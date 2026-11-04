@@ -12,6 +12,8 @@ export interface Look {
   /** Le sprite reste au sol pendant les sauts (le saut est déjà dans l'animation). */
   ignoreZ?: boolean;
   tint?: number;
+  /** Zoom du portrait dans la timeline du HUD (1 = tout le corps tient dans le cadre). */
+  portraitZoom?: number;
 }
 
 const MONSTER_MAP = (shot: number, atk = 'AnimAttaque0'): Record<string, AnimSlice> => ({
@@ -44,7 +46,7 @@ const IOP_MAP: Record<string, AnimSlice> = {
 const GOLD = 0xffd87a;
 
 export const LOOKS: Record<string, Look> = {
-  iop: { atlas: 'iop', scale: 1.15, map: IOP_MAP, height: 120, ignoreZ: true },
+  iop: { atlas: 'iop', scale: 1.15, map: IOP_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7 },
   bouftou: { atlas: 'bouftou', scale: 0.85, map: MONSTER_MAP(9 / 32), height: 70 },
   boufton: { atlas: 'boufton', scale: 0.8, map: MONSTER_MAP(9 / 32), height: 55 },
   royal: { atlas: 'royal', scale: 1.05, map: MONSTER_MAP(10 / 20), height: 140 },
