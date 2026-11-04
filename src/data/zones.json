@@ -1,0 +1,22 @@
+{
+  "champs-astrub": {
+    "name": "Champs d'Astrub",
+    "dofusSubArea": 98,
+    "level": 15,
+    "map": { "coords": [5, -27], "dofusMapId": 189793284 },
+    "waves": {
+      "pack": [
+        { "monster": "pissenlit", "base": 2, "perWave": 1 },
+        { "monster": "rose", "base": 1, "perWave": 0.8 },
+        { "monster": "tournesol", "base": -1, "perWave": 1, "fromWave": 2 }
+      ],
+      "bossEvery": 5,
+      "boss": "epouvanteur",
+      "escort": { "monsters": ["pissenlit", "rose"], "base": 3, "perWave": 1 },
+      "archimonstres": {
+        "monsters": ["archi_pissenlit", "archi_rose", "archi_tournesol"],
+        "chance": [{ "fromWave": 2, "value": 0.1 }, { "fromWave": 4, "value": 0.2 }]
+      }
+    }
+  }
+}
