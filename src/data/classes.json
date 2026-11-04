@@ -2,7 +2,10 @@
   "iop": {
     "name": "Iop",
     "hp": 220, "speed": 230, "radius": 16, "iframesOnHit": 0.45, "healOnKill": 3,
-    "critChance": 0.15, "critMult": 1.6, "pa": 6, "pm": 3,
+    "critChance": 0.15, "critMult": 1.6,
+    "pa": { "max": 6, "regen": 1.25 }, "pm": { "max": 2, "recharge": 3.5 },
+    "potion": { "charges": 3, "heal": 0.35, "cooldown": 1 },
+    "xpBase": 100, "maxLevel": 50,
     "skills": {
       "attaque": {
         "name": "Attaque", "key": "Clic G", "cooldown": 0, "comboWindow": 0.45,
@@ -13,15 +16,15 @@
         ]
       },
       "epee": {
-        "name": "Épée Céleste", "key": "Clic D", "cooldown": 2.5,
+        "name": "Épée Céleste", "key": "Clic D", "cooldown": 1.2, "pa": 3,
         "duration": 0.46, "impactAt": 0.16, "cancelAt": 0.26, "dmg": 34, "length": 250, "width": 36, "knock": 320, "hitstop": 0.07, "shake": 0.007
       },
       "bond": {
-        "name": "Bond", "key": "Espace", "cooldown": 3.5,
+        "name": "Bond", "key": "Espace", "cooldown": 0.4,
         "duration": 0.30, "maxRange": 280, "height": 70, "dmg": 22, "radius": 95, "knock": 300, "stun": 0.6, "hitstop": 0.06, "shake": 0.009
       },
       "colere": {
-        "name": "Colère de Iop", "key": "R", "cooldown": 9,
+        "name": "Colère de Iop", "key": "R", "cooldown": 9, "pa": 4,
         "duration": 0.72, "impactAt": 0.42, "cancelAt": 0.55, "dmg": 95, "radius": 160, "knock": 620, "hitstop": 0.13, "shake": 0.018
       }
     }

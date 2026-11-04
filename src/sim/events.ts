@@ -12,7 +12,10 @@ export type SimEvent =
   | { k: 'playerHurt' }
   | { k: 'wave'; n: number; boss: string | null; archi: string | null }
   | { k: 'bossDown'; monster: string }
-  | { k: 'playerDeath'; wave: number };
+  | { k: 'playerDeath'; wave: number }
+  | { k: 'potion'; x: number; y: number; amount: number }
+  | { k: 'levelUp'; level: number }
+  | { k: 'noResource'; res: 'pa' | 'pm' };
 
 /** Zones au sol affichées avant un coup (rouge = danger, or = sort du joueur). */
 export type Telegraph =

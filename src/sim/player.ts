@@ -17,16 +17,51 @@ export class Player extends Entity {
   combo = 0;
   comboTimer = 0;
   invuln = 0;
+  /** PA disponibles (fractionnaires : ils remontent en continu). */
+  pa: number;
+  /** Charges de Bond disponibles (fractionnaires : elles se rechargent une à une). */
+  pm: number;
+  potions: number;
+  potionCd = 0;
+  level = 1;
+  xp = 0;
   private buffer: SkillId | null = null;
   private bufferT = 0;
 
   constructor(id: number, x: number, y: number, readonly cls: ClassDef) {
     super(id, x, y, cls.radius, cls.hp);
+    this.pa = cls.pa.max; this.pm = cls.pm.max; this.potions = cls.potion.charges;
+  }
+
+  /** Coût en PA d'un sort (0 pour l'attaque de base). */
+  paCost(id: SkillId): number { return id === 'attaque' ? 0 : this.cls.skills[id].pa ?? 0; }
+  /** Le sort a-t-il ses ressources (PA, ou une charge de PM pour le Bond) ? */
+  hasResource(id: SkillId): boolean { return id === 'bond' ? this.pm >= 1 : this.pa >= this.paCost(id); }
+  /** XP à gagner pour passer au niveau suivant. */
+  get xpNeeded(): number { return this.cls.xpBase * this.level; }
+
+  gainXp(n: number, world: World) {
+    if (this.level >= this.cls.maxLevel) return;
+    this.xp += n;
+    while (this.level < this.cls.maxLevel && this.xp >= this.xpNeeded) {
+      this.xp -= this.xpNeeded; this.level++;
+      world.emit({ k: 'levelUp', level: this.level });
+    }
+    if (this.level >= this.cls.maxLevel) this.xp = 0;
+  }
+
+  drinkPotion(world: World): boolean {
+    if (this.dead || this.potions <= 0 || this.potionCd > 0 || this.hp >= this.maxHp) return false;
+    const amount = Math.min(this.maxHp - this.hp, Math.round(this.maxHp * this.cls.potion.heal));
+    this.hp += amount; this.potions--; this.potionCd = this.cls.potion.cooldown;
+    world.emit({ k: 'potion', x: this.x, y: this.y, amount });
+    return true;
   }
 
   canStart(id: SkillId): boolean {
     if (this.dead) return false;
     if (id !== 'attaque' && this.cd[id] > 0) return false;
+    if (!this.hasResource(id)) return false;
     if (this.state === 'free' || !this.skill) return true;
     const s = this.skill;
     if (s.id === 'bond') return false;
@@ -43,7 +78,7 @@ export class Player extends Entity {
       this.setAnim('attack' + (idx + 1));
     } else if (id === 'epee') {
       this.skill = { id, def: S.epee, t: 0, impacted: false };
-      this.cd.epee = S.epee.cooldown; this.setAnim('epee');
+      this.cd.epee = S.epee.cooldown; this.pa -= this.paCost('epee'); this.setAnim('epee');
     } else if (id === 'bond') {
       const def = S.bond;
       const dx = aim.x - this.x, dy = aim.y - this.y, d = Math.hypot(dx, dy) || 1;
@@ -52,12 +87,12 @@ export class Player extends Entity {
       // on recule vers le départ jusqu'à une case où l'on peut atterrir
       for (let i = 0; i < 20 && !world.walkable(tx, ty); i++) { tx -= (dx / d) * L / 20; ty -= (dy / d) * L / 20; }
       this.skill = { id, def, t: 0, impacted: false, sx: this.x, sy: this.y, tx, ty };
-      this.cd.bond = def.cooldown;
+      this.cd.bond = def.cooldown; this.pm -= 1;
       this.invuln = Math.max(this.invuln, def.duration + 0.05);
       this.setAnim('leap');
     } else {
       this.skill = { id, def: S.colere, t: 0, impacted: false };
-      this.cd.colere = S.colere.cooldown; this.setAnim('colere_charge');
+      this.cd.colere = S.colere.cooldown; this.pa -= this.paCost('colere'); this.setAnim('colere_charge');
     }
     const s = this.skill;
     this.facing = s.id === 'bond' ? Math.atan2(s.ty - this.y, s.tx - this.x) : Math.atan2(aim.y - this.y, aim.x - this.x);
@@ -68,11 +103,20 @@ export class Player extends Entity {
     this.age += dt;
     for (const k of Object.keys(this.cd) as SkillId[]) this.cd[k] = Math.max(0, this.cd[k] - dt);
     this.invuln = Math.max(0, this.invuln - dt);
+    this.potionCd = Math.max(0, this.potionCd - dt);
+    this.pa = Math.min(this.cls.pa.max, this.pa + this.cls.pa.regen * dt);
+    this.pm = Math.min(this.cls.pm.max, this.pm + dt / this.cls.pm.recharge);
     this.flash = Math.max(0, this.flash - dt);
     if (this.dead) { this.setAnim('die', Math.min(1, this.animT + dt * 1.5)); return; }
     if (this.comboTimer > 0) this.comboTimer -= dt;
     // Tampon d'entrée : une touche pressée 150 ms trop tôt n'est pas perdue
-    if (input.pressed) { this.buffer = input.pressed; this.bufferT = 0.15; }
+    if (input.potion) this.drinkPotion(world);
+    if (input.pressed) {
+      // sort sans ressource : on le signale (le HUD fait clignoter le compteur), sans le garder en tampon
+      if (!this.hasResource(input.pressed) && (input.pressed === 'attaque' || this.cd[input.pressed] <= 0))
+        world.emit({ k: 'noResource', res: input.pressed === 'bond' ? 'pm' : 'pa' });
+      this.buffer = input.pressed; this.bufferT = 0.15;
+    }
     else if (input.holdAttack && !this.buffer) { this.buffer = 'attaque'; this.bufferT = 0.05; }
     if (this.buffer) {
       this.bufferT -= dt;
