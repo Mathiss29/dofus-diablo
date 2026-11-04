@@ -1,0 +1,70 @@
+import Phaser from 'phaser';
+import { ISO } from '../sim/iso';
+import { clamp } from '../sim/math';
+import type { Entity } from '../sim/entity';
+import type { Monster } from '../sim/monster';
+import type { Look } from './looks';
+
+/** Affiche une entité de la simulation avec sa planche de sprites.
+ *  Dofus dessine 2 orientations : _1 (face, bas-droite) et _5 (dos, haut-gauche) ;
+ *  les 2 autres diagonales s'obtiennent par miroir horizontal. */
+export class EntityView {
+  readonly sprite: Phaser.GameObjects.Sprite;
+  private readonly bar: Phaser.GameObjects.Graphics;
+  private readonly shadow: Phaser.GameObjects.Graphics;
+  private readonly counts: Record<string, number> = {};
+
+  constructor(scene: Phaser.Scene, private readonly look: Look) {
+    const tex = scene.textures.get(look.atlas);
+    const names = tex.getFrameNames();
+    for (const name of names) { const k = name.replace(/_\d+$/, ''); this.counts[k] = (this.counts[k] || 0) + 1; }
+    // meta.origin = pied du personnage dans la cellule de la planche (écrit par trim_pack.py)
+    const meta = (tex.customData as { meta?: { cell: number[]; origin: number[] } }).meta ?? { cell: [1, 1], origin: [0.5, 0.9] };
+    this.sprite = scene.add.sprite(0, 0, look.atlas, names[0])
+      .setOrigin(meta.origin[0] / meta.cell[0], meta.origin[1] / meta.cell[1]).setScale(look.scale);
+    this.bar = scene.add.graphics();
+    this.shadow = scene.add.graphics();   // ombre dessinée par le jeu (celle de Dofus laissait une croix)
+  }
+
+  sync(e: Entity) {
+    const L = this.look, p = ISO.toScreen(e.x, e.y);
+    const fd = ISO.toScreen(Math.cos(e.facing), Math.sin(e.facing));
+    const back = fd.y < -0.05;
+    const flip = back ? fd.x > 0 : fd.x < 0;
+    const st = L.map[e.anim] ?? L.map.idle;
+    const base = `${st.anim}_${back ? '5' : '1'}`;
+    const name = this.counts[base] ? base : `${st.anim}_1`;
+    const n = this.counts[name] || 1;
+    const a = Math.floor((st.from ?? 0) * n), b = Math.max(a + 1, Math.round((st.to ?? 1) * n));
+    const idx = st.loop
+      ? a + (Math.floor(e.age * (st.fps ?? 25)) % (b - a))
+      : a + Math.min(b - a - 1, Math.floor(clamp(e.animT, 0, 0.999) * (b - a)));
+    this.sprite.setFrame(`${name}_${idx}`);
+    let sy = L.scale, alpha = 1;
+    if (e.anim === 'idle') sy *= 1 + Math.sin(e.age * 4) * 0.02;
+    if (e.anim === 'spawn') alpha = e.animT;
+    if (e.anim === 'die') alpha = e.animT < 0.7 ? 1 : 1 - (e.animT - 0.7) / 0.3;
+    this.sprite.setScale(flip ? -L.scale : L.scale, sy).setAlpha(alpha);
+    this.sprite.setPosition(p.x, p.y - (L.ignoreZ ? 0 : e.z)).setDepth(p.y);
+    if (e.flash > 0) this.sprite.setTintFill(0xffffff);
+    else if (L.tint) this.sprite.setTint(L.tint);
+    else this.sprite.clearTint();
+    // Ombre au sol : reste au sol pendant les sauts
+    const sh = this.shadow; sh.clear();
+    if (!(e.dead && e.animT > 0.7)) {
+      const w = Math.max(30, e.radius * 2.6) * (1 / (1 + e.z / 120));
+      sh.setDepth(p.y - 1); sh.fillStyle(0x000000, 0.28 * alpha); sh.fillEllipse(p.x, p.y, w, w * 0.45);
+    }
+    // Barre de vie des monstres touchés
+    const g = this.bar; g.clear();
+    if (e.faction === 'monster' && e.hp < e.maxHp && !e.dead) {
+      const elite = (e as Monster).def.boss || (e as Monster).def.elite;
+      const w = Math.max(30, e.radius * 2.2), y = p.y - L.height * L.scale - 6;
+      g.setDepth(p.y + 1);
+      g.fillStyle(0x000000, 0.6); g.fillRect(p.x - w / 2 - 1, y - 1, w + 2, 6);
+      g.fillStyle(elite ? 0xe0a030 : 0xc93c3c); g.fillRect(p.x - w / 2, y, w * (e.hp / e.maxHp), 4);
+    }
+  }
+
+  destroy() { this.sprite.destroy(); this.bar.destroy(); this.shadow.destroy(); }
+}

@@ -1,0 +1,16 @@
+{
+  "bouftou":   { "dofusId": 101, "name": "Bouftou", "hp": 48, "speed": 92, "radius": 19, "mass": 1, "dmg": 12, "attackRange": 70, "windup": 0.5, "lungeSpeed": 430, "lungeTime": 0.2, "recover": 0.65, "look": "bouftou", "color": "#efe3c8" },
+  "boufton":   { "name": "Boufton Blanc", "hp": 18, "speed": 125, "radius": 12, "mass": 0.6, "dmg": 6, "attackRange": 50, "windup": 0.38, "lungeSpeed": 380, "lungeTime": 0.16, "recover": 0.5, "look": "boufton", "color": "#f7efe0" },
+  "royal":     { "name": "Bouftou Royal", "hp": 650, "speed": 72, "radius": 36, "mass": 6, "dmg": 26, "attackRange": 240, "windup": 0.75, "lungeSpeed": 560, "lungeTime": 0.42, "recover": 0.9,
+                 "slamRange": 110, "slamRadius": 135, "slamWindup": 0.85, "look": "royal", "boss": true, "color": "#e9d9b4" },
+  "pissenlit": { "dofusId": 79, "name": "Pissenlit Diabolique", "hp": 34, "speed": 120, "radius": 13, "mass": 0.7, "dmg": 8, "attackRange": 55, "windup": 0.4, "lungeSpeed": 400, "lungeTime": 0.17, "recover": 0.55, "look": "pissenlit", "color": "#f3efd8" },
+  "rose":      { "dofusId": 78, "name": "Rose Démoniaque", "hp": 40, "speed": 100, "radius": 15, "mass": 0.9, "dmg": 11, "attackRange": 75, "windup": 0.5, "lungeSpeed": 420, "lungeTime": 0.2, "recover": 0.65, "look": "rose", "color": "#d2452e" },
+  "tournesol": { "dofusId": 48, "name": "Tournesol Sauvage", "hp": 55, "speed": 78, "radius": 17, "mass": 1.2, "dmg": 13, "attackRange": -100, "windup": 0.5, "lungeSpeed": 0, "lungeTime": 0.1, "recover": 0.8,
+                 "slamRange": 95, "slamRadius": 105, "slamWindup": 0.75, "look": "tournesol", "color": "#f2c230" },
+  "epouvanteur": { "dofusId": 4820, "name": "Épouvanteur", "hp": 720, "speed": 62, "radius": 30, "mass": 6, "dmg": 24, "attackRange": 220, "windup": 0.75, "lungeSpeed": 520, "lungeTime": 0.4, "recover": 0.9,
+                 "slamRange": 110, "slamRadius": 140, "slamWindup": 0.85, "look": "epouvanteur", "boss": true, "color": "#c9a46a" },
+  "archi_pissenlit": { "dofusId": 2348, "name": "Pissdane l'Insipide", "hp": 120, "speed": 135, "radius": 15, "mass": 1.2, "dmg": 13, "attackRange": 60, "windup": 0.35, "lungeSpeed": 460, "lungeTime": 0.18, "recover": 0.45, "look": "archi_pissenlit", "elite": true, "color": "#ffd27a" },
+  "archi_rose":      { "dofusId": 2352, "name": "Roz la Magicienne", "hp": 140, "speed": 110, "radius": 17, "mass": 1.4, "dmg": 17, "attackRange": 80, "windup": 0.45, "lungeSpeed": 470, "lungeTime": 0.2, "recover": 0.55, "look": "archi_rose", "elite": true, "color": "#ffd27a" },
+  "archi_tournesol": { "dofusId": 2358, "name": "Tour le Vice", "hp": 180, "speed": 85, "radius": 19, "mass": 2, "dmg": 19, "attackRange": -100, "windup": 0.5, "lungeSpeed": 0, "lungeTime": 0.1, "recover": 0.7,
+                       "slamRange": 105, "slamRadius": 125, "slamWindup": 0.7, "look": "archi_tournesol", "elite": true, "color": "#ffd27a" }
+}
