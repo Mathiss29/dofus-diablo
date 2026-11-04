@@ -60,6 +60,10 @@ export class FX {
         this.ring(e.x, e.y, 20, e.radius, 0xe0402a, 0.35, 10);
         this.particles(e.x, e.y, 0, 30, 0x8a7350, 300, 0.6, 5, 220);
         break;
+      case 'potion':
+        this.number(e.x, e.y, 60, e.amount, false, '#7be07b');
+        this.particles(e.x, e.y, 30, 14, 0x7be07b, 120, 0.6, 3, 220);
+        break;
       case 'hit':
         if (e.target === 'monster') {
           this.number(e.x, e.y, e.z, e.amount, e.crit);

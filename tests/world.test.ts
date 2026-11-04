@@ -92,3 +92,56 @@ describe('simulation', () => {
     expect(w.wave).toBe(2);
   });
 });
+
+describe('PA, PM, potion et XP', () => {
+  const press = (w: World, pressed: PlayerInput['pressed'], extra: Partial<PlayerInput> = {}) =>
+    w.step(STEP, { ...NO_INPUT, aim: { x: w.player.x + 100, y: w.player.y }, pressed, ...extra });
+  const idle = (w: World, s: number) => { for (let i = 0; i < s * 60; i++) w.step(STEP, NO_INPUT); };
+
+  it('Épée Céleste coûte 3 PA, et les PA remontent ensuite', () => {
+    const w = newWorld(), p = w.player;
+    press(w, 'epee');
+    expect(p.skill?.id).toBe('epee');
+    expect(p.pa).toBeCloseTo(3, 1);
+    idle(w, 3);
+    expect(p.pa).toBe(p.cls.pa.max);
+  });
+
+  it('sans assez de PA, le sort ne part pas et le HUD est prévenu', () => {
+    const w = newWorld(), p = w.player;
+    p.pa = 2;
+    press(w, 'colere');
+    expect(p.skill).toBeNull();
+    expect(w.drainEvents().some(e => e.k === 'noResource' && e.res === 'pa')).toBe(true);
+  });
+
+  it('le Bond consomme une charge de PM : deux Bonds d\'affilée, pas trois', () => {
+    const w = newWorld(), p = w.player;
+    let bonds = 0;
+    for (let i = 0; i < 3; i++) {
+      press(w, 'bond');
+      if (p.skill?.id === 'bond') bonds++;
+      idle(w, 0.5);
+    }
+    expect(bonds).toBe(2);
+    expect(p.pm).toBeLessThan(1);
+  });
+
+  it('la potion rend 35 % des PV max et consomme une charge', () => {
+    const w = newWorld(), p = w.player;
+    p.hp = 50;
+    press(w, null, { potion: true });
+    expect(p.hp).toBe(50 + Math.round(p.maxHp * 0.35));
+    expect(p.potions).toBe(p.cls.potion.charges - 1);
+    press(w, null, { potion: true });   // délai entre deux gorgées
+    expect(p.potions).toBe(p.cls.potion.charges - 1);
+  });
+
+  it('tuer des monstres donne de l\'XP et fait monter de niveau', () => {
+    const w = newWorld(), p = w.player;
+    p.gainXp(p.xpNeeded + 10, w);
+    expect(p.level).toBe(2);
+    expect(p.xp).toBe(10);
+    expect(w.drainEvents().some(e => e.k === 'levelUp' && e.level === 2)).toBe(true);
+  });
+});

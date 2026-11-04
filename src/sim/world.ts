@@ -82,6 +82,9 @@ export class World {
     this.wave++;
     const plan = planWave(this.wave, this.zone.waves, this.rng);
     this.emit({ k: 'wave', n: this.wave, boss: plan.boss, archi: plan.archi });
+    // chaque nouvelle vague rend une potion
+    const p = this.player;
+    if (this.wave > 1) p.potions = Math.min(p.cls.potion.charges, p.potions + 1);
     for (const type of plan.monsters) {
       let pos = this.map.randomFree(this.rng), tries = 0;
       while (Math.hypot(pos.x - this.player.x, pos.y - this.player.y) < 300 && ++tries < 50) pos = this.map.randomFree(this.rng);
@@ -138,6 +141,7 @@ export class World {
     this.emit({ k: 'kill', x: m.x, y: m.y, radius: m.radius, monster: m.type });
     const p = this.player;
     p.hp = Math.min(p.maxHp, p.hp + p.cls.healOnKill);
+    p.gainXp(m.def.xp ?? Math.round(m.def.hp / 5), this);
     if (m.def.boss) { this.emit({ k: 'impact', hitstop: 0.15, shake: 0.02, big: true }); this.emit({ k: 'bossDown', monster: m.type }); }
   }
   onPlayerDeath() { this.over = true; this.emit({ k: 'playerDeath', wave: this.wave }); }

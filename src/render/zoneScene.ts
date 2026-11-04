@@ -26,6 +26,7 @@ export class ZoneScene extends Phaser.Scene {
   private hud!: Hud;
   private keys!: Record<string, Phaser.Input.Keyboard.Key>;
   private pressed: SkillId | null = null;
+  private potion = false;
   private hitstop = 0;
   private acc = 0;
   private static readonly STEP = 1 / 60;
@@ -34,7 +35,7 @@ export class ZoneScene extends Phaser.Scene {
 
   init(data: { zone?: string }) {
     if (data?.zone) this.zoneId = data.zone;
-    this.views = new Map(); this.pressed = null; this.hitstop = 0; this.acc = 0;
+    this.views = new Map(); this.pressed = null; this.potion = false; this.hitstop = 0; this.acc = 0;
   }
 
   preload() {
@@ -69,10 +70,11 @@ export class ZoneScene extends Phaser.Scene {
     const K = Phaser.Input.Keyboard.KeyCodes, kb = this.input.keyboard!;
     // ZQSD (AZERTY), WASD (QWERTY) et flèches
     this.keys = kb.addKeys({ W: K.W, Z: K.Z, A: K.A, Q: K.Q, S: K.S, D: K.D, UP: K.UP, DOWN: K.DOWN, LEFT: K.LEFT, RIGHT: K.RIGHT,
-      SPACE: K.SPACE, R: K.R, F: K.F, H: K.H, ENTER: K.ENTER, ONE: K.ONE, TWO: K.TWO }) as Record<string, Phaser.Input.Keyboard.Key>;
+      SPACE: K.SPACE, R: K.R, E: K.E, F: K.F, H: K.H, ENTER: K.ENTER, ONE: K.ONE, TWO: K.TWO }) as Record<string, Phaser.Input.Keyboard.Key>;
     this.input.on('pointerdown', (p: Phaser.Input.Pointer) => { this.pressed = p.rightButtonDown() ? 'epee' : 'attaque'; });
     this.keys.SPACE.on('down', () => { this.pressed = 'bond'; });
     this.keys.R.on('down', () => { this.pressed = 'colere'; });
+    this.keys.E.on('down', () => { this.potion = true; });
     this.keys.ONE.on('down', () => { this.pressed = 'epee'; });
     this.keys.TWO.on('down', () => { this.pressed = 'colere'; });
     this.keys.F.on('down', () => {
@@ -92,8 +94,8 @@ export class ZoneScene extends Phaser.Scene {
     if (k.D.isDown || k.RIGHT.isDown) sx += 1;
     const move = sx || sy ? ISO.dirFromScreen(sx, sy) : { x: 0, y: 0 };
     const ptr = this.input.activePointer, wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
-    const input = { move, aim: ISO.toWorld(wp.x, wp.y), pressed: this.pressed, holdAttack: ptr.leftButtonDown() };
-    this.pressed = null;
+    const input = { move, aim: ISO.toWorld(wp.x, wp.y), pressed: this.pressed, holdAttack: ptr.leftButtonDown(), potion: this.potion };
+    this.pressed = null; this.potion = false;
     return input;
   }
 
@@ -109,7 +111,7 @@ export class ZoneScene extends Phaser.Scene {
     while (this.acc >= ZoneScene.STEP && this.hitstop <= 0) {
       this.acc -= ZoneScene.STEP;
       this.world.step(ZoneScene.STEP, input);
-      input = { ...input, pressed: null };
+      input = { ...input, pressed: null, potion: false };
       this.consumeEvents();
     }
     if (this.hitstop > 0) this.acc = 0;
@@ -128,8 +130,12 @@ export class ZoneScene extends Phaser.Scene {
           break;
         case 'playerHurt': this.hud.hurtFlash(this.fx.juice); break;
         case 'wave':
+          this.hud.onWave(e.n);
           this.hud.banner(e.boss ? `Vague ${e.n}\n${M[e.boss].name}` : e.archi ? `Vague ${e.n}\nArchimonstre : ${M[e.archi].name} !` : `Vague ${e.n}`);
           break;
+        case 'potion': this.hud.potionDrunk(); break;
+        case 'noResource': this.hud.noResource(e.res); break;
+        case 'levelUp': this.hud.banner(`Niveau ${e.level} !`, 1200); break;
         case 'bossDown': this.hud.banner(`${M[e.monster].name} vaincu !`); break;
         case 'playerDeath': this.hud.banner(`Vaincu à la vague ${e.wave}\nEntrée pour recommencer`, 0, true); break;
       }
@@ -153,6 +159,6 @@ export class ZoneScene extends Phaser.Scene {
     const s = w.player.skill;
     if (s?.id === 'colere' && s.t < s.def.impactAt) this.fx.chargeSparks(w.player.x, w.player.y);
     this.fx.draw(w.telegraphs);
-    this.hud.draw(w, this.fx.juice);
+    this.hud.draw(w, this.fx.juice, this.game.loop.delta / 1000);
   }
 }

@@ -11,6 +11,8 @@ export interface PlayerInput {
   pressed: SkillId | null;
   /** Clic gauche maintenu : enchaîne l'attaque. */
   holdAttack: boolean;
+  /** Boire une potion pendant cette frame. */
+  potion?: boolean;
 }
 
 export const NO_INPUT: PlayerInput = { move: { x: 0, y: 0 }, aim: { x: 0, y: 0 }, pressed: null, holdAttack: false };
