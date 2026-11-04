@@ -82,7 +82,7 @@ export class Hud {
     this.panel = nine(100, 80);
     this.g = fixed(scene.add.graphics(), 3);
 
-    this.zonePanel = nine(250, 62).setOrigin(0);
+    this.zonePanel = nine(250, 62);
     this.zoneTitle = fixed(scene.add.text(0, 0, '', { ...STYLE, fontSize: '17px', color: '#ffe3b0', fontStyle: 'bold' }), 5);
     this.zoneInfo = fixed(scene.add.text(0, 0, '', { ...STYLE, fontSize: '13px' }), 5);
 
@@ -174,12 +174,14 @@ export class Hud {
     this.shortOf.pa = Math.max(0, this.shortOf.pa - dt); this.shortOf.pm = Math.max(0, this.shortOf.pm - dt);
     const alive = world.monsters.filter(m => !m.dead);
 
-    // --- Cartouche de zone (haut gauche) ---
-    this.zonePanel.setPosition(12, 10);
-    this.zoneTitle.setPosition(28, 20).setText(world.zone.name);
-    this.zoneTitle.setText(`${world.zone.name}`);
-    this.zoneInfo.setPosition(28, 44).setText(`Niv. ${world.zone.level}   ·   Vague ${world.wave}   ·   ${alive.length} monstre${alive.length > 1 ? 's' : ''}   ·   ${world.kills} tués${juice ? '' : '   ·   effets OFF'}`);
-    this.zonePanel.setSize(Math.max(this.zoneTitle.width, this.zoneInfo.width) + 34, 62);
+    // --- Cartouche de zone (haut gauche) : marges égales autour des deux lignes ---
+    const zx = 12, zy = 10, padX = 18, padY = 11;
+    this.zoneTitle.setText(world.zone.name).setPosition(zx + padX, zy + padY);
+    this.zoneInfo.setText(`Niv. ${world.zone.level}  ·  Vague ${world.wave}  ·  ${alive.length} monstre${alive.length > 1 ? 's' : ''}  ·  ${world.kills} tués${juice ? '' : '  ·  effets OFF'}`)
+      .setPosition(zx + padX, zy + padY + this.zoneTitle.height + 2);
+    const zw = Math.max(this.zoneTitle.width, this.zoneInfo.width) + 2 * padX;
+    const zh = this.zoneTitle.height + 2 + this.zoneInfo.height + 2 * padY;
+    this.zonePanel.setSize(zw, zh).setPosition(zx + zw / 2, zy + zh / 2);
 
     // --- Bandeau du bas : potion, PA/PM, cœur, sorts, XP ---
     const slot = 60, gap = 6, heartSize = 104, potW = 70, leftW = 52;
