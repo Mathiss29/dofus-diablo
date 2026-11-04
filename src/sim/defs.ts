@@ -8,6 +8,8 @@ export interface SkillBase { name: string; key: string; cooldown: number; durati
 export interface ClassDef {
   name: string; hp: number; speed: number; radius: number; iframesOnHit: number; healOnKill: number;
   critChance: number; critMult: number;
+  /** PA et PM affichés dans le HUD (pas encore consommés par les sorts). */
+  pa?: number; pm?: number;
   skills: {
     attaque: { name: string; key: string; cooldown: number; comboWindow: number; combo: ComboHit[] };
     epee: SkillBase & { impactAt: number; dmg: number; length: number; width: number; knock: number };

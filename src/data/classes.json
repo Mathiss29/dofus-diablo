@@ -2,7 +2,7 @@
   "iop": {
     "name": "Iop",
     "hp": 220, "speed": 230, "radius": 16, "iframesOnHit": 0.45, "healOnKill": 3,
-    "critChance": 0.15, "critMult": 1.6,
+    "critChance": 0.15, "critMult": 1.6, "pa": 6, "pm": 3,
     "skills": {
       "attaque": {
         "name": "Attaque", "key": "Clic G", "cooldown": 0, "comboWindow": 0.45,

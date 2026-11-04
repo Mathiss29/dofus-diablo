@@ -38,6 +38,7 @@ export class ZoneScene extends Phaser.Scene {
   }
 
   preload() {
+    Hud.preload(this);
     const zone = GAME_DATA.zones[this.zoneId];
     // On ne charge que les planches utiles à cette zone
     const w = zone.waves;
@@ -130,7 +131,7 @@ export class ZoneScene extends Phaser.Scene {
           this.hud.banner(e.boss ? `Vague ${e.n}\n${M[e.boss].name}` : e.archi ? `Vague ${e.n}\nArchimonstre : ${M[e.archi].name} !` : `Vague ${e.n}`);
           break;
         case 'bossDown': this.hud.banner(`${M[e.monster].name} vaincu !`); break;
-        case 'playerDeath': this.hud.banner(`Vaincu à la vague ${e.wave}\nEntrée pour recommencer`, 0); break;
+        case 'playerDeath': this.hud.banner(`Vaincu à la vague ${e.wave}\nEntrée pour recommencer`, 0, true); break;
       }
     }
   }
