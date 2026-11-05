@@ -228,17 +228,18 @@ export class ZoneScene extends Phaser.Scene {
     } catch { /* son indisponible */ }
   }
 
-  /** Monstre sous le curseur (on vise le corps dessiné, pas seulement les pieds). */
+  /** Monstre sous le curseur : on vise le corps dessiné (rectangle rogné de la frame), ou à défaut ses pieds ;
+   *  s'il y en a plusieurs, le plus proche du curseur. */
   private monsterUnder(ptr: Phaser.Input.Pointer) {
     const wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
     let best: Entity | null = null, bd = Infinity;
     for (const m of this.world.monsters) {
       if (m.dead) continue;
       const v = this.views.get(m.id); if (!v) continue;
-      const b = v.sprite.getBounds();
-      if (!b.contains(wp.x, wp.y)) continue;
-      const s = ISO.toScreen(m.x, m.y), d = Math.abs(s.x - wp.x) + Math.abs(s.y - wp.y);
-      if (d < bd) { bd = d; best = m; }
+      const s = ISO.toScreen(m.x, m.y), feet = Math.hypot((s.x - wp.x) / 1.6, s.y - wp.y);
+      const body = v.hit(wp.x, wp.y);
+      const d = body >= 0 ? body : feet < m.radius + 10 ? feet : -1;
+      if (d >= 0 && d < bd) { bd = d; best = m; }
     }
     return best;
   }
