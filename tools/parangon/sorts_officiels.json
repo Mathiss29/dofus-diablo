@@ -1,0 +1,932 @@
+{
+ "iop": [
+  {
+   "id": 13115,
+   "nom": "Couperet",
+   "niveau": 1,
+   "element": "feu",
+   "desc": "Occasionne des dommages Feu et retire des PM en zone."
+  },
+  {
+   "id": 14676,
+   "nom": "Ferveur",
+   "niveau": 1,
+   "element": "eau",
+   "desc": "Applique un bouclier sur le lanceur et ses alliés et occasionne des dommages Eau aux ennemis en zone."
+  },
+  {
+   "id": 13110,
+   "nom": "Épée Divine",
+   "niveau": 1,
+   "element": "air",
+   "desc": "Occasionne des dommages Air aux ennemis et augmente les Dommages du lanceur et des alliés en zone."
+  },
+  {
+   "id": 13106,
+   "nom": "Pression",
+   "niveau": 1,
+   "element": "terre",
+   "desc": "Érode la cible et occasionne des dommages Terre."
+  },
+  {
+   "id": 13108,
+   "nom": "Intimidation",
+   "niveau": 5,
+   "element": null,
+   "desc": "Occasionne des dommages dans le meilleur élément du lanceur aux ennemis et repousse la cible."
+  },
+  {
+   "id": 13107,
+   "nom": "Bond",
+   "niveau": 10,
+   "element": null,
+   "desc": "Téléporte le lanceur sur la case ciblée et augmente les dommages subis par les ennemis en zone."
+  },
+  {
+   "id": 13123,
+   "nom": "Concentration",
+   "niveau": 15,
+   "element": "terre",
+   "desc": "Occasionne des dommages Terre.\nLes dommages sont plus importants sur les invocations."
+  },
+  {
+   "id": 13126,
+   "nom": "Déferlement",
+   "niveau": 20,
+   "element": "eau",
+   "desc": "Rapproche le lanceur vers la cible et occasionne des dommages Eau aux ennemis."
+  },
+  {
+   "id": 13120,
+   "nom": "Vitalité",
+   "niveau": 25,
+   "element": null,
+   "desc": "Augmente la Vitalité de la cible.\nLa Vitalité est plus importante sur le lanceur."
+  },
+  {
+   "id": 13116,
+   "nom": "Souffle",
+   "niveau": 30,
+   "element": "air",
+   "desc": "Repousse les cibles depuis le centre et occasionne des dommages Air aux ennemis en zone."
+  },
+  {
+   "id": 13119,
+   "nom": "Épée Destructrice",
+   "niveau": 35,
+   "element": "feu",
+   "desc": "Érode les cibles et occasionne des dommages Feu en zone."
+  },
+  {
+   "id": 13118,
+   "nom": "Puissance",
+   "niveau": 40,
+   "element": null,
+   "desc": "Augmente la Puissance et les Dommages Poussée de la cible."
+  },
+  {
+   "id": 13121,
+   "nom": "Tempête de Puissance",
+   "niveau": 45,
+   "element": "feu",
+   "desc": "Occasionne des dommages Feu.\nN'affecte pas le lanceur.\n\nOccasionne également des dommages Feu sur l'ennemi initial si le sort est lancé sur une autre cible.\nCes dommages sont plus importants après 2 lancers consécutifs sur un même ennemi."
+  },
+  {
+   "id": 13133,
+   "nom": "Endurance",
+   "niveau": 50,
+   "element": "eau",
+   "desc": "Applique un bouclier sur le lanceur et occasionne des dommages Eau.\nLes dommages n'affectent pas le lanceur."
+  },
+  {
+   "id": 13142,
+   "nom": "Vertu",
+   "niveau": 55,
+   "element": null,
+   "desc": "Applique un bouclier sur les alliés en zone.\nRetire également de la Puissance au lanceur pour chaque allié à son contact (cumulable 4 fois)."
+  },
+  {
+   "id": 13125,
+   "nom": "Épée de Iop",
+   "niveau": 60,
+   "element": "terre",
+   "desc": "Occasionne des dommages Terre en zone.\nN'affecte pas le lanceur."
+  },
+  {
+   "id": 13113,
+   "nom": "Friction",
+   "niveau": 65,
+   "element": null,
+   "desc": "Attire la cible et lui applique l'état Friction :\n• Sur un ennemi : attire la cible vers son attaquant ennemi.\n• Sur un allié : attire ses attaquants ennemis vers elle."
+  },
+  {
+   "id": 13122,
+   "nom": "Épée Céleste",
+   "niveau": 70,
+   "element": "air",
+   "desc": "Occasionne des dommages Air en zone.\nN'affecte pas le lanceur."
+  },
+  {
+   "id": 13114,
+   "nom": "Précipitation",
+   "niveau": 75,
+   "element": null,
+   "desc": "Augmente les PA de l'allié ciblé et lui applique l'état Affaibli.\nRetire des PA non esquivables à cet allié au tour suivant.\n\nL'état n'est pas appliqué sur le lanceur."
+  },
+  {
+   "id": 13111,
+   "nom": "Épée du Destin",
+   "niveau": 80,
+   "element": "feu",
+   "desc": "Occasionne des dommages Feu.\nLes dommages du sort sont augmentés à la récupération du sort."
+  },
+  {
+   "id": 13141,
+   "nom": "Emprise",
+   "niveau": 85,
+   "element": null,
+   "desc": "Rend l'ennemi ciblé Invulnérable et l'immobilise."
+  },
+  {
+   "id": 13156,
+   "nom": "Fureur",
+   "niveau": 90,
+   "element": "terre",
+   "desc": "Occasionne des dommages Terre.\nLes dommages du sort sont augmentés après chaque lancer. \n\nLes bonus se décrémentent si le sort n'est pas relancé."
+  },
+  {
+   "id": 13139,
+   "nom": "Fracture",
+   "niveau": 95,
+   "element": "air",
+   "desc": "Érode les cibles et occasionne des dommages Air en zone."
+  },
+  {
+   "id": 13130,
+   "nom": "Menace",
+   "niveau": 100,
+   "element": "eau",
+   "desc": "Attire la cible et occasionne des dommages Eau aux ennemis."
+  },
+  {
+   "id": 13138,
+   "nom": "Accumulation",
+   "niveau": 105,
+   "element": "terre",
+   "desc": "Occasionne des dommages Terre.\n\nSur le lanceur : augmente les dommages du sort."
+  },
+  {
+   "id": 13117,
+   "nom": "Épée du Jugement",
+   "niveau": 110,
+   "element": "eau",
+   "desc": "Applique un bouclier sur le lanceur, occasionne des dommages Eau et applique l'état Condamné sur la cible :\n• Occasionne des dommages Eau plus importants à retardement sur la cible.\n\nLe bouclier est plus important et le retardement est réinitialisé sur une cible Condamnée.\n\nSur le lanceur : applique un bouclier."
+  },
+  {
+   "id": 13148,
+   "nom": "Conquête",
+   "niveau": 115,
+   "element": null,
+   "desc": "Invoque un Stratège Iop qui peut renvoyer 50% des dommages qu'il subit en zone autour de lui.\nLe renvoi de dommages n'affecte pas le lanceur.\n\nLe Stratège Iop réduit de 50% les dommages immédiats alliés.\n\nIl ne peut y avoir qu'un seul Stratège Iop par équipe. Si le Stratège Iop est encore présent et que celui-ci est ré-invoqué, l'ancien est détruit pour laisser place au nouveau."
+  },
+  {
+   "id": 13143,
+   "nom": "Agitation",
+   "niveau": 120,
+   "element": null,
+   "desc": "Augmente les PM de l'allié ciblé et le rend Intaclable.\nAugmente également sa Puissance pour chaque PM utilisé."
+  },
+  {
+   "id": 13147,
+   "nom": "Sentence",
+   "niveau": 125,
+   "element": "feu",
+   "desc": "Occasionne des dommages Feu et applique l'état Sentence sur la cible :\n• À la fin du tour de la cible, occasionne des dommages Feu aux ennemis en zone autour d'elle.\n\nLes dommages n'affectent pas le lanceur."
+  },
+  {
+   "id": 13135,
+   "nom": "Anneau Destructeur",
+   "niveau": 130,
+   "element": "air",
+   "desc": "Occasionne des dommages Air aux ennemis et attire les cibles vers le centre en zone.\nN'affecte pas le lanceur."
+  },
+  {
+   "id": 13137,
+   "nom": "Violence",
+   "niveau": 135,
+   "element": null,
+   "desc": "Repousse les cibles en zone."
+  },
+  {
+   "id": 13136,
+   "nom": "Rassemblement",
+   "niveau": 140,
+   "element": "feu",
+   "desc": "Occasionne des dommages Feu aux ennemis et attire les cibles jusqu'au centre en zone.\nN'affecte pas le lanceur."
+  },
+  {
+   "id": 14818,
+   "nom": "Fustigation",
+   "niveau": 145,
+   "element": "eau",
+   "desc": "Érode les cibles et occasionne des dommages Eau en zone."
+  },
+  {
+   "id": 14677,
+   "nom": "Vindicte",
+   "niveau": 150,
+   "element": null,
+   "desc": "Érode la cible."
+  },
+  {
+   "id": 13131,
+   "nom": "Tannée",
+   "niveau": 155,
+   "element": "air",
+   "desc": "Occasionne des dommages Air et retire des PM en zone."
+  },
+  {
+   "id": 13146,
+   "nom": "Pugilat",
+   "niveau": 160,
+   "element": "terre",
+   "desc": "Occasionne des dommages Terre en zone.\nLes dommages du sort sont augmentés après chaque lancer pour le tour en cours.\n\nLes dommages n'affectent pas le lanceur."
+  },
+  {
+   "id": 13112,
+   "nom": "Massacre",
+   "niveau": 165,
+   "element": null,
+   "desc": "Augmente et renvoie une partie des dommages subis par l'ennemi ciblé aux ennemis en zone autour de lui."
+  },
+  {
+   "id": 13134,
+   "nom": "Fendoir",
+   "niveau": 170,
+   "element": "eau",
+   "desc": "Applique un bouclier sur le lanceur pour chaque ennemi dans la zone d'effet et occasionne des dommages Eau en zone.\nLes dommages n'affectent pas le lanceur."
+  },
+  {
+   "id": 13140,
+   "nom": "Coup pour Coup",
+   "niveau": 175,
+   "element": null,
+   "desc": "Repousse la cible et lui applique l'état Coup pour Coup :\n• Sur un ennemi : repousse la cible si elle attaque le lanceur.\n• Sur un allié : repousse les attaquants ennemis."
+  },
+  {
+   "id": 13145,
+   "nom": "Zénith",
+   "niveau": 180,
+   "element": "air",
+   "desc": "Occasionne des dommages Air en zone. \nOccasionne des dommages Air supplémentaires en zone selon les PM restants du lanceur."
+  },
+  {
+   "id": 13132,
+   "nom": "Détermination",
+   "niveau": 185,
+   "element": null,
+   "desc": "Rend l'allié ciblé Indéplaçable et lui applique un bouclier."
+  },
+  {
+   "id": 13144,
+   "nom": "Tumulte",
+   "niveau": 190,
+   "element": "feu",
+   "desc": "Augmente les dommages du sort pour chaque ennemi dans la zone d'effet et occasionne des dommages Feu en zone.\nN'affecte pas le lanceur."
+  },
+  {
+   "id": 13109,
+   "nom": "Duel",
+   "niveau": 195,
+   "element": null,
+   "desc": "Rend le lanceur et l'ennemi ciblé Invulnérables à distance, leur applique l'état Pesanteur et les immobilise.\nLa durée de l'état Pesanteur est plus importante sur le lanceur."
+  },
+  {
+   "id": 13124,
+   "nom": "Colère de Iop",
+   "niveau": 200,
+   "element": "terre",
+   "desc": "Occasionne des dommages Terre.\nLes dommages du sort sont augmentés à la récupération du sort."
+  }
+ ],
+ "cra": [
+  {
+   "id": 32435,
+   "nom": "Flèche Glacée",
+   "niveau": 1,
+   "element": "eau",
+   "desc": "Retire des PA et occasionne des dommages Eau.\nLes dommages du sort sont augmentés après son utilisation."
+  },
+  {
+   "id": 32443,
+   "nom": "Flèche de Barrage",
+   "niveau": 1,
+   "element": "feu",
+   "desc": "Occasionne des dommages Feu aux ennemis et repousse les cibles en zone."
+  },
+  {
+   "id": 32455,
+   "nom": "Flèche Vagabonde",
+   "niveau": 1,
+   "element": "terre",
+   "desc": "Éloigne le lanceur de la cible et occasionne des dommages Terre aux ennemis."
+  },
+  {
+   "id": 32426,
+   "nom": "Flèche de Recul",
+   "niveau": 1,
+   "element": "air",
+   "desc": "Occasionne des dommages Air aux ennemis et repousse la cible."
+  },
+  {
+   "id": 32464,
+   "nom": "Pas Chassé",
+   "niveau": 5,
+   "element": null,
+   "desc": "Téléporte le lanceur sur la case ciblée.\nAugmente les PM du lanceur au tour suivant."
+  },
+  {
+   "id": 32465,
+   "nom": "Tirs Éloignés",
+   "niveau": 10,
+   "element": null,
+   "desc": "Augmente les portées minimale et maximale de tous les sorts offensifs Crâ du lanceur.\nAugmente également la Portée des alliés (hors Crâs) en zone autour du lanceur et de ses Balises."
+  },
+  {
+   "id": 32444,
+   "nom": "Flèche Détonante",
+   "niveau": 15,
+   "element": "feu",
+   "desc": "Retire de la Portée, occasionne des dommages Feu et applique l'état Flèche Détonante sur la cible :\n• Applique les effets sans l'état sur les ennemis en zone autour de la cible à la fin de son tour.\n\nLes effets peuvent être déclenchés prématurément si la cible subit des dommages de poussée."
+  },
+  {
+   "id": 32453,
+   "nom": "Flèche d'Abolition",
+   "niveau": 20,
+   "element": "terre",
+   "desc": "Vole de la vie dans l'élément Terre.\nLes dommages sont plus importants sur les cibles ayant du bouclier.\n\nLa taille de la zone est augmentée après chaque lancer pour le tour en cours."
+  },
+  {
+   "id": 32427,
+   "nom": "Flèche Cinglante",
+   "niveau": 25,
+   "element": "air",
+   "desc": "Retire des PM et occasionne des dommages Air."
+  },
+  {
+   "id": 32436,
+   "nom": "Flèche d'Immobilisation",
+   "niveau": 30,
+   "element": "eau",
+   "desc": "Vole des PM et occasionne des dommages Eau\nLes dommages du sort sont augmentés après chaque lancer."
+  },
+  {
+   "id": 32466,
+   "nom": "Tirs Puissants",
+   "niveau": 35,
+   "element": null,
+   "desc": "Sacrifie la Portée du lanceur pour augmenter sa Puissance, ses Dommages Poussée et ses Critiques."
+  },
+  {
+   "id": 32428,
+   "nom": "Flèche de Dispersion",
+   "niveau": 40,
+   "element": "air",
+   "desc": "Occasionne des dommages Air aux ennemis et repousse les cibles depuis le centre en zone.\nLa poussée est plus importante aux extrémités de la zone."
+  },
+  {
+   "id": 32445,
+   "nom": "Flèche Explosive",
+   "niveau": 45,
+   "element": "feu",
+   "desc": "Occasionne des dommages Feu en zone."
+  },
+  {
+   "id": 32437,
+   "nom": "Œil de Taupe",
+   "niveau": 50,
+   "element": "eau",
+   "desc": "Dévoile les invisibles, retire de la Portée et vole de la vie dans l'élément Eau en zone."
+  },
+  {
+   "id": 32454,
+   "nom": "Œil pour Œil",
+   "niveau": 55,
+   "element": "terre",
+   "desc": "Vole de la vie dans l'élément Terre en zone.\nN'affecte pas le lanceur.\n\nLes dommages du sort sont augmentés pour chaque attaque ennemie subie au tour précédent."
+  },
+  {
+   "id": 32474,
+   "nom": "Balise de Survie",
+   "niveau": 60,
+   "element": null,
+   "desc": "Invoque une Balise qui peut soigner tous les alliés dans sa ligne de vue au début de son tour.\nElle peut également échanger de position avec le lanceur s'il l'attaque en étant dans sa ligne de vue.\n\nLa balise est détruite 2 tours après son invocation."
+  },
+  {
+   "id": 32470,
+   "nom": "Tir de Repli",
+   "niveau": 65,
+   "element": null,
+   "desc": "Éloigne le lanceur de l'ennemi ciblé ou rapproche le lanceur vers l'allié ciblé.\nAugmente également la Portée du lanceur."
+  },
+  {
+   "id": 32456,
+   "nom": "Flèche Punitive",
+   "niveau": 70,
+   "element": "terre",
+   "desc": "Érode la cible et occasionne des dommages Terre.\nLes dommages du sort sont augmentés pour les prochains lancers."
+  },
+  {
+   "id": 32438,
+   "nom": "Flèche d'Expiation",
+   "niveau": 75,
+   "element": "eau",
+   "desc": "Réduit les soins reçus par la cible et occasionne des dommages Eau.\nLes dommages du sort sont augmentés pour les prochains lancers."
+  },
+  {
+   "id": 32429,
+   "nom": "Flèche Perforante",
+   "niveau": 80,
+   "element": "air",
+   "desc": "Occasionne des dommages Air aux ennemis et repousse les cibles en zone.\nLes dommages de zone ne sont pas dégressifs et sont plus importants sur les cibles ayant du bouclier."
+  },
+  {
+   "id": 32446,
+   "nom": "Flèche Dévorante",
+   "niveau": 85,
+   "element": "feu",
+   "desc": "Vole de la vie dans l'élément Feu.\nN'affecte pas le lanceur.\nLe vol de vie est plus important après chaque lancer sur un même ennemi.\n\nOccasionne également des dommages Feu à l'ennemi initial si le sort est lancé sur une autre cible, ou dans les prochains tours s'il n'est pas relancé.\nLes dommages sont plus importants selon le nombre de lancers effectués sur un même ennemi."
+  },
+  {
+   "id": 32469,
+   "nom": "Acuité Absolue",
+   "niveau": 90,
+   "element": null,
+   "desc": "Augmente la portée minimale de tous les sorts offensifs Crâ du lanceur pour désactiver la ligne de vue sur tous ses sorts.\nAugmente également ses Critiques."
+  },
+  {
+   "id": 32449,
+   "nom": "Flèche Éclatante",
+   "niveau": 95,
+   "element": "feu",
+   "desc": "Vole de la vie dans l'élément Feu aux ennemis et repousse les cibles depuis le centre en zone."
+  },
+  {
+   "id": 32708,
+   "nom": "Flèche Harcelante",
+   "niveau": 100,
+   "element": null,
+   "desc": "Réduit les soins reçus par la cible et lui applique un poison Air de début de tour."
+  },
+  {
+   "id": 32459,
+   "nom": "Carreaux Destructeurs",
+   "niveau": 105,
+   "element": "terre",
+   "desc": "Occasionne des dommages Terre et retire des dommages aux ennemis et repousse les cibles en zone.\nLes dommages de zone ne sont pas dégressifs."
+  },
+  {
+   "id": 32531,
+   "nom": "Flèche Évasive",
+   "niveau": 110,
+   "element": "eau",
+   "desc": "Applique des effets selon la position du lanceur par rapport à la cible et occasionne des dommages Eau aux ennemis :\n• Éloigne le lanceur de la cible et retire des PM aux ennemis s'il est en mêlée.\n• Repousse la cible et retire des PA aux ennemis si le lanceur est à distance."
+  },
+  {
+   "id": 32467,
+   "nom": "Balise Tactique",
+   "niveau": 115,
+   "element": null,
+   "desc": "Invoque une Balise statique qui peut appliquer des effets en zone autour d'elle selon ce qu'elle subit :\n• Elle attire les cibles si un allié lui occasionne des dommages à distance ou la pousse.\n• Elle pousse les cibles si un allié lui occasionne des dommages en mêlée ou de poussée.\n\nLa balise est détruite 3 tours après son invocation.\n\nAugmente également la Puissance du lanceur pour chaque ennemi dans la ligne de vue de la case ciblée."
+  },
+  {
+   "id": 32471,
+   "nom": "Tir Perçant",
+   "niveau": 120,
+   "element": null,
+   "desc": "Érode la cible et augmente les dommages qu'elle subit jusqu'à la prochaine attaque."
+  },
+  {
+   "id": 32439,
+   "nom": "Flèche Ralentissante",
+   "niveau": 125,
+   "element": "eau",
+   "desc": "Retire des PA et des PM et occasionne des dommages Eau en zone."
+  },
+  {
+   "id": 32433,
+   "nom": "Flèche Persécutrice",
+   "niveau": 130,
+   "element": "air",
+   "desc": "Vole de la vie dans l'élément Air.\nOccasionne des dommages Air au tour suivant si la cible n'est pas dans la ligne de vue du lanceur."
+  },
+  {
+   "id": 32458,
+   "nom": "Flèche Assaillante",
+   "niveau": 135,
+   "element": "terre",
+   "desc": "Applique des effets selon la position du lanceur par rapport à la cible, occasionne des dommages Terre aux ennemis et augmente la Puissance du lanceur :\n• Repousse la cible si le lanceur est en mêlée.\n• Rapproche le lanceur vers la cible s'il est à distance."
+  },
+  {
+   "id": 32448,
+   "nom": "Flèche Tyrannique",
+   "niveau": 140,
+   "element": "feu",
+   "desc": "Occasionne des dommages et applique un poison Feu de fin de tour sur la cible.\nLe poison est renouvelé si la cible est déplacée sous les effets du sort.\n\nOccasionne prématurément des dommages Feu et retire les effets du sort si la cible subit des dommages de poussée."
+  },
+  {
+   "id": 32618,
+   "nom": "Flèches Amoureuses",
+   "niveau": 145,
+   "element": null,
+   "desc": "Soigne l'allié ciblé.\n\nPartage également les dommages entre le combattant allié initial et un autre combattant allié en augmentant leur Puissance si le sort est lancé sur cet autre combattant.\n\nLes soins n'affectent pas le lanceur."
+  },
+  {
+   "id": 32447,
+   "nom": "Flèches Enflammées",
+   "niveau": 150,
+   "element": "feu",
+   "desc": "Éloigne le lanceur des cibles, occasionne des dommages Feu aux ennemis et repousse les cibles en zone."
+  },
+  {
+   "id": 32457,
+   "nom": "Flèche Massacrante",
+   "niveau": 155,
+   "element": "terre",
+   "desc": "Augmente les dommages du sort pour chaque entité dans la zone d'effet et occasionne des dommages Terre en zone."
+  },
+  {
+   "id": 32431,
+   "nom": "Pluie de Flèches",
+   "niveau": 160,
+   "element": "air",
+   "desc": "Retire de l'Esquive PM et occasionne des dommages Air en zone.\nN'affecte pas le lanceur.\n\nLes effets sont relancés à partir de la case ciblée au tour suivant."
+  },
+  {
+   "id": 32441,
+   "nom": "Flèche Paralysante",
+   "niveau": 165,
+   "element": "eau",
+   "desc": "Retire des PA et des PM et occasionne des dommages Eau en zone."
+  },
+  {
+   "id": 32472,
+   "nom": "Représailles",
+   "niveau": 170,
+   "element": null,
+   "desc": "Occasionne des dommages Neutre aux ennemis selon leur vie érodée en zone.\nApplique également l'état Pesanteur sur les cibles et augmente les dommages subis par les ennemis en zone."
+  },
+  {
+   "id": 32473,
+   "nom": "Vendetta",
+   "niveau": 175,
+   "element": null,
+   "desc": "Pose un piège mono-cellule qui occasionne des dommages dans le meilleur élément du lanceur aux ennemis et attire les entités vers son centre en zone."
+  },
+  {
+   "id": 32460,
+   "nom": "Flèche du Jugement",
+   "niveau": 180,
+   "element": "terre",
+   "desc": "Retire de la Puissance et occasionne des dommages Terre.\nLa première attaque dépend des PM restants du lanceur."
+  },
+  {
+   "id": 32442,
+   "nom": "Flèche de Rédemption",
+   "niveau": 185,
+   "element": "eau",
+   "desc": "Vole de la vie dans l'élément Eau.\nLes dommages du sort sont augmentés pour chaque tentative de retrait de PA ou de PM réussie.\n\nLes dommages sont réinitialisés après utilisation du sort."
+  },
+  {
+   "id": 32432,
+   "nom": "Flèche Boomerang",
+   "niveau": 190,
+   "element": "air",
+   "desc": "Retire des PM et occasionne des dommages Air.\nN'affecte pas le lanceur.\n\nRetire des PM et vole de la vie à la cible initiale et aux ennemis entre elle et la nouvelle cible si elles sont alignées.\nAffecte également les Balises.\nApplique ces effets entre la dernière cible et le lanceur à la fin du tour de ce dernier s'il est aligné avec elle."
+  },
+  {
+   "id": 32450,
+   "nom": "Flèche Fulminante",
+   "niveau": 195,
+   "element": "feu",
+   "desc": "Occasionne des dommages Feu.\nRebondit sur l'ennemi le plus proche dans un cercle de taille 2.\nPeut également rebondir sur les Balises.\n\nLes dommages du sort sont augmentés après chaque cible touchée."
+  },
+  {
+   "id": 32475,
+   "nom": "Sentinelle",
+   "niveau": 200,
+   "element": null,
+   "desc": "Augmente les dommages à distance et la Portée du lanceur et dévoile tous les ennemis dans sa ligne de vue.\nLes effets sont réduits pour chaque PM utilisé."
+  }
+ ],
+ "osamodas": [
+  {
+   "id": 31110,
+   "nom": "Cri du Corbac",
+   "niveau": 1,
+   "element": "air",
+   "desc": "Vole de la vie aux ennemis ou soigne les alliés dans l'élément Air.\nAugmente également les PM du lanceur et de l'allié ciblé.\n\nLes soins n'affectent pas le lanceur."
+  },
+  {
+   "id": 31111,
+   "nom": "Pics du Prespic",
+   "niveau": 1,
+   "element": "feu",
+   "desc": "Vole de la vie aux ennemis ou soigne les alliés dans l'élément Feu.\nAugmente également les Critiques du lanceur et de l'allié ciblé.\n\nLes soins n'affectent pas le lanceur."
+  },
+  {
+   "id": 31135,
+   "nom": "Dents du Piranya",
+   "niveau": 1,
+   "element": "eau",
+   "desc": "Soigne les alliés et vole de la vie dans l'élément Eau aux ennemis en zone.\nAugmente également les Dommages du lanceur et des alliés ciblés.\n\nLes soins n'affectent pas le lanceur."
+  },
+  {
+   "id": 31132,
+   "nom": "Cri de l'Ours",
+   "niveau": 1,
+   "element": "terre",
+   "desc": "Soigne les alliés et vole de la vie dans l'élément Terre aux ennemis en zone.\nAugmente également la Puissance du lanceur et des alliés ciblés.\n\nLes soins n'affectent pas le lanceur."
+  },
+  {
+   "id": 31114,
+   "nom": "Fouet",
+   "niveau": 5,
+   "element": null,
+   "desc": "Occasionne des dommages dans le meilleur élément du lanceur aux ennemis et repousse la cible.\nAugmente également les PM de la cible si c'est une invocation alliée."
+  },
+  {
+   "id": 31115,
+   "nom": "Tofu",
+   "niveau": 10,
+   "element": "air",
+   "desc": "Invoque un Tofu maîtrisable qui peut occasionner des dommages Air, soigner, retirer du Tacle et repousser."
+  },
+  {
+   "id": 31116,
+   "nom": "Bouftou",
+   "niveau": 15,
+   "element": "terre",
+   "desc": "Invoque un Bouftou maîtrisable qui peut occasionner des dommages Terre, soigner, retirer de la Fuite et se téléporter."
+  },
+  {
+   "id": 31117,
+   "nom": "Crapipou",
+   "niveau": 20,
+   "element": "eau",
+   "desc": "Invoque un Crapipou maîtrisable qui peut occasionner des dommages et appliquer un poison Eau, soigner, augmenter ou retirer de la Portée et s'éloigner."
+  },
+  {
+   "id": 31118,
+   "nom": "Dragoune",
+   "niveau": 25,
+   "element": "feu",
+   "desc": "Invoque une Dragoune maîtrisable qui peut occasionner des dommages Feu, soigner, retirer de la Puissance et échanger de positions."
+  },
+  {
+   "id": 31119,
+   "nom": "Cortège Sauvage",
+   "niveau": 30,
+   "element": null,
+   "desc": "Augmente les Invocations du lanceur et réduit le coût en PA des sorts d'invocation Osamodas.\n\nToutes les invocations Osamodas meurent au début du tour du lanceur tant qu'il est sous les effets du sort."
+  },
+  {
+   "id": 31120,
+   "nom": "Piqûre Motivante",
+   "niveau": 35,
+   "element": null,
+   "desc": "Augmente les PA et les PM de la cible.\nLes effets sont plus importants sur les invocations."
+  },
+  {
+   "id": 31121,
+   "nom": "Saute-granouille",
+   "niveau": 40,
+   "element": "eau",
+   "desc": "Téléporte le lanceur symétriquement par rapport à la cible et occasionne des dommages Eau aux ennemis.\nTéléporte également la cible symétriquement par rapport au lanceur si c'est une invocation."
+  },
+  {
+   "id": 31122,
+   "nom": "Souffle Draconique",
+   "niveau": 45,
+   "element": "feu",
+   "desc": "Éloigne le lanceur des cibles, occasionne des dommages Feu aux ennemis et repousse les cibles en zone."
+  },
+  {
+   "id": 31123,
+   "nom": "Charge Bestiale",
+   "niveau": 50,
+   "element": "terre",
+   "desc": "Rapproche le lanceur vers la cible et occasionne des dommages Terre aux ennemis.\nAttire également les invocations jusqu'au centre en zone autour de la cible."
+  },
+  {
+   "id": 31124,
+   "nom": "Aéropique",
+   "niveau": 55,
+   "element": "air",
+   "desc": "Rapproche le lanceur vers la cible, occasionne des dommages Air aux ennemis et repousse la cible.\nRepousse également les entités au contact de la cible si cette dernière est une invocation."
+  },
+  {
+   "id": 31125,
+   "nom": "Discipline",
+   "niveau": 60,
+   "element": null,
+   "desc": "Occasionne des dommages dans le meilleur élément du lanceur et retire des PM aux ennemis, et attire la cible."
+  },
+  {
+   "id": 31152,
+   "nom": "Laisse Spirituelle",
+   "niveau": 65,
+   "element": null,
+   "desc": "Applique l'état En laisse sur la cible pour le tour en cours :\n• Suit le lanceur immédiatement et lorsqu'il utilise ses PM.\n\nSur le lanceur : applique l'état sur toutes ses invocations.\n\nL'état est retiré si le lanceur ou la cible sont déplacés."
+  },
+  {
+   "id": 31126,
+   "nom": "Ventritofu",
+   "niveau": 70,
+   "element": "air",
+   "desc": "Invoque un Ventritofu maîtrisable qui peut occasionner des dommages Air, augmenter la Fuite, se téléporter, téléporter symétriquement des entités, repousser et se rapprocher."
+  },
+  {
+   "id": 31127,
+   "nom": "Bouflourd",
+   "niveau": 75,
+   "element": "terre",
+   "desc": "Invoque un Bouflourd maîtrisable qui peut occasionner des dommages Terre, réduire les dommages subis, se rapprocher et attirer."
+  },
+  {
+   "id": 31128,
+   "nom": "Crapipaud",
+   "niveau": 80,
+   "element": "eau",
+   "desc": "Invoque un Crapipaud maîtrisable qui peut occasionner des dommages et appliquer un poison Eau, augmenter les PM, repousser et se téléporter symétriquement."
+  },
+  {
+   "id": 31129,
+   "nom": "Dragonnet",
+   "niveau": 85,
+   "element": "feu",
+   "desc": "Invoque un Dragonnet maîtrisable qui peut occasionner des dommages Feu, augmenter la Puissance et repousser."
+  },
+  {
+   "id": 31131,
+   "nom": "Esprit Glouton",
+   "niveau": 90,
+   "element": null,
+   "desc": "Invoque un Gobgob Glouton contrôlable qui peut occasionner des dommages Neutre selon sa vie, tuer des invocations alliés pour augmenter sa Vitalité et ses PM, intercepter les dommages d'un allié et se téléporter en créant des illusions.\n\nLe temps de relance est fixé à la mort du Gobgob."
+  },
+  {
+   "id": 31113,
+   "nom": "Crocs du Mulou",
+   "niveau": 95,
+   "element": "terre",
+   "desc": "Occasionne des dommages Terre aux ennemis et augmente les dommages en mêlée du lanceur et des alliés en zone."
+  },
+  {
+   "id": 31137,
+   "nom": "Déplumage",
+   "niveau": 100,
+   "element": "air",
+   "desc": "Occasionne des dommages Air et réduit les Résistances Poussée des ennemis en zone."
+  },
+  {
+   "id": 31140,
+   "nom": "Cœur Sauvage",
+   "niveau": 105,
+   "element": "feu",
+   "desc": "Occasionne des dommages Feu aux ennemis et augmente les soins reçus du lanceur et des alliés en zone."
+  },
+  {
+   "id": 31139,
+   "nom": "Bave du Crapaud",
+   "niveau": 110,
+   "element": "eau",
+   "desc": "Occasionne des dommages Eau et retire des Dommages aux ennemis en zone."
+  },
+  {
+   "id": 31136,
+   "nom": "Cravache",
+   "niveau": 115,
+   "element": null,
+   "desc": "Attire les cibles vers le centre et occasionne des dommages dans le meilleur élément du lanceur aux ennemis en zone.\nTéléporte les cibles symétriquement par rapport au centre si la case centrale est occupée.\n\nN'affecte pas directement le lanceur."
+  },
+  {
+   "id": 31134,
+   "nom": "Griffes du Chtigre",
+   "niveau": 120,
+   "element": "feu",
+   "desc": "Occasionne des dommages Feu et réduit les soins reçus par la cible."
+  },
+  {
+   "id": 31133,
+   "nom": "Serres du Vautour",
+   "niveau": 125,
+   "element": "air",
+   "desc": "Occasionne des dommages Air aux ennemis et soigne leurs attaquants en zone."
+  },
+  {
+   "id": 31138,
+   "nom": "Toison d'Or",
+   "niveau": 130,
+   "element": "terre",
+   "desc": "Applique un bouclier sur les alliés et occasionne des dommages Terre aux ennemis en zone."
+  },
+  {
+   "id": 31112,
+   "nom": "Morsure du Serpent",
+   "niveau": 135,
+   "element": null,
+   "desc": "Augmente les dommages subis par la cible et lui applique un poison Eau de début de tour."
+  },
+  {
+   "id": 31141,
+   "nom": "Pacte Bestial",
+   "niveau": 140,
+   "element": null,
+   "desc": "Applique l'état Bestial sur le lanceur :\n• Augmente ses PA.\n• Sacrifie toutes ses présentes et futures invocations Osamodas pour augmenter ses dommages et soins finaux.\n• Transfère une partie de la vie des invocations sacrifiées vers le lanceur.\n• Les effets sont plus importants selon le coût en PI de l'invocation.\n\nLes Gobgobs ne sont pas affectés par le sort.\nLa durée de l'état et du bonus PA est prolongée si le lanceur invoque une créature Osamodas.\nLe temps de relance des sorts d'invocation Osamodas est réinitialisé et les effets du sort sont retirés à la perte de l'état ou si le sort est relancé."
+  },
+  {
+   "id": 31142,
+   "nom": "Communion Animale",
+   "niveau": 145,
+   "element": null,
+   "desc": "Partage les dommages entre le lanceur et une invocation alliée.\n\nSur le lanceur : partage les dommages entre toutes ses invocations."
+  },
+  {
+   "id": 31143,
+   "nom": "Tornade de Plumes",
+   "niveau": 150,
+   "element": "air",
+   "desc": "Téléporte le lanceur sur la case ciblée, occasionne des dommages Air aux ennemis et repousse les cibles depuis le centre en zone."
+  },
+  {
+   "id": 31144,
+   "nom": "Frappe du Craqueleur",
+   "niveau": 155,
+   "element": "terre",
+   "desc": "Occasionne des dommages Terre et attire les cibles jusqu'au centre en zone.\nN'affecte pas le lanceur."
+  },
+  {
+   "id": 31145,
+   "nom": "Chant du Phénix",
+   "niveau": 160,
+   "element": "feu",
+   "desc": "Soigne les alliés, occasionne des dommages Feu aux ennemis et repousse les cibles depuis le centre en zone."
+  },
+  {
+   "id": 31146,
+   "nom": "Tourbillon",
+   "niveau": 165,
+   "element": "eau",
+   "desc": "Téléporte les alliés symétriquement par rapport au centre et occasionne des dommages Eau aux ennemis en zone."
+  },
+  {
+   "id": 31147,
+   "nom": "Martinet",
+   "niveau": 170,
+   "element": null,
+   "desc": "Attire toutes les invocations du lanceur vers la cible et occasionne des dommages dans le meilleur élément du lanceur aux ennemis.\n\nLes invocations Osamodas attaquent également si elles sont à portée et en ligne de vue de la cible.\nLes dommages et soins des invocations sont réduits de 50% pendant l'utilisation du sort.\n• Tofu : Bisou Béco\n• Bouftou : Saute-bouftou\n• Crapipou : Croassement\n• Dragoune : Dracorage\n• Ventritofu : Ventripoussée\n• Bouflourd : Charge du Bouflourd\n• Crapipaud : Crapobatie\n• Dragonnet : Souffle du Dragon\n• Scarafoudre : Scarafusée\n• Craquolosse : Fronde Rocheuse\n• Crocoléreux : Crocs Coléreux\n• Sulfénix : Sulfuria"
+  },
+  {
+   "id": 31130,
+   "nom": "Relais Spirituel",
+   "niveau": 175,
+   "element": null,
+   "desc": "Échange de position avec une invocation du lanceur et lui applique l'état Relais :\n• Les prochains échanges se feront entre l'invocation dans l'état et la prochaine invocation ciblée.\n\nLes échanges ne s'appliquent que si les invocations sont à 5 cases ou moins du lanceur."
+  },
+  {
+   "id": 31149,
+   "nom": "Craquolosse",
+   "niveau": 180,
+   "element": "terre",
+   "desc": "Invoque un Craquolosse maîtrisable qui peut occasionner des dommages Terre, attirer, retirer des PM et augmenter les résistances."
+  },
+  {
+   "id": 31150,
+   "nom": "Crocoléreux",
+   "niveau": 185,
+   "element": "eau",
+   "desc": "Invoque un Crocoléreux maîtrisable qui peut occasionner des dommages Eau, retirer des Critiques et réduire les soins et les dommages reçus."
+  },
+  {
+   "id": 31151,
+   "nom": "Sulfénix",
+   "niveau": 190,
+   "element": "feu",
+   "desc": "Invoque un Sulfénix maîtrisable qui peut occasionner des dommages Feu, soigner et se téléporter."
+  },
+  {
+   "id": 31148,
+   "nom": "Scarafoudre",
+   "niveau": 195,
+   "element": "air",
+   "desc": "Invoque un Scarafoudre maîtrisable qui peut occasionner des dommages Air, se téléporter, retirer des chances de Critique et appliquer du bouclier."
+  },
+  {
+   "id": 31153,
+   "nom": "Esprit Facétieux",
+   "niveau": 200,
+   "element": null,
+   "desc": "Invoque un Gobgob Facétieux contrôlable qui peut échanger de positions, réduire la durée des effets et se sacrifier pour copier une invocation Osamodas.\n\nLe temps de relance est fixé à la mort du Gobgob."
+  }
+ ]
+}

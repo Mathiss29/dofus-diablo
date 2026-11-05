@@ -1,0 +1,6546 @@
+{
+ "classe": "iop",
+ "nom": "Parangon du Iop",
+ "regles": {
+  "ouverture": 200,
+  "pointParNiveau": 1,
+  "plafondDepart": 100,
+  "plafondParGrandeZone": "à fixer zone par zone",
+  "clesDeVouteMax": 1,
+  "distanceSort": "6 + (niveau - 1) * 34 / 189",
+  "paliers": {
+   "petit": "<= 60",
+   "moyen": "61-139",
+   "transformation": ">= 140"
+  },
+  "runes": {
+   "Rune": 50,
+   "Pa": 100,
+   "Ra": 150
+  },
+  "reinitialisation": "nœud par nœud contre des kamas"
+ },
+ "noeuds": [
+  {
+   "type": "depart",
+   "zone": null,
+   "x": 0,
+   "y": 0,
+   "nom": "Départ du Iop",
+   "id": 0
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.0075,
+   "y": -0.0204,
+   "profondeur": 1,
+   "stat": "force",
+   "valeur": 5,
+   "id": 1
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.015,
+   "y": -0.0408,
+   "profondeur": 2,
+   "stat": "dommages_terre_pct",
+   "valeur": 3,
+   "id": 2
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.0225,
+   "y": -0.0612,
+   "profondeur": 3,
+   "stat": "resistance_terre_pct",
+   "valeur": 4,
+   "id": 3
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.03,
+   "y": -0.0816,
+   "profondeur": 4,
+   "stat": "dommages_critiques_pct",
+   "valeur": 2,
+   "id": 4
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.0375,
+   "y": -0.102,
+   "profondeur": 5,
+   "stat": "force",
+   "valeur": 5,
+   "id": 5
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.045,
+   "y": -0.1224,
+   "profondeur": 6,
+   "stat": "dommages_terre_pct",
+   "valeur": 3,
+   "id": 6
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.0524,
+   "y": -0.1429,
+   "profondeur": 7,
+   "stat": "resistance_terre_pct",
+   "valeur": 4,
+   "id": 7
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.0599,
+   "y": -0.1633,
+   "profondeur": 8,
+   "stat": "dommages_critiques_pct",
+   "valeur": 2,
+   "id": 8
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.0674,
+   "y": -0.1837,
+   "profondeur": 9,
+   "stat": "force",
+   "valeur": 5,
+   "id": 9
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.0749,
+   "y": -0.2041,
+   "profondeur": 10,
+   "stat": "dommages_terre_pct",
+   "valeur": 3,
+   "id": 10
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.0824,
+   "y": -0.2245,
+   "profondeur": 11,
+   "stat": "resistance_terre_pct",
+   "valeur": 4,
+   "id": 11
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.0899,
+   "y": -0.2449,
+   "profondeur": 12,
+   "stat": "dommages_critiques_pct",
+   "valeur": 2,
+   "id": 12
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.0974,
+   "y": -0.2653,
+   "profondeur": 13,
+   "stat": "force",
+   "valeur": 5,
+   "id": 13
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.1049,
+   "y": -0.2857,
+   "profondeur": 14,
+   "stat": "dommages_terre_pct",
+   "valeur": 3,
+   "id": 14
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.1124,
+   "y": -0.3061,
+   "profondeur": 15,
+   "stat": "resistance_terre_pct",
+   "valeur": 4,
+   "id": 15
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.1199,
+   "y": -0.3265,
+   "profondeur": 16,
+   "stat": "dommages_critiques_pct",
+   "valeur": 2,
+   "id": 16
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.1274,
+   "y": -0.3469,
+   "profondeur": 17,
+   "stat": "force",
+   "valeur": 5,
+   "id": 17
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.1349,
+   "y": -0.3673,
+   "profondeur": 18,
+   "stat": "dommages_terre_pct",
+   "valeur": 3,
+   "id": 18
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.1424,
+   "y": -0.3877,
+   "profondeur": 19,
+   "stat": "resistance_terre_pct",
+   "valeur": 4,
+   "id": 19
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.1498,
+   "y": -0.4081,
+   "profondeur": 20,
+   "stat": "dommages_critiques_pct",
+   "valeur": 2,
+   "id": 20
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.1573,
+   "y": -0.4286,
+   "profondeur": 21,
+   "stat": "force",
+   "valeur": 5,
+   "id": 21
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.1648,
+   "y": -0.449,
+   "profondeur": 22,
+   "stat": "dommages_terre_pct",
+   "valeur": 3,
+   "id": 22
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.1723,
+   "y": -0.4694,
+   "profondeur": 23,
+   "stat": "resistance_terre_pct",
+   "valeur": 4,
+   "id": 23
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.1798,
+   "y": -0.4898,
+   "profondeur": 24,
+   "stat": "dommages_critiques_pct",
+   "valeur": 2,
+   "id": 24
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.1873,
+   "y": -0.5102,
+   "profondeur": 25,
+   "stat": "force",
+   "valeur": 5,
+   "id": 25
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.1948,
+   "y": -0.5306,
+   "profondeur": 26,
+   "stat": "dommages_terre_pct",
+   "valeur": 3,
+   "id": 26
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.2023,
+   "y": -0.551,
+   "profondeur": 27,
+   "stat": "resistance_terre_pct",
+   "valeur": 4,
+   "id": 27
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.2098,
+   "y": -0.5714,
+   "profondeur": 28,
+   "stat": "dommages_critiques_pct",
+   "valeur": 2,
+   "id": 28
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.2173,
+   "y": -0.5918,
+   "profondeur": 29,
+   "stat": "force",
+   "valeur": 5,
+   "id": 29
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.2248,
+   "y": -0.6122,
+   "profondeur": 30,
+   "stat": "dommages_terre_pct",
+   "valeur": 3,
+   "id": 30
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.2323,
+   "y": -0.6326,
+   "profondeur": 31,
+   "stat": "resistance_terre_pct",
+   "valeur": 4,
+   "id": 31
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.2398,
+   "y": -0.653,
+   "profondeur": 32,
+   "stat": "dommages_critiques_pct",
+   "valeur": 2,
+   "id": 32
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.2472,
+   "y": -0.6734,
+   "profondeur": 33,
+   "stat": "force",
+   "valeur": 5,
+   "id": 33
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.2547,
+   "y": -0.6938,
+   "profondeur": 34,
+   "stat": "dommages_terre_pct",
+   "valeur": 3,
+   "id": 34
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.2622,
+   "y": -0.7143,
+   "profondeur": 35,
+   "stat": "resistance_terre_pct",
+   "valeur": 4,
+   "id": 35
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.2697,
+   "y": -0.7347,
+   "profondeur": 36,
+   "stat": "dommages_critiques_pct",
+   "valeur": 2,
+   "id": 36
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.2772,
+   "y": -0.7551,
+   "profondeur": 37,
+   "stat": "force",
+   "valeur": 5,
+   "id": 37
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.2847,
+   "y": -0.7755,
+   "profondeur": 38,
+   "stat": "dommages_terre_pct",
+   "valeur": 3,
+   "id": 38
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.2922,
+   "y": -0.7959,
+   "profondeur": 39,
+   "stat": "resistance_terre_pct",
+   "valeur": 4,
+   "id": 39
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.2997,
+   "y": -0.8163,
+   "profondeur": 40,
+   "stat": "dommages_critiques_pct",
+   "valeur": 2,
+   "id": 40
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.3072,
+   "y": -0.8367,
+   "profondeur": 41,
+   "stat": "force",
+   "valeur": 5,
+   "id": 41
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.0171,
+   "y": -0.0134,
+   "profondeur": 1,
+   "stat": "dommages_terre_pct",
+   "valeur": 3,
+   "id": 42
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.0342,
+   "y": -0.0269,
+   "profondeur": 2,
+   "stat": "resistance_terre_pct",
+   "valeur": 4,
+   "id": 43
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.0513,
+   "y": -0.0403,
+   "profondeur": 3,
+   "stat": "dommages_critiques_pct",
+   "valeur": 2,
+   "id": 44
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.0684,
+   "y": -0.0537,
+   "profondeur": 4,
+   "stat": "force",
+   "valeur": 5,
+   "id": 45
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.0855,
+   "y": -0.0672,
+   "profondeur": 5,
+   "stat": "dommages_terre_pct",
+   "valeur": 3,
+   "id": 46
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.1026,
+   "y": -0.0806,
+   "profondeur": 6,
+   "stat": "resistance_terre_pct",
+   "valeur": 4,
+   "id": 47
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.1197,
+   "y": -0.094,
+   "profondeur": 7,
+   "stat": "dommages_critiques_pct",
+   "valeur": 2,
+   "id": 48
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.1367,
+   "y": -0.1075,
+   "profondeur": 8,
+   "stat": "force",
+   "valeur": 5,
+   "id": 49
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.1538,
+   "y": -0.1209,
+   "profondeur": 9,
+   "stat": "dommages_terre_pct",
+   "valeur": 3,
+   "id": 50
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.1709,
+   "y": -0.1343,
+   "profondeur": 10,
+   "stat": "resistance_terre_pct",
+   "valeur": 4,
+   "id": 51
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.188,
+   "y": -0.1477,
+   "profondeur": 11,
+   "stat": "dommages_critiques_pct",
+   "valeur": 2,
+   "id": 52
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.2051,
+   "y": -0.1612,
+   "profondeur": 12,
+   "stat": "force",
+   "valeur": 5,
+   "id": 53
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.2222,
+   "y": -0.1746,
+   "profondeur": 13,
+   "stat": "dommages_terre_pct",
+   "valeur": 3,
+   "id": 54
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.2393,
+   "y": -0.188,
+   "profondeur": 14,
+   "stat": "resistance_terre_pct",
+   "valeur": 4,
+   "id": 55
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.2564,
+   "y": -0.2015,
+   "profondeur": 15,
+   "stat": "dommages_critiques_pct",
+   "valeur": 2,
+   "id": 56
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.2735,
+   "y": -0.2149,
+   "profondeur": 16,
+   "stat": "force",
+   "valeur": 5,
+   "id": 57
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.2906,
+   "y": -0.2283,
+   "profondeur": 17,
+   "stat": "dommages_terre_pct",
+   "valeur": 3,
+   "id": 58
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.3077,
+   "y": -0.2418,
+   "profondeur": 18,
+   "stat": "resistance_terre_pct",
+   "valeur": 4,
+   "id": 59
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.3248,
+   "y": -0.2552,
+   "profondeur": 19,
+   "stat": "dommages_critiques_pct",
+   "valeur": 2,
+   "id": 60
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.3419,
+   "y": -0.2686,
+   "profondeur": 20,
+   "stat": "force",
+   "valeur": 5,
+   "id": 61
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.359,
+   "y": -0.2821,
+   "profondeur": 21,
+   "stat": "dommages_terre_pct",
+   "valeur": 3,
+   "id": 62
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.3761,
+   "y": -0.2955,
+   "profondeur": 22,
+   "stat": "resistance_terre_pct",
+   "valeur": 4,
+   "id": 63
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.3931,
+   "y": -0.3089,
+   "profondeur": 23,
+   "stat": "dommages_critiques_pct",
+   "valeur": 2,
+   "id": 64
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.4102,
+   "y": -0.3224,
+   "profondeur": 24,
+   "stat": "force",
+   "valeur": 5,
+   "id": 65
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.4273,
+   "y": -0.3358,
+   "profondeur": 25,
+   "stat": "dommages_terre_pct",
+   "valeur": 3,
+   "id": 66
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.4444,
+   "y": -0.3492,
+   "profondeur": 26,
+   "stat": "resistance_terre_pct",
+   "valeur": 4,
+   "id": 67
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.4615,
+   "y": -0.3627,
+   "profondeur": 27,
+   "stat": "dommages_critiques_pct",
+   "valeur": 2,
+   "id": 68
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.4786,
+   "y": -0.3761,
+   "profondeur": 28,
+   "stat": "force",
+   "valeur": 5,
+   "id": 69
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.4957,
+   "y": -0.3895,
+   "profondeur": 29,
+   "stat": "dommages_terre_pct",
+   "valeur": 3,
+   "id": 70
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.5128,
+   "y": -0.403,
+   "profondeur": 30,
+   "stat": "resistance_terre_pct",
+   "valeur": 4,
+   "id": 71
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.5299,
+   "y": -0.4164,
+   "profondeur": 31,
+   "stat": "dommages_critiques_pct",
+   "valeur": 2,
+   "id": 72
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.547,
+   "y": -0.4298,
+   "profondeur": 32,
+   "stat": "force",
+   "valeur": 5,
+   "id": 73
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.5641,
+   "y": -0.4432,
+   "profondeur": 33,
+   "stat": "dommages_terre_pct",
+   "valeur": 3,
+   "id": 74
+  },
+  {
+   "type": "carac",
+   "zone": "terre",
+   "x": 0.5812,
+   "y": -0.4567,
+   "profondeur": 34,
+   "stat": "resistance_terre_pct",
+   "valeur": 4,
+   "id": 75
+  },
+  {
+   "type": "sort",
+   "zone": "terre",
+   "x": 0.0558,
+   "y": -0.1179,
+   "profondeur": 6,
+   "nom": "Pression",
+   "texte": "Pression érode 30 % de plus.",
+   "sort": {
+    "id": 13106,
+    "nom": "Pression",
+    "niveau": 1,
+    "palier": "petit"
+   },
+   "id": 76
+  },
+  {
+   "type": "sort",
+   "zone": "terre",
+   "x": 0.1424,
+   "y": -0.1342,
+   "profondeur": 9,
+   "nom": "Concentration",
+   "texte": "Concentration : +10 % de dommages.",
+   "sort": {
+    "id": 13123,
+    "nom": "Concentration",
+    "niveau": 15,
+    "palier": "petit"
+   },
+   "id": 77
+  },
+  {
+   "type": "sort",
+   "zone": "terre",
+   "x": 0.0957,
+   "y": -0.357,
+   "profondeur": 17,
+   "nom": "Épée de Iop",
+   "texte": "Épée de Iop : +10 % de dommages.",
+   "sort": {
+    "id": 13125,
+    "nom": "Épée de Iop",
+    "niveau": 60,
+    "palier": "petit"
+   },
+   "id": 78
+  },
+  {
+   "type": "sort",
+   "zone": "terre",
+   "x": 0.4011,
+   "y": -0.2605,
+   "profondeur": 22,
+   "nom": "Fureur",
+   "texte": "Fureur : +20 % de dommages. Le sort se recharge aussi 3 s plus vite.",
+   "sort": {
+    "id": 13156,
+    "nom": "Fureur",
+    "niveau": 90,
+    "palier": "moyen"
+   },
+   "id": 79
+  },
+  {
+   "type": "sort",
+   "zone": "terre",
+   "x": 0.2324,
+   "y": -0.4913,
+   "profondeur": 25,
+   "nom": "Accumulation",
+   "texte": "L'effet d'Accumulation dure 50 % plus longtemps. Le sort se recharge aussi 3 s plus vite.",
+   "sort": {
+    "id": 13138,
+    "nom": "Accumulation",
+    "niveau": 105,
+    "palier": "moyen"
+   },
+   "id": 80
+  },
+  {
+   "type": "sort",
+   "zone": "terre",
+   "x": 0.5536,
+   "y": -0.522,
+   "profondeur": 35,
+   "nom": "Enchaînement",
+   "texte": "Le bonus de Pugilat ne retombe plus tant que tu frappes au moins une fois toutes les 3 s.",
+   "sort": {
+    "id": 13146,
+    "nom": "Pugilat",
+    "niveau": 160,
+    "palier": "transformation"
+   },
+   "id": 81
+  },
+  {
+   "type": "sort",
+   "zone": "terre",
+   "x": 0.2364,
+   "y": -0.8819,
+   "profondeur": 42,
+   "nom": "Colère sans fin",
+   "texte": "Colère de Iop part dès que ta Rage est pleine, sans attendre sa recharge.",
+   "sort": {
+    "id": 13124,
+    "nom": "Colère de Iop",
+    "niveau": 200,
+    "palier": "transformation"
+   },
+   "id": 82
+  },
+  {
+   "x": 0.0649,
+   "y": -0.275,
+   "zone": "terre",
+   "profondeur": 13,
+   "type": "carac",
+   "stat": "force",
+   "valeur": 5,
+   "id": 83
+  },
+  {
+   "x": 0.0699,
+   "y": -0.2962,
+   "zone": "terre",
+   "profondeur": 14,
+   "type": "notable",
+   "nom": "Érosion",
+   "texte": "Pression, Épée Destructrice, Fracture, Fustigation et Vindicte érodent 50 % de plus.",
+   "id": 84
+  },
+  {
+   "x": 0.5016,
+   "y": -0.3048,
+   "zone": "terre",
+   "profondeur": 27,
+   "type": "carac",
+   "stat": "force",
+   "valeur": 5,
+   "id": 85
+  },
+  {
+   "x": 0.5202,
+   "y": -0.3161,
+   "zone": "terre",
+   "profondeur": 28,
+   "type": "notable",
+   "nom": "Acharnement",
+   "texte": "Le bonus de Fureur et de Pugilat (dommages qui montent à chaque lancer) monte deux fois plus vite.",
+   "id": 86
+  },
+  {
+   "x": 0.2458,
+   "y": -0.2461,
+   "zone": "terre",
+   "profondeur": 16,
+   "type": "rune",
+   "nom": "Emplacement de rune",
+   "runes": [
+    "Fo"
+   ],
+   "id": 87
+  },
+  {
+   "x": 0.3458,
+   "y": -0.6777,
+   "zone": "terre",
+   "profondeur": 35,
+   "type": "carac",
+   "stat": "force",
+   "valeur": 5,
+   "id": 88
+  },
+  {
+   "x": 0.3557,
+   "y": -0.6971,
+   "zone": "terre",
+   "profondeur": 36,
+   "type": "carac",
+   "stat": "force",
+   "valeur": 5,
+   "id": 89
+  },
+  {
+   "x": 0.3656,
+   "y": -0.7165,
+   "zone": "terre",
+   "profondeur": 37,
+   "type": "cle",
+   "nom": "Colosse",
+   "texte": "+30 % dommages.",
+   "prix": "Tu ne fais plus de coups critiques.",
+   "id": 90
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.0217,
+   "y": 0.0008,
+   "profondeur": 1,
+   "stat": "intelligence",
+   "valeur": 5,
+   "id": 91
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.0434,
+   "y": 0.0016,
+   "profondeur": 2,
+   "stat": "dommages_feu_pct",
+   "valeur": 3,
+   "id": 92
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.0652,
+   "y": 0.0025,
+   "profondeur": 3,
+   "stat": "resistance_feu_pct",
+   "valeur": 4,
+   "id": 93
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.0869,
+   "y": 0.0033,
+   "profondeur": 4,
+   "stat": "critique_pct",
+   "valeur": 2,
+   "id": 94
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.1086,
+   "y": 0.0041,
+   "profondeur": 5,
+   "stat": "intelligence",
+   "valeur": 5,
+   "id": 95
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.1303,
+   "y": 0.0049,
+   "profondeur": 6,
+   "stat": "dommages_feu_pct",
+   "valeur": 3,
+   "id": 96
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.1521,
+   "y": 0.0057,
+   "profondeur": 7,
+   "stat": "resistance_feu_pct",
+   "valeur": 4,
+   "id": 97
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.1738,
+   "y": 0.0066,
+   "profondeur": 8,
+   "stat": "critique_pct",
+   "valeur": 2,
+   "id": 98
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.1955,
+   "y": 0.0074,
+   "profondeur": 9,
+   "stat": "intelligence",
+   "valeur": 5,
+   "id": 99
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.2172,
+   "y": 0.0082,
+   "profondeur": 10,
+   "stat": "dommages_feu_pct",
+   "valeur": 3,
+   "id": 100
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.239,
+   "y": 0.009,
+   "profondeur": 11,
+   "stat": "resistance_feu_pct",
+   "valeur": 4,
+   "id": 101
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.2607,
+   "y": 0.0098,
+   "profondeur": 12,
+   "stat": "critique_pct",
+   "valeur": 2,
+   "id": 102
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.2824,
+   "y": 0.0107,
+   "profondeur": 13,
+   "stat": "intelligence",
+   "valeur": 5,
+   "id": 103
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.3041,
+   "y": 0.0115,
+   "profondeur": 14,
+   "stat": "dommages_feu_pct",
+   "valeur": 3,
+   "id": 104
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.3259,
+   "y": 0.0123,
+   "profondeur": 15,
+   "stat": "resistance_feu_pct",
+   "valeur": 4,
+   "id": 105
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.3476,
+   "y": 0.0131,
+   "profondeur": 16,
+   "stat": "critique_pct",
+   "valeur": 2,
+   "id": 106
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.3693,
+   "y": 0.0139,
+   "profondeur": 17,
+   "stat": "intelligence",
+   "valeur": 5,
+   "id": 107
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.391,
+   "y": 0.0147,
+   "profondeur": 18,
+   "stat": "dommages_feu_pct",
+   "valeur": 3,
+   "id": 108
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.4127,
+   "y": 0.0156,
+   "profondeur": 19,
+   "stat": "resistance_feu_pct",
+   "valeur": 4,
+   "id": 109
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.4345,
+   "y": 0.0164,
+   "profondeur": 20,
+   "stat": "critique_pct",
+   "valeur": 2,
+   "id": 110
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.4562,
+   "y": 0.0172,
+   "profondeur": 21,
+   "stat": "intelligence",
+   "valeur": 5,
+   "id": 111
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.4779,
+   "y": 0.018,
+   "profondeur": 22,
+   "stat": "dommages_feu_pct",
+   "valeur": 3,
+   "id": 112
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.4996,
+   "y": 0.0188,
+   "profondeur": 23,
+   "stat": "resistance_feu_pct",
+   "valeur": 4,
+   "id": 113
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.5214,
+   "y": 0.0197,
+   "profondeur": 24,
+   "stat": "critique_pct",
+   "valeur": 2,
+   "id": 114
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.5431,
+   "y": 0.0205,
+   "profondeur": 25,
+   "stat": "intelligence",
+   "valeur": 5,
+   "id": 115
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.5648,
+   "y": 0.0213,
+   "profondeur": 26,
+   "stat": "dommages_feu_pct",
+   "valeur": 3,
+   "id": 116
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.5865,
+   "y": 0.0221,
+   "profondeur": 27,
+   "stat": "resistance_feu_pct",
+   "valeur": 4,
+   "id": 117
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.6083,
+   "y": 0.0229,
+   "profondeur": 28,
+   "stat": "critique_pct",
+   "valeur": 2,
+   "id": 118
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.63,
+   "y": 0.0238,
+   "profondeur": 29,
+   "stat": "intelligence",
+   "valeur": 5,
+   "id": 119
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.6517,
+   "y": 0.0246,
+   "profondeur": 30,
+   "stat": "dommages_feu_pct",
+   "valeur": 3,
+   "id": 120
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.6734,
+   "y": 0.0254,
+   "profondeur": 31,
+   "stat": "resistance_feu_pct",
+   "valeur": 4,
+   "id": 121
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.6952,
+   "y": 0.0262,
+   "profondeur": 32,
+   "stat": "critique_pct",
+   "valeur": 2,
+   "id": 122
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.7169,
+   "y": 0.027,
+   "profondeur": 33,
+   "stat": "intelligence",
+   "valeur": 5,
+   "id": 123
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.7386,
+   "y": 0.0279,
+   "profondeur": 34,
+   "stat": "dommages_feu_pct",
+   "valeur": 3,
+   "id": 124
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.7603,
+   "y": 0.0287,
+   "profondeur": 35,
+   "stat": "resistance_feu_pct",
+   "valeur": 4,
+   "id": 125
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.7821,
+   "y": 0.0295,
+   "profondeur": 36,
+   "stat": "critique_pct",
+   "valeur": 2,
+   "id": 126
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.8038,
+   "y": 0.0303,
+   "profondeur": 37,
+   "stat": "intelligence",
+   "valeur": 5,
+   "id": 127
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.8255,
+   "y": 0.0311,
+   "profondeur": 38,
+   "stat": "dommages_feu_pct",
+   "valeur": 3,
+   "id": 128
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.8472,
+   "y": 0.032,
+   "profondeur": 39,
+   "stat": "resistance_feu_pct",
+   "valeur": 4,
+   "id": 129
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.0181,
+   "y": 0.0121,
+   "profondeur": 1,
+   "stat": "critique_pct",
+   "valeur": 2,
+   "id": 130
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.0361,
+   "y": 0.0242,
+   "profondeur": 2,
+   "stat": "intelligence",
+   "valeur": 5,
+   "id": 131
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.0542,
+   "y": 0.0363,
+   "profondeur": 3,
+   "stat": "dommages_feu_pct",
+   "valeur": 3,
+   "id": 132
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.0722,
+   "y": 0.0484,
+   "profondeur": 4,
+   "stat": "resistance_feu_pct",
+   "valeur": 4,
+   "id": 133
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.0903,
+   "y": 0.0605,
+   "profondeur": 5,
+   "stat": "critique_pct",
+   "valeur": 2,
+   "id": 134
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.1083,
+   "y": 0.0726,
+   "profondeur": 6,
+   "stat": "intelligence",
+   "valeur": 5,
+   "id": 135
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.1264,
+   "y": 0.0847,
+   "profondeur": 7,
+   "stat": "dommages_feu_pct",
+   "valeur": 3,
+   "id": 136
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.1445,
+   "y": 0.0968,
+   "profondeur": 8,
+   "stat": "resistance_feu_pct",
+   "valeur": 4,
+   "id": 137
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.1625,
+   "y": 0.109,
+   "profondeur": 9,
+   "stat": "critique_pct",
+   "valeur": 2,
+   "id": 138
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.1806,
+   "y": 0.1211,
+   "profondeur": 10,
+   "stat": "intelligence",
+   "valeur": 5,
+   "id": 139
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.1986,
+   "y": 0.1332,
+   "profondeur": 11,
+   "stat": "dommages_feu_pct",
+   "valeur": 3,
+   "id": 140
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.2167,
+   "y": 0.1453,
+   "profondeur": 12,
+   "stat": "resistance_feu_pct",
+   "valeur": 4,
+   "id": 141
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.2347,
+   "y": 0.1574,
+   "profondeur": 13,
+   "stat": "critique_pct",
+   "valeur": 2,
+   "id": 142
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.2528,
+   "y": 0.1695,
+   "profondeur": 14,
+   "stat": "intelligence",
+   "valeur": 5,
+   "id": 143
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.2708,
+   "y": 0.1816,
+   "profondeur": 15,
+   "stat": "dommages_feu_pct",
+   "valeur": 3,
+   "id": 144
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.2889,
+   "y": 0.1937,
+   "profondeur": 16,
+   "stat": "resistance_feu_pct",
+   "valeur": 4,
+   "id": 145
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.307,
+   "y": 0.2058,
+   "profondeur": 17,
+   "stat": "critique_pct",
+   "valeur": 2,
+   "id": 146
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.325,
+   "y": 0.2179,
+   "profondeur": 18,
+   "stat": "intelligence",
+   "valeur": 5,
+   "id": 147
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.3431,
+   "y": 0.23,
+   "profondeur": 19,
+   "stat": "dommages_feu_pct",
+   "valeur": 3,
+   "id": 148
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.3611,
+   "y": 0.2421,
+   "profondeur": 20,
+   "stat": "resistance_feu_pct",
+   "valeur": 4,
+   "id": 149
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.3792,
+   "y": 0.2542,
+   "profondeur": 21,
+   "stat": "critique_pct",
+   "valeur": 2,
+   "id": 150
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.3972,
+   "y": 0.2663,
+   "profondeur": 22,
+   "stat": "intelligence",
+   "valeur": 5,
+   "id": 151
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.4153,
+   "y": 0.2784,
+   "profondeur": 23,
+   "stat": "dommages_feu_pct",
+   "valeur": 3,
+   "id": 152
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.4334,
+   "y": 0.2905,
+   "profondeur": 24,
+   "stat": "resistance_feu_pct",
+   "valeur": 4,
+   "id": 153
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.4514,
+   "y": 0.3026,
+   "profondeur": 25,
+   "stat": "critique_pct",
+   "valeur": 2,
+   "id": 154
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.4695,
+   "y": 0.3148,
+   "profondeur": 26,
+   "stat": "intelligence",
+   "valeur": 5,
+   "id": 155
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.4875,
+   "y": 0.3269,
+   "profondeur": 27,
+   "stat": "dommages_feu_pct",
+   "valeur": 3,
+   "id": 156
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.5056,
+   "y": 0.339,
+   "profondeur": 28,
+   "stat": "resistance_feu_pct",
+   "valeur": 4,
+   "id": 157
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.5236,
+   "y": 0.3511,
+   "profondeur": 29,
+   "stat": "critique_pct",
+   "valeur": 2,
+   "id": 158
+  },
+  {
+   "type": "carac",
+   "zone": "feu",
+   "x": 0.5417,
+   "y": 0.3632,
+   "profondeur": 30,
+   "stat": "intelligence",
+   "valeur": 5,
+   "id": 159
+  },
+  {
+   "type": "sort",
+   "zone": "feu",
+   "x": 0.1294,
+   "y": 0.0166,
+   "profondeur": 6,
+   "nom": "Couperet",
+   "texte": "Couperet ralentit 20 % plus fort.",
+   "sort": {
+    "id": 13115,
+    "nom": "Couperet",
+    "niveau": 1,
+    "palier": "petit"
+   },
+   "id": 160
+  },
+  {
+   "type": "sort",
+   "zone": "feu",
+   "x": 0.2289,
+   "y": 0.1252,
+   "profondeur": 12,
+   "nom": "Épée Destructrice",
+   "texte": "Épée Destructrice érode 30 % de plus.",
+   "sort": {
+    "id": 13119,
+    "nom": "Épée Destructrice",
+    "niveau": 35,
+    "palier": "petit"
+   },
+   "id": 161
+  },
+  {
+   "type": "sort",
+   "zone": "feu",
+   "x": 0.3039,
+   "y": -0.0159,
+   "profondeur": 14,
+   "nom": "Tempête de Puissance",
+   "texte": "Tempête de Puissance : +10 % de dommages.",
+   "sort": {
+    "id": 13121,
+    "nom": "Tempête de Puissance",
+    "niveau": 45,
+    "palier": "petit"
+   },
+   "id": 162
+  },
+  {
+   "type": "sort",
+   "zone": "feu",
+   "x": 0.3379,
+   "y": 0.2736,
+   "profondeur": 20,
+   "nom": "Épée du Destin",
+   "texte": "Épée du Destin : +20 % de dommages. Le sort se recharge aussi 3 s plus vite.",
+   "sort": {
+    "id": 13111,
+    "nom": "Épée du Destin",
+    "niveau": 80,
+    "palier": "moyen"
+   },
+   "id": 163
+  },
+  {
+   "type": "sort",
+   "zone": "feu",
+   "x": 0.6037,
+   "y": 0.0775,
+   "profondeur": 28,
+   "nom": "Sentence",
+   "texte": "L'effet de Sentence dure 50 % plus longtemps. Le sort a aussi une case de zone en plus.",
+   "sort": {
+    "id": 13147,
+    "nom": "Sentence",
+    "niveau": 125,
+    "palier": "moyen"
+   },
+   "id": 164
+  },
+  {
+   "type": "sort",
+   "zone": "feu",
+   "x": 0.5912,
+   "y": 0.3235,
+   "profondeur": 31,
+   "nom": "Tourbillon",
+   "texte": "Rassemblement attire tous les ennemis d'un grand rayon vers son centre.",
+   "sort": {
+    "id": 13136,
+    "nom": "Rassemblement",
+    "niveau": 140,
+    "palier": "transformation"
+   },
+   "id": 165
+  },
+  {
+   "type": "sort",
+   "zone": "feu",
+   "x": 0.8684,
+   "y": -0.0455,
+   "profondeur": 40,
+   "nom": "Mêlée générale",
+   "texte": "Tumulte compte aussi les ennemis autour de toi, pas seulement ceux de sa zone.",
+   "sort": {
+    "id": 13144,
+    "nom": "Tumulte",
+    "niveau": 190,
+    "palier": "transformation"
+   },
+   "id": 166
+  },
+  {
+   "x": 0.2817,
+   "y": -0.0232,
+   "zone": "feu",
+   "profondeur": 13,
+   "type": "carac",
+   "stat": "intelligence",
+   "valeur": 5,
+   "id": 167
+  },
+  {
+   "x": 0.3033,
+   "y": -0.025,
+   "zone": "feu",
+   "profondeur": 14,
+   "type": "notable",
+   "nom": "Rassemblement",
+   "texte": "Rassemblement et Couperet touchent une case de zone en plus.",
+   "id": 168
+  },
+  {
+   "x": 0.4449,
+   "y": 0.3829,
+   "zone": "feu",
+   "profondeur": 27,
+   "type": "carac",
+   "stat": "intelligence",
+   "valeur": 5,
+   "id": 169
+  },
+  {
+   "x": 0.4614,
+   "y": 0.3971,
+   "zone": "feu",
+   "profondeur": 28,
+   "type": "notable",
+   "nom": "Tempête",
+   "texte": "Tempête de Puissance touche aussi les ennemis autour de sa cible.",
+   "id": 170
+  },
+  {
+   "x": 0.31,
+   "y": 0.1577,
+   "zone": "feu",
+   "profondeur": 16,
+   "type": "rune",
+   "nom": "Emplacement de rune",
+   "runes": [
+    "Ine"
+   ],
+   "id": 171
+  },
+  {
+   "x": 0.7514,
+   "y": 0.1195,
+   "zone": "feu",
+   "profondeur": 35,
+   "type": "carac",
+   "stat": "intelligence",
+   "valeur": 5,
+   "id": 172
+  },
+  {
+   "x": 0.7729,
+   "y": 0.1229,
+   "zone": "feu",
+   "profondeur": 36,
+   "type": "carac",
+   "stat": "intelligence",
+   "valeur": 5,
+   "id": 173
+  },
+  {
+   "x": 0.7944,
+   "y": 0.1263,
+   "zone": "feu",
+   "profondeur": 37,
+   "type": "cle",
+   "nom": "Fournaise",
+   "texte": "+20 % dommages et +10 % critique.",
+   "prix": "-20 % à toutes tes résistances.",
+   "id": 174
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.0059,
+   "y": 0.0209,
+   "profondeur": 1,
+   "stat": "chance",
+   "valeur": 5,
+   "id": 175
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.0119,
+   "y": 0.0418,
+   "profondeur": 2,
+   "stat": "dommages_eau_pct",
+   "valeur": 3,
+   "id": 176
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.0178,
+   "y": 0.0627,
+   "profondeur": 3,
+   "stat": "resistance_eau_pct",
+   "valeur": 4,
+   "id": 177
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.0237,
+   "y": 0.0837,
+   "profondeur": 4,
+   "stat": "prospection",
+   "valeur": 4,
+   "id": 178
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.0297,
+   "y": 0.1046,
+   "profondeur": 5,
+   "stat": "chance",
+   "valeur": 5,
+   "id": 179
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.0356,
+   "y": 0.1255,
+   "profondeur": 6,
+   "stat": "dommages_eau_pct",
+   "valeur": 3,
+   "id": 180
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.0415,
+   "y": 0.1464,
+   "profondeur": 7,
+   "stat": "resistance_eau_pct",
+   "valeur": 4,
+   "id": 181
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.0475,
+   "y": 0.1673,
+   "profondeur": 8,
+   "stat": "prospection",
+   "valeur": 4,
+   "id": 182
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.0534,
+   "y": 0.1882,
+   "profondeur": 9,
+   "stat": "chance",
+   "valeur": 5,
+   "id": 183
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.0593,
+   "y": 0.2091,
+   "profondeur": 10,
+   "stat": "dommages_eau_pct",
+   "valeur": 3,
+   "id": 184
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.0653,
+   "y": 0.2301,
+   "profondeur": 11,
+   "stat": "resistance_eau_pct",
+   "valeur": 4,
+   "id": 185
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.0712,
+   "y": 0.251,
+   "profondeur": 12,
+   "stat": "prospection",
+   "valeur": 4,
+   "id": 186
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.0771,
+   "y": 0.2719,
+   "profondeur": 13,
+   "stat": "chance",
+   "valeur": 5,
+   "id": 187
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.0831,
+   "y": 0.2928,
+   "profondeur": 14,
+   "stat": "dommages_eau_pct",
+   "valeur": 3,
+   "id": 188
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.089,
+   "y": 0.3137,
+   "profondeur": 15,
+   "stat": "resistance_eau_pct",
+   "valeur": 4,
+   "id": 189
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.0949,
+   "y": 0.3346,
+   "profondeur": 16,
+   "stat": "prospection",
+   "valeur": 4,
+   "id": 190
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.1009,
+   "y": 0.3555,
+   "profondeur": 17,
+   "stat": "chance",
+   "valeur": 5,
+   "id": 191
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.1068,
+   "y": 0.3764,
+   "profondeur": 18,
+   "stat": "dommages_eau_pct",
+   "valeur": 3,
+   "id": 192
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.1127,
+   "y": 0.3974,
+   "profondeur": 19,
+   "stat": "resistance_eau_pct",
+   "valeur": 4,
+   "id": 193
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.1187,
+   "y": 0.4183,
+   "profondeur": 20,
+   "stat": "prospection",
+   "valeur": 4,
+   "id": 194
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.1246,
+   "y": 0.4392,
+   "profondeur": 21,
+   "stat": "chance",
+   "valeur": 5,
+   "id": 195
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.1305,
+   "y": 0.4601,
+   "profondeur": 22,
+   "stat": "dommages_eau_pct",
+   "valeur": 3,
+   "id": 196
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.1365,
+   "y": 0.481,
+   "profondeur": 23,
+   "stat": "resistance_eau_pct",
+   "valeur": 4,
+   "id": 197
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.1424,
+   "y": 0.5019,
+   "profondeur": 24,
+   "stat": "prospection",
+   "valeur": 4,
+   "id": 198
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.1483,
+   "y": 0.5228,
+   "profondeur": 25,
+   "stat": "chance",
+   "valeur": 5,
+   "id": 199
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.1543,
+   "y": 0.5438,
+   "profondeur": 26,
+   "stat": "dommages_eau_pct",
+   "valeur": 3,
+   "id": 200
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.1602,
+   "y": 0.5647,
+   "profondeur": 27,
+   "stat": "resistance_eau_pct",
+   "valeur": 4,
+   "id": 201
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.1661,
+   "y": 0.5856,
+   "profondeur": 28,
+   "stat": "prospection",
+   "valeur": 4,
+   "id": 202
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.1721,
+   "y": 0.6065,
+   "profondeur": 29,
+   "stat": "chance",
+   "valeur": 5,
+   "id": 203
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.178,
+   "y": 0.6274,
+   "profondeur": 30,
+   "stat": "dommages_eau_pct",
+   "valeur": 3,
+   "id": 204
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.1839,
+   "y": 0.6483,
+   "profondeur": 31,
+   "stat": "resistance_eau_pct",
+   "valeur": 4,
+   "id": 205
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.1899,
+   "y": 0.6692,
+   "profondeur": 32,
+   "stat": "prospection",
+   "valeur": 4,
+   "id": 206
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.1958,
+   "y": 0.6902,
+   "profondeur": 33,
+   "stat": "chance",
+   "valeur": 5,
+   "id": 207
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.2017,
+   "y": 0.7111,
+   "profondeur": 34,
+   "stat": "dommages_eau_pct",
+   "valeur": 3,
+   "id": 208
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.2077,
+   "y": 0.732,
+   "profondeur": 35,
+   "stat": "resistance_eau_pct",
+   "valeur": 4,
+   "id": 209
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": 0.2136,
+   "y": 0.7529,
+   "profondeur": 36,
+   "stat": "prospection",
+   "valeur": 4,
+   "id": 210
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.0059,
+   "y": 0.0209,
+   "profondeur": 1,
+   "stat": "chance",
+   "valeur": 5,
+   "id": 211
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.0119,
+   "y": 0.0418,
+   "profondeur": 2,
+   "stat": "dommages_eau_pct",
+   "valeur": 3,
+   "id": 212
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.0178,
+   "y": 0.0627,
+   "profondeur": 3,
+   "stat": "resistance_eau_pct",
+   "valeur": 4,
+   "id": 213
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.0237,
+   "y": 0.0837,
+   "profondeur": 4,
+   "stat": "prospection",
+   "valeur": 4,
+   "id": 214
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.0297,
+   "y": 0.1046,
+   "profondeur": 5,
+   "stat": "chance",
+   "valeur": 5,
+   "id": 215
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.0356,
+   "y": 0.1255,
+   "profondeur": 6,
+   "stat": "dommages_eau_pct",
+   "valeur": 3,
+   "id": 216
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.0415,
+   "y": 0.1464,
+   "profondeur": 7,
+   "stat": "resistance_eau_pct",
+   "valeur": 4,
+   "id": 217
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.0475,
+   "y": 0.1673,
+   "profondeur": 8,
+   "stat": "prospection",
+   "valeur": 4,
+   "id": 218
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.0534,
+   "y": 0.1882,
+   "profondeur": 9,
+   "stat": "chance",
+   "valeur": 5,
+   "id": 219
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.0593,
+   "y": 0.2091,
+   "profondeur": 10,
+   "stat": "dommages_eau_pct",
+   "valeur": 3,
+   "id": 220
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.0653,
+   "y": 0.2301,
+   "profondeur": 11,
+   "stat": "resistance_eau_pct",
+   "valeur": 4,
+   "id": 221
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.0712,
+   "y": 0.251,
+   "profondeur": 12,
+   "stat": "prospection",
+   "valeur": 4,
+   "id": 222
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.0771,
+   "y": 0.2719,
+   "profondeur": 13,
+   "stat": "chance",
+   "valeur": 5,
+   "id": 223
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.0831,
+   "y": 0.2928,
+   "profondeur": 14,
+   "stat": "dommages_eau_pct",
+   "valeur": 3,
+   "id": 224
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.089,
+   "y": 0.3137,
+   "profondeur": 15,
+   "stat": "resistance_eau_pct",
+   "valeur": 4,
+   "id": 225
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.0949,
+   "y": 0.3346,
+   "profondeur": 16,
+   "stat": "prospection",
+   "valeur": 4,
+   "id": 226
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.1009,
+   "y": 0.3555,
+   "profondeur": 17,
+   "stat": "chance",
+   "valeur": 5,
+   "id": 227
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.1068,
+   "y": 0.3764,
+   "profondeur": 18,
+   "stat": "dommages_eau_pct",
+   "valeur": 3,
+   "id": 228
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.1127,
+   "y": 0.3974,
+   "profondeur": 19,
+   "stat": "resistance_eau_pct",
+   "valeur": 4,
+   "id": 229
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.1187,
+   "y": 0.4183,
+   "profondeur": 20,
+   "stat": "prospection",
+   "valeur": 4,
+   "id": 230
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.1246,
+   "y": 0.4392,
+   "profondeur": 21,
+   "stat": "chance",
+   "valeur": 5,
+   "id": 231
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.1305,
+   "y": 0.4601,
+   "profondeur": 22,
+   "stat": "dommages_eau_pct",
+   "valeur": 3,
+   "id": 232
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.1365,
+   "y": 0.481,
+   "profondeur": 23,
+   "stat": "resistance_eau_pct",
+   "valeur": 4,
+   "id": 233
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.1424,
+   "y": 0.5019,
+   "profondeur": 24,
+   "stat": "prospection",
+   "valeur": 4,
+   "id": 234
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.1483,
+   "y": 0.5228,
+   "profondeur": 25,
+   "stat": "chance",
+   "valeur": 5,
+   "id": 235
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.1543,
+   "y": 0.5438,
+   "profondeur": 26,
+   "stat": "dommages_eau_pct",
+   "valeur": 3,
+   "id": 236
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.1602,
+   "y": 0.5647,
+   "profondeur": 27,
+   "stat": "resistance_eau_pct",
+   "valeur": 4,
+   "id": 237
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.1661,
+   "y": 0.5856,
+   "profondeur": 28,
+   "stat": "prospection",
+   "valeur": 4,
+   "id": 238
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.1721,
+   "y": 0.6065,
+   "profondeur": 29,
+   "stat": "chance",
+   "valeur": 5,
+   "id": 239
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.178,
+   "y": 0.6274,
+   "profondeur": 30,
+   "stat": "dommages_eau_pct",
+   "valeur": 3,
+   "id": 240
+  },
+  {
+   "type": "carac",
+   "zone": "eau",
+   "x": -0.1839,
+   "y": 0.6483,
+   "profondeur": 31,
+   "stat": "resistance_eau_pct",
+   "valeur": 4,
+   "id": 241
+  },
+  {
+   "type": "sort",
+   "zone": "eau",
+   "x": 0.0242,
+   "y": 0.1282,
+   "profondeur": 6,
+   "nom": "Ferveur",
+   "texte": "Le bouclier de Ferveur est 20 % plus solide.",
+   "sort": {
+    "id": 14676,
+    "nom": "Ferveur",
+    "niveau": 1,
+    "palier": "petit"
+   },
+   "id": 242
+  },
+  {
+   "type": "sort",
+   "zone": "eau",
+   "x": -0.0363,
+   "y": 0.1923,
+   "profondeur": 9,
+   "nom": "Déferlement",
+   "texte": "Déferlement attire d'une case de plus.",
+   "sort": {
+    "id": 13126,
+    "nom": "Déferlement",
+    "niveau": 20,
+    "palier": "petit"
+   },
+   "id": 243
+  },
+  {
+   "type": "sort",
+   "zone": "eau",
+   "x": 0.1168,
+   "y": 0.3044,
+   "profondeur": 15,
+   "nom": "Endurance",
+   "texte": "Le bouclier d'Endurance est 20 % plus solide.",
+   "sort": {
+    "id": 13133,
+    "nom": "Endurance",
+    "niveau": 50,
+    "palier": "petit"
+   },
+   "id": 244
+  },
+  {
+   "type": "sort",
+   "zone": "eau",
+   "x": -0.1869,
+   "y": 0.4871,
+   "profondeur": 24,
+   "nom": "Menace",
+   "texte": "Menace attire de 2 cases de plus. Le sort se recharge aussi 3 s plus vite.",
+   "sort": {
+    "id": 13130,
+    "nom": "Menace",
+    "niveau": 100,
+    "palier": "moyen"
+   },
+   "id": 245
+  },
+  {
+   "type": "sort",
+   "zone": "eau",
+   "x": 0.1048,
+   "y": 0.5554,
+   "profondeur": 26,
+   "nom": "Épée du Jugement",
+   "texte": "Le bouclier d'Épée du Jugement est 40 % plus solide. Le sort se recharge aussi 3 s plus vite.",
+   "sort": {
+    "id": 13117,
+    "nom": "Épée du Jugement",
+    "niveau": 110,
+    "palier": "moyen"
+   },
+   "id": 246
+  },
+  {
+   "type": "sort",
+   "zone": "eau",
+   "x": -0.129,
+   "y": 0.6836,
+   "profondeur": 32,
+   "nom": "Sol érodé",
+   "texte": "La zone de Fustigation reste au sol 3 s : les ennemis qui y entrent sont érodés eux aussi.",
+   "sort": {
+    "id": 14818,
+    "nom": "Fustigation",
+    "niveau": 145,
+    "palier": "transformation"
+   },
+   "id": 247
+  },
+  {
+   "type": "sort",
+   "zone": "eau",
+   "x": 0.2804,
+   "y": 0.7306,
+   "profondeur": 36,
+   "nom": "Bastion",
+   "texte": "Tes boucliers de Fendoir explosent en dommages Eau autour de toi quand ils se brisent.",
+   "sort": {
+    "id": 13134,
+    "nom": "Fendoir",
+    "niveau": 170,
+    "palier": "transformation"
+   },
+   "id": 248
+  },
+  {
+   "x": 0.1091,
+   "y": 0.2607,
+   "zone": "eau",
+   "profondeur": 13,
+   "type": "carac",
+   "stat": "chance",
+   "valeur": 5,
+   "id": 249
+  },
+  {
+   "x": 0.1175,
+   "y": 0.2807,
+   "zone": "eau",
+   "profondeur": 14,
+   "type": "notable",
+   "nom": "Rempart",
+   "texte": "Tes boucliers (Ferveur, Endurance, Épée du Jugement, Fendoir) sont 25 % plus solides.",
+   "id": 250
+  },
+  {
+   "x": -0.2267,
+   "y": 0.5414,
+   "zone": "eau",
+   "profondeur": 27,
+   "type": "carac",
+   "stat": "chance",
+   "valeur": 5,
+   "id": 251
+  },
+  {
+   "x": -0.2351,
+   "y": 0.5615,
+   "zone": "eau",
+   "profondeur": 28,
+   "type": "notable",
+   "nom": "Déferlement",
+   "texte": "Après un Déferlement, ton prochain sort Eau coûte 1 PA de moins.",
+   "id": 252
+  },
+  {
+   "x": -0.0542,
+   "y": 0.3436,
+   "zone": "eau",
+   "profondeur": 16,
+   "type": "rune",
+   "nom": "Emplacement de rune",
+   "runes": [
+    "Cha"
+   ],
+   "id": 253
+  },
+  {
+   "x": 0.1186,
+   "y": 0.7516,
+   "zone": "eau",
+   "profondeur": 35,
+   "type": "carac",
+   "stat": "chance",
+   "valeur": 5,
+   "id": 254
+  },
+  {
+   "x": 0.1219,
+   "y": 0.773,
+   "zone": "eau",
+   "profondeur": 36,
+   "type": "carac",
+   "stat": "chance",
+   "valeur": 5,
+   "id": 255
+  },
+  {
+   "x": 0.1253,
+   "y": 0.7945,
+   "zone": "eau",
+   "profondeur": 37,
+   "type": "cle",
+   "nom": "Roc",
+   "texte": "+25 % à toutes tes résistances.",
+   "prix": "-15 % de vitesse de déplacement.",
+   "id": 256
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.0181,
+   "y": 0.0121,
+   "profondeur": 1,
+   "stat": "agilite",
+   "valeur": 5,
+   "id": 257
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.0361,
+   "y": 0.0242,
+   "profondeur": 2,
+   "stat": "dommages_air_pct",
+   "valeur": 3,
+   "id": 258
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.0542,
+   "y": 0.0363,
+   "profondeur": 3,
+   "stat": "resistance_air_pct",
+   "valeur": 4,
+   "id": 259
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.0722,
+   "y": 0.0484,
+   "profondeur": 4,
+   "stat": "reduction_recharge_pct",
+   "valeur": 2,
+   "id": 260
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.0903,
+   "y": 0.0605,
+   "profondeur": 5,
+   "stat": "agilite",
+   "valeur": 5,
+   "id": 261
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.1083,
+   "y": 0.0726,
+   "profondeur": 6,
+   "stat": "dommages_air_pct",
+   "valeur": 3,
+   "id": 262
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.1264,
+   "y": 0.0847,
+   "profondeur": 7,
+   "stat": "resistance_air_pct",
+   "valeur": 4,
+   "id": 263
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.1445,
+   "y": 0.0968,
+   "profondeur": 8,
+   "stat": "reduction_recharge_pct",
+   "valeur": 2,
+   "id": 264
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.1625,
+   "y": 0.109,
+   "profondeur": 9,
+   "stat": "agilite",
+   "valeur": 5,
+   "id": 265
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.1806,
+   "y": 0.1211,
+   "profondeur": 10,
+   "stat": "dommages_air_pct",
+   "valeur": 3,
+   "id": 266
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.1986,
+   "y": 0.1332,
+   "profondeur": 11,
+   "stat": "resistance_air_pct",
+   "valeur": 4,
+   "id": 267
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.2167,
+   "y": 0.1453,
+   "profondeur": 12,
+   "stat": "reduction_recharge_pct",
+   "valeur": 2,
+   "id": 268
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.2347,
+   "y": 0.1574,
+   "profondeur": 13,
+   "stat": "agilite",
+   "valeur": 5,
+   "id": 269
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.2528,
+   "y": 0.1695,
+   "profondeur": 14,
+   "stat": "dommages_air_pct",
+   "valeur": 3,
+   "id": 270
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.2708,
+   "y": 0.1816,
+   "profondeur": 15,
+   "stat": "resistance_air_pct",
+   "valeur": 4,
+   "id": 271
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.2889,
+   "y": 0.1937,
+   "profondeur": 16,
+   "stat": "reduction_recharge_pct",
+   "valeur": 2,
+   "id": 272
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.307,
+   "y": 0.2058,
+   "profondeur": 17,
+   "stat": "agilite",
+   "valeur": 5,
+   "id": 273
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.325,
+   "y": 0.2179,
+   "profondeur": 18,
+   "stat": "dommages_air_pct",
+   "valeur": 3,
+   "id": 274
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.3431,
+   "y": 0.23,
+   "profondeur": 19,
+   "stat": "resistance_air_pct",
+   "valeur": 4,
+   "id": 275
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.3611,
+   "y": 0.2421,
+   "profondeur": 20,
+   "stat": "reduction_recharge_pct",
+   "valeur": 2,
+   "id": 276
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.3792,
+   "y": 0.2542,
+   "profondeur": 21,
+   "stat": "agilite",
+   "valeur": 5,
+   "id": 277
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.3972,
+   "y": 0.2663,
+   "profondeur": 22,
+   "stat": "dommages_air_pct",
+   "valeur": 3,
+   "id": 278
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.4153,
+   "y": 0.2784,
+   "profondeur": 23,
+   "stat": "resistance_air_pct",
+   "valeur": 4,
+   "id": 279
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.4334,
+   "y": 0.2905,
+   "profondeur": 24,
+   "stat": "reduction_recharge_pct",
+   "valeur": 2,
+   "id": 280
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.4514,
+   "y": 0.3026,
+   "profondeur": 25,
+   "stat": "agilite",
+   "valeur": 5,
+   "id": 281
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.4695,
+   "y": 0.3148,
+   "profondeur": 26,
+   "stat": "dommages_air_pct",
+   "valeur": 3,
+   "id": 282
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.4875,
+   "y": 0.3269,
+   "profondeur": 27,
+   "stat": "resistance_air_pct",
+   "valeur": 4,
+   "id": 283
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.5056,
+   "y": 0.339,
+   "profondeur": 28,
+   "stat": "reduction_recharge_pct",
+   "valeur": 2,
+   "id": 284
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.5236,
+   "y": 0.3511,
+   "profondeur": 29,
+   "stat": "agilite",
+   "valeur": 5,
+   "id": 285
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.5417,
+   "y": 0.3632,
+   "profondeur": 30,
+   "stat": "dommages_air_pct",
+   "valeur": 3,
+   "id": 286
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.5597,
+   "y": 0.3753,
+   "profondeur": 31,
+   "stat": "resistance_air_pct",
+   "valeur": 4,
+   "id": 287
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.5778,
+   "y": 0.3874,
+   "profondeur": 32,
+   "stat": "reduction_recharge_pct",
+   "valeur": 2,
+   "id": 288
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.5959,
+   "y": 0.3995,
+   "profondeur": 33,
+   "stat": "agilite",
+   "valeur": 5,
+   "id": 289
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.6139,
+   "y": 0.4116,
+   "profondeur": 34,
+   "stat": "dommages_air_pct",
+   "valeur": 3,
+   "id": 290
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.632,
+   "y": 0.4237,
+   "profondeur": 35,
+   "stat": "resistance_air_pct",
+   "valeur": 4,
+   "id": 291
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.65,
+   "y": 0.4358,
+   "profondeur": 36,
+   "stat": "reduction_recharge_pct",
+   "valeur": 2,
+   "id": 292
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.6681,
+   "y": 0.4479,
+   "profondeur": 37,
+   "stat": "agilite",
+   "valeur": 5,
+   "id": 293
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.0217,
+   "y": 0.0008,
+   "profondeur": 1,
+   "stat": "dommages_air_pct",
+   "valeur": 3,
+   "id": 294
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.0434,
+   "y": 0.0016,
+   "profondeur": 2,
+   "stat": "resistance_air_pct",
+   "valeur": 4,
+   "id": 295
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.0652,
+   "y": 0.0025,
+   "profondeur": 3,
+   "stat": "reduction_recharge_pct",
+   "valeur": 2,
+   "id": 296
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.0869,
+   "y": 0.0033,
+   "profondeur": 4,
+   "stat": "agilite",
+   "valeur": 5,
+   "id": 297
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.1086,
+   "y": 0.0041,
+   "profondeur": 5,
+   "stat": "dommages_air_pct",
+   "valeur": 3,
+   "id": 298
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.1303,
+   "y": 0.0049,
+   "profondeur": 6,
+   "stat": "resistance_air_pct",
+   "valeur": 4,
+   "id": 299
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.1521,
+   "y": 0.0057,
+   "profondeur": 7,
+   "stat": "reduction_recharge_pct",
+   "valeur": 2,
+   "id": 300
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.1738,
+   "y": 0.0066,
+   "profondeur": 8,
+   "stat": "agilite",
+   "valeur": 5,
+   "id": 301
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.1955,
+   "y": 0.0074,
+   "profondeur": 9,
+   "stat": "dommages_air_pct",
+   "valeur": 3,
+   "id": 302
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.2172,
+   "y": 0.0082,
+   "profondeur": 10,
+   "stat": "resistance_air_pct",
+   "valeur": 4,
+   "id": 303
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.239,
+   "y": 0.009,
+   "profondeur": 11,
+   "stat": "reduction_recharge_pct",
+   "valeur": 2,
+   "id": 304
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.2607,
+   "y": 0.0098,
+   "profondeur": 12,
+   "stat": "agilite",
+   "valeur": 5,
+   "id": 305
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.2824,
+   "y": 0.0107,
+   "profondeur": 13,
+   "stat": "dommages_air_pct",
+   "valeur": 3,
+   "id": 306
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.3041,
+   "y": 0.0115,
+   "profondeur": 14,
+   "stat": "resistance_air_pct",
+   "valeur": 4,
+   "id": 307
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.3259,
+   "y": 0.0123,
+   "profondeur": 15,
+   "stat": "reduction_recharge_pct",
+   "valeur": 2,
+   "id": 308
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.3476,
+   "y": 0.0131,
+   "profondeur": 16,
+   "stat": "agilite",
+   "valeur": 5,
+   "id": 309
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.3693,
+   "y": 0.0139,
+   "profondeur": 17,
+   "stat": "dommages_air_pct",
+   "valeur": 3,
+   "id": 310
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.391,
+   "y": 0.0147,
+   "profondeur": 18,
+   "stat": "resistance_air_pct",
+   "valeur": 4,
+   "id": 311
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.4127,
+   "y": 0.0156,
+   "profondeur": 19,
+   "stat": "reduction_recharge_pct",
+   "valeur": 2,
+   "id": 312
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.4345,
+   "y": 0.0164,
+   "profondeur": 20,
+   "stat": "agilite",
+   "valeur": 5,
+   "id": 313
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.4562,
+   "y": 0.0172,
+   "profondeur": 21,
+   "stat": "dommages_air_pct",
+   "valeur": 3,
+   "id": 314
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.4779,
+   "y": 0.018,
+   "profondeur": 22,
+   "stat": "resistance_air_pct",
+   "valeur": 4,
+   "id": 315
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.4996,
+   "y": 0.0188,
+   "profondeur": 23,
+   "stat": "reduction_recharge_pct",
+   "valeur": 2,
+   "id": 316
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.5214,
+   "y": 0.0197,
+   "profondeur": 24,
+   "stat": "agilite",
+   "valeur": 5,
+   "id": 317
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.5431,
+   "y": 0.0205,
+   "profondeur": 25,
+   "stat": "dommages_air_pct",
+   "valeur": 3,
+   "id": 318
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.5648,
+   "y": 0.0213,
+   "profondeur": 26,
+   "stat": "resistance_air_pct",
+   "valeur": 4,
+   "id": 319
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.5865,
+   "y": 0.0221,
+   "profondeur": 27,
+   "stat": "reduction_recharge_pct",
+   "valeur": 2,
+   "id": 320
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.6083,
+   "y": 0.0229,
+   "profondeur": 28,
+   "stat": "agilite",
+   "valeur": 5,
+   "id": 321
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.63,
+   "y": 0.0238,
+   "profondeur": 29,
+   "stat": "dommages_air_pct",
+   "valeur": 3,
+   "id": 322
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.6517,
+   "y": 0.0246,
+   "profondeur": 30,
+   "stat": "resistance_air_pct",
+   "valeur": 4,
+   "id": 323
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.6734,
+   "y": 0.0254,
+   "profondeur": 31,
+   "stat": "reduction_recharge_pct",
+   "valeur": 2,
+   "id": 324
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.6952,
+   "y": 0.0262,
+   "profondeur": 32,
+   "stat": "agilite",
+   "valeur": 5,
+   "id": 325
+  },
+  {
+   "type": "carac",
+   "zone": "air",
+   "x": -0.7169,
+   "y": 0.027,
+   "profondeur": 33,
+   "stat": "dommages_air_pct",
+   "valeur": 3,
+   "id": 326
+  },
+  {
+   "type": "sort",
+   "zone": "air",
+   "x": -0.1144,
+   "y": 0.0626,
+   "profondeur": 6,
+   "nom": "Épée Divine",
+   "texte": "L'effet d'Épée Divine dure 25 % plus longtemps.",
+   "sort": {
+    "id": 13110,
+    "nom": "Épée Divine",
+    "niveau": 1,
+    "palier": "petit"
+   },
+   "id": 327
+  },
+  {
+   "type": "sort",
+   "zone": "air",
+   "x": -0.2372,
+   "y": 0.0305,
+   "profondeur": 11,
+   "nom": "Souffle",
+   "texte": "Souffle repousse d'une case de plus.",
+   "sort": {
+    "id": 13116,
+    "nom": "Souffle",
+    "niveau": 30,
+    "palier": "petit"
+   },
+   "id": 328
+  },
+  {
+   "type": "sort",
+   "zone": "air",
+   "x": -0.3041,
+   "y": 0.2462,
+   "profondeur": 18,
+   "nom": "Épée Céleste",
+   "texte": "Épée Céleste : +20 % de dommages. Le sort a aussi une case de zone en plus.",
+   "sort": {
+    "id": 13122,
+    "nom": "Épée Céleste",
+    "niveau": 70,
+    "palier": "moyen"
+   },
+   "id": 329
+  },
+  {
+   "type": "sort",
+   "zone": "air",
+   "x": -0.4993,
+   "y": -0.0261,
+   "profondeur": 23,
+   "nom": "Fracture",
+   "texte": "Fracture érode 60 % de plus. Le sort a aussi une case de zone en plus.",
+   "sort": {
+    "id": 13139,
+    "nom": "Fracture",
+    "niveau": 95,
+    "palier": "moyen"
+   },
+   "id": 330
+  },
+  {
+   "type": "sort",
+   "zone": "air",
+   "x": -0.5531,
+   "y": 0.3026,
+   "profondeur": 29,
+   "nom": "Anneau Destructeur",
+   "texte": "Anneau Destructeur attire de 2 cases de plus. Le sort a aussi une case de zone en plus.",
+   "sort": {
+    "id": 13135,
+    "nom": "Anneau Destructeur",
+    "niveau": 130,
+    "palier": "moyen"
+   },
+   "id": 331
+  },
+  {
+   "type": "sort",
+   "zone": "air",
+   "x": -0.7331,
+   "y": 0.0941,
+   "profondeur": 34,
+   "nom": "Correction",
+   "texte": "Les ennemis ralentis par Tannée sont ensuite attirés vers toi.",
+   "sort": {
+    "id": 13131,
+    "nom": "Tannée",
+    "niveau": 155,
+    "palier": "transformation"
+   },
+   "id": 332
+  },
+  {
+   "type": "sort",
+   "zone": "air",
+   "x": -0.642,
+   "y": 0.5198,
+   "profondeur": 38,
+   "nom": "Apogée",
+   "texte": "Le bonus de Zénith compte toujours tes PM pleins, même après un Bond.",
+   "sort": {
+    "id": 13145,
+    "nom": "Zénith",
+    "niveau": 180,
+    "palier": "transformation"
+   },
+   "id": 333
+  },
+  {
+   "x": -0.2142,
+   "y": 0.1843,
+   "zone": "air",
+   "profondeur": 13,
+   "type": "carac",
+   "stat": "agilite",
+   "valeur": 5,
+   "id": 334
+  },
+  {
+   "x": -0.2307,
+   "y": 0.1985,
+   "zone": "air",
+   "profondeur": 14,
+   "type": "notable",
+   "nom": "Souffle",
+   "texte": "Souffle et Intimidation repoussent de 2 cases de plus, et un ennemi qui heurte un mur subit des dommages de poussée.",
+   "id": 335
+  },
+  {
+   "x": -0.585,
+   "y": -0.0483,
+   "zone": "air",
+   "profondeur": 27,
+   "type": "carac",
+   "stat": "agilite",
+   "valeur": 5,
+   "id": 336
+  },
+  {
+   "x": -0.6066,
+   "y": -0.05,
+   "zone": "air",
+   "profondeur": 28,
+   "type": "notable",
+   "nom": "Lame céleste",
+   "texte": "Épée Céleste et Zénith ont 15 % de zone en plus.",
+   "id": 337
+  },
+  {
+   "x": -0.3435,
+   "y": 0.0546,
+   "zone": "air",
+   "profondeur": 16,
+   "type": "rune",
+   "nom": "Emplacement de rune",
+   "runes": [
+    "Age"
+   ],
+   "id": 338
+  },
+  {
+   "x": -0.6782,
+   "y": 0.345,
+   "zone": "air",
+   "profondeur": 35,
+   "type": "carac",
+   "stat": "agilite",
+   "valeur": 5,
+   "id": 339
+  },
+  {
+   "x": -0.6975,
+   "y": 0.3549,
+   "zone": "air",
+   "profondeur": 36,
+   "type": "carac",
+   "stat": "agilite",
+   "valeur": 5,
+   "id": 340
+  },
+  {
+   "x": -0.7169,
+   "y": 0.3647,
+   "zone": "air",
+   "profondeur": 37,
+   "type": "cle",
+   "nom": "Fantôme",
+   "texte": "+20 % de vitesse de déplacement et d'attaque.",
+   "prix": "-25 % de PV max.",
+   "id": 341
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.0171,
+   "y": -0.0134,
+   "profondeur": 1,
+   "stat": "vitalite",
+   "valeur": 20,
+   "id": 342
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.0342,
+   "y": -0.0269,
+   "profondeur": 2,
+   "stat": "sagesse",
+   "valeur": 5,
+   "id": 343
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.0513,
+   "y": -0.0403,
+   "profondeur": 3,
+   "stat": "soins_pct",
+   "valeur": 3,
+   "id": 344
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.0684,
+   "y": -0.0537,
+   "profondeur": 4,
+   "stat": "resistance_toutes_pct",
+   "valeur": 2,
+   "id": 345
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.0855,
+   "y": -0.0672,
+   "profondeur": 5,
+   "stat": "vitalite",
+   "valeur": 20,
+   "id": 346
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.1026,
+   "y": -0.0806,
+   "profondeur": 6,
+   "stat": "sagesse",
+   "valeur": 5,
+   "id": 347
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.1197,
+   "y": -0.094,
+   "profondeur": 7,
+   "stat": "soins_pct",
+   "valeur": 3,
+   "id": 348
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.1367,
+   "y": -0.1075,
+   "profondeur": 8,
+   "stat": "resistance_toutes_pct",
+   "valeur": 2,
+   "id": 349
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.1538,
+   "y": -0.1209,
+   "profondeur": 9,
+   "stat": "vitalite",
+   "valeur": 20,
+   "id": 350
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.1709,
+   "y": -0.1343,
+   "profondeur": 10,
+   "stat": "sagesse",
+   "valeur": 5,
+   "id": 351
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.188,
+   "y": -0.1477,
+   "profondeur": 11,
+   "stat": "soins_pct",
+   "valeur": 3,
+   "id": 352
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.2051,
+   "y": -0.1612,
+   "profondeur": 12,
+   "stat": "resistance_toutes_pct",
+   "valeur": 2,
+   "id": 353
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.2222,
+   "y": -0.1746,
+   "profondeur": 13,
+   "stat": "vitalite",
+   "valeur": 20,
+   "id": 354
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.2393,
+   "y": -0.188,
+   "profondeur": 14,
+   "stat": "sagesse",
+   "valeur": 5,
+   "id": 355
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.2564,
+   "y": -0.2015,
+   "profondeur": 15,
+   "stat": "soins_pct",
+   "valeur": 3,
+   "id": 356
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.2735,
+   "y": -0.2149,
+   "profondeur": 16,
+   "stat": "resistance_toutes_pct",
+   "valeur": 2,
+   "id": 357
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.2906,
+   "y": -0.2283,
+   "profondeur": 17,
+   "stat": "vitalite",
+   "valeur": 20,
+   "id": 358
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.3077,
+   "y": -0.2418,
+   "profondeur": 18,
+   "stat": "sagesse",
+   "valeur": 5,
+   "id": 359
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.3248,
+   "y": -0.2552,
+   "profondeur": 19,
+   "stat": "soins_pct",
+   "valeur": 3,
+   "id": 360
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.3419,
+   "y": -0.2686,
+   "profondeur": 20,
+   "stat": "resistance_toutes_pct",
+   "valeur": 2,
+   "id": 361
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.359,
+   "y": -0.2821,
+   "profondeur": 21,
+   "stat": "vitalite",
+   "valeur": 20,
+   "id": 362
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.3761,
+   "y": -0.2955,
+   "profondeur": 22,
+   "stat": "sagesse",
+   "valeur": 5,
+   "id": 363
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.3931,
+   "y": -0.3089,
+   "profondeur": 23,
+   "stat": "soins_pct",
+   "valeur": 3,
+   "id": 364
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.4102,
+   "y": -0.3224,
+   "profondeur": 24,
+   "stat": "resistance_toutes_pct",
+   "valeur": 2,
+   "id": 365
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.4273,
+   "y": -0.3358,
+   "profondeur": 25,
+   "stat": "vitalite",
+   "valeur": 20,
+   "id": 366
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.4444,
+   "y": -0.3492,
+   "profondeur": 26,
+   "stat": "sagesse",
+   "valeur": 5,
+   "id": 367
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.4615,
+   "y": -0.3627,
+   "profondeur": 27,
+   "stat": "soins_pct",
+   "valeur": 3,
+   "id": 368
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.4786,
+   "y": -0.3761,
+   "profondeur": 28,
+   "stat": "resistance_toutes_pct",
+   "valeur": 2,
+   "id": 369
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.4957,
+   "y": -0.3895,
+   "profondeur": 29,
+   "stat": "vitalite",
+   "valeur": 20,
+   "id": 370
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.5128,
+   "y": -0.403,
+   "profondeur": 30,
+   "stat": "sagesse",
+   "valeur": 5,
+   "id": 371
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.5299,
+   "y": -0.4164,
+   "profondeur": 31,
+   "stat": "soins_pct",
+   "valeur": 3,
+   "id": 372
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.547,
+   "y": -0.4298,
+   "profondeur": 32,
+   "stat": "resistance_toutes_pct",
+   "valeur": 2,
+   "id": 373
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.5641,
+   "y": -0.4432,
+   "profondeur": 33,
+   "stat": "vitalite",
+   "valeur": 20,
+   "id": 374
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.5812,
+   "y": -0.4567,
+   "profondeur": 34,
+   "stat": "sagesse",
+   "valeur": 5,
+   "id": 375
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.5983,
+   "y": -0.4701,
+   "profondeur": 35,
+   "stat": "soins_pct",
+   "valeur": 3,
+   "id": 376
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.6154,
+   "y": -0.4835,
+   "profondeur": 36,
+   "stat": "resistance_toutes_pct",
+   "valeur": 2,
+   "id": 377
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.6324,
+   "y": -0.497,
+   "profondeur": 37,
+   "stat": "vitalite",
+   "valeur": 20,
+   "id": 378
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.6495,
+   "y": -0.5104,
+   "profondeur": 38,
+   "stat": "sagesse",
+   "valeur": 5,
+   "id": 379
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.0075,
+   "y": -0.0204,
+   "profondeur": 1,
+   "stat": "soins_pct",
+   "valeur": 3,
+   "id": 380
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.015,
+   "y": -0.0408,
+   "profondeur": 2,
+   "stat": "resistance_toutes_pct",
+   "valeur": 2,
+   "id": 381
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.0225,
+   "y": -0.0612,
+   "profondeur": 3,
+   "stat": "vitalite",
+   "valeur": 20,
+   "id": 382
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.03,
+   "y": -0.0816,
+   "profondeur": 4,
+   "stat": "sagesse",
+   "valeur": 5,
+   "id": 383
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.0375,
+   "y": -0.102,
+   "profondeur": 5,
+   "stat": "soins_pct",
+   "valeur": 3,
+   "id": 384
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.045,
+   "y": -0.1224,
+   "profondeur": 6,
+   "stat": "resistance_toutes_pct",
+   "valeur": 2,
+   "id": 385
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.0524,
+   "y": -0.1429,
+   "profondeur": 7,
+   "stat": "vitalite",
+   "valeur": 20,
+   "id": 386
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.0599,
+   "y": -0.1633,
+   "profondeur": 8,
+   "stat": "sagesse",
+   "valeur": 5,
+   "id": 387
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.0674,
+   "y": -0.1837,
+   "profondeur": 9,
+   "stat": "soins_pct",
+   "valeur": 3,
+   "id": 388
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.0749,
+   "y": -0.2041,
+   "profondeur": 10,
+   "stat": "resistance_toutes_pct",
+   "valeur": 2,
+   "id": 389
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.0824,
+   "y": -0.2245,
+   "profondeur": 11,
+   "stat": "vitalite",
+   "valeur": 20,
+   "id": 390
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.0899,
+   "y": -0.2449,
+   "profondeur": 12,
+   "stat": "sagesse",
+   "valeur": 5,
+   "id": 391
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.0974,
+   "y": -0.2653,
+   "profondeur": 13,
+   "stat": "soins_pct",
+   "valeur": 3,
+   "id": 392
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.1049,
+   "y": -0.2857,
+   "profondeur": 14,
+   "stat": "resistance_toutes_pct",
+   "valeur": 2,
+   "id": 393
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.1124,
+   "y": -0.3061,
+   "profondeur": 15,
+   "stat": "vitalite",
+   "valeur": 20,
+   "id": 394
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.1199,
+   "y": -0.3265,
+   "profondeur": 16,
+   "stat": "sagesse",
+   "valeur": 5,
+   "id": 395
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.1274,
+   "y": -0.3469,
+   "profondeur": 17,
+   "stat": "soins_pct",
+   "valeur": 3,
+   "id": 396
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.1349,
+   "y": -0.3673,
+   "profondeur": 18,
+   "stat": "resistance_toutes_pct",
+   "valeur": 2,
+   "id": 397
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.1424,
+   "y": -0.3877,
+   "profondeur": 19,
+   "stat": "vitalite",
+   "valeur": 20,
+   "id": 398
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.1498,
+   "y": -0.4081,
+   "profondeur": 20,
+   "stat": "sagesse",
+   "valeur": 5,
+   "id": 399
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.1573,
+   "y": -0.4286,
+   "profondeur": 21,
+   "stat": "soins_pct",
+   "valeur": 3,
+   "id": 400
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.1648,
+   "y": -0.449,
+   "profondeur": 22,
+   "stat": "resistance_toutes_pct",
+   "valeur": 2,
+   "id": 401
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.1723,
+   "y": -0.4694,
+   "profondeur": 23,
+   "stat": "vitalite",
+   "valeur": 20,
+   "id": 402
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.1798,
+   "y": -0.4898,
+   "profondeur": 24,
+   "stat": "sagesse",
+   "valeur": 5,
+   "id": 403
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.1873,
+   "y": -0.5102,
+   "profondeur": 25,
+   "stat": "soins_pct",
+   "valeur": 3,
+   "id": 404
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.1948,
+   "y": -0.5306,
+   "profondeur": 26,
+   "stat": "resistance_toutes_pct",
+   "valeur": 2,
+   "id": 405
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.2023,
+   "y": -0.551,
+   "profondeur": 27,
+   "stat": "vitalite",
+   "valeur": 20,
+   "id": 406
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.2098,
+   "y": -0.5714,
+   "profondeur": 28,
+   "stat": "sagesse",
+   "valeur": 5,
+   "id": 407
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.2173,
+   "y": -0.5918,
+   "profondeur": 29,
+   "stat": "soins_pct",
+   "valeur": 3,
+   "id": 408
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.2248,
+   "y": -0.6122,
+   "profondeur": 30,
+   "stat": "resistance_toutes_pct",
+   "valeur": 2,
+   "id": 409
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.2323,
+   "y": -0.6326,
+   "profondeur": 31,
+   "stat": "vitalite",
+   "valeur": 20,
+   "id": 410
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.2398,
+   "y": -0.653,
+   "profondeur": 32,
+   "stat": "sagesse",
+   "valeur": 5,
+   "id": 411
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.2472,
+   "y": -0.6734,
+   "profondeur": 33,
+   "stat": "soins_pct",
+   "valeur": 3,
+   "id": 412
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.2547,
+   "y": -0.6938,
+   "profondeur": 34,
+   "stat": "resistance_toutes_pct",
+   "valeur": 2,
+   "id": 413
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.2622,
+   "y": -0.7143,
+   "profondeur": 35,
+   "stat": "vitalite",
+   "valeur": 20,
+   "id": 414
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.2697,
+   "y": -0.7347,
+   "profondeur": 36,
+   "stat": "sagesse",
+   "valeur": 5,
+   "id": 415
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.2772,
+   "y": -0.7551,
+   "profondeur": 37,
+   "stat": "soins_pct",
+   "valeur": 3,
+   "id": 416
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.2847,
+   "y": -0.7755,
+   "profondeur": 38,
+   "stat": "resistance_toutes_pct",
+   "valeur": 2,
+   "id": 417
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.2922,
+   "y": -0.7959,
+   "profondeur": 39,
+   "stat": "vitalite",
+   "valeur": 20,
+   "id": 418
+  },
+  {
+   "type": "carac",
+   "zone": "soutien",
+   "x": -0.2997,
+   "y": -0.8163,
+   "profondeur": 40,
+   "stat": "sagesse",
+   "valeur": 5,
+   "id": 419
+  },
+  {
+   "type": "sort",
+   "zone": "soutien",
+   "x": -0.1107,
+   "y": -0.1044,
+   "profondeur": 7,
+   "nom": "Intimidation",
+   "texte": "Intimidation repousse d'une case de plus.",
+   "sort": {
+    "id": 13108,
+    "nom": "Intimidation",
+    "niveau": 5,
+    "palier": "petit"
+   },
+   "id": 420
+  },
+  {
+   "type": "sort",
+   "zone": "soutien",
+   "x": -0.0744,
+   "y": -0.1572,
+   "profondeur": 8,
+   "nom": "Bond",
+   "texte": "Bond se recharge 1,5 s plus vite.",
+   "sort": {
+    "id": 13107,
+    "nom": "Bond",
+    "niveau": 10,
+    "palier": "petit"
+   },
+   "id": 421
+  },
+  {
+   "type": "sort",
+   "zone": "soutien",
+   "x": -0.1823,
+   "y": -0.1184,
+   "profondeur": 10,
+   "nom": "Vitalité",
+   "texte": "L'effet de Vitalité dure 25 % plus longtemps.",
+   "sort": {
+    "id": 13120,
+    "nom": "Vitalité",
+    "niveau": 25,
+    "palier": "petit"
+   },
+   "id": 422
+  },
+  {
+   "type": "sort",
+   "zone": "soutien",
+   "x": -0.0732,
+   "y": -0.273,
+   "profondeur": 13,
+   "nom": "Puissance",
+   "texte": "L'effet de Puissance dure 25 % plus longtemps.",
+   "sort": {
+    "id": 13118,
+    "nom": "Puissance",
+    "niveau": 40,
+    "palier": "petit"
+   },
+   "id": 423
+  },
+  {
+   "type": "sort",
+   "zone": "soutien",
+   "x": -0.2531,
+   "y": -0.2386,
+   "profondeur": 16,
+   "nom": "Vertu",
+   "texte": "Le bouclier de Vertu est 20 % plus solide.",
+   "sort": {
+    "id": 13142,
+    "nom": "Vertu",
+    "niveau": 55,
+    "palier": "petit"
+   },
+   "id": 424
+  },
+  {
+   "type": "sort",
+   "zone": "soutien",
+   "x": -0.1673,
+   "y": -0.3537,
+   "profondeur": 18,
+   "nom": "Friction",
+   "texte": "Friction attire de 2 cases de plus. Le sort se recharge aussi 3 s plus vite.",
+   "sort": {
+    "id": 13113,
+    "nom": "Friction",
+    "niveau": 65,
+    "palier": "moyen"
+   },
+   "id": 425
+  },
+  {
+   "type": "sort",
+   "zone": "soutien",
+   "x": -0.3464,
+   "y": -0.225,
+   "profondeur": 19,
+   "nom": "Précipitation",
+   "texte": "L'effet de Précipitation dure 50 % plus longtemps. Le sort se recharge aussi 3 s plus vite.",
+   "sort": {
+    "id": 13114,
+    "nom": "Précipitation",
+    "niveau": 75,
+    "palier": "moyen"
+   },
+   "id": 426
+  },
+  {
+   "type": "sort",
+   "zone": "soutien",
+   "x": -0.1182,
+   "y": -0.441,
+   "profondeur": 21,
+   "nom": "Emprise",
+   "texte": "L'effet d'Emprise dure 50 % plus longtemps. Le sort se recharge aussi 3 s plus vite.",
+   "sort": {
+    "id": 13141,
+    "nom": "Emprise",
+    "niveau": 85,
+    "palier": "moyen"
+   },
+   "id": 427
+  },
+  {
+   "type": "sort",
+   "zone": "soutien",
+   "x": -0.4271,
+   "y": -0.4027,
+   "profondeur": 27,
+   "nom": "Conquête",
+   "texte": "Conquête : l'invocation a +25 % de PV et de dommages. Le sort a aussi une case de zone en plus.",
+   "sort": {
+    "id": 13148,
+    "nom": "Conquête",
+    "niveau": 115,
+    "palier": "moyen"
+   },
+   "id": 428
+  },
+  {
+   "type": "sort",
+   "zone": "soutien",
+   "x": -0.251,
+   "y": -0.5306,
+   "profondeur": 27,
+   "nom": "Agitation",
+   "texte": "L'effet d'Agitation dure 50 % plus longtemps. Le sort se recharge aussi 3 s plus vite.",
+   "sort": {
+    "id": 13143,
+    "nom": "Agitation",
+    "niveau": 120,
+    "palier": "moyen"
+   },
+   "id": 429
+  },
+  {
+   "type": "sort",
+   "zone": "soutien",
+   "x": -0.5469,
+   "y": -0.3552,
+   "profondeur": 30,
+   "nom": "Violence",
+   "texte": "Violence repousse de 2 cases de plus. Le sort a aussi une case de zone en plus.",
+   "sort": {
+    "id": 13137,
+    "nom": "Violence",
+    "niveau": 135,
+    "palier": "moyen"
+   },
+   "id": 430
+  },
+  {
+   "type": "sort",
+   "zone": "soutien",
+   "x": -0.1857,
+   "y": -0.6929,
+   "profondeur": 33,
+   "nom": "Contagion",
+   "texte": "L'érosion de Vindicte saute sur les 2 ennemis les plus proches de la cible.",
+   "sort": {
+    "id": 14677,
+    "nom": "Vindicte",
+    "niveau": 150,
+    "palier": "transformation"
+   },
+   "id": 431
+  },
+  {
+   "type": "sort",
+   "zone": "soutien",
+   "x": -0.5694,
+   "y": -0.5369,
+   "profondeur": 36,
+   "nom": "Carnage",
+   "texte": "Quand l'ennemi marqué par Massacre meurt, la marque passe à l'ennemi le plus proche.",
+   "sort": {
+    "id": 13112,
+    "nom": "Massacre",
+    "niveau": 165,
+    "palier": "transformation"
+   },
+   "id": 432
+  },
+  {
+   "type": "sort",
+   "zone": "soutien",
+   "x": -0.344,
+   "y": -0.7271,
+   "profondeur": 37,
+   "nom": "Riposte",
+   "texte": "Pendant 6 s après le lancer, tout ennemi qui te frappe au contact est repoussé.",
+   "sort": {
+    "id": 13140,
+    "nom": "Coup pour Coup",
+    "niveau": 175,
+    "palier": "transformation"
+   },
+   "id": 433
+  },
+  {
+   "type": "sort",
+   "zone": "soutien",
+   "x": -0.711,
+   "y": -0.4618,
+   "profondeur": 39,
+   "nom": "Inébranlable",
+   "texte": "Détermination se lance aussi sur toi : bouclier, et impossible à repousser pendant 4 s.",
+   "sort": {
+    "id": 13132,
+    "nom": "Détermination",
+    "niveau": 185,
+    "palier": "transformation"
+   },
+   "id": 434
+  },
+  {
+   "type": "sort",
+   "zone": "soutien",
+   "x": -0.2307,
+   "y": -0.8609,
+   "profondeur": 41,
+   "nom": "Arène",
+   "texte": "Pendant Duel, tu peux encore utiliser Bond, et l'ennemi immobilisé subit +20 % de dommages.",
+   "sort": {
+    "id": 13109,
+    "nom": "Duel",
+    "niveau": 195,
+    "palier": "transformation"
+   },
+   "id": 435
+  },
+  {
+   "x": -0.2415,
+   "y": -0.1468,
+   "zone": "soutien",
+   "profondeur": 13,
+   "type": "carac",
+   "stat": "vitalite",
+   "valeur": 20,
+   "id": 436
+  },
+  {
+   "x": -0.2601,
+   "y": -0.158,
+   "zone": "soutien",
+   "profondeur": 14,
+   "type": "notable",
+   "nom": "Puissance",
+   "texte": "Le bonus du sort Puissance dure deux fois plus longtemps.",
+   "id": 437
+  },
+  {
+   "x": -0.1349,
+   "y": -0.5713,
+   "zone": "soutien",
+   "profondeur": 27,
+   "type": "carac",
+   "stat": "vitalite",
+   "valeur": 20,
+   "id": 438
+  },
+  {
+   "x": -0.1399,
+   "y": -0.5924,
+   "zone": "soutien",
+   "profondeur": 28,
+   "type": "notable",
+   "nom": "Vitalité",
+   "texte": "Le sort Vitalité donne aussi +10 % à toutes les résistances.",
+   "id": 439
+  },
+  {
+   "x": -0.1581,
+   "y": -0.3098,
+   "zone": "soutien",
+   "profondeur": 16,
+   "type": "rune",
+   "nom": "Emplacement de rune",
+   "runes": [
+    "Vi",
+    "Sa"
+   ],
+   "id": 440
+  }
+ ],
+ "liens": [
+  [
+   0,
+   1
+  ],
+  [
+   1,
+   2
+  ],
+  [
+   2,
+   3
+  ],
+  [
+   3,
+   4
+  ],
+  [
+   4,
+   5
+  ],
+  [
+   5,
+   6
+  ],
+  [
+   6,
+   7
+  ],
+  [
+   7,
+   8
+  ],
+  [
+   8,
+   9
+  ],
+  [
+   9,
+   10
+  ],
+  [
+   10,
+   11
+  ],
+  [
+   11,
+   12
+  ],
+  [
+   12,
+   13
+  ],
+  [
+   13,
+   14
+  ],
+  [
+   14,
+   15
+  ],
+  [
+   15,
+   16
+  ],
+  [
+   16,
+   17
+  ],
+  [
+   17,
+   18
+  ],
+  [
+   18,
+   19
+  ],
+  [
+   19,
+   20
+  ],
+  [
+   20,
+   21
+  ],
+  [
+   21,
+   22
+  ],
+  [
+   22,
+   23
+  ],
+  [
+   23,
+   24
+  ],
+  [
+   24,
+   25
+  ],
+  [
+   25,
+   26
+  ],
+  [
+   26,
+   27
+  ],
+  [
+   27,
+   28
+  ],
+  [
+   28,
+   29
+  ],
+  [
+   29,
+   30
+  ],
+  [
+   30,
+   31
+  ],
+  [
+   31,
+   32
+  ],
+  [
+   32,
+   33
+  ],
+  [
+   33,
+   34
+  ],
+  [
+   34,
+   35
+  ],
+  [
+   35,
+   36
+  ],
+  [
+   36,
+   37
+  ],
+  [
+   37,
+   38
+  ],
+  [
+   38,
+   39
+  ],
+  [
+   39,
+   40
+  ],
+  [
+   40,
+   41
+  ],
+  [
+   0,
+   42
+  ],
+  [
+   42,
+   43
+  ],
+  [
+   43,
+   44
+  ],
+  [
+   44,
+   45
+  ],
+  [
+   45,
+   46
+  ],
+  [
+   46,
+   47
+  ],
+  [
+   47,
+   48
+  ],
+  [
+   48,
+   49
+  ],
+  [
+   49,
+   50
+  ],
+  [
+   50,
+   51
+  ],
+  [
+   51,
+   52
+  ],
+  [
+   52,
+   53
+  ],
+  [
+   53,
+   54
+  ],
+  [
+   54,
+   55
+  ],
+  [
+   55,
+   56
+  ],
+  [
+   56,
+   57
+  ],
+  [
+   57,
+   58
+  ],
+  [
+   58,
+   59
+  ],
+  [
+   59,
+   60
+  ],
+  [
+   60,
+   61
+  ],
+  [
+   61,
+   62
+  ],
+  [
+   62,
+   63
+  ],
+  [
+   63,
+   64
+  ],
+  [
+   64,
+   65
+  ],
+  [
+   65,
+   66
+  ],
+  [
+   66,
+   67
+  ],
+  [
+   67,
+   68
+  ],
+  [
+   68,
+   69
+  ],
+  [
+   69,
+   70
+  ],
+  [
+   70,
+   71
+  ],
+  [
+   71,
+   72
+  ],
+  [
+   72,
+   73
+  ],
+  [
+   73,
+   74
+  ],
+  [
+   74,
+   75
+  ],
+  [
+   8,
+   49
+  ],
+  [
+   16,
+   57
+  ],
+  [
+   24,
+   65
+  ],
+  [
+   32,
+   73
+  ],
+  [
+   5,
+   76
+  ],
+  [
+   49,
+   77
+  ],
+  [
+   16,
+   78
+  ],
+  [
+   62,
+   79
+  ],
+  [
+   24,
+   80
+  ],
+  [
+   75,
+   81
+  ],
+  [
+   41,
+   82
+  ],
+  [
+   12,
+   83
+  ],
+  [
+   83,
+   84
+  ],
+  [
+   67,
+   85
+  ],
+  [
+   85,
+   86
+  ],
+  [
+   56,
+   87
+  ],
+  [
+   34,
+   88
+  ],
+  [
+   88,
+   89
+  ],
+  [
+   89,
+   90
+  ],
+  [
+   0,
+   91
+  ],
+  [
+   91,
+   92
+  ],
+  [
+   92,
+   93
+  ],
+  [
+   93,
+   94
+  ],
+  [
+   94,
+   95
+  ],
+  [
+   95,
+   96
+  ],
+  [
+   96,
+   97
+  ],
+  [
+   97,
+   98
+  ],
+  [
+   98,
+   99
+  ],
+  [
+   99,
+   100
+  ],
+  [
+   100,
+   101
+  ],
+  [
+   101,
+   102
+  ],
+  [
+   102,
+   103
+  ],
+  [
+   103,
+   104
+  ],
+  [
+   104,
+   105
+  ],
+  [
+   105,
+   106
+  ],
+  [
+   106,
+   107
+  ],
+  [
+   107,
+   108
+  ],
+  [
+   108,
+   109
+  ],
+  [
+   109,
+   110
+  ],
+  [
+   110,
+   111
+  ],
+  [
+   111,
+   112
+  ],
+  [
+   112,
+   113
+  ],
+  [
+   113,
+   114
+  ],
+  [
+   114,
+   115
+  ],
+  [
+   115,
+   116
+  ],
+  [
+   116,
+   117
+  ],
+  [
+   117,
+   118
+  ],
+  [
+   118,
+   119
+  ],
+  [
+   119,
+   120
+  ],
+  [
+   120,
+   121
+  ],
+  [
+   121,
+   122
+  ],
+  [
+   122,
+   123
+  ],
+  [
+   123,
+   124
+  ],
+  [
+   124,
+   125
+  ],
+  [
+   125,
+   126
+  ],
+  [
+   126,
+   127
+  ],
+  [
+   127,
+   128
+  ],
+  [
+   128,
+   129
+  ],
+  [
+   0,
+   130
+  ],
+  [
+   130,
+   131
+  ],
+  [
+   131,
+   132
+  ],
+  [
+   132,
+   133
+  ],
+  [
+   133,
+   134
+  ],
+  [
+   134,
+   135
+  ],
+  [
+   135,
+   136
+  ],
+  [
+   136,
+   137
+  ],
+  [
+   137,
+   138
+  ],
+  [
+   138,
+   139
+  ],
+  [
+   139,
+   140
+  ],
+  [
+   140,
+   141
+  ],
+  [
+   141,
+   142
+  ],
+  [
+   142,
+   143
+  ],
+  [
+   143,
+   144
+  ],
+  [
+   144,
+   145
+  ],
+  [
+   145,
+   146
+  ],
+  [
+   146,
+   147
+  ],
+  [
+   147,
+   148
+  ],
+  [
+   148,
+   149
+  ],
+  [
+   149,
+   150
+  ],
+  [
+   150,
+   151
+  ],
+  [
+   151,
+   152
+  ],
+  [
+   152,
+   153
+  ],
+  [
+   153,
+   154
+  ],
+  [
+   154,
+   155
+  ],
+  [
+   155,
+   156
+  ],
+  [
+   156,
+   157
+  ],
+  [
+   157,
+   158
+  ],
+  [
+   158,
+   159
+  ],
+  [
+   98,
+   137
+  ],
+  [
+   106,
+   145
+  ],
+  [
+   114,
+   153
+  ],
+  [
+   95,
+   160
+  ],
+  [
+   140,
+   161
+  ],
+  [
+   103,
+   162
+  ],
+  [
+   148,
+   163
+  ],
+  [
+   117,
+   164
+  ],
+  [
+   159,
+   165
+  ],
+  [
+   129,
+   166
+  ],
+  [
+   102,
+   167
+  ],
+  [
+   167,
+   168
+  ],
+  [
+   155,
+   169
+  ],
+  [
+   169,
+   170
+  ],
+  [
+   144,
+   171
+  ],
+  [
+   124,
+   172
+  ],
+  [
+   172,
+   173
+  ],
+  [
+   173,
+   174
+  ],
+  [
+   0,
+   175
+  ],
+  [
+   175,
+   176
+  ],
+  [
+   176,
+   177
+  ],
+  [
+   177,
+   178
+  ],
+  [
+   178,
+   179
+  ],
+  [
+   179,
+   180
+  ],
+  [
+   180,
+   181
+  ],
+  [
+   181,
+   182
+  ],
+  [
+   182,
+   183
+  ],
+  [
+   183,
+   184
+  ],
+  [
+   184,
+   185
+  ],
+  [
+   185,
+   186
+  ],
+  [
+   186,
+   187
+  ],
+  [
+   187,
+   188
+  ],
+  [
+   188,
+   189
+  ],
+  [
+   189,
+   190
+  ],
+  [
+   190,
+   191
+  ],
+  [
+   191,
+   192
+  ],
+  [
+   192,
+   193
+  ],
+  [
+   193,
+   194
+  ],
+  [
+   194,
+   195
+  ],
+  [
+   195,
+   196
+  ],
+  [
+   196,
+   197
+  ],
+  [
+   197,
+   198
+  ],
+  [
+   198,
+   199
+  ],
+  [
+   199,
+   200
+  ],
+  [
+   200,
+   201
+  ],
+  [
+   201,
+   202
+  ],
+  [
+   202,
+   203
+  ],
+  [
+   203,
+   204
+  ],
+  [
+   204,
+   205
+  ],
+  [
+   205,
+   206
+  ],
+  [
+   206,
+   207
+  ],
+  [
+   207,
+   208
+  ],
+  [
+   208,
+   209
+  ],
+  [
+   209,
+   210
+  ],
+  [
+   0,
+   211
+  ],
+  [
+   211,
+   212
+  ],
+  [
+   212,
+   213
+  ],
+  [
+   213,
+   214
+  ],
+  [
+   214,
+   215
+  ],
+  [
+   215,
+   216
+  ],
+  [
+   216,
+   217
+  ],
+  [
+   217,
+   218
+  ],
+  [
+   218,
+   219
+  ],
+  [
+   219,
+   220
+  ],
+  [
+   220,
+   221
+  ],
+  [
+   221,
+   222
+  ],
+  [
+   222,
+   223
+  ],
+  [
+   223,
+   224
+  ],
+  [
+   224,
+   225
+  ],
+  [
+   225,
+   226
+  ],
+  [
+   226,
+   227
+  ],
+  [
+   227,
+   228
+  ],
+  [
+   228,
+   229
+  ],
+  [
+   229,
+   230
+  ],
+  [
+   230,
+   231
+  ],
+  [
+   231,
+   232
+  ],
+  [
+   232,
+   233
+  ],
+  [
+   233,
+   234
+  ],
+  [
+   234,
+   235
+  ],
+  [
+   235,
+   236
+  ],
+  [
+   236,
+   237
+  ],
+  [
+   237,
+   238
+  ],
+  [
+   238,
+   239
+  ],
+  [
+   239,
+   240
+  ],
+  [
+   240,
+   241
+  ],
+  [
+   182,
+   218
+  ],
+  [
+   190,
+   226
+  ],
+  [
+   198,
+   234
+  ],
+  [
+   179,
+   242
+  ],
+  [
+   218,
+   243
+  ],
+  [
+   188,
+   244
+  ],
+  [
+   233,
+   245
+  ],
+  [
+   199,
+   246
+  ],
+  [
+   241,
+   247
+  ],
+  [
+   209,
+   248
+  ],
+  [
+   186,
+   249
+  ],
+  [
+   249,
+   250
+  ],
+  [
+   236,
+   251
+  ],
+  [
+   251,
+   252
+  ],
+  [
+   225,
+   253
+  ],
+  [
+   208,
+   254
+  ],
+  [
+   254,
+   255
+  ],
+  [
+   255,
+   256
+  ],
+  [
+   0,
+   257
+  ],
+  [
+   257,
+   258
+  ],
+  [
+   258,
+   259
+  ],
+  [
+   259,
+   260
+  ],
+  [
+   260,
+   261
+  ],
+  [
+   261,
+   262
+  ],
+  [
+   262,
+   263
+  ],
+  [
+   263,
+   264
+  ],
+  [
+   264,
+   265
+  ],
+  [
+   265,
+   266
+  ],
+  [
+   266,
+   267
+  ],
+  [
+   267,
+   268
+  ],
+  [
+   268,
+   269
+  ],
+  [
+   269,
+   270
+  ],
+  [
+   270,
+   271
+  ],
+  [
+   271,
+   272
+  ],
+  [
+   272,
+   273
+  ],
+  [
+   273,
+   274
+  ],
+  [
+   274,
+   275
+  ],
+  [
+   275,
+   276
+  ],
+  [
+   276,
+   277
+  ],
+  [
+   277,
+   278
+  ],
+  [
+   278,
+   279
+  ],
+  [
+   279,
+   280
+  ],
+  [
+   280,
+   281
+  ],
+  [
+   281,
+   282
+  ],
+  [
+   282,
+   283
+  ],
+  [
+   283,
+   284
+  ],
+  [
+   284,
+   285
+  ],
+  [
+   285,
+   286
+  ],
+  [
+   286,
+   287
+  ],
+  [
+   287,
+   288
+  ],
+  [
+   288,
+   289
+  ],
+  [
+   289,
+   290
+  ],
+  [
+   290,
+   291
+  ],
+  [
+   291,
+   292
+  ],
+  [
+   292,
+   293
+  ],
+  [
+   0,
+   294
+  ],
+  [
+   294,
+   295
+  ],
+  [
+   295,
+   296
+  ],
+  [
+   296,
+   297
+  ],
+  [
+   297,
+   298
+  ],
+  [
+   298,
+   299
+  ],
+  [
+   299,
+   300
+  ],
+  [
+   300,
+   301
+  ],
+  [
+   301,
+   302
+  ],
+  [
+   302,
+   303
+  ],
+  [
+   303,
+   304
+  ],
+  [
+   304,
+   305
+  ],
+  [
+   305,
+   306
+  ],
+  [
+   306,
+   307
+  ],
+  [
+   307,
+   308
+  ],
+  [
+   308,
+   309
+  ],
+  [
+   309,
+   310
+  ],
+  [
+   310,
+   311
+  ],
+  [
+   311,
+   312
+  ],
+  [
+   312,
+   313
+  ],
+  [
+   313,
+   314
+  ],
+  [
+   314,
+   315
+  ],
+  [
+   315,
+   316
+  ],
+  [
+   316,
+   317
+  ],
+  [
+   317,
+   318
+  ],
+  [
+   318,
+   319
+  ],
+  [
+   319,
+   320
+  ],
+  [
+   320,
+   321
+  ],
+  [
+   321,
+   322
+  ],
+  [
+   322,
+   323
+  ],
+  [
+   323,
+   324
+  ],
+  [
+   324,
+   325
+  ],
+  [
+   325,
+   326
+  ],
+  [
+   264,
+   301
+  ],
+  [
+   272,
+   309
+  ],
+  [
+   280,
+   317
+  ],
+  [
+   288,
+   325
+  ],
+  [
+   261,
+   327
+  ],
+  [
+   303,
+   328
+  ],
+  [
+   273,
+   329
+  ],
+  [
+   315,
+   330
+  ],
+  [
+   284,
+   331
+  ],
+  [
+   326,
+   332
+  ],
+  [
+   293,
+   333
+  ],
+  [
+   268,
+   334
+  ],
+  [
+   334,
+   335
+  ],
+  [
+   319,
+   336
+  ],
+  [
+   336,
+   337
+  ],
+  [
+   308,
+   338
+  ],
+  [
+   290,
+   339
+  ],
+  [
+   339,
+   340
+  ],
+  [
+   340,
+   341
+  ],
+  [
+   0,
+   342
+  ],
+  [
+   342,
+   343
+  ],
+  [
+   343,
+   344
+  ],
+  [
+   344,
+   345
+  ],
+  [
+   345,
+   346
+  ],
+  [
+   346,
+   347
+  ],
+  [
+   347,
+   348
+  ],
+  [
+   348,
+   349
+  ],
+  [
+   349,
+   350
+  ],
+  [
+   350,
+   351
+  ],
+  [
+   351,
+   352
+  ],
+  [
+   352,
+   353
+  ],
+  [
+   353,
+   354
+  ],
+  [
+   354,
+   355
+  ],
+  [
+   355,
+   356
+  ],
+  [
+   356,
+   357
+  ],
+  [
+   357,
+   358
+  ],
+  [
+   358,
+   359
+  ],
+  [
+   359,
+   360
+  ],
+  [
+   360,
+   361
+  ],
+  [
+   361,
+   362
+  ],
+  [
+   362,
+   363
+  ],
+  [
+   363,
+   364
+  ],
+  [
+   364,
+   365
+  ],
+  [
+   365,
+   366
+  ],
+  [
+   366,
+   367
+  ],
+  [
+   367,
+   368
+  ],
+  [
+   368,
+   369
+  ],
+  [
+   369,
+   370
+  ],
+  [
+   370,
+   371
+  ],
+  [
+   371,
+   372
+  ],
+  [
+   372,
+   373
+  ],
+  [
+   373,
+   374
+  ],
+  [
+   374,
+   375
+  ],
+  [
+   375,
+   376
+  ],
+  [
+   376,
+   377
+  ],
+  [
+   377,
+   378
+  ],
+  [
+   378,
+   379
+  ],
+  [
+   0,
+   380
+  ],
+  [
+   380,
+   381
+  ],
+  [
+   381,
+   382
+  ],
+  [
+   382,
+   383
+  ],
+  [
+   383,
+   384
+  ],
+  [
+   384,
+   385
+  ],
+  [
+   385,
+   386
+  ],
+  [
+   386,
+   387
+  ],
+  [
+   387,
+   388
+  ],
+  [
+   388,
+   389
+  ],
+  [
+   389,
+   390
+  ],
+  [
+   390,
+   391
+  ],
+  [
+   391,
+   392
+  ],
+  [
+   392,
+   393
+  ],
+  [
+   393,
+   394
+  ],
+  [
+   394,
+   395
+  ],
+  [
+   395,
+   396
+  ],
+  [
+   396,
+   397
+  ],
+  [
+   397,
+   398
+  ],
+  [
+   398,
+   399
+  ],
+  [
+   399,
+   400
+  ],
+  [
+   400,
+   401
+  ],
+  [
+   401,
+   402
+  ],
+  [
+   402,
+   403
+  ],
+  [
+   403,
+   404
+  ],
+  [
+   404,
+   405
+  ],
+  [
+   405,
+   406
+  ],
+  [
+   406,
+   407
+  ],
+  [
+   407,
+   408
+  ],
+  [
+   408,
+   409
+  ],
+  [
+   409,
+   410
+  ],
+  [
+   410,
+   411
+  ],
+  [
+   411,
+   412
+  ],
+  [
+   412,
+   413
+  ],
+  [
+   413,
+   414
+  ],
+  [
+   414,
+   415
+  ],
+  [
+   415,
+   416
+  ],
+  [
+   416,
+   417
+  ],
+  [
+   417,
+   418
+  ],
+  [
+   418,
+   419
+  ],
+  [
+   349,
+   387
+  ],
+  [
+   357,
+   395
+  ],
+  [
+   365,
+   403
+  ],
+  [
+   373,
+   411
+  ],
+  [
+   347,
+   420
+  ],
+  [
+   386,
+   421
+  ],
+  [
+   350,
+   422
+  ],
+  [
+   391,
+   423
+  ],
+  [
+   356,
+   424
+  ],
+  [
+   396,
+   425
+  ],
+  [
+   359,
+   426
+  ],
+  [
+   399,
+   427
+  ],
+  [
+   367,
+   428
+  ],
+  [
+   405,
+   429
+  ],
+  [
+   370,
+   430
+  ],
+  [
+   411,
+   431
+  ],
+  [
+   376,
+   432
+  ],
+  [
+   415,
+   433
+  ],
+  [
+   379,
+   434
+  ],
+  [
+   419,
+   435
+  ],
+  [
+   353,
+   436
+  ],
+  [
+   436,
+   437
+  ],
+  [
+   405,
+   438
+  ],
+  [
+   438,
+   439
+  ],
+  [
+   394,
+   440
+  ]
+ ]
+}
