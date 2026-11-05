@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { GAME_DATA, ITEMS } from '../src/sim/data';
 import { icons as ICON_FRAMES } from '../src/data/icones_objets.json';
 import { GridMap, type MapData } from '../src/sim/gridmap';
-import { legendaryPower, rollItem, type Stat } from '../src/sim/items';
+import { legendaryPower, rollItem, rollRarity, type Stat } from '../src/sim/items';
 import { Rng } from '../src/sim/math';
 import { NO_INPUT } from '../src/sim/input';
 import { World } from '../src/sim/world';
@@ -25,7 +25,7 @@ describe('objets officiels', () => {
     const [id, def] = find('Amulette du Mulou'), rng = new Rng(3);
     const [a, b] = def.stats.vitalite!;
     for (let i = 0; i < 50; i++) {
-      const c = rollItem(id, def, 'commun', rng, i), r = rollItem(id, def, 'rare', rng, i);
+      const c = rollItem(id, def, 'commun', rng, i), r = rollItem(id, def, 'epique', rng, i);
       expect(c.stats.vitalite).toBeLessThanOrEqual(Math.round(a + (b - a) / 2));
       expect(r.stats.vitalite).toBeGreaterThanOrEqual(Math.round(a + (b - a) / 2));
       expect(c.extra).toHaveLength(0);
@@ -38,12 +38,24 @@ describe('objets officiels', () => {
     const [id, def] = find('Amulette du Mulou'), it = rollItem(id, def, 'legendaire', new Rng(1), 1);
     expect(it.legendary).toBeDefined();
   });
+  it('un Mythique a des jets parfaits et deux effets légendaires différents', () => {
+    const [id, def] = find('Amulette du Mulou'), it = rollItem(id, def, 'mythique', new Rng(3), 1);
+    for (const [k, [, b]] of Object.entries(def.stats)) if (b > 0) expect(it.stats[k as Stat]).toBe(b);
+    expect(it.legendary && it.legendary2).toBeTruthy();
+    expect(it.legendary!.id).not.toBe(it.legendary2!.id);
+  });
+  it('environ un légendaire sur 20 est Mythique', () => {
+    const rng = new Rng(11), n: Record<string, number> = {};
+    for (let i = 0; i < 200000; i++) { const r = rollRarity(rng, true); n[r] = (n[r] ?? 0) + 1; }
+    const ratio = n.mythique / (n.mythique + n.legendaire);
+    expect(ratio).toBeGreaterThan(0.035); expect(ratio).toBeLessThan(0.065);
+  });
 });
 
 describe('équipement et caractéristiques', () => {
   it('équiper un objet ajoute ses caractéristiques, le retirer les enlève', () => {
     const w = arena(), p = w.player, [id, def] = find('Amulette du Mulou');
-    const it = rollItem(id, def, 'magique', w.rng, 999);
+    const it = rollItem(id, def, 'rare', w.rng, 999);
     p.bag.push(it);
     p.level = 10; p.recompute();
     const hp = p.maxHp;
@@ -103,10 +115,10 @@ describe('butin au sol', () => {
     expect(w.drops).toHaveLength(0);
   });
 
-  it('un objet Magique ou mieux n\'est pas aspiré : il reste au sol tant qu\'on ne clique pas dessus', () => {
+  it('un objet Rare ou mieux n\'est pas aspiré : il reste au sol tant qu\'on ne clique pas dessus', () => {
     const w = arena(5), p = w.player;
     const [id, def] = Object.entries(ITEMS.equipment)[0];
-    w.drops.push({ uid: 9999, x: p.x + 30, y: p.y, item: rollItem(id, def, 'rare', w.rng, 777), t: 1 });
+    w.drops.push({ uid: 9999, x: p.x + 30, y: p.y, item: rollItem(id, def, 'epique', w.rng, 777), t: 1 });
     for (let i = 0; i < 60; i++) w.step(STEP, NO_INPUT);
     expect(w.drops.some(d => d.uid === 9999)).toBe(true);
     w.step(STEP, { ...NO_INPUT, pickup: 9999 });

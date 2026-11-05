@@ -67,10 +67,11 @@ export const metierXpNeeded = (level: number) => 20 * level;
 export const METIER_XP = { viande: 5, parIngredient: 10 };
 
 /** Raretés (choix du 2026-11-04) ; la panoplie reste une étiquette à part. */
-export const RARITIES = ['commun', 'magique', 'rare', 'legendaire'] as const;
+/** Choix 12A : Commun, Rare, Épique, Légendaire, Mythique (les Dofus viendront à part). */
+export const RARITIES = ['commun', 'rare', 'epique', 'legendaire', 'mythique'] as const;
 export type Rarity = typeof RARITIES[number];
-export const RARITY_NAMES: Record<Rarity, string> = { commun: 'Commun', magique: 'Magique', rare: 'Rare', legendaire: 'Légendaire' };
-export const RARITY_COLORS: Record<Rarity, string> = { commun: '#e8e2d4', magique: '#6fb2e8', rare: '#f2d36b', legendaire: '#f08a2c' };
+export const RARITY_NAMES: Record<Rarity, string> = { commun: 'Commun', rare: 'Rare', epique: 'Épique', legendaire: 'Légendaire', mythique: 'Mythique' };
+export const RARITY_COLORS: Record<Rarity, string> = { commun: '#e8e2d4', rare: '#6fb2e8', epique: '#b77cf0', legendaire: '#f08a2c', mythique: '#ff4d4d' };
 
 /** Effets légendaires : du confort plutôt que de gros dégâts, et leur puissance suit le niveau de l'objet
  *  (40 % au niveau 10, 100 % au niveau 50), pour que les légendaires de bas niveau restent raisonnables. */
@@ -90,39 +91,45 @@ export interface Item {
   /** Lignes ajoutées par la rareté (affichées en couleur dans la fiche). */
   extra: Stat[];
   legendary?: { id: LegendaryId; value: number };
+  /** Mythique : un 2e effet légendaire. */
+  legendary2?: { id: LegendaryId; value: number };
 }
 
 /** Tirage de la rareté : le niveau du monstre et la Prospection rendent les bons objets un peu plus fréquents. */
 export function rollRarity(rng: Rng, boss: boolean, prospection = 0): Rarity {
   const p = 1 + prospection / 200, r = rng.next() * 100;
-  const leg = (boss ? 4 : 0.6) * p, rare = (boss ? 22 : 6) * p, mag = (boss ? 45 : 24) * p;
-  return r < leg ? 'legendaire' : r < leg + rare ? 'rare' : r < leg + rare + mag ? 'magique' : 'commun';
+  const leg = (boss ? 4 : 0.6) * p, epic = (boss ? 22 : 6) * p, rare = (boss ? 45 : 24) * p;
+  // environ un légendaire sur 20 est Mythique
+  return r < leg / 20 ? 'mythique' : r < leg ? 'legendaire' : r < leg + epic ? 'epique' : r < leg + epic + rare ? 'rare' : 'commun';
 }
 
 /** Tire les jets d'un objet officiel selon sa rareté :
- *  commun = jets dans la moitié basse ; magique = jets complets + 1 ligne ; rare = moitié haute + 2 lignes ;
- *  légendaire = jets hauts + 2 lignes + un effet légendaire. Les malus de l'objet officiel sont gardés tels quels. */
+ *  commun = jets dans la moitié basse ; rare = jets complets + 1 ligne ; épique = moitié haute + 2 lignes ;
+ *  légendaire = jets hauts + 2 lignes + un effet légendaire ; mythique = jets parfaits + 2 lignes + deux effets légendaires.
+ *  Les malus de l'objet officiel sont gardés tels quels. */
 export function rollItem(id: string, def: ItemDef, rarity: Rarity, rng: Rng, uid: number): Item {
-  const lo = { commun: 0, magique: 0, rare: 0.5, legendaire: 0.7 }[rarity], hi = { commun: 0.5, magique: 1, rare: 1, legendaire: 1 }[rarity];
+  const lo = { commun: 0, rare: 0, epique: 0.5, legendaire: 0.7, mythique: 1 }[rarity], hi = { commun: 0.5, rare: 1, epique: 1, legendaire: 1, mythique: 1 }[rarity];
   const stats: Stats = {};
   for (const [k, [a, b]] of Object.entries(def.stats) as [Stat, [number, number]][]) {
     if (a < 0) { stats[k] = a; continue; }
     stats[k] = Math.round(a + (b - a) * (lo + (hi - lo) * rng.next()));
   }
   const extra: Stat[] = [];
-  const n = { commun: 0, magique: 1, rare: 2, legendaire: 2 }[rarity];
+  const n = { commun: 0, rare: 1, epique: 2, legendaire: 2, mythique: 2 }[rarity];
   const pool: Stat[] = ['vitalite', 'force', 'intelligence', 'chance', 'agilite', 'sagesse', 'critique', 'prospection', 'vitesse'];
   for (let i = 0; i < n; i++) {
     const free = pool.filter(s => stats[s] === undefined);
     if (!free.length) break;
     const s = rng.pick(free), base = s === 'critique' || s === 'vitesse' ? 2 + def.level / 20 : s === 'vitalite' ? 4 + def.level : 2 + def.level / 2;
-    stats[s] = Math.max(1, Math.round(base * rng.range(0.6, 1)));
+    stats[s] = Math.max(1, Math.round(base * (rarity === 'mythique' ? 1 : rng.range(0.6, 1))));
     extra.push(s);
   }
   const it: Item = { uid, id, rarity, stats, extra };
-  if (rarity === 'legendaire') {
-    const l = rng.pick(Object.keys(LEGENDARY) as LegendaryId[]);
-    it.legendary = { id: l, value: Math.round(LEGENDARY[l].max * legendaryPower(def.level)) };
+  if (rarity === 'legendaire' || rarity === 'mythique') {
+    const ids = Object.keys(LEGENDARY) as LegendaryId[], l = rng.pick(ids);
+    const fx = (k: LegendaryId) => ({ id: k, value: Math.round(LEGENDARY[k].max * legendaryPower(def.level)) });
+    it.legendary = fx(l);
+    if (rarity === 'mythique') it.legendary2 = fx(rng.pick(ids.filter(k => k !== l)));
   }
   return it;
 }

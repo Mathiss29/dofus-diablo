@@ -40,7 +40,7 @@ export class Player extends Entity {
   /** Métiers (choix 6A : Chasseur) : niveau et XP. */
   metiers: Record<string, { level: number; xp: number }> = { chasseur: { level: 1, xp: 0 } };
   kamas = 0;
-  /** Butin au sol affiché et aspiré (choix 4C, réglé dans l'inventaire) : 0 tout, 1 Magique et plus, 2 Rare et plus. */
+  /** Butin au sol affiché et aspiré (choix 4C, réglé dans l'inventaire) : 0 tout, 1 Rare et plus, 2 Épique et plus. */
   lootFilter = 0;
   /** Objet au sol que l'on va ramasser (clic). */
   pickupId: number | null = null;
@@ -98,7 +98,7 @@ export class Player extends Entity {
   /** Effet légendaire porté (somme si plusieurs). */
   legendary(id: string): number {
     let v = 0;
-    for (const it of Object.values(this.equipment)) if (it?.legendary?.id === id) v += it.legendary.value;
+    for (const it of Object.values(this.equipment)) for (const l of [it?.legendary, it?.legendary2]) if (l?.id === id) v += l.value;
     return v;
   }
   /** Recalcule les caractéristiques et les PV max (5 PV par niveau + 1 par point de Vitalité, comme Dofus). */

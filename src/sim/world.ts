@@ -13,7 +13,7 @@ interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: nu
   /** Effets officiels : Érosion (part des dommages ôtée aux PV max), retrait de PM / PA. */
   erosion?: number; pmLoss?: number; paLoss?: number }
 /** Butin au sol (choix 1C 2D 6A) : équipements et kamas seulement. Les Communs et les kamas filent vers le joueur
- *  qui passe près ; Magique et plus se ramassent d'un clic. Les ressources vont directement dans le sac. */
+ *  qui passe près ; Rare et plus se ramassent d'un clic. Les ressources vont directement dans le sac. */
 export interface Drop { uid: number; x: number; y: number; item?: Item; kamas?: number; t: number; warned?: boolean }
 
 /** Flèche en vol (Crâ). */
@@ -435,7 +435,7 @@ export class World {
       if (o.item) this.emit({ k: 'itemDrop', x, y, rarity: o.item.rarity });
     });
   }
-  /** Rareté minimale affichée et ramassable selon le filtre du joueur (0 Commun, 1 Magique, 2 Rare). */
+  /** Rareté minimale affichée et ramassable selon le filtre du joueur (0 Commun, 1 Rare, 2 Épique). */
   shown(d: Drop): boolean { return !d.item || RARITIES.indexOf(d.item.rarity) >= this.player.lootFilter; }
   /** Aspiré quand on passe près (kamas et Communs) ou ramassé d'un clic (le reste). */
   static magnetic(d: Drop): boolean { return !d.item || d.item.rarity === 'commun'; }

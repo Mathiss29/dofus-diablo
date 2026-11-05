@@ -210,7 +210,7 @@ export class ZoneScene extends Phaser.Scene {
     });
   }
 
-  /** Objet au sol (Magique et plus, affiché) sous le curseur. */
+  /** Objet au sol (Rare et plus, affiché) sous le curseur. */
   private dropUnder(ptr: Phaser.Input.Pointer): number | null {
     const wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
     for (const [uid, v] of this.dropViews) {
@@ -333,7 +333,7 @@ export class ZoneScene extends Phaser.Scene {
         case 'lootKamas': this.hud.loot(`+${e.n} kamas`, '#f2d36b'); this.windows?.refresh(); break;
         case 'bagFull': this.hud.toast('Sac plein : recycle des objets (Maj + clic dans l\'inventaire)'); break;
         case 'monsterCast': this.castName(e.id, e.name); break;
-        case 'itemDrop': if (e.rarity === 'rare' || e.rarity === 'legendaire') this.chime(e.rarity === 'legendaire'); break;
+        case 'itemDrop': if (e.rarity === 'epique' || e.rarity === 'legendaire' || e.rarity === 'mythique') this.chime(e.rarity !== 'epique'); break;
         case 'metierLevel': this.hud.banner(`${ITEMS.metiers?.[e.metier]?.name ?? 'Métier'} niveau ${e.level} !`, 1500); this.windows?.refresh(); break;
         case 'craft': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Objet'} x${e.n}`, '#9ad15a'); this.windows?.refresh(); break;
         case 'eat': this.windows?.refresh(); break;
@@ -346,7 +346,7 @@ export class ZoneScene extends Phaser.Scene {
     }
   }
 
-  /** Butin au sol (choix 3A) : icône officielle qui flotte, colonne de lumière de la couleur de la rareté dès Magique
+  /** Butin au sol (choix 3A) : icône officielle qui flotte, colonne de lumière de la couleur de la rareté dès Rare
    *  (plus haute pour Rare et Légendaire), nom au survol ou avec Alt ; les kamas sont un petit tas de pièces. */
   private drawDrops() {
     const seen = new Set<number>(), w = this.world;
@@ -368,7 +368,7 @@ export class ZoneScene extends Phaser.Scene {
       const p = ISO.toScreen(d.x, d.y);
       if (!v) {
         const col = d.item ? RARITY_COLORS[d.item.rarity] : '#f2d36b', tint = parseInt(col.slice(1), 16);
-        const big = d.item ? ['magique', 'rare', 'legendaire'].indexOf(d.item.rarity) : -1;
+        const big = d.item ? ['rare', 'epique', 'legendaire', 'mythique'].indexOf(d.item.rarity) : -1;
         v = {
           glow: this.add.ellipse(p.x, p.y, 46, 20, tint, 0.35),
           icon: d.item ? this.add.image(p.x, p.y - 14, ICON_SHEET.key, Math.max(0, iconFrame(ITEMS.equipment[d.item.id]?.icon ?? 0))).setDisplaySize(34, 34)
@@ -377,10 +377,10 @@ export class ZoneScene extends Phaser.Scene {
             fontFamily: 'Trebuchet MS, Verdana, sans-serif', fontSize: '13px', fontStyle: 'bold', color: col, stroke: '#000', strokeThickness: 3,
             backgroundColor: '#0d0c0acc', padding: { x: 4, y: 2 },
           }).setOrigin(0.5) : undefined,
-          // colonne : un halo de la couleur de la rareté (orangé pour Rare, qui se perdrait sur les sols dorés) et un cœur blanc
-          beam: big >= 0 ? this.add.image(p.x, p.y, 'beam').setOrigin(0.5, 1).setTint(big === 1 ? 0xffa000 : tint)
-            .setDisplaySize(30 + big * 6, [120, 180, 250][big]) : undefined,
-          core: big >= 0 ? this.add.image(p.x, p.y, 'beam').setOrigin(0.5, 1).setDisplaySize(8 + big * 2, [100, 150, 210][big]) : undefined,
+          // colonne : un halo de la couleur de la rareté et un cœur blanc, plus haute à chaque rang
+          beam: big >= 0 ? this.add.image(p.x, p.y, 'beam').setOrigin(0.5, 1).setTint(tint)
+            .setDisplaySize(30 + big * 6, [110, 160, 220, 290][big]) : undefined,
+          core: big >= 0 ? this.add.image(p.x, p.y, 'beam').setOrigin(0.5, 1).setDisplaySize(8 + big * 2, [90, 135, 185, 250][big]) : undefined,
         };
         this.dropViews.set(d.uid, v);
       }
