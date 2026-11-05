@@ -18,6 +18,8 @@ export interface MapData {
 /** Une carte Dofus dans un monde (tools/extraction/world_export.py). */
 export interface WorldMapEntry {
   x: number; y: number; id: number; sub: number; tag: string; sol: Rect; fond?: Rect & { k?: number }; decor: DecorPlace[];
+  /** Ce que la carte dessine au-delà de son cadre, posé en fondu sur les voisines (plus de coupure au raccord). */
+  bord?: Rect;
   /** Intérieur (maison, mine…) : rangé à part dans la grille, on y entre par une porte. */
   inside?: number;
 }

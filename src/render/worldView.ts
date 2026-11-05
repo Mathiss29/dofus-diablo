@@ -11,6 +11,8 @@ const LOAD_RING = 1, UNLOAD_RING = 2;
 type Slot = { state: 'none' | 'loading' | 'ready'; objs: Phaser.GameObjects.GameObject[]; next: number };
 /** Temps (ms) donné à chaque image pour poser du décor : une carte = ~400 images, les créer d'un coup faisait une saccade. */
 const BUDGET_MS = 3;
+/** Calques facultatifs d'une carte (tools/extraction/world_export.py). */
+const CALQUES = ['fond', 'bord'] as const;
 
 /** Affichage d'un monde ouvert qui ne garde en mémoire que les cartes proches du joueur.
  *  Chaque carte = un sol (+ un fond de nuages non coupé) + un atlas de décor (tools/extraction/world_export.py). Le ciel est une seule image
@@ -40,7 +42,7 @@ export class WorldView {
   }
   private static queue(scene: Phaser.Scene, m: WorldMapEntry, dir: string, prefix: string) {
     scene.load.image(WorldView.key(prefix, `sol_${m.tag}`), v(`${dir}/sol_${m.tag}.webp`));
-    if (m.fond) scene.load.image(WorldView.key(prefix, `fond_${m.tag}`), v(`${dir}/fond_${m.tag}.webp`));
+    for (const c of CALQUES) if (m[c]) scene.load.image(WorldView.key(prefix, `${c}_${m.tag}`), v(`${dir}/${c}_${m.tag}.webp`));
     scene.load.atlas(WorldView.key(prefix, `decor_${m.tag}`), v(`${dir}/decor_${m.tag}.webp`), v(`${dir}/decor_${m.tag}.json`));
   }
 
@@ -77,10 +79,10 @@ export class WorldView {
 
   private texturesReady(m: WorldMapEntry) {
     return this.scene.textures.exists(this.k(`sol_${m.tag}`)) && this.scene.textures.exists(this.k(`decor_${m.tag}`))
-      && (!m.fond || this.scene.textures.exists(this.k(`fond_${m.tag}`)));
+      && CALQUES.every(c => !m[c] || this.scene.textures.exists(this.k(`${c}_${m.tag}`)));
   }
   private onFile(key: string) {
-    const tag = key.replace(new RegExp(`^${this.prefix}_(sol|fond|decor)_`), '');
+    const tag = key.replace(new RegExp(`^${this.prefix}_(sol|fond|bord|decor)_`), '');
     const m = this.wg.world.maps.find(x => x.tag === tag), s = m && this.slots.get(tag);
     // le chargeur prévient quand le fichier est lu ; la texture arrive juste après : on attend une image
     if (!m || !s) return;
@@ -98,6 +100,11 @@ export class WorldView {
     if (m.fond) {   // nuages et rayons qui débordent sur les voisins : sous tous les sols
       const f = wg.toScreen(m.fond.x, m.fond.y);
       s.objs.push(this.scene.add.image(f.x, f.y, this.k(`fond_${m.tag}`)).setOrigin(0).setScale(S * (m.fond.k ?? 1)).setDepth(-15000));
+    }
+    // débords en fondu sur les voisines : au-dessus de tous les sols, sous le décor
+    if (m.bord) {
+      const f = wg.toScreen(m.bord.x, m.bord.y);
+      s.objs.push(this.scene.add.image(f.x, f.y, this.k(`bord_${m.tag}`)).setOrigin(0).setScale(S).setDepth(-9999));
     }
     s.next = 0;
     for (const p of this.portes) if (p.tag === m.tag) {
@@ -131,7 +138,7 @@ export class WorldView {
     this.dropTextures(m);
   }
   private dropTextures(m: WorldMapEntry) {
-    for (const n of [`sol_${m.tag}`, `fond_${m.tag}`, `decor_${m.tag}`]) if (this.scene.textures.exists(this.k(n))) this.scene.textures.remove(this.k(n));
+    for (const n of [`sol_${m.tag}`, `decor_${m.tag}`, ...CALQUES.map(c => `${c}_${m.tag}`)]) if (this.scene.textures.exists(this.k(n))) this.scene.textures.remove(this.k(n));
     this.scene.cache.json.remove(this.k(`decor_${m.tag}`));
   }
 
