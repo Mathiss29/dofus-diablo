@@ -6,6 +6,7 @@ import type { PlayerInput } from './input';
 import { CASE, Monster, TOUR } from './monster';
 import { METIER_XP, RARITIES, rollItem, rollRarity, type Item, type ItemsData } from './items';
 import { Player } from './player';
+import { initiativeBonus, removalChance } from './caracs';
 import { planWave } from './waves';
 
 interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: number;
@@ -233,7 +234,7 @@ export class World {
 
   // --- Flèches ---------------------------------------------------------------
   shoot(x: number, y: number, facing: number, hz: Extract<HitZone, { shape: 'projectile' }>, hit: HitDef, stun: number, area: number, spell: string) {
-    this.projectiles.push({ id: this.nextId++, spell, x, y, dx: Math.cos(facing), dy: Math.sin(facing), left: hz.range, speed: hz.speed,
+    this.projectiles.push({ id: this.nextId++, spell, x, y, dx: Math.cos(facing), dy: Math.sin(facing), left: hz.range + this.player.stat('portee') * CASE, speed: hz.speed,
       width: hz.width, explode: (hz.explode ?? 0) * area, pierce: !!hz.pierce, hit, stun, touched: new Set() });
   }
   /** Projectile d'un monstre vers le joueur. */
@@ -255,14 +256,19 @@ export class World {
       if (e.k === 'dmg') {
         const n = Math.round(e.perPa ? e.min * k * Math.max(0, p.paMax - p.pa) : this.rng.range(e.min, e.max + 1) * k);
         if (n <= 0) continue;
-        landed = p.hurt(n, m.x, m.y, this);
+        landed = p.hurt(n, m.x, m.y, this, e.element);
         if (!landed) return;
         if (e.steal) m.hp = Math.min(m.maxHp, m.hp + Math.round(n / 2));
       } else if (!landed) return;
-      else if (e.k === 'pa' && e.n < 0) { p.pa = Math.max(0, p.pa + e.n); this.emit({ k: 'status', x: p.x, y: p.y, text: `${e.n} PA`, color: '#5aa8ff' }); }
-      else if (e.k === 'pm' && e.n < 0) {
-        p.pm = Math.max(0, p.pm + e.n); p.slow(Math.max(1, e.dur) * TOUR, Math.min(0.6, -e.n * 0.15));
-        this.emit({ k: 'status', x: p.x, y: p.y, text: `${e.n} PM`, color: '#7be07b' });
+      else if ((e.k === 'pa' || e.k === 'pm') && e.n < 0) {
+        // Retrait officiel du monstre (Retrait PA ; pas de Retrait PM dans ses données) contre l'Esquive du joueur
+        const n = this.removed(-e.n, e.k === 'pa' ? m.def.caracs?.retraitPA ?? 0 : 0, p.esquive(e.k === 'pa' ? 'PA' : 'PM'));
+        if (!n) this.emit({ k: 'status', x: p.x, y: p.y, text: 'Esquive', color: '#c8c8c8' });
+        else if (e.k === 'pa') { p.pa = Math.max(0, p.pa - n); this.emit({ k: 'status', x: p.x, y: p.y, text: `-${n} PA`, color: '#5aa8ff' }); }
+        else {
+          p.pm = Math.max(0, p.pm - n); p.slow(Math.max(1, e.dur) * TOUR, Math.min(0.6, n * 0.15));
+          this.emit({ k: 'status', x: p.x, y: p.y, text: `-${n} PM`, color: '#7be07b' });
+        }
       }
       else if (e.k === 'puissance') { p.addMod('puissance', e.n, Math.max(1, e.dur) * TOUR); this.emit({ k: 'status', x: p.x, y: p.y, text: `${e.n} Puissance`, color: '#e0a030' }); }
       else if (e.k === 'attire' || e.k === 'repousse') {
@@ -289,7 +295,7 @@ export class World {
         if (!this.walkable(pr.x, pr.y)) pr.left = 0;   // arrêté par le décor
         else if (!p.dead && Math.hypot(p.x - pr.x, p.y - pr.y) <= p.radius + pr.width) {
           if (pr.from) this.monsterSpellHits(pr.from.monster, pr.from.spell, p);
-          else p.hurt(pr.hit.dmg, pr.x - pr.dx * 20, pr.y - pr.dy * 20, this);
+          else p.hurt(pr.hit.dmg, pr.x - pr.dx * 20, pr.y - pr.dy * 20, this, pr.hit.element);
           pr.left = 0;
         }
         if (pr.left <= 0) this.emit({ k: 'spell', fx: 'burst', id: pr.spell, x: pr.x, y: pr.y, facing: Math.atan2(pr.dy, pr.dx), size: 18, arc: 0,
@@ -342,13 +348,20 @@ export class World {
       const crit = this.rng.next() < p.critChance;
       // Choix 19A : résistances officielles du monstre dans l'élément du coup (plafonnées à 50 %, comme Dofus)
       const el = p.resolveElement(def.element ?? 'neutre'), res = Math.min(50, m.def.res?.[el] ?? 0);
-      const dmg = Math.max(1, Math.round(p.damage(def.dmg, def.element ?? 'neutre') * this.rng.range(0.9, 1.1) * (crit ? cls.critMult : 1) * (1 - res / 100)));
+      // Initiative : le premier coup porté à un monstre est renforcé ; Dommages Critiques et Dommages Poussée s'ajoutent au coup
+      const first = m.struck ? 1 : 1 + initiativeBonus(p.initiative); m.struck = true;
+      const flat = (crit ? p.stat('dommagesCritiques') : 0) + (def.knock > 0 ? p.stat('dommagesPoussee') : 0);
+      const dmg = Math.max(1, Math.round((p.damage(def.dmg, def.element ?? 'neutre') * this.rng.range(0.9, 1.1) * (crit ? cls.critMult : 1) * first + flat) * (1 - res / 100)));
       m.hp -= dmg; m.flash = 0.09;
       if (def.erosion) { m.maxHp = Math.max(1, m.maxHp - Math.round(dmg * def.erosion)); m.hp = Math.min(m.hp, m.maxHp); }
-      if (def.pmLoss) { m.haste = Math.min(m.haste, Math.max(0.3, 1 - 0.15 * def.pmLoss)); m.hasteT = Math.max(m.hasteT, TOUR);
-        this.emit({ k: 'status', x: m.x, y: m.y, text: `-${def.pmLoss} PM`, color: '#9ad15a' }); }
-      if (def.paLoss) { m.atkCd = Math.max(m.atkCd, 0) + 0.4 * def.paLoss;
-        this.emit({ k: 'status', x: m.x, y: m.y, text: `-${def.paLoss} PA`, color: '#5aa8ff' }); }
+      // Retrait PA / PM du joueur contre l'Esquive officielle du monstre : chaque point a sa chance de passer
+      const pm = this.removed(def.pmLoss ?? 0, p.retrait('PM'), m.def.caracs?.esquivePM ?? 0);
+      const pa = this.removed(def.paLoss ?? 0, p.retrait('PA'), m.def.caracs?.esquivePA ?? 0);
+      if (pm) { m.haste = Math.min(m.haste, Math.max(0.3, 1 - 0.15 * pm)); m.hasteT = Math.max(m.hasteT, TOUR);
+        this.emit({ k: 'status', x: m.x, y: m.y, text: `-${pm} PM`, color: '#9ad15a' }); }
+      if (pa) { m.atkCd = Math.max(m.atkCd, 0) + 0.4 * pa;
+        this.emit({ k: 'status', x: m.x, y: m.y, text: `-${pa} PA`, color: '#5aa8ff' }); }
+      if ((def.pmLoss && !pm) || (def.paLoss && !pa)) this.emit({ k: 'status', x: m.x, y: m.y, text: 'Esquive', color: '#c8c8c8' });
       const a = pushDir ?? Math.atan2(m.y - oy, m.x - ox);
       const kb = def.knock / m.def.mass;
       m.kx += Math.cos(a) * kb; m.ky += Math.sin(a) * kb;
@@ -360,6 +373,12 @@ export class World {
       if (m.hp <= 0) this.killMonster(m);
     }
     return n;
+  }
+  /** Points de PA / PM réellement retirés : chacun passe selon Retrait contre Esquive. */
+  private removed(n: number, retrait: number, esquive: number): number {
+    let k = 0;
+    for (let i = 0; i < n; i++) if (this.rng.next() < removalChance(retrait, esquive)) k++;
+    return k;
   }
   private killMonster(m: Monster) {
     m.dead = true; m.t = 0.6; this.kills++;

@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { GAME_DATA } from '../src/sim/data';
+import { GAME_DATA, ITEMS } from '../src/sim/data';
 import { GridMap, WorldGrid, type MapData, type WorldData } from '../src/sim/gridmap';
 import { NO_INPUT, type PlayerInput } from '../src/sim/input';
 import { World } from '../src/sim/world';
@@ -204,5 +204,54 @@ describe('Crâ', () => {
     press(w, 'abolition', { x: m.x, y: m.y });
     idle(w, 0.4);
     expect(p.hp).toBeGreaterThan(50);
+  });
+});
+
+describe('caractéristiques (choix 10C + 10D)', () => {
+  it('Résistance fixe puis % Résistance réduisent les dommages reçus de leur élément', () => {
+    const w = arena(), p = w.player;
+    p.invuln = 0; let hp = p.hp; p.hurt(40, p.x + 10, p.y, w, 'terre'); const plain = hp - p.hp;
+    p.addMod('redTerre', 10, 999); p.addMod('resTerre', 50, 999);
+    p.invuln = 0; hp = p.hp; p.hurt(40, p.x + 10, p.y, w, 'terre');
+    expect(plain).toBe(40);
+    expect(hp - p.hp).toBe(15);   // (40 - 10) × 50 %
+    p.invuln = 0; hp = p.hp; p.hurt(40, p.x + 10, p.y, w, 'feu');
+    expect(hp - p.hp).toBe(40);
+  });
+
+  it('l\'Esquive PM officielle du monstre résiste au retrait de PM (Flèche Cinglante)', () => {
+    const cra = GAME_DATA.classes.cra;
+    const shot = (esquive: number) => {
+      const w = new World({ data: GAME_DATA, zone: 'champs-astrub', map: new GridMap(carte), seed: 9, classId: 'cra' }), p = w.player;
+      const m = w.spawnMonster('epouvanteur', p.x + 120, p.y);
+      m.state = 'chase';
+      (m as { def: typeof m.def }).def = { ...m.def, caracs: { ...m.def.caracs, esquivePM: esquive } };
+      press(w, 'cinglante', { x: m.x, y: m.y });
+      idle(w, 0.6);
+      return w.drainEvents().filter(e => e.k === 'status').map(e => (e as { text: string }).text);
+    };
+    expect(cra.spells.cinglante.pmLoss).toBe(2);
+    expect(shot(0)).toContain('-2 PM');
+    expect(shot(1000)).toContain('Esquive');
+  });
+
+  it('le Tacle d\'un monstre au contact ralentit le joueur qui s\'éloigne, la Fuite y résiste', () => {
+    const run = (fuite: number) => {
+      const w = arena(), p = w.player;
+      if (fuite) p.addMod('fuite', fuite, 999);
+      const m = w.spawnMonster('bouftou', p.x - p.radius - 20, p.y);
+      m.state = 'chase'; m.stun = 99;
+      (m as { def: typeof m.def }).def = { ...m.def, caracs: { ...m.def.caracs, tacle: 40 } };
+      const x = p.x;
+      for (let i = 0; i < 6; i++) w.step(STEP, { ...NO_INPUT, move: { x: 1, y: 0 } });
+      return p.x - x;
+    };
+    const slow = run(0), free = run(1000);
+    expect(slow).toBeLessThan(free * 0.8);
+  });
+
+  it('les objets officiels portent les nouvelles caractéristiques (Tacle, Fuite, Initiative…)', () => {
+    const seen = new Set(Object.values(ITEMS.equipment).flatMap(d => Object.keys(d.stats)));
+    for (const k of ['tacle', 'fuite', 'initiative', 'portee', 'invocations']) expect(seen.has(k), k).toBe(true);
   });
 });

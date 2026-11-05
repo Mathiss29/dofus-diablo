@@ -4,6 +4,7 @@ import { WEAPONS } from './data';
 import { BASE_STATS, EQUIP_SLOTS, METIER_MAX, metierXpNeeded, type EquipSlot, type Item, type ItemsData, type Stat, type Stats } from './items';
 import type { PlayerInput } from './input';
 import type { World } from './world';
+import { fuiteFactor, tackleSlow, tacleOf } from './caracs';
 
 type ActiveSkill =
   | { id: 'attaque'; def: ComboHit; t: number; impacted: boolean; idx: number; boosted: false }
@@ -72,8 +73,25 @@ export class Player extends Entity {
   addMod(k: Stat, n: number, t: number) { this.mods.push({ k, n, t }); }
   /** Ralentissement (retrait de PM) : fraction de vitesse perdue et durée restante. */
   slowK = 0; slowT = 0;
-  slow(t: number, k: number) { this.slowK = this.slowT > 0 ? Math.max(this.slowK, k) : k; this.slowT = Math.max(this.slowT, t); }
+  slow(t: number, k: number) { k *= fuiteFactor(this.fuite); this.slowK = this.slowT > 0 ? Math.max(this.slowK, k) : k; this.slowT = Math.max(this.slowT, t); }
   get speed(): number { return this.cls.speed * (this.slowT > 0 ? 1 - this.slowK : 1); }
+  /** Tacle et Fuite (base Agilité / 10), Retrait et Esquive PA / PM (base Sagesse / 10), comme dans Dofus. */
+  get tacle(): number { return tacleOf(this.stat('tacle'), this.stat('agilite')); }
+  get fuite(): number { return tacleOf(this.stat('fuite'), this.stat('agilite')); }
+  retrait(k: 'PA' | 'PM'): number { return this.stat(`retrait${k}`) + this.stat('sagesse') / 10; }
+  esquive(k: 'PA' | 'PM'): number { return this.stat(`esquive${k}`) + this.stat('sagesse') / 10; }
+  get initiative(): number { return this.stat('initiative') + this.stat('force') + this.stat('intelligence') + this.stat('chance') + this.stat('agilite'); }
+  /** Tacle des monstres au contact : on avance moins vite en s'éloignant d'eux (la Fuite y résiste). */
+  private tackled(dx: number, dy: number, world: World): number {
+    let k = 0;
+    for (const m of world.monsters) {
+      if (m.dead || m.state === 'spawn') continue;
+      const ox = this.x - m.x, oy = this.y - m.y, d = Math.hypot(ox, oy);
+      if (d > m.radius + this.radius + 12 || ox * dx + oy * dy <= 0) continue;
+      k = Math.max(k, tackleSlow(tacleOf(m.def.caracs?.tacle ?? 0, m.def.caracs?.agilite ?? 0), this.fuite));
+    }
+    return 1 - k;
+  }
   get paMax(): number { return this.cls.pa.max + this.stat('pa'); }
   get pmMax(): number { return this.cls.pm.max + this.stat('pm'); }
   get critChance(): number { return this.cls.critChance + this.stat('critique') / 100; }
@@ -349,10 +367,11 @@ export class Player extends Entity {
       const m = input.move;
       if (m.x || m.y) {
         this.path = []; this.chaseId = null;
-        this.x += m.x * this.speed * dt; this.y += m.y * this.speed * dt;
+        const v = this.speed * this.tackled(m.x, m.y, world);
+        this.x += m.x * v * dt; this.y += m.y * v * dt;
         this.facing = Math.atan2(m.y, m.x); this.setAnim('run');
       } else if (this.path.length) {
-        const t = this.path[0], dx = t.x - this.x, dy = t.y - this.y, d = Math.hypot(dx, dy), step = this.speed * dt;
+        const t = this.path[0], dx = t.x - this.x, dy = t.y - this.y, d = Math.hypot(dx, dy), step = this.speed * this.tackled(dx, dy, world) * dt;
         if (d <= step) { this.x = t.x; this.y = t.y; this.path.shift(); }
         else { this.x += dx / d * step; this.y += dy / d * step; }
         if (d > 0.5) this.facing = Math.atan2(dy, dx);
@@ -455,8 +474,11 @@ export class Player extends Entity {
     if (s.t >= d.duration) this.endSkill();
   }
 
-  hurt(dmg: number, fromX: number, fromY: number, world: World): boolean {
+  /** Coup reçu : Résistance fixe puis % Résistance de l'élément (plafonnée à 50 %), comme Dofus. */
+  hurt(raw: number, fromX: number, fromY: number, world: World, element: Element = 'neutre'): boolean {
     if (this.invuln > 0 || this.dead) return false;
+    const E = element === 'meilleur' ? 'Neutre' : `${element[0].toUpperCase()}${element.slice(1)}`;
+    const dmg = Math.max(1, Math.round((raw - this.stat(`red${E}` as Stat)) * (1 - Math.min(50, this.stat(`res${E}` as Stat)) / 100)));
     this.hp -= dmg; this.flash = 0.1; this.invuln = this.cls.iframesOnHit;
     const a = Math.atan2(this.y - fromY, this.x - fromX);
     this.kx += Math.cos(a) * 260; this.ky += Math.sin(a) * 260;

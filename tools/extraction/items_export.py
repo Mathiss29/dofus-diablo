@@ -27,12 +27,27 @@ I, RI = table('items'); SETS, RS = table('itemsets'); M, _ = table('monsters')
 SLOTS = {1: 'amulette', 9: 'anneau', 10: 'ceinture', 11: 'bottes', 16: 'chapeau', 17: 'cape', 82: 'bouclier',
          2: 'arme', 3: 'arme', 4: 'arme', 5: 'arme', 6: 'arme', 7: 'arme', 8: 'arme', 19: 'arme', 22: 'arme'}
 WEAPON = {2: 'Arc', 3: 'Baguette', 4: 'Bâton', 5: 'Dague', 6: 'Épée', 7: 'Marteau', 8: 'Pelle', 19: 'Hache', 22: 'Faux'}
-# effectId Dofus -> caractéristique du jeu (signe -1 pour les malus)
-STATS = {125: ('vitalite', 1), 153: ('vitalite', -1), 118: ('force', 1), 157: ('force', -1), 126: ('intelligence', 1), 155: ('intelligence', -1),
-         123: ('chance', 1), 152: ('chance', -1), 119: ('agilite', 1), 154: ('agilite', -1), 124: ('sagesse', 1), 156: ('sagesse', -1),
-         115: ('critique', 1), 138: ('puissance', 1), 112: ('dommages', 1), 178: ('soins', 1), 111: ('pa', 1), 128: ('pm', 1),
-         176: ('prospection', 1), 422: ('dommagesTerre', 1), 424: ('dommagesFeu', 1), 426: ('dommagesEau', 1), 428: ('dommagesAir', 1),
-         430: ('dommagesNeutre', 1)}
+# caractéristique officielle (characteristics.keyword) -> caractéristique du jeu (choix 10C : toutes les caracs de Dofus)
+CARAC = {'vitality': 'vitalite', 'wisdom': 'sagesse', 'strength': 'force', 'intelligence': 'intelligence', 'chance': 'chance',
+         'agility': 'agilite', 'damagePercent': 'puissance', 'allDamageBonus': 'dommages', 'criticalHit': 'critique', 'healBonus': 'soins',
+         'actionPoints': 'pa', 'movementPoints': 'pm', 'magicFind': 'prospection', 'range': 'portee', 'initiative': 'initiative',
+         'earthDamageBonus': 'dommagesTerre', 'fireDamageBonus': 'dommagesFeu', 'waterDamageBonus': 'dommagesEau',
+         'airDamageBonus': 'dommagesAir', 'neutralDamageBonus': 'dommagesNeutre',
+         'earthElementResistPercent': 'resTerre', 'fireElementResistPercent': 'resFeu', 'waterElementResistPercent': 'resEau',
+         'airElementResistPercent': 'resAir', 'neutralElementResistPercent': 'resNeutre',
+         'earthElementReduction': 'redTerre', 'fireElementReduction': 'redFeu', 'waterElementReduction': 'redEau',
+         'airElementReduction': 'redAir', 'neutralElementReduction': 'redNeutre',
+         'tackleBlock': 'tacle', 'tackleEvade': 'fuite', 'DodgeApLostProbability': 'esquivePA', 'DodgeMpLostProbability': 'esquivePM',
+         'apReduction': 'retraitPA', 'mpReduction': 'retraitPM', 'pushDamageBonus': 'dommagesPoussee', 'pushDamageReduction': 'resPoussee',
+         'criticalDamageBonus': 'dommagesCritiques', 'criticalDamageReduction': 'resCritiques',
+         'maxSummonedCreaturesBoost': 'invocations', 'weight': 'pods'}
+# effectId Dofus -> (caractéristique du jeu, signe), lu dans la table des effets (characteristic + characteristicOperator)
+EFF, _ = table('effects'); CH, _ = table('characteristics')
+STATS = {}
+for eid, e in EFF.items():
+    kw = (CH.get(int(e.get('characteristic') or 0)) or {}).get('keyword')
+    if kw in CARAC and e.get('characteristicOperator') in ('+', '-'):
+        STATS[eid] = (CARAC[kw], 1 if e['characteristicOperator'] == '+' else -1)
 # lignes de dommages des armes -> élément
 WEAPON_DMG = {96: 'eau', 97: 'terre', 98: 'air', 99: 'feu', 100: 'neutre'}
 

@@ -91,3 +91,9 @@ Les bundles d'effets ne sont pas dans le cache : les copier depuis le PC de Math
 `items_export.py` ajoute aussi : `chasse` sur les armes à effet 795 « Arme de chasse », le critère officiel des viandes
 (`Pj>41,N&CU>0` → `metier: {id: 41, min: N+1}`, `chasse: true`), les recettes du Chasseur faisables avec le butin du jeu
 (`recipes`), et `soin` (effet 110) sur les plats.
+
+## Caractéristiques (choix 10C + 10D)
+
+`items_export.py` lit toutes les caractéristiques des objets dans la table des effets (`characteristic` + `characteristicOperator`)
+et les range selon `CARAC` (mot-clé de `characteristics` → caractéristique du jeu). `monster_stats.py` donne aux monstres leurs
+caractéristiques officielles (grade 1). Rôle de chacune en temps réel : `src/sim/caracs.ts`.

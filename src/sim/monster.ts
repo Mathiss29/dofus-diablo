@@ -2,6 +2,7 @@ import { Entity } from './entity';
 import type { MonsterDef, MonsterSpell } from './defs';
 import type { Player } from './player';
 import type { World } from './world';
+import { tackleSlow, tacleOf } from './caracs';
 
 /** Dofus -> temps réel : 1 case = CASE px (pas d'une case à sa voisine en diagonale), 1 tour = TOUR s. */
 export const CASE = 48, TOUR = 3;
@@ -44,6 +45,8 @@ export class Monster extends Entity {
   spellCd: number[];
   /** Bonus de vitesse (sort qui donne des PM, ex. Bêlement) : multiplicateur et durée restante. */
   haste = 1; hasteT = 0;
+  /** Déjà touché par le joueur (l'Initiative ne renforce que le premier coup). */
+  struck = false;
 
   constructor(id: number, readonly type: string, readonly def: MonsterDef, x: number, y: number, world: World) {
     super(id, x, y, def.radius, def.hp);
@@ -66,7 +69,9 @@ export class Monster extends Entity {
     this.atkCd -= dt;
     for (let i = 0; i < this.spellCd.length; i++) this.spellCd[i] -= dt;
     if (this.hasteT > 0 && (this.hasteT -= dt) <= 0) this.haste = 1;
-    const speed = D.speed * this.haste;
+    // Tacle du joueur : un monstre à son contact avance moins vite (sa Fuite officielle y résiste)
+    const near = Math.hypot(player.x - this.x, player.y - this.y) <= this.radius + player.radius + 12;
+    const speed = D.speed * this.haste * (near ? 1 - tackleSlow(player.tacle, tacleOf(D.caracs?.fuite ?? 0, D.caracs?.agilite ?? 0)) : 1);
     if (open && this.state !== 'idle' && this.state !== 'return'
       && (player.dead || Math.hypot(this.x - this.homeX, this.y - this.homeY) > open.leash)) { this.state = 'return'; this.wanderT = 0; }
     switch (this.state) {
@@ -86,7 +91,7 @@ export class Monster extends Entity {
         this.hp = Math.min(this.maxHp, this.hp + this.maxHp * dt * 0.5);
         this.wanderT -= dt;
         if (this.wanderT < -6) { this.x = this.homeX; this.y = this.homeY; }   // coincé derrière un obstacle
-        if (!this.moveTo(this.homeX, this.homeY, D.speed * 1.4, dt)) { this.state = 'idle'; this.maxHp = this.def.hp; this.hp = this.maxHp; this.setAnim('idle'); }
+        if (!this.moveTo(this.homeX, this.homeY, D.speed * 1.4, dt)) { this.state = 'idle'; this.maxHp = this.def.hp; this.struck = false; this.hp = this.maxHp; this.setAnim('idle'); }
         else this.setAnim('run');
         break;
       }
