@@ -1,3 +1,4 @@
+import { RARITY_COLORS } from '../sim/items';
 import { v } from './assetUrl';
 import Phaser from 'phaser';
 import { GAME_DATA } from '../sim/data';
@@ -326,6 +327,14 @@ export class Hud {
         const q = toMini(m.x, m.y);
         if (q.x < mx || q.y < my || q.x > mx + mw || q.y > my + mh) continue;
         g.fillStyle(m.def.boss || m.def.elite ? C.gold : 0xd04030, 1); g.fillCircle(q.x, q.y, m.def.boss ? 3.5 : 2.2);
+      }
+      // objets Rare et Légendaire au sol : un losange de leur couleur (choix 3D)
+      for (const d of world.drops) {
+        if (d.t < 0 || !d.item || (d.item.rarity !== 'rare' && d.item.rarity !== 'legendaire') || !world.shown(d)) continue;
+        const q = toMini(d.x, d.y);
+        if (q.x < mx || q.y < my || q.x > mx + mw || q.y > my + mh) continue;
+        g.fillStyle(parseInt(RARITY_COLORS[d.item.rarity].slice(1), 16), 1); g.lineStyle(1, 0x000000, 1);
+        g.fillTriangle(q.x, q.y - 5, q.x + 4, q.y, q.x - 4, q.y); g.fillTriangle(q.x, q.y + 5, q.x + 4, q.y, q.x - 4, q.y);
       }
       // le perso (losange bleu) et les coins du cadre, comme dans Dofus 3
       const q = toMini(p.x, p.y);

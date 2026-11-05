@@ -4,13 +4,14 @@ import type { SimEvent, Telegraph } from './events';
 import { GridMap, WorldGrid } from './gridmap';
 import type { PlayerInput } from './input';
 import { Monster } from './monster';
-import { rollItem, rollRarity, type Item, type ItemsData } from './items';
+import { RARITIES, rollItem, rollRarity, type Item, type ItemsData } from './items';
 import { Player } from './player';
 import { planWave } from './waves';
 
 interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: number }
-/** Butin au sol : ramassé en passant dessus. */
-export interface Drop { uid: number; x: number; y: number; item?: Item; resource?: { id: string; n: number }; t: number }
+/** Butin au sol (choix 1C 2D 6A) : équipements et kamas seulement. Les Communs et les kamas filent vers le joueur
+ *  qui passe près ; Magique et plus se ramassent d'un clic. Les ressources vont directement dans le sac. */
+export interface Drop { uid: number; x: number; y: number; item?: Item; kamas?: number; t: number; warned?: boolean }
 
 /** Flèche en vol (Crâ). */
 export interface Projectile { id: number; spell: string; x: number; y: number; dx: number; dy: number; left: number; speed: number; width: number;
@@ -332,7 +333,10 @@ export class World {
     for (const d of I.drops[m.type] ?? []) {
       if (this.rng.next() * 100 >= d.chance * more) continue;
       if (I.equipment[d.item]) out.push({ item: rollItem(d.item, I.equipment[d.item], rollRarity(this.rng, boss, pros), this.rng, this.nextId++) });
-      else out.push({ resource: { id: d.item, n: 1 } });
+      else {   // ressource : directement dans le sac
+        p.resources[d.item] = (p.resources[d.item] ?? 0) + 1;
+        this.emit({ k: 'lootResource', id: d.item, n: 1 });
+      }
     }
     const equipChance = boss ? 1 : elite ? 0.3 : 0.06;
     for (let k = 0; k < (boss ? 2 : 1); k++) {
@@ -342,6 +346,8 @@ export class World {
       const id = this.rng.pick(pool).id;
       out.push({ item: rollItem(id, I.equipment[id], rollRarity(this.rng, boss, pros), this.rng, this.nextId++) });
     }
+    // kamas : un petit tas de pièces, plus gros pour les élites et les boss
+    if (boss || elite || this.rng.next() < 0.6) out.push({ kamas: Math.max(1, Math.round(lvl * this.rng.range(1, 3) * (boss ? 12 : elite ? 4 : 1) * more)) });
     out.forEach((o, i) => {
       const a = (i / Math.max(1, out.length)) * Math.PI * 2 + this.rng.range(0, 1), r = out.length > 1 ? 34 : 0;
       let x = m.x + Math.cos(a) * r, y = m.y + Math.sin(a) * r;
@@ -350,21 +356,32 @@ export class World {
       if (o.item) this.emit({ k: 'itemDrop', x, y, rarity: o.item.rarity });
     });
   }
+  /** Rareté minimale affichée et ramassable selon le filtre du joueur (0 Commun, 1 Magique, 2 Rare). */
+  shown(d: Drop): boolean { return !d.item || RARITIES.indexOf(d.item.rarity) >= this.player.lootFilter; }
+  /** Aspiré quand on passe près (kamas et Communs) ou ramassé d'un clic (le reste). */
+  static magnetic(d: Drop): boolean { return !d.item || d.item.rarity === 'commun'; }
   private updateDrops(dt: number) {
     const p = this.player;
     for (const d of this.drops) {
       d.t += dt;
-      if (p.dead || d.t < 0.5 || Math.hypot(d.x - p.x, d.y - p.y) > 60) continue;
+      if (p.dead || d.t < 0.5 || !this.shown(d)) continue;
+      const dist = Math.hypot(d.x - p.x, d.y - p.y);
+      if (World.magnetic(d)) {
+        if (dist > 130) continue;
+        if (dist > 26) { const s = Math.min(dist, 520 * dt); d.x += (p.x - d.x) / dist * s; d.y += (p.y - d.y) / dist * s; continue; }
+      } else if (p.pickupId !== d.uid || dist > 44) continue;
       if (d.item) {
-        if (p.bag.length >= Player.BAG_SIZE) continue;   // sac plein : l'objet reste au sol
+        if (p.pickupId === d.uid) p.pickupId = null;
+        if (p.bag.length >= Player.BAG_SIZE) { if (!d.warned) this.emit({ k: 'bagFull' }); d.warned = true; continue; }   // sac plein : l'objet reste au sol
         p.bag.push(d.item);
         this.emit({ k: 'loot', item: d.item });
-      } else if (d.resource) {
-        p.resources[d.resource.id] = (p.resources[d.resource.id] ?? 0) + d.resource.n;
-        this.emit({ k: 'lootResource', id: d.resource.id, n: d.resource.n });
+      } else if (d.kamas) {
+        p.kamas += d.kamas;
+        this.emit({ k: 'lootKamas', n: d.kamas });
       }
       d.t = -1;
     }
+    if (p.pickupId != null && !this.drops.some(d => d.uid === p.pickupId && d.t >= 0)) p.pickupId = null;
     // ramassé, ou oublié au sol depuis 3 minutes
     this.drops = this.drops.filter(d => d.t >= 0 && d.t < 180);
   }

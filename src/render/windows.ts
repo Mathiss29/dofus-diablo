@@ -62,7 +62,7 @@ const CSS = `
 .dw .tab img{width:24px;height:24px}
 .dw .tab.on{background:linear-gradient(#6f9a2a,#4c6e17);border-color:#b9e54b}
 .dw .tab:hover{border-color:#b9e54b}
-.dw .list{display:grid;grid-template-rows:auto auto 1fr auto;gap:8px;padding:12px 12px 10px;min-height:0}
+.dw .list{display:grid;grid-template-rows:auto auto 1fr auto auto;gap:8px;padding:12px 12px 10px;min-height:0}
 .dw input,.dw select{width:100%;box-sizing:border-box;background:#141310;border:1px solid #45433b;color:#e8e2d4;padding:7px 9px;border-radius:3px;font:13px 'Trebuchet MS',sans-serif}
 .dw select{cursor:pointer}
 .dw .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -173,13 +173,16 @@ export class Windows {
             </div>
             <div class="grid">${html}</div>
             <div class="foot"><span>Visible(s) : <b>${n}</b> · sac <b>${p.bag.length} / ${Player.BAG_SIZE}</b><br><span class="hint">Clic droit : équiper / retirer · Maj + clic : recycler</span></span>
-              <span class="k">${Object.values(p.resources).reduce((a, b) => a + b, 0)} <img src="${INV}/tab_resources.png" alt="" title="Ressources"></span></div>
+              <span class="k">${p.kamas.toLocaleString('fr-FR')} <img src="${INV}/kamas.png" alt="" title="Kamas"></span></div>
+            <div class="foot"><span>Butin affiché au sol</span>
+              <select data-filter style="width:auto">${['Tout', 'Magique et plus', 'Rare et plus'].map((n, i) => `<option value="${i}" ${p.lootFilter === i ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
           </div>
         </div>
       </div>`;
     w.querySelectorAll<HTMLElement>('[data-tab]').forEach(e => e.addEventListener('click', () => { this.tab = e.dataset.tab!; this.render(); }));
     w.querySelector<HTMLSelectElement>('[data-sort]')!.addEventListener('change', e => { this.sort = (e.target as HTMLSelectElement).value; this.render(); });
     w.querySelector<HTMLSelectElement>('[data-kind]')!.addEventListener('change', e => { this.kind = (e.target as HTMLSelectElement).value; this.render(); });
+    w.querySelector<HTMLSelectElement>('[data-filter]')!.addEventListener('change', e => { p.lootFilter = +(e.target as HTMLSelectElement).value; this.render(); });
     w.querySelectorAll('select').forEach(s => s.addEventListener('keydown', e => e.stopPropagation()));
     const inp = w.querySelector<HTMLInputElement>('[data-search]')!;
     inp.addEventListener('input', () => { this.search = inp.value; this.render(); const m = this.win!.querySelector<HTMLInputElement>('[data-search]')!; m.focus(); m.setSelectionRange(m.value.length, m.value.length); });

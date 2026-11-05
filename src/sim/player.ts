@@ -36,13 +36,18 @@ export class Player extends Entity {
   /** Sac (objets tirés) et ressources par identifiant Dofus. */
   bag: Item[] = [];
   resources: Record<string, number> = {};
+  kamas = 0;
+  /** Butin au sol affiché et aspiré (choix 4C, réglé dans l'inventaire) : 0 tout, 1 Magique et plus, 2 Rare et plus. */
+  lootFilter = 0;
+  /** Objet au sol que l'on va ramasser (clic). */
+  pickupId: number | null = null;
   equipment: Partial<Record<EquipSlot, Item>> = {};
   /** Caractéristiques totales (points + équipement + panoplies), recalculées à chaque changement. */
   stats: Stats = {};
   /** Panoplies portées : nombre d'objets par panoplie. */
   setCount: Record<string, number> = {};
   items: ItemsData | null = null;
-  static readonly BAG_SIZE = 60;
+  static readonly BAG_SIZE = 120;
   /** Déplacement à la souris : points de passage restants, monstre poursuivi, dernière destination. */
   path: { x: number; y: number }[] = [];
   chaseId: number | null = null;
@@ -266,9 +271,13 @@ export class Player extends Entity {
     // Déplacement à la souris (clic gauche) : sur le sol on y va, sur un monstre on s'approche pour l'attaquer
     let aim = input.aim;
     this.repathT -= dt;
-    if (input.target != null) this.chaseId = input.target;
+    if (input.pickup != null) {
+      const d = world.drops.find(q => q.uid === input.pickup);
+      if (d) { this.pickupId = d.uid; this.chaseId = null; this.dest = null; this.path = world.findPath(this, d); }
+    }
+    if (input.target != null) { this.chaseId = input.target; this.pickupId = null; }
     else if (input.dest) {
-      this.chaseId = null;
+      this.chaseId = null; this.pickupId = null;
       if (!this.dest || Math.hypot(input.dest.x - this.dest.x, input.dest.y - this.dest.y) > 20 || this.repathT <= 0) {
         this.dest = { ...input.dest }; this.path = world.findPath(this, input.dest); this.repathT = 0.25;
       }
