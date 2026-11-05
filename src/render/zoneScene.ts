@@ -12,6 +12,7 @@ import { Hud } from './hud';
 import { LOOKS } from './looks';
 import { drawMap } from './mapView';
 import { WorldView } from './worldView';
+import { ICON_SHEET, iconFrame } from './icons';
 import { Windows } from './windows';
 import { RARITY_COLORS, RARITY_NAMES, rollItem } from '../sim/items';
 
@@ -53,9 +54,8 @@ export class ZoneScene extends Phaser.Scene {
 
   preload() {
     Hud.preload(this);
-    // Icônes des objets officiels (petites : on les charge toutes)
-    const icons = new Set<number>([...Object.values(ITEMS.equipment).map(i => i.icon), ...Object.values(ITEMS.resources).map(r => r.icon)]);
-    for (const i of icons) if (!this.textures.exists(`obj_${i}`)) this.load.image(`obj_${i}`, `${ASSETS}/ui/objets/${i}.png`);
+    // Icônes des objets officiels : une seule planche
+    if (!this.textures.exists(ICON_SHEET.key)) this.load.spritesheet(ICON_SHEET.key, `${ASSETS}/${ICON_SHEET.url}`, { frameWidth: ICON_SHEET.cell, frameHeight: ICON_SHEET.cell });
     const zone = GAME_DATA.zones[this.zoneId];
     // On ne charge que les planches utiles à cette zone
     const types = new Set<string>();
@@ -225,7 +225,7 @@ export class ZoneScene extends Phaser.Scene {
         const col = d.item ? RARITY_COLORS[d.item.rarity] : '#c9c4ab';
         v = {
           glow: this.add.ellipse(p.x, p.y, 46, 20, parseInt(col.slice(1), 16), 0.35),
-          icon: this.add.image(p.x, p.y - 14, `obj_${icon}`).setDisplaySize(34, 34),
+          icon: this.add.image(p.x, p.y - 14, ICON_SHEET.key, Math.max(0, iconFrame(icon ?? 0))).setDisplaySize(34, 34),
           label: d.item ? this.add.text(p.x, p.y - 40, ITEMS.equipment[d.item.id]?.name ?? '', {
             fontFamily: 'Trebuchet MS, Verdana, sans-serif', fontSize: '13px', fontStyle: 'bold', color: col, stroke: '#000', strokeThickness: 3,
           }).setOrigin(0.5) : undefined,

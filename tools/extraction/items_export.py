@@ -1,6 +1,6 @@
-"""Exporte les objets officiels utiles au jeu dans src/data/items.json, et copie leurs icônes.
+"""Exporte les objets officiels utiles au jeu dans src/data/items.json, et range leurs icônes sur une planche.
 
-python items_export.py <donnees> <icones_item_1x> <monsters.json du jeu> <src/data/items.json> <public/assets/ui/objets> [niveau_max]
+python items_export.py <donnees> <icones_item_1x> <monsters.json du jeu> <src/data/items.json> <public/assets/ui/objets (sans extension)> [niveau_max]
   donnees : tables sorties par data_dump.py (items.json, itemsets.json, itemtypes.json, monsters.json de Dofus)
   icones  : dossier png/item_1x du catalogue (catalogue.py), une icône par iconId
 Garde : les équipements jusqu'au niveau max (25 par défaut) avec leurs lignes de caractéristiques (min, max),
@@ -86,10 +86,22 @@ for key, gm in game.items():
     drops[key] = lst
 
 json.dump({'equipment': items, 'sets': sets, 'resources': resources, 'drops': drops}, open(out, 'w'), ensure_ascii=False, indent=1)
-os.makedirs(icon_out, exist_ok=True)
-miss = 0
-for i in used_icons:
+# Une seule planche pour toutes les icônes (case de 64 px, ordre des iconId) : <icon_out>.webp + src/data/icones_objets.json
+# (des centaines de petits fichiers ralentissent le chargement et dépassent les limites de publication)
+from PIL import Image
+C, miss, cells = 64, 0, []
+for i in sorted(used_icons):
     src = os.path.join(icons, f'{i}.png')
-    if os.path.exists(src): shutil.copy(src, os.path.join(icon_out, f'{i}.png'))
+    if os.path.exists(src): cells.append((i, src))
     else: miss += 1
-print(len(items), 'équipements,', len(sets), 'panoplies,', len(resources), 'ressources,', len(used_icons) - miss, 'icônes (', miss, 'manquantes )')
+cols = 20; rows = (len(cells) + cols - 1) // cols
+sheet = Image.new('RGBA', (cols * C, rows * C))
+frames = {}
+for n, (i, src) in enumerate(cells):
+    im = Image.open(src).convert('RGBA'); im.thumbnail((C, C))
+    x, y = (n % cols) * C, (n // cols) * C
+    sheet.paste(im, (x + (C - im.width) // 2, y + (C - im.height) // 2))
+    frames[str(i)] = n
+sheet.save(icon_out + '.webp', 'WEBP', lossless=True, method=6)
+json.dump({'cell': C, 'cols': cols, 'rows': rows, 'icons': frames}, open(os.path.join(os.path.dirname(out), 'icones_objets.json'), 'w'))
+print(len(items), 'équipements,', len(sets), 'panoplies,', len(resources), 'ressources,', len(cells), 'icônes (', miss, 'manquantes )')

@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { GAME_DATA, ITEMS } from '../src/sim/data';
+import { icons as ICON_FRAMES } from '../src/data/icones_objets.json';
 import { GridMap, type MapData } from '../src/sim/gridmap';
 import { legendaryPower, rollItem, type Stat } from '../src/sim/items';
 import { Rng } from '../src/sim/math';
@@ -15,7 +16,7 @@ const find = (name: string) => Object.entries(ITEMS.equipment).find(([, d]) => d
 describe('objets officiels', () => {
   it('des équipements de niveau 1 à 25 avec icône, et le butin officiel des monstres du jeu', () => {
     expect(Object.keys(ITEMS.equipment).length).toBeGreaterThan(200);
-    for (const d of Object.values(ITEMS.equipment)) expect(readFileSync(new URL(`../public/assets/ui/objets/${d.icon}.png`, import.meta.url)).length).toBeGreaterThan(50);
+    for (const d of Object.values(ITEMS.equipment)) expect((ICON_FRAMES as Record<string, number>)[d.icon]).toBeGreaterThanOrEqual(0);
     expect(ITEMS.drops.bouftou_nuageux.length).toBeGreaterThan(0);
   });
   it('la rareté règle les jets : commun dans la moitié basse, rare dans la moitié haute avec 2 lignes en plus', () => {

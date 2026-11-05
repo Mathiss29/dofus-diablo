@@ -1,3 +1,4 @@
+import { ICON_CSS, iconHtml } from './icons';
 import { ITEMS } from '../sim/data';
 import {
   BASE_STATS, LEGENDARY, RARITY_COLORS, RARITY_NAMES, STATS, STAT_NAMES, recycleValue,
@@ -5,7 +6,6 @@ import {
 } from '../sim/items';
 import type { World } from '../sim/world';
 
-const ICON = (i: number) => `assets/ui/objets/${i}.png`;
 const SLOT_NAMES: Record<EquipSlot, string> = {
   chapeau: 'Coiffe', cape: 'Cape', amulette: 'Amulette', anneau1: 'Anneau', anneau2: 'Anneau', ceinture: 'Ceinture',
   bottes: 'Bottes', arme: 'Arme', bouclier: 'Bouclier',
@@ -27,7 +27,7 @@ const CSS = `
 .dw .perso{display:grid;grid-template-columns:62px 1fr 62px;gap:6px;align-items:center}
 .dw .slots{display:grid;gap:8px}
 .dw .slot{width:56px;height:56px;border-radius:5px;background:#1d1c15;border:1px solid #4a4736;position:relative;display:grid;place-items:center;cursor:pointer}
-.dw .slot img{width:48px;height:48px}.dw .slot .lab{position:absolute;inset:0;display:grid;place-items:center;font-size:10px;color:#6f6a55;text-align:center}
+.dw .slot .ic{width:48px;height:48px}.dw .slot .lab{position:absolute;inset:0;display:grid;place-items:center;font-size:10px;color:#6f6a55;text-align:center}
 .dw .stage{position:relative;height:300px;display:grid;place-items:end center}
 .dw .stage .socle{position:absolute;bottom:8px;width:190px;opacity:.9;filter:sepia(.5) saturate(1.3) drop-shadow(0 0 10px #8fe8ff66)}
 .dw .stage .who{position:relative;bottom:40px;image-rendering:auto;max-height:230px}
@@ -38,7 +38,7 @@ const CSS = `
 .dw input{width:100%;box-sizing:border-box;background:#0f0e0b;border:1px solid #3a3a2c;color:#e8e2d4;padding:6px 8px;border-radius:4px;margin-bottom:8px}
 .dw .grid{display:grid;grid-template-columns:repeat(auto-fill,52px);gap:5px}
 .dw .cell{width:52px;height:52px;border-radius:4px;background:#1d1c15;border:1px solid #3a3a2c;position:relative;cursor:pointer}
-.dw .cell img{width:44px;height:44px;margin:4px}.dw .cell .n{position:absolute;right:3px;bottom:1px;font-size:11px;font-weight:bold;text-shadow:0 0 2px #000}
+.dw .cell .ic{width:44px;height:44px;margin:4px}.dw .cell .n{position:absolute;right:3px;bottom:1px;font-size:11px;font-weight:bold;text-shadow:0 0 2px #000}
 .dw .cell.up::after{content:'▲';position:absolute;left:3px;top:1px;color:#7be07b;font-size:10px}
 .dw .cell.low{opacity:.55}
 .dw .stats{display:grid;gap:3px}.dw .stats div{display:flex;justify-content:space-between;align-items:center;padding:2px 0;border-bottom:1px solid #2a2820}
@@ -67,7 +67,7 @@ export class Windows {
   onChange: () => void = () => {};
 
   constructor(private world: World) {
-    const style = document.createElement('style'); style.textContent = CSS; document.head.appendChild(style);
+    const style = document.createElement('style'); style.textContent = CSS + ICON_CSS; document.head.appendChild(style);
     this.root = document.createElement('div'); this.root.className = 'dw'; document.body.appendChild(this.root);
     this.tip = document.createElement('div'); this.tip.className = 'tip'; this.tip.style.display = 'none'; this.root.appendChild(this.tip);
   }
@@ -91,7 +91,7 @@ export class Windows {
     const w = this.win!, p = this.world.player, cls = p.cls;
     const slot = (s: EquipSlot) => {
       const it = p.equipment[s], d = it && ITEMS.equipment[it.id];
-      return `<div class="slot" data-slot="${s}" style="${it ? `border-color:${RARITY_COLORS[it.rarity]}` : ''}">${d ? `<img src="${ICON(d.icon)}" alt="">` : `<span class="lab">${SLOT_NAMES[s]}</span>`}</div>`;
+      return `<div class="slot" data-slot="${s}" style="${it ? `border-color:${RARITY_COLORS[it.rarity]}` : ''}">${d ? `${iconHtml(d.icon)}` : `<span class="lab">${SLOT_NAMES[s]}</span>`}</div>`;
     };
     const bag = this.filtered();
     const st = (k: Stat) => p.stat(k);
@@ -159,12 +159,12 @@ export class Windows {
       if (!d || (this.cat !== 'tout' && d.slot !== this.cat) || (q && !d.name.toLowerCase().includes(q))) continue;
       const slot = p.slotFor(it), cur = slot ? p.equipment[slot] : undefined;
       const up = d.level <= p.level && (!cur || this.score(it) > this.score(cur));
-      cells.push(`<div class="cell ${up ? 'up' : ''} ${d.level > p.level ? 'low' : ''}" data-uid="${it.uid}" style="border-color:${RARITY_COLORS[it.rarity]}88"><img src="${ICON(d.icon)}" alt=""></div>`);
+      cells.push(`<div class="cell ${up ? 'up' : ''} ${d.level > p.level ? 'low' : ''}" data-uid="${it.uid}" style="border-color:${RARITY_COLORS[it.rarity]}88">${iconHtml(d.icon)}</div>`);
     }
     if (this.cat === 'tout' || this.cat === 'ressource') for (const [id, n] of Object.entries(p.resources)) {
       const r = ITEMS.resources[id];
       if (!r || (q && !r.name.toLowerCase().includes(q))) continue;
-      cells.push(`<div class="cell" title="${r.name}"><img src="${ICON(r.icon)}" alt=""><span class="n">${n}</span></div>`);
+      cells.push(`<div class="cell" title="${r.name}">${iconHtml(r.icon)}<span class="n">${n}</span></div>`);
     }
     return cells.join('') || '<div style="color:#7f7a64">Rien ici pour l\'instant. Les monstres lâchent leurs objets officiels.</div>';
   }
