@@ -1,32 +1,506 @@
 {
-  "iop": {
-    "name": "Iop",
-    "hp": 220, "speed": 230, "radius": 16, "iframesOnHit": 0.45, "healOnKill": 3,
-    "critChance": 0.15, "critMult": 1.6,
-    "pa": { "max": 6, "regen": 1.25 }, "pm": { "max": 2, "recharge": 3.5 },
-    "potion": { "charges": 3, "heal": 0.35, "cooldown": 1 },
-    "xpBase": 100, "maxLevel": 50,
-    "skills": {
-      "attaque": {
-        "name": "Attaque", "key": "Clic G", "cooldown": 0, "comboWindow": 0.45,
-        "combo": [
-          { "duration": 0.28, "impactAt": 0.07, "cancelAt": 0.13, "dmg": 14, "range": 78, "arc": 110, "knock": 210, "step": 120, "hitstop": 0.05, "shake": 0.0035 },
-          { "duration": 0.28, "impactAt": 0.07, "cancelAt": 0.13, "dmg": 14, "range": 78, "arc": 110, "knock": 210, "step": 120, "hitstop": 0.05, "shake": 0.0035 },
-          { "duration": 0.40, "impactAt": 0.11, "cancelAt": 0.22, "dmg": 30, "range": 92, "arc": 160, "knock": 480, "step": 220, "hitstop": 0.085, "shake": 0.008 }
-        ]
-      },
-      "epee": {
-        "name": "Épée Céleste", "key": "Clic D", "cooldown": 1.2, "pa": 3,
-        "duration": 0.46, "impactAt": 0.16, "cancelAt": 0.26, "dmg": 34, "length": 250, "width": 36, "knock": 320, "hitstop": 0.07, "shake": 0.007
-      },
-      "bond": {
-        "name": "Bond", "key": "Espace", "cooldown": 0.4,
-        "duration": 0.30, "maxRange": 280, "height": 70, "dmg": 22, "radius": 95, "knock": 300, "stun": 0.6, "hitstop": 0.06, "shake": 0.009
-      },
-      "colere": {
-        "name": "Colère de Iop", "key": "R", "cooldown": 9, "pa": 4,
-        "duration": 0.72, "impactAt": 0.42, "cancelAt": 0.55, "dmg": 95, "radius": 160, "knock": 620, "hitstop": 0.13, "shake": 0.018
-      }
+ "iop": {
+  "name": "Iop",
+  "hp": 220,
+  "speed": 230,
+  "radius": 16,
+  "iframesOnHit": 0.45,
+  "healOnKill": 3,
+  "critChance": 0.15,
+  "critMult": 1.6,
+  "pa": {
+   "max": 6,
+   "regen": 1.25
+  },
+  "pm": {
+   "max": 2,
+   "recharge": 3.5
+  },
+  "potion": {
+   "charges": 3,
+   "heal": 0.35,
+   "cooldown": 1
+  },
+  "xpBase": 100,
+  "maxLevel": 50,
+  "rage": {
+   "name": "Rage",
+   "max": 100,
+   "perHit": 4,
+   "perHurt": 7,
+   "bonus": 0.6,
+   "area": 1.25
+  },
+  "attaque": {
+   "name": "Coup de poing",
+   "element": "terre",
+   "comboWindow": 0.45,
+   "combo": [
+    {
+     "duration": 0.28,
+     "impactAt": 0.07,
+     "cancelAt": 0.13,
+     "dmg": 14,
+     "range": 78,
+     "arc": 110,
+     "knock": 210,
+     "step": 120,
+     "hitstop": 0.05,
+     "shake": 0.0035
+    },
+    {
+     "duration": 0.28,
+     "impactAt": 0.07,
+     "cancelAt": 0.13,
+     "dmg": 14,
+     "range": 78,
+     "arc": 110,
+     "knock": 210,
+     "step": 120,
+     "hitstop": 0.05,
+     "shake": 0.0035
+    },
+    {
+     "duration": 0.4,
+     "impactAt": 0.11,
+     "cancelAt": 0.22,
+     "dmg": 30,
+     "range": 92,
+     "arc": 160,
+     "knock": 480,
+     "step": 220,
+     "hitstop": 0.085,
+     "shake": 0.008
     }
-  }
+   ]
+  },
+  "spells": {
+   "pression": {
+    "name": "Pression",
+    "icon": 11830,
+    "element": "terre",
+    "pa": 2,
+    "cooldown": 0.5,
+    "duration": 0.36,
+    "impactAt": 0.13,
+    "cancelAt": 0.22,
+    "dmg": 26,
+    "knock": 220,
+    "hit": {
+     "shape": "cone",
+     "range": 105,
+     "arc": 80
+    },
+    "hitstop": 0.06,
+    "shake": 0.005,
+    "fx": "arc"
+   },
+   "intimidation": {
+    "name": "Intimidation",
+    "icon": 11835,
+    "element": "meilleur",
+    "pa": 2,
+    "cooldown": 3,
+    "duration": 0.4,
+    "impactAt": 0.14,
+    "cancelAt": 0.24,
+    "dmg": 18,
+    "knock": 760,
+    "stun": 0.6,
+    "hit": {
+     "shape": "cone",
+     "range": 95,
+     "arc": 70
+    },
+    "hitstop": 0.09,
+    "shake": 0.009,
+    "fx": "arc"
+   },
+   "epee": {
+    "name": "Épée Céleste",
+    "icon": 11843,
+    "element": "air",
+    "pa": 3,
+    "cooldown": 1.2,
+    "duration": 0.46,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 34,
+    "knock": 320,
+    "hit": {
+     "shape": "line",
+     "length": 250,
+     "width": 36
+    },
+    "hitstop": 0.07,
+    "shake": 0.007,
+    "fx": "line"
+   },
+   "deferlement": {
+    "name": "Déferlement",
+    "icon": 11832,
+    "element": "eau",
+    "pa": 3,
+    "cooldown": 5,
+    "duration": 0.38,
+    "impactAt": 0.22,
+    "cancelAt": 0.3,
+    "dmg": 30,
+    "knock": 300,
+    "stun": 0.3,
+    "hit": {
+     "shape": "circle",
+     "radius": 80
+    },
+    "move": {
+     "kind": "dash",
+     "maxRange": 260
+    },
+    "hitstop": 0.07,
+    "shake": 0.008,
+    "fx": "burst"
+   },
+   "fureur": {
+    "name": "Fureur",
+    "icon": 11873,
+    "element": "terre",
+    "pa": 3,
+    "cooldown": 1.5,
+    "duration": 0.42,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 22,
+    "knock": 260,
+    "hit": {
+     "shape": "cone",
+     "range": 100,
+     "arc": 120
+    },
+    "stack": {
+     "per": 0.3,
+     "max": 4,
+     "time": 6
+    },
+    "hitstop": 0.07,
+    "shake": 0.007,
+    "fx": "arc"
+   },
+   "colere": {
+    "name": "Colère de Iop",
+    "icon": 11851,
+    "element": "terre",
+    "pa": 4,
+    "cooldown": 9,
+    "duration": 0.72,
+    "impactAt": 0.42,
+    "cancelAt": 0.55,
+    "dmg": 95,
+    "knock": 620,
+    "stun": 0.4,
+    "hit": {
+     "shape": "circle",
+     "radius": 160
+    },
+    "charge": true,
+    "hitstop": 0.13,
+    "shake": 0.018,
+    "fx": "burst"
+   },
+   "bond": {
+    "name": "Bond",
+    "icon": 11831,
+    "element": "neutre",
+    "pm": 1,
+    "cooldown": 0.4,
+    "duration": 0.3,
+    "impactAt": 0.3,
+    "dmg": 22,
+    "knock": 300,
+    "stun": 0.6,
+    "hit": {
+     "shape": "circle",
+     "radius": 95
+    },
+    "move": {
+     "kind": "leap",
+     "maxRange": 280,
+     "height": 70
+    },
+    "hitstop": 0.06,
+    "shake": 0.009,
+    "fx": "land"
+   }
+  },
+  "bar": [
+   "pression",
+   "intimidation",
+   "epee",
+   "deferlement",
+   "fureur",
+   "colere"
+  ],
+  "mobility": "bond",
+  "favorite": "epee"
+ },
+ "cra": {
+  "name": "Crâ",
+  "hp": 180,
+  "speed": 225,
+  "radius": 16,
+  "iframesOnHit": 0.45,
+  "healOnKill": 3,
+  "critChance": 0.18,
+  "critMult": 1.6,
+  "pa": {
+   "max": 6,
+   "regen": 1.25
+  },
+  "pm": {
+   "max": 2,
+   "recharge": 3.5
+  },
+  "potion": {
+   "charges": 3,
+   "heal": 0.35,
+   "cooldown": 1
+  },
+  "xpBase": 100,
+  "maxLevel": 50,
+  "rage": {
+   "name": "Précision",
+   "max": 100,
+   "perHit": 3,
+   "perHurt": 5,
+   "bonus": 0.6,
+   "area": 1.25
+  },
+  "attaque": {
+   "name": "Flèche Cinglante",
+   "element": "terre",
+   "comboWindow": 0.45,
+   "combo": [
+    {
+     "duration": 0.28,
+     "impactAt": 0.07,
+     "cancelAt": 0.13,
+     "dmg": 14,
+     "range": 78,
+     "arc": 110,
+     "knock": 210,
+     "step": 120,
+     "hitstop": 0.05,
+     "shake": 0.0035
+    },
+    {
+     "duration": 0.28,
+     "impactAt": 0.07,
+     "cancelAt": 0.13,
+     "dmg": 14,
+     "range": 78,
+     "arc": 110,
+     "knock": 210,
+     "step": 120,
+     "hitstop": 0.05,
+     "shake": 0.0035
+    },
+    {
+     "duration": 0.4,
+     "impactAt": 0.11,
+     "cancelAt": 0.22,
+     "dmg": 30,
+     "range": 92,
+     "arc": 160,
+     "knock": 480,
+     "step": 220,
+     "hitstop": 0.085,
+     "shake": 0.008
+    }
+   ]
+  },
+  "spells": {
+   "cinglante": {
+    "name": "Flèche Cinglante",
+    "icon": 15409,
+    "element": "air",
+    "cooldown": 0.32,
+    "duration": 0.3,
+    "impactAt": 0.1,
+    "cancelAt": 0.16,
+    "dmg": 13,
+    "knock": 90,
+    "hit": {
+     "shape": "projectile",
+     "speed": 1100,
+     "range": 620,
+     "width": 14
+    },
+    "hitstop": 0.04,
+    "shake": 0.004,
+    "fx": "burst"
+   },
+   "recul": {
+    "name": "Flèche de Recul",
+    "icon": 11876,
+    "element": "air",
+    "cooldown": 2.5,
+    "duration": 0.38,
+    "impactAt": 0.12,
+    "cancelAt": 0.18,
+    "dmg": 20,
+    "knock": 820,
+    "hit": {
+     "shape": "projectile",
+     "speed": 1100,
+     "range": 520,
+     "width": 16
+    },
+    "hitstop": 0.04,
+    "shake": 0.004,
+    "fx": "burst",
+    "pa": 2,
+    "stun": 0.4
+   },
+   "glacee": {
+    "name": "Flèche Glacée",
+    "icon": 13032,
+    "element": "eau",
+    "cooldown": 1.2,
+    "duration": 0.36,
+    "impactAt": 0.12,
+    "cancelAt": 0.18,
+    "dmg": 30,
+    "knock": 150,
+    "hit": {
+     "shape": "projectile",
+     "speed": 1100,
+     "range": 640,
+     "width": 16
+    },
+    "hitstop": 0.04,
+    "shake": 0.004,
+    "fx": "burst",
+    "pa": 3,
+    "stun": 0.5
+   },
+   "barrage": {
+    "name": "Flèche de Barrage",
+    "icon": 11904,
+    "element": "feu",
+    "cooldown": 4,
+    "duration": 0.42,
+    "impactAt": 0.16,
+    "cancelAt": 0.22,
+    "dmg": 24,
+    "knock": 520,
+    "hit": {
+     "shape": "cone",
+     "range": 190,
+     "arc": 70
+    },
+    "hitstop": 0.04,
+    "shake": 0.008,
+    "fx": "arc",
+    "pa": 3
+   },
+   "explosive": {
+    "name": "Flèche Explosive",
+    "icon": 11898,
+    "element": "feu",
+    "cooldown": 2,
+    "duration": 0.48,
+    "impactAt": 0.2,
+    "cancelAt": 0.26,
+    "dmg": 34,
+    "knock": 260,
+    "hit": {
+     "shape": "projectile",
+     "speed": 1100,
+     "range": 600,
+     "width": 16,
+     "explode": 95
+    },
+    "hitstop": 0.04,
+    "shake": 0.009,
+    "fx": "burst",
+    "pa": 4
+   },
+   "abolition": {
+    "name": "Flèche d'Abolition",
+    "icon": 15430,
+    "element": "terre",
+    "cooldown": 3,
+    "duration": 0.4,
+    "impactAt": 0.12,
+    "cancelAt": 0.18,
+    "dmg": 28,
+    "knock": 120,
+    "hit": {
+     "shape": "projectile",
+     "speed": 1100,
+     "range": 600,
+     "width": 16,
+     "pierce": true
+    },
+    "hitstop": 0.04,
+    "shake": 0.004,
+    "fx": "burst",
+    "pa": 3,
+    "lifesteal": 0.4
+   },
+   "dispersion": {
+    "name": "Flèche de Dispersion",
+    "icon": 15159,
+    "element": "air",
+    "cooldown": 8,
+    "duration": 0.55,
+    "impactAt": 0.2,
+    "cancelAt": 0.26,
+    "dmg": 40,
+    "knock": 680,
+    "hit": {
+     "shape": "circle",
+     "radius": 170
+    },
+    "hitstop": 0.1,
+    "shake": 0.014,
+    "fx": "burst",
+    "pa": 4,
+    "stun": 0.4
+   },
+   "pas_chasse": {
+    "name": "Pas Chassé",
+    "icon": 15414,
+    "element": "neutre",
+    "pm": 1,
+    "cooldown": 0.4,
+    "duration": 0.25,
+    "impactAt": 0.25,
+    "dmg": 0,
+    "knock": 0,
+    "hit": {
+     "shape": "circle",
+     "radius": 1
+    },
+    "move": {
+     "kind": "leap",
+     "maxRange": 240,
+     "height": 18
+    },
+    "hitstop": 0,
+    "shake": 0,
+    "fx": "land"
+   }
+  },
+  "bar": [
+   "recul",
+   "glacee",
+   "barrage",
+   "explosive",
+   "abolition",
+   "dispersion"
+  ],
+  "mobility": "pas_chasse",
+  "favorite": "explosive",
+  "basic": "cinglante"
+ }
 }

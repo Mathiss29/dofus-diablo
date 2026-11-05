@@ -1,0 +1,62 @@
+# Robot Discord de Diablofus (serveur Ombrelune Studio). Lancement à la main uniquement, depuis l'onglet Actions.
+# Nécessite le secret DISCORD_BOT_TOKEN (voir tools/discord/LISEZMOI.md).
+name: Discord
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "liste = voir les salons ; categorie = renommer la catégorie du jeu ; annonce = publier un message"
+        type: choice
+        default: liste
+        options: [liste, categorie, annonce]
+      texte:
+        description: "annonce : texte (mise en forme Discord, 1 900 caractères au plus, \\n pour aller à la ligne)"
+        type: string
+      salon:
+        description: "annonce : salon (cherché d'abord dans la catégorie du jeu)"
+        type: string
+        default: annonces
+      role:
+        description: "annonce : rôle à mentionner (nom exact, ou aucun)"
+        type: string
+        default: aucun
+      ancien:
+        description: "categorie : nom actuel de la catégorie (un morceau suffit)"
+        type: string
+      nouveau:
+        description: "categorie : nouveau nom"
+        type: string
+        default: "🔥 DIABLOFUS : LES DOUZE ENFERS"
+      essai:
+        description: "Essai : affiche ce qui serait fait sans rien envoyer"
+        type: boolean
+        default: true
+permissions:
+  contents: read
+concurrency:
+  group: discord
+  cancel-in-progress: false
+jobs:
+  discord:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Lancer le robot
+        env:
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          DISCORD_CATEGORIE: diablofus
+          DISCORD_TEXTE: ${{ inputs.texte }}
+          DISCORD_SALON: ${{ inputs.salon }}
+          DISCORD_ROLE: ${{ inputs.role }}
+          ACTION: ${{ inputs.action }}
+          ANCIEN: ${{ inputs.ancien }}
+          NOUVEAU: ${{ inputs.nouveau }}
+          ESSAI: ${{ inputs.essai && '--print' || '' }}
+        run: |
+          if [ "$ACTION" = categorie ]; then
+            node tools/discord/discord_bot.mjs categorie "$ANCIEN" "$NOUVEAU" $ESSAI
+          else
+            node tools/discord/discord_bot.mjs "$ACTION" $ESSAI
+          fi

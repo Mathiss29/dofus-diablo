@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
-import { GAME_DATA } from '../sim/data';
-import { GridMap, type MapData } from '../sim/gridmap';
+import { GAME_DATA, ITEMS } from '../sim/data';
+import { GridMap, WorldGrid, type MapData, type WorldData } from '../sim/gridmap';
 import { ISO } from '../sim/iso';
 import type { PlayerInput } from '../sim/input';
 import type { SkillId } from '../sim/defs';
@@ -11,16 +11,24 @@ import { FX } from './fx';
 import { Hud } from './hud';
 import { LOOKS } from './looks';
 import { drawMap } from './mapView';
+import { WorldView } from './worldView';
+import { ICON_SHEET, iconFrame } from './icons';
+import { Windows } from './windows';
+import { RARITY_COLORS, RARITY_NAMES, rollItem } from '../sim/items';
 
 const ASSETS = 'assets';
 const mapDir = ([x, y]: [number, number]) => `${ASSETS}/cartes/${x}_${y}`;
+const worldDir = (w: string) => `${ASSETS}/mondes/${w}`;
 const hex = (c: string) => parseInt(c.replace('#', ''), 16);
 
 /** Scène d'une zone : charge la carte et les planches de la zone, fait tourner la simulation
  *  à pas fixe, et dessine son état. Toute la logique de jeu est dans World (src/sim). */
 export class ZoneScene extends Phaser.Scene {
-  private zoneId = 'champs-astrub';
+  private zoneId = 'incarnam';
+  /** Classe jouée (#cra dans l'adresse, ou touche K pour changer). */
+  private classId = 'iop';
   private world!: World;
+  private worldView: WorldView | null = null;
   private views = new Map<number, EntityView>();
   private fx!: FX;
   private hud!: Hud;
@@ -28,61 +36,112 @@ export class ZoneScene extends Phaser.Scene {
   private pressed: SkillId | null = null;
   private potion = false;
   private hitstop = 0;
+  private windows: Windows | null = null;
+  /** Butin au sol : icône + nom de l'objet, couleur de sa rareté. */
+  private dropViews = new Map<number, { icon: Phaser.GameObjects.Image; label?: Phaser.GameObjects.Text; glow: Phaser.GameObjects.Ellipse }>();
   private acc = 0;
   private static readonly STEP = 1 / 60;
 
   constructor() { super('zone'); }
 
-  init(data: { zone?: string }) {
+  init(data: { zone?: string; classe?: string }) {
+    this.classId = data?.classe ?? (location.hash.includes('cra') ? 'cra' : 'iop');
+    // #astrub dans l'adresse : l'ancienne zone à vagues des Champs d'Astrub
     if (data?.zone) this.zoneId = data.zone;
-    this.views = new Map(); this.pressed = null; this.potion = false; this.hitstop = 0; this.acc = 0;
+    else if (location.hash === '#astrub') this.zoneId = 'champs-astrub';
+    this.views = new Map(); this.dropViews = new Map(); this.worldView = null; this.pressed = null; this.potion = false; this.hitstop = 0; this.acc = 0;
   }
 
   preload() {
     Hud.preload(this);
+    // Icônes des objets officiels : une seule planche
+    if (!this.textures.exists(ICON_SHEET.key)) this.load.spritesheet(ICON_SHEET.key, `${ASSETS}/${ICON_SHEET.url}`, { frameWidth: ICON_SHEET.cell, frameHeight: ICON_SHEET.cell });
     const zone = GAME_DATA.zones[this.zoneId];
     // On ne charge que les planches utiles à cette zone
-    const w = zone.waves;
-    const types = new Set([...w.pack.map(p => p.monster), w.boss, ...w.escort.monsters, ...w.archimonstres.monsters]);
-    const atlases = new Set(['iop', ...[...types].map(t => LOOKS[GAME_DATA.monsters[t].look].atlas)]);
+    const types = new Set<string>();
+    if (zone.open) for (const s of Object.values(zone.open.subareas)) s.monsters.forEach(m => types.add(m));
+    else {
+      const w = zone.waves!;
+      [...w.pack.map(p => p.monster), w.boss, ...w.escort.monsters, ...w.archimonstres.monsters].forEach(m => types.add(m));
+    }
+    const atlases = new Set([LOOKS[this.classId].atlas, ...[...types].map(t => LOOKS[GAME_DATA.monsters[t].look].atlas)]);
     for (const a of atlases) if (!this.textures.exists(a)) this.load.atlas(a, `${ASSETS}/sprites/${a}.webp`, `${ASSETS}/sprites/${a}.json`);
-    const dir = mapDir(zone.map.coords), key = dir.replace(/\W/g, '_');
+    if (zone.open) {
+      // Monde ouvert : monde.json décrit les cartes ; on ne charge d'abord que le ciel et les cartes autour du départ,
+      // les autres se chargent en jeu quand le joueur approche (WorldView)
+      const open = zone.open, dir = worldDir(open.world);
+      this.load.json(WorldView.key(open.world, 'monde'), `${dir}/monde.json`);
+      this.load.once(`filecomplete-json-${WorldView.key(open.world, 'monde')}`, (_: string, __: string, data: WorldData) =>
+        WorldView.preload(this, data, dir, open.world, open.start));
+      return;
+    }
+    const dir = mapDir(zone.map!.coords), key = dir.replace(/\W/g, '_');
     this.load.json(`${key}_carte`, `${dir}/carte.json`);
     this.load.image(`${key}_sol`, `${dir}/sol.webp`);
     this.load.atlas(`${key}_decor`, `${dir}/decor.webp`, `${dir}/decor.json`);
   }
 
   create() {
-    const zone = GAME_DATA.zones[this.zoneId];
-    const key = mapDir(zone.map.coords).replace(/\W/g, '_');
-    const map = new GridMap(this.cache.json.get(`${key}_carte`) as MapData);
-    this.world = new World({ data: GAME_DATA, zone: this.zoneId, map, seed: (Math.random() * 2 ** 32) >>> 0 });
-    this.cameras.main.setBackgroundColor('#12141b');
+    const zone = GAME_DATA.zones[this.zoneId], seed = (Math.random() * 2 ** 32) >>> 0;
     this.input.mouse?.disableContextMenu();
-    drawMap(this, map, `${key}_sol`, `${key}_decor`);
+    if (zone.open) {
+      const open = zone.open;
+      const wg = new WorldGrid(this.cache.json.get(WorldView.key(open.world, 'monde')) as WorldData);
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS });
+      this.cameras.main.setBackgroundColor('#0d2b36');   // sous le ciel, au cas où il manque
+      this.worldView = new WorldView(this, wg, worldDir(open.world), open.world);
+      this.worldView.create();
+    } else {
+      const key = mapDir(zone.map!.coords).replace(/\W/g, '_');
+      const map = new GridMap(this.cache.json.get(`${key}_carte`) as MapData);
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map, seed, classId: this.classId, items: ITEMS });
+      this.cameras.main.setBackgroundColor('#12141b');
+      drawMap(this, map, `${key}_sol`, `${key}_decor`);
+    }
     this.fx = new FX(this, t => hex(GAME_DATA.monsters[t].color));
-    this.hud = new Hud(this);
+    this.hud = new Hud(this, this.world);
+    this.windows?.destroy();
+    this.windows = new Windows(this.world);
+    this.windows.portrait = this.textures.getBase64(LOOKS[this.classId].atlas, 'AnimStatiqueCombat0_1_0');
+    this.events.once('shutdown', () => { this.windows?.destroy(); this.windows = null; });
+    this.hud.onMenu = name => {
+      if (name === 'Personnage') this.windows!.toggle();
+      else this.hud.toast(`${name} : arrive dans une prochaine version`);
+    };
     this.cameras.main.startFollow(this.viewOf(this.world.player).sprite, true, 0.12, 0.12, 0, 30);
     this.bindInput();
+    // Accès console / tests automatisés (captures) : la partie et le tirage d'objets
+    (window as unknown as { diablofus: unknown }).diablofus = { scene: this, world: this.world, rollItem, ITEMS };
   }
 
   private bindInput() {
     const K = Phaser.Input.Keyboard.KeyCodes, kb = this.input.keyboard!;
     // ZQSD (AZERTY), WASD (QWERTY) et flèches
     this.keys = kb.addKeys({ W: K.W, Z: K.Z, A: K.A, Q: K.Q, S: K.S, D: K.D, UP: K.UP, DOWN: K.DOWN, LEFT: K.LEFT, RIGHT: K.RIGHT,
-      SPACE: K.SPACE, R: K.R, E: K.E, F: K.F, H: K.H, ENTER: K.ENTER, ONE: K.ONE, TWO: K.TWO }) as Record<string, Phaser.Input.Keyboard.Key>;
-    this.input.on('pointerdown', (p: Phaser.Input.Pointer) => { this.pressed = p.rightButtonDown() ? 'epee' : 'attaque'; });
-    this.keys.SPACE.on('down', () => { this.pressed = 'bond'; });
-    this.keys.R.on('down', () => { this.pressed = 'colere'; });
+      SPACE: K.SPACE, E: K.E, K: K.K, I: K.I, C: K.C, ESC: K.ESC, F: K.F, H: K.H, ENTER: K.ENTER,
+      ONE: K.ONE, TWO: K.TWO, THREE: K.THREE, FOUR: K.FOUR, FIVE: K.FIVE, SIX: K.SIX }) as Record<string, Phaser.Input.Keyboard.Key>;
+    const cls = this.world.player.cls;
+    // Choix 9B : clic gauche = attaque, clic droit = sort favori, Espace = déplacement, 1 à 6 (& é " ' ( - en AZERTY) = barre de sorts
+    this.input.on('pointerdown', (p: Phaser.Input.Pointer) => { this.pressed = p.rightButtonDown() ? cls.favorite : 'attaque'; });
+    this.keys.SPACE.on('down', () => { this.pressed = cls.mobility; });
     this.keys.E.on('down', () => { this.potion = true; });
-    this.keys.ONE.on('down', () => { this.pressed = 'epee'; });
-    this.keys.TWO.on('down', () => { this.pressed = 'colere'; });
+    ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX'].forEach((k, i) => this.keys[k].on('down', () => { if (cls.bar[i]) this.pressed = cls.bar[i]; }));
     this.keys.F.on('down', () => {
       this.fx.juice = !this.fx.juice;
       this.hud.toast(this.fx.juice ? 'Effets d\'impact : ACTIVÉS' : 'Effets d\'impact : DÉSACTIVÉS (compare !)');
     });
     this.keys.H.on('down', () => this.hud.toggleHelp());
-    this.keys.ENTER.on('down', () => { if (this.world.over) this.scene.restart({ zone: this.zoneId }); });
+    // I ou C : fenêtre Personnage (inventaire + caractéristiques) ; le jeu continue derrière
+    this.keys.I.on('down', () => this.windows?.toggle());
+    this.keys.C.on('down', () => this.windows?.toggle());
+    this.keys.ESC.on('down', () => this.windows?.close());
+    // K : changer de classe (en attendant l'écran de création de la 0.1b)
+    this.keys.K.on('down', () => this.scene.restart({ zone: this.zoneId, classe: this.classId === 'iop' ? 'cra' : 'iop' }));
+    this.keys.ENTER.on('down', () => {
+      if (!this.world.over) return;
+      if (this.world.zone.open) this.world.respawnPlayer();
+      else this.scene.restart({ zone: this.zoneId });
+    });
   }
 
   private readInput(): PlayerInput {
@@ -121,6 +180,7 @@ export class ZoneScene extends Phaser.Scene {
   private consumeEvents() {
     for (const e of this.world.drainEvents()) {
       this.fx.handle(e);
+      this.hud.handle(e);
       const M = GAME_DATA.monsters;
       switch (e.k) {
         case 'impact':
@@ -130,22 +190,60 @@ export class ZoneScene extends Phaser.Scene {
           break;
         case 'playerHurt': this.hud.hurtFlash(this.fx.juice); break;
         case 'wave':
-          this.hud.onWave(e.n);
           this.hud.banner(e.boss ? `Vague ${e.n}\n${M[e.boss].name}` : e.archi ? `Vague ${e.n}\nArchimonstre : ${M[e.archi].name} !` : `Vague ${e.n}`);
           break;
-        case 'potion': this.hud.potionDrunk(); break;
         case 'noResource': this.hud.noResource(e.res); break;
-        case 'levelUp': this.hud.banner(`Niveau ${e.level} !`, 1200); break;
+        case 'rageFull': this.hud.toast(`${this.world.player.cls.rage.name} au maximum : ton prochain sort est renforcé !`); break;
         case 'bossDown': this.hud.banner(`${M[e.monster].name} vaincu !`); break;
-        case 'playerDeath': this.hud.banner(`Vaincu à la vague ${e.wave}\nEntrée pour recommencer`, 0, true); break;
+        case 'playerDeath':
+          if (this.world.zone.open) this.hud.banner(`Vaincu\nEntrée : retour à ${this.world.checkpointName}`, 0, true);
+          else this.hud.banner(`Vaincu à la vague ${e.wave}\nEntrée pour recommencer`, 0, true);
+          break;
+        case 'loot': {
+          const d = ITEMS.equipment[e.item.id];
+          this.hud.loot(`${d?.name ?? 'Objet'}  ·  ${RARITY_NAMES[e.item.rarity]}`, RARITY_COLORS[e.item.rarity]);
+          this.windows?.refresh();
+          break;
+        }
+        case 'lootResource': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Ressource'} x${e.n}`, '#c9c4ab'); this.windows?.refresh(); break;
+        case 'levelUp': this.hud.banner(`Niveau ${e.level} !\n+5 points (C)`, 1500); this.windows?.refresh(); break;
+        case 'checkpoint': this.hud.banner(`Point de retour\n${e.name}`, 1400); break;
+        case 'respawn': this.hud.banner('De retour !', 900); break;
+        case 'enterArea': this.hud.banner(`${e.name}\nNiveau ${e.level}`, 1600); break;
       }
     }
+  }
+
+  private drawDrops() {
+    const seen = new Set<number>();
+    for (const d of this.world.drops) {
+      seen.add(d.uid);
+      let v = this.dropViews.get(d.uid);
+      const p = ISO.toScreen(d.x, d.y);
+      if (!v) {
+        const icon = d.item ? ITEMS.equipment[d.item.id]?.icon : ITEMS.resources[d.resource!.id]?.icon;
+        const col = d.item ? RARITY_COLORS[d.item.rarity] : '#c9c4ab';
+        v = {
+          glow: this.add.ellipse(p.x, p.y, 46, 20, parseInt(col.slice(1), 16), 0.35),
+          icon: this.add.image(p.x, p.y - 14, ICON_SHEET.key, Math.max(0, iconFrame(icon ?? 0))).setDisplaySize(34, 34),
+          label: d.item ? this.add.text(p.x, p.y - 40, ITEMS.equipment[d.item.id]?.name ?? '', {
+            fontFamily: 'Trebuchet MS, Verdana, sans-serif', fontSize: '13px', fontStyle: 'bold', color: col, stroke: '#000', strokeThickness: 3,
+          }).setOrigin(0.5) : undefined,
+        };
+        this.dropViews.set(d.uid, v);
+      }
+      const bob = Math.sin(this.world.time * 4 + d.uid) * 3, pop = Math.min(1, d.t * 4);
+      v.glow.setPosition(p.x, p.y).setDepth(p.y - 2).setScale(pop);
+      v.icon.setPosition(p.x, p.y - 14 - bob - (1 - pop) * 30).setDepth(p.y + 1);
+      v.label?.setPosition(p.x, p.y - 44 - bob).setDepth(1e6 - 1);
+    }
+    for (const [uid, v] of this.dropViews) if (!seen.has(uid)) { v.icon.destroy(); v.label?.destroy(); v.glow.destroy(); this.dropViews.delete(uid); }
   }
 
   private viewOf(e: Entity): EntityView {
     let v = this.views.get(e.id);
     if (!v) {
-      const look = e.faction === 'player' ? LOOKS.iop : LOOKS[GAME_DATA.monsters[(e as { type?: string }).type!].look];
+      const look = e.faction === 'player' ? LOOKS[this.classId] : LOOKS[GAME_DATA.monsters[(e as { type?: string }).type!].look];
       v = new EntityView(this, look);
       this.views.set(e.id, v);
     }
@@ -153,12 +251,18 @@ export class ZoneScene extends Phaser.Scene {
   }
 
   private render() {
-    const w = this.world, alive = new Set<number>();
-    for (const e of [w.player, ...w.monsters]) { this.viewOf(e).sync(e); alive.add(e.id); }
+    const w = this.world, alive = new Set<number>(), wv = this.worldView, wg = w.worldGrid;
+    wv?.update(w.player.x, w.player.y);
+    for (const e of [w.player, ...w.monsters]) {
+      // monde ouvert : on n'affiche que les monstres des cartes chargées (les autres vivent quand même dans la simulation)
+      if (wv && wg && e !== w.player && !wv.isReady(wg.mapAt(e.x, e.y)?.tag)) continue;
+      this.viewOf(e).sync(e); alive.add(e.id);
+    }
     for (const [id, v] of this.views) if (!alive.has(id)) { v.destroy(); this.views.delete(id); }
     const s = w.player.skill;
-    if (s?.id === 'colere' && s.t < s.def.impactAt) this.fx.chargeSparks(w.player.x, w.player.y);
-    this.fx.draw(w.telegraphs);
-    this.hud.draw(w, this.fx.juice, this.game.loop.delta / 1000);
+    if (s && 'charge' in s.def && s.def.charge && !s.def.move && s.t < s.def.impactAt) this.fx.chargeSparks(w.player.x, w.player.y);
+    this.fx.draw(w.telegraphs, w.projectiles);
+    this.drawDrops();
+    this.hud.draw(this.fx.juice, this.game.loop.delta / 1000);
   }
 }

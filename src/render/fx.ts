@@ -1,7 +1,9 @@
 import Phaser from 'phaser';
 import { ISO, type Vec } from '../sim/iso';
 import { TAU } from '../sim/math';
+import type { Element } from '../sim/defs';
 import type { SimEvent, Telegraph } from '../sim/events';
+import type { Projectile } from '../sim/world';
 
 const rand = (a: number, b: number) => a + Math.random() * (b - a);
 
@@ -12,6 +14,9 @@ export function isoCircle(cx: number, cy: number, r: number, n = 28): Vec[] {
   return pts;
 }
 const isoPoly = (pts: { x: number; y: number; z?: number }[]) => pts.map(p => ISO.toScreen(p.x, p.y, p.z ?? 0));
+
+/** Couleur des effets selon l'élément du sort (terre, feu, eau, air). */
+const ELEMENT_COLORS: Record<Element, number> = { neutre: 0xffe9c4, terre: 0xd9a35a, feu: 0xff6a3d, eau: 0x5fb4ff, air: 0x8fe07a, meilleur: 0xffe9c4 };
 
 interface Particle { x: number; y: number; z: number; vx: number; vy: number; vz: number; life: number; max: number; color: number; size: number }
 type Trail =
@@ -38,24 +43,26 @@ export class FX {
   /** Traduit un événement de la simulation en effets. */
   handle(e: SimEvent) {
     switch (e.k) {
-      case 'swing':
-        this.trails.push({ kind: 'arc', x: e.x, y: e.y, z: 24, facing: e.facing, radius: e.radius, arc: e.arc,
-          color: e.finisher ? 0xffb347 : 0xffe9c4, width: e.finisher ? 16 : 10, life: e.finisher ? 0.2 : 0.13, max: e.finisher ? 0.2 : 0.13 });
+      case 'spell': {
+        const col = ELEMENT_COLORS[e.element], w = e.big ? 16 : 10;
+        if (e.boosted) this.ring(e.x, e.y, 10, e.size * 1.3, 0xff7a2e, 0.45, 12);   // sort renforcé par la Rage
+        if (e.fx === 'arc') {
+          this.trails.push({ kind: 'arc', x: e.x, y: e.y, z: 24, facing: e.facing, radius: e.size, arc: Math.max(e.arc, 0.6),
+            color: e.big ? 0xffb347 : col, width: w, life: e.big ? 0.2 : 0.14, max: e.big ? 0.2 : 0.14 });
+        } else if (e.fx === 'line') {
+          this.trails.push({ kind: 'line', x: e.x, y: e.y, facing: e.facing, length: e.size, width: 18, color: col, life: 0.22, max: 0.22 });
+          this.particles(e.x + Math.cos(e.facing) * e.size, e.y + Math.sin(e.facing) * e.size, 20, 10, col, 160, 0.35);
+        } else if (e.fx === 'land') {
+          this.ring(e.x, e.y, 10, e.size * 1.15, 0xffd27a, 0.3, 8);
+          this.particles(e.x, e.y, 0, 26, 0xb59a6a, 260, 0.5, 4, 260);
+        } else {
+          this.ring(e.x, e.y, 20, e.size * 1.2, 0xffffff, 0.35, e.big ? 14 : 8);
+          this.ring(e.x, e.y, 10, e.size * 0.8, col, 0.5, 10);
+          this.particles(e.x, e.y, 0, e.big ? 60 : 30, col, e.big ? 420 : 280, 0.6, 4, e.big ? 420 : 260);
+          if (e.big) this.particles(e.x, e.y, 0, 30, 0x8a7350, 300, 0.7, 5, 200);
+        }
         break;
-      case 'epee':
-        this.trails.push({ kind: 'line', x: e.x, y: e.y, facing: e.facing, length: e.length, width: 18, color: 0x9fd8ff, life: 0.22, max: 0.22 });
-        this.particles(e.x + Math.cos(e.facing) * e.length, e.y + Math.sin(e.facing) * e.length, 20, 10, 0x9fd8ff, 160, 0.35);
-        break;
-      case 'bondLand':
-        this.ring(e.x, e.y, 10, e.radius * 1.15, 0xffd27a, 0.3, 8);
-        this.particles(e.x, e.y, 0, 26, 0xb59a6a, 260, 0.5, 4, 260);
-        break;
-      case 'colere':
-        this.ring(e.x, e.y, 20, e.radius * 1.2, 0xffffff, 0.35, 14);
-        this.ring(e.x, e.y, 10, e.radius * 0.8, 0xffb347, 0.5, 10);
-        this.particles(e.x, e.y, 0, 60, 0xffc04d, 420, 0.6, 4, 420);
-        this.particles(e.x, e.y, 0, 30, 0x8a7350, 300, 0.7, 5, 200);
-        break;
+      }
       case 'slam':
         this.ring(e.x, e.y, 20, e.radius, 0xe0402a, 0.35, 10);
         this.particles(e.x, e.y, 0, 30, 0x8a7350, 300, 0.6, 5, 220);
@@ -118,9 +125,17 @@ export class FX {
     this.rings = this.rings.filter(r => r.life > 0);
   }
 
-  draw(telegraphs: readonly Telegraph[]) {
+  draw(telegraphs: readonly Telegraph[], arrows: readonly Projectile[] = []) {
     const g = this.ground, top = this.top;
     g.clear(); top.clear();
+    // Flèches en vol : un trait lumineux de la couleur de l'élément, à hauteur d'arc
+    for (const a of arrows) {
+      const col = ELEMENT_COLORS[a.hit.element ?? 'neutre'];
+      const h = ISO.toScreen(a.x, a.y, 34), t = ISO.toScreen(a.x - a.dx * 46, a.y - a.dy * 46, 34);
+      top.lineStyle(a.explode ? 7 : 5, col, 0.55); top.lineBetween(t.x, t.y, h.x, h.y);
+      top.lineStyle(2, 0xffffff, 1); top.lineBetween((t.x + h.x) / 2, (t.y + h.y) / 2, h.x, h.y);
+      if (Math.random() < 0.4) this.particles(a.x, a.y, 34, 1, col, 40, 0.25, 2, 40);
+    }
     for (const tg of telegraphs) {
       const col = tg.danger ? 0xe0402a : 0xf0b030, k = tg.progress;
       if (tg.kind === 'circle') {

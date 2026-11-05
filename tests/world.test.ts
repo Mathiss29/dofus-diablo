@@ -32,7 +32,7 @@ describe('carte', () => {
 });
 
 describe('vagues des Champs d\'Astrub', () => {
-  const def = GAME_DATA.zones['champs-astrub'].waves;
+  const def = GAME_DATA.zones['champs-astrub'].waves!;
   it('vague 1 : 3 Pissenlits et 1 Rose, pas de Tournesol', () => {
     const p = planWave(1, def, new Rng(1));
     expect(p.monsters.filter(m => m === 'pissenlit')).toHaveLength(3);

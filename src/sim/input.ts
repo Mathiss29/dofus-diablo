@@ -7,7 +7,7 @@ export interface PlayerInput {
   move: Vec;
   /** Point visé dans le monde (souris). */
   aim: Vec;
-  /** Sort déclenché pendant cette frame. */
+  /** Sort déclenché pendant cette frame ('attaque' ou l'identifiant d'un sort de la classe). */
   pressed: SkillId | null;
   /** Clic gauche maintenu : enchaîne l'attaque. */
   holdAttack: boolean;
