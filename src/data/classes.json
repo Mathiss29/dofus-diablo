@@ -77,6 +77,7 @@
   "spells": {
    "pression": {
     "name": "Pression",
+    "dofusId": 13106,
     "icon": 11830,
     "element": "terre",
     "pa": 2,
@@ -98,6 +99,7 @@
    },
    "intimidation": {
     "name": "Intimidation",
+    "dofusId": 13108,
     "icon": 11835,
     "element": "meilleur",
     "pa": 2,
@@ -120,6 +122,7 @@
    },
    "epee": {
     "name": "Épée Céleste",
+    "dofusId": 13122,
     "icon": 11843,
     "element": "air",
     "pa": 3,
@@ -141,6 +144,7 @@
    },
    "deferlement": {
     "name": "Déferlement",
+    "dofusId": 13126,
     "icon": 11832,
     "element": "eau",
     "pa": 3,
@@ -166,6 +170,7 @@
    },
    "fureur": {
     "name": "Fureur",
+    "dofusId": 13156,
     "icon": 11873,
     "element": "terre",
     "pa": 3,
@@ -192,6 +197,7 @@
    },
    "bond": {
     "name": "Bond",
+    "dofusId": 13107,
     "icon": 11831,
     "element": "neutre",
     "pm": 1,
@@ -217,6 +223,7 @@
    },
    "colere": {
     "name": "Colère de Iop",
+    "dofusId": 13124,
     "icon": 11851,
     "element": "terre",
     "pa": 4,
@@ -327,6 +334,7 @@
   "spells": {
    "cinglante": {
     "name": "Flèche Cinglante",
+    "dofusId": 32427,
     "icon": 15409,
     "element": "air",
     "cooldown": 0.32,
@@ -349,6 +357,7 @@
    },
    "recul": {
     "name": "Flèche de Recul",
+    "dofusId": 32426,
     "icon": 11876,
     "element": "air",
     "cooldown": 2.5,
@@ -372,6 +381,7 @@
    },
    "glacee": {
     "name": "Flèche Glacée",
+    "dofusId": 32435,
     "icon": 13032,
     "element": "eau",
     "cooldown": 1.2,
@@ -395,6 +405,7 @@
    },
    "barrage": {
     "name": "Flèche de Barrage",
+    "dofusId": 32443,
     "icon": 11904,
     "element": "feu",
     "cooldown": 4,
@@ -416,6 +427,7 @@
    },
    "explosive": {
     "name": "Flèche Explosive",
+    "dofusId": 32445,
     "icon": 11898,
     "element": "feu",
     "cooldown": 2,
@@ -439,6 +451,7 @@
    },
    "abolition": {
     "name": "Flèche d'Abolition",
+    "dofusId": 32453,
     "icon": 15430,
     "element": "terre",
     "cooldown": 3,
@@ -463,6 +476,7 @@
    },
    "dispersion": {
     "name": "Flèche de Dispersion",
+    "dofusId": 32428,
     "icon": 15159,
     "element": "air",
     "cooldown": 8,
@@ -484,6 +498,7 @@
    },
    "pas_chasse": {
     "name": "Pas Chassé",
+    "dofusId": 32464,
     "icon": 15414,
     "element": "neutre",
     "pm": 1,

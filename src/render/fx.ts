@@ -4,6 +4,7 @@ import { TAU } from '../sim/math';
 import type { Element } from '../sim/defs';
 import type { SimEvent, Telegraph } from '../sim/events';
 import type { Projectile } from '../sim/world';
+import { SpellFx } from './spellFx';
 
 const rand = (a: number, b: number) => a + Math.random() * (b - a);
 
@@ -37,8 +38,11 @@ export class FX {
   private parts: Particle[] = [];
   private trails: Trail[] = [];
   private rings: Ring[] = [];
+  /** Effets officiels des sorts (planches Dofus 3). */
+  readonly official: SpellFx;
 
   constructor(private scene: Phaser.Scene, private colorOf: (monster: string) => number) {
+    this.official = new SpellFx(scene);
     this.ground = scene.add.graphics().setDepth(-5000);   // télégraphes au sol
     this.top = scene.add.graphics().setDepth(1e6);        // traînées, particules
   }
@@ -46,8 +50,17 @@ export class FX {
   /** Traduit un événement de la simulation en effets. */
   handle(e: SimEvent) {
     switch (e.k) {
+      case 'spellFx':
+        this.official.cast(e.id, e.x, e.y, e.facing);
+        break;
       case 'spell': {
         const col = ELEMENT_COLORS[e.element], w = e.big ? 16 : 10;
+        // Effet officiel du sort (8A) : sur la zone visée et sur le lanceur ; remplace la forme dessinée
+        const reach = e.fx === 'arc' ? e.size * 0.55 : e.fx === 'line' ? e.size * 0.5 : 0;
+        if (this.official.cast(e.id, e.x + Math.cos(e.facing) * reach, e.y + Math.sin(e.facing) * reach, e.facing, e.x, e.y)) {
+          if (e.boosted) this.ring(e.x, e.y, 10, e.size * 1.3, 0xff7a2e, 0.45, 12);
+          break;
+        }
         if (e.boosted) this.ring(e.x, e.y, 10, e.size * 1.3, 0xff7a2e, 0.45, 12);   // sort renforcé par la Rage
         if (e.fx === 'arc') {
           this.trails.push({ kind: 'arc', x: e.x, y: e.y, z: 24, facing: e.facing, radius: e.size, arc: Math.max(e.arc, 0.6),
@@ -123,6 +136,7 @@ export class FX {
   }
 
   update(dt: number) {
+    this.official.update(dt);
     for (const p of this.parts) {
       p.life -= dt; p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt; p.vz -= 900 * dt;
       if (p.z < 0) { p.z = 0; p.vz *= -0.3; p.vx *= 0.6; p.vy *= 0.6; }
@@ -138,8 +152,10 @@ export class FX {
   draw(telegraphs: readonly Telegraph[], arrows: readonly Projectile[] = []) {
     const g = this.ground, top = this.top;
     g.clear(); top.clear();
-    // Flèches en vol : un trait lumineux de la couleur de l'élément, à hauteur d'arc
+    // Flèches en vol : le projectile officiel s'il existe, sinon un trait lumineux de la couleur de l'élément
+    const official = this.official.projectiles(arrows);
     for (const a of arrows) {
+      if (official.has(a.id)) { if (Math.random() < 0.25) this.particles(a.x, a.y, 34, 1, ELEMENT_COLORS[a.hit.element ?? 'neutre'], 30, 0.2, 2, 30); continue; }
       const col = ELEMENT_COLORS[a.hit.element ?? 'neutre'];
       if (a.hostile) {   // boule d'un monstre : cerclée de rouge pour qu'on la repère et qu'on l'esquive
         const h = ISO.toScreen(a.x, a.y, 30), t = ISO.toScreen(a.x - a.dx * 30, a.y - a.dy * 30, 30);

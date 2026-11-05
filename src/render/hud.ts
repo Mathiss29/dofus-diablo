@@ -23,7 +23,7 @@ const KEYS = ['&', 'é', '"', "'", '(', '-'];
 /** Colonne de menus avec les icônes officielles en couleur de Dofus 3 (uiassets_2x) : icône, nom, raccourci (vide si aucun).
  *  Seulement les menus utiles au jeu ; les autres (guilde, montures...) viendront avec leur fonctionnalité. */
 const MENUS: [string, string, string][] = [
-  ['inventory', 'Inventaire', 'I'], ['characteristic', 'Caractéristiques', 'C'], ['spells', 'Sorts', ''], ['quest', 'Quêtes', ''],
+  ['inventory', 'Inventaire', 'I'], ['characteristic', 'Caractéristiques', 'C'], ['job', 'Métiers', 'J'], ['spells', 'Sorts', ''], ['quest', 'Quêtes', ''],
   ['map', 'Carte du monde', ''], ['bestiary', 'Bestiaire', ''], ['success', 'Succès', ''], ['breach', 'Failles', ''],
 ];
 

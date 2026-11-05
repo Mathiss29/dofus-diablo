@@ -11,6 +11,8 @@ export type SimEvent =
   | { k: 'slam'; x: number; y: number; radius: number }
   /** Un monstre commence un de ses sorts officiels (nom affiché au-dessus de lui). */
   | { k: 'monsterCast'; id: number; name: string; x: number; y: number }
+  /** Sort au contact d'un monstre qui touche : l'affichage joue l'effet officiel du sort sur la cible. */
+  | { k: 'spellFx'; id: string; x: number; y: number; facing: number }
   /** Retrait ou bonus de PA / PM / Puissance (texte flottant façon Dofus). */
   | { k: 'status'; x: number; y: number; text: string; color: string }
   | { k: 'hit'; target: 'monster' | 'player'; id?: number; x: number; y: number; z: number; amount: number; crit: boolean; element?: Element }
@@ -36,6 +38,10 @@ export type SimEvent =
   | { k: 'itemDrop'; x: number; y: number; rarity: Rarity }
   | { k: 'loot'; item: Item }
   | { k: 'lootResource'; id: string; n: number }
+  /** Métiers : niveau gagné, recette faite, plat mangé. */
+  | { k: 'metierLevel'; metier: string; level: number }
+  | { k: 'craft'; id: string; n: number }
+  | { k: 'eat'; id: string; heal: number }
   | { k: 'lootKamas'; n: number }
   /** Sac plein : l'objet reste au sol. */
   | { k: 'bagFull' }

@@ -76,3 +76,18 @@ Les ombres Dofus sont faites de 4 quarts semi-transparents qui se chevauchent (c
   + `uielements/gaugeHeartBorder` ; PA = `figs/paCounter`, PM = `figs/pmCounter` ; emplacements = `uidarkstone/slot_dark_background_full`,
   `slot_light_lock` ; timeline = `uidarkstone/background_timeline_{blue,red}_*` + `uielements/border_turn_timeline` (blanc, à teinter) ;
   bannières = `uidarkstone/background_levelup_banner`, `background_defeat_banner`. Copies utilisées par le jeu : `public/assets/ui/`.
+
+## Effets visuels officiels des sorts (choix 8A)
+
+`python3 tools/extraction/spell_fx.py <tables json> <Content/Characters/Bones>` (depuis la racine du dépôt) :
+lit les spellscripts des sorts du joueur (`classes.json` → `dofusId`) et des monstres (`monsters.json` → `spells[].id`),
+rend chaque gfx `bones_assets_bone_<gfx>.bundle` (FX_0, ou FX_1/3/5/7 orientés) avec les couleurs du jeu
+(render.html applique mul/add des bones ; `SKIP_MASKS=1` ignore les nœuds masques 0x40), puis écrit
+`public/assets/fx/fx_<gfx>.webp/json` et `src/data/spellfx.json`. Les gfx déjà rendus sont gardés (`FORCE=1` pour tout refaire).
+Les bundles d'effets ne sont pas dans le cache : les copier depuis le PC de Mathis.
+
+## Métiers (choix 6A)
+
+`items_export.py` ajoute aussi : `chasse` sur les armes à effet 795 « Arme de chasse », le critère officiel des viandes
+(`Pj>41,N&CU>0` → `metier: {id: 41, min: N+1}`, `chasse: true`), les recettes du Chasseur faisables avec le butin du jeu
+(`recipes`), et `soin` (effet 110) sur les plats.

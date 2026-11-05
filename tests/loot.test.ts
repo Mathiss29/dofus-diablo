@@ -10,7 +10,9 @@ import { World } from '../src/sim/world';
 
 const carte = JSON.parse(readFileSync(new URL('../public/assets/cartes/5_-27/carte.json', import.meta.url), 'utf8')) as MapData;
 const STEP = 1 / 60;
-const arena = (seed = 42) => new World({ data: GAME_DATA, zone: 'champs-astrub', map: new GridMap(carte), seed, items: ITEMS });
+const world = (seed = 42, classId = 'iop') => new World({ data: GAME_DATA, zone: 'champs-astrub', map: new GridMap(carte), seed, items: ITEMS, classId });
+/** Sac vidé de l'arme de chasse de départ, pour compter les objets simplement. */
+const arena = (seed = 42) => { const w = world(seed); w.player.bag.length = 0; return w; };
 const find = (name: string) => Object.entries(ITEMS.equipment).find(([, d]) => d.name === name)!;
 
 describe('objets officiels', () => {
@@ -135,5 +137,46 @@ describe('auto-attaque à l\'arme', () => {
     expect(m.hp).toBeLessThan(hp);
     p.unequip('arme');
     expect(p.autoAttack).toBe('attaque');
+  });
+});
+
+describe('métier Chasseur (choix 6A)', () => {
+  const meatOf = (m: string) => ITEMS.drops[m].find(d => d.metier);
+  it('on commence avec une arme de chasse officielle (Couteau de Chasse, Arc de Chasse pour le Crâ)', () => {
+    expect(world().player.bag.map(i => ITEMS.equipment[i.id].name)).toEqual(['Couteau de Chasse']);
+    expect(world(42, 'cra').player.bag.map(i => ITEMS.equipment[i.id].name)).toEqual(['Arc de Chasse']);
+    expect(ITEMS.equipment['1934'].chasse).toBe(true);
+  });
+  it('les viandes suivent le critère officiel : arme de chasse en main et niveau de Chasseur', () => {
+    const d = meatOf('feu_vif')!;
+    expect(ITEMS.resources[d.item].name).toBe('Viande Intangible');
+    expect(d.metier).toEqual({ id: 41, min: 1 });
+    expect(ITEMS.drops.pissenlit.find(x => x.item === '17124')?.metier?.min).toBe(20);   // Viande Faisandée : Chasseur > 19
+    const kill = (hunt: boolean) => {
+      const w = world(); const p = w.player;
+      if (hunt) expect(p.equip(p.bag[0].uid)).toBe(true);
+      let meat = 0;
+      for (let i = 0; i < 60; i++) {
+        const m = w.spawnMonster('feu_vif', p.x + 300, p.y);
+        (w as unknown as { killMonster(m: unknown): void }).killMonster(m);
+        meat = p.resources[d.item] ?? 0;
+      }
+      return { meat, job: p.metiers.chasseur };
+    };
+    expect(kill(false).meat).toBe(0);
+    const h = kill(true);
+    expect(h.meat).toBeGreaterThan(10);
+    expect(h.job.level * 1000 + h.job.xp).toBeGreaterThan(1000);   // le métier a monté
+  });
+  it('recette officielle : Bouillon de Chair = 1 Viande Intangible, se mange (+11 PV)', () => {
+    const w = world(), p = w.player, i = ITEMS.recipes!.findIndex(r => ITEMS.resources[r.result].name === 'Bouillon de Chair');
+    expect(ITEMS.recipes![i].ingredients).toEqual([['16663', 1]]);
+    expect(w.craft(i)).toBe(false);
+    p.resources['16663'] = 2;
+    expect(w.craft(i)).toBe(true);
+    expect(p.resources['16663']).toBe(1); expect(p.resources['16670']).toBe(1);
+    p.hp = p.maxHp - 50;
+    expect(w.eat('16670')).toBe(true);
+    expect(p.hp).toBe(p.maxHp - 39); expect(p.resources['16670']).toBeUndefined();
   });
 });

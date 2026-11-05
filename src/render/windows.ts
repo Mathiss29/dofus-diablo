@@ -1,7 +1,7 @@
 import { ICON_CSS, iconHtml } from './icons';
 import { ITEMS } from '../sim/data';
 import {
-  BASE_STATS, LEGENDARY, RARITY_COLORS, RARITY_NAMES, STATS, STAT_NAMES, recycleValue,
+  BASE_STATS, LEGENDARY, RARITY_COLORS, RARITY_NAMES, STATS, STAT_NAMES, metierXpNeeded, recycleValue,
   type EquipSlot, type Item, type Stat,
 } from '../sim/items';
 import { Player } from '../sim/player';
@@ -92,10 +92,23 @@ const CSS = `
 .dw .tip h4{margin:0 0 2px;font-size:15px}.dw .tip .sub{color:#a9a48b;font-size:12px;margin-bottom:6px}
 .dw .tip .up{color:#7be07b}.dw .tip .down{color:#e0625a}.dw .tip .ex{color:#6fb2e8}.dw .tip .leg{color:#f08a2c;margin-top:4px}
 .dw .tip .set{color:#9ad15a;margin-top:6px;font-size:12px}.dw .tip .hint{color:#7f7a64;font-size:11px;margin-top:6px}
+.dw .win.job{width:min(560px,96vw);height:min(640px,92vh)}
+.dw .job .in{padding:14px 16px;overflow:auto;display:grid;gap:12px;align-content:start}
+.dw .mh{display:flex;gap:12px;align-items:center}.dw .mh img{width:56px;height:56px}
+.dw .mh b{font-size:17px;color:#f4efe0}.dw .bar{height:8px;border-radius:4px;background:#2c281f;overflow:hidden;margin-top:5px;width:260px;max-width:100%}
+.dw .bar i{display:block;height:100%;background:#b9e54b}
+.dw .note{font-size:12px;color:#c9c4ab;background:#1d1c19;border:1px solid #34322b;border-radius:3px;padding:8px 10px}
+.dw .note.ok{border-color:#4c6e17;color:#d6f57a}
+.dw .rec{display:grid;grid-template-columns:52px 1fr auto;gap:10px;align-items:center;padding:8px;border:1px solid #34322b;border-radius:4px;background:#26251f}
+.dw .rec .ic{width:48px;height:48px}.dw .rec .ings{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;font-size:12px}
+.dw .rec .ing{display:flex;align-items:center;gap:3px}.dw .rec .ing .ic{width:26px;height:26px}
+.dw .rec .lack{color:#e0625a}.dw .rec .have{color:#9ad15a}
+.dw .btn{cursor:pointer;background:linear-gradient(#6f9a2a,#4c6e17);border:1px solid #b9e54b;color:#fff;border-radius:3px;padding:6px 12px;font-weight:bold}
+.dw .btn.off{opacity:.35;pointer-events:none;filter:grayscale(1)}
 .dw .tip .cmp{border-top:1px solid #3a3a2c;margin-top:6px;padding-top:6px;font-size:12px}
 `;
 
-type Mode = 'inv' | 'car';
+type Mode = 'inv' | 'car' | 'job';
 
 /** Fenêtres façon Dofus 3 : « Inventaire » (le perso sur son socle, ses emplacements autour, le sac à onglets)
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
@@ -137,11 +150,11 @@ export class Windows {
   refresh() { if (this.win) this.render(); }
 
   private render() {
-    if (this.mode === 'car') this.renderCarac(); else this.renderInv();
+    if (this.mode === 'car') this.renderCarac(); else if (this.mode === 'job') this.renderJob(); else this.renderInv();
     this.win!.querySelector('[data-close]')!.addEventListener('click', () => this.close());
   }
   private title(name: string, icon: string) {
-    return `<div class="ttl"><img src="assets/ui/menu/${icon}.png" alt=""><b>${name}</b><span class="x" data-close title="Fermer (Échap)">✕</span></div>`;
+    return `<div class="ttl"><img src="assets/ui/menu/${icon}.png" alt="" style="object-fit:contain"><b>${name}</b><span class="x" data-close title="Fermer (Échap)">✕</span></div>`;
   }
 
   private renderInv() {
@@ -195,6 +208,14 @@ export class Windows {
       e.addEventListener('contextmenu', () => { p.unequip(s); this.changed(); });
       e.addEventListener('dblclick', () => { p.unequip(s); this.changed(); });
     });
+    w.querySelectorAll<HTMLElement>('[data-res]').forEach(e => {
+      const id = e.dataset.res!, r = ITEMS.resources[id];
+      const eat = () => { if (this.world.eat(id)) this.changed(); };
+      e.addEventListener('mouseenter', ev => { this.tip.innerHTML = `<h4>${r.name}</h4><div class="sub">${r.soin ? 'Consommable' : 'Ressource'} · niveau ${r.level}</div>${r.soin ? `<div class="up">+${r.soin} PV</div><div class="hint">Clic droit : manger</div>` : ''}`; this.tip.style.display = 'block'; this.moveTip(ev); });
+      e.addEventListener('mousemove', ev => this.moveTip(ev));
+      e.addEventListener('mouseleave', () => this.hideTip());
+      if (r.soin) { e.addEventListener('contextmenu', eat); e.addEventListener('dblclick', eat); }
+    });
     w.querySelectorAll<HTMLElement>('[data-uid]').forEach(e => {
       const uid = +e.dataset.uid!, it = p.bag.find(b => b.uid === uid)!;
       const equip = () => { if (!p.equip(uid)) this.flash(e); this.changed(); };
@@ -227,6 +248,32 @@ export class Windows {
     }));
   }
 
+  /** Fenêtre « Métiers » (choix 6A) : le Chasseur, son niveau, et ses recettes officielles faisables avec le butin du jeu. */
+  private renderJob() {
+    const w = this.win!, p = this.world.player, M = ITEMS.metiers ?? {}, R = ITEMS.recipes ?? [];
+    const res = (id: string) => ITEMS.resources[id];
+    const jobs = Object.entries(M).map(([k, m]) => {
+      const st = p.metiers[k] ?? { level: 1, xp: 0 }, need = metierXpNeeded(st.level);
+      const weapon = p.huntingWeapon
+        ? `<div class="note ok">Arme de chasse en main : les monstres peuvent lâcher leurs viandes.</div>`
+        : `<div class="note">Équipe une arme avec l'effet « Arme de chasse » (Couteau de Chasse, Arc de Chasse…) pour que les monstres lâchent leurs viandes.</div>`;
+      const recs = R.map((r, i) => ({ r, i })).filter(({ r }) => r.metier === k).map(({ r, i }) => {
+        const out = res(r.result), lvlOk = st.level >= r.level;
+        const ok = lvlOk && r.ingredients.every(([id, q]) => (p.resources[id] ?? 0) >= q);
+        const ings = r.ingredients.map(([id, q]) => { const have = p.resources[id] ?? 0;
+          return `<span class="ing" title="${res(id)?.name ?? id}">${iconHtml(res(id)?.icon ?? 0)}<span class="${have >= q ? 'have' : 'lack'}">${have}/${q}</span> ${res(id)?.name ?? ''}</span>`; }).join('');
+        return `<div class="rec">${iconHtml(out?.icon ?? 0)}<div><b>${out?.name ?? r.result}</b> <span class="hint">niveau ${r.level}${out?.soin ? ` · +${out.soin} PV` : ''}</span>
+          ${lvlOk ? '' : `<div class="lack" style="font-size:12px">${M[k].name} niveau ${r.level} requis</div>`}<div class="ings">${ings}</div></div>
+          <span class="btn ${ok ? '' : 'off'}" data-craft="${i}">Fabriquer</span></div>`;
+      }).join('');
+      return `<div class="mh"><img src="assets/ui/metier_${k}.png" alt=""><div><b>${m.name}</b> · niveau ${st.level}
+        <div class="bar"><i style="width:${Math.round((st.xp / need) * 100)}%"></i></div><span class="hint">${st.xp} / ${need} XP · une viande ramassée ou une recette faite fait monter le métier</span></div></div>
+        ${weapon}${recs}`;
+    }).join('');
+    w.innerHTML = `${this.title('Métiers', 'job')}<div class="in">${jobs || '<div class="hint">Aucun métier.</div>'}</div>`;
+    w.querySelectorAll<HTMLElement>('[data-craft]').forEach(e => e.addEventListener('click', () => { this.world.craft(+e.dataset.craft!); this.changed(); }));
+  }
+
   private changed() { this.hideTip(); this.render(); this.onChange(); }
   private flash(e: HTMLElement) { e.style.borderColor = '#e0625a'; }
 
@@ -250,10 +297,11 @@ export class Windows {
         cells.push(`<div class="cell ${up ? 'up' : ''} ${d.level > p.level ? 'low' : ''}" data-uid="${it.uid}">${iconHtml(d.icon)}<i class="r" style="background:${RARITY_COLORS[it.rarity]}"></i></div>`);
       }
     }
-    if ((this.tab === 'tout' || this.tab === 'ressource') && !this.kind) for (const [id, n] of Object.entries(p.resources)) {
+    if ((this.tab === 'tout' || this.tab === 'ressource' || this.tab === 'conso') && !this.kind) for (const [id, n] of Object.entries(p.resources)) {
       const r = ITEMS.resources[id];
       if (!r || (q && !r.name.toLowerCase().includes(q))) continue;
-      cells.push(`<div class="cell" title="${r.name}">${iconHtml(r.icon)}<span class="n">${n}</span></div>`);
+      if (this.tab === 'conso' && !r.soin) continue;
+      cells.push(`<div class="cell" data-res="${id}">${iconHtml(r.icon)}<span class="n">${n}</span></div>`);
     }
     const n = cells.length;
     for (let i = n; i < Math.max(35, Math.ceil(n / 5) * 5); i++) cells.push('<div class="cell empty"></div>');
@@ -283,7 +331,8 @@ export class Windows {
     const slot = p.slotFor(it), cur = !worn && slot ? p.equipment[slot] : undefined;
     const line = (k: Stat, v: number) => `<div class="${it.extra.includes(k) ? 'ex' : v < 0 ? 'down' : ''}">${v > 0 ? '+' : ''}${v} ${STAT_NAMES[k]}</div>`;
     const stats = STATS.filter(k => it.stats[k] !== undefined).map(k => line(k, it.stats[k]!)).join('');
-    const weapon = d.weapon ? `<div>${d.weapon.dmg.map(x => `${x.min}–${x.max} dommages ${x.element}`).join(' · ')}</div>` : '';
+    const weapon = (d.weapon ? `<div>${d.weapon.dmg.map(x => `${x.min}–${x.max} dommages ${x.element}`).join(' · ')}</div>` : '')
+      + (d.chasse ? '<div class="ex">Arme de chasse</div>' : '');
     const leg = it.legendary ? `<div class="leg"><b>${LEGENDARY[it.legendary.id].name}</b> : ${LEGENDARY[it.legendary.id].text(it.legendary.value)}</div>` : '';
     const set = d.set && ITEMS.sets[d.set] ? `<div class="set">${ITEMS.sets[d.set].name}</div>` : '';
     let cmp = '';

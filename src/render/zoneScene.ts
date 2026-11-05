@@ -8,6 +8,7 @@ import type { SkillId } from '../sim/defs';
 import type { Entity } from '../sim/entity';
 import { World } from '../sim/world';
 import { EntityView } from './entityView';
+import { SpellFx } from './spellFx';
 import { FX } from './fx';
 import { Hud } from './hud';
 import { LOOKS } from './looks';
@@ -80,6 +81,9 @@ export class ZoneScene extends Phaser.Scene {
       const w = zone.waves!;
       [...w.pack.map(p => p.monster), w.boss, ...w.escort.monsters, ...w.archimonstres.monsters].forEach(m => types.add(m));
     }
+    // Effets officiels des sorts : ceux de la classe et des monstres de la zone
+    SpellFx.preload(this, [...Object.keys(GAME_DATA.classes[this.classId].spells),
+      ...[...types].flatMap(t => (GAME_DATA.monsters[t].spells ?? []).map(s => `m${s.id}`))]);
     const looks = [LOOKS[this.classId], ...[...types].map(t => LOOKS[GAME_DATA.monsters[t].look])];
     const seen = new Set<string>();
     for (const L of looks) {
@@ -148,6 +152,7 @@ export class ZoneScene extends Phaser.Scene {
     this.hud.onMenu = name => {
       if (name === 'Inventaire') this.windows!.toggle('inv');
       else if (name === 'Caractéristiques') this.windows!.toggle('car');
+      else if (name === 'Métiers') this.windows!.toggle('job');
       else this.hud.toast(`${name} : arrive dans une prochaine version`);
     };
     this.cameras.main.startFollow(this.viewOf(this.world.player).sprite, true, 0.12, 0.12, 0, 30);
@@ -160,7 +165,7 @@ export class ZoneScene extends Phaser.Scene {
     const K = Phaser.Input.Keyboard.KeyCodes, kb = this.input.keyboard!;
     // Déplacement à la souris (clic gauche) ; le clavier sert aux sorts, à la potion et aux menus
     this.keys = kb.addKeys({ SHIFT: K.SHIFT, ALT: K.ALT,
-      SPACE: K.SPACE, E: K.E, K: K.K, I: K.I, C: K.C, ESC: K.ESC, F: K.F, H: K.H, ENTER: K.ENTER,
+      SPACE: K.SPACE, E: K.E, K: K.K, I: K.I, C: K.C, J: K.J, ESC: K.ESC, F: K.F, H: K.H, ENTER: K.ENTER,
       ONE: K.ONE, TWO: K.TWO, THREE: K.THREE, FOUR: K.FOUR, FIVE: K.FIVE, SIX: K.SIX }) as Record<string, Phaser.Input.Keyboard.Key>;
     const cls = this.world.player.cls;
     // Façon Diablo (demande de Mathis, 2026-11-05) : clic gauche sur le sol = y aller (maintenu : suivre le curseur),
@@ -194,6 +199,7 @@ export class ZoneScene extends Phaser.Scene {
     // I ou C : fenêtre Personnage (inventaire + caractéristiques) ; le jeu continue derrière
     this.keys.I.on('down', () => this.windows?.toggle('inv'));
     this.keys.C.on('down', () => this.windows?.toggle('car'));
+    this.keys.J.on('down', () => this.windows?.toggle('job'));   // Métiers (choix 6A : Chasseur)
     this.keys.ESC.on('down', () => this.windows?.close());
     // K : changer de classe (en attendant l'écran de création de la 0.1b)
     this.keys.K.on('down', () => this.scene.restart({ zone: this.zoneId, classe: this.classId === 'iop' ? 'cra' : 'iop' }));
@@ -328,6 +334,9 @@ export class ZoneScene extends Phaser.Scene {
         case 'bagFull': this.hud.toast('Sac plein : recycle des objets (Maj + clic dans l\'inventaire)'); break;
         case 'monsterCast': this.castName(e.id, e.name); break;
         case 'itemDrop': if (e.rarity === 'rare' || e.rarity === 'legendaire') this.chime(e.rarity === 'legendaire'); break;
+        case 'metierLevel': this.hud.banner(`${ITEMS.metiers?.[e.metier]?.name ?? 'Métier'} niveau ${e.level} !`, 1500); this.windows?.refresh(); break;
+        case 'craft': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Objet'} x${e.n}`, '#9ad15a'); this.windows?.refresh(); break;
+        case 'eat': this.windows?.refresh(); break;
         case 'lootResource': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Ressource'} x${e.n}`, '#c9c4ab'); this.windows?.refresh(); break;
         case 'levelUp': this.hud.banner(`Niveau ${e.level} !\n+5 points (C)`, 1500); this.windows?.refresh(); break;
         case 'checkpoint': this.hud.banner(`Point de retour\n${e.name}`, 1400); break;
