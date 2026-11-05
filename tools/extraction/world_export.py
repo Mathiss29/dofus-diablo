@@ -64,7 +64,12 @@ x1m, y1m = x0m + MW, y0m + MH
 ONLY_INSIDE = os.environ.get('ONLY_INSIDE') == '1'
 # DECOR_ONLY=1 : ne réécrit que les atlas de décor (sols et fonds inchangés)
 DECOR_ONLY = os.environ.get('DECOR_ONLY') == '1'
+# avec DECOR_ONLY : NO_DECOR=1 saute aussi les atlas de décor ; CALQUES=fond,bord réécrit quand même ces calques
+NO_DECOR = os.environ.get('NO_DECOR') == '1'
+CALQUES = set(os.environ.get('CALQUES', 'bord').split(','))
+sols, entiers = {}, {}
 def pack(variants, path, write=True):
+    write = write and not NO_DECOR
     """Atlas Phaser d'une carte : une image par (gfx, couleur, échelle), rangées en étagères."""
     items = sorted(variants.values(), key=lambda v: -v[1].height)
     maxW = 2048; px = py = rowH = 0; pos = {}
@@ -128,15 +133,25 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
     by1 = y1m if nb['b'] else max([y1m] + [ey + im.height for im, _, ey in sol_els])
     sol = Image.new('RGBA', (bx1 - bx0, by1 - by0))
     for im, ex, ey in sol_els: sol.alpha_composite(im, (ex - bx0, ey - by0))
-    fond = None
-    if fond_els:
-        fx0 = min(ex for _, ex, _ in fond_els); fy0 = min(ey for _, _, ey in fond_els)
-        fx1 = max(ex + im.width for im, ex, _ in fond_els); fy1 = max(ey + im.height for im, _, ey in fond_els)
+    # le sol entier, sans coupe : sert au calque « bord » (deuxième passe, après toutes les cartes)
+    if sol_els and not extra[(x, y)].get('inside'):
+        ux0 = min(ex for _, ex, _ in sol_els); uy0 = min(ey for _, _, ey in sol_els)
+        ux1 = max(ex + im.width for im, ex, _ in sol_els); uy1 = max(ey + im.height for im, _, ey in sol_els)
+        if (ux0, uy0, ux1, uy1) != (bx0, by0, bx1, by1):
+            full = Image.new('RGBA', (ux1 - ux0, uy1 - uy0))
+            for im, ex, ey in sol_els: full.alpha_composite(im, (ex - ux0, ey - uy0))
+            entiers[tag] = (full, ux0 + dx, uy0 + dy, (x0m + dx, y0m + dy, x1m + dx, y1m + dy), (bx0 + dx, by0 + dy, bx1 + dx, by1 + dy), write)
+    sols[tag] = (sol, bx0 + dx, by0 + dy)
+    def calque(lst, nom):
+        if not lst: return None
+        fx0 = min(ex for _, ex, _ in lst); fy0 = min(ey for _, _, ey in lst)
+        fx1 = max(ex + im.width for im, ex, _ in lst); fy1 = max(ey + im.height for im, _, ey in lst)
         fim = Image.new('RGBA', (fx1 - fx0, fy1 - fy0))
-        for im, ex, ey in fond_els: fim.alpha_composite(im, (ex - fx0, ey - fy0))
+        for im, ex, ey in lst: fim.alpha_composite(im, (ex - fx0, ey - fy0))
         # flou par nature : moitié de résolution (le jeu l'agrandit x2), 4 fois moins de mémoire vidéo
-        if write and not DECOR_ONLY: fim.resize((max(1, fim.width // 2), max(1, fim.height // 2)), Image.LANCZOS).save(f'{out}/fond_{tag}.webp', 'WEBP', quality=80, method=6)
-        fond = {'x': fx0 + dx, 'y': fy0 + dy, 'w': fim.width, 'h': fim.height, 'k': 2}
+        if write and (not DECOR_ONLY or nom in CALQUES): fim.resize((max(1, fim.width // 2), max(1, fim.height // 2)), Image.LANCZOS).save(f'{out}/{nom}_{tag}.webp', 'WEBP', quality=80, method=6)
+        return {'x': fx0 + dx, 'y': fy0 + dy, 'w': fim.width, 'h': fim.height, 'k': 2}
+    fond = calque(fond_els, 'fond')
     if write and not DECOR_ONLY: sol.save(f'{out}/sol_{tag}.webp', 'WEBP', quality=80, method=6)
     # Décor : un atlas par carte, pour que le jeu ne charge que les cartes proches du joueur
     variants = {}; places = []
@@ -155,6 +170,37 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
                           'sol': {'x': bx0 + dx, 'y': by0 + dy, 'w': sol.width, 'h': sol.height}, 'decor': places,
                           **({'fond': fond} if fond else {}), **({'inside': 1} if extra[(x, y)].get('inside') else {})})
     print(tag, 'retirés', len(hard), 'sol', sol.size, 'fond', fond and (fond['w'], fond['h']), 'decor', len(places), asz)
+# Calque « bord » : ce qu'une carte dessine au-delà de son cadre, posé par-dessus les cartes voisines.
+#  - là où la voisine n'a rien (trou, ciel) : en entier (falaises et rochers qui débordent) ;
+#  - ailleurs : en fondu sur BORD px (ombres, fonds de ciel… plus de coupure nette au raccord).
+import numpy as np
+BORD = 160
+for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
+    tag = extra[(x, y)].get('tag', f'{x}_{y}')
+    if tag not in entiers: continue
+    full, ux, uy, (rx0, ry0, rx1, ry1), (sx0, sy0, sx1, sy1), write = entiers[tag]
+    A = np.asarray(full).astype(np.float32)
+    h, w = A.shape[:2]
+    gx = ux + np.arange(w)[None, :]; gy = uy + np.arange(h)[:, None]
+    hors = ~((gx >= sx0) & (gx < sx1) & (gy >= sy0) & (gy < sy1))   # pas déjà dans le sol de la carte
+    # alpha du sol des autres cartes sous chaque pixel
+    autre = np.zeros((h, w), np.float32)
+    for t2, (s2, ox, oy) in sols.items():
+        if t2 == tag: continue
+        x0, y0 = max(ux, ox), max(uy, oy); x1, y1 = min(ux + w, ox + s2.width), min(uy + h, oy + s2.height)
+        if x0 >= x1 or y0 >= y1: continue
+        a2 = np.asarray(s2.getchannel('A').crop((x0 - ox, y0 - oy, x1 - ox, y1 - oy))).astype(np.float32)
+        sub = autre[y0 - uy:y1 - uy, x0 - ux:x1 - ux]; np.maximum(sub, a2, out=sub)
+    d = np.maximum(np.maximum(rx0 - gx, gx - rx1), np.maximum(ry0 - gy, gy - ry1)).clip(0)
+    f = np.where(autre < 128, 1.0, np.clip(1 - d / BORD, 0, 1)) * hors
+    A[..., 3] *= f
+    if not (A[..., 3] > 4).any(): continue
+    im = Image.fromarray(A.astype(np.uint8), 'RGBA'); b = im.getbbox()
+    im = im.crop(b)
+    if write and 'bord' in CALQUES: im.save(f'{out}/bord_{tag}.webp', 'WEBP', quality=80, method=6)
+    e = next(m for m in monde['maps'] if m['tag'] == tag)
+    e['bord'] = {'x': ux + b[0], 'y': uy + b[1], 'w': im.width, 'h': im.height}
+    print('bord', tag, im.size)
 if sky is not None:
     sky.convert('RGB').save(f'{out}/ciel.webp', 'WEBP', quality=85, method=6); monde['sky'] = 'ciel.webp'
 monde['mov'] = ''.join(mov)
