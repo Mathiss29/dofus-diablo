@@ -45,5 +45,6 @@ if not maxH:
     json.dump({'frames': P['frames'], 'meta': {'image': P['image'], 'size': {'w': maxW, 'h': P['sheet'].height}, **meta}}, open(out + '.json', 'w'))
 else:
     json.dump({'textures': [{'image': P['image'], 'format': 'RGBA8888', 'size': {'w': maxW, 'h': P['sheet'].height}, 'scale': 1,
-                             'frames': [{'filename': k, **f} for k, f in P['frames'].items()]} for P in pages], 'meta': meta}, open(out + '.json', 'w'))
+                             # meta recopié dans chaque page : Phaser ne garde que les clés des pages (texture.customData)
+                             'meta': meta, 'frames': [{'filename': k, **f} for k, f in P['frames'].items()]} for P in pages], 'meta': meta}, open(out + '.json', 'w'))
 print(len(pages), 'page(s)', [P['sheet'].size for P in pages])
