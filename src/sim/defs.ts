@@ -106,7 +106,10 @@ export type MonsterEffect =
   | { k: 'dmg'; element: Element; min: number; max: number; steal?: boolean; perPa?: boolean }
   | { k: 'pa' | 'pm' | 'puissance'; n: number; dur: number }
   | { k: 'attire' | 'repousse' | 'avance'; n: number }
-  | { k: 'soin'; min: number; max: number };
+  | { k: 'soin'; min: number; max: number }
+  /** Dommages en plus (pct : en %) pendant dur tours, ex. Frénésie ; invocation d'un monstre, ex. Appel de Kardorib. */
+  | { k: 'dommages'; n: number; pct?: boolean; dur: number }
+  | { k: 'invoque'; monster: string };
 /** Sort officiel d'un monstre : coût, portée en cases (po), relance en tours, animation AnimAttaque<anim>,
  *  zone (P1 = une case, X1 = croix autour), allies = vise ses alliés, missile / gfx = effets visuels officiels. */
 export interface MonsterSpell {
@@ -128,7 +131,10 @@ export interface SubAreaDef {
   interieur?: boolean;
 }
 /** Porte entre deux cartes du monde (dehors -> intérieur, ou d'une salle à l'autre) : [tag de la carte, case Dofus 0-559]. */
-export interface PorteDef { a: [string, number]; b: [string, number]; nom: string }
+/** verrou : la salle du côté a doit être vidée avant de passer ; sens : on ne passe que de a vers b (donjons). */
+export interface PorteDef { a: [string, number]; b: [string, number]; nom: string; verrou?: number; sens?: number }
+/** Donjon : ses salles (tag de carte) et, pour chacune, ses groupes de monstres officiels (fixes). */
+export interface DonjonDef { nom: string; salles: Record<string, string[][]> }
 /** Monde ouvert : cartes Dofus collées, groupes de monstres posés sur chaque carte, qui réapparaissent. */
 export interface OpenDef {
   /** Dossier public/assets/mondes/<world>. */
@@ -142,6 +148,7 @@ export interface OpenDef {
   subareas: Record<string, SubAreaDef>;
   /** Portes vers les intérieurs, reliées à la main (tools/extraction/interieurs.py). */
   portes?: PorteDef[];
+  donjons?: DonjonDef[];
 }
 export interface ZoneDef {
   name: string; level: number;

@@ -55,6 +55,10 @@ export class Player extends Entity {
   path: { x: number; y: number }[] = [];
   chaseId: number | null = null;
   private dest: { x: number; y: number } | null = null;
+  /** Le joueur a cliqué près de ce point (portes : on n'entre que si on a cliqué dessus, pas en passant devant). */
+  vise(x: number, y: number, r: number): boolean { return !!this.dest && Math.hypot(this.dest.x - x, this.dest.y - y) <= r; }
+  /** Arrête le déplacement en cours (après une porte : on ne repart pas vers l'ancien clic). */
+  stopMove() { this.dest = null; this.path = []; this.chaseId = null; }
   private repathT = 0;
   private buffer: SkillId | null = null;
   private bufferT = 0;

@@ -25,7 +25,11 @@ export interface Projectile { id: number; spell: string; x: number; y: number; d
   from?: { monster: Monster; spell: MonsterSpell } }
 
 /** Monde ouvert : un groupe de monstres posé sur une carte Dofus, qui réapparaît quand il a été vaincu. */
-interface MonsterGroup { id: number; map: string; sub: SubAreaDef; members: Monster[]; timer: number; cleared: boolean; x: number; y: number }
+interface MonsterGroup {
+  id: number; map: string; sub: SubAreaDef; members: Monster[]; timer: number; cleared: boolean; x: number; y: number;
+  /** Donjon : monstres fixes du groupe et nom du donjon (ne réapparaît pas tant que le joueur y est). */
+  fixe?: string[]; donjon?: string;
+}
 export interface PorteEnd { tag: string; x: number; y: number }
 
 export interface WorldOptions {
@@ -68,9 +72,11 @@ export class World {
   /** Sous-zone où se trouve le joueur (monde ouvert). */
   area: SubAreaDef | null = null;
   /** Portes du monde ouvert : les deux bouts en coordonnées monde, et la carte de chacun. */
-  portes: { nom: string; ends: [PorteEnd, PorteEnd] }[] = [];
+  portes: { nom: string; ends: [PorteEnd, PorteEnd]; verrou: boolean; sens: boolean }[] = [];
   /** Bout de porte par lequel le joueur vient d'arriver : inactif tant qu'il ne s'en est pas éloigné. */
   private portalLock: PorteEnd | null = null;
+  /** Distance (|dx| + |dy|) au-delà de laquelle un monstre qui attend ne bouge plus. */
+  static readonly SOMMEIL = 1400;
 
   constructor(readonly opts: WorldOptions) {
     this.rng = new Rng(opts.seed ?? 1);
@@ -111,7 +117,7 @@ export class World {
         const q = wg.cellToWorld(wg.cellOf(tag, c));
         return { tag, ...wg.nearestFree(q.x, q.y, wg.freeByMap.get(tag)!) };
       };
-      this.portes.push({ nom: d.nom, ends: [end(d.a), end(d.b)] });
+      this.portes.push({ nom: d.nom, ends: [end(d.a), end(d.b)], verrou: !!d.verrou, sens: !!d.sens });
     }
   }
   /** Passe la porte si le joueur est dessus : il arrive de l'autre côté, un peu en avant de la porte d'arrivée. */
@@ -121,7 +127,13 @@ export class World {
     if (this.portalLock && Math.hypot(p.x - this.portalLock.x, p.y - this.portalLock.y) > R + 30) this.portalLock = null;
     for (const po of this.portes) for (let i = 0; i < 2; i++) {
       const from = po.ends[i], to = po.ends[1 - i];
-      if (from === this.portalLock || Math.hypot(p.x - from.x, p.y - from.y) > R) continue;
+      if ((i === 1 && po.sens) || from === this.portalLock || Math.hypot(p.x - from.x, p.y - from.y) > R) continue;
+      if (!p.vise(from.x, from.y, R + 40)) continue;   // on passe la porte en cliquant dessus, pas en la frôlant
+      if (po.verrou && !this.salleVide(from.tag)) {
+        this.portalLock = from;   // un seul message tant qu'il reste sur la porte
+        this.emit({ k: 'status', x: p.x, y: p.y - 60, text: 'Vaincs les monstres de la salle', color: '#ff9a5a' });
+        return;
+      }
       // arrivée : une case libre juste hors du rayon de la porte d'arrivée, du côté du milieu de la carte (pas collé au bord)
       const free = (wg.freeByMap.get(to.tag) ?? []).map(c => wg.cellToWorld(c));
       const mid = free.reduce((a, q) => ({ x: a.x + q.x / free.length, y: a.y + q.y / free.length }), { x: 0, y: 0 });
@@ -132,11 +144,21 @@ export class World {
         const score = d + 0.6 * Math.hypot(q.x - mid.x, q.y - mid.y);
         if (score < bd) { bd = score; best = { tag: to.tag, ...q }; }
       }
-      p.x = best.x; p.y = best.y; p.kx = p.ky = 0; p.z = 0;
+      p.x = best.x; p.y = best.y; p.kx = p.ky = 0; p.z = 0; p.stopMove();
       this.portalLock = to;
       this.emit({ k: 'portal', nom: po.nom });
       return;
     }
+  }
+
+  /** Plus aucun monstre vivant dans les groupes de cette carte (portes verrouillées des donjons). */
+  salleVide(tag: string): boolean {
+    return !this.groups.some(g => g.map === tag && g.members.some(m => !m.dead));
+  }
+  /** Le joueur est dans une salle de ce donjon. */
+  private dansDonjon(nom: string): boolean {
+    const d = this.zone.open?.donjons?.find(x => x.nom === nom), tag = this.worldGrid?.mapAt(this.player.x, this.player.y)?.tag;
+    return !!d && !!tag && tag in d.salles;
   }
 
   /** Case la plus dégagée d'une carte (le plus de cases marchables autour). */
@@ -165,17 +187,28 @@ export class World {
         this.spawnGroup(g);
       }
     }
+    // Donjons : groupes officiels fixes, salle par salle
+    for (const d of open.donjons ?? []) for (const [tag, groupes] of Object.entries(d.salles)) {
+      const m = wg.mapByTag(tag);
+      if (!m || !wg.freeByMap.get(tag)?.length) continue;
+      const sub = open.subareas[String(m.sub)] ?? { name: d.nom, level: this.zone.level, monsters: [], groupsPerMap: 0, groupSize: [0, 0] };
+      for (const fixe of groupes) {
+        const g: MonsterGroup = { id: this.groups.length, map: tag, sub, members: [], timer: 0, cleared: false, x: 0, y: 0, fixe, donjon: d.nom };
+        this.groups.push(g);
+        this.spawnGroup(g);
+      }
+    }
   }
   private spawnGroup(g: MonsterGroup) {
     const wg = this.worldGrid!, free = wg.freeByMap.get(g.map)!, p = this.player;
     let pos = wg.randomFree(this.rng, free), tries = 0;
     while (Math.hypot(pos.x - p.x, pos.y - p.y) < 450 && ++tries < 30) pos = wg.randomFree(this.rng, free);
     g.x = pos.x; g.y = pos.y; g.members = []; g.cleared = false;
-    const [a, b] = g.sub.groupSize, n = a + this.rng.int(b - a + 1);
+    const [a, b] = g.sub.groupSize, n = g.fixe ? g.fixe.length : a + this.rng.int(b - a + 1);
     for (let i = 0; i < n; i++) {
       const ang = this.rng.range(0, Math.PI * 2), r = i === 0 ? 0 : this.rng.range(30, 80);
       const q = wg.nearestFree(pos.x + Math.cos(ang) * r, pos.y + Math.sin(ang) * r, free);
-      const mo = this.spawnMonster(this.rng.pick(g.sub.monsters), q.x, q.y);
+      const mo = this.spawnMonster(g.fixe ? g.fixe[i] : this.rng.pick(g.sub.monsters), q.x, q.y);
       mo.group = g.id; g.members.push(mo);
     }
   }
@@ -196,7 +229,7 @@ export class World {
       }
       g.timer -= dt;
       // Réapparition hors de la vue du joueur
-      if (g.timer <= 0 && Math.hypot(g.x - p.x, g.y - p.y) > 900) this.spawnGroup(g);
+      if (g.timer <= 0 && Math.hypot(g.x - p.x, g.y - p.y) > 900 && !(g.donjon && this.dansDonjon(g.donjon))) this.spawnGroup(g);
     }
     const m = this.worldGrid!.mapAt(p.x, p.y), sub = m ? open.subareas[String(m.sub)] ?? null : null;
     if (sub && sub !== this.area) { this.area = sub; this.emit({ k: 'enterArea', name: sub.name, level: sub.level }); }
@@ -232,7 +265,11 @@ export class World {
     const p = this.player;
     const ents = [p, ...this.monsters], prev = ents.map(e => [e.x, e.y] as const);
     p.update(dt, input, this);
-    for (const m of this.monsters) m.update(dt, p, this);
+    // Monde ouvert : un monstre qui attend loin du joueur dort (pas d'errance ni d'IA) : bien moins de calcul
+    for (const m of this.monsters) {
+      if (this.zone.open && m.state === 'idle' && !m.dead && Math.abs(m.x - p.x) + Math.abs(m.y - p.y) > World.SOMMEIL) continue;
+      m.update(dt, p, this);
+    }
     this.updateProjectiles(dt);
     this.updateDrops(dt);
     this.separate();
@@ -300,7 +337,8 @@ export class World {
     let landed = true;
     for (const e of spell.effects) {
       if (e.k === 'dmg') {
-        const n = Math.round(e.perPa ? e.min * k * Math.max(0, p.paMax - p.pa) : this.rng.range(e.min, e.max + 1) * k);
+        const jet = e.perPa ? e.min * k * Math.max(0, p.paMax - p.pa) : this.rng.range(e.min, e.max + 1) * k;
+        const n = Math.round(jet * (1 + m.furyPct / 100) + m.furyFlat * k);   // + bonus de Dommages (Frénésie…)
         if (n <= 0) continue;
         landed = p.hurt(n, m.x, m.y, this, e.element);
         if (!landed) return;
@@ -330,7 +368,22 @@ export class World {
     for (const e of spell.effects) if (e.k === 'pm' && e.n > 0) {
       m.haste = 1 + e.n * 0.25; m.hasteT = Math.max(1, e.dur) * TOUR;
       this.emit({ k: 'status', x: m.x, y: m.y, text: `+${e.n} PM`, color: '#7be07b' });
+    } else if (e.k === 'dommages') {
+      if (e.pct) m.furyPct = e.n; else m.furyFlat = e.n;
+      m.furyT = Math.max(1, e.dur) * TOUR;
+      this.emit({ k: 'status', x: m.x, y: m.y, text: `+${e.n}${e.pct ? ' %' : ''} Dommages`, color: '#ff7a3a' });
     }
+  }
+  /** Invocation (ex. Appel de Kardorib) : le monstre invoqué apparaît au contact du lanceur et attaque tout de suite.
+   *  Il ne donne ni XP ni butin et disparaît avec son invocateur. */
+  summon(m: Monster, type: string) {
+    if (!this.opts.data.monsters[type]) return;
+    const a = this.rng.range(0, Math.PI * 2), d = m.radius + 30;
+    const wg = this.worldGrid, tag = wg?.mapAt(m.x, m.y)?.tag;
+    const q = wg && tag ? wg.nearestFree(m.x + Math.cos(a) * d, m.y + Math.sin(a) * d, wg.freeByMap.get(tag)!) : { x: m.x + Math.cos(a) * d, y: m.y + Math.sin(a) * d };
+    const s = this.spawnMonster(type, q.x, q.y);
+    s.summoner = m; s.homeX = m.homeX; s.homeY = m.homeY; s.t = 0.3;
+    this.emit({ k: 'status', x: s.x, y: s.y - 40, text: s.def.name, color: '#e0d0b0' });
   }
   private updateProjectiles(dt: number) {
     for (const pr of this.projectiles) {
@@ -426,8 +479,10 @@ export class World {
     for (let i = 0; i < n; i++) if (this.rng.next() < removalChance(retrait, esquive)) k++;
     return k;
   }
-  private killMonster(m: Monster) {
+  killMonster(m: Monster) {
     m.dead = true; m.t = 0.6; this.kills++;
+    for (const s of this.monsters) if (s.summoner === m && !s.dead) this.killMonster(s);   // ses invocations disparaissent avec lui
+    if (m.summoner) { this.emit({ k: 'kill', x: m.x, y: m.y, radius: m.radius, monster: m.type }); return; }
     this.emit({ k: 'kill', x: m.x, y: m.y, radius: m.radius, monster: m.type });
     const p = this.player;
     p.hp = Math.min(p.maxHp, p.hp + p.cls.healOnKill + p.legendary('vampire'));

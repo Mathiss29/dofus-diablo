@@ -18,9 +18,10 @@ def bas(tag):
     # porte de sortie : la case marchable la plus basse (à égalité, la plus au centre)
     return max(cells[tag], key=lambda c: (c // 14, -abs(c % 14 - 6.5)))
 portes = []
-for a, b, nom in D['liens']:
+for a, b, nom, *opt in D['liens']:
     a, b = [[t, bas(t) if c == 'bas' else c] for t, c in (a, b)]
-    portes.append({'a': a, 'b': b, 'nom': nom})
+    # 4e champ (donjons) : verrou = salle de a à vider avant de passer, sens = seulement de a vers b
+    portes.append({'a': a, 'b': b, 'nom': nom, **(opt[0] if opt else {})})
 json.dump(liste, open(out, 'w'))
 Z = json.load(open(zpath)); Z[zone]['open']['portes'] = portes
 json.dump(Z, open(zpath, 'w'), ensure_ascii=False, indent=1)

@@ -7,13 +7,17 @@ mbs={f:json.load(open(f)) for f in glob.glob(out+'/mb_*.json')}
 m=[v for v in mbs.values() if 'animations' in v][0]
 skin=mbs[out+'/mb_%d.json'%m['boneAsset']['m_PathID']]
 V=skin['vertices']; T=skin['triangles']
+# Gros squelettes (ex. Kardorim 3183) : plusieurs atlas, chaque morceau dit lequel (textureIndex)
+TEX=sorted(glob.glob(out+'/tex_*.png'), key=lambda f: (len(f), f))
 meshes=[]
 for g in m['graphics']:
     ch=g['part']['skinChunks'][0]
     sv=ch['startVertexIndex']; vc=ch['vertexCount']
     verts=[[V[sv+i]['pos']['x'],V[sv+i]['pos']['y'],V[sv+i]['uv']['x'],V[sv+i]['uv']['y']] for i in range(vc)]
     tris=T[ch['startIndexIndex']:ch['startIndexIndex']+ch['indexCount']]
-    meshes.append({'name':g['part']['name'],'v':verts,'t':tris})
+    mesh={'name':g['part']['name'],'v':verts,'t':tris}
+    if len(TEX)>1: mesh['tex']=TEX[min(ch.get('textureIndex',0),len(TEX)-1)]
+    meshes.append(mesh)
 anims={}; shots={}
 for f in sorted(glob.glob(out+'/ta_*.bin')):
     name=os.path.basename(f)[3:-4].split('_',1)[1]

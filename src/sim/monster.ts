@@ -7,8 +7,9 @@ import { tackleSlow, tacleOf } from './caracs';
 /** Dofus -> temps réel : 1 case = CASE px (pas d'une case à sa voisine en diagonale), 1 tour = TOUR s. */
 export const CASE = 48, TOUR = 3;
 /** Façon de lancer un sort de monstre, déduite de ses données officielles. */
-export type CastKind = 'melee' | 'charge' | 'missile' | 'target' | 'self';
+export type CastKind = 'melee' | 'charge' | 'missile' | 'target' | 'self' | 'invoque';
 export function castKind(s: MonsterSpell): CastKind {
+  if (s.effects.some(e => e.k === 'invoque')) return 'invoque';
   if (s.po[1] === 0) return 'self';
   if (s.effects.some(e => e.k === 'avance')) return 'charge';
   if (s.missile) return 'missile';
@@ -45,6 +46,10 @@ export class Monster extends Entity {
   spellCd: number[];
   /** Bonus de vitesse (sort qui donne des PM, ex. Bêlement) : multiplicateur et durée restante. */
   haste = 1; hasteT = 0;
+  /** Bonus de Dommages (Frénésie : %, Euphorie malsaine : fixes) et durée restante. */
+  furyPct = 0; furyFlat = 0; furyT = 0;
+  /** Invocateur (Kardorib invoqué par Kardorim). */
+  summoner: Monster | null = null;
   /** Déjà touché par le joueur (l'Initiative ne renforce que le premier coup). */
   struck = false;
 
@@ -69,6 +74,7 @@ export class Monster extends Entity {
     this.atkCd -= dt;
     for (let i = 0; i < this.spellCd.length; i++) this.spellCd[i] -= dt;
     if (this.hasteT > 0 && (this.hasteT -= dt) <= 0) this.haste = 1;
+    if (this.furyT > 0 && (this.furyT -= dt) <= 0) this.furyPct = this.furyFlat = 0;
     // Tacle du joueur : un monstre à son contact avance moins vite (sa Fuite officielle y résiste)
     const near = Math.hypot(player.x - this.x, player.y - this.y) <= this.radius + player.radius + 12;
     const speed = D.speed * this.haste * (near ? 1 - tackleSlow(player.tacle, tacleOf(D.caracs?.fuite ?? 0, D.caracs?.agilite ?? 0)) : 1);
@@ -80,8 +86,8 @@ export class Monster extends Entity {
         // Petite errance autour du point de départ
         this.wanderT -= dt;
         if (this.wanderT <= 0) {
-          this.wanderT = world.rng.range(2, 5);
-          const a = world.rng.range(0, Math.PI * 2), r = world.rng.range(0, 70);
+          this.wanderT = world.rng.range(4, 9);   // plus calme : de petits pas, de temps en temps
+          const a = world.rng.range(0, Math.PI * 2), r = world.rng.range(0, 45);
           this.wanderX = this.homeX + Math.cos(a) * r; this.wanderY = this.homeY + Math.sin(a) * r;
         }
         if (this.moveTo(this.wanderX, this.wanderY, D.speed * 0.35, dt)) this.setAnim('run'); else this.setAnim('idle');
@@ -130,7 +136,8 @@ export class Monster extends Entity {
         } else if (this.mode === 'spell') {
           const S = this.spell!, w = this.windupOf(S), k = 1 - this.t / w;
           this.setAnim(`windup${S.anim}`, k);
-          if (this.kind === 'target' || this.kind === 'self') {
+          if (this.kind === 'invoque') { /* pas de zone : l'invocation apparaît à son contact */ }
+          else if (this.kind === 'target' || this.kind === 'self') {
             if (this.kind === 'self') { this.tx = this.x; this.ty = this.y; }
             world.telegraphs.push({ kind: 'circle', x: this.tx, y: this.ty, r: zoneRadius(S), progress: k, danger: !S.allies });
           } else {
@@ -180,6 +187,7 @@ export class Monster extends Entity {
   /** Portée d'un sort en pixels (bord à bord). Les sorts au contact gardent la portée de charge du monstre. */
   private reach(S: MonsterSpell, player: Player): [number, number] {
     const k = castKind(S), pad = this.radius + player.radius;
+    if (k === 'invoque') return [0, CASE * 6];
     if (k === 'self') return [0, S.allies ? Infinity : zoneRadius(S) + player.radius];
     if (k === 'melee') return [0, this.def.attackRange + player.radius];
     return [S.po[0] >= 2 ? S.po[0] * CASE : 0, S.po[1] * CASE + pad];
@@ -203,7 +211,15 @@ export class Monster extends Entity {
     S.forEach((s, i) => {
       if (this.spellCd[i] > 0) return;
       const k = castKind(s), [a, b] = this.reach(s, player);
-      if (s.allies && k === 'self') { if (this.hasteT <= 0 && dist > CASE * 2) ok.push(i); return; }
+      if (k === 'invoque') {   // une invocation à la fois, quand le joueur est proche
+        if (dist < CASE * 6 && !world.monsters.some(m => m.summoner === this && !m.dead)) ok.push(i);
+        return;
+      }
+      if (s.allies && k === 'self') {
+        if (s.effects.some(e => e.k === 'dommages')) { if (this.furyT <= 0 && dist < CASE * 4) ok.push(i); }   // Frénésie : juste avant le contact
+        else if (this.hasteT <= 0 && dist > CASE * 2) ok.push(i);
+        return;
+      }
       if (dist < a || dist > b) return;
       if (k !== 'self' && k !== 'melee' && !world.clearShot(this, player)) return;
       ok.push(i);
@@ -221,7 +237,9 @@ export class Monster extends Entity {
   private release(player: Player, world: World) {
     const S = this.spell!;
     if (this.kind === 'melee' || this.kind === 'charge') { this.state = 'lunge'; this.t = this.def.lungeTime; this.hitDone = false; return; }
-    if (this.kind === 'missile') {
+    if (this.kind === 'invoque') {
+      for (const e of S.effects) if (e.k === 'invoque') world.summon(this, e.monster);
+    } else if (this.kind === 'missile') {
       world.monsterMissile(this, S, this.missileRange(S));
     } else {
       const r = zoneRadius(S), el = (S.effects.find(e => e.k === 'dmg') as { element: string } | undefined)?.element ?? 'neutre';

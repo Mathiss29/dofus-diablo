@@ -1811,7 +1811,12 @@
     "anim": 0,
     "zone": "P1",
     "allies": true,
-    "effects": []
+    "effects": [
+     {
+      "k": "invoque",
+      "monster": "feu_de_joie"
+     }
+    ]
    },
    {
     "id": 5865,
@@ -2255,8 +2260,14 @@
     "relance": 3,
     "anim": 0,
     "zone": "C63",
-    "allies": false,
-    "effects": []
+    "allies": true,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 10,
+      "dur": 1
+     }
+    ]
    }
   ],
   "level": 7,
@@ -2318,6 +2329,11 @@
       "steal": false
      },
      {
+      "k": "dommages",
+      "n": 2,
+      "dur": 5
+     },
+     {
       "k": "pa",
       "n": -1,
       "dur": 1
@@ -2359,5 +2375,255 @@
    "fuite": 0,
    "retraitPA": 0
   }
+ },
+ "sergent_chafer": {
+  "dofusId": 4050,
+  "name": "Sergent Chafer",
+  "hp": 90,
+  "speed": 100,
+  "radius": 22,
+  "mass": 1.6,
+  "dmg": 18,
+  "attackRange": 58,
+  "windup": 0.5,
+  "lungeSpeed": 410,
+  "lungeTime": 0.18,
+  "recover": 0.62,
+  "look": "sergent_chafer",
+  "color": "#e0b040",
+  "elite": true,
+  "spells": [
+   {
+    "id": 207,
+    "name": "Petit coup du Chafer",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 21,
+      "max": 25,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 5903,
+    "name": "Frénésie",
+    "pa": 5,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "C63",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 50,
+      "pct": true,
+      "dur": 2
+     }
+    ]
+   }
+  ],
+  "xp": 0,
+  "level": 7,
+  "res": {
+   "terre": 0,
+   "feu": 10,
+   "eau": 0,
+   "air": 0,
+   "neutre": 0
+  },
+  "caracs": {
+   "force": 60,
+   "intelligence": 60,
+   "chance": 0,
+   "agilite": 0,
+   "sagesse": 20,
+   "esquivePA": 10,
+   "esquivePM": 5,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "kardorib": {
+  "dofusId": 4052,
+  "name": "Kardorib",
+  "hp": 150,
+  "speed": 118,
+  "radius": 22,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 58,
+  "windup": 0.45,
+  "lungeSpeed": 430,
+  "lungeTime": 0.17,
+  "recover": 0.55,
+  "look": "kardorib",
+  "color": "#e8d8c0",
+  "spells": [
+   {
+    "id": 5904,
+    "name": "Embrochement",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 21,
+      "max": 25,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 2
+     }
+    ]
+   }
+  ],
+  "xp": 0,
+  "level": 10,
+  "res": {
+   "terre": 0,
+   "feu": 0,
+   "eau": 0,
+   "air": 0,
+   "neutre": 0
+  },
+  "caracs": {
+   "force": 40,
+   "intelligence": 0,
+   "chance": 0,
+   "agilite": 40,
+   "sagesse": 0,
+   "esquivePA": 5,
+   "esquivePM": 15,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "kardorim": {
+  "dofusId": 4051,
+  "name": "Kardorim",
+  "hp": 700,
+  "speed": 80,
+  "radius": 30,
+  "mass": 6,
+  "dmg": 24,
+  "attackRange": 70,
+  "windup": 0.65,
+  "lungeSpeed": 480,
+  "lungeTime": 0.22,
+  "recover": 0.8,
+  "look": "kardorim",
+  "color": "#c8c0a8",
+  "spells": [
+   {
+    "id": 5718,
+    "name": "Casse-crâne",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "L1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 34,
+      "max": 38,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 5851,
+    "name": "Craquement d'Os",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "C2",
+    "allies": true,
+    "effects": [
+     {
+      "k": "pm",
+      "n": 1,
+      "dur": 1
+     }
+    ],
+    "gfx": 7470
+   },
+   {
+    "id": 5852,
+    "name": "Appel de Kardorib",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 6,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "invoque",
+      "monster": "kardorib"
+     }
+    ]
+   }
+  ],
+  "xp": 150,
+  "level": 10,
+  "res": {
+   "terre": -15,
+   "feu": 20,
+   "eau": -10,
+   "air": 5,
+   "neutre": 10
+  },
+  "caracs": {
+   "force": 50,
+   "intelligence": 50,
+   "chance": 50,
+   "agilite": 50,
+   "sagesse": 50,
+   "esquivePA": 10,
+   "esquivePM": 5,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "boss": true
  }
 }
