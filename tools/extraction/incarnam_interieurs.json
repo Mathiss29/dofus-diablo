@@ -1,0 +1,32 @@
+{
+ "_": "Intérieurs d'Incarnam (cartes worldMap -1). Le lien porte -> salle n'est que sur le serveur de Dofus : il est relié ici à la main, d'après les éléments interactifs officiels (cadres de mine 50077 dehors, arches et passages 39767 dedans, portes 425xx des maisons). Une case 'bas' = la case marchable la plus basse de la salle (porte de sortie des maisons).",
+ "salles": {
+  "mine_1_-5": [153357312, 778], "mine_2_-5": [153358336, 778], "mine_3_-5": [153357318, 778],
+  "mine_1_-4": [153357314, 778], "mine_2_-4": [153358338, 778], "mine_3_-4": [153358344, 778], "mine_4_-4": [153358342, 778],
+  "taverne": [153357316, 448],
+  "maison_-2_-2": [153355270, 442], "maison_-1_-4": [153354242, 444], "maison_0_-4": [153356292, 444],
+  "maison_0_-2": [153354244, 442], "maison_0_-1": [153354246, 442], "maison_1_-4": [153355272, 445],
+  "maison_2_-4": [153355264, 445], "maison_2_-3": [153356296, 450], "maison_3_-3": [153354240, 450], "maison_2_-2": [153355266, 443]
+ },
+ "liens": [
+  [["2_-4", 198], ["mine_2_-4", 158], "Mine"],
+  [["1_-4", 209], ["mine_1_-4", 348], "Mine"],
+  [["2_-4", 167], ["mine_3_-4", 268], "Mine"],
+  [["3_-4", 155], ["mine_3_-4", 289], "Mine"],
+  [["mine_1_-4", 173], ["mine_1_-5", 473], "Galerie"],
+  [["mine_2_-4", 376], ["mine_2_-5", 459], "Galerie"],
+  [["mine_3_-4", 472], ["mine_3_-5", 444], "Galerie"],
+  [["mine_2_-4", 491], ["mine_4_-4", 436], "Galerie"],
+  [["0_-3", 326], ["taverne", "bas"], "Taverne"],
+  [["-2_-2", 186], ["maison_-2_-2", "bas"], "Maison"],
+  [["-1_-4", 274], ["maison_-1_-4", "bas"], "Maison"],
+  [["0_-4", 315], ["maison_0_-4", "bas"], "Maison"],
+  [["0_-2", 315], ["maison_0_-2", "bas"], "Maison"],
+  [["0_-1", 301], ["maison_0_-1", "bas"], "Maison"],
+  [["1_-4", 329], ["maison_1_-4", "bas"], "Maison"],
+  [["2_-4", 330], ["maison_2_-4", "bas"], "Maison"],
+  [["2_-3", 285], ["maison_2_-3", "bas"], "Maison"],
+  [["3_-3", 427], ["maison_3_-3", "bas"], "Maison"],
+  [["2_-2", 315], ["maison_2_-2", "bas"], "Maison"]
+ ]
+}

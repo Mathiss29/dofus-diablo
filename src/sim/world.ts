@@ -26,6 +26,7 @@ export interface Projectile { id: number; spell: string; x: number; y: number; d
 
 /** Monde ouvert : un groupe de monstres posé sur une carte Dofus, qui réapparaît quand il a été vaincu. */
 interface MonsterGroup { id: number; map: string; sub: SubAreaDef; members: Monster[]; timer: number; cleared: boolean; x: number; y: number }
+export interface PorteEnd { tag: string; x: number; y: number }
 
 export interface WorldOptions {
   data: GameData;
@@ -66,6 +67,10 @@ export class World {
   checkpointName = '';
   /** Sous-zone où se trouve le joueur (monde ouvert). */
   area: SubAreaDef | null = null;
+  /** Portes du monde ouvert : les deux bouts en coordonnées monde, et la carte de chacun. */
+  portes: { nom: string; ends: [PorteEnd, PorteEnd] }[] = [];
+  /** Bout de porte par lequel le joueur vient d'arriver : inactif tant qu'il ne s'en est pas éloigné. */
+  private portalLock: PorteEnd | null = null;
 
   constructor(readonly opts: WorldOptions) {
     this.rng = new Rng(opts.seed ?? 1);
@@ -91,7 +96,47 @@ export class World {
       const hunt = opts.classId === 'cra' ? '1942' : '1934';
       if (opts.items.equipment[hunt]?.chasse) this.player.bag.push({ uid: this.nextId++, id: hunt, rarity: 'commun', stats: {}, extra: [] });
     }
-    if (open) this.spawnGroups();
+    if (open) { this.buildPortes(); this.spawnGroups(); }
+  }
+
+  /** Rayon autour d'une porte qui la déclenche (≈ 1,4 case) et distance d'arrivée de l'autre côté. */
+  static readonly PORTE_R = 65;
+  static readonly PORTE_ARRIVEE = 80;
+  private buildPortes() {
+    const wg = this.worldGrid!;
+    for (const d of this.zone.open!.portes ?? []) {
+      if (!wg.mapByTag(d.a[0]) || !wg.mapByTag(d.b[0])) continue;   // intérieur pas (encore) exporté dans ce monde
+      // la porte est souvent sur un mur : on la ramène sur la case marchable la plus proche de sa carte
+      const end = ([tag, c]: [string, number]): PorteEnd => {
+        const q = wg.cellToWorld(wg.cellOf(tag, c));
+        return { tag, ...wg.nearestFree(q.x, q.y, wg.freeByMap.get(tag)!) };
+      };
+      this.portes.push({ nom: d.nom, ends: [end(d.a), end(d.b)] });
+    }
+  }
+  /** Passe la porte si le joueur est dessus : il arrive de l'autre côté, un peu en avant de la porte d'arrivée. */
+  private updatePortes() {
+    const p = this.player, wg = this.worldGrid!, R = World.PORTE_R;
+    if (p.dead || p.state !== 'free') return;   // pas au milieu d'un sort ou d'un bond
+    if (this.portalLock && Math.hypot(p.x - this.portalLock.x, p.y - this.portalLock.y) > R + 30) this.portalLock = null;
+    for (const po of this.portes) for (let i = 0; i < 2; i++) {
+      const from = po.ends[i], to = po.ends[1 - i];
+      if (from === this.portalLock || Math.hypot(p.x - from.x, p.y - from.y) > R) continue;
+      // arrivée : une case libre juste hors du rayon de la porte d'arrivée, du côté du milieu de la carte (pas collé au bord)
+      const free = (wg.freeByMap.get(to.tag) ?? []).map(c => wg.cellToWorld(c));
+      const mid = free.reduce((a, q) => ({ x: a.x + q.x / free.length, y: a.y + q.y / free.length }), { x: 0, y: 0 });
+      let best = to, bd = Infinity;
+      for (const q of free) {
+        const d = Math.hypot(q.x - to.x, q.y - to.y);
+        if (d < World.PORTE_ARRIVEE) continue;
+        const score = d + 0.6 * Math.hypot(q.x - mid.x, q.y - mid.y);
+        if (score < bd) { bd = score; best = { tag: to.tag, ...q }; }
+      }
+      p.x = best.x; p.y = best.y; p.kx = p.ky = 0; p.z = 0;
+      this.portalLock = to;
+      this.emit({ k: 'portal', nom: po.nom });
+      return;
+    }
   }
 
   /** Case la plus dégagée d'une carte (le plus de cases marchables autour). */
@@ -113,7 +158,7 @@ export class World {
     const wg = this.worldGrid!, open = this.zone.open!;
     for (const m of wg.world.maps) {
       const sub = open.subareas[String(m.sub)];
-      if (!sub || !wg.freeByMap.get(m.tag)!.length) continue;
+      if (!sub || !wg.freeByMap.get(m.tag)!.length || (m.inside && !sub.interieur)) continue;
       for (let i = 0; i < sub.groupsPerMap; i++) {
         const g: MonsterGroup = { id: this.groups.length, map: m.tag, sub, members: [], timer: 0, cleared: false, x: 0, y: 0 };
         this.groups.push(g);
@@ -141,6 +186,7 @@ export class World {
   }
   private updateOpen(dt: number) {
     const p = this.player, open = this.zone.open!;
+    this.updatePortes();
     for (const g of this.groups) {
       if (g.members.some(m => !m.dead)) continue;
       if (!g.cleared) {
@@ -499,11 +545,22 @@ export class World {
   /** Évite que les monstres se superposent (O(n²), suffisant sous 100 monstres). */
   private separate() {
     const all = this.monsters.filter(m => !m.dead);
-    for (let i = 0; i < all.length; i++) for (let j = i + 1; j < all.length; j++) {
+    // Grille de 128 : seuls les monstres de cases voisines peuvent se toucher (rayons ≤ 36). Monde ouvert = des centaines
+    // de monstres, tester toutes les paires coûtait l'essentiel du pas de simulation.
+    const G = 128, cells = new Map<number, number[]>(), key = (cx: number, cy: number) => cx * 65536 + cy;
+    all.forEach((m, i) => { const k = key(Math.floor(m.x / G), Math.floor(m.y / G)); const c = cells.get(k); if (c) c.push(i); else cells.set(k, [i]); });
+    const near: number[] = [];
+    for (let i = 0; i < all.length; i++) {
+      const cx = Math.floor(all[i].x / G), cy = Math.floor(all[i].y / G);
+      near.length = 0;
+      for (let ox = -1; ox <= 1; ox++) for (let oy = -1; oy <= 1; oy++) for (const j of cells.get(key(cx + ox, cy + oy)) ?? []) if (j > i) near.push(j);
+      near.sort((x, y) => x - y);
+      for (const j of near) {
       const a = all[i], b = all[j], dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 0.01, min = a.radius + b.radius;
       if (d < min) {
         const push = (min - d) / 2, nx = dx / d, ny = dy / d, wa = b.def.mass / (a.def.mass + b.def.mass), wb = 1 - wa;
         a.x -= nx * push * 2 * wa; a.y -= ny * push * 2 * wa; b.x += nx * push * 2 * wb; b.y += ny * push * 2 * wb;
+      }
       }
     }
     const p = this.player;

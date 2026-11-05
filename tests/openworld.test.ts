@@ -20,10 +20,10 @@ describe('monde d\'Incarnam (cartes Dofus collées)', () => {
   });
   it('chaque case marchable appartient à une carte, et chaque carte a des cases marchables', () => {
     for (const c of wg.free.slice(0, 2000)) expect(wg.mapOfCell(c)).toBeDefined();
-    for (const m of monde.maps) expect(wg.freeByMap.get(m.tag)!.length).toBeGreaterThan(50);
+    for (const m of monde.maps) expect(wg.freeByMap.get(m.tag)!.length).toBeGreaterThan(m.inside ? 20 : 50);
   });
   it('Incarnam entier : Route des âmes, Champs, Pâturages, Lac, Forêt et Cimetière, chacun avec ses monstres officiels', () => {
-    expect(monde.maps.length).toBe(50);
+    expect(monde.maps.filter(m => !m.inside).length).toBe(50);
     for (const sub of ['450', '444', '445', '442', '443', '449']) {
       expect(monde.maps.some(m => String(m.sub) === sub), sub).toBe(true);
       for (const t of zone.subareas[sub].monsters) expect(GAME_DATA.monsters[t]?.dofusId, t).toBeDefined();
@@ -95,5 +95,36 @@ describe('monde ouvert', () => {
     expect(w.over).toBe(false);
     expect(w.player.hp).toBe(w.player.maxHp);
     expect([w.player.x, w.player.y]).toEqual([start.x, start.y]);
+  });
+});
+
+describe('intérieurs (maisons, Mine, Taverne)', () => {
+  it('chaque porte mène de l\'autre côté, et la porte d\'arrivée ne renvoie pas aussitôt', () => {
+    const w = newWorld(), wg = w.worldGrid!, p = w.player;
+    expect(w.portes.length).toBeGreaterThanOrEqual(19);
+    for (const po of w.portes) for (let i = 0; i < 2; i++) {
+      const from = po.ends[i], to = po.ends[1 - i];
+      // une case marchable dans le rayon de la porte (on peut l'atteindre à pied)
+      const c = wg.freeByMap.get(from.tag)!.map(c => wg.cellToWorld(c)).find(q => Math.hypot(q.x - from.x, q.y - from.y) <= World.PORTE_R);
+      expect(c, `${po.nom} ${from.tag}`).toBeDefined();
+      p.x = c!.x; p.y = c!.y; p.hp = p.maxHp;
+      w.step(STEP, NO_INPUT);
+      expect(wg.mapAt(p.x, p.y)?.tag, `${from.tag} -> ${to.tag}`).toBe(to.tag);
+      const there = { x: p.x, y: p.y };
+      w.step(STEP, NO_INPUT);
+      expect(wg.mapAt(p.x, p.y)?.tag).toBe(to.tag);
+      expect(Math.hypot(p.x - there.x, p.y - there.y)).toBeLessThan(20);
+      w.drainEvents();
+      // on s'éloigne (coin du monde sans porte) : la porte se réarme
+      const loin = wg.cellToWorld(wg.freeByMap.get('-3_-6')![0]);
+      p.x = loin.x; p.y = loin.y; w.step(STEP, NO_INPUT);
+    }
+  });
+  it('la Mine a ses Aminites, les maisons restent vides', () => {
+    const w = newWorld(), wg = w.worldGrid!;
+    const inside = w.monsters.map(m => wg.mapAt(m.homeX, m.homeY)!).filter(m => m.inside);
+    expect(inside.length).toBeGreaterThan(0);
+    expect(inside.every(m => m.sub === 778)).toBe(true);
+    expect(w.monsters.filter(m => wg.mapAt(m.homeX, m.homeY)!.sub === 778).every(m => m.type === 'aminite')).toBe(true);
   });
 });

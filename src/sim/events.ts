@@ -46,7 +46,9 @@ export type SimEvent =
   /** Sac plein : l'objet reste au sol. */
   | { k: 'bagFull' }
   /** Nouveau point de retour (Zaap). */
-  | { k: 'checkpoint'; name: string };
+  | { k: 'checkpoint'; name: string }
+  /** Le joueur passe une porte (le rendu fait un fondu au noir). */
+  | { k: 'portal'; nom: string };
 
 /** Zones au sol affichées avant un coup (rouge = danger, or = sort du joueur). */
 export type Telegraph =

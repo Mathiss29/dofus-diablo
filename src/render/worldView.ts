@@ -1,12 +1,16 @@
 import { v } from './assetUrl';
 import Phaser from 'phaser';
 import { GridMap, type WorldGrid, type WorldMapEntry } from '../sim/gridmap';
+import { ISO } from '../sim/iso';
 
 /** Rayon (en cartes) chargé autour du joueur, et rayon au-delà duquel une carte est déchargée.
  *  Entre les deux, une carte déjà chargée reste : pas de va-et-vient quand on longe un bord. */
 const LOAD_RING = 1, UNLOAD_RING = 2;
 
-type Slot = { state: 'none' | 'loading' | 'ready'; objs: Phaser.GameObjects.Image[] };
+/** Une carte affichée ; `next` = prochain élément de décor à poser (le décor arrive en plusieurs images, voir pump()). */
+type Slot = { state: 'none' | 'loading' | 'ready'; objs: Phaser.GameObjects.GameObject[]; next: number };
+/** Temps (ms) donné à chaque image pour poser du décor : une carte = ~400 images, les créer d'un coup faisait une saccade. */
+const BUDGET_MS = 3;
 
 /** Affichage d'un monde ouvert qui ne garde en mémoire que les cartes proches du joueur.
  *  Chaque carte = un sol (+ un fond de nuages non coupé) + un atlas de décor (tools/extraction/world_export.py). Le ciel est une seule image
@@ -15,9 +19,11 @@ export class WorldView {
   private readonly slots = new Map<string, Slot>();
   sky?: Phaser.GameObjects.Image;
   private center = '';
+  /** Bouts de portes (sim/world.ts) : un repère doré au sol est posé sur chacun quand sa carte est chargée. */
+  portes: { tag: string; x: number; y: number }[] = [];
 
   constructor(private readonly scene: Phaser.Scene, private readonly wg: WorldGrid, private readonly dir: string, private readonly prefix: string) {
-    for (const m of wg.world.maps) this.slots.set(m.tag, { state: 'none', objs: [] });
+    for (const m of wg.world.maps) this.slots.set(m.tag, { state: 'none', objs: [], next: 0 });
     scene.load.on(Phaser.Loader.Events.FILE_COMPLETE, (key: string) => this.onFile(key));
     scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
       for (const m of wg.world.maps) if (this.slots.get(m.tag)!.state === 'loading' && this.texturesReady(m)) this.build(m);
@@ -42,6 +48,7 @@ export class WorldView {
   create() {
     if (this.scene.textures.exists(this.k('ciel'))) this.sky = this.scene.add.image(0, 0, this.k('ciel')).setScrollFactor(0).setDepth(-20000);
     for (const m of this.wg.world.maps) if (this.texturesReady(m)) { this.slots.get(m.tag)!.state = 'loading'; this.build(m); }
+    this.pump(Infinity);   // au lancement, tout de suite (l'écran de chargement couvre)
   }
 
   isReady(tag: string | undefined) { return !!tag && this.slots.get(tag)?.state === 'ready'; }
@@ -49,9 +56,13 @@ export class WorldView {
   /** Chaque image : ciel qui suit la caméra ; quand le joueur change de carte, charge / décharge autour de lui. */
   update(px: number, py: number) {
     this.drawSky();
+    this.pump();
     const here = this.wg.mapAt(px, py);
     if (!here || here.tag === this.center) return;
     this.center = here.tag;
+    // intérieur : pas de ciel, fond noir comme dans Dofus
+    this.sky?.setVisible(!here.inside);
+    this.scene.cameras.main.setBackgroundColor(here.inside ? '#000000' : '#0d2b36');
     let queued = false;
     for (const m of this.wg.world.maps) {
       const d = ring(m, here.x, here.y), s = this.slots.get(m.tag)!;
@@ -80,7 +91,7 @@ export class WorldView {
   }
 
   private build(m: WorldMapEntry) {
-    const s = this.slots.get(m.tag)!, S = GridMap.S, wg = this.wg, h = wg.data.grid.h;
+    const s = this.slots.get(m.tag)!, S = GridMap.S, wg = this.wg;
     if (s.state !== 'loading') { this.unload(m); return; }   // annulée entre-temps (le joueur est reparti)
     const o = wg.toScreen(m.sol.x, m.sol.y);
     s.objs.push(this.scene.add.image(o.x, o.y, this.k(`sol_${m.tag}`)).setOrigin(0).setScale(S).setDepth(-10000));
@@ -88,17 +99,35 @@ export class WorldView {
       const f = wg.toScreen(m.fond.x, m.fond.y);
       s.objs.push(this.scene.add.image(f.x, f.y, this.k(`fond_${m.tag}`)).setOrigin(0).setScale(S * (m.fond.k ?? 1)).setDepth(-15000));
     }
-    for (const p of m.decor) {
-      // profondeur = bas de la case dans la grande grille : on passe derrière un arbre même s'il est sur la carte voisine
-      const sp = wg.toScreen(p.x, p.y), cc = wg.cellCenter(p.c), cs = wg.toScreen(cc.x, cc.y + h / 2);
-      s.objs.push(this.scene.add.image(sp.x, sp.y, this.k(`decor_${m.tag}`), p.f).setScale(S).setDepth(cs.y + p.o * 0.01));
+    s.next = 0;
+    for (const p of this.portes) if (p.tag === m.tag) {
+      const c = ISO.toScreen(p.x, p.y), g = this.scene.add.graphics().setPosition(c.x, c.y).setDepth(c.y - 2);   // comme une ombre : au-dessus du sol et des tapis
+      g.fillStyle(0xffd36a, 0.35).fillEllipse(0, 0, 92, 46).lineStyle(3, 0xfff0b0, 1).strokeEllipse(0, 0, 92, 46);
+      this.scene.tweens.add({ targets: g, alpha: 0.5, duration: 800, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+      s.objs.push(g);
     }
     s.state = 'ready';
+    this.pump(m.tag === this.center ? Infinity : BUDGET_MS);   // la carte du joueur tout de suite, les voisines au fil des images
+  }
+  /** Pose le décor des cartes prêtes, dans la limite du budget de temps. */
+  private pump(budget = BUDGET_MS) {
+    const t0 = performance.now(), wg = this.wg, S = GridMap.S, h = wg.data.grid.h;
+    for (const m of this.wg.world.maps) {
+      const s = this.slots.get(m.tag)!;
+      if (s.state !== 'ready') continue;
+      while (s.next < m.decor.length) {
+        if (performance.now() - t0 > budget) return;
+        const p = m.decor[s.next++];
+        // profondeur = bas de la case dans la grande grille : on passe derrière un arbre même s'il est sur la carte voisine
+        const sp = wg.toScreen(p.x, p.y), cc = wg.cellCenter(p.c), cs = wg.toScreen(cc.x, cc.y + h / 2);
+        s.objs.push(this.scene.add.image(sp.x, sp.y, this.k(`decor_${m.tag}`), p.f).setScale(S).setDepth(cs.y + p.o * 0.01));
+      }
+    }
   }
   private unload(m: WorldMapEntry) {
     const s = this.slots.get(m.tag)!;
-    for (const o of s.objs) o.destroy();
-    s.objs = []; s.state = 'none';
+    for (const o of s.objs) { this.scene.tweens.killTweensOf(o); o.destroy(); }
+    s.objs = []; s.state = 'none'; s.next = 0;
     this.dropTextures(m);
   }
   private dropTextures(m: WorldMapEntry) {

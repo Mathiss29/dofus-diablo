@@ -122,7 +122,13 @@ export interface WavesDef {
   archimonstres: { monsters: string[]; chance: { fromWave: number; value: number }[] };
 }
 /** Une sous-zone Dofus dans un monde ouvert : ses monstres officiels et la taille des groupes. */
-export interface SubAreaDef { name: string; level: number; monsters: string[]; groupsPerMap: number; groupSize: [number, number] }
+export interface SubAreaDef {
+  name: string; level: number; monsters: string[]; groupsPerMap: number; groupSize: [number, number];
+  /** Sous-zone faite d'intérieurs (Mine…) : ses monstres apparaissent aussi dedans. Sinon les intérieurs (maisons) restent vides. */
+  interieur?: boolean;
+}
+/** Porte entre deux cartes du monde (dehors -> intérieur, ou d'une salle à l'autre) : [tag de la carte, case Dofus 0-559]. */
+export interface PorteDef { a: [string, number]; b: [string, number]; nom: string }
 /** Monde ouvert : cartes Dofus collées, groupes de monstres posés sur chaque carte, qui réapparaissent. */
 export interface OpenDef {
   /** Dossier public/assets/mondes/<world>. */
@@ -134,6 +140,8 @@ export interface OpenDef {
   /** Points de retour après une mort (Zaaps) : le dernier atteint est gardé. Le premier est le départ. */
   checkpoints: { name: string; map: [number, number] }[];
   subareas: Record<string, SubAreaDef>;
+  /** Portes vers les intérieurs, reliées à la main (tools/extraction/interieurs.py). */
+  portes?: PorteDef[];
 }
 export interface ZoneDef {
   name: string; level: number;

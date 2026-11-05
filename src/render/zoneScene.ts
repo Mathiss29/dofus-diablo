@@ -32,6 +32,8 @@ export class ZoneScene extends Phaser.Scene {
   private classId = 'iop';
   private world!: World;
   private worldView: WorldView | null = null;
+  /** Le joueur vient de passer une porte : la caméra le rejoint d'un coup (pas de glissade à travers le monde). */
+  private snapCam = false;
   private views = new Map<number, EntityView>();
   private fx!: FX;
   private hud!: Hud;
@@ -128,6 +130,7 @@ export class ZoneScene extends Phaser.Scene {
       this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS });
       this.cameras.main.setBackgroundColor('#0d2b36');   // sous le ciel, au cas où il manque
       this.worldView = new WorldView(this, wg, worldDir(open.world), open.world);
+      this.worldView.portes = this.world.portes.flatMap(p => p.ends);
       this.worldView.create();
     } else {
       const key = mapDir(zone.map!.coords).replace(/\W/g, '_');
@@ -342,6 +345,7 @@ export class ZoneScene extends Phaser.Scene {
         case 'checkpoint': this.hud.banner(`Point de retour\n${e.name}`, 1400); break;
         case 'respawn': this.hud.banner('De retour !', 900); break;
         case 'enterArea': this.hud.banner(`${e.name}\nNiveau ${e.level}`, 1600); break;
+        case 'portal': this.cameras.main.fadeIn(450, 0, 0, 0); this.snapCam = true; break;   // fondu au noir, la caméra saute avec le joueur
       }
     }
   }
@@ -420,6 +424,7 @@ export class ZoneScene extends Phaser.Scene {
       this.viewOf(e).sync(e); alive.add(e.id);
     }
     for (const [id, v] of this.views) if (!alive.has(id)) { v.destroy(); this.views.delete(id); }
+    if (this.snapCam) { const pv = this.viewOf(w.player).sprite; cam.centerOn(pv.x, pv.y - 30); this.snapCam = false; }
     const s = w.player.skill;
     if (s && 'charge' in s.def && s.def.charge && !s.def.move && s.t < s.def.impactAt) this.fx.chargeSparks(w.player.x, w.player.y);
     this.fx.draw(w.telegraphs, w.projectiles);
