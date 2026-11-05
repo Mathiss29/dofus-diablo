@@ -1,135 +1,176 @@
 {
-  "champs-astrub": {
-    "name": "Champs d'Astrub",
-    "dofusSubArea": 98,
-    "level": 15,
-    "map": {
-      "coords": [
-        5,
-        -27
-      ],
-      "dofusMapId": 189793284
-    },
-    "waves": {
-      "pack": [
-        {
-          "monster": "pissenlit",
-          "base": 2,
-          "perWave": 1
-        },
-        {
-          "monster": "rose",
-          "base": 1,
-          "perWave": 0.8
-        },
-        {
-          "monster": "tournesol",
-          "base": -1,
-          "perWave": 1,
-          "fromWave": 2
-        }
-      ],
-      "bossEvery": 5,
-      "boss": "epouvanteur",
-      "escort": {
-        "monsters": [
-          "pissenlit",
-          "rose"
-        ],
-        "base": 3,
-        "perWave": 1
-      },
-      "archimonstres": {
-        "monsters": [
-          "archi_pissenlit",
-          "archi_rose",
-          "archi_tournesol"
-        ],
-        "chance": [
-          {
-            "fromWave": 2,
-            "value": 0.1
-          },
-          {
-            "fromWave": 4,
-            "value": 0.2
-          }
-        ]
-      }
-    }
+ "champs-astrub": {
+  "name": "Champs d'Astrub",
+  "dofusSubArea": 98,
+  "level": 15,
+  "map": {
+   "coords": [
+    5,
+    -27
+   ],
+   "dofusMapId": 189793284
   },
-  "incarnam": {
-    "name": "Incarnam",
-    "level": 1,
-    "dofusArea": 45,
-    "open": {
-      "world": "incarnam",
-      "start": [
-        0,
-        -3
-      ],
-      "aggro": 240,
-      "leash": 650,
-      "respawn": 25,
-      "subareas": {
-        "450": {
-          "name": "Route des âmes",
-          "level": 1,
-          "monsters": [
-            "feu_vif",
-            "feu_de_joie",
-            "feu_furieux",
-            "feu_follet"
-          ],
-          "groupsPerMap": 1,
-          "groupSize": [
-            3,
-            5
-          ]
-        },
-        "444": {
-          "name": "Champs",
-          "level": 3,
-          "monsters": [
-            "tofu_chimerique",
-            "pissenlit_miroitant",
-            "rose_vaporeuse",
-            "tournesol_nebuleux"
-          ],
-          "groupsPerMap": 2,
-          "groupSize": [
-            3,
-            6
-          ]
-        },
-        "445": {
-          "name": "Pâturages",
-          "level": 5,
-          "monsters": [
-            "bouftou_nuageux",
-            "bouftou_nuageux",
-            "boufton_palichon",
-            "boufton_orageux",
-            "boufton_palichon",
-            "boufton_orageux",
-            "bouftor_ethere"
-          ],
-          "groupsPerMap": 2,
-          "groupSize": [
-            3,
-            6
-          ]
-        }
-      },
-      "checkpoints": [
-        {
-          "name": "Route des âmes",
-          "map": [
-            0,
-            -3
-          ]
-        }
-      ]
+  "waves": {
+   "pack": [
+    {
+     "monster": "pissenlit",
+     "base": 2,
+     "perWave": 1
+    },
+    {
+     "monster": "rose",
+     "base": 1,
+     "perWave": 0.8
+    },
+    {
+     "monster": "tournesol",
+     "base": -1,
+     "perWave": 1,
+     "fromWave": 2
     }
+   ],
+   "bossEvery": 5,
+   "boss": "epouvanteur",
+   "escort": {
+    "monsters": [
+     "pissenlit",
+     "rose"
+    ],
+    "base": 3,
+    "perWave": 1
+   },
+   "archimonstres": {
+    "monsters": [
+     "archi_pissenlit",
+     "archi_rose",
+     "archi_tournesol"
+    ],
+    "chance": [
+     {
+      "fromWave": 2,
+      "value": 0.1
+     },
+     {
+      "fromWave": 4,
+      "value": 0.2
+     }
+    ]
+   }
   }
+ },
+ "incarnam": {
+  "name": "Incarnam",
+  "level": 1,
+  "dofusArea": 45,
+  "open": {
+   "world": "incarnam",
+   "start": [
+    0,
+    -3
+   ],
+   "aggro": 240,
+   "leash": 650,
+   "respawn": 25,
+   "subareas": {
+    "450": {
+     "name": "Route des âmes",
+     "level": 1,
+     "monsters": [
+      "feu_vif",
+      "feu_de_joie",
+      "feu_furieux",
+      "feu_follet"
+     ],
+     "groupsPerMap": 1,
+     "groupSize": [
+      3,
+      5
+     ]
+    },
+    "444": {
+     "name": "Champs",
+     "level": 3,
+     "monsters": [
+      "tofu_chimerique",
+      "pissenlit_miroitant",
+      "rose_vaporeuse",
+      "tournesol_nebuleux"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ]
+    },
+    "445": {
+     "name": "Pâturages",
+     "level": 5,
+     "monsters": [
+      "bouftou_nuageux",
+      "bouftou_nuageux",
+      "boufton_palichon",
+      "boufton_orageux",
+      "boufton_palichon",
+      "boufton_orageux",
+      "bouftor_ethere"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ]
+    },
+    "442": {
+     "name": "Lac",
+     "level": 5,
+     "monsters": [
+      "plikplok",
+      "petit_gloot"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      5
+     ]
+    },
+    "443": {
+     "name": "Forêt",
+     "level": 5,
+     "monsters": [
+      "ronronchon",
+      "tigrimas"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      5
+     ]
+    },
+    "449": {
+     "name": "Cimetière",
+     "level": 10,
+     "monsters": [
+      "chafer_debutant",
+      "chafer_furtif",
+      "chafer_eclaireur",
+      "chafer_piquier"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ]
+    }
+   },
+   "checkpoints": [
+    {
+     "name": "Route des âmes",
+     "map": [
+      0,
+      -3
+     ]
+    }
+   ]
+  }
+ }
 }

@@ -128,4 +128,14 @@ export const LOOKS: Record<string, Look> = {
   feu_de_joie: { atlas: 'feu_de_joie', scale: 0.5, map: MONSTER_MAP(17 / 38), height: 160 },
   feu_furieux: { atlas: 'feu_furieux', scale: 0.5, map: MONSTER_MAP(5 / 38), height: 152 },
   feu_follet: { atlas: 'feu_follet', scale: 0.55, map: MONSTER_MAP(5 / 32), height: 132 },
+  // Lac, Forêt, Cimetière et Mine d'Incarnam (tools/extraction/monster_planche.py)
+  plikplok: { atlas: 'plikplok', scale: 0.55, map: MONSTER_MAP(17 / 30, 'AnimAttaque0'), height: 93, multi: true },
+  petit_gloot: { atlas: 'petit_gloot', scale: 0.55, map: MONSTER_MAP(10 / 29, 'AnimAttaque0'), height: 74, multi: true },
+  ronronchon: { atlas: 'ronronchon', scale: 0.86, map: MONSTER_MAP(16 / 42, 'AnimAttaque0', { 0: 16 / 42, 1: 22 / 44, 2: 6 / 20 }), height: 198, multi: true },
+  tigrimas: { atlas: 'tigrimas', scale: 0.86, map: MONSTER_MAP(16 / 42, 'AnimAttaque0', { 0: 16 / 42, 2: 11 / 43 }), height: 165, multi: true },
+  chafer_debutant: { atlas: 'chafer_debutant', scale: 0.66, map: MONSTER_MAP(8 / 24, 'AnimAttaque0', { 0: 8 / 24, 1: 8 / 24 }), height: 189, multi: true },
+  chafer_furtif: { atlas: 'chafer_furtif', scale: 0.69, map: MONSTER_MAP(8 / 24, 'AnimAttaque0', { 0: 8 / 24, 1: 8 / 24 }), height: 192, multi: true },
+  chafer_eclaireur: { atlas: 'chafer_eclaireur', scale: 0.63, map: MONSTER_MAP(23 / 50, 'AnimAttaque2', { 2: 23 / 50, 901: 23 / 50 }), height: 199, multi: true },
+  chafer_piquier: { atlas: 'chafer_piquier', scale: 1.22, map: MONSTER_MAP(10 / 41, 'AnimAttaque0', { 0: 10 / 41, 1: 17 / 41 }), height: 149, multi: true },
+  aminite: { atlas: 'aminite', scale: 0.55, map: MONSTER_MAP(16 / 35, 'AnimAttaque0', { 0: 16 / 35, 1: 8 / 43 }), height: 154, multi: true },
 };

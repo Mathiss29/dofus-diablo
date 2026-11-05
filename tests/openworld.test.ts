@@ -22,6 +22,13 @@ describe('monde d\'Incarnam (cartes Dofus collées)', () => {
     for (const c of wg.free.slice(0, 2000)) expect(wg.mapOfCell(c)).toBeDefined();
     for (const m of monde.maps) expect(wg.freeByMap.get(m.tag)!.length).toBeGreaterThan(50);
   });
+  it('Incarnam entier : Route des âmes, Champs, Pâturages, Lac, Forêt et Cimetière, chacun avec ses monstres officiels', () => {
+    expect(monde.maps.length).toBe(50);
+    for (const sub of ['450', '444', '445', '442', '443', '449']) {
+      expect(monde.maps.some(m => String(m.sub) === sub), sub).toBe(true);
+      for (const t of zone.subareas[sub].monsters) expect(GAME_DATA.monsters[t]?.dofusId, t).toBeDefined();
+    }
+  });
   it('retrouve la carte sous un point du monde', () => {
     const m = wg.mapByCoords(-2, -5)!, c = wg.freeByMap.get(m.tag)![10], p = wg.cellToWorld(c);
     expect(wg.mapAt(p.x, p.y)?.tag).toBe('-2_-5');
