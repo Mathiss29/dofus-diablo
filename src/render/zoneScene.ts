@@ -22,6 +22,8 @@ const hex = (c: string) => parseInt(c.replace('#', ''), 16);
  *  à pas fixe, et dessine son état. Toute la logique de jeu est dans World (src/sim). */
 export class ZoneScene extends Phaser.Scene {
   private zoneId = 'incarnam';
+  /** Classe jouée (#cra dans l'adresse, ou touche K pour changer). */
+  private classId = 'iop';
   private world!: World;
   private worldView: WorldView | null = null;
   private views = new Map<number, EntityView>();
@@ -36,7 +38,8 @@ export class ZoneScene extends Phaser.Scene {
 
   constructor() { super('zone'); }
 
-  init(data: { zone?: string }) {
+  init(data: { zone?: string; classe?: string }) {
+    this.classId = data?.classe ?? (location.hash.includes('cra') ? 'cra' : 'iop');
     // #astrub dans l'adresse : l'ancienne zone à vagues des Champs d'Astrub
     if (data?.zone) this.zoneId = data.zone;
     else if (location.hash === '#astrub') this.zoneId = 'champs-astrub';
@@ -53,7 +56,7 @@ export class ZoneScene extends Phaser.Scene {
       const w = zone.waves!;
       [...w.pack.map(p => p.monster), w.boss, ...w.escort.monsters, ...w.archimonstres.monsters].forEach(m => types.add(m));
     }
-    const atlases = new Set(['iop', ...[...types].map(t => LOOKS[GAME_DATA.monsters[t].look].atlas)]);
+    const atlases = new Set([LOOKS[this.classId].atlas, ...[...types].map(t => LOOKS[GAME_DATA.monsters[t].look].atlas)]);
     for (const a of atlases) if (!this.textures.exists(a)) this.load.atlas(a, `${ASSETS}/sprites/${a}.webp`, `${ASSETS}/sprites/${a}.json`);
     if (zone.open) {
       // Monde ouvert : monde.json décrit les cartes ; on ne charge d'abord que le ciel et les cartes autour du départ,
@@ -76,19 +79,20 @@ export class ZoneScene extends Phaser.Scene {
     if (zone.open) {
       const open = zone.open;
       const wg = new WorldGrid(this.cache.json.get(WorldView.key(open.world, 'monde')) as WorldData);
-      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed });
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId });
       this.cameras.main.setBackgroundColor('#0d2b36');   // sous le ciel, au cas où il manque
       this.worldView = new WorldView(this, wg, worldDir(open.world), open.world);
       this.worldView.create();
     } else {
       const key = mapDir(zone.map!.coords).replace(/\W/g, '_');
       const map = new GridMap(this.cache.json.get(`${key}_carte`) as MapData);
-      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map, seed });
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map, seed, classId: this.classId });
       this.cameras.main.setBackgroundColor('#12141b');
       drawMap(this, map, `${key}_sol`, `${key}_decor`);
     }
     this.fx = new FX(this, t => hex(GAME_DATA.monsters[t].color));
-    this.hud = new Hud(this);
+    this.hud = new Hud(this, this.world);
+    this.hud.onMenu = name => this.hud.toast(`${name} : la fenêtre arrive avec l'inventaire (prochaine étape)`);
     this.cameras.main.startFollow(this.viewOf(this.world.player).sprite, true, 0.12, 0.12, 0, 30);
     this.bindInput();
   }
@@ -97,18 +101,21 @@ export class ZoneScene extends Phaser.Scene {
     const K = Phaser.Input.Keyboard.KeyCodes, kb = this.input.keyboard!;
     // ZQSD (AZERTY), WASD (QWERTY) et flèches
     this.keys = kb.addKeys({ W: K.W, Z: K.Z, A: K.A, Q: K.Q, S: K.S, D: K.D, UP: K.UP, DOWN: K.DOWN, LEFT: K.LEFT, RIGHT: K.RIGHT,
-      SPACE: K.SPACE, R: K.R, E: K.E, F: K.F, H: K.H, ENTER: K.ENTER, ONE: K.ONE, TWO: K.TWO }) as Record<string, Phaser.Input.Keyboard.Key>;
-    this.input.on('pointerdown', (p: Phaser.Input.Pointer) => { this.pressed = p.rightButtonDown() ? 'epee' : 'attaque'; });
-    this.keys.SPACE.on('down', () => { this.pressed = 'bond'; });
-    this.keys.R.on('down', () => { this.pressed = 'colere'; });
+      SPACE: K.SPACE, E: K.E, K: K.K, F: K.F, H: K.H, ENTER: K.ENTER,
+      ONE: K.ONE, TWO: K.TWO, THREE: K.THREE, FOUR: K.FOUR, FIVE: K.FIVE, SIX: K.SIX }) as Record<string, Phaser.Input.Keyboard.Key>;
+    const cls = this.world.player.cls;
+    // Choix 9B : clic gauche = attaque, clic droit = sort favori, Espace = déplacement, 1 à 6 (& é " ' ( - en AZERTY) = barre de sorts
+    this.input.on('pointerdown', (p: Phaser.Input.Pointer) => { this.pressed = p.rightButtonDown() ? cls.favorite : 'attaque'; });
+    this.keys.SPACE.on('down', () => { this.pressed = cls.mobility; });
     this.keys.E.on('down', () => { this.potion = true; });
-    this.keys.ONE.on('down', () => { this.pressed = 'epee'; });
-    this.keys.TWO.on('down', () => { this.pressed = 'colere'; });
+    ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX'].forEach((k, i) => this.keys[k].on('down', () => { if (cls.bar[i]) this.pressed = cls.bar[i]; }));
     this.keys.F.on('down', () => {
       this.fx.juice = !this.fx.juice;
       this.hud.toast(this.fx.juice ? 'Effets d\'impact : ACTIVÉS' : 'Effets d\'impact : DÉSACTIVÉS (compare !)');
     });
     this.keys.H.on('down', () => this.hud.toggleHelp());
+    // K : changer de classe (en attendant l'écran de création de la 0.1b)
+    this.keys.K.on('down', () => this.scene.restart({ zone: this.zoneId, classe: this.classId === 'iop' ? 'cra' : 'iop' }));
     this.keys.ENTER.on('down', () => {
       if (!this.world.over) return;
       if (this.world.zone.open) this.world.respawnPlayer();
@@ -152,6 +159,7 @@ export class ZoneScene extends Phaser.Scene {
   private consumeEvents() {
     for (const e of this.world.drainEvents()) {
       this.fx.handle(e);
+      this.hud.handle(e);
       const M = GAME_DATA.monsters;
       switch (e.k) {
         case 'impact':
@@ -161,18 +169,17 @@ export class ZoneScene extends Phaser.Scene {
           break;
         case 'playerHurt': this.hud.hurtFlash(this.fx.juice); break;
         case 'wave':
-          this.hud.onWave(e.n);
           this.hud.banner(e.boss ? `Vague ${e.n}\n${M[e.boss].name}` : e.archi ? `Vague ${e.n}\nArchimonstre : ${M[e.archi].name} !` : `Vague ${e.n}`);
           break;
-        case 'potion': this.hud.potionDrunk(); break;
         case 'noResource': this.hud.noResource(e.res); break;
+        case 'rageFull': this.hud.toast(`${this.world.player.cls.rage.name} au maximum : ton prochain sort est renforcé !`); break;
         case 'levelUp': this.hud.banner(`Niveau ${e.level} !`, 1200); break;
         case 'bossDown': this.hud.banner(`${M[e.monster].name} vaincu !`); break;
         case 'playerDeath':
-          if (this.world.zone.open) this.hud.banner('Vaincu\nEntrée pour revenir au départ', 0, true);
+          if (this.world.zone.open) this.hud.banner(`Vaincu\nEntrée : retour à ${this.world.checkpointName}`, 0, true);
           else this.hud.banner(`Vaincu à la vague ${e.wave}\nEntrée pour recommencer`, 0, true);
           break;
-        case 'groupCleared': this.hud.onWave(2); break;
+        case 'checkpoint': this.hud.banner(`Point de retour\n${e.name}`, 1400); break;
         case 'respawn': this.hud.banner('De retour !', 900); break;
         case 'enterArea': this.hud.banner(`${e.name}\nNiveau ${e.level}`, 1600); break;
       }
@@ -182,7 +189,7 @@ export class ZoneScene extends Phaser.Scene {
   private viewOf(e: Entity): EntityView {
     let v = this.views.get(e.id);
     if (!v) {
-      const look = e.faction === 'player' ? LOOKS.iop : LOOKS[GAME_DATA.monsters[(e as { type?: string }).type!].look];
+      const look = e.faction === 'player' ? LOOKS[this.classId] : LOOKS[GAME_DATA.monsters[(e as { type?: string }).type!].look];
       v = new EntityView(this, look);
       this.views.set(e.id, v);
     }
@@ -199,8 +206,8 @@ export class ZoneScene extends Phaser.Scene {
     }
     for (const [id, v] of this.views) if (!alive.has(id)) { v.destroy(); this.views.delete(id); }
     const s = w.player.skill;
-    if (s?.id === 'colere' && s.t < s.def.impactAt) this.fx.chargeSparks(w.player.x, w.player.y);
-    this.fx.draw(w.telegraphs);
-    this.hud.draw(w, this.fx.juice, this.game.loop.delta / 1000);
+    if (s && 'charge' in s.def && s.def.charge && !s.def.move && s.t < s.def.impactAt) this.fx.chargeSparks(w.player.x, w.player.y);
+    this.fx.draw(w.telegraphs, w.projectiles);
+    this.hud.draw(this.fx.juice, this.game.loop.delta / 1000);
   }
 }

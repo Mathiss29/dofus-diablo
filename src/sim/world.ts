@@ -1,5 +1,5 @@
 import { angleDiff, Rng } from './math';
-import type { GameData, SubAreaDef, ZoneDef } from './defs';
+import type { Element, GameData, HitZone, SubAreaDef, ZoneDef } from './defs';
 import type { SimEvent, Telegraph } from './events';
 import { GridMap, WorldGrid } from './gridmap';
 import type { PlayerInput } from './input';
@@ -7,7 +7,10 @@ import { Monster } from './monster';
 import { Player } from './player';
 import { planWave } from './waves';
 
-interface HitDef { dmg: number; knock: number }
+interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: number }
+/** Flèche en vol (Crâ). */
+export interface Projectile { id: number; spell: string; x: number; y: number; dx: number; dy: number; left: number; speed: number; width: number;
+  explode: number; pierce: boolean; hit: HitDef; stun: number; touched: Set<number> }
 
 /** Monde ouvert : un groupe de monstres posé sur une carte Dofus, qui réapparaît quand il a été vaincu. */
 interface MonsterGroup { id: number; map: string; sub: SubAreaDef; members: Monster[]; timer: number; cleared: boolean; x: number; y: number }
@@ -29,6 +32,7 @@ export class World {
   readonly map: GridMap;
   readonly player: Player;
   monsters: Monster[] = [];
+  projectiles: Projectile[] = [];
   /** Événements produits depuis le dernier drainEvents(). */
   private events: SimEvent[] = [];
   /** Télégraphes du dernier pas (recalculés à chaque pas). */
@@ -40,7 +44,9 @@ export class World {
   time = 0;
   private nextId = 1;
   private groups: MonsterGroup[] = [];
-  private startPos = { x: 0, y: 0 };
+  /** Point de retour après une mort (le dernier Zaap atteint). */
+  private checkpoint = { x: 0, y: 0 };
+  checkpointName = '';
   /** Sous-zone où se trouve le joueur (monde ouvert). */
   area: SubAreaDef | null = null;
 
@@ -56,18 +62,24 @@ export class World {
       const m = this.map.mapByCoords(...open.start);
       if (!m) throw new Error(`Carte de départ absente du monde : ${open.start}`);
       // départ : la case la plus dégagée de la carte (le plus de cases marchables autour)
-      const free = this.map.freeByMap.get(m.tag)!, ok = new Set(free), C = this.map.cols;
-      let best = free[0], bestN = -1;
-      for (const c of free) {
-        let n = 0;
-        for (let dr = -6; dr <= 6; dr++) for (let dk = -3; dk <= 3; dk++) if (ok.has(c + dr * C + dk)) n++;
-        if (n > bestN) { bestN = n; best = c; }
-      }
-      start = this.map.cellToWorld(best);
+      start = this.openestCell(m.tag);
+      this.checkpointName = open.checkpoints[0]?.name ?? '';
     }
-    this.startPos = start;
+    this.checkpoint = start;
     this.player = new Player(this.nextId++, start.x, start.y, opts.data.classes[opts.classId ?? 'iop']);
     if (open) this.spawnGroups();
+  }
+
+  /** Case la plus dégagée d'une carte (le plus de cases marchables autour). */
+  private openestCell(tag: string) {
+    const wg = this.worldGrid!, free = wg.freeByMap.get(tag)!, ok = new Set(free), C = wg.cols;
+    let best = free[0], bestN = -1;
+    for (const c of free) {
+      let n = 0;
+      for (let dr = -6; dr <= 6; dr++) for (let dk = -3; dk <= 3; dk++) if (ok.has(c + dr * C + dk)) n++;
+      if (n > bestN) { bestN = n; best = c; }
+    }
+    return wg.cellToWorld(best);
   }
 
   get worldGrid(): WorldGrid | null { return this.map instanceof WorldGrid ? this.map : null; }
@@ -118,13 +130,19 @@ export class World {
     }
     const m = this.worldGrid!.mapAt(p.x, p.y), sub = m ? open.subareas[String(m.sub)] ?? null : null;
     if (sub && sub !== this.area) { this.area = sub; this.emit({ k: 'enterArea', name: sub.name, level: sub.level }); }
+    // Zaap atteint : il devient le point de retour
+    const cp = m && open.checkpoints.find(c => c.map[0] === m.x && c.map[1] === m.y);
+    if (cp && cp.name !== this.checkpointName) {
+      this.checkpointName = cp.name; this.checkpoint = this.openestCell(m.tag);
+      this.emit({ k: 'checkpoint', name: cp.name });
+    }
   }
-  /** Monde ouvert, après une mort : retour à la carte de départ, sans pénalité. */
+  /** Monde ouvert, après une mort : retour au dernier Zaap atteint, sans pénalité (choix 10D). */
   respawnPlayer() {
     const p = this.player;
     if (!this.zone.open || !p.dead) return;
-    p.dead = false; p.hp = p.maxHp; p.x = this.startPos.x; p.y = this.startPos.y; p.kx = p.ky = 0; p.z = 0;
-    p.state = 'free'; p.skill = null; p.invuln = 2; p.setAnim('idle');
+    p.dead = false; p.hp = p.maxHp; p.x = this.checkpoint.x; p.y = this.checkpoint.y; p.kx = p.ky = 0; p.z = 0;
+    p.state = 'free'; p.skill = null; p.invuln = 2; p.rage = 0; p.setAnim('idle');
     this.over = false;
     this.emit({ k: 'respawn' });
   }
@@ -141,6 +159,7 @@ export class World {
     const ents = [p, ...this.monsters], prev = ents.map(e => [e.x, e.y] as const);
     p.update(dt, input, this);
     for (const m of this.monsters) m.update(dt, p, this);
+    this.updateProjectiles(dt);
     this.separate();
     // Cases bloquantes : on glisse le long des obstacles (axe par axe), sauf en plein Bond
     ents.forEach((e, i) => {
@@ -184,25 +203,54 @@ export class World {
     return m;
   }
 
+  // --- Flèches ---------------------------------------------------------------
+  shoot(x: number, y: number, facing: number, hz: Extract<HitZone, { shape: 'projectile' }>, hit: HitDef, stun: number, area: number, spell: string) {
+    this.projectiles.push({ id: this.nextId++, spell, x, y, dx: Math.cos(facing), dy: Math.sin(facing), left: hz.range, speed: hz.speed,
+      width: hz.width * area, explode: (hz.explode ?? 0) * area, pierce: !!hz.pierce, hit, stun, touched: new Set() });
+  }
+  private updateProjectiles(dt: number) {
+    for (const pr of this.projectiles) {
+      const st = Math.min(pr.left, pr.speed * dt);
+      pr.x += pr.dx * st; pr.y += pr.dy * st; pr.left -= st;
+      const target = this.monsters.find(m => !m.dead && m.state !== 'spawn' && !pr.touched.has(m.id) && Math.hypot(m.x - pr.x, m.y - pr.y) <= m.radius + pr.width);
+      let end = pr.left <= 0;
+      if (target) {
+        if (pr.explode) { this.hitCircle(pr.x, pr.y, pr.explode, pr.hit, pr.stun); end = true; }
+        else {
+          pr.touched.add(target.id);
+          this.applyHits(m => m === target, pr.hit, pr.x - pr.dx * 10, pr.y - pr.dy * 10, pr.stun, Math.atan2(pr.dy, pr.dx));
+          if (!pr.pierce) end = true;
+        }
+        this.emit({ k: 'impact', hitstop: 0.03, shake: pr.explode ? 0.008 : 0.003, big: false });
+      } else if (end && pr.explode) this.hitCircle(pr.x, pr.y, pr.explode, pr.hit, pr.stun);
+      if (end) {
+        pr.left = 0;
+        this.emit({ k: 'spell', fx: 'burst', id: pr.spell, x: pr.x, y: pr.y, facing: Math.atan2(pr.dy, pr.dx), size: pr.explode || 26, arc: 0,
+          element: pr.hit.element ?? 'neutre', big: pr.explode > 0, boosted: false });
+      }
+    }
+    this.projectiles = this.projectiles.filter(p => p.left > 0);
+  }
+
   // --- Zones de frappe (coordonnées monde) --------------------------------
-  hitCone(x: number, y: number, facing: number, range: number, arc: number, def: HitDef) {
+  hitCone(x: number, y: number, facing: number, range: number, arc: number, def: HitDef, stun = 0) {
     return this.applyHits(m => {
       const dx = m.x - x, dy = m.y - y, d = Math.hypot(dx, dy);
       return d <= range + m.radius && (d < m.radius + 8 || Math.abs(angleDiff(Math.atan2(dy, dx), facing)) <= arc / 2);
-    }, def, x, y, 0);
+    }, def, x, y, stun);
   }
-  hitLine(x: number, y: number, facing: number, length: number, width: number, def: HitDef) {
+  hitLine(x: number, y: number, facing: number, length: number, width: number, def: HitDef, stun = 0) {
     const c = Math.cos(facing), s = Math.sin(facing);
     return this.applyHits(m => {
       const dx = m.x - x, dy = m.y - y, t = dx * c + dy * s, perp = Math.abs(-dx * s + dy * c);
       return t >= -m.radius && t <= length + m.radius && perp <= width + m.radius;
-    }, def, x, y, 0, facing);
+    }, def, x, y, stun, facing);
   }
   hitCircle(x: number, y: number, r: number, def: HitDef, stun = 0) {
     return this.applyHits(m => Math.hypot(m.x - x, m.y - y) <= r + m.radius, def, x, y, stun);
   }
   private applyHits(test: (m: Monster) => boolean, def: HitDef, ox: number, oy: number, stun: number, pushDir?: number): number {
-    const cls = this.player.cls;
+    const p = this.player, cls = p.cls;
     let n = 0;
     for (const m of this.monsters) {
       if (m.dead || m.state === 'spawn' || !test(m)) continue;
@@ -215,7 +263,9 @@ export class World {
       m.kx += Math.cos(a) * kb; m.ky += Math.sin(a) * kb;
       if (!m.def.boss) m.stun = Math.max(m.stun, stun || 0.12);   // petit vacillement : interrompt les télégraphes
       else if (stun) m.stun = Math.max(m.stun, stun * 0.3);
-      this.emit({ k: 'hit', target: 'monster', x: m.x, y: m.y, z: m.radius * 2 + 10, amount: dmg, crit });
+      this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: dmg, crit, element: def.element ?? 'neutre' });
+      if (n <= 3) p.addRage(cls.rage.perHit, this);
+      if (def.lifesteal) p.hp = Math.min(p.maxHp, p.hp + Math.round(dmg * def.lifesteal));   // la Rage monte avec les coups portés (3 cibles max par coup)
       if (m.hp <= 0) this.killMonster(m);
     }
     return n;

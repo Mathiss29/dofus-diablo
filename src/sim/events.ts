@@ -1,12 +1,14 @@
+import type { Element, SpellDef } from './defs';
+
 /** Ce que la simulation signale à l'affichage (effets, sons, interface).
  *  La simulation ne dessine rien : elle pousse des événements, l'affichage les consomme. */
 export type SimEvent =
-  | { k: 'swing'; x: number; y: number; facing: number; radius: number; arc: number; finisher: boolean }
-  | { k: 'epee'; x: number; y: number; facing: number; length: number }
-  | { k: 'bondLand'; x: number; y: number; radius: number }
-  | { k: 'colere'; x: number; y: number; radius: number }
+  /** Impact d'un coup du joueur : fx = forme de l'effet, size = portée / longueur / rayon, boosted = renforcé par la Rage. */
+  | { k: 'spell'; fx: SpellDef['fx']; id: string; x: number; y: number; facing: number; size: number; arc: number; element: Element; big: boolean; boosted: boolean }
+  /** Une flèche part (l'affichage lit world.projectiles pour la dessiner en vol). */
+  | { k: 'shoot'; id: string; x: number; y: number; facing: number; element: Element; boosted: boolean }
   | { k: 'slam'; x: number; y: number; radius: number }
-  | { k: 'hit'; target: 'monster' | 'player'; x: number; y: number; z: number; amount: number; crit: boolean }
+  | { k: 'hit'; target: 'monster' | 'player'; id?: number; x: number; y: number; z: number; amount: number; crit: boolean; element?: Element }
   | { k: 'kill'; x: number; y: number; radius: number; monster: string }
   | { k: 'impact'; hitstop: number; shake: number; big: boolean }
   | { k: 'playerHurt' }
@@ -16,10 +18,15 @@ export type SimEvent =
   | { k: 'potion'; x: number; y: number; amount: number }
   | { k: 'levelUp'; level: number }
   | { k: 'noResource'; res: 'pa' | 'pm' }
+  /** Jauge de classe pleine, puis dépensée par un sort renforcé. */
+  | { k: 'rageFull' }
+  | { k: 'rageSpent'; spell: string }
   /** Monde ouvert : le joueur entre dans une autre sous-zone. */
   | { k: 'enterArea'; name: string; level: number }
   | { k: 'groupCleared' }
-  | { k: 'respawn' };
+  | { k: 'respawn' }
+  /** Nouveau point de retour (Zaap). */
+  | { k: 'checkpoint'; name: string };
 
 /** Zones au sol affichées avant un coup (rouge = danger, or = sort du joueur). */
 export type Telegraph =

@@ -30,6 +30,7 @@ const MONSTER_MAP = (shot: number, atk = 'AnimAttaque0'): Record<string, AnimSli
 // Iop : squelette joueur n° 1 + skin 80 (corps) + 2124 (tête). Animations officielles lues dans
 // les données de sorts (spellscripts -> casterAnimation) : Épée Céleste = AnimAttaque801,
 // Bond = AnimAttaque811, Colère de Iop = AnimAttaque800, attaque sans arme = AnimArme0.
+// Planche refaite avec tools/extraction/iop_planche.sh (toutes les animations utiles en une passe).
 const IOP_MAP: Record<string, AnimSlice> = {
   idle: { anim: 'AnimStatiqueCombat0', loop: true, fps: 20 },
   run: { anim: 'AnimCourse', loop: true, fps: 32 },
@@ -37,16 +38,41 @@ const IOP_MAP: Record<string, AnimSlice> = {
   attack2: { anim: 'AnimArme0', from: 3 / 28, to: 17 / 28 },
   attack3: { anim: 'AnimArme0', from: 3 / 28, to: 24 / 28 },
   epee: { anim: 'AnimAttaque801', from: 6 / 32, to: 1 },
-  leap: { anim: 'AnimAttaque811', from: 0, to: 12 / 30 },
+  bond: { anim: 'AnimAttaque811', from: 0, to: 12 / 30 },
+  // Animations officielles (casterAnimation des sorts) : Pression 802, Intimidation 803, Déferlement 809, Fureur 808.
+  // Bornes choisies pour que le coup de l'animation tombe sur l'impact du sort.
+  pression: { anim: 'AnimAttaque802', from: 0.1, to: 0.75 },
+  intimidation: { anim: 'AnimAttaque803', from: 0, to: 0.6 },
+  deferlement: { anim: 'AnimAttaque809', from: 0, to: 0.55 },
+  fureur: { anim: 'AnimAttaque808', from: 0, to: 0.25 },
+  hit: { anim: 'AnimHit', from: 0, to: 1 },
   colere_charge: { anim: 'AnimAttaque800', from: 0, to: 21 / 32 },
   colere_hit: { anim: 'AnimAttaque800', from: 21 / 32, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 19 / 20 },
+};
+
+// Crâ : squelette joueur n° 1 + skin 90 (corps) + 2140 (tête), planche faite par tools/extraction/perso_planche.py.
+// Bornes : to = SHOT × durée / impactAt du sort, pour que la flèche parte avec l'animation.
+const CRA_MAP: Record<string, AnimSlice> = {
+  idle: { anim: 'AnimStatiqueCombat0', loop: true, fps: 20 },
+  run: { anim: 'AnimCourse', loop: true, fps: 32 },
+  cinglante: { anim: 'AnimAttaque911', from: 0, to: 0.6 },
+  recul: { anim: 'AnimAttaque919', from: 0, to: 0.82 },
+  glacee: { anim: 'AnimAttaque910', from: 0, to: 0.6 },
+  barrage: { anim: 'AnimAttaque901', from: 0, to: 0.77 },
+  explosive: { anim: 'AnimAttaque916', from: 0, to: 0.63 },
+  abolition: { anim: 'AnimAttaque913', from: 0, to: 0.62 },
+  dispersion: { anim: 'AnimAttaque915', from: 0, to: 0.51 },
+  pas_chasse: { anim: 'AnimAttaque923', from: 0.1, to: 0.6 },
+  hit: { anim: 'AnimHit', from: 0, to: 1 },
+  die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };
 
 const GOLD = 0xffd87a;
 
 export const LOOKS: Record<string, Look> = {
   iop: { atlas: 'iop', scale: 1.15, map: IOP_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7 },
+  cra: { atlas: 'cra', scale: 1.15, map: CRA_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7 },
   bouftou: { atlas: 'bouftou', scale: 0.85, map: MONSTER_MAP(9 / 32), height: 70 },
   boufton: { atlas: 'boufton', scale: 0.8, map: MONSTER_MAP(9 / 32), height: 55 },
   royal: { atlas: 'royal', scale: 1.05, map: MONSTER_MAP(10 / 20), height: 140 },

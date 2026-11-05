@@ -120,7 +120,16 @@
             4
           ]
         }
-      }
+      },
+      "checkpoints": [
+        {
+          "name": "Route des âmes",
+          "map": [
+            0,
+            -3
+          ]
+        }
+      ]
     }
   }
 }
