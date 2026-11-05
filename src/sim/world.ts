@@ -342,7 +342,7 @@ export class World {
       m.kx += Math.cos(a) * kb; m.ky += Math.sin(a) * kb;
       if (!m.def.boss) m.stun = Math.max(m.stun, stun || 0.12);   // petit vacillement : interrompt les télégraphes
       else if (stun) m.stun = Math.max(m.stun, stun * 0.3);
-      this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: dmg, crit, element: def.element ?? 'neutre' });
+      this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: dmg, crit, element: p.resolveElement(def.element ?? 'neutre') });
       if (n <= 3) p.addRage(cls.rage.perHit, this);
       if (def.lifesteal) p.hp = Math.min(p.maxHp, p.hp + Math.round(dmg * def.lifesteal));   // la Rage monte avec les coups portés (3 cibles max par coup)
       if (m.hp <= 0) this.killMonster(m);
@@ -355,7 +355,8 @@ export class World {
     const p = this.player;
     p.hp = Math.min(p.maxHp, p.hp + p.cls.healOnKill + p.legendary('vampire'));
     this.dropLoot(m);
-    p.gainXp(m.def.xp ?? Math.round(m.def.hp / 5), this);
+    const xp = p.gainXp(m.def.xp ?? Math.round(m.def.hp / 5), this);
+    if (xp > 0) this.emit({ k: 'xp', x: m.x, y: m.y, z: m.radius * 2 + 30, n: xp });
     if (m.def.boss) { this.emit({ k: 'impact', hitstop: 0.15, shake: 0.02, big: true }); this.emit({ k: 'bossDown', monster: m.type }); }
   }
   // --- Butin (choix 24) ----------------------------------------------------

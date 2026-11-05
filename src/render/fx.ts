@@ -26,6 +26,9 @@ interface Ring { x: number; y: number; r0: number; r1: number; color: number; li
 
 /** Effets visuels : particules, traînées, anneaux, chiffres de dégâts, télégraphes.
  *  Purement cosmétique : utilise Math.random() librement, rien ici n'influe sur la partie. */
+/** Couleur des chiffres de dégâts par élément (choix 2A de Mathis). */
+const DMG_COLORS: Record<string, string> = { terre: '#c9925a', feu: '#ff6a45', eau: '#5cb4ff', air: '#6fdc7a', neutre: '#e2e2e2', meilleur: '#ffffff' };
+
 export class FX {
   /** Touche F : effets d'impact (gel, tremblement, particules pleines). */
   juice = true;
@@ -73,12 +76,16 @@ export class FX {
         break;
       case 'hit':
         if (e.target === 'monster') {
-          this.number(e.x, e.y, e.z, e.amount, e.crit);
+          // choix 2A : couleur de l'élément ; critique = plus gros, contour doré
+          this.number(e.x, e.y, e.z, e.amount, e.crit, DMG_COLORS[e.element ?? 'neutre'] ?? '#ffffff', e.crit ? '#8a5a00' : '#1a0f0a');
           this.particles(e.x, e.y, e.z / 2, e.crit ? 14 : 8, e.crit ? 0xffd23f : 0xffffff, 240, 0.35, 3, 160);
         } else {
           this.number(e.x, e.y, e.z, e.amount, false, '#ff6b5b');
           this.particles(e.x, e.y, 20, 10, 0xd2412f, 200, 0.4);
         }
+        break;
+      case 'xp':
+        this.number(e.x, e.y, e.z, `+ ${e.n} XP`, false, '#c99cff');
         break;
       case 'status':
         this.number(e.x, e.y, 70, e.text, false, e.color);
@@ -104,11 +111,11 @@ export class FX {
   ring(x: number, y: number, r0: number, r1: number, color: number, life = 0.3, width = 6) {
     this.rings.push({ x, y, r0, r1, color, life, max: life, width });
   }
-  number(x: number, y: number, z: number, value: number | string, crit: boolean, color?: string) {
+  number(x: number, y: number, z: number, value: number | string, crit: boolean, color?: string, stroke = '#1a0f0a') {
     const p = ISO.toScreen(x, y, z);
     const t = this.scene.add.text(p.x + rand(-8, 8), p.y, String(value), {
       fontFamily: 'Trebuchet MS, Verdana, sans-serif', fontSize: crit ? '26px' : '17px', fontStyle: 'bold',
-      color: color ?? (crit ? '#ffd23f' : '#ffffff'), stroke: '#1a0f0a', strokeThickness: 4,
+      color: color ?? (crit ? '#ffd23f' : '#ffffff'), stroke, strokeThickness: crit ? 5 : 4,
     }).setOrigin(0.5).setDepth(1e6 + 1);
     t.setScale(crit ? 1.6 : 1.25);
     this.scene.tweens.add({ targets: t, scale: crit ? 1.1 : 0.9, duration: 120, ease: 'Back.Out' });

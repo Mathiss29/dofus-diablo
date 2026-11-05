@@ -146,6 +146,16 @@ describe('PA, PM, potion et XP', () => {
     expect(p.xp).toBe(10);
     expect(w.drainEvents().some(e => e.k === 'levelUp' && e.level === 2)).toBe(true);
   });
+
+  it('tuer un monstre affiche l\'XP gagnée au-dessus de lui', () => {
+    const w = newWorld(), p = w.player;
+    const m = w.spawnMonster('pissenlit', p.x + 40, p.y); m.state = 'chase'; m.hp = 1;
+    w.drainEvents();
+    w.step(STEP, { ...NO_INPUT, aim: { x: m.x, y: m.y }, pressed: 'attaque' });
+    for (let i = 0; i < 20; i++) w.step(STEP, NO_INPUT);
+    const xp = w.drainEvents().find(e => e.k === 'xp');
+    expect(xp && xp.k === 'xp' && xp.n).toBeGreaterThan(0);
+  });
 });
 
 describe('déplacement à la souris', () => {
