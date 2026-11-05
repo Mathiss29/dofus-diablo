@@ -12,7 +12,7 @@ type Slot = { state: 'none' | 'loading' | 'ready'; objs: Phaser.GameObjects.Imag
  *  fixée à la caméra, qui glisse un peu (parallaxe) quand on traverse le monde. */
 export class WorldView {
   private readonly slots = new Map<string, Slot>();
-  private sky?: Phaser.GameObjects.Image;
+  sky?: Phaser.GameObjects.Image;
   private center = '';
 
   constructor(private readonly scene: Phaser.Scene, private readonly wg: WorldGrid, private readonly dir: string, private readonly prefix: string) {
@@ -115,7 +115,9 @@ export class WorldView {
     const b = this.wg.toScreen(this.wg.data.grid.ox + this.wg.cols * this.wg.data.grid.w, this.wg.data.grid.oy + this.wg.rows * this.wg.data.grid.h / 2);
     const fx = Phaser.Math.Clamp((cam.midPoint.x - a.x) / (b.x - a.x), 0, 1), fy = Phaser.Math.Clamp((cam.midPoint.y - a.y) / (b.y - a.y), 0, 1);
     const ex = sky.width * sc - W, ey = sky.height * sc - H;
-    sky.setScale(sc).setOrigin(0).setPosition(-ex * fx, -ey * fy);
+    // le zoom de la caméra agrandit aussi les objets fixes autour du centre de l'écran : on le compense
+    const z = cam.zoom, cx = W / 2, cy = H / 2;
+    sky.setScale(sc / z).setOrigin(0).setPosition(cx + (-ex * fx - cx) / z, cy + (-ey * fy - cy) / z);
   }
 }
 

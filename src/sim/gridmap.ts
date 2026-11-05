@@ -81,6 +81,81 @@ export class GridMap {
     const s = ISO.toScreen(wx, wy), m = this.fromScreen(s.x, s.y);
     return this.cellAt(m.x, m.y);
   }
+  /** Cases voisines (losanges qui se touchent par un côté ou un coin), marchables. */
+  private neighbors(c: number): number[] {
+    const r = Math.floor(c / this.cols), k = c % this.cols, o = r % 2, out: number[] = [];
+    const add = (rr: number, kk: number) => {
+      if (rr < 0 || rr >= this.rows || kk < 0 || kk >= this.cols) return;
+      const n = rr * this.cols + kk; if (this.data.mov[n] === '1') out.push(n);
+    };
+    add(r - 1, k - 1 + o); add(r - 1, k + o); add(r + 1, k - 1 + o); add(r + 1, k + o);   // côtés
+    add(r - 2, k); add(r + 2, k); add(r, k - 1); add(r, k + 1);                             // coins
+    return out;
+  }
+  /** Ligne droite marchable entre deux points du monde (échantillonnée tous les 8 px). */
+  clearLine(a: Vec, b: Vec): boolean {
+    const d = Math.hypot(b.x - a.x, b.y - a.y), n = Math.ceil(d / 8);
+    for (let i = 1; i < n; i++) if (!this.walkable(a.x + (b.x - a.x) * i / n, a.y + (b.y - a.y) * i / n)) return false;
+    return true;
+  }
+  /** Chemin (A*) entre deux points du monde, en points de passage lissés ; vide si inatteignable.
+   *  Si l'arrivée est bloquée, on va à la case libre la plus proche. maxNodes borne le coût d'un clic lointain. */
+  findPath(from: Vec, to: Vec, maxNodes = 6000): Vec[] {
+    if (this.clearLine(from, to) && this.walkable(to.x, to.y)) return [to];
+    const start = this.cellAtWorld(from.x, from.y);
+    let goal = this.cellAtWorld(to.x, to.y);
+    if (start < 0) return [];
+    if (goal < 0 || this.data.mov[goal] !== '1') {
+      const f = this.nearestFreeNear(to, 6); if (!f) return []; goal = this.cellAtWorld(f.x, f.y); to = f;
+    }
+    const W = (c: number) => this.cellToWorld(c), gp = W(goal);
+    const h = (c: number) => { const p = W(c); return Math.hypot(p.x - gp.x, p.y - gp.y); };
+    const g = new Map<number, number>([[start, 0]]), came = new Map<number, number>();
+    const open = new Heap(), closed = new Set<number>();
+    open.push(h(start), start);
+    let found = false, n = 0, best = start, bestH = h(start);
+    while (open.size && n++ < maxNodes) {
+      const c = open.pop();
+      if (c === goal) { found = true; break; }
+      if (closed.has(c)) continue;
+      closed.add(c);
+      const hc = h(c); if (hc < bestH) { bestH = hc; best = c; }
+      const pc = W(c);
+      for (const nb of this.neighbors(c)) {
+        if (closed.has(nb)) continue;
+        const pn = W(nb), ng = g.get(c)! + Math.hypot(pn.x - pc.x, pn.y - pc.y);
+        if (ng < (g.get(nb) ?? Infinity)) { g.set(nb, ng); came.set(nb, c); open.push(ng + h(nb), nb); }
+      }
+    }
+    // inatteignable (ou trop loin) : on va au plus près
+    let c = found ? goal : best;
+    const cells: number[] = [];
+    while (c !== start && c !== undefined) { cells.push(c); c = came.get(c)!; }
+    const pts = cells.reverse().map(W);
+    if (found) pts[pts.length - 1] = to;
+    // lissage : on saute les points visibles en ligne droite
+    const out: Vec[] = []; let cur = from;
+    for (let i = 0; i < pts.length; i++) {
+      let j = i;
+      while (j + 1 < pts.length && this.clearLine(cur, pts[j + 1])) j++;
+      out.push(pts[j]); cur = pts[j]; i = j;
+    }
+    return out;
+  }
+  /** Case libre la plus proche d'un point, en cherchant dans un rayon de r cases. */
+  nearestFreeNear(p: Vec, r: number): Vec | null {
+    const c0 = this.cellAtWorld(p.x, p.y);
+    if (c0 < 0) return null;
+    const R = Math.floor(c0 / this.cols), K = c0 % this.cols;
+    let best: Vec | null = null, bd = Infinity;
+    for (let rr = R - 2 * r; rr <= R + 2 * r; rr++) for (let kk = K - r; kk <= K + r; kk++) {
+      if (rr < 0 || rr >= this.rows || kk < 0 || kk >= this.cols) continue;
+      const c = rr * this.cols + kk; if (this.data.mov[c] !== '1') continue;
+      const q = this.cellToWorld(c), d = (q.x - p.x) ** 2 + (q.y - p.y) ** 2;
+      if (d < bd) { bd = d; best = q; }
+    }
+    return best;
+  }
   randomFree(rng: Rng, among: number[] = this.free): Vec { return this.cellToWorld(rng.pick(among)); }
   nearestFree(wx: number, wy: number, among: number[] = this.free): Vec {
     let best = this.cellToWorld(among[0]), bd = Infinity;
@@ -112,4 +187,28 @@ export class WorldGrid extends GridMap {
   /** Carte Dofus sous un point du monde du jeu. */
   mapAt(wx: number, wy: number): WorldMapEntry | undefined { return this.mapOfCell(this.cellAtWorld(wx, wy)); }
   mapByCoords(x: number, y: number): WorldMapEntry | undefined { return this.world.maps.find(m => m.x === x && m.y === y); }
+}
+
+/** File de priorité (tas binaire) pour l'A*. */
+class Heap {
+  private k: number[] = []; private v: number[] = [];
+  get size() { return this.k.length; }
+  push(key: number, val: number) {
+    const k = this.k, v = this.v; let i = k.length; k.push(key); v.push(val);
+    while (i > 0) { const p = (i - 1) >> 1; if (k[p] <= k[i]) break; [k[p], k[i]] = [k[i], k[p]]; [v[p], v[i]] = [v[i], v[p]]; i = p; }
+  }
+  pop(): number {
+    const k = this.k, v = this.v, top = v[0], lk = k.pop()!, lv = v.pop()!;
+    if (k.length) {
+      k[0] = lk; v[0] = lv; let i = 0;
+      for (;;) {
+        const l = 2 * i + 1, r = l + 1; let m = i;
+        if (l < k.length && k[l] < k[m]) m = l;
+        if (r < k.length && k[r] < k[m]) m = r;
+        if (m === i) break;
+        [k[m], k[i]] = [k[i], k[m]]; [v[m], v[i]] = [v[i], v[m]]; i = m;
+      }
+    }
+    return top;
+  }
 }

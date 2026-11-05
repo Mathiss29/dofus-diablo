@@ -40,6 +40,18 @@ export interface SpellDef {
   lifesteal?: number;
   /** Effet visuel (FX) : arc, line, burst, land. */
   fx: 'arc' | 'line' | 'burst' | 'land';
+  /** Description officielle (spellsdataroot.descriptionId), pour l'infobulle. */
+  desc?: string;
+  /** Animation du lanceur, si ce n'est pas l'identifiant du sort (auto-attaque à l'arme : arme6...). */
+  anim?: string;
+  /** Icône d'objet (planche des objets) au lieu d'une icône de sort. */
+  itemIcon?: number;
+}
+/** Auto-attaque d'un type d'arme : un sort sans coût dont les dommages viennent de l'arme portée. */
+export interface WeaponProfile extends Omit<SpellDef, 'name' | 'icon' | 'element' | 'dmg' | 'cooldown' | 'anim'> {
+  /** typeId Dofus de l'arme : animation AnimArme<anim>, icône weapon_<anim>. */
+  anim: number;
+  base: number; mult: number;
 }
 export interface ClassDef {
   name: string; hp: number; speed: number; radius: number; iframesOnHit: number; healOnKill: number;

@@ -1,5 +1,6 @@
 import { Entity } from './entity';
 import type { ClassDef, ComboHit, Element, SkillId, SpellDef } from './defs';
+import { WEAPONS } from './data';
 import { BASE_STATS, EQUIP_SLOTS, type EquipSlot, type Item, type ItemsData, type Stat, type Stats } from './items';
 import type { PlayerInput } from './input';
 import type { World } from './world';
@@ -42,6 +43,11 @@ export class Player extends Entity {
   setCount: Record<string, number> = {};
   items: ItemsData | null = null;
   static readonly BAG_SIZE = 60;
+  /** Déplacement à la souris : points de passage restants, monstre poursuivi, dernière destination. */
+  path: { x: number; y: number }[] = [];
+  chaseId: number | null = null;
+  private dest: { x: number; y: number } | null = null;
+  private repathT = 0;
   private buffer: SkillId | null = null;
   private bufferT = 0;
 
@@ -83,6 +89,7 @@ export class Player extends Entity {
     this.maxHp = Math.max(1, this.cls.hp + (this.level - 1) * 5 + this.stat('vitalite'));
     if (this.maxHp > was) this.hp += this.maxHp - was;
     this.hp = Math.min(this.hp, this.maxHp);
+    this.buildWeapon();
   }
   /** Dommages d'un coup : base × (1 + (caractéristique de l'élément + Puissance) / 100) + Dommages fixes, comme Dofus. */
   damage(base: number, element: Element): number {
@@ -127,7 +134,19 @@ export class Player extends Entity {
     return true;
   }
 
-  spell(id: SkillId): SpellDef | undefined { return this.cls.spells[id]; }
+  spell(id: SkillId): SpellDef | undefined { return id === 'arme' ? this.weaponDef ?? undefined : this.cls.spells[id]; }
+  /** Auto-attaque (clic gauche) : celle de l'arme portée, sinon le coup de la classe (Coup de poing, Flèche Cinglante). */
+  get autoAttack(): SkillId { return this.weaponDef ? 'arme' : this.cls.basic ?? 'attaque'; }
+  /** Auto-attaque de l'arme portée (src/data/armes.json), recalculée à chaque changement d'équipement. */
+  weaponDef: SpellDef | null = null;
+  private buildWeapon() {
+    const it = this.equipment.arme, d = it && this.items?.equipment[it.id], w = d?.weapon, prof = w && WEAPONS[w.type];
+    if (!d || !w || !prof) { this.weaponDef = null; return; }
+    const best = [...w.dmg].sort((a, b) => (b.min + b.max) - (a.min + a.max))[0];
+    const { base, mult, anim, ...rest } = prof;
+    this.weaponDef = { ...rest, name: d.name, icon: anim, itemIcon: d.icon, element: (best?.element ?? 'neutre') as Element, cooldown: 0,
+      dmg: Math.round(base + this.weaponDamage() * mult), anim: `arme${anim}` };
+  }
   /** Coût en PA d'un sort (0 pour l'attaque de base). */
   paCost(id: SkillId): number { return this.spell(id)?.pa ?? 0; }
   /** Le sort a-t-il ses ressources (PA, ou une charge de PM pour un déplacement) ? */
@@ -215,7 +234,7 @@ export class Player extends Entity {
     this.skill = { id, def, t: 0, impacted: false, sx: this.x, sy: this.y, tx, ty, boosted };
     this.cd[id] = def.cooldown; this.pa -= def.pa ?? 0; this.pm -= def.pm ?? 0;
     if (def.move?.kind === 'leap') this.invuln = Math.max(this.invuln, def.duration + 0.05);
-    this.setAnim(def.charge ? `${id}_charge` : id);
+    this.setAnim(def.charge ? `${id}_charge` : def.anim ?? id);
     this.facing = def.move && (tx !== this.x || ty !== this.y) ? Math.atan2(ty - this.y, tx - this.x) : Math.atan2(aim.y - this.y, aim.x - this.x);
     this.state = 'skill';
   }
@@ -232,27 +251,67 @@ export class Player extends Entity {
     if (this.dead) { this.setAnim('die', Math.min(1, this.animT + dt * 1.5)); return; }
     if (this.comboTimer > 0) this.comboTimer -= dt;
     if (input.potion) this.drinkPotion(world);
+    // Déplacement à la souris (clic gauche) : sur le sol on y va, sur un monstre on s'approche pour l'attaquer
+    let aim = input.aim;
+    this.repathT -= dt;
+    if (input.target != null) this.chaseId = input.target;
+    else if (input.dest) {
+      this.chaseId = null;
+      if (!this.dest || Math.hypot(input.dest.x - this.dest.x, input.dest.y - this.dest.y) > 20 || this.repathT <= 0) {
+        this.dest = { ...input.dest }; this.path = world.findPath(this, input.dest); this.repathT = 0.25;
+      }
+    }
+    if (this.chaseId != null) {
+      const m = world.monsters.find(q => q.id === this.chaseId && !q.dead);
+      if (!m) { this.chaseId = null; this.path = []; }
+      else {
+        aim = { x: m.x, y: m.y };
+        if (Math.hypot(m.x - this.x, m.y - this.y) <= this.attackReach() + m.radius) {
+          this.path = [];
+          if (!this.buffer) { this.buffer = this.autoAttack; this.bufferT = 0.05; this.chaseId = null; }
+        } else if (this.repathT <= 0 || !this.path.length) { this.path = world.findPath(this, m); this.repathT = 0.2; }
+      }
+    }
     // Tampon d'entrée : une touche pressée 150 ms trop tôt n'est pas perdue
-    const pr = input.pressed === 'attaque' && this.cls.basic ? this.cls.basic : input.pressed;
+    const pr = input.pressed === 'attaque' ? this.autoAttack : input.pressed;
     if (pr && (pr === 'attaque' || this.spell(pr))) {
       // sort sans ressource : on le signale (le HUD fait clignoter le compteur), sans le garder en tampon
       if (!this.hasResource(pr) && (pr === 'attaque' || this.cd[pr] <= 0)) world.emit({ k: 'noResource', res: this.missing(pr) });
       this.buffer = pr; this.bufferT = 0.15;
     }
-    else if (input.holdAttack && !this.buffer) { this.buffer = this.cls.basic ?? 'attaque'; this.bufferT = 0.05; }
+    else if (input.holdAttack && !this.buffer) { this.buffer = this.autoAttack; this.bufferT = 0.05; }
     if (this.buffer) {
       this.bufferT -= dt;
-      if (this.canStart(this.buffer)) { this.endSkill(); this.start(this.buffer, input.aim, world); this.buffer = null; }
+      if (this.canStart(this.buffer)) {
+        // un sort lancé arrête le déplacement à la souris (sauf l'auto-attaque d'une poursuite, déjà à portée)
+        if (this.buffer !== this.autoAttack) { this.path = []; this.chaseId = null; this.dest = null; }
+        this.endSkill(); this.start(this.buffer, aim, world); this.buffer = null;
+      }
       else if (this.bufferT <= 0) this.buffer = null;
     }
     if (this.state === 'free') {
       const m = input.move;
       if (m.x || m.y) {
+        this.path = []; this.chaseId = null;
         this.x += m.x * this.cls.speed * dt; this.y += m.y * this.cls.speed * dt;
         this.facing = Math.atan2(m.y, m.x); this.setAnim('run');
+      } else if (this.path.length) {
+        const t = this.path[0], dx = t.x - this.x, dy = t.y - this.y, d = Math.hypot(dx, dy), step = this.cls.speed * dt;
+        if (d <= step) { this.x = t.x; this.y = t.y; this.path.shift(); }
+        else { this.x += dx / d * step; this.y += dy / d * step; }
+        if (d > 0.5) this.facing = Math.atan2(dy, dx);
+        this.setAnim('run');
       } else this.setAnim('idle');
     } else this.updateSkill(dt, world);
     this.applyKnock(dt);
+  }
+
+  /** Portée de l'auto-attaque : distance à laquelle on s'arrête pour frapper un monstre poursuivi. */
+  attackReach(): number {
+    const d = this.spell(this.autoAttack);
+    if (!d) return this.cls.attaque.combo[0].range * 0.8;
+    const h = d.hit;
+    return h.shape === 'cone' ? h.range * 0.8 : h.shape === 'line' ? h.length * 0.75 : h.shape === 'circle' ? h.radius * 0.8 : h.range * 0.85;
   }
 
   /** Moyenne des dommages de l'arme portée, ajoutée à l'attaque de base. */

@@ -93,7 +93,8 @@
     },
     "hitstop": 0.06,
     "shake": 0.005,
-    "fx": "arc"
+    "fx": "arc",
+    "desc": "Érode la cible et occasionne des dommages Terre."
    },
    "intimidation": {
     "name": "Intimidation",
@@ -114,7 +115,8 @@
     },
     "hitstop": 0.09,
     "shake": 0.009,
-    "fx": "arc"
+    "fx": "arc",
+    "desc": "Occasionne des dommages dans le meilleur élément du lanceur aux ennemis et repousse la cible."
    },
    "epee": {
     "name": "Épée Céleste",
@@ -134,7 +136,8 @@
     },
     "hitstop": 0.07,
     "shake": 0.007,
-    "fx": "line"
+    "fx": "line",
+    "desc": "Occasionne des dommages Air en zone.\nN'affecte pas le lanceur."
    },
    "deferlement": {
     "name": "Déferlement",
@@ -158,7 +161,8 @@
     },
     "hitstop": 0.07,
     "shake": 0.008,
-    "fx": "burst"
+    "fx": "burst",
+    "desc": "Rapproche le lanceur vers la cible et occasionne des dommages Eau aux ennemis."
    },
    "fureur": {
     "name": "Fureur",
@@ -183,28 +187,8 @@
     },
     "hitstop": 0.07,
     "shake": 0.007,
-    "fx": "arc"
-   },
-   "colere": {
-    "name": "Colère de Iop",
-    "icon": 11851,
-    "element": "terre",
-    "pa": 4,
-    "cooldown": 9,
-    "duration": 0.72,
-    "impactAt": 0.42,
-    "cancelAt": 0.55,
-    "dmg": 95,
-    "knock": 620,
-    "stun": 0.4,
-    "hit": {
-     "shape": "circle",
-     "radius": 160
-    },
-    "charge": true,
-    "hitstop": 0.13,
-    "shake": 0.018,
-    "fx": "burst"
+    "fx": "arc",
+    "desc": "Occasionne des dommages Terre.\nLes dommages du sort sont augmentés après chaque lancer. \n\nLes bonus se décrémentent si le sort n'est pas relancé."
    },
    "bond": {
     "name": "Bond",
@@ -228,7 +212,30 @@
     },
     "hitstop": 0.06,
     "shake": 0.009,
-    "fx": "land"
+    "fx": "land",
+    "desc": "Téléporte le lanceur sur la case ciblée et augmente les dommages subis par les ennemis en zone."
+   },
+   "colere": {
+    "name": "Colère de Iop",
+    "icon": 11851,
+    "element": "terre",
+    "pa": 4,
+    "cooldown": 9,
+    "duration": 0.72,
+    "impactAt": 0.42,
+    "cancelAt": 0.55,
+    "dmg": 95,
+    "knock": 620,
+    "stun": 0.4,
+    "hit": {
+     "shape": "circle",
+     "radius": 160
+    },
+    "charge": true,
+    "hitstop": 0.13,
+    "shake": 0.018,
+    "fx": "burst",
+    "desc": "Occasionne des dommages Terre.\nLes dommages du sort sont augmentés à la récupération du sort."
    }
   },
   "bar": [
@@ -336,7 +343,8 @@
     },
     "hitstop": 0.04,
     "shake": 0.004,
-    "fx": "burst"
+    "fx": "burst",
+    "desc": "Retire des PM et occasionne des dommages Air."
    },
    "recul": {
     "name": "Flèche de Recul",
@@ -358,7 +366,8 @@
     "shake": 0.004,
     "fx": "burst",
     "pa": 2,
-    "stun": 0.4
+    "stun": 0.4,
+    "desc": "Occasionne des dommages Air aux ennemis et repousse la cible."
    },
    "glacee": {
     "name": "Flèche Glacée",
@@ -380,7 +389,8 @@
     "shake": 0.004,
     "fx": "burst",
     "pa": 3,
-    "stun": 0.5
+    "stun": 0.5,
+    "desc": "Retire des PA et occasionne des dommages Eau.\nLes dommages du sort sont augmentés après son utilisation."
    },
    "barrage": {
     "name": "Flèche de Barrage",
@@ -400,7 +410,8 @@
     "hitstop": 0.04,
     "shake": 0.008,
     "fx": "arc",
-    "pa": 3
+    "pa": 3,
+    "desc": "Occasionne des dommages Feu aux ennemis et repousse les cibles en zone."
    },
    "explosive": {
     "name": "Flèche Explosive",
@@ -422,7 +433,8 @@
     "hitstop": 0.04,
     "shake": 0.009,
     "fx": "burst",
-    "pa": 4
+    "pa": 4,
+    "desc": "Occasionne des dommages Feu en zone."
    },
    "abolition": {
     "name": "Flèche d'Abolition",
@@ -445,7 +457,8 @@
     "shake": 0.004,
     "fx": "burst",
     "pa": 3,
-    "lifesteal": 0.4
+    "lifesteal": 0.4,
+    "desc": "Vole de la vie dans l'élément Terre.\nLes dommages sont plus importants sur les cibles ayant du bouclier.\n\nLa taille de la zone est augmentée après chaque lancer pour le tour en cours."
    },
    "dispersion": {
     "name": "Flèche de Dispersion",
@@ -465,7 +478,8 @@
     "shake": 0.014,
     "fx": "burst",
     "pa": 4,
-    "stun": 0.4
+    "stun": 0.4,
+    "desc": "Occasionne des dommages Air aux ennemis et repousse les cibles depuis le centre en zone.\nLa poussée est plus importante aux extrémités de la zone."
    },
    "pas_chasse": {
     "name": "Pas Chassé",
@@ -488,7 +502,8 @@
     },
     "hitstop": 0,
     "shake": 0,
-    "fx": "land"
+    "fx": "land",
+    "desc": "Téléporte le lanceur sur la case ciblée.\nAugmente les PM du lanceur au tour suivant."
    }
   },
   "bar": [

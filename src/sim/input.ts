@@ -13,6 +13,10 @@ export interface PlayerInput {
   holdAttack: boolean;
   /** Boire une potion pendant cette frame. */
   potion?: boolean;
+  /** Clic gauche sur le sol (maintenu : suit le curseur) : le perso y va par le plus court chemin. */
+  dest?: Vec | null;
+  /** Clic gauche sur un monstre : le perso s'approche à portée et lance son auto-attaque. */
+  target?: number | null;
 }
 
 export const NO_INPUT: PlayerInput = { move: { x: 0, y: 0 }, aim: { x: 0, y: 0 }, pressed: null, holdAttack: false };

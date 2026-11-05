@@ -163,6 +163,8 @@ export class World {
   emit(e: SimEvent) { this.events.push(e); }
   drainEvents(): SimEvent[] { const e = this.events; this.events = []; return e; }
   walkable(x: number, y: number) { return this.map.walkable(x, y); }
+  /** Chemin à pied (A* sur les cases de Dofus) vers un point. */
+  findPath(from: { x: number; y: number }, to: { x: number; y: number }) { return this.map.findPath(from, to); }
 
   /** Avance la simulation de dt secondes. */
   step(dt: number, input: PlayerInput) {

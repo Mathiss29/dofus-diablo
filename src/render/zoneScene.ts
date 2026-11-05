@@ -14,6 +14,7 @@ import { drawMap } from './mapView';
 import { WorldView } from './worldView';
 import { ICON_SHEET, iconFrame } from './icons';
 import { Windows } from './windows';
+import { spellTipHtml } from './spellTip';
 import { RARITY_COLORS, RARITY_NAMES, rollItem } from '../sim/items';
 
 const ASSETS = 'assets';
@@ -40,6 +41,15 @@ export class ZoneScene extends Phaser.Scene {
   /** Butin au sol : icône + nom de l'objet, couleur de sa rareté. */
   private dropViews = new Map<number, { icon: Phaser.GameObjects.Image; label?: Phaser.GameObjects.Text; glow: Phaser.GameObjects.Ellipse }>();
   private acc = 0;
+  /** Le clic en cours a commencé sur l'interface : maintenir le bouton ne fait pas attaquer. */
+  private uiClick = false;
+  /** Clic gauche en cours : sur le sol, sur un monstre, ou attaque sur place (Maj). */
+  private clickMode: 'ground' | 'target' | 'place' | null = null;
+  private clickTarget: number | null = null;
+  private clickDest = false;
+  /** Zoom voulu (molette) ; la caméra le rejoint en douceur. */
+  private zoom = 1;
+  static readonly ZOOM: [number, number] = [0.7, 1.5];
   private static readonly STEP = 1 / 60;
 
   constructor() { super('zone'); }
@@ -64,8 +74,15 @@ export class ZoneScene extends Phaser.Scene {
       const w = zone.waves!;
       [...w.pack.map(p => p.monster), w.boss, ...w.escort.monsters, ...w.archimonstres.monsters].forEach(m => types.add(m));
     }
-    const atlases = new Set([LOOKS[this.classId].atlas, ...[...types].map(t => LOOKS[GAME_DATA.monsters[t].look].atlas)]);
-    for (const a of atlases) if (!this.textures.exists(a)) this.load.atlas(a, `${ASSETS}/sprites/${a}.webp`, `${ASSETS}/sprites/${a}.json`);
+    const looks = [LOOKS[this.classId], ...[...types].map(t => LOOKS[GAME_DATA.monsters[t].look])];
+    const seen = new Set<string>();
+    for (const L of looks) {
+      const a = L.atlas;
+      if (this.textures.exists(a) || seen.has(a)) continue;
+      seen.add(a);
+      if (L.multi) this.load.multiatlas(a, `${ASSETS}/sprites/${a}.json`, `${ASSETS}/sprites/`);
+      else this.load.atlas(a, `${ASSETS}/sprites/${a}.webp`, `${ASSETS}/sprites/${a}.json`);
+    }
     if (zone.open) {
       // Monde ouvert : monde.json décrit les cartes ; on ne charge d'abord que le ciel et les cartes autour du départ,
       // les autres se chargent en jeu quand le joueur approche (WorldView)
@@ -84,6 +101,17 @@ export class ZoneScene extends Phaser.Scene {
   create() {
     const zone = GAME_DATA.zones[this.zoneId], seed = (Math.random() * 2 ** 32) >>> 0;
     this.input.mouse?.disableContextMenu();
+    // Deux caméras : celle du jeu (zoom à la molette) et celle de l'interface (jamais zoomée).
+    // Tout objet ajouté à la scène est ignoré par la caméra d'interface, sauf l'interface elle-même (Hud).
+    const ui = this.cameras.add(0, 0, this.scale.width, this.scale.height).setName('ui');
+    this.scale.on('resize', (sz: Phaser.Structs.Size) => ui.setSize(sz.width, sz.height));
+    const onAdd = (o: Phaser.GameObjects.GameObject) => ui.ignore(o);
+    this.sys.events.on(Phaser.Scenes.Events.ADDED_TO_SCENE, onAdd);
+    this.events.once('shutdown', () => this.sys.events.off(Phaser.Scenes.Events.ADDED_TO_SCENE, onAdd));
+    this.zoom = 1; this.cameras.main.setZoom(1);
+    this.input.on('wheel', (_p: Phaser.Input.Pointer, _o: unknown, _dx: number, dy: number) => {
+      this.zoom = Phaser.Math.Clamp(this.zoom * (dy > 0 ? 0.9 : 1.1), ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]);
+    });
     if (zone.open) {
       const open = zone.open;
       const wg = new WorldGrid(this.cache.json.get(WorldView.key(open.world, 'monde')) as WorldData);
@@ -100,10 +128,17 @@ export class ZoneScene extends Phaser.Scene {
     }
     this.fx = new FX(this, t => hex(GAME_DATA.monsters[t].color));
     this.hud = new Hud(this, this.world);
+    const mini = this.cameras.getCamera('mini');
+    if (mini && this.worldView?.sky) mini.ignore(this.worldView.sky);
     this.windows?.destroy();
     this.windows = new Windows(this.world);
     this.windows.portrait = this.textures.getBase64(LOOKS[this.classId].atlas, 'AnimStatiqueCombat0_1_0');
     this.events.once('shutdown', () => { this.windows?.destroy(); this.windows = null; });
+    this.hud.onSlotHover = (id, x, y) => {
+      if (!id) { this.windows?.hideTip(); return; }
+      const r = this.game.canvas.getBoundingClientRect();
+      this.windows?.showHtmlTip(spellTipHtml(this.world.player, id), r.left + x, r.top + y);
+    };
     this.hud.onMenu = name => {
       if (name === 'Personnage') this.windows!.toggle();
       else this.hud.toast(`${name} : arrive dans une prochaine version`);
@@ -116,13 +151,25 @@ export class ZoneScene extends Phaser.Scene {
 
   private bindInput() {
     const K = Phaser.Input.Keyboard.KeyCodes, kb = this.input.keyboard!;
-    // ZQSD (AZERTY), WASD (QWERTY) et flèches
-    this.keys = kb.addKeys({ W: K.W, Z: K.Z, A: K.A, Q: K.Q, S: K.S, D: K.D, UP: K.UP, DOWN: K.DOWN, LEFT: K.LEFT, RIGHT: K.RIGHT,
+    // Déplacement à la souris (clic gauche) ; le clavier sert aux sorts, à la potion et aux menus
+    this.keys = kb.addKeys({ SHIFT: K.SHIFT,
       SPACE: K.SPACE, E: K.E, K: K.K, I: K.I, C: K.C, ESC: K.ESC, F: K.F, H: K.H, ENTER: K.ENTER,
       ONE: K.ONE, TWO: K.TWO, THREE: K.THREE, FOUR: K.FOUR, FIVE: K.FIVE, SIX: K.SIX }) as Record<string, Phaser.Input.Keyboard.Key>;
     const cls = this.world.player.cls;
-    // Choix 9B : clic gauche = attaque, clic droit = sort favori, Espace = déplacement, 1 à 6 (& é " ' ( - en AZERTY) = barre de sorts
-    this.input.on('pointerdown', (p: Phaser.Input.Pointer) => { this.pressed = p.rightButtonDown() ? cls.favorite : 'attaque'; });
+    // Façon Diablo (demande de Mathis, 2026-11-05) : clic gauche sur le sol = y aller (maintenu : suivre le curseur),
+    // sur un monstre = s'approcher et l'attaquer (maintenu : continuer), Maj + clic gauche = attaquer sur place ;
+    // clic droit = sort favori, Espace = déplacement, 1 à 6 (& é " ' ( - en AZERTY) = barre de sorts.
+    // Un clic sur l'interface (barre, mini-carte, menus, fiches) ne fait rien en jeu.
+    this.input.on('pointerdown', (p: Phaser.Input.Pointer, over: unknown[]) => {
+      if (over.length || this.hud.blocks(p.x, p.y)) { this.uiClick = true; return; }
+      this.uiClick = false;
+      if (p.rightButtonDown()) { this.pressed = cls.favorite; return; }
+      if (this.keys.SHIFT.isDown) { this.pressed = 'attaque'; this.clickMode = 'place'; return; }
+      const m = this.monsterUnder(p);
+      this.clickMode = m ? 'target' : 'ground';
+      this.clickTarget = m?.id ?? null;
+      if (!m) this.moveMarker(p);
+    });
     this.keys.SPACE.on('down', () => { this.pressed = cls.mobility; });
     this.keys.E.on('down', () => { this.potion = true; });
     ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX'].forEach((k, i) => this.keys[k].on('down', () => { if (cls.bar[i]) this.pressed = cls.bar[i]; }));
@@ -144,17 +191,42 @@ export class ZoneScene extends Phaser.Scene {
     });
   }
 
+  /** Monstre sous le curseur (on vise le corps dessiné, pas seulement les pieds). */
+  private monsterUnder(ptr: Phaser.Input.Pointer) {
+    const wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
+    let best: Entity | null = null, bd = Infinity;
+    for (const m of this.world.monsters) {
+      if (m.dead) continue;
+      const v = this.views.get(m.id); if (!v) continue;
+      const b = v.sprite.getBounds();
+      if (!b.contains(wp.x, wp.y)) continue;
+      const s = ISO.toScreen(m.x, m.y), d = Math.abs(s.x - wp.x) + Math.abs(s.y - wp.y);
+      if (d < bd) { bd = d; best = m; }
+    }
+    return best;
+  }
+  /** Petit cercle vert là où l'on a cliqué pour aller. */
+  private moveMarker(ptr: Phaser.Input.Pointer) {
+    const wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
+    const c = this.add.ellipse(wp.x, wp.y, 34, 16).setStrokeStyle(2, 0x9ad15a, 0.9).setDepth(wp.y - 1);
+    this.tweens.add({ targets: c, scale: 0.3, alpha: 0, duration: 450, onComplete: () => c.destroy() });
+  }
+
   private readInput(): PlayerInput {
-    const k = this.keys;
-    let sx = 0, sy = 0;
-    if (k.W.isDown || k.Z.isDown || k.UP.isDown) sy -= 1;
-    if (k.S.isDown || k.DOWN.isDown) sy += 1;
-    if (k.A.isDown || k.Q.isDown || k.LEFT.isDown) sx -= 1;
-    if (k.D.isDown || k.RIGHT.isDown) sx += 1;
-    const move = sx || sy ? ISO.dirFromScreen(sx, sy) : { x: 0, y: 0 };
     const ptr = this.input.activePointer, wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
-    const input = { move, aim: ISO.toWorld(wp.x, wp.y), pressed: this.pressed, holdAttack: ptr.leftButtonDown(), potion: this.potion };
+    const aim = ISO.toWorld(wp.x, wp.y), held = ptr.leftButtonDown() && !this.uiClick;
+    const input: PlayerInput = { move: { x: 0, y: 0 }, aim, pressed: this.pressed, potion: this.potion,
+      holdAttack: held && this.clickMode === 'place' };
+    if (held && this.clickMode === 'ground') input.dest = aim;
+    if (held && this.clickMode === 'target' && this.clickTarget != null) input.target = this.clickTarget;
+    // clic bref sur un monstre : on garde la cible jusqu'au premier coup (le perso continue de s'approcher)
+    if (!held && this.clickMode === 'target' && this.clickTarget != null) { input.target = this.clickTarget; this.clickTarget = null; }
+    // clic bref sur le sol : une seule destination
+    if (!held && this.clickMode === 'ground' && this.clickDest) { input.dest = aim; }
+    this.clickDest = held && this.clickMode === 'ground';
     this.pressed = null; this.potion = false;
+    // curseur : une épée sur un monstre
+    this.game.canvas.style.cursor = this.monsterUnder(ptr) ? 'crosshair' : 'default';
     return input;
   }
 
@@ -252,6 +324,8 @@ export class ZoneScene extends Phaser.Scene {
 
   private render() {
     const w = this.world, alive = new Set<number>(), wv = this.worldView, wg = w.worldGrid;
+    const cam = this.cameras.main;
+    if (Math.abs(cam.zoom - this.zoom) > 0.001) cam.setZoom(cam.zoom + (this.zoom - cam.zoom) * 0.2);
     wv?.update(w.player.x, w.player.y);
     for (const e of [w.player, ...w.monsters]) {
       // monde ouvert : on n'affiche que les monstres des cartes chargées (les autres vivent quand même dans la simulation)
