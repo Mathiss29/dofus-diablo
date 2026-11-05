@@ -49,7 +49,7 @@ const WEAPON_MAP: Record<string, AnimSlice> = {
 // Planche refaite avec tools/extraction/iop_planche.sh (toutes les animations utiles en une passe).
 const IOP_MAP: Record<string, AnimSlice> = {
   ...WEAPON_MAP,
-  idle: { anim: 'AnimStatiqueCombat0', loop: true, fps: 20 },
+  idle: { anim: 'AnimStatiqueExplo0', loop: true, fps: 20 },
   run: { anim: 'AnimCourse', loop: true, fps: 32 },
   attack1: { anim: 'AnimArme0', from: 3 / 28, to: 17 / 28 },
   attack2: { anim: 'AnimArme0', from: 3 / 28, to: 17 / 28 },
@@ -72,7 +72,7 @@ const IOP_MAP: Record<string, AnimSlice> = {
 // Bornes : to = SHOT × durée / impactAt du sort, pour que la flèche parte avec l'animation.
 const CRA_MAP: Record<string, AnimSlice> = {
   ...WEAPON_MAP,
-  idle: { anim: 'AnimStatiqueCombat0', loop: true, fps: 20 },
+  idle: { anim: 'AnimStatiqueExplo0', loop: true, fps: 20 },
   run: { anim: 'AnimCourse', loop: true, fps: 32 },
   cinglante: { anim: 'AnimAttaque911', from: 0, to: 0.6 },
   recul: { anim: 'AnimAttaque919', from: 0, to: 0.82 },

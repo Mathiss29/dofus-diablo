@@ -4,63 +4,110 @@ import {
   BASE_STATS, LEGENDARY, RARITY_COLORS, RARITY_NAMES, STATS, STAT_NAMES, recycleValue,
   type EquipSlot, type Item, type Stat,
 } from '../sim/items';
+import { Player } from '../sim/player';
 import type { World } from '../sim/world';
 
 const SLOT_NAMES: Record<EquipSlot, string> = {
   chapeau: 'Coiffe', cape: 'Cape', amulette: 'Amulette', anneau1: 'Anneau', anneau2: 'Anneau', ceinture: 'Ceinture',
   bottes: 'Bottes', arme: 'Arme', bouclier: 'Bouclier',
 };
-/** Place des emplacements autour du perso (gauche puis droite), comme l'inventaire de Dofus 3. */
-const LEFT: EquipSlot[] = ['chapeau', 'cape', 'amulette', 'ceinture'];
-const RIGHT: EquipSlot[] = ['anneau1', 'anneau2', 'bottes', 'arme', 'bouclier'];
-const CATS: [string, string][] = [['tout', 'Tout'], ['arme', 'Armes'], ['amulette', 'Amulettes'], ['anneau', 'Anneaux'],
-  ['chapeau', 'Coiffes'], ['cape', 'Capes'], ['ceinture', 'Ceintures'], ['bottes', 'Bottes'], ['ressource', 'Ressources']];
+/** Silhouette blanche des emplacements vides (icons_2x de Dofus 3). */
+const SLOT_ICONS: Record<EquipSlot, string> = {
+  chapeau: 'helmet', cape: 'cape', amulette: 'amulet', anneau1: 'ring', anneau2: 'ring', ceinture: 'belt',
+  bottes: 'boots', arme: 'weapon', bouclier: 'shield',
+};
+/** Place des emplacements autour du perso, comme l'inventaire de Dofus 3 (null = case vide de l'interface). */
+const LEFT: (EquipSlot | null)[] = ['chapeau', 'cape', null, 'arme', 'bouclier'];
+const RIGHT: (EquipSlot | null)[] = ['amulette', 'anneau1', 'anneau2', 'ceinture', 'bottes'];
+/** Onglets verticaux de l'inventaire de Dofus 3 : tout, équipements, consommables, ressources, objets de quête, apparats. */
+const TABS: [string, string, string][] = [['tout', 'all', 'Tout'], ['equip', 'equipments', 'Équipements'], ['conso', 'consumables', 'Consommables'],
+  ['ressource', 'resources', 'Ressources'], ['quete', 'key', 'Objets de quête'], ['apparat', 'cosmetics', 'Apparats']];
+const KINDS: [string, string][] = [['', 'Toutes les catégories'], ['arme', 'Armes'], ['amulette', 'Amulettes'], ['anneau', 'Anneaux'],
+  ['chapeau', 'Coiffes'], ['cape', 'Capes'], ['ceinture', 'Ceintures'], ['bottes', 'Bottes'], ['bouclier', 'Boucliers']];
+const SORTS: [string, string][] = [['', 'Aucun tri'], ['niveau', 'Niveau'], ['rarete', 'Rareté'], ['nom', 'Nom']];
+const RARITY_ORDER: Record<string, number> = { commun: 0, magique: 1, rare: 2, legendaire: 3 };
+const INV = 'assets/ui/inv';
 
 const CSS = `
 .dw{position:fixed;inset:0;pointer-events:none;font:13px 'Trebuchet MS',Verdana,sans-serif;color:#e8e2d4;z-index:10}
-.dw .win{pointer-events:auto;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(1080px,96vw);height:min(640px,90vh);
- background:linear-gradient(#24211a,#17150f);border:1px solid #8a6d32;box-shadow:inset 0 0 0 2px #17140d,inset 0 0 0 3px #5a4a26,0 10px 40px #000a;border-radius:6px;display:grid;grid-template-columns:330px 1fr 250px;grid-template-rows:40px 1fr}
-.dw .bar{grid-column:1/-1;display:flex;align-items:center;gap:14px;padding:0 14px;border-bottom:1px solid #3a3a2c;font-weight:bold;color:#ffe9b0;font-size:15px}
-.dw .bar .x{margin-left:auto;cursor:pointer;color:#c9c4ab;font-size:18px}
-.dw .bar .tab{cursor:pointer;color:#a9a48b;font-size:13px}.dw .bar .tab.on{color:#ffe9b0;box-shadow:inset 0 -2px 0 #b9e54b}
-.dw .col{padding:12px;overflow:auto;min-height:0}
-.dw .perso{display:grid;grid-template-columns:62px 1fr 62px;gap:6px;align-items:center}
-.dw .slots{display:grid;gap:8px}
-.dw .slot{width:56px;height:56px;border-radius:5px;background:#1d1c15;border:1px solid #4a4736;position:relative;display:grid;place-items:center;cursor:pointer}
-.dw .slot .ic{width:48px;height:48px}.dw .slot .lab{position:absolute;inset:0;display:grid;place-items:center;font-size:10px;color:#6f6a55;text-align:center}
-.dw .stage{position:relative;height:300px;display:grid;place-items:end center}
-.dw .stage .socle{position:absolute;bottom:8px;width:190px;opacity:.9;filter:sepia(.5) saturate(1.3) drop-shadow(0 0 10px #8fe8ff66)}
-.dw .stage .who{position:relative;bottom:40px;image-rendering:auto;max-height:230px}
-.dw .name{text-align:center;font-weight:bold;color:#ffe9b0;margin-top:6px}
-.dw .cats{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
-.dw .cats span{padding:3px 8px;border-radius:3px;background:#1d1c15;border:1px solid #3a3a2c;cursor:pointer;font-size:12px}
-.dw .cats span.on{border-color:#b9e54b;color:#d6f57a}
-.dw input{width:100%;box-sizing:border-box;background:#0f0e0b;border:1px solid #3a3a2c;color:#e8e2d4;padding:6px 8px;border-radius:4px;margin-bottom:8px}
-.dw .grid{display:grid;grid-template-columns:repeat(auto-fill,52px);gap:5px}
-.dw .cell{width:52px;height:52px;border-radius:4px;background:#1d1c15;border:1px solid #3a3a2c;position:relative;cursor:pointer}
-.dw .cell .ic{width:44px;height:44px;margin:4px}.dw .cell .n{position:absolute;right:3px;bottom:1px;font-size:11px;font-weight:bold;text-shadow:0 0 2px #000}
-.dw .cell.up::after{content:'▲';position:absolute;left:3px;top:1px;color:#7be07b;font-size:10px}
-.dw .cell.low{opacity:.55}
-.dw .stats{display:grid;gap:3px}.dw .stats div{display:flex;justify-content:space-between;align-items:center;padding:2px 0;border-bottom:1px solid #2a2820}
+.dw .win{pointer-events:auto;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#24231f;border:1px solid #0d0c0a;
+ box-shadow:inset 0 0 0 1px #4a4840,0 12px 40px #000c;border-radius:4px;display:grid;grid-template-rows:38px 1fr;overflow:hidden}
+.dw .win.inv{width:min(910px,96vw);height:min(720px,92vh)}
+.dw .win.car{width:min(440px,96vw);height:min(640px,92vh)}
+.dw .ttl{position:relative;display:grid;place-items:center;background:linear-gradient(#34322b,#26241f);border-bottom:1px solid #0d0c0a;box-shadow:inset 0 -1px 0 #4a4840}
+.dw .ttl b{font:bold 17px 'Trebuchet MS',sans-serif;color:#f4efe0;text-shadow:0 1px 2px #000;letter-spacing:.3px}
+.dw .ttl img{position:absolute;left:8px;top:5px;width:28px;height:28px}
+.dw .ttl .x{position:absolute;right:10px;top:4px;cursor:pointer;color:#f4efe0;font-size:22px;line-height:28px}
+.dw .ttl .x:hover{color:#b9e54b}
+.dw .body{display:grid;grid-template-columns:minmax(0,465px) minmax(0,1fr);min-height:0}
+.dw .left{position:relative;display:grid;grid-template-rows:1fr auto;background:radial-gradient(ellipse 30% 48% at 50% 50%,#e4f59a 0%,#9fd27a 18%,#4f8a58 42%,#2b4632 68%,#1b231c 100%);border-right:1px solid #0d0c0a;min-height:0}
+.dw .left::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#0004,transparent 18%,transparent 82%,#0004);pointer-events:none}
+.dw .perso{position:relative;display:grid;grid-template-columns:64px 1fr 64px;gap:8px;padding:14px 14px 0;min-height:0}
+.dw .slots{display:grid;grid-auto-rows:64px;gap:10px;align-content:start;z-index:1}
+.dw .slot{width:62px;height:62px;border-radius:4px;background:linear-gradient(#4a4943,#383732);border:1px solid #6a675c;box-shadow:inset 0 0 0 1px #0007,0 2px 4px #0006;position:relative;display:grid;place-items:center;cursor:pointer}
+.dw .slot.none{visibility:hidden}
+.dw .slot .sil{width:34px;height:34px;opacity:.9}
+.dw .slot .ic{width:52px;height:52px}
+.dw .slot:hover{border-color:#b9e54b}
+.dw .stage{position:relative;display:grid;place-items:end center;min-height:0}
+.dw .stage .socle{position:absolute;bottom:40px;width:250px;max-width:100%;filter:drop-shadow(0 8px 10px #0008)}
+.dw .stage .who{position:relative;bottom:118px;height:min(270px,40vh);max-width:100%;object-fit:contain}
+.dw .stage .lv{position:absolute;top:2px;left:0;right:0;text-align:center;font-weight:bold;color:#f4efe0;text-shadow:0 1px 3px #000}
+.dw .dofus{display:flex;justify-content:center;gap:10px;padding:12px 14px 16px;z-index:1}
+.dw .dofus .slot{width:54px;height:54px;opacity:.85}
+.dw .sets{position:absolute;left:90px;right:90px;bottom:92px;text-align:center;font-size:12px;color:#d6f57a;text-shadow:0 1px 2px #000}
+.dw .right{display:grid;grid-template-columns:44px minmax(0,1fr);min-height:0;background:#292824}
+.dw .tabs{display:flex;flex-direction:column;gap:6px;padding:14px 4px 0 6px;border-right:1px solid #0d0c0a;background:#1d1c19}
+.dw .tab{width:32px;height:32px;border-radius:4px;display:grid;place-items:center;cursor:pointer;background:#2e2d28;border:1px solid #45433b}
+.dw .tab img{width:24px;height:24px}
+.dw .tab.on{background:linear-gradient(#6f9a2a,#4c6e17);border-color:#b9e54b}
+.dw .tab:hover{border-color:#b9e54b}
+.dw .list{display:grid;grid-template-rows:auto auto 1fr auto;gap:8px;padding:12px 12px 10px;min-height:0}
+.dw input,.dw select{width:100%;box-sizing:border-box;background:#141310;border:1px solid #45433b;color:#e8e2d4;padding:7px 9px;border-radius:3px;font:13px 'Trebuchet MS',sans-serif}
+.dw select{cursor:pointer}
+.dw .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dw .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(62px,1fr));grid-auto-rows:62px;gap:6px;overflow:auto;align-content:start;padding-right:2px}
+.dw .cell{border-radius:3px;background:linear-gradient(#3e3d37,#33322d);border:1px solid #57554c;box-shadow:inset 0 0 0 1px #0005;position:relative;cursor:pointer;display:grid;place-items:center}
+.dw .cell.empty{cursor:default;background:#2e2d29;border-color:#46443d}
+.dw .cell:not(.empty):hover{border-color:#b9e54b}
+.dw .cell .ic{width:52px;height:52px}
+.dw .cell .n{position:absolute;left:4px;top:2px;font-size:13px;font-weight:bold;color:#fff;text-shadow:0 0 3px #000,0 0 2px #000}
+.dw .cell .r{position:absolute;left:4px;right:4px;bottom:3px;height:3px;border-radius:2px}
+.dw .cell.up::after{content:'';position:absolute;right:4px;top:4px;border:5px solid transparent;border-bottom:7px solid #7be07b;border-top:0}
+.dw .cell.low{opacity:.5}
+.dw .foot{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#c9c4ab}
+.dw .foot b{color:#f4efe0}
+.dw .foot .k{display:flex;gap:5px;align-items:center;font-weight:bold;color:#b9e54b;font-size:15px}
+.dw .foot .k img{width:18px;height:18px}
+.dw .hint{color:#8f8a73;font-size:11px}
+.dw .carac{padding:16px 18px;overflow:auto;display:grid;gap:10px;align-content:start}
+.dw .who2{display:flex;gap:12px;align-items:center}
+.dw .who2 img{width:54px;height:54px;border-radius:50%;background:#1d1c19;border:1px solid #57554c;object-fit:cover;object-position:top}
+.dw .who2 b{font-size:16px;color:#f4efe0}
+.dw .stats{display:grid;gap:3px}.dw .stats div{display:flex;justify-content:space-between;align-items:center;padding:4px 2px;border-bottom:1px solid #34322b}
 .dw .plus{cursor:pointer;background:#2c3a12;border:1px solid #6f8f2a;color:#d6f57a;border-radius:3px;padding:0 6px;margin-left:6px;font-weight:bold}
 .dw .plus.off{opacity:.3;pointer-events:none}
-.dw .pts{color:#b9e54b;font-weight:bold;margin:4px 0 8px}
-.dw .tip{position:fixed;pointer-events:none;z-index:11;min-width:240px;max-width:320px;background:#14130ff4;border:1px solid #8a6d32;border-radius:5px;padding:10px 12px;box-shadow:0 6px 20px #000a;line-height:1.45}
+.dw .pts{color:#b9e54b;font-weight:bold}
+.dw .tip{position:fixed;pointer-events:none;z-index:11;min-width:240px;max-width:320px;background:#14130ff4;border:1px solid #57554c;border-radius:4px;padding:10px 12px;box-shadow:0 6px 20px #000a;line-height:1.45}
 .dw .tip h4{margin:0 0 2px;font-size:15px}.dw .tip .sub{color:#a9a48b;font-size:12px;margin-bottom:6px}
 .dw .tip .up{color:#7be07b}.dw .tip .down{color:#e0625a}.dw .tip .ex{color:#6fb2e8}.dw .tip .leg{color:#f08a2c;margin-top:4px}
 .dw .tip .set{color:#9ad15a;margin-top:6px;font-size:12px}.dw .tip .hint{color:#7f7a64;font-size:11px;margin-top:6px}
 .dw .tip .cmp{border-top:1px solid #3a3a2c;margin-top:6px;padding-top:6px;font-size:12px}
-.dw .btn{display:inline-block;margin-top:8px;padding:5px 10px;border-radius:4px;background:linear-gradient(#cff26a,#9ccd2c);color:#1d2a06;font-weight:bold;cursor:pointer}
 `;
 
-/** Fenêtre « Personnage » façon Dofus 3 (choix 14D) : le perso sur son socle avec ses emplacements autour,
- *  le sac en grille (catégories, recherche), les caractéristiques avec les points à placer.
- *  Le jeu continue derrière (pas de pause : multijoueur prévu). Les clics appellent l'API de la partie (World / Player). */
+type Mode = 'inv' | 'car';
+
+/** Fenêtres façon Dofus 3 : « Inventaire » (le perso sur son socle, ses emplacements autour, le sac à onglets)
+ *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
+ *  Les clics appellent l'API de la partie (World / Player). */
 export class Windows {
   private root: HTMLDivElement;
   private win: HTMLDivElement | null = null;
+  private mode: Mode = 'inv';
   private tip: HTMLDivElement;
-  private cat = 'tout';
+  private tab = 'tout';
+  private kind = '';
+  private sort = '';
   private search = '';
   /** Image du perso (frame de repos de sa planche). */
   portrait = '';
@@ -72,13 +119,15 @@ export class Windows {
     this.tip = document.createElement('div'); this.tip.className = 'tip'; this.tip.style.display = 'none'; this.root.appendChild(this.tip);
   }
   get open() { return !!this.win; }
-  toggle() { if (this.win) this.close(); else this.show(); }
+  /** Ouvre la fenêtre demandée, ou la ferme si c'est déjà elle. */
+  toggle(mode: Mode = 'inv') { if (this.win && this.mode === mode) this.close(); else this.show(mode); }
   close() { this.win?.remove(); this.win = null; this.tip.style.display = 'none'; }
   destroy() { this.root.remove(); }
 
-  show() {
+  show(mode: Mode = 'inv') {
     this.close();
-    const w = document.createElement('div'); w.className = 'win';
+    this.mode = mode;
+    const w = document.createElement('div'); w.className = `win ${mode}`;
     w.addEventListener('contextmenu', e => e.preventDefault());
     w.addEventListener('pointerdown', e => e.stopPropagation());
     this.win = w; this.root.appendChild(w);
@@ -88,31 +137,78 @@ export class Windows {
   refresh() { if (this.win) this.render(); }
 
   private render() {
-    const w = this.win!, p = this.world.player, cls = p.cls;
-    const slot = (s: EquipSlot) => {
+    if (this.mode === 'car') this.renderCarac(); else this.renderInv();
+    this.win!.querySelector('[data-close]')!.addEventListener('click', () => this.close());
+  }
+  private title(name: string, icon: string) {
+    return `<div class="ttl"><img src="assets/ui/menu/${icon}.png" alt=""><b>${name}</b><span class="x" data-close title="Fermer (Échap)">✕</span></div>`;
+  }
+
+  private renderInv() {
+    const w = this.win!, p = this.world.player;
+    const slot = (s: EquipSlot | null) => {
+      if (!s) return '<div class="slot none"></div>';
       const it = p.equipment[s], d = it && ITEMS.equipment[it.id];
-      return `<div class="slot" data-slot="${s}" style="${it ? `border-color:${RARITY_COLORS[it.rarity]}` : ''}">${d ? `${iconHtml(d.icon)}` : `<span class="lab">${SLOT_NAMES[s]}</span>`}</div>`;
+      return `<div class="slot" data-slot="${s}" title="${d ? '' : SLOT_NAMES[s]}" style="${it ? `box-shadow:inset 0 -3px 0 ${RARITY_COLORS[it.rarity]}` : ''}">${d ? iconHtml(d.icon) : `<img class="sil" src="${INV}/s_${SLOT_ICONS[s]}.png" alt="">`}</div>`;
     };
-    const bag = this.filtered();
-    const st = (k: Stat) => p.stat(k);
-    w.innerHTML = `
-      <div class="bar">Personnage · ${cls.name} niv. ${p.level}<span class="x" data-close>✕</span></div>
-      <div class="col">
-        <div class="perso">
-          <div class="slots">${LEFT.map(slot).join('')}</div>
-          <div><div class="stage"><img class="socle" src="assets/ui/socle.png" alt=""><img class="who" src="${this.portrait}" alt=""></div>
-            <div class="name">${cls.name} · niv. ${p.level}</div></div>
-          <div class="slots">${RIGHT.map(slot).join('')}</div>
+    const { html, n } = this.cells();
+    w.innerHTML = `${this.title('Inventaire', 'inventory')}
+      <div class="body">
+        <div class="left">
+          <div class="perso">
+            <div class="slots">${LEFT.map(slot).join('')}</div>
+            <div class="stage"><div class="lv">${p.cls.name} · niveau ${p.level}</div><img class="socle" src="assets/ui/socle.png" alt=""><img class="who" src="${this.portrait}" alt=""></div>
+            <div class="slots">${RIGHT.map(slot).join('')}</div>
+          </div>
+          <div class="sets">${this.setsHtml()}</div>
+          <div class="dofus">${Array.from({ length: 6 }, () => `<div class="slot" title="Dofus (plus tard)"><img class="sil" src="${INV}/s_dofus.png" alt=""></div>`).join('')}</div>
         </div>
-        ${this.setsHtml()}
-      </div>
-      <div class="col">
-        <div class="cats">${CATS.map(([k, n]) => `<span data-cat="${k}" class="${this.cat === k ? 'on' : ''}">${n}</span>`).join('')}</div>
-        <input placeholder="Rechercher un objet" value="${this.search.replace(/"/g, '&quot;')}" data-search>
-        <div class="grid">${bag}</div>
-        <div style="color:#7f7a64;font-size:11px;margin-top:8px">${p.bag.length} / 60 · clic droit : équiper · Maj + clic : recycler</div>
-      </div>
-      <div class="col">
+        <div class="right">
+          <div class="tabs">${TABS.map(([k, ic, name]) => `<div class="tab ${this.tab === k ? 'on' : ''}" data-tab="${k}" title="${name}"><img src="${INV}/tab_${ic}.png" alt=""></div>`).join('')}</div>
+          <div class="list">
+            <input placeholder="Rechercher..." value="${this.search.replace(/"/g, '&quot;')}" data-search>
+            <div class="row2">
+              <select data-sort>${SORTS.map(([k, v]) => `<option value="${k}" ${this.sort === k ? 'selected' : ''}>${v}</option>`).join('')}</select>
+              <select data-kind>${KINDS.map(([k, v]) => `<option value="${k}" ${this.kind === k ? 'selected' : ''}>${v}</option>`).join('')}</select>
+            </div>
+            <div class="grid">${html}</div>
+            <div class="foot"><span>Visible(s) : <b>${n}</b> · sac <b>${p.bag.length} / ${Player.BAG_SIZE}</b><br><span class="hint">Clic droit : équiper / retirer · Maj + clic : recycler</span></span>
+              <span class="k">${Object.values(p.resources).reduce((a, b) => a + b, 0)} <img src="${INV}/tab_resources.png" alt="" title="Ressources"></span></div>
+          </div>
+        </div>
+      </div>`;
+    w.querySelectorAll<HTMLElement>('[data-tab]').forEach(e => e.addEventListener('click', () => { this.tab = e.dataset.tab!; this.render(); }));
+    w.querySelector<HTMLSelectElement>('[data-sort]')!.addEventListener('change', e => { this.sort = (e.target as HTMLSelectElement).value; this.render(); });
+    w.querySelector<HTMLSelectElement>('[data-kind]')!.addEventListener('change', e => { this.kind = (e.target as HTMLSelectElement).value; this.render(); });
+    w.querySelectorAll('select').forEach(s => s.addEventListener('keydown', e => e.stopPropagation()));
+    const inp = w.querySelector<HTMLInputElement>('[data-search]')!;
+    inp.addEventListener('input', () => { this.search = inp.value; this.render(); const m = this.win!.querySelector<HTMLInputElement>('[data-search]')!; m.focus(); m.setSelectionRange(m.value.length, m.value.length); });
+    inp.addEventListener('keydown', e => e.stopPropagation());
+    w.querySelectorAll<HTMLElement>('[data-slot]').forEach(e => {
+      const s = e.dataset.slot as EquipSlot;
+      e.addEventListener('mouseenter', ev => { const it = p.equipment[s]; if (it) this.showTip(it, ev, true); });
+      e.addEventListener('mousemove', ev => this.moveTip(ev));
+      e.addEventListener('mouseleave', () => this.hideTip());
+      e.addEventListener('contextmenu', () => { p.unequip(s); this.changed(); });
+      e.addEventListener('dblclick', () => { p.unequip(s); this.changed(); });
+    });
+    w.querySelectorAll<HTMLElement>('[data-uid]').forEach(e => {
+      const uid = +e.dataset.uid!, it = p.bag.find(b => b.uid === uid)!;
+      const equip = () => { if (!p.equip(uid)) this.flash(e); this.changed(); };
+      e.addEventListener('mouseenter', ev => this.showTip(it, ev, false));
+      e.addEventListener('mousemove', ev => this.moveTip(ev));
+      e.addEventListener('mouseleave', () => this.hideTip());
+      e.addEventListener('contextmenu', equip);
+      e.addEventListener('dblclick', equip);
+      e.addEventListener('click', ev => { if (ev.shiftKey) { this.world.recycle(uid); this.changed(); } });
+    });
+  }
+
+  private renderCarac() {
+    const w = this.win!, p = this.world.player, st = (k: Stat) => p.stat(k);
+    w.innerHTML = `${this.title('Caractéristiques', 'characteristic')}
+      <div class="carac">
+        <div class="who2"><img src="${this.portrait}" alt=""><div><b>${p.cls.name}</b><br>Niveau ${p.level}</div></div>
         <div class="pts">${p.points} point${p.points > 1 ? 's' : ''} à placer</div>
         <div class="stats">
           <div><span>Points de vie</span><b>${Math.ceil(p.hp)} / ${p.maxHp}</b></div>
@@ -120,53 +216,44 @@ export class Windows {
           ${BASE_STATS.map(k => `<div><span>${STAT_NAMES[k]}</span><span><b>${st(k)}</b><span class="plus ${p.points ? '' : 'off'}" data-plus="${k}" title="Maj : +10">+</span></span></div>`).join('')}
           ${(['puissance', 'dommages', 'critique', 'prospection', 'soins'] as Stat[]).map(k => `<div><span>${STAT_NAMES[k]}</span><b>${k === 'critique' ? Math.round(p.critChance * 100) : st(k)}</b></div>`).join('')}
         </div>
-        <div style="color:#7f7a64;font-size:11px;margin-top:10px">Force : sorts Terre · Intelligence : Feu · Chance : Eau · Agilité : Air (+1 % de dommages par point). Vitalité : +1 PV. Sagesse : +1 % d'XP.</div>
+        <div class="hint">Force : sorts Terre · Intelligence : Feu · Chance : Eau · Agilité : Air (+1 % de dommages par point). Vitalité : +1 PV. Sagesse : +1 % d'XP.</div>
       </div>`;
-    w.querySelector('[data-close]')!.addEventListener('click', () => this.close());
-    w.querySelectorAll<HTMLElement>('[data-cat]').forEach(e => e.addEventListener('click', () => { this.cat = e.dataset.cat!; this.render(); }));
-    const inp = w.querySelector<HTMLInputElement>('[data-search]')!;
-    inp.addEventListener('input', () => { this.search = inp.value; this.render(); const n = this.win!.querySelector<HTMLInputElement>('[data-search]')!; n.focus(); n.setSelectionRange(n.value.length, n.value.length); });
-    inp.addEventListener('keydown', e => e.stopPropagation());
     w.querySelectorAll<HTMLElement>('[data-plus]').forEach(e => e.addEventListener('click', ev => {
       p.spendPoint(e.dataset.plus as Stat, ev.shiftKey ? Math.min(10, p.points) : 1); this.changed();
     }));
-    w.querySelectorAll<HTMLElement>('[data-slot]').forEach(e => {
-      const s = e.dataset.slot as EquipSlot;
-      e.addEventListener('mouseenter', ev => { const it = p.equipment[s]; if (it) this.showTip(it, ev, true); });
-      e.addEventListener('mousemove', ev => this.moveTip(ev));
-      e.addEventListener('mouseleave', () => this.hideTip());
-      e.addEventListener('contextmenu', () => { p.unequip(s); this.changed(); });
-    });
-    w.querySelectorAll<HTMLElement>('[data-uid]').forEach(e => {
-      const uid = +e.dataset.uid!, it = p.bag.find(b => b.uid === uid)!;
-      e.addEventListener('mouseenter', ev => this.showTip(it, ev, false));
-      e.addEventListener('mousemove', ev => this.moveTip(ev));
-      e.addEventListener('mouseleave', () => this.hideTip());
-      e.addEventListener('contextmenu', () => { if (!p.equip(uid)) this.flash(e); this.changed(); });
-      e.addEventListener('click', ev => { if (ev.shiftKey) { this.world.recycle(uid); this.changed(); } });
-    });
   }
 
   private changed() { this.hideTip(); this.render(); this.onChange(); }
   private flash(e: HTMLElement) { e.style.borderColor = '#e0625a'; }
 
-  /** Contenu du sac selon la catégorie et la recherche ; les ressources s'empilent. */
-  private filtered(): string {
+  /** Contenu du sac selon l'onglet, la catégorie, le tri et la recherche ; les ressources s'empilent.
+   *  La grille est complétée de cases vides, comme dans Dofus. */
+  private cells(): { html: string; n: number } {
     const p = this.world.player, q = this.search.toLowerCase();
     const cells: string[] = [];
-    if (this.cat !== 'ressource') for (const it of p.bag) {
-      const d = ITEMS.equipment[it.id];
-      if (!d || (this.cat !== 'tout' && d.slot !== this.cat) || (q && !d.name.toLowerCase().includes(q))) continue;
-      const slot = p.slotFor(it), cur = slot ? p.equipment[slot] : undefined;
-      const up = d.level <= p.level && (!cur || this.score(it) > this.score(cur));
-      cells.push(`<div class="cell ${up ? 'up' : ''} ${d.level > p.level ? 'low' : ''}" data-uid="${it.uid}" style="border-color:${RARITY_COLORS[it.rarity]}88">${iconHtml(d.icon)}</div>`);
+    if (this.tab === 'tout' || this.tab === 'equip') {
+      const items = p.bag.filter(it => {
+        const d = ITEMS.equipment[it.id];
+        return d && (!this.kind || d.slot === this.kind) && (!q || d.name.toLowerCase().includes(q));
+      });
+      const D = (it: Item) => ITEMS.equipment[it.id];
+      if (this.sort === 'niveau') items.sort((x, y) => D(y).level - D(x).level);
+      if (this.sort === 'rarete') items.sort((x, y) => RARITY_ORDER[y.rarity] - RARITY_ORDER[x.rarity]);
+      if (this.sort === 'nom') items.sort((x, y) => D(x).name.localeCompare(D(y).name));
+      for (const it of items) {
+        const d = D(it), slot = p.slotFor(it), cur = slot ? p.equipment[slot] : undefined;
+        const up = d.level <= p.level && (!cur || this.score(it) > this.score(cur));
+        cells.push(`<div class="cell ${up ? 'up' : ''} ${d.level > p.level ? 'low' : ''}" data-uid="${it.uid}">${iconHtml(d.icon)}<i class="r" style="background:${RARITY_COLORS[it.rarity]}"></i></div>`);
+      }
     }
-    if (this.cat === 'tout' || this.cat === 'ressource') for (const [id, n] of Object.entries(p.resources)) {
+    if ((this.tab === 'tout' || this.tab === 'ressource') && !this.kind) for (const [id, n] of Object.entries(p.resources)) {
       const r = ITEMS.resources[id];
       if (!r || (q && !r.name.toLowerCase().includes(q))) continue;
       cells.push(`<div class="cell" title="${r.name}">${iconHtml(r.icon)}<span class="n">${n}</span></div>`);
     }
-    return cells.join('') || '<div style="color:#7f7a64">Rien ici pour l\'instant. Les monstres lâchent leurs objets officiels.</div>';
+    const n = cells.length;
+    for (let i = n; i < Math.max(35, Math.ceil(n / 5) * 5); i++) cells.push('<div class="cell empty"></div>');
+    return { html: cells.join(''), n };
   }
   /** Note grossière d'un objet pour la flèche verte « meilleur que l'objet porté ». */
   private score(it: Item): number {
@@ -180,7 +267,7 @@ export class Windows {
     for (const [id, n] of Object.entries(p.setCount)) {
       const s = ITEMS.sets[id]; if (!s || n < 2) continue;
       const b = s.bonus[String(n - 1)] ?? {};
-      out.push(`<div style="margin-top:8px;color:#9ad15a"><b>${s.name}</b> (${n} / ${s.items.length})<br><span style="font-size:12px">${Object.entries(b).map(([k, v]) => `+${v} ${STAT_NAMES[k as Stat]}`).join(' · ')}</span></div>`);
+      out.push(`<div><b>${s.name}</b> (${n} / ${s.items.length}) · <span>${Object.entries(b).map(([k, v]) => `+${v} ${STAT_NAMES[k as Stat]}`).join(' · ')}</span></div>`);
     }
     return out.join('');
   }
