@@ -15,7 +15,11 @@ export type SimEvent =
   | { k: 'playerDeath'; wave: number }
   | { k: 'potion'; x: number; y: number; amount: number }
   | { k: 'levelUp'; level: number }
-  | { k: 'noResource'; res: 'pa' | 'pm' };
+  | { k: 'noResource'; res: 'pa' | 'pm' }
+  /** Monde ouvert : le joueur entre dans une autre sous-zone. */
+  | { k: 'enterArea'; name: string; level: number }
+  | { k: 'groupCleared' }
+  | { k: 'respawn' };
 
 /** Zones au sol affichées avant un coup (rouge = danger, or = sort du joueur). */
 export type Telegraph =

@@ -8,7 +8,7 @@ Chaîne testée sur le Bouftou (`bones_assets_bone_563.bundle`, Dofus 3.7, Unity
 2. `python build_scene.py out/`
    Décode les animations (format Ankama Animator2D, voir `anim_parse.py`) et écrit `out/scene.json` :
    les maillages des morceaux + pour chaque frame la liste des morceaux avec leur matrice.
-3. `node render.js out/scene.json out/tex_563-0.png bouftou AnimStatique_1,AnimCourse_1,... 1 1.1`
+3. `node render.cjs out/scene.json out/tex_563-0.png bouftou AnimStatique_1,AnimCourse_1,... 1 1.1`
    (Playwright) Rend chaque frame et produit `bouftou.png` + `bouftou.json` (atlas Phaser, frames `{Anim}_{dir}_{i}`).
 
 Format d'une animation (`ta_*.bin`) :
@@ -27,7 +27,7 @@ Format d'une animation (`ta_*.bin`) :
   de groupes nommés + feuilles ; les feuilles sous un groupe `ColorGray_N_*` prennent la couleur N (`maleColors`),
   appliquée en mode « overlay » sur la texture grise.
 - Iop mâle : look `{1|80||55}`, tête 2124, couleurs 15704172,15301153,14736065,12200764,484225,12429686.
-- Rendu à cellule fixe : `BOX=-150,-280,150,50 node render.js scene.json - iop "AnimCourse_1:16,..." 1 0.5`.
+- Rendu à cellule fixe : `BOX=-150,-280,150,50 node render.cjs scene.json - iop "AnimCourse_1:16,..." 1 0.5`.
 Identifiants utiles : Bouftou 563, Boufton Blanc 567, Bouftou Royal 571 (`data_assets_monstersdataroot`, champ `look`).
 
 ## Animation officielle d'un sort
@@ -44,6 +44,24 @@ Iop : Pression 802, Épée Céleste 801, Bond 811, Colère de Iop (13124) 800, C
 - Rendu : élément centré en (m31, -m32), miroir/échelle m11/m22, couleur ARGB multiplicative (0x80 = neutre). Ordre : fond, triables par (cellId, innerCellRenderOrder). Les foregroundElements sont des effets de lumière (ignorés).
 - Grille : 14 x 40 cases losanges 86 x 43, origine (-620, -490) en unités carte (calée à l'œil avec `grid_overlay.py`). `cellsData[i].mov` = marchable.
 - `map_export.py map.json dossier` produit sol.webp, decor.webp/json et carte.json pour le jeu.
+
+## Monde ouvert (plusieurs cartes collées)
+- Les cartes voisines se raccordent bord à bord : [x+1,y] est 14 cases (1204 px) à droite, [x,y+1] 40 demi-lignes (860 px) plus bas,
+  donc un monde = une grande grille 14·nx × 40·ny (même origine, même décalage des lignes impaires).
+- `python world_export.py liste.json cartes/ textures/ public/assets/mondes/<nom>` ; `liste.json` = `{"x,y": [mapId, sousZone]}`
+  (cartes `worldMap` = 2 pour Incarnam, prises dans `subareasdataroot.mapIds`), `cartes/` = les `map_{id}.json` sortis des bundles mapdata.
+  Sortie : `monde.json` (grille, cases marchables, sous-zone et décor de chaque carte), un `sol_x_y.webp` par carte (rogné pile au raccord
+  côté voisin pour que le ciel d'une carte ne recouvre pas le sol de l'autre), et tout le décor dédoublonné dans `decor.json` + `decor_N.webp`
+  (multiatlas Phaser, pages de 4096).
+- Incarnam (zone 45) : Champs 444, Pâturages 445, Route des âmes 450 = 24 cartes, bundles mapdata `world_468` et `world_587`.
+- Copier les gros bundles de textures UN PAR APPEL depuis le PC (en parallèle, les copies échouent).
+
+## Monstres d'une sous-zone
+- `subareasdataroot.monsters` -> `monstersdataroot` (`look` = `{squelette|...|échelle}`) ; attaque = `animId` du premier sort
+  (`spells.boundScriptUsageData[].scriptId` -> `spellscriptsdataroot.rawParams`, ex. `animId:1` = `AnimAttaque1`).
+- Planche : `b_dump.py`, `build_scene.py`, `drop_shadow.py`, puis
+  `BOX=-200,-400,200,100 node render.cjs scene.json tex.png raw "AnimStatique_1:1,AnimStatique_5:1,AnimCourse_1,AnimCourse_5,AnimAttaque0_1,AnimAttaque0_5,AnimHit_1,AnimHit_5,AnimMort_1,AnimMort_5" 1 2.5`
+  et `trim_pack.py raw nom 2048` (les Feux d'Incarnam : BOX=-130,-260,130,60 et échelle 2, sinon la planche dépasse la taille max du canvas).
 
 ## Ombre au sol
 Les ombres Dofus sont faites de 4 quarts semi-transparents qui se chevauchent (croix sombre au rendu). `python drop_shadow.py scene.json [tex.png]` les retire avant le rendu ; le jeu dessine sa propre ellipse.

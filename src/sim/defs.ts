@@ -32,6 +32,8 @@ export interface MonsterDef {
   attackRange: number; windup: number; lungeSpeed: number; lungeTime: number; recover: number;
   slamRange?: number; slamRadius?: number; slamWindup?: number;
   look: string; color: string; boss?: boolean; elite?: boolean;
+  /** Monde ouvert : distance à laquelle il repère le joueur (défaut : OpenDef.aggro). */
+  aggro?: number;
 }
 
 interface Count { base: number; perWave: number; fromWave?: number }
@@ -41,10 +43,26 @@ export interface WavesDef {
   escort: Count & { monsters: string[] };
   archimonstres: { monsters: string[]; chance: { fromWave: number; value: number }[] };
 }
+/** Une sous-zone Dofus dans un monde ouvert : ses monstres officiels et la taille des groupes. */
+export interface SubAreaDef { name: string; level: number; monsters: string[]; groupsPerMap: number; groupSize: [number, number] }
+/** Monde ouvert : cartes Dofus collées, groupes de monstres posés sur chaque carte, qui réapparaissent. */
+export interface OpenDef {
+  /** Dossier public/assets/mondes/<world>. */
+  world: string;
+  /** Carte Dofus de départ [x, y]. */
+  start: [number, number];
+  /** Distance de repérage, distance de laisse (retour au point de départ), délai de réapparition (s). */
+  aggro: number; leash: number; respawn: number;
+  subareas: Record<string, SubAreaDef>;
+}
 export interface ZoneDef {
-  name: string; dofusSubArea: number; level: number;
-  map: { coords: [number, number]; dofusMapId: number };
-  waves: WavesDef;
+  name: string; level: number;
+  dofusSubArea?: number; dofusArea?: number;
+  /** Zone à vagues sur une seule carte. */
+  map?: { coords: [number, number]; dofusMapId: number };
+  waves?: WavesDef;
+  /** Zone en monde ouvert. */
+  open?: OpenDef;
 }
 
 /** Tout ce dont la simulation a besoin, injecté (les tests passent leurs propres données). */

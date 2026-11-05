@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { GAME_DATA } from '../sim/data';
-import { GridMap, type MapData } from '../sim/gridmap';
+import { GridMap, WorldGrid, type MapData, type WorldData } from '../sim/gridmap';
 import { ISO } from '../sim/iso';
 import type { PlayerInput } from '../sim/input';
 import type { SkillId } from '../sim/defs';
@@ -10,16 +10,17 @@ import { EntityView } from './entityView';
 import { FX } from './fx';
 import { Hud } from './hud';
 import { LOOKS } from './looks';
-import { drawMap } from './mapView';
+import { drawMap, drawWorld } from './mapView';
 
 const ASSETS = 'assets';
 const mapDir = ([x, y]: [number, number]) => `${ASSETS}/cartes/${x}_${y}`;
+const worldDir = (w: string) => `${ASSETS}/mondes/${w}`;
 const hex = (c: string) => parseInt(c.replace('#', ''), 16);
 
 /** Scène d'une zone : charge la carte et les planches de la zone, fait tourner la simulation
  *  à pas fixe, et dessine son état. Toute la logique de jeu est dans World (src/sim). */
 export class ZoneScene extends Phaser.Scene {
-  private zoneId = 'champs-astrub';
+  private zoneId = 'incarnam';
   private world!: World;
   private views = new Map<number, EntityView>();
   private fx!: FX;
@@ -34,7 +35,9 @@ export class ZoneScene extends Phaser.Scene {
   constructor() { super('zone'); }
 
   init(data: { zone?: string }) {
+    // #astrub dans l'adresse : l'ancienne zone à vagues des Champs d'Astrub
     if (data?.zone) this.zoneId = data.zone;
+    else if (location.hash === '#astrub') this.zoneId = 'champs-astrub';
     this.views = new Map(); this.pressed = null; this.potion = false; this.hitstop = 0; this.acc = 0;
   }
 
@@ -42,24 +45,46 @@ export class ZoneScene extends Phaser.Scene {
     Hud.preload(this);
     const zone = GAME_DATA.zones[this.zoneId];
     // On ne charge que les planches utiles à cette zone
-    const w = zone.waves;
-    const types = new Set([...w.pack.map(p => p.monster), w.boss, ...w.escort.monsters, ...w.archimonstres.monsters]);
+    const types = new Set<string>();
+    if (zone.open) for (const s of Object.values(zone.open.subareas)) s.monsters.forEach(m => types.add(m));
+    else {
+      const w = zone.waves!;
+      [...w.pack.map(p => p.monster), w.boss, ...w.escort.monsters, ...w.archimonstres.monsters].forEach(m => types.add(m));
+    }
     const atlases = new Set(['iop', ...[...types].map(t => LOOKS[GAME_DATA.monsters[t].look].atlas)]);
     for (const a of atlases) if (!this.textures.exists(a)) this.load.atlas(a, `${ASSETS}/sprites/${a}.webp`, `${ASSETS}/sprites/${a}.json`);
-    const dir = mapDir(zone.map.coords), key = dir.replace(/\W/g, '_');
+    if (zone.open) {
+      // Monde ouvert : monde.json dit quelles cartes charger (un sol par carte), le décor est un multiatlas commun
+      const dir = worldDir(zone.open.world), k = (n: string) => `${zone.open!.world}_${n}`;
+      this.load.json(k('monde'), `${dir}/monde.json`);
+      this.load.multiatlas(k('decor'), `${dir}/decor.json`, dir);
+      this.load.once(`filecomplete-json-${k('monde')}`, (_: string, __: string, data: WorldData) => {
+        for (const m of data.maps) this.load.image(k(`sol_${m.tag}`), `${dir}/sol_${m.tag}.webp`);
+      });
+      return;
+    }
+    const dir = mapDir(zone.map!.coords), key = dir.replace(/\W/g, '_');
     this.load.json(`${key}_carte`, `${dir}/carte.json`);
     this.load.image(`${key}_sol`, `${dir}/sol.webp`);
     this.load.atlas(`${key}_decor`, `${dir}/decor.webp`, `${dir}/decor.json`);
   }
 
   create() {
-    const zone = GAME_DATA.zones[this.zoneId];
-    const key = mapDir(zone.map.coords).replace(/\W/g, '_');
-    const map = new GridMap(this.cache.json.get(`${key}_carte`) as MapData);
-    this.world = new World({ data: GAME_DATA, zone: this.zoneId, map, seed: (Math.random() * 2 ** 32) >>> 0 });
-    this.cameras.main.setBackgroundColor('#12141b');
+    const zone = GAME_DATA.zones[this.zoneId], seed = (Math.random() * 2 ** 32) >>> 0;
     this.input.mouse?.disableContextMenu();
-    drawMap(this, map, `${key}_sol`, `${key}_decor`);
+    if (zone.open) {
+      const k = (n: string) => `${zone.open!.world}_${n}`;
+      const wg = new WorldGrid(this.cache.json.get(k('monde')) as WorldData);
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed });
+      this.cameras.main.setBackgroundColor('#0d2b36');   // ciel d'Incarnam autour des îles
+      drawWorld(this, wg, k);
+    } else {
+      const key = mapDir(zone.map!.coords).replace(/\W/g, '_');
+      const map = new GridMap(this.cache.json.get(`${key}_carte`) as MapData);
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map, seed });
+      this.cameras.main.setBackgroundColor('#12141b');
+      drawMap(this, map, `${key}_sol`, `${key}_decor`);
+    }
     this.fx = new FX(this, t => hex(GAME_DATA.monsters[t].color));
     this.hud = new Hud(this);
     this.cameras.main.startFollow(this.viewOf(this.world.player).sprite, true, 0.12, 0.12, 0, 30);
@@ -82,7 +107,11 @@ export class ZoneScene extends Phaser.Scene {
       this.hud.toast(this.fx.juice ? 'Effets d\'impact : ACTIVÉS' : 'Effets d\'impact : DÉSACTIVÉS (compare !)');
     });
     this.keys.H.on('down', () => this.hud.toggleHelp());
-    this.keys.ENTER.on('down', () => { if (this.world.over) this.scene.restart({ zone: this.zoneId }); });
+    this.keys.ENTER.on('down', () => {
+      if (!this.world.over) return;
+      if (this.world.zone.open) this.world.respawnPlayer();
+      else this.scene.restart({ zone: this.zoneId });
+    });
   }
 
   private readInput(): PlayerInput {
@@ -137,7 +166,13 @@ export class ZoneScene extends Phaser.Scene {
         case 'noResource': this.hud.noResource(e.res); break;
         case 'levelUp': this.hud.banner(`Niveau ${e.level} !`, 1200); break;
         case 'bossDown': this.hud.banner(`${M[e.monster].name} vaincu !`); break;
-        case 'playerDeath': this.hud.banner(`Vaincu à la vague ${e.wave}\nEntrée pour recommencer`, 0, true); break;
+        case 'playerDeath':
+          if (this.world.zone.open) this.hud.banner('Vaincu\nEntrée pour revenir au départ', 0, true);
+          else this.hud.banner(`Vaincu à la vague ${e.wave}\nEntrée pour recommencer`, 0, true);
+          break;
+        case 'groupCleared': this.hud.onWave(2); break;
+        case 'respawn': this.hud.banner('De retour !', 900); break;
+        case 'enterArea': this.hud.banner(`${e.name}\nNiveau ${e.level}`, 1600); break;
       }
     }
   }

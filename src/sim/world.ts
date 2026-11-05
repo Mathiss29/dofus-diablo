@@ -1,13 +1,16 @@
 import { angleDiff, Rng } from './math';
-import type { GameData, ZoneDef } from './defs';
+import type { GameData, SubAreaDef, ZoneDef } from './defs';
 import type { SimEvent, Telegraph } from './events';
-import { GridMap } from './gridmap';
+import { GridMap, WorldGrid } from './gridmap';
 import type { PlayerInput } from './input';
 import { Monster } from './monster';
 import { Player } from './player';
 import { planWave } from './waves';
 
 interface HitDef { dmg: number; knock: number }
+
+/** Monde ouvert : un groupe de monstres posé sur une carte Dofus, qui réapparaît quand il a été vaincu. */
+interface MonsterGroup { id: number; map: string; sub: SubAreaDef; members: Monster[]; timer: number; cleared: boolean; x: number; y: number }
 
 export interface WorldOptions {
   data: GameData;
@@ -36,14 +39,94 @@ export class World {
   over = false;
   time = 0;
   private nextId = 1;
+  private groups: MonsterGroup[] = [];
+  private startPos = { x: 0, y: 0 };
+  /** Sous-zone où se trouve le joueur (monde ouvert). */
+  area: SubAreaDef | null = null;
 
   constructor(readonly opts: WorldOptions) {
     this.rng = new Rng(opts.seed ?? 1);
     this.zone = opts.data.zones[opts.zone];
     if (!this.zone) throw new Error(`Zone inconnue : ${opts.zone}`);
     this.map = opts.map;
-    const start = this.map.nearestFree(GridMap.OFFSET_Y, GridMap.OFFSET_Y);
+    let start = this.map.nearestFree(GridMap.OFFSET_Y, GridMap.OFFSET_Y);
+    const open = this.zone.open;
+    if (open) {
+      if (!(this.map instanceof WorldGrid)) throw new Error('Une zone en monde ouvert demande un WorldGrid');
+      const m = this.map.mapByCoords(...open.start);
+      if (!m) throw new Error(`Carte de départ absente du monde : ${open.start}`);
+      // départ : la case la plus dégagée de la carte (le plus de cases marchables autour)
+      const free = this.map.freeByMap.get(m.tag)!, ok = new Set(free), C = this.map.cols;
+      let best = free[0], bestN = -1;
+      for (const c of free) {
+        let n = 0;
+        for (let dr = -6; dr <= 6; dr++) for (let dk = -3; dk <= 3; dk++) if (ok.has(c + dr * C + dk)) n++;
+        if (n > bestN) { bestN = n; best = c; }
+      }
+      start = this.map.cellToWorld(best);
+    }
+    this.startPos = start;
     this.player = new Player(this.nextId++, start.x, start.y, opts.data.classes[opts.classId ?? 'iop']);
+    if (open) this.spawnGroups();
+  }
+
+  get worldGrid(): WorldGrid | null { return this.map instanceof WorldGrid ? this.map : null; }
+
+  // --- Monde ouvert ---------------------------------------------------------
+  private spawnGroups() {
+    const wg = this.worldGrid!, open = this.zone.open!;
+    for (const m of wg.world.maps) {
+      const sub = open.subareas[String(m.sub)];
+      if (!sub || !wg.freeByMap.get(m.tag)!.length) continue;
+      for (let i = 0; i < sub.groupsPerMap; i++) {
+        const g: MonsterGroup = { id: this.groups.length, map: m.tag, sub, members: [], timer: 0, cleared: false, x: 0, y: 0 };
+        this.groups.push(g);
+        this.spawnGroup(g);
+      }
+    }
+  }
+  private spawnGroup(g: MonsterGroup) {
+    const wg = this.worldGrid!, free = wg.freeByMap.get(g.map)!, p = this.player;
+    let pos = wg.randomFree(this.rng, free), tries = 0;
+    while (Math.hypot(pos.x - p.x, pos.y - p.y) < 450 && ++tries < 30) pos = wg.randomFree(this.rng, free);
+    g.x = pos.x; g.y = pos.y; g.members = []; g.cleared = false;
+    const [a, b] = g.sub.groupSize, n = a + this.rng.int(b - a + 1);
+    for (let i = 0; i < n; i++) {
+      const ang = this.rng.range(0, Math.PI * 2), r = i === 0 ? 0 : this.rng.range(30, 80);
+      const q = wg.nearestFree(pos.x + Math.cos(ang) * r, pos.y + Math.sin(ang) * r, free);
+      const mo = this.spawnMonster(this.rng.pick(g.sub.monsters), q.x, q.y);
+      mo.group = g.id; g.members.push(mo);
+    }
+  }
+  /** Un monstre repère le joueur : tout son groupe passe à l'attaque. */
+  aggroGroup(m: Monster) {
+    const g = this.groups[m.group];
+    for (const o of g ? g.members : [m]) if (!o.dead && (o.state === 'idle' || o === m)) o.state = 'chase';
+  }
+  private updateOpen(dt: number) {
+    const p = this.player, open = this.zone.open!;
+    for (const g of this.groups) {
+      if (g.members.some(m => !m.dead)) continue;
+      if (!g.cleared) {
+        g.cleared = true; g.timer = open.respawn;
+        p.potions = Math.min(p.cls.potion.charges, p.potions + 1);   // un groupe vaincu rend une potion
+        this.emit({ k: 'groupCleared' });
+      }
+      g.timer -= dt;
+      // Réapparition hors de la vue du joueur
+      if (g.timer <= 0 && Math.hypot(g.x - p.x, g.y - p.y) > 900) this.spawnGroup(g);
+    }
+    const m = this.worldGrid!.mapAt(p.x, p.y), sub = m ? open.subareas[String(m.sub)] ?? null : null;
+    if (sub && sub !== this.area) { this.area = sub; this.emit({ k: 'enterArea', name: sub.name, level: sub.level }); }
+  }
+  /** Monde ouvert, après une mort : retour à la carte de départ, sans pénalité. */
+  respawnPlayer() {
+    const p = this.player;
+    if (!this.zone.open || !p.dead) return;
+    p.dead = false; p.hp = p.maxHp; p.x = this.startPos.x; p.y = this.startPos.y; p.kx = p.ky = 0; p.z = 0;
+    p.state = 'free'; p.skill = null; p.invuln = 2; p.setAnim('idle');
+    this.over = false;
+    this.emit({ k: 'respawn' });
   }
 
   emit(e: SimEvent) { this.events.push(e); }
@@ -72,6 +155,7 @@ export class World {
       e.kx = 0; e.ky = 0;
     });
     this.monsters = this.monsters.filter(m => !(m.dead && m.t <= 0));
+    if (this.zone.open) { this.updateOpen(dt); return; }
     if (!this.over && this.monsters.length === 0) {
       this.waveDelay -= dt;
       if (this.waveDelay <= 0) { this.spawnWave(); this.waveDelay = 2; }
@@ -80,7 +164,7 @@ export class World {
 
   spawnWave() {
     this.wave++;
-    const plan = planWave(this.wave, this.zone.waves, this.rng);
+    const plan = planWave(this.wave, this.zone.waves!, this.rng);
     this.emit({ k: 'wave', n: this.wave, boss: plan.boss, archi: plan.archi });
     // chaque nouvelle vague rend une potion
     const p = this.player;

@@ -176,8 +176,11 @@ export class Hud {
 
     // --- Cartouche de zone (haut gauche) : marges égales autour des deux lignes ---
     const zx = 12, zy = 10, padX = 18, padY = 11;
-    this.zoneTitle.setText(world.zone.name).setPosition(zx + padX, zy + padY);
-    this.zoneInfo.setText(`Niv. ${world.zone.level}  ·  Vague ${world.wave}  ·  ${alive.length} monstre${alive.length > 1 ? 's' : ''}  ·  ${world.kills} tués${juice ? '' : '  ·  effets OFF'}`)
+    const area = world.area;   // monde ouvert : la sous-zone où est le joueur
+    this.zoneTitle.setText(area ? area.name : world.zone.name).setPosition(zx + padX, zy + padY);
+    const info = area ? `${world.zone.name}  ·  Niv. ${area.level}  ·  ${world.kills} tués`
+      : `Niv. ${world.zone.level}  ·  Vague ${world.wave}  ·  ${alive.length} monstre${alive.length > 1 ? 's' : ''}  ·  ${world.kills} tués`;
+    this.zoneInfo.setText(`${info}${juice ? '' : '  ·  effets OFF'}`)
       .setPosition(zx + padX, zy + padY + this.zoneTitle.height + 2);
     const zw = Math.max(this.zoneTitle.width, this.zoneInfo.width) + 2 * padX;
     const zh = this.zoneTitle.height + 2 + this.zoneInfo.height + 2 * padY;
@@ -266,11 +269,13 @@ export class Hud {
     }
 
     // --- Portraits (haut droite) : le joueur puis les archimonstres / élites en vie ---
-    const elites = alive.filter(m => m.def.elite);
+    // monde ouvert : seulement les élites qui se battent (pas celles qui attendent ailleurs sur la carte)
+    const open = !!world.zone.open;
+    const elites = alive.filter(m => m.def.elite && (!open || m.state === 'chase' || m.state === 'windup' || m.state === 'lunge' || m.state === 'recover'));
     const fighters: Entity[] = [p, ...elites].slice(0, PORTRAITS_MAX);
     const tl = 54, tgap = 4, tx0 = W - 16 - fighters.length * (tl + tgap) + tgap, ty = 22 + tl / 2;
     this.portraitMask.clear().fillStyle(0xffffff);
-    this.archiLabel.setVisible(elites.length > 0).setPosition(tx0 - 8, ty);
+    this.archiLabel.setText(open ? 'Élites' : 'Archimonstres').setVisible(elites.length > 0).setPosition(tx0 - 8, ty);
     this.portraits.forEach((t, i) => {
       const e = fighters[i], vis = !!e;
       t.bg.setVisible(vis); t.sprite.setVisible(vis); t.border.setVisible(vis);
