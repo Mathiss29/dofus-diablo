@@ -15,6 +15,8 @@ export interface PlayerInput {
   potion?: boolean;
   /** Clic gauche sur le sol (maintenu : suit le curseur) : le perso y va par le plus court chemin. */
   dest?: Vec | null;
+  /** Clic sur un objet au sol (Magique et plus) : aller le ramasser. */
+  pickup?: number | null;
   /** Clic gauche sur un monstre : le perso s'approche à portée et lance son auto-attaque. */
   target?: number | null;
 }

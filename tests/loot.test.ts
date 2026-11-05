@@ -82,7 +82,7 @@ describe('équipement et caractéristiques', () => {
 });
 
 describe('butin au sol', () => {
-  it('un boss lâche toujours un équipement, ramassé en passant dessus', () => {
+  it('un boss lâche toujours un équipement : Communs et kamas aspirés, le reste ramassé d\'un clic', () => {
     const w = arena(5), p = w.player;
     const m = w.spawnMonster('epouvanteur', p.x + 40, p.y);
     m.hp = 1; m.state = 'chase';
@@ -90,9 +90,26 @@ describe('butin au sol', () => {
     for (let i = 0; i < 20; i++) w.step(STEP, NO_INPUT);
     expect(m.dead).toBe(true);
     expect(w.drops.some(d => d.item)).toBe(true);
-    for (const d of w.drops) { p.x = d.x; p.y = d.y; for (let i = 0; i < 40; i++) w.step(STEP, NO_INPUT); }
+    expect(w.drops.some(d => d.kamas)).toBe(true);
+    for (const d of [...w.drops]) {
+      p.x = d.x + 20; p.y = d.y;
+      w.step(STEP, { ...NO_INPUT, pickup: d.uid });
+      for (let i = 0; i < 40; i++) w.step(STEP, NO_INPUT);
+    }
     expect(p.bag.length).toBeGreaterThan(0);
+    expect(p.kamas).toBeGreaterThan(0);
     expect(w.drops).toHaveLength(0);
+  });
+
+  it('un objet Magique ou mieux n\'est pas aspiré : il reste au sol tant qu\'on ne clique pas dessus', () => {
+    const w = arena(5), p = w.player;
+    const [id, def] = Object.entries(ITEMS.equipment)[0];
+    w.drops.push({ uid: 9999, x: p.x + 30, y: p.y, item: rollItem(id, def, 'rare', w.rng, 777), t: 1 });
+    for (let i = 0; i < 60; i++) w.step(STEP, NO_INPUT);
+    expect(w.drops.some(d => d.uid === 9999)).toBe(true);
+    w.step(STEP, { ...NO_INPUT, pickup: 9999 });
+    for (let i = 0; i < 60; i++) w.step(STEP, NO_INPUT);
+    expect(p.bag.some(b => b.uid === 777)).toBe(true);
   });
 });
 

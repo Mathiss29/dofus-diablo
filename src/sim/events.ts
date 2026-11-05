@@ -30,6 +30,9 @@ export type SimEvent =
   | { k: 'itemDrop'; x: number; y: number; rarity: Rarity }
   | { k: 'loot'; item: Item }
   | { k: 'lootResource'; id: string; n: number }
+  | { k: 'lootKamas'; n: number }
+  /** Sac plein : l'objet reste au sol. */
+  | { k: 'bagFull' }
   /** Nouveau point de retour (Zaap). */
   | { k: 'checkpoint'; name: string };
 

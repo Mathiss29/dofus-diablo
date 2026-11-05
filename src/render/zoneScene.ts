@@ -40,7 +40,9 @@ export class ZoneScene extends Phaser.Scene {
   private hitstop = 0;
   private windows: Windows | null = null;
   /** Butin au sol : icône + nom de l'objet, couleur de sa rareté. */
-  private dropViews = new Map<number, { icon: Phaser.GameObjects.Image; label?: Phaser.GameObjects.Text; glow: Phaser.GameObjects.Ellipse }>();
+  private dropViews = new Map<number, { icon: Phaser.GameObjects.Image; label?: Phaser.GameObjects.Text; glow: Phaser.GameObjects.Ellipse; beam?: Phaser.GameObjects.Image; core?: Phaser.GameObjects.Image }>();
+  /** Objet au sol cliqué (à ramasser). */
+  private pickClick: number | null = null;
   private acc = 0;
   /** Le clic en cours a commencé sur l'interface : maintenir le bouton ne fait pas attaquer. */
   private uiClick = false;
@@ -68,6 +70,7 @@ export class ZoneScene extends Phaser.Scene {
   preload() {
     Hud.preload(this);
     // Icônes des objets officiels : une seule planche
+    if (!this.textures.exists('kamas_tas')) this.load.image('kamas_tas', v(`${ASSETS}/ui/inv/kamas.png`));
     if (!this.textures.exists(ICON_SHEET.key)) this.load.spritesheet(ICON_SHEET.key, v(`${ASSETS}/${ICON_SHEET.url}`), { frameWidth: ICON_SHEET.cell, frameHeight: ICON_SHEET.cell });
     const zone = GAME_DATA.zones[this.zoneId];
     // On ne charge que les planches utiles à cette zone
@@ -156,7 +159,7 @@ export class ZoneScene extends Phaser.Scene {
   private bindInput() {
     const K = Phaser.Input.Keyboard.KeyCodes, kb = this.input.keyboard!;
     // Déplacement à la souris (clic gauche) ; le clavier sert aux sorts, à la potion et aux menus
-    this.keys = kb.addKeys({ SHIFT: K.SHIFT,
+    this.keys = kb.addKeys({ SHIFT: K.SHIFT, ALT: K.ALT,
       SPACE: K.SPACE, E: K.E, K: K.K, I: K.I, C: K.C, ESC: K.ESC, F: K.F, H: K.H, ENTER: K.ENTER,
       ONE: K.ONE, TWO: K.TWO, THREE: K.THREE, FOUR: K.FOUR, FIVE: K.FIVE, SIX: K.SIX }) as Record<string, Phaser.Input.Keyboard.Key>;
     const cls = this.world.player.cls;
@@ -170,6 +173,8 @@ export class ZoneScene extends Phaser.Scene {
       if (p.rightButtonDown()) { this.pressed = cls.favorite; return; }
       this.holding = true;
       if (this.keys.SHIFT.isDown) { this.pressed = 'attaque'; this.clickMode = 'place'; return; }
+      const d = this.dropUnder(p);
+      if (d != null) { this.pickClick = d; this.clickMode = null; this.holding = false; return; }
       const m = this.monsterUnder(p);
       this.clickMode = m ? 'target' : 'ground';
       this.clickTarget = m?.id ?? null;
@@ -199,6 +204,30 @@ export class ZoneScene extends Phaser.Scene {
     });
   }
 
+  /** Objet au sol (Magique et plus, affiché) sous le curseur. */
+  private dropUnder(ptr: Phaser.Input.Pointer): number | null {
+    const wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
+    for (const [uid, v] of this.dropViews) {
+      if (!v.icon.visible || !v.label) continue;
+      if (v.icon.getBounds().contains(wp.x, wp.y) || (v.label.visible && v.label.getBounds().contains(wp.x, wp.y))) return uid;
+    }
+    return null;
+  }
+  /** Petit carillon (synthétisé, pas de fichier) quand un objet Rare ou Légendaire tombe (choix 3D). */
+  private chime(legendary: boolean) {
+    try {
+      const A = (this.sound as unknown as { context?: AudioContext }).context;
+      if (!A) return;
+      const notes = legendary ? [784, 988, 1319, 1568] : [880, 1175];
+      notes.forEach((f, i) => {
+        const o = A.createOscillator(), g = A.createGain(), t0 = A.currentTime + i * 0.09;
+        o.type = 'triangle'; o.frequency.value = f;
+        g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(0.12, t0 + 0.02); g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.6);
+        o.connect(g).connect(A.destination); o.start(t0); o.stop(t0 + 0.65);
+      });
+    } catch { /* son indisponible */ }
+  }
+
   /** Monstre sous le curseur (on vise le corps dessiné, pas seulement les pieds). */
   private monsterUnder(ptr: Phaser.Input.Pointer) {
     const wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
@@ -224,7 +253,8 @@ export class ZoneScene extends Phaser.Scene {
     const ptr = this.input.activePointer, wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
     const aim = ISO.toWorld(wp.x, wp.y), held = this.holding && ptr.leftButtonDown() && !this.uiClick;
     const input: PlayerInput = { move: { x: 0, y: 0 }, aim, pressed: this.pressed, potion: this.potion,
-      holdAttack: held && this.clickMode === 'place' };
+      holdAttack: held && this.clickMode === 'place', pickup: this.pickClick };
+    this.pickClick = null;
     if (held && this.clickMode === 'ground') input.dest = aim;
     if (held && this.clickMode === 'target' && this.clickTarget != null) input.target = this.clickTarget;
     // clic bref sur un monstre : on garde la cible jusqu'au premier coup (le perso continue de s'approcher)
@@ -285,6 +315,9 @@ export class ZoneScene extends Phaser.Scene {
           this.windows?.refresh();
           break;
         }
+        case 'lootKamas': this.hud.loot(`+${e.n} kamas`, '#f2d36b'); this.windows?.refresh(); break;
+        case 'bagFull': this.hud.toast('Sac plein : recycle des objets (Maj + clic dans l\'inventaire)'); break;
+        case 'itemDrop': if (e.rarity === 'rare' || e.rarity === 'legendaire') this.chime(e.rarity === 'legendaire'); break;
         case 'lootResource': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Ressource'} x${e.n}`, '#c9c4ab'); this.windows?.refresh(); break;
         case 'levelUp': this.hud.banner(`Niveau ${e.level} !\n+5 points (C)`, 1500); this.windows?.refresh(); break;
         case 'checkpoint': this.hud.banner(`Point de retour\n${e.name}`, 1400); break;
@@ -294,30 +327,57 @@ export class ZoneScene extends Phaser.Scene {
     }
   }
 
+  /** Butin au sol (choix 3A) : icône officielle qui flotte, colonne de lumière de la couleur de la rareté dès Magique
+   *  (plus haute pour Rare et Légendaire), nom au survol ou avec Alt ; les kamas sont un petit tas de pièces. */
   private drawDrops() {
-    const seen = new Set<number>();
-    for (const d of this.world.drops) {
+    const seen = new Set<number>(), w = this.world;
+    if (!this.textures.exists('beam')) {
+      const c = this.textures.createCanvas('beam', 32, 256)!, x = c.getContext();
+      const gr = x.createLinearGradient(0, 0, 0, 256);
+      gr.addColorStop(0, 'rgba(255,255,255,0)'); gr.addColorStop(0.45, 'rgba(255,255,255,0.7)'); gr.addColorStop(1, 'rgba(255,255,255,1)');
+      const hz = x.createLinearGradient(0, 0, 32, 0);
+      hz.addColorStop(0, 'rgba(0,0,0,1)'); hz.addColorStop(0.3, 'rgba(0,0,0,0.15)'); hz.addColorStop(0.7, 'rgba(0,0,0,0.15)'); hz.addColorStop(1, 'rgba(0,0,0,1)');
+      x.fillStyle = gr; x.fillRect(0, 0, 32, 256);
+      x.globalCompositeOperation = 'destination-out'; x.fillStyle = hz; x.fillRect(0, 0, 32, 256);
+      c.refresh();
+    }
+    const ptr = this.input.activePointer, wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2, alt = this.keys.ALT.isDown;
+    for (const d of w.drops) {
+      if (d.t < 0) continue;
       seen.add(d.uid);
       let v = this.dropViews.get(d.uid);
       const p = ISO.toScreen(d.x, d.y);
       if (!v) {
-        const icon = d.item ? ITEMS.equipment[d.item.id]?.icon : ITEMS.resources[d.resource!.id]?.icon;
-        const col = d.item ? RARITY_COLORS[d.item.rarity] : '#c9c4ab';
+        const col = d.item ? RARITY_COLORS[d.item.rarity] : '#f2d36b', tint = parseInt(col.slice(1), 16);
+        const big = d.item ? ['magique', 'rare', 'legendaire'].indexOf(d.item.rarity) : -1;
         v = {
-          glow: this.add.ellipse(p.x, p.y, 46, 20, parseInt(col.slice(1), 16), 0.35),
-          icon: this.add.image(p.x, p.y - 14, ICON_SHEET.key, Math.max(0, iconFrame(icon ?? 0))).setDisplaySize(34, 34),
-          label: d.item ? this.add.text(p.x, p.y - 40, ITEMS.equipment[d.item.id]?.name ?? '', {
+          glow: this.add.ellipse(p.x, p.y, 46, 20, tint, 0.35),
+          icon: d.item ? this.add.image(p.x, p.y - 14, ICON_SHEET.key, Math.max(0, iconFrame(ITEMS.equipment[d.item.id]?.icon ?? 0))).setDisplaySize(34, 34)
+            : this.add.image(p.x, p.y - 8, 'kamas_tas').setDisplaySize(22, 22),
+          label: big >= 0 ? this.add.text(p.x, p.y - 40, ITEMS.equipment[d.item!.id]?.name ?? '', {
             fontFamily: 'Trebuchet MS, Verdana, sans-serif', fontSize: '13px', fontStyle: 'bold', color: col, stroke: '#000', strokeThickness: 3,
+            backgroundColor: '#0d0c0acc', padding: { x: 4, y: 2 },
           }).setOrigin(0.5) : undefined,
+          // colonne : un halo de la couleur de la rareté (orangé pour Rare, qui se perdrait sur les sols dorés) et un cœur blanc
+          beam: big >= 0 ? this.add.image(p.x, p.y, 'beam').setOrigin(0.5, 1).setTint(big === 1 ? 0xffa000 : tint)
+            .setDisplaySize(30 + big * 6, [120, 180, 250][big]) : undefined,
+          core: big >= 0 ? this.add.image(p.x, p.y, 'beam').setOrigin(0.5, 1).setDisplaySize(8 + big * 2, [100, 150, 210][big]) : undefined,
         };
         this.dropViews.set(d.uid, v);
       }
-      const bob = Math.sin(this.world.time * 4 + d.uid) * 3, pop = Math.min(1, d.t * 4);
-      v.glow.setPosition(p.x, p.y).setDepth(p.y - 2).setScale(pop);
-      v.icon.setPosition(p.x, p.y - 14 - bob - (1 - pop) * 30).setDepth(p.y + 1);
-      v.label?.setPosition(p.x, p.y - 44 - bob).setDepth(1e6 - 1);
+      const shown = w.shown(d);
+      const bob = d.item ? Math.sin(w.time * 4 + d.uid) * 3 : 0, pop = Math.min(1, d.t * 4);
+      v.glow.setPosition(p.x, p.y).setDepth(p.y - 2).setScale(pop).setVisible(shown);
+      v.icon.setPosition(p.x, p.y - (d.item ? 14 : 8) - bob - (1 - pop) * 30).setDepth(p.y + 1).setVisible(shown);
+      const pulse = (0.85 + Math.sin(w.time * 3 + d.uid) * 0.15) * pop;
+      v.beam?.setPosition(p.x, p.y).setDepth(p.y - 1).setAlpha(pulse).setVisible(shown);
+      v.core?.setPosition(p.x, p.y).setDepth(p.y - 0.5).setAlpha(pulse * 0.8).setVisible(shown);
+      if (v.label) {
+        const hover = Math.abs(wp.x - p.x) < 26 && wp.y > p.y - 48 && wp.y < p.y + 10;
+        v.label.setPosition(p.x, p.y - 46 - bob).setDepth(1e6 - 1).setVisible(shown && (alt || hover || w.player.pickupId === d.uid));
+      }
     }
-    for (const [uid, v] of this.dropViews) if (!seen.has(uid)) { v.icon.destroy(); v.label?.destroy(); v.glow.destroy(); this.dropViews.delete(uid); }
+    for (const [uid, v] of this.dropViews) if (!seen.has(uid)) { v.icon.destroy(); v.label?.destroy(); v.glow.destroy(); v.beam?.destroy(); v.core?.destroy(); this.dropViews.delete(uid); }
   }
 
   private viewOf(e: Entity): EntityView {
