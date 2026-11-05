@@ -1,5 +1,6 @@
 # world_export.py liste.json cartes_dir textures_dir outdir : exporte plusieurs cartes Dofus 3 voisines en un « monde » continu.
 #  liste.json = {"x,y": [mapId, sousZone], ...} (coordonnées Dofus de chaque carte)
+#    un intérieur (maison, mine…) : {"x,y": [mapId, sousZone, {"tag": nom, "inside": 1}]}, x,y = sa place dans la grille (interieurs.py)
 #  cartes_dir = dossier des map_{id}.json (MonoBehaviour des bundles mapdata_assets_world_N)
 #  textures_dir = dossier des bundles mapgfx_1x_*_assets_all.bundle
 #  CACHE=fichier.pkl (option) : garde les textures lues pour relancer vite
@@ -15,8 +16,15 @@ liste, cdir, tdir, out = sys.argv[1:5]; os.makedirs(out, exist_ok=True)
 W, H, OX, OY, COLS, ROWS = 86, 43, -620, -490, 14, 40
 MW, MH = COLS * W, ROWS * H // 2
 sel = {tuple(map(int, k.split(','))): v for k, v in json.load(open(liste)).items()}
-maps = {xy: json.load(open(f'{cdir}/map_{v[0]}.json'))['mapData'] for xy, v in sel.items()}
-need = set(e['gfxId'] for md in maps.values() for k in ['backgroundElements', 'sortableElements'] for e in md[k])
+raw = {xy: json.load(open(f'{cdir}/map_{v[0]}.json')) for xy, v in sel.items()}
+maps = {xy: r['mapData'] for xy, r in raw.items()}
+# Éléments interactifs (portes, cadres de mine, panneaux…) : rangés à part dans references ; ceux qui ont une image fixe
+# sont posés avec le décor (les animés — minerais, céréales — sont dans d'autres paquets et restent absents).
+for xy, r in raw.items():
+    R = {q['rid']: q.get('data') for q in r.get('references', {}).get('RefIds', [])}
+    maps[xy]['ies'] = [R[e['rid']] for e in maps[xy].get('interactiveElements', []) if R.get(e['rid']) and 'gfxId' in R[e['rid']]]
+need = set(e['gfxId'] for md in maps.values() for k in ['backgroundElements', 'sortableElements', 'ies'] for e in md[k])
+extra = {xy: (v[2] if len(v) > 2 else {}) for xy, v in sel.items()}
 imgs = {}
 CACHE = os.environ.get('CACHE')   # fichier pickle des textures déjà lues (la lecture des bundles est longue)
 if CACHE and os.path.exists(CACHE):
@@ -52,7 +60,11 @@ monde = {'grid': {'w': W, 'h': H, 'ox': OX, 'oy': OY, 'cols': COLS * nx, 'rows':
 SKY = {int(g) for g in os.environ.get('SKY', '').split(',') if g}
 x0m, y0m = OX + W // 4, OY + H // 4
 x1m, y1m = x0m + MW, y0m + MH
-def pack(variants, path):
+# ONLY_INSIDE=1 : ne réécrit les images que des intérieurs (les cartes du dehors déjà exportées ne changent pas)
+ONLY_INSIDE = os.environ.get('ONLY_INSIDE') == '1'
+# DECOR_ONLY=1 : ne réécrit que les atlas de décor (sols et fonds inchangés)
+DECOR_ONLY = os.environ.get('DECOR_ONLY') == '1'
+def pack(variants, path, write=True):
     """Atlas Phaser d'une carte : une image par (gfx, couleur, échelle), rangées en étagères."""
     items = sorted(variants.values(), key=lambda v: -v[1].height)
     maxW = 2048; px = py = rowH = 0; pos = {}
@@ -60,6 +72,8 @@ def pack(variants, path):
         b = im.getbbox() or (0, 0, 1, 1); w, h = b[2] - b[0] + 2, b[3] - b[1] + 2
         if px + w > maxW: px = 0; py += rowH; rowH = 0
         pos[name] = (px, py, b); px += w; rowH = max(rowH, h)
+    if not write:
+        return (maxW, max(1, py + rowH))
     atlas = Image.new('RGBA', (maxW, max(1, py + rowH))); frames = {}
     for name, im in items:
         ax, ay, b = pos[name]; atlas.paste(im.crop(b), (ax + 1, ay + 1)); w, h = b[2] - b[0], b[3] - b[1]
@@ -70,7 +84,8 @@ def pack(variants, path):
     return atlas.size
 sky = None
 for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
-    ix, iy = x - X0, y - Y0; dx, dy = ix * MW, iy * MH; tag = f'{x}_{y}'
+    ix, iy = x - X0, y - Y0; dx, dy = ix * MW, iy * MH; tag = extra[(x, y)].get('tag', f'{x}_{y}')
+    write = not ONLY_INSIDE or extra[(x, y)].get('inside')
     for c, cell in enumerate(md['cellsData']):
         r, k = divmod(c, COLS)
         if cell['mov']: mov[(iy * ROWS + r) * COLS * nx + ix * COLS + k] = '1'
@@ -82,7 +97,7 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
     for e in md['backgroundElements']:
         im = styled(e)
         if im is None: continue
-        if e['gfxId'] in SKY:
+        if e['gfxId'] in SKY and not extra[(x, y)].get('inside'):
             sky = sky or im; continue
         tr = e['transform']; ex, ey = round(tr['m31'] - im.width / 2), round(-tr['m32'] - im.height / 2)
         els.append((im, ex, ey))
@@ -120,12 +135,13 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
         fim = Image.new('RGBA', (fx1 - fx0, fy1 - fy0))
         for im, ex, ey in fond_els: fim.alpha_composite(im, (ex - fx0, ey - fy0))
         # flou par nature : moitié de résolution (le jeu l'agrandit x2), 4 fois moins de mémoire vidéo
-        fim.resize((max(1, fim.width // 2), max(1, fim.height // 2)), Image.LANCZOS).save(f'{out}/fond_{tag}.webp', 'WEBP', quality=80, method=6)
+        if write and not DECOR_ONLY: fim.resize((max(1, fim.width // 2), max(1, fim.height // 2)), Image.LANCZOS).save(f'{out}/fond_{tag}.webp', 'WEBP', quality=80, method=6)
         fond = {'x': fx0 + dx, 'y': fy0 + dy, 'w': fim.width, 'h': fim.height, 'k': 2}
-    sol.save(f'{out}/sol_{tag}.webp', 'WEBP', quality=80, method=6)
+    if write and not DECOR_ONLY: sol.save(f'{out}/sol_{tag}.webp', 'WEBP', quality=80, method=6)
     # Décor : un atlas par carte, pour que le jeu ne charge que les cartes proches du joueur
     variants = {}; places = []
-    for e in md['sortableElements']:
+    els_d = md['sortableElements'] + [e for e in md['ies'] if e['gfxId'] in imgs]
+    for e in sorted(els_d, key=lambda e: (e['cellId'], e.get('innerCellRenderOrder', 0))):
         tr = e['transform']; key = (e['gfxId'], e['color']['value'], round(tr['m11'], 3), round(tr['m22'], 3))
         if key not in variants:
             im = styled(e)
@@ -134,10 +150,10 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
         r, k = divmod(e['cellId'], COLS)
         places.append({'f': variants[key][0], 'x': round(tr['m31'] + dx, 1), 'y': round(-tr['m32'] + dy, 1),
                        'c': (iy * ROWS + r) * COLS * nx + ix * COLS + k, 'o': e['innerCellRenderOrder']})
-    asz = pack(variants, f'{out}/decor_{tag}')
+    asz = pack(variants, f'{out}/decor_{tag}', write)
     monde['maps'].append({'x': x, 'y': y, 'id': sel[(x, y)][0], 'sub': sel[(x, y)][1], 'tag': tag,
                           'sol': {'x': bx0 + dx, 'y': by0 + dy, 'w': sol.width, 'h': sol.height}, 'decor': places,
-                          **({'fond': fond} if fond else {})})
+                          **({'fond': fond} if fond else {}), **({'inside': 1} if extra[(x, y)].get('inside') else {})})
     print(tag, 'retirés', len(hard), 'sol', sol.size, 'fond', fond and (fond['w'], fond['h']), 'decor', len(places), asz)
 if sky is not None:
     sky.convert('RGB').save(f'{out}/ciel.webp', 'WEBP', quality=85, method=6); monde['sky'] = 'ciel.webp'

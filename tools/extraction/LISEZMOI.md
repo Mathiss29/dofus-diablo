@@ -103,3 +103,17 @@ Les bundles d'effets ne sont pas dans le cache : les copier depuis le PC de Math
 `items_export.py` lit toutes les caractéristiques des objets dans la table des effets (`characteristic` + `characteristicOperator`)
 et les range selon `CARAC` (mot-clé de `characteristics` → caractéristique du jeu). `monster_stats.py` donne aux monstres leurs
 caractéristiques officielles (grade 1). Rôle de chacune en temps réel : `src/sim/caracs.ts`.
+
+## Intérieurs (maisons, Mine, Taverne…)
+
+Les cartes d'intérieur (worldMap -1 dans MapsInformation) n'ont pas de sortie par les bords. Le lien entre une porte et une salle n'existe que sur le serveur de Dofus. On le relie donc à la main dans `incarnam_interieurs.json`, d'après les éléments interactifs officiels :
+- dehors : cadres de mine 50077, portes 425xx ;
+- dedans : arches et passages 39767.
+
+1. `python interieurs.py incarnam_interieurs.json incarnam_cartes.json cartes/ liste.json ../../src/data/zones.json incarnam`
+   - Range les salles sous le dehors dans la grande grille, avec une carte vide entre chaque salle.
+   - Écrit les portes dans `zones.json` (`open.portes`).
+2. `ONLY_INSIDE=1 python world_export.py liste.json cartes/ textures/ ../../public/assets/mondes/incarnam` : ne réécrit que les images des intérieurs.
+   - `DECOR_ONLY=1` ne réécrit que les atlas de décor.
+
+Les éléments interactifs qui ont une image fixe (portes, cadres de mine, panneaux) sont posés avec le décor. Les animés (minerais, céréales) manquent encore.

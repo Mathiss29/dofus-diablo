@@ -16,7 +16,11 @@ export interface MapData {
 }
 
 /** Une carte Dofus dans un monde (tools/extraction/world_export.py). */
-export interface WorldMapEntry { x: number; y: number; id: number; sub: number; tag: string; sol: Rect; fond?: Rect & { k?: number }; decor: DecorPlace[] }
+export interface WorldMapEntry {
+  x: number; y: number; id: number; sub: number; tag: string; sol: Rect; fond?: Rect & { k?: number }; decor: DecorPlace[];
+  /** Intérieur (maison, mine…) : rangé à part dans la grille, on y entre par une porte. */
+  inside?: number;
+}
 /** Plusieurs cartes Dofus voisines collées bord à bord en une seule grande grille. */
 export interface WorldData extends MapData { origin: [number, number]; maps: WorldMapEntry[]; /** Ciel commun posé derrière tout le monde. */ sky?: string }
 
@@ -187,6 +191,14 @@ export class WorldGrid extends GridMap {
   /** Carte Dofus sous un point du monde du jeu. */
   mapAt(wx: number, wy: number): WorldMapEntry | undefined { return this.mapOfCell(this.cellAtWorld(wx, wy)); }
   mapByCoords(x: number, y: number): WorldMapEntry | undefined { return this.world.maps.find(m => m.x === x && m.y === y); }
+  mapByTag(tag: string): WorldMapEntry | undefined { return this.world.maps.find(m => m.tag === tag); }
+  /** Case de la grande grille pour la case `c` (0-559) de la carte `tag`. */
+  cellOf(tag: string, c: number): number {
+    const m = this.mapByTag(tag);
+    if (!m) throw new Error(`Carte absente du monde : ${tag}`);
+    const [X0, Y0] = this.world.origin, r = Math.floor(c / MAP_COLS), k = c % MAP_COLS;
+    return ((m.y - Y0) * MAP_ROWS + r) * this.cols + (m.x - X0) * MAP_COLS + k;
+  }
 }
 
 /** File de priorité (tas binaire) pour l'A*. */

@@ -295,7 +295,7 @@ export class Hud {
 
     // --- Coordonnées et sous-zone (haut centre) ---
     const map = world.worldGrid?.mapAt(p.x, p.y);
-    this.coords.setPosition(W / 2, 10).setText(map ? `${map.x},${map.y}  ${world.zone.name}${world.area ? ` (${world.area.name})` : ''}` : world.zone.name);
+    this.coords.setPosition(W / 2, 10).setText(map ? `${map.inside ? '' : `${map.x},${map.y}  `}${world.zone.name}${world.area ? ` (${world.area.name})` : ''}` : world.zone.name);
 
     // --- Jauge de boss ---
     const boss = world.monsters.find(m => m.def.boss && !m.dead);
