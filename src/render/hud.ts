@@ -328,9 +328,9 @@ export class Hud {
         if (q.x < mx || q.y < my || q.x > mx + mw || q.y > my + mh) continue;
         g.fillStyle(m.def.boss || m.def.elite ? C.gold : 0xd04030, 1); g.fillCircle(q.x, q.y, m.def.boss ? 3.5 : 2.2);
       }
-      // objets Rare et Légendaire au sol : un losange de leur couleur (choix 3D)
+      // objets Épique, Légendaire et Mythique au sol : un losange de leur couleur (choix 3D)
       for (const d of world.drops) {
-        if (d.t < 0 || !d.item || (d.item.rarity !== 'rare' && d.item.rarity !== 'legendaire') || !world.shown(d)) continue;
+        if (d.t < 0 || !d.item || !['epique', 'legendaire', 'mythique'].includes(d.item.rarity) || !world.shown(d)) continue;
         const q = toMini(d.x, d.y);
         if (q.x < mx || q.y < my || q.x > mx + mw || q.y > my + mh) continue;
         g.fillStyle(parseInt(RARITY_COLORS[d.item.rarity].slice(1), 16), 1); g.lineStyle(1, 0x000000, 1);

@@ -25,7 +25,7 @@ const TABS: [string, string, string][] = [['tout', 'all', 'Tout'], ['equip', 'eq
 const KINDS: [string, string][] = [['', 'Toutes les catégories'], ['arme', 'Armes'], ['amulette', 'Amulettes'], ['anneau', 'Anneaux'],
   ['chapeau', 'Coiffes'], ['cape', 'Capes'], ['ceinture', 'Ceintures'], ['bottes', 'Bottes'], ['bouclier', 'Boucliers']];
 const SORTS: [string, string][] = [['', 'Aucun tri'], ['niveau', 'Niveau'], ['rarete', 'Rareté'], ['nom', 'Nom']];
-const RARITY_ORDER: Record<string, number> = { commun: 0, magique: 1, rare: 2, legendaire: 3 };
+const RARITY_ORDER: Record<string, number> = { commun: 0, rare: 1, epique: 2, legendaire: 3, mythique: 4 };
 const INV = 'assets/ui/inv';
 
 const CSS = `
@@ -188,7 +188,7 @@ export class Windows {
             <div class="foot"><span>Visible(s) : <b>${n}</b> · sac <b>${p.bag.length} / ${Player.BAG_SIZE}</b><br><span class="hint">Clic droit : équiper / retirer · Maj + clic : recycler</span></span>
               <span class="k">${p.kamas.toLocaleString('fr-FR')} <img src="${INV}/kamas.png" alt="" title="Kamas"></span></div>
             <div class="foot"><span>Butin affiché au sol</span>
-              <select data-filter style="width:auto">${['Tout', 'Magique et plus', 'Rare et plus'].map((n, i) => `<option value="${i}" ${p.lootFilter === i ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
+              <select data-filter style="width:auto">${['Tout', 'Rare et plus', 'Épique et plus'].map((n, i) => `<option value="${i}" ${p.lootFilter === i ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
           </div>
         </div>
       </div>`;
@@ -329,7 +329,7 @@ export class Windows {
   private score(it: Item): number {
     let s = 0;
     for (const [k, v] of Object.entries(it.stats) as [Stat, number][]) s += v * (k === 'vitalite' ? 0.5 : k === 'critique' ? 3 : k.startsWith('dommages') ? 4 : k === 'pa' || k === 'pm' ? 40 : 1);
-    return s + (it.legendary ? 30 : 0);
+    return s + (it.legendary ? 30 : 0) + (it.legendary2 ? 30 : 0);
   }
 
   private setsHtml(): string {
@@ -351,7 +351,7 @@ export class Windows {
     const stats = STATS.filter(k => it.stats[k] !== undefined).map(k => line(k, it.stats[k]!)).join('');
     const weapon = (d.weapon ? `<div>${d.weapon.dmg.map(x => `${x.min}–${x.max} dommages ${x.element}`).join(' · ')}</div>` : '')
       + (d.chasse ? '<div class="ex">Arme de chasse</div>' : '');
-    const leg = it.legendary ? `<div class="leg"><b>${LEGENDARY[it.legendary.id].name}</b> : ${LEGENDARY[it.legendary.id].text(it.legendary.value)}</div>` : '';
+    const leg = [it.legendary, it.legendary2].map(l => l ? `<div class="leg"><b>${LEGENDARY[l.id].name}</b> : ${LEGENDARY[l.id].text(l.value)}</div>` : '').join('');
     const set = d.set && ITEMS.sets[d.set] ? `<div class="set">${ITEMS.sets[d.set].name}</div>` : '';
     let cmp = '';
     if (cur) {
