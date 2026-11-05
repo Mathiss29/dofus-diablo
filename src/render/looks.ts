@@ -139,7 +139,7 @@ export const LOOKS: Record<string, Look> = {
   chafer_piquier: { atlas: 'chafer_piquier', scale: 1.22, map: MONSTER_MAP(10 / 41, 'AnimAttaque0', { 0: 10 / 41, 1: 17 / 41 }), height: 149, multi: true },
   aminite: { atlas: 'aminite', scale: 0.55, map: MONSTER_MAP(16 / 35, 'AnimAttaque0', { 0: 16 / 35, 1: 8 / 43 }), height: 154, multi: true },
   // Crypte de Kardorim : Sergent Chafer, Kardorim (rendu à SCALE 1,6 : gros squelette) et son invocation Kardorib
-  sergent_chafer: { atlas: 'sergent_chafer', scale: 0.55, map: MONSTER_MAP(27 / 47, 'AnimAttaque0', { 0: 27 / 47, 1: 17 / 30 }), height: 203, multi: true },
+  sergent_chafer: { atlas: 'sergent_chafer', scale: 0.55, map: MONSTER_MAP(8 / 24, 'AnimAttaque0', { 0: 8 / 24, 1: 7 / 24 }), height: 288, multi: true },
   kardorim: { atlas: 'kardorim', scale: 0.95, map: MONSTER_MAP(14 / 24, 'AnimAttaque0', { 0: 14 / 24, 1: 29 / 44, 2: 5 / 22 }), height: 196, multi: true },
   kardorib: { atlas: 'kardorib', scale: 0.66, map: MONSTER_MAP(21 / 33, 'AnimAttaque0', { 0: 21 / 33, 1: 10 / 27, 2: 19 / 39 }), height: 224, multi: true },
 };

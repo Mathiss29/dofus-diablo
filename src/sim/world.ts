@@ -173,6 +173,12 @@ export class World {
     return wg.cellToWorld(best);
   }
 
+  private freeSets = new Map<string, Set<number>>();
+  private freeSet(tag: string) {
+    let s = this.freeSets.get(tag);
+    if (!s) { s = new Set(this.worldGrid!.freeByMap.get(tag)!); this.freeSets.set(tag, s); }
+    return s;
+  }
   get worldGrid(): WorldGrid | null { return this.map instanceof WorldGrid ? this.map : null; }
 
   // --- Monde ouvert ---------------------------------------------------------
@@ -201,12 +207,22 @@ export class World {
   }
   private spawnGroup(g: MonsterGroup) {
     const wg = this.worldGrid!, free = wg.freeByMap.get(g.map)!, p = this.player;
-    let pos = wg.randomFree(this.rng, free), tries = 0;
-    while (Math.hypot(pos.x - p.x, pos.y - p.y) < 450 && ++tries < 30) pos = wg.randomFree(this.rng, free);
+    // Le groupe se pose sur un coin dégagé (pas au bord d'une falaise ni dans un recoin), loin du joueur
+    const ok = this.freeSet(g.map), C = wg.cols;
+    const ouvert = (c: number) => { let n = 0; for (let dr = -6; dr <= 6; dr++) for (let dk = -3; dk <= 3; dk++) if (ok.has(c + dr * C + dk)) n++; return n; };
+    let pos = wg.randomFree(this.rng, free), best = -1;
+    for (let t = 0; t < 40; t++) {
+      const c = free[this.rng.int(free.length)], q = wg.cellToWorld(c);
+      const score = ouvert(c) - (Math.hypot(q.x - p.x, q.y - p.y) < 450 ? 1000 : 0);
+      if (score > best) { best = score; pos = q; }
+      if (best >= 80) break;
+    }
     g.x = pos.x; g.y = pos.y; g.members = []; g.cleared = false;
     const [a, b] = g.sub.groupSize, n = g.fixe ? g.fixe.length : a + this.rng.int(b - a + 1);
+    const a0 = this.rng.range(0, Math.PI * 2);
     for (let i = 0; i < n; i++) {
-      const ang = this.rng.range(0, Math.PI * 2), r = i === 0 ? 0 : this.rng.range(30, 80);
+      // en cercle autour du chef, chacun sa place (plus de tas de monstres les uns sur les autres)
+      const ang = a0 + (i / Math.max(1, n - 1)) * Math.PI * 2 + this.rng.range(-0.3, 0.3), r = i === 0 ? 0 : this.rng.range(90, 150);
       const q = wg.nearestFree(pos.x + Math.cos(ang) * r, pos.y + Math.sin(ang) * r, free);
       const mo = this.spawnMonster(g.fixe ? g.fixe[i] : this.rng.pick(g.sub.monsters), q.x, q.y);
       mo.group = g.id; g.members.push(mo);
