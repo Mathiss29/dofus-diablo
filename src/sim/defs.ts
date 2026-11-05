@@ -40,6 +40,10 @@ export interface SpellDef {
   stack?: { per: number; max: number; time: number };
   /** Part des dommages rendue en PV au lanceur (vol de vie). */
   lifesteal?: number;
+  /** Effets officiels : Érosion (part des dommages retirée aux PV max, Pression), retrait de PM (ralentit) et de PA (retarde ses attaques). */
+  erosion?: number; pmLoss?: number; paLoss?: number;
+  /** Choix 2B : l'effet qui caractérise le sort, poussé de +50 % (rage.signature) quand la Rage est pleine. */
+  rage?: 'knock' | 'length' | 'radius' | 'explode' | 'dash' | 'stack' | 'lifesteal' | 'erosion' | 'pm' | 'pa';
   /** Effet visuel (FX) : arc, line, burst, land. */
   fx: 'arc' | 'line' | 'burst' | 'land';
   /** Description officielle (spellsdataroot.descriptionId), pour l'infobulle. */
@@ -66,7 +70,8 @@ export interface ClassDef {
   /** XP pour passer du niveau n au niveau n+1 = xpBase × n. */
   xpBase: number; maxLevel: number;
   /** Jauge de classe (Rage du Iop) : se remplit en frappant et en prenant des coups ; pleine, le sort suivant fait +bonus. */
-  rage: { name: string; max: number; perHit: number; perHurt: number; bonus: number; area: number };
+  /** bonus : dommages en plus ; signature : multiplicateur de l'effet propre au sort (SpellDef.rage), 1,5 = +50 %. */
+  rage: { name: string; max: number; perHit: number; perHurt: number; bonus: number; signature: number };
   /** Attaque de base (clic gauche maintenu) : combo de 3 coups au corps à corps, ou un sort sans coût (basic) pour les classes à distance. */
   basic?: string;
   attaque: { name: string; element: Element; comboWindow: number; combo: ComboHit[] };
@@ -88,6 +93,10 @@ export interface MonsterDef {
   look: string; color: string; boss?: boolean; elite?: boolean;
   /** Monde ouvert : distance à laquelle il repère le joueur (défaut : OpenDef.aggro). */
   aggro?: number;
+  /** Officiel (tools/extraction/monster_stats.py) : niveau, résistances par élément en %, caractéristiques. */
+  level?: number;
+  res?: Partial<Record<Element, number>>;
+  caracs?: Partial<Record<'force' | 'intelligence' | 'chance' | 'agilite' | 'sagesse' | 'esquivePA' | 'esquivePM' | 'tacle' | 'fuite' | 'retraitPA', number>>;
   /** Les vrais sorts du monstre dans Dofus 3 (tools/extraction/monster_spells.py). Sans sorts : simple charge au corps à corps. */
   spells?: MonsterSpell[];
 }

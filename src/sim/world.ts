@@ -8,7 +8,9 @@ import { METIER_XP, RARITIES, rollItem, rollRarity, type Item, type ItemsData } 
 import { Player } from './player';
 import { planWave } from './waves';
 
-interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: number }
+interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: number;
+  /** Effets officiels : Érosion (part des dommages ôtée aux PV max), retrait de PM / PA. */
+  erosion?: number; pmLoss?: number; paLoss?: number }
 /** Butin au sol (choix 1C 2D 6A) : équipements et kamas seulement. Les Communs et les kamas filent vers le joueur
  *  qui passe près ; Magique et plus se ramassent d'un clic. Les ressources vont directement dans le sac. */
 export interface Drop { uid: number; x: number; y: number; item?: Item; kamas?: number; t: number; warned?: boolean }
@@ -232,7 +234,7 @@ export class World {
   // --- Flèches ---------------------------------------------------------------
   shoot(x: number, y: number, facing: number, hz: Extract<HitZone, { shape: 'projectile' }>, hit: HitDef, stun: number, area: number, spell: string) {
     this.projectiles.push({ id: this.nextId++, spell, x, y, dx: Math.cos(facing), dy: Math.sin(facing), left: hz.range, speed: hz.speed,
-      width: hz.width * area, explode: (hz.explode ?? 0) * area, pierce: !!hz.pierce, hit, stun, touched: new Set() });
+      width: hz.width, explode: (hz.explode ?? 0) * area, pierce: !!hz.pierce, hit, stun, touched: new Set() });
   }
   /** Projectile d'un monstre vers le joueur. */
   /** Projectile d'un sort de monstre (missileGfxId dans ses données), lancé vers le joueur. */
@@ -338,14 +340,21 @@ export class World {
       if (m.dead || m.state === 'spawn' || !test(m)) continue;
       n++;
       const crit = this.rng.next() < p.critChance;
-      const dmg = Math.round(p.damage(def.dmg, def.element ?? 'neutre') * this.rng.range(0.9, 1.1) * (crit ? cls.critMult : 1));
+      // Choix 19A : résistances officielles du monstre dans l'élément du coup (plafonnées à 50 %, comme Dofus)
+      const el = p.resolveElement(def.element ?? 'neutre'), res = Math.min(50, m.def.res?.[el] ?? 0);
+      const dmg = Math.max(1, Math.round(p.damage(def.dmg, def.element ?? 'neutre') * this.rng.range(0.9, 1.1) * (crit ? cls.critMult : 1) * (1 - res / 100)));
       m.hp -= dmg; m.flash = 0.09;
+      if (def.erosion) { m.maxHp = Math.max(1, m.maxHp - Math.round(dmg * def.erosion)); m.hp = Math.min(m.hp, m.maxHp); }
+      if (def.pmLoss) { m.haste = Math.min(m.haste, Math.max(0.3, 1 - 0.15 * def.pmLoss)); m.hasteT = Math.max(m.hasteT, TOUR);
+        this.emit({ k: 'status', x: m.x, y: m.y, text: `-${def.pmLoss} PM`, color: '#9ad15a' }); }
+      if (def.paLoss) { m.atkCd = Math.max(m.atkCd, 0) + 0.4 * def.paLoss;
+        this.emit({ k: 'status', x: m.x, y: m.y, text: `-${def.paLoss} PA`, color: '#5aa8ff' }); }
       const a = pushDir ?? Math.atan2(m.y - oy, m.x - ox);
       const kb = def.knock / m.def.mass;
       m.kx += Math.cos(a) * kb; m.ky += Math.sin(a) * kb;
       if (!m.def.boss) m.stun = Math.max(m.stun, stun || 0.12);   // petit vacillement : interrompt les télégraphes
       else if (stun) m.stun = Math.max(m.stun, stun * 0.3);
-      this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: dmg, crit, element: p.resolveElement(def.element ?? 'neutre') });
+      this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: dmg, crit, element: el });
       if (n <= 3) p.addRage(cls.rage.perHit, this);
       if (def.lifesteal) p.hp = Math.min(p.maxHp, p.hp + Math.round(dmg * def.lifesteal));   // la Rage monte avec les coups portés (3 cibles max par coup)
       if (m.hp <= 0) this.killMonster(m);

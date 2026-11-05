@@ -74,6 +74,35 @@ describe('Rage', () => {
     expect(boosted.rage).toBeLessThan(iop.rage.max);
   });
 
+  it('pleine, elle pousse l\'effet signature du sort de 50 % (Pression érode 15 % au lieu de 10 %)', () => {
+    const erode = (full: boolean) => {
+      const w = arena(7), p = w.player;
+      const m = w.spawnMonster('epouvanteur', p.x + 60, p.y);
+      m.state = 'chase';
+      p.rage = full ? iop.rage.max : 0;
+      w.drainEvents();
+      press(w, 'pression', { x: m.x, y: m.y });
+      idle(w, 0.5);
+      const dmg = w.drainEvents().filter(e => e.k === 'hit' && e.target === 'monster').reduce((a, e) => a + (e as { amount: number }).amount, 0);
+      return (m.def.hp - m.maxHp) / dmg;
+    };
+    expect(erode(false)).toBeCloseTo(0.1, 1);
+    expect(erode(true)).toBeCloseTo(0.15, 1);
+  });
+
+  it('les résistances officielles du monstre réduisent les dommages de leur élément', () => {
+    const w = arena(5), p = w.player;
+    const m = w.spawnMonster('epouvanteur', p.x + 300, p.y);
+    m.state = 'chase';
+    (m as { def: typeof m.def }).def = { ...m.def, res: { terre: 40, neutre: 0 } };   // terre et neutre suivent toutes deux la Force
+    const hit = (element: 'terre' | 'neutre') => {
+      let t = 0;
+      for (let i = 0; i < 30; i++) { m.hp = m.maxHp; w.hitCircle(m.x, m.y, 1, { dmg: 20, knock: 0, element }); t += m.maxHp - m.hp; }
+      return t;
+    };
+    expect(hit('terre')).toBeLessThan(hit('neutre') * 0.75);
+  });
+
   it('le Bond ne consomme pas la Rage', () => {
     const w = arena(), p = w.player;
     p.rage = iop.rage.max;

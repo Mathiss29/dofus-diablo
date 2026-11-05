@@ -262,7 +262,8 @@ export class Player extends Entity {
     let tx = this.x, ty = this.y;
     if (def.move) {
       const dx = aim.x - this.x, dy = aim.y - this.y, d = Math.hypot(dx, dy) || 1;
-      let L = Math.min(def.move.maxRange, d);
+      const sig = this.rageFull && def.rage === 'dash' ? this.cls.rage.signature : 1;   // Déferlement renforcé : avance plus loin
+      let L = Math.min(def.move.maxRange * sig, d);
       if (def.move.kind === 'dash') {
         // la ruée s'arrête devant le premier ennemi sur sa route
         for (const m of world.monsters) {
@@ -409,7 +410,9 @@ export class Player extends Entity {
       if (s.t < d.impactAt) this.setAnim(`${s.id}_charge`, s.t / d.impactAt);
       else this.setAnim(`${s.id}_hit`, (s.t - d.impactAt) / (d.duration - d.impactAt));
     } else this.animT = k;
-    const R = this.cls.rage, boost = s.boosted ? 1 + R.bonus : 1, area = s.boosted ? R.area : 1;
+    // Rage pleine (choix 2B) : dommages en plus, et l'effet qui caractérise le sort poussé de +50 %
+    const R = this.cls.rage, boost = s.boosted ? 1 + R.bonus : 1, sig = (k: SpellDef['rage']) => (s.boosted && d.rage === k ? R.signature : 1);
+    const area = Math.max(sig('length'), sig('radius'));
     const hz = d.hit;
     if (mv) {
       const kk = Math.min(1, s.t / d.impactAt);
@@ -429,17 +432,19 @@ export class Player extends Entity {
       let mult = boost;
       if (d.stack) {
         const st = this.stacks[s.id] ?? { n: 0, t: 0 };
-        mult *= 1 + d.stack.per * st.n;
+        mult *= 1 + d.stack.per * sig('stack') * st.n;
         this.stacks[s.id] = { n: Math.min(d.stack.max, st.n + 1), t: d.stack.time };
       }
-      const hit = { dmg: (d.dmg + (s.id === this.cls.basic ? this.weaponDamage() : 0)) * mult, knock: d.knock, element: d.element, lifesteal: d.lifesteal };
+      const hit = { dmg: (d.dmg + (s.id === this.cls.basic ? this.weaponDamage() : 0)) * mult, knock: d.knock * sig('knock'), element: d.element,
+        lifesteal: d.lifesteal && d.lifesteal * sig('lifesteal'), erosion: d.erosion && d.erosion * sig('erosion'),
+        pmLoss: d.pmLoss && Math.round(d.pmLoss * sig('pm')), paLoss: d.paLoss && Math.round(d.paLoss * sig('pa')) };
       let hits = 0, size = 0;
       if (hz.shape === 'cone') { size = hz.range * area; hits = world.hitCone(this.x, this.y, this.facing, size, (hz.arc * Math.PI) / 180, hit, d.stun); }
       else if (hz.shape === 'line') { size = hz.length * area; hits = world.hitLine(this.x, this.y, this.facing, size, hz.width * area, hit, d.stun); }
       else if (hz.shape === 'circle') { size = hz.radius * area; hits = world.hitCircle(this.x, this.y, size, hit, d.stun); }
       else {
         // Flèche : la zone (et les dommages) partent avec le projectile ; l'effet d'impact se joue à l'arrivée
-        world.shoot(this.x, this.y, this.facing, hz, hit, d.stun ?? 0, area, s.id);
+        world.shoot(this.x, this.y, this.facing, hz, hit, d.stun ?? 0, sig('explode'), s.id);
         size = hz.range;
       }
       if (hz.shape !== 'projectile') world.emit({ k: 'spell', fx: d.fx, id: s.id, x: this.x, y: this.y, facing: this.facing, size,

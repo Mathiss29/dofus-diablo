@@ -29,7 +29,7 @@
    "perHit": 4,
    "perHurt": 7,
    "bonus": 0.6,
-   "area": 1.25
+   "signature": 1.5
   },
   "attaque": {
    "name": "Coup de poing",
@@ -95,7 +95,9 @@
     "hitstop": 0.06,
     "shake": 0.005,
     "fx": "arc",
-    "desc": "Érode la cible et occasionne des dommages Terre."
+    "desc": "Érode la cible et occasionne des dommages Terre.",
+    "erosion": 0.1,
+    "rage": "erosion"
    },
    "intimidation": {
     "name": "Intimidation",
@@ -118,7 +120,8 @@
     "hitstop": 0.09,
     "shake": 0.009,
     "fx": "arc",
-    "desc": "Occasionne des dommages dans le meilleur élément du lanceur aux ennemis et repousse la cible."
+    "desc": "Occasionne des dommages dans le meilleur élément du lanceur aux ennemis et repousse la cible.",
+    "rage": "knock"
    },
    "epee": {
     "name": "Épée Céleste",
@@ -140,7 +143,8 @@
     "hitstop": 0.07,
     "shake": 0.007,
     "fx": "line",
-    "desc": "Occasionne des dommages Air en zone.\nN'affecte pas le lanceur."
+    "desc": "Occasionne des dommages Air en zone.\nN'affecte pas le lanceur.",
+    "rage": "length"
    },
    "deferlement": {
     "name": "Déferlement",
@@ -166,7 +170,8 @@
     "hitstop": 0.07,
     "shake": 0.008,
     "fx": "burst",
-    "desc": "Rapproche le lanceur vers la cible et occasionne des dommages Eau aux ennemis."
+    "desc": "Rapproche le lanceur vers la cible et occasionne des dommages Eau aux ennemis.",
+    "rage": "dash"
    },
    "fureur": {
     "name": "Fureur",
@@ -193,7 +198,8 @@
     "hitstop": 0.07,
     "shake": 0.007,
     "fx": "arc",
-    "desc": "Occasionne des dommages Terre.\nLes dommages du sort sont augmentés après chaque lancer. \n\nLes bonus se décrémentent si le sort n'est pas relancé."
+    "desc": "Occasionne des dommages Terre.\nLes dommages du sort sont augmentés après chaque lancer. \n\nLes bonus se décrémentent si le sort n'est pas relancé.",
+    "rage": "stack"
    },
    "bond": {
     "name": "Bond",
@@ -242,7 +248,8 @@
     "hitstop": 0.13,
     "shake": 0.018,
     "fx": "burst",
-    "desc": "Occasionne des dommages Terre.\nLes dommages du sort sont augmentés à la récupération du sort."
+    "desc": "Occasionne des dommages Terre.\nLes dommages du sort sont augmentés à la récupération du sort.",
+    "rage": "radius"
    }
   },
   "bar": [
@@ -286,7 +293,7 @@
    "perHit": 3,
    "perHurt": 5,
    "bonus": 0.6,
-   "area": 1.25
+   "signature": 1.5
   },
   "attaque": {
    "name": "Coup de poing",
@@ -353,7 +360,9 @@
     "shake": 0.004,
     "fx": "burst",
     "desc": "Retire des PM et occasionne des dommages Air.",
-    "pa": 2
+    "pa": 2,
+    "pmLoss": 2,
+    "rage": "pm"
    },
    "recul": {
     "name": "Flèche de Recul",
@@ -377,7 +386,8 @@
     "fx": "burst",
     "pa": 2,
     "stun": 0.4,
-    "desc": "Occasionne des dommages Air aux ennemis et repousse la cible."
+    "desc": "Occasionne des dommages Air aux ennemis et repousse la cible.",
+    "rage": "knock"
    },
    "glacee": {
     "name": "Flèche Glacée",
@@ -401,7 +411,9 @@
     "fx": "burst",
     "pa": 3,
     "stun": 0.5,
-    "desc": "Retire des PA et occasionne des dommages Eau.\nLes dommages du sort sont augmentés après son utilisation."
+    "desc": "Retire des PA et occasionne des dommages Eau.\nLes dommages du sort sont augmentés après son utilisation.",
+    "paLoss": 2,
+    "rage": "pa"
    },
    "barrage": {
     "name": "Flèche de Barrage",
@@ -423,7 +435,8 @@
     "shake": 0.008,
     "fx": "arc",
     "pa": 3,
-    "desc": "Occasionne des dommages Feu aux ennemis et repousse les cibles en zone."
+    "desc": "Occasionne des dommages Feu aux ennemis et repousse les cibles en zone.",
+    "rage": "knock"
    },
    "explosive": {
     "name": "Flèche Explosive",
@@ -447,7 +460,8 @@
     "shake": 0.009,
     "fx": "burst",
     "pa": 4,
-    "desc": "Occasionne des dommages Feu en zone."
+    "desc": "Occasionne des dommages Feu en zone.",
+    "rage": "explode"
    },
    "abolition": {
     "name": "Flèche d'Abolition",
@@ -472,7 +486,8 @@
     "fx": "burst",
     "pa": 3,
     "lifesteal": 0.4,
-    "desc": "Vole de la vie dans l'élément Terre.\nLes dommages sont plus importants sur les cibles ayant du bouclier.\n\nLa taille de la zone est augmentée après chaque lancer pour le tour en cours."
+    "desc": "Vole de la vie dans l'élément Terre.\nLes dommages sont plus importants sur les cibles ayant du bouclier.\n\nLa taille de la zone est augmentée après chaque lancer pour le tour en cours.",
+    "rage": "lifesteal"
    },
    "dispersion": {
     "name": "Flèche de Dispersion",
@@ -494,7 +509,8 @@
     "fx": "burst",
     "pa": 4,
     "stun": 0.4,
-    "desc": "Occasionne des dommages Air aux ennemis et repousse les cibles depuis le centre en zone.\nLa poussée est plus importante aux extrémités de la zone."
+    "desc": "Occasionne des dommages Air aux ennemis et repousse les cibles depuis le centre en zone.\nLa poussée est plus importante aux extrémités de la zone.",
+    "rage": "knock"
    },
    "pas_chasse": {
     "name": "Pas Chassé",

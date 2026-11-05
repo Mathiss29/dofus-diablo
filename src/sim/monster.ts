@@ -86,7 +86,7 @@ export class Monster extends Entity {
         this.hp = Math.min(this.maxHp, this.hp + this.maxHp * dt * 0.5);
         this.wanderT -= dt;
         if (this.wanderT < -6) { this.x = this.homeX; this.y = this.homeY; }   // coincé derrière un obstacle
-        if (!this.moveTo(this.homeX, this.homeY, D.speed * 1.4, dt)) { this.state = 'idle'; this.hp = this.maxHp; this.setAnim('idle'); }
+        if (!this.moveTo(this.homeX, this.homeY, D.speed * 1.4, dt)) { this.state = 'idle'; this.maxHp = this.def.hp; this.hp = this.maxHp; this.setAnim('idle'); }
         else this.setAnim('run');
         break;
       }

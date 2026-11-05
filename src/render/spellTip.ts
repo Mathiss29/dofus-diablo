@@ -5,6 +5,14 @@ import { ELEMENT_COLORS } from './fx';
 const ELEMENT_NAMES: Record<string, string> = { neutre: 'Neutre', terre: 'Terre', feu: 'Feu', eau: 'Eau', air: 'Air', meilleur: 'meilleur élément' };
 const n1 = (v: number) => (Math.round(v * 10) / 10).toString().replace('.', ',');
 
+/** Choix 2B : ce que la Rage pleine pousse de +50 % pour chaque sort. */
+const RAGE_TEXT: Record<NonNullable<SpellDef['rage']>, (d: SpellDef) => string> = {
+  knock: () => 'repousse 50 % plus loin', length: () => 'ligne 50 % plus longue', radius: () => 'zone 50 % plus grande',
+  explode: () => 'explosion 50 % plus grande', dash: () => 'avance 50 % plus loin', stack: d => `+${Math.round((d.stack?.per ?? 0) * 150)} % par lancer`,
+  lifesteal: d => `vole ${Math.round((d.lifesteal ?? 0) * 150)} % des dommages`, erosion: d => `Érosion ${Math.round((d.erosion ?? 0) * 150)} %`,
+  pm: d => `-${Math.round((d.pmLoss ?? 0) * 1.5)} PM`, pa: d => `-${Math.round((d.paLoss ?? 0) * 1.5)} PA`,
+};
+
 function zone(d: SpellDef): string {
   const h = d.hit;
   if (h.shape === 'cone') return h.arc >= 180 ? `Zone : demi-cercle devant soi (${h.range})` : `Zone : cône devant soi (${h.range})`;
@@ -31,6 +39,9 @@ export function spellTipHtml(p: Player, id: SkillId): string {
     d.stun ? `Étourdit ${n1(d.stun)} s` : '',
     d.stack ? `+${Math.round(d.stack.per * 100)} % par lancer (jusqu'à ${d.stack.max} fois)` : '',
     d.lifesteal ? `Vole ${Math.round(d.lifesteal * 100)} % des dommages en PV` : '',
+    d.erosion ? `Érosion ${Math.round(d.erosion * 100)} % (PV max retirés)` : '',
+    d.pmLoss ? `-${d.pmLoss} PM (ralentit la cible)` : '',
+    d.paLoss ? `-${d.paLoss} PA (retarde ses attaques)` : '',
     d.move ? `${d.move.kind === 'leap' ? 'Saut' : 'Ruée'} jusqu'à ${d.move.maxRange}` : '',
     d.charge ? 'Se charge avant de frapper' : '',
   ].filter(Boolean);
@@ -39,5 +50,5 @@ export function spellTipHtml(p: Player, id: SkillId): string {
     <div class="sub">${[cost, d.cooldown >= 1 ? `recharge ${n1(d.cooldown)} s` : '', key].filter(Boolean).join(' · ')}</div>
     ${d.desc ? `<div>${d.desc.replace(/\n+/g, '<br>')}</div>` : ''}
     <div class="cmp">${[dmg, zone(d), ...extra].filter(Boolean).join('<br>')}</div>
-    ${p.rageFull && !d.move ? `<div class="leg">${p.cls.rage.name} pleine : +${Math.round(p.cls.rage.bonus * 100)} % de dommages et zone plus grande</div>` : ''}`;
+    ${d.move?.kind === 'leap' ? '' : `<div class="leg" style="${p.rageFull ? '' : 'opacity:.6'}">${p.cls.rage.name}${p.rageFull ? ' pleine' : ''} : +${Math.round(p.cls.rage.bonus * 100)} % de dommages${d.rage ? `, ${RAGE_TEXT[d.rage](d)}` : ''}</div>`}`;
 }
