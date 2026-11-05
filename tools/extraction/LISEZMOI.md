@@ -59,7 +59,7 @@ Iop : Pression 802, Épée Céleste 801, Bond 811, Colère de Iop (13124) 800, C
 - Copier les gros bundles de textures UN PAR APPEL depuis le PC (en parallèle, les copies échouent).
 
 ## Monstres d'une sous-zone
-- `subareasdataroot.monsters` -> `monstersdataroot` (`look` = `{squelette|...|échelle}`) ; attaque = `animId` du premier sort
+- `subareasdataroot.monsters` -> `monstersdataroot` (`look` = `{squelette|...|échelle}` ; c'est ce squelette-là qu'il faut, PAS `gfxId` qui est un ancien numéro : le Sergent Chafer a gfxId 180 mais look {313}) ; attaque = `animId` du premier sort
   (`spells.boundScriptUsageData[].scriptId` -> `spellscriptsdataroot.rawParams`, ex. `animId:1` = `AnimAttaque1`).
 - Planche : `b_dump.py`, `build_scene.py`, `drop_shadow.py`, puis
   `BOX=-200,-400,200,100 node render.cjs scene.json tex.png raw "AnimStatique_1:1,AnimStatique_5:1,AnimCourse_1,AnimCourse_5,AnimAttaque0_1,AnimAttaque0_5,AnimHit_1,AnimHit_5,AnimMort_1,AnimMort_5" 1 2.5`

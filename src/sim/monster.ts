@@ -79,7 +79,7 @@ export class Monster extends Entity {
     const near = Math.hypot(player.x - this.x, player.y - this.y) <= this.radius + player.radius + 12;
     const speed = D.speed * this.haste * (near ? 1 - tackleSlow(player.tacle, tacleOf(D.caracs?.fuite ?? 0, D.caracs?.agilite ?? 0)) : 1);
     if (open && this.state !== 'idle' && this.state !== 'return'
-      && (player.dead || Math.hypot(this.x - this.homeX, this.y - this.homeY) > open.leash)) { this.state = 'return'; this.wanderT = 0; }
+      && (player.dead || dist > open.leash * 1.5 || Math.hypot(this.x - this.homeX, this.y - this.homeY) > open.leash)) { this.state = 'return'; this.wanderT = 0; }   // joueur perdu de vue ou laisse dépassée
     switch (this.state) {
       case 'idle': {
         if (!player.dead && dist < (D.aggro ?? open?.aggro ?? 250)) { world.aggroGroup(this); break; }
@@ -139,7 +139,7 @@ export class Monster extends Entity {
           if (this.kind === 'invoque') { /* pas de zone : l'invocation apparaît à son contact */ }
           else if (this.kind === 'target' || this.kind === 'self') {
             if (this.kind === 'self') { this.tx = this.x; this.ty = this.y; }
-            world.telegraphs.push({ kind: 'circle', x: this.tx, y: this.ty, r: zoneRadius(S), progress: k, danger: !S.allies });
+            if (!S.allies) world.telegraphs.push({ kind: 'circle', x: this.tx, y: this.ty, r: zoneRadius(S), progress: k, danger: true });
           } else {
             this.facing = Math.atan2(this.dirY, this.dirX);
             const len = this.kind === 'charge' ? this.chargeLen(S) + this.radius : this.kind === 'missile' ? this.missileRange(S) : D.lungeSpeed * D.lungeTime + this.radius;
@@ -243,11 +243,14 @@ export class Monster extends Entity {
       world.monsterMissile(this, S, this.missileRange(S));
     } else {
       const r = zoneRadius(S), el = (S.effects.find(e => e.k === 'dmg') as { element: string } | undefined)?.element ?? 'neutre';
+      // Boost d'alliés : sa zone officielle (ex. C63 = tout le combat) devient son groupe, à portée de voix
+      const vis = Math.min(r, CASE * 3);   // l'effet dessiné reste autour du lanceur, jamais sur toute la carte
       if (S.allies) {
-        for (const m of world.monsters) if (!m.dead && Math.hypot(m.x - this.tx, m.y - this.ty) <= r + m.radius) world.monsterSpellBuff(m, S);
+        for (const m of world.monsters) if (!m.dead && (m === this || (m.group >= 0 && m.group === this.group) || m.summoner === this)
+          && Math.hypot(m.x - this.tx, m.y - this.ty) <= Math.min(r, CASE * 8) + m.radius) world.monsterSpellBuff(m, S);
       } else if (Math.hypot(player.x - this.tx, player.y - this.ty) <= r + player.radius) world.monsterSpellHits(this, S, player);
-      if (this.kind === 'self') world.emit({ k: 'slam', x: this.tx, y: this.ty, radius: r });
-      world.emit({ k: 'spell', fx: 'burst', id: `m${S.id}`, x: this.tx, y: this.ty, facing: 0, size: r, arc: 0, element: el as never, big: false, boosted: false });
+      if (this.kind === 'self' && !S.allies) world.emit({ k: 'slam', x: this.tx, y: this.ty, radius: vis });
+      world.emit({ k: 'spell', fx: 'burst', id: `m${S.id}`, x: this.tx, y: this.ty, facing: 0, size: S.allies ? this.radius * 2 : vis, arc: 0, element: el as never, big: false, boosted: false });
     }
     this.endCast(world);
   }
