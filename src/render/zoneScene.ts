@@ -1,3 +1,4 @@
+import { v } from './assetUrl';
 import Phaser from 'phaser';
 import { GAME_DATA, ITEMS } from '../sim/data';
 import { GridMap, WorldGrid, type MapData, type WorldData } from '../sim/gridmap';
@@ -43,6 +44,8 @@ export class ZoneScene extends Phaser.Scene {
   private acc = 0;
   /** Le clic en cours a commencé sur l'interface : maintenir le bouton ne fait pas attaquer. */
   private uiClick = false;
+  /** Bouton gauche enfoncé depuis un clic DANS le jeu (Phaser voit aussi les clics sur les fenêtres HTML). */
+  private holding = false;
   /** Clic gauche en cours : sur le sol, sur un monstre, ou attaque sur place (Maj). */
   private clickMode: 'ground' | 'target' | 'place' | null = null;
   private clickTarget: number | null = null;
@@ -65,7 +68,7 @@ export class ZoneScene extends Phaser.Scene {
   preload() {
     Hud.preload(this);
     // Icônes des objets officiels : une seule planche
-    if (!this.textures.exists(ICON_SHEET.key)) this.load.spritesheet(ICON_SHEET.key, `${ASSETS}/${ICON_SHEET.url}`, { frameWidth: ICON_SHEET.cell, frameHeight: ICON_SHEET.cell });
+    if (!this.textures.exists(ICON_SHEET.key)) this.load.spritesheet(ICON_SHEET.key, v(`${ASSETS}/${ICON_SHEET.url}`), { frameWidth: ICON_SHEET.cell, frameHeight: ICON_SHEET.cell });
     const zone = GAME_DATA.zones[this.zoneId];
     // On ne charge que les planches utiles à cette zone
     const types = new Set<string>();
@@ -80,22 +83,22 @@ export class ZoneScene extends Phaser.Scene {
       const a = L.atlas;
       if (this.textures.exists(a) || seen.has(a)) continue;
       seen.add(a);
-      if (L.multi) this.load.multiatlas(a, `${ASSETS}/sprites/${a}.json`, `${ASSETS}/sprites/`);
-      else this.load.atlas(a, `${ASSETS}/sprites/${a}.webp`, `${ASSETS}/sprites/${a}.json`);
+      if (L.multi) this.load.multiatlas(a, v(`${ASSETS}/sprites/${a}.json`), `${ASSETS}/sprites/`);
+      else this.load.atlas(a, v(`${ASSETS}/sprites/${a}.webp`), v(`${ASSETS}/sprites/${a}.json`));
     }
     if (zone.open) {
       // Monde ouvert : monde.json décrit les cartes ; on ne charge d'abord que le ciel et les cartes autour du départ,
       // les autres se chargent en jeu quand le joueur approche (WorldView)
       const open = zone.open, dir = worldDir(open.world);
-      this.load.json(WorldView.key(open.world, 'monde'), `${dir}/monde.json`);
+      this.load.json(WorldView.key(open.world, 'monde'), v(`${dir}/monde.json`));
       this.load.once(`filecomplete-json-${WorldView.key(open.world, 'monde')}`, (_: string, __: string, data: WorldData) =>
         WorldView.preload(this, data, dir, open.world, open.start));
       return;
     }
     const dir = mapDir(zone.map!.coords), key = dir.replace(/\W/g, '_');
-    this.load.json(`${key}_carte`, `${dir}/carte.json`);
-    this.load.image(`${key}_sol`, `${dir}/sol.webp`);
-    this.load.atlas(`${key}_decor`, `${dir}/decor.webp`, `${dir}/decor.json`);
+    this.load.json(`${key}_carte`, v(`${dir}/carte.json`));
+    this.load.image(`${key}_sol`, v(`${dir}/sol.webp`));
+    this.load.atlas(`${key}_decor`, v(`${dir}/decor.webp`), v(`${dir}/decor.json`));
   }
 
   create() {
@@ -132,7 +135,7 @@ export class ZoneScene extends Phaser.Scene {
     if (mini && this.worldView?.sky) mini.ignore(this.worldView.sky);
     this.windows?.destroy();
     this.windows = new Windows(this.world);
-    this.windows.portrait = this.textures.getBase64(LOOKS[this.classId].atlas, 'AnimStatiqueExplo0_1_0');
+    this.windows.portrait = v(`${ASSETS}/ui/perso_${this.classId}.png`);   // rendu en grand (perso_planche : render.cjs échelle 2,2)
     this.events.once('shutdown', () => { this.windows?.destroy(); this.windows = null; });
     this.hud.onSlotHover = (id, x, y) => {
       if (!id) { this.windows?.hideTip(); return; }
@@ -165,12 +168,16 @@ export class ZoneScene extends Phaser.Scene {
       if (over.length || this.hud.blocks(p.x, p.y)) { this.uiClick = true; return; }
       this.uiClick = false;
       if (p.rightButtonDown()) { this.pressed = cls.favorite; return; }
+      this.holding = true;
       if (this.keys.SHIFT.isDown) { this.pressed = 'attaque'; this.clickMode = 'place'; return; }
       const m = this.monsterUnder(p);
       this.clickMode = m ? 'target' : 'ground';
       this.clickTarget = m?.id ?? null;
       if (!m) this.moveMarker(p);
     });
+    const release = () => { this.holding = false; };
+    window.addEventListener('pointerup', release);
+    this.events.once('shutdown', () => window.removeEventListener('pointerup', release));
     this.keys.SPACE.on('down', () => { this.pressed = cls.mobility; });
     this.keys.E.on('down', () => { this.potion = true; });
     ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX'].forEach((k, i) => this.keys[k].on('down', () => { if (cls.bar[i]) this.pressed = cls.bar[i]; }));
@@ -215,7 +222,7 @@ export class ZoneScene extends Phaser.Scene {
 
   private readInput(): PlayerInput {
     const ptr = this.input.activePointer, wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
-    const aim = ISO.toWorld(wp.x, wp.y), held = ptr.leftButtonDown() && !this.uiClick;
+    const aim = ISO.toWorld(wp.x, wp.y), held = this.holding && ptr.leftButtonDown() && !this.uiClick;
     const input: PlayerInput = { move: { x: 0, y: 0 }, aim, pressed: this.pressed, potion: this.potion,
       holdAttack: held && this.clickMode === 'place' };
     if (held && this.clickMode === 'ground') input.dest = aim;

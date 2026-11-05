@@ -27,6 +27,7 @@ export function spellTipHtml(p: Player, id: SkillId): string {
   const cost = d.pm ? `${d.pm} PM` : d.pa ? `${d.pa} PA` : 'Sans coût';
   const key = id === p.autoAttack ? 'Auto-attaque · clic gauche' : id === p.cls.mobility ? 'Déplacement · Espace' : id === p.cls.favorite ? 'Sort favori · clic droit' : '';
   const extra = [
+    id === p.autoAttack ? `${n1(1 / p.attackInterval())} attaque(s) par seconde (Vitesse d'attaque : +${p.stat('vitesse')} %)` : '',
     d.stun ? `Étourdit ${n1(d.stun)} s` : '',
     d.stack ? `+${Math.round(d.stack.per * 100)} % par lancer (jusqu'à ${d.stack.max} fois)` : '',
     d.lifesteal ? `Vole ${Math.round(d.lifesteal * 100)} % des dommages en PV` : '',

@@ -192,6 +192,7 @@ export class Player extends Entity {
     const sp = this.spell(id);
     if (!sp && id !== 'attaque') return false;
     if (sp && this.cd[id] > 0) return false;
+    if (id === this.autoAttack && this.autoCd > 0) return false;
     if (!this.hasResource(id)) return false;
     if (this.state === 'free' || !this.skill) return true;
     const s = this.skill;
@@ -200,7 +201,17 @@ export class Player extends Entity {
     return s.t >= (s.def.cancelAt ?? s.def.duration);     // sinon on attend la fenêtre d'annulation
   }
 
+  /** Temps mini entre deux auto-attaques : 1 / (attaques par seconde de l'arme x (1 + Vitesse d'attaque %)). */
+  attackInterval(): number {
+    const aps = this.spell(this.autoAttack)?.aps ?? Player.BASE_APS;
+    return 1 / (aps * (1 + this.stat('vitesse') / 100));
+  }
+  static readonly BASE_APS = 1.2;
+  /** Recharge de l'auto-attaque en cours. */
+  autoCd = 0;
+
   start(id: SkillId, aim: { x: number; y: number }, world: World) {
+    if (id === this.autoAttack) this.autoCd = this.attackInterval();
     if (id === 'attaque') {
       const A = this.cls.attaque;
       const idx = this.comboTimer > 0 ? (this.combo + 1) % A.combo.length : 0;
@@ -242,6 +253,7 @@ export class Player extends Entity {
   update(dt: number, input: PlayerInput, world: World) {
     this.age += dt;
     for (const k of Object.keys(this.cd)) this.cd[k] = Math.max(0, this.cd[k] - dt);
+    this.autoCd = Math.max(0, this.autoCd - dt);
     for (const [k, s] of Object.entries(this.stacks)) { s.t -= dt; if (s.t <= 0) delete this.stacks[k]; }
     this.invuln = Math.max(0, this.invuln - dt);
     this.potionCd = Math.max(0, this.potionCd - dt);
@@ -268,7 +280,7 @@ export class Player extends Entity {
         aim = { x: m.x, y: m.y };
         if (Math.hypot(m.x - this.x, m.y - this.y) <= this.attackReach() + m.radius) {
           this.path = [];
-          if (!this.buffer) { this.buffer = this.autoAttack; this.bufferT = 0.05; this.chaseId = null; }
+          if (!this.buffer) { this.buffer = this.autoAttack; this.bufferT = 0.05; }   // la poursuite s'arrête au premier coup porté
         } else if (this.repathT <= 0 || !this.path.length) { this.path = world.findPath(this, m); this.repathT = 0.2; }
       }
     }
@@ -285,6 +297,7 @@ export class Player extends Entity {
       if (this.canStart(this.buffer)) {
         // un sort lancé arrête le déplacement à la souris (sauf l'auto-attaque d'une poursuite, déjà à portée)
         if (this.buffer !== this.autoAttack) { this.path = []; this.chaseId = null; this.dest = null; }
+        else this.chaseId = null;
         this.endSkill(); this.start(this.buffer, aim, world); this.buffer = null;
       }
       else if (this.bufferT <= 0) this.buffer = null;

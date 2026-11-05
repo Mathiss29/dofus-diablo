@@ -20,7 +20,7 @@ export class Monster extends Entity {
   stun = 0;
   dirX = 1; dirY = 0;
   hitDone = false;
-  mode: 'lunge' | 'slam' = 'lunge';
+  mode: 'lunge' | 'slam' | 'shoot' = 'lunge';
 
   constructor(id: number, readonly type: string, readonly def: MonsterDef, x: number, y: number, world: World) {
     super(id, x, y, def.radius, def.hp);
@@ -72,6 +72,12 @@ export class Monster extends Entity {
         if (dist < range && this.atkCd <= 0 && (!D.slamRange || dist > D.slamRange)) {
           this.state = 'windup'; this.mode = 'lunge'; this.t = D.windup; this.dirX = dx / dist; this.dirY = dy / dist; break;
         }
+        // Tireur : à portée et sans obstacle, il s'arrête et lance un projectile
+        const R = D.ranged;
+        if (R && dist >= range && dist < R.range && world.clearShot(this, player)) {
+          if (this.atkCd <= 0) { this.state = 'windup'; this.mode = 'shoot'; this.t = R.windup; this.dirX = dx / dist; this.dirY = dy / dist; break; }
+          if (dist < R.range * 0.8) { this.setAnim('idle'); break; }   // garde ses distances en attendant
+        }
         if (dist > this.radius + player.radius + 4) { this.x += (dx / dist) * D.speed * dt; this.y += (dy / dist) * D.speed * dt; this.setAnim('run'); }
         else this.setAnim('idle');
         break;
@@ -87,6 +93,15 @@ export class Monster extends Entity {
             world.emit({ k: 'slam', x: this.x, y: this.y, radius: D.slamRadius! });
             world.emit({ k: 'impact', hitstop: 0, shake: 0.012, big: false });
             this.state = 'recover'; this.t = D.recover; this.atkCd = world.rng.range(1.2, 2);
+          }
+        } else if (this.mode === 'shoot') {
+          const R = D.ranged!, k = 1 - this.t / R.windup;
+          this.setAnim('windup', k);
+          this.facing = Math.atan2(this.dirY, this.dirX);
+          world.telegraphs.push({ kind: 'rect', x: this.x, y: this.y, facing: this.facing, len: R.range, w: R.width, progress: k, danger: true });
+          if (this.t <= 0) {
+            world.enemyShoot(this.x + this.dirX * this.radius, this.y + this.dirY * this.radius, this.facing, R, R.dmg ?? D.dmg);
+            this.state = 'recover'; this.t = D.recover; this.atkCd = world.rng.range(1.6, 2.6);
           }
         } else {
           const k = 1 - this.t / D.windup;

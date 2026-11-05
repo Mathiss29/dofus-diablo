@@ -3,7 +3,7 @@ import type { Rng } from './math';
 /** Caractéristiques du perso (noms Dofus). Les élémentaires boostent les sorts de leur élément :
  *  terre = force, feu = intelligence, eau = chance, air = agilité (comme dans Dofus : +1 % par point). */
 export const STATS = ['vitalite', 'sagesse', 'force', 'intelligence', 'chance', 'agilite', 'puissance', 'dommages', 'critique', 'soins',
-  'pa', 'pm', 'prospection', 'dommagesTerre', 'dommagesFeu', 'dommagesEau', 'dommagesAir', 'dommagesNeutre'] as const;
+  'pa', 'pm', 'prospection', 'vitesse', 'dommagesTerre', 'dommagesFeu', 'dommagesEau', 'dommagesAir', 'dommagesNeutre'] as const;
 export type Stat = typeof STATS[number];
 export type Stats = Partial<Record<Stat, number>>;
 /** Les 6 caractéristiques où l'on place ses 5 points par niveau (choix 6C). */
@@ -11,7 +11,7 @@ export const BASE_STATS: Stat[] = ['vitalite', 'sagesse', 'force', 'intelligence
 
 export const STAT_NAMES: Record<Stat, string> = {
   vitalite: 'Vitalité', sagesse: 'Sagesse', force: 'Force', intelligence: 'Intelligence', chance: 'Chance', agilite: 'Agilité',
-  puissance: 'Puissance', dommages: 'Dommages', critique: '% Critique', soins: 'Soins', pa: 'PA', pm: 'PM', prospection: 'Prospection',
+  puissance: 'Puissance', dommages: 'Dommages', critique: '% Critique', soins: 'Soins', pa: 'PA', pm: 'PM', prospection: 'Prospection', vitesse: '% Vitesse d\'attaque',
   dommagesTerre: 'Dommages Terre', dommagesFeu: 'Dommages Feu', dommagesEau: 'Dommages Eau', dommagesAir: 'Dommages Air', dommagesNeutre: 'Dommages Neutre',
 };
 
@@ -84,11 +84,11 @@ export function rollItem(id: string, def: ItemDef, rarity: Rarity, rng: Rng, uid
   }
   const extra: Stat[] = [];
   const n = { commun: 0, magique: 1, rare: 2, legendaire: 2 }[rarity];
-  const pool: Stat[] = ['vitalite', 'force', 'intelligence', 'chance', 'agilite', 'sagesse', 'critique', 'prospection'];
+  const pool: Stat[] = ['vitalite', 'force', 'intelligence', 'chance', 'agilite', 'sagesse', 'critique', 'prospection', 'vitesse'];
   for (let i = 0; i < n; i++) {
     const free = pool.filter(s => stats[s] === undefined);
     if (!free.length) break;
-    const s = rng.pick(free), base = s === 'critique' ? 1 + def.level / 25 : s === 'vitalite' ? 4 + def.level : 2 + def.level / 2;
+    const s = rng.pick(free), base = s === 'critique' || s === 'vitesse' ? 2 + def.level / 20 : s === 'vitalite' ? 4 + def.level : 2 + def.level / 2;
     stats[s] = Math.max(1, Math.round(base * rng.range(0.6, 1)));
     extra.push(s);
   }

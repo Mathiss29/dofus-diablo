@@ -214,7 +214,8 @@ export class Windows {
           <div><span>Points de vie</span><b>${Math.ceil(p.hp)} / ${p.maxHp}</b></div>
           <div><span>PA · PM</span><b>${p.paMax} · ${p.pmMax}</b></div>
           ${BASE_STATS.map(k => `<div><span>${STAT_NAMES[k]}</span><span><b>${st(k)}</b><span class="plus ${p.points ? '' : 'off'}" data-plus="${k}" title="Maj : +10">+</span></span></div>`).join('')}
-          ${(['puissance', 'dommages', 'critique', 'prospection', 'soins'] as Stat[]).map(k => `<div><span>${STAT_NAMES[k]}</span><b>${k === 'critique' ? Math.round(p.critChance * 100) : st(k)}</b></div>`).join('')}
+          <div><span>Auto-attaque</span><b>${(1 / p.attackInterval()).toFixed(2)} / s</b></div>
+          ${(['puissance', 'dommages', 'critique', 'vitesse', 'prospection', 'soins'] as Stat[]).map(k => `<div><span>${STAT_NAMES[k]}</span><b>${k === 'critique' ? Math.round(p.critChance * 100) : st(k)}</b></div>`).join('')}
         </div>
         <div class="hint">Force : sorts Terre · Intelligence : Feu · Chance : Eau · Agilité : Air (+1 % de dommages par point). Vitalité : +1 PV. Sagesse : +1 % d'XP.</div>
       </div>`;

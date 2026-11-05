@@ -5,6 +5,7 @@ import { GridMap, type MapData } from '../src/sim/gridmap';
 import { NO_INPUT, type PlayerInput } from '../src/sim/input';
 import { Rng } from '../src/sim/math';
 import { planWave } from '../src/sim/waves';
+import { Player } from '../src/sim/player';
 import { World } from '../src/sim/world';
 
 const carte = JSON.parse(readFileSync(new URL('../public/assets/cartes/5_-27/carte.json', import.meta.url), 'utf8')) as MapData;
@@ -161,5 +162,30 @@ describe('déplacement à la souris', () => {
     const hp = m.hp;
     for (let i = 0; i < 60 * 4 && m.hp === hp; i++) w.step(STEP, { ...NO_INPUT, target: m.id, aim: { x: m.x, y: m.y } });
     expect(m.hp).toBeLessThan(hp);
+  });
+});
+
+describe('cadence et attaques à distance', () => {
+  it('l\'auto-attaque attend sa recharge, et la Vitesse d\'attaque la raccourcit', () => {
+    const w = newWorld(), p = w.player;
+    const m = w.spawnMonster('pissenlit', p.x + 40, p.y); m.state = 'chase';
+    const swings = () => { let n = 0; for (let i = 0; i < 120; i++) { w.step(STEP, { ...NO_INPUT, aim: { x: m.x, y: m.y }, holdAttack: true }); if (p.state === 'skill' && p.skill?.t === STEP) n++; } return n; };
+    m.hp = m.maxHp = 1e6;
+    const slow = swings();
+    expect(slow).toBeLessThanOrEqual(Math.ceil(2 / p.attackInterval()) + 1);
+    p.stats.vitesse = 100;
+    expect(p.attackInterval()).toBeLessThan(1 / Player.BASE_APS);
+    expect(swings()).toBeGreaterThan(slow);
+  });
+
+  it('un Feu Follet à distance tire une boule qui blesse le joueur', () => {
+    const w = newWorld(), p = w.player;
+    const m = w.spawnMonster('feu_follet', p.x + 200, p.y); m.state = 'chase'; m.atkCd = 0;
+    expect(GAME_DATA.monsters.feu_follet.ranged).toBeTruthy();
+    const hp = p.hp;
+    let shot = false;
+    for (let i = 0; i < 60 * 3 && p.hp === hp; i++) { w.step(STEP, NO_INPUT); shot ||= w.projectiles.some(q => q.hostile); }
+    expect(shot).toBe(true);
+    expect(p.hp).toBeLessThan(hp);
   });
 });

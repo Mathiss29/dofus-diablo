@@ -1,3 +1,4 @@
+import { v } from './assetUrl';
 import Phaser from 'phaser';
 import { GAME_DATA } from '../sim/data';
 import { ISO } from '../sim/iso';
@@ -46,14 +47,14 @@ interface FeedLine { text: Txt; t: number }
  *  - en bas à gauche, le suivi (à la place du chat) ; en bas à droite, le butin. */
 export class Hud {
   static preload(scene: Phaser.Scene) {
-    for (const k of UI_IMAGES) if (!scene.textures.exists(k)) scene.load.image(k, `${UI}/${k}.png`);
-    for (const [k] of MENUS) if (!scene.textures.exists(`menu_${k}`)) scene.load.image(`menu_${k}`, `${UI}/menu/${k}.png`);
-    for (const k of Object.values(HEADS)) if (!scene.textures.exists(k)) scene.load.image(k, `${UI}/${k}.png`);
+    for (const k of UI_IMAGES) if (!scene.textures.exists(k)) scene.load.image(k, v(`${UI}/${k}.png`));
+    for (const [k] of MENUS) if (!scene.textures.exists(`menu_${k}`)) scene.load.image(`menu_${k}`, v(`${UI}/menu/${k}.png`));
+    for (const k of Object.values(HEADS)) if (!scene.textures.exists(k)) scene.load.image(k, v(`${UI}/${k}.png`));
     const icons = new Set<number>();
     for (const c of Object.values(GAME_DATA.classes)) for (const s of Object.values(c.spells)) icons.add(s.icon);
-    for (const i of icons) if (!scene.textures.exists(`sort_${i}`)) scene.load.image(`sort_${i}`, `${UI}/sorts/sort_${i}.png`);
+    for (const i of icons) if (!scene.textures.exists(`sort_${i}`)) scene.load.image(`sort_${i}`, v(`${UI}/sorts/sort_${i}.png`));
     // Auto-attaque à l'arme : icônes officielles weapon_<typeId> (arme_0 = sans arme)
-    for (const t of [0, 2, 3, 4, 5, 6, 7, 8, 19, 22]) if (!scene.textures.exists(`arme_${t}`)) scene.load.image(`arme_${t}`, `${UI}/sorts/arme_${t}.png`);
+    for (const t of [0, 2, 3, 4, 5, 6, 7, 8, 19, 22]) if (!scene.textures.exists(`arme_${t}`)) scene.load.image(`arme_${t}`, v(`${UI}/sorts/arme_${t}.png`));
   }
 
   /** Clic sur une icône de la colonne de menus (le jeu ne se met pas en pause : multijoueur prévu). */

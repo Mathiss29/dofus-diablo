@@ -1,5 +1,5 @@
 import { angleDiff, Rng } from './math';
-import type { Element, GameData, HitZone, SubAreaDef, ZoneDef } from './defs';
+import type { Element, GameData, HitZone, MonsterDef, SubAreaDef, ZoneDef } from './defs';
 import type { SimEvent, Telegraph } from './events';
 import { GridMap, WorldGrid } from './gridmap';
 import type { PlayerInput } from './input';
@@ -14,7 +14,9 @@ export interface Drop { uid: number; x: number; y: number; item?: Item; resource
 
 /** Flèche en vol (Crâ). */
 export interface Projectile { id: number; spell: string; x: number; y: number; dx: number; dy: number; left: number; speed: number; width: number;
-  explode: number; pierce: boolean; hit: HitDef; stun: number; touched: Set<number> }
+  explode: number; pierce: boolean; hit: HitDef; stun: number; touched: Set<number>;
+  /** Tiré par un monstre : touche le joueur, pas les monstres. */
+  hostile?: boolean }
 
 /** Monde ouvert : un groupe de monstres posé sur une carte Dofus, qui réapparaît quand il a été vaincu. */
 interface MonsterGroup { id: number; map: string; sub: SubAreaDef; members: Monster[]; timer: number; cleared: boolean; x: number; y: number }
@@ -165,6 +167,8 @@ export class World {
   walkable(x: number, y: number) { return this.map.walkable(x, y); }
   /** Chemin à pied (A* sur les cases de Dofus) vers un point. */
   findPath(from: { x: number; y: number }, to: { x: number; y: number }) { return this.map.findPath(from, to); }
+  /** Ligne de tir sans obstacle (cases marchables) entre deux points. */
+  clearShot(from: { x: number; y: number }, to: { x: number; y: number }) { return this.map.clearLine(from, to); }
 
   /** Avance la simulation de dt secondes. */
   step(dt: number, input: PlayerInput) {
@@ -224,10 +228,25 @@ export class World {
     this.projectiles.push({ id: this.nextId++, spell, x, y, dx: Math.cos(facing), dy: Math.sin(facing), left: hz.range, speed: hz.speed,
       width: hz.width * area, explode: (hz.explode ?? 0) * area, pierce: !!hz.pierce, hit, stun, touched: new Set() });
   }
+  /** Projectile d'un monstre vers le joueur. */
+  enemyShoot(x: number, y: number, facing: number, r: NonNullable<MonsterDef['ranged']>, dmg: number) {
+    this.projectiles.push({ id: this.nextId++, spell: 'monstre', x, y, dx: Math.cos(facing), dy: Math.sin(facing), left: r.range * 1.25,
+      speed: r.speed, width: r.width, explode: 0, pierce: false, hit: { dmg, knock: 0, element: r.element }, stun: 0, touched: new Set(), hostile: true });
+  }
   private updateProjectiles(dt: number) {
     for (const pr of this.projectiles) {
       const st = Math.min(pr.left, pr.speed * dt);
       pr.x += pr.dx * st; pr.y += pr.dy * st; pr.left -= st;
+      if (pr.hostile) {
+        const p = this.player;
+        if (!this.walkable(pr.x, pr.y)) pr.left = 0;   // arrêté par le décor
+        else if (!p.dead && Math.hypot(p.x - pr.x, p.y - pr.y) <= p.radius + pr.width) {
+          p.hurt(pr.hit.dmg, pr.x - pr.dx * 20, pr.y - pr.dy * 20, this); pr.left = 0;
+        }
+        if (pr.left <= 0) this.emit({ k: 'spell', fx: 'burst', id: pr.spell, x: pr.x, y: pr.y, facing: Math.atan2(pr.dy, pr.dx), size: 18, arc: 0,
+          element: pr.hit.element ?? 'neutre', big: false, boosted: false });
+        continue;
+      }
       const target = this.monsters.find(m => !m.dead && m.state !== 'spawn' && !pr.touched.has(m.id) && Math.hypot(m.x - pr.x, m.y - pr.y) <= m.radius + pr.width);
       let end = pr.left <= 0;
       if (target) {
