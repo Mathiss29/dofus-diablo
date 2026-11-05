@@ -9093,6 +9093,71 @@
    "icon": 17048,
    "level": 8
   },
+  "311": {
+   "name": "Eau Potable",
+   "icon": 15026,
+   "level": 1
+  },
+  "16522": {
+   "name": "Peau de Gloot",
+   "icon": 164066,
+   "level": 2
+  },
+  "2477": {
+   "name": "Ceinture de l'aventurier",
+   "icon": 10033,
+   "level": 6
+  },
+  "1782": {
+   "name": "Goujon",
+   "icon": 41294,
+   "level": 1
+  },
+  "16515": {
+   "name": "Queue de Chapardam",
+   "icon": 65767,
+   "level": 4
+  },
+  "2475": {
+   "name": "Anneau de l'Aventurier",
+   "icon": 9048,
+   "level": 4
+  },
+  "303": {
+   "name": "Bois de Frêne",
+   "icon": 38017,
+   "level": 1
+  },
+  "310": {
+   "name": "Os de Chafer",
+   "icon": 47015,
+   "level": 5
+  },
+  "16524": {
+   "name": "Relique d'Incarnam",
+   "icon": 164068,
+   "level": 5
+  },
+  "2474": {
+   "name": "Chapeau de l'Aventurier",
+   "icon": 16044,
+   "level": 9
+  },
+  "16523": {
+   "name": "Volve d'Aminite",
+   "icon": 119014,
+   "level": 5
+  },
+  "16999": {
+   "name": "Poudre d'Aminite",
+   "icon": 48670,
+   "level": 1
+  },
+  "312": {
+   "name": "Fer",
+   "icon": 39024,
+   "level": 1
+  },
   "16670": {
    "name": "Bouillon de Chair",
    "icon": 69741,
@@ -9786,6 +9851,233 @@
    {
     "item": "2473",
     "chance": 1.18
+   }
+  ],
+  "plikplok": [
+   {
+    "item": "311",
+    "chance": 59.0
+   },
+   {
+    "item": "16663",
+    "chance": 59.0,
+    "metier": {
+     "id": 41,
+     "min": 1
+    },
+    "chasse": true
+   },
+   {
+    "item": "16522",
+    "chance": 59.0
+   },
+   {
+    "item": "2477",
+    "chance": 1.76
+   },
+   {
+    "item": "1782",
+    "chance": 50.0
+   }
+  ],
+  "petit_gloot": [
+   {
+    "item": "16663",
+    "chance": 59.0,
+    "metier": {
+     "id": 41,
+     "min": 1
+    },
+    "chasse": true
+   },
+   {
+    "item": "16522",
+    "chance": 59.0
+   },
+   {
+    "item": "311",
+    "chance": 59.0
+   },
+   {
+    "item": "2477",
+    "chance": 1.76
+   },
+   {
+    "item": "1782",
+    "chance": 50.0
+   }
+  ],
+  "ronronchon": [
+   {
+    "item": "16515",
+    "chance": 58.0
+   },
+   {
+    "item": "1984",
+    "chance": 58.0
+   },
+   {
+    "item": "16663",
+    "chance": 58.0,
+    "metier": {
+     "id": 41,
+     "min": 1
+    },
+    "chasse": true
+   },
+   {
+    "item": "2475",
+    "chance": 2.31
+   },
+   {
+    "item": "303",
+    "chance": 50.0
+   }
+  ],
+  "tigrimas": [
+   {
+    "item": "16515",
+    "chance": 58.0
+   },
+   {
+    "item": "16663",
+    "chance": 58.0,
+    "metier": {
+     "id": 41,
+     "min": 1
+    },
+    "chasse": true
+   },
+   {
+    "item": "1984",
+    "chance": 58.0
+   },
+   {
+    "item": "2475",
+    "chance": 2.32
+   },
+   {
+    "item": "303",
+    "chance": 50.0
+   }
+  ],
+  "chafer_debutant": [
+   {
+    "item": "310",
+    "chance": 58.0
+   },
+   {
+    "item": "16663",
+    "chance": 58.0,
+    "metier": {
+     "id": 41,
+     "min": 1
+    },
+    "chasse": true
+   },
+   {
+    "item": "16524",
+    "chance": 58.0
+   },
+   {
+    "item": "2474",
+    "chance": 1.16
+   }
+  ],
+  "chafer_furtif": [
+   {
+    "item": "16663",
+    "chance": 58.0,
+    "metier": {
+     "id": 41,
+     "min": 1
+    },
+    "chasse": true
+   },
+   {
+    "item": "16524",
+    "chance": 58.0
+   },
+   {
+    "item": "310",
+    "chance": 58.0
+   },
+   {
+    "item": "2474",
+    "chance": 1.16
+   }
+  ],
+  "chafer_eclaireur": [
+   {
+    "item": "310",
+    "chance": 58.0
+   },
+   {
+    "item": "16524",
+    "chance": 58.0
+   },
+   {
+    "item": "16663",
+    "chance": 58.0,
+    "metier": {
+     "id": 41,
+     "min": 1
+    },
+    "chasse": true
+   },
+   {
+    "item": "2474",
+    "chance": 1.16
+   }
+  ],
+  "chafer_piquier": [
+   {
+    "item": "310",
+    "chance": 58.0
+   },
+   {
+    "item": "16524",
+    "chance": 58.0
+   },
+   {
+    "item": "16663",
+    "chance": 58.0,
+    "metier": {
+     "id": 41,
+     "min": 1
+    },
+    "chasse": true
+   },
+   {
+    "item": "2474",
+    "chance": 1.15
+   }
+  ],
+  "aminite": [
+   {
+    "item": "16523",
+    "chance": 58.0
+   },
+   {
+    "item": "1984",
+    "chance": 58.0
+   },
+   {
+    "item": "16663",
+    "chance": 58.0,
+    "metier": {
+     "id": 41,
+     "min": 1
+    },
+    "chasse": true
+   },
+   {
+    "item": "16999",
+    "chance": 48.0
+   },
+   {
+    "item": "312",
+    "chance": 100.0
    }
   ]
  },

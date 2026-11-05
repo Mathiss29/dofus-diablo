@@ -53,7 +53,9 @@ Iop : Pression 802, Épée Céleste 801, Bond 811, Colère de Iop (13124) 800, C
   Sortie : `monde.json` (grille, cases marchables, sous-zone et décor de chaque carte), un `sol_x_y.webp` par carte (rogné pile au raccord
   côté voisin pour que le ciel d'une carte ne recouvre pas le sol de l'autre), et tout le décor dédoublonné dans `decor.json` + `decor_N.webp`
   (multiatlas Phaser, pages de 4096).
-- Incarnam (zone 45) : Champs 444, Pâturages 445, Route des âmes 450 = 24 cartes, bundles mapdata `world_468` et `world_587`.
+- Incarnam (zone 45) : 50 cartes du dehors (`incarnam_cartes.json`) : Route des âmes 450, Champs 444, Pâturages 445, Lac 442, Forêt 443,
+  Cimetière 449 ; bundles mapdata `world_468` et `world_587`. Les cartes en (0,0) et celles de `worldMap` -1 sont des intérieurs
+  (Mine, Taverne, Crypte, Queue du Dragon, maisons) : le lien porte → intérieur n'est pas dans le client (`m_interactionId`, côté serveur).
 - Copier les gros bundles de textures UN PAR APPEL depuis le PC (en parallèle, les copies échouent).
 
 ## Monstres d'une sous-zone
@@ -62,6 +64,10 @@ Iop : Pression 802, Épée Céleste 801, Bond 811, Colère de Iop (13124) 800, C
 - Planche : `b_dump.py`, `build_scene.py`, `drop_shadow.py`, puis
   `BOX=-200,-400,200,100 node render.cjs scene.json tex.png raw "AnimStatique_1:1,AnimStatique_5:1,AnimCourse_1,AnimCourse_5,AnimAttaque0_1,AnimAttaque0_5,AnimHit_1,AnimHit_5,AnimMort_1,AnimMort_5" 1 2.5`
   et `trim_pack.py raw nom 2048` (les Feux d'Incarnam : BOX=-130,-260,130,60 et échelle 2, sinon la planche dépasse la taille max du canvas).
+
+- `python monster_planche.py <squelette> <nom> <Bones> public/assets/sprites 0,1` fait tout d'un coup (planche multiatlas en pages de 4096,
+  repère SHOT de chaque attaque à reporter dans looks.ts). `SCALE` (2,5 par défaut ; 1,6 pour les gros), `BOX` (auto), `SKIP_MASKS=1` (Chafers).
+  Grand Splatch (3249) et Chakrobat (3250) : bundles illisibles par UnityPy (LZMA « corrupt »), pas encore en jeu.
 
 ## Ombre au sol
 Les ombres Dofus sont faites de 4 quarts semi-transparents qui se chevauchent (croix sombre au rendu). `python drop_shadow.py scene.json [tex.png]` les retire avant le rendu ; le jeu dessine sa propre ellipse.
