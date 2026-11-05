@@ -4,10 +4,14 @@ import type { SimEvent, Telegraph } from './events';
 import { GridMap, WorldGrid } from './gridmap';
 import type { PlayerInput } from './input';
 import { Monster } from './monster';
+import { rollItem, rollRarity, type Item, type ItemsData } from './items';
 import { Player } from './player';
 import { planWave } from './waves';
 
 interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: number }
+/** Butin au sol : ramassé en passant dessus. */
+export interface Drop { uid: number; x: number; y: number; item?: Item; resource?: { id: string; n: number }; t: number }
+
 /** Flèche en vol (Crâ). */
 export interface Projectile { id: number; spell: string; x: number; y: number; dx: number; dy: number; left: number; speed: number; width: number;
   explode: number; pierce: boolean; hit: HitDef; stun: number; touched: Set<number> }
@@ -21,6 +25,8 @@ export interface WorldOptions {
   map: GridMap;
   seed?: number;
   classId?: string;
+  /** Objets officiels (src/data/items.json) ; sans eux, pas de butin. */
+  items?: ItemsData;
 }
 
 /** La simulation d'une zone : joueur, monstres, vagues, collisions.
@@ -33,6 +39,9 @@ export class World {
   readonly player: Player;
   monsters: Monster[] = [];
   projectiles: Projectile[] = [];
+  drops: Drop[] = [];
+  /** Objets d'équipement par niveau, pour le butin de zone. */
+  private equipByLevel: { id: string; level: number }[] = [];
   /** Événements produits depuis le dernier drainEvents(). */
   private events: SimEvent[] = [];
   /** Télégraphes du dernier pas (recalculés à chaque pas). */
@@ -67,6 +76,10 @@ export class World {
     }
     this.checkpoint = start;
     this.player = new Player(this.nextId++, start.x, start.y, opts.data.classes[opts.classId ?? 'iop']);
+    if (opts.items) {
+      this.player.items = opts.items;
+      this.equipByLevel = Object.entries(opts.items.equipment).map(([id, d]) => ({ id, level: d.level }));
+    }
     if (open) this.spawnGroups();
   }
 
@@ -160,6 +173,7 @@ export class World {
     p.update(dt, input, this);
     for (const m of this.monsters) m.update(dt, p, this);
     this.updateProjectiles(dt);
+    this.updateDrops(dt);
     this.separate();
     // Cases bloquantes : on glisse le long des obstacles (axe par axe), sauf en plein Bond
     ents.forEach((e, i) => {
@@ -255,8 +269,8 @@ export class World {
     for (const m of this.monsters) {
       if (m.dead || m.state === 'spawn' || !test(m)) continue;
       n++;
-      const crit = this.rng.next() < cls.critChance;
-      const dmg = Math.round(def.dmg * this.rng.range(0.9, 1.1) * (crit ? cls.critMult : 1));
+      const crit = this.rng.next() < p.critChance;
+      const dmg = Math.round(p.damage(def.dmg, def.element ?? 'neutre') * this.rng.range(0.9, 1.1) * (crit ? cls.critMult : 1));
       m.hp -= dmg; m.flash = 0.09;
       const a = pushDir ?? Math.atan2(m.y - oy, m.x - ox);
       const kb = def.knock / m.def.mass;
@@ -274,10 +288,73 @@ export class World {
     m.dead = true; m.t = 0.6; this.kills++;
     this.emit({ k: 'kill', x: m.x, y: m.y, radius: m.radius, monster: m.type });
     const p = this.player;
-    p.hp = Math.min(p.maxHp, p.hp + p.cls.healOnKill);
+    p.hp = Math.min(p.maxHp, p.hp + p.cls.healOnKill + p.legendary('vampire'));
+    this.dropLoot(m);
     p.gainXp(m.def.xp ?? Math.round(m.def.hp / 5), this);
     if (m.def.boss) { this.emit({ k: 'impact', hitstop: 0.15, shake: 0.02, big: true }); this.emit({ k: 'bossDown', monster: m.type }); }
   }
+  // --- Butin (choix 24) ----------------------------------------------------
+  /** Niveau d'un monstre : celui de la sous-zone où il vit. */
+  monsterLevel(m: Monster): number {
+    const wg = this.worldGrid, open = this.zone.open;
+    const sub = wg && open ? open.subareas[String(wg.mapAt(m.homeX, m.homeY)?.sub)] : undefined;
+    return sub?.level ?? this.zone.level;
+  }
+  /** Un monstre vaincu lâche son butin officiel (ressources, parfois un équipement) et, plus rarement, un équipement
+   *  de son niveau pris dans tous les objets de Dofus. Élites et boss lâchent plus et mieux. */
+  private dropLoot(m: Monster) {
+    const I = this.opts.items;
+    if (!I) return;
+    const p = this.player, pros = p.stat('prospection'), boss = !!m.def.boss, elite = !!m.def.elite;
+    const lvl = this.monsterLevel(m), more = 1 + pros / 100;
+    const out: Omit<Drop, 'x' | 'y' | 't' | 'uid'>[] = [];
+    for (const d of I.drops[m.type] ?? []) {
+      if (this.rng.next() * 100 >= d.chance * more) continue;
+      if (I.equipment[d.item]) out.push({ item: rollItem(d.item, I.equipment[d.item], rollRarity(this.rng, boss, pros), this.rng, this.nextId++) });
+      else out.push({ resource: { id: d.item, n: 1 } });
+    }
+    const equipChance = boss ? 1 : elite ? 0.3 : 0.06;
+    for (let k = 0; k < (boss ? 2 : 1); k++) {
+      if (this.rng.next() >= equipChance * more) continue;
+      const pool = this.equipByLevel.filter(e => e.level >= lvl - 4 && e.level <= lvl + 6);
+      if (!pool.length) continue;
+      const id = this.rng.pick(pool).id;
+      out.push({ item: rollItem(id, I.equipment[id], rollRarity(this.rng, boss, pros), this.rng, this.nextId++) });
+    }
+    out.forEach((o, i) => {
+      const a = (i / Math.max(1, out.length)) * Math.PI * 2 + this.rng.range(0, 1), r = out.length > 1 ? 34 : 0;
+      let x = m.x + Math.cos(a) * r, y = m.y + Math.sin(a) * r;
+      if (!this.walkable(x, y)) { x = m.x; y = m.y; }
+      this.drops.push({ ...o, uid: this.nextId++, x, y, t: 0 });
+      if (o.item) this.emit({ k: 'itemDrop', x, y, rarity: o.item.rarity });
+    });
+  }
+  private updateDrops(dt: number) {
+    const p = this.player;
+    for (const d of this.drops) {
+      d.t += dt;
+      if (p.dead || d.t < 0.5 || Math.hypot(d.x - p.x, d.y - p.y) > 60) continue;
+      if (d.item) {
+        if (p.bag.length >= Player.BAG_SIZE) continue;   // sac plein : l'objet reste au sol
+        p.bag.push(d.item);
+        this.emit({ k: 'loot', item: d.item });
+      } else if (d.resource) {
+        p.resources[d.resource.id] = (p.resources[d.resource.id] ?? 0) + d.resource.n;
+        this.emit({ k: 'lootResource', id: d.resource.id, n: d.resource.n });
+      }
+      d.t = -1;
+    }
+    // ramassé, ou oublié au sol depuis 3 minutes
+    this.drops = this.drops.filter(d => d.t >= 0 && d.t < 180);
+  }
+  /** Recycle un objet du sac (plus tard : des runes pour la forgemagie). */
+  recycle(uid: number): boolean {
+    const p = this.player, i = p.bag.findIndex(b => b.uid === uid);
+    if (i < 0) return false;
+    p.bag.splice(i, 1);
+    return true;
+  }
+
   onPlayerDeath() { this.over = true; this.emit({ k: 'playerDeath', wave: this.wave }); }
 
   /** Évite que les monstres se superposent (O(n²), suffisant sous 100 monstres). */

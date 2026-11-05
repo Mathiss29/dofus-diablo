@@ -158,7 +158,7 @@ export class Hud {
     this.toastText = txt(15, {}, 8).setOrigin(0.5).setAlpha(0);
     const S = cls.spells, bar = cls.bar.map((id, i) => `${KEYS[i]} ${S[id].name}`).join('  ·  ');
     this.help = txt(13, { align: 'center' }).setOrigin(0.5, 0).setText(
-      `ZQSD : se déplacer   ·   Clic gauche (maintenu) : ${cls.basic ? S[cls.basic].name : cls.attaque.name}   ·   Clic droit : ${S[cls.favorite].name}   ·   Espace : ${S[cls.mobility].name}   ·   E : potion\n` +
+      `ZQSD : se déplacer   ·   Clic gauche (maintenu) : ${cls.basic ? S[cls.basic].name : cls.attaque.name}   ·   Clic droit : ${S[cls.favorite].name}   ·   Espace : ${S[cls.mobility].name}   ·   E : potion   ·   I : inventaire\n` +
       `${bar}\n` +
       `${cls.rage.name} pleine : le sort suivant est renforcé   ·   K : changer de classe (Iop / Crâ)   ·   F : effets d'impact   ·   H : aide`);
   }
@@ -259,9 +259,9 @@ export class Hud {
     bar(bx, fy + 28, bw, 15, p.hp / p.maxHp, C.hp);
     this.hpText.setPosition(bx + bw / 2, fy + 35.5).setText(`${Math.max(0, Math.ceil(p.hp))} / ${p.maxHp}`);
     const hw = (bw - 6) / 2;
-    bar(bx, fy + 48, hw, 13, p.pa / cls.pa.max, blink(this.shortOf.pa) ? 0xff5040 : C.pa);
+    bar(bx, fy + 48, hw, 13, p.pa / p.paMax, blink(this.shortOf.pa) ? 0xff5040 : C.pa);
     this.paText.setPosition(bx + hw / 2, fy + 54.5).setText(`${Math.floor(p.pa)} PA`);
-    bar(bx + hw + 6, fy + 48, hw, 13, p.pm / cls.pm.max, blink(this.shortOf.pm) ? 0xff5040 : C.pm);
+    bar(bx + hw + 6, fy + 48, hw, 13, p.pm / p.pmMax, blink(this.shortOf.pm) ? 0xff5040 : C.pm);
     this.pmText.setPosition(bx + hw + 6 + hw / 2, fy + 54.5).setText(`${Math.floor(p.pm)} PM`);
     const rr = p.rage / cls.rage.max, rageCol = p.rageFull ? (Math.floor(world.time * 6) % 2 ? 0xffc04d : C.rage) : C.rage;
     bar(bx, fy + 66, bw, 13, rr, rageCol);
@@ -275,7 +275,7 @@ export class Hud {
     if (tgt && showT) {
       const tx = fx + fw + 8, tw = 210, th = 52;
       panel(tx, fy, tw, th);
-      this.targetName.setPosition(tx + 10, fy + 15).setText(`${tgt.def.name}  ·  niv. ${this.levelOf(tgt)}`);
+      this.targetName.setPosition(tx + 10, fy + 15).setText(`${tgt.def.name}  ·  niv. ${this.world.monsterLevel(tgt)}`);
       bar(tx + 10, fy + 28, tw - 20, 14, tgt.hp / tgt.maxHp, tgt.def.boss || tgt.def.elite ? C.gold : C.hp);
       this.targetHp.setPosition(tx + tw / 2, fy + 35).setText(`${Math.max(0, Math.ceil(tgt.hp))} / ${tgt.maxHp}`);
     }
@@ -388,12 +388,5 @@ export class Hud {
     this.bannerBg.setPosition(W / 2, H * 0.3 + 8);
     this.toastText.setPosition(W / 2, H * 0.2);
     this.help.setPosition(W / 2, boss ? 104 : 40);
-  }
-
-  /** Niveau d'un monstre : celui de la sous-zone où il vit. */
-  private levelOf(m: Monster): number {
-    const wg = this.world.worldGrid, open = this.world.zone.open;
-    const sub = wg && open ? open.subareas[String(wg.mapAt(m.homeX, m.homeY)?.sub)] : undefined;
-    return sub?.level ?? this.world.zone.level;
   }
 }

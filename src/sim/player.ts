@@ -1,5 +1,6 @@
 import { Entity } from './entity';
-import type { ClassDef, ComboHit, SkillId, SpellDef } from './defs';
+import type { ClassDef, ComboHit, Element, SkillId, SpellDef } from './defs';
+import { BASE_STATS, EQUIP_SLOTS, type EquipSlot, type Item, type ItemsData, type Stat, type Stats } from './items';
 import type { PlayerInput } from './input';
 import type { World } from './world';
 
@@ -28,13 +29,102 @@ export class Player extends Entity {
   rage = 0;
   /** Sorts à cumul (Fureur) : nombre de lancers cumulés et temps avant remise à zéro. */
   stacks: Record<string, { n: number; t: number }> = {};
+  /** Points de caractéristiques placés (5 par niveau, choix 6C) et non placés. */
+  base: Partial<Record<Stat, number>> = {};
+  points = 0;
+  /** Sac (objets tirés) et ressources par identifiant Dofus. */
+  bag: Item[] = [];
+  resources: Record<string, number> = {};
+  equipment: Partial<Record<EquipSlot, Item>> = {};
+  /** Caractéristiques totales (points + équipement + panoplies), recalculées à chaque changement. */
+  stats: Stats = {};
+  /** Panoplies portées : nombre d'objets par panoplie. */
+  setCount: Record<string, number> = {};
+  items: ItemsData | null = null;
+  static readonly BAG_SIZE = 60;
   private buffer: SkillId | null = null;
   private bufferT = 0;
 
   constructor(id: number, x: number, y: number, readonly cls: ClassDef) {
     super(id, x, y, cls.radius, cls.hp);
     this.pa = cls.pa.max; this.pm = cls.pm.max; this.potions = cls.potion.charges;
+    this.recompute();
     for (const k of Object.keys(cls.spells)) this.cd[k] = 0;
+  }
+
+  // --- Caractéristiques -------------------------------------------------------
+  stat(k: Stat): number { return this.stats[k] ?? 0; }
+  get paMax(): number { return this.cls.pa.max + this.stat('pa'); }
+  get pmMax(): number { return this.cls.pm.max + this.stat('pm'); }
+  get critChance(): number { return this.cls.critChance + this.stat('critique') / 100; }
+  /** Effet légendaire porté (somme si plusieurs). */
+  legendary(id: string): number {
+    let v = 0;
+    for (const it of Object.values(this.equipment)) if (it?.legendary?.id === id) v += it.legendary.value;
+    return v;
+  }
+  /** Recalcule les caractéristiques et les PV max (5 PV par niveau + 1 par point de Vitalité, comme Dofus). */
+  recompute() {
+    const st: Stats = {}, add = (k: Stat, v: number) => { st[k] = (st[k] ?? 0) + v; };
+    for (const [k, v] of Object.entries(this.base) as [Stat, number][]) add(k, v);
+    const sets: Record<string, number> = {};
+    for (const it of Object.values(this.equipment)) {
+      if (!it) continue;
+      for (const [k, v] of Object.entries(it.stats) as [Stat, number][]) add(k, v);
+      const set = this.items?.equipment[it.id]?.set;
+      if (set) sets[set] = (sets[set] ?? 0) + 1;
+    }
+    for (const [id, n] of Object.entries(sets)) {
+      const b = this.items?.sets[id]?.bonus[String(n - 1)];
+      if (b) for (const [k, v] of Object.entries(b) as [Stat, number][]) add(k, v);
+    }
+    this.stats = st; this.setCount = sets;
+    const was = this.maxHp;
+    this.maxHp = Math.max(1, this.cls.hp + (this.level - 1) * 5 + this.stat('vitalite'));
+    if (this.maxHp > was) this.hp += this.maxHp - was;
+    this.hp = Math.min(this.hp, this.maxHp);
+  }
+  /** Dommages d'un coup : base × (1 + (caractéristique de l'élément + Puissance) / 100) + Dommages fixes, comme Dofus. */
+  damage(base: number, element: Element): number {
+    const E: Record<string, Stat> = { terre: 'force', feu: 'intelligence', eau: 'chance', air: 'agilite' };
+    let el = element;
+    if (el === 'meilleur') el = (['terre', 'feu', 'eau', 'air'] as Element[]).reduce((a, b) => this.stat(E[b]) > this.stat(E[a]) ? b : a, 'terre');
+    const c = E[el] ? this.stat(E[el]) : this.stat('force');
+    const flat = this.stat('dommages') + this.stat((`dommages${el[0].toUpperCase()}${el.slice(1)}`) as Stat);
+    return Math.max(1, base * (1 + Math.max(-50, c + this.stat('puissance')) / 100) + flat);
+  }
+  /** Place n points dans une caractéristique de base. */
+  spendPoint(k: Stat, n = 1): boolean {
+    if (!BASE_STATS.includes(k) || n < 1 || this.points < n) return false;
+    this.points -= n; this.base[k] = (this.base[k] ?? 0) + n; this.recompute();
+    return true;
+  }
+
+  // --- Sac et équipement --------------------------------------------------------
+  /** Emplacement où irait cet objet (le 2e anneau si le 1er est pris). */
+  slotFor(it: Item): EquipSlot | null {
+    const d = this.items?.equipment[it.id];
+    if (!d) return null;
+    if (d.slot === 'anneau') return !this.equipment.anneau1 || this.equipment.anneau2 ? 'anneau1' : 'anneau2';
+    return d.slot as EquipSlot;
+  }
+  /** Équipe un objet du sac (l'ancien retourne dans le sac). Le niveau requis est celui de l'objet. */
+  equip(uid: number, slot?: EquipSlot): boolean {
+    const i = this.bag.findIndex(b => b.uid === uid), it = this.bag[i], d = it && this.items?.equipment[it.id];
+    if (!it || !d || d.level > this.level) return false;
+    const to = slot ?? this.slotFor(it);
+    if (!to || !EQUIP_SLOTS.includes(to) || (d.slot === 'anneau' ? !to.startsWith('anneau') : to !== d.slot)) return false;
+    this.bag.splice(i, 1);
+    const old = this.equipment[to];
+    if (old) this.bag.push(old);
+    this.equipment[to] = it; this.recompute();
+    return true;
+  }
+  unequip(slot: EquipSlot): boolean {
+    const it = this.equipment[slot];
+    if (!it || this.bag.length >= Player.BAG_SIZE) return false;
+    delete this.equipment[slot]; this.bag.push(it); this.recompute();
+    return true;
   }
 
   spell(id: SkillId): SpellDef | undefined { return this.cls.spells[id]; }
@@ -54,9 +144,10 @@ export class Player extends Entity {
 
   gainXp(n: number, world: World) {
     if (this.level >= this.cls.maxLevel) return;
-    this.xp += n;
+    this.xp += Math.round(n * (1 + this.stat('sagesse') / 100));
     while (this.level < this.cls.maxLevel && this.xp >= this.xpNeeded) {
-      this.xp -= this.xpNeeded; this.level++;
+      this.xp -= this.xpNeeded; this.level++; this.points += 5;
+      this.recompute(); this.hp = this.maxHp;
       world.emit({ k: 'levelUp', level: this.level });
     }
     if (this.level >= this.cls.maxLevel) this.xp = 0;
@@ -65,13 +156,13 @@ export class Player extends Entity {
   /** Remplit la jauge de classe ; prévient l'affichage quand elle devient pleine. */
   addRage(n: number, world: World) {
     const R = this.cls.rage, was = this.rageFull;
-    this.rage = Math.min(R.max, this.rage + n);
+    this.rage = Math.min(R.max, this.rage + n * (1 + this.legendary('rage') / 100));
     if (!was && this.rageFull) world.emit({ k: 'rageFull' });
   }
 
   drinkPotion(world: World): boolean {
     if (this.dead || this.potions <= 0 || this.potionCd > 0 || this.hp >= this.maxHp) return false;
-    const amount = Math.min(this.maxHp - this.hp, Math.round(this.maxHp * this.cls.potion.heal));
+    const amount = Math.min(this.maxHp - this.hp, Math.round(this.maxHp * this.cls.potion.heal * (1 + this.legendary('potion') / 100)));
     this.hp += amount; this.potions--; this.potionCd = this.cls.potion.cooldown;
     world.emit({ k: 'potion', x: this.x, y: this.y, amount });
     return true;
@@ -135,8 +226,8 @@ export class Player extends Entity {
     for (const [k, s] of Object.entries(this.stacks)) { s.t -= dt; if (s.t <= 0) delete this.stacks[k]; }
     this.invuln = Math.max(0, this.invuln - dt);
     this.potionCd = Math.max(0, this.potionCd - dt);
-    this.pa = Math.min(this.cls.pa.max, this.pa + this.cls.pa.regen * dt);
-    this.pm = Math.min(this.cls.pm.max, this.pm + dt / this.cls.pm.recharge);
+    this.pa = Math.min(this.paMax, this.pa + this.cls.pa.regen * dt);
+    this.pm = Math.min(this.pmMax, this.pm + dt * (1 + this.legendary('mobilite') / 100) / this.cls.pm.recharge);
     this.flash = Math.max(0, this.flash - dt);
     if (this.dead) { this.setAnim('die', Math.min(1, this.animT + dt * 1.5)); return; }
     if (this.comboTimer > 0) this.comboTimer -= dt;
@@ -164,6 +255,12 @@ export class Player extends Entity {
     this.applyKnock(dt);
   }
 
+  /** Moyenne des dommages de l'arme portée, ajoutée à l'attaque de base. */
+  weaponDamage(): number {
+    const w = this.equipment.arme && this.items?.equipment[this.equipment.arme.id]?.weapon;
+    return w ? w.dmg.reduce((a, d) => a + (d.min + d.max) / 2, 0) : 0;
+  }
+
   endSkill() {
     if (this.skill?.id === 'attaque') this.comboTimer = this.cls.attaque.comboWindow;
     this.state = 'free'; this.skill = null; this.z = 0;
@@ -184,7 +281,7 @@ export class Player extends Entity {
       if (!s.impacted && s.t >= d.impactAt) {
         s.impacted = true;
         const arc = (d.arc * Math.PI) / 180;
-        const hits = world.hitCone(this.x, this.y, this.facing, d.range, arc, { dmg: d.dmg, knock: d.knock, element: this.cls.attaque.element });
+        const hits = world.hitCone(this.x, this.y, this.facing, d.range, arc, { dmg: d.dmg + this.weaponDamage(), knock: d.knock, element: this.cls.attaque.element });
         world.emit({ k: 'spell', fx: 'arc', id: 'attaque', x: this.x, y: this.y, facing: this.facing, size: d.range * 0.85, arc, element: this.cls.attaque.element, big: s.idx === 2, boosted: false });
         world.emit({ k: 'impact', hitstop: hits ? d.hitstop : 0, shake: hits ? d.shake : d.shake * 0.25, big: false });
       }
@@ -221,7 +318,7 @@ export class Player extends Entity {
         mult *= 1 + d.stack.per * st.n;
         this.stacks[s.id] = { n: Math.min(d.stack.max, st.n + 1), t: d.stack.time };
       }
-      const hit = { dmg: d.dmg * mult, knock: d.knock, element: d.element, lifesteal: d.lifesteal };
+      const hit = { dmg: (d.dmg + (s.id === this.cls.basic ? this.weaponDamage() : 0)) * mult, knock: d.knock, element: d.element, lifesteal: d.lifesteal };
       let hits = 0, size = 0;
       if (hz.shape === 'cone') { size = hz.range * area; hits = world.hitCone(this.x, this.y, this.facing, size, (hz.arc * Math.PI) / 180, hit, d.stun); }
       else if (hz.shape === 'line') { size = hz.length * area; hits = world.hitLine(this.x, this.y, this.facing, size, hz.width * area, hit, d.stun); }

@@ -1,4 +1,5 @@
 import type { Element, SpellDef } from './defs';
+import type { Item, Rarity } from './items';
 
 /** Ce que la simulation signale à l'affichage (effets, sons, interface).
  *  La simulation ne dessine rien : elle pousse des événements, l'affichage les consomme. */
@@ -25,6 +26,10 @@ export type SimEvent =
   | { k: 'enterArea'; name: string; level: number }
   | { k: 'groupCleared' }
   | { k: 'respawn' }
+  /** Butin : un objet tombe (rareté pour l'effet), puis il est ramassé. */
+  | { k: 'itemDrop'; x: number; y: number; rarity: Rarity }
+  | { k: 'loot'; item: Item }
+  | { k: 'lootResource'; id: string; n: number }
   /** Nouveau point de retour (Zaap). */
   | { k: 'checkpoint'; name: string };
 

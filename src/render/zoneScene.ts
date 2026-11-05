@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { GAME_DATA } from '../sim/data';
+import { GAME_DATA, ITEMS } from '../sim/data';
 import { GridMap, WorldGrid, type MapData, type WorldData } from '../sim/gridmap';
 import { ISO } from '../sim/iso';
 import type { PlayerInput } from '../sim/input';
@@ -12,6 +12,8 @@ import { Hud } from './hud';
 import { LOOKS } from './looks';
 import { drawMap } from './mapView';
 import { WorldView } from './worldView';
+import { Windows } from './windows';
+import { RARITY_COLORS, RARITY_NAMES, rollItem } from '../sim/items';
 
 const ASSETS = 'assets';
 const mapDir = ([x, y]: [number, number]) => `${ASSETS}/cartes/${x}_${y}`;
@@ -33,6 +35,9 @@ export class ZoneScene extends Phaser.Scene {
   private pressed: SkillId | null = null;
   private potion = false;
   private hitstop = 0;
+  private windows: Windows | null = null;
+  /** Butin au sol : icône + nom de l'objet, couleur de sa rareté. */
+  private dropViews = new Map<number, { icon: Phaser.GameObjects.Image; label?: Phaser.GameObjects.Text; glow: Phaser.GameObjects.Ellipse }>();
   private acc = 0;
   private static readonly STEP = 1 / 60;
 
@@ -43,11 +48,14 @@ export class ZoneScene extends Phaser.Scene {
     // #astrub dans l'adresse : l'ancienne zone à vagues des Champs d'Astrub
     if (data?.zone) this.zoneId = data.zone;
     else if (location.hash === '#astrub') this.zoneId = 'champs-astrub';
-    this.views = new Map(); this.worldView = null; this.pressed = null; this.potion = false; this.hitstop = 0; this.acc = 0;
+    this.views = new Map(); this.dropViews = new Map(); this.worldView = null; this.pressed = null; this.potion = false; this.hitstop = 0; this.acc = 0;
   }
 
   preload() {
     Hud.preload(this);
+    // Icônes des objets officiels (petites : on les charge toutes)
+    const icons = new Set<number>([...Object.values(ITEMS.equipment).map(i => i.icon), ...Object.values(ITEMS.resources).map(r => r.icon)]);
+    for (const i of icons) if (!this.textures.exists(`obj_${i}`)) this.load.image(`obj_${i}`, `${ASSETS}/ui/objets/${i}.png`);
     const zone = GAME_DATA.zones[this.zoneId];
     // On ne charge que les planches utiles à cette zone
     const types = new Set<string>();
@@ -79,29 +87,38 @@ export class ZoneScene extends Phaser.Scene {
     if (zone.open) {
       const open = zone.open;
       const wg = new WorldGrid(this.cache.json.get(WorldView.key(open.world, 'monde')) as WorldData);
-      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId });
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS });
       this.cameras.main.setBackgroundColor('#0d2b36');   // sous le ciel, au cas où il manque
       this.worldView = new WorldView(this, wg, worldDir(open.world), open.world);
       this.worldView.create();
     } else {
       const key = mapDir(zone.map!.coords).replace(/\W/g, '_');
       const map = new GridMap(this.cache.json.get(`${key}_carte`) as MapData);
-      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map, seed, classId: this.classId });
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map, seed, classId: this.classId, items: ITEMS });
       this.cameras.main.setBackgroundColor('#12141b');
       drawMap(this, map, `${key}_sol`, `${key}_decor`);
     }
     this.fx = new FX(this, t => hex(GAME_DATA.monsters[t].color));
     this.hud = new Hud(this, this.world);
-    this.hud.onMenu = name => this.hud.toast(`${name} : la fenêtre arrive avec l'inventaire (prochaine étape)`);
+    this.windows?.destroy();
+    this.windows = new Windows(this.world);
+    this.windows.portrait = this.textures.getBase64(LOOKS[this.classId].atlas, 'AnimStatiqueCombat0_1_0');
+    this.events.once('shutdown', () => { this.windows?.destroy(); this.windows = null; });
+    this.hud.onMenu = name => {
+      if (name === 'Personnage') this.windows!.toggle();
+      else this.hud.toast(`${name} : arrive dans une prochaine version`);
+    };
     this.cameras.main.startFollow(this.viewOf(this.world.player).sprite, true, 0.12, 0.12, 0, 30);
     this.bindInput();
+    // Accès console / tests automatisés (captures) : la partie et le tirage d'objets
+    (window as unknown as { diablofus: unknown }).diablofus = { scene: this, world: this.world, rollItem, ITEMS };
   }
 
   private bindInput() {
     const K = Phaser.Input.Keyboard.KeyCodes, kb = this.input.keyboard!;
     // ZQSD (AZERTY), WASD (QWERTY) et flèches
     this.keys = kb.addKeys({ W: K.W, Z: K.Z, A: K.A, Q: K.Q, S: K.S, D: K.D, UP: K.UP, DOWN: K.DOWN, LEFT: K.LEFT, RIGHT: K.RIGHT,
-      SPACE: K.SPACE, E: K.E, K: K.K, F: K.F, H: K.H, ENTER: K.ENTER,
+      SPACE: K.SPACE, E: K.E, K: K.K, I: K.I, C: K.C, ESC: K.ESC, F: K.F, H: K.H, ENTER: K.ENTER,
       ONE: K.ONE, TWO: K.TWO, THREE: K.THREE, FOUR: K.FOUR, FIVE: K.FIVE, SIX: K.SIX }) as Record<string, Phaser.Input.Keyboard.Key>;
     const cls = this.world.player.cls;
     // Choix 9B : clic gauche = attaque, clic droit = sort favori, Espace = déplacement, 1 à 6 (& é " ' ( - en AZERTY) = barre de sorts
@@ -114,6 +131,10 @@ export class ZoneScene extends Phaser.Scene {
       this.hud.toast(this.fx.juice ? 'Effets d\'impact : ACTIVÉS' : 'Effets d\'impact : DÉSACTIVÉS (compare !)');
     });
     this.keys.H.on('down', () => this.hud.toggleHelp());
+    // I ou C : fenêtre Personnage (inventaire + caractéristiques) ; le jeu continue derrière
+    this.keys.I.on('down', () => this.windows?.toggle());
+    this.keys.C.on('down', () => this.windows?.toggle());
+    this.keys.ESC.on('down', () => this.windows?.close());
     // K : changer de classe (en attendant l'écran de création de la 0.1b)
     this.keys.K.on('down', () => this.scene.restart({ zone: this.zoneId, classe: this.classId === 'iop' ? 'cra' : 'iop' }));
     this.keys.ENTER.on('down', () => {
@@ -173,17 +194,50 @@ export class ZoneScene extends Phaser.Scene {
           break;
         case 'noResource': this.hud.noResource(e.res); break;
         case 'rageFull': this.hud.toast(`${this.world.player.cls.rage.name} au maximum : ton prochain sort est renforcé !`); break;
-        case 'levelUp': this.hud.banner(`Niveau ${e.level} !`, 1200); break;
         case 'bossDown': this.hud.banner(`${M[e.monster].name} vaincu !`); break;
         case 'playerDeath':
           if (this.world.zone.open) this.hud.banner(`Vaincu\nEntrée : retour à ${this.world.checkpointName}`, 0, true);
           else this.hud.banner(`Vaincu à la vague ${e.wave}\nEntrée pour recommencer`, 0, true);
           break;
+        case 'loot': {
+          const d = ITEMS.equipment[e.item.id];
+          this.hud.loot(`${d?.name ?? 'Objet'}  ·  ${RARITY_NAMES[e.item.rarity]}`, RARITY_COLORS[e.item.rarity]);
+          this.windows?.refresh();
+          break;
+        }
+        case 'lootResource': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Ressource'} x${e.n}`, '#c9c4ab'); this.windows?.refresh(); break;
+        case 'levelUp': this.hud.banner(`Niveau ${e.level} !\n+5 points (C)`, 1500); this.windows?.refresh(); break;
         case 'checkpoint': this.hud.banner(`Point de retour\n${e.name}`, 1400); break;
         case 'respawn': this.hud.banner('De retour !', 900); break;
         case 'enterArea': this.hud.banner(`${e.name}\nNiveau ${e.level}`, 1600); break;
       }
     }
+  }
+
+  private drawDrops() {
+    const seen = new Set<number>();
+    for (const d of this.world.drops) {
+      seen.add(d.uid);
+      let v = this.dropViews.get(d.uid);
+      const p = ISO.toScreen(d.x, d.y);
+      if (!v) {
+        const icon = d.item ? ITEMS.equipment[d.item.id]?.icon : ITEMS.resources[d.resource!.id]?.icon;
+        const col = d.item ? RARITY_COLORS[d.item.rarity] : '#c9c4ab';
+        v = {
+          glow: this.add.ellipse(p.x, p.y, 46, 20, parseInt(col.slice(1), 16), 0.35),
+          icon: this.add.image(p.x, p.y - 14, `obj_${icon}`).setDisplaySize(34, 34),
+          label: d.item ? this.add.text(p.x, p.y - 40, ITEMS.equipment[d.item.id]?.name ?? '', {
+            fontFamily: 'Trebuchet MS, Verdana, sans-serif', fontSize: '13px', fontStyle: 'bold', color: col, stroke: '#000', strokeThickness: 3,
+          }).setOrigin(0.5) : undefined,
+        };
+        this.dropViews.set(d.uid, v);
+      }
+      const bob = Math.sin(this.world.time * 4 + d.uid) * 3, pop = Math.min(1, d.t * 4);
+      v.glow.setPosition(p.x, p.y).setDepth(p.y - 2).setScale(pop);
+      v.icon.setPosition(p.x, p.y - 14 - bob - (1 - pop) * 30).setDepth(p.y + 1);
+      v.label?.setPosition(p.x, p.y - 44 - bob).setDepth(1e6 - 1);
+    }
+    for (const [uid, v] of this.dropViews) if (!seen.has(uid)) { v.icon.destroy(); v.label?.destroy(); v.glow.destroy(); this.dropViews.delete(uid); }
   }
 
   private viewOf(e: Entity): EntityView {
@@ -208,6 +262,7 @@ export class ZoneScene extends Phaser.Scene {
     const s = w.player.skill;
     if (s && 'charge' in s.def && s.def.charge && !s.def.move && s.t < s.def.impactAt) this.fx.chargeSparks(w.player.x, w.player.y);
     this.fx.draw(w.telegraphs, w.projectiles);
+    this.drawDrops();
     this.hud.draw(this.fx.juice, this.game.loop.delta / 1000);
   }
 }
