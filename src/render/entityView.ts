@@ -6,8 +6,10 @@ import type { Monster } from '../sim/monster';
 import type { Look } from './looks';
 
 /** Affiche une entité de la simulation avec sa planche de sprites.
- *  Dofus dessine 2 orientations : _1 (face, bas-droite) et _5 (dos, haut-gauche) ;
- *  les 2 autres diagonales s'obtiennent par miroir horizontal. */
+ *  Orientations de Dofus : _0 droite, _1 bas-droite, _2 bas, _5 haut-gauche, _6 haut ; les autres par miroir
+ *  (_3 = _1, _4 = _0, _7 = _5). La course et le repos ont les 5 orientations, donc 8 directions ;
+ *  les attaques n'ont que _1 et _5, donc les 4 diagonales. */
+const MIRROR: Record<number, number> = { 3: 1, 4: 0, 7: 5 };
 export class EntityView {
   readonly sprite: Phaser.GameObjects.Sprite;
   private readonly bar: Phaser.GameObjects.Graphics;
@@ -29,10 +31,15 @@ export class EntityView {
   sync(e: Entity) {
     const L = this.look, p = ISO.toScreen(e.x, e.y);
     const fd = ISO.toScreen(Math.cos(e.facing), Math.sin(e.facing));
-    const back = fd.y < -0.05;
-    const flip = back ? fd.x > 0 : fd.x < 0;
     const st = L.map[e.anim] ?? L.map.idle;
-    const base = `${st.anim}_${back ? '5' : '1'}`;
+    // secteur de 45° mesuré après avoir « redressé » la vue isométrique (y x 2) : 0 = droite, 2 = bas, 6 = haut
+    const sector = ((Math.round(Math.atan2(fd.y * 2, fd.x) / (Math.PI / 4)) % 8) + 8) % 8;
+    let o = MIRROR[sector] ?? sector, flip = sector in MIRROR;
+    if (!this.counts[`${st.anim}_${o}`]) {   // animation à 2 orientations : la diagonale la plus proche
+      const back = fd.y < -0.05;
+      o = back ? 5 : 1; flip = back ? fd.x > 0 : fd.x < 0;
+    }
+    const base = `${st.anim}_${o}`;
     const name = this.counts[base] ? base : `${st.anim}_1`;
     const n = this.counts[name] || 1;
     const a = Math.floor((st.from ?? 0) * n), b = Math.max(a + 1, Math.round((st.to ?? 1) * n));

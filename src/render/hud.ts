@@ -13,17 +13,16 @@ const UI = 'assets/ui';
 const UI_IMAGES = [
   'slot_dark_background_full', 'slot_light_lock', 'icon_pv', 'iconBossSkull',
   'background_levelup_banner', 'background_defeat_banner',
-  'menu_character', 'menu_wand', 'menu_exclamationMark', 'menu_gobbal', 'menu_trophy', 'menu_world', 'menu_cog',
 ];
 /** Tête de chaque classe pour la fiche du perso (icônes de classe de Dofus 3). */
 const HEADS: Record<string, string> = { iop: 'tete_iop', cra: 'tete_cra' };
 /** Touches de la barre de sorts : 1 à 6, soit & é " ' ( - sur un clavier AZERTY. */
 const KEYS = ['&', 'é', '"', "'", '(', '-'];
-/** Colonne de menus (à droite de la mini-carte), comme le bandeau de Dofus 3 : icône (icons_2x, blanche, teintée), nom, raccourci, teinte. */
-const MENUS: [string, string, string, number][] = [
-  ['menu_exclamationMark', 'Quêtes', 'J', 0x8ee04a], ['menu_character', 'Personnage', 'C', 0xf2c45a], ['menu_wand', 'Sorts', 'S', 0xe58ad8],
-  ['menu_gobbal', 'Bestiaire', 'B', 0xf0a05a], ['menu_trophy', 'Succès', 'U', 0xf2d36b], ['menu_world', 'Carte', 'M', 0x6fc6e8],
-  ['menu_cog', 'Options', 'O', 0xd8d0b8],
+/** Colonne de menus avec les icônes officielles en couleur de Dofus 3 (uiassets_2x) : icône, nom, raccourci (vide si aucun).
+ *  Seulement les menus utiles au jeu ; les autres (guilde, montures...) viendront avec leur fonctionnalité. */
+const MENUS: [string, string, string][] = [
+  ['inventory', 'Inventaire', 'I'], ['characteristic', 'Caractéristiques', 'C'], ['spells', 'Sorts', ''], ['quest', 'Quêtes', ''],
+  ['map', 'Carte du monde', ''], ['bestiary', 'Bestiaire', ''], ['success', 'Succès', ''], ['breach', 'Failles', ''],
 ];
 
 const C = {
@@ -48,6 +47,7 @@ interface FeedLine { text: Txt; t: number }
 export class Hud {
   static preload(scene: Phaser.Scene) {
     for (const k of UI_IMAGES) if (!scene.textures.exists(k)) scene.load.image(k, `${UI}/${k}.png`);
+    for (const [k] of MENUS) if (!scene.textures.exists(`menu_${k}`)) scene.load.image(`menu_${k}`, `${UI}/menu/${k}.png`);
     for (const k of Object.values(HEADS)) if (!scene.textures.exists(k)) scene.load.image(k, `${UI}/${k}.png`);
     const icons = new Set<number>();
     for (const c of Object.values(GAME_DATA.classes)) for (const s of Object.values(c.spells)) icons.add(s.icon);
@@ -139,10 +139,10 @@ export class Hud {
 
     this.miniLabel = txt(11, { color: '#d8d0b8' }).setOrigin(0.5, 0);
     this.menuTip = txt(12, { backgroundColor: '#14130f', padding: { x: 6, y: 3 } }, 9).setOrigin(1, 0.5).setVisible(false);
-    for (const [icon, label, key, tint] of MENUS) {
-      const ic = img(icon, 4).setTint(tint);
+    for (const [icon, label, key] of MENUS) {
+      const ic = img(`menu_${icon}`, 4);
       const zone = fixed(scene.add.zone(0, 0, 30, 30).setInteractive({ useHandCursor: true }), 4);
-      zone.on('pointerover', () => this.menuTip.setText(`${label} (${key})`).setVisible(true).setPosition(zone.x - 22, zone.y));
+      zone.on('pointerover', () => this.menuTip.setText(key ? `${label} (${key})` : label).setVisible(true).setPosition(zone.x - 22, zone.y));
       zone.on('pointerout', () => this.menuTip.setVisible(false));
       zone.on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, ev: Phaser.Types.Input.EventData) => { ev.stopPropagation(); this.onMenu(label); });
       this.menus.push({ icon: ic, zone });
@@ -338,15 +338,17 @@ export class Hud {
     }
     this.miniLabel.setPosition(mx + mw / 2, my + mh + 6).setText(world.area?.name ?? world.zone.name);
     // Colonne de menus : boutons carrés sombres en relief, comme le bandeau de Dofus 3
+    // Boutons carrés sombres serrés les uns contre les autres ; ils rapetissent si l'écran est bas
+    const step = Math.min(38, Math.floor((H - 150 - my) / this.menus.length)), bs = step - 2;
     this.menus.forEach((m, i) => {
-      const y = my + 18 + i * 40, x = colX;
-      this.rects.push([x, y - 18, 36, 36]);
-      g.fillStyle(0x24231d, 1); g.fillRoundedRect(x, y - 18, 36, 36, 6);
-      g.fillStyle(0x45433a, 1); g.fillRoundedRect(x + 2, y - 16, 32, 32, 5);
-      g.fillStyle(0x56544a, 1); g.fillRoundedRect(x + 3, y - 15, 30, 14, { tl: 4, tr: 4, bl: 0, br: 0 });
-      g.lineStyle(1, 0x111008, 1); g.strokeRoundedRect(x + 0.5, y - 17.5, 35, 35, 6);
-      m.icon.setPosition(x + 18, y).setDisplaySize(24, 24);
-      m.zone.setPosition(x + 18, y).setSize(36, 36);
+      const y = my + bs / 2 + i * step, x = colX + (36 - bs) / 2;
+      this.rects.push([x, y - bs / 2, bs, bs]);
+      g.fillStyle(0x1b1a16, 1); g.fillRoundedRect(x, y - bs / 2, bs, bs, 5);
+      g.fillStyle(0x3a3933, 1); g.fillRoundedRect(x + 1.5, y - bs / 2 + 1.5, bs - 3, bs - 3, 4);
+      g.fillStyle(0x47463f, 1); g.fillRoundedRect(x + 2, y - bs / 2 + 2, bs - 4, (bs - 4) / 2, { tl: 3, tr: 3, bl: 0, br: 0 });
+      const s = bs - 8, f = m.icon.frame, k = Math.min(s / f.width, s / f.height);
+      m.icon.setPosition(x + bs / 2, y).setDisplaySize(f.width * k, f.height * k);
+      m.zone.setPosition(x + bs / 2, y).setSize(bs, bs);
     });
 
     // --- Barre du bas : XP, 6 sorts, déplacement, potion, Rage ---

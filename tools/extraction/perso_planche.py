@@ -49,7 +49,7 @@ for sid in L(B['breedSpellsId']):
     spells[int(sid)] = {'icon': int(s['iconId']), 'anims': list(dict.fromkeys(anims))}
 
 # AnimArme<typeId> = auto-attaque avec une arme de ce type (2 Arc, 3 Baguette, 4 Bâton, 5 Dague, 6 Épée, 7 Marteau, 8 Pelle, 19 Hache, 22 Faux)
-base = ['AnimStatiqueCombat0', 'AnimCourse', 'AnimArme0', 'AnimHit', 'AnimMort'] + [f'AnimArme{t}' for t in (2, 3, 4, 5, 6, 7, 8, 19, 22)]
+base = ['AnimStatiqueCombat0', 'AnimStatiqueExplo0', 'AnimCourse', 'AnimArme0', 'AnimHit', 'AnimMort'] + [f'AnimArme{t}' for t in (2, 3, 4, 5, 6, 7, 8, 19, 22)]
 wanted = list(dict.fromkeys(base + [a for s in spells.values() for a in s['anims']]))
 
 # 1. Bundles -> morceaux (b_dump.py), une seule fois
@@ -78,7 +78,11 @@ for d in dirs:
 anims = [a for a in wanted if a in have]
 # ANIMS=AnimCourse,AnimAttaque911,... : ne garder que celles-là (planche plus légère pour le jeu)
 if os.environ.get('ANIMS'): anims = [a for a in anims if a in os.environ['ANIMS'].split(',')]
-names = ','.join(f'{a}_{o}' for a in anims for o in (1, 5))
+# Orientations : _1 (face, bas-droite) et _5 (dos, haut-gauche) pour tout ; les animations de déplacement et de repos
+# existent aussi en _0 (droite), _2 (bas) et _6 (haut) : avec les miroirs, le perso se tourne dans les 8 directions.
+EIGHT = {'AnimCourse', 'AnimStatiqueExplo0'}
+orients = lambda a: (0, 1, 2, 5, 6) if a in EIGHT else (1, 5)
+names = ','.join(f'{a}_{o}' for a in anims for o in orients(a))
 
 # 2. Scène (squelette + skins + couleurs de la classe), 3. rendu, 4. planche rognée
 scene = os.path.join(work, 'scene.json')
@@ -88,7 +92,7 @@ subprocess.run([sys.executable, os.path.join(HERE, 'drop_shadow.py'), scene], ch
 sc = json.load(open(scene))
 counts = {k: len(v) for k, v in sc['anims'].items()}
 shots = sc.get('shots', {})
-frames_of = {f'{a}_{o}': min(MAXN, counts.get(f"{a}_{o}", 1)) for a in anims for o in (1, 5)}
+frames_of = {f'{a}_{o}': min(MAXN, counts.get(f"{a}_{o}", 1)) for a in anims for o in orients(a) if f'{a}_{o}' in counts}
 nom = os.path.basename(os.path.normpath(out))
 env = dict(os.environ, BOX='-260,-1000,260,120')
 # SCALE : taille du rendu (0.7 = net jusqu'à un zoom x1,2 avec une échelle d'affichage ~0,8 dans looks.ts)

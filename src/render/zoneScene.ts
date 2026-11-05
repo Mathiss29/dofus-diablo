@@ -132,7 +132,7 @@ export class ZoneScene extends Phaser.Scene {
     if (mini && this.worldView?.sky) mini.ignore(this.worldView.sky);
     this.windows?.destroy();
     this.windows = new Windows(this.world);
-    this.windows.portrait = this.textures.getBase64(LOOKS[this.classId].atlas, 'AnimStatiqueCombat0_1_0');
+    this.windows.portrait = this.textures.getBase64(LOOKS[this.classId].atlas, 'AnimStatiqueExplo0_1_0');
     this.events.once('shutdown', () => { this.windows?.destroy(); this.windows = null; });
     this.hud.onSlotHover = (id, x, y) => {
       if (!id) { this.windows?.hideTip(); return; }
@@ -140,7 +140,8 @@ export class ZoneScene extends Phaser.Scene {
       this.windows?.showHtmlTip(spellTipHtml(this.world.player, id), r.left + x, r.top + y);
     };
     this.hud.onMenu = name => {
-      if (name === 'Personnage') this.windows!.toggle();
+      if (name === 'Inventaire') this.windows!.toggle('inv');
+      else if (name === 'Caractéristiques') this.windows!.toggle('car');
       else this.hud.toast(`${name} : arrive dans une prochaine version`);
     };
     this.cameras.main.startFollow(this.viewOf(this.world.player).sprite, true, 0.12, 0.12, 0, 30);
@@ -179,8 +180,8 @@ export class ZoneScene extends Phaser.Scene {
     });
     this.keys.H.on('down', () => this.hud.toggleHelp());
     // I ou C : fenêtre Personnage (inventaire + caractéristiques) ; le jeu continue derrière
-    this.keys.I.on('down', () => this.windows?.toggle());
-    this.keys.C.on('down', () => this.windows?.toggle());
+    this.keys.I.on('down', () => this.windows?.toggle('inv'));
+    this.keys.C.on('down', () => this.windows?.toggle('car'));
     this.keys.ESC.on('down', () => this.windows?.close());
     // K : changer de classe (en attendant l'écran de création de la 0.1b)
     this.keys.K.on('down', () => this.scene.restart({ zone: this.zoneId, classe: this.classId === 'iop' ? 'cra' : 'iop' }));
