@@ -103,11 +103,16 @@ export class Player extends Entity {
     this.hp = Math.min(this.hp, this.maxHp);
     this.buildWeapon();
   }
+  /** « Meilleur élément » du lanceur = celui de sa plus forte caractéristique. */
+  resolveElement(element: Element): Element {
+    if (element !== 'meilleur') return element;
+    const E: Record<string, Stat> = { terre: 'force', feu: 'intelligence', eau: 'chance', air: 'agilite' };
+    return (['terre', 'feu', 'eau', 'air'] as Element[]).reduce((a, b) => this.stat(E[b]) > this.stat(E[a]) ? b : a, 'terre');
+  }
   /** Dommages d'un coup : base × (1 + (caractéristique de l'élément + Puissance) / 100) + Dommages fixes, comme Dofus. */
   damage(base: number, element: Element): number {
     const E: Record<string, Stat> = { terre: 'force', feu: 'intelligence', eau: 'chance', air: 'agilite' };
-    let el = element;
-    if (el === 'meilleur') el = (['terre', 'feu', 'eau', 'air'] as Element[]).reduce((a, b) => this.stat(E[b]) > this.stat(E[a]) ? b : a, 'terre');
+    const el = this.resolveElement(element);
     const c = E[el] ? this.stat(E[el]) : this.stat('force');
     const flat = this.stat('dommages') + this.stat((`dommages${el[0].toUpperCase()}${el.slice(1)}`) as Stat);
     return Math.max(1, base * (1 + Math.max(-50, c + this.stat('puissance')) / 100) + flat);
@@ -173,15 +178,18 @@ export class Player extends Entity {
   /** XP à gagner pour passer au niveau suivant. */
   get xpNeeded(): number { return this.cls.xpBase * this.level; }
 
-  gainXp(n: number, world: World) {
-    if (this.level >= this.cls.maxLevel) return;
-    this.xp += Math.round(n * (1 + this.stat('sagesse') / 100));
+  /** Ajoute l'XP (bonus de Sagesse compris) et renvoie ce qui a été gagné. */
+  gainXp(n: number, world: World): number {
+    if (this.level >= this.cls.maxLevel) return 0;
+    const gain = Math.round(n * (1 + this.stat('sagesse') / 100));
+    this.xp += gain;
     while (this.level < this.cls.maxLevel && this.xp >= this.xpNeeded) {
       this.xp -= this.xpNeeded; this.level++; this.points += 5;
       this.recompute(); this.hp = this.maxHp;
       world.emit({ k: 'levelUp', level: this.level });
     }
     if (this.level >= this.cls.maxLevel) this.xp = 0;
+    return gain;
   }
 
   /** Remplit la jauge de classe ; prévient l'affichage quand elle devient pleine. */
