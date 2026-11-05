@@ -83,8 +83,8 @@
           ],
           "groupsPerMap": 1,
           "groupSize": [
-            2,
-            3
+            3,
+            5
           ]
         },
         "444": {
@@ -98,8 +98,8 @@
           ],
           "groupsPerMap": 2,
           "groupSize": [
-            2,
-            4
+            3,
+            6
           ]
         },
         "445": {
@@ -116,8 +116,8 @@
           ],
           "groupsPerMap": 2,
           "groupSize": [
-            2,
-            4
+            3,
+            6
           ]
         }
       },
