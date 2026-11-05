@@ -96,6 +96,10 @@
     "force": [
      7,
      10
+    ],
+    "fuite": [
+     3,
+     4
     ]
    },
    "weapon": {
@@ -122,6 +126,14 @@
     "agilite": [
      21,
      25
+    ],
+    "fuite": [
+     2,
+     3
+    ],
+    "soins": [
+     -10,
+     -10
     ]
    },
    "weapon": {
@@ -184,6 +196,10 @@
     "vitalite": [
      16,
      20
+    ],
+    "tacle": [
+     2,
+     2
     ]
    },
    "weapon": {
@@ -388,6 +404,10 @@
     "agilite": [
      7,
      10
+    ],
+    "tacle": [
+     2,
+     2
     ]
    }
   },
@@ -426,6 +446,10 @@
     "force": [
      11,
      15
+    ],
+    "tacle": [
+     2,
+     3
     ]
    },
    "weapon": {
@@ -587,7 +611,19 @@
      21,
      30
     ],
+    "resCritiques": [
+     2,
+     3
+    ],
+    "fuite": [
+     2,
+     3
+    ],
     "dommagesFeu": [
+     2,
+     2
+    ],
+    "dommagesCritiques": [
      2,
      2
     ]
@@ -612,6 +648,10 @@
     "agilite": [
      16,
      20
+    ],
+    "tacle": [
+     2,
+     3
     ]
    },
    "weapon": {
@@ -716,6 +756,10 @@
     "vitalite": [
      16,
      25
+    ],
+    "tacle": [
+     2,
+     3
     ]
    },
    "weapon": {
@@ -884,6 +928,10 @@
     "chance": [
      4,
      5
+    ],
+    "fuite": [
+     1,
+     1
     ]
    }
   },
@@ -893,6 +941,10 @@
    "level": 24,
    "icon": 11008,
    "stats": {
+    "dommagesCritiques": [
+     2,
+     2
+    ],
     "critique": [
      6,
      6
@@ -940,6 +992,10 @@
     "force": [
      16,
      20
+    ],
+    "fuite": [
+     2,
+     3
     ]
    },
    "weapon": {
@@ -1148,6 +1204,10 @@
      11,
      15
     ],
+    "fuite": [
+     -8,
+     -8
+    ],
     "critique": [
      2,
      3
@@ -1177,6 +1237,10 @@
     "chance": [
      11,
      15
+    ],
+    "tacle": [
+     2,
+     3
     ]
    }
   },
@@ -1227,6 +1291,10 @@
     "chance": [
      -20,
      -20
+    ],
+    "dommagesPoussee": [
+     7,
+     10
     ]
    },
    "weapon": {
@@ -1266,9 +1334,21 @@
    "level": 25,
    "icon": 2001,
    "stats": {
+    "initiative": [
+     -100,
+     -100
+    ],
+    "fuite": [
+     -15,
+     -15
+    ],
     "pa": [
      1,
      1
+    ],
+    "tacle": [
+     -15,
+     -15
     ]
    },
    "weapon": {
@@ -1304,6 +1384,18 @@
     ]
    }
   },
+  "610": {
+   "name": "Amulette en Crabe",
+   "slot": "amulette",
+   "level": 24,
+   "icon": 1030,
+   "stats": {
+    "portee": [
+     1,
+     1
+    ]
+   }
+  },
   "616": {
    "name": "Amulette du Marin",
    "slot": "amulette",
@@ -1326,6 +1418,10 @@
    "level": 21,
    "icon": 16001,
    "stats": {
+    "initiative": [
+     151,
+     200
+    ],
     "vitalite": [
      41,
      45
@@ -1375,6 +1471,10 @@
     "intelligence": [
      7,
      10
+    ],
+    "tacle": [
+     2,
+     2
     ]
    },
    "weapon": {
@@ -1394,9 +1494,17 @@
    "level": 25,
    "icon": 19010,
    "stats": {
+    "critique": [
+     -5,
+     -5
+    ],
     "agilite": [
      16,
      20
+    ],
+    "portee": [
+     1,
+     1
     ]
    },
    "weapon": {
@@ -1407,6 +1515,18 @@
       "min": 9,
       "max": 13
      }
+    ]
+   }
+  },
+  "677": {
+   "name": "Cape du Pirate",
+   "slot": "cape",
+   "level": 1,
+   "icon": 17011,
+   "stats": {
+    "pm": [
+     -1,
+     -1
     ]
    }
   },
@@ -1463,6 +1583,10 @@
     "vitalite": [
      -80,
      -80
+    ],
+    "invocations": [
+     1,
+     1
     ]
    }
   },
@@ -1491,6 +1615,10 @@
     "vitalite": [
      11,
      15
+    ],
+    "invocations": [
+     1,
+     1
     ]
    }
   },
@@ -1503,6 +1631,10 @@
     "force": [
      16,
      20
+    ],
+    "fuite": [
+     4,
+     4
     ]
    }
   },
@@ -1515,6 +1647,10 @@
     "chance": [
      21,
      25
+    ],
+    "fuite": [
+     3,
+     4
     ]
    },
    "set": 868
@@ -1652,6 +1788,10 @@
     "force": [
      11,
      15
+    ],
+    "tacle": [
+     2,
+     3
     ]
    }
   },
@@ -1680,6 +1820,14 @@
     "vitalite": [
      21,
      25
+    ],
+    "tacle": [
+     2,
+     3
+    ],
+    "dommagesPoussee": [
+     4,
+     4
     ]
    }
   },
@@ -1756,6 +1904,10 @@
     "agilite": [
      11,
      15
+    ],
+    "tacle": [
+     2,
+     3
     ]
    }
   },
@@ -1792,6 +1944,10 @@
     "intelligence": [
      7,
      10
+    ],
+    "tacle": [
+     2,
+     3
     ]
    }
   },
@@ -1855,6 +2011,10 @@
    "level": 11,
    "icon": 2015,
    "stats": {
+    "fuite": [
+     3,
+     4
+    ],
     "puissance": [
      7,
      10
@@ -2089,6 +2249,22 @@
     ]
    }
   },
+  "911": {
+   "name": "Bottes Usées d'Hogmeiser",
+   "slot": "bottes",
+   "level": 1,
+   "icon": 11011,
+   "stats": {
+    "pm": [
+     -1,
+     -1
+    ],
+    "pa": [
+     -1,
+     -1
+    ]
+   }
+  },
   "924": {
    "name": "Puissantes Bottes de Klime",
    "slot": "bottes",
@@ -2118,6 +2294,10 @@
     "vitalite": [
      21,
      30
+    ],
+    "fuite": [
+     2,
+     3
     ]
    }
   },
@@ -2137,6 +2317,22 @@
     ]
    }
   },
+  "940": {
+   "name": "Louffeur",
+   "slot": "chapeau",
+   "level": 1,
+   "icon": 16020,
+   "stats": {
+    "redNeutre": [
+     1,
+     1
+    ],
+    "redTerre": [
+     1,
+     1
+    ]
+   }
+  },
   "941": {
    "name": "Bandeau Komintot",
    "slot": "chapeau",
@@ -2146,6 +2342,26 @@
     "sagesse": [
      3,
      5
+    ]
+   }
+  },
+  "942": {
+   "name": "Lisseur",
+   "slot": "chapeau",
+   "level": 2,
+   "icon": 16023,
+   "stats": {
+    "redEau": [
+     1,
+     1
+    ],
+    "redAir": [
+     1,
+     1
+    ],
+    "redFeu": [
+     1,
+     1
     ]
    }
   },
@@ -2162,6 +2378,10 @@
     "agilite": [
      11,
      15
+    ],
+    "tacle": [
+     2,
+     3
     ]
    }
   },
@@ -2206,6 +2426,38 @@
     "puissance": [
      11,
      15
+    ],
+    "tacle": [
+     4,
+     5
+    ]
+   }
+  },
+  "976": {
+   "name": "Citwouille",
+   "slot": "chapeau",
+   "level": 20,
+   "icon": 16024,
+   "stats": {
+    "redNeutre": [
+     3,
+     3
+    ],
+    "redTerre": [
+     3,
+     3
+    ],
+    "redEau": [
+     3,
+     3
+    ],
+    "redAir": [
+     3,
+     3
+    ],
+    "redFeu": [
+     3,
+     3
     ]
    }
   },
@@ -2218,6 +2470,10 @@
     "vitalite": [
      26,
      30
+    ],
+    "fuite": [
+     7,
+     10
     ]
    },
    "set": 870
@@ -2228,6 +2484,10 @@
    "level": 20,
    "icon": 17022,
    "stats": {
+    "initiative": [
+     51,
+     100
+    ],
     "vitalite": [
      31,
      35
@@ -2616,6 +2876,14 @@
     "intelligence": [
      -40,
      -40
+    ],
+    "tacle": [
+     4,
+     5
+    ],
+    "dommagesPoussee": [
+     5,
+     7
     ]
    },
    "weapon": {
@@ -2646,6 +2914,10 @@
     "chance": [
      21,
      30
+    ],
+    "tacle": [
+     4,
+     5
     ]
    },
    "weapon": {
@@ -2676,6 +2948,14 @@
     "intelligence": [
      -30,
      -30
+    ],
+    "soins": [
+     -15,
+     -15
+    ],
+    "portee": [
+     1,
+     1
     ]
    },
    "weapon": {
@@ -2754,6 +3034,10 @@
     "intelligence": [
      7,
      10
+    ],
+    "fuite": [
+     3,
+     4
     ]
    }
   },
@@ -2786,6 +3070,10 @@
     "chance": [
      7,
      10
+    ],
+    "fuite": [
+     2,
+     2
     ]
    }
   },
@@ -2912,6 +3200,10 @@
     "vitalite": [
      11,
      15
+    ],
+    "tacle": [
+     3,
+     3
     ]
    }
   },
@@ -3011,15 +3303,91 @@
     ]
    }
   },
+  "1697": {
+   "name": "Petit Sac en Laine de Boufton",
+   "slot": "cape",
+   "level": 1,
+   "icon": 81025,
+   "stats": {
+    "pods": [
+     71,
+     100
+    ]
+   }
+  },
+  "1698": {
+   "name": "Sac du Petit Récolteur",
+   "slot": "cape",
+   "level": 6,
+   "icon": 81026,
+   "stats": {
+    "pods": [
+     151,
+     250
+    ]
+   }
+  },
+  "1699": {
+   "name": "Sac du Petit Aventurier",
+   "slot": "cape",
+   "level": 10,
+   "icon": 81027,
+   "stats": {
+    "pods": [
+     151,
+     200
+    ]
+   }
+  },
   "1701": {
    "name": "Ceinture de Poche",
    "slot": "ceinture",
    "level": 13,
    "icon": 10016,
    "stats": {
+    "pods": [
+     71,
+     110
+    ],
     "force": [
      7,
      10
+    ]
+   }
+  },
+  "1702": {
+   "name": "Sac du Récolteur",
+   "slot": "cape",
+   "level": 15,
+   "icon": 81028,
+   "stats": {
+    "pods": [
+     251,
+     400
+    ]
+   }
+  },
+  "1703": {
+   "name": "Sac du Grand Récolteur",
+   "slot": "cape",
+   "level": 20,
+   "icon": 81029,
+   "stats": {
+    "pods": [
+     601,
+     800
+    ]
+   }
+  },
+  "1704": {
+   "name": "Sac du Staca Noviste",
+   "slot": "cape",
+   "level": 20,
+   "icon": 81030,
+   "stats": {
+    "pods": [
+     1001,
+     1500
     ]
    }
   },
@@ -3032,6 +3400,10 @@
     "vitalite": [
      41,
      60
+    ],
+    "tacle": [
+     2,
+     3
     ]
    }
   },
@@ -3070,6 +3442,34 @@
     ]
    },
    "chasse": true
+  },
+  "2154": {
+   "name": "Bague De Sendar",
+   "slot": "anneau",
+   "level": 1,
+   "icon": 9007,
+   "stats": {
+    "redEau": [
+     100,
+     100
+    ],
+    "redAir": [
+     100,
+     100
+    ],
+    "redFeu": [
+     100,
+     100
+    ],
+    "redTerre": [
+     100,
+     100
+    ],
+    "redNeutre": [
+     100,
+     100
+    ]
+   }
   },
   "2155": {
    "name": "Amulette de Jiva",
@@ -3135,6 +3535,10 @@
     "vitalite": [
      6,
      10
+    ],
+    "invocations": [
+     1,
+     1
     ]
    }
   },
@@ -3185,6 +3589,10 @@
    "level": 20,
    "icon": 17044,
    "stats": {
+    "initiative": [
+     151,
+     200
+    ],
     "vitalite": [
      36,
      40
@@ -3201,6 +3609,10 @@
     "vitalite": [
      16,
      20
+    ],
+    "invocations": [
+     1,
+     1
     ]
    },
    "weapon": {
@@ -3229,6 +3641,10 @@
     "vitalite": [
      21,
      30
+    ],
+    "initiative": [
+     71,
+     100
     ]
    },
    "set": 1
@@ -3277,6 +3693,10 @@
    "level": 20,
    "icon": 10029,
    "stats": {
+    "pods": [
+     401,
+     500
+    ],
     "intelligence": [
      11,
      15
@@ -3579,6 +3999,10 @@
    "level": 20,
    "icon": 17058,
    "stats": {
+    "tacle": [
+     4,
+     5
+    ],
     "intelligence": [
      16,
      20
@@ -3609,6 +4033,10 @@
    "level": 20,
    "icon": 9066,
    "stats": {
+    "initiative": [
+     71,
+     100
+    ],
     "dommagesFeu": [
      2,
      2
@@ -3629,6 +4057,14 @@
     "sagesse": [
      5,
      7
+    ],
+    "resFeu": [
+     -7,
+     -7
+    ],
+    "portee": [
+     1,
+     1
     ]
    },
    "set": 12
@@ -3663,6 +4099,10 @@
     "intelligence": [
      5,
      7
+    ],
+    "invocations": [
+     1,
+     1
     ]
    },
    "weapon": {
@@ -3686,6 +4126,10 @@
     "intelligence": [
      1,
      1
+    ],
+    "initiative": [
+     5,
+     5
     ]
    }
   },
@@ -3695,6 +4139,10 @@
    "level": 12,
    "icon": 6007,
    "stats": {
+    "initiative": [
+     10,
+     10
+    ],
     "vitalite": [
      10,
      10
@@ -3717,6 +4165,10 @@
    "level": 12,
    "icon": 3008,
    "stats": {
+    "initiative": [
+     10,
+     10
+    ],
     "vitalite": [
      10,
      10
@@ -3739,6 +4191,10 @@
    "level": 12,
    "icon": 4001,
    "stats": {
+    "initiative": [
+     10,
+     10
+    ],
     "vitalite": [
      10,
      10
@@ -3761,6 +4217,10 @@
    "level": 12,
    "icon": 2001,
    "stats": {
+    "initiative": [
+     10,
+     10
+    ],
     "vitalite": [
      10,
      10
@@ -3783,6 +4243,10 @@
    "level": 12,
    "icon": 5010,
    "stats": {
+    "initiative": [
+     10,
+     10
+    ],
     "vitalite": [
      10,
      10
@@ -3805,6 +4269,10 @@
    "level": 12,
    "icon": 7001,
    "stats": {
+    "initiative": [
+     10,
+     10
+    ],
     "vitalite": [
      10,
      10
@@ -3827,6 +4295,10 @@
    "level": 12,
    "icon": 8001,
    "stats": {
+    "initiative": [
+     10,
+     10
+    ],
     "vitalite": [
      10,
      10
@@ -3842,6 +4314,27 @@
      }
     ]
    }
+  },
+  "6789": {
+   "name": "Amulette des Champs",
+   "slot": "amulette",
+   "level": 15,
+   "icon": 1073,
+   "stats": {
+    "initiative": [
+     71,
+     100
+    ],
+    "tacle": [
+     -9,
+     -9
+    ],
+    "invocations": [
+     1,
+     1
+    ]
+   },
+   "set": 18
   },
   "6791": {
    "name": "Anneau Champêtre",
@@ -3976,7 +4469,12 @@
    "slot": "arme",
    "level": 1,
    "icon": 6018,
-   "stats": {},
+   "stats": {
+    "initiative": [
+     10,
+     10
+    ]
+   },
    "weapon": {
     "type": "Épée",
     "dmg": [
@@ -3993,7 +4491,12 @@
    "slot": "arme",
    "level": 1,
    "icon": 6018,
-   "stats": {},
+   "stats": {
+    "initiative": [
+     10,
+     10
+    ]
+   },
    "weapon": {
     "type": "Épée",
     "dmg": [
@@ -4052,6 +4555,10 @@
      -10,
      -10
     ],
+    "invocations": [
+     1,
+     1
+    ],
     "critique": [
      4,
      4
@@ -4085,6 +4592,10 @@
     "vitalite": [
      11,
      15
+    ],
+    "fuite": [
+     2,
+     2
     ]
    },
    "set": 22
@@ -4177,6 +4688,10 @@
    "level": 16,
    "icon": 81059,
    "stats": {
+    "pods": [
+     71,
+     100
+    ],
     "chance": [
      11,
      15
@@ -4223,6 +4738,10 @@
     "vitalite": [
      16,
      20
+    ],
+    "tacle": [
+     3,
+     3
     ]
    },
    "set": 24
@@ -4236,6 +4755,10 @@
     "vitalite": [
      16,
      20
+    ],
+    "fuite": [
+     2,
+     2
     ]
    },
    "set": 24
@@ -4246,6 +4769,10 @@
    "level": 12,
    "icon": 16084,
    "stats": {
+    "tacle": [
+     3,
+     4
+    ],
     "vitalite": [
      21,
      30
@@ -4262,6 +4789,10 @@
     "vitalite": [
      21,
      30
+    ],
+    "tacle": [
+     4,
+     5
     ]
    },
    "set": 24
@@ -4398,6 +4929,10 @@
      11,
      15
     ],
+    "tacle": [
+     2,
+     2
+    ],
     "soins": [
      5,
      5
@@ -4417,6 +4952,14 @@
     "vitalite": [
      16,
      20
+    ],
+    "tacle": [
+     3,
+     3
+    ],
+    "fuite": [
+     3,
+     3
     ]
    }
   },
@@ -4429,6 +4972,30 @@
     "vitalite": [
      11,
      15
+    ],
+    "tacle": [
+     2,
+     3
+    ],
+    "fuite": [
+     2,
+     3
+    ]
+   }
+  },
+  "7177": {
+   "name": "Bandeau Pandawushu",
+   "slot": "chapeau",
+   "level": 4,
+   "icon": 16102,
+   "stats": {
+    "initiative": [
+     81,
+     100
+    ],
+    "fuite": [
+     3,
+     4
     ]
    }
   },
@@ -4441,6 +5008,10 @@
     "agilite": [
      11,
      15
+    ],
+    "fuite": [
+     2,
+     2
     ],
     "critique": [
      3,
@@ -4475,6 +5046,10 @@
     "agilite": [
      6,
      10
+    ],
+    "portee": [
+     1,
+     1
     ]
    },
    "weapon": {
@@ -4511,6 +5086,10 @@
    "level": 22,
    "icon": 10089,
    "stats": {
+    "pods": [
+     151,
+     200
+    ],
     "intelligence": [
      7,
      10
@@ -4535,6 +5114,10 @@
     "sagesse": [
      11,
      15
+    ],
+    "fuite": [
+     4,
+     5
     ]
    },
    "set": 50
@@ -4545,9 +5128,17 @@
    "level": 20,
    "icon": 1097,
    "stats": {
+    "initiative": [
+     51,
+     100
+    ],
     "chance": [
      11,
      15
+    ],
+    "fuite": [
+     2,
+     3
     ],
     "dommagesEau": [
      2,
@@ -4569,6 +5160,10 @@
     "chance": [
      16,
      20
+    ],
+    "fuite": [
+     3,
+     3
     ]
    },
    "set": 47
@@ -4599,6 +5194,10 @@
     "vitalite": [
      -40,
      -40
+    ],
+    "invocations": [
+     1,
+     1
     ]
    },
    "set": 47
@@ -4658,6 +5257,10 @@
     "chance": [
      16,
      20
+    ],
+    "pods": [
+     161,
+     200
     ]
    },
    "set": 47
@@ -4668,6 +5271,10 @@
    "level": 1,
    "icon": 16134,
    "stats": {
+    "initiative": [
+     1,
+     10
+    ],
     "vitalite": [
      1,
      5
@@ -4768,6 +5375,10 @@
     "vitalite": [
      16,
      20
+    ],
+    "fuite": [
+     2,
+     3
     ]
    },
    "set": 70
@@ -4815,6 +5426,10 @@
     "puissance": [
      7,
      10
+    ],
+    "initiative": [
+     31,
+     50
     ]
    },
    "set": 62
@@ -4859,6 +5474,10 @@
    "level": 7,
    "icon": 9111,
    "stats": {
+    "fuite": [
+     2,
+     3
+    ],
     "soins": [
      1,
      1
@@ -4892,6 +5511,10 @@
     "vitalite": [
      16,
      20
+    ],
+    "invocations": [
+     1,
+     1
     ]
    },
    "set": 61
@@ -4905,6 +5528,10 @@
     "vitalite": [
      16,
      20
+    ],
+    "invocations": [
+     1,
+     1
     ]
    },
    "set": 62
@@ -4952,6 +5579,10 @@
     "vitalite": [
      16,
      20
+    ],
+    "invocations": [
+     1,
+     1
     ]
    },
    "set": 70
@@ -4965,6 +5596,10 @@
     "vitalite": [
      16,
      20
+    ],
+    "invocations": [
+     1,
+     1
     ]
    },
    "set": 60
@@ -5012,6 +5647,10 @@
     "vitalite": [
      16,
      20
+    ],
+    "initiative": [
+     31,
+     50
     ]
    },
    "set": 62
@@ -5093,6 +5732,10 @@
     "sagesse": [
      7,
      10
+    ],
+    "initiative": [
+     31,
+     50
     ]
    },
    "set": 62
@@ -5123,6 +5766,10 @@
     "vitalite": [
      16,
      20
+    ],
+    "invocations": [
+     1,
+     1
     ]
    },
    "set": 72
@@ -5204,6 +5851,10 @@
     "vitalite": [
      16,
      20
+    ],
+    "invocations": [
+     1,
+     1
     ]
    },
    "set": 71
@@ -5234,6 +5885,10 @@
     "critique": [
      2,
      3
+    ],
+    "fuite": [
+     1,
+     2
     ]
    },
    "set": 70
@@ -5268,6 +5923,10 @@
     "vitalite": [
      16,
      20
+    ],
+    "fuite": [
+     2,
+     2
     ],
     "dommagesAir": [
      2,
@@ -5320,6 +5979,10 @@
     "agilite": [
      16,
      20
+    ],
+    "fuite": [
+     2,
+     2
     ]
    },
    "set": 63
@@ -5333,6 +5996,10 @@
     "agilite": [
      21,
      30
+    ],
+    "fuite": [
+     2,
+     2
     ]
    },
    "set": 63
@@ -5368,6 +6035,10 @@
      11,
      15
     ],
+    "fuite": [
+     2,
+     3
+    ],
     "dommagesEau": [
      2,
      3
@@ -5385,6 +6056,14 @@
      16,
      25
     ],
+    "tacle": [
+     3,
+     4
+    ],
+    "fuite": [
+     3,
+     4
+    ],
     "sagesse": [
      4,
      6
@@ -5398,6 +6077,10 @@
    "level": 22,
    "icon": 16155,
    "stats": {
+    "pods": [
+     101,
+     150
+    ],
     "vitalite": [
      26,
      35
@@ -5460,6 +6143,10 @@
    "level": 14,
    "icon": 11098,
    "stats": {
+    "initiative": [
+     51,
+     100
+    ],
     "vitalite": [
      11,
      15
@@ -5635,6 +6322,10 @@
      10,
      10
     ],
+    "invocations": [
+     5,
+     5
+    ],
     "vitalite": [
      300,
      300
@@ -5761,6 +6452,10 @@
     "vitalite": [
      1,
      1
+    ],
+    "initiative": [
+     1,
+     1
     ]
    },
    "set": 150
@@ -5772,6 +6467,10 @@
    "icon": 9190,
    "stats": {
     "vitalite": [
+     1,
+     1
+    ],
+    "initiative": [
      1,
      1
     ]
@@ -5787,6 +6486,10 @@
     "vitalite": [
      1,
      1
+    ],
+    "initiative": [
+     1,
+     1
     ]
    },
    "set": 150
@@ -5798,6 +6501,10 @@
    "icon": 6096,
    "stats": {
     "vitalite": [
+     1,
+     1
+    ],
+    "initiative": [
      1,
      1
     ]
@@ -5830,6 +6537,10 @@
     "vitalite": [
      1,
      1
+    ],
+    "initiative": [
+     1,
+     1
     ]
    },
    "set": 150
@@ -5841,6 +6552,10 @@
    "icon": 17201,
    "stats": {
     "vitalite": [
+     1,
+     1
+    ],
+    "initiative": [
      1,
      1
     ]
@@ -5856,6 +6571,10 @@
     "vitalite": [
      1,
      1
+    ],
+    "initiative": [
+     1,
+     1
     ]
    },
    "set": 150
@@ -5866,6 +6585,10 @@
    "level": 12,
    "icon": 19001,
    "stats": {
+    "initiative": [
+     10,
+     10
+    ],
     "vitalite": [
      10,
      10
@@ -5888,9 +6611,25 @@
    "level": 10,
    "icon": 16256,
    "stats": {
+    "initiative": [
+     41,
+     50
+    ],
     "vitalite": [
      26,
      30
+    ]
+   }
+  },
+  "10971": {
+   "name": "Sac ripant",
+   "slot": "cape",
+   "level": 20,
+   "icon": 81025,
+   "stats": {
+    "pods": [
+     251,
+     300
     ]
    }
   },
@@ -5900,6 +6639,10 @@
    "level": 10,
    "icon": 1202,
    "stats": {
+    "portee": [
+     1,
+     1
+    ],
     "force": [
      -15,
      -15
@@ -5915,6 +6658,35 @@
     "chance": [
      -15,
      -15
+    ]
+   },
+   "set": 863
+  },
+  "12423": {
+   "name": "Anneau Tétriste",
+   "slot": "anneau",
+   "level": 10,
+   "icon": 9240,
+   "stats": {
+    "invocations": [
+     1,
+     1
+    ],
+    "resAir": [
+     -1,
+     -1
+    ],
+    "resEau": [
+     -1,
+     -1
+    ],
+    "resFeu": [
+     -1,
+     -1
+    ],
+    "resTerre": [
+     -1,
+     -1
     ]
    },
    "set": 863
@@ -5953,6 +6725,18 @@
    },
    "set": 864
   },
+  "12661": {
+   "name": "Sac à Main",
+   "slot": "anneau",
+   "level": 5,
+   "icon": 9243,
+   "stats": {
+    "pods": [
+     31,
+     80
+    ]
+   }
+  },
   "12753": {
    "name": "Ceinturong",
    "slot": "ceinture",
@@ -5979,6 +6763,10 @@
     "sagesse": [
      -15,
      -15
+    ],
+    "invocations": [
+     1,
+     1
     ]
    },
    "set": 866
@@ -6000,6 +6788,23 @@
    },
    "set": 865
   },
+  "12757": {
+   "name": "Pacmabottes",
+   "slot": "bottes",
+   "level": 10,
+   "icon": 11206,
+   "stats": {
+    "initiative": [
+     51,
+     100
+    ],
+    "esquivePM": [
+     1,
+     2
+    ]
+   },
+   "set": 865
+  },
   "12848": {
    "name": "Manteau du Glutin",
    "slot": "cape",
@@ -6013,6 +6818,10 @@
     "puissance": [
      11,
      15
+    ],
+    "fuite": [
+     2,
+     3
     ],
     "dommages": [
      2,
@@ -6038,6 +6847,23 @@
     "chance": [
      7,
      10
+    ],
+    "fuite": [
+     3,
+     4
+    ]
+   },
+   "set": 232
+  },
+  "12850": {
+   "name": "Caleçon Fourré du Glutin",
+   "slot": "ceinture",
+   "level": 25,
+   "icon": 10220,
+   "stats": {
+    "portee": [
+     1,
+     1
     ]
    },
    "set": 232
@@ -6059,6 +6885,10 @@
     "chance": [
      7,
      10
+    ],
+    "fuite": [
+     2,
+     2
     ]
    },
    "set": 232
@@ -6072,6 +6902,10 @@
     "vitalite": [
      -70,
      -70
+    ],
+    "invocations": [
+     1,
+     1
     ]
    }
   },
@@ -6301,6 +7135,10 @@
    "level": 10,
    "icon": 10260,
    "stats": {
+    "fuite": [
+     2,
+     3
+    ],
     "critique": [
      2,
      2
@@ -6313,6 +7151,10 @@
    "level": 10,
    "icon": 11250,
    "stats": {
+    "tacle": [
+     3,
+     4
+    ],
     "vitalite": [
      6,
      15
@@ -6344,6 +7186,18 @@
     "vitalite": [
      21,
      30
+    ],
+    "dommagesCritiques": [
+     -20,
+     -20
+    ],
+    "retraitPA": [
+     4,
+     5
+    ],
+    "invocations": [
+     1,
+     1
     ]
    },
    "set": 869
@@ -6418,6 +7272,27 @@
     "vitalite": [
      16,
      20
+    ],
+    "dommagesPoussee": [
+     5,
+     5
+    ]
+   },
+   "set": 363
+  },
+  "15795": {
+   "name": "Bottes de Fouduglen",
+   "slot": "bottes",
+   "level": 10,
+   "icon": 11281,
+   "stats": {
+    "fuite": [
+     3,
+     4
+    ],
+    "dommagesPoussee": [
+     4,
+     5
     ]
    },
    "set": 363
@@ -6431,6 +7306,10 @@
     "agilite": [
      7,
      10
+    ],
+    "dommagesPoussee": [
+     4,
+     4
     ]
    },
    "set": 363
@@ -6448,6 +7327,10 @@
     "chance": [
      11,
      15
+    ],
+    "fuite": [
+     3,
+     3
     ]
    },
    "set": 373
@@ -6465,6 +7348,10 @@
     "chance": [
      11,
      15
+    ],
+    "fuite": [
+     3,
+     3
     ]
    },
    "set": 373
@@ -6554,6 +7441,23 @@
    },
    "set": 376
   },
+  "16505": {
+   "name": "Animulette",
+   "slot": "amulette",
+   "level": 7,
+   "icon": 1269,
+   "stats": {
+    "invocations": [
+     1,
+     1
+    ],
+    "critique": [
+     -5,
+     -5
+    ]
+   },
+   "set": 376
+  },
   "16527": {
    "name": "Marteau de Hargnok",
    "slot": "arme",
@@ -6585,6 +7489,18 @@
     ]
    }
   },
+  "16843": {
+   "name": "Sac à Main Renforcé",
+   "slot": "anneau",
+   "level": 8,
+   "icon": 9243,
+   "stats": {
+    "pods": [
+     51,
+     100
+    ]
+   }
+  },
   "17487": {
    "name": "Collier de Khan Karkass",
    "slot": "amulette",
@@ -6611,6 +7527,10 @@
     "dommagesTerre": [
      3,
      4
+    ],
+    "tacle": [
+     2,
+     3
     ]
    },
    "set": 867
@@ -6657,6 +7577,10 @@
      16,
      25
     ],
+    "resAir": [
+     4,
+     6
+    ],
     "agilite": [
      11,
      15
@@ -6680,6 +7604,18 @@
     ]
    },
    "set": 1
+  },
+  "18668": {
+   "name": "Bouclier Volant",
+   "slot": "bouclier",
+   "level": 10,
+   "icon": 82017,
+   "stats": {
+    "fuite": [
+     4,
+     5
+    ]
+   }
   },
   "18676": {
    "name": "Bouclier du Bûcheron",
@@ -6746,6 +7682,59 @@
      }
     ]
    }
+  },
+  "29463": {
+   "name": "Bouclier Tonbarien",
+   "slot": "bouclier",
+   "level": 15,
+   "icon": 82475,
+   "stats": {
+    "initiative": [
+     101,
+     150
+    ]
+   }
+  },
+  "30691": {
+   "name": "Le Blanclier",
+   "slot": "bouclier",
+   "level": 15,
+   "icon": 82061,
+   "stats": {
+    "invocations": [
+     1,
+     1
+    ]
+   }
+  },
+  "30701": {
+   "name": "La Halte Efkat",
+   "slot": "bouclier",
+   "level": 1,
+   "icon": 82519,
+   "stats": {
+    "redNeutre": [
+     1,
+     1
+    ],
+    "redTerre": [
+     1,
+     1
+    ],
+    "redFeu": [
+     1,
+     1
+    ],
+    "redEau": [
+     1,
+     1
+    ],
+    "redAir": [
+     1,
+     1
+    ]
+   },
+   "set": 69
   },
   "30828": {
    "name": "Bounihimée",
@@ -6916,22 +7905,47 @@
     },
     "2": {
      "intelligence": 10,
+     "redEau": 1,
+     "redFeu": 1,
+     "redAir": 1,
+     "redNeutre": 1,
+     "redTerre": 1,
      "dommagesFeu": 1
     },
     "3": {
+     "redFeu": 2,
+     "redAir": 2,
      "intelligence": 20,
+     "redNeutre": 2,
+     "redTerre": 2,
+     "redEau": 2,
      "dommagesFeu": 2
     },
     "4": {
+     "redFeu": 3,
+     "redAir": 3,
      "intelligence": 30,
+     "redNeutre": 3,
+     "redTerre": 3,
+     "redEau": 3,
      "dommagesFeu": 3
     },
     "5": {
+     "redFeu": 4,
+     "redAir": 4,
      "intelligence": 40,
+     "redNeutre": 4,
+     "redTerre": 4,
+     "redEau": 4,
      "dommagesFeu": 4
     },
     "6": {
+     "redFeu": 5,
+     "redAir": 5,
      "intelligence": 40,
+     "redNeutre": 5,
+     "redTerre": 5,
+     "redEau": 5,
      "pa": 1,
      "dommagesFeu": 4
     }
@@ -6940,6 +7954,7 @@
   "18": {
    "name": "Panoplie Champêtre",
    "items": [
+    6789,
     6791,
     6792,
     6794,
@@ -6950,18 +7965,22 @@
    "bonus": {
     "1": {
      "vitalite": 20,
-     "force": 10
+     "force": 10,
+     "initiative": 50
     },
     "2": {
      "vitalite": 30,
-     "force": 20
+     "force": 20,
+     "initiative": 70
     },
     "3": {
      "vitalite": 30,
      "puissance": 20,
-     "force": 20
+     "force": 20,
+     "initiative": 70
     },
     "4": {
+     "initiative": 100,
      "puissance": 20,
      "force": 20,
      "vitalite": 30,
@@ -6969,12 +7988,14 @@
     },
     "5": {
      "critique": 5,
+     "initiative": 150,
      "puissance": 30,
      "force": 30,
      "vitalite": 50
     },
     "6": {
      "pm": 1,
+     "initiative": 150,
      "critique": 5,
      "puissance": 30,
      "force": 30,
@@ -6992,11 +8013,15 @@
    "bonus": {
     "1": {
      "vitalite": 30,
-     "critique": 3
+     "critique": 3,
+     "dommagesPoussee": 10,
+     "initiative": 50
     },
     "2": {
      "vitalite": 60,
-     "critique": 6
+     "critique": 6,
+     "initiative": 100,
+     "dommagesPoussee": 20
     }
    }
   },
@@ -7064,9 +8089,13 @@
      "vitalite": 20
     },
     "2": {
-     "vitalite": 30
+     "vitalite": 30,
+     "esquivePM": 3
     },
     "3": {
+     "tacle": 4,
+     "esquivePM": 4,
+     "redNeutre": 4,
      "vitalite": 40
     }
    }
@@ -7083,6 +8112,7 @@
     "1": {
      "vitalite": 30,
      "dommagesTerre": 3,
+     "initiative": 25,
      "dommagesEau": 3,
      "dommagesNeutre": 3,
      "dommagesAir": 3,
@@ -7090,6 +8120,7 @@
     },
     "2": {
      "vitalite": 40,
+     "initiative": 50,
      "dommagesTerre": 5,
      "dommagesEau": 5,
      "dommagesNeutre": 5,
@@ -7098,6 +8129,7 @@
     },
     "3": {
      "vitalite": 50,
+     "initiative": 100,
      "dommagesTerre": 10,
      "dommagesEau": 10,
      "dommagesNeutre": 10,
@@ -7120,24 +8152,31 @@
    ],
    "bonus": {
     "1": {
-     "vitalite": 2
+     "vitalite": 2,
+     "initiative": 2
     },
     "2": {
-     "vitalite": 3
+     "vitalite": 3,
+     "initiative": 3
     },
     "3": {
+     "initiative": 4,
      "vitalite": 4
     },
     "4": {
+     "initiative": 5,
      "vitalite": 5
     },
     "5": {
+     "initiative": 6,
      "vitalite": 6
     },
     "6": {
+     "initiative": 7,
      "vitalite": 7
     },
     "7": {
+     "initiative": 8,
      "vitalite": 8
     }
    }
@@ -7201,28 +8240,34 @@
    "bonus": {
     "1": {
      "dommagesAir": 2,
+     "initiative": 50,
      "agilite": 10
     },
     "2": {
      "dommagesAir": 3,
+     "initiative": 100,
      "agilite": 15
     },
     "3": {
      "dommagesAir": 4,
+     "initiative": 150,
      "agilite": 20
     },
     "4": {
      "dommagesAir": 4,
+     "initiative": 150,
      "agilite": 20,
      "sagesse": 10
     },
     "5": {
      "dommagesAir": 6,
+     "initiative": 200,
      "agilite": 40,
      "sagesse": 20
     },
     "6": {
      "dommagesAir": 7,
+     "initiative": 300,
      "agilite": 60,
      "sagesse": 30,
      "pm": 2
@@ -7255,7 +8300,8 @@
     },
     "5": {
      "intelligence": 30,
-     "dommagesFeu": 3
+     "dommagesFeu": 3,
+     "portee": 1
     }
    }
   },
@@ -7285,7 +8331,8 @@
     },
     "5": {
      "chance": 30,
-     "dommagesEau": 3
+     "dommagesEau": 3,
+     "portee": 1
     }
    }
   },
@@ -7313,7 +8360,8 @@
      "puissance": 20
     },
     "5": {
-     "puissance": 20
+     "puissance": 20,
+     "portee": 1
     }
    }
   },
@@ -7345,19 +8393,22 @@
      "chance": 10,
      "agilite": 10,
      "dommagesEau": 1,
-     "dommagesAir": 1
+     "dommagesAir": 1,
+     "fuite": 1
     },
     "4": {
      "vitalite": 20,
      "chance": 20,
      "agilite": 20,
      "dommagesEau": 2,
-     "dommagesAir": 2
+     "dommagesAir": 2,
+     "fuite": 2
     },
     "5": {
      "vitalite": 30,
      "chance": 30,
      "agilite": 30,
+     "fuite": 3,
      "dommagesEau": 3,
      "dommagesAir": 3
     },
@@ -7365,6 +8416,7 @@
      "vitalite": 30,
      "chance": 30,
      "agilite": 30,
+     "fuite": 3,
      "dommagesEau": 3,
      "dommagesAir": 3,
      "pa": 1
@@ -7374,6 +8426,7 @@
      "vitalite": 50,
      "chance": 50,
      "agilite": 50,
+     "fuite": 5,
      "dommagesEau": 5,
      "dommagesAir": 5
     }
@@ -7388,6 +8441,7 @@
     8536,
     8537,
     8538,
+    30701,
     30828
    ],
    "bonus": {
@@ -7477,6 +8531,7 @@
      "vitalite": 50
     },
     "5": {
+     "portee": 1,
      "soins": 8,
      "vitalite": 50
     }
@@ -7508,6 +8563,7 @@
     },
     "5": {
      "agilite": 30,
+     "portee": 1,
      "dommagesAir": 3
     }
    }
@@ -7538,7 +8594,8 @@
     },
     "5": {
      "force": 30,
-     "dommagesTerre": 3
+     "dommagesTerre": 3,
+     "portee": 1
     }
    }
   },
@@ -7557,11 +8614,13 @@
   "863": {
    "name": "Panoplie Tétriste",
    "items": [
-    12421
+    12421,
+    12423
    ],
    "bonus": {
     "1": {
-     "vitalite": 30
+     "vitalite": 30,
+     "initiative": 200
     }
    }
   },
@@ -7583,7 +8642,8 @@
   "865": {
    "name": "Pacmanoplie",
    "items": [
-    12756
+    12756,
+    12757
    ],
    "bonus": {
     "1": {
@@ -7600,6 +8660,7 @@
    ],
    "bonus": {
     "1": {
+     "portee": 1,
      "dommages": 3
     }
    }
@@ -7626,12 +8687,14 @@
     "1": {
      "vitalite": 15,
      "chance": 15,
-     "prospection": 10
+     "prospection": 10,
+     "fuite": 5
     },
     "2": {
      "vitalite": 30,
      "chance": 30,
-     "prospection": 20
+     "prospection": 20,
+     "fuite": 10
     }
    }
   },
@@ -7643,6 +8706,7 @@
    ],
    "bonus": {
     "1": {
+     "retraitPA": 5,
      "dommagesNeutre": 5,
      "dommagesTerre": 5,
      "dommagesFeu": 5,
@@ -7660,6 +8724,7 @@
    "bonus": {
     "1": {
      "vitalite": 40,
+     "initiative": 200,
      "critique": 5
     }
    }
@@ -7669,18 +8734,23 @@
    "items": [
     12848,
     12849,
+    12850,
     12851
    ],
    "bonus": {
     "1": {
      "vitalite": 10,
-     "puissance": 10
+     "puissance": 10,
+     "fuite": 2
     },
     "2": {
      "vitalite": 20,
+     "fuite": 4,
      "puissance": 20
     },
     "3": {
+     "portee": 1,
+     "fuite": 6,
      "puissance": 30,
      "vitalite": 30
     }
@@ -7690,14 +8760,17 @@
    "name": "Panoplie Fouduglen",
    "items": [
     15794,
+    15795,
     15796
    ],
    "bonus": {
     "1": {
+     "dommagesPoussee": 5,
      "agilite": 10
     },
     "2": {
-     "agilite": 20
+     "agilite": 20,
+     "dommagesPoussee": 10
     }
    }
   },
@@ -7741,7 +8814,8 @@
    "name": "Panoplie des Âmes",
    "items": [
     16503,
-    16504
+    16504,
+    16505
    ],
    "bonus": {
     "1": {

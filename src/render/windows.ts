@@ -84,7 +84,7 @@ const CSS = `
 .dw .who2{display:flex;gap:12px;align-items:center}
 .dw .who2 img{width:54px;height:54px;border-radius:50%;background:#1d1c19;border:1px solid #57554c;object-fit:cover;object-position:top}
 .dw .who2 b{font-size:16px;color:#f4efe0}
-.dw .stats{display:grid;gap:3px}.dw .stats div{display:flex;justify-content:space-between;align-items:center;padding:4px 2px;border-bottom:1px solid #34322b}
+.dw .carac .sub{color:#c9a55a;font-size:12px;text-transform:uppercase;letter-spacing:.06em;margin-top:4px}.dw .stats{display:grid;gap:3px}.dw .stats div{display:flex;justify-content:space-between;align-items:center;padding:4px 2px;border-bottom:1px solid #34322b}
 .dw .plus{cursor:pointer;background:#2c3a12;border:1px solid #6f8f2a;color:#d6f57a;border-radius:3px;padding:0 6px;margin-left:6px;font-weight:bold}
 .dw .plus.off{opacity:.3;pointer-events:none}
 .dw .pts{color:#b9e54b;font-weight:bold}
@@ -229,7 +229,8 @@ export class Windows {
   }
 
   private renderCarac() {
-    const w = this.win!, p = this.world.player, st = (k: Stat) => p.stat(k);
+    const w = this.win!, p = this.world.player, st = (k: Stat) => p.stat(k), r1 = (v: number) => Math.round(v * 10) / 10;
+    const row = (label: string, v: number | string, tip: string) => `<div title="${tip}"><span>${label}</span><b>${v}</b></div>`;
     w.innerHTML = `${this.title('Caractéristiques', 'characteristic')}
       <div class="carac">
         <div class="who2"><img src="${this.portrait}" alt=""><div><b>${p.cls.name}</b><br>Niveau ${p.level}</div></div>
@@ -240,6 +241,23 @@ export class Windows {
           ${BASE_STATS.map(k => `<div><span>${STAT_NAMES[k]}</span><span><b>${st(k)}</b><span class="plus ${p.points ? '' : 'off'}" data-plus="${k}" title="Maj : +10">+</span></span></div>`).join('')}
           <div><span>Auto-attaque</span><b>${(1 / p.attackInterval()).toFixed(2)} / s</b></div>
           ${(['puissance', 'dommages', 'critique', 'vitesse', 'prospection', 'soins'] as Stat[]).map(k => `<div><span>${STAT_NAMES[k]}</span><b>${k === 'critique' ? Math.round(p.critChance * 100) : st(k)}</b></div>`).join('')}
+        </div>
+        <div class="sub">Combat</div>
+        <div class="stats">
+          ${row('Portée', st('portee'), '+1 case de portée par point pour les sorts à distance')}
+          ${row('Initiative', p.initiative, 'Initiative + Force + Intelligence + Chance + Agilité. Le premier coup porté à un monstre fait +1 % par 10 points (jusqu\'à +50 %)')}
+          ${row('Tacle', r1(p.tacle), 'Agilité / 10 + Tacle. Ralentit les monstres à ton contact (leur Fuite y résiste)')}
+          ${row('Fuite', r1(p.fuite), 'Agilité / 10 + Fuite. Résiste au Tacle des monstres et réduit les ralentissements subis')}
+          ${row('Retrait PA · PM', `${r1(p.retrait('PA'))} · ${r1(p.retrait('PM'))}`, 'Sagesse / 10 + Retrait. Chance que tes retraits de PA / PM passent l\'Esquive du monstre')}
+          ${row('Esquive PA · PM', `${r1(p.esquive('PA'))} · ${r1(p.esquive('PM'))}`, 'Sagesse / 10 + Esquive. Chance d\'éviter les retraits de PA / PM des monstres')}
+          ${row('Dommages Critiques', st('dommagesCritiques'), 'S\'ajoutent à chaque coup critique')}
+          ${row('Dommages Poussée', st('dommagesPoussee'), 'S\'ajoutent aux coups qui repoussent')}
+          ${row('Résistance Poussée · Critiques', `${st('resPoussee')} · ${st('resCritiques')}`, 'Sans effet pour l\'instant : les monstres ne font ni dommages de poussée ni coups critiques')}
+          ${row('Invocations · Pods', `${st('invocations')} · ${st('pods')}`, 'Invocations : pour l\'Osamodas, plus tard. Pods : pas encore de limite de poids')}
+        </div>
+        <div class="sub">Résistances (fixe · %)</div>
+        <div class="stats">
+          ${(['Terre', 'Feu', 'Eau', 'Air', 'Neutre'] as const).map(e => row(e, `${st(`red${e}` as Stat)} · ${st(`res${e}` as Stat)} %`, `Les dommages ${e} reçus perdent d'abord la résistance fixe, puis le pourcentage (50 % au plus)`)).join('')}
         </div>
         <div class="hint">Force : sorts Terre · Intelligence : Feu · Chance : Eau · Agilité : Air (+1 % de dommages par point). Vitalité : +1 PV. Sagesse : +1 % d'XP.</div>
       </div>`;

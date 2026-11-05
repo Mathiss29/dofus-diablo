@@ -3,7 +3,11 @@ import type { Rng } from './math';
 /** Caractéristiques du perso (noms Dofus). Les élémentaires boostent les sorts de leur élément :
  *  terre = force, feu = intelligence, eau = chance, air = agilité (comme dans Dofus : +1 % par point). */
 export const STATS = ['vitalite', 'sagesse', 'force', 'intelligence', 'chance', 'agilite', 'puissance', 'dommages', 'critique', 'soins',
-  'pa', 'pm', 'prospection', 'vitesse', 'dommagesTerre', 'dommagesFeu', 'dommagesEau', 'dommagesAir', 'dommagesNeutre'] as const;
+  'pa', 'pm', 'prospection', 'vitesse', 'dommagesTerre', 'dommagesFeu', 'dommagesEau', 'dommagesAir', 'dommagesNeutre',
+  // choix 10C : toutes les autres caractéristiques de Dofus (rôles en temps réel dans src/sim/caracs.ts)
+  'portee', 'initiative', 'resTerre', 'resFeu', 'resEau', 'resAir', 'resNeutre', 'redTerre', 'redFeu', 'redEau', 'redAir', 'redNeutre',
+  'tacle', 'fuite', 'esquivePA', 'esquivePM', 'retraitPA', 'retraitPM', 'dommagesPoussee', 'resPoussee', 'dommagesCritiques', 'resCritiques',
+  'invocations', 'pods'] as const;
 export type Stat = typeof STATS[number];
 export type Stats = Partial<Record<Stat, number>>;
 /** Les 6 caractéristiques où l'on place ses 5 points par niveau (choix 6C). */
@@ -13,6 +17,12 @@ export const STAT_NAMES: Record<Stat, string> = {
   vitalite: 'Vitalité', sagesse: 'Sagesse', force: 'Force', intelligence: 'Intelligence', chance: 'Chance', agilite: 'Agilité',
   puissance: 'Puissance', dommages: 'Dommages', critique: '% Critique', soins: 'Soins', pa: 'PA', pm: 'PM', prospection: 'Prospection', vitesse: '% Vitesse d\'attaque',
   dommagesTerre: 'Dommages Terre', dommagesFeu: 'Dommages Feu', dommagesEau: 'Dommages Eau', dommagesAir: 'Dommages Air', dommagesNeutre: 'Dommages Neutre',
+  portee: 'Portée', initiative: 'Initiative',
+  resTerre: '% Résistance Terre', resFeu: '% Résistance Feu', resEau: '% Résistance Eau', resAir: '% Résistance Air', resNeutre: '% Résistance Neutre',
+  redTerre: 'Résistance Terre', redFeu: 'Résistance Feu', redEau: 'Résistance Eau', redAir: 'Résistance Air', redNeutre: 'Résistance Neutre',
+  tacle: 'Tacle', fuite: 'Fuite', esquivePA: 'Esquive PA', esquivePM: 'Esquive PM', retraitPA: 'Retrait PA', retraitPM: 'Retrait PM',
+  dommagesPoussee: 'Dommages Poussée', resPoussee: 'Résistance Poussée', dommagesCritiques: 'Dommages Critiques', resCritiques: 'Résistance Critiques',
+  invocations: 'Invocations', pods: 'Pods',
 };
 
 export type Slot = 'amulette' | 'anneau' | 'ceinture' | 'bottes' | 'chapeau' | 'cape' | 'bouclier' | 'arme';
