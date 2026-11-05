@@ -1,3 +1,4 @@
+import { v } from './assetUrl';
 import Phaser from 'phaser';
 import { GridMap, type WorldGrid, type WorldMapEntry } from '../sim/gridmap';
 
@@ -28,13 +29,13 @@ export class WorldView {
 
   /** À appeler dans preload() : le ciel et les cartes autour du départ, pour ne rien voir apparaître au lancement. */
   static preload(scene: Phaser.Scene, world: { sky?: string; maps: WorldMapEntry[] }, dir: string, prefix: string, start: [number, number]) {
-    if (world.sky) scene.load.image(WorldView.key(prefix, 'ciel'), `${dir}/${world.sky}`);
+    if (world.sky) scene.load.image(WorldView.key(prefix, 'ciel'), v(`${dir}/${world.sky}`));
     for (const m of world.maps) if (ring(m, start[0], start[1]) <= LOAD_RING) WorldView.queue(scene, m, dir, prefix);
   }
   private static queue(scene: Phaser.Scene, m: WorldMapEntry, dir: string, prefix: string) {
-    scene.load.image(WorldView.key(prefix, `sol_${m.tag}`), `${dir}/sol_${m.tag}.webp`);
-    if (m.fond) scene.load.image(WorldView.key(prefix, `fond_${m.tag}`), `${dir}/fond_${m.tag}.webp`);
-    scene.load.atlas(WorldView.key(prefix, `decor_${m.tag}`), `${dir}/decor_${m.tag}.webp`, `${dir}/decor_${m.tag}.json`);
+    scene.load.image(WorldView.key(prefix, `sol_${m.tag}`), v(`${dir}/sol_${m.tag}.webp`));
+    if (m.fond) scene.load.image(WorldView.key(prefix, `fond_${m.tag}`), v(`${dir}/fond_${m.tag}.webp`));
+    scene.load.atlas(WorldView.key(prefix, `decor_${m.tag}`), v(`${dir}/decor_${m.tag}.webp`), v(`${dir}/decor_${m.tag}.json`));
   }
 
   /** Après preload : pose le ciel et les cartes déjà chargées. */

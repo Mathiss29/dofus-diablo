@@ -33,9 +33,13 @@ for i, (k, c, b) in enumerate(items):
                       'spriteSourceSize': {'x': b[0], 'y': b[1], 'w': w, 'h': h}, 'sourceSize': {'w': cw, 'h': ch}}
 import os
 name = out.split('/')[-1]; meta = {'scale': '1', 'cell': [cw, ch], 'origin': j['meta']['origin']}
+import hashlib, io
 for pg, P in enumerate(pages):
-    P['image'] = name + ('' if pg == 0 else f'-{pg}') + '.webp'
-    P['sheet'].save(os.path.join(os.path.dirname(out), P['image']), 'WEBP', quality=int(os.environ.get('QUALITY', 88)), method=6)
+    buf = io.BytesIO(); P['sheet'].save(buf, 'WEBP', quality=int(os.environ.get('QUALITY', 88)), method=6)
+    # multiatlas : nom avec l'empreinte du contenu, pour que le navigateur ne garde pas une ancienne page en cache
+    tag = ('.' + hashlib.md5(buf.getvalue()).hexdigest()[:8]) if maxH else ''
+    P['image'] = name + ('' if pg == 0 else f'-{pg}') + tag + '.webp'
+    open(os.path.join(os.path.dirname(out), P['image']), 'wb').write(buf.getvalue())
 if not maxH:
     P = pages[0]; P['sheet'].save(out + '.png')
     json.dump({'frames': P['frames'], 'meta': {'image': P['image'], 'size': {'w': maxW, 'h': P['sheet'].height}, **meta}}, open(out + '.json', 'w'))

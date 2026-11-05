@@ -131,6 +131,15 @@ export class FX {
     // Flèches en vol : un trait lumineux de la couleur de l'élément, à hauteur d'arc
     for (const a of arrows) {
       const col = ELEMENT_COLORS[a.hit.element ?? 'neutre'];
+      if (a.hostile) {   // boule d'un monstre : cerclée de rouge pour qu'on la repère et qu'on l'esquive
+        const h = ISO.toScreen(a.x, a.y, 30), t = ISO.toScreen(a.x - a.dx * 30, a.y - a.dy * 30, 30);
+        top.lineStyle(8, col, 0.35); top.lineBetween(t.x, t.y, h.x, h.y);
+        top.fillStyle(col, 1); top.fillCircle(h.x, h.y, a.width * 0.75);
+        top.lineStyle(2, 0xe0402a, 1); top.strokeCircle(h.x, h.y, a.width * 0.75 + 1);
+        top.fillStyle(0xffffff, 0.9); top.fillCircle(h.x - 2, h.y - 2, a.width * 0.25);
+        if (Math.random() < 0.4) this.particles(a.x, a.y, 30, 1, col, 30, 0.25, 2, 30);
+        continue;
+      }
       const h = ISO.toScreen(a.x, a.y, 34), t = ISO.toScreen(a.x - a.dx * 46, a.y - a.dy * 46, 34);
       top.lineStyle(a.explode ? 7 : 5, col, 0.55); top.lineBetween(t.x, t.y, h.x, h.y);
       top.lineStyle(2, 0xffffff, 1); top.lineBetween((t.x + h.x) / 2, (t.y + h.y) / 2, h.x, h.y);

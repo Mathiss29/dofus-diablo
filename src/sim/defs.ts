@@ -19,6 +19,8 @@ export type HitZone =
 
 /** Un sort officiel de la classe, adapté au temps réel. Tous les temps sont en secondes. */
 export interface SpellDef {
+  /** Auto-attaque : attaques par seconde au plus (accélérées par la stat Vitesse d'attaque). */
+  aps?: number;
   name: string;
   /** iconId de spellsdataroot (assets/ui/sorts/sort_{icon}.png). */
   icon: number;
@@ -86,6 +88,8 @@ export interface MonsterDef {
   look: string; color: string; boss?: boolean; elite?: boolean;
   /** Monde ouvert : distance à laquelle il repère le joueur (défaut : OpenDef.aggro). */
   aggro?: number;
+  /** Attaque à distance : il s'arrête à portée et lance un projectile (ligne d'avertissement pendant windup s). */
+  ranged?: { range: number; speed: number; width: number; windup: number; element: Element; dmg?: number };
 }
 
 interface Count { base: number; perWave: number; fromWave?: number }
