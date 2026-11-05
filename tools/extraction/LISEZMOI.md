@@ -119,3 +119,8 @@ Les cartes d'intérieur (worldMap -1 dans MapsInformation) n'ont pas de sortie p
 Raccords entre cartes : chaque carte a un calque `bord_x_y.webp` avec ce qu'elle dessine au-delà de son cadre. Il est posé en entier là où la voisine est vide (falaises), et en fondu sur 160 px ailleurs (ombres, fonds de ciel). Pour le refaire sans réécrire le reste : `DECOR_ONLY=1 NO_DECOR=1 CALQUES=bord`.
 
 Les éléments interactifs qui ont une image fixe (portes, cadres de mine, panneaux) sont posés avec le décor. Les animés (minerais, céréales) manquent encore.
+
+## Donjons (Crypte de Kardorim)
+
+Les salles d'un donjon sont des intérieurs comme les autres (`incarnam_interieurs.json`, `dungeons` dans les données pour leur ordre). Un lien peut porter un 4e champ `{"verrou": 1, "sens": 1}` : on ne passe que de a vers b, et seulement quand la salle a est vidée. Les monstres de chaque salle sont dans `zones.json` (`open.donjons`), d'après les groupes officiels (8 par salle).
+`ONLY=1_-4 DECOR_ONLY=1 python world_export.py …` réécrit une seule carte (ex. une image abîmée par un export interrompu). Les gros squelettes à plusieurs atlas (Kardorim) sont gérés par `build_scene.py` (`textureIndex`).

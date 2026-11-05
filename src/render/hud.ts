@@ -298,7 +298,8 @@ export class Hud {
     this.coords.setPosition(W / 2, 10).setText(map ? `${map.inside ? '' : `${map.x},${map.y}  `}${world.zone.name}${world.area ? ` (${world.area.name})` : ''}` : world.zone.name);
 
     // --- Jauge de boss ---
-    const boss = world.monsters.find(m => m.def.boss && !m.dead);
+    const wgr = world.worldGrid, ici = wgr?.mapAt(world.player.x, world.player.y)?.tag;   // seulement le boss de la carte du joueur
+    const boss = world.monsters.find(m => m.def.boss && !m.dead && (!wgr || wgr.mapAt(m.homeX, m.homeY)?.tag === ici));
     const Bv = this.boss, vis = !!boss;
     Bv.skull.setVisible(vis); Bv.name.setVisible(vis); Bv.hp.setVisible(vis);
     if (boss) {

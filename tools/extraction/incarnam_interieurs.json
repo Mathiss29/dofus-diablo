@@ -6,7 +6,8 @@
   "taverne": [153357316, 448],
   "maison_-2_-2": [153355270, 442], "maison_-1_-4": [153354242, 444], "maison_0_-4": [153356292, 444],
   "maison_0_-2": [153354244, 442], "maison_0_-1": [153354246, 442], "maison_1_-4": [153355272, 445],
-  "maison_2_-4": [153355264, 445], "maison_2_-3": [153356296, 450], "maison_3_-3": [153354240, 450], "maison_2_-2": [153355266, 443]
+  "maison_2_-4": [153355264, 445], "maison_2_-3": [153356296, 450], "maison_3_-3": [153354240, 450], "maison_2_-2": [153355266, 443],
+  "crypte_1": [152829952, 447], "crypte_2": [152830976, 447], "crypte_3": [152832000, 447], "crypte_4": [152833024, 447], "crypte_5": [152834048, 447]
  },
  "liens": [
   [["2_-4", 198], ["mine_2_-4", 158], "Mine"],
@@ -27,6 +28,12 @@
   [["2_-4", 330], ["maison_2_-4", "bas"], "Maison"],
   [["2_-3", 285], ["maison_2_-3", "bas"], "Maison"],
   [["3_-3", 427], ["maison_3_-3", "bas"], "Maison"],
-  [["2_-2", 315], ["maison_2_-2", "bas"], "Maison"]
+  [["2_-2", 315], ["maison_2_-2", "bas"], "Maison"],
+  [["5_-1", 345], ["crypte_1", 424], "Crypte de Kardorim"],
+  [["crypte_1", 233], ["crypte_2", 484], "Crypte de Kardorim", {"verrou": 1, "sens": 1}],
+  [["crypte_2", 231], ["crypte_3", 509], "Crypte de Kardorim", {"verrou": 1, "sens": 1}],
+  [["crypte_3", 262], ["crypte_4", 538], "Crypte de Kardorim", {"verrou": 1, "sens": 1}],
+  [["crypte_4", 285], ["crypte_5", 484], "Crypte de Kardorim", {"verrou": 1, "sens": 1}],
+  [["crypte_5", 255], ["5_-1", 345], "Incarnam", {"verrou": 1, "sens": 1}]
  ]
 }

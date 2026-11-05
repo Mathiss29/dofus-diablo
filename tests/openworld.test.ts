@@ -104,11 +104,15 @@ describe('intérieurs (maisons, Mine, Taverne)', () => {
     expect(w.portes.length).toBeGreaterThanOrEqual(19);
     for (const po of w.portes) for (let i = 0; i < 2; i++) {
       const from = po.ends[i], to = po.ends[1 - i];
+      if (i === 1 && po.sens) continue;   // donjon : on ne revient pas en arrière
+      if (po.verrou) for (const m of w.monsters) if (wg.mapAt(m.homeX, m.homeY)?.tag === from.tag) m.dead = true;
       // une case marchable dans le rayon de la porte (on peut l'atteindre à pied)
       const c = wg.freeByMap.get(from.tag)!.map(c => wg.cellToWorld(c)).find(q => Math.hypot(q.x - from.x, q.y - from.y) <= World.PORTE_R);
       expect(c, `${po.nom} ${from.tag}`).toBeDefined();
       p.x = c!.x; p.y = c!.y; p.hp = p.maxHp;
       w.step(STEP, NO_INPUT);
+      expect(wg.mapAt(p.x, p.y)?.tag, 'en passant devant, on n\'entre pas').toBe(from.tag);
+      w.step(STEP, { ...NO_INPUT, dest: { x: from.x, y: from.y } });   // clic sur la porte
       expect(wg.mapAt(p.x, p.y)?.tag, `${from.tag} -> ${to.tag}`).toBe(to.tag);
       const there = { x: p.x, y: p.y };
       w.step(STEP, NO_INPUT);
@@ -124,7 +128,45 @@ describe('intérieurs (maisons, Mine, Taverne)', () => {
     const w = newWorld(), wg = w.worldGrid!;
     const inside = w.monsters.map(m => wg.mapAt(m.homeX, m.homeY)!).filter(m => m.inside);
     expect(inside.length).toBeGreaterThan(0);
-    expect(inside.every(m => m.sub === 778)).toBe(true);
+    expect(inside.filter(m => m.sub !== 447).every(m => m.sub === 778)).toBe(true);
     expect(w.monsters.filter(m => wg.mapAt(m.homeX, m.homeY)!.sub === 778).every(m => m.type === 'aminite')).toBe(true);
+  });
+});
+
+describe('Crypte de Kardorim', () => {
+  const salle = (w: World, tag: string) => w.monsters.filter(m => !m.dead && w.worldGrid!.mapAt(m.homeX, m.homeY)?.tag === tag);
+  it('5 salles de 8 monstres officiels, Kardorim dans la dernière', () => {
+    const w = newWorld();
+    for (let i = 1; i <= 5; i++) expect(salle(w, `crypte_${i}`).length, `salle ${i}`).toBe(8);
+    expect(salle(w, 'crypte_5').filter(m => m.type === 'kardorim').length).toBe(1);
+    expect(w.monsters.filter(m => m.type === 'kardorim').length).toBe(1);
+  });
+  it('la porte de la salle suivante ne s\'ouvre qu\'une fois la salle vidée', () => {
+    const w = newWorld(), wg = w.worldGrid!, p = w.player;
+    const po = w.portes.find(q => q.ends[0].tag === 'crypte_1')!;
+    const go = () => { p.x = po.ends[0].x; p.y = po.ends[0].y; w.step(STEP, { ...NO_INPUT, dest: { x: p.x, y: p.y } }); };
+    for (const m of salle(w, 'crypte_1')) m.state = 'spawn';   // ne bougent pas pendant le test
+    go();
+    expect(wg.mapAt(p.x, p.y)?.tag).toBe('crypte_1');
+    expect(w.drainEvents().some(e => e.k === 'status')).toBe(true);
+    for (const m of salle(w, 'crypte_1')) m.dead = true;
+    const loin = wg.cellToWorld(wg.freeByMap.get('-3_-6')![0]); p.x = loin.x; p.y = loin.y; w.step(STEP, NO_INPUT);
+    go();
+    expect(wg.mapAt(p.x, p.y)?.tag).toBe('crypte_2');
+  });
+  it('Kardorim invoque un seul Kardorib à la fois, qui disparaît avec lui', () => {
+    const w = newWorld(), wg = w.worldGrid!, p = w.player;
+    const k = w.monsters.find(m => m.type === 'kardorim')!;
+    for (const m of w.monsters) if (m !== k && wg.mapAt(m.homeX, m.homeY)?.tag === 'crypte_5') m.dead = true;
+    const ribs = () => w.monsters.filter(m => m.type === 'kardorib' && !m.dead);
+    let max = 0;
+    for (let t = 0; t < 40 * 60; t++) {
+      p.x = k.x + 120; p.y = k.y; p.hp = p.maxHp; p.dead = false;
+      w.step(STEP, NO_INPUT); max = Math.max(max, ribs().length);
+    }
+    expect(max).toBe(1);
+    expect(ribs()[0]?.summoner).toBe(k);
+    w.killMonster(k);
+    expect(ribs().length).toBe(0);
   });
 });

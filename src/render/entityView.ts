@@ -28,7 +28,10 @@ export class EntityView {
     this.shadow = scene.add.graphics();   // ombre dessinée par le jeu (celle de Dofus laissait une croix)
   }
 
+  /** Hors de l'écran : rien à dessiner (on ne recalcule pas l'animation). */
+  hide() { this.sprite.setVisible(false); this.bar.setVisible(false); this.shadow.setVisible(false); }
   sync(e: Entity) {
+    if (!this.sprite.visible) { this.sprite.setVisible(true); this.bar.setVisible(true); this.shadow.setVisible(true); }
     const L = this.look, p = ISO.toScreen(e.x, e.y);
     const fd = ISO.toScreen(Math.cos(e.facing), Math.sin(e.facing));
     const st = L.map[e.anim] ?? L.map[e.anim.replace(/\d+$/, '')] ?? L.map.idle;   // windup1 -> windup si l'animation du sort manque

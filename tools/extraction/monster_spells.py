@@ -29,12 +29,16 @@ def effect(e):
     if i == 5: return {'k': 'repousse', 'n': n}
     if i == 1042: return {'k': 'avance', 'n': n}
     if i == 108: return {'k': 'soin', 'min': n, 'max': max(n, e['diceSide'])}
+    if i == 138: return {'k': 'dommages', 'n': n, 'pct': True, 'dur': dur}    # % Dommages (ex. Frénésie)
+    if i == 112: return {'k': 'dommages', 'n': n, 'dur': dur}                 # Dommages fixes (ex. Euphorie malsaine)
+    if i == 181: return {'k': 'invoque', 'dofusId': n}                        # invocation : monstre n (clé remplie par main)
     return None
 
 def main(d, frbin, out='src/data/monsters.json'):
     T = i18n(frbin)
     M, S, L, SC = (table(d, n) for n in ('monsters', 'spells', 'spelllevels', 'spellscripts'))
     ours = json.load(open(out))
+    cle = {md.get('dofusId'): k for k, md in ours.items()}
     for key, md in ours.items():
         m = M.get(md.get('dofusId', -1))
         if not m: continue
@@ -48,11 +52,14 @@ def main(d, frbin, out='src/data/monsters.json'):
                 for kv in raw.split(','):
                     if ':' in kv: k, v = kv.split(':', 1); params.setdefault(k.strip(), v.strip())
             effs = [x for x in (effect(e) for e in P(lv['effects'])) if x]
+            for x in effs:
+                if x['k'] == 'invoque': x['monster'] = cle.get(x.pop('dofusId'))
+            effs = [x for x in effs if x['k'] != 'invoque' or x['monster']]
             z = P(lv['effects'])[0]['zoneDescr'] if P(lv['effects']) else {'shape': 80, 'param1': 0}
             tm = P(lv['effects'])[0]['targetMask'] if P(lv['effects']) else 'A'
             sp = {'id': int(sid), 'name': T(int(s['nameId'])), 'pa': int(lv['apCost']), 'po': [int(lv['minRange']), int(lv['range'])],
                   'relance': int(lv['minCastInterval']), 'anim': int(params.get('animId', 0) or 0),
-                  'zone': chr(z['shape']) + str(z['param1']), 'allies': tm.startswith('a'), 'effects': effs}
+                  'zone': chr(z['shape']) + str(z['param1']), 'allies': tm[:1] in ('a', 'g'), 'effects': effs}
             if params.get('missileGfxId'): sp['missile'] = int(params['missileGfxId'])
             if params.get('targetGfxId'): sp['gfx'] = int(params['targetGfxId'])
             spells.append(sp)

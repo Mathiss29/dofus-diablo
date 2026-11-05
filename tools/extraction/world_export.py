@@ -62,6 +62,8 @@ x0m, y0m = OX + W // 4, OY + H // 4
 x1m, y1m = x0m + MW, y0m + MH
 # ONLY_INSIDE=1 : ne réécrit les images que des intérieurs (les cartes du dehors déjà exportées ne changent pas)
 ONLY_INSIDE = os.environ.get('ONLY_INSIDE') == '1'
+# ONLY=1_-4,mine_2_-4 : ne réécrit les images que de ces cartes (ex. une image abîmée par un export interrompu)
+ONLY = set(filter(None, os.environ.get('ONLY', '').split(',')))
 # DECOR_ONLY=1 : ne réécrit que les atlas de décor (sols et fonds inchangés)
 DECOR_ONLY = os.environ.get('DECOR_ONLY') == '1'
 # avec DECOR_ONLY : NO_DECOR=1 saute aussi les atlas de décor ; CALQUES=fond,bord réécrit quand même ces calques
@@ -90,7 +92,7 @@ def pack(variants, path, write=True):
 sky = None
 for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
     ix, iy = x - X0, y - Y0; dx, dy = ix * MW, iy * MH; tag = extra[(x, y)].get('tag', f'{x}_{y}')
-    write = not ONLY_INSIDE or extra[(x, y)].get('inside')
+    write = (not ONLY_INSIDE or extra[(x, y)].get('inside')) and (not ONLY or tag in ONLY)
     for c, cell in enumerate(md['cellsData']):
         r, k = divmod(c, COLS)
         if cell['mov']: mov[(iy * ROWS + r) * COLS * nx + ix * COLS + k] = '1'
@@ -151,7 +153,8 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
         # flou par nature : moitié de résolution (le jeu l'agrandit x2), 4 fois moins de mémoire vidéo
         if write and (not DECOR_ONLY or nom in CALQUES): fim.resize((max(1, fim.width // 2), max(1, fim.height // 2)), Image.LANCZOS).save(f'{out}/{nom}_{tag}.webp', 'WEBP', quality=80, method=6)
         return {'x': fx0 + dx, 'y': fy0 + dy, 'w': fim.width, 'h': fim.height, 'k': 2}
-    fond = calque(fond_els, 'fond')
+    # rayons / nuages qui passent sur une voisine : coupés net par le sol de la voisine quoi qu'on fasse -> retirés (choix de Mathis)
+    fond = calque(fond_els, 'fond') if os.environ.get('GARDER_FOND') == '1' else None
     if write and not DECOR_ONLY: sol.save(f'{out}/sol_{tag}.webp', 'WEBP', quality=80, method=6)
     # Décor : un atlas par carte, pour que le jeu ne charge que les cartes proches du joueur
     variants = {}; places = []

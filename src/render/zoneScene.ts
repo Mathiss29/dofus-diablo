@@ -83,6 +83,8 @@ export class ZoneScene extends Phaser.Scene {
       const w = zone.waves!;
       [...w.pack.map(p => p.monster), w.boss, ...w.escort.monsters, ...w.archimonstres.monsters].forEach(m => types.add(m));
     }
+    // invocations (ex. Kardorib) : monstres appelés par un sort, absents des listes de sous-zones
+    for (const t of [...types]) for (const s of GAME_DATA.monsters[t].spells ?? []) for (const e of s.effects) if (e.k === 'invoque') types.add(e.monster);
     // Effets officiels des sorts : ceux de la classe et des monstres de la zone
     SpellFx.preload(this, [...Object.keys(GAME_DATA.classes[this.classId].spells),
       ...[...types].flatMap(t => (GAME_DATA.monsters[t].spells ?? []).map(s => `m${s.id}`))]);
@@ -421,7 +423,13 @@ export class ZoneScene extends Phaser.Scene {
     for (const e of [w.player, ...w.monsters]) {
       // monde ouvert : on n'affiche que les monstres des cartes chargées (les autres vivent quand même dans la simulation)
       if (wv && wg && e !== w.player && !wv.isReady(wg.mapAt(e.x, e.y)?.tag)) continue;
-      this.viewOf(e).sync(e); alive.add(e.id);
+      alive.add(e.id);
+      // hors de l'écran (avec une marge) : la vue reste, mais on ne la met pas à jour
+      if (e !== w.player) {
+        const s = ISO.toScreen(e.x, e.y), r = cam.worldView;
+        if (s.x < r.x - 250 || s.x > r.right + 250 || s.y < r.y - 150 || s.y > r.bottom + 350) { this.views.get(e.id)?.hide(); continue; }
+      }
+      this.viewOf(e).sync(e);
     }
     for (const [id, v] of this.views) if (!alive.has(id)) { v.destroy(); this.views.delete(id); }
     if (this.snapCam) { const pv = this.viewOf(w.player).sprite; cam.centerOn(pv.x, pv.y - 30); this.snapCam = false; }

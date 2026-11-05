@@ -183,6 +183,23 @@
       0,
       0
      ]
+    },
+    "447": {
+     "name": "Crypte de Kardorim",
+     "level": 10,
+     "monsters": [
+      "chafer_debutant",
+      "chafer_furtif",
+      "chafer_eclaireur",
+      "chafer_piquier",
+      "sergent_chafer",
+      "kardorim"
+     ],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ]
     }
    },
    "checkpoints": [
@@ -403,6 +420,159 @@
       426
      ],
      "nom": "Maison"
+    },
+    {
+     "a": [
+      "5_-1",
+      345
+     ],
+     "b": [
+      "crypte_1",
+      424
+     ],
+     "nom": "Crypte de Kardorim"
+    },
+    {
+     "a": [
+      "crypte_1",
+      233
+     ],
+     "b": [
+      "crypte_2",
+      484
+     ],
+     "nom": "Crypte de Kardorim",
+     "verrou": 1,
+     "sens": 1
+    },
+    {
+     "a": [
+      "crypte_2",
+      231
+     ],
+     "b": [
+      "crypte_3",
+      509
+     ],
+     "nom": "Crypte de Kardorim",
+     "verrou": 1,
+     "sens": 1
+    },
+    {
+     "a": [
+      "crypte_3",
+      262
+     ],
+     "b": [
+      "crypte_4",
+      538
+     ],
+     "nom": "Crypte de Kardorim",
+     "verrou": 1,
+     "sens": 1
+    },
+    {
+     "a": [
+      "crypte_4",
+      285
+     ],
+     "b": [
+      "crypte_5",
+      484
+     ],
+     "nom": "Crypte de Kardorim",
+     "verrou": 1,
+     "sens": 1
+    },
+    {
+     "a": [
+      "crypte_5",
+      255
+     ],
+     "b": [
+      "5_-1",
+      345
+     ],
+     "nom": "Incarnam",
+     "verrou": 1,
+     "sens": 1
+    }
+   ],
+   "donjons": [
+    {
+     "nom": "Crypte de Kardorim",
+     "salles": {
+      "crypte_1": [
+       [
+        "sergent_chafer",
+        "chafer_furtif",
+        "chafer_debutant",
+        "chafer_piquier"
+       ],
+       [
+        "chafer_furtif",
+        "chafer_debutant",
+        "chafer_piquier",
+        "chafer_eclaireur"
+       ]
+      ],
+      "crypte_2": [
+       [
+        "chafer_eclaireur",
+        "chafer_eclaireur",
+        "sergent_chafer",
+        "chafer_piquier"
+       ],
+       [
+        "chafer_eclaireur",
+        "chafer_furtif",
+        "chafer_debutant",
+        "sergent_chafer"
+       ]
+      ],
+      "crypte_3": [
+       [
+        "chafer_piquier",
+        "chafer_piquier",
+        "chafer_eclaireur",
+        "sergent_chafer"
+       ],
+       [
+        "chafer_piquier",
+        "chafer_eclaireur",
+        "chafer_furtif",
+        "chafer_debutant"
+       ]
+      ],
+      "crypte_4": [
+       [
+        "chafer_piquier",
+        "sergent_chafer",
+        "chafer_furtif",
+        "chafer_eclaireur"
+       ],
+       [
+        "chafer_piquier",
+        "chafer_furtif",
+        "chafer_furtif",
+        "chafer_debutant"
+       ]
+      ],
+      "crypte_5": [
+       [
+        "kardorim",
+        "sergent_chafer",
+        "chafer_piquier",
+        "chafer_furtif"
+       ],
+       [
+        "sergent_chafer",
+        "chafer_eclaireur",
+        "chafer_furtif",
+        "chafer_debutant"
+       ]
+      ]
+     }
     }
    ]
   }
