@@ -80,6 +80,9 @@ export class FX {
           this.particles(e.x, e.y, 20, 10, 0xd2412f, 200, 0.4);
         }
         break;
+      case 'status':
+        this.number(e.x, e.y, 70, e.text, false, e.color);
+        break;
       case 'kill':
         this.particles(e.x, e.y, e.radius, 22, this.colorOf(e.monster), 300, 0.6, 4, 300);
         break;
@@ -101,7 +104,7 @@ export class FX {
   ring(x: number, y: number, r0: number, r1: number, color: number, life = 0.3, width = 6) {
     this.rings.push({ x, y, r0, r1, color, life, max: life, width });
   }
-  number(x: number, y: number, z: number, value: number, crit: boolean, color?: string) {
+  number(x: number, y: number, z: number, value: number | string, crit: boolean, color?: string) {
     const p = ISO.toScreen(x, y, z);
     const t = this.scene.add.text(p.x + rand(-8, 8), p.y, String(value), {
       fontFamily: 'Trebuchet MS, Verdana, sans-serif', fontSize: crit ? '26px' : '17px', fontStyle: 'bold',

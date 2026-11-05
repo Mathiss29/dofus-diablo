@@ -243,6 +243,14 @@ export class ZoneScene extends Phaser.Scene {
     }
     return best;
   }
+  /** Nom du sort officiel au-dessus du monstre qui le lance. */
+  private castName(id: number, name: string) {
+    const v = this.views.get(id); if (!v) return;
+    const b = v.sprite, top = b.y - v.look.height * v.look.scale - 14;
+    const t = this.add.text(b.x, top, name, { fontFamily: 'Trebuchet MS, Verdana, sans-serif', fontSize: '13px', fontStyle: 'bold',
+      color: '#ffd9a0', stroke: '#1a0f0a', strokeThickness: 3 }).setOrigin(0.5, 1).setDepth(1e6);
+    this.tweens.add({ targets: t, y: top - 18, alpha: 0, delay: 500, duration: 500, onComplete: () => t.destroy() });
+  }
   /** Petit cercle vert là où l'on a cliqué pour aller. */
   private moveMarker(ptr: Phaser.Input.Pointer) {
     const wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
@@ -318,6 +326,7 @@ export class ZoneScene extends Phaser.Scene {
         }
         case 'lootKamas': this.hud.loot(`+${e.n} kamas`, '#f2d36b'); this.windows?.refresh(); break;
         case 'bagFull': this.hud.toast('Sac plein : recycle des objets (Maj + clic dans l\'inventaire)'); break;
+        case 'monsterCast': this.castName(e.id, e.name); break;
         case 'itemDrop': if (e.rarity === 'rare' || e.rarity === 'legendaire') this.chime(e.rarity === 'legendaire'); break;
         case 'lootResource': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Ressource'} x${e.n}`, '#c9c4ab'); this.windows?.refresh(); break;
         case 'levelUp': this.hud.banner(`Niveau ${e.level} !\n+5 points (C)`, 1500); this.windows?.refresh(); break;

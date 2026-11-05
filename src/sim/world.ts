@@ -1,9 +1,9 @@
 import { angleDiff, Rng } from './math';
-import type { Element, GameData, HitZone, MonsterDef, SubAreaDef, ZoneDef } from './defs';
+import type { Element, GameData, HitZone, MonsterSpell, SubAreaDef, ZoneDef } from './defs';
 import type { SimEvent, Telegraph } from './events';
 import { GridMap, WorldGrid } from './gridmap';
 import type { PlayerInput } from './input';
-import { Monster } from './monster';
+import { CASE, Monster, TOUR } from './monster';
 import { RARITIES, rollItem, rollRarity, type Item, type ItemsData } from './items';
 import { Player } from './player';
 import { planWave } from './waves';
@@ -17,7 +17,9 @@ export interface Drop { uid: number; x: number; y: number; item?: Item; kamas?: 
 export interface Projectile { id: number; spell: string; x: number; y: number; dx: number; dy: number; left: number; speed: number; width: number;
   explode: number; pierce: boolean; hit: HitDef; stun: number; touched: Set<number>;
   /** Tiré par un monstre : touche le joueur, pas les monstres. */
-  hostile?: boolean }
+  hostile?: boolean;
+  /** Sort officiel du monstre qui l'a lancé (ses effets s'appliquent à l'impact). */
+  from?: { monster: Monster; spell: MonsterSpell } }
 
 /** Monde ouvert : un groupe de monstres posé sur une carte Dofus, qui réapparaît quand il a été vaincu. */
 interface MonsterGroup { id: number; map: string; sub: SubAreaDef; members: Monster[]; timer: number; cleared: boolean; x: number; y: number }
@@ -230,9 +232,48 @@ export class World {
       width: hz.width * area, explode: (hz.explode ?? 0) * area, pierce: !!hz.pierce, hit, stun, touched: new Set() });
   }
   /** Projectile d'un monstre vers le joueur. */
-  enemyShoot(x: number, y: number, facing: number, r: NonNullable<MonsterDef['ranged']>, dmg: number) {
-    this.projectiles.push({ id: this.nextId++, spell: 'monstre', x, y, dx: Math.cos(facing), dy: Math.sin(facing), left: r.range * 1.25,
-      speed: r.speed, width: r.width, explode: 0, pierce: false, hit: { dmg, knock: 0, element: r.element }, stun: 0, touched: new Set(), hostile: true });
+  /** Projectile d'un sort de monstre (missileGfxId dans ses données), lancé vers le joueur. */
+  monsterMissile(m: Monster, spell: MonsterSpell, range: number) {
+    const el = (spell.effects.find(e => e.k === 'dmg') as { element: Element } | undefined)?.element ?? 'neutre';
+    this.projectiles.push({ id: this.nextId++, spell: `m${spell.id}`, x: m.x + m.dirX * m.radius, y: m.y + m.dirY * m.radius, dx: m.dirX, dy: m.dirY,
+      left: range, speed: 420, width: 12, explode: 0, pierce: false, hit: { dmg: 0, knock: 0, element: el }, stun: 0, touched: new Set(), hostile: true,
+      from: { monster: m, spell } });
+  }
+  /** Applique au joueur les effets d'un sort de monstre, dans l'ordre des données de Dofus 3.
+   *  Dommages : jet officiel ramené à l'échelle du monstre (son meilleur sort = def.dmg). */
+  monsterSpellHits(m: Monster, spell: MonsterSpell, p: Player) {
+    if (p.dead) return;
+    const ref = Math.max(1, ...(m.def.spells ?? []).flatMap(s => s.effects).filter(e => e.k === 'dmg' && !e.perPa).map(e => (e as { min: number; max: number }).min / 2 + (e as { max: number }).max / 2));
+    const k = m.def.dmg / ref;
+    let landed = true;
+    for (const e of spell.effects) {
+      if (e.k === 'dmg') {
+        const n = Math.round(e.perPa ? e.min * k * Math.max(0, p.paMax - p.pa) : this.rng.range(e.min, e.max + 1) * k);
+        if (n <= 0) continue;
+        landed = p.hurt(n, m.x, m.y, this);
+        if (!landed) return;
+        if (e.steal) m.hp = Math.min(m.maxHp, m.hp + Math.round(n / 2));
+      } else if (!landed) return;
+      else if (e.k === 'pa' && e.n < 0) { p.pa = Math.max(0, p.pa + e.n); this.emit({ k: 'status', x: p.x, y: p.y, text: `${e.n} PA`, color: '#5aa8ff' }); }
+      else if (e.k === 'pm' && e.n < 0) {
+        p.pm = Math.max(0, p.pm + e.n); p.slow(Math.max(1, e.dur) * TOUR, Math.min(0.6, -e.n * 0.15));
+        this.emit({ k: 'status', x: p.x, y: p.y, text: `${e.n} PM`, color: '#7be07b' });
+      }
+      else if (e.k === 'puissance') { p.addMod('puissance', e.n, Math.max(1, e.dur) * TOUR); this.emit({ k: 'status', x: p.x, y: p.y, text: `${e.n} Puissance`, color: '#e0a030' }); }
+      else if (e.k === 'attire' || e.k === 'repousse') {
+        const dx = m.x - p.x, dy = m.y - p.y, d = Math.hypot(dx, dy) || 1, sign = e.k === 'attire' ? 1 : -1;
+        const len = sign > 0 ? Math.min(e.n * CASE, Math.max(0, d - m.radius - p.radius - 4)) : e.n * CASE;
+        p.kx += sign * dx / d * len * 7.13; p.ky += sign * dy / d * len * 7.13;   // le recul freine en 0,0008^t : distance = vitesse / 7,13
+      }
+      else if (e.k === 'soin') m.hp = Math.min(m.maxHp, m.hp + Math.round(this.rng.range(e.min, e.max + 1) * k));
+    }
+  }
+  /** Sort lancé sur un allié (ex. Bêlement : +PM -> le monstre court plus vite pendant la durée). */
+  monsterSpellBuff(m: Monster, spell: MonsterSpell) {
+    for (const e of spell.effects) if (e.k === 'pm' && e.n > 0) {
+      m.haste = 1 + e.n * 0.25; m.hasteT = Math.max(1, e.dur) * TOUR;
+      this.emit({ k: 'status', x: m.x, y: m.y, text: `+${e.n} PM`, color: '#7be07b' });
+    }
   }
   private updateProjectiles(dt: number) {
     for (const pr of this.projectiles) {
@@ -242,7 +283,9 @@ export class World {
         const p = this.player;
         if (!this.walkable(pr.x, pr.y)) pr.left = 0;   // arrêté par le décor
         else if (!p.dead && Math.hypot(p.x - pr.x, p.y - pr.y) <= p.radius + pr.width) {
-          p.hurt(pr.hit.dmg, pr.x - pr.dx * 20, pr.y - pr.dy * 20, this); pr.left = 0;
+          if (pr.from) this.monsterSpellHits(pr.from.monster, pr.from.spell, p);
+          else p.hurt(pr.hit.dmg, pr.x - pr.dx * 20, pr.y - pr.dy * 20, this);
+          pr.left = 0;
         }
         if (pr.left <= 0) this.emit({ k: 'spell', fx: 'burst', id: pr.spell, x: pr.x, y: pr.y, facing: Math.atan2(pr.dy, pr.dx), size: 18, arc: 0,
           element: pr.hit.element ?? 'neutre', big: false, boosted: false });

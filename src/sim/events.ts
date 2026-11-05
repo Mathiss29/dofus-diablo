@@ -9,6 +9,10 @@ export type SimEvent =
   /** Une flèche part (l'affichage lit world.projectiles pour la dessiner en vol). */
   | { k: 'shoot'; id: string; x: number; y: number; facing: number; element: Element; boosted: boolean }
   | { k: 'slam'; x: number; y: number; radius: number }
+  /** Un monstre commence un de ses sorts officiels (nom affiché au-dessus de lui). */
+  | { k: 'monsterCast'; id: number; name: string; x: number; y: number }
+  /** Retrait ou bonus de PA / PM / Puissance (texte flottant façon Dofus). */
+  | { k: 'status'; x: number; y: number; text: string; color: string }
   | { k: 'hit'; target: 'monster' | 'player'; id?: number; x: number; y: number; z: number; amount: number; crit: boolean; element?: Element }
   | { k: 'kill'; x: number; y: number; radius: number; monster: string }
   | { k: 'impact'; hitstop: number; shake: number; big: boolean }

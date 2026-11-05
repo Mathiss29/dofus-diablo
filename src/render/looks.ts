@@ -18,7 +18,13 @@ export interface Look {
   multi?: boolean;
 }
 
-const MONSTER_MAP = (shot: number, atk = 'AnimAttaque0'): Record<string, AnimSlice> => ({
+/** shot = repère SHOT / nb de frames de l'attaque par défaut ; spells = les autres animations de sorts présentes
+ *  dans la planche (animId du sort -> SHOT), jouées par windup<animId> / lunge<animId>. */
+const MONSTER_MAP = (shot: number, atk = 'AnimAttaque0', spells: Record<number, number> = {}): Record<string, AnimSlice> => ({
+  ...Object.fromEntries(Object.entries(spells).flatMap(([id, s]) => [
+    [`windup${id}`, { anim: `AnimAttaque${id}`, from: 0, to: s }],
+    [`lunge${id}`, { anim: `AnimAttaque${id}`, from: s, to: Math.min(1, s + 0.35) }],
+  ])),
   idle: { anim: 'AnimStatique' },
   spawn: { anim: 'AnimStatique' },
   run: { anim: 'AnimCourse', loop: true, fps: 30 },
@@ -104,15 +110,16 @@ export const LOOKS: Record<string, Look> = {
   archi_rose: { atlas: 'rose', scale: 0.66, map: MONSTER_MAP(9 / 33), height: 100, tint: GOLD },
   archi_tournesol: { atlas: 'tournesol', scale: 0.78, map: MONSTER_MAP(12 / 25), height: 120, tint: GOLD },
   // Incarnam (monstres spectraux). Attaque = animId du sort officiel du monstre (spells -> spellscripts) ;
+  // un sort dont l'animation n'existe pas sur le squelette (ex. 1001 et 6 du Tournesol Nébuleux) joue l'attaque par défaut ;
   // fraction = repère SHOT de l'animation / nombre de frames.
   tofu_chimerique: { atlas: 'tofu_chimerique', scale: 0.55, map: MONSTER_MAP(9 / 30), height: 90 },
   pissenlit_miroitant: { atlas: 'pissenlit_miroitant', scale: 0.6, map: MONSTER_MAP(14 / 27, 'AnimAttaque1'), height: 121 },
-  rose_vaporeuse: { atlas: 'rose_vaporeuse', scale: 0.55, map: MONSTER_MAP(13 / 27, 'AnimAttaque1'), height: 138 },
+  rose_vaporeuse: { atlas: 'rose_vaporeuse', scale: 0.55, map: MONSTER_MAP(13 / 27, 'AnimAttaque1', { 0: 9 / 20, 1: 13 / 27 }), height: 138 },
   tournesol_nebuleux: { atlas: 'tournesol_nebuleux', scale: 0.42, map: MONSTER_MAP(10 / 21, 'AnimAttaque1'), height: 262 },
   bouftou_nuageux: { atlas: 'bouftou_nuageux', scale: 0.5, map: MONSTER_MAP(9 / 32), height: 161 },
-  boufton_palichon: { atlas: 'boufton_palichon', scale: 0.55, map: MONSTER_MAP(8 / 17, 'AnimAttaque1'), height: 95 },
-  boufton_orageux: { atlas: 'boufton_orageux', scale: 0.5, map: MONSTER_MAP(9 / 32), height: 115 },
-  bouftor_ethere: { atlas: 'bouftor_ethere', scale: 0.48, map: MONSTER_MAP(10 / 37), height: 225 },
+  boufton_palichon: { atlas: 'boufton_palichon', scale: 0.55, map: MONSTER_MAP(8 / 17, 'AnimAttaque1', { 0: 9 / 32, 1: 8 / 17 }), height: 95 },
+  boufton_orageux: { atlas: 'boufton_orageux', scale: 0.5, map: MONSTER_MAP(9 / 32, 'AnimAttaque0', { 0: 9 / 32, 1: 8 / 17 }), height: 115 },
+  bouftor_ethere: { atlas: 'bouftor_ethere', scale: 0.48, map: MONSTER_MAP(10 / 37, 'AnimAttaque0', { 0: 10 / 37, 1: 14 / 24 }), height: 225 },
   feu_vif: { atlas: 'feu_vif', scale: 0.55, map: MONSTER_MAP(17 / 38), height: 120 },
   feu_de_joie: { atlas: 'feu_de_joie', scale: 0.5, map: MONSTER_MAP(17 / 38), height: 160 },
   feu_furieux: { atlas: 'feu_furieux', scale: 0.5, map: MONSTER_MAP(5 / 38), height: 152 },

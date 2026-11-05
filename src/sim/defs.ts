@@ -88,8 +88,21 @@ export interface MonsterDef {
   look: string; color: string; boss?: boolean; elite?: boolean;
   /** Monde ouvert : distance à laquelle il repère le joueur (défaut : OpenDef.aggro). */
   aggro?: number;
-  /** Attaque à distance : il s'arrête à portée et lance un projectile (ligne d'avertissement pendant windup s). */
-  ranged?: { range: number; speed: number; width: number; windup: number; element: Element; dmg?: number };
+  /** Les vrais sorts du monstre dans Dofus 3 (tools/extraction/monster_spells.py). Sans sorts : simple charge au corps à corps. */
+  spells?: MonsterSpell[];
+}
+
+/** Effet d'un sort de monstre, tel que dans les données de Dofus 3 (n < 0 = retrait, dur en tours). */
+export type MonsterEffect =
+  | { k: 'dmg'; element: Element; min: number; max: number; steal?: boolean; perPa?: boolean }
+  | { k: 'pa' | 'pm' | 'puissance'; n: number; dur: number }
+  | { k: 'attire' | 'repousse' | 'avance'; n: number }
+  | { k: 'soin'; min: number; max: number };
+/** Sort officiel d'un monstre : coût, portée en cases (po), relance en tours, animation AnimAttaque<anim>,
+ *  zone (P1 = une case, X1 = croix autour), allies = vise ses alliés, missile / gfx = effets visuels officiels. */
+export interface MonsterSpell {
+  id: number; name: string; pa: number; po: [number, number]; relance: number; anim: number;
+  zone: string; allies: boolean; effects: MonsterEffect[]; missile?: number; gfx?: number;
 }
 
 interface Count { base: number; perWave: number; fromWave?: number }

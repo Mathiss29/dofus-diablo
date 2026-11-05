@@ -64,7 +64,14 @@ export class Player extends Entity {
   }
 
   // --- Caractéristiques -------------------------------------------------------
-  stat(k: Stat): number { return this.stats[k] ?? 0; }
+  stat(k: Stat): number { let v = this.stats[k] ?? 0; for (const m of this.mods) if (m.k === k) v += m.n; return v; }
+  /** Bonus / malus temporaires (sorts de monstres : -40 Puissance pendant un tour…). */
+  mods: { k: Stat; n: number; t: number }[] = [];
+  addMod(k: Stat, n: number, t: number) { this.mods.push({ k, n, t }); }
+  /** Ralentissement (retrait de PM) : fraction de vitesse perdue et durée restante. */
+  slowK = 0; slowT = 0;
+  slow(t: number, k: number) { this.slowK = this.slowT > 0 ? Math.max(this.slowK, k) : k; this.slowT = Math.max(this.slowT, t); }
+  get speed(): number { return this.cls.speed * (this.slowT > 0 ? 1 - this.slowK : 1); }
   get paMax(): number { return this.cls.pa.max + this.stat('pa'); }
   get pmMax(): number { return this.cls.pm.max + this.stat('pm'); }
   get critChance(): number { return this.cls.critChance + this.stat('critique') / 100; }
@@ -265,6 +272,8 @@ export class Player extends Entity {
     this.pa = Math.min(this.paMax, this.pa + this.cls.pa.regen * dt);
     this.pm = Math.min(this.pmMax, this.pm + dt * (1 + this.legendary('mobilite') / 100) / this.cls.pm.recharge);
     this.flash = Math.max(0, this.flash - dt);
+    if (this.slowT > 0) this.slowT -= dt;
+    if (this.mods.length) { for (const m of this.mods) m.t -= dt; this.mods = this.mods.filter(m => m.t > 0); }
     if (this.dead) { this.setAnim('die', Math.min(1, this.animT + dt * 1.5)); return; }
     if (this.comboTimer > 0) this.comboTimer -= dt;
     if (input.potion) this.drinkPotion(world);
@@ -315,10 +324,10 @@ export class Player extends Entity {
       const m = input.move;
       if (m.x || m.y) {
         this.path = []; this.chaseId = null;
-        this.x += m.x * this.cls.speed * dt; this.y += m.y * this.cls.speed * dt;
+        this.x += m.x * this.speed * dt; this.y += m.y * this.speed * dt;
         this.facing = Math.atan2(m.y, m.x); this.setAnim('run');
       } else if (this.path.length) {
-        const t = this.path[0], dx = t.x - this.x, dy = t.y - this.y, d = Math.hypot(dx, dy), step = this.cls.speed * dt;
+        const t = this.path[0], dx = t.x - this.x, dy = t.y - this.y, d = Math.hypot(dx, dy), step = this.speed * dt;
         if (d <= step) { this.x = t.x; this.y = t.y; this.path.shift(); }
         else { this.x += dx / d * step; this.y += dy / d * step; }
         if (d > 0.5) this.facing = Math.atan2(dy, dx);
