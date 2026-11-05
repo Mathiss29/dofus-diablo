@@ -2,13 +2,14 @@
 #  liste.json = {"x,y": [mapId, sousZone], ...} (coordonnées Dofus de chaque carte)
 #  cartes_dir = dossier des map_{id}.json (MonoBehaviour des bundles mapdata_assets_world_N)
 #  textures_dir = dossier des bundles mapgfx_1x_*_assets_all.bundle
-# Sortie : monde.json, un sol_x_y.webp par carte, et le décor de tout le monde dans decor.json + decor_N.webp (multiatlas).
+#  CACHE=fichier.pkl (option) : garde les textures lues pour relancer vite
+# Sortie : monde.json, et par carte sol_x_y.webp (+ fond_x_y.webp) + decor_x_y.webp/json (chargés par le jeu seulement près du joueur), ciel.webp.
 # Les cartes Dofus se raccordent bord à bord : la carte [x+1,y] commence 14 cases (1204 px) plus à droite,
 # la carte [x,y+1] 40 demi-lignes (860 px) plus bas. La grille du monde est donc une grande grille 14·nx × 40·ny.
 import sys, json, glob, os, warnings
 warnings.filterwarnings('ignore')
 import UnityPy
-from PIL import Image
+from PIL import Image, ImageStat
 UnityPy.config.FALLBACK_UNITY_VERSION = "6000.3.16f1"
 liste, cdir, tdir, out = sys.argv[1:5]; os.makedirs(out, exist_ok=True)
 W, H, OX, OY, COLS, ROWS = 86, 43, -620, -490, 14, 40
@@ -17,11 +18,16 @@ sel = {tuple(map(int, k.split(','))): v for k, v in json.load(open(liste)).items
 maps = {xy: json.load(open(f'{cdir}/map_{v[0]}.json'))['mapData'] for xy, v in sel.items()}
 need = set(e['gfxId'] for md in maps.values() for k in ['backgroundElements', 'sortableElements'] for e in md[k])
 imgs = {}
-for b in glob.glob(f'{tdir}/mapgfx_*.bundle'):
-    for o in UnityPy.load(b).objects:
-        if o.type.name != 'Texture2D': continue
-        d = o.read()
-        if d.m_Name.isdigit() and int(d.m_Name) in need: imgs[int(d.m_Name)] = d.image.convert('RGBA')
+CACHE = os.environ.get('CACHE')   # fichier pickle des textures déjà lues (la lecture des bundles est longue)
+if CACHE and os.path.exists(CACHE):
+    import pickle; imgs = pickle.load(open(CACHE, 'rb'))
+else:
+    for b in glob.glob(f'{tdir}/mapgfx_*.bundle'):
+        for o in UnityPy.load(b).objects:
+            if o.type.name != 'Texture2D': continue
+            d = o.read()
+            if d.m_Name.isdigit() and int(d.m_Name) in need: imgs[int(d.m_Name)] = d.image.convert('RGBA')
+    if CACHE: import pickle; pickle.dump(imgs, open(CACHE, 'wb'))
 print('textures', len(imgs), '/', len(need))
 def styled(e):
     im = imgs.get(e['gfxId']); tr = e['transform']
@@ -41,60 +47,99 @@ X0, Y0 = min(x for x, _ in sel), min(y for _, y in sel)
 nx, ny = max(x for x, _ in sel) - X0 + 1, max(y for _, y in sel) - Y0 + 1
 mov = ['0'] * (COLS * nx * ROWS * ny)
 monde = {'grid': {'w': W, 'h': H, 'ox': OX, 'oy': OY, 'cols': COLS * nx, 'rows': ROWS * ny}, 'origin': [X0, Y0], 'maps': []}
-variants = {}   # décor partagé entre les cartes : une image par (gfx, couleur, échelle) pour tout le monde
-def variant(e):
-    tr = e['transform']; key = (e['gfxId'], e['color']['value'], round(tr['m11'], 3), round(tr['m22'], 3))
-    if key not in variants:
-        im = styled(e)
-        if im is None: return None
-        variants[key] = ('d%d' % len(variants), im)
-    return variants[key][0]
-# Rectangle d'une carte = exactement une période de la grille (1204 x 860) : côté voisin, on coupe pile au raccord
-# (sinon le ciel d'une carte recouvre le sol de sa voisine) ; côté vide, on garde une marge pour falaises et ciel.
+# Ciel : le grand fond opaque que Dofus met sous chaque carte du bord (SKY=gfxId,... ; Incarnam : 805542).
+# On le retire des sols (sinon il fait des coutures rectangulaires entre cartes) et le jeu en pose un seul, derrière tout.
+SKY = {int(g) for g in os.environ.get('SKY', '').split(',') if g}
 x0m, y0m = OX + W // 4, OY + H // 4
 x1m, y1m = x0m + MW, y0m + MH
+def pack(variants, path):
+    """Atlas Phaser d'une carte : une image par (gfx, couleur, échelle), rangées en étagères."""
+    items = sorted(variants.values(), key=lambda v: -v[1].height)
+    maxW = 2048; px = py = rowH = 0; pos = {}
+    for name, im in items:
+        b = im.getbbox() or (0, 0, 1, 1); w, h = b[2] - b[0] + 2, b[3] - b[1] + 2
+        if px + w > maxW: px = 0; py += rowH; rowH = 0
+        pos[name] = (px, py, b); px += w; rowH = max(rowH, h)
+    atlas = Image.new('RGBA', (maxW, max(1, py + rowH))); frames = {}
+    for name, im in items:
+        ax, ay, b = pos[name]; atlas.paste(im.crop(b), (ax + 1, ay + 1)); w, h = b[2] - b[0], b[3] - b[1]
+        frames[name] = {'frame': {'x': ax + 1, 'y': ay + 1, 'w': w, 'h': h}, 'rotated': False, 'trimmed': True,
+                        'spriteSourceSize': {'x': b[0], 'y': b[1], 'w': w, 'h': h}, 'sourceSize': {'w': im.width, 'h': im.height}}
+    atlas.save(path + '.webp', 'WEBP', quality=82, method=6)
+    json.dump({'frames': frames, 'meta': {'image': os.path.basename(path) + '.webp', 'size': {'w': maxW, 'h': atlas.height}, 'scale': '1'}}, open(path + '.json', 'w'))
+    return atlas.size
+sky = None
 for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
     ix, iy = x - X0, y - Y0; dx, dy = ix * MW, iy * MH; tag = f'{x}_{y}'
     for c, cell in enumerate(md['cellsData']):
         r, k = divmod(c, COLS)
         if cell['mov']: mov[(iy * ROWS + r) * COLS * nx + ix * COLS + k] = '1'
-    # sol : rogné autour de la carte (marge plus large côté vide, pour garder falaises et ciel au bord du monde)
-    mg = lambda nb: 0 if nb in sel else 420
-    bx0, by0 = x0m - mg((x - 1, y)), y0m - mg((x, y - 1)); bx1, by1 = x1m + mg((x + 1, y)), y1m + mg((x, y + 1))
-    sol = Image.new('RGBA', (bx1 - bx0, by1 - by0))
+    # Sol = exactement une période de la grille (1204 x 860) côté voisin : on coupe pile au raccord ;
+    # côté vide, rien n'est coupé (falaises, nuages au bord du monde).
+    # Les nuages / rayons translucides qui débordent sur un voisin iraient se couper net au raccord :
+    # ils partent dans un calque « fond » non coupé, posé sous tous les sols.
+    els = []
     for e in md['backgroundElements']:
         im = styled(e)
         if im is None: continue
-        tr = e['transform']; sol.alpha_composite(im, (round(tr['m31'] - bx0 - im.width / 2), round(-tr['m32'] - by0 - im.height / 2)))
+        if e['gfxId'] in SKY:
+            sky = sky or im; continue
+        tr = e['transform']; ex, ey = round(tr['m31'] - im.width / 2), round(-tr['m32'] - im.height / 2)
+        els.append((im, ex, ey))
+    nb = {'l': (x - 1, y) in sel, 't': (x, y - 1) in sel, 'r': (x + 1, y) in sel, 'b': (x, y + 1) in sel}
+    def crosses(ex, ey, im):
+        return (nb['l'] and ex < x0m) or (nb['t'] and ey < y0m) or (nb['r'] and ex + im.width > x1m) or (nb['b'] and ey + im.height > y1m)
+    def atmo(im):
+        # nuage / rayon de lumière : grand, surtout translucide, clair (les ombres sont sombres, les touffes d'herbe petites)
+        if im.width * im.height < 150000: return False
+        a = im.getchannel('A'); h = a.histogram(); vis = sum(h[9:])
+        if vis == 0 or sum(h[9:200]) < vis * 0.6: return False
+        st = ImageStat.Stat(im.convert('RGB'), a.point(lambda q: 255 if q > 8 else 0))
+        return sum(st.mean) / 3 > 110
+    def hard_edge(im):
+        # bord net (grand dégradé rectangulaire) : en monde ouvert on le verrait, Dofus le cache hors caméra
+        a = im.getchannel('A'); b = a.point(lambda q: 255 if q > 8 else 0).getbbox()
+        if not b: return False
+        c = a.crop(b); w, h = c.size
+        sides = [c.crop((0, 0, w, 3)), c.crop((0, h - 3, w, h)), c.crop((0, 0, 3, h)), c.crop((w - 3, 0, w, h))]
+        return max(ImageStat.Stat(x).mean[0] for x in sides) > 40
+    at = [t for t in els if atmo(t[0])]
+    hard = [t for t in at if hard_edge(t[0])]   # retirés partout : on verrait leurs bords dans les trous du sol
+    fond_els = [t for t in at if crosses(t[1], t[2], t[0]) and id(t) not in {id(u) for u in hard}]
+    fid = {id(t) for t in hard + fond_els}; sol_els = [t for t in els if id(t) not in fid]
+    bx0 = x0m if nb['l'] else min([x0m] + [ex for _, ex, _ in sol_els])
+    by0 = y0m if nb['t'] else min([y0m] + [ey for _, _, ey in sol_els])
+    bx1 = x1m if nb['r'] else max([x1m] + [ex + im.width for im, ex, _ in sol_els])
+    by1 = y1m if nb['b'] else max([y1m] + [ey + im.height for im, _, ey in sol_els])
+    sol = Image.new('RGBA', (bx1 - bx0, by1 - by0))
+    for im, ex, ey in sol_els: sol.alpha_composite(im, (ex - bx0, ey - by0))
+    fond = None
+    if fond_els:
+        fx0 = min(ex for _, ex, _ in fond_els); fy0 = min(ey for _, _, ey in fond_els)
+        fx1 = max(ex + im.width for im, ex, _ in fond_els); fy1 = max(ey + im.height for im, _, ey in fond_els)
+        fim = Image.new('RGBA', (fx1 - fx0, fy1 - fy0))
+        for im, ex, ey in fond_els: fim.alpha_composite(im, (ex - fx0, ey - fy0))
+        # flou par nature : moitié de résolution (le jeu l'agrandit x2), 4 fois moins de mémoire vidéo
+        fim.resize((max(1, fim.width // 2), max(1, fim.height // 2)), Image.LANCZOS).save(f'{out}/fond_{tag}.webp', 'WEBP', quality=80, method=6)
+        fond = {'x': fx0 + dx, 'y': fy0 + dy, 'w': fim.width, 'h': fim.height, 'k': 2}
     sol.save(f'{out}/sol_{tag}.webp', 'WEBP', quality=80, method=6)
-    places = []
+    # Décor : un atlas par carte, pour que le jeu ne charge que les cartes proches du joueur
+    variants = {}; places = []
     for e in md['sortableElements']:
-        name = variant(e)
-        if name is None: continue
-        tr = e['transform']; r, k = divmod(e['cellId'], COLS)
-        places.append({'f': name, 'x': round(tr['m31'] + dx, 1), 'y': round(-tr['m32'] + dy, 1),
+        tr = e['transform']; key = (e['gfxId'], e['color']['value'], round(tr['m11'], 3), round(tr['m22'], 3))
+        if key not in variants:
+            im = styled(e)
+            if im is None: continue
+            variants[key] = ('d%d' % len(variants), im)
+        r, k = divmod(e['cellId'], COLS)
+        places.append({'f': variants[key][0], 'x': round(tr['m31'] + dx, 1), 'y': round(-tr['m32'] + dy, 1),
                        'c': (iy * ROWS + r) * COLS * nx + ix * COLS + k, 'o': e['innerCellRenderOrder']})
+    asz = pack(variants, f'{out}/decor_{tag}')
     monde['maps'].append({'x': x, 'y': y, 'id': sel[(x, y)][0], 'sub': sel[(x, y)][1], 'tag': tag,
-                          'sol': {'x': bx0 + dx, 'y': by0 + dy, 'w': sol.width, 'h': sol.height}, 'decor': places})
-    print(tag, 'sol', sol.size, 'decor', len(places))
-# atlas du décor en pages de 4096 (format multiatlas de Phaser)
-P = 4096; pages = []; cur = None
-items = sorted(variants.values(), key=lambda v: -v[1].height)
-def newpage(): return {'im': Image.new('RGBA', (P, P)), 'frames': [], 'x': 0, 'y': 0, 'rowH': 0}
-cur = newpage(); pages.append(cur)
-for name, im in items:
-    b = im.getbbox() or (0, 0, 1, 1); w, h = b[2] - b[0] + 2, b[3] - b[1] + 2
-    if cur['x'] + w > P: cur['x'] = 0; cur['y'] += cur['rowH']; cur['rowH'] = 0
-    if cur['y'] + h > P: cur = newpage(); pages.append(cur)
-    px, py = cur['x'], cur['y']; cur['im'].paste(im.crop(b), (px + 1, py + 1)); cur['x'] += w; cur['rowH'] = max(cur['rowH'], h)
-    cur['frames'].append({'filename': name, 'frame': {'x': px + 1, 'y': py + 1, 'w': w - 2, 'h': h - 2}, 'rotated': False, 'trimmed': True,
-                          'spriteSourceSize': {'x': b[0], 'y': b[1], 'w': w - 2, 'h': h - 2}, 'sourceSize': {'w': im.width, 'h': im.height}})
-textures = []
-for i, pg in enumerate(pages):
-    hgt = pg['y'] + pg['rowH']; img = pg['im'].crop((0, 0, P, max(1, hgt)))
-    img.save(f'{out}/decor_{i}.webp', 'WEBP', quality=82, method=6)
-    textures.append({'image': f'decor_{i}.webp', 'format': 'RGBA8888', 'size': {'w': P, 'h': img.height}, 'scale': 1, 'frames': pg['frames']})
-json.dump({'textures': textures, 'meta': {}}, open(f'{out}/decor.json', 'w'))
-print('decor', len(variants), 'images,', len(pages), 'pages', [t['size']['h'] for t in textures])
+                          'sol': {'x': bx0 + dx, 'y': by0 + dy, 'w': sol.width, 'h': sol.height}, 'decor': places,
+                          **({'fond': fond} if fond else {})})
+    print(tag, 'retirés', len(hard), 'sol', sol.size, 'fond', fond and (fond['w'], fond['h']), 'decor', len(places), asz)
+if sky is not None:
+    sky.convert('RGB').save(f'{out}/ciel.webp', 'WEBP', quality=85, method=6); monde['sky'] = 'ciel.webp'
 monde['mov'] = ''.join(mov)
 json.dump(monde, open(f'{out}/monde.json', 'w'))

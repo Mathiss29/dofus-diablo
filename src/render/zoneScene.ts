@@ -10,7 +10,8 @@ import { EntityView } from './entityView';
 import { FX } from './fx';
 import { Hud } from './hud';
 import { LOOKS } from './looks';
-import { drawMap, drawWorld } from './mapView';
+import { drawMap } from './mapView';
+import { WorldView } from './worldView';
 
 const ASSETS = 'assets';
 const mapDir = ([x, y]: [number, number]) => `${ASSETS}/cartes/${x}_${y}`;
@@ -22,6 +23,7 @@ const hex = (c: string) => parseInt(c.replace('#', ''), 16);
 export class ZoneScene extends Phaser.Scene {
   private zoneId = 'incarnam';
   private world!: World;
+  private worldView: WorldView | null = null;
   private views = new Map<number, EntityView>();
   private fx!: FX;
   private hud!: Hud;
@@ -38,7 +40,7 @@ export class ZoneScene extends Phaser.Scene {
     // #astrub dans l'adresse : l'ancienne zone à vagues des Champs d'Astrub
     if (data?.zone) this.zoneId = data.zone;
     else if (location.hash === '#astrub') this.zoneId = 'champs-astrub';
-    this.views = new Map(); this.pressed = null; this.potion = false; this.hitstop = 0; this.acc = 0;
+    this.views = new Map(); this.worldView = null; this.pressed = null; this.potion = false; this.hitstop = 0; this.acc = 0;
   }
 
   preload() {
@@ -54,13 +56,12 @@ export class ZoneScene extends Phaser.Scene {
     const atlases = new Set(['iop', ...[...types].map(t => LOOKS[GAME_DATA.monsters[t].look].atlas)]);
     for (const a of atlases) if (!this.textures.exists(a)) this.load.atlas(a, `${ASSETS}/sprites/${a}.webp`, `${ASSETS}/sprites/${a}.json`);
     if (zone.open) {
-      // Monde ouvert : monde.json dit quelles cartes charger (un sol par carte), le décor est un multiatlas commun
-      const dir = worldDir(zone.open.world), k = (n: string) => `${zone.open!.world}_${n}`;
-      this.load.json(k('monde'), `${dir}/monde.json`);
-      this.load.multiatlas(k('decor'), `${dir}/decor.json`, dir);
-      this.load.once(`filecomplete-json-${k('monde')}`, (_: string, __: string, data: WorldData) => {
-        for (const m of data.maps) this.load.image(k(`sol_${m.tag}`), `${dir}/sol_${m.tag}.webp`);
-      });
+      // Monde ouvert : monde.json décrit les cartes ; on ne charge d'abord que le ciel et les cartes autour du départ,
+      // les autres se chargent en jeu quand le joueur approche (WorldView)
+      const open = zone.open, dir = worldDir(open.world);
+      this.load.json(WorldView.key(open.world, 'monde'), `${dir}/monde.json`);
+      this.load.once(`filecomplete-json-${WorldView.key(open.world, 'monde')}`, (_: string, __: string, data: WorldData) =>
+        WorldView.preload(this, data, dir, open.world, open.start));
       return;
     }
     const dir = mapDir(zone.map!.coords), key = dir.replace(/\W/g, '_');
@@ -73,11 +74,12 @@ export class ZoneScene extends Phaser.Scene {
     const zone = GAME_DATA.zones[this.zoneId], seed = (Math.random() * 2 ** 32) >>> 0;
     this.input.mouse?.disableContextMenu();
     if (zone.open) {
-      const k = (n: string) => `${zone.open!.world}_${n}`;
-      const wg = new WorldGrid(this.cache.json.get(k('monde')) as WorldData);
+      const open = zone.open;
+      const wg = new WorldGrid(this.cache.json.get(WorldView.key(open.world, 'monde')) as WorldData);
       this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed });
-      this.cameras.main.setBackgroundColor('#0d2b36');   // ciel d'Incarnam autour des îles
-      drawWorld(this, wg, k);
+      this.cameras.main.setBackgroundColor('#0d2b36');   // sous le ciel, au cas où il manque
+      this.worldView = new WorldView(this, wg, worldDir(open.world), open.world);
+      this.worldView.create();
     } else {
       const key = mapDir(zone.map!.coords).replace(/\W/g, '_');
       const map = new GridMap(this.cache.json.get(`${key}_carte`) as MapData);
@@ -188,8 +190,13 @@ export class ZoneScene extends Phaser.Scene {
   }
 
   private render() {
-    const w = this.world, alive = new Set<number>();
-    for (const e of [w.player, ...w.monsters]) { this.viewOf(e).sync(e); alive.add(e.id); }
+    const w = this.world, alive = new Set<number>(), wv = this.worldView, wg = w.worldGrid;
+    wv?.update(w.player.x, w.player.y);
+    for (const e of [w.player, ...w.monsters]) {
+      // monde ouvert : on n'affiche que les monstres des cartes chargées (les autres vivent quand même dans la simulation)
+      if (wv && wg && e !== w.player && !wv.isReady(wg.mapAt(e.x, e.y)?.tag)) continue;
+      this.viewOf(e).sync(e); alive.add(e.id);
+    }
     for (const [id, v] of this.views) if (!alive.has(id)) { v.destroy(); this.views.delete(id); }
     const s = w.player.skill;
     if (s?.id === 'colere' && s.t < s.def.impactAt) this.fx.chargeSparks(w.player.x, w.player.y);

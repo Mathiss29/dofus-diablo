@@ -16,9 +16,9 @@ export interface MapData {
 }
 
 /** Une carte Dofus dans un monde (tools/extraction/world_export.py). */
-export interface WorldMapEntry { x: number; y: number; id: number; sub: number; tag: string; sol: Rect; decor: DecorPlace[] }
+export interface WorldMapEntry { x: number; y: number; id: number; sub: number; tag: string; sol: Rect; fond?: Rect & { k?: number }; decor: DecorPlace[] }
 /** Plusieurs cartes Dofus voisines collées bord à bord en une seule grande grille. */
-export interface WorldData extends MapData { origin: [number, number]; maps: WorldMapEntry[] }
+export interface WorldData extends MapData { origin: [number, number]; maps: WorldMapEntry[]; /** Ciel commun posé derrière tout le monde. */ sky?: string }
 
 /** Taille d'une carte Dofus en cases. */
 export const MAP_COLS = 14, MAP_ROWS = 40;
