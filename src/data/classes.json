@@ -282,7 +282,7 @@
    "area": 1.25
   },
   "attaque": {
-   "name": "Flèche Cinglante",
+   "name": "Coup de poing",
    "element": "terre",
    "comboWindow": 0.45,
    "combo": [
@@ -344,7 +344,8 @@
     "hitstop": 0.04,
     "shake": 0.004,
     "fx": "burst",
-    "desc": "Retire des PM et occasionne des dommages Air."
+    "desc": "Retire des PM et occasionne des dommages Air.",
+    "pa": 2
    },
    "recul": {
     "name": "Flèche de Recul",
@@ -515,7 +516,6 @@
    "dispersion"
   ],
   "mobility": "pas_chasse",
-  "favorite": "explosive",
-  "basic": "cinglante"
+  "favorite": "cinglante"
  }
 }

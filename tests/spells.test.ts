@@ -137,18 +137,22 @@ describe('mort et retour au Zaap', () => {
 describe('Crâ', () => {
   const cra = GAME_DATA.classes.cra;
   const archer = (seed = 42) => new World({ data: GAME_DATA, zone: 'champs-astrub', map: new GridMap(carte), seed, classId: 'cra' });
-  it('6 sorts officiels, Pas Chassé sur Espace, attaque de base à distance', () => {
+  it('6 sorts officiels, Pas Chassé sur Espace, Flèche Cinglante au clic droit (2 PA), coup de poing sans arme', () => {
     expect(cra.bar).toHaveLength(6);
-    for (const id of [...cra.bar, cra.mobility, cra.basic!]) {
+    expect(cra.basic).toBeUndefined();
+    expect(cra.favorite).toBe('cinglante');
+    expect(cra.spells.cinglante.pa).toBe(2);
+    for (const id of [...cra.bar, cra.mobility, cra.favorite]) {
       expect(cra.spells[id]).toBeDefined();
       expect(readFileSync(new URL(`../public/assets/ui/sorts/sort_${cra.spells[id].icon}.png`, import.meta.url)).length).toBeGreaterThan(100);
     }
   });
-  it('le clic gauche tire une flèche qui touche un monstre à distance', () => {
+  it('Flèche Cinglante tire une flèche qui touche un monstre à distance', () => {
     const w = archer(), p = w.player;
+    expect(p.autoAttack).toBe('attaque');
     const m = w.spawnMonster('epouvanteur', p.x + 300, p.y);
     m.state = 'chase';
-    press(w, 'attaque', { x: m.x, y: m.y });
+    press(w, 'cinglante', { x: m.x, y: m.y });
     w.step(STEP, NO_INPUT);
     for (let i = 0; i < 12 && !w.projectiles.length; i++) w.step(STEP, NO_INPUT);
     expect(w.projectiles.length).toBe(1);

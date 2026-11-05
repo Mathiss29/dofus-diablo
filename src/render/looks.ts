@@ -80,6 +80,10 @@ const CRA_MAP: Record<string, AnimSlice> = {
   ...WEAPON_MAP,
   idle: { anim: 'AnimStatiqueExplo0', loop: true, fps: 20 },
   run: { anim: 'AnimCourse', loop: true, fps: 32 },
+  // sans arme : Coup de poing, comme toutes les classes de Dofus (AnimArme0)
+  attack1: { anim: 'AnimArme0', from: 3 / 28, to: 17 / 28 },
+  attack2: { anim: 'AnimArme0', from: 3 / 28, to: 17 / 28 },
+  attack3: { anim: 'AnimArme0', from: 3 / 28, to: 24 / 28 },
   cinglante: { anim: 'AnimAttaque911', from: 0, to: 0.6 },
   recul: { anim: 'AnimAttaque919', from: 0, to: 0.82 },
   glacee: { anim: 'AnimAttaque910', from: 0, to: 0.6 },
