@@ -3709,7 +3709,7 @@
    "y": 0.0969,
    "profondeur": 35,
    "nom": "Averse",
-   "texte": "La seconde vague de Pluie de Flèches tombe sur l'ennemi le plus proche au lieu du même endroit.",
+   "texte": "Pluie de Flèches tombe deux fois d'un coup : sur la zone visée et sur l'ennemi le plus proche.",
    "sort": {
     "id": 32431,
     "nom": "Pluie de Flèches",
@@ -4770,7 +4770,7 @@
    "y": -0.7769,
    "profondeur": 37,
    "nom": "Piège tenace",
-   "texte": "Le piège de Vendetta se repose tout seul une fois, 3 s après s'être déclenché.",
+   "texte": "Le piège de Vendetta se déclenche deux fois avant de disparaître.",
    "sort": {
     "id": 32473,
     "nom": "Vendetta",

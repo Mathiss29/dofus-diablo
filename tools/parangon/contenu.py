@@ -1,5 +1,6 @@
 # Textes écrits à la main du Parangon (choix de Mathis, 2026-11-05 : 1B 2B 3A 4B 5A+5B 6B).
-# Le jeu est en temps réel : aucun vocabulaire de tour. 1 tour officiel = 3 s, « au contact » = corps à moins de 12 px.
+# Le jeu est en temps réel : aucun vocabulaire de tour, aucun effet différé (réaction instantanée ou aura continue).
+# 1 tour officiel = 3 s ; « au contact » = à moins d'une case (48 px).
 # Les nœuds de sort n'ont jamais de contrepartie ; seules les clés de voûte (générales, sans sort) ont un prix.
 
 ZONES = ['terre', 'feu', 'eau', 'air', 'soutien']
@@ -94,10 +95,10 @@ TRANSFO = {
     'Flèches Amoureuses': ('Cœur fidèle', "Flèches Amoureuses te soigne aussi de la moitié du soin donné."),
     'Flèches Enflammées': ('Traînée de feu', "Ton recul laisse une traînée de feu qui brûle les ennemis qui la traversent."),
     'Flèche Massacrante': ('Hécatombe', "Chaque ennemi tué par Flèche Massacrante déclenche une petite explosion Terre."),
-    'Pluie de Flèches': ('Averse', "La seconde vague de Pluie de Flèches tombe sur l'ennemi le plus proche au lieu du même endroit."),
+    'Pluie de Flèches': ('Averse', "Pluie de Flèches tombe deux fois d'un coup : sur la zone visée et sur l'ennemi le plus proche."),
     'Flèche Paralysante': ('Gel', "Flèche Paralysante immobilise 1 s les ennemis déjà ralentis."),
     'Représailles': ('Châtiment', "Représailles frappe aussi tous les ennemis érodés d'un grand rayon autour de la cible."),
-    'Vendetta': ('Piège tenace', "Le piège de Vendetta se repose tout seul une fois, 3 s après s'être déclenché."),
+    'Vendetta': ('Piège tenace', "Le piège de Vendetta se déclenche deux fois avant de disparaître."),
     'Flèche du Jugement': ('Verdict', "Flèche du Jugement frappe toujours comme si tes PM étaient pleins."),
     'Flèche de Rédemption': ('Rachat', "Chaque ralentissement réussi par tes autres flèches charge aussi Flèche de Rédemption."),
     'Flèche Boomerang': ('Retour', "Flèche Boomerang revient vers toi et touche une seconde fois tout ce qu'elle traverse."),
