@@ -215,5 +215,12 @@ export class Windows {
     t.style.left = `${Math.min(innerWidth - w - 8, ev.clientX + 16)}px`;
     t.style.top = `${Math.min(innerHeight - h - 8, ev.clientY + 12)}px`;
   }
-  private hideTip() { this.tip.style.display = 'none'; }
+  hideTip() { this.tip.style.display = 'none'; }
+  /** Infobulle libre (sorts de la barre), au-dessus du point (x, y) de l'écran. */
+  showHtmlTip(html: string, x: number, y: number) {
+    const t = this.tip; t.innerHTML = html; t.style.display = 'block';
+    const w = t.offsetWidth, h = t.offsetHeight;
+    t.style.left = `${Math.max(8, Math.min(innerWidth - w - 8, x - w / 2))}px`;
+    t.style.top = `${Math.max(8, y - h - 12)}px`;
+  }
 }

@@ -14,6 +14,8 @@ export interface Look {
   tint?: number;
   /** Zoom du portrait dans la timeline du HUD (1 = tout le corps tient dans le cadre). */
   portraitZoom?: number;
+  /** Planche sur plusieurs pages (multiatlas Phaser, faite par perso_planche.py). */
+  multi?: boolean;
 }
 
 const MONSTER_MAP = (shot: number, atk = 'AnimAttaque0'): Record<string, AnimSlice> => ({
@@ -27,11 +29,26 @@ const MONSTER_MAP = (shot: number, atk = 'AnimAttaque0'): Record<string, AnimSli
   die: { anim: 'AnimMort' },
 });
 
+// Auto-attaque à l'arme (src/data/armes.json) : AnimArme<typeId>, même squelette pour toutes les classes.
+// Bornes : le repère SHOT de l'animation tombe sur l'impact du coup (impactAt / duration).
+const WEAPON_MAP: Record<string, AnimSlice> = {
+  arme6: { anim: 'AnimArme6', from: 0, to: 0.66 },    // Épée
+  arme5: { anim: 'AnimArme5', from: 0, to: 0.87 },    // Dague
+  arme7: { anim: 'AnimArme7', from: 0, to: 0.79 },    // Marteau
+  arme19: { anim: 'AnimArme19', from: 0, to: 0.58 },  // Hache
+  arme8: { anim: 'AnimArme8', from: 0.04, to: 1 },    // Pelle
+  arme4: { anim: 'AnimArme4', from: 0.06, to: 1 },    // Bâton
+  arme22: { anim: 'AnimArme22', from: 0, to: 0.7 },   // Faux
+  arme2: { anim: 'AnimArme2', from: 0.24, to: 1 },    // Arc
+  arme3: { anim: 'AnimArme3', from: 0.12, to: 1 },    // Baguette
+};
+
 // Iop : squelette joueur n° 1 + skin 80 (corps) + 2124 (tête). Animations officielles lues dans
 // les données de sorts (spellscripts -> casterAnimation) : Épée Céleste = AnimAttaque801,
 // Bond = AnimAttaque811, Colère de Iop = AnimAttaque800, attaque sans arme = AnimArme0.
 // Planche refaite avec tools/extraction/iop_planche.sh (toutes les animations utiles en une passe).
 const IOP_MAP: Record<string, AnimSlice> = {
+  ...WEAPON_MAP,
   idle: { anim: 'AnimStatiqueCombat0', loop: true, fps: 20 },
   run: { anim: 'AnimCourse', loop: true, fps: 32 },
   attack1: { anim: 'AnimArme0', from: 3 / 28, to: 17 / 28 },
@@ -54,6 +71,7 @@ const IOP_MAP: Record<string, AnimSlice> = {
 // Crâ : squelette joueur n° 1 + skin 90 (corps) + 2140 (tête), planche faite par tools/extraction/perso_planche.py.
 // Bornes : to = SHOT × durée / impactAt du sort, pour que la flèche parte avec l'animation.
 const CRA_MAP: Record<string, AnimSlice> = {
+  ...WEAPON_MAP,
   idle: { anim: 'AnimStatiqueCombat0', loop: true, fps: 20 },
   run: { anim: 'AnimCourse', loop: true, fps: 32 },
   cinglante: { anim: 'AnimAttaque911', from: 0, to: 0.6 },
@@ -71,8 +89,8 @@ const CRA_MAP: Record<string, AnimSlice> = {
 const GOLD = 0xffd87a;
 
 export const LOOKS: Record<string, Look> = {
-  iop: { atlas: 'iop', scale: 1.15, map: IOP_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7 },
-  cra: { atlas: 'cra', scale: 1.15, map: CRA_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7 },
+  iop: { atlas: 'iop', scale: 0.82, map: IOP_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
+  cra: { atlas: 'cra', scale: 0.82, map: CRA_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
   bouftou: { atlas: 'bouftou', scale: 0.85, map: MONSTER_MAP(9 / 32), height: 70 },
   boufton: { atlas: 'boufton', scale: 0.8, map: MONSTER_MAP(9 / 32), height: 55 },
   royal: { atlas: 'royal', scale: 1.05, map: MONSTER_MAP(10 / 20), height: 140 },

@@ -16,7 +16,7 @@ export function isoCircle(cx: number, cy: number, r: number, n = 28): Vec[] {
 const isoPoly = (pts: { x: number; y: number; z?: number }[]) => pts.map(p => ISO.toScreen(p.x, p.y, p.z ?? 0));
 
 /** Couleur des effets selon l'élément du sort (terre, feu, eau, air). */
-const ELEMENT_COLORS: Record<Element, number> = { neutre: 0xffe9c4, terre: 0xd9a35a, feu: 0xff6a3d, eau: 0x5fb4ff, air: 0x8fe07a, meilleur: 0xffe9c4 };
+export const ELEMENT_COLORS: Record<Element, number> = { neutre: 0xffe9c4, terre: 0xd9a35a, feu: 0xff6a3d, eau: 0x5fb4ff, air: 0x8fe07a, meilleur: 0xffe9c4 };
 
 interface Particle { x: number; y: number; z: number; vx: number; vy: number; vz: number; life: number; max: number; color: number; size: number }
 type Trail =

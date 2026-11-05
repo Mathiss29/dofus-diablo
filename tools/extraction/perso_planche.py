@@ -48,7 +48,8 @@ for sid in L(B['breedSpellsId']):
         anims += re.findall(r'casterAnimation[^0-9A-Za-z]*([A-Za-z0-9_]+)', r)
     spells[int(sid)] = {'icon': int(s['iconId']), 'anims': list(dict.fromkeys(anims))}
 
-base = ['AnimStatiqueCombat0', 'AnimCourse', 'AnimArme0', 'AnimHit', 'AnimMort']
+# AnimArme<typeId> = auto-attaque avec une arme de ce type (2 Arc, 3 Baguette, 4 Bâton, 5 Dague, 6 Épée, 7 Marteau, 8 Pelle, 19 Hache, 22 Faux)
+base = ['AnimStatiqueCombat0', 'AnimCourse', 'AnimArme0', 'AnimHit', 'AnimMort'] + [f'AnimArme{t}' for t in (2, 3, 4, 5, 6, 7, 8, 19, 22)]
 wanted = list(dict.fromkeys(base + [a for s in spells.values() for a in s['anims']]))
 
 # 1. Bundles -> morceaux (b_dump.py), une seule fois
@@ -82,19 +83,29 @@ names = ','.join(f'{a}_{o}' for a in anims for o in (1, 5))
 # 2. Scène (squelette + skins + couleurs de la classe), 3. rendu, 4. planche rognée
 scene = os.path.join(work, 'scene.json')
 subprocess.run([sys.executable, os.path.join(HERE, 'build_char.py'), scene, ','.join(dirs), ','.join(sk), colors, names], check=True, capture_output=True)
+# Ombre au sol de Dofus (4 quarts qui se chevauchent = croix sombre) : retirée, le jeu dessine la sienne
+subprocess.run([sys.executable, os.path.join(HERE, 'drop_shadow.py'), scene], check=True, capture_output=True)
 sc = json.load(open(scene))
 counts = {k: len(v) for k, v in sc['anims'].items()}
 shots = sc.get('shots', {})
-spec = ','.join(f'{a}_{o}:{min(MAXN, counts.get(f"{a}_{o}", 1))}' for a in anims for o in (1, 5))
+frames_of = {f'{a}_{o}': min(MAXN, counts.get(f"{a}_{o}", 1)) for a in anims for o in (1, 5)}
 nom = os.path.basename(os.path.normpath(out))
-raw = os.path.join(work, nom + '_raw')
 env = dict(os.environ, BOX='-260,-1000,260,120')
-subprocess.run(['node', os.path.join(HERE, 'render.cjs'), scene, '-', raw, spec, '1', '0.5'], check=True, env=env, cwd=HERE)
-subprocess.run([sys.executable, os.path.join(HERE, 'trim_pack.py'), raw, os.path.join(out, nom), '4096'], check=True)
-Image.open(os.path.join(out, nom + '.png')).save(os.path.join(out, nom + '.webp'), 'WEBP', quality=88, method=6)
-os.remove(os.path.join(out, nom + '.png'))
-js = json.load(open(os.path.join(out, nom + '.json'))); js['meta']['image'] = nom + '.webp'
-json.dump(js, open(os.path.join(out, nom + '.json'), 'w'))
+# SCALE : taille du rendu (0.7 = net jusqu'à un zoom x1,2 avec une échelle d'affichage ~0,8 dans looks.ts)
+SCALE = os.environ.get('SCALE', '0.7')
+# Rendu par paquets d'environ 280 images : une seule toile pour toute la classe dépasse la taille maximale du navigateur
+groups, cur, n = [], [], 0
+for k, c in frames_of.items():
+    if cur and n + c > 280: groups.append(cur); cur, n = [], 0
+    cur.append(k); n += c
+groups.append(cur)
+raws = []
+for gi, gk in enumerate(groups):
+    raw = os.path.join(work, f'{nom}_raw{gi}')
+    subprocess.run(['node', os.path.join(HERE, 'render.cjs'), scene, '-', raw, ','.join(f'{k}:{frames_of[k]}' for k in gk), '1', SCALE], check=True, env=env, cwd=HERE)
+    raws.append(raw)
+# Planches de 4096 x 4096 au plus (multiatlas Phaser si plusieurs pages) : <nom>.json + <nom>.webp, <nom>-1.webp...
+subprocess.run([sys.executable, os.path.join(HERE, 'trim_pack.py'), ','.join(raws), os.path.join(out, nom), '4096', '4096'], check=True)
 
 # Résumé : sorts -> animations, frame d'impact (fraction) quand le repère SHOT existe
 info = {'classe': classe, 'sexe': sexe, 'skins': [body, head], 'animations': {},
@@ -106,7 +117,10 @@ for a in anims:
 json.dump(info, open(os.path.join(out, 'anims.json'), 'w'), ensure_ascii=False, indent=1)
 
 # Aperçu : une ligne par animation (orientation face), une image sur deux
-im = Image.open(raw + '.png'); rj = json.load(open(raw + '.json'))
+rj = {'frames': {}}; ims = {}
+for raw in raws:
+    for k, f in json.load(open(raw + '.json'))['frames'].items(): rj['frames'][k] = f; ims[k] = raw
+opened = {r: Image.open(r + '.png') for r in raws}
 cw, ch = 104, 224
 rows = [(a, sorted((k for k in rj['frames'] if k.startswith(a + '_1_')), key=lambda k: int(k.rsplit('_', 1)[1]))[::2]) for a in anims]
 W = max(len(r[1]) for r in rows)
@@ -114,7 +128,7 @@ sheet = Image.new('RGB', (cw * W, ch * len(rows)), (34, 34, 30)); d = ImageDraw.
 for r, (a, ks) in enumerate(rows):
     for i, k in enumerate(ks):
         f = rj['frames'][k]['frame']
-        c = im.crop((f['x'], f['y'], f['x'] + f['w'], f['y'] + f['h'])).resize((cw, ch))
+        c = opened[ims[k]].crop((f['x'], f['y'], f['x'] + f['w'], f['y'] + f['h'])).resize((cw, ch))
         sheet.paste(c, (i * cw, r * ch), c); d.text((i * cw + 2, r * ch + 2), k.rsplit('_', 1)[1], fill=(255, 230, 0))
     d.text((2, r * ch + ch - 14), a, fill=(255, 255, 255))
 sheet.save(os.path.join(out, 'apercu.png'))

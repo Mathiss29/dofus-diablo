@@ -95,3 +95,28 @@ describe('butin au sol', () => {
     expect(w.drops).toHaveLength(0);
   });
 });
+
+describe('auto-attaque à l\'arme', () => {
+  it('sans arme : le coup de la classe ; avec une arme : son animation, son élément et ses dommages', () => {
+    const w = arena(), p = w.player;
+    expect(p.autoAttack).toBe('attaque');
+    const [id, def] = Object.entries(ITEMS.equipment).find(([, d]) => d.weapon?.type === 'Marteau' && d.level <= 10 && d.weapon.dmg.length)!;
+    p.level = 20; p.recompute();
+    p.bag.push(rollItem(id, def, 'commun', w.rng, 500));
+    expect(p.equip(500)).toBe(true);
+    expect(p.autoAttack).toBe('arme');
+    expect(p.weaponDef!.anim).toBe('arme7');
+    expect(p.weaponDef!.element).toBe(def.weapon!.dmg[0].element);
+    expect(p.weaponDef!.dmg).toBeGreaterThan(18);
+    // le clic gauche frappe avec le marteau
+    const m = w.spawnMonster('bouftou', p.x + 50, p.y);
+    m.state = 'chase';
+    const hp = m.hp;
+    w.step(STEP, { ...NO_INPUT, aim: { x: m.x, y: m.y }, pressed: 'attaque' });
+    expect(p.skill?.id).toBe('arme');
+    for (let i = 0; i < 40; i++) w.step(STEP, { ...NO_INPUT, aim: { x: m.x, y: m.y } });
+    expect(m.hp).toBeLessThan(hp);
+    p.unequip('arme');
+    expect(p.autoAttack).toBe('attaque');
+  });
+});

@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { GAME_DATA } from '../src/sim/data';
+import { GAME_DATA, ITEMS } from '../src/sim/data';
 import { GridMap, type MapData } from '../src/sim/gridmap';
 import { NO_INPUT, type PlayerInput } from '../src/sim/input';
 import { Rng } from '../src/sim/math';
@@ -143,5 +143,23 @@ describe('PA, PM, potion et XP', () => {
     expect(p.level).toBe(2);
     expect(p.xp).toBe(10);
     expect(w.drainEvents().some(e => e.k === 'levelUp' && e.level === 2)).toBe(true);
+  });
+});
+
+describe('déplacement à la souris', () => {
+  it('un clic sur le sol : le perso y va en contournant les obstacles ; un clic sur un monstre : il s\'approche et frappe', () => {
+    const w = new World({ data: GAME_DATA, zone: 'champs-astrub', map: new GridMap(carte), seed: 3, items: ITEMS });
+    const p = w.player, map = w.map;
+    const goal = map.randomFree(w.rng);
+    const path = w.findPath(p, goal);
+    expect(path.length).toBeGreaterThan(0);
+    for (const q of path) expect(map.walkable(q.x, q.y)).toBe(true);
+    w.step(STEP, { ...NO_INPUT, dest: goal });
+    for (let i = 0; i < 60 * 12 && Math.hypot(p.x - goal.x, p.y - goal.y) > 4; i++) w.step(STEP, NO_INPUT);
+    expect(Math.hypot(p.x - goal.x, p.y - goal.y)).toBeLessThan(30);
+    const m = w.spawnMonster('bouftou', p.x + 200, p.y); m.state = 'chase';
+    const hp = m.hp;
+    for (let i = 0; i < 60 * 4 && m.hp === hp; i++) w.step(STEP, { ...NO_INPUT, target: m.id, aim: { x: m.x, y: m.y } });
+    expect(m.hp).toBeLessThan(hp);
   });
 });

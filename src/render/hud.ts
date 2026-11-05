@@ -3,7 +3,6 @@ import { GAME_DATA } from '../sim/data';
 import { ISO } from '../sim/iso';
 import type { SimEvent } from '../sim/events';
 import type { Monster } from '../sim/monster';
-import type { WorldGrid } from '../sim/gridmap';
 import type { World } from '../sim/world';
 
 const FONT = 'Trebuchet MS, Verdana, sans-serif';
@@ -14,16 +13,17 @@ const UI = 'assets/ui';
 const UI_IMAGES = [
   'slot_dark_background_full', 'slot_light_lock', 'icon_pv', 'iconBossSkull',
   'background_levelup_banner', 'background_defeat_banner',
-  'i_character', 'i_bestiaire', 'i_journal', 'i_trophy', 'i_world', 'i_quests', 'i_spell',
+  'menu_character', 'menu_wand', 'menu_exclamationMark', 'menu_gobbal', 'menu_trophy', 'menu_world', 'menu_cog',
 ];
 /** Tête de chaque classe pour la fiche du perso (icônes de classe de Dofus 3). */
 const HEADS: Record<string, string> = { iop: 'tete_iop', cra: 'tete_cra' };
 /** Touches de la barre de sorts : 1 à 6, soit & é " ' ( - sur un clavier AZERTY. */
 const KEYS = ['&', 'é', '"', "'", '(', '-'];
-/** Colonne de menus (à droite de la mini-carte) : icône, nom, raccourci. */
-const MENUS: [string, string, string][] = [
-  ['i_character', 'Personnage', 'C'], ['i_spell', 'Sorts', 'S'], ['i_quests', 'Quêtes', 'J'],
-  ['i_bestiaire', 'Bestiaire', 'B'], ['i_trophy', 'Succès', 'U'], ['i_world', 'Carte', 'M'],
+/** Colonne de menus (à droite de la mini-carte), comme le bandeau de Dofus 3 : icône (icons_2x, blanche, teintée), nom, raccourci, teinte. */
+const MENUS: [string, string, string, number][] = [
+  ['menu_exclamationMark', 'Quêtes', 'J', 0x8ee04a], ['menu_character', 'Personnage', 'C', 0xf2c45a], ['menu_wand', 'Sorts', 'S', 0xe58ad8],
+  ['menu_gobbal', 'Bestiaire', 'B', 0xf0a05a], ['menu_trophy', 'Succès', 'U', 0xf2d36b], ['menu_world', 'Carte', 'M', 0x6fc6e8],
+  ['menu_cog', 'Options', 'O', 0xd8d0b8],
 ];
 
 const C = {
@@ -36,7 +36,7 @@ type Fixed = Phaser.GameObjects.Components.ScrollFactor & Phaser.GameObjects.Com
 type Txt = Phaser.GameObjects.Text;
 type Img = Phaser.GameObjects.Image;
 
-interface SlotView { bg: Img; icon: Img | null; cd: Txt; key: Txt; cost: Txt }
+interface SlotView { bg: Img; icon: Img | null; cd: Txt; key: Txt; cost: Txt; zone?: Phaser.GameObjects.Zone }
 interface FeedLine { text: Txt; t: number }
 
 /** Interface fixe à l'écran, façon MMO Dofus 3 (choix 13D de la maquette), adaptée au temps réel :
@@ -52,10 +52,17 @@ export class Hud {
     const icons = new Set<number>();
     for (const c of Object.values(GAME_DATA.classes)) for (const s of Object.values(c.spells)) icons.add(s.icon);
     for (const i of icons) if (!scene.textures.exists(`sort_${i}`)) scene.load.image(`sort_${i}`, `${UI}/sorts/sort_${i}.png`);
+    // Auto-attaque à l'arme : icônes officielles weapon_<typeId> (arme_0 = sans arme)
+    for (const t of [0, 2, 3, 4, 5, 6, 7, 8, 19, 22]) if (!scene.textures.exists(`arme_${t}`)) scene.load.image(`arme_${t}`, `${UI}/sorts/arme_${t}.png`);
   }
 
   /** Clic sur une icône de la colonne de menus (le jeu ne se met pas en pause : multijoueur prévu). */
   onMenu: (name: string) => void = () => {};
+  /** Survol d'un emplacement de sort (id du sort, centre haut de l'emplacement à l'écran) ; null quand on le quitte. */
+  onSlotHover: (id: string | null, x: number, y: number) => void = () => {};
+  /** Rectangles de l'interface à l'écran (un clic dessus ne doit pas faire attaquer). */
+  private rects: [number, number, number, number][] = [];
+  blocks(x: number, y: number) { return this.rects.some(([rx, ry, rw, rh]) => x >= rx && y >= ry && x <= rx + rw && y <= ry + rh); }
 
   private g: Phaser.GameObjects.Graphics;
   private fixed: <T extends Fixed>(o: T, d?: number) => T;
@@ -69,15 +76,14 @@ export class Hud {
   private coords: Txt;
   private boss: { skull: Img; name: Txt; hp: Txt };
   // mini-carte
-  private mini: Img | null = null;
-  private miniScale = 1 / 36;
-  private miniOrigin = { x: 0, y: 0 };
+  private miniCam: Phaser.Cameras.Scene2D.Camera | null = null;
   private miniLabel: Txt;
   private menus: { icon: Img; zone: Phaser.GameObjects.Zone }[] = [];
   private menuTip: Txt;
   // barre du bas
   private slots: SlotView[] = [];
   private move: SlotView;
+  private auto: SlotView;
   private potion: SlotView;
   private xpText: Txt;
   private rageLabel: Txt;
@@ -96,7 +102,19 @@ export class Hud {
   private areaKills = new Map<string, number>();
 
   constructor(private scene: Phaser.Scene, private world: World) {
-    const fixed = <T extends Fixed>(o: T, d = 0) => { o.setScrollFactor(0); o.setDepth(2e6 + d); return o; };
+    // Mini-carte façon Dofus 3 : une petite caméra qui filme le vrai décor autour du perso (vue de dessus réduite)
+    if (world.worldGrid) {
+      this.miniCam = scene.cameras.add(0, 0, 210, 150).setName('mini').setZoom(0.16).setBackgroundColor('#0d0c0a');
+      scene.cameras.cameras.forEach(c => { if (c.name === 'ui') { scene.cameras.cameras.splice(scene.cameras.cameras.indexOf(c), 1); scene.cameras.cameras.push(c); } });
+    }
+    // L'interface est dessinée par la caméra « ui » (sans zoom) et ignorée par la caméra du jeu (zoomable)
+    const fixed = <T extends Fixed>(o: T, d = 0) => {
+      o.setScrollFactor(0); o.setDepth(2e6 + d);
+      (o as unknown as Phaser.GameObjects.GameObject).cameraFilter = 0;
+      scene.cameras.main.ignore(o as unknown as Phaser.GameObjects.GameObject);
+      this.miniCam?.ignore(o as unknown as Phaser.GameObjects.GameObject);
+      return o;
+    };
     this.fixed = fixed;
     const img = (k: string, d = 2) => fixed(scene.add.image(0, 0, k), d);
     const txt = (size: number, extra: Partial<Phaser.Types.GameObjects.Text.TextStyle> = {}, d = 5) =>
@@ -119,12 +137,10 @@ export class Hud {
     this.coords = txt(15, { ...bold, strokeThickness: 4 }).setOrigin(0.5, 0);
     this.boss = { skull: img('iconBossSkull', 4), name: txt(16, { ...bold, color: '#ffe3b0' }).setOrigin(0.5), hp: txt(11, bold).setOrigin(0.5) };
 
-    const wg = world.worldGrid;
-    if (wg) this.buildMinimap(wg);
     this.miniLabel = txt(11, { color: '#d8d0b8' }).setOrigin(0.5, 0);
     this.menuTip = txt(12, { backgroundColor: '#14130f', padding: { x: 6, y: 3 } }, 9).setOrigin(1, 0.5).setVisible(false);
-    for (const [icon, label, key] of MENUS) {
-      const ic = img(icon, 4);
+    for (const [icon, label, key, tint] of MENUS) {
+      const ic = img(icon, 4).setTint(tint);
       const zone = fixed(scene.add.zone(0, 0, 30, 30).setInteractive({ useHandCursor: true }), 4);
       zone.on('pointerover', () => this.menuTip.setText(`${label} (${key})`).setVisible(true).setPosition(zone.x - 22, zone.y));
       zone.on('pointerout', () => this.menuTip.setVisible(false));
@@ -144,6 +160,19 @@ export class Hud {
       this.slots.push(mkSlot(id ? cls.spells[id].icon : null, KEYS[i]));
     }
     this.move = mkSlot(cls.spells[cls.mobility].icon, 'Esp.');
+    // Auto-attaque (clic gauche) : l'icône suit l'arme portée
+    this.auto = mkSlot(cls.spells[cls.basic ?? cls.mobility].icon, 'Clic');
+    this.auto.icon!.setTexture(cls.basic ? `sort_${cls.spells[cls.basic].icon}` : 'arme_0');
+    // Survol : infobulle du sort
+    const hover = (sv: SlotView, id: () => string | null) => {
+      const z = fixed(scene.add.zone(0, 0, 54, 54).setInteractive(), 4);
+      z.on('pointerover', () => { const i = id(); if (i) this.onSlotHover(i, z.x, z.y - 27); });
+      z.on('pointerout', () => this.onSlotHover(null, 0, 0));
+      sv.zone = z;
+    };
+    this.slots.forEach((sv, i) => hover(sv, () => cls.bar[i] ?? null));
+    hover(this.move, () => cls.mobility);
+    hover(this.auto, () => world.player.autoAttack);
     this.potion = mkSlot(null, 'E');
     this.potion.bg.setTexture('slot_dark_background_full');
     this.potion.icon = img('icon_pv', 3);
@@ -158,29 +187,9 @@ export class Hud {
     this.toastText = txt(15, {}, 8).setOrigin(0.5).setAlpha(0);
     const S = cls.spells, bar = cls.bar.map((id, i) => `${KEYS[i]} ${S[id].name}`).join('  ·  ');
     this.help = txt(13, { align: 'center' }).setOrigin(0.5, 0).setText(
-      `ZQSD : se déplacer   ·   Clic gauche (maintenu) : ${cls.basic ? S[cls.basic].name : cls.attaque.name}   ·   Clic droit : ${S[cls.favorite].name}   ·   Espace : ${S[cls.mobility].name}   ·   E : potion   ·   I : inventaire\n` +
+      `Clic gauche : aller / attaquer (maintenu : continuer)   ·   Maj + clic : attaquer sur place   ·   Clic droit : ${S[cls.favorite].name}   ·   Espace : ${S[cls.mobility].name}   ·   E : potion   ·   I : inventaire   ·   Molette : zoom\n` +
       `${bar}\n` +
       `${cls.rage.name} pleine : le sort suivant est renforcé   ·   K : changer de classe (Iop / Crâ)   ·   F : effets d'impact   ·   H : aide`);
-  }
-
-  /** Mini-carte : les cases marchables du monde, projetées comme à l'écran et réduites, colorées par sous-zone. */
-  private buildMinimap(wg: WorldGrid) {
-    const k = this.miniScale, pts = wg.free.map(c => { const w = wg.cellToWorld(c), s = ISO.toScreen(w.x, w.y); return { c, x: s.x * k, y: s.y * k }; });
-    const minX = Math.min(...pts.map(p => p.x)) - 4, minY = Math.min(...pts.map(p => p.y)) - 4;
-    const W = Math.ceil(Math.max(...pts.map(p => p.x)) - minX + 8), H = Math.ceil(Math.max(...pts.map(p => p.y)) - minY + 8);
-    const key = 'minimap_' + wg.world.maps.length;
-    const tex = this.scene.textures.exists(key) ? this.scene.textures.get(key) as Phaser.Textures.CanvasTexture : this.scene.textures.createCanvas(key, W, H)!;
-    const ctx = tex.getContext(), subs = [...new Set(wg.world.maps.map(m => m.sub))];
-    const tints = ['#6f8f4a', '#8a9a5a', '#5f7f8f', '#8f7a5a', '#7a6f9a'];
-    ctx.fillStyle = '#0d0c0a'; ctx.fillRect(0, 0, W, H);
-    for (const p of pts) {
-      const m = wg.mapOfCell(p.c);
-      ctx.fillStyle = tints[Math.max(0, subs.indexOf(m?.sub ?? -1)) % tints.length];
-      ctx.fillRect(p.x - minX - 1.5, p.y - minY - 1, 3.5, 2);
-    }
-    tex.refresh();
-    this.miniOrigin = { x: minX, y: minY };
-    this.mini = this.fixed(this.scene.add.image(0, 0, key).setOrigin(0), 2);
   }
 
   /** H : l'aide reste ensuite comme le joueur l'a laissée. */
@@ -241,7 +250,9 @@ export class Hud {
     this.shortOf.pa = Math.max(0, this.shortOf.pa - dt); this.shortOf.pm = Math.max(0, this.shortOf.pm - dt);
     this.rageFlash = Math.max(0, this.rageFlash - dt);
     const blink = (v: number) => v > 0 && Math.floor(v * 12) % 2 === 0;
+    this.rects = [];
     const panel = (x: number, y: number, w: number, h: number, a = C.panelA) => {
+      this.rects.push([x, y, w, h]);
       g.fillStyle(C.panel, a); g.fillRoundedRect(x, y, w, h, 5);
       g.lineStyle(1, C.border, 1); g.strokeRoundedRect(x + 0.5, y + 0.5, w - 1, h - 1, 5);
     };
@@ -298,35 +309,49 @@ export class Hud {
     }
 
     // --- Mini-carte et colonne de menus (haut droite) ---
-    const colX = W - 12 - 34, mw = 210, mh = 150, mx = colX - 8 - mw, my = 10;
-    panel(mx - 3, my - 3, mw + 6, mh + 6, 1);
-    if (this.mini) {
-      const s = ISO.toScreen(p.x, p.y), k = this.miniScale;
-      const px = s.x * k - this.miniOrigin.x, py = s.y * k - this.miniOrigin.y;
-      const tw = this.mini.width, th = this.mini.height;
-      const cx = Phaser.Math.Clamp(px - mw / 2, 0, Math.max(0, tw - mw)), cy = Phaser.Math.Clamp(py - mh / 2, 0, Math.max(0, th - mh));
-      this.mini.setCrop(cx, cy, mw, mh).setPosition(mx - cx, my - cy);
-      // monstres proches (points rouges) et joueur (point clair)
+    const colX = W - 12 - 36, mw = 210, mh = 150, mx = colX - 10 - mw, my = 10;
+    // cadre seulement : l'intérieur est filmé par la caméra de la mini-carte, dessinée avant l'interface
+    this.rects.push([mx - 3, my - 3, mw + 6, mh + 6]);
+    g.lineStyle(3, 0x24231d, 1); g.strokeRoundedRect(mx - 2, my - 2, mw + 4, mh + 4, 5);
+    g.lineStyle(1, 0x5a584c, 1); g.strokeRoundedRect(mx - 3.5, my - 3.5, mw + 7, mh + 7, 6);
+    const mc = this.miniCam;
+    if (mc) {
+      const ps = ISO.toScreen(p.x, p.y);
+      mc.setViewport(mx, my, mw, mh).centerOn(ps.x, ps.y - 20);
+      // monstres (points rouges, dorés pour les élites) par-dessus le décor filmé
+      const toMini = (wx: number, wy: number) => { const s2 = ISO.toScreen(wx, wy); return { x: mx + mw / 2 + (s2.x - ps.x) * mc.zoom, y: my + mh / 2 + (s2.y - ps.y + 20) * mc.zoom }; };
       for (const m of world.monsters) {
         if (m.dead) continue;
-        const ms = ISO.toScreen(m.x, m.y), ox = ms.x * k - this.miniOrigin.x - cx, oy = ms.y * k - this.miniOrigin.y - cy;
-        if (ox < 0 || oy < 0 || ox > mw || oy > mh) continue;
-        g.fillStyle(m.def.boss || m.def.elite ? C.gold : 0xd04030, 1); g.fillCircle(mx + ox, my + oy, m.def.boss ? 3 : 1.6);
+        const q = toMini(m.x, m.y);
+        if (q.x < mx || q.y < my || q.x > mx + mw || q.y > my + mh) continue;
+        g.fillStyle(m.def.boss || m.def.elite ? C.gold : 0xd04030, 1); g.fillCircle(q.x, q.y, m.def.boss ? 3.5 : 2.2);
       }
-      g.fillStyle(0xffffff, 1); g.fillCircle(mx + px - cx, my + py - cy, 3.2);
-      g.lineStyle(1.5, 0x000000, 1); g.strokeCircle(mx + px - cx, my + py - cy, 3.2);
+      // le perso (losange bleu) et les coins du cadre, comme dans Dofus 3
+      const q = toMini(p.x, p.y);
+      g.fillStyle(0x3a8fe0, 1); g.lineStyle(1.5, 0xffffff, 1);
+      g.fillTriangle(q.x, q.y - 7, q.x + 5, q.y, q.x - 5, q.y); g.fillTriangle(q.x, q.y + 5, q.x + 5, q.y, q.x - 5, q.y);
+      g.strokeTriangle(q.x, q.y - 7, q.x + 5, q.y, q.x - 5, q.y);
+      const L = 12, k = 0xf1ecd8; g.lineStyle(2.5, k, 0.9);
+      for (const [cx, cy, sx, sy] of [[mx + 6, my + 6, 1, 1], [mx + mw - 6, my + 6, -1, 1], [mx + 6, my + mh - 6, 1, -1], [mx + mw - 6, my + mh - 6, -1, -1]]) {
+        g.beginPath(); g.moveTo(cx, cy + sy * L); g.lineTo(cx, cy); g.lineTo(cx + sx * L, cy); g.strokePath();
+      }
     }
     this.miniLabel.setPosition(mx + mw / 2, my + mh + 6).setText(world.area?.name ?? world.zone.name);
+    // Colonne de menus : boutons carrés sombres en relief, comme le bandeau de Dofus 3
     this.menus.forEach((m, i) => {
-      const y = my + 17 + i * 36;
-      panel(colX, y - 16, 34, 32, 1);
-      m.icon.setPosition(colX + 17, y).setDisplaySize(26, 26);
-      m.zone.setPosition(colX + 17, y);
+      const y = my + 18 + i * 40, x = colX;
+      this.rects.push([x, y - 18, 36, 36]);
+      g.fillStyle(0x24231d, 1); g.fillRoundedRect(x, y - 18, 36, 36, 6);
+      g.fillStyle(0x45433a, 1); g.fillRoundedRect(x + 2, y - 16, 32, 32, 5);
+      g.fillStyle(0x56544a, 1); g.fillRoundedRect(x + 3, y - 15, 30, 14, { tl: 4, tr: 4, bl: 0, br: 0 });
+      g.lineStyle(1, 0x111008, 1); g.strokeRoundedRect(x + 0.5, y - 17.5, 35, 35, 6);
+      m.icon.setPosition(x + 18, y).setDisplaySize(24, 24);
+      m.zone.setPosition(x + 18, y).setSize(36, 36);
     });
 
     // --- Barre du bas : XP, 6 sorts, déplacement, potion, Rage ---
     const slot = 54, gap = 5, n = 6;
-    const barW = n * slot + (n - 1) * gap, extra = 16 + slot + gap + slot + 16 + 64;
+    const barW = n * slot + (n - 1) * gap, extra = slot + 14 + 16 + slot + gap + slot + 16 + 64;
     const totalW = barW + extra + 24, x0 = Math.round(W / 2 - totalW / 2), y0 = H - 12 - (slot + 44);
     panel(x0, y0, totalW, slot + 44);
     const xr = p.level >= cls.maxLevel ? 1 : p.xp / p.xpNeeded;
@@ -335,8 +360,10 @@ export class Hud {
     const sy = y0 + 30 + slot / 2;
     const drawSlot = (s: SlotView, x: number, id: string | null) => {
       s.bg.setPosition(x, sy).setDisplaySize(slot, slot);
+      s.zone?.setPosition(x, sy);
+      s.key.setPosition(x - slot / 2 + 4, sy - slot / 2 + 1);
       if (!id || !s.icon) { s.cd.setText(''); s.cost.setText(''); return; }
-      const def = cls.spells[id], cd = p.cd[id] ?? 0, frac = def.cooldown ? cd / def.cooldown : 0;
+      const def = p.spell(id)!, cd = p.cd[id] ?? 0, frac = def.cooldown ? cd / def.cooldown : 0;
       const ok = p.hasResource(id), inner = slot - 8;
       s.icon.setPosition(x, sy).setDisplaySize(inner, inner).setTint(cd > 0 ? 0x8a8a8a : ok ? 0xffffff : 0x6f86b8);
       if (frac > 0) { g.fillStyle(0x000000, 0.55); g.fillRect(x - inner / 2, sy - inner / 2, inner, inner * frac); }
@@ -347,7 +374,13 @@ export class Hud {
       s.key.setPosition(x - slot / 2 + 4, sy - slot / 2 + 1);
       s.cost.setPosition(x + slot / 2 - 3, sy + slot / 2 - 1).setText(def.pm ? `${def.pm} PM` : def.pa ? `${def.pa}` : '').setColor(def.pm ? css(C.pm) : css(C.pa));
     };
-    const sx0 = x0 + 12 + slot / 2;
+    // Auto-attaque (à gauche de la barre) : icône de l'arme portée (weapon_<type> officielle), sinon le coup de la classe
+    const ax = x0 + 12 + slot / 2, wd = p.weaponDef;
+    this.auto.icon!.setTexture(wd ? `arme_${wd.icon}` : cls.basic ? `sort_${cls.spells[cls.basic].icon}` : 'arme_0');
+    drawSlot(this.auto, ax, p.autoAttack === 'attaque' ? null : p.autoAttack);
+    if (p.autoAttack === 'attaque') this.auto.icon!.setPosition(ax, sy).setDisplaySize(slot - 8, slot - 8).clearTint();
+    this.auto.zone?.setPosition(ax, sy);
+    const sx0 = ax + slot + 14;
     this.slots.forEach((s, i) => drawSlot(s, sx0 + i * (slot + gap), cls.bar[i] ?? null));
     const mvx = sx0 + n * (slot + gap) + 16;
     drawSlot(this.move, mvx, cls.mobility);
@@ -387,6 +420,6 @@ export class Hud {
     this.center.setPosition(W / 2, H * 0.3);
     this.bannerBg.setPosition(W / 2, H * 0.3 + 8);
     this.toastText.setPosition(W / 2, H * 0.2);
-    this.help.setPosition(W / 2, boss ? 104 : 40);
+    this.help.setPosition(W / 2, boss ? 110 : 118);
   }
 }
