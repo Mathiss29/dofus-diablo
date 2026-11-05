@@ -4,7 +4,7 @@ import type { SimEvent, Telegraph } from './events';
 import { GridMap, WorldGrid } from './gridmap';
 import type { PlayerInput } from './input';
 import { CASE, Monster, TOUR } from './monster';
-import { RARITIES, rollItem, rollRarity, type Item, type ItemsData } from './items';
+import { METIER_XP, RARITIES, rollItem, rollRarity, type Item, type ItemsData } from './items';
 import { Player } from './player';
 import { planWave } from './waves';
 
@@ -84,6 +84,9 @@ export class World {
     if (opts.items) {
       this.player.items = opts.items;
       this.equipByLevel = Object.entries(opts.items.equipment).map(([id, d]) => ({ id, level: d.level }));
+      // Choix 6A : une arme de chasse officielle dans le sac au départ (Arc de Chasse pour le Crâ, Couteau de Chasse sinon)
+      const hunt = opts.classId === 'cra' ? '1942' : '1934';
+      if (opts.items.equipment[hunt]?.chasse) this.player.bag.push({ uid: this.nextId++, id: hunt, rarity: 'commun', stats: {}, extra: [] });
     }
     if (open) this.spawnGroups();
   }
@@ -375,7 +378,11 @@ export class World {
     const lvl = this.monsterLevel(m), more = 1 + pros / 100;
     const out: Omit<Drop, 'x' | 'y' | 't' | 'uid'>[] = [];
     for (const d of I.drops[m.type] ?? []) {
+      // viandes (choix 6A) : critère officiel = arme de chasse en main et niveau de Chasseur suffisant
+      const job = d.metier && Object.entries(I.metiers ?? {}).find(([, j]) => j.id === d.metier!.id)?.[0];
+      if (d.metier && (!job || p.metierLevel(job) < d.metier.min || (d.chasse && !p.huntingWeapon))) continue;
       if (this.rng.next() * 100 >= d.chance * more) continue;
+      if (job) p.gainMetierXp(job, METIER_XP.viande, this);
       if (I.equipment[d.item]) out.push({ item: rollItem(d.item, I.equipment[d.item], rollRarity(this.rng, boss, pros), this.rng, this.nextId++) });
       else {   // ressource : directement dans le sac
         p.resources[d.item] = (p.resources[d.item] ?? 0) + 1;
@@ -434,6 +441,28 @@ export class World {
     const p = this.player, i = p.bag.findIndex(b => b.uid === uid);
     if (i < 0) return false;
     p.bag.splice(i, 1);
+    return true;
+  }
+
+  // --- Métiers (choix 6A) ----------------------------------------------------
+  /** Fait une recette officielle si on a les ingrédients et le niveau de métier. */
+  craft(i: number): boolean {
+    const r = this.opts.items?.recipes?.[i], p = this.player;
+    if (!r || p.metierLevel(r.metier) < r.level || !r.ingredients.every(([id, q]) => (p.resources[id] ?? 0) >= q)) return false;
+    for (const [id, q] of r.ingredients) { p.resources[id] -= q; if (p.resources[id] <= 0) delete p.resources[id]; }
+    p.resources[r.result] = (p.resources[r.result] ?? 0) + 1;
+    p.gainMetierXp(r.metier, METIER_XP.parIngredient * r.ingredients.reduce((n, [, q]) => n + q, 0), this);
+    this.emit({ k: 'craft', id: r.result, n: 1 });
+    return true;
+  }
+  /** Mange une ressource qui soigne (Bouillon de Chair : +11 PV). */
+  eat(id: string): boolean {
+    const r = this.opts.items?.resources[id], p = this.player;
+    if (!r?.soin || !(p.resources[id] > 0) || p.dead) return false;
+    p.resources[id]--; if (!p.resources[id]) delete p.resources[id];
+    const heal = Math.min(r.soin, p.maxHp - p.hp); p.hp += heal;
+    this.emit({ k: 'eat', id, heal });
+    this.emit({ k: 'potion', x: p.x, y: p.y, amount: r.soin });
     return true;
   }
 

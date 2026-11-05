@@ -1,7 +1,7 @@
 import { Entity } from './entity';
 import type { ClassDef, ComboHit, Element, SkillId, SpellDef } from './defs';
 import { WEAPONS } from './data';
-import { BASE_STATS, EQUIP_SLOTS, type EquipSlot, type Item, type ItemsData, type Stat, type Stats } from './items';
+import { BASE_STATS, EQUIP_SLOTS, METIER_MAX, metierXpNeeded, type EquipSlot, type Item, type ItemsData, type Stat, type Stats } from './items';
 import type { PlayerInput } from './input';
 import type { World } from './world';
 
@@ -36,6 +36,8 @@ export class Player extends Entity {
   /** Sac (objets tirés) et ressources par identifiant Dofus. */
   bag: Item[] = [];
   resources: Record<string, number> = {};
+  /** Métiers (choix 6A : Chasseur) : niveau et XP. */
+  metiers: Record<string, { level: number; xp: number }> = { chasseur: { level: 1, xp: 0 } };
   kamas = 0;
   /** Butin au sol affiché et aspiré (choix 4C, réglé dans l'inventaire) : 0 tout, 1 Magique et plus, 2 Rare et plus. */
   lootFilter = 0;
@@ -190,6 +192,20 @@ export class Player extends Entity {
     }
     if (this.level >= this.cls.maxLevel) this.xp = 0;
     return gain;
+  }
+
+  /** L'arme en main a-t-elle l'effet officiel « Arme de chasse » ? */
+  get huntingWeapon(): boolean { const it = this.equipment.arme; return !!(it && this.items?.equipment[it.id]?.chasse); }
+  metierLevel(key: string): number { return this.metiers[key]?.level ?? 0; }
+  /** XP de métier ; prévient l'affichage à chaque niveau. */
+  gainMetierXp(key: string, n: number, world: World) {
+    const m = this.metiers[key] ??= { level: 1, xp: 0 };
+    if (m.level >= METIER_MAX) return;
+    m.xp += n;
+    while (m.level < METIER_MAX && m.xp >= metierXpNeeded(m.level)) {
+      m.xp -= metierXpNeeded(m.level); m.level++;
+      world.emit({ k: 'metierLevel', metier: key, level: m.level });
+    }
   }
 
   /** Remplit la jauge de classe ; prévient l'affichage quand elle devient pleine. */

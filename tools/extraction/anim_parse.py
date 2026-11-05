@@ -12,12 +12,14 @@ def parse(d):
     frames=[]
     for i in range(F):
         p=offs[i]; e=offs[i+1]; recs=[]
-        while p<e:
-            idx,fl,al=struct.unpack_from('<HBB',d,p); p+=4; r={'idx':idx,'fl':fl,'alpha':al}
-            if fl&0x21: r['sym'],r['par'],r['u']=struct.unpack_from('<hhI',d,p); p+=8
-            if fl&4: r['mul']=tuple(d[p:p+4]); p+=4
-            if fl&8: r['add']=tuple(d[p:p+4]); p+=4
-            if fl&0x10: r['m']=struct.unpack_from('<6f',d,p); p+=24
+        while p+4<=e:
+            try:
+                idx,fl,al=struct.unpack_from('<HBB',d,p); p+=4; r={'idx':idx,'fl':fl,'alpha':al}
+                if fl&0x21: r['sym'],r['par'],r['u']=struct.unpack_from('<hhI',d,p); p+=8
+                if fl&4: r['mul']=tuple(d[p:p+4]); p+=4
+                if fl&8: r['add']=tuple(d[p:p+4]); p+=4
+                if fl&0x10: r['m']=struct.unpack_from('<6f',d,p); p+=24
+            except struct.error: break   # fin tronquée (petites animations d'un seul plan, ex. flèche 8202)
             recs.append(r)
         frames.append(recs)
     return {'F':F,'N':N,'header':d[:tp],'frames':frames}

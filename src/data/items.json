@@ -80,7 +80,8 @@
       "max": 10
      }
     ]
-   }
+   },
+   "chasse": true
   },
   "62": {
    "name": "Épée d'Ha",
@@ -726,7 +727,8 @@
       "max": 20
      }
     ]
-   }
+   },
+   "chasse": true
   },
   "255": {
    "name": "Ceinture Vitalesque",
@@ -826,7 +828,8 @@
       "max": 10
      }
     ]
-   }
+   },
+   "chasse": true
   },
   "278": {
    "name": "Anneau des Rocheuses",
@@ -1026,7 +1029,8 @@
       "max": 20
      }
     ]
-   }
+   },
+   "chasse": true
   },
   "337": {
    "name": "Arc du Bwork Archer",
@@ -2558,7 +2562,8 @@
       "max": 11
      }
     ]
-   }
+   },
+   "chasse": true
   },
   "1399": {
    "name": "Maillet Aclou",
@@ -3045,7 +3050,8 @@
       "max": 6
      }
     ]
-   }
+   },
+   "chasse": true
   },
   "1942": {
    "name": "Arc de Chasse",
@@ -3062,7 +3068,8 @@
       "max": 12
      }
     ]
-   }
+   },
+   "chasse": true
   },
   "2155": {
    "name": "Amulette de Jiva",
@@ -4474,6 +4481,7 @@
     "type": "Baguette",
     "dmg": []
    },
+   "chasse": true,
    "set": 50
   },
   "8111": {
@@ -6760,6 +6768,7 @@
      }
     ]
    },
+   "chasse": true,
    "set": 69
   }
  },
@@ -8009,6 +8018,23 @@
    "name": "Cape de l'Aventurier",
    "icon": 17048,
    "level": 8
+  },
+  "16670": {
+   "name": "Bouillon de Chair",
+   "icon": 69741,
+   "level": 1,
+   "soin": 11
+  },
+  "17169": {
+   "name": "Beignet Astrubien",
+   "icon": 69115,
+   "level": 20,
+   "soin": 30
+  },
+  "17171": {
+   "name": "Roulade de Carne",
+   "icon": 69825,
+   "level": 30
   }
  },
  "drops": {
@@ -8023,7 +8049,12 @@
    },
    {
     "item": "17126",
-    "chance": 53.0
+    "chance": 53.0,
+    "metier": {
+     "id": 41,
+     "min": 30
+    },
+    "chasse": true
    },
    {
     "item": "384",
@@ -8065,7 +8096,12 @@
    },
    {
     "item": "17124",
-    "chance": 55.0
+    "chance": 55.0,
+    "metier": {
+     "id": 41,
+     "min": 20
+    },
+    "chasse": true
    },
    {
     "item": "2663",
@@ -8099,7 +8135,12 @@
    },
    {
     "item": "17124",
-    "chance": 55.0
+    "chance": 55.0,
+    "metier": {
+     "id": 41,
+     "min": 20
+    },
+    "chasse": true
    },
    {
     "item": "309",
@@ -8141,7 +8182,12 @@
    },
    {
     "item": "17124",
-    "chance": 55.0
+    "chance": 55.0,
+    "metier": {
+     "id": 41,
+     "min": 20
+    },
+    "chasse": true
    },
    {
     "item": "2659",
@@ -8183,7 +8229,12 @@
    },
    {
     "item": "17124",
-    "chance": 55.0
+    "chance": 55.0,
+    "metier": {
+     "id": 41,
+     "min": 20
+    },
+    "chasse": true
    },
    {
     "item": "641",
@@ -8225,7 +8276,12 @@
   "archi_pissenlit": [
    {
     "item": "17124",
-    "chance": 100.0
+    "chance": 100.0,
+    "metier": {
+     "id": 41,
+     "min": 20
+    },
+    "chasse": true
    },
    {
     "item": "19624",
@@ -8255,7 +8311,12 @@
    },
    {
     "item": "17124",
-    "chance": 100.0
+    "chance": 100.0,
+    "metier": {
+     "id": 41,
+     "min": 20
+    },
+    "chasse": true
    },
    {
     "item": "2662",
@@ -8273,7 +8334,12 @@
    },
    {
     "item": "17124",
-    "chance": 100.0
+    "chance": 100.0,
+    "metier": {
+     "id": 41,
+     "min": 20
+    },
+    "chasse": true
    },
    {
     "item": "19626",
@@ -8303,7 +8369,12 @@
    },
    {
     "item": "16663",
-    "chance": 59.0
+    "chance": 59.0,
+    "metier": {
+     "id": 41,
+     "min": 1
+    },
+    "chasse": true
    },
    {
     "item": "2478",
@@ -8321,7 +8392,12 @@
   "pissenlit_miroitant": [
    {
     "item": "16663",
-    "chance": 59.0
+    "chance": 59.0,
+    "metier": {
+     "id": 41,
+     "min": 1
+    },
+    "chasse": true
    },
    {
     "item": "519",
@@ -8347,7 +8423,12 @@
   "rose_vaporeuse": [
    {
     "item": "16663",
-    "chance": 59.0
+    "chance": 59.0,
+    "metier": {
+     "id": 41,
+     "min": 1
+    },
+    "chasse": true
    },
    {
     "item": "519",
@@ -8377,7 +8458,12 @@
    },
    {
     "item": "16663",
-    "chance": 59.0
+    "chance": 59.0,
+    "metier": {
+     "id": 41,
+     "min": 1
+    },
+    "chasse": true
    },
    {
     "item": "519",
@@ -8403,7 +8489,12 @@
    },
    {
     "item": "16663",
-    "chance": 58.0
+    "chance": 58.0,
+    "metier": {
+     "id": 41,
+     "min": 1
+    },
+    "chasse": true
    },
    {
     "item": "16511",
@@ -8425,7 +8516,12 @@
   "boufton_palichon": [
    {
     "item": "16663",
-    "chance": 59.0
+    "chance": 59.0,
+    "metier": {
+     "id": 41,
+     "min": 1
+    },
+    "chasse": true
    },
    {
     "item": "16511",
@@ -8459,7 +8555,12 @@
    },
    {
     "item": "16663",
-    "chance": 59.0
+    "chance": 59.0,
+    "metier": {
+     "id": 41,
+     "min": 1
+    },
+    "chasse": true
    },
    {
     "item": "16505",
@@ -8477,7 +8578,12 @@
   "bouftor_ethere": [
    {
     "item": "16663",
-    "chance": 58.0
+    "chance": 58.0,
+    "metier": {
+     "id": 41,
+     "min": 1
+    },
+    "chasse": true
    },
    {
     "item": "16511",
@@ -8503,7 +8609,12 @@
   "feu_vif": [
    {
     "item": "16663",
-    "chance": 59.0
+    "chance": 59.0,
+    "metier": {
+     "id": 41,
+     "min": 1
+    },
+    "chasse": true
    },
    {
     "item": "16518",
@@ -8533,7 +8644,12 @@
    },
    {
     "item": "16663",
-    "chance": 59.0
+    "chance": 59.0,
+    "metier": {
+     "id": 41,
+     "min": 1
+    },
+    "chasse": true
    },
    {
     "item": "2473",
@@ -8547,7 +8663,12 @@
   "feu_furieux": [
    {
     "item": "16663",
-    "chance": 59.0
+    "chance": 59.0,
+    "metier": {
+     "id": 41,
+     "min": 1
+    },
+    "chasse": true
    },
    {
     "item": "16518",
@@ -8569,7 +8690,12 @@
   "feu_follet": [
    {
     "item": "16663",
-    "chance": 59.0
+    "chance": 59.0,
+    "metier": {
+     "id": 41,
+     "min": 1
+    },
+    "chasse": true
    },
    {
     "item": "1984",
@@ -8588,5 +8714,55 @@
     "chance": 1.18
    }
   ]
+ },
+ "recipes": [
+  {
+   "result": "16670",
+   "metier": "chasseur",
+   "level": 1,
+   "ingredients": [
+    [
+     "16663",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "17169",
+   "metier": "chasseur",
+   "level": 20,
+   "ingredients": [
+    [
+     "17124",
+     1
+    ],
+    [
+     "289",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "17171",
+   "metier": "chasseur",
+   "level": 30,
+   "ingredients": [
+    [
+     "17126",
+     1
+    ],
+    [
+     "289",
+     1
+    ]
+   ]
+  }
+ ],
+ "metiers": {
+  "chasseur": {
+   "id": 41,
+   "name": "Chasseur",
+   "icon": 32
+  }
  }
 }

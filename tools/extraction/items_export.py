@@ -5,7 +5,7 @@ python items_export.py <donnees> <icones_item_1x> <monsters.json du jeu> <src/da
   icones  : dossier png/item_1x du catalogue (catalogue.py), une icône par iconId
 Garde : les équipements jusqu'au niveau max (25 par défaut) avec leurs lignes de caractéristiques (min, max),
 leurs panoplies (bonus par nombre d'objets portés), et les ressources lâchées par les monstres du jeu (choix 24E)."""
-import ast, json, os, shutil, sys
+import ast, json, os, re, shutil, sys
 from i18n import load as load_i18n
 
 donnees, icons, game_monsters, out, icon_out = sys.argv[1:6]
@@ -59,6 +59,7 @@ for k, v in I.items():
     if not st and not dmg: continue
     it = {'name': T(int(v['nameId'])), 'slot': SLOTS[int(v['typeId'])], 'level': int(v['level']), 'icon': int(v['iconId']), 'stats': st}
     if int(v['typeId']) in WEAPON: it['weapon'] = {'type': WEAPON[int(v['typeId'])], 'dmg': dmg}
+    if any(int((RI.get(r['rid']) or {}).get('effectId', 0)) == 795 for r in L(v['possibleEffects'])): it['chasse'] = True   # effet « Arme de chasse »
     if int(v['itemSetId']) > 0: it['set'] = int(v['itemSetId'])
     items[str(k)] = it; used_icons.add(it['icon'])
 for sid in {it['set'] for it in items.values() if 'set' in it}:
@@ -80,12 +81,39 @@ for key, gm in game.items():
     for d in L(dm['drops']):
         o = I.get(int(d['objectId']))
         if not o: continue
-        lst.append({'item': str(d['objectId']), 'chance': round(float(d['percentDropForGrade1']), 2)})
+        e = {'item': str(d['objectId']), 'chance': round(float(d['percentDropForGrade1']), 2)}
+        # viandes : « Pj>41,N&CU>0 » = métier Chasseur au-dessus du niveau N et une arme de chasse en main
+        mj = re.search(r'Pj>(\d+),(\d+)', d.get('criterions') or '')
+        if mj: e['metier'] = {'id': int(mj.group(1)), 'min': int(mj.group(2)) + 1}; e['chasse'] = 'CU>0' in d['criterions']
+        lst.append(e)
         resources[str(d['objectId'])] = {'name': T(int(o['nameId'])), 'icon': int(o['iconId']), 'level': int(o['level'])}
         used_icons.add(int(o['iconId']))
     drops[key] = lst
 
-json.dump({'equipment': items, 'sets': sets, 'resources': resources, 'drops': drops}, open(out, 'w'), ensure_ascii=False, indent=1)
+JOBS = {41: 'chasseur'}
+J, _ = table('jobs'); REC, _ = table('recipes')
+recipes, metiers = [], {}
+for jid, key in JOBS.items():
+    metiers[key] = {'id': jid, 'name': T(int(J[jid]['nameId'])), 'icon': int(J[jid]['iconId'])}
+changed = True
+while changed:   # une recette peut utiliser le résultat d'une autre
+    changed = False
+    for rid, r in REC.items():
+        if not r or int(r['jobId']) not in JOBS or str(r['resultId']) in resources: continue
+        ing = list(zip(L(r['ingredientIds']), L(r['quantities'])))
+        if not all(str(i) in resources for i, _ in ing): continue
+        o = I[int(r['resultId'])]
+        res = {'name': T(int(o['nameId'])), 'icon': int(o['iconId']), 'level': int(o['level'])}
+        for e in L(o['possibleEffects']):
+            e = RI.get(e['rid']) or {}
+            if int(e.get('effectId', 0)) == 110: res['soin'] = int(e['diceNum'])   # « +N PV » : se mange
+        resources[str(r['resultId'])] = res; used_icons.add(res['icon']); changed = True
+        recipes.append({'result': str(r['resultId']), 'metier': JOBS[int(r['jobId'])], 'level': int(r['resultLevel']),
+                        'ingredients': [[str(i), int(q)] for i, q in ing]})
+recipes.sort(key=lambda r: r['level'])
+
+json.dump({'equipment': items, 'sets': sets, 'resources': resources, 'drops': drops, 'recipes': recipes, 'metiers': metiers},
+          open(out, 'w'), ensure_ascii=False, indent=1)
 # Une seule planche pour toutes les icônes (case de 64 px, ordre des iconId) : <icon_out>.webp + src/data/icones_objets.json
 # (des centaines de petits fichiers ralentissent le chargement et dépassent les limites de publication)
 from PIL import Image

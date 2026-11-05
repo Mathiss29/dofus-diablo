@@ -150,7 +150,10 @@ export class Monster extends Entity {
         this.x += this.dirX * sp * dt; this.y += this.dirY * sp * dt;
         if (!this.hitDone && Math.hypot(player.x - this.x, player.y - this.y) < this.radius + player.radius + 6) {
           this.hitDone = true;
-          if (S) { world.monsterSpellHits(this, S, player); if (this.kind === 'charge') this.t = 0; }
+          if (S) {
+            world.monsterSpellHits(this, S, player); if (this.kind === 'charge') this.t = 0;
+            world.emit({ k: 'spellFx', id: `m${S.id}`, x: player.x, y: player.y, facing: this.facing });
+          }
           else player.hurt(D.dmg, this.x, this.y, world);
         }
         if (this.t <= 0) this.endCast(world);

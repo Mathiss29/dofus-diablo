@@ -27,17 +27,34 @@ export interface ItemDef {
   stats: Partial<Record<Stat, [number, number]>>;
   weapon?: { type: string; dmg: { element: string; min: number; max: number }[] };
   set?: number;
+  /** Effet officiel « Arme de chasse » (795) : fait tomber les viandes (métier Chasseur, choix 6A). */
+  chasse?: boolean;
 }
 /** Panoplie : bonus[n] s'applique avec n + 1 objets portés. */
 export interface SetDef { name: string; items: number[]; bonus: Record<string, Stats> }
-export interface ResourceDef { name: string; icon: number; level: number }
+/** soin : la ressource se mange et rend ce nombre de PV (effet officiel 110, ex. Bouillon de Chair +11 PV). */
+export interface ResourceDef { name: string; icon: number; level: number; soin?: number }
+/** Butin d'un monstre ; metier = critère officiel « Pj>41,N » (Chasseur au-dessus du niveau N), chasse = « CU>0 » (arme de chasse). */
+export interface DropDef { item: string; chance: number; metier?: { id: number; min: number }; chasse?: boolean }
+/** Recette officielle d'un métier (recipesdataroot). */
+export interface RecipeDef { result: string; metier: string; level: number; ingredients: [string, number][] }
+export interface MetierDef { id: number; name: string; icon: number }
 export interface ItemsData {
   equipment: Record<string, ItemDef>;
   sets: Record<string, SetDef>;
   resources: Record<string, ResourceDef>;
   /** Butin officiel de chaque monstre du jeu (chance en %). */
-  drops: Record<string, { item: string; chance: number }[]>;
+  drops: Record<string, DropDef[]>;
+  recipes?: RecipeDef[];
+  metiers?: Record<string, MetierDef>;
 }
+
+/** Métiers : niveau 1 à 200 comme dans Dofus. La courbe d'XP et les gains ne sont pas dans les données du jeu :
+ *  ce sont les nôtres (XP pour passer au niveau suivant = 20 × niveau). */
+export const METIER_MAX = 200;
+export const metierXpNeeded = (level: number) => 20 * level;
+/** XP de métier : une viande ramassée, et une recette faite (par ingrédient). */
+export const METIER_XP = { viande: 5, parIngredient: 10 };
 
 /** Raretés (choix du 2026-11-04) ; la panoplie reste une étiquette à part. */
 export const RARITIES = ['commun', 'magique', 'rare', 'legendaire'] as const;
