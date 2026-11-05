@@ -73,5 +73,19 @@ export class EntityView {
     }
   }
 
+  /** Le point (x, y) du monde tombe-t-il sur le corps dessiné ? On teste le rectangle rogné de la frame
+   *  (getBounds() prend la cellule de rendu entière, bien plus grande que le monstre), à `pad` pixels près.
+   *  Renvoie la distance au centre du corps, ou -1 si le point est à côté. */
+  hit(x: number, y: number, pad = 6): number {
+    const s = this.sprite, f = s.frame;
+    if (!s.visible || !s.scaleX || !s.scaleY) return -1;
+    const ss = ((f as unknown as { data: object }).data as { spriteSourceSize?: { x: number; y: number; w: number; h: number } }).spriteSourceSize;
+    const r = f.trimmed && ss ? ss : { x: 0, y: 0, w: f.realWidth, h: f.realHeight };
+    const k = Math.abs(s.scaleX);
+    const px = (x - s.x) / s.scaleX + s.originX * f.realWidth, py = (y - s.y) / s.scaleY + s.originY * f.realHeight, pd = pad / k;
+    if (px < r.x - pd || px > r.x + r.w + pd || py < r.y - pd || py > r.y + r.h + pd) return -1;
+    return Math.hypot(px - (r.x + r.w / 2), py - (r.y + r.h / 2)) * k;
+  }
+
   destroy() { this.sprite.destroy(); this.bar.destroy(); this.shadow.destroy(); }
 }
