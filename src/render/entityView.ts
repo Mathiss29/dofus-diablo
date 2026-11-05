@@ -16,7 +16,7 @@ export class EntityView {
   private readonly shadow: Phaser.GameObjects.Graphics;
   private readonly counts: Record<string, number> = {};
 
-  constructor(scene: Phaser.Scene, private readonly look: Look) {
+  constructor(scene: Phaser.Scene, readonly look: Look) {
     const tex = scene.textures.get(look.atlas);
     const names = tex.getFrameNames();
     for (const name of names) { const k = name.replace(/_\d+$/, ''); this.counts[k] = (this.counts[k] || 0) + 1; }
@@ -31,7 +31,7 @@ export class EntityView {
   sync(e: Entity) {
     const L = this.look, p = ISO.toScreen(e.x, e.y);
     const fd = ISO.toScreen(Math.cos(e.facing), Math.sin(e.facing));
-    const st = L.map[e.anim] ?? L.map.idle;
+    const st = L.map[e.anim] ?? L.map[e.anim.replace(/\d+$/, '')] ?? L.map.idle;   // windup1 -> windup si l'animation du sort manque
     // secteur de 45° mesuré après avoir « redressé » la vue isométrique (y x 2) : 0 = droite, 2 = bas, 6 = haut
     const sector = ((Math.round(Math.atan2(fd.y * 2, fd.x) / (Math.PI / 4)) % 8) + 8) % 8;
     let o = MIRROR[sector] ?? sector, flip = sector in MIRROR;

@@ -7,6 +7,7 @@ import { Rng } from '../src/sim/math';
 import { planWave } from '../src/sim/waves';
 import { Player } from '../src/sim/player';
 import { World } from '../src/sim/world';
+import { CASE } from '../src/sim/monster';
 
 const carte = JSON.parse(readFileSync(new URL('../public/assets/cartes/5_-27/carte.json', import.meta.url), 'utf8')) as MapData;
 const newWorld = (seed = 42) => new World({ data: GAME_DATA, zone: 'champs-astrub', map: new GridMap(carte), seed });
@@ -178,10 +179,36 @@ describe('cadence et attaques à distance', () => {
     expect(swings()).toBeGreaterThan(slow);
   });
 
-  it('un Feu Follet à distance tire une boule qui blesse le joueur', () => {
+  it('les monstres ont leurs vrais sorts de Dofus 3', () => {
+    const M = GAME_DATA.monsters;
+    expect(M.pissenlit_miroitant.spells!.map(s => s.name)).toEqual(['Herbe Sauvage']);
+    expect(M.feu_follet.spells![0]).toMatchObject({ name: 'Brûlure légère', po: [1, 1], missile: 129 });
+    expect(M.feu_vif.spells![0].effects[0]).toMatchObject({ k: 'dmg', element: 'terre' });
+    expect(M.bouftor_ethere.spells!.map(s => s.name)).toEqual(['Morsure du Bouftou', 'Fureur du Bouftou']);
+  });
+
+  it('Herbe Sauvage tombe là où était le joueur : 2 PM en moins, et on peut l\'esquiver', () => {
+    const cast = (dodge: boolean) => {
+      const w = newWorld(), p = w.player;
+      const m = w.spawnMonster('pissenlit_miroitant', p.x + 4 * CASE, p.y); m.state = 'chase'; m.atkCd = 0;
+      const hp = p.hp, pm = p.pm;
+      let named = false;
+      for (let i = 0; i < 60 && (m.state as string) !== 'recover'; i++) {
+        w.step(STEP, dodge && (m.state as string) === 'windup' ? { ...NO_INPUT, move: { x: -1, y: 0 } } : NO_INPUT);
+        named ||= w.drainEvents().some(e => e.k === 'monsterCast' && e.name === 'Herbe Sauvage');
+      }
+      return { named, hurt: p.hp < hp, pm: p.pm - pm };
+    };
+    const hit = cast(false);
+    expect(hit.named).toBe(true);
+    expect(hit.hurt).toBe(true);
+    expect(hit.pm).toBeLessThan(-1.9);
+    expect(cast(true).hurt).toBe(false);
+  });
+
+  it('un Feu Follet crache sa Brûlure légère (projectile) au contact', () => {
     const w = newWorld(), p = w.player;
-    const m = w.spawnMonster('feu_follet', p.x + 200, p.y); m.state = 'chase'; m.atkCd = 0;
-    expect(GAME_DATA.monsters.feu_follet.ranged).toBeTruthy();
+    const m = w.spawnMonster('feu_follet', p.x + 60, p.y); m.state = 'chase'; m.atkCd = 0;
     const hp = p.hp;
     let shot = false;
     for (let i = 0; i < 60 * 3 && p.hp === hp; i++) { w.step(STEP, NO_INPUT); shot ||= w.projectiles.some(q => q.hostile); }
