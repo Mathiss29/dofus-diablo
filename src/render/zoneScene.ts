@@ -1,7 +1,7 @@
 import { apercuSort } from '../sim/apercu';
 import { dossier, v } from './assetUrl';
 import Phaser from 'phaser';
-import { BOUTIQUES, GAME_DATA, ITEMS, QUETES, RECOLTES } from '../sim/data';
+import { APPARATS, BOUTIQUES, GAME_DATA, ITEMS, QUETES, RECOLTES } from '../sim/data';
 import type { Compte } from '../sim/quests';
 import { QuestView } from './questView';
 import { RecolteView } from './recolteView';
@@ -14,7 +14,7 @@ import type { Entity } from '../sim/entity';
 import { World } from '../sim/world';
 import { EntityView } from './entityView';
 import { Attente, PersoVivant } from './persoVivant';
-import { Assemblage, type Apparence } from './squelette';
+import { Assemblage, apparenceValide, fiches, objetsPortes, type Apparence } from './squelette';
 import { SpellFx } from './spellFx';
 import { FX } from './fx';
 import { Hud } from './hud';
@@ -173,7 +173,10 @@ export class ZoneScene extends Phaser.Scene {
     // Perso du joueur dessiné en direct depuis son squelette (Apparence 3A) ; l'ancienne planche ne sert plus qu'en secours
     const looks = [...(zone.open ? [] : [...types].map(t => LOOKS[GAME_DATA.monsters[t].look]))];
     this.assemblage = null;
-    const pret = Assemblage.creer(this.clePerso, this.perso?.apparence ?? this.apparenceEssai).then(a => { this.assemblage = a; }, () => {
+    // coiffe, cape et bouclier portés (et leur apparat) dessinés dès le départ, d'après la sauvegarde (Apparence 4A+4B+5A)
+    const e0 = this.perso?.etat, obj0 = objetsPortes(e0?.equipment, e0?.apparat);
+    this.apparenceCle = this.cleApparence(obj0);
+    const pret = Assemblage.creer(this.clePerso, this.perso?.apparence ?? this.apparenceEssai, obj0).then(a => { this.assemblage = a; }, () => {
       const L = this.look;
       if (!this.textures.exists(L.atlas)) this.load.multiatlas(L.atlas, v(`${ASSETS}/sprites/${L.atlas}.json`), dossier(`${ASSETS}/sprites/`));
     });
@@ -220,7 +223,7 @@ export class ZoneScene extends Phaser.Scene {
     if (zone.open) {
       const open = zone.open;
       const wg = new WorldGrid(this.cache.json.get(WorldView.key(open.world, 'monde')) as WorldData);
-      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, recoltes: RECOLTES, compte: chargerCompte(), tuto: this.perso?.tuto, 
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, apparats: APPARATS, recoltes: RECOLTES, compte: chargerCompte(), tuto: this.perso?.tuto, 
         // vitrine : les PNJ sont là, mais aucune quête ne démarre
         arrivee: this.arrivee,
         reprise: this.vitrine ? { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} } : this.perso?.etat?.quetes });
@@ -269,6 +272,11 @@ export class ZoneScene extends Phaser.Scene {
     this.windows?.destroy();
     this.windows = new Windows(this.world);
     this.windows.portrait = v(`${ASSETS}/ui/perso_${this.classId}${this.perso?.sexe === 'f' ? '_f' : ''}.png`);
+    // perso dessiné en direct dans l'inventaire, l'aperçu des apparats et la garde-robe (Apparence 5A, 6B)
+    this.fichePerso();
+    this.windows.onApparence = a => {
+      if (this.perso) { this.perso.apparence = a; this.sauver(); } else this.apparenceEssai = a;   // majApparence() réassemble le perso
+    };
     if (this.perso) this.windows.onAccueil = () => this.versAccueil();   // rendu en grand (perso_planche : render.cjs échelle 2,2)
     this.windows.reglages = this.reglages;
     this.windows.onReglages = r => { this.zoom = Phaser.Math.Clamp(r.zoom, ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]); this.updateAmbiance(true); this.appliquerSon(); };
@@ -318,6 +326,32 @@ export class ZoneScene extends Phaser.Scene {
   /** Essai d'une classe (Accueil 8B) : apparence choisie sur l'écran de création. */
   private apparenceEssai?: Apparence;
   private vivant: PersoVivant | null = null;
+  /** Tête, couleurs et objets visibles du perso dessiné : quand ils changent (objet porté, apparat, garde-robe), le perso est réassemblé. */
+  private apparenceCle = '';
+  private cleApparence(objets: string[]) { const a = this.perso?.apparence ?? this.apparenceEssai; return JSON.stringify([a?.tete, a?.couleurs, objets]); }
+  /** Classe, sexe et apparence complète (tête et couleurs validées) donnés aux fenêtres. */
+  private fichePerso() {
+    fiches().then(f => { const fi = f[this.clePerso]; if (fi && this.windows) this.windows.perso = { cle: this.clePerso, app: apparenceValide(fi, this.perso?.apparence ?? this.apparenceEssai) }; }, () => {});
+  }
+  private nouveauVivant(a: Assemblage) {
+    const vv = new PersoVivant(this, a);
+    this.events.once('shutdown', () => { vv.destroy(); if (this.vivant === vv) this.vivant = null; });
+    return vv;
+  }
+  /** Réassemble le perso quand son apparence change ; l'ancien reste affiché jusqu'à ce que le nouveau soit prêt. */
+  private majApparence() {
+    if (!this.assemblage) return;   // perso en planche (secours hors ligne)
+    const p = this.world.player, objets = objetsPortes(p.equipment, p.apparat), k = this.cleApparence(objets);
+    if (k === this.apparenceCle) return;
+    this.apparenceCle = k;
+    Assemblage.creer(this.clePerso, this.perso?.apparence ?? this.apparenceEssai, objets).then(a => {
+      if (this.apparenceCle !== k || !this.sys.isActive()) return;
+      const old = this.vivant;
+      this.assemblage = a; this.vivant = this.nouveauVivant(a);
+      this.views.get(p.id)?.changerVivant(this.vivant);
+      this.time.delayedCall(250, () => old?.destroy());   // le sprite a pris une image du nouveau entre-temps
+    }, () => { /* hors ligne : on garde l'ancien */ });
+  }
   private get look() { return ((this.perso?.sexe ?? this.essai?.sexe) === 'f' && LOOKS[`${this.classId}_f`]) || LOOKS[this.classId]; }
   /** Sauvegarde automatique du perso (toutes les 5 s, en quittant la page, en revenant à l'accueil). */
   private sauver = () => {
@@ -621,7 +655,9 @@ export class ZoneScene extends Phaser.Scene {
         case 'craft': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Objet'} x${e.n}`, '#9ad15a'); this.windows?.refresh(); break;
         case 'eat': this.windows?.refresh(); break;
         // Emp (0.2b) : sa fenêtre s'ouvre par la réponse « Recycler » ou « Boutique » de son dialogue
-        case 'service': if (this.windows && (e.service === 'recycler' || e.service === 'boutique')) { this.windows.empOnglet = e.service; this.windows.show('emp'); } break;
+        case 'service': if (this.windows && (e.service === 'recycler' || e.service === 'boutique')) { this.windows.empOnglet = e.service; this.windows.show('emp'); }
+          else if (this.windows && e.service === 'garde-robe') this.windows.show('garde');
+          break;
         case 'recycle': this.hud.loot(`+${e.pepites} Pépite${e.pepites > 1 ? 's' : ''}${e.n > 1 ? ` (${e.n} recyclés)` : ''}`, '#b9e54b'); break;
         case 'achat': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Objet'} acheté (−${e.prix} Pépites)`, '#b9e54b'); break;
         case 'rappel': this.hud.banner(`Rappel\n${e.name}`, 1200); this.snapCam = true; break;
@@ -812,9 +848,7 @@ export class ZoneScene extends Phaser.Scene {
     if (!v) {
       const look = e.faction === 'player' ? this.look : LOOKS[GAME_DATA.monsters[(e as { type?: string }).type!].look];
       if (e.faction === 'player' && this.assemblage && !this.vivant) {
-        this.vivant = new PersoVivant(this, this.assemblage);
-        const vv = this.vivant;
-        this.events.once('shutdown', () => { vv.destroy(); if (this.vivant === vv) this.vivant = null; });
+        this.vivant = this.nouveauVivant(this.assemblage);
       }
       v = new EntityView(this, look, e.faction === 'player' ? this.vivant ?? undefined : undefined);
       this.views.set(e.id, v);
@@ -912,7 +946,9 @@ export class ZoneScene extends Phaser.Scene {
       this.viewOf(e).sync(e);
     }
     for (const [id, v] of this.views) if (!alive.has(id)) { v.destroy(); this.views.delete(id); }
+    this.majApparence();
     this.vivant?.maj();
+    this.windows?.majPerso(this.time.now);
     if (this.snapCam && !this.vitrine) { const pv = this.viewOf(w.player).sprite; cam.centerOn(pv.x, pv.y - 30); this.snapCam = false; }
     const s = w.player.skill;
     if (s && 'charge' in s.def && s.def.charge && !s.def.move && s.t < s.def.impactAt) this.fx.chargeSparks(w.player.x, w.player.y);

@@ -16,7 +16,8 @@ export interface Apparence {
 }
 
 export interface FichePerso { classe: number; anims: string; corps: number; tetes: number[]; couleurs: number[]; os: string[] }
-interface Morceau { z: number; v: number[]; t: number[]; tex?: string }
+/** `c` : partie de la tête (cheveux, crane, oreille, patte) qu'une coiffe peut cacher ; `trou` : emplacement d'objet porté. */
+interface Morceau { z: number; v: number[]; t: number[]; tex?: string; trou?: string; tf?: number[]; c?: string }
 interface Skin { tex: string; parts: Record<string, Morceau[]> }
 /** [g, n, a, b, tx, c, d, ty, alpha, mulR, mulG, mulB, mulA] */
 type Trace = number[];
@@ -37,6 +38,20 @@ function image(f: string): Promise<HTMLImageElement> {
 }
 
 export const fiches = () => charge<Record<string, FichePerso>>('persos.json');
+/** Objet officiel (id) -> dessin porté (skin), pour les coiffes, capes, boucliers et apparats (equipement_export.py) ;
+ *  `caches` : parties de la tête cachées par une coiffe (règle par défaut « 0 », par classe « b8 », par tête « t2124 »). */
+interface Equipement { objets: Record<string, number>; caches: Record<string, Record<string, string[]>> }
+export const equipement = () => charge<Equipement>('equipement.json');
+/** Objets dont on voit le dessin : coiffe, cape, bouclier ; l'apparat (5A) passe par-dessus, « 0 » cache l'objet porté. */
+export const EMPLACEMENTS_VISIBLES = ['chapeau', 'cape', 'bouclier'] as const;
+export type EmplacementVisible = typeof EMPLACEMENTS_VISIBLES[number];
+/** Objets visibles d'après l'équipement et l'apparat du joueur (en jeu ou d'une sauvegarde). */
+export function objetsPortes(eq?: Partial<Record<string, { id: string } | undefined>>, apparat?: Partial<Record<EmplacementVisible, string>>): string[] {
+  return objetsVisibles({ chapeau: eq?.chapeau?.id, cape: eq?.cape?.id, bouclier: eq?.bouclier?.id }, apparat);
+}
+export function objetsVisibles(porte: Partial<Record<EmplacementVisible, string | undefined>>, apparat: Partial<Record<EmplacementVisible, string>> = {}): string[] {
+  return EMPLACEMENTS_VISIBLES.map(e => apparat[e] ?? porte[e]).filter((x): x is string => !!x && x !== '0');
+}
 
 /** Couleurs par défaut et bornes : une apparence lue d'une sauvegarde est toujours valide. */
 export function apparenceValide(f: FichePerso, a?: Partial<Apparence> | null): Apparence {
@@ -54,21 +69,42 @@ export class Assemblage {
   private teintes = new Map<string, HTMLCanvasElement | HTMLImageElement>();
   private couleurs = new Map<string, [HTMLCanvasElement, number, number]>();
 
-  private constructor(readonly data: AnimsData, private texs: Record<string, HTMLImageElement>, corps: Skin, tete: Skin, private app: Apparence) {
-    // (les emplacements d'objets portés, `trou`, n'ont pas de maillage : ils serviront aux coiffes)
-    const avec = (ms: Morceau[] | undefined, tex: string) => (ms ?? []).filter(m => m.t?.length).map(m => ({ ...m, tex }));
-    this.parts = data.noeuds.map(n => [...avec(corps.parts[n], corps.tex), ...avec(tete.parts[n], tete.tex)]);
+  private constructor(readonly data: AnimsData, private texs: Record<string, HTMLImageElement>, corps: Skin, tete: Skin, private app: Apparence, objets: Skin[] = [], caches = new Set<string>()) {
+    // Objets portés (Apparence 4A+4B) : une coiffe se pose dans les emplacements vides de la tête (Chapeau_1...),
+    // avec la transformation de l'emplacement ; les morceaux sans emplacement (Cape_1, Bouclier_1...) vont sur le nœud du même nom.
+    const porte = new Map<string, Morceau[]>();
+    for (const o of objets) for (const [k, ms] of Object.entries(o.parts)) porte.set(k, [...(porte.get(k) ?? []), ...ms.map(m => ({ ...m, tex: o.tex }))]);
+    const poses = new Set<string>();
+    const etendre = (ms: Morceau[] | undefined, tex: string): Morceau[] => (ms ?? []).flatMap(m => {
+      if (!m.trou) return m.t?.length && !(m.c && caches.has(m.c)) ? [{ ...m, tex }] : [];
+      const o = porte.get(m.trou); if (!o) return [];
+      poses.add(m.trou);
+      const f = m.tf!;
+      return o.map(x => {
+        const v = x.v.slice();
+        for (let i = 0; i < v.length; i += 4) { const a = x.v[i], b = x.v[i + 1]; v[i] = f[0] * a + f[1] * b + f[2]; v[i + 1] = f[3] * a + f[4] * b + f[5]; }
+        return { ...x, v };
+      });
+    });
+    this.parts = data.noeuds.map(n => [...etendre(corps.parts[n], corps.tex), ...etendre(tete.parts[n], tete.tex)]);
+    data.noeuds.forEach((n, i) => { if (!poses.has(n)) this.parts[i].push(...(porte.get(n) ?? [])); });
   }
 
-  static async creer(cle: string, app?: Partial<Apparence> | null): Promise<Assemblage> {
+  /** `objets` : objets portés dont on montre le dessin (idObjet officiel : coiffe, cape, bouclier), voir equipement.json. */
+  static async creer(cle: string, app?: Partial<Apparence> | null, objets: string[] = []): Promise<Assemblage> {
     const f = (await fiches())[cle];
     if (!f) throw new Error(`perso inconnu : ${cle}`);
     const a = apparenceValide(f, app);
     const tid = f.tetes[a.tete];
-    const [data, corps, tete] = await Promise.all([charge<AnimsData>(f.anims), charge<Skin>(`skin_${f.corps}.json`), charge<Skin>(`skin_${tid}.json`)]);
-    const noms = [corps.tex, tete.tex, ...f.os];
+    const eq = objets.length ? await equipement() : { objets: {}, caches: {} };
+    const ids = [...new Set(objets.map(o => eq.objets[o]).filter((x): x is number => x != null))];
+    // cheveux, oreilles... cachés par la coiffe : règle de la tête, sinon de la classe, sinon par défaut
+    const caches = new Set(ids.flatMap(id => { const r = eq.caches[id]; return r ? r[`t${tid}`] ?? r[`b${f.classe}`] ?? r['0'] ?? [] : []; }));
+    const [data, corps, tete, ...os] = await Promise.all([charge<AnimsData>(f.anims), charge<Skin>(`skin_${f.corps}.json`), charge<Skin>(`skin_${tid}.json`),
+      ...ids.map(id => charge<Skin>(`skin_${id}.json`))]);
+    const noms = [corps.tex, tete.tex, ...f.os, ...os.map(o => o.tex)];
     const ims = await Promise.all(noms.map(image));
-    return new Assemblage(data, Object.fromEntries(noms.map((n, i) => [n, ims[i]])), corps, tete, a);
+    return new Assemblage(data, Object.fromEntries(noms.map((n, i) => [n, ims[i]])), corps, tete, a, os, caches);
   }
 
   /** Change les couleurs (même tête) : les textures teintées sont refaites à la prochaine image. */
@@ -186,8 +222,8 @@ export const ZONES = ['Peau', 'Cheveux', 'Tenue 1', 'Tenue 2', 'Tenue 3', 'Tenue
 
 const assemblages = new Map<string, Promise<Assemblage>>();
 /** Assemblage d'un perso pour les écrans d'accueil (une tête = un assemblage, les couleurs se changent dessus). */
-export function assemblagePour(cle: string, app: Apparence): Promise<Assemblage> {
-  const k = `${cle}|${app.tete}`;
-  if (!assemblages.has(k)) assemblages.set(k, Assemblage.creer(cle, app).catch(e => { assemblages.delete(k); throw e; }));
+export function assemblagePour(cle: string, app: Apparence, objets: string[] = []): Promise<Assemblage> {
+  const k = `${cle}|${app.tete}|${objets.join(',')}`;
+  if (!assemblages.has(k)) assemblages.set(k, Assemblage.creer(cle, app, objets).catch(e => { assemblages.delete(k); throw e; }));
   return assemblages.get(k)!.then(a => { a.recolorer(app.couleurs); return a; });
 }

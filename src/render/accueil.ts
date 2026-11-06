@@ -3,7 +3,7 @@ import { MANIFESTE, Son } from './son';
 import { GAME_DATA, ITEMS, QUETES } from '../sim/data';
 import { EQUIP_SLOTS, RARITY_COLORS, RARITY_NAMES } from '../sim/items';
 import { LOOKS } from './looks';
-import { DOSSIER, PALETTES, ZONES, apparenceValide, assemblagePour, fiches, type Apparence, type Assemblage, type FichePerso } from './squelette';
+import { DOSSIER, PALETTES, ZONES, apparenceValide, assemblagePour, fiches, objetsPortes, type Apparence, type Assemblage, type FichePerso } from './squelette';
 import { ICON_CSS, iconHtml } from './icons';
 import { PALIERS, lireBestiaire } from './carnet';
 import { SORTS, niveauRequis, type SortOfficiel } from '../sim/sorts';
@@ -283,10 +283,10 @@ export class Accueil {
   /** Perso dessiné en direct sur le socle (maquette Apparence 3A) : mêmes place et taille que les anciennes planches
    *  (rendu à l'échelle 3,2, pied en (210, 592) d'une image de 504 x 684 pixels affichée sur 24 unités de haut). */
   private socle(cv: HTMLCanvasElement, f: number) {
-    const cle = cv.dataset.cle!, app = JSON.parse(cv.dataset.app!) as Apparence, anim = cv.dataset.anim!;
-    const k = `${cle}|${app.tete}`;
+    const cle = cv.dataset.cle!, app = JSON.parse(cv.dataset.app!) as Apparence, anim = cv.dataset.anim!, objets = cv.dataset.objets ? cv.dataset.objets.split(',') : [];
+    const k = `${cle}|${app.tete}|${objets}`;
     const a = this.vus.get(k);
-    if (!a) { if (!this.vus.has(k)) { this.vus.set(k, null); assemblagePour(cle, app).then(x => this.vus.set(k, x), () => this.vus.delete(k)); } return; }
+    if (!a) { if (!this.vus.has(k)) { this.vus.set(k, null); assemblagePour(cle, app, objets).then(x => this.vus.set(k, x), () => this.vus.delete(k)); } return; }
     a.recolorer(app.couleurs);
     // dessiné en 2x la taille de l'écran puis réduit par le navigateur : bords lisses (le découpage des triangles
     // du canevas n'est pas anticrénelé, en taille réelle les contours faisaient des escaliers)
@@ -306,8 +306,8 @@ export class Accueil {
     return f ? apparenceValide(f, { tete: this.crea.tete, couleurs: this.crea.couleurs ?? undefined }) : null;
   }
   /** Canevas du perso vivant, à la place de la planche de l'ancien socle. */
-  private canevas(cle: string, app: Apparence, anim: string, style: string, label: string) {
-    return `<canvas class="abs hero vivant" data-cle="${cle}" data-app='${JSON.stringify(app)}' data-anim="${anim}" role="img" aria-label="${esc(label)}" style="${style}"></canvas>`;
+  private canevas(cle: string, app: Apparence, anim: string, style: string, label: string, objets: string[] = []) {
+    return `<canvas class="abs hero vivant" data-cle="${cle}" data-app='${JSON.stringify(app)}' data-objets="${objets.join(',')}" data-anim="${anim}" role="img" aria-label="${esc(label)}" style="${style}"></canvas>`;
   }
 
   get visible() { return !this.root.hidden; }
@@ -523,7 +523,7 @@ export class Accueil {
       <img src="${img('lumiere.png')}" alt="" class="abs" style="left:calc(50% - 3.5*var(--u));top:calc(8*var(--u));width:calc(15*var(--u));opacity:.7;mix-blend-mode:screen">
       <img src="assets/ui/socle.png" alt="" class="abs" style="left:calc(50% - 6.5*var(--u));top:calc(31.5*var(--u));width:calc(21*var(--u));filter:sepia(.55) saturate(1.3) brightness(.95) drop-shadow(0 0 calc(1.2*var(--u)) #8fe8ff99)">
       ${this.fiches?.[`${c.cle}_${p.sexe}`] ? this.canevas(`${c.cle}_${p.sexe}`, apparenceValide(this.fiches[`${c.cle}_${p.sexe}`], p.apparence), ANIM_POSE.repos,
-        'left:calc(50% - 4.85*var(--u));top:calc(15.4*var(--u));width:calc(17.7*var(--u));height:calc(24*var(--u))', p.nom)
+        'left:calc(50% - 4.85*var(--u));top:calc(15.4*var(--u));width:calc(17.7*var(--u));height:calc(24*var(--u))', p.nom, objetsPortes(p.etat?.equipment, p.etat?.apparat))
       : `<div class="abs hero" data-n="24" role="img" aria-label="${esc(p.nom)}" style="left:calc(50% - 4.85*var(--u));top:calc(15.4*var(--u));width:calc(17.7*var(--u));height:calc(24*var(--u));background-image:url(${img(`${c.cle}_${p.sexe}_repos.webp`)});background-size:2400% 100%" data-src="${img(`${c.cle}_${p.sexe}_repos.webp`)}"></div>`}
       ${this.resume(p)}
       <div class="abs" style="left:calc(50% + 4*var(--u));transform:translateX(-50%);top:calc(47*var(--u));display:flex;gap:calc(1*var(--u));align-items:center">
