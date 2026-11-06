@@ -13,7 +13,7 @@ def _gris(tex, pts):
     if len(px) < 20: return False
     sat = sum(max(q[:3]) - min(q[:3]) for q in px) / len(px)
     return sat < 12
-def mesh_from(skin, key_idx, tex, colors, tint=None):
+def mesh_from(skin, key_idx, tex, colors, tint=None, trous=False):
     """Un morceau = liste aplatie d'entrées (groupes nommés + feuilles -1). Chaque feuille
     consomme le chunk de maillage suivant ; sa transformation est déjà composée. Les
     feuilles situées sous un groupe ColorGray_N_* prennent la couleur N.
@@ -26,9 +26,12 @@ def mesh_from(skin, key_idx, tex, colors, tint=None):
     voisin = {}    # id du niveau parent -> dernière couleur ColorGray vue parmi ses enfants
     attente = {}   # id du niveau parent -> feuilles grises sans couleur, en attente du groupe suivant
     for e in entries:
+        # `entries` d'un groupe = nombre de TOUS ses descendants (pas seulement ses enfants directs) :
+        # chaque entrée compte pour chacun des groupes ouverts au-dessus d'elle
         while stack and stack[-1][0] == 0: stack.pop()
-        if stack: stack[-1][0] -= 1
+        for g in stack: g[0] -= 1
         sid, n = e['symbolId'], e['entries']
+        if sid < 0 and n > 0: stack.append([n, '']); continue   # groupe sans nom (pas un morceau : il n'a pas de maillage à lui)
         if sid >= 0:
             name = rs[sid] if sid < len(rs) else ''
             mm = re.match(r'^Color\w+?_(\d+)_', name)
@@ -38,6 +41,10 @@ def mesh_from(skin, key_idx, tex, colors, tint=None):
                 for m in attente.pop(par, []):
                     if colors and c - 1 < len(colors): m['tint'] = colors[c - 1]
             if n > 0: stack.append([n, name])
+            # emplacement vide (entries = 0) : l'objet porté y est posé (Chapeau_1, Masque_1... d'un autre skin), avec cette transformation
+            elif n == 0 and trous and name:
+                t = e['transform']
+                res.append({'trou': name, 'tf': [t['rX'], t['uX'], t['tX'], t['rY'], t['uY'], t['tY']]})
             continue
         ch = next(chunks, None)
         if ch is None: break
@@ -53,6 +60,9 @@ def mesh_from(skin, key_idx, tex, colors, tint=None):
             x, y = V[sv+i]['pos']['x'], V[sv+i]['pos']['y']
             pts.append([x, y, V[sv+i]['uv']['x'], V[sv+i]['uv']['y']])  # sommets déjà dans l'espace du morceau
         m = {'tex': tex, 'tint': tt, 'v': pts, 't': T[ch['startIndexIndex']:ch['startIndexIndex'] + ch['indexCount']]}
+        # partie de la tête (cheveux, oreille...) : la dernière famille nommée au-dessus de la feuille ; une coiffe peut la cacher
+        for _, nm in reversed(stack):
+            if nm and not nm.startswith('Color'): m['grp'] = re.sub(r'_\d+$', '', nm); break
         if ci is None and colors and stack and _gris(tex, pts):
             par = id(stack[-1]); c = voisin.get(par)
             if c and c - 1 < len(colors): m['tint'] = colors[c - 1]

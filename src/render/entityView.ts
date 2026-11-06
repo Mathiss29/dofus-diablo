@@ -24,13 +24,16 @@ export class EntityView {
   private readonly bar: Phaser.GameObjects.Graphics;
   private readonly shadow: Phaser.GameObjects.Graphics;
   private readonly counts: Record<string, number> = {};
+  /** Images du perso vivant plus fines que celles des planches : le sprite est réduit d'autant. */
+  private k = 1;
 
   /** `vivant` : perso du joueur dessiné en direct depuis son squelette (apparence choisie à la création). */
-  constructor(scene: Phaser.Scene, readonly look: Look, private readonly vivant?: PersoVivant) {
+  constructor(scene: Phaser.Scene, readonly look: Look, private vivant?: PersoVivant) {
     if (vivant) {
       Object.assign(this.counts, vivant.compte);
       const [k, f] = vivant.image('AnimStatiqueExplo0_1', 0), [cw, ch] = PersoVivant.CELLULE, [ox, oy] = PersoVivant.PIED;
-      this.sprite = scene.add.sprite(0, 0, k, f).setOrigin(ox / cw, oy / ch).setScale(look.scale);
+      this.sprite = scene.add.sprite(0, 0, k, f).setOrigin(ox / cw, oy / ch).setScale(look.scale / PersoVivant.RESOLUTION);
+      this.k = 1 / PersoVivant.RESOLUTION;
     } else {
       const tex = scene.textures.get(look.atlas);
       const names = tex.getFrameNames();
@@ -43,6 +46,9 @@ export class EntityView {
     this.bar = scene.add.graphics();
     this.shadow = scene.add.graphics();   // ombre dessinée par le jeu (celle de Dofus laissait une croix)
   }
+
+  /** Perso réassemblé (nouvel objet porté, apparat, garde-robe) : les images suivantes viennent du nouveau. */
+  changerVivant(v: PersoVivant) { this.vivant = v; Object.assign(this.counts, v.compte); }
 
   /** Hors de l'écran : rien à dessiner (on ne recalcule pas l'animation). */
   hide() { this.sprite.setVisible(false); this.bar.setVisible(false); this.shadow.setVisible(false); }
@@ -67,11 +73,11 @@ export class EntityView {
       : a + Math.min(b - a - 1, Math.floor(clamp(e.animT, 0, 0.999) * (b - a)));
     if (this.vivant) { const [k, f] = this.vivant.image(name, idx); this.sprite.setTexture(k, f); }
     else this.sprite.setFrame(`${name}_${idx}`);
-    let sy = L.scale, alpha = 1;
+    let sy = L.scale * this.k, alpha = 1;
     if (e.anim === 'idle') sy *= 1 + Math.sin(e.age * 4) * 0.02;
     if (e.anim === 'spawn') alpha = e.animT;
     if (e.anim === 'die') alpha = e.animT < 0.7 ? 1 : 1 - (e.animT - 0.7) / 0.3;
-    this.sprite.setScale(flip ? -L.scale : L.scale, sy).setAlpha(alpha);
+    this.sprite.setScale((flip ? -L.scale : L.scale) * this.k, sy).setAlpha(alpha);
     this.sprite.setPosition(p.x, p.y - (L.ignoreZ ? 0 : e.z)).setDepth(p.y);
     if (e.flash > 0) this.sprite.setTintFill(0xffffff);
     else if (L.tint || EntityView.ambiance !== 0xffffff) this.sprite.setTint(mulTint(L.tint ?? 0xffffff, EntityView.ambiance));

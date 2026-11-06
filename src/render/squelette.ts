@@ -55,7 +55,9 @@ export class Assemblage {
   private couleurs = new Map<string, [HTMLCanvasElement, number, number]>();
 
   private constructor(readonly data: AnimsData, private texs: Record<string, HTMLImageElement>, corps: Skin, tete: Skin, private app: Apparence) {
-    this.parts = data.noeuds.map(n => [...(corps.parts[n] ?? []).map(m => ({ ...m, tex: corps.tex })), ...(tete.parts[n] ?? []).map(m => ({ ...m, tex: tete.tex }))]);
+    // (les emplacements d'objets portés, `trou`, n'ont pas de maillage : ils serviront aux coiffes)
+    const avec = (ms: Morceau[] | undefined, tex: string) => (ms ?? []).filter(m => m.t?.length).map(m => ({ ...m, tex }));
+    this.parts = data.noeuds.map(n => [...avec(corps.parts[n], corps.tex), ...avec(tete.parts[n], tete.tex)]);
   }
 
   static async creer(cle: string, app?: Partial<Apparence> | null): Promise<Assemblage> {

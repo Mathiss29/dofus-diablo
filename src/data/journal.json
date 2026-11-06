@@ -63,7 +63,9 @@
           "PNJ qui tremblaient quand la caméra défilait.",
           "Gros personnage du socle net, même avec l'affichage Windows à 125 %.",
           "Sac vide au départ : plus d'arme de chasse donnée d'office.",
-          "Astrub prend environ dix fois moins de mémoire : le jeu ne plante plus quand on traverse Astrub ou qu'on se téléporte plusieurs fois."
+          "Astrub prend environ dix fois moins de mémoire : le jeu ne plante plus quand on traverse Astrub ou qu'on se téléporte plusieurs fois.",
+          "Têtes de création : masques, bandeaux et mèches reprennent leur vraie couleur (plus de calotte rouge ni de cheveux gris), vérifiées une par une contre les portraits officiels.",
+          "Perso plus net en jeu et sur le socle : il est dessiné en 2x puis réduit, les contours ne font plus d'escaliers."
         ],
         "En coulisses": [
           "Fenêtres refaites avec les vraies images de Dofus 3 et ses polices (Lexend, Rowdies).",
