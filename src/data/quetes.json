@@ -69,39 +69,234 @@
      ]
     }
    },
-   "etapes": [
-    {
-     "nom": "Premiers pas",
-     "bulle": "Bienvenue sur Incarnam ! Montre-moi ce que tu sais faire : lance un sort, puis esquive.",
-     "objectifs": [
-      {
-       "t": "utiliser",
-       "quoi": "sort",
-       "texte": "Lancer un sort"
+   "etapes": {
+    "iop": [
+     {
+      "nom": "Premiers pas",
+      "bulle": "Bienvenue sur Incarnam, jeune Iop ! Clique sur le sol pour marcher : va saluer Berb Nhin, devant la taverne.",
+      "objectifs": [
+       {
+        "t": "aller",
+        "texte": "Marcher jusqu'à Berb Nhin (clic gauche)",
+        "pnj": "berb_nhin"
+       }
+      ]
+     },
+     {
+      "nom": "Frapper",
+      "bulle": "Un esprit de feu rôde sur la Route. Clique dessus : tu le poursuis et tu frappes.",
+      "objectifs": [
+       {
+        "t": "vaincre",
+        "texte": "Vaincre un monstre (clic dessus)",
+        "n": 1,
+        "sousZone": 450
+       }
+      ]
+     },
+     {
+      "nom": "Ton premier sort",
+      "bulle": "Tes sorts sont sur & é \" '. Touche & : Pression !",
+      "halo": 0,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "sort": "pression",
+        "texte": "Lancer ton premier sort (&)"
+       }
+      ]
+     },
+     {
+      "nom": "Tes sorts",
+      "bulle": "Essaie les autres : é Ferveur, \" Couperet, ' Épée Divine. Vide ce groupe !",
+      "halo": 1,
+      "objectifs": [
+       {
+        "t": "vaincre",
+        "texte": "Vaincre des monstres avec tes sorts",
+        "n": 3,
+        "sousZone": 450
+       }
+      ]
+     },
+     {
+      "nom": "La jauge de classe",
+      "bulle": "Chaque coup remplit ta Rage. Pleine, elle renforce ton sort suivant : remplis-la, puis frappe !",
+      "halo": "jauge",
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "quoi": "jauge",
+        "texte": "Lancer un sort avec la jauge pleine"
+       }
+      ]
+     },
+     {
+      "nom": "Se déplacer vite",
+      "bulle": "Espace : Bond. Tu sautes là où pointe ta souris, pour fondre sur un monstre ou te sortir d'un mauvais pas.",
+      "halo": 7,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "quoi": "mobilite",
+        "texte": "Se déplacer avec Espace"
+       }
+      ]
+     },
+     {
+      "nom": "La potion",
+      "bulle": "Blessé ? E : une potion. Tu en regagnes une à chaque groupe vaincu.",
+      "halo": "potion",
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "quoi": "potion",
+        "texte": "Boire une potion (E) une fois blessé"
+       }
+      ]
+     },
+     {
+      "nom": "Premières armes",
+      "bulle": "Prends cette Épée Tulante. I ouvre ton sac : équipe-la, ton attaque change avec elle.",
+      "donner": {
+       "iop": "10797"
       },
-      {
-       "t": "utiliser",
-       "quoi": "mobilite",
-       "texte": "Se déplacer avec Espace"
-      }
-     ]
-    },
-    {
-     "nom": "Premières armes",
-     "bulle": "Les esprits de la Route des âmes t'attendent. Va les remettre à leur place !",
-     "objectifs": [
-      {
-       "t": "vaincre",
-       "texte": "Vaincre des monstres sur la Route des âmes",
-       "n": 5,
-       "sousZone": 450
-      }
-     ]
-    }
-   ],
+      "objectifs": [
+       {
+        "t": "equiper",
+        "objet": "10797",
+        "texte": "Équiper ton arme (I)"
+       }
+      ]
+     },
+     {
+      "nom": "Le point de retour",
+      "bulle": "Le Zaap de la Route des âmes est ton point de retour : si tu tombes, tu reviens là, sans rien perdre. Viens me voir.",
+      "objectifs": [
+       {
+        "t": "aller",
+        "texte": "Retourner voir Ganymède près du Zaap",
+        "pnj": "ganymede"
+       }
+      ]
+     }
+    ],
+    "cra": [
+     {
+      "nom": "Premiers pas",
+      "bulle": "Bienvenue sur Incarnam, jeune Crâ ! Clique sur le sol pour marcher : va saluer Berb Nhin, devant la taverne.",
+      "objectifs": [
+       {
+        "t": "aller",
+        "texte": "Marcher jusqu'à Berb Nhin (clic gauche)",
+        "pnj": "berb_nhin"
+       }
+      ]
+     },
+     {
+      "nom": "Frapper",
+      "bulle": "Un esprit de feu rôde sur la Route. Clique dessus : sans arc, tu frappes au poing.",
+      "objectifs": [
+       {
+        "t": "vaincre",
+        "texte": "Vaincre un monstre (clic dessus)",
+        "n": 1,
+        "sousZone": 450
+       }
+      ]
+     },
+     {
+      "nom": "Ton premier sort",
+      "bulle": "Tes flèches sont sur & é \" '. Touche & : Flèche de Recul, elle repousse ta cible !",
+      "halo": 0,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "sort": "recul",
+        "texte": "Lancer ton premier sort (&)"
+       }
+      ]
+     },
+     {
+      "nom": "Tes sorts",
+      "bulle": "Essaie les autres : é Flèche Glacée, \" Flèche Vagabonde, ' Flèche de Barrage. Reste loin et vide ce groupe !",
+      "halo": 1,
+      "objectifs": [
+       {
+        "t": "vaincre",
+        "texte": "Vaincre des monstres avec tes sorts",
+        "n": 3,
+        "sousZone": 450
+       }
+      ]
+     },
+     {
+      "nom": "La jauge de classe",
+      "bulle": "Tirer de loin remplit ta Précision. Pleine, elle renforce ta flèche suivante : remplis-la, puis tire !",
+      "halo": "jauge",
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "quoi": "jauge",
+        "texte": "Lancer un sort avec la jauge pleine"
+       }
+      ]
+     },
+     {
+      "nom": "Se déplacer vite",
+      "bulle": "Espace : Pas Chassé. Un pas vif vers ta souris, pour reprendre tes distances quand un monstre te colle.",
+      "halo": 7,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "quoi": "mobilite",
+        "texte": "Se déplacer avec Espace"
+       }
+      ]
+     },
+     {
+      "nom": "La potion",
+      "bulle": "Blessé ? E : une potion. Tu en regagnes une à chaque groupe vaincu.",
+      "halo": "potion",
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "quoi": "potion",
+        "texte": "Boire une potion (E) une fois blessé"
+       }
+      ]
+     },
+     {
+      "nom": "Premières armes",
+      "bulle": "Prends cet Arc de Chasse. I ouvre ton sac : équipe-le, tu tireras des flèches au lieu de frapper au poing.",
+      "donner": {
+       "cra": "1942"
+      },
+      "objectifs": [
+       {
+        "t": "equiper",
+        "objet": "1942",
+        "texte": "Équiper ton arme (I)"
+       }
+      ]
+     },
+     {
+      "nom": "Le point de retour",
+      "bulle": "Le Zaap de la Route des âmes est ton point de retour : si tu tombes, tu reviens là, sans rien perdre. Viens me voir.",
+      "objectifs": [
+       {
+        "t": "aller",
+        "texte": "Retourner voir Ganymède près du Zaap",
+        "pnj": "ganymede"
+       }
+      ]
+     }
+    ]
+   },
    "recompense": {
     "xp": 150,
-    "potions": true
+    "potions": true,
+    "niveau": 2
    }
   },
   "village": {
@@ -897,7 +1092,7 @@
      "nom": "Premières armes",
      "etape": [
       "reponses",
-      1
+      7
      ]
     },
     {

@@ -37,6 +37,8 @@ export interface EtapeDef {
   bulle?: string;
   /** Aide visuelle du tutoriel : emplacement de la barre à entourer (0-5, 6 clic droit, 7 Espace) ou 'potion' / 'jauge'. */
   halo?: number | 'potion' | 'jauge';
+  /** Objet donné au début de l'étape (id de items.json), ou un par classe (l'arme de niveau 1 du tutoriel). */
+  donner?: string | Record<string, string>;
 }
 export interface RecompenseDef {
   xp?: number; kamas?: number;
@@ -198,6 +200,8 @@ export class Quetes {
     const e = this.etapeDe(c)!, q = this.def(c.id);
     c.compte = e.objectifs.map(() => 0);
     if (e.bulle && q.pnj) this.dire(q.pnj, e.bulle);
+    const don = typeof e.donner === 'string' ? e.donner : e.donner?.[this.classe];
+    if (don) this.world.donnerObjet(don);
     for (const o of e.objectifs) if (o.t === 'elite') this.faireApparaitre(c.id, o);
     this.world.emit({ k: 'queteEtape', id: c.id, etape: c.etape });
     this.verifier();
