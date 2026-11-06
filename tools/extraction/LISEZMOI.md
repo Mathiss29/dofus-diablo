@@ -206,3 +206,7 @@ Elles sont réduites aux caractères latins et converties en woff2 (`fontTools.s
   avec deux cartes factices aux coins du monde (même origine, même largeur), puis ajoutées à `monde.json` (cartes, lignes de `mov`, `grid.rows`).
   Entrée = case de la porte officielle dehors (arche 63634 de la Grange, porte 42274 de la Cour) ; de salle en salle : case marchable la plus haute
   vers la plus basse de la suivante, verrouillée tant que la salle n'est pas vidée. Monstres = ceux de la sous-zone du donjon, boss dans la dernière salle.
+
+Planches en AVIF (6 nov. 2026, choix « AVIF : 1A ») : `monster_planche.py` et `perso_planche.py` passent `FORMAT=AVIF` à `trim_pack.py`
+(qualité 50, −37 % en moyenne par rapport au WebP). Les cartes, décors, bords et effets restent en WebP.
+Les anciennes planches ont été converties par `tools/hebergement/planches_avif.py`. Après un export : `node tools/hebergement/envoi.mjs`.

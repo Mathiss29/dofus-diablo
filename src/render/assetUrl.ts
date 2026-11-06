@@ -9,7 +9,7 @@ import EMPREINTES from '../data/fichiers-lourds.json';
 declare const __BUILD__: string;
 const DISTANT = ((import.meta.env?.VITE_ASSETS_URL as string | undefined) ?? '').replace(/\/+$/, '');
 /** Dossiers et extensions qui partent sur le stockage distant. */
-export const LOURD = /^assets\/((?:mondes|sprites|son|fx|cartes)\/.+\.(?:webp|png|jpg|mp3|ogg))$/;
+export const LOURD = /^assets\/((?:mondes|sprites|son|fx|cartes)\/.+\.(?:webp|avif|png|jpg|mp3|ogg))$/;
 const E = EMPREINTES as Record<string, string>;
 
 /** Vrai quand les fichiers lourds viennent d'un autre domaine (il faut alors demander les images en CORS). */

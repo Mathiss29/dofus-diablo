@@ -11,8 +11,8 @@ const RACINE = new URL('../../', import.meta.url).pathname;
 const ASSETS = join(RACINE, 'public/assets');
 const SORTIE = join(RACINE, 'src/data/fichiers-lourds.json');
 // Même règle que src/render/assetUrl.ts (LOURD)
-const LOURD = /^(?:mondes|sprites|son|fx|cartes)\/.+\.(?:webp|png|jpg|mp3|ogg)$/;
-const TYPES = { webp: 'image/webp', png: 'image/png', jpg: 'image/jpeg', mp3: 'audio/mpeg', ogg: 'audio/ogg' };
+const LOURD = /^(?:mondes|sprites|son|fx|cartes)\/.+\.(?:webp|avif|png|jpg|mp3|ogg)$/;
+const TYPES = { webp: 'image/webp', avif: 'image/avif', png: 'image/png', jpg: 'image/jpeg', mp3: 'audio/mpeg', ogg: 'audio/ogg' };
 const args = new Set(process.argv.slice(2));
 
 function* fichiers(dir) {

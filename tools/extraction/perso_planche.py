@@ -108,8 +108,8 @@ for gi, gk in enumerate(groups):
     raw = os.path.join(work, f'{nom}_raw{gi}')
     subprocess.run(['node', os.path.join(HERE, 'render.cjs'), scene, '-', raw, ','.join(f'{k}:{frames_of[k]}' for k in gk), '1', SCALE], check=True, env=env, cwd=HERE)
     raws.append(raw)
-# Planches de 4096 x 4096 au plus (multiatlas Phaser si plusieurs pages) : <nom>.json + <nom>.webp, <nom>-1.webp...
-subprocess.run([sys.executable, os.path.join(HERE, 'trim_pack.py'), ','.join(raws), os.path.join(out, nom), '4096', '4096'], check=True)
+# Planches de 4096 x 4096 au plus (multiatlas Phaser si plusieurs pages) : <nom>.json + <nom>.avif, <nom>-1.avif... (AVIF depuis le 6 nov. 2026)
+subprocess.run([sys.executable, os.path.join(HERE, 'trim_pack.py'), ','.join(raws), os.path.join(out, nom), '4096', '4096'], check=True, env={**os.environ, 'FORMAT': 'AVIF'})
 
 # Résumé : sorts -> animations, frame d'impact (fraction) quand le repère SHOT existe
 info = {'classe': classe, 'sexe': sexe, 'skins': [body, head], 'animations': {},

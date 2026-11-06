@@ -679,7 +679,7 @@ function cadre(atlas: string): Promise<Cadre | null> {
     try {
       type F = { filename?: string; frame: { x: number; y: number; w: number; h: number } };
       const j = await (await fetch(v(`assets/sprites/${atlas}.json`))).json();
-      const pages: { image: string; frames: F[] }[] = j.textures ?? [{ image: `${atlas}.webp`, frames: Object.entries(j.frames).map(([filename, f]) => ({ filename, ...(f as F) })) }];
+      const pages: { image: string; frames: F[] }[] = j.textures ?? [{ image: `${atlas}.avif`, frames: Object.entries(j.frames).map(([filename, f]) => ({ filename, ...(f as F) })) }];
       let pick: { page: string; f: F } | null = null;
       for (const pg of pages) for (const f of pg.frames) {
         if (!pick || (f.filename?.startsWith('AnimStatique_1') && !pick.f.filename?.startsWith('AnimStatique_1'))) pick = { page: pg.image, f };

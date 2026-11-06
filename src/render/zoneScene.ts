@@ -170,7 +170,7 @@ export class ZoneScene extends Phaser.Scene {
       if (this.textures.exists(a) || seen.has(a)) continue;
       seen.add(a);
       if (L.multi) this.load.multiatlas(a, v(`${ASSETS}/sprites/${a}.json`), dossier(`${ASSETS}/sprites/`));
-      else this.load.atlas(a, v(`${ASSETS}/sprites/${a}.webp`), v(`${ASSETS}/sprites/${a}.json`));
+      else this.load.atlas(a, v(`${ASSETS}/sprites/${a}.avif`), v(`${ASSETS}/sprites/${a}.json`));
     }
     if (zone.open) {
       // Monde ouvert : monde.json décrit les cartes ; on ne charge d'abord que le ciel et les cartes autour du départ,
@@ -749,7 +749,7 @@ export class ZoneScene extends Phaser.Scene {
     if (!this.demandees.has(a)) {
       this.demandees.add(a);
       if (L.multi) this.load.multiatlas(a, v(`${ASSETS}/sprites/${a}.json`), dossier(`${ASSETS}/sprites/`));
-      else this.load.atlas(a, v(`${ASSETS}/sprites/${a}.webp`), v(`${ASSETS}/sprites/${a}.json`));
+      else this.load.atlas(a, v(`${ASSETS}/sprites/${a}.avif`), v(`${ASSETS}/sprites/${a}.json`));
       this.load.once(`filecomplete-${L.multi ? 'multiatlas' : 'atlasjson'}-${a}`, () => this.time.delayedCall(0, () => this.demandees.delete(a)));
       if (!this.load.isLoading()) this.load.start();
     }

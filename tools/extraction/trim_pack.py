@@ -34,11 +34,15 @@ for i, (k, c, b) in enumerate(items):
 import os
 name = out.split('/')[-1]; meta = {'scale': '1', 'cell': [cw, ch], 'origin': j['meta']['origin']}
 import hashlib, io
+FMT = os.environ.get('FORMAT', 'WEBP').lower()
 for pg, P in enumerate(pages):
-    buf = io.BytesIO(); P['sheet'].save(buf, 'WEBP', quality=int(os.environ.get('QUALITY', 88)), method=6)
+    # FORMAT=AVIF pour les planches de monstres, PNJ et persos (choix « AVIF : 1A » du 6 nov. 2026), WebP pour le reste
+    buf = io.BytesIO()
+    if FMT == 'avif': P['sheet'].save(buf, 'AVIF', quality=int(os.environ.get('QUALITY', 50)), speed=6)
+    else: P['sheet'].save(buf, 'WEBP', quality=int(os.environ.get('QUALITY', 88)), method=6)
     # multiatlas : nom avec l'empreinte du contenu, pour que le navigateur ne garde pas une ancienne page en cache
     tag = ('.' + hashlib.md5(buf.getvalue()).hexdigest()[:8]) if maxH else ''
-    P['image'] = name + ('' if pg == 0 else f'-{pg}') + tag + '.webp'
+    P['image'] = name + ('' if pg == 0 else f'-{pg}') + tag + '.' + FMT
     open(os.path.join(os.path.dirname(out), P['image']), 'wb').write(buf.getvalue())
 if not maxH:
     P = pages[0]; P['sheet'].save(out + '.png')
