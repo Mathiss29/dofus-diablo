@@ -39,6 +39,7 @@
           "Bricoleur : fabrique les clés des donjons d'Astrub (et celle de la Crypte) avec leurs recettes officielles.",
           "Ton apparence : à la création, choisis l'une des têtes officielles de ta classe (15 pour l'Iop, 17 pour le Crâ), règle librement tes 6 couleurs ou prends une palette toute faite. Ton perso la garde en jeu.",
           "Le jeu a sa propre adresse : diablofus.com (l'ancienne redirige automatiquement).",
+          "Ressources à récolter : bulle au survol avec le métier et le niveau requis, et le curseur de l'outil (faux, hache, pioche, filet) comme dans Dofus.",
           "Coiffes, capes et boucliers se voient sur ton personnage ; les cheveux se rangent sous la coiffe.",
           "Apparats officiels : près de 700 coiffes et capes chez Emp contre des Pépites, à porter dans la case Apparence de l'inventaire (ou pour cacher un objet). Garde-robe gratuite chez Lykhen et chez Emp pour changer de tête et de couleurs."
         ],
@@ -54,6 +55,7 @@
           "Les monstres d'Astrub lâchent leurs ressources officielles : pétales, laines, cornes… de quoi fabriquer les clés."
         ],
         "Combat": [
+          "Pas Chassé du Crâ rééquilibré : il ne s'enchaîne plus en boucle, relance officielle de 9 s (6 s dès le niveau 72).",
           "Aperçu de la portée et de la zone des sorts avant de lancer.",
           "Bouclier violet sur la barre de vie, Ferveur qui protège.",
           "Sorts Iop et Crâ vérifiés contre les données officielles, onglet Sorts détaillé.",

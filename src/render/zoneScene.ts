@@ -570,7 +570,7 @@ export class ZoneScene extends Phaser.Scene {
     const surPnj = this.questView?.pnjUnder(ptr, this.cameras.main) ?? null;
     if (this.questView) this.questView.survole = surPnj;
     this.dialogueView?.survol(surPnj, ptr);
-    this.game.canvas.style.cursor = this.monsterUnder(ptr) ? 'crosshair' : surPnj ? 'pointer' : 'default';
+    this.game.canvas.style.cursor = this.monsterUnder(ptr) ? 'crosshair' : surPnj ? 'pointer' : this.recolteView?.curseur() ?? 'default';
     return input;
   }
 
