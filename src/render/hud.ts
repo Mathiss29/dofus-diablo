@@ -30,7 +30,7 @@ const MENUS: [string, string, string][] = [
 
 const C = {
   panel: 0x14130f, panelA: 0.9, border: 0x3a3a2c, track: 0x2c281f,
-  hp: 0xe0625a, pa: 0x6fb2e8, pm: 0x9ad15a, rage: 0xf08a2c, xp: 0xb9e54b, gold: 0xe2b75a,
+  hp: 0xe0625a, shield: 0xa66be0, pa: 0x6fb2e8, pm: 0x9ad15a, rage: 0xf08a2c, xp: 0xb9e54b, gold: 0xe2b75a,
 };
 const css = (n: number) => '#' + n.toString(16).padStart(6, '0');
 
@@ -289,7 +289,11 @@ export class Hud {
     const bx = fx + 76, bw = fw - 88;
     this.name.setPosition(bx, fy + 16).setText(`${cls.name}  ·  niv. ${p.level}`);
     bar(bx, fy + 28, bw, 15, p.hp / p.maxHp, C.hp);
-    this.hpText.setPosition(bx + bw / 2, fy + 35.5).setText(`${Math.max(0, Math.ceil(p.hp))} / ${p.maxHp}`);
+    if (p.shield > 0) {   // bouclier en violet, comme dans Dofus : à la suite des PV, ou par-dessus la fin de la barre si elle est pleine
+      const sw = Math.max(4, bw * Math.min(1, p.shield / p.maxHp)), sx = Math.min(bx + bw * Phaser.Math.Clamp(p.hp / p.maxHp, 0, 1), bx + bw - sw);
+      g.fillStyle(C.shield, 0.95); g.fillRoundedRect(sx, fy + 28, sw, 15, 7);
+    }
+    this.hpText.setPosition(bx + bw / 2, fy + 35.5).setText(`${Math.max(0, Math.ceil(p.hp))} / ${p.maxHp}${p.shield > 0 ? `  +${Math.ceil(p.shield)}` : ''}`);
     const hw = (bw - 6) / 2;
     bar(bx, fy + 48, hw, 13, p.pa / p.paMax, blink(this.shortOf.pa) ? 0xff5040 : C.pa);
     this.paText.setPosition(bx + hw / 2, fy + 54.5).setText(`${Math.floor(p.pa)} PA`);
