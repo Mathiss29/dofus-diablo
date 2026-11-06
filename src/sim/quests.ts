@@ -180,7 +180,9 @@ export class Quetes {
   demarrer() {
     for (const [id, q] of Object.entries(this.data.quetes)) {
       if (!q.auDepart) continue;
-      if (q.options?.sauterSiCompte && this.compte.persos > 0) { this.terminer(id, true); continue; }
+      // choix « Tutoriel » à la création (world.opts.tuto) ; sans choix, sauté dès le 2e perso du compte (7B)
+      const tuto = this.world.opts.tuto ?? !(q.options?.sauterSiCompte && this.compte.persos > 0);
+      if (q.type === 'tutoriel' && !tuto) { this.terminer(id, true); continue; }
       this.prendre(id);
       // le tutoriel commence au Temple Céleste ; le point de retour reste le Zaap de la Route des âmes
       if (q.depart && this.world.worldGrid?.mapByTag(q.depart)) {
@@ -256,8 +258,7 @@ export class Quetes {
     c.compte = e.objectifs.map(() => 0);
     const qui = e.pnj ?? q.pnj;
     if (e.bulle && qui) this.dire(qui, e.bulle);
-    const don = typeof e.donner === 'string' || Array.isArray(e.donner) ? e.donner : e.donner?.[this.classe];
-    for (const o of don == null ? [] : Array.isArray(don) ? don : [don]) this.world.donnerObjet(o);
+    for (const o of this.dons(e)) this.world.donnerObjet(o);
     for (const o of e.objectifs) if (o.t === 'elite') this.faireApparaitre(c.id, o);
     this.world.emit({ k: 'queteEtape', id: c.id, etape: c.etape });
     this.verifier();
@@ -412,9 +413,15 @@ export class Quetes {
   }
   /** Fin de la quête : récompense, quête suivante, succès. sautee = passée (tutoriel au 2e perso, bouton Passer). */
   terminer(id: string, sautee = false) {
-    const q = this.def(id), w = this.world, p = w.player;
+    const q = this.def(id), w = this.world, p = w.player, c = this.enCours.find(x => x.id === id);
     this.enCours = this.enCours.filter(c => c.id !== id);
     if (this.finies.has(id)) return;
+    // quête passée : les objets des étapes pas encore atteintes sont quand même donnés et portés (équipement de départ du tutoriel)
+    if (sautee) {
+      const dons = this.etapes(id).flatMap((e, i) => i > (c?.etape ?? -1) ? this.dons(e) : []);
+      for (const o of dons) w.donnerObjet(o);
+      for (const it of p.bag.filter(b => dons.includes(b.id))) { const s = p.slotFor(it); if (s && !p.equipment[s]) p.equip(it.uid, s); }
+    }
     this.finies.add(id);
     this.etapes(id).forEach((_, i) => this.etapesFinies.add(`${id}:${i}`));
     for (const [m, qid] of this.elites) if (qid === id) { this.elites.delete(m); }
@@ -438,6 +445,11 @@ export class Quetes {
     if (q.suivante) this.prendre(q.suivante);
     this.suivie ??= this.enCours[0]?.id ?? null;
     this.verifierSucces();
+  }
+  /** Objets donnés au début d'une étape, pour la classe du perso. */
+  private dons(e: EtapeDef): string[] {
+    const don = typeof e.donner === 'string' || Array.isArray(e.donner) ? e.donner : e.donner?.[this.classe];
+    return don == null ? [] : Array.isArray(don) ? don : [don];
   }
   /** Bouton « Passer » (7A) : la quête est donnée comme finie. */
   passer(id: string) { if (this.enCours.some(c => c.id === id) && this.def(id).options?.passable) this.terminer(id, true); }

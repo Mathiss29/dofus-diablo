@@ -190,7 +190,7 @@ export class ZoneScene extends Phaser.Scene {
     if (zone.open) {
       const open = zone.open;
       const wg = new WorldGrid(this.cache.json.get(WorldView.key(open.world, 'monde')) as WorldData);
-      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, compte: chargerCompte(), 
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, compte: chargerCompte(), tuto: this.perso?.tuto, 
         // vitrine : les PNJ sont là, mais aucune quête ne démarre
         reprise: this.vitrine ? { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} } : this.perso?.etat?.quetes });
       this.cameras.main.setBackgroundColor('#0d2b36');   // sous le ciel, au cas où il manque

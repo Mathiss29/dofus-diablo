@@ -212,4 +212,17 @@ describe('quêtes et succès', () => {
     const w = newWorld(1), q = w.quetes!;
     for (const n of q.pnjs) for (const m of w.monsters) if (!m.def.elite) expect(Math.hypot(m.x - n.x, m.y - n.y), n.id).toBeGreaterThan(250);
   });
+  it('tutoriel décoché à la création : passé, mais l\'équipement de départ est donné et porté (et coché, il se fait même au 2e perso)', () => {
+    for (const [classe, arme] of [['iop', '10797'], ['cra', '1942']] as const) {
+      const w = new World({ data: GAME_DATA, zone: 'incarnam', map: new WorldGrid(monde), seed: 7, items: ITEMS as unknown as ItemsData, quetes: Q, compte: { succes: [], persos: 0 }, classId: classe, tuto: false });
+      const q = w.quetes!, p = w.player;
+      expect(q.finies.has('reponses')).toBe(true);
+      expect(w.worldGrid!.mapAt(p.x, p.y)?.tag.startsWith('temple')).toBe(false);
+      const portes = Object.values(p.equipment).map(it => it!.id);
+      for (const id of ['10801', '10800', '10784', '10785', '10799', '10794', arme]) expect(portes, `${classe} ${id}`).toContain(id);
+      if (classe === 'iop') expect(portes).toContain('10798');
+    }
+    const w = new World({ data: GAME_DATA, zone: 'incarnam', map: new WorldGrid(monde), seed: 7, items: ITEMS as unknown as ItemsData, quetes: Q, compte: { succes: [], persos: 3 }, tuto: true });
+    expect(w.quetes!.enCours.some(c => c.id === 'reponses')).toBe(true);
+  });
 });

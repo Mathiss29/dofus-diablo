@@ -48,6 +48,8 @@ export interface WorldOptions {
   /** Quêtes et succès (src/data/quetes.json) ; compte = succès et persos déjà créés, gardés par l'affichage. */
   quetes?: QuetesData;
   compte?: Compte;
+  /** Choix « Tutoriel » à la création du perso : faux = tutoriel passé (équipement de départ quand même donné). Absent = règle du compte (7B). */
+  tuto?: boolean;
   /** Partie reprise : avancement des quêtes sauvegardé (sinon les quêtes du départ démarrent). */
   reprise?: EtatQuetes;
 }

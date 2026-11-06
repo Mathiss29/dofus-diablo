@@ -171,7 +171,7 @@ export class Accueil {
   private root: HTMLDivElement;
   private page: Page = 'accueil';
   /** Création : classe, sexe, pose, nom, Hardcore, filtre de la barre des classes. */
-  private crea = { cle: 'iop', sexe: 'm' as 'm' | 'f', pose: 'repos', nom: '', hardcore: false, filtre: 'Toutes', err: '' };
+  private crea = { cle: 'iop', sexe: 'm' as 'm' | 'f', pose: 'repos', nom: '', hardcore: false, tuto: true, filtre: 'Toutes', err: '' };
   /** « Mes personnages » : emplacement choisi, et suppression en attente de confirmation. */
   private choix = 0;
   private confirmer = -1;
@@ -347,6 +347,7 @@ export class Accueil {
         <input class="field" data-nom maxlength="16" spellcheck="false" autocomplete="off" value="${esc(s.nom)}" placeholder="3 à 16 lettres" ${jouable ? '' : 'disabled'}>
         <div class="err">${esc(s.err)}</div>
         <label class="check"><input type="checkbox" data-hc ${s.hardcore ? 'checked' : ''} ${jouable ? '' : 'disabled'}><span>Mode Hardcore <span class="hc">(mort définitive)</span></span></label>
+        <label class="check"><input type="checkbox" data-tuto ${s.tuto ? 'checked' : ''} ${jouable ? '' : 'disabled'}><span>Faire le tutoriel <span style="opacity:.7">(Temple Céleste)</span></span></label>
         <button type="button" class="lbtn" data-creer style="display:block;width:100%;box-sizing:border-box;margin-top:calc(1*var(--u));font-size:calc(1.15*var(--u));padding:calc(.7*var(--u))" ${jouable && libre >= 0 ? '' : 'aria-disabled="true"'}>${bouton}</button>
         ${jouable && libre < 0 ? `<div class="tiny" style="margin-top:calc(.4*var(--u))">Supprime un personnage dans « Mes personnages ».</div>` : ''}
       </div>
@@ -529,6 +530,7 @@ export class Accueil {
     nom?.addEventListener('input', () => { this.crea.nom = nom.value; });
     nom?.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') this.creer(); });
     nom?.addEventListener('keyup', e => e.stopPropagation());
+    r.querySelector<HTMLInputElement>('[data-tuto]')?.addEventListener('change', e => { this.crea.tuto = (e.target as HTMLInputElement).checked; });
     r.querySelector<HTMLInputElement>('[data-hc]')?.addEventListener('change', e => { this.crea.hardcore = (e.target as HTMLInputElement).checked; });
     on('[data-creer]', () => this.creer());
     // mes personnages
@@ -550,9 +552,9 @@ export class Accueil {
     if (!nomValide(nom)) { s.err = '3 à 16 lettres (accents, tiret et espace permis).'; this.render(); return; }
     if (lirePersos().some(p => p?.nom.toLowerCase() === nom.toLowerCase())) { s.err = 'Tu as déjà un personnage de ce nom.'; this.render(); return; }
     const now = Date.now();
-    const p: Perso = { nom, classe: c.cle, sexe: s.sexe, hardcore: s.hardcore, cree: now, maj: now, temps: 0, lieu: 'Incarnam', zones: [] };
+    const p: Perso = { nom, classe: c.cle, sexe: s.sexe, hardcore: s.hardcore, tuto: s.tuto, cree: now, maj: now, temps: 0, lieu: 'Incarnam', zones: [] };
     sauverPerso(libre, p);
-    s.nom = ''; s.hardcore = false;
+    s.nom = ''; s.hardcore = false; s.tuto = true;
     this.jouer(libre);
   }
 }
