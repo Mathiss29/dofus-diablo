@@ -1,0 +1,81 @@
+{
+  "zone": "Incarnam",
+  "rubriques": [
+    "Nouveautés",
+    "Le monde",
+    "Combat",
+    "Corrections",
+    "En coulisses"
+  ],
+  "carnets": [
+    {
+      "date": "2026-11-06",
+      "titre": "Le Temple Céleste s'ouvre, Incarnam se met à parler",
+      "resume": "Tutoriel avec Ganymède, quêtes et succès, musique officielle, PNJ vivants, Bestiaire, sauvegarde exportable et kamas qui giclent.",
+      "capture": "assets/journal/2026-11-06.webp",
+      "legende": "Le Temple Céleste, 6 novembre 2026.",
+      "lignes": {
+        "Nouveautés": [
+          "Tutoriel jouable dans le Temple Céleste avec Ganymède, une trame par classe.",
+          "Quêtes et succès : suivi à l'écran, flèche, journal des quêtes, fenêtre Succès et les quêtes d'Incarnam.",
+          "Accueil, création de personnage devant le dieu de ta classe et « Mes personnages » (3 emplacements).",
+          "Dialogues avec les PNJ dans le style de Dofus 3.",
+          "Musique et sons officiels de Dofus 3, avec une musique qui monte quand on t'attaque.",
+          "Bestiaire qui se dévoile en chassant : sorts à 10 vaincus, résistances à 25, butin à 50.",
+          "Onglet Succès, fiches de zones et « La dernière fois… » sur l'accueil, résumé de chaque personnage.",
+          "Sauvegarde exportable en fichier .diablofus et 3 copies de secours restaurables.",
+          "Cimetière des héros : les personnages Hardcore tombés y laissent une stèle.",
+          "Kamas au sol : vraies pièces de Dofus, gerbe qui rebondit, reflet doré et tintement.",
+          "Logo du jeu sur l'accueil, l'onglet du navigateur et l'écran de chargement.",
+          "Guide sur la touche H dans une fenêtre façon Dofus 3, suivi de quête et butin en petite fenêtre au-dessus de la barre.",
+          "Journal façon « Les nouvelles » : un carnet par journée, avec une pastille quand un nouveau carnet t'attend."
+        ],
+        "Le monde": [
+          "Crypte de Kardorim, avec le vrai Sergent Chafer.",
+          "Jour et nuit sur l'heure de ton PC, lumières et particules officielles des cartes.",
+          "Monde sans coupure : portes en fondu, arrivées sans vide, cartes préchargées.",
+          "Plus de bande ni de décor en double entre deux cartes.",
+          "PNJ vivants : animations officielles, taille officielle, ombre.",
+          "Tour de la Milice avec son rez-de-chaussée et son escalier."
+        ],
+        "Combat": [
+          "Aperçu de la portée et de la zone des sorts avant de lancer.",
+          "Bouclier violet sur la barre de vie, Ferveur qui protège.",
+          "Sorts Iop et Crâ vérifiés contre les données officielles, onglet Sorts détaillé.",
+          "Annonces d'attaque au sol pour les élites et les boss seulement.",
+          "+1 PA au niveau 100, comme dans Dofus."
+        ],
+        "Corrections": [
+          "Plus de mini-gel en changeant de carte.",
+          "PNJ qui tremblaient quand la caméra défilait.",
+          "Gros personnage du socle net, même avec l'affichage Windows à 125 %.",
+          "Sac vide au départ : plus d'arme de chasse donnée d'office."
+        ],
+        "En coulisses": [
+          "Fenêtres refaites avec les vraies images de Dofus 3 et ses polices (Lexend, Rowdies).",
+          "Ce journal : un carnet par journée, écrit à chaque mise à jour."
+        ]
+      }
+    },
+    {
+      "date": "2026-11-05",
+      "titre": "Incarnam s'agrandit",
+      "resume": "Le Lac, la Forêt et le Cimetière deviennent jouables, avec les intérieurs du village et un jeu plus fluide.",
+      "capture": "assets/journal/2026-11-05.webp",
+      "legende": "Le village d'Incarnam, 5 novembre 2026.",
+      "lignes": {
+        "Le monde": [
+          "Lac, Forêt et Cimetière d'Incarnam jouables.",
+          "Intérieurs d'Incarnam : Mine, Taverne et maisons.",
+          "Plus de coupures nettes entre les cartes."
+        ],
+        "Corrections": [
+          "Les monstres ne flottent plus au-dessus du sol."
+        ],
+        "En coulisses": [
+          "Parangon des Iop, Crâ et Osamodas écrit en données, pour après le niveau 200."
+        ]
+      }
+    }
+  ]
+}
