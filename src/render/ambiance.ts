@@ -21,8 +21,10 @@ export interface Reglages {
   /** Cartes vivantes (maquette « Vivant », 5A) : arbres au vent, eau animée. */
   vent: boolean;
   eau: boolean;
+  /** Particules officielles des cartes (spores, poussière, braises, étoiles…). */
+  particules: boolean;
 }
-export const REGLAGES_DEFAUT: Reglages = { heure: 'auto', lumieres: 1, saturation: 1, chaleur: 0, zoom: 0.62, volume: 1, vent: true, eau: true };
+export const REGLAGES_DEFAUT: Reglages = { heure: 'auto', lumieres: 1, saturation: 1, chaleur: 0, zoom: 0.62, volume: 1, vent: true, eau: true, particules: true };
 const CLE = 'diablofus.reglages';
 
 export function chargerReglages(): Reglages {
