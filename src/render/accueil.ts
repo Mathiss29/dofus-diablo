@@ -5,6 +5,7 @@ import { LOOKS } from './looks';
 import { PALIERS, lireBestiaire } from './carnet';
 import { SORTS, niveauRequis, type SortOfficiel } from '../sim/sorts';
 import CLASSES_DOFUS from '../data/classes_dofus.json';
+import JOURNAL from '../data/journal.json';
 import { EMPLACEMENTS, NB_SECOURS, dernier, dureeTexte, exporter, importer, lireCimetiere, lirePersos, lireSecours, nomValide, prendreSecours, restaurerSecours, sauverPerso, supprimerPerso, type Perso } from './persos';
 
 /** Écrans hors du jeu (maquette unique, choix 17A à 23A, 19B, 22D, 30E) : accueil avec Incarnam en direct derrière,
@@ -158,6 +159,34 @@ const CSS = `
 #acc .mob .lock{color:#77745f;font-style:italic;font-weight:600}
 #acc .mob .det{grid-column:1/-1;display:grid;gap:calc(.25*var(--u))}
 #acc .zt{grid-column:1/-1;font-family:var(--disp);font-size:calc(1.4*var(--u));color:var(--lime);margin-top:calc(.4*var(--u))}
+#acc .pastille{position:absolute;top:calc(.2*var(--u));right:calc(.4*var(--u));font-size:calc(.5*var(--u));font-weight:800;background:#e0572a;color:#fff;border-radius:calc(.6*var(--u));padding:0 calc(.3*var(--u));box-shadow:0 0 calc(.5*var(--u)) #e0572a99}
+#acc .jr{position:absolute;left:calc(6.6*var(--u));right:0;top:0;bottom:0;overflow:auto;background:#29251a;user-select:text}
+#acc .jr .in{width:calc(70*var(--u));margin:0 auto;padding:calc(3*var(--u)) 0 calc(4*var(--u))}
+#acc .jr h1{font-family:var(--disp);font-weight:400;font-size:calc(4.6*var(--u));line-height:1;margin:0;color:#fbf3d4}
+#acc .jr h1 em{font-style:normal;color:var(--lime)}
+#acc .une{display:grid;grid-template-columns:1fr 1.05fr;gap:calc(2.4*var(--u));align-items:center;background:#ece2c4;color:#2b2416;border-radius:calc(.3*var(--u));padding:calc(2.4*var(--u));margin:calc(2.4*var(--u)) 0;position:relative}
+#acc .une .t,#acc .jc .t{font-size:calc(.75*var(--u));font-weight:800;color:#4e6b14}
+#acc .une h2{font-family:var(--disp);font-weight:400;font-size:calc(3*var(--u));margin:calc(.4*var(--u)) 0}
+#acc .une p{font-size:calc(.95*var(--u));line-height:1.6;color:#4a4030;margin:0 0 calc(1*var(--u))}
+#acc .lire{all:unset;cursor:pointer;font-weight:800;font-size:calc(.85*var(--u));color:#3c5a14;border-bottom:1px solid currentColor}
+#acc .jc .lire{color:var(--lime)}
+#acc .photo{background:#fff;padding:calc(.5*var(--u));box-shadow:0 calc(.5*var(--u)) calc(1.4*var(--u)) #0006;transform:rotate(1.4deg)}
+#acc .photo img{display:block;width:100%}
+#acc .photo small{display:block;font-size:calc(.65*var(--u));color:#5a5236;margin-top:calc(.4*var(--u))}
+#acc .grille{display:grid;grid-template-columns:1fr 1fr;gap:calc(2.4*var(--u)) calc(2*var(--u))}
+#acc .jc img{width:100%;aspect-ratio:16/9;object-fit:cover;border:calc(.25*var(--u)) solid #4a4433;display:block}
+#acc .jc h3{font-family:var(--disp);font-weight:400;font-size:calc(2*var(--u));margin:calc(.5*var(--u)) 0;color:#fbf3d4}
+#acc .jc p{font-size:calc(.85*var(--u));line-height:1.6;color:#d9d4bd;margin:0 0 calc(.6*var(--u))}
+#acc .sec{font-family:var(--disp);font-weight:400;font-size:calc(1.6*var(--u));color:#fbf3d4;border-bottom:1px solid #4a4433;padding-bottom:calc(.4*var(--u));margin:0 0 calc(1.4*var(--u))}
+#acc .cn{display:grid;grid-template-columns:calc(14*var(--u)) 1fr;gap:calc(3*var(--u));margin-top:calc(2*var(--u))}
+#acc .som{position:sticky;top:calc(1*var(--u));align-self:start;display:grid;gap:calc(.6*var(--u));font-size:calc(.75*var(--u));font-weight:700}
+#acc .som b{font-size:calc(.7*var(--u));letter-spacing:.08em;color:#c9c4ab}
+#acc .som button{all:unset;cursor:pointer;border-left:2px solid #4a4433;padding-left:calc(.7*var(--u));color:#d9d4bd}
+#acc .som button:hover{color:var(--lime);border-color:var(--lime)}
+#acc .som canvas{width:calc(6*var(--u));height:calc(6*var(--u));margin:calc(1.4*var(--u)) 0 0 calc(2*var(--u));animation:acc-flotte 3s ease-in-out infinite}
+@keyframes acc-flotte{50%{transform:translateY(calc(-.5*var(--u)))}}
+#acc .cn h3{font-family:var(--disp);font-weight:400;font-size:calc(2*var(--u));color:#e6fa9c;margin:0 0 calc(.8*var(--u))}
+#acc .cn p{font-size:calc(.95*var(--u));line-height:1.65;font-weight:700;color:#f1ecd8;margin:0 0 calc(1*var(--u))}
 #acc .hero{opacity:0}
 #acc .hero.vu{opacity:1;animation:acc-app .5s ease-out}
 @keyframes acc-app{0%{opacity:0;filter:brightness(3) blur(2px);transform-origin:50% 100%;scale:.92}60%{opacity:1;filter:brightness(1.6)}100%{filter:none;scale:1}}
@@ -165,7 +194,17 @@ const CSS = `
 #acc .check input{accent-color:#e0925a;width:calc(1.1*var(--u));height:calc(1.1*var(--u));margin:0}
 `;
 
-type Page = 'accueil' | 'creation' | 'persos' | 'succes' | 'bestiaire';
+type Page = 'accueil' | 'creation' | 'persos' | 'succes' | 'bestiaire' | 'journal';
+/** Journal (Accueil 3A+3B+3C+3E) : un carnet par journée de travail, écrit à chaque mise à jour (src/data/journal.json). */
+interface Carnet { date: string; titre: string; resume: string; capture?: string; legende?: string; lignes: Record<string, string[]> }
+const CARNETS = (JOURNAL.carnets as Carnet[]).slice().sort((a, b) => b.date.localeCompare(a.date));
+const dateLongue = (d: string) => new Date(`${d}T12:00:00`).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+const CLE_LU = 'diablofus.journal';
+function carnetNonLu(): boolean {
+  if (!CARNETS.length) return false;
+  try { return (localStorage.getItem(CLE_LU) ?? '') < CARNETS[0].date; } catch { return false; }
+}
+function marquerLu() { try { if (CARNETS.length) localStorage.setItem(CLE_LU, CARNETS[0].date); } catch { /* rien */ } }
 
 export class Accueil {
   private root: HTMLDivElement;
@@ -179,6 +218,8 @@ export class Accueil {
   private toastT = 0;
   /** Fenêtre ouverte par-dessus la page (fiche de zone, cimetière, copies de secours). */
   private modal: string | null = null;
+  /** Journal : carnet ouvert (sa date), ou la liste. */
+  private carnet: string | null = null;
 
   /** onJouer : lance la partie de cet emplacement (déjà sauvegardé). */
   constructor(private onJouer: (slot: number) => void) {
@@ -229,7 +270,7 @@ export class Accueil {
   }
 
   private render() {
-    const html = this.page === 'accueil' ? this.pageAccueil() : this.page === 'creation' ? this.pageCreation() : this.page === 'succes' ? this.pageSucces() : this.page === 'bestiaire' ? this.pageBestiaire() : this.pagePersos();
+    const html = this.page === 'accueil' ? this.pageAccueil() : this.page === 'creation' ? this.pageCreation() : this.page === 'succes' ? this.pageSucces() : this.page === 'bestiaire' ? this.pageBestiaire() : this.page === 'journal' ? this.pageJournal() : this.pagePersos();
     const m = this.modal ? `<div class="modal" data-fermer><div class="card">${this.modal}<button type="button" class="x" data-fermer aria-label="Fermer">✕</button></div></div>` : '';
     this.root.innerHTML = `<div class="page">${html}${this.side()}${m}<div class="toast" style="opacity:0"></div></div>`;
     this.bind();
@@ -247,7 +288,7 @@ export class Accueil {
     const NAV: [string, string, string][] = [['accueil', 'assets/ui/menu/home.png', 'Accueil'], ['persos', 'assets/ui/menu/character.png', 'Personnages'],
       ['creation', img('h_80.png'), 'Classes'], ['bestiaire', 'assets/ui/menu/bestiary.png', 'Bestiaire'], ['succes', 'assets/ui/menu/success.png', 'Succès'], ['journal', 'assets/ui/menu/calendar.png', 'Journal']];
     return `<nav class="side"><img class="logo" src="${v('assets/logo/embleme.webp')}" alt="" aria-hidden="true">${NAV.map(([k, ic, l]) =>
-      `<button type="button" class="nav${k === this.page ? ' on' : ''}" data-nav="${k}"><img src="${ic}" alt="">${l}</button>`).join('')}
+      `<button type="button" class="nav${k === this.page ? ' on' : ''}" data-nav="${k}" style="position:relative"><img src="${ic}" alt="">${l}${k === 'journal' && carnetNonLu() ? '<span class="pastille">nouveau</span>' : ''}</button>`).join('')}
       <button type="button" class="play" data-jouer>Jouer</button><div class="ver">VERSION ${VERSION}</div></nav>`;
   }
 
@@ -271,6 +312,9 @@ export class Accueil {
       <button type="button" class="dbtn" style="font-size:calc(.85*var(--u));padding:calc(.5*var(--u)) calc(1*var(--u))" data-go="persos">Mes personnages${n ? ` (${n})` : ''}</button>
       <span class="tiny">${EMPLACEMENTS} emplacements · sauvegarde automatique</span></div>
     ${p ? this.derniereFois(p) : ''}
+    ${carnetNonLu() ? `<div class="abs card" style="right:calc(2*var(--u));top:calc(1.6*var(--u));padding:calc(.7*var(--u)) calc(1*var(--u));display:flex;gap:calc(1*var(--u));align-items:center;font-weight:800;font-size:calc(.85*var(--u))">
+      <span class="pastille" style="position:static">nouveau</span><span>Carnet du ${dateLongue(CARNETS[0].date)}<br><span class="tiny">${esc(CARNETS[0].titre)}</span></span>
+      <button type="button" class="mini" data-carnet="${CARNETS[0].date}">Lire</button></div>` : ''}
     <div class="abs" style="right:calc(2*var(--u));bottom:calc(1.6*var(--u));display:flex;gap:calc(.6*var(--u))">
       ${ZONES_ACC.map(z => `<button type="button" class="chip${z.cle === 'incarnam' ? ' on' : z.dispo ? '' : ' off'}" style="cursor:pointer" data-zone="${z.cle}">${z.nom}${z.dispo ? '' : ' · bientôt'}</button>`).join('')}</div>`;
   }
@@ -446,6 +490,36 @@ export class Accueil {
     });
   }
 
+  // --- Journal (Accueil 3A) : façon « Les nouvelles d'Astrub », un carnet par journée ---------------------------
+  private pageJournal(): string {
+    const zone = JOURNAL.zone, c = this.carnet ? CARNETS.find(x => x.date === this.carnet) : null;
+    if (c) {
+      const rub = JOURNAL.rubriques.filter(r => c.lignes[r]?.length);
+      return `<div class="jr" data-jr><div class="in">
+        <button type="button" class="lire" data-carnet="" style="color:var(--lime)">← Tous les carnets</button>
+        <div class="tiny" style="margin-top:calc(1.6*var(--u));font-weight:800">Mises à jour · ${dateLongue(c.date)}</div>
+        <h1 style="font-size:calc(3.6*var(--u));margin-top:calc(.4*var(--u))">${dateLongue(c.date)}</h1>
+        <div style="font-weight:800;font-size:calc(1.2*var(--u));color:#e6fa9c;margin-top:calc(.4*var(--u))">${esc(c.titre)}</div>
+        <div class="cn"><nav class="som"><b>DANS CE CARNET</b>${rub.map((r, i) => `<button type="button" data-rub="${i}">${esc(r)}</button>`).join('')}
+          <canvas data-atlas="${LOOKS.tofu_chimerique?.atlas ?? ''}" width="120" height="120" aria-hidden="true"></canvas></nav>
+          <div>${c.capture ? `<div class="photo" style="transform:none;margin-bottom:calc(2*var(--u))"><img src="${v(c.capture)}" alt=""><small>${esc(c.legende ?? '')}</small></div>` : ''}
+          ${rub.map((r, i) => `<h3 id="rub-${i}">${esc(r)}</h3>${c.lignes[r].map(l => `<p>${esc(l)}</p>`).join('')}`).join('')}</div></div>
+      </div></div>`;
+    }
+    const [une, ...autres] = CARNETS;
+    return `<div class="jr"><div class="in">
+      <h1>Les nouvelles<br>d'<em>${esc(zone)}.</em></h1>
+      <div style="font-weight:700;font-size:calc(.9*var(--u));line-height:1.7;margin-top:calc(1*var(--u))">Ce qui change dans tes chasses.<br>Ce qui se prépare en coulisses.</div>
+      ${une ? `<div class="une"><div><div class="t">À la une · Mises à jour</div><h2>${dateLongue(une.date)}</h2>
+        <p><b>${esc(une.titre)}.</b> ${esc(une.resume)}</p><button type="button" class="lire" data-carnet="${une.date}">Ouvrir le carnet ↗</button></div>
+        <div>${une.capture ? `<div class="photo"><img src="${v(une.capture)}" alt=""><small>${esc(une.legende ?? '')}</small></div>` : ''}</div>
+        <img src="${v('assets/ui/kamas_tas.png')}" alt="" style="position:absolute;right:calc(1.4*var(--u));bottom:calc(-1.2*var(--u));width:calc(5*var(--u));filter:drop-shadow(0 calc(.3*var(--u)) calc(.4*var(--u)) #0008)"></div>` : ''}
+      ${autres.length ? `<div class="sec">Les carnets précédents</div><div class="grille">${autres.map(c => `<div class="jc">${c.capture ? `<img src="${v(c.capture)}" alt="">` : ''}
+        <div class="t" style="color:#c9c4ab;margin-top:calc(.8*var(--u))">Mises à jour · ${dateLongue(c.date)}</div><h3>${dateLongue(c.date)}</h3>
+        <p>${esc(c.resume)}</p><button type="button" class="lire" data-carnet="${c.date}">Lire le carnet ↗</button></div>`).join('')}</div>` : ''}
+    </div></div>`;
+  }
+
   // --- Succès (Accueil 2A) : ceux du compte, comme la fenêtre Succès du jeu ------------------------------------
   private pageSucces(): string {
     const fait = compte(), all = Object.entries(QUETES.succes);
@@ -494,12 +568,15 @@ export class Accueil {
     const r = this.root, on = (sel: string, f: (e: HTMLElement) => void) => r.querySelectorAll<HTMLElement>(sel).forEach(e => e.addEventListener('click', () => f(e)));
     on('[data-nav]', e => {
       const k = e.dataset.nav!;
-      if (k === 'accueil' || k === 'persos' || k === 'creation' || k === 'succes' || k === 'bestiaire') this.go(k);
+      if (k === 'accueil' || k === 'persos' || k === 'creation' || k === 'succes' || k === 'bestiaire' || k === 'journal') { this.carnet = null; this.go(k); }
       else this.toast(`${e.textContent!.trim()} : arrive dans une prochaine version`);
     });
     on('[data-go]', e => this.go(e.dataset.go as Page));
     // fenêtres par-dessus (fiche de zone, cimetière, copies de secours)
     on('[data-zone]', e => this.ouvrir(e.dataset.zone!));
+    // journal : ouvrir un carnet (le dernier ouvert = lu, la pastille s'éteint), sommaire
+    on('[data-carnet]', e => { this.carnet = e.dataset.carnet || null; if (this.carnet === CARNETS[0]?.date) marquerLu(); this.page = 'journal'; this.render(); this.root.querySelector('.jr')?.scrollTo(0, 0); });
+    on('[data-rub]', e => this.root.querySelector(`#rub-${e.dataset.rub}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
     on('[data-modal]', e => this.ouvrir(e.dataset.modal!));
     r.querySelectorAll<HTMLElement>('[data-fermer]').forEach(e => e.addEventListener('click', ev => { if (ev.target === e) { this.modal = null; this.render(); } }));
     on('[data-restaurer]', e => { const err = restaurerSecours(+e.dataset.restaurer!); this.modal = null; this.go('persos'); this.toast(err ?? 'Copie restaurée'); });
