@@ -14,7 +14,7 @@ const UI = 'assets/ui';
 /** Images d'interface de Dofus 3 (bundles figs, uielements, uidarkstone, icons ; voir tools/extraction/LISEZMOI.md). */
 const UI_IMAGES = [
   'slot_dark_background_full', 'slot_light_lock', 'icon_pv', 'iconBossSkull',
-  'background_levelup_banner', 'background_defeat_banner',
+  'background_levelup_banner', 'background_defeat_banner', 'success_ornament', 'scoreTitle',
 ];
 /** Tête de chaque classe pour la fiche du perso (icônes de classe de Dofus 3). */
 const HEADS: Record<string, string> = { iop: 'tete_iop', cra: 'tete_cra' };
@@ -94,6 +94,12 @@ export class Hud {
   private feed: FeedLine[] = [];
   // bannières
   private bannerBg: Img;
+  /** Bandeau de zone (maquette « Bandeau » : 1B+1C 2A+2C 3A) : grand nom + ornement doré, ou plaque dorée discrète. */
+  private zoneName: Txt;
+  private zoneOrn: Img;
+  private zoneSub: Txt;
+  private zonePlate: Img;
+  private zonePlateTxt: Txt;
   private center: Txt;
   private toastText: Txt;
   private hurtRect: Phaser.GameObjects.Rectangle;
@@ -184,6 +190,11 @@ export class Hud {
     this.bannerBg = img('background_levelup_banner', 7).setAlpha(0);
     this.center = txt(34, { ...bold, stroke: '#3a2208', strokeThickness: 6, align: 'center', lineSpacing: -4 }, 8).setOrigin(0.5).setAlpha(0);
     this.toastText = txt(15, {}, 8).setOrigin(0.5).setAlpha(0);
+    this.zoneName = txt(40, { ...bold, stroke: '#1d1408', strokeThickness: 7 }, 8).setOrigin(0.5).setAlpha(0);
+    this.zoneOrn = img('success_ornament', 7).setOrigin(0.5).setAlpha(0);
+    this.zoneSub = txt(15, { ...bold, color: '#5a3305', strokeThickness: 0 }, 8).setOrigin(0.5).setAlpha(0);
+    this.zonePlate = img('scoreTitle', 7).setOrigin(0.5).setAlpha(0);
+    this.zonePlateTxt = txt(13, { ...bold, color: '#4a2a05', strokeThickness: 0, align: 'center', lineSpacing: -2 }, 8).setOrigin(0.5).setAlpha(0);
     this.help = txt(13, { align: 'center' }).setOrigin(0.5, 0).setText(
       `Clic gauche : aller / attaquer (maintenu : continuer)   ·   Maj + clic : attaquer sur place   ·   Clic droit et & é " ' ( - : sorts de la barre   ·   Espace : ${cls.spells[cls.mobility].name}   ·   E : potion   ·   Molette : zoom\n` +
       `S : sorts (nouveaux sorts aux niveaux officiels, glisser dans la barre)   ·   I : inventaire   ·   C : caractéristiques\n` +
@@ -204,6 +215,18 @@ export class Hud {
     this.scene.tweens.add({ targets: c, scale: 1, duration: 200, ease: 'Back.Out' });
     this.scene.tweens.add({ targets: b, scaleX: sx, scaleY: sy, duration: 200, ease: 'Back.Out' });
     if (ms) this.scene.tweens.add({ targets: [c, b], alpha: 0, delay: ms, duration: 400 });
+  }
+  /** Entrée dans une sous-zone : la première fois, grand nom + ornement doré officiel ; ensuite, la petite plaque dorée.
+   *  En haut de l'écran pour ne pas cacher le combat, 3 secondes. */
+  zoneBanner(name: string, region: string, level: number, first: boolean) {
+    const big = [this.zoneName, this.zoneOrn, this.zoneSub], small = [this.zonePlate, this.zonePlateTxt];
+    this.scene.tweens.killTweensOf([...big, ...small]);
+    for (const o of [...big, ...small]) o.setAlpha(0);
+    const show = first ? big : small;
+    if (first) { this.zoneName.setText(name); this.zoneSub.setText(`${region} · Niveau ${level}`); }
+    else this.zonePlateTxt.setText(`${name}\nNiveau ${level}`);
+    this.scene.tweens.add({ targets: show, alpha: 1, duration: 400 });
+    this.scene.tweens.add({ targets: show, alpha: 0, delay: 3000, duration: 700 });
   }
   toast(text: string) {
     this.toastText.setText(text).setAlpha(1);
@@ -438,6 +461,12 @@ export class Hud {
     this.center.setPosition(W / 2, H * 0.3);
     this.bannerBg.setPosition(W / 2, H * 0.3 + 8);
     this.toastText.setPosition(W / 2, H * 0.2);
+    const zy = Math.max(84, H * 0.13);
+    this.zoneName.setPosition(W / 2, zy);
+    this.zoneOrn.setPosition(W / 2, zy + 44).setScale(Math.min(1, (W * 0.6) / 733));
+    this.zoneSub.setPosition(W / 2, zy + 47);
+    this.zonePlate.setPosition(W / 2, 62).setScale(1.25, 1.15);
+    this.zonePlateTxt.setPosition(W / 2, 62);
     this.help.setPosition(W / 2, boss ? 110 : 118);
   }
 }
