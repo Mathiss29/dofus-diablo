@@ -56,6 +56,9 @@ export class Monster extends Entity {
   summoner: Monster | null = null;
   /** Déjà touché par le joueur (l'Initiative ne renforce que le premier coup). */
   struck = false;
+  /** Partie de test : posé par le panneau F1 ; mannequin = immobile et increvable (compteur de DPS, 7D). */
+  poseTest = false;
+  mannequin = false;
 
   /** Zone d'une attaque annoncée au sol avant l'impact : seulement pour les élites et les boss (maquette Aperçu 8A, Mathis 2026-11-06). */
   private annonce(world: World, tg: World['telegraphs'][number]) { if (this.def.elite || this.def.boss) world.telegraphs.push(tg); }
@@ -75,6 +78,7 @@ export class Monster extends Entity {
     if (this.dead) { this.t -= dt; this.setAnim('die', 1 - this.t / 0.6); this.applyKnock(dt); return; }
     const open = world.zone.open;
     if (this.state === 'spawn') { this.t -= dt; this.setAnim('spawn', 1 - this.t / 0.6); if (this.t <= 0) this.state = open ? 'idle' : 'chase'; return; }
+    if (this.mannequin) { this.stun = 0; this.kx = this.ky = 0; this.setAnim('idle'); return; }
     if (this.stun > 0) { this.stun -= dt; this.setAnim('stun'); this.applyKnock(dt); if (this.state === 'windup') this.state = 'chase'; if (this.state === 'idle') this.state = 'chase'; return; }
     const dx = player.x - this.x, dy = player.y - this.y, dist = Math.hypot(dx, dy) || 1;
     this.atkCd -= dt;

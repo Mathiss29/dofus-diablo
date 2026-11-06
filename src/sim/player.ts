@@ -168,7 +168,9 @@ export class Player extends Entity {
   /** Ralentissement (retrait de PM) : fraction de vitesse perdue et durée restante. */
   slowK = 0; slowT = 0;
   slow(t: number, k: number) { k *= fuiteFactor(this.fuite); this.slowK = this.slowT > 0 ? Math.max(this.slowK, k) : k; this.slowT = Math.max(this.slowT, t); }
-  get speed(): number { return this.cls.speed * (this.slowT > 0 ? 1 - this.slowK : 1); }
+  get speed(): number { return this.cls.speed * this.vitesseTest * (this.slowT > 0 ? 1 - this.slowK : 1); }
+  /** Partie de test (5D) : course ×3. */
+  vitesseTest = 1;
   /** Tacle et Fuite (base Agilité / 10), Retrait et Esquive PA / PM (base Sagesse / 10), comme dans Dofus. */
   get tacle(): number { return tacleOf(this.stat('tacle'), this.stat('agilite')); }
   get fuite(): number { return tacleOf(this.stat('fuite'), this.stat('agilite')); }
@@ -231,6 +233,21 @@ export class Player extends Entity {
     const c = E[el] ? this.stat(E[el]) : this.stat('force');
     const flat = this.stat('dommages') + this.stat((`dommages${el[0].toUpperCase()}${el.slice(1)}`) as Stat);
     return Math.max(1, base * (1 + Math.max(-50, c + this.stat('puissance')) / 100) + flat);
+  }
+  /** Partie de test (4A) : passe directement au niveau n. Tous les points sont rendus (5 par niveau) ; carac donnée = ils y vont tous.
+   *  Les objets d'un niveau trop haut retournent dans le sac, les sorts pas encore connus quittent la barre. */
+  fixerNiveau(n: number, carac: Stat | null) {
+    this.level = Math.max(1, Math.min(this.cls.maxLevel, Math.round(n))); this.xp = 0;
+    this.base = {}; this.points = 5 * (this.level - 1);
+    if (carac && this.points) { this.base[carac] = this.points; this.points = 0; }
+    for (const [slot, it] of Object.entries(this.equipment) as [EquipSlot, Item][]) {
+      if ((this.items?.equipment[it.id]?.level ?? 0) > this.level) { delete this.equipment[slot]; this.bag.push(it); }
+    }
+    this.pairs.forEach((p, i) => { if (this.level < this.requiredLevel(p[this.variants[i] ?? 0])) this.variants[i] = 0; });
+    this.learned = new Set();
+    this.bar = this.bar.map(k => (k && this.knows(k) ? k : null));
+    this.learnSpells(null);
+    this.recompute(); this.hp = this.maxHp; this.pa = this.paMax; this.pm = this.pmMax;
   }
   /** Place n points dans une caractéristique de base. */
   spendPoint(k: Stat, n = 1): boolean {
@@ -675,6 +692,7 @@ export class Player extends Entity {
     world.emit({ k: 'impact', hitstop: 0.04, shake: 0.006, big: false });
     this.addRage(this.cls.rage.perHurt, world);
     if (this.hp <= 0 && world.quetes?.immortel) this.hp = 1;   // tutoriel : PV bloqués à 1
+    if (world.test?.invincible) this.hp = this.maxHp;   // partie de test (8A) : le coup s'affiche, les PV ne bougent pas
     if (this.hp <= 0) { this.hp = 0; this.dead = true; this.setAnim('die'); world.onPlayerDeath(); }
     return true;
   }

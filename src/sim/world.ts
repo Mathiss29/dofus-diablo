@@ -9,6 +9,7 @@ import { Player } from './player';
 import { initiativeBonus, removalChance } from './caracs';
 import { planWave } from './waves';
 import { Quetes, type Compte, type EtatQuetes, type QuetesData } from './quests';
+import { appliquerTest, type ReglagesTest } from './outilsTest';
 import { RECOLTE, quantite, xpRecolte, type Recolte, type RecoltesData } from './recolte';
 
 interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: number;
@@ -61,6 +62,8 @@ export interface WorldOptions {
   boutiques?: Record<string, { id: string; prix: number }[]>;
   /** Objets d'apparat officiels (src/data/apparat.json) et leur prix en Pépites chez Emp (boutique.json, apparat_prix). */
   apparats?: { objets: Record<string, { slot: string }>; prix: Record<string, number> };
+  /** Partie de test (#test) : réglages du panneau F1 ; absent dans une vraie partie. */
+  test?: ReglagesTest;
 }
 
 /** La simulation d'une zone : joueur, monstres, vagues, collisions.
@@ -108,6 +111,8 @@ export class World {
   /** Distance (|dx| + |dy|) au-delà de laquelle un monstre qui attend ne bouge plus. */
   static readonly SOMMEIL = 2400;
   /** Quêtes et succès (monde ouvert avec quetes.json). */
+  /** Partie de test : invincible, recharges, course, murs (null dans une vraie partie). */
+  test: ReglagesTest | null = null;
   quetes: Quetes | null = null;   // au-delà de ce qu'on voit même dézoomé à fond (avant : monstres figés au bord de l'écran)
 
   constructor(readonly opts: WorldOptions) {
@@ -115,6 +120,7 @@ export class World {
     this.zone = opts.data.zones[opts.zone];
     if (!this.zone) throw new Error(`Zone inconnue : ${opts.zone}`);
     this.map = opts.map;
+    this.test = opts.test ? { ...opts.test } : null;
     let start = this.map.nearestFree(GridMap.OFFSET_Y, GridMap.OFFSET_Y);
     const open = this.zone.open;
     if (open) {
@@ -367,7 +373,13 @@ export class World {
   drainEvents(): SimEvent[] { const e = this.events; this.events = []; return e; }
   walkable(x: number, y: number) { return this.map.walkable(x, y); }
   /** Chemin à pied (A* sur les cases de Dofus) vers un point. */
-  findPath(from: { x: number; y: number }, to: { x: number; y: number }) { return this.map.findPath(from, to); }
+  findPath(from: { x: number; y: number }, to: { x: number; y: number }) { return this.test?.murs && from === this.player ? [{ x: to.x, y: to.y }] : this.map.findPath(from, to); }
+  /** Partie de test (8A) : recharges, PA et PM pleins. */
+  private rechargerTout() {
+    const p = this.player;
+    for (const k of Object.keys(p.cd)) p.cd[k] = 0;
+    p.pa = p.paMax; p.pm = p.pmMax; p.potionCd = 0;
+  }
   /** Ligne de tir sans obstacle (cases marchables) entre deux points. */
   clearShot(from: { x: number; y: number }, to: { x: number; y: number }) { return this.map.clearLine(from, to); }
 
@@ -376,6 +388,11 @@ export class World {
     this.time += dt;
     this.telegraphs.length = 0;
     const p = this.player;
+    if (this.test) {
+      for (const c of input.test ?? []) appliquerTest(this, c);
+      p.vitesseTest = this.test.course ? 3 : 1;
+      if (this.test.recharges) this.rechargerTout();
+    }
     const ents = [p, ...this.monsters], prev = ents.map(e => [e.x, e.y] as const);
     if (input.recolte != null) { this.versRecolte = input.recolte; this.enRecolte = null; }
     else if (input.dest || input.target != null || input.pickup != null || input.talk || input.pressed || input.move.x || input.move.y) {
@@ -388,6 +405,7 @@ export class World {
       else if (input.dest || input.target != null || input.pickup != null) this.quetes.annulerClic();
     }
     p.update(dt, this.passage ? { ...NO_INPUT, aim: input.aim } : input, this);   // devant une porte : le perso attend le fondu
+    if (this.test?.recharges) this.rechargerTout();
     // Monde ouvert : un monstre qui attend loin du joueur dort (pas d'errance ni d'IA) : bien moins de calcul
     for (const m of this.monsters) {
       if (this.zone.open && m.state === 'idle' && !m.dead && Math.abs(m.x - p.x) + Math.abs(m.y - p.y) > World.SOMMEIL) continue;
@@ -398,7 +416,7 @@ export class World {
     this.separate();
     // Cases bloquantes : on glisse le long des obstacles (axe par axe), sauf en plein Bond
     ents.forEach((e, i) => {
-      if (e === p && p.airborne) return;
+      if (e === p && (p.airborne || this.test?.murs)) return;
       if (this.walkable(e.x, e.y)) return;
       const [ox, oy] = prev[i];
       if (this.walkable(e.x, oy)) e.y = oy;
@@ -634,6 +652,7 @@ export class World {
     return k;
   }
   killMonster(m: Monster) {
+    if (m.mannequin) { m.hp = m.maxHp; return; }   // partie de test (7D) : le mannequin ne meurt pas
     m.dead = true; m.t = 0.6; this.kills++;
     this.quetes?.eliteVaincu(m.id);
     for (const s of this.monsters) if (s.summoner === m && !s.dead) this.killMonster(s);   // ses invocations disparaissent avec lui

@@ -34,6 +34,8 @@ import { lireBestiaire, noter, nouvelleSession, sauverBestiaire, statsVides } fr
 import { dernier, enterrer, lirePersos, sauverPerso, supprimerPerso, type Perso } from './persos';
 import { SonView, synthe } from './sonView';
 import { MANIFESTE, Son } from './son';
+import { ETATS_PRETS, PanneauTest, lireTest, modeTest, sauverTest, type EtatTest } from './panneauTest';
+import { REGLAGES_TEST, type CommandeTest } from '../sim/outilsTest';
 
 const ASSETS = 'assets';
 const mapDir = ([x, y]: [number, number]) => `${ASSETS}/cartes/${x}_${y}`;
@@ -56,6 +58,10 @@ export class ZoneScene extends Phaser.Scene {
   private essai: { sexe: 'm' | 'f'; t: number; averti: boolean } | null = null;
   static readonly ESSAI = 60;
   private sauveT = 0;
+  /** Partie de test (#test, maquette « Test : ») : le perso de test, son panneau (F1) et les ordres à passer à la simulation. */
+  private test: EtatTest | null = null;
+  private panneau: PanneauTest | null = null;
+  private cmdTest: CommandeTest[] = [];
   private mortDefinitive = false;
   private world!: World;
   private worldView: WorldView | null = null;
@@ -128,12 +134,14 @@ export class ZoneScene extends Phaser.Scene {
     // Accueil 4A/4C : résumé du perso et nouvelle « dernière partie » ; Bestiaire du compte (1A)
     if (this.perso) { this.perso.stats ??= statsVides(); this.perso.session = nouvelleSession(this.perso.etat?.level ?? 1); }
     this.bestiaire = lireBestiaire();
-    this.classId = this.perso?.classe ?? data?.classe ?? (location.hash.includes('cra') ? 'cra' : 'iop');
+    this.test = !this.perso && !this.vitrine && !this.essai && modeTest() ? lireTest() : null; this.cmdTest = [];
+    this.classId = this.perso?.classe ?? data?.classe ?? this.test?.classe ?? (location.hash.includes('cra') ? 'cra' : 'iop');
     // #astrub dans l'adresse : l'ancienne zone à vagues des Champs d'Astrub
     // #astrub2 : Astrub en monde ouvert, sans perso (mode dév) ; un perso reprend dans sa zone
     this.arrivee = data?.arrivee;
     if (data?.zone) this.zoneId = data.zone;
     else if (this.perso?.etat?.zone && GAME_DATA.zones[this.perso.etat.zone]) this.zoneId = this.perso.etat.zone;
+    else if (this.test) { const z = this.test.zone ?? this.test.etat?.zone; this.zoneId = z && GAME_DATA.zones[z] ? z : 'incarnam'; }
     else if (location.hash === '#astrub') this.zoneId = 'champs-astrub';
     else if (location.hash.includes('astrub2')) this.zoneId = 'astrub';
     else this.zoneId = 'incarnam';
@@ -223,10 +231,10 @@ export class ZoneScene extends Phaser.Scene {
     if (zone.open) {
       const open = zone.open;
       const wg = new WorldGrid(this.cache.json.get(WorldView.key(open.world, 'monde')) as WorldData);
-      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, apparats: APPARATS, recoltes: RECOLTES, compte: chargerCompte(), tuto: this.perso?.tuto, 
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, apparats: APPARATS, recoltes: RECOLTES, compte: chargerCompte(), tuto: this.test ? false : this.perso?.tuto, test: this.test?.reglages,
         // vitrine : les PNJ sont là, mais aucune quête ne démarre
         arrivee: this.arrivee,
-        reprise: this.vitrine ? { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} } : this.perso?.etat?.quetes });
+        reprise: this.vitrine ? { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} } : this.perso?.etat?.quetes ?? this.test?.etat?.quetes });
       this.cameras.main.setBackgroundColor('#0d2b36');   // sous le ciel, au cas où il manque
       this.worldView = new WorldView(this, wg, worldDir(open.world), open.world);
       this.worldView.portes = this.world.portes.flatMap(p => p.ends);
@@ -242,12 +250,14 @@ export class ZoneScene extends Phaser.Scene {
     } else {
       const key = mapDir(zone.map!.coords).replace(/\W/g, '_');
       const map = new GridMap(this.cache.json.get(`${key}_carte`) as MapData);
-      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map, seed, classId: this.classId, items: ITEMS });
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map, seed, classId: this.classId, items: ITEMS, test: this.test?.reglages });
       this.cameras.main.setBackgroundColor('#12141b');
       drawMap(this, map, `${key}_sol`, `${key}_decor`);
     }
     this.fx = new FX(this, t => hex(GAME_DATA.monsters[t].color));
     if (this.perso?.etat) restaurerJoueur(this.world, this.perso.etat);
+    else if (this.test?.etat) restaurerJoueur(this.world, this.test.etat);
+    if (this.test?.apres) { this.cmdTest = this.test.apres; this.test.apres = undefined; }
     this.hud = new Hud(this, this.world, this.perso ?? undefined);
     // Accès de test (?test dans l'adresse) : le robot de test lit la partie et téléporte le perso. Le jeu normal n'en a pas.
     if (/[?&]test\b/.test(location.search)) (window as unknown as { __df: unknown }).__df = {
@@ -282,6 +292,8 @@ export class ZoneScene extends Phaser.Scene {
     this.windows.onReglages = r => { this.zoom = Phaser.Math.Clamp(r.zoom, ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]); this.updateAmbiance(true); this.appliquerSon(); };
     this.windows.juice = { get: () => this.fx.juice, set: on => { this.fx.juice = on; } };
     this.windows.heureNom = () => ambiance(this.reglages, new Date(), !!this.world.worldGrid?.mapAt(this.world.player.x, this.world.player.y)?.inside).nom;
+    this.panneau?.destroy(); this.panneau = null;
+    if (this.test) { const pt = this.panneau = new PanneauTest(this.world, this.actionsTest(), this.zoneId); this.events.once('shutdown', () => { pt.destroy(); if (this.panneau === pt) this.panneau = null; }); }
     this.carte?.destroy();
     this.carte = zone.open ? new CarteMonde(this.world, v(`${worldDir(zone.open.world)}/carte.webp`), `${ASSETS}/ui/reperes`) : null;
     this.events.once('shutdown', () => { this.windows?.destroy(); this.windows = null; this.carte?.destroy(); this.carte = null; });
@@ -309,7 +321,7 @@ export class ZoneScene extends Phaser.Scene {
       this.cameras.main.startFollow(this.viewOf(this.world.player).sprite, true, 0.12, 0.12, 0, 30);
       this.bindInput();
     }
-    if (this.perso) {
+    if (this.perso || this.test) {
       const quitter = () => this.sauver(), cache = () => { if (document.hidden) this.sauver(); };
       window.addEventListener('beforeunload', quitter); document.addEventListener('visibilitychange', cache);
       this.events.once('shutdown', () => { this.sauver(); window.removeEventListener('beforeunload', quitter); document.removeEventListener('visibilitychange', cache); });
@@ -355,6 +367,11 @@ export class ZoneScene extends Phaser.Scene {
   private get look() { return ((this.perso?.sexe ?? this.essai?.sexe) === 'f' && LOOKS[`${this.classId}_f`]) || LOOKS[this.classId]; }
   /** Sauvegarde automatique du perso (toutes les 5 s, en quittant la page, en revenant à l'accueil). */
   private sauver = () => {
+    if (this.test && this.world) {
+      const t = this.test;
+      t.etat = exporterJoueur(this.world); t.zone = this.zoneId; t.reglages = { ...REGLAGES_TEST, ...this.world.test };
+      sauverTest(t); return;
+    }
     if (!this.perso || this.slot < 0 || this.mortDefinitive || !this.world) return;
     const p = this.perso;
     p.etat = exporterJoueur(this.world); p.maj = Date.now();
@@ -363,6 +380,39 @@ export class ZoneScene extends Phaser.Scene {
   };
   /** Retour à l'écran d'accueil (main.ts relance la partie en vitrine). */
   private versAccueil() { this.sauver(); this.game.events.emit('accueil'); }
+
+  /** Partie de test : relance la partie depuis un perso de test écrit d'avance (classe, zone ou état tout prêt). */
+  private relancerTest(t: EtatTest) {
+    sauverTest(t);
+    this.test = null;   // la sauvegarde de fin de scène ne doit pas écraser ce qu'on vient d'écrire
+    this.scene.restart({});
+  }
+  private actionsTest() {
+    const reglages = () => ({ ...REGLAGES_TEST, ...this.world.test });
+    return {
+      envoyer: (c: CommandeTest) => { this.cmdTest.push(c); },
+      // 4B : même perso, autre classe (les sorts, la barre et les variantes sont ceux de la nouvelle classe)
+      classe: (id: string) => {
+        if (!this.test) return;
+        this.relancerTest({ ...this.test, classe: id, zone: this.zoneId, reglages: reglages(), apres: undefined,
+          etat: { ...exporterJoueur(this.world), variants: [], bar: [], learned: [] } });
+      },
+      zone: (id: string, carte?: [string, string]) => {
+        if (!this.test) return;
+        this.relancerTest({ ...this.test, zone: id, reglages: reglages(), etat: exporterJoueur(this.world),
+          apres: carte ? [{ k: 'aller', tag: carte[0], nom: carte[1] }] : undefined });
+      },
+      // 9A : un perso tout neuf, monté au niveau, habillé, puis sur la bonne carte
+      pret: (i: number) => {
+        const e = ETATS_PRETS[i]; if (!e || !this.test) return;
+        const apres: CommandeTest[] = [{ k: 'niveau', n: e.niveau, auto: true }, { k: 'tenue', rarete: e.tenue }];
+        if (e.carte) apres.push({ k: 'aller', tag: e.carte[0], nom: e.carte[1] });
+        this.relancerTest({ classe: e.classe, sexe: this.test.sexe, zone: e.zone, reglages: reglages(), apres, zones: [] });
+      },
+      poser: () => {},
+      nouveau: () => { if (this.test) this.relancerTest({ classe: this.classId, sexe: this.test.sexe, reglages: reglages(), zones: [] }); },
+    };
+  }
 
   private bindInput() {
     const K = Phaser.Input.Keyboard.KeyCodes, kb = this.input.keyboard!;
@@ -378,6 +428,13 @@ export class ZoneScene extends Phaser.Scene {
       this.dialogueView?.fermerMenu();
       if (over.length || this.hud.blocks(p.x, p.y)) { this.uiClick = true; return; }
       this.uiClick = false;
+      // partie de test (7A, 7D) : ce clic pose les monstres choisis dans le panneau (clic droit : annuler)
+      const pose = this.panneau?.pose;
+      if (pose) {
+        this.uiClick = true;
+        if (!p.rightButtonDown()) { const wp = p.positionToCamera(this.cameras.main) as Phaser.Math.Vector2, q = ISO.toWorld(wp.x, wp.y); this.cmdTest.push({ k: 'monstre', ...pose, x: q.x, y: q.y }); }
+        this.panneau!.posee(); return;
+      }
       if (p.rightButtonDown()) {
         // clic droit sur un PNJ : son petit menu d'actions (Dialogues 1C)
         const n = this.questView?.pnjUnder(p, this.cameras.main);
@@ -426,9 +483,11 @@ export class ZoneScene extends Phaser.Scene {
     this.keys.J.on('down', () => this.windows?.toggle('job'));   // Métiers (choix 6A : Chasseur)
     this.keys.O.on('down', () => this.windows?.toggle('opt'));
     this.keys.S.on('down', () => this.windows?.toggle('sorts'));   // Sorts (choix 8A, touche S)   // Réglages (choix 10A + 10B)
-    this.keys.ESC.on('down', () => { if (this.essai) { this.essai = null; this.game.events.emit('accueil', 'creation'); return; } if (this.dialogueView?.ouvert) { this.dialogueView.touche(-1); return; } this.dialogueView?.fermerMenu(); this.aimId = null; this.aimKey = null; this.windows?.close(); this.carte?.fermer(); });
-    // K : changer de classe, seulement sans perso (mode dév #cra / #jeu) ; sinon la classe se choisit à la création
-    if (!this.perso) this.keys.K.on('down', () => this.scene.restart({ zone: this.zoneId, classe: this.classId === 'iop' ? 'cra' : 'iop' }));
+    this.keys.ESC.on('down', () => { if (this.panneau?.pose) { this.panneau.posee(); return; } if (this.essai) { this.essai = null; this.game.events.emit('accueil', 'creation'); return; } if (this.dialogueView?.ouvert) { this.dialogueView.touche(-1); return; } this.dialogueView?.fermerMenu(); this.aimId = null; this.aimKey = null; this.windows?.close(); this.carte?.fermer(); });
+    // K : changer de classe, seulement sans perso (mode dév #cra / #jeu, partie de test) ; sinon la classe se choisit à la création
+    if (!this.perso) this.keys.K.on('down', () => { const c = this.classId === 'iop' ? 'cra' : 'iop'; if (this.test) this.actionsTest().classe(c); else this.scene.restart({ zone: this.zoneId, classe: c }); });
+    // F1 : outils de la partie de test (3A) ; la touche n'ouvre plus l'aide du navigateur
+    if (this.test) kb.addKey(K.F1).on('down', () => this.panneau?.basculer());
     this.keys.ENTER.on('down', () => {
       if (!this.world.over) return;
       if (this.mortDefinitive) this.game.events.emit('accueil');
@@ -550,6 +609,7 @@ export class ZoneScene extends Phaser.Scene {
     const vise = this.pressed ? this.monsterUnder(ptr) : null;
     if (vise && !vise.dead) { input.castOn = vise.id; input.aim = { x: vise.x, y: vise.y }; }
     this.pickClick = null;
+    if (this.cmdTest.length) { input.test = this.cmdTest; this.cmdTest = []; }
     const dv = this.dialogueView;
     if (dv) { input.reponse = dv.reponse; dv.reponse = null; if (dv.menuTalk) { this.talkClick = dv.menuTalk; dv.menuTalk = null; } }
     const np = this.talkClick && this.world.quetes?.pnj(this.talkClick);
@@ -585,8 +645,8 @@ export class ZoneScene extends Phaser.Scene {
       if (!e.averti && e.t >= ZoneScene.ESSAI - 10) { e.averti = true; this.hud.toast('Plus que 10 secondes d\'essai'); }
       if (e.t >= ZoneScene.ESSAI) { this.essai = null; this.game.events.emit('accueil', 'creation'); return; }
     }
-    else if (this.perso) {
-      this.perso.temps += dt;
+    else if (this.perso || this.test) {
+      if (this.perso) this.perso.temps += dt;
       if ((this.sauveT += dt) >= 5) { this.sauveT = 0; this.sauver(); }
     }
     // GEL D'IMAGE : la simulation s'arrête, l'affichage continue (tremblement, chiffres)
@@ -600,7 +660,7 @@ export class ZoneScene extends Phaser.Scene {
     while (this.acc >= ZoneScene.STEP && this.hitstop <= 0) {
       this.acc -= ZoneScene.STEP;
       this.world.step(ZoneScene.STEP, input);
-      input = { ...input, pressed: null, potion: false, reponse: null };
+      input = { ...input, pressed: null, potion: false, reponse: null, test: null };
       this.consumeEvents();
     }
     if (this.hitstop > 0) this.acc = 0;
@@ -612,6 +672,7 @@ export class ZoneScene extends Phaser.Scene {
       if (this.perso?.stats && this.perso.session) noter(e, this.perso.stats, this.perso.session, this.bestiaire, GAME_DATA.monsters, ITEMS.equipment);
       this.fx.handle(e);
       this.hud.handle(e);
+      if (this.panneau && e.k === 'hit' && e.target === 'monster') this.panneau.noterCoup(e.amount);
       this.son.handle(e);
       const M = GAME_DATA.monsters;
       switch (e.k) {
@@ -686,14 +747,15 @@ export class ZoneScene extends Phaser.Scene {
         case 'queteFin': {
           const q = QUETES.quetes[e.id];
           if (!e.sautee) this.hud.banner(`Quête terminée\n${q.nom}`, 1600);
-          if (q.type === 'tutoriel') sauverCompte(this.world, 1);
+          if (q.type === 'tutoriel' && !this.test) sauverCompte(this.world, 1);   // partie de test : rien ne compte (10A)
           this.windows?.refresh(); break;
         }
         case 'objetQuete': this.hud.loot(`${e.nom}  ${e.n}/${e.sur}`, '#9ad15a'); break;
         case 'succes': {
           const s = QUETES.succes[e.id];
-          this.hud.succes(s.nom, s.points); sauverCompte(this.world); this.windows?.refresh(); break;
+          this.hud.succes(s.nom, s.points); if (!this.test) sauverCompte(this.world); this.windows?.refresh(); break;
         }
+        case 'test': this.hud.toast(e.texte); this.windows?.refresh(); break;
         case 'portalStart': this.baisserRideau(); break;   // fondu de sortie (0,2 s), le perso attend devant la porte
         // portail vers une autre zone : on sauve le perso puis la partie repart là-bas (même emplacement)
         case 'changeZone': this.sauver(); this.scene.restart({ slot: this.slot, zone: e.zone, arrivee: e.arrivee }); return;
@@ -874,6 +936,7 @@ export class ZoneScene extends Phaser.Scene {
 
   /** Sous-zones déjà vues (bandeau 2C : grand la première fois, petit ensuite) : par personnage. */
   private decouvrir(nom: string): boolean {
+    if (this.test) { const z = this.test.zones ??= []; if (z.includes(nom)) return false; z.push(nom); return true; }
     if (!this.perso) return decouvrir(nom);
     if (this.perso.zones.includes(nom)) return false;
     this.perso.zones.push(nom);
@@ -949,6 +1012,7 @@ export class ZoneScene extends Phaser.Scene {
     this.majApparence();
     this.vivant?.maj();
     this.windows?.majPerso(this.time.now);
+    this.panneau?.maj(this.time.now);
     if (this.snapCam && !this.vitrine) { const pv = this.viewOf(w.player).sprite; cam.centerOn(pv.x, pv.y - 30); this.snapCam = false; }
     const s = w.player.skill;
     if (s && 'charge' in s.def && s.def.charge && !s.def.move && s.t < s.def.impactAt) this.fx.chargeSparks(w.player.x, w.player.y);
