@@ -114,8 +114,11 @@ export class World {
       const hunt = opts.classId === 'cra' ? '1942' : '1934';
       if (opts.items.equipment[hunt]?.chasse) this.player.bag.push({ uid: this.nextId++, id: hunt, rarity: 'commun', stats: {}, extra: [] });
     }
-    if (open) { this.buildPortes(); this.spawnGroups(); }
-    if (open && opts.quetes) { this.quetes = new Quetes(opts.quetes, this, opts.compte); if (opts.reprise) this.quetes.reprendre(opts.reprise); else this.quetes.demarrer(); }
+    if (open) this.buildPortes();
+    // les PNJ d'abord : les groupes de monstres ne se posent pas sur eux
+    if (open && opts.quetes) this.quetes = new Quetes(opts.quetes, this, opts.compte);
+    if (open) this.spawnGroups();
+    if (this.quetes) { if (opts.reprise) this.quetes.reprendre(opts.reprise); else this.quetes.demarrer(); }
   }
 
   /** Rayon autour d'une porte qui la déclenche (≈ 1,4 case) et distance d'arrivée de l'autre côté. */
@@ -227,7 +230,8 @@ export class World {
     let pos = wg.randomFree(this.rng, free), best = -1;
     for (let t = 0; t < 40; t++) {
       const c = free[this.rng.int(free.length)], q = wg.cellToWorld(c);
-      const score = ouvert(c) - (Math.hypot(q.x - p.x, q.y - p.y) < 450 ? 1000 : 0);
+      const score = ouvert(c) - (Math.hypot(q.x - p.x, q.y - p.y) < 450 ? 1000 : 0)
+        - (this.quetes?.pnjs.some(n => Math.hypot(q.x - n.x, q.y - n.y) < 420) ? 1000 : 0);   // pas de groupe sur un PNJ
       if (score > best) { best = score; pos = q; }
       if (best >= 80) break;
     }
