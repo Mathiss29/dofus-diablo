@@ -288,7 +288,9 @@ export class Accueil {
     const a = this.vus.get(k);
     if (!a) { if (!this.vus.has(k)) { this.vus.set(k, null); assemblagePour(cle, app).then(x => this.vus.set(k, x), () => this.vus.delete(k)); } return; }
     a.recolorer(app.couleurs);
-    const dpr = devicePixelRatio || 1, W = Math.round(cv.offsetWidth * dpr), H = Math.round(cv.offsetHeight * dpr);
+    // dessiné en 2x la taille de l'écran puis réduit par le navigateur : bords lisses (le découpage des triangles
+    // du canevas n'est pas anticrénelé, en taille réelle les contours faisaient des escaliers)
+    const dpr = (devicePixelRatio || 1) * 2, W = Math.round(cv.offsetWidth * dpr), H = Math.round(cv.offsetHeight * dpr);
     if (!W || !H) return;
     if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
     const n = a.compte[anim] ?? 0; if (!n) return;

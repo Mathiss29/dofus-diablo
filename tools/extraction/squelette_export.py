@@ -70,10 +70,18 @@ def ombre(tex, m):
 
 
 def compact(m, tex):
+    if 'trou' in m: return {'trou': m['trou'], 'tf': [round(x, 4) for x in m['tf']]}
     if not m['t'] or ombre(tex, m): return None
     v = []
     for x, y, u, w in m['v']: v += [round(x, 2), round(y, 2), round(u, 5), round(w, 5)]
-    return {'z': m['tint'] or 0, 'v': v, 't': m['t']}
+    r = {'z': m['tint'] or 0, 'v': v, 't': m['t']}
+    c = PARTIE.get(re.sub(r'_[a-zA-Z]$', '', m.get('grp', '')).lower())
+    if c: r['c'] = c
+    return r
+
+
+# parties de la tête qu'une coiffe peut cacher (skinslotsrules, voir equipement_export.py)
+PARTIE = {'cheveux': 'cheveux', 'cheveuxcrane': 'crane', 'oreille': 'oreille', 'oreille0': 'oreille', 'patte': 'patte'}
 
 
 def webp(src, dst):
@@ -173,7 +181,7 @@ def export_skin(sid):
     parts = {}
     for i, k in enumerate(sk['m_keys']):
         if k not in nidx: continue
-        ms = [compact(x, tex) for x in mesh_from(sk, i, tex, ZONES)]
+        ms = [compact(x, tex) for x in mesh_from(sk, i, tex, ZONES, trous=True)]
         ms = [x for x in ms if x]
         if ms: parts[k] = ms
     webp(tex, os.path.join(out, f'skin_{sid}.webp'))

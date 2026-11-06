@@ -6,11 +6,17 @@ import { Assemblage } from './squelette';
  *  de 2048 px (textures Phaser). Les images ont la même cellule, le même pied et la même échelle que les anciennes
  *  planches (perso_planche.py : boîte -260,-1000,260,120 à l'échelle 0,7), donc EntityView les affiche pareil. */
 export class PersoVivant {
-  static readonly ECHELLE = 0.7;
-  static readonly CELLULE: [number, number] = [364, 784];
-  static readonly PIED: [number, number] = [182, 700];
+  /** Finesse : les images sont faites RESOLUTION fois plus grandes que les anciennes planches, et le sprite est réduit
+   *  d'autant (la caméra agrandit le jeu : en 1x, le perso était flou et ses bords en escalier). */
+  static readonly RESOLUTION = 2;
+  static readonly ECHELLE = 0.7 * PersoVivant.RESOLUTION;
+  static readonly CELLULE: [number, number] = [364 * PersoVivant.RESOLUTION, 784 * PersoVivant.RESOLUTION];
+  static readonly PIED: [number, number] = [182 * PersoVivant.RESOLUTION, 700 * PersoVivant.RESOLUTION];
   private static readonly PAGE = 2048;
   private static n = 0;
+  /** Suréchantillonnage : chaque image est dessinée SUR fois plus grande sur ce brouillon, puis réduite dans sa page. */
+  private static readonly SUR = 1;
+  private static readonly brouillon = document.createElement('canvas');
   private pages: { tex: Phaser.Textures.CanvasTexture; x: number; y: number; h: number; sale: boolean }[] = [];
   private faites = new Map<string, [string, string]>();
   private file: [string, number][] = [];
@@ -57,10 +63,15 @@ export class PersoVivant {
     }
     const w = x1 - x0, h = y1 - y0, p = this.page(w + 2, h + 2), px = p.x + 1, py = p.y + 1;
     if (b) {
+      // dessiné SUR fois plus grand sur un brouillon puis réduit (bords plus lisses) ; à 1, la RESOLUTION suffit
+      const t = PersoVivant.brouillon, S = PersoVivant.SUR;
+      if (t.width < w * S || t.height < h * S) { t.width = Math.max(t.width, w * S); t.height = Math.max(t.height, h * S); }
+      const tc = t.getContext('2d')!;
+      tc.setTransform(1, 0, 0, 1, 0, 0); tc.clearRect(0, 0, w * S, h * S);
+      this.a.dessiner(tc, anim, idx, (ox - x0) * S, (oy - y0) * S, sc * S);
       const ctx = p.tex.getContext();
-      ctx.save(); ctx.beginPath(); ctx.rect(px, py, w, h); ctx.clip();
-      this.a.dessiner(ctx, anim, idx, px - x0 + ox, py - y0 + oy, sc);
-      ctx.restore();
+      ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(t, 0, 0, w * S, h * S, px, py, w, h);
       p.sale = true;
     }
     p.x += w + 2; p.h = Math.max(p.h, h + 2);
