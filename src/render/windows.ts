@@ -350,11 +350,11 @@ export class Windows {
       ${range('lumieres', 'Lumières (halos, feux)', 0, 200)}
       ${range('saturation', 'Couleurs (moins = adouci)', 50, 120)}
       ${range('chaleur', 'Chaleur de la lumière', -100, 100, '')}
-      ${range('zoom', 'Zoom', 45, 150)}
+      ${range('zoom', 'Zoom', 55, 150)}
       <div class="sub">Options</div>
       ${range('volume', 'Volume des sons', 0, 100)}
       <label class="row"><span>Effets d'impact (F)</span><input type="checkbox" data-juice ${this.juice.get() ? 'checked' : ''} style="justify-self:start;accent-color:#b9e54b"><output></output></label>
-      ${(['vent', 'eau'] as const).map(k => `<label class="row"><span>${k === 'vent' ? 'Arbres au vent' : 'Eau animée'}</span><input type="checkbox" data-b="${k}" ${r[k] ? 'checked' : ''} style="justify-self:start;accent-color:#b9e54b"><output></output></label>`).join('')}
+      ${(['vent', 'eau', 'particules'] as const).map(k => `<label class="row"><span>${({ vent: 'Arbres au vent', eau: 'Eau animée', particules: 'Particules (spores, braises…)' })[k]}</span><input type="checkbox" data-b="${k}" ${r[k] ? 'checked' : ''} style="justify-self:start;accent-color:#b9e54b"><output></output></label>`).join('')}
       <div class="sub">Touches</div>
       <div class="keys">${[['Clic gauche', 'aller / attaquer (maintenu : continuer)'], ['Maj + clic', 'attaquer sur place'], ['Clic droit', 'sort de la barre (case libre)'],
         ['& é " \' ( -', 'barre de sorts'], ['S', 'sorts'], ['Espace', 'déplacement'], ['E', 'potion'], ['I', 'inventaire'], ['C', 'caractéristiques'], ['J', 'métiers'],
@@ -370,7 +370,7 @@ export class Windows {
       apply();
     }));
     w.querySelector<HTMLSelectElement>('select[data-k=heure]')!.addEventListener('change', e => { r.heure = (e.target as HTMLSelectElement).value as Heure; apply(); this.render(); });
-    w.querySelectorAll<HTMLInputElement>('[data-b]').forEach(e => e.addEventListener('change', () => { r[e.dataset.b as 'vent' | 'eau'] = e.checked; apply(); }));
+    w.querySelectorAll<HTMLInputElement>('[data-b]').forEach(e => e.addEventListener('change', () => { r[e.dataset.b as 'vent' | 'eau' | 'particules'] = e.checked; apply(); }));
     w.querySelector<HTMLInputElement>('[data-juice]')!.addEventListener('change', e => this.juice.set((e.target as HTMLInputElement).checked));
     w.querySelector('[data-defaut]')!.addEventListener('click', () => { Object.assign(r, REGLAGES_DEFAUT); apply(); this.render(); });
   }

@@ -14,6 +14,7 @@ import { Hud } from './hud';
 import { LOOKS } from './looks';
 import { drawMap } from './mapView';
 import { WorldView } from './worldView';
+import { Particules, type SysData } from './particles';
 import { ambiance, chargerReglages, matriceSaturation, type Reglages } from './ambiance';
 import { ICON_SHEET, iconFrame } from './icons';
 import { Windows } from './windows';
@@ -60,7 +61,7 @@ export class ZoneScene extends Phaser.Scene {
   private clickDest = false;
   /** Zoom voulu (molette) ; la caméra le rejoint en douceur. */
   private zoom = 1;
-  static readonly ZOOM: [number, number] = [0.45, 1.5];
+  static readonly ZOOM: [number, number] = [0.55, 1.5];   // dézoom limité (Mathis, 2026-11-06 : à 0,45 on voyait trop loin)
   /** Réglages du joueur (fenêtre Réglages, touche O) et dernière mise à jour de l'ambiance. */
   private reglages: Reglages = chargerReglages();
   private ambT = 0;
@@ -111,6 +112,7 @@ export class ZoneScene extends Phaser.Scene {
       this.load.json(WorldView.key(open.world, 'monde'), v(`${dir}/monde.json`));
       this.load.once(`filecomplete-json-${WorldView.key(open.world, 'monde')}`, (_: string, __: string, data: WorldData) =>
         WorldView.preload(this, data, dir, open.world, open.start));
+      Particules.preload(this, dir, open.world, v);
       return;
     }
     const dir = mapDir(zone.map!.coords), key = dir.replace(/\W/g, '_');
@@ -130,7 +132,7 @@ export class ZoneScene extends Phaser.Scene {
     this.sys.events.on(Phaser.Scenes.Events.ADDED_TO_SCENE, onAdd);
     this.events.once('shutdown', () => this.sys.events.off(Phaser.Scenes.Events.ADDED_TO_SCENE, onAdd));
     this.reglages = chargerReglages(); this.ambT = 0; this.sat = undefined;
-    this.zoom = this.reglages.zoom; this.cameras.main.setZoom(this.zoom);
+    this.zoom = Phaser.Math.Clamp(this.reglages.zoom, ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]); this.cameras.main.setZoom(this.zoom);
     this.input.on('wheel', (_p: Phaser.Input.Pointer, _o: unknown, _dx: number, dy: number) => {
       this.zoom = Phaser.Math.Clamp(this.zoom * (dy > 0 ? 0.9 : 1.1), ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]);
     });
@@ -141,6 +143,8 @@ export class ZoneScene extends Phaser.Scene {
       this.cameras.main.setBackgroundColor('#0d2b36');   // sous le ciel, au cas où il manque
       this.worldView = new WorldView(this, wg, worldDir(open.world), open.world);
       this.worldView.portes = this.world.portes.flatMap(p => p.ends);
+      const parts = this.cache.json.get(`${open.world}_particules`) as Record<string, SysData[]> | undefined;
+      if (parts) this.worldView.parts = new Particules(this, wg, parts, `${open.world}_particules_img`);
       this.worldView.create();
     } else {
       const key = mapDir(zone.map!.coords).replace(/\W/g, '_');
@@ -465,7 +469,7 @@ export class ZoneScene extends Phaser.Scene {
     const w = this.world, inside = !!w.worldGrid?.mapAt(w.player.x, w.player.y)?.inside;
     const a = ambiance(this.reglages, new Date(), inside || !w.zone.open);
     this.worldView?.setAmbiance(a.tint, a.lumieres, a.soleil);
-    if (this.worldView) { this.worldView.vent = this.reglages.vent; this.worldView.eau = this.reglages.eau; }
+    if (this.worldView) { this.worldView.vent = this.reglages.vent; this.worldView.eau = this.reglages.eau; if (this.worldView.parts) this.worldView.parts.actif = this.reglages.particules; }
     EntityView.ambiance = a.tintPerso;
     // couleurs adoucies (5B) : un filtre sur la caméra du jeu, seulement s'il sert (WebGL)
     const s = this.reglages.saturation, cam = this.cameras.main;

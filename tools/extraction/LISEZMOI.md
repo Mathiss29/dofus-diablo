@@ -139,3 +139,16 @@ traduit : 1 tour = 3 s (relance, lancers par tour), 1 case = 48 px (portée des 
 grade selon le niveau du perso. Un sort n'est jouable que s'il a sa fiche dans `classes.json` (champ `dofusId`).
 Attention : Colère de Iop est la variante de Fureur (niveau 200), pas de l'Épée du Destin (dont la variante est Tumulte).
 Animations des nouveaux sorts : `ANIMS=... perso_planche.py` (Ferveur AnimAttaque814 ; Crâ 902, 907, 917).
+
+## Particules des cartes
+
+Les systèmes de particules Unity de chaque carte (`mapData.particlesParameters` : spores, poussière, braises, brume, étoiles, comètes…)
+sont simplifiés par `particules.py` et rejoués par `src/render/particles.ts` (case « Particules » dans les Réglages).
+Leurs images sont dans `Content/Map/Textures/Effects/mapeffects_assets_all.bundle` (`textures/effects/particles/<gfxId>.png`).
+Une copie des 282 images est dans `/mnt/project-files/cache-dofus/particules.tar.gz`.
+
+    python3 tools/extraction/particules.py liste.json <dossier map_*.json> <bundle ou dossier de .png> public/assets/mondes/incarnam
+
+Gardés : les systèmes qui bouclent (pas ceux déclenchés par le jeu, ni les sous-émetteurs). Repris : durée de vie, vitesse, taille,
+couleurs et dégradés, débit et salves, forme (sphère, cône, cercle, bord, boîte, rectangle), vitesse sur la vie, gravité, bruit
+(dérive douce), planches d'images, étirement. Pas repris : les traînées (trails).

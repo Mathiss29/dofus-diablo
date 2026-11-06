@@ -21,8 +21,10 @@ export interface Reglages {
   /** Cartes vivantes (maquette « Vivant », 5A) : arbres au vent, eau animée. */
   vent: boolean;
   eau: boolean;
+  /** Particules officielles des cartes (spores, poussière, braises, étoiles…). */
+  particules: boolean;
 }
-export const REGLAGES_DEFAUT: Reglages = { heure: 'auto', lumieres: 1, saturation: 1, chaleur: 0, zoom: 0.62, volume: 1, vent: true, eau: true };
+export const REGLAGES_DEFAUT: Reglages = { heure: 'auto', lumieres: 1, saturation: 1, chaleur: 0, zoom: 0.62, volume: 1, vent: true, eau: true, particules: true };
 const CLE = 'diablofus.reglages';
 
 export function chargerReglages(): Reglages {
@@ -36,9 +38,10 @@ type RGB = [number, number, number];
 /** Une étape du cycle : teinte multipliée sur les cartes, force des feux et lueurs (l), force des reflets et rayons du soleil (s). */
 interface Etape { t: RGB; l: number; s: number }
 const JOUR: Etape = { t: [1, 1, 1], l: 1, s: 1 };
-const SOIR: Etape = { t: [0.95, 0.66, 0.55], l: 1.6, s: 0.6 };
+// soir adouci (Mathis, 2026-11-06 : l'ancien orange [0.95, 0.66, 0.55] faisait mal aux yeux sur les sols jaunes d'Incarnam)
+const SOIR: Etape = { t: [0.94, 0.84, 0.8], l: 1.4, s: 0.6 };
 const NUIT: Etape = { t: [0.47, 0.55, 0.86], l: 2.6, s: 0.1 };
-const AUBE: Etape = { t: [0.82, 0.72, 0.82], l: 1.4, s: 0.5 };
+const AUBE: Etape = { t: [0.86, 0.82, 0.88], l: 1.3, s: 0.5 };
 /** Heures (0-24) des étapes : nuit jusqu'à 5 h, aube vers 6 h, jour de 7 h 30 à 18 h, soir vers 19 h 30, nuit dès 21 h. */
 const CYCLE: [number, Etape][] = [[0, NUIT], [5, NUIT], [6.2, AUBE], [7.5, JOUR], [18, JOUR], [19.5, SOIR], [21, NUIT], [24, NUIT]];
 const FIXE: Record<Exclude<Heure, 'auto'>, Etape> = { jour: JOUR, soir: SOIR, nuit: NUIT };
