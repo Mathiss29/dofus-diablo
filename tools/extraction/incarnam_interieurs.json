@@ -1,5 +1,11 @@
 {
  "_": "Intérieurs d'Incarnam (cartes worldMap -1). Le lien porte -> salle n'est que sur le serveur de Dofus : il est relié ici à la main, d'après les éléments interactifs officiels (cadres de mine 50077 dehors, arches et passages 39767 dedans, portes 425xx des maisons). Une case 'bas' = la case marchable la plus basse de la salle (porte de sortie des maisons).",
+ "_temple": "Temple Céleste (départ du tutoriel) : 3 salles en chemin, posées à la main (places) deux rangées sous la Crypte, car leur sol déborde de ~2 cartes vers le haut (nuages, arches). Sortie à sens unique vers la Route des âmes.",
+ "places": {
+  "temple_1": "-3,15",
+  "temple_2": "-1,15",
+  "temple_3": "1,15"
+ },
  "salles": {
   "mine_1_-5": [
    153357312,
@@ -96,6 +102,18 @@
   "milice_rdc": [
    153356294,
    444
+  ],
+  "temple_1": [
+   241443329,
+   446
+  ],
+  "temple_2": [
+   241444353,
+   446
+  ],
+  "temple_3": [
+   241445377,
+   446
   ]
  },
  "liens": [
@@ -404,6 +422,42 @@
     346
    ],
    "Escalier"
+  ],
+  [
+   [
+    "temple_1",
+    503
+   ],
+   [
+    "temple_2",
+    56
+   ],
+   "Temple Céleste"
+  ],
+  [
+   [
+    "temple_2",
+    503
+   ],
+   [
+    "temple_3",
+    56
+   ],
+   "Temple Céleste"
+  ],
+  [
+   [
+    "temple_3",
+    447
+   ],
+   [
+    "0_-3",
+    465
+   ],
+   "Route des âmes",
+   {
+    "sens": true
+   }
   ]
  ]
 }
