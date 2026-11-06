@@ -2,7 +2,7 @@
 
 # Diablofus : Les Douze Enfers
 
-**[Jouer dans le navigateur](https://mathiss29.github.io/dofus-diablo/)**
+**[Jouer dans le navigateur](https://diablofus.com/)**
 
 ARPG en temps réel dans l'univers de Dofus 3, jouable dans le navigateur (PC, clavier et souris).
 On incarne une classe de Dofus, on nettoie des zones du Monde des Douze et on ramasse du butin, avec un combat nerveux à la Diablo 4.

@@ -35,7 +35,7 @@ Le test `tests/hebergement.test.ts` échoue si un fichier lourd présent en loca
 1. Bucket `diablofus-assets`, emplacement Automatic.
 2. Settings → Custom Domains → `assets.<domaine>`.
 3. Settings → CORS policy :
-   `[{"AllowedOrigins":["https://mathiss29.github.io","https://<domaine>"],"AllowedMethods":["GET","HEAD"],"AllowedHeaders":["*"],"MaxAgeSeconds":86400}]`
+   `[{"AllowedOrigins":["https://diablofus.com","https://www.diablofus.com","https://mathiss29.github.io"],"AllowedMethods":["GET","HEAD"],"AllowedHeaders":["*"],"MaxAgeSeconds":86400}]`
 4. Manage API tokens → Object Read & Write, limité au bucket.
 
 Le chargement en CORS est déjà en place : `loader.crossOrigin` de Phaser (src/main.ts), `crossOrigin` sur l'audio (son.ts) et sur les planches dessinées dans un canevas (accueil.ts).
