@@ -15,7 +15,7 @@ export const QUEST_ICON: Record<QueteType, [string, string]> = {
   tutoriel: ['questInitiation', 'questObjective'], principale: ['questPrincipale', 'questPrincipaleObjective'],
   secondaire: ['quest', 'questObjective'], prime: ['questRepeatable', 'questRepeatableObjective'], evenement: ['questEvent', 'questObjective'],
 };
-const STYLE = { fontFamily: 'Trebuchet MS, Verdana, sans-serif' };
+const STYLE = { fontFamily: 'Lexend, Verdana, sans-serif' };
 
 interface PnjSprite {
   id: string; img: Phaser.GameObjects.Sprite; name: Phaser.GameObjects.Text; icon: Phaser.GameObjects.Image; shadow: Phaser.GameObjects.Graphics;

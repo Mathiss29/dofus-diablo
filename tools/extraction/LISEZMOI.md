@@ -186,3 +186,9 @@ couleurs et dégradés, débit et salves, forme (sphère, cône, cercle, bord, b
 - Les cartes ont des sons officiels (`mapData.playlistSet`, `localizedSounds` avec position) mais référencés par GUID d'événement FMOD ;
   `Master.strings.bank` contient les noms (arbre compressé STDT, pas encore décodé). En attendant, les sons du décor viennent des particules
   officielles (Feu, Braises, Cascade, Courant, Vortex du Zaap).
+
+## Polices
+
+Les polices de l'interface de Dofus 3 sont des objets `Font` de `tss_assets_all.bundle` (UnityPy : `m_FontData`) :
+Lexend (Regular, Medium, SemiBold, Bold) pour les textes, Rowdies pour les boutons, NotoSans en secours.
+Elles sont réduites aux caractères latins et converties en woff2 (`fontTools.subset --flavor=woff2`) dans `public/assets/fonts/`.

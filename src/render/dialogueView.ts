@@ -12,7 +12,7 @@ import { QUEST_ICON, type QuestView } from './questView';
  *  - clic droit sur un PNJ : petit menu d'actions ; survol : son nom et ce qu'il propose.
  *  Le texte s'affiche d'un coup. Lit world.quetes.dialogue ; la réponse choisie repart par l'entrée du joueur (input.reponse). */
 const CSS = `
-.dlgv{position:fixed;inset:0;pointer-events:none;z-index:9;font:600 14px/1.45 'Trebuchet MS',Verdana,sans-serif;color:#f4efe0}
+.dlgv{position:fixed;inset:0;pointer-events:none;z-index:9;font:600 14px/1.45 Lexend,Verdana,sans-serif;color:#f4efe0}
 .dlgv .dlg{position:absolute;width:min(400px,46vw);display:grid;gap:10px;pointer-events:auto}
 .dlgv .bul{position:relative;background:#1b1711f2;border:2px solid #f1ecd8;border-radius:16px;padding:30px 20px 16px;box-shadow:0 6px 20px #000a;white-space:pre-line}
 .dlgv .bul::after{content:"";position:absolute;top:var(--py,40%);border:10px solid transparent}
@@ -20,7 +20,7 @@ const CSS = `
 .dlgv .dlg.g .bul::after{right:-20px;border-left:12px solid #f1ecd8}
 .dlgv .rub{position:absolute;left:50%;top:-22px;transform:translateX(-50%);min-width:170px;height:46px;padding:0 34px;box-sizing:border-box;
  background:url(${v('assets/ui/quetes/rubanPnj.png')}) center/100% 100% no-repeat;display:grid;place-items:center;
- font:bold 15px 'Trebuchet MS',sans-serif;color:#fff;text-shadow:0 1px 2px #5a3305,0 0 3px #5a3305;white-space:nowrap}
+ font:bold 15px Lexend,sans-serif;color:#fff;text-shadow:0 1px 2px #5a3305,0 0 3px #5a3305;white-space:nowrap}
 .dlgv .x{position:absolute;right:12px;top:8px;cursor:pointer;font-size:17px;line-height:1;color:#f4efe0}
 .dlgv .x:hover{color:#b9e54b}
 .dlgv .rep{background:#1b1711f2;border:2px solid #a8d84b;border-radius:14px;padding:10px;display:grid;gap:6px;box-shadow:0 6px 20px #000a}
