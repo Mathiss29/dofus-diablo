@@ -164,4 +164,10 @@ couleurs et dégradés, débit et salves, forme (sphère, cône, cercle, bord, b
   `BOX=-150,-280,150,40 node render.cjs scene.json - big "AnimStatiqueExplo0_1:24:repos,AnimStatiqueCombat0_1:24:garde" 1 1.6`
   (flip = 1 avec les scènes de `perso_planche.py`), puis découpe de chaque image en (135,152)-(387,494).
   L'attaque (`AnimArme0_1:23:attaque`, BOX=-150,-280,330,40) est découpée sur 400 px de large : le perso s'élance vers la droite.
+- Version fine (2026-11-06, l'Iop du socle était flou : 342 px de haut affichés sur ~460 px en 1080p) : même rendu à l'échelle
+  **3,2** au lieu de 1,6, puis `python accueil_grille.py big.png big.json <sortie>/iop_m 270,304,774,988 270,304,1070,988`
+  (boîtes doublées). Les images sont rangées en grille de 8192 px de large au plus (une bande de 23 attaques HD dépasserait
+  les 16 383 px du WebP) ; `accueil.ts` lit aussi bien les anciennes bandes que les grilles.
+- Persos en jeu : `SCALE=0.7` (défaut de `perso_planche.py`) reste net jusqu'à un zoom d'environ 1,2 ; la molette va jusqu'à 1,5,
+  donc `SCALE=0.9` pour être net partout (planches environ 1,65 fois plus lourdes).
 - Textes des classes (titre, description, rôles et difficulté officiels) : `breeds` + `breedroles` + `fr.bin` → `src/data/classes_dofus.json`.
