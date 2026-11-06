@@ -1,0 +1,28 @@
+import type { Rng } from './math';
+
+/** Métiers de récolte (0.2b, maquette Métiers : 5A récolte au clic de 1,2 s qu'on peut interrompre, 6A repousse en 60 s,
+ *  6C ressource dorée qui donne ×5, quantité qui monte avec le niveau du métier). Données : src/data/recoltes.json
+ *  (tools/contenu/recoltes.py : emplacements officiels des cartes, ressources officielles des sous-zones). */
+export interface RecolteRes { nom: string; metier: string; niveau: number; anim: string; icone: number; niveauObjet: number }
+export interface RecoltesData {
+  metiers: Record<string, { id: number; nom: string }>;
+  ressources: Record<string, RecolteRes>;
+  /** Par monde (dossier de public/assets/mondes) : [tag de carte, case Dofus, id de la ressource]. */
+  [monde: string]: unknown;
+}
+/** Une ressource posée dans le monde. repousse > 0 : déjà récoltée, elle repousse. */
+export interface Recolte { id: number; tag: string; x: number; y: number; item: string; dore: boolean; repousse: number }
+
+export const RECOLTE = {
+  /** Durée du geste (s), portée (px monde) à laquelle on récolte, délai de repousse (s). */
+  duree: 1.2, portee: 110, repousse: 60,
+  /** Chance qu'une ressource repousse dorée, et son multiplicateur. */
+  dore: 0.05, multDore: 5,
+};
+/** Quantité récoltée : 1 au niveau de la ressource, puis une de plus tous les 20 niveaux de métier au-dessus (tirée de 1 à ce maximum). */
+export function quantite(rng: Rng, niveauMetier: number, niveauRes: number, dore: boolean) {
+  const max = 1 + Math.floor(Math.max(0, niveauMetier - niveauRes) / 20);
+  return (1 + Math.floor(rng.next() * max)) * (dore ? RECOLTE.multDore : 1);
+}
+/** XP de métier d'une récolte : selon le niveau de la ressource (×2 pour une dorée). */
+export const xpRecolte = (niveauRes: number, dore: boolean) => (5 + niveauRes) * (dore ? 2 : 1);

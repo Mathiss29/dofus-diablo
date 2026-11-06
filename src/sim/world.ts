@@ -9,6 +9,7 @@ import { Player } from './player';
 import { initiativeBonus, removalChance } from './caracs';
 import { planWave } from './waves';
 import { Quetes, type Compte, type EtatQuetes, type QuetesData } from './quests';
+import { RECOLTE, quantite, xpRecolte, type Recolte, type RecoltesData } from './recolte';
 
 interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: number;
   /** Effets officiels : Érosion (part des dommages ôtée aux PV max), retrait de PM / PA. */
@@ -54,6 +55,8 @@ export interface WorldOptions {
   reprise?: EtatQuetes;
   /** Arrivée par un portail d'une autre zone : [carte, case] de la porte d'arrivée. */
   arrivee?: [string, number];
+  /** Métiers de récolte (src/data/recoltes.json) : ressources et leurs emplacements par monde. */
+  recoltes?: RecoltesData;
   /** Boutiques des PNJ (src/data/boutique.json) : articles et prix en Pépites. */
   boutiques?: Record<string, { id: string; prix: number }[]>;
 }
@@ -73,6 +76,11 @@ export class World {
   private equipByLevel: { id: string; level: number }[] = [];
   /** Événements produits depuis le dernier drainEvents(). */
   private events: SimEvent[] = [];
+  /** Ressources à récolter du monde (métiers de récolte, 0.2b). */
+  recoltes: Recolte[] = [];
+  /** Ressource cliquée (le perso y va) et geste en cours (t = temps écoulé, hp = PV au début : un coup reçu l'interrompt). */
+  versRecolte: number | null = null;
+  enRecolte: { id: number; t: number; hp: number } | null = null;
   /** Télégraphes du dernier pas (recalculés à chaque pas). */
   telegraphs: Telegraph[] = [];
   wave = 0;
@@ -122,7 +130,7 @@ export class World {
       this.equipByLevel = Object.entries(opts.items.equipment).map(([id, d]) => ({ id, level: d.level }));
       // sac vide au départ (Mathis, 2026-11-06) : l'équipement vient du tutoriel (panoplie de l'Intrépide, Arc de Chasse du Crâ)
     }
-    if (open) this.buildPortes();
+    if (open) { this.buildPortes(); this.buildRecoltes(); }
     if (open && opts.arrivee) this.arriver(opts.arrivee);
     // les PNJ d'abord : les groupes de monstres ne se posent pas sur eux
     if (open && opts.quetes) this.quetes = new Quetes(opts.quetes, this, opts.compte);
@@ -367,6 +375,11 @@ export class World {
     this.telegraphs.length = 0;
     const p = this.player;
     const ents = [p, ...this.monsters], prev = ents.map(e => [e.x, e.y] as const);
+    if (input.recolte != null) { this.versRecolte = input.recolte; this.enRecolte = null; }
+    else if (input.dest || input.target != null || input.pickup != null || input.talk || input.pressed || input.move.x || input.move.y) {
+      if (this.enRecolte) this.emit({ k: 'recolteStop' });
+      this.versRecolte = null; this.enRecolte = null;
+    }
     if (this.quetes) {
       if (input.reponse != null) this.quetes.repondre(input.reponse);
       if (input.talk) this.quetes.cliquer(input.talk);
@@ -394,7 +407,7 @@ export class World {
       e.kx = 0; e.ky = 0;
     });
     this.monsters = this.monsters.filter(m => !(m.dead && m.t <= 0));
-    if (this.zone.open) { this.updateOpen(dt); this.quetes?.update(dt); return; }
+    if (this.zone.open) { this.updateOpen(dt); this.updateRecoltes(dt); this.quetes?.update(dt); return; }
     if (!this.over && this.monsters.length === 0) {
       this.waveDelay -= dt;
       if (this.waveDelay <= 0) { this.spawnWave(); this.waveDelay = 2; }
@@ -705,6 +718,58 @@ export class World {
     // ramassé, ou oublié au sol depuis 3 minutes
     this.drops = this.drops.filter(d => d.t >= 0 && d.t < 180);
   }
+  // --- Métiers de récolte (0.2b) ---------------------------------------------------------------------------------
+  private buildRecoltes() {
+    const R = this.opts.recoltes, wg = this.worldGrid, open = this.zone.open;
+    const l = R && open && (R[open.world] as [string, number, string][] | undefined);
+    if (!R || !wg || !l) return;
+    for (const [tag, cell, item] of l) {
+      if (!wg.mapByTag(tag) || !R.ressources[item]) continue;
+      const q = wg.cellToWorld(wg.cellOf(tag, cell));
+      this.recoltes.push({ id: this.nextId++, tag, x: q.x, y: q.y, item, dore: this.rng.next() < RECOLTE.dore, repousse: 0 });
+    }
+  }
+  /** Case libre la plus proche d'une ressource (les arbres et les minerais sont souvent sur une case bloquante). */
+  approcheRecolte(id: number) {
+    const r = this.recoltes.find(x => x.id === id);
+    return r ? this.map.nearestFree(r.x, r.y) : null;
+  }
+  private updateRecoltes(dt: number) {
+    for (const r of this.recoltes) if (r.repousse > 0 && (r.repousse -= dt) <= 0) { r.repousse = 0; r.dore = this.rng.next() < RECOLTE.dore; }
+    const p = this.player, R = this.opts.recoltes;
+    if (!R || p.dead) { this.versRecolte = null; this.enRecolte = null; return; }
+    if (this.enRecolte) {
+      const g = this.enRecolte, r = this.recoltes.find(x => x.id === g.id);
+      if (!r || r.repousse > 0 || p.hp < g.hp) { this.enRecolte = null; this.emit({ k: 'recolteStop' }); return; }
+      p.stopMove(); g.t += dt;
+      if (g.t < RECOLTE.duree) return;
+      this.enRecolte = null;
+      const def = R.ressources[r.item], lv = Math.max(1, p.metierLevel(def.metier));
+      const n = quantite(this.rng, lv, def.niveau, r.dore);
+      p.resources[r.item] = (p.resources[r.item] ?? 0) + n;
+      p.gainMetierXp(def.metier, xpRecolte(def.niveau, r.dore), this);
+      this.emit({ k: 'recolteFin', id: r.id, item: r.item, n, dore: r.dore });
+      r.repousse = RECOLTE.repousse; r.dore = false;
+      return;
+    }
+    if (this.versRecolte == null) return;
+    const r = this.recoltes.find(x => x.id === this.versRecolte);
+    if (!r || r.repousse > 0) { this.versRecolte = null; return; }
+    if (Math.hypot(r.x - p.x, r.y - p.y) > RECOLTE.portee || p.state !== 'free') return;
+    this.versRecolte = null;
+    const def = R.ressources[r.item], lv = Math.max(1, p.metierLevel(def.metier));
+    if (lv < def.niveau) {
+      p.stopMove();
+      this.emit({ k: 'status', x: p.x, y: p.y - 60, text: `${R.metiers[def.metier]?.nom ?? 'Métier'} niveau ${def.niveau} requis`, color: '#ff9a5a' });
+      this.emit({ k: 'recolteNiveau', metier: def.metier, niveau: def.niveau });
+      return;
+    }
+    p.stopMove();
+    p.facing = Math.atan2(r.y - p.y, r.x - p.x);
+    this.enRecolte = { id: r.id, t: 0, hp: p.hp };
+    this.emit({ k: 'recolteDebut', id: r.id, duree: RECOLTE.duree });
+  }
+
   // --- Emp, le Méryde du Recyclage (maquette 0.2, 8A+8B+8C, 9A+9B) ---------------------------------------------
   private pepites(n: number) { const p = this.player; p.resources[PEPITE] = (p.resources[PEPITE] ?? 0) + n; }
   /** Recycle un objet du sac contre des Pépites (un objet sous cadenas n'est jamais recyclé). */
@@ -774,7 +839,7 @@ export class World {
   /** Fait une recette officielle si on a les ingrédients et le niveau de métier. */
   craft(i: number): boolean {
     const r = this.opts.items?.recipes?.[i], p = this.player;
-    if (!r || p.metierLevel(r.metier) < r.level || !r.ingredients.every(([id, q]) => (p.resources[id] ?? 0) >= q)) return false;
+    if (!r || Math.max(1, p.metierLevel(r.metier)) < r.level || !r.ingredients.every(([id, q]) => (p.resources[id] ?? 0) >= q)) return false;
     for (const [id, q] of r.ingredients) { p.resources[id] -= q; if (p.resources[id] <= 0) delete p.resources[id]; }
     p.resources[r.result] = (p.resources[r.result] ?? 0) + 1;
     p.gainMetierXp(r.metier, METIER_XP.parIngredient * r.ingredients.reduce((n, [, q]) => n + q, 0), this);

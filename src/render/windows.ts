@@ -1,7 +1,7 @@
 import { REGLAGES_DEFAUT, sauverReglages, type Reglages } from './ambiance';
 import { ICON_CSS, iconHtml } from './icons';
 import { MANIFESTE, Son } from './son';
-import { BOUTIQUES, ITEMS } from '../sim/data';
+import { BOUTIQUES, ITEMS, RECOLTES } from '../sim/data';
 import {
   BASE_STATS, LEGENDARY, PEPITE, RARITY_COLORS, RARITY_NAMES, STATS, STAT_NAMES, metierXpNeeded, recycleResource, recycleValue,
   type EquipSlot, type Item, type Rarity, type ResourceDef, type Stat,
@@ -184,6 +184,7 @@ const CSS = `
 .dw .bar i{display:block;height:100%;background:#b9e54b}
 .dw .note{font-size:12px;color:#c9c4ab;background:#1d1c19;border:1px solid #34322b;border-radius:3px;padding:8px 10px}
 .dw .note.ok{border-color:#4c6e17;color:#d6f57a}
+.dw .job .ings{display:flex;gap:8px;flex-wrap:wrap;font-size:12px}.dw .job .ing{display:flex;align-items:center;gap:3px}.dw .job .ing .ic{width:26px;height:26px}.dw .job .ing.lack{opacity:.45}
 .dw .rec{display:grid;grid-template-columns:52px 1fr auto;gap:10px;align-items:center;padding:8px;border:1px solid #34322b;border-radius:4px;background:#26251f}
 .dw .rec .ic{width:48px;height:48px}.dw .rec .ings{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;font-size:12px}
 .dw .rec .ing{display:flex;align-items:center;gap:3px}.dw .rec .ing .ic{width:26px;height:26px}
@@ -484,7 +485,10 @@ export class Windows {
     const res = (id: string) => ITEMS.resources[id];
     const jobs = Object.entries(M).map(([k, m]) => {
       const st = p.metiers[k] ?? { level: 1, xp: 0 }, need = metierXpNeeded(st.level);
-      const weapon = p.huntingWeapon
+      const recolte = Object.values(RECOLTES.ressources).filter(r => r.metier === k).sort((a, b) => a.niveau - b.niveau);
+      const weapon = recolte.length ? `<div class="note">Clique une ressource sur la carte pour la récolter (1,2 s). Elle repousse en une minute ; une dorée donne ×5.</div>
+        <div class="ings">${recolte.map(r => `<span class="ing ${st.level >= r.niveau ? '' : 'lack'}" title="${r.nom} : niveau ${r.niveau}">${iconHtml(r.icone)}${r.nom} <span class="hint">${r.niveau}</span></span>`).join('')}</div>`
+        : k !== 'chasseur' ? '' : p.huntingWeapon
         ? `<div class="note ok">Arme de chasse en main : les monstres peuvent lâcher leurs viandes.</div>`
         : `<div class="note">Équipe une arme avec l'effet « Arme de chasse » (Couteau de Chasse, Arc de Chasse…) pour que les monstres lâchent leurs viandes.</div>`;
       const recs = R.map((r, i) => ({ r, i })).filter(({ r }) => r.metier === k).map(({ r, i }) => {
@@ -497,7 +501,7 @@ export class Windows {
           <span class="btn ${ok ? '' : 'off'}" data-craft="${i}">Fabriquer</span></div>`;
       }).join('');
       return `<div class="mh"><img src="assets/ui/metier_${k}.png" alt=""><div><b>${m.name}</b> · niveau ${st.level}
-        <div class="bar"><i style="width:${Math.round((st.xp / need) * 100)}%"></i></div><span class="hint">${st.xp} / ${need} XP · une viande ramassée ou une recette faite fait monter le métier</span></div></div>
+        <div class="bar"><i style="width:${Math.round((st.xp / need) * 100)}%"></i></div><span class="hint">${st.xp} / ${need} XP · ${k === 'chasseur' ? 'une viande ramassée ou une recette faite' : recolte.length ? 'chaque récolte' : 'chaque objet fabriqué'} fait monter le métier</span></div></div>
         ${weapon}${recs}`;
     }).join('');
     w.innerHTML = `${this.title('Métiers', 'job')}<div class="in">${jobs || '<div class="hint">Aucun métier.</div>'}</div>`;
