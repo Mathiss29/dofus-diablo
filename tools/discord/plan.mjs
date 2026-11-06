@@ -6,6 +6,7 @@
 export const TYPES = { texte: 0, vocal: 2, categorie: 4, annonces: 5, forum: 15, scene: 13 };
 const NOM_TYPE = Object.fromEntries(Object.entries(TYPES).map(([k, v]) => [v, k]));
 // les autres jeux du studio (Idlus, Re:Arise) ne sont jamais touchés
+export const slug = (s) => s.toLowerCase().normalize("NFC").replace(/[^\p{L}\p{N}-]+/gu, "");
 export const INTERDIT = /idlus|re:? ?arise/i;
 
 export function actions(plan, salons) {
@@ -26,8 +27,9 @@ export function actions(plan, salons) {
     (g.salons || []).forEach((p, position) => {
       const genre = TYPES[p.type || "texte"];
       if (genre === undefined) throw new Error("Type de salon inconnu : " + p.type);
-      const s = p.id && parId.get(p.id);
-      if (p.id && !s) throw new Error(`Salon ${p.id} (${p.nom}) introuvable sur le serveur`);
+      if (p.id && !parId.get(p.id)) throw new Error(`Salon ${p.id} (${p.nom}) introuvable sur le serveur`);
+      // sans id : un salon de même nom (sans les émojis) dans la catégorie compte comme celui du plan, pour ne pas le recréer à chaque déploiement
+      const s = p.id ? parId.get(p.id) : salons.find((x) => !vus.has(x.id) && x.type === genre && (x.parent_id || null) === (typeof catId === "string" ? catId : null) && slug(x.name) === slug(p.nom));
       if (!s) return out.push({ type: "creer", nom: p.nom, genre, parent: catId, sujet: p.sujet, position });
       vus.add(s.id);
       if (INTERDIT.test(parId.get(s.parent_id)?.name || "")) throw new Error(`#${s.name} est dans la catégorie d'Idlus`);
