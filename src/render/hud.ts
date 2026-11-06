@@ -44,7 +44,7 @@ interface FeedLine { text: Txt; t: number }
 
 /** Interface fixe à l'écran, façon MMO Dofus 3 (choix 13D de la maquette), adaptée au temps réel :
  *  - en haut à gauche, la fiche du perso (PV, PA, PM, Rage) et la fiche de la cible ;
- *  - en haut au centre, les coordonnées et la sous-zone ; la jauge de boss juste dessous ;
+ *  - en haut au centre, la zone et la sous-zone (plus de coordonnées de carte, choix 4A) ; la jauge de boss juste dessous ;
  *  - en haut à droite, la mini-carte et la colonne de menus ;
  *  - en bas au centre, l'XP au-dessus d'une seule rangée de 6 sorts, le déplacement, la potion et la Rage ;
  *  - en bas à gauche, le suivi (à la place du chat) ; en bas à droite, le butin. */
@@ -356,7 +356,7 @@ export class Hud {
 
     // --- Coordonnées et sous-zone (haut centre) ---
     const map = world.worldGrid?.mapAt(p.x, p.y);
-    this.coords.setPosition(W / 2, 10).setText(map ? `${map.inside ? '' : `${map.x},${map.y}  `}${world.zone.name}${world.area ? ` (${world.area.name})` : ''}` : world.zone.name);
+    this.coords.setPosition(W / 2, 10).setText(map ? `${world.zone.name}${world.area ? ` (${world.area.name})` : ''}` : world.zone.name);   // sans coordonnées (choix 4A : rien ne rappelle les cartes ; elles iront sur la carte du monde, touche M)
 
     // --- Jauge de boss ---
     const wgr = world.worldGrid, ici = wgr?.mapAt(world.player.x, world.player.y)?.tag;   // seulement le boss de la carte du joueur

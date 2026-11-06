@@ -53,7 +53,9 @@ export type SimEvent =
   | { k: 'bagFull' }
   /** Nouveau point de retour (Zaap). */
   | { k: 'checkpoint'; name: string }
-  /** Le joueur passe une porte (le rendu fait un fondu au noir). */
+  /** Le joueur clique une porte : il s'arrête devant pendant World.PASSAGE s (le rendu fond au noir). */
+  | { k: 'portalStart'; nom: string }
+  /** Le joueur arrive ailleurs d'un coup (porte, fin de quête) : le rendu garde le noir jusqu'à ce que les cartes soient posées. */
   | { k: 'portal'; nom: string }
   /** Le joueur lance un sort ou son attaque (objectifs « utiliser »). */
   | { k: 'cast'; id: string }

@@ -7,6 +7,8 @@ import type { Particules } from './particles';
 /** Rayon (en cartes) chargé autour du joueur, et rayon au-delà duquel une carte est déchargée.
  *  Entre les deux, une carte déjà chargée reste : pas de va-et-vient quand on longe un bord. */
 const LOAD_RING = 1, UNLOAD_RING = 2;
+/** Préchargement (choix 2A) : la 2e couronne est téléchargée d'avance sans être affichée ; les fichiers sont oubliés au-delà de OUBLI_RING. */
+const PREFETCH_RING = 2, OUBLI_RING = 3;
 
 /** Une carte affichée ; `next` = prochain élément de décor à poser (le décor arrive en plusieurs images, voir pump()). */
 type Slot = { state: 'none' | 'loading' | 'ready'; objs: Phaser.GameObjects.GameObject[]; next: number };
@@ -28,6 +30,10 @@ export class WorldView {
   /** Cartes en téléchargement, et textures prêtes à envoyer à la carte graphique (une par image, voir fetchMap). */
   private readonly fetching = new Set<string>();
   private readonly uploads: { m: WorldMapEntry; add: () => void }[] = [];
+  /** Fichiers des cartes déjà téléchargés (ou en cours), par nom : préchargement de la 2e couronne et retours rapides. */
+  private readonly blobs = new Map<string, Promise<Blob>>();
+  /** Rideau baissé (arrivée par une porte, un Zaap, après une mort) : on pose le décor plus vite, l'écran est noir. */
+  presse = false;
   /** Ambiance (render/ambiance.ts) : teinte des cartes et force des lumières, appliquées aux objets posés et à venir. */
   private tint = 0xffffff;
   private lum = 1;
@@ -76,7 +82,8 @@ export class WorldView {
   update(px: number, py: number) {
     this.drawSky();
     this.upload();
-    this.pump();
+    if (this.presse) this.upload();   // écran noir : deux textures par image, et plus de temps pour le décor
+    this.pump(this.presse ? 14 : BUDGET_MS);
     const t = this.scene.time.now / 1000;
     this.animate(t);
     this.parts?.update(this.lastT ? t - this.lastT : 0);
@@ -91,12 +98,7 @@ export class WorldView {
       this.sky?.setVisible(!here.inside || !!here.ciel);
       this.scene.cameras.main.setBackgroundColor(here.inside && !here.ciel ? '#000000' : '#0d2b36');
     }
-    const v = this.scene.cameras.main.worldView, S = GridMap.S;
-    const seen = (m: WorldMapEntry, marge: number) => {
-      if (!!m.inside !== !!here.inside) return false;   // dehors on ne voit pas les intérieurs (et inversement)
-      const a = this.wg.toScreen(m.sol.x, m.sol.y);
-      return a.x < v.right + marge && a.x + m.sol.w * S > v.x - marge && a.y < v.bottom + marge && a.y + m.sol.h * S > v.y - marge;
-    };
+    const seen = (m: WorldMapEntry, marge: number) => this.seen(m, here, marge);
     for (const m of this.wg.world.maps) {
       const d = ring(m, here.x, here.y), s = this.slots.get(m.tag)!;
       // dans un intérieur, seule sa salle est dessinée : les salles voisines dans la grille ne doivent pas se voir
@@ -108,6 +110,7 @@ export class WorldView {
         else this.fetchMap(m);
       } else if (jette && s.state !== 'none') this.unload(m);   // 'loading' : la carte arrivera pour rien, build() la jette
     }
+    this.prefetch(here);
   }
 
   /** En jeu, une carte se charge sans saccade : les images sont téléchargées et décodées hors du fil principal
@@ -116,16 +119,68 @@ export class WorldView {
   private fetchMap(m: WorldMapEntry) {
     if (this.fetching.has(m.tag)) return;
     this.fetching.add(m.tag);
-    const tex = this.scene.textures, url = (n: string) => v(`${this.dir}/${n}`);
-    const bmp = (n: string) => fetch(url(n)).then(r => { if (!r.ok) throw new Error(n); return r.blob(); })
-      .then(b => createImageBitmap(b, { premultiplyAlpha: 'premultiply' }));
+    const tex = this.scene.textures;
+    const bmp = (n: string) => this.blob(n).then(b => createImageBitmap(b, { premultiplyAlpha: 'premultiply' }));
     const image = (n: string) => bmp(`${n}.webp`).then(b => () => { if (!tex.exists(this.k(n))) tex.addImage(this.k(n), b as unknown as HTMLImageElement); });
     const jobs = [image(`sol_${m.tag}`), ...CALQUES.filter(c => m[c]).map(c => image(`${c}_${m.tag}`)),
-      Promise.all([bmp(`decor_${m.tag}.webp`), fetch(url(`decor_${m.tag}.json`)).then(r => r.json())])
+      Promise.all([bmp(`decor_${m.tag}.webp`), this.blob(`decor_${m.tag}.json`).then(b => b.text()).then(t => JSON.parse(t))])
         .then(([b, j]) => () => { if (!tex.exists(this.k(`decor_${m.tag}`))) tex.addAtlas(this.k(`decor_${m.tag}`), b as unknown as HTMLImageElement, j); })];
     Promise.all(jobs).then(adds => { for (const add of adds) this.uploads.push({ m, add }); })
       .catch(e => console.warn('Carte non chargée', m.tag, e))
       .finally(() => this.fetching.delete(m.tag));
+  }
+  /** Fichiers d'une carte (tools/extraction/world_export.py). */
+  private fichiers(m: WorldMapEntry) {
+    return [`sol_${m.tag}.webp`, ...CALQUES.filter(c => m[c]).map(c => `${c}_${m.tag}.webp`), `decor_${m.tag}.webp`, `decor_${m.tag}.json`];
+  }
+  /** Télécharge un fichier une seule fois (préchargé ou demandé par la carte) ; un échec sera retenté. */
+  private blob(n: string) {
+    let b = this.blobs.get(n);
+    if (!b) {
+      b = fetch(v(`${this.dir}/${n}`)).then(r => { if (!r.ok) throw new Error(n); return r.blob(); });
+      b.catch(() => this.blobs.delete(n));
+      this.blobs.set(n, b);
+    }
+    return b;
+  }
+  /** Préchargement (2A) : quand rien d'autre ne se télécharge, une carte de la 2e couronne à la fois, sans l'afficher.
+   *  Les fichiers des cartes lointaines sont oubliés (mémoire). */
+  private prefetch(here: WorldMapEntry) {
+    for (const m of this.wg.world.maps) {
+      if (this.slots.get(m.tag)!.state !== 'none') continue;
+      const d = !!m.inside === !!here.inside ? ring(m, here.x, here.y) : Infinity;
+      if (d > OUBLI_RING) for (const n of this.fichiers(m)) this.blobs.delete(n);
+    }
+    if (here.inside || this.fetching.size) return;
+    for (const m of this.wg.world.maps) {
+      if (m.inside || ring(m, here.x, here.y) !== PREFETCH_RING || this.slots.get(m.tag)!.state !== 'none') continue;
+      const f = this.fichiers(m);
+      if (f.every(n => this.blobs.has(n))) continue;
+      for (const n of f) this.blob(n).catch(() => { /* retenté plus tard */ });
+      return;
+    }
+  }
+
+  /** Arrivée (1A) : la carte du joueur et ses 8 voisines (dedans : la salle seule), et celles que la caméra voit,
+   *  sont posées en entier, décor compris. `p` = part déjà posée, pour la barre de l'écran de chargement. */
+  pret(px: number, py: number): { ok: boolean; p: number } {
+    const here = this.wg.mapAt(px, py);
+    if (!here) return { ok: true, p: 1 };
+    let n = 0, ok = 0;
+    for (const m of this.wg.world.maps) {
+      const voulue = here.inside ? m.tag === here.tag : !m.inside && (ring(m, here.x, here.y) <= LOAD_RING || this.seen(m, here, 0));
+      if (!voulue) continue;
+      const s = this.slots.get(m.tag)!;
+      n++;
+      if (s.state === 'ready' && s.next >= m.decor.length) ok++;
+    }
+    return { ok: ok === n, p: n ? ok / n : 1 };
+  }
+  /** La carte est (presque) dans le champ de la caméra. */
+  private seen(m: WorldMapEntry, here: WorldMapEntry, marge: number) {
+    if (!!m.inside !== !!here.inside) return false;   // dehors on ne voit pas les intérieurs (et inversement)
+    const v = this.scene.cameras.main.worldView, S = GridMap.S, a = this.wg.toScreen(m.sol.x, m.sol.y);
+    return a.x < v.right + marge && a.x + m.sol.w * S > v.x - marge && a.y < v.bottom + marge && a.y + m.sol.h * S > v.y - marge;
   }
   /** Une texture par image vers la carte graphique ; la carte se pose quand toutes ses textures sont là. */
   private upload() {
@@ -174,7 +229,7 @@ export class WorldView {
     }
     s.state = 'ready';
     this.parts?.add(m.tag);
-    this.pump(m.tag === this.center ? Infinity : BUDGET_MS);   // la carte du joueur tout de suite, les voisines au fil des images
+    this.pump(m.tag === this.center ? Infinity : this.presse ? 14 : BUDGET_MS);   // la carte du joueur tout de suite, les voisines au fil des images
   }
   /** Pose le décor des cartes prêtes, dans la limite du budget de temps. */
   private pump(budget = BUDGET_MS) {
