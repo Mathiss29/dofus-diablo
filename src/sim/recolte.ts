@@ -20,6 +20,8 @@ export const RECOLTE = {
   duree: 1.2, portee: 110, repousse: 60,
   /** Chance qu'une ressource repousse dorée, et son multiplicateur. */
   dore: 0.05, multDore: 5,
+  /** 13C : une élite fait briller jusqu'à 3 ressources prêtes dans ce rayon (px) ; tant qu'elle vit, une ressource de sa carte repousse dorée 1 fois sur 3. */
+  rayonElite: 700, doreesElite: 3, doreElite: 0.33,
 };
 /** Quantité récoltée : 1 au niveau de la ressource, puis une de plus tous les 20 niveaux de métier au-dessus (tirée de 1 à ce maximum). */
 export function quantite(rng: Rng, niveauMetier: number, niveauRes: number, dore: boolean) {

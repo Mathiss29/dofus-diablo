@@ -184,9 +184,9 @@ describe('métier Chasseur (choix 6A)', () => {
   it('recette officielle : Bouillon de Chair = 1 Viande Intangible, se mange (+11 PV)', () => {
     const w = world(), p = w.player, i = ITEMS.recipes!.findIndex(r => ITEMS.resources[r.result].name === 'Bouillon de Chair');
     expect(ITEMS.recipes![i].ingredients).toEqual([['16663', 1]]);
-    expect(w.craft(i)).toBe(false);
+    expect(w.craft(i)).toBe(0);
     p.resources['16663'] = 2;
-    expect(w.craft(i)).toBe(true);
+    expect(w.craft(i)).toBe(1);
     expect(p.resources['16663']).toBe(1); expect(p.resources['16670']).toBe(1);
     p.hp = p.maxHp - 50;
     expect(w.eat('16670')).toBe(true);

@@ -639,6 +639,76 @@
       ]
      }
     }
+   ],
+   "ateliers": [
+    {
+     "nom": "Atelier des paysans d'Incarnam",
+     "metiers": [
+      "paysan"
+     ],
+     "cartes": [
+      "-1_-4",
+      "maison_-1_-4"
+     ]
+    },
+    {
+     "nom": "Atelier des mineurs d'Incarnam",
+     "metiers": [
+      "mineur"
+     ],
+     "cartes": [
+      "2_-4",
+      "maison_2_-4"
+     ]
+    },
+    {
+     "nom": "Atelier des alchimistes d'Incarnam",
+     "metiers": [
+      "alchimiste"
+     ],
+     "cartes": [
+      "-2_-2",
+      "maison_-2_-2"
+     ]
+    },
+    {
+     "nom": "Atelier des chasseurs d'Incarnam",
+     "metiers": [
+      "chasseur"
+     ],
+     "cartes": [
+      "-1_-2"
+     ]
+    },
+    {
+     "nom": "Atelier des bricoleurs d'Incarnam",
+     "metiers": [
+      "bricoleur"
+     ],
+     "cartes": [
+      "1_-2"
+     ]
+    },
+    {
+     "nom": "Atelier des bûcherons d'Incarnam",
+     "metiers": [
+      "bucheron"
+     ],
+     "cartes": [
+      "2_-2",
+      "maison_2_-2"
+     ]
+    },
+    {
+     "nom": "Atelier des pêcheurs d'Incarnam",
+     "metiers": [
+      "pecheur"
+     ],
+     "cartes": [
+      "0_-1",
+      "maison_0_-1"
+     ]
+    }
    ]
   }
  },
@@ -811,6 +881,32 @@
       0,
       0
      ]
+    },
+    "842": {
+     "name": "Cache de Kankreblath",
+     "level": 40,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ]
+    },
+    "843": {
+     "name": "Planque des Vilinsekts",
+     "level": 35,
+     "monsters": [
+      "cafarcher",
+      "pyrasite",
+      "mirgrillon",
+      "sakarien"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      2,
+      4
+     ],
+     "interieur": true
     }
    },
    "checkpoints": [
@@ -1096,6 +1192,261 @@
      "nom": "Astrub",
      "verrou": 1,
      "sens": 1
+    },
+    {
+     "a": [
+      "4_-18",
+      288
+     ],
+     "b": [
+      "banque",
+      525
+     ],
+     "nom": "Banque d'Astrub"
+    },
+    {
+     "a": [
+      "6_-18",
+      325
+     ],
+     "b": [
+      "taverne",
+      511
+     ],
+     "nom": "Taverne d'Astrub"
+    },
+    {
+     "a": [
+      "5_-19",
+      397
+     ],
+     "b": [
+      "milice",
+      538
+     ],
+     "nom": "Milice d'Astrub"
+    },
+    {
+     "a": [
+      "4_-19",
+      352
+     ],
+     "b": [
+      "conseil",
+      524
+     ],
+     "nom": "Tour du Conseil"
+    },
+    {
+     "a": [
+      "3_-21",
+      198
+     ],
+     "b": [
+      "atelier_alchimistes",
+      556
+     ],
+     "nom": "Atelier des alchimistes"
+    },
+    {
+     "a": [
+      "5_-20",
+      244
+     ],
+     "b": [
+      "atelier_chasseurs",
+      552
+     ],
+     "nom": "Atelier des chasseurs"
+    },
+    {
+     "a": [
+      "5_-21",
+      344
+     ],
+     "b": [
+      "atelier_paysans",
+      468
+     ],
+     "nom": "Atelier des paysans"
+    },
+    {
+     "a": [
+      "4_-20",
+      231
+     ],
+     "b": [
+      "atelier_pecheurs",
+      468
+     ],
+     "nom": "Atelier des pêcheurs"
+    },
+    {
+     "a": [
+      "7_-16",
+      386
+     ],
+     "b": [
+      "atelier_mineurs",
+      497
+     ],
+     "nom": "Atelier des mineurs et des forgerons"
+    },
+    {
+     "a": [
+      "3_-15",
+      413
+     ],
+     "b": [
+      "atelier_bricoleurs",
+      412
+     ],
+     "nom": "Atelier des bricoleurs"
+    },
+    {
+     "a": [
+      "2_-16",
+      260
+     ],
+     "b": [
+      "atelier_bucherons",
+      527
+     ],
+     "nom": "Atelier des bûcherons et des sculpteurs"
+    },
+    {
+     "a": [
+      "6_-21",
+      255
+     ],
+     "b": [
+      "planque_6_-21",
+      548
+     ],
+     "nom": "Planque des Vilinsekts"
+    },
+    {
+     "a": [
+      "4_-19",
+      313
+     ],
+     "b": [
+      "planque_4_-19",
+      556
+     ],
+     "nom": "Planque des Vilinsekts"
+    },
+    {
+     "a": [
+      "1_-16",
+      223
+     ],
+     "b": [
+      "planque_1_-16",
+      549
+     ],
+     "nom": "Planque des Vilinsekts"
+    },
+    {
+     "a": [
+      "3_-17",
+      290
+     ],
+     "b": [
+      "cache_0",
+      552
+     ],
+     "nom": "Cache de Kankreblath",
+     "cle": "15991"
+    },
+    {
+     "a": [
+      "cache_0",
+      273
+     ],
+     "b": [
+      "cache_1",
+      548
+     ],
+     "nom": "Cache de Kankreblath"
+    },
+    {
+     "a": [
+      "cache_1",
+      203
+     ],
+     "b": [
+      "cache_2",
+      552
+     ],
+     "nom": "Cache de Kankreblath",
+     "verrou": 1,
+     "sens": 1
+    },
+    {
+     "a": [
+      "cache_2",
+      300
+     ],
+     "b": [
+      "cache_3",
+      549
+     ],
+     "nom": "Cache de Kankreblath",
+     "verrou": 1,
+     "sens": 1
+    },
+    {
+     "a": [
+      "cache_3",
+      13
+     ],
+     "b": [
+      "cache_4",
+      549
+     ],
+     "nom": "Cache de Kankreblath",
+     "verrou": 1,
+     "sens": 1
+    },
+    {
+     "a": [
+      "cache_4",
+      220
+     ],
+     "b": [
+      "cache_5",
+      555
+     ],
+     "nom": "Cache de Kankreblath",
+     "verrou": 1,
+     "sens": 1
+    },
+    {
+     "a": [
+      "cache_5",
+      162
+     ],
+     "b": [
+      "cache_6",
+      552
+     ],
+     "nom": "Cache de Kankreblath",
+     "verrou": 1,
+     "sens": 1
+    },
+    {
+     "a": [
+      "cache_6",
+      189
+     ],
+     "b": [
+      "cache_7",
+      552
+     ],
+     "nom": "Cache de Kankreblath",
+     "verrou": 1,
+     "sens": 1
     }
    ],
    "donjons": [
@@ -1315,6 +1666,175 @@
        ]
       ]
      }
+    },
+    {
+     "nom": "Cache de Kankreblath",
+     "salles": {
+      "cache_1": [
+       [
+        "cafarcher",
+        "pyrasite",
+        "mirgrillon",
+        "sakarien"
+       ],
+       [
+        "pyrasite",
+        "cafarcher",
+        "mirgrillon"
+       ]
+      ],
+      "cache_2": [
+       [
+        "sakarien",
+        "mirgrillon",
+        "cafarcher",
+        "pyrasite"
+       ],
+       [
+        "mirgrillon",
+        "sakarien",
+        "cafarcher"
+       ]
+      ],
+      "cache_3": [
+       [
+        "ceglumen",
+        "cafarcher",
+        "pyrasite",
+        "mirgrillon"
+       ],
+       [
+        "sakarien",
+        "pyrasite",
+        "cafarcher",
+        "mirgrillon"
+       ]
+      ],
+      "cache_4": [
+       [
+        "ceglumen",
+        "sakarien",
+        "mirgrillon",
+        "pyrasite"
+       ],
+       [
+        "cafarcher",
+        "cafarcher",
+        "sakarien",
+        "pyrasite"
+       ]
+      ],
+      "cache_5": [
+       [
+        "ceglumen",
+        "ceglumen",
+        "sakarien",
+        "cafarcher"
+       ],
+       [
+        "mirgrillon",
+        "pyrasite",
+        "sakarien",
+        "ceglumen"
+       ]
+      ],
+      "cache_6": [
+       [
+        "ceglumen",
+        "sakarien",
+        "pyrasite",
+        "mirgrillon"
+       ],
+       [
+        "ceglumen",
+        "cafarcher",
+        "mirgrillon",
+        "sakarien"
+       ]
+      ],
+      "cache_7": [
+       [
+        "kankreblath",
+        "ceglumen",
+        "sakarien",
+        "pyrasite"
+       ]
+      ]
+     }
+    }
+   ],
+   "ateliers": [
+    {
+     "nom": "Atelier des alchimistes d'Astrub",
+     "metiers": [
+      "alchimiste"
+     ],
+     "cartes": [
+      "atelier_alchimistes",
+      "3_-21"
+     ]
+    },
+    {
+     "nom": "Atelier des chasseurs d'Astrub",
+     "metiers": [
+      "chasseur"
+     ],
+     "cartes": [
+      "atelier_chasseurs",
+      "5_-20"
+     ]
+    },
+    {
+     "nom": "Atelier des paysans d'Astrub",
+     "metiers": [
+      "paysan"
+     ],
+     "cartes": [
+      "atelier_paysans",
+      "5_-21",
+      "7_-24"
+     ]
+    },
+    {
+     "nom": "Atelier des pêcheurs d'Astrub",
+     "metiers": [
+      "pecheur"
+     ],
+     "cartes": [
+      "atelier_pecheurs",
+      "4_-20"
+     ]
+    },
+    {
+     "nom": "Atelier des mineurs d'Astrub",
+     "metiers": [
+      "mineur"
+     ],
+     "cartes": [
+      "atelier_mineurs",
+      "7_-16"
+     ]
+    },
+    {
+     "nom": "Atelier des bricoleurs d'Astrub",
+     "metiers": [
+      "bricoleur"
+     ],
+     "cartes": [
+      "atelier_bricoleurs",
+      "3_-15"
+     ]
+    },
+    {
+     "nom": "Atelier des bûcherons d'Astrub",
+     "metiers": [
+      "bucheron"
+     ],
+     "cartes": [
+      "atelier_bucherons",
+      "2_-16",
+      "0_-25"
+     ]
     }
    ]
   }

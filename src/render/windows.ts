@@ -225,7 +225,7 @@ const CSS = `
 .dw .note.ok{border-color:#4c6e17;color:#d6f57a}
 .dw .job .ings{display:flex;gap:8px;flex-wrap:wrap;font-size:12px}.dw .job .ing{display:flex;align-items:center;gap:3px}.dw .job .ing .ic{width:26px;height:26px}.dw .job .ing.lack{opacity:.45}
 .dw .rec{display:grid;grid-template-columns:52px 1fr auto;gap:10px;align-items:center;padding:8px;border:1px solid #34322b;border-radius:4px;background:#26251f}
-.dw .rec .ic{width:48px;height:48px}.dw .rec .ings{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;font-size:12px}
+.dw .rec .cb{display:flex;flex-direction:column;gap:4px;align-items:stretch;text-align:center}.dw .rec .ic{width:48px;height:48px}.dw .rec .ings{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;font-size:12px}
 .dw .rec .ing{display:flex;align-items:center;gap:3px}.dw .rec .ing .ic{width:26px;height:26px}
 .dw .rec .lack{color:#e0625a}.dw .rec .have{color:#9ad15a}
 .dw .btn{cursor:pointer;background:linear-gradient(#6f9a2a,#4c6e17);border:1px solid #b9e54b;color:#fff;border-radius:3px;padding:6px 12px;font-weight:bold}
@@ -562,21 +562,28 @@ export class Windows {
         : k !== 'chasseur' ? '' : p.huntingWeapon
         ? `<div class="note ok">Arme de chasse en main : les monstres peuvent lâcher leurs viandes.</div>`
         : `<div class="note">Équipe une arme avec l'effet « Arme de chasse » (Couteau de Chasse, Arc de Chasse…) pour que les monstres lâchent leurs viandes.</div>`;
+      // ateliers officiels (10A) : on fabrique à l'atelier du métier ; Fabriquer ×N (10B)
+      const ici = this.world.atelierIci(k), ou = this.world.ateliersDe(k).map(a => a.nom);
+      const atelier = ici === null && R.some(r => r.metier === k)
+        ? `<div class="note">Fabrication à l'atelier : ${[...new Set(ou)].join(', ') || 'aucun atelier dans cette zone'}.</div>`
+        : ici ? `<div class="note ok">${ici.nom} : tu peux fabriquer ici.</div>` : '';
       const recs = R.map((r, i) => ({ r, i })).filter(({ r }) => r.metier === k).map(({ r, i }) => {
-        const out = res(r.result), lvlOk = st.level >= r.level;
-        const ok = lvlOk && r.ingredients.every(([id, q]) => (p.resources[id] ?? 0) >= q);
+        const out = res(r.result), lvlOk = st.level >= r.level, max = this.world.craftMax(i);
+        const ok = lvlOk && max > 0 && ici !== null;
         const ings = r.ingredients.map(([id, q]) => { const have = p.resources[id] ?? 0;
           return `<span class="ing" title="${res(id)?.name ?? id}">${iconHtml(res(id)?.icon ?? 0)}<span class="${have >= q ? 'have' : 'lack'}">${have}/${q}</span> ${res(id)?.name ?? ''}</span>`; }).join('');
         return `<div class="rec">${iconHtml(out?.icon ?? 0)}<div><b>${out?.name ?? r.result}</b> <span class="hint">niveau ${r.level}${out?.soin ? ` · +${out.soin} PV` : ''}</span>
           ${lvlOk ? '' : `<div class="lack" style="font-size:12px">${M[k].name} niveau ${r.level} requis</div>`}<div class="ings">${ings}</div></div>
-          <span class="btn ${ok ? '' : 'off'}" data-craft="${i}">Fabriquer</span></div>`;
+          <span class="cb"><span class="btn ${ok ? '' : 'off'}" data-craft="${i}" title="Maj+clic : tout fabriquer">Fabriquer</span>${ok && max > 1 ? `<span class="btn" data-craft="${i}" data-n="${max}" title="Avec tout ce que tu as">×${max}</span>` : ''}</span></div>`;
       }).join('');
       return `<div class="mh"><img src="assets/ui/metier_${k}.png" alt=""><div><b>${m.name}</b> · niveau ${st.level}
         <div class="bar"><i style="width:${Math.round((st.xp / need) * 100)}%"></i></div><span class="hint">${st.xp} / ${need} XP · ${k === 'chasseur' ? 'une viande ramassée ou une recette faite' : recolte.length ? 'chaque récolte' : 'chaque objet fabriqué'} fait monter le métier</span></div></div>
-        ${weapon}${recs}`;
+        ${weapon}${atelier}${recs}`;
     }).join('');
     w.innerHTML = `${this.title('Métiers', 'job')}<div class="in">${jobs || '<div class="hint">Aucun métier.</div>'}</div>`;
-    w.querySelectorAll<HTMLElement>('[data-craft]').forEach(e => e.addEventListener('click', () => { this.world.craft(+e.dataset.craft!); this.changed(); }));
+    w.querySelectorAll<HTMLElement>('[data-craft]').forEach(e => e.addEventListener('click', ev => {
+      const i = +e.dataset.craft!; this.world.craft(i, e.dataset.n ? +e.dataset.n : ev.shiftKey ? this.world.craftMax(i) : 1); this.changed();
+    }));
   }
 
   /** Journal des quêtes (fenêtre Quêtes de Dofus 3, 10A+10B) : en cours et terminées à gauche, détail à droite

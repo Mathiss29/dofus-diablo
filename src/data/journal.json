@@ -42,7 +42,9 @@
           "Ressources à récolter : bulle au survol avec le métier et le niveau requis, et le curseur de l'outil (faux, hache, pioche, filet) comme dans Dofus.",
           "Coiffes, capes et boucliers se voient sur ton personnage ; les cheveux se rangent sous la coiffe.",
           "Apparats officiels : près de 700 coiffes et capes chez Emp contre des Pépites, à porter dans la case Apparence de l'inventaire (ou pour cacher un objet). Garde-robe gratuite chez Lykhen et chez Emp pour changer de tête et de couleurs.",
-          "Les vraies ressources à récolter dans les champs, les forêts et les mines d'Astrub et d'Incarnam (blé, arbres, minerais, ortie, remous de pêche), avec leur animation de coupe."
+          "Les vraies ressources à récolter dans les champs, les forêts et les mines d'Astrub et d'Incarnam (blé, arbres, minerais, ortie, remous de pêche), avec leur animation de coupe.",
+          "Ateliers officiels : on fabrique dans l'atelier de son métier (à Astrub et Incarnam), avec un bouton ×N pour tout fabriquer d'un coup. 37 recettes officielles en plus : pains, potions, poissons, viandes, alliages, planches.",
+          "« Quoi de neuf ? » au lancement : les nouveautés du dernier carnet en cinq lignes."
         ],
         "Le monde": [
           "Crypte de Kardorim, avec le vrai Sergent Chafer.",
@@ -53,7 +55,10 @@
           "Tour de la Milice avec son rez-de-chaussée et son escalier.",
           "Astrub s'ouvre : 359 cartes, les monstres officiels de chaque sous-zone, et le portail d'Incarnam qui y descend.",
           "Trois donjons d'Astrub : la Grange du Tournesol Affamé, le Château Ensablé et la Cour du Bouftou Royal. Chacun demande sa clé officielle, prise à l'entrée (Emp en vend).",
-          "Les monstres d'Astrub lâchent leurs ressources officielles : pétales, laines, cornes… de quoi fabriquer les clés."
+          "Les monstres d'Astrub lâchent leurs ressources officielles : pétales, laines, cornes… de quoi fabriquer les clés.",
+          "La Cité d'Astrub s'ouvre : Banque, Taverne, Milice, Tour du Conseil et sept ateliers se visitent.",
+          "Les Vilinsekts ont envahi trois caves de la Cité, et Kankreblath attend dans sa Cache (donjon niveau 40, sa clé se fabrique au Bricoleur ou s'achète chez Emp).",
+          "Une élite fait briller les ressources autour d'elle : elles repoussent plus souvent dorées tant qu'elle vit."
         ],
         "Combat": [
           "Pas Chassé du Crâ rééquilibré : il ne s'enchaîne plus en boucle, relance officielle de 9 s (6 s dès le niveau 72).",
