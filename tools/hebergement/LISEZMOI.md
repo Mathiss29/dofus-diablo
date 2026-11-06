@@ -6,6 +6,19 @@
 - `src/render/assetUrl.ts` choisit l'adresse : avec `VITE_ASSETS_URL` au build, les fichiers lourds viennent de R2 ; sans, tout est local.
 - `src/data/fichiers-lourds.json` donne l'empreinte de chaque fichier lourd (`?v=…`) : un joueur ne retélécharge que ce qui a changé.
 
+## État (6 nov. 2026)
+
+Les 2 465 fichiers lourds sont sur R2 et **ne sont plus dans git** (`.gitignore`, sans réécrire l'historique).
+Le déploiement Pages construit avec `VITE_ASSETS_URL=https://assets.diablofus.com` (`.github/workflows/pages.yml`).
+Copie de secours au moment de la bascule : `/mnt/project-files/assets-jeu/fichiers-lourds-735da2c.tar`.
+
+## Clone neuf (jouer ou tester en local)
+
+```
+node tools/hebergement/envoi.mjs --recuperer   # télécharge depuis R2 les fichiers lourds absents
+```
+Sans ces fichiers, `npm test` et `npm run build` passent quand même ; seul le jeu lancé en local sans `VITE_ASSETS_URL` n'a pas d'images.
+
 ## Après un export (cartes, sprites, sons)
 
 ```

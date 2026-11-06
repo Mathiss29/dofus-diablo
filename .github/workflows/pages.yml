@@ -25,6 +25,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+        env:
+          # fichiers lourds servis par Cloudflare R2 (tools/hebergement/LISEZMOI.md)
+          VITE_ASSETS_URL: https://assets.diablofus.com
       - uses: actions/configure-pages@v5
         with:
           enablement: true
