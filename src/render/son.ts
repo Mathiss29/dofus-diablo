@@ -24,6 +24,8 @@ type Manifest = {
   monstres: Record<string, { attaque: string[]; hit: string[]; mort: string[] }>; impacts: string[];
   /** Pièces qui tombent (AMB_Loc_CoinDrop) : kamas au sol et ramassés. */
   kamas?: string[];
+  /** Coups des animations de récolte (maquette Armes 9A) : par geste officiel (AnimFaucher, AnimHache…). */
+  recolte?: Record<string, string[]>;
 };
 export const MANIFESTE = SONS as Manifest;
 const DOSSIER = 'assets/son/';

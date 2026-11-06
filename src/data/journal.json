@@ -47,7 +47,8 @@
           "Où les trouver : Pioute chez les Pious, Tofüm chez les Tofus, Jeune Boufton Céleste chez les Bouftous d'Incarnam, Fotome sur Kardorim, Chienchien en récompense du succès « Dans les nuages ». Plus de 100 familiers d'apparat chez Emp.",
           "Voir à travers le décor : le bâtiment ou l'arbre qui cache ton perso s'efface en fondu, et les monstres cachés apparaissent en silhouette rouge (case dans Options > Affichage).",
           "Ateliers officiels : on fabrique dans l'atelier de son métier (à Astrub et Incarnam), avec un bouton ×N pour tout fabriquer d'un coup. 37 recettes officielles en plus : pains, potions, poissons, viandes, alliages, planches.",
-          "« Quoi de neuf ? » au lancement : les nouveautés du dernier carnet en cinq lignes."
+          "« Quoi de neuf ? » au lancement : les nouveautés du dernier carnet en cinq lignes.",
+          "Récolte animée : on fauche, on coupe, on pioche, on cueille et on pêche avec les gestes et les sons officiels. La Lance est prête pour les prochains niveaux d'objets."
         ],
         "Le monde": [
           "Crypte de Kardorim, avec le vrai Sergent Chafer.",
@@ -74,7 +75,8 @@
           "+1 PA au niveau 100, comme dans Dofus.",
           "Les monstres tapent selon leur rang et leur niveau (ceux d'Astrub tapaient tous 14), et les groupes t'encerclent au lieu de faire la queue.",
           "Les boss ont une attaque signature annoncée au sol (Dégraissage de Mob l'Éponge en vraie ligne de 8 cases, Kankroulahoup…), deviennent Furieux à mi-vie et font leur entrée ; un gros coup reçu rougit les bords de l'écran.",
-          "Kankreblath lance enfin sa Blathération, son grand trait qui traverse la salle."
+          "Kankreblath lance enfin sa Blathération, son grand trait qui traverse la salle.",
+          "Chaque arme se voit en main pendant l'attaque, avec son geste officiel accéléré par la Vitesse d'attaque ; l'arc tire une vraie flèche qui se plante au sol quand elle rate, et chaque coup laisse un éclat de l'élément de l'arme."
         ],
         "Corrections": [
           "La Cape de l'Intrépide portée montre enfin son vrai dessin (cape jaune à l'emblème vert) et plus une autre cape.",

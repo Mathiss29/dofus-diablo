@@ -25,8 +25,8 @@ I, RI = table('items'); SETS, RS = table('itemsets'); M, _ = table('monsters')
 
 # typeId Dofus -> emplacement du jeu
 SLOTS = {1: 'amulette', 9: 'anneau', 10: 'ceinture', 11: 'bottes', 16: 'chapeau', 17: 'cape', 82: 'bouclier',
-         2: 'arme', 3: 'arme', 4: 'arme', 5: 'arme', 6: 'arme', 7: 'arme', 8: 'arme', 19: 'arme', 22: 'arme'}
-WEAPON = {2: 'Arc', 3: 'Baguette', 4: 'Bâton', 5: 'Dague', 6: 'Épée', 7: 'Marteau', 8: 'Pelle', 19: 'Hache', 22: 'Faux'}
+         2: 'arme', 3: 'arme', 4: 'arme', 5: 'arme', 6: 'arme', 7: 'arme', 8: 'arme', 19: 'arme', 22: 'arme', 271: 'arme'}
+WEAPON = {2: 'Arc', 3: 'Baguette', 4: 'Bâton', 5: 'Dague', 6: 'Épée', 7: 'Marteau', 8: 'Pelle', 19: 'Hache', 22: 'Faux', 271: 'Lance'}
 # caractéristique officielle (characteristics.keyword) -> caractéristique du jeu (choix 10C : toutes les caracs de Dofus)
 CARAC = {'vitality': 'vitalite', 'wisdom': 'sagesse', 'strength': 'force', 'intelligence': 'intelligence', 'chance': 'chance',
          'agility': 'agilite', 'damagePercent': 'puissance', 'allDamageBonus': 'dommages', 'criticalHit': 'critique', 'healBonus': 'soins',

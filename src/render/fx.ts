@@ -42,6 +42,9 @@ export class FX {
   private rings: Ring[] = [];
   /** Effets officiels des sorts (planches Dofus 3). */
   readonly official: SpellFx;
+  /** Armes 4B : flèches de l'arc (dessin officiel de l'animation) en vol, et celles plantées au sol quand elles ratent. */
+  private fleches = new Map<number, { img: Phaser.GameObjects.Image; a: Projectile }>();
+  private plantees: { img: Phaser.GameObjects.Image; life: number }[] = [];
 
   constructor(private scene: Phaser.Scene, private colorOf: (monster: string) => number) {
     this.official = new SpellFx(scene);
@@ -56,6 +59,8 @@ export class FX {
         this.official.cast(e.id, e.x, e.y, e.facing);
         break;
       case 'spell': {
+        // Armes 3B : la traînée officielle est dans l'animation d'arme, on ne dessine plus la nôtre (sauf l'éclat de la Baguette)
+        if (e.id === 'arme' && e.fx !== 'burst') break;
         const col = ELEMENT_COLORS[e.element], w = e.big ? 16 : 10;
         // Effet officiel du sort (8A) : sur la zone visée et sur le lanceur ; remplace la forme dessinée
         const reach = e.fx === 'arc' ? e.size * 0.55 : e.fx === 'line' ? e.size * 0.5 : 0;
@@ -96,6 +101,11 @@ export class FX {
           // choix 2A : couleur de l'élément ; critique = plus gros, contour doré
           this.number(e.x, e.y, e.z, e.amount, e.crit, DMG_COLORS[e.element ?? 'neutre'] ?? '#ffffff', e.crit ? '#8a5a00' : '#1a0f0a');
           this.particles(e.x, e.y, e.z / 2, e.crit ? 14 : 8, e.crit ? 0xffd23f : 0xffffff, 240, 0.35, 3, 160);
+          if (e.eclat) {   // Armes 3B : éclat de l'élément de l'arme sur chaque monstre touché
+            const col = ELEMENT_COLORS[e.element ?? 'neutre'];
+            this.ring(e.x, e.y, 6, e.crit ? 46 : 34, col, 0.22, e.crit ? 8 : 6);
+            this.particles(e.x, e.y, e.z / 2, e.crit ? 12 : 7, col, 260, 0.3, 3, 180);
+          }
         } else {
           this.number(e.x, e.y, e.z, e.amount, false, '#ff6b5b');
           this.particles(e.x, e.y, 20, 10, 0xd2412f, 200, 0.4);
@@ -151,6 +161,35 @@ export class FX {
     this.trails = this.trails.filter(t => t.life > 0);
     for (const r of this.rings) r.life -= dt;
     this.rings = this.rings.filter(r => r.life > 0);
+    for (const f of this.plantees) { f.life -= dt; f.img.setAlpha(Math.min(1, f.life / 0.3)); if (f.life <= 0) f.img.destroy(); }
+    this.plantees = this.plantees.filter(f => f.life > 0);
+  }
+
+  /** Flèches de l'arc : image officielle tournée dans le sens du vol ; une flèche qui n'a rien touché se plante un instant. */
+  private dessinerFleches(arrows: readonly Projectile[]) {
+    const vues = new Set<number>();
+    for (const a of arrows) {
+      if (!a.fleche) continue;
+      vues.add(a.id);
+      let f = this.fleches.get(a.id);
+      if (!f) {
+        if (!this.scene.textures.exists('fleche_arme')) continue;
+        f = { img: this.scene.add.image(0, 0, 'fleche_arme').setOrigin(0.85, 0.5).setScale(0.28), a };
+        this.fleches.set(a.id, f);
+      }
+      f.a = a;
+      const h = ISO.toScreen(a.x, a.y, 34), t = ISO.toScreen(a.x + a.dx * 10, a.y + a.dy * 10, 34);
+      f.img.setPosition(h.x, h.y).setRotation(Math.atan2(t.y - h.y, t.x - h.x)).setDepth(ISO.toScreen(a.x, a.y).y + 2);
+    }
+    for (const [id, f] of this.fleches) {
+      if (vues.has(id)) continue;
+      this.fleches.delete(id);
+      if (f.a.touched.size) { f.img.destroy(); continue; }
+      // ratée : pointe dans le sol, un peu inclinée, puis s'efface
+      const a = f.a, h = ISO.toScreen(a.x, a.y, 6), r = f.img.rotation;
+      f.img.setPosition(h.x, h.y).setRotation(r + (Math.cos(r) >= 0 ? 0.5 : -0.5)).setDepth(ISO.toScreen(a.x, a.y).y);
+      this.plantees.push({ img: f.img, life: 0.8 });
+    }
   }
 
   /** Aperçu d'un sort avant de le lancer (maquette Aperçu : formes lisses façon Diablo, 4B) : cercle de portée bleu,
@@ -189,7 +228,9 @@ export class FX {
     g.clear(); top.clear();
     // Flèches en vol : le projectile officiel s'il existe, sinon un trait lumineux de la couleur de l'élément
     const official = this.official.projectiles(arrows);
+    this.dessinerFleches(arrows);
     for (const a of arrows) {
+      if (a.fleche && this.fleches.has(a.id)) continue;
       if (official.has(a.id)) { if (Math.random() < 0.25) this.particles(a.x, a.y, 34, 1, ELEMENT_COLORS[a.hit.element ?? 'neutre'], 30, 0.2, 2, 30); continue; }
       const col = ELEMENT_COLORS[a.hit.element ?? 'neutre'];
       if (a.hostile) {   // boule d'un monstre : cerclée de rouge pour qu'on la repère et qu'on l'esquive

@@ -19,7 +19,9 @@ export type SimEvent =
   | { k: 'spellFx'; id: string; x: number; y: number; facing: number }
   /** Retrait ou bonus de PA / PM / Puissance (texte flottant façon Dofus). */
   | { k: 'status'; x: number; y: number; text: string; color: string }
-  | { k: 'hit'; target: 'monster' | 'player'; id?: number; x: number; y: number; z: number; amount: number; crit: boolean; element?: Element }
+  | { k: 'hit'; target: 'monster' | 'player'; id?: number; x: number; y: number; z: number; amount: number; crit: boolean; element?: Element;
+      /** Coup d'arme : éclat de la couleur de l'élément (maquette Armes 3B). */
+      eclat?: boolean }
   /** XP gagnée en tuant un monstre (choix 1A : chiffre au-dessus de lui). */
   | { k: 'xp'; x: number; y: number; z: number; n: number }
   | { k: 'kill'; x: number; y: number; radius: number; monster: string }

@@ -19,7 +19,9 @@ interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: nu
   /** Dommages multipliés sur les invocations (Concentration), et aussi sur les élites et les boss (Rage pleine). */
   vsSummon?: number; vsElite?: boolean;
   /** Dommages de poussée officiels si la cible heurte un obstacle ou un monstre. */
-  pushDmg?: boolean }
+  pushDmg?: boolean;
+  /** Coup d'arme (maquette Armes 3B) : l'affichage fait jaillir un éclat de la couleur de l'élément. */
+  eclat?: boolean }
 /** Butin au sol (choix 1C 2D 6A) : équipements et kamas seulement. Les Communs et les kamas filent vers le joueur
  *  qui passe près ; Rare et plus se ramassent d'un clic. Les ressources vont directement dans le sac. */
 export interface Drop { uid: number; x: number; y: number; item?: Item; kamas?: number; t: number; warned?: boolean;
@@ -29,6 +31,8 @@ export interface Drop { uid: number; x: number; y: number; item?: Item; kamas?: 
 /** Flèche en vol (Crâ). */
 export interface Projectile { id: number; spell: string; x: number; y: number; dx: number; dy: number; left: number; speed: number; width: number;
   explode: number; pierce: boolean; hit: HitDef; stun: number; touched: Set<number>;
+  /** Flèche officielle de l'Arc (maquette Armes 4B) : dessinée par l'affichage, plantée au sol si elle manque. */
+  fleche?: boolean;
   /** Tiré par un monstre : touche le joueur, pas les monstres. */
   hostile?: boolean;
   /** Sort officiel du monstre qui l'a lancé (ses effets s'appliquent à l'impact). */
@@ -510,7 +514,7 @@ export class World {
   // --- Flèches ---------------------------------------------------------------
   shoot(x: number, y: number, facing: number, hz: Extract<HitZone, { shape: 'projectile' }>, hit: HitDef, stun: number, area: number, spell: string) {
     this.projectiles.push({ id: this.nextId++, spell, x, y, dx: Math.cos(facing), dy: Math.sin(facing), left: hz.range + this.player.stat('portee') * CASE, speed: hz.speed,
-      width: hz.width, explode: (hz.explode ?? 0) * area, pierce: !!hz.pierce, hit, stun, touched: new Set() });
+      width: hz.width, explode: (hz.explode ?? 0) * area, pierce: !!hz.pierce, hit, stun, touched: new Set(), fleche: hz.fleche || undefined });
   }
   /** Projectile d'un monstre vers le joueur. */
   /** Projectile d'un sort de monstre (missileGfxId dans ses données), lancé vers le joueur. */
@@ -623,6 +627,7 @@ export class World {
       } else if (end && pr.explode) this.hitCircle(pr.x, pr.y, pr.explode, pr.hit, pr.stun);
       if (end) {
         pr.left = 0;
+        if (pr.fleche) continue;   // la flèche se plante ou disparaît dans le monstre : pas d'explosion
         this.emit({ k: 'spell', fx: 'burst', id: pr.spell, x: pr.x, y: pr.y, facing: Math.atan2(pr.dy, pr.dx), size: pr.explode || 26, arc: 0,
           element: pr.hit.element ?? 'neutre', big: pr.explode > 0, boosted: false });
       }
@@ -681,7 +686,7 @@ export class World {
       if (def.pushDmg && kb > 0) this.pushDamage(m, a, kb / 7.13);
       if (!m.def.boss) m.stun = Math.max(m.stun, stun || 0.12);   // petit vacillement : interrompt les télégraphes
       else if (stun) m.stun = Math.max(m.stun, stun * 0.3);
-      this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: dmg, crit, element: el });
+      this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: dmg, crit, element: el, eclat: def.eclat });
       if (n <= 3) p.rageOnHit(Math.hypot(m.x - p.x, m.y - p.y), this);
       if (def.lifesteal) p.hp = Math.min(p.maxHp, p.hp + Math.round(dmg * def.lifesteal));   // la Rage monte avec les coups portés (3 cibles max par coup)
       if (m.hp <= 0) this.killMonster(m);
@@ -899,6 +904,9 @@ export class World {
       const g = this.enRecolte, r = this.recoltes.find(x => x.id === g.id);
       if (!r || r.repousse > 0 || p.hp < g.hp) { this.enRecolte = null; this.emit({ k: 'recolteStop' }); return; }
       p.stopMove(); g.t += dt;
+      // Maquette Armes 9A : le perso joue l'animation officielle du métier (faucher, couper, piocher, cueillir, pêcher)
+      const geste = R.ressources[r.item]?.anim;
+      if (geste) p.setAnim(`r_${geste}`, g.t / RECOLTE.duree);
       if (g.t < RECOLTE.duree) return;
       this.enRecolte = null;
       const def = R.ressources[r.item], lv = Math.max(1, p.metierLevel(def.metier));
@@ -924,6 +932,7 @@ export class World {
     p.stopMove();
     p.facing = Math.atan2(r.y - p.y, r.x - p.x);
     this.enRecolte = { id: r.id, t: 0, hp: p.hp };
+    if (def.anim) p.setAnim(`r_${def.anim}`, 0);
     this.emit({ k: 'recolteDebut', id: r.id, duree: RECOLTE.duree });
   }
 
