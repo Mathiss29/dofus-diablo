@@ -23,6 +23,30 @@ const FILTRES = ['Toutes', 'Dégâts', 'Tank', 'Soins', 'Invocation'];
 const A = 'assets/accueil';
 const img = (f: string) => v(`${A}/${f}`);
 const esc = (s: string) => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+/** Planche d'un gros perso : une bande (anciennes planches) ou une grille (planches fines, voir tools/extraction/accueil_grille.py).
+ *  Le nombre de colonnes se déduit de la taille de l'image et du format de la case (celui de l'élément). */
+const grilles = new Map<string, { cols: number; rows: number } | null>();
+function grille(h: HTMLElement, n: number) {
+  const src = h.dataset.src!, k = `${src}|${n}`;
+  if (grilles.has(k)) return grilles.get(k)!;
+  grilles.set(k, null);
+  const im = new Image();
+  im.onload = () => {
+    if (!h.offsetWidth || !h.offsetHeight) { grilles.delete(k); return; }   // pas encore affiché : on réessaiera
+    const ratio = h.offsetWidth / h.offsetHeight;
+    let best = { cols: n, rows: 1 }, err = Infinity;
+    for (let rows = 1; rows <= n; rows++) {
+      // colonnes prédites par la taille de l'image ; la dernière ligne peut être incomplète
+      const p = im.naturalWidth * rows / (im.naturalHeight * ratio), cols = Math.max(1, Math.round(p));
+      if (cols * rows < n || cols * (rows - 1) >= n) continue;
+      const e = Math.abs(p - cols) / cols;
+      if (e < err) { err = e; best = { cols, rows }; }
+    }
+    grilles.set(k, best);
+  };
+  im.src = src;
+  return null;
+}
 const tete = (c: ClasseDofus, sexe: 'm' | 'f') => img(`h_${c.id}${sexe === 'm' ? 0 : 1}.png`);
 const classe = (cle: string) => CLASSES.find(c => c.cle === cle) ?? CLASSES[0];
 
@@ -121,7 +145,11 @@ export class Accueil {
       if (t - last < 40) return;   // 25 images par seconde, comme les animations de Dofus
       last = t; f++;
       this.root.querySelectorAll<HTMLElement>('.hero').forEach(h => {
-        const n = +h.dataset.n!; h.style.backgroundPosition = `${((f % n) / (n - 1)) * 100}% 0`;
+        const n = +h.dataset.n!, g = grille(h, n);
+        if (!g) return;
+        const i = f % n, c = i % g.cols, l = Math.floor(i / g.cols);
+        h.style.backgroundSize = `${g.cols * 100}% ${g.rows * 100}%`;
+        h.style.backgroundPosition = `${g.cols > 1 ? (c / (g.cols - 1)) * 100 : 0}% ${g.rows > 1 ? (l / (g.rows - 1)) * 100 : 0}%`;
       });
     };
     if (!matchMedia('(prefers-reduced-motion: reduce)').matches) this.anim = requestAnimationFrame(tick);
@@ -212,7 +240,7 @@ export class Accueil {
     </div>
     <img src="${img('lumiere.png')}" alt="" class="abs" style="left:calc(50% - 7.5*var(--u));top:calc(6*var(--u));width:calc(15*var(--u));opacity:.7;mix-blend-mode:screen">
     <img src="assets/ui/socle.png" alt="" class="abs" style="left:calc(50% - 10.5*var(--u));top:calc(29.5*var(--u));width:calc(21*var(--u));filter:sepia(.55) saturate(1.3) brightness(.95) drop-shadow(0 0 calc(1.2*var(--u)) #8fe8ff99)">
-    ${jouable ? `<div class="abs hero" data-n="${pose[2]}" role="img" aria-label="${esc(c.nom)}" style="left:calc(50% - 8.85*var(--u));top:calc(13.4*var(--u));width:calc(${s.pose === 'attaque' ? 28.1 : 17.7}*var(--u));height:calc(24*var(--u));background-image:url(${img(`${c.cle}_${s.sexe}_${s.pose}.webp`)});background-size:${pose[2] * 100}% 100%"></div>`
+    ${jouable ? `<div class="abs hero" data-n="${pose[2]}" role="img" aria-label="${esc(c.nom)}" style="left:calc(50% - 8.85*var(--u));top:calc(13.4*var(--u));width:calc(${s.pose === 'attaque' ? 28.1 : 17.7}*var(--u));height:calc(24*var(--u));background-image:url(${img(`${c.cle}_${s.sexe}_${s.pose}.webp`)});background-size:${pose[2] * 100}% 100%" data-src="${img(`${c.cle}_${s.sexe}_${s.pose}.webp`)}"></div>`
       : `<img src="${tete(c, s.sexe)}" alt="" class="abs" style="left:calc(50% - 6*var(--u));top:calc(15*var(--u));width:calc(12*var(--u));filter:drop-shadow(0 calc(.5*var(--u)) calc(1*var(--u)) #000)">
       <div class="abs" style="left:50%;top:calc(27*var(--u));transform:translateX(-50%);font-family:var(--disp);font-size:calc(1.5*var(--u));color:#e0925a;-webkit-text-stroke:calc(.1*var(--u)) #2a1407;paint-order:stroke fill;white-space:nowrap">${PLUS_TARD[c.cle] ?? 'Jouable plus tard'}</div>`}
     <div class="abs card" style="right:calc(2*var(--u));top:calc(4.2*var(--u));width:calc(17.5*var(--u));padding:0 0 calc(1*var(--u));${jouable ? '' : 'opacity:.55'}">
@@ -269,7 +297,7 @@ export class Accueil {
       <div class="abs" style="left:calc(50% + 4*var(--u));transform:translateX(-50%);top:calc(7.6*var(--u));font-weight:800;font-size:calc(1.15*var(--u));white-space:nowrap">${c.nom} · niveau ${p.etat?.level ?? 1}${p.hardcore ? ' · <span class="hc">Hardcore</span>' : ''}</div>
       <img src="${img('lumiere.png')}" alt="" class="abs" style="left:calc(50% - 3.5*var(--u));top:calc(8*var(--u));width:calc(15*var(--u));opacity:.7;mix-blend-mode:screen">
       <img src="assets/ui/socle.png" alt="" class="abs" style="left:calc(50% - 6.5*var(--u));top:calc(31.5*var(--u));width:calc(21*var(--u));filter:sepia(.55) saturate(1.3) brightness(.95) drop-shadow(0 0 calc(1.2*var(--u)) #8fe8ff99)">
-      <div class="abs hero" data-n="24" role="img" aria-label="${esc(p.nom)}" style="left:calc(50% - 4.85*var(--u));top:calc(15.4*var(--u));width:calc(17.7*var(--u));height:calc(24*var(--u));background-image:url(${img(`${c.cle}_${p.sexe}_repos.webp`)});background-size:2400% 100%"></div>
+      <div class="abs hero" data-n="24" role="img" aria-label="${esc(p.nom)}" style="left:calc(50% - 4.85*var(--u));top:calc(15.4*var(--u));width:calc(17.7*var(--u));height:calc(24*var(--u));background-image:url(${img(`${c.cle}_${p.sexe}_repos.webp`)});background-size:2400% 100%" data-src="${img(`${c.cle}_${p.sexe}_repos.webp`)}"></div>
       <div class="abs" style="left:calc(50% + 4*var(--u));transform:translateX(-50%);top:calc(47*var(--u));display:flex;gap:calc(1*var(--u));align-items:center">
         <button type="button" class="dbtn rouge" data-suppr="${this.choix}" style="font-size:calc(.9*var(--u))">${this.confirmer === this.choix ? 'Vraiment supprimer ?' : 'Supprimer'}</button>
         <button type="button" class="lbtn" data-jouer-slot="${this.choix}" style="font-size:calc(1.5*var(--u));padding:calc(.8*var(--u)) calc(3*var(--u))">Jouer</button>
