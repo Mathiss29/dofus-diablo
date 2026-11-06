@@ -212,12 +212,15 @@
     "cooldown": 0.4,
     "duration": 0.3,
     "impactAt": 0.3,
-    "dmg": 22,
-    "knock": 300,
-    "stun": 0.6,
+    "dmg": 0,
+    "knock": 0,
+    "vuln": {
+     "n": 10,
+     "t": 3
+    },
     "hit": {
      "shape": "circle",
-     "radius": 95
+     "radius": 72
     },
     "move": {
      "kind": "leap",
@@ -269,7 +272,7 @@
     "pmLoss": 2,
     "hit": {
      "shape": "line",
-     "length": 192,
+     "length": 144,
      "width": 30
     },
     "hitstop": 0.06,

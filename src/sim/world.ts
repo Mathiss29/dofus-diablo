@@ -471,7 +471,8 @@ export class World {
       const first = m.struck ? 1 : 1 + initiativeBonus(p.initiative); m.struck = true;
       const flat = (crit ? p.stat('dommagesCritiques') : 0) + (def.knock > 0 ? p.stat('dommagesPoussee') : 0);
       const vs = def.vsSummon && (m.summoner || (def.vsElite && (m.def.elite || m.def.boss))) ? def.vsSummon : 1;
-      const dmg = Math.max(1, Math.round((p.damage(def.dmg * vs, def.element ?? 'neutre') * this.rng.range(0.9, 1.1) * (crit ? cls.critMult : 1) * first + flat) * (1 - res / 100)));
+      const vu = m.vulnT > 0 ? 1 + m.vuln / 100 : 1;   // dommages subis augmentés (Bond)
+      const dmg = Math.max(1, Math.round((p.damage(def.dmg * vs, def.element ?? 'neutre') * this.rng.range(0.9, 1.1) * (crit ? cls.critMult : 1) * first + flat) * (1 - res / 100) * vu));
       m.hp -= dmg; m.flash = 0.09;
       if (def.erosion) { m.maxHp = Math.max(1, m.maxHp - Math.round(dmg * def.erosion)); m.hp = Math.min(m.hp, m.maxHp); }
       // Retrait PA / PM du joueur contre l'Esquive officielle du monstre : chaque point a sa chance de passer
@@ -494,6 +495,16 @@ export class World {
       if (m.hp <= 0) this.killMonster(m);
     }
     return n;
+  }
+  /** Augmente les dommages subis par les monstres dans ce cercle, sans les frapper (Bond). */
+  markVuln(x: number, y: number, r: number, n: number, t: number): number {
+    let k = 0;
+    for (const m of this.monsters) {
+      if (m.dead || m.state === 'spawn' || Math.hypot(m.x - x, m.y - y) > r + m.radius) continue;
+      m.vuln = Math.max(m.vuln, n); m.vulnT = Math.max(m.vulnT, t); k++;
+      this.emit({ k: 'status', x: m.x, y: m.y - 20, text: `Dommages subis +${n} %`, color: '#e07cf0' });
+    }
+    return k;
   }
   /** Dommages de poussée de Dofus : (niveau / 2 + Dommages Poussée + 32) × cases de poussée restantes / 4,
    *  quand la cible heurte un obstacle ou un autre monstre avant la fin de son recul. */

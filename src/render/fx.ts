@@ -58,7 +58,7 @@ export class FX {
         const col = ELEMENT_COLORS[e.element], w = e.big ? 16 : 10;
         // Effet officiel du sort (8A) : sur la zone visée et sur le lanceur ; remplace la forme dessinée
         const reach = e.fx === 'arc' ? e.size * 0.55 : e.fx === 'line' ? e.size * 0.5 : 0;
-        if (this.official.cast(e.id, e.x + Math.cos(e.facing) * reach, e.y + Math.sin(e.facing) * reach, e.facing, e.x, e.y)) {
+        if (this.official.cast(e.id, e.x + Math.cos(e.facing) * reach, e.y + Math.sin(e.facing) * reach, e.facing, e.x, e.y, e.fx === 'line' ? e.size : 0)) {
           if (e.boosted) this.ring(e.x, e.y, 10, e.size * 1.3, 0xff7a2e, 0.45, 12);
           break;
         }

@@ -618,6 +618,7 @@ export class Player extends Entity {
       if (d.self) { size = 60; }
       else if (hz.shape === 'cone') { size = hz.range * area; hits = world.hitCone(this.x, this.y, this.facing, size, (hz.arc * Math.PI) / 180, hit, d.stun); }
       else if (hz.shape === 'line') { size = hz.length * area; hits = world.hitLine(this.x, this.y, this.facing, size, hz.width * area, hit, d.stun); }
+      else if (hz.shape === 'circle' && d.vuln && !d.dmg) { size = hz.radius * area; world.markVuln(this.x, this.y, size, d.vuln.n, d.vuln.t); }
       else if (hz.shape === 'circle') { size = hz.radius * area; hits = world.hitCircle(this.x, this.y, size, hit, d.stun); }
       else {
         // Flèche : la zone (et les dommages) partent avec le projectile ; l'effet d'impact se joue à l'arrivée

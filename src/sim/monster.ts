@@ -46,6 +46,8 @@ export class Monster extends Entity {
   spellCd: number[];
   /** Bonus de vitesse (sort qui donne des PM, ex. Bêlement) : multiplicateur et durée restante. */
   haste = 1; hasteT = 0;
+  /** Dommages subis augmentés de vuln % pendant vulnT s (Bond). */
+  vuln = 0; vulnT = 0;
   /** Bonus de Dommages (Frénésie : %, Euphorie malsaine : fixes) et durée restante. */
   furyPct = 0; furyFlat = 0; furyT = 0;
   /** Invocateur (Kardorib invoqué par Kardorim). */
@@ -76,6 +78,7 @@ export class Monster extends Entity {
     this.atkCd -= dt;
     for (let i = 0; i < this.spellCd.length; i++) this.spellCd[i] -= dt;
     if (this.hasteT > 0 && (this.hasteT -= dt) <= 0) this.haste = 1;
+    if (this.vulnT > 0 && (this.vulnT -= dt) <= 0) this.vuln = 0;
     if (this.furyT > 0 && (this.furyT -= dt) <= 0) this.furyPct = this.furyFlat = 0;
     // Tacle du joueur : un monstre à son contact avance moins vite (sa Fuite officielle y résiste)
     const near = Math.hypot(player.x - this.x, player.y - this.y) <= this.radius + player.radius + 12;
