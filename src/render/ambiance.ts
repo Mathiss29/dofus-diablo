@@ -29,12 +29,14 @@ export interface Reglages {
   eau: boolean;
   /** Particules officielles des cartes (spores, poussière, braises, étoiles…). */
   particules: boolean;
+  /** Voir le perso derrière le décor (maquette « Transparence », 6A) : le décor devant lui s'efface, les monstres cachés ont une silhouette rouge. */
+  transparence: boolean;
   /** Lancer des sorts (maquette Aperçu 1A/1B/1C) : maintenir pour voir puis relâcher, lancer tout de suite (aperçu avec Alt), ou viser comme Dofus (clic pour lancer). */
   lancer: 'relache' | 'immediat' | 'dofus';
   /** Option 5B : sur un monstre hors de portée, le perso s'approche avant de lancer. */
   approche: boolean;
 }
-export const REGLAGES_DEFAUT: Reglages = { heure: 'auto', lumieres: 1, saturation: 1, chaleur: 0, zoom: 0.8, volume: 1, volMusique: 0.5, volEffets: 0.7, volAmbiance: 0.6, volInterface: 0.7, muet: false, vent: true, eau: true, particules: true, lancer: 'relache', approche: false };
+export const REGLAGES_DEFAUT: Reglages = { heure: 'auto', lumieres: 1, saturation: 1, chaleur: 0, zoom: 0.8, volume: 1, volMusique: 0.5, volEffets: 0.7, volAmbiance: 0.6, volInterface: 0.7, muet: false, vent: true, eau: true, particules: true, transparence: true, lancer: 'relache', approche: false };
 const CLE = 'diablofus.reglages';
 
 export function chargerReglages(): Reglages {

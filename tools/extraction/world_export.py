@@ -12,6 +12,7 @@ warnings.filterwarnings('ignore')
 import UnityPy
 from PIL import Image, ImageStat, ImageFilter
 import numpy as np
+from collections import Counter
 UnityPy.config.FALLBACK_UNITY_VERSION = "6000.3.16f1"
 liste, cdir, tdir, out = sys.argv[1:5]; os.makedirs(out, exist_ok=True)
 W, H, OX, OY, COLS, ROWS = 86, 43, -620, -490, 14, 40
@@ -112,7 +113,7 @@ LUMIERES = {305396, 404317, 57871, 57971, 806080, 305477, 60327, 36648, 39767,  
             42481, 44653, 805552, 402668, 806081}                               # rayons de lumière
 # lumières du soleil (reflets sur l'eau, rayons) : 'j' = 1, elles s'éteignent la nuit ; les autres (feux, lueurs) s'y renforcent
 SOLEIL = {305396, 404317, 806080, 60327, 42481, 44653, 805552, 402668, 806081}
-VOILES = {62942}
+VOILES = {62942, 63044}   # 63044 : lueur jaune des coins de l'écran (Cité d'Astrub), voir voiles.py
 # Fond du lac : de grandes ellipses (49153-49156) que Dofus fond entre elles (masque de dissolution 201) sur la couleur de fond
 # de la carte (backgroundColor, vert d'eau). On adoucit leurs bords et on remplit dessous de cette couleur : plus de disques.
 EAU_FOND = {49153, 49154, 49155, 49156}
@@ -143,6 +144,11 @@ def additif(xy, mk, e):
             d = R.get(p['rid']) or {}
             if d.get('destinationFactor') == 1 and d.get('sourceFactor') in (1, 2, 3): return True
     return False
+def vague(xy, mk, e):
+    """Vague de rivage (ShaderWaveParameters, ex. Château Ensablé) : la texture est une forme pleine que Dofus anime en
+    écume sur ses bords. Posée telle quelle, elle faisait de grandes taches blanches sur la mer : on ne la pose pas."""
+    sd = maps[xy][mk].get('shaderData', []); i = e.get('materialIndex', -1); R = REFS[xy]
+    return 0 <= i < len(sd) and any('waveTexID' in (R.get(p['rid']) or {}) for p in (R.get(sd[i]['rid']) or {}).get('shaderParameters', []))
 def cache(e):
     """Élément caché par défaut (couleur d'alpha 0) : montré par une mise en scène du serveur (ex. Dofus posé sur son socle)."""
     return (e['color']['value'] >> 24) & 255 == 0
@@ -202,13 +208,14 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
     # côté vide, rien n'est coupé (falaises, nuages au bord du monde).
     # Les nuages / rayons translucides qui débordent sur un voisin iraient se couper net au raccord :
     # ils partent dans un calque « fond » non coupé, posé sous tous les sols.
-    els = []; lums = []; eaux = []
+    els = []; lums = []; eaux = []; gfx_els = []
     # Eau animée : les éléments du sol qui bougent (reflets et vaguelettes, translucides) sortent du sol
     # et vont dans une couche juste au-dessus (garder aussi ce qui est posé dessus emportait presque tout le sol)
     couche = []
     for e in md['backgroundElements']:
         im = styled(e)
         if im is None or e['gfxId'] in VOILES or cache(e): continue
+        if vague((x, y), 'backgroundMaterialData', e): continue   # (en écume fixe, ses cercles se croisaient partout sur la mer)
         if e['gfxId'] in LUMIERES or additif((x, y), 'backgroundMaterialData', e): lums.append(('backgroundMaterialData', -1, e)); continue
         a = anime((x, y), 'backgroundMaterialData', e); a.pop('w', None)
         if a and im.width * im.height <= 160000:   # les grands (nuages, voiles) restent dans le sol
@@ -218,7 +225,24 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
             sky = sky or im; continue
         tr = e['transform']; ex, ey = round(tr['m31'] - im.width / 2), round(-tr['m32'] - im.height / 2)
         if e['gfxId'] in EAU_FOND: eaux.append((im, ex, ey)); im = adoucir(im)
-        els.append((im, ex, ey))
+        els.append((im, ex, ey)); gfx_els.append((e['gfxId'], e.get('displayBehaviour', 0)))
+    # Sol en carreaux (Château Ensablé : 885 losanges de sable 96 x 56) : leur bord sur la mer faisait des dents de scie.
+    # Ils sont réunis en une couche dont le contour est arrondi (le dedans reste net).
+    nbg = Counter(e['gfxId'] for e in md['backgroundElements'])
+    # (+ les petits bords crème posés en dents de scie autour, displayBehaviour 2)
+    tuiles = [i for i, t in enumerate(els) if t[0].width <= 200 and t[0].height <= 100 and (nbg[gfx_els[i][0]] >= 100 or gfx_els[i][1] == 2)]
+    if tuiles and extra[(x, y)].get('inside'):   # dehors, le bord d'une carte touche sa voisine : on n'y touche pas
+        tx0 = min(els[i][1] for i in tuiles); ty0 = min(els[i][2] for i in tuiles)
+        tx1 = max(els[i][1] + els[i][0].width for i in tuiles); ty1 = max(els[i][2] + els[i][0].height for i in tuiles)
+        P = 24; ct = Image.new('RGBA', (tx1 - tx0 + 2 * P, ty1 - ty0 + 2 * P))
+        for i in tuiles: ct.alpha_composite(els[i][0], (els[i][1] - tx0 + P, els[i][2] - ty0 + P))
+        al = ct.getchannel('A').filter(ImageFilter.GaussianBlur(16)).point(lambda q: 0 if q < 70 else 255 if q > 185 else (q - 70) * 255 // 115)
+        lisse = ct.convert('RGB')
+        for _ in range(5): lisse = lisse.filter(ImageFilter.MaxFilter(9))   # couleur prolongée sous le nouveau bord (sinon des pointes noires)
+        lisse.paste(ct.convert('RGB'), (0, 0), ct.getchannel('A').point(lambda q: 255 if q > 200 else 0)); lisse = lisse.convert('RGBA')
+        lisse.putalpha(al)
+        garde = set(tuiles)
+        els = [((lisse, tx0 - P, ty0 - P) if i == tuiles[0] else t) for i, t in enumerate(els) if i not in garde or i == tuiles[0]]
     nb = {'l': (x - 1, y) in sel, 't': (x, y - 1) in sel, 'r': (x + 1, y) in sel, 'b': (x, y + 1) in sel}
     def crosses(ex, ey, im):
         return (nb['l'] and ex < x0m) or (nb['t'] and ey < y0m) or (nb['r'] and ex + im.width > x1m) or (nb['b'] and ey + im.height > y1m)
@@ -246,7 +270,8 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
     by1 = y1m if nb['b'] else max([y1m] + [ey + im.height for im, _, ey in sol_els])
     sol = Image.new('RGBA', (bx1 - bx0, by1 - by0))
     # (pas dans le Temple Céleste : ses pierres flottantes animées y laissaient des taches noires, sa couleur de fond)
-    if eaux and not extra[(x, y)].get('ciel'):   # couleur de fond de la carte sous le lac (là où sont ses ellipses, un peu élargies pour boucher les trous)
+    bgv = md['backgroundColor']['value']; clair = ((bgv >> 16 & 255) + (bgv >> 8 & 255) + (bgv & 255)) / 3 > 140
+    if eaux and not extra[(x, y)].get('ciel') and not clair:   # (fond clair, Château Ensablé : faisait des taches pâles sur la mer)   # couleur de fond de la carte sous le lac (là où sont ses ellipses, un peu élargies pour boucher les trous)
         m = Image.new('L', sol.size)
         for im, ex, ey in eaux: m.paste(255, (ex - bx0, ey - by0), im.getchannel('A').point(lambda q: 255 if q > 5 else 0))
         w8, h8 = max(1, sol.width // 8), max(1, sol.height // 8)

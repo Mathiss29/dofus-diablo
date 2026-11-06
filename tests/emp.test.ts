@@ -48,26 +48,34 @@ describe('Emp, le Méryde du Recyclage (0.2b)', () => {
     expect(p.bag.map(b => b.uid).sort()).toEqual([c.uid, l.uid].sort());
     expect(p.resources[PEPITE]).toBe(recycleValue(ITEMS.equipment[id], e));
   });
-  it('boutique en Pépites, puis la clé ouvre la Grange (et elle est prise)', () => {
-    const w = monde(), p = w.player;
+  it('boutique en Pépites, puis la clé ouvre la Grange chez son gardien (et elle est prise)', () => {
+    const w = monde(), p = w.player, Q = w.quetes!;
     expect(w.acheter('emp', '8143')).toBe(false);   // pas de Pépites
     p.resources[PEPITE] = 160;
     expect(w.acheter('emp', '8143')).toBe(true);
     expect(p.resources[PEPITE]).toBe(10);
-    const po = w.portes.find(x => x.nom === 'Grange du Tournesol Affamé' && x.cle)!;
+    const po = w.entreeDonjon('Grange du Tournesol Affamé')!;
+    // clic sur la porte : le dialogue de Mawy Ingalsse s'ouvre (la clé n'est pas encore prise)
     const essai = () => {
       p.x = po.ends[0].x + 40; p.y = po.ends[0].y;
-      for (let i = 0; i < 90; i++) w.step(1 / 60, { ...NO_INPUT, dest: { x: po.ends[0].x, y: po.ends[0].y } });
-      return w.worldGrid!.mapAt(p.x, p.y)?.tag;
+      for (let i = 0; i < 90 && !Q.dialogue; i++) w.step(1 / 60, { ...NO_INPUT, dest: { x: po.ends[0].x, y: po.ends[0].y } });
+      expect(Q.dialogue?.pnj).toBe('mawy');
+      return Q.dialogue!;
     };
-    expect(essai()).toBe('grange_0');
+    expect(essai().reponses[0]).toMatchObject({ a: 'entrer' });
+    expect(p.resources['8143']).toBe(1);
+    Q.repondre(0);
+    for (let i = 0; i < 90; i++) w.step(1 / 60, NO_INPUT);
+    expect(w.worldGrid!.mapAt(p.x, p.y)?.tag).toBe('grange_0');
     expect(p.resources['8143']).toBeUndefined();
-    // sans clé, on reste dehors
-    p.x = po.ends[0].x + 300; p.y = po.ends[0].y;
-    for (let i = 0; i < 30; i++) w.step(1 / 60, NO_INPUT);
+    // sans clé : « Je n'ai pas de clé », le gardien envoie chez le vendeur (marqué sur la carte M)
     w.drainEvents();
-    expect(essai()).toBe('7_-24');
-    expect(w.drainEvents().some(e => e.k === 'cleManquante')).toBe(true);
+    const d = essai();
+    expect(d.reponses[0]).toMatchObject({ a: 'sansCle' });
+    Q.repondre(0);
+    expect(Q.dialogue?.texte).toMatch(/Emp/);
+    expect(Q.marqueVendeur).toBe('emp');
+    expect(w.worldGrid!.mapAt(p.x, p.y)?.tag).toBe('7_-24');
   });
   it('la Potion de Rappel ramène au dernier Zaap', () => {
     const w = monde(), p = w.player, r = w.pointDeRetour;

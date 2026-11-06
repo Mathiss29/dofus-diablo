@@ -6,6 +6,8 @@ import type { World } from '../sim/world';
 import type { WorldView } from './worldView';
 import { PNJ_LOOKS, type PnjLook } from './looks';
 import { EntityView } from './entityView';
+import { ICON_SHEET, iconFrame } from './icons';
+import { ITEMS } from '../sim/data';
 
 const SP = 'assets/sprites', QI = 'assets/ui/quetes';
 /** Animations « fun » des PNJ : une toutes les FUN_PAUSE secondes environ (tirage au poids officiel). */
@@ -141,6 +143,12 @@ export class QuestView {
         const k = 34 / Math.max(p.icon.width, p.icon.height);
         p.iconY = Math.round(-p.h - 34 + Math.sin(t * 3) * 3);
         p.icon.setScale(k).setPosition(s.x, s.y + p.iconY).setDepth(1e6 - 2);
+      } else if (on && q.data.pnj[p.id]?.gardien && this.scene.textures.exists(ICON_SHEET.key)) {
+        // gardien d'un donjon (9A) : la clé officielle du donjon au-dessus de sa tête (crypte sans clé : une clé quand même)
+        const cle = this.world.entreeDonjon(q.data.pnj[p.id].gardien!.donjon)?.cle, fr = iconFrame(ITEMS.resources[cle ?? '8545']?.icon ?? 0);
+        p.icon.setTexture(ICON_SHEET.key, Math.max(0, fr)).setVisible(true).setDisplaySize(34, 34);
+        p.iconY = Math.round(-p.h - 30 + Math.sin(t * 3) * 3);
+        p.icon.setPosition(s.x, s.y + p.iconY).setDepth(1e6 - 2);
       } else p.icon.setVisible(false);
     }
     this.caler();   // caméra sans suivi (vitrine de l'accueil) : déjà placée pour cette image

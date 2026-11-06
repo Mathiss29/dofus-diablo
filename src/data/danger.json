@@ -1,0 +1,28 @@
+{
+ "_": "Danger des monstres (maquette « Danger », Mathis 2026-11-06 : 1A 2A 3A 4A 5A 7A 8A). Tout se règle ici, sans toucher au code.",
+ "degats": {
+  "_": "1A : un coup moyen retire cette part des PV d'un perso du même niveau (PV de référence = base + parNiveau × (niveau - 1), Iop sans équipement). La force du sort officiel module de min à max (racine de jet / jetRef).",
+  "part": { "normal": 0.07, "elite": 0.11, "boss": 0.15 },
+  "pvRef": { "base": 220, "parNiveau": 5 },
+  "jetRef": 20, "min": 0.7, "max": 1.3
+ },
+ "rythme": {
+  "_": "2A : temps mort (s) entre deux attaques ; encerclement : les monstres contournent ceux qui sont déjà au contact.",
+  "pause": [0.5, 1.0],
+  "pausePietinement": [0.8, 1.4],
+  "encerclement": 140
+ },
+ "grosCoup": {
+  "_": "3A : un coup qui retire au moins cette part des PV secoue l'écran, fige l'action et rougit les bords.",
+  "part": 0.12, "fige": 0.08, "secousse": 0.016
+ },
+ "signature": {
+  "_": "4A : le grand sort officiel du boss (champ signature dans monsters.json) joué en grand : zone officielle ×zone, télégraphe (s), dégâts ×degats, relance (s).",
+  "zone": 1.5, "telegraphe": 1.2, "degats": 2.5, "relance": 7, "repos": 1.0
+ },
+ "furieux": {
+  "_": "5A : sous cette part des PV, le boss devient Furieux : vitesse ×vitesse, relances ×relance, jusqu'à invocations invocations en même temps.",
+  "seuil": 0.5, "vitesse": 1.2, "relance": 0.7, "invocations": 2
+ },
+ "camera": { "_": "7A : la caméra recule un peu pendant un combat de boss.", "recul": 0.85 }
+}

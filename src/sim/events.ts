@@ -25,6 +25,11 @@ export type SimEvent =
   | { k: 'kill'; x: number; y: number; radius: number; monster: string }
   | { k: 'impact'; hitstop: number; shake: number; big: boolean }
   | { k: 'playerHurt' }
+  /** Gros coup reçu (maquette « Danger » 3A) : bords de l'écran rouges. */
+  | { k: 'grosCoup' }
+  /** Boss : entrée en combat (7A) et passage Furieux sous la moitié des PV (5A). */
+  | { k: 'bossIntro'; id: number; monster: string }
+  | { k: 'furieux'; id: number; name: string; x: number; y: number }
   | { k: 'wave'; n: number; boss: string | null; archi: string | null }
   | { k: 'bossDown'; monster: string }
   | { k: 'playerDeath'; wave: number }
@@ -51,6 +56,9 @@ export type SimEvent =
   /** Emp (0.2) : objets recyclés contre des Pépites, achat dans sa boutique, Potion de Rappel bue, réponse « service » d'un PNJ. */
   | { k: 'recycle'; n: number; pepites: number }
   | { k: 'achat'; id: string; prix: number }
+  /** Familier : niveau gagné, et repas (XP donnée). */
+  | { k: 'familierNiveau'; nom: string; niveau: number }
+  | { k: 'familierRepas'; xp: number }
   | { k: 'rappel'; name: string }
   | { k: 'cleManquante'; id: string }
   /** Métiers de récolte : geste commencé (durée), interrompu, ressource récoltée (quantité, dorée), niveau de métier trop bas. */
@@ -68,6 +76,8 @@ export type SimEvent =
   | { k: 'portalStart'; nom: string }
   /** Le joueur arrive ailleurs d'un coup (porte, fin de quête) : le rendu garde le noir jusqu'à ce que les cartes soient posées. */
   | { k: 'portal'; nom: string }
+  /** Partie de test : un ordre du panneau F1 a été fait (message court pour l'interface). */
+  | { k: 'test'; texte: string }
   /** Portail vers une autre zone : l'affichage sauve le perso et relance la partie là-bas (case b de la porte). */
   | { k: 'changeZone'; zone: string; arrivee: [string, number]; nom: string }
   /** Le joueur lance un sort ou son attaque (objectifs « utiliser »). */

@@ -43,6 +43,9 @@
           "Coiffes, capes et boucliers se voient sur ton personnage ; les cheveux se rangent sous la coiffe.",
           "Apparats officiels : près de 700 coiffes et capes chez Emp contre des Pépites, à porter dans la case Apparence de l'inventaire (ou pour cacher un objet). Garde-robe gratuite chez Lykhen et chez Emp pour changer de tête et de couleurs.",
           "Les vraies ressources à récolter dans les champs, les forêts et les mines d'Astrub et d'Incarnam (blé, arbres, minerais, ortie, remous de pêche), avec leur animation de coupe.",
+          "Familiers : une case Familier dans l'inventaire. Le familier te suit, ramasse le butin et les kamas autour de toi, monte du niveau 1 au niveau 100 en chassant ou quand tu le nourris (Alt + clic), et ses bonus officiels grandissent avec lui.",
+          "Où les trouver : Pioute chez les Pious, Tofüm chez les Tofus, Jeune Boufton Céleste chez les Bouftous d'Incarnam, Fotome sur Kardorim, Chienchien en récompense du succès « Dans les nuages ». Plus de 100 familiers d'apparat chez Emp.",
+          "Voir à travers le décor : le bâtiment ou l'arbre qui cache ton perso s'efface en fondu, et les monstres cachés apparaissent en silhouette rouge (case dans Options > Affichage).",
           "Ateliers officiels : on fabrique dans l'atelier de son métier (à Astrub et Incarnam), avec un bouton ×N pour tout fabriquer d'un coup. 37 recettes officielles en plus : pains, potions, poissons, viandes, alliages, planches.",
           "« Quoi de neuf ? » au lancement : les nouveautés du dernier carnet en cinq lignes."
         ],
@@ -56,6 +59,8 @@
           "Astrub s'ouvre : 359 cartes, les monstres officiels de chaque sous-zone, et le portail d'Incarnam qui y descend.",
           "Trois donjons d'Astrub : la Grange du Tournesol Affamé, le Château Ensablé et la Cour du Bouftou Royal. Chacun demande sa clé officielle, prise à l'entrée (Emp en vend).",
           "Les monstres d'Astrub lâchent leurs ressources officielles : pétales, laines, cornes… de quoi fabriquer les clés.",
+          "Cuirasse Laineuse, Rinçage, Grognement et Hyperleukocytine ont enfin leurs effets officiels.",
+          "Un gardien devant chaque donjon : Mawy Ingalsse à la Grange, le Capitaine Igloute au Château Ensablé, Rotabla à la Cour du Bouftou Royal et Klasmor à la Crypte. Ils te font entrer avec ta clé, montrent le boss et son butin, et se souviennent de tes victoires.",
           "La Cité d'Astrub s'ouvre : Banque, Taverne, Milice, Tour du Conseil et sept ateliers se visitent.",
           "Les Vilinsekts ont envahi trois caves de la Cité, et Kankreblath attend dans sa Cache (donjon niveau 40, sa clé se fabrique au Bricoleur ou s'achète chez Emp).",
           "Une élite fait briller les ressources autour d'elle : elles repoussent plus souvent dorées tant qu'elle vit."
@@ -66,16 +71,26 @@
           "Bouclier violet sur la barre de vie, Ferveur qui protège.",
           "Sorts Iop et Crâ vérifiés contre les données officielles, onglet Sorts détaillé.",
           "Annonces d'attaque au sol pour les élites et les boss seulement.",
-          "+1 PA au niveau 100, comme dans Dofus."
+          "+1 PA au niveau 100, comme dans Dofus.",
+          "Les monstres tapent selon leur rang et leur niveau (ceux d'Astrub tapaient tous 14), et les groupes t'encerclent au lieu de faire la queue.",
+          "Les boss ont une attaque signature annoncée au sol (Dégraissage de Mob l'Éponge en vraie ligne de 8 cases, Kankroulahoup…), deviennent Furieux à mi-vie et font leur entrée ; un gros coup reçu rougit les bords de l'écran."
         ],
         "Corrections": [
+          "La Cape de l'Intrépide portée montre enfin son vrai dessin (cape jaune à l'emblème vert) et plus une autre cape.",
           "Plus de mini-gel en changeant de carte.",
           "PNJ qui tremblaient quand la caméra défilait.",
           "Gros personnage du socle net, même avec l'affichage Windows à 125 %.",
           "Sac vide au départ : plus d'arme de chasse donnée d'office.",
           "Astrub prend environ dix fois moins de mémoire : le jeu ne plante plus quand on traverse Astrub ou qu'on se téléporte plusieurs fois.",
           "Têtes de création : masques, bandeaux et mèches reprennent leur vraie couleur (plus de calotte rouge ni de cheveux gris), vérifiées une par une contre les portraits officiels.",
-          "Perso plus net en jeu et sur le socle : il est dessiné en 2x puis réduit, les contours ne font plus d'escaliers."
+          "Perso plus net en jeu et sur le socle : il est dessiné en 2x puis réduit, les contours ne font plus d'escaliers.",
+          "Château Ensablé : plus de grandes taches blanches sur la mer, et le bord du sable est arrondi au lieu d'être en dents de scie.",
+          "Cité d'Astrub et Tainéla : plus de maisons posées deux fois côte à côte ni de grands rectangles clairs, et le bord du monde se fond dans la brume au lieu de s'arrêter en escalier.",
+          "Le décor et les ressources ne tremblent plus quand la caméra te suit.",
+          "Longues balades dans Astrub : les dessins des monstres qu'on ne croise plus sont libérés, le jeu ne s'alourdit plus au fil des cartes.",
+          "Cliquer sur la porte d'un donjon ne brûle plus la clé par erreur : on entre en choisissant « Entrer » chez le gardien.",
+          "Au nord d'Astrub (Tainéla, Cour du Bouftou Royal, Grange), le sol passait par-dessus tout : perso, PNJ, maisons et arbres réapparaissent.",
+          "Les ressources à récolter ne scintillent plus quand tu bouges, ne flottent plus au-dessus du vide et ne sont plus en double ; la grande lueur jaune de la Cité d'Astrub est retirée, et la mer des Calanques et des Prairies n'a plus de grandes taches blanches."
         ],
         "En coulisses": [
           "Fenêtres refaites avec les vraies images de Dofus 3 et ses polices (Lexend, Rowdies).",
@@ -83,7 +98,8 @@
           "Le jeu se prépare à grandir : cartes, sprites et sons pourront bientôt venir d'un stockage dédié, et après une mise à jour ton navigateur ne retélécharge plus que ce qui a changé.",
           "Les planches des monstres, des PNJ et des persos passent en AVIF : environ un tiers plus légères, donc plus rapides à charger.",
           "Les images et les sons du jeu sont maintenant servis depuis assets.diablofus.com : place pour tout le Monde des Douze, et tu ne retélécharges que ce qui a changé.",
-          "Ton perso est désormais dessiné en direct depuis son squelette Dofus, comme dans Dofus 3 : la porte est ouverte aux coiffes, capes, boucliers, familiers et à l'apparat."
+          "Ton perso est désormais dessiné en direct depuis son squelette Dofus, comme dans Dofus 3 : la porte est ouverte aux coiffes, capes, boucliers, familiers et à l'apparat.",
+          "Partie de test sur diablofus.com/#test : un perso à part, et sur F1 le niveau, les zones, les objets, les monstres, un mannequin avec compteur de DPS et le mode invincible."
         ]
       }
     },

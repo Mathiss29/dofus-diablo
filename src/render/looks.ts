@@ -234,4 +234,9 @@ export const PNJ_LOOKS: Record<string, PnjLook> = {
   // Emp, le Méryde du Recyclage (PNJ 1640, look {1979|1981|1=15788464}) : animFunList officielle
   emp: { scale: 0.82, anim: 'AnimStatique_1', fun: [['AnimAttaque0_1', 2], ['AnimAttaque12_1', 2], ['AnimAttaque13_1', 1], ['AnimAttaque15_1', 3], ['AnimAttaque2_1', 2], ['AnimAttaque4_1', 3], ['AnimAttaque8_1', 1], ['AnimAttaque5_1', 1]] },
   marylork: { scale: 0.82, anim: 'AnimStatique_1', fun: [['AnimAttaque0_1', 3], ['AnimAttaque1_1', 1]] },
+  // gardiens des donjons d'Astrub (maquette Gardiens) : Mawy Ingalsse {4980|||90}, Capitaine Igloute {4981|||95} (sans anim fun),
+  // Rotabla le berger {950} (animFunList officielle)
+  mawy: { scale: 0.82, anim: 'AnimStatique_1' },
+  igloute: { scale: 0.82, anim: 'AnimStatique_1' },
+  rotabla: { scale: 0.82, anim: 'AnimStatique_1', fun: [['AnimAttaque0_1', 1], ['AnimAttaque1_1', 2], ['AnimAttaque2_1', 3]] },
 };

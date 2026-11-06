@@ -14,7 +14,7 @@ const EQ = JSON.parse(readFileSync(new URL('../public/assets/sprites/squelette/e
 
 describe('apparat et objets visibles (Apparence 4A 4B 5A)', () => {
   it('coiffes et capes d\'apparat officielles, chacune avec son dessin porté', () => {
-    const l = Object.entries(APPARATS.objets);
+    const l = Object.entries(APPARATS.objets).filter(([, d]) => d.slot !== 'familier');   // familiers d'apparat : tests/familiers.test.ts
     expect(l.length).toBeGreaterThan(600);
     for (const [id, d] of l) { expect(['chapeau', 'cape']).toContain(d.slot); expect(EQ.objets[id], d.name).toBeTruthy(); }
     expect(APPARATS.prix.chapeau).toBeGreaterThan(0);

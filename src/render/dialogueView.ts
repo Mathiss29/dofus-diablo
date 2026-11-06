@@ -2,7 +2,7 @@ import type Phaser from 'phaser';
 import { v } from './assetUrl';
 import { ICON_CSS, iconHtml } from './icons';
 import { ITEMS } from '../sim/data';
-import type { Dialogue, RecompenseDef } from '../sim/quests';
+import type { Dialogue, InfoDonjon, RecompenseDef } from '../sim/quests';
 import type { World } from '../sim/world';
 import { QUEST_ICON, type QuestView } from './questView';
 
@@ -38,6 +38,12 @@ const CSS = `
 .dlgv .menu div:not(.t):hover{background:#3a4a1c}
 .dlgv .tip{position:absolute;background:#14130fe8;border:1px solid #57554c;border-radius:4px;padding:3px 9px;font-size:13px;white-space:nowrap}
 .dlgv .tip span{color:#f2d36b}
+.dlgv .inf{margin-top:10px;padding-top:8px;border-top:1px solid #f1ecd833;font-weight:normal;font-size:12.5px;color:#d9d1b8;white-space:normal}
+.dlgv .inf b{color:#f2d36b}
+.dlgv .but{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;align-items:center}
+.dlgv .but .ic{width:28px;height:28px;background-color:#0006;border-radius:4px}
+.dlgv .but span{font-size:12px;color:#a8a290;margin-right:4px}
+.dlgv .rep .r .ic{width:22px;height:22px;flex:none}
 `;
 
 export class DialogueView {
@@ -91,10 +97,11 @@ export class DialogueView {
     el.className = 'dlg d';
     const reps = d.reponses.map((r, i) => {
       const q = 'quete' in r ? Q.def(r.quete) : null;
-      const ic = r.a === 'voir' && q ? `<img src="${v(`assets/ui/quetes/${QUEST_ICON[q.type][0]}.png`)}" alt="">` : '';
+      const cle = r.a === 'entrer' && d.donjon?.cle ? ITEMS.resources[d.donjon.cle] : null;
+      const ic = r.a === 'voir' && q ? `<img src="${v(`assets/ui/quetes/${QUEST_ICON[q.type][0]}.png`)}" alt="">` : cle ? iconHtml(cle.icon ?? 0) : '';
       return `<div class="r" data-i="${i}"><small>${i + 1}</small>${ic}<span>${esc(r.texte)}${r.detail ? ` <em>(${esc(r.detail)})</em>` : ''}</span></div>`;
     }).join('');
-    el.innerHTML = `<div class="bul"><div class="rub">${esc(Q.data.pnj[d.pnj]?.nom ?? '')}</div><span class="x" title="Fermer (Échap)">✕</span>${esc(d.texte)}</div>
+    el.innerHTML = `<div class="bul"><div class="rub">${esc(Q.data.pnj[d.pnj]?.nom ?? '')}</div><span class="x" title="Fermer (Échap)">✕</span>${esc(d.texte)}${d.donjon ? infoDonjon(d.donjon) : ''}</div>
       <div class="rep">${d.recompense ? `<div class="rew">${recompense(d.recompense, Q.classe)}</div>` : ''}${reps}</div>`;
     el.querySelector('.x')!.addEventListener('pointerdown', e => { e.stopPropagation(); this.reponse = -1; });
     el.querySelectorAll<HTMLElement>('.r').forEach(r => r.addEventListener('pointerdown', e => { e.stopPropagation(); this.reponse = +r.dataset.i!; }));
@@ -119,7 +126,7 @@ export class DialogueView {
   survol(pnj: string | null, ptr: Phaser.Input.Pointer) {
     if (!pnj || this.menu) { this.tip.hidden = true; return; }
     const Q = this.world.quetes!, ic = Q.icone(pnj) ?? (Q.attendParler(pnj) ? { rendre: true } : null);
-    const quoi = !ic ? 'Parler' : ic.rendre ? 'Quête à rendre' : Q.aDonnerTous(pnj).length > 1 ? 'Quêtes' : 'Quête';
+    const quoi = !ic && Q.data.pnj[pnj]?.gardien ? `Gardien · ${Q.data.pnj[pnj].gardien!.donjon}` : !ic ? 'Parler' : ic.rendre ? 'Quête à rendre' : Q.aDonnerTous(pnj).length > 1 ? 'Quêtes' : 'Quête';
     this.tip.innerHTML = `${esc(Q.data.pnj[pnj]?.nom ?? '')} · <span>${quoi}</span>`;
     const r = this.scene.game.canvas.getBoundingClientRect(), k = r.width / this.scene.scale.width;
     this.tip.style.left = `${r.left + ptr.x * k + 16}px`; this.tip.style.top = `${r.top + ptr.y * k + 18}px`;
@@ -127,6 +134,15 @@ export class DialogueView {
   }
 
   destroy() { this.root.remove(); }
+}
+
+/** Infos du donjon sous la réplique du gardien (maquette Gardiens 7A + 7B). */
+function infoDonjon(i: InfoDonjon) {
+  const cle = i.cle ? ITEMS.resources[i.cle] : null;
+  const l = [i.boss ? `Boss : <b>${esc(i.boss)}</b>` : '', `niveau conseillé <b>${Math.max(1, i.niveau - 2)}-${i.niveau + 2}</b>`, `${i.salles} salles`,
+    cle ? `${esc(cle.name)} : <b>${i.cles}</b> dans ton sac` : 'sans clé', i.victoires ? `victoires : <b>${i.victoires}</b>` : ''].filter(Boolean).join(' · ');
+  const but = i.butin.map(id => { const e = ITEMS.equipment[id] ?? ITEMS.resources[id]; return e ? `<i title="${esc(e.name)}">${iconHtml(e.icon ?? 0)}</i>` : ''; }).join('');
+  return `<div class="inf">${l}${but ? `<div class="but"><span>Butin du boss</span>${but}</div>` : ''}</div>`;
 }
 
 function recompense(r: RecompenseDef, classe: string) {

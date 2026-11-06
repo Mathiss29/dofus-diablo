@@ -4,11 +4,13 @@ import type { SimEvent, Telegraph } from './events';
 import { GridMap, WorldGrid } from './gridmap';
 import { NO_INPUT, type PlayerInput } from './input';
 import { CASE, Monster, TOUR } from './monster';
-import { METIER_XP, PEPITE, RARITIES, recycleResource, recycleValue, rollItem, rollRarity, type Item, type ItemsData, type Rarity } from './items';
+import { jetOfficiel } from './danger';
+import { FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, recycleResource, recycleValue, rollItem, rollRarity, type Item, type ItemsData, type Rarity } from './items';
 import { Player } from './player';
 import { initiativeBonus, removalChance } from './caracs';
 import { planWave } from './waves';
 import { Quetes, type Compte, type EtatQuetes, type QuetesData } from './quests';
+import { appliquerTest, type ReglagesTest } from './outilsTest';
 import { RECOLTE, quantite, xpRecolte, type Recolte, type RecoltesData } from './recolte';
 
 interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: number;
@@ -20,7 +22,9 @@ interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: nu
   pushDmg?: boolean }
 /** Butin au sol (choix 1C 2D 6A) : équipements et kamas seulement. Les Communs et les kamas filent vers le joueur
  *  qui passe près ; Rare et plus se ramassent d'un clic. Les ressources vont directement dans le sac. */
-export interface Drop { uid: number; x: number; y: number; item?: Item; kamas?: number; t: number; warned?: boolean }
+export interface Drop { uid: number; x: number; y: number; item?: Item; kamas?: number; t: number; warned?: boolean;
+  /** Rapporté par le familier : ramassé tout de suite. */
+  familier?: boolean }
 
 /** Flèche en vol (Crâ). */
 export interface Projectile { id: number; spell: string; x: number; y: number; dx: number; dy: number; left: number; speed: number; width: number;
@@ -61,7 +65,14 @@ export interface WorldOptions {
   boutiques?: Record<string, { id: string; prix: number }[]>;
   /** Objets d'apparat officiels (src/data/apparat.json) et leur prix en Pépites chez Emp (boutique.json, apparat_prix). */
   apparats?: { objets: Record<string, { slot: string }>; prix: Record<string, number> };
+  /** Partie de test (#test) : réglages du panneau F1 ; absent dans une vraie partie. */
+  test?: ReglagesTest;
+  /** Courbe d'XP officielle des familiers (XP totale par niveau, src/data/familiers.json). */
+  familierXp?: number[];
 }
+
+/** Le familier porté (maquette Familiers 4A) : il suit le perso et va chercher le butin autour de lui. */
+export interface FamilierEtat { x: number; y: number; vx: number; vy: number; cible: number | null }
 
 /** La simulation d'une zone : joueur, monstres, vagues, collisions.
  *  Aucune dépendance à Phaser ni au navigateur : elle tourne telle quelle dans les tests
@@ -74,6 +85,10 @@ export class World {
   monsters: Monster[] = [];
   projectiles: Projectile[] = [];
   drops: Drop[] = [];
+  /** Familier porté (null sans familier). */
+  familier: FamilierEtat | null = null;
+  /** Familiers lâchés par chaque monstre (1A : la famille du monstre). */
+  private familiersDe: Record<string, string[]> = {};
   /** Objets d'équipement par niveau, pour le butin de zone. */
   private equipByLevel: { id: string; level: number }[] = [];
   /** Événements produits depuis le dernier drainEvents(). */
@@ -108,6 +123,8 @@ export class World {
   /** Distance (|dx| + |dy|) au-delà de laquelle un monstre qui attend ne bouge plus. */
   static readonly SOMMEIL = 2400;
   /** Quêtes et succès (monde ouvert avec quetes.json). */
+  /** Partie de test : invincible, recharges, course, murs (null dans une vraie partie). */
+  test: ReglagesTest | null = null;
   quetes: Quetes | null = null;   // au-delà de ce qu'on voit même dézoomé à fond (avant : monstres figés au bord de l'écran)
 
   constructor(readonly opts: WorldOptions) {
@@ -115,6 +132,7 @@ export class World {
     this.zone = opts.data.zones[opts.zone];
     if (!this.zone) throw new Error(`Zone inconnue : ${opts.zone}`);
     this.map = opts.map;
+    this.test = opts.test ? { ...opts.test } : null;
     let start = this.map.nearestFree(GridMap.OFFSET_Y, GridMap.OFFSET_Y);
     const open = this.zone.open;
     if (open) {
@@ -129,7 +147,8 @@ export class World {
     this.player = new Player(this.nextId++, start.x, start.y, opts.data.classes[opts.classId ?? 'iop']);
     if (opts.items) {
       this.player.items = opts.items;
-      this.equipByLevel = Object.entries(opts.items.equipment).map(([id, d]) => ({ id, level: d.level }));
+      this.equipByLevel = Object.entries(opts.items.equipment).filter(([, d]) => !d.familier).map(([id, d]) => ({ id, level: d.level }));
+      for (const [id, d] of Object.entries(opts.items.equipment)) for (const m of d.familier?.monstres ?? []) (this.familiersDe[m] ??= []).push(id);
       // sac vide au départ (Mathis, 2026-11-06) : l'équipement vient du tutoriel (panoplie de l'Intrépide, Arc de Chasse du Crâ)
     }
     if (open) { this.buildPortes(); this.buildRecoltes(); }
@@ -194,24 +213,51 @@ export class World {
         this.emit({ k: 'status', x: p.x, y: p.y - 60, text: 'Vaincs les monstres de la salle', color: '#ff9a5a' });
         return;
       }
-      // entrée d'un donjon : la clé officielle est prise en entrant (sans clé, la porte reste fermée)
-      if (po.cle && i === 0) {
-        const r = p.resources[po.cle] ?? 0;
-        if (r <= 0) {
-          this.portalLock = from;
-          this.emit({ k: 'status', x: p.x, y: p.y - 60, text: `Il faut une ${this.opts.items?.resources[po.cle]?.name ?? 'clé'}`, color: '#ff9a5a' });
-          this.emit({ k: 'cleManquante', id: po.cle });
-          return;
-        }
-        if (r === 1) delete p.resources[po.cle]; else p.resources[po.cle] = r - 1;
-      }
-      // le perso s'arrête devant la porte pendant le fondu de sortie, puis passe (traverser)
-      p.stopMove();
-      this.passage = { to, nom: po.nom, t: World.PASSAGE, vers: po.vers };
-      this.emit({ k: 'portalStart', nom: po.nom });
+      // entrée d'un donjon gardé (maquette Gardiens 5A) : la porte ouvre le dialogue du gardien, qui fait entrer (« Entrer »)
+      const gardien = i === 0 && this.quetes?.gardienDe(po.nom);
+      if (gardien && po === this.entreeDonjon(po.nom)) { p.stopMove(); this.quetes!.parlerA(gardien); return; }
+      if (i === 0 && !this.prendreCle(po)) { this.portalLock = from; return; }
+      this.passer(po, to);
       return;
     }
   }
+  /** Le perso s'arrête devant la porte pendant le fondu de sortie, puis passe (traverser). */
+  private passer(po: World['portes'][number], to: PorteEnd) {
+    this.player.stopMove();
+    this.passage = { to, nom: po.nom, t: World.PASSAGE, vers: po.vers };
+    this.emit({ k: 'portalStart', nom: po.nom });
+  }
+  /** Entrée d'un donjon : la clé officielle est prise en entrant (sans clé, la porte reste fermée). Vrai si on peut passer. */
+  private prendreCle(po: World['portes'][number]): boolean {
+    if (!po.cle) return true;
+    const p = this.player, r = p.resources[po.cle] ?? 0;
+    if (r <= 0) {
+      this.emit({ k: 'status', x: p.x, y: p.y - 60, text: `Il faut une ${this.opts.items?.resources[po.cle]?.name ?? 'clé'}`, color: '#ff9a5a' });
+      this.emit({ k: 'cleManquante', id: po.cle });
+      return false;
+    }
+    if (r === 1) delete p.resources[po.cle]; else p.resources[po.cle] = r - 1;
+    return true;
+  }
+  /** Porte d'entrée d'un donjon (dehors -> première salle) : celle qui demande la clé, sinon la première qui n'est pas verrouillée. */
+  entreeDonjon(nom: string) {
+    return this.portes.find(po => po.nom === nom && po.cle) ?? this.portes.find(po => po.nom === nom && !po.verrou && !po.vers);
+  }
+  /** « Entrer » chez le gardien : la clé est prise, puis fondu et arrivée dans la première salle. */
+  entrerDonjon(nom: string): boolean {
+    const po = this.entreeDonjon(nom);
+    if (!po || this.passage || this.player.dead || !this.prendreCle(po)) return false;
+    this.passer(po, po.ends[1]);
+    return true;
+  }
+  /** Boss d'un donjon (monstre « boss » de ses salles). */
+  bossDuDonjon(nom: string): string | null {
+    const d = this.zone.open?.donjons?.find(x => x.nom === nom), M = this.opts.data.monsters;
+    for (const gs of Object.values(d?.salles ?? {})) for (const g of gs) for (const m of g) if (M[m]?.boss) return m;
+    return null;
+  }
+  /** Donjon où se trouve le joueur (nom), ou null. */
+  donjonIci(): string | null { return this.zone.open?.donjons?.find(d => this.dansDonjon(d.nom))?.nom ?? null; }
   /** Arrivée de l'autre côté : une case libre juste hors du rayon de la porte d'arrivée, du côté du milieu de la carte (pas collé au bord). */
   private traverser(to: PorteEnd, nom: string) {
     const p = this.player, wg = this.worldGrid!;
@@ -234,7 +280,7 @@ export class World {
     return !this.groups.some(g => g.map === tag && g.members.some(m => !m.dead));
   }
   /** Le joueur est dans une salle de ce donjon. */
-  private dansDonjon(nom: string): boolean {
+  dansDonjon(nom: string): boolean {
     const d = this.zone.open?.donjons?.find(x => x.nom === nom), tag = this.worldGrid?.mapAt(this.player.x, this.player.y)?.tag;
     return !!d && !!tag && tag in d.salles;
   }
@@ -378,7 +424,13 @@ export class World {
   drainEvents(): SimEvent[] { const e = this.events; this.events = []; return e; }
   walkable(x: number, y: number) { return this.map.walkable(x, y); }
   /** Chemin à pied (A* sur les cases de Dofus) vers un point. */
-  findPath(from: { x: number; y: number }, to: { x: number; y: number }) { return this.map.findPath(from, to); }
+  findPath(from: { x: number; y: number }, to: { x: number; y: number }) { return this.test?.murs && from === this.player ? [{ x: to.x, y: to.y }] : this.map.findPath(from, to); }
+  /** Partie de test (8A) : recharges, PA et PM pleins. */
+  private rechargerTout() {
+    const p = this.player;
+    for (const k of Object.keys(p.cd)) p.cd[k] = 0;
+    p.pa = p.paMax; p.pm = p.pmMax; p.potionCd = 0;
+  }
   /** Ligne de tir sans obstacle (cases marchables) entre deux points. */
   clearShot(from: { x: number; y: number }, to: { x: number; y: number }) { return this.map.clearLine(from, to); }
 
@@ -387,6 +439,11 @@ export class World {
     this.time += dt;
     this.telegraphs.length = 0;
     const p = this.player;
+    if (this.test) {
+      for (const c of input.test ?? []) appliquerTest(this, c);
+      p.vitesseTest = this.test.course ? 3 : 1;
+      if (this.test.recharges) this.rechargerTout();
+    }
     const ents = [p, ...this.monsters], prev = ents.map(e => [e.x, e.y] as const);
     if (input.recolte != null) { this.versRecolte = input.recolte; this.enRecolte = null; }
     else if (input.dest || input.target != null || input.pickup != null || input.talk || input.pressed || input.move.x || input.move.y) {
@@ -399,6 +456,7 @@ export class World {
       else if (input.dest || input.target != null || input.pickup != null) this.quetes.annulerClic();
     }
     p.update(dt, this.passage ? { ...NO_INPUT, aim: input.aim } : input, this);   // devant une porte : le perso attend le fondu
+    if (this.test?.recharges) this.rechargerTout();
     // Monde ouvert : un monstre qui attend loin du joueur dort (pas d'errance ni d'IA) : bien moins de calcul
     for (const m of this.monsters) {
       if (this.zone.open && m.state === 'idle' && !m.dead && Math.abs(m.x - p.x) + Math.abs(m.y - p.y) > World.SOMMEIL) continue;
@@ -409,7 +467,7 @@ export class World {
     this.separate();
     // Cases bloquantes : on glisse le long des obstacles (axe par axe), sauf en plein Bond
     ents.forEach((e, i) => {
-      if (e === p && p.airborne) return;
+      if (e === p && (p.airborne || this.test?.murs)) return;
       if (this.walkable(e.x, e.y)) return;
       const [ox, oy] = prev[i];
       if (this.walkable(e.x, oy)) e.y = oy;
@@ -463,11 +521,11 @@ export class World {
       from: { monster: m, spell } });
   }
   /** Applique au joueur les effets d'un sort de monstre, dans l'ordre des données de Dofus 3.
-   *  Dommages : jet officiel ramené à l'échelle du monstre (son meilleur sort = def.dmg). */
-  monsterSpellHits(m: Monster, spell: MonsterSpell, p: Player) {
+   *  Dommages : jet officiel ramené à l'échelle du monstre (son meilleur sort, tous ses coups additionnés = def.dmg) ;
+   *  mult : attaque signature d'un boss (4A, ×2,5). */
+  monsterSpellHits(m: Monster, spell: MonsterSpell, p: Player, mult = 1) {
     if (p.dead) return;
-    const ref = Math.max(1, ...(m.def.spells ?? []).flatMap(s => s.effects).filter(e => e.k === 'dmg' && !e.perPa).map(e => (e as { min: number; max: number }).min / 2 + (e as { max: number }).max / 2));
-    const k = m.def.dmg / ref;
+    const k = m.def.dmg / Math.max(1, jetOfficiel(m.def)) * mult;
     let landed = true;
     for (const e of spell.effects) {
       if (e.k === 'dmg') {
@@ -494,7 +552,21 @@ export class World {
         const len = sign > 0 ? Math.min(e.n * CASE, Math.max(0, d - m.radius - p.radius - 4)) : e.n * CASE;
         p.kx += sign * dx / d * len * 7.13; p.ky += sign * dy / d * len * 7.13;   // le recul freine en 0,0008^t : distance = vitesse / 7,13
       }
-      else if (e.k === 'soin') m.hp = Math.min(m.maxHp, m.hp + Math.round(this.rng.range(e.min, e.max + 1) * k));
+      else if (e.k === 'soin') m.hp = Math.min(m.maxHp, m.hp + Math.round(this.rng.range(e.min, e.max + 1) * k / mult));
+      else if (e.k === 'subis') {   // Grognement, Bave Affaiblissante : le joueur prend plus de dommages
+        p.subis = e.n / 100; p.subisT = Math.max(1, e.dur) * TOUR;
+        this.emit({ k: 'status', x: p.x, y: p.y, text: `Dommages subis ${e.n > 100 ? '+' : ''}${e.n - 100} %`, color: '#e07cf0' });
+      }
+      else if (e.k === 'desenvoute') {   // Rinçage : bonus et bouclier raccourcis de n tours
+        for (const md of p.mods) md.t -= e.n * TOUR;
+        p.mods = p.mods.filter(md => md.t > 0);
+        if (p.shieldT > 0) { p.shieldT -= e.n * TOUR; if (p.shieldT <= 0) { p.shieldT = 0; p.shield = 0; } }
+        this.emit({ k: 'status', x: p.x, y: p.y, text: 'Désenvoûté', color: '#9ad0ff' });
+      }
+      else if (e.k === 'etat' && Math.hypot(p.x - m.x, p.y - m.y) <= (e.r + 0.5) * CASE + p.radius) {   // Hyperleukocytine : Pacifiste
+        p.pacifiste = Math.max(p.pacifiste, Math.max(1, e.dur) * TOUR);
+        this.emit({ k: 'status', x: p.x, y: p.y - 20, text: 'Pacifiste', color: '#c8c8c8' });
+      }
     }
   }
   /** Sort lancé sur un allié (ex. Bêlement : +PM -> le monstre court plus vite pendant la durée). */
@@ -502,6 +574,9 @@ export class World {
     for (const e of spell.effects) if (e.k === 'pm' && e.n > 0) {
       m.haste = 1 + e.n * 0.25; m.hasteT = Math.max(1, e.dur) * TOUR;
       this.emit({ k: 'status', x: m.x, y: m.y, text: `+${e.n} PM`, color: '#7be07b' });
+    } else if (e.k === 'subis') {   // Cuirasse Laineuse : ses alliés prennent moins de dommages
+      m.subis = e.n / 100; m.subisT = Math.max(1, e.dur) * TOUR;
+      this.emit({ k: 'status', x: m.x, y: m.y, text: `Dommages subis ${e.n > 100 ? '+' : ''}${e.n - 100} %`, color: '#c8b48a' });
     } else if (e.k === 'dommages') {
       if (e.pct) m.furyPct = e.n; else m.furyFlat = e.n;
       m.furyT = Math.max(1, e.dur) * TOUR;
@@ -577,6 +652,7 @@ export class World {
     let n = 0;
     for (const m of this.monsters) {
       if (m.dead || m.state === 'spawn' || !test(m)) continue;
+      if (p.pacifiste > 0) { this.emit({ k: 'status', x: m.x, y: m.y - 20, text: 'Pacifiste', color: '#c8c8c8' }); return 0; }   // Hyperleukocytine : aucun dommage
       n++;
       const crit = this.rng.next() < p.critChance;
       // Choix 19A : résistances officielles du monstre dans l'élément du coup (plafonnées à 50 %, comme Dofus)
@@ -585,7 +661,7 @@ export class World {
       const first = m.struck ? 1 : 1 + initiativeBonus(p.initiative); m.struck = true;
       const flat = (crit ? p.stat('dommagesCritiques') : 0) + (def.knock > 0 ? p.stat('dommagesPoussee') : 0);
       const vs = def.vsSummon && (m.summoner || (def.vsElite && (m.def.elite || m.def.boss))) ? def.vsSummon : 1;
-      const vu = m.vulnT > 0 ? 1 + m.vuln / 100 : 1;   // dommages subis augmentés (Bond)
+      const vu = (m.vulnT > 0 ? 1 + m.vuln / 100 : 1) * m.subis;   // dommages subis augmentés (Bond) ou réduits (Cuirasse Laineuse)
       const dmg = Math.max(1, Math.round((p.damage(def.dmg * vs, def.element ?? 'neutre') * this.rng.range(0.9, 1.1) * (crit ? cls.critMult : 1) * first + flat) * (1 - res / 100) * vu));
       m.hp -= dmg; m.flash = 0.09;
       if (def.erosion) { m.maxHp = Math.max(1, m.maxHp - Math.round(dmg * def.erosion)); m.hp = Math.min(m.hp, m.maxHp); }
@@ -645,6 +721,7 @@ export class World {
     return k;
   }
   killMonster(m: Monster) {
+    if (m.mannequin) { m.hp = m.maxHp; return; }   // partie de test (7D) : le mannequin ne meurt pas
     m.dead = true; m.t = 0.6; this.kills++;
     this.quetes?.eliteVaincu(m.id);
     for (const s of this.monsters) if (s.summoner === m && !s.dead) this.killMonster(s);   // ses invocations disparaissent avec lui
@@ -655,6 +732,7 @@ export class World {
     this.dropLoot(m);
     const xp = p.gainXp(m.def.xp ?? Math.round(m.def.hp / 5), this);
     if (xp > 0) this.emit({ k: 'xp', x: m.x, y: m.y, z: m.radius * 2 + 30, n: xp });
+    this.xpFamilier(FAMILIER_XP.chasse(this.monsterLevel(m), !!m.def.elite, !!m.def.boss));
     if (m.def.boss) { this.emit({ k: 'impact', hitstop: 0.15, shake: 0.02, big: true }); this.emit({ k: 'bossDown', monster: m.type }); }
   }
   // --- Butin (choix 24) ----------------------------------------------------
@@ -684,6 +762,9 @@ export class World {
         this.emit({ k: 'lootResource', id: d.item, n: 1 });
       }
     }
+    // familier de la famille du monstre (1A)
+    for (const id of this.familiersDe[m.type] ?? [])
+      if (this.rng.next() < FAMILIER_XP.butin(elite, boss) * more) out.push({ item: rollItem(id, I.equipment[id], 'commun', this.rng, this.nextId++) });
     const equipChance = boss ? 1 : elite ? 0.3 : 0.06;
     for (let k = 0; k < (boss ? 2 : 1); k++) {
       if (this.rng.next() >= equipChance * more) continue;
@@ -707,18 +788,19 @@ export class World {
   /** Aspiré quand on passe près (kamas et Communs) ou ramassé d'un clic (le reste). */
   static magnetic(d: Drop): boolean { return !d.item || d.item.rarity === 'commun'; }
   private updateDrops(dt: number) {
-    const p = this.player;
+    const p = this.player, f = this.updateFamilier(dt);
     for (const d of this.drops) {
       d.t += dt;
       if (p.dead || d.t < 0.5 || !this.shown(d)) continue;
       const dist = Math.hypot(d.x - p.x, d.y - p.y);
-      if (World.magnetic(d)) {
+      if (d.familier) { if (f) f.cible = null; }   // rapporté par le familier
+      else if (World.magnetic(d)) {
         if (dist > 130) continue;
         if (dist > 26) { const s = Math.min(dist, 520 * dt); d.x += (p.x - d.x) / dist * s; d.y += (p.y - d.y) / dist * s; continue; }
       } else if (p.pickupId !== d.uid || dist > 44) continue;
       if (d.item) {
         if (p.pickupId === d.uid) p.pickupId = null;
-        if (p.bag.length >= Player.BAG_SIZE) { if (!d.warned) this.emit({ k: 'bagFull' }); d.warned = true; continue; }   // sac plein : l'objet reste au sol
+        if (p.bag.length >= Player.BAG_SIZE) { if (!d.warned) this.emit({ k: 'bagFull' }); d.warned = true; d.familier = false; continue; }   // sac plein : l'objet reste au sol
         p.bag.push(d.item);
         this.emit({ k: 'loot', item: d.item });
       } else if (d.kamas) {
@@ -730,6 +812,65 @@ export class World {
     if (p.pickupId != null && !this.drops.some(d => d.uid === p.pickupId && d.t >= 0)) p.pickupId = null;
     // ramassé, ou oublié au sol depuis 3 minutes
     this.drops = this.drops.filter(d => d.t >= 0 && d.t < 180);
+  }
+  // --- Familier (maquette Familiers) -------------------------------------------------------------------------------
+  /** Rayon autour du perso où le familier va chercher le butin (4A). */
+  static readonly FAMILIER_RAYON = 260;
+  /** Le familier suit le perso (un peu derrière) ou court vers le butin le plus proche, qu'il rapporte en le touchant. */
+  private updateFamilier(dt: number): FamilierEtat | null {
+    const p = this.player;
+    if (!p.equipment.familier) { this.familier = null; return null; }
+    const f = this.familier ??= { x: p.x - 30, y: p.y + 10, vx: 0, vy: 0, cible: null };
+    if (Math.hypot(f.x - p.x, f.y - p.y) > 600) { f.x = p.x - 30; f.y = p.y + 10; f.cible = null; }   // porte, Zaap, Rappel : il arrive avec toi
+    let cible = f.cible != null ? this.drops.find(d => d.uid === f.cible && d.t >= 0.5) : undefined;
+    if (!cible && !p.dead) {
+      let best = World.FAMILIER_RAYON;
+      for (const d of this.drops) {
+        if (d.t < 0.5 || d.familier || !this.shown(d) || (d.item && p.bag.length >= Player.BAG_SIZE)) continue;
+        const r = Math.hypot(d.x - p.x, d.y - p.y);
+        if (r < best) { best = r; cible = d; }
+      }
+    }
+    f.cible = cible?.uid ?? null;
+    const tx = cible ? cible.x : p.x - 34, ty = cible ? cible.y : p.y + 12, dx = tx - f.x, dy = ty - f.y, r = Math.hypot(dx, dy);
+    const v = cible ? 420 : r > 60 ? p.speed * 1.15 : r > 20 ? p.speed * 0.8 : 0;
+    const s = Math.min(r, v * dt);
+    f.vx = r > 1 && s > 0 ? dx / r * s / dt : 0; f.vy = r > 1 && s > 0 ? dy / r * s / dt : 0;
+    if (r > 1) { f.x += dx / r * s; f.y += dy / r * s; }
+    if (cible && Math.hypot(cible.x - f.x, cible.y - f.y) < 22) {   // il ramasse : comme si le perso passait dessus
+      cible.x = f.x; cible.y = f.y; cible.familier = true;
+    }
+    return f;
+  }
+  /** XP pour le familier porté (2C) ; ses bonus suivent son niveau. */
+  xpFamilier(n: number) {
+    const p = this.player, it = p.equipment.familier, def = it && this.opts.items?.equipment[it.id]?.familier;
+    if (!it || !def || n <= 0 || (it.niv ?? 1) >= FAMILIER_MAX) return;
+    it.xpF = (it.xpF ?? 0) + Math.round(n);
+    const avant = it.niv ?? 1, niv = familierNiveau(it.xpF, this.opts.familierXp ?? []);
+    if (niv === avant) return;
+    it.niv = niv; it.stats = familierStats(def, niv); p.recompute();
+    this.emit({ k: 'familierNiveau', nom: def.nom, niveau: niv });
+  }
+  /** Nourrir le familier porté (2C) avec un objet du sac (sauf cadenas) ou une ressource (une unité, ou toute la pile). */
+  nourrirFamilier(quoi: { uid: number } | { res: string; tout?: boolean }): boolean {
+    const p = this.player, it = p.equipment.familier, I = this.opts.items;
+    if (!it || !I || (it.niv ?? 1) >= FAMILIER_MAX) return false;
+    let xp = 0;
+    if ('uid' in quoi) {
+      const i = p.bag.findIndex(b => b.uid === quoi.uid), o = p.bag[i], d = o && I.equipment[o.id];
+      if (!o || !d || o.cadenas) return false;
+      p.bag.splice(i, 1); xp = FAMILIER_XP.objet(d.level, o.rarity);
+    } else {
+      const r = I.resources[quoi.res], n = p.resources[quoi.res] ?? 0;
+      if (!r || !n || r.pepite || r.cle) return false;
+      const k = quoi.tout ? n : 1;
+      p.resources[quoi.res] -= k; if (!p.resources[quoi.res]) delete p.resources[quoi.res];
+      xp = FAMILIER_XP.ressource(r.level) * k;
+    }
+    this.emit({ k: 'familierRepas', xp });
+    this.xpFamilier(xp);
+    return true;
   }
   // --- Métiers de récolte (0.2b) ---------------------------------------------------------------------------------
   private buildRecoltes() {
@@ -849,7 +990,7 @@ export class World {
     return true;
   }
   /** Case Apparence de l'inventaire : pose un apparat possédé sur l'emplacement, « 0 » cache l'objet porté, null rend sa vraie apparence. */
-  porterApparat(slot: 'chapeau' | 'cape' | 'bouclier', id: string | null): boolean {
+  porterApparat(slot: 'chapeau' | 'cape' | 'bouclier' | 'familier', id: string | null): boolean {
     const p = this.player;
     if (id === null) { delete p.apparat[slot]; return true; }
     if (id !== '0' && (!p.apparats.includes(id) || this.opts.apparats?.objets[id]?.slot !== slot)) return false;

@@ -106,13 +106,29 @@ export interface PnjDef {
   discussion?: { reponse: string; texte: string }[];
   /** Texte officiel de la réponse qui ferme le dialogue (sinon « Au revoir. »). */
   adieu?: string;
+  /** Gardien de l'entrée d'un donjon (maquette Gardiens) : il fait entrer avec la clé. Répliques inédites. Sans case, il se poste
+   *  à quelques pas de la porte d'entrée. */
+  gardien?: GardienDef;
 }
+export interface GardienDef {
+  /** Nom du donjon (zones.json, open.donjons[].nom). */
+  donjon: string;
+  /** Petite bulle quand on passe devant (9A, une fois par visite). */
+  approche: string;
+  /** Ce qu'il dit après ta victoire sur le boss, ou après ta mort dans le donjon (8A). */
+  victoire: string; mort: string;
+  /** Sans clé (6A). {vendeur} = le PNJ qui vend la clé. */
+  sansCle?: string;
+}
+/** Ligne d'infos sous la réplique du gardien (7A + 7B). */
+export interface InfoDonjon { nom: string; boss: string | null; niveau: number; salles: number; cle: string | null; cles: number; victoires: number; butin: string[] }
 /** Réponse du cadre vert sous la bulle (maquette Dialogues 3A) : voir une quête, l'accepter, revenir à la liste, fermer. */
 export type Reponse = { texte: string; detail?: string } & (
   { a: 'voir' | 'accepter'; quete: string } | { a: 'retour' } | { a: 'fermer' } | { a: 'service'; service: string } | { a: 'suite'; i: number }
+  | { a: 'entrer'; donjon: string } | { a: 'sansCle'; donjon: string }
 );
 /** Dialogue ouvert avec un PNJ (bulle officielle à ruban, réponses 1 à 4). Le jeu continue derrière (4A). */
-export interface Dialogue { pnj: string; texte: string; reponses: Reponse[]; quete?: string; recompense?: RecompenseDef }
+export interface Dialogue { pnj: string; texte: string; reponses: Reponse[]; quete?: string; recompense?: RecompenseDef; donjon?: InfoDonjon }
 /** Objectif d'un succès officiel : une quête finie, une étape de quête finie, un autre succès, une sous-zone découverte,
  *  un niveau atteint ou un monstre vaincu. */
 export type SuccesObjectif = { nom: string } & (
@@ -134,7 +150,10 @@ export interface Compte { succes: string[]; persos: number }
 export interface EtatQuetes {
   enCours: QueteEnCours[]; finies: string[]; etapesFinies: string[]; suivie: string | null;
   decouvertes: number[]; vaincus: string[]; objets: Record<string, number>;
+  /** Donjons (8A) : victoires sur le boss, morts, et dernier résultat pas encore commenté par le gardien. */
+  donjons?: Record<string, BilanDonjon>;
 }
+export interface BilanDonjon { v: number; m: number; dernier?: 'v' | 'm' }
 
 export class Quetes {
   enCours: QueteEnCours[] = [];
@@ -149,6 +168,12 @@ export class Quetes {
   vaincus = new Set<string>();
   /** Objets de quête dans le sac (onglet « Objets de quête »). */
   objets: Record<string, number> = {};
+  /** Victoires et morts dans chaque donjon (8A). */
+  donjons: Record<string, BilanDonjon> = {};
+  /** Vendeur de clés montré par un gardien (6A) : la carte M le met en avant. */
+  marqueVendeur: string | null = null;
+  /** Gardiens qui ont déjà dit leur bulle d'approche pendant cette visite (9A). */
+  private salues = new Set<string>();
   /** PNJ placés dans le monde (coordonnées monde). */
   pnjs: { id: string; def: PnjDef; x: number; y: number; tag: string }[] = [];
   /** Bulle en cours au-dessus d'un PNJ. */
@@ -172,7 +197,8 @@ export class Quetes {
       const m = wg.mapByTag(def.carte);
       if (!m || !wg.freeByMap.get(def.carte)?.length) continue;   // carte pas (encore) exportée
       const free = wg.freeByMap.get(def.carte)!;
-      let q = def.case != null ? wg.nearestFree(...xy(wg.cellToWorld(wg.cellOf(def.carte, def.case))), free) : world.openestCellOf(def.carte);
+      let q = def.case != null ? wg.nearestFree(...xy(wg.cellToWorld(wg.cellOf(def.carte, def.case))), free)
+        : def.gardien ? this.posteDeGarde(def.gardien.donjon, def.carte) ?? world.openestCellOf(def.carte) : world.openestCellOf(def.carte);
       // deux PNJ sur la même carte : le second se pose à côté (case libre la plus proche à plus de 5 cases)
       if (this.pnjs.some(o => Math.hypot(o.x - q.x, o.y - q.y) < 200)) {
         let best = q, bd = Infinity;
@@ -184,6 +210,38 @@ export class Quetes {
       }
       this.pnjs.push({ id, def, x: q.x, y: q.y, tag: def.carte });
     }
+  }
+  /** Case du gardien : à quelques pas de la porte d'entrée de son donjon, du côté du milieu de la carte. */
+  private posteDeGarde(donjon: string, tag: string) {
+    const wg = this.world.worldGrid!, po = this.world.entreeDonjon(donjon), e = po?.ends[0];
+    if (!e || e.tag !== tag) return null;
+    const free = (wg.freeByMap.get(tag) ?? []).map(c => wg.cellToWorld(c));
+    const mid = free.reduce((a, q) => ({ x: a.x + q.x / free.length, y: a.y + q.y / free.length }), { x: 0, y: 0 });
+    let best: { x: number; y: number } | null = null, bd = Infinity;
+    for (const q of free) {
+      const d = Math.hypot(q.x - e.x, q.y - e.y);
+      if (d < 110 || d > 200) continue;
+      const score = Math.abs(d - 140) + 0.25 * Math.hypot(q.x - mid.x, q.y - mid.y);
+      if (score < bd) { bd = score; best = q; }
+    }
+    return best;
+  }
+  /** Gardien d'un donjon (id du PNJ placé dans ce monde). */
+  gardienDe(donjon: string): string | null { return this.pnjs.find(p => p.def.gardien?.donjon === donjon)?.id ?? null; }
+  /** PNJ qui vend cette clé (boutiques des PNJ), pour le gardien sans clé (6A) et la carte M. */
+  vendeurDe(cle: string): string | null {
+    return Object.entries(this.world.opts.boutiques ?? {}).find(([k, l]) => this.data.pnj[k] && Array.isArray(l) && l.some(a => a.id === cle))?.[0] ?? null;
+  }
+  /** Infos du donjon sous la réplique du gardien (7A + 7B : boss, niveau, salles, clés dans le sac, victoires, butin du boss). */
+  infoDonjon(nom: string): InfoDonjon {
+    const w = this.world, d = w.zone.open?.donjons?.find(x => x.nom === nom), boss = w.bossDuDonjon(nom), M = w.opts.data.monsters;
+    const cle = w.entreeDonjon(nom)?.cle ?? null, I = w.opts.items;
+    // butin officiel du boss : équipements d'abord, puis ressources du plus courant au plus rare (sans les caisses à 100 %)
+    const l = boss && I ? (I.drops[boss] ?? []).filter(x => (I.equipment[x.item] || I.resources[x.item]) && (I.equipment[x.item] || x.chance < 100)) : [];
+    l.sort((x, y) => +!!I!.equipment[y.item] - +!!I!.equipment[x.item] || y.chance - x.chance);
+    const butin = [...new Set(l.map(x => x.item))].slice(0, 8);
+    return { nom, boss: boss ? M[boss].name : null, niveau: boss ? M[boss].level ?? 1 : 1, salles: Object.keys(d?.salles ?? {}).length,
+      cle, cles: cle ? w.player.resources[cle] ?? 0 : 0, victoires: this.donjons[nom]?.v ?? 0, butin };
   }
   /** Lance les quêtes du départ (le tutoriel, sauté dès le 2e perso si elle le demande). */
   demarrer() {
@@ -204,7 +262,7 @@ export class Quetes {
   /** Avancement des quêtes du perso (sauvegarde, src/sim/sauvegarde.ts). */
   exporter(): EtatQuetes {
     return JSON.parse(JSON.stringify({ enCours: this.enCours, finies: [...this.finies], etapesFinies: [...this.etapesFinies], suivie: this.suivie,
-      decouvertes: [...this.decouvertes], vaincus: [...this.vaincus], objets: this.objets }));
+      decouvertes: [...this.decouvertes], vaincus: [...this.vaincus], objets: this.objets, donjons: this.donjons }));
   }
   /** Reprend une partie sauvegardée au lieu de demarrer() : mêmes quêtes, mêmes étapes, et les élites de l'étape en cours reviennent. */
   reprendre(e: EtatQuetes) {
@@ -212,6 +270,7 @@ export class Quetes {
     this.finies = new Set(e.finies ?? []); this.etapesFinies = new Set(e.etapesFinies ?? []);
     this.suivie = e.suivie && this.enCours.some(c => c.id === e.suivie) ? e.suivie : this.enCours[0]?.id ?? null;
     this.decouvertes = new Set(e.decouvertes ?? []); this.vaincus = new Set(e.vaincus ?? []); this.objets = { ...e.objets };
+    this.donjons = JSON.parse(JSON.stringify(e.donjons ?? {}));
     for (const c of this.enCours) if (!c.aRendre) this.etapeDe(c)!.objectifs.forEach((o, i) => {
       if (o.t === 'elite' && (c.compte[i] ?? 0) < 1) this.faireApparaitre(c.id, o);
     });
@@ -284,6 +343,8 @@ export class Quetes {
   /** Clic sur un PNJ : le perso y va ; à portée, il prend la quête, la rend ou lui parle. */
   cliquer(pnj: string) { this.versPnj = pnj; }
   annulerClic() { this.versPnj = null; }
+  /** Ouvre tout de suite le dialogue d'un PNJ (porte d'un donjon gardé : le gardien se tient à côté). */
+  parlerA(pnj: string) { this.versPnj = null; if (this.dialogue?.pnj !== pnj) this.parler(pnj); }
   get destination() { const p = this.versPnj && this.pnj(this.versPnj); return p ? { x: p.x, y: p.y } : null; }
   /** À portée du PNJ : il valide ce qui l'attend (rendu 6B, objectif « parler »), puis ouvre le dialogue. */
   private parler(pnj: string) {
@@ -303,19 +364,35 @@ export class Quetes {
   }
   /** Ouvre le dialogue : une seule quête à donner = son offre (5A), plusieurs = la liste (5C), aucune = sa phrase (10A). */
   private ouvrir(pnj: string, intro: string | null, liste = false) {
-    const ds = this.aDonnerTous(pnj);
+    const ds = this.aDonnerTous(pnj), def = this.data.pnj[pnj], dis = def?.discussion?.[0];
+    if (def?.gardien) { this.garder(pnj, def, intro, ds); return; }
     if (ds.length === 1 && !liste) { this.offre(pnj, ds[0], intro); return; }
-    const def = this.data.pnj[pnj], dis = def?.discussion?.[0];
     this.dialogue = { pnj, texte: intro ?? def?.phrase ?? 'Bonne route, aventurier.',
       reponses: [...ds.map(id => ({ a: 'voir' as const, quete: id, texte: this.def(id).nom })),
         ...(def?.services ?? []).map(s => ({ a: 'service' as const, service: s.service, texte: s.texte })),
         ...(dis && !ds.length ? [{ a: 'suite' as const, i: 0, texte: dis.reponse }] : []),
         { a: 'fermer', texte: def?.adieu ?? 'Au revoir.' }] };
   }
+  /** Dialogue d'un gardien : sa réplique (ou ce qu'il pense de ta dernière visite), les infos du donjon, « Entrer ». */
+  private garder(pnj: string, def: PnjDef, intro: string | null, ds: string[]) {
+    const g = def.gardien!, b = this.donjons[g.donjon], info = this.infoDonjon(g.donjon);
+    const dernier = b?.dernier === 'v' ? g.victoire : b?.dernier === 'm' ? g.mort : null;
+    if (b) delete b.dernier;
+    const nomCle = info.cle ? this.world.opts.items?.resources[info.cle]?.name ?? 'clé' : null;
+    const entrer: Reponse = !info.cle || info.cles > 0
+      ? { a: 'entrer', donjon: g.donjon, texte: 'Entrer.', ...(nomCle ? { detail: `utiliser 1 ${nomCle}` } : {}) }
+      : { a: 'sansCle', donjon: g.donjon, texte: "Je n'ai pas de clé." };
+    const dis = def.discussion?.[0];
+    this.dialogue = { pnj, donjon: info, texte: intro ?? dernier ?? def.phrase ?? 'Bonne route, aventurier.',
+      reponses: [entrer, ...ds.map(id => ({ a: 'voir' as const, quete: id, texte: this.def(id).nom })),
+        ...(dis ? [{ a: 'suite' as const, i: 0, texte: dis.reponse }] : []), { a: 'fermer' as const, texte: def.adieu ?? 'Au revoir.' }].slice(0, 4) };
+    if (this.dialogue.reponses.at(-1)!.a !== 'fermer') this.dialogue.reponses[3] = { a: 'fermer', texte: def.adieu ?? 'Au revoir.' };
+  }
   /** Suite de la discussion officielle : le texte n, puis la réponse vers le n + 1 (ou l'adieu). */
   private suite(pnj: string, i: number) {
     const def = this.data.pnj[pnj], l = def?.discussion ?? [], n = l[i + 1];
     if (!l[i]) { this.ouvrir(pnj, null); return; }
+    if (def.gardien && !n) { this.ouvrir(pnj, l[i].texte); return; }   // le gardien répond, puis « Entrer » revient
     this.dialogue = { pnj, texte: l[i].texte, reponses: [...(n ? [{ a: 'suite' as const, i: i + 1, texte: n.reponse }] : []),
       ...(def?.services ?? []).map(s => ({ a: 'service' as const, service: s.service, texte: s.texte })).slice(0, n ? 2 : 3),
       { a: 'fermer', texte: def?.adieu ?? 'Au revoir.' }] };
@@ -334,6 +411,14 @@ export class Quetes {
     if (r.a === 'retour') this.ouvrir(d.pnj, null, true);
     else if (r.a === 'voir') this.offre(d.pnj, r.quete, null);
     else if (r.a === 'suite') this.suite(d.pnj, r.i);
+    else if (r.a === 'entrer') { this.dialogue = null; this.world.entrerDonjon(r.donjon); }
+    else if (r.a === 'sansCle') {
+      const def = this.data.pnj[d.pnj], cle = this.world.entreeDonjon(r.donjon)?.cle ?? '', v = this.vendeurDe(cle);
+      const vendeur = v ? `${this.data.pnj[v].nom}, près du Zaap d'Astrub,` : "Un marchand d'Astrub";
+      const t = (def?.gardien?.sansCle ?? "Sans clé, la porte ne s'ouvre pas. {vendeur} en vend : je te l'ai marqué sur ta carte (M).").replace('{vendeur}', vendeur);
+      this.marqueVendeur = v;
+      this.dialogue = { pnj: d.pnj, donjon: d.donjon, texte: t, reponses: [{ a: 'fermer', texte: def?.adieu ?? 'Au revoir.' }] };
+    }
     else if (r.a === 'service') { this.dialogue = null; this.world.emit({ k: 'service', service: r.service, pnj: d.pnj }); }
     else { this.dialogue = null; this.prendre(r.quete); this.suivie = r.quete; }
   }
@@ -343,6 +428,8 @@ export class Quetes {
     const w = this.world;
     if (e.k === 'kill') {
       this.vaincus.add(e.monster);
+      const ici = w.donjonIci();   // victoire sur le boss du donjon (8A)
+      if (ici && w.bossDuDonjon(ici) === e.monster) { const b = this.donjons[ici] ??= { v: 0, m: 0 }; b.v++; b.dernier = 'v'; }
       const sub = w.worldGrid?.mapAt(e.x, e.y)?.sub;
       for (const c of this.enCours) this.etapeDe(c)?.objectifs.forEach((o, i) => {
         const okSub = !('sousZone' in o) || o.sousZone == null || o.sousZone === sub;
@@ -361,6 +448,10 @@ export class Quetes {
           : (o.sort && o.sort === e.id) || (o.quoi === 'mobilite' && e.id === p.cls.mobility) || (o.quoi === 'sort' && e.id !== p.cls.mobility && e.id !== 'attaque');
         if (ok) c.compte[i] = 1;
       });
+    } else if (e.k === 'playerDeath') {
+      const ici = w.donjonIci();
+      if (ici) { const b = this.donjons[ici] ??= { v: 0, m: 0 }; b.m++; b.dernier = 'm'; }
+      return;
     } else if (e.k === 'playerHurt') {
       this.dialogue = null;   // un coup reçu ferme le dialogue (4B)
       return;
@@ -392,6 +483,13 @@ export class Quetes {
       if (!n || p.dead || Math.hypot(n.x - p.x, n.y - p.y) > Quetes.DIALOGUE_MAX) this.dialogue = null;
     }
     if (map) this.decouvertes.add(map.sub);
+    // bulle du gardien quand on passe devant (9A), une fois par visite
+    for (const n of this.pnjs) {
+      if (!n.def.gardien) continue;
+      const d = Math.hypot(n.x - p.x, n.y - p.y);
+      if (d > 900) this.salues.delete(n.id);
+      else if (d < 380 && !this.salues.has(n.id) && !this.dialogue && !this.bulle && !p.dead) { this.salues.add(n.id); this.dire(n.id, n.def.gardien.approche); }
+    }
     // quêtes sans PNJ : elles démarrent seules en entrant dans leur sous-zone
     if (map) for (const [id, q] of Object.entries(this.data.quetes))
       if (q.zone === map.sub && !q.pnj && !this.finies.has(id) && !this.enCours.some(c => c.id === id) && p.level + 2 >= q.niveau

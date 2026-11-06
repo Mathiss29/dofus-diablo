@@ -1,11 +1,11 @@
 import { REGLAGES_DEFAUT, sauverReglages, type Reglages } from './ambiance';
 import { ICON_CSS, iconHtml } from './icons';
 import { MANIFESTE, Son } from './son';
-import { APPARATS, BOUTIQUES, ITEMS, RECOLTES } from '../sim/data';
+import { APPARATS, BOUTIQUES, FAMILIERS, ITEMS, RECOLTES } from '../sim/data';
 import { v } from './assetUrl';
 import { DOSSIER, PALETTES, ZONES, apparenceValide, assemblagePour, fiches, objetsPortes, type Apparence, type Assemblage, type FichePerso } from './squelette';
 import {
-  BASE_STATS, LEGENDARY, PEPITE, RARITY_COLORS, RARITY_NAMES, STATS, STAT_NAMES, metierXpNeeded, recycleResource, recycleValue,
+  BASE_STATS, FAMILIER_MAX, FAMILIER_XP, LEGENDARY, PEPITE, RARITY_COLORS, RARITY_NAMES, STATS, STAT_NAMES, metierXpNeeded, recycleResource, recycleValue,
   type EquipSlot, type Item, type Rarity, type ResourceDef, type Stat,
 } from '../sim/items';
 import { Player } from '../sim/player';
@@ -15,16 +15,16 @@ import type { World } from '../sim/world';
 
 const SLOT_NAMES: Record<EquipSlot, string> = {
   chapeau: 'Coiffe', cape: 'Cape', amulette: 'Amulette', anneau1: 'Anneau', anneau2: 'Anneau', ceinture: 'Ceinture',
-  bottes: 'Bottes', arme: 'Arme', bouclier: 'Bouclier',
+  bottes: 'Bottes', arme: 'Arme', bouclier: 'Bouclier', familier: 'Familier',
 };
 /** Place des emplacements autour du perso, comme l'inventaire de Dofus 3 (null = case vide de l'interface). */
-const LEFT: (EquipSlot | null)[] = ['chapeau', 'cape', null, 'arme', 'bouclier'];
+const LEFT: (EquipSlot | null)[] = ['chapeau', 'cape', 'familier', 'arme', 'bouclier'];
 const RIGHT: (EquipSlot | null)[] = ['amulette', 'anneau1', 'anneau2', 'ceinture', 'bottes'];
 /** Onglets verticaux de l'inventaire de Dofus 3 : tout, équipements, consommables, ressources, objets de quête, apparats. */
 const TABS: [string, string, string][] = [['tout', 'all', 'Tout'], ['equip', 'equipments', 'Équipements'], ['conso', 'consumables', 'Consommables'],
   ['ressource', 'resources', 'Ressources'], ['quete', 'key', 'Objets de quête'], ['apparat', 'cosmetics', 'Apparats']];
 const KINDS: [string, string][] = [['', 'Toutes les catégories'], ['arme', 'Armes'], ['amulette', 'Amulettes'], ['anneau', 'Anneaux'],
-  ['chapeau', 'Coiffes'], ['cape', 'Capes'], ['ceinture', 'Ceintures'], ['bottes', 'Bottes'], ['bouclier', 'Boucliers']];
+  ['chapeau', 'Coiffes'], ['cape', 'Capes'], ['ceinture', 'Ceintures'], ['bottes', 'Bottes'], ['bouclier', 'Boucliers'], ['familier', 'Familiers']];
 const SORTS: [string, string][] = [['', 'Aucun tri'], ['niveau', 'Niveau'], ['rarete', 'Rareté'], ['nom', 'Nom']];
 const RARITY_ORDER: Record<string, number> = { commun: 0, rare: 1, epique: 2, legendaire: 3, mythique: 4 };
 const INV = 'assets/ui/inv';
@@ -35,19 +35,20 @@ const D3 = 'assets/ui/d3';
 /** Fond officiel des emplacements d'équipement (silhouette comprise). */
 const SLOT_D3: Record<EquipSlot, string> = {
   chapeau: 'helmet', cape: 'cape', amulette: 'collar', anneau1: 'ring', anneau2: 'ring', ceinture: 'belt',
-  bottes: 'shoe', arme: 'weapon', bouclier: 'shield',
+  bottes: 'shoe', arme: 'weapon', bouclier: 'shield', familier: 'pet',
 };
 const TAB_D3: Record<string, string> = { all: 'all', equipments: 'equipment', consumables: 'consumable', resources: 'resources', key: 'quest', cosmetics: 'cosmetics' };
 
 /** Icône d'un objet d'apparat (planche à part ui/apparat.webp, apparat_export.py). */
 function apparatHtml(id: string) {
   const d = APPARATS.objets[id]; if (!d) return '<i class="ic"></i>';
+  if (d.case < 0) return iconHtml(d.icon);   // familier d'apparat : planche des objets
   const x = (d.case % APPARATS.cols) / (APPARATS.cols - 1) * 100, y = Math.floor(d.case / APPARATS.cols) / Math.max(1, APPARATS.rows - 1) * 100;
   return `<i class="ic" style="background-image:url(assets/ui/apparat.webp);background-size:${APPARATS.cols * 100}% ${APPARATS.rows * 100}%;background-position:${x.toFixed(3)}% ${y.toFixed(3)}%"></i>`;
 }
 const hexa = (c: number) => '#' + c.toString(16).padStart(6, '0');
-type Visible = 'chapeau' | 'cape' | 'bouclier';
-const VISIBLES: [Visible, string][] = [['chapeau', 'Coiffe'], ['cape', 'Cape'], ['bouclier', 'Bouclier']];
+type Visible = 'chapeau' | 'cape' | 'bouclier' | 'familier';
+const VISIBLES: [Visible, string][] = [['chapeau', 'Coiffe'], ['cape', 'Cape'], ['bouclier', 'Bouclier'], ['familier', 'Familier']];
 
 const CSS = `
 .dw canvas.vivant{display:block}
@@ -231,6 +232,7 @@ const CSS = `
 .dw .btn{cursor:pointer;background:linear-gradient(#6f9a2a,#4c6e17);border:1px solid #b9e54b;color:#fff;border-radius:3px;padding:6px 12px;font-weight:bold}
 .dw .btn.off{opacity:.35;pointer-events:none;filter:grayscale(1)}
 .dw .tip .cmp{border-top:1px solid #3a3a2c;margin-top:6px;padding-top:6px;font-size:12px}
+.dw .tip .xpf{height:5px;background:#2a2620;border-radius:3px;margin:3px 0 5px;overflow:hidden}.dw .tip .xpf i{display:block;height:100%;background:#6fb2e8}
 
 .dw .win.quetes,.dw .win.succes{width:min(900px,96vw);height:min(660px,92vh)}
 .dw .qb{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);min-height:0}
@@ -353,7 +355,7 @@ export class Windows {
   /** Apparat survolé dans la boutique d'Emp : le perso de l'aperçu le porte. */
   private essaiApparat: string | null = null;
   private apparatRecherche = '';
-  private apparatSlot: '' | 'chapeau' | 'cape' = '';
+  private apparatSlot: '' | 'chapeau' | 'cape' | 'familier' = '';
   /** Perso du joueur dessiné en direct (classe et sexe, tête et couleurs) : inventaire, aperçu des apparats, garde-robe. */
   perso: { cle: string; app: Apparence } | null = null;
   /** Garde-robe (Apparence 6B) : nouvelle tête et nouvelles couleurs, enregistrées par l'affichage du jeu. */
@@ -455,7 +457,7 @@ export class Windows {
               <select data-kind>${KINDS.map(([k, v]) => `<option value="${k}" ${this.kind === k ? 'selected' : ''}>${v}</option>`).join('')}</select>
             </div>
             <div class="grid">${html}</div>
-            <div class="foot"><span>Visible(s) : <b>${n}</b> · sac <b>${p.bag.length} / ${Player.BAG_SIZE}</b><br><span class="hint">Clic droit : équiper / retirer · Maj + clic : recycler · Ctrl + clic : cadenas</span></span>
+            <div class="foot"><span>Visible(s) : <b>${n}</b> · sac <b>${p.bag.length} / ${Player.BAG_SIZE}</b><br><span class="hint">Clic droit : équiper / retirer · Maj + clic : recycler · Ctrl + clic : cadenas${p.equipment.familier ? ' · Alt + clic : nourrir le familier' : ''}</span></span>
               <span class="k">${p.kamas.toLocaleString('fr-FR')} <img src="${INV}/kamas.png" alt="" title="Kamas"></span></div>
             <div class="foot"><span>Butin affiché au sol</span>
               <select data-filter style="width:auto">${['Tout', 'Rare et plus', 'Épique et plus'].map((n, i) => `<option value="${i}" ${p.lootFilter === i ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
@@ -487,7 +489,7 @@ export class Windows {
     w.querySelectorAll<HTMLElement>('[data-app]').forEach(e => {
       const id = e.dataset.app!, d = APPARATS.objets[id];
       const porter = () => { this.world.porterApparat(d.slot, p.apparat[d.slot] === id ? null : id); this.changed(); };
-      e.addEventListener('mouseenter', ev => { this.tip.innerHTML = `<h4>${d.name}</h4><div class="sub">${d.slot === 'chapeau' ? 'Coiffe' : 'Cape'} d'apparat</div><div class="hint">Change seulement l'apparence. Clic droit : porter / retirer</div>`; this.tip.style.display = 'block'; this.moveTip(ev); });
+      e.addEventListener('mouseenter', ev => { this.tip.innerHTML = `<h4>${d.name}</h4><div class="sub">${d.slot === 'chapeau' ? 'Coiffe' : d.slot === 'cape' ? 'Cape' : 'Familier'} d'apparat</div><div class="hint">Change seulement l'apparence. Clic droit : porter / retirer</div>`; this.tip.style.display = 'block'; this.moveTip(ev); });
       e.addEventListener('mousemove', ev => this.moveTip(ev));
       e.addEventListener('mouseleave', () => this.hideTip());
       e.addEventListener('contextmenu', porter); e.addEventListener('dblclick', porter);
@@ -499,6 +501,7 @@ export class Windows {
       e.addEventListener('mousemove', ev => this.moveTip(ev));
       e.addEventListener('mouseleave', () => this.hideTip());
       if (r.soin || r.rappel) { e.addEventListener('contextmenu', eat); e.addEventListener('dblclick', eat); }
+      e.addEventListener('click', ev => { if (ev.altKey && this.world.nourrirFamilier({ res: id, tout: ev.shiftKey })) { ev.preventDefault(); this.changed(); } });
     });
     w.querySelectorAll<HTMLElement>('[data-uid]').forEach(e => {
       const uid = +e.dataset.uid!, it = p.bag.find(b => b.uid === uid)!;
@@ -508,7 +511,9 @@ export class Windows {
       e.addEventListener('mouseleave', () => this.hideTip());
       e.addEventListener('contextmenu', equip);
       e.addEventListener('dblclick', equip);
-      e.addEventListener('click', ev => { if (ev.ctrlKey || ev.metaKey) { this.world.cadenas(uid); this.changed(); } else if (ev.shiftKey) { this.world.recycle(uid); this.changed(); } });
+      e.addEventListener('click', ev => {
+        if (ev.altKey) { ev.preventDefault(); if (this.world.nourrirFamilier({ uid })) this.changed(); else this.flash(e); }
+        else if (ev.ctrlKey || ev.metaKey) { this.world.cadenas(uid); this.changed(); } else if (ev.shiftKey) { this.world.recycle(uid); this.changed(); } });
     });
   }
 
@@ -736,6 +741,7 @@ export class Windows {
           { k: 'zoom', nom: 'Zoom de départ', t: 'range', min: 55, max: 120 },
           { k: 'vent', nom: 'Arbres au vent', t: 'check' },
           { k: 'eau', nom: 'Eau animée', t: 'check' },
+          { k: 'transparence', nom: 'Voir à travers le décor', aide: 'Le décor devant ton perso s\'efface, les monstres cachés ont une silhouette rouge.', t: 'check' },
           { k: 'particules', nom: 'Particules (spores, braises…)', t: 'check' },
         ] },
       ] },
@@ -914,11 +920,11 @@ export class Windows {
       const essai = this.essaiApparat && APPARATS.objets[this.essaiApparat];
       const objets = objetsPortes(p.equipment, { ...p.apparat, ...(essai ? { [essai.slot]: this.essaiApparat! } : {}) });
       corps = `<div class="filtre"><input placeholder="Rechercher un apparat..." value="${this.apparatRecherche.replace(/"/g, '&quot;')}" data-arech>
-          <select data-aslot style="width:auto">${[['', 'Coiffes et capes'], ['chapeau', 'Coiffes'], ['cape', 'Capes']].map(([k, n]) => `<option value="${k}" ${this.apparatSlot === k ? 'selected' : ''}>${n}</option>`).join('')}</select>
+          <select data-aslot style="width:auto">${[['', 'Tous les apparats'], ['chapeau', 'Coiffes'], ['cape', 'Capes'], ['familier', 'Familiers']].map(([k, n]) => `<option value="${k}" ${this.apparatSlot === k ? 'selected' : ''}>${n}</option>`).join('')}</select>
           <span class="hint">${l.length} apparat${l.length > 1 ? 's' : ''}</span></div>
         <div class="cata"><div class="apercu">${this.perso ? this.canevas('', objets) : ''}<div class="hint" style="text-align:center">${essai ? essai.name : 'Survole un apparat pour l\'essayer'}</div></div>
         <div class="shop">${l.slice(0, 120).map(([id, d]) => { const a = p.apparats.includes(id), prix = APPARATS.prix[d.slot] ?? 0;
-          return `<div class="rec" data-essai="${id}">${apparatHtml(id)}<div><b>${d.name}</b> <span class="hint">${d.slot === 'chapeau' ? 'Coiffe' : 'Cape'} d'apparat</span></div>
+          return `<div class="rec" data-essai="${id}">${apparatHtml(id)}<div><b>${d.name}</b> <span class="hint">${d.slot === 'chapeau' ? 'Coiffe' : d.slot === 'cape' ? 'Cape' : 'Familier'} d'apparat</span></div>
             ${a ? '<span class="hint">Déjà à toi</span>' : `<span class="btn ${pep >= prix ? '' : 'off'}" data-aachat="${id}">${prix} ${iconHtml(ITEMS.resources[PEPITE].icon)}</span>`}</div>`; }).join('')}
           ${l.length > 120 ? `<div class="hint">… et ${l.length - 120} autres : affine la recherche.</div>` : ''}</div></div>`;
     } else {
@@ -943,7 +949,7 @@ export class Windows {
       ar.addEventListener('input', () => { this.apparatRecherche = ar.value; this.render(); const m = this.win!.querySelector<HTMLInputElement>('[data-arech]')!; m.focus(); m.setSelectionRange(m.value.length, m.value.length); });
       ar.addEventListener('keydown', e => e.stopPropagation());
     }
-    w.querySelector<HTMLSelectElement>('[data-aslot]')?.addEventListener('change', e => { this.apparatSlot = (e.target as HTMLSelectElement).value as '' | 'chapeau' | 'cape'; this.render(); });
+    w.querySelector<HTMLSelectElement>('[data-aslot]')?.addEventListener('change', e => { this.apparatSlot = (e.target as HTMLSelectElement).value as '' | 'chapeau' | 'cape' | 'familier'; this.render(); });
     w.querySelectorAll<HTMLElement>('[data-lot]').forEach(e => e.addEventListener('click', () => { this.world.recycleLot(e.dataset.lot as Rarity); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-achat]').forEach(e => e.addEventListener('click', () => { this.world.acheter('emp', e.dataset.achat!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-rres]').forEach(e => e.addEventListener('click', () => { this.world.recycleRessource(e.dataset.rres!); this.changed(); }));
@@ -1098,9 +1104,17 @@ export class Windows {
       }).join('<br>') || 'identique'}</div>`;
     }
     const lvl = d.level > p.level ? `<div class="down">Niveau ${d.level} requis</div>` : '';
+    let fam = '';
+    if (d.familier) {   // familier : son niveau, son XP, et ses bonus au niveau 100
+      const n = it.niv ?? 1, c = FAMILIERS.xp, a = c[n - 1] ?? 0, b = c[n] ?? a, x = it.xpF ?? 0;
+      const max = STATS.filter(k => d.stats[k]).map(k => `${d.stats[k]![1]} ${STAT_NAMES[k]}`).join(' · ');
+      fam = `<div class="ex">Familier niveau ${n} / ${FAMILIER_MAX}</div>${n < FAMILIER_MAX ? `<div class="xpf"><i style="width:${Math.round(100 * Math.min(1, (x - a) / Math.max(1, b - a)))}%"></i></div>` : ''}
+        ${max ? `<div class="hint">Au niveau 100 : ${max}</div>` : ''}
+        <div class="hint">Il gagne de l'XP quand tu chasses, et quand tu le nourris (Alt + clic sur un objet ou une ressource du sac).</div>`;
+    } else if (p.equipment.familier && !worn) fam = `<div class="hint">Alt + clic : le donner à manger au familier (+${FAMILIER_XP.objet(d.level, it.rarity)} XP)</div>`;
     this.tip.innerHTML = `<h4 style="color:${RARITY_COLORS[it.rarity]}">${d.name}</h4>
-      <div class="sub">${RARITY_NAMES[it.rarity]} · ${d.weapon?.type ?? SLOT_NAMES[(slot ?? 'amulette') as EquipSlot]} · niveau ${d.level}</div>
-      ${weapon}${stats}${leg}${set}${lvl}${cmp}
+      <div class="sub">${d.familier ? 'Familier' : `${RARITY_NAMES[it.rarity]} · ${d.weapon?.type ?? SLOT_NAMES[(slot ?? 'amulette') as EquipSlot]}`} · niveau ${d.level}</div>
+      ${weapon}${stats}${fam}${leg}${set}${lvl}${cmp}
       <div class="hint">${worn ? 'Clic droit : retirer' : it.cadenas ? 'Sous cadenas : jamais recyclé · Ctrl + clic : l\'ôter' : `Clic droit : équiper · Maj + clic : recycler (${recycleValue(d, it)} Pépites) · Ctrl + clic : cadenas`}</div>`;
     this.tip.style.display = 'block'; this.moveTip(ev);
   }

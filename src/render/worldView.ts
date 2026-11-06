@@ -1,8 +1,13 @@
 import { v } from './assetUrl';
 import Phaser from 'phaser';
-import { GridMap, type DecorPlace, type WorldGrid, type WorldMapEntry } from '../sim/gridmap';
+import { GridMap, MAP_COLS, MAP_ROWS, type DecorPlace, type WorldGrid, type WorldMapEntry } from '../sim/gridmap';
 import { ISO } from '../sim/iso';
 import type { Particules } from './particles';
+import type { Transparence } from './transparence';
+
+/** Profondeur du sol. Le reste (perso, monstres, décor) est trié par sa hauteur à l'écran, qui descend sous -10 000 au nord
+ *  d'Astrub (Tainéla, Cour du Bouftou Royal) : un sol à -10 000 passait alors au-dessus du perso et des PNJ. */
+export const SOL = -1e8;
 
 /** Rayon (en cartes) chargé autour du joueur, et rayon au-delà duquel une carte est déchargée.
  *  Entre les deux, une carte déjà chargée reste : pas de va-et-vient quand on longe un bord. */
@@ -44,9 +49,15 @@ export class WorldView {
   eau = true;
   /** Particules officielles des cartes (render/particles.ts), lancées quand une carte est posée. */
   parts?: Particules;
+  /** Décor qui s'efface devant le perso et les monstres (render/transparence.ts) : chaque image de décor posée lui est donnée. */
+  transparence?: Transparence;
   private lastT = 0;
 
+  /** Cartes du dehors (« x,y ») : un côté sans voisine est un bord du monde (voir brume()). */
+  private readonly dehors: Set<string>;
+
   constructor(private readonly scene: Phaser.Scene, private readonly wg: WorldGrid, private readonly dir: string, private readonly prefix: string) {
+    this.dehors = new Set(wg.world.maps.filter(m => !m.inside).map(m => `${m.x},${m.y}`));
     for (const m of wg.world.maps) this.slots.set(m.tag, { state: 'none', objs: [], next: 0 });
     scene.load.on(Phaser.Loader.Events.FILE_COMPLETE, (key: string) => this.onFile(key));
     scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
@@ -70,7 +81,7 @@ export class WorldView {
 
   /** Après preload : pose le ciel et les cartes déjà chargées. */
   create() {
-    if (this.scene.textures.exists(this.k('ciel'))) this.sky = this.scene.add.image(0, 0, this.k('ciel')).setScrollFactor(0).setDepth(-20000).setTint(this.tint);
+    if (this.scene.textures.exists(this.k('ciel'))) this.sky = this.scene.add.image(0, 0, this.k('ciel')).setScrollFactor(0).setDepth(SOL - 1e7).setTint(this.tint);
     for (const m of this.wg.world.maps) if (this.texturesReady(m)) { this.slots.get(m.tag)!.state = 'loading'; this.build(m); }
     this.pump(Infinity);   // au lancement, tout de suite (l'écran de chargement couvre)
   }
@@ -221,17 +232,18 @@ export class WorldView {
     const s = this.slots.get(m.tag)!, S = GridMap.S, wg = this.wg;
     if (s.state !== 'loading') { this.unload(m); return; }   // annulée entre-temps (le joueur est reparti)
     const o = wg.toScreen(m.sol.x, m.sol.y);
-    s.objs.push(this.scene.add.image(o.x, o.y, this.k(`sol_${m.tag}`)).setOrigin(0).setScale(S).setDepth(-10000).setTint(this.tint));
+    s.objs.push(this.scene.add.image(o.x, o.y, this.k(`sol_${m.tag}`)).setOrigin(0).setScale(S).setDepth(SOL).setTint(this.tint));
     if (m.fond) {   // nuages et rayons qui débordent sur les voisins : sous tous les sols
       const f = wg.toScreen(m.fond.x, m.fond.y);
-      s.objs.push(this.scene.add.image(f.x, f.y, this.k(`fond_${m.tag}`)).setOrigin(0).setScale(S * (m.fond.k ?? 1)).setDepth(-15000).setTint(this.tint));
+      s.objs.push(this.scene.add.image(f.x, f.y, this.k(`fond_${m.tag}`)).setOrigin(0).setScale(S * (m.fond.k ?? 1)).setDepth(SOL - 5e6).setTint(this.tint));
     }
     // débords en fondu sur les voisines : au-dessus de tous les sols, sous le décor. Une carte plus haut (ou plus à gauche)
     // passe au-dessus : son dessin continue sans coupure au-delà du raccord (tools/extraction/bords_fondu.py).
     if (m.bord) {
       const f = wg.toScreen(m.bord.x, m.bord.y), rang = (m.y - this.wg.world.origin[1]) * 1000 + (m.x - this.wg.world.origin[0]);
-      s.objs.push(this.scene.add.image(f.x, f.y, this.k(`bord_${m.tag}`)).setOrigin(0).setScale(S).setDepth(-9998.6 - rang * 1e-6).setTint(this.tint));
+      s.objs.push(this.scene.add.image(f.x, f.y, this.k(`bord_${m.tag}`)).setOrigin(0).setScale(S).setDepth(SOL + 1.4 - rang * 1e-6).setTint(this.tint));
     }
+    this.brume(m, s);
     s.next = 0;
     for (const p of this.portes) if (p.tag === m.tag) {
       const c = ISO.toScreen(p.x, p.y), g = this.scene.add.graphics().setPosition(c.x, c.y).setDepth(c.y - 2);   // comme une ombre : au-dessus du sol et des tapis
@@ -242,6 +254,33 @@ export class WorldView {
     s.state = 'ready';
     this.parts?.add(m.tag);
     this.pump(m.tag === this.center ? Infinity : this.presse ? 14 : BUDGET_MS);   // la carte du joueur tout de suite, les voisines au fil des images
+  }
+  /** Bord du monde (monde sans ciel, ex. Astrub) : là où une carte du dehors n'a pas de voisine, son sol s'arrêtait net en escalier
+   *  sur le fond, avec des bouts de toits qui flottaient au-delà (Tainéla, retour de Mathis 2026-11-06 ; Dofus ne montre qu'une
+   *  carte, on n'y voit jamais ce bord). On fond le bord de la carte dans la couleur du fond, sur 2 cases, puis on couvre le reste. */
+  private brume(m: WorldMapEntry, s: Slot) {
+    const w = this.wg.world;
+    if (w.sky || m.inside) return;
+    const g = w.grid, [X0, Y0] = w.origin, S = GridMap.S;
+    const x0 = g.ox + Math.floor(g.w / 4) + (m.x - X0) * MAP_COLS * g.w, y0 = g.oy + Math.floor(g.h / 4) + (m.y - Y0) * MAP_ROWS * g.h / 2;
+    const a = this.wg.toScreen(x0, y0), W = MAP_COLS * g.w * S, H = MAP_ROWS * g.h / 2 * S;
+    const dedans = 2 * g.w * S, dehors = 0.4 * g.w * S, loin = 1600, c = 0x0d2b36;
+    const libre = (dx: number, dy: number) => !this.dehors.has(`${m.x + dx},${m.y + dy}`);
+    const gr = this.scene.add.graphics().setDepth(1e6);
+    const bande = (x: number, y: number, w2: number, h2: number, a1: number, a2: number, a3: number, a4: number) =>
+      gr.fillGradientStyle(c, c, c, c, a1, a2, a3, a4).fillRect(x, y, w2, h2);
+    const plein = (x: number, y: number, w2: number, h2: number) => gr.fillStyle(c, 1).fillRect(x, y, w2, h2);
+    const L = libre(-1, 0), R = libre(1, 0), T = libre(0, -1), B = libre(0, 1), e = dehors + loin;
+    if (L) { bande(a.x - dehors, a.y, dedans + dehors, H, 1, 0, 1, 0); plein(a.x - e, a.y, loin, H); }
+    if (R) { bande(a.x + W - dedans, a.y, dedans + dehors, H, 0, 1, 0, 1); plein(a.x + W + dehors, a.y, loin, H); }
+    if (T) { bande(a.x, a.y - dehors, W, dedans + dehors, 1, 1, 0, 0); plein(a.x, a.y - e, W, loin); }
+    if (B) { bande(a.x, a.y + H - dedans, W, dedans + dehors, 0, 0, 1, 1); plein(a.x, a.y + H + dehors, W, loin); }
+    // coins : seulement si les deux côtés et la diagonale sont vides
+    if (L && T && libre(-1, -1)) plein(a.x - e, a.y - e, e, e);
+    if (R && T && libre(1, -1)) plein(a.x + W, a.y - e, e, e);
+    if (L && B && libre(-1, 1)) plein(a.x - e, a.y + H, e, e);
+    if (R && B && libre(1, 1)) plein(a.x + W, a.y + H, e, e);
+    if (gr.commandBuffer.length) s.objs.push(gr); else gr.destroy();
   }
   /** Pose le décor des cartes prêtes, dans la limite du budget de temps. */
   private pump(budget = BUDGET_MS) {
@@ -254,16 +293,17 @@ export class WorldView {
         const p = m.decor[s.next++];
         // profondeur = bas de la case dans la grande grille : on passe derrière un arbre même s'il est sur la carte voisine
         const sp = wg.toScreen(p.x, p.y), im = this.scene.add.image(sp.x, sp.y, this.k(p.p !== undefined ? `decor_p${p.p}` : `decor_${m.tag}`), p.f).setScale(S * (p.z ?? 1));
-        if (p.c < 0) im.setDepth(-9990 + p.o * 0.01);   // lumière posée sur le sol : au-dessus du sol, sous le décor
+        if (p.c < 0) im.setDepth(SOL + 10 + p.o * 0.01);   // lumière posée sur le sol : au-dessus du sol, sous le décor
         else { const cc = wg.cellCenter(p.c), cs = wg.toScreen(cc.x, cc.y + h / 2); im.setDepth(cs.y + p.o * 0.01); }
         if (p.b) this.light(im, p);
         else im.setTint(this.tint);
-        if (p.c < 0 && p.g) im.setDepth(-9998 + p.o * 0.0001);   // eau animée : juste au-dessus du sol, sous les lumières
+        if (p.c < 0 && p.g) im.setDepth(SOL + 2 + p.o * 0.0001);   // eau animée : juste au-dessus du sol, sous les lumières
         if (p.w || p.t || p.ca) {
           // vent : l'arbre plie depuis son pied (origine en bas) ; phase tirée de sa position, pour ne pas bouger tous ensemble
           if (p.w) { im.setOrigin(0.5, 1); im.y += (im.height * im.scaleY) / 2; }
           this.vivants.push({ im, p, x0: im.x, y0: im.y, ph: (p.x * 0.013 + p.y * 0.007) % (Math.PI * 2) });
         }
+        if (p.c >= 0 && !p.b) this.transparence?.ajouter(im);
         s.objs.push(im);
       }
     }

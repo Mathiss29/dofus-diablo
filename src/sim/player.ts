@@ -8,6 +8,7 @@ import { fuiteFactor, tackleSlow, tacleOf } from './caracs';
 import { CASE, TOUR } from './monster';
 import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type SortGrade, type SortOfficiel } from './sorts';
 import { porteeSort } from './apercu';
+import { DANGER } from './danger';
 
 type ActiveSkill =
   | { id: 'attaque'; def: ComboHit; t: number; impacted: boolean; idx: number; boosted: false }
@@ -53,7 +54,7 @@ export class Player extends Entity {
   /** Apparat (maquette Apparence 5A) : objets d'apparat officiels possédés (id Dofus), et ceux posés par-dessus
    *  la coiffe, la cape ou le bouclier (case Apparence de l'inventaire). « 0 » cache l'objet porté. Rien ne change les stats. */
   apparats: string[] = [];
-  apparat: Partial<Record<'chapeau' | 'cape' | 'bouclier', string>> = {};
+  apparat: Partial<Record<'chapeau' | 'cape' | 'bouclier' | 'familier', string>> = {};
   /** Caractéristiques totales (points + équipement + panoplies), recalculées à chaque changement. */
   stats: Stats = {};
   /** Panoplies portées : nombre d'objets par panoplie. */
@@ -82,6 +83,8 @@ export class Player extends Entity {
   private casts: Record<string, number[]> = {};
   /** Bouclier (Ferveur) : points et temps restant. */
   shield = 0; shieldT = 0;
+  /** Sorts officiels de monstres : dommages subis × subis pendant subisT s (Grognement : 1,2), Pacifiste pendant pacifiste s (Hyperleukocytine : ne peut plus infliger de dommages). */
+  subis = 1; subisT = 0; pacifiste = 0;
   private repathT = 0;
   private buffer: SkillId | null = null;
   private bufferT = 0;
@@ -168,7 +171,9 @@ export class Player extends Entity {
   /** Ralentissement (retrait de PM) : fraction de vitesse perdue et durée restante. */
   slowK = 0; slowT = 0;
   slow(t: number, k: number) { k *= fuiteFactor(this.fuite); this.slowK = this.slowT > 0 ? Math.max(this.slowK, k) : k; this.slowT = Math.max(this.slowT, t); }
-  get speed(): number { return this.cls.speed * (this.slowT > 0 ? 1 - this.slowK : 1); }
+  get speed(): number { return this.cls.speed * this.vitesseTest * (this.slowT > 0 ? 1 - this.slowK : 1); }
+  /** Partie de test (5D) : course ×3. */
+  vitesseTest = 1;
   /** Tacle et Fuite (base Agilité / 10), Retrait et Esquive PA / PM (base Sagesse / 10), comme dans Dofus. */
   get tacle(): number { return tacleOf(this.stat('tacle'), this.stat('agilite')); }
   get fuite(): number { return tacleOf(this.stat('fuite'), this.stat('agilite')); }
@@ -231,6 +236,21 @@ export class Player extends Entity {
     const c = E[el] ? this.stat(E[el]) : this.stat('force');
     const flat = this.stat('dommages') + this.stat((`dommages${el[0].toUpperCase()}${el.slice(1)}`) as Stat);
     return Math.max(1, base * (1 + Math.max(-50, c + this.stat('puissance')) / 100) + flat);
+  }
+  /** Partie de test (4A) : passe directement au niveau n. Tous les points sont rendus (5 par niveau) ; carac donnée = ils y vont tous.
+   *  Les objets d'un niveau trop haut retournent dans le sac, les sorts pas encore connus quittent la barre. */
+  fixerNiveau(n: number, carac: Stat | null) {
+    this.level = Math.max(1, Math.min(this.cls.maxLevel, Math.round(n))); this.xp = 0;
+    this.base = {}; this.points = 5 * (this.level - 1);
+    if (carac && this.points) { this.base[carac] = this.points; this.points = 0; }
+    for (const [slot, it] of Object.entries(this.equipment) as [EquipSlot, Item][]) {
+      if ((this.items?.equipment[it.id]?.level ?? 0) > this.level) { delete this.equipment[slot]; this.bag.push(it); }
+    }
+    this.pairs.forEach((p, i) => { if (this.level < this.requiredLevel(p[this.variants[i] ?? 0])) this.variants[i] = 0; });
+    this.learned = new Set();
+    this.bar = this.bar.map(k => (k && this.knows(k) ? k : null));
+    this.learnSpells(null);
+    this.recompute(); this.hp = this.maxHp; this.pa = this.paMax; this.pm = this.pmMax;
   }
   /** Place n points dans une caractéristique de base. */
   spendPoint(k: Stat, n = 1): boolean {
@@ -461,6 +481,8 @@ export class Player extends Entity {
     for (const [k, s] of Object.entries(this.stacks)) { s.t -= dt; if (s.t <= 0) delete this.stacks[k]; }
     this.invuln = Math.max(0, this.invuln - dt);
     if (this.shieldT > 0 && (this.shieldT -= dt) <= 0) this.shield = 0;
+    if (this.subisT > 0 && (this.subisT -= dt) <= 0) this.subis = 1;
+    if (this.pacifiste > 0) this.pacifiste -= dt;
     if (this.rage > 0 && this.age - this.lastHitAt > 6) this.rage = Math.max(0, this.rage - 8 * dt);   // 26B : la jauge retombe hors combat
     this.potionCd = Math.max(0, this.potionCd - dt);
     this.pa = Math.min(this.paMax, this.pa + this.cls.pa.regen * dt);
@@ -665,16 +687,20 @@ export class Player extends Entity {
   hurt(raw: number, fromX: number, fromY: number, world: World, element: Element = 'neutre'): boolean {
     if (this.invuln > 0 || this.dead) return false;
     const E = element === 'meilleur' ? 'Neutre' : `${element[0].toUpperCase()}${element.slice(1)}`;
-    let dmg = Math.max(1, Math.round((raw - this.stat(`red${E}` as Stat)) * (1 - Math.min(50, this.stat(`res${E}` as Stat)) / 100)));
+    let dmg = Math.max(1, Math.round((raw - this.stat(`red${E}` as Stat)) * (1 - Math.min(50, this.stat(`res${E}` as Stat)) / 100) * this.subis));
     if (this.shield > 0) { const a = Math.min(this.shield, dmg); this.shield -= a; dmg -= a; }   // le bouclier prend les coups d'abord
     this.hp -= dmg; this.flash = 0.1; this.invuln = this.cls.iframesOnHit;
     const a = Math.atan2(this.y - fromY, this.x - fromX);
     this.kx += Math.cos(a) * 260; this.ky += Math.sin(a) * 260;
     world.emit({ k: 'hit', target: 'player', x: this.x, y: this.y, z: 50, amount: dmg, crit: false });
     world.emit({ k: 'playerHurt' });
-    world.emit({ k: 'impact', hitstop: 0.04, shake: 0.006, big: false });
+    // 3A (maquette « Danger ») : un gros coup secoue l'écran, fige l'action et rougit les bords
+    const G = DANGER.grosCoup, gros = dmg >= this.maxHp * G.part;
+    world.emit(gros ? { k: 'impact', hitstop: G.fige, shake: G.secousse, big: true } : { k: 'impact', hitstop: 0.04, shake: 0.006, big: false });
+    if (gros) world.emit({ k: 'grosCoup' });
     this.addRage(this.cls.rage.perHurt, world);
     if (this.hp <= 0 && world.quetes?.immortel) this.hp = 1;   // tutoriel : PV bloqués à 1
+    if (world.test?.invincible) this.hp = this.maxHp;   // partie de test (8A) : le coup s'affiche, les PV ne bougent pas
     if (this.hp <= 0) { this.hp = 0; this.dead = true; this.setAnim('die'); world.onPlayerDeath(); }
     return true;
   }
