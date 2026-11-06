@@ -621,7 +621,7 @@ export class Accueil {
     on('[data-sexe]', e => { this.crea.sexe = e.dataset.sexe as 'm' | 'f'; this.render(); });
     on('[data-pose]', e => { this.crea.pose = e.dataset.pose!; this.render(); });
     on('[data-filtre]', e => { this.crea.filtre = e.dataset.filtre!; this.render(); });
-    const nom = r.querySelector<HTMLInputElement>('[data-nom]');
+    const nom = r.querySelector<HTMLInputElement>('input[data-nom]');
     nom?.addEventListener('input', () => { this.crea.nom = nom.value; });
     nom?.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') this.creer(); });
     nom?.addEventListener('keyup', e => e.stopPropagation());
