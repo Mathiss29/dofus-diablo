@@ -231,6 +231,20 @@ export class ZoneScene extends Phaser.Scene {
     this.fx = new FX(this, t => hex(GAME_DATA.monsters[t].color));
     if (this.perso?.etat) restaurerJoueur(this.world, this.perso.etat);
     this.hud = new Hud(this, this.world, this.perso ?? undefined);
+    // Accès de test (?test dans l'adresse) : le robot de test lit la partie et téléporte le perso. Le jeu normal n'en a pas.
+    if (/[?&]test\b/.test(location.search)) (window as unknown as { __df: unknown }).__df = {
+      scene: this, world: this.world,
+      /** Téléporte le joueur sur une case libre de la carte « x_y » (noir puis cartes chargées, comme un portail). */
+      aller: (tag: string) => {
+        const wg = this.world.worldGrid, libres = wg?.freeByMap.get(tag);
+        if (!wg || !libres?.length) return false;
+        const q = wg.cellToWorld(libres[Math.floor(libres.length / 2)]);
+        this.world.player.x = q.x; this.world.player.y = q.y; this.attendreCartes(); this.snapCam = true; return true;
+      },
+      cartes: () => this.world.worldGrid?.world.maps.map(m => m.tag) ?? [],
+      /** Position à l'écran (pixels du canvas) d'un point du monde, pour cliquer dessus. */
+      ecran: (x: number, y: number) => { const q = ISO.toScreen(x, y), c = this.cameras.main, r = c.worldView; return { x: (q.x - r.x) * c.zoom, y: (q.y - r.y) * c.zoom }; },
+    };
     this.son = new SonView(this.world, this.look, this.classId, this.vitrine,
       zone.open ? this.cache.json.get(`${zone.open.world}_particules`) as Record<string, SysData[]> | undefined : undefined, this.world.worldGrid ?? undefined);
     this.appliquerSon();
