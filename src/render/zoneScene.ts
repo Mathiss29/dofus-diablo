@@ -226,6 +226,9 @@ export class ZoneScene extends Phaser.Scene {
     this.events.once('shutdown', () => this.sys.events.off(Phaser.Scenes.Events.ADDED_TO_SCENE, onAdd));
     this.reglages = chargerReglages(); this.ambT = 0; this.sat = undefined;
     this.zoom = Phaser.Math.Clamp(this.reglages.zoom, ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]); this.cameras.main.setZoom(this.zoom);
+    // Pas d'arrondi au pixel pour la caméra du jeu : Phaser arrondit chaque coin d'image séparément, donc une image agrandie
+    // (tout le décor, à l'échelle du zoom) gagnait ou perdait un pixel selon le défilement et « tremblait » (Mathis, 2026-11-06).
+    this.cameras.main.setRoundPixels(false);
     this.input.on('wheel', (_p: Phaser.Input.Pointer, _o: unknown, _dx: number, dy: number) => {
       this.zoom = Phaser.Math.Clamp(this.zoom * (dy > 0 ? 0.9 : 1.1), ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]);
     });
