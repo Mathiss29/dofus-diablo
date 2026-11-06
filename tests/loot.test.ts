@@ -154,10 +154,11 @@ describe('auto-attaque à l\'arme', () => {
 
 describe('métier Chasseur (choix 6A)', () => {
   const meatOf = (m: string) => ITEMS.drops[m].find(d => d.metier);
-  it('on commence avec une arme de chasse officielle (Couteau de Chasse, Arc de Chasse pour le Crâ)', () => {
-    expect(world().player.bag.map(i => ITEMS.equipment[i.id].name)).toEqual(['Couteau de Chasse']);
-    expect(world(42, 'cra').player.bag.map(i => ITEMS.equipment[i.id].name)).toEqual(['Arc de Chasse']);
+  it('sac vide au départ ; Couteau et Arc de Chasse sont des armes de chasse officielles', () => {
+    expect(world().player.bag).toHaveLength(0);
+    expect(world(42, 'cra').player.bag).toHaveLength(0);
     expect(ITEMS.equipment['1934'].chasse).toBe(true);
+    expect(ITEMS.equipment['1942'].chasse).toBe(true);
   });
   it('les viandes suivent le critère officiel : arme de chasse en main et niveau de Chasseur', () => {
     const d = meatOf('feu_vif')!;
@@ -166,7 +167,7 @@ describe('métier Chasseur (choix 6A)', () => {
     expect(ITEMS.drops.pissenlit.find(x => x.item === '17124')?.metier?.min).toBe(20);   // Viande Faisandée : Chasseur > 19
     const kill = (hunt: boolean) => {
       const w = world(); const p = w.player;
-      if (hunt) expect(p.equip(p.bag[0].uid)).toBe(true);
+      if (hunt) { w.donnerObjet('1934'); expect(p.equip(p.bag[0].uid)).toBe(true); }
       let meat = 0;
       for (let i = 0; i < 60; i++) {
         const m = w.spawnMonster('feu_vif', p.x + 300, p.y);
