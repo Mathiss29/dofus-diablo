@@ -74,6 +74,8 @@
    "niveau": 1,
    "auDepart": true,
    "depart": "temple_1",
+   "arrivee": "-2_-3",
+   "arriveeCase": 355,
    "suivante": "village",
    "texte": "Avant de quitter le temple céleste, prenez le temps de contempler les Dofus et le Monde des Douze... et n'oubliez pas de saluer votre dieu au passage ! Ganymède vous apprend à vous battre avant de vous laisser descendre sur l'île.",
    "options": {
@@ -87,7 +89,8 @@
      "taille": [
       1,
       3
-     ]
+     ],
+     "etape": 2
     }
    },
    "etapes": {
@@ -211,12 +214,12 @@
      {
       "nom": "Descendre sur Incarnam",
       "pnj": "ganymede_temple",
-      "bulle": "Tu es prêt. La sortie du Temple mène à la Route des âmes : son Zaap sera ton point de retour si tu tombes.",
+      "bulle": "Tu es prêt. Parle-moi et je t'envoie au village, près de Lykhen. Le Zaap de la Route des âmes sera ton point de retour si tu tombes.",
       "objectifs": [
        {
-        "t": "aller",
-        "texte": "Sortir du Temple vers la Route des âmes",
-        "carte": "0_-3"
+        "t": "parler",
+        "texte": "Parler à Ganymède pour descendre au village",
+        "pnj": "ganymede_temple"
        }
       ]
      }
@@ -341,12 +344,12 @@
      {
       "nom": "Descendre sur Incarnam",
       "pnj": "ganymede_temple",
-      "bulle": "Tu es prêt. La sortie du Temple mène à la Route des âmes : son Zaap sera ton point de retour si tu tombes.",
+      "bulle": "Tu es prêt. Parle-moi et je t'envoie au village, près de Lykhen. Le Zaap de la Route des âmes sera ton point de retour si tu tombes.",
       "objectifs": [
        {
-        "t": "aller",
-        "texte": "Sortir du Temple vers la Route des âmes",
-        "carte": "0_-3"
+        "t": "parler",
+        "texte": "Parler à Ganymède pour descendre au village",
+        "pnj": "ganymede_temple"
        }
       ]
      }

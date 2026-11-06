@@ -549,18 +549,6 @@
       56
      ],
      "nom": "Temple Céleste"
-    },
-    {
-     "a": [
-      "temple_3",
-      447
-     ],
-     "b": [
-      "0_-3",
-      465
-     ],
-     "nom": "Route des âmes",
-     "sens": true
     }
    ],
    "donjons": [
