@@ -1,7 +1,7 @@
 import { apercuSort } from '../sim/apercu';
 import { dossier, v } from './assetUrl';
 import Phaser from 'phaser';
-import { APPARATS, BOUTIQUES, GAME_DATA, ITEMS, QUETES, RECOLTES } from '../sim/data';
+import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES } from '../sim/data';
 import type { Compte } from '../sim/quests';
 import { QuestView } from './questView';
 import { RecolteView } from './recolteView';
@@ -18,6 +18,7 @@ import { Attente, PersoVivant } from './persoVivant';
 import { Assemblage, apparenceValide, fiches, objetsPortes, type Apparence } from './squelette';
 import { SpellFx } from './spellFx';
 import { FX } from './fx';
+import { FamilierView } from './familierView';
 import { Hud } from './hud';
 import { LOOKS, type Look } from './looks';
 import { drawMap } from './mapView';
@@ -235,7 +236,7 @@ export class ZoneScene extends Phaser.Scene {
     if (zone.open) {
       const open = zone.open;
       const wg = new WorldGrid(this.cache.json.get(WorldView.key(open.world, 'monde')) as WorldData);
-      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, apparats: APPARATS, recoltes: RECOLTES, compte: chargerCompte(), tuto: this.test ? false : this.perso?.tuto, test: this.test?.reglages,
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, apparats: APPARATS, familierXp: FAMILIERS.xp, recoltes: RECOLTES, compte: chargerCompte(), tuto: this.test ? false : this.perso?.tuto, test: this.test?.reglages,
         // vitrine : les PNJ sont là, mais aucune quête ne démarre
         arrivee: this.arrivee,
         reprise: this.vitrine ? { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} } : this.perso?.etat?.quetes ?? this.test?.etat?.quetes });
@@ -254,11 +255,13 @@ export class ZoneScene extends Phaser.Scene {
     } else {
       const key = mapDir(zone.map!.coords).replace(/\W/g, '_');
       const map = new GridMap(this.cache.json.get(`${key}_carte`) as MapData);
-      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map, seed, classId: this.classId, items: ITEMS, test: this.test?.reglages });
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map, seed, classId: this.classId, items: ITEMS, familierXp: FAMILIERS.xp, test: this.test?.reglages });
       this.cameras.main.setBackgroundColor('#12141b');
       drawMap(this, map, `${key}_sol`, `${key}_decor`);
     }
     this.fx = new FX(this, t => hex(GAME_DATA.monsters[t].color));
+    const fv = this.familierView = new FamilierView(this, a => this.planche({ atlas: a, multi: true } as Look));
+    this.events.once('shutdown', () => { fv.destroy(); if (this.familierView === fv) this.familierView = null; });
     if (this.perso?.etat) restaurerJoueur(this.world, this.perso.etat);
     else if (this.test?.etat) restaurerJoueur(this.world, this.test.etat);
     if (this.test?.apres) { this.cmdTest = this.test.apres; this.test.apres = undefined; }
@@ -342,6 +345,7 @@ export class ZoneScene extends Phaser.Scene {
   /** Essai d'une classe (Accueil 8B) : apparence choisie sur l'écran de création. */
   private apparenceEssai?: Apparence;
   private vivant: PersoVivant | null = null;
+  private familierView: FamilierView | null = null;
   /** Tête, couleurs et objets visibles du perso dessiné : quand ils changent (objet porté, apparat, garde-robe), le perso est réassemblé. */
   private apparenceCle = '';
   private cleApparence(objets: string[]) { const a = this.perso?.apparence ?? this.apparenceEssai; return JSON.stringify([a?.tete, a?.couleurs, objets]); }
@@ -1020,6 +1024,7 @@ export class ZoneScene extends Phaser.Scene {
       this.viewOf(e).sync(e);
     }
     for (const [id, v] of this.views) if (!alive.has(id)) { v.destroy(); this.views.delete(id); }
+    if (!this.vitrine) this.familierView?.maj(w, this.game.loop.delta / 1000);
     this.majApparence();
     this.vivant?.maj();
     this.windows?.majPerso(this.time.now);

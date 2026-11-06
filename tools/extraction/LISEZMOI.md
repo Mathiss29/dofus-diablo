@@ -279,3 +279,14 @@ dans `/mnt/project-files/cache-dofus/elements-animes/` (LISEZMOI là-bas).
 1. `python tools/contenu/recoltes.py <liste.json> <cartes> <tables> <fr.bin> <monde.json> <monde>` : emplacements + gfx + décalage + miroir.
 2. `python tools/extraction/recoltes_planches.py <dossier b> public/assets/sprites/recoltes <gfx,…>` : une planche AVIF par gfx.
 3. `node tools/hebergement/envoi.mjs`.
+
+## Familiers (familiers_export.py)
+
+- Un familier (objets type 18) ou un familier d'apparat (type 249) se dessine avec le squelette `bones_assets_bone_<appearanceId>.bundle`
+  (pas un skin : les skins de même numéro sont des armes). Copie des squelettes : `cache-dofus/familiers/bones.tgz` et `apparats.tgz`.
+- Beaucoup de squelettes de familiers manquent au PC ou n'ont aucune animation (Chacha, Bwaks, Bouloute, Tofoudre…) : le jeu les
+  télécharge sans doute à la demande. Seuls ceux qui ont `AnimStatique_1` sont gardés (39 familiers, 110 apparats au 2026-11-06).
+- `python familiers_export.py <tables> <fr.bin> <dossier des bones>` écrit `src/data/familiers.json` (bonus evolutiveeffects,
+  courbe d'XP evolutiveitemtypes) puis les planches `sprites/fam_<squelette>` (repos + course ou marche, `ANIMS=` de monster_planche.py).
+  Puis `icones_ajout.py` pour les icônes et `node tools/hebergement/envoi.mjs`.
+- Sources (maquette 1A, 1C) : dictionnaires `SOURCES` (familier -> monstres de sa famille) et `SUCCES` dans le script.

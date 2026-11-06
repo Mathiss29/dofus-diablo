@@ -19,7 +19,7 @@ export interface EtatJoueur {
   zone?: string;
   /** Apparat possédé et porté (Apparence 5A). */
   apparats?: string[];
-  apparat?: Partial<Record<'chapeau' | 'cape' | 'bouclier', string>>;
+  apparat?: Partial<Record<'chapeau' | 'cape' | 'bouclier' | 'familier', string>>;
 }
 
 const copie = <T>(o: T): T => JSON.parse(JSON.stringify(o)) as T;
@@ -48,7 +48,7 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
   p.variants = s.variants ?? [];
   p.apparats = Array.isArray(s.apparats) ? s.apparats.filter(a => typeof a === 'string') : [];
   p.apparat = {};
-  for (const k of ['chapeau', 'cape', 'bouclier'] as const) { const a = s.apparat?.[k]; if (a === '0' || (a && p.apparats.includes(a))) p.apparat[k] = a; }
+  for (const k of ['chapeau', 'cape', 'bouclier', 'familier'] as const) { const a = s.apparat?.[k]; if (a === '0' || (a && p.apparats.includes(a))) p.apparat[k] = a; }
   p.learned = new Set(s.learned ?? []);
   if (s.bar?.length === p.bar.length) p.bar = s.bar.map(k => (k && p.cls.spells[k] ? k : null));
   p.recompute(); p.hp = p.maxHp;

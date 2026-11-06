@@ -56,6 +56,9 @@ export type SimEvent =
   /** Emp (0.2) : objets recyclés contre des Pépites, achat dans sa boutique, Potion de Rappel bue, réponse « service » d'un PNJ. */
   | { k: 'recycle'; n: number; pepites: number }
   | { k: 'achat'; id: string; prix: number }
+  /** Familier : niveau gagné, et repas (XP donnée). */
+  | { k: 'familierNiveau'; nom: string; niveau: number }
+  | { k: 'familierRepas'; xp: number }
   | { k: 'rappel'; name: string }
   | { k: 'cleManquante'; id: string }
   /** Métiers de récolte : geste commencé (durée), interrompu, ressource récoltée (quantité, dorée), niveau de métier trop bas. */
