@@ -3,6 +3,7 @@ import Phaser from 'phaser';
 import { GridMap, MAP_COLS, MAP_ROWS, type DecorPlace, type WorldGrid, type WorldMapEntry } from '../sim/gridmap';
 import { ISO } from '../sim/iso';
 import type { Particules } from './particles';
+import type { Transparence } from './transparence';
 
 /** Profondeur du sol. Le reste (perso, monstres, décor) est trié par sa hauteur à l'écran, qui descend sous -10 000 au nord
  *  d'Astrub (Tainéla, Cour du Bouftou Royal) : un sol à -10 000 passait alors au-dessus du perso et des PNJ. */
@@ -48,6 +49,8 @@ export class WorldView {
   eau = true;
   /** Particules officielles des cartes (render/particles.ts), lancées quand une carte est posée. */
   parts?: Particules;
+  /** Décor qui s'efface devant le perso et les monstres (render/transparence.ts) : chaque image de décor posée lui est donnée. */
+  transparence?: Transparence;
   private lastT = 0;
 
   /** Cartes du dehors (« x,y ») : un côté sans voisine est un bord du monde (voir brume()). */
@@ -300,6 +303,7 @@ export class WorldView {
           if (p.w) { im.setOrigin(0.5, 1); im.y += (im.height * im.scaleY) / 2; }
           this.vivants.push({ im, p, x0: im.x, y0: im.y, ph: (p.x * 0.013 + p.y * 0.007) % (Math.PI * 2) });
         }
+        if (p.c >= 0 && !p.b) this.transparence?.ajouter(im);
         s.objs.push(im);
       }
     }

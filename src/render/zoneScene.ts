@@ -22,6 +22,7 @@ import { FamilierView } from './familierView';
 import { Hud } from './hud';
 import { LOOKS, type Look } from './looks';
 import { drawMap } from './mapView';
+import { Transparence, type Cache } from './transparence';
 import { WorldView } from './worldView';
 import { Particules, type SysData } from './particles';
 import { ambiance, chargerReglages, matriceSaturation, sauverReglages, type Reglages } from './ambiance';
@@ -75,6 +76,7 @@ export class ZoneScene extends Phaser.Scene {
   static readonly RIDEAU_ECRAN = 0.6;
   static readonly RIDEAU_MAX = 10;
   private views = new Map<number, EntityView>();
+  private transparence: Transparence | null = null;
   private fx!: FX;
   /** Aura de la jauge de classe pleine (ligne Rage 27B), sous le perso. */
   private rageAura?: Phaser.GameObjects.Graphics;
@@ -245,6 +247,9 @@ export class ZoneScene extends Phaser.Scene {
       this.worldView.portes = this.world.portes.flatMap(p => p.ends);
       const parts = this.cache.json.get(`${open.world}_particules`) as Record<string, SysData[]> | undefined;
       if (parts) this.worldView.parts = new Particules(this, wg, parts, `${open.world}_particules_img`);
+      const tr = this.transparence = new Transparence(this);
+      this.worldView.transparence = tr;
+      this.events.once('shutdown', () => { tr.destroy(); if (this.transparence === tr) this.transparence = null; });
       this.worldView.create();
       if (this.world.recoltes.length) { const rv = this.recolteView = new RecolteView(this, this.world); this.events.once('shutdown', () => { rv.destroy(); if (this.recolteView === rv) this.recolteView = null; }); }
       if (this.world.quetes) {
@@ -277,6 +282,7 @@ export class ZoneScene extends Phaser.Scene {
         this.world.player.x = q.x; this.world.player.y = q.y; this.attendreCartes(); this.snapCam = true; return true;
       },
       cartes: () => this.world.worldGrid?.world.maps.map(m => m.tag) ?? [],
+      transp: () => this.transparence, iso: ISO,
       /** Position à l'écran (pixels du canvas) d'un point du monde, pour cliquer dessus. */
       ecran: (x: number, y: number) => { const q = ISO.toScreen(x, y), c = this.cameras.main, r = c.worldView; return { x: (q.x - r.x) * c.zoom, y: (q.y - r.y) * c.zoom }; },
     };
@@ -286,6 +292,7 @@ export class ZoneScene extends Phaser.Scene {
     if (this.questView) { const qv = this.questView; this.hud.portraitPnj = id => qv.portrait(id); }
     const mini = this.cameras.getCamera('mini');
     if (mini && this.worldView?.sky) mini.ignore(this.worldView.sky);
+    if (mini && this.transparence) mini.ignore(this.transparence.calque);
     this.windows?.destroy();
     this.windows = new Windows(this.world);
     this.windows.portrait = v(`${ASSETS}/ui/perso_${this.classId}${this.perso?.sexe === 'f' ? '_f' : ''}.png`);
@@ -956,6 +963,7 @@ export class ZoneScene extends Phaser.Scene {
     const w = this.world, inside = !!w.worldGrid?.mapAt(w.player.x, w.player.y)?.inside;
     const a = ambiance(this.reglages, new Date(), inside || !w.zone.open);
     this.worldView?.setAmbiance(a.tint, a.lumieres, a.soleil);
+    Transparence.reglages.actif = this.reglages.transparence !== false;
     if (this.worldView) { this.worldView.vent = this.reglages.vent; this.worldView.eau = this.reglages.eau; if (this.worldView.parts) this.worldView.parts.actif = this.reglages.particules; }
     EntityView.ambiance = a.tintPerso;
     // couleurs adoucies (5B) : un filtre sur la caméra du jeu, seulement s'il sert (WebGL)
@@ -1048,6 +1056,14 @@ export class ZoneScene extends Phaser.Scene {
     for (const [id, v] of this.views) if (!alive.has(id)) { v.destroy(); this.views.delete(id); }
     this.oublierPlanches();
     if (!this.vitrine) this.familierView?.maj(w, this.game.loop.delta / 1000);
+    if (this.transparence) {
+      const caches: Cache[] = [];
+      for (const e of [w.player, ...w.monsters]) {
+        const v = this.views.get(e.id);
+        if (v && alive.has(e.id) && !e.dead) caches.push({ id: e.id, sprite: v.sprite, joueur: e === w.player, w: Math.max(34, e.radius * 2.2), h: v.look.height * Math.abs(v.look.scale) });
+      }
+      this.transparence.update(this.game.loop.delta / 1000, caches);
+    }
     this.majApparence();
     this.vivant?.maj();
     this.windows?.majPerso(this.time.now);

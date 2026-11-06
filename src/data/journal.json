@@ -44,7 +44,8 @@
           "Apparats officiels : près de 700 coiffes et capes chez Emp contre des Pépites, à porter dans la case Apparence de l'inventaire (ou pour cacher un objet). Garde-robe gratuite chez Lykhen et chez Emp pour changer de tête et de couleurs.",
           "Les vraies ressources à récolter dans les champs, les forêts et les mines d'Astrub et d'Incarnam (blé, arbres, minerais, ortie, remous de pêche), avec leur animation de coupe.",
           "Familiers : une case Familier dans l'inventaire. Le familier te suit, ramasse le butin et les kamas autour de toi, monte du niveau 1 au niveau 100 en chassant ou quand tu le nourris (Alt + clic), et ses bonus officiels grandissent avec lui.",
-          "Où les trouver : Pioute chez les Pious, Tofüm chez les Tofus, Jeune Boufton Céleste chez les Bouftous d'Incarnam, Fotome sur Kardorim, Chienchien en récompense du succès « Dans les nuages ». Plus de 100 familiers d'apparat chez Emp."
+          "Où les trouver : Pioute chez les Pious, Tofüm chez les Tofus, Jeune Boufton Céleste chez les Bouftous d'Incarnam, Fotome sur Kardorim, Chienchien en récompense du succès « Dans les nuages ». Plus de 100 familiers d'apparat chez Emp.",
+          "Voir à travers le décor : le bâtiment ou l'arbre qui cache ton perso s'efface en fondu, et les monstres cachés apparaissent en silhouette rouge (case dans Options > Affichage)."
         ],
         "Le monde": [
           "Crypte de Kardorim, avec le vrai Sergent Chafer.",
@@ -69,7 +70,7 @@
           "Les monstres tapent selon leur rang et leur niveau (ceux d'Astrub tapaient tous 14), et les groupes t'encerclent au lieu de faire la queue.",
           "Les boss ont une attaque signature annoncée au sol (Dégraissage de Mob l'Éponge en vraie ligne de 8 cases, Kankroulahoup…), deviennent Furieux à mi-vie et font leur entrée ; un gros coup reçu rougit les bords de l'écran."
         ],
-        "Corrections": [
+        "Corrections": ["La Cape de l'Intrépide portée montre enfin son vrai dessin (cape jaune à l'emblème vert) et plus une autre cape.", 
           "Plus de mini-gel en changeant de carte.",
           "PNJ qui tremblaient quand la caméra défilait.",
           "Gros personnage du socle net, même avec l'affichage Windows à 125 %.",
