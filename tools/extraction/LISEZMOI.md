@@ -230,3 +230,21 @@ Les anciennes planches ont été converties par `tools/hebergement/planches_avif
   (famille par sous-zone, puis rang de fréquence = rang de niveau) et l'affichage pose l'icône officielle de l'objet.
 - `tools/contenu/drops_ajout.py <tables> <fr.bin>` ajoute le butin officiel des monstres qui n'en ont pas encore, sans réécrire items.json.
 - Icônes des métiers : `Content/Picto/UI/job_assets_2x.bundle` (iconId de la table jobs) -> `public/assets/ui/metier_<métier>.png`.
+
+## Perso dessiné en direct (maquette Apparence, 6 nov. 2026 : 1A 2A+2C 3A)
+
+Le perso du joueur n'est plus une planche : le jeu assemble squelette + corps + tête + couleurs dans le navigateur
+(`src/render/squelette.ts` pour le dessin, `src/render/persoVivant.ts` pour les pages de textures Phaser, images
+dessinées à la première utilisation puis gardées). Rendu identique à `render.html` (vérifié image par image contre les planches).
+
+- `python squelette_export.py <persos> <donnees> <classe> public/assets/sprites/squelette` (8 = Iop, 9 = Crâ) écrit :
+  `anims_<classe>.json` (mêmes animations et mêmes images que `perso_planche.py`, communes aux deux sexes),
+  `skin_<id>.json/.webp` (corps et toutes les têtes de création, morceaux avec leur zone de couleur `ColorGray_N`),
+  `os_<bone>.webp` (morceaux propres au squelette : effets des sorts, armes ; à moitié de taille, `OS_ECHELLE`) et `persos.json`.
+  Les tables `breeds heads spells spellscripts` viennent de `data_dump.py`. Compter ~5 min par classe.
+- `python tetes_vignettes.py <persos> <donnees> public/assets/sprites/squelette` : vignettes des têtes de l'écran de création.
+- `skin_mesh.py` : découpe d'un skin en morceaux, partagée avec `build_char.py`.
+- Puis `node tools/hebergement/envoi.mjs` (les .webp partent sur R2, les .json restent dans git).
+- Les anciennes planches `iop`, `cra`, `iop_f`, `cra_f` ne servent plus qu'en secours (squelette injoignable).
+- À venir (0.2b) : coiffe, cape, bouclier, familier et apparat = d'autres skins posés sur les mêmes nœuds ; leurs dessins
+  ne sont pas dans le cache (`Characters/Skins` complet à copier depuis le PC de Mathis).

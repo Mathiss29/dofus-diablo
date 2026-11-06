@@ -1,4 +1,5 @@
 import type { EtatJoueur } from '../sim/sauvegarde';
+import type { Apparence } from './squelette';
 import type { Session, StatsPerso } from './carnet';
 
 /** Un personnage sauvegardé (choix 16B : 3 emplacements, sauvegarde automatique dans le navigateur). */
@@ -6,6 +7,8 @@ export interface Perso {
   nom: string;
   classe: string;
   sexe: 'm' | 'f';
+  /** Tête et couleurs choisies à la création (maquette Apparence) ; absent = tête 1 et couleurs officielles. */
+  apparence?: Apparence;
   /** Mode Hardcore (choix 10D) : la mort efface le personnage. */
   hardcore: boolean;
   /** Choix « Tutoriel » à la création : faux = commence directement en Incarnam, avec l'équipement de départ. */

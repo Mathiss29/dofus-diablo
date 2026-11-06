@@ -3,6 +3,7 @@ import { MANIFESTE, Son } from './son';
 import { GAME_DATA, ITEMS, QUETES } from '../sim/data';
 import { EQUIP_SLOTS, RARITY_COLORS, RARITY_NAMES } from '../sim/items';
 import { LOOKS } from './looks';
+import { DOSSIER, PALETTES, ZONES, apparenceValide, assemblagePour, fiches, type Apparence, type Assemblage, type FichePerso } from './squelette';
 import { ICON_CSS, iconHtml } from './icons';
 import { PALIERS, lireBestiaire } from './carnet';
 import { SORTS, niveauRequis, type SortOfficiel } from '../sim/sorts';
@@ -41,6 +42,9 @@ const DIEUX = new Set(['iop', 'cra', 'osamodas']);
 /** Animations du perso sur le socle : nombre d'images de chaque bande (rendues comme le jeu, voir LISEZMOI ;
  *  l'attaque est plus large : le perso s'élance vers la droite). */
 const POSES: [string, string, number][] = [['repos', 'Repos', 24], ['garde', 'Garde', 24], ['attaque', 'Attaque', 23]];
+/** Animation officielle de chaque pose, pour le perso dessiné en direct. */
+const ANIM_POSE: Record<string, string> = { repos: 'AnimStatiqueExplo0_1', garde: 'AnimStatiqueCombat0_1', attaque: 'AnimArme0_1' };
+const hexa = (c: number) => '#' + c.toString(16).padStart(6, '0');
 const FILTRES = ['Toutes', 'Dégâts', 'Tank', 'Soins', 'Invocation'];
 
 const A = 'assets/accueil';
@@ -128,6 +132,17 @@ const CSS = `
 #acc .sp img{width:calc(1.9*var(--u));height:calc(1.9*var(--u));border-radius:calc(.3*var(--u));border:1px solid #5d5c45}
 #acc .sp small{display:block;color:#a8a58e;font-size:calc(.62*var(--u))}
 #acc .hero{background-repeat:no-repeat}
+#acc canvas.vivant{pointer-events:none}
+#acc .tetes{display:grid;grid-template-columns:repeat(6,1fr);gap:calc(.25*var(--u))}
+#acc .tetes button{all:unset;cursor:pointer;aspect-ratio:1;border-radius:calc(.35*var(--u));background-color:#2a2b1f;background-repeat:no-repeat;border:1px solid #45452f}
+#acc .tetes button.on{border-color:var(--lime);box-shadow:0 0 0 calc(.1*var(--u)) var(--lime);background-color:#3a4a1c}
+#acc .tetes button:focus-visible,#acc .coul label:focus-within{outline:2px solid var(--lime)}
+#acc .coul{display:grid;grid-template-columns:repeat(6,1fr);gap:calc(.25*var(--u))}
+#acc .coul label{display:grid;justify-items:center;gap:calc(.1*var(--u));font-size:calc(.5*var(--u));font-weight:800;color:#c9c4ab;cursor:pointer;border-radius:calc(.3*var(--u))}
+#acc .coul input{all:unset;width:100%;aspect-ratio:1.4;border-radius:calc(.35*var(--u));border:1px solid #f1ecd8aa;box-sizing:border-box;cursor:pointer}
+#acc .pals{display:flex;flex-wrap:wrap;gap:calc(.25*var(--u));margin-top:calc(.35*var(--u))}
+#acc .pals button{all:unset;cursor:pointer;display:flex;align-items:center;gap:calc(.2*var(--u));font-size:calc(.6*var(--u));font-weight:800;padding:calc(.15*var(--u)) calc(.4*var(--u));border-radius:calc(1*var(--u));background:#2a2b1f;border:1px solid #45452f}
+#acc .pals i{display:inline-block;width:calc(.55*var(--u));height:calc(.55*var(--u));border-radius:50%}
 #acc .slot{all:unset;cursor:pointer;display:grid;grid-template-columns:calc(4.6*var(--u)) 1fr;align-items:center;gap:calc(.8*var(--u));width:100%;box-sizing:border-box;padding:calc(.7*var(--u)) calc(.9*var(--u));border-radius:calc(.6*var(--u));background:#1b1c13e6;border:1px solid #45452f}
 #acc .slot img{width:100%}
 #acc .slot b{font-family:var(--disp);font-weight:400;font-size:calc(1.5*var(--u));color:#fbf3d4;display:block;line-height:1.05}
@@ -212,7 +227,11 @@ export class Accueil {
   private root: HTMLDivElement;
   private page: Page = 'accueil';
   /** Création : classe, sexe, pose, nom, Hardcore, filtre de la barre des classes. */
-  private crea = { cle: 'iop', sexe: 'm' as 'm' | 'f', pose: 'repos', nom: '', hardcore: false, tuto: true, filtre: 'Toutes', err: '' };
+  private crea = { cle: 'iop', sexe: 'm' as 'm' | 'f', pose: 'repos', nom: '', hardcore: false, tuto: true, filtre: 'Toutes', err: '',
+    /** Apparence (maquette Apparence 1A 2A 2C) : tête dans l'ordre officiel, couleurs (null = officielles de la classe). */
+    tete: 0, couleurs: null as number[] | null };
+  /** Fiches des persos dessinés en direct (corps, têtes, couleurs officielles), lues une fois. */
+  private fiches: Record<string, FichePerso> | null = null;
   /** « Mes personnages » : emplacement choisi, et suppression en attente de confirmation. */
   private choix = 0;
   private confirmer = -1;
@@ -224,7 +243,7 @@ export class Accueil {
   private carnet: string | null = null;
 
   /** onJouer : lance la partie de cet emplacement (déjà sauvegardé). */
-  constructor(private onJouer: (slot: number) => void, private onEssayer?: (classe: string, sexe: 'm' | 'f') => void) {
+  constructor(private onJouer: (slot: number) => void, private onEssayer?: (classe: string, sexe: 'm' | 'f', apparence?: Apparence) => void) {
     if (!document.getElementById('acc-css')) {
       const st = document.createElement('style'); st.id = 'acc-css'; st.textContent = CSS + ICON_CSS.replace('.ic{', '#acc .ic{'); document.head.appendChild(st);
     }
@@ -246,7 +265,8 @@ export class Accueil {
       this.anim = requestAnimationFrame(tick);
       if (t - last < 40) return;   // 25 images par seconde, comme les animations de Dofus
       last = t; f++;
-      this.root.querySelectorAll<HTMLElement>('.hero').forEach(h => {
+      this.root.querySelectorAll<HTMLCanvasElement>('canvas.vivant').forEach(cv => this.socle(cv, f));
+      this.root.querySelectorAll<HTMLElement>('.hero:not(canvas)').forEach(h => {
         const n = +h.dataset.n!, g = grille(h, n);
         if (!g) return;
         h.classList.add('vu');
@@ -260,8 +280,39 @@ export class Accueil {
     if (!matchMedia('(prefers-reduced-motion: reduce)').matches) this.anim = requestAnimationFrame(tick);
   }
 
+  /** Perso dessiné en direct sur le socle (maquette Apparence 3A) : mêmes place et taille que les anciennes planches
+   *  (rendu à l'échelle 3,2, pied en (210, 592) d'une image de 504 x 684 pixels affichée sur 24 unités de haut). */
+  private socle(cv: HTMLCanvasElement, f: number) {
+    const cle = cv.dataset.cle!, app = JSON.parse(cv.dataset.app!) as Apparence, anim = cv.dataset.anim!;
+    const k = `${cle}|${app.tete}`;
+    const a = this.vus.get(k);
+    if (!a) { if (!this.vus.has(k)) { this.vus.set(k, null); assemblagePour(cle, app).then(x => this.vus.set(k, x), () => this.vus.delete(k)); } return; }
+    a.recolorer(app.couleurs);
+    const dpr = devicePixelRatio || 1, W = Math.round(cv.offsetWidth * dpr), H = Math.round(cv.offsetHeight * dpr);
+    if (!W || !H) return;
+    if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
+    const n = a.compte[anim] ?? 0; if (!n) return;
+    const ctx = cv.getContext('2d')!, u = H / 24;
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, W, H);
+    a.dessiner(ctx, anim, Math.floor(f * (anim.startsWith('AnimStatique') ? 0.8 : 1)) % n, 210 / 28.5 * u, 592 / 28.5 * u, 3.2 / 28.5 * u);
+    cv.classList.add('vu');
+  }
+  private vus = new Map<string, Assemblage | null>();
+  /** Apparence en cours de création, valide pour la classe et le sexe choisis. */
+  private appCrea(): Apparence | null {
+    const f = this.fiches?.[`${this.crea.cle}_${this.crea.sexe}`];
+    return f ? apparenceValide(f, { tete: this.crea.tete, couleurs: this.crea.couleurs ?? undefined }) : null;
+  }
+  /** Canevas du perso vivant, à la place de la planche de l'ancien socle. */
+  private canevas(cle: string, app: Apparence, anim: string, style: string, label: string) {
+    return `<canvas class="abs hero vivant" data-cle="${cle}" data-app='${JSON.stringify(app)}' data-anim="${anim}" role="img" aria-label="${esc(label)}" style="${style}"></canvas>`;
+  }
+
   get visible() { return !this.root.hidden; }
-  show(page: Page = 'accueil') { this.root.hidden = false; this.precharger(); this.go(page); }
+  show(page: Page = 'accueil') {
+    this.root.hidden = false; this.precharger(); this.go(page);
+    if (!this.fiches) fiches().then(f => { this.fiches = f; if (!this.root.hidden && (this.page === 'creation' || this.page === 'persos')) this.render(); }, () => { /* hors ligne : anciennes planches */ });
+  }
   /** Accueil 5A : les planches des persos (3 emplacements) et des classes jouables sont chargées dès l'accueil,
    *  pour que le socle ne reste jamais vide. */
   private precharger() {
@@ -369,6 +420,7 @@ export class Accueil {
     const roles = Object.entries(c.roles).slice(0, 3);
     const libre = lirePersos().findIndex(p => !p);
     const bouton = !jouable ? plusTard(c.cle) : libre < 0 ? 'Emplacements pleins' : 'Créer et jouer';
+    const app = jouable ? this.appCrea() : null, fiche = this.fiches?.[`${c.cle}_${s.sexe}`];
     return `<div class="cover" style="background-image:url(${img(DIEUX.has(c.cle) ? `dieu_${c.cle}.jpg` : 'login.jpg')})"></div>
     <div class="cover" style="background:radial-gradient(ellipse 60% 70% at 52% 55%,transparent 30%,#0d0e09d0 80%),linear-gradient(90deg,#0d0e09f0 8%,#0d0e0980 32%,transparent 50%,#0d0e0980 72%,#0d0e09f0 92%)"></div>
     <div class="abs tiny" style="left:calc(8.4*var(--u));top:calc(1.4*var(--u));font-weight:800">Créer un personnage</div>
@@ -391,7 +443,8 @@ export class Accueil {
     <div class="abs card bulleSort" style="left:calc(33*var(--u));top:calc(30*var(--u));width:calc(18*var(--u));padding:calc(.7*var(--u)) calc(.9*var(--u));font-size:calc(.75*var(--u));font-weight:600;line-height:1.45;opacity:0;transition:opacity .15s;pointer-events:none;z-index:6"></div>
     <img src="${img('lumiere.png')}" alt="" class="abs" style="left:calc(50% - 7.5*var(--u));top:calc(6*var(--u));width:calc(15*var(--u));opacity:.7;mix-blend-mode:screen">
     <img src="assets/ui/socle.png" alt="" class="abs" style="left:calc(50% - 10.5*var(--u));top:calc(29.5*var(--u));width:calc(21*var(--u));filter:sepia(.55) saturate(1.3) brightness(.95) drop-shadow(0 0 calc(1.2*var(--u)) #8fe8ff99)">
-    ${jouable ? `<div class="abs hero" data-n="${pose[2]}" role="img" aria-label="${esc(c.nom)}" style="left:calc(50% - 8.85*var(--u));top:calc(13.4*var(--u));width:calc(${s.pose === 'attaque' ? 28.1 : 17.7}*var(--u));height:calc(24*var(--u));background-image:url(${img(`${c.cle}_${s.sexe}_${s.pose}.webp`)});background-size:${pose[2] * 100}% 100%" data-src="${img(`${c.cle}_${s.sexe}_${s.pose}.webp`)}"></div>`
+    ${jouable && app ? this.canevas(`${c.cle}_${s.sexe}`, app, ANIM_POSE[s.pose], `left:calc(50% - 8.85*var(--u));top:calc(13.4*var(--u));width:calc(28.1*var(--u));height:calc(24*var(--u))`, c.nom)
+      : jouable ? `<div class="abs hero" data-n="${pose[2]}" role="img" aria-label="${esc(c.nom)}" style="left:calc(50% - 8.85*var(--u));top:calc(13.4*var(--u));width:calc(${s.pose === 'attaque' ? 28.1 : 17.7}*var(--u));height:calc(24*var(--u));background-image:url(${img(`${c.cle}_${s.sexe}_${s.pose}.webp`)});background-size:${pose[2] * 100}% 100%" data-src="${img(`${c.cle}_${s.sexe}_${s.pose}.webp`)}"></div>`
       : `<img src="${tete(c, s.sexe)}" alt="" class="abs" style="left:calc(50% - 6*var(--u));top:calc(15*var(--u));width:calc(12*var(--u));filter:drop-shadow(0 calc(.5*var(--u)) calc(1*var(--u)) #000)">
       <div class="abs" style="left:50%;top:calc(27*var(--u));transform:translateX(-50%);font-family:var(--disp);font-size:calc(1.5*var(--u));color:#e0925a;-webkit-text-stroke:calc(.1*var(--u)) #2a1407;paint-order:stroke fill;white-space:nowrap">${plusTard(c.cle)}</div>`}
     <div class="abs card" style="right:calc(2*var(--u));top:calc(4.2*var(--u));width:calc(17.5*var(--u));padding:0 0 calc(1*var(--u));${jouable ? '' : 'opacity:.55'}">
@@ -402,8 +455,14 @@ export class Accueil {
           <button class="tab${s.sexe === 'f' ? ' on' : ''}" type="button" data-sexe="f"><img src="${tete(c, 'f')}" alt="">Femme</button>
         </div>
         <div class="lab">Pose</div>
-        <div style="display:grid;gap:calc(.4*var(--u))">${POSES.map(([k, n]) =>
-          `<button class="tab${s.pose === k ? ' on' : ''}" type="button" data-pose="${k}" style="justify-content:flex-start;padding-left:calc(1*var(--u))">${n}</button>`).join('')}</div>
+        <div style="display:flex;gap:calc(.3*var(--u))">${POSES.map(([k, n]) =>
+          `<button class="tab${s.pose === k ? ' on' : ''}" type="button" data-pose="${k}">${n}</button>`).join('')}</div>
+        ${app && fiche ? `<div class="lab">Tête</div>
+        <div class="tetes">${fiche.tetes.map((_, i) => `<button type="button" data-tete="${i}" class="${app.tete === i ? 'on' : ''}" aria-label="Tête ${i + 1}" title="Tête ${i + 1}"
+          style="background-image:url(${v(`${DOSSIER}/tetes_${c.cle}_${s.sexe}.webp`)});background-size:${fiche.tetes.length * 100}% 100%;background-position:${fiche.tetes.length > 1 ? (i / (fiche.tetes.length - 1)) * 100 : 0}% 0"></button>`).join('')}</div>
+        <div class="lab" style="display:flex;justify-content:space-between;align-items:center">Couleurs<button type="button" class="mini" data-officielles style="font-size:calc(.6*var(--u))">Couleurs officielles</button></div>
+        <div class="coul">${app.couleurs.map((col, i) => `<label><input type="color" data-coul="${i}" value="${hexa(col)}" style="background:${hexa(col)}" aria-label="${ZONES[i]}">${ZONES[i]}</label>`).join('')}</div>
+        <div class="pals">${PALETTES.map((pl, i) => `<button type="button" data-palette="${i}">${pl.c.slice(0, 3).map(x => `<i style="background:${hexa(x)}"></i>`).join('')}${pl.nom}</button>`).join('')}</div>` : ''}
         <div class="lab">Nom du personnage</div>
         <input class="field" data-nom maxlength="16" spellcheck="false" autocomplete="off" value="${esc(s.nom)}" placeholder="3 à 16 lettres" ${jouable ? '' : 'disabled'}>
         <div class="err">${esc(s.err)}</div>
@@ -461,7 +520,9 @@ export class Accueil {
       <div class="abs" style="left:calc(50% + 4*var(--u));transform:translateX(-50%);top:calc(7.6*var(--u));font-weight:800;font-size:calc(1.15*var(--u));white-space:nowrap">${c.nom} · niveau ${p.etat?.level ?? 1}${p.hardcore ? ' · <span class="hc">Hardcore</span>' : ''}</div>
       <img src="${img('lumiere.png')}" alt="" class="abs" style="left:calc(50% - 3.5*var(--u));top:calc(8*var(--u));width:calc(15*var(--u));opacity:.7;mix-blend-mode:screen">
       <img src="assets/ui/socle.png" alt="" class="abs" style="left:calc(50% - 6.5*var(--u));top:calc(31.5*var(--u));width:calc(21*var(--u));filter:sepia(.55) saturate(1.3) brightness(.95) drop-shadow(0 0 calc(1.2*var(--u)) #8fe8ff99)">
-      <div class="abs hero" data-n="24" role="img" aria-label="${esc(p.nom)}" style="left:calc(50% - 4.85*var(--u));top:calc(15.4*var(--u));width:calc(17.7*var(--u));height:calc(24*var(--u));background-image:url(${img(`${c.cle}_${p.sexe}_repos.webp`)});background-size:2400% 100%" data-src="${img(`${c.cle}_${p.sexe}_repos.webp`)}"></div>
+      ${this.fiches?.[`${c.cle}_${p.sexe}`] ? this.canevas(`${c.cle}_${p.sexe}`, apparenceValide(this.fiches[`${c.cle}_${p.sexe}`], p.apparence), ANIM_POSE.repos,
+        'left:calc(50% - 4.85*var(--u));top:calc(15.4*var(--u));width:calc(17.7*var(--u));height:calc(24*var(--u))', p.nom)
+      : `<div class="abs hero" data-n="24" role="img" aria-label="${esc(p.nom)}" style="left:calc(50% - 4.85*var(--u));top:calc(15.4*var(--u));width:calc(17.7*var(--u));height:calc(24*var(--u));background-image:url(${img(`${c.cle}_${p.sexe}_repos.webp`)});background-size:2400% 100%" data-src="${img(`${c.cle}_${p.sexe}_repos.webp`)}"></div>`}
       ${this.resume(p)}
       <div class="abs" style="left:calc(50% + 4*var(--u));transform:translateX(-50%);top:calc(47*var(--u));display:flex;gap:calc(1*var(--u));align-items:center">
         <button type="button" class="dbtn rouge" data-suppr="${this.choix}" style="font-size:calc(.9*var(--u))">${this.confirmer === this.choix ? 'Vraiment supprimer ?' : 'Supprimer'}</button>
@@ -617,8 +678,22 @@ export class Accueil {
     on('[data-jouer]', () => { const d = dernier(); if (d != null) this.jouer(d); else this.go('creation'); });
     on('[data-continuer]', () => { const d = dernier(); if (d != null) this.jouer(d); });
     // création
-    on('[data-cls]', e => { this.crea.cle = e.dataset.cls!; this.crea.err = ''; this.render(); });
-    on('[data-sexe]', e => { this.crea.sexe = e.dataset.sexe as 'm' | 'f'; this.render(); });
+    on('[data-cls]', e => { if (this.crea.cle !== e.dataset.cls) { this.crea.tete = 0; this.crea.couleurs = null; } this.crea.cle = e.dataset.cls!; this.crea.err = ''; this.render(); });
+    on('[data-sexe]', e => { if (this.crea.sexe !== e.dataset.sexe) { this.crea.tete = 0; this.crea.couleurs = null; } this.crea.sexe = e.dataset.sexe as 'm' | 'f'; this.render(); });
+    // Apparence : tête (1A), couleurs libres (2A), palettes (2C) ; le perso du socle change tout de suite
+    on('[data-tete]', e => { this.crea.tete = +e.dataset.tete!; this.render(); });
+    on('[data-officielles]', () => { this.crea.couleurs = null; this.render(); });
+    on('[data-palette]', e => {
+      const a = this.appCrea(); if (!a) return;
+      this.crea.couleurs = [a.couleurs[0], ...PALETTES[+e.dataset.palette!].c]; this.render();
+    });
+    r.querySelectorAll<HTMLInputElement>('input[data-coul]').forEach(inp => inp.addEventListener('input', () => {
+      const a = this.appCrea(); if (!a) return;
+      const c = [...a.couleurs]; c[+inp.dataset.coul!] = parseInt(inp.value.slice(1), 16);
+      this.crea.couleurs = c; inp.style.background = inp.value;
+      // pas de nouveau rendu de la page (le sélecteur de couleur resterait ouvert dans le vide) : seul le socle change
+      const cv = r.querySelector<HTMLCanvasElement>('canvas.vivant'); if (cv) cv.dataset.app = JSON.stringify({ tete: a.tete, couleurs: c });
+    }));
     on('[data-pose]', e => { this.crea.pose = e.dataset.pose!; this.render(); });
     on('[data-filtre]', e => { this.crea.filtre = e.dataset.filtre!; this.render(); });
     const nom = r.querySelector<HTMLInputElement>('input[data-nom]');
@@ -628,11 +703,17 @@ export class Accueil {
     r.querySelector<HTMLInputElement>('[data-tuto]')?.addEventListener('change', e => { this.crea.tuto = (e.target as HTMLInputElement).checked; });
     r.querySelector<HTMLInputElement>('[data-hc]')?.addEventListener('change', e => { this.crea.hardcore = (e.target as HTMLInputElement).checked; });
     on('[data-creer]', () => this.creer());
-    on('[data-essayer]', () => this.onEssayer?.(this.crea.cle, this.crea.sexe));
+    on('[data-essayer]', () => this.onEssayer?.(this.crea.cle, this.crea.sexe, this.appCrea() ?? undefined));
     // Accueil 8A : survol d'un premier sort = le perso du socle attaque, et le texte officiel du sort s'affiche
     r.querySelectorAll<HTMLElement>('[data-sort]').forEach(e => {
       const h = r.querySelector<HTMLElement>('.hero'), bulle = r.querySelector<HTMLElement>('.bulleSort');
       if (!h || !bulle) return;
+      if (h instanceof HTMLCanvasElement) {
+        const avant = h.dataset.anim!;
+        e.addEventListener('mouseenter', () => { bulle.innerHTML = `<b>${esc(e.dataset.nom!)}</b><br>${esc(e.dataset.desc!)}`; bulle.style.opacity = '1'; h.dataset.anim = ANIM_POSE.attaque; });
+        e.addEventListener('mouseleave', () => { bulle.style.opacity = '0'; h.dataset.anim = avant; });
+        return;
+      }
       const avant = { src: h.dataset.src!, n: h.dataset.n!, w: h.style.width };
       const att = img(`${this.crea.cle}_${this.crea.sexe}_attaque.webp`), [, , na] = POSES.find(p => p[0] === 'attaque')!;
       e.addEventListener('mouseenter', () => {
@@ -665,8 +746,9 @@ export class Accueil {
     if (lirePersos().some(p => p?.nom.toLowerCase() === nom.toLowerCase())) { s.err = 'Tu as déjà un personnage de ce nom.'; this.render(); return; }
     const now = Date.now();
     const p: Perso = { nom, classe: c.cle, sexe: s.sexe, hardcore: s.hardcore, tuto: s.tuto, cree: now, maj: now, temps: 0, lieu: 'Incarnam', zones: [] };
+    const app = this.appCrea(); if (app) p.apparence = app;
     sauverPerso(libre, p);
-    s.nom = ''; s.hardcore = false; s.tuto = true;
+    s.nom = ''; s.hardcore = false; s.tuto = true; s.tete = 0; s.couleurs = null;
     this.jouer(libre);
   }
 }
