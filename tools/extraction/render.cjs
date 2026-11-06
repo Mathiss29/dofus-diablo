@@ -14,9 +14,9 @@ const { chromium } = require('playwright'); const fs = require('fs');
   let r;
   if (process.env.BOX) {
     const specs = animsCsv.split(',').map(t => { const [name, max, out] = t.split(':'); return { name, max: max ? +max : 0, out: out || name }; });
-    // BOX=auto : boîte = union des bornes des animations demandées (effets de sorts)
+    // BOX=auto : boîte = union des bornes des animations demandées (effets de sorts), marge de 4 unités (+ PAD, pour le contour)
     const box = process.env.BOX === 'auto'
-      ? await pg.evaluate(([sp, f]) => { let b = [1e9, 1e9, -1e9, -1e9]; for (const x of sp) { const c = bounds(x.name, f); b = [Math.min(b[0], c[0]), Math.min(b[1], c[1]), Math.max(b[2], c[2]), Math.max(b[3], c[3])]; } return [b[0] - 4, b[1] - 4, b[2] + 4, b[3] + 4]; }, [specs, flip === '1'])
+      ? await pg.evaluate(([sp, f, pad]) => { let b = [1e9, 1e9, -1e9, -1e9]; for (const x of sp) { const c = bounds(x.name, f); b = [Math.min(b[0], c[0]), Math.min(b[1], c[1]), Math.max(b[2], c[2]), Math.max(b[3], c[3])]; } const m = 4 + pad; return [b[0] - m, b[1] - m, b[2] + m, b[3] + m]; }, [specs, flip === '1', +process.env.PAD || 0])
       : process.env.BOX.split(',').map(Number);
     r = await pg.evaluate(([sp, f, s, bx]) => sheetFixed(sp, s, f, bx, 4096), [specs, flip === '1', +scale, box]);
   } else r = await pg.evaluate(([a, f, s]) => sheet(a, s, f, 4), [animsCsv.split(','), flip === '1', +scale]);
