@@ -49,8 +49,8 @@ Iop : Pression 802, Épée Céleste 801, Bond 811, Colère de Iop (13124) 800, C
 - Les cartes voisines se raccordent bord à bord : [x+1,y] est 14 cases (1204 px) à droite, [x,y+1] 40 demi-lignes (860 px) plus bas,
   donc un monde = une grande grille 14·nx × 40·ny (même origine, même décalage des lignes impaires).
 - `python world_export.py liste.json cartes/ textures/ public/assets/mondes/<nom>` ; `liste.json` = `{"x,y": [mapId, sousZone]}`
-  - Puis TOUJOURS `python bords_fondu.py public/assets/mondes/<nom>` : un seul débord par raccord (celui de la carte du haut ou de gauche), sinon une bande nette sépare les cartes. Les bords déjà traités sont notés `"fondu": 1` dans `monde.json`.
   (cartes `worldMap` = 2 pour Incarnam, prises dans `subareasdataroot.mapIds`), `cartes/` = les `map_{id}.json` sortis des bundles mapdata.
+  - Puis TOUJOURS `python bords_fondu.py public/assets/mondes/<nom>` : un seul débord par raccord (celui de la carte du haut ou de gauche), sinon une bande nette sépare les cartes. Les bords déjà traités sont notés `"fondu": 1` dans `monde.json`.
   Sortie : `monde.json` (grille, cases marchables, sous-zone et décor de chaque carte), un `sol_x_y.webp` par carte (rogné pile au raccord
   côté voisin pour que le ciel d'une carte ne recouvre pas le sol de l'autre), et tout le décor dédoublonné dans `decor.json` + `decor_N.webp`
   (multiatlas Phaser, pages de 4096).
