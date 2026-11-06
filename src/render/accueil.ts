@@ -1,4 +1,5 @@
 import { v } from './assetUrl';
+import { MANIFESTE, Son } from './son';
 import { GAME_DATA, ITEMS, QUETES } from '../sim/data';
 import { RARITY_COLORS, RARITY_NAMES } from '../sim/items';
 import { LOOKS } from './looks';
@@ -229,6 +230,15 @@ export class Accueil {
     this.root = document.createElement('div'); this.root.id = 'acc'; this.root.hidden = true;
     // les clics sur ces écrans ne vont pas au jeu derrière
     for (const ev of ['pointerdown', 'wheel', 'contextmenu'] as const) this.root.addEventListener(ev, e => { e.stopPropagation(); if (ev === 'contextmenu') e.preventDefault(); });
+    // Son officiel au clic (UI.bank) : « OK » pour jouer / créer / continuer, onglet pour la navigation, bouton générique sinon
+    Son.demarrer(); Son.precharger([MANIFESTE.ui.ok, MANIFESTE.ui.bouton, MANIFESTE.ui.onglet]);
+    this.root.addEventListener('click', e => {
+      const b = (e.target as HTMLElement).closest<HTMLElement>('button,[data-go],[data-nav]');
+      if (!b || b.getAttribute('aria-disabled') === 'true') return;
+      const f = b.matches('.lbtn,.play,[data-jouer],[data-creer],[data-continuer],[data-jouer-slot]') ? MANIFESTE.ui.ok
+        : b.matches('.nav,.tab,.chip,.cls,.slot,[data-nav]') ? MANIFESTE.ui.onglet : MANIFESTE.ui.bouton;
+      Son.jouer(f, 'interface', { cle: 'clic', ecart: 0.05 });
+    }, true);
     document.body.appendChild(this.root);
     let last = 0, f = 0;
     const tick = (t: number) => {
