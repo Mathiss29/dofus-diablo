@@ -51,6 +51,7 @@ Iop : Pression 802, Épée Céleste 801, Bond 811, Colère de Iop (13124) 800, C
 - `python world_export.py liste.json cartes/ textures/ public/assets/mondes/<nom>` ; `liste.json` = `{"x,y": [mapId, sousZone]}`
   (cartes `worldMap` = 2 pour Incarnam, prises dans `subareasdataroot.mapIds`), `cartes/` = les `map_{id}.json` sortis des bundles mapdata.
   - Puis TOUJOURS `python bords_fondu.py public/assets/mondes/<nom>` : un seul débord par raccord (celui de la carte du haut ou de gauche), sinon une bande nette sépare les cartes. Les bords déjà traités sont notés `"fondu": 1` dans `monde.json`.
+  - Puis `python decor_doublons.py public/assets/mondes/<nom>` : chaque carte Dofus reprend le décor de ses voisines qui déborde sur elle ; en monde continu on garde un seul exemplaire (celui de la carte où il se trouve), sinon ordre d’affichage faux et ombres doublées. Cartes traitées notées `"doublons": 1`.
   Sortie : `monde.json` (grille, cases marchables, sous-zone et décor de chaque carte), un `sol_x_y.webp` par carte (rogné pile au raccord
   côté voisin pour que le ciel d'une carte ne recouvre pas le sol de l'autre), et tout le décor dédoublonné dans `decor.json` + `decor_N.webp`
   (multiatlas Phaser, pages de 4096).
