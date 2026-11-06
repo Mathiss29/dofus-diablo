@@ -29,7 +29,7 @@ import { exporterJoueur, restaurerJoueur } from '../sim/sauvegarde';
 import { lireBestiaire, noter, nouvelleSession, sauverBestiaire, statsVides } from './carnet';
 import { enterrer, lirePersos, sauverPerso, supprimerPerso, type Perso } from './persos';
 import { SonView, synthe } from './sonView';
-import { Son } from './son';
+import { MANIFESTE, Son } from './son';
 
 const ASSETS = 'assets';
 const mapDir = ([x, y]: [number, number]) => `${ASSETS}/cartes/${x}_${y}`;
@@ -70,7 +70,9 @@ export class ZoneScene extends Phaser.Scene {
   private hitstop = 0;
   private windows: Windows | null = null;
   /** Butin au sol : icône + nom de l'objet, couleur de sa rareté. */
-  private dropViews = new Map<number, { icon: Phaser.GameObjects.Image; label?: Phaser.GameObjects.Text; glow: Phaser.GameObjects.Ellipse; beam?: Phaser.GameObjects.Image; core?: Phaser.GameObjects.Image }>();
+  private dropViews = new Map<number, { icon: Phaser.GameObjects.Image; label?: Phaser.GameObjects.Text; glow: Phaser.GameObjects.Ellipse; beam?: Phaser.GameObjects.Image; core?: Phaser.GameObjects.Image;
+    /** Kamas (choix Kamas A+B+D) : pièces de la gerbe, reflet, taille du tas, chute déjà sonnée. */
+    coins?: Phaser.GameObjects.Image[]; shine?: Phaser.GameObjects.Image; tier?: number; sonne?: boolean }>();
   /** Objet au sol cliqué (à ramasser). */
   private pickClick: number | null = null;
   /** PNJ cliqué (quêtes) et leur affichage. */
@@ -122,7 +124,9 @@ export class ZoneScene extends Phaser.Scene {
     this.load.off('progress', Chargement.progres).on('progress', Chargement.progres);   // le chargeur survit aux relances de la scène
     Hud.preload(this);
     // Icônes des objets officiels : une seule planche
-    if (!this.textures.exists('kamas_tas')) this.load.image('kamas_tas', v(`${ASSETS}/ui/inv/kamas.png`));
+    // kamas au sol (Kamas A) : le tas de pièces officiel (figs_/kamastack) et une pièce seule, prise sur le dessus du tas
+    if (!this.textures.exists('kamas_tas')) this.load.image('kamas_tas', v(`${ASSETS}/ui/kamas_tas.png`));
+    if (!this.textures.exists('kamas_piece')) this.load.image('kamas_piece', v(`${ASSETS}/ui/kamas_piece.png`));
     if (!this.textures.exists(ICON_SHEET.key)) this.load.spritesheet(ICON_SHEET.key, v(`${ASSETS}/${ICON_SHEET.url}`), { frameWidth: ICON_SHEET.cell, frameHeight: ICON_SHEET.cell });
     const zone = GAME_DATA.zones[this.zoneId];
     // On ne charge que les planches utiles à cette zone
@@ -632,7 +636,7 @@ export class ZoneScene extends Phaser.Scene {
         v = {
           glow: this.add.ellipse(p.x, p.y, 46, 20, tint, 0.35),
           icon: d.item ? this.add.image(p.x, p.y - 14, ICON_SHEET.key, Math.max(0, iconFrame(ITEMS.equipment[d.item.id]?.icon ?? 0))).setDisplaySize(34, 34)
-            : this.add.image(p.x, p.y - 8, 'kamas_tas').setDisplaySize(22, 22),
+            : this.kamasIcon(d.kamas ?? 1, p),
           label: big >= 0 ? this.add.text(p.x, p.y - 40, ITEMS.equipment[d.item!.id]?.name ?? '', {
             fontFamily: 'Lexend, Verdana, sans-serif', fontSize: '13px', fontStyle: 'bold', color: col, stroke: '#000', strokeThickness: 3,
             backgroundColor: '#0d0c0acc', padding: { x: 4, y: 2 },
@@ -642,8 +646,15 @@ export class ZoneScene extends Phaser.Scene {
             .setDisplaySize(30 + big * 6, [110, 160, 220, 290][big]) : undefined,
           core: big >= 0 ? this.add.image(p.x, p.y, 'beam').setOrigin(0.5, 1).setDisplaySize(8 + big * 2, [90, 135, 185, 250][big]) : undefined,
         };
+        if (!d.item) {
+          const tier = this.kamasTier(d.kamas ?? 1), n = [3, 5, 8][tier];
+          v.tier = tier;
+          v.coins = Array.from({ length: n }, () => this.add.image(p.x, p.y, 'kamas_piece').setDisplaySize(15, 8).setOrigin(0.5, 1));
+          v.shine = this.add.image(p.x, p.y, v.icon.texture.key).setOrigin(0.5, 1).setTintFill(0xffffff).setBlendMode(Phaser.BlendModes.ADD).setAlpha(0);
+        }
         this.dropViews.set(d.uid, v);
       }
+      if (!d.item) { this.drawKamas(d, v, p, w.shown(d)); continue; }
       const shown = w.shown(d);
       const bob = d.item ? Math.sin(w.time * 4 + d.uid) * 3 : 0, pop = Math.min(1, d.t * 4);
       v.glow.setPosition(p.x, p.y).setDepth(p.y - 2).setScale(pop).setVisible(shown);
@@ -656,7 +667,43 @@ export class ZoneScene extends Phaser.Scene {
         v.label.setPosition(p.x, p.y - 46 - bob).setDepth(1e6 - 1).setVisible(shown && (alt || hover || w.player.pickupId === d.uid));
       }
     }
-    for (const [uid, v] of this.dropViews) if (!seen.has(uid)) { v.icon.destroy(); v.label?.destroy(); v.glow.destroy(); v.beam?.destroy(); v.core?.destroy(); this.dropViews.delete(uid); }
+    for (const [uid, v] of this.dropViews) if (!seen.has(uid)) { v.icon.destroy(); v.label?.destroy(); v.glow.destroy(); v.beam?.destroy(); v.core?.destroy(); v.coins?.forEach(c => c.destroy()); v.shine?.destroy(); this.dropViews.delete(uid); }
+  }
+
+  /** Kamas A : taille du tas selon la somme, comparée au niveau du joueur (petite poignée, tas, gros tas d'élite ou de boss). */
+  private kamasTier(n: number) { const r = n / Math.max(1, this.world.player.level); return r < 2.2 ? 0 : r < 8 ? 1 : 2; }
+  private kamasIcon(n: number, p: { x: number; y: number }) {
+    const t = this.kamasTier(n);
+    return t === 0 ? this.add.image(p.x, p.y, 'kamas_piece').setDisplaySize(17, 9).setOrigin(0.5, 1)
+      : this.add.image(p.x, p.y, 'kamas_tas').setDisplaySize(t === 1 ? 24 : 36, t === 1 ? 24 : 36).setOrigin(0.5, 1);
+  }
+  /** Kamas B + D : la gerbe de pièces qui jaillit, tourne sur elle-même et rebondit, puis le tas qui scintille.
+   *  Tout se calcule depuis l'âge du butin (d.t) : rien n'est gardé à part la chute déjà sonnée. */
+  private drawKamas(d: { uid: number; t: number }, v: NonNullable<ReturnType<typeof this.dropViews.get>>, p: { x: number; y: number }, shown: boolean) {
+    const t = d.t, U = 0.42, B = 0.16, pop = Math.min(1, t * 4);
+    v.glow.setPosition(p.x, p.y).setDepth(p.y - 2).setScale(pop * (0.6 + 0.2 * (v.tier ?? 0))).setVisible(shown);
+    // le tas (ou la pièce seule) se pose quand la gerbe retombe
+    const k = Phaser.Math.Clamp((t - U * 0.8) / 0.18, 0, 1), sc = k < 1 ? Phaser.Math.Easing.Back.Out(k) : 1;
+    const [iw, ih] = v.tier === 0 ? [17, 9] : v.tier === 1 ? [24, 24] : [36, 36];
+    v.icon.setPosition(p.x, p.y).setDepth(p.y + 1).setDisplaySize(Math.max(0.01, iw * sc), Math.max(0.01, ih * sc)).setVisible(shown && sc > 0.01);
+    // la gerbe : chaque pièce part dans sa direction, monte, retombe et rebondit une fois
+    const coins = v.coins ?? [], n = coins.length;
+    coins.forEach((c, i) => {
+      const a = (i / n) * Math.PI * 2 + d.uid * 1.7, r = 9 + ((d.uid * 7 + i * 13) % 13), H = 26 + ((d.uid + i * 5) % 4) * 7;
+      const f = Math.min(1, t / U), ox = Math.cos(a) * r * f, oy = Math.sin(a) * r * 0.5 * f;
+      const h = t < U ? Math.sin(Math.PI * f) * H : t < U + B ? Math.sin(Math.PI * (t - U) / B) * H * 0.22 : 0;
+      const air = t < U + B, spin = air ? 0.15 + 0.85 * Math.abs(Math.cos(t * 19 + i * 1.3)) : 1;
+      c.setPosition(p.x + ox, p.y + oy - h).setScale(15 / c.width * spin, 8 / c.height).setDepth(p.y + oy + (air ? 2 : 0.5)).setVisible(shown);
+    });
+    // chute : le son officiel des pièces, une fois, quand la gerbe touche le sol (seulement si c'est à l'écran)
+    if (!v.sonne && t >= U && t < U + 0.5) {
+      v.sonne = true;
+      const cam = this.cameras.main;
+      if (!this.vitrine && cam.worldView.contains(p.x, p.y)) Son.jouer(Son.auHasard(MANIFESTE.kamas), 'effets', { vol: 0.45, vitesse: 0.95 + Math.random() * 0.1, cle: 'kamasSol', ecart: 0.1 });
+    }
+    // Kamas D : un reflet doré passe toutes les 2 secondes
+    const g = (this.world.time + d.uid * 0.37) % 2, flash = t > U + B && g < 0.3 ? Math.sin(Math.PI * g / 0.3) * 0.55 : 0;
+    v.shine?.setPosition(p.x, p.y).setDisplaySize(iw, ih).setDepth(p.y + 1.2).setAlpha(flash).setVisible(shown && flash > 0.01);
   }
 
   private viewOf(e: Entity): EntityView {
