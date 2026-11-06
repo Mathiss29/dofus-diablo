@@ -26,7 +26,7 @@ const KEYS = ['&', 'é', '"', "'", '(', '-'];
 const MENUS: [string, string, string][] = [
   ['inventory', 'Inventaire', 'I'], ['characteristic', 'Caractéristiques', 'C'], ['job', 'Métiers', 'J'], ['spells', 'Sorts', 'S'], ['quest', 'Quêtes', ''],
   ['map', 'Carte du monde', ''], ['bestiary', 'Bestiaire', ''], ['success', 'Succès', ''], ['breach', 'Failles', ''],
-  ['options', 'Réglages', 'O'],
+  ['guide', 'Guide', 'H'], ['options', 'Réglages', 'O'],
 ];
 
 const C = {
@@ -113,10 +113,8 @@ export class Hud {
   private center: Txt;
   private toastText: Txt;
   private hurtRect: Phaser.GameObjects.Rectangle;
-  private help: Txt;
   /** Tutoriel (3A) : la touche à presser, au-dessus de l'emplacement entouré. */
   private haloKey: Txt;
-  private helpAuto = true;
   private shortOf = { pa: 0, pm: 0 };
   private rageFlash = 0;
   private areaKills = new Map<string, number>();
@@ -216,17 +214,8 @@ export class Hud {
     this.zoneSub = txt(15, { ...bold, color: '#5a3305', strokeThickness: 0 }, 8).setOrigin(0.5).setAlpha(0);
     this.zonePlate = img('scoreTitle', 7).setOrigin(0.5).setAlpha(0);
     this.zonePlateTxt = txt(13, { ...bold, color: '#4a2a05', strokeThickness: 0, align: 'center', lineSpacing: -2 }, 8).setOrigin(0.5).setAlpha(0);
-    this.help = txt(13, { align: 'center' }).setOrigin(0.5, 0).setText(
-      `Clic gauche : aller / attaquer (maintenu : continuer)   ·   Maj + clic : attaquer sur place   ·   Clic droit et & é " ' ( - : sorts de la barre   ·   Espace : ${cls.spells[cls.mobility].name}   ·   E : potion   ·   Molette : zoom\n` +
-      `S : sorts (nouveaux sorts aux niveaux officiels, glisser dans la barre)   ·   I : inventaire   ·   C : caractéristiques\n` +
-      `${cls.rage.name} pleine : le sort suivant est renforcé   ·   F : effets d'impact   ·   O : réglages   ·   H : aide`);
-    // Le tutoriel apprend les touches (maquette « Tutoriel d'Incarnam ») : la fiche ne s'affiche plus d'office, H la montre.
-    this.help.setVisible(false); this.helpAuto = false;
     this.haloKey = txt(15, { ...bold, color: '#2a1e05', backgroundColor: '#e6b85c', padding: { x: 7, y: 3 }, strokeThickness: 0 }, 7).setOrigin(0.5, 1).setVisible(false);
   }
-
-  /** H : l'aide reste ensuite comme le joueur l'a laissée. */
-  toggleHelp() { this.helpAuto = false; this.help.setVisible(!this.help.visible); }
 
   /** Bannière centrale ; defeat = ruban rouge de défaite au lieu du ruban doré. */
   banner(text: string, ms = 1400, defeat = false) {
@@ -283,7 +272,6 @@ export class Hud {
         this.loot(`${d.name}  ·  +${d.xp ?? Math.round(d.hp / 5)} XP`);
         const a = w.area?.name ?? '';
         this.areaKills.set(a, (this.areaKills.get(a) ?? 0) + 1);
-        if (this.helpAuto && w.kills >= 6) { this.help.setVisible(false); this.helpAuto = false; }
         break;
       }
       case 'rageFull': this.rageFlash = 1.2; break;
@@ -548,7 +536,8 @@ export class Hud {
     const sl = this.succesT > 0 ? this.succesLine.height + 4 : 0;
     const tw2 = Math.max(this.trackTitle.width + iconW + (this.skipBtn.visible ? this.skipBtn.width + 12 : 0), this.trackBody.width, this.succesT > 0 ? this.succesLine.width : 0) + 20;
     const th2 = this.trackTitle.height + this.trackBody.height + 18 + sl;
-    const tx2 = 12, ty2 = H - 12 - th2;
+    // Petite fenêtre : si le suivi touche la barre de sorts, il remonte au-dessus d'elle (le bouton « Passer » reste visible)
+    const tx2 = 12, ty2 = tx2 + tw2 + 8 > x0 ? y0 - 8 - th2 : H - 12 - th2;
     panel(tx2, ty2, tw2, th2, 0.8);
     this.rects.push([tx2, ty2, tw2, th2]);
     this.trackIcon.setPosition(tx2 + 18, ty2 + 7 + this.trackTitle.height / 2);
@@ -575,7 +564,8 @@ export class Hud {
     }
 
     // --- Butin (bas droite) : les dernières lignes s'effacent ---
-    this.feed.forEach((f, i) => { f.t -= dt; f.text.setPosition(W - 16, H - 16 - i * 18).setAlpha(Phaser.Math.Clamp(f.t, 0, 1)); });
+    const feedY = W - 16 - Math.max(0, ...this.feed.map(f => f.text.width)) < x0 + totalW + 8 ? y0 - 8 : H - 16;   // pareil pour le butin
+    this.feed.forEach((f, i) => { f.t -= dt; f.text.setPosition(W - 16, feedY - i * 18).setAlpha(Phaser.Math.Clamp(f.t, 0, 1)); });
     for (const f of this.feed.filter(f => f.t <= 0)) f.text.destroy();
     this.feed = this.feed.filter(f => f.t > 0);
 
@@ -588,6 +578,5 @@ export class Hud {
     this.zoneSub.setPosition(W / 2, zy + 47);
     this.zonePlate.setPosition(W / 2, 62).setScale(1.25, 1.15);
     this.zonePlateTxt.setPosition(W / 2, 62);
-    this.help.setPosition(W / 2, boss ? 110 : 118);
   }
 }
