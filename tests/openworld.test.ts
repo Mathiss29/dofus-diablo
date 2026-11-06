@@ -124,11 +124,11 @@ describe('intérieurs (maisons, Mine, Taverne)', () => {
       p.x = loin.x; p.y = loin.y; w.step(STEP, NO_INPUT);
     }
   });
-  it('la Mine a ses Aminites, les maisons restent vides', () => {
+  it('la Mine a ses Aminites, le Temple ses esprits de feu du tutoriel, les maisons restent vides', () => {
     const w = newWorld(), wg = w.worldGrid!;
     const inside = w.monsters.map(m => wg.mapAt(m.homeX, m.homeY)!).filter(m => m.inside);
     expect(inside.length).toBeGreaterThan(0);
-    expect(inside.filter(m => m.sub !== 447).every(m => m.sub === 778)).toBe(true);
+    expect(inside.filter(m => m.sub !== 447).every(m => m.sub === 778 || m.sub === 446)).toBe(true);
     expect(w.monsters.filter(m => wg.mapAt(m.homeX, m.homeY)!.sub === 778).every(m => m.type === 'aminite')).toBe(true);
   });
 });

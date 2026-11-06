@@ -8,8 +8,8 @@ OUT = os.path.join(os.path.dirname(__file__), '..', '..', 'src', 'data', 'quetes
 PNJ = {
   # phrase = ce qu'il dit quand on lui parle sans quête (écrite pour l'ARPG, maquette Dialogues 10A)
   # carte = tag de public/assets/mondes/incarnam/monde.json (carte officielle de départ de leurs quêtes)
-  'ganymede': {'nom': 'Ganymède', 'dofusId': 7581, 'carte': 'temple_1', 'phrase': 'Les Dofus dorment ici depuis des siècles. Avant de partir les chercher, apprends à te battre.'},       # Temple Céleste, devant les Dofus (accueil du tutoriel)
-  'ganymede_route': {'nom': 'Ganymède', 'dofusId': 7581, 'carte': '0_-3', 'sprite': 'ganymede', 'phrase': "La Route des âmes descend jusqu'au village. Les esprits qui y rôdent sont un bon entraînement."},    # le même, qui attend le joueur en bas, sur la Route des âmes
+  'ganymede': {'nom': 'Ganymède', 'dofusId': 7581, 'carte': 'temple_1', 'case': 174, 'phrase': 'Les Dofus dorment ici depuis des siècles. Avant de partir les chercher, apprends à te battre.'},       # Temple Céleste, devant les Dofus (accueil du tutoriel)
+  'ganymede_temple': {'nom': 'Ganymède', 'dofusId': 7581, 'carte': 'temple_2', 'sprite': 'ganymede', 'phrase': "Des esprits de feu se sont glissés dans le Temple. Bon entraînement avant de descendre sur l'île."},    # le même, qui entraîne le joueur dans la salle suivante
   'lykhen': {'nom': 'Lykhen Lesurviven', 'dofusId': 2892, 'carte': '-2_-3', 'phrase': "Bienvenue au village d'Incarnam. Chacun ici a quelque chose à t'apprendre."},
   'fecaline': {'nom': 'Fécaline la Sage', 'dofusId': 1515, 'carte': 'maison_2_-3', 'phrase': "Les Dofus ne sont pas des légendes. J'ai passé ma vie à suivre leur trace."},
   'ternette': {'nom': 'Ternette Nhin', 'dofusId': 2905, 'carte': '-1_-3', 'phrase': 'Zaaps, nuages, vestiges des dieux : Incarnam est pleine de secrets pour qui sait regarder.'},
@@ -33,29 +33,29 @@ def parler(texte, pnj, **k): return {'t': 'parler', 'texte': texte, 'pnj': pnj, 
 def tuto(classe, frappe, sort1, sorts, jauge, mobilite, arme):
     """Trame du tutoriel d'une classe : 10 étapes, une action chacune (départ au Temple Céleste)."""
     return [
-      {'nom': 'Premiers pas', 'bulle': f"Bienvenue sur Incarnam, jeune {classe} ! Contemple les Dofus, salue ton dieu, puis clique sur le sol et suis le chemin. Je t'attends en bas.",
-       'objectifs': [aller('Traverser le Temple Céleste (clic gauche)', carte='temple_3')]},
-      {'nom': 'La Route des âmes', 'pnj': 'ganymede_route',
-       'objectifs': [aller('Rejoindre Ganymède sur la Route des âmes', pnj='ganymede_route')]},
-      {'nom': 'Frapper', 'pnj': 'ganymede_route', 'bulle': f"Un esprit de feu rôde sur la Route. Clique dessus : {frappe}.",
-       'objectifs': [vaincre('Vaincre un monstre (clic dessus)', 1, sousZone=SZ['route'])]},
-      {'nom': 'Ton premier sort', 'pnj': 'ganymede_route', 'bulle': sort1[1], 'halo': 0, 'objectifs': [{'t': 'utiliser', 'sort': sort1[0], 'texte': 'Lancer ton premier sort (&)'}]},
-      {'nom': 'Tes sorts', 'pnj': 'ganymede_route', 'bulle': sorts, 'halo': 1, 'objectifs': [vaincre('Vaincre des monstres avec tes sorts', 3, sousZone=SZ['route'])]},
-      {'nom': 'La jauge de classe', 'pnj': 'ganymede_route', 'bulle': jauge, 'halo': 'jauge', 'objectifs': [{'t': 'utiliser', 'quoi': 'jauge', 'texte': 'Lancer un sort avec la jauge pleine'}]},
-      {'nom': 'Se déplacer vite', 'pnj': 'ganymede_route', 'bulle': mobilite, 'halo': 7, 'objectifs': [{'t': 'utiliser', 'quoi': 'mobilite', 'texte': 'Se déplacer avec Espace'}]},
-      {'nom': 'La potion', 'pnj': 'ganymede_route', 'bulle': "Blessé ? E : une potion. Tu en regagnes une à chaque groupe vaincu.", 'halo': 'potion',
+      {'nom': 'Premiers pas', 'bulle': f"Bienvenue sur Incarnam, jeune {classe} ! Contemple les Dofus, salue ton dieu, puis clique sur le sol et suis le chemin. Je t'attends dans la salle suivante.",
+       'objectifs': [aller('Passer dans la salle suivante (clic gauche)', carte='temple_2')]},
+      {'nom': "La salle d'entraînement", 'pnj': 'ganymede_temple',
+       'objectifs': [aller('Rejoindre Ganymède', pnj='ganymede_temple')]},
+      {'nom': 'Frapper', 'pnj': 'ganymede_temple', 'bulle': f"Des esprits de feu se sont glissés dans le Temple. Clique sur l'un d'eux : {frappe}.",
+       'objectifs': [vaincre('Vaincre un monstre (clic dessus)', 1, sousZone=SZ['temple'])]},
+      {'nom': 'Ton premier sort', 'pnj': 'ganymede_temple', 'bulle': sort1[1], 'halo': 0, 'objectifs': [{'t': 'utiliser', 'sort': sort1[0], 'texte': 'Lancer ton premier sort (&)'}]},
+      {'nom': 'Tes sorts', 'pnj': 'ganymede_temple', 'bulle': sorts, 'halo': 1, 'objectifs': [vaincre('Vaincre des monstres avec tes sorts', 3, sousZone=SZ['temple'])]},
+      {'nom': 'La jauge de classe', 'pnj': 'ganymede_temple', 'bulle': jauge, 'halo': 'jauge', 'objectifs': [{'t': 'utiliser', 'quoi': 'jauge', 'texte': 'Lancer un sort avec la jauge pleine'}]},
+      {'nom': 'Se déplacer vite', 'pnj': 'ganymede_temple', 'bulle': mobilite, 'halo': 7, 'objectifs': [{'t': 'utiliser', 'quoi': 'mobilite', 'texte': 'Se déplacer avec Espace'}]},
+      {'nom': 'La potion', 'pnj': 'ganymede_temple', 'bulle': "Blessé ? E : une potion. Tu en regagnes une à chaque groupe vaincu.", 'halo': 'potion',
        'objectifs': [{'t': 'utiliser', 'quoi': 'potion', 'texte': 'Boire une potion (E) une fois blessé'}]},
-      {'nom': 'Premières armes', 'pnj': 'ganymede_route', 'bulle': arme[1], 'donner': {classe.lower().replace('â', 'a'): arme[0]},
+      {'nom': 'Premières armes', 'pnj': 'ganymede_temple', 'bulle': arme[1], 'donner': {classe.lower().replace('â', 'a'): arme[0]},
        'objectifs': [{'t': 'equiper', 'objet': arme[0], 'texte': 'Équiper ton arme (I)'}]},
-      {'nom': 'Le point de retour', 'pnj': 'ganymede_route', 'bulle': "Le Zaap de la Route des âmes est ton point de retour : si tu tombes, tu reviens là, sans rien perdre. Viens me voir.",
-       'objectifs': [aller('Retourner voir Ganymède près du Zaap', pnj='ganymede_route')]},
+      {'nom': 'Descendre sur Incarnam', 'pnj': 'ganymede_temple', 'bulle': "Tu es prêt. La sortie du Temple mène à la Route des âmes : son Zaap sera ton point de retour si tu tombes.",
+       'objectifs': [aller('Sortir du Temple vers la Route des âmes', carte='0_-3')]},
     ]
 
 Q = {}
 # --- Fil principal (Ganymède -> Lykhen -> Fécaline) ---------------------------------------------------------
 Q['reponses'] = {'nom': 'Réponses à tout', 'type': 'tutoriel', 'pnj': 'ganymede', 'niveau': 1, 'auDepart': True, 'depart': 'temple_1', 'suivante': 'village',
   'texte': "Avant de quitter le temple céleste, prenez le temps de contempler les Dofus et le Monde des Douze... et n'oubliez pas de saluer votre dieu au passage ! Ganymède vous apprend à vous battre avant de vous laisser descendre sur l'île.",
-  'options': {'passable': True, 'sauterSiCompte': True, 'immortel': True, 'groupes': {'sousZones': [SZ['route']], 'taille': [1, 3]}},
+  'options': {'passable': True, 'sauterSiCompte': True, 'immortel': True, 'groupes': {'sousZones': [SZ['temple']], 'taille': [1, 3]}},
   # Tutoriel (maquette « Tutoriel d'Incarnam », tranchée le 2026-11-06) : une trame par classe (9B), une action par étape,
   # halo sur la barre + bulle de Ganymède (3A+3B). Les indices des étapes « Premiers pas » (0) et « Premières armes » (8)
   # servent au succès « Premier temps » : garder les deux trames de même longueur.

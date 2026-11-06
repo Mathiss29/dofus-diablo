@@ -45,15 +45,18 @@ describe('quêtes et succès', () => {
       // la flèche vise la porte de la salle (pas le but à travers le vide)
       const sortie1 = w.portes.find(po => po.ends[0].tag === 'temple_1')!.ends[0];
       expect(q.cible()).toEqual({ x: sortie1.x, y: sortie1.y });
-      const t3 = w.openestCellOf('temple_3'); p.x = t3.x; p.y = t3.y;
+      const t2 = w.openestCellOf('temple_2'); p.x = t2.x; p.y = t2.y;
       w.step(STEP, NO_INPUT);
       expect(etape(), classe).toBe(1);
-      const sortie3 = w.portes.find(po => po.ends[0].tag === 'temple_3')!.ends[0];
-      expect(q.cible()).toEqual({ x: sortie3.x, y: sortie3.y });
-      const g0 = q.pnj('ganymede_route')!; p.x = g0.x + 20; p.y = g0.y;
+      // tout le tutoriel se fait dans le Temple : esprits de feu dans les salles 2 et 3, pas dans la salle des Dofus
+      const temple = w.monsters.filter(x => w.worldGrid!.mapAt(x.x, x.y)?.sub === 446).map(x => w.worldGrid!.mapAt(x.x, x.y)!.tag);
+      expect(new Set(temple)).toEqual(new Set(['temple_2', 'temple_3']));
+      const g0 = q.pnj('ganymede_temple')!;
+      expect(w.worldGrid!.mapAt(g0.x, g0.y)?.tag).toBe('temple_2');
+      p.x = g0.x + 20; p.y = g0.y;
       w.step(STEP, NO_INPUT);
       expect(etape(), classe).toBe(2);
-      const m = w.monsters.find(x => w.worldGrid!.mapAt(x.x, x.y)?.sub === 450)!;
+      const m = w.monsters.find(x => w.worldGrid!.mapAt(x.x, x.y)?.sub === 446)!;
       const tuer = (n: number) => { for (let i = 0; i < n; i++) w.emit({ k: 'kill', x: m.x, y: m.y, radius: 10, monster: m.type }); };
       tuer(1); expect(etape()).toBe(3);
       expect(q.etapeDe(q.enCours[0])?.halo).toBe(0);
@@ -66,10 +69,13 @@ describe('quêtes et succès', () => {
       const it = p.bag.find(i => i.id === arme)!;
       expect(it, classe).toBeDefined();
       expect(p.equip(it.uid)).toBe(true);
-      p.x = 0; p.y = 0;   // loin de Ganymède
       w.step(STEP, NO_INPUT); expect(etape()).toBe(9);
-      const g = q.pnj('ganymede_route')!; p.x = g.x + 20; p.y = g.y;
+      // la sortie du Temple mène à la Route des âmes : fin du tutoriel
+      const sortie3 = w.portes.find(po => po.ends[0].tag === 'temple_3')!.ends[0];
+      expect(q.cible()).not.toBeNull();
+      const r = w.openestCellOf('0_-3'); p.x = r.x; p.y = r.y;
       w.step(STEP, NO_INPUT);
+      expect(sortie3).toBeDefined();
       expect(q.finies.has('reponses')).toBe(true);
       expect(p.level).toBeGreaterThanOrEqual(2);
       expect(q.enCours.map(c => c.id)).toEqual(['village']);

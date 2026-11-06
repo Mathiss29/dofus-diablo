@@ -107,6 +107,18 @@ def melange(xy, mk, e):
     if f[0] == 2: return 's', 0.2             # DstColor, One : éclaircit ce qui est dessous
     if f[0] == 3: return 'a', 0.1             # SrcColor, One : couleur au carré
     return 'a', 0.25
+def additif(xy, mk, e):
+    """Matériau officiel en mélange additif (destinationFactor = One) : lueur, halo, œuf de Dofus du Temple Céleste…
+    Posé comme du décor normal, sa couleur sombre (0xff171a1e : « n'ajoute presque rien ») le rendait noir."""
+    sd = maps[xy][mk].get('shaderData', []); i = e.get('materialIndex', -1); R = REFS[xy]
+    if 0 <= i < len(sd):
+        for p in (R.get(sd[i]['rid']) or {}).get('shaderParameters', []):
+            d = R.get(p['rid']) or {}
+            if d.get('destinationFactor') == 1 and d.get('sourceFactor') in (1, 2, 3): return True
+    return False
+def cache(e):
+    """Élément caché par défaut (couleur d'alpha 0) : montré par une mise en scène du serveur (ex. Dofus posé sur son socle)."""
+    return (e['color']['value'] >> 24) & 255 == 0
 def shader(xy, mk, e):
     """Paramètres officiels du matériau d'un élément (les classes ne sont pas gardées : on les reconnaît à leurs champs)."""
     sd = maps[xy][mk].get('shaderData', []); i = e.get('materialIndex', -1); R = REFS[xy]; out = {}
@@ -164,13 +176,13 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
     couche = []
     for e in md['backgroundElements']:
         im = styled(e)
-        if im is None or e['gfxId'] in VOILES: continue
-        if e['gfxId'] in LUMIERES: lums.append(('backgroundMaterialData', -1, e)); continue
+        if im is None or e['gfxId'] in VOILES or cache(e): continue
+        if e['gfxId'] in LUMIERES or additif((x, y), 'backgroundMaterialData', e): lums.append(('backgroundMaterialData', -1, e)); continue
         a = anime((x, y), 'backgroundMaterialData', e); a.pop('w', None)
         if a and im.width * im.height <= 160000:   # les grands (nuages, voiles) restent dans le sol
             tr = e['transform']; eaux.append((im, round(tr['m31'] - im.width / 2), round(-tr['m32'] - im.height / 2)))
             couche.append((e, a)); continue
-        if e['gfxId'] in SKY and not extra[(x, y)].get('inside'):
+        if e['gfxId'] in SKY and (not extra[(x, y)].get('inside') or extra[(x, y)].get('ciel')):
             sky = sky or im; continue
         tr = e['transform']; ex, ey = round(tr['m31'] - im.width / 2), round(-tr['m32'] - im.height / 2)
         if e['gfxId'] in EAU_FOND: eaux.append((im, ex, ey)); im = adoucir(im)
@@ -201,7 +213,8 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
     bx1 = x1m if nb['r'] else max([x1m] + [ex + im.width for im, ex, _ in sol_els])
     by1 = y1m if nb['b'] else max([y1m] + [ey + im.height for im, _, ey in sol_els])
     sol = Image.new('RGBA', (bx1 - bx0, by1 - by0))
-    if eaux:   # couleur de fond de la carte sous le lac (là où sont ses ellipses, un peu élargies pour boucher les trous)
+    # (pas dans le Temple Céleste : ses pierres flottantes animées y laissaient des taches noires, sa couleur de fond)
+    if eaux and not extra[(x, y)].get('ciel'):   # couleur de fond de la carte sous le lac (là où sont ses ellipses, un peu élargies pour boucher les trous)
         m = Image.new('L', sol.size)
         for im, ex, ey in eaux: m.paste(255, (ex - bx0, ey - by0), im.getchannel('A').point(lambda q: 255 if q > 5 else 0))
         w8, h8 = max(1, sol.width // 8), max(1, sol.height // 8)
@@ -233,7 +246,8 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
     if write and not DECOR_ONLY: webp(sol, f'{out}/sol_{tag}.webp', 80)
     # Décor : un atlas par carte, pour que le jeu ne charge que les cartes proches du joueur
     variants = {}; places = []
-    lums += [('sortableMaterialData', 0, e) for e in md['sortableElements'] if e['gfxId'] in LUMIERES]
+    lum_s = [e for e in md['sortableElements'] if not cache(e) and (e['gfxId'] in LUMIERES or additif((x, y), 'sortableMaterialData', e))]
+    lums += [('sortableMaterialData', 0, e) for e in lum_s]
     # couche d'eau animée : g = 1 (au-dessus du sol, sous les lumières et le décor), o = ordre d'origine
     for i, (e, a) in enumerate(couche):
         tr = e['transform']; key = (e['gfxId'], e['color']['value'], round(tr['m11'], 3), round(tr['m22'], 3))
@@ -242,7 +256,7 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
             if im is None: continue
             variants[key] = ('d%d' % len(variants), im)
         places.append({'f': variants[key][0], 'x': round(tr['m31'] + dx, 1), 'y': round(-tr['m32'] + dy, 1), 'c': -1, 'o': i, 'g': 1, **a})
-    els_d = [e for e in md['sortableElements'] if e['gfxId'] not in LUMIERES | VOILES] + [e for e in md['ies'] if e['gfxId'] in imgs]
+    els_d = [e for e in md['sortableElements'] if e['gfxId'] not in VOILES and not cache(e) and not any(e is l for l in lum_s)] + [e for e in md['ies'] if e['gfxId'] in imgs]
     for e in sorted(els_d, key=lambda e: (e['cellId'], e.get('innerCellRenderOrder', 0))):
         tr = e['transform']; key = (e['gfxId'], e['color']['value'], round(tr['m11'], 3), round(tr['m22'], 3))
         if key not in variants:
@@ -268,7 +282,8 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
     asz = pack(variants, f'{out}/decor_{tag}', write)
     monde['maps'].append({'x': x, 'y': y, 'id': sel[(x, y)][0], 'sub': sel[(x, y)][1], 'tag': tag,
                           'sol': {'x': bx0 + dx, 'y': by0 + dy, 'w': sol.width, 'h': sol.height}, 'decor': places,
-                          **({'fond': fond} if fond else {}), **({'inside': 1} if extra[(x, y)].get('inside') else {})})
+                          **({'fond': fond} if fond else {}), **({'inside': 1} if extra[(x, y)].get('inside') else {}),
+                          **({'ciel': 1} if extra[(x, y)].get('ciel') else {})})
     print(tag, 'retirés', len(hard), 'lumières', len(lums), 'eau', len(couche), 'sol', sol.size, 'fond', fond and (fond['w'], fond['h']), 'decor', len(places), asz)
 # Calque « bord » : ce qu'une carte dessine au-delà de son cadre, posé par-dessus les cartes voisines.
 #  - là où la voisine n'a rien (trou, ciel) : en entier (falaises et rochers qui débordent) ;

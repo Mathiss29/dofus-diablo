@@ -203,7 +203,7 @@ export class World {
     const wg = this.worldGrid!, open = this.zone.open!;
     for (const m of wg.world.maps) {
       const sub = open.subareas[String(m.sub)];
-      if (!sub || !wg.freeByMap.get(m.tag)!.length || (m.inside && !sub.interieur)) continue;
+      if (!sub || !wg.freeByMap.get(m.tag)!.length || (m.inside && !sub.interieur) || (sub.cartes && !sub.cartes.includes(m.tag))) continue;
       for (let i = 0; i < sub.groupsPerMap; i++) {
         const g: MonsterGroup = { id: this.groups.length, map: m.tag, sub, members: [], timer: 0, cleared: false, x: 0, y: 0 };
         this.groups.push(g);

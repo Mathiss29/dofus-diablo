@@ -155,6 +155,8 @@ export interface SubAreaDef {
   name: string; level: number; monsters: string[]; groupsPerMap: number; groupSize: [number, number];
   /** Sous-zone faite d'intérieurs (Mine…) : ses monstres apparaissent aussi dedans. Sinon les intérieurs (maisons) restent vides. */
   interieur?: boolean;
+  /** Seulement sur ces cartes (ex. Temple Céleste : la salle des Dofus reste calme, les deux autres servent au tutoriel). */
+  cartes?: string[];
 }
 /** Porte entre deux cartes du monde (dehors -> intérieur, ou d'une salle à l'autre) : [tag de la carte, case Dofus 0-559]. */
 /** verrou : la salle du côté a doit être vidée avant de passer ; sens : on ne passe que de a vers b (donjons). */
