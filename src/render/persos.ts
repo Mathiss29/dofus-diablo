@@ -8,6 +8,8 @@ export interface Perso {
   sexe: 'm' | 'f';
   /** Mode Hardcore (choix 10D) : la mort efface le personnage. */
   hardcore: boolean;
+  /** Choix « Tutoriel » à la création : faux = commence directement en Incarnam, avec l'équipement de départ. */
+  tuto?: boolean;
   cree: number;
   /** Dernière partie (horodatage) et temps de jeu total, en secondes. */
   maj: number;
