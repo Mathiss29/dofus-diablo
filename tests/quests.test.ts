@@ -112,7 +112,12 @@ describe('quêtes et succès', () => {
     const el = w.monsters.find(m => m.type === 'caporale_mynerve')!;
     expect(el).toBeDefined();
     expect(q.estEliteDeQuete(el.id)).toBe(true);
+    // le Capitaine est dans la tour : la flèche vise d'abord la porte, puis l'élite une fois dehors
+    expect(q.cible()).not.toEqual({ x: el.x, y: el.y });
+    const px = p.x, py = p.y;
+    p.x = el.x + 30; p.y = el.y;
     expect(q.cible()).toEqual({ x: el.x, y: el.y });
+    p.x = px; p.y = py;
     w.killMonster(el);
     const c = q.enCours.find(x => x.id === 'epreuve')!;
     expect(c.aRendre).toBe(true);

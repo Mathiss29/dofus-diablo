@@ -13,9 +13,9 @@ PNJ = {
   'fecaline': {'nom': 'Fécaline la Sage', 'dofusId': 1515, 'carte': 'maison_2_-3'},
   'ternette': {'nom': 'Ternette Nhin', 'dofusId': 2905, 'carte': '-1_-3'},
   'berb_nhin': {'nom': 'Berb Nhin', 'dofusId': 2899, 'carte': '0_-3'},
-  'capitaine': {'nom': 'Capitaine des Kerubims', 'dofusId': 2880, 'carte': '2_-3'},   # sa carte (153356294) pas exportée : devant chez Fécaline
-  'klasmor': {'nom': 'Klasmor le fossoyeur', 'dofusId': 2907, 'carte': '5_-1'},
-  'anta_brok': {'nom': 'Anta Brok', 'dofusId': 2886, 'carte': '1_-2'},
+  'capitaine': {'nom': 'Capitaine des Kerubims', 'dofusId': 2880, 'carte': 'milice_rdc', 'case': 370},   # sa carte officielle 153356294 : rez-de-chaussée de la Tour de la Milice
+  'klasmor': {'nom': 'Klasmor le fossoyeur', 'dofusId': 2907, 'carte': '5_-1', 'case': 358},
+  'anta_brok': {'nom': 'Anta Brok', 'dofusId': 2886, 'carte': '1_-2', 'case': 389},
   'marylork': {'nom': 'Marylork', 'dofusId': 2888, 'carte': '3_-5'},
 }
 SZ = {'route': 450, 'champs': 444, 'paturages': 445, 'lac': 442, 'foret': 443, 'cimetiere': 449, 'mine': 778, 'taverne': 448, 'crypte': 447, 'temple': 446}
