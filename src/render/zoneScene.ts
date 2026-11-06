@@ -28,7 +28,7 @@ import { spellTipHtml } from './spellTip';
 import { RARITY_COLORS, RARITY_NAMES, rollItem } from '../sim/items';
 import { exporterJoueur, restaurerJoueur } from '../sim/sauvegarde';
 import { lireBestiaire, noter, nouvelleSession, sauverBestiaire, statsVides } from './carnet';
-import { enterrer, lirePersos, sauverPerso, supprimerPerso, type Perso } from './persos';
+import { dernier, enterrer, lirePersos, sauverPerso, supprimerPerso, type Perso } from './persos';
 import { SonView, synthe } from './sonView';
 import { MANIFESTE, Son } from './son';
 
@@ -49,6 +49,9 @@ export class ZoneScene extends Phaser.Scene {
   /** Vitrine : la partie tourne derrière l'écran d'accueil, sans joueur ni interface ; la caméra se promène. */
   private vitrine = false;
   private vitrineT = 0;
+  /** Accueil 8B : essai d'une classe, 60 s dans les Champs d'Astrub, sans perso ni sauvegarde (sexe choisi, temps écoulé). */
+  private essai: { sexe: 'm' | 'f'; t: number; averti: boolean } | null = null;
+  static readonly ESSAI = 60;
   private sauveT = 0;
   private mortDefinitive = false;
   private world!: World;
@@ -110,7 +113,8 @@ export class ZoneScene extends Phaser.Scene {
 
   /** Arrivée par un portail d'une autre zone (Incarnam <-> Astrub). */
   private arrivee?: [string, number];
-  init(data: { zone?: string; classe?: string; slot?: number; vitrine?: boolean; arrivee?: [string, number] }) {
+  init(data: { zone?: string; classe?: string; slot?: number; vitrine?: boolean; arrivee?: [string, number]; essai?: 'm' | 'f' }) {
+    this.essai = data?.essai ? { sexe: data.essai, t: 0, averti: false } : null;
     this.vitrine = !!data?.vitrine; this.vitrineT = 0; this.sauveT = 0; this.mortDefinitive = false;
     this.slot = data?.slot ?? -1;
     this.perso = this.slot >= 0 ? lirePersos()[this.slot] : null;
@@ -279,7 +283,7 @@ export class ZoneScene extends Phaser.Scene {
   }
 
   /** Apparence du joueur : planche de la classe, version femme si le perso en est une. */
-  private get look() { return (this.perso?.sexe === 'f' && LOOKS[`${this.classId}_f`]) || LOOKS[this.classId]; }
+  private get look() { return ((this.perso?.sexe ?? this.essai?.sexe) === 'f' && LOOKS[`${this.classId}_f`]) || LOOKS[this.classId]; }
   /** Sauvegarde automatique du perso (toutes les 5 s, en quittant la page, en revenant à l'accueil). */
   private sauver = () => {
     if (!this.perso || this.slot < 0 || this.mortDefinitive || !this.world) return;
@@ -351,7 +355,7 @@ export class ZoneScene extends Phaser.Scene {
     this.keys.J.on('down', () => this.windows?.toggle('job'));   // Métiers (choix 6A : Chasseur)
     this.keys.O.on('down', () => this.windows?.toggle('opt'));
     this.keys.S.on('down', () => this.windows?.toggle('sorts'));   // Sorts (choix 8A, touche S)   // Réglages (choix 10A + 10B)
-    this.keys.ESC.on('down', () => { if (this.dialogueView?.ouvert) { this.dialogueView.touche(-1); return; } this.dialogueView?.fermerMenu(); this.aimId = null; this.aimKey = null; this.windows?.close(); this.carte?.fermer(); });
+    this.keys.ESC.on('down', () => { if (this.essai) { this.essai = null; this.game.events.emit('accueil', 'creation'); return; } if (this.dialogueView?.ouvert) { this.dialogueView.touche(-1); return; } this.dialogueView?.fermerMenu(); this.aimId = null; this.aimKey = null; this.windows?.close(); this.carte?.fermer(); });
     // K : changer de classe, seulement sans perso (mode dév #cra / #jeu) ; sinon la classe se choisit à la création
     if (!this.perso) this.keys.K.on('down', () => this.scene.restart({ zone: this.zoneId, classe: this.classId === 'iop' ? 'cra' : 'iop' }));
     this.keys.ENTER.on('down', () => {
@@ -501,6 +505,12 @@ export class ZoneScene extends Phaser.Scene {
     this.fx.update(dt);
     this.carte?.update();
     if (this.vitrine) this.updateVitrine(dt);
+    else if (this.essai) {
+      const e = this.essai; e.t += dt;
+      if (e.t - dt <= 3 && e.t > 3) this.hud.banner(`Essai : ${ZoneScene.ESSAI} secondes\nÉchap pour revenir à la création`, 2500);
+      if (!e.averti && e.t >= ZoneScene.ESSAI - 10) { e.averti = true; this.hud.toast('Plus que 10 secondes d\'essai'); }
+      if (e.t >= ZoneScene.ESSAI) { this.essai = null; this.game.events.emit('accueil', 'creation'); return; }
+    }
     else if (this.perso) {
       this.perso.temps += dt;
       if ((this.sauveT += dt) >= 5) { this.sauveT = 0; this.sauver(); }
@@ -544,7 +554,8 @@ export class ZoneScene extends Phaser.Scene {
         case 'rageFull': this.rageSound(); this.hud.toast(`${this.world.player.cls.rage.name} au maximum : ton prochain sort est renforcé !`); break;
         case 'bossDown': this.hud.banner(`${M[e.monster].name} vaincu !`); break;
         case 'playerDeath':
-          if (this.perso?.hardcore) {
+          if (this.essai) { this.hud.banner('Essai terminé', 1500); this.time.delayedCall(1500, () => { if (this.essai) { this.essai = null; this.game.events.emit('accueil', 'creation'); } }); }
+          else if (this.perso?.hardcore) {
             // Hardcore (choix 10D) : la mort efface le personnage
             this.mortDefinitive = true;
             // Cimetière des héros (Accueil 11A) : une stèle avec le monstre le plus proche au moment de la mort
@@ -788,9 +799,12 @@ export class ZoneScene extends Phaser.Scene {
     this.cameras.getCamera('mini')?.setVisible(false);
     const w = this.world, wg = w.worldGrid, p = w.player;
     p.dead = true;
+    // Accueil 6A : le fond montre la carte où le dernier perso s'est arrêté (si elle est dehors), sinon le départ
+    const d = dernier(), e = d != null ? lirePersos()[d]?.etat : undefined, m = e && wg?.mapAt(e.x, e.y);
+    if (e && m && !m.inside && w.zone.open) { p.x = e.x; p.y = e.y; }
     this.tour = [{ x: p.x, y: p.y }];
     if (wg && w.zone.open) {
-      const [sx, sy] = w.zone.open.start;
+      const [sx, sy] = m && !m.inside && e ? [m.x, m.y] : w.zone.open.start;
       // boucle sur les cartes du dehors autour du départ, dans l'ordre de l'angle
       const autour = wg.world.maps.filter(m => !m.inside && Math.abs(m.x - sx) <= 2 && Math.abs(m.y - sy) <= 2 && (m.x !== sx || m.y !== sy))
         .sort((a, b) => Math.atan2(a.y - sy, a.x - sx) - Math.atan2(b.y - sy, b.x - sx));
