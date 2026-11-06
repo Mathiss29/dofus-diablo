@@ -200,15 +200,37 @@
      {
       "nom": "Premières armes",
       "pnj": "ganymede_temple",
-      "bulle": "Prends cette Épée Tulante. I ouvre ton sac : équipe-la, ton attaque change avec elle.",
+      "bulle": "Voici ton équipement : l'Épée Tulante et la panoplie de l'Intrépide. I ouvre ton sac : équipe tout, tu seras plus solide.",
       "donner": {
-       "iop": "10797"
+       "iop": [
+        "10797",
+        "10801",
+        "10800",
+        "10784",
+        "10785",
+        "10799",
+        "10794",
+        "10798"
+       ]
       },
       "objectifs": [
        {
         "t": "equiper",
         "objet": "10797",
         "texte": "Équiper ton arme (I)"
+       },
+       {
+        "t": "equiper",
+        "objets": [
+         "10801",
+         "10800",
+         "10784",
+         "10785",
+         "10799",
+         "10794",
+         "10798"
+        ],
+        "texte": "Équiper la panoplie de l'Intrépide"
        }
       ]
      },
@@ -330,15 +352,35 @@
      {
       "nom": "Premières armes",
       "pnj": "ganymede_temple",
-      "bulle": "Prends cet Arc de Chasse. I ouvre ton sac : équipe-le, tu tireras des flèches au lieu de frapper au poing.",
+      "bulle": "Voici ton équipement : un Arc de Chasse et la panoplie de l'Intrépide. I ouvre ton sac : équipe tout, tu tireras des flèches au lieu de frapper au poing.",
       "donner": {
-       "cra": "1942"
+       "cra": [
+        "1942",
+        "10801",
+        "10800",
+        "10784",
+        "10785",
+        "10799",
+        "10794"
+       ]
       },
       "objectifs": [
        {
         "t": "equiper",
         "objet": "1942",
         "texte": "Équiper ton arme (I)"
+       },
+       {
+        "t": "equiper",
+        "objets": [
+         "10801",
+         "10800",
+         "10784",
+         "10785",
+         "10799",
+         "10794"
+        ],
+        "texte": "Équiper la panoplie de l'Intrépide"
        }
       ]
      },

@@ -73,6 +73,9 @@ describe('quêtes et succès', () => {
       const it = p.bag.find(i => i.id === arme)!;
       expect(it, classe).toBeDefined();
       expect(p.equip(it.uid)).toBe(true);
+      w.step(STEP, NO_INPUT); expect(etape()).toBe(8);   // il reste la panoplie de l'Intrépide (équipement de départ officiel)
+      const pano = ['10801', '10800', '10784', '10785', '10799', '10794', ...(classe === 'iop' ? ['10798'] : [])];   // bouclier avec l'épée
+      for (const id of pano) { const o = p.bag.find(i => i.id === id)!; expect(o, id).toBeDefined(); expect(p.equip(o.uid), id).toBe(true); }
       w.step(STEP, NO_INPUT); expect(etape()).toBe(9);
       // pas de porte dans le vide : on parle à Ganymède, qui envoie le perso au village, sur le cercle de pierre de [-2,-3]
       expect(q.finies.has('reponses')).toBe(false);
