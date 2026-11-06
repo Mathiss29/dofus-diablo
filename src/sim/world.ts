@@ -307,6 +307,7 @@ export class World {
     const p = this.player;
     const ents = [p, ...this.monsters], prev = ents.map(e => [e.x, e.y] as const);
     if (this.quetes) {
+      if (input.reponse != null) this.quetes.repondre(input.reponse);
       if (input.talk) this.quetes.cliquer(input.talk);
       else if (input.dest || input.target != null || input.pickup != null) this.quetes.annulerClic();
     }

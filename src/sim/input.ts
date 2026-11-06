@@ -24,6 +24,8 @@ export interface PlayerInput {
   approach?: boolean;
   /** Clic sur un PNJ (clé de quetes.json) : le perso y va et lui parle. */
   talk?: string | null;
+  /** Réponse au dialogue ouvert (index du cadre vert, -1 = fermer). */
+  reponse?: number | null;
 }
 
 export const NO_INPUT: PlayerInput = { move: { x: 0, y: 0 }, aim: { x: 0, y: 0 }, pressed: null, holdAttack: false };

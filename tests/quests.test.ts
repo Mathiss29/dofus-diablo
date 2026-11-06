@@ -107,6 +107,12 @@ describe('quêtes et succès', () => {
     p.x = cap.x + 40; p.y = cap.y;
     w.step(STEP, { ...NO_INPUT, talk: 'capitaine', dest: { x: cap.x, y: cap.y } });
     for (let i = 0; i < 5; i++) w.step(STEP, NO_INPUT);
+    // le dialogue s'ouvre sur l'offre : texte, récompenses, Accepter / Plus tard / Au revoir
+    expect(q.dialogue?.quete).toBe('epreuve');
+    expect(q.dialogue!.reponses.map(r => r.a)).toEqual(['accepter', 'retour', 'fermer']);
+    expect(q.enCours.some(c => c.id === 'epreuve')).toBe(false);
+    w.step(STEP, { ...NO_INPUT, reponse: 0 });
+    expect(q.dialogue).toBeNull();
     expect(q.enCours.some(c => c.id === 'epreuve')).toBe(true);
     // la Caporale Mynerve apparaît comme élite de quête
     const el = w.monsters.find(m => m.type === 'caporale_mynerve')!;
@@ -126,6 +132,7 @@ describe('quêtes et succès', () => {
     w.step(STEP, { ...NO_INPUT, talk: 'capitaine', dest: { x: cap.x, y: cap.y } });
     for (let i = 0; i < 5; i++) w.step(STEP, NO_INPUT);
     expect(q.finies.has('epreuve')).toBe(true);
+    expect(q.dialogue?.pnj).toBe('capitaine');   // remerciement dans la bulle (6B)
     expect(p.level > lvl || p.xp > xp).toBe(true);
     expect(p.resources['16518']).toBe(5);
     // la suivante de la série est maintenant proposée (niveau assez haut)
@@ -149,5 +156,37 @@ describe('quêtes et succès', () => {
     const rat = w.monsters.find(m => m.type === 'rat_soiffe')!;
     w.killMonster(rat);
     expect(q.finies.has('mort_au_rat')).toBe(true);
+  });
+
+  it('dialogue : Plus tard revient à la liste, un coup reçu ou s\'éloigner ferme, un PNJ sans quête dit sa phrase', () => {
+    const w = newWorld(1), q = w.quetes!, p = w.player;
+    const parler = (id: string) => {
+      const n = q.pnj(id)!; p.x = n.x + 40; p.y = n.y;
+      w.step(STEP, { ...NO_INPUT, talk: id, dest: { x: n.x, y: n.y } });
+      for (let i = 0; i < 3; i++) w.step(STEP, NO_INPUT);
+    };
+    parler('capitaine');
+    w.step(STEP, { ...NO_INPUT, reponse: 1 });   // Plus tard
+    expect(q.dialogue?.quete).toBeUndefined();
+    expect(q.dialogue!.reponses.map(r => r.a)).toEqual(['voir', 'fermer']);
+    w.step(STEP, { ...NO_INPUT, reponse: 0 });   // revoir l'offre
+    expect(q.dialogue?.quete).toBe('epreuve');
+    w.step(STEP, { ...NO_INPUT, reponse: -1 });  // croix
+    expect(q.dialogue).toBeNull();
+    parler('capitaine');
+    p.invuln = 0; p.hurt(1, p.x + 10, p.y, w);
+    expect(q.dialogue).toBeNull();
+    parler('capitaine');
+    p.x += 1000; q.update(STEP);
+    expect(q.dialogue).toBeNull();
+    const autre = q.pnjs.find(n => !q.aDonner(n.id) && !q.aRendre(n.id) && !q.attendParler(n.id) && Q.pnj[n.id].phrase)!;
+    parler(autre.id);
+    expect(q.dialogue?.texte).toBe(Q.pnj[autre.id].phrase);
+    expect(q.dialogue!.reponses.at(-1)!.texte).toBe('Au revoir.');
+  });
+
+  it('aucun groupe de monstres autour des PNJ (4C)', () => {
+    const w = newWorld(1), q = w.quetes!;
+    for (const n of q.pnjs) for (const m of w.monsters) if (!m.def.elite) expect(Math.hypot(m.x - n.x, m.y - n.y), n.id).toBeGreaterThan(250);
   });
 });
