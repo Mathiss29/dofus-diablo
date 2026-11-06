@@ -22,7 +22,7 @@ export interface Reglages {
   volEffets: number;
   volAmbiance: number;
   volInterface: number;
-  /** Tout le son coupé (touche M, 8B). */
+  /** Tout le son coupé (Ctrl+M, 8B ; M = carte du monde). */
   muet: boolean;
   /** Cartes vivantes (maquette « Vivant », 5A) : arbres au vent, eau animée. */
   vent: boolean;
