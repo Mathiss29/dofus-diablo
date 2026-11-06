@@ -375,7 +375,7 @@ export class Player extends Entity {
     const def = this.spell(id);
     if (!def) return {};
     const g = def.pm ? null : this.grade(id);
-    const range = g && def.hit.shape === 'projectile' ? g.po[1] * CASE + CASE / 2 : undefined;
+    const range = g && (def.hit.shape === 'projectile' || def.hit.shape === 'point') ? g.po[1] * CASE + CASE / 2 : undefined;
     let explode: number | undefined;
     if (def.grow) {
       const n = (this.casts[id] ?? []).filter(t => this.age - t < TOUR).length;
@@ -387,6 +387,11 @@ export class Player extends Entity {
   landing(id: SkillId, aim: { x: number; y: number }, world: World): { x: number; y: number } {
     const def = this.spell(id);
     let tx = this.x, ty = this.y;
+    if (def?.hit.shape === 'point' && !def.move) {   // case visée, ramenée à la portée du sort
+      const R = (this.shot(id).range ?? def.hit.range) + this.stat('portee') * CASE, dx = aim.x - this.x, dy = aim.y - this.y, d = Math.hypot(dx, dy);
+      const L = Math.min(d, R) / (d || 1);
+      return { x: this.x + dx * L, y: this.y + dy * L };
+    }
     if (!def?.move) return { x: tx, y: ty };
     const dx = aim.x - this.x, dy = aim.y - this.y, d = Math.hypot(dx, dy) || 1;
     const sig = this.rageFull && def.rage === 'dash' ? this.cls.rage.signature : 1;   // Déferlement renforcé : avance plus loin
@@ -619,6 +624,7 @@ export class Player extends Entity {
       if (d.self) { size = 60; }
       else if (hz.shape === 'cone') { size = hz.range * area; hits = world.hitCone(this.x, this.y, this.facing, size, (hz.arc * Math.PI) / 180, hit, d.stun); }
       else if (hz.shape === 'line') { size = hz.length * area; hits = world.hitLine(this.x, this.y, this.facing, size, hz.width * area, hit, d.stun); }
+      else if (hz.shape === 'point') { size = hz.radius * area; hits = world.hitCircle(s.tx, s.ty, size, hit, d.stun, this.facing); }   // poussée dans l'axe du lanceur, comme Dofus
       else if (hz.shape === 'circle' && d.vuln && !d.dmg) { size = hz.radius * area; world.markVuln(this.x, this.y, size, d.vuln.n, d.vuln.t); }
       else if (hz.shape === 'circle') { size = hz.radius * area; hits = world.hitCircle(this.x, this.y, size, hit, d.stun); }
       else {
@@ -627,7 +633,8 @@ export class Player extends Entity {
         world.shoot(this.x, this.y, this.facing, shot, hit, d.stun ?? 0, sig('explode'), s.id);
         size = hz.range;
       }
-      if (hz.shape !== 'projectile') world.emit({ k: 'spell', fx: d.fx, id: s.id, x: this.x, y: this.y, facing: this.facing, size,
+      const pt = hz.shape === 'point';
+      if (hz.shape !== 'projectile') world.emit({ k: 'spell', fx: pt ? 'burst' : d.fx, id: s.id, x: pt ? s.tx : this.x, y: pt ? s.ty : this.y, cx: this.x, cy: this.y, facing: this.facing, size,
         arc: hz.shape === 'cone' ? (hz.arc * Math.PI) / 180 : 0, element: d.element, big: d.shake >= 0.012 || s.boosted, boosted: s.boosted });
       else world.emit({ k: 'shoot', id: s.id, x: this.x, y: this.y, facing: this.facing, element: d.element, boosted: s.boosted });
       if (hz.shape !== 'projectile') world.emit({ k: 'impact', hitstop: hits || d.charge ? d.hitstop * (s.boosted ? 1.4 : 1) : 0, shake: d.shake * (s.boosted ? 1.5 : 1), big: d.shake >= 0.012 || s.boosted });
