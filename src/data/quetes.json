@@ -18,7 +18,13 @@
    "nom": "Lykhen Lesurviven",
    "dofusId": 2892,
    "carte": "-2_-3",
-   "phrase": "Bienvenue au village d'Incarnam. Chacun ici a quelque chose à t'apprendre."
+   "phrase": "Bienvenue au village d'Incarnam. Chacun ici a quelque chose à t'apprendre.",
+   "services": [
+    {
+     "texte": "Changer de tête ou de couleurs (garde-robe).",
+     "service": "garde-robe"
+    }
+   ]
   },
   "fecaline": {
    "nom": "Fécaline la Sage",

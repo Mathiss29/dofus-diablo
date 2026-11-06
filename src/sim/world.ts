@@ -59,6 +59,8 @@ export interface WorldOptions {
   recoltes?: RecoltesData;
   /** Boutiques des PNJ (src/data/boutique.json) : articles et prix en Pépites. */
   boutiques?: Record<string, { id: string; prix: number }[]>;
+  /** Objets d'apparat officiels (src/data/apparat.json) et leur prix en Pépites chez Emp (boutique.json, apparat_prix). */
+  apparats?: { objets: Record<string, { slot: string }>; prix: Record<string, number> };
 }
 
 /** La simulation d'une zone : joueur, monstres, vagues, collisions.
@@ -822,6 +824,23 @@ export class World {
     p.resources[PEPITE] -= a.prix; if (!p.resources[PEPITE]) delete p.resources[PEPITE];
     p.resources[id] = (p.resources[id] ?? 0) + 1;
     this.emit({ k: 'achat', id, prix: a.prix });
+    return true;
+  }
+  /** Achat d'un objet d'apparat chez Emp (Apparence 5A) : il rejoint la collection du perso, une fois pour toutes. */
+  acheterApparat(id: string): boolean {
+    const d = this.opts.apparats?.objets[id], prix = d && this.opts.apparats!.prix[d.slot], p = this.player;
+    if (!d || prix == null || p.apparats.includes(id) || (p.resources[PEPITE] ?? 0) < prix) return false;
+    p.resources[PEPITE] -= prix; if (!p.resources[PEPITE]) delete p.resources[PEPITE];
+    p.apparats.push(id);
+    this.emit({ k: 'achat', id, prix });
+    return true;
+  }
+  /** Case Apparence de l'inventaire : pose un apparat possédé sur l'emplacement, « 0 » cache l'objet porté, null rend sa vraie apparence. */
+  porterApparat(slot: 'chapeau' | 'cape' | 'bouclier', id: string | null): boolean {
+    const p = this.player;
+    if (id === null) { delete p.apparat[slot]; return true; }
+    if (id !== '0' && (!p.apparats.includes(id) || this.opts.apparats?.objets[id]?.slot !== slot)) return false;
+    p.apparat[slot] = id;
     return true;
   }
   /** Potion de Rappel : retour au dernier Zaap atteint (le point de retour). */

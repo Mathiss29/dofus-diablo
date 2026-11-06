@@ -50,6 +50,10 @@ export class Player extends Entity {
   /** Objet au sol que l'on va ramasser (clic). */
   pickupId: number | null = null;
   equipment: Partial<Record<EquipSlot, Item>> = {};
+  /** Apparat (maquette Apparence 5A) : objets d'apparat officiels possédés (id Dofus), et ceux posés par-dessus
+   *  la coiffe, la cape ou le bouclier (case Apparence de l'inventaire). « 0 » cache l'objet porté. Rien ne change les stats. */
+  apparats: string[] = [];
+  apparat: Partial<Record<'chapeau' | 'cape' | 'bouclier', string>> = {};
   /** Caractéristiques totales (points + équipement + panoplies), recalculées à chaque changement. */
   stats: Stats = {};
   /** Panoplies portées : nombre d'objets par panoplie. */
@@ -159,8 +163,8 @@ export class Player extends Entity {
   // --- Caractéristiques -------------------------------------------------------
   stat(k: Stat): number { let v = this.stats[k] ?? 0; for (const m of this.mods) if (m.k === k) v += m.n; return v; }
   /** Bonus / malus temporaires (sorts de monstres : -40 Puissance pendant un tour…). */
-  mods: { k: Stat; n: number; t: number }[] = [];
-  addMod(k: Stat, n: number, t: number) { this.mods.push({ k, n, t }); }
+  mods: { k: Stat; n: number; t: number; src?: string }[] = [];
+  addMod(k: Stat, n: number, t: number, src?: string) { this.mods.push({ k, n, t, src }); }
   /** Ralentissement (retrait de PM) : fraction de vitesse perdue et durée restante. */
   slowK = 0; slowT = 0;
   slow(t: number, k: number) { k *= fuiteFactor(this.fuite); this.slowK = this.slowT > 0 ? Math.max(this.slowK, k) : k; this.slowT = Math.max(this.slowT, t); }
@@ -438,7 +442,9 @@ export class Player extends Entity {
     const gm = g && g0 && dmgMoyen(g0) ? dmgMoyen(g) / dmgMoyen(g0) : 1;
     const { range, explode } = this.shot(id);
     this.skill = { id, def, t: 0, impacted: false, sx: this.x, sy: this.y, tx, ty, boosted, gm, explode, range };
-    this.cd[id] = g ? Math.max(g.relance * TOUR, def.cooldown) : def.cooldown;
+    // Relance officielle aussi pour un déplacement qui la demande (Pas Chassé : 3 tours = 9 s, puis 2 tours = 6 s au niveau 72)
+    const gr = g ?? (def.relanceOfficielle ? this.grade(id) : null);
+    this.cd[id] = gr ? Math.max(gr.relance * TOUR, def.cooldown) : def.cooldown;
     this.pa -= this.paCost(id); this.pm -= def.pm ?? 0;
     (this.casts[id] ??= []).push(this.age);
     this.casts[id] = this.casts[id].filter(t => this.age - t < TOUR);
@@ -618,8 +624,10 @@ export class Player extends Entity {
       }
       if (d.buff) {
         const n = Math.round(d.buff.n * sig('buff'));
-        this.addMod(d.buff.stat, n, d.buff.t);
-        if (d.buff.stat === 'pm') this.pm = Math.min(this.pmMax, this.pm + n);   // le PM gagné est utilisable tout de suite (Pas Chassé)
+        // Un même bonus ne se cumule pas : il est rafraîchi (sinon Pas Chassé s'enchaînait sans fin).
+        // Le PM gagné relève le plafond mais n'est pas rendu : il se remplit avec la recharge normale.
+        this.mods = this.mods.filter(m => m.src !== s.id);
+        this.addMod(d.buff.stat, n, d.buff.t, s.id);
       }
       if (d.shield) { this.shield = Math.max(this.shield, Math.round(this.maxHp * d.shield.part * sig('shield'))); this.shieldT = d.shield.t; }
       if (d.selfKnock) {   // « Recule de n cases » : à l'opposé du tir (freinage de applyKnock : distance = vitesse / 7,13)
