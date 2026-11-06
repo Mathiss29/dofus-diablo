@@ -12,6 +12,8 @@ import type { SkillId } from '../sim/defs';
 import type { Entity } from '../sim/entity';
 import { World } from '../sim/world';
 import { EntityView } from './entityView';
+import { Attente, PersoVivant } from './persoVivant';
+import { Assemblage, type Apparence } from './squelette';
 import { SpellFx } from './spellFx';
 import { FX } from './fx';
 import { Hud } from './hud';
@@ -113,8 +115,9 @@ export class ZoneScene extends Phaser.Scene {
 
   /** Arrivée par un portail d'une autre zone (Incarnam <-> Astrub). */
   private arrivee?: [string, number];
-  init(data: { zone?: string; classe?: string; slot?: number; vitrine?: boolean; arrivee?: [string, number]; essai?: 'm' | 'f' }) {
+  init(data: { zone?: string; classe?: string; slot?: number; vitrine?: boolean; arrivee?: [string, number]; essai?: 'm' | 'f'; apparence?: Apparence }) {
     this.essai = data?.essai ? { sexe: data.essai, t: 0, averti: false } : null;
+    this.apparenceEssai = data?.apparence;
     this.vitrine = !!data?.vitrine; this.vitrineT = 0; this.sauveT = 0; this.mortDefinitive = false;
     this.slot = data?.slot ?? -1;
     this.perso = this.slot >= 0 ? lirePersos()[this.slot] : null;
@@ -163,7 +166,14 @@ export class ZoneScene extends Phaser.Scene {
       ...[...types].flatMap(t => (GAME_DATA.monsters[t].spells ?? []).map(s => `m${s.id}`))]);
     // monde ouvert : les planches des monstres arrivent à la demande (planche()), quand un monstre est près de l'écran
     // (Astrub : 38 monstres, 70 Mo de planches) ; les zones à vagues les chargent toutes d'avance
-    const looks = [this.look, ...(zone.open ? [] : [...types].map(t => LOOKS[GAME_DATA.monsters[t].look]))];
+    // Perso du joueur dessiné en direct depuis son squelette (Apparence 3A) ; l'ancienne planche ne sert plus qu'en secours
+    const looks = [...(zone.open ? [] : [...types].map(t => LOOKS[GAME_DATA.monsters[t].look]))];
+    this.assemblage = null;
+    const pret = Assemblage.creer(this.clePerso, this.perso?.apparence ?? this.apparenceEssai).then(a => { this.assemblage = a; }, () => {
+      const L = this.look;
+      if (!this.textures.exists(L.atlas)) this.load.multiatlas(L.atlas, v(`${ASSETS}/sprites/${L.atlas}.json`), dossier(`${ASSETS}/sprites/`));
+    });
+    this.load.addFile(new Attente(this.load, `vivant_${this.clePerso}`, pret));
     const seen = new Set<string>();
     for (const L of looks) {
       const a = L.atlas;
@@ -297,6 +307,12 @@ export class ZoneScene extends Phaser.Scene {
   }
 
   /** Apparence du joueur : planche de la classe, version femme si le perso en est une. */
+  /** Clé du perso dans assets/sprites/squelette/persos.json (iop_m, cra_f...). */
+  private get clePerso() { return `${this.classId}_${(this.perso?.sexe ?? this.essai?.sexe) === 'f' ? 'f' : 'm'}`; }
+  private assemblage: Assemblage | null = null;
+  /** Essai d'une classe (Accueil 8B) : apparence choisie sur l'écran de création. */
+  private apparenceEssai?: Apparence;
+  private vivant: PersoVivant | null = null;
   private get look() { return ((this.perso?.sexe ?? this.essai?.sexe) === 'f' && LOOKS[`${this.classId}_f`]) || LOOKS[this.classId]; }
   /** Sauvegarde automatique du perso (toutes les 5 s, en quittant la page, en revenant à l'accueil). */
   private sauver = () => {
@@ -774,7 +790,12 @@ export class ZoneScene extends Phaser.Scene {
     let v = this.views.get(e.id);
     if (!v) {
       const look = e.faction === 'player' ? this.look : LOOKS[GAME_DATA.monsters[(e as { type?: string }).type!].look];
-      v = new EntityView(this, look);
+      if (e.faction === 'player' && this.assemblage && !this.vivant) {
+        this.vivant = new PersoVivant(this, this.assemblage);
+        const vv = this.vivant;
+        this.events.once('shutdown', () => { vv.destroy(); if (this.vivant === vv) this.vivant = null; });
+      }
+      v = new EntityView(this, look, e.faction === 'player' ? this.vivant ?? undefined : undefined);
       this.views.set(e.id, v);
     }
     return v;
@@ -870,6 +891,7 @@ export class ZoneScene extends Phaser.Scene {
       this.viewOf(e).sync(e);
     }
     for (const [id, v] of this.views) if (!alive.has(id)) { v.destroy(); this.views.delete(id); }
+    this.vivant?.maj();
     if (this.snapCam && !this.vitrine) { const pv = this.viewOf(w.player).sprite; cam.centerOn(pv.x, pv.y - 30); this.snapCam = false; }
     const s = w.player.skill;
     if (s && 'charge' in s.def && s.def.charge && !s.def.move && s.t < s.def.impactAt) this.fx.chargeSparks(w.player.x, w.player.y);

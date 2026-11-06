@@ -4,6 +4,7 @@ import { clamp } from '../sim/math';
 import type { Entity } from '../sim/entity';
 import type { Monster } from '../sim/monster';
 import type { Look } from './looks';
+import { PersoVivant } from './persoVivant';
 
 /** Affiche une entité de la simulation avec sa planche de sprites.
  *  Orientations de Dofus : _0 droite, _1 bas-droite, _2 bas, _5 haut-gauche, _6 haut ; les autres par miroir
@@ -24,14 +25,21 @@ export class EntityView {
   private readonly shadow: Phaser.GameObjects.Graphics;
   private readonly counts: Record<string, number> = {};
 
-  constructor(scene: Phaser.Scene, readonly look: Look) {
-    const tex = scene.textures.get(look.atlas);
-    const names = tex.getFrameNames();
-    for (const name of names) { const k = name.replace(/_\d+$/, ''); this.counts[k] = (this.counts[k] || 0) + 1; }
-    // meta.origin = pied du personnage dans la cellule de la planche (écrit par trim_pack.py)
-    const meta = (tex.customData as { meta?: { cell: number[]; origin: number[] } }).meta ?? { cell: [1, 1], origin: [0.5, 0.9] };
-    this.sprite = scene.add.sprite(0, 0, look.atlas, names[0])
-      .setOrigin(meta.origin[0] / meta.cell[0], meta.origin[1] / meta.cell[1]).setScale(look.scale);
+  /** `vivant` : perso du joueur dessiné en direct depuis son squelette (apparence choisie à la création). */
+  constructor(scene: Phaser.Scene, readonly look: Look, private readonly vivant?: PersoVivant) {
+    if (vivant) {
+      Object.assign(this.counts, vivant.compte);
+      const [k, f] = vivant.image('AnimStatiqueExplo0_1', 0), [cw, ch] = PersoVivant.CELLULE, [ox, oy] = PersoVivant.PIED;
+      this.sprite = scene.add.sprite(0, 0, k, f).setOrigin(ox / cw, oy / ch).setScale(look.scale);
+    } else {
+      const tex = scene.textures.get(look.atlas);
+      const names = tex.getFrameNames();
+      for (const name of names) { const k = name.replace(/_\d+$/, ''); this.counts[k] = (this.counts[k] || 0) + 1; }
+      // meta.origin = pied du personnage dans la cellule de la planche (écrit par trim_pack.py)
+      const meta = (tex.customData as { meta?: { cell: number[]; origin: number[] } }).meta ?? { cell: [1, 1], origin: [0.5, 0.9] };
+      this.sprite = scene.add.sprite(0, 0, look.atlas, names[0])
+        .setOrigin(meta.origin[0] / meta.cell[0], meta.origin[1] / meta.cell[1]).setScale(look.scale);
+    }
     this.bar = scene.add.graphics();
     this.shadow = scene.add.graphics();   // ombre dessinée par le jeu (celle de Dofus laissait une croix)
   }
@@ -57,7 +65,8 @@ export class EntityView {
     const idx = st.loop
       ? a + (Math.floor(e.age * (st.fps ?? 25)) % (b - a))
       : a + Math.min(b - a - 1, Math.floor(clamp(e.animT, 0, 0.999) * (b - a)));
-    this.sprite.setFrame(`${name}_${idx}`);
+    if (this.vivant) { const [k, f] = this.vivant.image(name, idx); this.sprite.setTexture(k, f); }
+    else this.sprite.setFrame(`${name}_${idx}`);
     let sy = L.scale, alpha = 1;
     if (e.anim === 'idle') sy *= 1 + Math.sin(e.age * 4) * 0.02;
     if (e.anim === 'spawn') alpha = e.animT;
