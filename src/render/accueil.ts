@@ -1,8 +1,9 @@
 import { v } from './assetUrl';
 import { MANIFESTE, Son } from './son';
 import { GAME_DATA, ITEMS, QUETES } from '../sim/data';
-import { RARITY_COLORS, RARITY_NAMES } from '../sim/items';
+import { EQUIP_SLOTS, RARITY_COLORS, RARITY_NAMES } from '../sim/items';
 import { LOOKS } from './looks';
+import { ICON_CSS, iconHtml } from './icons';
 import { PALIERS, lireBestiaire } from './carnet';
 import { SORTS, niveauRequis, type SortOfficiel } from '../sim/sorts';
 import CLASSES_DOFUS from '../data/classes_dofus.json';
@@ -223,9 +224,9 @@ export class Accueil {
   private carnet: string | null = null;
 
   /** onJouer : lance la partie de cet emplacement (déjà sauvegardé). */
-  constructor(private onJouer: (slot: number) => void) {
+  constructor(private onJouer: (slot: number) => void, private onEssayer?: (classe: string, sexe: 'm' | 'f') => void) {
     if (!document.getElementById('acc-css')) {
-      const st = document.createElement('style'); st.id = 'acc-css'; st.textContent = CSS; document.head.appendChild(st);
+      const st = document.createElement('style'); st.id = 'acc-css'; st.textContent = CSS + ICON_CSS.replace('.ic{', '#acc .ic{'); document.head.appendChild(st);
     }
     this.root = document.createElement('div'); this.root.id = 'acc'; this.root.hidden = true;
     // les clics sur ces écrans ne vont pas au jeu derrière
@@ -351,8 +352,13 @@ export class Accueil {
       ['Monstres vaincus', (st?.vaincus ?? 0).toLocaleString('fr-FR')], ['Quêtes finies', String(st?.quetes ?? 0)],
       ...(p.hardcore ? [] : [['Défaites', String(st?.morts ?? 0)] as [string, string]]),
       ['Meilleur objet', st?.meilleur ? `<span style="color:${RARITY_COLORS[st.meilleur.rarete]}">${esc(st.meilleur.nom)}</span> <span class="tiny">${RARITY_NAMES[st.meilleur.rarete]}</span>` : '<span class="tiny">aucun</span>']];
+    // Accueil 4B : la tenue réelle du perso. Les gros persos du socle sont des rendus faits d'avance (sans équipement),
+    // alors l'équipement porté s'affiche en cases, comme la fiche du perso en jeu.
+    const eq = EQUIP_SLOTS.map(k => e?.equipment?.[k]).filter(Boolean);
+    const cases = eq.length ? `<div style="display:flex;flex-wrap:wrap;gap:calc(.3*var(--u));padding:calc(.6*var(--u)) calc(1*var(--u)) 0">${eq.map(it => {
+      const d = ITEMS.equipment[it!.id]; return `<span title="${esc(d?.name ?? '')} · ${RARITY_NAMES[it!.rarity]}" style="width:calc(2.6*var(--u));height:calc(2.6*var(--u));border:1px solid ${RARITY_COLORS[it!.rarity]};border-radius:calc(.3*var(--u));background:#0f100b;padding:calc(.15*var(--u));display:grid">${iconHtml(d?.icon ?? 0)}</span>`; }).join('')}</div>` : '';
     return `<div class="abs card" style="right:calc(2*var(--u));top:calc(12*var(--u));width:calc(17*var(--u));padding:0 0 calc(.7*var(--u))">
-      <div class="panelT">Résumé</div><div style="padding:calc(.6*var(--u)) calc(1*var(--u)) 0;display:grid;gap:calc(.4*var(--u));font-size:calc(.82*var(--u));font-weight:700">
+      <div class="panelT">Résumé</div>${cases}<div style="padding:calc(.6*var(--u)) calc(1*var(--u)) 0;display:grid;gap:calc(.4*var(--u));font-size:calc(.82*var(--u));font-weight:700">
       ${l.map(([k, x]) => `<div style="display:flex;justify-content:space-between;gap:calc(.6*var(--u))"><span style="color:#c9c4ab">${k}</span><span style="text-align:right">${x}</span></div>`).join('')}</div></div>`;
   }
 
@@ -378,10 +384,11 @@ export class Accueil {
           <div style="display:flex;justify-content:space-between"><span>Difficulté</span><span class="dots">${'●'.repeat(c.complexite)}<i>${'●'.repeat(5 - c.complexite)}</i></span></div>
           ${jouable ? `<div class="lab" style="margin-bottom:0">Premiers sorts</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:calc(.5*var(--u))">${this.premiersSorts(c.cle).map(([sp, n]) =>
-            `<div class="sp"><img src="assets/ui/sorts/sort_${sp.icon}.png" alt=""><span>${esc(sp.name)}<small>niveau ${n}</small></span></div>`).join('')}</div>` : ''}
+            `<div class="sp" data-sort data-nom="${esc(sp.name)}" data-desc="${esc(sp.desc)}" style="cursor:help"><img src="assets/ui/sorts/sort_${sp.icon}.png" alt=""><span>${esc(sp.name)}<small>niveau ${n}</small></span></div>`).join('')}</div>` : ''}
         </div>
       </div>
     </div>
+    <div class="abs card bulleSort" style="left:calc(33*var(--u));top:calc(30*var(--u));width:calc(18*var(--u));padding:calc(.7*var(--u)) calc(.9*var(--u));font-size:calc(.75*var(--u));font-weight:600;line-height:1.45;opacity:0;transition:opacity .15s;pointer-events:none;z-index:6"></div>
     <img src="${img('lumiere.png')}" alt="" class="abs" style="left:calc(50% - 7.5*var(--u));top:calc(6*var(--u));width:calc(15*var(--u));opacity:.7;mix-blend-mode:screen">
     <img src="assets/ui/socle.png" alt="" class="abs" style="left:calc(50% - 10.5*var(--u));top:calc(29.5*var(--u));width:calc(21*var(--u));filter:sepia(.55) saturate(1.3) brightness(.95) drop-shadow(0 0 calc(1.2*var(--u)) #8fe8ff99)">
     ${jouable ? `<div class="abs hero" data-n="${pose[2]}" role="img" aria-label="${esc(c.nom)}" style="left:calc(50% - 8.85*var(--u));top:calc(13.4*var(--u));width:calc(${s.pose === 'attaque' ? 28.1 : 17.7}*var(--u));height:calc(24*var(--u));background-image:url(${img(`${c.cle}_${s.sexe}_${s.pose}.webp`)});background-size:${pose[2] * 100}% 100%" data-src="${img(`${c.cle}_${s.sexe}_${s.pose}.webp`)}"></div>`
@@ -403,6 +410,7 @@ export class Accueil {
         <label class="check"><input type="checkbox" data-hc ${s.hardcore ? 'checked' : ''} ${jouable ? '' : 'disabled'}><span>Mode Hardcore <span class="hc">(mort définitive)</span></span></label>
         <button type="button" class="lbtn" data-creer style="display:block;width:100%;box-sizing:border-box;margin-top:calc(1*var(--u));font-size:calc(1.15*var(--u));padding:calc(.7*var(--u))" ${jouable && libre >= 0 ? '' : 'aria-disabled="true"'}>${bouton}</button>
         ${jouable && libre < 0 ? `<div class="tiny" style="margin-top:calc(.4*var(--u))">Supprime un personnage dans « Mes personnages ».</div>` : ''}
+        ${jouable && this.onEssayer ? `<button type="button" class="dbtn" data-essayer style="display:block;width:100%;box-sizing:border-box;margin-top:calc(.6*var(--u));font-size:calc(.85*var(--u));padding:calc(.5*var(--u))">Essayer 60 secondes</button>` : ''}
       </div>
     </div>
     <div class="abs" style="left:calc(8.4*var(--u));bottom:calc(6.4*var(--u));display:flex;gap:calc(.5*var(--u))">${FILTRES.map(f =>
@@ -618,6 +626,23 @@ export class Accueil {
     nom?.addEventListener('keyup', e => e.stopPropagation());
     r.querySelector<HTMLInputElement>('[data-hc]')?.addEventListener('change', e => { this.crea.hardcore = (e.target as HTMLInputElement).checked; });
     on('[data-creer]', () => this.creer());
+    on('[data-essayer]', () => this.onEssayer?.(this.crea.cle, this.crea.sexe));
+    // Accueil 8A : survol d'un premier sort = le perso du socle attaque, et le texte officiel du sort s'affiche
+    r.querySelectorAll<HTMLElement>('[data-sort]').forEach(e => {
+      const h = r.querySelector<HTMLElement>('.hero'), bulle = r.querySelector<HTMLElement>('.bulleSort');
+      if (!h || !bulle) return;
+      const avant = { src: h.dataset.src!, n: h.dataset.n!, w: h.style.width };
+      const att = img(`${this.crea.cle}_${this.crea.sexe}_attaque.webp`), [, , na] = POSES.find(p => p[0] === 'attaque')!;
+      e.addEventListener('mouseenter', () => {
+        bulle.innerHTML = `<b>${esc(e.dataset.nom!)}</b><br>${esc(e.dataset.desc!)}`; bulle.style.opacity = '1';
+        if (this.crea.pose === 'attaque') return;
+        h.dataset.src = att; h.dataset.n = String(na); h.style.width = 'calc(28.1*var(--u))'; h.style.backgroundImage = `url(${att})`;
+      });
+      e.addEventListener('mouseleave', () => {
+        bulle.style.opacity = '0';
+        h.dataset.src = avant.src; h.dataset.n = avant.n; h.style.width = avant.w; h.style.backgroundImage = `url(${avant.src})`;
+      });
+    });
     // mes personnages
     on('[data-slot]', e => { const i = +e.dataset.slot!; if (lirePersos()[i]) { this.choix = i; this.confirmer = -1; this.render(); } else this.go('creation'); });
     on('[data-suppr]', e => {
