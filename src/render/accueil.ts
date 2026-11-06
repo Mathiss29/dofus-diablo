@@ -62,7 +62,8 @@ const CSS = `
 #acc .side{position:absolute;left:0;top:0;bottom:0;width:calc(6.6*var(--u));background:#17180f;border-right:1px solid #2c2f1f;display:flex;flex-direction:column;align-items:center;padding:calc(1.2*var(--u)) 0 calc(1*var(--u));gap:calc(.35*var(--u));z-index:5}
 #acc .side .logo{width:calc(3.6*var(--u));height:calc(3.6*var(--u));border-radius:50%;background:radial-gradient(circle at 35% 30%,#d6f57a,#7fae1f 65%,#40600c);display:grid;place-items:center;font-family:var(--disp);font-size:calc(2*var(--u));color:var(--ink);margin-bottom:calc(1.2*var(--u));box-shadow:0 0 0 calc(.2*var(--u)) #0c0d08,0 calc(.3*var(--u)) calc(.8*var(--u)) #0009}
 #acc .nav{all:unset;cursor:pointer;width:100%;display:grid;justify-items:center;gap:calc(.2*var(--u));padding:calc(.55*var(--u)) 0;font-size:calc(.72*var(--u));font-weight:800;color:#d9d4bd;border-left:calc(.2*var(--u)) solid transparent;box-sizing:border-box}
-#acc .nav img{height:calc(2.1*var(--u));width:auto;filter:drop-shadow(0 1px 1px #000)}
+#acc .nav img{height:calc(2.3*var(--u));width:calc(2.7*var(--u));object-fit:contain;filter:drop-shadow(0 1px 1px #000);transition:transform .15s,filter .15s}
+#acc .nav.on img{transform:scale(1.15);filter:drop-shadow(0 0 calc(.4*var(--u)) #b9e54b88) drop-shadow(0 1px 1px #000)}
 #acc .nav:hover{background:#1f2116}
 #acc .nav.on{background:#23261a;border-left-color:var(--lime);color:#fff}
 #acc .side .play{all:unset;cursor:pointer;margin-top:auto;font-family:var(--disp);font-size:calc(1.25*var(--u));color:var(--ink);background:linear-gradient(#cff26a,#9ccd2c);padding:calc(.5*var(--u)) calc(1.1*var(--u));clip-path:polygon(8% 0,100% 0,92% 100%,0 100%);box-shadow:0 calc(.2*var(--u)) 0 #5d7d14}
@@ -180,10 +181,10 @@ export class Accueil {
     clearTimeout(this.toastT); this.toastT = window.setTimeout(() => { t.style.opacity = '0'; }, 2200);
   }
 
-  /** Colonne fine (30E) : icônes de l'interface de Dofus 3 + texte. Bestiaire, Succès et Journal arrivent plus tard. */
+  /** Colonne fine (30E) : icônes en couleur du menu principal de Dofus 3 (uiassets_2x) + texte. Bestiaire, Succès et Journal arrivent plus tard. */
   private side(): string {
-    const NAV: [string, string, string][] = [['accueil', 'assets/ui/i_world.png', 'Accueil'], ['persos', 'assets/ui/i_character.png', 'Personnages'],
-      ['creation', img('h_80.png'), 'Classes'], ['bestiaire', 'assets/ui/i_bestiaire.png', 'Bestiaire'], ['succes', 'assets/ui/i_trophy.png', 'Succès'], ['journal', 'assets/ui/i_journal.png', 'Journal']];
+    const NAV: [string, string, string][] = [['accueil', 'assets/ui/menu/home.png', 'Accueil'], ['persos', 'assets/ui/menu/character.png', 'Personnages'],
+      ['creation', img('h_80.png'), 'Classes'], ['bestiaire', 'assets/ui/menu/bestiary.png', 'Bestiaire'], ['succes', 'assets/ui/menu/success.png', 'Succès'], ['journal', 'assets/ui/menu/calendar.png', 'Journal']];
     return `<nav class="side"><div class="logo" aria-hidden="true">D</div>${NAV.map(([k, ic, l]) =>
       `<button type="button" class="nav${k === this.page ? ' on' : ''}" data-nav="${k}"><img src="${ic}" alt="">${l}</button>`).join('')}
       <button type="button" class="play" data-jouer>Jouer</button><div class="ver">VERSION 0.1</div></nav>`;
