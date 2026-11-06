@@ -128,3 +128,16 @@ Les salles d'un donjon sont des intérieurs comme les autres (`incarnam_interieu
 ## Lumières des cartes (halos, lueurs, rayons)
 
 Dofus dessine certains éléments de carte en les **ajoutant** à l'image (`ShaderBlendingParameters` du matériau : facteurs de mélange Unity), avec un masque de dissolution animé : halos sur l'eau (305396), lueurs des feux (57871, 305477…), rayons de soleil (42481, 44653…). Posés comme du décor normal, ils faisaient de grandes taches blanches. `world_export.py` les sort du sol (liste `LUMIERES`) et les met dans le décor avec `b` (`a` additif, `s` écran), `k` (intensité) et `z` (image réduite au tiers, le jeu l'agrandit) ; `c = -1` pour ceux du sol. Le jeu les dessine en mode additif, en entier (plus de coupure au raccord), et plus fort la nuit (`src/render/ambiance.ts` : cycle sur l'heure du PC, réglages touche O). Le rectangle blanc 62942 (mode « multiplier », sans effet dans Dofus) est retiré (`VOILES`).
+
+## Particules des cartes
+
+Les systèmes de particules Unity de chaque carte (`mapData.particlesParameters` : spores, poussière, braises, brume, étoiles, comètes…)
+sont simplifiés par `particules.py` et rejoués par `src/render/particles.ts` (case « Particules » dans les Réglages).
+Leurs images sont dans `Content/Map/Textures/Effects/mapeffects_assets_all.bundle` (`textures/effects/particles/<gfxId>.png`).
+Une copie des 282 images est dans `/mnt/project-files/cache-dofus/particules.tar.gz`.
+
+    python3 tools/extraction/particules.py liste.json <dossier map_*.json> <bundle ou dossier de .png> public/assets/mondes/incarnam
+
+Gardés : les systèmes qui bouclent (pas ceux déclenchés par le jeu, ni les sous-émetteurs). Repris : durée de vie, vitesse, taille,
+couleurs et dégradés, débit et salves, forme (sphère, cône, cercle, bord, boîte, rectangle), vitesse sur la vie, gravité, bruit
+(dérive douce), planches d'images, étirement. Pas repris : les traînées (trails).

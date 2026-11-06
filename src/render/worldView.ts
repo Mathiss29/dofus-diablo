@@ -2,6 +2,7 @@ import { v } from './assetUrl';
 import Phaser from 'phaser';
 import { GridMap, type DecorPlace, type WorldGrid, type WorldMapEntry } from '../sim/gridmap';
 import { ISO } from '../sim/iso';
+import type { Particules } from './particles';
 
 /** Rayon (en cartes) chargé autour du joueur, et rayon au-delà duquel une carte est déchargée.
  *  Entre les deux, une carte déjà chargée reste : pas de va-et-vient quand on longe un bord. */
@@ -35,6 +36,9 @@ export class WorldView {
   private readonly vivants: { im: Phaser.GameObjects.Image; p: DecorPlace; x0: number; y0: number; ph: number }[] = [];
   vent = true;
   eau = true;
+  /** Particules officielles des cartes (render/particles.ts), lancées quand une carte est posée. */
+  parts?: Particules;
+  private lastT = 0;
 
   constructor(private readonly scene: Phaser.Scene, private readonly wg: WorldGrid, private readonly dir: string, private readonly prefix: string) {
     for (const m of wg.world.maps) this.slots.set(m.tag, { state: 'none', objs: [], next: 0 });
@@ -73,7 +77,10 @@ export class WorldView {
     this.drawSky();
     this.upload();
     this.pump();
-    this.animate(this.scene.time.now / 1000);
+    const t = this.scene.time.now / 1000;
+    this.animate(t);
+    this.parts?.update(this.lastT ? t - this.lastT : 0);
+    this.lastT = t;
     const here = this.wg.mapAt(px, py), now = this.scene.time.now;
     if (!here || (here.tag === this.center && now - this.viewT < 250)) return;
     this.viewT = now;
@@ -162,6 +169,7 @@ export class WorldView {
       s.objs.push(g);
     }
     s.state = 'ready';
+    this.parts?.add(m.tag);
     this.pump(m.tag === this.center ? Infinity : BUDGET_MS);   // la carte du joueur tout de suite, les voisines au fil des images
   }
   /** Pose le décor des cartes prêtes, dans la limite du budget de temps. */
@@ -218,6 +226,7 @@ export class WorldView {
   setAmbiance(tint: number, lum: number, sol: number) {
     if (tint === this.tint && Math.abs(lum - this.lum) < 0.01 && Math.abs(sol - this.sol) < 0.01) return;
     this.tint = tint; this.lum = lum; this.sol = sol;
+    this.parts?.setAmbiance(tint, lum);
     this.sky?.setTint(tint);
     for (const s of this.slots.values()) for (const o of s.objs) {
       if (!(o instanceof Phaser.GameObjects.Image)) continue;
@@ -230,6 +239,7 @@ export class WorldView {
     const s = this.slots.get(m.tag)!;
     for (const o of s.objs) { this.scene.tweens.killTweensOf(o); o.destroy(); }
     s.objs = []; s.state = 'none'; s.next = 0;
+    this.parts?.remove(m.tag);
     this.dropTextures(m);
   }
   private dropTextures(m: WorldMapEntry) {
