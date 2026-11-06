@@ -30,7 +30,8 @@ describe('quêtes et succès', () => {
         if ((o.t === 'aller' || o.t === 'parler') && o.pnj) expect(Q.pnj[o.pnj], o.pnj).toBeDefined();
       }
     }
-    for (const p of Object.values(Q.pnj)) expect(monde.maps.some(m => m.tag === p.carte), p.carte).toBe(true);
+    const astrub = JSON.parse(readFileSync(new URL('../public/assets/mondes/astrub/monde.json', import.meta.url), 'utf8')) as WorldData;
+    for (const p of Object.values(Q.pnj)) expect((p.zone === 'astrub' ? astrub : monde).maps.some(m => m.tag === p.carte), p.carte).toBe(true);
     for (const s of Object.values(Q.succes)) for (const o of s.objectifs) if ('succes' in o) expect(Q.succes[o.succes]).toBeDefined();
   });
 

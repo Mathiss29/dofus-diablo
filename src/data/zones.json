@@ -851,7 +851,8 @@
       "grange_0",
       482
      ],
-     "nom": "Grange du Tournesol Affamé"
+     "nom": "Grange du Tournesol Affamé",
+     "cle": "8143"
     },
     {
      "a": [
@@ -938,7 +939,8 @@
       "chateau_1",
       552
      ],
-     "nom": "Château Ensablé"
+     "nom": "Château Ensablé",
+     "cle": "8437"
     },
     {
      "a": [
@@ -1027,7 +1029,8 @@
       "cour_1",
       525
      ],
-     "nom": "Cour du Bouftou Royal"
+     "nom": "Cour du Bouftou Royal",
+     "cle": "1568"
     },
     {
      "a": [

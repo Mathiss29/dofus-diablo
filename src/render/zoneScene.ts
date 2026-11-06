@@ -1,9 +1,10 @@
 import { apercuSort } from '../sim/apercu';
 import { dossier, v } from './assetUrl';
 import Phaser from 'phaser';
-import { GAME_DATA, ITEMS, QUETES } from '../sim/data';
+import { BOUTIQUES, GAME_DATA, ITEMS, QUETES, RECOLTES } from '../sim/data';
 import type { Compte } from '../sim/quests';
 import { QuestView } from './questView';
+import { RecolteView } from './recolteView';
 import { DialogueView } from './dialogueView';
 import { GridMap, WorldGrid, type MapData, type WorldData } from '../sim/gridmap';
 import { ISO } from '../sim/iso';
@@ -83,6 +84,9 @@ export class ZoneScene extends Phaser.Scene {
     coins?: Phaser.GameObjects.Image[]; shine?: Phaser.GameObjects.Image; tier?: number; sonne?: boolean }>();
   /** Objet au sol cliqué (à ramasser). */
   private pickClick: number | null = null;
+  /** Métiers de récolte (0.2b) : ressources du monde, et celle cliquée. */
+  private recolteView: RecolteView | null = null;
+  private recolteClick: number | null = null;
   /** PNJ cliqué (quêtes) et leur affichage. */
   private talkClick: string | null = null;
   private questView: QuestView | null = null;
@@ -216,7 +220,7 @@ export class ZoneScene extends Phaser.Scene {
     if (zone.open) {
       const open = zone.open;
       const wg = new WorldGrid(this.cache.json.get(WorldView.key(open.world, 'monde')) as WorldData);
-      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, compte: chargerCompte(), tuto: this.perso?.tuto, 
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, recoltes: RECOLTES, compte: chargerCompte(), tuto: this.perso?.tuto, 
         // vitrine : les PNJ sont là, mais aucune quête ne démarre
         arrivee: this.arrivee,
         reprise: this.vitrine ? { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} } : this.perso?.etat?.quetes });
@@ -226,6 +230,7 @@ export class ZoneScene extends Phaser.Scene {
       const parts = this.cache.json.get(`${open.world}_particules`) as Record<string, SysData[]> | undefined;
       if (parts) this.worldView.parts = new Particules(this, wg, parts, `${open.world}_particules_img`);
       this.worldView.create();
+      if (this.world.recoltes.length) { const rv = this.recolteView = new RecolteView(this, this.world); this.events.once('shutdown', () => { rv.destroy(); if (this.recolteView === rv) this.recolteView = null; }); }
       if (this.world.quetes) {
         this.questView = new QuestView(this, this.world, this.worldView);
         const dv = this.dialogueView = new DialogueView(this, this.world, this.questView);
@@ -351,6 +356,8 @@ export class ZoneScene extends Phaser.Scene {
       if (this.keys.SHIFT.isDown) { this.pressed = 'attaque'; this.clickMode = 'place'; return; }
       const n = this.questView?.pnjUnder(p, this.cameras.main);
       if (n) { this.talkClick = n; this.clickMode = null; this.holding = false; return; }
+      const rc = this.recolteView?.sous(p, this.cameras.main);
+      if (rc != null) { this.recolteClick = rc; this.clickMode = null; this.holding = false; return; }
       const d = this.dropUnder(p);
       if (d != null) { this.pickClick = d; this.clickMode = null; this.holding = false; return; }
       const m = this.monsterUnder(p);
@@ -514,6 +521,9 @@ export class ZoneScene extends Phaser.Scene {
     const np = this.talkClick && this.world.quetes?.pnj(this.talkClick);
     if (np) { input.talk = this.talkClick; input.dest = { x: np.x, y: np.y }; this.clickMode = null; }
     this.talkClick = null;
+    const ar = this.recolteClick != null ? this.world.approcheRecolte(this.recolteClick) : null;
+    if (ar) { input.recolte = this.recolteClick; input.dest = ar; this.clickMode = null; }
+    this.recolteClick = null;
     if (held && this.clickMode === 'ground') input.dest = aim;
     if (held && this.clickMode === 'target' && this.clickTarget != null) input.target = this.clickTarget;
     // clic bref sur un monstre : on garde la cible jusqu'au premier coup (le perso continue de s'approcher)
@@ -604,12 +614,23 @@ export class ZoneScene extends Phaser.Scene {
           break;
         }
         case 'lootKamas': this.hud.loot(`+${e.n} kamas`, '#f2d36b'); this.windows?.refresh(); break;
-        case 'bagFull': this.hud.toast('Sac plein : recycle des objets (Maj + clic dans l\'inventaire)'); break;
+        case 'bagFull': this.hud.toast('Sac plein : recycle des objets chez Emp (Zaap d\'Astrub) ou Maj + clic dans l\'inventaire'); break;
         case 'monsterCast': this.castName(e.id, e.name); break;
         case 'itemDrop': if (e.rarity === 'epique' || e.rarity === 'legendaire' || e.rarity === 'mythique') this.chime(e.rarity !== 'epique'); break;
         case 'metierLevel': this.hud.banner(`${ITEMS.metiers?.[e.metier]?.name ?? 'Métier'} niveau ${e.level} !`, 1500); this.windows?.refresh(); break;
         case 'craft': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Objet'} x${e.n}`, '#9ad15a'); this.windows?.refresh(); break;
         case 'eat': this.windows?.refresh(); break;
+        // Emp (0.2b) : sa fenêtre s'ouvre par la réponse « Recycler » ou « Boutique » de son dialogue
+        case 'service': if (this.windows && (e.service === 'recycler' || e.service === 'boutique')) { this.windows.empOnglet = e.service; this.windows.show('emp'); } break;
+        case 'recycle': this.hud.loot(`+${e.pepites} Pépite${e.pepites > 1 ? 's' : ''}${e.n > 1 ? ` (${e.n} recyclés)` : ''}`, '#b9e54b'); break;
+        case 'achat': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Objet'} acheté (−${e.prix} Pépites)`, '#b9e54b'); break;
+        case 'rappel': this.hud.banner(`Rappel\n${e.name}`, 1200); this.snapCam = true; break;
+        case 'recolteFin': {
+          const r = RECOLTES.ressources[e.item];
+          this.hud.loot(`${r?.nom ?? 'Ressource'} x${e.n}${e.dore ? ' (dorée !)' : ''}`, e.dore ? '#ffd34a' : '#9ad15a'); this.windows?.refresh(); break;
+        }
+        case 'recolteNiveau': this.hud.toast(`Il faut ${RECOLTES.metiers[e.metier]?.nom ?? 'ce métier'} niveau ${e.niveau} pour récolter cette ressource`); break;
+        case 'cleManquante': this.hud.toast(`${ITEMS.resources[e.id]?.name ?? 'Une clé'} requise : Emp en vend une, à côté du Zaap d'Astrub`); break;
         case 'lootResource': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Ressource'} x${e.n}`, '#c9c4ab'); this.windows?.refresh(); break;
         case 'levelUp': this.hud.banner(`Niveau ${e.level} !\n+5 points (C)${e.level === 100 ? '\n+1 PA' : ''}`, 1500); this.windows?.refresh(); break;
         case 'newSpell': {
@@ -904,6 +925,7 @@ export class ZoneScene extends Phaser.Scene {
       this.fx.apercu(id && !p.dead ? apercuSort(w, id, aim) : null, p, w.monsters.filter(q => !q.dead), !!this.keys?.SHIFT?.isDown && !p.dead ? p.attackReach() : 0);
     }
     this.drawDrops();
+    this.recolteView?.update(this.cameras.main, this.input.activePointer);
     this.questView?.update();
     this.dialogueView?.update();
     this.hud.draw(this.fx.juice, this.game.loop.delta / 1000);

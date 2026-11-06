@@ -1,10 +1,10 @@
 import { REGLAGES_DEFAUT, sauverReglages, type Reglages } from './ambiance';
 import { ICON_CSS, iconHtml } from './icons';
 import { MANIFESTE, Son } from './son';
-import { ITEMS } from '../sim/data';
+import { BOUTIQUES, ITEMS, RECOLTES } from '../sim/data';
 import {
-  BASE_STATS, LEGENDARY, RARITY_COLORS, RARITY_NAMES, STATS, STAT_NAMES, metierXpNeeded, recycleValue,
-  type EquipSlot, type Item, type Stat,
+  BASE_STATS, LEGENDARY, PEPITE, RARITY_COLORS, RARITY_NAMES, STATS, STAT_NAMES, metierXpNeeded, recycleResource, recycleValue,
+  type EquipSlot, type Item, type Rarity, type ResourceDef, type Stat,
 } from '../sim/items';
 import { Player } from '../sim/player';
 import { dmgMoyen, gradeAuNiveau, type SortOfficiel } from '../sim/sorts';
@@ -26,6 +26,8 @@ const KINDS: [string, string][] = [['', 'Toutes les catégories'], ['arme', 'Arm
 const SORTS: [string, string][] = [['', 'Aucun tri'], ['niveau', 'Niveau'], ['rarete', 'Rareté'], ['nom', 'Nom']];
 const RARITY_ORDER: Record<string, number> = { commun: 0, rare: 1, epique: 2, legendaire: 3, mythique: 4 };
 const INV = 'assets/ui/inv';
+/** Cadenas officiel (icons_assets_1x/lockShadowOutline) posé sur un objet protégé du recyclage. */
+const CADENAS = '<img class="cad" src="assets/ui/emp/cadenas.png" alt="" title="Sous cadenas">';
 /** Vraies pièces de l'interface de Dofus 3 (uidarkstone / uielements) : cadre des fenêtres, cases, onglets, cases à cocher. */
 const D3 = 'assets/ui/d3';
 /** Fond officiel des emplacements d'équipement (silhouette comprise). */
@@ -82,6 +84,20 @@ const CSS = `
 .dw .cell .r{position:absolute;left:4px;right:4px;bottom:3px;height:3px;border-radius:2px}
 .dw .cell.up::after{content:'';position:absolute;right:4px;top:4px;border:5px solid transparent;border-bottom:7px solid #7be07b;border-top:0}
 .dw .cell.low{opacity:.5}
+.dw .cell .cad{position:absolute;right:3px;top:3px;width:16px;height:19px;filter:drop-shadow(0 1px 1px #000)}
+.dw .win.emp{width:min(760px,96vw);height:min(640px,92vh)}
+.dw .in.emp{display:grid;gap:10px;align-content:start;overflow:auto;padding:14px 16px}
+.dw .emp .eh{display:flex;justify-content:space-between;align-items:center}
+.dw .emp .eos{display:flex;gap:6px}
+.dw .emp .eo{cursor:pointer;padding:6px 16px;border-radius:3px;background:#2e2d28;border:1px solid #45433b;font-weight:bold;color:#d8d2bf}
+.dw .emp .eo.on{background:linear-gradient(#6f9a2a,#4c6e17);border-color:#b9e54b;color:#fff}
+.dw .emp .k{display:flex;gap:4px;align-items:center;font-weight:bold;color:#b9e54b;font-size:16px}.dw .emp .k .ic{width:30px;height:30px}
+.dw .emp .lots{display:flex;gap:8px;flex-wrap:wrap}.dw .emp .lots .btn{display:grid;text-align:center}.dw .emp .lots small{font-weight:normal;font-size:11px;opacity:.85}
+.dw .emp .eg{max-height:none;overflow:visible}
+.dw .emp .cell .pv{position:absolute;right:3px;top:1px;font-size:11px;font-weight:bold;color:#b9e54b;text-shadow:0 0 3px #000}
+.dw .emp .cell.verrou{opacity:.75}
+.dw .emp .sub2{color:#c9a55a;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.dw .emp .shop{display:grid;gap:6px}.dw .emp .shop .btn{display:flex;gap:4px;align-items:center}.dw .emp .shop .btn .ic{width:22px;height:22px}
 .dw .foot{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#c9c4ab}
 .dw .foot b{color:#f4efe0}
 .dw .foot .k{display:flex;gap:5px;align-items:center;font-weight:bold;color:#b9e54b;font-size:15px}
@@ -168,6 +184,7 @@ const CSS = `
 .dw .bar i{display:block;height:100%;background:#b9e54b}
 .dw .note{font-size:12px;color:#c9c4ab;background:#1d1c19;border:1px solid #34322b;border-radius:3px;padding:8px 10px}
 .dw .note.ok{border-color:#4c6e17;color:#d6f57a}
+.dw .job .ings{display:flex;gap:8px;flex-wrap:wrap;font-size:12px}.dw .job .ing{display:flex;align-items:center;gap:3px}.dw .job .ing .ic{width:26px;height:26px}.dw .job .ing.lack{opacity:.45}
 .dw .rec{display:grid;grid-template-columns:52px 1fr auto;gap:10px;align-items:center;padding:8px;border:1px solid #34322b;border-radius:4px;background:#26251f}
 .dw .rec .ic{width:48px;height:48px}.dw .rec .ings{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;font-size:12px}
 .dw .rec .ing{display:flex;align-items:center;gap:3px}.dw .rec .ing .ic{width:26px;height:26px}
@@ -278,7 +295,7 @@ const CSS = `
 .dw .ttl b{font-weight:700}
 `;
 
-type Mode = 'inv' | 'car' | 'job' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide';
+type Mode = 'inv' | 'car' | 'job' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp';
 
 /** Fenêtres façon Dofus 3 : « Inventaire » (le perso sur son socle, ses emplacements autour, le sac à onglets)
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
@@ -292,6 +309,8 @@ export class Windows {
   /** Journal des quêtes (5C) : quête affichée ; Succès : catégorie affichée. */
   private queteVue: string | null = null;
   private succesCat = '';
+  /** Fenêtre d'Emp : onglet Recycler ou Boutique. */
+  empOnglet: 'recycler' | 'boutique' = 'recycler';
   private kind = '';
   private sort = '';
   private search = '';
@@ -344,7 +363,7 @@ export class Windows {
     if (this.mode === 'guide') this.renderGuide();
     else if (this.mode === 'car') this.renderCarac(); else if (this.mode === 'job') this.renderJob(); else if (this.mode === 'opt') this.renderOpt();
     else if (this.mode === 'sorts') this.renderSorts(); else if (this.mode === 'quetes') this.renderQuetes();
-    else if (this.mode === 'succes') this.renderSucces(); else this.renderInv();
+    else if (this.mode === 'succes') this.renderSucces(); else if (this.mode === 'emp') this.renderEmp(); else this.renderInv();
     this.win!.querySelector('[data-close]')!.addEventListener('click', () => this.close());
   }
   private title(name: string, icon: string) {
@@ -379,7 +398,7 @@ export class Windows {
               <select data-kind>${KINDS.map(([k, v]) => `<option value="${k}" ${this.kind === k ? 'selected' : ''}>${v}</option>`).join('')}</select>
             </div>
             <div class="grid">${html}</div>
-            <div class="foot"><span>Visible(s) : <b>${n}</b> · sac <b>${p.bag.length} / ${Player.BAG_SIZE}</b><br><span class="hint">Clic droit : équiper / retirer · Maj + clic : recycler</span></span>
+            <div class="foot"><span>Visible(s) : <b>${n}</b> · sac <b>${p.bag.length} / ${Player.BAG_SIZE}</b><br><span class="hint">Clic droit : équiper / retirer · Maj + clic : recycler · Ctrl + clic : cadenas</span></span>
               <span class="k">${p.kamas.toLocaleString('fr-FR')} <img src="${INV}/kamas.png" alt="" title="Kamas"></span></div>
             <div class="foot"><span>Butin affiché au sol</span>
               <select data-filter style="width:auto">${['Tout', 'Rare et plus', 'Épique et plus'].map((n, i) => `<option value="${i}" ${p.lootFilter === i ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
@@ -404,11 +423,11 @@ export class Windows {
     });
     w.querySelectorAll<HTMLElement>('[data-res]').forEach(e => {
       const id = e.dataset.res!, r = ITEMS.resources[id];
-      const eat = () => { if (this.world.eat(id)) this.changed(); };
-      e.addEventListener('mouseenter', ev => { this.tip.innerHTML = `<h4>${r.name}</h4><div class="sub">${r.soin ? 'Consommable' : 'Ressource'} · niveau ${r.level}</div>${r.soin ? `<div class="up">+${r.soin} PV</div><div class="hint">Clic droit : manger</div>` : ''}`; this.tip.style.display = 'block'; this.moveTip(ev); });
+      const eat = () => { if (r.rappel ? this.world.rappel(id) : this.world.eat(id)) { if (r.rappel) this.close(); else this.changed(); } };
+      e.addEventListener('mouseenter', ev => { this.tip.innerHTML = this.resTip(r); this.tip.style.display = 'block'; this.moveTip(ev); });
       e.addEventListener('mousemove', ev => this.moveTip(ev));
       e.addEventListener('mouseleave', () => this.hideTip());
-      if (r.soin) { e.addEventListener('contextmenu', eat); e.addEventListener('dblclick', eat); }
+      if (r.soin || r.rappel) { e.addEventListener('contextmenu', eat); e.addEventListener('dblclick', eat); }
     });
     w.querySelectorAll<HTMLElement>('[data-uid]').forEach(e => {
       const uid = +e.dataset.uid!, it = p.bag.find(b => b.uid === uid)!;
@@ -418,7 +437,7 @@ export class Windows {
       e.addEventListener('mouseleave', () => this.hideTip());
       e.addEventListener('contextmenu', equip);
       e.addEventListener('dblclick', equip);
-      e.addEventListener('click', ev => { if (ev.shiftKey) { this.world.recycle(uid); this.changed(); } });
+      e.addEventListener('click', ev => { if (ev.ctrlKey || ev.metaKey) { this.world.cadenas(uid); this.changed(); } else if (ev.shiftKey) { this.world.recycle(uid); this.changed(); } });
     });
   }
 
@@ -466,7 +485,10 @@ export class Windows {
     const res = (id: string) => ITEMS.resources[id];
     const jobs = Object.entries(M).map(([k, m]) => {
       const st = p.metiers[k] ?? { level: 1, xp: 0 }, need = metierXpNeeded(st.level);
-      const weapon = p.huntingWeapon
+      const recolte = Object.values(RECOLTES.ressources).filter(r => r.metier === k).sort((a, b) => a.niveau - b.niveau);
+      const weapon = recolte.length ? `<div class="note">Clique une ressource sur la carte pour la récolter (1,2 s). Elle repousse en une minute ; une dorée donne ×5.</div>
+        <div class="ings">${recolte.map(r => `<span class="ing ${st.level >= r.niveau ? '' : 'lack'}" title="${r.nom} : niveau ${r.niveau}">${iconHtml(r.icone)}${r.nom} <span class="hint">${r.niveau}</span></span>`).join('')}</div>`
+        : k !== 'chasseur' ? '' : p.huntingWeapon
         ? `<div class="note ok">Arme de chasse en main : les monstres peuvent lâcher leurs viandes.</div>`
         : `<div class="note">Équipe une arme avec l'effet « Arme de chasse » (Couteau de Chasse, Arc de Chasse…) pour que les monstres lâchent leurs viandes.</div>`;
       const recs = R.map((r, i) => ({ r, i })).filter(({ r }) => r.metier === k).map(({ r, i }) => {
@@ -479,7 +501,7 @@ export class Windows {
           <span class="btn ${ok ? '' : 'off'}" data-craft="${i}">Fabriquer</span></div>`;
       }).join('');
       return `<div class="mh"><img src="assets/ui/metier_${k}.png" alt=""><div><b>${m.name}</b> · niveau ${st.level}
-        <div class="bar"><i style="width:${Math.round((st.xp / need) * 100)}%"></i></div><span class="hint">${st.xp} / ${need} XP · une viande ramassée ou une recette faite fait monter le métier</span></div></div>
+        <div class="bar"><i style="width:${Math.round((st.xp / need) * 100)}%"></i></div><span class="hint">${st.xp} / ${need} XP · ${k === 'chasseur' ? 'une viande ramassée ou une recette faite' : recolte.length ? 'chaque récolte' : 'chaque objet fabriqué'} fait monter le métier</span></div></div>
         ${weapon}${recs}`;
     }).join('');
     w.innerHTML = `${this.title('Métiers', 'job')}<div class="in">${jobs || '<div class="hint">Aucun métier.</div>'}</div>`;
@@ -776,6 +798,64 @@ export class Windows {
   }
 
   private changed() { this.hideTip(); this.render(); this.onChange(); }
+  /** Bulle d'une ressource : consommable, clé de donjon, Potion de Rappel ou Pépite. */
+  private resTip(r: ResourceDef) {
+    const sorte = r.soin || r.rappel ? 'Consommable' : r.cle ? 'Clé de donjon' : r.pepite ? 'Monnaie d\'Emp' : 'Ressource';
+    const effet = r.soin ? `<div class="up">+${r.soin} PV</div><div class="hint">Clic droit : manger</div>`
+      : r.rappel ? `<div class="up">Retour au dernier Zaap (${this.world.checkpointName})</div><div class="hint">Clic droit : boire</div>`
+      : r.cle ? `<div class="up">Ouvre l'entrée : ${r.cle}</div><div class="hint">Prise en entrant dans le donjon</div>`
+      : r.pepite ? '<div class="hint">Recycle tes objets chez Emp, à côté du Zaap d\'Astrub, et dépense-les dans sa boutique.</div>' : '';
+    return `<h4>${r.name}</h4><div class="sub">${sorte} · niveau ${r.level}</div>${effet}`;
+  }
+
+  /** Emp, le Méryde du Recyclage (maquette 0.2, 7A 8A+8B+8C 9A+9B) : recyclage contre des Pépites, en lot ou objet par objet,
+   *  cadenas, et sa boutique payée en Pépites. S'ouvre par la réponse « service » de son dialogue. */
+  private renderEmp() {
+    const w = this.win!, p = this.world.player, pep = p.resources[PEPITE] ?? 0;
+    const onglet = (k: string, n: string) => `<span class="eo ${this.empOnglet === k ? 'on' : ''}" data-eo="${k}">${n}</span>`;
+    const tete = `<div class="eh"><div class="eos">${onglet('recycler', 'Recycler')}${onglet('boutique', 'Boutique')}</div>
+      <span class="k" title="Pépites">${pep.toLocaleString('fr-FR')} ${iconHtml(ITEMS.resources[PEPITE].icon)}</span></div>`;
+    let corps = '';
+    if (this.empOnglet === 'recycler') {
+      const lots: [Rarity, string][] = [['commun', 'Tout le Commun'], ['rare', 'Commun et Rare'], ['epique', 'Tout sauf Légendaire']];
+      const lotsHtml = lots.map(([r, n]) => { const a = this.world.apercuLot(r);
+        return `<span class="btn ${a.n ? '' : 'off'}" data-lot="${r}">${n}<small>${a.n} objet${a.n > 1 ? 's' : ''} · +${a.pepites} Pépites</small></span>`; }).join('');
+      const objets = p.bag.filter(it => ITEMS.equipment[it.id]).map(it => { const d = ITEMS.equipment[it.id];
+        return `<div class="cell ${it.cadenas ? 'verrou' : ''}" data-ruid="${it.uid}">${iconHtml(d.icon)}<i class="r" style="background:${RARITY_COLORS[it.rarity]}"></i>${it.cadenas ? CADENAS : `<span class="pv">+${recycleValue(d, it)}</span>`}</div>`; }).join('');
+      const res = Object.entries(p.resources).filter(([id]) => { const r = ITEMS.resources[id]; return r && !r.pepite && !r.cle && !r.soin && !r.rappel; })
+        .map(([id, n]) => `<div class="cell" data-rres="${id}" title="${ITEMS.resources[id].name} : ${n} × ${recycleResource(ITEMS.resources[id])} Pépites">${iconHtml(ITEMS.resources[id].icon)}<span class="n">${n}</span></div>`).join('');
+      corps = `<div class="lots">${lotsHtml}</div>
+        <div class="hint">Clic : recycler l'objet · Ctrl + clic (ou clic droit) : cadenas, l'objet n'est jamais recyclé. Les objets sous cadenas restent hors des lots.</div>
+        <div class="grid eg">${objets || '<div class="hint">Ton sac est vide.</div>'}</div>
+        ${res ? `<div class="sub2">Ressources (la pile entière)</div><div class="grid eg">${res}</div>` : ''}`;
+    } else {
+      corps = `<div class="shop">${(BOUTIQUES.emp ?? []).map(a => { const r = ITEMS.resources[a.id]; if (!r) return '';
+        const effet = r.soin ? `+${r.soin} PV` : r.rappel ? 'Retour au dernier Zaap' : r.cle ? `Entrée : ${r.cle}` : '';
+        return `<div class="rec" data-rid="${a.id}">${iconHtml(r.icon)}<div><b>${r.name}</b> <span class="hint">niveau ${r.level}${(p.resources[a.id] ?? 0) ? ` · tu en as ${p.resources[a.id]}` : ''}</span><div style="font-size:12px;color:#c9c4ab">${effet}</div></div>
+          <span class="btn ${pep >= a.prix ? '' : 'off'}" data-achat="${a.id}">${a.prix} ${iconHtml(ITEMS.resources[PEPITE].icon)}</span></div>`; }).join('')}</div>
+        <div class="hint">Les apparats d'Emp arrivent avec la personnalisation du perso.</div>`;
+    }
+    w.innerHTML = `${this.title('Emp · Méryde du Recyclage', 'inventory')}<div class="in emp">${tete}${corps}</div>`;
+    w.querySelectorAll<HTMLElement>('[data-eo]').forEach(e => e.addEventListener('click', () => { this.empOnglet = e.dataset.eo as 'recycler' | 'boutique'; this.render(); }));
+    w.querySelectorAll<HTMLElement>('[data-lot]').forEach(e => e.addEventListener('click', () => { this.world.recycleLot(e.dataset.lot as Rarity); this.changed(); }));
+    w.querySelectorAll<HTMLElement>('[data-achat]').forEach(e => e.addEventListener('click', () => { this.world.acheter('emp', e.dataset.achat!); this.changed(); }));
+    w.querySelectorAll<HTMLElement>('[data-rres]').forEach(e => e.addEventListener('click', () => { this.world.recycleRessource(e.dataset.rres!); this.changed(); }));
+    w.querySelectorAll<HTMLElement>('[data-rid]').forEach(e => {
+      const r = ITEMS.resources[e.dataset.rid!];
+      e.addEventListener('mouseenter', ev => { this.tip.innerHTML = this.resTip(r); this.tip.style.display = 'block'; this.moveTip(ev); });
+      e.addEventListener('mousemove', ev => this.moveTip(ev));
+      e.addEventListener('mouseleave', () => this.hideTip());
+    });
+    w.querySelectorAll<HTMLElement>('[data-ruid]').forEach(e => {
+      const uid = +e.dataset.ruid!, it = p.bag.find(b => b.uid === uid)!;
+      const cad = () => { this.world.cadenas(uid); this.changed(); };
+      e.addEventListener('mouseenter', ev => this.showTip(it, ev, false));
+      e.addEventListener('mousemove', ev => this.moveTip(ev));
+      e.addEventListener('mouseleave', () => this.hideTip());
+      e.addEventListener('contextmenu', cad);
+      e.addEventListener('click', ev => { if (ev.ctrlKey || ev.metaKey) cad(); else { this.world.recycle(uid); this.changed(); } });
+    });
+  }
   private flash(e: HTMLElement) { e.style.borderColor = '#e0625a'; }
 
   /** Contenu du sac selon l'onglet, la catégorie, le tri et la recherche ; les ressources s'empilent.
@@ -795,13 +875,13 @@ export class Windows {
       for (const it of items) {
         const d = D(it), slot = p.slotFor(it), cur = slot ? p.equipment[slot] : undefined;
         const up = d.level <= p.level && (!cur || this.score(it) > this.score(cur));
-        cells.push(`<div class="cell ${up ? 'up' : ''} ${d.level > p.level ? 'low' : ''}" data-uid="${it.uid}">${iconHtml(d.icon)}<i class="r" style="background:${RARITY_COLORS[it.rarity]}"></i></div>`);
+        cells.push(`<div class="cell ${up ? 'up' : ''} ${d.level > p.level ? 'low' : ''}" data-uid="${it.uid}">${iconHtml(d.icon)}<i class="r" style="background:${RARITY_COLORS[it.rarity]}"></i>${it.cadenas ? CADENAS : ''}</div>`);
       }
     }
     if ((this.tab === 'tout' || this.tab === 'ressource' || this.tab === 'conso') && !this.kind) for (const [id, n] of Object.entries(p.resources)) {
       const r = ITEMS.resources[id];
       if (!r || (q && !r.name.toLowerCase().includes(q))) continue;
-      if (this.tab === 'conso' && !r.soin) continue;
+      if (this.tab === 'conso' && !r.soin && !r.rappel) continue;
       cells.push(`<div class="cell" data-res="${id}">${iconHtml(r.icon)}<span class="n">${n}</span></div>`);
     }
     // Objets de quête (pages, Sac de Bijoux...) : onglet « Objets de quête » ; ils partent à la fin de la quête
@@ -853,7 +933,7 @@ export class Windows {
     this.tip.innerHTML = `<h4 style="color:${RARITY_COLORS[it.rarity]}">${d.name}</h4>
       <div class="sub">${RARITY_NAMES[it.rarity]} · ${d.weapon?.type ?? SLOT_NAMES[(slot ?? 'amulette') as EquipSlot]} · niveau ${d.level}</div>
       ${weapon}${stats}${leg}${set}${lvl}${cmp}
-      <div class="hint">${worn ? 'Clic droit : retirer' : `Clic droit : équiper · Maj + clic : recycler (${recycleValue(d, it)} runes)`}</div>`;
+      <div class="hint">${worn ? 'Clic droit : retirer' : it.cadenas ? 'Sous cadenas : jamais recyclé · Ctrl + clic : l\'ôter' : `Clic droit : équiper · Maj + clic : recycler (${recycleValue(d, it)} Pépites) · Ctrl + clic : cadenas`}</div>`;
     this.tip.style.display = 'block'; this.moveTip(ev);
   }
   private moveTip(ev: MouseEvent) {

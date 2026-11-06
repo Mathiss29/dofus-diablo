@@ -4,11 +4,12 @@ import type { SimEvent, Telegraph } from './events';
 import { GridMap, WorldGrid } from './gridmap';
 import { NO_INPUT, type PlayerInput } from './input';
 import { CASE, Monster, TOUR } from './monster';
-import { METIER_XP, RARITIES, rollItem, rollRarity, type Item, type ItemsData } from './items';
+import { METIER_XP, PEPITE, RARITIES, recycleResource, recycleValue, rollItem, rollRarity, type Item, type ItemsData, type Rarity } from './items';
 import { Player } from './player';
 import { initiativeBonus, removalChance } from './caracs';
 import { planWave } from './waves';
 import { Quetes, type Compte, type EtatQuetes, type QuetesData } from './quests';
+import { RECOLTE, quantite, xpRecolte, type Recolte, type RecoltesData } from './recolte';
 
 interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: number;
   /** Effets officiels : Érosion (part des dommages ôtée aux PV max), retrait de PM / PA. */
@@ -54,6 +55,10 @@ export interface WorldOptions {
   reprise?: EtatQuetes;
   /** Arrivée par un portail d'une autre zone : [carte, case] de la porte d'arrivée. */
   arrivee?: [string, number];
+  /** Métiers de récolte (src/data/recoltes.json) : ressources et leurs emplacements par monde. */
+  recoltes?: RecoltesData;
+  /** Boutiques des PNJ (src/data/boutique.json) : articles et prix en Pépites. */
+  boutiques?: Record<string, { id: string; prix: number }[]>;
 }
 
 /** La simulation d'une zone : joueur, monstres, vagues, collisions.
@@ -71,6 +76,11 @@ export class World {
   private equipByLevel: { id: string; level: number }[] = [];
   /** Événements produits depuis le dernier drainEvents(). */
   private events: SimEvent[] = [];
+  /** Ressources à récolter du monde (métiers de récolte, 0.2b). */
+  recoltes: Recolte[] = [];
+  /** Ressource cliquée (le perso y va) et geste en cours (t = temps écoulé, hp = PV au début : un coup reçu l'interrompt). */
+  versRecolte: number | null = null;
+  enRecolte: { id: number; t: number; hp: number } | null = null;
   /** Télégraphes du dernier pas (recalculés à chaque pas). */
   telegraphs: Telegraph[] = [];
   wave = 0;
@@ -86,7 +96,7 @@ export class World {
   /** Sous-zone où se trouve le joueur (monde ouvert). */
   area: SubAreaDef | null = null;
   /** Portes du monde ouvert : les deux bouts en coordonnées monde, et la carte de chacun. */
-  portes: { nom: string; ends: [PorteEnd, PorteEnd]; verrou: boolean; sens: boolean; vers?: { zone: string; arrivee: [string, number] } }[] = [];
+  portes: { nom: string; ends: [PorteEnd, PorteEnd]; verrou: boolean; sens: boolean; cle?: string; vers?: { zone: string; arrivee: [string, number] } }[] = [];
   /** Bout de porte par lequel le joueur vient d'arriver : inactif tant qu'il ne s'en est pas éloigné. */
   private portalLock: PorteEnd | null = null;
   /** Porte franchie : le joueur s'arrête devant pendant le fondu de sortie (PASSAGE s), puis arrive de l'autre côté. */
@@ -120,7 +130,7 @@ export class World {
       this.equipByLevel = Object.entries(opts.items.equipment).map(([id, d]) => ({ id, level: d.level }));
       // sac vide au départ (Mathis, 2026-11-06) : l'équipement vient du tutoriel (panoplie de l'Intrépide, Arc de Chasse du Crâ)
     }
-    if (open) this.buildPortes();
+    if (open) { this.buildPortes(); this.buildRecoltes(); }
     if (open && opts.arrivee) this.arriver(opts.arrivee);
     // les PNJ d'abord : les groupes de monstres ne se posent pas sur eux
     if (open && opts.quetes) this.quetes = new Quetes(opts.quetes, this, opts.compte);
@@ -155,7 +165,7 @@ export class World {
         const q = wg.cellToWorld(wg.cellOf(tag, c));
         return { tag, ...wg.nearestFree(q.x, q.y, wg.freeByMap.get(tag)!) };
       };
-      this.portes.push({ nom: d.nom, ends: [end(d.a), end(d.b)], verrou: !!d.verrou, sens: !!d.sens });
+      this.portes.push({ nom: d.nom, ends: [end(d.a), end(d.b)], verrou: !!d.verrou, sens: !!d.sens, cle: d.cle });
     }
   }
   /** Passe la porte si le joueur est dessus : il arrive de l'autre côté, un peu en avant de la porte d'arrivée. */
@@ -181,6 +191,17 @@ export class World {
         this.portalLock = from;   // un seul message tant qu'il reste sur la porte
         this.emit({ k: 'status', x: p.x, y: p.y - 60, text: 'Vaincs les monstres de la salle', color: '#ff9a5a' });
         return;
+      }
+      // entrée d'un donjon : la clé officielle est prise en entrant (sans clé, la porte reste fermée)
+      if (po.cle && i === 0) {
+        const r = p.resources[po.cle] ?? 0;
+        if (r <= 0) {
+          this.portalLock = from;
+          this.emit({ k: 'status', x: p.x, y: p.y - 60, text: `Il faut une ${this.opts.items?.resources[po.cle]?.name ?? 'clé'}`, color: '#ff9a5a' });
+          this.emit({ k: 'cleManquante', id: po.cle });
+          return;
+        }
+        if (r === 1) delete p.resources[po.cle]; else p.resources[po.cle] = r - 1;
       }
       // le perso s'arrête devant la porte pendant le fondu de sortie, puis passe (traverser)
       p.stopMove();
@@ -354,6 +375,11 @@ export class World {
     this.telegraphs.length = 0;
     const p = this.player;
     const ents = [p, ...this.monsters], prev = ents.map(e => [e.x, e.y] as const);
+    if (input.recolte != null) { this.versRecolte = input.recolte; this.enRecolte = null; }
+    else if (input.dest || input.target != null || input.pickup != null || input.talk || input.pressed || input.move.x || input.move.y) {
+      if (this.enRecolte) this.emit({ k: 'recolteStop' });
+      this.versRecolte = null; this.enRecolte = null;
+    }
     if (this.quetes) {
       if (input.reponse != null) this.quetes.repondre(input.reponse);
       if (input.talk) this.quetes.cliquer(input.talk);
@@ -381,7 +407,7 @@ export class World {
       e.kx = 0; e.ky = 0;
     });
     this.monsters = this.monsters.filter(m => !(m.dead && m.t <= 0));
-    if (this.zone.open) { this.updateOpen(dt); this.quetes?.update(dt); return; }
+    if (this.zone.open) { this.updateOpen(dt); this.updateRecoltes(dt); this.quetes?.update(dt); return; }
     if (!this.over && this.monsters.length === 0) {
       this.waveDelay -= dt;
       if (this.waveDelay <= 0) { this.spawnWave(); this.waveDelay = 2; }
@@ -692,11 +718,120 @@ export class World {
     // ramassé, ou oublié au sol depuis 3 minutes
     this.drops = this.drops.filter(d => d.t >= 0 && d.t < 180);
   }
-  /** Recycle un objet du sac (plus tard : des runes pour la forgemagie). */
+  // --- Métiers de récolte (0.2b) ---------------------------------------------------------------------------------
+  private buildRecoltes() {
+    const R = this.opts.recoltes, wg = this.worldGrid, open = this.zone.open;
+    const l = R && open && (R[open.world] as [string, number, string][] | undefined);
+    if (!R || !wg || !l) return;
+    for (const [tag, cell, item] of l) {
+      if (!wg.mapByTag(tag) || !R.ressources[item]) continue;
+      const q = wg.cellToWorld(wg.cellOf(tag, cell));
+      this.recoltes.push({ id: this.nextId++, tag, x: q.x, y: q.y, item, dore: this.rng.next() < RECOLTE.dore, repousse: 0 });
+    }
+  }
+  /** Case libre la plus proche d'une ressource (les arbres et les minerais sont souvent sur une case bloquante). */
+  approcheRecolte(id: number) {
+    const r = this.recoltes.find(x => x.id === id);
+    return r ? this.map.nearestFree(r.x, r.y) : null;
+  }
+  private updateRecoltes(dt: number) {
+    for (const r of this.recoltes) if (r.repousse > 0 && (r.repousse -= dt) <= 0) { r.repousse = 0; r.dore = this.rng.next() < RECOLTE.dore; }
+    const p = this.player, R = this.opts.recoltes;
+    if (!R || p.dead) { this.versRecolte = null; this.enRecolte = null; return; }
+    if (this.enRecolte) {
+      const g = this.enRecolte, r = this.recoltes.find(x => x.id === g.id);
+      if (!r || r.repousse > 0 || p.hp < g.hp) { this.enRecolte = null; this.emit({ k: 'recolteStop' }); return; }
+      p.stopMove(); g.t += dt;
+      if (g.t < RECOLTE.duree) return;
+      this.enRecolte = null;
+      const def = R.ressources[r.item], lv = Math.max(1, p.metierLevel(def.metier));
+      const n = quantite(this.rng, lv, def.niveau, r.dore);
+      p.resources[r.item] = (p.resources[r.item] ?? 0) + n;
+      p.gainMetierXp(def.metier, xpRecolte(def.niveau, r.dore), this);
+      this.emit({ k: 'recolteFin', id: r.id, item: r.item, n, dore: r.dore });
+      r.repousse = RECOLTE.repousse; r.dore = false;
+      return;
+    }
+    if (this.versRecolte == null) return;
+    const r = this.recoltes.find(x => x.id === this.versRecolte);
+    if (!r || r.repousse > 0) { this.versRecolte = null; return; }
+    if (Math.hypot(r.x - p.x, r.y - p.y) > RECOLTE.portee || p.state !== 'free') return;
+    this.versRecolte = null;
+    const def = R.ressources[r.item], lv = Math.max(1, p.metierLevel(def.metier));
+    if (lv < def.niveau) {
+      p.stopMove();
+      this.emit({ k: 'status', x: p.x, y: p.y - 60, text: `${R.metiers[def.metier]?.nom ?? 'Métier'} niveau ${def.niveau} requis`, color: '#ff9a5a' });
+      this.emit({ k: 'recolteNiveau', metier: def.metier, niveau: def.niveau });
+      return;
+    }
+    p.stopMove();
+    p.facing = Math.atan2(r.y - p.y, r.x - p.x);
+    this.enRecolte = { id: r.id, t: 0, hp: p.hp };
+    this.emit({ k: 'recolteDebut', id: r.id, duree: RECOLTE.duree });
+  }
+
+  // --- Emp, le Méryde du Recyclage (maquette 0.2, 8A+8B+8C, 9A+9B) ---------------------------------------------
+  private pepites(n: number) { const p = this.player; p.resources[PEPITE] = (p.resources[PEPITE] ?? 0) + n; }
+  /** Recycle un objet du sac contre des Pépites (un objet sous cadenas n'est jamais recyclé). */
   recycle(uid: number): boolean {
-    const p = this.player, i = p.bag.findIndex(b => b.uid === uid);
-    if (i < 0) return false;
-    p.bag.splice(i, 1);
+    const p = this.player, i = p.bag.findIndex(b => b.uid === uid), d = i >= 0 && this.opts.items?.equipment[p.bag[i].id];
+    if (i < 0 || p.bag[i].cadenas) return false;
+    const n = d ? recycleValue(d, p.bag[i]) : 1;
+    p.bag.splice(i, 1); this.pepites(n);
+    this.emit({ k: 'recycle', n: 1, pepites: n });
+    return true;
+  }
+  /** Recyclage en lot (8B) : tous les objets du sac jusqu'à cette rareté comprise, sauf ceux sous cadenas. */
+  recycleLot(jusqua: Rarity): number {
+    const p = this.player, max = RARITIES.indexOf(jusqua), I = this.opts.items;
+    let n = 0, pep = 0;
+    p.bag = p.bag.filter(it => {
+      if (it.cadenas || RARITIES.indexOf(it.rarity) > max) return true;
+      const d = I?.equipment[it.id]; n++; pep += d ? recycleValue(d, it) : 1; return false;
+    });
+    if (n) { this.pepites(pep); this.emit({ k: 'recycle', n, pepites: pep }); }
+    return n;
+  }
+  /** Pépites que rendrait recycleLot (aperçu dans la fenêtre d'Emp). */
+  apercuLot(jusqua: Rarity): { n: number; pepites: number } {
+    const max = RARITIES.indexOf(jusqua), I = this.opts.items;
+    const l = this.player.bag.filter(it => !it.cadenas && RARITIES.indexOf(it.rarity) <= max);
+    return { n: l.length, pepites: l.reduce((a, it) => a + (I?.equipment[it.id] ? recycleValue(I.equipment[it.id], it) : 1), 0) };
+  }
+  /** Recycle toute une pile de ressources (pas les Pépites, ni les clés, ni ce qui se mange). */
+  recycleRessource(id: string): boolean {
+    const p = this.player, r = this.opts.items?.resources[id], q = p.resources[id] ?? 0;
+    if (!r || q <= 0 || r.pepite || r.cle || r.soin || r.rappel) return false;
+    const n = recycleResource(r) * q;
+    delete p.resources[id]; this.pepites(n);
+    this.emit({ k: 'recycle', n: q, pepites: n });
+    return true;
+  }
+  /** Pose ou retire le cadenas d'un objet du sac (8C). */
+  cadenas(uid: number): boolean {
+    const it = this.player.bag.find(b => b.uid === uid);
+    if (!it) return false;
+    if (it.cadenas) delete it.cadenas; else it.cadenas = true;
+    return true;
+  }
+  /** Achat dans une boutique (src/data/boutique.json), payé en Pépites. */
+  acheter(boutique: string, id: string): boolean {
+    const a = this.opts.boutiques?.[boutique]?.find(x => x.id === id), p = this.player;
+    if (!a || (p.resources[PEPITE] ?? 0) < a.prix) return false;
+    p.resources[PEPITE] -= a.prix; if (!p.resources[PEPITE]) delete p.resources[PEPITE];
+    p.resources[id] = (p.resources[id] ?? 0) + 1;
+    this.emit({ k: 'achat', id, prix: a.prix });
+    return true;
+  }
+  /** Potion de Rappel : retour au dernier Zaap atteint (le point de retour). */
+  rappel(id: string): boolean {
+    const r = this.opts.items?.resources[id], p = this.player;
+    if (!r?.rappel || !(p.resources[id] > 0) || p.dead || !this.zone.open) return false;
+    p.resources[id]--; if (!p.resources[id]) delete p.resources[id];
+    p.x = this.checkpoint.x; p.y = this.checkpoint.y; p.kx = p.ky = 0; p.z = 0; p.stopMove();
+    this.passage = null; this.portalLock = null;
+    this.emit({ k: 'rappel', name: this.checkpointName });
+    this.emit({ k: 'portal', nom: this.checkpointName });
     return true;
   }
 
@@ -704,7 +839,7 @@ export class World {
   /** Fait une recette officielle si on a les ingrédients et le niveau de métier. */
   craft(i: number): boolean {
     const r = this.opts.items?.recipes?.[i], p = this.player;
-    if (!r || p.metierLevel(r.metier) < r.level || !r.ingredients.every(([id, q]) => (p.resources[id] ?? 0) >= q)) return false;
+    if (!r || Math.max(1, p.metierLevel(r.metier)) < r.level || !r.ingredients.every(([id, q]) => (p.resources[id] ?? 0) >= q)) return false;
     for (const [id, q] of r.ingredients) { p.resources[id] -= q; if (p.resources[id] <= 0) delete p.resources[id]; }
     p.resources[r.result] = (p.resources[r.result] ?? 0) + 1;
     p.gainMetierXp(r.metier, METIER_XP.parIngredient * r.ingredients.reduce((n, [, q]) => n + q, 0), this);

@@ -200,6 +200,9 @@ Elles sont réduites aux caractères latins et converties en woff2 (`fontTools.s
 - Monde : `PARTAGE=1 FILS=3 TEXDIR=<tex png> python3 world_export.py liste.json cartes/ /dev/null public/assets/mondes/astrub`.
   `PARTAGE=1` range le décor de toutes les cartes dans des pages communes `decor_p<N>` (2048 x 2048) : une image utilisée sur 50 cartes
   n'est stockée qu'une fois. Chaque décor a son `p` (page), chaque carte la liste de ses `pages`. `TEXDIR` lit les textures en PNG à la demande (mémoire).
+  Puis TOUJOURS `python3 decor_par_carte.py public/assets/mondes/astrub` : chaque carte reçoit SES pages (seulement les images qu'elle pose).
+  Sans ça, la carte du joueur et ses 8 voisines touchaient ~81 pages communes, soit 1,1 Go (jusqu'à 2,3 Go) de mémoire graphique pour ~84 Mo utiles :
+  le navigateur plantait après quelques déplacements. Les nouvelles pages prennent des numéros neufs.
 - Carte du monde (touche M) : `python3 carte_monde.py public/assets/mondes/<monde> [0.1]` écrit `carte.webp` (sols + décor réduits) et `monde.json.carte`.
 - Sons : `python3 sons_astrub.py <banques .bank> <dossier fsb5> <racine du dépôt>` ajoute la musique d'Astrub, ses ambiances et les sons des nouveaux monstres à `src/data/sons.json`.
 - Donjons d'Astrub (Grange, Château Ensablé, Cour du Bouftou Royal) : salles = `dungeons.mapIds`, exportées à part (`PARTAGE` désactivé, atlas par salle)
@@ -210,6 +213,23 @@ Elles sont réduites aux caractères latins et converties en woff2 (`fontTools.s
 Planches en AVIF (6 nov. 2026, choix « AVIF : 1A ») : `monster_planche.py` et `perso_planche.py` passent `FORMAT=AVIF` à `trim_pack.py`
 (qualité 50, −37 % en moyenne par rapport au WebP). Les cartes, décors, bords et effets restent en WebP.
 Les anciennes planches ont été converties par `tools/hebergement/planches_avif.py`. Après un export : `node tools/hebergement/envoi.mjs`.
+
+## Emp et la boutique (0.2b, 6 nov. 2026)
+
+- Icônes d'objets ajoutées à la planche `public/assets/ui/objets.webp` : `python icones_ajout.py <item_assets_1x.bundle> <iconId>...`
+  (le bundle est copié dans `/mnt/project-files/cache-dofus/astrub/item_assets_1x.bundle`).
+- PNJ dont le look a un skin et des couleurs (`{bone|skin|1=couleur}`) : `SKINS=<skins_assets_skin_N.bundle> COULEURS=1=<couleur>`
+  devant `monster_planche.py`. Emp : `PNJ=1 SCALE=1.32 SKINS=.../skins_assets_skin_1981.bundle COULEURS=1=15788464 python monster_planche.py 1979 pnj_emp <bones> <sortie>`.
+- Cadenas : icône officielle `icons_assets_1x/lockShadowOutline` dans `public/assets/ui/emp/`.
+
+## Métiers de récolte (0.2b, 6 nov. 2026)
+
+- `tools/contenu/recoltes.py <liste.json> <cartes> <tables> <fr.bin> <monde.json>` écrit `src/data/recoltes.json` : emplacements officiels
+  (éléments interactifs animés des cartes) et ressources officielles des sous-zones (subareas.harvestables, skills).
+- Les animations des ressources (looks `{650}`, `{660}`…) ne sont ni dans le client ni dans son cache : la ressource d'un gfx est déduite
+  (famille par sous-zone, puis rang de fréquence = rang de niveau) et l'affichage pose l'icône officielle de l'objet.
+- `tools/contenu/drops_ajout.py <tables> <fr.bin>` ajoute le butin officiel des monstres qui n'en ont pas encore, sans réécrire items.json.
+- Icônes des métiers : `Content/Picto/UI/job_assets_2x.bundle` (iconId de la table jobs) -> `public/assets/ui/metier_<métier>.png`.
 
 ## Perso dessiné en direct (maquette Apparence, 6 nov. 2026 : 1A 2A+2C 3A)
 

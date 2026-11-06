@@ -92,16 +92,24 @@ export interface QueteDef {
 }
 export interface PnjDef {
   nom: string; dofusId: number;
+  /** Zone où il se tient (sans : Incarnam) ; les tags de carte de deux mondes peuvent se ressembler. */
+  zone?: string;
   /** Carte de monde.json où il se tient, et case Dofus (0-559) ; sans case : le coin le plus dégagé de la carte. */
   carte: string; case?: number;
   /** Planche de sprites d'un autre PNJ (le même personnage à deux endroits : Ganymède au Temple puis sur la Route). */
   sprite?: string;
   /** Ce qu'il dit quand on lui parle sans quête (maquette Dialogues 10A). */
   phrase?: string;
+  /** Services du PNJ (Emp : recycler, boutique) : la réponse ferme le dialogue et l'affichage ouvre la fenêtre du service. */
+  services?: { texte: string; service: string }[];
+  /** Discussion officielle (dialogMessages / dialogReplies) : la réponse n mène au texte n, la dernière laisse adieu pour partir. */
+  discussion?: { reponse: string; texte: string }[];
+  /** Texte officiel de la réponse qui ferme le dialogue (sinon « Au revoir. »). */
+  adieu?: string;
 }
 /** Réponse du cadre vert sous la bulle (maquette Dialogues 3A) : voir une quête, l'accepter, revenir à la liste, fermer. */
 export type Reponse = { texte: string; detail?: string } & (
-  { a: 'voir' | 'accepter'; quete: string } | { a: 'retour' } | { a: 'fermer' }
+  { a: 'voir' | 'accepter'; quete: string } | { a: 'retour' } | { a: 'fermer' } | { a: 'service'; service: string } | { a: 'suite'; i: number }
 );
 /** Dialogue ouvert avec un PNJ (bulle officielle à ruban, réponses 1 à 4). Le jeu continue derrière (4A). */
 export interface Dialogue { pnj: string; texte: string; reponses: Reponse[]; quete?: string; recompense?: RecompenseDef }
@@ -160,6 +168,7 @@ export class Quetes {
     for (const s of compte.succes) this.succes.add(s);
     const wg = world.worldGrid;
     if (wg) for (const [id, def] of Object.entries(data.pnj)) {
+      if ((def.zone ?? 'incarnam') !== world.opts.zone) continue;
       const m = wg.mapByTag(def.carte);
       if (!m || !wg.freeByMap.get(def.carte)?.length) continue;   // carte pas (encore) exportée
       const free = wg.freeByMap.get(def.carte)!;
@@ -296,8 +305,20 @@ export class Quetes {
   private ouvrir(pnj: string, intro: string | null, liste = false) {
     const ds = this.aDonnerTous(pnj);
     if (ds.length === 1 && !liste) { this.offre(pnj, ds[0], intro); return; }
-    this.dialogue = { pnj, texte: intro ?? this.data.pnj[pnj]?.phrase ?? 'Bonne route, aventurier.',
-      reponses: [...ds.map(id => ({ a: 'voir' as const, quete: id, texte: this.def(id).nom })), { a: 'fermer', texte: 'Au revoir.' }] };
+    const def = this.data.pnj[pnj], dis = def?.discussion?.[0];
+    this.dialogue = { pnj, texte: intro ?? def?.phrase ?? 'Bonne route, aventurier.',
+      reponses: [...ds.map(id => ({ a: 'voir' as const, quete: id, texte: this.def(id).nom })),
+        ...(def?.services ?? []).map(s => ({ a: 'service' as const, service: s.service, texte: s.texte })),
+        ...(dis && !ds.length ? [{ a: 'suite' as const, i: 0, texte: dis.reponse }] : []),
+        { a: 'fermer', texte: def?.adieu ?? 'Au revoir.' }] };
+  }
+  /** Suite de la discussion officielle : le texte n, puis la réponse vers le n + 1 (ou l'adieu). */
+  private suite(pnj: string, i: number) {
+    const def = this.data.pnj[pnj], l = def?.discussion ?? [], n = l[i + 1];
+    if (!l[i]) { this.ouvrir(pnj, null); return; }
+    this.dialogue = { pnj, texte: l[i].texte, reponses: [...(n ? [{ a: 'suite' as const, i: i + 1, texte: n.reponse }] : []),
+      ...(def?.services ?? []).map(s => ({ a: 'service' as const, service: s.service, texte: s.texte })).slice(0, n ? 2 : 3),
+      { a: 'fermer', texte: def?.adieu ?? 'Au revoir.' }] };
   }
   private offre(pnj: string, id: string, intro: string | null) {
     const q = this.def(id);
@@ -312,6 +333,8 @@ export class Quetes {
     if (!r) return;
     if (r.a === 'retour') this.ouvrir(d.pnj, null, true);
     else if (r.a === 'voir') this.offre(d.pnj, r.quete, null);
+    else if (r.a === 'suite') this.suite(d.pnj, r.i);
+    else if (r.a === 'service') { this.dialogue = null; this.world.emit({ k: 'service', service: r.service, pnj: d.pnj }); }
     else { this.dialogue = null; this.prendre(r.quete); this.suivie = r.quete; }
   }
 
