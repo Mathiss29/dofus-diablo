@@ -73,8 +73,8 @@ async function main() {
     const under = (id) => all.filter((c) => c.type !== CATEGORY && c.parent_id === id).sort((a, b) => a.position - b.position);
     for (const c of under(null)) console.log("#" + c.name);
     for (const k of cats) { console.log(`\n[${k.name}]`); for (const c of under(k.id)) console.log("  #" + c.name); }
-    console.log("\n--- plan actuel (catégorie du jeu + salons généraux), à coller dans tools/discord/serveur.json ---");
-    console.log(JSON.stringify(planActuel(all, new RegExp(process.env.DISCORD_CATEGORIE || "diablofus", "i")), null, 2));
+    console.log("\n--- plan actuel (toutes les catégories sauf les autres jeux), à reprendre dans tools/discord/serveur.json ---");
+    console.log(JSON.stringify(planActuel(all, /./), null, 2));
   } else if (cmd === "plan") {
     const plan = JSON.parse(fs.readFileSync(new URL("./serveur.json", import.meta.url), "utf8"));
     if (!plan.actif) return console.log("serveur.json : plan inactif (\"actif\": false), rien à faire.");
