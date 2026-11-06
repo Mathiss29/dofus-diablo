@@ -79,7 +79,7 @@ export class ZoneScene extends Phaser.Scene {
   private clickDest = false;
   /** Zoom voulu (molette) ; la caméra le rejoint en douceur. */
   private zoom = 1;
-  static readonly ZOOM: [number, number] = [0.55, 1.5];   // dézoom limité (Mathis, 2026-11-06 : à 0,45 on voyait trop loin)
+  static readonly ZOOM: [number, number] = [0.55, 1.2];   // dézoom limité (Mathis, 2026-11-06 : à 0,45 on voyait trop loin) ; au-delà de 1,2 les planches (SCALE 0,7) sont agrandies donc floues
   /** Réglages du joueur (fenêtre Réglages, touche O) et dernière mise à jour de l'ambiance. */
   private reglages: Reglages = chargerReglages();
   private ambT = 0;

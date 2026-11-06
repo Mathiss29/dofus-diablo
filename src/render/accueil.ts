@@ -25,7 +25,7 @@ const img = (f: string) => v(`${A}/${f}`);
 const esc = (s: string) => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 /** Planche d'un gros perso : une bande (anciennes planches) ou une grille (planches fines, voir tools/extraction/accueil_grille.py).
  *  Le nombre de colonnes se déduit de la taille de l'image et du format de la case (celui de l'élément). */
-const grilles = new Map<string, { cols: number; rows: number } | null>();
+const grilles = new Map<string, { cols: number; rows: number; fh: number } | null>();
 function grille(h: HTMLElement, n: number) {
   const src = h.dataset.src!, k = `${src}|${n}`;
   if (grilles.has(k)) return grilles.get(k)!;
@@ -34,13 +34,13 @@ function grille(h: HTMLElement, n: number) {
   im.onload = () => {
     if (!h.offsetWidth || !h.offsetHeight) { grilles.delete(k); return; }   // pas encore affiché : on réessaiera
     const ratio = h.offsetWidth / h.offsetHeight;
-    let best = { cols: n, rows: 1 }, err = Infinity;
+    let best = { cols: n, rows: 1, fh: im.naturalHeight }, err = Infinity;
     for (let rows = 1; rows <= n; rows++) {
       // colonnes prédites par la taille de l'image ; la dernière ligne peut être incomplète
       const p = im.naturalWidth * rows / (im.naturalHeight * ratio), cols = Math.max(1, Math.round(p));
       if (cols * rows < n || cols * (rows - 1) >= n) continue;
       const e = Math.abs(p - cols) / cols;
-      if (e < err) { err = e; best = { cols, rows }; }
+      if (e < err) { err = e; best = { cols, rows, fh: im.naturalHeight / rows }; }
     }
     grilles.set(k, best);
   };
@@ -149,6 +149,8 @@ export class Accueil {
         if (!g) return;
         const i = f % n, c = i % g.cols, l = Math.floor(i / g.cols);
         h.style.backgroundSize = `${g.cols * 100}% ${g.rows * 100}%`;
+        // jamais agrandi au-delà de la taille de l'image (sinon flou) : le perso rapetisse, les pieds restent sur le socle
+        h.style.transformOrigin = '50% 100%'; h.style.transform = `scale(${Math.min(1, g.fh / Math.max(1, h.offsetHeight))})`;
         h.style.backgroundPosition = `${g.cols > 1 ? (c / (g.cols - 1)) * 100 : 0}% ${g.rows > 1 ? (l / (g.rows - 1)) * 100 : 0}%`;
       });
     };
