@@ -200,6 +200,9 @@ Elles sont réduites aux caractères latins et converties en woff2 (`fontTools.s
 - Monde : `PARTAGE=1 FILS=3 TEXDIR=<tex png> python3 world_export.py liste.json cartes/ /dev/null public/assets/mondes/astrub`.
   `PARTAGE=1` range le décor de toutes les cartes dans des pages communes `decor_p<N>` (2048 x 2048) : une image utilisée sur 50 cartes
   n'est stockée qu'une fois. Chaque décor a son `p` (page), chaque carte la liste de ses `pages`. `TEXDIR` lit les textures en PNG à la demande (mémoire).
+  Puis TOUJOURS `python3 decor_par_carte.py public/assets/mondes/astrub` : chaque carte reçoit SES pages (seulement les images qu'elle pose).
+  Sans ça, la carte du joueur et ses 8 voisines touchaient ~81 pages communes, soit 1,1 Go (jusqu'à 2,3 Go) de mémoire graphique pour ~84 Mo utiles :
+  le navigateur plantait après quelques déplacements. Les nouvelles pages prennent des numéros neufs.
 - Carte du monde (touche M) : `python3 carte_monde.py public/assets/mondes/<monde> [0.1]` écrit `carte.webp` (sols + décor réduits) et `monde.json.carte`.
 - Sons : `python3 sons_astrub.py <banques .bank> <dossier fsb5> <racine du dépôt>` ajoute la musique d'Astrub, ses ambiances et les sons des nouveaux monstres à `src/data/sons.json`.
 - Donjons d'Astrub (Grange, Château Ensablé, Cour du Bouftou Royal) : salles = `dungeons.mapIds`, exportées à part (`PARTAGE` désactivé, atlas par salle)
