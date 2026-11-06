@@ -50,6 +50,7 @@ Iop : Pression 802, Épée Céleste 801, Bond 811, Colère de Iop (13124) 800, C
   donc un monde = une grande grille 14·nx × 40·ny (même origine, même décalage des lignes impaires).
 - `python world_export.py liste.json cartes/ textures/ public/assets/mondes/<nom>` ; `liste.json` = `{"x,y": [mapId, sousZone]}`
   (cartes `worldMap` = 2 pour Incarnam, prises dans `subareasdataroot.mapIds`), `cartes/` = les `map_{id}.json` sortis des bundles mapdata.
+  - Puis TOUJOURS `python bords_fondu.py public/assets/mondes/<nom>` : un seul débord par raccord (celui de la carte du haut ou de gauche), sinon une bande nette sépare les cartes. Les bords déjà traités sont notés `"fondu": 1` dans `monde.json`.
   Sortie : `monde.json` (grille, cases marchables, sous-zone et décor de chaque carte), un `sol_x_y.webp` par carte (rogné pile au raccord
   côté voisin pour que le ciel d'une carte ne recouvre pas le sol de l'autre), et tout le décor dédoublonné dans `decor.json` + `decor_N.webp`
   (multiatlas Phaser, pages de 4096).
@@ -186,3 +187,9 @@ couleurs et dégradés, débit et salves, forme (sphère, cône, cercle, bord, b
 - Les cartes ont des sons officiels (`mapData.playlistSet`, `localizedSounds` avec position) mais référencés par GUID d'événement FMOD ;
   `Master.strings.bank` contient les noms (arbre compressé STDT, pas encore décodé). En attendant, les sons du décor viennent des particules
   officielles (Feu, Braises, Cascade, Courant, Vortex du Zaap).
+
+## Polices
+
+Les polices de l'interface de Dofus 3 sont des objets `Font` de `tss_assets_all.bundle` (UnityPy : `m_FontData`) :
+Lexend (Regular, Medium, SemiBold, Bold) pour les textes, Rowdies pour les boutons, NotoSans en secours.
+Elles sont réduites aux caractères latins et converties en woff2 (`fontTools.subset --flavor=woff2`) dans `public/assets/fonts/`.

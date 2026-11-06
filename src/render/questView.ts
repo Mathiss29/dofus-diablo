@@ -15,11 +15,11 @@ export const QUEST_ICON: Record<QueteType, [string, string]> = {
   tutoriel: ['questInitiation', 'questObjective'], principale: ['questPrincipale', 'questPrincipaleObjective'],
   secondaire: ['quest', 'questObjective'], prime: ['questRepeatable', 'questRepeatableObjective'], evenement: ['questEvent', 'questObjective'],
 };
-const STYLE = { fontFamily: 'Trebuchet MS, Verdana, sans-serif' };
+const STYLE = { fontFamily: 'Lexend, Verdana, sans-serif' };
 
 interface PnjSprite {
   id: string; img: Phaser.GameObjects.Sprite; name: Phaser.GameObjects.Text; icon: Phaser.GameObjects.Image; shadow: Phaser.GameObjects.Graphics;
-  x: number; y: number; tag: string; h: number; L: PnjLook; key: string; prochainFun: number;
+  x: number; y: number; tag: string; h: number; L: PnjLook; key: string; prochainFun: number; iconY: number;
 }
 
 /** PNJ des quêtes dans le monde : sprite officiel, nom, icône de quête au-dessus, bulle de dialogue (5A).
@@ -62,9 +62,28 @@ export class QuestView {
       const h = ((meta?.origin?.[1] ?? img.frame.realHeight) - top) * L.scale;
       const name = scene.add.text(s.x, s.y, p.def.nom, { ...STYLE, fontSize: '13px', fontStyle: 'bold', color: '#f1ecd8', stroke: '#14130f', strokeThickness: 3 }).setOrigin(0.5, 1);
       const icon = scene.add.image(s.x, s.y, 'qi_quest').setVisible(false);
-      const shadow = scene.add.graphics();   // même ombre au sol que le perso et les monstres (EntityView)
+      // même ombre au sol que le perso et les monstres (EntityView), largeur prise sur la pose de repos (fixe pendant les animations)
+      const w = Math.min(70, Math.max(34, img.frame.realWidth * L.scale * 0.7));
+      const shadow = scene.add.graphics().fillStyle(0x000000, 0.28).fillEllipse(0, 0, w, w * 0.45);
       this.pnjs.push({ id: p.id, img, name, icon, shadow, x: p.x, y: p.y, tag: p.tag, h: Math.min(h, 230), L, key,
-        prochainFun: world.time + Phaser.Math.FloatBetween(1, FUN_PAUSE[1]) });
+        prochainFun: world.time + Phaser.Math.FloatBetween(1, FUN_PAUSE[1]), iconY: 0 });
+    }
+    // Calage au pixel près APRÈS le suivi de la caméra (qui bouge le défilement juste avant le rendu)
+    scene.cameras.main.on(Phaser.Cameras.Scene2D.Events.FOLLOW_UPDATE, () => this.caler());
+  }
+
+  /** Les sommets des images sont arrondis au pixel (caméra roundPixels) : un PNJ immobile placé à une fraction de pixel
+   *  différente à chaque image change d'un pixel de largeur et « tremble » quand la caméra défile. On décale donc le PNJ
+   *  (moins d'un pixel) pour que ses pieds tombent pile sur un pixel de l'écran : il défile alors d'un bloc avec le décor. */
+  private caler() {
+    const cam = this.scene.cameras.main, z = cam.zoom, ox = cam.width * cam.originX, oy = cam.height * cam.originY;
+    for (const p of this.pnjs) {
+      if (!p.img.visible) continue;
+      const s = ISO.toScreen(p.x, p.y);
+      const x = Math.round(z * (s.x - cam.scrollX - ox)) / z + cam.scrollX + ox, y = Math.round(z * (s.y - cam.scrollY - oy)) / z + cam.scrollY + oy;
+      p.img.setPosition(x, y); p.shadow.setPosition(x, y);
+      p.name.setPosition(x, y - p.h - 4);
+      if (p.icon.visible) p.icon.setPosition(x, y + p.iconY);
     }
   }
 
@@ -106,8 +125,7 @@ export class QuestView {
       const s = ISO.toScreen(p.x, p.y);
       p.img.setVisible(on).setPosition(s.x, s.y).setDepth(s.y);
       if (EntityView.ambiance !== 0xffffff) p.img.setTint(EntityView.ambiance); else p.img.clearTint();   // lumière du jour/soir/nuit
-      const w = Math.min(70, Math.max(34, p.img.frame.realWidth * p.L.scale * 0.7));
-      p.shadow.clear().setVisible(on).setDepth(s.y - 1).fillStyle(0x000000, 0.28).fillEllipse(s.x, s.y, w, w * 0.45);
+      p.shadow.setVisible(on).setPosition(s.x, s.y).setDepth(s.y - 1);
       // de temps en temps, une animation « fun » officielle tirée au poids (comme dans Dofus)
       if (on && p.L.fun?.length && t >= p.prochainFun) {
         p.prochainFun = t + Phaser.Math.FloatBetween(...FUN_PAUSE);
@@ -121,9 +139,11 @@ export class QuestView {
         const [give, back] = QUEST_ICON[q.def(ic.quete).type];
         p.icon.setTexture(`qi_${ic.rendre ? back : give}`).setVisible(true);
         const k = 34 / Math.max(p.icon.width, p.icon.height);
-        p.icon.setScale(k).setPosition(s.x, s.y - p.h - 34 + Math.sin(t * 3) * 3).setDepth(1e6 - 2);
+        p.iconY = Math.round(-p.h - 34 + Math.sin(t * 3) * 3);
+        p.icon.setScale(k).setPosition(s.x, s.y + p.iconY).setDepth(1e6 - 2);
       } else p.icon.setVisible(false);
     }
+    this.caler();   // caméra sans suivi (vitrine de l'accueil) : déjà placée pour cette image
     // bulle du PNJ qui parle (le jeu continue, 5A)
     const b = q.bulle, n = b && this.pnjs.find(x => x.id === b.pnj);
     if (!b || !n || !n.img.visible) { this.bulle?.bg.destroy(); this.bulle?.text.destroy(); this.bulle?.nom.destroy(); this.bulle = null; return; }

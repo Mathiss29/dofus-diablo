@@ -130,7 +130,7 @@ export class FX {
   number(x: number, y: number, z: number, value: number | string, crit: boolean, color?: string, stroke = '#1a0f0a') {
     const p = ISO.toScreen(x, y, z);
     const t = this.scene.add.text(p.x + rand(-8, 8), p.y, String(value), {
-      fontFamily: 'Trebuchet MS, Verdana, sans-serif', fontSize: crit ? '26px' : '17px', fontStyle: 'bold',
+      fontFamily: 'Lexend, Verdana, sans-serif', fontSize: crit ? '26px' : '17px', fontStyle: 'bold',
       color: color ?? (crit ? '#ffd23f' : '#ffffff'), stroke, strokeThickness: crit ? 5 : 4,
     }).setOrigin(0.5).setDepth(1e6 + 1);
     t.setScale(crit ? 1.6 : 1.25);
