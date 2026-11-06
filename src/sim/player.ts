@@ -7,6 +7,7 @@ import type { World } from './world';
 import { fuiteFactor, tackleSlow, tacleOf } from './caracs';
 import { CASE, TOUR } from './monster';
 import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type SortGrade, type SortOfficiel } from './sorts';
+import { porteeSort } from './apercu';
 
 type ActiveSkill =
   | { id: 'attaque'; def: ComboHit; t: number; impacted: boolean; idx: number; boosted: false }
@@ -58,11 +59,13 @@ export class Player extends Entity {
   /** Déplacement à la souris : points de passage restants, monstre poursuivi, dernière destination. */
   path: { x: number; y: number }[] = [];
   chaseId: number | null = null;
+  /** Sort en attente : on s'approche du monstre visé jusqu'à l'avoir à portée (option 5B). */
+  castChase: { id: SkillId; m: number } | null = null;
   private dest: { x: number; y: number } | null = null;
   /** Le joueur a cliqué près de ce point (portes : on n'entre que si on a cliqué dessus, pas en passant devant). */
   vise(x: number, y: number, r: number): boolean { return !!this.dest && Math.hypot(this.dest.x - x, this.dest.y - y) <= r; }
   /** Arrête le déplacement en cours (après une porte : on ne repart pas vers l'ancien clic). */
-  stopMove() { this.dest = null; this.path = []; this.chaseId = null; }
+  stopMove() { this.dest = null; this.path = []; this.chaseId = null; this.castChase = null; }
   /** Barre (choix 5A) : 6 touches (& é " ' ( -), le clic droit (6A, case libre) et Espace. Identifiants des sorts, null = vide. */
   bar: (SkillId | null)[] = Array(8).fill(null);
   static readonly CLIC_DROIT = 6;
@@ -367,6 +370,40 @@ export class Player extends Entity {
   /** Recharge de l'auto-attaque en cours. */
   autoCd = 0;
 
+  /** Portée de la flèche (portée officielle du grade, en cases) et taille de son explosion (qui grandit à chaque lancer des 3 dernières secondes). */
+  shot(id: SkillId): { range?: number; explode?: number } {
+    const def = this.spell(id);
+    if (!def) return {};
+    const g = def.pm ? null : this.grade(id);
+    const range = g && def.hit.shape === 'projectile' ? g.po[1] * CASE + CASE / 2 : undefined;
+    let explode: number | undefined;
+    if (def.grow) {
+      const n = (this.casts[id] ?? []).filter(t => this.age - t < TOUR).length;
+      explode = def.grow[Math.min(n, def.grow.length - 1)];
+    }
+    return { range, explode };
+  }
+  /** Point d'arrivée d'un sort de déplacement (Bond, Déferlement…) vers le point visé ; sinon la position du perso. */
+  landing(id: SkillId, aim: { x: number; y: number }, world: World): { x: number; y: number } {
+    const def = this.spell(id);
+    let tx = this.x, ty = this.y;
+    if (!def?.move) return { x: tx, y: ty };
+    const dx = aim.x - this.x, dy = aim.y - this.y, d = Math.hypot(dx, dy) || 1;
+    const sig = this.rageFull && def.rage === 'dash' ? this.cls.rage.signature : 1;   // Déferlement renforcé : avance plus loin
+    let L = Math.min(def.move.maxRange * sig, d);
+    if (def.move.kind === 'dash') {
+      // la ruée s'arrête devant le premier ennemi sur sa route
+      for (const m of world.monsters) {
+        if (m.dead) continue;
+        const t = (m.x - this.x) * dx / d + (m.y - this.y) * dy / d, perp = Math.abs(-(m.x - this.x) * dy / d + (m.y - this.y) * dx / d);
+        if (t > 0 && t < L + m.radius && perp < m.radius + this.radius) L = Math.max(0, Math.min(L, t - m.radius - this.radius));
+      }
+    }
+    tx = this.x + (dx / d) * L; ty = this.y + (dy / d) * L;
+    // on recule vers le départ jusqu'à une case où l'on peut arriver
+    for (let i = 0; i < 20 && !world.walkable(tx, ty); i++) { tx -= (dx / d) * L / 20; ty -= (dy / d) * L / 20; }
+    return { x: tx, y: ty };
+  }
   start(id: SkillId, aim: { x: number; y: number }, world: World) {
     world.emit({ k: 'cast', id });
     if (id === this.autoAttack) this.autoCd = this.attackInterval();
@@ -381,35 +418,14 @@ export class Player extends Entity {
       return;
     }
     const def = this.spell(id)!;
-    let tx = this.x, ty = this.y;
-    if (def.move) {
-      const dx = aim.x - this.x, dy = aim.y - this.y, d = Math.hypot(dx, dy) || 1;
-      const sig = this.rageFull && def.rage === 'dash' ? this.cls.rage.signature : 1;   // Déferlement renforcé : avance plus loin
-      let L = Math.min(def.move.maxRange * sig, d);
-      if (def.move.kind === 'dash') {
-        // la ruée s'arrête devant le premier ennemi sur sa route
-        for (const m of world.monsters) {
-          if (m.dead) continue;
-          const t = (m.x - this.x) * dx / d + (m.y - this.y) * dy / d, perp = Math.abs(-(m.x - this.x) * dy / d + (m.y - this.y) * dx / d);
-          if (t > 0 && t < L + m.radius && perp < m.radius + this.radius) L = Math.max(0, Math.min(L, t - m.radius - this.radius));
-        }
-      }
-      tx = this.x + (dx / d) * L; ty = this.y + (dy / d) * L;
-      // on recule vers le départ jusqu'à une case où l'on peut arriver
-      for (let i = 0; i < 20 && !world.walkable(tx, ty); i++) { tx -= (dx / d) * L / 20; ty -= (dy / d) * L / 20; }
-    }
+    const { x: tx, y: ty } = this.landing(id, aim, world);
     // Rage pleine : ce sort est renforcé (pas les déplacements)
     const boosted = this.rageFull && def.move?.kind !== 'leap';
     if (boosted) { this.rage = 0; world.emit({ k: 'rageSpent', spell: id }); }
     // Grade officiel : coût, relance (tours × 3 s), dommages (grade atteint / grade 1), portée des flèches (cases × 48 px)
     const g = def.pm ? null : this.grade(id), g0 = this.official(id)?.grades[0];
     const gm = g && g0 && dmgMoyen(g0) ? dmgMoyen(g) / dmgMoyen(g0) : 1;
-    const range = g && def.hit.shape === 'projectile' ? g.po[1] * CASE + CASE / 2 : undefined;
-    let explode: number | undefined;
-    if (def.grow) {   // la zone grandit à chaque lancer des 3 dernières secondes
-      const n = (this.casts[id] ?? []).filter(t => this.age - t < TOUR).length;
-      explode = def.grow[Math.min(n, def.grow.length - 1)];
-    }
+    const { range, explode } = this.shot(id);
     this.skill = { id, def, t: 0, impacted: false, sx: this.x, sy: this.y, tx, ty, boosted, gm, explode, range };
     this.cd[id] = g ? Math.max(g.relance * TOUR, def.cooldown) : def.cooldown;
     this.pa -= this.paCost(id); this.pm -= def.pm ?? 0;
@@ -463,8 +479,25 @@ export class Player extends Entity {
         } else if (this.repathT <= 0 || !this.path.length) { this.path = world.findPath(this, m); this.repathT = 0.2; }
       }
     }
+    if (input.target != null || input.dest || input.pickup != null) this.castChase = null;
     // Tampon d'entrée : une touche pressée 150 ms trop tôt n'est pas perdue
-    const pr = input.pressed === 'attaque' ? this.autoAttack : input.pressed;
+    let pr = input.pressed === 'attaque' ? this.autoAttack : input.pressed;
+    // Option 5B : sort lancé sur un monstre hors de portée → le perso s'approche, puis lance
+    if (pr && pr !== this.autoAttack && input.approach && input.castOn != null && this.knows(pr) && !this.spell(pr)?.move) {
+      const m = world.monsters.find(q => q.id === input.castOn && !q.dead), reach = porteeSort(world, pr);
+      if (m && reach > 0 && Math.hypot(m.x - this.x, m.y - this.y) > reach + m.radius) {
+        this.castChase = { id: pr, m: m.id }; this.chaseId = null; this.dest = null; this.path = world.findPath(this, m); this.repathT = 0.2; pr = null;
+      }
+    }
+    if (this.castChase) {
+      const c = this.castChase, m = world.monsters.find(q => q.id === c.m && !q.dead);
+      if (!m) { this.castChase = null; this.path = []; }
+      else {
+        aim = { x: m.x, y: m.y };
+        if (Math.hypot(m.x - this.x, m.y - this.y) <= porteeSort(world, c.id) + m.radius) { this.path = []; this.castChase = null; pr = c.id; }
+        else if (this.repathT <= 0 || !this.path.length) { this.path = world.findPath(this, m); this.repathT = 0.2; }
+      }
+    }
     if (pr && (pr === 'attaque' || (this.spell(pr) && (pr === 'arme' || this.knows(pr))))) {
       // sort sans ressource : on le signale (le HUD fait clignoter le compteur), sans le garder en tampon
       if (!this.hasResource(pr) && (pr === 'attaque' || this.cd[pr] <= 0)) world.emit({ k: 'noResource', res: this.missing(pr) });

@@ -459,6 +459,9 @@ export class Windows {
       ${range('volume', 'Volume des sons', 0, 100)}
       <label class="row"><span>Effets d'impact (F)</span><input type="checkbox" data-juice ${this.juice.get() ? 'checked' : ''} style="justify-self:start;accent-color:#b9e54b"><output></output></label>
       ${(['vent', 'eau', 'particules'] as const).map(k => `<label class="row"><span>${({ vent: 'Arbres au vent', eau: 'Eau animée', particules: 'Particules (spores, braises…)' })[k]}</span><input type="checkbox" data-b="${k}" ${r[k] ? 'checked' : ''} style="justify-self:start;accent-color:#b9e54b"><output></output></label>`).join('')}
+      <div class="sub">Sorts</div>
+      <label class="row"><span>Lancer un sort</span><select data-k="lancer">${([['relache', 'Maintenir pour voir, relâcher pour lancer'], ['immediat', 'Tout de suite (aperçu avec Alt)'], ['dofus', 'Comme Dofus : touche puis clic']] as const).map(([k, n]) => `<option value="${k}" ${r.lancer === k ? 'selected' : ''}>${n}</option>`).join('')}</select><output></output></label>
+      <label class="row"><span>Monstre hors de portée : s'approcher avant de lancer</span><input type="checkbox" data-b="approche" ${r.approche ? 'checked' : ''} style="justify-self:start;accent-color:#b9e54b"><output></output></label>
       <div class="sub">Touches</div>
       <div class="keys">${[['Clic gauche', 'aller / attaquer (maintenu : continuer)'], ['Maj + clic', 'attaquer sur place'], ['Clic droit', 'sort de la barre (case libre)'],
         ['& é " \' ( -', 'barre de sorts'], ['S', 'sorts'], ['Espace', 'déplacement'], ['E', 'potion'], ['I', 'inventaire'], ['C', 'caractéristiques'], ['J', 'métiers'],
@@ -473,8 +476,9 @@ export class Windows {
       w.querySelector(`[data-o="${k}"]`)!.textContent = `${e.value}${k === 'chaleur' ? '' : '%'}`;
       apply();
     }));
+    w.querySelector<HTMLSelectElement>('select[data-k=lancer]')!.addEventListener('change', e => { r.lancer = (e.target as HTMLSelectElement).value as Reglages['lancer']; apply(); });
     w.querySelector<HTMLSelectElement>('select[data-k=heure]')!.addEventListener('change', e => { r.heure = (e.target as HTMLSelectElement).value as Heure; apply(); this.render(); });
-    w.querySelectorAll<HTMLInputElement>('[data-b]').forEach(e => e.addEventListener('change', () => { r[e.dataset.b as 'vent' | 'eau' | 'particules'] = e.checked; apply(); }));
+    w.querySelectorAll<HTMLInputElement>('[data-b]').forEach(e => e.addEventListener('change', () => { r[e.dataset.b as 'vent' | 'eau' | 'particules' | 'approche'] = e.checked; apply(); }));
     w.querySelector<HTMLInputElement>('[data-juice]')!.addEventListener('change', e => this.juice.set((e.target as HTMLInputElement).checked));
     w.querySelector('[data-defaut]')!.addEventListener('click', () => { Object.assign(r, REGLAGES_DEFAUT); apply(); this.render(); });
   }

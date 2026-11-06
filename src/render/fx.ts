@@ -1,3 +1,4 @@
+import type { Apercu } from '../sim/apercu';
 import Phaser from 'phaser';
 import { ISO, type Vec } from '../sim/iso';
 import { TAU } from '../sim/math';
@@ -147,6 +148,37 @@ export class FX {
     this.trails = this.trails.filter(t => t.life > 0);
     for (const r of this.rings) r.life -= dt;
     this.rings = this.rings.filter(r => r.life > 0);
+  }
+
+  /** Aperçu d'un sort avant de le lancer (maquette Aperçu : formes lisses façon Diablo, 4B) : cercle de portée bleu,
+   *  zone touchée orange, ennemis touchés cerclés de rouge. À appeler après draw(). */
+  apercu(a: Apercu | null, from: Vec, monsters: readonly { id: number; x: number; y: number; radius: number }[], reach = 0) {
+    const g = this.ground;
+    if (reach > 0) { g.lineStyle(1.5, 0xe8e2d4, 0.45); g.strokePoints(isoCircle(from.x, from.y, reach, 40), true, true); }   // portée de l'arme (Maj, 9B)
+    if (!a) return;
+    const BLEU = 0x8cc4ff, ORANGE = 0xff8a45, ROUGE = 0xff4a3a;
+    if (a.portee > 0) {
+      g.fillStyle(BLEU, 0.07); g.fillPoints(isoCircle(from.x, from.y, a.portee, 48), true);
+      g.lineStyle(1.5, BLEU, 0.75); g.strokePoints(isoCircle(from.x, from.y, a.portee, 48), true, true);
+    }
+    const z = a.zone;
+    const fill = (pts: Vec[]) => { g.fillStyle(ORANGE, 0.26); g.fillPoints(pts, true); g.lineStyle(2, ORANGE, 0.9); g.strokePoints(pts, true, true); };
+    if (z?.kind === 'circle') fill(isoCircle(z.x, z.y, z.r, 36));
+    else if (z?.kind === 'cone') {
+      const pts: { x: number; y: number }[] = [{ x: z.x, y: z.y }], n = 18;
+      for (let i = 0; i <= n; i++) { const t = z.facing - z.arc / 2 + (z.arc * i) / n; pts.push({ x: z.x + Math.cos(t) * z.range, y: z.y + Math.sin(t) * z.range }); }
+      fill(z.arc >= TAU - 0.01 ? isoCircle(z.x, z.y, z.range, 36) : isoPoly(pts));
+    } else if (z?.kind === 'line') {
+      const c = Math.cos(z.facing), s = Math.sin(z.facing), px = -s * z.width, py = c * z.width;
+      fill(isoPoly([{ x: z.x + px, y: z.y + py }, { x: z.x + c * z.length + px, y: z.y + s * z.length + py }, { x: z.x + c * z.length - px, y: z.y + s * z.length - py }, { x: z.x - px, y: z.y - py }]));
+    } else if (z?.kind === 'shot') {
+      const a1 = ISO.toScreen(z.x, z.y), b1 = ISO.toScreen(z.tx, z.ty);
+      g.lineStyle(z.width * 1.2, ORANGE, 0.22); g.lineBetween(a1.x, a1.y, b1.x, b1.y);
+      g.lineStyle(2, ORANGE, 0.9); g.lineBetween(a1.x, a1.y, b1.x, b1.y);
+      if (z.r > 0) fill(isoCircle(z.tx, z.ty, z.r, 36));
+      else { g.fillStyle(ORANGE, 0.9); g.fillPoints(isoCircle(z.tx, z.ty, 5, 12), true); }
+    }
+    for (const m of monsters) if (a.cibles.includes(m.id)) { g.lineStyle(3, ROUGE, 0.95); g.strokePoints(isoCircle(m.x, m.y, m.radius + 7, 24), true, true); }
   }
 
   draw(telegraphs: readonly Telegraph[], arrows: readonly Projectile[] = []) {
