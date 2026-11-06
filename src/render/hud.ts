@@ -1,6 +1,7 @@
 import { RARITY_COLORS } from '../sim/items';
 import { v } from './assetUrl';
 import Phaser from 'phaser';
+import { DANGER } from '../sim/danger';
 import { GAME_DATA } from '../sim/data';
 import { ISO } from '../sim/iso';
 import type { SimEvent } from '../sim/events';
@@ -113,6 +114,8 @@ export class Hud {
   private center: Txt;
   private toastText: Txt;
   private hurtRect: Phaser.GameObjects.Rectangle;
+  /** Bords de l'écran rougis par un gros coup reçu (maquette « Danger » 3A). */
+  private vignette: Phaser.GameObjects.Image;
   /** Tutoriel (3A) : la touche à presser, au-dessus de l'emplacement entouré. */
   private haloKey: Txt;
   private shortOf = { pa: 0, pm: 0 };
@@ -141,6 +144,13 @@ export class Hud {
     const cls = world.player.cls;
 
     this.hurtRect = fixed(scene.add.rectangle(0, 0, 10, 10, 0xc0201a, 1).setOrigin(0).setAlpha(0), -1);
+    if (!scene.textures.exists('vignetteRouge')) {   // dégradé : centre transparent, bords rouge sang
+      const tx = scene.textures.createCanvas('vignetteRouge', 256, 256)!, cx = tx.getContext();
+      const gr = cx.createRadialGradient(128, 128, 60, 128, 128, 182);
+      gr.addColorStop(0, 'rgba(150,10,5,0)'); gr.addColorStop(0.55, 'rgba(160,12,6,0.35)'); gr.addColorStop(1, 'rgba(170,14,8,0.95)');
+      cx.fillStyle = gr; cx.fillRect(0, 0, 256, 256); tx.refresh();
+    }
+    this.vignette = fixed(scene.add.image(0, 0, 'vignetteRouge').setOrigin(0).setAlpha(0), -1);
     this.g = fixed(scene.add.graphics(), 1);
 
     const clsId = Object.keys(GAME_DATA.classes).find(k => GAME_DATA.classes[k] === cls) ?? 'iop';
@@ -250,6 +260,12 @@ export class Hud {
     this.hurtRect.setAlpha(strong ? 0.28 : 0.1);
     this.scene.tweens.add({ targets: this.hurtRect, alpha: 0, duration: 300 });
   }
+  /** 3A : gros coup reçu, les bords de l'écran rougissent puis s'effacent. */
+  grosCoup() {
+    this.scene.tweens.killTweensOf(this.vignette);
+    this.vignette.setAlpha(0.9);
+    this.scene.tweens.add({ targets: this.vignette, alpha: 0, duration: 650, ease: 'Quad.In' });
+  }
   /** Sort lancé sans assez de PA (ou de PM) : la barre clignote en rouge. */
   noResource(res: 'pa' | 'pm') { this.shortOf[res] = 0.35; }
   /** Ligne dans le journal de butin (en bas à droite). */
@@ -282,7 +298,7 @@ export class Hud {
   draw(juice: boolean, dt = 1 / 60) {
     const world = this.world, W = this.scene.scale.width, H = this.scene.scale.height, g = this.g, p = world.player, cls = p.cls;
     g.clear();
-    this.hurtRect.setSize(W, H);
+    this.hurtRect.setSize(W, H); this.vignette.setDisplaySize(W, H);
     this.shortOf.pa = Math.max(0, this.shortOf.pa - dt); this.shortOf.pm = Math.max(0, this.shortOf.pm - dt);
     this.rageFlash = Math.max(0, this.rageFlash - dt);
     const blink = (v: number) => v > 0 && Math.floor(v * 12) % 2 === 0;
@@ -356,9 +372,10 @@ export class Hud {
     if (boss) {
       const w = Math.min(520, W * 0.36), x = W / 2 - w / 2, y = 48;
       panel(x - 40, y - 26, w + 60, 50);
-      bar(x, y + 2, w, 14, boss.hp / boss.maxHp, 0xc8352b);
+      bar(x, y + 2, w, 14, boss.hp / boss.maxHp, boss.furieux ? 0xe8471c : 0xc8352b);
+      g.fillStyle(C.gold, 1); g.fillRect(x + w * DANGER.furieux.seuil - 1, y - 1, 2, 20);   // 5A : marque de la phase Furieux
       Bv.skull.setPosition(x - 20, y + 9).setDisplaySize(28, 28);
-      Bv.name.setPosition(W / 2, y - 10).setText(boss.def.name);
+      Bv.name.setPosition(W / 2, y - 10).setText(boss.furieux ? `${boss.def.name} · Furieux` : boss.def.name).setColor(boss.furieux ? '#ff8a6a' : '#ffe3b0');
       Bv.hp.setPosition(W / 2, y + 9).setText(`${Math.max(0, Math.ceil(boss.hp))} / ${boss.maxHp}`);
     }
 

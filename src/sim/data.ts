@@ -11,8 +11,11 @@ import type { RecoltesData } from './recolte';
 import type { ItemsData } from './items';
 import type { QuetesData } from './quests';
 import type { GameData, WeaponProfile } from './defs';
+import { degatsMonstre } from './danger';
 
 export const GAME_DATA = { classes, monsters, zones } as unknown as GameData;
+// 1A (maquette « Danger ») : les dégâts des monstres suivent leur rang et leur niveau (src/data/danger.json) ; le champ dmg du json n'est plus lu
+for (const d of Object.values(GAME_DATA.monsters)) d.dmg = degatsMonstre(d);
 export const ITEMS = items as unknown as ItemsData;
 /** Auto-attaque par type d'arme (src/data/armes.json). */
 export const WEAPONS = Object.fromEntries(Object.entries(armes).filter(([k]) => !k.startsWith('_'))) as unknown as Record<string, WeaponProfile>;

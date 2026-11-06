@@ -25,6 +25,11 @@ export type SimEvent =
   | { k: 'kill'; x: number; y: number; radius: number; monster: string }
   | { k: 'impact'; hitstop: number; shake: number; big: boolean }
   | { k: 'playerHurt' }
+  /** Gros coup reçu (maquette « Danger » 3A) : bords de l'écran rouges. */
+  | { k: 'grosCoup' }
+  /** Boss : entrée en combat (7A) et passage Furieux sous la moitié des PV (5A). */
+  | { k: 'bossIntro'; id: number; monster: string }
+  | { k: 'furieux'; id: number; name: string; x: number; y: number }
   | { k: 'wave'; n: number; boss: string | null; archi: string | null }
   | { k: 'bossDown'; monster: string }
   | { k: 'playerDeath'; wave: number }
