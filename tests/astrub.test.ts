@@ -60,7 +60,7 @@ describe('Astrub (0.2a)', () => {
       for (const [tag, groupes] of Object.entries(d.salles)) {
         expect(w.worldGrid!.mapByTag(tag), tag).toBeDefined();
         for (const g of groupes) for (const t of g) expect(LOOKS[GAME_DATA.monsters[t]?.look], t).toBeDefined();
-        expect(w.groups.filter(g => g.map === tag).length, tag).toBe(groupes.length);
+        expect((w as unknown as { groups: { map: string }[] }).groups.filter(g => g.map === tag).length, tag).toBe(groupes.length);
       }
       expect(w.portes.filter(p => p.nom === d.nom).length).toBeGreaterThan(Object.keys(d.salles).length - 1);
     }
