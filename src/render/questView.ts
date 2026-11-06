@@ -153,13 +153,19 @@ export class QuestView {
       const nom = this.scene.add.text(0, 0, q.data.pnj[b.pnj]?.nom ?? '', { ...STYLE, fontSize: '12px', fontStyle: 'bold', color: '#f2d36b' }).setOrigin(0.5, 1);
       this.bulle = { bg: this.scene.add.graphics(), text, nom, pnj: b.pnj, texte: b.texte };
     }
-    const s = ISO.toScreen(n.x, n.y), by = s.y - n.h - 50, T = this.bulle.text, N = this.bulle.nom, w = Math.max(T.width, N.width) + 20, h = T.height + N.height + 16;
+    const s = ISO.toScreen(n.x, n.y), T = this.bulle.text, N = this.bulle.nom, w = Math.max(T.width, N.width) + 20, h = T.height + N.height + 16;
+    // Pas de place au-dessus du PNJ (bord haut de l'écran, sous le nom de la zone) : la bulle passe sous ses pieds, pointe vers le haut
+    const cam = this.scene.cameras.main, haut = cam.worldView.y + 44 / cam.zoom, dessous = s.y - n.h - 50 - h + 7 < haut;
+    const by = dessous ? s.y + 26 + h - 7 : s.y - n.h - 50;
     T.setPosition(s.x, by).setDepth(1e6).setAlpha(Math.min(1, b.t * 2));
     N.setPosition(s.x, by - T.height - 2).setDepth(1e6).setAlpha(Math.min(1, b.t * 2));
     const g = this.bulle.bg.clear().setDepth(1e6 - 1).setAlpha(Math.min(1, b.t * 2));
     g.fillStyle(0x1b1711, 0.95); g.lineStyle(2, 0xf1ecd8, 1);   // style sombre officiel (Dialogues 7B)
     g.fillRoundedRect(s.x - w / 2, by - h + 7, w, h, 8); g.strokeRoundedRect(s.x - w / 2, by - h + 7, w, h, 8);
-    g.fillTriangle(s.x - 8, by + 6, s.x + 8, by + 6, s.x, by + 16); g.lineBetween(s.x - 8, by + 7, s.x, by + 16); g.lineBetween(s.x + 8, by + 7, s.x, by + 16);
+    if (dessous) {
+      const t = by - h + 7;
+      g.fillTriangle(s.x - 8, t + 1, s.x + 8, t + 1, s.x, t - 9); g.lineBetween(s.x - 8, t, s.x, t - 9); g.lineBetween(s.x + 8, t, s.x, t - 9);
+    } else { g.fillTriangle(s.x - 8, by + 6, s.x + 8, by + 6, s.x, by + 16); g.lineBetween(s.x - 8, by + 7, s.x, by + 16); g.lineBetween(s.x + 8, by + 7, s.x, by + 16); }
     // la grande bulle à réponses remplace la petite pendant un dialogue avec ce PNJ
     const cache = q.dialogue?.pnj === b.pnj; T.setVisible(!cache); N.setVisible(!cache); g.setVisible(!cache);
   }

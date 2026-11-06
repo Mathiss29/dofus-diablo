@@ -236,6 +236,7 @@ export class ZoneScene extends Phaser.Scene {
       else if (name === 'Caractéristiques') this.windows!.toggle('car');
       else if (name === 'Métiers') this.windows!.toggle('job');
       else if (name === 'Réglages') this.windows!.toggle('opt');
+      else if (name === 'Guide') this.windows!.toggle('guide');
       else if (name === 'Sorts') this.windows!.toggle('sorts');
       else if (name === 'Quêtes' && this.world.quetes) this.windows!.toggle('quetes');
       else if (name === 'Succès' && this.world.quetes) this.windows!.toggle('succes');
@@ -318,7 +319,7 @@ export class ZoneScene extends Phaser.Scene {
       this.fx.juice = !this.fx.juice;
       this.hud.toast(this.fx.juice ? 'Effets d\'impact : ACTIVÉS' : 'Effets d\'impact : DÉSACTIVÉS (compare !)');
     });
-    this.keys.H.on('down', () => this.hud.toggleHelp());
+    this.keys.H.on('down', () => this.windows?.toggle('guide'));   // Guide (fenêtre façon Dofus 3, demande de Mathis 2026-11-06)
     // Ctrl+M : couper ou remettre tout le son ; M seul est gardé pour la carte du monde, comme dans Dofus (maquette 0.2, 18A)
     this.keys.M.on('down', (_k: Phaser.Input.Keyboard.Key, e: KeyboardEvent) => {
       if (e?.ctrlKey || e?.metaKey) { e.preventDefault(); this.basculerMuet(); }

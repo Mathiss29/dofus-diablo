@@ -264,11 +264,21 @@ const CSS = `
 .dw .opt .row input[type=range]{-webkit-appearance:none;appearance:none;height:8px;border-radius:4px;background:linear-gradient(90deg,#8fae3a,#b9e54b) 0/var(--v,50%) 100% no-repeat,#15140f;box-shadow:inset 0 1px 2px #000,0 0 0 1px #3d3b33;cursor:pointer}
 .dw .opt .row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:20px;border-radius:3px;background:linear-gradient(#e8ff8a,#9cc62a);border:1px solid #1e2a05;box-shadow:0 1px 3px #000}
 .dw .opt .row input[type=range]::-moz-range-thumb{width:12px;height:20px;border-radius:3px;background:linear-gradient(#e8ff8a,#9cc62a);border:1px solid #1e2a05}
+.dw .guide .ob{grid-template-columns:240px minmax(0,1fr)}
+.dw .guide .nav{grid-template-rows:auto 1fr}
+.dw .guide .nav .it{padding:9px 14px;font-size:14px;color:#e8e2cc}
+.dw .guide .page{display:grid;gap:8px;font-size:14px;line-height:1.55;color:#e8e2cc;max-width:62ch}
+.dw .guide .page h3{margin:10px 0 0;font:bold 15px Lexend,sans-serif;color:#f4efe0}
+.dw .guide .page p{margin:0}
+.dw .guide .page .chapo{font-weight:bold;color:#f4efe0}
+.dw .guide .page .k,.dw .guide .keys b{color:#f4efe0;font-family:monospace;font-size:12.5px;background:#15140f;border:1px solid #4a4840;border-radius:3px;padding:1px 6px;white-space:nowrap}
+.dw .guide .keys{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:13.5px;color:#d8d2bf}
+.dw .guide .keys b{justify-self:start}
 .dw .btn,.dw .opt .nav .bas .lien[data-accueil]{font-family:Rowdies,Lexend,sans-serif;font-weight:400;letter-spacing:.02em}
 .dw .ttl b{font-weight:700}
 `;
 
-type Mode = 'inv' | 'car' | 'job' | 'opt' | 'sorts' | 'quetes' | 'succes';
+type Mode = 'inv' | 'car' | 'job' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide';
 
 /** Fenêtres façon Dofus 3 : « Inventaire » (le perso sur son socle, ses emplacements autour, le sac à onglets)
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
@@ -316,7 +326,7 @@ export class Windows {
     Son.jouer(MANIFESTE.ui.ouvrir, 'interface', { cle: 'fenetre', ecart: 0.1 });   // 6B : ouverture, puis clic sur les boutons
 
     this.mode = mode;
-    const w = document.createElement('div'); w.className = `win ${mode}`;
+    const w = document.createElement('div'); w.className = mode === 'guide' ? 'win opt guide' : `win ${mode}`;   // le Guide reprend la mise en page des Options
     w.addEventListener('contextmenu', e => e.preventDefault());
     w.addEventListener('pointerdown', e => e.stopPropagation());
     w.addEventListener('click', e => {
@@ -331,7 +341,8 @@ export class Windows {
   refresh() { if (this.win) this.render(); }
 
   private render() {
-    if (this.mode === 'car') this.renderCarac(); else if (this.mode === 'job') this.renderJob(); else if (this.mode === 'opt') this.renderOpt();
+    if (this.mode === 'guide') this.renderGuide();
+    else if (this.mode === 'car') this.renderCarac(); else if (this.mode === 'job') this.renderJob(); else if (this.mode === 'opt') this.renderOpt();
     else if (this.mode === 'sorts') this.renderSorts(); else if (this.mode === 'quetes') this.renderQuetes();
     else if (this.mode === 'succes') this.renderSucces(); else this.renderInv();
     this.win!.querySelector('[data-close]')!.addEventListener('click', () => this.close());
@@ -549,6 +560,54 @@ export class Windows {
    *  sections à droite avec leur « Réinitialiser », cases vertes. Contenu : choix 10A + 10B (ambiance), maquette Aperçu (sorts),
    *  maquette Son (8A volumes, 8B touche M). Tout est gardé dans le navigateur. */
   private optRecherche = '';
+  /** Guide (touche H) : rubrique affichée et recherche. */
+  private guideVue = 'bienvenue';
+  private guideRecherche = '';
+
+  /** Guide façon Dofus 3 (le « Guide de Sanstour » montré par Mathis) : rubriques à gauche, une page à droite, recherche.
+   *  Remplace le texte d'aide qui s'affichait sur l'écran. */
+  private renderGuide() {
+    const w = this.win!, cls = this.world.player.cls, jauge = cls.rage.name, mob = cls.spells[cls.mobility]?.name ?? 'déplacement';
+    const iop = cls.rage.mode === 'melee';
+    const k = (t: string) => `<b class="k">${t}</b>`;
+    const PAGES: { id: string; titre: string; html: string }[] = [
+      { id: 'bienvenue', titre: 'Bienvenue', html: `<p class="chapo">Explore le Monde des Douze, rencontre ses habitants et combats en temps réel : tes déplacements et tes sorts se jouent sans attendre.</p>
+        <h3>Un monde à parcourir</h3><p>Passe d'une carte à l'autre sans chargement, entre dans les maisons par leurs portes et parle aux PNJ en cliquant dessus. La mini-carte en haut à droite montre les monstres (points rouges), les PNJ qui ont une quête (points verts) et ta destination (point doré).</p>
+        <h3>Ton but</h3><p>Suis la quête affichée en bas à gauche. Une flèche dorée au bord de l'écran indique où aller quand c'est loin.</p>` },
+      { id: 'combat', titre: 'Se déplacer et combattre', html: `<h3>À la souris</h3><p>${k('Clic gauche')} sur le sol : y aller (maintenu : suivre le curseur). Sur un monstre : s'approcher et l'attaquer.</p>
+        <p>${k('Maj + clic')} : attaquer sur place, sans bouger.</p><p>${k('Clic droit')} : lancer le sort de la case libre de la barre. Sur un PNJ : ses actions.</p>
+        <h3>Esquiver</h3><p>${k('Espace')} : ${mob}. Il a des charges qui se rechargent toutes seules.</p>
+        <h3>Se soigner</h3><p>${k('E')} : boire une potion. Chaque groupe de monstres vaincu en rend une.</p>
+        <h3>Mourir</h3><p>Tu reviens au dernier point de retour. En mode Hardcore, la mort est définitive.</p>` },
+      { id: 'sorts', titre: `Sorts et ${jauge}`, html: `<h3>La barre de sorts</h3><p>${k('&')} ${k('é')} ${k('"')} ${k("'")} ${k('(')} ${k('-')} lancent les 6 sorts de la barre (1 à 6 sur un clavier QWERTY). Chaque sort coûte des PA, qui remontent tout seuls, et a sa recharge.</p>
+        <p>${k('S')} ouvre la fenêtre des sorts : de nouveaux sorts arrivent aux niveaux officiels de Dofus. Glisse-les dans la barre.</p>
+        <h3>${jauge}</h3><p>${iop ? 'La Rage monte quand tu frappes, surtout au corps à corps, et quand tu es touché.' : 'La Précision monte quand tu touches, surtout de loin (plus de 4 cases).'} Pleine, elle renforce ton prochain sort.</p>
+        <p>Dans ${k('O')} Options, tu peux choisir comment lancer un sort : relâcher la touche, tout de suite, ou comme dans Dofus (touche puis clic).</p>` },
+      { id: 'butin', titre: 'Inventaire et butin', html: `<h3>Ramasser</h3><p>Clique sur un objet au sol pour le ramasser. Les objets Épiques et mieux apparaissent aussi sur la mini-carte.</p>
+        <h3>Raretés</h3><p>${(['commun', 'rare', 'epique', 'legendaire', 'mythique'] as const).map(r => `<span style="color:${RARITY_COLORS[r]}">${RARITY_NAMES[r]}</span>`).join(' · ')}</p>
+        <h3>S'équiper</h3><p>${k('I')} ouvre l'inventaire. Clic droit sur un objet : l'équiper ou le retirer. ${k('Maj + clic')} : le recycler.</p>
+        <p>${k('C')} ouvre les caractéristiques : chaque niveau donne 5 points à placer.</p>` },
+      { id: 'metiers', titre: 'Métiers', html: `<p>${k('J')} ouvre les métiers. Le Chasseur récupère de la viande sur les monstres quand tu portes une arme de chasse, et cuisine des plats qui soignent.</p>` },
+      { id: 'quetes', titre: 'Quêtes et succès', html: `<p>Un PNJ qui a une quête porte une icône au-dessus de la tête. Le suivi en bas à gauche montre l'étape en cours.</p>
+        <p>Le journal des quêtes et les succès s'ouvrent depuis la colonne de menus, à droite de l'écran.</p>` },
+      { id: 'touches', titre: 'Toutes les touches', html: `<div class="keys">${[['Clic gauche', 'aller / attaquer (maintenu : continuer)'], ['Maj + clic', 'attaquer sur place'], ['Clic droit', 'sort de la barre (case libre)'],
+          ['& é " \' ( -', 'barre de sorts'], ['Espace', mob], ['E', 'potion'], ['S', 'sorts'], ['I', 'inventaire'], ['C', 'caractéristiques'], ['J', 'métiers'],
+          ['O', 'options'], ['H', 'ce guide'], ['M', 'carte du monde (bientôt)'], ['Ctrl+M', 'couper ou remettre le son'], ['Molette', 'zoom'], ['F', 'effets d\'impact'], ['Échap', 'fermer']]
+          .map(([a, b]) => `<b>${a}</b><span>${b}</span>`).join('')}</div>` },
+    ];
+    const q = this.guideRecherche.trim().toLowerCase();
+    const texte = (h: string) => h.replace(/<[^>]+>/g, ' ').toLowerCase();
+    const vues = PAGES.filter(pg => !q || `${pg.titre} ${texte(pg.html)}`.toLowerCase().includes(q));
+    const vu = vues.find(pg => pg.id === this.guideVue) ?? vues[0];
+    const nav = vues.map(pg => `<div class="it ${pg === vu ? 'on' : ''}" data-page="${pg.id}">${pg.titre}</div>`).join('') || '<div class="vide">Rien ne correspond.</div>';
+    w.innerHTML = `${this.title('Guide', 'guide')}<div class="ob">
+      <div class="nav"><input type="search" placeholder="Rechercher dans le guide" value="${this.guideRecherche.replace(/"/g, '&quot;')}" data-cherche><div class="cats">${nav}</div></div>
+      <div class="main">${vu ? `<div class="grp"><h2>${vu.titre}</h2><div class="page">${vu.html}</div></div>` : ''}</div></div>`;
+    w.querySelectorAll<HTMLElement>('[data-page]').forEach(e => e.addEventListener('click', () => { this.guideVue = e.dataset.page!; this.render(); }));
+    const ch = w.querySelector<HTMLInputElement>('[data-cherche]')!;
+    ch.addEventListener('input', () => { this.guideRecherche = ch.value; this.render(); const n = this.win?.querySelector<HTMLInputElement>('[data-cherche]'); n?.focus(); n?.setSelectionRange(n.value.length, n.value.length); });
+    ch.addEventListener('keydown', e => e.stopPropagation());
+  }
   private renderOpt() {
     const w = this.win!, r = this.reglages;
     const heures: [string, string][] = [['auto', 'Heure du PC'], ['jour', 'Jour'], ['soir', 'Soir'], ['nuit', 'Nuit']];
@@ -563,7 +622,7 @@ export class Windows {
         ] },
         { id: 'touches', titre: 'Touches', opts: [], html: `<div class="keys">${[['Clic gauche', 'aller / attaquer (maintenu : continuer)'], ['Maj + clic', 'attaquer sur place'], ['Clic droit', 'sort de la barre (case libre)'],
           ['& é " \' ( -', 'barre de sorts'], ['Espace', 'déplacement'], ['E', 'potion'], ['S', 'sorts'], ['I', 'inventaire'], ['C', 'caractéristiques'], ['J', 'métiers'],
-          ['O', 'options'], ['M', 'carte du monde (0.2a)'], ['Ctrl+M', 'couper ou remettre le son'], ['Molette', 'zoom'], ['F', 'effets d\'impact'], ['H', 'aide'], ['Échap', 'fermer']]
+          ['O', 'options'], ['M', 'carte du monde (0.2a)'], ['Ctrl+M', 'couper ou remettre le son'], ['Molette', 'zoom'], ['F', 'effets d\'impact'], ['H', 'guide'], ['Échap', 'fermer']]
           .map(([k, d]) => `<b>${k}</b><span>${d}</span>`).join('')}</div>` },
       ] },
       { nom: 'Affichage', desc: 'Ces options règlent l\'ambiance et l\'image du monde.', secs: [
