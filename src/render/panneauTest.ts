@@ -63,7 +63,7 @@ const ONGLETS: [Onglet, string][] = [['perso', 'Perso'], ['aller', 'Aller à'], 
 const CSS = `
 #ptest-badge{position:fixed;bottom:118px;left:50%;transform:translateX(-50%);z-index:12;pointer-events:none;background:#f0a83a;color:#1b1206;font:13px Rowdies,Lexend,sans-serif;letter-spacing:.12em;padding:5px 12px;border-radius:3px;box-shadow:0 2px 8px #000a}
 #ptest-badge small{font:500 11px Lexend,sans-serif;letter-spacing:0;margin-left:8px;opacity:.75}
-#ptest{position:fixed;top:56px;right:12px;bottom:150px;width:min(360px,calc(100vw - 24px));z-index:11;display:grid;grid-template-rows:42px auto 1fr;
+#ptest{position:fixed;top:56px;right:12px;bottom:150px;width:min(360px,calc(100vw - 24px));z-index:11;display:grid;grid-template-rows:42px auto 1fr;grid-template-columns:minmax(0,1fr);box-sizing:border-box;
  background:#24221dee url(assets/ui/d3/block_background_second.jpg) center/cover;border:1px solid #0b0a07;border-radius:4px;box-shadow:0 12px 40px #000c;
  font:13px Lexend,Verdana,sans-serif;color:#e8e2d4}
 #ptest[hidden]{display:none}
@@ -74,7 +74,7 @@ const CSS = `
 #ptest .ong button{all:unset;flex:1;text-align:center;padding:8px 2px;cursor:pointer;color:#c9c4ab;font-size:12px;border-bottom:2px solid transparent}
 #ptest .ong button.on{color:#b9e54b;border-bottom-color:#b9e54b}
 #ptest .ong button:focus-visible{outline:1px solid #b9e54b}
-#ptest .corps{overflow:auto;padding:10px 12px 14px;display:grid;gap:9px;align-content:start}
+#ptest .corps{overflow:auto;padding:10px 12px 14px;display:grid;grid-template-columns:minmax(0,1fr);gap:9px;align-content:start;min-width:0}
 #ptest h4{margin:6px 0 0;font:11px Lexend,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#c9c4ab}
 #ptest .l{display:flex;align-items:center;justify-content:space-between;gap:8px}
 #ptest input[type=text],#ptest input[type=number],#ptest select{box-sizing:border-box;background:#1a1915;border:1px solid #3d3b33;box-shadow:inset 0 1px 3px #000a;color:#e8e2d4;padding:6px 8px;border-radius:3px;font:13px Lexend,sans-serif}

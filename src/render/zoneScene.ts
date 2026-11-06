@@ -906,7 +906,7 @@ export class ZoneScene extends Phaser.Scene {
   /** Planche d'un monstre prête ? Sinon on la demande (une fois) et le monstre apparaît dès qu'elle est arrivée. */
   private planche(L: Look): boolean {
     const a = L.atlas;
-    if (this.textures.exists(a)) return true;
+    if (this.textures.exists(a)) { this.vuPlanche.set(a, this.time.now); return true; }
     if (!this.demandees.has(a)) {
       this.demandees.add(a);
       if (L.multi) this.load.multiatlas(a, v(`${ASSETS}/sprites/${a}.json`), dossier(`${ASSETS}/sprites/`));
@@ -917,6 +917,21 @@ export class ZoneScene extends Phaser.Scene {
     return false;
   }
   private demandees = new Set<string>();
+  /** Dernier usage de chaque planche de monstre chargée à la demande (ms). */
+  private readonly vuPlanche = new Map<string, number>();
+  private oubliT = 0;
+  /** Planches des monstres qu'on n'a plus vus depuis 30 s : rendues à la carte graphique. Sans ça, une longue balade dans
+   *  Astrub gardait toutes les planches croisées (chasse aux bugs du 6 nov. : 1,2 -> 2,9 Go de textures en 14 cartes). */
+  private oublierPlanches() {
+    const now = this.time.now;
+    if (now - this.oubliT < 5000) return;
+    this.oubliT = now;
+    for (const [a, t] of this.vuPlanche) {
+      if (now - t < 30000 || this.demandees.has(a) || a.startsWith('fam_')) continue;   // (familier : sa vue garde la planche)
+      this.vuPlanche.delete(a);
+      if (this.textures.exists(a)) this.textures.remove(a);
+    }
+  }
   private viewOf(e: Entity): EntityView {
     let v = this.views.get(e.id);
     if (!v) {
@@ -1018,12 +1033,17 @@ export class ZoneScene extends Phaser.Scene {
       // hors de l'écran (avec une marge) : la vue reste, mais on ne la met pas à jour
       if (e !== w.player) {
         const s = ISO.toScreen(e.x, e.y), r = cam.worldView;
-        if (s.x < r.x - 250 || s.x > r.right + 250 || s.y < r.y - 150 || s.y > r.bottom + 350) { this.views.get(e.id)?.hide(); continue; }
+        if (s.x < r.x - 250 || s.x > r.right + 250 || s.y < r.y - 150 || s.y > r.bottom + 350) {
+          const vu = this.views.get(e.id);
+          if (vu) { vu.hide(); this.vuPlanche.set(LOOKS[GAME_DATA.monsters[(e as { type?: string }).type!].look].atlas, this.time.now); }   // vue gardée : sa planche aussi
+          continue;
+        }
       }
       if (e !== w.player && !this.planche(LOOKS[GAME_DATA.monsters[(e as { type?: string }).type!].look])) { alive.delete(e.id); continue; }
       this.viewOf(e).sync(e);
     }
     for (const [id, v] of this.views) if (!alive.has(id)) { v.destroy(); this.views.delete(id); }
+    this.oublierPlanches();
     if (!this.vitrine) this.familierView?.maj(w, this.game.loop.delta / 1000);
     this.majApparence();
     this.vivant?.maj();
