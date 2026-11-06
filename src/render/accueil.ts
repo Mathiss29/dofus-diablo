@@ -60,7 +60,7 @@ const CSS = `
 #acc .cover{position:absolute;inset:0;background-size:cover;background-position:center}
 #acc .abs{position:absolute}
 #acc .side{position:absolute;left:0;top:0;bottom:0;width:calc(6.6*var(--u));background:#17180f;border-right:1px solid #2c2f1f;display:flex;flex-direction:column;align-items:center;padding:calc(1.2*var(--u)) 0 calc(1*var(--u));gap:calc(.35*var(--u));z-index:5}
-#acc .side .logo{width:calc(3.6*var(--u));height:calc(3.6*var(--u));border-radius:50%;background:radial-gradient(circle at 35% 30%,#d6f57a,#7fae1f 65%,#40600c);display:grid;place-items:center;font-family:var(--disp);font-size:calc(2*var(--u));color:var(--ink);margin-bottom:calc(1.2*var(--u));box-shadow:0 0 0 calc(.2*var(--u)) #0c0d08,0 calc(.3*var(--u)) calc(.8*var(--u)) #0009}
+#acc .side .logo{width:calc(4.4*var(--u));height:auto;margin-bottom:calc(1*var(--u));filter:drop-shadow(0 calc(.3*var(--u)) calc(.6*var(--u)) #000a)}
 #acc .nav{all:unset;cursor:pointer;width:100%;display:grid;justify-items:center;gap:calc(.2*var(--u));padding:calc(.55*var(--u)) 0;font-size:calc(.72*var(--u));font-weight:800;color:#d9d4bd;border-left:calc(.2*var(--u)) solid transparent;box-sizing:border-box}
 #acc .nav img{height:calc(2.3*var(--u));width:calc(2.7*var(--u));object-fit:contain;filter:drop-shadow(0 1px 1px #000);transition:transform .15s,filter .15s}
 #acc .nav.on img{transform:scale(1.15);filter:drop-shadow(0 0 calc(.4*var(--u)) #b9e54b88) drop-shadow(0 1px 1px #000)}
@@ -76,8 +76,7 @@ const CSS = `
 #acc .dbtn.rouge{color:#ffb39a;border-color:#7a3a2a}
 #acc .tiny{font-size:calc(.75*var(--u));color:#c9c4ab}
 #acc .ttl{font-family:var(--disp);color:var(--lime);-webkit-text-stroke:calc(.12*var(--u)) #1f2a08;paint-order:stroke fill;text-shadow:0 calc(.3*var(--u)) 0 #1f2a08,0 calc(.6*var(--u)) calc(1.4*var(--u)) #0009;line-height:.95}
-#acc .logoT{font-family:var(--disp);font-size:calc(4.6*var(--u));color:#fbf3d4;-webkit-text-stroke:calc(.35*var(--u)) #233008;paint-order:stroke fill;text-shadow:0 calc(.4*var(--u)) 0 #233008,0 0 calc(2*var(--u)) #b9e54b55;line-height:.9;transform:rotate(-2deg)}
-#acc .logoT small{display:block;font-size:calc(2*var(--u));color:var(--lime);margin-left:calc(5.6*var(--u));margin-top:calc(-.2*var(--u))}
+#acc .logoI{width:calc(25*var(--u));height:auto;filter:drop-shadow(0 calc(.5*var(--u)) calc(1.2*var(--u)) #000b)}
 #acc .ribbon{font-family:var(--disp);font-size:calc(4.4*var(--u));color:#e6fa9c;-webkit-text-stroke:calc(.18*var(--u)) #1f2a08;paint-order:stroke fill;text-shadow:0 calc(.3*var(--u)) 0 #1f2a08;padding:calc(.6*var(--u)) calc(3*var(--u)) calc(.9*var(--u)) calc(2.2*var(--u));background:linear-gradient(90deg,#3c5a12,#56801a 70%,#3c5a1200);clip-path:polygon(0 15%,100% 0,96% 100%,3% 88%);white-space:nowrap}
 #acc .card{background:#1d1e15ee;border:1px solid #45452f;border-radius:calc(.6*var(--u));box-shadow:0 calc(.3*var(--u)) calc(1*var(--u)) #0008}
 #acc .chip{all:unset;cursor:pointer;font-weight:800;font-size:calc(.8*var(--u));border:1px solid #f1ecd8aa;border-radius:calc(2*var(--u));padding:calc(.4*var(--u)) calc(1.1*var(--u));background:#1b1c13cc;white-space:nowrap}
@@ -185,7 +184,7 @@ export class Accueil {
   private side(): string {
     const NAV: [string, string, string][] = [['accueil', 'assets/ui/menu/home.png', 'Accueil'], ['persos', 'assets/ui/menu/character.png', 'Personnages'],
       ['creation', img('h_80.png'), 'Classes'], ['bestiaire', 'assets/ui/menu/bestiary.png', 'Bestiaire'], ['succes', 'assets/ui/menu/success.png', 'Succès'], ['journal', 'assets/ui/menu/calendar.png', 'Journal']];
-    return `<nav class="side"><div class="logo" aria-hidden="true">D</div>${NAV.map(([k, ic, l]) =>
+    return `<nav class="side"><img class="logo" src="${v('assets/logo/embleme.webp')}" alt="" aria-hidden="true">${NAV.map(([k, ic, l]) =>
       `<button type="button" class="nav${k === this.page ? ' on' : ''}" data-nav="${k}"><img src="${ic}" alt="">${l}</button>`).join('')}
       <button type="button" class="play" data-jouer>Jouer</button><div class="ver">VERSION 0.1</div></nav>`;
   }
@@ -196,7 +195,7 @@ export class Accueil {
     const c = p && classe(p.classe);
     return `<div class="cover" style="background:linear-gradient(90deg,#0d0e09f0 6%,#0d0e09b0 30%,#0d0e0918 55%,transparent 70%)"></div>
     <div class="abs tiny" style="left:calc(11*var(--u));top:calc(2.2*var(--u));letter-spacing:.15em;font-weight:800">INCARNAM, EN TEMPS RÉEL</div>
-    <div class="abs" style="left:calc(11*var(--u));top:calc(5*var(--u))"><div class="logoT">Diablofus<small>Les Douze Enfers</small></div></div>
+    <img class="abs logoI" style="left:calc(10.4*var(--u));top:calc(3.6*var(--u))" src="${v('assets/logo/logo.webp')}" alt="Diablofus : Les Douze Enfers">
     <div class="abs" style="left:calc(11.5*var(--u));top:calc(15.2*var(--u));font-weight:800;font-size:calc(1.7*var(--u))">Le monde des Douze, en action.</div>
     <div class="abs ribbon" style="left:calc(9.8*var(--u));top:calc(18.2*var(--u))">En chasse !</div>
     <div class="abs" style="left:calc(11.5*var(--u));top:calc(26.8*var(--u));font-weight:700;font-size:calc(1.05*var(--u));line-height:1.75;max-width:calc(34*var(--u))">

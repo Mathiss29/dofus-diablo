@@ -22,6 +22,7 @@ import { Particules, type SysData } from './particles';
 import { ambiance, chargerReglages, matriceSaturation, type Reglages } from './ambiance';
 import { ICON_SHEET, iconFrame } from './icons';
 import { Windows } from './windows';
+import { Chargement } from './chargement';
 import { spellTipHtml } from './spellTip';
 import { RARITY_COLORS, RARITY_NAMES, rollItem } from '../sim/items';
 import { exporterJoueur, restaurerJoueur } from '../sim/sauvegarde';
@@ -102,6 +103,8 @@ export class ZoneScene extends Phaser.Scene {
   }
 
   preload() {
+    Chargement.montrer();
+    this.load.off('progress', Chargement.progres).on('progress', Chargement.progres);   // le chargeur survit aux relances de la scène
     Hud.preload(this);
     // Icônes des objets officiels : une seule planche
     if (!this.textures.exists('kamas_tas')) this.load.image('kamas_tas', v(`${ASSETS}/ui/inv/kamas.png`));
@@ -231,6 +234,7 @@ export class ZoneScene extends Phaser.Scene {
       window.addEventListener('beforeunload', quitter); document.addEventListener('visibilitychange', cache);
       this.events.once('shutdown', () => { this.sauver(); window.removeEventListener('beforeunload', quitter); document.removeEventListener('visibilitychange', cache); });
     }
+    Chargement.cacher();
     // Accès console / tests automatisés (captures) : la partie et le tirage d'objets
     (window as unknown as { diablofus: unknown }).diablofus = { scene: this, world: this.world, rollItem, ITEMS };
   }
