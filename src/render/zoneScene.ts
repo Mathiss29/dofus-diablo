@@ -1,3 +1,4 @@
+import { apercuSort } from '../sim/apercu';
 import { v } from './assetUrl';
 import Phaser from 'phaser';
 import { GAME_DATA, ITEMS } from '../sim/data';
@@ -55,6 +56,8 @@ export class ZoneScene extends Phaser.Scene {
   private uiClick = false;
   /** Bouton gauche enfoncé depuis un clic DANS le jeu (Phaser voit aussi les clics sur les fenêtres HTML). */
   private holding = false;
+  /** Sort en cours de visee (aperçu affiché), la touche qui le tient, et le sort survolé dans la barre (6A). */
+  private aimId: SkillId | null = null; private aimKey: string | null = null; private hoverId: SkillId | null = null;
   /** Clic gauche en cours : sur le sol, sur un monstre, ou attaque sur place (Maj). */
   private clickMode: 'ground' | 'target' | 'place' | null = null;
   private clickTarget: number | null = null;
@@ -75,7 +78,7 @@ export class ZoneScene extends Phaser.Scene {
     // #astrub dans l'adresse : l'ancienne zone à vagues des Champs d'Astrub
     if (data?.zone) this.zoneId = data.zone;
     else if (location.hash === '#astrub') this.zoneId = 'champs-astrub';
-    this.views = new Map(); this.dropViews = new Map(); this.worldView = null; this.pressed = null; this.potion = false; this.hitstop = 0; this.acc = 0;
+    this.views = new Map(); this.dropViews = new Map(); this.worldView = null; this.pressed = null; this.aimId = null; this.aimKey = null; this.hoverId = null; this.potion = false; this.hitstop = 0; this.acc = 0;
   }
 
   preload() {
@@ -166,6 +169,7 @@ export class ZoneScene extends Phaser.Scene {
     this.windows.heureNom = () => ambiance(this.reglages, new Date(), !!this.world.worldGrid?.mapAt(this.world.player.x, this.world.player.y)?.inside).nom;
     this.events.once('shutdown', () => { this.windows?.destroy(); this.windows = null; });
     this.hud.onSlotHover = (id, x, y) => {
+      this.hoverId = id;
       if (!id) { this.windows?.hideTip(); return; }
       const r = this.game.canvas.getBoundingClientRect();
       this.windows?.showHtmlTip(spellTipHtml(this.world.player, id), r.left + x, r.top + y);
@@ -197,7 +201,11 @@ export class ZoneScene extends Phaser.Scene {
     this.input.on('pointerdown', (p: Phaser.Input.Pointer, over: unknown[]) => {
       if (over.length || this.hud.blocks(p.x, p.y)) { this.uiClick = true; return; }
       this.uiClick = false;
-      if (p.rightButtonDown()) { this.pressed = this.world.player.bar[6]; return; }
+      if (p.rightButtonDown()) {
+        if (this.reglages.lancer === 'dofus' && this.aimId) { this.aimId = null; this.aimKey = null; return; }   // clic droit : annuler la visee
+        this.down('CLICD', this.world.player.bar[6]); return;
+      }
+      if (this.reglages.lancer === 'dofus' && this.aimId) { this.pressed = this.aimId; this.aimId = null; this.aimKey = null; this.uiClick = true; return; }
       this.holding = true;
       if (this.keys.SHIFT.isDown) { this.pressed = 'attaque'; this.clickMode = 'place'; return; }
       const d = this.dropUnder(p);
@@ -207,12 +215,16 @@ export class ZoneScene extends Phaser.Scene {
       this.clickTarget = m?.id ?? null;
       if (!m) this.moveMarker(p);
     });
-    const release = () => { this.holding = false; };
+    const release = (e: PointerEvent) => { if (e.button === 2) this.up('CLICD'); else this.holding = false; };
     window.addEventListener('pointerup', release);
     this.events.once('shutdown', () => window.removeEventListener('pointerup', release));
-    this.keys.SPACE.on('down', () => { this.pressed = this.world.player.bar[7]; });
+    this.keys.SPACE.on('down', () => this.down('SPACE', this.world.player.bar[7]));
+    this.keys.SPACE.on('up', () => this.up('SPACE'));
     this.keys.E.on('down', () => { this.potion = true; });
-    ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX'].forEach((k, i) => this.keys[k].on('down', () => { this.pressed = this.world.player.bar[i]; }));
+    ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX'].forEach((k, i) => {
+      this.keys[k].on('down', () => this.down(k, this.world.player.bar[i]));
+      this.keys[k].on('up', () => this.up(k));
+    });
     this.keys.F.on('down', () => {
       this.fx.juice = !this.fx.juice;
       this.hud.toast(this.fx.juice ? 'Effets d\'impact : ACTIVÉS' : 'Effets d\'impact : DÉSACTIVÉS (compare !)');
@@ -224,7 +236,7 @@ export class ZoneScene extends Phaser.Scene {
     this.keys.J.on('down', () => this.windows?.toggle('job'));   // Métiers (choix 6A : Chasseur)
     this.keys.O.on('down', () => this.windows?.toggle('opt'));
     this.keys.S.on('down', () => this.windows?.toggle('sorts'));   // Sorts (choix 8A, touche S)   // Réglages (choix 10A + 10B)
-    this.keys.ESC.on('down', () => this.windows?.close());
+    this.keys.ESC.on('down', () => { this.aimId = null; this.aimKey = null; this.windows?.close(); });
     // K : changer de classe (en attendant l'écran de création de la 0.1b)
     this.keys.K.on('down', () => this.scene.restart({ zone: this.zoneId, classe: this.classId === 'iop' ? 'cra' : 'iop' }));
     this.keys.ENTER.on('down', () => {
@@ -310,11 +322,29 @@ export class ZoneScene extends Phaser.Scene {
     this.tweens.add({ targets: c, scale: 0.3, alpha: 0, duration: 450, onComplete: () => c.destroy() });
   }
 
+  /** Touche de sort enfoncée (maquette Aperçu, 1A/1B/1C selon les Réglages) : maintenir pour voir l'aperçu, relâcher pour lancer ;
+   *  ou lancer tout de suite (Alt maintenu : aperçu) ; ou viser comme Dofus (la touche arme le sort, clic gauche pour lancer). */
+  private down(key: string, id: SkillId | null) {
+    if (!id) return;
+    const mode = this.reglages.lancer;
+    if (mode === 'immediat' && !this.keys.ALT.isDown) { this.pressed = id; return; }
+    if (mode === 'dofus' && key !== 'SPACE') { if (this.aimId === id) { this.pressed = id; this.aimId = null; } else { this.aimId = id; this.aimKey = null; } return; }
+    this.aimId = id; this.aimKey = key;
+  }
+  private up(key: string) {
+    if (this.aimKey !== key || !this.aimId) return;
+    this.pressed = this.aimId; this.aimId = null; this.aimKey = null;
+  }
+
   private readInput(): PlayerInput {
     const ptr = this.input.activePointer, wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
     const aim = ISO.toWorld(wp.x, wp.y), held = this.holding && ptr.leftButtonDown() && !this.uiClick;
     const input: PlayerInput = { move: { x: 0, y: 0 }, aim, pressed: this.pressed, potion: this.potion,
-      holdAttack: held && this.clickMode === 'place', pickup: this.pickClick };
+      holdAttack: held && this.clickMode === 'place', pickup: this.pickClick, approach: this.reglages.approche,
+      castOn: null };
+    // un sort lancé sur un monstre vise le monstre (comme l'aperçu), pas le sol derrière son sprite
+    const vise = this.pressed ? this.monsterUnder(ptr) : null;
+    if (vise && !vise.dead) { input.castOn = vise.id; input.aim = { x: vise.x, y: vise.y }; }
     this.pickClick = null;
     if (held && this.clickMode === 'ground') input.dest = aim;
     if (held && this.clickMode === 'target' && this.clickTarget != null) input.target = this.clickTarget;
@@ -500,6 +530,13 @@ export class ZoneScene extends Phaser.Scene {
     const s = w.player.skill;
     if (s && 'charge' in s.def && s.def.charge && !s.def.move && s.t < s.def.impactAt) this.fx.chargeSparks(w.player.x, w.player.y);
     this.fx.draw(w.telegraphs, w.projectiles);
+    // Aperçu du sort vise (ou survolé dans la barre), et portée de l'arme en maintenant Maj (9B)
+    {
+      const p = w.player, id = this.aimId ?? this.hoverId, ptr = this.input.activePointer;
+      const wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2, m = this.monsterUnder(ptr);
+      const aim = m && !m.dead ? { x: m.x, y: m.y } : ISO.toWorld(wp.x, wp.y);
+      this.fx.apercu(id && !p.dead ? apercuSort(w, id, aim) : null, p, w.monsters.filter(q => !q.dead), this.keys.SHIFT.isDown && !p.dead ? p.attackReach() : 0);
+    }
     this.drawDrops();
     this.hud.draw(this.fx.juice, this.game.loop.delta / 1000);
   }
