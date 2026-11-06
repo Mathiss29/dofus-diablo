@@ -6,6 +6,7 @@ import type { Element } from '../sim/defs';
 import type { SimEvent, Telegraph } from '../sim/events';
 import type { Projectile } from '../sim/world';
 import { SpellFx } from './spellFx';
+import { SOL } from './worldView';
 
 const rand = (a: number, b: number) => a + Math.random() * (b - a);
 
@@ -44,7 +45,7 @@ export class FX {
 
   constructor(private scene: Phaser.Scene, private colorOf: (monster: string) => number) {
     this.official = new SpellFx(scene);
-    this.ground = scene.add.graphics().setDepth(-5000);   // télégraphes au sol
+    this.ground = scene.add.graphics().setDepth(SOL + 50);   // télégraphes au sol
     this.top = scene.add.graphics().setDepth(1e6);        // traînées, particules
   }
 

@@ -213,24 +213,51 @@ export class World {
         this.emit({ k: 'status', x: p.x, y: p.y - 60, text: 'Vaincs les monstres de la salle', color: '#ff9a5a' });
         return;
       }
-      // entrée d'un donjon : la clé officielle est prise en entrant (sans clé, la porte reste fermée)
-      if (po.cle && i === 0) {
-        const r = p.resources[po.cle] ?? 0;
-        if (r <= 0) {
-          this.portalLock = from;
-          this.emit({ k: 'status', x: p.x, y: p.y - 60, text: `Il faut une ${this.opts.items?.resources[po.cle]?.name ?? 'clé'}`, color: '#ff9a5a' });
-          this.emit({ k: 'cleManquante', id: po.cle });
-          return;
-        }
-        if (r === 1) delete p.resources[po.cle]; else p.resources[po.cle] = r - 1;
-      }
-      // le perso s'arrête devant la porte pendant le fondu de sortie, puis passe (traverser)
-      p.stopMove();
-      this.passage = { to, nom: po.nom, t: World.PASSAGE, vers: po.vers };
-      this.emit({ k: 'portalStart', nom: po.nom });
+      // entrée d'un donjon gardé (maquette Gardiens 5A) : la porte ouvre le dialogue du gardien, qui fait entrer (« Entrer »)
+      const gardien = i === 0 && this.quetes?.gardienDe(po.nom);
+      if (gardien && po === this.entreeDonjon(po.nom)) { p.stopMove(); this.quetes!.parlerA(gardien); return; }
+      if (i === 0 && !this.prendreCle(po)) { this.portalLock = from; return; }
+      this.passer(po, to);
       return;
     }
   }
+  /** Le perso s'arrête devant la porte pendant le fondu de sortie, puis passe (traverser). */
+  private passer(po: World['portes'][number], to: PorteEnd) {
+    this.player.stopMove();
+    this.passage = { to, nom: po.nom, t: World.PASSAGE, vers: po.vers };
+    this.emit({ k: 'portalStart', nom: po.nom });
+  }
+  /** Entrée d'un donjon : la clé officielle est prise en entrant (sans clé, la porte reste fermée). Vrai si on peut passer. */
+  private prendreCle(po: World['portes'][number]): boolean {
+    if (!po.cle) return true;
+    const p = this.player, r = p.resources[po.cle] ?? 0;
+    if (r <= 0) {
+      this.emit({ k: 'status', x: p.x, y: p.y - 60, text: `Il faut une ${this.opts.items?.resources[po.cle]?.name ?? 'clé'}`, color: '#ff9a5a' });
+      this.emit({ k: 'cleManquante', id: po.cle });
+      return false;
+    }
+    if (r === 1) delete p.resources[po.cle]; else p.resources[po.cle] = r - 1;
+    return true;
+  }
+  /** Porte d'entrée d'un donjon (dehors -> première salle) : celle qui demande la clé, sinon la première qui n'est pas verrouillée. */
+  entreeDonjon(nom: string) {
+    return this.portes.find(po => po.nom === nom && po.cle) ?? this.portes.find(po => po.nom === nom && !po.verrou && !po.vers);
+  }
+  /** « Entrer » chez le gardien : la clé est prise, puis fondu et arrivée dans la première salle. */
+  entrerDonjon(nom: string): boolean {
+    const po = this.entreeDonjon(nom);
+    if (!po || this.passage || this.player.dead || !this.prendreCle(po)) return false;
+    this.passer(po, po.ends[1]);
+    return true;
+  }
+  /** Boss d'un donjon (monstre « boss » de ses salles). */
+  bossDuDonjon(nom: string): string | null {
+    const d = this.zone.open?.donjons?.find(x => x.nom === nom), M = this.opts.data.monsters;
+    for (const gs of Object.values(d?.salles ?? {})) for (const g of gs) for (const m of g) if (M[m]?.boss) return m;
+    return null;
+  }
+  /** Donjon où se trouve le joueur (nom), ou null. */
+  donjonIci(): string | null { return this.zone.open?.donjons?.find(d => this.dansDonjon(d.nom))?.nom ?? null; }
   /** Arrivée de l'autre côté : une case libre juste hors du rayon de la porte d'arrivée, du côté du milieu de la carte (pas collé au bord). */
   private traverser(to: PorteEnd, nom: string) {
     const p = this.player, wg = this.worldGrid!;
@@ -253,7 +280,7 @@ export class World {
     return !this.groups.some(g => g.map === tag && g.members.some(m => !m.dead));
   }
   /** Le joueur est dans une salle de ce donjon. */
-  private dansDonjon(nom: string): boolean {
+  dansDonjon(nom: string): boolean {
     const d = this.zone.open?.donjons?.find(x => x.nom === nom), tag = this.worldGrid?.mapAt(this.player.x, this.player.y)?.tag;
     return !!d && !!tag && tag in d.salles;
   }

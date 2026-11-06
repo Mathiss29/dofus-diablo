@@ -57,7 +57,8 @@
           "Astrub s'ouvre : 359 cartes, les monstres officiels de chaque sous-zone, et le portail d'Incarnam qui y descend.",
           "Trois donjons d'Astrub : la Grange du Tournesol Affamé, le Château Ensablé et la Cour du Bouftou Royal. Chacun demande sa clé officielle, prise à l'entrée (Emp en vend).",
           "Les monstres d'Astrub lâchent leurs ressources officielles : pétales, laines, cornes… de quoi fabriquer les clés.",
-          "Cuirasse Laineuse, Rinçage, Grognement et Hyperleukocytine ont enfin leurs effets officiels."
+          "Cuirasse Laineuse, Rinçage, Grognement et Hyperleukocytine ont enfin leurs effets officiels.",
+          "Un gardien devant chaque donjon : Mawy Ingalsse à la Grange, le Capitaine Igloute au Château Ensablé, Rotabla à la Cour du Bouftou Royal et Klasmor à la Crypte. Ils te font entrer avec ta clé, montrent le boss et son butin, et se souviennent de tes victoires."
         ],
         "Combat": [
           "Pas Chassé du Crâ rééquilibré : il ne s'enchaîne plus en boucle, relance officielle de 9 s (6 s dès le niveau 72).",
@@ -69,7 +70,7 @@
           "Les monstres tapent selon leur rang et leur niveau (ceux d'Astrub tapaient tous 14), et les groupes t'encerclent au lieu de faire la queue.",
           "Les boss ont une attaque signature annoncée au sol (Dégraissage de Mob l'Éponge en vraie ligne de 8 cases, Kankroulahoup…), deviennent Furieux à mi-vie et font leur entrée ; un gros coup reçu rougit les bords de l'écran."
         ],
-        "Corrections": [
+        "Corrections": ["La Cape de l'Intrépide portée montre enfin son vrai dessin (cape jaune à l'emblème vert) et plus une autre cape.", 
           "Plus de mini-gel en changeant de carte.",
           "PNJ qui tremblaient quand la caméra défilait.",
           "Gros personnage du socle net, même avec l'affichage Windows à 125 %.",
@@ -81,6 +82,8 @@
           "Cité d'Astrub et Tainéla : plus de maisons posées deux fois côte à côte ni de grands rectangles clairs, et le bord du monde se fond dans la brume au lieu de s'arrêter en escalier.",
           "Le décor et les ressources ne tremblent plus quand la caméra te suit.",
           "Longues balades dans Astrub : les dessins des monstres qu'on ne croise plus sont libérés, le jeu ne s'alourdit plus au fil des cartes.",
+          "Cliquer sur la porte d'un donjon ne brûle plus la clé par erreur : on entre en choisissant « Entrer » chez le gardien.",
+          "Au nord d'Astrub (Tainéla, Cour du Bouftou Royal, Grange), le sol passait par-dessus tout : perso, PNJ, maisons et arbres réapparaissent.",
           "Les ressources à récolter ne scintillent plus quand tu bouges, ne flottent plus au-dessus du vide et ne sont plus en double ; la grande lueur jaune de la Cité d'Astrub est retirée, et la mer des Calanques et des Prairies n'a plus de grandes taches blanches."
         ],
         "En coulisses": [

@@ -5,6 +5,10 @@ import { ISO } from '../sim/iso';
 import type { Particules } from './particles';
 import type { Transparence } from './transparence';
 
+/** Profondeur du sol. Le reste (perso, monstres, décor) est trié par sa hauteur à l'écran, qui descend sous -10 000 au nord
+ *  d'Astrub (Tainéla, Cour du Bouftou Royal) : un sol à -10 000 passait alors au-dessus du perso et des PNJ. */
+export const SOL = -1e8;
+
 /** Rayon (en cartes) chargé autour du joueur, et rayon au-delà duquel une carte est déchargée.
  *  Entre les deux, une carte déjà chargée reste : pas de va-et-vient quand on longe un bord. */
 const LOAD_RING = 1, UNLOAD_RING = 2;
@@ -77,7 +81,7 @@ export class WorldView {
 
   /** Après preload : pose le ciel et les cartes déjà chargées. */
   create() {
-    if (this.scene.textures.exists(this.k('ciel'))) this.sky = this.scene.add.image(0, 0, this.k('ciel')).setScrollFactor(0).setDepth(-20000).setTint(this.tint);
+    if (this.scene.textures.exists(this.k('ciel'))) this.sky = this.scene.add.image(0, 0, this.k('ciel')).setScrollFactor(0).setDepth(SOL - 1e7).setTint(this.tint);
     for (const m of this.wg.world.maps) if (this.texturesReady(m)) { this.slots.get(m.tag)!.state = 'loading'; this.build(m); }
     this.pump(Infinity);   // au lancement, tout de suite (l'écran de chargement couvre)
   }
@@ -228,16 +232,16 @@ export class WorldView {
     const s = this.slots.get(m.tag)!, S = GridMap.S, wg = this.wg;
     if (s.state !== 'loading') { this.unload(m); return; }   // annulée entre-temps (le joueur est reparti)
     const o = wg.toScreen(m.sol.x, m.sol.y);
-    s.objs.push(this.scene.add.image(o.x, o.y, this.k(`sol_${m.tag}`)).setOrigin(0).setScale(S).setDepth(-10000).setTint(this.tint));
+    s.objs.push(this.scene.add.image(o.x, o.y, this.k(`sol_${m.tag}`)).setOrigin(0).setScale(S).setDepth(SOL).setTint(this.tint));
     if (m.fond) {   // nuages et rayons qui débordent sur les voisins : sous tous les sols
       const f = wg.toScreen(m.fond.x, m.fond.y);
-      s.objs.push(this.scene.add.image(f.x, f.y, this.k(`fond_${m.tag}`)).setOrigin(0).setScale(S * (m.fond.k ?? 1)).setDepth(-15000).setTint(this.tint));
+      s.objs.push(this.scene.add.image(f.x, f.y, this.k(`fond_${m.tag}`)).setOrigin(0).setScale(S * (m.fond.k ?? 1)).setDepth(SOL - 5e6).setTint(this.tint));
     }
     // débords en fondu sur les voisines : au-dessus de tous les sols, sous le décor. Une carte plus haut (ou plus à gauche)
     // passe au-dessus : son dessin continue sans coupure au-delà du raccord (tools/extraction/bords_fondu.py).
     if (m.bord) {
       const f = wg.toScreen(m.bord.x, m.bord.y), rang = (m.y - this.wg.world.origin[1]) * 1000 + (m.x - this.wg.world.origin[0]);
-      s.objs.push(this.scene.add.image(f.x, f.y, this.k(`bord_${m.tag}`)).setOrigin(0).setScale(S).setDepth(-9998.6 - rang * 1e-6).setTint(this.tint));
+      s.objs.push(this.scene.add.image(f.x, f.y, this.k(`bord_${m.tag}`)).setOrigin(0).setScale(S).setDepth(SOL + 1.4 - rang * 1e-6).setTint(this.tint));
     }
     this.brume(m, s);
     s.next = 0;
@@ -289,11 +293,11 @@ export class WorldView {
         const p = m.decor[s.next++];
         // profondeur = bas de la case dans la grande grille : on passe derrière un arbre même s'il est sur la carte voisine
         const sp = wg.toScreen(p.x, p.y), im = this.scene.add.image(sp.x, sp.y, this.k(p.p !== undefined ? `decor_p${p.p}` : `decor_${m.tag}`), p.f).setScale(S * (p.z ?? 1));
-        if (p.c < 0) im.setDepth(-9990 + p.o * 0.01);   // lumière posée sur le sol : au-dessus du sol, sous le décor
+        if (p.c < 0) im.setDepth(SOL + 10 + p.o * 0.01);   // lumière posée sur le sol : au-dessus du sol, sous le décor
         else { const cc = wg.cellCenter(p.c), cs = wg.toScreen(cc.x, cc.y + h / 2); im.setDepth(cs.y + p.o * 0.01); }
         if (p.b) this.light(im, p);
         else im.setTint(this.tint);
-        if (p.c < 0 && p.g) im.setDepth(-9998 + p.o * 0.0001);   // eau animée : juste au-dessus du sol, sous les lumières
+        if (p.c < 0 && p.g) im.setDepth(SOL + 2 + p.o * 0.0001);   // eau animée : juste au-dessus du sol, sous les lumières
         if (p.w || p.t || p.ca) {
           // vent : l'arbre plie depuis son pied (origine en bas) ; phase tirée de sa position, pour ne pas bouger tous ensemble
           if (p.w) { im.setOrigin(0.5, 1); im.y += (im.height * im.scaleY) / 2; }

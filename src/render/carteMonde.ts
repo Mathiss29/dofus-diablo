@@ -1,6 +1,8 @@
 import type { World } from '../sim/world';
 import { v } from './assetUrl';
 import { ISO } from '../sim/iso';
+import { ITEMS } from '../sim/data';
+import { ICON_CSS, iconHtml } from './icons';
 
 /** Carte du monde (touche M, maquette 0.2 choix 18A) : l'image réduite du monde (tools/extraction/carte_monde.py),
  *  le joueur, les Zaaps, les portails et le nom des sous-zones. Glisser pour se déplacer, molette pour zoomer.
@@ -21,6 +23,11 @@ const CSS = `
 .cm .leg i{display:inline-block;width:10px;height:10px;margin-right:5px;vertical-align:-1px;border:1px solid #fff}
 .cm .rp{width:26px;height:26px;pointer-events:auto;cursor:help;filter:drop-shadow(0 1px 2px #000)}
 .cm .rp:hover{filter:drop-shadow(0 0 4px #ffe9a8) brightness(1.15)}
+.cm .gd{width:26px;height:26px;pointer-events:auto;cursor:help;filter:drop-shadow(0 1px 2px #000) drop-shadow(0 0 4px #f2d36b)}
+.cm .gd .ic{width:26px;height:26px}
+.cm .vd{pointer-events:auto;cursor:help;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;border:2px solid #f2d36b;background:#000a;box-shadow:0 0 0 4px #f2d36b55,0 0 14px #f2d36b;animation:cmvd 1.2s ease-in-out infinite alternate}
+.cm .vd .ic{width:22px;height:22px}
+@keyframes cmvd{to{box-shadow:0 0 0 9px #f2d36b22,0 0 20px #f2d36b}}
 .cm .aide{position:absolute;right:12px;bottom:10px;background:#000b;padding:4px 10px;border-radius:3px;font:12px Lexend,sans-serif;color:#a8a290;pointer-events:none}
 `;
 
@@ -32,7 +39,7 @@ export class CarteMonde {
   private pos = { x: 0, y: 0 };
 
   constructor(private world: World, private image: string, private icones: string) {
-    const st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
+    const st = document.createElement('style'); st.textContent = CSS + ICON_CSS; document.head.appendChild(st);
   }
   get ouverte() { return !!this.root; }
   get dispo() { return !!this.world.worldGrid?.world.carte; }
@@ -96,6 +103,15 @@ export class CarteMonde {
       const c = this.milieuCarte(tag); this.marque('mk zp', c.x, c.y).title = cp.name;
     }
     for (const po of this.world.portes) if (po.vers) { const c = this.duJeu(po.ends[0].x, po.ends[0].y); this.marque('mk pt', c.x, c.y); }
+    // gardiens des donjons (maquette Gardiens 9A) : la clé du donjon ; le vendeur de clés montré par un gardien (6A) brille
+    const Q = this.world.quetes;
+    for (const n of Q?.pnjs ?? []) {
+      const g = n.def.gardien; if (!g) continue;
+      const cle = this.world.entreeDonjon(g.donjon)?.cle ?? '8545', c = this.duJeu(n.x, n.y);
+      const d = this.marque('mk gd', c.x, c.y + 20); d.innerHTML = iconHtml(ITEMS.resources[cle]?.icon ?? 0); d.title = `${n.def.nom} · ${g.donjon}`;
+    }
+    const ve = Q?.marqueVendeur && Q.pnj(Q.marqueVendeur);
+    if (ve) { const c = this.duJeu(ve.x, ve.y), d = this.marque('mk vd', c.x, c.y); d.innerHTML = iconHtml(ITEMS.resources['8143']?.icon ?? 0); d.title = `${ve.def.nom} · clés de donjon`; }
     this.moi = this.marque('mk moi', 0, 0);
 
     // centré sur le joueur, à l'échelle 1 (l'image est déjà réduite)
