@@ -202,3 +202,7 @@ Elles sont réduites aux caractères latins et converties en woff2 (`fontTools.s
   n'est stockée qu'une fois. Chaque décor a son `p` (page), chaque carte la liste de ses `pages`. `TEXDIR` lit les textures en PNG à la demande (mémoire).
 - Carte du monde (touche M) : `python3 carte_monde.py public/assets/mondes/<monde> [0.1]` écrit `carte.webp` (sols + décor réduits) et `monde.json.carte`.
 - Sons : `python3 sons_astrub.py <banques .bank> <dossier fsb5> <racine du dépôt>` ajoute la musique d'Astrub, ses ambiances et les sons des nouveaux monstres à `src/data/sons.json`.
+- Donjons d'Astrub (Grange, Château Ensablé, Cour du Bouftou Royal) : salles = `dungeons.mapIds`, exportées à part (`PARTAGE` désactivé, atlas par salle)
+  avec deux cartes factices aux coins du monde (même origine, même largeur), puis ajoutées à `monde.json` (cartes, lignes de `mov`, `grid.rows`).
+  Entrée = case de la porte officielle dehors (arche 63634 de la Grange, porte 42274 de la Cour) ; de salle en salle : case marchable la plus haute
+  vers la plus basse de la suivante, verrouillée tant que la salle n'est pas vidée. Monstres = ceux de la sous-zone du donjon, boss dans la dernière salle.
