@@ -21,6 +21,7 @@ export class WorldView {
   private readonly slots = new Map<string, Slot>();
   sky?: Phaser.GameObjects.Image;
   private center = '';
+  private viewT = 0;
   /** Bouts de portes (sim/world.ts) : un repère doré au sol est posé sur chacun quand sa carte est chargée. */
   portes: { tag: string; x: number; y: number }[] = [];
   /** Cartes en téléchargement, et textures prêtes à envoyer à la carte graphique (une par image, voir fetchMap). */
@@ -66,25 +67,35 @@ export class WorldView {
 
   isReady(tag: string | undefined) { return !!tag && this.slots.get(tag)?.state === 'ready'; }
 
-  /** Chaque image : ciel qui suit la caméra ; quand le joueur change de carte, charge / décharge autour de lui. */
+  /** Chaque image : ciel qui suit la caméra ; charge les cartes autour du joueur ET celles que la caméra voit (dézoom),
+   *  décharge celles qui sont loin des deux. Vérifié quand le joueur change de carte, et 4 fois par seconde pour le zoom. */
   update(px: number, py: number) {
     this.drawSky();
     this.upload();
     this.pump();
     this.animate(this.scene.time.now / 1000);
-    const here = this.wg.mapAt(px, py);
-    if (!here || here.tag === this.center) return;
-    this.center = here.tag;
-    // intérieur : pas de ciel, fond noir comme dans Dofus
-    this.sky?.setVisible(!here.inside);
-    this.scene.cameras.main.setBackgroundColor(here.inside ? '#000000' : '#0d2b36');
+    const here = this.wg.mapAt(px, py), now = this.scene.time.now;
+    if (!here || (here.tag === this.center && now - this.viewT < 250)) return;
+    this.viewT = now;
+    if (here.tag !== this.center) {
+      this.center = here.tag;
+      // intérieur : pas de ciel, fond noir comme dans Dofus
+      this.sky?.setVisible(!here.inside);
+      this.scene.cameras.main.setBackgroundColor(here.inside ? '#000000' : '#0d2b36');
+    }
+    const v = this.scene.cameras.main.worldView, S = GridMap.S;
+    const seen = (m: WorldMapEntry, marge: number) => {
+      if (!!m.inside !== !!here.inside) return false;   // dehors on ne voit pas les intérieurs (et inversement)
+      const a = this.wg.toScreen(m.sol.x, m.sol.y);
+      return a.x < v.right + marge && a.x + m.sol.w * S > v.x - marge && a.y < v.bottom + marge && a.y + m.sol.h * S > v.y - marge;
+    };
     for (const m of this.wg.world.maps) {
       const d = ring(m, here.x, here.y), s = this.slots.get(m.tag)!;
-      if (d <= LOAD_RING && s.state === 'none') {
+      if ((d <= LOAD_RING || seen(m, 400)) && s.state === 'none') {
         s.state = 'loading';
         if (this.texturesReady(m)) this.build(m);
         else this.fetchMap(m);
-      } else if (d > UNLOAD_RING && s.state !== 'none') this.unload(m);   // 'loading' : la carte arrivera pour rien, build() la jette
+      } else if (d > UNLOAD_RING && !seen(m, 1200) && s.state !== 'none') this.unload(m);   // 'loading' : la carte arrivera pour rien, build() la jette
     }
   }
 

@@ -76,7 +76,7 @@ export class World {
   /** Bout de porte par lequel le joueur vient d'arriver : inactif tant qu'il ne s'en est pas éloigné. */
   private portalLock: PorteEnd | null = null;
   /** Distance (|dx| + |dy|) au-delà de laquelle un monstre qui attend ne bouge plus. */
-  static readonly SOMMEIL = 1400;
+  static readonly SOMMEIL = 2400;   // au-delà de ce qu'on voit même dézoomé à fond (avant : monstres figés au bord de l'écran)
 
   constructor(readonly opts: WorldOptions) {
     this.rng = new Rng(opts.seed ?? 1);
