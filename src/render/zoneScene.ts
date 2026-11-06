@@ -392,7 +392,7 @@ export class ZoneScene extends Phaser.Scene {
         }
         case 'checkpoint': this.hud.banner(`Point de retour\n${e.name}`, 1400); break;
         case 'respawn': this.hud.banner('De retour !', 900); break;
-        case 'enterArea': this.hud.banner(`${e.name}\nNiveau ${e.level}`, 1600); break;
+        case 'enterArea': this.hud.zoneBanner(e.name, this.world.zone.name, e.level, decouvrir(e.name)); break;
         case 'portal': this.cameras.main.fadeIn(450, 0, 0, 0); this.snapCam = true; break;   // fondu au noir, la caméra saute avec le joueur
       }
     }
@@ -503,4 +503,14 @@ export class ZoneScene extends Phaser.Scene {
     this.drawDrops();
     this.hud.draw(this.fx.juice, this.game.loop.delta / 1000);
   }
+}
+
+/** Sous-zones déjà vues (bandeau 2C : grand la première fois, petit ensuite), gardées dans le navigateur. Affichage seulement. */
+function decouvrir(nom: string): boolean {
+  try {
+    const k = 'diablofus.zones', vues: string[] = JSON.parse(localStorage.getItem(k) ?? '[]');
+    if (vues.includes(nom)) return false;
+    localStorage.setItem(k, JSON.stringify([...vues, nom]));
+  } catch { /* navigateur sans stockage : toujours le grand bandeau */ }
+  return true;
 }
