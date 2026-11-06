@@ -15,6 +15,8 @@ export interface EtatJoueur {
   retour: { name: string; x: number; y: number };
   /** Quêtes du perso (à redonner au World : opts.reprise). */
   quetes?: EtatQuetes;
+  /** Zone où se trouve le perso (absente : Incarnam, sauvegardes d'avant Astrub). */
+  zone?: string;
 }
 
 const copie = <T>(o: T): T => JSON.parse(JSON.stringify(o)) as T;
@@ -25,7 +27,7 @@ export function exporterJoueur(w: World): EtatJoueur {
     level: p.level, xp: p.xp, points: p.points, kamas: p.kamas, potions: p.potions, lootFilter: p.lootFilter,
     base: p.base, bag: p.bag, equipment: p.equipment, resources: p.resources, metiers: p.metiers,
     bar: p.bar, variants: p.variants, learned: [...p.learned],
-    x: p.x, y: p.y, retour: w.pointDeRetour, quetes: w.quetes?.exporter(),
+    x: p.x, y: p.y, retour: w.pointDeRetour, quetes: w.quetes?.exporter(), zone: w.opts.zone,
   });
 }
 
@@ -44,6 +46,8 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
   if (s.bar?.length === p.bar.length) p.bar = s.bar.map(k => (k && p.cls.spells[k] ? k : null));
   p.recompute(); p.hp = p.maxHp;
   p.learnSpells(null);
+  // position et point de retour : seulement dans la même zone, et pas à l'arrivée par un portail (le World y a posé le perso)
+  if ((s.zone ?? 'incarnam') !== w.opts.zone || w.opts.arrivee) return;
   if (s.retour) w.setPointDeRetour(s.retour.name, s.retour.x, s.retour.y);
   // départ : là où l'on s'était arrêté, sinon au point de retour
   const r = w.pointDeRetour, ok = w.map.walkable(s.x, s.y);

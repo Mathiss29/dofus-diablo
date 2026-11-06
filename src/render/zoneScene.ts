@@ -15,12 +15,13 @@ import { EntityView } from './entityView';
 import { SpellFx } from './spellFx';
 import { FX } from './fx';
 import { Hud } from './hud';
-import { LOOKS } from './looks';
+import { LOOKS, type Look } from './looks';
 import { drawMap } from './mapView';
 import { WorldView } from './worldView';
 import { Particules, type SysData } from './particles';
 import { ambiance, chargerReglages, matriceSaturation, sauverReglages, type Reglages } from './ambiance';
 import { ICON_SHEET, iconFrame } from './icons';
+import { CarteMonde } from './carteMonde';
 import { Windows } from './windows';
 import { Chargement } from './chargement';
 import { spellTipHtml } from './spellTip';
@@ -68,6 +69,8 @@ export class ZoneScene extends Phaser.Scene {
   private potion = false;
   private hitstop = 0;
   private windows: Windows | null = null;
+  /** Carte du monde (touche M, 0.2 18A). */
+  private carte: CarteMonde | null = null;
   /** Butin au sol : icône + nom de l'objet, couleur de sa rareté. */
   private dropViews = new Map<number, { icon: Phaser.GameObjects.Image; label?: Phaser.GameObjects.Text; glow: Phaser.GameObjects.Ellipse; beam?: Phaser.GameObjects.Image; core?: Phaser.GameObjects.Image }>();
   /** Objet au sol cliqué (à ramasser). */
@@ -100,14 +103,21 @@ export class ZoneScene extends Phaser.Scene {
 
   constructor() { super('zone'); }
 
-  init(data: { zone?: string; classe?: string; slot?: number; vitrine?: boolean }) {
+  /** Arrivée par un portail d'une autre zone (Incarnam <-> Astrub). */
+  private arrivee?: [string, number];
+  init(data: { zone?: string; classe?: string; slot?: number; vitrine?: boolean; arrivee?: [string, number] }) {
     this.vitrine = !!data?.vitrine; this.vitrineT = 0; this.sauveT = 0; this.mortDefinitive = false;
     this.slot = data?.slot ?? -1;
     this.perso = this.slot >= 0 ? lirePersos()[this.slot] : null;
     this.classId = this.perso?.classe ?? data?.classe ?? (location.hash.includes('cra') ? 'cra' : 'iop');
     // #astrub dans l'adresse : l'ancienne zone à vagues des Champs d'Astrub
+    // #astrub2 : Astrub en monde ouvert, sans perso (mode dév) ; un perso reprend dans sa zone
+    this.arrivee = data?.arrivee;
     if (data?.zone) this.zoneId = data.zone;
+    else if (this.perso?.etat?.zone && GAME_DATA.zones[this.perso.etat.zone]) this.zoneId = this.perso.etat.zone;
     else if (location.hash === '#astrub') this.zoneId = 'champs-astrub';
+    else if (location.hash.includes('astrub2')) this.zoneId = 'astrub';
+    else this.zoneId = 'incarnam';
     this.views = new Map(); this.dropViews = new Map(); this.worldView = null; this.questView = null; this.dialogueView = null; this.talkClick = null; this.pressed = null; this.aimId = null; this.aimKey = null; this.hoverId = null; this.potion = false; this.hitstop = 0; this.acc = 0;
   }
 
@@ -137,7 +147,9 @@ export class ZoneScene extends Phaser.Scene {
     // Effets officiels des sorts : ceux de la classe et des monstres de la zone
     SpellFx.preload(this, [...Object.keys(GAME_DATA.classes[this.classId].spells),
       ...[...types].flatMap(t => (GAME_DATA.monsters[t].spells ?? []).map(s => `m${s.id}`))]);
-    const looks = [this.look, ...[...types].map(t => LOOKS[GAME_DATA.monsters[t].look])];
+    // monde ouvert : les planches des monstres arrivent à la demande (planche()), quand un monstre est près de l'écran
+    // (Astrub : 38 monstres, 70 Mo de planches) ; les zones à vagues les chargent toutes d'avance
+    const looks = [this.look, ...(zone.open ? [] : [...types].map(t => LOOKS[GAME_DATA.monsters[t].look]))];
     const seen = new Set<string>();
     for (const L of looks) {
       const a = L.atlas;
@@ -182,6 +194,7 @@ export class ZoneScene extends Phaser.Scene {
       const wg = new WorldGrid(this.cache.json.get(WorldView.key(open.world, 'monde')) as WorldData);
       this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, compte: chargerCompte(), 
         // vitrine : les PNJ sont là, mais aucune quête ne démarre
+        arrivee: this.arrivee,
         reprise: this.vitrine ? { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} } : this.perso?.etat?.quetes });
       this.cameras.main.setBackgroundColor('#0d2b36');   // sous le ciel, au cas où il manque
       this.worldView = new WorldView(this, wg, worldDir(open.world), open.world);
@@ -218,7 +231,9 @@ export class ZoneScene extends Phaser.Scene {
     this.windows.onReglages = r => { this.zoom = Phaser.Math.Clamp(r.zoom, ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]); this.updateAmbiance(true); this.appliquerSon(); };
     this.windows.juice = { get: () => this.fx.juice, set: on => { this.fx.juice = on; } };
     this.windows.heureNom = () => ambiance(this.reglages, new Date(), !!this.world.worldGrid?.mapAt(this.world.player.x, this.world.player.y)?.inside).nom;
-    this.events.once('shutdown', () => { this.windows?.destroy(); this.windows = null; });
+    this.carte?.destroy();
+    this.carte = zone.open ? new CarteMonde(this.world, v(`${worldDir(zone.open.world)}/carte.webp`), `${ASSETS}/ui/reperes`) : null;
+    this.events.once('shutdown', () => { this.windows?.destroy(); this.windows = null; this.carte?.destroy(); this.carte = null; });
     this.hud.onSlotHover = (id, x, y) => {
       this.hoverId = id;
       if (!id) { this.windows?.hideTip(); return; }
@@ -233,6 +248,7 @@ export class ZoneScene extends Phaser.Scene {
       else if (name === 'Sorts') this.windows!.toggle('sorts');
       else if (name === 'Quêtes' && this.world.quetes) this.windows!.toggle('quetes');
       else if (name === 'Succès' && this.world.quetes) this.windows!.toggle('succes');
+      else if (name === 'Carte du monde') this.basculerCarte();
       else this.hud.toast(`${name} : arrive dans une prochaine version`);
     };
     this.hud.onPasser = id => this.world.quetes?.passer(id);
@@ -316,7 +332,7 @@ export class ZoneScene extends Phaser.Scene {
     // Ctrl+M : couper ou remettre tout le son ; M seul est gardé pour la carte du monde, comme dans Dofus (maquette 0.2, 18A)
     this.keys.M.on('down', (_k: Phaser.Input.Keyboard.Key, e: KeyboardEvent) => {
       if (e?.ctrlKey || e?.metaKey) { e.preventDefault(); this.basculerMuet(); }
-      else this.hud.toast('Carte du monde : elle arrive avec Astrub (0.2a). Ctrl+M coupe le son.');
+      else this.basculerCarte();
     });
     // I ou C : fenêtre Personnage (inventaire + caractéristiques) ; le jeu continue derrière
     this.keys.I.on('down', () => this.windows?.toggle('inv'));
@@ -324,7 +340,7 @@ export class ZoneScene extends Phaser.Scene {
     this.keys.J.on('down', () => this.windows?.toggle('job'));   // Métiers (choix 6A : Chasseur)
     this.keys.O.on('down', () => this.windows?.toggle('opt'));
     this.keys.S.on('down', () => this.windows?.toggle('sorts'));   // Sorts (choix 8A, touche S)   // Réglages (choix 10A + 10B)
-    this.keys.ESC.on('down', () => { if (this.dialogueView?.ouvert) { this.dialogueView.touche(-1); return; } this.dialogueView?.fermerMenu(); this.aimId = null; this.aimKey = null; this.windows?.close(); });
+    this.keys.ESC.on('down', () => { if (this.dialogueView?.ouvert) { this.dialogueView.touche(-1); return; } this.dialogueView?.fermerMenu(); this.aimId = null; this.aimKey = null; this.windows?.close(); this.carte?.fermer(); });
     // K : changer de classe, seulement sans perso (mode dév #cra / #jeu) ; sinon la classe se choisit à la création
     if (!this.perso) this.keys.K.on('down', () => this.scene.restart({ zone: this.zoneId, classe: this.classId === 'iop' ? 'cra' : 'iop' }));
     this.keys.ENTER.on('down', () => {
@@ -382,6 +398,11 @@ export class ZoneScene extends Phaser.Scene {
     const r = this.reglages;
     Son.volumes({ general: r.volume, musique: r.volMusique, effets: r.volEffets, ambiance: r.volAmbiance, interface: r.volInterface, muet: r.muet });
     this.hud.muet = r.muet;
+  }
+  /** M : carte du monde (0.2 18A). */
+  private basculerCarte() {
+    if (this.carte?.dispo) { this.windows?.close(); this.carte.basculer(); }
+    else this.hud.toast('Pas de carte du monde ici');
   }
   private basculerMuet() {
     this.reglages.muet = !this.reglages.muet; sauverReglages(this.reglages); this.appliquerSon();
@@ -467,6 +488,7 @@ export class ZoneScene extends Phaser.Scene {
   update(_: number, deltaMs: number) {
     const dt = Math.min(deltaMs / 1000, 0.1);
     this.fx.update(dt);
+    this.carte?.update();
     if (this.vitrine) this.updateVitrine(dt);
     else if (this.perso) {
       this.perso.temps += dt;
@@ -558,6 +580,8 @@ export class ZoneScene extends Phaser.Scene {
           this.hud.succes(s.nom, s.points); sauverCompte(this.world); this.windows?.refresh(); break;
         }
         case 'portalStart': this.baisserRideau(); break;   // fondu de sortie (0,2 s), le perso attend devant la porte
+        // portail vers une autre zone : on sauve le perso puis la partie repart là-bas (même emplacement)
+        case 'changeZone': this.sauver(); this.scene.restart({ slot: this.slot, zone: e.zone, arrivee: e.arrivee }); return;
         case 'portal': this.attendreCartes(); this.snapCam = true; break;   // noir, la caméra saute avec le joueur
       }
     }
@@ -647,6 +671,20 @@ export class ZoneScene extends Phaser.Scene {
     for (const [uid, v] of this.dropViews) if (!seen.has(uid)) { v.icon.destroy(); v.label?.destroy(); v.glow.destroy(); v.beam?.destroy(); v.core?.destroy(); this.dropViews.delete(uid); }
   }
 
+  /** Planche d'un monstre prête ? Sinon on la demande (une fois) et le monstre apparaît dès qu'elle est arrivée. */
+  private planche(L: Look): boolean {
+    const a = L.atlas;
+    if (this.textures.exists(a)) return true;
+    if (!this.demandees.has(a)) {
+      this.demandees.add(a);
+      if (L.multi) this.load.multiatlas(a, v(`${ASSETS}/sprites/${a}.json`), `${ASSETS}/sprites/`);
+      else this.load.atlas(a, v(`${ASSETS}/sprites/${a}.webp`), v(`${ASSETS}/sprites/${a}.json`));
+      this.load.once(`filecomplete-${L.multi ? 'multiatlas' : 'atlasjson'}-${a}`, () => this.time.delayedCall(0, () => this.demandees.delete(a)));
+      if (!this.load.isLoading()) this.load.start();
+    }
+    return false;
+  }
+  private demandees = new Set<string>();
   private viewOf(e: Entity): EntityView {
     let v = this.views.get(e.id);
     if (!v) {
@@ -740,6 +778,7 @@ export class ZoneScene extends Phaser.Scene {
         const s = ISO.toScreen(e.x, e.y), r = cam.worldView;
         if (s.x < r.x - 250 || s.x > r.right + 250 || s.y < r.y - 150 || s.y > r.bottom + 350) { this.views.get(e.id)?.hide(); continue; }
       }
+      if (e !== w.player && !this.planche(LOOKS[GAME_DATA.monsters[(e as { type?: string }).type!].look])) { alive.delete(e.id); continue; }
       this.viewOf(e).sync(e);
     }
     for (const [id, v] of this.views) if (!alive.has(id)) { v.destroy(); this.views.delete(id); }

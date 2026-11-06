@@ -57,6 +57,8 @@ export type SimEvent =
   | { k: 'portalStart'; nom: string }
   /** Le joueur arrive ailleurs d'un coup (porte, fin de quête) : le rendu garde le noir jusqu'à ce que les cartes soient posées. */
   | { k: 'portal'; nom: string }
+  /** Portail vers une autre zone : l'affichage sauve le perso et relance la partie là-bas (case b de la porte). */
+  | { k: 'changeZone'; zone: string; arrivee: [string, number]; nom: string }
   /** Le joueur lance un sort ou son attaque (objectifs « utiliser »). */
   | { k: 'cast'; id: string }
   /** Quêtes : prise, étape suivante, fin (sautee = passée) ; bulle d'un PNJ ; objet de quête ramassé ; succès obtenu. */

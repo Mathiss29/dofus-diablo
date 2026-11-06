@@ -8,7 +8,8 @@ export interface DecorPlace { f: string; x: number; y: number; c: number; o: num
   /** lumière du soleil (reflet, rayon) : s'éteint la nuit */ j?: number;
   /** souplesse au vent (0 à 1) */ w?: number;
   /** eau qui glisse : direction x, y, amplitude (px), fréquence */ t?: [number, number, number, number];
-  /** couleur qui va et vient : 0xRRGGBB, alpha, fréquence */ ca?: [number, number, number] }
+  /** couleur qui va et vient : 0xRRGGBB, alpha, fréquence */ ca?: [number, number, number];
+  /** décor partagé : numéro de la page d'atlas commune (decor_p<N>) */ p?: number }
 
 /** Données d'une carte Dofus 3 exportée par tools/extraction/map_export.py. */
 export interface MapData {
@@ -30,9 +31,15 @@ export interface WorldMapEntry {
   inside?: number;
   /** Intérieur à ciel ouvert (Temple Céleste) : le ciel reste derrière. */
   ciel?: number;
+  /** Décor partagé entre cartes (world_export.py PARTAGE=1) : pages d'atlas communes utilisées par cette carte. */
+  pages?: number[];
 }
 /** Plusieurs cartes Dofus voisines collées bord à bord en une seule grande grille. */
-export interface WorldData extends MapData { origin: [number, number]; maps: WorldMapEntry[]; /** Ciel commun posé derrière tout le monde. */ sky?: string }
+export interface WorldData extends MapData { origin: [number, number]; maps: WorldMapEntry[]; /** Ciel commun posé derrière tout le monde. */ sky?: string;
+  /** Carte du monde (touche M) : carte.webp, coin haut-gauche (repère des sols) et échelle (tools/extraction/carte_monde.py). */
+  carte?: { x: number; y: number; k: number };
+  /** Points d'intérêt officiels (table hints) : carte, nom, icône, catégorie (tools/extraction/reperes.py). */
+  reperes?: { t: string; n: string; g: number; c: number }[] }
 
 /** Taille d'une carte Dofus en cases. */
 export const MAP_COLS = 14, MAP_ROWS = 40;

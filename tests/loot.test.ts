@@ -98,7 +98,7 @@ describe('équipement et caractéristiques', () => {
 describe('butin au sol', () => {
   it('un boss lâche toujours un équipement : Communs et kamas aspirés, le reste ramassé d\'un clic', () => {
     const w = arena(5), p = w.player;
-    const m = w.spawnMonster('epouvanteur', p.x + 40, p.y);
+    const m = w.spawnMonster('royal', p.x + 40, p.y);
     m.hp = 1; m.state = 'chase';
     w.step(STEP, { ...NO_INPUT, aim: { x: m.x, y: m.y }, pressed: 'attaque' });
     for (let i = 0; i < 20; i++) w.step(STEP, NO_INPUT);

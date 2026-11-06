@@ -65,7 +65,7 @@ export class WorldView {
   private static queue(scene: Phaser.Scene, m: WorldMapEntry, dir: string, prefix: string) {
     scene.load.image(WorldView.key(prefix, `sol_${m.tag}`), v(`${dir}/sol_${m.tag}.webp`));
     for (const c of CALQUES) if (m[c]) scene.load.image(WorldView.key(prefix, `${c}_${m.tag}`), v(`${dir}/${c}_${m.tag}.webp`));
-    scene.load.atlas(WorldView.key(prefix, `decor_${m.tag}`), v(`${dir}/decor_${m.tag}.webp`), v(`${dir}/decor_${m.tag}.json`));
+    for (const d of decors(m)) if (!scene.textures.exists(WorldView.key(prefix, d))) scene.load.atlas(WorldView.key(prefix, d), v(`${dir}/${d}.webp`), v(`${dir}/${d}.json`));
   }
 
   /** Après preload : pose le ciel et les cartes déjà chargées. */
@@ -122,16 +122,18 @@ export class WorldView {
     const tex = this.scene.textures;
     const bmp = (n: string) => this.blob(n).then(b => createImageBitmap(b, { premultiplyAlpha: 'premultiply' }));
     const image = (n: string) => bmp(`${n}.webp`).then(b => () => { if (!tex.exists(this.k(n))) tex.addImage(this.k(n), b as unknown as HTMLImageElement); });
+    const atlas = (d: string) => Promise.all([bmp(`${d}.webp`), this.blob(`${d}.json`).then(b => b.text()).then(t => JSON.parse(t))])
+      .then(([b, j]) => () => { if (!tex.exists(this.k(d))) tex.addAtlas(this.k(d), b as unknown as HTMLImageElement, j); });
+    // pages communes déjà envoyées à la carte graphique (une voisine les utilise) : pas besoin de les refaire
     const jobs = [image(`sol_${m.tag}`), ...CALQUES.filter(c => m[c]).map(c => image(`${c}_${m.tag}`)),
-      Promise.all([bmp(`decor_${m.tag}.webp`), this.blob(`decor_${m.tag}.json`).then(b => b.text()).then(t => JSON.parse(t))])
-        .then(([b, j]) => () => { if (!tex.exists(this.k(`decor_${m.tag}`))) tex.addAtlas(this.k(`decor_${m.tag}`), b as unknown as HTMLImageElement, j); })];
+      ...decors(m).filter(d => !tex.exists(this.k(d))).map(atlas)];
     Promise.all(jobs).then(adds => { for (const add of adds) this.uploads.push({ m, add }); })
       .catch(e => console.warn('Carte non chargée', m.tag, e))
       .finally(() => this.fetching.delete(m.tag));
   }
   /** Fichiers d'une carte (tools/extraction/world_export.py). */
   private fichiers(m: WorldMapEntry) {
-    return [`sol_${m.tag}.webp`, ...CALQUES.filter(c => m[c]).map(c => `${c}_${m.tag}.webp`), `decor_${m.tag}.webp`, `decor_${m.tag}.json`];
+    return [`sol_${m.tag}.webp`, ...CALQUES.filter(c => m[c]).map(c => `${c}_${m.tag}.webp`), ...decors(m).flatMap(d => [`${d}.webp`, `${d}.json`])];
   }
   /** Télécharge un fichier une seule fois (préchargé ou demandé par la carte) ; un échec sera retenté. */
   private blob(n: string) {
@@ -192,12 +194,21 @@ export class WorldView {
     if (this.texturesReady(u.m)) this.build(u.m);
   }
   private texturesReady(m: WorldMapEntry) {
-    return this.scene.textures.exists(this.k(`sol_${m.tag}`)) && this.scene.textures.exists(this.k(`decor_${m.tag}`))
+    return this.scene.textures.exists(this.k(`sol_${m.tag}`)) && decors(m).every(d => this.scene.textures.exists(this.k(d)))
       && CALQUES.every(c => !m[c] || this.scene.textures.exists(this.k(`${c}_${m.tag}`)));
   }
   private onFile(key: string) {
+    const page = key.match(new RegExp(`^${this.prefix}_decor_p(\\d+)$`));
+    if (page) {   // page commune : toutes les cartes qui l'attendaient
+      for (const m of this.wg.world.maps) if (m.pages?.includes(+page[1])) this.onMap(m);
+      return;
+    }
     const tag = key.replace(new RegExp(`^${this.prefix}_(sol|fond|bord|decor)_`), '');
-    const m = this.wg.world.maps.find(x => x.tag === tag), s = m && this.slots.get(tag);
+    const m = this.wg.world.maps.find(x => x.tag === tag);
+    if (m) this.onMap(m);
+  }
+  private onMap(m: WorldMapEntry) {
+    const s = this.slots.get(m.tag);
     // le chargeur prévient quand le fichier est lu ; la texture arrive juste après : on attend une image
     if (!m || !s) return;
     this.scene.time.delayedCall(0, () => {
@@ -242,7 +253,7 @@ export class WorldView {
         if (performance.now() - t0 > budget) return;
         const p = m.decor[s.next++];
         // profondeur = bas de la case dans la grande grille : on passe derrière un arbre même s'il est sur la carte voisine
-        const sp = wg.toScreen(p.x, p.y), im = this.scene.add.image(sp.x, sp.y, this.k(`decor_${m.tag}`), p.f).setScale(S * (p.z ?? 1));
+        const sp = wg.toScreen(p.x, p.y), im = this.scene.add.image(sp.x, sp.y, this.k(p.p !== undefined ? `decor_p${p.p}` : `decor_${m.tag}`), p.f).setScale(S * (p.z ?? 1));
         if (p.c < 0) im.setDepth(-9990 + p.o * 0.01);   // lumière posée sur le sol : au-dessus du sol, sous le décor
         else { const cc = wg.cellCenter(p.c), cs = wg.toScreen(cc.x, cc.y + h / 2); im.setDepth(cs.y + p.o * 0.01); }
         if (p.b) this.light(im, p);
@@ -304,8 +315,11 @@ export class WorldView {
     this.dropTextures(m);
   }
   private dropTextures(m: WorldMapEntry) {
-    for (const n of [`sol_${m.tag}`, `decor_${m.tag}`, ...CALQUES.map(c => `${c}_${m.tag}`)]) if (this.scene.textures.exists(this.k(n))) this.scene.textures.remove(this.k(n));
-    this.scene.cache.json.remove(this.k(`decor_${m.tag}`));
+    // une page commune reste tant qu'une autre carte affichée ou en chargement s'en sert
+    const enUsage = (d: string) => this.wg.world.maps.some(o => o !== m && this.slots.get(o.tag)!.state !== 'none' && decors(o).includes(d));
+    const decor = decors(m).filter(d => !enUsage(d));
+    for (const n of [`sol_${m.tag}`, ...decor, ...CALQUES.map(c => `${c}_${m.tag}`)]) if (this.scene.textures.exists(this.k(n))) this.scene.textures.remove(this.k(n));
+    for (const d of decor) this.scene.cache.json.remove(this.k(d));
   }
 
   /** Ciel : couvre l'écran avec 20 % de marge et glisse de cette marge d'un bout à l'autre du monde. */
@@ -325,6 +339,8 @@ export class WorldView {
 }
 
 /** Distance en cartes (anneau) entre une carte et (x, y). */
+/** Atlas de décor d'une carte : le sien, ou les pages communes du décor partagé (world_export.py PARTAGE=1). */
+function decors(m: WorldMapEntry) { return m.pages ? m.pages.map(p => `decor_p${p}`) : [`decor_${m.tag}`]; }
 function ring(m: { x: number; y: number }, x: number, y: number) { return Math.max(Math.abs(m.x - x), Math.abs(m.y - y)); }
 
 /** Produit de deux teintes 0xRRGGBB, et mélange de a vers b (f de 0 à 1). */

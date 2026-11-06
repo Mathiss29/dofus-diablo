@@ -15,7 +15,11 @@
   "combat_intro": "musique/combat_intro.mp3",
   "combat_centrale": "musique/combat_centrale.mp3",
   "combat_victoire": "musique/combat_victoire.mp3",
-  "combat_defaite": "musique/combat_defaite.mp3"
+  "combat_defaite": "musique/combat_defaite.mp3",
+  "astrub": {
+   "calme": "musique/astrub_calme.mp3",
+   "renfort": "musique/astrub_renfort.mp3"
+  }
  },
  "ambiances": {
   "incarnam_vent": "ambiance/incarnam_vent.mp3",
@@ -26,7 +30,9 @@
   "zaap": "ambiance/zaap.mp3",
   "feu": "ambiance/feu.mp3",
   "cascade": "ambiance/cascade.mp3",
-  "courant": "ambiance/courant.mp3"
+  "courant": "ambiance/courant.mp3",
+  "astrub_oiseaux": "ambiance/astrub_oiseaux.mp3",
+  "astrub_vent": "ambiance/astrub_vent.mp3"
  },
  "ui": {
   "niveau": "ui/16062_Int_Level_Up.mp3",
@@ -918,6 +924,1257 @@
    "mort": [
     "monstres/1410507_Voix_Souris_Mort.mp3",
     "monstres/3101537201_MonstresDesEgouts_RatBasher_AnimMort_01.mp3"
+   ]
+  },
+  "boufton": {
+   "attaque": [
+    "monstres/3001355001_MonstresDesCavernes_Boufcoul_AnimAttaque0.mp3",
+    "monstres/3001570001_Bouftou_BouftonBlanc_AnimAttaque1.mp3"
+   ],
+   "hit": [
+    "monstres/1412108_Voix_Boufton_Hit.mp3",
+    "monstres/1412109_Voix_Boufton_Hit.mp3",
+    "monstres/1412110_Voix_Boufton_Hit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1412111_Voix_Boufton_Mort.mp3",
+    "monstres/3101355201_MonstresDesCavernes_Boufcoul_AnimMort_01.mp3"
+   ]
+  },
+  "royal": {
+   "attaque": [
+    "monstres/1412112_Voix_ChefDeGuerreBouftou_Attaque1.mp3",
+    "monstres/1412113_Voix_ChefDeGuerreBouftou_Attaque1.mp3",
+    "monstres/1412114_Voix_ChefDeGuerreBouftou_Attaque1.mp3",
+    "monstres/3001574001_Bouftou_BouftouRoyal_AnimAttaque0.mp3",
+    "monstres/3001574002_Bouftou_BouftouRoyal_AnimAttaque1.mp3",
+    "monstres/3001574003_Bouftou_BouftouRoyal_AnimAttaque2.mp3"
+   ],
+   "hit": [
+    "monstres/1412115_Voix_ChefDeGuerreBouftou_Hit.mp3",
+    "monstres/1412116_Voix_ChefDeGuerreBouftou_Hit.mp3",
+    "monstres/1412117_Voix_ChefDeGuerreBouftou_Hit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1412118_Voix_ChefDeGuerreBouftou_Mort.mp3",
+    "monstres/3101573201_Bouftou_ChefDeGuerreBouftou_AnimMort_01.mp3"
+   ]
+  },
+  "pissenlit": {
+   "attaque": [
+    "monstres/1402232_PissenlitDiabolique_AnimAttaque0.mp3",
+    "monstres/1402233_PissenlitDiabolique_AnimAttaque0.mp3",
+    "monstres/1402234_PissenlitDiabolique_AnimAttaque0.mp3",
+    "monstres/1402235_PissenlitDiabolique_AnimAttaque1.mp3",
+    "monstres/1402236_PissenlitDiabolique_AnimAttaque1.mp3",
+    "monstres/1402237_PissenlitDiabolique_AnimAttaque1.mp3",
+    "monstres/3002298001_PissenlitDiabolique_AnimAttaque0.mp3",
+    "monstres/3002298002_PissenlitDiabolique_AnimAttaque1.mp3",
+    "monstres/3002298003_PissenlitDiabolique_AnimAttaque2.mp3",
+    "monstres/3002298705_PissenlitDiabolique_AnimAttaque4.mp3",
+    "monstres/3002298706_PissenlitDiabolique_AnimAttaque5.mp3"
+   ],
+   "hit": [
+    "monstres/1402226_PissenlitDiabolique_AnimHit.mp3",
+    "monstres/1402227_PissenlitDiabolique_AnimHit.mp3",
+    "monstres/1402228_PissenlitDiabolique_AnimHit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1402229_PissenlitDiabolique_AnimMort.mp3",
+    "monstres/1402230_PissenlitDiabolique_AnimMort.mp3",
+    "monstres/1402231_PissenlitDiabolique_AnimMort.mp3",
+    "monstres/3100000302_Gen_Mort_Explosion.mp3",
+    "monstres/3100000303_Gen_Mort_Explosion.mp3",
+    "monstres/3100000304_Gen_Mort_Explosion.mp3",
+    "monstres/3100000305_Gen_Mort_Explosion.mp3"
+   ]
+  },
+  "rose": {
+   "attaque": [
+    "monstres/1402238_RoseDemoniaque_AnimAttaque0.mp3",
+    "monstres/1402239_RoseDemoniaque_AnimAttaque0.mp3",
+    "monstres/1402240_RoseDemoniaque_AnimAttaque0.mp3",
+    "monstres/1402241_RoseDemoniaque_AnimAttaque1.mp3",
+    "monstres/1402242_RoseDemoniaque_AnimAttaque1.mp3",
+    "monstres/1402243_RoseDemoniaque_AnimAttaque1.mp3",
+    "monstres/3002299001_RoseDemoniaque_AnimAttaque0.mp3",
+    "monstres/3002299002_RoseDemoniaque_AnimAttaque1.mp3",
+    "monstres/3002299703_RoseDemoniaque_AnimAttaque3.mp3",
+    "monstres/3002299704_RoseDemoniaque_AnimAttaque4.mp3"
+   ],
+   "hit": [
+    "monstres/1402244_RoseDemoniaque_AnimHit.mp3",
+    "monstres/1402245_RoseDemoniaque_AnimHit.mp3",
+    "monstres/1402246_RoseDemoniaque_AnimHit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1402247_RoseDemoniaque_AnimMort.mp3",
+    "monstres/1402248_RoseDemoniaque_AnimMort.mp3",
+    "monstres/1402249_RoseDemoniaque_AnimMort.mp3",
+    "monstres/3100000302_Gen_Mort_Explosion.mp3",
+    "monstres/3100000303_Gen_Mort_Explosion.mp3",
+    "monstres/3100000304_Gen_Mort_Explosion.mp3",
+    "monstres/3100000305_Gen_Mort_Explosion.mp3"
+   ]
+  },
+  "tournesol": {
+   "attaque": [
+    "monstres/1402250_TournesolSauvage_AnimAttaque0.mp3",
+    "monstres/1402251_TournesolSauvage_AnimAttaque0.mp3",
+    "monstres/1402252_TournesolSauvage_AnimAttaque0.mp3",
+    "monstres/1402253_TournesolSauvage_AnimAttaque1.mp3",
+    "monstres/1402254_TournesolSauvage_AnimAttaque1.mp3",
+    "monstres/1402255_TournesolSauvage_AnimAttaque1.mp3",
+    "monstres/3002303001_TournesolSauvage_AnimAttaque0.mp3",
+    "monstres/3002303002_TournesolSauvage_AnimAttaque1.mp3",
+    "monstres/3002303703_TournesolSauvage_AnimAttaque2.mp3",
+    "monstres/3002303704_TournesolSauvage_AnimAttaque3.mp3"
+   ],
+   "hit": [
+    "monstres/1402262_TournesolSauvage_AnimHit.mp3",
+    "monstres/1402263_TournesolSauvage_AnimHit.mp3",
+    "monstres/1402264_TournesolSauvage_AnimHit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1402265_TournesolSauvage_AnimMort.mp3",
+    "monstres/1402266_TournesolSauvage_AnimMort.mp3",
+    "monstres/1402267_TournesolSauvage_AnimMort.mp3",
+    "monstres/3100000302_Gen_Mort_Explosion.mp3",
+    "monstres/3100000303_Gen_Mort_Explosion.mp3",
+    "monstres/3100000304_Gen_Mort_Explosion.mp3",
+    "monstres/3100000305_Gen_Mort_Explosion.mp3"
+   ]
+  },
+  "epouvanteur": {
+   "attaque": [
+    "monstres/3002305001_EpouvanteurRefonte431_AnimAttaque0.mp3",
+    "monstres/3002305002_Epouvanteur_AnimAttaque1.mp3",
+    "monstres/3002305003_Epouvanteur_AnimAttaque2.mp3"
+   ],
+   "hit": [],
+   "mort": [
+    "monstres/3102305201_Emouvanteur_AnimMort.mp3"
+   ]
+  },
+  "archi_pissenlit": {
+   "attaque": [
+    "monstres/1402232_PissenlitDiabolique_AnimAttaque0.mp3",
+    "monstres/1402233_PissenlitDiabolique_AnimAttaque0.mp3",
+    "monstres/1402234_PissenlitDiabolique_AnimAttaque0.mp3",
+    "monstres/1402235_PissenlitDiabolique_AnimAttaque1.mp3",
+    "monstres/1402236_PissenlitDiabolique_AnimAttaque1.mp3",
+    "monstres/1402237_PissenlitDiabolique_AnimAttaque1.mp3",
+    "monstres/3002298001_PissenlitDiabolique_AnimAttaque0.mp3",
+    "monstres/3002298002_PissenlitDiabolique_AnimAttaque1.mp3",
+    "monstres/3002298003_PissenlitDiabolique_AnimAttaque2.mp3",
+    "monstres/3002298705_PissenlitDiabolique_AnimAttaque4.mp3",
+    "monstres/3002298706_PissenlitDiabolique_AnimAttaque5.mp3"
+   ],
+   "hit": [
+    "monstres/1402226_PissenlitDiabolique_AnimHit.mp3",
+    "monstres/1402227_PissenlitDiabolique_AnimHit.mp3",
+    "monstres/1402228_PissenlitDiabolique_AnimHit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1402229_PissenlitDiabolique_AnimMort.mp3",
+    "monstres/1402230_PissenlitDiabolique_AnimMort.mp3",
+    "monstres/1402231_PissenlitDiabolique_AnimMort.mp3",
+    "monstres/3100000302_Gen_Mort_Explosion.mp3",
+    "monstres/3100000303_Gen_Mort_Explosion.mp3",
+    "monstres/3100000304_Gen_Mort_Explosion.mp3",
+    "monstres/3100000305_Gen_Mort_Explosion.mp3"
+   ]
+  },
+  "archi_rose": {
+   "attaque": [
+    "monstres/1402238_RoseDemoniaque_AnimAttaque0.mp3",
+    "monstres/1402239_RoseDemoniaque_AnimAttaque0.mp3",
+    "monstres/1402240_RoseDemoniaque_AnimAttaque0.mp3",
+    "monstres/1402241_RoseDemoniaque_AnimAttaque1.mp3",
+    "monstres/1402242_RoseDemoniaque_AnimAttaque1.mp3",
+    "monstres/1402243_RoseDemoniaque_AnimAttaque1.mp3",
+    "monstres/3002299001_RoseDemoniaque_AnimAttaque0.mp3",
+    "monstres/3002299002_RoseDemoniaque_AnimAttaque1.mp3",
+    "monstres/3002299703_RoseDemoniaque_AnimAttaque3.mp3",
+    "monstres/3002299704_RoseDemoniaque_AnimAttaque4.mp3"
+   ],
+   "hit": [
+    "monstres/1402244_RoseDemoniaque_AnimHit.mp3",
+    "monstres/1402245_RoseDemoniaque_AnimHit.mp3",
+    "monstres/1402246_RoseDemoniaque_AnimHit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1402247_RoseDemoniaque_AnimMort.mp3",
+    "monstres/1402248_RoseDemoniaque_AnimMort.mp3",
+    "monstres/1402249_RoseDemoniaque_AnimMort.mp3",
+    "monstres/3100000302_Gen_Mort_Explosion.mp3",
+    "monstres/3100000303_Gen_Mort_Explosion.mp3",
+    "monstres/3100000304_Gen_Mort_Explosion.mp3",
+    "monstres/3100000305_Gen_Mort_Explosion.mp3"
+   ]
+  },
+  "archi_tournesol": {
+   "attaque": [
+    "monstres/1402250_TournesolSauvage_AnimAttaque0.mp3",
+    "monstres/1402251_TournesolSauvage_AnimAttaque0.mp3",
+    "monstres/1402252_TournesolSauvage_AnimAttaque0.mp3",
+    "monstres/1402253_TournesolSauvage_AnimAttaque1.mp3",
+    "monstres/1402254_TournesolSauvage_AnimAttaque1.mp3",
+    "monstres/1402255_TournesolSauvage_AnimAttaque1.mp3",
+    "monstres/3002303001_TournesolSauvage_AnimAttaque0.mp3",
+    "monstres/3002303002_TournesolSauvage_AnimAttaque1.mp3",
+    "monstres/3002303703_TournesolSauvage_AnimAttaque2.mp3",
+    "monstres/3002303704_TournesolSauvage_AnimAttaque3.mp3"
+   ],
+   "hit": [
+    "monstres/1402262_TournesolSauvage_AnimHit.mp3",
+    "monstres/1402263_TournesolSauvage_AnimHit.mp3",
+    "monstres/1402264_TournesolSauvage_AnimHit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1402265_TournesolSauvage_AnimMort.mp3",
+    "monstres/1402266_TournesolSauvage_AnimMort.mp3",
+    "monstres/1402267_TournesolSauvage_AnimMort.mp3",
+    "monstres/3100000302_Gen_Mort_Explosion.mp3",
+    "monstres/3100000303_Gen_Mort_Explosion.mp3",
+    "monstres/3100000304_Gen_Mort_Explosion.mp3",
+    "monstres/3100000305_Gen_Mort_Explosion.mp3"
+   ]
+  },
+  "chef_de_guerre_bouftou": {
+   "attaque": [
+    "monstres/1412112_Voix_ChefDeGuerreBouftou_Attaque1.mp3",
+    "monstres/1412113_Voix_ChefDeGuerreBouftou_Attaque1.mp3",
+    "monstres/1412114_Voix_ChefDeGuerreBouftou_Attaque1.mp3",
+    "monstres/3001573001_Bouftou_ChefDeGuerreBouftou_AnimAttaque0.mp3",
+    "monstres/3001573002_Bouftou_ChefDeGuerreBouftou_AnimAttaque1.mp3",
+    "monstres/3001573003_Bouftou_ChefDeGuerreBouftou_AnimAttaque2.mp3"
+   ],
+   "hit": [
+    "monstres/1412115_Voix_ChefDeGuerreBouftou_Hit.mp3",
+    "monstres/1412116_Voix_ChefDeGuerreBouftou_Hit.mp3",
+    "monstres/1412117_Voix_ChefDeGuerreBouftou_Hit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1412118_Voix_ChefDeGuerreBouftou_Mort.mp3",
+    "monstres/3101573201_Bouftou_ChefDeGuerreBouftou_AnimMort_01.mp3"
+   ]
+  },
+  "boufton_noir": {
+   "attaque": [
+    "monstres/3001355001_MonstresDesCavernes_Boufcoul_AnimAttaque0.mp3",
+    "monstres/3001570001_Bouftou_BouftonBlanc_AnimAttaque1.mp3"
+   ],
+   "hit": [
+    "monstres/1412108_Voix_Boufton_Hit.mp3",
+    "monstres/1412109_Voix_Boufton_Hit.mp3",
+    "monstres/1412110_Voix_Boufton_Hit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1412111_Voix_Boufton_Mort.mp3",
+    "monstres/3101355201_MonstresDesCavernes_Boufcoul_AnimMort_01.mp3"
+   ]
+  },
+  "ballotin_le_bouftou": {
+   "attaque": [
+    "monstres/1412101_Voix_Bouftou_Attaque.mp3",
+    "monstres/1412102_Voix_Bouftou_Attaque.mp3",
+    "monstres/1412103_Voix_Bouftou_Attaque.mp3",
+    "monstres/3001355001_MonstresDesCavernes_Boufcoul_AnimAttaque0.mp3",
+    "monstres/3001355002_MonstresDesCavernes_Boufcoul_AnimAttaque1.mp3"
+   ],
+   "hit": [
+    "monstres/1412104_Voix_Bouftou_Hit.mp3",
+    "monstres/1412105_Voix_Bouftou_Hit.mp3",
+    "monstres/1412106_Voix_Bouftou_Hit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1400839_Voix_Bouftou_BoufON_Mort.mp3",
+    "monstres/1400840_Voix_Bouftou_BoufON_Mort.mp3",
+    "monstres/1412107_Voix_Bouftou_Mort.mp3",
+    "monstres/3101355201_MonstresDesCavernes_Boufcoul_AnimMort_01.mp3"
+   ]
+  },
+  "bouftou_noir": {
+   "attaque": [
+    "monstres/1412101_Voix_Bouftou_Attaque.mp3",
+    "monstres/1412102_Voix_Bouftou_Attaque.mp3",
+    "monstres/1412103_Voix_Bouftou_Attaque.mp3",
+    "monstres/3001355001_MonstresDesCavernes_Boufcoul_AnimAttaque0.mp3",
+    "monstres/3001355002_MonstresDesCavernes_Boufcoul_AnimAttaque1.mp3"
+   ],
+   "hit": [
+    "monstres/1412104_Voix_Bouftou_Hit.mp3",
+    "monstres/1412105_Voix_Bouftou_Hit.mp3",
+    "monstres/1412106_Voix_Bouftou_Hit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1400839_Voix_Bouftou_BoufON_Mort.mp3",
+    "monstres/1400840_Voix_Bouftou_BoufON_Mort.mp3",
+    "monstres/1412107_Voix_Bouftou_Mort.mp3",
+    "monstres/3101355201_MonstresDesCavernes_Boufcoul_AnimMort_01.mp3"
+   ]
+  },
+  "piou_violet": {
+   "attaque": [
+    "monstres/1401501_Voix_Piou_Attaque.mp3",
+    "monstres/1401502_Voix_Piou_Attaque.mp3",
+    "monstres/1401503_Voix_Piou_Attaque.mp3",
+    "monstres/3001212001_Piou_PiouBleu_AnimAttaque0.mp3",
+    "monstres/3001801701_piou_AnimAttaque3.mp3",
+    "monstres/3001801702_piou_AnimAttaque4.mp3",
+    "monstres/3001801703_piou_AnimAttaque5.mp3",
+    "monstres/3001801704_piou_AnimAttaque6.mp3"
+   ],
+   "hit": [
+    "monstres/1401504_Voix_Piou_Hit.mp3",
+    "monstres/1401505_Voix_Piou_Hit.mp3",
+    "monstres/1401506_Voix_Piou_Hit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1400838_Voix_Piou_Mort.mp3",
+    "monstres/1401507_Voix_Piou_Mort.mp3",
+    "monstres/3101019201_Tofu_AnimMort_01.mp3"
+   ]
+  },
+  "fouduglen_l_ecureuil": {
+   "attaque": [
+    "monstres/1402133_Ecurouille_AnimAttaque0.mp3",
+    "monstres/1402134_Ecurouille_AnimAttaque0.mp3",
+    "monstres/1402135_Ecurouille_AnimAttaque0.mp3",
+    "monstres/1402136_Ecurouille_AnimAttaque1.mp3",
+    "monstres/1402137_Ecurouille_AnimAttaque1.mp3",
+    "monstres/1402138_Ecurouille_AnimAttaque1.mp3",
+    "monstres/3002291001_Ecurouille_AnimAttaque0.mp3",
+    "monstres/3002291002_Ecurouille_AnimAttaque1.mp3"
+   ],
+   "hit": [
+    "monstres/1402142_Ecurouille_AnimHit.mp3",
+    "monstres/1402143_Ecurouille_AnimHit.mp3",
+    "monstres/1402144_Ecurouille_AnimHit.mp3"
+   ],
+   "mort": [
+    "monstres/1402145_Ecurouille_AnimMort.mp3",
+    "monstres/1402146_Ecurouille_AnimMort.mp3",
+    "monstres/1402147_Ecurouille_AnimMort.mp3",
+    "monstres/3102291201_Ecurouille_AnimMort.mp3"
+   ]
+  },
+  "piou_rouge": {
+   "attaque": [
+    "monstres/1401501_Voix_Piou_Attaque.mp3",
+    "monstres/1401502_Voix_Piou_Attaque.mp3",
+    "monstres/1401503_Voix_Piou_Attaque.mp3",
+    "monstres/3001212001_Piou_PiouBleu_AnimAttaque0.mp3",
+    "monstres/3001801701_piou_AnimAttaque3.mp3",
+    "monstres/3001801702_piou_AnimAttaque4.mp3",
+    "monstres/3001801703_piou_AnimAttaque5.mp3",
+    "monstres/3001801704_piou_AnimAttaque6.mp3"
+   ],
+   "hit": [
+    "monstres/1401504_Voix_Piou_Hit.mp3",
+    "monstres/1401505_Voix_Piou_Hit.mp3",
+    "monstres/1401506_Voix_Piou_Hit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1400838_Voix_Piou_Mort.mp3",
+    "monstres/1401507_Voix_Piou_Mort.mp3",
+    "monstres/3101019201_Tofu_AnimMort_01.mp3"
+   ]
+  },
+  "piou_vert": {
+   "attaque": [
+    "monstres/1401501_Voix_Piou_Attaque.mp3",
+    "monstres/1401502_Voix_Piou_Attaque.mp3",
+    "monstres/1401503_Voix_Piou_Attaque.mp3",
+    "monstres/3001212001_Piou_PiouBleu_AnimAttaque0.mp3",
+    "monstres/3001801701_piou_AnimAttaque3.mp3",
+    "monstres/3001801702_piou_AnimAttaque4.mp3",
+    "monstres/3001801703_piou_AnimAttaque5.mp3",
+    "monstres/3001801704_piou_AnimAttaque6.mp3"
+   ],
+   "hit": [
+    "monstres/1401504_Voix_Piou_Hit.mp3",
+    "monstres/1401505_Voix_Piou_Hit.mp3",
+    "monstres/1401506_Voix_Piou_Hit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1400838_Voix_Piou_Mort.mp3",
+    "monstres/1401507_Voix_Piou_Mort.mp3",
+    "monstres/3101019201_Tofu_AnimMort_01.mp3"
+   ]
+  },
+  "piou_bleu": {
+   "attaque": [
+    "monstres/1401501_Voix_Piou_Attaque.mp3",
+    "monstres/1401502_Voix_Piou_Attaque.mp3",
+    "monstres/1401503_Voix_Piou_Attaque.mp3",
+    "monstres/3001212001_Piou_PiouBleu_AnimAttaque0.mp3",
+    "monstres/3001801701_piou_AnimAttaque3.mp3",
+    "monstres/3001801702_piou_AnimAttaque4.mp3",
+    "monstres/3001801703_piou_AnimAttaque5.mp3",
+    "monstres/3001801704_piou_AnimAttaque6.mp3"
+   ],
+   "hit": [
+    "monstres/1401504_Voix_Piou_Hit.mp3",
+    "monstres/1401505_Voix_Piou_Hit.mp3",
+    "monstres/1401506_Voix_Piou_Hit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1400838_Voix_Piou_Mort.mp3",
+    "monstres/1401507_Voix_Piou_Mort.mp3",
+    "monstres/3101019201_Tofu_AnimMort_01.mp3"
+   ]
+  },
+  "piou_rose": {
+   "attaque": [
+    "monstres/1401501_Voix_Piou_Attaque.mp3",
+    "monstres/1401502_Voix_Piou_Attaque.mp3",
+    "monstres/1401503_Voix_Piou_Attaque.mp3",
+    "monstres/3001212001_Piou_PiouBleu_AnimAttaque0.mp3",
+    "monstres/3001801701_piou_AnimAttaque3.mp3",
+    "monstres/3001801702_piou_AnimAttaque4.mp3",
+    "monstres/3001801703_piou_AnimAttaque5.mp3",
+    "monstres/3001801704_piou_AnimAttaque6.mp3"
+   ],
+   "hit": [
+    "monstres/1401504_Voix_Piou_Hit.mp3",
+    "monstres/1401505_Voix_Piou_Hit.mp3",
+    "monstres/1401506_Voix_Piou_Hit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1400838_Voix_Piou_Mort.mp3",
+    "monstres/1401507_Voix_Piou_Mort.mp3",
+    "monstres/3101019201_Tofu_AnimMort_01.mp3"
+   ]
+  },
+  "piou_jaune": {
+   "attaque": [
+    "monstres/1401501_Voix_Piou_Attaque.mp3",
+    "monstres/1401502_Voix_Piou_Attaque.mp3",
+    "monstres/1401503_Voix_Piou_Attaque.mp3",
+    "monstres/3001212001_Piou_PiouBleu_AnimAttaque0.mp3",
+    "monstres/3001801701_piou_AnimAttaque3.mp3",
+    "monstres/3001801702_piou_AnimAttaque4.mp3",
+    "monstres/3001801703_piou_AnimAttaque5.mp3",
+    "monstres/3001801704_piou_AnimAttaque6.mp3"
+   ],
+   "hit": [
+    "monstres/1401504_Voix_Piou_Hit.mp3",
+    "monstres/1401505_Voix_Piou_Hit.mp3",
+    "monstres/1401506_Voix_Piou_Hit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1400838_Voix_Piou_Mort.mp3",
+    "monstres/1401507_Voix_Piou_Mort.mp3",
+    "monstres/3101019201_Tofu_AnimMort_01.mp3"
+   ]
+  },
+  "poutch_ingball": {
+   "attaque": [],
+   "hit": [
+    "monstres/3101219101_ProtecteurDesCereales_PountchIngball_AnimHit_01.mp3"
+   ],
+   "mort": [
+    "monstres/3101411201_ProtecteurDesCereales_EpouventaildeBle_AnimMort_01.mp3"
+   ]
+  },
+  "martoa": {
+   "attaque": [
+    "monstres/1402073_Martoa_AnimAttaque0.mp3",
+    "monstres/1402074_Martoa_AnimAttaque0.mp3",
+    "monstres/1402075_Martoa_AnimAttaque0.mp3",
+    "monstres/1402076_Martoa_AnimAttaque1.mp3",
+    "monstres/1402077_Martoa_AnimAttaque1.mp3",
+    "monstres/1402078_Martoa_AnimAttaque1.mp3",
+    "monstres/3002285001_Martoa_AnimAttaque0.mp3",
+    "monstres/3002285002_Martoa_AnimAttaque1.mp3"
+   ],
+   "hit": [
+    "monstres/1402079_Martoa_AnimHit.mp3",
+    "monstres/1402080_Martoa_AnimHit.mp3",
+    "monstres/1402081_Martoa_AnimHit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1402085_Martoa_AnimMort.mp3",
+    "monstres/1402086_Martoa_AnimMort.mp3",
+    "monstres/1402087_Martoa_AnimMort.mp3",
+    "monstres/3102285201_Martoa_AnimMort.mp3"
+   ]
+  },
+  "sherpoa": {
+   "attaque": [
+    "monstres/1402073_Martoa_AnimAttaque0.mp3",
+    "monstres/1402074_Martoa_AnimAttaque0.mp3",
+    "monstres/1402075_Martoa_AnimAttaque0.mp3",
+    "monstres/1402076_Martoa_AnimAttaque1.mp3",
+    "monstres/1402077_Martoa_AnimAttaque1.mp3",
+    "monstres/1402078_Martoa_AnimAttaque1.mp3"
+   ],
+   "hit": [
+    "monstres/1402079_Martoa_AnimHit.mp3",
+    "monstres/1402080_Martoa_AnimHit.mp3",
+    "monstres/1402081_Martoa_AnimHit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1402085_Martoa_AnimMort.mp3",
+    "monstres/1402086_Martoa_AnimMort.mp3",
+    "monstres/1402087_Martoa_AnimMort.mp3",
+    "monstres/3102286201_Sherpoa_AnimMort.mp3"
+   ]
+  },
+  "douzdoa": {
+   "attaque": [
+    "monstres/1402073_Martoa_AnimAttaque0.mp3",
+    "monstres/1402074_Martoa_AnimAttaque0.mp3",
+    "monstres/1402075_Martoa_AnimAttaque0.mp3",
+    "monstres/1402076_Martoa_AnimAttaque1.mp3",
+    "monstres/1402077_Martoa_AnimAttaque1.mp3",
+    "monstres/1402078_Martoa_AnimAttaque1.mp3",
+    "monstres/3002287001_Douzdoa_AnimAttaque0.mp3",
+    "monstres/3002287002_Douzdoa_AnimAttaque1.mp3"
+   ],
+   "hit": [
+    "monstres/1402079_Martoa_AnimHit.mp3",
+    "monstres/1402080_Martoa_AnimHit.mp3",
+    "monstres/1402081_Martoa_AnimHit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1402085_Martoa_AnimMort.mp3",
+    "monstres/1402086_Martoa_AnimMort.mp3",
+    "monstres/1402087_Martoa_AnimMort.mp3",
+    "monstres/3102287201_Douzdoa_AnimMort.mp3"
+   ]
+  },
+  "pikdoa": {
+   "attaque": [
+    "monstres/1402073_Martoa_AnimAttaque0.mp3",
+    "monstres/1402074_Martoa_AnimAttaque0.mp3",
+    "monstres/1402075_Martoa_AnimAttaque0.mp3",
+    "monstres/1402076_Martoa_AnimAttaque1.mp3",
+    "monstres/1402077_Martoa_AnimAttaque1.mp3",
+    "monstres/1402078_Martoa_AnimAttaque1.mp3",
+    "monstres/3002288001_Pikoda_AnimAttaque0.mp3",
+    "monstres/3002288002_Pikoda_AnimAttaque1.mp3"
+   ],
+   "hit": [
+    "monstres/1402079_Martoa_AnimHit.mp3",
+    "monstres/1402080_Martoa_AnimHit.mp3",
+    "monstres/1402081_Martoa_AnimHit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1402085_Martoa_AnimMort.mp3",
+    "monstres/1402086_Martoa_AnimMort.mp3",
+    "monstres/1402087_Martoa_AnimMort.mp3",
+    "monstres/3102288201_Pikoda_AnimMort.mp3"
+   ]
+  },
+  "prespic": {
+   "attaque": [
+    "monstres/1402103_Prespic_AnimAttaque0.mp3",
+    "monstres/1402104_Prespic_AnimAttaque0.mp3",
+    "monstres/1402105_Prespic_AnimAttaque0.mp3",
+    "monstres/1402106_Prespic_AnimAttaque1.mp3",
+    "monstres/1402107_Prespic_AnimAttaque1.mp3",
+    "monstres/1402108_Prespic_AnimAttaque1.mp3",
+    "monstres/3002289001_Prespic_AnimAttaque0001.mp3",
+    "monstres/3002289002_Prespic_AnimAttaque1001.mp3"
+   ],
+   "hit": [
+    "monstres/1402112_Prespic_AnimHit.mp3",
+    "monstres/1402113_Prespic_AnimHit.mp3",
+    "monstres/1402114_Prespic_AnimHit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1402115_Prespic_AnimMort.mp3",
+    "monstres/1402116_Prespic_AnimMort.mp3",
+    "monstres/1402117_Prespic_AnimMort.mp3",
+    "monstres/3102288201_Pikoda_AnimMort.mp3"
+   ]
+  },
+  "sanglier": {
+   "attaque": [
+    "monstres/1403516_Voix_Sanglier_Attaque.mp3",
+    "monstres/1403517_Voix_Sanglier_Attaque.mp3",
+    "monstres/1403518_Voix_Sanglier_Attaque.mp3",
+    "monstres/3002297001_Sanglier_AnimAttaque0.mp3",
+    "monstres/3002297002_Sanglier_AnimAttaque1.mp3",
+    "monstres/3002297703_Sanglier_AnimAttaque2.mp3",
+    "monstres/3002297704_Sanglier_AnimAttaque3.mp3"
+   ],
+   "hit": [
+    "monstres/1402271_Sanglier_AnimHit.mp3",
+    "monstres/1402272_Sanglier_AnimHit.mp3",
+    "monstres/1402273_Sanglier_AnimHit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1402274_Sanglier_AnimMort.mp3",
+    "monstres/1402275_Sanglier_AnimMort.mp3",
+    "monstres/1402276_Sanglier_AnimMort.mp3",
+    "monstres/3100000302_Gen_Mort_Explosion.mp3",
+    "monstres/3100000303_Gen_Mort_Explosion.mp3",
+    "monstres/3100000304_Gen_Mort_Explosion.mp3",
+    "monstres/3100000305_Gen_Mort_Explosion.mp3"
+   ]
+  },
+  "milimulou": {
+   "attaque": [
+    "monstres/1402118_Milimulou_AnimAttaque0.mp3",
+    "monstres/1402119_Milimulou_AnimAttaque0.mp3",
+    "monstres/1402120_Milimulou_AnimAttaque0.mp3",
+    "monstres/1402121_Milimulou_AnimAttaque1.mp3",
+    "monstres/1402122_Milimulou_AnimAttaque1.mp3",
+    "monstres/1402123_Milimulou_AnimAttaque1.mp3",
+    "monstres/3002290001_Milimulou_AnimAttaque0.mp3",
+    "monstres/3002290002_Milimulou_AnimAttaque1.mp3"
+   ],
+   "hit": [
+    "monstres/1402127_Milimulou_AnimHit.mp3",
+    "monstres/1402128_Milimulou_AnimHit.mp3",
+    "monstres/1402129_Milimulou_AnimHit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1402130_Milimulou_AnimMort.mp3",
+    "monstres/1402131_Milimulou_AnimMort.mp3",
+    "monstres/1402132_Milimulou_AnimMort.mp3",
+    "monstres/3102288201_Pikoda_AnimMort.mp3"
+   ]
+  },
+  "frakacia_leukocytine": {
+   "attaque": [
+    "monstres/3001247001_AvisDeRecherche_FrakaciaLeukocytine_AnimAttaque0.mp3",
+    "monstres/3001247002_AvisDeRecherche_FrakaciaLeukocytine_AnimAttaque1.mp3",
+    "monstres/3001247003_AvisDeRecherche_FrakaciaLeukocytine_AnimAttaque2.mp3",
+    "monstres/3001247701_FrakaciaMamaRoublardemonstre1247_AnimAttaque3.mp3"
+   ],
+   "hit": [
+    "monstres/1400440_HumanFemaleABarkHit01.mp3",
+    "monstres/1400441_HumanFemaleABarkHit02.mp3",
+    "monstres/1400442_HumanFemaleABarkHit03.mp3",
+    "monstres/1400443_HumanFemaleABarkHit04.mp3",
+    "monstres/1400444_HumanFemaleABarkHit05.mp3"
+   ],
+   "mort": [
+    "monstres/3101247201_AvisDeRecherche_FrakaciaLeukocytine_AnimMort_01.mp3"
+   ]
+  },
+  "ecurouille": {
+   "attaque": [
+    "monstres/1402133_Ecurouille_AnimAttaque0.mp3",
+    "monstres/1402134_Ecurouille_AnimAttaque0.mp3",
+    "monstres/1402135_Ecurouille_AnimAttaque0.mp3",
+    "monstres/1402136_Ecurouille_AnimAttaque1.mp3",
+    "monstres/1402137_Ecurouille_AnimAttaque1.mp3",
+    "monstres/1402138_Ecurouille_AnimAttaque1.mp3",
+    "monstres/3002291001_Ecurouille_AnimAttaque0.mp3",
+    "monstres/3002291002_Ecurouille_AnimAttaque1.mp3"
+   ],
+   "hit": [
+    "monstres/1402142_Ecurouille_AnimHit.mp3",
+    "monstres/1402143_Ecurouille_AnimHit.mp3",
+    "monstres/1402144_Ecurouille_AnimHit.mp3"
+   ],
+   "mort": [
+    "monstres/1402145_Ecurouille_AnimMort.mp3",
+    "monstres/1402146_Ecurouille_AnimMort.mp3",
+    "monstres/1402147_Ecurouille_AnimMort.mp3",
+    "monstres/3102291201_Ecurouille_AnimMort.mp3"
+   ]
+  },
+  "tofu_malade": {
+   "attaque": [
+    "monstres/1400101_Voix_Tofu_Attaque.mp3",
+    "monstres/1400102_Voix_Tofu_Attaque.mp3",
+    "monstres/1400103_Voix_Tofu_Attaque.mp3",
+    "monstres/1400105_Voix_Tofu_Attaque.mp3",
+    "monstres/3001019001_Tofu_AnimAttaque0.mp3"
+   ],
+   "hit": [
+    "monstres/1400106_Voix_Tofu_Hit.mp3",
+    "monstres/1400107_Voix_Tofu_Hit.mp3",
+    "monstres/1400108_Voix_Tofu_Hit.mp3"
+   ],
+   "mort": [
+    "monstres/1400104_Voix_Tofu_Mort.mp3",
+    "monstres/3101019201_Tofu_AnimMort_01.mp3"
+   ]
+  },
+  "arakne_malade": {
+   "attaque": [
+    "monstres/1402028_ArakneMalade_AnimAttaque0.mp3",
+    "monstres/1402029_ArakneMalade_AnimAttaque0.mp3",
+    "monstres/1402030_ArakneMalade_AnimAttaque0.mp3",
+    "monstres/1402031_ArakneMalade_AnimAttaque1.mp3",
+    "monstres/1402032_ArakneMalade_AnimAttaque1.mp3",
+    "monstres/1402033_ArakneMalade_AnimAttaque1.mp3",
+    "monstres/3002276001_ArakneMalade_AnimAttaque0001.mp3",
+    "monstres/3002276002_ArakneMalade_AnimAttaque1001.mp3"
+   ],
+   "hit": [
+    "monstres/1402037_ArakneMalade_AnimHit.mp3",
+    "monstres/1402038_ArakneMalade_AnimHit.mp3",
+    "monstres/1402039_ArakneMalade_AnimHit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1402040_ArakneMalade_AnimMort.mp3",
+    "monstres/1402041_ArakneMalade_AnimMort.mp3",
+    "monstres/1402042_ArakneMalade_AnimMort.mp3",
+    "monstres/3102275201_ArakneAgressive_AnimMort.mp3"
+   ]
+  },
+  "araknose": {
+   "attaque": [
+    "monstres/1402043_Araknose_AnimAttaque0.mp3",
+    "monstres/1402044_Araknose_AnimAttaque0.mp3",
+    "monstres/1402045_Araknose_AnimAttaque0.mp3",
+    "monstres/1402046_Araknose_AnimAttaque1.mp3",
+    "monstres/1402047_Araknose_AnimAttaque1.mp3",
+    "monstres/1402048_Araknose_AnimAttaque1.mp3",
+    "monstres/3002277001_Araknose_AnimAttaque0.mp3",
+    "monstres/3002277002_Araknose_AnimAttaque1.mp3"
+   ],
+   "hit": [
+    "monstres/1402052_Araknose_AnimHit.mp3",
+    "monstres/1402053_Araknose_AnimHit.mp3",
+    "monstres/1402054_Araknose_AnimHit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1402055_Araknose_AnimMort.mp3",
+    "monstres/1402056_Araknose_AnimMort.mp3",
+    "monstres/1402057_Araknose_AnimMort.mp3",
+    "monstres/3102275201_ArakneAgressive_AnimMort.mp3"
+   ]
+  },
+  "arakmute": {
+   "attaque": [
+    "monstres/3001916001_Tregenaire_Attaque0.mp3",
+    "monstres/3001916002_Tregenaire_Attaque1.mp3"
+   ],
+   "hit": [],
+   "mort": [
+    "monstres/3101916201_Tregenaire_Mort.mp3"
+   ]
+  },
+  "arakne_des_egouts": {
+   "attaque": [
+    "monstres/1402013_ArakneAgressive_AnimAttaque0.mp3",
+    "monstres/1402014_ArakneAgressive_AnimAttaque0.mp3",
+    "monstres/1402015_ArakneAgressive_AnimAttaque0.mp3",
+    "monstres/1402016_ArakneAgressive_AnimAttaque1.mp3",
+    "monstres/1402017_ArakneAgressive_AnimAttaque1.mp3",
+    "monstres/1402018_ArakneAgressive_AnimAttaque1.mp3",
+    "monstres/3002275001_ArakneAgressive_AnimAttaque0.mp3",
+    "monstres/3002275002_ArakneAgressive_AnimAttaque1.mp3"
+   ],
+   "hit": [
+    "monstres/1402022_ArakneAgressive_AnimHit.mp3",
+    "monstres/1402023_ArakneAgressive_AnimHit.mp3",
+    "monstres/1402024_ArakneAgressive_AnimHit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1402025_ArakneAgressive_AnimMort.mp3",
+    "monstres/1402026_ArakneAgressive_AnimMort.mp3",
+    "monstres/1402027_ArakneAgressive_AnimMort.mp3",
+    "monstres/3102275201_ArakneAgressive_AnimMort.mp3"
+   ]
+  },
+  "scelerat_strubien": {
+   "attaque": [
+    "monstres/3001537001_MonstresDesEgouts_RatBasher_AnimAttaque0.mp3"
+   ],
+   "hit": [
+    "monstres/1410504_Voix_Souris_Hit.mp3",
+    "monstres/1410505_Voix_Souris_Hit.mp3",
+    "monstres/1410506_Voix_Souris_Hit.mp3"
+   ],
+   "mort": [
+    "monstres/1410507_Voix_Souris_Mort.mp3",
+    "monstres/3101537201_MonstresDesEgouts_RatBasher_AnimMort_01.mp3"
+   ]
+  },
+  "milirat_strubien": {
+   "attaque": [
+    "monstres/1410501_Voix_Souris_Attaque.mp3",
+    "monstres/1410502_Voix_Souris_Attaque.mp3",
+    "monstres/1410503_Voix_Souris_Attaque.mp3",
+    "monstres/3001226001_MonstresDesEgouts_RatDEgoutant_AnimAttaque0_ToRight.mp3",
+    "monstres/3001226003_MonstresDesEgouts_RatDEgoutant_AnimAttaque2.mp3",
+    "monstres/3001535001_MonstresDesEgouts_RatDeMarais_AnimAttaque0.mp3"
+   ],
+   "hit": [
+    "monstres/1410504_Voix_Souris_Hit.mp3",
+    "monstres/1410505_Voix_Souris_Hit.mp3",
+    "monstres/1410506_Voix_Souris_Hit.mp3",
+    "monstres/3100000121_NPC_Foleys_ArmureElements_AnimHit_Gen_01.mp3",
+    "monstres/3100000122_NPC_Foleys_ArmureElements_AnimHit_Gen_02.mp3",
+    "monstres/3100000123_NPC_Foleys_ArmureElements_AnimHit_Gen_03.mp3"
+   ],
+   "mort": [
+    "monstres/1410507_Voix_Souris_Mort.mp3",
+    "monstres/3101535201_MonstresDesEgouts_RatDeMarais_AnimMort_01.mp3"
+   ]
+  },
+  "ramane_strubien": {
+   "attaque": [
+    "monstres/1410501_Voix_Souris_Attaque.mp3",
+    "monstres/1410502_Voix_Souris_Attaque.mp3",
+    "monstres/1410503_Voix_Souris_Attaque.mp3",
+    "monstres/3001227001_MonstresDesEgouts_ChamanDEgoutant_AnimAttaque0.mp3",
+    "monstres/3001227002_MonstresDesEgouts_ChamanDEgoutant_AnimAttaque1.mp3",
+    "monstres/3001227003_MonstresDesEgouts_ChamanDEgoutant_AnimAttaque2.mp3"
+   ],
+   "hit": [
+    "monstres/1410504_Voix_Souris_Hit.mp3",
+    "monstres/1410505_Voix_Souris_Hit.mp3",
+    "monstres/1410506_Voix_Souris_Hit.mp3",
+    "monstres/3101227101_MonstresDesEgouts_ChamanDEgoutant_AnimHit_01.mp3",
+    "monstres/3101227102_MonstresDesEgouts_ChamanDEgoutant_AnimHit_02.mp3",
+    "monstres/3101227103_MonstresDesEgouts_ChamanDEgoutant_AnimHit_03.mp3"
+   ],
+   "mort": [
+    "monstres/1410507_Voix_Souris_Mort.mp3",
+    "monstres/3101227201_MonstresDesEgouts_ChamanDEgoutant_AnimMort_01.mp3"
+   ]
+  },
+  "la_ouassingue": {
+   "attaque": [
+    "monstres/1411101_Voix_LaOuassingue_Attaque.mp3",
+    "monstres/1411102_Voix_LaOuassingue_Attaque.mp3",
+    "monstres/1411103_Voix_LaOuassingue_Attaque.mp3",
+    "monstres/3001251001_MonstreDeLaNuit_LaOuassingue_AnimAttaque0.mp3",
+    "monstres/3001251002_MonstreDeLaNuit_LaOuassingue_AnimAttaque1.mp3"
+   ],
+   "hit": [
+    "monstres/1411104_Voix_laOuassingue_Hit.mp3",
+    "monstres/1411105_Voix_laOuassingue_Hit.mp3",
+    "monstres/1411106_Voix_laOuassingue_Hit.mp3"
+   ],
+   "mort": [
+    "monstres/1411107_Voix_laOuassingue_Mort.mp3",
+    "monstres/3101251201_MonstreDeLaNuit_LaOuassingue_AnimMort_01.mp3"
+   ]
+  },
+  "le_ouassingue": {
+   "attaque": [
+    "monstres/1411101_Voix_LaOuassingue_Attaque.mp3",
+    "monstres/1411102_Voix_LaOuassingue_Attaque.mp3",
+    "monstres/1411103_Voix_LaOuassingue_Attaque.mp3",
+    "monstres/3001251001_MonstreDeLaNuit_LaOuassingue_AnimAttaque0.mp3",
+    "monstres/3001251002_MonstreDeLaNuit_LaOuassingue_AnimAttaque1.mp3"
+   ],
+   "hit": [
+    "monstres/1411104_Voix_laOuassingue_Hit.mp3",
+    "monstres/1411105_Voix_laOuassingue_Hit.mp3",
+    "monstres/1411106_Voix_laOuassingue_Hit.mp3"
+   ],
+   "mort": [
+    "monstres/1411107_Voix_laOuassingue_Mort.mp3",
+    "monstres/3101251201_MonstreDeLaNuit_LaOuassingue_AnimMort_01.mp3"
+   ]
+  },
+  "gargrouille": {
+   "attaque": [
+    "monstres/1402148_Gargrouille_AnimAttaque0.mp3",
+    "monstres/1402149_Gargrouille_AnimAttaque0.mp3",
+    "monstres/1402150_Gargrouille_AnimAttaque0.mp3",
+    "monstres/1402160_Gargrouille_AnimAttaque1.mp3",
+    "monstres/1402161_Gargrouille_AnimAttaque1.mp3",
+    "monstres/1402162_Gargrouille_AnimAttaque1.mp3",
+    "monstres/3002292001_Garglyphe_AnimAttaque0.mp3",
+    "monstres/3002292002_Garglyphe_AnimAttaque1.mp3",
+    "monstres/3002292003_Gargrouille_AnimAttaque2.mp3",
+    "monstres/3004936001_GargouilleRefonte445_AnimAttaque3.mp3"
+   ],
+   "hit": [
+    "monstres/1402154_Gargrouille_AnimHit.mp3",
+    "monstres/1402155_Gargrouille_AnimHit.mp3",
+    "monstres/1402156_Gargrouille_AnimHit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1402157_Gargrouille_AnimMort.mp3",
+    "monstres/1402158_Gargrouille_AnimMort.mp3",
+    "monstres/1402159_Gargrouille_AnimMort.mp3",
+    "monstres/3102292201_Garglyphe_AnimMort.mp3"
+   ]
+  },
+  "garglyphe": {
+   "attaque": [
+    "monstres/3002293001_Garglyphe_AnimAttaque0.mp3",
+    "monstres/3002293002_Garglyphe_AnimAttaque1.mp3"
+   ],
+   "hit": [
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/3102293201_Garglyphe_AnimMort.mp3"
+   ]
+  },
+  "larve_bleue": {
+   "attaque": [
+    "monstres/3002284001_LarveBleue_AnimAttaque0.mp3",
+    "monstres/3002284002_LarveBleue_AnimAttaque1.mp3",
+    "monstres/3002284003_LarveBleue_AnimAttaque2.mp3"
+   ],
+   "hit": [],
+   "mort": [
+    "monstres/3102284201_LarveBleue_AnimMort.mp3"
+   ]
+  },
+  "larve_verte": {
+   "attaque": [
+    "monstres/3002284001_LarveBleue_AnimAttaque0.mp3",
+    "monstres/3002284002_LarveBleue_AnimAttaque1.mp3"
+   ],
+   "hit": [],
+   "mort": [
+    "monstres/3102284201_LarveBleue_AnimMort.mp3"
+   ]
+  },
+  "larve_orange": {
+   "attaque": [
+    "monstres/3002284001_LarveBleue_AnimAttaque0.mp3",
+    "monstres/3002284002_LarveBleue_AnimAttaque1.mp3",
+    "monstres/3002284003_LarveBleue_AnimAttaque2.mp3"
+   ],
+   "hit": [],
+   "mort": [
+    "monstres/3102284201_LarveBleue_AnimMort.mp3"
+   ]
+  },
+  "sam_sagaz": {
+   "attaque": [
+    "monstres/1419201_Voix_WarkoVert_Attaque.mp3",
+    "monstres/1419202_Voix_WarkoVert_Attaque.mp3",
+    "monstres/1419203_Voix_WarkoVert_Attaque.mp3",
+    "monstres/3001362001_Koalak_WarkoViolet_AnimAttaque0.mp3",
+    "monstres/3001362002_Koalak_WarkoViolet_AnimAttaque1.mp3",
+    "monstres/3001362703_Koalak_WarkoViolet_AnimAttaque2.mp3"
+   ],
+   "hit": [],
+   "mort": [
+    "monstres/1419204_Voix_WarkoVert_Mort.mp3",
+    "monstres/1419205_Voix_WarkoVert_Mort.mp3",
+    "monstres/1419206_Voix_WarkoVert_Mort.mp3",
+    "monstres/3101362201_Koalak_WarkoVert_AnimMort_01.mp3"
+   ]
+  },
+  "larve_jaune": {
+   "attaque": [
+    "monstres/3002284001_LarveBleue_AnimAttaque0.mp3",
+    "monstres/3002284002_LarveBleue_AnimAttaque1.mp3"
+   ],
+   "hit": [],
+   "mort": [
+    "monstres/3102284201_LarveBleue_AnimMort.mp3"
+   ]
+  },
+  "tournesol_affame": {
+   "attaque": [
+    "monstres/1402199_TournesolAffame_AnimAttaque0.mp3",
+    "monstres/1402200_TournesolAffame_AnimAttaque0.mp3",
+    "monstres/1402201_TournesolAffame_AnimAttaque0.mp3",
+    "monstres/1402202_TournesolAffame_AnimAttaque1.mp3",
+    "monstres/1402203_TournesolAffame_AnimAttaque1.mp3",
+    "monstres/1402204_TournesolAffame_AnimAttaque1.mp3",
+    "monstres/1402217_TournesolAffame_AnimAttaque2.mp3",
+    "monstres/1402218_TournesolAffame_AnimAttaque2.mp3",
+    "monstres/1402219_TournesolAffame_AnimAttaque2.mp3",
+    "monstres/3002296001_TournesolAffame_AnimAttaque0.mp3",
+    "monstres/3002296002_TournesolAffame_AnimAttaque1.mp3",
+    "monstres/3002296003_TournesolAffame_AnimAttaque2.mp3",
+    "monstres/3002296704_TournesolAffame_AnimAttaque3.mp3",
+    "monstres/3002296705_TournesolAffame_AnimAttaque4.mp3",
+    "monstres/3002296706_TournesolAffame_AnimAttaque5.mp3"
+   ],
+   "hit": [
+    "monstres/1402214_TournesolAffame_AnimHit.mp3",
+    "monstres/1402215_TournesolAffame_AnimHit.mp3",
+    "monstres/1402216_TournesolAffame_AnimHit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1402211_TournesolAffame_AnimMort.mp3",
+    "monstres/1402212_TournesolAffame_AnimMort.mp3",
+    "monstres/1402213_TournesolAffame_AnimMort.mp3",
+    "monstres/3102296201_TournesolAffame_AnimMort.mp3"
+   ]
+  },
+  "gardienne_champetre": {
+   "attaque": [
+    "monstres/3002294001_GardienneChampetre_AnimAttaque0.mp3",
+    "monstres/3002294701_GardienneChampetre_AnimAttaque3.mp3",
+    "monstres/3002294702_GardienneChampetre_AnimAttaque2.mp3",
+    "monstres/3002294703_GardienneChampetre_AnimAttaque4.mp3",
+    "monstres/3002294704_GardienneChampetre_AnimAttaque4.mp3",
+    "monstres/3002294705_GardienneChampetre_AnimAttaque4.mp3",
+    "monstres/3002294706_GardienneChampetre_AnimAttaque4.mp3",
+    "monstres/3002294707_GardienneChampetre_AnimAttaque4.mp3",
+    "monstres/3002294708_GardienneChampetre_AnimAttaque4.mp3",
+    "monstres/3002294709_GardienneChampetre_AnimAttaque4.mp3",
+    "monstres/3002294710_GardienneChampetre_AnimAttaque4.mp3",
+    "monstres/3002294711_GardienneChampetre_AnimAttaque2.mp3"
+   ],
+   "hit": [
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/3102294201_GardienneChampetre_AnimMort.mp3"
+   ]
+  },
+  "pichon_orange": {
+   "attaque": [
+    "monstres/3002281001_PichonOrange_AnimAttaque0.mp3",
+    "monstres/3002281002_PichonOrange_AnimAttaque1.mp3"
+   ],
+   "hit": [
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/3102278201_PichonKloune_AnimMort.mp3"
+   ]
+  },
+  "pichon_bleu": {
+   "attaque": [
+    "monstres/3002280001_PichonBleu_AnimAttaque0.mp3",
+    "monstres/3002280002_PichonBleu_AnimAttaque1.mp3"
+   ],
+   "hit": [
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/3102278201_PichonKloune_AnimMort.mp3"
+   ]
+  },
+  "pichon_blanc": {
+   "attaque": [
+    "monstres/3002279001_PichonBlanc_AnimAttaque0.mp3",
+    "monstres/3002279002_PichonBlanc_AnimAttaque1.mp3"
+   ],
+   "hit": [
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/3102278201_PichonKloune_AnimMort.mp3"
+   ]
+  },
+  "pichon_vert": {
+   "attaque": [
+    "monstres/1402058_PichonVert_AnimAttaque0.mp3",
+    "monstres/1402059_PichonVert_AnimAttaque0.mp3",
+    "monstres/1402060_PichonVert_AnimAttaque0.mp3",
+    "monstres/1402061_PichonVert_AnimAttaque1.mp3",
+    "monstres/1402062_PichonVert_AnimAttaque1.mp3",
+    "monstres/1402063_PichonVert_AnimAttaque1.mp3",
+    "monstres/3002282001_PichonVert_AnimAttaque0.mp3",
+    "monstres/3002282002_PichonVert_AnimAttaque1.mp3"
+   ],
+   "hit": [
+    "monstres/1402064_PichonVert_AnimHit.mp3",
+    "monstres/1402065_PichonVert_AnimHit.mp3",
+    "monstres/1402066_PichonVert_AnimHit.mp3",
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/1402070_PichonVert_AnimMort.mp3",
+    "monstres/1402071_PichonVert_AnimMort.mp3",
+    "monstres/1402072_PichonVert_AnimMort.mp3",
+    "monstres/3102278201_PichonKloune_AnimMort.mp3"
+   ]
+  },
+  "pichon_kloune": {
+   "attaque": [
+    "monstres/3002278001_PichonKloune_AnimAttaque0.mp3",
+    "monstres/3002278002_PichonKloune_AnimAttaque1.mp3"
+   ],
+   "hit": [
+    "monstres/3100000101_hits_dofus_flesh_01.mp3",
+    "monstres/3100000102_hits_dofus_flesh_02.mp3",
+    "monstres/3100000103_hits_dofus_flesh_03.mp3"
+   ],
+   "mort": [
+    "monstres/3102278201_PichonKloune_AnimMort.mp3"
+   ]
+  },
+  "mob_l_eponge": {
+   "attaque": [
+    "monstres/3001546002_mob_eponge_AnimAttaque_01_ToLeft.mp3",
+    "monstres/3001546003_mob_eponge_AnimAttaque_02.mp3",
+    "monstres/3001546004_mob_eponge_AnimAttaque_03.mp3"
+   ],
+   "hit": [
+    "monstres/1400410_HumanDBarkHit01.mp3",
+    "monstres/1400411_HumanDBarkHit02.mp3",
+    "monstres/1400412_HumanDBarkHit03.mp3",
+    "monstres/1400413_HumanDBarkHit04.mp3",
+    "monstres/1400414_HumanDBarkHit05.mp3",
+    "monstres/3101546103_mob_eponge_AnimHit_01.mp3"
+   ],
+   "mort": []
+  },
+  "cafarcher": {
+   "attaque": [
+    "monstres/3001899001_Curedents_Attaque0.mp3",
+    "monstres/3001899002_Curedents_Attaque1.mp3"
+   ],
+   "hit": [],
+   "mort": [
+    "monstres/3101899201_Curedents_Mort.mp3"
+   ]
+  },
+  "pyrasite": {
+   "attaque": [
+    "monstres/3001898001_PuceAlumette_Attaque0.mp3",
+    "monstres/3001898002_PuceAlumette_Attaque1.mp3"
+   ],
+   "hit": [],
+   "mort": [
+    "monstres/3101898201_PuceAlumette_Mort.mp3"
+   ]
+  },
+  "mirgrillon": {
+   "attaque": [
+    "monstres/3001901001_PuceBouclierLance_Attaque0.mp3",
+    "monstres/3001901002_PuceBouclierLance_Attaque0.mp3",
+    "monstres/3001901701_PuceBouclierLance_AnimAttaque3.mp3",
+    "monstres/3001901702_PuceBouclierLance_AnimAttaque4.mp3"
+   ],
+   "hit": [],
+   "mort": [
+    "monstres/3101901201_PuceBouclierLance_Mort.mp3"
+   ]
+  },
+  "sakarien": {
+   "attaque": [
+    "monstres/3001904001_PuceGorille_Attaque0.mp3",
+    "monstres/3001904002_PuceGorille_Attaque1.mp3",
+    "monstres/3001904701_PuceGorille_AnimAttaque2.mp3"
+   ],
+   "hit": [],
+   "mort": [
+    "monstres/3101904201_PuceGorille_Mort.mp3"
+   ]
+  },
+  "ceglumen": {
+   "attaque": [
+    "monstres/3001903001_Cotontige_Attaque0.mp3",
+    "monstres/3001903002_Cotontige_Attaque1.mp3"
+   ],
+   "hit": [],
+   "mort": [
+    "monstres/3101903201_Cotontige_Mort.mp3"
+   ]
+  },
+  "kankreblath": {
+   "attaque": [
+    "monstres/3001902001_BossPuceBague_Attaque0.mp3",
+    "monstres/3001902002_BossPuceBague_Attaque1.mp3",
+    "monstres/3001902003_BossPuceBague_Attaque2.mp3",
+    "monstres/3001902004_rikiki_boss_puce_bague_AnimAttaque3.mp3"
+   ],
+   "hit": [],
+   "mort": [
+    "monstres/3101902201_BossPuceBague_Mort.mp3"
    ]
   }
  },

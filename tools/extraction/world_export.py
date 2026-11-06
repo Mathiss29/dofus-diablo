@@ -29,7 +29,22 @@ need = set(e['gfxId'] for md in maps.values() for k in ['backgroundElements', 's
 extra = {xy: (v[2] if len(v) > 2 else {}) for xy, v in sel.items()}
 imgs = {}
 CACHE = os.environ.get('CACHE')   # fichier pickle des textures déjà lues (la lecture des bundles est longue)
-if CACHE and os.path.exists(CACHE):
+# TEXDIR=dossier : textures déjà sorties en <gfx>.png (une par fichier), lues à la demande. Pour les grands mondes (Astrub :
+# 360 cartes), tout charger d'un coup dépassait la mémoire.
+TEXDIR = os.environ.get('TEXDIR')
+class Lazy(dict):
+    def __init__(self, d): super().__init__(); self.d = d; self.ids = {int(f[:-4]) for f in os.listdir(d) if f.endswith('.png')}
+    def get(self, k, default=None):
+        if k not in self.ids: return default
+        if not dict.__contains__(self, k):
+            if dict.__len__(self) > 400: self.clear()
+            dict.__setitem__(self, k, Image.open(f'{self.d}/{k}.png').convert('RGBA'))
+        return dict.__getitem__(self, k)
+    def __contains__(self, k): return k in self.ids
+    def __len__(self): return len(self.ids)
+if TEXDIR:
+    imgs = Lazy(TEXDIR)
+elif CACHE and os.path.exists(CACHE):
     import pickle; imgs = pickle.load(open(CACHE, 'rb'))
 else:
     for b in glob.glob(f'{tdir}/mapgfx_*.bundle'):
@@ -75,8 +90,20 @@ sols, entiers = {}, {}
 # L'encodage WebP (method=6) est le plus long : il part dans 4 fils en parallèle (PIL libère le verrou pendant l'encodage).
 from concurrent.futures import ThreadPoolExecutor
 POOL = ThreadPoolExecutor(int(os.environ.get('FILS', os.cpu_count() or 4)))
+PENDING = []
 def webp(im, path, q):
-    POOL.submit(lambda: im.save(path, 'WEBP', quality=q, method=6))
+    PENDING.append(POOL.submit(lambda: im.save(path, 'WEBP', quality=q, method=6)))
+    while len(PENDING) > 8: PENDING.pop(0).result()   # pas plus de 8 images en attente d'encodage (mémoire)
+# Grands mondes (Astrub) : les images gardées pour la fin (sol entier pour le calque « bord », décor partagé) vont sur le disque.
+import tempfile
+TMP = tempfile.mkdtemp(prefix='world_export_')
+class Disque:
+    """Image rangée sur le disque, relue à la demande (mêmes attributs que ce qu'on en utilise)."""
+    def __init__(self, im, path):
+        im.save(path); self.path = path; self.width, self.height = im.size; self.size = im.size; self._b = im.getbbox()
+    def getbbox(self): return self._b
+    def crop(self, b): return Image.open(self.path).convert('RGBA').crop(b)
+    def load(self): return Image.open(self.path).convert('RGBA')
 # Lumières (halos sur l'eau, lueurs, rayons de soleil) : Dofus les dessine en les AJOUTANT à l'image (ShaderBlendingParameters,
 # facteurs de mélange Unity), avec un masque de dissolution animé. Posées comme du décor normal, elles faisaient de grandes taches
 # blanches. Elles sortent du sol et partent dans le décor avec 'b' (mélange) et 'k' (intensité) : le jeu les dessine en mode additif,
@@ -159,6 +186,11 @@ def pack(variants, path, write=True):
     webp(atlas, path + '.webp', 82)
     json.dump({'frames': frames, 'meta': {'image': os.path.basename(path) + '.webp', 'size': {'w': maxW, 'h': atlas.height}, 'scale': '1'}}, open(path + '.json', 'w'))
     return atlas.size
+# PARTAGE=1 : décor partagé (maquette « Monde sans coupure », 3A). Une même image (gfx, couleur, échelle) sert à toutes les cartes :
+# elle va une seule fois dans des pages d'atlas communes (decor_p<N>), rangées dans l'ordre où les cartes l'utilisent
+# (les cartes voisines partagent donc les mêmes pages). Chaque carte liste ses pages ('pages'), chaque élément sa page ('p').
+PARTAGE = os.environ.get('PARTAGE') == '1'
+GLOBAL = {}
 sky = None
 for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
     ix, iy = x - X0, y - Y0; dx, dy = ix * MW, iy * MH; tag = extra[(x, y)].get('tag', f'{x}_{y}')
@@ -229,8 +261,8 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
         if (ux0, uy0, ux1, uy1) != (bx0, by0, bx1, by1):
             full = Image.new('RGBA', (ux1 - ux0, uy1 - uy0))
             for im, ex, ey in sol_els: full.alpha_composite(im, (ex - ux0, ey - uy0))
-            entiers[tag] = (full, ux0 + dx, uy0 + dy, (x0m + dx, y0m + dy, x1m + dx, y1m + dy), (bx0 + dx, by0 + dy, bx1 + dx, by1 + dy), write)
-    sols[tag] = (sol, bx0 + dx, by0 + dy)
+            entiers[tag] = (Disque(full, f'{TMP}/entier_{tag}.png'), ux0 + dx, uy0 + dy, (x0m + dx, y0m + dy, x1m + dx, y1m + dy), (bx0 + dx, by0 + dy, bx1 + dx, by1 + dy), write)
+    sols[tag] = (sol.getchannel('A'), bx0 + dx, by0 + dy)   # seul l'alpha sert (calque « bord ») : 4 fois moins de mémoire
     def calque(lst, nom):
         if not lst: return None
         fx0 = min(ex for _, ex, _ in lst); fy0 = min(ey for _, _, ey in lst)
@@ -245,7 +277,7 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
     fond = calque(fond_els, 'fond') if os.environ.get('GARDER_FOND') == '1' else None
     if write and not DECOR_ONLY: webp(sol, f'{out}/sol_{tag}.webp', 80)
     # Décor : un atlas par carte, pour que le jeu ne charge que les cartes proches du joueur
-    variants = {}; places = []
+    variants = GLOBAL if PARTAGE else {}; places = []
     lum_s = [e for e in md['sortableElements'] if not cache(e) and (e['gfxId'] in LUMIERES or additif((x, y), 'sortableMaterialData', e))]
     lums += [('sortableMaterialData', 0, e) for e in lum_s]
     # couche d'eau animée : g = 1 (au-dessus du sol, sous les lumières et le décor), o = ordre d'origine
@@ -279,12 +311,43 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
         places.append({'f': variants[key][0], 'x': round(tr['m31'] + dx, 1), 'y': round(-tr['m32'] + dy, 1),
                        'c': (iy * ROWS + r) * COLS * nx + ix * COLS + k if sortable == 0 else -1,
                        'o': e.get('innerCellRenderOrder', 0), 'b': b, 'k': kk, 'z': 3, **({'j': 1} if e['gfxId'] in SOLEIL else {})})
-    asz = pack(variants, f'{out}/decor_{tag}', write)
+    asz = None if PARTAGE else pack(variants, f'{out}/decor_{tag}', write)
+    if PARTAGE:   # images du décor partagé : sur le disque jusqu'au rangement en pages
+        for kk, (nm, im) in list(GLOBAL.items()):
+            if not isinstance(im, Disque): GLOBAL[kk] = (nm, Disque(im, f'{TMP}/{nm}.png'))
     monde['maps'].append({'x': x, 'y': y, 'id': sel[(x, y)][0], 'sub': sel[(x, y)][1], 'tag': tag,
                           'sol': {'x': bx0 + dx, 'y': by0 + dy, 'w': sol.width, 'h': sol.height}, 'decor': places,
                           **({'fond': fond} if fond else {}), **({'inside': 1} if extra[(x, y)].get('inside') else {}),
                           **({'ciel': 1} if extra[(x, y)].get('ciel') else {})})
     print(tag, 'retirés', len(hard), 'lumières', len(lums), 'eau', len(couche), 'sol', sol.size, 'fond', fond and (fond['w'], fond['h']), 'decor', len(places), asz)
+def pages_partagees():
+    """Range toutes les images du décor dans des pages de 2048 x 2048 au plus, dans l'ordre de première utilisation."""
+    PW, PH = 2048, 2048; page = 0; px = py = rowH = 0; pos = {}; order = sorted(GLOBAL.values(), key=lambda v: int(v[0][1:]))
+    for name, im in order:
+        b = im.getbbox() or (0, 0, 1, 1); w, h = b[2] - b[0] + 2, b[3] - b[1] + 2
+        if w > PW or h > PH: im = im.crop(b); b = (0, 0, im.width, im.height); w, h = min(PW, im.width) + 2, min(PH, im.height) + 2
+        if px + w > PW: px = 0; py += rowH; rowH = 0
+        if py + h > PH: page += 1; px = py = rowH = 0
+        pos[name] = (page, px, py, b, im); px += w; rowH = max(rowH, h)
+    out_pages = {}
+    for name, (pg, ax, ay, b, im) in pos.items(): out_pages.setdefault(pg, []).append((name, ax, ay, b, im))
+    for pg, items in out_pages.items():
+        hgt = max(ay + (b[3] - b[1]) + 2 for _, _, ay, b, _ in items)
+        atlas = Image.new('RGBA', (PW, min(PH, hgt))); frames = {}
+        for name, ax, ay, b, im in items:
+            c = im.crop(b).crop((0, 0, min(PW - 2, b[2] - b[0]), min(PH - 2, b[3] - b[1]))); atlas.paste(c, (ax + 1, ay + 1))
+            frames[name] = {'frame': {'x': ax + 1, 'y': ay + 1, 'w': c.width, 'h': c.height}, 'rotated': False, 'trimmed': True,
+                            'spriteSourceSize': {'x': b[0], 'y': b[1], 'w': c.width, 'h': c.height}, 'sourceSize': {'w': im.width, 'h': im.height}}
+        if not NO_DECOR:
+            webp(atlas, f'{out}/decor_p{pg}.webp', 82)
+            json.dump({'frames': frames, 'meta': {'image': f'decor_p{pg}.webp', 'size': {'w': PW, 'h': atlas.height}, 'scale': '1'}}, open(f'{out}/decor_p{pg}.json', 'w'))
+    return {name: v[0] for name, v in pos.items()}
+if PARTAGE:
+    PG = pages_partagees()
+    for m in monde['maps']:
+        for d in m['decor']: d['p'] = PG[d['f']]
+        m['pages'] = sorted({d['p'] for d in m['decor']})
+    print('pages de décor partagées', max(PG.values()) + 1, 'images', len(PG))
 # Calque « bord » : ce qu'une carte dessine au-delà de son cadre, posé par-dessus les cartes voisines.
 #  - là où la voisine n'a rien (trou, ciel) : en entier (falaises et rochers qui débordent) ;
 #  - ailleurs : en fondu sur BORD px (ombres, fonds de ciel… plus de coupure nette au raccord).
@@ -294,6 +357,7 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
     tag = extra[(x, y)].get('tag', f'{x}_{y}')
     if tag not in entiers: continue
     full, ux, uy, (rx0, ry0, rx1, ry1), (sx0, sy0, sx1, sy1), write = entiers[tag]
+    full = full.load()
     A = np.asarray(full).astype(np.float32)
     h, w = A.shape[:2]
     gx = ux + np.arange(w)[None, :]; gy = uy + np.arange(h)[:, None]
@@ -304,7 +368,7 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
         if t2 == tag: continue
         x0, y0 = max(ux, ox), max(uy, oy); x1, y1 = min(ux + w, ox + s2.width), min(uy + h, oy + s2.height)
         if x0 >= x1 or y0 >= y1: continue
-        a2 = np.asarray(s2.getchannel('A').crop((x0 - ox, y0 - oy, x1 - ox, y1 - oy))).astype(np.float32)
+        a2 = np.asarray(s2.crop((x0 - ox, y0 - oy, x1 - ox, y1 - oy))).astype(np.float32)
         sub = autre[y0 - uy:y1 - uy, x0 - ux:x1 - ux]; np.maximum(sub, a2, out=sub)
     d = np.maximum(np.maximum(rx0 - gx, gx - rx1), np.maximum(ry0 - gy, gy - ry1)).clip(0)
     f = np.where(autre < 128, 1.0, np.clip(1 - d / BORD, 0, 1)) * hors
