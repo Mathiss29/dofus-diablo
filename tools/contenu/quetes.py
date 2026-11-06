@@ -55,7 +55,7 @@ Q = {}
 # --- Fil principal (Ganymède -> Lykhen -> Fécaline) ---------------------------------------------------------
 Q['reponses'] = {'nom': 'Réponses à tout', 'type': 'tutoriel', 'pnj': 'ganymede', 'niveau': 1, 'auDepart': True, 'depart': 'temple_1', 'arrivee': '-2_-3', 'arriveeCase': 355, 'suivante': 'village',
   'texte': "Avant de quitter le temple céleste, prenez le temps de contempler les Dofus et le Monde des Douze... et n'oubliez pas de saluer votre dieu au passage ! Ganymède vous apprend à vous battre avant de vous laisser descendre sur l'île.",
-  'options': {'passable': True, 'sauterSiCompte': True, 'immortel': True, 'groupes': {'sousZones': [SZ['temple']], 'taille': [1, 3], 'etape': 2}},
+  'options': {'passable': True, 'sauterSiCompte': True, 'immortel': True, 'jauge': 4, 'groupes': {'sousZones': [SZ['temple']], 'taille': [1, 3], 'etape': 2}},
   # Tutoriel (maquette « Tutoriel d'Incarnam », tranchée le 2026-11-06) : une trame par classe (9B), une action par étape,
   # halo sur la barre + bulle de Ganymède (3A+3B). Les indices des étapes « Premiers pas » (0) et « Premières armes » (8)
   # servent au succès « Premier temps » : garder les deux trames de même longueur.
@@ -68,7 +68,7 @@ Q['reponses'] = {'nom': 'Réponses à tout', 'type': 'tutoriel', 'pnj': 'ganymed
              'cra': tuto('Crâ', "sans arc, tu frappes au poing",
                  ('recul', 'Tes flèches sont sur & é " \'. Touche & : Flèche de Recul, elle repousse ta cible !'),
                  "Essaie les autres : é Flèche Glacée, \" Flèche Vagabonde, ' Flèche de Barrage. Reste loin et vide ce groupe !",
-                 "Tirer de loin remplit ta Précision. Pleine, elle renforce ta flèche suivante : remplis-la, puis tire !",
+                 "Toucher de loin remplit ta Précision : utilise tes flèches (& é \" ') à distance. Pleine, elle renforce ta flèche suivante : remplis-la, puis tire !",
                  "Espace : Pas Chassé. Un pas vif vers ta souris, pour reprendre tes distances quand un monstre te colle.",
                  ('1942', "Prends cet Arc de Chasse. I ouvre ton sac : équipe-le, tu tireras des flèches au lieu de frapper au poing."))},
   'recompense': {'xp': 150, 'potions': True, 'niveau': 2}}

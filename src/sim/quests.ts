@@ -74,7 +74,8 @@ export interface QueteDef {
   recompense: RecompenseDef;
   /** Options du tutoriel : PV bloqués à 1 (6A), groupes réduits dans ces sous-zones (5A), sautée si le compte a déjà un perso (7B). */
   /** groupes.etape : les groupes de ces sous-zones n'apparaissent qu'à partir de cette étape (tutoriel : pas de monstres dès l'entrée dans la salle). */
-  options?: { immortel?: boolean; groupes?: { sousZones: number[]; taille: [number, number]; etape?: number }; sauterSiCompte?: boolean; passable?: boolean };
+  /** jauge : la jauge de classe se remplit N fois plus vite pendant la quête (le Crâ du tutoriel n'a pas encore d'arc). */
+  options?: { immortel?: boolean; groupes?: { sousZones: number[]; taille: [number, number]; etape?: number }; sauterSiCompte?: boolean; passable?: boolean; jauge?: number };
   /** Démarre dès le début de la partie (le tutoriel). */
   auDepart?: boolean;
   /** Carte (tag de monde.json) où le perso apparaît quand la quête démarre au départ (tutoriel : le Temple Céleste). */
@@ -441,6 +442,8 @@ export class Quetes {
   passer(id: string) { if (this.enCours.some(c => c.id === id) && this.def(id).options?.passable) this.terminer(id, true); }
 
   /** Option du tutoriel : PV bloqués à 1. */
+  /** Option du tutoriel : multiplicateur de la jauge de classe. */
+  get jaugeX() { let k = 1; for (const c of this.enCours) k = Math.max(k, this.def(c.id).options?.jauge ?? 1); return k; }
   get immortel() { return this.enCours.some(c => this.def(c.id).options?.immortel); }
   /** Option du tutoriel : taille des groupes dans une sous-zone pendant la quête. */
   /** Faux tant qu'une quête en cours retient les groupes de cette sous-zone (étape pas encore atteinte). */

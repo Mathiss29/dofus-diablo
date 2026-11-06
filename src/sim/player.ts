@@ -340,7 +340,7 @@ export class Player extends Entity {
   /** Remplit la jauge de classe ; prévient l'affichage quand elle devient pleine. */
   addRage(n: number, world: World) {
     const R = this.cls.rage, was = this.rageFull;
-    this.rage = Math.min(R.max, this.rage + n * (1 + this.legendary('rage') / 100));
+    this.rage = Math.min(R.max, this.rage + n * (1 + this.legendary('rage') / 100) * (world.quetes?.jaugeX ?? 1));
     if (!was && this.rageFull) world.emit({ k: 'rageFull' });
   }
 

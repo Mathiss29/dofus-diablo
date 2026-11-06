@@ -101,6 +101,17 @@ describe('quêtes et succès', () => {
     expect(wg.freeByMap.get('temple_1')!.length).toBeGreaterThan(100);
   });
 
+  it('tutoriel : la Précision du Crâ (sans arc) se remplit en quelques touches, les esprits reviennent vite', () => {
+    const w = new World({ data: GAME_DATA, zone: 'incarnam', map: new WorldGrid(monde), seed: 7, items: ITEMS as unknown as ItemsData, quetes: Q, compte: { succes: [], persos: 0 }, classId: 'cra' });
+    const p = w.player;
+    let n = 0;
+    while (!p.rageFull && n < 50) { p.rageOnHit(500, w); n++; }
+    expect(n).toBeLessThanOrEqual(10);   // de loin
+    p.rage = 0; n = 0;
+    while (!p.rageFull && n < 50) { p.rageOnHit(40, w); n++; }
+    expect(n).toBeLessThanOrEqual(25);   // même au poing, ça finit par venir
+  });
+
   it('le tutoriel est sauté dès le 2e perso ; les PV restent à 1 pendant le tutoriel', () => {
     expect(newWorld(1).quetes!.finies.has('reponses')).toBe(true);
     const w = newWorld(), p = w.player;

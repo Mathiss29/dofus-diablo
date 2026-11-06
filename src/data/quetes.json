@@ -82,6 +82,7 @@
     "passable": true,
     "sauterSiCompte": true,
     "immortel": true,
+    "jauge": 4,
     "groupes": {
      "sousZones": [
       446
@@ -290,7 +291,7 @@
      {
       "nom": "La jauge de classe",
       "pnj": "ganymede_temple",
-      "bulle": "Tirer de loin remplit ta Précision. Pleine, elle renforce ta flèche suivante : remplis-la, puis tire !",
+      "bulle": "Toucher de loin remplit ta Précision : utilise tes flèches (& é \" ') à distance. Pleine, elle renforce ta flèche suivante : remplis-la, puis tire !",
       "halo": "jauge",
       "objectifs": [
        {
