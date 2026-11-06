@@ -57,7 +57,8 @@
         "En coulisses": [
           "Fenêtres refaites avec les vraies images de Dofus 3 et ses polices (Lexend, Rowdies).",
           "Ce journal : un carnet par journée, écrit à chaque mise à jour.",
-          "Le jeu se prépare à grandir : cartes, sprites et sons pourront bientôt venir d'un stockage dédié, et après une mise à jour ton navigateur ne retélécharge plus que ce qui a changé."
+          "Le jeu se prépare à grandir : cartes, sprites et sons pourront bientôt venir d'un stockage dédié, et après une mise à jour ton navigateur ne retélécharge plus que ce qui a changé.",
+          "Les planches des monstres, des PNJ et des persos passent en AVIF : environ un tiers plus légères, donc plus rapides à charger."
         ]
       }
     },
