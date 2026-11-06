@@ -456,7 +456,7 @@ export class Windows {
       ${range('lumieres', 'Lumières (halos, feux)', 0, 200)}
       ${range('saturation', 'Couleurs (moins = adouci)', 50, 120)}
       ${range('chaleur', 'Chaleur de la lumière', -100, 100, '')}
-      ${range('zoom', 'Zoom', 55, 150)}
+      ${range('zoom', 'Zoom', 55, 120)}
       <div class="sub">Options</div>
       ${range('volume', 'Volume des sons', 0, 100)}
       <label class="row"><span>Effets d'impact (F)</span><input type="checkbox" data-juice ${this.juice.get() ? 'checked' : ''} style="justify-self:start;accent-color:#b9e54b"><output></output></label>
