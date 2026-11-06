@@ -3,3 +3,36 @@ dist/
 *.log
 .DS_Store
 __pycache__/
+
+# Fichiers lourds servis par Cloudflare R2 (assets.diablofus.com), plus dans git depuis le 6 nov. 2026.
+# Clone neuf : node tools/hebergement/envoi.mjs --recuperer (voir tools/hebergement/LISEZMOI.md). Les JSON restent dans git.
+/public/assets/mondes/**/*.webp
+/public/assets/mondes/**/*.avif
+/public/assets/mondes/**/*.png
+/public/assets/mondes/**/*.jpg
+/public/assets/mondes/**/*.mp3
+/public/assets/mondes/**/*.ogg
+/public/assets/sprites/**/*.webp
+/public/assets/sprites/**/*.avif
+/public/assets/sprites/**/*.png
+/public/assets/sprites/**/*.jpg
+/public/assets/sprites/**/*.mp3
+/public/assets/sprites/**/*.ogg
+/public/assets/son/**/*.webp
+/public/assets/son/**/*.avif
+/public/assets/son/**/*.png
+/public/assets/son/**/*.jpg
+/public/assets/son/**/*.mp3
+/public/assets/son/**/*.ogg
+/public/assets/fx/**/*.webp
+/public/assets/fx/**/*.avif
+/public/assets/fx/**/*.png
+/public/assets/fx/**/*.jpg
+/public/assets/fx/**/*.mp3
+/public/assets/fx/**/*.ogg
+/public/assets/cartes/**/*.webp
+/public/assets/cartes/**/*.avif
+/public/assets/cartes/**/*.png
+/public/assets/cartes/**/*.jpg
+/public/assets/cartes/**/*.mp3
+/public/assets/cartes/**/*.ogg
