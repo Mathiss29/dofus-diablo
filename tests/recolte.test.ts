@@ -51,6 +51,19 @@ describe('Métiers de récolte (0.2b)', () => {
     expect(p.resources['470']).toBeUndefined();
     expect(w.drainEvents().some(e => e.k === 'recolteNiveau')).toBe(true);
   });
+  it('chaque emplacement (Astrub, Incarnam) a son dessin officiel : planche, frames prête / coupe / récoltée', () => {
+    const R = RECOLTES as unknown as Record<string, [string, number, string, number][]>;
+    for (const monde of ['astrub', 'incarnam']) {
+      expect(R[monde].length, monde).toBeGreaterThan(500);
+      for (const g of new Set(R[monde].map(x => x[3]))) {
+        const j = JSON.parse(readFileSync(new URL(`../public/assets/sprites/recoltes/${g}.json`, import.meta.url), 'utf8'));
+        expect(j.frames.pret, `${g}`).toBeDefined();
+        expect(j.frames.recolte, `${g}`).toBeDefined();
+        expect(j.meta.image).toBe(`${g}.avif`);
+      }
+    }
+    expect(monde().recoltes.every(r => r.gfx != null)).toBe(true);
+  });
   it('Bricoleur : les recettes officielles des clés de donjon', () => {
     const r = (id: string) => ITEMS.recipes!.find(x => x.result === id)!;
     expect(r('8143')).toMatchObject({ metier: 'bricoleur', level: 10 });

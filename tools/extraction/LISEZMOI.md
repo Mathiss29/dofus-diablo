@@ -248,3 +248,11 @@ dessinées à la première utilisation puis gardées). Rendu identique à `rende
 - Les anciennes planches `iop`, `cra`, `iop_f`, `cra_f` ne servent plus qu'en secours (squelette injoignable).
 - À venir (0.2b) : coiffe, cape, bouclier, familier et apparat = d'autres skins posés sur les mêmes nœuds ; leurs dessins
   ne sont pas dans le cache (`Characters/Skins` complet à copier depuis le PC de Mathis).
+
+## Ressources à récolter (dessins)
+Les animations des éléments interactifs (blé 660, frêne 650, fer 4918, ortie 3212, pêche 1018…) ne sont pas dans le client de Dofus 3.
+Elles viennent du client Stasis (format msgpack, voir l'en-tête de `recoltes_planches.py`) ; les 639 éléments animés sont gardés
+dans `/mnt/project-files/cache-dofus/elements-animes/` (LISEZMOI là-bas).
+1. `python tools/contenu/recoltes.py <liste.json> <cartes> <tables> <fr.bin> <monde.json> <monde>` : emplacements + gfx + décalage + miroir.
+2. `python tools/extraction/recoltes_planches.py <dossier b> public/assets/sprites/recoltes <gfx,…>` : une planche AVIF par gfx.
+3. `node tools/hebergement/envoi.mjs`.

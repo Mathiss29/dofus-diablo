@@ -721,12 +721,13 @@ export class World {
   // --- Métiers de récolte (0.2b) ---------------------------------------------------------------------------------
   private buildRecoltes() {
     const R = this.opts.recoltes, wg = this.worldGrid, open = this.zone.open;
-    const l = R && open && (R[open.world] as [string, number, string][] | undefined);
+    const l = R && open && (R[open.world] as [string, number, string, number?, number?, number?, number?][] | undefined);
     if (!R || !wg || !l) return;
-    for (const [tag, cell, item] of l) {
+    for (const [tag, cell, item, gfx, dx, dy, miroir] of l) {
       if (!wg.mapByTag(tag) || !R.ressources[item]) continue;
       const q = wg.cellToWorld(wg.cellOf(tag, cell));
-      this.recoltes.push({ id: this.nextId++, tag, x: q.x, y: q.y, item, dore: this.rng.next() < RECOLTE.dore, repousse: 0 });
+      this.recoltes.push({ id: this.nextId++, tag, x: q.x, y: q.y, item, dore: this.rng.next() < RECOLTE.dore, repousse: 0,
+        gfx, dessin: dx || dy ? { x: dx!, y: dy! } : undefined, miroir: miroir === 1 });
     }
   }
   /** Case libre la plus proche d'une ressource (les arbres et les minerais sont souvent sur une case bloquante). */
