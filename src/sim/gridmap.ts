@@ -2,7 +2,13 @@ import { ISO, type Vec } from './iso';
 import type { Rng } from './math';
 
 export interface Rect { x: number; y: number; w: number; h: number }
-export interface DecorPlace { f: string; x: number; y: number; c: number; o: number }
+/** Un élément de décor. c = case (profondeur), -1 = posé sur le sol. Lumières (halos, rayons) : b = mélange ('a' additif, 's' écran), k = intensité, z = réduction de l'image. */
+export interface DecorPlace { f: string; x: number; y: number; c: number; o: number; b?: 'a' | 's'; k?: number; /** image réduite : le jeu l'agrandit d'autant */ z?: number;
+  /** couche d'eau animée (sous les lumières) */ g?: number;
+  /** lumière du soleil (reflet, rayon) : s'éteint la nuit */ j?: number;
+  /** souplesse au vent (0 à 1) */ w?: number;
+  /** eau qui glisse : direction x, y, amplitude (px), fréquence */ t?: [number, number, number, number];
+  /** couleur qui va et vient : 0xRRGGBB, alpha, fréquence */ ca?: [number, number, number] }
 
 /** Données d'une carte Dofus 3 exportée par tools/extraction/map_export.py. */
 export interface MapData {

@@ -10,7 +10,15 @@ import type { Look } from './looks';
  *  (_3 = _1, _4 = _0, _7 = _5). La course et le repos ont les 5 orientations, donc 8 directions ;
  *  les attaques n'ont que _1 et _5, donc les 4 diagonales. */
 const MIRROR: Record<number, number> = { 3: 1, 4: 0, 7: 5 };
+/** Produit de deux teintes 0xRRGGBB. */
+function mulTint(a: number, b: number) {
+  const c = (s: number) => Math.round((((a >> s) & 255) * ((b >> s) & 255)) / 255) << s;
+  return c(16) | c(8) | c(0);
+}
+
 export class EntityView {
+  /** Teinte d'ambiance des personnages et des monstres (render/ambiance.ts : plus légère que celle des cartes, ils ressortent la nuit). */
+  static ambiance = 0xffffff;
   readonly sprite: Phaser.GameObjects.Sprite;
   private readonly bar: Phaser.GameObjects.Graphics;
   private readonly shadow: Phaser.GameObjects.Graphics;
@@ -57,7 +65,7 @@ export class EntityView {
     this.sprite.setScale(flip ? -L.scale : L.scale, sy).setAlpha(alpha);
     this.sprite.setPosition(p.x, p.y - (L.ignoreZ ? 0 : e.z)).setDepth(p.y);
     if (e.flash > 0) this.sprite.setTintFill(0xffffff);
-    else if (L.tint) this.sprite.setTint(L.tint);
+    else if (L.tint || EntityView.ambiance !== 0xffffff) this.sprite.setTint(mulTint(L.tint ?? 0xffffff, EntityView.ambiance));
     else this.sprite.clearTint();
     // Ombre au sol : reste au sol pendant les sauts
     const sh = this.shadow; sh.clear();

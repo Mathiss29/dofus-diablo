@@ -14,6 +14,7 @@ import { Hud } from './hud';
 import { LOOKS } from './looks';
 import { drawMap } from './mapView';
 import { WorldView } from './worldView';
+import { ambiance, chargerReglages, matriceSaturation, type Reglages } from './ambiance';
 import { ICON_SHEET, iconFrame } from './icons';
 import { Windows } from './windows';
 import { spellTipHtml } from './spellTip';
@@ -57,7 +58,11 @@ export class ZoneScene extends Phaser.Scene {
   private clickDest = false;
   /** Zoom voulu (molette) ; la caméra le rejoint en douceur. */
   private zoom = 1;
-  static readonly ZOOM: [number, number] = [0.7, 1.5];
+  static readonly ZOOM: [number, number] = [0.45, 1.5];
+  /** Réglages du joueur (fenêtre Réglages, touche O) et dernière mise à jour de l'ambiance. */
+  private reglages: Reglages = chargerReglages();
+  private ambT = 0;
+  private sat?: Phaser.FX.ColorMatrix;
   private static readonly STEP = 1 / 60;
 
   constructor() { super('zone'); }
@@ -122,7 +127,8 @@ export class ZoneScene extends Phaser.Scene {
     const onAdd = (o: Phaser.GameObjects.GameObject) => ui.ignore(o);
     this.sys.events.on(Phaser.Scenes.Events.ADDED_TO_SCENE, onAdd);
     this.events.once('shutdown', () => this.sys.events.off(Phaser.Scenes.Events.ADDED_TO_SCENE, onAdd));
-    this.zoom = 1; this.cameras.main.setZoom(1);
+    this.reglages = chargerReglages(); this.ambT = 0; this.sat = undefined;
+    this.zoom = this.reglages.zoom; this.cameras.main.setZoom(this.zoom);
     this.input.on('wheel', (_p: Phaser.Input.Pointer, _o: unknown, _dx: number, dy: number) => {
       this.zoom = Phaser.Math.Clamp(this.zoom * (dy > 0 ? 0.9 : 1.1), ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]);
     });
@@ -148,6 +154,10 @@ export class ZoneScene extends Phaser.Scene {
     this.windows?.destroy();
     this.windows = new Windows(this.world);
     this.windows.portrait = v(`${ASSETS}/ui/perso_${this.classId}.png`);   // rendu en grand (perso_planche : render.cjs échelle 2,2)
+    this.windows.reglages = this.reglages;
+    this.windows.onReglages = r => { this.zoom = Phaser.Math.Clamp(r.zoom, ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]); this.updateAmbiance(true); };
+    this.windows.juice = { get: () => this.fx.juice, set: on => { this.fx.juice = on; } };
+    this.windows.heureNom = () => ambiance(this.reglages, new Date(), !!this.world.worldGrid?.mapAt(this.world.player.x, this.world.player.y)?.inside).nom;
     this.events.once('shutdown', () => { this.windows?.destroy(); this.windows = null; });
     this.hud.onSlotHover = (id, x, y) => {
       if (!id) { this.windows?.hideTip(); return; }
@@ -158,6 +168,7 @@ export class ZoneScene extends Phaser.Scene {
       if (name === 'Inventaire') this.windows!.toggle('inv');
       else if (name === 'Caractéristiques') this.windows!.toggle('car');
       else if (name === 'Métiers') this.windows!.toggle('job');
+      else if (name === 'Réglages') this.windows!.toggle('opt');
       else this.hud.toast(`${name} : arrive dans une prochaine version`);
     };
     this.cameras.main.startFollow(this.viewOf(this.world.player).sprite, true, 0.12, 0.12, 0, 30);
@@ -170,7 +181,7 @@ export class ZoneScene extends Phaser.Scene {
     const K = Phaser.Input.Keyboard.KeyCodes, kb = this.input.keyboard!;
     // Déplacement à la souris (clic gauche) ; le clavier sert aux sorts, à la potion et aux menus
     this.keys = kb.addKeys({ SHIFT: K.SHIFT, ALT: K.ALT,
-      SPACE: K.SPACE, E: K.E, K: K.K, I: K.I, C: K.C, J: K.J, ESC: K.ESC, F: K.F, H: K.H, ENTER: K.ENTER,
+      SPACE: K.SPACE, E: K.E, K: K.K, I: K.I, C: K.C, J: K.J, ESC: K.ESC, F: K.F, H: K.H, O: K.O, ENTER: K.ENTER,
       ONE: K.ONE, TWO: K.TWO, THREE: K.THREE, FOUR: K.FOUR, FIVE: K.FIVE, SIX: K.SIX }) as Record<string, Phaser.Input.Keyboard.Key>;
     const cls = this.world.player.cls;
     // Façon Diablo (demande de Mathis, 2026-11-05) : clic gauche sur le sol = y aller (maintenu : suivre le curseur),
@@ -205,6 +216,7 @@ export class ZoneScene extends Phaser.Scene {
     this.keys.I.on('down', () => this.windows?.toggle('inv'));
     this.keys.C.on('down', () => this.windows?.toggle('car'));
     this.keys.J.on('down', () => this.windows?.toggle('job'));   // Métiers (choix 6A : Chasseur)
+    this.keys.O.on('down', () => this.windows?.toggle('opt'));   // Réglages (choix 10A + 10B)
     this.keys.ESC.on('down', () => this.windows?.close());
     // K : changer de classe (en attendant l'écran de création de la 0.1b)
     this.keys.K.on('down', () => this.scene.restart({ zone: this.zoneId, classe: this.classId === 'iop' ? 'cra' : 'iop' }));
@@ -233,7 +245,7 @@ export class ZoneScene extends Phaser.Scene {
       notes.forEach((f, i) => {
         const o = A.createOscillator(), g = A.createGain(), t0 = A.currentTime + i * 0.09;
         o.type = 'triangle'; o.frequency.value = f;
-        g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(0.12, t0 + 0.02); g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.6);
+        g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(0.12 * this.reglages.volume + 0.0001, t0 + 0.02); g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.6);
         o.connect(g).connect(A.destination); o.start(t0); o.stop(t0 + 0.65);
       });
     } catch { /* son indisponible */ }
@@ -415,10 +427,27 @@ export class ZoneScene extends Phaser.Scene {
     return v;
   }
 
+  /** Ambiance (render/ambiance.ts) : jour / soir / nuit selon l'heure du PC, lumière fixe dans les intérieurs. Quatre fois par seconde. */
+  private updateAmbiance(force = false) {
+    const now = this.time.now;
+    if (!force && now - this.ambT < 250) return;
+    this.ambT = now;
+    const w = this.world, inside = !!w.worldGrid?.mapAt(w.player.x, w.player.y)?.inside;
+    const a = ambiance(this.reglages, new Date(), inside || !w.zone.open);
+    this.worldView?.setAmbiance(a.tint, a.lumieres, a.soleil);
+    if (this.worldView) { this.worldView.vent = this.reglages.vent; this.worldView.eau = this.reglages.eau; }
+    EntityView.ambiance = a.tintPerso;
+    // couleurs adoucies (5B) : un filtre sur la caméra du jeu, seulement s'il sert (WebGL)
+    const s = this.reglages.saturation, cam = this.cameras.main;
+    if (Math.abs(s - 1) > 0.01 && cam.postFX) { this.sat ??= cam.postFX.addColorMatrix(); this.sat.set(matriceSaturation(s)); }
+    else if (this.sat) { cam.postFX.remove(this.sat as unknown as Phaser.FX.Controller); this.sat = undefined; }
+  }
+
   private render() {
     const w = this.world, alive = new Set<number>(), wv = this.worldView, wg = w.worldGrid;
     const cam = this.cameras.main;
     if (Math.abs(cam.zoom - this.zoom) > 0.001) cam.setZoom(cam.zoom + (this.zoom - cam.zoom) * 0.2);
+    this.updateAmbiance();
     wv?.update(w.player.x, w.player.y);
     for (const e of [w.player, ...w.monsters]) {
       // monde ouvert : on n'affiche que les monstres des cartes chargées (les autres vivent quand même dans la simulation)

@@ -1,3 +1,4 @@
+import { REGLAGES_DEFAUT, sauverReglages, type Heure, type Reglages } from './ambiance';
 import { ICON_CSS, iconHtml } from './icons';
 import { ITEMS } from '../sim/data';
 import {
@@ -92,6 +93,15 @@ const CSS = `
 .dw .tip h4{margin:0 0 2px;font-size:15px}.dw .tip .sub{color:#a9a48b;font-size:12px;margin-bottom:6px}
 .dw .tip .up{color:#7be07b}.dw .tip .down{color:#e0625a}.dw .tip .ex{color:#6fb2e8}.dw .tip .leg{color:#f08a2c;margin-top:4px}
 .dw .tip .set{color:#9ad15a;margin-top:6px;font-size:12px}.dw .tip .hint{color:#7f7a64;font-size:11px;margin-top:6px}
+.dw .win.opt{width:min(480px,96vw);max-height:92vh}
+.dw .opt .in{padding:14px 16px;overflow:auto;display:grid;gap:10px;align-content:start;max-height:calc(92vh - 50px)}
+.dw .opt .sub{color:#c9a55a;font-size:12px;text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
+.dw .opt .row{display:grid;grid-template-columns:150px 1fr 52px;gap:10px;align-items:center;font-size:13px}
+.dw .opt .row input[type=range]{width:100%;accent-color:#b9e54b}
+.dw .opt .row select{background:#1d1c19;color:#e8e2cc;border:1px solid #34322b;border-radius:3px;padding:3px 6px}
+.dw .opt .row output{text-align:right;color:#c9c4ab;font-variant-numeric:tabular-nums}
+.dw .opt .keys{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:12px;color:#c9c4ab}
+.dw .opt .keys b{color:#e8e2cc;font-family:monospace}
 .dw .win.job{width:min(560px,96vw);height:min(640px,92vh)}
 .dw .job .in{padding:14px 16px;overflow:auto;display:grid;gap:12px;align-content:start}
 .dw .mh{display:flex;gap:12px;align-items:center}.dw .mh img{width:56px;height:56px}
@@ -108,7 +118,7 @@ const CSS = `
 .dw .tip .cmp{border-top:1px solid #3a3a2c;margin-top:6px;padding-top:6px;font-size:12px}
 `;
 
-type Mode = 'inv' | 'car' | 'job';
+type Mode = 'inv' | 'car' | 'job' | 'opt';
 
 /** Fenêtres façon Dofus 3 : « Inventaire » (le perso sur son socle, ses emplacements autour, le sac à onglets)
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
@@ -124,6 +134,12 @@ export class Windows {
   private search = '';
   /** Image du perso (frame de repos de sa planche). */
   portrait = '';
+  /** Réglages (render/ambiance.ts), modifiés en direct par la fenêtre Réglages. */
+  reglages: Reglages = { ...REGLAGES_DEFAUT };
+  onReglages: (r: Reglages) => void = () => {};
+  /** Effets d'impact (touche F), et l'étape d'ambiance du moment pour l'affichage. */
+  juice = { get: () => true, set: (_on: boolean) => {} };
+  heureNom = () => '';
   onChange: () => void = () => {};
 
   constructor(private world: World) {
@@ -150,7 +166,7 @@ export class Windows {
   refresh() { if (this.win) this.render(); }
 
   private render() {
-    if (this.mode === 'car') this.renderCarac(); else if (this.mode === 'job') this.renderJob(); else this.renderInv();
+    if (this.mode === 'car') this.renderCarac(); else if (this.mode === 'job') this.renderJob(); else if (this.mode === 'opt') this.renderOpt(); else this.renderInv();
     this.win!.querySelector('[data-close]')!.addEventListener('click', () => this.close());
   }
   private title(name: string, icon: string) {
@@ -290,6 +306,43 @@ export class Windows {
     }).join('');
     w.innerHTML = `${this.title('Métiers', 'job')}<div class="in">${jobs || '<div class="hint">Aucun métier.</div>'}</div>`;
     w.querySelectorAll<HTMLElement>('[data-craft]').forEach(e => e.addEventListener('click', () => { this.world.craft(+e.dataset.craft!); this.changed(); }));
+  }
+
+  /** Réglages (choix 10A + 10B) : curseurs d'ambiance en direct, puis les options du joueur. Gardés dans le navigateur. */
+  private renderOpt() {
+    const w = this.win!, r = this.reglages;
+    const range = (k: keyof Reglages, name: string, min: number, max: number, unit = '%', mul = 100) =>
+      `<label class="row"><span>${name}</span><input type="range" data-k="${k}" min="${min}" max="${max}" value="${Math.round((r[k] as number) * mul)}" data-mul="${mul}"><output data-o="${k}">${Math.round((r[k] as number) * mul)}${unit}</output></label>`;
+    const heures: [string, string][] = [['auto', 'Heure du PC'], ['jour', 'Jour'], ['soir', 'Soir'], ['nuit', 'Nuit']];
+    w.innerHTML = `${this.title('Réglages', 'options')}<div class="in">
+      <div class="sub">Ambiance</div>
+      <label class="row"><span>Heure</span><select data-k="heure">${heures.map(([k, n]) => `<option value="${k}" ${r.heure === k ? 'selected' : ''}>${n}</option>`).join('')}</select><output>${this.heureNom()}</output></label>
+      ${range('lumieres', 'Lumières (halos, feux)', 0, 200)}
+      ${range('saturation', 'Couleurs (moins = adouci)', 50, 120)}
+      ${range('chaleur', 'Chaleur de la lumière', -100, 100, '')}
+      ${range('zoom', 'Zoom', 45, 150)}
+      <div class="sub">Options</div>
+      ${range('volume', 'Volume des sons', 0, 100)}
+      <label class="row"><span>Effets d'impact (F)</span><input type="checkbox" data-juice ${this.juice.get() ? 'checked' : ''} style="justify-self:start;accent-color:#b9e54b"><output></output></label>
+      ${(['vent', 'eau'] as const).map(k => `<label class="row"><span>${k === 'vent' ? 'Arbres au vent' : 'Eau animée'}</span><input type="checkbox" data-b="${k}" ${r[k] ? 'checked' : ''} style="justify-self:start;accent-color:#b9e54b"><output></output></label>`).join('')}
+      <div class="sub">Touches</div>
+      <div class="keys">${[['Clic gauche', 'aller / attaquer (maintenu : continuer)'], ['Maj + clic', 'attaquer sur place'], ['Clic droit', 'sort favori'],
+        ['& é " \' ( -', 'barre de sorts'], ['Espace', 'déplacement'], ['E', 'potion'], ['I', 'inventaire'], ['C', 'caractéristiques'], ['J', 'métiers'],
+        ['O', 'réglages'], ['Molette', 'zoom'], ['F', 'effets d\'impact'], ['K', 'changer de classe (Iop / Crâ)'], ['H', 'aide'], ['Échap', 'fermer']]
+        .map(([k, d]) => `<b>${k}</b><span>${d}</span>`).join('')}</div>
+      <div><span class="btn" data-defaut>Valeurs par défaut</span></div>
+    </div>`;
+    const apply = () => { sauverReglages(r); this.onReglages(r); };
+    w.querySelectorAll<HTMLInputElement>('input[type=range]').forEach(e => e.addEventListener('input', () => {
+      const k = e.dataset.k as keyof Reglages, mul = +e.dataset.mul!;
+      (r as unknown as Record<string, number>)[k] = +e.value / mul;
+      w.querySelector(`[data-o="${k}"]`)!.textContent = `${e.value}${k === 'chaleur' ? '' : '%'}`;
+      apply();
+    }));
+    w.querySelector<HTMLSelectElement>('select[data-k=heure]')!.addEventListener('change', e => { r.heure = (e.target as HTMLSelectElement).value as Heure; apply(); this.render(); });
+    w.querySelectorAll<HTMLInputElement>('[data-b]').forEach(e => e.addEventListener('change', () => { r[e.dataset.b as 'vent' | 'eau'] = e.checked; apply(); }));
+    w.querySelector<HTMLInputElement>('[data-juice]')!.addEventListener('change', e => this.juice.set((e.target as HTMLInputElement).checked));
+    w.querySelector('[data-defaut]')!.addEventListener('click', () => { Object.assign(r, REGLAGES_DEFAUT); apply(); this.render(); });
   }
 
   private changed() { this.hideTip(); this.render(); this.onChange(); }

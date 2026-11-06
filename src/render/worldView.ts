@@ -1,6 +1,6 @@
 import { v } from './assetUrl';
 import Phaser from 'phaser';
-import { GridMap, type WorldGrid, type WorldMapEntry } from '../sim/gridmap';
+import { GridMap, type DecorPlace, type WorldGrid, type WorldMapEntry } from '../sim/gridmap';
 import { ISO } from '../sim/iso';
 
 /** Rayon (en cartes) chargé autour du joueur, et rayon au-delà duquel une carte est déchargée.
@@ -26,6 +26,14 @@ export class WorldView {
   /** Cartes en téléchargement, et textures prêtes à envoyer à la carte graphique (une par image, voir fetchMap). */
   private readonly fetching = new Set<string>();
   private readonly uploads: { m: WorldMapEntry; add: () => void }[] = [];
+  /** Ambiance (render/ambiance.ts) : teinte des cartes et force des lumières, appliquées aux objets posés et à venir. */
+  private tint = 0xffffff;
+  private lum = 1;
+  private sol = 1;
+  /** Décor qui bouge (maquette « Vivant ») : arbres au vent, eau qui glisse ou change de couleur. Coupables dans les Réglages. */
+  private readonly vivants: { im: Phaser.GameObjects.Image; p: DecorPlace; x0: number; y0: number; ph: number }[] = [];
+  vent = true;
+  eau = true;
 
   constructor(private readonly scene: Phaser.Scene, private readonly wg: WorldGrid, private readonly dir: string, private readonly prefix: string) {
     for (const m of wg.world.maps) this.slots.set(m.tag, { state: 'none', objs: [], next: 0 });
@@ -51,7 +59,7 @@ export class WorldView {
 
   /** Après preload : pose le ciel et les cartes déjà chargées. */
   create() {
-    if (this.scene.textures.exists(this.k('ciel'))) this.sky = this.scene.add.image(0, 0, this.k('ciel')).setScrollFactor(0).setDepth(-20000);
+    if (this.scene.textures.exists(this.k('ciel'))) this.sky = this.scene.add.image(0, 0, this.k('ciel')).setScrollFactor(0).setDepth(-20000).setTint(this.tint);
     for (const m of this.wg.world.maps) if (this.texturesReady(m)) { this.slots.get(m.tag)!.state = 'loading'; this.build(m); }
     this.pump(Infinity);   // au lancement, tout de suite (l'écran de chargement couvre)
   }
@@ -63,6 +71,7 @@ export class WorldView {
     this.drawSky();
     this.upload();
     this.pump();
+    this.animate(this.scene.time.now / 1000);
     const here = this.wg.mapAt(px, py);
     if (!here || here.tag === this.center) return;
     this.center = here.tag;
@@ -124,15 +133,15 @@ export class WorldView {
     const s = this.slots.get(m.tag)!, S = GridMap.S, wg = this.wg;
     if (s.state !== 'loading') { this.unload(m); return; }   // annulée entre-temps (le joueur est reparti)
     const o = wg.toScreen(m.sol.x, m.sol.y);
-    s.objs.push(this.scene.add.image(o.x, o.y, this.k(`sol_${m.tag}`)).setOrigin(0).setScale(S).setDepth(-10000));
+    s.objs.push(this.scene.add.image(o.x, o.y, this.k(`sol_${m.tag}`)).setOrigin(0).setScale(S).setDepth(-10000).setTint(this.tint));
     if (m.fond) {   // nuages et rayons qui débordent sur les voisins : sous tous les sols
       const f = wg.toScreen(m.fond.x, m.fond.y);
-      s.objs.push(this.scene.add.image(f.x, f.y, this.k(`fond_${m.tag}`)).setOrigin(0).setScale(S * (m.fond.k ?? 1)).setDepth(-15000));
+      s.objs.push(this.scene.add.image(f.x, f.y, this.k(`fond_${m.tag}`)).setOrigin(0).setScale(S * (m.fond.k ?? 1)).setDepth(-15000).setTint(this.tint));
     }
     // débords en fondu sur les voisines : au-dessus de tous les sols, sous le décor
     if (m.bord) {
       const f = wg.toScreen(m.bord.x, m.bord.y);
-      s.objs.push(this.scene.add.image(f.x, f.y, this.k(`bord_${m.tag}`)).setOrigin(0).setScale(S).setDepth(-9999));
+      s.objs.push(this.scene.add.image(f.x, f.y, this.k(`bord_${m.tag}`)).setOrigin(0).setScale(S).setDepth(-9999).setTint(this.tint));
     }
     s.next = 0;
     for (const p of this.portes) if (p.tag === m.tag) {
@@ -154,9 +163,56 @@ export class WorldView {
         if (performance.now() - t0 > budget) return;
         const p = m.decor[s.next++];
         // profondeur = bas de la case dans la grande grille : on passe derrière un arbre même s'il est sur la carte voisine
-        const sp = wg.toScreen(p.x, p.y), cc = wg.cellCenter(p.c), cs = wg.toScreen(cc.x, cc.y + h / 2);
-        s.objs.push(this.scene.add.image(sp.x, sp.y, this.k(`decor_${m.tag}`), p.f).setScale(S).setDepth(cs.y + p.o * 0.01));
+        const sp = wg.toScreen(p.x, p.y), im = this.scene.add.image(sp.x, sp.y, this.k(`decor_${m.tag}`), p.f).setScale(S * (p.z ?? 1));
+        if (p.c < 0) im.setDepth(-9990 + p.o * 0.01);   // lumière posée sur le sol : au-dessus du sol, sous le décor
+        else { const cc = wg.cellCenter(p.c), cs = wg.toScreen(cc.x, cc.y + h / 2); im.setDepth(cs.y + p.o * 0.01); }
+        if (p.b) this.light(im, p);
+        else im.setTint(this.tint);
+        if (p.c < 0 && p.g) im.setDepth(-9998 + p.o * 0.0001);   // eau animée : juste au-dessus du sol, sous les lumières
+        if (p.w || p.t || p.ca) {
+          // vent : l'arbre plie depuis son pied (origine en bas) ; phase tirée de sa position, pour ne pas bouger tous ensemble
+          if (p.w) { im.setOrigin(0.5, 1); im.y += (im.height * im.scaleY) / 2; }
+          this.vivants.push({ im, p, x0: im.x, y0: im.y, ph: (p.x * 0.013 + p.y * 0.007) % (Math.PI * 2) });
+        }
+        s.objs.push(im);
       }
+    }
+  }
+  /** Fait bouger le décor vivant (arbres au vent, eau). Les fréquences et amplitudes viennent des matériaux officiels. */
+  private animate(t: number) {
+    let n = 0;
+    for (const v of this.vivants) {
+      if (!v.im.active) continue;   // carte déchargée : on l'oublie
+      this.vivants[n++] = v;
+      const { im, p } = v;
+      if (p.w) im.setRotation(this.vent ? p.w * 0.035 * Math.sin(t * 1.3 + v.ph) + p.w * 0.012 * Math.sin(t * 3.1 + v.ph * 2) : 0);
+      if (p.t) {
+        const a = this.eau ? p.t[2] * Math.sin(t * Math.PI * 2 * p.t[3] * 10 + v.ph) : 0;
+        im.setPosition(v.x0 + p.t[0] * a * GridMap.S, v.y0 - p.t[1] * a * GridMap.S);
+      }
+      if (p.ca) {
+        const f = this.eau ? p.ca[1] * (0.5 + 0.5 * Math.sin(t * Math.PI * 2 * p.ca[2] + v.ph)) : 0;
+        im.setTint(mulTint(lerpTint(0xffffff, p.ca[0], f), this.tint));
+      }
+    }
+    this.vivants.length = n;
+  }
+  /** Lumière officielle (halo, lueur, rayon) : ajoutée à l'image comme dans Dofus, jamais teintée, plus forte la nuit. */
+  private light(im: Phaser.GameObjects.Image, p: DecorPlace) {
+    im.setBlendMode(p.b === 'a' ? Phaser.BlendModes.ADD : Phaser.BlendModes.SCREEN).setData('k', p.k ?? 1).setData('j', !!p.j);
+    const f = p.j ? this.sol : this.lum;
+    im.setAlpha(Math.min(1, (p.k ?? 1) * f)).setVisible(f > 0.01);
+  }
+  /** Change l'ambiance : teinte des cartes (sol, décor, ciel) et force des lumières. Ne refait le travail que si ça a changé. */
+  setAmbiance(tint: number, lum: number, sol: number) {
+    if (tint === this.tint && Math.abs(lum - this.lum) < 0.01 && Math.abs(sol - this.sol) < 0.01) return;
+    this.tint = tint; this.lum = lum; this.sol = sol;
+    this.sky?.setTint(tint);
+    for (const s of this.slots.values()) for (const o of s.objs) {
+      if (!(o instanceof Phaser.GameObjects.Image)) continue;
+      const k = o.getData('k') as number | undefined;
+      if (k === undefined) o.setTint(tint);   // (l'eau qui change de couleur est reteintée à chaque image par animate)
+      else { const f = o.getData('j') ? sol : lum; o.setAlpha(Math.min(1, k * f)).setVisible(f > 0.01); }
     }
   }
   private unload(m: WorldMapEntry) {
@@ -188,3 +244,13 @@ export class WorldView {
 
 /** Distance en cartes (anneau) entre une carte et (x, y). */
 function ring(m: { x: number; y: number }, x: number, y: number) { return Math.max(Math.abs(m.x - x), Math.abs(m.y - y)); }
+
+/** Produit de deux teintes 0xRRGGBB, et mélange de a vers b (f de 0 à 1). */
+function mulTint(a: number, b: number) {
+  const c = (s: number) => Math.round((((a >> s) & 255) * ((b >> s) & 255)) / 255) << s;
+  return c(16) | c(8) | c(0);
+}
+function lerpTint(a: number, b: number, f: number) {
+  const c = (s: number) => Math.round(((a >> s) & 255) + ((((b >> s) & 255) - ((a >> s) & 255)) * f)) << s;
+  return c(16) | c(8) | c(0);
+}
