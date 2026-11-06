@@ -151,7 +151,7 @@ export class Accueil {
         const i = f % n, c = i % g.cols, l = Math.floor(i / g.cols);
         h.style.backgroundSize = `${g.cols * 100}% ${g.rows * 100}%`;
         // jamais agrandi au-delà de la taille de l'image (sinon flou) : le perso rapetisse, les pieds restent sur le socle
-        h.style.transformOrigin = '50% 100%'; h.style.transform = `scale(${Math.min(1, g.fh / Math.max(1, h.offsetHeight))})`;
+        h.style.transformOrigin = '50% 100%'; h.style.transform = `scale(${Math.min(1, g.fh / (Math.max(1, h.offsetHeight) * (devicePixelRatio || 1)))})`;   // en pixels de l'écran (Windows à 125 %, 150 %…)
         h.style.backgroundPosition = `${g.cols > 1 ? (c / (g.cols - 1)) * 100 : 0}% ${g.rows > 1 ? (l / (g.rows - 1)) * 100 : 0}%`;
       });
     };
