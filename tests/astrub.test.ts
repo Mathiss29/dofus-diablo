@@ -54,4 +54,15 @@ describe('Astrub (0.2a)', () => {
     const retour = passerPortail(w2);
     expect(retour).toMatchObject({ zone: 'incarnam', arrivee: ['4_-3', 174] });
   });
+  it('trois donjons : salles exportées, monstres officiels, portes verrouillées de salle en salle', () => {
+    const w = new World({ data: GAME_DATA, zone: 'astrub', map: new WorldGrid(astrub), seed: 1 });
+    for (const d of zone.donjons!) {
+      for (const [tag, groupes] of Object.entries(d.salles)) {
+        expect(w.worldGrid!.mapByTag(tag), tag).toBeDefined();
+        for (const g of groupes) for (const t of g) expect(LOOKS[GAME_DATA.monsters[t]?.look], t).toBeDefined();
+        expect((w as unknown as { groups: { map: string }[] }).groups.filter(g => g.map === tag).length, tag).toBe(groupes.length);
+      }
+      expect(w.portes.filter(p => p.nom === d.nom).length).toBeGreaterThan(Object.keys(d.salles).length - 1);
+    }
+  });
 });
