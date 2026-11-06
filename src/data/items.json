@@ -9174,6 +9174,31 @@
    "name": "Roulade de Carne",
    "icon": 69825,
    "level": 30
+  },
+  "10207": {
+   "name": "Trousseau de clefs",
+   "icon": 24774,
+   "level": 1
+  },
+  "16525": {
+   "name": "Crâne de Kardorim",
+   "icon": 47845,
+   "level": 10
+  },
+  "16526": {
+   "name": "Tête de Marteau en Jade",
+   "icon": 126041,
+   "level": 8
+  },
+  "12660": {
+   "name": "Bouclier d'Incarnam",
+   "icon": 82063,
+   "level": 1
+  },
+  "16540": {
+   "name": "Sac de Bijoux",
+   "icon": 139000,
+   "level": 1
   }
  },
  "drops": {

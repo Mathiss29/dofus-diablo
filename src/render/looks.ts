@@ -151,4 +151,10 @@ export const LOOKS: Record<string, Look> = {
   sergent_chafer: { atlas: 'sergent_chafer', scale: 0.55, map: MONSTER_MAP(8 / 24, 'AnimAttaque0', { 0: 8 / 24, 1: 7 / 24 }), height: 288, multi: true },
   kardorim: { atlas: 'kardorim', scale: 0.95, map: MONSTER_MAP(14 / 24, 'AnimAttaque0', { 0: 14 / 24, 1: 29 / 44, 2: 5 / 22 }), height: 196, multi: true },
   kardorib: { atlas: 'kardorib', scale: 0.66, map: MONSTER_MAP(21 / 33, 'AnimAttaque0', { 0: 21 / 33, 1: 10 / 27, 2: 19 / 39 }), height: 224, multi: true },
+  // Élites des quêtes d'Incarnam (quetes.json) : Milimilou (SCALE 1,6), Caporale Mynerve (2), Kruella Freuz (2,5), Percy Klop (1,6), Rat Soiffé (2,5)
+  milimilou: { atlas: 'milimilou', scale: 0.95, map: MONSTER_MAP(21 / 42, 'AnimAttaque0', { 0: 21 / 42 }), height: 173, multi: true },
+  caporale_mynerve: { atlas: 'caporale_mynerve', scale: 0.62, map: MONSTER_MAP(8 / 30, 'AnimAttaque0', { 0: 8 / 30 }), height: 209, multi: true },
+  kruella_freuz: { atlas: 'kruella_freuz', scale: 0.62, map: MONSTER_MAP(8 / 33, 'AnimAttaque0', { 0: 8 / 33, 1: 8 / 33 }), height: 246, multi: true },
+  percy_klop: { atlas: 'percy_klop', scale: 0.95, map: MONSTER_MAP(7 / 23, 'AnimAttaque0', { 0: 7 / 23, 1: 7 / 22 }), height: 133, multi: true },
+  rat_soiffe: { atlas: 'rat_soiffe', scale: 0.7, map: MONSTER_MAP(5 / 18, 'AnimAttaque0', { 0: 5 / 18, 1: 3 / 21 }), height: 87, multi: true },
 };

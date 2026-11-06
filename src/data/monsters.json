@@ -2625,5 +2625,466 @@
    "retraitPA": 0
   },
   "boss": true
+ },
+ "milimilou": {
+  "dofusId": 4102,
+  "name": "Milimilou",
+  "hp": 550,
+  "speed": 95,
+  "radius": 30,
+  "mass": 5,
+  "dmg": 18,
+  "attackRange": 60,
+  "windup": 0.55,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.7,
+  "look": "milimilou",
+  "color": "#e8e0f0",
+  "elite": true,
+  "spells": [
+   {
+    "id": 5961,
+    "name": "Éventration",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 11,
+      "max": 20,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 5962,
+    "name": "Grognement",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 2,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pa",
+      "n": -1,
+      "dur": 1
+     },
+     {
+      "k": "pm",
+      "n": 1,
+      "dur": 1
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     }
+    ]
+   }
+  ],
+  "xp": 20,
+  "level": 16,
+  "res": {
+   "terre": 5,
+   "feu": -11,
+   "eau": -16,
+   "air": 10,
+   "neutre": 18
+  },
+  "caracs": {
+   "force": 60,
+   "intelligence": 60,
+   "chance": 60,
+   "agilite": 60,
+   "sagesse": 0,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "caporale_mynerve": {
+  "dofusId": 4098,
+  "name": "Caporale Mynerve",
+  "hp": 250,
+  "speed": 95,
+  "radius": 24,
+  "mass": 2.5,
+  "dmg": 18,
+  "attackRange": 60,
+  "windup": 0.55,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.7,
+  "look": "caporale_mynerve",
+  "color": "#d8c070",
+  "elite": true,
+  "spells": [
+   {
+    "id": 5817,
+    "name": "Rétrogradation",
+    "pa": 3,
+    "po": [
+     1,
+     63
+    ],
+    "relance": 1,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 5,
+      "max": 5,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "xp": 20,
+  "level": 3,
+  "res": {
+   "terre": 0,
+   "feu": 0,
+   "eau": 0,
+   "air": 0,
+   "neutre": 0
+  },
+  "caracs": {
+   "force": 0,
+   "intelligence": 0,
+   "chance": 0,
+   "agilite": 0,
+   "sagesse": 0,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "kruella_freuz": {
+  "dofusId": 4097,
+  "name": "Kruella Freuz",
+  "hp": 575,
+  "speed": 95,
+  "radius": 24,
+  "mass": 2.5,
+  "dmg": 18,
+  "attackRange": 60,
+  "windup": 0.55,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.7,
+  "look": "kruella_freuz",
+  "color": "#d0a0e0",
+  "elite": true,
+  "spells": [
+   {
+    "id": 5820,
+    "name": "Invocation de Kruella",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 8,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 5825,
+    "name": "Souffle Motivant",
+    "pa": 3,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 2,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 10,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 5963,
+    "name": "Souffle Empoisonné",
+    "pa": 3,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 2,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 11,
+      "max": 15,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 11,
+      "max": 15,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "xp": 20,
+  "level": 8,
+  "res": {
+   "terre": 0,
+   "feu": 0,
+   "eau": 0,
+   "air": 0,
+   "neutre": 0
+  },
+  "caracs": {
+   "force": 0,
+   "intelligence": 0,
+   "chance": 0,
+   "agilite": 0,
+   "sagesse": 0,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "percy_klop": {
+  "dofusId": 4053,
+  "name": "Percy Klop",
+  "hp": 178,
+  "speed": 95,
+  "radius": 26,
+  "mass": 3,
+  "dmg": 18,
+  "attackRange": 60,
+  "windup": 0.55,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.7,
+  "look": "percy_klop",
+  "color": "#c8c0a8",
+  "elite": true,
+  "spells": [
+   {
+    "id": 207,
+    "name": "Petit coup du Chafer",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 21,
+      "max": 25,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 5899,
+    "name": "Estocrâme",
+    "pa": 2,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 0,
+    "anim": 301,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 11,
+      "max": 15,
+      "steal": false
+     }
+    ],
+    "gfx": 20408
+   }
+  ],
+  "xp": 20,
+  "level": 9,
+  "res": {
+   "terre": 10,
+   "feu": 10,
+   "eau": 10,
+   "air": 10,
+   "neutre": 0
+  },
+  "caracs": {
+   "force": 0,
+   "intelligence": 0,
+   "chance": 0,
+   "agilite": 0,
+   "sagesse": 50,
+   "esquivePA": 10,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "rat_soiffe": {
+  "dofusId": 4113,
+  "name": "Rat Soiffé",
+  "hp": 175,
+  "speed": 115,
+  "radius": 16,
+  "mass": 1.2,
+  "dmg": 18,
+  "attackRange": 60,
+  "windup": 0.55,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.7,
+  "look": "rat_soiffe",
+  "color": "#a08870",
+  "elite": true,
+  "spells": [
+   {
+    "id": 220,
+    "name": "Effleurement",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 11,
+      "max": 14,
+      "steal": false
+     },
+     {
+      "k": "pa",
+      "n": -1,
+      "dur": 1
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 1005,
+    "name": "Doctorat",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "C3",
+    "allies": true,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 21,
+      "max": 30
+     }
+    ]
+   },
+   {
+    "id": 3964,
+    "name": "Mordillage",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 16,
+      "max": 18,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     }
+    ]
+   }
+  ],
+  "xp": 20,
+  "level": 7,
+  "res": {
+   "terre": 10,
+   "feu": -10,
+   "eau": 10,
+   "air": -10,
+   "neutre": -20
+  },
+  "caracs": {
+   "force": 50,
+   "intelligence": 50,
+   "chance": 50,
+   "agilite": 50,
+   "sagesse": 50,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
  }
 }
