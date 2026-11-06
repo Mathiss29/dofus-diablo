@@ -1,5 +1,6 @@
-import { REGLAGES_DEFAUT, sauverReglages, type Heure, type Reglages } from './ambiance';
+import { REGLAGES_DEFAUT, sauverReglages, type Reglages } from './ambiance';
 import { ICON_CSS, iconHtml } from './icons';
+import { MANIFESTE, Son } from './son';
 import { ITEMS } from '../sim/data';
 import {
   BASE_STATS, LEGENDARY, RARITY_COLORS, RARITY_NAMES, STATS, STAT_NAMES, metierXpNeeded, recycleValue,
@@ -95,15 +96,38 @@ const CSS = `
 .dw .tip h4{margin:0 0 2px;font-size:15px}.dw .tip .sub{color:#a9a48b;font-size:12px;margin-bottom:6px}
 .dw .tip .up{color:#7be07b}.dw .tip .down{color:#e0625a}.dw .tip .ex{color:#6fb2e8}.dw .tip .leg{color:#f08a2c;margin-top:4px}
 .dw .tip .set{color:#9ad15a;margin-top:6px;font-size:12px}.dw .tip .hint{color:#7f7a64;font-size:11px;margin-top:6px}
-.dw .win.opt{width:min(480px,96vw);max-height:92vh}
-.dw .opt .in{padding:14px 16px;overflow:auto;display:grid;gap:10px;align-content:start;max-height:calc(92vh - 50px)}
-.dw .opt .sub{color:#c9a55a;font-size:12px;text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
-.dw .opt .row{display:grid;grid-template-columns:150px 1fr 52px;gap:10px;align-items:center;font-size:13px}
+.dw .win.opt{width:min(1000px,96vw);height:min(720px,92vh)}
+.dw .opt .ob{display:grid;grid-template-columns:270px minmax(0,1fr);min-height:0}
+.dw .opt .nav{background:#2a2823;border-right:1px solid #0d0c0a;display:grid;grid-template-rows:auto 1fr auto;min-height:0}
+.dw .opt .nav input{margin:10px;width:calc(100% - 20px);box-sizing:border-box;padding:7px 9px;background:#1d1c19;border:1px solid #4a4840;border-radius:3px;color:#e8e2cc;font:inherit}
+.dw .opt .nav .cats{overflow:auto;padding:0 0 10px}
+.dw .opt .nav .cat{font-weight:bold;font-size:14px;color:#f4efe0;padding:9px 14px 4px}
+.dw .opt .nav .it{padding:6px 14px 6px 30px;color:#d8d2bf;cursor:pointer;font-size:13.5px}
+.dw .opt .nav .it:hover,.dw .opt .nav .it.on{color:#b9e54b}
+.dw .opt .nav .bas{display:grid;gap:4px;padding:10px 14px;border-top:1px solid #3a3830}
+.dw .opt .lien{display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;color:#e8e2cc;font-weight:bold;font-size:12px;text-transform:uppercase;letter-spacing:.04em;padding:5px}
+.dw .opt .lien:hover{color:#b9e54b}
+.dw .opt .main{overflow:auto;padding:16px 22px 26px;display:grid;gap:16px;align-content:start;background:#24231f}
+.dw .opt .grp{display:grid;gap:12px}
+.dw .opt .grp>h2{margin:6px 0 0;font:bold 21px 'Trebuchet MS',sans-serif;color:#f4efe0}
+.dw .opt .grp>.desc{background:#1d1c19;border-radius:3px;padding:8px 10px;font-style:italic;color:#d8d2bf;font-size:12.5px}
+.dw .opt .sec{background:#36332c;border-radius:5px;padding:12px 16px 14px;display:grid;gap:4px}
+.dw .opt .sec .sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.dw .opt .sec .sh b{font-size:15px;color:#f4efe0}
+.dw .opt .sec .sh .lien{font-size:11.5px}
+.dw .opt .row{display:grid;grid-template-columns:minmax(0,1fr) minmax(140px,240px) 46px;gap:10px;align-items:center;min-height:32px;font-size:13.5px;color:#e8e2cc}
+.dw .opt .row.ck{grid-template-columns:22px minmax(0,1fr);cursor:pointer}
+.dw .opt .row.ck.on>span{color:#b9e54b}
+.dw .opt .row input[type=checkbox]{appearance:none;width:18px;height:18px;margin:0;border:1px solid #6a675c;border-radius:2px;background:#1d1c19;display:grid;place-items:center;cursor:pointer}
+.dw .opt .row input[type=checkbox]:checked{border-color:#b9e54b}
+.dw .opt .row input[type=checkbox]:checked::after{content:'';width:9px;height:5px;border:solid #b9e54b;border-width:0 0 2px 2px;transform:translate(0,-2px) rotate(-45deg)}
 .dw .opt .row input[type=range]{width:100%;accent-color:#b9e54b}
-.dw .opt .row select{background:#1d1c19;color:#e8e2cc;border:1px solid #34322b;border-radius:3px;padding:3px 6px}
+.dw .opt .row select{background:#57534a;color:#f4efe0;border:1px solid #2a2823;border-radius:3px;padding:5px 8px;font:inherit;grid-column:2/4}
 .dw .opt .row output{text-align:right;color:#c9c4ab;font-variant-numeric:tabular-nums}
-.dw .opt .keys{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:12px;color:#c9c4ab}
-.dw .opt .keys b{color:#e8e2cc;font-family:monospace}
+.dw .opt .row small{display:block;color:#a9a390;font-size:11.5px}
+.dw .opt .keys{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;font-size:13px;color:#d8d2bf}
+.dw .opt .keys b{color:#f4efe0;font-family:monospace;font-size:12.5px;background:#1d1c19;border:1px solid #4a4840;border-radius:3px;padding:1px 6px;justify-self:start}
+.dw .opt .vide{color:#a9a390;font-style:italic;padding:20px}
 .dw .win.sorts{width:min(900px,96vw);height:min(680px,92vh)}
 .dw .sorts .sb{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;min-height:0}
 .dw .sorts .ls{overflow:auto;padding:10px;border-right:1px solid #0d0c0a;background:#292824;display:grid;gap:5px;align-content:start}
@@ -214,15 +238,25 @@ export class Windows {
   get open() { return !!this.win; }
   /** Ouvre la fenêtre demandée, ou la ferme si c'est déjà elle. */
   toggle(mode: Mode = 'inv') { if (this.win && this.mode === mode) this.close(); else this.show(mode); }
-  close() { this.win?.remove(); this.win = null; this.tip.style.display = 'none'; }
+  close(son = true) {
+    if (this.win && son) Son.jouer(MANIFESTE.ui.fermer, 'interface', { cle: 'fenetre', ecart: 0.1 });   // 6B
+    this.win?.remove(); this.win = null; this.tip.style.display = 'none';
+  }
   destroy() { this.root.remove(); }
 
   show(mode: Mode = 'inv') {
-    this.close();
+    this.close(false);
+    Son.jouer(MANIFESTE.ui.ouvrir, 'interface', { cle: 'fenetre', ecart: 0.1 });   // 6B : ouverture, puis clic sur les boutons
+
     this.mode = mode;
     const w = document.createElement('div'); w.className = `win ${mode}`;
     w.addEventListener('contextmenu', e => e.preventDefault());
     w.addEventListener('pointerdown', e => e.stopPropagation());
+    w.addEventListener('click', e => {
+      const t = e.target as HTMLElement;
+      if (t.closest('.btn,button')) Son.jouer(MANIFESTE.ui.ok, 'interface', { cle: 'clic', ecart: 0.05 });
+      else if (t.closest('.it,[data-c],[data-tab],.tab,.lien')) Son.jouer(MANIFESTE.ui.onglet, 'interface', { cle: 'clic', ecart: 0.05 });
+    });
     this.win = w; this.root.appendChild(w);
     this.render();
   }
@@ -444,45 +478,104 @@ export class Windows {
     w.querySelectorAll<HTMLElement>('[data-c]').forEach(e => e.addEventListener('click', () => { this.succesCat = e.dataset.c!; this.render(); }));
   }
 
-  /** Réglages (choix 10A + 10B) : curseurs d'ambiance en direct, puis les options du joueur. Gardés dans le navigateur. */
+  /** Réglages façon « Options » de Dofus 3 (demande de Mathis, 2026-11-06) : catégories à gauche avec recherche,
+   *  sections à droite avec leur « Réinitialiser », cases vertes. Contenu : choix 10A + 10B (ambiance), maquette Aperçu (sorts),
+   *  maquette Son (8A volumes, 8B touche M). Tout est gardé dans le navigateur. */
+  private optRecherche = '';
   private renderOpt() {
     const w = this.win!, r = this.reglages;
-    const range = (k: keyof Reglages, name: string, min: number, max: number, unit = '%', mul = 100) =>
-      `<label class="row"><span>${name}</span><input type="range" data-k="${k}" min="${min}" max="${max}" value="${Math.round((r[k] as number) * mul)}" data-mul="${mul}"><output data-o="${k}">${Math.round((r[k] as number) * mul)}${unit}</output></label>`;
     const heures: [string, string][] = [['auto', 'Heure du PC'], ['jour', 'Jour'], ['soir', 'Soir'], ['nuit', 'Nuit']];
-    w.innerHTML = `${this.title('Réglages', 'options')}<div class="in">
-      <div class="sub">Ambiance</div>
-      <label class="row"><span>Heure</span><select data-k="heure">${heures.map(([k, n]) => `<option value="${k}" ${r.heure === k ? 'selected' : ''}>${n}</option>`).join('')}</select><output>${this.heureNom()}</output></label>
-      ${range('lumieres', 'Lumières (halos, feux)', 0, 200)}
-      ${range('saturation', 'Couleurs (moins = adouci)', 50, 120)}
-      ${range('chaleur', 'Chaleur de la lumière', -100, 100, '')}
-      ${range('zoom', 'Zoom', 55, 120)}
-      <div class="sub">Options</div>
-      ${range('volume', 'Volume des sons', 0, 100)}
-      <label class="row"><span>Effets d'impact (F)</span><input type="checkbox" data-juice ${this.juice.get() ? 'checked' : ''} style="justify-self:start;accent-color:#b9e54b"><output></output></label>
-      ${(['vent', 'eau', 'particules'] as const).map(k => `<label class="row"><span>${({ vent: 'Arbres au vent', eau: 'Eau animée', particules: 'Particules (spores, braises…)' })[k]}</span><input type="checkbox" data-b="${k}" ${r[k] ? 'checked' : ''} style="justify-self:start;accent-color:#b9e54b"><output></output></label>`).join('')}
-      <div class="sub">Sorts</div>
-      <label class="row"><span>Lancer un sort</span><select data-k="lancer">${([['relache', 'Maintenir pour voir, relâcher pour lancer'], ['immediat', 'Tout de suite (aperçu avec Alt)'], ['dofus', 'Comme Dofus : touche puis clic']] as const).map(([k, n]) => `<option value="${k}" ${r.lancer === k ? 'selected' : ''}>${n}</option>`).join('')}</select><output></output></label>
-      <label class="row"><span>Monstre hors de portée : s'approcher avant de lancer</span><input type="checkbox" data-b="approche" ${r.approche ? 'checked' : ''} style="justify-self:start;accent-color:#b9e54b"><output></output></label>
-      <div class="sub">Touches</div>
-      <div class="keys">${[['Clic gauche', 'aller / attaquer (maintenu : continuer)'], ['Maj + clic', 'attaquer sur place'], ['Clic droit', 'sort de la barre (case libre)'],
-        ['& é " \' ( -', 'barre de sorts'], ['S', 'sorts'], ['Espace', 'déplacement'], ['E', 'potion'], ['I', 'inventaire'], ['C', 'caractéristiques'], ['J', 'métiers'],
-        ['O', 'réglages'], ['Molette', 'zoom'], ['F', 'effets d\'impact'], ['H', 'aide'], ['Échap', 'fermer']]
-        .map(([k, d]) => `<b>${k}</b><span>${d}</span>`).join('')}</div>
-      <div style="display:flex;gap:8px"><span class="btn" data-defaut>Valeurs par défaut</span>${this.onAccueil ? '<span class="btn" data-accueil>Sauvegarder et revenir à l\'accueil</span>' : ''}</div>
-    </div>`;
+    type Opt = { k: string; nom: string; aide?: string } & ({ t: 'range'; min: number; max: number; unite?: string } | { t: 'check' } | { t: 'select'; choix: [string, string][] });
+    type Sec = { id: string; titre: string; opts: Opt[]; html?: string };
+    const GROUPES: { nom: string; desc: string; secs: Sec[] }[] = [
+      { nom: 'Interface', desc: 'Ces options règlent la façon de lancer les sorts et les effets de jeu.', secs: [
+        { id: 'general', titre: 'Général', opts: [
+          { k: 'lancer', nom: 'Lancer un sort', t: 'select', choix: [['relache', 'Maintenir pour voir, relâcher pour lancer'], ['immediat', 'Tout de suite (aperçu avec Alt)'], ['dofus', 'Comme Dofus : touche puis clic']] },
+          { k: 'approche', nom: 'Monstre hors de portée : s\'approcher avant de lancer', t: 'check' },
+          { k: 'juice', nom: 'Effets d\'impact (tremblement, gel d\'image)', aide: 'Touche F', t: 'check' },
+        ] },
+        { id: 'touches', titre: 'Touches', opts: [], html: `<div class="keys">${[['Clic gauche', 'aller / attaquer (maintenu : continuer)'], ['Maj + clic', 'attaquer sur place'], ['Clic droit', 'sort de la barre (case libre)'],
+          ['& é " \' ( -', 'barre de sorts'], ['Espace', 'déplacement'], ['E', 'potion'], ['S', 'sorts'], ['I', 'inventaire'], ['C', 'caractéristiques'], ['J', 'métiers'],
+          ['O', 'options'], ['M', 'couper ou remettre le son'], ['Molette', 'zoom'], ['F', 'effets d\'impact'], ['H', 'aide'], ['Échap', 'fermer']]
+          .map(([k, d]) => `<b>${k}</b><span>${d}</span>`).join('')}</div>` },
+      ] },
+      { nom: 'Affichage', desc: 'Ces options règlent l\'ambiance et l\'image du monde.', secs: [
+        { id: 'ambiance', titre: 'Ambiance du monde', opts: [
+          { k: 'heure', nom: 'Heure', aide: `En ce moment : ${this.heureNom()}`, t: 'select', choix: heures },
+          { k: 'lumieres', nom: 'Lumières (halos, feux)', t: 'range', min: 0, max: 200 },
+          { k: 'saturation', nom: 'Couleurs (moins = adouci)', t: 'range', min: 50, max: 120 },
+          { k: 'chaleur', nom: 'Chaleur de la lumière', t: 'range', min: -100, max: 100, unite: '' },
+        ] },
+        { id: 'graphismes', titre: 'Graphismes', opts: [
+          { k: 'zoom', nom: 'Zoom de départ', t: 'range', min: 55, max: 120 },
+          { k: 'vent', nom: 'Arbres au vent', t: 'check' },
+          { k: 'eau', nom: 'Eau animée', t: 'check' },
+          { k: 'particules', nom: 'Particules (spores, braises…)', t: 'check' },
+        ] },
+      ] },
+      { nom: 'Son', desc: 'Ces options règlent la musique et les sons du jeu. La touche M coupe ou remet tout le son.', secs: [
+        { id: 'son', titre: 'Général', opts: [
+          { k: 'muet', nom: 'Couper tout le son', aide: 'Touche M', t: 'check' },
+          { k: 'volume', nom: 'Volume général', t: 'range', min: 0, max: 100 },
+          { k: 'volMusique', nom: 'Musique', t: 'range', min: 0, max: 100 },
+          { k: 'volEffets', nom: 'Effets (sorts, coups, monstres)', t: 'range', min: 0, max: 100 },
+          { k: 'volAmbiance', nom: 'Ambiance (vent, eau, feu, Zaap)', t: 'range', min: 0, max: 100 },
+          { k: 'volInterface', nom: 'Interface (fenêtres, niveau, quêtes)', t: 'range', min: 0, max: 100 },
+        ] },
+      ] },
+    ];
+    const val = (k: string) => k === 'juice' ? this.juice.get() : (r as unknown as Record<string, unknown>)[k];
+    const q = this.optRecherche.trim().toLowerCase();
+    const garde = (o: Opt) => !q || `${o.nom} ${o.aide ?? ''}`.toLowerCase().includes(q);
+    const ligne = (o: Opt) => {
+      const aide = o.aide ? `<small>${o.aide}</small>` : '';
+      if (o.t === 'check') return `<label class="row ck ${val(o.k) ? 'on' : ''}"><input type="checkbox" data-ck="${o.k}" ${val(o.k) ? 'checked' : ''}><span>${o.nom}${aide}</span></label>`;
+      if (o.t === 'select') return `<label class="row"><span>${o.nom}${aide}</span><select data-sel="${o.k}">${o.choix.map(([k, n]) => `<option value="${k}" ${val(o.k) === k ? 'selected' : ''}>${n}</option>`).join('')}</select></label>`;
+      const n = Math.round((val(o.k) as number) * 100);
+      return `<label class="row"><span>${o.nom}${aide}</span><input type="range" data-rg="${o.k}" min="${o.min}" max="${o.max}" value="${n}"><output data-o="${o.k}">${n}${o.unite ?? '%'}</output></label>`;
+    };
+    const RESET = '<span style="font-size:15px">↺</span>';
+    const main = GROUPES.map(g => {
+      const secs = g.secs.map(s => {
+        const lignes = s.opts.filter(garde);
+        if (q && !lignes.length && !(s.html && s.titre.toLowerCase().includes(q))) return '';
+        return `<div class="sec" id="opt-${s.id}"><div class="sh"><b>${s.titre}</b>${s.opts.length ? `<span class="lien" data-reset="${s.id}">${RESET} Réinitialiser</span>` : ''}</div>${lignes.map(ligne).join('')}${s.html ?? ''}</div>`;
+      }).join('');
+      return secs ? `<div class="grp"><h2>${g.nom}</h2><div class="desc">${g.desc}</div>${secs}</div>` : '';
+    }).join('') || '<div class="vide">Aucune option ne correspond à la recherche.</div>';
+    const nav = GROUPES.map(g => `<div class="cat">${g.nom}</div>${g.secs.map(s => `<div class="it" data-va="${s.id}">${s.titre}</div>`).join('')}`).join('');
+    w.innerHTML = `${this.title('Options', 'options')}<div class="ob">
+      <div class="nav"><input type="search" placeholder="Rechercher" value="${this.optRecherche.replace(/"/g, '&quot;')}" data-cherche><div class="cats">${nav}</div>
+        <div class="bas"><span class="lien" data-tout>${RESET} Tout réinitialiser</span>${this.onAccueil ? '<span class="lien" data-accueil>Sauvegarder et revenir à l\'accueil</span>' : ''}</div></div>
+      <div class="main">${main}</div></div>`;
     const apply = () => { sauverReglages(r); this.onReglages(r); };
-    w.querySelectorAll<HTMLInputElement>('input[type=range]').forEach(e => e.addEventListener('input', () => {
-      const k = e.dataset.k as keyof Reglages, mul = +e.dataset.mul!;
-      (r as unknown as Record<string, number>)[k] = +e.value / mul;
-      w.querySelector(`[data-o="${k}"]`)!.textContent = `${e.value}${k === 'chaleur' ? '' : '%'}`;
-      apply();
+    const R = r as unknown as Record<string, unknown>;
+    w.querySelectorAll<HTMLInputElement>('[data-rg]').forEach(e => {
+      const k = e.dataset.rg!;
+      e.addEventListener('input', () => { R[k] = +e.value / 100; w.querySelector(`[data-o="${k}"]`)!.textContent = `${e.value}${k === 'chaleur' ? '' : '%'}`; apply(); });
+      // 8A : aperçu sonore quand on lâche le curseur
+      e.addEventListener('change', () => { if (k === 'volEffets') Son.jouer(MANIFESTE.impacts[0], 'effets'); else if (k === 'volInterface' || k === 'volume') Son.jouer(MANIFESTE.ui.ok, 'interface'); });
+    });
+    w.querySelectorAll<HTMLSelectElement>('[data-sel]').forEach(e => e.addEventListener('change', () => { R[e.dataset.sel!] = e.value; apply(); if (e.dataset.sel === 'heure') this.render(); }));
+    w.querySelectorAll<HTMLInputElement>('[data-ck]').forEach(e => e.addEventListener('change', () => {
+      const k = e.dataset.ck!;
+      if (k === 'juice') this.juice.set(e.checked); else { R[k] = e.checked; apply(); }
+      e.closest('.row')!.classList.toggle('on', e.checked);
     }));
-    w.querySelector<HTMLSelectElement>('select[data-k=lancer]')!.addEventListener('change', e => { r.lancer = (e.target as HTMLSelectElement).value as Reglages['lancer']; apply(); });
-    w.querySelector<HTMLSelectElement>('select[data-k=heure]')!.addEventListener('change', e => { r.heure = (e.target as HTMLSelectElement).value as Heure; apply(); this.render(); });
-    w.querySelectorAll<HTMLInputElement>('[data-b]').forEach(e => e.addEventListener('change', () => { r[e.dataset.b as 'vent' | 'eau' | 'particules' | 'approche'] = e.checked; apply(); }));
-    w.querySelector<HTMLInputElement>('[data-juice]')!.addEventListener('change', e => this.juice.set((e.target as HTMLInputElement).checked));
-    w.querySelector('[data-defaut]')!.addEventListener('click', () => { Object.assign(r, REGLAGES_DEFAUT); apply(); this.render(); });
+    const defaut = REGLAGES_DEFAUT as unknown as Record<string, unknown>;
+    const reset = (s: Sec) => { for (const o of s.opts) { if (o.k === 'juice') this.juice.set(true); else R[o.k] = defaut[o.k]; } };
+    w.querySelectorAll<HTMLElement>('[data-reset]').forEach(e => e.addEventListener('click', () => {
+      const s = GROUPES.flatMap(g => g.secs).find(x => x.id === e.dataset.reset); if (s) reset(s);
+      apply(); this.render();
+    }));
+    w.querySelector('[data-tout]')!.addEventListener('click', () => { GROUPES.forEach(g => g.secs.forEach(reset)); apply(); this.render(); });
+    w.querySelectorAll<HTMLElement>('[data-va]').forEach(e => e.addEventListener('click', () => {
+      w.querySelectorAll('.nav .it').forEach(x => x.classList.toggle('on', x === e));
+      w.querySelector(`#opt-${e.dataset.va}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }));
+    const ch = w.querySelector<HTMLInputElement>('[data-cherche]')!;
+    ch.addEventListener('input', () => { this.optRecherche = ch.value; this.render(); const n = this.win?.querySelector<HTMLInputElement>('[data-cherche]'); n?.focus(); n?.setSelectionRange(n.value.length, n.value.length); });
+    ch.addEventListener('keydown', e => e.stopPropagation());
     w.querySelector('[data-accueil]')?.addEventListener('click', () => { this.close(); this.onAccueil?.(); });
   }
 
