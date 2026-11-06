@@ -1,8 +1,8 @@
 import { v } from './assetUrl';
-import { GAME_DATA } from '../sim/data';
+import { GAME_DATA, QUETES } from '../sim/data';
 import { SORTS, niveauRequis, type SortOfficiel } from '../sim/sorts';
 import CLASSES_DOFUS from '../data/classes_dofus.json';
-import { EMPLACEMENTS, dernier, dureeTexte, lirePersos, nomValide, sauverPerso, supprimerPerso, type Perso } from './persos';
+import { EMPLACEMENTS, NB_SECOURS, dernier, dureeTexte, exporter, importer, lireCimetiere, lirePersos, lireSecours, nomValide, prendreSecours, restaurerSecours, sauverPerso, supprimerPerso, type Perso } from './persos';
 
 /** Écrans hors du jeu (maquette unique, choix 17A à 23A, 19B, 22D, 30E) : accueil avec Incarnam en direct derrière,
  *  création du perso devant le dieu de sa classe, et « Mes personnages ». Du HTML posé sur le jeu : la partie (ZoneScene)
@@ -12,7 +12,24 @@ interface ClasseDofus { id: number; cle: string; nom: string; titre: string; des
 const CLASSES = CLASSES_DOFUS as ClasseDofus[];
 /** Classes jouables (planches en jeu) et date prévue des suivantes. */
 const JOUABLES = new Set(Object.keys(GAME_DATA.classes));
-const PLUS_TARD: Record<string, string> = { osamodas: 'Après la 0.1b' };
+/** Classes pas encore jouables (Accueil 9A) : leur fiche s'affiche quand même, avec la version prévue (feuille de route). */
+const PLUS_TARD: Record<string, string> = { osamodas: 'Prévue en 0.4' };
+const plusTard = (cle: string) => PLUS_TARD[cle] ?? 'Prévue après la 1.0';
+/** Version affichée et textes de l'accueil (Accueil 12A) : ils racontent la zone de la version, pas le moteur. */
+const VERSION = '0.1';
+const TEXTES: Record<string, { zone: string; slogan: string; ruban: string; lignes: string[] }> = {
+  '0.1': {
+    zone: 'INCARNAM, LE VILLAGE DANS LES NUAGES', slogan: 'Les nuages d\'Incarnam grouillent de monstres.', ruban: 'En chasse !',
+    lignes: ['Le Milimilou rôde dans la forêt, et la Milice cherche des bras.', 'Kardorim ne dort que d\'un œil au fond de sa crypte.', 'Astrub t\'attend sous les nuages, dans la prochaine version.'],
+  },
+};
+const TEXTE = TEXTES[VERSION];
+/** Pastilles de zones (Accueil 7A) : un clic ouvre la fiche de la zone. */
+const ZONES_ACC: { cle: string; nom: string; sous: string[]; dispo: boolean; plus?: string }[] = [
+  { cle: 'incarnam', nom: 'Incarnam', sous: ['450', '444', '445', '442', '443', '778', '449', '446'], dispo: true },
+  { cle: 'crypte', nom: 'Crypte de Kardorim', sous: ['447'], dispo: true },
+  { cle: 'astrub', nom: 'Astrub', sous: [], dispo: false, plus: 'Arrive en 0.2 : 16 sous-zones, du niveau 10 au 40, et 4 donjons (Tournesol Affamé, Mob l\'Éponge, Bouftou Royal, Kankreblath).' },
+];
 /** Illustration du dieu de la classe (class_/LevelUp{N} de Dofus 3) ; les autres classes ont le décor du titre. */
 const DIEUX = new Set(['iop', 'cra', 'osamodas']);
 /** Animations du perso sur le socle : nombre d'images de chaque bande (rendues comme le jeu, voir LISEZMOI ;
@@ -114,10 +131,28 @@ const CSS = `
 #acc .toast{position:absolute;left:50%;bottom:calc(6*var(--u));transform:translateX(-50%);background:#14130fee;border:1px solid #5d5c45;padding:calc(.6*var(--u)) calc(1.4*var(--u));border-radius:calc(.5*var(--u));font-weight:800;font-size:calc(.95*var(--u));z-index:9;pointer-events:none;transition:opacity .3s}
 #acc .err{color:#ff9a7a;font-size:calc(.7*var(--u));margin-top:calc(.3*var(--u));min-height:1em}
 #acc .check{display:flex;align-items:center;gap:calc(.5*var(--u));margin-top:calc(.8*var(--u));font-weight:800;font-size:calc(.8*var(--u));cursor:pointer}
+#acc .modal{position:absolute;inset:0;z-index:12;background:#05060399;display:grid;place-items:center}
+#acc .modal>.card{width:calc(44*var(--u));max-height:calc(46*var(--u));overflow:auto;padding:calc(1.2*var(--u)) calc(1.6*var(--u));position:relative}
+#acc .modal h2{font-family:var(--disp);font-weight:400;font-size:calc(2*var(--u));color:var(--lime);margin:0 0 calc(.4*var(--u))}
+#acc .modal .x{all:unset;cursor:pointer;position:absolute;right:calc(1*var(--u));top:calc(.7*var(--u));font-size:calc(1.4*var(--u));color:#c9c4ab}
+#acc .lst{display:grid;gap:calc(.45*var(--u));margin-top:calc(.7*var(--u))}
+#acc .lst>div{display:grid;grid-template-columns:1fr auto;gap:calc(.2*var(--u)) calc(1*var(--u));align-items:center;background:#25261bcc;border:1px solid #3c3c2a;border-radius:calc(.4*var(--u));padding:calc(.5*var(--u)) calc(.8*var(--u));font-size:calc(.85*var(--u));font-weight:700}
+#acc .lst small{grid-column:1/-1;color:#a8a58e;font-weight:600;font-size:calc(.72*var(--u))}
+#acc .lst .ok{color:var(--lime)}
+#acc .lst .no{color:#77745f}
+#acc .lst>.stele{display:grid;grid-template-columns:calc(3.4*var(--u)) 1fr;gap:calc(.8*var(--u));align-items:center;background:linear-gradient(#3a3a33,#26261f);border:1px solid #57554c;border-radius:calc(1.6*var(--u)) calc(1.6*var(--u)) calc(.3*var(--u)) calc(.3*var(--u));padding:calc(.6*var(--u)) calc(1*var(--u))}
+#acc .stele img{width:100%;filter:grayscale(1) brightness(.85)}
+#acc .stele b{font-family:var(--disp);font-weight:400;font-size:calc(1.3*var(--u));color:#e8e2c8}
+#acc .mini{all:unset;cursor:pointer;font-weight:800;font-size:calc(.75*var(--u));color:#f1ecd8;background:#2a2a20;border:1px solid #4c4b3a;border-radius:calc(.4*var(--u));padding:calc(.3*var(--u)) calc(.8*var(--u));white-space:nowrap}
+#acc .mini:hover{border-color:#8a8a66}
+#acc .hero{opacity:0}
+#acc .hero.vu{opacity:1;animation:acc-app .5s ease-out}
+@keyframes acc-app{0%{opacity:0;filter:brightness(3) blur(2px);transform-origin:50% 100%;scale:.92}60%{opacity:1;filter:brightness(1.6)}100%{filter:none;scale:1}}
+@media (prefers-reduced-motion: reduce){#acc .hero{opacity:1}#acc .hero.vu{animation:none}}
 #acc .check input{accent-color:#e0925a;width:calc(1.1*var(--u));height:calc(1.1*var(--u));margin:0}
 `;
 
-type Page = 'accueil' | 'creation' | 'persos';
+type Page = 'accueil' | 'creation' | 'persos' | 'succes';
 
 export class Accueil {
   private root: HTMLDivElement;
@@ -129,6 +164,8 @@ export class Accueil {
   private confirmer = -1;
   private anim = 0;
   private toastT = 0;
+  /** Fenêtre ouverte par-dessus la page (fiche de zone, cimetière, copies de secours). */
+  private modal: string | null = null;
 
   /** onJouer : lance la partie de cet emplacement (déjà sauvegardé). */
   constructor(private onJouer: (slot: number) => void) {
@@ -147,6 +184,7 @@ export class Accueil {
       this.root.querySelectorAll<HTMLElement>('.hero').forEach(h => {
         const n = +h.dataset.n!, g = grille(h, n);
         if (!g) return;
+        h.classList.add('vu');
         const i = f % n, c = i % g.cols, l = Math.floor(i / g.cols);
         h.style.backgroundSize = `${g.cols * 100}% ${g.rows * 100}%`;
         // jamais agrandi au-delà de la taille de l'image (sinon flou) : le perso rapetisse, les pieds restent sur le socle
@@ -158,19 +196,29 @@ export class Accueil {
   }
 
   get visible() { return !this.root.hidden; }
-  show(page: Page = 'accueil') { this.root.hidden = false; this.go(page); }
+  show(page: Page = 'accueil') { this.root.hidden = false; this.precharger(); this.go(page); }
+  /** Accueil 5A : les planches des persos (3 emplacements) et des classes jouables sont chargées dès l'accueil,
+   *  pour que le socle ne reste jamais vide. */
+  private precharger() {
+    const urls = new Set<string>();
+    for (const p of lirePersos()) if (p) urls.add(img(`${p.classe}_${p.sexe}_repos.webp`));
+    for (const c of JOUABLES) for (const sx of ['m', 'f']) for (const [k] of POSES) urls.add(img(`${c}_${sx}_${k}.webp`));
+    for (const u of urls) { const im = new Image(); im.src = u; }
+  }
+  private jouer(slot: number) { prendreSecours(); this.onJouer(slot); }
   hide() { this.root.hidden = true; this.root.innerHTML = ''; }
   destroy() { cancelAnimationFrame(this.anim); this.root.remove(); }
 
   private go(page: Page) {
-    this.page = page; this.confirmer = -1; this.crea.err = '';
+    this.page = page; this.confirmer = -1; this.crea.err = ''; this.modal = null;
     if (page === 'persos') { const d = dernier(); this.choix = d ?? Math.max(0, lirePersos().findIndex(p => p)); }
     this.render();
   }
 
   private render() {
-    const html = this.page === 'accueil' ? this.pageAccueil() : this.page === 'creation' ? this.pageCreation() : this.pagePersos();
-    this.root.innerHTML = `<div class="page">${html}${this.side()}<div class="toast" style="opacity:0"></div></div>`;
+    const html = this.page === 'accueil' ? this.pageAccueil() : this.page === 'creation' ? this.pageCreation() : this.page === 'succes' ? this.pageSucces() : this.pagePersos();
+    const m = this.modal ? `<div class="modal" data-fermer><div class="card">${this.modal}<button type="button" class="x" data-fermer aria-label="Fermer">✕</button></div></div>` : '';
+    this.root.innerHTML = `<div class="page">${html}${this.side()}${m}<div class="toast" style="opacity:0"></div></div>`;
     this.bind();
   }
 
@@ -186,7 +234,7 @@ export class Accueil {
       ['creation', img('h_80.png'), 'Classes'], ['bestiaire', 'assets/ui/menu/bestiary.png', 'Bestiaire'], ['succes', 'assets/ui/menu/success.png', 'Succès'], ['journal', 'assets/ui/menu/calendar.png', 'Journal']];
     return `<nav class="side"><img class="logo" src="${v('assets/logo/embleme.webp')}" alt="" aria-hidden="true">${NAV.map(([k, ic, l]) =>
       `<button type="button" class="nav${k === this.page ? ' on' : ''}" data-nav="${k}"><img src="${ic}" alt="">${l}</button>`).join('')}
-      <button type="button" class="play" data-jouer>Jouer</button><div class="ver">VERSION 0.1</div></nav>`;
+      <button type="button" class="play" data-jouer>Jouer</button><div class="ver">VERSION ${VERSION}</div></nav>`;
   }
 
   // --- Accueil (17A) : Incarnam en direct derrière, titre, Continuer / Nouvelle partie --------------------------
@@ -194,12 +242,12 @@ export class Accueil {
     const l = lirePersos(), d = dernier(), p = d != null ? l[d] : null, n = l.filter(Boolean).length;
     const c = p && classe(p.classe);
     return `<div class="cover" style="background:linear-gradient(90deg,#0d0e09f0 6%,#0d0e09b0 30%,#0d0e0918 55%,transparent 70%)"></div>
-    <div class="abs tiny" style="left:calc(11*var(--u));top:calc(2.2*var(--u));letter-spacing:.15em;font-weight:800">INCARNAM, EN TEMPS RÉEL</div>
+    <div class="abs tiny" style="left:calc(11*var(--u));top:calc(2.2*var(--u));letter-spacing:.15em;font-weight:800">${TEXTE.zone}</div>
     <img class="abs logoI" style="left:calc(10.4*var(--u));top:calc(3.6*var(--u))" src="${v('assets/logo/logo.webp')}" alt="Diablofus : Les Douze Enfers">
-    <div class="abs" style="left:calc(11.5*var(--u));top:calc(15.2*var(--u));font-weight:800;font-size:calc(1.7*var(--u))">Le monde des Douze, en action.</div>
-    <div class="abs ribbon" style="left:calc(9.8*var(--u));top:calc(18.2*var(--u))">En chasse !</div>
+    <div class="abs" style="left:calc(11.5*var(--u));top:calc(15.2*var(--u));font-weight:800;font-size:calc(1.7*var(--u))">${TEXTE.slogan}</div>
+    <div class="abs ribbon" style="left:calc(9.8*var(--u));top:calc(18.2*var(--u))">${TEXTE.ruban}</div>
     <div class="abs" style="left:calc(11.5*var(--u));top:calc(26.8*var(--u));font-weight:700;font-size:calc(1.05*var(--u));line-height:1.75;max-width:calc(34*var(--u))">
-      Traverse Incarnam sans temps de chargement.<br>Enchaîne les groupes de monstres avec les sorts officiels de ta classe.<br>Ramasse des objets que tu connais, avec des jets au hasard.</div>
+      ${TEXTE.lignes.join('<br>')}</div>
     <div class="abs" style="left:calc(11.5*var(--u));top:calc(34.5*var(--u));display:flex;gap:calc(1*var(--u));align-items:center">
       ${p ? `<button type="button" class="lbtn" data-continuer>Continuer · ${esc(p.nom)}, ${c!.nom} niv. ${p.etat?.level ?? 1}</button>
         <button type="button" class="dbtn" data-go="creation">Nouvelle partie</button>`
@@ -211,7 +259,7 @@ export class Accueil {
     ${p ? `<div class="abs card" style="right:calc(2*var(--u));bottom:calc(5.4*var(--u));padding:calc(.8*var(--u)) calc(1.1*var(--u));font-weight:700;font-size:calc(.9*var(--u));transform:rotate(-1deg);background:#f4ecd0;color:#2a2615;border-color:#c9b98a">
       Dernière sortie : ${esc(p.lieu)} · ${dureeTexte(p.temps)} de jeu</div>` : ''}
     <div class="abs" style="right:calc(2*var(--u));bottom:calc(1.6*var(--u));display:flex;gap:calc(.6*var(--u))">
-      <span class="chip on">Incarnam</span><span class="chip off">Crypte de Kardorim</span><span class="chip off">Astrub · bientôt</span></div>`;
+      ${ZONES_ACC.map(z => `<button type="button" class="chip${z.cle === 'incarnam' ? ' on' : z.dispo ? '' : ' off'}" style="cursor:pointer" data-zone="${z.cle}">${z.nom}${z.dispo ? '' : ' · bientôt'}</button>`).join('')}</div>`;
   }
 
   // --- Création (18A-21A, 19B en partie, Hardcore 10D) ----------------------------------------------------------
@@ -220,7 +268,7 @@ export class Accueil {
     const pose = POSES.find(p => p[0] === s.pose)!;
     const roles = Object.entries(c.roles).slice(0, 3);
     const libre = lirePersos().findIndex(p => !p);
-    const bouton = !jouable ? (PLUS_TARD[c.cle] ?? 'Pas encore jouable') : libre < 0 ? 'Emplacements pleins' : 'Créer et jouer';
+    const bouton = !jouable ? plusTard(c.cle) : libre < 0 ? 'Emplacements pleins' : 'Créer et jouer';
     return `<div class="cover" style="background-image:url(${img(DIEUX.has(c.cle) ? `dieu_${c.cle}.jpg` : 'login.jpg')})"></div>
     <div class="cover" style="background:radial-gradient(ellipse 60% 70% at 52% 55%,transparent 30%,#0d0e09d0 80%),linear-gradient(90deg,#0d0e09f0 8%,#0d0e0980 32%,transparent 50%,#0d0e0980 72%,#0d0e09f0 92%)"></div>
     <div class="abs tiny" style="left:calc(8.4*var(--u));top:calc(1.4*var(--u));font-weight:800">Créer un personnage</div>
@@ -244,7 +292,7 @@ export class Accueil {
     <img src="assets/ui/socle.png" alt="" class="abs" style="left:calc(50% - 10.5*var(--u));top:calc(29.5*var(--u));width:calc(21*var(--u));filter:sepia(.55) saturate(1.3) brightness(.95) drop-shadow(0 0 calc(1.2*var(--u)) #8fe8ff99)">
     ${jouable ? `<div class="abs hero" data-n="${pose[2]}" role="img" aria-label="${esc(c.nom)}" style="left:calc(50% - 8.85*var(--u));top:calc(13.4*var(--u));width:calc(${s.pose === 'attaque' ? 28.1 : 17.7}*var(--u));height:calc(24*var(--u));background-image:url(${img(`${c.cle}_${s.sexe}_${s.pose}.webp`)});background-size:${pose[2] * 100}% 100%" data-src="${img(`${c.cle}_${s.sexe}_${s.pose}.webp`)}"></div>`
       : `<img src="${tete(c, s.sexe)}" alt="" class="abs" style="left:calc(50% - 6*var(--u));top:calc(15*var(--u));width:calc(12*var(--u));filter:drop-shadow(0 calc(.5*var(--u)) calc(1*var(--u)) #000)">
-      <div class="abs" style="left:50%;top:calc(27*var(--u));transform:translateX(-50%);font-family:var(--disp);font-size:calc(1.5*var(--u));color:#e0925a;-webkit-text-stroke:calc(.1*var(--u)) #2a1407;paint-order:stroke fill;white-space:nowrap">${PLUS_TARD[c.cle] ?? 'Jouable plus tard'}</div>`}
+      <div class="abs" style="left:50%;top:calc(27*var(--u));transform:translateX(-50%);font-family:var(--disp);font-size:calc(1.5*var(--u));color:#e0925a;-webkit-text-stroke:calc(.1*var(--u)) #2a1407;paint-order:stroke fill;white-space:nowrap">${plusTard(c.cle)}</div>`}
     <div class="abs card" style="right:calc(2*var(--u));top:calc(4.2*var(--u));width:calc(17.5*var(--u));padding:0 0 calc(1*var(--u));${jouable ? '' : 'opacity:.55'}">
       <div class="panelT">Ton personnage</div>
       <div style="padding:calc(.8*var(--u)) calc(1*var(--u)) 0">
@@ -294,6 +342,17 @@ export class Accueil {
           <span class="tiny" style="display:block">${esc(q.lieu)} · ${dureeTexte(q.temps)} de jeu</span></span></button>`;
       }).join('')}
       <div class="tiny" style="text-align:center">Sauvegarde automatique dans ton navigateur · aucun compte</div>
+      <div class="card" style="padding:calc(.7*var(--u)) calc(.9*var(--u));display:grid;gap:calc(.5*var(--u))">
+        <div style="font-weight:800;font-size:calc(.85*var(--u))">Ta sauvegarde</div>
+        <div style="display:flex;gap:calc(.5*var(--u));flex-wrap:wrap">
+          <button type="button" class="mini" data-exporter>Exporter</button>
+          <button type="button" class="mini" data-importer>Importer</button>
+          <button type="button" class="mini" data-modal="secours">Copies de secours (${lireSecours().length})</button>
+        </div>
+        <div class="tiny" style="font-size:calc(.65*var(--u))">Garde le fichier .diablofus : il remet tes personnages sur un autre PC ou après avoir vidé le navigateur.</div>
+        <input type="file" accept=".diablofus,.json,application/json" data-fichier hidden>
+      </div>
+      ${lireCimetiere().length ? `<button type="button" class="dbtn" data-modal="cimetiere" style="font-size:calc(.85*var(--u));padding:calc(.5*var(--u))">Cimetière des héros (${lireCimetiere().length})</button>` : ''}
     </div>
     ${p && c ? `<div class="abs ttl" style="left:calc(50% + 4*var(--u));transform:translateX(-50%);top:calc(2.6*var(--u));font-size:calc(4.2*var(--u));white-space:nowrap">${esc(p.nom)}</div>
       <div class="abs" style="left:calc(50% + 4*var(--u));transform:translateX(-50%);top:calc(7.6*var(--u));font-weight:800;font-size:calc(1.15*var(--u));white-space:nowrap">${c.nom} · niveau ${p.etat?.level ?? 1}${p.hardcore ? ' · <span class="hc">Hardcore</span>' : ''}</div>
@@ -309,16 +368,80 @@ export class Accueil {
         <button type="button" class="lbtn" data-go="creation">Créer un personnage</button></div>`}`;
   }
 
+  // --- Succès (Accueil 2A) : ceux du compte, comme la fenêtre Succès du jeu ------------------------------------
+  private pageSucces(): string {
+    const fait = compte(), all = Object.entries(QUETES.succes);
+    const total = all.reduce((n, [, x]) => n + x.points, 0), pts = all.filter(([id]) => fait.has(id)).reduce((n, [, x]) => n + x.points, 0);
+    const cats = [...new Set(all.map(([, x]) => `${x.categorie} · ${x.sousCategorie}`))];
+    return `<div class="cover" style="background-image:url(${img('login.jpg')});filter:brightness(.45) saturate(.8)"></div>
+    <div class="abs tiny" style="left:calc(8.4*var(--u));top:calc(1.4*var(--u));font-weight:800">Succès du compte</div>
+    <button type="button" class="abs dbtn" style="right:calc(2*var(--u));top:calc(1*var(--u));font-size:calc(.8*var(--u));padding:calc(.35*var(--u)) calc(.9*var(--u))" data-go="accueil">Retour</button>
+    <div class="abs" style="left:calc(8.4*var(--u));top:calc(3.6*var(--u));display:flex;align-items:baseline;gap:calc(1.2*var(--u))">
+      <div class="ttl" style="font-size:calc(4*var(--u))">Succès</div>
+      <div style="font-weight:800;font-size:calc(1.2*var(--u))">${pts} / ${total} points · ${fait.size} / ${all.length} succès</div></div>
+    <div class="abs" style="left:calc(8.4*var(--u));right:calc(2*var(--u));top:calc(9.5*var(--u));bottom:calc(1.5*var(--u));overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(calc(26*var(--u)),1fr));gap:calc(1*var(--u));align-content:start">
+      ${cats.map(c => {
+        const ss = all.filter(([, x]) => `${x.categorie} · ${x.sousCategorie}` === c);
+        return `<div class="card" style="padding:calc(.8*var(--u)) calc(1*var(--u))"><div style="display:flex;justify-content:space-between;font-weight:800;font-size:calc(.95*var(--u))"><span>${esc(c)}</span><span class="tiny">${ss.filter(([id]) => fait.has(id)).length} / ${ss.length}</span></div>
+          <div class="lst">${ss.map(([id, x]) => `<div><span class="${fait.has(id) ? 'ok' : ''}">${fait.has(id) ? '✓ ' : ''}${esc(x.nom)}</span><span class="tiny">${x.points} pt${x.points > 1 ? 's' : ''}</span><small>${esc(x.description)}</small></div>`).join('')}</div></div>`;
+      }).join('')}
+    </div>`;
+  }
+
+  /** Fiches ouvertes par-dessus la page. */
+  private ouvrir(k: string) {
+    if (k === 'cimetiere') {
+      const l = lireCimetiere();
+      this.modal = `<h2>Cimetière des héros</h2><div class="tiny">Les héros Hardcore tombés au combat. Leur emplacement est libre, leur nom reste ici.</div>
+        <div class="lst" style="gap:calc(.7*var(--u))">${l.map(m => { const c = classe(m.classe); return `<div class="stele"><img src="${tete(c, m.sexe)}" alt=""><span><b>${esc(m.nom)}</b><br>
+          <span class="tiny">${c.nom} niveau ${m.niveau} · ${dureeTexte(m.temps)} de jeu<br>Tombé face à ${esc(m.tueur)}, ${esc(m.lieu)}, le ${new Date(m.date).toLocaleDateString('fr-FR')}</span></span></div>`; }).join('')}</div>`;
+    } else if (k === 'secours') {
+      const l = lireSecours();
+      this.modal = `<h2>Copies de secours</h2><div class="tiny">Les ${NB_SECOURS} dernières, prises en lançant une partie, avant un import et avant une suppression. Restaurer remplace la sauvegarde actuelle (elle-même gardée en copie).</div>
+        <div class="lst">${l.length ? l.map((c, i) => `<div><span>${new Date(c.date).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })}</span><button type="button" class="mini" data-restaurer="${i}">Restaurer</button><small>${esc(c.resume)}</small></div>`).join('') : '<div><span class="no">Aucune copie pour l\'instant.</span></div>'}</div>`;
+    } else {
+      const z = ZONES_ACC.find(x => x.cle === k); if (!z) return;
+      const sub = GAME_DATA.zones.incarnam.open?.subareas ?? {}, vues = new Set(lirePersos().flatMap(p => p?.zones ?? []));
+      const lignes = z.sous.map(id => sub[id]).filter(Boolean);
+      const nb = lignes.filter(x => vues.has(x.name)).length;
+      this.modal = `<h2>${esc(z.nom)}</h2>${z.dispo ? `<div class="tiny">${nb} / ${lignes.length} sous-zone${lignes.length > 1 ? 's' : ''} découverte${nb > 1 ? 's' : ''} par tes personnages</div>
+        <div class="lst">${lignes.map(x => { const vu = vues.has(x.name), mons = [...new Set(x.monsters)].map(m => GAME_DATA.monsters[m]?.name ?? m);
+          return `<div><span class="${vu ? 'ok' : 'no'}">${vu ? '✓ ' : ''}${esc(x.name)}</span><span class="tiny">niveau ${x.level}</span><small>${mons.length ? esc(mons.join(', ')) : 'Pas de monstres'}</small></div>`; }).join('')}</div>`
+        : `<div class="tiny" style="font-size:calc(.9*var(--u));margin-top:calc(.6*var(--u))">${esc(z.plus ?? '')}</div>`}`;
+    }
+    this.render();
+  }
+
   private bind() {
     const r = this.root, on = (sel: string, f: (e: HTMLElement) => void) => r.querySelectorAll<HTMLElement>(sel).forEach(e => e.addEventListener('click', () => f(e)));
     on('[data-nav]', e => {
       const k = e.dataset.nav!;
-      if (k === 'accueil' || k === 'persos' || k === 'creation') this.go(k);
+      if (k === 'accueil' || k === 'persos' || k === 'creation' || k === 'succes') this.go(k);
       else this.toast(`${e.textContent!.trim()} : arrive dans une prochaine version`);
     });
     on('[data-go]', e => this.go(e.dataset.go as Page));
-    on('[data-jouer]', () => { const d = dernier(); if (d != null) this.onJouer(d); else this.go('creation'); });
-    on('[data-continuer]', () => { const d = dernier(); if (d != null) this.onJouer(d); });
+    // fenêtres par-dessus (fiche de zone, cimetière, copies de secours)
+    on('[data-zone]', e => this.ouvrir(e.dataset.zone!));
+    on('[data-modal]', e => this.ouvrir(e.dataset.modal!));
+    r.querySelectorAll<HTMLElement>('[data-fermer]').forEach(e => e.addEventListener('click', ev => { if (ev.target === e) { this.modal = null; this.render(); } }));
+    on('[data-restaurer]', e => { const err = restaurerSecours(+e.dataset.restaurer!); this.modal = null; this.go('persos'); this.toast(err ?? 'Copie restaurée'); });
+    // sauvegarde : fichier .diablofus
+    on('[data-exporter]', () => {
+      const f = exporter(), a = document.createElement('a'), d = new Date(f.date);
+      a.href = URL.createObjectURL(new Blob([JSON.stringify(f)], { type: 'application/json' }));
+      a.download = `diablofus-${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}.diablofus`;
+      a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+      this.toast('Sauvegarde exportée');
+    });
+    const fic = r.querySelector<HTMLInputElement>('[data-fichier]');
+    on('[data-importer]', () => fic?.click());
+    fic?.addEventListener('change', async () => {
+      const f = fic.files?.[0]; if (!f) return;
+      const err = importer(await f.text());
+      this.go('persos'); this.toast(err ?? 'Sauvegarde importée');
+    });
+    on('[data-jouer]', () => { const d = dernier(); if (d != null) this.jouer(d); else this.go('creation'); });
+    on('[data-continuer]', () => { const d = dernier(); if (d != null) this.jouer(d); });
     // création
     on('[data-cls]', e => { this.crea.cle = e.dataset.cls!; this.crea.err = ''; this.render(); });
     on('[data-sexe]', e => { this.crea.sexe = e.dataset.sexe as 'm' | 'f'; this.render(); });
@@ -337,7 +460,7 @@ export class Accueil {
       if (this.confirmer !== i) { this.confirmer = i; this.render(); return; }
       supprimerPerso(i); this.confirmer = -1; this.choix = Math.max(0, lirePersos().findIndex(p => p)); this.render();
     });
-    on('[data-jouer-slot]', e => this.onJouer(+e.dataset.jouerSlot!));
+    on('[data-jouer-slot]', e => this.jouer(+e.dataset.jouerSlot!));
   }
 
   private creer() {
@@ -352,6 +475,11 @@ export class Accueil {
     const p: Perso = { nom, classe: c.cle, sexe: s.sexe, hardcore: s.hardcore, cree: now, maj: now, temps: 0, lieu: 'Incarnam', zones: [] };
     sauverPerso(libre, p);
     s.nom = ''; s.hardcore = false;
-    this.onJouer(libre);
+    this.jouer(libre);
   }
+}
+
+/** Succès du compte (gardés par la partie dans le navigateur). */
+function compte(): Set<string> {
+  try { const c = JSON.parse(localStorage.getItem('diablofus.compte') ?? 'null'); return new Set(Array.isArray(c?.succes) ? c.succes : []); } catch { return new Set(); }
 }

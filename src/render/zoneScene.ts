@@ -26,7 +26,7 @@ import { Chargement } from './chargement';
 import { spellTipHtml } from './spellTip';
 import { RARITY_COLORS, RARITY_NAMES, rollItem } from '../sim/items';
 import { exporterJoueur, restaurerJoueur } from '../sim/sauvegarde';
-import { lirePersos, sauverPerso, supprimerPerso, type Perso } from './persos';
+import { enterrer, lirePersos, sauverPerso, supprimerPerso, type Perso } from './persos';
 import { SonView, synthe } from './sonView';
 import { Son } from './son';
 
@@ -512,7 +512,12 @@ export class ZoneScene extends Phaser.Scene {
         case 'playerDeath':
           if (this.perso?.hardcore) {
             // Hardcore (choix 10D) : la mort efface le personnage
-            this.mortDefinitive = true; supprimerPerso(this.slot);
+            this.mortDefinitive = true;
+            // Cimetière des héros (Accueil 11A) : une stèle avec le monstre le plus proche au moment de la mort
+            const p = this.world.player, pr = this.perso;
+            const tueur = this.world.monsters.filter(m => !m.dead).sort((a, b) => Math.hypot(a.x - p.x, a.y - p.y) - Math.hypot(b.x - p.x, b.y - p.y))[0];
+            enterrer({ cree: pr.cree, nom: pr.nom, classe: pr.classe, sexe: pr.sexe, niveau: p.level, temps: Math.round(pr.temps), lieu: this.world.area?.name ?? pr.lieu, tueur: tueur?.def.name ?? 'Inconnu', date: Date.now() });
+            supprimerPerso(this.slot);
             this.hud.banner(`${this.perso.nom} est mort\nMode Hardcore : Entrée pour revenir à l'accueil`, 0, true);
           } else if (this.world.zone.open) this.hud.banner(`Vaincu\nEntrée : retour à ${this.world.checkpointName}`, 0, true);
           else this.hud.banner(`Vaincu à la vague ${e.wave}\nEntrée pour recommencer`, 0, true);
