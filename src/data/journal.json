@@ -34,7 +34,9 @@
           "Fond de l'accueil : la carte où ton dernier personnage s'est arrêté ; équipement porté affiché dans « Mes personnages ».",
           "Carte du monde sur la touche M, avec les Zaaps, la Banque, les ateliers et les donjons.",
           "Emp, le Méryde du Recyclage, t'attend à côté du Zaap d'Astrub : recycle tes objets contre des Pépites, en lot ou un par un (Ctrl + clic pose un cadenas), et dépense-les dans sa boutique.",
-          "Potion de Rappel : clic droit dans l'inventaire et te voilà de retour au dernier Zaap."
+          "Potion de Rappel : clic droit dans l'inventaire et te voilà de retour au dernier Zaap.",
+          "Métiers de récolte : Paysan, Bûcheron, Mineur, Alchimiste et Pêcheur. Clique le blé, les arbres, les minerais, les plantes et les coins de pêche d'Astrub ; ils repoussent en une minute, et une ressource dorée en donne cinq fois plus.",
+          "Bricoleur : fabrique les clés des donjons d'Astrub (et celle de la Crypte) avec leurs recettes officielles."
         ],
         "Le monde": [
           "Crypte de Kardorim, avec le vrai Sergent Chafer.",
@@ -44,7 +46,8 @@
           "PNJ vivants : animations officielles, taille officielle, ombre.",
           "Tour de la Milice avec son rez-de-chaussée et son escalier.",
           "Astrub s'ouvre : 359 cartes, les monstres officiels de chaque sous-zone, et le portail d'Incarnam qui y descend.",
-          "Trois donjons d'Astrub : la Grange du Tournesol Affamé, le Château Ensablé et la Cour du Bouftou Royal. Chacun demande sa clé officielle, prise à l'entrée (Emp en vend)."
+          "Trois donjons d'Astrub : la Grange du Tournesol Affamé, le Château Ensablé et la Cour du Bouftou Royal. Chacun demande sa clé officielle, prise à l'entrée (Emp en vend).",
+          "Les monstres d'Astrub lâchent leurs ressources officielles : pétales, laines, cornes… de quoi fabriquer les clés."
         ],
         "Combat": [
           "Aperçu de la portée et de la zone des sorts avant de lancer.",

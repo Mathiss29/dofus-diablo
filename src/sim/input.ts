@@ -22,6 +22,8 @@ export interface PlayerInput {
   /** Monstre sous le curseur quand le sort est lancé, et option « s'approcher avant de lancer » (Réglages, choix 5B). */
   castOn?: number | null;
   approach?: boolean;
+  /** Clic sur une ressource à récolter (id de world.recoltes) : le perso y va et la récolte. */
+  recolte?: number | null;
   /** Clic sur un PNJ (clé de quetes.json) : le perso y va et lui parle. */
   talk?: string | null;
   /** Réponse au dialogue ouvert (index du cadre vert, -1 = fermer). */

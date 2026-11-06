@@ -5,6 +5,8 @@ import items from '../data/items.json';
 import armes from '../data/armes.json';
 import quetes from '../data/quetes.json';
 import boutique from '../data/boutique.json';
+import recoltes from '../data/recoltes.json';
+import type { RecoltesData } from './recolte';
 import type { ItemsData } from './items';
 import type { QuetesData } from './quests';
 import type { GameData, WeaponProfile } from './defs';
@@ -17,3 +19,5 @@ export const WEAPONS = Object.fromEntries(Object.entries(armes).filter(([k]) => 
 export const QUETES = quetes as unknown as QuetesData;
 /** Boutiques des PNJ (src/data/boutique.json) : articles et prix en Pépites. */
 export const BOUTIQUES = Object.fromEntries(Object.entries(boutique).filter(([k]) => !k.startsWith('_'))) as unknown as Record<string, { id: string; prix: number }[]>;
+/** Métiers de récolte (src/data/recoltes.json, écrit par tools/contenu/recoltes.py). */
+export const RECOLTES = recoltes as unknown as RecoltesData;

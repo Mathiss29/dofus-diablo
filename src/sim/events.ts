@@ -53,6 +53,11 @@ export type SimEvent =
   | { k: 'achat'; id: string; prix: number }
   | { k: 'rappel'; name: string }
   | { k: 'cleManquante'; id: string }
+  /** Métiers de récolte : geste commencé (durée), interrompu, ressource récoltée (quantité, dorée), niveau de métier trop bas. */
+  | { k: 'recolteDebut'; id: number; duree: number }
+  | { k: 'recolteFin'; id: number; item: string; n: number; dore: boolean }
+  | { k: 'recolteStop' }
+  | { k: 'recolteNiveau'; metier: string; niveau: number }
   | { k: 'service'; service: string; pnj: string }
   | { k: 'lootKamas'; n: number }
   /** Sac plein : l'objet reste au sol. */

@@ -221,3 +221,12 @@ Les anciennes planches ont été converties par `tools/hebergement/planches_avif
 - PNJ dont le look a un skin et des couleurs (`{bone|skin|1=couleur}`) : `SKINS=<skins_assets_skin_N.bundle> COULEURS=1=<couleur>`
   devant `monster_planche.py`. Emp : `PNJ=1 SCALE=1.32 SKINS=.../skins_assets_skin_1981.bundle COULEURS=1=15788464 python monster_planche.py 1979 pnj_emp <bones> <sortie>`.
 - Cadenas : icône officielle `icons_assets_1x/lockShadowOutline` dans `public/assets/ui/emp/`.
+
+## Métiers de récolte (0.2b, 6 nov. 2026)
+
+- `tools/contenu/recoltes.py <liste.json> <cartes> <tables> <fr.bin> <monde.json>` écrit `src/data/recoltes.json` : emplacements officiels
+  (éléments interactifs animés des cartes) et ressources officielles des sous-zones (subareas.harvestables, skills).
+- Les animations des ressources (looks `{650}`, `{660}`…) ne sont ni dans le client ni dans son cache : la ressource d'un gfx est déduite
+  (famille par sous-zone, puis rang de fréquence = rang de niveau) et l'affichage pose l'icône officielle de l'objet.
+- `tools/contenu/drops_ajout.py <tables> <fr.bin>` ajoute le butin officiel des monstres qui n'en ont pas encore, sans réécrire items.json.
+- Icônes des métiers : `Content/Picto/UI/job_assets_2x.bundle` (iconId de la table jobs) -> `public/assets/ui/metier_<métier>.png`.
