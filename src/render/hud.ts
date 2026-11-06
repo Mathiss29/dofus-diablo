@@ -109,6 +109,8 @@ export class Hud {
   private toastText: Txt;
   private hurtRect: Phaser.GameObjects.Rectangle;
   private help: Txt;
+  /** Tutoriel (3A) : la touche à presser, au-dessus de l'emplacement entouré. */
+  private haloKey: Txt;
   private helpAuto = true;
   private shortOf = { pa: 0, pm: 0 };
   private rageFlash = 0;
@@ -212,6 +214,9 @@ export class Hud {
       `Clic gauche : aller / attaquer (maintenu : continuer)   ·   Maj + clic : attaquer sur place   ·   Clic droit et & é " ' ( - : sorts de la barre   ·   Espace : ${cls.spells[cls.mobility].name}   ·   E : potion   ·   Molette : zoom\n` +
       `S : sorts (nouveaux sorts aux niveaux officiels, glisser dans la barre)   ·   I : inventaire   ·   C : caractéristiques\n` +
       `${cls.rage.name} pleine : le sort suivant est renforcé   ·   K : changer de classe (Iop / Crâ)   ·   F : effets d'impact   ·   O : réglages   ·   H : aide`);
+    // Le tutoriel apprend les touches (maquette « Tutoriel d'Incarnam ») : la fiche ne s'affiche plus d'office, H la montre.
+    this.help.setVisible(false); this.helpAuto = false;
+    this.haloKey = txt(15, { ...bold, color: '#2a1e05', backgroundColor: '#e6b85c', padding: { x: 7, y: 3 }, strokeThickness: 0 }, 7).setOrigin(0.5, 1).setVisible(false);
   }
 
   /** H : l'aide reste ensuite comme le joueur l'a laissée. */
@@ -475,6 +480,16 @@ export class Hud {
     g.fillStyle(rageCol, 1); g.fillRoundedRect(rx - 9, ry + rh * (1 - rr), 18, Math.max(4, rh * rr), 5);
     if (this.rageFlash > 0 && juice) { g.lineStyle(3, 0xffc04d, this.rageFlash); g.strokeRoundedRect(rx - 12, ry - 3, 24, rh + 6, 6); }
     this.rageLabel.setPosition(rx, ry + rh + 1);
+    // Tutoriel (3A) : halo doré qui pulse sur l'emplacement de l'étape suivie, et sa touche au-dessus
+    const qs = world.quetes, qc = qs?.enCours.find(c => c.id === qs.suivie), halo = qc && !qc.aRendre ? qs!.etapeDe(qc)?.halo : undefined;
+    if (halo != null) {
+      const hj = halo === 'jauge', hx = halo === 'potion' ? pox : hj ? rx : halo === 7 ? mvx : halo === 6 ? cdx : sx0 + halo * (slot + gap);
+      const hw = hj ? 28 : slot + 8, hh = hj ? rh + 10 : slot + 8, hy = hj ? ry + rh / 2 : sy, pulse = 0.55 + 0.45 * Math.sin(world.time * 6);
+      g.lineStyle(3, 0xffd66b, pulse); g.strokeRoundedRect(hx - hw / 2, hy - hh / 2, hw, hh, 8);
+      g.lineStyle(7, 0xe6b85c, 0.25 * pulse); g.strokeRoundedRect(hx - hw / 2 - 3, hy - hh / 2 - 3, hw + 6, hh + 6, 10);
+      const lab = halo === 'potion' ? 'E' : hj ? cls.rage.name : halo === 7 ? 'Espace' : halo === 6 ? 'Clic droit' : KEYS[halo];
+      this.haloKey.setVisible(true).setText(lab).setPosition(hx, y0 - 4 - 5 * Math.abs(Math.sin(world.time * 3)));
+    } else this.haloKey.setVisible(false);
 
     // --- Suivi (bas gauche) : la quête suivie (8A), sinon l'exploration ---
     const a = world.area, kills = this.areaKills.get(a?.name ?? '') ?? 0, Q = world.quetes;

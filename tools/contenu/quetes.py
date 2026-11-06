@@ -28,18 +28,46 @@ def vaincre(texte, n, **k): return {'t': 'vaincre', 'texte': texte, 'n': n, **k}
 def elite(texte, monstre, carte, **k): return {'t': 'elite', 'texte': texte, 'monstre': monstre, 'carte': carte, 'pv': 1, **k}
 def parler(texte, pnj, **k): return {'t': 'parler', 'texte': texte, 'pnj': pnj, **k}
 
+def tuto(classe, frappe, sort1, sorts, jauge, mobilite, arme):
+    """Trame du tutoriel d'une classe : 9 étapes, une action chacune."""
+    return [
+      {'nom': 'Premiers pas', 'bulle': f"Bienvenue sur Incarnam, jeune {classe} ! Clique sur le sol pour marcher : va saluer Berb Nhin, devant la taverne.",
+       'objectifs': [aller('Marcher jusqu\'à Berb Nhin (clic gauche)', pnj='berb_nhin')]},
+      {'nom': 'Frapper', 'bulle': f"Un esprit de feu rôde sur la Route. Clique dessus : {frappe}.",
+       'objectifs': [vaincre('Vaincre un monstre (clic dessus)', 1, sousZone=SZ['route'])]},
+      {'nom': 'Ton premier sort', 'bulle': sort1[1], 'halo': 0, 'objectifs': [{'t': 'utiliser', 'sort': sort1[0], 'texte': 'Lancer ton premier sort (&)'}]},
+      {'nom': 'Tes sorts', 'bulle': sorts, 'halo': 1, 'objectifs': [vaincre('Vaincre des monstres avec tes sorts', 3, sousZone=SZ['route'])]},
+      {'nom': 'La jauge de classe', 'bulle': jauge, 'halo': 'jauge', 'objectifs': [{'t': 'utiliser', 'quoi': 'jauge', 'texte': 'Lancer un sort avec la jauge pleine'}]},
+      {'nom': 'Se déplacer vite', 'bulle': mobilite, 'halo': 7, 'objectifs': [{'t': 'utiliser', 'quoi': 'mobilite', 'texte': 'Se déplacer avec Espace'}]},
+      {'nom': 'La potion', 'bulle': "Blessé ? E : une potion. Tu en regagnes une à chaque groupe vaincu.", 'halo': 'potion',
+       'objectifs': [{'t': 'utiliser', 'quoi': 'potion', 'texte': 'Boire une potion (E) une fois blessé'}]},
+      {'nom': 'Premières armes', 'bulle': arme[1], 'donner': {classe.lower().replace('â', 'a'): arme[0]},
+       'objectifs': [{'t': 'equiper', 'objet': arme[0], 'texte': 'Équiper ton arme (I)'}]},
+      {'nom': 'Le point de retour', 'bulle': "Le Zaap de la Route des âmes est ton point de retour : si tu tombes, tu reviens là, sans rien perdre. Viens me voir.",
+       'objectifs': [aller('Retourner voir Ganymède près du Zaap', pnj='ganymede')]},
+    ]
+
 Q = {}
 # --- Fil principal (Ganymède -> Lykhen -> Fécaline) ---------------------------------------------------------
 Q['reponses'] = {'nom': 'Réponses à tout', 'type': 'tutoriel', 'pnj': 'ganymede', 'niveau': 1, 'auDepart': True, 'suivante': 'village',
   'texte': "Avant de quitter le temple céleste, prenez le temps de contempler les Dofus et le Monde des Douze... et n'oubliez pas de saluer votre dieu au passage ! Ganymède vous apprend à vous battre avant de vous laisser descendre sur l'île.",
   'options': {'passable': True, 'sauterSiCompte': True, 'immortel': True, 'groupes': {'sousZones': [SZ['route']], 'taille': [1, 3]}},
-  'etapes': [
-    {'nom': 'Premiers pas', 'bulle': "Bienvenue sur Incarnam ! Montre-moi ce que tu sais faire : lance un sort, puis esquive.",
-     'objectifs': [{'t': 'utiliser', 'quoi': 'sort', 'texte': 'Lancer un sort'}, {'t': 'utiliser', 'quoi': 'mobilite', 'texte': 'Se déplacer avec Espace'}]},
-    {'nom': 'Premières armes', 'bulle': "Les esprits de la Route des âmes t'attendent. Va les remettre à leur place !",
-     'objectifs': [vaincre('Vaincre des monstres sur la Route des âmes', 5, sousZone=SZ['route'])]},
-  ],
-  'recompense': {'xp': 150, 'potions': True}}
+  # Tutoriel (maquette « Tutoriel d'Incarnam », tranchée le 2026-11-06) : une trame par classe (9B), une action par étape,
+  # halo sur la barre + bulle de Ganymède (3A+3B). Les indices des étapes « Premiers pas » (0) et « Premières armes » (7)
+  # servent au succès « Premier temps » : garder les deux trames de même longueur.
+  'etapes': {'iop': tuto('Iop', 'tu le poursuis et tu frappes',
+                 ('pression', 'Tes sorts sont sur & é " \'. Touche & : Pression !'),
+                 "Essaie les autres : é Ferveur, \" Couperet, ' Épée Divine. Vide ce groupe !",
+                 "Chaque coup remplit ta Rage. Pleine, elle renforce ton sort suivant : remplis-la, puis frappe !",
+                 "Espace : Bond. Tu sautes là où pointe ta souris, pour fondre sur un monstre ou te sortir d'un mauvais pas.",
+                 ('10797', "Prends cette Épée Tulante. I ouvre ton sac : équipe-la, ton attaque change avec elle.")),
+             'cra': tuto('Crâ', "sans arc, tu frappes au poing",
+                 ('recul', 'Tes flèches sont sur & é " \'. Touche & : Flèche de Recul, elle repousse ta cible !'),
+                 "Essaie les autres : é Flèche Glacée, \" Flèche Vagabonde, ' Flèche de Barrage. Reste loin et vide ce groupe !",
+                 "Tirer de loin remplit ta Précision. Pleine, elle renforce ta flèche suivante : remplis-la, puis tire !",
+                 "Espace : Pas Chassé. Un pas vif vers ta souris, pour reprendre tes distances quand un monstre te colle.",
+                 ('1942', "Prends cet Arc de Chasse. I ouvre ton sac : équipe-le, tu tireras des flèches au lieu de frapper au poing."))},
+  'recompense': {'xp': 150, 'potions': True, 'niveau': 2}}
 Q['village'] = {'nom': 'Le village dans les nuages', 'type': 'principale', 'pnj': 'lykhen', 'niveau': 3, 'suivante': 'espoirs',
   'texte': "Les habitants du village d'Incarnam sont prêts à aider les aventuriers. N'hésitez pas à aller les saluer ! Lykhen Lesurviven vous envoie faire le tour du village avant de rencontrer Fécaline la Sage.",
   'etapes': [
@@ -160,7 +188,7 @@ def suc(nom, did, desc, cat, sous, pts, icone, obj, ratio=0, objet=None):
     return s
 S = {
   'premier_temps': suc('Premier temps', 8518, 'Terminer la première partie du tutoriel.', 'Quêtes', 'Général', 1, 203,
-     [{'nom': 'Premiers pas', 'etape': ['reponses', 0]}, {'nom': 'Premières armes', 'etape': ['reponses', 1]}, {'nom': 'Première partie du tutoriel', 'quete': 'reponses'}], 0.213),
+     [{'nom': 'Premiers pas', 'etape': ['reponses', 0]}, {'nom': 'Premières armes', 'etape': ['reponses', 7]}, {'nom': 'Première partie du tutoriel', 'quete': 'reponses'}], 0.213),
   'second_temps': suc('Second temps', 8519, 'Terminer la seconde partie du tutoriel.', 'Quêtes', 'Général', 1, 203, [{'nom': 'Seconde partie du tutoriel', 'quete': 'village'}], 0.213),
   'bonnes_bases': suc('Sur de bonnes bases', 8520, 'Terminer les succès du tutoriel.', 'Quêtes', 'Général', 3, 273,
      [{'nom': 'Premier temps', 'succes': 'premier_temps'}, {'nom': 'Second temps', 'succes': 'second_temps'}], 0.287, '10207'),
