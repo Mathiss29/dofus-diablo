@@ -178,20 +178,20 @@ export class WorldView {
       }
     }
   }
-  /** Fait bouger le décor vivant (arbres au vent, eau). Les fréquences et amplitudes viennent des matériaux officiels. */
+  /** Fait bouger le décor vivant (arbres au vent, eau). Amplitudes officielles ; vitesses ralenties (trop rapides pour Mathis, 2026-11-06). */
   private animate(t: number) {
     let n = 0;
     for (const v of this.vivants) {
       if (!v.im.active) continue;   // carte déchargée : on l'oublie
       this.vivants[n++] = v;
       const { im, p } = v;
-      if (p.w) im.setRotation(this.vent ? p.w * 0.035 * Math.sin(t * 1.3 + v.ph) + p.w * 0.012 * Math.sin(t * 3.1 + v.ph * 2) : 0);
+      if (p.w) im.setRotation(this.vent ? p.w * 0.035 * Math.sin(t * 0.7 + v.ph) + p.w * 0.008 * Math.sin(t * 1.5 + v.ph * 2) : 0);
       if (p.t) {
-        const a = this.eau ? p.t[2] * Math.sin(t * Math.PI * 2 * p.t[3] * 10 + v.ph) : 0;
+        const a = this.eau ? p.t[2] * Math.sin(t * Math.PI * 2 * p.t[3] * 4 + v.ph) : 0;
         im.setPosition(v.x0 + p.t[0] * a * GridMap.S, v.y0 - p.t[1] * a * GridMap.S);
       }
       if (p.ca) {
-        const f = this.eau ? p.ca[1] * (0.5 + 0.5 * Math.sin(t * Math.PI * 2 * p.ca[2] + v.ph)) : 0;
+        const f = this.eau ? p.ca[1] * (0.5 + 0.5 * Math.sin(t * Math.PI * 2 * p.ca[2] * 0.5 + v.ph)) : 0;
         im.setTint(mulTint(lerpTint(0xffffff, p.ca[0], f), this.tint));
       }
     }
