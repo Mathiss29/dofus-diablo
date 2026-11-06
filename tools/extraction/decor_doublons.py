@@ -18,6 +18,8 @@ def cadre(m):
     x0 = OX + W // 4 + (m['x'] - X0) * COLS * W; y0 = OY + H // 4 + (m['y'] - Y0) * ROWS * H // 2
     return x0, y0, x0 + COLS * W, y0 + ROWS * H // 2
 atlas, img = {}, {}
+# décor partagé (world_export.py PARTAGE=1) : l'image est dans la page commune p<N>, sinon dans l'atlas de la carte
+cle = lambda m, p: f"p{p['p']}" if 'p' in p else m['tag']
 def frame(tag, f):
     if tag not in atlas:
         atlas[tag] = json.load(open(f'{D}/decor_{tag}.json'))['frames']
@@ -29,7 +31,7 @@ def pixels(tag, f):
 groupes = {}
 for m in outs:
     for i, p in enumerate(m['decor']):
-        fr = frame(m['tag'], p['f'])
+        fr = frame(cle(m, p), p['f'])
         k = (round(p['x'] * 2), round(p['y'] * 2), fr['sourceSize']['w'], fr['sourceSize']['h'], p.get('z', 1), p.get('b'), p.get('c', 0) < 0)
         groupes.setdefault(k, []).append((m, i, p))
 jeter = {m['tag']: set() for m in outs}
@@ -37,8 +39,8 @@ n = 0
 for k, L in groupes.items():
     if len(L) < 2: continue
     # même image ? (sinon deux éléments différents posés au même point : on les garde)
-    ref = pixels(L[0][0]['tag'], L[0][2]['f'])
-    L = [q for q in L if np.abs(pixels(q[0]['tag'], q[2]['f']) - ref).mean() < 12]
+    ref = pixels(cle(L[0][0], L[0][2]), L[0][2]['f'])
+    L = [q for q in L if np.abs(pixels(cle(q[0], q[2]), q[2]['f']) - ref).mean() < 12]
     if len(L) < 2: continue
     def dist(q):
         m, _, p = q; x0, y0, x1, y1 = cadre(m)

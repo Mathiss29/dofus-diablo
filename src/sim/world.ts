@@ -50,6 +50,8 @@ export interface WorldOptions {
   compte?: Compte;
   /** Partie reprise : avancement des quêtes sauvegardé (sinon les quêtes du départ démarrent). */
   reprise?: EtatQuetes;
+  /** Arrivée par un portail d'une autre zone : [carte, case] de la porte d'arrivée. */
+  arrivee?: [string, number];
 }
 
 /** La simulation d'une zone : joueur, monstres, vagues, collisions.
@@ -82,11 +84,11 @@ export class World {
   /** Sous-zone où se trouve le joueur (monde ouvert). */
   area: SubAreaDef | null = null;
   /** Portes du monde ouvert : les deux bouts en coordonnées monde, et la carte de chacun. */
-  portes: { nom: string; ends: [PorteEnd, PorteEnd]; verrou: boolean; sens: boolean }[] = [];
+  portes: { nom: string; ends: [PorteEnd, PorteEnd]; verrou: boolean; sens: boolean; vers?: { zone: string; arrivee: [string, number] } }[] = [];
   /** Bout de porte par lequel le joueur vient d'arriver : inactif tant qu'il ne s'en est pas éloigné. */
   private portalLock: PorteEnd | null = null;
   /** Porte franchie : le joueur s'arrête devant pendant le fondu de sortie (PASSAGE s), puis arrive de l'autre côté. */
-  passage: { to: PorteEnd; nom: string; t: number } | null = null;
+  passage: { to: PorteEnd; nom: string; t: number; vers?: { zone: string; arrivee: [string, number] } } | null = null;
   /** Durée du fondu de sortie d'une porte (choix 5A : 0,2 s pour sortir, 0,3 s pour entrer). */
   static readonly PASSAGE = 0.2;
   /** Distance (|dx| + |dy|) au-delà de laquelle un monstre qui attend ne bouge plus. */
@@ -117,6 +119,7 @@ export class World {
       // sac vide au départ (Mathis, 2026-11-06) : l'équipement vient du tutoriel (panoplie de l'Intrépide, Arc de Chasse du Crâ)
     }
     if (open) this.buildPortes();
+    if (open && opts.arrivee) this.arriver(opts.arrivee);
     // les PNJ d'abord : les groupes de monstres ne se posent pas sur eux
     if (open && opts.quetes) this.quetes = new Quetes(opts.quetes, this, opts.compte);
     // les quêtes d'abord : le tutoriel retient les groupes du Temple jusqu'à son étape « Frapper »
@@ -124,12 +127,26 @@ export class World {
     if (open) this.spawnGroups();
   }
 
+  /** Arrivée par un portail d'une autre zone : un peu en avant de la porte d'arrivée (comme une porte normale). */
+  arriver([tag, c]: [string, number]) {
+    const wg = this.worldGrid;
+    if (!wg?.mapByTag(tag)) return;
+    const q = wg.cellToWorld(wg.cellOf(tag, c));
+    this.traverser({ tag, ...wg.nearestFree(q.x, q.y, wg.freeByMap.get(tag)!) }, '');
+    this.events.length = 0;   // pas d'annonce de porte à l'arrivée
+  }
   /** Rayon autour d'une porte qui la déclenche (≈ 1,4 case) et distance d'arrivée de l'autre côté. */
   static readonly PORTE_R = 65;
   static readonly PORTE_ARRIVEE = 80;
   private buildPortes() {
     const wg = this.worldGrid!;
     for (const d of this.zone.open!.portes ?? []) {
+      if (d.zone) {   // portail vers une autre zone : un seul bout ici
+        if (!wg.mapByTag(d.a[0])) continue;
+        const q = wg.cellToWorld(wg.cellOf(d.a[0], d.a[1])), a = { tag: d.a[0], ...wg.nearestFree(q.x, q.y, wg.freeByMap.get(d.a[0])!) };
+        this.portes.push({ nom: d.nom, ends: [a, a], verrou: false, sens: true, vers: { zone: d.zone, arrivee: d.b } });
+        continue;
+      }
       if (!wg.mapByTag(d.a[0]) || !wg.mapByTag(d.b[0])) continue;   // intérieur pas (encore) exporté dans ce monde
       // la porte est souvent sur un mur : on la ramène sur la case marchable la plus proche de sa carte
       const end = ([tag, c]: [string, number]): PorteEnd => {
@@ -148,6 +165,7 @@ export class World {
       p.stopMove(); q.t -= dt;
       if (q.t > 0) return;
       this.passage = null;
+      if (q.vers) { this.emit({ k: 'changeZone', zone: q.vers.zone, arrivee: q.vers.arrivee, nom: q.nom }); return; }
       this.traverser(q.to, q.nom);
       return;
     }
@@ -164,7 +182,7 @@ export class World {
       }
       // le perso s'arrête devant la porte pendant le fondu de sortie, puis passe (traverser)
       p.stopMove();
-      this.passage = { to, nom: po.nom, t: World.PASSAGE };
+      this.passage = { to, nom: po.nom, t: World.PASSAGE, vers: po.vers };
       this.emit({ k: 'portalStart', nom: po.nom });
       return;
     }
@@ -266,7 +284,9 @@ export class World {
       // en cercle autour du chef, chacun sa place (plus de tas de monstres les uns sur les autres)
       const ang = a0 + (i / Math.max(1, n - 1)) * Math.PI * 2 + this.rng.range(-0.3, 0.3), r = i === 0 ? 0 : this.rng.range(90, 150);
       const q = wg.nearestFree(pos.x + Math.cos(ang) * r, pos.y + Math.sin(ang) * r, free);
-      const mo = this.spawnMonster(g.fixe ? g.fixe[i] : this.rng.pick(g.sub.monsters), q.x, q.y);
+      // l'élite unique de la sous-zone mène un groupe sur 8 environ, s'il n'est pas déjà en vie ailleurs
+      const elite = !g.fixe && i === 0 && g.sub.elite && this.rng.next() < 0.12 && !this.monsters.some(o => !o.dead && o.type === g.sub.elite);
+      const mo = this.spawnMonster(g.fixe ? g.fixe[i] : elite ? g.sub.elite! : this.rng.pick(g.sub.monsters), q.x, q.y);
       mo.group = g.id; g.members.push(mo);
     }
   }

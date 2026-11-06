@@ -31,7 +31,7 @@ export class SonView {
     this.classe = classId;
     Son.demarrer();
     if (vitrine) Son.menu();
-    else Son.zone(world.zone.open ? ['incarnam1', 'incarnam2', 'incarnam_explo01'] : []);
+    else Son.zone(!world.zone.open ? [] : world.opts.zone === 'astrub' ? ['astrub'] : ['incarnam1', 'incarnam2', 'incarnam_explo01']);
     // 7B : sources de sons du décor, d'après les particules officielles (feux, eau, Zaap), regroupées
     if (parts && wg) {
       const pts = new Map<string, { x: number; y: number }[]>();
@@ -155,7 +155,7 @@ export class SonView {
     if ((this.fondT -= dt) <= 0) {
       this.fondT = 1;
       const temple = w.area?.name === 'Temple Céleste';
-      Son.fond(!w.zone.open ? ['incarnam_vent'] : temple ? ['temple_tuto', 'temple_ethere'] : inside ? ['interieur'] : ['incarnam_vent', 'incarnam']);
+      Son.fond(!w.zone.open ? ['incarnam_vent'] : temple ? ['temple_tuto', 'temple_ethere'] : inside ? ['interieur'] : w.opts.zone === 'astrub' ? ['astrub_vent', 'astrub_oiseaux'] : ['incarnam_vent', 'incarnam']);
     }
     // 7B : sources du décor les plus proches
     const ps = ISO.toScreen(p.x, p.y), proches: Record<string, number> = {};

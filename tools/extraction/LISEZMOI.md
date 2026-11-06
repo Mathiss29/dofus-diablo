@@ -194,3 +194,11 @@ couleurs et dégradés, débit et salves, forme (sphère, cône, cercle, bord, b
 Les polices de l'interface de Dofus 3 sont des objets `Font` de `tss_assets_all.bundle` (UnityPy : `m_FontData`) :
 Lexend (Regular, Medium, SemiBold, Bold) pour les textes, Rowdies pour les boutons, NotoSans en secours.
 Elles sont réduites aux caractères latins et converties en woff2 (`fontTools.subset --flavor=woff2`) dans `public/assets/fonts/`.
+
+## Astrub (0.2a)
+- Tout ce qu'il faut est dans `/mnt/project-files/cache-dofus/astrub/` (cartes, textures 1x, squelettes des monstres, effets, banques de sons) : plus besoin du PC.
+- Monde : `PARTAGE=1 FILS=3 TEXDIR=<tex png> python3 world_export.py liste.json cartes/ /dev/null public/assets/mondes/astrub`.
+  `PARTAGE=1` range le décor de toutes les cartes dans des pages communes `decor_p<N>` (2048 x 2048) : une image utilisée sur 50 cartes
+  n'est stockée qu'une fois. Chaque décor a son `p` (page), chaque carte la liste de ses `pages`. `TEXDIR` lit les textures en PNG à la demande (mémoire).
+- Carte du monde (touche M) : `python3 carte_monde.py public/assets/mondes/<monde> [0.1]` écrit `carte.webp` (sols + décor réduits) et `monde.json.carte`.
+- Sons : `python3 sons_astrub.py <banques .bank> <dossier fsb5> <racine du dépôt>` ajoute la musique d'Astrub, ses ambiances et les sons des nouveaux monstres à `src/data/sons.json`.
