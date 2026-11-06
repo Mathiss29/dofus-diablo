@@ -53,7 +53,7 @@ Iop : Pression 802, Épée Céleste 801, Bond 811, Colère de Iop (13124) 800, C
   - Puis TOUJOURS `python bords_fondu.py public/assets/mondes/<nom>` : un seul débord par raccord (celui de la carte du haut ou de gauche), sinon une bande nette sépare les cartes. Les bords déjà traités sont notés `"fondu": 1` dans `monde.json`.
   - Puis `python decor_doublons.py public/assets/mondes/<nom>` : chaque carte Dofus reprend le décor de ses voisines qui déborde sur elle ; en monde continu on garde un seul exemplaire (celui de la carte où il se trouve), sinon ordre d’affichage faux et ombres doublées. Cartes traitées notées `"doublons": 1`.
     Il retire aussi les copies DÉCALÉES (Cité d'Astrub, Cimetière, Tainéla) : entre certaines voisines, la copie est posée une ou deux cases à côté de l'original, toujours du même décalage pour la paire ; sinon la maison apparaît deux fois côte à côte. Cartes traitées notées `"decales": 1`.
-  - Puis `python voiles_fondu.py public/assets/mondes/<nom>` : les grands voiles de lumière semi-transparents (gfx 63044 dans la Cité, 2000 x 868) couvrent toute une carte et leurs bords, hors écran dans Dofus, faisaient des rectangles clairs chez nous ; on les fond vers le transparent dans les pages d'atlas (noté dans `"voiles"` de `monde.json`).
+  - Puis `python voiles.py public/assets/mondes/<nom>` : retire les grands voiles de lumière semi-transparents posés sur toute une carte (gfx 63044 dans la Cité, 2000 x 868 : lueur des coins de l'écran dans Dofus, grandes zones claires à bords nets chez nous). Noté dans `"voiles"` de `monde.json` ; `world_export.py` les met aussi dans `VOILES`.
   - Bords du monde (monde sans ciel) : le jeu fond lui-même dans la brume les côtés de carte sans voisine (`WorldView.brume`).
   Sortie : `monde.json` (grille, cases marchables, sous-zone et décor de chaque carte), un `sol_x_y.webp` par carte (rogné pile au raccord
   côté voisin pour que le ciel d'une carte ne recouvre pas le sol de l'autre), et tout le décor dédoublonné dans `decor.json` + `decor_N.webp`
@@ -277,6 +277,8 @@ Les animations des éléments interactifs (blé 660, frêne 650, fer 4918, ortie
 Elles viennent du client Stasis (format msgpack, voir l'en-tête de `recoltes_planches.py`) ; les 639 éléments animés sont gardés
 dans `/mnt/project-files/cache-dofus/elements-animes/` (LISEZMOI là-bas).
 1. `python tools/contenu/recoltes.py <liste.json> <cartes> <tables> <fr.bin> <monde.json> <monde>` : emplacements + gfx + décalage + miroir.
+   Puis UNE fois `python tools/contenu/recoltes_cases.py <monde> <cartes>` : chaque ressource prend la case la plus proche de son dessin officiel
+   (parfois sur la carte voisine) et les copies que les voisines recopient sont retirées (sinon du blé flottait sur le vide, en double).
 2. `python tools/extraction/recoltes_planches.py <dossier b> public/assets/sprites/recoltes <gfx,…>` : une planche AVIF par gfx.
 3. `node tools/hebergement/envoi.mjs`.
 

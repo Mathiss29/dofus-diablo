@@ -18,7 +18,7 @@ function recolter(w: World, id: number, pas = 600) {
 describe('Métiers de récolte (0.2b)', () => {
   it('ressources officielles posées dans Astrub, chacune avec son icône et son métier', () => {
     const w = monde();
-    expect(w.recoltes.length).toBeGreaterThan(3000);
+    expect(w.recoltes.length).toBeGreaterThan(1500);   // sans les copies des cartes voisines (recoltes_cases.py)
     for (const [id, r] of Object.entries(RECOLTES.ressources)) {
       expect(ITEMS.resources[id], id).toBeDefined();
       expect(ITEMS.metiers?.[r.metier], r.metier).toBeDefined();
@@ -54,7 +54,7 @@ describe('Métiers de récolte (0.2b)', () => {
   it('chaque emplacement (Astrub, Incarnam) a son dessin officiel : planche, frames prête / coupe / récoltée', () => {
     const R = RECOLTES as unknown as Record<string, [string, number, string, number][]>;
     for (const monde of ['astrub', 'incarnam']) {
-      expect(R[monde].length, monde).toBeGreaterThan(500);
+      expect(R[monde].length, monde).toBeGreaterThan(300);
       for (const g of new Set(R[monde].map(x => x[3]))) {
         const j = JSON.parse(readFileSync(new URL(`../public/assets/sprites/recoltes/${g}.json`, import.meta.url), 'utf8'));
         expect(j.frames.pret, `${g}`).toBeDefined();

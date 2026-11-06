@@ -113,7 +113,7 @@ LUMIERES = {305396, 404317, 57871, 57971, 806080, 305477, 60327, 36648, 39767,  
             42481, 44653, 805552, 402668, 806081}                               # rayons de lumière
 # lumières du soleil (reflets sur l'eau, rayons) : 'j' = 1, elles s'éteignent la nuit ; les autres (feux, lueurs) s'y renforcent
 SOLEIL = {305396, 404317, 806080, 60327, 42481, 44653, 805552, 402668, 806081}
-VOILES = {62942}
+VOILES = {62942, 63044}   # 63044 : lueur jaune des coins de l'écran (Cité d'Astrub), voir voiles.py
 # Fond du lac : de grandes ellipses (49153-49156) que Dofus fond entre elles (masque de dissolution 201) sur la couleur de fond
 # de la carte (backgroundColor, vert d'eau). On adoucit leurs bords et on remplit dessous de cette couleur : plus de disques.
 EAU_FOND = {49153, 49154, 49155, 49156}
