@@ -72,6 +72,8 @@ export class FX {
         } else if (e.fx === 'land') {
           this.ring(e.x, e.y, 10, e.size * 1.15, 0xffd27a, 0.3, 8);
           this.particles(e.x, e.y, 0, 26, 0xb59a6a, 260, 0.5, 4, 260);
+        } else if (e.discret) {
+          this.particles(e.x, e.y, 0, 18, col, 200, 0.45, 3, 200);
         } else {
           this.ring(e.x, e.y, 20, e.size * 1.2, 0xffffff, 0.35, e.big ? 14 : 8);
           this.ring(e.x, e.y, 10, e.size * 0.8, col, 0.5, 10);
