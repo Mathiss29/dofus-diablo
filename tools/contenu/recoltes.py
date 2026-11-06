@@ -1,6 +1,6 @@
 # recoltes.py : écrit src/data/recoltes.json (métiers de récolte de la 0.2b, maquette Métiers : 2A 5A 6A+6C 13C).
 #
-# Usage : python recoltes.py <liste.json du monde> <dossier des cartes map_<id>.json> <dossier des tables (data_dump)> <fr.bin> <monde.json>
+# Usage : python recoltes.py <liste.json du monde> <dossier des cartes map_<id>.json> <dossier des tables (data_dump)> <fr.bin> <monde.json> [nom du monde, astrub par défaut]
 #   (Astrub : liste.json et cartes/ de l'export du monde, tables de cache-dofus/donnees.tar.gz)
 #
 # Emplacements : les éléments interactifs animés des cartes officielles (ClientInteractiveAnimatedElementTransform : case + gfx).
@@ -14,6 +14,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'extraction'))
 from i18n import load as i18n
 
 liste, cartes, tables, frbin, monde = sys.argv[1:6]
+NOM = sys.argv[6] if len(sys.argv) > 6 else 'astrub'   # clé du monde dans recoltes.json (les autres mondes sont gardés)
 T = i18n(frbin)
 def table(n):
     d = json.load(open(f'{tables}/{n}.json')); R = {r['rid']: r['data'] for r in d['references']['RefIds']}; o = d['objectsById']
@@ -46,7 +47,11 @@ for xy, v in L.items():
         if q['type']['class'] != 'ClientInteractiveAnimatedElementTransform': continue
         g = q['data']['gfxId']
         if g not in FAMILLE: continue
-        freq[g] += 1; spots.append((tag, q['data']['cellId'], g, s))
+        # position du dessin (repère Unity de la carte : x = px - 623,5, y = 505,25 - py) : souvent la case, parfois décalée ; m11 < 0 = miroir
+        t, c = q['data']['transform'], q['data']['cellId']; row, k = divmod(c, 14)
+        dx, dy = round(t['m31'] + 623.5 - (43 + k * 86 + (row % 2) * 43), 1), round(505.25 - t['m32'] - (21.5 + row * 21.5), 1)
+        if abs(dx) > 60 or abs(dy) > 60: dx = dy = 0   # grands écarts (multiples de cases, hors carte) : repère non compris, on reste sur la case
+        freq[g] += 1; spots.append((tag, c, g, s, dx, dy, 1 if t['m11'] < 0 else 0))
 
 # gfx -> ressource : rang de fréquence dans la famille = rang de niveau parmi les ressources officielles d'Astrub de cette famille
 GFX = {}
@@ -65,17 +70,22 @@ def poisson(tag, cell, s):
         x -= w
 
 out = []
-for tag, cell, g, s in spots:
+for tag, cell, g, s, dx, dy, miroir in spots:
     h = poisson(tag, cell, s) if FAMILLE[g] == 'poisson' else GFX.get(g)
-    if h: out.append([tag, cell, str(h)])
+    if h: out.append([tag, cell, str(h), g, dx, dy, miroir])
 nom = lambda h: T(I[h]['nameId'])
-data = {
+OUT = os.path.join(os.path.dirname(__file__), '..', '..', 'src', 'data', 'recoltes.json')
+data = json.load(open(OUT)) if os.path.exists(OUT) else {}
+data[NOM] = out
+mondes = [k for k in data if not k.startswith('_') and k not in ('metiers', 'ressources')]
+tous = {int(x[2]) for k in mondes for x in data[k]}
+data.update({
     '_': "Métiers de récolte (0.2b), écrit par tools/contenu/recoltes.py. Ressource d'un emplacement : déduite (voir l'en-tête du script).",
     'metiers': {k: {'id': j, 'nom': T(J[j]['nameId'])} for j, k in METIERS.items()},
     'ressources': {str(h): {'nom': nom(h), 'metier': RES[h][0], 'niveau': RES[h][1], 'anim': RES[h][2], 'icone': I[h]['iconId'], 'niveauObjet': I[h]['level']}
-                   for h in sorted({int(x[2]) for x in out})},
-    'astrub': out,
-}
-OUT = os.path.join(os.path.dirname(__file__), '..', '..', 'src', 'data', 'recoltes.json')
+                   for h in sorted(tous)},
+    '_monde': "<monde>: [carte, case, ressource, gfx (planche public/assets/sprites/recoltes/<gfx>), décalage x, y du dessin (px Dofus), miroir]",
+})
+data.pop('_astrub', None)
 json.dump(data, open(OUT, 'w'), ensure_ascii=False, separators=(',', ':'))
 print(len(out), 'emplacements ;', ', '.join(f"{v['nom']} ({sum(1 for x in out if x[2] == k)})" for k, v in data['ressources'].items()))

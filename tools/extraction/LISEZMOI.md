@@ -266,3 +266,13 @@ acheté chez Emp en Pépites ; la garde-robe (Lykhen à Incarnam, Emp à Astrub)
   dans le skin de tête, écrits par `squelette_export.py`), la cape et le bouclier sur les nœuds du même nom.
 - `caches` : parties de la tête qu'une coiffe cache (table `skinslotsrules` : règle par défaut, par classe, par tête).
   Les numéros d'emplacement ne sont pas nommés dans le client : 13 = cheveux, 5 = crâne, 0/1 = oreilles, 11/12 = pattes, déduits des coiffes.
+- À venir (0.2b) : coiffe, cape, bouclier, familier et apparat = d'autres skins posés sur les mêmes nœuds ; leurs dessins
+  ne sont pas dans le cache (`Characters/Skins` complet à copier depuis le PC de Mathis).
+
+## Ressources à récolter (dessins)
+Les animations des éléments interactifs (blé 660, frêne 650, fer 4918, ortie 3212, pêche 1018…) ne sont pas dans le client de Dofus 3.
+Elles viennent du client Stasis (format msgpack, voir l'en-tête de `recoltes_planches.py`) ; les 639 éléments animés sont gardés
+dans `/mnt/project-files/cache-dofus/elements-animes/` (LISEZMOI là-bas).
+1. `python tools/contenu/recoltes.py <liste.json> <cartes> <tables> <fr.bin> <monde.json> <monde>` : emplacements + gfx + décalage + miroir.
+2. `python tools/extraction/recoltes_planches.py <dossier b> public/assets/sprites/recoltes <gfx,…>` : une planche AVIF par gfx.
+3. `node tools/hebergement/envoi.mjs`.

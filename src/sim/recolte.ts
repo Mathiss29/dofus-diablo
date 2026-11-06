@@ -7,11 +7,13 @@ export interface RecolteRes { nom: string; metier: string; niveau: number; anim:
 export interface RecoltesData {
   metiers: Record<string, { id: number; nom: string }>;
   ressources: Record<string, RecolteRes>;
-  /** Par monde (dossier de public/assets/mondes) : [tag de carte, case Dofus, id de la ressource]. */
+  /** Par monde (dossier de public/assets/mondes) : [tag de carte, case Dofus, id de la ressource, gfx, décalage x, y du dessin, miroir]. */
   [monde: string]: unknown;
 }
 /** Une ressource posée dans le monde. repousse > 0 : déjà récoltée, elle repousse. */
-export interface Recolte { id: number; tag: string; x: number; y: number; item: string; dore: boolean; repousse: number }
+export interface Recolte { id: number; tag: string; x: number; y: number; item: string; dore: boolean; repousse: number;
+  /** Dessin officiel (élément interactif de la carte) : son gfx, son décalage en pixels Dofus, en miroir ou non. Affichage seulement. */
+  gfx?: number; dessin?: { x: number; y: number }; miroir?: boolean }
 
 export const RECOLTE = {
   /** Durée du geste (s), portée (px monde) à laquelle on récolte, délai de repousse (s). */
