@@ -73,6 +73,9 @@ describe('quêtes et succès', () => {
       const it = p.bag.find(i => i.id === arme)!;
       expect(it, classe).toBeDefined();
       expect(p.equip(it.uid)).toBe(true);
+      w.step(STEP, NO_INPUT); expect(etape()).toBe(8);   // il reste la panoplie de l'Intrépide (équipement de départ officiel)
+      const pano = ['10801', '10800', '10784', '10785', '10799', '10794', ...(classe === 'iop' ? ['10798'] : [])];   // bouclier avec l'épée
+      for (const id of pano) { const o = p.bag.find(i => i.id === id)!; expect(o, id).toBeDefined(); expect(p.equip(o.uid), id).toBe(true); }
       w.step(STEP, NO_INPUT); expect(etape()).toBe(9);
       // pas de porte dans le vide : on parle à Ganymède, qui envoie le perso au village, sur le cercle de pierre de [-2,-3]
       expect(q.finies.has('reponses')).toBe(false);
@@ -99,6 +102,17 @@ describe('quêtes et succès', () => {
     expect(ids).toContain('temple_2>temple_3');
     expect(ids.some(x => x.includes('0_-3') && x.includes('temple'))).toBe(false);
     expect(wg.freeByMap.get('temple_1')!.length).toBeGreaterThan(100);
+  });
+
+  it('tutoriel : la Précision du Crâ (sans arc) se remplit en quelques touches, les esprits reviennent vite', () => {
+    const w = new World({ data: GAME_DATA, zone: 'incarnam', map: new WorldGrid(monde), seed: 7, items: ITEMS as unknown as ItemsData, quetes: Q, compte: { succes: [], persos: 0 }, classId: 'cra' });
+    const p = w.player;
+    let n = 0;
+    while (!p.rageFull && n < 50) { p.rageOnHit(500, w); n++; }
+    expect(n).toBeLessThanOrEqual(10);   // de loin
+    p.rage = 0; n = 0;
+    while (!p.rageFull && n < 50) { p.rageOnHit(40, w); n++; }
+    expect(n).toBeLessThanOrEqual(25);   // même au poing, ça finit par venir
   });
 
   it('le tutoriel est sauté dès le 2e perso ; les PV restent à 1 pendant le tutoriel', () => {

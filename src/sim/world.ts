@@ -287,9 +287,11 @@ export class World {
         p.potions = Math.min(p.cls.potion.charges, p.potions + 1);   // un groupe vaincu rend une potion
         this.emit({ k: 'groupCleared' });
       }
-      g.timer -= dt;
+      // tutoriel : les esprits du Temple reviennent vite, même pas loin (de quoi finir chaque étape sans attendre)
+      const tuto = !g.fixe && !!this.quetes?.tailleGroupe(this.worldGrid!.mapByTag(g.map)?.sub ?? -1);
+      g.timer -= tuto ? dt * 4 : dt;
       // Réapparition hors de la vue du joueur
-      if (g.timer <= 0 && Math.hypot(g.x - p.x, g.y - p.y) > 900 && !(g.donjon && this.dansDonjon(g.donjon)) && this.groupesPrets(g)) this.spawnGroup(g);
+      if (g.timer <= 0 && Math.hypot(g.x - p.x, g.y - p.y) > (tuto ? 500 : 900) && !(g.donjon && this.dansDonjon(g.donjon)) && this.groupesPrets(g)) this.spawnGroup(g);
     }
     const m = this.worldGrid!.mapAt(p.x, p.y), sub = m ? open.subareas[String(m.sub)] ?? null : null;
     if (sub && sub !== this.area) { this.area = sub; this.emit({ k: 'enterArea', name: sub.name, level: sub.level }); }

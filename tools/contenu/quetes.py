@@ -30,6 +30,9 @@ def vaincre(texte, n, **k): return {'t': 'vaincre', 'texte': texte, 'n': n, **k}
 def elite(texte, monstre, carte, **k): return {'t': 'elite', 'texte': texte, 'monstre': monstre, 'carte': carte, 'pv': 1, **k}
 def parler(texte, pnj, **k): return {'t': 'parler', 'texte': texte, 'pnj': pnj, **k}
 
+# Équipement de départ officiel : la Panoplie de l'Intrépide (itemsets Dofus 3 : 10784-10801, niveau 1), que le tutoriel de Dofus
+# donne au nouveau perso. L'épée de la panoplie (Épée Tulante) va au Iop ; le Crâ garde un arc, sans le bouclier (arc à deux mains).
+INTREPIDE = ['10801', '10800', '10784', '10785', '10799', '10794']   # chapeau, cape, amulette, anneau, ceinture, bottes
 def tuto(classe, frappe, sort1, sorts, jauge, mobilite, arme):
     """Trame du tutoriel d'une classe : 10 étapes, une action chacune (départ au Temple Céleste)."""
     return [
@@ -45,8 +48,9 @@ def tuto(classe, frappe, sort1, sorts, jauge, mobilite, arme):
       {'nom': 'Se déplacer vite', 'pnj': 'ganymede_temple', 'bulle': mobilite, 'halo': 7, 'objectifs': [{'t': 'utiliser', 'quoi': 'mobilite', 'texte': 'Se déplacer avec Espace'}]},
       {'nom': 'La potion', 'pnj': 'ganymede_temple', 'bulle': "Blessé ? E : une potion. Tu en regagnes une à chaque groupe vaincu.", 'halo': 'potion',
        'objectifs': [{'t': 'utiliser', 'quoi': 'potion', 'texte': 'Boire une potion (E) une fois blessé'}]},
-      {'nom': 'Premières armes', 'pnj': 'ganymede_temple', 'bulle': arme[1], 'donner': {classe.lower().replace('â', 'a'): arme[0]},
-       'objectifs': [{'t': 'equiper', 'objet': arme[0], 'texte': 'Équiper ton arme (I)'}]},
+      {'nom': 'Premières armes', 'pnj': 'ganymede_temple', 'bulle': arme[1], 'donner': {classe.lower().replace('â', 'a'): [arme[0]] + arme[2]},
+       'objectifs': [{'t': 'equiper', 'objet': arme[0], 'texte': 'Équiper ton arme (I)'},
+                     {'t': 'equiper', 'objets': arme[2], 'texte': "Équiper la panoplie de l'Intrépide"}]},
       {'nom': 'Descendre sur Incarnam', 'pnj': 'ganymede_temple', 'bulle': "Tu es prêt. Parle-moi et je t'envoie au village, près de Lykhen. Le Zaap de la Route des âmes sera ton point de retour si tu tombes.",
        'objectifs': [parler('Parler à Ganymède pour descendre au village', 'ganymede_temple')]},
     ]
@@ -55,7 +59,7 @@ Q = {}
 # --- Fil principal (Ganymède -> Lykhen -> Fécaline) ---------------------------------------------------------
 Q['reponses'] = {'nom': 'Réponses à tout', 'type': 'tutoriel', 'pnj': 'ganymede', 'niveau': 1, 'auDepart': True, 'depart': 'temple_1', 'arrivee': '-2_-3', 'arriveeCase': 355, 'suivante': 'village',
   'texte': "Avant de quitter le temple céleste, prenez le temps de contempler les Dofus et le Monde des Douze... et n'oubliez pas de saluer votre dieu au passage ! Ganymède vous apprend à vous battre avant de vous laisser descendre sur l'île.",
-  'options': {'passable': True, 'sauterSiCompte': True, 'immortel': True, 'groupes': {'sousZones': [SZ['temple']], 'taille': [1, 3], 'etape': 2}},
+  'options': {'passable': True, 'sauterSiCompte': True, 'immortel': True, 'jauge': 4, 'groupes': {'sousZones': [SZ['temple']], 'taille': [1, 3], 'etape': 2}},
   # Tutoriel (maquette « Tutoriel d'Incarnam », tranchée le 2026-11-06) : une trame par classe (9B), une action par étape,
   # halo sur la barre + bulle de Ganymède (3A+3B). Les indices des étapes « Premiers pas » (0) et « Premières armes » (8)
   # servent au succès « Premier temps » : garder les deux trames de même longueur.
@@ -64,13 +68,13 @@ Q['reponses'] = {'nom': 'Réponses à tout', 'type': 'tutoriel', 'pnj': 'ganymed
                  "Essaie les autres : é Ferveur, \" Couperet, ' Épée Divine. Vide ce groupe !",
                  "Chaque coup remplit ta Rage. Pleine, elle renforce ton sort suivant : remplis-la, puis frappe !",
                  "Espace : Bond. Tu sautes là où pointe ta souris, pour fondre sur un monstre ou te sortir d'un mauvais pas.",
-                 ('10797', "Prends cette Épée Tulante. I ouvre ton sac : équipe-la, ton attaque change avec elle.")),
+                 ('10797', "Voici ton équipement : l'Épée Tulante et la panoplie de l'Intrépide. I ouvre ton sac : équipe tout, tu seras plus solide.", INTREPIDE + ['10798'])),
              'cra': tuto('Crâ', "sans arc, tu frappes au poing",
                  ('recul', 'Tes flèches sont sur & é " \'. Touche & : Flèche de Recul, elle repousse ta cible !'),
                  "Essaie les autres : é Flèche Glacée, \" Flèche Vagabonde, ' Flèche de Barrage. Reste loin et vide ce groupe !",
-                 "Tirer de loin remplit ta Précision. Pleine, elle renforce ta flèche suivante : remplis-la, puis tire !",
+                 "Toucher de loin remplit ta Précision : utilise tes flèches (& é \" ') à distance. Pleine, elle renforce ta flèche suivante : remplis-la, puis tire !",
                  "Espace : Pas Chassé. Un pas vif vers ta souris, pour reprendre tes distances quand un monstre te colle.",
-                 ('1942', "Prends cet Arc de Chasse. I ouvre ton sac : équipe-le, tu tireras des flèches au lieu de frapper au poing."))},
+                 ('1942', "Voici ton équipement : un Arc de Chasse et la panoplie de l'Intrépide. I ouvre ton sac : équipe tout, tu tireras des flèches au lieu de frapper au poing.", INTREPIDE))},
   'recompense': {'xp': 150, 'potions': True, 'niveau': 2}}
 Q['village'] = {'nom': 'Le village dans les nuages', 'type': 'principale', 'pnj': 'lykhen', 'niveau': 3, 'suivante': 'espoirs',
   'texte': "Les habitants du village d'Incarnam sont prêts à aider les aventuriers. N'hésitez pas à aller les saluer ! Lykhen Lesurviven vous envoie faire le tour du village avant de rencontrer Fécaline la Sage.",

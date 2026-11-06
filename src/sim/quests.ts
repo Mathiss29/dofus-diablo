@@ -18,8 +18,8 @@ export type ObjectifDef = { texte: string } & (
   | { t: 'ramasser'; objet: string; n: number; chance: number; monstres?: string[]; sousZone?: number }
   /** Utiliser : un sort précis, la mobilité (Espace), la jauge de classe pleine, ou la potion. */
   | { t: 'utiliser'; sort?: string; quoi?: 'mobilite' | 'jauge' | 'potion' | 'sort' }
-  /** Équiper un objet (n'importe lequel, ou un objet précis par son id). */
-  | { t: 'equiper'; objet?: string }
+  /** Équiper un objet (n'importe lequel, ou un objet précis par son id), ou tous les objets d'une liste (panoplie de départ). */
+  | { t: 'equiper'; objet?: string; objets?: string[] }
   /** Activer un Zaap (il devient le point de retour). */
   | { t: 'activer'; zaap: string }
   /** Parler à un PNJ (clic dessus) ; avec objet : lui montrer un objet de quête qu'on porte. */
@@ -38,7 +38,7 @@ export interface EtapeDef {
   /** Aide visuelle du tutoriel : emplacement de la barre à entourer (0-5, 6 clic droit, 7 Espace) ou 'potion' / 'jauge'. */
   halo?: number | 'potion' | 'jauge';
   /** Objet donné au début de l'étape (id de items.json), ou un par classe (l'arme de niveau 1 du tutoriel). */
-  donner?: string | Record<string, string>;
+  donner?: string | string[] | Record<string, string | string[]>;
   /** PNJ qui dit la bulle de cette étape (par défaut celui de la quête) : Ganymède accueille au Temple, puis attend sur la Route. */
   pnj?: string;
 }
@@ -74,7 +74,8 @@ export interface QueteDef {
   recompense: RecompenseDef;
   /** Options du tutoriel : PV bloqués à 1 (6A), groupes réduits dans ces sous-zones (5A), sautée si le compte a déjà un perso (7B). */
   /** groupes.etape : les groupes de ces sous-zones n'apparaissent qu'à partir de cette étape (tutoriel : pas de monstres dès l'entrée dans la salle). */
-  options?: { immortel?: boolean; groupes?: { sousZones: number[]; taille: [number, number]; etape?: number }; sauterSiCompte?: boolean; passable?: boolean };
+  /** jauge : la jauge de classe se remplit N fois plus vite pendant la quête (le Crâ du tutoriel n'a pas encore d'arc). */
+  options?: { immortel?: boolean; groupes?: { sousZones: number[]; taille: [number, number]; etape?: number }; sauterSiCompte?: boolean; passable?: boolean; jauge?: number };
   /** Démarre dès le début de la partie (le tutoriel). */
   auDepart?: boolean;
   /** Carte (tag de monde.json) où le perso apparaît quand la quête démarre au départ (tutoriel : le Temple Céleste). */
@@ -255,8 +256,8 @@ export class Quetes {
     c.compte = e.objectifs.map(() => 0);
     const qui = e.pnj ?? q.pnj;
     if (e.bulle && qui) this.dire(qui, e.bulle);
-    const don = typeof e.donner === 'string' ? e.donner : e.donner?.[this.classe];
-    if (don) this.world.donnerObjet(don);
+    const don = typeof e.donner === 'string' || Array.isArray(e.donner) ? e.donner : e.donner?.[this.classe];
+    for (const o of don == null ? [] : Array.isArray(don) ? don : [don]) this.world.donnerObjet(o);
     for (const o of e.objectifs) if (o.t === 'elite') this.faireApparaitre(c.id, o);
     this.world.emit({ k: 'queteEtape', id: c.id, etape: c.etape });
     this.verifier();
@@ -384,7 +385,8 @@ export class Quetes {
       } else if (o.t === 'niveau') {
         if (p.level >= o.n) c.compte[i] = 1;
       } else if (o.t === 'equiper') {
-        if (Object.values(p.equipment).some(it => it && (!o.objet || it.id === o.objet))) c.compte[i] = 1;
+        const portes = Object.values(p.equipment).filter(it => it).map(it => it!.id);
+        if (o.objets ? o.objets.every(id => portes.includes(id)) : portes.some(id => !o.objet || id === o.objet)) c.compte[i] = 1;
       }
     });
     this.verifier();
@@ -441,6 +443,8 @@ export class Quetes {
   passer(id: string) { if (this.enCours.some(c => c.id === id) && this.def(id).options?.passable) this.terminer(id, true); }
 
   /** Option du tutoriel : PV bloqués à 1. */
+  /** Option du tutoriel : multiplicateur de la jauge de classe. */
+  get jaugeX() { let k = 1; for (const c of this.enCours) k = Math.max(k, this.def(c.id).options?.jauge ?? 1); return k; }
   get immortel() { return this.enCours.some(c => this.def(c.id).options?.immortel); }
   /** Option du tutoriel : taille des groupes dans une sous-zone pendant la quête. */
   /** Faux tant qu'une quête en cours retient les groupes de cette sous-zone (étape pas encore atteinte). */
