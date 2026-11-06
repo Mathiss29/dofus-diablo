@@ -19,6 +19,8 @@ export interface PlayerInput {
   pickup?: number | null;
   /** Clic gauche sur un monstre : le perso s'approche à portée et lance son auto-attaque. */
   target?: number | null;
+  /** Clic sur un PNJ (clé de quetes.json) : le perso y va et lui parle. */
+  talk?: string | null;
 }
 
 export const NO_INPUT: PlayerInput = { move: { x: 0, y: 0 }, aim: { x: 0, y: 0 }, pressed: null, holdAttack: false };

@@ -1,6 +1,8 @@
 import { v } from './assetUrl';
 import Phaser from 'phaser';
-import { GAME_DATA, ITEMS } from '../sim/data';
+import { GAME_DATA, ITEMS, QUETES } from '../sim/data';
+import type { Compte } from '../sim/quests';
+import { QuestView } from './questView';
 import { GridMap, WorldGrid, type MapData, type WorldData } from '../sim/gridmap';
 import { ISO } from '../sim/iso';
 import type { PlayerInput } from '../sim/input';
@@ -50,6 +52,9 @@ export class ZoneScene extends Phaser.Scene {
   private dropViews = new Map<number, { icon: Phaser.GameObjects.Image; label?: Phaser.GameObjects.Text; glow: Phaser.GameObjects.Ellipse; beam?: Phaser.GameObjects.Image; core?: Phaser.GameObjects.Image }>();
   /** Objet au sol cliqué (à ramasser). */
   private pickClick: number | null = null;
+  /** PNJ cliqué (quêtes) et leur affichage. */
+  private talkClick: string | null = null;
+  private questView: QuestView | null = null;
   private acc = 0;
   /** Le clic en cours a commencé sur l'interface : maintenir le bouton ne fait pas attaquer. */
   private uiClick = false;
@@ -75,7 +80,7 @@ export class ZoneScene extends Phaser.Scene {
     // #astrub dans l'adresse : l'ancienne zone à vagues des Champs d'Astrub
     if (data?.zone) this.zoneId = data.zone;
     else if (location.hash === '#astrub') this.zoneId = 'champs-astrub';
-    this.views = new Map(); this.dropViews = new Map(); this.worldView = null; this.pressed = null; this.potion = false; this.hitstop = 0; this.acc = 0;
+    this.views = new Map(); this.dropViews = new Map(); this.worldView = null; this.questView = null; this.talkClick = null; this.pressed = null; this.potion = false; this.hitstop = 0; this.acc = 0;
   }
 
   preload() {
@@ -87,6 +92,12 @@ export class ZoneScene extends Phaser.Scene {
     // On ne charge que les planches utiles à cette zone
     const types = new Set<string>();
     if (zone.open) for (const s of Object.values(zone.open.subareas)) s.monsters.forEach(m => types.add(m));
+    // élites des quêtes (Milimilou, Caporale Mynerve...) : absents des sous-zones
+    if (zone.open) {
+      for (const q of Object.values(QUETES.quetes)) for (const e of Array.isArray(q.etapes) ? q.etapes : Object.values(q.etapes).flat())
+        for (const o of e.objectifs) if (o.t === 'elite' && GAME_DATA.monsters[o.monstre]) types.add(o.monstre);
+      QuestView.preload(this, QUETES);
+    }
     else {
       const w = zone.waves!;
       [...w.pack.map(p => p.monster), w.boss, ...w.escort.monsters, ...w.archimonstres.monsters].forEach(m => types.add(m));
@@ -139,13 +150,14 @@ export class ZoneScene extends Phaser.Scene {
     if (zone.open) {
       const open = zone.open;
       const wg = new WorldGrid(this.cache.json.get(WorldView.key(open.world, 'monde')) as WorldData);
-      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS });
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, compte: chargerCompte() });
       this.cameras.main.setBackgroundColor('#0d2b36');   // sous le ciel, au cas où il manque
       this.worldView = new WorldView(this, wg, worldDir(open.world), open.world);
       this.worldView.portes = this.world.portes.flatMap(p => p.ends);
       const parts = this.cache.json.get(`${open.world}_particules`) as Record<string, SysData[]> | undefined;
       if (parts) this.worldView.parts = new Particules(this, wg, parts, `${open.world}_particules_img`);
       this.worldView.create();
+      if (this.world.quetes) this.questView = new QuestView(this, this.world, this.worldView);
     } else {
       const key = mapDir(zone.map!.coords).replace(/\W/g, '_');
       const map = new GridMap(this.cache.json.get(`${key}_carte`) as MapData);
@@ -176,8 +188,11 @@ export class ZoneScene extends Phaser.Scene {
       else if (name === 'Métiers') this.windows!.toggle('job');
       else if (name === 'Réglages') this.windows!.toggle('opt');
       else if (name === 'Sorts') this.windows!.toggle('sorts');
+      else if (name === 'Quêtes' && this.world.quetes) this.windows!.toggle('quetes');
+      else if (name === 'Succès' && this.world.quetes) this.windows!.toggle('succes');
       else this.hud.toast(`${name} : arrive dans une prochaine version`);
     };
+    this.hud.onPasser = id => this.world.quetes?.passer(id);
     this.cameras.main.startFollow(this.viewOf(this.world.player).sprite, true, 0.12, 0.12, 0, 30);
     this.bindInput();
     // Accès console / tests automatisés (captures) : la partie et le tirage d'objets
@@ -200,6 +215,8 @@ export class ZoneScene extends Phaser.Scene {
       if (p.rightButtonDown()) { this.pressed = this.world.player.bar[6]; return; }
       this.holding = true;
       if (this.keys.SHIFT.isDown) { this.pressed = 'attaque'; this.clickMode = 'place'; return; }
+      const n = this.questView?.pnjUnder(p, this.cameras.main);
+      if (n) { this.talkClick = n; this.clickMode = null; this.holding = false; return; }
       const d = this.dropUnder(p);
       if (d != null) { this.pickClick = d; this.clickMode = null; this.holding = false; return; }
       const m = this.monsterUnder(p);
@@ -316,6 +333,9 @@ export class ZoneScene extends Phaser.Scene {
     const input: PlayerInput = { move: { x: 0, y: 0 }, aim, pressed: this.pressed, potion: this.potion,
       holdAttack: held && this.clickMode === 'place', pickup: this.pickClick };
     this.pickClick = null;
+    const np = this.talkClick && this.world.quetes?.pnj(this.talkClick);
+    if (np) { input.talk = this.talkClick; input.dest = { x: np.x, y: np.y }; this.clickMode = null; }
+    this.talkClick = null;
     if (held && this.clickMode === 'ground') input.dest = aim;
     if (held && this.clickMode === 'target' && this.clickTarget != null) input.target = this.clickTarget;
     // clic bref sur un monstre : on garde la cible jusqu'au premier coup (le perso continue de s'approcher)
@@ -325,7 +345,7 @@ export class ZoneScene extends Phaser.Scene {
     this.clickDest = held && this.clickMode === 'ground';
     this.pressed = null; this.potion = false;
     // curseur : une épée sur un monstre
-    this.game.canvas.style.cursor = this.monsterUnder(ptr) ? 'crosshair' : 'default';
+    this.game.canvas.style.cursor = this.monsterUnder(ptr) ? 'crosshair' : this.questView?.pnjUnder(ptr, this.cameras.main) ? 'pointer' : 'default';
     return input;
   }
 
@@ -393,6 +413,23 @@ export class ZoneScene extends Phaser.Scene {
         case 'checkpoint': this.hud.banner(`Point de retour\n${e.name}`, 1400); break;
         case 'respawn': this.hud.banner('De retour !', 900); break;
         case 'enterArea': this.hud.zoneBanner(e.name, this.world.zone.name, e.level, decouvrir(e.name)); break;
+        case 'queteDebut': {
+          const q = QUETES.quetes[e.id];
+          if (q.type !== 'tutoriel') this.hud.toast(`Nouvelle quête : ${q.nom}`);
+          this.windows?.refresh(); break;
+        }
+        case 'queteEtape': this.windows?.refresh(); break;
+        case 'queteFin': {
+          const q = QUETES.quetes[e.id];
+          if (!e.sautee) this.hud.banner(`Quête terminée\n${q.nom}`, 1600);
+          if (q.type === 'tutoriel') sauverCompte(this.world, 1);
+          this.windows?.refresh(); break;
+        }
+        case 'objetQuete': this.hud.loot(`${e.nom}  ${e.n}/${e.sur}`, '#9ad15a'); break;
+        case 'succes': {
+          const s = QUETES.succes[e.id];
+          this.hud.succes(s.nom, s.points); sauverCompte(this.world); this.windows?.refresh(); break;
+        }
         case 'portal': this.cameras.main.fadeIn(450, 0, 0, 0); this.snapCam = true; break;   // fondu au noir, la caméra saute avec le joueur
       }
     }
@@ -501,6 +538,7 @@ export class ZoneScene extends Phaser.Scene {
     if (s && 'charge' in s.def && s.def.charge && !s.def.move && s.t < s.def.impactAt) this.fx.chargeSparks(w.player.x, w.player.y);
     this.fx.draw(w.telegraphs, w.projectiles);
     this.drawDrops();
+    this.questView?.update();
     this.hud.draw(this.fx.juice, this.game.loop.delta / 1000);
   }
 }
@@ -513,4 +551,16 @@ function decouvrir(nom: string): boolean {
     localStorage.setItem(k, JSON.stringify([...vues, nom]));
   } catch { /* navigateur sans stockage : toujours le grand bandeau */ }
   return true;
+}
+
+/** Compte (succès du compte, 15A ; persos déjà joués, 7B), gardé dans le navigateur. Affichage seulement. */
+function chargerCompte(): Compte {
+  try { const c = JSON.parse(localStorage.getItem('diablofus.compte') ?? 'null'); if (c && Array.isArray(c.succes)) return { succes: c.succes, persos: +c.persos || 0 }; }
+  catch { /* pas de stockage */ }
+  return { succes: [], persos: 0 };
+}
+function sauverCompte(w: World, persos = 0) {
+  const q = w.quetes; if (!q) return;
+  try { localStorage.setItem('diablofus.compte', JSON.stringify({ succes: [...q.succes], persos: Math.max(q.compte.persos, persos) })); q.compte.persos = Math.max(q.compte.persos, persos); }
+  catch { /* pas de stockage */ }
 }

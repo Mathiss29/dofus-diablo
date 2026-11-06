@@ -19,7 +19,8 @@ def main(bone, name, bones, out='public/assets/sprites', atks='0,1'):
     import math   # certains squelettes ont des sommets NaN / infinis : JSON invalide pour le rendu
     fix = lambda v: [fix(x) for x in v] if isinstance(v, list) else ({k: fix(x) for k, x in v.items()} if isinstance(v, dict) else (0 if isinstance(v, float) and not math.isfinite(v) else v))
     sc = fix(sc); json.dump(sc, open(b + '/scene.json', 'w'))
-    want = ['AnimStatique_1:1', 'AnimStatique_5:1', 'AnimCourse_1', 'AnimCourse_5']
+    # PNJ=1 : animation de repos complète (les PNJ ne courent pas), sinon une seule frame de repos
+    want = sorted(a for a in A if a.startswith('AnimStatique_')) if os.environ.get('PNJ') else ['AnimStatique_1:1', 'AnimStatique_5:1', 'AnimCourse_1', 'AnimCourse_5']
     shots = {}
     for i in atks.split(','):
         if f'AnimAttaque{i}_1' in A:
