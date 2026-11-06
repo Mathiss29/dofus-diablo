@@ -7,9 +7,9 @@ import type { WorldView } from './worldView';
 
 const SP = 'assets/sprites', QI = 'assets/ui/quetes';
 /** Échelle et animation de repos des PNJ (planches tools/extraction/monster_planche.py, PNJ=1). Ganymède est rendu à
- *  l'échelle 1 (gros squelette) et n'a que l'orientation 3. */
+ *  l'échelle 1 (gros squelette, réduit à 0,68 pour rester à côté du perso) et n'a que l'orientation 3. */
 const PNJ_LOOK: Record<string, { scale: number; anim: string; frames?: number }> = {
-  ganymede: { scale: 1.1, anim: 'AnimStatique_3', frames: 60 },
+  ganymede: { scale: 0.68, anim: 'AnimStatique_3', frames: 60 },
 };
 /** Icônes officielles en couleur au-dessus des PNJ (uidarkstone_all) : quête à donner (!) ou à rendre (?). */
 export const QUEST_ICON: Record<QueteType, [string, string]> = {

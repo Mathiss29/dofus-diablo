@@ -87,8 +87,9 @@ export class WorldView {
     if (here.tag !== this.center) {
       this.center = here.tag;
       // intérieur : pas de ciel, fond noir comme dans Dofus
-      this.sky?.setVisible(!here.inside);
-      this.scene.cameras.main.setBackgroundColor(here.inside ? '#000000' : '#0d2b36');
+      // (le Temple Céleste flotte dans le ciel : il le garde)
+      this.sky?.setVisible(!here.inside || !!here.ciel);
+      this.scene.cameras.main.setBackgroundColor(here.inside && !here.ciel ? '#000000' : '#0d2b36');
     }
     const v = this.scene.cameras.main.worldView, S = GridMap.S;
     const seen = (m: WorldMapEntry, marge: number) => {
@@ -98,11 +99,14 @@ export class WorldView {
     };
     for (const m of this.wg.world.maps) {
       const d = ring(m, here.x, here.y), s = this.slots.get(m.tag)!;
-      if ((d <= LOAD_RING || seen(m, 400)) && s.state === 'none') {
+      // dans un intérieur, seule sa salle est dessinée : les salles voisines dans la grille ne doivent pas se voir
+      const veut = here.inside ? m.tag === here.tag : d <= LOAD_RING || seen(m, 400);
+      const jette = here.inside ? m.tag !== here.tag : d > UNLOAD_RING && !seen(m, 1200);
+      if (veut && s.state === 'none') {
         s.state = 'loading';
         if (this.texturesReady(m)) this.build(m);
         else this.fetchMap(m);
-      } else if (d > UNLOAD_RING && !seen(m, 1200) && s.state !== 'none') this.unload(m);   // 'loading' : la carte arrivera pour rien, build() la jette
+      } else if (jette && s.state !== 'none') this.unload(m);   // 'loading' : la carte arrivera pour rien, build() la jette
     }
   }
 
@@ -206,7 +210,8 @@ export class WorldView {
       const { im, p } = v;
       if (p.w) im.setRotation(this.vent ? p.w * 0.035 * Math.sin(t * 0.7 + v.ph) + p.w * 0.008 * Math.sin(t * 1.5 + v.ph * 2) : 0);
       if (p.t) {
-        const a = this.eau ? p.t[2] * Math.sin(t * Math.PI * 2 * p.t[3] * 4 + v.ph) : 0;
+        // l'eau officielle (0,02) est accélérée x4 ; plafond 0,15 : les pierres flottantes du Temple (0,2-0,3) allaient trop vite
+        const a = this.eau ? p.t[2] * Math.sin(t * Math.PI * 2 * Math.min(p.t[3] * 4, 0.15) + v.ph) : 0;
         im.setPosition(v.x0 + p.t[0] * a * GridMap.S, v.y0 - p.t[1] * a * GridMap.S);
       }
       if (p.ca) {

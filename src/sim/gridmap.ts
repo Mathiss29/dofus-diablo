@@ -28,6 +28,8 @@ export interface WorldMapEntry {
   bord?: Rect;
   /** Intérieur (maison, mine…) : rangé à part dans la grille, on y entre par une porte. */
   inside?: number;
+  /** Intérieur à ciel ouvert (Temple Céleste) : le ciel reste derrière. */
+  ciel?: number;
 }
 /** Plusieurs cartes Dofus voisines collées bord à bord en une seule grande grille. */
 export interface WorldData extends MapData { origin: [number, number]; maps: WorldMapEntry[]; /** Ciel commun posé derrière tout le monde. */ sky?: string }

@@ -204,13 +204,22 @@
     "446": {
      "name": "Temple Céleste",
      "level": 1,
-     "monsters": [],
-     "groupsPerMap": 0,
-     "groupSize": [
-      0,
-      0
+     "monsters": [
+      "feu_vif",
+      "feu_de_joie",
+      "feu_furieux",
+      "feu_follet"
      ],
-     "interieur": true
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      5
+     ],
+     "interieur": true,
+     "cartes": [
+      "temple_2",
+      "temple_3"
+     ]
     }
    },
    "checkpoints": [
