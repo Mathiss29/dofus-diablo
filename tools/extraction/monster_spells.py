@@ -15,6 +15,7 @@ def table(d, n):
 
 P = lambda v: ast.literal_eval(v) if isinstance(v, str) and v[:1] in '[{' else v
 EL = {96: 'eau', 97: 'terre', 98: 'air', 99: 'feu', 100: 'neutre', 91: 'eau', 92: 'terre', 93: 'air', 94: 'feu', 95: 'neutre'}
+STATES = {218: 'pacifiste'}   # états officiels (spellstates) traduits en temps réel
 PA_LOSS = {84, 101, 168, 1079}; PM_LOSS = {77, 127, 169, 1080}
 
 def effect(e):
@@ -32,6 +33,11 @@ def effect(e):
     if i == 138: return {'k': 'dommages', 'n': n, 'pct': True, 'dur': dur}    # % Dommages (ex. Frénésie)
     if i == 112: return {'k': 'dommages', 'n': n, 'dur': dur}                 # Dommages fixes (ex. Euphorie malsaine)
     if i == 181: return {'k': 'invoque', 'dofusId': n}                        # invocation : monstre n (clé remplie par main)
+    if i == 1163: return {'k': 'subis', 'n': n, 'dur': dur}                   # Dommages subis x n % (ex. Cuirasse Laineuse : 70)
+    if i == 1075: return {'k': 'desenvoute', 'n': n}                          # Durée des effets : -n tours (ex. Rinçage)
+    if i == 950 and STATES.get(e.get('value')):                               # État (ex. Pacifiste : ne peut plus infliger de dommages)
+        z = e.get('zoneDescr') or {}
+        return {'k': 'etat', 'etat': STATES[e['value']], 'dur': dur, 'r': int(z.get('param1', 0)) if isinstance(z, dict) else 0}
     return None
 
 def main(d, frbin, out='src/data/monsters.json'):

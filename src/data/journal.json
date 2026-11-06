@@ -55,7 +55,8 @@
           "Tour de la Milice avec son rez-de-chaussée et son escalier.",
           "Astrub s'ouvre : 359 cartes, les monstres officiels de chaque sous-zone, et le portail d'Incarnam qui y descend.",
           "Trois donjons d'Astrub : la Grange du Tournesol Affamé, le Château Ensablé et la Cour du Bouftou Royal. Chacun demande sa clé officielle, prise à l'entrée (Emp en vend).",
-          "Les monstres d'Astrub lâchent leurs ressources officielles : pétales, laines, cornes… de quoi fabriquer les clés."
+          "Les monstres d'Astrub lâchent leurs ressources officielles : pétales, laines, cornes… de quoi fabriquer les clés.",
+          "Cuirasse Laineuse, Rinçage, Grognement et Hyperleukocytine ont enfin leurs effets officiels."
         ],
         "Combat": [
           "Pas Chassé du Crâ rééquilibré : il ne s'enchaîne plus en boucle, relance officielle de 9 s (6 s dès le niveau 72).",
@@ -63,7 +64,9 @@
           "Bouclier violet sur la barre de vie, Ferveur qui protège.",
           "Sorts Iop et Crâ vérifiés contre les données officielles, onglet Sorts détaillé.",
           "Annonces d'attaque au sol pour les élites et les boss seulement.",
-          "+1 PA au niveau 100, comme dans Dofus."
+          "+1 PA au niveau 100, comme dans Dofus.",
+          "Les monstres tapent selon leur rang et leur niveau (ceux d'Astrub tapaient tous 14), et les groupes t'encerclent au lieu de faire la queue.",
+          "Les boss ont une attaque signature annoncée au sol (Dégraissage de Mob l'Éponge en vraie ligne de 8 cases, Kankroulahoup…), deviennent Furieux à mi-vie et font leur entrée ; un gros coup reçu rougit les bords de l'écran."
         ],
         "Corrections": [
           "Plus de mini-gel en changeant de carte.",

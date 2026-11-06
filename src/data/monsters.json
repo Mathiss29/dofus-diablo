@@ -246,7 +246,13 @@
     "anim": 1,
     "zone": "P1",
     "allies": true,
-    "effects": [],
+    "effects": [
+     {
+      "k": "subis",
+      "n": 70,
+      "dur": 0
+     }
+    ],
     "gfx": 6146
    }
   ],
@@ -270,7 +276,8 @@
    "tacle": 0,
    "fuite": 0,
    "retraitPA": 0
-  }
+  },
+  "signature": 2927
  },
  "pissenlit": {
   "dofusId": 79,
@@ -2779,7 +2786,8 @@
    "fuite": 0,
    "retraitPA": 0
   },
-  "boss": true
+  "boss": true,
+  "signature": 5718
  },
  "milimilou": {
   "dofusId": 4102,
@@ -3568,7 +3576,13 @@
     "anim": 2,
     "zone": "P1",
     "allies": false,
-    "effects": [],
+    "effects": [
+     {
+      "k": "subis",
+      "n": 120,
+      "dur": 0
+     }
+    ],
     "gfx": 3709
    },
    {
@@ -4959,7 +4973,18 @@
     "anim": 1,
     "zone": "I7",
     "allies": false,
-    "effects": []
+    "effects": [
+     {
+      "k": "desenvoute",
+      "n": 4
+     },
+     {
+      "k": "etat",
+      "etat": "pacifiste",
+      "dur": 1,
+      "r": 6
+     }
+    ]
    }
   ],
   "xp": 20,
@@ -6530,6 +6555,11 @@
       "min": 15,
       "max": 20,
       "steal": false
+     },
+     {
+      "k": "subis",
+      "n": 120,
+      "dur": 0
      }
     ]
    },
@@ -6693,7 +6723,8 @@
    "tacle": 0,
    "fuite": 0,
    "retraitPA": 0
-  }
+  },
+  "signature": 792
  },
  "gardienne_champetre": {
   "dofusId": 4821,
@@ -7252,7 +7283,12 @@
     "anim": 3,
     "zone": "C2",
     "allies": false,
-    "effects": []
+    "effects": [
+     {
+      "k": "desenvoute",
+      "n": 2
+     }
+    ]
    },
    {
     "id": 992,
@@ -7295,7 +7331,8 @@
    "tacle": 0,
    "fuite": 0,
    "retraitPA": 0
-  }
+  },
+  "signature": 990
  },
  "cafarcher": {
   "dofusId": 3940,
@@ -7853,6 +7890,7 @@
    "tacle": 0,
    "fuite": 0,
    "retraitPA": 0
-  }
+  },
+  "signature": 5283
  }
 }

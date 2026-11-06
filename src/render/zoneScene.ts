@@ -12,6 +12,7 @@ import type { PlayerInput } from '../sim/input';
 import type { SkillId } from '../sim/defs';
 import type { Entity } from '../sim/entity';
 import { World } from '../sim/world';
+import { DANGER } from '../sim/danger';
 import { EntityView } from './entityView';
 import { Attente, PersoVivant } from './persoVivant';
 import { Assemblage, apparenceValide, fiches, objetsPortes, type Apparence } from './squelette';
@@ -689,6 +690,10 @@ export class ZoneScene extends Phaser.Scene {
           if (e.shake > 0) this.cameras.main.shake(e.big ? 220 : 110, e.shake, true);
           break;
         case 'playerHurt': this.hud.hurtFlash(this.fx.juice); break;
+        case 'grosCoup': if (this.fx.juice) this.hud.grosCoup(); break;
+        // Maquette « Danger » : entrée du boss (7A) et phase Furieux (5A)
+        case 'bossIntro': this.hud.banner(`${M[e.monster].name}\n${this.world.area?.name ?? this.world.zone.name}`, 2200); break;
+        case 'furieux': this.hud.banner(`${e.name}\nFurieux !`, 1300, true); break;
         case 'wave':
           this.hud.banner(e.boss ? `Vague ${e.n}\n${M[e.boss].name}` : e.archi ? `Vague ${e.n}\nArchimonstre : ${M[e.archi].name} !` : `Vague ${e.n}`);
           break;
@@ -996,7 +1001,10 @@ export class ZoneScene extends Phaser.Scene {
   private render() {
     const w = this.world, alive = new Set<number>(), wv = this.worldView, wg = w.worldGrid;
     const cam = this.cameras.main;
-    if (Math.abs(cam.zoom - this.zoom) > 0.001) cam.setZoom(cam.zoom + (this.zoom - cam.zoom) * 0.2);
+    // 7A : pendant un combat de boss, la caméra recule un peu pour voir ses zones
+    const bossEnCombat = w.monsters.some(m => m.def.boss && !m.dead && m.state !== 'idle' && m.state !== 'return' && Math.hypot(m.x - w.player.x, m.y - w.player.y) < 900);
+    const zoomVise = this.zoom * (bossEnCombat ? DANGER.camera.recul : 1);
+    if (Math.abs(cam.zoom - zoomVise) > 0.001) cam.setZoom(cam.zoom + (zoomVise - cam.zoom) * (bossEnCombat ? 0.04 : 0.2));
     this.updateAmbiance();
     this.son.update(!!wg?.mapAt(w.player.x, w.player.y)?.inside);
     wv?.update(w.player.x, w.player.y);

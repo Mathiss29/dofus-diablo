@@ -4,6 +4,7 @@ import type { SimEvent, Telegraph } from './events';
 import { GridMap, WorldGrid } from './gridmap';
 import { NO_INPUT, type PlayerInput } from './input';
 import { CASE, Monster, TOUR } from './monster';
+import { jetOfficiel } from './danger';
 import { FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, recycleResource, recycleValue, rollItem, rollRarity, type Item, type ItemsData, type Rarity } from './items';
 import { Player } from './player';
 import { initiativeBonus, removalChance } from './caracs';
@@ -482,11 +483,11 @@ export class World {
       from: { monster: m, spell } });
   }
   /** Applique au joueur les effets d'un sort de monstre, dans l'ordre des données de Dofus 3.
-   *  Dommages : jet officiel ramené à l'échelle du monstre (son meilleur sort = def.dmg). */
-  monsterSpellHits(m: Monster, spell: MonsterSpell, p: Player) {
+   *  Dommages : jet officiel ramené à l'échelle du monstre (son meilleur sort, tous ses coups additionnés = def.dmg) ;
+   *  mult : attaque signature d'un boss (4A, ×2,5). */
+  monsterSpellHits(m: Monster, spell: MonsterSpell, p: Player, mult = 1) {
     if (p.dead) return;
-    const ref = Math.max(1, ...(m.def.spells ?? []).flatMap(s => s.effects).filter(e => e.k === 'dmg' && !e.perPa).map(e => (e as { min: number; max: number }).min / 2 + (e as { max: number }).max / 2));
-    const k = m.def.dmg / ref;
+    const k = m.def.dmg / Math.max(1, jetOfficiel(m.def)) * mult;
     let landed = true;
     for (const e of spell.effects) {
       if (e.k === 'dmg') {
@@ -513,7 +514,21 @@ export class World {
         const len = sign > 0 ? Math.min(e.n * CASE, Math.max(0, d - m.radius - p.radius - 4)) : e.n * CASE;
         p.kx += sign * dx / d * len * 7.13; p.ky += sign * dy / d * len * 7.13;   // le recul freine en 0,0008^t : distance = vitesse / 7,13
       }
-      else if (e.k === 'soin') m.hp = Math.min(m.maxHp, m.hp + Math.round(this.rng.range(e.min, e.max + 1) * k));
+      else if (e.k === 'soin') m.hp = Math.min(m.maxHp, m.hp + Math.round(this.rng.range(e.min, e.max + 1) * k / mult));
+      else if (e.k === 'subis') {   // Grognement, Bave Affaiblissante : le joueur prend plus de dommages
+        p.subis = e.n / 100; p.subisT = Math.max(1, e.dur) * TOUR;
+        this.emit({ k: 'status', x: p.x, y: p.y, text: `Dommages subis ${e.n > 100 ? '+' : ''}${e.n - 100} %`, color: '#e07cf0' });
+      }
+      else if (e.k === 'desenvoute') {   // Rinçage : bonus et bouclier raccourcis de n tours
+        for (const md of p.mods) md.t -= e.n * TOUR;
+        p.mods = p.mods.filter(md => md.t > 0);
+        if (p.shieldT > 0) { p.shieldT -= e.n * TOUR; if (p.shieldT <= 0) { p.shieldT = 0; p.shield = 0; } }
+        this.emit({ k: 'status', x: p.x, y: p.y, text: 'Désenvoûté', color: '#9ad0ff' });
+      }
+      else if (e.k === 'etat' && Math.hypot(p.x - m.x, p.y - m.y) <= (e.r + 0.5) * CASE + p.radius) {   // Hyperleukocytine : Pacifiste
+        p.pacifiste = Math.max(p.pacifiste, Math.max(1, e.dur) * TOUR);
+        this.emit({ k: 'status', x: p.x, y: p.y - 20, text: 'Pacifiste', color: '#c8c8c8' });
+      }
     }
   }
   /** Sort lancé sur un allié (ex. Bêlement : +PM -> le monstre court plus vite pendant la durée). */
@@ -521,6 +536,9 @@ export class World {
     for (const e of spell.effects) if (e.k === 'pm' && e.n > 0) {
       m.haste = 1 + e.n * 0.25; m.hasteT = Math.max(1, e.dur) * TOUR;
       this.emit({ k: 'status', x: m.x, y: m.y, text: `+${e.n} PM`, color: '#7be07b' });
+    } else if (e.k === 'subis') {   // Cuirasse Laineuse : ses alliés prennent moins de dommages
+      m.subis = e.n / 100; m.subisT = Math.max(1, e.dur) * TOUR;
+      this.emit({ k: 'status', x: m.x, y: m.y, text: `Dommages subis ${e.n > 100 ? '+' : ''}${e.n - 100} %`, color: '#c8b48a' });
     } else if (e.k === 'dommages') {
       if (e.pct) m.furyPct = e.n; else m.furyFlat = e.n;
       m.furyT = Math.max(1, e.dur) * TOUR;
@@ -596,6 +614,7 @@ export class World {
     let n = 0;
     for (const m of this.monsters) {
       if (m.dead || m.state === 'spawn' || !test(m)) continue;
+      if (p.pacifiste > 0) { this.emit({ k: 'status', x: m.x, y: m.y - 20, text: 'Pacifiste', color: '#c8c8c8' }); return 0; }   // Hyperleukocytine : aucun dommage
       n++;
       const crit = this.rng.next() < p.critChance;
       // Choix 19A : résistances officielles du monstre dans l'élément du coup (plafonnées à 50 %, comme Dofus)
@@ -604,7 +623,7 @@ export class World {
       const first = m.struck ? 1 : 1 + initiativeBonus(p.initiative); m.struck = true;
       const flat = (crit ? p.stat('dommagesCritiques') : 0) + (def.knock > 0 ? p.stat('dommagesPoussee') : 0);
       const vs = def.vsSummon && (m.summoner || (def.vsElite && (m.def.elite || m.def.boss))) ? def.vsSummon : 1;
-      const vu = m.vulnT > 0 ? 1 + m.vuln / 100 : 1;   // dommages subis augmentés (Bond)
+      const vu = (m.vulnT > 0 ? 1 + m.vuln / 100 : 1) * m.subis;   // dommages subis augmentés (Bond) ou réduits (Cuirasse Laineuse)
       const dmg = Math.max(1, Math.round((p.damage(def.dmg * vs, def.element ?? 'neutre') * this.rng.range(0.9, 1.1) * (crit ? cls.critMult : 1) * first + flat) * (1 - res / 100) * vu));
       m.hp -= dmg; m.flash = 0.09;
       if (def.erosion) { m.maxHp = Math.max(1, m.maxHp - Math.round(dmg * def.erosion)); m.hp = Math.min(m.hp, m.maxHp); }

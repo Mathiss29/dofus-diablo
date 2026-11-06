@@ -12,8 +12,11 @@ import type { RecoltesData } from './recolte';
 import type { FamilierDef, ItemsData, Stat } from './items';
 import type { QuetesData } from './quests';
 import type { GameData, WeaponProfile } from './defs';
+import { degatsMonstre } from './danger';
 
 export const GAME_DATA = { classes, monsters, zones } as unknown as GameData;
+// 1A (maquette « Danger ») : les dégâts des monstres suivent leur rang et leur niveau (src/data/danger.json) ; le champ dmg du json n'est plus lu
+for (const d of Object.values(GAME_DATA.monsters)) d.dmg = degatsMonstre(d);
 export const ITEMS = items as unknown as ItemsData;
 /** Familiers officiels (src/data/familiers.json, familiers_export.py) : courbe d'XP et familiers, dont ceux d'apparat. */
 export const FAMILIERS = familiers as unknown as { xp: number[]; familiers: Record<string, FamilierDef> };

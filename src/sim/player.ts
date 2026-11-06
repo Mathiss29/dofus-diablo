@@ -8,6 +8,7 @@ import { fuiteFactor, tackleSlow, tacleOf } from './caracs';
 import { CASE, TOUR } from './monster';
 import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type SortGrade, type SortOfficiel } from './sorts';
 import { porteeSort } from './apercu';
+import { DANGER } from './danger';
 
 type ActiveSkill =
   | { id: 'attaque'; def: ComboHit; t: number; impacted: boolean; idx: number; boosted: false }
@@ -82,6 +83,8 @@ export class Player extends Entity {
   private casts: Record<string, number[]> = {};
   /** Bouclier (Ferveur) : points et temps restant. */
   shield = 0; shieldT = 0;
+  /** Sorts officiels de monstres : dommages subis × subis pendant subisT s (Grognement : 1,2), Pacifiste pendant pacifiste s (Hyperleukocytine : ne peut plus infliger de dommages). */
+  subis = 1; subisT = 0; pacifiste = 0;
   private repathT = 0;
   private buffer: SkillId | null = null;
   private bufferT = 0;
@@ -478,6 +481,8 @@ export class Player extends Entity {
     for (const [k, s] of Object.entries(this.stacks)) { s.t -= dt; if (s.t <= 0) delete this.stacks[k]; }
     this.invuln = Math.max(0, this.invuln - dt);
     if (this.shieldT > 0 && (this.shieldT -= dt) <= 0) this.shield = 0;
+    if (this.subisT > 0 && (this.subisT -= dt) <= 0) this.subis = 1;
+    if (this.pacifiste > 0) this.pacifiste -= dt;
     if (this.rage > 0 && this.age - this.lastHitAt > 6) this.rage = Math.max(0, this.rage - 8 * dt);   // 26B : la jauge retombe hors combat
     this.potionCd = Math.max(0, this.potionCd - dt);
     this.pa = Math.min(this.paMax, this.pa + this.cls.pa.regen * dt);
@@ -682,14 +687,17 @@ export class Player extends Entity {
   hurt(raw: number, fromX: number, fromY: number, world: World, element: Element = 'neutre'): boolean {
     if (this.invuln > 0 || this.dead) return false;
     const E = element === 'meilleur' ? 'Neutre' : `${element[0].toUpperCase()}${element.slice(1)}`;
-    let dmg = Math.max(1, Math.round((raw - this.stat(`red${E}` as Stat)) * (1 - Math.min(50, this.stat(`res${E}` as Stat)) / 100)));
+    let dmg = Math.max(1, Math.round((raw - this.stat(`red${E}` as Stat)) * (1 - Math.min(50, this.stat(`res${E}` as Stat)) / 100) * this.subis));
     if (this.shield > 0) { const a = Math.min(this.shield, dmg); this.shield -= a; dmg -= a; }   // le bouclier prend les coups d'abord
     this.hp -= dmg; this.flash = 0.1; this.invuln = this.cls.iframesOnHit;
     const a = Math.atan2(this.y - fromY, this.x - fromX);
     this.kx += Math.cos(a) * 260; this.ky += Math.sin(a) * 260;
     world.emit({ k: 'hit', target: 'player', x: this.x, y: this.y, z: 50, amount: dmg, crit: false });
     world.emit({ k: 'playerHurt' });
-    world.emit({ k: 'impact', hitstop: 0.04, shake: 0.006, big: false });
+    // 3A (maquette « Danger ») : un gros coup secoue l'écran, fige l'action et rougit les bords
+    const G = DANGER.grosCoup, gros = dmg >= this.maxHp * G.part;
+    world.emit(gros ? { k: 'impact', hitstop: G.fige, shake: G.secousse, big: true } : { k: 'impact', hitstop: 0.04, shake: 0.006, big: false });
+    if (gros) world.emit({ k: 'grosCoup' });
     this.addRage(this.cls.rage.perHurt, world);
     if (this.hp <= 0 && world.quetes?.immortel) this.hp = 1;   // tutoriel : PV bloqués à 1
     if (world.test?.invincible) this.hp = this.maxHp;   // partie de test (8A) : le coup s'affiche, les PV ne bougent pas
