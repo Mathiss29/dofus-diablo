@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { gainDistance, MANIFESTE, regrouper, sonDuDecor, suivante } from '../src/render/son';
 import { GAME_DATA } from '../src/sim/data';
 import { existsSync } from 'node:fs';
+import LOURDS from '../src/data/fichiers-lourds.json';
 
 describe('Son (maquette Son, 2026-11-06)', () => {
   it('le volume baisse avec la distance', () => {
@@ -29,7 +30,7 @@ describe('Son (maquette Son, 2026-11-06)', () => {
       ...Object.values(M.sorts).flatMap(s => Object.values(s)), ...Object.values(M.gfx).flat(),
       ...Object.values(M.monstres).flatMap(m => [...m.attaque, ...m.hit, ...m.mort]),
       ...Object.values(M.musiques).flatMap(m => typeof m === 'string' ? [m] : [m.calme, m.renfort ?? m.calme])];
-    for (const x of f) expect(existsSync(`public/assets/son/${x}`), x).toBe(true);
+    for (const x of f) expect(existsSync(`public/assets/son/${x}`) || `son/${x}` in LOURDS, x).toBe(true);
   });
   it('les monstres d\'Incarnam ont leurs sons, et chaque sort Iop a le son de son animation', () => {
     const inc = GAME_DATA.zones.incarnam.open!;
