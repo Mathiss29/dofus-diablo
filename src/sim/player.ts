@@ -405,6 +405,7 @@ export class Player extends Entity {
     return { x: tx, y: ty };
   }
   start(id: SkillId, aim: { x: number; y: number }, world: World) {
+    world.emit({ k: 'cast', id });
     if (id === this.autoAttack) this.autoCd = this.attackInterval();
     if (id === 'attaque') {
       const A = this.cls.attaque;
@@ -646,6 +647,7 @@ export class Player extends Entity {
     world.emit({ k: 'playerHurt' });
     world.emit({ k: 'impact', hitstop: 0.04, shake: 0.006, big: false });
     this.addRage(this.cls.rage.perHurt, world);
+    if (this.hp <= 0 && world.quetes?.immortel) this.hp = 1;   // tutoriel : PV bloqués à 1
     if (this.hp <= 0) { this.hp = 0; this.dead = true; this.setAnim('die'); world.onPlayerDeath(); }
     return true;
   }
