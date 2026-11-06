@@ -12,7 +12,7 @@ import { Quetes, type Compte, type EtatQuetes, type QuetesData } from './quests'
 
 interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: number;
   /** Effets officiels : Érosion (part des dommages ôtée aux PV max), retrait de PM / PA. */
-  erosion?: number; pmLoss?: number; paLoss?: number;
+  erosion?: number; pmLoss?: number; paLoss?: number; poLoss?: number;
   /** Dommages multipliés sur les invocations (Concentration), et aussi sur les élites et les boss (Rage pleine). */
   vsSummon?: number; vsElite?: boolean;
   /** Dommages de poussée officiels si la cible heurte un obstacle ou un monstre. */
@@ -508,6 +508,8 @@ export class World {
         this.emit({ k: 'status', x: m.x, y: m.y, text: `-${pm} PM`, color: '#9ad15a' }); }
       if (pa) { m.atkCd = Math.max(m.atkCd, 0) + 0.4 * pa;
         this.emit({ k: 'status', x: m.x, y: m.y, text: `-${pa} PA`, color: '#5aa8ff' }); }
+      if (def.poLoss) { m.poMalus = Math.max(m.poMalus, def.poLoss); m.poMalusT = TOUR;   // retrait de Portée : ne s'esquive pas
+        this.emit({ k: 'status', x: m.x, y: m.y, text: `-${def.poLoss} PO`, color: '#c8a0ff' }); }
       if ((def.pmLoss && !pm) || (def.paLoss && !pa)) this.emit({ k: 'status', x: m.x, y: m.y, text: 'Esquive', color: '#c8c8c8' });
       const a = pushDir ?? Math.atan2(m.y - oy, m.x - ox);
       const kb = def.knock / m.def.mass;

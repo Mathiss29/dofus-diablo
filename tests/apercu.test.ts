@@ -71,6 +71,29 @@ describe('aperçu des sorts (maquette Aperçu)', () => {
     expect(m.vuln).toBe(10);
   });
 
+  it('Flèche Détonante : retire 2 de Portée à la cible pendant 3 s (3 au dernier grade)', () => {
+    const w = monde('cra'), p = w.player;
+    p.level = 15; p.recompute(); p.learnSpells(null);
+    const m = monstre(w, p.x + 150, p.y);
+    p.pa = p.paMax;
+    w.step(STEP, { ...NO_INPUT, aim: { x: m.x, y: m.y }, pressed: 'detonante' });
+    for (let i = 0; i < 40 && !m.poMalus; i++) w.step(STEP, { ...NO_INPUT, aim: { x: m.x, y: m.y } });
+    expect(m.poMalus).toBe(2);
+    expect(m.poMalusT).toBeGreaterThan(2);
+    p.level = 149; p.recompute();
+    expect(p.parGrade('detonante', [2, 2, 3])).toBe(3);
+  });
+
+  it('Pas Chassé : +1 PM tout de suite et pendant 3 s', () => {
+    const w = monde('cra'), p = w.player, max = p.pmMax;
+    w.step(STEP, { ...NO_INPUT, aim: { x: p.x + 100, y: p.y }, pressed: 'pas_chasse' });
+    for (let i = 0; i < 30; i++) w.step(STEP, NO_INPUT);
+    expect(p.pmMax).toBe(max + 1);
+    expect(p.pm).toBeGreaterThan(max - 1);   // le PM dépensé est rendu par le bonus
+    for (let i = 0; i < 4 * 60; i++) w.step(STEP, NO_INPUT);
+    expect(p.pmMax).toBe(max);
+  });
+
   it('Pression (sort ciblé) : frappe le monstre visé à distance, sans le pousser', () => {
     const w = monde(), p = w.player;
     const m = monstre(w, p.x + 150, p.y), x0 = m.x;
