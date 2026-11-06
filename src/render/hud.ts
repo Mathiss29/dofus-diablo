@@ -8,7 +8,7 @@ import type { Monster } from '../sim/monster';
 import type { World } from '../sim/world';
 import { QUEST_ICON } from './questView';
 
-const FONT = 'Trebuchet MS, Verdana, sans-serif';
+const FONT = 'Lexend, Verdana, sans-serif';
 const STYLE = { fontFamily: FONT, fontSize: '14px', color: '#e8e2d4', stroke: '#000', strokeThickness: 3 };
 const UI = 'assets/ui';
 

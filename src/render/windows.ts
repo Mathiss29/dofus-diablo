@@ -36,13 +36,13 @@ const SLOT_D3: Record<EquipSlot, string> = {
 const TAB_D3: Record<string, string> = { all: 'all', equipments: 'equipment', consumables: 'consumable', resources: 'resources', key: 'quest', cosmetics: 'cosmetics' };
 
 const CSS = `
-.dw{position:fixed;inset:0;pointer-events:none;font:13px 'Trebuchet MS',Verdana,sans-serif;color:#e8e2d4;z-index:10}
+.dw{position:fixed;inset:0;pointer-events:none;font:13px Lexend,Verdana,sans-serif;color:#e8e2d4;z-index:10}
 .dw .win{pointer-events:auto;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#24231f;border:1px solid #0d0c0a;
  box-shadow:inset 0 0 0 1px #4a4840,0 12px 40px #000c;border-radius:4px;display:grid;grid-template-rows:38px 1fr;overflow:hidden}
 .dw .win.inv{width:min(910px,96vw);height:min(720px,92vh)}
 .dw .win.car{width:min(440px,96vw);height:min(640px,92vh)}
 .dw .ttl{position:relative;display:grid;place-items:center;background:linear-gradient(#34322b,#26241f);border-bottom:1px solid #0d0c0a;box-shadow:inset 0 -1px 0 #4a4840}
-.dw .ttl b{font:bold 17px 'Trebuchet MS',sans-serif;color:#f4efe0;text-shadow:0 1px 2px #000;letter-spacing:.3px}
+.dw .ttl b{font:bold 17px Lexend,sans-serif;color:#f4efe0;text-shadow:0 1px 2px #000;letter-spacing:.3px}
 .dw .ttl img{position:absolute;left:8px;top:5px;width:28px;height:28px}
 .dw .ttl .x{position:absolute;right:10px;top:4px;cursor:pointer;color:#f4efe0;font-size:22px;line-height:28px}
 .dw .ttl .x:hover{color:#b9e54b}
@@ -70,7 +70,7 @@ const CSS = `
 .dw .tab.on{background:linear-gradient(#6f9a2a,#4c6e17);border-color:#b9e54b}
 .dw .tab:hover{border-color:#b9e54b}
 .dw .list{display:grid;grid-template-rows:auto auto 1fr auto auto;gap:8px;padding:12px 12px 10px;min-height:0}
-.dw input,.dw select{width:100%;box-sizing:border-box;background:#141310;border:1px solid #45433b;color:#e8e2d4;padding:7px 9px;border-radius:3px;font:13px 'Trebuchet MS',sans-serif}
+.dw input,.dw select{width:100%;box-sizing:border-box;background:#141310;border:1px solid #45433b;color:#e8e2d4;padding:7px 9px;border-radius:3px;font:13px Lexend,sans-serif}
 .dw select{cursor:pointer}
 .dw .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .dw .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(62px,1fr));grid-auto-rows:62px;gap:6px;overflow:auto;align-content:start;padding-right:2px}
@@ -112,7 +112,7 @@ const CSS = `
 .dw .opt .lien:hover{color:#b9e54b}
 .dw .opt .main{overflow:auto;padding:16px 22px 26px;display:grid;gap:16px;align-content:start;background:#24231f}
 .dw .opt .grp{display:grid;gap:12px}
-.dw .opt .grp>h2{margin:6px 0 0;font:bold 21px 'Trebuchet MS',sans-serif;color:#f4efe0}
+.dw .opt .grp>h2{margin:6px 0 0;font:bold 21px Lexend,sans-serif;color:#f4efe0}
 .dw .opt .grp>.desc{background:#1d1c19;border-radius:3px;padding:8px 10px;font-style:italic;color:#d8d2bf;font-size:12.5px}
 .dw .opt .sec{background:#36332c;border-radius:5px;padding:12px 16px 14px;display:grid;gap:4px}
 .dw .opt .sec .sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
@@ -210,7 +210,7 @@ const CSS = `
 .dw .ttl{background:linear-gradient(#4d4535,#332e23 70%,#2a261d);border-bottom:1px solid #0b0a07;box-shadow:inset 0 1px 0 #6b6150,0 2px 6px #0008;border-radius:3px 3px 0 0;overflow:hidden}
 .dw .ttl::before,.dw .ttl::after{content:'';position:absolute;top:0;bottom:0;width:150px;background:url(assets/ui/d3/slideCornerBgHeader.png) left top/150px 100% no-repeat;opacity:.9;pointer-events:none}
 .dw .ttl::before{left:0}.dw .ttl::after{right:0;transform:scaleX(-1)}
-.dw .ttl b{font:bold 19px 'Trebuchet MS',sans-serif;color:#fff;text-shadow:0 1px 3px #000;position:relative;z-index:1}
+.dw .ttl b{font:bold 19px Lexend,sans-serif;color:#fff;text-shadow:0 1px 3px #000;position:relative;z-index:1}
 .dw .ttl img{z-index:1;top:8px;left:10px}
 .dw .ttl .x{z-index:1;top:10px;right:12px;width:30px;height:25px;background:url(assets/ui/d3/btn_close_normal.png) center/contain no-repeat;filter:brightness(0) invert(1)}
 .dw .ttl .x:hover{filter:brightness(0) invert(1) sepia(1) saturate(6) hue-rotate(28deg)}
@@ -264,6 +264,8 @@ const CSS = `
 .dw .opt .row input[type=range]{-webkit-appearance:none;appearance:none;height:8px;border-radius:4px;background:linear-gradient(90deg,#8fae3a,#b9e54b) 0/var(--v,50%) 100% no-repeat,#15140f;box-shadow:inset 0 1px 2px #000,0 0 0 1px #3d3b33;cursor:pointer}
 .dw .opt .row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:20px;border-radius:3px;background:linear-gradient(#e8ff8a,#9cc62a);border:1px solid #1e2a05;box-shadow:0 1px 3px #000}
 .dw .opt .row input[type=range]::-moz-range-thumb{width:12px;height:20px;border-radius:3px;background:linear-gradient(#e8ff8a,#9cc62a);border:1px solid #1e2a05}
+.dw .btn,.dw .opt .nav .bas .lien[data-accueil]{font-family:Rowdies,Lexend,sans-serif;font-weight:400;letter-spacing:.02em}
+.dw .ttl b{font-weight:700}
 `;
 
 type Mode = 'inv' | 'car' | 'job' | 'opt' | 'sorts' | 'quetes' | 'succes';

@@ -408,7 +408,7 @@ export class ZoneScene extends Phaser.Scene {
   private castName(id: number, name: string) {
     const v = this.views.get(id); if (!v) return;
     const b = v.sprite, top = b.y - v.look.height * v.look.scale - 14;
-    const t = this.add.text(b.x, top, name, { fontFamily: 'Trebuchet MS, Verdana, sans-serif', fontSize: '13px', fontStyle: 'bold',
+    const t = this.add.text(b.x, top, name, { fontFamily: 'Lexend, Verdana, sans-serif', fontSize: '13px', fontStyle: 'bold',
       color: '#ffd9a0', stroke: '#1a0f0a', strokeThickness: 3 }).setOrigin(0.5, 1).setDepth(1e6);
     this.tweens.add({ targets: t, y: top - 18, alpha: 0, delay: 500, duration: 500, onComplete: () => t.destroy() });
   }
@@ -622,7 +622,7 @@ export class ZoneScene extends Phaser.Scene {
           icon: d.item ? this.add.image(p.x, p.y - 14, ICON_SHEET.key, Math.max(0, iconFrame(ITEMS.equipment[d.item.id]?.icon ?? 0))).setDisplaySize(34, 34)
             : this.add.image(p.x, p.y - 8, 'kamas_tas').setDisplaySize(22, 22),
           label: big >= 0 ? this.add.text(p.x, p.y - 40, ITEMS.equipment[d.item!.id]?.name ?? '', {
-            fontFamily: 'Trebuchet MS, Verdana, sans-serif', fontSize: '13px', fontStyle: 'bold', color: col, stroke: '#000', strokeThickness: 3,
+            fontFamily: 'Lexend, Verdana, sans-serif', fontSize: '13px', fontStyle: 'bold', color: col, stroke: '#000', strokeThickness: 3,
             backgroundColor: '#0d0c0acc', padding: { x: 4, y: 2 },
           }).setOrigin(0.5) : undefined,
           // colonne : un halo de la couleur de la rareté et un cœur blanc, plus haute à chaque rang
