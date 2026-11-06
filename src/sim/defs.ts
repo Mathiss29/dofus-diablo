@@ -153,6 +153,8 @@ export interface WavesDef {
 /** Une sous-zone Dofus dans un monde ouvert : ses monstres officiels et la taille des groupes. */
 export interface SubAreaDef {
   name: string; level: number; monsters: string[]; groupsPerMap: number; groupSize: [number, number];
+  /** Élite unique de la sous-zone (maquette 0.2, 4A : Frakacia Leukocytine, Sam Sagaz…) : mène parfois un groupe, un seul à la fois. */
+  elite?: string;
   /** Sous-zone faite d'intérieurs (Mine…) : ses monstres apparaissent aussi dedans. Sinon les intérieurs (maisons) restent vides. */
   interieur?: boolean;
   /** Seulement sur ces cartes (ex. Temple Céleste : la salle des Dofus reste calme, les deux autres servent au tutoriel). */
@@ -160,7 +162,9 @@ export interface SubAreaDef {
 }
 /** Porte entre deux cartes du monde (dehors -> intérieur, ou d'une salle à l'autre) : [tag de la carte, case Dofus 0-559]. */
 /** verrou : la salle du côté a doit être vidée avant de passer ; sens : on ne passe que de a vers b (donjons). */
-export interface PorteDef { a: [string, number]; b: [string, number]; nom: string; verrou?: number; sens?: number }
+export interface PorteDef { a: [string, number]; b: [string, number]; nom: string; verrou?: number; sens?: number;
+  /** Portail vers une autre zone (Incarnam <-> Astrub) : b est une case de cette zone-là. */
+  zone?: string }
 /** Donjon : ses salles (tag de carte) et, pour chacune, ses groupes de monstres officiels (fixes). */
 export interface DonjonDef { nom: string; salles: Record<string, string[][]> }
 /** Monde ouvert : cartes Dofus collées, groupes de monstres posés sur chaque carte, qui réapparaissent. */

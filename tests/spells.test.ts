@@ -227,7 +227,7 @@ describe('sorts particuliers', () => {
     iop.critChance = 0;   // sans coups critiques, pour comparer les dommages
     const w = arena(3), p = w.player;
     niveau(p, 90);
-    const m = w.spawnMonster('epouvanteur', p.x + 60, p.y);
+    const m = w.spawnMonster('royal', p.x + 60, p.y);
     m.state = 'chase';
     const dmg: number[] = [];
     for (let i = 0; i < 3; i++) {

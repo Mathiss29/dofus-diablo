@@ -549,6 +549,18 @@
       56
      ],
      "nom": "Temple Céleste"
+    },
+    {
+     "a": [
+      "4_-3",
+      174
+     ],
+     "b": [
+      "6_-19",
+      326
+     ],
+     "nom": "Astrub",
+     "zone": "astrub"
     }
    ],
    "donjons": [
@@ -628,6 +640,180 @@
      }
     }
    ]
+  }
+ },
+ "astrub": {
+  "name": "Astrub",
+  "level": 10,
+  "dofusArea": 18,
+  "open": {
+   "world": "astrub",
+   "start": [
+    6,
+    -19
+   ],
+   "aggro": 240,
+   "leash": 650,
+   "respawn": 25,
+   "subareas": {
+    "95": {
+     "name": "Cité d'Astrub",
+     "level": 10,
+     "monsters": [
+      "piou_violet",
+      "piou_rouge",
+      "piou_vert",
+      "piou_bleu",
+      "piou_rose",
+      "piou_jaune"
+     ],
+     "groupsPerMap": 1,
+     "groupSize": [
+      2,
+      4
+     ],
+     "elite": "fouduglen_l_ecureuil"
+    },
+    "98": {
+     "name": "Champs d'Astrub",
+     "level": 15,
+     "monsters": [
+      "tournesol",
+      "rose",
+      "pissenlit",
+      "epouvanteur"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ]
+    },
+    "173": {
+     "name": "Prairies d'Astrub",
+     "level": 15,
+     "monsters": [
+      "larve_bleue",
+      "larve_verte",
+      "larve_orange",
+      "larve_jaune"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "elite": "sam_sagaz"
+    },
+    "335": {
+     "name": "Calanques d'Astrub",
+     "level": 15,
+     "monsters": [
+      "pichon_orange",
+      "pichon_bleu",
+      "pichon_blanc",
+      "pichon_vert"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ]
+    },
+    "96": {
+     "name": "Carrière d'Astrub",
+     "level": 20,
+     "monsters": [
+      "martoa",
+      "sherpoa",
+      "douzdoa",
+      "pikdoa"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ]
+    },
+    "97": {
+     "name": "Forêt d'Astrub",
+     "level": 20,
+     "monsters": [
+      "prespic",
+      "sanglier",
+      "ecurouille",
+      "milimulou"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "elite": "frakacia_leukocytine"
+    },
+    "30": {
+     "name": "Tainéla",
+     "level": 20,
+     "monsters": [
+      "bouftou",
+      "boufton",
+      "boufton_noir",
+      "chef_de_guerre_bouftou"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "elite": "ballotin_le_bouftou"
+    },
+    "102": {
+     "name": "Cimetière d'Astrub",
+     "level": 30,
+     "monsters": [
+      "la_ouassingue",
+      "le_ouassingue",
+      "gargrouille",
+      "garglyphe"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ]
+    }
+   },
+   "checkpoints": [
+    {
+     "name": "Zaap d'Astrub",
+     "map": [
+      5,
+      -18
+     ]
+    },
+    {
+     "name": "Zaap de Tainéla",
+     "map": [
+      1,
+      -32
+     ]
+    }
+   ],
+   "portes": [
+    {
+     "a": [
+      "6_-19",
+      326
+     ],
+     "b": [
+      "4_-3",
+      174
+     ],
+     "nom": "Incarnam",
+     "zone": "incarnam"
+    }
+   ],
+   "donjons": []
   }
  }
 }
