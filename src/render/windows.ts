@@ -6,7 +6,8 @@ import {
   type EquipSlot, type Item, type Stat,
 } from '../sim/items';
 import { Player } from '../sim/player';
-import { gradeAuNiveau, type SortOfficiel } from '../sim/sorts';
+import { dmgMoyen, gradeAuNiveau, type SortOfficiel } from '../sim/sorts';
+import { n1, spellDetail } from './spellTip';
 import type { World } from '../sim/world';
 
 const SLOT_NAMES: Record<EquipSlot, string> = {
@@ -125,6 +126,8 @@ const CSS = `
 .dw .sorts dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:0}
 .dw .sorts dt{color:#a9a48b}.dw .sorts dd{margin:0}
 .dw .sorts .ds{background:#1d1c19;border:1px solid #34322b;border-radius:3px;padding:8px 10px;white-space:pre-line;font-size:12.5px}
+.dw .sorts .ef{margin:8px 0 0;padding-left:18px;font-size:12.5px;color:#d8d2bc}.dw .sorts .ef li{margin:2px 0}
+.dw .sorts .rg{color:#f08a2c;font-size:12.5px;margin:6px 0 8px}
 .dw .sorts .bb{grid-column:1/-1;display:flex;gap:6px;align-items:end;padding:10px 12px;border-top:1px solid #0d0c0a;background:#1d1c19;flex-wrap:wrap}
 .dw .sorts .bs{width:52px;display:grid;gap:2px;justify-items:center;font-size:11px;color:#a9a48b;font-weight:bold}
 .dw .sorts .bs i{width:50px;height:50px;border-radius:4px;border:1px solid #57554c;background:#2e2d29 center/44px no-repeat;display:block;cursor:pointer}
@@ -395,16 +398,25 @@ export class Windows {
     if (vu) {
       const cur = gradeAuNiveau(vu, p.level), gi = this.vuGrade >= 0 && this.vuGrade < vu.grades.length ? this.vuGrade : vu.grades.indexOf(cur), g = vu.grades[gi];
       const key = p.keyOf(vu.id), mob = key === p.cls.mobility;
-      const port = g.po[1] === 0 ? 'sur soi' : `${g.po[0]} à ${g.po[1]} case${g.po[1] > 1 ? 's' : ''}`;
-      const rel = g.relance ? `${g.relance * 3} s` : 'aucune';
-      const lanc = g.parTour ? `${g.parTour} toutes les 3 s` : 'sans limite (PA)';
-      const dmg = g.dmg ? `${g.dmg[0]}${g.dmg[1] > g.dmg[0] ? ` à ${g.dmg[1]}` : ''} ${g.element ? g.element[0].toUpperCase() + g.element.slice(1) : ''}${g.vol ? ' (vol de vie)' : ''} <span class="hint">(valeurs de Dofus ; en jeu ×1,5 et vos caractéristiques)</span>` : '—';
+      const el = (e?: string) => e ? e[0].toUpperCase() + e.slice(1) : '';
+      let rows: [string, string][], effets = '';
+      if (key) {
+        const x = spellDetail(p, key, mob ? undefined : g);
+        rows = [['Coût', mob ? `${x.cost} (déplacement)` : x.cost], ['Recharge', mob ? 'charges de PM' : x.cdS >= 1 ? `${n1(x.cdS)} s` : 'aucune'],
+          ['Zone', x.zone.replace(/^Zone : /, '')], ['Dommages', x.dmg ? x.dmg.replace(/^Dommages : /, '') : '—']];
+        effets = `${x.extra.length ? `<ul class="ef">${x.extra.map(t => `<li>${t}</li>`).join('')}</ul>` : ''}${x.rage ? `<div class="rg">${x.rage}</div>` : ''}`;
+      } else {
+        rows = [['Coût', `${g.pa} PA`], ['Recharge', g.relance ? `${g.relance * 3} s` : 'aucune'],
+          ['Portée', g.po[1] === 0 ? 'sur soi' : `${g.po[1]} case${g.po[1] > 1 ? 's' : ''}`],
+          ['Dommages', g.dmg ? `<b>${Math.round(p.damage(dmgMoyen(g) * 1.5, g.element ?? 'neutre'))}</b> ${el(g.element)}${g.vol ? ' (vol de vie)' : ''}` : '—']];
+        if (g.parTour) rows.push(['Cadence', `${g.parTour} lancer${g.parTour > 1 ? 's' : ''} toutes les 3 s au plus`]);
+      }
       fiche = `<div class="fh"><img src="${ico(vu)}" alt=""><div><b>${vu.name}</b>
         <div class="gr">${vu.grades.map((x, k) => `<span data-g="${k}" class="${k === gi ? 'on' : ''}">Grade ${k + 1} · niv ${x.niv}</span>`).join('')}</div></div></div>
         ${p.level < p.requiredLevel(vu) ? `<div class="note">Se débloque au niveau ${p.requiredLevel(vu)}.</div>` : ''}
         ${key ? '' : '<div class="note">Pas encore jouable : il arrivera avec les zones de son niveau.</div>'}
-        <dl><dt>Coût</dt><dd>${mob ? `${p.cls.spells[key!].pm} PM (déplacement)` : `${g.pa} PA`}</dd><dt>Portée</dt><dd>${port}</dd>
-        <dt>Recharge</dt><dd>${mob ? 'charges de PM' : rel}</dd><dt>Lancers</dt><dd>${mob ? '—' : lanc}</dd><dt>Dommages</dt><dd>${dmg}</dd></dl>
+        <dl>${rows.map(([t, v]) => `<dt>${t}</dt><dd>${v}</dd>`).join('')}</dl>
+        ${effets}
         <div class="ds">${vu.desc}</div>
         <div class="hint">Glisse un sort débloqué dans la barre, ou clique-le puis clique une case. Clic sur l'autre sort d'une paire pour l'échanger (un seul des deux, comme dans Dofus). Clic droit sur une case de la barre : la vider.</div>`;
     }
