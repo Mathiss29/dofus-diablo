@@ -20,6 +20,30 @@ const OUTIL: Record<string, string> = { paysan: 'faux', alchimiste: 'faux', buch
 const CSS = `.rcbulle{position:fixed;z-index:8;pointer-events:none;transform:translate(-50%,-100%);background:#141210ee;border:1px solid #4a4436;
  border-radius:4px;padding:5px 10px;font:600 13px/1.35 Lexend,Verdana,sans-serif;color:#f4efe0;text-align:center;white-space:nowrap;box-shadow:0 2px 6px #000a}
 .rcbulle b{display:block;font-size:14px}.rcbulle .ko{color:#ff6b5a}.rcbulle .dore{color:#ffd34a}.rcbulle i{font-style:normal;color:#a8a290;font-size:12px}`;
+/** Les planches sont dessinées en 2x puis affichées à ~0,3 (échelle 0,55 x zoom) : sans mipmaps, une image aussi réduite scintille
+ *  et « tremble » dès que la caméra glisse d'une fraction de pixel (retour de Mathis 2026-11-06). On en garde une copie réduite
+ *  de moitié, lissée une fois par le navigateur ; mêmes noms d'images, échelle de la planche divisée par deux. */
+function reduire(T: Phaser.Textures.TextureManager, k: string) {
+  const src = T.get(k), img = src.getSourceImage() as HTMLImageElement | HTMLCanvasElement;
+  const c = document.createElement('canvas'); c.width = Math.ceil(img.width / 2); c.height = Math.ceil(img.height / 2);
+  const ctx = c.getContext('2d');
+  if (!ctx) return;
+  ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high'; ctx.drawImage(img, 0, 0, img.width / 2, img.height / 2);
+  const frames = src.getFrameNames().map(n => {
+    const f = src.get(n), sss = (f.customData as { spriteSourceSize?: { x: number; y: number; w: number; h: number } }).spriteSourceSize;
+    return { n, x: f.cutX, y: f.cutY, w: f.cutWidth, h: f.cutHeight, rw: f.realWidth, rh: f.realHeight, trim: f.trimmed ? sss : undefined };
+  });
+  const custom = src.customData as { meta?: { echelle?: number } };
+  T.remove(k);
+  const t = T.addCanvas(k, c);
+  if (!t) return;
+  for (const f of frames) {
+    const nf = t.add(f.n, 0, f.x / 2, f.y / 2, Math.max(0.5, f.w / 2), Math.max(0.5, f.h / 2));
+    if (nf && f.trim) nf.setTrim(f.rw / 2, f.rh / 2, f.trim.x / 2, f.trim.y / 2, f.trim.w / 2, f.trim.h / 2);
+  }
+  t.customData = { ...custom, meta: custom.meta ? { ...custom.meta, echelle: (custom.meta.echelle ?? 2) / 2 } : undefined };
+}
+
 export class RecolteView {
   private vues = new Map<number, Vue>();
   private barre: Phaser.GameObjects.Graphics;
@@ -43,6 +67,7 @@ export class RecolteView {
     if (!this.demandes.has(g)) {
       this.demandes.add(g);
       const d = `${ASSETS}/sprites/recoltes/${g}`;
+      this.scene.load.once(`filecomplete-atlas-${k}`, () => reduire(this.scene.textures, k));
       this.scene.load.atlas(k, url(`${d}.avif`), url(`${d}.json`));
       if (!this.scene.load.isLoading()) this.scene.load.start();
     }

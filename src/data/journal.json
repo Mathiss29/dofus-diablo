@@ -76,7 +76,8 @@
           "Perso plus net en jeu et sur le socle : il est dessiné en 2x puis réduit, les contours ne font plus d'escaliers.",
           "Château Ensablé : plus de grandes taches blanches sur la mer, et le bord du sable est arrondi au lieu d'être en dents de scie.",
           "Cité d'Astrub et Tainéla : plus de maisons posées deux fois côte à côte ni de grands rectangles clairs, et le bord du monde se fond dans la brume au lieu de s'arrêter en escalier.",
-          "Le décor et les ressources ne tremblent plus quand la caméra te suit."
+          "Le décor et les ressources ne tremblent plus quand la caméra te suit.",
+          "Les ressources à récolter ne scintillent plus quand tu bouges, et la grande lueur jaune qui éclaircissait des pans entiers de la Cité d'Astrub est retirée."
         ],
         "En coulisses": [
           "Fenêtres refaites avec les vraies images de Dofus 3 et ses polices (Lexend, Rowdies).",
