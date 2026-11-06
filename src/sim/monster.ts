@@ -48,6 +48,8 @@ export class Monster extends Entity {
   haste = 1; hasteT = 0;
   /** Dommages subis augmentés de vuln % pendant vulnT s (Bond). */
   vuln = 0; vulnT = 0;
+  /** Portée retirée (cases) à ses sorts à distance pendant poMalusT s (Flèche Détonante). */
+  poMalus = 0; poMalusT = 0;
   /** Bonus de Dommages (Frénésie : %, Euphorie malsaine : fixes) et durée restante. */
   furyPct = 0; furyFlat = 0; furyT = 0;
   /** Invocateur (Kardorib invoqué par Kardorim). */
@@ -79,6 +81,7 @@ export class Monster extends Entity {
     for (let i = 0; i < this.spellCd.length; i++) this.spellCd[i] -= dt;
     if (this.hasteT > 0 && (this.hasteT -= dt) <= 0) this.haste = 1;
     if (this.vulnT > 0 && (this.vulnT -= dt) <= 0) this.vuln = 0;
+    if (this.poMalusT > 0 && (this.poMalusT -= dt) <= 0) this.poMalus = 0;
     if (this.furyT > 0 && (this.furyT -= dt) <= 0) this.furyPct = this.furyFlat = 0;
     // Tacle du joueur : un monstre à son contact avance moins vite (sa Fuite officielle y résiste)
     const near = Math.hypot(player.x - this.x, player.y - this.y) <= this.radius + player.radius + 12;
@@ -195,7 +198,7 @@ export class Monster extends Entity {
     if (k === 'invoque') return [0, CASE * 6];
     if (k === 'self') return [0, S.allies ? Infinity : zoneRadius(S) + player.radius];
     if (k === 'melee') return [0, this.def.attackRange + player.radius];
-    return [S.po[0] >= 2 ? S.po[0] * CASE : 0, S.po[1] * CASE + pad];
+    return [S.po[0] >= 2 ? S.po[0] * CASE : 0, this.po(S) * CASE + pad];
   }
   /** Plus grande portée d'un sort offensif à distance, si le monstre n'a aucun sort au contact (sinon 0 : il vient au contact). */
   private spellReach(player: Player): number {
@@ -208,7 +211,9 @@ export class Monster extends Entity {
     return k === 'melee' ? this.def.windup : k === 'target' || k === 'self' ? Math.max(0.7, this.def.windup + 0.2) : Math.max(0.55, this.def.windup);
   }
   private chargeLen(S: MonsterSpell): number { return (S.effects.find(e => e.k === 'avance') as { n: number } | undefined ?? { n: 1 }).n * CASE; }
-  private missileRange(S: MonsterSpell): number { return (S.po[1] + 0.5) * CASE + this.radius; }
+  private missileRange(S: MonsterSpell): number { return (this.po(S) + 0.5) * CASE + this.radius; }
+  /** Portée maximale du sort en cases, moins la Portée retirée (jamais sous sa portée minimale, ni sous 1). */
+  po(S: MonsterSpell): number { return Math.max(S.po[0], 1, S.po[1] - this.poMalus); }
 
   /** Choisit un sort utilisable (relance finie, à portée, ligne de vue) et commence à le lancer. */
   private castSpell(dist: number, player: Player, world: World): boolean {

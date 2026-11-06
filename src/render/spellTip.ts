@@ -12,7 +12,7 @@ const RAGE_TEXT: Record<NonNullable<SpellDef['rage']>, (d: SpellDef) => string> 
   explode: () => 'explosion 50 % plus grande', dash: () => 'avance 50 % plus loin', stack: d => `+${Math.round((d.stack?.per ?? 0) * 150)} % par lancer`,
   lifesteal: d => `vole ${Math.round((d.lifesteal ?? 0) * 150)} % des dommages`, erosion: d => `Érosion ${Math.round((d.erosion ?? 0) * 150)} %`,
   pm: d => `-${Math.round((d.pmLoss ?? 0) * 1.5)} PM`, pa: d => `-${Math.round((d.paLoss ?? 0) * 1.5)} PA`,
-  buff: d => `${d.buff?.stat === 'portee' ? 'Portée' : 'Dommages'} +${Math.round((d.buff?.n ?? 0) * 1.5)}`, shield: () => 'bouclier 50 % plus gros',
+  buff: d => `${d.buff?.stat === 'portee' ? 'Portée' : d.buff?.stat === 'pm' ? 'PM' : 'Dommages'} +${Math.round((d.buff?.n ?? 0) * 1.5)}`, shield: () => 'bouclier 50 % plus gros',
   selfKnock: () => 'recule 50 % plus loin', summon: d => `+${Math.round(((d.vsSummon ?? 1) - 1) * 150)} % sur les invocations, les élites et les boss`,
 };
 
@@ -45,7 +45,8 @@ export function spellDetail(p: Player, id: SkillId, gOver?: SortGrade) {
     d.move ? `${d.move.kind === 'leap' ? 'Saut' : 'Ruée'} jusqu'à ${Math.round(d.move.maxRange / 48)} cases` : '',
     d.charge ? 'Se charge avant de frapper' : '',
     g?.parTour && !d.pm ? `${g.parTour} lancer${g.parTour > 1 ? 's' : ''} toutes les 3 s au plus` : '',
-    d.buff ? `${d.buff.stat === 'portee' ? 'Portée' : 'Dommages'} +${d.buff.n} pendant ${d.buff.t} s` : '',
+    d.buff ? `${d.buff.stat === 'portee' ? 'Portée' : d.buff.stat === 'pm' ? 'PM' : 'Dommages'} +${d.buff.n} pendant ${d.buff.t} s` : '',
+    d.poLoss ? `-${d.poLoss[0]} Portée à la cible pendant 3 s${d.poLoss.length > 1 && d.poLoss.at(-1) !== d.poLoss[0] ? ` (-${d.poLoss.at(-1)} au dernier grade)` : ''}` : '',
     d.shield ? `Bouclier : ${Math.round(p.maxHp * d.shield.part)} PV pendant ${d.shield.t} s` : '',
     d.selfKnock ? `Recule de ${Math.round(d.selfKnock / 48)} cases` : '',
     d.vsSummon ? `+${Math.round((d.vsSummon - 1) * 100)} % sur les invocations` : '',

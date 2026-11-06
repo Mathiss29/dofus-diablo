@@ -108,6 +108,11 @@ export class Player extends Entity {
   /** Niveau requis (officiel, sauf le déplacement donné au niveau 1). */
   requiredLevel(s: SortOfficiel): number { return niveauRequis(s, this.cls.spells[this.cls.mobility]?.dofusId); }
   /** Grade officiel atteint pour ce sort (null pour un sort sans fiche : arme, attaque). */
+  /** Valeur officielle propre au grade atteint (une valeur par grade, la dernière vaut pour les suivants). */
+  parGrade(id: SkillId, v: number[]): number {
+    const o = this.official(id), g = this.grade(id);
+    return v[Math.min(v.length - 1, Math.max(0, o && g ? o.grades.indexOf(g) : 0))];
+  }
   grade(id: SkillId): SortGrade | null { const o = this.official(id); return o ? gradeAuNiveau(o, this.level) : null; }
   /** Le sort est-il connu : niveau atteint et choisi dans sa paire ? */
   knows(id: SkillId): boolean {
@@ -611,7 +616,11 @@ export class Player extends Entity {
         mult *= 1 + d.stack.per * sig('stack') * st.n;
         this.stacks[s.id] = { n: Math.min(d.stack.max, st.n + 1), t: d.stack.time };
       }
-      if (d.buff) this.addMod(d.buff.stat, Math.round(d.buff.n * sig('buff')), d.buff.t);
+      if (d.buff) {
+        const n = Math.round(d.buff.n * sig('buff'));
+        this.addMod(d.buff.stat, n, d.buff.t);
+        if (d.buff.stat === 'pm') this.pm = Math.min(this.pmMax, this.pm + n);   // le PM gagné est utilisable tout de suite (Pas Chassé)
+      }
       if (d.shield) { this.shield = Math.max(this.shield, Math.round(this.maxHp * d.shield.part * sig('shield'))); this.shieldT = d.shield.t; }
       if (d.selfKnock) {   // « Recule de n cases » : à l'opposé du tir (freinage de applyKnock : distance = vitesse / 7,13)
         const v = d.selfKnock * sig('selfKnock') * 7.13;
@@ -620,7 +629,8 @@ export class Player extends Entity {
       const hit = { dmg: (d.dmg * s.gm + (s.id === this.cls.basic ? this.weaponDamage() : 0)) * mult, knock: d.knock * sig('knock'), element: d.element, vsSummon: d.vsSummon && 1 + (d.vsSummon - 1) * sig('summon'), vsElite: sig('summon') > 1,
         pushDmg: d.pushDmg && s.boosted,
         lifesteal: d.lifesteal && d.lifesteal * sig('lifesteal'), erosion: d.erosion && d.erosion * sig('erosion'),
-        pmLoss: d.pmLoss && Math.round(d.pmLoss * sig('pm')), paLoss: d.paLoss && Math.round(d.paLoss * sig('pa')) };
+        pmLoss: d.pmLoss && Math.round(d.pmLoss * sig('pm')), paLoss: d.paLoss && Math.round(d.paLoss * sig('pa')),
+        poLoss: d.poLoss && this.parGrade(s.id, d.poLoss) };
       let hits = 0, size = 0;
       if (d.self) { size = 60; }
       else if (hz.shape === 'cone') { size = hz.range * area; hits = world.hitCone(this.x, this.y, this.facing, size, (hz.arc * Math.PI) / 180, hit, d.stun); }

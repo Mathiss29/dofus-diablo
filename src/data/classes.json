@@ -641,7 +641,12 @@
     "shake": 0,
     "fx": "land",
     "desc": "Téléporte le lanceur sur la case ciblée.\nAugmente les PM du lanceur au tour suivant.",
-    "self": true
+    "self": true,
+    "buff": {
+     "stat": "pm",
+     "n": 1,
+     "t": 3
+    }
    },
    "vagabonde": {
     "name": "Flèche Vagabonde",
@@ -718,7 +723,12 @@
     "hitstop": 0.04,
     "shake": 0.006,
     "fx": "burst",
-    "rage": "explode"
+    "rage": "explode",
+    "poLoss": [
+     2,
+     2,
+     3
+    ]
    }
   },
   "mobility": "pas_chasse",

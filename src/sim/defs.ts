@@ -45,6 +45,8 @@ export interface SpellDef {
   lifesteal?: number;
   /** Effets officiels : Érosion (part des dommages retirée aux PV max, Pression), retrait de PM (ralentit) et de PA (retarde ses attaques). */
   erosion?: number; pmLoss?: number; paLoss?: number;
+  /** Retrait de Portée (Flèche Détonante) : cases ôtées aux sorts à distance de la cible pendant un tour (3 s), par grade. */
+  poLoss?: number[];
   /** Choix 2B : l'effet qui caractérise le sort, poussé de +50 % (rage.signature) quand la Rage est pleine. */
   rage?: 'knock' | 'length' | 'radius' | 'explode' | 'dash' | 'stack' | 'lifesteal' | 'erosion' | 'pm' | 'pa'
     | 'buff' | 'shield' | 'selfKnock' | 'summon';
