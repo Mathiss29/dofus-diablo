@@ -26,6 +26,8 @@ export type SimEvent =
   | { k: 'playerDeath'; wave: number }
   | { k: 'potion'; x: number; y: number; amount: number }
   | { k: 'levelUp'; level: number }
+  /** Nouveau sort débloqué (niveau officiel), placé seul dans la barre si une case est libre (choix 7A). */
+  | { k: 'newSpell'; id: string; slot: number }
   | { k: 'noResource'; res: 'pa' | 'pm' }
   /** Jauge de classe pleine, puis dépensée par un sort renforcé. */
   | { k: 'rageFull' }

@@ -128,3 +128,14 @@ Les salles d'un donjon sont des intérieurs comme les autres (`incarnam_interieu
 ## Lumières des cartes (halos, lueurs, rayons)
 
 Dofus dessine certains éléments de carte en les **ajoutant** à l'image (`ShaderBlendingParameters` du matériau : facteurs de mélange Unity), avec un masque de dissolution animé : halos sur l'eau (305396), lueurs des feux (57871, 305477…), rayons de soleil (42481, 44653…). Posés comme du décor normal, ils faisaient de grandes taches blanches. `world_export.py` les sort du sol (liste `LUMIERES`) et les met dans le décor avec `b` (`a` additif, `s` écran), `k` (intensité) et `z` (image réduite au tiers, le jeu l'agrandit) ; `c = -1` pour ceux du sol. Le jeu les dessine en mode additif, en entier (plus de coupure au raccord), et plus fort la nuit (`src/render/ambiance.ts` : cycle sur l'heure du PC, réglages touche O). Le rectangle blanc 62942 (mode « multiplier », sans effet dans Dofus) est retiré (`VOILES`).
+
+## Sorts de classe et onglet Sorts (maquette Sorts, 2026-11-06)
+
+`python3 tools/extraction/class_spells.py <tables json> <I18n/fr.bin> src/data/sorts.json iop:8 cra:9`
+écrit les 22 paires officielles de chaque classe (`spellvariantsdataroot` : sort ⇄ variante), triées par niveau
+d'obtention puis dans l'ordre officiel (`breeds.breedSpellsId`), avec les grades de `spelllevelsdataroot`
+(niveau requis, PA, portée en cases, relance en tours, lancers par tour, dommages). Le jeu (src/sim/sorts.ts, Player)
+traduit : 1 tour = 3 s (relance, lancers par tour), 1 case = 48 px (portée des flèches), dommages × 1,5,
+grade selon le niveau du perso. Un sort n'est jouable que s'il a sa fiche dans `classes.json` (champ `dofusId`).
+Attention : Colère de Iop est la variante de Fureur (niveau 200), pas de l'Épée du Destin (dont la variante est Tumulte).
+Animations des nouveaux sorts : `ANIMS=... perso_planche.py` (Ferveur AnimAttaque814 ; Crâ 902, 907, 917).

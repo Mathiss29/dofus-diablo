@@ -37,6 +37,8 @@ export class ZoneScene extends Phaser.Scene {
   private snapCam = false;
   private views = new Map<number, EntityView>();
   private fx!: FX;
+  /** Aura de la jauge de classe pleine (ligne Rage 27B), sous le perso. */
+  private rageAura?: Phaser.GameObjects.Graphics;
   private hud!: Hud;
   private keys!: Record<string, Phaser.Input.Keyboard.Key>;
   private pressed: SkillId | null = null;
@@ -169,6 +171,7 @@ export class ZoneScene extends Phaser.Scene {
       else if (name === 'Caractéristiques') this.windows!.toggle('car');
       else if (name === 'Métiers') this.windows!.toggle('job');
       else if (name === 'Réglages') this.windows!.toggle('opt');
+      else if (name === 'Sorts') this.windows!.toggle('sorts');
       else this.hud.toast(`${name} : arrive dans une prochaine version`);
     };
     this.cameras.main.startFollow(this.viewOf(this.world.player).sprite, true, 0.12, 0.12, 0, 30);
@@ -181,9 +184,8 @@ export class ZoneScene extends Phaser.Scene {
     const K = Phaser.Input.Keyboard.KeyCodes, kb = this.input.keyboard!;
     // Déplacement à la souris (clic gauche) ; le clavier sert aux sorts, à la potion et aux menus
     this.keys = kb.addKeys({ SHIFT: K.SHIFT, ALT: K.ALT,
-      SPACE: K.SPACE, E: K.E, K: K.K, I: K.I, C: K.C, J: K.J, ESC: K.ESC, F: K.F, H: K.H, O: K.O, ENTER: K.ENTER,
+      SPACE: K.SPACE, S: K.S, E: K.E, K: K.K, I: K.I, C: K.C, J: K.J, ESC: K.ESC, F: K.F, H: K.H, O: K.O, ENTER: K.ENTER,
       ONE: K.ONE, TWO: K.TWO, THREE: K.THREE, FOUR: K.FOUR, FIVE: K.FIVE, SIX: K.SIX }) as Record<string, Phaser.Input.Keyboard.Key>;
-    const cls = this.world.player.cls;
     // Façon Diablo (demande de Mathis, 2026-11-05) : clic gauche sur le sol = y aller (maintenu : suivre le curseur),
     // sur un monstre = s'approcher et l'attaquer (maintenu : continuer), Maj + clic gauche = attaquer sur place ;
     // clic droit = sort favori, Espace = déplacement, 1 à 6 (& é " ' ( - en AZERTY) = barre de sorts.
@@ -191,7 +193,7 @@ export class ZoneScene extends Phaser.Scene {
     this.input.on('pointerdown', (p: Phaser.Input.Pointer, over: unknown[]) => {
       if (over.length || this.hud.blocks(p.x, p.y)) { this.uiClick = true; return; }
       this.uiClick = false;
-      if (p.rightButtonDown()) { this.pressed = cls.favorite; return; }
+      if (p.rightButtonDown()) { this.pressed = this.world.player.bar[6]; return; }
       this.holding = true;
       if (this.keys.SHIFT.isDown) { this.pressed = 'attaque'; this.clickMode = 'place'; return; }
       const d = this.dropUnder(p);
@@ -204,9 +206,9 @@ export class ZoneScene extends Phaser.Scene {
     const release = () => { this.holding = false; };
     window.addEventListener('pointerup', release);
     this.events.once('shutdown', () => window.removeEventListener('pointerup', release));
-    this.keys.SPACE.on('down', () => { this.pressed = cls.mobility; });
+    this.keys.SPACE.on('down', () => { this.pressed = this.world.player.bar[7]; });
     this.keys.E.on('down', () => { this.potion = true; });
-    ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX'].forEach((k, i) => this.keys[k].on('down', () => { if (cls.bar[i]) this.pressed = cls.bar[i]; }));
+    ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX'].forEach((k, i) => this.keys[k].on('down', () => { this.pressed = this.world.player.bar[i]; }));
     this.keys.F.on('down', () => {
       this.fx.juice = !this.fx.juice;
       this.hud.toast(this.fx.juice ? 'Effets d\'impact : ACTIVÉS' : 'Effets d\'impact : DÉSACTIVÉS (compare !)');
@@ -216,7 +218,8 @@ export class ZoneScene extends Phaser.Scene {
     this.keys.I.on('down', () => this.windows?.toggle('inv'));
     this.keys.C.on('down', () => this.windows?.toggle('car'));
     this.keys.J.on('down', () => this.windows?.toggle('job'));   // Métiers (choix 6A : Chasseur)
-    this.keys.O.on('down', () => this.windows?.toggle('opt'));   // Réglages (choix 10A + 10B)
+    this.keys.O.on('down', () => this.windows?.toggle('opt'));
+    this.keys.S.on('down', () => this.windows?.toggle('sorts'));   // Sorts (choix 8A, touche S)   // Réglages (choix 10A + 10B)
     this.keys.ESC.on('down', () => this.windows?.close());
     // K : changer de classe (en attendant l'écran de création de la 0.1b)
     this.keys.K.on('down', () => this.scene.restart({ zone: this.zoneId, classe: this.classId === 'iop' ? 'cra' : 'iop' }));
@@ -237,6 +240,28 @@ export class ZoneScene extends Phaser.Scene {
     return null;
   }
   /** Petit carillon (synthétisé, pas de fichier) quand un objet Rare ou Légendaire tombe (choix 3D). */
+  /** Jauge pleine : halo qui pulse aux pieds du perso, couleur de la jauge (ligne Rage 27B). */
+  private drawRageAura() {
+    const p = this.world.player, g = this.rageAura ??= this.add.graphics();
+    g.clear();
+    if (!p.rageFull || p.dead) return;
+    const v = this.viewOf(p), s = ISO.toScreen(p.x, p.y), k = 0.5 + 0.5 * Math.sin(this.world.time * 6);
+    g.setDepth(v.sprite.depth - 0.5).setBlendMode(Phaser.BlendModes.ADD);
+    g.fillStyle(0xf08a2c, 0.16 + 0.12 * k); g.fillEllipse(s.x, s.y, 92 + 14 * k, 40 + 6 * k);
+    g.lineStyle(2, 0xffc04d, 0.45 + 0.35 * k); g.strokeEllipse(s.x, s.y, 80 + 10 * k, 34 + 4 * k);
+  }
+  /** Son court quand la jauge se remplit (ligne Rage 27B), synthétisé comme le carillon du butin. */
+  private rageSound() {
+    try {
+      const A = (this.sound as unknown as { context?: AudioContext }).context;
+      if (!A) return;
+      const o = A.createOscillator(), g = A.createGain(), t0 = A.currentTime;
+      o.type = 'sawtooth'; o.frequency.setValueAtTime(180, t0); o.frequency.exponentialRampToValueAtTime(420, t0 + 0.18);
+      g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(0.08 * this.reglages.volume + 0.0001, t0 + 0.03); g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.35);
+      o.connect(g).connect(A.destination); o.start(t0); o.stop(t0 + 0.4);
+    } catch { /* son indisponible */ }
+  }
+
   private chime(legendary: boolean) {
     try {
       const A = (this.sound as unknown as { context?: AudioContext }).context;
@@ -335,7 +360,7 @@ export class ZoneScene extends Phaser.Scene {
           this.hud.banner(e.boss ? `Vague ${e.n}\n${M[e.boss].name}` : e.archi ? `Vague ${e.n}\nArchimonstre : ${M[e.archi].name} !` : `Vague ${e.n}`);
           break;
         case 'noResource': this.hud.noResource(e.res); break;
-        case 'rageFull': this.hud.toast(`${this.world.player.cls.rage.name} au maximum : ton prochain sort est renforcé !`); break;
+        case 'rageFull': this.rageSound(); this.hud.toast(`${this.world.player.cls.rage.name} au maximum : ton prochain sort est renforcé !`); break;
         case 'bossDown': this.hud.banner(`${M[e.monster].name} vaincu !`); break;
         case 'playerDeath':
           if (this.world.zone.open) this.hud.banner(`Vaincu\nEntrée : retour à ${this.world.checkpointName}`, 0, true);
@@ -356,6 +381,11 @@ export class ZoneScene extends Phaser.Scene {
         case 'eat': this.windows?.refresh(); break;
         case 'lootResource': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Ressource'} x${e.n}`, '#c9c4ab'); this.windows?.refresh(); break;
         case 'levelUp': this.hud.banner(`Niveau ${e.level} !\n+5 points (C)`, 1500); this.windows?.refresh(); break;
+        case 'newSpell': {
+          const KEY = ['&', 'é', '"', "'", '(', '-', 'clic droit', 'Espace'];
+          this.hud.toast(`Nouveau sort : ${this.world.player.cls.spells[e.id]?.name ?? e.id}${e.slot >= 0 ? ` (${KEY[e.slot]})` : ' · S pour le placer'}`);
+          this.windows?.refresh(); break;
+        }
         case 'checkpoint': this.hud.banner(`Point de retour\n${e.name}`, 1400); break;
         case 'respawn': this.hud.banner('De retour !', 900); break;
         case 'enterArea': this.hud.banner(`${e.name}\nNiveau ${e.level}`, 1600); break;
@@ -449,6 +479,7 @@ export class ZoneScene extends Phaser.Scene {
     if (Math.abs(cam.zoom - this.zoom) > 0.001) cam.setZoom(cam.zoom + (this.zoom - cam.zoom) * 0.2);
     this.updateAmbiance();
     wv?.update(w.player.x, w.player.y);
+    this.drawRageAura();
     for (const e of [w.player, ...w.monsters]) {
       // monde ouvert : on n'affiche que les monstres des cartes chargées (les autres vivent quand même dans la simulation)
       if (wv && wg && e !== w.player && !wv.isReady(wg.mapAt(e.x, e.y)?.tag)) continue;

@@ -65,6 +65,11 @@ const IOP_MAP: Record<string, AnimSlice> = {
   // Animations officielles (casterAnimation des sorts) : Pression 802, Intimidation 803, Déferlement 809, Fureur 808.
   // Bornes choisies pour que le coup de l'animation tombe sur l'impact du sort.
   pression: { anim: 'AnimAttaque802', from: 0.1, to: 0.75 },
+  // Sorts du niveau 1 à 20 (maquette Sorts, 2026-11-06) : Couperet 802, Épée Divine 800, Ferveur 814, Concentration 801
+  couperet: { anim: 'AnimAttaque802', from: 0.1, to: 0.75 },
+  epee_divine: { anim: 'AnimAttaque800', from: 0.4, to: 1 },
+  ferveur: { anim: 'AnimAttaque814', from: 0, to: 0.33 },
+  concentration: { anim: 'AnimAttaque801', from: 6 / 32, to: 1 },
   intimidation: { anim: 'AnimAttaque803', from: 0, to: 0.6 },
   deferlement: { anim: 'AnimAttaque809', from: 0, to: 0.55 },
   fureur: { anim: 'AnimAttaque808', from: 0, to: 0.25 },
@@ -92,6 +97,10 @@ const CRA_MAP: Record<string, AnimSlice> = {
   abolition: { anim: 'AnimAttaque913', from: 0, to: 0.62 },
   dispersion: { anim: 'AnimAttaque915', from: 0, to: 0.51 },
   pas_chasse: { anim: 'AnimAttaque923', from: 0.1, to: 0.6 },
+  // Sorts du niveau 1 à 20 (maquette Sorts, 2026-11-06) : Flèche Vagabonde 917, Tirs Éloignés 902, Flèche Détonante 907
+  vagabonde: { anim: 'AnimAttaque917', from: 0, to: 0.75 },
+  tirs_eloignes: { anim: 'AnimAttaque902', from: 0, to: 0.6 },
+  detonante: { anim: 'AnimAttaque907', from: 0, to: 0.6 },
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };

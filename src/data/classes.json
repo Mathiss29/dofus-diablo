@@ -22,14 +22,15 @@
    "cooldown": 1
   },
   "xpBase": 100,
-  "maxLevel": 50,
+  "maxLevel": 200,
   "rage": {
    "name": "Rage",
    "max": 100,
    "perHit": 4,
    "perHurt": 7,
-   "bonus": 0.6,
-   "signature": 1.5
+   "bonus": 0.3,
+   "signature": 1.5,
+   "mode": "melee"
   },
   "attaque": {
    "name": "Coup de poing",
@@ -80,8 +81,8 @@
     "dofusId": 13106,
     "icon": 11830,
     "element": "terre",
-    "pa": 2,
-    "cooldown": 0.5,
+    "pa": 3,
+    "cooldown": 0,
     "duration": 0.36,
     "impactAt": 0.13,
     "cancelAt": 0.22,
@@ -105,12 +106,12 @@
     "icon": 11835,
     "element": "meilleur",
     "pa": 2,
-    "cooldown": 3,
+    "cooldown": 0,
     "duration": 0.4,
     "impactAt": 0.14,
     "cancelAt": 0.24,
-    "dmg": 18,
-    "knock": 760,
+    "dmg": 8,
+    "knock": 684,
     "stun": 0.6,
     "hit": {
      "shape": "cone",
@@ -121,19 +122,20 @@
     "shake": 0.009,
     "fx": "arc",
     "desc": "Occasionne des dommages dans le meilleur élément du lanceur aux ennemis et repousse la cible.",
-    "rage": "knock"
+    "rage": "knock",
+    "pushDmg": true
    },
    "epee": {
     "name": "Épée Céleste",
     "dofusId": 13122,
     "icon": 11843,
     "element": "air",
-    "pa": 3,
-    "cooldown": 1.2,
+    "pa": 4,
+    "cooldown": 0,
     "duration": 0.46,
     "impactAt": 0.16,
     "cancelAt": 0.26,
-    "dmg": 34,
+    "dmg": 44,
     "knock": 320,
     "hit": {
      "shape": "line",
@@ -151,12 +153,12 @@
     "dofusId": 13126,
     "icon": 11832,
     "element": "eau",
-    "pa": 3,
-    "cooldown": 5,
+    "pa": 4,
+    "cooldown": 0,
     "duration": 0.38,
     "impactAt": 0.22,
     "cancelAt": 0.3,
-    "dmg": 30,
+    "dmg": 38,
     "knock": 300,
     "stun": 0.3,
     "hit": {
@@ -165,7 +167,7 @@
     },
     "move": {
      "kind": "dash",
-     "maxRange": 260
+     "maxRange": 200
     },
     "hitstop": 0.07,
     "shake": 0.008,
@@ -179,11 +181,11 @@
     "icon": 11873,
     "element": "terre",
     "pa": 3,
-    "cooldown": 1.5,
+    "cooldown": 0,
     "duration": 0.42,
     "impactAt": 0.16,
     "cancelAt": 0.26,
-    "dmg": 22,
+    "dmg": 37,
     "knock": 260,
     "hit": {
      "shape": "cone",
@@ -232,12 +234,12 @@
     "dofusId": 13124,
     "icon": 11851,
     "element": "terre",
-    "pa": 4,
+    "pa": 7,
     "cooldown": 9,
     "duration": 0.72,
     "impactAt": 0.42,
     "cancelAt": 0.55,
-    "dmg": 95,
+    "dmg": 136,
     "knock": 620,
     "stun": 0.4,
     "hit": {
@@ -250,18 +252,111 @@
     "fx": "burst",
     "desc": "Occasionne des dommages Terre.\nLes dommages du sort sont augmentés à la récupération du sort.",
     "rage": "radius"
+   },
+   "couperet": {
+    "name": "Couperet",
+    "dofusId": 13115,
+    "icon": 11855,
+    "element": "feu",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Feu et retire des PM en zone.",
+    "duration": 0.36,
+    "impactAt": 0.13,
+    "cancelAt": 0.22,
+    "dmg": 27,
+    "knock": 120,
+    "pmLoss": 2,
+    "hit": {
+     "shape": "line",
+     "length": 192,
+     "width": 30
+    },
+    "hitstop": 0.06,
+    "shake": 0.005,
+    "fx": "line",
+    "rage": "pm"
+   },
+   "epee_divine": {
+    "name": "Épée Divine",
+    "dofusId": 13110,
+    "icon": 11833,
+    "element": "air",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Air aux ennemis et augmente les Dommages du lanceur et des alliés en zone.",
+    "duration": 0.5,
+    "impactAt": 0.2,
+    "cancelAt": 0.3,
+    "dmg": 23,
+    "knock": 200,
+    "hit": {
+     "shape": "circle",
+     "radius": 130
+    },
+    "buff": {
+     "stat": "dommages",
+     "n": 10,
+     "t": 12
+    },
+    "hitstop": 0.07,
+    "shake": 0.008,
+    "fx": "burst",
+    "rage": "buff"
+   },
+   "ferveur": {
+    "name": "Ferveur",
+    "dofusId": 14676,
+    "icon": 11839,
+    "element": "eau",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Applique un bouclier sur le lanceur et ses alliés et occasionne des dommages Eau aux ennemis en zone.",
+    "duration": 0.42,
+    "impactAt": 0.18,
+    "cancelAt": 0.28,
+    "dmg": 15,
+    "knock": 160,
+    "hit": {
+     "shape": "circle",
+     "radius": 82
+    },
+    "shield": {
+     "part": 0.025,
+     "t": 6
+    },
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "rage": "shield"
+   },
+   "concentration": {
+    "name": "Concentration",
+    "dofusId": 13123,
+    "icon": 11838,
+    "element": "terre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Terre.\nLes dommages sont plus importants sur les invocations.",
+    "duration": 0.32,
+    "impactAt": 0.12,
+    "cancelAt": 0.2,
+    "dmg": 21,
+    "knock": 180,
+    "vsSummon": 1.43,
+    "hit": {
+     "shape": "cone",
+     "range": 78,
+     "arc": 80
+    },
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "arc",
+    "rage": "summon"
    }
   },
-  "bar": [
-   "pression",
-   "intimidation",
-   "epee",
-   "deferlement",
-   "fureur",
-   "colere"
-  ],
   "mobility": "bond",
-  "favorite": "epee"
+  "sorts": "iop"
  },
  "cra": {
   "name": "Crâ",
@@ -286,14 +381,15 @@
    "cooldown": 1
   },
   "xpBase": 100,
-  "maxLevel": 50,
+  "maxLevel": 200,
   "rage": {
    "name": "Précision",
    "max": 100,
    "perHit": 3,
-   "perHurt": 5,
-   "bonus": 0.6,
-   "signature": 1.5
+   "perHurt": 0,
+   "bonus": 0.3,
+   "signature": 1.5,
+   "mode": "distance"
   },
   "attaque": {
    "name": "Coup de poing",
@@ -344,16 +440,16 @@
     "dofusId": 32427,
     "icon": 15409,
     "element": "air",
-    "cooldown": 0.32,
+    "cooldown": 0,
     "duration": 0.3,
     "impactAt": 0.1,
     "cancelAt": 0.16,
-    "dmg": 13,
+    "dmg": 15,
     "knock": 90,
     "hit": {
      "shape": "projectile",
      "speed": 1100,
-     "range": 620,
+     "range": 264,
      "width": 14
     },
     "hitstop": 0.04,
@@ -369,41 +465,42 @@
     "dofusId": 32426,
     "icon": 11876,
     "element": "air",
-    "cooldown": 2.5,
+    "cooldown": 0,
     "duration": 0.38,
     "impactAt": 0.12,
     "cancelAt": 0.18,
-    "dmg": 20,
-    "knock": 820,
+    "dmg": 24,
+    "knock": 684,
     "hit": {
      "shape": "projectile",
      "speed": 1100,
-     "range": 520,
+     "range": 216,
      "width": 16
     },
     "hitstop": 0.04,
     "shake": 0.004,
     "fx": "burst",
-    "pa": 2,
+    "pa": 3,
     "stun": 0.4,
     "desc": "Occasionne des dommages Air aux ennemis et repousse la cible.",
-    "rage": "knock"
+    "rage": "knock",
+    "pushDmg": true
    },
    "glacee": {
     "name": "Flèche Glacée",
     "dofusId": 32435,
     "icon": 13032,
     "element": "eau",
-    "cooldown": 1.2,
+    "cooldown": 0,
     "duration": 0.36,
     "impactAt": 0.12,
     "cancelAt": 0.18,
-    "dmg": 30,
+    "dmg": 20,
     "knock": 150,
     "hit": {
      "shape": "projectile",
      "speed": 1100,
-     "range": 640,
+     "range": 264,
      "width": 16
     },
     "hitstop": 0.04,
@@ -413,19 +510,24 @@
     "stun": 0.5,
     "desc": "Retire des PA et occasionne des dommages Eau.\nLes dommages du sort sont augmentés après son utilisation.",
     "paLoss": 2,
-    "rage": "pa"
+    "rage": "pa",
+    "stack": {
+     "per": 0.3,
+     "max": 3,
+     "time": 9
+    }
    },
    "barrage": {
     "name": "Flèche de Barrage",
     "dofusId": 32443,
     "icon": 11904,
     "element": "feu",
-    "cooldown": 4,
+    "cooldown": 0,
     "duration": 0.42,
     "impactAt": 0.16,
     "cancelAt": 0.22,
-    "dmg": 24,
-    "knock": 520,
+    "dmg": 22,
+    "knock": 342,
     "hit": {
      "shape": "cone",
      "range": 190,
@@ -436,23 +538,23 @@
     "fx": "arc",
     "pa": 3,
     "desc": "Occasionne des dommages Feu aux ennemis et repousse les cibles en zone.",
-    "rage": "knock"
+    "rage": "radius"
    },
    "explosive": {
     "name": "Flèche Explosive",
     "dofusId": 32445,
     "icon": 11898,
     "element": "feu",
-    "cooldown": 2,
+    "cooldown": 0,
     "duration": 0.48,
     "impactAt": 0.2,
     "cancelAt": 0.26,
-    "dmg": 34,
+    "dmg": 30,
     "knock": 260,
     "hit": {
      "shape": "projectile",
      "speed": 1100,
-     "range": 600,
+     "range": 264,
      "width": 16,
      "explode": 95
     },
@@ -468,37 +570,41 @@
     "dofusId": 32453,
     "icon": 15430,
     "element": "terre",
-    "cooldown": 3,
+    "cooldown": 0,
     "duration": 0.4,
     "impactAt": 0.12,
     "cancelAt": 0.18,
-    "dmg": 28,
+    "dmg": 9,
     "knock": 120,
     "hit": {
      "shape": "projectile",
      "speed": 1100,
-     "range": 600,
-     "width": 16,
-     "pierce": true
+     "range": 264,
+     "width": 16
     },
     "hitstop": 0.04,
     "shake": 0.004,
     "fx": "burst",
-    "pa": 3,
-    "lifesteal": 0.4,
+    "pa": 2,
+    "lifesteal": 0.5,
     "desc": "Vole de la vie dans l'élément Terre.\nLes dommages sont plus importants sur les cibles ayant du bouclier.\n\nLa taille de la zone est augmentée après chaque lancer pour le tour en cours.",
-    "rage": "lifesteal"
+    "rage": "lifesteal",
+    "grow": [
+     0,
+     72,
+     120
+    ]
    },
    "dispersion": {
     "name": "Flèche de Dispersion",
     "dofusId": 32428,
     "icon": 15159,
     "element": "air",
-    "cooldown": 8,
+    "cooldown": 0,
     "duration": 0.55,
     "impactAt": 0.2,
     "cancelAt": 0.26,
-    "dmg": 40,
+    "dmg": 21,
     "knock": 680,
     "hit": {
      "shape": "circle",
@@ -507,7 +613,7 @@
     "hitstop": 0.1,
     "shake": 0.014,
     "fx": "burst",
-    "pa": 4,
+    "pa": 3,
     "stun": 0.4,
     "desc": "Occasionne des dommages Air aux ennemis et repousse les cibles depuis le centre en zone.\nLa poussée est plus importante aux extrémités de la zone.",
     "rage": "knock"
@@ -535,18 +641,88 @@
     "hitstop": 0,
     "shake": 0,
     "fx": "land",
-    "desc": "Téléporte le lanceur sur la case ciblée.\nAugmente les PM du lanceur au tour suivant."
+    "desc": "Téléporte le lanceur sur la case ciblée.\nAugmente les PM du lanceur au tour suivant.",
+    "self": true
+   },
+   "vagabonde": {
+    "name": "Flèche Vagabonde",
+    "dofusId": 32455,
+    "icon": 15407,
+    "element": "terre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Éloigne le lanceur de la cible et occasionne des dommages Terre aux ennemis.",
+    "duration": 0.4,
+    "impactAt": 0.14,
+    "cancelAt": 0.22,
+    "dmg": 26,
+    "knock": 150,
+    "selfKnock": 144,
+    "hit": {
+     "shape": "projectile",
+     "speed": 1100,
+     "range": 312,
+     "width": 16
+    },
+    "hitstop": 0.04,
+    "shake": 0.004,
+    "fx": "burst",
+    "rage": "selfKnock"
+   },
+   "tirs_eloignes": {
+    "name": "Tirs Éloignés",
+    "dofusId": 32465,
+    "icon": 15307,
+    "element": "neutre",
+    "pa": 1,
+    "cooldown": 6,
+    "desc": "Augmente les portées minimale et maximale de tous les sorts offensifs Crâ du lanceur.\nAugmente également la Portée des alliés (hors Crâs) en zone autour du lanceur et de ses Balises.",
+    "duration": 0.4,
+    "impactAt": 0.2,
+    "dmg": 0,
+    "knock": 0,
+    "self": true,
+    "buff": {
+     "stat": "portee",
+     "n": 4,
+     "t": 3
+    },
+    "hit": {
+     "shape": "circle",
+     "radius": 1
+    },
+    "hitstop": 0,
+    "shake": 0,
+    "fx": "land",
+    "rage": "buff"
+   },
+   "detonante": {
+    "name": "Flèche Détonante",
+    "dofusId": 32444,
+    "icon": 13034,
+    "element": "feu",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Retire de la Portée, occasionne des dommages Feu et applique l'état Flèche Détonante sur la cible :\n• Applique les effets sans l'état sur les ennemis en zone autour de la cible à la fin de son tour.\n\nLes effets peuvent être déclenchés prématurément si la cible subit des dommages de poussée.",
+    "duration": 0.36,
+    "impactAt": 0.12,
+    "cancelAt": 0.18,
+    "dmg": 15,
+    "knock": 120,
+    "hit": {
+     "shape": "projectile",
+     "speed": 1100,
+     "range": 216,
+     "width": 16,
+     "explode": 120
+    },
+    "hitstop": 0.04,
+    "shake": 0.006,
+    "fx": "burst",
+    "rage": "explode"
    }
   },
-  "bar": [
-   "recul",
-   "glacee",
-   "barrage",
-   "explosive",
-   "abolition",
-   "dispersion"
-  ],
   "mobility": "pas_chasse",
-  "favorite": "cinglante"
+  "sorts": "cra"
  }
 }

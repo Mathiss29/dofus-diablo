@@ -13,26 +13,110 @@ const press = (w: World, pressed: PlayerInput['pressed'], aim = { x: w.player.x 
   w.step(STEP, { ...NO_INPUT, aim, pressed });
 const idle = (w: World, s: number) => { for (let i = 0; i < s * 60; i++) w.step(STEP, NO_INPUT); };
 const iop = GAME_DATA.classes.iop;
+/** Monte le perso à ce niveau et lui apprend les sorts officiels de ce niveau. */
+const niveau = (p: World['player'], n: number) => { p.level = n; p.recompute(); p.learnSpells(null); };
 
-describe('barre de sorts du Iop', () => {
-  it('6 sorts officiels sur 1 à 6, chacun avec son icône, plus le Bond sur Espace', () => {
-    expect(iop.bar).toHaveLength(6);
-    for (const id of [...iop.bar, iop.mobility, iop.favorite]) {
-      expect(iop.spells[id]).toBeDefined();
-      expect(readFileSync(new URL(`../public/assets/ui/sorts/sort_${iop.spells[id].icon}.png`, import.meta.url)).length).toBeGreaterThan(100);
-    }
-    expect(iop.spells[iop.mobility].move?.kind).toBe('leap');
+describe('sorts officiels par niveau (maquette Sorts : 1A 2A 3A 4A 5A 6A 7A)', () => {
+  it('niveau 1 : les 4 sorts officiels du niveau 1 sur & é " \', le Bond sur Espace, clic droit libre', () => {
+    const p = arena().player;
+    expect(p.bar.slice(0, 4).map(id => iop.spells[id!].name)).toEqual(['Pression', 'Ferveur', 'Couperet', 'Épée Divine']);
+    expect(p.bar[4]).toBeNull();
+    expect(p.bar[6]).toBeNull();
+    expect(p.bar[7]).toBe('bond');
+    for (const id of p.bar.filter(Boolean)) expect(readFileSync(new URL(`../public/assets/ui/sorts/sort_${iop.spells[id!].icon}.png`, import.meta.url)).length).toBeGreaterThan(100);
   });
 
-  it('chaque sort de la barre touche un monstre placé devant le joueur', () => {
-    for (const id of iop.bar) {
-      const w = arena(), p = w.player;
-      const m = w.spawnMonster('pissenlit', p.x + 50, p.y);
-      m.state = 'chase';
-      press(w, id, { x: m.x, y: m.y });
-      idle(w, 1);
-      expect(m.hp, id).toBeLessThan(m.maxHp);
+  it('le Crâ commence avec ses 4 flèches du niveau 1 et Pas Chassé', () => {
+    const p = new World({ data: GAME_DATA, zone: 'champs-astrub', map: new GridMap(carte), seed: 1, classId: 'cra' }).player;
+    expect(p.bar.slice(0, 4).map(id => p.cls.spells[id!].name)).toEqual(['Flèche de Recul', 'Flèche Glacée', 'Flèche Vagabonde', 'Flèche de Barrage']);
+    expect(p.bar[7]).toBe('pas_chasse');
+  });
+
+  it('un sort se débloque au niveau officiel et se place seul dans la barre', () => {
+    const w = arena(), p = w.player;
+    expect(p.canStart('deferlement')).toBe(false);   // niveau 20
+    p.xp = 0;
+    while (p.level < 5) p.gainXp(p.xpNeeded, w);
+    const ev = w.drainEvents().find(e => e.k === 'newSpell');
+    expect(ev).toMatchObject({ id: 'intimidation', slot: 4 });
+    expect(p.bar[4]).toBe('intimidation');
+    niveau(p, 20);
+    expect(p.bar).toContain('deferlement');
+    expect(p.bar[6]).toBe('deferlement');   // 7e sort : clic droit
+  });
+
+  it('coût, relance et dommages suivent le grade officiel', () => {
+    const p = arena().player;
+    expect(p.paCost('pression')).toBe(3);
+    niveau(p, 132);
+    expect(p.grade('pression')?.niv).toBe(132);
+    expect(p.grade('pression')?.dmg).toEqual([26, 30]);
+  });
+
+  it('limite officielle de lancers par tour : Fureur, 1 lancer toutes les 3 s', () => {
+    const w = arena(), p = w.player;
+    niveau(p, 90);
+    press(w, 'fureur'); idle(w, 0.7);
+    p.pa = p.paMax;
+    expect(p.canStart('fureur')).toBe(false);
+    idle(w, 2.5);
+    expect(p.canStart('fureur')).toBe(true);
+  });
+
+  it('variante : on joue l\'un ou l\'autre, la barre suit', () => {
+    const p = arena().player;
+    niveau(p, 200);
+    const i = p.pairs.findIndex(pr => pr[0].name === 'Fureur');
+    expect(p.setVariant(i, 1)).toBe(true);
+    expect(p.knows('colere')).toBe(true);
+    p.assign(5, 'colere');
+    expect(p.setVariant(i, 0)).toBe(true);
+    expect(p.knows('colere')).toBe(false);
+    expect(p.bar).not.toContain('colere');
+  });
+
+  it('assign : glisser un sort dans une case l\'échange avec celui qui y était', () => {
+    const p = arena().player;
+    const [a, b] = [p.bar[0], p.bar[1]];
+    p.assign(1, a);
+    expect([p.bar[0], p.bar[1]]).toEqual([b, a]);
+    expect(p.assign(2, 'deferlement')).toBe(false);   // pas encore connu
+  });
+
+  it('chaque sort jouable jusqu\'au niveau 20 touche un monstre placé devant le joueur', () => {
+    for (const classId of ['iop', 'cra']) {
+      const cls = GAME_DATA.classes[classId];
+      for (const [id, d] of Object.entries(cls.spells)) {
+        if (d.self || d.move?.kind === 'leap') continue;
+        const w = new World({ data: GAME_DATA, zone: 'champs-astrub', map: new GridMap(carte), seed: 42, classId }), p = w.player;
+        niveau(p, 20);
+        if (!p.knows(id)) continue;
+        const m = w.spawnMonster('pissenlit', p.x + 50, p.y);
+        m.state = 'chase';
+        press(w, id, { x: m.x, y: m.y });
+        idle(w, 1);
+        expect(m.hp, id).toBeLessThan(m.maxHp);
+      }
     }
+  });
+
+  it('Ferveur pose un bouclier qui prend les coups d\'abord', () => {
+    const w = arena(), p = w.player;
+    press(w, 'ferveur'); idle(w, 0.5);
+    expect(p.shield).toBeGreaterThan(0);
+    const hp = p.hp; p.invuln = 0;
+    p.hurt(p.shield, p.x + 10, p.y, w);
+    expect(p.hp).toBe(hp);
+  });
+
+  it('Épée Divine augmente les Dommages du lanceur, Tirs Éloignés sa Portée', () => {
+    const w = arena(), p = w.player;
+    press(w, 'epee_divine'); idle(w, 0.6);
+    expect(p.stat('dommages')).toBe(10);
+    const wc = new World({ data: GAME_DATA, zone: 'champs-astrub', map: new GridMap(carte), seed: 1, classId: 'cra' }), c = wc.player;
+    niveau(c, 10);
+    press(wc, 'tirs_eloignes', { x: c.x + 50, y: c.y }); idle(wc, 0.5);
+    expect(c.stat('portee')).toBe(4);
   });
 
   it('un sort inconnu est ignoré', () => {
@@ -62,6 +146,7 @@ describe('Rage', () => {
       const m = w.spawnMonster('epouvanteur', p.x + 60, p.y);
       m.state = 'chase';
       p.rage = full ? iop.rage.max : 0;
+      p.lastHitAt = p.age;   // en plein combat : pas de baisse de la jauge
       w.drainEvents();
       press(w, 'pression', { x: m.x, y: m.y });
       idle(w, 0.5);
@@ -70,7 +155,7 @@ describe('Rage', () => {
     const normal = hit(false), boosted = hit(true);
     expect(boosted.spent).toBe(true);
     expect(normal.spent).toBe(false);
-    expect(boosted.dmg).toBeGreaterThan(normal.dmg * 1.3);
+    expect(boosted.dmg).toBeGreaterThan(normal.dmg * 1.15);
     expect(boosted.rage).toBeLessThan(iop.rage.max);
   });
 
@@ -106,9 +191,23 @@ describe('Rage', () => {
   it('le Bond ne consomme pas la Rage', () => {
     const w = arena(), p = w.player;
     p.rage = iop.rage.max;
+    p.lastHitAt = 1e9;   // pas de baisse de la jauge pendant le test
     press(w, 'bond');
     expect(p.skill?.id).toBe('bond');
     expect(p.rage).toBe(iop.rage.max);
+  });
+});
+
+describe('Rage : remplissage et baisse', () => {
+  it('se vide doucement après 6 s sans frapper', () => {
+    const w = arena(), p = w.player;
+    p.rage = 50;
+    p.lastHitAt = p.age;
+    w.step(STEP, NO_INPUT);
+    expect(p.rage).toBe(50);       // frappé il y a moins de 6 s : la jauge tient
+    p.lastHitAt = p.age - 7;
+    w.step(STEP, NO_INPUT);
+    expect(p.rage).toBeLessThan(50);   // 7 s sans frapper : elle retombe
   });
 });
 
@@ -117,10 +216,12 @@ describe('sorts particuliers', () => {
     const crit = iop.critChance;
     iop.critChance = 0;   // sans coups critiques, pour comparer les dommages
     const w = arena(3), p = w.player;
+    niveau(p, 90);
     const m = w.spawnMonster('epouvanteur', p.x + 60, p.y);
     m.state = 'chase';
     const dmg: number[] = [];
     for (let i = 0; i < 3; i++) {
+      if (i) idle(w, 2.5);
       p.pa = iop.pa.max; p.cd.fureur = 0; p.rage = 0;
       const before = m.hp;
       m.x = p.x + 60; m.y = p.y; m.kx = m.ky = 0;
@@ -135,6 +236,7 @@ describe('sorts particuliers', () => {
 
   it('Déferlement : la ruée s\'arrête devant le premier ennemi', () => {
     const w = arena(), p = w.player, x0 = p.x;
+    niveau(p, 20);
     const m = w.spawnMonster('epouvanteur', p.x + 150, p.y);
     m.state = 'chase';
     press(w, 'deferlement', { x: p.x + 400, y: p.y });
@@ -165,21 +267,18 @@ describe('mort et retour au Zaap', () => {
 
 describe('Crâ', () => {
   const cra = GAME_DATA.classes.cra;
-  const archer = (seed = 42) => new World({ data: GAME_DATA, zone: 'champs-astrub', map: new GridMap(carte), seed, classId: 'cra' });
-  it('6 sorts officiels, Pas Chassé sur Espace, Flèche Cinglante au clic droit (2 PA), coup de poing sans arme', () => {
-    expect(cra.bar).toHaveLength(6);
+  const archer = (seed = 42) => { const w = new World({ data: GAME_DATA, zone: 'champs-astrub', map: new GridMap(carte), seed, classId: 'cra' }); niveau(w.player, 60); return w; };
+  it('Pas Chassé sur Espace, Flèche Cinglante (niveau 25, 2 PA), coup de poing sans arme', () => {
     expect(cra.basic).toBeUndefined();
-    expect(cra.favorite).toBe('cinglante');
+    expect(cra.mobility).toBe('pas_chasse');
     expect(cra.spells.cinglante.pa).toBe(2);
-    for (const id of [...cra.bar, cra.mobility, cra.favorite]) {
-      expect(cra.spells[id]).toBeDefined();
+    for (const id of Object.keys(cra.spells))
       expect(readFileSync(new URL(`../public/assets/ui/sorts/sort_${cra.spells[id].icon}.png`, import.meta.url)).length).toBeGreaterThan(100);
-    }
   });
   it('Flèche Cinglante tire une flèche qui touche un monstre à distance', () => {
     const w = archer(), p = w.player;
     expect(p.autoAttack).toBe('attaque');
-    const m = w.spawnMonster('epouvanteur', p.x + 300, p.y);
+    const m = w.spawnMonster('epouvanteur', p.x + 200, p.y);
     m.state = 'chase';
     press(w, 'cinglante', { x: m.x, y: m.y });
     w.step(STEP, NO_INPUT);
@@ -191,8 +290,8 @@ describe('Crâ', () => {
   });
   it('Flèche Explosive touche tout le groupe autour du point d\'impact', () => {
     const w = archer(), p = w.player;
-    const ms = [0, 40, -40].map(dy => { const m = w.spawnMonster('epouvanteur', p.x + 300, p.y + dy); m.state = 'chase'; return m; });
-    press(w, 'explosive', { x: p.x + 300, y: p.y });
+    const ms = [0, 40, -40].map(dy => { const m = w.spawnMonster('epouvanteur', p.x + 220, p.y + dy); m.state = 'chase'; return m; });
+    press(w, 'explosive', { x: p.x + 220, y: p.y });
     idle(w, 1);
     for (const m of ms) expect(m.hp).toBeLessThan(m.maxHp);
   });
@@ -223,6 +322,7 @@ describe('caractéristiques (choix 10C + 10D)', () => {
     const cra = GAME_DATA.classes.cra;
     const shot = (esquive: number) => {
       const w = new World({ data: GAME_DATA, zone: 'champs-astrub', map: new GridMap(carte), seed: 9, classId: 'cra' }), p = w.player;
+      niveau(p, 25);
       const m = w.spawnMonster('epouvanteur', p.x + 120, p.y);
       m.state = 'chase';
       (m as { def: typeof m.def }).def = { ...m.def, caracs: { ...m.def.caracs, esquivePM: esquive } };
