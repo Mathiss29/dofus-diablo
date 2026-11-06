@@ -1,5 +1,9 @@
 import type { Element, SpellDef } from './defs';
 import type { Item, Rarity } from './items';
+/** Point de retour (dernier Zaap atteint) : nom et position. */
+export interface PointDeRetour { name: string; x: number; y: number }
+/** Havre-Sac (maquette Hub 2A) : où était le perso avant d'y entrer, pour en ressortir au même endroit. */
+export interface RetourHavreSac { zone: string; x: number; y: number; point: PointDeRetour }
 
 /** Ce que la simulation signale à l'affichage (effets, sons, interface).
  *  La simulation ne dessine rien : elle pousse des événements, l'affichage les consomme. */
@@ -81,7 +85,14 @@ export type SimEvent =
   /** Partie de test : un ordre du panneau F1 a été fait (message court pour l'interface). */
   | { k: 'test'; texte: string }
   /** Portail vers une autre zone : l'affichage sauve le perso et relance la partie là-bas (case b de la porte). */
-  | { k: 'changeZone'; zone: string; arrivee: [string, number]; nom: string }
+  /** Changement de zone : par un portail (arrivee), vers le Havre-Sac (retour = d'où l'on vient), en sortant du Havre-Sac
+   *  (position exacte + point de retour d'avant) ou par son Zaap (zaap = nom du Zaap d'arrivée). */
+  | { k: 'changeZone'; zone: string; arrivee?: [string, number]; nom: string; position?: { x: number; y: number }; point?: PointDeRetour; zaap?: string; retour?: RetourHavreSac }
+  /** Havre-Sac : incantation commencée (durée), coupée, arche du Havre-Sac touchée (ouvre la liste des Zaaps), PNJ qui emménagent. */
+  | { k: 'incantation'; duree: number }
+  | { k: 'incantationStop' }
+  | { k: 'arche' }
+  | { k: 'emmenage'; noms: string[] }
   /** Le joueur lance un sort ou son attaque (objectifs « utiliser »). */
   | { k: 'cast'; id: string }
   /** Quêtes : prise, étape suivante, fin (sautee = passée) ; bulle d'un PNJ ; objet de quête ramassé ; succès obtenu. */

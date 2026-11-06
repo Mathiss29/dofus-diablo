@@ -13,7 +13,7 @@ const objet = (w: World, id: string, rarete: 'commun' | 'rare' | 'epique' | 'leg
   const it = rollItem(id, ITEMS.equipment[id], rarete, w.rng, w.newUid()); w.player.bag.push(it); return it;
 };
 
-describe('Emp, le Méryde du Recyclage (0.2b)', () => {
+describe('Emp, le Méryde du Recyclage (0.2b), et les services du Havre-Sac (maquette Hub 4A)', () => {
   it('se tient à côté du Zaap d\'Astrub, seulement dans Astrub', () => {
     const w = monde(), e = w.quetes!.pnjs.find(p => p.id === 'emp');
     expect(e?.tag).toBe('5_-18');
@@ -21,20 +21,17 @@ describe('Emp, le Méryde du Recyclage (0.2b)', () => {
     const wi = new World({ data: GAME_DATA, zone: 'incarnam', map: new WorldGrid(inc), seed: 1, items: ITEMS, quetes: QUETES });
     expect(wi.quetes!.pnjs.some(p => p.id === 'emp')).toBe(false);
   });
-  it('dialogue officiel : services, discussion en trois temps, adieu', () => {
+  it('Emp garde sa discussion officielle, sans guichet (ses services sont au Havre-Sac)', () => {
     const w = monde(), Q = w.quetes!, e = Q.pnjs.find(p => p.id === 'emp')!;
     w.player.x = e.x + 40; w.player.y = e.y;
     Q.cliquer('emp');
     for (let i = 0; i < 30 && !Q.dialogue; i++) w.step(1 / 60, NO_INPUT);
-    expect(Q.dialogue?.texte).toMatch(/offrande/);
-    expect(Q.dialogue!.reponses.map(r => r.a)).toEqual(['service', 'service', 'suite', 'fermer']);
-    Q.repondre(2); expect(Q.dialogue?.texte).toMatch(/disciple/);
+    expect(Q.dialogue?.texte).toMatch(/Havre-Sac/);
+    expect(Q.dialogue!.reponses.map(r => r.a)).toEqual(['suite', 'fermer']);
+    Q.repondre(0); expect(Q.dialogue?.texte).toMatch(/disciple/);
     Q.repondre(0); expect(Q.dialogue?.texte).toMatch(/poubelles/);
     Q.repondre(0); expect(Q.dialogue?.texte).toMatch(/gaspillage/);
     expect(Q.dialogue!.reponses.at(-1)!.texte).toMatch(/saluts quotidiens/);
-    Q.repondre(0);   // « Recycler » : le dialogue se ferme et l'affichage ouvre la fenêtre
-    expect(Q.dialogue).toBeNull();
-    expect(w.drainEvents().find(e => e.k === 'service')).toMatchObject({ service: 'recycler', pnj: 'emp' });
   });
   it('recycle contre des Pépites selon le niveau et la rareté, cadenas et lots', () => {
     const w = monde(), p = w.player;
@@ -50,9 +47,10 @@ describe('Emp, le Méryde du Recyclage (0.2b)', () => {
   });
   it('boutique en Pépites, puis la clé ouvre la Grange chez son gardien (et elle est prise)', () => {
     const w = monde(), p = w.player, Q = w.quetes!;
-    expect(w.acheter('emp', '8143')).toBe(false);   // pas de Pépites
+    expect(w.acheter('goultard', '8143')).toBe(false);   // pas de Pépites
     p.resources[PEPITE] = 160;
-    expect(w.acheter('emp', '8143')).toBe(true);
+    expect(w.acheter('emp', '8143')).toBe(false);   // Emp n'a plus de boutique
+    expect(w.acheter('goultard', '8143')).toBe(true);
     expect(p.resources[PEPITE]).toBe(10);
     const po = w.entreeDonjon('Grange du Tournesol Affamé')!;
     // clic sur la porte : le dialogue de Mawy Ingalsse s'ouvre (la clé n'est pas encore prise)
@@ -73,8 +71,8 @@ describe('Emp, le Méryde du Recyclage (0.2b)', () => {
     const d = essai();
     expect(d.reponses[0]).toMatchObject({ a: 'sansCle' });
     Q.repondre(0);
-    expect(Q.dialogue?.texte).toMatch(/Emp/);
-    expect(Q.marqueVendeur).toBe('emp');
+    expect(Q.dialogue?.texte).toMatch(/Goultard, dans ton Havre-Sac/);
+    expect(Q.marqueVendeur).toBe('goultard');
     expect(w.worldGrid!.mapAt(p.x, p.y)?.tag).toBe('7_-24');
   });
   it('la Potion de Rappel ramène au dernier Zaap', () => {

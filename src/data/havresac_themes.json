@@ -1,0 +1,245 @@
+{
+ "_": "Thèmes officiels du Havre-Sac (table havenbagthemes de Dofus 3 : nom, carte du bundle mapdata_assets_world_621). Maquette Hub 5A : à débloquer (succès, boss, boutique en Pépites), règles à écrire. Seul le thème en jeu est exporté (zones.json, havresac.open.havreSac.theme) ; les autres : tools/extraction/havresac.py puis world_export.py.",
+ "themes": [
+  {
+   "id": 1,
+   "nom": "Kerubim",
+   "carte": 162791424
+  },
+  {
+   "id": 2,
+   "nom": "Amakna",
+   "carte": 162793472
+  },
+  {
+   "id": 3,
+   "nom": "Nowel",
+   "carte": 162795520
+  },
+  {
+   "id": 4,
+   "nom": "Allister",
+   "carte": 162791426
+  },
+  {
+   "id": 5,
+   "nom": "Printemps",
+   "carte": 162791428
+  },
+  {
+   "id": 6,
+   "nom": "Sain Ballotin",
+   "carte": 162795522
+  },
+  {
+   "id": 7,
+   "nom": "Hiver",
+   "carte": 162795524
+  },
+  {
+   "id": 8,
+   "nom": "Spectacle",
+   "carte": 162793476
+  },
+  {
+   "id": 9,
+   "nom": "Wabbit",
+   "carte": 162793474
+  },
+  {
+   "id": 10,
+   "nom": "Taverne",
+   "carte": 162791430
+  },
+  {
+   "id": 11,
+   "nom": "Casino",
+   "carte": 162793478
+  },
+  {
+   "id": 12,
+   "nom": "Princesse",
+   "carte": 162795526
+  },
+  {
+   "id": 14,
+   "nom": "Pwâk",
+   "carte": 162791432
+  },
+  {
+   "id": 15,
+   "nom": "Fin Patraque",
+   "carte": 162793480
+  },
+  {
+   "id": 16,
+   "nom": "Fanfon",
+   "carte": 162795528
+  },
+  {
+   "id": 17,
+   "nom": "Été",
+   "carte": 162791434
+  },
+  {
+   "id": 18,
+   "nom": "Steamer",
+   "carte": 162791436
+  },
+  {
+   "id": 19,
+   "nom": "Sidimote",
+   "carte": 162793484
+  },
+  {
+   "id": 20,
+   "nom": "Halouine",
+   "carte": 162795532
+  },
+  {
+   "id": 21,
+   "nom": "Crypte",
+   "carte": 162791438
+  },
+  {
+   "id": 23,
+   "nom": "Pyramide",
+   "carte": 162793482
+  },
+  {
+   "id": 24,
+   "nom": "Harebourg",
+   "carte": 162795530
+  },
+  {
+   "id": 25,
+   "nom": "Champs",
+   "carte": 162793486
+  },
+  {
+   "id": 26,
+   "nom": "Trithon",
+   "carte": 162791440
+  },
+  {
+   "id": 27,
+   "nom": "Cale des Pirates",
+   "carte": 162795534
+  },
+  {
+   "id": 28,
+   "nom": "Moon",
+   "carte": 162793488
+  },
+  {
+   "id": 29,
+   "nom": "Coqueline",
+   "carte": 162795536
+  },
+  {
+   "id": 30,
+   "nom": "Bateau des Forbans",
+   "carte": 162791442
+  },
+  {
+   "id": 31,
+   "nom": "Anomalie Temporelle",
+   "carte": 162793490
+  },
+  {
+   "id": 32,
+   "nom": "Stade Bontarien",
+   "carte": 162795538
+  },
+  {
+   "id": 33,
+   "nom": "Stade Brâkmarien",
+   "carte": 162791444
+  },
+  {
+   "id": 34,
+   "nom": "Ankama",
+   "carte": 162793492
+  },
+  {
+   "id": 35,
+   "nom": "Corruption",
+   "carte": 162795540
+  },
+  {
+   "id": 36,
+   "nom": "Guerre",
+   "carte": 162791446
+  },
+  {
+   "id": 39,
+   "nom": "Servitude",
+   "carte": 162793494
+  },
+  {
+   "id": 50,
+   "nom": "Misère",
+   "carte": 162795542
+  },
+  {
+   "id": 51,
+   "nom": "Eliocalypse",
+   "carte": 162791448
+  },
+  {
+   "id": 52,
+   "nom": "Pandala",
+   "carte": 162793496
+  },
+  {
+   "id": 53,
+   "nom": "Sucreries",
+   "carte": 162795544
+  },
+  {
+   "id": 54,
+   "nom": "Brâkmar",
+   "carte": 162791450
+  },
+  {
+   "id": 55,
+   "nom": "Bonta",
+   "carte": 162793498
+  },
+  {
+   "id": 56,
+   "nom": "Forêt Maléfique",
+   "carte": 162795546
+  },
+  {
+   "id": 57,
+   "nom": "Mercenaire",
+   "carte": 162791452
+  },
+  {
+   "id": 58,
+   "nom": "Ephedrya",
+   "carte": 162793500
+  },
+  {
+   "id": 60,
+   "nom": "Almanax Printanier",
+   "carte": 162793502
+  },
+  {
+   "id": 61,
+   "nom": "Almanax Estival",
+   "carte": 162795550
+  },
+  {
+   "id": 62,
+   "nom": "Almanax Automnal",
+   "carte": 162795548
+  },
+  {
+   "id": 63,
+   "nom": "Almanax Hivernal",
+   "carte": 162791454
+  }
+ ]
+}

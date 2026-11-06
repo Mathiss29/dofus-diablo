@@ -1838,5 +1838,27 @@
     }
    ]
   }
+ },
+ "havresac": {
+  "name": "Havre-Sac",
+  "level": 1,
+  "open": {
+   "world": "havresac",
+   "start": [
+    0,
+    0
+   ],
+   "aggro": 0,
+   "leash": 0,
+   "respawn": 60,
+   "checkpoints": [],
+   "subareas": {},
+   "havreSac": {
+    "arrivee": 257,
+    "arche": 157,
+    "poutch": 371,
+    "theme": 57
+   }
+  }
  }
 }

@@ -1,5 +1,6 @@
 import type { EquipSlot, Item, Stat } from './items';
 import type { EtatQuetes } from './quests';
+import type { RetourHavreSac } from './events';
 import type { World } from './world';
 
 /** État du joueur gardé entre deux parties (écran « Mes personnages », 3 emplacements, choix 16B).
@@ -20,6 +21,10 @@ export interface EtatJoueur {
   /** Apparat possédé et porté (Apparence 5A). */
   apparats?: string[];
   apparat?: Partial<Record<'chapeau' | 'cape' | 'bouclier' | 'familier', string>>;
+  /** Havre-Sac (maquette Hub) : Zaaps découverts, zones visitées, et d'où l'on vient si l'on est dans le Havre-Sac. */
+  zaaps?: { zone: string; name: string }[];
+  zonesVues?: string[];
+  havreSac?: RetourHavreSac;
 }
 
 const copie = <T>(o: T): T => JSON.parse(JSON.stringify(o)) as T;
@@ -32,6 +37,7 @@ export function exporterJoueur(w: World): EtatJoueur {
     bar: p.bar, variants: p.variants, learned: [...p.learned],
     x: p.x, y: p.y, retour: w.pointDeRetour, quetes: w.quetes?.exporter(), zone: w.opts.zone,
     apparats: p.apparats, apparat: p.apparat,
+    zaaps: p.zaaps, zonesVues: p.zonesVues, ...(w.retour ? { havreSac: w.retour } : {}),
   });
 }
 
@@ -50,11 +56,14 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
   p.apparat = {};
   for (const k of ['chapeau', 'cape', 'bouclier', 'familier'] as const) { const a = s.apparat?.[k]; if (a === '0' || (a && p.apparats.includes(a))) p.apparat[k] = a; }
   p.learned = new Set(s.learned ?? []);
+  if (Array.isArray(s.zaaps)) p.zaaps = s.zaaps.filter(z => typeof z?.zone === 'string' && typeof z?.name === 'string');
+  p.zonesVues = [...new Set([...(s.zonesVues ?? []), ...p.zonesVues])];
+  if (s.havreSac && w.dansHavreSac && !w.retour) w.retour = s.havreSac;
   if (s.bar?.length === p.bar.length) p.bar = s.bar.map(k => (k && p.cls.spells[k] ? k : null));
   p.recompute(); p.hp = p.maxHp;
   p.learnSpells(null);
   // position et point de retour : seulement dans la même zone, et pas à l'arrivée par un portail (le World y a posé le perso)
-  if ((s.zone ?? 'incarnam') !== w.opts.zone || w.opts.arrivee) return;
+  if ((s.zone ?? 'incarnam') !== w.opts.zone || w.opts.arrivee || w.opts.position || w.opts.zaap) return;
   if (s.retour) w.setPointDeRetour(s.retour.name, s.retour.x, s.retour.y);
   // départ : là où l'on s'était arrêté, sinon au point de retour
   const r = w.pointDeRetour, ok = w.map.walkable(s.x, s.y);

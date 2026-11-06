@@ -27,7 +27,7 @@ const KEYS = ['&', 'é', '"', "'", '(', '-'];
 const MENUS: [string, string, string][] = [
   ['inventory', 'Inventaire', 'I'], ['characteristic', 'Caractéristiques', 'C'], ['job', 'Métiers', 'J'], ['spells', 'Sorts', 'S'], ['quest', 'Quêtes', ''],
   ['map', 'Carte du monde', ''], ['bestiary', 'Bestiaire', ''], ['success', 'Succès', ''], ['breach', 'Failles', ''],
-  ['guide', 'Guide', 'H'], ['options', 'Réglages', 'O'],
+  ['home', 'Havre-Sac', 'H'], ['guide', 'Guide', 'G'], ['options', 'Réglages', 'O'],
 ];
 
 const C = {

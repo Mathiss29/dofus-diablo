@@ -1,10 +1,12 @@
 {
- "_": "Boutique d'Emp, le Méryde du Recyclage (maquette 0.2, choix 9A+9B ; 9D apparats : apparat_prix, prix par emplacement de tous les apparats officiels (src/data/apparat.json)). Prix en Pépites (objet officiel 14635).",
- "emp": [
+ "_": "Boutiques des PNJ du Havre-Sac (maquette Hub 4A, 2026-11-06) : Otomaï (Potion de Rappel), Mère Bouillotte (nourriture), Goultard (clés de donjon) ; apparat_prix = prix par emplacement des apparats officiels chez Tissebelle (src/data/apparat.json). Prix en Pépites (objet officiel 14635), que Kerubim Crépin donne contre les objets recyclés.",
+ "otomai": [
   {
    "id": "548",
    "prix": 30
-  },
+  }
+ ],
+ "bouillotte": [
   {
    "id": "16670",
    "prix": 6
@@ -12,7 +14,9 @@
   {
    "id": "17169",
    "prix": 20
-  },
+  }
+ ],
+ "goultard": [
   {
    "id": "8143",
    "prix": 150
