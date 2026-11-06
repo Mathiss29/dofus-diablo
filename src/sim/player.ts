@@ -177,7 +177,8 @@ export class Player extends Entity {
     }
     return 1 - k;
   }
-  get paMax(): number { return this.cls.pa.max + this.stat('pa'); }
+  /** +1 PA au niveau 100, comme dans Dofus (6 PA au départ, 7 ensuite). */
+  get paMax(): number { return this.cls.pa.max + (this.level >= 100 ? 1 : 0) + this.stat('pa'); }
   get pmMax(): number { return this.cls.pm.max + this.stat('pm'); }
   get critChance(): number { return this.cls.critChance + this.stat('critique') / 100; }
   /** Effet légendaire porté (somme si plusieurs). */
