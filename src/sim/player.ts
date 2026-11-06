@@ -5,10 +5,14 @@ import { BASE_STATS, EQUIP_SLOTS, METIER_MAX, metierXpNeeded, type EquipSlot, ty
 import type { PlayerInput } from './input';
 import type { World } from './world';
 import { fuiteFactor, tackleSlow, tacleOf } from './caracs';
+import { CASE, TOUR } from './monster';
+import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type SortGrade, type SortOfficiel } from './sorts';
 
 type ActiveSkill =
   | { id: 'attaque'; def: ComboHit; t: number; impacted: boolean; idx: number; boosted: false }
-  | { id: string; def: SpellDef; t: number; impacted: boolean; sx: number; sy: number; tx: number; ty: number; boosted: boolean };
+  | { id: string; def: SpellDef; t: number; impacted: boolean; sx: number; sy: number; tx: number; ty: number; boosted: boolean;
+      /** Dommages du grade atteint / dommages du grade 1 ; zone d'explosion de la flèche (Abolition) ; portée de la flèche. */
+      gm: number; explode?: number; range?: number };
 
 export class Player extends Entity {
   readonly faction = 'player' as const;
@@ -59,6 +63,18 @@ export class Player extends Entity {
   vise(x: number, y: number, r: number): boolean { return !!this.dest && Math.hypot(this.dest.x - x, this.dest.y - y) <= r; }
   /** Arrête le déplacement en cours (après une porte : on ne repart pas vers l'ancien clic). */
   stopMove() { this.dest = null; this.path = []; this.chaseId = null; }
+  /** Barre (choix 5A) : 6 touches (& é " ' ( -), le clic droit (6A, case libre) et Espace. Identifiants des sorts, null = vide. */
+  bar: (SkillId | null)[] = Array(8).fill(null);
+  static readonly CLIC_DROIT = 6;
+  static readonly ESPACE = 7;
+  /** Choix de chaque paire officielle (4A, comme Dofus 3) : 0 le sort, 1 sa variante ; l'un ou l'autre. */
+  variants: number[] = [];
+  /** Sorts déjà appris (placés une fois seuls dans la barre, choix 7A ; retirés à la main, ils n'y reviennent pas). */
+  learned = new Set<string>();
+  /** Lancers récents de chaque sort (limite officielle de lancers par tour = par 3 s). */
+  private casts: Record<string, number[]> = {};
+  /** Bouclier (Ferveur) : points et temps restant. */
+  shield = 0; shieldT = 0;
   private repathT = 0;
   private buffer: SkillId | null = null;
   private bufferT = 0;
@@ -68,6 +84,68 @@ export class Player extends Entity {
     this.pa = cls.pa.max; this.pm = cls.pm.max; this.potions = cls.potion.charges;
     this.recompute();
     for (const k of Object.keys(cls.spells)) this.cd[k] = 0;
+    this.learnSpells(null);
+  }
+
+  // --- Sorts officiels de la classe (onglet Sorts, src/data/sorts.json) -------------
+  /** Les 22 paires officielles de la classe, triées par niveau d'obtention. */
+  get pairs(): PaireSorts[] { return SORTS[this.cls.sorts] ?? []; }
+  /** Identifiant du sort jouable correspondant à un sort officiel (null : pas encore jouable). */
+  keyOf(dofusId: number): SkillId | null {
+    for (const [k, d] of Object.entries(this.cls.spells)) if (d.dofusId === dofusId) return k;
+    return null;
+  }
+  /** Fiche officielle d'un sort de la classe. */
+  official(id: SkillId): SortOfficiel | null {
+    const d = this.cls.spells[id];
+    if (!d?.dofusId) return null;
+    for (const p of this.pairs) for (const s of p) if (s.id === d.dofusId) return s;
+    return null;
+  }
+  /** Niveau requis (officiel, sauf le déplacement donné au niveau 1). */
+  requiredLevel(s: SortOfficiel): number { return niveauRequis(s, this.cls.spells[this.cls.mobility]?.dofusId); }
+  /** Grade officiel atteint pour ce sort (null pour un sort sans fiche : arme, attaque). */
+  grade(id: SkillId): SortGrade | null { const o = this.official(id); return o ? gradeAuNiveau(o, this.level) : null; }
+  /** Le sort est-il connu : niveau atteint et choisi dans sa paire ? */
+  knows(id: SkillId): boolean {
+    const d = this.cls.spells[id];
+    if (!d?.dofusId) return !!d;
+    const i = this.pairs.findIndex(p => p.some(s => s.id === d.dofusId));
+    if (i < 0) return true;
+    const s = this.pairs[i][this.variants[i] ?? 0];
+    return s.id === d.dofusId && this.level >= this.requiredLevel(s);
+  }
+  /** Place seuls dans la barre les sorts nouvellement connus (premier emplacement libre ; Espace pour le déplacement). */
+  learnSpells(world: World | null) {
+    this.pairs.forEach((p, i) => {
+      const k = this.keyOf(p[this.variants[i] ?? 0].id);
+      if (!k || this.learned.has(k) || !this.knows(k)) return;
+      this.learned.add(k);
+      if (this.bar.includes(k)) return;
+      const slot = k === this.cls.mobility ? (this.bar[Player.ESPACE] ? -1 : Player.ESPACE) : this.bar.findIndex((b, j) => !b && j < Player.ESPACE);
+      if (slot >= 0) this.bar[slot] = k;
+      world?.emit({ k: 'newSpell', id: k, slot });
+    });
+  }
+  /** Met un sort (ou rien) dans un emplacement de la barre ; s'il était déjà ailleurs, les deux s'échangent. */
+  assign(slot: number, id: SkillId | null): boolean {
+    if (slot < 0 || slot >= this.bar.length || (id && !this.knows(id))) return false;
+    const from = id ? this.bar.indexOf(id) : -1;
+    if (from >= 0) this.bar[from] = this.bar[slot];
+    this.bar[slot] = id;
+    return true;
+  }
+  /** Choisit le sort (0) ou sa variante (1) d'une paire ; la barre suit. */
+  setVariant(pair: number, v: 0 | 1): boolean {
+    const p = this.pairs[pair];
+    if (!p || this.level < this.requiredLevel(p[v])) return false;
+    const old = this.keyOf(p[this.variants[pair] ?? 0].id);
+    this.variants[pair] = v;
+    const k = this.keyOf(p[v].id);
+    const at = old ? this.bar.indexOf(old) : -1;
+    if (at >= 0) this.bar[at] = k && this.knows(k) ? k : null;
+    if (k) this.learned.add(k);
+    return true;
   }
 
   // --- Caractéristiques -------------------------------------------------------
@@ -189,12 +267,22 @@ export class Player extends Entity {
       dmg: Math.round(base + this.weaponDamage() * mult), anim: `arme${anim}` };
   }
   /** Coût en PA d'un sort (0 pour l'attaque de base). */
-  paCost(id: SkillId): number { return this.spell(id)?.pa ?? 0; }
+  paCost(id: SkillId): number {
+    const s = this.spell(id);
+    if (!s || s.pm) return s?.pa ?? 0;
+    return this.grade(id)?.pa ?? s.pa ?? 0;
+  }
+  /** Lancers encore possibles d'ici 3 s : la limite officielle « lancers par tour » (0 = sans limite). */
+  private castsLeft(id: SkillId): boolean {
+    const g = this.cls.spells[id]?.pm ? null : this.grade(id);
+    if (!g?.parTour) return true;
+    return (this.casts[id] ?? []).filter(t => this.age - t < TOUR).length < g.parTour;
+  }
   /** Le sort a-t-il ses ressources (PA, ou une charge de PM pour un déplacement) ? */
   hasResource(id: SkillId): boolean {
     const s = this.spell(id);
     if (!s) return id === 'attaque';
-    return this.pa >= (s.pa ?? 0) && this.pm >= (s.pm ?? 0);
+    return this.pa >= this.paCost(id) && this.pm >= (s.pm ?? 0);
   }
   /** La ressource qui manque pour lancer ce sort. */
   missing(id: SkillId): 'pa' | 'pm' { const s = this.spell(id); return s && this.pm < (s.pm ?? 0) ? 'pm' : 'pa'; }
@@ -211,6 +299,7 @@ export class Player extends Entity {
       this.xp -= this.xpNeeded; this.level++; this.points += 5;
       this.recompute(); this.hp = this.maxHp;
       world.emit({ k: 'levelUp', level: this.level });
+      this.learnSpells(world);
     }
     if (this.level >= this.cls.maxLevel) this.xp = 0;
     return gain;
@@ -230,6 +319,15 @@ export class Player extends Entity {
     }
   }
 
+  /** Dernier coup porté (la jauge baisse après 6 s sans frapper, ligne Rage 26B). */
+  lastHitAt = -99;
+  /** Coup porté à cette distance : la Rage du Iop monte plus en mêlée, la Précision du Crâ plus de loin (24B). */
+  rageOnHit(dist: number, world: World) {
+    const R = this.cls.rage;
+    this.lastHitAt = this.age;
+    const k = R.mode === 'melee' ? (dist <= CASE * 1.5 + this.radius ? 1.5 : 1) : R.mode === 'distance' ? (dist > CASE * 4 ? 2 : 0.5) : 1;
+    this.addRage(R.perHit * k, world);
+  }
   /** Remplit la jauge de classe ; prévient l'affichage quand elle devient pleine. */
   addRage(n: number, world: World) {
     const R = this.cls.rage, was = this.rageFull;
@@ -250,6 +348,7 @@ export class Player extends Entity {
     const sp = this.spell(id);
     if (!sp && id !== 'attaque') return false;
     if (sp && this.cd[id] > 0) return false;
+    if (sp && id !== 'arme' && (!this.knows(id) || !this.castsLeft(id))) return false;
     if (id === this.autoAttack && this.autoCd > 0) return false;
     if (!this.hasResource(id)) return false;
     if (this.state === 'free' || !this.skill) return true;
@@ -301,8 +400,20 @@ export class Player extends Entity {
     // Rage pleine : ce sort est renforcé (pas les déplacements)
     const boosted = this.rageFull && def.move?.kind !== 'leap';
     if (boosted) { this.rage = 0; world.emit({ k: 'rageSpent', spell: id }); }
-    this.skill = { id, def, t: 0, impacted: false, sx: this.x, sy: this.y, tx, ty, boosted };
-    this.cd[id] = def.cooldown; this.pa -= def.pa ?? 0; this.pm -= def.pm ?? 0;
+    // Grade officiel : coût, relance (tours × 3 s), dommages (grade atteint / grade 1), portée des flèches (cases × 48 px)
+    const g = def.pm ? null : this.grade(id), g0 = this.official(id)?.grades[0];
+    const gm = g && g0 && dmgMoyen(g0) ? dmgMoyen(g) / dmgMoyen(g0) : 1;
+    const range = g && def.hit.shape === 'projectile' ? g.po[1] * CASE + CASE / 2 : undefined;
+    let explode: number | undefined;
+    if (def.grow) {   // la zone grandit à chaque lancer des 3 dernières secondes
+      const n = (this.casts[id] ?? []).filter(t => this.age - t < TOUR).length;
+      explode = def.grow[Math.min(n, def.grow.length - 1)];
+    }
+    this.skill = { id, def, t: 0, impacted: false, sx: this.x, sy: this.y, tx, ty, boosted, gm, explode, range };
+    this.cd[id] = g ? Math.max(g.relance * TOUR, def.cooldown) : def.cooldown;
+    this.pa -= this.paCost(id); this.pm -= def.pm ?? 0;
+    (this.casts[id] ??= []).push(this.age);
+    this.casts[id] = this.casts[id].filter(t => this.age - t < TOUR);
     if (def.move?.kind === 'leap') this.invuln = Math.max(this.invuln, def.duration + 0.05);
     this.setAnim(def.charge ? `${id}_charge` : def.anim ?? id);
     this.facing = def.move && (tx !== this.x || ty !== this.y) ? Math.atan2(ty - this.y, tx - this.x) : Math.atan2(aim.y - this.y, aim.x - this.x);
@@ -315,6 +426,8 @@ export class Player extends Entity {
     this.autoCd = Math.max(0, this.autoCd - dt);
     for (const [k, s] of Object.entries(this.stacks)) { s.t -= dt; if (s.t <= 0) delete this.stacks[k]; }
     this.invuln = Math.max(0, this.invuln - dt);
+    if (this.shieldT > 0 && (this.shieldT -= dt) <= 0) this.shield = 0;
+    if (this.rage > 0 && this.age - this.lastHitAt > 6) this.rage = Math.max(0, this.rage - 8 * dt);   // 26B : la jauge retombe hors combat
     this.potionCd = Math.max(0, this.potionCd - dt);
     this.pa = Math.min(this.paMax, this.pa + this.cls.pa.regen * dt);
     this.pm = Math.min(this.pmMax, this.pm + dt * (1 + this.legendary('mobilite') / 100) / this.cls.pm.recharge);
@@ -351,7 +464,7 @@ export class Player extends Entity {
     }
     // Tampon d'entrée : une touche pressée 150 ms trop tôt n'est pas perdue
     const pr = input.pressed === 'attaque' ? this.autoAttack : input.pressed;
-    if (pr && (pr === 'attaque' || this.spell(pr))) {
+    if (pr && (pr === 'attaque' || (this.spell(pr) && (pr === 'arme' || this.knows(pr))))) {
       // sort sans ressource : on le signale (le HUD fait clignoter le compteur), sans le garder en tampon
       if (!this.hasResource(pr) && (pr === 'attaque' || this.cd[pr] <= 0)) world.emit({ k: 'noResource', res: this.missing(pr) });
       this.buffer = pr; this.bufferT = 0.15;
@@ -458,16 +571,25 @@ export class Player extends Entity {
         mult *= 1 + d.stack.per * sig('stack') * st.n;
         this.stacks[s.id] = { n: Math.min(d.stack.max, st.n + 1), t: d.stack.time };
       }
-      const hit = { dmg: (d.dmg + (s.id === this.cls.basic ? this.weaponDamage() : 0)) * mult, knock: d.knock * sig('knock'), element: d.element,
+      if (d.buff) this.addMod(d.buff.stat, Math.round(d.buff.n * sig('buff')), d.buff.t);
+      if (d.shield) { this.shield = Math.max(this.shield, Math.round(this.maxHp * d.shield.part * sig('shield'))); this.shieldT = d.shield.t; }
+      if (d.selfKnock) {   // « Recule de n cases » : à l'opposé du tir (freinage de applyKnock : distance = vitesse / 7,13)
+        const v = d.selfKnock * sig('selfKnock') * 7.13;
+        this.kx -= Math.cos(this.facing) * v; this.ky -= Math.sin(this.facing) * v;
+      }
+      const hit = { dmg: (d.dmg * s.gm + (s.id === this.cls.basic ? this.weaponDamage() : 0)) * mult, knock: d.knock * sig('knock'), element: d.element, vsSummon: d.vsSummon && 1 + (d.vsSummon - 1) * sig('summon'), vsElite: sig('summon') > 1,
+        pushDmg: d.pushDmg && s.boosted,
         lifesteal: d.lifesteal && d.lifesteal * sig('lifesteal'), erosion: d.erosion && d.erosion * sig('erosion'),
         pmLoss: d.pmLoss && Math.round(d.pmLoss * sig('pm')), paLoss: d.paLoss && Math.round(d.paLoss * sig('pa')) };
       let hits = 0, size = 0;
-      if (hz.shape === 'cone') { size = hz.range * area; hits = world.hitCone(this.x, this.y, this.facing, size, (hz.arc * Math.PI) / 180, hit, d.stun); }
+      if (d.self) { size = 60; }
+      else if (hz.shape === 'cone') { size = hz.range * area; hits = world.hitCone(this.x, this.y, this.facing, size, (hz.arc * Math.PI) / 180, hit, d.stun); }
       else if (hz.shape === 'line') { size = hz.length * area; hits = world.hitLine(this.x, this.y, this.facing, size, hz.width * area, hit, d.stun); }
       else if (hz.shape === 'circle') { size = hz.radius * area; hits = world.hitCircle(this.x, this.y, size, hit, d.stun); }
       else {
         // Flèche : la zone (et les dommages) partent avec le projectile ; l'effet d'impact se joue à l'arrivée
-        world.shoot(this.x, this.y, this.facing, hz, hit, d.stun ?? 0, sig('explode'), s.id);
+        const shot = { ...hz, range: s.range ?? hz.range, explode: s.explode ?? hz.explode };
+        world.shoot(this.x, this.y, this.facing, shot, hit, d.stun ?? 0, sig('explode'), s.id);
         size = hz.range;
       }
       if (hz.shape !== 'projectile') world.emit({ k: 'spell', fx: d.fx, id: s.id, x: this.x, y: this.y, facing: this.facing, size,
@@ -482,7 +604,8 @@ export class Player extends Entity {
   hurt(raw: number, fromX: number, fromY: number, world: World, element: Element = 'neutre'): boolean {
     if (this.invuln > 0 || this.dead) return false;
     const E = element === 'meilleur' ? 'Neutre' : `${element[0].toUpperCase()}${element.slice(1)}`;
-    const dmg = Math.max(1, Math.round((raw - this.stat(`red${E}` as Stat)) * (1 - Math.min(50, this.stat(`res${E}` as Stat)) / 100)));
+    let dmg = Math.max(1, Math.round((raw - this.stat(`red${E}` as Stat)) * (1 - Math.min(50, this.stat(`res${E}` as Stat)) / 100)));
+    if (this.shield > 0) { const a = Math.min(this.shield, dmg); this.shield -= a; dmg -= a; }   // le bouclier prend les coups d'abord
     this.hp -= dmg; this.flash = 0.1; this.invuln = this.cls.iframesOnHit;
     const a = Math.atan2(this.y - fromY, this.x - fromX);
     this.kx += Math.cos(a) * 260; this.ky += Math.sin(a) * 260;

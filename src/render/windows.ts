@@ -6,6 +6,7 @@ import {
   type EquipSlot, type Item, type Stat,
 } from '../sim/items';
 import { Player } from '../sim/player';
+import { gradeAuNiveau, type SortOfficiel } from '../sim/sorts';
 import type { World } from '../sim/world';
 
 const SLOT_NAMES: Record<EquipSlot, string> = {
@@ -102,6 +103,34 @@ const CSS = `
 .dw .opt .row output{text-align:right;color:#c9c4ab;font-variant-numeric:tabular-nums}
 .dw .opt .keys{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:12px;color:#c9c4ab}
 .dw .opt .keys b{color:#e8e2cc;font-family:monospace}
+.dw .win.sorts{width:min(900px,96vw);height:min(680px,92vh)}
+.dw .sorts .sb{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;min-height:0}
+.dw .sorts .ls{overflow:auto;padding:10px;border-right:1px solid #0d0c0a;background:#292824;display:grid;gap:5px;align-content:start}
+.dw .sorts .pr{display:grid;grid-template-columns:1fr 16px 1fr;gap:4px;align-items:center}
+.dw .sorts .pr .x{color:#8f8a73;text-align:center;font-size:12px}
+.dw .sorts .sp{display:grid;grid-template-columns:40px 1fr;gap:8px;align-items:center;padding:4px 6px;border-radius:3px;background:linear-gradient(#3e3d37,#33322d);border:1px solid #57554c;cursor:pointer;min-width:0;line-height:1.2}
+.dw .sorts .sp img{width:40px;height:40px;border-radius:4px}
+.dw .sorts .sp small{display:block;color:#a9a48b;font-size:11px}
+.dw .sorts .sp.lock{opacity:.4;filter:grayscale(1)}
+.dw .sorts .sp.on{border-color:#b9e54b;box-shadow:inset 0 0 0 1px #b9e54b}
+.dw .sorts .sp.vu{outline:2px solid #f2d36b;outline-offset:1px}
+.dw .sorts .sp .soon{color:#c9a55a}
+.dw .sorts .fi{padding:14px 16px;overflow:auto;display:grid;gap:10px;align-content:start}
+.dw .sorts .fh{display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:center}
+.dw .sorts .fh img{width:64px;height:64px;border-radius:6px;border:1px solid #6a675c}
+.dw .sorts .fh b{font-size:18px;color:#f4efe0}
+.dw .sorts .gr{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.dw .sorts .gr span{font-size:11px;padding:3px 7px;border-radius:3px;border:1px solid #45433b;color:#a9a48b;cursor:pointer}
+.dw .sorts .gr span.on{border-color:#b9e54b;color:#e8e2d4}
+.dw .sorts dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:0}
+.dw .sorts dt{color:#a9a48b}.dw .sorts dd{margin:0}
+.dw .sorts .ds{background:#1d1c19;border:1px solid #34322b;border-radius:3px;padding:8px 10px;white-space:pre-line;font-size:12.5px}
+.dw .sorts .bb{grid-column:1/-1;display:flex;gap:6px;align-items:end;padding:10px 12px;border-top:1px solid #0d0c0a;background:#1d1c19;flex-wrap:wrap}
+.dw .sorts .bs{width:52px;display:grid;gap:2px;justify-items:center;font-size:11px;color:#a9a48b;font-weight:bold}
+.dw .sorts .bs i{width:50px;height:50px;border-radius:4px;border:1px solid #57554c;background:#2e2d29 center/44px no-repeat;display:block;cursor:pointer}
+.dw .sorts .bs i.drop{border-color:#b9e54b;box-shadow:0 0 8px #b9e54b88}
+.dw .sorts .bs.gap{margin-left:12px}
+.dw .sorts .bb .hint{flex-basis:100%}
 .dw .win.job{width:min(560px,96vw);height:min(640px,92vh)}
 .dw .job .in{padding:14px 16px;overflow:auto;display:grid;gap:12px;align-content:start}
 .dw .mh{display:flex;gap:12px;align-items:center}.dw .mh img{width:56px;height:56px}
@@ -118,7 +147,7 @@ const CSS = `
 .dw .tip .cmp{border-top:1px solid #3a3a2c;margin-top:6px;padding-top:6px;font-size:12px}
 `;
 
-type Mode = 'inv' | 'car' | 'job' | 'opt';
+type Mode = 'inv' | 'car' | 'job' | 'opt' | 'sorts';
 
 /** Fenêtres façon Dofus 3 : « Inventaire » (le perso sur son socle, ses emplacements autour, le sac à onglets)
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
@@ -166,7 +195,8 @@ export class Windows {
   refresh() { if (this.win) this.render(); }
 
   private render() {
-    if (this.mode === 'car') this.renderCarac(); else if (this.mode === 'job') this.renderJob(); else if (this.mode === 'opt') this.renderOpt(); else this.renderInv();
+    if (this.mode === 'car') this.renderCarac(); else if (this.mode === 'job') this.renderJob(); else if (this.mode === 'opt') this.renderOpt();
+    else if (this.mode === 'sorts') this.renderSorts(); else this.renderInv();
     this.win!.querySelector('[data-close]')!.addEventListener('click', () => this.close());
   }
   private title(name: string, icon: string) {
@@ -326,8 +356,8 @@ export class Windows {
       <label class="row"><span>Effets d'impact (F)</span><input type="checkbox" data-juice ${this.juice.get() ? 'checked' : ''} style="justify-self:start;accent-color:#b9e54b"><output></output></label>
       ${(['vent', 'eau', 'particules'] as const).map(k => `<label class="row"><span>${({ vent: 'Arbres au vent', eau: 'Eau animée', particules: 'Particules (spores, braises…)' })[k]}</span><input type="checkbox" data-b="${k}" ${r[k] ? 'checked' : ''} style="justify-self:start;accent-color:#b9e54b"><output></output></label>`).join('')}
       <div class="sub">Touches</div>
-      <div class="keys">${[['Clic gauche', 'aller / attaquer (maintenu : continuer)'], ['Maj + clic', 'attaquer sur place'], ['Clic droit', 'sort favori'],
-        ['& é " \' ( -', 'barre de sorts'], ['Espace', 'déplacement'], ['E', 'potion'], ['I', 'inventaire'], ['C', 'caractéristiques'], ['J', 'métiers'],
+      <div class="keys">${[['Clic gauche', 'aller / attaquer (maintenu : continuer)'], ['Maj + clic', 'attaquer sur place'], ['Clic droit', 'sort de la barre (case libre)'],
+        ['& é " \' ( -', 'barre de sorts'], ['S', 'sorts'], ['Espace', 'déplacement'], ['E', 'potion'], ['I', 'inventaire'], ['C', 'caractéristiques'], ['J', 'métiers'],
         ['O', 'réglages'], ['Molette', 'zoom'], ['F', 'effets d\'impact'], ['K', 'changer de classe (Iop / Crâ)'], ['H', 'aide'], ['Échap', 'fermer']]
         .map(([k, d]) => `<b>${k}</b><span>${d}</span>`).join('')}</div>
       <div><span class="btn" data-defaut>Valeurs par défaut</span></div>
@@ -343,6 +373,67 @@ export class Windows {
     w.querySelectorAll<HTMLInputElement>('[data-b]').forEach(e => e.addEventListener('change', () => { r[e.dataset.b as 'vent' | 'eau' | 'particules'] = e.checked; apply(); }));
     w.querySelector<HTMLInputElement>('[data-juice]')!.addEventListener('change', e => this.juice.set((e.target as HTMLInputElement).checked));
     w.querySelector('[data-defaut]')!.addEventListener('click', () => { Object.assign(r, REGLAGES_DEFAUT); apply(); this.render(); });
+  }
+
+  /** Sort affiché dans la fiche de l'onglet Sorts, et grade montré. */
+  private vu: number | null = null;
+  private vuGrade = -1;
+  /** Onglet Sorts (choix 8A, comme Dofus 3) : les 22 paires officielles (sort ⇄ variante) triées par niveau, la fiche
+   *  du sort avec ses grades, et la barre où l'on glisse les sorts. Clic sur l'autre sort d'une paire : on l'échange. */
+  private renderSorts() {
+    const w = this.win!, p = this.world.player, pairs = p.pairs;
+    const ico = (s: SortOfficiel) => `assets/ui/sorts/sort_${s.icon}.png`;
+    const all = pairs.flat();
+    const vu = all.find(s => s.id === this.vu) ?? pairs[0]?.[0];
+    const row = (pr: SortOfficiel[], i: number) => pr.map((s, j) => {
+      const lock = p.level < p.requiredLevel(s), key = p.keyOf(s.id), chosen = (p.variants[i] ?? 0) === j;
+      const drag = !lock && chosen && key ? `draggable="true" data-drag="${key}"` : '';
+      return `<div class="sp ${lock ? 'lock' : ''} ${chosen && !lock ? 'on' : ''} ${vu?.id === s.id ? 'vu' : ''}" data-s="${s.id}" data-p="${i}" data-v="${j}" ${drag}>
+        <img src="${ico(s)}" alt=""><span>${s.name}<small>niv ${p.requiredLevel(s)}${key ? '' : ' · <span class="soon">bientôt jouable</span>'}</small></span></div>`;
+    }).join('<span class="x">⇄</span>');
+    let fiche = '';
+    if (vu) {
+      const cur = gradeAuNiveau(vu, p.level), gi = this.vuGrade >= 0 && this.vuGrade < vu.grades.length ? this.vuGrade : vu.grades.indexOf(cur), g = vu.grades[gi];
+      const key = p.keyOf(vu.id), mob = key === p.cls.mobility;
+      const port = g.po[1] === 0 ? 'sur soi' : `${g.po[0]} à ${g.po[1]} case${g.po[1] > 1 ? 's' : ''}`;
+      const rel = g.relance ? `${g.relance * 3} s` : 'aucune';
+      const lanc = g.parTour ? `${g.parTour} toutes les 3 s` : 'sans limite (PA)';
+      const dmg = g.dmg ? `${g.dmg[0]}${g.dmg[1] > g.dmg[0] ? ` à ${g.dmg[1]}` : ''} ${g.element ? g.element[0].toUpperCase() + g.element.slice(1) : ''}${g.vol ? ' (vol de vie)' : ''} <span class="hint">(valeurs de Dofus ; en jeu ×1,5 et vos caractéristiques)</span>` : '—';
+      fiche = `<div class="fh"><img src="${ico(vu)}" alt=""><div><b>${vu.name}</b>
+        <div class="gr">${vu.grades.map((x, k) => `<span data-g="${k}" class="${k === gi ? 'on' : ''}">Grade ${k + 1} · niv ${x.niv}</span>`).join('')}</div></div></div>
+        ${p.level < p.requiredLevel(vu) ? `<div class="note">Se débloque au niveau ${p.requiredLevel(vu)}.</div>` : ''}
+        ${key ? '' : '<div class="note">Pas encore jouable : il arrivera avec les zones de son niveau.</div>'}
+        <dl><dt>Coût</dt><dd>${mob ? `${p.cls.spells[key!].pm} PM (déplacement)` : `${g.pa} PA`}</dd><dt>Portée</dt><dd>${port}</dd>
+        <dt>Recharge</dt><dd>${mob ? 'charges de PM' : rel}</dd><dt>Lancers</dt><dd>${mob ? '—' : lanc}</dd><dt>Dommages</dt><dd>${dmg}</dd></dl>
+        <div class="ds">${vu.desc}</div>
+        <div class="hint">Glisse un sort débloqué dans la barre, ou clique-le puis clique une case. Clic sur l'autre sort d'une paire pour l'échanger (un seul des deux, comme dans Dofus). Clic droit sur une case de la barre : la vider.</div>`;
+    }
+    const KEYS = ['&', 'é', '"', "'", '(', '-', 'Clic D', 'Espace'];
+    const slot = (i: number) => {
+      const id = p.bar[i], d = id ? p.cls.spells[id] : null;
+      return `<div class="bs ${i === 6 || i === 7 ? 'gap' : ''}"><i data-slot="${i}" title="${d?.name ?? 'vide'}" style="${d ? `background-image:url(assets/ui/sorts/sort_${d.icon}.png)` : ''}"></i>${KEYS[i]}</div>`;
+    };
+    w.innerHTML = `${this.title('Sorts', 'spells')}<div class="sb">
+      <div class="ls">${pairs.map((pr, i) => `<div class="pr">${row(pr, i)}</div>`).join('')}</div>
+      <div class="fi">${fiche}</div>
+      <div class="bb">${p.bar.map((_, i) => slot(i)).join('')}<span class="hint">${p.cls.name} niveau ${p.level} · ${all.filter(s => p.level >= p.requiredLevel(s)).length} sorts débloqués sur ${all.length}</span></div>
+    </div>`;
+    w.querySelectorAll<HTMLElement>('.sp').forEach(e => e.addEventListener('click', () => {
+      const id = +e.dataset.s!, i = +e.dataset.p!, v = +e.dataset.v! as 0 | 1;
+      if (this.vu === id && (p.variants[i] ?? 0) !== v) p.setVariant(i, v);
+      else if ((p.variants[i] ?? 0) !== v && p.level >= p.requiredLevel(pairs[i][v])) p.setVariant(i, v);
+      this.vu = id; this.vuGrade = -1; this.render(); this.onChange();
+    }));
+    w.querySelectorAll<HTMLElement>('.gr span').forEach(e => e.addEventListener('click', () => { this.vuGrade = +e.dataset.g!; this.render(); }));
+    w.querySelectorAll<HTMLElement>('[data-drag]').forEach(e => e.addEventListener('dragstart', ev => ev.dataTransfer?.setData('text/plain', e.dataset.drag!)));
+    w.querySelectorAll<HTMLElement>('[data-slot]').forEach(e => {
+      const i = +e.dataset.slot!;
+      e.addEventListener('dragover', ev => { ev.preventDefault(); e.classList.add('drop'); });
+      e.addEventListener('dragleave', () => e.classList.remove('drop'));
+      e.addEventListener('drop', ev => { ev.preventDefault(); const id = ev.dataTransfer?.getData('text/plain'); if (id && p.assign(i, id)) { this.render(); this.onChange(); } });
+      e.addEventListener('click', () => { const k = vu && p.keyOf(vu.id); if (k && p.assign(i, k)) { this.render(); this.onChange(); } });
+      e.addEventListener('contextmenu', ev => { ev.preventDefault(); p.assign(i, null); this.render(); this.onChange(); });
+    });
   }
 
   private changed() { this.hideTip(); this.render(); this.onChange(); }

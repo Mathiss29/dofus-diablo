@@ -100,10 +100,10 @@ describe('PA, PM, potion et XP', () => {
     w.step(STEP, { ...NO_INPUT, aim: { x: w.player.x + 100, y: w.player.y }, pressed, ...extra });
   const idle = (w: World, s: number) => { for (let i = 0; i < s * 60; i++) w.step(STEP, NO_INPUT); };
 
-  it('Épée Céleste coûte 3 PA, et les PA remontent ensuite', () => {
+  it('Pression coûte 3 PA (coût officiel), et les PA remontent ensuite', () => {
     const w = newWorld(), p = w.player;
-    press(w, 'epee');
-    expect(p.skill?.id).toBe('epee');
+    press(w, 'pression');
+    expect(p.skill?.id).toBe('pression');
     expect(p.pa).toBeCloseTo(3, 1);
     idle(w, 3);
     expect(p.pa).toBe(p.cls.pa.max);
@@ -112,7 +112,7 @@ describe('PA, PM, potion et XP', () => {
   it('sans assez de PA, le sort ne part pas et le HUD est prévenu', () => {
     const w = newWorld(), p = w.player;
     p.pa = 2;
-    press(w, 'colere');
+    press(w, 'pression');
     expect(p.skill).toBeNull();
     expect(w.drainEvents().some(e => e.k === 'noResource' && e.res === 'pa')).toBe(true);
   });

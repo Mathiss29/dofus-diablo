@@ -11,7 +11,11 @@ import { planWave } from './waves';
 
 interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: number;
   /** Effets officiels : Érosion (part des dommages ôtée aux PV max), retrait de PM / PA. */
-  erosion?: number; pmLoss?: number; paLoss?: number }
+  erosion?: number; pmLoss?: number; paLoss?: number;
+  /** Dommages multipliés sur les invocations (Concentration), et aussi sur les élites et les boss (Rage pleine). */
+  vsSummon?: number; vsElite?: boolean;
+  /** Dommages de poussée officiels si la cible heurte un obstacle ou un monstre. */
+  pushDmg?: boolean }
 /** Butin au sol (choix 1C 2D 6A) : équipements et kamas seulement. Les Communs et les kamas filent vers le joueur
  *  qui passe près ; Rare et plus se ramassent d'un clic. Les ressources vont directement dans le sac. */
 export interface Drop { uid: number; x: number; y: number; item?: Item; kamas?: number; t: number; warned?: boolean }
@@ -466,7 +470,8 @@ export class World {
       // Initiative : le premier coup porté à un monstre est renforcé ; Dommages Critiques et Dommages Poussée s'ajoutent au coup
       const first = m.struck ? 1 : 1 + initiativeBonus(p.initiative); m.struck = true;
       const flat = (crit ? p.stat('dommagesCritiques') : 0) + (def.knock > 0 ? p.stat('dommagesPoussee') : 0);
-      const dmg = Math.max(1, Math.round((p.damage(def.dmg, def.element ?? 'neutre') * this.rng.range(0.9, 1.1) * (crit ? cls.critMult : 1) * first + flat) * (1 - res / 100)));
+      const vs = def.vsSummon && (m.summoner || (def.vsElite && (m.def.elite || m.def.boss))) ? def.vsSummon : 1;
+      const dmg = Math.max(1, Math.round((p.damage(def.dmg * vs, def.element ?? 'neutre') * this.rng.range(0.9, 1.1) * (crit ? cls.critMult : 1) * first + flat) * (1 - res / 100)));
       m.hp -= dmg; m.flash = 0.09;
       if (def.erosion) { m.maxHp = Math.max(1, m.maxHp - Math.round(dmg * def.erosion)); m.hp = Math.min(m.hp, m.maxHp); }
       // Retrait PA / PM du joueur contre l'Esquive officielle du monstre : chaque point a sa chance de passer
@@ -480,14 +485,31 @@ export class World {
       const a = pushDir ?? Math.atan2(m.y - oy, m.x - ox);
       const kb = def.knock / m.def.mass;
       m.kx += Math.cos(a) * kb; m.ky += Math.sin(a) * kb;
+      if (def.pushDmg && kb > 0) this.pushDamage(m, a, kb / 7.13);
       if (!m.def.boss) m.stun = Math.max(m.stun, stun || 0.12);   // petit vacillement : interrompt les télégraphes
       else if (stun) m.stun = Math.max(m.stun, stun * 0.3);
       this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: dmg, crit, element: el });
-      if (n <= 3) p.addRage(cls.rage.perHit, this);
+      if (n <= 3) p.rageOnHit(Math.hypot(m.x - p.x, m.y - p.y), this);
       if (def.lifesteal) p.hp = Math.min(p.maxHp, p.hp + Math.round(dmg * def.lifesteal));   // la Rage monte avec les coups portés (3 cibles max par coup)
       if (m.hp <= 0) this.killMonster(m);
     }
     return n;
+  }
+  /** Dommages de poussée de Dofus : (niveau / 2 + Dommages Poussée + 32) × cases de poussée restantes / 4,
+   *  quand la cible heurte un obstacle ou un autre monstre avant la fin de son recul. */
+  private pushDamage(m: Monster, a: number, dist: number) {
+    const c = Math.cos(a), s = Math.sin(a), step = 8;
+    let t = 0;
+    for (; t < dist; t += step) {
+      const x = m.x + c * (t + m.radius), y = m.y + s * (t + m.radius);
+      if (!this.walkable(x, y) || this.monsters.some(o => o !== m && !o.dead && Math.hypot(o.x - x, o.y - y) < o.radius)) break;
+    }
+    const left = (dist - t) / CASE;
+    if (left <= 0.25) return;
+    const p = this.player, dmg = Math.max(1, Math.round((p.level / 2 + p.stat('dommagesPoussee') + 32) * left / 4));
+    m.hp -= dmg; m.flash = 0.09;
+    this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 30, amount: dmg, crit: false });
+    this.emit({ k: 'status', x: m.x, y: m.y - 20, text: 'Choc !', color: '#f2d36b' });
   }
   /** Points de PA / PM réellement retirés : chacun passe selon Retrait contre Esquive. */
   private removed(n: number, retrait: number, esquive: number): number {

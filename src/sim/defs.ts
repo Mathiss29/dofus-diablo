@@ -1,4 +1,5 @@
 /** Types des données de jeu (src/data/*.json). La simulation ne lit que ça. */
+import type { Stat } from './items';
 
 export interface ComboHit {
   duration: number; impactAt: number; cancelAt: number;
@@ -43,7 +44,10 @@ export interface SpellDef {
   /** Effets officiels : Érosion (part des dommages retirée aux PV max, Pression), retrait de PM (ralentit) et de PA (retarde ses attaques). */
   erosion?: number; pmLoss?: number; paLoss?: number;
   /** Choix 2B : l'effet qui caractérise le sort, poussé de +50 % (rage.signature) quand la Rage est pleine. */
-  rage?: 'knock' | 'length' | 'radius' | 'explode' | 'dash' | 'stack' | 'lifesteal' | 'erosion' | 'pm' | 'pa';
+  rage?: 'knock' | 'length' | 'radius' | 'explode' | 'dash' | 'stack' | 'lifesteal' | 'erosion' | 'pm' | 'pa'
+    | 'buff' | 'shield' | 'selfKnock' | 'summon';
+  /** Ligne Rage (4A, 12A) : jauge pleine, la cible qui heurte un obstacle ou un monstre prend les dommages de poussée officiels. */
+  pushDmg?: boolean;
   /** Effet visuel (FX) : arc, line, burst, land. */
   fx: 'arc' | 'line' | 'burst' | 'land';
   /** Description officielle (spellsdataroot.descriptionId), pour l'infobulle. */
@@ -52,6 +56,20 @@ export interface SpellDef {
   anim?: string;
   /** Icône d'objet (planche des objets) au lieu d'une icône de sort. */
   itemIcon?: number;
+  /** Id du sort dans Dofus (spellsdataroot) : son niveau, ses grades, son coût et sa relance officiels (src/data/sorts.json). */
+  dofusId?: number;
+  /** Sort sur soi : ne touche aucun ennemi (Tirs Éloignés). */
+  self?: boolean;
+  /** Bonus sur le lanceur (tours officiels × 3 s) : Dommages de l'Épée Divine, Portée des Tirs Éloignés. */
+  buff?: { stat: Stat; n: number; t: number };
+  /** Bouclier sur le lanceur (Ferveur) : part des PV max, durée en secondes. */
+  shield?: { part: number; t: number };
+  /** Recul du lanceur à l'impact, en px (Flèche Vagabonde : « Recule de 3 cases »). */
+  selfKnock?: number;
+  /** Dommages multipliés sur les invocations (Concentration). */
+  vsSummon?: number;
+  /** Zone d'explosion de la flèche selon le nombre de lancers sur 3 s (Flèche d'Abolition : la zone grandit à chaque lancer). */
+  grow?: number[];
 }
 /** Auto-attaque d'un type d'arme : un sort sans coût dont les dommages viennent de l'arme portée. */
 export interface WeaponProfile extends Omit<SpellDef, 'name' | 'icon' | 'element' | 'dmg' | 'cooldown' | 'anim'> {
@@ -71,15 +89,17 @@ export interface ClassDef {
   xpBase: number; maxLevel: number;
   /** Jauge de classe (Rage du Iop) : se remplit en frappant et en prenant des coups ; pleine, le sort suivant fait +bonus. */
   /** bonus : dommages en plus ; signature : multiplicateur de l'effet propre au sort (SpellDef.rage), 1,5 = +50 %. */
-  rage: { name: string; max: number; perHit: number; perHurt: number; bonus: number; signature: number };
+  rage: { name: string; max: number; perHit: number; perHurt: number; bonus: number; signature: number;
+    /** Ligne Rage 24B : la Rage du Iop monte plus en mêlée, la Précision du Crâ plus de loin (et pas en prenant des coups). */
+    mode?: 'melee' | 'distance' };
   /** Attaque de base (clic gauche maintenu) : combo de 3 coups au corps à corps, ou un sort sans coût (basic) pour les classes à distance. */
   basic?: string;
   attaque: { name: string; element: Element; comboWindow: number; combo: ComboHit[] };
   spells: Record<string, SpellDef>;
-  /** Barre de 6 sorts (touches 1 à 6), le déplacement (Espace) et le sort favori (clic droit). */
-  bar: string[];
+  /** Clé de la classe dans src/data/sorts.json (paires officielles de sorts). */
+  sorts: string;
+  /** Sort de déplacement (Espace), donné dès le niveau 1. La barre elle-même est celle du joueur (Player.bar). */
   mobility: string;
-  favorite: string;
 }
 /** 'attaque' = l'attaque de base ; sinon l'identifiant d'un sort de la classe. */
 export type SkillId = string;

@@ -23,7 +23,7 @@ const KEYS = ['&', 'é', '"', "'", '(', '-'];
 /** Colonne de menus avec les icônes officielles en couleur de Dofus 3 (uiassets_2x) : icône, nom, raccourci (vide si aucun).
  *  Seulement les menus utiles au jeu ; les autres (guilde, montures...) viendront avec leur fonctionnalité. */
 const MENUS: [string, string, string][] = [
-  ['inventory', 'Inventaire', 'I'], ['characteristic', 'Caractéristiques', 'C'], ['job', 'Métiers', 'J'], ['spells', 'Sorts', ''], ['quest', 'Quêtes', ''],
+  ['inventory', 'Inventaire', 'I'], ['characteristic', 'Caractéristiques', 'C'], ['job', 'Métiers', 'J'], ['spells', 'Sorts', 'S'], ['quest', 'Quêtes', ''],
   ['map', 'Carte du monde', ''], ['bestiary', 'Bestiaire', ''], ['success', 'Succès', ''], ['breach', 'Failles', ''],
   ['options', 'Réglages', 'O'],
 ];
@@ -85,7 +85,6 @@ export class Hud {
   private menuTip: Txt;
   // barre du bas
   private slots: SlotView[] = [];
-  private move: SlotView;
   private auto: SlotView;
   private potion: SlotView;
   private xpText: Txt;
@@ -151,18 +150,16 @@ export class Hud {
       this.menus.push({ icon: ic, zone });
     }
 
+    const anyIcon = Object.values(cls.spells)[0].icon;
     const mkSlot = (icon: number | null, key: string): SlotView => ({
       bg: img(icon ? 'slot_dark_background_full' : 'slot_light_lock', 2),
-      icon: icon ? img(`sort_${icon}`, 3) : null,
+      icon: img(`sort_${icon ?? anyIcon}`, 3).setVisible(!!icon),
       cd: txt(17, { ...bold, strokeThickness: 4 }, 6).setOrigin(0.5),
       key: txt(12, { ...bold, strokeThickness: 3 }, 6).setOrigin(0, 0).setText(key),
       cost: txt(11, { ...bold, color: css(C.pa) }, 6).setOrigin(1, 1),
     });
-    for (let i = 0; i < 6; i++) {
-      const id = cls.bar[i];
-      this.slots.push(mkSlot(id ? cls.spells[id].icon : null, KEYS[i]));
-    }
-    this.move = mkSlot(cls.spells[cls.mobility].icon, 'Esp.');
+    // Barre du joueur (Player.bar) : 6 touches, le clic droit (case libre, choix 6A) et Espace ; les icônes suivent la barre
+    for (let i = 0; i < 8; i++) this.slots.push(mkSlot(null, i < 6 ? KEYS[i] : i === 6 ? 'Clic D' : 'Esp.'));
     // Auto-attaque (clic gauche) : l'icône suit l'arme portée
     this.auto = mkSlot(cls.spells[cls.basic ?? cls.mobility].icon, 'Clic');
     this.auto.icon!.setTexture(cls.basic ? `sort_${cls.spells[cls.basic].icon}` : 'arme_0');
@@ -173,8 +170,7 @@ export class Hud {
       z.on('pointerout', () => this.onSlotHover(null, 0, 0));
       sv.zone = z;
     };
-    this.slots.forEach((sv, i) => hover(sv, () => cls.bar[i] ?? null));
-    hover(this.move, () => cls.mobility);
+    this.slots.forEach((sv, i) => hover(sv, () => world.player.bar[i] ?? null));
     hover(this.auto, () => world.player.autoAttack);
     this.potion = mkSlot(null, 'E');
     this.potion.bg.setTexture('slot_dark_background_full');
@@ -188,10 +184,9 @@ export class Hud {
     this.bannerBg = img('background_levelup_banner', 7).setAlpha(0);
     this.center = txt(34, { ...bold, stroke: '#3a2208', strokeThickness: 6, align: 'center', lineSpacing: -4 }, 8).setOrigin(0.5).setAlpha(0);
     this.toastText = txt(15, {}, 8).setOrigin(0.5).setAlpha(0);
-    const S = cls.spells, bar = cls.bar.map((id, i) => `${KEYS[i]} ${S[id].name}`).join('  ·  ');
     this.help = txt(13, { align: 'center' }).setOrigin(0.5, 0).setText(
-      `Clic gauche : aller / attaquer (maintenu : continuer)   ·   Maj + clic : attaquer sur place   ·   Clic droit : ${S[cls.favorite].name}   ·   Espace : ${S[cls.mobility].name}   ·   E : potion   ·   I : inventaire   ·   Molette : zoom\n` +
-      `${bar}\n` +
+      `Clic gauche : aller / attaquer (maintenu : continuer)   ·   Maj + clic : attaquer sur place   ·   Clic droit et & é " ' ( - : sorts de la barre   ·   Espace : ${cls.spells[cls.mobility].name}   ·   E : potion   ·   Molette : zoom\n` +
+      `S : sorts (nouveaux sorts aux niveaux officiels, glisser dans la barre)   ·   I : inventaire   ·   C : caractéristiques\n` +
       `${cls.rage.name} pleine : le sort suivant est renforcé   ·   K : changer de classe (Iop / Crâ)   ·   F : effets d'impact   ·   O : réglages   ·   H : aide`);
   }
 
@@ -363,9 +358,9 @@ export class Hud {
       m.zone.setPosition(x + bs / 2, y).setSize(bs, bs);
     });
 
-    // --- Barre du bas : XP, 6 sorts, déplacement, potion, Rage ---
+    // --- Barre du bas : XP, 6 sorts, clic droit, déplacement, potion, Rage ---
     const slot = 54, gap = 5, n = 6;
-    const barW = n * slot + (n - 1) * gap, extra = slot + 14 + 16 + slot + gap + slot + 16 + 64;
+    const barW = n * slot + (n - 1) * gap, extra = slot + 14 + 10 + slot + gap + 16 + slot + gap + slot + 16 + 64;
     const totalW = barW + extra + 24, x0 = Math.round(W / 2 - totalW / 2), y0 = H - 12 - (slot + 44);
     panel(x0, y0, totalW, slot + 44);
     const xr = p.level >= cls.maxLevel ? 1 : p.xp / p.xpNeeded;
@@ -376,8 +371,14 @@ export class Hud {
       s.bg.setPosition(x, sy).setDisplaySize(slot, slot);
       s.zone?.setPosition(x, sy);
       s.key.setPosition(x - slot / 2 + 4, sy - slot / 2 + 1);
-      if (!id || !s.icon) { s.cd.setText(''); s.cost.setText(''); return; }
-      const def = p.spell(id)!, cd = p.cd[id] ?? 0, frac = def.cooldown ? cd / def.cooldown : 0;
+      const def = id ? p.spell(id) : undefined;
+      if (s !== this.auto) {
+        s.bg.setTexture(def ? 'slot_dark_background_full' : 'slot_light_lock');
+        s.icon?.setVisible(!!def);
+        if (def && s.icon && s.icon.texture.key !== `sort_${def.icon}`) s.icon.setTexture(`sort_${def.icon}`);
+      }
+      if (!id || !def || !s.icon) { s.cd.setText(''); s.cost.setText(''); return; }
+      const cd = p.cd[id] ?? 0, cdMax = Math.max(def.cooldown, (p.grade(id)?.relance ?? 0) * 3), frac = cdMax ? Math.min(1, cd / cdMax) : 0;
       const ok = p.hasResource(id), inner = slot - 8;
       s.icon.setPosition(x, sy).setDisplaySize(inner, inner).setTint(cd > 0 ? 0x8a8a8a : ok ? 0xffffff : 0x6f86b8);
       if (frac > 0) { g.fillStyle(0x000000, 0.55); g.fillRect(x - inner / 2, sy - inner / 2, inner, inner * frac); }
@@ -386,7 +387,8 @@ export class Hud {
       const st = p.stacks[id];
       s.cd.setPosition(x, sy).setText(cd > 0 ? (cd >= 1 ? `${Math.ceil(cd)}s` : cd.toFixed(1)) : st ? `x${st.n}` : '');
       s.key.setPosition(x - slot / 2 + 4, sy - slot / 2 + 1);
-      s.cost.setPosition(x + slot / 2 - 3, sy + slot / 2 - 1).setText(def.pm ? `${def.pm} PM` : def.pa ? `${def.pa}` : '').setColor(def.pm ? css(C.pm) : css(C.pa));
+      const pa = p.paCost(id);
+      s.cost.setPosition(x + slot / 2 - 3, sy + slot / 2 - 1).setText(def.pm ? `${def.pm} PM` : pa ? `${pa}` : '').setColor(def.pm ? css(C.pm) : css(C.pa));
     };
     // Auto-attaque (à gauche de la barre) : icône de l'arme portée (weapon_<type> officielle), sinon le coup de la classe
     const ax = x0 + 12 + slot / 2, wd = p.weaponDef;
@@ -395,9 +397,11 @@ export class Hud {
     if (p.autoAttack === 'attaque') this.auto.icon!.setPosition(ax, sy).setDisplaySize(slot - 8, slot - 8).clearTint();
     this.auto.zone?.setPosition(ax, sy);
     const sx0 = ax + slot + 14;
-    this.slots.forEach((s, i) => drawSlot(s, sx0 + i * (slot + gap), cls.bar[i] ?? null));
-    const mvx = sx0 + n * (slot + gap) + 16;
-    drawSlot(this.move, mvx, cls.mobility);
+    for (let i = 0; i < 6; i++) drawSlot(this.slots[i], sx0 + i * (slot + gap), p.bar[i]);
+    const cdx = sx0 + n * (slot + gap) + 10;          // clic droit, un peu à part
+    drawSlot(this.slots[6], cdx, p.bar[6]);
+    const mvx = cdx + slot + gap + 16;
+    drawSlot(this.slots[7], mvx, p.bar[7]);
     // Potion (E) : charges, +1 par groupe vaincu
     const po = this.potion, pox = mvx + slot + gap, pcd = p.potionCd / cls.potion.cooldown;
     po.bg.setPosition(pox, sy).setDisplaySize(slot, slot);

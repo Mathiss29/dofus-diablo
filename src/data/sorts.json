@@ -1,0 +1,3456 @@
+{
+ "iop": [
+  [
+   {
+    "id": 13106,
+    "name": "Pression",
+    "icon": 11830,
+    "desc": "Érode la cible et occasionne des dommages Terre.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 4,
+      "parCible": 2,
+      "dmg": [
+       16,
+       18
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 66,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 4,
+      "parCible": 2,
+      "dmg": [
+       20,
+       23
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 132,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 4,
+      "parCible": 2,
+      "dmg": [
+       26,
+       30
+      ],
+      "element": "terre"
+     }
+    ]
+   },
+   {
+    "id": 13139,
+    "name": "Fracture",
+    "icon": 11852,
+    "desc": "Érode les cibles et occasionne des dommages Air en zone.",
+    "grades": [
+     {
+      "niv": 95,
+      "pa": 4,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       26,
+       29
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 162,
+      "pa": 4,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       32,
+       36
+      ],
+      "element": "air"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 14676,
+    "name": "Ferveur",
+    "icon": 11839,
+    "desc": "Applique un bouclier sur le lanceur et ses alliés et occasionne des dommages Eau aux ennemis en zone.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 2,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       9,
+       11
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 67,
+      "pa": 2,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       13,
+       15
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 133,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       16,
+       19
+      ],
+      "element": "eau"
+     }
+    ]
+   },
+   {
+    "id": 13130,
+    "name": "Menace",
+    "icon": 11862,
+    "desc": "Attire la cible et occasionne des dommages Eau aux ennemis.",
+    "grades": [
+     {
+      "niv": 100,
+      "pa": 3,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       21,
+       23
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 167,
+      "pa": 3,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       26,
+       28
+      ],
+      "element": "eau"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 13115,
+    "name": "Couperet",
+    "icon": 11855,
+    "desc": "Occasionne des dommages Feu et retire des PM en zone.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       17,
+       19
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 68,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       22,
+       25
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 134,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       28,
+       32
+      ],
+      "element": "feu"
+     }
+    ]
+   },
+   {
+    "id": 13138,
+    "name": "Accumulation",
+    "icon": 11856,
+    "desc": "Occasionne des dommages Terre.\n\nSur le lanceur : augmente les dommages du sort.",
+    "grades": [
+     {
+      "niv": 105,
+      "pa": 3,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       19,
+       22
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 172,
+      "pa": 3,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       22,
+       26
+      ],
+      "element": "terre"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 13110,
+    "name": "Épée Divine",
+    "icon": 11833,
+    "desc": "Occasionne des dommages Air aux ennemis et augmente les Dommages du lanceur et des alliés en zone.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 3,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       14,
+       17
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 69,
+      "pa": 3,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       19,
+       22
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 136,
+      "pa": 3,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       24,
+       28
+      ],
+      "element": "air"
+     }
+    ]
+   },
+   {
+    "id": 13117,
+    "name": "Épée du Jugement",
+    "icon": 11861,
+    "desc": "Applique un bouclier sur le lanceur, occasionne des dommages Eau et applique l'état Condamné sur la cible :\n• Occasionne des dommages Eau plus importants à retardement sur la cible.\n\nLe bouclier est plus important et le retardement est réinitialisé sur une cible Condamnée.\n\nSur le lanceur : applique un bouclier.",
+    "grades": [
+     {
+      "niv": 110,
+      "pa": 4,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       26,
+       30
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 177,
+      "pa": 4,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       31,
+       35
+      ],
+      "element": "eau"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 13108,
+    "name": "Intimidation",
+    "icon": 11835,
+    "desc": "Occasionne des dommages dans le meilleur élément du lanceur aux ennemis et repousse la cible.",
+    "grades": [
+     {
+      "niv": 5,
+      "pa": 2,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       4,
+       6
+      ],
+      "element": "meilleur"
+     },
+     {
+      "niv": 72,
+      "pa": 2,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       6,
+       8
+      ],
+      "element": "meilleur"
+     },
+     {
+      "niv": 139,
+      "pa": 2,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       8,
+       10
+      ],
+      "element": "meilleur"
+     }
+    ]
+   },
+   {
+    "id": 13148,
+    "name": "Conquête",
+    "icon": 11857,
+    "desc": "Invoque un Stratège Iop qui peut renvoyer 50% des dommages qu'il subit en zone autour de lui.\nLe renvoi de dommages n'affecte pas le lanceur.\n\nLe Stratège Iop réduit de 50% les dommages immédiats alliés.\n\nIl ne peut y avoir qu'un seul Stratège Iop par équipe. Si le Stratège Iop est encore présent et que celui-ci est ré-invoqué, l'ancien est détruit pour laisser place au nouveau.",
+    "grades": [
+     {
+      "niv": 115,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 182,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 13107,
+    "name": "Bond",
+    "icon": 11831,
+    "desc": "Téléporte le lanceur sur la case ciblée et augmente les dommages subis par les ennemis en zone.",
+    "grades": [
+     {
+      "niv": 10,
+      "pa": 4,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 77,
+      "pa": 4,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 144,
+      "pa": 4,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ]
+   },
+   {
+    "id": 13143,
+    "name": "Agitation",
+    "icon": 11853,
+    "desc": "Augmente les PM de l'allié ciblé et le rend Intaclable.\nAugmente également sa Puissance pour chaque PM utilisé.",
+    "grades": [
+     {
+      "niv": 120,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 187,
+      "pa": 2,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 13123,
+    "name": "Concentration",
+    "icon": 11838,
+    "desc": "Occasionne des dommages Terre.\nLes dommages sont plus importants sur les invocations.",
+    "grades": [
+     {
+      "niv": 15,
+      "pa": 2,
+      "po": [
+       1,
+       1
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       13,
+       15
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 82,
+      "pa": 2,
+      "po": [
+       1,
+       1
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       16,
+       19
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 149,
+      "pa": 2,
+      "po": [
+       1,
+       1
+      ],
+      "relance": 0,
+      "parTour": 4,
+      "parCible": 3,
+      "dmg": [
+       20,
+       24
+      ],
+      "element": "terre"
+     }
+    ]
+   },
+   {
+    "id": 13147,
+    "name": "Sentence",
+    "icon": 11872,
+    "desc": "Occasionne des dommages Feu et applique l'état Sentence sur la cible :\n• À la fin du tour de la cible, occasionne des dommages Feu aux ennemis en zone autour d'elle.\n\nLes dommages n'affectent pas le lanceur.",
+    "grades": [
+     {
+      "niv": 125,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 1,
+      "dmg": [
+       11,
+       14
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 192,
+      "pa": 2,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 1,
+      "dmg": [
+       13,
+       16
+      ],
+      "element": "feu"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 13126,
+    "name": "Déferlement",
+    "icon": 11832,
+    "desc": "Rapproche le lanceur vers la cible et occasionne des dommages Eau aux ennemis.",
+    "grades": [
+     {
+      "niv": 20,
+      "pa": 4,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       24,
+       27
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 87,
+      "pa": 4,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       31,
+       34
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 154,
+      "pa": 4,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       38,
+       42
+      ],
+      "element": "eau"
+     }
+    ]
+   },
+   {
+    "id": 13135,
+    "name": "Anneau Destructeur",
+    "icon": 11854,
+    "desc": "Occasionne des dommages Air aux ennemis et attire les cibles vers le centre en zone.\nN'affecte pas le lanceur.",
+    "grades": [
+     {
+      "niv": 130,
+      "pa": 3,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       22,
+       25
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 197,
+      "pa": 3,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       24,
+       28
+      ],
+      "element": "air"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 13120,
+    "name": "Vitalité",
+    "icon": 11848,
+    "desc": "Augmente la Vitalité de la cible.\nLa Vitalité est plus importante sur le lanceur.",
+    "grades": [
+     {
+      "niv": 25,
+      "pa": 3,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 92,
+      "pa": 3,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 159,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   },
+   {
+    "id": 13137,
+    "name": "Violence",
+    "icon": 11859,
+    "desc": "Repousse les cibles en zone.",
+    "grades": [
+     {
+      "niv": 135,
+      "pa": 3,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 13116,
+    "name": "Souffle",
+    "icon": 13328,
+    "desc": "Repousse les cibles depuis le centre et occasionne des dommages Air aux ennemis en zone.",
+    "grades": [
+     {
+      "niv": 30,
+      "pa": 2,
+      "po": [
+       2,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       8,
+       10
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 97,
+      "pa": 2,
+      "po": [
+       2,
+       7
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       10,
+       12
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 164,
+      "pa": 2,
+      "po": [
+       2,
+       8
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       13,
+       15
+      ],
+      "element": "air"
+     }
+    ]
+   },
+   {
+    "id": 13136,
+    "name": "Rassemblement",
+    "icon": 13327,
+    "desc": "Occasionne des dommages Feu aux ennemis et attire les cibles jusqu'au centre en zone.\nN'affecte pas le lanceur.",
+    "grades": [
+     {
+      "niv": 140,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       22,
+       25
+      ],
+      "element": "feu"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 13119,
+    "name": "Épée Destructrice",
+    "icon": 11834,
+    "desc": "Érode les cibles et occasionne des dommages Feu en zone.",
+    "grades": [
+     {
+      "niv": 35,
+      "pa": 4,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       20,
+       23
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 102,
+      "pa": 4,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       26,
+       29
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 169,
+      "pa": 4,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       32,
+       36
+      ],
+      "element": "feu"
+     }
+    ]
+   },
+   {
+    "id": 14818,
+    "name": "Fustigation",
+    "icon": 11846,
+    "desc": "Érode les cibles et occasionne des dommages Eau en zone.",
+    "grades": [
+     {
+      "niv": 145,
+      "pa": 3,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       28,
+       31
+      ],
+      "element": "eau"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 13118,
+    "name": "Puissance",
+    "icon": 11844,
+    "desc": "Augmente la Puissance et les Dommages Poussée de la cible.",
+    "grades": [
+     {
+      "niv": 40,
+      "pa": 3,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 107,
+      "pa": 3,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 174,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   },
+   {
+    "id": 14677,
+    "name": "Vindicte",
+    "icon": 11867,
+    "desc": "Érode la cible.",
+    "grades": [
+     {
+      "niv": 150,
+      "pa": 2,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 13121,
+    "name": "Tempête de Puissance",
+    "icon": 11842,
+    "desc": "Occasionne des dommages Feu.\nN'affecte pas le lanceur.\n\nOccasionne également des dommages Feu sur l'ennemi initial si le sort est lancé sur une autre cible.\nCes dommages sont plus importants après 2 lancers consécutifs sur un même ennemi.",
+    "grades": [
+     {
+      "niv": 45,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       17,
+       19
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 112,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       22,
+       25
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 179,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       27,
+       30
+      ],
+      "element": "feu"
+     }
+    ]
+   },
+   {
+    "id": 13131,
+    "name": "Tannée",
+    "icon": 11871,
+    "desc": "Occasionne des dommages Air et retire des PM en zone.",
+    "grades": [
+     {
+      "niv": 155,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       27,
+       30
+      ],
+      "element": "air"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 13133,
+    "name": "Endurance",
+    "icon": 11869,
+    "desc": "Applique un bouclier sur le lanceur et occasionne des dommages Eau.\nLes dommages n'affectent pas le lanceur.",
+    "grades": [
+     {
+      "niv": 50,
+      "pa": 3,
+      "po": [
+       0,
+       2
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       22,
+       25
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 117,
+      "pa": 3,
+      "po": [
+       0,
+       2
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       27,
+       30
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 184,
+      "pa": 3,
+      "po": [
+       0,
+       2
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       30,
+       34
+      ],
+      "element": "eau"
+     }
+    ]
+   },
+   {
+    "id": 13146,
+    "name": "Pugilat",
+    "icon": 11781,
+    "desc": "Occasionne des dommages Terre en zone.\nLes dommages du sort sont augmentés après chaque lancer pour le tour en cours.\n\nLes dommages n'affectent pas le lanceur.",
+    "grades": [
+     {
+      "niv": 160,
+      "pa": 2,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 4,
+      "parCible": 1,
+      "dmg": [
+       9,
+       11
+      ],
+      "element": "terre"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 13142,
+    "name": "Vertu",
+    "icon": 11860,
+    "desc": "Applique un bouclier sur les alliés en zone.\nRetire également de la Puissance au lanceur pour chaque allié à son contact (cumulable 4 fois).",
+    "grades": [
+     {
+      "niv": 55,
+      "pa": 3,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 122,
+      "pa": 3,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 189,
+      "pa": 3,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   },
+   {
+    "id": 13112,
+    "name": "Massacre",
+    "icon": 11870,
+    "desc": "Augmente et renvoie une partie des dommages subis par l'ennemi ciblé aux ennemis en zone autour de lui.",
+    "grades": [
+     {
+      "niv": 165,
+      "pa": 2,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 13125,
+    "name": "Épée de Iop",
+    "icon": 11847,
+    "desc": "Occasionne des dommages Terre en zone.\nN'affecte pas le lanceur.",
+    "grades": [
+     {
+      "niv": 60,
+      "pa": 4,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       27,
+       30
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 127,
+      "pa": 4,
+      "po": [
+       0,
+       7
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       33,
+       37
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 194,
+      "pa": 4,
+      "po": [
+       0,
+       8
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       37,
+       41
+      ],
+      "element": "terre"
+     }
+    ]
+   },
+   {
+    "id": 13134,
+    "name": "Fendoir",
+    "icon": 11850,
+    "desc": "Applique un bouclier sur le lanceur pour chaque ennemi dans la zone d'effet et occasionne des dommages Eau en zone.\nLes dommages n'affectent pas le lanceur.",
+    "grades": [
+     {
+      "niv": 170,
+      "pa": 5,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       47,
+       53
+      ],
+      "element": "eau"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 13113,
+    "name": "Friction",
+    "icon": 11840,
+    "desc": "Attire la cible et lui applique l'état Friction :\n• Sur un ennemi : attire la cible vers son attaquant ennemi.\n• Sur un allié : attire ses attaquants ennemis vers elle.",
+    "grades": [
+     {
+      "niv": 65,
+      "pa": 2,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 131,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 198,
+      "pa": 2,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   },
+   {
+    "id": 13140,
+    "name": "Coup pour Coup",
+    "icon": 11863,
+    "desc": "Repousse la cible et lui applique l'état Coup pour Coup :\n• Sur un ennemi : repousse la cible si elle attaque le lanceur.\n• Sur un allié : repousse les attaquants ennemis.",
+    "grades": [
+     {
+      "niv": 175,
+      "pa": 2,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 13122,
+    "name": "Épée Céleste",
+    "icon": 11843,
+    "desc": "Occasionne des dommages Air en zone.\nN'affecte pas le lanceur.",
+    "grades": [
+     {
+      "niv": 70,
+      "pa": 4,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       28,
+       31
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 137,
+      "pa": 4,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       36,
+       40
+      ],
+      "element": "air"
+     }
+    ]
+   },
+   {
+    "id": 13145,
+    "name": "Zénith",
+    "icon": 11866,
+    "desc": "Occasionne des dommages Air en zone. \nOccasionne des dommages Air supplémentaires en zone selon les PM restants du lanceur.",
+    "grades": [
+     {
+      "niv": 180,
+      "pa": 5,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       27,
+       29
+      ],
+      "element": "air"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 13114,
+    "name": "Précipitation",
+    "icon": 12939,
+    "desc": "Augmente les PA de l'allié ciblé et lui applique l'état Affaibli.\nRetire des PA non esquivables à cet allié au tour suivant.\n\nL'état n'est pas appliqué sur le lanceur.",
+    "grades": [
+     {
+      "niv": 75,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 142,
+      "pa": 2,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   },
+   {
+    "id": 13132,
+    "name": "Détermination",
+    "icon": 11868,
+    "desc": "Rend l'allié ciblé Indéplaçable et lui applique un bouclier.",
+    "grades": [
+     {
+      "niv": 185,
+      "pa": 2,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 13111,
+    "name": "Épée du Destin",
+    "icon": 11849,
+    "desc": "Occasionne des dommages Feu.\nLes dommages du sort sont augmentés à la récupération du sort.",
+    "grades": [
+     {
+      "niv": 80,
+      "pa": 4,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0,
+      "dmg": [
+       31,
+       34
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 147,
+      "pa": 4,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0,
+      "dmg": [
+       38,
+       42
+      ],
+      "element": "feu"
+     }
+    ]
+   },
+   {
+    "id": 13144,
+    "name": "Tumulte",
+    "icon": 11865,
+    "desc": "Augmente les dommages du sort pour chaque ennemi dans la zone d'effet et occasionne des dommages Feu en zone.\nN'affecte pas le lanceur.",
+    "grades": [
+     {
+      "niv": 190,
+      "pa": 4,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       19,
+       21
+      ],
+      "element": "feu"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 13141,
+    "name": "Emprise",
+    "icon": 12209,
+    "desc": "Rend l'ennemi ciblé Invulnérable et l'immobilise.",
+    "grades": [
+     {
+      "niv": 85,
+      "pa": 3,
+      "po": [
+       1,
+       1
+      ],
+      "relance": 5,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 152,
+      "pa": 3,
+      "po": [
+       1,
+       1
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   },
+   {
+    "id": 13109,
+    "name": "Duel",
+    "icon": 12208,
+    "desc": "Rend le lanceur et l'ennemi ciblé Invulnérables à distance, leur applique l'état Pesanteur et les immobilise.\nLa durée de l'état Pesanteur est plus importante sur le lanceur.",
+    "grades": [
+     {
+      "niv": 195,
+      "pa": 4,
+      "po": [
+       1,
+       1
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 13156,
+    "name": "Fureur",
+    "icon": 11873,
+    "desc": "Occasionne des dommages Terre.\nLes dommages du sort sont augmentés après chaque lancer. \n\nLes bonus se décrémentent si le sort n'est pas relancé.",
+    "grades": [
+     {
+      "niv": 90,
+      "pa": 3,
+      "po": [
+       1,
+       1
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       23,
+       26
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 157,
+      "pa": 3,
+      "po": [
+       1,
+       1
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       28,
+       32
+      ],
+      "element": "terre"
+     }
+    ]
+   },
+   {
+    "id": 13124,
+    "name": "Colère de Iop",
+    "icon": 11851,
+    "desc": "Occasionne des dommages Terre.\nLes dommages du sort sont augmentés à la récupération du sort.",
+    "grades": [
+     {
+      "niv": 200,
+      "pa": 7,
+      "po": [
+       1,
+       1
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0,
+      "dmg": [
+       81,
+       100
+      ],
+      "element": "terre"
+     }
+    ]
+   }
+  ]
+ ],
+ "cra": [
+  [
+   {
+    "id": 32426,
+    "name": "Flèche de Recul",
+    "icon": 11876,
+    "desc": "Occasionne des dommages Air aux ennemis et repousse la cible.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       15,
+       17
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 66,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       20,
+       22
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 132,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       25,
+       28
+      ],
+      "element": "air"
+     }
+    ]
+   },
+   {
+    "id": 32449,
+    "name": "Flèche Éclatante",
+    "icon": 15403,
+    "desc": "Vole de la vie dans l'élément Feu aux ennemis et repousse les cibles depuis le centre en zone.",
+    "grades": [
+     {
+      "niv": 95,
+      "pa": 3,
+      "po": [
+       3,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       18,
+       20
+      ],
+      "element": "feu",
+      "vol": true
+     },
+     {
+      "niv": 162,
+      "pa": 3,
+      "po": [
+       3,
+       7
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       22,
+       25
+      ],
+      "element": "feu",
+      "vol": true
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 32435,
+    "name": "Flèche Glacée",
+    "icon": 13032,
+    "desc": "Retire des PA et occasionne des dommages Eau.\nLes dommages du sort sont augmentés après son utilisation.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       12,
+       14
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 67,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       16,
+       19
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 133,
+      "pa": 3,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       21,
+       24
+      ],
+      "element": "eau"
+     }
+    ]
+   },
+   {
+    "id": 32708,
+    "name": "Flèche Harcelante",
+    "icon": 11888,
+    "desc": "Réduit les soins reçus par la cible et lui applique un poison Air de début de tour.",
+    "grades": [
+     {
+      "niv": 100,
+      "pa": 3,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 1,
+      "dmg": [
+       13,
+       15
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 167,
+      "pa": 3,
+      "po": [
+       1,
+       10
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 1,
+      "dmg": [
+       17,
+       19
+      ],
+      "element": "air"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 32455,
+    "name": "Flèche Vagabonde",
+    "icon": 15407,
+    "desc": "Éloigne le lanceur de la cible et occasionne des dommages Terre aux ennemis.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       16,
+       18
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 69,
+      "pa": 3,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       21,
+       23
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 136,
+      "pa": 3,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       27,
+       30
+      ],
+      "element": "terre"
+     }
+    ]
+   },
+   {
+    "id": 32531,
+    "name": "Flèche Évasive",
+    "icon": 15411,
+    "desc": "Applique des effets selon la position du lanceur par rapport à la cible et occasionne des dommages Eau aux ennemis :\n• Éloigne le lanceur de la cible et retire des PM aux ennemis s'il est en mêlée.\n• Repousse la cible et retire des PA aux ennemis si le lanceur est à distance.",
+    "grades": [
+     {
+      "niv": 110,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       21,
+       23
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 177,
+      "pa": 3,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       26,
+       29
+      ],
+      "element": "eau"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 32443,
+    "name": "Flèche de Barrage",
+    "icon": 11904,
+    "desc": "Occasionne des dommages Feu aux ennemis et repousse les cibles en zone.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       14,
+       16
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 68,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       19,
+       21
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 134,
+      "pa": 3,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       24,
+       27
+      ],
+      "element": "feu"
+     }
+    ]
+   },
+   {
+    "id": 32459,
+    "name": "Carreaux Destructeurs",
+    "icon": 15408,
+    "desc": "Occasionne des dommages Terre et retire des dommages aux ennemis et repousse les cibles en zone.\nLes dommages de zone ne sont pas dégressifs.",
+    "grades": [
+     {
+      "niv": 105,
+      "pa": 4,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       31,
+       34
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 172,
+      "pa": 4,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       38,
+       42
+      ],
+      "element": "terre"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 32464,
+    "name": "Pas Chassé",
+    "icon": 15414,
+    "desc": "Téléporte le lanceur sur la case ciblée.\nAugmente les PM du lanceur au tour suivant.",
+    "grades": [
+     {
+      "niv": 5,
+      "pa": 2,
+      "po": [
+       1,
+       1
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 72,
+      "pa": 2,
+      "po": [
+       1,
+       1
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 139,
+      "pa": 2,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   },
+   {
+    "id": 32467,
+    "name": "Balise Tactique",
+    "icon": 15415,
+    "desc": "Invoque une Balise statique qui peut appliquer des effets en zone autour d'elle selon ce qu'elle subit :\n• Elle attire les cibles si un allié lui occasionne des dommages à distance ou la pousse.\n• Elle pousse les cibles si un allié lui occasionne des dommages en mêlée ou de poussée.\n\nLa balise est détruite 3 tours après son invocation.\n\nAugmente également la Puissance du lanceur pour chaque ennemi dans la ligne de vue de la case ciblée.",
+    "grades": [
+     {
+      "niv": 115,
+      "pa": 1,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 182,
+      "pa": 1,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 32465,
+    "name": "Tirs Éloignés",
+    "icon": 15307,
+    "desc": "Augmente les portées minimale et maximale de tous les sorts offensifs Crâ du lanceur.\nAugmente également la Portée des alliés (hors Crâs) en zone autour du lanceur et de ses Balises.",
+    "grades": [
+     {
+      "niv": 10,
+      "pa": 1,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 77,
+      "pa": 1,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 144,
+      "pa": 1,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   },
+   {
+    "id": 32471,
+    "name": "Tir Perçant",
+    "icon": 15427,
+    "desc": "Érode la cible et augmente les dommages qu'elle subit jusqu'à la prochaine attaque.",
+    "grades": [
+     {
+      "niv": 120,
+      "pa": 1,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1
+     },
+     {
+      "niv": 187,
+      "pa": 1,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 32444,
+    "name": "Flèche Détonante",
+    "icon": 13034,
+    "desc": "Retire de la Portée, occasionne des dommages Feu et applique l'état Flèche Détonante sur la cible :\n• Applique les effets sans l'état sur les ennemis en zone autour de la cible à la fin de son tour.\n\nLes effets peuvent être déclenchés prématurément si la cible subit des dommages de poussée.",
+    "grades": [
+     {
+      "niv": 15,
+      "pa": 2,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       9,
+       11
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 82,
+      "pa": 2,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       11,
+       14
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 149,
+      "pa": 2,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       14,
+       17
+      ],
+      "element": "feu"
+     }
+    ]
+   },
+   {
+    "id": 32439,
+    "name": "Flèche Ralentissante",
+    "icon": 11896,
+    "desc": "Retire des PA et des PM et occasionne des dommages Eau en zone.",
+    "grades": [
+     {
+      "niv": 125,
+      "pa": 4,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       28,
+       30
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 192,
+      "pa": 4,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       32,
+       34
+      ],
+      "element": "eau"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 32453,
+    "name": "Flèche d'Abolition",
+    "icon": 15430,
+    "desc": "Vole de la vie dans l'élément Terre.\nLes dommages sont plus importants sur les cibles ayant du bouclier.\n\nLa taille de la zone est augmentée après chaque lancer pour le tour en cours.",
+    "grades": [
+     {
+      "niv": 20,
+      "pa": 2,
+      "po": [
+       3,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 0,
+      "dmg": [
+       5,
+       7
+      ],
+      "element": "terre",
+      "vol": true
+     },
+     {
+      "niv": 87,
+      "pa": 2,
+      "po": [
+       3,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 0,
+      "dmg": [
+       7,
+       9
+      ],
+      "element": "terre",
+      "vol": true
+     },
+     {
+      "niv": 154,
+      "pa": 2,
+      "po": [
+       3,
+       7
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 0,
+      "dmg": [
+       9,
+       11
+      ],
+      "element": "terre",
+      "vol": true
+     }
+    ]
+   },
+   {
+    "id": 32433,
+    "name": "Flèche Persécutrice",
+    "icon": 15255,
+    "desc": "Vole de la vie dans l'élément Air.\nOccasionne des dommages Air au tour suivant si la cible n'est pas dans la ligne de vue du lanceur.",
+    "grades": [
+     {
+      "niv": 130,
+      "pa": 4,
+      "po": [
+       3,
+       7
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       30,
+       34
+      ],
+      "element": "air",
+      "vol": true
+     },
+     {
+      "niv": 197,
+      "pa": 4,
+      "po": [
+       3,
+       9
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       34,
+       38
+      ],
+      "element": "air",
+      "vol": true
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 32427,
+    "name": "Flèche Cinglante",
+    "icon": 15409,
+    "desc": "Retire des PM et occasionne des dommages Air.",
+    "grades": [
+     {
+      "niv": 25,
+      "pa": 2,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       9,
+       11
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 92,
+      "pa": 2,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       12,
+       14
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 159,
+      "pa": 2,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       15,
+       18
+      ],
+      "element": "air"
+     }
+    ]
+   },
+   {
+    "id": 32458,
+    "name": "Flèche Assaillante",
+    "icon": 15428,
+    "desc": "Applique des effets selon la position du lanceur par rapport à la cible, occasionne des dommages Terre aux ennemis et augmente la Puissance du lanceur :\n• Repousse la cible si le lanceur est en mêlée.\n• Rapproche le lanceur vers la cible s'il est à distance.",
+    "grades": [
+     {
+      "niv": 135,
+      "pa": 3,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       23,
+       26
+      ],
+      "element": "terre"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 32436,
+    "name": "Flèche d'Immobilisation",
+    "icon": 11885,
+    "desc": "Vole des PM et occasionne des dommages Eau\nLes dommages du sort sont augmentés après chaque lancer.",
+    "grades": [
+     {
+      "niv": 30,
+      "pa": 2,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 4,
+      "parCible": 2,
+      "dmg": [
+       7,
+       9
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 97,
+      "pa": 2,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 4,
+      "parCible": 2,
+      "dmg": [
+       9,
+       11
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 164,
+      "pa": 2,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 4,
+      "parCible": 2,
+      "dmg": [
+       11,
+       13
+      ],
+      "element": "eau"
+     }
+    ]
+   },
+   {
+    "id": 32448,
+    "name": "Flèche Tyrannique",
+    "icon": 15404,
+    "desc": "Occasionne des dommages et applique un poison Feu de fin de tour sur la cible.\nLe poison est renouvelé si la cible est déplacée sous les effets du sort.\n\nOccasionne prématurément des dommages Feu et retire les effets du sort si la cible subit des dommages de poussée.",
+    "grades": [
+     {
+      "niv": 140,
+      "pa": 4,
+      "po": [
+       2,
+       8
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       28,
+       32
+      ],
+      "element": "feu"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 32466,
+    "name": "Tirs Puissants",
+    "icon": 15272,
+    "desc": "Sacrifie la Portée du lanceur pour augmenter sa Puissance, ses Dommages Poussée et ses Critiques.",
+    "grades": [
+     {
+      "niv": 35,
+      "pa": 1,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 102,
+      "pa": 1,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 169,
+      "pa": 1,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   },
+   {
+    "id": 32618,
+    "name": "Flèches Amoureuses",
+    "icon": 15274,
+    "desc": "Soigne l'allié ciblé.\n\nPartage également les dommages entre le combattant allié initial et un autre combattant allié en augmentant leur Puissance si le sort est lancé sur cet autre combattant.\n\nLes soins n'affectent pas le lanceur.",
+    "grades": [
+     {
+      "niv": 145,
+      "pa": 3,
+      "po": [
+       0,
+       8
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 32428,
+    "name": "Flèche de Dispersion",
+    "icon": 15159,
+    "desc": "Occasionne des dommages Air aux ennemis et repousse les cibles depuis le centre en zone.\nLa poussée est plus importante aux extrémités de la zone.",
+    "grades": [
+     {
+      "niv": 40,
+      "pa": 3,
+      "po": [
+       2,
+       4
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       13,
+       15
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 107,
+      "pa": 3,
+      "po": [
+       2,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       17,
+       19
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 174,
+      "pa": 3,
+      "po": [
+       2,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       21,
+       24
+      ],
+      "element": "air"
+     }
+    ]
+   },
+   {
+    "id": 32447,
+    "name": "Flèches Enflammées",
+    "icon": 11880,
+    "desc": "Éloigne le lanceur des cibles, occasionne des dommages Feu aux ennemis et repousse les cibles en zone.",
+    "grades": [
+     {
+      "niv": 150,
+      "pa": 4,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       34,
+       38
+      ],
+      "element": "feu"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 32445,
+    "name": "Flèche Explosive",
+    "icon": 11898,
+    "desc": "Occasionne des dommages Feu en zone.",
+    "grades": [
+     {
+      "niv": 45,
+      "pa": 4,
+      "po": [
+       4,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       19,
+       21
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 112,
+      "pa": 4,
+      "po": [
+       4,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       25,
+       28
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 179,
+      "pa": 4,
+      "po": [
+       4,
+       7
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       30,
+       34
+      ],
+      "element": "feu"
+     }
+    ]
+   },
+   {
+    "id": 32457,
+    "name": "Flèche Massacrante",
+    "icon": 15196,
+    "desc": "Augmente les dommages du sort pour chaque entité dans la zone d'effet et occasionne des dommages Terre en zone.",
+    "grades": [
+     {
+      "niv": 155,
+      "pa": 4,
+      "po": [
+       2,
+       7
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       25,
+       29
+      ],
+      "element": "terre"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 32437,
+    "name": "Œil de Taupe",
+    "icon": 11883,
+    "desc": "Dévoile les invisibles, retire de la Portée et vole de la vie dans l'élément Eau en zone.",
+    "grades": [
+     {
+      "niv": 50,
+      "pa": 3,
+      "po": [
+       3,
+       4
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       12,
+       14
+      ],
+      "element": "eau",
+      "vol": true
+     },
+     {
+      "niv": 117,
+      "pa": 3,
+      "po": [
+       3,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       16,
+       19
+      ],
+      "element": "eau",
+      "vol": true
+     },
+     {
+      "niv": 184,
+      "pa": 3,
+      "po": [
+       3,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       19,
+       22
+      ],
+      "element": "eau",
+      "vol": true
+     }
+    ]
+   },
+   {
+    "id": 32431,
+    "name": "Pluie de Flèches",
+    "icon": 15412,
+    "desc": "Retire de l'Esquive PM et occasionne des dommages Air en zone.\nN'affecte pas le lanceur.\n\nLes effets sont relancés à partir de la case ciblée au tour suivant.",
+    "grades": [
+     {
+      "niv": 160,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       21,
+       23
+      ],
+      "element": "air"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 32454,
+    "name": "Œil pour Œil",
+    "icon": 15256,
+    "desc": "Vole de la vie dans l'élément Terre en zone.\nN'affecte pas le lanceur.\n\nLes dommages du sort sont augmentés pour chaque attaque ennemie subie au tour précédent.",
+    "grades": [
+     {
+      "niv": 55,
+      "pa": 3,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       18,
+       20
+      ],
+      "element": "terre",
+      "vol": true
+     },
+     {
+      "niv": 122,
+      "pa": 3,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       24,
+       26
+      ],
+      "element": "terre",
+      "vol": true
+     },
+     {
+      "niv": 189,
+      "pa": 3,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       27,
+       30
+      ],
+      "element": "terre",
+      "vol": true
+     }
+    ]
+   },
+   {
+    "id": 32441,
+    "name": "Flèche Paralysante",
+    "icon": 13033,
+    "desc": "Retire des PA et des PM et occasionne des dommages Eau en zone.",
+    "grades": [
+     {
+      "niv": 165,
+      "pa": 4,
+      "po": [
+       3,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       30,
+       34
+      ],
+      "element": "eau"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 32474,
+    "name": "Balise de Survie",
+    "icon": 15416,
+    "desc": "Invoque une Balise qui peut soigner tous les alliés dans sa ligne de vue au début de son tour.\nElle peut également échanger de position avec le lanceur s'il l'attaque en étant dans sa ligne de vue.\n\nLa balise est détruite 2 tours après son invocation.",
+    "grades": [
+     {
+      "niv": 60,
+      "pa": 2,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 127,
+      "pa": 2,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 194,
+      "pa": 2,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   },
+   {
+    "id": 32472,
+    "name": "Représailles",
+    "icon": 15309,
+    "desc": "Occasionne des dommages Neutre aux ennemis selon leur vie érodée en zone.\nApplique également l'état Pesanteur sur les cibles et augmente les dommages subis par les ennemis en zone.",
+    "grades": [
+     {
+      "niv": 170,
+      "pa": 3,
+      "po": [
+       3,
+       6
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 32470,
+    "name": "Tir de Repli",
+    "icon": 15417,
+    "desc": "Éloigne le lanceur de l'ennemi ciblé ou rapproche le lanceur vers l'allié ciblé.\nAugmente également la Portée du lanceur.",
+    "grades": [
+     {
+      "niv": 65,
+      "pa": 1,
+      "po": [
+       2,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2
+     },
+     {
+      "niv": 131,
+      "pa": 1,
+      "po": [
+       2,
+       7
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2
+     },
+     {
+      "niv": 198,
+      "pa": 1,
+      "po": [
+       2,
+       8
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2
+     }
+    ]
+   },
+   {
+    "id": 32473,
+    "name": "Vendetta",
+    "icon": 15413,
+    "desc": "Pose un piège mono-cellule qui occasionne des dommages dans le meilleur élément du lanceur aux ennemis et attire les entités vers son centre en zone.",
+    "grades": [
+     {
+      "niv": 175,
+      "pa": 2,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 32456,
+    "name": "Flèche Punitive",
+    "icon": 15406,
+    "desc": "Érode la cible et occasionne des dommages Terre.\nLes dommages du sort sont augmentés pour les prochains lancers.",
+    "grades": [
+     {
+      "niv": 70,
+      "pa": 4,
+      "po": [
+       4,
+       8
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       23,
+       27
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 137,
+      "pa": 4,
+      "po": [
+       4,
+       10
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       30,
+       34
+      ],
+      "element": "terre"
+     }
+    ]
+   },
+   {
+    "id": 32460,
+    "name": "Flèche du Jugement",
+    "icon": 11911,
+    "desc": "Retire de la Puissance et occasionne des dommages Terre.\nLa première attaque dépend des PM restants du lanceur.",
+    "grades": [
+     {
+      "niv": 180,
+      "pa": 4,
+      "po": [
+       3,
+       9
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       25,
+       27
+      ],
+      "element": "terre"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 32438,
+    "name": "Flèche d'Expiation",
+    "icon": 11882,
+    "desc": "Réduit les soins reçus par la cible et occasionne des dommages Eau.\nLes dommages du sort sont augmentés pour les prochains lancers.",
+    "grades": [
+     {
+      "niv": 75,
+      "pa": 4,
+      "po": [
+       6,
+       10
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0,
+      "dmg": [
+       28,
+       30
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 142,
+      "pa": 4,
+      "po": [
+       6,
+       12
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0,
+      "dmg": [
+       35,
+       37
+      ],
+      "element": "eau"
+     }
+    ]
+   },
+   {
+    "id": 32442,
+    "name": "Flèche de Rédemption",
+    "icon": 15426,
+    "desc": "Vole de la vie dans l'élément Eau.\nLes dommages du sort sont augmentés pour chaque tentative de retrait de PA ou de PM réussie.\n\nLes dommages sont réinitialisés après utilisation du sort.",
+    "grades": [
+     {
+      "niv": 185,
+      "pa": 4,
+      "po": [
+       4,
+       9
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       26,
+       29
+      ],
+      "element": "eau",
+      "vol": true
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 32429,
+    "name": "Flèche Perforante",
+    "icon": 11914,
+    "desc": "Occasionne des dommages Air aux ennemis et repousse les cibles en zone.\nLes dommages de zone ne sont pas dégressifs et sont plus importants sur les cibles ayant du bouclier.",
+    "grades": [
+     {
+      "niv": 80,
+      "pa": 4,
+      "po": [
+       3,
+       7
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       31,
+       34
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 147,
+      "pa": 4,
+      "po": [
+       3,
+       9
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       38,
+       42
+      ],
+      "element": "air"
+     }
+    ]
+   },
+   {
+    "id": 32432,
+    "name": "Flèche Boomerang",
+    "icon": 15402,
+    "desc": "Retire des PM et occasionne des dommages Air.\nN'affecte pas le lanceur.\n\nRetire des PM et vole de la vie à la cible initiale et aux ennemis entre elle et la nouvelle cible si elles sont alignées.\nAffecte également les Balises.\nApplique ces effets entre la dernière cible et le lanceur à la fin du tour de ce dernier s'il est aligné avec elle.",
+    "grades": [
+     {
+      "niv": 190,
+      "pa": 3,
+      "po": [
+       0,
+       7
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       26,
+       29
+      ],
+      "element": "air"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 32446,
+    "name": "Flèche Dévorante",
+    "icon": 15195,
+    "desc": "Vole de la vie dans l'élément Feu.\nN'affecte pas le lanceur.\nLe vol de vie est plus important après chaque lancer sur un même ennemi.\n\nOccasionne également des dommages Feu à l'ennemi initial si le sort est lancé sur une autre cible, ou dans les prochains tours s'il n'est pas relancé.\nLes dommages sont plus importants selon le nombre de lancers effectués sur un même ennemi.",
+    "grades": [
+     {
+      "niv": 85,
+      "pa": 3,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       9,
+       11
+      ],
+      "element": "feu",
+      "vol": true
+     },
+     {
+      "niv": 152,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       11,
+       13
+      ],
+      "element": "feu",
+      "vol": true
+     }
+    ]
+   },
+   {
+    "id": 32450,
+    "name": "Flèche Fulminante",
+    "icon": 11923,
+    "desc": "Occasionne des dommages Feu.\nRebondit sur l'ennemi le plus proche dans un cercle de taille 2.\nPeut également rebondir sur les Balises.\n\nLes dommages du sort sont augmentés après chaque cible touchée.",
+    "grades": [
+     {
+      "niv": 195,
+      "pa": 4,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       26,
+       29
+      ],
+      "element": "feu"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 32469,
+    "name": "Acuité Absolue",
+    "icon": 15431,
+    "desc": "Augmente la portée minimale de tous les sorts offensifs Crâ du lanceur pour désactiver la ligne de vue sur tous ses sorts.\nAugmente également ses Critiques.",
+    "grades": [
+     {
+      "niv": 90,
+      "pa": 2,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 157,
+      "pa": 2,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   },
+   {
+    "id": 32475,
+    "name": "Sentinelle",
+    "icon": 11925,
+    "desc": "Augmente les dommages à distance et la Portée du lanceur et dévoile tous les ennemis dans sa ligne de vue.\nLes effets sont réduits pour chaque PM utilisé.",
+    "grades": [
+     {
+      "niv": 200,
+      "pa": 2,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 5,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   }
+  ]
+ ]
+}
