@@ -58,7 +58,7 @@ export class Hud {
     for (const c of Object.values(GAME_DATA.classes)) for (const s of Object.values(c.spells)) icons.add(s.icon);
     for (const i of icons) if (!scene.textures.exists(`sort_${i}`)) scene.load.image(`sort_${i}`, v(`${UI}/sorts/sort_${i}.png`));
     // Auto-attaque à l'arme : icônes officielles weapon_<typeId> (arme_0 = sans arme)
-    for (const t of [0, 2, 3, 4, 5, 6, 7, 8, 19, 22]) if (!scene.textures.exists(`arme_${t}`)) scene.load.image(`arme_${t}`, v(`${UI}/sorts/arme_${t}.png`));
+    for (const t of [0, 2, 3, 4, 5, 6, 7, 8, 19, 22, 271]) if (!scene.textures.exists(`arme_${t}`)) scene.load.image(`arme_${t}`, v(`${UI}/sorts/arme_${t}.png`));
   }
 
   /** Clic sur une icône de la colonne de menus (le jeu ne se met pas en pause : multijoueur prévu). */

@@ -31,7 +31,8 @@
   "os": [
    "os_1-8-combat.webp",
    "os_1-combat-armes.webp",
-   "os_1-combat.webp"
+   "os_1-combat.webp",
+   "os_1-metier.webp"
   ]
  },
  "iop_f": {
@@ -66,7 +67,8 @@
   "os": [
    "os_1-8-combat.webp",
    "os_1-combat-armes.webp",
-   "os_1-combat.webp"
+   "os_1-combat.webp",
+   "os_1-metier.webp"
   ]
  },
  "cra_m": {
@@ -103,7 +105,8 @@
   "os": [
    "os_1-9-combat.webp",
    "os_1-combat-armes.webp",
-   "os_1-combat.webp"
+   "os_1-combat.webp",
+   "os_1-metier.webp"
   ]
  },
  "cra_f": {
@@ -140,7 +143,8 @@
   "os": [
    "os_1-9-combat.webp",
    "os_1-combat-armes.webp",
-   "os_1-combat.webp"
+   "os_1-combat.webp",
+   "os_1-metier.webp"
   ]
  }
 }

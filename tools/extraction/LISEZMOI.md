@@ -272,6 +272,19 @@ acheté chez Emp en Pépites ; la garde-robe (Lykhen à Incarnam, Emp à Astrub)
 - À venir (0.2b) : coiffe, cape, bouclier, familier et apparat = d'autres skins posés sur les mêmes nœuds ; leurs dessins
   ne sont pas dans le cache (`Characters/Skins` complet à copier depuis le PC de Mathis).
 
+## Armes en main, Lance et gestes de récolte (maquette Armes, 2026-11-06)
+
+- Les animations d'arme (`AnimArme<type>` de `bone_1-combat-armes`) ont un nœud `Arme_1`/`Arme_5` (sauf Bâton 4 et Pelle 8) :
+  le dessin de l'arme est un skin posé sur ce nœud, comme une cape. 843 skins ont un morceau `Arme_*`.
+- Lien arme -> skin absent du client : 98 armes reliées dans `equipement_correspondances.json` en comparant l'icône aux dessins
+  (forme alignée + couleurs, vérifié à l'œil) ; 63 dessins sûrs, les 35 autres prennent le dessin type de leur famille
+  (Épée 484, Arc 824, Dague 841, Baguette 954, Bâton 636, Marteau 615, Hache 1000, Pelle 714, Faux 975). Puis `equipement_export.py`.
+- `squelette_export.py` lit aussi `bone_1-metier` (gestes de récolte AnimFaucher, AnimHache, AnimPioche, AnimCueillir0, AnimPeche)
+  et l'anim de la Lance (`AnimArme271`). Ordre des dossiers d'os à garder (static, movement, combat, combat-armes, metier, classe).
+- Flèche de l'arc : découpée dans l'atlas de `combat-armes` -> `public/assets/fx/fleche_arme.webp` (le jeu la fait voler).
+- Sons de récolte : `python sons_recolte.py <dossier des .bank> <dossier fsb5> <racine>` (banque `Player_Rp.bank`).
+- La Lance (type 271) est dans `items_export.py` ; aucune n'est sous le plafond de niveau actuel (la première est niveau 29).
+
 ## Ressources à récolter (dessins)
 Les animations des éléments interactifs (blé 660, frêne 650, fer 4918, ortie 3212, pêche 1018…) ne sont pas dans le client de Dofus 3.
 Elles viennent du client Stasis (format msgpack, voir l'en-tête de `recoltes_planches.py`) ; les 639 éléments animés sont gardés

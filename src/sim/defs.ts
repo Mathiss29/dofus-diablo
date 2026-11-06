@@ -18,7 +18,9 @@ export type HitZone =
   /** Sort ciblé (zone officielle autour de la case visée, à portée du grade) : frappe autour du point visé, ramené à la portée. */
   | { shape: 'point'; range: number; radius: number }
   /** Flèche (Crâ) : part vers le point visé, touche le premier ennemi (ou tous avec pierce), explose en zone si explode. */
-  | { shape: 'projectile'; speed: number; range: number; width: number; explode?: number; pierce?: boolean };
+  | { shape: 'projectile'; speed: number; range: number; width: number; explode?: number; pierce?: boolean;
+      /** Auto-attaque à l'Arc : la flèche officielle de l'animation vole jusqu'à la cible (maquette Armes 4B). */
+      fleche?: boolean };
 
 /** Un sort officiel de la classe, adapté au temps réel. Tous les temps sont en secondes. */
 export interface SpellDef {

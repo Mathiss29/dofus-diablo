@@ -48,15 +48,17 @@ for sid in L(B['breedSpellsId']):
         anims += re.findall(r'casterAnimation[^0-9A-Za-z]*([A-Za-z0-9_]+)', r)
     spells[int(sid)] = {'icon': int(s['iconId']), 'anims': list(dict.fromkeys(anims))}
 
-# AnimArme<typeId> = auto-attaque avec une arme de ce type (2 Arc, 3 Baguette, 4 Bâton, 5 Dague, 6 Épée, 7 Marteau, 8 Pelle, 19 Hache, 22 Faux)
-base = ['AnimStatiqueCombat0', 'AnimStatiqueExplo0', 'AnimCourse', 'AnimArme0', 'AnimHit', 'AnimMort'] + [f'AnimArme{t}' for t in (2, 3, 4, 5, 6, 7, 8, 19, 22)]
+# AnimArme<typeId> = auto-attaque avec une arme de ce type (2 Arc, 3 Baguette, 4 Bâton, 5 Dague, 6 Épée, 7 Marteau, 8 Pelle, 19 Hache, 22 Faux, 271 Lance)
+# Récolte (maquette Armes 9A) : animations officielles des métiers (bone_1-metier), l'outil est dessiné dans l'animation
+METIERS = ['AnimCueillir0', 'AnimFaucher', 'AnimHache', 'AnimPioche', 'AnimPeche']
+base = ['AnimStatiqueCombat0', 'AnimStatiqueExplo0', 'AnimCourse', 'AnimArme0', 'AnimHit', 'AnimMort'] + [f'AnimArme{t}' for t in (2, 3, 4, 5, 6, 7, 8, 19, 22, 271)] + METIERS
 wanted = list(dict.fromkeys(base + [a for s in spells.values() for a in s['anims']]))
 
 # 1. Bundles -> morceaux (b_dump.py), une seule fois
 bones = os.path.join(persos, 'Characters', 'Bones'); skins = os.path.join(persos, 'Characters', 'Skins')
 work = os.path.join(out, 'travail'); os.makedirs(work, exist_ok=True)
 dirs = []
-for b in ['1-static', '1-movement', '1-combat', '1-combat-armes', f'1-{classe}-combat', f'1-{classe}-static']:
+for b in ['1-static', '1-movement', '1-combat', '1-combat-armes', '1-metier', f'1-{classe}-combat', f'1-{classe}-static']:
     f = os.path.join(bones, f'bones_assets_bone_{b}.bundle')
     if not os.path.exists(f): continue
     d = os.path.join(work, 'bone_' + b)

@@ -296,7 +296,10 @@ export class Player extends Entity {
     if (!d || !w || !prof) { this.weaponDef = null; return; }
     const best = [...w.dmg].sort((a, b) => (b.min + b.max) - (a.min + a.max))[0];
     const { base, mult, anim, ...rest } = prof;
-    this.weaponDef = { ...rest, name: d.name, icon: anim, itemIcon: d.icon, element: (best?.element ?? 'neutre') as Element, cooldown: 0,
+    // Maquette Armes 5A : la Vitesse d'attaque accélère aussi le geste (jusqu'à ×1,6), on voit qu'on frappe plus vite
+    const k = Math.min(Player.GESTE_MAX, Math.max(1, 1 + this.stat('vitesse') / 100));
+    this.weaponDef = { ...rest, duration: rest.duration / k, impactAt: rest.impactAt / k, cancelAt: rest.cancelAt !== undefined ? rest.cancelAt / k : undefined,
+      name: d.name, icon: anim, itemIcon: d.icon, element: (best?.element ?? 'neutre') as Element, cooldown: 0,
       dmg: Math.round(base + this.weaponDamage() * mult), anim: `arme${anim}` };
   }
   /** Coût en PA d'un sort (0 pour l'attaque de base). */
@@ -397,6 +400,8 @@ export class Player extends Entity {
     return 1 / (aps * (1 + this.stat('vitesse') / 100));
   }
   static readonly BASE_APS = 1.2;
+  /** Accélération maximale du geste d'auto-attaque par la Vitesse d'attaque (maquette Armes 5A). */
+  static readonly GESTE_MAX = 1.6;
   /** Recharge de l'auto-attaque en cours. */
   autoCd = 0;
 
@@ -660,7 +665,9 @@ export class Player extends Entity {
         pushDmg: d.pushDmg && s.boosted,
         lifesteal: d.lifesteal && d.lifesteal * sig('lifesteal'), erosion: d.erosion && d.erosion * sig('erosion'),
         pmLoss: d.pmLoss && Math.round(d.pmLoss * sig('pm')), paLoss: d.paLoss && Math.round(d.paLoss * sig('pa')),
-        poLoss: d.poLoss && this.parGrade(s.id, d.poLoss) };
+        poLoss: d.poLoss && this.parGrade(s.id, d.poLoss),
+        // Maquette Armes 3B : un coup d'arme fait jaillir un éclat de la couleur de son élément sur chaque monstre touché
+        eclat: s.id === 'arme' || undefined };
       let hits = 0, size = 0;
       if (d.self) { size = 60; }
       else if (hz.shape === 'cone') { size = hz.range * area; hits = world.hitCone(this.x, this.y, this.facing, size, (hz.arc * Math.PI) / 180, hit, d.stun); }

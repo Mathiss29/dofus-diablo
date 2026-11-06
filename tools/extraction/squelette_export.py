@@ -96,7 +96,9 @@ for sid in L(B['breedSpellsId']):
     for u in L(s['boundScriptUsageData']):
         r = str((SC.get(int(u['scriptId'])) or {}).get('rawParams', ''))
         wanted_spells += re.findall(r'casterAnimation[^0-9A-Za-z]*([A-Za-z0-9_]+)', r)
-base = ['AnimStatiqueCombat0', 'AnimStatiqueExplo0', 'AnimCourse', 'AnimArme0', 'AnimHit', 'AnimMort'] + [f'AnimArme{t}' for t in (2, 3, 4, 5, 6, 7, 8, 19, 22)]
+# Récolte (maquette Armes 9A) : animations officielles des métiers (bone_1-metier), l'outil est dessiné dans l'animation
+METIERS = ['AnimCueillir0', 'AnimFaucher', 'AnimHache', 'AnimPioche', 'AnimPeche']
+base = ['AnimStatiqueCombat0', 'AnimStatiqueExplo0', 'AnimCourse', 'AnimArme0', 'AnimHit', 'AnimMort'] + [f'AnimArme{t}' for t in (2, 3, 4, 5, 6, 7, 8, 19, 22, 271)] + METIERS
 wanted = list(dict.fromkeys(base + wanted_spells))
 EIGHT = {'AnimCourse', 'AnimStatiqueExplo0'}
 orients = lambda a: (0, 1, 2, 5, 6) if a in EIGHT else (1, 5)
@@ -105,7 +107,7 @@ names = {f'{a}_{o}' for a in wanted for o in orients(a)}
 # --- Animations du squelette ----------------------------------------------------------------------------------
 graphiques, noeuds, anims, shots, textures = [], [], {}, {}, []
 nidx = {}
-for b in ['1-static', '1-movement', '1-combat', '1-combat-armes', f'1-{classe}-combat', f'1-{classe}-static']:
+for b in ['1-static', '1-movement', '1-combat', '1-combat-armes', '1-metier', f'1-{classe}-combat', f'1-{classe}-static']:
     f = os.path.join(bones, f'bones_assets_bone_{b}.bundle')
     if not os.path.exists(f): continue
     d = dump(f, os.path.join(work, 'bone_' + b))

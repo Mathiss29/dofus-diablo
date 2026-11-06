@@ -47,6 +47,13 @@ const WEAPON_MAP: Record<string, AnimSlice> = {
   arme22: { anim: 'AnimArme22', from: 0, to: 0.7 },   // Faux
   arme2: { anim: 'AnimArme2', from: 0.24, to: 1 },    // Arc
   arme3: { anim: 'AnimArme3', from: 0.12, to: 1 },    // Baguette
+  arme271: { anim: 'AnimArme271', from: 0.06, to: 1 }, // Lance (maquette Armes 1A)
+  // Récolte (maquette Armes 9A) : animation officielle du métier (bone_1-metier), l'outil est dessiné dedans ; jouée en boucle
+  r_AnimFaucher: { anim: 'AnimFaucher', loop: true, fps: 26 },
+  r_AnimHache: { anim: 'AnimHache', loop: true, fps: 24 },
+  r_AnimPioche: { anim: 'AnimPioche', loop: true, fps: 22 },
+  r_AnimCueillir0: { anim: 'AnimCueillir0', loop: true, fps: 14 },
+  r_AnimPeche: { anim: 'AnimPeche', loop: true, fps: 20 },
 };
 
 // Iop : squelette joueur n° 1 + skin 80 (corps) + 2124 (tête). Animations officielles lues dans

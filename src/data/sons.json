@@ -2188,5 +2188,49 @@
   "ui/AMB_Loc_CoinDrop_005.mp3",
   "ui/AMB_Loc_CoinDrop_007.mp3",
   "ui/AMB_Loc_CoinDrop_009.mp3"
- ]
+ ],
+ "recolte": {
+  "AnimFaucher": [
+   "recolte/AnimFaucher_Lp_01.mp3",
+   "recolte/AnimFaucher_Lp_02.mp3",
+   "recolte/AnimFaucher_Lp_03.mp3",
+   "recolte/AnimFaucher_Lp_04.mp3",
+   "recolte/AnimFaucher_Lp_05.mp3",
+   "recolte/AnimFaucher_Lp_06.mp3",
+   "recolte/AnimFaucher_Lp_07.mp3",
+   "recolte/AnimFaucher_Lp_08.mp3"
+  ],
+  "AnimHache": [
+   "recolte/AnimHache_Lp_01.mp3",
+   "recolte/AnimHache_Lp_02.mp3",
+   "recolte/AnimHache_Lp_03.mp3",
+   "recolte/AnimHache_Lp_04.mp3",
+   "recolte/AnimHache_Lp_05.mp3",
+   "recolte/AnimHache_Lp_06.mp3",
+   "recolte/AnimHache_Lp_07.mp3",
+   "recolte/AnimHache_Lp_08.mp3"
+  ],
+  "AnimPioche": [
+   "recolte/AnimPioche_Lp_01.mp3",
+   "recolte/AnimPioche_Lp_02.mp3",
+   "recolte/AnimPioche_Lp_03.mp3",
+   "recolte/AnimPioche_Lp_04.mp3",
+   "recolte/AnimPioche_Lp_05.mp3",
+   "recolte/AnimPioche_Lp_06.mp3",
+   "recolte/AnimPioche_Lp_07.mp3",
+   "recolte/AnimPioche_Lp_08.mp3"
+  ],
+  "AnimCueillir0": [
+   "recolte/AnimCueillir0_01.mp3",
+   "recolte/AnimCueillir0_02.mp3",
+   "recolte/AnimCueillir0_03.mp3",
+   "recolte/AnimCueillir0_04.mp3"
+  ],
+  "AnimPeche": [
+   "recolte/AnimStatique_to_AnimPeche_01.mp3",
+   "recolte/AnimStatique_to_AnimPeche_02.mp3",
+   "recolte/AnimStatique_to_AnimPeche_03.mp3",
+   "recolte/AnimStatique_to_AnimPeche_04.mp3"
+  ]
+ }
 }

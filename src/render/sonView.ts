@@ -20,6 +20,7 @@ export class SonView {
   private classe: string;
   private prevAnim = '';
   private prevT = 0;
+  private coupRecolte = 0;
   private etats = new Map<number, string>();
   /** Élite ou boss contre qui la musique de combat joue (3B). */
   private adversaire: Monster | null = null;
@@ -47,7 +48,7 @@ export class SonView {
 
   /** Sons de la classe, des effets et des monstres de la zone : chargés en fond dès l'arrivée. */
   private precharger() {
-    const M = MANIFESTE, f: string[] = [...Object.values(M.ui), ...M.impacts, ...(M.kamas ?? [])];
+    const M = MANIFESTE, f: string[] = [...Object.values(M.ui), ...M.impacts, ...(M.kamas ?? []), ...Object.values(M.recolte ?? {}).flat()];
     f.push(...Object.values(M.sorts[this.classe] ?? {}));
     for (const a of Object.values(this.look.map)) { const s = M.sorts.commun[a.anim]; if (s) f.push(s); }
     const types = new Set(this.world.monsters.map(m => m.type));
@@ -123,6 +124,15 @@ export class SonView {
       }
     }
     this.prevAnim = p.anim; this.prevT = p.animT;
+    // Armes 9A : coups officiels de l'animation de récolte (la pêche n'a que le lancer de ligne, une fois)
+    if (p.anim.startsWith('r_')) {
+      const g = p.anim.slice(2), l = M.recolte?.[g];
+      this.coupRecolte -= dt;
+      if (l?.length && this.coupRecolte <= 0) {
+        Son.jouer(Son.auHasard(l), 'effets', { vol: 0.75, vitesse: 0.95 + Math.random() * 0.1, cle: 'recolte', ecart: 0.1 });
+        this.coupRecolte = g === 'AnimPeche' ? 99 : g === 'AnimCueillir0' ? 0.6 : 0.42;
+      }
+    } else this.coupRecolte = 0;
     // 5A : cri d'attaque des monstres ; 3A/3B : qui nous attaque
     let attaquants = 0, adv: Monster | null = null;
     const vus = new Set<number>();

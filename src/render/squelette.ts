@@ -45,9 +45,11 @@ export const equipement = () => charge<Equipement>('equipement.json');
 /** Objets dont on voit le dessin : coiffe, cape, bouclier ; l'apparat (5A) passe par-dessus, « 0 » cache l'objet porté. */
 export const EMPLACEMENTS_VISIBLES = ['chapeau', 'cape', 'bouclier'] as const;
 export type EmplacementVisible = typeof EMPLACEMENTS_VISIBLES[number];
-/** Objets visibles d'après l'équipement et l'apparat du joueur (en jeu ou d'une sauvegarde). */
+/** Objets visibles d'après l'équipement et l'apparat du joueur (en jeu ou d'une sauvegarde).
+ *  L'arme (maquette Armes 8A) se pose sur le nœud Arme_1/Arme_5 que seules les animations d'arme (AnimArme…) montrent. */
 export function objetsPortes(eq?: Partial<Record<string, { id: string } | undefined>>, apparat?: Partial<Record<EmplacementVisible, string>>): string[] {
-  return objetsVisibles({ chapeau: eq?.chapeau?.id, cape: eq?.cape?.id, bouclier: eq?.bouclier?.id }, apparat);
+  const o = objetsVisibles({ chapeau: eq?.chapeau?.id, cape: eq?.cape?.id, bouclier: eq?.bouclier?.id }, apparat);
+  return eq?.arme?.id ? [...o, eq.arme.id] : o;
 }
 export function objetsVisibles(porte: Partial<Record<EmplacementVisible, string | undefined>>, apparat: Partial<Record<EmplacementVisible, string>> = {}): string[] {
   return EMPLACEMENTS_VISIBLES.map(e => apparat[e] ?? porte[e]).filter((x): x is string => !!x && x !== '0');
