@@ -1,6 +1,6 @@
 import { v } from './assetUrl';
 import Phaser from 'phaser';
-import { GridMap, type DecorPlace, type WorldGrid, type WorldMapEntry } from '../sim/gridmap';
+import { GridMap, MAP_COLS, MAP_ROWS, type DecorPlace, type WorldGrid, type WorldMapEntry } from '../sim/gridmap';
 import { ISO } from '../sim/iso';
 import type { Particules } from './particles';
 
@@ -46,7 +46,11 @@ export class WorldView {
   parts?: Particules;
   private lastT = 0;
 
+  /** Cartes du dehors (« x,y ») : un côté sans voisine est un bord du monde (voir brume()). */
+  private readonly dehors: Set<string>;
+
   constructor(private readonly scene: Phaser.Scene, private readonly wg: WorldGrid, private readonly dir: string, private readonly prefix: string) {
+    this.dehors = new Set(wg.world.maps.filter(m => !m.inside).map(m => `${m.x},${m.y}`));
     for (const m of wg.world.maps) this.slots.set(m.tag, { state: 'none', objs: [], next: 0 });
     scene.load.on(Phaser.Loader.Events.FILE_COMPLETE, (key: string) => this.onFile(key));
     scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
@@ -232,6 +236,7 @@ export class WorldView {
       const f = wg.toScreen(m.bord.x, m.bord.y), rang = (m.y - this.wg.world.origin[1]) * 1000 + (m.x - this.wg.world.origin[0]);
       s.objs.push(this.scene.add.image(f.x, f.y, this.k(`bord_${m.tag}`)).setOrigin(0).setScale(S).setDepth(-9998.6 - rang * 1e-6).setTint(this.tint));
     }
+    this.brume(m, s);
     s.next = 0;
     for (const p of this.portes) if (p.tag === m.tag) {
       const c = ISO.toScreen(p.x, p.y), g = this.scene.add.graphics().setPosition(c.x, c.y).setDepth(c.y - 2);   // comme une ombre : au-dessus du sol et des tapis
@@ -242,6 +247,33 @@ export class WorldView {
     s.state = 'ready';
     this.parts?.add(m.tag);
     this.pump(m.tag === this.center ? Infinity : this.presse ? 14 : BUDGET_MS);   // la carte du joueur tout de suite, les voisines au fil des images
+  }
+  /** Bord du monde (monde sans ciel, ex. Astrub) : là où une carte du dehors n'a pas de voisine, son sol s'arrêtait net en escalier
+   *  sur le fond, avec des bouts de toits qui flottaient au-delà (Tainéla, retour de Mathis 2026-11-06 ; Dofus ne montre qu'une
+   *  carte, on n'y voit jamais ce bord). On fond le bord de la carte dans la couleur du fond, sur 2 cases, puis on couvre le reste. */
+  private brume(m: WorldMapEntry, s: Slot) {
+    const w = this.wg.world;
+    if (w.sky || m.inside) return;
+    const g = w.grid, [X0, Y0] = w.origin, S = GridMap.S;
+    const x0 = g.ox + Math.floor(g.w / 4) + (m.x - X0) * MAP_COLS * g.w, y0 = g.oy + Math.floor(g.h / 4) + (m.y - Y0) * MAP_ROWS * g.h / 2;
+    const a = this.wg.toScreen(x0, y0), W = MAP_COLS * g.w * S, H = MAP_ROWS * g.h / 2 * S;
+    const dedans = 2 * g.w * S, dehors = 0.4 * g.w * S, loin = 1600, c = 0x0d2b36;
+    const libre = (dx: number, dy: number) => !this.dehors.has(`${m.x + dx},${m.y + dy}`);
+    const gr = this.scene.add.graphics().setDepth(1e6);
+    const bande = (x: number, y: number, w2: number, h2: number, a1: number, a2: number, a3: number, a4: number) =>
+      gr.fillGradientStyle(c, c, c, c, a1, a2, a3, a4).fillRect(x, y, w2, h2);
+    const plein = (x: number, y: number, w2: number, h2: number) => gr.fillStyle(c, 1).fillRect(x, y, w2, h2);
+    const L = libre(-1, 0), R = libre(1, 0), T = libre(0, -1), B = libre(0, 1), e = dehors + loin;
+    if (L) { bande(a.x - dehors, a.y, dedans + dehors, H, 1, 0, 1, 0); plein(a.x - e, a.y, loin, H); }
+    if (R) { bande(a.x + W - dedans, a.y, dedans + dehors, H, 0, 1, 0, 1); plein(a.x + W + dehors, a.y, loin, H); }
+    if (T) { bande(a.x, a.y - dehors, W, dedans + dehors, 1, 1, 0, 0); plein(a.x, a.y - e, W, loin); }
+    if (B) { bande(a.x, a.y + H - dedans, W, dedans + dehors, 0, 0, 1, 1); plein(a.x, a.y + H + dehors, W, loin); }
+    // coins : seulement si les deux côtés et la diagonale sont vides
+    if (L && T && libre(-1, -1)) plein(a.x - e, a.y - e, e, e);
+    if (R && T && libre(1, -1)) plein(a.x + W, a.y - e, e, e);
+    if (L && B && libre(-1, 1)) plein(a.x - e, a.y + H, e, e);
+    if (R && B && libre(1, 1)) plein(a.x + W, a.y + H, e, e);
+    if (gr.commandBuffer.length) s.objs.push(gr); else gr.destroy();
   }
   /** Pose le décor des cartes prêtes, dans la limite du budget de temps. */
   private pump(budget = BUDGET_MS) {

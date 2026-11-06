@@ -52,5 +52,53 @@ for m in outs:
     if m.get('doublons'): continue
     m['decor'] = [p for i, p in enumerate(m['decor']) if i not in jeter[m['tag']]]
     m['doublons'] = 1
-json.dump(M, open(f'{D}/monde.json', 'w'))
 print('décor en double retiré :', n)
+
+# Copies DÉCALÉES (Cité d'Astrub, Cimetière, Tainéla…) : entre certaines cartes voisines, la copie du décor qui déborde n'est pas
+# au même endroit que l'original mais décalée d'une ou deux cases, toujours du même décalage pour une paire de cartes
+# (ex. 7,-18 -> 8,-18 : 67 copies à (0, -43)). Dofus ne montre qu'une carte : ça ne se voit pas. Chez nous la maison était posée
+# deux fois, l'une à côté de l'autre (retour de Mathis 2026-11-06). Une copie = un élément hors du cadre de sa carte, dont la même
+# image se trouve dans une voisine (plus près de son cadre) au décalage habituel de la paire ; on garde l'original.
+par = {(m['x'], m['y']): m for m in outs}
+def dist(q):
+    m, _, p = q; x0, y0, x1, y1 = cadre(m)
+    return max(x0 - p['x'], p['x'] - x1, 0) + max(y0 - p['y'], p['y'] - y1, 0)
+def jumeaux(m, p):
+    """(voisine, décalage) des mêmes images dans les cartes voisines, à moins de 2 cases."""
+    fr = frame(cle(m, p), p['f']); sz = (fr['sourceSize']['w'], fr['sourceSize']['h']); r = []
+    ref = None
+    for dx in (-1, 0, 1):
+        for dy in (-1, 0, 1):
+            o = par.get((m['x'] + dx, m['y'] + dy))
+            if not o or o is m: continue
+            for q in o['decor']:
+                ox, oy = q['x'] - p['x'], q['y'] - p['y']
+                if abs(ox) > 2 * W + 1 or abs(oy) > 2 * H + 1 or abs(ox) + abs(oy) < 1: continue
+                if (q.get('z', 1), q.get('b'), q.get('w', 1), q.get('c', 0) < 0) != (p.get('z', 1), p.get('b'), p.get('w', 1), p.get('c', 0) < 0): continue
+                fq = frame(cle(o, q), q['f'])
+                if (fq['sourceSize']['w'], fq['sourceSize']['h']) != sz or dist((o, 0, q)) >= dist((m, 0, p)): continue
+                if ref is None: ref = pixels(cle(m, p), p['f'])
+                if np.abs(pixels(cle(o, q), q['f']) - ref).mean() < 12: r.append((o['tag'], round(ox), round(oy)))
+    return r
+cand = []
+for m in outs:
+    if m.get('decales'): continue
+    for i, p in enumerate(m['decor']):
+        if dist((m, i, p)) > 0: cand.append((m, i, jumeaux(m, p)))
+# décalages habituels de chaque paire (à 1 px près) : au moins 3 copies et un quart des copies de la paire
+compte = {}
+for m, i, J in cand:
+    for t, ox, oy in set(J): compte.setdefault((m['tag'], t), {}).setdefault((ox, oy), 0); compte[(m['tag'], t)][(ox, oy)] += 1
+def habituel(a, t, ox, oy):
+    c = compte.get((a, t), {}); tot = sum(c.values())
+    k = sum(v for (x, y), v in c.items() if abs(x - ox) <= 1 and abs(y - oy) <= 1)
+    return k >= 3 and k * 4 >= tot
+n2, jeter2 = 0, {m['tag']: set() for m in outs}
+for m, i, J in cand:
+    if any(habituel(m['tag'], t, ox, oy) for t, ox, oy in J): jeter2[m['tag']].add(i); n2 += 1
+for m in outs:
+    if m.get('decales'): continue
+    m['decor'] = [p for i, p in enumerate(m['decor']) if i not in jeter2[m['tag']]]
+    m['decales'] = 1
+json.dump(M, open(f'{D}/monde.json', 'w'))
+print('copies décalées retirées :', n2)
