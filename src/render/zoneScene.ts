@@ -51,6 +51,11 @@ export class ZoneScene extends Phaser.Scene {
   private worldView: WorldView | null = null;
   /** Le joueur vient de passer une porte : la caméra le rejoint d'un coup (pas de glissade à travers le monde). */
   private snapCam = false;
+  /** Rideau des arrivées (choix 1A + 5A) : 'sortie' = fondu au noir devant une porte ; 'attente' = noir tant que la carte
+   *  d'arrivée et ses voisines ne sont pas posées (la partie est en pause). Au-delà de RIDEAU_ECRAN s, l'écran de chargement s'affiche. */
+  private rideau: { etat: 'sortie' | 'attente'; t: number; ecran: boolean } | null = null;
+  static readonly RIDEAU_ECRAN = 0.6;
+  static readonly RIDEAU_MAX = 10;
   private views = new Map<number, EntityView>();
   private fx!: FX;
   /** Aura de la jauge de classe pleine (ligne Rage 27B), sous le perso. */
@@ -449,6 +454,8 @@ export class ZoneScene extends Phaser.Scene {
     }
     // GEL D'IMAGE : la simulation s'arrête, l'affichage continue (tremblement, chiffres)
     if (this.hitstop > 0) { this.hitstop -= dt; this.render(); return; }
+    // ARRIVÉE : écran noir tant que les cartes ne sont pas posées, la partie attend (pas de coup reçu dans le noir)
+    if (this.rideau?.etat === 'attente') { this.acc = 0; this.render(); return; }
     // Pas fixe : même résultat quelle que soit la fréquence de l'écran (indispensable pour la coop)
     this.acc += dt;
     if (this.acc < ZoneScene.STEP) { this.render(); return; }   // écran > 60 Hz : on garde la touche pour le prochain pas
@@ -510,7 +517,7 @@ export class ZoneScene extends Phaser.Scene {
           this.windows?.refresh(); break;
         }
         case 'checkpoint': this.hud.banner(`Point de retour\n${e.name}`, 1400); break;
-        case 'respawn': this.hud.banner('De retour !', 900); break;
+        case 'respawn': this.hud.banner('De retour !', 900); this.attendreCartes(); this.snapCam = true; break;
         case 'enterArea': if (!this.vitrine) this.hud.zoneBanner(e.name, this.world.zone.name, e.level, this.decouvrir(e.name)); break;
         case 'queteDebut': {
           const q = QUETES.quetes[e.id];
@@ -529,9 +536,41 @@ export class ZoneScene extends Phaser.Scene {
           const s = QUETES.succes[e.id];
           this.hud.succes(s.nom, s.points); sauverCompte(this.world); this.windows?.refresh(); break;
         }
-        case 'portal': this.cameras.main.fadeIn(450, 0, 0, 0); this.snapCam = true; break;   // fondu au noir, la caméra saute avec le joueur
+        case 'portalStart': this.baisserRideau(); break;   // fondu de sortie (0,2 s), le perso attend devant la porte
+        case 'portal': this.attendreCartes(); this.snapCam = true; break;   // noir, la caméra saute avec le joueur
       }
     }
+  }
+
+  /** Fondu au noir de sortie (5A : 0,2 s, la durée World.PASSAGE). */
+  private baisserRideau() {
+    if (this.vitrine || !this.worldView) return;
+    this.cameras.main.fadeOut(World.PASSAGE * 1000, 0, 0, 0);
+    this.rideau = { etat: 'sortie', t: 0, ecran: false };
+  }
+  /** Arrivée d'un coup (porte, mort, fin de quête, Zaap) : noir tout de suite, puis attente des cartes (render). */
+  private attendreCartes() {
+    if (this.vitrine || !this.worldView) { this.cameras.main.fadeIn(450, 0, 0, 0); return; }
+    this.cameras.main.fadeEffect.start(true, 0, 0, 0, 0, true);
+    this.rideau = { etat: 'attente', t: 0, ecran: false };
+    this.worldView.presse = true;
+  }
+  /** Lève le rideau quand la carte du joueur et ses voisines sont posées (fondu d'entrée 0,3 s). */
+  private leverRideau(dt: number) {
+    const r = this.rideau, wv = this.worldView;
+    if (!r || !wv) return;
+    r.t += dt;
+    if (r.etat === 'sortie') {   // porte annulée (mort pendant le fondu) : on rouvre
+      if (!this.world.passage && r.t > World.PASSAGE + 0.3) { this.cameras.main.fadeIn(300, 0, 0, 0); this.rideau = null; }
+      return;
+    }
+    const p = this.world.player, etat = wv.pret(p.x, p.y);
+    if (!r.ecran && r.t > ZoneScene.RIDEAU_ECRAN && !etat.ok) { r.ecran = true; Chargement.montrer(); }
+    if (r.ecran) Chargement.progres(etat.p);
+    if (!etat.ok && r.t < ZoneScene.RIDEAU_MAX) return;
+    if (r.ecran) Chargement.cacher();
+    this.cameras.main.fadeIn(300, 0, 0, 0);
+    wv.presse = false; this.rideau = null;
   }
 
   /** Butin au sol (choix 3A) : icône officielle qui flotte, colonne de lumière de la couleur de la rareté dès Rare
@@ -667,6 +706,7 @@ export class ZoneScene extends Phaser.Scene {
     if (Math.abs(cam.zoom - this.zoom) > 0.001) cam.setZoom(cam.zoom + (this.zoom - cam.zoom) * 0.2);
     this.updateAmbiance();
     wv?.update(w.player.x, w.player.y);
+    this.leverRideau(this.game.loop.delta / 1000);
     this.drawRageAura();
     for (const e of [w.player, ...w.monsters]) {
       // monde ouvert : on n'affiche que les monstres des cartes chargées (les autres vivent quand même dans la simulation)

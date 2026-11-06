@@ -2,7 +2,7 @@ import { angleDiff, Rng } from './math';
 import type { Element, GameData, HitZone, MonsterSpell, SubAreaDef, ZoneDef } from './defs';
 import type { SimEvent, Telegraph } from './events';
 import { GridMap, WorldGrid } from './gridmap';
-import type { PlayerInput } from './input';
+import { NO_INPUT, type PlayerInput } from './input';
 import { CASE, Monster, TOUR } from './monster';
 import { METIER_XP, RARITIES, rollItem, rollRarity, type Item, type ItemsData } from './items';
 import { Player } from './player';
@@ -85,6 +85,10 @@ export class World {
   portes: { nom: string; ends: [PorteEnd, PorteEnd]; verrou: boolean; sens: boolean }[] = [];
   /** Bout de porte par lequel le joueur vient d'arriver : inactif tant qu'il ne s'en est pas éloigné. */
   private portalLock: PorteEnd | null = null;
+  /** Porte franchie : le joueur s'arrête devant pendant le fondu de sortie (PASSAGE s), puis arrive de l'autre côté. */
+  passage: { to: PorteEnd; nom: string; t: number } | null = null;
+  /** Durée du fondu de sortie d'une porte (choix 5A : 0,2 s pour sortir, 0,3 s pour entrer). */
+  static readonly PASSAGE = 0.2;
   /** Distance (|dx| + |dy|) au-delà de laquelle un monstre qui attend ne bouge plus. */
   static readonly SOMMEIL = 2400;
   /** Quêtes et succès (monde ouvert avec quetes.json). */
@@ -138,8 +142,17 @@ export class World {
     }
   }
   /** Passe la porte si le joueur est dessus : il arrive de l'autre côté, un peu en avant de la porte d'arrivée. */
-  private updatePortes() {
-    const p = this.player, wg = this.worldGrid!, R = World.PORTE_R;
+  private updatePortes(dt: number) {
+    const p = this.player, R = World.PORTE_R;
+    if (this.passage) {
+      const q = this.passage;
+      if (p.dead) { this.passage = null; return; }
+      p.stopMove(); q.t -= dt;
+      if (q.t > 0) return;
+      this.passage = null;
+      this.traverser(q.to, q.nom);
+      return;
+    }
     if (p.dead || p.state !== 'free') return;   // pas au milieu d'un sort ou d'un bond
     if (this.portalLock && Math.hypot(p.x - this.portalLock.x, p.y - this.portalLock.y) > R + 30) this.portalLock = null;
     for (const po of this.portes) for (let i = 0; i < 2; i++) {
@@ -151,21 +164,28 @@ export class World {
         this.emit({ k: 'status', x: p.x, y: p.y - 60, text: 'Vaincs les monstres de la salle', color: '#ff9a5a' });
         return;
       }
-      // arrivée : une case libre juste hors du rayon de la porte d'arrivée, du côté du milieu de la carte (pas collé au bord)
-      const free = (wg.freeByMap.get(to.tag) ?? []).map(c => wg.cellToWorld(c));
-      const mid = free.reduce((a, q) => ({ x: a.x + q.x / free.length, y: a.y + q.y / free.length }), { x: 0, y: 0 });
-      let best = to, bd = Infinity;
-      for (const q of free) {
-        const d = Math.hypot(q.x - to.x, q.y - to.y);
-        if (d < World.PORTE_ARRIVEE) continue;
-        const score = d + 0.6 * Math.hypot(q.x - mid.x, q.y - mid.y);
-        if (score < bd) { bd = score; best = { tag: to.tag, ...q }; }
-      }
-      p.x = best.x; p.y = best.y; p.kx = p.ky = 0; p.z = 0; p.stopMove();
-      this.portalLock = to;
-      this.emit({ k: 'portal', nom: po.nom });
+      // le perso s'arrête devant la porte pendant le fondu de sortie, puis passe (traverser)
+      p.stopMove();
+      this.passage = { to, nom: po.nom, t: World.PASSAGE };
+      this.emit({ k: 'portalStart', nom: po.nom });
       return;
     }
+  }
+  /** Arrivée de l'autre côté : une case libre juste hors du rayon de la porte d'arrivée, du côté du milieu de la carte (pas collé au bord). */
+  private traverser(to: PorteEnd, nom: string) {
+    const p = this.player, wg = this.worldGrid!;
+    const free = (wg.freeByMap.get(to.tag) ?? []).map(c => wg.cellToWorld(c));
+    const mid = free.reduce((a, q) => ({ x: a.x + q.x / free.length, y: a.y + q.y / free.length }), { x: 0, y: 0 });
+    let best = to, bd = Infinity;
+    for (const q of free) {
+      const d = Math.hypot(q.x - to.x, q.y - to.y);
+      if (d < World.PORTE_ARRIVEE) continue;
+      const score = d + 0.6 * Math.hypot(q.x - mid.x, q.y - mid.y);
+      if (score < bd) { bd = score; best = { tag: to.tag, ...q }; }
+    }
+    p.x = best.x; p.y = best.y; p.kx = p.ky = 0; p.z = 0; p.stopMove();
+    this.portalLock = to;
+    this.emit({ k: 'portal', nom });
   }
 
   /** Plus aucun monstre vivant dans les groupes de cette carte (portes verrouillées des donjons). */
@@ -259,7 +279,7 @@ export class World {
   }
   private updateOpen(dt: number) {
     const p = this.player, open = this.zone.open!;
-    this.updatePortes();
+    this.updatePortes(dt);
     for (const g of this.groups) {
       if (g.members.some(m => !m.dead)) continue;
       if (!g.cleared) {
@@ -317,7 +337,7 @@ export class World {
       if (input.talk) this.quetes.cliquer(input.talk);
       else if (input.dest || input.target != null || input.pickup != null) this.quetes.annulerClic();
     }
-    p.update(dt, input, this);
+    p.update(dt, this.passage ? { ...NO_INPUT, aim: input.aim } : input, this);   // devant une porte : le perso attend le fondu
     // Monde ouvert : un monstre qui attend loin du joueur dort (pas d'errance ni d'IA) : bien moins de calcul
     for (const m of this.monsters) {
       if (this.zone.open && m.state === 'idle' && !m.dead && Math.abs(m.x - p.x) + Math.abs(m.y - p.y) > World.SOMMEIL) continue;

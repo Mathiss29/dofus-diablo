@@ -98,6 +98,9 @@ describe('monde ouvert', () => {
   });
 });
 
+/** Laisse passer le fondu de sortie d'une porte (World.PASSAGE), sans toucher au clavier. */
+function finirPassage(w: World) { for (let i = 0; i < 60 && w.passage; i++) w.step(STEP, NO_INPUT); }
+
 describe('intérieurs (maisons, Mine, Taverne)', () => {
   it('chaque porte mène de l\'autre côté, et la porte d\'arrivée ne renvoie pas aussitôt', () => {
     const w = newWorld(), wg = w.worldGrid!, p = w.player;
@@ -113,6 +116,9 @@ describe('intérieurs (maisons, Mine, Taverne)', () => {
       w.step(STEP, NO_INPUT);
       expect(wg.mapAt(p.x, p.y)?.tag, 'en passant devant, on n\'entre pas').toBe(from.tag);
       w.step(STEP, { ...NO_INPUT, dest: { x: from.x, y: from.y } });   // clic sur la porte
+      expect(w.passage, 'le perso attend le fondu devant la porte').not.toBeNull();
+      expect(wg.mapAt(p.x, p.y)?.tag).toBe(from.tag);
+      finirPassage(w);
       expect(wg.mapAt(p.x, p.y)?.tag, `${from.tag} -> ${to.tag}`).toBe(to.tag);
       const there = { x: p.x, y: p.y };
       w.step(STEP, NO_INPUT);
@@ -144,7 +150,7 @@ describe('Crypte de Kardorim', () => {
   it('la porte de la salle suivante ne s\'ouvre qu\'une fois la salle vidée', () => {
     const w = newWorld(), wg = w.worldGrid!, p = w.player;
     const po = w.portes.find(q => q.ends[0].tag === 'crypte_1')!;
-    const go = () => { p.x = po.ends[0].x; p.y = po.ends[0].y; w.step(STEP, { ...NO_INPUT, dest: { x: p.x, y: p.y } }); };
+    const go = () => { p.x = po.ends[0].x; p.y = po.ends[0].y; w.step(STEP, { ...NO_INPUT, dest: { x: p.x, y: p.y } }); finirPassage(w); };
     for (const m of salle(w, 'crypte_1')) m.state = 'spawn';   // ne bougent pas pendant le test
     go();
     expect(wg.mapAt(p.x, p.y)?.tag).toBe('crypte_1');
