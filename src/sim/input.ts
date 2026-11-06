@@ -1,5 +1,6 @@
 import type { Vec } from './iso';
 import type { SkillId } from './defs';
+import type { CommandeTest } from './outilsTest';
 
 /** Entrées d'un joueur pour un pas de simulation (clavier, manette ou réseau plus tard). */
 export interface PlayerInput {
@@ -28,6 +29,8 @@ export interface PlayerInput {
   talk?: string | null;
   /** Réponse au dialogue ouvert (index du cadre vert, -1 = fermer). */
   reponse?: number | null;
+  /** Partie de test : ordres du panneau F1 (absent dans une vraie partie). */
+  test?: CommandeTest[] | null;
 }
 
 export const NO_INPUT: PlayerInput = { move: { x: 0, y: 0 }, aim: { x: 0, y: 0 }, pressed: null, holdAttack: false };
