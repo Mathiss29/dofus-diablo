@@ -1,3 +1,4 @@
+import { degatsMonstre } from './danger';
 import { EQUIP_SLOTS, RARITIES, RARITY_NAMES, rollItem, type EquipSlot, type Rarity, type Slot } from './items';
 import type { Element } from './defs';
 import type { World } from './world';
@@ -100,6 +101,7 @@ export function appliquerTest(w: World, c: CommandeTest) {
       const def = c.mannequin ? { ...base, hp: base.hp * 20, name: `${base.name} (mannequin)` }
         : c.rang === 'elite' && !base.elite && !base.boss ? { ...base, elite: true, hp: Math.round(base.hp * 3), xp: xp * 3 }
         : c.rang === 'boss' && !base.boss ? { ...base, boss: true, hp: Math.round(base.hp * 10), xp: xp * 10 } : base;
+      if (def !== base && !c.mannequin) def.dmg = degatsMonstre(def);   // maquette « Danger » 1A : le rang choisi change aussi ses dégâts
       const n = Math.max(1, Math.min(20, c.n)), a0 = w.rng.range(0, Math.PI * 2);
       for (let i = 0; i < n; i++) {
         const a = a0 + (i / n) * Math.PI * 2, r = i === 0 ? 0 : w.rng.range(60, 120);
