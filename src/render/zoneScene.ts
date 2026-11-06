@@ -1,5 +1,5 @@
 import { apercuSort } from '../sim/apercu';
-import { v } from './assetUrl';
+import { dossier, v } from './assetUrl';
 import Phaser from 'phaser';
 import { GAME_DATA, ITEMS, QUETES } from '../sim/data';
 import type { Compte } from '../sim/quests';
@@ -169,7 +169,7 @@ export class ZoneScene extends Phaser.Scene {
       const a = L.atlas;
       if (this.textures.exists(a) || seen.has(a)) continue;
       seen.add(a);
-      if (L.multi) this.load.multiatlas(a, v(`${ASSETS}/sprites/${a}.json`), `${ASSETS}/sprites/`);
+      if (L.multi) this.load.multiatlas(a, v(`${ASSETS}/sprites/${a}.json`), dossier(`${ASSETS}/sprites/`));
       else this.load.atlas(a, v(`${ASSETS}/sprites/${a}.webp`), v(`${ASSETS}/sprites/${a}.json`));
     }
     if (zone.open) {
@@ -748,7 +748,7 @@ export class ZoneScene extends Phaser.Scene {
     if (this.textures.exists(a)) return true;
     if (!this.demandees.has(a)) {
       this.demandees.add(a);
-      if (L.multi) this.load.multiatlas(a, v(`${ASSETS}/sprites/${a}.json`), `${ASSETS}/sprites/`);
+      if (L.multi) this.load.multiatlas(a, v(`${ASSETS}/sprites/${a}.json`), dossier(`${ASSETS}/sprites/`));
       else this.load.atlas(a, v(`${ASSETS}/sprites/${a}.webp`), v(`${ASSETS}/sprites/${a}.json`));
       this.load.once(`filecomplete-${L.multi ? 'multiatlas' : 'atlasjson'}-${a}`, () => this.time.delayedCall(0, () => this.demandees.delete(a)));
       if (!this.load.isLoading()) this.load.start();

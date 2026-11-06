@@ -69,7 +69,7 @@ class Flux {
   readonly gain: GainNode;
   private src: MediaElementAudioSourceNode;
   constructor(ctx: AudioContext, url: string, bus: AudioNode, boucle: boolean, vol = 0) {
-    this.el = new Audio(v(DOSSIER + url));
+    this.el = new Audio(); this.el.crossOrigin = 'anonymous'; this.el.src = v(DOSSIER + url);
     this.el.loop = boucle; this.el.preload = 'auto';
     this.src = ctx.createMediaElementSource(this.el);
     this.gain = ctx.createGain(); this.gain.gain.value = vol;

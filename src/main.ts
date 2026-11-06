@@ -9,6 +9,8 @@ const game = new Phaser.Game({
   type: Phaser.AUTO,
   parent: 'game',
   backgroundColor: '#12141b',
+  // fichiers lourds éventuellement servis par Cloudflare R2 (src/render/assetUrl.ts) : images demandées en CORS
+  loader: { crossOrigin: 'anonymous' },
   scale: { mode: Phaser.Scale.RESIZE, width: '100%', height: '100%' },
 });
 

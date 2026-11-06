@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { v } from './assetUrl';
+import { dossier, v } from './assetUrl';
 import { ISO } from '../sim/iso';
 import type { QueteType, Quetes } from '../sim/quests';
 import type { World } from '../sim/world';
@@ -26,7 +26,7 @@ interface PnjSprite {
  *  Lit world.quetes ; ne modifie rien (le clic passe par l'entrée du joueur : input.talk). */
 export class QuestView {
   static preload(scene: Phaser.Scene, quetes: { pnj: Record<string, { sprite?: string }> }) {
-    for (const id of new Set(Object.entries(quetes.pnj).map(([k, d]) => d.sprite ?? k))) if (!scene.textures.exists(`pnj_${id}`)) scene.load.multiatlas(`pnj_${id}`, v(`${SP}/pnj_${id}.json`), `${SP}/`);
+    for (const id of new Set(Object.entries(quetes.pnj).map(([k, d]) => d.sprite ?? k))) if (!scene.textures.exists(`pnj_${id}`)) scene.load.multiatlas(`pnj_${id}`, v(`${SP}/pnj_${id}.json`), dossier(`${SP}/`));
     for (const [a, b] of Object.values(QUEST_ICON)) for (const k of [a, b]) if (!scene.textures.exists(`qi_${k}`)) scene.load.image(`qi_${k}`, v(`${QI}/${k}.png`));
   }
 

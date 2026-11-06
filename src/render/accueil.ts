@@ -685,7 +685,7 @@ function cadre(atlas: string): Promise<Cadre | null> {
         if (!pick || (f.filename?.startsWith('AnimStatique_1') && !pick.f.filename?.startsWith('AnimStatique_1'))) pick = { page: pg.image, f };
       }
       if (!pick) return null;
-      const im = new Image(); im.src = v(`assets/sprites/${pick.page}`); await im.decode();
+      const im = new Image(); im.crossOrigin = 'anonymous'; im.src = v(`assets/sprites/${pick.page}`); await im.decode();
       return { im, ...pick.f.frame };
     } catch { return null; }
   })());
