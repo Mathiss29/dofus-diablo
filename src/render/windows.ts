@@ -734,6 +734,7 @@ export class Windows {
           { k: 'zoom', nom: 'Zoom de départ', t: 'range', min: 55, max: 120 },
           { k: 'vent', nom: 'Arbres au vent', t: 'check' },
           { k: 'eau', nom: 'Eau animée', t: 'check' },
+          { k: 'transparence', nom: 'Voir à travers le décor', aide: 'Le décor devant ton perso s\'efface, les monstres cachés ont une silhouette rouge.', t: 'check' },
           { k: 'particules', nom: 'Particules (spores, braises…)', t: 'check' },
         ] },
       ] },
