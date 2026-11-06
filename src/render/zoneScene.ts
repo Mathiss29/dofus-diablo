@@ -4,6 +4,7 @@ import Phaser from 'phaser';
 import { GAME_DATA, ITEMS, QUETES } from '../sim/data';
 import type { Compte } from '../sim/quests';
 import { QuestView } from './questView';
+import { DialogueView } from './dialogueView';
 import { GridMap, WorldGrid, type MapData, type WorldData } from '../sim/gridmap';
 import { ISO } from '../sim/iso';
 import type { PlayerInput } from '../sim/input';
@@ -66,6 +67,7 @@ export class ZoneScene extends Phaser.Scene {
   /** PNJ cliqué (quêtes) et leur affichage. */
   private talkClick: string | null = null;
   private questView: QuestView | null = null;
+  private dialogueView: DialogueView | null = null;
   private acc = 0;
   /** Le clic en cours a commencé sur l'interface : maintenir le bouton ne fait pas attaquer. */
   private uiClick = false;
@@ -96,7 +98,7 @@ export class ZoneScene extends Phaser.Scene {
     // #astrub dans l'adresse : l'ancienne zone à vagues des Champs d'Astrub
     if (data?.zone) this.zoneId = data.zone;
     else if (location.hash === '#astrub') this.zoneId = 'champs-astrub';
-    this.views = new Map(); this.dropViews = new Map(); this.worldView = null; this.questView = null; this.talkClick = null; this.pressed = null; this.aimId = null; this.aimKey = null; this.hoverId = null; this.potion = false; this.hitstop = 0; this.acc = 0;
+    this.views = new Map(); this.dropViews = new Map(); this.worldView = null; this.questView = null; this.dialogueView = null; this.talkClick = null; this.pressed = null; this.aimId = null; this.aimKey = null; this.hoverId = null; this.potion = false; this.hitstop = 0; this.acc = 0;
   }
 
   preload() {
@@ -175,7 +177,11 @@ export class ZoneScene extends Phaser.Scene {
       const parts = this.cache.json.get(`${open.world}_particules`) as Record<string, SysData[]> | undefined;
       if (parts) this.worldView.parts = new Particules(this, wg, parts, `${open.world}_particules_img`);
       this.worldView.create();
-      if (this.world.quetes) this.questView = new QuestView(this, this.world, this.worldView);
+      if (this.world.quetes) {
+        this.questView = new QuestView(this, this.world, this.worldView);
+        const dv = this.dialogueView = new DialogueView(this, this.world, this.questView);
+        this.events.once('shutdown', () => dv.destroy());
+      }
     } else {
       const key = mapDir(zone.map!.coords).replace(/\W/g, '_');
       const map = new GridMap(this.cache.json.get(`${key}_carte`) as MapData);
@@ -186,6 +192,7 @@ export class ZoneScene extends Phaser.Scene {
     this.fx = new FX(this, t => hex(GAME_DATA.monsters[t].color));
     if (this.perso?.etat) restaurerJoueur(this.world, this.perso.etat);
     this.hud = new Hud(this, this.world, this.perso ?? undefined);
+    if (this.questView) { const qv = this.questView; this.hud.portraitPnj = id => qv.portrait(id); }
     const mini = this.cameras.getCamera('mini');
     if (mini && this.worldView?.sky) mini.ignore(this.worldView.sky);
     this.windows?.destroy();
@@ -252,9 +259,13 @@ export class ZoneScene extends Phaser.Scene {
     // clic droit = sort favori, Espace = déplacement, 1 à 6 (& é " ' ( - en AZERTY) = barre de sorts.
     // Un clic sur l'interface (barre, mini-carte, menus, fiches) ne fait rien en jeu.
     this.input.on('pointerdown', (p: Phaser.Input.Pointer, over: unknown[]) => {
+      this.dialogueView?.fermerMenu();
       if (over.length || this.hud.blocks(p.x, p.y)) { this.uiClick = true; return; }
       this.uiClick = false;
       if (p.rightButtonDown()) {
+        // clic droit sur un PNJ : son petit menu d'actions (Dialogues 1C)
+        const n = this.questView?.pnjUnder(p, this.cameras.main);
+        if (n && this.dialogueView) { this.dialogueView.ouvrirMenu(n, p); return; }
         if (this.aimId) { this.aimId = null; this.aimKey = null; return; }   // clic droit pendant la visée : annuler le sort (Mathis, 2026-11-06)
         this.down('CLICD', this.world.player.bar[6]); return;
       }
@@ -277,7 +288,8 @@ export class ZoneScene extends Phaser.Scene {
     this.keys.SPACE.on('up', () => this.up('SPACE'));
     this.keys.E.on('down', () => { this.potion = true; });
     ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX'].forEach((k, i) => {
-      this.keys[k].on('down', () => this.down(k, this.world.player.bar[i]));
+      // pendant un dialogue, 1 à 4 choisissent la réponse (Dialogues 3B)
+      this.keys[k].on('down', () => { if (this.dialogueView?.ouvert && i < 4) this.dialogueView.touche(i); else this.down(k, this.world.player.bar[i]); });
       this.keys[k].on('up', () => this.up(k));
     });
     this.keys.F.on('down', () => {
@@ -291,7 +303,7 @@ export class ZoneScene extends Phaser.Scene {
     this.keys.J.on('down', () => this.windows?.toggle('job'));   // Métiers (choix 6A : Chasseur)
     this.keys.O.on('down', () => this.windows?.toggle('opt'));
     this.keys.S.on('down', () => this.windows?.toggle('sorts'));   // Sorts (choix 8A, touche S)   // Réglages (choix 10A + 10B)
-    this.keys.ESC.on('down', () => { this.aimId = null; this.aimKey = null; this.windows?.close(); });
+    this.keys.ESC.on('down', () => { if (this.dialogueView?.ouvert) { this.dialogueView.touche(-1); return; } this.dialogueView?.fermerMenu(); this.aimId = null; this.aimKey = null; this.windows?.close(); });
     // K : changer de classe, seulement sans perso (mode dév #cra / #jeu) ; sinon la classe se choisit à la création
     if (!this.perso) this.keys.K.on('down', () => this.scene.restart({ zone: this.zoneId, classe: this.classId === 'iop' ? 'cra' : 'iop' }));
     this.keys.ENTER.on('down', () => {
@@ -402,6 +414,8 @@ export class ZoneScene extends Phaser.Scene {
     const vise = this.pressed ? this.monsterUnder(ptr) : null;
     if (vise && !vise.dead) { input.castOn = vise.id; input.aim = { x: vise.x, y: vise.y }; }
     this.pickClick = null;
+    const dv = this.dialogueView;
+    if (dv) { input.reponse = dv.reponse; dv.reponse = null; if (dv.menuTalk) { this.talkClick = dv.menuTalk; dv.menuTalk = null; } }
     const np = this.talkClick && this.world.quetes?.pnj(this.talkClick);
     if (np) { input.talk = this.talkClick; input.dest = { x: np.x, y: np.y }; this.clickMode = null; }
     this.talkClick = null;
@@ -414,7 +428,10 @@ export class ZoneScene extends Phaser.Scene {
     this.clickDest = held && this.clickMode === 'ground';
     this.pressed = null; this.potion = false;
     // curseur : une épée sur un monstre
-    this.game.canvas.style.cursor = this.monsterUnder(ptr) ? 'crosshair' : this.questView?.pnjUnder(ptr, this.cameras.main) ? 'pointer' : 'default';
+    const surPnj = this.questView?.pnjUnder(ptr, this.cameras.main) ?? null;
+    if (this.questView) this.questView.survole = surPnj;
+    this.dialogueView?.survol(surPnj, ptr);
+    this.game.canvas.style.cursor = this.monsterUnder(ptr) ? 'crosshair' : surPnj ? 'pointer' : 'default';
     return input;
   }
 
@@ -435,7 +452,7 @@ export class ZoneScene extends Phaser.Scene {
     while (this.acc >= ZoneScene.STEP && this.hitstop <= 0) {
       this.acc -= ZoneScene.STEP;
       this.world.step(ZoneScene.STEP, input);
-      input = { ...input, pressed: null, potion: false };
+      input = { ...input, pressed: null, potion: false, reponse: null };
       this.consumeEvents();
     }
     if (this.hitstop > 0) this.acc = 0;
@@ -673,6 +690,7 @@ export class ZoneScene extends Phaser.Scene {
     }
     this.drawDrops();
     this.questView?.update();
+    this.dialogueView?.update();
     this.hud.draw(this.fx.juice, this.game.loop.delta / 1000);
   }
 }

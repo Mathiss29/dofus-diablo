@@ -6,17 +6,18 @@ import json, os
 OUT = os.path.join(os.path.dirname(__file__), '..', '..', 'src', 'data', 'quetes.json')
 
 PNJ = {
+  # phrase = ce qu'il dit quand on lui parle sans quête (écrite pour l'ARPG, maquette Dialogues 10A)
   # carte = tag de public/assets/mondes/incarnam/monde.json (carte officielle de départ de leurs quêtes)
-  'ganymede': {'nom': 'Ganymède', 'dofusId': 7581, 'carte': 'temple_1'},       # Temple Céleste, devant les Dofus (accueil du tutoriel)
-  'ganymede_route': {'nom': 'Ganymède', 'dofusId': 7581, 'carte': '0_-3', 'sprite': 'ganymede'},    # le même, qui attend le joueur en bas, sur la Route des âmes
-  'lykhen': {'nom': 'Lykhen Lesurviven', 'dofusId': 2892, 'carte': '-2_-3'},
-  'fecaline': {'nom': 'Fécaline la Sage', 'dofusId': 1515, 'carte': 'maison_2_-3'},
-  'ternette': {'nom': 'Ternette Nhin', 'dofusId': 2905, 'carte': '-1_-3'},
-  'berb_nhin': {'nom': 'Berb Nhin', 'dofusId': 2899, 'carte': '0_-3'},
-  'capitaine': {'nom': 'Capitaine des Kerubims', 'dofusId': 2880, 'carte': 'milice_rdc', 'case': 370},   # sa carte officielle 153356294 : rez-de-chaussée de la Tour de la Milice
-  'klasmor': {'nom': 'Klasmor le fossoyeur', 'dofusId': 2907, 'carte': '5_-1', 'case': 358},
-  'anta_brok': {'nom': 'Anta Brok', 'dofusId': 2886, 'carte': '1_-2', 'case': 389},
-  'marylork': {'nom': 'Marylork', 'dofusId': 2888, 'carte': '3_-5'},
+  'ganymede': {'nom': 'Ganymède', 'dofusId': 7581, 'carte': 'temple_1', 'phrase': 'Les Dofus dorment ici depuis des siècles. Avant de partir les chercher, apprends à te battre.'},       # Temple Céleste, devant les Dofus (accueil du tutoriel)
+  'ganymede_route': {'nom': 'Ganymède', 'dofusId': 7581, 'carte': '0_-3', 'sprite': 'ganymede', 'phrase': "La Route des âmes descend jusqu'au village. Les esprits qui y rôdent sont un bon entraînement."},    # le même, qui attend le joueur en bas, sur la Route des âmes
+  'lykhen': {'nom': 'Lykhen Lesurviven', 'dofusId': 2892, 'carte': '-2_-3', 'phrase': "Bienvenue au village d'Incarnam. Chacun ici a quelque chose à t'apprendre."},
+  'fecaline': {'nom': 'Fécaline la Sage', 'dofusId': 1515, 'carte': 'maison_2_-3', 'phrase': "Les Dofus ne sont pas des légendes. J'ai passé ma vie à suivre leur trace."},
+  'ternette': {'nom': 'Ternette Nhin', 'dofusId': 2905, 'carte': '-1_-3', 'phrase': 'Zaaps, nuages, vestiges des dieux : Incarnam est pleine de secrets pour qui sait regarder.'},
+  'berb_nhin': {'nom': 'Berb Nhin', 'dofusId': 2899, 'carte': '0_-3', 'phrase': 'Un bon artisan fait un bon aventurier. Reviens me voir quand tu voudras apprendre un métier.'},
+  'capitaine': {'nom': 'Capitaine des Kerubims', 'dofusId': 2880, 'carte': 'milice_rdc', 'case': 370, 'phrase': "La Milice garde Incarnam. Si ta lame est solide, j'ai du travail pour toi."},   # sa carte officielle 153356294 : rez-de-chaussée de la Tour de la Milice
+  'klasmor': {'nom': 'Klasmor le fossoyeur', 'dofusId': 2907, 'carte': '5_-1', 'case': 358, 'phrase': 'Les morts dorment mal sous le cimetière. Je ne descendrais pas dans la crypte sans raison.'},
+  'anta_brok': {'nom': 'Anta Brok', 'dofusId': 2886, 'carte': '1_-2', 'case': 389, 'phrase': 'Les esprits des Champs sont nerveux ces temps-ci. Garde ton arme à portée de main.'},
+  'marylork': {'nom': 'Marylork', 'dofusId': 2888, 'carte': '3_-5', 'phrase': "D'ici, on voit toute l'île. Le vent porte loin, au-dessus des nuages."},
 }
 SZ = {'route': 450, 'champs': 444, 'paturages': 445, 'lac': 442, 'foret': 443, 'cimetiere': 449, 'mine': 778, 'taverne': 448, 'crypte': 447, 'temple': 446}
 

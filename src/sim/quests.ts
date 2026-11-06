@@ -80,6 +80,8 @@ export interface QueteDef {
   depart?: string;
   /** Sans PNJ : démarre seule en entrant dans cette sous-zone (ex. « Mort au rat ! » dans la Taverne). */
   zone?: number;
+  /** Remerciement du PNJ quand on rend la quête (Dialogues 6B) ; sans : une ligne commune. */
+  merci?: string;
 }
 export interface PnjDef {
   nom: string; dofusId: number;
@@ -87,7 +89,15 @@ export interface PnjDef {
   carte: string; case?: number;
   /** Planche de sprites d'un autre PNJ (le même personnage à deux endroits : Ganymède au Temple puis sur la Route). */
   sprite?: string;
+  /** Ce qu'il dit quand on lui parle sans quête (maquette Dialogues 10A). */
+  phrase?: string;
 }
+/** Réponse du cadre vert sous la bulle (maquette Dialogues 3A) : voir une quête, l'accepter, revenir à la liste, fermer. */
+export type Reponse = { texte: string; detail?: string } & (
+  { a: 'voir' | 'accepter'; quete: string } | { a: 'retour' } | { a: 'fermer' }
+);
+/** Dialogue ouvert avec un PNJ (bulle officielle à ruban, réponses 1 à 4). Le jeu continue derrière (4A). */
+export interface Dialogue { pnj: string; texte: string; reponses: Reponse[]; quete?: string; recompense?: RecompenseDef }
 /** Objectif d'un succès officiel : une quête finie, une étape de quête finie, un autre succès, une sous-zone découverte,
  *  un niveau atteint ou un monstre vaincu. */
 export type SuccesObjectif = { nom: string } & (
@@ -128,6 +138,10 @@ export class Quetes {
   pnjs: { id: string; def: PnjDef; x: number; y: number; tag: string }[] = [];
   /** Bulle en cours au-dessus d'un PNJ. */
   bulle: { pnj: string; texte: string; t: number } | null = null;
+  /** Dialogue ouvert (clic sur un PNJ à portée). */
+  dialogue: Dialogue | null = null;
+  /** Distance au PNJ au-delà de laquelle le dialogue se ferme (4B). */
+  static readonly DIALOGUE_MAX = 300;
   /** PNJ cliqué : le perso s'en approche, la discussion part quand il est à portée. */
   private versPnj: string | null = null;
   /** Élites de quête vivants : id du monstre -> quête. */
@@ -194,16 +208,18 @@ export class Quetes {
   pnj(id: string) { return this.pnjs.find(p => p.id === id); }
 
   /** Quête que ce PNJ peut donner maintenant (niveau, quêtes requises). */
-  aDonner(pnj: string): string | null {
-    const lvl = this.world.player.level;
+  aDonner(pnj: string): string | null { return this.aDonnerTous(pnj)[0] ?? null; }
+  /** Toutes les quêtes que ce PNJ peut donner maintenant (5C : listées comme réponses). */
+  aDonnerTous(pnj: string): string[] {
+    const lvl = this.world.player.level, out: string[] = [];
     for (const [id, q] of Object.entries(this.data.quetes)) {
       if (q.pnj !== pnj || this.finies.has(id) || this.enCours.some(c => c.id === id) || q.auDepart) continue;
       if (q.niveau > lvl + 2 || !(q.requiert ?? []).every(r => this.finies.has(r))) continue;
       // une quête qui suit une autre (fil principal) démarre seule à la fin de la précédente : son PNJ ne la propose pas
       if (Object.values(this.data.quetes).some(o => o.suivante === id)) continue;
-      return id;
+      out.push(id);
     }
-    return null;
+    return out;
   }
   /** Quête finie qui attend d'être rendue à ce PNJ. */
   aRendre(pnj: string): string | null {
@@ -252,19 +268,43 @@ export class Quetes {
   cliquer(pnj: string) { this.versPnj = pnj; }
   annulerClic() { this.versPnj = null; }
   get destination() { const p = this.versPnj && this.pnj(this.versPnj); return p ? { x: p.x, y: p.y } : null; }
+  /** À portée du PNJ : il valide ce qui l'attend (rendu 6B, objectif « parler »), puis ouvre le dialogue. */
   private parler(pnj: string) {
+    const avant = this.bulle;
+    let intro: string | null = null;
     const r = this.aRendre(pnj);
-    if (r) { this.terminer(r); return; }
-    if (this.attendParler(pnj)) {
+    if (r) { this.terminer(r); intro = this.def(r).merci ?? 'Beau travail. Voici ta récompense.'; }
+    else if (this.attendParler(pnj)) {
       for (const c of this.enCours) this.etapeDe(c)?.objectifs.forEach((o, i) => {
         if (o.t === 'parler' && o.pnj === pnj && (!o.objet || (this.objets[o.objet] ?? 0) > 0)) c.compte[i] = 1;
       });
       this.verifier();
-      return;
     }
-    const d = this.aDonner(pnj);
-    if (d) { this.prendre(d); this.suivie = d; if (!this.etapeDe(this.enCours.find(c => c.id === d)!)?.bulle) this.dire(pnj, this.def(d).texte.split('. ')[0] + '.'); return; }
-    const p = this.pnj(pnj); if (p) this.dire(pnj, 'Bonne route, aventurier.');
+    // la bulle de l'étape qui vient de commencer, dite par ce PNJ, passe dans le dialogue
+    if (this.bulle && this.bulle !== avant && this.bulle.pnj === pnj) { intro = intro ? `${intro} ${this.bulle.texte}` : this.bulle.texte; this.bulle = null; }
+    this.ouvrir(pnj, intro);
+  }
+  /** Ouvre le dialogue : une seule quête à donner = son offre (5A), plusieurs = la liste (5C), aucune = sa phrase (10A). */
+  private ouvrir(pnj: string, intro: string | null, liste = false) {
+    const ds = this.aDonnerTous(pnj);
+    if (ds.length === 1 && !liste) { this.offre(pnj, ds[0], intro); return; }
+    this.dialogue = { pnj, texte: intro ?? this.data.pnj[pnj]?.phrase ?? 'Bonne route, aventurier.',
+      reponses: [...ds.map(id => ({ a: 'voir' as const, quete: id, texte: this.def(id).nom })), { a: 'fermer', texte: 'Au revoir.' }] };
+  }
+  private offre(pnj: string, id: string, intro: string | null) {
+    const q = this.def(id);
+    this.dialogue = { pnj, quete: id, recompense: q.recompense, texte: intro ? `${intro}\n\n${q.texte}` : q.texte, reponses: [
+      { a: 'accepter', quete: id, texte: 'Accepter.', detail: q.nom }, { a: 'retour', texte: 'Plus tard.' }, { a: 'fermer', texte: 'Au revoir.' }] };
+  }
+  /** Réponse choisie (clic sur le cadre vert ou touches 1 à 4) ; -1 = croix ou Échap. */
+  repondre(i: number) {
+    const d = this.dialogue; if (!d) return;
+    const r = d.reponses[i];
+    if (i < 0 || r?.a === 'fermer') { this.dialogue = null; return; }
+    if (!r) return;
+    if (r.a === 'retour') this.ouvrir(d.pnj, null, true);
+    else if (r.a === 'voir') this.offre(d.pnj, r.quete, null);
+    else { this.dialogue = null; this.prendre(r.quete); this.suivie = r.quete; }
   }
 
   /** Un événement de la simulation fait avancer les objectifs et les succès. */
@@ -290,6 +330,9 @@ export class Quetes {
           : (o.sort && o.sort === e.id) || (o.quoi === 'mobilite' && e.id === p.cls.mobility) || (o.quoi === 'sort' && e.id !== p.cls.mobility && e.id !== 'attaque');
         if (ok) c.compte[i] = 1;
       });
+    } else if (e.k === 'playerHurt') {
+      this.dialogue = null;   // un coup reçu ferme le dialogue (4B)
+      return;
     } else if (e.k === 'checkpoint') {
       for (const c of this.enCours) this.etapeDe(c)?.objectifs.forEach((o, i) => { if (o.t === 'activer' && o.zaap === e.name) c.compte[i] = 1; });
     } else if (e.k === 'lootResource' || e.k === 'craft') {
@@ -313,6 +356,10 @@ export class Quetes {
   update(dt: number) {
     const w = this.world, p = w.player, map = w.worldGrid?.mapAt(p.x, p.y);
     if (this.bulle && (this.bulle.t -= dt) <= 0) this.bulle = null;
+    if (this.dialogue) {   // s'éloigner du PNJ ferme le dialogue (4B)
+      const n = this.pnj(this.dialogue.pnj);
+      if (!n || p.dead || Math.hypot(n.x - p.x, n.y - p.y) > Quetes.DIALOGUE_MAX) this.dialogue = null;
+    }
     if (map) this.decouvertes.add(map.sub);
     // quêtes sans PNJ : elles démarrent seules en entrant dans leur sous-zone
     if (map) for (const [id, q] of Object.entries(this.data.quetes))

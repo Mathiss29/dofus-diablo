@@ -29,7 +29,10 @@ export class QuestView {
   }
 
   private pnjs: PnjSprite[] = [];
-  private bulle: { bg: Phaser.GameObjects.Graphics; text: Phaser.GameObjects.Text; pnj: string; texte: string } | null = null;
+  /** PNJ survolé (contour doré, 8A). */
+  survole: string | null = null;
+  private glow: { id: string; fx: Phaser.FX.Glow } | null = null;
+  private bulle: { bg: Phaser.GameObjects.Graphics; text: Phaser.GameObjects.Text; nom: Phaser.GameObjects.Text; pnj: string; texte: string } | null = null;
 
   constructor(private scene: Phaser.Scene, private world: World, private wv: WorldView | null) {
     const q = world.quetes!;
@@ -55,6 +58,19 @@ export class QuestView {
     }
   }
 
+  /** Pieds et hauteur du corps d'un PNJ visible (coordonnées dessinées) : la bulle de dialogue s'y accroche. */
+  ancre(id: string): { x: number; y: number; h: number } | null {
+    const p = this.pnjs.find(x => x.id === id);
+    if (!p || !p.img.visible) return null;
+    const s = ISO.toScreen(p.x, p.y);
+    return { x: s.x, y: s.y, h: p.h };
+  }
+  /** Image du PNJ pour la fiche de cible (2C) : texture et cadre de sa planche. */
+  portrait(id: string): { key: string; frame: string } | null {
+    const p = this.pnjs.find(x => x.id === id);
+    return p ? { key: p.img.texture.key, frame: p.img.frame.name } : null;
+  }
+
   /** PNJ sous le curseur (corps dessiné ou pieds). */
   pnjUnder(ptr: Phaser.Input.Pointer, cam: Phaser.Cameras.Scene2D.Camera): string | null {
     const wp = ptr.positionToCamera(cam) as Phaser.Math.Vector2;
@@ -68,6 +84,13 @@ export class QuestView {
 
   update() {
     const q = this.world.quetes as Quetes, t = this.world.time;
+    // contour doré du PNJ survolé (WebGL seulement)
+    if (this.glow?.id !== this.survole) {
+      if (this.glow) this.pnjs.find(x => x.id === this.glow!.id)?.img.preFX?.remove(this.glow.fx);
+      const n = this.survole ? this.pnjs.find(x => x.id === this.survole) : null;
+      const fx = n?.img.preFX?.addGlow(0xf2d36b, 3, 0, false, 0.1, 10);
+      this.glow = n && fx ? { id: n.id, fx } : null;
+    }
     for (const p of this.pnjs) {
       const on = !this.wv || this.wv.isReady(p.tag);
       const s = ISO.toScreen(p.x, p.y);
@@ -83,17 +106,21 @@ export class QuestView {
     }
     // bulle du PNJ qui parle (le jeu continue, 5A)
     const b = q.bulle, n = b && this.pnjs.find(x => x.id === b.pnj);
-    if (!b || !n || !n.img.visible) { this.bulle?.bg.destroy(); this.bulle?.text.destroy(); this.bulle = null; return; }
+    if (!b || !n || !n.img.visible) { this.bulle?.bg.destroy(); this.bulle?.text.destroy(); this.bulle?.nom.destroy(); this.bulle = null; return; }
     if (!this.bulle || this.bulle.pnj !== b.pnj || this.bulle.texte !== b.texte) {
-      this.bulle?.bg.destroy(); this.bulle?.text.destroy();
-      const text = this.scene.add.text(0, 0, b.texte, { ...STYLE, fontSize: '13px', color: '#2a2418', wordWrap: { width: 230 }, align: 'center' }).setOrigin(0.5, 1);
-      this.bulle = { bg: this.scene.add.graphics(), text, pnj: b.pnj, texte: b.texte };
+      this.bulle?.bg.destroy(); this.bulle?.text.destroy(); this.bulle?.nom.destroy();
+      const text = this.scene.add.text(0, 0, b.texte, { ...STYLE, fontSize: '13px', fontStyle: 'bold', color: '#f4efe0', wordWrap: { width: 230 }, align: 'center' }).setOrigin(0.5, 1);
+      const nom = this.scene.add.text(0, 0, q.data.pnj[b.pnj]?.nom ?? '', { ...STYLE, fontSize: '12px', fontStyle: 'bold', color: '#f2d36b' }).setOrigin(0.5, 1);
+      this.bulle = { bg: this.scene.add.graphics(), text, nom, pnj: b.pnj, texte: b.texte };
     }
-    const s = ISO.toScreen(n.x, n.y), by = s.y - n.h - 50, T = this.bulle.text, w = T.width + 20, h = T.height + 14;
+    const s = ISO.toScreen(n.x, n.y), by = s.y - n.h - 50, T = this.bulle.text, N = this.bulle.nom, w = Math.max(T.width, N.width) + 20, h = T.height + N.height + 16;
     T.setPosition(s.x, by).setDepth(1e6).setAlpha(Math.min(1, b.t * 2));
+    N.setPosition(s.x, by - T.height - 2).setDepth(1e6).setAlpha(Math.min(1, b.t * 2));
     const g = this.bulle.bg.clear().setDepth(1e6 - 1).setAlpha(Math.min(1, b.t * 2));
-    g.fillStyle(0xf4ecd2, 0.96); g.lineStyle(2, 0x6a5a3a, 1);
+    g.fillStyle(0x1b1711, 0.95); g.lineStyle(2, 0xf1ecd8, 1);   // style sombre officiel (Dialogues 7B)
     g.fillRoundedRect(s.x - w / 2, by - h + 7, w, h, 8); g.strokeRoundedRect(s.x - w / 2, by - h + 7, w, h, 8);
     g.fillTriangle(s.x - 8, by + 6, s.x + 8, by + 6, s.x, by + 16); g.lineBetween(s.x - 8, by + 7, s.x, by + 16); g.lineBetween(s.x + 8, by + 7, s.x, by + 16);
+    // la grande bulle à réponses remplace la petite pendant un dialogue avec ce PNJ
+    const cache = q.dialogue?.pnj === b.pnj; T.setVisible(!cache); N.setVisible(!cache); g.setVisible(!cache);
   }
 }

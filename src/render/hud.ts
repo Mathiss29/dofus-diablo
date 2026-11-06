@@ -76,6 +76,9 @@ export class Hud {
   // fiche de la cible
   private targetName: Txt; private targetHp: Txt;
   private targetId = -1; private targetT = 0;
+  /** Image d'un PNJ pour la fiche de cible pendant un dialogue (Dialogues 2C) ; fournie par la scène (QuestView). */
+  portraitPnj: ((id: string) => { key: string; frame: string } | null) | null = null;
+  private pnjImg: Phaser.GameObjects.Image | null = null;
   // haut centre
   private coords: Txt;
   private boss: { skull: Img; name: Txt; hp: Txt };
@@ -328,8 +331,21 @@ export class Hud {
     // --- Fiche de la cible (à côté) : le dernier monstre touché ---
     this.targetT -= dt;
     const tgt = world.monsters.find(m => m.id === this.targetId && !m.dead) as Monster | undefined;
-    const showT = !!tgt && this.targetT > 0;
-    this.targetName.setVisible(showT); this.targetHp.setVisible(showT);
+    const dlg = world.quetes?.dialogue, port = dlg ? this.portraitPnj?.(dlg.pnj) : null;
+    const showT = !!tgt && this.targetT > 0 && !dlg;
+    this.targetName.setVisible(showT || !!dlg); this.targetHp.setVisible(showT);
+    if (this.pnjImg) this.pnjImg.setVisible(!!port);
+    if (dlg) {   // pendant un dialogue, la fiche de cible montre le PNJ : son portrait et son nom
+      const tx = fx + fw + 8, tw = 210, th = 52;
+      panel(tx, fy, tw, th);
+      if (port) {
+        this.pnjImg ??= this.fixed(this.scene.add.image(0, 0, port.key, port.frame), 6);
+        this.pnjImg.setTexture(port.key, port.frame).setOrigin(0.5, 0);
+        const k = 92 / this.pnjImg.height;   // le haut du corps : la tête dans la case
+        this.pnjImg.setScale(k).setPosition(tx + 28, fy + 4).setCrop(0, 0, this.pnjImg.width, 46 / k);
+      }
+      this.targetName.setPosition(tx + 56, fy + th / 2).setText(world.quetes!.data.pnj[dlg.pnj]?.nom ?? '');
+    }
     if (tgt && showT) {
       const tx = fx + fw + 8, tw = 210, th = 52;
       panel(tx, fy, tw, th);
