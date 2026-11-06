@@ -17,7 +17,7 @@ const UI_IMAGES = [
   'background_levelup_banner', 'background_defeat_banner', 'success_ornament', 'scoreTitle',
 ];
 /** Tête de chaque classe pour la fiche du perso (icônes de classe de Dofus 3). */
-const HEADS: Record<string, string> = { iop: 'tete_iop', cra: 'tete_cra' };
+const HEADS: Record<string, string> = { iop: 'tete_iop', cra: 'tete_cra', iop_f: 'tete_iop_f', cra_f: 'tete_cra_f' };
 /** Touches de la barre de sorts : 1 à 6, soit & é " ' ( - sur un clavier AZERTY. */
 const KEYS = ['&', 'é', '"', "'", '(', '-'];
 /** Colonne de menus avec les icônes officielles en couleur de Dofus 3 (uiassets_2x) : icône, nom, raccourci (vide si aucun).
@@ -109,7 +109,7 @@ export class Hud {
   private rageFlash = 0;
   private areaKills = new Map<string, number>();
 
-  constructor(private scene: Phaser.Scene, private world: World) {
+  constructor(private scene: Phaser.Scene, private world: World, private perso?: { nom: string; sexe: 'm' | 'f' }) {
     // Mini-carte façon Dofus 3 : une petite caméra qui filme le vrai décor autour du perso (vue de dessus réduite)
     if (world.worldGrid) {
       this.miniCam = scene.cameras.add(0, 0, 210, 150).setName('mini').setZoom(0.16).setBackgroundColor('#0d0c0a');
@@ -133,7 +133,8 @@ export class Hud {
     this.hurtRect = fixed(scene.add.rectangle(0, 0, 10, 10, 0xc0201a, 1).setOrigin(0).setAlpha(0), -1);
     this.g = fixed(scene.add.graphics(), 1);
 
-    this.head = img(HEADS[Object.keys(GAME_DATA.classes).find(k => GAME_DATA.classes[k] === cls) ?? 'iop'] ?? 'tete_iop');
+    const clsId = Object.keys(GAME_DATA.classes).find(k => GAME_DATA.classes[k] === cls) ?? 'iop';
+    this.head = img(HEADS[clsId + (perso?.sexe === 'f' ? '_f' : '')] ?? HEADS[clsId] ?? 'tete_iop');
     this.name = txt(15, { ...bold, color: '#f1ecd8' }).setOrigin(0, 0.5);
     this.hpText = txt(12, bold).setOrigin(0.5);
     this.paText = txt(11, bold).setOrigin(0.5);
@@ -198,7 +199,7 @@ export class Hud {
     this.help = txt(13, { align: 'center' }).setOrigin(0.5, 0).setText(
       `Clic gauche : aller / attaquer (maintenu : continuer)   ·   Maj + clic : attaquer sur place   ·   Clic droit et & é " ' ( - : sorts de la barre   ·   Espace : ${cls.spells[cls.mobility].name}   ·   E : potion   ·   Molette : zoom\n` +
       `S : sorts (nouveaux sorts aux niveaux officiels, glisser dans la barre)   ·   I : inventaire   ·   C : caractéristiques\n` +
-      `${cls.rage.name} pleine : le sort suivant est renforcé   ·   K : changer de classe (Iop / Crâ)   ·   F : effets d'impact   ·   O : réglages   ·   H : aide`);
+      `${cls.rage.name} pleine : le sort suivant est renforcé   ·   F : effets d'impact   ·   O : réglages   ·   H : aide`);
   }
 
   /** H : l'aide reste ensuite comme le joueur l'a laissée. */
@@ -287,7 +288,7 @@ export class Hud {
     panel(fx, fy, fw, fh);
     this.head.setPosition(fx + 38, fy + fh / 2).setDisplaySize(60, 60);
     const bx = fx + 76, bw = fw - 88;
-    this.name.setPosition(bx, fy + 16).setText(`${cls.name}  ·  niv. ${p.level}`);
+    this.name.setPosition(bx, fy + 16).setText(this.perso ? `${this.perso.nom}  ·  ${cls.name} niv. ${p.level}` : `${cls.name}  ·  niv. ${p.level}`);
     bar(bx, fy + 28, bw, 15, p.hp / p.maxHp, C.hp);
     if (p.shield > 0) {   // bouclier en violet, comme dans Dofus : à la suite des PV, ou par-dessus la fin de la barre si elle est pleine
       const sw = Math.max(4, bw * Math.min(1, p.shield / p.maxHp)), sx = Math.min(bx + bw * Phaser.Math.Clamp(p.hp / p.maxHp, 0, 1), bx + bw - sw);

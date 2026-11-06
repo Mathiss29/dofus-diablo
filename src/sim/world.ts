@@ -261,6 +261,14 @@ export class World {
     }
   }
   /** Monde ouvert, après une mort : retour au dernier Zaap atteint, sans pénalité (choix 10D). */
+  /** Nouvel identifiant unique (objets restaurés d'une sauvegarde). */
+  newUid(): number { return this.nextId++; }
+  /** Point de retour courant (sauvegarde) et sa restauration. */
+  get pointDeRetour() { return { name: this.checkpointName, ...this.checkpoint }; }
+  setPointDeRetour(name: string, x: number, y: number) {
+    if (!this.map.walkable(x, y)) return;
+    this.checkpointName = name; this.checkpoint = { x, y };
+  }
   respawnPlayer() {
     const p = this.player;
     if (!this.zone.open || !p.dead) return;

@@ -110,6 +110,9 @@ const GOLD = 0xffd87a;
 export const LOOKS: Record<string, Look> = {
   iop: { atlas: 'iop', scale: 0.82, map: IOP_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
   cra: { atlas: 'cra', scale: 0.82, map: CRA_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
+  // Versions femme (création de perso) : même squelette et mêmes animations, skin et tête officielles de création
+  iop_f: { atlas: 'iop_f', scale: 0.82, map: IOP_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
+  cra_f: { atlas: 'cra_f', scale: 0.82, map: CRA_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
   bouftou: { atlas: 'bouftou', scale: 0.85, map: MONSTER_MAP(9 / 32), height: 70 },
   boufton: { atlas: 'boufton', scale: 0.8, map: MONSTER_MAP(9 / 32), height: 55 },
   royal: { atlas: 'royal', scale: 1.05, map: MONSTER_MAP(10 / 20), height: 140 },

@@ -172,6 +172,8 @@ export class Windows {
   /** Effets d'impact (touche F), et l'étape d'ambiance du moment pour l'affichage. */
   juice = { get: () => true, set: (_on: boolean) => {} };
   heureNom = () => '';
+  /** Bouton « Retour à l'accueil » de la fenêtre Réglages (sauvegarde puis écran d'accueil). */
+  onAccueil: (() => void) | null = null;
   onChange: () => void = () => {};
 
   constructor(private world: World) {
@@ -361,9 +363,9 @@ export class Windows {
       <div class="sub">Touches</div>
       <div class="keys">${[['Clic gauche', 'aller / attaquer (maintenu : continuer)'], ['Maj + clic', 'attaquer sur place'], ['Clic droit', 'sort de la barre (case libre)'],
         ['& é " \' ( -', 'barre de sorts'], ['S', 'sorts'], ['Espace', 'déplacement'], ['E', 'potion'], ['I', 'inventaire'], ['C', 'caractéristiques'], ['J', 'métiers'],
-        ['O', 'réglages'], ['Molette', 'zoom'], ['F', 'effets d\'impact'], ['K', 'changer de classe (Iop / Crâ)'], ['H', 'aide'], ['Échap', 'fermer']]
+        ['O', 'réglages'], ['Molette', 'zoom'], ['F', 'effets d\'impact'], ['H', 'aide'], ['Échap', 'fermer']]
         .map(([k, d]) => `<b>${k}</b><span>${d}</span>`).join('')}</div>
-      <div><span class="btn" data-defaut>Valeurs par défaut</span></div>
+      <div style="display:flex;gap:8px"><span class="btn" data-defaut>Valeurs par défaut</span>${this.onAccueil ? '<span class="btn" data-accueil>Sauvegarder et revenir à l\'accueil</span>' : ''}</div>
     </div>`;
     const apply = () => { sauverReglages(r); this.onReglages(r); };
     w.querySelectorAll<HTMLInputElement>('input[type=range]').forEach(e => e.addEventListener('input', () => {
@@ -376,6 +378,7 @@ export class Windows {
     w.querySelectorAll<HTMLInputElement>('[data-b]').forEach(e => e.addEventListener('change', () => { r[e.dataset.b as 'vent' | 'eau' | 'particules'] = e.checked; apply(); }));
     w.querySelector<HTMLInputElement>('[data-juice]')!.addEventListener('change', e => this.juice.set((e.target as HTMLInputElement).checked));
     w.querySelector('[data-defaut]')!.addEventListener('click', () => { Object.assign(r, REGLAGES_DEFAUT); apply(); this.render(); });
+    w.querySelector('[data-accueil]')?.addEventListener('click', () => { this.close(); this.onAccueil?.(); });
   }
 
   /** Sort affiché dans la fiche de l'onglet Sorts, et grade montré. */

@@ -20,6 +20,8 @@ import { ICON_SHEET, iconFrame } from './icons';
 import { Windows } from './windows';
 import { spellTipHtml } from './spellTip';
 import { RARITY_COLORS, RARITY_NAMES, rollItem } from '../sim/items';
+import { exporterJoueur, restaurerJoueur } from '../sim/sauvegarde';
+import { lirePersos, sauverPerso, supprimerPerso, type Perso } from './persos';
 
 const ASSETS = 'assets';
 const mapDir = ([x, y]: [number, number]) => `${ASSETS}/cartes/${x}_${y}`;
@@ -32,6 +34,14 @@ export class ZoneScene extends Phaser.Scene {
   private zoneId = 'incarnam';
   /** Classe jouée (#cra dans l'adresse, ou touche K pour changer). */
   private classId = 'iop';
+  /** Personnage joué (écran « Mes personnages ») et son emplacement ; absent en mode dév (#cra, #astrub, #jeu). */
+  private perso: Perso | null = null;
+  private slot = -1;
+  /** Vitrine : la partie tourne derrière l'écran d'accueil, sans joueur ni interface ; la caméra se promène. */
+  private vitrine = false;
+  private vitrineT = 0;
+  private sauveT = 0;
+  private mortDefinitive = false;
   private world!: World;
   private worldView: WorldView | null = null;
   /** Le joueur vient de passer une porte : la caméra le rejoint d'un coup (pas de glissade à travers le monde). */
@@ -70,8 +80,11 @@ export class ZoneScene extends Phaser.Scene {
 
   constructor() { super('zone'); }
 
-  init(data: { zone?: string; classe?: string }) {
-    this.classId = data?.classe ?? (location.hash.includes('cra') ? 'cra' : 'iop');
+  init(data: { zone?: string; classe?: string; slot?: number; vitrine?: boolean }) {
+    this.vitrine = !!data?.vitrine; this.vitrineT = 0; this.sauveT = 0; this.mortDefinitive = false;
+    this.slot = data?.slot ?? -1;
+    this.perso = this.slot >= 0 ? lirePersos()[this.slot] : null;
+    this.classId = this.perso?.classe ?? data?.classe ?? (location.hash.includes('cra') ? 'cra' : 'iop');
     // #astrub dans l'adresse : l'ancienne zone à vagues des Champs d'Astrub
     if (data?.zone) this.zoneId = data.zone;
     else if (location.hash === '#astrub') this.zoneId = 'champs-astrub';
@@ -96,7 +109,7 @@ export class ZoneScene extends Phaser.Scene {
     // Effets officiels des sorts : ceux de la classe et des monstres de la zone
     SpellFx.preload(this, [...Object.keys(GAME_DATA.classes[this.classId].spells),
       ...[...types].flatMap(t => (GAME_DATA.monsters[t].spells ?? []).map(s => `m${s.id}`))]);
-    const looks = [LOOKS[this.classId], ...[...types].map(t => LOOKS[GAME_DATA.monsters[t].look])];
+    const looks = [this.look, ...[...types].map(t => LOOKS[GAME_DATA.monsters[t].look])];
     const seen = new Set<string>();
     for (const L of looks) {
       const a = L.atlas;
@@ -154,12 +167,14 @@ export class ZoneScene extends Phaser.Scene {
       drawMap(this, map, `${key}_sol`, `${key}_decor`);
     }
     this.fx = new FX(this, t => hex(GAME_DATA.monsters[t].color));
-    this.hud = new Hud(this, this.world);
+    if (this.perso?.etat) restaurerJoueur(this.world, this.perso.etat);
+    this.hud = new Hud(this, this.world, this.perso ?? undefined);
     const mini = this.cameras.getCamera('mini');
     if (mini && this.worldView?.sky) mini.ignore(this.worldView.sky);
     this.windows?.destroy();
     this.windows = new Windows(this.world);
-    this.windows.portrait = v(`${ASSETS}/ui/perso_${this.classId}.png`);   // rendu en grand (perso_planche : render.cjs échelle 2,2)
+    this.windows.portrait = v(`${ASSETS}/ui/perso_${this.classId}${this.perso?.sexe === 'f' ? '_f' : ''}.png`);
+    if (this.perso) this.windows.onAccueil = () => this.versAccueil();   // rendu en grand (perso_planche : render.cjs échelle 2,2)
     this.windows.reglages = this.reglages;
     this.windows.onReglages = r => { this.zoom = Phaser.Math.Clamp(r.zoom, ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]); this.updateAmbiance(true); };
     this.windows.juice = { get: () => this.fx.juice, set: on => { this.fx.juice = on; } };
@@ -178,11 +193,32 @@ export class ZoneScene extends Phaser.Scene {
       else if (name === 'Sorts') this.windows!.toggle('sorts');
       else this.hud.toast(`${name} : arrive dans une prochaine version`);
     };
-    this.cameras.main.startFollow(this.viewOf(this.world.player).sprite, true, 0.12, 0.12, 0, 30);
-    this.bindInput();
+    if (this.vitrine) this.initVitrine();
+    else {
+      this.cameras.main.startFollow(this.viewOf(this.world.player).sprite, true, 0.12, 0.12, 0, 30);
+      this.bindInput();
+    }
+    if (this.perso) {
+      const quitter = () => this.sauver(), cache = () => { if (document.hidden) this.sauver(); };
+      window.addEventListener('beforeunload', quitter); document.addEventListener('visibilitychange', cache);
+      this.events.once('shutdown', () => { this.sauver(); window.removeEventListener('beforeunload', quitter); document.removeEventListener('visibilitychange', cache); });
+    }
     // Accès console / tests automatisés (captures) : la partie et le tirage d'objets
     (window as unknown as { diablofus: unknown }).diablofus = { scene: this, world: this.world, rollItem, ITEMS };
   }
+
+  /** Apparence du joueur : planche de la classe, version femme si le perso en est une. */
+  private get look() { return (this.perso?.sexe === 'f' && LOOKS[`${this.classId}_f`]) || LOOKS[this.classId]; }
+  /** Sauvegarde automatique du perso (toutes les 5 s, en quittant la page, en revenant à l'accueil). */
+  private sauver = () => {
+    if (!this.perso || this.slot < 0 || this.mortDefinitive || !this.world) return;
+    const p = this.perso;
+    p.etat = exporterJoueur(this.world); p.maj = Date.now();
+    p.lieu = this.world.area?.name ?? p.lieu;
+    sauverPerso(this.slot, p);
+  };
+  /** Retour à l'écran d'accueil (main.ts relance la partie en vitrine). */
+  private versAccueil() { this.sauver(); this.game.events.emit('accueil'); }
 
   private bindInput() {
     const K = Phaser.Input.Keyboard.KeyCodes, kb = this.input.keyboard!;
@@ -225,11 +261,12 @@ export class ZoneScene extends Phaser.Scene {
     this.keys.O.on('down', () => this.windows?.toggle('opt'));
     this.keys.S.on('down', () => this.windows?.toggle('sorts'));   // Sorts (choix 8A, touche S)   // Réglages (choix 10A + 10B)
     this.keys.ESC.on('down', () => this.windows?.close());
-    // K : changer de classe (en attendant l'écran de création de la 0.1b)
-    this.keys.K.on('down', () => this.scene.restart({ zone: this.zoneId, classe: this.classId === 'iop' ? 'cra' : 'iop' }));
+    // K : changer de classe, seulement sans perso (mode dév #cra / #jeu) ; sinon la classe se choisit à la création
+    if (!this.perso) this.keys.K.on('down', () => this.scene.restart({ zone: this.zoneId, classe: this.classId === 'iop' ? 'cra' : 'iop' }));
     this.keys.ENTER.on('down', () => {
       if (!this.world.over) return;
-      if (this.world.zone.open) this.world.respawnPlayer();
+      if (this.mortDefinitive) this.game.events.emit('accueil');
+      else if (this.world.zone.open) this.world.respawnPlayer();
       else this.scene.restart({ zone: this.zoneId });
     });
   }
@@ -332,12 +369,17 @@ export class ZoneScene extends Phaser.Scene {
   update(_: number, deltaMs: number) {
     const dt = Math.min(deltaMs / 1000, 0.1);
     this.fx.update(dt);
+    if (this.vitrine) this.updateVitrine(dt);
+    else if (this.perso) {
+      this.perso.temps += dt;
+      if ((this.sauveT += dt) >= 5) { this.sauveT = 0; this.sauver(); }
+    }
     // GEL D'IMAGE : la simulation s'arrête, l'affichage continue (tremblement, chiffres)
     if (this.hitstop > 0) { this.hitstop -= dt; this.render(); return; }
     // Pas fixe : même résultat quelle que soit la fréquence de l'écran (indispensable pour la coop)
     this.acc += dt;
     if (this.acc < ZoneScene.STEP) { this.render(); return; }   // écran > 60 Hz : on garde la touche pour le prochain pas
-    let input = this.readInput();
+    let input = this.vitrine ? { move: { x: 0, y: 0 }, aim: { x: 0, y: 0 }, pressed: null } as PlayerInput : this.readInput();
     while (this.acc >= ZoneScene.STEP && this.hitstop <= 0) {
       this.acc -= ZoneScene.STEP;
       this.world.step(ZoneScene.STEP, input);
@@ -367,7 +409,11 @@ export class ZoneScene extends Phaser.Scene {
         case 'rageFull': this.rageSound(); this.hud.toast(`${this.world.player.cls.rage.name} au maximum : ton prochain sort est renforcé !`); break;
         case 'bossDown': this.hud.banner(`${M[e.monster].name} vaincu !`); break;
         case 'playerDeath':
-          if (this.world.zone.open) this.hud.banner(`Vaincu\nEntrée : retour à ${this.world.checkpointName}`, 0, true);
+          if (this.perso?.hardcore) {
+            // Hardcore (choix 10D) : la mort efface le personnage
+            this.mortDefinitive = true; supprimerPerso(this.slot);
+            this.hud.banner(`${this.perso.nom} est mort\nMode Hardcore : Entrée pour revenir à l'accueil`, 0, true);
+          } else if (this.world.zone.open) this.hud.banner(`Vaincu\nEntrée : retour à ${this.world.checkpointName}`, 0, true);
           else this.hud.banner(`Vaincu à la vague ${e.wave}\nEntrée pour recommencer`, 0, true);
           break;
         case 'loot': {
@@ -392,7 +438,7 @@ export class ZoneScene extends Phaser.Scene {
         }
         case 'checkpoint': this.hud.banner(`Point de retour\n${e.name}`, 1400); break;
         case 'respawn': this.hud.banner('De retour !', 900); break;
-        case 'enterArea': this.hud.zoneBanner(e.name, this.world.zone.name, e.level, decouvrir(e.name)); break;
+        case 'enterArea': if (!this.vitrine) this.hud.zoneBanner(e.name, this.world.zone.name, e.level, this.decouvrir(e.name)); break;
         case 'portal': this.cameras.main.fadeIn(450, 0, 0, 0); this.snapCam = true; break;   // fondu au noir, la caméra saute avec le joueur
       }
     }
@@ -412,7 +458,7 @@ export class ZoneScene extends Phaser.Scene {
       x.globalCompositeOperation = 'destination-out'; x.fillStyle = hz; x.fillRect(0, 0, 32, 256);
       c.refresh();
     }
-    const ptr = this.input.activePointer, wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2, alt = this.keys.ALT.isDown;
+    const ptr = this.input.activePointer, wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2, alt = !!this.keys?.ALT?.isDown;
     for (const d of w.drops) {
       if (d.t < 0) continue;
       seen.add(d.uid);
@@ -454,7 +500,7 @@ export class ZoneScene extends Phaser.Scene {
   private viewOf(e: Entity): EntityView {
     let v = this.views.get(e.id);
     if (!v) {
-      const look = e.faction === 'player' ? LOOKS[this.classId] : LOOKS[GAME_DATA.monsters[(e as { type?: string }).type!].look];
+      const look = e.faction === 'player' ? this.look : LOOKS[GAME_DATA.monsters[(e as { type?: string }).type!].look];
       v = new EntityView(this, look);
       this.views.set(e.id, v);
     }
@@ -477,6 +523,54 @@ export class ZoneScene extends Phaser.Scene {
     else if (this.sat) { cam.postFX.remove(this.sat as unknown as Phaser.FX.Controller); this.sat = undefined; }
   }
 
+  /** Sous-zones déjà vues (bandeau 2C : grand la première fois, petit ensuite) : par personnage. */
+  private decouvrir(nom: string): boolean {
+    if (!this.perso) return decouvrir(nom);
+    if (this.perso.zones.includes(nom)) return false;
+    this.perso.zones.push(nom);
+    return true;
+  }
+
+  /** Vitrine de l'écran d'accueil (17A) : pas d'interface ni de joueur visible, les monstres ne le voient pas (mort pour eux),
+   *  et la caméra glisse lentement d'une carte à l'autre autour du départ. Le « joueur » suit la caméra pour que les cartes
+   *  se chargent et que les monstres autour vivent. */
+  private tour: { x: number; y: number }[] = [];
+  private initVitrine() {
+    this.cameras.getCamera('ui')?.setVisible(false);
+    this.cameras.getCamera('mini')?.setVisible(false);
+    const w = this.world, wg = w.worldGrid, p = w.player;
+    p.dead = true;
+    this.tour = [{ x: p.x, y: p.y }];
+    if (wg && w.zone.open) {
+      const [sx, sy] = w.zone.open.start;
+      // boucle sur les cartes du dehors autour du départ, dans l'ordre de l'angle
+      const autour = wg.world.maps.filter(m => !m.inside && Math.abs(m.x - sx) <= 2 && Math.abs(m.y - sy) <= 2 && (m.x !== sx || m.y !== sy))
+        .sort((a, b) => Math.atan2(a.y - sy, a.x - sx) - Math.atan2(b.y - sy, b.x - sx));
+      for (const m of autour) {
+        const free = wg.freeByMap.get(m.tag);
+        if (free?.length) this.tour.push(wg.cellToWorld(free[Math.floor(free.length / 2)]));
+      }
+    }
+    const s = ISO.toScreen(p.x, p.y);
+    this.cameras.main.centerOn(s.x, s.y);
+  }
+  private updateVitrine(dt: number) {
+    const p = this.world.player, n = this.tour.length;
+    if (!n) return;
+    // ~45 unités par seconde le long de la boucle : on voit le décor vivre sans que ça défile vite
+    this.vitrineT += dt * 45;
+    const seg = this.tour.map((a, i) => { const b = this.tour[(i + 1) % n]; return Math.hypot(b.x - a.x, b.y - a.y); });
+    const total = seg.reduce((x, y) => x + y, 0);
+    if (total > 0) {
+      let d = this.vitrineT % total, i = 0;
+      while (d > seg[i]) d -= seg[i++];
+      const a = this.tour[i], b = this.tour[(i + 1) % n], t = seg[i] ? d / seg[i] : 0;
+      p.x = a.x + (b.x - a.x) * t; p.y = a.y + (b.y - a.y) * t;
+    }
+    const s = ISO.toScreen(p.x, p.y), cam = this.cameras.main;
+    cam.centerOn(cam.midPoint.x + (s.x - cam.midPoint.x) * 0.03, cam.midPoint.y + (s.y - 40 - cam.midPoint.y) * 0.03);
+  }
+
   private render() {
     const w = this.world, alive = new Set<number>(), wv = this.worldView, wg = w.worldGrid;
     const cam = this.cameras.main;
@@ -487,6 +581,7 @@ export class ZoneScene extends Phaser.Scene {
     for (const e of [w.player, ...w.monsters]) {
       // monde ouvert : on n'affiche que les monstres des cartes chargées (les autres vivent quand même dans la simulation)
       if (wv && wg && e !== w.player && !wv.isReady(wg.mapAt(e.x, e.y)?.tag)) continue;
+      if (this.vitrine && e === w.player) continue;
       alive.add(e.id);
       // hors de l'écran (avec une marge) : la vue reste, mais on ne la met pas à jour
       if (e !== w.player) {
@@ -496,7 +591,7 @@ export class ZoneScene extends Phaser.Scene {
       this.viewOf(e).sync(e);
     }
     for (const [id, v] of this.views) if (!alive.has(id)) { v.destroy(); this.views.delete(id); }
-    if (this.snapCam) { const pv = this.viewOf(w.player).sprite; cam.centerOn(pv.x, pv.y - 30); this.snapCam = false; }
+    if (this.snapCam && !this.vitrine) { const pv = this.viewOf(w.player).sprite; cam.centerOn(pv.x, pv.y - 30); this.snapCam = false; }
     const s = w.player.skill;
     if (s && 'charge' in s.def && s.def.charge && !s.def.move && s.t < s.def.impactAt) this.fx.chargeSparks(w.player.x, w.player.y);
     this.fx.draw(w.telegraphs, w.projectiles);
@@ -505,7 +600,7 @@ export class ZoneScene extends Phaser.Scene {
   }
 }
 
-/** Sous-zones déjà vues (bandeau 2C : grand la première fois, petit ensuite), gardées dans le navigateur. Affichage seulement. */
+/** Sous-zones déjà vues sans perso (mode dév), gardées dans le navigateur. Affichage seulement. */
 function decouvrir(nom: string): boolean {
   try {
     const k = 'diablofus.zones', vues: string[] = JSON.parse(localStorage.getItem(k) ?? '[]');

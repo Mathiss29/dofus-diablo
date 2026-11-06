@@ -1,0 +1,325 @@
+[
+ {
+  "id": 1,
+  "cle": "feca",
+  "nom": "Féca",
+  "titre": "Protecteur",
+  "desc": "Les Fécas sont de loyaux protecteurs toujours sur la défensive. Ils sont appréciés dans les groupes d'aventuriers pour leurs armures élémentaires et leur capacité à encaisser les coups durs. Ils sont également maîtres dans l'art des signes magiques : quand il va y avoir du grabuge, les Fécas sortent leurs glyphes !",
+  "complexite": 2,
+  "roles": {
+   "Protection": 8,
+   "Tank": 8,
+   "Dégâts": 7,
+   "Entrave": 7,
+   "Placement": 4,
+   "Amélioration": 3,
+   "Invocation": 2
+  }
+ },
+ {
+  "id": 2,
+  "cle": "osamodas",
+  "nom": "Osamodas",
+  "titre": "Invocateur de créatures",
+  "desc": "Les Osamodas sont des dompteurs nés ! Ils ont le pouvoir d'invoquer des créatures et sont de remarquables dresseurs. Une rumeur prétend qu'ils taillent leurs vêtements dans la peau de leurs ennemis, mais allez donc leur demander ce qu'il en est... Si vous êtes de son côté, un Osamodas sera aux petits soins pour vous. Dans le cas contraire, peut-être terminerez-vous votre vie sous la forme d'une botte ou d'un bonnet fourré.",
+  "complexite": 4,
+  "roles": {
+   "Invocation": 12,
+   "Amélioration": 6,
+   "Soins": 5,
+   "Dégâts": 4,
+   "Placement": 4,
+   "Entrave": 3,
+   "Protection": 3,
+   "Tank": 2
+  }
+ },
+ {
+  "id": 3,
+  "cle": "enutrof",
+  "nom": "Enutrof",
+  "titre": "Chasseur de trésors",
+  "desc": "Les Enutrofs sont des chasseurs de trésor avides de kamas, qui malgré leur grand âge courent comme des dragodindes à la vue d'un coffre bien rempli. Ils sont experts dans l'art de ralentir leurs ennemis : ils peuvent ainsi les harceler avant de les assommer à grands coups de pelle le moment venu !",
+  "complexite": 2,
+  "roles": {
+   "Entrave": 8,
+   "Invocation": 6,
+   "Amélioration": 6,
+   "Soins": 5,
+   "Dégâts": 5,
+   "Protection": 4,
+   "Placement": 3
+  }
+ },
+ {
+  "id": 4,
+  "cle": "sram",
+  "nom": "Sram",
+  "titre": "Assassin",
+  "desc": "Les Srams sont des assassins qui aiment les bourses, rebondies de préférence. Trousser les pans d'une tunique, tâter le fond d'une poche, faire preuve de doigté, palper enfin des bijoux tant convoités avant de poser un piège ou d'asséner un coup mortel, voilà la vie d'un disciple de Sram !",
+  "complexite": 2,
+  "roles": {
+   "Dégâts": 10,
+   "Placement": 7,
+   "Entrave": 6,
+   "Amélioration": 3,
+   "Soins": 2,
+   "Tank": 2,
+   "Invocation": 1
+  }
+ },
+ {
+  "id": 5,
+  "cle": "xelor",
+  "nom": "Xélor",
+  "titre": "Maître du temps",
+  "desc": "Les Xélors sont des mages qui maîtrisent le temps et toutes les mécaniques qui donnent l'heure : carillons, horloges, et pendules leur obéissent au doigt et à l'œil. Les Xélors jouent donc avec le temps pour ralentir un ennemi ou se téléporter où bon leur semble.",
+  "complexite": 5,
+  "roles": {
+   "Placement": 9,
+   "Entrave": 7,
+   "Dégâts": 7,
+   "Amélioration": 4,
+   "Invocation": 2,
+   "Tank": 2
+  }
+ },
+ {
+  "id": 6,
+  "cle": "ecaflip",
+  "nom": "Ecaflip",
+  "titre": "Combattant imprévisible",
+  "desc": "Les Ecaflips sont des guerriers joueurs qui se fourrent dans les endroits où l'on peut gagner gros, et perdre beaucoup... Un Ecaflip bien dans sa peau parie sans arrêt, pour tout et pour rien. Mais attention, il prend le jeu très au sérieux et ira même jusqu'à risquer sa vie sur un jet de dés pour tenter de remporter la mise...",
+  "complexite": 4,
+  "roles": {
+   "Dégâts": 9,
+   "Amélioration": 7,
+   "Soins": 6,
+   "Entrave": 4,
+   "Invocation": 3,
+   "Placement": 3,
+   "Protection": 2
+  }
+ },
+ {
+  "id": 7,
+  "cle": "eniripsa",
+  "nom": "Eniripsa",
+  "titre": "Guérisseur",
+  "desc": "Les Eniripsas sont des guérisseurs qui soignent d'un simple Mot. Ils utilisent le pouvoir de la parole pour soulager les souffrances de leurs alliés, mais parfois aussi pour blesser leurs ennemis. Certains Eniripsas sont même devenus de véritables arpenteurs du verbe, des rôdeurs des langues oubliées.",
+  "complexite": 1,
+  "roles": {
+   "Soins": 12,
+   "Amélioration": 9,
+   "Entrave": 9,
+   "Dégâts": 7,
+   "Invocation": 5,
+   "Placement": 5,
+   "Protection": 2
+  }
+ },
+ {
+  "id": 8,
+  "cle": "iop",
+  "nom": "Iop",
+  "titre": "Guerrier téméraire",
+  "desc": "Les Iops sont des guerriers fonceurs et sans reproche ! Une chose est sûre : les Iops savent faire parler les armes. D'ailleurs, se retrouver pris dans une bagarre au moins une fois par jour est pour eux un signe de bonne santé. Leur tempérament impétueux fait des Iops des paladins de l'extrême, capables du meilleur... comme du pire !",
+  "complexite": 1,
+  "roles": {
+   "Dégâts": 12,
+   "Amélioration": 8,
+   "Placement": 6,
+   "Tank": 3,
+   "Protection": 3,
+   "Entrave": 2,
+   "Invocation": 1
+  }
+ },
+ {
+  "id": 9,
+  "cle": "cra",
+  "nom": "Crâ",
+  "titre": "Archer",
+  "desc": "Les Crâs sont des archers aussi fiers que précis ! Ils font des alliés précieux contre les adeptes de la mêlée franche. Restant à distance, décochant leurs traits empennés dans le moindre orifice laissé sans surveillance, ils ne laissent aucun répit à leurs adversaires !",
+  "complexite": 1,
+  "roles": {
+   "Dégâts": 10,
+   "Entrave": 8,
+   "Amélioration": 8,
+   "Placement": 5,
+   "Invocation": 2
+  }
+ },
+ {
+  "id": 10,
+  "cle": "sadida",
+  "nom": "Sadida",
+  "titre": "Sorcier sylvestre",
+  "desc": "Les Sadidas sont des invocateurs qui empoisonnent la vie de leurs ennemis ! Apprivoiser les Ronces pour en faire des armes terrifiantes, confectionner des poupées de guerre et de soins, voilà qui satisfait tout disciple Sadida digne de ce nom.",
+  "complexite": 3,
+  "roles": {
+   "Invocation": 10,
+   "Entrave": 8,
+   "Soins": 6,
+   "Dégâts": 5,
+   "Protection": 2,
+   "Placement": 1
+  }
+ },
+ {
+  "id": 11,
+  "cle": "sacrieur",
+  "nom": "Sacrieur",
+  "titre": "Berserker",
+  "desc": "Les Sacrieurs sont des berserkers qui décuplent leurs forces dès qu'ils sont frappés ! N'ayant pas peur de recevoir des coups, ni de s'exposer aux blessures, ils seront souvent en première ligne, prêts à verser le premier sang ! Le Sacrieur est vraiment le compagnon idéal pour vos longues soirées guerrières...",
+  "complexite": 1,
+  "roles": {
+   "Tank": 12,
+   "Dégâts": 8,
+   "Placement": 7,
+   "Protection": 6,
+   "Soins": 3,
+   "Invocation": 2,
+   "Entrave": 2,
+   "Amélioration": 2
+  }
+ },
+ {
+  "id": 12,
+  "cle": "pandawa",
+  "nom": "Pandawa",
+  "titre": "Bagarreur assoiffé",
+  "desc": "Les Pandawas sont des guerriers adeptes des arts martiaux qui savent faire des folies de leurs corps ! Ils peuvent même en faire avec le corps des autres... Le Pandawa sait comment soulever les foules, il porte ses alliés sur ses épaules pour mieux les protéger. Quant à ses ennemis, il les enverra valser dans le décor, avant de fêter sa victoire avec une bonne rasade de lait de bambou !",
+  "complexite": 3,
+  "roles": {
+   "Placement": 12,
+   "Dégâts": 8,
+   "Tank": 7,
+   "Amélioration": 5,
+   "Soins": 4,
+   "Invocation": 4,
+   "Entrave": 3,
+   "Protection": 1
+  }
+ },
+ {
+  "id": 13,
+  "cle": "roublard",
+  "nom": "Roublard",
+  "titre": "Expert en explosifs",
+  "desc": "Membres d'un clan créé à l'origine par Raval et la famille Smisse, les Roublards ont finalement prêté allégeance au dieu Dralbour, qui n'est autre que Sram. Maîtres de l'entourloupe, du coup fourré, des bombes à retardement et des pistolets... les Roublards ne sont à l'aise qu'en terrain miné.",
+  "complexite": 5,
+  "roles": {
+   "Dégâts": 10,
+   "Placement": 7,
+   "Entrave": 6,
+   "Invocation": 5,
+   "Amélioration": 5
+  }
+ },
+ {
+  "id": 14,
+  "cle": "zobal",
+  "nom": "Zobal",
+  "titre": "Guerrier lunatique",
+  "desc": "Les Zobals portent des masques magiques qui leur permettent de changer de tête comme de chemise. Tour à tour collants comme de la glu, enragés comme des psychopathes ou partisans de la retraite stratégique, ils s'adaptent à la situation, mais gare aux troubles de la personnalité ! La légende dit que ces êtres imprévisibles seraient bénis par Sadida lui-même.",
+  "complexite": 3,
+  "roles": {
+   "Tank": 7,
+   "Dégâts": 7,
+   "Protection": 7,
+   "Amélioration": 6,
+   "Placement": 5,
+   "Entrave": 5,
+   "Invocation": 1
+  }
+ },
+ {
+  "id": 15,
+  "cle": "steamer",
+  "nom": "Steamer",
+  "titre": "Technomage",
+  "desc": "Les Steamers ont plus d'une tourelle dans leur boîte à outils. En fins tacticiens, ils utilisent la technomagie pour prendre l'avantage sur le terrain. Ces marinventeurs aux scaphandres rutilants vouent un culte au Grand Oktapodas, le protecteur des océans.",
+  "complexite": 4,
+  "roles": {
+   "Placement": 7,
+   "Soins": 7,
+   "Dégâts": 7,
+   "Invocation": 6,
+   "Amélioration": 5,
+   "Protection": 3,
+   "Entrave": 3,
+   "Tank": 2
+  }
+ },
+ {
+  "id": 16,
+  "cle": "eliotrope",
+  "nom": "Eliotrope",
+  "titre": "Créateur de portails",
+  "desc": "Apparus par accident, les Eliotropes sont des reflets de leur créateur, le Roi-Dieu. Ils se déplacent à la vitesse de l'éclair, disparaissant en un clin d'œil pour réapparaître plus loin. Tout comme les Eliatropes, ils connaissent les secrets du Wakfu.",
+  "complexite": 5,
+  "roles": {
+   "Placement": 8,
+   "Dégâts": 7,
+   "Soins": 6,
+   "Amélioration": 5,
+   "Entrave": 3,
+   "Invocation": 1
+  }
+ },
+ {
+  "id": 17,
+  "cle": "huppermage",
+  "nom": "Huppermage",
+  "titre": "Mage élémentaliste",
+  "desc": "Les Huppermages sont capables de combiner le Feu, l'Air, l'Eau et la Terre pour lancer des sortilèges aux multiples effets. Maîtres des runes élémentaires, ils vénèrent la Balance Krosmique, une force mystérieuse qui tend à maintenir l'équilibre dans l'univers.",
+  "complexite": 4,
+  "roles": {
+   "Dégâts": 7,
+   "Placement": 6,
+   "Amélioration": 6,
+   "Soins": 4,
+   "Protection": 4,
+   "Tank": 4,
+   "Entrave": 4,
+   "Invocation": 2
+  }
+ },
+ {
+  "id": 18,
+  "cle": "ouginak",
+  "nom": "Ouginak",
+  "titre": "Barbare",
+  "desc": "Quand on est un barbare avec un caractère de chienchien, il faut savoir montrer les crocs pour se faire respecter. Le regard fier, le poil brillant, la truffe humide : c'est ainsi que l'Ouginak traverse les épreuves et triomphe de l'adversité. Traquer ses proies sans relâche, laisser éclater sa rage pour écraser ses ennemis, les voir mourir devant soi et entendre les miaulements terrorisés de leurs chachas... Voilà une vie digne d'être vécue !",
+  "complexite": 2,
+  "roles": {
+   "Dégâts": 9,
+   "Tank": 7,
+   "Entrave": 5,
+   "Amélioration": 4,
+   "Soins": 4,
+   "Protection": 3,
+   "Placement": 3,
+   "Invocation": 2
+  }
+ },
+ {
+  "id": 20,
+  "cle": "forgelance",
+  "nom": "Forgelance",
+  "titre": "Champion immortel",
+  "desc": "Les Forgelances sont des lanciers qui ne croient qu'en eux-mêmes ! Tirant leurs pouvoirs de la Lance Originelle, ces combattants cherchent à se forger une renommée que la mort elle-même ne saurait effacer. Féru d'arts, de récits légendaires et de joutes épiques, le Forgelance se laissera convaincre de brandir son arme à vos côtés par des promesses de gloire et de postérité. Véritables fers de lance des combats, ils sont les premiers au contact pour percer les défenses adverses.",
+  "complexite": 3,
+  "roles": {
+   "Dégâts": 10,
+   "Placement": 8,
+   "Protection": 6,
+   "Entrave": 3,
+   "Amélioration": 3,
+   "Soins": 2,
+   "Tank": 2,
+   "Invocation": 1
+  }
+ }
+]
