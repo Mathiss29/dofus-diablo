@@ -15,11 +15,6 @@ const SLOT_NAMES: Record<EquipSlot, string> = {
   chapeau: 'Coiffe', cape: 'Cape', amulette: 'Amulette', anneau1: 'Anneau', anneau2: 'Anneau', ceinture: 'Ceinture',
   bottes: 'Bottes', arme: 'Arme', bouclier: 'Bouclier',
 };
-/** Silhouette blanche des emplacements vides (icons_2x de Dofus 3). */
-const SLOT_ICONS: Record<EquipSlot, string> = {
-  chapeau: 'helmet', cape: 'cape', amulette: 'amulet', anneau1: 'ring', anneau2: 'ring', ceinture: 'belt',
-  bottes: 'boots', arme: 'weapon', bouclier: 'shield',
-};
 /** Place des emplacements autour du perso, comme l'inventaire de Dofus 3 (null = case vide de l'interface). */
 const LEFT: (EquipSlot | null)[] = ['chapeau', 'cape', null, 'arme', 'bouclier'];
 const RIGHT: (EquipSlot | null)[] = ['amulette', 'anneau1', 'anneau2', 'ceinture', 'bottes'];
@@ -31,6 +26,14 @@ const KINDS: [string, string][] = [['', 'Toutes les catégories'], ['arme', 'Arm
 const SORTS: [string, string][] = [['', 'Aucun tri'], ['niveau', 'Niveau'], ['rarete', 'Rareté'], ['nom', 'Nom']];
 const RARITY_ORDER: Record<string, number> = { commun: 0, rare: 1, epique: 2, legendaire: 3, mythique: 4 };
 const INV = 'assets/ui/inv';
+/** Vraies pièces de l'interface de Dofus 3 (uidarkstone / uielements) : cadre des fenêtres, cases, onglets, cases à cocher. */
+const D3 = 'assets/ui/d3';
+/** Fond officiel des emplacements d'équipement (silhouette comprise). */
+const SLOT_D3: Record<EquipSlot, string> = {
+  chapeau: 'helmet', cape: 'cape', amulette: 'collar', anneau1: 'ring', anneau2: 'ring', ceinture: 'belt',
+  bottes: 'shoe', arme: 'weapon', bouclier: 'shield',
+};
+const TAB_D3: Record<string, string> = { all: 'all', equipments: 'equipment', consumables: 'consumable', resources: 'resources', key: 'quest', cosmetics: 'cosmetics' };
 
 const CSS = `
 .dw{position:fixed;inset:0;pointer-events:none;font:13px 'Trebuchet MS',Verdana,sans-serif;color:#e8e2d4;z-index:10}
@@ -199,6 +202,68 @@ const CSS = `
 .dw .su{border:1px solid #45433b;border-radius:4px;padding:8px 10px;background:#1f1e1a;display:grid;gap:4px}
 .dw .su.ok{border-color:#8f7a3a;background:linear-gradient(#2e2a1c,#24211a)}
 .dw .su .hd{display:flex;justify-content:space-between;gap:10px}.dw .su .hd b{color:#f4efe0}.dw .su .pt{color:#f2d36b;font-weight:bold;white-space:nowrap}
+
+/* ——— Vraie interface de Dofus 3 : cadre, titre, fond, cases, onglets (assets/ui/d3) ——— */
+.dw .win{background:#262520 url(assets/ui/d3/block_background_second.jpg) center/cover;border:0;border-radius:3px;box-shadow:0 16px 50px #000d;grid-template-rows:46px 1fr;overflow:visible}
+.dw .win::after{content:'';position:absolute;inset:0 -9px -20px;pointer-events:none;z-index:4;border:40px solid transparent;border-image:url(assets/ui/d3/window_border_bottom.png) 40}
+.dw .win>*{min-height:0}
+.dw .ttl{background:linear-gradient(#4d4535,#332e23 70%,#2a261d);border-bottom:1px solid #0b0a07;box-shadow:inset 0 1px 0 #6b6150,0 2px 6px #0008;border-radius:3px 3px 0 0;overflow:hidden}
+.dw .ttl::before,.dw .ttl::after{content:'';position:absolute;top:0;bottom:0;width:150px;background:url(assets/ui/d3/slideCornerBgHeader.png) left top/150px 100% no-repeat;opacity:.9;pointer-events:none}
+.dw .ttl::before{left:0}.dw .ttl::after{right:0;transform:scaleX(-1)}
+.dw .ttl b{font:bold 19px 'Trebuchet MS',sans-serif;color:#fff;text-shadow:0 1px 3px #000;position:relative;z-index:1}
+.dw .ttl img{z-index:1;top:8px;left:10px}
+.dw .ttl .x{z-index:1;top:10px;right:12px;width:30px;height:25px;background:url(assets/ui/d3/btn_close_normal.png) center/contain no-repeat;filter:brightness(0) invert(1)}
+.dw .ttl .x:hover{filter:brightness(0) invert(1) sepia(1) saturate(6) hue-rotate(28deg)}
+.dw .btn{border:6px solid transparent;border-image:url(assets/ui/d3/btn_green_normal.png) 8 fill/6px;background:none;color:#1e2a05;text-shadow:0 1px 0 #e8ff7a;padding:0 10px;border-radius:0;text-transform:uppercase;font-size:12px;letter-spacing:.03em}
+.dw .btn:hover{border-image-source:url(assets/ui/d3/btn_green_over.png)}
+.dw .btn:active{border-image-source:url(assets/ui/d3/btn_green_pressed.png)}
+.dw input,.dw select{background-color:#1a1915;border:1px solid #3d3b33;box-shadow:inset 0 1px 3px #000a}
+.dw select{appearance:none;-webkit-appearance:none;background:#57514a url(assets/ui/d3/contextMenuDownArrow.png) right 10px center/12px no-repeat;border:1px solid #23211b;box-shadow:inset 0 1px 0 #77705f;padding-right:30px;color:#f4efe0}
+.dw select option{background:#2a2823;color:#f4efe0}
+/* inventaire */
+.dw .left{background:transparent}
+.dw .left::after{content:'';position:absolute;left:50%;top:44%;width:440px;height:440px;transform:translate(-50%,-50%);background:#a6e35a;-webkit-mask:url(assets/ui/d3/light_bg_inventory.png) center/contain no-repeat;mask:url(assets/ui/d3/light_bg_inventory.png) center/contain no-repeat;opacity:.55;pointer-events:none}
+.dw .perso,.dw .dofus,.dw .sets{position:relative;z-index:1}
+.dw .slot{width:64px;height:64px;border:0;border-radius:0;background:url(assets/ui/d3/slot_dark_background_empty.png) center/100% no-repeat;box-shadow:none}
+.dw .slot.plein{background-image:url(assets/ui/d3/slot_dark_background_full.png)}
+.dw .slot:hover{outline:1px solid #b9e54b;outline-offset:-3px}
+.dw .dofus .slot{width:56px;height:56px;opacity:1;background-size:100%}
+.dw .right{background:#0003;border-left:1px solid #0b0a07}
+.dw .left{border-right:0}
+.dw .tabs{width:auto;padding:12px 0 0 4px;gap:2px;background:#0003;border-right:1px solid #0b0a07}
+.dw .right{grid-template-columns:52px minmax(0,1fr)}
+.dw .tab{width:46px;height:52px;border:0;border-radius:0;background:url(assets/ui/d3/tab_right_normal.png) center/100% 100% no-repeat}
+.dw .tab:hover{border:0;background-image:url(assets/ui/d3/tab_right_over.png)}
+.dw .tab.on{border:0;background:url(assets/ui/d3/tab_right_selected.png) center/100% 100% no-repeat}
+.dw .tab img{width:28px;height:28px;object-fit:contain}
+.dw .list input[data-search]{background:#1a1915 url(assets/ui/d3/btnIcon_magnifierSearch.png) right 8px center/18px no-repeat;padding-right:32px}
+.dw .cell{border:0;border-radius:0;background:url(assets/ui/d3/slot_dark_background_full.png) center/100% no-repeat;box-shadow:none}
+.dw .cell.empty{background:url(assets/ui/d3/slot_dark_background_empty.png) center/100% no-repeat}
+.dw .cell:not(.empty):hover{outline:1px solid #b9e54b;outline-offset:-3px}
+/* options */
+.dw .opt .ob{background:none}
+.dw .opt .nav{background:#0000002e;border-right:1px solid #0b0a07;border-radius:0 0 0 3px}
+.dw .opt .nav input{background:#15140f;border-color:#3d3b33}
+.dw .opt .nav .it{position:relative}
+.dw .opt .nav .it.on::before{content:'';position:absolute;inset:2px 0;background:#b9e54b;-webkit-mask:url(assets/ui/d3/sectionHeaderSelection.png) left/100% 100%;mask:url(assets/ui/d3/sectionHeaderSelection.png) left/100% 100%;opacity:.18}
+.dw .opt .main{background:none;padding-top:6px}
+.dw .opt .otabs{display:flex;justify-content:center;gap:40px;margin-bottom:-4px}
+.dw .opt .otabs span{position:relative;padding:8px 26px 10px;font-weight:bold;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:#cfc9b6}
+.dw .opt .otabs span.on{color:#b9e54b}
+.dw .opt .otabs span.on::after{content:'';position:absolute;left:-30px;right:-30px;bottom:0;height:42px;background:#b9e54b;-webkit-mask:url(assets/ui/d3/headerHighlight.png) center/100% 100%;mask:url(assets/ui/d3/headerHighlight.png) center/100% 100%;opacity:.8;pointer-events:none}
+.dw .opt .grp>.desc{background:#0000004d}
+.dw .opt .sec{background:#4a443a99;box-shadow:inset 0 1px 0 #ffffff10,0 1px 3px #0006;border-radius:6px}
+.dw .opt .row input[type=checkbox]{width:26px;height:22px;border:0;border-radius:0;background:url(assets/ui/d3/btn_checkbox_normal.png) center/100% no-repeat}
+.dw .opt .row input[type=checkbox]:checked{background-image:url(assets/ui/d3/btn_checkbox_selected.png)}
+.dw .opt .row input[type=checkbox]:checked::after{display:none}
+.dw .opt .row.ck{grid-template-columns:28px minmax(0,1fr)}
+.dw .opt .rs{display:inline-block;width:18px;height:18px;background:url(assets/ui/d3/btnIcon_reset.png) center/contain no-repeat;filter:brightness(0) invert(.92)}
+.dw .opt .lien:hover .rs{filter:brightness(0) invert(1) sepia(1) saturate(6) hue-rotate(28deg)}
+.dw .opt .nav .bas .lien[data-accueil]{border:6px solid transparent;border-image:url(assets/ui/d3/btn_grey_small_normal.png) 8 fill/6px;padding:2px 6px;color:#f4efe0;text-shadow:0 1px 2px #000}
+.dw .opt .nav .bas .lien[data-accueil]:hover{border-image-source:url(assets/ui/d3/btn_grey_small_over.png)}
+.dw .opt .row input[type=range]{-webkit-appearance:none;appearance:none;height:8px;border-radius:4px;background:linear-gradient(90deg,#8fae3a,#b9e54b) 0/var(--v,50%) 100% no-repeat,#15140f;box-shadow:inset 0 1px 2px #000,0 0 0 1px #3d3b33;cursor:pointer}
+.dw .opt .row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:20px;border-radius:3px;background:linear-gradient(#e8ff8a,#9cc62a);border:1px solid #1e2a05;box-shadow:0 1px 3px #000}
+.dw .opt .row input[type=range]::-moz-range-thumb{width:12px;height:20px;border-radius:3px;background:linear-gradient(#e8ff8a,#9cc62a);border:1px solid #1e2a05}
 `;
 
 type Mode = 'inv' | 'car' | 'job' | 'opt' | 'sorts' | 'quetes' | 'succes';
@@ -270,7 +335,7 @@ export class Windows {
     this.win!.querySelector('[data-close]')!.addEventListener('click', () => this.close());
   }
   private title(name: string, icon: string) {
-    return `<div class="ttl"><img src="assets/ui/menu/${icon}.png" alt="" style="object-fit:contain"><b>${name}</b><span class="x" data-close title="Fermer (Échap)">✕</span></div>`;
+    return `<div class="ttl"><img src="assets/ui/menu/${icon}.png" alt="" style="object-fit:contain"><b>${name}</b><span class="x" data-close title="Fermer (Échap)"></span></div>`;
   }
 
   private renderInv() {
@@ -278,7 +343,7 @@ export class Windows {
     const slot = (s: EquipSlot | null) => {
       if (!s) return '<div class="slot none"></div>';
       const it = p.equipment[s], d = it && ITEMS.equipment[it.id];
-      return `<div class="slot" data-slot="${s}" title="${d ? '' : SLOT_NAMES[s]}" style="${it ? `box-shadow:inset 0 -3px 0 ${RARITY_COLORS[it.rarity]}` : ''}">${d ? iconHtml(d.icon) : `<img class="sil" src="${INV}/s_${SLOT_ICONS[s]}.png" alt="">`}</div>`;
+      return `<div class="slot ${d ? 'plein' : ''}" data-slot="${s}" title="${d ? '' : SLOT_NAMES[s]}" style="${it ? `box-shadow:inset 0 -3px 0 ${RARITY_COLORS[it.rarity]}` : `background-image:url(${D3}/tx_slot_${SLOT_D3[s]}.png)`}">${d ? iconHtml(d.icon) : ''}</div>`;
     };
     const { html, n } = this.cells();
     w.innerHTML = `${this.title('Inventaire', 'inventory')}
@@ -290,10 +355,10 @@ export class Windows {
             <div class="slots">${RIGHT.map(slot).join('')}</div>
           </div>
           <div class="sets">${this.setsHtml()}</div>
-          <div class="dofus">${Array.from({ length: 6 }, () => `<div class="slot" title="Dofus (plus tard)"><img class="sil" src="${INV}/s_dofus.png" alt=""></div>`).join('')}</div>
+          <div class="dofus">${Array.from({ length: 6 }, () => `<div class="slot" title="Dofus (plus tard)" style="background-image:url(${D3}/tx_slot_dofus.png)"></div>`).join('')}</div>
         </div>
         <div class="right">
-          <div class="tabs">${TABS.map(([k, ic, name]) => `<div class="tab ${this.tab === k ? 'on' : ''}" data-tab="${k}" title="${name}"><img src="${INV}/tab_${ic}.png" alt=""></div>`).join('')}</div>
+          <div class="tabs">${TABS.map(([k, ic, name]) => `<div class="tab ${this.tab === k ? 'on' : ''}" data-tab="${k}" title="${name}"><img src="${D3}/inventory_${TAB_D3[ic]}.png" alt=""></div>`).join('')}</div>
           <div class="list">
             <input placeholder="Rechercher..." value="${this.search.replace(/"/g, '&quot;')}" data-search>
             <div class="row2">
@@ -532,9 +597,9 @@ export class Windows {
       if (o.t === 'check') return `<label class="row ck ${val(o.k) ? 'on' : ''}"><input type="checkbox" data-ck="${o.k}" ${val(o.k) ? 'checked' : ''}><span>${o.nom}${aide}</span></label>`;
       if (o.t === 'select') return `<label class="row"><span>${o.nom}${aide}</span><select data-sel="${o.k}">${o.choix.map(([k, n]) => `<option value="${k}" ${val(o.k) === k ? 'selected' : ''}>${n}</option>`).join('')}</select></label>`;
       const n = Math.round((val(o.k) as number) * 100);
-      return `<label class="row"><span>${o.nom}${aide}</span><input type="range" data-rg="${o.k}" min="${o.min}" max="${o.max}" value="${n}"><output data-o="${o.k}">${n}${o.unite ?? '%'}</output></label>`;
+      return `<label class="row"><span>${o.nom}${aide}</span><input type="range" data-rg="${o.k}" min="${o.min}" max="${o.max}" value="${n}" style="--v:${(n - o.min) / (o.max - o.min) * 100}%"><output data-o="${o.k}">${n}${o.unite ?? '%'}</output></label>`;
     };
-    const RESET = '<span style="font-size:15px">↺</span>';
+    const RESET = '<i class="rs"></i>';
     const main = GROUPES.map(g => {
       const secs = g.secs.map(s => {
         const lignes = s.opts.filter(garde);
@@ -547,12 +612,12 @@ export class Windows {
     w.innerHTML = `${this.title('Options', 'options')}<div class="ob">
       <div class="nav"><input type="search" placeholder="Rechercher" value="${this.optRecherche.replace(/"/g, '&quot;')}" data-cherche><div class="cats">${nav}</div>
         <div class="bas"><span class="lien" data-tout>${RESET} Tout réinitialiser</span>${this.onAccueil ? '<span class="lien" data-accueil>Sauvegarder et revenir à l\'accueil</span>' : ''}</div></div>
-      <div class="main">${main}</div></div>`;
+      <div class="main"><div class="otabs"><span class="on">Options générales</span></div>${main}</div></div>`;
     const apply = () => { sauverReglages(r); this.onReglages(r); };
     const R = r as unknown as Record<string, unknown>;
     w.querySelectorAll<HTMLInputElement>('[data-rg]').forEach(e => {
       const k = e.dataset.rg!;
-      e.addEventListener('input', () => { R[k] = +e.value / 100; w.querySelector(`[data-o="${k}"]`)!.textContent = `${e.value}${k === 'chaleur' ? '' : '%'}`; apply(); });
+      e.addEventListener('input', () => { R[k] = +e.value / 100; e.style.setProperty('--v', `${(+e.value - +e.min) / (+e.max - +e.min) * 100}%`); w.querySelector(`[data-o="${k}"]`)!.textContent = `${e.value}${k === 'chaleur' ? '' : '%'}`; apply(); });
       // 8A : aperçu sonore quand on lâche le curseur
       e.addEventListener('change', () => { if (k === 'volEffets') Son.jouer(MANIFESTE.impacts[0], 'effets'); else if (k === 'volInterface' || k === 'volume') Son.jouer(MANIFESTE.ui.ok, 'interface'); });
     });
