@@ -170,6 +170,8 @@ couleurs et dégradés, débit et salves, forme (sphère, cône, cercle, bord, b
   **3,2** au lieu de 1,6, puis `python accueil_grille.py big.png big.json <sortie>/iop_m 270,304,774,988 270,304,1070,988`
   (boîtes doublées). Les images sont rangées en grille de 8192 px de large au plus (une bande de 23 attaques HD dépasserait
   les 16 383 px du WebP) ; `accueil.ts` lit aussi bien les anciennes bandes que les grilles.
+- Couleurs : quelques morceaux gris des têtes sont posés à côté de leur groupe `ColorGray_N` au lieu d'être dedans
+  (frange de la Crâ, mèche de l'Iopette). `build_char.py` leur donne la couleur du groupe voisin (sinon ils restaient gris).
 - Persos en jeu : `SCALE=0.7` (défaut de `perso_planche.py`) reste net jusqu'à un zoom d'environ 1,2 ; la molette va jusqu'à 1,5,
   donc `SCALE=0.9` pour être net partout (planches environ 1,65 fois plus lourdes).
 - Textes des classes (titre, description, rôles et difficulté officiels) : `breeds` + `breedroles` + `fr.bin` → `src/data/classes_dofus.json`.
