@@ -925,5 +925,11 @@
   "impacts/3100000101_hits_dofus_flesh_01.mp3",
   "impacts/3100000102_hits_dofus_flesh_02.mp3",
   "impacts/3100000103_hits_dofus_flesh_03.mp3"
+ ],
+ "kamas": [
+  "ui/AMB_Loc_CoinDrop_002.mp3",
+  "ui/AMB_Loc_CoinDrop_005.mp3",
+  "ui/AMB_Loc_CoinDrop_007.mp3",
+  "ui/AMB_Loc_CoinDrop_009.mp3"
  ]
 }

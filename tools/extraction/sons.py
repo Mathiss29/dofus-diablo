@@ -99,6 +99,9 @@ for k, s in {'niveau': '16062_Int_Level_Up', 'objectif': '16074_Int_Jingle_Petit
              'ok': '16002_Int_OK_01', 'bouton': '16004_Int_Boutons_Génériques_01', 'onglet': '16009_Int_Onglet_01'}.items():
     U[k] = sfx('UI', s, 'ui')
 
+# kamas (choix Kamas D) : pièces qui tombent, dans la banque du décor
+manifest['kamas'] = [sfx('AMB_Loc', f'AMB_Loc_CoinDrop_{n}', 'ui') for n in ('002', '005', '007', '009')]
+
 # ---- sorts des classes (4A) : son de l'animation du lanceur ----
 S = manifest['sorts']
 for cls in ('Iop', 'Cra', 'Commun'):

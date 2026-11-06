@@ -47,7 +47,7 @@ export class SonView {
 
   /** Sons de la classe, des effets et des monstres de la zone : chargés en fond dès l'arrivée. */
   private precharger() {
-    const M = MANIFESTE, f: string[] = [...Object.values(M.ui), ...M.impacts];
+    const M = MANIFESTE, f: string[] = [...Object.values(M.ui), ...M.impacts, ...(M.kamas ?? [])];
     f.push(...Object.values(M.sorts[this.classe] ?? {}));
     for (const a of Object.values(this.look.map)) { const s = M.sorts.commun[a.anim]; if (s) f.push(s); }
     const types = new Set(this.world.monsters.map(m => m.type));
@@ -101,6 +101,8 @@ export class SonView {
       case 'queteFin': if (!e.sautee) Son.jouer(M.ui.objectif, 'interface', { cle: 'objectif', ecart: 0.5 }); break;
       case 'succes': Son.jouer(M.ui.succes, 'interface'); break;
       case 'checkpoint': Son.jouer(M.ui.checkpoint, 'interface'); break;
+      // Kamas D : tintement des pièces ramassées (son officiel, plus aigu que la chute au sol)
+      case 'lootKamas': Son.jouer(Son.auHasard(M.kamas), 'effets', { vol: 0.7, vitesse: 1.12 + Math.random() * 0.1, cle: 'kamas', ecart: 0.08 }); break;
       case 'playerDeath': if (this.adversaire) { this.adversaire = null; Son.finCombat(false); } break;
     }
   }
