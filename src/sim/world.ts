@@ -467,8 +467,8 @@ export class World {
       return t >= -m.radius && t <= length + m.radius && perp <= width + m.radius;
     }, def, x, y, stun, facing);
   }
-  hitCircle(x: number, y: number, r: number, def: HitDef, stun = 0) {
-    return this.applyHits(m => Math.hypot(m.x - x, m.y - y) <= r + m.radius, def, x, y, stun);
+  hitCircle(x: number, y: number, r: number, def: HitDef, stun = 0, pushDir?: number) {
+    return this.applyHits(m => Math.hypot(m.x - x, m.y - y) <= r + m.radius, def, x, y, stun, pushDir);
   }
   private applyHits(test: (m: Monster) => boolean, def: HitDef, ox: number, oy: number, stun: number, pushDir?: number): number {
     const p = this.player, cls = p.cls;

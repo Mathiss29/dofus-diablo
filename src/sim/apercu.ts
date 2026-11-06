@@ -48,6 +48,11 @@ export function apercuSort(world: World, id: SkillId, aim: { x: number; y: numbe
       return t >= -m.radius && t <= length + m.radius && Math.abs(-dx * s + dy * c) <= width + m.radius;
     }) };
   }
+  if (hz.shape === 'point') {
+    const at = p.landing(id, aim, world), r = hz.radius * area;
+    return { portee: (p.shot(id).range ?? hz.range) + p.stat('portee') * CASE, zone: { kind: 'circle', x: at.x, y: at.y, r },
+      cibles: dans(m => Math.hypot(m.x - at.x, m.y - at.y) <= r + m.radius) };
+  }
   if (hz.shape === 'circle') {
     const r = hz.radius * area;
     return { portee: r, zone: { kind: 'circle', x: p.x, y: p.y, r }, cibles: dans(m => Math.hypot(m.x - p.x, m.y - p.y) <= r + m.radius) };

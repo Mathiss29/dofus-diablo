@@ -21,6 +21,7 @@ function zone(d: SpellDef): string {
   if (h.shape === 'cone') return h.arc >= 180 ? `Zone : demi-cercle devant soi, ${c(h.range)}` : `Zone : cône devant soi, ${c(h.range)}`;
   if (h.shape === 'line') return `Zone : ligne de ${c(h.length)}`;
   if (h.shape === 'circle') return d.move ? `Zone : cercle à l'arrivée, rayon ${c(h.radius)}` : `Zone : cercle autour de soi, rayon ${c(h.radius)}`;
+  if (h.shape === 'point') return h.radius <= 36 ? `Une cible, portée ${c(h.range)}` : `Zone autour de la cible (rayon ${c(h.radius)}), portée ${c(h.range)}`;
   return `Projectile, portée ${c(h.range)}${h.explode ? `, explose (rayon ${c(h.explode)})` : ''}${h.pierce ? ', traverse les ennemis' : ''}`;
 }
 

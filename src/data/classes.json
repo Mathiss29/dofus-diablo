@@ -87,11 +87,11 @@
     "impactAt": 0.13,
     "cancelAt": 0.22,
     "dmg": 26,
-    "knock": 220,
+    "knock": 0,
     "hit": {
-     "shape": "cone",
-     "range": 105,
-     "arc": 80
+     "shape": "point",
+     "range": 216,
+     "radius": 30
     },
     "hitstop": 0.06,
     "shake": 0.005,
@@ -112,11 +112,10 @@
     "cancelAt": 0.24,
     "dmg": 8,
     "knock": 684,
-    "stun": 0.6,
     "hit": {
-     "shape": "cone",
-     "range": 95,
-     "arc": 70
+     "shape": "point",
+     "range": 120,
+     "radius": 30
     },
     "hitstop": 0.09,
     "shake": 0.009,
@@ -136,11 +135,11 @@
     "impactAt": 0.16,
     "cancelAt": 0.26,
     "dmg": 44,
-    "knock": 320,
+    "knock": 0,
     "hit": {
-     "shape": "line",
-     "length": 250,
-     "width": 36
+     "shape": "point",
+     "range": 264,
+     "radius": 110
     },
     "hitstop": 0.07,
     "shake": 0.007,
@@ -159,15 +158,14 @@
     "impactAt": 0.22,
     "cancelAt": 0.3,
     "dmg": 38,
-    "knock": 300,
-    "stun": 0.3,
+    "knock": 0,
     "hit": {
      "shape": "circle",
-     "radius": 80
+     "radius": 40
     },
     "move": {
      "kind": "dash",
-     "maxRange": 200
+     "maxRange": 144
     },
     "hitstop": 0.07,
     "shake": 0.008,
@@ -186,11 +184,11 @@
     "impactAt": 0.16,
     "cancelAt": 0.26,
     "dmg": 37,
-    "knock": 260,
+    "knock": 0,
     "hit": {
-     "shape": "cone",
-     "range": 100,
-     "arc": 120
+     "shape": "point",
+     "range": 72,
+     "radius": 30
     },
     "stack": {
      "per": 0.3,
@@ -243,11 +241,11 @@
     "impactAt": 0.42,
     "cancelAt": 0.55,
     "dmg": 136,
-    "knock": 620,
-    "stun": 0.4,
+    "knock": 0,
     "hit": {
-     "shape": "circle",
-     "radius": 160
+     "shape": "point",
+     "range": 72,
+     "radius": 30
     },
     "charge": true,
     "hitstop": 0.13,
@@ -268,7 +266,7 @@
     "impactAt": 0.13,
     "cancelAt": 0.22,
     "dmg": 27,
-    "knock": 120,
+    "knock": 0,
     "pmLoss": 2,
     "hit": {
      "shape": "line",
@@ -292,10 +290,10 @@
     "impactAt": 0.2,
     "cancelAt": 0.3,
     "dmg": 23,
-    "knock": 200,
+    "knock": 0,
     "hit": {
      "shape": "circle",
-     "radius": 130
+     "radius": 150
     },
     "buff": {
      "stat": "dommages",
@@ -319,10 +317,10 @@
     "impactAt": 0.18,
     "cancelAt": 0.28,
     "dmg": 15,
-    "knock": 160,
+    "knock": 0,
     "hit": {
      "shape": "circle",
-     "radius": 82
+     "radius": 60
     },
     "shield": {
      "part": 0.05,
@@ -345,12 +343,12 @@
     "impactAt": 0.12,
     "cancelAt": 0.2,
     "dmg": 21,
-    "knock": 180,
+    "knock": 0,
     "vsSummon": 1.43,
     "hit": {
-     "shape": "cone",
-     "range": 78,
-     "arc": 80
+     "shape": "point",
+     "range": 72,
+     "radius": 30
     },
     "hitstop": 0.05,
     "shake": 0.005,
@@ -448,7 +446,7 @@
     "impactAt": 0.1,
     "cancelAt": 0.16,
     "dmg": 15,
-    "knock": 90,
+    "knock": 0,
     "hit": {
      "shape": "projectile",
      "speed": 1100,
@@ -484,7 +482,6 @@
     "shake": 0.004,
     "fx": "burst",
     "pa": 3,
-    "stun": 0.4,
     "desc": "Occasionne des dommages Air aux ennemis et repousse la cible.",
     "rage": "knock",
     "pushDmg": true
@@ -499,7 +496,7 @@
     "impactAt": 0.12,
     "cancelAt": 0.18,
     "dmg": 20,
-    "knock": 150,
+    "knock": 0,
     "hit": {
      "shape": "projectile",
      "speed": 1100,
@@ -510,7 +507,6 @@
     "shake": 0.004,
     "fx": "burst",
     "pa": 3,
-    "stun": 0.5,
     "desc": "Retire des PA et occasionne des dommages Eau.\nLes dommages du sort sont augmentés après son utilisation.",
     "paLoss": 2,
     "rage": "pa",
@@ -532,9 +528,9 @@
     "dmg": 22,
     "knock": 342,
     "hit": {
-     "shape": "cone",
-     "range": 190,
-     "arc": 70
+     "shape": "point",
+     "range": 264,
+     "radius": 72
     },
     "hitstop": 0.04,
     "shake": 0.008,
@@ -553,13 +549,13 @@
     "impactAt": 0.2,
     "cancelAt": 0.26,
     "dmg": 30,
-    "knock": 260,
+    "knock": 0,
     "hit": {
      "shape": "projectile",
      "speed": 1100,
      "range": 264,
      "width": 16,
-     "explode": 95
+     "explode": 150
     },
     "hitstop": 0.04,
     "shake": 0.009,
@@ -578,7 +574,7 @@
     "impactAt": 0.12,
     "cancelAt": 0.18,
     "dmg": 9,
-    "knock": 120,
+    "knock": 0,
     "hit": {
      "shape": "projectile",
      "speed": 1100,
@@ -610,14 +606,14 @@
     "dmg": 21,
     "knock": 680,
     "hit": {
-     "shape": "circle",
-     "radius": 170
+     "shape": "point",
+     "range": 216,
+     "radius": 100
     },
     "hitstop": 0.1,
     "shake": 0.014,
     "fx": "burst",
     "pa": 3,
-    "stun": 0.4,
     "desc": "Occasionne des dommages Air aux ennemis et repousse les cibles depuis le centre en zone.\nLa poussée est plus importante aux extrémités de la zone.",
     "rage": "knock"
    },
@@ -659,7 +655,7 @@
     "impactAt": 0.14,
     "cancelAt": 0.22,
     "dmg": 26,
-    "knock": 150,
+    "knock": 0,
     "selfKnock": 144,
     "hit": {
      "shape": "projectile",
@@ -687,7 +683,7 @@
     "self": true,
     "buff": {
      "stat": "portee",
-     "n": 4,
+     "n": 2,
      "t": 3
     },
     "hit": {
@@ -711,13 +707,13 @@
     "impactAt": 0.12,
     "cancelAt": 0.18,
     "dmg": 15,
-    "knock": 120,
+    "knock": 0,
     "hit": {
      "shape": "projectile",
      "speed": 1100,
      "range": 216,
      "width": 16,
-     "explode": 120
+     "explode": 100
     },
     "hitstop": 0.04,
     "shake": 0.006,

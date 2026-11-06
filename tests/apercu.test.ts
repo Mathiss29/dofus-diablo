@@ -70,4 +70,24 @@ describe('aperçu des sorts (maquette Aperçu)', () => {
     expect(m.vulnT).toBeGreaterThan(0);
     expect(m.vuln).toBe(10);
   });
+
+  it('Pression (sort ciblé) : frappe le monstre visé à distance, sans le pousser', () => {
+    const w = monde(), p = w.player;
+    const m = monstre(w, p.x + 150, p.y), x0 = m.x;
+    w.step(STEP, { ...NO_INPUT, aim: { x: m.x, y: m.y }, pressed: 'pression', castOn: m.id });
+    for (let i = 0; i < 40; i++) w.step(STEP, { ...NO_INPUT, aim: { x: m.x, y: m.y } });
+    expect(m.hp).toBeLessThan(m.maxHp);
+    expect(Math.abs(m.x - x0)).toBeLessThan(20);
+  });
+
+  it('Intimidation repousse dans l\'axe du lanceur', () => {
+    const w = monde(), p = w.player;
+    p.level = 5; p.recompute(); p.learnSpells(null);
+    const m = monstre(w, p.x + 70, p.y);
+    w.step(STEP, { ...NO_INPUT, aim: { x: m.x, y: m.y }, pressed: 'intimidation', castOn: m.id });
+    const x0 = m.x;
+    let maxX = x0;
+    for (let i = 0; i < 40; i++) { w.step(STEP, { ...NO_INPUT, aim: { x: m.x, y: m.y } }); maxX = Math.max(maxX, m.x); }
+    expect(maxX).toBeGreaterThan(x0 + 30 / m.def.mass);
+  });
 });

@@ -15,6 +15,8 @@ export type HitZone =
   | { shape: 'line'; length: number; width: number }
   /** Cercle autour du lanceur (ou du point d'arrivée d'un déplacement). */
   | { shape: 'circle'; radius: number }
+  /** Sort ciblé (zone officielle autour de la case visée, à portée du grade) : frappe autour du point visé, ramené à la portée. */
+  | { shape: 'point'; range: number; radius: number }
   /** Flèche (Crâ) : part vers le point visé, touche le premier ennemi (ou tous avec pierce), explose en zone si explode. */
   | { shape: 'projectile'; speed: number; range: number; width: number; explode?: number; pierce?: boolean };
 

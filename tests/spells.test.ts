@@ -116,7 +116,7 @@ describe('sorts officiels par niveau (maquette Sorts : 1A 2A 3A 4A 5A 6A 7A)', (
     const wc = new World({ data: GAME_DATA, zone: 'champs-astrub', map: new GridMap(carte), seed: 1, classId: 'cra' }), c = wc.player;
     niveau(c, 10);
     press(wc, 'tirs_eloignes', { x: c.x + 50, y: c.y }); idle(wc, 0.5);
-    expect(c.stat('portee')).toBe(4);
+    expect(c.stat('portee')).toBe(2);
   });
 
   it('un sort inconnu est ignoré', () => {
