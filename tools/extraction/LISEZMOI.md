@@ -152,3 +152,14 @@ Une copie des 282 images est dans `/mnt/project-files/cache-dofus/particules.tar
 Gardés : les systèmes qui bouclent (pas ceux déclenchés par le jeu, ni les sous-émetteurs). Repris : durée de vie, vitesse, taille,
 couleurs et dégradés, débit et salves, forme (sphère, cône, cercle, bord, boîte, rectangle), vitesse sur la vie, gravité, bruit
 (dérive douce), planches d'images, étirement. Pas repris : les traînées (trails).
+
+## Écrans d'accueil et de création (choix 17A à 23A)
+
+- Persos femme en jeu : `ANIMS=<mêmes animations que la planche homme> python perso_planche.py <persos> <donnees> 8 f <sortie>/iop_f 32`
+  (même chose avec 9 pour la Crâ) ; tête = première tête de création officielle (`heads`, `availableAtCreation`).
+- Gros persos animés sur le socle (`public/assets/accueil/<classe>_<m|f>_<repos|garde|attaque>.webp`) : on réutilise la
+  `scene.json` de `perso_planche.py` et on la rend en grand :
+  `BOX=-150,-280,150,40 node render.cjs scene.json - big "AnimStatiqueExplo0_1:24:repos,AnimStatiqueCombat0_1:24:garde" 1 1.6`
+  (flip = 1 avec les scènes de `perso_planche.py`), puis découpe de chaque image en (135,152)-(387,494).
+  L'attaque (`AnimArme0_1:23:attaque`, BOX=-150,-280,330,40) est découpée sur 400 px de large : le perso s'élance vers la droite.
+- Textes des classes (titre, description, rôles et difficulté officiels) : `breeds` + `breedroles` + `fr.bin` → `src/data/classes_dofus.json`.

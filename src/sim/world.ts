@@ -8,7 +8,7 @@ import { METIER_XP, RARITIES, rollItem, rollRarity, type Item, type ItemsData } 
 import { Player } from './player';
 import { initiativeBonus, removalChance } from './caracs';
 import { planWave } from './waves';
-import { Quetes, type Compte, type QuetesData } from './quests';
+import { Quetes, type Compte, type EtatQuetes, type QuetesData } from './quests';
 
 interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: number;
   /** Effets officiels : Érosion (part des dommages ôtée aux PV max), retrait de PM / PA. */
@@ -48,6 +48,8 @@ export interface WorldOptions {
   /** Quêtes et succès (src/data/quetes.json) ; compte = succès et persos déjà créés, gardés par l'affichage. */
   quetes?: QuetesData;
   compte?: Compte;
+  /** Partie reprise : avancement des quêtes sauvegardé (sinon les quêtes du départ démarrent). */
+  reprise?: EtatQuetes;
 }
 
 /** La simulation d'une zone : joueur, monstres, vagues, collisions.
@@ -113,7 +115,7 @@ export class World {
       if (opts.items.equipment[hunt]?.chasse) this.player.bag.push({ uid: this.nextId++, id: hunt, rarity: 'commun', stats: {}, extra: [] });
     }
     if (open) { this.buildPortes(); this.spawnGroups(); }
-    if (open && opts.quetes) { this.quetes = new Quetes(opts.quetes, this, opts.compte); this.quetes.demarrer(); }
+    if (open && opts.quetes) { this.quetes = new Quetes(opts.quetes, this, opts.compte); if (opts.reprise) this.quetes.reprendre(opts.reprise); else this.quetes.demarrer(); }
   }
 
   /** Rayon autour d'une porte qui la déclenche (≈ 1,4 case) et distance d'arrivée de l'autre côté. */
@@ -269,6 +271,14 @@ export class World {
     }
   }
   /** Monde ouvert, après une mort : retour au dernier Zaap atteint, sans pénalité (choix 10D). */
+  /** Nouvel identifiant unique (objets restaurés d'une sauvegarde). */
+  newUid(): number { return this.nextId++; }
+  /** Point de retour courant (sauvegarde) et sa restauration. */
+  get pointDeRetour() { return { name: this.checkpointName, ...this.checkpoint }; }
+  setPointDeRetour(name: string, x: number, y: number) {
+    if (!this.map.walkable(x, y)) return;
+    this.checkpointName = name; this.checkpoint = { x, y };
+  }
   respawnPlayer() {
     const p = this.player;
     if (!this.zone.open || !p.dead) return;

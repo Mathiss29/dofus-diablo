@@ -99,6 +99,11 @@ export interface QuetesData { pnj: Record<string, PnjDef>; quetes: Record<string
 export interface QueteEnCours { id: string; etape: number; compte: number[]; /** Étapes finies, en attente du rendu au PNJ. */ aRendre: boolean }
 /** Ce qui dépasse la partie : succès du compte (15A) et nombre de persos déjà créés (7B). L'affichage le garde. */
 export interface Compte { succes: string[]; persos: number }
+/** Ce que la sauvegarde d'un perso garde de ses quêtes. */
+export interface EtatQuetes {
+  enCours: QueteEnCours[]; finies: string[]; etapesFinies: string[]; suivie: string | null;
+  decouvertes: number[]; vaincus: string[]; objets: Record<string, number>;
+}
 
 export class Quetes {
   enCours: QueteEnCours[] = [];
@@ -151,6 +156,22 @@ export class Quetes {
       if (q.options?.sauterSiCompte && this.compte.persos > 0) { this.terminer(id, true); continue; }
       this.prendre(id);
     }
+  }
+
+  /** Avancement des quêtes du perso (sauvegarde, src/sim/sauvegarde.ts). */
+  exporter(): EtatQuetes {
+    return JSON.parse(JSON.stringify({ enCours: this.enCours, finies: [...this.finies], etapesFinies: [...this.etapesFinies], suivie: this.suivie,
+      decouvertes: [...this.decouvertes], vaincus: [...this.vaincus], objets: this.objets }));
+  }
+  /** Reprend une partie sauvegardée au lieu de demarrer() : mêmes quêtes, mêmes étapes, et les élites de l'étape en cours reviennent. */
+  reprendre(e: EtatQuetes) {
+    this.enCours = (e.enCours ?? []).filter(c => this.data.quetes[c.id] && this.etapeDe(c));
+    this.finies = new Set(e.finies ?? []); this.etapesFinies = new Set(e.etapesFinies ?? []);
+    this.suivie = e.suivie && this.enCours.some(c => c.id === e.suivie) ? e.suivie : this.enCours[0]?.id ?? null;
+    this.decouvertes = new Set(e.decouvertes ?? []); this.vaincus = new Set(e.vaincus ?? []); this.objets = { ...e.objets };
+    for (const c of this.enCours) if (!c.aRendre) this.etapeDe(c)!.objectifs.forEach((o, i) => {
+      if (o.t === 'elite' && (c.compte[i] ?? 0) < 1) this.faireApparaitre(c.id, o);
+    });
   }
 
   def(id: string) { return this.data.quetes[id]; }
