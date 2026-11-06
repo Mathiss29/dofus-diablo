@@ -1,4 +1,5 @@
 import type { EtatJoueur } from '../sim/sauvegarde';
+import type { Session, StatsPerso } from './carnet';
 
 /** Un personnage sauvegardé (choix 16B : 3 emplacements, sauvegarde automatique dans le navigateur). */
 export interface Perso {
@@ -15,6 +16,9 @@ export interface Perso {
   lieu: string;
   zones: string[];
   etat?: EtatJoueur;
+  /** Résumé (Accueil 4A) et dernière partie (4C), notés par l'affichage. */
+  stats?: StatsPerso;
+  session?: Session;
 }
 
 export const EMPLACEMENTS = 3;
@@ -62,7 +66,7 @@ export function enterrer(s: Stele) {
 
 // --- Sauvegarde exportable (10A) et copies de secours (10B) ----------------------------------------------------
 /** Tout ce que le navigateur garde du joueur : persos, dernier emplacement, succès du compte, cimetière, sous-zones vues. */
-const CLES = [CLE, CLE_DERNIER, 'diablofus.compte', CLE_CIMETIERE, 'diablofus.zones'];
+const CLES = [CLE, CLE_DERNIER, 'diablofus.compte', CLE_CIMETIERE, 'diablofus.zones', 'diablofus.bestiaire'];
 export interface Fichier { format: 'diablofus'; version: 1; date: number; donnees: Record<string, string> }
 
 export function exporter(): Fichier {
