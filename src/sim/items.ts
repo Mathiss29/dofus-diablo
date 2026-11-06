@@ -25,10 +25,10 @@ export const STAT_NAMES: Record<Stat, string> = {
   invocations: 'Invocations', pods: 'Pods',
 };
 
-export type Slot = 'amulette' | 'anneau' | 'ceinture' | 'bottes' | 'chapeau' | 'cape' | 'bouclier' | 'arme';
+export type Slot = 'amulette' | 'anneau' | 'ceinture' | 'bottes' | 'chapeau' | 'cape' | 'bouclier' | 'arme' | 'familier';
 /** Emplacements portés : deux anneaux. */
 export type EquipSlot = Exclude<Slot, 'anneau'> | 'anneau1' | 'anneau2';
-export const EQUIP_SLOTS: EquipSlot[] = ['chapeau', 'cape', 'amulette', 'anneau1', 'anneau2', 'ceinture', 'bottes', 'arme', 'bouclier'];
+export const EQUIP_SLOTS: EquipSlot[] = ['chapeau', 'cape', 'amulette', 'anneau1', 'anneau2', 'ceinture', 'bottes', 'arme', 'bouclier', 'familier'];
 
 /** Objet officiel de Dofus (src/data/items.json, fait par tools/extraction/items_export.py). */
 export interface ItemDef {
@@ -39,7 +39,43 @@ export interface ItemDef {
   set?: number;
   /** Effet officiel « Arme de chasse » (795) : fait tomber les viandes (métier Chasseur, choix 6A). */
   chasse?: boolean;
+  /** Familier (maquette Familiers) : ses bonus grandissent avec son niveau, de 1 à 100. */
+  familier?: FamilierDef;
 }
+/** Familier officiel (src/data/familiers.json, tools/extraction/familiers_export.py). */
+export interface FamilierDef {
+  nom: string; niveau: number; icon: number;
+  /** Planche (assets/sprites/<planche>.json) et ses animations : repos (diagonales 1 et 5) puis course ou marche. */
+  planche: string; anims: string[];
+  /** [carac, valeur au niveau 0, gain par niveau] (evolutiveeffects). */
+  stats?: [Stat, number, number][];
+  /** 1A : monstres de sa famille qui peuvent le lâcher ; 1C : succès qui le donne. */
+  monstres?: string[]; succes?: string;
+  /** Familier d'apparat (5A) : change seulement l'apparence du familier porté. */
+  apparat?: boolean;
+}
+export const FAMILIER_MAX = 100;
+/** Bonus d'un familier à ce niveau (officiel : valeur au niveau 0 + gain × niveau). */
+export function familierStats(f: FamilierDef, niv: number): Stats {
+  const st: Stats = {};
+  for (const [k, base, par] of f.stats ?? []) { const v = Math.floor(base + par * niv); if (v > 0) st[k] = v; }
+  return st;
+}
+/** Niveau d'un familier selon son XP totale (courbe officielle : XP totale par niveau). */
+export function familierNiveau(xp: number, courbe: number[]): number {
+  let n = 1;
+  while (n < FAMILIER_MAX && n < courbe.length && xp >= courbe[n]) n++;
+  return n;
+}
+/** XP de familier (2C) : en chassant (par monstre vaincu, selon son niveau) et en le nourrissant (objet ou ressource du sac).
+ *  Ce ne sont pas des valeurs officielles : réglées pour un niveau 100 vers le niveau 60 du joueur en chassant seul. */
+export const FAMILIER_XP = {
+  chasse: (niveauMonstre: number, elite: boolean, boss: boolean) => niveauMonstre * 2 * (boss ? 10 : elite ? 3 : 1),
+  objet: (niveau: number, r: Rarity) => niveau * 5 * PEPITE_RARETE[r],
+  ressource: (niveau: number) => Math.max(1, niveau * 2),
+  /** Chance de butin (1A) : un familier de la famille du monstre, comme les légendaires (1/1500, 1/150, 1/50) mais un peu plus souvent. */
+  butin: (elite: boolean, boss: boolean) => boss ? 1 / 40 : elite ? 1 / 120 : 1 / 1000,
+};
 /** Panoplie : bonus[n] s'applique avec n + 1 objets portés. */
 export interface SetDef { name: string; items: number[]; bonus: Record<string, Stats> }
 /** soin : la ressource se mange et rend ce nombre de PV (effet officiel 110, ex. Bouillon de Chair +11 PV).
@@ -97,6 +133,8 @@ export interface Item {
   legendary2?: { id: LegendaryId; value: number };
   /** Cadenas (maquette 0.2, 8C) : jamais recyclé, ni seul ni en lot. */
   cadenas?: boolean;
+  /** Familier : son niveau (1 à 100) et son XP totale. */
+  niv?: number; xpF?: number;
 }
 
 /** Tirage de la rareté : le niveau du monstre et la Prospection rendent les bons objets un peu plus fréquents. */
@@ -112,6 +150,7 @@ export function rollRarity(rng: Rng, boss: boolean, prospection = 0): Rarity {
  *  légendaire = jets hauts + 2 lignes + un effet légendaire ; mythique = jets parfaits + 2 lignes + deux effets légendaires.
  *  Les malus de l'objet officiel sont gardés tels quels. */
 export function rollItem(id: string, def: ItemDef, rarity: Rarity, rng: Rng, uid: number): Item {
+  if (def.familier) return { uid, id, rarity: 'commun', stats: familierStats(def.familier, 1), extra: [], niv: 1, xpF: 0 };   // pas de rareté ni de jet
   const lo = { commun: 0, rare: 0, epique: 0.5, legendaire: 0.7, mythique: 1 }[rarity], hi = { commun: 0.5, rare: 1, epique: 1, legendaire: 1, mythique: 1 }[rarity];
   const stats: Stats = {};
   for (const [k, [a, b]] of Object.entries(def.stats) as [Stat, [number, number]][]) {

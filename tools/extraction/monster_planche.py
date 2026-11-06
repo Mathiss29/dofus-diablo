@@ -44,6 +44,8 @@ def main(bone, name, bones, out='public/assets/sprites', atks='0,1'):
             n = len(A[f'AnimAttaque{i}_1']); s = sc['shots'].get(f'AnimAttaque{i}_1', n // 2)
             shots[i] = (s, n)
     if not pnj: want += [a for a in ('AnimHit_1', 'AnimHit_5', 'AnimMort_1', 'AnimMort_5') if a in A]
+    # ANIMS=a,b,... : liste imposée (familiers : repos + marche, voir familiers_export.py)
+    if os.environ.get('ANIMS'): want = os.environ['ANIMS'].split(',')
     want = [w for w in want if w.split(':')[0] in A]
     raw = os.path.join(tmp, 'raw')
     run('node', os.path.join(HERE, 'render.cjs'), b + '/scene.json', tex, raw, ','.join(want), '1', SCALE, env={**os.environ, 'BOX': os.environ.get('BOX', 'auto'), 'PAD': str(3 * int(os.environ.get('CONTOUR') or 0) / float(SCALE))})

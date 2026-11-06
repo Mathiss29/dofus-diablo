@@ -5,7 +5,7 @@ import { GridMap, WorldGrid } from './gridmap';
 import { NO_INPUT, type PlayerInput } from './input';
 import { CASE, Monster, TOUR } from './monster';
 import { jetOfficiel } from './danger';
-import { METIER_XP, PEPITE, RARITIES, recycleResource, recycleValue, rollItem, rollRarity, type Item, type ItemsData, type Rarity } from './items';
+import { FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, recycleResource, recycleValue, rollItem, rollRarity, type Item, type ItemsData, type Rarity } from './items';
 import { Player } from './player';
 import { initiativeBonus, removalChance } from './caracs';
 import { planWave } from './waves';
@@ -22,7 +22,9 @@ interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: nu
   pushDmg?: boolean }
 /** Butin au sol (choix 1C 2D 6A) : équipements et kamas seulement. Les Communs et les kamas filent vers le joueur
  *  qui passe près ; Rare et plus se ramassent d'un clic. Les ressources vont directement dans le sac. */
-export interface Drop { uid: number; x: number; y: number; item?: Item; kamas?: number; t: number; warned?: boolean }
+export interface Drop { uid: number; x: number; y: number; item?: Item; kamas?: number; t: number; warned?: boolean;
+  /** Rapporté par le familier : ramassé tout de suite. */
+  familier?: boolean }
 
 /** Flèche en vol (Crâ). */
 export interface Projectile { id: number; spell: string; x: number; y: number; dx: number; dy: number; left: number; speed: number; width: number;
@@ -65,7 +67,12 @@ export interface WorldOptions {
   apparats?: { objets: Record<string, { slot: string }>; prix: Record<string, number> };
   /** Partie de test (#test) : réglages du panneau F1 ; absent dans une vraie partie. */
   test?: ReglagesTest;
+  /** Courbe d'XP officielle des familiers (XP totale par niveau, src/data/familiers.json). */
+  familierXp?: number[];
 }
+
+/** Le familier porté (maquette Familiers 4A) : il suit le perso et va chercher le butin autour de lui. */
+export interface FamilierEtat { x: number; y: number; vx: number; vy: number; cible: number | null }
 
 /** La simulation d'une zone : joueur, monstres, vagues, collisions.
  *  Aucune dépendance à Phaser ni au navigateur : elle tourne telle quelle dans les tests
@@ -78,6 +85,10 @@ export class World {
   monsters: Monster[] = [];
   projectiles: Projectile[] = [];
   drops: Drop[] = [];
+  /** Familier porté (null sans familier). */
+  familier: FamilierEtat | null = null;
+  /** Familiers lâchés par chaque monstre (1A : la famille du monstre). */
+  private familiersDe: Record<string, string[]> = {};
   /** Objets d'équipement par niveau, pour le butin de zone. */
   private equipByLevel: { id: string; level: number }[] = [];
   /** Événements produits depuis le dernier drainEvents(). */
@@ -136,7 +147,8 @@ export class World {
     this.player = new Player(this.nextId++, start.x, start.y, opts.data.classes[opts.classId ?? 'iop']);
     if (opts.items) {
       this.player.items = opts.items;
-      this.equipByLevel = Object.entries(opts.items.equipment).map(([id, d]) => ({ id, level: d.level }));
+      this.equipByLevel = Object.entries(opts.items.equipment).filter(([, d]) => !d.familier).map(([id, d]) => ({ id, level: d.level }));
+      for (const [id, d] of Object.entries(opts.items.equipment)) for (const m of d.familier?.monstres ?? []) (this.familiersDe[m] ??= []).push(id);
       // sac vide au départ (Mathis, 2026-11-06) : l'équipement vient du tutoriel (panoplie de l'Intrépide, Arc de Chasse du Crâ)
     }
     if (open) { this.buildPortes(); this.buildRecoltes(); }
@@ -682,6 +694,7 @@ export class World {
     this.dropLoot(m);
     const xp = p.gainXp(m.def.xp ?? Math.round(m.def.hp / 5), this);
     if (xp > 0) this.emit({ k: 'xp', x: m.x, y: m.y, z: m.radius * 2 + 30, n: xp });
+    this.xpFamilier(FAMILIER_XP.chasse(this.monsterLevel(m), !!m.def.elite, !!m.def.boss));
     if (m.def.boss) { this.emit({ k: 'impact', hitstop: 0.15, shake: 0.02, big: true }); this.emit({ k: 'bossDown', monster: m.type }); }
   }
   // --- Butin (choix 24) ----------------------------------------------------
@@ -711,6 +724,9 @@ export class World {
         this.emit({ k: 'lootResource', id: d.item, n: 1 });
       }
     }
+    // familier de la famille du monstre (1A)
+    for (const id of this.familiersDe[m.type] ?? [])
+      if (this.rng.next() < FAMILIER_XP.butin(elite, boss) * more) out.push({ item: rollItem(id, I.equipment[id], 'commun', this.rng, this.nextId++) });
     const equipChance = boss ? 1 : elite ? 0.3 : 0.06;
     for (let k = 0; k < (boss ? 2 : 1); k++) {
       if (this.rng.next() >= equipChance * more) continue;
@@ -734,18 +750,19 @@ export class World {
   /** Aspiré quand on passe près (kamas et Communs) ou ramassé d'un clic (le reste). */
   static magnetic(d: Drop): boolean { return !d.item || d.item.rarity === 'commun'; }
   private updateDrops(dt: number) {
-    const p = this.player;
+    const p = this.player, f = this.updateFamilier(dt);
     for (const d of this.drops) {
       d.t += dt;
       if (p.dead || d.t < 0.5 || !this.shown(d)) continue;
       const dist = Math.hypot(d.x - p.x, d.y - p.y);
-      if (World.magnetic(d)) {
+      if (d.familier) { if (f) f.cible = null; }   // rapporté par le familier
+      else if (World.magnetic(d)) {
         if (dist > 130) continue;
         if (dist > 26) { const s = Math.min(dist, 520 * dt); d.x += (p.x - d.x) / dist * s; d.y += (p.y - d.y) / dist * s; continue; }
       } else if (p.pickupId !== d.uid || dist > 44) continue;
       if (d.item) {
         if (p.pickupId === d.uid) p.pickupId = null;
-        if (p.bag.length >= Player.BAG_SIZE) { if (!d.warned) this.emit({ k: 'bagFull' }); d.warned = true; continue; }   // sac plein : l'objet reste au sol
+        if (p.bag.length >= Player.BAG_SIZE) { if (!d.warned) this.emit({ k: 'bagFull' }); d.warned = true; d.familier = false; continue; }   // sac plein : l'objet reste au sol
         p.bag.push(d.item);
         this.emit({ k: 'loot', item: d.item });
       } else if (d.kamas) {
@@ -757,6 +774,65 @@ export class World {
     if (p.pickupId != null && !this.drops.some(d => d.uid === p.pickupId && d.t >= 0)) p.pickupId = null;
     // ramassé, ou oublié au sol depuis 3 minutes
     this.drops = this.drops.filter(d => d.t >= 0 && d.t < 180);
+  }
+  // --- Familier (maquette Familiers) -------------------------------------------------------------------------------
+  /** Rayon autour du perso où le familier va chercher le butin (4A). */
+  static readonly FAMILIER_RAYON = 260;
+  /** Le familier suit le perso (un peu derrière) ou court vers le butin le plus proche, qu'il rapporte en le touchant. */
+  private updateFamilier(dt: number): FamilierEtat | null {
+    const p = this.player;
+    if (!p.equipment.familier) { this.familier = null; return null; }
+    const f = this.familier ??= { x: p.x - 30, y: p.y + 10, vx: 0, vy: 0, cible: null };
+    if (Math.hypot(f.x - p.x, f.y - p.y) > 600) { f.x = p.x - 30; f.y = p.y + 10; f.cible = null; }   // porte, Zaap, Rappel : il arrive avec toi
+    let cible = f.cible != null ? this.drops.find(d => d.uid === f.cible && d.t >= 0.5) : undefined;
+    if (!cible && !p.dead) {
+      let best = World.FAMILIER_RAYON;
+      for (const d of this.drops) {
+        if (d.t < 0.5 || d.familier || !this.shown(d) || (d.item && p.bag.length >= Player.BAG_SIZE)) continue;
+        const r = Math.hypot(d.x - p.x, d.y - p.y);
+        if (r < best) { best = r; cible = d; }
+      }
+    }
+    f.cible = cible?.uid ?? null;
+    const tx = cible ? cible.x : p.x - 34, ty = cible ? cible.y : p.y + 12, dx = tx - f.x, dy = ty - f.y, r = Math.hypot(dx, dy);
+    const v = cible ? 420 : r > 60 ? p.speed * 1.15 : r > 20 ? p.speed * 0.8 : 0;
+    const s = Math.min(r, v * dt);
+    f.vx = r > 1 && s > 0 ? dx / r * s / dt : 0; f.vy = r > 1 && s > 0 ? dy / r * s / dt : 0;
+    if (r > 1) { f.x += dx / r * s; f.y += dy / r * s; }
+    if (cible && Math.hypot(cible.x - f.x, cible.y - f.y) < 22) {   // il ramasse : comme si le perso passait dessus
+      cible.x = f.x; cible.y = f.y; cible.familier = true;
+    }
+    return f;
+  }
+  /** XP pour le familier porté (2C) ; ses bonus suivent son niveau. */
+  xpFamilier(n: number) {
+    const p = this.player, it = p.equipment.familier, def = it && this.opts.items?.equipment[it.id]?.familier;
+    if (!it || !def || n <= 0 || (it.niv ?? 1) >= FAMILIER_MAX) return;
+    it.xpF = (it.xpF ?? 0) + Math.round(n);
+    const avant = it.niv ?? 1, niv = familierNiveau(it.xpF, this.opts.familierXp ?? []);
+    if (niv === avant) return;
+    it.niv = niv; it.stats = familierStats(def, niv); p.recompute();
+    this.emit({ k: 'familierNiveau', nom: def.nom, niveau: niv });
+  }
+  /** Nourrir le familier porté (2C) avec un objet du sac (sauf cadenas) ou une ressource (une unité, ou toute la pile). */
+  nourrirFamilier(quoi: { uid: number } | { res: string; tout?: boolean }): boolean {
+    const p = this.player, it = p.equipment.familier, I = this.opts.items;
+    if (!it || !I || (it.niv ?? 1) >= FAMILIER_MAX) return false;
+    let xp = 0;
+    if ('uid' in quoi) {
+      const i = p.bag.findIndex(b => b.uid === quoi.uid), o = p.bag[i], d = o && I.equipment[o.id];
+      if (!o || !d || o.cadenas) return false;
+      p.bag.splice(i, 1); xp = FAMILIER_XP.objet(d.level, o.rarity);
+    } else {
+      const r = I.resources[quoi.res], n = p.resources[quoi.res] ?? 0;
+      if (!r || !n || r.pepite || r.cle) return false;
+      const k = quoi.tout ? n : 1;
+      p.resources[quoi.res] -= k; if (!p.resources[quoi.res]) delete p.resources[quoi.res];
+      xp = FAMILIER_XP.ressource(r.level) * k;
+    }
+    this.emit({ k: 'familierRepas', xp });
+    this.xpFamilier(xp);
+    return true;
   }
   // --- Métiers de récolte (0.2b) ---------------------------------------------------------------------------------
   private buildRecoltes() {
@@ -874,7 +950,7 @@ export class World {
     return true;
   }
   /** Case Apparence de l'inventaire : pose un apparat possédé sur l'emplacement, « 0 » cache l'objet porté, null rend sa vraie apparence. */
-  porterApparat(slot: 'chapeau' | 'cape' | 'bouclier', id: string | null): boolean {
+  porterApparat(slot: 'chapeau' | 'cape' | 'bouclier' | 'familier', id: string | null): boolean {
     const p = this.player;
     if (id === null) { delete p.apparat[slot]; return true; }
     if (id !== '0' && (!p.apparats.includes(id) || this.opts.apparats?.objets[id]?.slot !== slot)) return false;

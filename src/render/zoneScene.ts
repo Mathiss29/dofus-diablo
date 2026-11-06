@@ -1,7 +1,7 @@
 import { apercuSort } from '../sim/apercu';
 import { dossier, v } from './assetUrl';
 import Phaser from 'phaser';
-import { APPARATS, BOUTIQUES, GAME_DATA, ITEMS, QUETES, RECOLTES } from '../sim/data';
+import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES } from '../sim/data';
 import type { Compte } from '../sim/quests';
 import { QuestView } from './questView';
 import { RecolteView } from './recolteView';
@@ -18,9 +18,11 @@ import { Attente, PersoVivant } from './persoVivant';
 import { Assemblage, apparenceValide, fiches, objetsPortes, type Apparence } from './squelette';
 import { SpellFx } from './spellFx';
 import { FX } from './fx';
+import { FamilierView } from './familierView';
 import { Hud } from './hud';
 import { LOOKS, type Look } from './looks';
 import { drawMap } from './mapView';
+import { Transparence, type Cache } from './transparence';
 import { WorldView } from './worldView';
 import { Particules, type SysData } from './particles';
 import { ambiance, chargerReglages, matriceSaturation, sauverReglages, type Reglages } from './ambiance';
@@ -74,6 +76,7 @@ export class ZoneScene extends Phaser.Scene {
   static readonly RIDEAU_ECRAN = 0.6;
   static readonly RIDEAU_MAX = 10;
   private views = new Map<number, EntityView>();
+  private transparence: Transparence | null = null;
   private fx!: FX;
   /** Aura de la jauge de classe pleine (ligne Rage 27B), sous le perso. */
   private rageAura?: Phaser.GameObjects.Graphics;
@@ -235,7 +238,7 @@ export class ZoneScene extends Phaser.Scene {
     if (zone.open) {
       const open = zone.open;
       const wg = new WorldGrid(this.cache.json.get(WorldView.key(open.world, 'monde')) as WorldData);
-      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, apparats: APPARATS, recoltes: RECOLTES, compte: chargerCompte(), tuto: this.test ? false : this.perso?.tuto, test: this.test?.reglages,
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, apparats: APPARATS, familierXp: FAMILIERS.xp, recoltes: RECOLTES, compte: chargerCompte(), tuto: this.test ? false : this.perso?.tuto, test: this.test?.reglages,
         // vitrine : les PNJ sont là, mais aucune quête ne démarre
         arrivee: this.arrivee,
         reprise: this.vitrine ? { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} } : this.perso?.etat?.quetes ?? this.test?.etat?.quetes });
@@ -244,6 +247,9 @@ export class ZoneScene extends Phaser.Scene {
       this.worldView.portes = this.world.portes.flatMap(p => p.ends);
       const parts = this.cache.json.get(`${open.world}_particules`) as Record<string, SysData[]> | undefined;
       if (parts) this.worldView.parts = new Particules(this, wg, parts, `${open.world}_particules_img`);
+      const tr = this.transparence = new Transparence(this);
+      this.worldView.transparence = tr;
+      this.events.once('shutdown', () => { tr.destroy(); if (this.transparence === tr) this.transparence = null; });
       this.worldView.create();
       if (this.world.recoltes.length) { const rv = this.recolteView = new RecolteView(this, this.world); this.events.once('shutdown', () => { rv.destroy(); if (this.recolteView === rv) this.recolteView = null; }); }
       if (this.world.quetes) {
@@ -254,11 +260,13 @@ export class ZoneScene extends Phaser.Scene {
     } else {
       const key = mapDir(zone.map!.coords).replace(/\W/g, '_');
       const map = new GridMap(this.cache.json.get(`${key}_carte`) as MapData);
-      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map, seed, classId: this.classId, items: ITEMS, test: this.test?.reglages });
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map, seed, classId: this.classId, items: ITEMS, familierXp: FAMILIERS.xp, test: this.test?.reglages });
       this.cameras.main.setBackgroundColor('#12141b');
       drawMap(this, map, `${key}_sol`, `${key}_decor`);
     }
     this.fx = new FX(this, t => hex(GAME_DATA.monsters[t].color));
+    const fv = this.familierView = new FamilierView(this, a => this.planche({ atlas: a, multi: true } as Look));
+    this.events.once('shutdown', () => { fv.destroy(); if (this.familierView === fv) this.familierView = null; });
     if (this.perso?.etat) restaurerJoueur(this.world, this.perso.etat);
     else if (this.test?.etat) restaurerJoueur(this.world, this.test.etat);
     if (this.test?.apres) { this.cmdTest = this.test.apres; this.test.apres = undefined; }
@@ -274,6 +282,7 @@ export class ZoneScene extends Phaser.Scene {
         this.world.player.x = q.x; this.world.player.y = q.y; this.attendreCartes(); this.snapCam = true; return true;
       },
       cartes: () => this.world.worldGrid?.world.maps.map(m => m.tag) ?? [],
+      transp: () => this.transparence, iso: ISO,
       /** Position à l'écran (pixels du canvas) d'un point du monde, pour cliquer dessus. */
       ecran: (x: number, y: number) => { const q = ISO.toScreen(x, y), c = this.cameras.main, r = c.worldView; return { x: (q.x - r.x) * c.zoom, y: (q.y - r.y) * c.zoom }; },
     };
@@ -283,6 +292,7 @@ export class ZoneScene extends Phaser.Scene {
     if (this.questView) { const qv = this.questView; this.hud.portraitPnj = id => qv.portrait(id); }
     const mini = this.cameras.getCamera('mini');
     if (mini && this.worldView?.sky) mini.ignore(this.worldView.sky);
+    if (mini && this.transparence) mini.ignore(this.transparence.calque);
     this.windows?.destroy();
     this.windows = new Windows(this.world);
     this.windows.portrait = v(`${ASSETS}/ui/perso_${this.classId}${this.perso?.sexe === 'f' ? '_f' : ''}.png`);
@@ -342,6 +352,7 @@ export class ZoneScene extends Phaser.Scene {
   /** Essai d'une classe (Accueil 8B) : apparence choisie sur l'écran de création. */
   private apparenceEssai?: Apparence;
   private vivant: PersoVivant | null = null;
+  private familierView: FamilierView | null = null;
   /** Tête, couleurs et objets visibles du perso dessiné : quand ils changent (objet porté, apparat, garde-robe), le perso est réassemblé. */
   private apparenceCle = '';
   private cleApparence(objets: string[]) { const a = this.perso?.apparence ?? this.apparenceEssai; return JSON.stringify([a?.tete, a?.couleurs, objets]); }
@@ -902,7 +913,7 @@ export class ZoneScene extends Phaser.Scene {
   /** Planche d'un monstre prête ? Sinon on la demande (une fois) et le monstre apparaît dès qu'elle est arrivée. */
   private planche(L: Look): boolean {
     const a = L.atlas;
-    if (this.textures.exists(a)) return true;
+    if (this.textures.exists(a)) { this.vuPlanche.set(a, this.time.now); return true; }
     if (!this.demandees.has(a)) {
       this.demandees.add(a);
       if (L.multi) this.load.multiatlas(a, v(`${ASSETS}/sprites/${a}.json`), dossier(`${ASSETS}/sprites/`));
@@ -913,6 +924,21 @@ export class ZoneScene extends Phaser.Scene {
     return false;
   }
   private demandees = new Set<string>();
+  /** Dernier usage de chaque planche de monstre chargée à la demande (ms). */
+  private readonly vuPlanche = new Map<string, number>();
+  private oubliT = 0;
+  /** Planches des monstres qu'on n'a plus vus depuis 30 s : rendues à la carte graphique. Sans ça, une longue balade dans
+   *  Astrub gardait toutes les planches croisées (chasse aux bugs du 6 nov. : 1,2 -> 2,9 Go de textures en 14 cartes). */
+  private oublierPlanches() {
+    const now = this.time.now;
+    if (now - this.oubliT < 5000) return;
+    this.oubliT = now;
+    for (const [a, t] of this.vuPlanche) {
+      if (now - t < 30000 || this.demandees.has(a) || a.startsWith('fam_')) continue;   // (familier : sa vue garde la planche)
+      this.vuPlanche.delete(a);
+      if (this.textures.exists(a)) this.textures.remove(a);
+    }
+  }
   private viewOf(e: Entity): EntityView {
     let v = this.views.get(e.id);
     if (!v) {
@@ -934,6 +960,7 @@ export class ZoneScene extends Phaser.Scene {
     const w = this.world, inside = !!w.worldGrid?.mapAt(w.player.x, w.player.y)?.inside;
     const a = ambiance(this.reglages, new Date(), inside || !w.zone.open);
     this.worldView?.setAmbiance(a.tint, a.lumieres, a.soleil);
+    Transparence.reglages.actif = this.reglages.transparence !== false;
     if (this.worldView) { this.worldView.vent = this.reglages.vent; this.worldView.eau = this.reglages.eau; if (this.worldView.parts) this.worldView.parts.actif = this.reglages.particules; }
     EntityView.ambiance = a.tintPerso;
     // couleurs adoucies (5B) : un filtre sur la caméra du jeu, seulement s'il sert (WebGL)
@@ -1014,12 +1041,26 @@ export class ZoneScene extends Phaser.Scene {
       // hors de l'écran (avec une marge) : la vue reste, mais on ne la met pas à jour
       if (e !== w.player) {
         const s = ISO.toScreen(e.x, e.y), r = cam.worldView;
-        if (s.x < r.x - 250 || s.x > r.right + 250 || s.y < r.y - 150 || s.y > r.bottom + 350) { this.views.get(e.id)?.hide(); continue; }
+        if (s.x < r.x - 250 || s.x > r.right + 250 || s.y < r.y - 150 || s.y > r.bottom + 350) {
+          const vu = this.views.get(e.id);
+          if (vu) { vu.hide(); this.vuPlanche.set(LOOKS[GAME_DATA.monsters[(e as { type?: string }).type!].look].atlas, this.time.now); }   // vue gardée : sa planche aussi
+          continue;
+        }
       }
       if (e !== w.player && !this.planche(LOOKS[GAME_DATA.monsters[(e as { type?: string }).type!].look])) { alive.delete(e.id); continue; }
       this.viewOf(e).sync(e);
     }
     for (const [id, v] of this.views) if (!alive.has(id)) { v.destroy(); this.views.delete(id); }
+    this.oublierPlanches();
+    if (!this.vitrine) this.familierView?.maj(w, this.game.loop.delta / 1000);
+    if (this.transparence) {
+      const caches: Cache[] = [];
+      for (const e of [w.player, ...w.monsters]) {
+        const v = this.views.get(e.id);
+        if (v && alive.has(e.id) && !e.dead) caches.push({ id: e.id, sprite: v.sprite, joueur: e === w.player, w: Math.max(34, e.radius * 2.2), h: v.look.height * Math.abs(v.look.scale) });
+      }
+      this.transparence.update(this.game.loop.delta / 1000, caches);
+    }
     this.majApparence();
     this.vivant?.maj();
     this.windows?.majPerso(this.time.now);

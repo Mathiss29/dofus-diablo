@@ -29,7 +29,7 @@ describe('Partie de test (panneau F1)', () => {
   it('tenue complète du niveau, avec l\'arme de la classe', () => {
     const w = monde('cra'), p = w.player;
     ordre(w, { k: 'niveau', n: 30, auto: true }, { k: 'tenue', rarete: 'legendaire' });
-    for (const s of EQUIP_SLOTS) if (s !== 'bouclier') expect(p.equipment[s]?.rarity).toBe('legendaire');
+    for (const s of EQUIP_SLOTS) if (s !== 'bouclier' && s !== 'familier') expect(p.equipment[s]?.rarity).toBe('legendaire');
     expect(ITEMS.equipment[p.equipment.arme!.id].weapon?.type).toBe('Arc');
     expect(p.equipment.anneau1!.id).not.toBe(p.equipment.anneau2!.id);
   });
