@@ -21,6 +21,7 @@ export class WorldView {
   private readonly slots = new Map<string, Slot>();
   sky?: Phaser.GameObjects.Image;
   private center = '';
+  private viewT = 0;
   /** Bouts de portes (sim/world.ts) : un repère doré au sol est posé sur chacun quand sa carte est chargée. */
   portes: { tag: string; x: number; y: number }[] = [];
   /** Cartes en téléchargement, et textures prêtes à envoyer à la carte graphique (une par image, voir fetchMap). */
@@ -66,25 +67,35 @@ export class WorldView {
 
   isReady(tag: string | undefined) { return !!tag && this.slots.get(tag)?.state === 'ready'; }
 
-  /** Chaque image : ciel qui suit la caméra ; quand le joueur change de carte, charge / décharge autour de lui. */
+  /** Chaque image : ciel qui suit la caméra ; charge les cartes autour du joueur ET celles que la caméra voit (dézoom),
+   *  décharge celles qui sont loin des deux. Vérifié quand le joueur change de carte, et 4 fois par seconde pour le zoom. */
   update(px: number, py: number) {
     this.drawSky();
     this.upload();
     this.pump();
     this.animate(this.scene.time.now / 1000);
-    const here = this.wg.mapAt(px, py);
-    if (!here || here.tag === this.center) return;
-    this.center = here.tag;
-    // intérieur : pas de ciel, fond noir comme dans Dofus
-    this.sky?.setVisible(!here.inside);
-    this.scene.cameras.main.setBackgroundColor(here.inside ? '#000000' : '#0d2b36');
+    const here = this.wg.mapAt(px, py), now = this.scene.time.now;
+    if (!here || (here.tag === this.center && now - this.viewT < 250)) return;
+    this.viewT = now;
+    if (here.tag !== this.center) {
+      this.center = here.tag;
+      // intérieur : pas de ciel, fond noir comme dans Dofus
+      this.sky?.setVisible(!here.inside);
+      this.scene.cameras.main.setBackgroundColor(here.inside ? '#000000' : '#0d2b36');
+    }
+    const v = this.scene.cameras.main.worldView, S = GridMap.S;
+    const seen = (m: WorldMapEntry, marge: number) => {
+      if (!!m.inside !== !!here.inside) return false;   // dehors on ne voit pas les intérieurs (et inversement)
+      const a = this.wg.toScreen(m.sol.x, m.sol.y);
+      return a.x < v.right + marge && a.x + m.sol.w * S > v.x - marge && a.y < v.bottom + marge && a.y + m.sol.h * S > v.y - marge;
+    };
     for (const m of this.wg.world.maps) {
       const d = ring(m, here.x, here.y), s = this.slots.get(m.tag)!;
-      if (d <= LOAD_RING && s.state === 'none') {
+      if ((d <= LOAD_RING || seen(m, 400)) && s.state === 'none') {
         s.state = 'loading';
         if (this.texturesReady(m)) this.build(m);
         else this.fetchMap(m);
-      } else if (d > UNLOAD_RING && s.state !== 'none') this.unload(m);   // 'loading' : la carte arrivera pour rien, build() la jette
+      } else if (d > UNLOAD_RING && !seen(m, 1200) && s.state !== 'none') this.unload(m);   // 'loading' : la carte arrivera pour rien, build() la jette
     }
   }
 
@@ -178,20 +189,20 @@ export class WorldView {
       }
     }
   }
-  /** Fait bouger le décor vivant (arbres au vent, eau). Les fréquences et amplitudes viennent des matériaux officiels. */
+  /** Fait bouger le décor vivant (arbres au vent, eau). Amplitudes officielles ; vitesses ralenties (trop rapides pour Mathis, 2026-11-06). */
   private animate(t: number) {
     let n = 0;
     for (const v of this.vivants) {
       if (!v.im.active) continue;   // carte déchargée : on l'oublie
       this.vivants[n++] = v;
       const { im, p } = v;
-      if (p.w) im.setRotation(this.vent ? p.w * 0.035 * Math.sin(t * 1.3 + v.ph) + p.w * 0.012 * Math.sin(t * 3.1 + v.ph * 2) : 0);
+      if (p.w) im.setRotation(this.vent ? p.w * 0.035 * Math.sin(t * 0.7 + v.ph) + p.w * 0.008 * Math.sin(t * 1.5 + v.ph * 2) : 0);
       if (p.t) {
-        const a = this.eau ? p.t[2] * Math.sin(t * Math.PI * 2 * p.t[3] * 10 + v.ph) : 0;
+        const a = this.eau ? p.t[2] * Math.sin(t * Math.PI * 2 * p.t[3] * 4 + v.ph) : 0;
         im.setPosition(v.x0 + p.t[0] * a * GridMap.S, v.y0 - p.t[1] * a * GridMap.S);
       }
       if (p.ca) {
-        const f = this.eau ? p.ca[1] * (0.5 + 0.5 * Math.sin(t * Math.PI * 2 * p.ca[2] + v.ph)) : 0;
+        const f = this.eau ? p.ca[1] * (0.5 + 0.5 * Math.sin(t * Math.PI * 2 * p.ca[2] * 0.5 + v.ph)) : 0;
         im.setTint(mulTint(lerpTint(0xffffff, p.ca[0], f), this.tint));
       }
     }

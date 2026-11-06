@@ -58,7 +58,7 @@ export class ZoneScene extends Phaser.Scene {
   private clickDest = false;
   /** Zoom voulu (molette) ; la caméra le rejoint en douceur. */
   private zoom = 1;
-  static readonly ZOOM: [number, number] = [0.45, 1.5];
+  static readonly ZOOM: [number, number] = [0.55, 1.5];   // dézoom limité (Mathis, 2026-11-06 : à 0,45 on voyait trop loin)
   /** Réglages du joueur (fenêtre Réglages, touche O) et dernière mise à jour de l'ambiance. */
   private reglages: Reglages = chargerReglages();
   private ambT = 0;
@@ -128,7 +128,7 @@ export class ZoneScene extends Phaser.Scene {
     this.sys.events.on(Phaser.Scenes.Events.ADDED_TO_SCENE, onAdd);
     this.events.once('shutdown', () => this.sys.events.off(Phaser.Scenes.Events.ADDED_TO_SCENE, onAdd));
     this.reglages = chargerReglages(); this.ambT = 0; this.sat = undefined;
-    this.zoom = this.reglages.zoom; this.cameras.main.setZoom(this.zoom);
+    this.zoom = Phaser.Math.Clamp(this.reglages.zoom, ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]); this.cameras.main.setZoom(this.zoom);
     this.input.on('wheel', (_p: Phaser.Input.Pointer, _o: unknown, _dx: number, dy: number) => {
       this.zoom = Phaser.Math.Clamp(this.zoom * (dy > 0 ? 0.9 : 1.1), ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]);
     });
