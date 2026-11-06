@@ -62,7 +62,7 @@ export interface SpellDef {
   self?: boolean;
   /** Bonus sur le lanceur (tours officiels × 3 s) : Dommages de l'Épée Divine, Portée des Tirs Éloignés. */
   buff?: { stat: Stat; n: number; t: number };
-  /** Bouclier sur le lanceur (Ferveur) : part des PV max, durée en secondes. */
+  /** Bouclier : part des PV max (Dofus « % du niveau » : 100 % du niveau = 10 % des PV max, choix 4C), durée en s. */
   shield?: { part: number; t: number };
   /** Recul du lanceur à l'impact, en px (Flèche Vagabonde : « Recule de 3 cases »). */
   selfKnock?: number;
