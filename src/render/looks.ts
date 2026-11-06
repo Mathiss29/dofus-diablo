@@ -213,6 +213,8 @@ export const LOOKS: Record<string, Look> = {
   mirgrillon: { atlas: 'mirgrillon', scale: 0.44, map: MONSTER_MAP(14 / 37, 'AnimAttaque0', { 0: 14 / 37, 1: 15 / 28, 2: 14 / 37 }), height: 479, multi: true },
   sakarien: { atlas: 'sakarien', scale: 0.69, map: MONSTER_MAP(11 / 27, 'AnimAttaque1', { 0: 23 / 48, 1: 11 / 27, 2: 19 / 39 }), height: 252, multi: true },
   ceglumen: { atlas: 'ceglumen', scale: 0.9, map: MONSTER_MAP(22 / 40, 'AnimAttaque1', { 0: 16 / 34, 1: 22 / 40, 2: 10 / 20 }), height: 352, multi: true },
+  // Kankreblath (0.2b) : planche à SCALE 1,6 sans AnimAttaque1 (un projectile qui part très loin : planche trop grande pour le rendu)
+  kankreblath: { atlas: 'kankreblath', scale: 0.77, map: MONSTER_MAP(28 / 64, 'AnimAttaque0', { 0: 28 / 64, 2: 45 / 57 }), height: 244, multi: true },
 };
 
 /** PNJ dans le monde (planches tools/extraction/monster_planche.py, PNJ=1, SCALE = 1,32 x échelle officielle du look).

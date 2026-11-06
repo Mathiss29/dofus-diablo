@@ -241,6 +241,8 @@ export class Accueil {
   private modal: string | null = null;
   /** Journal : carnet ouvert (sa date), ou la liste. */
   private carnet: string | null = null;
+  /** « Quoi de neuf » déjà montré pendant cette session. */
+  private quoiDeNeufVu = false;
 
   /** onJouer : lance la partie de cet emplacement (déjà sauvegardé). */
   constructor(private onJouer: (slot: number) => void, private onEssayer?: (classe: string, sexe: 'm' | 'f', apparence?: Apparence) => void) {
@@ -313,6 +315,8 @@ export class Accueil {
   get visible() { return !this.root.hidden; }
   show(page: Page = 'accueil') {
     this.root.hidden = false; this.precharger(); this.go(page);
+    // « Quoi de neuf » (feuille de route 21A, Accueil 3E) : au lancement, une fois par carnet non lu, les nouveautés en 5 lignes
+    if (page === 'accueil' && carnetNonLu() && !this.quoiDeNeufVu) { this.quoiDeNeufVu = true; this.ouvrir('quoi-de-neuf'); }
     if (!this.fiches) fiches().then(f => { this.fiches = f; if (!this.root.hidden && (this.page === 'creation' || this.page === 'persos')) this.render(); }, () => { /* hors ligne : anciennes planches */ });
   }
   /** Accueil 5A : les planches des persos (3 emplacements) et des classes jouables sont chargées dès l'accueil,
@@ -624,7 +628,13 @@ export class Accueil {
 
   /** Fiches ouvertes par-dessus la page. */
   private ouvrir(k: string) {
-    if (k === 'cimetiere') {
+    if (k === 'quoi-de-neuf') {
+      const c = CARNETS[0], l = (c.lignes['Nouveautés'] ?? Object.values(c.lignes).flat()).slice(0, 5);
+      this.modal = `<h2>Quoi de neuf ?</h2><div class="tiny">Carnet du ${dateLongue(c.date)} · ${esc(c.titre)}</div>
+        <div class="lst" style="gap:calc(.5*var(--u))">${l.map(x => `<div><span class="ok">✦ ${esc(x)}</span></div>`).join('')}</div>
+        <div style="display:flex;gap:calc(.8*var(--u));margin-top:calc(1*var(--u))"><button type="button" class="lbtn" data-carnet="${c.date}">Lire tout le carnet</button>
+        <button type="button" class="dbtn" data-fermer-btn>Plus tard</button></div>`;
+    } else if (k === 'cimetiere') {
       const l = lireCimetiere();
       this.modal = `<h2>Cimetière des héros</h2><div class="tiny">Les héros Hardcore tombés au combat. Leur emplacement est libre, leur nom reste ici.</div>
         <div class="lst" style="gap:calc(.7*var(--u))">${l.map(m => { const c = classe(m.classe); return `<div class="stele"><img src="${tete(c, m.sexe)}" alt=""><span><b>${esc(m.nom)}</b><br>
@@ -660,6 +670,7 @@ export class Accueil {
     on('[data-carnet]', e => { this.carnet = e.dataset.carnet || null; if (this.carnet === CARNETS[0]?.date) marquerLu(); this.page = 'journal'; this.render(); this.root.querySelector('.jr')?.scrollTo(0, 0); });
     on('[data-rub]', e => this.root.querySelector(`#rub-${e.dataset.rub}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
     on('[data-modal]', e => this.ouvrir(e.dataset.modal!));
+    on('[data-fermer-btn]', () => { this.modal = null; this.render(); });
     r.querySelectorAll<HTMLElement>('[data-fermer]').forEach(e => e.addEventListener('click', ev => { if (ev.target === e) { this.modal = null; this.render(); } }));
     on('[data-restaurer]', e => { const err = restaurerSecours(+e.dataset.restaurer!); this.modal = null; this.go('persos'); this.toast(err ?? 'Copie restaurée'); });
     // sauvegarde : fichier .diablofus

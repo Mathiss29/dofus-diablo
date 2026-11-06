@@ -1,5 +1,5 @@
 import { angleDiff, Rng } from './math';
-import type { Element, GameData, HitZone, MonsterSpell, SubAreaDef, ZoneDef } from './defs';
+import type { AtelierDef, Element, GameData, HitZone, MonsterSpell, SubAreaDef, ZoneDef } from './defs';
 import type { SimEvent, Telegraph } from './events';
 import { GridMap, WorldGrid } from './gridmap';
 import { NO_INPUT, type PlayerInput } from './input';
@@ -359,7 +359,18 @@ export class World {
       const elite = !g.fixe && i === 0 && g.sub.elite && this.rng.next() < 0.12 && !this.monsters.some(o => !o.dead && o.type === g.sub.elite);
       const mo = this.spawnMonster(g.fixe ? g.fixe[i] : elite ? g.sub.elite! : this.rng.pick(g.sub.monsters), q.x, q.y);
       mo.group = g.id; g.members.push(mo);
+      if (elite) this.doreesPresElite(g.map, q.x, q.y);
     }
+  }
+  /** Ressources dorées près des élites (maquette Métiers 13C) : les ressources prêtes les plus proches de l'élite brillent. */
+  private doreesPresElite(tag: string, x: number, y: number) {
+    const pres = this.recoltes.filter(r => r.tag === tag && r.repousse <= 0 && Math.hypot(r.x - x, r.y - y) < RECOLTE.rayonElite)
+      .sort((a, b) => Math.hypot(a.x - x, a.y - y) - Math.hypot(b.x - x, b.y - y));
+    for (const r of pres.slice(0, RECOLTE.doreesElite)) r.dore = true;
+  }
+  /** Une élite en vie sur cette carte ? */
+  private eliteSur(tag: string) {
+    return this.monsters.some(m => !m.dead && m.def.elite && this.groups[m.group]?.map === tag);
   }
   /** Un monstre repère le joueur : tout son groupe passe à l'attaque. */
   aggroGroup(m: Monster) {
@@ -879,7 +890,9 @@ export class World {
     return r ? this.map.nearestFree(r.x, r.y) : null;
   }
   private updateRecoltes(dt: number) {
-    for (const r of this.recoltes) if (r.repousse > 0 && (r.repousse -= dt) <= 0) { r.repousse = 0; r.dore = this.rng.next() < RECOLTE.dore; }
+    for (const r of this.recoltes) if (r.repousse > 0 && (r.repousse -= dt) <= 0) {
+      r.repousse = 0; r.dore = this.rng.next() < (this.eliteSur(r.tag) ? RECOLTE.doreElite : RECOLTE.dore);
+    }
     const p = this.player, R = this.opts.recoltes;
     if (!R || p.dead) { this.versRecolte = null; this.enRecolte = null; return; }
     if (this.enRecolte) {
@@ -996,16 +1009,33 @@ export class World {
     return true;
   }
 
-  // --- Métiers (choix 6A) ----------------------------------------------------
-  /** Fait une recette officielle si on a les ingrédients et le niveau de métier. */
-  craft(i: number): boolean {
+  // --- Métiers (choix 6A, ateliers 10A, Fabriquer ×N 10B) ----------------------
+  /** Atelier où se trouve le joueur pour ce métier (null : pas d'atelier ici). Sans ateliers déclarés (tests, vagues), partout. */
+  atelierIci(metier: string): AtelierDef | null | undefined {
+    const A = this.zone.open?.ateliers;
+    if (!A) return undefined;
+    const tag = this.worldGrid?.mapAt(this.player.x, this.player.y)?.tag;
+    return A.find(a => a.metiers.includes(metier) && !!tag && a.cartes.includes(tag)) ?? null;
+  }
+  /** Ateliers de ce métier dans la zone (pour dire où aller). */
+  ateliersDe(metier: string): AtelierDef[] { return (this.zone.open?.ateliers ?? []).filter(a => a.metiers.includes(metier)); }
+  /** Combien de fois on peut faire la recette i avec le sac actuel. */
+  craftMax(i: number): number {
     const r = this.opts.items?.recipes?.[i], p = this.player;
-    if (!r || Math.max(1, p.metierLevel(r.metier)) < r.level || !r.ingredients.every(([id, q]) => (p.resources[id] ?? 0) >= q)) return false;
-    for (const [id, q] of r.ingredients) { p.resources[id] -= q; if (p.resources[id] <= 0) delete p.resources[id]; }
-    p.resources[r.result] = (p.resources[r.result] ?? 0) + 1;
-    p.gainMetierXp(r.metier, METIER_XP.parIngredient * r.ingredients.reduce((n, [, q]) => n + q, 0), this);
-    this.emit({ k: 'craft', id: r.result, n: 1 });
-    return true;
+    if (!r || Math.max(1, p.metierLevel(r.metier)) < r.level) return 0;
+    return Math.min(...r.ingredients.map(([id, q]) => Math.floor((p.resources[id] ?? 0) / q)));
+  }
+  /** Fait n fois une recette officielle si on a les ingrédients, le niveau de métier et qu'on est à son atelier. Rend le nombre fait. */
+  craft(i: number, n = 1): number {
+    const r = this.opts.items?.recipes?.[i], p = this.player;
+    if (!r || this.atelierIci(r.metier) === null) return 0;
+    n = Math.min(Math.max(1, Math.floor(n)), this.craftMax(i));
+    if (n <= 0) return 0;
+    for (const [id, q] of r.ingredients) { p.resources[id] -= q * n; if (p.resources[id] <= 0) delete p.resources[id]; }
+    p.resources[r.result] = (p.resources[r.result] ?? 0) + n;
+    p.gainMetierXp(r.metier, n * METIER_XP.parIngredient * r.ingredients.reduce((s, [, q]) => s + q, 0), this);
+    this.emit({ k: 'craft', id: r.result, n });
+    return n;
   }
   /** Mange une ressource qui soigne (Bouillon de Chair : +11 PV). */
   eat(id: string): boolean {

@@ -70,8 +70,33 @@ describe('Métiers de récolte (0.2b)', () => {
     expect(r('8545')).toMatchObject({ metier: 'bricoleur', level: 1 });
     const w = monde(), p = w.player, i = ITEMS.recipes!.indexOf(r('8545'));
     for (const [id, q] of r('8545').ingredients) p.resources[id] = q;
-    expect(w.craft(i)).toBe(true);
+    expect(w.craft(i)).toBe(0);   // pas à l'atelier des bricoleurs
+    const q = (w as unknown as { openestCellOf(t: string): { x: number; y: number } }).openestCellOf('atelier_bricoleurs');
+    p.x = q.x; p.y = q.y;
+    expect(w.craft(i)).toBe(1);
     expect(p.resources['8545']).toBe(1);
     expect(p.metiers.bricoleur.xp).toBeGreaterThan(0);
+  });
+  it('ateliers officiels (10A) : on fabrique à l\'atelier du métier, Fabriquer ×N (10B), recettes officielles des récoltes', () => {
+    const inc = JSON.parse(readFileSync(new URL('../public/assets/mondes/incarnam/monde.json', import.meta.url), 'utf8')) as WorldData;
+    const w = new World({ data: GAME_DATA, zone: 'incarnam', map: new WorldGrid(inc), seed: 3, items: ITEMS, recoltes: RECOLTES }), p = w.player;
+    const i = ITEMS.recipes!.findIndex(r => r.result === '468');   // Pain d'Incarnam = 4 Blé (Paysan 1)
+    expect(ITEMS.recipes![i].ingredients).toEqual([['289', 4]]);
+    expect(ITEMS.resources['468'].soin).toBeGreaterThan(0);
+    for (const n of ['Potion de Mini Soin', 'Goujon en Tranche', 'Planche Agglomérée', 'Ferrite']) expect(ITEMS.recipes!.some(r => ITEMS.resources[r.result]?.name === n), n).toBe(true);
+    p.resources['289'] = 13;
+    const loin = w.atelierIci('paysan');
+    expect(loin).toBeNull();
+    expect(w.craft(i)).toBe(0);
+    const at = w.ateliersDe('paysan')[0], q = (w as unknown as { openestCellOf(t: string): { x: number; y: number } }).openestCellOf(at.cartes[0]);
+    p.x = q.x; p.y = q.y;
+    expect(w.atelierIci('paysan')?.nom).toBe(at.nom);
+    expect(w.craftMax(i)).toBe(3);
+    expect(w.craft(i, 99)).toBe(3);
+    expect(p.resources['468']).toBe(3);
+    expect(p.resources['289']).toBe(1);
+  });
+  it('ressources dorées près des élites (13C)', () => {
+    expect(RECOLTE.doreElite).toBeGreaterThan(RECOLTE.dore);
   });
 });

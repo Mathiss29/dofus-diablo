@@ -193,7 +193,11 @@ export interface OpenDef {
   /** Portes vers les intérieurs, reliées à la main (tools/extraction/interieurs.py). */
   portes?: PorteDef[];
   donjons?: DonjonDef[];
+  /** Ateliers officiels (table hints de Dofus 3, maquette Métiers 10A) : cartes (tags) où l'on fabrique pour ces métiers. */
+  ateliers?: AtelierDef[];
 }
+/** Atelier : nom officiel, métiers servis, cartes où il se trouve (la salle de l'atelier, ou la carte du dehors s'il est en plein air). */
+export interface AtelierDef { nom: string; metiers: string[]; cartes: string[] }
 export interface ZoneDef {
   name: string; level: number;
   dofusSubArea?: number; dofusArea?: number;

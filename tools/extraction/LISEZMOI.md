@@ -292,3 +292,14 @@ dans `/mnt/project-files/cache-dofus/elements-animes/` (LISEZMOI là-bas).
   courbe d'XP evolutiveitemtypes) puis les planches `sprites/fam_<squelette>` (repos + course ou marche, `ANIMS=` de monster_planche.py).
   Puis `icones_ajout.py` pour les icônes et `node tools/hebergement/envoi.mjs`.
 - Sources (maquette 1A, 1C) : dictionnaires `SOURCES` (familier -> monstres de sa famille) et `SUCCES` dans le script.
+
+## Cité d'Astrub, Vilinsekts, Cache de Kankreblath (0.2b, 6 nov. 2026)
+
+- Intérieurs utiles (maquette 0.2 : Banque, Taverne, Milice, Tour du Conseil, ateliers) : un intérieur a les mêmes [x, y] que la carte du dehors
+  (`mapsinformation`, `worldMap` -1). La porte du dehors = l'élément interactif du bâtiment dans `boundingBoxes` (`m_interactionId`),
+  sinon une porte `62977/62986-62989/62995` des `interactiveElements` repérée à l'œil. Salles exportées comme les donjons (atlas par salle,
+  deux cartes factices), rangées y = -2, 0, 2 du monde ; portes, ateliers (`open.ateliers`), donjon et sous-zones dans `src/data/zones.json`.
+- Cache de Kankreblath : salles = `dungeons[88].mapIds` (entrée 146676736), porte 39697 case 290 de [3,-17], clé 15991.
+  Planque des Vilinsekts (sous-zone 843) : trois caves de la Cité ([6,-21], [4,-19], [1,-16]), monstres qui réapparaissent (Antennes pour la clé).
+- Kankreblath : `SCALE=1.6 monster_planche.py 3053 kankreblath … 0,2` (son AnimAttaque1 envoie un projectile très loin : planche trop grande).
+- Recettes : `tools/contenu/recettes.py <tables> <fr.bin>` ajoute les recettes officielles des métiers de récolte (consommables, jusqu'au niveau 60).
