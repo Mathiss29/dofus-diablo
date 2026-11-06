@@ -61,7 +61,7 @@ export class ZoneScene extends Phaser.Scene {
   private uiClick = false;
   /** Bouton gauche enfoncé depuis un clic DANS le jeu (Phaser voit aussi les clics sur les fenêtres HTML). */
   private holding = false;
-  /** Sort en cours de visee (aperçu affiché), la touche qui le tient, et le sort survolé dans la barre (6A). */
+  /** Sort en cours de visée (aperçu affiché), la touche qui le tient, et le sort survolé dans la barre (6A). */
   private aimId: SkillId | null = null; private aimKey: string | null = null; private hoverId: SkillId | null = null;
   /** Clic gauche en cours : sur le sol, sur un monstre, ou attaque sur place (Maj). */
   private clickMode: 'ground' | 'target' | 'place' | null = null;
@@ -217,7 +217,7 @@ export class ZoneScene extends Phaser.Scene {
       if (over.length || this.hud.blocks(p.x, p.y)) { this.uiClick = true; return; }
       this.uiClick = false;
       if (p.rightButtonDown()) {
-        if (this.reglages.lancer === 'dofus' && this.aimId) { this.aimId = null; this.aimKey = null; return; }   // clic droit : annuler la visee
+        if (this.aimId) { this.aimId = null; this.aimKey = null; return; }   // clic droit pendant la visée : annuler le sort (Mathis, 2026-11-06)
         this.down('CLICD', this.world.player.bar[6]); return;
       }
       if (this.reglages.lancer === 'dofus' && this.aimId) { this.pressed = this.aimId; this.aimId = null; this.aimKey = null; this.uiClick = true; return; }
@@ -567,7 +567,7 @@ export class ZoneScene extends Phaser.Scene {
     const s = w.player.skill;
     if (s && 'charge' in s.def && s.def.charge && !s.def.move && s.t < s.def.impactAt) this.fx.chargeSparks(w.player.x, w.player.y);
     this.fx.draw(w.telegraphs, w.projectiles);
-    // Aperçu du sort vise (ou survolé dans la barre), et portée de l'arme en maintenant Maj (9B)
+    // Aperçu du sort visé (ou survolé dans la barre), et portée de l'arme en maintenant Maj (9B)
     {
       const p = w.player, id = this.aimId ?? this.hoverId, ptr = this.input.activePointer;
       const wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2, m = this.monsterUnder(ptr);

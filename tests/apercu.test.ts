@@ -60,4 +60,14 @@ describe('aperçu des sorts (maquette Aperçu)', () => {
     expect(p.castChase).toBeNull();
     expect(p.skill?.id).toBe('recul');
   });
+
+  it('Bond : ne fait pas de dommages, augmente les dommages subis autour de l\'arrivée', () => {
+    const w = monde(), p = w.player;
+    const m = monstre(w, p.x + 150, p.y);
+    w.step(STEP, { ...NO_INPUT, aim: { x: m.x - 40, y: m.y }, pressed: 'bond' });
+    for (let i = 0; i < 40; i++) w.step(STEP, { ...NO_INPUT, aim: { x: m.x, y: m.y } });
+    expect(m.hp).toBe(m.maxHp);
+    expect(m.vulnT).toBeGreaterThan(0);
+    expect(m.vuln).toBe(10);
+  });
 });

@@ -68,6 +68,8 @@ export interface SpellDef {
   selfKnock?: number;
   /** Dommages multipliés sur les invocations (Concentration). */
   vsSummon?: number;
+  /** Augmente les dommages subis par les ennemis en zone de n % pendant t s, sans les frapper (Bond : effet officiel 1163). */
+  vuln?: { n: number; t: number };
   /** Zone d'explosion de la flèche selon le nombre de lancers sur 3 s (Flèche d'Abolition : la zone grandit à chaque lancer). */
   grow?: number[];
 }

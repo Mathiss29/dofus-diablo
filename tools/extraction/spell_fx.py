@@ -34,10 +34,12 @@ def scripts_of(spell, SC):
             if 'gfxId' not in g: continue
             e = {'gfx': int(g['gfxId'])}
             if g.get('strata') == 'background': e['bg'] = True
+            if g['type'] == 'trail' and g.get('isEntireSpellZone'): e['zone'] = True   # rejoué sur chaque case de la zone
+            if g.get('scaleX', 1) != 1: e['scale'] = g['scaleX']
             if g['type'] == 'projectile':
                 out.setdefault('projectile', {'gfx': e['gfx'], 'curvature': g.get('curvature', 0), 'offsetY': g.get('offsetY', 0)})
             elif g['type'] == 'caster' or onCaster: out['caster'].append(e)
-            elif g['type'] == 'target': out['target'].append(e)
+            elif g['type'] in ('target', 'trail'): out['target'].append(e)   # trail : traînée orientée le long de la zone (Couperet)
     return {k: v for k, v in out.items() if v}
 
 def render(gfx, bones, outdir, tmp):
