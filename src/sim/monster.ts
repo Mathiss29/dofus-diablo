@@ -235,7 +235,7 @@ export class Monster extends Entity {
     this.dirX = dx / d; this.dirY = dy / d; this.facing = Math.atan2(dy, dx);
     this.tx = player.x; this.ty = player.y;   // le sort tombe là où était le joueur : on peut l'esquiver
     this.spellCd[i] = Math.max(1, s.relance) * TOUR * 0.5;
-    world.emit({ k: 'monsterCast', id: this.id, name: s.name, x: this.x, y: this.y });
+    if (this.def.elite || this.def.boss) world.emit({ k: 'monsterCast', id: this.id, name: s.name, x: this.x, y: this.y });
     return true;
   }
   /** Fin de l'incantation : coup au contact (lunge), projectile, ou effet sur la zone visée. */
@@ -254,8 +254,10 @@ export class Monster extends Entity {
         for (const m of world.monsters) if (!m.dead && (m === this || (m.group >= 0 && m.group === this.group) || m.summoner === this)
           && Math.hypot(m.x - this.tx, m.y - this.ty) <= Math.min(r, CASE * 8) + m.radius) world.monsterSpellBuff(m, S);
       } else if (Math.hypot(player.x - this.tx, player.y - this.ty) <= r + player.radius) world.monsterSpellHits(this, S, player);
-      if (this.kind === 'self' && !S.allies) world.emit({ k: 'slam', x: this.tx, y: this.ty, radius: vis });
-      world.emit({ k: 'spell', fx: 'burst', id: `m${S.id}`, x: this.tx, y: this.ty, facing: 0, size: S.allies ? this.radius * 2 : vis, arc: 0, element: el as never, big: false, boosted: false });
+      // Monstre de base : pas de cercle de zone ni de nom de sort, seulement l'éclat de l'impact (comme 8A)
+      const zone = this.def.elite || this.def.boss;
+      if (zone && this.kind === 'self' && !S.allies) world.emit({ k: 'slam', x: this.tx, y: this.ty, radius: vis });
+      world.emit({ k: 'spell', fx: 'burst', id: `m${S.id}`, x: this.tx, y: this.ty, facing: 0, size: S.allies ? this.radius * 2 : vis, arc: 0, element: el as never, big: false, boosted: false, ...(zone ? {} : { discret: true }) });
     }
     this.endCast(world);
   }

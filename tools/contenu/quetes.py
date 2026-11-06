@@ -7,14 +7,15 @@ OUT = os.path.join(os.path.dirname(__file__), '..', '..', 'src', 'data', 'quetes
 
 PNJ = {
   # carte = tag de public/assets/mondes/incarnam/monde.json (carte officielle de départ de leurs quêtes)
-  'ganymede': {'nom': 'Ganymède', 'dofusId': 7581, 'carte': '0_-3'},          # Temple Céleste pas encore exporté : au départ
+  'ganymede': {'nom': 'Ganymède', 'dofusId': 7581, 'carte': 'temple_1'},       # Temple Céleste, devant les Dofus (accueil du tutoriel)
+  'ganymede_route': {'nom': 'Ganymède', 'dofusId': 7581, 'carte': '0_-3', 'sprite': 'ganymede'},    # le même, qui attend le joueur en bas, sur la Route des âmes
   'lykhen': {'nom': 'Lykhen Lesurviven', 'dofusId': 2892, 'carte': '-2_-3'},
   'fecaline': {'nom': 'Fécaline la Sage', 'dofusId': 1515, 'carte': 'maison_2_-3'},
   'ternette': {'nom': 'Ternette Nhin', 'dofusId': 2905, 'carte': '-1_-3'},
   'berb_nhin': {'nom': 'Berb Nhin', 'dofusId': 2899, 'carte': '0_-3'},
-  'capitaine': {'nom': 'Capitaine des Kerubims', 'dofusId': 2880, 'carte': '2_-3'},   # sa carte (153356294) pas exportée : devant chez Fécaline
-  'klasmor': {'nom': 'Klasmor le fossoyeur', 'dofusId': 2907, 'carte': '5_-1'},
-  'anta_brok': {'nom': 'Anta Brok', 'dofusId': 2886, 'carte': '1_-2'},
+  'capitaine': {'nom': 'Capitaine des Kerubims', 'dofusId': 2880, 'carte': 'milice_rdc', 'case': 370},   # sa carte officielle 153356294 : rez-de-chaussée de la Tour de la Milice
+  'klasmor': {'nom': 'Klasmor le fossoyeur', 'dofusId': 2907, 'carte': '5_-1', 'case': 358},
+  'anta_brok': {'nom': 'Anta Brok', 'dofusId': 2886, 'carte': '1_-2', 'case': 389},
   'marylork': {'nom': 'Marylork', 'dofusId': 2888, 'carte': '3_-5'},
 }
 SZ = {'route': 450, 'champs': 444, 'paturages': 445, 'lac': 442, 'foret': 443, 'cimetiere': 449, 'mine': 778, 'taverne': 448, 'crypte': 447, 'temple': 446}
@@ -29,31 +30,33 @@ def elite(texte, monstre, carte, **k): return {'t': 'elite', 'texte': texte, 'mo
 def parler(texte, pnj, **k): return {'t': 'parler', 'texte': texte, 'pnj': pnj, **k}
 
 def tuto(classe, frappe, sort1, sorts, jauge, mobilite, arme):
-    """Trame du tutoriel d'une classe : 9 étapes, une action chacune."""
+    """Trame du tutoriel d'une classe : 10 étapes, une action chacune (départ au Temple Céleste)."""
     return [
-      {'nom': 'Premiers pas', 'bulle': f"Bienvenue sur Incarnam, jeune {classe} ! Clique sur le sol pour marcher : va saluer Berb Nhin, devant la taverne.",
-       'objectifs': [aller('Marcher jusqu\'à Berb Nhin (clic gauche)', pnj='berb_nhin')]},
-      {'nom': 'Frapper', 'bulle': f"Un esprit de feu rôde sur la Route. Clique dessus : {frappe}.",
+      {'nom': 'Premiers pas', 'bulle': f"Bienvenue sur Incarnam, jeune {classe} ! Contemple les Dofus, salue ton dieu, puis clique sur le sol et suis le chemin. Je t'attends en bas.",
+       'objectifs': [aller('Traverser le Temple Céleste (clic gauche)', carte='temple_3')]},
+      {'nom': 'La Route des âmes', 'pnj': 'ganymede_route',
+       'objectifs': [aller('Rejoindre Ganymède sur la Route des âmes', pnj='ganymede_route')]},
+      {'nom': 'Frapper', 'pnj': 'ganymede_route', 'bulle': f"Un esprit de feu rôde sur la Route. Clique dessus : {frappe}.",
        'objectifs': [vaincre('Vaincre un monstre (clic dessus)', 1, sousZone=SZ['route'])]},
-      {'nom': 'Ton premier sort', 'bulle': sort1[1], 'halo': 0, 'objectifs': [{'t': 'utiliser', 'sort': sort1[0], 'texte': 'Lancer ton premier sort (&)'}]},
-      {'nom': 'Tes sorts', 'bulle': sorts, 'halo': 1, 'objectifs': [vaincre('Vaincre des monstres avec tes sorts', 3, sousZone=SZ['route'])]},
-      {'nom': 'La jauge de classe', 'bulle': jauge, 'halo': 'jauge', 'objectifs': [{'t': 'utiliser', 'quoi': 'jauge', 'texte': 'Lancer un sort avec la jauge pleine'}]},
-      {'nom': 'Se déplacer vite', 'bulle': mobilite, 'halo': 7, 'objectifs': [{'t': 'utiliser', 'quoi': 'mobilite', 'texte': 'Se déplacer avec Espace'}]},
-      {'nom': 'La potion', 'bulle': "Blessé ? E : une potion. Tu en regagnes une à chaque groupe vaincu.", 'halo': 'potion',
+      {'nom': 'Ton premier sort', 'pnj': 'ganymede_route', 'bulle': sort1[1], 'halo': 0, 'objectifs': [{'t': 'utiliser', 'sort': sort1[0], 'texte': 'Lancer ton premier sort (&)'}]},
+      {'nom': 'Tes sorts', 'pnj': 'ganymede_route', 'bulle': sorts, 'halo': 1, 'objectifs': [vaincre('Vaincre des monstres avec tes sorts', 3, sousZone=SZ['route'])]},
+      {'nom': 'La jauge de classe', 'pnj': 'ganymede_route', 'bulle': jauge, 'halo': 'jauge', 'objectifs': [{'t': 'utiliser', 'quoi': 'jauge', 'texte': 'Lancer un sort avec la jauge pleine'}]},
+      {'nom': 'Se déplacer vite', 'pnj': 'ganymede_route', 'bulle': mobilite, 'halo': 7, 'objectifs': [{'t': 'utiliser', 'quoi': 'mobilite', 'texte': 'Se déplacer avec Espace'}]},
+      {'nom': 'La potion', 'pnj': 'ganymede_route', 'bulle': "Blessé ? E : une potion. Tu en regagnes une à chaque groupe vaincu.", 'halo': 'potion',
        'objectifs': [{'t': 'utiliser', 'quoi': 'potion', 'texte': 'Boire une potion (E) une fois blessé'}]},
-      {'nom': 'Premières armes', 'bulle': arme[1], 'donner': {classe.lower().replace('â', 'a'): arme[0]},
+      {'nom': 'Premières armes', 'pnj': 'ganymede_route', 'bulle': arme[1], 'donner': {classe.lower().replace('â', 'a'): arme[0]},
        'objectifs': [{'t': 'equiper', 'objet': arme[0], 'texte': 'Équiper ton arme (I)'}]},
-      {'nom': 'Le point de retour', 'bulle': "Le Zaap de la Route des âmes est ton point de retour : si tu tombes, tu reviens là, sans rien perdre. Viens me voir.",
-       'objectifs': [aller('Retourner voir Ganymède près du Zaap', pnj='ganymede')]},
+      {'nom': 'Le point de retour', 'pnj': 'ganymede_route', 'bulle': "Le Zaap de la Route des âmes est ton point de retour : si tu tombes, tu reviens là, sans rien perdre. Viens me voir.",
+       'objectifs': [aller('Retourner voir Ganymède près du Zaap', pnj='ganymede_route')]},
     ]
 
 Q = {}
 # --- Fil principal (Ganymède -> Lykhen -> Fécaline) ---------------------------------------------------------
-Q['reponses'] = {'nom': 'Réponses à tout', 'type': 'tutoriel', 'pnj': 'ganymede', 'niveau': 1, 'auDepart': True, 'suivante': 'village',
+Q['reponses'] = {'nom': 'Réponses à tout', 'type': 'tutoriel', 'pnj': 'ganymede', 'niveau': 1, 'auDepart': True, 'depart': 'temple_1', 'suivante': 'village',
   'texte': "Avant de quitter le temple céleste, prenez le temps de contempler les Dofus et le Monde des Douze... et n'oubliez pas de saluer votre dieu au passage ! Ganymède vous apprend à vous battre avant de vous laisser descendre sur l'île.",
   'options': {'passable': True, 'sauterSiCompte': True, 'immortel': True, 'groupes': {'sousZones': [SZ['route']], 'taille': [1, 3]}},
   # Tutoriel (maquette « Tutoriel d'Incarnam », tranchée le 2026-11-06) : une trame par classe (9B), une action par étape,
-  # halo sur la barre + bulle de Ganymède (3A+3B). Les indices des étapes « Premiers pas » (0) et « Premières armes » (7)
+  # halo sur la barre + bulle de Ganymède (3A+3B). Les indices des étapes « Premiers pas » (0) et « Premières armes » (8)
   # servent au succès « Premier temps » : garder les deux trames de même longueur.
   'etapes': {'iop': tuto('Iop', 'tu le poursuis et tu frappes',
                  ('pression', 'Tes sorts sont sur & é " \'. Touche & : Pression !'),
@@ -188,7 +191,7 @@ def suc(nom, did, desc, cat, sous, pts, icone, obj, ratio=0, objet=None):
     return s
 S = {
   'premier_temps': suc('Premier temps', 8518, 'Terminer la première partie du tutoriel.', 'Quêtes', 'Général', 1, 203,
-     [{'nom': 'Premiers pas', 'etape': ['reponses', 0]}, {'nom': 'Premières armes', 'etape': ['reponses', 7]}, {'nom': 'Première partie du tutoriel', 'quete': 'reponses'}], 0.213),
+     [{'nom': 'Premiers pas', 'etape': ['reponses', 0]}, {'nom': 'Premières armes', 'etape': ['reponses', 8]}, {'nom': 'Première partie du tutoriel', 'quete': 'reponses'}], 0.213),
   'second_temps': suc('Second temps', 8519, 'Terminer la seconde partie du tutoriel.', 'Quêtes', 'Général', 1, 203, [{'nom': 'Seconde partie du tutoriel', 'quete': 'village'}], 0.213),
   'bonnes_bases': suc('Sur de bonnes bases', 8520, 'Terminer les succès du tutoriel.', 'Quêtes', 'Général', 3, 273,
      [{'nom': 'Premier temps', 'succes': 'premier_temps'}, {'nom': 'Second temps', 'succes': 'second_temps'}], 0.287, '10207'),

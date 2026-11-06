@@ -116,6 +116,8 @@ Les cartes d'intérieur (worldMap -1 dans MapsInformation) n'ont pas de sortie p
 2. `ONLY_INSIDE=1 python world_export.py liste.json cartes/ textures/ ../../public/assets/mondes/incarnam` : ne réécrit que les images des intérieurs.
    - `DECOR_ONLY=1` ne réécrit que les atlas de décor.
 
+Temple Céleste (départ du tutoriel, sous-zone 446) : 3 salles du bundle `mapdata_assets_world_921`, posées à la main (`places` dans `incarnam_interieurs.json`, rangée 15) car leur sol déborde de ~2 cartes vers le haut. Export fait seul, sans réécrire le reste : `world_export.py` sur une liste avec les 3 salles + deux cartes factices en (-3,-6) et (5,15) (même origine et même largeur que le monde), `ONLY=temple_1,temple_2,temple_3 SKY=805542`, puis fusion des entrées `temple_*` et des cases marchables de la rangée 15 dans `monde.json`. Textures extraites une fois dans `/mnt/project-files/cache-dofus/temple-celeste/` (tex/, cartes/).
+
 Raccords entre cartes : chaque carte a un calque `bord_x_y.webp` avec ce qu'elle dessine au-delà de son cadre. Il est posé en entier là où la voisine est vide (falaises), et en fondu sur 160 px ailleurs (ombres, fonds de ciel). Pour le refaire sans réécrire le reste : `DECOR_ONLY=1 NO_DECOR=1 CALQUES=bord`.
 
 Les éléments interactifs qui ont une image fixe (portes, cadres de mine, panneaux) sont posés avec le décor. Les animés (minerais, céréales) manquent encore.

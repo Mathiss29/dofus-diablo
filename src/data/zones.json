@@ -200,6 +200,17 @@
       0,
       0
      ]
+    },
+    "446": {
+     "name": "Temple Céleste",
+     "level": 1,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ],
+     "interieur": true
     }
    },
    "checkpoints": [
@@ -507,6 +518,40 @@
       346
      ],
      "nom": "Escalier"
+    },
+    {
+     "a": [
+      "temple_1",
+      503
+     ],
+     "b": [
+      "temple_2",
+      56
+     ],
+     "nom": "Temple Céleste"
+    },
+    {
+     "a": [
+      "temple_2",
+      503
+     ],
+     "b": [
+      "temple_3",
+      56
+     ],
+     "nom": "Temple Céleste"
+    },
+    {
+     "a": [
+      "temple_3",
+      447
+     ],
+     "b": [
+      "0_-3",
+      465
+     ],
+     "nom": "Route des âmes",
+     "sens": true
     }
    ],
    "donjons": [

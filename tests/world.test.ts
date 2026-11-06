@@ -210,7 +210,7 @@ describe('cadence et attaques à distance', () => {
       return { named, hurt: p.hp < hp, pm: p.pm - pm };
     };
     const hit = cast(false);
-    expect(hit.named).toBe(true);
+    expect(hit.named).toBe(false);   // monstre de base : pas de nom de sort annoncé (seuls élites et boss)
     expect(hit.hurt).toBe(true);
     expect(hit.pm).toBeLessThan(-1.9);
     expect(cast(true).hurt).toBe(false);

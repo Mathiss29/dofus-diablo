@@ -126,6 +126,16 @@ describe('sorts officiels par niveau (maquette Sorts : 1A 2A 3A 4A 5A 6A 7A)', (
   });
 });
 
+describe('PA', () => {
+  it('+1 PA au niveau 100, comme dans Dofus : Colère de Iop (7 PA, niveau 200) devient lançable', () => {
+    const p = arena().player;
+    expect(p.paMax).toBe(6);
+    niveau(p, 99); expect(p.paMax).toBe(6);
+    niveau(p, 100); expect(p.paMax).toBe(7);
+    niveau(p, 200); expect(p.paMax).toBeGreaterThanOrEqual(iop.spells.colere.pa!);
+  });
+});
+
 describe('Rage', () => {
   it('monte en frappant et en prenant des coups', () => {
     const w = arena(), p = w.player;
