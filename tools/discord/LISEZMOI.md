@@ -1,16 +1,33 @@
 # Robot Discord de Diablofus
 
-Repris du système du projet idlus : le jeton du robot est un secret GitHub, et un workflow lancé à la main exécute `discord_bot.mjs`. Claude ne voit jamais le jeton.
+Repris du système du projet idlus : le jeton du robot est un secret GitHub, et GitHub Actions lance `discord_bot.mjs` quelques secondes, sans serveur allumé en permanence. Claude ne voit jamais le jeton.
+
+## Ce qu'il fait tout seul
+Après chaque déploiement de diablofus.com (workflow « Pages », job `discord`) :
+1. **Plan des salons** : applique `serveur.json` (inactif tant que `"actif": false`).
+2. **Carnet du jour** : la carte du carnet le plus récent de `src/data/journal.json` (titre, résumé, rubriques, capture, lien) est
+   - publiée dans `#journal` une fois par jour avec la mention du rôle `Diablofus`, puis réécrite à chaque déploiement du même jour ;
+   - publiée dans le forum `#carnets` : un post par jour, où les joueurs répondent, dont le premier message est réécrit.
+   Les noms sont cherchés sans les émojis (« 📜・journal » = journal), d'abord dans la catégorie du jeu. Un gros carnet montre les lignes les plus récentes puis « … et N autres » (limite Discord de 6 000 caractères).
+
+Sans le secret `DISCORD_BOT_TOKEN`, le job ne fait rien et reste vert.
+
+## Plan des salons (`serveur.json`)
+- Périmètre : les salons sans catégorie (généraux du studio) et les catégories du plan. Toute catégorie dont le nom contient « Idlus » est refusée.
+- Salon avec `id` : renommé, changé de sujet ou déplacé selon le plan. Sans `id` : créé. Types : `texte`, `forum`, `annonces`, `vocal`.
+- Un salon du périmètre absent du plan est **supprimé** (sauf `"supprimer": false`). Les fils ne sont jamais supprimés.
+- Pour démarrer : action `liste`, copier le « plan actuel » affiché dans `serveur.json`, le modifier, mettre `"actif": true`. L'action `plan` avec « Essai » coché montre les changements sans rien faire.
 
 ## Mise en place (une fois, par Mathis)
-1. https://discord.com/developers/applications → « New Application » (« Diablofus »), onglet Bot → « Reset Token », copier le jeton.
-2. OAuth2 → URL Generator : cocher `bot`, puis les droits « Envoyer des messages », « Joindre des fichiers », « Lire l'historique », « Gérer les salons » (pour renommer la catégorie). Ouvrir le lien et inviter le robot sur Ombrelune Studio.
+1. https://discord.com/developers/applications → « New Application » (« Diablofus »), icône dans General Information, onglet Bot → « Reset Token », copier le jeton.
+2. OAuth2 → URL Generator : cocher `bot` puis `Administrator` (ou au moins : Gérer les salons, Gérer les rôles, Voir les salons, Envoyer des messages, Envoyer dans les fils, Intégrer des liens, Lire l'historique). Ouvrir le lien et inviter le robot sur Ombrelune Studio.
 3. Dépôt GitHub → Settings → Secrets and variables → Actions → New repository secret : `DISCORD_BOT_TOKEN`.
+4. Les salons forum demandent un serveur en mode Communauté. Le rôle `Diablofus` se crée dans Discord ; les membres le prennent eux-mêmes via « Salons et rôles » (Onboarding).
 
-## Utilisation
+## À la main
 Onglet Actions → « Discord » → Run workflow. « Essai » est coché par défaut : rien n'est envoyé, le journal montre ce qui serait fait.
-- `liste` : catégories et salons du serveur.
+- `liste` : catégories et salons du serveur, puis le plan actuel au format `serveur.json`.
+- `plan` : applique `serveur.json`.
+- `journal` : publie ou réécrit le carnet (champ `date` pour un ancien carnet).
 - `categorie` : renomme la catégorie du jeu (`ancien` = un morceau du nom actuel).
 - `annonce` : publie `texte` dans `salon`, cherché d'abord dans la catégorie du jeu.
-
-Le workflow doit être sur `main` pour apparaître dans l'onglet Actions.

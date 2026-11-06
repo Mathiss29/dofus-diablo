@@ -1,0 +1,20 @@
+{
+  "_lisezmoi": "Plan du serveur Ombrelune Studio géré par le robot (voir LISEZMOI.md). Inactif tant que les id des salons existants n'y sont pas : lancer l'action « liste », coller le plan affiché ici, puis mettre actif à true. Un salon sans id est créé, un salon du périmètre absent du plan est supprimé. Idlus n'est jamais touché.",
+  "actif": false,
+  "supprimer": true,
+  "general": [],
+  "categories": [
+    {
+      "categorie": { "nom": "🔥 DIABLOFUS : LES DOUZE ENFERS" },
+      "salons": [
+        { "nom": "📜・journal", "sujet": "Le carnet du jour du Journal de Diablofus, publié par le robot à chaque mise à jour de diablofus.com." },
+        { "nom": "🗞・carnets", "type": "forum", "sujet": "Un post par carnet du Journal : réagis aux nouveautés du jour." },
+        { "nom": "📣・annonces" },
+        { "nom": "💬・discussion" },
+        { "nom": "🖼・captures" },
+        { "nom": "💡・idées" },
+        { "nom": "🐛・bugs" }
+      ]
+    }
+  ]
+}

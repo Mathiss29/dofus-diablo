@@ -1,14 +1,15 @@
-# Robot Discord de Diablofus (serveur Ombrelune Studio). Lancement à la main uniquement, depuis l'onglet Actions.
+# Robot Discord de Diablofus (serveur Ombrelune Studio), lancé à la main depuis l'onglet Actions.
+# Le plan des salons et le carnet du jour passent aussi tout seuls après chaque déploiement (pages.yml).
 # Nécessite le secret DISCORD_BOT_TOKEN (voir tools/discord/LISEZMOI.md).
 name: Discord
 on:
   workflow_dispatch:
     inputs:
       action:
-        description: "liste = voir les salons ; categorie = renommer la catégorie du jeu ; annonce = publier un message"
+        description: "liste = voir les salons et le plan actuel ; plan = appliquer serveur.json ; journal = carnet du jour ; categorie = renommer la catégorie du jeu ; annonce = publier un message"
         type: choice
         default: liste
-        options: [liste, categorie, annonce]
+        options: [liste, plan, journal, categorie, annonce]
       texte:
         description: "annonce : texte (mise en forme Discord, 1 900 caractères au plus, \\n pour aller à la ligne)"
         type: string
@@ -17,9 +18,12 @@ on:
         type: string
         default: annonces
       role:
-        description: "annonce : rôle à mentionner (nom exact, ou aucun)"
+        description: "annonce / journal : rôle à mentionner (nom exact, ou aucun)"
         type: string
         default: aucun
+      date:
+        description: "journal : date du carnet (AAAA-MM-JJ, vide = le plus récent)"
+        type: string
       ancien:
         description: "categorie : nom actuel de la catégorie (un morceau suffit)"
         type: string
@@ -53,9 +57,12 @@ jobs:
           ACTION: ${{ inputs.action }}
           ANCIEN: ${{ inputs.ancien }}
           NOUVEAU: ${{ inputs.nouveau }}
+          DATE: ${{ inputs.date }}
           ESSAI: ${{ inputs.essai && '--print' || '' }}
         run: |
-          if [ "$ACTION" = categorie ]; then
+          if [ "$ACTION" = journal ]; then
+            node tools/discord/discord_bot.mjs journal $DATE $ESSAI
+          elif [ "$ACTION" = categorie ]; then
             node tools/discord/discord_bot.mjs categorie "$ANCIEN" "$NOUVEAU" $ESSAI
           else
             node tools/discord/discord_bot.mjs "$ACTION" $ESSAI
