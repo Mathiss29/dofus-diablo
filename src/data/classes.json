@@ -322,7 +322,7 @@
      "radius": 82
     },
     "shield": {
-     "part": 0.025,
+     "part": 0.05,
      "t": 6
     },
     "hitstop": 0.05,
