@@ -48,6 +48,7 @@ export function spellDetail(p: Player, id: SkillId, gOver?: SortGrade) {
     d.shield ? `Bouclier : ${Math.round(p.maxHp * d.shield.part)} PV pendant ${d.shield.t} s` : '',
     d.selfKnock ? `Recule de ${Math.round(d.selfKnock / 48)} cases` : '',
     d.vsSummon ? `+${Math.round((d.vsSummon - 1) * 100)} % sur les invocations` : '',
+    d.vuln ? `Ennemis autour de l'arrivée : dommages subis +${d.vuln.n} % pendant ${d.vuln.t} s` : '',
     d.pushDmg ? 'Dommages de poussée si elle heurte un obstacle' : '',
   ].filter(Boolean);
   const gm = o && g && o.grades[0].dmg && g.dmg ? (g.dmg[0] + g.dmg[1]) / (o.grades[0].dmg[0] + o.grades[0].dmg[1]) : 1;

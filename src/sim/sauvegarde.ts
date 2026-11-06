@@ -1,4 +1,5 @@
 import type { EquipSlot, Item, Stat } from './items';
+import type { EtatQuetes } from './quests';
 import type { World } from './world';
 
 /** État du joueur gardé entre deux parties (écran « Mes personnages », 3 emplacements, choix 16B).
@@ -12,6 +13,8 @@ export interface EtatJoueur {
   bar: (string | null)[]; variants: number[]; learned: string[];
   x: number; y: number;
   retour: { name: string; x: number; y: number };
+  /** Quêtes du perso (à redonner au World : opts.reprise). */
+  quetes?: EtatQuetes;
 }
 
 const copie = <T>(o: T): T => JSON.parse(JSON.stringify(o)) as T;
@@ -22,7 +25,7 @@ export function exporterJoueur(w: World): EtatJoueur {
     level: p.level, xp: p.xp, points: p.points, kamas: p.kamas, potions: p.potions, lootFilter: p.lootFilter,
     base: p.base, bag: p.bag, equipment: p.equipment, resources: p.resources, metiers: p.metiers,
     bar: p.bar, variants: p.variants, learned: [...p.learned],
-    x: p.x, y: p.y, retour: w.pointDeRetour,
+    x: p.x, y: p.y, retour: w.pointDeRetour, quetes: w.quetes?.exporter(),
   });
 }
 

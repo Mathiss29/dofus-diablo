@@ -6,6 +6,7 @@ import { ISO } from '../sim/iso';
 import type { SimEvent } from '../sim/events';
 import type { Monster } from '../sim/monster';
 import type { World } from '../sim/world';
+import { QUEST_ICON } from './questView';
 
 const FONT = 'Trebuchet MS, Verdana, sans-serif';
 const STYLE = { fontFamily: FONT, fontSize: '14px', color: '#e8e2d4', stroke: '#000', strokeThickness: 3 };
@@ -91,6 +92,10 @@ export class Hud {
   private rageLabel: Txt;
   // suivi et butin
   private trackTitle: Txt; private trackBody: Txt;
+  /** Quêtes : icône de la quête suivie, bouton « Passer » (tutoriel, 7A), ligne de succès discrète (19B), flèche au bord de l'écran (8B). */
+  private trackIcon: Img; private skipBtn: Txt; private succesLine: Txt; private succesT = 0; private arrow: Phaser.GameObjects.Graphics;
+  /** Clic sur « Passer » (quête id). */
+  onPasser: (id: string) => void = () => {};
   private feed: FeedLine[] = [];
   // bannières
   private bannerBg: Img;
@@ -104,6 +109,8 @@ export class Hud {
   private toastText: Txt;
   private hurtRect: Phaser.GameObjects.Rectangle;
   private help: Txt;
+  /** Tutoriel (3A) : la touche à presser, au-dessus de l'emplacement entouré. */
+  private haloKey: Txt;
   private helpAuto = true;
   private shortOf = { pa: 0, pm: 0 };
   private rageFlash = 0;
@@ -187,6 +194,14 @@ export class Hud {
 
     this.trackTitle = txt(13, { ...bold, color: css(C.xp) });
     this.trackBody = txt(12, { lineSpacing: 3 });
+    this.trackIcon = img('qi_quest', 5).setVisible(false);
+    this.succesLine = txt(12, { ...bold, color: '#f2d36b' }).setAlpha(0);
+    this.skipBtn = txt(12, { ...bold, color: '#c9c4ab', backgroundColor: '#2e2d28', padding: { x: 6, y: 2 } }, 6).setText('Passer ›').setVisible(false)
+      .setInteractive({ useHandCursor: true });
+    this.skipBtn.on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, ev: Phaser.Types.Input.EventData) => {
+      ev.stopPropagation(); const q = world.quetes, id = q?.suivie; if (id) this.onPasser(id);
+    });
+    this.arrow = fixed(scene.add.graphics(), 3);
 
     this.bannerBg = img('background_levelup_banner', 7).setAlpha(0);
     this.center = txt(34, { ...bold, stroke: '#3a2208', strokeThickness: 6, align: 'center', lineSpacing: -4 }, 8).setOrigin(0.5).setAlpha(0);
@@ -200,6 +215,9 @@ export class Hud {
       `Clic gauche : aller / attaquer (maintenu : continuer)   ·   Maj + clic : attaquer sur place   ·   Clic droit et & é " ' ( - : sorts de la barre   ·   Espace : ${cls.spells[cls.mobility].name}   ·   E : potion   ·   Molette : zoom\n` +
       `S : sorts (nouveaux sorts aux niveaux officiels, glisser dans la barre)   ·   I : inventaire   ·   C : caractéristiques\n` +
       `${cls.rage.name} pleine : le sort suivant est renforcé   ·   F : effets d'impact   ·   O : réglages   ·   H : aide`);
+    // Le tutoriel apprend les touches (maquette « Tutoriel d'Incarnam ») : la fiche ne s'affiche plus d'office, H la montre.
+    this.help.setVisible(false); this.helpAuto = false;
+    this.haloKey = txt(15, { ...bold, color: '#2a1e05', backgroundColor: '#e6b85c', padding: { x: 7, y: 3 }, strokeThickness: 0 }, 7).setOrigin(0.5, 1).setVisible(false);
   }
 
   /** H : l'aide reste ensuite comme le joueur l'a laissée. */
@@ -246,6 +264,9 @@ export class Hud {
     this.feed.unshift({ text: t, t: 5 });
     for (const f of this.feed.splice(6)) f.text.destroy();
   }
+
+  /** Succès obtenu : une ligne discrète dans le suivi (19B), pas de bannière. */
+  succes(nom: string, points: number) { this.succesLine.setText(`Succès : ${nom}  (+${points} pt${points > 1 ? 's' : ''})`).setAlpha(1); this.succesT = 6; }
 
   /** Événements de la simulation utiles à l'interface. */
   handle(e: SimEvent) {
@@ -361,6 +382,23 @@ export class Hud {
         g.fillStyle(parseInt(RARITY_COLORS[d.item.rarity].slice(1), 16), 1); g.lineStyle(1, 0x000000, 1);
         g.fillTriangle(q.x, q.y - 5, q.x + 4, q.y, q.x - 4, q.y); g.fillTriangle(q.x, q.y + 5, q.x + 4, q.y, q.x - 4, q.y);
       }
+      // quêtes (8B) : PNJ qui ont une quête (point vert), et la destination de la quête suivie (point doré qui pulse)
+      const Q = world.quetes;
+      if (Q) {
+        for (const n of Q.pnjs) {
+          if (!Q.icone(n.id) && !Q.attendParler(n.id)) continue;
+          const q = toMini(n.x, n.y);
+          if (q.x < mx || q.y < my || q.x > mx + mw || q.y > my + mh) continue;
+          g.fillStyle(0x9ad15a, 1); g.lineStyle(1, 0x000000, 1); g.fillCircle(q.x, q.y, 3); g.strokeCircle(q.x, q.y, 3);
+        }
+        const tq = Q.cible();
+        if (tq) {
+          const q = toMini(tq.x, tq.y), cx = Phaser.Math.Clamp(q.x, mx + 6, mx + mw - 6), cy = Phaser.Math.Clamp(q.y, my + 6, my + mh - 6);
+          const k = 0.5 + 0.5 * Math.sin(world.time * 5);
+          g.fillStyle(C.gold, 1); g.lineStyle(1.5, 0x3a2208, 1); g.fillCircle(cx, cy, 4); g.strokeCircle(cx, cy, 4);
+          g.lineStyle(1.5, C.gold, 0.4 + 0.5 * k); g.strokeCircle(cx, cy, 6 + 3 * k);
+        }
+      }
       // le perso (losange bleu) et les coins du cadre, comme dans Dofus 3
       const q = toMini(p.x, p.y);
       g.fillStyle(0x3a8fe0, 1); g.lineStyle(1.5, 0xffffff, 1);
@@ -443,20 +481,74 @@ export class Hud {
     g.fillStyle(rageCol, 1); g.fillRoundedRect(rx - 9, ry + rh * (1 - rr), 18, Math.max(4, rh * rr), 5);
     if (this.rageFlash > 0 && juice) { g.lineStyle(3, 0xffc04d, this.rageFlash); g.strokeRoundedRect(rx - 12, ry - 3, 24, rh + 6, 6); }
     this.rageLabel.setPosition(rx, ry + rh + 1);
+    // Tutoriel (3A) : halo doré qui pulse sur l'emplacement de l'étape suivie, et sa touche au-dessus
+    const qs = world.quetes, qc = qs?.enCours.find(c => c.id === qs.suivie), halo = qc && !qc.aRendre ? qs!.etapeDe(qc)?.halo : undefined;
+    if (halo != null) {
+      const hj = halo === 'jauge', hx = halo === 'potion' ? pox : hj ? rx : halo === 7 ? mvx : halo === 6 ? cdx : sx0 + halo * (slot + gap);
+      const hw = hj ? 28 : slot + 8, hh = hj ? rh + 10 : slot + 8, hy = hj ? ry + rh / 2 : sy, pulse = 0.55 + 0.45 * Math.sin(world.time * 6);
+      g.lineStyle(3, 0xffd66b, pulse); g.strokeRoundedRect(hx - hw / 2, hy - hh / 2, hw, hh, 8);
+      g.lineStyle(7, 0xe6b85c, 0.25 * pulse); g.strokeRoundedRect(hx - hw / 2 - 3, hy - hh / 2 - 3, hw + 6, hh + 6, 10);
+      const lab = halo === 'potion' ? 'E' : hj ? cls.rage.name : halo === 7 ? 'Espace' : halo === 6 ? 'Clic droit' : KEYS[halo];
+      this.haloKey.setVisible(true).setText(lab).setPosition(hx, y0 - 4 - 5 * Math.abs(Math.sin(world.time * 3)));
+    } else this.haloKey.setVisible(false);
 
-    // --- Suivi (bas gauche) ---
-    const a = world.area, kills = this.areaKills.get(a?.name ?? '') ?? 0;
-    this.trackTitle.setText(a ? `Exploration · ${a.name}` : world.zone.name);
-    this.trackBody.setText([
-      a ? `Monstres du coin vaincus : ${kills}` : `Monstres vaincus : ${world.kills}`,
-      `Point de retour : ${world.checkpointName}`,
-      juice ? '' : 'Effets d\'impact désactivés (F)',
-    ].filter(Boolean).join('\n'));
-    const tw2 = Math.max(this.trackTitle.width, this.trackBody.width) + 20, th2 = this.trackTitle.height + this.trackBody.height + 18;
+    // --- Suivi (bas gauche) : la quête suivie (8A), sinon l'exploration ---
+    const a = world.area, kills = this.areaKills.get(a?.name ?? '') ?? 0, Q = world.quetes;
+    const cq = Q && (Q.enCours.find(c => c.id === Q.suivie) ?? Q.enCours[0]);
+    let iconW = 0;
+    if (Q && cq) {
+      const def = Q.def(cq.id), e = Q.etapeDe(cq);
+      const [give, back] = QUEST_ICON[def.type];
+      this.trackIcon.setTexture(`qi_${cq.aRendre ? back : give}`).setVisible(true);
+      const k = 20 / Math.max(this.trackIcon.width, this.trackIcon.height); this.trackIcon.setScale(k); iconW = 24;
+      this.trackTitle.setText(def.nom);
+      const lines = cq.aRendre ? [`  Retourner voir ${Q.data.pnj[def.rendre!]?.nom ?? ''}`]
+        : (e?.objectifs ?? []).map((o, i) => {
+          const tot = Q.total(o), n = Math.min(cq.compte[i] ?? 0, tot), done = n >= tot;
+          return `${done ? '✓' : '•'} ${o.texte}${tot > 1 ? `  ${n}/${tot}` : ''}`;
+        });
+      const autres = Q.enCours.length - 1;
+      this.trackBody.setText([e && !cq.aRendre ? e.nom : '', ...lines, autres > 0 ? `+${autres} autre${autres > 1 ? 's' : ''} quête${autres > 1 ? 's' : ''} (journal)` : '', juice ? '' : 'Effets d\'impact désactivés (F)']
+        .filter(Boolean).join('\n'));
+      this.skipBtn.setVisible(!!def.options?.passable);
+    } else {
+      this.trackIcon.setVisible(false); this.skipBtn.setVisible(false);
+      this.trackTitle.setText(a ? `Exploration · ${a.name}` : world.zone.name);
+      this.trackBody.setText([
+        a ? `Monstres du coin vaincus : ${kills}` : `Monstres vaincus : ${world.kills}`,
+        `Point de retour : ${world.checkpointName}`,
+        juice ? '' : 'Effets d\'impact désactivés (F)',
+      ].filter(Boolean).join('\n'));
+    }
+    this.succesT = Math.max(0, this.succesT - dt); this.succesLine.setAlpha(Phaser.Math.Clamp(this.succesT, 0, 1));
+    const sl = this.succesT > 0 ? this.succesLine.height + 4 : 0;
+    const tw2 = Math.max(this.trackTitle.width + iconW + (this.skipBtn.visible ? this.skipBtn.width + 12 : 0), this.trackBody.width, this.succesT > 0 ? this.succesLine.width : 0) + 20;
+    const th2 = this.trackTitle.height + this.trackBody.height + 18 + sl;
     const tx2 = 12, ty2 = H - 12 - th2;
     panel(tx2, ty2, tw2, th2, 0.8);
-    this.trackTitle.setPosition(tx2 + 10, ty2 + 7);
+    this.rects.push([tx2, ty2, tw2, th2]);
+    this.trackIcon.setPosition(tx2 + 18, ty2 + 7 + this.trackTitle.height / 2);
+    this.trackTitle.setPosition(tx2 + 10 + iconW, ty2 + 7);
+    this.skipBtn.setPosition(tx2 + tw2 - this.skipBtn.width - 8, ty2 + 6);
     this.trackBody.setPosition(tx2 + 10, ty2 + 10 + this.trackTitle.height);
+    this.succesLine.setPosition(tx2 + 10, ty2 + 12 + this.trackTitle.height + this.trackBody.height);
+    // flèche au bord de l'écran vers la destination de la quête suivie, quand elle est hors de l'écran (8B)
+    this.arrow.clear();
+    const tq = Q?.cible(), cam = this.scene.cameras.main;
+    if (tq) {
+      const s2 = ISO.toScreen(tq.x, tq.y), r = cam.worldView;
+      const sx = (s2.x - r.x) * cam.zoom, sy2 = (s2.y - r.y) * cam.zoom, m = 46;
+      if (sx < 0 || sy2 < 0 || sx > W || sy2 > H) {
+        const cx = W / 2, cy = H / 2, ang = Math.atan2(sy2 - cy, sx - cx);
+        const kx = (W / 2 - m) / Math.max(1e-6, Math.abs(Math.cos(ang))), ky = (H / 2 - m) / Math.max(1e-6, Math.abs(Math.sin(ang))), d = Math.min(kx, ky);
+        // pas sous la colonne de menus (droite) ni sous la barre de sorts (bas)
+        const ax2 = Phaser.Math.Clamp(cx + Math.cos(ang) * d, m, W - 70), ay2 = Phaser.Math.Clamp(cy + Math.sin(ang) * d, m, H - 120), pul = 0.75 + 0.25 * Math.sin(world.time * 5);
+        const pt = (l: number, w2: number) => ({ x: ax2 + Math.cos(ang) * l - Math.sin(ang) * w2, y: ay2 + Math.sin(ang) * l + Math.cos(ang) * w2 });
+        const t0 = pt(18, 0), t1 = pt(-10, 13), t2 = pt(-4, 0), t3 = pt(-10, -13);
+        this.arrow.fillStyle(C.gold, pul); this.arrow.lineStyle(2, 0x3a2208, 1);
+        this.arrow.fillPoints([t0, t1, t2, t3], true); this.arrow.strokePoints([t0, t1, t2, t3], true, true);
+      }
+    }
 
     // --- Butin (bas droite) : les dernières lignes s'effacent ---
     this.feed.forEach((f, i) => { f.t -= dt; f.text.setPosition(W - 16, H - 16 - i * 18).setAlpha(Phaser.Math.Clamp(f.t, 0, 1)); });

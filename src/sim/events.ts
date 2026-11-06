@@ -50,7 +50,16 @@ export type SimEvent =
   /** Nouveau point de retour (Zaap). */
   | { k: 'checkpoint'; name: string }
   /** Le joueur passe une porte (le rendu fait un fondu au noir). */
-  | { k: 'portal'; nom: string };
+  | { k: 'portal'; nom: string }
+  /** Le joueur lance un sort ou son attaque (objectifs « utiliser »). */
+  | { k: 'cast'; id: string }
+  /** Quêtes : prise, étape suivante, fin (sautee = passée) ; bulle d'un PNJ ; objet de quête ramassé ; succès obtenu. */
+  | { k: 'queteDebut'; id: string }
+  | { k: 'queteEtape'; id: string; etape: number }
+  | { k: 'queteFin'; id: string; sautee: boolean }
+  | { k: 'bulle'; pnj: string; texte: string }
+  | { k: 'objetQuete'; nom: string; n: number; sur: number }
+  | { k: 'succes'; id: string };
 
 /** Zones au sol affichées avant un coup (rouge = danger, or = sort du joueur). */
 export type Telegraph =

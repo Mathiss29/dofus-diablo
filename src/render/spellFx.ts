@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { ISO } from '../sim/iso';
+import { CASE } from '../sim/monster';
 import type { Projectile } from '../sim/world';
 import SPELL_FX from '../data/spellfx.json';
 import { v } from './assetUrl';
@@ -10,7 +11,8 @@ const ASSETS = 'assets';
  *  tools/extraction/spell_fx.py. Pour chaque sort : projectile, effets sur la cible, effets sur le lanceur.
  *  Purement cosmétique. */
 interface GfxDef { anims: Record<string, number>; fps: number; origin: [number, number] }
-interface FxRef { gfx: number; bg?: boolean }
+/** zone : rejoué sur chaque case de la zone du sort (traînée du Couperet) ; scale : échelle officielle de l'effet. */
+interface FxRef { gfx: number; bg?: boolean; zone?: boolean; scale?: number }
 export interface SpellFxDef { target?: FxRef[]; caster?: FxRef[]; projectile?: { gfx: number; curvature: number; offsetY: number } }
 const DATA = SPELL_FX as unknown as { spells: Record<string, SpellFxDef>; gfx: Record<string, GfxDef> };
 
@@ -62,21 +64,25 @@ export class SpellFx {
     return { anim: Object.keys(A)[0], flip: false };
   }
 
-  play(g: number, x: number, y: number, facing: number, bg = false, z = 0) {
+  play(g: number, x: number, y: number, facing: number, bg = false, z = 0, k = 1) {
     if (!this.ensure(g)) return;
     const G = DATA.gfx[g], { anim, flip } = this.pick(g, facing), n = G.anims[anim];
     const frames = Array.from({ length: n }, (_, i) => `${anim}_${i}`);
     const p = ISO.toScreen(x, y, z);
     const s = this.scene.add.sprite(p.x, p.y, key(g), frames[0]).setOrigin(G.origin[0], G.origin[1])
-      .setScale(flip ? -SCALE : SCALE, SCALE).setDepth(bg ? -4000 : p.y + 30);
+      .setScale((flip ? -SCALE : SCALE) * k, SCALE * k).setDepth(bg ? -4000 : p.y + 30);
     this.live.push({ s, frames, t: 0, fps: G.fps });
   }
 
   /** Effets d'un sort : sur la cible (x, y) et sur le lanceur (cx, cy). true si le sort a des effets officiels. */
-  cast(id: string, x: number, y: number, facing: number, cx = x, cy = y): boolean {
+  cast(id: string, x: number, y: number, facing: number, cx = x, cy = y, len = 0): boolean {
     const d = DATA.spells[id];
     if (!d || (!d.target?.length && !d.caster?.length)) return false;
-    for (const r of d.target ?? []) this.play(r.gfx, x, y, facing, r.bg);
+    for (const r of d.target ?? []) {
+      if (r.zone && len > 0) {   // une fois par case de la zone, depuis le lanceur
+        for (let t = CASE; t <= len + 1; t += CASE) this.play(r.gfx, cx + Math.cos(facing) * t, cy + Math.sin(facing) * t, facing, r.bg, 0, r.scale ?? 1);
+      } else this.play(r.gfx, x, y, facing, r.bg, 0, r.scale ?? 1);
+    }
     for (const r of d.caster ?? []) this.play(r.gfx, cx, cy, facing, r.bg);
     return true;
   }

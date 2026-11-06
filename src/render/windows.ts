@@ -148,9 +148,36 @@ const CSS = `
 .dw .btn{cursor:pointer;background:linear-gradient(#6f9a2a,#4c6e17);border:1px solid #b9e54b;color:#fff;border-radius:3px;padding:6px 12px;font-weight:bold}
 .dw .btn.off{opacity:.35;pointer-events:none;filter:grayscale(1)}
 .dw .tip .cmp{border-top:1px solid #3a3a2c;margin-top:6px;padding-top:6px;font-size:12px}
+
+.dw .win.quetes,.dw .win.succes{width:min(900px,96vw);height:min(660px,92vh)}
+.dw .qb{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);min-height:0}
+.dw .qb .ql{overflow:auto;padding:10px;border-right:1px solid #0d0c0a;background:#292824;display:grid;gap:4px;align-content:start}
+.dw .qb .qh{color:#c9a55a;font-size:12px;text-transform:uppercase;letter-spacing:.06em;margin:8px 2px 2px}
+.dw .qb .qi{display:grid;grid-template-columns:22px 1fr auto;gap:8px;align-items:center;padding:6px 8px;border-radius:3px;background:linear-gradient(#3e3d37,#33322d);border:1px solid #57554c;cursor:pointer;line-height:1.2}
+.dw .qb .qi img{width:20px;height:20px;object-fit:contain}
+.dw .qb .qi small{color:#a9a48b;font-size:11px}
+.dw .qb .qi.on{border-color:#b9e54b;box-shadow:inset 0 0 0 1px #b9e54b}
+.dw .qb .qi.fin{opacity:.6}
+.dw .qb .qi .pin{color:#f2d36b;font-size:12px}
+.dw .qb .qd{padding:16px 18px;overflow:auto;display:grid;gap:10px;align-content:start;background:linear-gradient(#2b2a25,#24231f)}
+.dw .qb .qd h3{margin:0;font-size:18px;color:#f4efe0}.dw .qb .qd .sub{color:#a9a48b;font-size:12px}
+.dw .qb .qd p{margin:0;line-height:1.5;color:#d8d2bf}
+.dw .qb .et{border:1px solid #45433b;border-radius:4px;padding:8px 10px;background:#1f1e1a}
+.dw .qb .et b{color:#e8e2cc}.dw .qb .et.done{opacity:.55}.dw .qb .et.cur{border-color:#8fae3a}
+.dw .qb .ob{display:flex;justify-content:space-between;gap:10px;font-size:12px;padding:3px 0 0 6px;color:#c9c4ab}
+.dw .qb .ob.ok{color:#7be07b}
+.dw .qb .rw{display:flex;flex-wrap:wrap;gap:12px;align-items:center;font-size:12px}
+.dw .qb .rw .ic{width:30px;height:30px}.dw .qb .rw span{display:flex;align-items:center;gap:4px}
+.dw .qb .btn{justify-self:start}
+.dw .btn{cursor:pointer;background:linear-gradient(#6f9a2a,#4c6e17);border:1px solid #b9e54b;color:#f4efe0;border-radius:3px;padding:5px 12px;font-weight:bold}
+.dw .btn.off{opacity:.35;pointer-events:none}
+.dw .sp2{height:6px;border-radius:3px;background:#14130f;border:1px solid #45433b;overflow:hidden}.dw .sp2 i{display:block;height:100%;background:linear-gradient(90deg,#8fae3a,#b9e54b)}
+.dw .su{border:1px solid #45433b;border-radius:4px;padding:8px 10px;background:#1f1e1a;display:grid;gap:4px}
+.dw .su.ok{border-color:#8f7a3a;background:linear-gradient(#2e2a1c,#24211a)}
+.dw .su .hd{display:flex;justify-content:space-between;gap:10px}.dw .su .hd b{color:#f4efe0}.dw .su .pt{color:#f2d36b;font-weight:bold;white-space:nowrap}
 `;
 
-type Mode = 'inv' | 'car' | 'job' | 'opt' | 'sorts';
+type Mode = 'inv' | 'car' | 'job' | 'opt' | 'sorts' | 'quetes' | 'succes';
 
 /** Fenêtres façon Dofus 3 : « Inventaire » (le perso sur son socle, ses emplacements autour, le sac à onglets)
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
@@ -161,6 +188,9 @@ export class Windows {
   private mode: Mode = 'inv';
   private tip: HTMLDivElement;
   private tab = 'tout';
+  /** Journal des quêtes (5C) : quête affichée ; Succès : catégorie affichée. */
+  private queteVue: string | null = null;
+  private succesCat = '';
   private kind = '';
   private sort = '';
   private search = '';
@@ -201,7 +231,8 @@ export class Windows {
 
   private render() {
     if (this.mode === 'car') this.renderCarac(); else if (this.mode === 'job') this.renderJob(); else if (this.mode === 'opt') this.renderOpt();
-    else if (this.mode === 'sorts') this.renderSorts(); else this.renderInv();
+    else if (this.mode === 'sorts') this.renderSorts(); else if (this.mode === 'quetes') this.renderQuetes();
+    else if (this.mode === 'succes') this.renderSucces(); else this.renderInv();
     this.win!.querySelector('[data-close]')!.addEventListener('click', () => this.close());
   }
   private title(name: string, icon: string) {
@@ -343,6 +374,76 @@ export class Windows {
     w.querySelectorAll<HTMLElement>('[data-craft]').forEach(e => e.addEventListener('click', () => { this.world.craft(+e.dataset.craft!); this.changed(); }));
   }
 
+  /** Journal des quêtes (fenêtre Quêtes de Dofus 3, 10A+10B) : en cours et terminées à gauche, détail à droite
+   *  (texte complet 5C, étapes et objectifs, récompenses) ; une seule quête suivie (10C). */
+  private renderQuetes() {
+    const w = this.win!, Q = this.world.quetes!, QI = 'assets/ui/quetes';
+    const icon = (id: string, rendre = false) => {
+      const t = Q.def(id).type, m: Record<string, [string, string]> = { tutoriel: ['questInitiation', 'questObjective'], principale: ['questPrincipale', 'questPrincipaleObjective'],
+        secondaire: ['quest', 'questObjective'], prime: ['questRepeatable', 'questRepeatableObjective'], evenement: ['questEvent', 'questObjective'] };
+      return `${QI}/${m[t][rendre ? 1 : 0]}.png`;
+    };
+    const ids = Q.enCours.map(c => c.id), fin = [...Q.finies].filter(id => Q.data.quetes[id]);
+    if (!this.queteVue || !Q.data.quetes[this.queteVue]) this.queteVue = Q.suivie ?? ids[0] ?? fin[0] ?? null;
+    const item = (id: string, done: boolean) => {
+      const q = Q.def(id), c = Q.enCours.find(x => x.id === id);
+      return `<div class="qi ${this.queteVue === id ? 'on' : ''} ${done ? 'fin' : ''}" data-q="${id}"><img src="${icon(id, !!c?.aRendre)}" alt="">
+        <div>${q.nom}<br><small>${q.serie ?? ({ tutoriel: 'Tutoriel', principale: 'Quête principale', secondaire: 'Quête', prime: 'Prime', evenement: 'Événement' })[q.type]} · niv. ${q.niveau}</small></div>
+        ${Q.suivie === id ? '<span class="pin" title="Quête suivie">◆</span>' : ''}</div>`;
+    };
+    let det = '<div class="hint">Aucune quête. Les PNJ avec une icône verte au-dessus de la tête en ont une à te confier.</div>';
+    const id = this.queteVue;
+    if (id) {
+      const q = Q.def(id), c = Q.enCours.find(x => x.id === id), done = Q.finies.has(id), et = Q.etapes(id);
+      const pnj = q.pnj ? Q.data.pnj[q.pnj]?.nom : null;
+      const steps = et.map((e, i) => {
+        const st = done || (c && (i < c.etape || c.aRendre)) ? 'done' : c && i === c.etape ? 'cur' : '';
+        const obs = st === 'cur' && c ? e.objectifs.map((o, k) => { const t = Q.total(o), n = Math.min(c.compte[k] ?? 0, t);
+          return `<div class="ob ${n >= t ? 'ok' : ''}"><span>${n >= t ? '✓' : '•'} ${o.texte}</span><span>${t > 1 ? `${n}/${t}` : ''}</span></div>`; }).join('') : '';
+        return `<div class="et ${st}"><b>${i + 1}. ${e.nom}</b>${st === 'done' ? ' <span class="hint">· terminée</span>' : ''}${obs}</div>`;
+      }).join('') + (c?.aRendre && q.rendre ? `<div class="et cur"><b>${et.length + 1}. Retourner voir ${Q.data.pnj[q.rendre]?.nom}</b></div>` : '');
+      const r = q.recompense, res = (o: string) => ITEMS.resources[o] ?? ITEMS.equipment[o];
+      const rw = [r.xp ? `<span><b>${r.xp}</b> XP</span>` : '', r.kamas ? `<span><img src="${INV}/kamas.png" alt="" style="width:16px">${r.kamas} kamas</span>` : '',
+        ...(r.objets ?? []).map(([o, n]) => `<span title="${res(o)?.name ?? o}">${iconHtml(res(o)?.icon ?? 0)}${n} × ${res(o)?.name ?? o}</span>`),
+        r.potions ? '<span>Potions remplies</span>' : ''].filter(Boolean).join('');
+      det = `<div><h3>${q.nom}</h3><div class="sub">${q.serie ? `${q.serie} · ` : ''}Niveau ${q.niveau}${pnj ? ` · ${pnj}` : ''}${done ? ' · Terminée' : ''}</div></div>
+        <p>${q.texte}</p>${steps}<div class="qh">Récompenses</div><div class="rw">${rw || '<span class="hint">Aucune</span>'}</div>
+        ${c ? `<span class="btn ${Q.suivie === id ? 'off' : ''}" data-suivre>${Q.suivie === id ? 'Quête suivie' : 'Suivre cette quête'}</span>` : ''}`;
+    }
+    w.innerHTML = `${this.title('Quêtes', 'quest')}<div class="qb"><div class="ql">
+      <div class="qh">En cours (${ids.length})</div>${ids.map(i => item(i, false)).join('') || '<div class="hint">Aucune</div>'}
+      <div class="qh">Terminées (${fin.length})</div>${fin.map(i => item(i, true)).join('') || '<div class="hint">Aucune</div>'}
+      </div><div class="qd">${det}</div></div>`;
+    w.querySelectorAll<HTMLElement>('[data-q]').forEach(e => e.addEventListener('click', () => { this.queteVue = e.dataset.q!; this.render(); }));
+    w.querySelector('[data-suivre]')?.addEventListener('click', () => { if (id) { Q.suivie = id; this.render(); } });
+  }
+
+  /** Succès (fenêtre Succès de Dofus 3, 12A) : catégories officielles à gauche, points du compte (15A), objectifs et récompenses. */
+  private renderSucces() {
+    const w = this.win!, Q = this.world.quetes!, all = Object.entries(Q.data.succes);
+    const cats = [...new Set(all.map(([, s]) => s.categorie))];
+    if (!cats.includes(this.succesCat)) this.succesCat = cats[0] ?? '';
+    const total = all.reduce((n, [, s]) => n + s.points, 0);
+    const catList = cats.map(c => {
+      const ss = all.filter(([, s]) => s.categorie === c), ok = ss.filter(([id]) => Q.succes.has(id)).length;
+      return `<div class="qi ${c === this.succesCat ? 'on' : ''}" data-c="${c}"><img src="assets/ui/menu/success.png" alt=""><div>${c}<br><small>${ok} / ${ss.length}</small></div><span></span></div>`;
+    }).join('');
+    const subs = [...new Set(all.filter(([, s]) => s.categorie === this.succesCat).map(([, s]) => s.sousCategorie))];
+    const list = subs.map(sc => `<div class="qh">${sc}</div>` + all.filter(([, s]) => s.categorie === this.succesCat && s.sousCategorie === sc).map(([id, s]) => {
+      const ok = Q.succes.has(id), done = s.objectifs.filter(o => ok || Q.objectifSuccesFait(o)).length;
+      const r = s.recompense, it = r?.objet ? ITEMS.resources[r.objet] ?? ITEMS.equipment[r.objet] : null;
+      const rw = [r?.xp ? `<span><b>${r.xp}</b> XP</span>` : '', it ? `<span>${iconHtml(it.icon)}${it.name}</span>` : ''].filter(Boolean).join('');
+      return `<div class="su ${ok ? 'ok' : ''}"><div class="hd"><b>${ok ? '✓ ' : ''}${s.nom}</b><span class="pt">${s.points} pt${s.points > 1 ? 's' : ''}</span></div>
+        <div class="sub">${s.description}</div>
+        ${s.objectifs.length > 1 ? s.objectifs.map(o => { const f = ok || Q.objectifSuccesFait(o); return `<div class="ob ${f ? 'ok' : ''}"><span>${f ? '✓' : '•'} ${o.nom}</span></div>`; }).join('') : ''}
+        <div class="sp2"><i style="width:${Math.round(done / Math.max(1, s.objectifs.length) * 100)}%"></i></div>
+        ${rw ? `<div class="rw">${rw}</div>` : ''}</div>`;
+    }).join('')).join('');
+    w.innerHTML = `${this.title('Succès', 'success')}<div class="qb"><div class="ql">
+      <div class="qh">Points de succès : ${Q.points} / ${total}</div>${catList}</div><div class="qd">${list}</div></div>`;
+    w.querySelectorAll<HTMLElement>('[data-c]').forEach(e => e.addEventListener('click', () => { this.succesCat = e.dataset.c!; this.render(); }));
+  }
+
   /** Réglages (choix 10A + 10B) : curseurs d'ambiance en direct, puis les options du joueur. Gardés dans le navigateur. */
   private renderOpt() {
     const w = this.win!, r = this.reglages;
@@ -360,6 +461,9 @@ export class Windows {
       ${range('volume', 'Volume des sons', 0, 100)}
       <label class="row"><span>Effets d'impact (F)</span><input type="checkbox" data-juice ${this.juice.get() ? 'checked' : ''} style="justify-self:start;accent-color:#b9e54b"><output></output></label>
       ${(['vent', 'eau', 'particules'] as const).map(k => `<label class="row"><span>${({ vent: 'Arbres au vent', eau: 'Eau animée', particules: 'Particules (spores, braises…)' })[k]}</span><input type="checkbox" data-b="${k}" ${r[k] ? 'checked' : ''} style="justify-self:start;accent-color:#b9e54b"><output></output></label>`).join('')}
+      <div class="sub">Sorts</div>
+      <label class="row"><span>Lancer un sort</span><select data-k="lancer">${([['relache', 'Maintenir pour voir, relâcher pour lancer'], ['immediat', 'Tout de suite (aperçu avec Alt)'], ['dofus', 'Comme Dofus : touche puis clic']] as const).map(([k, n]) => `<option value="${k}" ${r.lancer === k ? 'selected' : ''}>${n}</option>`).join('')}</select><output></output></label>
+      <label class="row"><span>Monstre hors de portée : s'approcher avant de lancer</span><input type="checkbox" data-b="approche" ${r.approche ? 'checked' : ''} style="justify-self:start;accent-color:#b9e54b"><output></output></label>
       <div class="sub">Touches</div>
       <div class="keys">${[['Clic gauche', 'aller / attaquer (maintenu : continuer)'], ['Maj + clic', 'attaquer sur place'], ['Clic droit', 'sort de la barre (case libre)'],
         ['& é " \' ( -', 'barre de sorts'], ['S', 'sorts'], ['Espace', 'déplacement'], ['E', 'potion'], ['I', 'inventaire'], ['C', 'caractéristiques'], ['J', 'métiers'],
@@ -374,8 +478,9 @@ export class Windows {
       w.querySelector(`[data-o="${k}"]`)!.textContent = `${e.value}${k === 'chaleur' ? '' : '%'}`;
       apply();
     }));
+    w.querySelector<HTMLSelectElement>('select[data-k=lancer]')!.addEventListener('change', e => { r.lancer = (e.target as HTMLSelectElement).value as Reglages['lancer']; apply(); });
     w.querySelector<HTMLSelectElement>('select[data-k=heure]')!.addEventListener('change', e => { r.heure = (e.target as HTMLSelectElement).value as Heure; apply(); this.render(); });
-    w.querySelectorAll<HTMLInputElement>('[data-b]').forEach(e => e.addEventListener('change', () => { r[e.dataset.b as 'vent' | 'eau' | 'particules'] = e.checked; apply(); }));
+    w.querySelectorAll<HTMLInputElement>('[data-b]').forEach(e => e.addEventListener('change', () => { r[e.dataset.b as 'vent' | 'eau' | 'particules' | 'approche'] = e.checked; apply(); }));
     w.querySelector<HTMLInputElement>('[data-juice]')!.addEventListener('change', e => this.juice.set((e.target as HTMLInputElement).checked));
     w.querySelector('[data-defaut]')!.addEventListener('click', () => { Object.assign(r, REGLAGES_DEFAUT); apply(); this.render(); });
     w.querySelector('[data-accueil]')?.addEventListener('click', () => { this.close(); this.onAccueil?.(); });
@@ -479,6 +584,11 @@ export class Windows {
       if (!r || (q && !r.name.toLowerCase().includes(q))) continue;
       if (this.tab === 'conso' && !r.soin) continue;
       cells.push(`<div class="cell" data-res="${id}">${iconHtml(r.icon)}<span class="n">${n}</span></div>`);
+    }
+    // Objets de quête (pages, Sac de Bijoux...) : onglet « Objets de quête » ; ils partent à la fin de la quête
+    if ((this.tab === 'tout' || this.tab === 'quete') && !this.kind) for (const [nom, k] of Object.entries(this.world.quetes?.objets ?? {})) {
+      if (q && !nom.toLowerCase().includes(q)) continue;
+      cells.push(`<div class="cell" title="${nom} (objet de quête)"><img src="${INV}/tab_key.png" alt="" style="width:34px;height:34px;opacity:.9"><span class="n">${k}</span></div>`);
     }
     const n = cells.length;
     for (let i = n; i < Math.max(35, Math.ceil(n / 5) * 5); i++) cells.push('<div class="cell empty"></div>');

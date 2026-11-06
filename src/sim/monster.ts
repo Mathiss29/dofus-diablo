@@ -46,6 +46,8 @@ export class Monster extends Entity {
   spellCd: number[];
   /** Bonus de vitesse (sort qui donne des PM, ex. Bêlement) : multiplicateur et durée restante. */
   haste = 1; hasteT = 0;
+  /** Dommages subis augmentés de vuln % pendant vulnT s (Bond). */
+  vuln = 0; vulnT = 0;
   /** Bonus de Dommages (Frénésie : %, Euphorie malsaine : fixes) et durée restante. */
   furyPct = 0; furyFlat = 0; furyT = 0;
   /** Invocateur (Kardorib invoqué par Kardorim). */
@@ -53,6 +55,8 @@ export class Monster extends Entity {
   /** Déjà touché par le joueur (l'Initiative ne renforce que le premier coup). */
   struck = false;
 
+  /** Zone d'une attaque annoncée au sol avant l'impact : seulement pour les élites et les boss (maquette Aperçu 8A, Mathis 2026-11-06). */
+  private annonce(world: World, tg: World['telegraphs'][number]) { if (this.def.elite || this.def.boss) world.telegraphs.push(tg); }
   constructor(id: number, readonly type: string, readonly def: MonsterDef, x: number, y: number, world: World) {
     super(id, x, y, def.radius, def.hp);
     this.homeX = this.wanderX = x; this.homeY = this.wanderY = y;
@@ -74,6 +78,7 @@ export class Monster extends Entity {
     this.atkCd -= dt;
     for (let i = 0; i < this.spellCd.length; i++) this.spellCd[i] -= dt;
     if (this.hasteT > 0 && (this.hasteT -= dt) <= 0) this.haste = 1;
+    if (this.vulnT > 0 && (this.vulnT -= dt) <= 0) this.vuln = 0;
     if (this.furyT > 0 && (this.furyT -= dt) <= 0) this.furyPct = this.furyFlat = 0;
     // Tacle du joueur : un monstre à son contact avance moins vite (sa Fuite officielle y résiste)
     const near = Math.hypot(player.x - this.x, player.y - this.y) <= this.radius + player.radius + 12;
@@ -126,7 +131,7 @@ export class Monster extends Entity {
         if (this.mode === 'slam') {
           const k = 1 - this.t / D.slamWindup!;
           this.setAnim('slam_charge', k);
-          world.telegraphs.push({ kind: 'circle', x: this.x, y: this.y, r: D.slamRadius!, progress: k, danger: true });
+          this.annonce(world, { kind: 'circle', x: this.x, y: this.y, r: D.slamRadius!, progress: k, danger: true });
           if (this.t <= 0) {
             if (Math.hypot(player.x - this.x, player.y - this.y) < D.slamRadius! + player.radius) player.hurt(Math.round(D.dmg * 1.3), this.x, this.y, world);
             world.emit({ k: 'slam', x: this.x, y: this.y, radius: D.slamRadius! });
@@ -139,11 +144,11 @@ export class Monster extends Entity {
           if (this.kind === 'invoque') { /* pas de zone : l'invocation apparaît à son contact */ }
           else if (this.kind === 'target' || this.kind === 'self') {
             if (this.kind === 'self') { this.tx = this.x; this.ty = this.y; }
-            if (!S.allies) world.telegraphs.push({ kind: 'circle', x: this.tx, y: this.ty, r: zoneRadius(S), progress: k, danger: true });
+            if (!S.allies) this.annonce(world, { kind: 'circle', x: this.tx, y: this.ty, r: zoneRadius(S), progress: k, danger: true });
           } else {
             this.facing = Math.atan2(this.dirY, this.dirX);
             const len = this.kind === 'charge' ? this.chargeLen(S) + this.radius : this.kind === 'missile' ? this.missileRange(S) : D.lungeSpeed * D.lungeTime + this.radius;
-            world.telegraphs.push({ kind: 'rect', x: this.x, y: this.y, facing: this.facing, len, w: this.kind === 'missile' ? 12 : this.radius * 0.9, progress: k, danger: true });
+            this.annonce(world, { kind: 'rect', x: this.x, y: this.y, facing: this.facing, len, w: this.kind === 'missile' ? 12 : this.radius * 0.9, progress: k, danger: true });
           }
           if (this.t <= 0) this.release(player, world);
         } else {
@@ -151,7 +156,7 @@ export class Monster extends Entity {
           this.setAnim('windup', k);
           this.spell = null;
           this.facing = Math.atan2(this.dirY, this.dirX);
-          world.telegraphs.push({ kind: 'rect', x: this.x, y: this.y, facing: this.facing, len: D.lungeSpeed * D.lungeTime + this.radius, w: this.radius * 0.9, progress: k, danger: true });
+          this.annonce(world, { kind: 'rect', x: this.x, y: this.y, facing: this.facing, len: D.lungeSpeed * D.lungeTime + this.radius, w: this.radius * 0.9, progress: k, danger: true });
           if (this.t <= 0) { this.state = 'lunge'; this.t = D.lungeTime; this.hitDone = false; }
         }
         break;

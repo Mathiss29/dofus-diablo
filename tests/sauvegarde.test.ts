@@ -4,6 +4,7 @@ import { GAME_DATA, ITEMS } from '../src/sim/data';
 import { WorldGrid, type WorldData } from '../src/sim/gridmap';
 import { World } from '../src/sim/world';
 import { exporterJoueur, restaurerJoueur } from '../src/sim/sauvegarde';
+import { QUETES } from '../src/sim/data';
 
 const monde = JSON.parse(readFileSync(new URL('../public/assets/mondes/incarnam/monde.json', import.meta.url), 'utf8')) as WorldData;
 const nouveau = (classId = 'iop', seed = 1) => new World({ data: GAME_DATA, zone: 'incarnam', map: new WorldGrid(monde), seed, classId, items: ITEMS });
@@ -36,5 +37,17 @@ describe('sauvegarde du personnage', () => {
     const b = nouveau();
     restaurerJoueur(b, e);
     expect([b.player.x, b.player.y]).toEqual([b.pointDeRetour.x, b.pointDeRetour.y]);
+  });
+  it('les quêtes reprennent où on les a laissées (le tutoriel ne recommence pas)', () => {
+    const mk = (reprise?: ReturnType<typeof exporterJoueur>['quetes']) => new World({ data: GAME_DATA, zone: 'incarnam', map: new WorldGrid(monde), seed: 3, items: ITEMS, quetes: QUETES, reprise });
+    const a = mk(), q = a.quetes!;
+    const tuto = q.enCours[0]?.id;
+    expect(tuto).toBeDefined();
+    q.finies.add(tuto!); q.enCours = []; q.decouvertes.add(450);
+    const e = JSON.parse(JSON.stringify(exporterJoueur(a)));
+    const b = mk(e.quetes);
+    expect(b.quetes!.enCours).toHaveLength(0);
+    expect(b.quetes!.finies.has(tuto!)).toBe(true);
+    expect(b.quetes!.decouvertes.has(450)).toBe(true);
   });
 });

@@ -8,6 +8,7 @@ import { METIER_XP, RARITIES, rollItem, rollRarity, type Item, type ItemsData } 
 import { Player } from './player';
 import { initiativeBonus, removalChance } from './caracs';
 import { planWave } from './waves';
+import { Quetes, type Compte, type EtatQuetes, type QuetesData } from './quests';
 
 interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: number;
   /** Effets officiels : Érosion (part des dommages ôtée aux PV max), retrait de PM / PA. */
@@ -44,6 +45,11 @@ export interface WorldOptions {
   classId?: string;
   /** Objets officiels (src/data/items.json) ; sans eux, pas de butin. */
   items?: ItemsData;
+  /** Quêtes et succès (src/data/quetes.json) ; compte = succès et persos déjà créés, gardés par l'affichage. */
+  quetes?: QuetesData;
+  compte?: Compte;
+  /** Partie reprise : avancement des quêtes sauvegardé (sinon les quêtes du départ démarrent). */
+  reprise?: EtatQuetes;
 }
 
 /** La simulation d'une zone : joueur, monstres, vagues, collisions.
@@ -80,7 +86,9 @@ export class World {
   /** Bout de porte par lequel le joueur vient d'arriver : inactif tant qu'il ne s'en est pas éloigné. */
   private portalLock: PorteEnd | null = null;
   /** Distance (|dx| + |dy|) au-delà de laquelle un monstre qui attend ne bouge plus. */
-  static readonly SOMMEIL = 2400;   // au-delà de ce qu'on voit même dézoomé à fond (avant : monstres figés au bord de l'écran)
+  static readonly SOMMEIL = 2400;
+  /** Quêtes et succès (monde ouvert avec quetes.json). */
+  quetes: Quetes | null = null;   // au-delà de ce qu'on voit même dézoomé à fond (avant : monstres figés au bord de l'écran)
 
   constructor(readonly opts: WorldOptions) {
     this.rng = new Rng(opts.seed ?? 1);
@@ -107,6 +115,7 @@ export class World {
       if (opts.items.equipment[hunt]?.chasse) this.player.bag.push({ uid: this.nextId++, id: hunt, rarity: 'commun', stats: {}, extra: [] });
     }
     if (open) { this.buildPortes(); this.spawnGroups(); }
+    if (open && opts.quetes) { this.quetes = new Quetes(opts.quetes, this, opts.compte); if (opts.reprise) this.quetes.reprendre(opts.reprise); else this.quetes.demarrer(); }
   }
 
   /** Rayon autour d'une porte qui la déclenche (≈ 1,4 case) et distance d'arrivée de l'autre côté. */
@@ -166,6 +175,7 @@ export class World {
   }
 
   /** Case la plus dégagée d'une carte (le plus de cases marchables autour). */
+  openestCellOf(tag: string) { return this.openestCell(tag); }
   private openestCell(tag: string) {
     const wg = this.worldGrid!, free = wg.freeByMap.get(tag)!, ok = new Set(free), C = wg.cols;
     let best = free[0], bestN = -1;
@@ -222,7 +232,7 @@ export class World {
       if (best >= 80) break;
     }
     g.x = pos.x; g.y = pos.y; g.members = []; g.cleared = false;
-    const [a, b] = g.sub.groupSize, n = g.fixe ? g.fixe.length : a + this.rng.int(b - a + 1);
+    const [a, b] = (!g.fixe && this.quetes?.tailleGroupe(this.worldGrid!.mapByTag(g.map)?.sub ?? -1)) || g.sub.groupSize, n = g.fixe ? g.fixe.length : a + this.rng.int(b - a + 1);
     const a0 = this.rng.range(0, Math.PI * 2);
     for (let i = 0; i < n; i++) {
       // en cercle autour du chef, chacun sa place (plus de tas de monstres les uns sur les autres)
@@ -278,7 +288,7 @@ export class World {
     this.emit({ k: 'respawn' });
   }
 
-  emit(e: SimEvent) { this.events.push(e); }
+  emit(e: SimEvent) { this.events.push(e); this.quetes?.observer(e); }
   drainEvents(): SimEvent[] { const e = this.events; this.events = []; return e; }
   walkable(x: number, y: number) { return this.map.walkable(x, y); }
   /** Chemin à pied (A* sur les cases de Dofus) vers un point. */
@@ -292,6 +302,10 @@ export class World {
     this.telegraphs.length = 0;
     const p = this.player;
     const ents = [p, ...this.monsters], prev = ents.map(e => [e.x, e.y] as const);
+    if (this.quetes) {
+      if (input.talk) this.quetes.cliquer(input.talk);
+      else if (input.dest || input.target != null || input.pickup != null) this.quetes.annulerClic();
+    }
     p.update(dt, input, this);
     // Monde ouvert : un monstre qui attend loin du joueur dort (pas d'errance ni d'IA) : bien moins de calcul
     for (const m of this.monsters) {
@@ -314,7 +328,7 @@ export class World {
       e.kx = 0; e.ky = 0;
     });
     this.monsters = this.monsters.filter(m => !(m.dead && m.t <= 0));
-    if (this.zone.open) { this.updateOpen(dt); return; }
+    if (this.zone.open) { this.updateOpen(dt); this.quetes?.update(dt); return; }
     if (!this.over && this.monsters.length === 0) {
       this.waveDelay -= dt;
       if (this.waveDelay <= 0) { this.spawnWave(); this.waveDelay = 2; }
@@ -335,8 +349,8 @@ export class World {
     }
   }
 
-  spawnMonster(type: string, x: number, y: number): Monster {
-    const def = this.opts.data.monsters[type];
+  /** def : définition modifiée (élite de quête : PV et nom). */
+  spawnMonster(type: string, x: number, y: number, def = this.opts.data.monsters[type]): Monster {
     if (!def) throw new Error(`Monstre inconnu : ${type}`);
     const m = new Monster(this.nextId++, type, def, x, y, this);
     this.monsters.push(m);
@@ -479,7 +493,8 @@ export class World {
       const first = m.struck ? 1 : 1 + initiativeBonus(p.initiative); m.struck = true;
       const flat = (crit ? p.stat('dommagesCritiques') : 0) + (def.knock > 0 ? p.stat('dommagesPoussee') : 0);
       const vs = def.vsSummon && (m.summoner || (def.vsElite && (m.def.elite || m.def.boss))) ? def.vsSummon : 1;
-      const dmg = Math.max(1, Math.round((p.damage(def.dmg * vs, def.element ?? 'neutre') * this.rng.range(0.9, 1.1) * (crit ? cls.critMult : 1) * first + flat) * (1 - res / 100)));
+      const vu = m.vulnT > 0 ? 1 + m.vuln / 100 : 1;   // dommages subis augmentés (Bond)
+      const dmg = Math.max(1, Math.round((p.damage(def.dmg * vs, def.element ?? 'neutre') * this.rng.range(0.9, 1.1) * (crit ? cls.critMult : 1) * first + flat) * (1 - res / 100) * vu));
       m.hp -= dmg; m.flash = 0.09;
       if (def.erosion) { m.maxHp = Math.max(1, m.maxHp - Math.round(dmg * def.erosion)); m.hp = Math.min(m.hp, m.maxHp); }
       // Retrait PA / PM du joueur contre l'Esquive officielle du monstre : chaque point a sa chance de passer
@@ -502,6 +517,16 @@ export class World {
       if (m.hp <= 0) this.killMonster(m);
     }
     return n;
+  }
+  /** Augmente les dommages subis par les monstres dans ce cercle, sans les frapper (Bond). */
+  markVuln(x: number, y: number, r: number, n: number, t: number): number {
+    let k = 0;
+    for (const m of this.monsters) {
+      if (m.dead || m.state === 'spawn' || Math.hypot(m.x - x, m.y - y) > r + m.radius) continue;
+      m.vuln = Math.max(m.vuln, n); m.vulnT = Math.max(m.vulnT, t); k++;
+      this.emit({ k: 'status', x: m.x, y: m.y - 20, text: `Dommages subis +${n} %`, color: '#e07cf0' });
+    }
+    return k;
   }
   /** Dommages de poussée de Dofus : (niveau / 2 + Dommages Poussée + 32) × cases de poussée restantes / 4,
    *  quand la cible heurte un obstacle ou un autre monstre avant la fin de son recul. */
@@ -527,6 +552,7 @@ export class World {
   }
   killMonster(m: Monster) {
     m.dead = true; m.t = 0.6; this.kills++;
+    this.quetes?.eliteVaincu(m.id);
     for (const s of this.monsters) if (s.summoner === m && !s.dead) this.killMonster(s);   // ses invocations disparaissent avec lui
     if (m.summoner) { this.emit({ k: 'kill', x: m.x, y: m.y, radius: m.radius, monster: m.type }); return; }
     this.emit({ k: 'kill', x: m.x, y: m.y, radius: m.radius, monster: m.type });
@@ -641,6 +667,12 @@ export class World {
     return true;
   }
 
+  /** Récompense de quête ou de succès : un équipement (Commun) dans le sac, ou une ressource. */
+  donnerObjet(id: string, n = 1) {
+    const I = this.opts.items, p = this.player;
+    if (I?.equipment[id]) { for (let i = 0; i < n; i++) p.bag.push(rollItem(id, I.equipment[id], 'commun', this.rng, this.nextId++)); }
+    else { p.resources[id] = (p.resources[id] ?? 0) + n; this.emit({ k: 'lootResource', id, n }); }
+  }
   onPlayerDeath() { this.over = true; this.emit({ k: 'playerDeath', wave: this.wave }); }
 
   /** Évite que les monstres se superposent (O(n²), suffisant sous 100 monstres). */
