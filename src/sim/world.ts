@@ -117,8 +117,9 @@ export class World {
     if (open) this.buildPortes();
     // les PNJ d'abord : les groupes de monstres ne se posent pas sur eux
     if (open && opts.quetes) this.quetes = new Quetes(opts.quetes, this, opts.compte);
-    if (open) this.spawnGroups();
+    // les quêtes d'abord : le tutoriel retient les groupes du Temple jusqu'à son étape « Frapper »
     if (this.quetes) { if (opts.reprise) this.quetes.reprendre(opts.reprise); else this.quetes.demarrer(); }
+    if (open) this.spawnGroups();
   }
 
   /** Rayon autour d'une porte qui la déclenche (≈ 1,4 case) et distance d'arrivée de l'autre côté. */
@@ -207,7 +208,8 @@ export class World {
       for (let i = 0; i < sub.groupsPerMap; i++) {
         const g: MonsterGroup = { id: this.groups.length, map: m.tag, sub, members: [], timer: 0, cleared: false, x: 0, y: 0 };
         this.groups.push(g);
-        this.spawnGroup(g);
+        if (this.groupesPrets(g)) this.spawnGroup(g);
+        else g.cleared = true;   // tutoriel : apparaîtra à l'étape voulue (updateOpen)
       }
     }
     // Donjons : groupes officiels fixes, salle par salle
@@ -221,6 +223,10 @@ export class World {
         this.spawnGroup(g);
       }
     }
+  }
+  private groupesPrets(g: MonsterGroup) {
+    const sub = this.worldGrid!.mapByTag(g.map)?.sub;
+    return g.fixe != null || sub == null || !this.quetes || this.quetes.groupesPrets(sub);
   }
   private spawnGroup(g: MonsterGroup) {
     const wg = this.worldGrid!, free = wg.freeByMap.get(g.map)!, p = this.player;
@@ -263,7 +269,7 @@ export class World {
       }
       g.timer -= dt;
       // Réapparition hors de la vue du joueur
-      if (g.timer <= 0 && Math.hypot(g.x - p.x, g.y - p.y) > 900 && !(g.donjon && this.dansDonjon(g.donjon))) this.spawnGroup(g);
+      if (g.timer <= 0 && Math.hypot(g.x - p.x, g.y - p.y) > 900 && !(g.donjon && this.dansDonjon(g.donjon)) && this.groupesPrets(g)) this.spawnGroup(g);
     }
     const m = this.worldGrid!.mapAt(p.x, p.y), sub = m ? open.subareas[String(m.sub)] ?? null : null;
     if (sub && sub !== this.area) { this.area = sub; this.emit({ k: 'enterArea', name: sub.name, level: sub.level }); }

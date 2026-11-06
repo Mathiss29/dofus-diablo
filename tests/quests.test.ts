@@ -48,14 +48,18 @@ describe('quêtes et succès', () => {
       const t2 = w.openestCellOf('temple_2'); p.x = t2.x; p.y = t2.y;
       w.step(STEP, NO_INPUT);
       expect(etape(), classe).toBe(1);
-      // tout le tutoriel se fait dans le Temple : esprits de feu dans les salles 2 et 3, pas dans la salle des Dofus
-      const temple = w.monsters.filter(x => w.worldGrid!.mapAt(x.x, x.y)?.sub === 446).map(x => w.worldGrid!.mapAt(x.x, x.y)!.tag);
-      expect(new Set(temple)).toEqual(new Set(['temple_2', 'temple_3']));
+      // tout le tutoriel se fait dans le Temple ; pas de monstres dès l'entrée dans la salle
+      const temple = () => w.monsters.filter(x => !x.dead && w.worldGrid!.mapAt(x.x, x.y)?.sub === 446);
+      expect(temple().length).toBe(0);
       const g0 = q.pnj('ganymede_temple')!;
       expect(w.worldGrid!.mapAt(g0.x, g0.y)?.tag).toBe('temple_2');
       p.x = g0.x + 20; p.y = g0.y;
       w.step(STEP, NO_INPUT);
       expect(etape(), classe).toBe(2);
+      // étape « Frapper » : les esprits de feu arrivent dans les salles 2 et 3 (pas dans la salle des Dofus), loin du perso
+      w.step(STEP, NO_INPUT);
+      expect(new Set(temple().map(x => w.worldGrid!.mapAt(x.x, x.y)!.tag))).toEqual(new Set(['temple_2', 'temple_3']));
+      expect(Math.min(...temple().map(x => Math.hypot(x.x - p.x, x.y - p.y)))).toBeGreaterThan(250);
       const m = w.monsters.find(x => w.worldGrid!.mapAt(x.x, x.y)?.sub === 446)!;
       const tuer = (n: number) => { for (let i = 0; i < n; i++) w.emit({ k: 'kill', x: m.x, y: m.y, radius: 10, monster: m.type }); };
       tuer(1); expect(etape()).toBe(3);
@@ -70,12 +74,13 @@ describe('quêtes et succès', () => {
       expect(it, classe).toBeDefined();
       expect(p.equip(it.uid)).toBe(true);
       w.step(STEP, NO_INPUT); expect(etape()).toBe(9);
-      // la sortie du Temple mène à la Route des âmes : fin du tutoriel
-      const sortie3 = w.portes.find(po => po.ends[0].tag === 'temple_3')!.ends[0];
-      expect(q.cible()).not.toBeNull();
-      const r = w.openestCellOf('0_-3'); p.x = r.x; p.y = r.y;
-      w.step(STEP, NO_INPUT);
-      expect(sortie3).toBeDefined();
+      // pas de porte dans le vide : on parle à Ganymède, qui envoie le perso au village, sur le cercle de pierre de [-2,-3]
+      expect(q.finies.has('reponses')).toBe(false);
+      const gt = q.pnj('ganymede_temple')!;
+      p.x = gt.x + 40; p.y = gt.y;
+      w.step(STEP, { ...NO_INPUT, talk: 'ganymede_temple', dest: { x: gt.x, y: gt.y } });
+      for (let i = 0; i < 5; i++) w.step(STEP, NO_INPUT);
+      expect(w.worldGrid!.mapAt(p.x, p.y)?.tag).toBe('-2_-3');
       expect(q.finies.has('reponses')).toBe(true);
       expect(p.level).toBeGreaterThanOrEqual(2);
       expect(q.enCours.map(c => c.id)).toEqual(['village']);
@@ -86,15 +91,13 @@ describe('quêtes et succès', () => {
     }
   });
 
-  it('le Temple Céleste mène à la Route des âmes par ses passages', () => {
+  it('le Temple Céleste : 3 salles reliées, sans porte dans le vide vers la Route des âmes', () => {
     const w = newWorld(), wg = w.worldGrid!;
     const tags = (n: number) => w.portes[n].ends.map(e => e.tag);
     const ids = w.portes.map((_, i) => tags(i).join('>'));
     expect(ids).toContain('temple_1>temple_2');
     expect(ids).toContain('temple_2>temple_3');
-    const sortie = w.portes.find(po => po.ends[0].tag === 'temple_3')!;
-    expect(sortie.ends[1].tag).toBe('0_-3');
-    expect(sortie.sens).toBe(true);
+    expect(ids.some(x => x.includes('0_-3') && x.includes('temple'))).toBe(false);
     expect(wg.freeByMap.get('temple_1')!.length).toBeGreaterThan(100);
   });
 

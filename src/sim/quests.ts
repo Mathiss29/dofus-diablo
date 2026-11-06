@@ -73,11 +73,17 @@ export interface QueteDef {
   etapes: EtapeDef[] | Record<string, EtapeDef[]>;
   recompense: RecompenseDef;
   /** Options du tutoriel : PV bloqués à 1 (6A), groupes réduits dans ces sous-zones (5A), sautée si le compte a déjà un perso (7B). */
-  options?: { immortel?: boolean; groupes?: { sousZones: number[]; taille: [number, number] }; sauterSiCompte?: boolean; passable?: boolean };
+  /** groupes.etape : les groupes de ces sous-zones n'apparaissent qu'à partir de cette étape (tutoriel : pas de monstres dès l'entrée dans la salle). */
+  options?: { immortel?: boolean; groupes?: { sousZones: number[]; taille: [number, number]; etape?: number }; sauterSiCompte?: boolean; passable?: boolean };
   /** Démarre dès le début de la partie (le tutoriel). */
   auDepart?: boolean;
   /** Carte (tag de monde.json) où le perso apparaît quand la quête démarre au départ (tutoriel : le Temple Céleste). */
   depart?: string;
+  /** Carte où le PNJ envoie le perso à la fin (ou quand on passe la quête) s'il est encore dans la sous-zone du départ :
+   *  Ganymède fait descendre du Temple Céleste sur la Route des âmes, comme dans Dofus (pas de porte dans le vide). */
+  arrivee?: string;
+  /** Case Dofus (0-559) d'arrivée sur cette carte ; sans : le coin le plus dégagé. */
+  arriveeCase?: number;
   /** Sans PNJ : démarre seule en entrant dans cette sous-zone (ex. « Mort au rat ! » dans la Taverne). */
   zone?: number;
   /** Remerciement du PNJ quand on rend la quête (Dialogues 6B) ; sans : une ligne commune. */
@@ -421,6 +427,12 @@ export class Quetes {
     for (const o of this.etapes(id).flatMap(e => e.objectifs)) if (o.t === 'ramasser') delete this.objets[o.objet];
     if (this.suivie === id) this.suivie = null;
     w.emit({ k: 'queteFin', id, sautee });
+    const wg = w.worldGrid, ici = wg?.mapAt(p.x, p.y), dep = q.depart ? wg?.mapByTag(q.depart) : null;
+    if (q.arrivee && wg?.mapByTag(q.arrivee) && ici && dep && ici.sub === dep.sub) {
+      const z = q.arriveeCase != null ? wg.nearestFree(...xy(wg.cellToWorld(wg.cellOf(q.arrivee, q.arriveeCase))), wg.freeByMap.get(q.arrivee)) : w.openestCellOf(q.arrivee);
+      p.x = z.x; p.y = z.y; p.kx = p.ky = 0; p.z = 0; p.stopMove();
+      w.emit({ k: 'portal', nom: this.def(id).nom });
+    }
     if (q.suivante) this.prendre(q.suivante);
     this.suivie ??= this.enCours[0]?.id ?? null;
     this.verifierSucces();
@@ -431,6 +443,11 @@ export class Quetes {
   /** Option du tutoriel : PV bloqués à 1. */
   get immortel() { return this.enCours.some(c => this.def(c.id).options?.immortel); }
   /** Option du tutoriel : taille des groupes dans une sous-zone pendant la quête. */
+  /** Faux tant qu'une quête en cours retient les groupes de cette sous-zone (étape pas encore atteinte). */
+  groupesPrets(sub: number): boolean {
+    for (const c of this.enCours) { const g = this.def(c.id).options?.groupes; if (g?.etape != null && g.sousZones.includes(sub) && c.etape < g.etape) return false; }
+    return true;
+  }
   tailleGroupe(sub: number): [number, number] | null {
     for (const c of this.enCours) { const g = this.def(c.id).options?.groupes; if (g?.sousZones.includes(sub)) return g.taille; }
     return null;

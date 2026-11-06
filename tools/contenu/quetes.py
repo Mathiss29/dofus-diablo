@@ -47,15 +47,15 @@ def tuto(classe, frappe, sort1, sorts, jauge, mobilite, arme):
        'objectifs': [{'t': 'utiliser', 'quoi': 'potion', 'texte': 'Boire une potion (E) une fois blessé'}]},
       {'nom': 'Premières armes', 'pnj': 'ganymede_temple', 'bulle': arme[1], 'donner': {classe.lower().replace('â', 'a'): arme[0]},
        'objectifs': [{'t': 'equiper', 'objet': arme[0], 'texte': 'Équiper ton arme (I)'}]},
-      {'nom': 'Descendre sur Incarnam', 'pnj': 'ganymede_temple', 'bulle': "Tu es prêt. La sortie du Temple mène à la Route des âmes : son Zaap sera ton point de retour si tu tombes.",
-       'objectifs': [aller('Sortir du Temple vers la Route des âmes', carte='0_-3')]},
+      {'nom': 'Descendre sur Incarnam', 'pnj': 'ganymede_temple', 'bulle': "Tu es prêt. Parle-moi et je t'envoie au village, près de Lykhen. Le Zaap de la Route des âmes sera ton point de retour si tu tombes.",
+       'objectifs': [parler('Parler à Ganymède pour descendre au village', 'ganymede_temple')]},
     ]
 
 Q = {}
 # --- Fil principal (Ganymède -> Lykhen -> Fécaline) ---------------------------------------------------------
-Q['reponses'] = {'nom': 'Réponses à tout', 'type': 'tutoriel', 'pnj': 'ganymede', 'niveau': 1, 'auDepart': True, 'depart': 'temple_1', 'suivante': 'village',
+Q['reponses'] = {'nom': 'Réponses à tout', 'type': 'tutoriel', 'pnj': 'ganymede', 'niveau': 1, 'auDepart': True, 'depart': 'temple_1', 'arrivee': '-2_-3', 'arriveeCase': 355, 'suivante': 'village',
   'texte': "Avant de quitter le temple céleste, prenez le temps de contempler les Dofus et le Monde des Douze... et n'oubliez pas de saluer votre dieu au passage ! Ganymède vous apprend à vous battre avant de vous laisser descendre sur l'île.",
-  'options': {'passable': True, 'sauterSiCompte': True, 'immortel': True, 'groupes': {'sousZones': [SZ['temple']], 'taille': [1, 3]}},
+  'options': {'passable': True, 'sauterSiCompte': True, 'immortel': True, 'groupes': {'sousZones': [SZ['temple']], 'taille': [1, 3], 'etape': 2}},
   # Tutoriel (maquette « Tutoriel d'Incarnam », tranchée le 2026-11-06) : une trame par classe (9B), une action par étape,
   # halo sur la barre + bulle de Ganymède (3A+3B). Les indices des étapes « Premiers pas » (0) et « Premières armes » (8)
   # servent au succès « Premier temps » : garder les deux trames de même longueur.
