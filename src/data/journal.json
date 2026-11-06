@@ -56,7 +56,8 @@
           "Astrub s'ouvre : 359 cartes, les monstres officiels de chaque sous-zone, et le portail d'Incarnam qui y descend.",
           "Trois donjons d'Astrub : la Grange du Tournesol Affamé, le Château Ensablé et la Cour du Bouftou Royal. Chacun demande sa clé officielle, prise à l'entrée (Emp en vend).",
           "Les monstres d'Astrub lâchent leurs ressources officielles : pétales, laines, cornes… de quoi fabriquer les clés.",
-          "Cuirasse Laineuse, Rinçage, Grognement et Hyperleukocytine ont enfin leurs effets officiels."
+          "Cuirasse Laineuse, Rinçage, Grognement et Hyperleukocytine ont enfin leurs effets officiels.",
+          "Un gardien devant chaque donjon : Mawy Ingalsse à la Grange, le Capitaine Igloute au Château Ensablé, Rotabla à la Cour du Bouftou Royal et Klasmor à la Crypte. Ils te font entrer avec ta clé, montrent le boss et son butin, et se souviennent de tes victoires."
         ],
         "Combat": [
           "Pas Chassé du Crâ rééquilibré : il ne s'enchaîne plus en boucle, relance officielle de 9 s (6 s dès le niveau 72).",
@@ -79,7 +80,9 @@
           "Château Ensablé : plus de grandes taches blanches sur la mer, et le bord du sable est arrondi au lieu d'être en dents de scie.",
           "Cité d'Astrub et Tainéla : plus de maisons posées deux fois côte à côte ni de grands rectangles clairs, et le bord du monde se fond dans la brume au lieu de s'arrêter en escalier.",
           "Le décor et les ressources ne tremblent plus quand la caméra te suit.",
-          "Longues balades dans Astrub : les dessins des monstres qu'on ne croise plus sont libérés, le jeu ne s'alourdit plus au fil des cartes."
+          "Longues balades dans Astrub : les dessins des monstres qu'on ne croise plus sont libérés, le jeu ne s'alourdit plus au fil des cartes.",
+          "Cliquer sur la porte d'un donjon ne brûle plus la clé par erreur : on entre en choisissant « Entrer » chez le gardien.",
+          "Au nord d'Astrub (Tainéla, Cour du Bouftou Royal, Grange), le sol passait par-dessus tout : perso, PNJ, maisons et arbres réapparaissent."
         ],
         "En coulisses": [
           "Fenêtres refaites avec les vraies images de Dofus 3 et ses polices (Lexend, Rowdies).",
