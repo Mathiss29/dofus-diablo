@@ -161,3 +161,20 @@ export const LOOKS: Record<string, Look> = {
   percy_klop: { atlas: 'percy_klop', scale: 0.95, map: MONSTER_MAP(7 / 23, 'AnimAttaque0', { 0: 7 / 23, 1: 7 / 22 }), height: 133, multi: true },
   rat_soiffe: { atlas: 'rat_soiffe', scale: 0.7, map: MONSTER_MAP(5 / 18, 'AnimAttaque0', { 0: 5 / 18, 1: 3 / 21 }), height: 87, multi: true },
 };
+
+/** PNJ dans le monde (planches tools/extraction/monster_planche.py, PNJ=1, SCALE = 1,32 x échelle officielle du look).
+ *  Dofus montre un PNJ immobile (AnimStatique, une seule image) qui joue de temps en temps une de ses animations « fun »
+ *  (npcsdataroot.animFunList : nom et poids du tirage). `scale` = échelle d'affichage (0,82 comme le perso : même netteté).
+ *  Ganymède n'a que l'orientation 3, animée en boucle (60 images). */
+export interface PnjLook { scale: number; anim: string; boucle?: number; fun?: [string, number][] }
+export const PNJ_LOOKS: Record<string, PnjLook> = {
+  ganymede: { scale: 0.82, anim: 'AnimStatique_3', boucle: 60 },
+  ternette: { scale: 0.82, anim: 'AnimStatique_1', fun: [['AnimAttaque0_1', 8], ['AnimAttaque1_1', 6], ['AnimAttaque2_1', 4]] },
+  lykhen: { scale: 0.82, anim: 'AnimStatique_1', fun: [['AnimAttaque0_1', 9], ['AnimAttaque1_1', 7], ['AnimAttaque2_1', 5]] },
+  fecaline: { scale: 0.82, anim: 'AnimStatique_1' },
+  berb_nhin: { scale: 0.82, anim: 'AnimStatique_1', fun: [['AnimAttaque0_1', 9], ['AnimAttaque1_1', 5], ['AnimAttaque2_1', 3]] },
+  capitaine: { scale: 0.82, anim: 'AnimStatique_1', fun: [['AnimAttaque0_1', 9], ['AnimAttaque1_1', 7], ['AnimAttaque2_1', 5], ['AnimAttaque3_1', 3]] },
+  klasmor: { scale: 0.82, anim: 'AnimStatique_1', fun: [['AnimAttaque0_1', 9], ['AnimAttaque1_1', 7], ['AnimAttaque2_1', 4]] },
+  anta_brok: { scale: 0.82, anim: 'AnimStatique_1', fun: [['AnimAttaque0_1', 9], ['AnimAttaque1_1', 7], ['AnimAttaque2_1', 7], ['AnimAttaque3_1', 4]] },
+  marylork: { scale: 0.82, anim: 'AnimStatique_1', fun: [['AnimAttaque0_1', 3], ['AnimAttaque1_1', 1]] },
+};

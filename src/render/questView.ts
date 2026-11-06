@@ -4,13 +4,12 @@ import { ISO } from '../sim/iso';
 import type { QueteType, Quetes } from '../sim/quests';
 import type { World } from '../sim/world';
 import type { WorldView } from './worldView';
+import { PNJ_LOOKS, type PnjLook } from './looks';
+import { EntityView } from './entityView';
 
 const SP = 'assets/sprites', QI = 'assets/ui/quetes';
-/** Échelle et animation de repos des PNJ (planches tools/extraction/monster_planche.py, PNJ=1). Ganymède est rendu à
- *  l'échelle 1 (gros squelette, réduit à 0,68 pour rester à côté du perso) et n'a que l'orientation 3. */
-const PNJ_LOOK: Record<string, { scale: number; anim: string; frames?: number }> = {
-  ganymede: { scale: 0.68, anim: 'AnimStatique_3', frames: 60 },
-};
+/** Animations « fun » des PNJ : une toutes les FUN_PAUSE secondes environ (tirage au poids officiel). */
+const FUN_PAUSE: [number, number] = [5, 12], FPS = 25;
 /** Icônes officielles en couleur au-dessus des PNJ (uidarkstone_all) : quête à donner (!) ou à rendre (?). */
 export const QUEST_ICON: Record<QueteType, [string, string]> = {
   tutoriel: ['questInitiation', 'questObjective'], principale: ['questPrincipale', 'questPrincipaleObjective'],
@@ -18,7 +17,10 @@ export const QUEST_ICON: Record<QueteType, [string, string]> = {
 };
 const STYLE = { fontFamily: 'Trebuchet MS, Verdana, sans-serif' };
 
-interface PnjSprite { id: string; img: Phaser.GameObjects.Sprite; name: Phaser.GameObjects.Text; icon: Phaser.GameObjects.Image; x: number; y: number; tag: string; h: number }
+interface PnjSprite {
+  id: string; img: Phaser.GameObjects.Sprite; name: Phaser.GameObjects.Text; icon: Phaser.GameObjects.Image; shadow: Phaser.GameObjects.Graphics;
+  x: number; y: number; tag: string; h: number; L: PnjLook; key: string; prochainFun: number;
+}
 
 /** PNJ des quêtes dans le monde : sprite officiel, nom, icône de quête au-dessus, bulle de dialogue (5A).
  *  Lit world.quetes ; ne modifie rien (le clic passe par l'entrée du joueur : input.talk). */
@@ -39,13 +41,19 @@ export class QuestView {
     for (const p of q.pnjs) {
       const sp = p.def.sprite ?? p.id, key = `pnj_${sp}`;
       if (!scene.textures.exists(key)) continue;
-      const L = PNJ_LOOK[sp] ?? { scale: 0.62, anim: 'AnimStatique_1' };
+      const L = PNJ_LOOKS[sp] ?? { scale: 0.82, anim: 'AnimStatique_1' };
       const s = ISO.toScreen(p.x, p.y);
       const img = scene.add.sprite(s.x, s.y, key, `${L.anim}_0`).setScale(L.scale);
-      if (L.frames && !scene.anims.exists(`${key}_idle`)) {
-        scene.anims.create({ key: `${key}_idle`, frames: Array.from({ length: L.frames }, (_, i) => ({ key, frame: `${L.anim}_${i}` })), frameRate: 24, repeat: -1 });
+      const tex = scene.textures.get(key), nb = (a: string) => tex.getFrameNames().filter(f => f.startsWith(a + '_')).length;
+      if (L.boucle && !scene.anims.exists(`${key}_idle`)) {
+        scene.anims.create({ key: `${key}_idle`, frames: Array.from({ length: L.boucle }, (_, i) => ({ key, frame: `${L.anim}_${i}` })), frameRate: 24, repeat: -1 });
       }
-      if (L.frames) img.play(`${key}_idle`);
+      if (L.boucle) img.play(`${key}_idle`);
+      for (const [a] of L.fun ?? []) if (!scene.anims.exists(`${key}_${a}`) && nb(a)) {
+        scene.anims.create({ key: `${key}_${a}`, frames: Array.from({ length: nb(a) }, (_, i) => ({ key, frame: `${a}_${i}` })), frameRate: FPS });
+      }
+      // la fin d'une animation fun ramène la pose de repos
+      img.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => img.setFrame(`${L.anim}_0`));
       // pivot de la planche = pieds du perso (origin de trim_pack)
       const meta = (scene.textures.get(key).customData as { meta?: { cell?: number[]; origin?: number[] } } | undefined)?.meta;
       if (meta?.cell && meta.origin) img.setOrigin(meta.origin[0] / meta.cell[0], meta.origin[1] / meta.cell[1]);
@@ -54,7 +62,9 @@ export class QuestView {
       const h = ((meta?.origin?.[1] ?? img.frame.realHeight) - top) * L.scale;
       const name = scene.add.text(s.x, s.y, p.def.nom, { ...STYLE, fontSize: '13px', fontStyle: 'bold', color: '#f1ecd8', stroke: '#14130f', strokeThickness: 3 }).setOrigin(0.5, 1);
       const icon = scene.add.image(s.x, s.y, 'qi_quest').setVisible(false);
-      this.pnjs.push({ id: p.id, img, name, icon, x: p.x, y: p.y, tag: p.tag, h: Math.min(h, 230) });
+      const shadow = scene.add.graphics();   // même ombre au sol que le perso et les monstres (EntityView)
+      this.pnjs.push({ id: p.id, img, name, icon, shadow, x: p.x, y: p.y, tag: p.tag, h: Math.min(h, 230), L, key,
+        prochainFun: world.time + Phaser.Math.FloatBetween(1, FUN_PAUSE[1]) });
     }
   }
 
@@ -95,6 +105,16 @@ export class QuestView {
       const on = !this.wv || this.wv.isReady(p.tag);
       const s = ISO.toScreen(p.x, p.y);
       p.img.setVisible(on).setPosition(s.x, s.y).setDepth(s.y);
+      if (EntityView.ambiance !== 0xffffff) p.img.setTint(EntityView.ambiance); else p.img.clearTint();   // lumière du jour/soir/nuit
+      const w = Math.min(70, Math.max(34, p.img.frame.realWidth * p.L.scale * 0.7));
+      p.shadow.clear().setVisible(on).setDepth(s.y - 1).fillStyle(0x000000, 0.28).fillEllipse(s.x, s.y, w, w * 0.45);
+      // de temps en temps, une animation « fun » officielle tirée au poids (comme dans Dofus)
+      if (on && p.L.fun?.length && t >= p.prochainFun) {
+        p.prochainFun = t + Phaser.Math.FloatBetween(...FUN_PAUSE);
+        const tot = p.L.fun.reduce((n, [, w]) => n + w, 0); let r = Math.random() * tot;
+        const pick = p.L.fun.find(([, w]) => (r -= w) < 0) ?? p.L.fun[0];
+        if (this.scene.anims.exists(`${p.key}_${pick[0]}`) && !p.img.anims.isPlaying) p.img.play(`${p.key}_${pick[0]}`);
+      }
       p.name.setVisible(on).setPosition(s.x, s.y - p.h - 4).setDepth(1e6 - 2);
       const ic = q.icone(p.id) ?? (q.attendParler(p.id) ? { quete: q.attendParler(p.id)!, rendre: true } : null);
       if (ic && on) {

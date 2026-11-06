@@ -14,7 +14,7 @@ export interface Reglages {
   saturation: number;
   /** Chaleur de la lumière : 0 = neutre, + = plus chaud, - = plus froid. */
   chaleur: number;
-  /** Zoom de la caméra au lancement (6B : plus large que l'ancien 1). */
+  /** Zoom de la caméra au lancement (6B : plus large que l'ancien 1 ; 0,8 depuis la maquette PNJ 5B du 2026-11-06). */
   zoom: number;
   /** Volume général (0 à 1), puis volume de chaque famille de sons (maquette Son, 8A ; départ 8D : musique 50 %, effets 70 %). */
   volume: number;
@@ -34,11 +34,15 @@ export interface Reglages {
   /** Option 5B : sur un monstre hors de portée, le perso s'approche avant de lancer. */
   approche: boolean;
 }
-export const REGLAGES_DEFAUT: Reglages = { heure: 'auto', lumieres: 1, saturation: 1, chaleur: 0, zoom: 0.62, volume: 1, volMusique: 0.5, volEffets: 0.7, volAmbiance: 0.6, volInterface: 0.7, muet: false, vent: true, eau: true, particules: true, lancer: 'relache', approche: false };
+export const REGLAGES_DEFAUT: Reglages = { heure: 'auto', lumieres: 1, saturation: 1, chaleur: 0, zoom: 0.8, volume: 1, volMusique: 0.5, volEffets: 0.7, volAmbiance: 0.6, volInterface: 0.7, muet: false, vent: true, eau: true, particules: true, lancer: 'relache', approche: false };
 const CLE = 'diablofus.reglages';
 
 export function chargerReglages(): Reglages {
-  try { return { ...REGLAGES_DEFAUT, ...JSON.parse(localStorage.getItem(CLE) ?? '{}') }; } catch { return { ...REGLAGES_DEFAUT }; }
+  try {
+    const r: Reglages = { ...REGLAGES_DEFAUT, ...JSON.parse(localStorage.getItem(CLE) ?? '{}') };
+    if (r.zoom === 0.62) r.zoom = REGLAGES_DEFAUT.zoom;   // ancien zoom de départ gardé dans le navigateur : passe au nouveau (PNJ 5B)
+    return r;
+  } catch { return { ...REGLAGES_DEFAUT }; }
 }
 export function sauverReglages(r: Reglages) {
   try { localStorage.setItem(CLE, JSON.stringify(r)); } catch { /* navigateur sans stockage : réglages pour cette partie seulement */ }

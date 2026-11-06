@@ -19,18 +19,23 @@ def main(bone, name, bones, out='public/assets/sprites', atks='0,1'):
     import math   # certains squelettes ont des sommets NaN / infinis : JSON invalide pour le rendu
     fix = lambda v: [fix(x) for x in v] if isinstance(v, list) else ({k: fix(x) for k, x in v.items()} if isinstance(v, dict) else (0 if isinstance(v, float) and not math.isfinite(v) else v))
     sc = fix(sc); json.dump(sc, open(b + '/scene.json', 'w'))
-    # PNJ=1 : animation de repos complète (les PNJ ne courent pas), sinon une seule frame de repos
-    want = sorted(a for a in A if a.startswith('AnimStatique_')) if os.environ.get('PNJ') else ['AnimStatique_1:1', 'AnimStatique_5:1', 'AnimCourse_1', 'AnimCourse_5']
+    # PNJ=1 : repos complet + animations « fun » de face (AnimAttaque*_1, que le jeu joue au hasard selon npcsdataroot.animFunList),
+    # pas de course ni de coup reçu ; sinon une seule frame de repos
+    pnj = bool(os.environ.get('PNJ'))
+    want = sorted(a for a in A if a.startswith('AnimStatique_') or (a.startswith('AnimAttaque') and a.endswith('_1'))) if pnj \
+        else ['AnimStatique_1:1', 'AnimStatique_5:1', 'AnimCourse_1', 'AnimCourse_5']
     shots = {}
-    for i in atks.split(','):
+    for i in ([] if pnj else atks.split(',')):
         if f'AnimAttaque{i}_1' in A:
             want += [f'AnimAttaque{i}_1', f'AnimAttaque{i}_5']
             n = len(A[f'AnimAttaque{i}_1']); s = sc['shots'].get(f'AnimAttaque{i}_1', n // 2)
             shots[i] = (s, n)
-    want += [a for a in ('AnimHit_1', 'AnimHit_5', 'AnimMort_1', 'AnimMort_5') if a in A]
+    if not pnj: want += [a for a in ('AnimHit_1', 'AnimHit_5', 'AnimMort_1', 'AnimMort_5') if a in A]
     want = [w for w in want if w.split(':')[0] in A]
     raw = os.path.join(tmp, 'raw')
-    run('node', os.path.join(HERE, 'render.cjs'), b + '/scene.json', tex, raw, ','.join(want), '1', SCALE, env={**os.environ, 'BOX': os.environ.get('BOX', 'auto')})
+    run('node', os.path.join(HERE, 'render.cjs'), b + '/scene.json', tex, raw, ','.join(want), '1', SCALE, env={**os.environ, 'BOX': os.environ.get('BOX', 'auto'), 'PAD': str(3 * int(os.environ.get('CONTOUR') or 0) / float(SCALE))})
+    # CONTOUR=n : trait sombre de n pixels autour du perso, comme Dofus 3 (fait pour les PNJ)
+    if os.environ.get('CONTOUR'): run(sys.executable, os.path.join(HERE, 'contour.py'), raw + '.png', os.environ['CONTOUR'])
     os.makedirs(out, exist_ok=True)
     run(sys.executable, os.path.join(HERE, 'trim_pack.py'), raw, os.path.join(out, name), '2048', '4096')   # pages de 4096 au plus (taille max des textures)
     png = os.path.join(out, name + '.png')
