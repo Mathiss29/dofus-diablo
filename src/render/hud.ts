@@ -122,7 +122,7 @@ export class Hud {
   constructor(private scene: Phaser.Scene, private world: World, private perso?: { nom: string; sexe: 'm' | 'f' }) {
     // Mini-carte façon Dofus 3 : une petite caméra qui filme le vrai décor autour du perso (vue de dessus réduite)
     if (world.worldGrid) {
-      this.miniCam = scene.cameras.add(0, 0, 210, 150).setName('mini').setZoom(0.16).setBackgroundColor('#0d0c0a');
+      this.miniCam = scene.cameras.add(0, 0, 210, 150).setName('mini').setZoom(0.16).setBackgroundColor('#0d0c0a').setRoundPixels(false);
       scene.cameras.cameras.forEach(c => { if (c.name === 'ui') { scene.cameras.cameras.splice(scene.cameras.cameras.indexOf(c), 1); scene.cameras.cameras.push(c); } });
     }
     // L'interface est dessinée par la caméra « ui » (sans zoom) et ignorée par la caméra du jeu (zoomable)
