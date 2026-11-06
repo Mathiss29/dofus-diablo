@@ -127,6 +127,8 @@ export interface MonsterDef {
   caracs?: Partial<Record<'force' | 'intelligence' | 'chance' | 'agilite' | 'sagesse' | 'esquivePA' | 'esquivePM' | 'tacle' | 'fuite' | 'retraitPA', number>>;
   /** Les vrais sorts du monstre dans Dofus 3 (tools/extraction/monster_spells.py). Sans sorts : simple charge au corps à corps. */
   spells?: MonsterSpell[];
+  /** Boss : id du sort officiel joué en attaque signature (maquette « Danger » 4A : zone agrandie, long télégraphe, gros dégâts). */
+  signature?: number;
 }
 
 /** Effet d'un sort de monstre, tel que dans les données de Dofus 3 (n < 0 = retrait, dur en tours). */
@@ -137,7 +139,13 @@ export type MonsterEffect =
   | { k: 'soin'; min: number; max: number }
   /** Dommages en plus (pct : en %) pendant dur tours, ex. Frénésie ; invocation d'un monstre, ex. Appel de Kardorib. */
   | { k: 'dommages'; n: number; pct?: boolean; dur: number }
-  | { k: 'invoque'; monster: string };
+  | { k: 'invoque'; monster: string }
+  /** Dommages subis × n % pendant dur tours (Cuirasse Laineuse : 70 sur ses alliés ; Grognement : 120 sur le joueur). */
+  | { k: 'subis'; n: number; dur: number }
+  /** Durée des effets -n tours (Rinçage) : raccourcit les bonus et malus en cours. */
+  | { k: 'desenvoute'; n: number }
+  /** État officiel (Pacifiste : ne peut plus infliger de dommages) sur tout ce qui est à r cases. */
+  | { k: 'etat'; etat: 'pacifiste'; dur: number; r: number };
 /** Sort officiel d'un monstre : coût, portée en cases (po), relance en tours, animation AnimAttaque<anim>,
  *  zone (P1 = une case, X1 = croix autour), allies = vise ses alliés, missile / gfx = effets visuels officiels. */
 export interface MonsterSpell {
