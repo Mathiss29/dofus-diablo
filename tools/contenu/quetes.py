@@ -18,11 +18,41 @@ PNJ = {
   'ternette': {'nom': 'Ternette Nhin', 'dofusId': 2905, 'carte': '-1_-3', 'phrase': 'Zaaps, nuages, vestiges des dieux : Incarnam est pleine de secrets pour qui sait regarder.'},
   'berb_nhin': {'nom': 'Berb Nhin', 'dofusId': 2899, 'carte': '0_-3', 'phrase': 'Un bon artisan fait un bon aventurier. Reviens me voir quand tu voudras apprendre un métier.'},
   'capitaine': {'nom': 'Capitaine des Kerubims', 'dofusId': 2880, 'carte': 'milice_rdc', 'case': 370, 'phrase': "La Milice garde Incarnam. Si ta lame est solide, j'ai du travail pour toi."},   # sa carte officielle 153356294 : rez-de-chaussée de la Tour de la Milice
-  'klasmor': {'nom': 'Klasmor le fossoyeur', 'dofusId': 2907, 'carte': '5_-1', 'case': 358, 'phrase': 'Les morts dorment mal sous le cimetière. Je ne descendrais pas dans la crypte sans raison.'},
+  # Klasmor garde aussi l'entrée de la Crypte (maquette Gardiens 4A ; dans Dofus 3, c'est lui qui demande la clé). Chez nous, pas de clé.
+  'klasmor': {'nom': 'Klasmor le fossoyeur', 'dofusId': 2907, 'carte': '5_-1', 'case': 358,
+    'phrase': "Kardorim dort là-dessous. Enfin, il ne dort pas vraiment. Il attend. Et il n'aime pas qu'on le réveille, alors vas-y doucement.",
+    'discussion': [{'reponse': 'Il faut une clé ?', 'texte': "Pas ici. La crypte est ouverte à tous : on n'a jamais eu besoin de serrure pour garder les vivants dehors."}],
+    'gardien': {'donjon': 'Crypte de Kardorim', 'approche': 'Psst. La crypte, c\'est par ici. Si tu y tiens.',
+      'victoire': "Kardorim, à terre ? Je vais devoir creuser un trou de plus. Ça ne me dérange pas : c'est mon métier.",
+      'mort': "Remonté tout seul ? Tu as de la chance. D'habitude, c'est moi qui remonte les gens. Avec une pelle."}},
   'anta_brok': {'nom': 'Anta Brok', 'dofusId': 2886, 'carte': '1_-2', 'case': 389, 'phrase': 'Les esprits des Champs sont nerveux ces temps-ci. Garde ton arme à portée de main.'},
   'marylork': {'nom': 'Marylork', 'dofusId': 2888, 'carte': '3_-5', 'phrase': "D'ici, on voit toute l'île. Le vent porte loin, au-dessus des nuages."},
   # Astrub (0.2b) : Emp, le Méryde du Recyclage, à côté du Zaap d'Astrub (maquette 0.2, 7A). Phrase, discussion et adieu = textes
   # officiels du PNJ 1640 (dialogMessages / dialogReplies) ; services = fenêtre Recycler / Boutique de l'affichage.
+  # Gardiens des donjons d'Astrub (maquette Gardiens, 2026-11-06 : 1A 2A 3A) : PNJ officiels de ces donjons dans Dofus 3
+  # (Mawy Ingalsse ouvre « sa » grange, Capitaine Igloute a affronté Mob l'Éponge, Rotabla pleure ses Bouftous), répliques inédites.
+  # Sans case : ils se postent à quelques pas de la porte d'entrée (Quetes.posteDeGarde).
+  'mawy': {'nom': 'Mawy Ingalsse', 'dofusId': 780, 'zone': 'astrub', 'carte': '7_-24',
+    'phrase': "C'est ma grange ! Enfin, c'était. Maintenant c'est la grange d'un tournesol qui mange tout ce qui bouge. Tu as une clé ? Moi je reste dehors.",
+    'discussion': [{'reponse': 'Pourquoi tu ne la reprends pas toi-même ?', 'texte': "Mon oncle a combattu des Wabbits géants. Moi, j'ai hérité de sa moustache, pas de son courage. Heureusement, la moustache, je ne l'ai pas gardée."}],
+    'gardien': {'donjon': 'Grange du Tournesol Affamé', 'approche': "Hé ! Tu n'aurais pas une Clef des Champs ?",
+      'victoire': "Il est tombé ? Le tournesol ? Je vais enfin pouvoir ranger mon foin ! Bon, je vais d'abord compter les poules.",
+      'mort': "Il t'a recraché ? C'est bon signe : il ne t'a pas trouvé à son goût. Retente ta chance.",
+      'sansCle': "Sans Clef des Champs, la porte ne bouge pas. {vendeur} en vend : je te l'ai marqué sur ta carte (M)."}},
+  'igloute': {'nom': 'Capitaine Igloute', 'dofusId': 798, 'zone': 'astrub', 'carte': '13_-28',
+    'phrase': "Mob l'Éponge ? Je l'ai déjà battu. Deux fois. Enfin, une fois et demie. La demie, c'est quand il m'a absorbé.",
+    'discussion': [{'reponse': 'Tu viens avec moi ?', 'texte': "J'ai encore du sable dans des endroits que je ne te décrirai pas. Vas-y, toi. Je surveille la marée."}],
+    'gardien': {'donjon': 'Château Ensablé', 'approche': 'Moussaillon ! Le château, c\'est par là. Attention à la marée.',
+      'victoire': "Essoré, le Mob ? Bravo, moussaillon. Je note dans mon journal de bord que je t'ai beaucoup aidé.",
+      'mort': "Absorbé, toi aussi ? On en ressort tout fripé, je sais. Bois un coup d'eau douce et retournes-y.",
+      'sansCle': "Pas de Clef du Château Ensablé, pas de château. {vendeur} en vend : je te l'ai marqué sur ta carte (M)."}},
+  'rotabla': {'nom': 'Rotabla le berger', 'dofusId': 173, 'zone': 'astrub', 'carte': '2_-34',
+    'phrase': "Mes Bouftous étaient si doux… Et puis un jour, le plus gros s'est mis une couronne sur la tête. Depuis, ils ne m'obéissent plus qu'à lui.",
+    'discussion': [{'reponse': 'Je dois tous les battre ?', 'texte': "Seulement le Royal. Les autres suivront. Les Bouftous, ça suit toujours quelqu'un. C'est bien le problème."}],
+    'gardien': {'donjon': 'Cour du Bouftou Royal', 'approche': 'Tu n\'aurais pas vu passer un Bouftou avec une couronne ?',
+      'victoire': "Le Royal est tombé ? Mes Bouftous vont redevenir gentils. Enfin, un peu. Enfin, j'espère.",
+      'mort': "Piétiné ? Ça arrive. Le Royal pèse plus lourd qu'il n'en a l'air, et il en a déjà l'air.",
+      'sansCle': "La Cour ne s'ouvre qu'avec sa clé. {vendeur} en vend : je te l'ai marqué sur ta carte (M)."}},
   'emp': {'nom': 'Emp', 'dofusId': 1640, 'zone': 'astrub', 'carte': '5_-18', 'case': EMP_CASE,
     'phrase': "Je te remercie pour ton offrande. Ça va probablement déplaire à Waro, mais tant pis.",
     'services': [{'texte': 'Recycler des objets contre des Pépites.', 'service': 'recycler'}, {'texte': 'Voir la boutique.', 'service': 'boutique'}],
