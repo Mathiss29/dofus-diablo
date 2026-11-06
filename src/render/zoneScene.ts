@@ -1,7 +1,7 @@
 import { apercuSort } from '../sim/apercu';
 import { dossier, v } from './assetUrl';
 import Phaser from 'phaser';
-import { GAME_DATA, ITEMS, QUETES } from '../sim/data';
+import { BOUTIQUES, GAME_DATA, ITEMS, QUETES } from '../sim/data';
 import type { Compte } from '../sim/quests';
 import { QuestView } from './questView';
 import { DialogueView } from './dialogueView';
@@ -206,7 +206,7 @@ export class ZoneScene extends Phaser.Scene {
     if (zone.open) {
       const open = zone.open;
       const wg = new WorldGrid(this.cache.json.get(WorldView.key(open.world, 'monde')) as WorldData);
-      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, compte: chargerCompte(), tuto: this.perso?.tuto, 
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, compte: chargerCompte(), tuto: this.perso?.tuto, 
         // vitrine : les PNJ sont là, mais aucune quête ne démarre
         arrivee: this.arrivee,
         reprise: this.vitrine ? { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} } : this.perso?.etat?.quetes });
@@ -588,12 +588,18 @@ export class ZoneScene extends Phaser.Scene {
           break;
         }
         case 'lootKamas': this.hud.loot(`+${e.n} kamas`, '#f2d36b'); this.windows?.refresh(); break;
-        case 'bagFull': this.hud.toast('Sac plein : recycle des objets (Maj + clic dans l\'inventaire)'); break;
+        case 'bagFull': this.hud.toast('Sac plein : recycle des objets chez Emp (Zaap d\'Astrub) ou Maj + clic dans l\'inventaire'); break;
         case 'monsterCast': this.castName(e.id, e.name); break;
         case 'itemDrop': if (e.rarity === 'epique' || e.rarity === 'legendaire' || e.rarity === 'mythique') this.chime(e.rarity !== 'epique'); break;
         case 'metierLevel': this.hud.banner(`${ITEMS.metiers?.[e.metier]?.name ?? 'Métier'} niveau ${e.level} !`, 1500); this.windows?.refresh(); break;
         case 'craft': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Objet'} x${e.n}`, '#9ad15a'); this.windows?.refresh(); break;
         case 'eat': this.windows?.refresh(); break;
+        // Emp (0.2b) : sa fenêtre s'ouvre par la réponse « Recycler » ou « Boutique » de son dialogue
+        case 'service': if (this.windows && (e.service === 'recycler' || e.service === 'boutique')) { this.windows.empOnglet = e.service; this.windows.show('emp'); } break;
+        case 'recycle': this.hud.loot(`+${e.pepites} Pépite${e.pepites > 1 ? 's' : ''}${e.n > 1 ? ` (${e.n} recyclés)` : ''}`, '#b9e54b'); break;
+        case 'achat': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Objet'} acheté (−${e.prix} Pépites)`, '#b9e54b'); break;
+        case 'rappel': this.hud.banner(`Rappel\n${e.name}`, 1200); this.snapCam = true; break;
+        case 'cleManquante': this.hud.toast(`${ITEMS.resources[e.id]?.name ?? 'Une clé'} requise : Emp en vend une, à côté du Zaap d'Astrub`); break;
         case 'lootResource': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Ressource'} x${e.n}`, '#c9c4ab'); this.windows?.refresh(); break;
         case 'levelUp': this.hud.banner(`Niveau ${e.level} !\n+5 points (C)${e.level === 100 ? '\n+1 PA' : ''}`, 1500); this.windows?.refresh(); break;
         case 'newSpell': {

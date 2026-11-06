@@ -210,3 +210,11 @@ Elles sont réduites aux caractères latins et converties en woff2 (`fontTools.s
 Planches en AVIF (6 nov. 2026, choix « AVIF : 1A ») : `monster_planche.py` et `perso_planche.py` passent `FORMAT=AVIF` à `trim_pack.py`
 (qualité 50, −37 % en moyenne par rapport au WebP). Les cartes, décors, bords et effets restent en WebP.
 Les anciennes planches ont été converties par `tools/hebergement/planches_avif.py`. Après un export : `node tools/hebergement/envoi.mjs`.
+
+## Emp et la boutique (0.2b, 6 nov. 2026)
+
+- Icônes d'objets ajoutées à la planche `public/assets/ui/objets.webp` : `python icones_ajout.py <item_assets_1x.bundle> <iconId>...`
+  (le bundle est copié dans `/mnt/project-files/cache-dofus/astrub/item_assets_1x.bundle`).
+- PNJ dont le look a un skin et des couleurs (`{bone|skin|1=couleur}`) : `SKINS=<skins_assets_skin_N.bundle> COULEURS=1=<couleur>`
+  devant `monster_planche.py`. Emp : `PNJ=1 SCALE=1.32 SKINS=.../skins_assets_skin_1981.bundle COULEURS=1=15788464 python monster_planche.py 1979 pnj_emp <bones> <sortie>`.
+- Cadenas : icône officielle `icons_assets_1x/lockShadowOutline` dans `public/assets/ui/emp/`.

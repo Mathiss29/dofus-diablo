@@ -9199,6 +9199,42 @@
    "name": "Sac de Bijoux",
    "icon": 139000,
    "level": 1
+  },
+  "14635": {
+   "name": "Pépite",
+   "icon": 50718,
+   "level": 1,
+   "pepite": true
+  },
+  "548": {
+   "name": "Potion de Rappel",
+   "icon": 12017,
+   "level": 10,
+   "rappel": true
+  },
+  "8143": {
+   "name": "Clef des Champs",
+   "icon": 84013,
+   "level": 10,
+   "cle": "Grange du Tournesol Affamé"
+  },
+  "8437": {
+   "name": "Clef du Château Ensablé",
+   "icon": 84237,
+   "level": 20,
+   "cle": "Château Ensablé"
+  },
+  "1568": {
+   "name": "Clef de la Cour du Bouftou Royal",
+   "icon": 84226,
+   "level": 30,
+   "cle": "Cour du Bouftou Royal"
+  },
+  "15991": {
+   "name": "Clef de la Cache de Kankreblath",
+   "icon": 84743,
+   "level": 40,
+   "cle": "Cache de Kankreblath"
   }
  },
  "drops": {
