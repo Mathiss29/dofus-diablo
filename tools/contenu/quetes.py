@@ -224,7 +224,7 @@ EXPLO = [('lac', 414, 'Lac', 'lac', 0.1), ('champs', 415, 'Champs', 'champs', 0.
 for k, did, nom, sz, ratio in EXPLO:
     S['zone_' + k] = suc(nom, did, f'Découvrir la zone "{nom}".', 'Exploration', 'Incarnam', 1, 176, [{'nom': nom, 'sousZone': SZ[sz]}], ratio)
 S['dans_les_nuages'] = suc('Dans les nuages', 840, 'Obtenir les Succès suivants.', 'Exploration', 'Incarnam', 10, 82,
-    [{'nom': nom, 'succes': 'zone_' + k} for k, _, nom, _, _ in EXPLO], 1)
+    [{'nom': nom, 'succes': 'zone_' + k} for k, _, nom, _, _ in EXPLO], 1, '1711')   # Chienchien (maquette Familiers 1C)
 
 json.dump({'pnj': PNJ, 'quetes': Q, 'succes': S}, open(OUT, 'w'), ensure_ascii=False, indent=1)
 print(len(Q), 'quêtes', len(S), 'succès')

@@ -28,6 +28,7 @@
  ],
  "apparat_prix": {
   "chapeau": 60,
-  "cape": 80
+  "cape": 80,
+  "familier": 100
  }
 }

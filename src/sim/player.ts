@@ -53,7 +53,7 @@ export class Player extends Entity {
   /** Apparat (maquette Apparence 5A) : objets d'apparat officiels possédés (id Dofus), et ceux posés par-dessus
    *  la coiffe, la cape ou le bouclier (case Apparence de l'inventaire). « 0 » cache l'objet porté. Rien ne change les stats. */
   apparats: string[] = [];
-  apparat: Partial<Record<'chapeau' | 'cape' | 'bouclier', string>> = {};
+  apparat: Partial<Record<'chapeau' | 'cape' | 'bouclier' | 'familier', string>> = {};
   /** Caractéristiques totales (points + équipement + panoplies), recalculées à chaque changement. */
   stats: Stats = {};
   /** Panoplies portées : nombre d'objets par panoplie. */
