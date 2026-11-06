@@ -29,6 +29,10 @@ export interface PlayerInput {
   talk?: string | null;
   /** Réponse au dialogue ouvert (index du cadre vert, -1 = fermer). */
   reponse?: number | null;
+  /** Touche H (maquette Hub 2A) : entrer dans le Havre-Sac (1,5 s d'incantation) ou en ressortir. */
+  havreSac?: boolean;
+  /** Zaap du Havre-Sac (2C) : -1 = ressortir là où l'on était, sinon l'index du Zaap découvert (player.zaaps). */
+  zaap?: number | null;
   /** Partie de test : ordres du panneau F1 (absent dans une vraie partie). */
   test?: CommandeTest[] | null;
 }

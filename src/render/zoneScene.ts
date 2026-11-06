@@ -5,6 +5,8 @@ import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES } fr
 import type { Compte } from '../sim/quests';
 import { QuestView } from './questView';
 import { RecolteView } from './recolteView';
+import { HavreSacView } from './havreSacView';
+import type { PointDeRetour, RetourHavreSac } from '../sim/events';
 import { DialogueView } from './dialogueView';
 import { GridMap, WorldGrid, type MapData, type WorldData } from '../sim/gridmap';
 import { ISO } from '../sim/iso';
@@ -96,6 +98,10 @@ export class ZoneScene extends Phaser.Scene {
   private pickClick: number | null = null;
   /** Métiers de récolte (0.2b) : ressources du monde, et celle cliquée. */
   private recolteView: RecolteView | null = null;
+  private havreSacView: HavreSacView | null = null;
+  /** Havre-Sac : touche H ou bouton du HUD (2A), choix dans la fenêtre du Zaap du Havre-Sac (2C), pour le prochain pas. */
+  private havreSacDemande = false;
+  private zaapChoix: number | null = null;
   private recolteClick: number | null = null;
   /** PNJ cliqué (quêtes) et leur affichage. */
   private talkClick: string | null = null;
@@ -127,9 +133,10 @@ export class ZoneScene extends Phaser.Scene {
   private bestiaire: Record<string, number> = {};
   constructor() { super('zone'); }
 
-  /** Arrivée par un portail d'une autre zone (Incarnam <-> Astrub). */
+  /** Arrivée par un portail d'une autre zone (Incarnam <-> Astrub), ou par le Havre-Sac (entrée, sortie, son Zaap). */
   private arrivee?: [string, number];
-  init(data: { zone?: string; classe?: string; slot?: number; vitrine?: boolean; arrivee?: [string, number]; essai?: 'm' | 'f'; apparence?: Apparence }) {
+  private transit: Transit = {};
+  init(data: { zone?: string; classe?: string; slot?: number; vitrine?: boolean; arrivee?: [string, number]; essai?: 'm' | 'f'; apparence?: Apparence } & Transit) {
     this.essai = data?.essai ? { sexe: data.essai, t: 0, averti: false } : null;
     this.apparenceEssai = data?.apparence;
     this.vitrine = !!data?.vitrine; this.vitrineT = 0; this.sauveT = 0; this.mortDefinitive = false;
@@ -143,6 +150,7 @@ export class ZoneScene extends Phaser.Scene {
     // #astrub dans l'adresse : l'ancienne zone à vagues des Champs d'Astrub
     // #astrub2 : Astrub en monde ouvert, sans perso (mode dév) ; un perso reprend dans sa zone
     this.arrivee = data?.arrivee;
+    this.transit = { position: data?.position, point: data?.point, zaap: data?.zaap, retour: data?.retour, vues: data?.vues };
     if (data?.zone) this.zoneId = data.zone;
     else if (this.perso?.etat?.zone && GAME_DATA.zones[this.perso.etat.zone]) this.zoneId = this.perso.etat.zone;
     else if (this.test) { const z = this.test.zone ?? this.test.etat?.zone; this.zoneId = z && GAME_DATA.zones[z] ? z : 'incarnam'; }
@@ -209,7 +217,7 @@ export class ZoneScene extends Phaser.Scene {
       this.load.json(WorldView.key(open.world, 'monde'), v(`${dir}/monde.json`));
       this.load.once(`filecomplete-json-${WorldView.key(open.world, 'monde')}`, (_: string, __: string, data: WorldData) =>
         WorldView.preload(this, data, dir, open.world, open.start));
-      Particules.preload(this, dir, open.world, v);
+      if (!open.havreSac) Particules.preload(this, dir, open.world, v);   // le Havre-Sac n'a pas de particules
       return;
     }
     const dir = mapDir(zone.map!.coords), key = dir.replace(/\W/g, '_');
@@ -241,7 +249,8 @@ export class ZoneScene extends Phaser.Scene {
       const wg = new WorldGrid(this.cache.json.get(WorldView.key(open.world, 'monde')) as WorldData);
       this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, apparats: APPARATS, familierXp: FAMILIERS.xp, recoltes: RECOLTES, compte: chargerCompte(), tuto: this.test ? false : this.perso?.tuto, test: this.test?.reglages,
         // vitrine : les PNJ sont là, mais aucune quête ne démarre
-        arrivee: this.arrivee,
+        arrivee: this.arrivee, position: this.transit.position, point: this.transit.point, zaap: this.transit.zaap, retour: this.transit.retour,
+        zonesVues: [...new Set([...(this.perso?.etat?.zonesVues ?? this.test?.etat?.zonesVues ?? []), ...(this.transit.vues ?? [])])],
         reprise: this.vitrine ? { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} } : this.perso?.etat?.quetes ?? this.test?.etat?.quetes });
       this.cameras.main.setBackgroundColor('#0d2b36');   // sous le ciel, au cas où il manque
       this.worldView = new WorldView(this, wg, worldDir(open.world), open.world);
@@ -252,6 +261,7 @@ export class ZoneScene extends Phaser.Scene {
       this.worldView.transparence = tr;
       this.events.once('shutdown', () => { tr.destroy(); if (this.transparence === tr) this.transparence = null; });
       this.worldView.create();
+      if (this.world.zone.open) { const hv = this.havreSacView = new HavreSacView(this, this.world); this.events.once('shutdown', () => { hv.destroy(); if (this.havreSacView === hv) this.havreSacView = null; }); }
       if (this.world.recoltes.length) { const rv = this.recolteView = new RecolteView(this, this.world); this.events.once('shutdown', () => { rv.destroy(); if (this.recolteView === rv) this.recolteView = null; }); }
       if (this.world.quetes) {
         this.questView = new QuestView(this, this.world, this.worldView);
@@ -296,6 +306,7 @@ export class ZoneScene extends Phaser.Scene {
     if (mini && this.transparence) mini.ignore(this.transparence.calque);
     this.windows?.destroy();
     this.windows = new Windows(this.world);
+    this.windows.onZaap = i => { this.zaapChoix = i; };
     this.windows.portrait = v(`${ASSETS}/ui/perso_${this.classId}${this.perso?.sexe === 'f' ? '_f' : ''}.png`);
     // perso dessiné en direct dans l'inventaire, l'aperçu des apparats et la garde-robe (Apparence 5A, 6B)
     this.fichePerso();
@@ -324,6 +335,7 @@ export class ZoneScene extends Phaser.Scene {
       else if (name === 'Métiers') this.windows!.toggle('job');
       else if (name === 'Réglages') this.windows!.toggle('opt');
       else if (name === 'Guide') this.windows!.toggle('guide');
+      else if (name === 'Havre-Sac') this.havreSacDemande = true;
       else if (name === 'Sorts') this.windows!.toggle('sorts');
       else if (name === 'Quêtes' && this.world.quetes) this.windows!.toggle('quetes');
       else if (name === 'Succès' && this.world.quetes) this.windows!.toggle('succes');
@@ -391,7 +403,7 @@ export class ZoneScene extends Phaser.Scene {
     if (!this.perso || this.slot < 0 || this.mortDefinitive || !this.world) return;
     const p = this.perso;
     p.etat = exporterJoueur(this.world); p.maj = Date.now();
-    p.lieu = this.world.area?.name ?? p.lieu;
+    p.lieu = this.world.area?.name ?? (this.world.dansHavreSac ? 'Havre-Sac' : p.lieu);
     sauverPerso(this.slot, p); sauverBestiaire(this.bestiaire);
   };
   /** Retour à l'écran d'accueil (main.ts relance la partie en vitrine). */
@@ -434,7 +446,7 @@ export class ZoneScene extends Phaser.Scene {
     const K = Phaser.Input.Keyboard.KeyCodes, kb = this.input.keyboard!;
     // Déplacement à la souris (clic gauche) ; le clavier sert aux sorts, à la potion et aux menus
     this.keys = kb.addKeys({ SHIFT: K.SHIFT, ALT: K.ALT,
-      SPACE: K.SPACE, S: K.S, E: K.E, K: K.K, I: K.I, C: K.C, J: K.J, ESC: K.ESC, F: K.F, H: K.H, O: K.O, M: K.M, ENTER: K.ENTER,
+      SPACE: K.SPACE, S: K.S, E: K.E, K: K.K, I: K.I, C: K.C, J: K.J, ESC: K.ESC, F: K.F, G: K.G, H: K.H, O: K.O, M: K.M, ENTER: K.ENTER,
       ONE: K.ONE, TWO: K.TWO, THREE: K.THREE, FOUR: K.FOUR, FIVE: K.FIVE, SIX: K.SIX }) as Record<string, Phaser.Input.Keyboard.Key>;
     // Façon Diablo (demande de Mathis, 2026-11-05) : clic gauche sur le sol = y aller (maintenu : suivre le curseur),
     // sur un monstre = s'approcher et l'attaquer (maintenu : continuer), Maj + clic gauche = attaquer sur place ;
@@ -487,7 +499,8 @@ export class ZoneScene extends Phaser.Scene {
       this.fx.juice = !this.fx.juice;
       this.hud.toast(this.fx.juice ? 'Effets d\'impact : ACTIVÉS' : 'Effets d\'impact : DÉSACTIVÉS (compare !)');
     });
-    this.keys.H.on('down', () => this.windows?.toggle('guide'));   // Guide (fenêtre façon Dofus 3, demande de Mathis 2026-11-06)
+    this.keys.G.on('down', () => this.windows?.toggle('guide'));   // Guide (fenêtre façon Dofus 3) ; H est la touche du Havre-Sac (maquette Hub 2A)
+    this.keys.H.on('down', () => { this.havreSacDemande = true; });
     // Ctrl+M : couper ou remettre tout le son ; M seul est gardé pour la carte du monde, comme dans Dofus (maquette 0.2, 18A)
     this.keys.M.on('down', (_k: Phaser.Input.Keyboard.Key, e: KeyboardEvent) => {
       if (e?.ctrlKey || e?.metaKey) { e.preventDefault(); this.basculerMuet(); }
@@ -625,6 +638,8 @@ export class ZoneScene extends Phaser.Scene {
     const vise = this.pressed ? this.monsterUnder(ptr) : null;
     if (vise && !vise.dead) { input.castOn = vise.id; input.aim = { x: vise.x, y: vise.y }; }
     this.pickClick = null;
+    if (this.havreSacDemande) { input.havreSac = true; this.havreSacDemande = false; }
+    if (this.zaapChoix != null) { input.zaap = this.zaapChoix; this.zaapChoix = null; }
     if (this.cmdTest.length) { input.test = this.cmdTest; this.cmdTest = []; }
     const dv = this.dialogueView;
     if (dv) { input.reponse = dv.reponse; dv.reponse = null; if (dv.menuTalk) { this.talkClick = dv.menuTalk; dv.menuTalk = null; } }
@@ -676,7 +691,7 @@ export class ZoneScene extends Phaser.Scene {
     while (this.acc >= ZoneScene.STEP && this.hitstop <= 0) {
       this.acc -= ZoneScene.STEP;
       this.world.step(ZoneScene.STEP, input);
-      input = { ...input, pressed: null, potion: false, reponse: null, test: null };
+      input = { ...input, pressed: null, potion: false, reponse: null, test: null, havreSac: false, zaap: null };
       this.consumeEvents();
     }
     if (this.hitstop > 0) this.acc = 0;
@@ -688,6 +703,7 @@ export class ZoneScene extends Phaser.Scene {
       if (this.perso?.stats && this.perso.session) noter(e, this.perso.stats, this.perso.session, this.bestiaire, GAME_DATA.monsters, ITEMS.equipment);
       this.fx.handle(e);
       this.hud.handle(e);
+      this.havreSacView?.handle(e);
       if (this.panneau && e.k === 'hit' && e.target === 'monster') this.panneau.noterCoup(e.amount);
       this.son.handle(e);
       const M = GAME_DATA.monsters;
@@ -729,16 +745,19 @@ export class ZoneScene extends Phaser.Scene {
           break;
         }
         case 'lootKamas': this.hud.loot(`+${e.n} kamas`, '#f2d36b'); this.windows?.refresh(); break;
-        case 'bagFull': this.hud.toast('Sac plein : recycle des objets chez Emp (Zaap d\'Astrub) ou Maj + clic dans l\'inventaire'); break;
+        case 'bagFull': this.hud.toast('Sac plein : recycle des objets chez Kerubim Crépin (Havre-Sac, touche H) ou Maj + clic dans l\'inventaire'); break;
         case 'monsterCast': this.castName(e.id, e.name); break;
         case 'itemDrop': if (e.rarity === 'epique' || e.rarity === 'legendaire' || e.rarity === 'mythique') this.chime(e.rarity !== 'epique'); break;
         case 'metierLevel': this.hud.banner(`${ITEMS.metiers?.[e.metier]?.name ?? 'Métier'} niveau ${e.level} !`, 1500); this.windows?.refresh(); break;
         case 'craft': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Objet'} x${e.n}`, '#9ad15a'); this.windows?.refresh(); break;
         case 'eat': this.windows?.refresh(); break;
-        // Emp (0.2b) : sa fenêtre s'ouvre par la réponse « Recycler » ou « Boutique » de son dialogue
-        case 'service': if (this.windows && (e.service === 'recycler' || e.service === 'boutique')) { this.windows.empOnglet = e.service; this.windows.show('emp'); }
+        // PNJ du Havre-Sac (maquette Hub 4A) : la réponse « service » de son dialogue ouvre sa fenêtre (recycler, boutique, apparats, miroir)
+        case 'service': if (this.windows && (e.service === 'recycler' || e.service === 'boutique' || e.service === 'apparat')) { this.windows.empPnj = e.pnj; this.windows.empOnglet = e.service; this.windows.show('emp'); }
           else if (this.windows && e.service === 'garde-robe') this.windows.show('garde');
           break;
+        case 'incantation': this.hud.toast('Havre-Sac : incantation…'); break;
+        case 'arche': this.windows?.show('zaap'); break;
+        case 'emmenage': this.hud.toast(`${e.noms.join(', ')} ${e.noms.length > 1 ? 'ont emménagé' : 'a emménagé'} dans ton Havre-Sac (H)`); break;
         case 'recycle': this.hud.loot(`+${e.pepites} Pépite${e.pepites > 1 ? 's' : ''}${e.n > 1 ? ` (${e.n} recyclés)` : ''}`, '#b9e54b'); break;
         case 'achat': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Objet'} acheté (−${e.prix} Pépites)`, '#b9e54b'); break;
         case 'rappel': this.hud.banner(`Rappel\n${e.name}`, 1200); this.snapCam = true; break;
@@ -748,8 +767,8 @@ export class ZoneScene extends Phaser.Scene {
         }
         case 'recolteNiveau': this.hud.toast(`Il faut ${RECOLTES.metiers[e.metier]?.nom ?? 'ce métier'} niveau ${e.niveau} pour récolter cette ressource`); break;
         case 'cleManquante': {
-          const ve = this.world.quetes?.vendeurDe(e.id), nom = ve ? this.world.quetes!.data.pnj[ve].nom : "un marchand d'Astrub";
-          this.hud.toast(`${ITEMS.resources[e.id]?.name ?? 'Une clé'} requise : ${nom} en vend une, près du Zaap d'Astrub`); break;
+          const ve = this.world.quetes?.vendeurDe(e.id), nom = ve ? this.world.quetes!.data.pnj[ve].nom : 'un marchand';
+          this.hud.toast(`${ITEMS.resources[e.id]?.name ?? 'Une clé'} requise : ${nom} en vend une, dans ton Havre-Sac (H)`); break;
         }
         case 'lootResource': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Ressource'} x${e.n}`, '#c9c4ab'); this.windows?.refresh(); break;
         case 'levelUp': this.hud.banner(`Niveau ${e.level} !\n+5 points (C)${e.level === 100 ? '\n+1 PA' : ''}`, 1500); this.windows?.refresh(); break;
@@ -781,7 +800,7 @@ export class ZoneScene extends Phaser.Scene {
         case 'test': this.hud.toast(e.texte); this.windows?.refresh(); break;
         case 'portalStart': this.baisserRideau(); break;   // fondu de sortie (0,2 s), le perso attend devant la porte
         // portail vers une autre zone : on sauve le perso puis la partie repart là-bas (même emplacement)
-        case 'changeZone': this.sauver(); this.scene.restart({ slot: this.slot, zone: e.zone, arrivee: e.arrivee }); return;
+        case 'changeZone': this.sauver(); this.scene.restart({ slot: this.slot, zone: e.zone, arrivee: e.arrivee, position: e.position, point: e.point, zaap: e.zaap, retour: e.retour, vues: this.world.player.zonesVues }); return;
         case 'portal': this.attendreCartes(); this.snapCam = true; break;   // noir, la caméra saute avec le joueur
       }
     }
@@ -1082,11 +1101,15 @@ export class ZoneScene extends Phaser.Scene {
     }
     this.drawDrops();
     this.recolteView?.update(this.cameras.main, this.input.activePointer);
+    this.havreSacView?.update(this.game.loop.delta / 1000);
     this.questView?.update();
     this.dialogueView?.update();
     this.hud.draw(this.fx.juice, this.game.loop.delta / 1000);
   }
 }
+
+/** Passage par le Havre-Sac (maquette Hub) : sortie à une position précise ou à un Zaap, entrée (retour), zones visitées. */
+interface Transit { position?: { x: number; y: number }; point?: PointDeRetour; zaap?: string; retour?: RetourHavreSac; vues?: string[] }
 
 /** Sous-zones déjà vues sans perso (mode dév), gardées dans le navigateur. Affichage seulement. */
 function decouvrir(nom: string): boolean {

@@ -48,7 +48,8 @@
           "Voir à travers le décor : le bâtiment ou l'arbre qui cache ton perso s'efface en fondu, et les monstres cachés apparaissent en silhouette rouge (case dans Options > Affichage).",
           "Ateliers officiels : on fabrique dans l'atelier de son métier (à Astrub et Incarnam), avec un bouton ×N pour tout fabriquer d'un coup. 37 recettes officielles en plus : pains, potions, poissons, viandes, alliages, planches.",
           "« Quoi de neuf ? » au lancement : les nouveautés du dernier carnet en cinq lignes.",
-          "Récolte animée : on fauche, on coupe, on pioche, on cueille et on pêche avec les gestes et les sons officiels. La Lance est prête pour les prochains niveaux d'objets."
+          "Récolte animée : on fauche, on coupe, on pioche, on cueille et on pêche avec les gestes et les sons officiels. La Lance est prête pour les prochains niveaux d'objets.",
+          "Le Havre-Sac : touche H (ou l'icône du sac) pour rejoindre ton monde de poche, où vivent Kerubim Crépin, Tissebelle, Otomaï, Mère Bouillotte et Goultard ; son arche est un Zaap vers tous ceux que tu as découverts, et le Poutch Ingball compte tes dégâts par seconde."
         ],
         "Le monde": [
           "Crypte de Kardorim, avec le vrai Sergent Chafer.",
@@ -64,7 +65,8 @@
           "Un gardien devant chaque donjon : Mawy Ingalsse à la Grange, le Capitaine Igloute au Château Ensablé, Rotabla à la Cour du Bouftou Royal et Klasmor à la Crypte. Ils te font entrer avec ta clé, montrent le boss et son butin, et se souviennent de tes victoires.",
           "La Cité d'Astrub s'ouvre : Banque, Taverne, Milice, Tour du Conseil et sept ateliers se visitent.",
           "Les Vilinsekts ont envahi trois caves de la Cité, et Kankreblath attend dans sa Cache (donjon niveau 40, sa clé se fabrique au Bricoleur ou s'achète chez Emp).",
-          "Une élite fait briller les ressources autour d'elle : elles repoussent plus souvent dorées tant qu'elle vit."
+          "Une élite fait briller les ressources autour d'elle : elles repoussent plus souvent dorées tant qu'elle vit.",
+          "Emp ferme ses guichets : recyclage, boutiques, apparats et garde-robe déménagent au Havre-Sac. Le Guide passe sur la touche G."
         ],
         "Combat": [
           "Pas Chassé du Crâ rééquilibré : il ne s'enchaîne plus en boucle, relance officielle de 9 s (6 s dès le niveau 72).",

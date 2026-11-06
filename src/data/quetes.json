@@ -100,7 +100,7 @@
     "approche": "Hé ! Tu n'aurais pas une Clef des Champs ?",
     "victoire": "Il est tombé ? Le tournesol ? Je vais enfin pouvoir ranger mon foin ! Bon, je vais d'abord compter les poules.",
     "mort": "Il t'a recraché ? C'est bon signe : il ne t'a pas trouvé à son goût. Retente ta chance.",
-    "sansCle": "Sans Clef des Champs, la porte ne bouge pas. {vendeur} en vend : je te l'ai marqué sur ta carte (M)."
+    "sansCle": "Sans Clef des Champs, la porte ne bouge pas. {vendeur} en vend."
    }
   },
   "igloute": {
@@ -120,7 +120,7 @@
     "approche": "Moussaillon ! Le château, c'est par là. Attention à la marée.",
     "victoire": "Essoré, le Mob ? Bravo, moussaillon. Je note dans mon journal de bord que je t'ai beaucoup aidé.",
     "mort": "Absorbé, toi aussi ? On en ressort tout fripé, je sais. Bois un coup d'eau douce et retournes-y.",
-    "sansCle": "Pas de Clef du Château Ensablé, pas de château. {vendeur} en vend : je te l'ai marqué sur ta carte (M)."
+    "sansCle": "Pas de Clef du Château Ensablé, pas de château. {vendeur} en vend."
    }
   },
   "rotabla": {
@@ -140,7 +140,7 @@
     "approche": "Tu n'aurais pas vu passer un Bouftou avec une couronne ?",
     "victoire": "Le Royal est tombé ? Mes Bouftous vont redevenir gentils. Enfin, un peu. Enfin, j'espère.",
     "mort": "Piétiné ? Ça arrive. Le Royal pèse plus lourd qu'il n'en a l'air, et il en a déjà l'air.",
-    "sansCle": "La Cour ne s'ouvre qu'avec sa clé. {vendeur} en vend : je te l'ai marqué sur ta carte (M)."
+    "sansCle": "La Cour ne s'ouvre qu'avec sa clé. {vendeur} en vend."
    }
   },
   "emp": {
@@ -149,17 +149,7 @@
    "zone": "astrub",
    "carte": "5_-18",
    "case": 300,
-   "phrase": "Je te remercie pour ton offrande. Ça va probablement déplaire à Waro, mais tant pis.",
-   "services": [
-    {
-     "texte": "Recycler des objets contre des Pépites.",
-     "service": "recycler"
-    },
-    {
-     "texte": "Voir la boutique.",
-     "service": "boutique"
-    }
-   ],
+   "phrase": "Mes guichets ? Confiés à Kerubim Crépin, dans ton Havre-Sac (touche H). Moins de queue, moins de gaspillage : Waro lui-même n'a rien trouvé à redire.",
    "discussion": [
     {
      "reponse": "Le prier d'en dire davantage sur le conflit l'opposant au Méryde de l'écologie.",
@@ -175,6 +165,130 @@
     }
    ],
    "adieu": "Recycler l'un de vos saluts quotidiens pour dire au revoir au Méryde."
+  },
+  "kerubim": {
+   "nom": "Kerubim Crépin",
+   "dofusId": 3043,
+   "zone": "havresac",
+   "carte": "0_0",
+   "case": 284,
+   "apres": "astrub",
+   "titre": "Antiquaire",
+   "phrase": "Entre, entre ! Chez Kerubim, rien n'est inutile : il y a juste des trésors qui ne savent pas encore qu'ils en sont.",
+   "services": [
+    {
+     "texte": "Recycler des objets contre des Pépites.",
+     "service": "recycler"
+    }
+   ],
+   "discussion": [
+    {
+     "reponse": "Tu rachètes vraiment tout ?",
+     "texte": "Tout. Une fois, j'ai racheté une chaussette à un Iop… relique sacrée."
+    },
+    {
+     "reponse": "Pourquoi ta boutique est dans mon Havre-Sac ?",
+     "texte": "Parce que le loyer à Astrub, c'est du vol. Ici, c'est toi qui paies le ménage."
+    }
+   ]
+  },
+  "tissebelle": {
+   "nom": "Tissebelle",
+   "dofusId": 0,
+   "zone": "havresac",
+   "carte": "0_0",
+   "case": 339,
+   "titre": "Couturière",
+   "phrase": "Tourne-toi. Non, l'autre côté. Hmm. On va dire que c'est un bon début.",
+   "services": [
+    {
+     "texte": "Voir les apparats.",
+     "service": "apparat"
+    },
+    {
+     "texte": "M'asseoir devant le miroir (garde-robe).",
+     "service": "garde-robe"
+    }
+   ],
+   "discussion": [
+    {
+     "reponse": "Tu fabriques tes tissus ?",
+     "texte": "Je les fais pousser. La soie de Sadida, c'est trois saisons de patience et une saison à empêcher les Bouftous de la brouter."
+    },
+    {
+     "reponse": "Je peux changer de tête ?",
+     "texte": "Assieds-toi devant le miroir. Ta tête, tes couleurs : c'est gratuit. Le style ne devrait jamais coûter un kama."
+    }
+   ]
+  },
+  "otomai": {
+   "nom": "Otomaï",
+   "dofusId": 914,
+   "zone": "havresac",
+   "carte": "0_0",
+   "case": 273,
+   "apres": "astrub",
+   "titre": "Alchimiste",
+   "phrase": "Ah, un volontaire ! Je veux dire : un client. Cette potion te ramène au Zaap. Dans 97 % des cas, en un seul morceau.",
+   "services": [
+    {
+     "texte": "Voir ses potions.",
+     "service": "boutique"
+    }
+   ],
+   "discussion": [
+    {
+     "reponse": "Et les 3 % ?",
+     "texte": "Ils reviennent aussi. Juste un peu plus tard, et parfois avec une oreille en plus. Je prends des notes."
+    }
+   ]
+  },
+  "bouillotte": {
+   "nom": "Mère Bouillotte",
+   "dofusId": 0,
+   "zone": "havresac",
+   "carte": "0_0",
+   "case": 261,
+   "titre": "Cuisinière",
+   "phrase": "Encore toi, et encore tout maigre ! Assieds-toi. Personne ne repart d'ici le ventre vide, même pas les Bouftous.",
+   "services": [
+    {
+     "texte": "Voir ses plats.",
+     "service": "boutique"
+    }
+   ],
+   "discussion": [
+    {
+     "reponse": "C'est quoi ton secret ?",
+     "texte": "Du lait de Bambou, une pincée de sel et trois heures à crier sur la marmite. Elle n'aime pas qu'on lui parle doucement."
+    }
+   ]
+  },
+  "goultard": {
+   "nom": "Goultard",
+   "dofusId": 1216,
+   "zone": "havresac",
+   "carte": "0_0",
+   "case": 333,
+   "apres": "astrub",
+   "titre": "Clés de donjon",
+   "phrase": "Tu veux une clé ? Montre tes bras. Hmm. Ça ira. Les monstres te trouveront appétissant, c'est déjà ça.",
+   "services": [
+    {
+     "texte": "Voir les clés.",
+     "service": "boutique"
+    }
+   ],
+   "discussion": [
+    {
+     "reponse": "Tu ne viens pas avec moi ?",
+     "texte": "Si je viens, il ne restera rien à taper pour toi. Je suis gentil, tu vois."
+    },
+    {
+     "reponse": "Pourquoi tu vis ici ?",
+     "texte": "Ton Havre-Sac est le seul endroit du Monde des Douze où personne ne me provoque en duel. J'en avais besoin."
+    }
+   ]
   }
  },
  "quetes": {

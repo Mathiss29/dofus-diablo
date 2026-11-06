@@ -197,6 +197,9 @@ export interface OpenDef {
   donjons?: DonjonDef[];
   /** Ateliers officiels (table hints de Dofus 3, maquette Métiers 10A) : cartes (tags) où l'on fabrique pour ces métiers. */
   ateliers?: AtelierDef[];
+  /** Le Havre-Sac (maquette Hub) : case d'arrivée et case de l'arche officielle (le Zaap du Havre-Sac, 2C), case du Poutch (7A),
+   *  thème officiel en jeu (src/data/havresac_themes.json, 5A : les autres thèmes se débloqueront). */
+  havreSac?: { arrivee: number; arche: number; poutch?: number; theme?: number };
 }
 /** Atelier : nom officiel, métiers servis, cartes où il se trouve (la salle de l'atelier, ou la carte du dehors s'il est en plein air). */
 export interface AtelierDef { nom: string; metiers: string[]; cartes: string[] }

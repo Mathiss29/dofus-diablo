@@ -1,6 +1,6 @@
 import { angleDiff, Rng } from './math';
 import type { AtelierDef, Element, GameData, HitZone, MonsterSpell, SubAreaDef, ZoneDef } from './defs';
-import type { SimEvent, Telegraph } from './events';
+import type { PointDeRetour, RetourHavreSac, SimEvent, Telegraph } from './events';
 import { GridMap, WorldGrid } from './gridmap';
 import { NO_INPUT, type PlayerInput } from './input';
 import { CASE, Monster, TOUR } from './monster';
@@ -45,6 +45,7 @@ interface MonsterGroup {
   fixe?: string[]; donjon?: string;
 }
 export interface PorteEnd { tag: string; x: number; y: number }
+const xy = (q: { x: number; y: number }): [number, number] => [q.x, q.y];
 
 export interface WorldOptions {
   data: GameData;
@@ -73,6 +74,15 @@ export interface WorldOptions {
   test?: ReglagesTest;
   /** Courbe d'XP officielle des familiers (XP totale par niveau, src/data/familiers.json). */
   familierXp?: number[];
+  /** Sortie du Havre-Sac (maquette Hub 2A) : à cet endroit précis, avec le point de retour d'avant. */
+  position?: { x: number; y: number };
+  point?: PointDeRetour;
+  /** Sortie par le Zaap du Havre-Sac (2C) : nom du Zaap d'arrivée. */
+  zaap?: string;
+  /** Dans le Havre-Sac : d'où l'on vient (pour en ressortir au même endroit). */
+  retour?: RetourHavreSac;
+  /** Zones déjà visitées par le perso (3A : les PNJ du Havre-Sac emménagent au fil de l'histoire). */
+  zonesVues?: string[];
 }
 
 /** Le familier porté (maquette Familiers 4A) : il suit le perso et va chercher le butin autour de lui. */
@@ -129,7 +139,14 @@ export class World {
   /** Quêtes et succès (monde ouvert avec quetes.json). */
   /** Partie de test : invincible, recharges, course, murs (null dans une vraie partie). */
   test: ReglagesTest | null = null;
-  quetes: Quetes | null = null;   // au-delà de ce qu'on voit même dézoomé à fond (avant : monstres figés au bord de l'écran)
+  quetes: Quetes | null = null;
+  /** Havre-Sac (maquette Hub 2A) : incantation en cours (t écoulé, PV au début : un coup reçu la coupe). */
+  incantation: { t: number; hp: number } | null = null;
+  static readonly INCANTATION = 1.5;
+  /** Dans le Havre-Sac : d'où l'on vient. */
+  retour: RetourHavreSac | null = null;
+  /** Poutch Ingball du Havre-Sac (7A) : id du monstre. */
+  poutch: number | null = null;   // au-delà de ce qu'on voit même dézoomé à fond (avant : monstres figés au bord de l'écran)
 
   constructor(readonly opts: WorldOptions) {
     this.rng = new Rng(opts.seed ?? 1);
@@ -146,6 +163,8 @@ export class World {
       // départ : la case la plus dégagée de la carte (le plus de cases marchables autour)
       start = this.openestCell(m.tag);
       this.checkpointName = open.checkpoints[0]?.name ?? '';
+      // Havre-Sac : arrivée devant l'arche, qui sert aussi de point de retour
+      if (open.havreSac) { const wg = this.map; start = wg.nearestFree(...xy(wg.cellToWorld(wg.cellOf(m.tag, open.havreSac.arrivee))), wg.freeByMap.get(m.tag)!); this.checkpointName = 'Havre-Sac'; }
     }
     this.checkpoint = start;
     this.player = new Player(this.nextId++, start.x, start.y, opts.data.classes[opts.classId ?? 'iop']);
@@ -157,11 +176,95 @@ export class World {
     }
     if (open) { this.buildPortes(); this.buildRecoltes(); }
     if (open && opts.arrivee) this.arriver(opts.arrivee);
+    if (open) this.sortieHavreSac(opts);
     // les PNJ d'abord : les groupes de monstres ne se posent pas sur eux
     if (open && opts.quetes) this.quetes = new Quetes(opts.quetes, this, opts.compte);
     // les quêtes d'abord : le tutoriel retient les groupes du Temple jusqu'à son étape « Frapper »
     if (this.quetes) { if (opts.reprise) this.quetes.reprendre(opts.reprise); else this.quetes.demarrer(); }
     if (open) this.spawnGroups();
+    if (open?.havreSac?.poutch != null) this.poserPoutch(open.havreSac.poutch);
+    if (open) this.visiter(opts.zonesVues ?? []);
+  }
+
+  // --- Havre-Sac (maquette Hub : 2A touche H, 2C Zaap du Havre-Sac, 3A PNJ qui emménagent, 7A Poutch) ---------------
+  /** Dans le Havre-Sac. */
+  get dansHavreSac() { return !!this.zone.open?.havreSac; }
+  /** Arrivée en sortant du Havre-Sac : au Zaap choisi (2C), sinon là où l'on était (2A). */
+  private sortieHavreSac(opts: WorldOptions) {
+    const p = this.player, wg = this.worldGrid!, open = this.zone.open!;
+    this.retour = opts.retour ?? null;
+    const cp = opts.zaap ? open.checkpoints.find(c => c.name === opts.zaap) : null, m = cp && wg.mapByCoords(...cp.map);
+    if (cp && m) {
+      const q = this.openestCell(m.tag);
+      p.x = q.x; p.y = q.y; this.checkpoint = q; this.checkpointName = cp.name;
+    } else if (opts.position && this.map.walkable(opts.position.x, opts.position.y)) {
+      p.x = opts.position.x; p.y = opts.position.y;
+      if (opts.point) this.setPointDeRetour(opts.point.name, opts.point.x, opts.point.y);
+    }
+  }
+  /** Zone visitée : les PNJ du Havre-Sac qui attendaient cette zone emménagent (annonce à la première visite). */
+  private visiter(vues: string[]) {
+    const p = this.player, z = this.opts.zone;
+    p.zonesVues = [...new Set([...vues, z])];
+    if (vues.includes(z) || !vues.length) return;   // premier lancement d'un perso : rien à annoncer
+    const noms = Object.values(this.opts.quetes?.pnj ?? {}).filter(d => d.apres === z).map(d => d.nom);
+    if (noms.length) this.emit({ k: 'emmenage', noms });
+  }
+  private poserPoutch(c: number) {
+    const wg = this.worldGrid!, tag = wg.world.maps[0].tag, M = this.opts.data.monsters.poutch_ingball;
+    if (!M) return;
+    const q = wg.nearestFree(...xy(wg.cellToWorld(wg.cellOf(tag, c))), wg.freeByMap.get(tag)!);
+    const m = this.spawnMonster('poutch_ingball', q.x, q.y, { ...M, hp: M.hp * 20 });
+    m.mannequin = true; this.poutch = m.id;
+  }
+  /** Touche H : dans le Havre-Sac, on en ressort ; ailleurs, 1,5 s d'incantation (coupée si l'on bouge ou si l'on est touché). */
+  havreSac(): boolean {
+    const p = this.player;
+    if (!this.zone.open || p.dead || this.passage) return false;
+    if (this.dansHavreSac) { this.sortirHavreSac(-1); return true; }
+    if (this.incantation) return false;
+    const non = (text: string) => { this.emit({ k: 'status', x: p.x, y: p.y - 60, text, color: '#ff9a5a' }); return false; };
+    const tag = this.worldGrid!.mapAt(p.x, p.y)?.tag ?? '';
+    if (tag.startsWith('temple')) return non('Pas pendant le tutoriel');
+    if (this.donjonIci()) return non('Impossible dans un donjon');
+    if (this.monsters.some(m => !m.dead && !m.mannequin && m.state !== 'idle' && m.state !== 'spawn' && Math.hypot(m.x - p.x, m.y - p.y) < 700)) return non('Des monstres te poursuivent');
+    p.stopMove();
+    this.incantation = { t: 0, hp: p.hp };
+    this.emit({ k: 'incantation', duree: World.INCANTATION });
+    return true;
+  }
+  private couperIncantation() {
+    if (!this.incantation) return;
+    this.incantation = null;
+    this.emit({ k: 'incantationStop' });
+  }
+  private updateIncantation(dt: number) {
+    const inc = this.incantation, p = this.player;
+    if (!inc) return;
+    if (p.dead || p.hp < inc.hp || this.passage) {
+      this.couperIncantation();
+      if (!p.dead) this.emit({ k: 'status', x: p.x, y: p.y - 60, text: 'Incantation interrompue', color: '#ff9a5a' });
+      return;
+    }
+    if ((inc.t += dt) < World.INCANTATION) return;
+    this.incantation = null;
+    this.emit({ k: 'changeZone', zone: 'havresac', nom: 'Havre-Sac', retour: { zone: this.opts.zone, x: p.x, y: p.y, point: this.pointDeRetour } });
+  }
+  /** Zaap du Havre-Sac (2C) : -1 = ressortir là où l'on était, sinon l'index d'un Zaap découvert. */
+  sortirHavreSac(i: number): boolean {
+    if (!this.dansHavreSac) return false;
+    const z = i >= 0 ? this.player.zaaps[i] : null;
+    if (i >= 0 && !z) return false;
+    if (z) { this.emit({ k: 'changeZone', zone: z.zone, nom: z.name, zaap: z.name }); return true; }
+    const r = this.retour;
+    if (r) this.emit({ k: 'changeZone', zone: r.zone, nom: r.point.name, position: { x: r.x, y: r.y }, point: r.point });
+    else { const d = this.player.zaaps[0]; this.emit({ k: 'changeZone', zone: d?.zone ?? 'incarnam', nom: d?.name ?? 'Incarnam', ...(d ? { zaap: d.name } : {}) }); }
+    return true;
+  }
+  /** Zaap atteint : il rejoint la liste du Zaap du Havre-Sac. */
+  private decouvrirZaap(name: string) {
+    const z = this.player.zaaps;
+    if (!z.some(o => o.zone === this.opts.zone && o.name === name)) z.push({ zone: this.opts.zone, name });
   }
 
   /** Arrivée par un portail d'une autre zone : un peu en avant de la porte d'arrivée (comme une porte normale). */
@@ -224,6 +327,19 @@ export class World {
       this.passer(po, to);
       return;
     }
+  }
+  /** Arche du Havre-Sac (2C) : cliquer dessus et s'en approcher ouvre la liste des Zaaps (une fois par clic). */
+  private archeVue = false;
+  private updateArche() {
+    const h = this.zone.open?.havreSac, p = this.player;
+    if (!h || p.dead) return;
+    const wg = this.worldGrid!, a = wg.cellToWorld(wg.cellOf(wg.world.maps[0].tag, h.arche));
+    // l'arche est dans le mur : on clique sur son dessin, le perso s'arrête sur les cases devant
+    const vise = p.vise(a.x, a.y, 150);
+    if (!vise) { this.archeVue = false; return; }
+    if (this.archeVue || Math.hypot(p.x - a.x, p.y - a.y) > 200) return;
+    this.archeVue = true; p.stopMove();
+    this.emit({ k: 'arche' });
   }
   /** Le perso s'arrête devant la porte pendant le fondu de sortie, puis passe (traverser). */
   private passer(po: World['portes'][number], to: PorteEnd) {
@@ -401,6 +517,7 @@ export class World {
     if (sub && sub !== this.area) { this.area = sub; this.emit({ k: 'enterArea', name: sub.name, level: sub.level }); }
     // Zaap atteint : il devient le point de retour
     const cp = m && open.checkpoints.find(c => c.map[0] === m.x && c.map[1] === m.y);
+    if (cp) this.decouvrirZaap(cp.name);
     if (cp && cp.name !== this.checkpointName) {
       this.checkpointName = cp.name; this.checkpoint = this.openestCell(m.tag);
       this.emit({ k: 'checkpoint', name: cp.name });
@@ -454,6 +571,10 @@ export class World {
       if (this.enRecolte) this.emit({ k: 'recolteStop' });
       this.versRecolte = null; this.enRecolte = null;
     }
+    // Havre-Sac : bouger ou agir coupe l'incantation ; H la lance (ou fait sortir) ; le Zaap du Havre-Sac fait sortir
+    if (this.incantation && (input.dest || input.target != null || input.pickup != null || input.talk || input.pressed || input.recolte != null || input.move.x || input.move.y)) this.couperIncantation();
+    if (input.havreSac) this.havreSac();
+    if (input.zaap != null) this.sortirHavreSac(input.zaap);
     if (this.quetes) {
       if (input.reponse != null) this.quetes.repondre(input.reponse);
       if (input.talk) this.quetes.cliquer(input.talk);
@@ -482,7 +603,7 @@ export class World {
       e.kx = 0; e.ky = 0;
     });
     this.monsters = this.monsters.filter(m => !(m.dead && m.t <= 0));
-    if (this.zone.open) { this.updateOpen(dt); this.updateRecoltes(dt); this.quetes?.update(dt); return; }
+    if (this.zone.open) { this.updateOpen(dt); this.updateRecoltes(dt); this.updateIncantation(dt); this.updateArche(); this.quetes?.update(dt); return; }
     if (!this.over && this.monsters.length === 0) {
       this.waveDelay -= dt;
       if (this.waveDelay <= 0) { this.spawnWave(); this.waveDelay = 2; }
@@ -1010,6 +1131,7 @@ export class World {
   rappel(id: string): boolean {
     const r = this.opts.items?.resources[id], p = this.player;
     if (!r?.rappel || !(p.resources[id] > 0) || p.dead || !this.zone.open) return false;
+    if (this.dansHavreSac) { this.emit({ k: 'status', x: p.x, y: p.y - 60, text: 'Sors du Havre-Sac par son Zaap', color: '#ff9a5a' }); return false; }
     p.resources[id]--; if (!p.resources[id]) delete p.resources[id];
     p.x = this.checkpoint.x; p.y = this.checkpoint.y; p.kx = p.ky = 0; p.z = 0; p.stopMove();
     this.passage = null; this.portalLock = null;

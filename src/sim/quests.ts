@@ -100,7 +100,11 @@ export interface PnjDef {
   sprite?: string;
   /** Ce qu'il dit quand on lui parle sans quête (maquette Dialogues 10A). */
   phrase?: string;
-  /** Services du PNJ (Emp : recycler, boutique) : la réponse ferme le dialogue et l'affichage ouvre la fenêtre du service. */
+  /** Havre-Sac (maquette Hub 3A) : il n'emménage qu'après la première visite de cette zone. */
+  apres?: string;
+  /** Métier affiché dans la fenêtre de ses services (Antiquaire, Couturière…). */
+  titre?: string;
+  /** Services du PNJ (recycler, boutique, apparat, garde-robe) : la réponse ferme le dialogue et l'affichage ouvre la fenêtre du service. */
   services?: { texte: string; service: string }[];
   /** Discussion officielle (dialogMessages / dialogReplies) : la réponse n mène au texte n, la dernière laisse adieu pour partir. */
   discussion?: { reponse: string; texte: string }[];
@@ -194,6 +198,7 @@ export class Quetes {
     const wg = world.worldGrid;
     if (wg) for (const [id, def] of Object.entries(data.pnj)) {
       if ((def.zone ?? 'incarnam') !== world.opts.zone) continue;
+      if (def.apres && !(world.opts.zonesVues ?? []).includes(def.apres) && world.opts.zone !== def.apres) continue;   // pas encore emménagé (3A)
       const m = wg.mapByTag(def.carte);
       if (!m || !wg.freeByMap.get(def.carte)?.length) continue;   // carte pas (encore) exportée
       const free = wg.freeByMap.get(def.carte)!;
@@ -414,8 +419,8 @@ export class Quetes {
     else if (r.a === 'entrer') { this.dialogue = null; this.world.entrerDonjon(r.donjon); }
     else if (r.a === 'sansCle') {
       const def = this.data.pnj[d.pnj], cle = this.world.entreeDonjon(r.donjon)?.cle ?? '', v = this.vendeurDe(cle);
-      const vendeur = v ? `${this.data.pnj[v].nom}, près du Zaap d'Astrub,` : "Un marchand d'Astrub";
-      const t = (def?.gardien?.sansCle ?? "Sans clé, la porte ne s'ouvre pas. {vendeur} en vend : je te l'ai marqué sur ta carte (M).").replace('{vendeur}', vendeur);
+      const vendeur = v ? `${this.data.pnj[v].nom}, dans ton Havre-Sac (H),` : "Un marchand d'Astrub";
+      const t = (def?.gardien?.sansCle ?? "Sans clé, la porte ne s'ouvre pas. {vendeur} en vend.").replace('{vendeur}', vendeur);
       this.marqueVendeur = v;
       this.dialogue = { pnj: d.pnj, donjon: d.donjon, texte: t, reponses: [{ a: 'fermer', texte: def?.adieu ?? 'Au revoir.' }] };
     }

@@ -51,6 +51,9 @@ export class Player extends Entity {
   /** Objet au sol que l'on va ramasser (clic). */
   pickupId: number | null = null;
   equipment: Partial<Record<EquipSlot, Item>> = {};
+  /** Zaaps découverts (maquette Hub 2C : le Zaap du Havre-Sac y mène) et zones déjà visitées (3A : les PNJ du Havre-Sac emménagent). */
+  zaaps: { zone: string; name: string }[] = [];
+  zonesVues: string[] = [];
   /** Apparat (maquette Apparence 5A) : objets d'apparat officiels possédés (id Dofus), et ceux posés par-dessus
    *  la coiffe, la cape ou le bouclier (case Apparence de l'inventaire). « 0 » cache l'objet porté. Rien ne change les stats. */
   apparats: string[] = [];

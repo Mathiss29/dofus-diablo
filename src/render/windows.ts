@@ -1,7 +1,7 @@
 import { REGLAGES_DEFAUT, sauverReglages, type Reglages } from './ambiance';
 import { ICON_CSS, iconHtml } from './icons';
 import { MANIFESTE, Son } from './son';
-import { APPARATS, BOUTIQUES, FAMILIERS, ITEMS, RECOLTES } from '../sim/data';
+import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES } from '../sim/data';
 import { v } from './assetUrl';
 import { DOSSIER, PALETTES, ZONES, apparenceValide, assemblagePour, fiches, objetsPortes, type Apparence, type Assemblage, type FichePerso } from './squelette';
 import {
@@ -126,6 +126,8 @@ const CSS = `
 .dw .cell.low{opacity:.5}
 .dw .cell .cad{position:absolute;right:3px;top:3px;width:16px;height:19px;filter:drop-shadow(0 1px 1px #000)}
 .dw .win.emp{width:min(760px,96vw);height:min(640px,92vh)}
+.dw .win.zaap{width:min(520px,96vw)}
+.dw .win.zaap .rec{grid-template-columns:1fr auto;align-items:center}
 .dw .in.emp{display:grid;gap:10px;align-content:start;overflow:auto;padding:14px 16px}
 .dw .emp .eh{display:flex;justify-content:space-between;align-items:center}
 .dw .emp .eos{display:flex;gap:6px}
@@ -336,7 +338,7 @@ const CSS = `
 .dw .ttl b{font-weight:700}
 `;
 
-type Mode = 'inv' | 'car' | 'job' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde';
+type Mode = 'inv' | 'car' | 'job' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap';
 
 /** Fenêtres façon Dofus 3 : « Inventaire » (le perso sur son socle, ses emplacements autour, le sac à onglets)
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
@@ -350,8 +352,11 @@ export class Windows {
   /** Journal des quêtes (5C) : quête affichée ; Succès : catégorie affichée. */
   private queteVue: string | null = null;
   private succesCat = '';
-  /** Fenêtre d'Emp : onglet Recycler, Boutique ou Apparats (Apparence 5A). */
+  /** Fenêtre des services d'un PNJ du Havre-Sac (maquette Hub 4A) : le PNJ, et l'onglet Recycler, Boutique ou Apparats (Apparence 5A). */
+  empPnj = 'kerubim';
   empOnglet: 'recycler' | 'boutique' | 'apparat' = 'recycler';
+  /** Zaap du Havre-Sac (2C) : choix fait dans sa fenêtre (-1 = là où l'on était), lu par la scène. */
+  onZaap: (i: number) => void = () => {};
   /** Apparat survolé dans la boutique d'Emp : le perso de l'aperçu le porte. */
   private essaiApparat: string | null = null;
   private apparatRecherche = '';
@@ -418,7 +423,7 @@ export class Windows {
     if (this.mode === 'guide') this.renderGuide();
     else if (this.mode === 'car') this.renderCarac(); else if (this.mode === 'job') this.renderJob(); else if (this.mode === 'opt') this.renderOpt();
     else if (this.mode === 'sorts') this.renderSorts(); else if (this.mode === 'quetes') this.renderQuetes();
-    else if (this.mode === 'succes') this.renderSucces(); else if (this.mode === 'emp') this.renderEmp();
+    else if (this.mode === 'succes') this.renderSucces(); else if (this.mode === 'emp') this.renderEmp(); else if (this.mode === 'zaap') this.renderZaap();
     else if (this.mode === 'garde') this.renderGarde(); else this.renderInv();
     this.win!.querySelector('[data-close]')!.addEventListener('click', () => this.close());
   }
@@ -665,7 +670,7 @@ export class Windows {
    *  sections à droite avec leur « Réinitialiser », cases vertes. Contenu : choix 10A + 10B (ambiance), maquette Aperçu (sorts),
    *  maquette Son (8A volumes, 8B touche M). Tout est gardé dans le navigateur. */
   private optRecherche = '';
-  /** Guide (touche H) : rubrique affichée et recherche. */
+  /** Guide (touche G) : rubrique affichée et recherche. */
   private guideVue = 'bienvenue';
   private guideRecherche = '';
 
@@ -692,12 +697,15 @@ export class Windows {
         <h3>Raretés</h3><p>${(['commun', 'rare', 'epique', 'legendaire', 'mythique'] as const).map(r => `<span style="color:${RARITY_COLORS[r]}">${RARITY_NAMES[r]}</span>`).join(' · ')}</p>
         <h3>S'équiper</h3><p>${k('I')} ouvre l'inventaire. Clic droit sur un objet : l'équiper ou le retirer. ${k('Maj + clic')} : le recycler.</p>
         <p>${k('C')} ouvre les caractéristiques : chaque niveau donne 5 points à placer.</p>` },
+      { id: 'havresac', titre: 'Le Havre-Sac', html: `<p>${k('H')} (ou l'icône du sac dans la colonne de menus) : 1,5 s d'incantation et tu entres dans ton Havre-Sac, ton monde de poche. Bouger ou être touché coupe l'incantation. Impossible dans un donjon ou poursuivi par des monstres.</p>
+        <p>Les PNJ de service y vivent : Kerubim Crépin recycle tes objets en Pépites, Tissebelle vend les apparats et tient le miroir, Otomaï ses potions, Mère Bouillotte ses plats, Goultard les clés de donjon. Certains emménagent au fil de ton aventure.</p>
+        <p>Le Poutch Ingball compte tes dégâts par seconde. ${k('H')} à nouveau te ramène là où tu étais ; l'arche est un Zaap vers tous ceux que tu as découverts.</p>` },
       { id: 'metiers', titre: 'Métiers', html: `<p>${k('J')} ouvre les métiers. Le Chasseur récupère de la viande sur les monstres quand tu portes une arme de chasse, et cuisine des plats qui soignent.</p>` },
       { id: 'quetes', titre: 'Quêtes et succès', html: `<p>Un PNJ qui a une quête porte une icône au-dessus de la tête. Le suivi en bas à gauche montre l'étape en cours.</p>
         <p>Le journal des quêtes et les succès s'ouvrent depuis la colonne de menus, à droite de l'écran.</p>` },
       { id: 'touches', titre: 'Toutes les touches', html: `<div class="keys">${[['Clic gauche', 'aller / attaquer (maintenu : continuer)'], ['Maj + clic', 'attaquer sur place'], ['Clic droit', 'sort de la barre (case libre)'],
           ['& é " \' ( -', 'barre de sorts'], ['Espace', mob], ['E', 'potion'], ['S', 'sorts'], ['I', 'inventaire'], ['C', 'caractéristiques'], ['J', 'métiers'],
-          ['O', 'options'], ['H', 'ce guide'], ['M', 'carte du monde (bientôt)'], ['Ctrl+M', 'couper ou remettre le son'], ['Molette', 'zoom'], ['F', 'effets d\'impact'], ['Échap', 'fermer']]
+          ['O', 'options'], ['G', 'ce guide'], ['H', 'Havre-Sac'], ['M', 'carte du monde (bientôt)'], ['Ctrl+M', 'couper ou remettre le son'], ['Molette', 'zoom'], ['F', 'effets d\'impact'], ['Échap', 'fermer']]
           .map(([a, b]) => `<b>${a}</b><span>${b}</span>`).join('')}</div>` },
     ];
     const q = this.guideRecherche.trim().toLowerCase();
@@ -727,7 +735,7 @@ export class Windows {
         ] },
         { id: 'touches', titre: 'Touches', opts: [], html: `<div class="keys">${[['Clic gauche', 'aller / attaquer (maintenu : continuer)'], ['Maj + clic', 'attaquer sur place'], ['Clic droit', 'sort de la barre (case libre)'],
           ['& é " \' ( -', 'barre de sorts'], ['Espace', 'déplacement'], ['E', 'potion'], ['S', 'sorts'], ['I', 'inventaire'], ['C', 'caractéristiques'], ['J', 'métiers'],
-          ['O', 'options'], ['M', 'carte du monde (0.2a)'], ['Ctrl+M', 'couper ou remettre le son'], ['Molette', 'zoom'], ['F', 'effets d\'impact'], ['H', 'guide'], ['Échap', 'fermer']]
+          ['O', 'options'], ['M', 'carte du monde (0.2a)'], ['Ctrl+M', 'couper ou remettre le son'], ['Molette', 'zoom'], ['F', 'effets d\'impact'], ['G', 'guide'], ['H', 'Havre-Sac'], ['Échap', 'fermer']]
           .map(([k, d]) => `<b>${k}</b><span>${d}</span>`).join('')}</div>` },
       ] },
       { nom: 'Affichage', desc: 'Ces options règlent l\'ambiance et l\'image du monde.', secs: [
@@ -884,11 +892,11 @@ export class Windows {
   private changed() { this.hideTip(); this.render(); this.onChange(); }
   /** Bulle d'une ressource : consommable, clé de donjon, Potion de Rappel ou Pépite. */
   private resTip(r: ResourceDef) {
-    const sorte = r.soin || r.rappel ? 'Consommable' : r.cle ? 'Clé de donjon' : r.pepite ? 'Monnaie d\'Emp' : 'Ressource';
+    const sorte = r.soin || r.rappel ? 'Consommable' : r.cle ? 'Clé de donjon' : r.pepite ? 'Monnaie du Havre-Sac' : 'Ressource';
     const effet = r.soin ? `<div class="up">+${r.soin} PV</div><div class="hint">Clic droit : manger</div>`
       : r.rappel ? `<div class="up">Retour au dernier Zaap (${this.world.checkpointName})</div><div class="hint">Clic droit : boire</div>`
       : r.cle ? `<div class="up">Ouvre l'entrée : ${r.cle}</div><div class="hint">Prise en entrant dans le donjon</div>`
-      : r.pepite ? '<div class="hint">Recycle tes objets chez Emp, à côté du Zaap d\'Astrub, et dépense-les dans sa boutique.</div>' : '';
+      : r.pepite ? '<div class="hint">Recycle tes objets chez Kerubim Crépin, dans ton Havre-Sac (H), et dépense-les chez ses voisins.</div>' : '';
     return `<h4>${r.name}</h4><div class="sub">${sorte} · niveau ${r.level}</div>${effet}`;
   }
 
@@ -896,8 +904,11 @@ export class Windows {
    *  cadenas, et sa boutique payée en Pépites. S'ouvre par la réponse « service » de son dialogue. */
   private renderEmp() {
     const w = this.win!, p = this.world.player, pep = p.resources[PEPITE] ?? 0;
-    const onglet = (k: string, n: string) => `<span class="eo ${this.empOnglet === k ? 'on' : ''}" data-eo="${k}">${n}</span>`;
-    const tete = `<div class="eh"><div class="eos">${onglet('recycler', 'Recycler')}${onglet('boutique', 'Boutique')}${onglet('apparat', 'Apparats')}<span class="eo" data-garde>Garde-robe</span></div>
+    // les onglets du PNJ ouvert : ses services (Kerubim recycle, Tissebelle a les apparats et le miroir, les autres une boutique)
+    const def = QUETES.pnj[this.empPnj], sv = new Set((def?.services ?? []).map(x => x.service)), boutique = BOUTIQUES[this.empPnj] ?? [];
+    if (!sv.has(this.empOnglet)) this.empOnglet = sv.has('boutique') ? 'boutique' : sv.has('apparat') ? 'apparat' : 'recycler';
+    const onglet = (k: string, n: string) => sv.has(k) ? `<span class="eo ${this.empOnglet === k ? 'on' : ''}" data-eo="${k}">${n}</span>` : '';
+    const tete = `<div class="eh"><div class="eos">${onglet('recycler', 'Recycler')}${onglet('boutique', 'Boutique')}${onglet('apparat', 'Apparats')}${sv.has('garde-robe') ? '<span class="eo" data-garde>Garde-robe</span>' : ''}</div>
       <span class="k" title="Pépites">${pep.toLocaleString('fr-FR')} ${iconHtml(ITEMS.resources[PEPITE].icon)}</span></div>`;
     let corps = '';
     if (this.empOnglet === 'recycler') {
@@ -928,13 +939,13 @@ export class Windows {
             ${a ? '<span class="hint">Déjà à toi</span>' : `<span class="btn ${pep >= prix ? '' : 'off'}" data-aachat="${id}">${prix} ${iconHtml(ITEMS.resources[PEPITE].icon)}</span>`}</div>`; }).join('')}
           ${l.length > 120 ? `<div class="hint">… et ${l.length - 120} autres : affine la recherche.</div>` : ''}</div></div>`;
     } else {
-      corps = `<div class="shop">${(BOUTIQUES.emp ?? []).map(a => { const r = ITEMS.resources[a.id]; if (!r) return '';
+      corps = `<div class="shop">${boutique.map(a => { const r = ITEMS.resources[a.id]; if (!r) return '';
         const effet = r.soin ? `+${r.soin} PV` : r.rappel ? 'Retour au dernier Zaap' : r.cle ? `Entrée : ${r.cle}` : '';
         return `<div class="rec" data-rid="${a.id}">${iconHtml(r.icon)}<div><b>${r.name}</b> <span class="hint">niveau ${r.level}${(p.resources[a.id] ?? 0) ? ` · tu en as ${p.resources[a.id]}` : ''}</span><div style="font-size:12px;color:#c9c4ab">${effet}</div></div>
           <span class="btn ${pep >= a.prix ? '' : 'off'}" data-achat="${a.id}">${a.prix} ${iconHtml(ITEMS.resources[PEPITE].icon)}</span></div>`; }).join('')}</div>
-        <div class="hint">Les apparats sont dans l'onglet Apparats.</div>`;
+        <div class="hint">Les Pépites se gagnent en recyclant tes objets chez Kerubim Crépin.</div>`;
     }
-    w.innerHTML = `${this.title('Emp · Méryde du Recyclage', 'inventory')}<div class="in emp">${tete}${corps}</div>`;
+    w.innerHTML = `${this.title(`${def?.nom ?? 'Marchand'}${def?.titre ? ` · ${def.titre}` : ''}`, 'inventory')}<div class="in emp">${tete}${corps}</div>`;
     w.querySelectorAll<HTMLElement>('[data-eo]').forEach(e => e.addEventListener('click', () => { this.empOnglet = e.dataset.eo as 'recycler' | 'boutique' | 'apparat'; this.render(); }));
     w.querySelector<HTMLElement>('[data-garde]')?.addEventListener('click', () => this.show('garde'));
     w.querySelectorAll<HTMLElement>('[data-aachat]').forEach(e => e.addEventListener('click', () => { this.world.acheterApparat(e.dataset.aachat!); this.changed(); }));
@@ -951,7 +962,7 @@ export class Windows {
     }
     w.querySelector<HTMLSelectElement>('[data-aslot]')?.addEventListener('change', e => { this.apparatSlot = (e.target as HTMLSelectElement).value as '' | 'chapeau' | 'cape' | 'familier'; this.render(); });
     w.querySelectorAll<HTMLElement>('[data-lot]').forEach(e => e.addEventListener('click', () => { this.world.recycleLot(e.dataset.lot as Rarity); this.changed(); }));
-    w.querySelectorAll<HTMLElement>('[data-achat]').forEach(e => e.addEventListener('click', () => { this.world.acheter('emp', e.dataset.achat!); this.changed(); }));
+    w.querySelectorAll<HTMLElement>('[data-achat]').forEach(e => e.addEventListener('click', () => { this.world.acheter(this.empPnj, e.dataset.achat!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-rres]').forEach(e => e.addEventListener('click', () => { this.world.recycleRessource(e.dataset.rres!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-rid]').forEach(e => {
       const r = ITEMS.resources[e.dataset.rid!];
@@ -970,6 +981,18 @@ export class Windows {
     });
   }
   private flash(e: HTMLElement) { e.style.borderColor = '#e0625a'; }
+
+  /** Zaap du Havre-Sac (maquette Hub 2C) : ressortir là où l'on était, ou partir vers un Zaap déjà découvert. */
+  private renderZaap() {
+    const w = this.win!, p = this.world.player, r = this.world.retour;
+    const zone = (z: string) => GAME_DATA.zones[z]?.name ?? z;
+    const ligne = (i: number, nom: string, sous: string) => `<div class="rec"><div><b>${nom}</b> <span class="hint">${sous}</span></div><span class="btn" data-zaap="${i}">Y aller</span></div>`;
+    const l = [r ? ligne(-1, 'Là où j\'étais', `${zone(r.zone)}, près de ${r.point.name}`) : ligne(-1, 'Ressortir', 'Dernier Zaap visité'),
+      ...p.zaaps.map((z, i) => ligne(i, z.name, zone(z.zone)))];
+    w.innerHTML = `${this.title('Zaap du Havre-Sac', 'home')}<div class="in emp"><div class="shop">${l.join('')}</div>
+      ${p.zaaps.length ? '' : '<div class="hint">Chaque Zaap que tu touches dans le monde s\'ajoute à cette liste.</div>'}</div>`;
+    w.querySelectorAll<HTMLElement>('[data-zaap]').forEach(e => e.addEventListener('click', () => { this.onZaap(+e.dataset.zaap!); this.close(); }));
+  }
 
   /** Garde-robe (Apparence 6B, gratuite, en ville) : tête de création, 6 couleurs, palettes, avec l'aperçu en direct. */
   private renderGarde() {
@@ -1062,7 +1085,7 @@ export class Windows {
       if (!d || (this.kind && d.slot !== this.kind) || (q && !d.name.toLowerCase().includes(q))) continue;
       cells.push(`<div class="cell ${p.apparat[d.slot] === id ? 'porte' : ''}" data-app="${id}">${apparatHtml(id)}</div>`);
     }
-    if (this.tab === 'apparat' && !p.apparats.length) cells.push('<div class="hint" style="grid-column:1/-1">Les apparats s\'achètent chez Emp, à côté du Zaap d\'Astrub. Ils changent seulement l\'apparence.</div>');
+    if (this.tab === 'apparat' && !p.apparats.length) cells.push('<div class="hint" style="grid-column:1/-1">Les apparats s\'achètent chez Tissebelle, dans ton Havre-Sac (H). Ils changent seulement l\'apparence.</div>');
     const n = cells.length;
     for (let i = n; i < Math.max(35, Math.ceil(n / 5) * 5); i++) cells.push('<div class="cell empty"></div>');
     return { html: cells.join(''), n };
