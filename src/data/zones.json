@@ -339,10 +339,10 @@
       315
      ],
      "b": [
-      "maison_0_-4",
-      524
+      "milice_rdc",
+      511
      ],
-     "nom": "Maison"
+     "nom": "Tour de la Milice"
     },
     {
      "a": [
@@ -496,6 +496,17 @@
      "nom": "Incarnam",
      "verrou": 1,
      "sens": 1
+    },
+    {
+     "a": [
+      "milice_rdc",
+      229
+     ],
+     "b": [
+      "maison_0_-4",
+      346
+     ],
+     "nom": "Escalier"
     }
    ],
    "donjons": [
