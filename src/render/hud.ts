@@ -66,7 +66,7 @@ export class Hud {
   onSlotHover: (id: string | null, x: number, y: number) => void = () => {};
   /** Rectangles de l'interface à l'écran (un clic dessus ne doit pas faire attaquer). */
   private rects: [number, number, number, number][] = [];
-  /** Son coupé (touche M, maquette Son 8B) : petit haut-parleur barré dans le coin de la mini-carte. */
+  /** Son coupé (Ctrl+M, maquette Son 8B ; M = carte du monde, 0.2 18A) : petit haut-parleur barré dans le coin de la mini-carte. */
   muet = false;
   blocks(x: number, y: number) { return this.rects.some(([rx, ry, rw, rh]) => x >= rx && y >= ry && x <= rx + rw && y <= ry + rh); }
 

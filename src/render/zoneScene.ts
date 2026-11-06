@@ -313,8 +313,11 @@ export class ZoneScene extends Phaser.Scene {
       this.hud.toast(this.fx.juice ? 'Effets d\'impact : ACTIVÉS' : 'Effets d\'impact : DÉSACTIVÉS (compare !)');
     });
     this.keys.H.on('down', () => this.hud.toggleHelp());
-    // M : couper ou remettre tout le son (8B)
-    this.keys.M.on('down', () => this.basculerMuet());
+    // Ctrl+M : couper ou remettre tout le son ; M seul est gardé pour la carte du monde, comme dans Dofus (maquette 0.2, 18A)
+    this.keys.M.on('down', (_k: Phaser.Input.Keyboard.Key, e: KeyboardEvent) => {
+      if (e?.ctrlKey || e?.metaKey) { e.preventDefault(); this.basculerMuet(); }
+      else this.hud.toast('Carte du monde : elle arrive avec Astrub (0.2a). Ctrl+M coupe le son.');
+    });
     // I ou C : fenêtre Personnage (inventaire + caractéristiques) ; le jeu continue derrière
     this.keys.I.on('down', () => this.windows?.toggle('inv'));
     this.keys.C.on('down', () => this.windows?.toggle('car'));
@@ -382,7 +385,7 @@ export class ZoneScene extends Phaser.Scene {
   }
   private basculerMuet() {
     this.reglages.muet = !this.reglages.muet; sauverReglages(this.reglages); this.appliquerSon();
-    this.hud.toast(this.reglages.muet ? 'Son coupé (M pour le remettre)' : 'Son remis');
+    this.hud.toast(this.reglages.muet ? 'Son coupé (Ctrl+M pour le remettre)' : 'Son remis');
     this.windows?.refresh();
   }
 

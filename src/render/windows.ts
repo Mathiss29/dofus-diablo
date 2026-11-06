@@ -561,7 +561,7 @@ export class Windows {
         ] },
         { id: 'touches', titre: 'Touches', opts: [], html: `<div class="keys">${[['Clic gauche', 'aller / attaquer (maintenu : continuer)'], ['Maj + clic', 'attaquer sur place'], ['Clic droit', 'sort de la barre (case libre)'],
           ['& é " \' ( -', 'barre de sorts'], ['Espace', 'déplacement'], ['E', 'potion'], ['S', 'sorts'], ['I', 'inventaire'], ['C', 'caractéristiques'], ['J', 'métiers'],
-          ['O', 'options'], ['M', 'couper ou remettre le son'], ['Molette', 'zoom'], ['F', 'effets d\'impact'], ['H', 'aide'], ['Échap', 'fermer']]
+          ['O', 'options'], ['M', 'carte du monde (0.2a)'], ['Ctrl+M', 'couper ou remettre le son'], ['Molette', 'zoom'], ['F', 'effets d\'impact'], ['H', 'aide'], ['Échap', 'fermer']]
           .map(([k, d]) => `<b>${k}</b><span>${d}</span>`).join('')}</div>` },
       ] },
       { nom: 'Affichage', desc: 'Ces options règlent l\'ambiance et l\'image du monde.', secs: [
@@ -578,9 +578,9 @@ export class Windows {
           { k: 'particules', nom: 'Particules (spores, braises…)', t: 'check' },
         ] },
       ] },
-      { nom: 'Son', desc: 'Ces options règlent la musique et les sons du jeu. La touche M coupe ou remet tout le son.', secs: [
+      { nom: 'Son', desc: 'Ces options règlent la musique et les sons du jeu. Ctrl+M coupe ou remet tout le son.', secs: [
         { id: 'son', titre: 'Général', opts: [
-          { k: 'muet', nom: 'Couper tout le son', aide: 'Touche M', t: 'check' },
+          { k: 'muet', nom: 'Couper tout le son', aide: 'Ctrl+M', t: 'check' },
           { k: 'volume', nom: 'Volume général', t: 'range', min: 0, max: 100 },
           { k: 'volMusique', nom: 'Musique', t: 'range', min: 0, max: 100 },
           { k: 'volEffets', nom: 'Effets (sorts, coups, monstres)', t: 'range', min: 0, max: 100 },
