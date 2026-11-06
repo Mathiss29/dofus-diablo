@@ -215,10 +215,11 @@ export class WorldView {
       const f = wg.toScreen(m.fond.x, m.fond.y);
       s.objs.push(this.scene.add.image(f.x, f.y, this.k(`fond_${m.tag}`)).setOrigin(0).setScale(S * (m.fond.k ?? 1)).setDepth(-15000).setTint(this.tint));
     }
-    // débords en fondu sur les voisines : au-dessus de tous les sols, sous le décor
+    // débords en fondu sur les voisines : au-dessus de tous les sols, sous le décor. Une carte plus haut (ou plus à gauche)
+    // passe au-dessus : son dessin continue sans coupure au-delà du raccord (tools/extraction/bords_fondu.py).
     if (m.bord) {
-      const f = wg.toScreen(m.bord.x, m.bord.y);
-      s.objs.push(this.scene.add.image(f.x, f.y, this.k(`bord_${m.tag}`)).setOrigin(0).setScale(S).setDepth(-9999).setTint(this.tint));
+      const f = wg.toScreen(m.bord.x, m.bord.y), rang = (m.y - this.wg.world.origin[1]) * 1000 + (m.x - this.wg.world.origin[0]);
+      s.objs.push(this.scene.add.image(f.x, f.y, this.k(`bord_${m.tag}`)).setOrigin(0).setScale(S).setDepth(-9998.6 - rang * 1e-6).setTint(this.tint));
     }
     s.next = 0;
     for (const p of this.portes) if (p.tag === m.tag) {
