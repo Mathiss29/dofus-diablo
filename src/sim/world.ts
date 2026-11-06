@@ -114,9 +114,7 @@ export class World {
     if (opts.items) {
       this.player.items = opts.items;
       this.equipByLevel = Object.entries(opts.items.equipment).map(([id, d]) => ({ id, level: d.level }));
-      // Choix 6A : une arme de chasse officielle dans le sac au départ (Arc de Chasse pour le Crâ, Couteau de Chasse sinon)
-      const hunt = opts.classId === 'cra' ? '1942' : '1934';
-      if (opts.items.equipment[hunt]?.chasse) this.player.bag.push({ uid: this.nextId++, id: hunt, rarity: 'commun', stats: {}, extra: [] });
+      // sac vide au départ (Mathis, 2026-11-06) : l'équipement vient du tutoriel (panoplie de l'Intrépide, Arc de Chasse du Crâ)
     }
     if (open) this.buildPortes();
     // les PNJ d'abord : les groupes de monstres ne se posent pas sur eux

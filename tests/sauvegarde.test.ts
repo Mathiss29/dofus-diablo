@@ -14,6 +14,7 @@ describe('sauvegarde du personnage', () => {
     const a = nouveau('cra');
     const p = a.player;
     p.level = 7; p.xp = 123; p.points = 12; p.kamas = 456; p.base = { agilite: 10 };
+    a.donnerObjet('1942');
     const hunt = p.bag[0];
     expect(p.equip(hunt.uid)).toBe(true);
     const m = a.worldGrid!.mapByCoords(-1, -4)!, q = a.worldGrid!.cellToWorld(a.worldGrid!.freeByMap.get(m.tag)![30]);
