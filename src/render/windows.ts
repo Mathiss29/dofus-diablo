@@ -1,7 +1,9 @@
 import { REGLAGES_DEFAUT, sauverReglages, type Reglages } from './ambiance';
 import { ICON_CSS, iconHtml } from './icons';
 import { MANIFESTE, Son } from './son';
-import { BOUTIQUES, ITEMS, RECOLTES } from '../sim/data';
+import { APPARATS, BOUTIQUES, ITEMS, RECOLTES } from '../sim/data';
+import { v } from './assetUrl';
+import { DOSSIER, PALETTES, ZONES, apparenceValide, assemblagePour, fiches, objetsPortes, type Apparence, type Assemblage, type FichePerso } from './squelette';
 import {
   BASE_STATS, LEGENDARY, PEPITE, RARITY_COLORS, RARITY_NAMES, STATS, STAT_NAMES, metierXpNeeded, recycleResource, recycleValue,
   type EquipSlot, type Item, type Rarity, type ResourceDef, type Stat,
@@ -37,7 +39,44 @@ const SLOT_D3: Record<EquipSlot, string> = {
 };
 const TAB_D3: Record<string, string> = { all: 'all', equipments: 'equipment', consumables: 'consumable', resources: 'resources', key: 'quest', cosmetics: 'cosmetics' };
 
+/** Icône d'un objet d'apparat (planche à part ui/apparat.webp, apparat_export.py). */
+function apparatHtml(id: string) {
+  const d = APPARATS.objets[id]; if (!d) return '<i class="ic"></i>';
+  const x = (d.case % APPARATS.cols) / (APPARATS.cols - 1) * 100, y = Math.floor(d.case / APPARATS.cols) / Math.max(1, APPARATS.rows - 1) * 100;
+  return `<i class="ic" style="background-image:url(assets/ui/apparat.webp);background-size:${APPARATS.cols * 100}% ${APPARATS.rows * 100}%;background-position:${x.toFixed(3)}% ${y.toFixed(3)}%"></i>`;
+}
+const hexa = (c: number) => '#' + c.toString(16).padStart(6, '0');
+type Visible = 'chapeau' | 'cape' | 'bouclier';
+const VISIBLES: [Visible, string][] = [['chapeau', 'Coiffe'], ['cape', 'Cape'], ['bouclier', 'Bouclier']];
+
 const CSS = `
+.dw canvas.vivant{display:block}
+.dw .stage canvas.who{position:relative;bottom:118px;height:min(270px,40vh);width:200px;max-width:100%}
+.dw .appa{display:flex;justify-content:center;align-items:center;gap:10px;padding:8px 14px 0;z-index:1;position:relative}
+.dw .appa > span{font-weight:bold;color:#f4efe0;text-shadow:0 1px 2px #000;font-size:12px}
+.dw .appa .slot{width:50px;height:50px;background-size:100%}
+.dw .appa .slot.cache::after{content:'';position:absolute;inset:8px;background:linear-gradient(45deg,transparent 46%,#e0625a 46%,#e0625a 54%,transparent 54%)}
+.dw .cell.porte{outline:2px solid #b9e54b;outline-offset:-2px}
+.dw .cell.pas{opacity:.45}
+.dw .emp .cata{display:grid;grid-template-columns:200px 1fr;gap:12px;min-height:0}
+.dw .emp .apercu{position:sticky;top:0;align-self:start;display:grid;justify-items:center;gap:6px;background:radial-gradient(ellipse at 50% 70%,#4f8a58,#1b231c 70%);border:1px solid #34322b;border-radius:4px;padding:8px}
+.dw .emp .apercu canvas{width:180px;height:260px}
+.dw .emp .filtre{display:flex;gap:6px;align-items:center}
+.dw .emp .filtre input{flex:1}
+.dw .win.garde{width:min(820px,96vw);height:min(640px,92vh)}
+.dw .in.garde{display:grid;grid-template-columns:280px 1fr;gap:16px;padding:14px 16px;min-height:0;overflow:auto}
+.dw .garde .apercu{display:grid;justify-items:center;align-content:start;gap:8px;background:radial-gradient(ellipse at 50% 70%,#4f8a58,#1b231c 70%);border:1px solid #34322b;border-radius:4px;padding:10px}
+.dw .garde .apercu canvas{width:250px;height:360px}
+.dw .garde .tetes{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.dw .garde .tetes button{all:unset;cursor:pointer;aspect-ratio:1;border-radius:4px;background-color:#2a2b1f;background-repeat:no-repeat;border:1px solid #45452f}
+.dw .garde .tetes button.on{border-color:#b9e54b;box-shadow:0 0 0 2px #b9e54b;background-color:#3a4a1c}
+.dw .garde .coul{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.dw .garde .coul label{display:flex;gap:6px;align-items:center;font-size:12px;color:#c9c4ab}
+.dw .garde .coul input{width:34px;height:26px;border:1px solid #57554c;padding:0;border-radius:3px;cursor:pointer}
+.dw .garde .pals{display:flex;flex-wrap:wrap;gap:6px}
+.dw .garde .pals button{all:unset;cursor:pointer;display:flex;gap:2px;align-items:center;padding:4px 8px;border:1px solid #45433b;border-radius:3px;background:#2e2d28;font-size:12px}
+.dw .garde .pals i{width:10px;height:14px;border-radius:2px;display:inline-block}
+.dw .garde h5{margin:6px 0 2px;font-size:13px;color:#f4efe0}
 .dw{position:fixed;inset:0;pointer-events:none;font:13px Lexend,Verdana,sans-serif;color:#e8e2d4;z-index:10}
 .dw .win{pointer-events:auto;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#24231f;border:1px solid #0d0c0a;
  box-shadow:inset 0 0 0 1px #4a4840,0 12px 40px #000c;border-radius:4px;display:grid;grid-template-rows:38px 1fr;overflow:hidden}
@@ -295,7 +334,7 @@ const CSS = `
 .dw .ttl b{font-weight:700}
 `;
 
-type Mode = 'inv' | 'car' | 'job' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp';
+type Mode = 'inv' | 'car' | 'job' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde';
 
 /** Fenêtres façon Dofus 3 : « Inventaire » (le perso sur son socle, ses emplacements autour, le sac à onglets)
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
@@ -309,8 +348,18 @@ export class Windows {
   /** Journal des quêtes (5C) : quête affichée ; Succès : catégorie affichée. */
   private queteVue: string | null = null;
   private succesCat = '';
-  /** Fenêtre d'Emp : onglet Recycler ou Boutique. */
-  empOnglet: 'recycler' | 'boutique' = 'recycler';
+  /** Fenêtre d'Emp : onglet Recycler, Boutique ou Apparats (Apparence 5A). */
+  empOnglet: 'recycler' | 'boutique' | 'apparat' = 'recycler';
+  /** Apparat survolé dans la boutique d'Emp : le perso de l'aperçu le porte. */
+  private essaiApparat: string | null = null;
+  private apparatRecherche = '';
+  private apparatSlot: '' | 'chapeau' | 'cape' = '';
+  /** Perso du joueur dessiné en direct (classe et sexe, tête et couleurs) : inventaire, aperçu des apparats, garde-robe. */
+  perso: { cle: string; app: Apparence } | null = null;
+  /** Garde-robe (Apparence 6B) : nouvelle tête et nouvelles couleurs, enregistrées par l'affichage du jeu. */
+  onApparence: (app: Apparence) => void = () => {};
+  private garde: Apparence | null = null;
+  private fiche: FichePerso | null = null;
   private kind = '';
   private sort = '';
   private search = '';
@@ -345,6 +394,10 @@ export class Windows {
     Son.jouer(MANIFESTE.ui.ouvrir, 'interface', { cle: 'fenetre', ecart: 0.1 });   // 6B : ouverture, puis clic sur les boutons
 
     this.mode = mode;
+    if (mode === 'garde') {
+      this.garde = this.perso ? { tete: this.perso.app.tete, couleurs: [...this.perso.app.couleurs] } : null;
+      if (this.perso && !this.fiche) fiches().then(f => { this.fiche = f[this.perso!.cle] ?? null; this.refresh(); }, () => {});
+    }
     const w = document.createElement('div'); w.className = mode === 'guide' ? 'win opt guide' : `win ${mode}`;   // le Guide reprend la mise en page des Options
     w.addEventListener('contextmenu', e => e.preventDefault());
     w.addEventListener('pointerdown', e => e.stopPropagation());
@@ -363,7 +416,8 @@ export class Windows {
     if (this.mode === 'guide') this.renderGuide();
     else if (this.mode === 'car') this.renderCarac(); else if (this.mode === 'job') this.renderJob(); else if (this.mode === 'opt') this.renderOpt();
     else if (this.mode === 'sorts') this.renderSorts(); else if (this.mode === 'quetes') this.renderQuetes();
-    else if (this.mode === 'succes') this.renderSucces(); else if (this.mode === 'emp') this.renderEmp(); else this.renderInv();
+    else if (this.mode === 'succes') this.renderSucces(); else if (this.mode === 'emp') this.renderEmp();
+    else if (this.mode === 'garde') this.renderGarde(); else this.renderInv();
     this.win!.querySelector('[data-close]')!.addEventListener('click', () => this.close());
   }
   private title(name: string, icon: string) {
@@ -383,9 +437,12 @@ export class Windows {
         <div class="left">
           <div class="perso">
             <div class="slots">${LEFT.map(slot).join('')}</div>
-            <div class="stage"><div class="lv">${p.cls.name} · niveau ${p.level}</div><img class="socle" src="assets/ui/socle.png" alt=""><img class="who" src="${this.portrait}" alt=""></div>
+            <div class="stage"><div class="lv">${p.cls.name} · niveau ${p.level}</div><img class="socle" src="assets/ui/socle.png" alt="">${this.perso ? this.canevas('who', objetsPortes(p.equipment, p.apparat)) : `<img class="who" src="${this.portrait}" alt="">`}</div>
             <div class="slots">${RIGHT.map(slot).join('')}</div>
           </div>
+          <div class="appa"><span title="Apparat : change seulement l'apparence. Clic : choisir ; clic droit : retirer, ou cacher l'objet porté">Apparence</span>${VISIBLES.map(([k, n]) => {
+            const a = p.apparat[k], ic = a && a !== '0' ? apparatHtml(a) : '';
+            return `<div class="slot ${a === '0' ? 'cache' : ''}" data-appa="${k}" title="${n} : ${a === '0' ? 'cachée' : a ? APPARATS.objets[a]?.name ?? '' : 'objet porté'}" style="${ic ? '' : `background-image:url(${D3}/tx_slot_${SLOT_D3[k]}.png)`}">${ic}</div>`; }).join('')}</div>
           <div class="sets">${this.setsHtml()}</div>
           <div class="dofus">${Array.from({ length: 6 }, () => `<div class="slot" title="Dofus (plus tard)" style="background-image:url(${D3}/tx_slot_dofus.png)"></div>`).join('')}</div>
         </div>
@@ -420,6 +477,20 @@ export class Windows {
       e.addEventListener('mouseleave', () => this.hideTip());
       e.addEventListener('contextmenu', () => { p.unequip(s); this.changed(); });
       e.addEventListener('dblclick', () => { p.unequip(s); this.changed(); });
+    });
+    // Case Apparence (5A) : clic = les apparats de cet emplacement ; clic droit = retirer l'apparat, sinon cacher / montrer l'objet porté
+    w.querySelectorAll<HTMLElement>('[data-appa]').forEach(e => {
+      const k = e.dataset.appa as Visible;
+      e.addEventListener('click', () => { this.tab = 'apparat'; this.kind = k === 'bouclier' ? '' : k; this.render(); });
+      e.addEventListener('contextmenu', () => { this.world.porterApparat(k, p.apparat[k] ? null : '0'); this.changed(); });
+    });
+    w.querySelectorAll<HTMLElement>('[data-app]').forEach(e => {
+      const id = e.dataset.app!, d = APPARATS.objets[id];
+      const porter = () => { this.world.porterApparat(d.slot, p.apparat[d.slot] === id ? null : id); this.changed(); };
+      e.addEventListener('mouseenter', ev => { this.tip.innerHTML = `<h4>${d.name}</h4><div class="sub">${d.slot === 'chapeau' ? 'Coiffe' : 'Cape'} d'apparat</div><div class="hint">Change seulement l'apparence. Clic droit : porter / retirer</div>`; this.tip.style.display = 'block'; this.moveTip(ev); });
+      e.addEventListener('mousemove', ev => this.moveTip(ev));
+      e.addEventListener('mouseleave', () => this.hideTip());
+      e.addEventListener('contextmenu', porter); e.addEventListener('dblclick', porter);
     });
     w.querySelectorAll<HTMLElement>('[data-res]').forEach(e => {
       const id = e.dataset.res!, r = ITEMS.resources[id];
@@ -813,7 +884,7 @@ export class Windows {
   private renderEmp() {
     const w = this.win!, p = this.world.player, pep = p.resources[PEPITE] ?? 0;
     const onglet = (k: string, n: string) => `<span class="eo ${this.empOnglet === k ? 'on' : ''}" data-eo="${k}">${n}</span>`;
-    const tete = `<div class="eh"><div class="eos">${onglet('recycler', 'Recycler')}${onglet('boutique', 'Boutique')}</div>
+    const tete = `<div class="eh"><div class="eos">${onglet('recycler', 'Recycler')}${onglet('boutique', 'Boutique')}${onglet('apparat', 'Apparats')}<span class="eo" data-garde>Garde-robe</span></div>
       <span class="k" title="Pépites">${pep.toLocaleString('fr-FR')} ${iconHtml(ITEMS.resources[PEPITE].icon)}</span></div>`;
     let corps = '';
     if (this.empOnglet === 'recycler') {
@@ -828,15 +899,44 @@ export class Windows {
         <div class="hint">Clic : recycler l'objet · Ctrl + clic (ou clic droit) : cadenas, l'objet n'est jamais recyclé. Les objets sous cadenas restent hors des lots.</div>
         <div class="grid eg">${objets || '<div class="hint">Ton sac est vide.</div>'}</div>
         ${res ? `<div class="sub2">Ressources (la pile entière)</div><div class="grid eg">${res}</div>` : ''}`;
+    } else if (this.empOnglet === 'apparat') {
+      // Apparats officiels (5A) : tout le catalogue, payé en Pépites ; le survol habille le perso de l'aperçu
+      const q = this.apparatRecherche.toLowerCase();
+      const l = Object.entries(APPARATS.objets).filter(([, d]) => (!this.apparatSlot || d.slot === this.apparatSlot) && (!q || d.name.toLowerCase().includes(q)))
+        .sort((a, b) => a[1].name.localeCompare(b[1].name, 'fr'));
+      const essai = this.essaiApparat && APPARATS.objets[this.essaiApparat];
+      const objets = objetsPortes(p.equipment, { ...p.apparat, ...(essai ? { [essai.slot]: this.essaiApparat! } : {}) });
+      corps = `<div class="filtre"><input placeholder="Rechercher un apparat..." value="${this.apparatRecherche.replace(/"/g, '&quot;')}" data-arech>
+          <select data-aslot style="width:auto">${[['', 'Coiffes et capes'], ['chapeau', 'Coiffes'], ['cape', 'Capes']].map(([k, n]) => `<option value="${k}" ${this.apparatSlot === k ? 'selected' : ''}>${n}</option>`).join('')}</select>
+          <span class="hint">${l.length} apparat${l.length > 1 ? 's' : ''}</span></div>
+        <div class="cata"><div class="apercu">${this.perso ? this.canevas('', objets) : ''}<div class="hint" style="text-align:center">${essai ? essai.name : 'Survole un apparat pour l\'essayer'}</div></div>
+        <div class="shop">${l.slice(0, 120).map(([id, d]) => { const a = p.apparats.includes(id), prix = APPARATS.prix[d.slot] ?? 0;
+          return `<div class="rec" data-essai="${id}">${apparatHtml(id)}<div><b>${d.name}</b> <span class="hint">${d.slot === 'chapeau' ? 'Coiffe' : 'Cape'} d'apparat</span></div>
+            ${a ? '<span class="hint">Déjà à toi</span>' : `<span class="btn ${pep >= prix ? '' : 'off'}" data-aachat="${id}">${prix} ${iconHtml(ITEMS.resources[PEPITE].icon)}</span>`}</div>`; }).join('')}
+          ${l.length > 120 ? `<div class="hint">… et ${l.length - 120} autres : affine la recherche.</div>` : ''}</div></div>`;
     } else {
       corps = `<div class="shop">${(BOUTIQUES.emp ?? []).map(a => { const r = ITEMS.resources[a.id]; if (!r) return '';
         const effet = r.soin ? `+${r.soin} PV` : r.rappel ? 'Retour au dernier Zaap' : r.cle ? `Entrée : ${r.cle}` : '';
         return `<div class="rec" data-rid="${a.id}">${iconHtml(r.icon)}<div><b>${r.name}</b> <span class="hint">niveau ${r.level}${(p.resources[a.id] ?? 0) ? ` · tu en as ${p.resources[a.id]}` : ''}</span><div style="font-size:12px;color:#c9c4ab">${effet}</div></div>
           <span class="btn ${pep >= a.prix ? '' : 'off'}" data-achat="${a.id}">${a.prix} ${iconHtml(ITEMS.resources[PEPITE].icon)}</span></div>`; }).join('')}</div>
-        <div class="hint">Les apparats d'Emp arrivent avec la personnalisation du perso.</div>`;
+        <div class="hint">Les apparats sont dans l'onglet Apparats.</div>`;
     }
     w.innerHTML = `${this.title('Emp · Méryde du Recyclage', 'inventory')}<div class="in emp">${tete}${corps}</div>`;
-    w.querySelectorAll<HTMLElement>('[data-eo]').forEach(e => e.addEventListener('click', () => { this.empOnglet = e.dataset.eo as 'recycler' | 'boutique'; this.render(); }));
+    w.querySelectorAll<HTMLElement>('[data-eo]').forEach(e => e.addEventListener('click', () => { this.empOnglet = e.dataset.eo as 'recycler' | 'boutique' | 'apparat'; this.render(); }));
+    w.querySelector<HTMLElement>('[data-garde]')?.addEventListener('click', () => this.show('garde'));
+    w.querySelectorAll<HTMLElement>('[data-aachat]').forEach(e => e.addEventListener('click', () => { this.world.acheterApparat(e.dataset.aachat!); this.changed(); }));
+    w.querySelectorAll<HTMLElement>('[data-essai]').forEach(e => e.addEventListener('mouseenter', () => {
+      this.essaiApparat = e.dataset.essai!;
+      const d = APPARATS.objets[this.essaiApparat], p2 = this.world.player, cv = w.querySelector<HTMLCanvasElement>('.apercu canvas');
+      if (cv) cv.dataset.objets = objetsPortes(p2.equipment, { ...p2.apparat, [d.slot]: this.essaiApparat }).join(',');
+      const t = w.querySelector('.apercu .hint'); if (t) t.textContent = d.name;
+    }));
+    const ar = w.querySelector<HTMLInputElement>('[data-arech]');
+    if (ar) {
+      ar.addEventListener('input', () => { this.apparatRecherche = ar.value; this.render(); const m = this.win!.querySelector<HTMLInputElement>('[data-arech]')!; m.focus(); m.setSelectionRange(m.value.length, m.value.length); });
+      ar.addEventListener('keydown', e => e.stopPropagation());
+    }
+    w.querySelector<HTMLSelectElement>('[data-aslot]')?.addEventListener('change', e => { this.apparatSlot = (e.target as HTMLSelectElement).value as '' | 'chapeau' | 'cape'; this.render(); });
     w.querySelectorAll<HTMLElement>('[data-lot]').forEach(e => e.addEventListener('click', () => { this.world.recycleLot(e.dataset.lot as Rarity); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-achat]').forEach(e => e.addEventListener('click', () => { this.world.acheter('emp', e.dataset.achat!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-rres]').forEach(e => e.addEventListener('click', () => { this.world.recycleRessource(e.dataset.rres!); this.changed(); }));
@@ -857,6 +957,60 @@ export class Windows {
     });
   }
   private flash(e: HTMLElement) { e.style.borderColor = '#e0625a'; }
+
+  /** Garde-robe (Apparence 6B, gratuite, en ville) : tête de création, 6 couleurs, palettes, avec l'aperçu en direct. */
+  private renderGarde() {
+    const w = this.win!, p = this.world.player, f = this.fiche, g = this.garde;
+    const [cls, sx] = (this.perso?.cle ?? 'iop_m').split('_');
+    const corps = !f || !g ? '<div class="hint">Chargement…</div>' : `<div>
+      <h5>Tête</h5>
+      <div class="tetes">${f.tetes.map((_, i) => `<button type="button" data-gtete="${i}" class="${g.tete === i ? 'on' : ''}" title="Tête ${i + 1}"
+        style="background-image:url(${v(`${DOSSIER}/tetes_${cls}_${sx}.webp`)});background-size:${f.tetes.length * 100}% 100%;background-position:${f.tetes.length > 1 ? (i / (f.tetes.length - 1)) * 100 : 0}% 0"></button>`).join('')}</div>
+      <h5>Couleurs</h5>
+      <div class="coul">${g.couleurs.map((c, i) => `<label><input type="color" data-gcoul="${i}" value="${hexa(c)}">${ZONES[i]}</label>`).join('')}</div>
+      <h5>Palettes</h5>
+      <div class="pals">${PALETTES.map((pl, i) => `<button type="button" data-gpal="${i}">${pl.c.slice(0, 3).map(x => `<i style="background:${hexa(x)}"></i>`).join('')}${pl.nom}</button>`).join('')}
+        <button type="button" data-gofficiel>Couleurs officielles</button></div>
+      <div style="display:flex;gap:10px;margin-top:14px;align-items:center"><span class="btn" data-genr>Enregistrer</span><span class="hint">Gratuit, à chaque garde-robe des villes.</span></div></div>`;
+    w.innerHTML = `${this.title('Garde-robe', 'inventory')}<div class="in garde"><div class="apercu">${g ? this.canevas('', objetsPortes(p.equipment, p.apparat), g) : ''}</div>${corps}</div>`;
+    if (!f || !g) return;
+    const apercu = () => { const cv = w.querySelector<HTMLCanvasElement>('.apercu canvas'); if (cv) cv.dataset.app = JSON.stringify(g); };
+    w.querySelectorAll<HTMLElement>('[data-gtete]').forEach(e => e.addEventListener('click', () => { g.tete = +e.dataset.gtete!; this.render(); }));
+    w.querySelectorAll<HTMLInputElement>('[data-gcoul]').forEach(e => e.addEventListener('input', () => { g.couleurs[+e.dataset.gcoul!] = parseInt(e.value.slice(1), 16); apercu(); }));
+    w.querySelectorAll<HTMLElement>('[data-gpal]').forEach(e => e.addEventListener('click', () => { g.couleurs = [g.couleurs[0], ...PALETTES[+e.dataset.gpal!].c]; this.render(); }));
+    w.querySelector('[data-gofficiel]')?.addEventListener('click', () => { g.couleurs = [...f.couleurs]; this.render(); });
+    w.querySelector('[data-genr]')?.addEventListener('click', () => {
+      const a = apparenceValide(f, g);
+      if (this.perso) this.perso.app = a;
+      this.onApparence(a); this.close();
+    });
+  }
+
+  /** Canevas du perso dessiné en direct (classe `k`), avec ces objets visibles ; redessiné par majPerso(). */
+  private canevas(k: string, objets: string[], app?: Apparence) {
+    return `<canvas class="vivant ${k}" data-objets="${objets.join(',')}"${app ? ` data-app='${JSON.stringify(app)}'` : ''}></canvas>`;
+  }
+  private vivants = new Map<string, Assemblage | null>();
+  private imageVivant = 0;
+  /** À appeler à chaque image du jeu : anime les persos dessinés en direct des fenêtres ouvertes (25 images par seconde). */
+  majPerso(t: number) {
+    if (!this.win || !this.perso) return;
+    const f = Math.floor(t / 40); if (f === this.imageVivant) return; this.imageVivant = f;
+    this.win.querySelectorAll<HTMLCanvasElement>('canvas.vivant').forEach(cv => {
+      const app = cv.dataset.app ? JSON.parse(cv.dataset.app) as Apparence : this.perso!.app, objets = cv.dataset.objets ? cv.dataset.objets.split(',') : [];
+      const k = `${app.tete}|${objets}`;
+      const a = this.vivants.get(k);
+      if (!a) { if (!this.vivants.has(k)) { this.vivants.set(k, null); assemblagePour(this.perso!.cle, app, objets).then(x => this.vivants.set(k, x), () => this.vivants.delete(k)); } return; }
+      a.recolorer(app.couleurs);
+      const dpr = (devicePixelRatio || 1) * 2, W = Math.round(cv.offsetWidth * dpr), H = Math.round(cv.offsetHeight * dpr);   // 2x puis réduit : bords lisses
+      if (!W || !H) return;
+      if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
+      const anim = 'AnimStatiqueExplo0_1', n = a.compte[anim] ?? 0; if (!n) return;
+      const ctx = cv.getContext('2d')!;
+      ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, W, H);
+      a.dessiner(ctx, anim, Math.floor(f * 0.8) % n, W / 2, H * 0.93, H / 330);
+    });
+  }
 
   /** Contenu du sac selon l'onglet, la catégorie, le tri et la recherche ; les ressources s'empilent.
    *  La grille est complétée de cases vides, comme dans Dofus. */
@@ -889,6 +1043,13 @@ export class Windows {
       if (q && !nom.toLowerCase().includes(q)) continue;
       cells.push(`<div class="cell" title="${nom} (objet de quête)"><img src="${INV}/tab_key.png" alt="" style="width:34px;height:34px;opacity:.9"><span class="n">${k}</span></div>`);
     }
+    // Apparats possédés (5A) : achetés chez Emp ; celui qui est porté est entouré
+    if (this.tab === 'apparat') for (const id of p.apparats) {
+      const d = APPARATS.objets[id];
+      if (!d || (this.kind && d.slot !== this.kind) || (q && !d.name.toLowerCase().includes(q))) continue;
+      cells.push(`<div class="cell ${p.apparat[d.slot] === id ? 'porte' : ''}" data-app="${id}">${apparatHtml(id)}</div>`);
+    }
+    if (this.tab === 'apparat' && !p.apparats.length) cells.push('<div class="hint" style="grid-column:1/-1">Les apparats s\'achètent chez Emp, à côté du Zaap d\'Astrub. Ils changent seulement l\'apparence.</div>');
     const n = cells.length;
     for (let i = n; i < Math.max(35, Math.ceil(n / 5) * 5); i++) cells.push('<div class="cell empty"></div>');
     return { html: cells.join(''), n };

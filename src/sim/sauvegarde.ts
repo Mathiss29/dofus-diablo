@@ -17,6 +17,9 @@ export interface EtatJoueur {
   quetes?: EtatQuetes;
   /** Zone où se trouve le perso (absente : Incarnam, sauvegardes d'avant Astrub). */
   zone?: string;
+  /** Apparat possédé et porté (Apparence 5A). */
+  apparats?: string[];
+  apparat?: Partial<Record<'chapeau' | 'cape' | 'bouclier', string>>;
 }
 
 const copie = <T>(o: T): T => JSON.parse(JSON.stringify(o)) as T;
@@ -28,6 +31,7 @@ export function exporterJoueur(w: World): EtatJoueur {
     base: p.base, bag: p.bag, equipment: p.equipment, resources: p.resources, metiers: p.metiers,
     bar: p.bar, variants: p.variants, learned: [...p.learned],
     x: p.x, y: p.y, retour: w.pointDeRetour, quetes: w.quetes?.exporter(), zone: w.opts.zone,
+    apparats: p.apparats, apparat: p.apparat,
   });
 }
 
@@ -42,6 +46,9 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
   p.bag = (s.bag ?? []).map(uid);
   p.equipment = Object.fromEntries(Object.entries(s.equipment ?? {}).map(([k, it]) => [k, uid(it as Item)]));
   p.variants = s.variants ?? [];
+  p.apparats = Array.isArray(s.apparats) ? s.apparats.filter(a => typeof a === 'string') : [];
+  p.apparat = {};
+  for (const k of ['chapeau', 'cape', 'bouclier'] as const) { const a = s.apparat?.[k]; if (a === '0' || (a && p.apparats.includes(a))) p.apparat[k] = a; }
   p.learned = new Set(s.learned ?? []);
   if (s.bar?.length === p.bar.length) p.bar = s.bar.map(k => (k && p.cls.spells[k] ? k : null));
   p.recompute(); p.hp = p.maxHp;

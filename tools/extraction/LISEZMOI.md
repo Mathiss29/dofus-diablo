@@ -246,5 +246,23 @@ dessinées à la première utilisation puis gardées). Rendu identique à `rende
 - `skin_mesh.py` : découpe d'un skin en morceaux, partagée avec `build_char.py`.
 - Puis `node tools/hebergement/envoi.mjs` (les .webp partent sur R2, les .json restent dans git).
 - Les anciennes planches `iop`, `cra`, `iop_f`, `cra_f` ne servent plus qu'en secours (squelette injoignable).
-- À venir (0.2b) : coiffe, cape, bouclier, familier et apparat = d'autres skins posés sur les mêmes nœuds ; leurs dessins
-  ne sont pas dans le cache (`Characters/Skins` complet à copier depuis le PC de Mathis).
+- `entries` d'un groupe de la DisplayList = nombre de TOUS ses descendants (pas de ses enfants directs) : `skin_mesh.py`
+  en tient compte depuis le 6 nov. (avant, le masque ou le bandeau rangé dans les cheveux prenait la couleur des cheveux).
+  Vérifier les têtes contre les portraits officiels de création : `cosmetic_assets_2x.bundle` (heads.assetId, copie dans cache-dofus/).
+
+## Objets portés et apparat (maquette Apparence 4A+4B 5A 6B)
+
+Coiffe, cape et bouclier se dessinent sur le perso vivant ; l'apparat passe par-dessus (case Apparence de l'inventaire),
+acheté chez Emp en Pépites ; la garde-robe (Lykhen à Incarnam, Emp à Astrub) change tête et couleurs, gratuitement.
+
+- Le client ne garde pas le lien objet -> dessin (le serveur l'envoie). `equipement_correspondances.json` { idObjet: idSkin } :
+  coiffes, capes et apparats repris de Kaikina/dofus-virtual-try-on (comparaison icône / dessin), boucliers trouvés
+  en comparant les icônes aux 606 skins qui ont un morceau `Bouclier` (8 sur 10 ; Bouclier Invisible et Tonbarien sans dessin sûr).
+- `python apparat_export.py <tables> <fr.bin> coiffes.json,capes.json <item_assets_1x.bundle>` : `src/data/apparat.json`
+  (types 246 coiffe, 247 cape d'apparat), leurs icônes sur `public/assets/ui/apparat.webp`, leurs paires dans les correspondances.
+- `python equipement_export.py <Skins> src/data/items.json equipement_correspondances.json public/assets/sprites/squelette <tables>` :
+  `skin_<id>.json/.webp` de chaque objet et `equipement.json` { objets, caches }. `PART=i/n` + `TRAVAIL` différent : plusieurs en parallèle.
+- Une coiffe se pose dans les emplacements vides de la tête (`Chapeau_1`, `ChapeauB_1`, `Masque_1`... = `trou` + transformation
+  dans le skin de tête, écrits par `squelette_export.py`), la cape et le bouclier sur les nœuds du même nom.
+- `caches` : parties de la tête qu'une coiffe cache (table `skinslotsrules` : règle par défaut, par classe, par tête).
+  Les numéros d'emplacement ne sont pas nommés dans le client : 13 = cheveux, 5 = crâne, 0/1 = oreilles, 11/12 = pattes, déduits des coiffes.

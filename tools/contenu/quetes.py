@@ -11,7 +11,9 @@ PNJ = {
   # carte = tag de public/assets/mondes/incarnam/monde.json (carte officielle de départ de leurs quêtes)
   'ganymede': {'nom': 'Ganymède', 'dofusId': 7581, 'carte': 'temple_1', 'case': 174, 'phrase': 'Les Dofus dorment ici depuis des siècles. Avant de partir les chercher, apprends à te battre.'},       # Temple Céleste, devant les Dofus (accueil du tutoriel)
   'ganymede_temple': {'nom': 'Ganymède', 'dofusId': 7581, 'carte': 'temple_2', 'sprite': 'ganymede', 'phrase': "Des esprits de feu se sont glissés dans le Temple. Bon entraînement avant de descendre sur l'île."},    # le même, qui entraîne le joueur dans la salle suivante
-  'lykhen': {'nom': 'Lykhen Lesurviven', 'dofusId': 2892, 'carte': '-2_-3', 'phrase': "Bienvenue au village d'Incarnam. Chacun ici a quelque chose à t'apprendre."},
+  'lykhen': {'nom': 'Lykhen Lesurviven', 'dofusId': 2892, 'carte': '-2_-3', 'phrase': "Bienvenue au village d'Incarnam. Chacun ici a quelque chose à t'apprendre.",
+    # garde-robe du village (maquette Apparence 6B : gratuite, dans les villes)
+    'services': [{'texte': 'Changer de tête ou de couleurs (garde-robe).', 'service': 'garde-robe'}]},
   'fecaline': {'nom': 'Fécaline la Sage', 'dofusId': 1515, 'carte': 'maison_2_-3', 'phrase': "Les Dofus ne sont pas des légendes. J'ai passé ma vie à suivre leur trace."},
   'ternette': {'nom': 'Ternette Nhin', 'dofusId': 2905, 'carte': '-1_-3', 'phrase': 'Zaaps, nuages, vestiges des dieux : Incarnam est pleine de secrets pour qui sait regarder.'},
   'berb_nhin': {'nom': 'Berb Nhin', 'dofusId': 2899, 'carte': '0_-3', 'phrase': 'Un bon artisan fait un bon aventurier. Reviens me voir quand tu voudras apprendre un métier.'},
@@ -24,6 +26,7 @@ PNJ = {
   'emp': {'nom': 'Emp', 'dofusId': 1640, 'zone': 'astrub', 'carte': '5_-18', 'case': EMP_CASE,
     'phrase': "Je te remercie pour ton offrande. Ça va probablement déplaire à Waro, mais tant pis.",
     'services': [{'texte': 'Recycler des objets contre des Pépites.', 'service': 'recycler'}, {'texte': 'Voir la boutique.', 'service': 'boutique'}],
+    # garde-robe d'Astrub (6B) : onglet « Garde-robe » de sa fenêtre (le dialogue garde 4 réponses, touches 1 à 4)
     'discussion': [
       {'reponse': "Le prier d'en dire davantage sur le conflit l'opposant au Méryde de l'écologie.", 'texte': "Il y a fort longtemps, j'étais son plus fervent disciple. Comme nous n'étions pas d'accord sur la manière d'aborder les choses, j'ai décidé de voler de mes propres ailes. Nous sommes restés bons amis mais il nous arrive parfois de nous disputer à cause de nos divergences d'opinion. Par exemple, il est contre l'industrialisation, tandis que moi, je pense qu'elle a ses bons côtés à condition qu'il n'y ait pas de gaspillage."},
       {'reponse': "Écouter la suite.", 'texte': "Ensemble, Waro et moi avons inventé les poubelles, puis le tri sélectif et pour son millième anniversaire, je lui ai présenté le concept des aventuriers recyclés. C'est quelque chose d'assez simple à mettre en place : on récupère un aventurier qui n'a plus grande utilité et on l'envoie dans un lieu où il servira à autre chose qu'à pomper les allocations des anciens mercenaires d'Astrub. Par exemple, il peut finir en ragoût pour Kannibouls, cible d'entraînement pour jeunes Bworks ou compagnon de nuit pour Trooll esseulé."},
