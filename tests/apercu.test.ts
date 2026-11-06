@@ -84,14 +84,30 @@ describe('aperçu des sorts (maquette Aperçu)', () => {
     expect(p.parGrade('detonante', [2, 2, 3])).toBe(3);
   });
 
-  it('Pas Chassé : +1 PM tout de suite et pendant 3 s', () => {
+  it('Pas Chassé : +1 PM max pendant 3 s, mais le PM dépensé n\'est pas rendu', () => {
     const w = monde('cra'), p = w.player, max = p.pmMax;
     w.step(STEP, { ...NO_INPUT, aim: { x: p.x + 100, y: p.y }, pressed: 'pas_chasse' });
     for (let i = 0; i < 30; i++) w.step(STEP, NO_INPUT);
     expect(p.pmMax).toBe(max + 1);
-    expect(p.pm).toBeGreaterThan(max - 1);   // le PM dépensé est rendu par le bonus
+    expect(p.pm).toBeLessThan(max);   // le saut coûte vraiment 1 PM
     for (let i = 0; i < 4 * 60; i++) w.step(STEP, NO_INPUT);
     expect(p.pmMax).toBe(max);
+  });
+
+  it('Pas Chassé ne s\'enchaîne plus : relance officielle de 9 s, 6 s au niveau 72', () => {
+    const w = monde('cra'), p = w.player;
+    let sauts = 0;
+    for (let i = 0; i < 8 * 60; i++) {
+      w.step(STEP, { ...NO_INPUT, aim: { x: p.x + (i % 60 < 30 ? 100 : -100), y: p.y }, pressed: 'pas_chasse' });
+      if (w.drainEvents().some(e => e.k === 'cast' && e.id === 'pas_chasse')) sauts++;
+    }
+    expect(sauts).toBe(1);
+    expect(p.pmMax).toBeLessThanOrEqual(GAME_DATA.classes.cra.pm.max + 1);   // le bonus ne se cumule pas
+    expect(p.cd.pas_chasse).toBeCloseTo(1, 1);
+    const w2 = monde('cra'), p2 = w2.player;
+    p2.level = 72; p2.recompute();
+    w2.step(STEP, { ...NO_INPUT, aim: { x: p2.x + 100, y: p2.y }, pressed: 'pas_chasse' });
+    expect(p2.cd.pas_chasse).toBeCloseTo(6, 1);
   });
 
   it('Pression (sort ciblé) : frappe le monstre visé à distance, sans le pousser', () => {

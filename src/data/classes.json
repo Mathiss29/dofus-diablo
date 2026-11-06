@@ -624,6 +624,7 @@
     "element": "neutre",
     "pm": 1,
     "cooldown": 0.4,
+    "relanceOfficielle": true,
     "duration": 0.25,
     "impactAt": 0.25,
     "dmg": 0,

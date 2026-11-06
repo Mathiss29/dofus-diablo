@@ -31,6 +31,8 @@ export interface SpellDef {
   /** Coût en PA (sorts) ou en PM (déplacement). */
   pa?: number; pm?: number;
   cooldown: number;
+  /** Applique la relance officielle du grade même à un sort de déplacement (Pas Chassé). */
+  relanceOfficielle?: boolean;
   duration: number; impactAt: number; cancelAt?: number;
   dmg: number; knock: number; stun?: number;
   hit: HitZone;
