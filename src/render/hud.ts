@@ -25,6 +25,7 @@ const KEYS = ['&', 'é', '"', "'", '(', '-'];
 const MENUS: [string, string, string][] = [
   ['inventory', 'Inventaire', 'I'], ['characteristic', 'Caractéristiques', 'C'], ['job', 'Métiers', 'J'], ['spells', 'Sorts', ''], ['quest', 'Quêtes', ''],
   ['map', 'Carte du monde', ''], ['bestiary', 'Bestiaire', ''], ['success', 'Succès', ''], ['breach', 'Failles', ''],
+  ['options', 'Réglages', 'O'],
 ];
 
 const C = {
@@ -191,7 +192,7 @@ export class Hud {
     this.help = txt(13, { align: 'center' }).setOrigin(0.5, 0).setText(
       `Clic gauche : aller / attaquer (maintenu : continuer)   ·   Maj + clic : attaquer sur place   ·   Clic droit : ${S[cls.favorite].name}   ·   Espace : ${S[cls.mobility].name}   ·   E : potion   ·   I : inventaire   ·   Molette : zoom\n` +
       `${bar}\n` +
-      `${cls.rage.name} pleine : le sort suivant est renforcé   ·   K : changer de classe (Iop / Crâ)   ·   F : effets d'impact   ·   H : aide`);
+      `${cls.rage.name} pleine : le sort suivant est renforcé   ·   K : changer de classe (Iop / Crâ)   ·   F : effets d'impact   ·   O : réglages   ·   H : aide`);
   }
 
   /** H : l'aide reste ensuite comme le joueur l'a laissée. */

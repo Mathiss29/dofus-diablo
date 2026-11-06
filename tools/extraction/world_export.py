@@ -10,7 +10,8 @@
 import sys, json, glob, os, warnings
 warnings.filterwarnings('ignore')
 import UnityPy
-from PIL import Image, ImageStat
+from PIL import Image, ImageStat, ImageFilter
+import numpy as np
 UnityPy.config.FALLBACK_UNITY_VERSION = "6000.3.16f1"
 liste, cdir, tdir, out = sys.argv[1:5]; os.makedirs(out, exist_ok=True)
 W, H, OX, OY, COLS, ROWS = 86, 43, -620, -490, 14, 40
@@ -20,8 +21,9 @@ raw = {xy: json.load(open(f'{cdir}/map_{v[0]}.json')) for xy, v in sel.items()}
 maps = {xy: r['mapData'] for xy, r in raw.items()}
 # Éléments interactifs (portes, cadres de mine, panneaux…) : rangés à part dans references ; ceux qui ont une image fixe
 # sont posés avec le décor (les animés — minerais, céréales — sont dans d'autres paquets et restent absents).
+REFS = {}
 for xy, r in raw.items():
-    R = {q['rid']: q.get('data') for q in r.get('references', {}).get('RefIds', [])}
+    R = REFS[xy] = {q['rid']: q.get('data') for q in r.get('references', {}).get('RefIds', [])}
     maps[xy]['ies'] = [R[e['rid']] for e in maps[xy].get('interactiveElements', []) if R.get(e['rid']) and 'gfxId' in R[e['rid']]]
 need = set(e['gfxId'] for md in maps.values() for k in ['backgroundElements', 'sortableElements', 'ies'] for e in md[k])
 extra = {xy: (v[2] if len(v) > 2 else {}) for xy, v in sel.items()}
@@ -70,6 +72,62 @@ DECOR_ONLY = os.environ.get('DECOR_ONLY') == '1'
 NO_DECOR = os.environ.get('NO_DECOR') == '1'
 CALQUES = set(os.environ.get('CALQUES', 'bord').split(','))
 sols, entiers = {}, {}
+# L'encodage WebP (method=6) est le plus long : il part dans 4 fils en parallèle (PIL libère le verrou pendant l'encodage).
+from concurrent.futures import ThreadPoolExecutor
+POOL = ThreadPoolExecutor(int(os.environ.get('FILS', os.cpu_count() or 4)))
+def webp(im, path, q):
+    POOL.submit(lambda: im.save(path, 'WEBP', quality=q, method=6))
+# Lumières (halos sur l'eau, lueurs, rayons de soleil) : Dofus les dessine en les AJOUTANT à l'image (ShaderBlendingParameters,
+# facteurs de mélange Unity), avec un masque de dissolution animé. Posées comme du décor normal, elles faisaient de grandes taches
+# blanches. Elles sortent du sol et partent dans le décor avec 'b' (mélange) et 'k' (intensité) : le jeu les dessine en mode additif,
+# en entier (plus de coupure au raccord) et plus fort la nuit (choix 1B de Mathis, 2026-11-06). Nuages et constellations restent du décor.
+LUMIERES = {305396, 404317, 57871, 57971, 806080, 305477, 60327, 36648, 39767,  # halos / lueurs
+            42481, 44653, 805552, 402668, 806081}                               # rayons de lumière
+# lumières du soleil (reflets sur l'eau, rayons) : 'j' = 1, elles s'éteignent la nuit ; les autres (feux, lueurs) s'y renforcent
+SOLEIL = {305396, 404317, 806080, 60327, 42481, 44653, 805552, 402668, 806081}
+VOILES = {62942}
+# Fond du lac : de grandes ellipses (49153-49156) que Dofus fond entre elles (masque de dissolution 201) sur la couleur de fond
+# de la carte (backgroundColor, vert d'eau). On adoucit leurs bords et on remplit dessous de cette couleur : plus de disques.
+EAU_FOND = {49153, 49154, 49155, 49156}
+def adoucir(im):
+    a = np.asarray(im).astype(np.float32); h, w = a.shape[:2]; yy, xx = np.mgrid[0:h, 0:w]
+    r = np.sqrt(((xx - w / 2) / (w / 2)) ** 2 + ((yy - h / 2) / (h / 2)) ** 2); f = np.clip((1 - r) / 0.45, 0, 1)
+    a[..., 3] *= f * f * (3 - 2 * f)
+    return Image.fromarray(a.astype(np.uint8), 'RGBA')   # rectangle blanc en mode « multiplier » : ne change rien dans Dofus, un voile blanc chez nous -> retiré
+def melange(xy, mk, e):
+    """(b, k) : 'a' = additif, 's' = écran ; k = intensité (le masque de dissolution de Dofus en cache une bonne part)."""
+    sd = maps[xy][mk].get('shaderData', []); i = e.get('materialIndex', -1); R = REFS[xy]
+    f = None
+    if 0 <= i < len(sd):
+        for p in (R.get(sd[i]['rid']) or {}).get('shaderParameters', []):
+            d = R.get(p['rid']) or {}
+            if 'sourceFactor' in d: f = (d['sourceFactor'], d['destinationFactor'])
+    # intensités réglées à l'œil en jeu (le masque de dissolution de Dofus ne laisse passer qu'un scintillement)
+    if f is None: return 's', 0.2             # rayons sans mélange : écran adouci
+    if f[0] == 2: return 's', 0.2             # DstColor, One : éclaircit ce qui est dessous
+    if f[0] == 3: return 'a', 0.1             # SrcColor, One : couleur au carré
+    return 'a', 0.25
+def shader(xy, mk, e):
+    """Paramètres officiels du matériau d'un élément (les classes ne sont pas gardées : on les reconnaît à leurs champs)."""
+    sd = maps[xy][mk].get('shaderData', []); i = e.get('materialIndex', -1); R = REFS[xy]; out = {}
+    if 0 <= i < len(sd):
+        for p in (R.get(sd[i]['rid']) or {}).get('shaderParameters', []):
+            d = R.get(p['rid']) or {}
+            if 'flexibility' in d: out['vent'] = d
+            elif 'finalColor' in d: out['couleur'] = d
+            elif 'amplitude' in d and 'direction' in d: out['glisse'] = d
+    return out
+def anime(xy, mk, e):
+    """Mouvements officiels repris par le jeu (maquette « Vivant », 2026-11-06) :
+    w = souplesse au vent (arbres, herbes) ; t = [dx, dy, amplitude px, fréquence] (eau qui glisse) ;
+    ca = [couleur 0xRRGGBB, alpha, fréquence] (eau dont la couleur va et vient)."""
+    p = shader(xy, mk, e); out = {}
+    if 'vent' in p: out['w'] = round(p['vent']['flexibility'], 2)
+    if 'glisse' in p:
+        d = p['glisse']; out['t'] = [round(d['direction']['x'], 2), round(d['direction']['y'], 2), round(d['amplitude'], 2), round(d['frequency'], 3)]
+    if 'couleur' in p:
+        v = p['couleur']['finalColor']['value']; out['ca'] = [v & 0xffffff, round(((v >> 24) & 255) / 255, 2), round(p['couleur']['frequency'], 3)]
+    return out
 def pack(variants, path, write=True):
     write = write and not NO_DECOR
     """Atlas Phaser d'une carte : une image par (gfx, couleur, échelle), rangées en étagères."""
@@ -86,7 +144,7 @@ def pack(variants, path, write=True):
         ax, ay, b = pos[name]; atlas.paste(im.crop(b), (ax + 1, ay + 1)); w, h = b[2] - b[0], b[3] - b[1]
         frames[name] = {'frame': {'x': ax + 1, 'y': ay + 1, 'w': w, 'h': h}, 'rotated': False, 'trimmed': True,
                         'spriteSourceSize': {'x': b[0], 'y': b[1], 'w': w, 'h': h}, 'sourceSize': {'w': im.width, 'h': im.height}}
-    atlas.save(path + '.webp', 'WEBP', quality=82, method=6)
+    webp(atlas, path + '.webp', 82)
     json.dump({'frames': frames, 'meta': {'image': os.path.basename(path) + '.webp', 'size': {'w': maxW, 'h': atlas.height}, 'scale': '1'}}, open(path + '.json', 'w'))
     return atlas.size
 sky = None
@@ -100,13 +158,22 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
     # côté vide, rien n'est coupé (falaises, nuages au bord du monde).
     # Les nuages / rayons translucides qui débordent sur un voisin iraient se couper net au raccord :
     # ils partent dans un calque « fond » non coupé, posé sous tous les sols.
-    els = []
+    els = []; lums = []; eaux = []
+    # Eau animée : les éléments du sol qui bougent (reflets et vaguelettes, translucides) sortent du sol
+    # et vont dans une couche juste au-dessus (garder aussi ce qui est posé dessus emportait presque tout le sol)
+    couche = []
     for e in md['backgroundElements']:
         im = styled(e)
-        if im is None: continue
+        if im is None or e['gfxId'] in VOILES: continue
+        if e['gfxId'] in LUMIERES: lums.append(('backgroundMaterialData', -1, e)); continue
+        a = anime((x, y), 'backgroundMaterialData', e); a.pop('w', None)
+        if a and im.width * im.height <= 160000:   # les grands (nuages, voiles) restent dans le sol
+            tr = e['transform']; eaux.append((im, round(tr['m31'] - im.width / 2), round(-tr['m32'] - im.height / 2)))
+            couche.append((e, a)); continue
         if e['gfxId'] in SKY and not extra[(x, y)].get('inside'):
             sky = sky or im; continue
         tr = e['transform']; ex, ey = round(tr['m31'] - im.width / 2), round(-tr['m32'] - im.height / 2)
+        if e['gfxId'] in EAU_FOND: eaux.append((im, ex, ey)); im = adoucir(im)
         els.append((im, ex, ey))
     nb = {'l': (x - 1, y) in sel, 't': (x, y - 1) in sel, 'r': (x + 1, y) in sel, 'b': (x, y + 1) in sel}
     def crosses(ex, ey, im):
@@ -134,6 +201,13 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
     bx1 = x1m if nb['r'] else max([x1m] + [ex + im.width for im, ex, _ in sol_els])
     by1 = y1m if nb['b'] else max([y1m] + [ey + im.height for im, _, ey in sol_els])
     sol = Image.new('RGBA', (bx1 - bx0, by1 - by0))
+    if eaux:   # couleur de fond de la carte sous le lac (là où sont ses ellipses, un peu élargies pour boucher les trous)
+        m = Image.new('L', sol.size)
+        for im, ex, ey in eaux: m.paste(255, (ex - bx0, ey - by0), im.getchannel('A').point(lambda q: 255 if q > 5 else 0))
+        w8, h8 = max(1, sol.width // 8), max(1, sol.height // 8)
+        m = m.resize((w8, h8)).filter(ImageFilter.MaxFilter(9)).filter(ImageFilter.MinFilter(5)).filter(ImageFilter.GaussianBlur(1)).resize(sol.size, Image.BILINEAR)
+        v = md['backgroundColor']['value']; fill = Image.new('RGBA', sol.size, ((v >> 16) & 255, (v >> 8) & 255, v & 255, 255))
+        sol.paste(fill, (0, 0), m)
     for im, ex, ey in sol_els: sol.alpha_composite(im, (ex - bx0, ey - by0))
     # le sol entier, sans coupe : sert au calque « bord » (deuxième passe, après toutes les cartes)
     if sol_els and not extra[(x, y)].get('inside'):
@@ -151,14 +225,24 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
         fim = Image.new('RGBA', (fx1 - fx0, fy1 - fy0))
         for im, ex, ey in lst: fim.alpha_composite(im, (ex - fx0, ey - fy0))
         # flou par nature : moitié de résolution (le jeu l'agrandit x2), 4 fois moins de mémoire vidéo
-        if write and (not DECOR_ONLY or nom in CALQUES): fim.resize((max(1, fim.width // 2), max(1, fim.height // 2)), Image.LANCZOS).save(f'{out}/{nom}_{tag}.webp', 'WEBP', quality=80, method=6)
+        if write and (not DECOR_ONLY or nom in CALQUES): fim.resize((max(1, fim.width // 2), max(1, fim.height // 2)), Image.LANCZOS)
+        if write and (not DECOR_ONLY or nom in CALQUES): webp(fim, f'{out}/{nom}_{tag}.webp', 80)
         return {'x': fx0 + dx, 'y': fy0 + dy, 'w': fim.width, 'h': fim.height, 'k': 2}
     # rayons / nuages qui passent sur une voisine : coupés net par le sol de la voisine quoi qu'on fasse -> retirés (choix de Mathis)
     fond = calque(fond_els, 'fond') if os.environ.get('GARDER_FOND') == '1' else None
-    if write and not DECOR_ONLY: sol.save(f'{out}/sol_{tag}.webp', 'WEBP', quality=80, method=6)
+    if write and not DECOR_ONLY: webp(sol, f'{out}/sol_{tag}.webp', 80)
     # Décor : un atlas par carte, pour que le jeu ne charge que les cartes proches du joueur
     variants = {}; places = []
-    els_d = md['sortableElements'] + [e for e in md['ies'] if e['gfxId'] in imgs]
+    lums += [('sortableMaterialData', 0, e) for e in md['sortableElements'] if e['gfxId'] in LUMIERES]
+    # couche d'eau animée : g = 1 (au-dessus du sol, sous les lumières et le décor), o = ordre d'origine
+    for i, (e, a) in enumerate(couche):
+        tr = e['transform']; key = (e['gfxId'], e['color']['value'], round(tr['m11'], 3), round(tr['m22'], 3))
+        if key not in variants:
+            im = styled(e)
+            if im is None: continue
+            variants[key] = ('d%d' % len(variants), im)
+        places.append({'f': variants[key][0], 'x': round(tr['m31'] + dx, 1), 'y': round(-tr['m32'] + dy, 1), 'c': -1, 'o': i, 'g': 1, **a})
+    els_d = [e for e in md['sortableElements'] if e['gfxId'] not in LUMIERES | VOILES] + [e for e in md['ies'] if e['gfxId'] in imgs]
     for e in sorted(els_d, key=lambda e: (e['cellId'], e.get('innerCellRenderOrder', 0))):
         tr = e['transform']; key = (e['gfxId'], e['color']['value'], round(tr['m11'], 3), round(tr['m22'], 3))
         if key not in variants:
@@ -167,12 +251,25 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
             variants[key] = ('d%d' % len(variants), im)
         r, k = divmod(e['cellId'], COLS)
         places.append({'f': variants[key][0], 'x': round(tr['m31'] + dx, 1), 'y': round(-tr['m32'] + dy, 1),
-                       'c': (iy * ROWS + r) * COLS * nx + ix * COLS + k, 'o': e['innerCellRenderOrder']})
+                       'c': (iy * ROWS + r) * COLS * nx + ix * COLS + k, 'o': e['innerCellRenderOrder'],
+                       **(anime((x, y), 'sortableMaterialData', e) if 'materialIndex' in e else {})})
+    # lumières : c = -1 pour celles du sol (posées sur le sol, sous le décor), sinon la case comme le décor
+    for mk, sortable, e in lums:
+        tr = e['transform']; key = (e['gfxId'], e['color']['value'], round(tr['m11'], 3), round(tr['m22'], 3))
+        if key not in variants:
+            im = styled(e)
+            if im is None: continue
+            # flou par nature et souvent très grand (rayons de 1000 px) : un tiers de la résolution, le jeu l'agrandit x3
+            variants[key] = ('d%d' % len(variants), im.resize((max(1, im.width // 3), max(1, im.height // 3)), Image.LANCZOS))
+        b, kk = melange((x, y), mk, e); r, k = divmod(e.get('cellId', 0), COLS)
+        places.append({'f': variants[key][0], 'x': round(tr['m31'] + dx, 1), 'y': round(-tr['m32'] + dy, 1),
+                       'c': (iy * ROWS + r) * COLS * nx + ix * COLS + k if sortable == 0 else -1,
+                       'o': e.get('innerCellRenderOrder', 0), 'b': b, 'k': kk, 'z': 3, **({'j': 1} if e['gfxId'] in SOLEIL else {})})
     asz = pack(variants, f'{out}/decor_{tag}', write)
     monde['maps'].append({'x': x, 'y': y, 'id': sel[(x, y)][0], 'sub': sel[(x, y)][1], 'tag': tag,
                           'sol': {'x': bx0 + dx, 'y': by0 + dy, 'w': sol.width, 'h': sol.height}, 'decor': places,
                           **({'fond': fond} if fond else {}), **({'inside': 1} if extra[(x, y)].get('inside') else {})})
-    print(tag, 'retirés', len(hard), 'sol', sol.size, 'fond', fond and (fond['w'], fond['h']), 'decor', len(places), asz)
+    print(tag, 'retirés', len(hard), 'lumières', len(lums), 'eau', len(couche), 'sol', sol.size, 'fond', fond and (fond['w'], fond['h']), 'decor', len(places), asz)
 # Calque « bord » : ce qu'une carte dessine au-delà de son cadre, posé par-dessus les cartes voisines.
 #  - là où la voisine n'a rien (trou, ciel) : en entier (falaises et rochers qui débordent) ;
 #  - ailleurs : en fondu sur BORD px (ombres, fonds de ciel… plus de coupure nette au raccord).
@@ -200,7 +297,7 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
     if not (A[..., 3] > 4).any(): continue
     im = Image.fromarray(A.astype(np.uint8), 'RGBA'); b = im.getbbox()
     im = im.crop(b)
-    if write and 'bord' in CALQUES: im.save(f'{out}/bord_{tag}.webp', 'WEBP', quality=80, method=6)
+    if write and 'bord' in CALQUES: webp(im, f'{out}/bord_{tag}.webp', 80)
     e = next(m for m in monde['maps'] if m['tag'] == tag)
     e['bord'] = {'x': ux + b[0], 'y': uy + b[1], 'w': im.width, 'h': im.height}
     print('bord', tag, im.size)
@@ -208,3 +305,4 @@ if sky is not None:
     sky.convert('RGB').save(f'{out}/ciel.webp', 'WEBP', quality=85, method=6); monde['sky'] = 'ciel.webp'
 monde['mov'] = ''.join(mov)
 json.dump(monde, open(f'{out}/monde.json', 'w'))
+POOL.shutdown(wait=True)
