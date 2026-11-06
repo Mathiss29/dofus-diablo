@@ -44,6 +44,11 @@ describe("plan du serveur", () => {
     expect(a.find((x) => x.type === "supprimer").id).toBe("12");
     expect(a.some((x) => x.id === "21" || x.id === "20")).toBe(false);
   });
+  it("retrouve par leur nom les salons créés sans id, sans les recréer ni les supprimer", () => {
+    const plan = { general: [{ id: "1", nom: "accueil" }], categories: [{ categorie: { id: "10", nom: "DIABLOFUS" }, salons: [{ id: "11", nom: "general" }, { id: "12", nom: "vieux" }, { nom: "📜・journal" }] }] };
+    const apres = [...salons, { id: "13", type: 0, name: "📜・journal", position: 2, parent_id: "10" }];
+    expect(actions(plan, apres)).toEqual([]);
+  });
   it("refuse un plan qui vise Idlus", () => {
     expect(() => actions({ categories: [{ categorie: { id: "20", nom: "Jeu" }, salons: [] }] }, salons)).toThrow(/Idlus/);
   });
