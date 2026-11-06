@@ -8,11 +8,13 @@ D = json.load(open(defs)); sel = json.load(open(dehors))
 xs = [int(k.split(',')[0]) for k in sel]; ys = [int(k.split(',')[1]) for k in sel]
 x0, x1, y = min(xs), max(xs), max(ys) + 2
 liste = dict(sel); x = x0; cells = {}
+places = D.get('places', {})   # salles posées à la main (Temple Céleste : son sol déborde loin vers le haut)
 for tag, (mid, sub) in D['salles'].items():
-    if x > x1: x = x0; y += 2
     md = json.load(open(f'{cdir}/map_{mid}.json'))['mapData']
-    liste[f'{x},{y}'] = [mid, sub, {'tag': tag, 'inside': 1}]
     cells[tag] = [c for c, q in enumerate(md['cellsData']) if q['mov']]
+    if tag in places: liste[places[tag]] = [mid, sub, {'tag': tag, 'inside': 1}]; continue
+    if x > x1: x = x0; y += 2
+    liste[f'{x},{y}'] = [mid, sub, {'tag': tag, 'inside': 1}]
     x += 2
 def bas(tag):
     # porte de sortie : la case marchable la plus basse (à égalité, la plus au centre)

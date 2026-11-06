@@ -39,6 +39,8 @@ export interface EtapeDef {
   halo?: number | 'potion' | 'jauge';
   /** Objet donné au début de l'étape (id de items.json), ou un par classe (l'arme de niveau 1 du tutoriel). */
   donner?: string | Record<string, string>;
+  /** PNJ qui dit la bulle de cette étape (par défaut celui de la quête) : Ganymède accueille au Temple, puis attend sur la Route. */
+  pnj?: string;
 }
 export interface RecompenseDef {
   xp?: number; kamas?: number;
@@ -74,6 +76,8 @@ export interface QueteDef {
   options?: { immortel?: boolean; groupes?: { sousZones: number[]; taille: [number, number] }; sauterSiCompte?: boolean; passable?: boolean };
   /** Démarre dès le début de la partie (le tutoriel). */
   auDepart?: boolean;
+  /** Carte (tag de monde.json) où le perso apparaît quand la quête démarre au départ (tutoriel : le Temple Céleste). */
+  depart?: string;
   /** Sans PNJ : démarre seule en entrant dans cette sous-zone (ex. « Mort au rat ! » dans la Taverne). */
   zone?: number;
 }
@@ -81,6 +85,8 @@ export interface PnjDef {
   nom: string; dofusId: number;
   /** Carte de monde.json où il se tient, et case Dofus (0-559) ; sans case : le coin le plus dégagé de la carte. */
   carte: string; case?: number;
+  /** Planche de sprites d'un autre PNJ (le même personnage à deux endroits : Ganymède au Temple puis sur la Route). */
+  sprite?: string;
 }
 /** Objectif d'un succès officiel : une quête finie, une étape de quête finie, un autre succès, une sous-zone découverte,
  *  un niveau atteint ou un monstre vaincu. */
@@ -155,6 +161,11 @@ export class Quetes {
       if (!q.auDepart) continue;
       if (q.options?.sauterSiCompte && this.compte.persos > 0) { this.terminer(id, true); continue; }
       this.prendre(id);
+      // le tutoriel commence au Temple Céleste ; le point de retour reste le Zaap de la Route des âmes
+      if (q.depart && this.world.worldGrid?.mapByTag(q.depart)) {
+        const z = this.world.openestCellOf(q.depart), p = this.world.player;
+        p.x = z.x; p.y = z.y;
+      }
     }
   }
 
@@ -220,7 +231,8 @@ export class Quetes {
   private entrerEtape(c: QueteEnCours) {
     const e = this.etapeDe(c)!, q = this.def(c.id);
     c.compte = e.objectifs.map(() => 0);
-    if (e.bulle && q.pnj) this.dire(q.pnj, e.bulle);
+    const qui = e.pnj ?? q.pnj;
+    if (e.bulle && qui) this.dire(qui, e.bulle);
     const don = typeof e.donner === 'string' ? e.donner : e.donner?.[this.classe];
     if (don) this.world.donnerObjet(don);
     for (const o of e.objectifs) if (o.t === 'elite') this.faireApparaitre(c.id, o);
@@ -405,6 +417,22 @@ export class Quetes {
 
   /** Où aller pour la quête suivie (point sur la mini-carte, flèche au bord de l'écran) : le premier objectif pas fini. */
   cible(): { x: number; y: number } | null {
+    const t = this.cibleBrute(), w = this.world, wg = w.worldGrid, p = w.player;
+    if (!t || !wg) return t;
+    // dans un intérieur (Temple Céleste…), viser la porte qui rapproche du but plutôt que le but à travers le vide
+    const ici = wg.mapAt(p.x, p.y), la = wg.mapAt(t.x, t.y);
+    if (!ici?.inside || la?.tag === ici.tag) return t;
+    let best: { x: number; y: number } | null = null, bd = Infinity;
+    for (const po of w.portes) for (let i = 0; i < 2; i++) {
+      if (i === 1 && po.sens) continue;
+      const a = po.ends[i], b = po.ends[1 - i];
+      if (a.tag !== ici.tag) continue;
+      const d = Math.hypot(b.x - t.x, b.y - t.y);
+      if (d < bd) { bd = d; best = { x: a.x, y: a.y }; }
+    }
+    return best ?? t;
+  }
+  private cibleBrute(): { x: number; y: number } | null {
     const c = this.enCours.find(x => x.id === this.suivie) ?? this.enCours[0];
     if (!c) return null;
     const w = this.world, wg = w.worldGrid, p = w.player, q = this.def(c.id);

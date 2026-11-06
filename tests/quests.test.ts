@@ -40,24 +40,35 @@ describe('quêtes et succès', () => {
       const q = w.quetes!, p = w.player, etape = () => q.enCours.find(c => c.id === 'reponses')?.etape;
       expect(q.suivie).toBe('reponses');
       expect(etape()).toBe(0);
-      const berb = q.pnj('berb_nhin')!; p.x = berb.x + 20; p.y = berb.y;
+      // départ au Temple Céleste, devant Ganymède ; le point de retour reste la Route des âmes
+      expect(w.worldGrid!.mapAt(p.x, p.y)?.tag).toBe('temple_1');
+      // la flèche vise la porte de la salle (pas le but à travers le vide)
+      const sortie1 = w.portes.find(po => po.ends[0].tag === 'temple_1')!.ends[0];
+      expect(q.cible()).toEqual({ x: sortie1.x, y: sortie1.y });
+      const t3 = w.openestCellOf('temple_3'); p.x = t3.x; p.y = t3.y;
       w.step(STEP, NO_INPUT);
       expect(etape(), classe).toBe(1);
+      const sortie3 = w.portes.find(po => po.ends[0].tag === 'temple_3')!.ends[0];
+      expect(q.cible()).toEqual({ x: sortie3.x, y: sortie3.y });
+      const g0 = q.pnj('ganymede_route')!; p.x = g0.x + 20; p.y = g0.y;
+      w.step(STEP, NO_INPUT);
+      expect(etape(), classe).toBe(2);
       const m = w.monsters.find(x => w.worldGrid!.mapAt(x.x, x.y)?.sub === 450)!;
       const tuer = (n: number) => { for (let i = 0; i < n; i++) w.emit({ k: 'kill', x: m.x, y: m.y, radius: 10, monster: m.type }); };
-      tuer(1); expect(etape()).toBe(2);
+      tuer(1); expect(etape()).toBe(3);
       expect(q.etapeDe(q.enCours[0])?.halo).toBe(0);
       expect(p.bar[0]).toBe(sort1);
-      w.emit({ k: 'cast', id: sort1 }); expect(etape()).toBe(3);
-      tuer(3); expect(etape()).toBe(4);
-      w.emit({ k: 'rageSpent', spell: sort1 }); expect(etape()).toBe(5);
-      w.emit({ k: 'cast', id: p.cls.mobility }); expect(etape()).toBe(6);
-      w.emit({ k: 'potion', x: p.x, y: p.y, amount: 10 }); expect(etape()).toBe(7);
+      w.emit({ k: 'cast', id: sort1 }); expect(etape()).toBe(4);
+      tuer(3); expect(etape()).toBe(5);
+      w.emit({ k: 'rageSpent', spell: sort1 }); expect(etape()).toBe(6);
+      w.emit({ k: 'cast', id: p.cls.mobility }); expect(etape()).toBe(7);
+      w.emit({ k: 'potion', x: p.x, y: p.y, amount: 10 }); expect(etape()).toBe(8);
       const it = p.bag.find(i => i.id === arme)!;
       expect(it, classe).toBeDefined();
       expect(p.equip(it.uid)).toBe(true);
-      w.step(STEP, NO_INPUT); expect(etape()).toBe(8);
-      const g = q.pnj('ganymede')!; p.x = g.x + 20; p.y = g.y;
+      p.x = 0; p.y = 0;   // loin de Ganymède
+      w.step(STEP, NO_INPUT); expect(etape()).toBe(9);
+      const g = q.pnj('ganymede_route')!; p.x = g.x + 20; p.y = g.y;
       w.step(STEP, NO_INPUT);
       expect(q.finies.has('reponses')).toBe(true);
       expect(p.level).toBeGreaterThanOrEqual(2);
@@ -67,6 +78,18 @@ describe('quêtes et succès', () => {
       expect(ev).toContain('queteFin');
       expect(ev).toContain('succes');
     }
+  });
+
+  it('le Temple Céleste mène à la Route des âmes par ses passages', () => {
+    const w = newWorld(), wg = w.worldGrid!;
+    const tags = (n: number) => w.portes[n].ends.map(e => e.tag);
+    const ids = w.portes.map((_, i) => tags(i).join('>'));
+    expect(ids).toContain('temple_1>temple_2');
+    expect(ids).toContain('temple_2>temple_3');
+    const sortie = w.portes.find(po => po.ends[0].tag === 'temple_3')!;
+    expect(sortie.ends[1].tag).toBe('0_-3');
+    expect(sortie.sens).toBe(true);
+    expect(wg.freeByMap.get('temple_1')!.length).toBeGreaterThan(100);
   });
 
   it('le tutoriel est sauté dès le 2e perso ; les PV restent à 1 pendant le tutoriel', () => {

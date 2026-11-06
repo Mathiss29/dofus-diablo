@@ -23,8 +23,8 @@ interface PnjSprite { id: string; img: Phaser.GameObjects.Sprite; name: Phaser.G
 /** PNJ des quêtes dans le monde : sprite officiel, nom, icône de quête au-dessus, bulle de dialogue (5A).
  *  Lit world.quetes ; ne modifie rien (le clic passe par l'entrée du joueur : input.talk). */
 export class QuestView {
-  static preload(scene: Phaser.Scene, quetes: { pnj: Record<string, unknown> }) {
-    for (const id of Object.keys(quetes.pnj)) if (!scene.textures.exists(`pnj_${id}`)) scene.load.multiatlas(`pnj_${id}`, v(`${SP}/pnj_${id}.json`), `${SP}/`);
+  static preload(scene: Phaser.Scene, quetes: { pnj: Record<string, { sprite?: string }> }) {
+    for (const id of new Set(Object.entries(quetes.pnj).map(([k, d]) => d.sprite ?? k))) if (!scene.textures.exists(`pnj_${id}`)) scene.load.multiatlas(`pnj_${id}`, v(`${SP}/pnj_${id}.json`), `${SP}/`);
     for (const [a, b] of Object.values(QUEST_ICON)) for (const k of [a, b]) if (!scene.textures.exists(`qi_${k}`)) scene.load.image(`qi_${k}`, v(`${QI}/${k}.png`));
   }
 
@@ -34,9 +34,9 @@ export class QuestView {
   constructor(private scene: Phaser.Scene, private world: World, private wv: WorldView | null) {
     const q = world.quetes!;
     for (const p of q.pnjs) {
-      const key = `pnj_${p.id}`;
+      const sp = p.def.sprite ?? p.id, key = `pnj_${sp}`;
       if (!scene.textures.exists(key)) continue;
-      const L = PNJ_LOOK[p.id] ?? { scale: 0.62, anim: 'AnimStatique_1' };
+      const L = PNJ_LOOK[sp] ?? { scale: 0.62, anim: 'AnimStatique_1' };
       const s = ISO.toScreen(p.x, p.y);
       const img = scene.add.sprite(s.x, s.y, key, `${L.anim}_0`).setScale(L.scale);
       if (L.frames && !scene.anims.exists(`${key}_idle`)) {

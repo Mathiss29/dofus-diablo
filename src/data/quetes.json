@@ -3,7 +3,13 @@
   "ganymede": {
    "nom": "Ganymède",
    "dofusId": 7581,
-   "carte": "0_-3"
+   "carte": "temple_1"
+  },
+  "ganymede_route": {
+   "nom": "Ganymède",
+   "dofusId": 7581,
+   "carte": "0_-3",
+   "sprite": "ganymede"
   },
   "lykhen": {
    "nom": "Lykhen Lesurviven",
@@ -56,6 +62,7 @@
    "pnj": "ganymede",
    "niveau": 1,
    "auDepart": true,
+   "depart": "temple_1",
    "suivante": "village",
    "texte": "Avant de quitter le temple céleste, prenez le temps de contempler les Dofus et le Monde des Douze... et n'oubliez pas de saluer votre dieu au passage ! Ganymède vous apprend à vous battre avant de vous laisser descendre sur l'île.",
    "options": {
@@ -76,17 +83,29 @@
     "iop": [
      {
       "nom": "Premiers pas",
-      "bulle": "Bienvenue sur Incarnam, jeune Iop ! Clique sur le sol pour marcher : va saluer Berb Nhin, devant la taverne.",
+      "bulle": "Bienvenue sur Incarnam, jeune Iop ! Contemple les Dofus, salue ton dieu, puis clique sur le sol et suis le chemin. Je t'attends en bas.",
       "objectifs": [
        {
         "t": "aller",
-        "texte": "Marcher jusqu'à Berb Nhin (clic gauche)",
-        "pnj": "berb_nhin"
+        "texte": "Traverser le Temple Céleste (clic gauche)",
+        "carte": "temple_3"
+       }
+      ]
+     },
+     {
+      "nom": "La Route des âmes",
+      "pnj": "ganymede_route",
+      "objectifs": [
+       {
+        "t": "aller",
+        "texte": "Rejoindre Ganymède sur la Route des âmes",
+        "pnj": "ganymede_route"
        }
       ]
      },
      {
       "nom": "Frapper",
+      "pnj": "ganymede_route",
       "bulle": "Un esprit de feu rôde sur la Route. Clique dessus : tu le poursuis et tu frappes.",
       "objectifs": [
        {
@@ -99,6 +118,7 @@
      },
      {
       "nom": "Ton premier sort",
+      "pnj": "ganymede_route",
       "bulle": "Tes sorts sont sur & é \" '. Touche & : Pression !",
       "halo": 0,
       "objectifs": [
@@ -111,6 +131,7 @@
      },
      {
       "nom": "Tes sorts",
+      "pnj": "ganymede_route",
       "bulle": "Essaie les autres : é Ferveur, \" Couperet, ' Épée Divine. Vide ce groupe !",
       "halo": 1,
       "objectifs": [
@@ -124,6 +145,7 @@
      },
      {
       "nom": "La jauge de classe",
+      "pnj": "ganymede_route",
       "bulle": "Chaque coup remplit ta Rage. Pleine, elle renforce ton sort suivant : remplis-la, puis frappe !",
       "halo": "jauge",
       "objectifs": [
@@ -136,6 +158,7 @@
      },
      {
       "nom": "Se déplacer vite",
+      "pnj": "ganymede_route",
       "bulle": "Espace : Bond. Tu sautes là où pointe ta souris, pour fondre sur un monstre ou te sortir d'un mauvais pas.",
       "halo": 7,
       "objectifs": [
@@ -148,6 +171,7 @@
      },
      {
       "nom": "La potion",
+      "pnj": "ganymede_route",
       "bulle": "Blessé ? E : une potion. Tu en regagnes une à chaque groupe vaincu.",
       "halo": "potion",
       "objectifs": [
@@ -160,6 +184,7 @@
      },
      {
       "nom": "Premières armes",
+      "pnj": "ganymede_route",
       "bulle": "Prends cette Épée Tulante. I ouvre ton sac : équipe-la, ton attaque change avec elle.",
       "donner": {
        "iop": "10797"
@@ -174,12 +199,13 @@
      },
      {
       "nom": "Le point de retour",
+      "pnj": "ganymede_route",
       "bulle": "Le Zaap de la Route des âmes est ton point de retour : si tu tombes, tu reviens là, sans rien perdre. Viens me voir.",
       "objectifs": [
        {
         "t": "aller",
         "texte": "Retourner voir Ganymède près du Zaap",
-        "pnj": "ganymede"
+        "pnj": "ganymede_route"
        }
       ]
      }
@@ -187,17 +213,29 @@
     "cra": [
      {
       "nom": "Premiers pas",
-      "bulle": "Bienvenue sur Incarnam, jeune Crâ ! Clique sur le sol pour marcher : va saluer Berb Nhin, devant la taverne.",
+      "bulle": "Bienvenue sur Incarnam, jeune Crâ ! Contemple les Dofus, salue ton dieu, puis clique sur le sol et suis le chemin. Je t'attends en bas.",
       "objectifs": [
        {
         "t": "aller",
-        "texte": "Marcher jusqu'à Berb Nhin (clic gauche)",
-        "pnj": "berb_nhin"
+        "texte": "Traverser le Temple Céleste (clic gauche)",
+        "carte": "temple_3"
+       }
+      ]
+     },
+     {
+      "nom": "La Route des âmes",
+      "pnj": "ganymede_route",
+      "objectifs": [
+       {
+        "t": "aller",
+        "texte": "Rejoindre Ganymède sur la Route des âmes",
+        "pnj": "ganymede_route"
        }
       ]
      },
      {
       "nom": "Frapper",
+      "pnj": "ganymede_route",
       "bulle": "Un esprit de feu rôde sur la Route. Clique dessus : sans arc, tu frappes au poing.",
       "objectifs": [
        {
@@ -210,6 +248,7 @@
      },
      {
       "nom": "Ton premier sort",
+      "pnj": "ganymede_route",
       "bulle": "Tes flèches sont sur & é \" '. Touche & : Flèche de Recul, elle repousse ta cible !",
       "halo": 0,
       "objectifs": [
@@ -222,6 +261,7 @@
      },
      {
       "nom": "Tes sorts",
+      "pnj": "ganymede_route",
       "bulle": "Essaie les autres : é Flèche Glacée, \" Flèche Vagabonde, ' Flèche de Barrage. Reste loin et vide ce groupe !",
       "halo": 1,
       "objectifs": [
@@ -235,6 +275,7 @@
      },
      {
       "nom": "La jauge de classe",
+      "pnj": "ganymede_route",
       "bulle": "Tirer de loin remplit ta Précision. Pleine, elle renforce ta flèche suivante : remplis-la, puis tire !",
       "halo": "jauge",
       "objectifs": [
@@ -247,6 +288,7 @@
      },
      {
       "nom": "Se déplacer vite",
+      "pnj": "ganymede_route",
       "bulle": "Espace : Pas Chassé. Un pas vif vers ta souris, pour reprendre tes distances quand un monstre te colle.",
       "halo": 7,
       "objectifs": [
@@ -259,6 +301,7 @@
      },
      {
       "nom": "La potion",
+      "pnj": "ganymede_route",
       "bulle": "Blessé ? E : une potion. Tu en regagnes une à chaque groupe vaincu.",
       "halo": "potion",
       "objectifs": [
@@ -271,6 +314,7 @@
      },
      {
       "nom": "Premières armes",
+      "pnj": "ganymede_route",
       "bulle": "Prends cet Arc de Chasse. I ouvre ton sac : équipe-le, tu tireras des flèches au lieu de frapper au poing.",
       "donner": {
        "cra": "1942"
@@ -285,12 +329,13 @@
      },
      {
       "nom": "Le point de retour",
+      "pnj": "ganymede_route",
       "bulle": "Le Zaap de la Route des âmes est ton point de retour : si tu tombes, tu reviens là, sans rien perdre. Viens me voir.",
       "objectifs": [
        {
         "t": "aller",
         "texte": "Retourner voir Ganymède près du Zaap",
-        "pnj": "ganymede"
+        "pnj": "ganymede_route"
        }
       ]
      }
@@ -1095,7 +1140,7 @@
      "nom": "Premières armes",
      "etape": [
       "reponses",
-      7
+      8
      ]
     },
     {
