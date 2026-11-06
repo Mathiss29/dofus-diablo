@@ -277,6 +277,8 @@ Les animations des éléments interactifs (blé 660, frêne 650, fer 4918, ortie
 Elles viennent du client Stasis (format msgpack, voir l'en-tête de `recoltes_planches.py`) ; les 639 éléments animés sont gardés
 dans `/mnt/project-files/cache-dofus/elements-animes/` (LISEZMOI là-bas).
 1. `python tools/contenu/recoltes.py <liste.json> <cartes> <tables> <fr.bin> <monde.json> <monde>` : emplacements + gfx + décalage + miroir.
+   Puis UNE fois `python tools/contenu/recoltes_cases.py <monde> <cartes>` : chaque ressource prend la case la plus proche de son dessin officiel
+   (parfois sur la carte voisine) et les copies que les voisines recopient sont retirées (sinon du blé flottait sur le vide, en double).
 2. `python tools/extraction/recoltes_planches.py <dossier b> public/assets/sprites/recoltes <gfx,…>` : une planche AVIF par gfx.
 3. `node tools/hebergement/envoi.mjs`.
 
