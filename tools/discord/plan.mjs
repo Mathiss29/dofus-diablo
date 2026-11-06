@@ -5,7 +5,8 @@
 
 export const TYPES = { texte: 0, vocal: 2, categorie: 4, annonces: 5, forum: 15, scene: 13 };
 const NOM_TYPE = Object.fromEntries(Object.entries(TYPES).map(([k, v]) => [v, k]));
-export const INTERDIT = /idlus/i;
+// les autres jeux du studio (Idlus, Re:Arise) ne sont jamais touchés
+export const INTERDIT = /idlus|re:? ?arise/i;
 
 export function actions(plan, salons) {
   const out = [];
