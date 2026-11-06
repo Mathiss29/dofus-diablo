@@ -23,8 +23,12 @@ export interface Reglages {
   eau: boolean;
   /** Particules officielles des cartes (spores, poussière, braises, étoiles…). */
   particules: boolean;
+  /** Lancer des sorts (maquette Aperçu 1A/1B/1C) : maintenir pour voir puis relâcher, lancer tout de suite (aperçu avec Alt), ou viser comme Dofus (clic pour lancer). */
+  lancer: 'relache' | 'immediat' | 'dofus';
+  /** Option 5B : sur un monstre hors de portée, le perso s'approche avant de lancer. */
+  approche: boolean;
 }
-export const REGLAGES_DEFAUT: Reglages = { heure: 'auto', lumieres: 1, saturation: 1, chaleur: 0, zoom: 0.62, volume: 1, vent: true, eau: true, particules: true };
+export const REGLAGES_DEFAUT: Reglages = { heure: 'auto', lumieres: 1, saturation: 1, chaleur: 0, zoom: 0.62, volume: 1, vent: true, eau: true, particules: true, lancer: 'relache', approche: false };
 const CLE = 'diablofus.reglages';
 
 export function chargerReglages(): Reglages {

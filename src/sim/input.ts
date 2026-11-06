@@ -19,6 +19,9 @@ export interface PlayerInput {
   pickup?: number | null;
   /** Clic gauche sur un monstre : le perso s'approche à portée et lance son auto-attaque. */
   target?: number | null;
+  /** Monstre sous le curseur quand le sort est lancé, et option « s'approcher avant de lancer » (Réglages, choix 5B). */
+  castOn?: number | null;
+  approach?: boolean;
 }
 
 export const NO_INPUT: PlayerInput = { move: { x: 0, y: 0 }, aim: { x: 0, y: 0 }, pressed: null, holdAttack: false };
