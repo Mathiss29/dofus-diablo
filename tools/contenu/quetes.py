@@ -5,6 +5,7 @@
 import json, os
 OUT = os.path.join(os.path.dirname(__file__), '..', '..', 'src', 'data', 'quetes.json')
 
+EMP_CASE = 300
 PNJ = {
   # phrase = ce qu'il dit quand on lui parle sans quête (écrite pour l'ARPG, maquette Dialogues 10A)
   # carte = tag de public/assets/mondes/incarnam/monde.json (carte officielle de départ de leurs quêtes)
@@ -18,6 +19,16 @@ PNJ = {
   'klasmor': {'nom': 'Klasmor le fossoyeur', 'dofusId': 2907, 'carte': '5_-1', 'case': 358, 'phrase': 'Les morts dorment mal sous le cimetière. Je ne descendrais pas dans la crypte sans raison.'},
   'anta_brok': {'nom': 'Anta Brok', 'dofusId': 2886, 'carte': '1_-2', 'case': 389, 'phrase': 'Les esprits des Champs sont nerveux ces temps-ci. Garde ton arme à portée de main.'},
   'marylork': {'nom': 'Marylork', 'dofusId': 2888, 'carte': '3_-5', 'phrase': "D'ici, on voit toute l'île. Le vent porte loin, au-dessus des nuages."},
+  # Astrub (0.2b) : Emp, le Méryde du Recyclage, à côté du Zaap d'Astrub (maquette 0.2, 7A). Phrase, discussion et adieu = textes
+  # officiels du PNJ 1640 (dialogMessages / dialogReplies) ; services = fenêtre Recycler / Boutique de l'affichage.
+  'emp': {'nom': 'Emp', 'dofusId': 1640, 'zone': 'astrub', 'carte': '5_-18', 'case': EMP_CASE,
+    'phrase': "Je te remercie pour ton offrande. Ça va probablement déplaire à Waro, mais tant pis.",
+    'services': [{'texte': 'Recycler des objets contre des Pépites.', 'service': 'recycler'}, {'texte': 'Voir la boutique.', 'service': 'boutique'}],
+    'discussion': [
+      {'reponse': "Le prier d'en dire davantage sur le conflit l'opposant au Méryde de l'écologie.", 'texte': "Il y a fort longtemps, j'étais son plus fervent disciple. Comme nous n'étions pas d'accord sur la manière d'aborder les choses, j'ai décidé de voler de mes propres ailes. Nous sommes restés bons amis mais il nous arrive parfois de nous disputer à cause de nos divergences d'opinion. Par exemple, il est contre l'industrialisation, tandis que moi, je pense qu'elle a ses bons côtés à condition qu'il n'y ait pas de gaspillage."},
+      {'reponse': "Écouter la suite.", 'texte': "Ensemble, Waro et moi avons inventé les poubelles, puis le tri sélectif et pour son millième anniversaire, je lui ai présenté le concept des aventuriers recyclés. C'est quelque chose d'assez simple à mettre en place : on récupère un aventurier qui n'a plus grande utilité et on l'envoie dans un lieu où il servira à autre chose qu'à pomper les allocations des anciens mercenaires d'Astrub. Par exemple, il peut finir en ragoût pour Kannibouls, cible d'entraînement pour jeunes Bworks ou compagnon de nuit pour Trooll esseulé."},
+      {'reponse': "Émettre des doutes sur le concept et demander à quoi va servir l'offrande.", 'texte': "À rien de plus que ce pour quoi elle a été conçue. C'est un très bon exemple de ce que l'on peut faire avec des ressources de base ou des vieux équipements qui traînent dans les sacs à dos. Je déteste le gaspillage. J'estime que les artisans ne doivent utiliser que le strict nécessaire pour leurs œuvres. Quant au surplus, il faut s'en servir pour de nouvelles créations plutôt que le laisser à l'abandon dans un coin, un coffre ou sur le dos d'un aventurier."}],
+    'adieu': "Recycler l'un de vos saluts quotidiens pour dire au revoir au Méryde."},
 }
 SZ = {'route': 450, 'champs': 444, 'paturages': 445, 'lac': 442, 'foret': 443, 'cimetiere': 449, 'mine': 778, 'taverne': 448, 'crypte': 447, 'temple': 446}
 

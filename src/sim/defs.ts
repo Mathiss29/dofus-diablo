@@ -163,6 +163,8 @@ export interface SubAreaDef {
 /** Porte entre deux cartes du monde (dehors -> intérieur, ou d'une salle à l'autre) : [tag de la carte, case Dofus 0-559]. */
 /** verrou : la salle du côté a doit être vidée avant de passer ; sens : on ne passe que de a vers b (donjons). */
 export interface PorteDef { a: [string, number]; b: [string, number]; nom: string; verrou?: number; sens?: number;
+  /** Clé officielle demandée et prise en passant de a vers b (entrée d'un donjon, maquette 0.2 5B) : id de la ressource. */
+  cle?: string;
   /** Portail vers une autre zone (Incarnam <-> Astrub) : b est une case de cette zone-là. */
   zone?: string }
 /** Donjon : ses salles (tag de carte) et, pour chacune, ses groupes de monstres officiels (fixes). */

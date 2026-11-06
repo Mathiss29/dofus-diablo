@@ -42,8 +42,10 @@ export interface ItemDef {
 }
 /** Panoplie : bonus[n] s'applique avec n + 1 objets portés. */
 export interface SetDef { name: string; items: number[]; bonus: Record<string, Stats> }
-/** soin : la ressource se mange et rend ce nombre de PV (effet officiel 110, ex. Bouillon de Chair +11 PV). */
-export interface ResourceDef { name: string; icon: number; level: number; soin?: number }
+/** soin : la ressource se mange et rend ce nombre de PV (effet officiel 110, ex. Bouillon de Chair +11 PV).
+ *  cle : clé officielle d'un donjon (son nom), demandée et prise à l'entrée (maquette 0.2, 5B).
+ *  rappel : Potion de Rappel, renvoie au dernier Zaap. pepite : la monnaie d'Emp, le recycleur (objet officiel 14635). */
+export interface ResourceDef { name: string; icon: number; level: number; soin?: number; cle?: string; rappel?: boolean; pepite?: boolean }
 /** Butin d'un monstre ; metier = critère officiel « Pj>41,N » (Chasseur au-dessus du niveau N), chasse = « CU>0 » (arme de chasse). */
 export interface DropDef { item: string; chance: number; metier?: { id: number; min: number }; chasse?: boolean }
 /** Recette officielle d'un métier (recipesdataroot). */
@@ -93,6 +95,8 @@ export interface Item {
   legendary?: { id: LegendaryId; value: number };
   /** Mythique : un 2e effet légendaire. */
   legendary2?: { id: LegendaryId; value: number };
+  /** Cadenas (maquette 0.2, 8C) : jamais recyclé, ni seul ni en lot. */
+  cadenas?: boolean;
 }
 
 /** Tirage de la rareté : le niveau du monstre et la Prospection rendent les bons objets un peu plus fréquents. */
@@ -134,5 +138,11 @@ export function rollItem(id: string, def: ItemDef, rarity: Rarity, rng: Rng, uid
   return it;
 }
 
-/** Valeur de vente au recycleur (des runes pour la forgemagie, plus tard). */
-export const recycleValue = (def: ItemDef, it: Item) => Math.max(1, Math.round(def.level * (1 + RARITIES.indexOf(it.rarity))));
+/** Id officiel de la Pépite, la monnaie d'Emp (rangée avec les ressources du sac). */
+export const PEPITE = '14635';
+/** Pépites rendues par Emp pour un équipement (maquette 0.2, 8A) : selon le niveau et la rareté
+ *  (un Commun niveau 20 rend 6 Pépites, un Épique niveau 20 en rend 41, un Légendaire niveau 50 plus de 300). */
+export const PEPITE_RARETE: Record<Rarity, number> = { commun: 1, rare: 3, epique: 8, legendaire: 25, mythique: 60 };
+export const recycleValue = (def: ItemDef, it: Item) => Math.round(def.level * PEPITE_RARETE[it.rarity] / 4) + 1;
+/** Pépites pour une ressource (à l'unité) : une par tranche de 10 niveaux. */
+export const recycleResource = (def: ResourceDef) => Math.max(1, Math.floor(def.level / 10));

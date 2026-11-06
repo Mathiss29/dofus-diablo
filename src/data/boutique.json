@@ -1,0 +1,29 @@
+{
+ "_": "Boutique d'Emp, le Méryde du Recyclage (maquette 0.2, choix 9A+9B ; 9D apparats plus tard). Prix en Pépites (objet officiel 14635). La Clef de la Cache de Kankreblath arrivera avec son donjon.",
+ "emp": [
+  {
+   "id": "548",
+   "prix": 30
+  },
+  {
+   "id": "16670",
+   "prix": 6
+  },
+  {
+   "id": "17169",
+   "prix": 20
+  },
+  {
+   "id": "8143",
+   "prix": 150
+  },
+  {
+   "id": "8437",
+   "prix": 150
+  },
+  {
+   "id": "1568",
+   "prix": 250
+  }
+ ]
+}

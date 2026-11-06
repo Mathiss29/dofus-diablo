@@ -48,6 +48,12 @@ export type SimEvent =
   | { k: 'metierLevel'; metier: string; level: number }
   | { k: 'craft'; id: string; n: number }
   | { k: 'eat'; id: string; heal: number }
+  /** Emp (0.2) : objets recyclés contre des Pépites, achat dans sa boutique, Potion de Rappel bue, réponse « service » d'un PNJ. */
+  | { k: 'recycle'; n: number; pepites: number }
+  | { k: 'achat'; id: string; prix: number }
+  | { k: 'rappel'; name: string }
+  | { k: 'cleManquante'; id: string }
+  | { k: 'service'; service: string; pnj: string }
   | { k: 'lootKamas'; n: number }
   /** Sac plein : l'objet reste au sol. */
   | { k: 'bagFull' }
