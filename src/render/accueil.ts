@@ -1,5 +1,8 @@
 import { v } from './assetUrl';
-import { GAME_DATA, QUETES } from '../sim/data';
+import { GAME_DATA, ITEMS, QUETES } from '../sim/data';
+import { RARITY_COLORS, RARITY_NAMES } from '../sim/items';
+import { LOOKS } from './looks';
+import { PALIERS, lireBestiaire } from './carnet';
 import { SORTS, niveauRequis, type SortOfficiel } from '../sim/sorts';
 import CLASSES_DOFUS from '../data/classes_dofus.json';
 import { EMPLACEMENTS, NB_SECOURS, dernier, dureeTexte, exporter, importer, lireCimetiere, lirePersos, lireSecours, nomValide, prendreSecours, restaurerSecours, sauverPerso, supprimerPerso, type Perso } from './persos';
@@ -145,6 +148,16 @@ const CSS = `
 #acc .stele b{font-family:var(--disp);font-weight:400;font-size:calc(1.3*var(--u));color:#e8e2c8}
 #acc .mini{all:unset;cursor:pointer;font-weight:800;font-size:calc(.75*var(--u));color:#f1ecd8;background:#2a2a20;border:1px solid #4c4b3a;border-radius:calc(.4*var(--u));padding:calc(.3*var(--u)) calc(.8*var(--u));white-space:nowrap}
 #acc .mini:hover{border-color:#8a8a66}
+#acc .bes{display:grid;grid-template-columns:repeat(auto-fill,minmax(calc(19*var(--u)),1fr));gap:calc(.8*var(--u))}
+#acc .mob{display:grid;grid-template-columns:calc(5*var(--u)) 1fr;gap:calc(.3*var(--u)) calc(.8*var(--u));padding:calc(.7*var(--u)) calc(.9*var(--u));font-size:calc(.75*var(--u));font-weight:700;align-content:start}
+#acc .mob canvas{width:calc(5*var(--u));height:calc(5*var(--u));grid-row:span 2}
+#acc .mob.inconnu canvas{filter:brightness(0) opacity(.55)}
+#acc .mob b{font-family:var(--disp);font-weight:400;font-size:calc(1.15*var(--u));color:#fbf3d4;display:block}
+#acc .mob .l{display:flex;justify-content:space-between;gap:calc(.5*var(--u));color:#c9c4ab}
+#acc .mob .l span:last-child{color:#f6f1dc;text-align:right}
+#acc .mob .lock{color:#77745f;font-style:italic;font-weight:600}
+#acc .mob .det{grid-column:1/-1;display:grid;gap:calc(.25*var(--u))}
+#acc .zt{grid-column:1/-1;font-family:var(--disp);font-size:calc(1.4*var(--u));color:var(--lime);margin-top:calc(.4*var(--u))}
 #acc .hero{opacity:0}
 #acc .hero.vu{opacity:1;animation:acc-app .5s ease-out}
 @keyframes acc-app{0%{opacity:0;filter:brightness(3) blur(2px);transform-origin:50% 100%;scale:.92}60%{opacity:1;filter:brightness(1.6)}100%{filter:none;scale:1}}
@@ -152,7 +165,7 @@ const CSS = `
 #acc .check input{accent-color:#e0925a;width:calc(1.1*var(--u));height:calc(1.1*var(--u));margin:0}
 `;
 
-type Page = 'accueil' | 'creation' | 'persos' | 'succes';
+type Page = 'accueil' | 'creation' | 'persos' | 'succes' | 'bestiaire';
 
 export class Accueil {
   private root: HTMLDivElement;
@@ -216,10 +229,11 @@ export class Accueil {
   }
 
   private render() {
-    const html = this.page === 'accueil' ? this.pageAccueil() : this.page === 'creation' ? this.pageCreation() : this.page === 'succes' ? this.pageSucces() : this.pagePersos();
+    const html = this.page === 'accueil' ? this.pageAccueil() : this.page === 'creation' ? this.pageCreation() : this.page === 'succes' ? this.pageSucces() : this.page === 'bestiaire' ? this.pageBestiaire() : this.pagePersos();
     const m = this.modal ? `<div class="modal" data-fermer><div class="card">${this.modal}<button type="button" class="x" data-fermer aria-label="Fermer">✕</button></div></div>` : '';
     this.root.innerHTML = `<div class="page">${html}${this.side()}${m}<div class="toast" style="opacity:0"></div></div>`;
     this.bind();
+    this.portraits();
   }
 
   private toast(msg: string) {
@@ -256,10 +270,36 @@ export class Accueil {
     <div class="abs" style="left:calc(11.5*var(--u));top:calc(39.6*var(--u));display:flex;gap:calc(1*var(--u));align-items:center">
       <button type="button" class="dbtn" style="font-size:calc(.85*var(--u));padding:calc(.5*var(--u)) calc(1*var(--u))" data-go="persos">Mes personnages${n ? ` (${n})` : ''}</button>
       <span class="tiny">${EMPLACEMENTS} emplacements · sauvegarde automatique</span></div>
-    ${p ? `<div class="abs card" style="right:calc(2*var(--u));bottom:calc(5.4*var(--u));padding:calc(.8*var(--u)) calc(1.1*var(--u));font-weight:700;font-size:calc(.9*var(--u));transform:rotate(-1deg);background:#f4ecd0;color:#2a2615;border-color:#c9b98a">
-      Dernière sortie : ${esc(p.lieu)} · ${dureeTexte(p.temps)} de jeu</div>` : ''}
+    ${p ? this.derniereFois(p) : ''}
     <div class="abs" style="right:calc(2*var(--u));bottom:calc(1.6*var(--u));display:flex;gap:calc(.6*var(--u))">
       ${ZONES_ACC.map(z => `<button type="button" class="chip${z.cle === 'incarnam' ? ' on' : z.dispo ? '' : ' off'}" style="cursor:pointer" data-zone="${z.cle}">${z.nom}${z.dispo ? '' : ' · bientôt'}</button>`).join('')}</div>`;
+  }
+
+  /** « La dernière fois… » (Accueil 4C) : la dernière partie du perso, sur une note de parchemin. */
+  private derniereFois(p: Perso): string {
+    const s = p.session, d = s ? Math.max(0, Math.round((p.maj - s.debut) / 1000)) : 0;
+    const l: [string, string][] = s ? [
+      ...(s.niveau > s.niveau0 ? [['Niveaux', `+${s.niveau - s.niveau0}`] as [string, string]] : []),
+      ['Monstres vaincus', String(s.vaincus)],
+      ...(s.quetes ? [['Quêtes finies', String(s.quetes)] as [string, string]] : []),
+      ...(s.elites.length ? [['Élites', s.elites.join(', ')] as [string, string]] : []),
+      ...(s.meilleur ? [['Meilleur objet', `<span style="color:${RARITY_COLORS[s.meilleur.rarete] === '#e8e2d4' ? '#2a2615' : RARITY_COLORS[s.meilleur.rarete]}">${esc(s.meilleur.nom)}</span>`] as [string, string]] : []),
+    ] : [];
+    return `<div class="abs card" style="right:calc(2*var(--u));bottom:calc(5.4*var(--u));width:calc(19*var(--u));padding:calc(.8*var(--u)) calc(1.1*var(--u));font-weight:700;font-size:calc(.85*var(--u));transform:rotate(-1deg);background:#f4ecd0;color:#2a2615;border-color:#c9b98a">
+      <div style="font-family:var(--disp);font-size:calc(1.2*var(--u));margin-bottom:calc(.3*var(--u))">${s ? 'La dernière fois…' : 'Dernière sortie'}</div>
+      <div style="display:flex;justify-content:space-between;gap:calc(.6*var(--u))"><span>${esc(p.lieu)}</span><span>${dureeTexte(s ? d : p.temps)}${s ? '' : ' de jeu'}</span></div>
+      ${l.map(([k, x]) => `<div style="display:flex;justify-content:space-between;gap:calc(.6*var(--u));color:#5a5236"><span>${k}</span><span style="color:#2a2615;text-align:right">${k === 'Meilleur objet' ? x : esc(x)}</span></div>`).join('')}</div>`;
+  }
+  /** Résumé du perso choisi (Accueil 4A). */
+  private resume(p: Perso): string {
+    const st = p.stats, e = p.etat;
+    const l: [string, string][] = [['Temps de jeu', dureeTexte(p.temps)], ['Dernière sortie', esc(p.lieu)], ['Kamas', (e?.kamas ?? 0).toLocaleString('fr-FR')],
+      ['Monstres vaincus', (st?.vaincus ?? 0).toLocaleString('fr-FR')], ['Quêtes finies', String(st?.quetes ?? 0)],
+      ...(p.hardcore ? [] : [['Défaites', String(st?.morts ?? 0)] as [string, string]]),
+      ['Meilleur objet', st?.meilleur ? `<span style="color:${RARITY_COLORS[st.meilleur.rarete]}">${esc(st.meilleur.nom)}</span> <span class="tiny">${RARITY_NAMES[st.meilleur.rarete]}</span>` : '<span class="tiny">aucun</span>']];
+    return `<div class="abs card" style="right:calc(2*var(--u));top:calc(12*var(--u));width:calc(17*var(--u));padding:0 0 calc(.7*var(--u))">
+      <div class="panelT">Résumé</div><div style="padding:calc(.6*var(--u)) calc(1*var(--u)) 0;display:grid;gap:calc(.4*var(--u));font-size:calc(.82*var(--u));font-weight:700">
+      ${l.map(([k, x]) => `<div style="display:flex;justify-content:space-between;gap:calc(.6*var(--u))"><span style="color:#c9c4ab">${k}</span><span style="text-align:right">${x}</span></div>`).join('')}</div></div>`;
   }
 
   // --- Création (18A-21A, 19B en partie, Hardcore 10D) ----------------------------------------------------------
@@ -359,6 +399,7 @@ export class Accueil {
       <img src="${img('lumiere.png')}" alt="" class="abs" style="left:calc(50% - 3.5*var(--u));top:calc(8*var(--u));width:calc(15*var(--u));opacity:.7;mix-blend-mode:screen">
       <img src="assets/ui/socle.png" alt="" class="abs" style="left:calc(50% - 6.5*var(--u));top:calc(31.5*var(--u));width:calc(21*var(--u));filter:sepia(.55) saturate(1.3) brightness(.95) drop-shadow(0 0 calc(1.2*var(--u)) #8fe8ff99)">
       <div class="abs hero" data-n="24" role="img" aria-label="${esc(p.nom)}" style="left:calc(50% - 4.85*var(--u));top:calc(15.4*var(--u));width:calc(17.7*var(--u));height:calc(24*var(--u));background-image:url(${img(`${c.cle}_${p.sexe}_repos.webp`)});background-size:2400% 100%" data-src="${img(`${c.cle}_${p.sexe}_repos.webp`)}"></div>
+      ${this.resume(p)}
       <div class="abs" style="left:calc(50% + 4*var(--u));transform:translateX(-50%);top:calc(47*var(--u));display:flex;gap:calc(1*var(--u));align-items:center">
         <button type="button" class="dbtn rouge" data-suppr="${this.choix}" style="font-size:calc(.9*var(--u))">${this.confirmer === this.choix ? 'Vraiment supprimer ?' : 'Supprimer'}</button>
         <button type="button" class="lbtn" data-jouer-slot="${this.choix}" style="font-size:calc(1.5*var(--u));padding:calc(.8*var(--u)) calc(3*var(--u))">Jouer</button>
@@ -366,6 +407,43 @@ export class Accueil {
       : `<div class="abs" style="left:calc(50% + 4*var(--u));top:50%;transform:translate(-50%,-50%);text-align:center;display:grid;gap:calc(1*var(--u));justify-items:center">
         <div class="ttl" style="font-size:calc(3*var(--u))">Aucun personnage</div>
         <button type="button" class="lbtn" data-go="creation">Créer un personnage</button></div>`}`;
+  }
+
+  // --- Bestiaire (Accueil 1A) : les monstres d'Incarnam par sous-zone, dévoilés en chassant ---------------------
+  private pageBestiaire(): string {
+    const b = lireBestiaire(), sub = GAME_DATA.zones.incarnam.open?.subareas ?? {}, deja = new Set<string>();
+    const zones = ZONES_ACC.filter(z => z.dispo).flatMap(z => z.sous).map(id => sub[id]).filter(x => x && x.monsters.length);
+    const tous = zones.flatMap(x => [...new Set(x.monsters)]), connus = new Set(tous.filter(m => b[m])).size, nb = new Set(tous).size;
+    const fiche = (m: string) => {
+      const d = GAME_DATA.monsters[m], n = b[m] ?? 0, L = LOOKS[d.look];
+      if (!n) return `<div class="card mob inconnu"><canvas data-atlas="${L?.atlas ?? ''}" width="96" height="96"></canvas><b>???</b><span class="lock">Pas encore croisé</span></div>`;
+      const res = Object.entries(d.res ?? {}).map(([e, v]) => `${e[0].toUpperCase()}${e.slice(1)} ${v} %`).join(' · ');
+      const drops = (ITEMS.drops[m] ?? []).map(x => `${(ITEMS.resources[x.item] ?? ITEMS.equipment[x.item])?.name ?? x.item} ${x.chance.toLocaleString("fr-FR")} %`).join(', ');
+      const pal = (k: keyof typeof PALIERS, txt: string) => n >= PALIERS[k] ? txt : `<span class="lock">à ${PALIERS[k]} vaincus</span>`;
+      return `<div class="card mob"><canvas data-atlas="${L?.atlas ?? ''}" width="96" height="96"></canvas><b>${esc(d.name)}</b>
+        <span class="l"><span>Niveau ${d.level ?? '?'}</span><span>${n} vaincu${n > 1 ? 's' : ''}</span></span>
+        <div class="det"><div class="l"><span>Sorts</span><span>${pal('sorts', esc((d.spells ?? []).map(x => x.name).join(', ') || 'aucun'))}</span></div>
+        <div class="l"><span>Résistances</span><span>${pal('res', esc(res || 'aucune'))}</span></div>
+        <div class="l"><span>Butin</span><span>${pal('butin', esc(drops || 'aucun'))}</span></div></div></div>`;
+    };
+    return `<div class="cover" style="background-image:url(${img('login.jpg')});filter:brightness(.4) saturate(.8)"></div>
+    <div class="abs tiny" style="left:calc(8.4*var(--u));top:calc(1.4*var(--u));font-weight:800">Bestiaire du compte</div>
+    <button type="button" class="abs dbtn" style="right:calc(2*var(--u));top:calc(1*var(--u));font-size:calc(.8*var(--u));padding:calc(.35*var(--u)) calc(.9*var(--u))" data-go="accueil">Retour</button>
+    <div class="abs" style="left:calc(8.4*var(--u));top:calc(3.6*var(--u));display:flex;align-items:baseline;gap:calc(1.2*var(--u))">
+      <div class="ttl" style="font-size:calc(4*var(--u))">Bestiaire</div>
+      <div style="font-weight:800;font-size:calc(1.1*var(--u))">${connus} / ${nb} monstres croisés · sorts à ${PALIERS.sorts} vaincus, résistances à ${PALIERS.res}, butin à ${PALIERS.butin}</div></div>
+    <div class="abs bes" style="left:calc(8.4*var(--u));right:calc(2*var(--u));top:calc(9.5*var(--u));bottom:calc(1.5*var(--u));overflow:auto;align-content:start">
+      ${zones.map(x => `<div class="zt">${esc(x.name)} · niveau ${x.level}</div>` + [...new Set(x.monsters)].filter(m => !deja.has(m) && deja.add(m)).map(fiche).join('')).join('')}
+    </div>`;
+  }
+  /** Portraits du Bestiaire : la première image de l'animation statique du monstre, prise dans sa planche. */
+  private portraits() {
+    this.root.querySelectorAll<HTMLCanvasElement>('canvas[data-atlas]').forEach(async cv => {
+      const a = cv.dataset.atlas; if (!a) return;
+      const f = await cadre(a); if (!f || !cv.isConnected) return;
+      const ctx = cv.getContext('2d')!, k = Math.min(cv.width / f.w, cv.height / f.h);
+      ctx.drawImage(f.im, f.x, f.y, f.w, f.h, (cv.width - f.w * k) / 2, cv.height - f.h * k, f.w * k, f.h * k);
+    });
   }
 
   // --- Succès (Accueil 2A) : ceux du compte, comme la fenêtre Succès du jeu ------------------------------------
@@ -416,7 +494,7 @@ export class Accueil {
     const r = this.root, on = (sel: string, f: (e: HTMLElement) => void) => r.querySelectorAll<HTMLElement>(sel).forEach(e => e.addEventListener('click', () => f(e)));
     on('[data-nav]', e => {
       const k = e.dataset.nav!;
-      if (k === 'accueil' || k === 'persos' || k === 'creation' || k === 'succes') this.go(k);
+      if (k === 'accueil' || k === 'persos' || k === 'creation' || k === 'succes' || k === 'bestiaire') this.go(k);
       else this.toast(`${e.textContent!.trim()} : arrive dans une prochaine version`);
     });
     on('[data-go]', e => this.go(e.dataset.go as Page));
@@ -477,6 +555,27 @@ export class Accueil {
     s.nom = ''; s.hardcore = false;
     this.jouer(libre);
   }
+}
+
+interface Cadre { im: HTMLImageElement; x: number; y: number; w: number; h: number }
+const cadres = new Map<string, Promise<Cadre | null>>();
+/** Image de repos d'une planche de monstre (atlas simple ou multi-atlas de TexturePacker). */
+function cadre(atlas: string): Promise<Cadre | null> {
+  if (!cadres.has(atlas)) cadres.set(atlas, (async () => {
+    try {
+      type F = { filename?: string; frame: { x: number; y: number; w: number; h: number } };
+      const j = await (await fetch(v(`assets/sprites/${atlas}.json`))).json();
+      const pages: { image: string; frames: F[] }[] = j.textures ?? [{ image: `${atlas}.webp`, frames: Object.entries(j.frames).map(([filename, f]) => ({ filename, ...(f as F) })) }];
+      let pick: { page: string; f: F } | null = null;
+      for (const pg of pages) for (const f of pg.frames) {
+        if (!pick || (f.filename?.startsWith('AnimStatique_1') && !pick.f.filename?.startsWith('AnimStatique_1'))) pick = { page: pg.image, f };
+      }
+      if (!pick) return null;
+      const im = new Image(); im.src = v(`assets/sprites/${pick.page}`); await im.decode();
+      return { im, ...pick.f.frame };
+    } catch { return null; }
+  })());
+  return cadres.get(atlas)!;
 }
 
 /** Succès du compte (gardés par la partie dans le navigateur). */

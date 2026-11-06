@@ -26,6 +26,7 @@ import { Chargement } from './chargement';
 import { spellTipHtml } from './spellTip';
 import { RARITY_COLORS, RARITY_NAMES, rollItem } from '../sim/items';
 import { exporterJoueur, restaurerJoueur } from '../sim/sauvegarde';
+import { lireBestiaire, noter, nouvelleSession, sauverBestiaire, statsVides } from './carnet';
 import { enterrer, lirePersos, sauverPerso, supprimerPerso, type Perso } from './persos';
 import { SonView, synthe } from './sonView';
 import { Son } from './son';
@@ -98,12 +99,17 @@ export class ZoneScene extends Phaser.Scene {
   private son!: SonView;
   private static readonly STEP = 1 / 60;
 
+  /** Monstres vaincus par le compte (Bestiaire, Accueil 1A). */
+  private bestiaire: Record<string, number> = {};
   constructor() { super('zone'); }
 
   init(data: { zone?: string; classe?: string; slot?: number; vitrine?: boolean }) {
     this.vitrine = !!data?.vitrine; this.vitrineT = 0; this.sauveT = 0; this.mortDefinitive = false;
     this.slot = data?.slot ?? -1;
     this.perso = this.slot >= 0 ? lirePersos()[this.slot] : null;
+    // Accueil 4A/4C : résumé du perso et nouvelle « dernière partie » ; Bestiaire du compte (1A)
+    if (this.perso) { this.perso.stats ??= statsVides(); this.perso.session = nouvelleSession(this.perso.etat?.level ?? 1); }
+    this.bestiaire = lireBestiaire();
     this.classId = this.perso?.classe ?? data?.classe ?? (location.hash.includes('cra') ? 'cra' : 'iop');
     // #astrub dans l'adresse : l'ancienne zone à vagues des Champs d'Astrub
     if (data?.zone) this.zoneId = data.zone;
@@ -259,7 +265,7 @@ export class ZoneScene extends Phaser.Scene {
     const p = this.perso;
     p.etat = exporterJoueur(this.world); p.maj = Date.now();
     p.lieu = this.world.area?.name ?? p.lieu;
-    sauverPerso(this.slot, p);
+    sauverPerso(this.slot, p); sauverBestiaire(this.bestiaire);
   };
   /** Retour à l'écran d'accueil (main.ts relance la partie en vitrine). */
   private versAccueil() { this.sauver(); this.game.events.emit('accueil'); }
@@ -492,6 +498,7 @@ export class ZoneScene extends Phaser.Scene {
 
   private consumeEvents() {
     for (const e of this.world.drainEvents()) {
+      if (this.perso?.stats && this.perso.session) noter(e, this.perso.stats, this.perso.session, this.bestiaire, GAME_DATA.monsters, ITEMS.equipment);
       this.fx.handle(e);
       this.hud.handle(e);
       this.son.handle(e);
