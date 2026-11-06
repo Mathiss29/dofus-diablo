@@ -162,7 +162,7 @@ export const LOOKS: Record<string, Look> = {
   rat_soiffe: { atlas: 'rat_soiffe', scale: 0.7, map: MONSTER_MAP(5 / 18, 'AnimAttaque0', { 0: 5 / 18, 1: 3 / 21 }), height: 87, multi: true },
 };
 
-/** PNJ dans le monde (planches tools/extraction/monster_planche.py, PNJ=1 CONTOUR=2, SCALE = 1,32 x échelle officielle du look).
+/** PNJ dans le monde (planches tools/extraction/monster_planche.py, PNJ=1, SCALE = 1,32 x échelle officielle du look).
  *  Dofus montre un PNJ immobile (AnimStatique, une seule image) qui joue de temps en temps une de ses animations « fun »
  *  (npcsdataroot.animFunList : nom et poids du tirage). `scale` = échelle d'affichage (0,82 comme le perso : même netteté).
  *  Ganymède n'a que l'orientation 3, animée en boucle (60 images). */
