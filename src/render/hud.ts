@@ -66,6 +66,8 @@ export class Hud {
   onSlotHover: (id: string | null, x: number, y: number) => void = () => {};
   /** Rectangles de l'interface à l'écran (un clic dessus ne doit pas faire attaquer). */
   private rects: [number, number, number, number][] = [];
+  /** Son coupé (touche M, maquette Son 8B) : petit haut-parleur barré dans le coin de la mini-carte. */
+  muet = false;
   blocks(x: number, y: number) { return this.rects.some(([rx, ry, rw, rh]) => x >= rx && y >= ry && x <= rx + rw && y <= ry + rh); }
 
   private g: Phaser.GameObjects.Graphics;
@@ -378,6 +380,12 @@ export class Hud {
     this.rects.push([mx - 3, my - 3, mw + 6, mh + 6]);
     g.lineStyle(3, 0x24231d, 1); g.strokeRoundedRect(mx - 2, my - 2, mw + 4, mh + 4, 5);
     g.lineStyle(1, 0x5a584c, 1); g.strokeRoundedRect(mx - 3.5, my - 3.5, mw + 7, mh + 7, 6);
+    if (this.muet) {
+      const ix = mx + 8, iy = my + mh - 22;
+      g.fillStyle(0x0d0c0a, 0.75); g.fillRoundedRect(ix - 4, iy - 4, 30, 22, 4);
+      g.fillStyle(0xe8e2cc, 1); g.fillRect(ix, iy + 4, 5, 6); g.fillTriangle(ix + 4, iy + 7, ix + 11, iy, ix + 11, iy + 14);
+      g.lineStyle(2, 0xe05040, 1); g.lineBetween(ix + 14, iy + 2, ix + 22, iy + 12); g.lineBetween(ix + 22, iy + 2, ix + 14, iy + 12);
+    }
     const mc = this.miniCam;
     if (mc) {
       const ps = ISO.toScreen(p.x, p.y);

@@ -19,7 +19,7 @@ import { LOOKS } from './looks';
 import { drawMap } from './mapView';
 import { WorldView } from './worldView';
 import { Particules, type SysData } from './particles';
-import { ambiance, chargerReglages, matriceSaturation, type Reglages } from './ambiance';
+import { ambiance, chargerReglages, matriceSaturation, sauverReglages, type Reglages } from './ambiance';
 import { ICON_SHEET, iconFrame } from './icons';
 import { Windows } from './windows';
 import { Chargement } from './chargement';
@@ -27,6 +27,8 @@ import { spellTipHtml } from './spellTip';
 import { RARITY_COLORS, RARITY_NAMES, rollItem } from '../sim/items';
 import { exporterJoueur, restaurerJoueur } from '../sim/sauvegarde';
 import { lirePersos, sauverPerso, supprimerPerso, type Perso } from './persos';
+import { SonView, synthe } from './sonView';
+import { Son } from './son';
 
 const ASSETS = 'assets';
 const mapDir = ([x, y]: [number, number]) => `${ASSETS}/cartes/${x}_${y}`;
@@ -92,6 +94,8 @@ export class ZoneScene extends Phaser.Scene {
   private reglages: Reglages = chargerReglages();
   private ambT = 0;
   private sat?: Phaser.FX.ColorMatrix;
+  /** Musique et sons (maquette Son). */
+  private son!: SonView;
   private static readonly STEP = 1 / 60;
 
   constructor() { super('zone'); }
@@ -200,6 +204,9 @@ export class ZoneScene extends Phaser.Scene {
     this.fx = new FX(this, t => hex(GAME_DATA.monsters[t].color));
     if (this.perso?.etat) restaurerJoueur(this.world, this.perso.etat);
     this.hud = new Hud(this, this.world, this.perso ?? undefined);
+    this.son = new SonView(this.world, this.look, this.classId, this.vitrine,
+      zone.open ? this.cache.json.get(`${zone.open.world}_particules`) as Record<string, SysData[]> | undefined : undefined, this.world.worldGrid ?? undefined);
+    this.appliquerSon();
     if (this.questView) { const qv = this.questView; this.hud.portraitPnj = id => qv.portrait(id); }
     const mini = this.cameras.getCamera('mini');
     if (mini && this.worldView?.sky) mini.ignore(this.worldView.sky);
@@ -208,7 +215,7 @@ export class ZoneScene extends Phaser.Scene {
     this.windows.portrait = v(`${ASSETS}/ui/perso_${this.classId}${this.perso?.sexe === 'f' ? '_f' : ''}.png`);
     if (this.perso) this.windows.onAccueil = () => this.versAccueil();   // rendu en grand (perso_planche : render.cjs échelle 2,2)
     this.windows.reglages = this.reglages;
-    this.windows.onReglages = r => { this.zoom = Phaser.Math.Clamp(r.zoom, ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]); this.updateAmbiance(true); };
+    this.windows.onReglages = r => { this.zoom = Phaser.Math.Clamp(r.zoom, ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]); this.updateAmbiance(true); this.appliquerSon(); };
     this.windows.juice = { get: () => this.fx.juice, set: on => { this.fx.juice = on; } };
     this.windows.heureNom = () => ambiance(this.reglages, new Date(), !!this.world.worldGrid?.mapAt(this.world.player.x, this.world.player.y)?.inside).nom;
     this.events.once('shutdown', () => { this.windows?.destroy(); this.windows = null; });
@@ -261,7 +268,7 @@ export class ZoneScene extends Phaser.Scene {
     const K = Phaser.Input.Keyboard.KeyCodes, kb = this.input.keyboard!;
     // Déplacement à la souris (clic gauche) ; le clavier sert aux sorts, à la potion et aux menus
     this.keys = kb.addKeys({ SHIFT: K.SHIFT, ALT: K.ALT,
-      SPACE: K.SPACE, S: K.S, E: K.E, K: K.K, I: K.I, C: K.C, J: K.J, ESC: K.ESC, F: K.F, H: K.H, O: K.O, ENTER: K.ENTER,
+      SPACE: K.SPACE, S: K.S, E: K.E, K: K.K, I: K.I, C: K.C, J: K.J, ESC: K.ESC, F: K.F, H: K.H, O: K.O, M: K.M, ENTER: K.ENTER,
       ONE: K.ONE, TWO: K.TWO, THREE: K.THREE, FOUR: K.FOUR, FIVE: K.FIVE, SIX: K.SIX }) as Record<string, Phaser.Input.Keyboard.Key>;
     // Façon Diablo (demande de Mathis, 2026-11-05) : clic gauche sur le sol = y aller (maintenu : suivre le curseur),
     // sur un monstre = s'approcher et l'attaquer (maintenu : continuer), Maj + clic gauche = attaquer sur place ;
@@ -306,6 +313,8 @@ export class ZoneScene extends Phaser.Scene {
       this.hud.toast(this.fx.juice ? 'Effets d\'impact : ACTIVÉS' : 'Effets d\'impact : DÉSACTIVÉS (compare !)');
     });
     this.keys.H.on('down', () => this.hud.toggleHelp());
+    // M : couper ou remettre tout le son (8B)
+    this.keys.M.on('down', () => this.basculerMuet());
     // I ou C : fenêtre Personnage (inventaire + caractéristiques) ; le jeu continue derrière
     this.keys.I.on('down', () => this.windows?.toggle('inv'));
     this.keys.C.on('down', () => this.windows?.toggle('car'));
@@ -345,28 +354,36 @@ export class ZoneScene extends Phaser.Scene {
   }
   /** Son court quand la jauge se remplit (ligne Rage 27B), synthétisé comme le carillon du butin. */
   private rageSound() {
-    try {
-      const A = (this.sound as unknown as { context?: AudioContext }).context;
-      if (!A) return;
+    synthe((A, out) => {
       const o = A.createOscillator(), g = A.createGain(), t0 = A.currentTime;
       o.type = 'sawtooth'; o.frequency.setValueAtTime(180, t0); o.frequency.exponentialRampToValueAtTime(420, t0 + 0.18);
-      g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(0.08 * this.reglages.volume + 0.0001, t0 + 0.03); g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.35);
-      o.connect(g).connect(A.destination); o.start(t0); o.stop(t0 + 0.4);
-    } catch { /* son indisponible */ }
+      g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(0.1, t0 + 0.03); g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.35);
+      o.connect(g).connect(out); o.start(t0); o.stop(t0 + 0.4);
+    });
   }
 
   private chime(legendary: boolean) {
-    try {
-      const A = (this.sound as unknown as { context?: AudioContext }).context;
-      if (!A) return;
+    synthe((A, out) => {
       const notes = legendary ? [784, 988, 1319, 1568] : [880, 1175];
       notes.forEach((f, i) => {
         const o = A.createOscillator(), g = A.createGain(), t0 = A.currentTime + i * 0.09;
         o.type = 'triangle'; o.frequency.value = f;
-        g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(0.12 * this.reglages.volume + 0.0001, t0 + 0.02); g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.6);
-        o.connect(g).connect(A.destination); o.start(t0); o.stop(t0 + 0.65);
+        g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(0.15, t0 + 0.02); g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.6);
+        o.connect(g).connect(out); o.start(t0); o.stop(t0 + 0.65);
       });
-    } catch { /* son indisponible */ }
+    });
+  }
+
+  /** Volumes des Réglages vers le son (8A), et l'icône du son sur le HUD (8B). */
+  private appliquerSon() {
+    const r = this.reglages;
+    Son.volumes({ general: r.volume, musique: r.volMusique, effets: r.volEffets, ambiance: r.volAmbiance, interface: r.volInterface, muet: r.muet });
+    this.hud.muet = r.muet;
+  }
+  private basculerMuet() {
+    this.reglages.muet = !this.reglages.muet; sauverReglages(this.reglages); this.appliquerSon();
+    this.hud.toast(this.reglages.muet ? 'Son coupé (M pour le remettre)' : 'Son remis');
+    this.windows?.refresh();
   }
 
   /** Monstre sous le curseur : on vise le corps dessiné (rectangle rogné de la frame), ou à défaut ses pieds ;
@@ -474,6 +491,7 @@ export class ZoneScene extends Phaser.Scene {
     for (const e of this.world.drainEvents()) {
       this.fx.handle(e);
       this.hud.handle(e);
+      this.son.handle(e);
       const M = GAME_DATA.monsters;
       switch (e.k) {
         case 'impact':
@@ -705,6 +723,7 @@ export class ZoneScene extends Phaser.Scene {
     const cam = this.cameras.main;
     if (Math.abs(cam.zoom - this.zoom) > 0.001) cam.setZoom(cam.zoom + (this.zoom - cam.zoom) * 0.2);
     this.updateAmbiance();
+    this.son.update(!!wg?.mapAt(w.player.x, w.player.y)?.inside);
     wv?.update(w.player.x, w.player.y);
     this.leverRideau(this.game.loop.delta / 1000);
     this.drawRageAura();

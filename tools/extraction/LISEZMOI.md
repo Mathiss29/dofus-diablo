@@ -175,3 +175,14 @@ couleurs et dégradés, débit et salves, forme (sphère, cône, cercle, bord, b
 - Persos en jeu : `SCALE=0.7` (défaut de `perso_planche.py`) reste net jusqu'à un zoom d'environ 1,2 ; la molette va jusqu'à 1,5,
   donc `SCALE=0.9` pour être net partout (planches environ 1,65 fois plus lourdes).
 - Textes des classes (titre, description, rôles et difficulté officiels) : `breeds` + `breedroles` + `fr.bin` → `src/data/classes_dofus.json`.
+
+## Sons et musiques (Dofus 3)
+- Banques FMOD dans `Dofus_Data/StreamingAssets/Content/Audio/Banks/Desktop/*.bank` (1,9 Go, 7091 banques). Chaque banque contient un FSB5 en Vorbis.
+  `<gfxId>.bank` = son d'un effet de sort, `<boneId>.bank` = sons d'un monstre, `Player_Fight_<Classe>.bank` = son de chaque animation de sort
+  (`Avatar_Fight_Iop_AnimAttaque801` = casterAnimation 801), `Incarnam.bank` / `Musiques.bank` (690 Mo) = musiques, `UI.bank` = menu et interface,
+  `GlobalAmbient` / `AMB_Loc` = ambiances et décor.
+- `python sons.py <dossier des .bank> <dossier fsb5> <racine du dépôt>` écrit `public/assets/son/**.mp3` et `src/data/sons.json`.
+  `fsb5` : `pip download fsb5` puis le dossier `fsb5/` du paquet (il faut libvorbis). `bones.json` : dofusId du monstre -> squelette (champ `look`).
+- Les cartes ont des sons officiels (`mapData.playlistSet`, `localizedSounds` avec position) mais référencés par GUID d'événement FMOD ;
+  `Master.strings.bank` contient les noms (arbre compressé STDT, pas encore décodé). En attendant, les sons du décor viennent des particules
+  officielles (Feu, Braises, Cascade, Courant, Vortex du Zaap).
