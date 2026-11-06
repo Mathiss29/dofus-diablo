@@ -23,6 +23,9 @@ export class WorldView {
   private center = '';
   /** Bouts de portes (sim/world.ts) : un repère doré au sol est posé sur chacun quand sa carte est chargée. */
   portes: { tag: string; x: number; y: number }[] = [];
+  /** Cartes en téléchargement, et textures prêtes à envoyer à la carte graphique (une par image, voir fetchMap). */
+  private readonly fetching = new Set<string>();
+  private readonly uploads: { m: WorldMapEntry; add: () => void }[] = [];
 
   constructor(private readonly scene: Phaser.Scene, private readonly wg: WorldGrid, private readonly dir: string, private readonly prefix: string) {
     for (const m of wg.world.maps) this.slots.set(m.tag, { state: 'none', objs: [], next: 0 });
@@ -58,6 +61,7 @@ export class WorldView {
   /** Chaque image : ciel qui suit la caméra ; quand le joueur change de carte, charge / décharge autour de lui. */
   update(px: number, py: number) {
     this.drawSky();
+    this.upload();
     this.pump();
     const here = this.wg.mapAt(px, py);
     if (!here || here.tag === this.center) return;
@@ -65,18 +69,42 @@ export class WorldView {
     // intérieur : pas de ciel, fond noir comme dans Dofus
     this.sky?.setVisible(!here.inside);
     this.scene.cameras.main.setBackgroundColor(here.inside ? '#000000' : '#0d2b36');
-    let queued = false;
     for (const m of this.wg.world.maps) {
       const d = ring(m, here.x, here.y), s = this.slots.get(m.tag)!;
       if (d <= LOAD_RING && s.state === 'none') {
         s.state = 'loading';
         if (this.texturesReady(m)) this.build(m);
-        else { WorldView.queue(this.scene, m, this.dir, this.prefix); queued = true; }
+        else this.fetchMap(m);
       } else if (d > UNLOAD_RING && s.state !== 'none') this.unload(m);   // 'loading' : la carte arrivera pour rien, build() la jette
     }
-    if (queued && !this.scene.load.isLoading()) this.scene.load.start();
   }
 
+  /** En jeu, une carte se charge sans saccade : les images sont téléchargées et décodées hors du fil principal
+   *  (createImageBitmap), puis envoyées à la carte graphique une par image (le chargeur de Phaser décodait tout d'un coup
+   *  au passage d'une carte à l'autre : mini-gel). */
+  private fetchMap(m: WorldMapEntry) {
+    if (this.fetching.has(m.tag)) return;
+    this.fetching.add(m.tag);
+    const tex = this.scene.textures, url = (n: string) => v(`${this.dir}/${n}`);
+    const bmp = (n: string) => fetch(url(n)).then(r => { if (!r.ok) throw new Error(n); return r.blob(); })
+      .then(b => createImageBitmap(b, { premultiplyAlpha: 'premultiply' }));
+    const image = (n: string) => bmp(`${n}.webp`).then(b => () => { if (!tex.exists(this.k(n))) tex.addImage(this.k(n), b as unknown as HTMLImageElement); });
+    const jobs = [image(`sol_${m.tag}`), ...CALQUES.filter(c => m[c]).map(c => image(`${c}_${m.tag}`)),
+      Promise.all([bmp(`decor_${m.tag}.webp`), fetch(url(`decor_${m.tag}.json`)).then(r => r.json())])
+        .then(([b, j]) => () => { if (!tex.exists(this.k(`decor_${m.tag}`))) tex.addAtlas(this.k(`decor_${m.tag}`), b as unknown as HTMLImageElement, j); })];
+    Promise.all(jobs).then(adds => { for (const add of adds) this.uploads.push({ m, add }); })
+      .catch(e => console.warn('Carte non chargée', m.tag, e))
+      .finally(() => this.fetching.delete(m.tag));
+  }
+  /** Une texture par image vers la carte graphique ; la carte se pose quand toutes ses textures sont là. */
+  private upload() {
+    const u = this.uploads.shift();
+    if (!u) return;
+    const s = this.slots.get(u.m.tag)!;
+    if (s.state !== 'loading') return;   // le joueur est reparti entre-temps
+    u.add();
+    if (this.texturesReady(u.m)) this.build(u.m);
+  }
   private texturesReady(m: WorldMapEntry) {
     return this.scene.textures.exists(this.k(`sol_${m.tag}`)) && this.scene.textures.exists(this.k(`decor_${m.tag}`))
       && CALQUES.every(c => !m[c] || this.scene.textures.exists(this.k(`${c}_${m.tag}`)));
