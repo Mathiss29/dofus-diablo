@@ -69,7 +69,7 @@
           "Les monstres tapent selon leur rang et leur niveau (ceux d'Astrub tapaient tous 14), et les groupes t'encerclent au lieu de faire la queue.",
           "Les boss ont une attaque signature annoncée au sol (Dégraissage de Mob l'Éponge en vraie ligne de 8 cases, Kankroulahoup…), deviennent Furieux à mi-vie et font leur entrée ; un gros coup reçu rougit les bords de l'écran."
         ],
-        "Corrections": [
+        "Corrections": ["La Cape de l'Intrépide portée montre enfin son vrai dessin (cape jaune à l'emblème vert) et plus une autre cape.", 
           "Plus de mini-gel en changeant de carte.",
           "PNJ qui tremblaient quand la caméra défilait.",
           "Gros personnage du socle net, même avec l'affichage Windows à 125 %.",
