@@ -36,3 +36,22 @@ jobs:
           path: dist
       - id: deploy
         uses: actions/deploy-pages@v4
+
+  # Robot Discord : applique le plan des salons (tools/discord/serveur.json) puis publie le carnet du jour du Journal.
+  # Sans le secret DISCORD_BOT_TOKEN, il ne fait rien (voir tools/discord/LISEZMOI.md).
+  discord:
+    needs: deploy
+    runs-on: ubuntu-latest
+    concurrency:
+      group: discord
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Plan des salons
+        env: { DISCORD_BOT_TOKEN: "${{ secrets.DISCORD_BOT_TOKEN }}", DISCORD_CATEGORIE: diablofus }
+        run: node tools/discord/discord_bot.mjs plan --auto
+      - name: Carnet du jour
+        env: { DISCORD_BOT_TOKEN: "${{ secrets.DISCORD_BOT_TOKEN }}", DISCORD_CATEGORIE: diablofus, DISCORD_ROLE: Diablofus }
+        run: node tools/discord/discord_bot.mjs journal --auto
