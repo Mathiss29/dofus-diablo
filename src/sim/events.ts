@@ -6,6 +6,8 @@ import type { Item, Rarity } from './items';
 export type SimEvent =
   /** Impact d'un coup du joueur : fx = forme de l'effet, size = portée / longueur / rayon, boosted = renforcé par la Rage. */
   | { k: 'spell'; fx: SpellDef['fx']; id: string; x: number; y: number; facing: number; size: number; arc: number; element: Element; big: boolean; boosted: boolean;
+      /** Sort d'un monstre de base : éclat seul, sans cercle de zone. */
+      discret?: boolean;
       /** Position du lanceur quand l'effet est joué ailleurs (sort ciblé) : les effets « lanceur » y sont joués. */
       cx?: number; cy?: number }
   /** Une flèche part (l'affichage lit world.projectiles pour la dessiner en vol). */
