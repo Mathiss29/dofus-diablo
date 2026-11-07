@@ -68,6 +68,8 @@ const hex = (c: number) => '#' + c.toString(16).padStart(6, '0');
 export class Assemblage {
   /** nœud exposé -> morceaux (corps puis tête) */
   private parts: Morceau[][];
+  /** Morceaux de la tête choisie (sans coiffe) : pour cadrer le portrait du HUD sur le visage. */
+  private deTete = new Set<Morceau>();
   private teintes = new Map<string, HTMLCanvasElement | HTMLImageElement>();
   private couleurs = new Map<string, [HTMLCanvasElement, number, number]>();
 
@@ -88,7 +90,11 @@ export class Assemblage {
         return { ...x, v };
       });
     });
-    this.parts = data.noeuds.map(n => [...etendre(corps.parts[n], corps.tex), ...etendre(tete.parts[n], tete.tex)]);
+    this.parts = data.noeuds.map(n => {
+      const t = etendre(tete.parts[n], tete.tex);
+      for (const m of t) if (m.tex === tete.tex) this.deTete.add(m);   // la coiffe posée dans un emplacement de la tête a la texture de l'objet
+      return [...etendre(corps.parts[n], corps.tex), ...t];
+    });
     data.noeuds.forEach((n, i) => { if (!poses.has(n)) this.parts[i].push(...(porte.get(n) ?? [])); });
   }
 
@@ -165,6 +171,17 @@ export class Assemblage {
   bornes(anim: string, i: number): [number, number, number, number] | null {
     let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
     for (const tr of this.data.anims[anim][i]) for (const [m] of this.morceaux(tr)) for (let k = 0; k < m.v.length; k += 4) {
+      const x = m.v[k], y = m.v[k + 1];
+      const X = tr[2] * x + tr[3] * y + tr[4], Y = -(tr[5] * x + tr[6] * y + tr[7]);
+      if (X < x0) x0 = X; if (X > x1) x1 = X; if (Y < y0) y0 = Y; if (Y > y1) y1 = Y;
+    }
+    return x0 <= x1 ? [x0, y0, x1, y1] : null;
+  }
+
+  /** Bornes de la tête seule (visage et cheveux, sans coiffe) d'une image, en unités du squelette ; null si absente. */
+  bornesTete(anim: string, i: number): [number, number, number, number] | null {
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    for (const tr of this.data.anims[anim]?.[i] ?? []) for (const [m] of this.morceaux(tr)) if (this.deTete.has(m)) for (let k = 0; k < m.v.length; k += 4) {
       const x = m.v[k], y = m.v[k + 1];
       const X = tr[2] * x + tr[3] * y + tr[4], Y = -(tr[5] * x + tr[6] * y + tr[7]);
       if (X < x0) x0 = X; if (X > x1) x1 = X; if (Y < y0) y0 = Y; if (Y > y1) y1 = Y;

@@ -322,6 +322,7 @@ export class ZoneScene extends Phaser.Scene {
       zone.open ? this.cache.json.get(`${zone.open.world}_particules`) as Record<string, SysData[]> | undefined : undefined, this.world.worldGrid ?? undefined);
     this.appliquerSon();
     if (this.questView) { const qv = this.questView; this.hud.portraitPnj = id => qv.portrait(id); }
+    this.hud.vivant = () => this.vivant;   // portrait vivant du cadre (Interface 4A)
     const mini = this.cameras.getCamera('mini');
     if (mini && this.worldView?.sky) mini.ignore(this.worldView.sky);
     if (mini && this.transparence) mini.ignore(this.transparence.calque);
