@@ -11,6 +11,7 @@ export interface EtatJoueur {
   bag: Item[]; equipment: Partial<Record<EquipSlot, Item>>;
   resources: Record<string, number>;
   metiers: Record<string, { level: number; xp: number }>;
+  recetteSuivie?: string | null;
   bar: (string | null)[]; variants: number[]; learned: string[];
   x: number; y: number;
   retour: { name: string; x: number; y: number };
@@ -33,7 +34,7 @@ export function exporterJoueur(w: World): EtatJoueur {
   const p = w.player;
   return copie({
     level: p.level, xp: p.xp, points: p.points, kamas: p.kamas, potions: p.potions, lootFilter: p.lootFilter,
-    base: p.base, bag: p.bag, equipment: p.equipment, resources: p.resources, metiers: p.metiers,
+    base: p.base, bag: p.bag, equipment: p.equipment, resources: p.resources, metiers: p.metiers, recetteSuivie: p.recetteSuivie,
     bar: p.bar, variants: p.variants, learned: [...p.learned],
     x: p.x, y: p.y, retour: w.pointDeRetour, quetes: w.quetes?.exporter(), zone: w.opts.zone,
     apparats: p.apparats, apparat: p.apparat,
@@ -49,6 +50,7 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
   p.level = s.level; p.xp = s.xp; p.points = s.points; p.kamas = s.kamas; p.lootFilter = s.lootFilter ?? 0;
   p.potions = Math.min(s.potions ?? p.potions, p.cls.potion.charges);
   p.base = s.base ?? {}; p.resources = s.resources ?? {}; p.metiers = { ...p.metiers, ...s.metiers };
+  p.recetteSuivie = typeof s.recetteSuivie === 'string' ? s.recetteSuivie : null;
   p.bag = (s.bag ?? []).map(uid);
   p.equipment = Object.fromEntries(Object.entries(s.equipment ?? {}).map(([k, it]) => [k, uid(it as Item)]));
   p.variants = s.variants ?? [];

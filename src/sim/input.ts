@@ -25,6 +25,8 @@ export interface PlayerInput {
   approach?: boolean;
   /** Clic sur une ressource à récolter (id de world.recoltes) : le perso y va et la récolte. */
   recolte?: number | null;
+  /** Clic sur un poste d'atelier (id de world.postes, Métiers UI 3A) : le perso y va et ouvre l'Artisanat. */
+  atelier?: number | null;
   /** Clic sur un PNJ (clé de quetes.json) : le perso y va et lui parle. */
   talk?: string | null;
   /** Réponse au dialogue ouvert (index du cadre vert, -1 = fermer). */

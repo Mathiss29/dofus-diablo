@@ -27,9 +27,16 @@ const CSS = `
 .cm .gd .ic{width:26px;height:26px}
 .cm .vd{pointer-events:auto;cursor:help;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;border:2px solid #f2d36b;background:#000a;box-shadow:0 0 0 4px #f2d36b55,0 0 14px #f2d36b;animation:cmvd 1.2s ease-in-out infinite alternate}
 .cm .vd .ic{width:22px;height:22px}
+.cm .ou{width:22px;height:22px;pointer-events:none;border-radius:50%;border:2px solid #b9e54b;background:#000a;display:grid;place-items:center;box-shadow:0 0 0 3px #b9e54b44,0 0 12px #b9e54b;animation:cmvd 1.1s ease-in-out infinite alternate}
+.cm .ou .ic{width:16px;height:16px}
+.cm .ttlou{position:absolute;left:12px;top:10px;background:#000c;padding:6px 12px;border-radius:3px;border:1px solid #b9e54b88;font:bold 13px Lexend,sans-serif;color:#d6f57a;display:flex;gap:8px;align-items:center;pointer-events:none}
+.cm .ttlou .ic{width:24px;height:24px}
 @keyframes cmvd{to{box-shadow:0 0 0 9px #f2d36b22,0 0 20px #f2d36b}}
 .cm .aide{position:absolute;right:12px;bottom:10px;background:#000b;padding:4px 10px;border-radius:3px;font:12px Lexend,sans-serif;color:#a8a290;pointer-events:none}
 `;
+
+/** « Montrer sur la carte » (Métiers UI 8B, 11B) : où trouver une ressource (cartes entières et points précis). */
+export interface MarqueCarte { titre: string; icone: number; tags: string[]; points: { x: number; y: number }[] }
 
 export class CarteMonde {
   private root: HTMLDivElement | null = null;
@@ -44,6 +51,8 @@ export class CarteMonde {
   get ouverte() { return !!this.root; }
   get dispo() { return !!this.world.worldGrid?.world.carte; }
   basculer() { if (this.root) this.fermer(); else this.ouvrir(); }
+  /** Ouvre la carte avec les endroits où trouver une ressource (Métiers UI). */
+  montrer(m: MarqueCarte) { this.fermer(); this.ouvrir(m); }
   fermer() { this.root?.remove(); this.root = null; }
   destroy() { this.fermer(); }
 
@@ -61,7 +70,7 @@ export class CarteMonde {
     return this.px(m.x, m.y);
   }
 
-  ouvrir() {
+  ouvrir(ou?: MarqueCarte) {
     const wg = this.world.worldGrid, open = this.world.zone.open;
     if (!wg || !open || !this.dispo) return;
     const root = document.createElement('div'); root.className = 'dw cm'; this.root = root;
@@ -112,10 +121,19 @@ export class CarteMonde {
     }
     const ve = Q?.marqueVendeur && Q.pnj(Q.marqueVendeur);
     if (ve) { const c = this.duJeu(ve.x, ve.y), d = this.marque('mk vd', c.x, c.y); d.innerHTML = iconHtml(ITEMS.resources['8143']?.icon ?? 0); d.title = `${ve.def.nom} · clés de donjon`; }
+    // Métiers UI : où trouver la ressource demandée (cartes de récolte ou des monstres qui la lâchent, entrées des donjons)
+    let centre: { x: number; y: number } | null = null;
+    if (ou) {
+      const pts = [...new Set(ou.tags)].filter(t => wg.mapByTag(t)).map(t => this.milieuCarte(t)).concat(ou.points.map(q => this.duJeu(q.x, q.y)));
+      for (const q of pts) { const d = this.marque('mk ou', q.x, q.y); d.innerHTML = iconHtml(ou.icone); d.title = ou.titre; }
+      if (pts.length) centre = { x: pts.reduce((s, q) => s + q.x, 0) / pts.length, y: pts.reduce((s, q) => s + q.y, 0) / pts.length };
+      const t = document.createElement('div'); t.className = 'ttlou'; t.innerHTML = `${iconHtml(ou.icone)}Où trouver : ${ou.titre} (${pts.length} endroit${pts.length > 1 ? 's' : ''})`;
+      vue.appendChild(t);
+    }
     this.moi = this.marque('mk moi', 0, 0);
 
     // centré sur le joueur, à l'échelle 1 (l'image est déjà réduite)
-    const r = vue.getBoundingClientRect(), p = this.duJeu(this.world.player.x, this.world.player.y);
+    const r = vue.getBoundingClientRect(), p = centre ?? this.duJeu(this.world.player.x, this.world.player.y);
     this.zoom = 1; this.pos = { x: r.width / 2 - p.x, y: r.height / 2 - p.y };
     this.appliquer(); this.update();
 

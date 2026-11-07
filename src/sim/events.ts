@@ -65,6 +65,10 @@ export type SimEvent =
   /** Métiers : niveau gagné, recette faite, plat mangé. */
   | { k: 'metierLevel'; metier: string; level: number }
   | { k: 'craft'; id: string; n: number }
+  /** Métiers UI : arrivé au poste d'un atelier (ouvre l'Artisanat) ; fabrication lancée (barre de 1 s) ou interrompue. */
+  | { k: 'atelier'; poste: number; metier: string }
+  | { k: 'fabricationDebut'; recette: number; n: number; duree: number }
+  | { k: 'fabricationStop' }
   | { k: 'eat'; id: string; heal: number }
   /** Emp (0.2) : objets recyclés contre des Pépites, achat dans sa boutique, Potion de Rappel bue, réponse « service » d'un PNJ. */
   | { k: 'recycle'; n: number; pepites: number }
