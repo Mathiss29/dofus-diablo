@@ -6,10 +6,10 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: "liste = voir les salons et le plan actuel ; plan = appliquer serveur.json ; journal = carnet du jour ; categorie = renommer la catégorie du jeu ; annonce = publier un message"
+        description: "liste = voir les salons et le plan actuel ; plan = appliquer serveur.json ; journal = carnet du jour ; categorie = renommer la catégorie du jeu ; annonce = publier un message ; sondage = sondage de tools/discord/sondages (voir étape)"
         type: choice
         default: liste
-        options: [liste, plan, journal, categorie, annonce]
+        options: [liste, plan, journal, categorie, annonce, sondage]
       texte:
         description: "annonce : texte (mise en forme Discord, 1 900 caractères au plus, \\n pour aller à la ligne)"
         type: string
@@ -31,6 +31,19 @@ on:
         description: "categorie : nouveau nom"
         type: string
         default: "🔥 DIABLOFUS : LES DOUZE ENFERS"
+      sondage:
+        description: "sondage : nom du fichier dans tools/discord/sondages (sans .json)"
+        type: string
+        default: classes
+      etape:
+        description: "sondage : lancer (émojis, fil, message, sondages) ; finale (les mieux classées) ; resultat (classement final)"
+        type: choice
+        default: lancer
+        options: [lancer, finale, resultat]
+      forcer:
+        description: "sondage : publier la finale ou le résultat sans attendre la fin du vote"
+        type: boolean
+        default: false
       essai:
         description: "Essai : affiche ce qui serait fait sans rien envoyer"
         type: boolean
@@ -58,10 +71,15 @@ jobs:
           ANCIEN: ${{ inputs.ancien }}
           NOUVEAU: ${{ inputs.nouveau }}
           DATE: ${{ inputs.date }}
+          SONDAGE: ${{ inputs.sondage }}
+          ETAPE: ${{ inputs.etape }}
+          FORCER: ${{ inputs.forcer && '--forcer' || '' }}
           ESSAI: ${{ inputs.essai && '--print' || '' }}
         run: |
           if [ "$ACTION" = journal ]; then
             node tools/discord/discord_bot.mjs journal $DATE $ESSAI
+          elif [ "$ACTION" = sondage ]; then
+            node tools/discord/discord_bot.mjs sondage "$SONDAGE" "$ETAPE" $FORCER $ESSAI
           elif [ "$ACTION" = categorie ]; then
             node tools/discord/discord_bot.mjs categorie "$ANCIEN" "$NOUVEAU" $ESSAI
           else

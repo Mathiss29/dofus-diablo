@@ -37,3 +37,8 @@ Onglet Actions → « Discord » → Run workflow. « Essai » est coché par d�
 - `journal` : publie ou réécrit le carnet (champ `date` pour un ancien carnet).
 - `categorie` : renomme la catégorie du jeu (`ancien` = un morceau du nom actuel).
 - `annonce` : publie `texte` dans `salon`, cherché d'abord dans la catégorie du jeu.
+- `sondage` : sondage natif Discord décrit dans `sondages/<nom>.json` (champ `sondage`, `classes` par défaut), en trois étapes (champ `etape`) :
+  - `lancer` : crée les émojis du serveur manquants (`dfus_<classe>`, symboles officiels de `sondages/symboles/`), le fil de discussion, puis publie le message (mention `@everyone` ou un rôle) et les sondages (10 réponses et 55 caractères par réponse au plus, plusieurs choix). Ne republie pas un sondage déjà là.
+  - `finale` : quand les sondages sont finis, publie les `finale.nombre` classes en tête dans un dernier sondage.
+  - `resultat` : publie le classement de la finale (ou des sondages s'il n'y a pas de finale).
+  `forcer` publie la finale ou le résultat sans attendre la fin du vote. Avec « Essai », `finale` et `resultat` lisent les votes et affichent ce qui serait publié.

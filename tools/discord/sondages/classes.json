@@ -1,0 +1,47 @@
+{
+  "_": "Sondage « Quelle classe après Osamodas ? » (maquette Sondage : 1A 2A 3A+3D 4B 5A 6A 7A 8B 9A). Lancé par l'action « sondage » du workflow Discord.",
+  "salon": "annonces",
+  "mention": "everyone",
+  "duree": 72,
+  "intro": "🗳️ **Quelle classe après l'Osamodas ?** {mention}\nIop et Crâ sont jouables, l'Osamodas arrive en 3e. Pour la suite, on veut votre avis !\nLes 16 autres classes de Dofus sont réparties dans les deux sondages ci-dessous : votez pour vos **3 préférées** dans chacun (ou seulement dans l'un).\nDans 3 jours, les 5 classes en tête passent en finale (3 jours de plus). Vos votes nous aideront à choisir les prochaines classes du jeu.\nDites-nous pourquoi dans le fil {fil}.",
+  "fil": {
+    "salon": "discussion",
+    "nom": "Pourquoi cette classe ?",
+    "message": "🗳️ Le sondage des classes est ouvert dans {salon} ! Ici, dites-nous **pourquoi** vous voulez votre classe dans Diablofus : un sort que vous imaginez en temps réel, un souvenir de Dofus, une idée de style de jeu…"
+  },
+  "sondages": [
+    {
+      "question": "Guerriers et rusés : lesquelles veux-tu jouer dans Diablofus ? (tes 3 préférées)",
+      "reponses": [
+        { "classe": "Sacrieur", "texte": "plus il saigne, plus il frappe fort", "emoji": "sacrieur" },
+        { "classe": "Pandawa", "texte": "soulève, porte et projette ses ennemis", "emoji": "pandawa" },
+        { "classe": "Écaflip", "texte": "gros coups de chance, à pile ou face", "emoji": "ecaflip" },
+        { "classe": "Ouginak", "texte": "traque sa proie et devient bête", "emoji": "ouginak" },
+        { "classe": "Forgelance", "texte": "charges et percées à la lance", "emoji": "forgelance" },
+        { "classe": "Zobal", "texte": "change de masque, change de style", "emoji": "zobal" },
+        { "classe": "Sram", "texte": "invisibilité, pièges et coups dans le dos", "emoji": "sram" },
+        { "classe": "Roublard", "texte": "pose ses bombes et les fait sauter", "emoji": "roublard" }
+      ]
+    },
+    {
+      "question": "Mages et soutiens : lesquelles veux-tu jouer dans Diablofus ? (tes 3 préférées)",
+      "reponses": [
+        { "classe": "Féca", "texte": "boucliers et glyphes protecteurs", "emoji": "feca" },
+        { "classe": "Eniripsa", "texte": "soigne les alliés, mots qui blessent", "emoji": "eniripsa" },
+        { "classe": "Xélor", "texte": "ralentit le temps et se téléporte", "emoji": "xelor" },
+        { "classe": "Sadida", "texte": "poupées, ronces et poisons", "emoji": "sadida" },
+        { "classe": "Enutrof", "texte": "pelle, malchance adverse et plus de butin", "emoji": "enutrof" },
+        { "classe": "Steamer", "texte": "tourelles à vapeur et harpon", "emoji": "steamer" },
+        { "classe": "Éliotrope", "texte": "portails qui renvoient ses sorts", "emoji": "eliotrope" },
+        { "classe": "Huppermage", "texte": "combine les éléments en runes", "emoji": "huppermage" }
+      ]
+    }
+  ],
+  "finale": {
+    "nombre": 5,
+    "duree": 72,
+    "question": "Finale : quelle classe veux-tu le plus voir dans Diablofus ? (tes 2 préférées)",
+    "intro": "🏆 **Finale du sondage des classes !** {mention}\nMerci pour vos votes. Voici les {nombre} classes en tête, à départager pendant 3 jours :"
+  },
+  "resultat": "📊 **Résultat du sondage des classes**\n{classement}\nMerci à tous ! Ces résultats nous aideront à choisir les prochaines classes de Diablofus, après l'Osamodas."
+}
