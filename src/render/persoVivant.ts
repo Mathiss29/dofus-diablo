@@ -82,6 +82,15 @@ export class PersoVivant {
     return r;
   }
 
+  /** Cadre du visage pour le portrait du HUD, en pixels de la cellule : centre (x, y) et côté ; null si pas de tête. */
+  cadreTete(anim: string, idx: number): [number, number, number] | null {
+    const b = this.a.bornesTete(anim, idx);
+    if (!b) return null;
+    const [ox, oy] = PersoVivant.PIED, sc = PersoVivant.ECHELLE;
+    const cote = Math.max(b[2] - b[0], b[3] - b[1]) * sc * 1.75;
+    return [ox + ((b[0] + b[2]) / 2) * sc, oy + ((b[1] + b[3]) / 2) * sc + cote * 0.02, cote];
+  }
+
   /** À appeler une fois par image du jeu : dessine d'avance pendant `ms` millisecondes au plus,
    *  puis envoie à la carte graphique les pages modifiées. */
   maj(ms = 3) {

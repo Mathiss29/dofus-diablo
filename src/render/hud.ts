@@ -18,6 +18,7 @@ const UI = 'assets/ui';
 const UI_IMAGES = [
   'slot_dark_background_full', 'slot_light_lock', 'icon_pv', 'iconBossSkull',
   'background_levelup_banner', 'background_defeat_banner', 'success_ornament', 'scoreTitle',
+  'tx_lifePoints', 'tx_actionPoints', 'tx_movementPoints',
 ];
 /** Tête de chaque classe pour la fiche du perso (icônes de classe de Dofus 3). */
 const HEADS: Record<string, string> = { iop: 'tete_iop', cra: 'tete_cra', iop_f: 'tete_iop_f', cra_f: 'tete_cra_f' };
@@ -55,6 +56,8 @@ export class Hud {
     for (const k of UI_IMAGES) if (!scene.textures.exists(k)) scene.load.image(k, v(`${UI}/${k}.png`));
     for (const [k] of MENUS) if (!scene.textures.exists(`menu_${k}`)) scene.load.image(`menu_${k}`, v(`${UI}/menu/${k}.png`));
     for (const k of Object.values(HEADS)) if (!scene.textures.exists(k)) scene.load.image(k, v(`${UI}/${k}.png`));
+    // Emblème de la classe dans le bandeau du cadre (icônes officielles de l'écran de création)
+    for (const c of Object.keys(GAME_DATA.classes)) if (!scene.textures.exists(`embleme_${c}`)) scene.load.image(`embleme_${c}`, v(`assets/accueil/c_${c}.png`));
     const icons = new Set<number>();
     for (const c of Object.values(GAME_DATA.classes)) for (const s of Object.values(c.spells)) icons.add(s.icon);
     for (const i of icons) if (!scene.textures.exists(`sort_${i}`)) scene.load.image(`sort_${i}`, v(`${UI}/sorts/sort_${i}.png`));
@@ -78,7 +81,18 @@ export class Hud {
   private fixed: <T extends Fixed>(o: T, d?: number) => T;
   // fiche du perso
   private head: Img;
-  private name: Txt; private hpText: Txt; private paText: Txt; private pmText: Txt; private rageText: Txt;
+  /** Portrait vivant (Interface 4A + demande de Mathis) : la tête du perso dessiné en direct, qui respire (animation de repos). */
+  private portrait: Img;
+  /** Perso du joueur dessiné en direct, fourni par la scène (null : perso en planche, on garde la tête de classe). */
+  vivant: (() => { image(anim: string, idx: number): [string, string]; cadreTete(anim: string, idx: number): [number, number, number] | null; compte: Record<string, number> } | null) | null = null;
+  private portraitImg = ''; private portraitVue: [number, number, number, string] | null = null;
+  private embleme: Img; private lvText: Txt;
+  private icoPv: Img; private icoPa: Img; private icoPm: Img;
+  private name: Txt; private hpText: Txt; private paText: Txt; private pmText: Txt; private shieldText: Txt;
+  private hpLab: Txt; private paLab: Txt; private pmLab: Txt;
+  /** Interface 8A : PV perdus qui restent un instant en blanc puis glissent. */
+  private hpTrail = 1; private hpTrailHold = 0;
+  private targetIco: Img; private targetTrail = 1; private targetTrailId = -1;
   // fiche de la cible
   private targetName: Txt; private targetHp: Txt;
   private targetId = -1; private targetT = 0;
@@ -163,13 +177,24 @@ export class Hud {
 
     const clsId = Object.keys(GAME_DATA.classes).find(k => GAME_DATA.classes[k] === cls) ?? 'iop';
     this.head = img(HEADS[clsId + (perso?.sexe === 'f' ? '_f' : '')] ?? HEADS[clsId] ?? 'tete_iop');
-    this.name = txt(15, { ...bold, color: '#f1ecd8' }).setOrigin(0, 0.5);
-    this.hpText = txt(12, bold).setOrigin(0.5);
-    this.paText = txt(11, bold).setOrigin(0.5);
-    this.pmText = txt(11, bold).setOrigin(0.5);
-    this.rageText = txt(11, bold).setOrigin(0.5);
-    this.targetName = txt(14, { ...bold, color: '#f1ecd8' }).setOrigin(0, 0.5);
-    this.targetHp = txt(11, bold).setOrigin(0.5);
+    this.portrait = img(HEADS[clsId] ?? 'tete_iop', 3).setVisible(false);
+    // Cadre façon Sanstour (maquette Interface) : textes sans contour sur fond noir, chiffres alignés à droite
+    const net = { ...bold, strokeThickness: 0 };
+    this.embleme = img(`embleme_${clsId}`, 3);
+    this.name = txt(15, { ...net, color: '#ffffff' }).setOrigin(0, 0.5);
+    this.lvText = txt(13, { ...net, color: '#1d1a14' }, 6).setOrigin(0.5);
+    this.icoPv = img('tx_lifePoints', 3); this.icoPa = img('tx_actionPoints', 3); this.icoPm = img('tx_movementPoints', 3);
+    this.hpText = txt(14, net).setOrigin(1, 0.5);
+    this.paText = txt(14, net).setOrigin(1, 0.5);
+    this.pmText = txt(14, net).setOrigin(1, 0.5);
+    const lab = { ...net, color: '#aaa49a' };
+    this.hpLab = txt(12, lab).setOrigin(1, 0.5).setText('PV');
+    this.paLab = txt(12, lab).setOrigin(1, 0.5).setText('PA');
+    this.pmLab = txt(12, lab).setOrigin(1, 0.5).setText('PM');
+    this.shieldText = txt(11, { ...bold, color: '#e3ccff', strokeThickness: 3 }, 6).setOrigin(1, 0.5);
+    this.targetName = txt(14, { ...net, color: '#ffffff' }).setOrigin(0, 0.5);
+    this.targetHp = txt(13, net).setOrigin(1, 0.5);
+    this.targetIco = img('tx_lifePoints', 3);
 
     this.coords = txt(15, { ...bold, strokeThickness: 4 }).setOrigin(0.5, 0);
     this.boss = { skull: img('iconBossSkull', 4), name: txt(16, { ...bold, color: '#ffe3b0' }).setOrigin(0.5), hp: txt(11, bold).setOrigin(0.5) };
@@ -327,51 +352,135 @@ export class Hud {
       if (r > 0) { g.fillStyle(col, 1); g.fillRoundedRect(x, y, Math.max(h, w * Phaser.Math.Clamp(r, 0, 1)), h, h / 2); }
     };
 
-    // --- Fiche du perso (haut gauche) ---
-    const fx = 12, fy = 10, fw = 270, fh = 92;
-    panel(fx, fy, fw, fh);
-    this.head.setPosition(fx + 38, fy + fh / 2).setDisplaySize(60, 60);
-    const bx = fx + 76, bw = fw - 88;
-    this.name.setPosition(bx, fy + 16).setText(this.perso ? `${this.perso.nom}  ·  ${cls.name} niv. ${p.level}` : `${cls.name}  ·  niv. ${p.level}`);
-    bar(bx, fy + 28, bw, 15, p.hp / p.maxHp, C.hp);
-    if (p.shield > 0) {   // bouclier en violet, comme dans Dofus : à la suite des PV, ou par-dessus la fin de la barre si elle est pleine
-      const sw = Math.max(4, bw * Math.min(1, p.shield / p.maxHp)), sx = Math.min(bx + bw * Phaser.Math.Clamp(p.hp / p.maxHp, 0, 1), bx + bw - sw);
-      g.fillStyle(C.shield, 0.95); g.fillRoundedRect(sx, fy + 28, sw, 15, 7);
+    // --- Cadre du perso (haut gauche), façon Sanstour (maquette Interface : 1A 2A 3A 4A 5A 6C 7A 8A+8B+8C 9A 10A) ---
+    // fond noir translucide sans bordure, bandeau emblème + nom, portrait vivant + pastille de niveau, PV / PA / PM
+    const cadre = (x: number, y: number, w: number, h: number, hd = 30) => {
+      this.rects.push([x, y, w, h]);
+      g.fillStyle(0x08080a, 0.82); g.fillRoundedRect(x, y, w, h, 9);
+      g.fillStyle(0xffffff, 0.09); g.fillRect(x, y + hd, w, 1);
+    };
+    /** Barre fine du cadre : `n` encoches (une par PA / PM, 3A), `trail` = PV perdus encore en blanc (8A). */
+    const barre = (x: number, y: number, w: number, r: number, col: number, n = 0, trail = 0) => {
+      const h = 10, k = Phaser.Math.Clamp(r, 0, 1);
+      g.fillStyle(0x2b2b2e, 1); g.fillRoundedRect(x, y, w, h, 3);
+      if (trail > k) { g.fillStyle(0xffffff, 0.9); g.fillRoundedRect(x, y, Math.max(6, w * Math.min(1, trail)), h, 3); }
+      if (k > 0) { g.fillStyle(col, 1); g.fillRoundedRect(x, y, Math.max(6, w * k), h, 3); }
+      g.fillStyle(0x141416, 1);
+      for (let i = 1; i < n; i++) g.fillRect(Math.round(x + (w * i) / n) - 1, y, 2, h);
+    };
+    const fx = 12, fy = 10, fw = 320, hd = 30, fh = hd + 80;
+    cadre(fx, fy, fw, fh, hd);
+    this.embleme.setPosition(fx + 19, fy + hd / 2).setDisplaySize(17, 17 * (this.embleme.height / this.embleme.width || 1));
+    this.name.setPosition(fx + 34, fy + hd / 2).setText(this.perso?.nom ?? cls.name);
+    // Portrait : case carrée, la tête du perso dessiné en direct qui respire (repos AnimStatiqueExplo0, face)
+    const ps = 60, px = fx + 10, py = fy + hd + 10, pcx = px + ps / 2;
+    g.fillStyle(0x1c2620, 1); g.fillRoundedRect(px, py, ps, ps, 6);
+    const vv = this.vivant?.(), idle = 'AnimStatiqueExplo0_1', nIdle = vv?.compte[idle] ?? 0;
+    if (vv && nIdle) {
+      const [k, f] = vv.image(idle, Math.floor(world.time * 20) % nIdle), P = this.portrait;
+      if (this.portraitImg !== k + f) {   // nouvelle image de l'animation : on la recopie dans la case (128 px, affichée en 60)
+        this.portraitImg = k + f;
+        const fr = this.scene.textures.getFrame(k, f), src = fr.source.image as CanvasImageSource;
+        const ss = (fr as unknown as { data: { spriteSourceSize?: { x: number; y: number } } }).data.spriteSourceSize;
+        const sx = fr.trimmed && ss ? ss.x : 0, sy = fr.trimmed && ss ? ss.y : 0;
+        // fenêtre fixe sur le visage, prise sur la 1re image du repos : la tête respire dedans (coiffe comprise, sans la suivre)
+        if (this.portraitVue?.[3] !== k) {
+          const c = vv.cadreTete(idle, 0) ?? [fr.realWidth / 2, sy + 120, 300];
+          this.portraitVue = [c[0] - c[2] / 2, c[1] - c[2] / 2, c[2], k];
+        }
+        const [wx, wy, vue] = this.portraitVue, S = 128 / vue;
+        const tex = this.scene.textures.exists('portrait_vivant') ? this.scene.textures.get('portrait_vivant') as Phaser.Textures.CanvasTexture
+          : this.scene.textures.createCanvas('portrait_vivant', 128, 128)!;
+        const ctx = tex.getContext();
+        ctx.clearRect(0, 0, 128, 128); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(src, fr.cutX, fr.cutY, fr.cutWidth, fr.cutHeight, (sx - wx) * S, (sy - wy) * S, fr.cutWidth * S, fr.cutHeight * S);
+        tex.refresh();
+        if (P.texture.key !== 'portrait_vivant') P.setTexture('portrait_vivant');
+      }
+      P.setVisible(true).setPosition(pcx, py + ps / 2).setDisplaySize(ps - 2, ps - 2); this.head.setVisible(false);
+    } else {
+      this.portrait.setVisible(false);
+      this.head.setVisible(true).setPosition(pcx, py + ps / 2).setDisplaySize(ps - 4, ps - 4);
     }
-    this.hpText.setPosition(bx + bw / 2, fy + 35.5).setText(`${Math.max(0, Math.ceil(p.hp))} / ${p.maxHp}${p.shield > 0 ? `  +${Math.ceil(p.shield)}` : ''}`);
-    const hw = (bw - 6) / 2;
-    bar(bx, fy + 48, hw, 13, p.pa / p.paMax, blink(this.shortOf.pa) ? 0xff5040 : C.pa);
-    this.paText.setPosition(bx + hw / 2, fy + 54.5).setText(`${Math.floor(p.pa)} PA`);
-    bar(bx + hw + 6, fy + 48, hw, 13, p.pm / p.pmMax, blink(this.shortOf.pm) ? 0xff5040 : C.pm);
-    this.pmText.setPosition(bx + hw + 6 + hw / 2, fy + 54.5).setText(`${Math.floor(p.pm)} PM`);
+    const gs = this.gSlots;   // bord, Rage et pastille par-dessus le portrait
+    gs.lineStyle(2, 0x8c8c86, 1); gs.strokeRoundedRect(px + 1, py + 1, ps - 2, ps - 2, 6);
+    // 6C : la Rage (ou la Précision) remplit le bord du portrait, qui s'embrase une fois pleine
     const rr = p.rage / cls.rage.max, rageCol = p.rageFull ? (Math.floor(world.time * 6) % 2 ? 0xffc04d : C.rage) : C.rage;
-    bar(bx, fy + 66, bw, 13, rr, rageCol);
-    this.rageText.setPosition(bx + bw / 2, fy + 72.5).setText(p.rageFull ? `${cls.rage.name} pleine !` : `${cls.rage.name} ${Math.floor(p.rage)}`);
+    if (p.rageFull) {
+      const k = 0.5 + 0.5 * Math.sin(world.time * 10);
+      gs.lineStyle(7, 0xffcf4d, 0.25 + 0.3 * k); gs.strokeRoundedRect(px - 3, py - 3, ps + 6, ps + 6, 8);
+      gs.lineStyle(3, rageCol, 1); gs.strokeRoundedRect(px - 1, py - 1, ps + 2, ps + 2, 7);
+    } else if (rr > 0) {
+      // le long du bord, depuis le milieu du haut, dans le sens des aiguilles d'une montre
+      const x0 = px - 1, y0 = py - 1, s2 = ps + 2, per = s2 * 4;
+      let reste = per * Phaser.Math.Clamp(rr, 0, 1);
+      const pts: [number, number][] = [[x0 + s2 / 2, y0], [x0 + s2, y0], [x0 + s2, y0 + s2], [x0, y0 + s2], [x0, y0], [x0 + s2 / 2, y0]];
+      gs.lineStyle(3, C.rage, 1); gs.beginPath(); gs.moveTo(pts[0][0], pts[0][1]);
+      for (let i = 1; i < pts.length && reste > 0; i++) {
+        const [ax, ay] = pts[i - 1], [bx, by] = pts[i], l = Math.hypot(bx - ax, by - ay), t = Math.min(1, reste / l);
+        gs.lineTo(ax + (bx - ax) * t, ay + (by - ay) * t); reste -= l;
+      }
+      gs.strokePath();
+    }
+    // pastille de niveau en bas à droite du portrait
+    const lv = String(p.level), lw = Math.max(20, 9 + lv.length * 8);
+    gs.fillStyle(0x000000, 0.5); gs.fillRoundedRect(px + ps - lw + 6, py + ps - 13, lw, 20, 5);
+    gs.fillStyle(0xbdb39e, 1); gs.fillRoundedRect(px + ps - lw + 6, py + ps - 14, lw, 20, 5);
+    this.lvText.setPosition(px + ps - lw / 2 + 6, py + ps - 4).setText(lv);
+    // trois lignes : icône officielle, barre, « PV 248 / 248 » aligné à droite
+    const ix = px + ps + 20, bx = ix + 16, tx = fx + fw - 10, bw = tx - 106 - bx, ry0 = py + 9;
+    const hr = p.hp / p.maxHp;
+    if (hr >= this.hpTrail) { this.hpTrail = hr; this.hpTrailHold = 0.4; }
+    else if ((this.hpTrailHold -= dt) <= 0) this.hpTrail = Math.max(hr, this.hpTrail - dt * 0.6);
+    const bat = hr < 0.3 && p.hp > 0 ? 1 + 0.22 * Math.max(0, Math.sin(world.time * 9)) : 1;   // 8C : le cœur bat sous 30 % de PV
+    this.icoPv.setPosition(ix, ry0).setDisplaySize(18 * bat, 18 * bat);
+    barre(bx, ry0 - 5, bw, hr, C.hp, 0, juice ? this.hpTrail : 0);
+    if (p.shield > 0) {   // 7A : bouclier en violet à la suite des PV, ou par-dessus la fin de la barre si elle est pleine
+      const sw = Math.max(4, bw * Math.min(1, p.shield / p.maxHp)), sx = Math.min(bx + bw * Phaser.Math.Clamp(hr, 0, 1), bx + bw - sw);
+      g.fillStyle(C.shield, 0.95); g.fillRoundedRect(sx, ry0 - 5, sw, 10, 3);
+    }
+    this.shieldText.setVisible(p.shield > 0).setPosition(bx + bw - 2, ry0).setText(`+${Math.ceil(p.shield)}`);
+    this.hpText.setPosition(tx, ry0).setText(`${Math.max(0, Math.ceil(p.hp))} / ${p.maxHp}`);
+    this.hpLab.setPosition(tx - this.hpText.width - 4, ry0 + 1);
+    const ry1 = ry0 + 21, ry2 = ry1 + 21;
+    this.icoPa.setPosition(ix, ry1).setDisplaySize(18, 18);
+    barre(bx, ry1 - 5, bw, p.pa / p.paMax, blink(this.shortOf.pa) ? 0xff5040 : C.pa, Math.round(p.paMax));
+    this.paText.setPosition(tx, ry1).setText(`${Math.floor(p.pa)} / ${Math.round(p.paMax)}`);
+    this.paLab.setPosition(tx - this.paText.width - 4, ry1 + 1);
+    this.icoPm.setPosition(ix, ry2).setDisplaySize(18, 18);
+    barre(bx, ry2 - 5, bw, p.pm / p.pmMax, blink(this.shortOf.pm) ? 0xff5040 : C.pm, Math.round(p.pmMax));
+    this.pmText.setPosition(tx, ry2).setText(`${Math.floor(p.pm)} / ${Math.round(p.pmMax)}`);
+    this.pmLab.setPosition(tx - this.pmText.width - 4, ry2 + 1);
 
-    // --- Fiche de la cible (à côté) : le dernier monstre touché ---
+    // --- Fiche de la cible (à côté), même style (9A) : le dernier monstre touché, ou le PNJ pendant un dialogue ---
     this.targetT -= dt;
     const tgt = world.monsters.find(m => m.id === this.targetId && !m.dead) as Monster | undefined;
     const dlg = world.quetes?.dialogue, port = dlg ? this.portraitPnj?.(dlg.pnj) : null;
     const showT = !!tgt && this.targetT > 0 && !dlg;
-    this.targetName.setVisible(showT || !!dlg); this.targetHp.setVisible(showT);
+    this.targetName.setVisible(showT || !!dlg); this.targetHp.setVisible(showT); this.targetIco.setVisible(showT);
     if (this.pnjImg) this.pnjImg.setVisible(!!port);
+    const tx0 = fx + fw + 8, tw = 240;
     if (dlg) {   // pendant un dialogue, la fiche de cible montre le PNJ : son portrait et son nom
-      const tx = fx + fw + 8, tw = 210, th = 52;
-      panel(tx, fy, tw, th);
+      const th = 56;
+      cadre(tx0, fy, tw, th, th);
       if (port) {
         this.pnjImg ??= this.fixed(this.scene.add.image(0, 0, port.key, port.frame), 6);
         this.pnjImg.setTexture(port.key, port.frame).setOrigin(0.5, 0);
         const k = 92 / this.pnjImg.height;   // le haut du corps : la tête dans la case
-        this.pnjImg.setScale(k).setPosition(tx + 28, fy + 4).setCrop(0, 0, this.pnjImg.width, 46 / k);
+        this.pnjImg.setScale(k).setPosition(tx0 + 28, fy + 5).setCrop(0, 0, this.pnjImg.width, 46 / k);
       }
-      this.targetName.setPosition(tx + 56, fy + th / 2).setText(world.quetes!.data.pnj[dlg.pnj]?.nom ?? '');
+      this.targetName.setPosition(tx0 + 58, fy + th / 2).setText(world.quetes!.data.pnj[dlg.pnj]?.nom ?? '');
     }
     if (tgt && showT) {
-      const tx = fx + fw + 8, tw = 210, th = 52;
-      panel(tx, fy, tw, th);
-      this.targetName.setPosition(tx + 10, fy + 15).setText(`${tgt.def.name}  ·  niv. ${this.world.monsterLevel(tgt)}`);
-      bar(tx + 10, fy + 28, tw - 20, 14, tgt.hp / tgt.maxHp, tgt.def.boss || tgt.def.elite ? C.gold : C.hp);
-      this.targetHp.setPosition(tx + tw / 2, fy + 35).setText(`${Math.max(0, Math.ceil(tgt.hp))} / ${tgt.maxHp}`);
+      const th = hd + 30, r = tgt.hp / tgt.maxHp;
+      if (this.targetTrailId !== tgt.id) { this.targetTrailId = tgt.id; this.targetTrail = r; }
+      this.targetTrail = r >= this.targetTrail ? r : Math.max(r, this.targetTrail - dt * 0.8);
+      cadre(tx0, fy, tw, th, hd);
+      this.targetName.setPosition(tx0 + 10, fy + hd / 2).setText(`${tgt.def.name}  ·  niv. ${this.world.monsterLevel(tgt)}`);
+      const ty = fy + hd + 15, ttx = tx0 + tw - 10;
+      this.targetIco.setPosition(tx0 + 19, ty).setDisplaySize(18, 18);
+      this.targetHp.setPosition(ttx, ty).setText(`${Math.max(0, Math.ceil(tgt.hp))} / ${tgt.maxHp}`);
+      barre(tx0 + 35, ty - 5, ttx - this.targetHp.width - 10 - (tx0 + 35), r, tgt.def.boss || tgt.def.elite ? C.gold : C.hp, 0, juice ? this.targetTrail : 0);
     }
 
     // --- Coordonnées et sous-zone (haut centre) ---

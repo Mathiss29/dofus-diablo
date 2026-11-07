@@ -145,7 +145,8 @@
           "Métiers : survole un ingrédient pour savoir où le trouver (récolte, monstres et leur chance, boutique) et clique pour le voir sur la carte. Épingle une recette pour suivre ses ingrédients à l'écran ; clic droit sur une ressource du sac pour voir les recettes qui l'utilisent.",
           "Bestiaire en jeu (touche B) : chaque monstre d'Incarnam et d'Astrub, rangé par sous-zone, avec un onglet Butin qui donne ta vraie chance (Prospection comprise) et « 1 sur N ». Cherche un objet pour voir où le trouver ; l'infobulle des objets le dit aussi.",
           "Options : nouveau curseur « Monstres » pour régler les cris à part des sorts.",
-          "Forgemagie chez Malek, le forgemage du Bastion des Douze : brise tes objets en runes officielles (Rune Fo, Pa Fo, Ra Fo…), fusionne-les, puis pose-les sur ton équipement avec les vraies règles de Dofus (succès critique, neutre, échec et puits). Il peut aussi viser une valeur pour toi, contre une commission en kamas."
+          "Forgemagie chez Malek, le forgemage du Bastion des Douze : brise tes objets en runes officielles (Rune Fo, Pa Fo, Ra Fo…), fusionne-les, puis pose-les sur ton équipement avec les vraies règles de Dofus (succès critique, neutre, échec et puits). Il peut aussi viser une valeur pour toi, contre une commission en kamas.",
+          "Nouveau cadre du personnage façon Sanstour : ta tête qui respire dans le portrait, PV, PA et PM avec les icônes officielles, une encoche par point."
         ],
         "Le monde": [
           "Donjons repensés : chaque donjon est maintenant une seule grande arène, construite avec les vraies pièces de Dofus (la Grange est une cour ronde avec ses meules, la Crypte une salle d'arches et de sarcophages, le Château une plage entre les remparts de sable…). Les monstres arrivent en 6 vagues par trois entrées marquées d'un cercle rouge, puis le boss descend de son estrade.",
@@ -161,7 +162,8 @@
           "Recharges des sorts : Épée Divine (Iop) et Flèche de Barrage (Crâ) deviennent un gros coup à 8 s qui frappe deux fois plus fort ; les sorts à « 2 lancers par tour » affichent leurs charges, et le voile de recharge tourne comme une horloge avec un tintement quand un gros sort revient.",
           "Les légendaires tombent comme prévu : 1 monstre sur 1 500, 1 élite sur 150, 1 boss sur 50. Les objets de quête et d'événement de Dofus (Pollenectar, Oueille, caisses de cadeaux…) ne tombent plus en temps normal.",
           "Moins de ressources communes : les monstres en lâchent trois fois moins (la Laine de Bouftou passe de 53 % à 17,7 %), pour que le sac ne déborde plus. Les ressources rares et le butin des boss ne changent pas.",
-          "Les gros groupes de monstres ne font plus mal aux oreilles : 2 cris par sorte à la fois, volume qui baisse quand ils sont nombreux, voix un peu variées, et seuls la moitié des monstres crient en attaquant (élites et boss toujours)."
+          "Les gros groupes de monstres ne font plus mal aux oreilles : 2 cris par sorte à la fois, volume qui baisse quand ils sont nombreux, voix un peu variées, et seuls la moitié des monstres crient en attaquant (élites et boss toujours).",
+          "La Rage (ou la Précision) remplit le bord du portrait et s'embrase quand elle est pleine ; les PV perdus restent un instant en blanc et le cœur bat sous 30 % de vie."
         ],
         "Corrections": [
           "Cache de Kankreblath : l'arène a enfin un plancher partout, plus de trous noirs sur les bords.",
