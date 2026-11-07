@@ -9,9 +9,9 @@ import type { SimEvent } from '../src/sim/events';
 import THEMES from '../src/data/havresac_themes.json';
 
 const lire = (w: string) => JSON.parse(readFileSync(new URL(`../public/assets/mondes/${w}/monde.json`, import.meta.url), 'utf8')) as WorldData;
-const HS = lire('havresac'), AS = lire('astrub');
+const HS = lire('havresac'), AS = lire('astrub'), BA = lire('bastion');
 const VIDE = { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} };
-const monde = (zone: string, o: Partial<WorldOptions> = {}) => new World({ data: GAME_DATA, zone, map: new WorldGrid(zone === 'havresac' ? HS : AS), seed: 1,
+const monde = (zone: string, o: Partial<WorldOptions> = {}) => new World({ data: GAME_DATA, zone, map: new WorldGrid(zone === 'havresac' ? HS : zone === 'bastion' ? BA : AS), seed: 1,
   items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, reprise: VIDE, ...o });
 const pas = (w: World, n: number, input = NO_INPUT) => { const ev: SimEvent[] = []; for (let i = 0; i < n; i++) { w.step(1 / 60, input); ev.push(...w.drainEvents()); } return ev; };
 
@@ -27,12 +27,15 @@ describe('Havre-Sac (maquette Hub : 1A 2A+2C 3A 4A 7A 8A 9A)', () => {
     expect(w.dansHavreSac).toBe(true);
     expect(w.walkable(w.player.x, w.player.y)).toBe(true);
   });
-  it('les PNJ de service y vivent ; Kerubim, Otomaï et Goultard emménagent après la première visite d\'Astrub (3A)', () => {
+  it('les PNJ de service vivent au Bastion (Ville 5A) ; Kerubim, Otomaï et Goultard emménagent après la première visite d\'Astrub (3A)', () => {
     const ids = (w: World) => w.quetes!.pnjs.map(p => p.id).sort();
-    expect(ids(monde('havresac'))).toEqual(['bouillotte', 'tissebelle']);
-    expect(ids(monde('havresac', { zonesVues: ['incarnam', 'astrub'] }))).toEqual(['bouillotte', 'goultard', 'kerubim', 'otomai', 'tissebelle']);
+    expect(ids(monde('bastion'))).toEqual(['bouillotte', 'tissebelle']);
+    expect(ids(monde('bastion', { zonesVues: ['incarnam', 'astrub'] }))).toEqual(['bouillotte', 'goultard', 'kerubim', 'otomai', 'tissebelle']);
+    // Ville 6B : Kerubim garde un guichet de recyclage au Havre-Sac
+    expect(ids(monde('havresac'))).toEqual([]);
+    expect(ids(monde('havresac', { zonesVues: ['astrub'] }))).toEqual(['kerubim_guichet']);
     // chacun sur sa case, tous à part
-    const w = monde('havresac', { zonesVues: ['astrub'] }), l = w.quetes!.pnjs;
+    const w = monde('bastion', { zonesVues: ['astrub'] }), l = w.quetes!.pnjs;
     for (const a of l) for (const b of l) if (a !== b) expect(Math.hypot(a.x - b.x, a.y - b.y)).toBeGreaterThan(60);
     // première visite d'Astrub : l'annonce
     const a = monde('astrub', { zonesVues: ['incarnam'] });
@@ -44,12 +47,14 @@ describe('Havre-Sac (maquette Hub : 1A 2A+2C 3A 4A 7A 8A 9A)', () => {
     expect(BOUTIQUES.otomai.map(a => a.id)).toEqual(['548']);
     expect(BOUTIQUES.bouillotte.length).toBe(2);
     expect(BOUTIQUES.emp).toBeUndefined();
-    const w = monde('havresac', { zonesVues: ['astrub'] }), Q = w.quetes!, k = Q.pnjs.find(p => p.id === 'kerubim')!;
-    w.player.x = k.x + 40; w.player.y = k.y;
-    Q.cliquer('kerubim'); pas(w, 30);
-    expect(Q.dialogue?.reponses[0]).toMatchObject({ a: 'service', service: 'recycler' });
-    Q.repondre(0);
-    expect(w.drainEvents().find(e => e.k === 'service')).toMatchObject({ service: 'recycler', pnj: 'kerubim' });
+    for (const [zone, id] of [['bastion', 'kerubim'], ['havresac', 'kerubim_guichet']]) {
+      const w = monde(zone, { zonesVues: ['astrub'] }), Q = w.quetes!, k = Q.pnjs.find(p => p.id === id)!;
+      w.player.x = k.x + 40; w.player.y = k.y;
+      Q.cliquer(id); pas(w, 30);
+      expect(Q.dialogue?.reponses[0]).toMatchObject({ a: 'service', service: 'recycler' });
+      Q.repondre(0);
+      expect(w.drainEvents().find(e => e.k === 'service')).toMatchObject({ service: 'recycler', pnj: id });
+    }
   });
   it('touche H : 1,5 s d\'incantation puis entrée ; bouger la coupe (2A)', () => {
     const w = monde('astrub'), p = w.player;
@@ -77,7 +82,6 @@ describe('Havre-Sac (maquette Hub : 1A 2A+2C 3A 4A 7A 8A 9A)', () => {
     const a = monde('astrub'), wg = a.worldGrid!, q = wg.cellToWorld(wg.freeByMap.get('7_-24')![30]);
     const retour = { zone: 'astrub', x: q.x, y: q.y, point: { name: 'Zaap de Tainéla', ...wg.cellToWorld(wg.freeByMap.get('1_-32')![40]) } };
     const h = monde('havresac', { retour });
-    expect(h.rappel('548')).toBe(false);   // pas de Potion de Rappel ici
     const cz = pas(h, 1, { ...NO_INPUT, havreSac: true }).find(e => e.k === 'changeZone');
     expect(cz).toMatchObject({ zone: 'astrub', position: { x: q.x, y: q.y }, point: retour.point });
     if (cz?.k !== 'changeZone') return;
@@ -120,5 +124,52 @@ describe('Havre-Sac (maquette Hub : 1A 2A+2C 3A 4A 7A 8A 9A)', () => {
     restaurerJoueur(h2, e);
     expect(h2.retour).toEqual(retour);
     expect(h2.player.zaaps).toEqual(e.zaaps);
+  });
+
+});
+
+describe('Bastion des Douze (maquette Ville : 1A 2A 3C 7A+7B 10B)', () => {
+  it('une grande carte en archipel (4×4), arrivée marchable, PNJ sur la place', () => {
+    expect(BA.maps).toHaveLength(1);
+    expect(BA.maps[0].n).toEqual([4, 4]);
+    const w = monde('bastion');
+    expect(w.dansBastion && w.dansRefuge && !w.dansHavreSac).toBe(true);
+    expect(w.walkable(w.player.x, w.player.y)).toBe(true);
+    expect(w.checkpointName).toBe('Bastion des Douze');
+    // chaque PNJ est posé près de sa case (pas renvoyé loin faute de place)
+    const B = GAME_DATA.zones.bastion.open!.bastion!, wg = w.worldGrid!;
+    for (const p of monde('bastion', { zonesVues: ['astrub'] }).quetes!.pnjs) {
+      const c = wg.cellToWorld(wg.cellOf('bastion', B.pnj![p.id]));
+      expect(Math.hypot(c.x - p.x, c.y - p.y), p.id).toBeLessThan(60);
+    }
+  });
+  it('le Zaap du Havre-Sac mène au Bastion (7B) en gardant d\'où l\'on vient ; son Zaap y ramène (7A)', () => {
+    const retour = { zone: 'astrub', x: 1, y: 2, point: { name: "Zaap d'Astrub", x: 3, y: 4 } };
+    const h = monde('havresac', { retour });
+    const cz = pas(h, 1, { ...NO_INPUT, zaap: World.ZAAP_BASTION }).find(e => e.k === 'changeZone');
+    expect(cz).toMatchObject({ zone: 'bastion', retour });
+    const b = monde('bastion', { retour });
+    expect(b.retour).toEqual(retour);
+    expect(b.sortirHavreSac(World.ZAAP_BASTION)).toBe(false);   // déjà au Bastion
+    const cz2 = pas(b, 1, { ...NO_INPUT, zaap: -1 }).find(e => e.k === 'changeZone');
+    expect(cz2).toMatchObject({ zone: 'astrub', position: { x: 1, y: 2 }, point: retour.point });
+    // sauvegarde : d'où l'on vient est gardé au Bastion aussi
+    const b2 = monde('bastion');
+    restaurerJoueur(b2, exporterJoueur(b));
+    expect(b2.retour).toEqual(retour);
+  });
+  it('cliquer sur le Zaap du Bastion ouvre la liste des Zaaps ; Rappel inutile sur place', () => {
+    const b = monde('bastion'), wg = b.worldGrid!, a = wg.cellToWorld(wg.cellOf('bastion', GAME_DATA.zones.bastion.open!.bastion!.zaap));
+    const ev = pas(b, 300, { ...NO_INPUT, dest: a });
+    expect(ev.filter(e => e.k === 'arche')).toHaveLength(1);
+    b.player.resources['548'] = 1;
+    expect(b.rappel('548')).toBe(false);
+    expect(b.player.resources['548']).toBe(1);
+  });
+  it('Potion de Rappel depuis le Havre-Sac : au Bastion, avec le retour d\'avant', () => {
+    const retour = { zone: 'astrub', x: 1, y: 2, point: { name: "Zaap d'Astrub", x: 3, y: 4 } };
+    const h = monde('havresac', { retour }); h.player.resources['548'] = 1; h.drainEvents();
+    expect(h.rappel('548')).toBe(true);
+    expect(h.drainEvents().find(e => e.k === 'changeZone')).toMatchObject({ zone: 'bastion', retour });
   });
 });

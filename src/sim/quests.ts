@@ -438,7 +438,7 @@ export class Quetes {
     else if (r.a === 'entrer') { this.dialogue = null; this.world.entrerDonjon(r.donjon); }
     else if (r.a === 'sansCle') {
       const def = this.data.pnj[d.pnj], cle = this.world.entreeDonjon(r.donjon)?.cle ?? '', v = this.vendeurDe(cle);
-      const vendeur = v ? `${this.data.pnj[v].nom}, dans ton Havre-Sac (H),` : "Un marchand d'Astrub";
+      const vendeur = v ? `${this.data.pnj[v].nom}, au Bastion des Douze (par un Zaap),` : "Un marchand d'Astrub";
       const t = (def?.gardien?.sansCle ?? "Sans clé, la porte ne s'ouvre pas. {vendeur} en vend.").replace('{vendeur}', vendeur);
       this.marqueVendeur = v;
       this.dialogue = { pnj: d.pnj, donjon: d.donjon, texte: t, reponses: [{ a: 'fermer', texte: def?.adieu ?? 'Au revoir.' }] };

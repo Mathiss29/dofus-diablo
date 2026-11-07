@@ -169,7 +169,7 @@
    "zone": "astrub",
    "carte": "5_-18",
    "case": 300,
-   "phrase": "Mes guichets ? Confiés à Kerubim Crépin, dans ton Havre-Sac (touche H). Moins de queue, moins de gaspillage : Waro lui-même n'a rien trouvé à redire.",
+   "phrase": "Mes guichets ? Confiés à Kerubim Crépin, au Bastion des Douze (par n'importe quel Zaap). Moins de queue, moins de gaspillage : Waro lui-même n'a rien trouvé à redire.",
    "discussion": [
     {
      "reponse": "Le prier d'en dire davantage sur le conflit l'opposant au Méryde de l'écologie.",
@@ -189,9 +189,9 @@
   "kerubim": {
    "nom": "Kerubim Crépin",
    "dofusId": 3043,
-   "zone": "havresac",
-   "carte": "0_0",
-   "case": 284,
+   "zone": "bastion",
+   "carte": "bastion",
+   "case": 3884,
    "apres": "astrub",
    "titre": "Antiquaire",
    "phrase": "Entre, entre ! Chez Kerubim, rien n'est inutile : il y a juste des trésors qui ne savent pas encore qu'ils en sont.",
@@ -207,17 +207,40 @@
      "texte": "Tout. Une fois, j'ai racheté une chaussette à un Iop… relique sacrée."
     },
     {
-     "reponse": "Pourquoi ta boutique est dans mon Havre-Sac ?",
-     "texte": "Parce que le loyer à Astrub, c'est du vol. Ici, c'est toi qui paies le ménage."
+     "reponse": "Pourquoi ta boutique est au Bastion ?",
+     "texte": "Parce que le loyer à Astrub, c'est du vol. Ici, les Douze ont offert le terrain. Et je garde un petit guichet dans ton Havre-Sac, pour les urgences."
+    }
+   ]
+  },
+  "kerubim_guichet": {
+   "nom": "Kerubim Crépin",
+   "sprite": "kerubim",
+   "dofusId": 3043,
+   "zone": "havresac",
+   "carte": "0_0",
+   "case": 284,
+   "apres": "astrub",
+   "titre": "Guichet de recyclage",
+   "phrase": "La boutique est au Bastion des Douze, mais pour toi j'ai gardé ce guichet. Recyclage seulement, et pas de marchandage avant le petit-déjeuner.",
+   "services": [
+    {
+     "texte": "Recycler des objets contre des Pépites.",
+     "service": "recycler"
+    }
+   ],
+   "discussion": [
+    {
+     "reponse": "Tu es à deux endroits à la fois ?",
+     "texte": "Un bon antiquaire est toujours là où il y a des trésors. Ne pose pas plus de questions, ça porte malheur au commerce."
     }
    ]
   },
   "tissebelle": {
    "nom": "Tissebelle",
    "dofusId": 0,
-   "zone": "havresac",
-   "carte": "0_0",
-   "case": 339,
+   "zone": "bastion",
+   "carte": "bastion",
+   "case": 4889,
    "titre": "Couturière",
    "phrase": "Tourne-toi. Non, l'autre côté. Hmm. On va dire que c'est un bon début.",
    "services": [
@@ -244,9 +267,9 @@
   "otomai": {
    "nom": "Otomaï",
    "dofusId": 914,
-   "zone": "havresac",
-   "carte": "0_0",
-   "case": 273,
+   "zone": "bastion",
+   "carte": "bastion",
+   "case": 3898,
    "apres": "astrub",
    "titre": "Alchimiste",
    "phrase": "Ah, un volontaire ! Je veux dire : un client. Cette potion te ramène au Zaap. Dans 97 % des cas, en un seul morceau.",
@@ -266,9 +289,9 @@
   "bouillotte": {
    "nom": "Mère Bouillotte",
    "dofusId": 0,
-   "zone": "havresac",
-   "carte": "0_0",
-   "case": 261,
+   "zone": "bastion",
+   "carte": "bastion",
+   "case": 5396,
    "titre": "Cuisinière",
    "phrase": "Encore toi, et encore tout maigre ! Assieds-toi. Personne ne repart d'ici le ventre vide, même pas les Bouftous.",
    "services": [
@@ -287,9 +310,9 @@
   "goultard": {
    "nom": "Goultard",
    "dofusId": 1216,
-   "zone": "havresac",
-   "carte": "0_0",
-   "case": 333,
+   "zone": "bastion",
+   "carte": "bastion",
+   "case": 4742,
    "apres": "astrub",
    "titre": "Clés de donjon",
    "phrase": "Tu veux une clé ? Montre tes bras. Hmm. Ça ira. Les monstres te trouveront appétissant, c'est déjà ça.",
@@ -306,7 +329,7 @@
     },
     {
      "reponse": "Pourquoi tu vis ici ?",
-     "texte": "Ton Havre-Sac est le seul endroit du Monde des Douze où personne ne me provoque en duel. J'en avais besoin."
+     "texte": "Au Bastion, chacun a déjà prouvé ce qu'il vaut : personne ne me provoque en duel. J'en avais besoin."
     }
    ]
   }

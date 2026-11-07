@@ -6,6 +6,8 @@ import json, os
 OUT = os.path.join(os.path.dirname(__file__), '..', '..', 'src', 'data', 'quetes.json')
 
 EMP_CASE = 300
+# Cases des PNJ au Bastion des Douze (posées par tools/extraction/bastion.py)
+BASTION = json.load(open(os.path.join(os.path.dirname(__file__), '..', '..', 'src', 'data', 'zones.json'), encoding='utf-8'))['bastion']['open']['bastion']['pnj']
 PNJ = {
   # phrase = ce qu'il dit quand on lui parle sans quête (écrite pour l'ARPG, maquette Dialogues 10A)
   # carte = tag de public/assets/mondes/incarnam/monde.json (carte officielle de départ de leurs quêtes)
@@ -63,38 +65,44 @@ PNJ = {
       'mort': "Ressorti par le trou en un seul morceau, à ce que je vois. Allez, je te rapetisse encore quand tu veux.",
       'sansCle': "Rapetisser, je sais faire. Ouvrir sans clef, non. {vendeur} en vend."}},
   'emp': {'nom': 'Emp', 'dofusId': 1640, 'zone': 'astrub', 'carte': '5_-18', 'case': EMP_CASE,
-    # Maquette Hub (4A) : ses guichets sont partis au Havre-Sac ; il garde sa discussion officielle et une phrase inédite
-    'phrase': "Mes guichets ? Confiés à Kerubim Crépin, dans ton Havre-Sac (touche H). Moins de queue, moins de gaspillage : Waro lui-même n'a rien trouvé à redire.",
+    # Maquette Hub (4A) puis Ville : ses guichets sont partis chez Kerubim, au Bastion des Douze ; discussion officielle et phrase inédite
+    'phrase': "Mes guichets ? Confiés à Kerubim Crépin, au Bastion des Douze (par n'importe quel Zaap). Moins de queue, moins de gaspillage : Waro lui-même n'a rien trouvé à redire.",
     'discussion': [
       {'reponse': "Le prier d'en dire davantage sur le conflit l'opposant au Méryde de l'écologie.", 'texte': "Il y a fort longtemps, j'étais son plus fervent disciple. Comme nous n'étions pas d'accord sur la manière d'aborder les choses, j'ai décidé de voler de mes propres ailes. Nous sommes restés bons amis mais il nous arrive parfois de nous disputer à cause de nos divergences d'opinion. Par exemple, il est contre l'industrialisation, tandis que moi, je pense qu'elle a ses bons côtés à condition qu'il n'y ait pas de gaspillage."},
       {'reponse': "Écouter la suite.", 'texte': "Ensemble, Waro et moi avons inventé les poubelles, puis le tri sélectif et pour son millième anniversaire, je lui ai présenté le concept des aventuriers recyclés. C'est quelque chose d'assez simple à mettre en place : on récupère un aventurier qui n'a plus grande utilité et on l'envoie dans un lieu où il servira à autre chose qu'à pomper les allocations des anciens mercenaires d'Astrub. Par exemple, il peut finir en ragoût pour Kannibouls, cible d'entraînement pour jeunes Bworks ou compagnon de nuit pour Trooll esseulé."},
       {'reponse': "Émettre des doutes sur le concept et demander à quoi va servir l'offrande.", 'texte': "À rien de plus que ce pour quoi elle a été conçue. C'est un très bon exemple de ce que l'on peut faire avec des ressources de base ou des vieux équipements qui traînent dans les sacs à dos. Je déteste le gaspillage. J'estime que les artisans ne doivent utiliser que le strict nécessaire pour leurs œuvres. Quant au surplus, il faut s'en servir pour de nouvelles créations plutôt que le laisser à l'abandon dans un coin, un coffre ou sur le dos d'un aventurier."}],
     'adieu': "Recycler l'un de vos saluts quotidiens pour dire au revoir au Méryde."},
-  # --- Havre-Sac (maquette Hub, tranchée le 2026-11-06 : 3A 4A) : les PNJ de service vivent dans le monde de poche du joueur.
+  # --- Bastion des Douze (maquette Ville, tranchée le 2026-11-07 : 5A 6B) : les PNJ de service quittent le Havre-Sac pour notre ville.
   # Noms et apparences officiels, dialogues inédits. apres = ils n'emménagent qu'après la première visite de cette zone.
-  'kerubim': {'nom': 'Kerubim Crépin', 'dofusId': 3043, 'zone': 'havresac', 'carte': '0_0', 'case': 284, 'apres': 'astrub', 'titre': 'Antiquaire',
+  # Cases : devant leur maison (tools/extraction/bastion.py, recopiées dans zones.json > bastion > pnj).
+  'kerubim': {'nom': 'Kerubim Crépin', 'dofusId': 3043, 'zone': 'bastion', 'carte': 'bastion', 'case': BASTION['kerubim'], 'apres': 'astrub', 'titre': 'Antiquaire',
     'phrase': "Entre, entre ! Chez Kerubim, rien n'est inutile : il y a juste des trésors qui ne savent pas encore qu'ils en sont.",
     'services': [{'texte': 'Recycler des objets contre des Pépites.', 'service': 'recycler'}],
     'discussion': [{'reponse': 'Tu rachètes vraiment tout ?', 'texte': "Tout. Une fois, j'ai racheté une chaussette à un Iop… relique sacrée."},
-      {'reponse': 'Pourquoi ta boutique est dans mon Havre-Sac ?', 'texte': "Parce que le loyer à Astrub, c'est du vol. Ici, c'est toi qui paies le ménage."}]},
-  'tissebelle': {'nom': 'Tissebelle', 'dofusId': 0, 'zone': 'havresac', 'carte': '0_0', 'case': 339, 'titre': 'Couturière',
+      {'reponse': 'Pourquoi ta boutique est au Bastion ?', 'texte': "Parce que le loyer à Astrub, c'est du vol. Ici, les Douze ont offert le terrain. Et je garde un petit guichet dans ton Havre-Sac, pour les urgences."}]},
+  # 6B : un guichet de recyclage reste au Havre-Sac (recyclage seulement)
+  'kerubim_guichet': {'nom': 'Kerubim Crépin', 'sprite': 'kerubim', 'dofusId': 3043, 'zone': 'havresac', 'carte': '0_0', 'case': 284, 'apres': 'astrub', 'titre': 'Guichet de recyclage',
+    'phrase': "La boutique est au Bastion des Douze, mais pour toi j'ai gardé ce guichet. Recyclage seulement, et pas de marchandage avant le petit-déjeuner.",
+    'services': [{'texte': 'Recycler des objets contre des Pépites.', 'service': 'recycler'}],
+    'discussion': [{'reponse': 'Tu es à deux endroits à la fois ?', 'texte': "Un bon antiquaire est toujours là où il y a des trésors. Ne pose pas plus de questions, ça porte malheur au commerce."}]},
+  'tissebelle': {'nom': 'Tissebelle', 'dofusId': 0, 'zone': 'bastion', 'carte': 'bastion', 'case': BASTION['tissebelle'], 'titre': 'Couturière',
     'phrase': "Tourne-toi. Non, l'autre côté. Hmm. On va dire que c'est un bon début.",
     'services': [{'texte': 'Voir les apparats.', 'service': 'apparat'}, {'texte': "M'asseoir devant le miroir (garde-robe).", 'service': 'garde-robe'}],
     'discussion': [{'reponse': 'Tu fabriques tes tissus ?', 'texte': "Je les fais pousser. La soie de Sadida, c'est trois saisons de patience et une saison à empêcher les Bouftous de la brouter."},
       {'reponse': 'Je peux changer de tête ?', 'texte': "Assieds-toi devant le miroir. Ta tête, tes couleurs : c'est gratuit. Le style ne devrait jamais coûter un kama."}]},
-  'otomai': {'nom': 'Otomaï', 'dofusId': 914, 'zone': 'havresac', 'carte': '0_0', 'case': 273, 'apres': 'astrub', 'titre': 'Alchimiste',
+  'otomai': {'nom': 'Otomaï', 'dofusId': 914, 'zone': 'bastion', 'carte': 'bastion', 'case': BASTION['otomai'], 'apres': 'astrub', 'titre': 'Alchimiste',
     'phrase': "Ah, un volontaire ! Je veux dire : un client. Cette potion te ramène au Zaap. Dans 97 % des cas, en un seul morceau.",
     'services': [{'texte': 'Voir ses potions.', 'service': 'boutique'}],
     'discussion': [{'reponse': 'Et les 3 % ?', 'texte': "Ils reviennent aussi. Juste un peu plus tard, et parfois avec une oreille en plus. Je prends des notes."}]},
-  'bouillotte': {'nom': 'Mère Bouillotte', 'dofusId': 0, 'zone': 'havresac', 'carte': '0_0', 'case': 261, 'titre': 'Cuisinière',
+  'bouillotte': {'nom': 'Mère Bouillotte', 'dofusId': 0, 'zone': 'bastion', 'carte': 'bastion', 'case': BASTION['bouillotte'], 'titre': 'Cuisinière',
     'phrase': "Encore toi, et encore tout maigre ! Assieds-toi. Personne ne repart d'ici le ventre vide, même pas les Bouftous.",
     'services': [{'texte': 'Voir ses plats.', 'service': 'boutique'}],
     'discussion': [{'reponse': "C'est quoi ton secret ?", 'texte': "Du lait de Bambou, une pincée de sel et trois heures à crier sur la marmite. Elle n'aime pas qu'on lui parle doucement."}]},
-  'goultard': {'nom': 'Goultard', 'dofusId': 1216, 'zone': 'havresac', 'carte': '0_0', 'case': 333, 'apres': 'astrub', 'titre': 'Clés de donjon',
+  'goultard': {'nom': 'Goultard', 'dofusId': 1216, 'zone': 'bastion', 'carte': 'bastion', 'case': BASTION['goultard'], 'apres': 'astrub', 'titre': 'Clés de donjon',
     'phrase': "Tu veux une clé ? Montre tes bras. Hmm. Ça ira. Les monstres te trouveront appétissant, c'est déjà ça.",
     'services': [{'texte': 'Voir les clés.', 'service': 'boutique'}],
     'discussion': [{'reponse': 'Tu ne viens pas avec moi ?', 'texte': "Si je viens, il ne restera rien à taper pour toi. Je suis gentil, tu vois."},
-      {'reponse': 'Pourquoi tu vis ici ?', 'texte': "Ton Havre-Sac est le seul endroit du Monde des Douze où personne ne me provoque en duel. J'en avais besoin."}]},
+      {'reponse': 'Pourquoi tu vis ici ?', 'texte': "Au Bastion, chacun a déjà prouvé ce qu'il vaut : personne ne me provoque en duel. J'en avais besoin."}]},
 }
 SZ = {'route': 450, 'champs': 444, 'paturages': 445, 'lac': 442, 'foret': 443, 'cimetiere': 449, 'mine': 778, 'taverne': 448, 'crypte': 447, 'temple': 446}
 

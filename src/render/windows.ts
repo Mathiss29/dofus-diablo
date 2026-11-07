@@ -15,7 +15,7 @@ import {
 import { Player } from '../sim/player';
 import { dmgMoyen, gradeAuNiveau, type SortOfficiel } from '../sim/sorts';
 import { n1, spellDetail } from './spellTip';
-import type { World } from '../sim/world';
+import { World } from '../sim/world';
 import { prochainPalier, recettesAvec, recettesDe, sourcesDe } from '../sim/metiers';
 import type { MarqueCarte } from './carteMonde';
 
@@ -714,7 +714,7 @@ export class Windows {
     for (const m of s.monstres.slice(0, 4)) l.push(`<b>Butin</b> · ${m.nom} (${n1(m.chance)} %)${m.chasse ? ', arme de chasse' : ''} · ${m.lieux.slice(0, 2).join(', ')}`);
     if (s.monstres.length > 4) l.push(`<span class="hint">+${s.monstres.length - 4} autres monstres</span>`);
     if (s.recette) l.push(`<b>Fabrication</b> · ${M[s.recette.metier]?.name ?? s.recette.metier} niveau ${s.recette.level}`);
-    if (s.boutique) l.push(`<b>Boutique</b> · ${QUETES.pnj[s.boutique]?.nom ?? s.boutique}, dans ton Havre-Sac (H)`);
+    if (s.boutique) l.push(`<b>Boutique</b> · ${QUETES.pnj[s.boutique]?.nom ?? s.boutique}, au Bastion des Douze`);
     const sert = recettesAvec(ITEMS, id).map(x => ITEMS.resources[x.result]?.name).filter(Boolean);
     const ici = this.marquesDe(id);
     return `<h4>${r?.name ?? id}</h4><div class="sub">${besoin != null ? `<span class="${have >= besoin ? 'ok' : 'ko'}">${have} / ${besoin}</span> dans ton sac` : `${have} dans ton sac`}</div>
@@ -989,8 +989,9 @@ export class Windows {
         <h3>S'équiper</h3><p>${k('I')} ouvre l'inventaire. Clic droit sur un objet : l'équiper ou le retirer. ${k('Maj + clic')} : le recycler.</p>
         <p>${k('C')} ouvre les caractéristiques : chaque niveau donne 5 points à placer.</p>` },
       { id: 'havresac', titre: 'Le Havre-Sac', html: `<p>${k('H')} (ou l'icône du sac dans la colonne de menus) : 1,5 s d'incantation et tu entres dans ton Havre-Sac, ton monde de poche. Bouger ou être touché coupe l'incantation. Impossible dans un donjon ou poursuivi par des monstres.</p>
-        <p>Les PNJ de service y vivent : Kerubim Crépin recycle tes objets en Pépites, Tissebelle vend les apparats et tient le miroir, Otomaï ses potions, Mère Bouillotte ses plats, Goultard les clés de donjon. Certains emménagent au fil de ton aventure.</p>
-        <p>Le Poutch Ingball compte tes dégâts par seconde. ${k('H')} à nouveau te ramène là où tu étais ; l'arche est un Zaap vers tous ceux que tu as découverts.</p>` },
+        <p>Le Poutch Ingball compte tes dégâts par seconde, et Kerubim Crépin y garde un guichet de recyclage. ${k('H')} à nouveau te ramène là où tu étais ; l'arche est un Zaap vers le Bastion des Douze et tous ceux que tu as découverts.</p>` },
+      { id: 'bastion', titre: 'Le Bastion des Douze', html: `<p>Notre ville, en archipel au-dessus du Monde des Douze. On y va par n'importe quel Zaap (il est en tête de liste), par l'arche du Havre-Sac, ou avec une Potion de Rappel. Son Zaap te ramène ensuite là où tu étais.</p>
+        <p>Les PNJ de service y vivent : Kerubim Crépin recycle tes objets en Pépites, Tissebelle vend les apparats et tient le miroir, Otomaï ses potions, Mère Bouillotte ses plats, Goultard les clés de donjon. Certains emménagent au fil de ton aventure. Chaque nation libérée y ajoutera son île.</p>` },
       { id: 'metiers', titre: 'Métiers', html: `<p>${k('J')} ouvre les métiers. Le Chasseur récupère de la viande sur les monstres quand tu portes une arme de chasse, et cuisine des plats qui soignent.</p>` },
       { id: 'quetes', titre: 'Quêtes et succès', html: `<p>Un PNJ qui a une quête porte une icône au-dessus de la tête. Le suivi en bas à gauche montre l'étape en cours.</p>
         <p>Le journal des quêtes et les succès s'ouvrent depuis la colonne de menus, à droite de l'écran.</p>` },
@@ -1242,11 +1243,11 @@ export class Windows {
   private changed() { this.hideTip(); this.render(); this.onChange(); }
   /** Bulle d'une ressource : consommable, clé de donjon, Potion de Rappel ou Pépite. */
   private resTip(r: ResourceDef, id: string) {
-    const sorte = r.soin || r.rappel ? 'Consommable' : r.cle ? 'Clé de donjon' : r.pepite ? 'Monnaie du Havre-Sac' : 'Ressource';
+    const sorte = r.soin || r.rappel ? 'Consommable' : r.cle ? 'Clé de donjon' : r.pepite ? 'Monnaie du Bastion' : 'Ressource';
     const effet = r.soin ? `<div class="up">+${r.soin} PV</div><div class="hint">Clic droit : manger</div>`
       : r.rappel ? `<div class="up">Retour au dernier Zaap (${this.world.checkpointName})</div><div class="hint">Clic droit : boire</div>`
       : r.cle ? `<div class="up">Ouvre l'entrée : ${r.cle}</div><div class="hint">Prise en entrant dans le donjon</div>`
-      : r.pepite ? '<div class="hint">Recycle tes objets chez Kerubim Crépin, dans ton Havre-Sac (H), et dépense-les chez ses voisins.</div>' : '';
+      : r.pepite ? '<div class="hint">Recycle tes objets chez Kerubim Crépin (au Bastion des Douze, ou à son guichet du Havre-Sac) et dépense-les chez ses voisins du Bastion.</div>' : '';
     const sert = recettesAvec(ITEMS, id).map(x => ITEMS.resources[x.result]?.name).filter(Boolean);
     const sertA = sert.length ? `<div class="ou"><div class="hd">Sert à</div><div>${sert.slice(0, 5).join(', ')}${sert.length > 5 ? '…' : ''}</div></div>${!r.soin && !r.rappel ? '<div class="hint">Clic droit : recettes qui l\'utilisent</div>' : ''}` : '';
     return `<h4>${r.name}</h4><div class="sub">${sorte} · niveau ${r.level}</div>${effet}${sertA}${sourcesHtml(id, 3)}`;   // 1B : où le trouver
@@ -1334,14 +1335,16 @@ export class Windows {
   }
   private flash(e: HTMLElement) { e.style.borderColor = '#e0625a'; }
 
-  /** Zaap du Havre-Sac (maquette Hub 2C) : ressortir là où l'on était, ou partir vers un Zaap déjà découvert. */
+  /** Zaap du Havre-Sac (maquette Hub 2C) ou du Bastion (Ville 7A+7B) : ressortir là où l'on était, le Bastion des Douze en tête,
+   *  ou un Zaap déjà découvert. */
   private renderZaap() {
-    const w = this.win!, p = this.world.player, r = this.world.retour;
+    const w = this.win!, p = this.world.player, r = this.world.retour, bastion = this.world.dansBastion;
     const zone = (z: string) => GAME_DATA.zones[z]?.name ?? z;
     const ligne = (i: number, nom: string, sous: string) => `<div class="rec"><div><b>${nom}</b> <span class="hint">${sous}</span></div><span class="btn" data-zaap="${i}">Y aller</span></div>`;
     const l = [r ? ligne(-1, 'Là où j\'étais', `${zone(r.zone)}, près de ${r.point.name}`) : ligne(-1, 'Ressortir', 'Dernier Zaap visité'),
+      ...(!bastion && GAME_DATA.zones.bastion ? [ligne(World.ZAAP_BASTION, zone('bastion'), 'Notre ville')] : []),
       ...p.zaaps.map((z, i) => ligne(i, z.name, zone(z.zone)))];
-    w.innerHTML = `${this.title('Zaap du Havre-Sac', 'home')}<div class="in emp"><div class="shop">${l.join('')}</div>
+    w.innerHTML = `${this.title(bastion ? 'Zaap du Bastion' : 'Zaap du Havre-Sac', 'home')}<div class="in emp"><div class="shop">${l.join('')}</div>
       ${p.zaaps.length ? '' : '<div class="hint">Chaque Zaap que tu touches dans le monde s\'ajoute à cette liste.</div>'}</div>`;
     w.querySelectorAll<HTMLElement>('[data-zaap]').forEach(e => e.addEventListener('click', () => { this.onZaap(+e.dataset.zaap!); this.close(); }));
   }
@@ -1437,7 +1440,7 @@ export class Windows {
       if (!d || (this.kind && d.slot !== this.kind) || (q && !d.name.toLowerCase().includes(q))) continue;
       cells.push(`<div class="cell ${p.apparat[d.slot] === id ? 'porte' : ''}" data-app="${id}">${apparatHtml(id)}</div>`);
     }
-    if (this.tab === 'apparat' && !p.apparats.length) cells.push('<div class="hint" style="grid-column:1/-1">Les apparats s\'achètent chez Tissebelle, dans ton Havre-Sac (H). Ils changent seulement l\'apparence.</div>');
+    if (this.tab === 'apparat' && !p.apparats.length) cells.push('<div class="hint" style="grid-column:1/-1">Les apparats s\'achètent chez Tissebelle, au Bastion des Douze. Ils changent seulement l\'apparence.</div>');
     const n = cells.length;
     for (let i = n; i < Math.max(35, Math.ceil(n / 5) * 5); i++) cells.push('<div class="cell empty"></div>');
     return { html: cells.join(''), n };

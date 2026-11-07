@@ -2715,5 +2715,33 @@
     "theme": 57
    }
   }
+ },
+ "bastion": {
+  "name": "Bastion des Douze",
+  "level": 1,
+  "open": {
+   "world": "bastion",
+   "start": [
+    0,
+    0
+   ],
+   "aggro": 0,
+   "leash": 0,
+   "respawn": 60,
+   "checkpoints": [],
+   "subareas": {},
+   "bastion": {
+    "arrivee": 4899,
+    "zaap": 4227,
+    "pnj": {
+     "kerubim": 3884,
+     "otomai": 3898,
+     "tissebelle": 4889,
+     "goultard": 4742,
+     "forgemage": 5579,
+     "bouillotte": 5396
+    }
+   }
+  }
  }
 }
