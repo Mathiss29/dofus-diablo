@@ -4,6 +4,7 @@ import { GAME_DATA } from '../src/sim/data';
 import { MAP_COLS, MAP_ROWS, WorldGrid, type WorldData } from '../src/sim/gridmap';
 import { NO_INPUT } from '../src/sim/input';
 import { World } from '../src/sim/world';
+import { exporterJoueur, restaurerJoueur } from '../src/sim/sauvegarde';
 
 const monde = JSON.parse(readFileSync(new URL('../public/assets/mondes/incarnam/monde.json', import.meta.url), 'utf8')) as WorldData;
 const STEP = 1 / 60;
@@ -211,6 +212,23 @@ describe('Crypte de Kardorim (une seule arène, maquette « Donjons en vagues »
     expect(w.arene!.vague).toBe(3);
     for (let i = 0; i < 601 * 60; i += 60) w.step(1, NO_INPUT);
     expect(p.cleDonjon).toBeNull();
+  });
+  it('rechargé (Ctrl+F5) dans l\'arène : les vagues reprennent à la vague atteinte ; sans clé valable, retour devant le gardien', () => {
+    const w = newWorld(), p = w.player;
+    w.allerArene('arene_crypte');
+    for (let t = 0; t < 60 * 60 && w.arene!.vague < 2; t++) { p.hp = p.maxHp; w.step(STEP, NO_INPUT); tuerTout(w); }
+    const e = JSON.parse(JSON.stringify(exporterJoueur(w)));
+    const w2 = newWorld(); restaurerJoueur(w2, e);
+    expect(w2.worldGrid!.mapAt(w2.player.x, w2.player.y)?.tag).toBe('arene_crypte');
+    expect(w2.arene?.nom).toBe('Crypte de Kardorim');
+    for (let i = 0; i < 200; i++) w2.step(STEP, NO_INPUT);
+    expect(w2.arene!.vague).toBe(2);
+    expect(vivants(w2).length + w2.arene!.arrivees.length).toBeGreaterThan(0);
+    // clé expirée (ou boss déjà tombé) : on ressort devant le gardien
+    const e3 = { ...e, cleDonjon: null };
+    const w3 = newWorld(); restaurerJoueur(w3, e3);
+    expect(w3.arene).toBeNull();
+    expect(w3.worldGrid!.mapAt(w3.player.x, w3.player.y)?.tag).toBe(w3.entreeDonjon('Crypte de Kardorim')!.ends[0].tag);
   });
   it('Kardorim invoque un seul Kardorib à la fois, qui disparaît avec lui', () => {
     const w = newWorld(), p = w.player;
