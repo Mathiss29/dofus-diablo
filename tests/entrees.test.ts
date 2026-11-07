@@ -1,0 +1,68 @@
+import { readFileSync } from 'node:fs';
+import { describe, expect, it } from 'vitest';
+import { BOUTIQUES, GAME_DATA, ITEMS, QUETES } from '../src/sim/data';
+import { WorldGrid, type WorldData } from '../src/sim/gridmap';
+import { NO_INPUT } from '../src/sim/input';
+import { World } from '../src/sim/world';
+
+const astrub = JSON.parse(readFileSync(new URL('../public/assets/mondes/astrub/monde.json', import.meta.url), 'utf8')) as WorldData;
+const vide = { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} };
+const monde = () => new World({ data: GAME_DATA, zone: 'astrub', map: new WorldGrid(astrub), seed: 3, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, reprise: vide });
+const porte = (w: World, nom: string) => w.portes.find(p => p.nom === nom)!;
+const ici = (w: World) => w.worldGrid!.mapAt(w.player.x, w.player.y)?.tag;
+/** Marche au clavier dans une direction pendant n images (sans clic). */
+const marcher = (w: World, dx: number, dy: number, n: number) => {
+  const d = Math.hypot(dx, dy);
+  for (let i = 0; i < n && !w.passage; i++) w.step(1 / 60, { ...NO_INPUT, move: { x: dx / d, y: dy / d } });
+  for (let i = 0; i < 40; i++) w.step(1 / 60, NO_INPUT);
+};
+
+describe('entrées et sorties (maquette Entrées)', () => {
+  it('chaque intérieur porte le nom de sa porte (5A), annoncé en entrant', () => {
+    const w = monde();
+    expect(w.lieux.get('taverne')).toBe("Taverne d'Astrub");
+    expect(w.lieux.get('grange_0')).toBe('Grange du Tournesol Affamé');
+    expect(w.lieux.get('grenier_kerubim')).toBe('Grenier de Kerubim');
+    const t = porte(w, "Taverne d'Astrub"), p = w.player;
+    p.x = t.ends[1].x; p.y = t.ends[1].y + 120;   // téléporté dedans, loin de la porte
+    w.drainEvents(); w.step(1 / 60, NO_INPUT);
+    expect(w.lieu).toBe("Taverne d'Astrub");
+    expect(w.drainEvents().find(e => e.k === 'enterLieu')).toMatchObject({ name: "Taverne d'Astrub" });
+    p.x = t.ends[0].x; p.y = t.ends[0].y + 150; w.step(1 / 60, NO_INPUT);
+    expect(w.lieu).toBeNull();
+  });
+  it('survol : le nom de l\'endroit derrière la porte, « sortie » pour ressortir, « salle suivante » dans un donjon (3A, 8A)', () => {
+    const w = monde(), t = porte(w, "Taverne d'Astrub");
+    expect(w.porteSous(t.ends[0].x + 10, t.ends[0].y)).toMatchObject({ nom: "Taverne d'Astrub", sortie: false });
+    const s = w.porteSous(t.ends[1].x, t.ends[1].y - 10)!;
+    expect(s.sortie).toBe(true);
+    expect(s.nom).toBe(w.opts.zone === 'astrub' ? w.zone.open!.subareas[String(w.worldGrid!.mapByTag(t.ends[0].tag)!.sub)].name : '');
+    const g = w.portes.find(p => p.ends[0].tag === 'grange_1')!;
+    expect(w.porteSous(g.ends[0].x, g.ends[0].y)?.nom).toBe('Salle suivante');
+    expect(w.porteSous(g.ends[1].x, g.ends[1].y)).toBeNull();   // sens unique : on ne revient pas en arrière
+    expect(w.porteSous(t.ends[0].x + 300, t.ends[0].y)).toBeNull();
+  });
+  it('on passe en marchant droit dans la porte, pas en la frôlant (4B)', () => {
+    const t = (w: World) => porte(w, "Taverne d'Astrub").ends[0];
+    // droit dessus, depuis la rue
+    const a = monde(), e = t(a);
+    a.player.x = e.x + 40; a.player.y = e.y + 20;
+    marcher(a, e.x - a.player.x, e.y - a.player.y, 60);
+    expect(ici(a)).toBe('taverne');
+    // de côté, à 42 de la porte : rien. On cherche une porte de la Cité et une ligne libre qui la longe.
+    const b = monde(), wg = b.worldGrid!;
+    let essai: { x: number; y: number; dx: number; dy: number } | null = null, f = t(b);
+    for (const po of b.portes) for (let k = 0; k < 16 && !essai && !po.cle && !po.vers && !po.verrou; k++) for (const s of [1, -1]) {
+      f = po.ends[0];
+      const a = k * Math.PI / 8, dx = Math.cos(a), dy = Math.sin(a), ox = f.x - dy * 42 * s, oy = f.y + dx * 42 * s;
+      const de = { x: ox - dx * 80, y: oy - dy * 80 }, vers = { x: ox + dx * 80, y: oy + dy * 80 };
+      if (wg.walkable(de.x, de.y) && wg.clearLine(de, vers)) { essai = { ...de, dx, dy }; break; }
+    }
+    // (la boucle s'arrête sur la première porte qui convient : f est alors son bout)
+    expect(essai).toBeTruthy();
+    b.player.x = essai!.x; b.player.y = essai!.y;
+    marcher(b, essai!.dx, essai!.dy, 45);
+    expect(ici(b)).toBe(f.tag);
+    expect(Math.hypot(b.player.x - f.x, b.player.y - f.y)).toBeGreaterThan(60);   // il est bien passé devant
+  });
+});

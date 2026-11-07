@@ -54,6 +54,8 @@ export type SimEvent =
   | { k: 'rageSpent'; spell: string }
   /** Monde ouvert : le joueur entre dans une autre sous-zone. */
   | { k: 'enterArea'; name: string; level: number }
+  /** Entrée dans un intérieur nommé (maquette Entrées 5A) : Taverne, atelier, donjon… */
+  | { k: 'enterLieu'; name: string; region: string; level: number }
   | { k: 'groupCleared' }
   | { k: 'respawn' }
   /** Butin : un objet tombe (rareté pour l'effet), puis il est ramassé. */

@@ -131,6 +131,10 @@ export class World {
   checkpointName = '';
   /** Sous-zone où se trouve le joueur (monde ouvert). */
   area: SubAreaDef | null = null;
+  /** Intérieur où se trouve le joueur (maquette Entrées 5A) : nom de la porte qui y mène (« Taverne d'Astrub »), null dehors. */
+  lieu: string | null = null;
+  /** Carte d'un intérieur -> son nom : la carte d'arrivée de chaque porte qui mène dedans (première porte trouvée). */
+  readonly lieux = new Map<string, string>();
   /** Portes du monde ouvert : les deux bouts en coordonnées monde, et la carte de chacun. */
   portes: { nom: string; ends: [PorteEnd, PorteEnd]; verrou: boolean; sens: boolean; cle?: string; vers?: { zone: string; arrivee: [string, number] } }[] = [];
   /** Bout de porte par lequel le joueur vient d'arriver : inactif tant qu'il ne s'en est pas éloigné. */
@@ -299,11 +303,40 @@ export class World {
         return { tag, ...wg.nearestFree(q.x, q.y, wg.freeByMap.get(tag)!) };
       };
       this.portes.push({ nom: d.nom, ends: [end(d.a), end(d.b)], verrou: !!d.verrou, sens: !!d.sens, cle: d.cle });
+      if (wg.mapByTag(d.b[0])?.inside && !this.lieux.has(d.b[0])) this.lieux.set(d.b[0], d.nom);
     }
   }
+  /** Nom d'un endroit (carte) : l'intérieur, sinon la sous-zone. */
+  private nomCarte(tag: string): string | null {
+    const m = this.worldGrid?.mapByTag(tag);
+    if (!m) return null;
+    return (m.inside ? this.lieux.get(tag) : null) ?? this.zone.open?.subareas[String(m.sub)]?.name ?? null;
+  }
+  /** Bout de porte sous un point (survol de la souris, maquette Entrées 3A et 8A) : où elle mène, et si c'est la sortie
+   *  d'un intérieur. Les bouts qu'on ne peut pas prendre dans ce sens (sens unique) sont ignorés. */
+  porteSous(x: number, y: number): { x: number; y: number; nom: string; sortie: boolean } | null {
+    if (!this.worldGrid) return null;
+    let best: { x: number; y: number; nom: string; sortie: boolean } | null = null, bd = World.PORTE_R;
+    for (const po of this.portes) for (let i = 0; i < 2; i++) {
+      if (i === 1 && po.sens) continue;
+      const from = po.ends[i], to = po.ends[1 - i], d = Math.hypot(x - from.x, y - from.y);
+      if (d > bd) continue;
+      bd = d;
+      const dedans = !!this.worldGrid.mapByTag(from.tag)?.inside;
+      if (po.vers) { best = { x: from.x, y: from.y, nom: po.nom, sortie: false }; continue; }
+      const versDedans = !!this.worldGrid.mapByTag(to.tag)?.inside, ici = this.nomCarte(from.tag), la = this.nomCarte(to.tag) ?? po.nom;
+      best = { x: from.x, y: from.y, nom: versDedans && dedans && la === ici ? 'Salle suivante' : la, sortie: dedans && !versDedans };
+    }
+    return best;
+  }
+  /** Position du joueur à l'image d'avant (sens de la marche, maquette Entrées 4B). */
+  private avant = { x: 0, y: 0 };
   /** Passe la porte si le joueur est dessus : il arrive de l'autre côté, un peu en avant de la porte d'arrivée. */
   private updatePortes(dt: number) {
     const p = this.player, R = World.PORTE_R;
+    // déplacement depuis l'image d'avant (un saut de plus de 60 = téléportation, pas une marche)
+    const mx = p.x - this.avant.x, my = p.y - this.avant.y, pas = Math.hypot(mx, my);
+    this.avant.x = p.x; this.avant.y = p.y;
     if (this.passage) {
       const q = this.passage;
       if (p.dead) { this.passage = null; return; }
@@ -319,7 +352,11 @@ export class World {
     for (const po of this.portes) for (let i = 0; i < 2; i++) {
       const from = po.ends[i], to = po.ends[1 - i];
       if ((i === 1 && po.sens) || from === this.portalLock || Math.hypot(p.x - from.x, p.y - from.y) > R) continue;
-      if (!p.vise(from.x, from.y, R + 40)) continue;   // on passe la porte en cliquant dessus, pas en la frôlant
+      // on passe la porte en cliquant dessus, ou en marchant droit dedans (4B) ; la frôler de côté ne fait rien
+      const dp = Math.hypot(from.x - p.x, from.y - p.y);
+      const marche = pas > 0.5 && pas < 60 && dp < R * 0.75 && (dp < 8 || (mx * (from.x - p.x) + my * (from.y - p.y)) / (pas * dp) > 0.6);
+      const clic = p.vise(from.x, from.y, R + 40);
+      if (!clic && !marche) continue;
       if (po.verrou && !this.salleVide(from.tag)) {
         this.portalLock = from;   // un seul message tant qu'il reste sur la porte
         this.emit({ k: 'status', x: p.x, y: p.y - 60, text: 'Vaincs les monstres de la salle', color: '#ff9a5a' });
@@ -327,7 +364,7 @@ export class World {
       }
       // entrée d'un donjon gardé (maquette Gardiens 5A) : la porte ouvre le dialogue du gardien, qui fait entrer (« Entrer »)
       const gardien = i === 0 && this.quetes?.gardienDe(po.nom);
-      if (gardien && po === this.entreeDonjon(po.nom)) { p.stopMove(); this.quetes!.parlerA(gardien); return; }
+      if (gardien && po === this.entreeDonjon(po.nom)) { p.stopMove(); if (!clic) this.portalLock = from; this.quetes!.parlerA(gardien); return; }
       if (i === 0 && !this.prendreCle(po)) { this.portalLock = from; return; }
       this.passer(po, to);
       return;
@@ -536,6 +573,12 @@ export class World {
     }
     const m = this.worldGrid!.mapAt(p.x, p.y), sub = m ? open.subareas[String(m.sub)] ?? null : null;
     if (sub && sub !== this.area) { this.area = sub; this.emit({ k: 'enterArea', name: sub.name, level: sub.level }); }
+    // intérieur (5A) : bandeau à son nom, sauf s'il porte le nom de la sous-zone (le bandeau de la sous-zone suffit)
+    const lieu = m?.inside ? this.lieux.get(m.tag) ?? null : null;
+    if (lieu !== this.lieu) {
+      this.lieu = lieu;
+      if (lieu && lieu !== sub?.name) this.emit({ k: 'enterLieu', name: lieu, region: sub?.name ?? this.zone.name, level: sub?.level ?? 0 });
+    }
     // Zaap atteint : il devient le point de retour
     const cp = m && open.checkpoints.find(c => c.map[0] === m.x && c.map[1] === m.y);
     if (cp) this.decouvrirZaap(cp.name);

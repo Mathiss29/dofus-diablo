@@ -46,6 +46,8 @@ const ASSETS = 'assets';
 const mapDir = ([x, y]: [number, number]) => `${ASSETS}/cartes/${x}_${y}`;
 const worldDir = (w: string) => `${ASSETS}/mondes/${w}`;
 const hex = (c: string) => parseInt(c.replace('#', ''), 16);
+/** Curseur au survol d'une porte (maquette Entrées 3A) : une porte et une flèche d'entrée. */
+const CURSEUR_PORTE = `url("data:image/svg+xml,${encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='30' height='30'><path d='M4 4h11v22H4z' fill='#3a2614' stroke='#e6b85c' stroke-width='2'/><circle cx='12' cy='15' r='1.4' fill='#ffd77a'/><path d='M17 15h10m-4-4 4 4-4 4' stroke='#1d1408' stroke-width='5' fill='none' stroke-linecap='round'/><path d='M17 15h10m-4-4 4 4-4 4' stroke='#ffd77a' stroke-width='2.6' fill='none' stroke-linecap='round'/></svg>")}") 4 4, pointer`;
 
 /** Scène d'une zone : charge la carte et les planches de la zone, fait tourner la simulation
  *  à pas fixe, et dessine son état. Toute la logique de jeu est dans World (src/sim). */
@@ -254,7 +256,12 @@ export class ZoneScene extends Phaser.Scene {
         reprise: this.vitrine ? { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} } : this.perso?.etat?.quetes ?? this.test?.etat?.quetes });
       this.cameras.main.setBackgroundColor('#0d2b36');   // sous le ciel, au cas où il manque
       this.worldView = new WorldView(this, wg, worldDir(open.world), open.world);
-      this.worldView.portes = this.world.portes.flatMap(p => p.ends);
+      // bouts de portes : où chacun mène (préchargement 2A) et sorties des intérieurs (repère 8A)
+      const dedans = (tag: string) => !!wg.mapByTag(tag)?.inside;
+      this.worldView.portes = this.world.portes.flatMap(p => p.ends.map((e, i) => {
+        const to = p.ends[1 - i], marche = !p.vers && !(i === 1 && p.sens);
+        return { ...e, vers: marche ? to.tag : undefined, sortie: marche && dedans(e.tag) && !dedans(to.tag) };
+      }));
       const parts = this.cache.json.get(`${open.world}_particules`) as Record<string, SysData[]> | undefined;
       if (parts) this.worldView.parts = new Particules(this, wg, parts, `${open.world}_particules_img`);
       const tr = this.transparence = new Transparence(this);
@@ -596,6 +603,26 @@ export class ZoneScene extends Phaser.Scene {
     this.windows?.refresh();
   }
 
+  /** Survol d'une porte (maquette Entrées 3A, 8A) : son nom au-dessus, « Sortie · … » pour la sortie d'un intérieur.
+   *  Le bout survolé fait aussi précharger ce qu'il y a derrière (2A, voir WorldView.prefetch). */
+  private porteLabel: Phaser.GameObjects.Text | null = null;
+  private porteSurvol(aim: { x: number; y: number }): boolean {
+    const po = this.vitrine || this.world.passage ? null : this.world.porteSous(aim.x, aim.y);
+    if (!po) { this.porteLabel?.setVisible(false); return false; }
+    if (!this.porteLabel) {
+      this.porteLabel = this.add.text(0, 0, '', { fontFamily: 'Lexend, sans-serif', fontSize: '15px', fontStyle: 'bold', color: '#f3e3bf', backgroundColor: '#0b0910e0',
+        padding: { x: 9, y: 5 }, align: 'center' }).setOrigin(0.5, 1).setDepth(1e6);
+      this.cameras.getCamera('mini')?.ignore(this.porteLabel);
+      const lab = this.porteLabel;
+      this.events.once('shutdown', () => { lab.destroy(); if (this.porteLabel === lab) this.porteLabel = null; });
+    }
+    const c = ISO.toScreen(po.x, po.y);
+    this.porteLabel.setText(po.sortie ? `Sortie · ${po.nom}` : po.nom).setColor(po.sortie ? '#ffe08a' : '#f3e3bf')
+      // une sortie est un repère au sol, souvent sous le perso : son nom va dessous ; une porte dans un mur, au-dessus
+      .setOrigin(0.5, po.sortie ? 0 : 1).setPosition(c.x, po.sortie ? c.y + 34 : c.y - 96).setScale(1 / this.cameras.main.zoom).setVisible(true);
+    return true;
+  }
+
   /** Monstre sous le curseur : on vise le corps dessiné (rectangle rogné de la frame), ou à défaut ses pieds ;
    *  s'il y en a plusieurs, le plus proche du curseur. */
   private monsterUnder(ptr: Phaser.Input.Pointer) {
@@ -673,7 +700,8 @@ export class ZoneScene extends Phaser.Scene {
     const surPnj = this.questView?.pnjUnder(ptr, this.cameras.main) ?? null;
     if (this.questView) this.questView.survole = surPnj;
     this.dialogueView?.survol(surPnj, ptr);
-    this.game.canvas.style.cursor = this.monsterUnder(ptr) ? 'crosshair' : surPnj ? 'pointer' : this.recolteView?.curseur() ?? 'default';
+    const monstre = this.monsterUnder(ptr), porte = !monstre && !surPnj ? this.porteSurvol(aim) : false;
+    this.game.canvas.style.cursor = monstre ? 'crosshair' : surPnj ? 'pointer' : porte ? CURSEUR_PORTE : this.recolteView?.curseur() ?? 'default';
     return input;
   }
 
@@ -792,7 +820,9 @@ export class ZoneScene extends Phaser.Scene {
         }
         case 'checkpoint': this.hud.banner(`Point de retour\n${e.name}`, 1400); break;
         case 'respawn': this.hud.banner('De retour !', 900); this.attendreCartes(); this.snapCam = true; break;
-        case 'enterArea': if (!this.vitrine) this.hud.zoneBanner(e.name, this.world.zone.name, e.level, this.decouvrir(e.name)); break;
+        // même nom que l'intérieur où l'on est déjà annoncé (salles d'un donjon) : pas de second bandeau
+        case 'enterArea': if (!this.vitrine && e.name !== this.world.lieu) this.hud.zoneBanner(e.name, this.world.zone.name, e.level, this.decouvrir(e.name)); break;
+        case 'enterLieu': if (!this.vitrine) this.hud.zoneBanner(e.name, e.region, e.level, this.decouvrir(e.name)); break;
         case 'queteDebut': {
           const q = QUETES.quetes[e.id];
           if (q.type !== 'tutoriel') this.hud.toast(`Nouvelle quête : ${q.nom}`);
