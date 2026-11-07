@@ -89,12 +89,12 @@ export class SonView {
           const p = this.place(e.x, e.y);
           Son.jouer(Son.auHasard(M.impacts), 'effets', { ...p, vol: p.vol * 0.55, vitesse: 0.92 + Math.random() * 0.16, cle: 'impact', ecart: 0.06 });
           const m = this.monstre(e.id), s = m && M.monstres[m.type];
-          if (s && Math.random() < 0.35) Son.jouer(Son.auHasard(s.hit), 'effets', { ...p, vol: p.vol * 0.7, cle: `hit${m!.id}`, ecart: 0.7, monstre: true });
+          if (s && Math.random() < 0.35) Son.jouer(Son.auHasard(s.hit), 'effets', { ...p, vol: p.vol * 0.7, cle: `hit${m!.id}`, ecart: 0.7, monstre: true, type: m!.type });
         }
         break;
       case 'kill': {
         const s = M.monstres[e.monster], p = this.place(e.x, e.y);
-        Son.jouer(Son.auHasard(s?.mort), 'effets', { ...p, vol: p.vol * 0.85, cle: `mort${e.monster}`, ecart: 0.15, monstre: true });
+        Son.jouer(Son.auHasard(s?.mort), 'effets', { ...p, vol: p.vol * 0.85, cle: `mort${e.monster}`, ecart: 0.15, monstre: true, type: e.monster });
         break;
       }
       case 'levelUp': Son.jouer(M.ui.niveau, 'interface'); break;
@@ -143,7 +143,9 @@ export class SonView {
         this.etats.set(m.id, m.state);
         if (m.state === 'windup' && !m.dead) {
           const s = M.monstres[m.type], pl = this.place(m.x, m.y);
-          if (s && pl.vol > 0.05) Son.jouer(Son.auHasard(s.attaque), 'effets', { ...pl, vol: pl.vol * 0.75, cle: `atk${m.id}`, ecart: 0.8, monstre: true });
+          // Sons 7B : un monstre normal sur deux crie en attaquant ; les élites et les boss crient toujours
+          const crie = m.def.elite || m.def.boss || Math.random() < 0.5;
+          if (s && crie && pl.vol > 0.05) Son.jouer(Son.auHasard(s.attaque), 'effets', { ...pl, vol: pl.vol * 0.75, cle: `atk${m.id}`, ecart: 0.8, monstre: true, type: m.type });
         }
       }
       if (m.dead || p.dead) continue;

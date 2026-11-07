@@ -10,13 +10,14 @@ import { v } from './assetUrl';
  *    officielles mélangées) qui monte quand des monstres nous attaquent (3A). Contre un élite ou un boss : musique de combat
  *    officielle (intro puis boucle), jingle de victoire ou de défaite (3B).
  *  - Effets : son de l'animation du lanceur (même numéro que l'animation : AnimAttaque801), son de l'effet du sort (gfx),
- *    impacts, voix des monstres (au plus 6 à la fois), interface.
+ *    impacts, cris des monstres sur leur bus (maquette Sons : 2 par sorte, volume qui baisse avec le nombre, hauteur variée,
+ *    compresseur doux), interface.
  *  - Ambiance : fond de la zone en boucle, et sons du décor (eau, feu, Zaap) d'autant plus forts qu'on s'en approche.
  *  Les musiques et les boucles passent par des balises <audio> (lues en flux, peu de mémoire), les sons courts par des
  *  tampons Web Audio. */
 
-export type Bus = 'musique' | 'effets' | 'ambiance' | 'interface';
-export interface Volumes { general: number; musique: number; effets: number; ambiance: number; interface: number; muet: boolean }
+export type Bus = 'musique' | 'effets' | 'monstres' | 'ambiance' | 'interface';
+export interface Volumes { general: number; musique: number; effets: number; monstres: number; ambiance: number; interface: number; muet: boolean }
 type Manifest = {
   musiques: Record<string, string | { calme: string; renfort?: string }>;
   ambiances: Record<string, string>; ui: Record<string, string>;
@@ -97,7 +98,7 @@ class Moteur {
   ctx: AudioContext | null = null;
   private master!: GainNode;
   private bus = {} as Record<Bus, GainNode>;
-  private vol: Volumes = { general: 1, musique: 0.5, effets: 0.7, ambiance: 0.6, interface: 0.7, muet: false };
+  private vol: Volumes = { general: 1, musique: 0.5, effets: 0.7, monstres: 0.7, ambiance: 0.6, interface: 0.7, muet: false };
   private cache = new Map<string, AudioBuffer | null | Promise<AudioBuffer | null>>();
   /** Ce que la musique doit jouer : le menu, la liste d'une zone, ou rien. */
   private voulu: 'menu' | 'zone' | 'rien' = 'rien';
@@ -109,7 +110,10 @@ class Moteur {
   private anciens: Flux[] = [];
   private fonds = new Map<string, Flux>();
   private decor = new Map<string, { f: Flux | null; muet: number }>();
-  private voixMonstres = 0;
+  /** Cris de monstres en cours (maquette Sons 1A : au plus 2 par type ; le plus faible, donc le plus loin, cède sa place). */
+  private voix: { src: AudioBufferSourceNode; type: string; vol: number }[] = [];
+  /** Dernier fichier tiré dans chaque liste (Sons 4B : jamais deux fois de suite le même). */
+  private tires = new WeakMap<string[], string>();
   private derniers = new Map<string, number>();
   private cache_visible = false;
 
@@ -118,7 +122,11 @@ class Moteur {
     if (this.ctx || typeof window === 'undefined' || !window.AudioContext) return;
     const ctx = this.ctx = new AudioContext();
     this.master = ctx.createGain(); this.master.connect(ctx.destination);
-    for (const b of ['musique', 'effets', 'ambiance', 'interface'] as Bus[]) { this.bus[b] = ctx.createGain(); this.bus[b].connect(this.master); }
+    for (const b of ['musique', 'effets', 'monstres', 'ambiance', 'interface'] as Bus[]) { this.bus[b] = ctx.createGain(); this.bus[b].connect(this.master); }
+    // Sons 5A : compresseur doux sur les monstres, il ne touche pas un cri seul et retient les pics d'un gros groupe
+    const comp = ctx.createDynamicsCompressor();
+    comp.threshold.value = -18; comp.knee.value = 12; comp.ratio.value = 4; comp.attack.value = 0.005; comp.release.value = 0.15;
+    this.bus.monstres.disconnect(); this.bus.monstres.connect(comp); comp.connect(this.master);
     this.appliquerVolumes();
     const reveil = () => {
       if (ctx.state !== 'running') ctx.resume().catch(() => {});
@@ -145,6 +153,7 @@ class Moteur {
     this.bus.musique.gain.setTargetAtTime(V.musique * bas, t, 0.1);
     this.bus.ambiance.gain.setTargetAtTime(V.ambiance * bas, t, 0.1);
     this.bus.effets.gain.setTargetAtTime(V.effets, t, 0.05);
+    this.bus.monstres.gain.setTargetAtTime(V.monstres, t, 0.05);
     this.bus.interface.gain.setTargetAtTime(V.interface, t, 0.05);
   }
 
@@ -274,26 +283,53 @@ class Moteur {
     this.cache.set(f, p);
     return null;
   }
-  /** Joue un son court. pan -1..1, offset = départ dans le fichier (s), cle = anti-répétition (au plus un toutes les `ecart` s). */
-  jouer(f: string | undefined, bus: Bus, o: { vol?: number; pan?: number; offset?: number; vitesse?: number; cle?: string; ecart?: number; monstre?: boolean } = {}) {
+  /** Joue un son court. pan -1..1, offset = départ dans le fichier (s), cle = anti-répétition (au plus un toutes les `ecart` s).
+   *  monstre = cri de monstre (type = sa sorte) : bus « monstres » et règles de la maquette Sons (2026-11-07). */
+  jouer(f: string | undefined, bus: Bus, o: { vol?: number; pan?: number; offset?: number; vitesse?: number; cle?: string; ecart?: number; monstre?: boolean; type?: string } = {}) {
     const c = this.ctx; if (!c || !f || c.state !== 'running' || this.vol.muet) return;
     if (o.cle) {
       const t = c.currentTime, d = this.derniers.get(o.cle) ?? -9;
       if (t - d < (o.ecart ?? 0.08)) return;
       this.derniers.set(o.cle, t);
     }
-    if (o.monstre && this.voixMonstres >= 6) return;   // 5A : au plus 6 voix de monstres à la fois
     const b = this.tampon(f); if (!b) return;
-    const src = c.createBufferSource(); src.buffer = b; src.playbackRate.value = o.vitesse ?? 1;
-    const g = c.createGain(); g.gain.value = o.vol ?? 1;
+    let vol = o.vol ?? 1, vitesse = o.vitesse ?? 1, depart = 0;
+    if (o.monstre) {
+      const type = o.type ?? '?', t = c.currentTime;
+      // 3A : une même sorte de monstre ne crie pas plus d'une fois toutes les 0,25 s
+      if (t - (this.derniers.get(`type:${type}`) ?? -9) < 0.25) return;
+      // 1A : 2 cris au plus par sorte ; s'il y en a déjà 2, le plus faible (le plus loin) cède sa place au nouveau s'il est plus fort
+      const memes = this.voix.filter(x => x.type === type);
+      if (memes.length >= 2) {
+        const faible = memes.reduce((x, y) => x.vol < y.vol ? x : y);
+        if (faible.vol >= vol) return;
+        this.couper(faible);
+      }
+      if (this.voix.length >= 6) return;   // et jamais plus de 6 cris de monstres en tout
+      this.derniers.set(`type:${type}`, t);
+      vol /= Math.sqrt(1 + this.voix.length);   // 2A : plus il y a de cris en cours, plus le nouveau est bas
+      vitesse *= 0.92 + Math.random() * 0.16;   // 4A : hauteur un peu variée (± 8 %)
+      depart = Math.random() * 0.12;            // 3B : petit décalage, le groupe ne claque plus d'un coup
+      bus = 'monstres';
+    }
+    const src = c.createBufferSource(); src.buffer = b; src.playbackRate.value = vitesse;
+    const g = c.createGain(); g.gain.value = vol;
     let n: AudioNode = src.connect(g);
     if (o.pan && c.createStereoPanner) { const p = c.createStereoPanner(); p.pan.value = Math.max(-1, Math.min(1, o.pan)); n = n.connect(p); }
     n.connect(this.bus[bus]);
-    if (o.monstre) { this.voixMonstres++; src.onended = () => { this.voixMonstres--; }; }
-    src.start(0, Math.min(Math.max(0, o.offset ?? 0), Math.max(0, b.duration - 0.15)));
+    if (o.monstre) { const x = { src, type: o.type ?? '?', vol }; this.voix.push(x); src.onended = () => { this.voix = this.voix.filter(y => y !== x); }; }
+    src.start(c.currentTime + depart, Math.min(Math.max(0, o.offset ?? 0), Math.max(0, b.duration - 0.15)));
   }
-  /** Un son pris au hasard dans une liste. */
-  auHasard(l: string[] | undefined) { return l?.length ? l[Math.floor(Math.random() * l.length)] : undefined; }
+  private couper(x: { src: AudioBufferSourceNode }) { this.voix = this.voix.filter(y => y !== x); try { x.src.stop(); } catch { /* déjà fini */ } }
+  /** Un son pris au hasard dans une liste, jamais deux fois de suite le même (Sons 4B). */
+  auHasard(l: string[] | undefined) {
+    if (!l?.length) return undefined;
+    const avant = this.tires.get(l);
+    let f = l[Math.floor(Math.random() * l.length)];
+    if (l.length > 1) while (f === avant) f = l[Math.floor(Math.random() * l.length)];
+    this.tires.set(l, f);
+    return f;
+  }
   /** Accès au contexte et au bus des effets pour les petits sons synthétisés (carillon du butin, jauge pleine). */
   synth(): { ctx: AudioContext; out: AudioNode } | null { return this.ctx && this.ctx.state === 'running' ? { ctx: this.ctx, out: this.bus.effets } : null; }
 }
