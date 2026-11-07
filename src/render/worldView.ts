@@ -113,7 +113,7 @@ export class WorldView {
       // intérieur : pas de ciel, fond noir comme dans Dofus
       // (le Temple Céleste flotte dans le ciel : il le garde)
       this.sky?.setVisible(!here.inside || !!here.ciel);
-      this.scene.cameras.main.setBackgroundColor(here.inside && !here.ciel ? '#000000' : '#0d2b36');
+      this.scene.cameras.main.setBackgroundColor(here.inside && !here.ciel ? '#000000' : here.mer !== undefined ? `#${here.mer.toString(16).padStart(6, '0')}` : '#0d2b36');
     }
     const seen = (m: WorldMapEntry, marge: number) => this.seen(m, here, marge);
     for (const m of this.wg.world.maps) {
@@ -299,7 +299,9 @@ export class WorldView {
     const g = w.grid, [X0, Y0] = w.origin, S = GridMap.S;
     const x0 = g.ox + Math.floor(g.w / 4) + (m.x - X0) * MAP_COLS * g.w, y0 = g.oy + Math.floor(g.h / 4) + (m.y - Y0) * MAP_ROWS * g.h / 2;
     const a = this.wg.toScreen(x0, y0), W = MAP_COLS * g.w * S, H = MAP_ROWS * g.h / 2 * S;
-    const dedans = 2 * g.w * S, dehors = 0.4 * g.w * S, loin = 1600, c = 0x0d2b36;
+    // rivage (Calanques) : le bord se fond dans la mer au lieu du bleu nuit (retour de Mathis, 2026-11-07)
+    const voisineMer = w.maps.find(n => !n.inside && n.mer !== undefined && Math.abs(n.x - m.x) <= 2 && Math.abs(n.y - m.y) <= 2);
+    const dedans = 2 * g.w * S, dehors = 0.4 * g.w * S, loin = 1600, c = m.mer ?? voisineMer?.mer ?? 0x0d2b36;
     const libre = (dx: number, dy: number) => !this.dehors.has(`${m.x + dx},${m.y + dy}`);
     const gr = this.scene.add.graphics().setDepth(1e6);
     const bande = (x: number, y: number, w2: number, h2: number, a1: number, a2: number, a3: number, a4: number) =>

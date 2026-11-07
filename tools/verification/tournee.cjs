@@ -12,7 +12,7 @@ const fs = require('fs');
   const p = await b.newPage({ viewport: { width: 1280, height: 720 } });
   const erreurs = [];
   p.on('pageerror', e => erreurs.push(e.message));
-  await p.goto(`http://localhost:4173/?test${monde === 'astrub' ? '#astrub2' : ''}`);
+  await p.goto(`http://localhost:4173/?test${monde === 'astrub' ? '#astrub2' : '#jeu'}`);
   await p.waitForFunction(() => window.__df && window.__df.cartes().length > 0, null, { timeout: 120000 });
   await p.addStyleTag({ content: 'body > div:not(#game) { display:none !important }' });
   const toutes = await p.evaluate(() => window.__df.cartes());
