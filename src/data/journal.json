@@ -166,7 +166,8 @@
         ],
         "En coulisses": [
           "Tous les taux de butin sont dans un seul fichier, et la partie de test (F1) a un onglet Butin : chaque ligne de butin du jeu, et un simulateur qui tue 1 000 monstres d'un coup.",
-          "Les cartes sont rangées par bâtiment, et un robot photographie chaque carte d'Astrub et d'Incarnam après chaque export pour repérer les doublons et les images manquantes."
+          "Les cartes sont rangées par bâtiment, et un robot photographie chaque carte d'Astrub et d'Incarnam après chaque export pour repérer les doublons et les images manquantes.",
+          "Discord rangé pour le test ouvert : #🧭・commencer-ici (lien, touches, où aller), #🤝・entraide, et des forums #🐛・bugs et #💡・idées avec étiquettes (« Corrigé », « Retenue ») et vote 👍. Le Journal du jour arrive toujours dans #📜・journal."
         ]
       }
     }
