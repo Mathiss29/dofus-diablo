@@ -264,14 +264,15 @@ def cache():
                  35: (146672640, (-61.5, 166.8, 310.5, 584.8)), 36: (146670592, (36.5, -639.8, 390.5, -201.2)), 40: (146672898, (-880.5, 240.8, -408.5, 536.8)),
                  44: (146670592, (-179.5, -530.8, 168.5, -166.8)), 45: (146672898, (-364.5, 26.8, 27.5, 331.8)), 46: (146670592, (-295.5, -410.2, 16.5, -35.8)),
                  47: (146673664, (105.5, -430.8, 428.5, -70.8)), 6: (146672640, (429.5, -1378.8, 1033.5, -354.8)), 7: (146672640, (-645.5, -944.2, -41.5, 79.8))})
-    a = Arene(51); plancher = ell(1300, 760)
-    a.sol(plancher, [47381], 0, edge=0.25, pas=(640, 440), alea=False)
+    a = Arene(51)
+    # plancher sur toute l'image (avant : une ellipse aux bords en escalier, des trous noirs dans le sol, retour de Mathis 2026-11-07)
+    a.sol(lambda x, y: 0, [47381], 0, pas=(640, 440), alea=False)
     a.anneau([P[30], P[40], P[44], P[45], P[29], P[35], P[46]], 1060, 610, 10, ENT + [(0, -590)], ecart=300)
     a.put(P[6], -420, -720); a.put(P[7], 420, -720, True); a.put(P[0], -1300, -230); a.put(P[1], 1300, -230)
     a.put(P[27], -820, -600); a.put(P[34], 820, -600, True); a.put(P[47], -1300, 420); a.put(P[28], 1300, 420, True)
     for i, (x, y) in enumerate(ABRIS): a.put(P[[36, 33, 32, 28][i]], x, y, i % 2 == 1, bloque=120)
     a.put(P[30], -760, 820); a.put(P[45], 760, 820, True)
-    return a, (6, 5, 4)
+    return a, (92, 58, 22)
 
 ARENES = {   # tag -> (monde, nom du donjon, salle officielle d'où vient la sous-zone, composition)
     'arene_crypte': ('incarnam', 'Crypte de Kardorim', 'crypte_5', crypte),
