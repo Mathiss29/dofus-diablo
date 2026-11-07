@@ -379,7 +379,7 @@ export class WorldView {
       this.selonCarte[n++] = e;
       const v = this.montre(e.p, e.tag);
       if (e.p.b) e.im.setVisible(v && (e.p.j ? this.sol : this.lum) > 0.01);
-      else e.im.setVisible(v);
+      else e.im.setVisible(v);   // tout de suite : un fondu cassait le rythme (Mathis, 2026-11-07)
     }
     this.selonCarte.length = n;
   }

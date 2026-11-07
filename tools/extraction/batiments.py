@@ -64,13 +64,17 @@ decor = lambda e: e['p'].get('c', 0) >= 0 and 'b' not in e['p']
 print(len(E), 'images')
 for e in E:
     e['hc'] = COURANTE and not e['m'].get('inside') and not e['m'].get('ciel') and dehors_cadre(e['m'], e['p']['x'], e['p']['y']) > 0
+JUM = []   # deux débords qui montrent la même chose (COURANTE)
 def doublon(a, b, garde_a):
     """a et b (deux cartes voisines) sont la même chose. Sans COURANTE : on retire la copie. Avec : un débord cache
     l'original de la voisine quand on est sur sa carte ; deux originaux : on retire la copie ; deux débords : rien."""
     garde, copie = (a, b) if garde_a else (b, a)
     if not COURANTE or (not a['hc'] and not b['hc']): jeter.add(id(copie)); return True
-    if a['hc'] and b['hc']: return False
+    if a['hc'] and b['hc']: JUM.append((a, b)); return False
     hn, nn = (a, b) if a['hc'] else (b, a)
+    if abs(hn['x0'] - nn['x0']) <= 2 and abs(hn['y0'] - nn['y0']) <= 2 and hn['mk'].shape == nn['mk'].shape \
+       and (hn['mk'] != nn['mk']).mean() < 0.02 and ('b' in hn['p']) == ('b' in nn['p']):
+        jeter.add(id(hn)); return True   # copie exacte, au même endroit : l'original suffit (fichier plus léger)
     hn['copie'] = True
     # la copie prend la profondeur de l'original : sinon, rangée sur une case du bord de sa carte, elle passe devant ou
     # derrière les voisins au mauvais moment (le rempart devant le pied de l'horloge en [3,-20])
@@ -114,7 +118,7 @@ for L in grille(grands).values():
             if abs(a['m']['x'] - b['m']['x']) > 1 or abs(a['m']['y'] - b['m']['y']) > 1: continue
             if not (0.85 < a['w'] / b['w'] < 1.18 and 0.85 < a['h'] / b['h'] < 1.18 and 0.7 < a['n'] / max(1, b['n']) < 1.43): continue
             ox, oy = b['x0'] - a['x0'], b['y0'] - a['y0']
-            if abs(ox) > 96 or abs(oy) > 96: continue
+            if abs(ox) > (256 if a['hc'] and b['hc'] else 96) or abs(oy) > (256 if a['hc'] and b['hc'] else 96): continue
             # même forme ? (masques superposés coin contre coin, à 3 cases de masque près)
             iou, _, _ = recale(a['mk'], b['mk'], 0, 0, 3)
             if iou < 0.8: continue
@@ -227,6 +231,33 @@ if COURANTE and CONTRE > 0:
         if e['hc'] and (e['m']['tag'], e.get('bt')) in faux and id(e) not in jeter: jeter.add(id(e)); nc += 1
     E = [e for e in E if id(e) not in jeter]
     print('débords qui contredisent la voisine, retirés :', nc)
+# débords orphelins (COURANTE) : montrés par aucune carte dans son cadre (le toit de la Taverne déborde au-dessus de [6,-18],
+# aucune carte ne l'a chez elle). Vus seulement depuis leur carte, ils manquaient partout ailleurs (Taverne sans toit vue de
+# [5,-18]). Un exemplaire par groupe de copies devient visible de partout : celui dont le centre est le plus près de son cadre ;
+# les autres le cachent depuis leur carte, comme pour un original.
+npr = 0
+if COURANTE:
+    vivant = {id(e) for e in E}
+    pere = {}
+    def chef(x):
+        while pere.get(x, x) != x: x = pere[x]
+        return x
+    for a, b in JUM:
+        if id(a) in vivant and id(b) in vivant: pere[chef(id(a))] = chef(id(b))
+    grp = collections.defaultdict(list)
+    for e in E:
+        if e['hc']: grp[chef(id(e))].append(e)
+    for L in grp.values():
+        if any(e.get('copie') for e in L): continue   # un original existe déjà dans un cadre
+        L.sort(key=lambda e: dehors_cadre(e['m'], e['p']['x'], e['p']['y']))
+        g = L[0]; g['hc'] = False; g['promu'] = True; npr += 1
+        for e in L[1:]:
+            if e['m'] is g['m']: continue
+            l = g['p'].setdefault('cc', [])
+            if e['m']['tag'] not in l: l.append(e['m']['tag'])
+            e['copie'] = True
+            if e['p'].get('c', -1) >= 0 and g['p'].get('c', -1) >= 0: e['p']['c'], e['p']['o'] = g['p']['c'], g['p']['o']
+    print('débords orphelins montrés de partout :', npr)
 # profondeur des débords sans original (COURANTE) : Dofus range tout le débord sur les cases du bord de sa carte. Seule sur
 # son écran, la carte s'en moque ; ici les voisines sont dessinées autour, et l'horloge de [3,-20], rangée sur la dernière
 # ligne, passait derrière les remparts de [3,-19]. On la range sur la case de son pied, comme le décor de la voisine.
@@ -237,9 +268,15 @@ if COURANTE:
     pied = ecarts[len(ecarts) // 2] if ecarts else 40
     nr = 0
     # un bâtiment du débord garde son ordre interne (toit sur les murs) : tout le groupe prend la case du pied le plus bas
-    grp = collections.defaultdict(list)
+    grp = collections.defaultdict(list); na = 0
     for e in E:
-        if e['hc'] and not e.get('copie') and decor(e): grp[(e['m']['tag'], e.get('bt', -id(e)))].append(e)
+        if not (e['hc'] or e.get('promu')) or e.get('copie') or not decor(e): continue
+        t = tete.get(e.get('bt'))
+        if t is not None and not t['hc']:
+            # rattaché à un bâtiment (ou arbre) d'une voisine : juste devant lui, pas sur la case de son propre pied
+            e['p']['c'], e['p']['o'] = t['p']['c'], t['p']['o'] + 1; na += 1; continue
+        grp[(e['m']['tag'], e.get('bt', -id(e)))].append(e)
+    print('débords rattachés au bâtiment d\'une voisine :', na)
     for L in grp.values():
         bas = max(L, key=lambda e: e['y0'] + e['h'])
         if dehors_cadre(bas['m'], bas['p']['x'], bas['y0'] + bas['h'] - pied) <= 0: continue   # pied dans sa carte (toit qui dépasse) : sa case est la bonne
