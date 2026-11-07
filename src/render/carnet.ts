@@ -46,4 +46,4 @@ export function sauverBestiaire(b: Record<string, number>) {
   try { localStorage.setItem(CLE_BESTIAIRE, JSON.stringify(b)); } catch { /* rien */ }
 }
 /** Paliers du Bestiaire (1A) : croisé = fiche, 10 = sorts, 25 = résistances, 50 = butin. */
-export const PALIERS = { sorts: 10, res: 25, butin: 50 };
+export const PALIERS = { sorts: 10, res: 25 };   // butin : visible dès le premier vaincu (maquette « Drops » 3A)

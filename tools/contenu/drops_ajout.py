@@ -4,6 +4,7 @@
 import json, os, re, sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'extraction'))
 from i18n import load as i18n
+from butin_conditions import condition
 tables, frbin = sys.argv[1:3]; T = i18n(frbin)
 def table(n):
     d = json.load(open(f'{tables}/{n}.json')); R = {r['rid']: r['data'] for r in d['references']['RefIds']}; o = d['objectsById']
@@ -20,7 +21,10 @@ for key, gm in mons.items():
     for x in dm.get('drops', []):
         o = I.get(int(x['objectId']))
         if not o: continue
+        if float(x['percentDropForGrade1']) <= 0: continue   # 6B : jamais lâché
         e = {'item': str(x['objectId']), 'chance': round(float(x['percentDropForGrade1']), 2)}
+        c = condition(x.get('criterions') or '')   # 6B : quête ou événement, ne tombe pas en temps normal
+        if c: e['cond'] = c
         mj = re.search(r'Pj>(\d+),(\d+)', x.get('criterions') or '')
         if mj: e['metier'] = {'id': int(mj.group(1)), 'min': int(mj.group(2)) + 1}; e['chasse'] = 'CU>0' in x['criterions']
         lst.append(e)

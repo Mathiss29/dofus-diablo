@@ -3,6 +3,10 @@ import { ICON_CSS, iconHtml } from './icons';
 import { MANIFESTE, Son } from './son';
 import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES } from '../sim/data';
 import { v } from './assetUrl';
+import { BUTIN_CSS, butinMonstre, dessinerPortraits, esc as escB, groupesBestiaire, nomObjet, iconeObjet, sourcesHtml } from './butinVue';
+import { PALIERS } from './carnet';
+import { LOOKS } from './looks';
+import { niveauHorsPartie, rangDe } from '../sim/butin';
 import { DOSSIER, PALETTES, ZONES, apparenceValide, assemblagePour, fiches, objetsPortes, type Apparence, type Assemblage, type FichePerso } from './squelette';
 import {
   BASE_STATS, REDUCTION_RECHARGES_MAX, FAMILIER_MAX, FAMILIER_XP, LEGENDARY, METIER_XP, PEPITE, RARITY_COLORS, RARITY_NAMES, STATS, STAT_NAMES, metierXpNeeded, recycleResource, recycleValue,
@@ -315,6 +319,27 @@ const CSS = `
 .dw .tip .xpf{height:5px;background:#2a2620;border-radius:3px;margin:3px 0 5px;overflow:hidden}.dw .tip .xpf i{display:block;height:100%;background:#6fb2e8}
 
 .dw .win.quetes,.dw .win.succes{width:min(900px,96vw);height:min(660px,92vh)}
+.dw .win.bestiaire{width:min(980px,96vw);height:min(700px,92vh)}
+.dw .bes{display:grid;grid-template-columns:minmax(0,250px) minmax(0,1fr);min-height:0}
+.dw .bes .bl{overflow:auto;padding:10px;border-right:1px solid #0d0c0a;background:#292824;display:grid;gap:3px;align-content:start}
+.dw .bes .bh{color:#c9a55a;font-size:11px;text-transform:uppercase;letter-spacing:.06em;margin:8px 2px 2px;line-height:1.3}
+.dw .bes .bm{display:grid;grid-template-columns:34px 1fr auto;gap:6px;align-items:center;padding:3px 6px;border-radius:3px;cursor:pointer;line-height:1.2;font-size:12.5px;border:1px solid transparent}
+.dw .bes .bm canvas{width:34px;height:34px}
+.dw .bes .bm small{color:#a9a48b;font-size:11px;font-variant-numeric:tabular-nums}
+.dw .bes .bm:hover{border-color:#57554c}.dw .bes .bm.on{border-color:#b9e54b;background:#2c3a16}
+.dw .bes .bm.inc{color:#8a8672}.dw .bes .bm.boss span{color:#f08a7a}.dw .bes .bm.elite span{color:#f2d36b}
+.dw .bes .bm .ic{width:30px;height:30px}
+.dw .bes .bd{padding:14px 16px;overflow:auto;display:grid;gap:10px;align-content:start;background:linear-gradient(#2b2a25,#24231f);min-width:0}
+.dw .bes .tete{display:flex;gap:14px;align-items:center}
+.dw .bes .tete canvas{width:110px;height:110px;background:radial-gradient(circle at 50% 75%,#3a4a1c,transparent 70%);border-radius:6px}
+.dw .bes .tete .ic{width:64px;height:64px;background-color:#1d1c19;border:1px solid #45433b;border-radius:6px}
+.dw .bes h3{margin:0;font-size:20px;color:#f4efe0}.dw .bes .sub{color:#a9a48b;font-size:12px}
+.dw .bes .ongl{display:flex;gap:4px;margin-top:6px}
+.dw .bes .ongl button{all:unset;cursor:pointer;font-size:12px;padding:3px 10px;border:1px solid #45433b;border-radius:3px;color:#c9c4ab}
+.dw .bes .ongl button.on{background:#b9e54b;border-color:#b9e54b;color:#15140f;font-weight:bold}
+.dw .bes .lock{color:#8a8672;font-style:italic}
+.dw .bes .kv{display:grid;gap:4px;font-size:13px}.dw .bes .kv div{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #3a383055;padding:3px 0}
+.dw .tip .bu-src{font-size:12px}.dw .tip .bu-ou{margin-top:8px}
 .dw .qb{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);min-height:0}
 .dw .qb .ql{overflow:auto;padding:10px;border-right:1px solid #0d0c0a;background:#292824;display:grid;gap:4px;align-content:start}
 .dw .qb .qh{color:#c9a55a;font-size:12px;text-transform:uppercase;letter-spacing:.06em;margin:8px 2px 2px}
@@ -416,7 +441,7 @@ const CSS = `
 .dw .ttl b{font-weight:700}
 `;
 
-type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap';
+type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap' | 'bestiaire';
 
 /** Fenêtres façon Dofus 3 : « Inventaire » (le perso sur son socle, ses emplacements autour, le sac à onglets)
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
@@ -459,9 +484,16 @@ export class Windows {
   /** Bouton « Retour à l'accueil » de la fenêtre Réglages (sauvegarde puis écran d'accueil). */
   onAccueil: (() => void) | null = null;
   onChange: () => void = () => {};
+  /** Bestiaire (maquette « Drops » 1A) : monstres vaincus par le compte (lus par la scène) ; partie de test : tout est visible. */
+  vaincus: () => Record<string, number> = () => ({});
+  toutVoir = false;
+  private bestType = '';
+  private bestObjet: string | null = null;
+  private bestOnglet: 'butin' | 'sorts' | 'res' = 'butin';
+  private bestRecherche = '';
 
   constructor(private world: World) {
-    const style = document.createElement('style'); style.textContent = CSS + ICON_CSS; document.head.appendChild(style);
+    const style = document.createElement('style'); style.textContent = CSS + ICON_CSS + BUTIN_CSS; document.head.appendChild(style);
     this.root = document.createElement('div'); this.root.className = 'dw'; document.body.appendChild(this.root);
     this.tip = document.createElement('div'); this.tip.className = 'tip'; this.tip.style.display = 'none'; this.root.appendChild(this.tip);
   }
@@ -502,7 +534,7 @@ export class Windows {
     else if (this.mode === 'car') this.renderCarac(); else if (this.mode === 'job') this.renderJob(); else if (this.mode === 'art') this.renderArt(); else if (this.mode === 'opt') this.renderOpt();
     else if (this.mode === 'sorts') this.renderSorts(); else if (this.mode === 'quetes') this.renderQuetes();
     else if (this.mode === 'succes') this.renderSucces(); else if (this.mode === 'emp') this.renderEmp(); else if (this.mode === 'zaap') this.renderZaap();
-    else if (this.mode === 'garde') this.renderGarde(); else this.renderInv();
+    else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else this.renderInv();
     this.win!.querySelector('[data-close]')!.addEventListener('click', () => this.close());
   }
   private title(name: string, icon: string) {
@@ -580,7 +612,7 @@ export class Windows {
     w.querySelectorAll<HTMLElement>('[data-res]').forEach(e => {
       const id = e.dataset.res!, r = ITEMS.resources[id];
       const eat = () => { if (r.rappel ? this.world.rappel(id) : this.world.eat(id)) { if (r.rappel) this.close(); else this.changed(); } };
-      e.addEventListener('mouseenter', ev => { this.tip.innerHTML = this.resTip(r); this.tip.style.display = 'block'; this.moveTip(ev); });
+      e.addEventListener('mouseenter', ev => { this.tip.innerHTML = this.resTip(r, id); this.tip.style.display = 'block'; this.moveTip(ev); });
       e.addEventListener('mousemove', ev => this.moveTip(ev));
       e.addEventListener('mouseleave', () => this.hideTip());
       if (r.soin || r.rappel) { e.addEventListener('contextmenu', eat); e.addEventListener('dblclick', eat); }
@@ -792,7 +824,7 @@ export class Windows {
     w.querySelectorAll<HTMLElement>('[data-voir]').forEach(e => e.addEventListener('click', () => this.montrer(e.dataset.voir!)));
     w.querySelectorAll<HTMLElement>('[data-rtip]').forEach(e => {
       const r = ITEMS.resources[e.dataset.rtip!];
-      e.addEventListener('mouseenter', ev => { if (!r) return; this.tip.innerHTML = this.resTip(r); this.tip.style.display = 'block'; this.moveTip(ev); });
+      e.addEventListener('mouseenter', ev => { if (!r) return; this.tip.innerHTML = this.resTip(r, e.dataset.rtip!); this.tip.style.display = 'block'; this.moveTip(ev); });
       e.addEventListener('mousemove', ev => this.moveTip(ev));
       e.addEventListener('mouseleave', () => this.hideTip());
     });
@@ -848,7 +880,7 @@ export class Windows {
     w.querySelector<HTMLElement>('[data-fab]')?.addEventListener('click', () => { if (this.world.lancerFabrication(this.artRecette, this.artQte)) this.render(); });
     w.querySelectorAll<HTMLElement>('[data-rtip]').forEach(e => {
       const r = ITEMS.resources[e.dataset.rtip!];
-      e.addEventListener('mouseenter', ev => { if (!r) return; this.tip.innerHTML = this.resTip(r); this.tip.style.display = 'block'; this.moveTip(ev); });
+      e.addEventListener('mouseenter', ev => { if (!r) return; this.tip.innerHTML = this.resTip(r, e.dataset.rtip!); this.tip.style.display = 'block'; this.moveTip(ev); });
       e.addEventListener('mousemove', ev => this.moveTip(ev));
       e.addEventListener('mouseleave', () => this.hideTip());
     });
@@ -963,7 +995,7 @@ export class Windows {
       { id: 'quetes', titre: 'Quêtes et succès', html: `<p>Un PNJ qui a une quête porte une icône au-dessus de la tête. Le suivi en bas à gauche montre l'étape en cours.</p>
         <p>Le journal des quêtes et les succès s'ouvrent depuis la colonne de menus, à droite de l'écran.</p>` },
       { id: 'touches', titre: 'Toutes les touches', html: `<div class="keys">${[['Clic gauche', 'aller / attaquer (maintenu : continuer)'], ['Maj + clic', 'attaquer sur place'], ['Clic droit', 'sort de la barre (case libre)'],
-          ['& é " \' ( -', 'barre de sorts'], ['Espace', mob], ['E', 'potion'], ['S', 'sorts'], ['I', 'inventaire'], ['C', 'caractéristiques'], ['J', 'métiers'],
+          ['& é " \' ( -', 'barre de sorts'], ['Espace', mob], ['E', 'potion'], ['S', 'sorts'], ['I', 'inventaire'], ['C', 'caractéristiques'], ['J', 'métiers'], ['B', 'bestiaire'],
           ['O', 'options'], ['G', 'ce guide'], ['H', 'Havre-Sac'], ['M', 'carte du monde (bientôt)'], ['Ctrl+M', 'couper ou remettre le son'], ['Molette', 'zoom'], ['F', 'effets d\'impact'], ['Échap', 'fermer']]
           .map(([a, b]) => `<b>${a}</b><span>${b}</span>`).join('')}</div>` },
     ];
@@ -993,7 +1025,7 @@ export class Windows {
           { k: 'juice', nom: 'Effets d\'impact (tremblement, gel d\'image)', aide: 'Touche F', t: 'check' },
         ] },
         { id: 'touches', titre: 'Touches', opts: [], html: `<div class="keys">${[['Clic gauche', 'aller / attaquer (maintenu : continuer)'], ['Maj + clic', 'attaquer sur place'], ['Clic droit', 'sort de la barre (case libre)'],
-          ['& é " \' ( -', 'barre de sorts'], ['Espace', 'déplacement'], ['E', 'potion'], ['S', 'sorts'], ['I', 'inventaire'], ['C', 'caractéristiques'], ['J', 'métiers'],
+          ['& é " \' ( -', 'barre de sorts'], ['Espace', 'déplacement'], ['E', 'potion'], ['S', 'sorts'], ['I', 'inventaire'], ['C', 'caractéristiques'], ['J', 'métiers'], ['B', 'bestiaire'],
           ['O', 'options'], ['M', 'carte du monde (0.2a)'], ['Ctrl+M', 'couper ou remettre le son'], ['Molette', 'zoom'], ['F', 'effets d\'impact'], ['G', 'guide'], ['H', 'Havre-Sac'], ['Échap', 'fermer']]
           .map(([k, d]) => `<b>${k}</b><span>${d}</span>`).join('')}</div>` },
       ] },
@@ -1148,18 +1180,76 @@ export class Windows {
     });
   }
 
+  /** Ouvre le Bestiaire sur un monstre ou un objet (fiche « Où le trouver »). */
+  bestiaire(o: { monstre?: string; objet?: string } = {}) {
+    if (o.monstre) { this.bestType = o.monstre; this.bestObjet = null; }
+    if (o.objet) this.bestObjet = o.objet;
+    this.show('bestiaire');
+  }
+  /** Bestiaire en jeu (maquette « Drops » 1A+1B, 2B+2C, 3A, 4A) : monstres par sous-zone, onglets Sorts / Résistances / Butin ;
+   *  la recherche trouve aussi les objets, avec leur fiche « Où le trouver ». */
+  private renderBestiaire() {
+    const w = this.win!, vus = this.vaincus(), connu = (m: string) => this.toutVoir || (vus[m] ?? 0) > 0;
+    const groupes = groupesBestiaire(), q = this.bestRecherche.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const va = (n: string) => !q || n.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').includes(q);
+    if (!this.bestType || !GAME_DATA.monsters[this.bestType]) this.bestType = groupes.flatMap(g => g.monstres).find(connu) ?? groupes[0]?.monstres[0] ?? '';
+    const ligne = (m: string) => {
+      const d = GAME_DATA.monsters[m], ok = connu(m), L = LOOKS[d.look];
+      return `<div class="bm ${ok ? '' : 'inc'} ${d.boss ? 'boss' : d.elite ? 'elite' : ''} ${!this.bestObjet && m === this.bestType ? 'on' : ''}" data-bm="${m}"><canvas data-atlas="${ok ? L?.atlas ?? '' : ''}" width="68" height="68"></canvas><span>${ok ? escB(d.name) : '???'}</span><small>${vus[m] ?? 0}</small></div>`;
+    };
+    const liste = groupes.map(g => {
+      const ms = g.monstres.filter(m => va(connu(m) ? GAME_DATA.monsters[m].name : ''));
+      return ms.length ? `<div class="bh">${escB(g.zone)} · ${escB(g.nom)} · niv. ${g.niveau}</div>${ms.map(ligne).join('')}` : '';
+    }).join('');
+    // objets (1B) : ceux qui ont au moins une source dans le jeu
+    const objets = q.length >= 2 ? [...Object.entries(ITEMS.resources), ...Object.entries(ITEMS.equipment)].filter(([, d]) => va(d.name)).slice(0, 30)
+      .map(([id]) => `<div class="bm ${this.bestObjet === id ? 'on' : ''}" data-bo="${id}">${iconeObjet(id)}<span>${escB(nomObjet(id))}</span><small></small></div>`).join('') : '';
+    let fiche = '';
+    if (this.bestObjet) {
+      const id = this.bestObjet, r = ITEMS.resources[id], e = ITEMS.equipment[id];
+      fiche = `<div class="tete">${iconeObjet(id)}<div><h3>${escB(nomObjet(id))}</h3><div class="sub">${e ? `Équipement · ${e.slot}` : r?.soin ? 'Consommable' : 'Ressource'} · niveau ${(r ?? e)?.level ?? '?'}</div></div></div>${sourcesHtml(id)}`;
+    } else if (this.bestType) {
+      const m = this.bestType, d = GAME_DATA.monsters[m], n = vus[m] ?? 0, L = LOOKS[d.look];
+      if (!connu(m)) fiche = `<div class="tete"><canvas width="220" height="220"></canvas><div><h3>???</h3><div class="sub">Pas encore croisé. Bats-en un pour remplir sa fiche.</div></div></div>`;
+      else {
+        const niv = niveauHorsPartie(m, GAME_DATA), ctx = this.world.contexteButin(m, rangDe(d), niv);
+        const pal = (k: keyof typeof PALIERS, txt: string) => this.toutVoir || n >= PALIERS[k] ? txt : `<span class="lock">à ${PALIERS[k]} vaincus (${n} pour l'instant)</span>`;
+        const res = Object.entries(d.res ?? {}).map(([el, v]) => `<div><span>${el[0].toUpperCase()}${el.slice(1)}</span><b>${v} %</b></div>`).join('');
+        const sorts = (d.spells ?? []).map(x => `<div><span>${escB(x.name)}</span><b>${x.po[1] > 1 ? `portée ${x.po[1]}` : 'au contact'}</b></div>`).join('');
+        const corps = this.bestOnglet === 'butin' ? butinMonstre(ctx)
+          : this.bestOnglet === 'sorts' ? `<div class="kv">${pal('sorts', sorts || '<div><span>Aucun sort</span></div>')}</div>`
+          : `<div class="kv">${pal('res', res || '<div><span>Aucune résistance</span></div>')}</div>`;
+        fiche = `<div class="tete"><canvas data-atlas="${L?.atlas ?? ''}" width="220" height="220"></canvas><div><h3>${escB(d.name)}</h3>
+          <div class="sub">${d.boss ? 'Boss · ' : d.elite ? 'Élite · ' : ''}niveau ${niv} · ${n} vaincu${n > 1 ? 's' : ''}${this.toutVoir ? ' · partie de test : tout est visible' : ''}</div>
+          <div class="ongl">${([['sorts', 'Sorts'], ['res', 'Résistances'], ['butin', 'Butin']] as const).map(([k, t]) => `<button type="button" data-bon="${k}" class="${this.bestOnglet === k ? 'on' : ''}">${t}</button>`).join('')}</div></div></div>${corps}`;
+      }
+    }
+    const tous = groupes.flatMap(g => g.monstres), nb = tous.filter(m => (vus[m] ?? 0) > 0).length;
+    w.innerHTML = `${this.title('Bestiaire', 'bestiary')}<div class="bes">
+      <div class="bl"><input placeholder="Monstre ou objet..." value="${escB(this.bestRecherche)}" data-bsearch><div class="sub" style="margin:4px 2px">${nb} / ${tous.length} monstres croisés</div>
+        ${objets ? `<div class="bh">Objets</div>${objets}` : ''}${liste || (objets ? '' : '<div class="sub">Rien de ce nom.</div>')}</div>
+      <div class="bd">${fiche}</div></div>`;
+    dessinerPortraits(w);
+    const inp = w.querySelector<HTMLInputElement>('[data-bsearch]')!;
+    inp.addEventListener('input', () => { this.bestRecherche = inp.value; this.render(); const m = this.win!.querySelector<HTMLInputElement>('[data-bsearch]')!; m.focus(); m.setSelectionRange(m.value.length, m.value.length); });
+    inp.addEventListener('keydown', e => e.stopPropagation());
+    w.querySelectorAll<HTMLElement>('[data-bm]').forEach(e => e.addEventListener('click', () => { this.bestType = e.dataset.bm!; this.bestObjet = null; this.render(); }));
+    w.querySelectorAll<HTMLElement>('[data-bo],[data-bobj]').forEach(e => e.addEventListener('click', () => { this.bestObjet = e.dataset.bo ?? e.dataset.bobj!; this.render(); }));
+    w.querySelectorAll<HTMLElement>('[data-bmon]').forEach(e => e.addEventListener('click', () => { this.bestType = e.dataset.bmon!; this.bestObjet = null; this.bestOnglet = 'butin'; this.render(); }));
+    w.querySelectorAll<HTMLElement>('[data-bon]').forEach(e => e.addEventListener('click', () => { this.bestOnglet = e.dataset.bon as 'butin' | 'sorts' | 'res'; this.render(); }));
+  }
+
   private changed() { this.hideTip(); this.render(); this.onChange(); }
   /** Bulle d'une ressource : consommable, clé de donjon, Potion de Rappel ou Pépite. */
-  private resTip(r: ResourceDef) {
+  private resTip(r: ResourceDef, id: string) {
     const sorte = r.soin || r.rappel ? 'Consommable' : r.cle ? 'Clé de donjon' : r.pepite ? 'Monnaie du Havre-Sac' : 'Ressource';
     const effet = r.soin ? `<div class="up">+${r.soin} PV</div><div class="hint">Clic droit : manger</div>`
       : r.rappel ? `<div class="up">Retour au dernier Zaap (${this.world.checkpointName})</div><div class="hint">Clic droit : boire</div>`
       : r.cle ? `<div class="up">Ouvre l'entrée : ${r.cle}</div><div class="hint">Prise en entrant dans le donjon</div>`
       : r.pepite ? '<div class="hint">Recycle tes objets chez Kerubim Crépin, dans ton Havre-Sac (H), et dépense-les chez ses voisins.</div>' : '';
-    const id = Object.keys(ITEMS.resources).find(k => ITEMS.resources[k] === r);
-    const sert = id ? recettesAvec(ITEMS, id).map(x => ITEMS.resources[x.result]?.name).filter(Boolean) : [];
+    const sert = recettesAvec(ITEMS, id).map(x => ITEMS.resources[x.result]?.name).filter(Boolean);
     const sertA = sert.length ? `<div class="ou"><div class="hd">Sert à</div><div>${sert.slice(0, 5).join(', ')}${sert.length > 5 ? '…' : ''}</div></div>${!r.soin && !r.rappel ? '<div class="hint">Clic droit : recettes qui l\'utilisent</div>' : ''}` : '';
-    return `<h4>${r.name}</h4><div class="sub">${sorte} · niveau ${r.level}</div>${effet}${sertA}`;
+    return `<h4>${r.name}</h4><div class="sub">${sorte} · niveau ${r.level}</div>${effet}${sertA}${sourcesHtml(id, 3)}`;   // 1B : où le trouver
   }
 
   /** Emp, le Méryde du Recyclage (maquette 0.2, 7A 8A+8B+8C 9A+9B) : recyclage contre des Pépites, en lot ou objet par objet,
@@ -1228,7 +1318,7 @@ export class Windows {
     w.querySelectorAll<HTMLElement>('[data-rres]').forEach(e => e.addEventListener('click', () => { this.world.recycleRessource(e.dataset.rres!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-rid]').forEach(e => {
       const r = ITEMS.resources[e.dataset.rid!];
-      e.addEventListener('mouseenter', ev => { this.tip.innerHTML = this.resTip(r); this.tip.style.display = 'block'; this.moveTip(ev); });
+      e.addEventListener('mouseenter', ev => { this.tip.innerHTML = this.resTip(r, e.dataset.rid!); this.tip.style.display = 'block'; this.moveTip(ev); });
       e.addEventListener('mousemove', ev => this.moveTip(ev));
       e.addEventListener('mouseleave', () => this.hideTip());
     });
@@ -1399,7 +1489,7 @@ export class Windows {
     } else if (p.equipment.familier && !worn) fam = `<div class="hint">Alt + clic : le donner à manger au familier (+${FAMILIER_XP.objet(d.level, it.rarity)} XP)</div>`;
     this.tip.innerHTML = `<h4 style="color:${RARITY_COLORS[it.rarity]}">${d.name}</h4>
       <div class="sub">${d.familier ? 'Familier' : `${RARITY_NAMES[it.rarity]} · ${d.weapon?.type ?? SLOT_NAMES[(slot ?? 'amulette') as EquipSlot]}`} · niveau ${d.level}</div>
-      ${weapon}${stats}${fam}${leg}${set}${lvl}${cmp}
+      ${weapon}${stats}${fam}${leg}${set}${lvl}${cmp}${sourcesHtml(it.id, 3)}
       <div class="hint">${worn ? 'Clic droit : retirer' : it.cadenas ? 'Sous cadenas : jamais recyclé · Ctrl + clic : l\'ôter' : `Clic droit : équiper · Maj + clic : recycler (${recycleValue(d, it)} Pépites) · Ctrl + clic : cadenas`}</div>`;
     this.tip.style.display = 'block'; this.moveTip(ev);
   }

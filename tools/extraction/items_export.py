@@ -6,6 +6,7 @@ python items_export.py <donnees> <icones_item_1x> <monsters.json du jeu> <src/da
 Garde : les équipements jusqu'au niveau max (25 par défaut) avec leurs lignes de caractéristiques (min, max),
 leurs panoplies (bonus par nombre d'objets portés), et les ressources lâchées par les monstres du jeu (choix 24E)."""
 import ast, json, os, re, shutil, sys
+from butin_conditions import condition
 from i18n import load as load_i18n
 
 donnees, icons, game_monsters, out, icon_out = sys.argv[1:6]
@@ -96,7 +97,10 @@ for key, gm in game.items():
     for d in L(dm['drops']):
         o = I.get(int(d['objectId']))
         if not o: continue
+        if float(d['percentDropForGrade1']) <= 0: continue   # 6B : jamais lâché
         e = {'item': str(d['objectId']), 'chance': round(float(d['percentDropForGrade1']), 2)}
+        c = condition(d.get('criterions') or '')   # 6B : quête ou événement, ne tombe pas en temps normal
+        if c: e['cond'] = c
         # viandes : « Pj>41,N&CU>0 » = métier Chasseur au-dessus du niveau N et une arme de chasse en main
         mj = re.search(r'Pj>(\d+),(\d+)', d.get('criterions') or '')
         if mj: e['metier'] = {'id': int(mj.group(1)), 'min': int(mj.group(2)) + 1}; e['chasse'] = 'CU>0' in d['criterions']
