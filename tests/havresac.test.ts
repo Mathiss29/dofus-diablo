@@ -29,8 +29,8 @@ describe('Havre-Sac (maquette Hub : 1A 2A+2C 3A 4A 7A 8A 9A)', () => {
   });
   it('les PNJ de service vivent au Bastion (Ville 5A) ; Kerubim, Otomaï et Goultard emménagent après la première visite d\'Astrub (3A)', () => {
     const ids = (w: World) => w.quetes!.pnjs.map(p => p.id).sort();
-    expect(ids(monde('bastion'))).toEqual(['bouillotte', 'tissebelle']);
-    expect(ids(monde('bastion', { zonesVues: ['incarnam', 'astrub'] }))).toEqual(['bouillotte', 'goultard', 'kerubim', 'otomai', 'tissebelle']);
+    expect(ids(monde('bastion'))).toEqual(['bouillotte', 'forgemage', 'tissebelle']);
+    expect(ids(monde('bastion', { zonesVues: ['incarnam', 'astrub'] }))).toEqual(['bouillotte', 'forgemage', 'goultard', 'kerubim', 'otomai', 'tissebelle']);
     // Ville 6B : Kerubim garde un guichet de recyclage au Havre-Sac
     expect(ids(monde('havresac'))).toEqual([]);
     expect(ids(monde('havresac', { zonesVues: ['astrub'] }))).toEqual(['kerubim_guichet']);

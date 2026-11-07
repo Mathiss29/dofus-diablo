@@ -444,6 +444,7 @@ export class ZoneScene extends Phaser.Scene {
     const reglages = () => ({ ...REGLAGES_TEST, ...this.world.test });
     return {
       envoyer: (c: CommandeTest) => { this.cmdTest.push(c); },
+      forge: () => this.windows?.ouvrirForge(),
       // 4B : même perso, autre classe (les sorts, la barre et les variantes sont ceux de la nouvelle classe)
       classe: (id: string) => {
         if (!this.test) return;
@@ -845,11 +846,18 @@ export class ZoneScene extends Phaser.Scene {
         case 'eat': this.windows?.refresh(); break;
         // PNJ du Havre-Sac (maquette Hub 4A) : la réponse « service » de son dialogue ouvre sa fenêtre (recycler, boutique, apparats, miroir)
         case 'service': if (this.windows && (e.service === 'recycler' || e.service === 'boutique' || e.service === 'apparat')) { this.windows.empPnj = e.pnj; this.windows.empOnglet = e.service; this.windows.show('emp'); }
+          else if (this.windows && e.service === 'forgemagie') this.windows.ouvrirForge();
           else if (this.windows && e.service === 'garde-robe') this.windows.show('garde');
           break;
         case 'incantation': this.hud.toast('Havre-Sac : incantation…'); break;
         case 'arche': this.windows?.show('zaap'); break;
         case 'emmenage': this.hud.toast(`${e.noms.join(', ')} ${e.noms.length > 1 ? 'ont emménagé' : 'a emménagé'} au Bastion des Douze (Zaap ou Potion de Rappel)`); break;
+        case 'forge': this.windows?.noteForgeEvt(e); break;
+        case 'brisage': { const n = Object.values(e.runes).reduce((a, b) => a + b, 0);
+          this.hud.loot(`${n} rune${n > 1 ? 's' : ''} (${e.n} objet${e.n > 1 ? 's' : ''} brisé${e.n > 1 ? 's' : ''})`, '#b77cf0');
+          this.windows?.noteForge({ t: `${e.n > 1 ? `${e.n} objets brisés` : 'Objet brisé'} : ${Object.entries(e.runes).map(([id, k]) => `${k} ${ITEMS.resources[id]?.name ?? id}`).join(', ') || 'aucune rune'}`, c: 'br' }); break; }
+        case 'fusion': this.windows?.noteForge({ t: `Fusion : ${e.n} ${ITEMS.resources[e.vers]?.name ?? e.vers}`, c: 'br' }); break;
+        case 'viser': this.windows?.noteForge({ t: e.essais ? `Le forgemage a posé ${e.essais} rune${e.essais > 1 ? 's' : ''} (${e.kamas} kamas) : ${e.atteint ? 'objectif atteint' : 'objectif pas atteint (plus de runes ou de kamas)'}` : 'Aucune rune possible pour cet objectif', c: e.atteint ? 'ok' : 'ne' }); break;
         case 'recycle': this.hud.loot(`+${e.pepites} Pépite${e.pepites > 1 ? 's' : ''}${e.n > 1 ? ` (${e.n} recyclés)` : ''}`, '#b9e54b'); break;
         case 'achat': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Objet'} acheté (−${e.prix} Pépites)`, '#b9e54b'); break;
         case 'rappel': this.hud.banner(`Rappel\n${e.name}`, 1200); this.snapCam = true; break;

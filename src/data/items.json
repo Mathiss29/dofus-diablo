@@ -10650,6 +10650,546 @@
    "name": "Edelweiss",
    "icon": 35191,
    "level": 100
+  },
+  "1519": {
+   "name": "Rune Fo",
+   "icon": 78043,
+   "level": 1,
+   "rune": true
+  },
+  "1521": {
+   "name": "Rune Sa",
+   "icon": 78049,
+   "level": 15,
+   "rune": true
+  },
+  "1522": {
+   "name": "Rune Ine",
+   "icon": 78037,
+   "level": 1,
+   "rune": true
+  },
+  "1523": {
+   "name": "Rune Vi",
+   "icon": 78052,
+   "level": 1,
+   "rune": true
+  },
+  "1524": {
+   "name": "Rune Age",
+   "icon": 78046,
+   "level": 1,
+   "rune": true
+  },
+  "1525": {
+   "name": "Rune Cha",
+   "icon": 78040,
+   "level": 1,
+   "rune": true
+  },
+  "1545": {
+   "name": "Rune Pa Fo",
+   "icon": 78044,
+   "level": 5,
+   "rune": true
+  },
+  "1546": {
+   "name": "Rune Pa Sa",
+   "icon": 78050,
+   "level": 20,
+   "rune": true
+  },
+  "1547": {
+   "name": "Rune Pa Ine",
+   "icon": 78038,
+   "level": 5,
+   "rune": true
+  },
+  "1548": {
+   "name": "Rune Pa Vi",
+   "icon": 78053,
+   "level": 5,
+   "rune": true
+  },
+  "1549": {
+   "name": "Rune Pa Age",
+   "icon": 78047,
+   "level": 5,
+   "rune": true
+  },
+  "1550": {
+   "name": "Rune Pa Cha",
+   "icon": 78041,
+   "level": 5,
+   "rune": true
+  },
+  "1551": {
+   "name": "Rune Ra Fo",
+   "icon": 78045,
+   "level": 10,
+   "rune": true
+  },
+  "1552": {
+   "name": "Rune Ra Sa",
+   "icon": 78051,
+   "level": 25,
+   "rune": true
+  },
+  "1553": {
+   "name": "Rune Ra Ine",
+   "icon": 78039,
+   "level": 10,
+   "rune": true
+  },
+  "1554": {
+   "name": "Rune Ra Vi",
+   "icon": 78054,
+   "level": 10,
+   "rune": true
+  },
+  "1555": {
+   "name": "Rune Ra Age",
+   "icon": 78048,
+   "level": 10,
+   "rune": true
+  },
+  "1556": {
+   "name": "Rune Ra Cha",
+   "icon": 78042,
+   "level": 10,
+   "rune": true
+  },
+  "1557": {
+   "name": "Rune Ga Pa",
+   "icon": 78055,
+   "level": 100,
+   "rune": true
+  },
+  "1558": {
+   "name": "Rune Ga Pme",
+   "icon": 78056,
+   "level": 95,
+   "rune": true
+  },
+  "7433": {
+   "name": "Rune Cri",
+   "icon": 78014,
+   "level": 80,
+   "rune": true
+  },
+  "7434": {
+   "name": "Rune So",
+   "icon": 78013,
+   "level": 80,
+   "rune": true
+  },
+  "7435": {
+   "name": "Rune Do",
+   "icon": 78015,
+   "level": 50,
+   "rune": true
+  },
+  "7436": {
+   "name": "Rune Pui",
+   "icon": 78016,
+   "level": 15,
+   "rune": true
+  },
+  "7438": {
+   "name": "Rune Po",
+   "icon": 78018,
+   "level": 90,
+   "rune": true
+  },
+  "7442": {
+   "name": "Rune Invo",
+   "icon": 78019,
+   "level": 85,
+   "rune": true
+  },
+  "7443": {
+   "name": "Rune Pod",
+   "icon": 78020,
+   "level": 1,
+   "rune": true
+  },
+  "7444": {
+   "name": "Rune Pa Pod",
+   "icon": 78021,
+   "level": 5,
+   "rune": true
+  },
+  "7445": {
+   "name": "Rune Ra Pod",
+   "icon": 78022,
+   "level": 10,
+   "rune": true
+  },
+  "7448": {
+   "name": "Rune Ini",
+   "icon": 78025,
+   "level": 1,
+   "rune": true
+  },
+  "7449": {
+   "name": "Rune Pa Ini",
+   "icon": 78026,
+   "level": 5,
+   "rune": true
+  },
+  "7450": {
+   "name": "Rune Ra Ini",
+   "icon": 78027,
+   "level": 10,
+   "rune": true
+  },
+  "7451": {
+   "name": "Rune Prospe",
+   "icon": 78036,
+   "level": 15,
+   "rune": true
+  },
+  "7452": {
+   "name": "Rune Ré Feu",
+   "icon": 78028,
+   "level": 30,
+   "rune": true
+  },
+  "7453": {
+   "name": "Rune Ré Air",
+   "icon": 78032,
+   "level": 30,
+   "rune": true
+  },
+  "7454": {
+   "name": "Rune Ré Eau",
+   "icon": 78030,
+   "level": 30,
+   "rune": true
+  },
+  "7455": {
+   "name": "Rune Ré Terre",
+   "icon": 78034,
+   "level": 30,
+   "rune": true
+  },
+  "7456": {
+   "name": "Rune Ré Neutre",
+   "icon": 78057,
+   "level": 30,
+   "rune": true
+  },
+  "7457": {
+   "name": "Rune Ré Per Feu",
+   "icon": 78029,
+   "level": 75,
+   "rune": true
+  },
+  "7458": {
+   "name": "Rune Ré Per Air",
+   "icon": 78033,
+   "level": 75,
+   "rune": true
+  },
+  "7459": {
+   "name": "Rune Ré Per Terre",
+   "icon": 78035,
+   "level": 75,
+   "rune": true
+  },
+  "7460": {
+   "name": "Rune Ré Per Neutre",
+   "icon": 78058,
+   "level": 75,
+   "rune": true
+  },
+  "7560": {
+   "name": "Rune Ré Per Eau",
+   "icon": 78031,
+   "level": 75,
+   "rune": true
+  },
+  "10618": {
+   "name": "Rune Pa Pui",
+   "icon": 78269,
+   "level": 20,
+   "rune": true
+  },
+  "10619": {
+   "name": "Rune Ra Pui",
+   "icon": 78270,
+   "level": 25,
+   "rune": true
+  },
+  "10662": {
+   "name": "Rune Pa Prospe",
+   "icon": 78271,
+   "level": 20,
+   "rune": true
+  },
+  "11637": {
+   "name": "Rune Fui",
+   "icon": 78076,
+   "level": 55,
+   "rune": true
+  },
+  "11638": {
+   "name": "Rune Pa Fui",
+   "icon": 78075,
+   "level": 60,
+   "rune": true
+  },
+  "11639": {
+   "name": "Rune Tac",
+   "icon": 78077,
+   "level": 55,
+   "rune": true
+  },
+  "11640": {
+   "name": "Rune Pa Tac",
+   "icon": 78078,
+   "level": 60,
+   "rune": true
+  },
+  "11641": {
+   "name": "Rune Ré Pa",
+   "icon": 78083,
+   "level": 65,
+   "rune": true
+  },
+  "11642": {
+   "name": "Rune Pa Ré Pa",
+   "icon": 78084,
+   "level": 70,
+   "rune": true
+  },
+  "11643": {
+   "name": "Rune Ré Pme",
+   "icon": 78085,
+   "level": 65,
+   "rune": true
+  },
+  "11644": {
+   "name": "Rune Pa Ré Pme",
+   "icon": 78086,
+   "level": 70,
+   "rune": true
+  },
+  "11645": {
+   "name": "Rune Ret Pa",
+   "icon": 78087,
+   "level": 65,
+   "rune": true
+  },
+  "11646": {
+   "name": "Rune Pa Ret Pa",
+   "icon": 78088,
+   "level": 70,
+   "rune": true
+  },
+  "11647": {
+   "name": "Rune Ret Pme",
+   "icon": 78089,
+   "level": 65,
+   "rune": true
+  },
+  "11648": {
+   "name": "Rune Pa Ret Pme",
+   "icon": 78090,
+   "level": 70,
+   "rune": true
+  },
+  "11649": {
+   "name": "Rune Do Pou",
+   "icon": 78081,
+   "level": 40,
+   "rune": true
+  },
+  "11650": {
+   "name": "Rune Pa Do Pou",
+   "icon": 78082,
+   "level": 45,
+   "rune": true
+  },
+  "11651": {
+   "name": "Rune Ré Pou",
+   "icon": 78079,
+   "level": 30,
+   "rune": true
+  },
+  "11652": {
+   "name": "Rune Pa Ré Pou",
+   "icon": 78080,
+   "level": 35,
+   "rune": true
+  },
+  "11653": {
+   "name": "Rune Do Cri",
+   "icon": 78073,
+   "level": 40,
+   "rune": true
+  },
+  "11654": {
+   "name": "Rune Pa Do Cri",
+   "icon": 78074,
+   "level": 45,
+   "rune": true
+  },
+  "11655": {
+   "name": "Rune Ré Cri",
+   "icon": 78071,
+   "level": 30,
+   "rune": true
+  },
+  "11656": {
+   "name": "Rune Pa Ré Cri",
+   "icon": 78072,
+   "level": 35,
+   "rune": true
+  },
+  "11657": {
+   "name": "Rune Do Terre",
+   "icon": 78065,
+   "level": 40,
+   "rune": true
+  },
+  "11658": {
+   "name": "Rune Pa Do Terre",
+   "icon": 78066,
+   "level": 45,
+   "rune": true
+  },
+  "11659": {
+   "name": "Rune Do Feu",
+   "icon": 78063,
+   "level": 40,
+   "rune": true
+  },
+  "11660": {
+   "name": "Rune Pa Do Feu",
+   "icon": 78064,
+   "level": 45,
+   "rune": true
+  },
+  "11661": {
+   "name": "Rune Do Eau",
+   "icon": 78061,
+   "level": 40,
+   "rune": true
+  },
+  "11662": {
+   "name": "Rune Pa Do Eau",
+   "icon": 78062,
+   "level": 45,
+   "rune": true
+  },
+  "11663": {
+   "name": "Rune Do Air",
+   "icon": 78067,
+   "level": 40,
+   "rune": true
+  },
+  "11664": {
+   "name": "Rune Pa Do Air",
+   "icon": 78068,
+   "level": 45,
+   "rune": true
+  },
+  "11665": {
+   "name": "Rune Do Neutre",
+   "icon": 78069,
+   "level": 40,
+   "rune": true
+  },
+  "11666": {
+   "name": "Rune Pa Do Neutre",
+   "icon": 78070,
+   "level": 45,
+   "rune": true
+  },
+  "19337": {
+   "name": "Rune Pa So",
+   "icon": 78099,
+   "level": 90,
+   "rune": true
+  },
+  "19338": {
+   "name": "Rune Pa Ré Air",
+   "icon": 78100,
+   "level": 35,
+   "rune": true
+  },
+  "19339": {
+   "name": "Rune Pa Ré Eau",
+   "icon": 78101,
+   "level": 35,
+   "rune": true
+  },
+  "19340": {
+   "name": "Rune Pa Ré Feu",
+   "icon": 78102,
+   "level": 35,
+   "rune": true
+  },
+  "19341": {
+   "name": "Rune Pa Ré Neutre",
+   "icon": 78103,
+   "level": 35,
+   "rune": true
+  },
+  "19342": {
+   "name": "Rune Pa Ré Terre",
+   "icon": 78104,
+   "level": 35,
+   "rune": true
+  },
+  "29683": {
+   "name": "Rune Ra Ré Pou",
+   "icon": 78272,
+   "level": 40,
+   "rune": true
+  },
+  "29684": {
+   "name": "Rune Ra Do Pou",
+   "icon": 78273,
+   "level": 50,
+   "rune": true
+  },
+  "30695": {
+   "name": "Rune Ra Ré Terre",
+   "icon": 78294,
+   "level": 40,
+   "rune": true
+  },
+  "30696": {
+   "name": "Rune Ra Ré Neutre",
+   "icon": 78293,
+   "level": 40,
+   "rune": true
+  },
+  "30697": {
+   "name": "Rune Ra Ré Feu",
+   "icon": 78295,
+   "level": 40,
+   "rune": true
+  },
+  "30698": {
+   "name": "Rune Ra Ré Eau",
+   "icon": 78296,
+   "level": 40,
+   "rune": true
+  },
+  "30699": {
+   "name": "Rune Ra Ré Cri",
+   "icon": 78292,
+   "level": 40,
+   "rune": true
+  },
+  "30700": {
+   "name": "Rune Ra Ré Air",
+   "icon": 78297,
+   "level": 40,
+   "rune": true
   }
  },
  "drops": {

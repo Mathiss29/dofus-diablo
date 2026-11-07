@@ -1,3 +1,4 @@
+import { RUNES } from '../sim/forgemagie';
 import { GAME_DATA, ITEMS } from '../sim/data';
 import type { EtatJoueur } from '../sim/sauvegarde';
 import { RARITY_COLORS, RARITY_NAMES, type Rarity } from '../sim/items';
@@ -61,6 +62,8 @@ export interface ActionsTest {
   /** Le prochain clic en jeu pose ces monstres (7A, 7D). */
   poser(p: { type: string; n: number; rang: RangTest; mannequin: boolean } | null): void;
   nouveau(): void;
+  /** Forgemagie (maquette « Forgemagie » 10C) : ouvre la fenêtre du forgemage, où qu'on soit. */
+  forge(): void;
 }
 
 const sansAccent = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
@@ -230,6 +233,7 @@ export class PanneauTest {
     this.lierObjets();
     tous('[data-rar]', b => { this.rarete = b.dataset.rar as Rarity; this.dessiner(); });
     tous('[data-tenue]', () => this.actions.envoyer({ k: 'tenue', rarete: this.rarete }));
+    tous('[data-forge]', () => this.actions.forge());
     tous('[data-kamas]', b => this.actions.envoyer({ k: 'kamas', n: +b.dataset.kamas! }));
     tous('[data-res]', b => { const [id, n] = b.dataset.res!.split(':'); for (const i of id.split(',')) this.actions.envoyer({ k: 'objet', id: i, rarete: 'commun', n: +n }); });
     // Monstres
@@ -329,6 +333,11 @@ export class PanneauTest {
     const cles = Object.entries(ITEMS.resources).filter(([, d]) => d.cle).map(([id]) => id).join(',');
     const rappel = Object.entries(ITEMS.resources).filter(([, d]) => d.rappel).map(([id]) => id).join(',');
     const pepite = Object.entries(ITEMS.resources).filter(([, d]) => d.pepite).map(([id]) => id).join(',');
+    // forgemagie (10C) : la plus petite rune de chaque caractéristique, et les autres paliers
+    const parStat = new Map<string, string[]>();
+    for (const id of Object.keys(RUNES)) parStat.set(RUNES[id].stat, [...(parStat.get(RUNES[id].stat) ?? []), id]);
+    const tri = [...parStat.values()].map(l => l.sort((a, b) => RUNES[a].val - RUNES[b].val));
+    const petites = tri.map(l => l[0]).join(','), grosses = tri.flatMap(l => l.slice(1)).join(',');
     return `<h4>Rareté des équipements</h4>
       <div class="rar">${RARETES_TEST.map(r => `<button type="button" data-rar="${r}" class="${this.rarete === r ? 'on' : ''}" style="color:${RARITY_COLORS[r]}">${RARITY_NAMES[r]}</button>`).join('')}</div>
       <button type="button" class="b" data-tenue>Tenue complète du niveau (${RARITY_NAMES[this.rarete]})</button>
@@ -342,7 +351,14 @@ export class PanneauTest {
         <button type="button" class="b g" data-res="${pepite}:500">+500 Pépites</button>
         <button type="button" class="b g" data-res="${cles}:3">Clés de donjon ×3</button>
         <button type="button" class="b g" data-res="${rappel}:10">Potions de Rappel ×10</button>
-      </div>`;
+      </div>
+      <h4>Forgemagie</h4>
+      <div class="l" style="flex-wrap:wrap;justify-content:flex-start">
+        <button type="button" class="b" data-forge>Ouvrir la forgemagie</button>
+        <button type="button" class="b g" data-res="${petites}:30">Petites runes ×30</button>
+        <button type="button" class="b g" data-res="${grosses}:5">Runes Pa et Ra ×5</button>
+      </div>
+      <span class="note">Le forgemage s'ouvre ici avant d'avoir sa place au Bastion des Douze : pose des runes, brise des objets, règle les chances en jouant.</span>`;
   }
 
   private static monstres() {

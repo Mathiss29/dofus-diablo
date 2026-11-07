@@ -144,7 +144,8 @@
           "Vraie interface des métiers : la fenêtre Métiers (J) range tes métiers à gauche avec leur niveau, et montre à droite les recettes, les récoltes et le prochain palier. Dans un atelier, clique une machine (four, scie, alambic…) pour ouvrir l'Artisanat : choisis la recette, la quantité, et tout se fabrique en une seconde.",
           "Métiers : survole un ingrédient pour savoir où le trouver (récolte, monstres et leur chance, boutique) et clique pour le voir sur la carte. Épingle une recette pour suivre ses ingrédients à l'écran ; clic droit sur une ressource du sac pour voir les recettes qui l'utilisent.",
           "Bestiaire en jeu (touche B) : chaque monstre d'Incarnam et d'Astrub, rangé par sous-zone, avec un onglet Butin qui donne ta vraie chance (Prospection comprise) et « 1 sur N ». Cherche un objet pour voir où le trouver ; l'infobulle des objets le dit aussi.",
-          "Options : nouveau curseur « Monstres » pour régler les cris à part des sorts."
+          "Options : nouveau curseur « Monstres » pour régler les cris à part des sorts.",
+          "Forgemagie chez Malek, le forgemage du Bastion des Douze : brise tes objets en runes officielles (Rune Fo, Pa Fo, Ra Fo…), fusionne-les, puis pose-les sur ton équipement avec les vraies règles de Dofus (succès critique, neutre, échec et puits). Il peut aussi viser une valeur pour toi, contre une commission en kamas."
         ],
         "Le monde": [
           "Donjons repensés : chaque donjon est maintenant une seule grande arène, construite avec les vraies pièces de Dofus (la Grange est une cour ronde avec ses meules, la Crypte une salle d'arches et de sarcophages, le Château une plage entre les remparts de sable…). Les monstres arrivent en 6 vagues par trois entrées marquées d'un cercle rouge, puis le boss descend de son estrade.",
@@ -178,7 +179,8 @@
           "Les cartes sont rangées par bâtiment, et un robot photographie chaque carte d'Astrub et d'Incarnam après chaque export pour repérer les doublons et les images manquantes.",
           "Discord rangé pour le test ouvert : #🧭・commencer-ici (lien, touches, où aller), #🤝・entraide, et des forums #🐛・bugs et #💡・idées avec étiquettes (« Corrigé », « Retenue ») et vote 👍. Le Journal du jour arrive toujours dans #📜・journal.",
           "Outils de test (F1) : onglet Placement pour poser à la main les groupes de chaque carte, régler leur taille et marquer le repaire de l'élite.",
-          "Le robot Discord sait publier des sondages. Le premier arrive bientôt dans #📣・annonces : quelle classe voulez-vous après l'Osamodas ? Les 16 autres classes, avec leurs symboles officiels, puis une finale des 5 premières."
+          "Le robot Discord sait publier des sondages. Le premier arrive bientôt dans #📣・annonces : quelle classe voulez-vous après l'Osamodas ? Les 16 autres classes, avec leurs symboles officiels, puis une finale des 5 premières.",
+          "Partie de test : F1 › Objets › Forgemagie ouvre la fenêtre du forgemage et donne des runes, pour régler les chances en jouant."
         ]
       }
     }
