@@ -5,6 +5,13 @@ import { REGLAGES_TEST, RARETES_TEST, type CommandeTest, type RangTest, type Reg
 import type { World } from '../sim/world';
 import { iconHtml } from './icons';
 import { LOOKS } from './looks';
+import { anomaliesButin, lieuxDe, niveauHorsPartie, rangDe, tableButin, tirerButin, type Rang } from '../sim/butin';
+import { Rng } from '../sim/math';
+import { groupesBestiaire, nomObjet, pct, unSur } from './butinVue';
+
+/** Une ligne du tableau de butin de l'outil de test (maquette « Drops » 1C, 8A+8B+8C). */
+interface LigneDev { m: string; nom: string; rang: Rang; niv: number; zone: string; item: string; objet: string; eq: boolean; off: number; reel: number; cond: string }
+type TriDev = 'nom' | 'niv' | 'objet' | 'off' | 'reel';
 
 /** Partie de test (maquette « Test : », 1B 2B) : on y entre par diablofus.com/#test. Le perso de test a son emplacement à lui
  *  dans le navigateur, jamais mélangé avec les 3 vrais persos ; rien n'y compte pour le compte (succès, carnet, bestiaire : 10A). */
@@ -57,8 +64,8 @@ export interface ActionsTest {
 
 const sansAccent = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 const esc = (s: string) => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
-type Onglet = 'perso' | 'aller' | 'objets' | 'monstres' | 'aides';
-const ONGLETS: [Onglet, string][] = [['perso', 'Perso'], ['aller', 'Aller à'], ['objets', 'Objets'], ['monstres', 'Monstres'], ['aides', 'Aides']];
+type Onglet = 'perso' | 'aller' | 'objets' | 'monstres' | 'butin' | 'aides';
+const ONGLETS: [Onglet, string][] = [['perso', 'Perso'], ['aller', 'Aller à'], ['objets', 'Objets'], ['monstres', 'Monstres'], ['butin', 'Butin'], ['aides', 'Aides']];
 
 const CSS = `
 #ptest-badge{position:fixed;bottom:118px;left:50%;transform:translateX(-50%);z-index:12;pointer-events:none;background:#f0a83a;color:#1b1206;font:13px Rowdies,Lexend,sans-serif;letter-spacing:.12em;padding:5px 12px;border-radius:3px;box-shadow:0 2px 8px #000a}
@@ -104,6 +111,19 @@ const CSS = `
 #ptest .dps div{background:#0005;border:1px solid #2e2c26;border-radius:3px;padding:6px 2px}
 #ptest .dps b{display:block;font:16px Rowdies,Lexend,sans-serif;color:#ffd34a;font-variant-numeric:tabular-nums}
 #ptest .dps span{font-size:10.5px;color:#9a9580}
+#ptest.large{width:min(860px,calc(100vw - 24px))}
+#ptest .bt{border-collapse:collapse;width:100%;font-size:12px}
+#ptest .bt th,#ptest .bt td{padding:3px 5px;border-bottom:1px solid #3a3830;text-align:left;white-space:nowrap}
+#ptest .bt th{position:sticky;top:0;background:#2a2823;color:#c9c4ab;font-weight:500;cursor:pointer;user-select:none}
+#ptest .bt th.on{color:#b9e54b}
+#ptest .bt td.n,#ptest .bt th.n{text-align:right;font-variant-numeric:tabular-nums}
+#ptest .bt td .ic{width:20px;height:20px;display:inline-block;vertical-align:middle;margin-right:4px}
+#ptest .bt tr.cond td{color:#e0896a}
+#ptest .btab{height:min(46vh,480px);overflow:auto;border:1px solid #2e2c26}
+#ptest .chips{display:flex;flex-wrap:wrap;gap:4px}
+#ptest .sim{display:grid;grid-template-columns:1fr auto;gap:2px 10px;font-size:12px;background:#0004;border:1px solid #2e2c26;border-radius:3px;padding:6px 8px;max-height:30vh;overflow:auto}
+#ptest .sim b{font-variant-numeric:tabular-nums;text-align:right}
+#ptest .ano{background:#3a1a14;border:1px solid #e0605a;border-radius:3px;padding:6px 8px;color:#ffb3a8;font-size:12px}
 #ptest .pose{background:#3a2a10;border:1px solid #f0a83a;border-radius:3px;padding:6px 8px;color:#ffd9a0;font-size:12px}
 `;
 
@@ -126,6 +146,15 @@ export class PanneauTest {
   private coups: { t: number; n: number }[] = [];
   private dernierCoup = 0;
   private majT = 0;
+  /** Onglet Butin (1C, 8A) : recherche, filtres, tri ; simulateur (8B). */
+  private rechercheButin = '';
+  private zoneButin = '';
+  private typeButin: '' | 'eq' | 'res' | 'cond' = '';
+  private triButin: TriDev = 'nom';
+  private triDesc = false;
+  private simMonstre = 'bouftou';
+  private simN = 1000;
+  private simRes = '';
 
   constructor(private world: World, private actions: ActionsTest, private zoneId: string) {
     if (!document.getElementById('ptest-css')) { const st = document.createElement('style'); st.id = 'ptest-css'; st.textContent = CSS; document.head.appendChild(st); }
@@ -143,6 +172,7 @@ export class PanneauTest {
   }
   get ouvert() { return !this.el.hidden; }
   basculer() { this.el.hidden = !this.el.hidden; if (!this.el.hidden) { this.niveau = this.world.player.level; this.dessiner(); } }
+  private lignesDev: LigneDev[] | null = null;
   destroy() { this.el.remove(); this.badge.remove(); }
 
   /** Un coup donné à un monstre (événement « hit » de la simulation). */
@@ -162,6 +192,7 @@ export class PanneauTest {
 
   private dessiner() {
     const p = this.world.player;
+    this.el.classList.toggle('large', this.onglet === 'butin'); this.lignesDev = null;
     this.el.innerHTML = `<div class="tt"><b>Outils de test</b><span>F1 pour fermer</span></div>
       <div class="ong" role="tablist">${ONGLETS.map(([k, n]) => `<button type="button" role="tab" data-o="${k}" class="${this.onglet === k ? 'on' : ''}" aria-selected="${this.onglet === k}">${n}</button>`).join('')}</div>
       <div class="corps">${this[this.onglet]()}</div>`;
@@ -199,6 +230,15 @@ export class PanneauTest {
     tous('[data-poser]', b => { this.pose = { type: this.monstre, n: b.dataset.poser === 'm' ? 1 : this.nombre, rang: b.dataset.poser === 'm' ? 'normal' : this.rang, mannequin: b.dataset.poser === 'm' }; this.actions.poser(this.pose); this.dessiner(); });
     tous('[data-annuler]', () => this.posee());
     tous('[data-retirer]', () => this.actions.envoyer({ k: 'retirer' }));
+    // Butin (1C, 8A+8B+8C)
+    const rb = q<HTMLInputElement>('#pt-but');
+    if (rb) rb.oninput = () => { this.rechercheButin = rb.value; const t = q('#pt-butt'); if (t) t.innerHTML = this.tableDev(); this.lierTri(); };
+    this.lierTri();
+    tous('[data-bz]', b => { this.zoneButin = b.dataset.bz!; this.dessiner(); });
+    tous('[data-bt]', b => { this.typeButin = b.dataset.bt as '' | 'eq' | 'res' | 'cond'; this.dessiner(); });
+    const sm = q<HTMLSelectElement>('#pt-simm'); if (sm) sm.onchange = () => { this.simMonstre = sm.value; };
+    tous('[data-simn]', b => { this.simN = +b.dataset.simn!; this.dessiner(); });
+    tous('[data-sim]', () => { this.simuler(); this.dessiner(); });
     // Aides et course / murs
     this.el.querySelectorAll<HTMLInputElement>('[data-reg]').forEach(i => i.onchange = () => this.actions.envoyer({ k: 'reglage', cle: i.dataset.reg as keyof ReglagesTest, on: i.checked }));
     this.el.querySelectorAll('select').forEach(s => s.addEventListener('keydown', e => e.stopPropagation()));
@@ -317,6 +357,72 @@ export class PanneauTest {
       <div class="dps"></div>
       <p class="note">Le compteur prend tous les coups donnés aux monstres sur les 10 dernières secondes.</p>
       <button type="button" class="b g" data-retirer>Retirer les monstres posés</button>`;
+  }
+  /** Toutes les lignes de butin du jeu, avec la chance réelle pour le perso de test (sa Prospection, son Chasseur). */
+  private lignes(): LigneDev[] {
+    const w = this.world, out: LigneDev[] = [];
+    for (const [m, d] of Object.entries(GAME_DATA.monsters)) {
+      const niv = niveauHorsPartie(m, GAME_DATA), rang = rangDe(d), lieu = lieuxDe(m, GAME_DATA)[0];
+      const t = tableButin(w.contexteButin(m, rang, niv));
+      for (const l of t.officiel) out.push({ m, nom: d.name, rang, niv, zone: lieu ? `${GAME_DATA.zones[lieu.zone]?.name ?? lieu.zone}${lieu.donjon ? ' · donjon' : ''}` : '?', item: l.d.item,
+        objet: nomObjet(l.d.item), eq: l.equipement, off: l.d.chance / 100, reel: l.etat === 'ok' ? l.chance : 0,
+        cond: l.etat === 'evenement' ? 'événement' : l.etat === 'quete' ? 'quête de Dofus' : l.d.metier ? `Chasseur ${l.d.metier.min}${l.etat === 'metier' ? ' (manque)' : ''}` : '' });
+    }
+    return out;
+  }
+  private tableDev() {
+    const r = sansAccent(this.rechercheButin.trim()), mots = r.split(/\s+/).filter(Boolean);
+    const l = (this.lignesDev ??= this.lignes()).filter(x => {
+      if (this.zoneButin === 'donjon' ? !x.zone.endsWith('donjon') : this.zoneButin && !x.zone.startsWith(this.zoneButin)) return false;
+      if (this.typeButin === 'eq' && !x.eq) return false;
+      if (this.typeButin === 'res' && x.eq) return false;
+      if (this.typeButin === 'cond' && !x.cond.match(/événement|quête/)) return false;
+      const t = sansAccent(`${x.nom} ${x.objet}`);
+      return mots.every(m => t.includes(m));
+    });
+    const k = this.triButin, sg = this.triDesc ? -1 : 1;
+    l.sort((a, b) => sg * (typeof a[k] === 'number' ? (a[k] as number) - (b[k] as number) : String(a[k]).localeCompare(String(b[k]))) || a.nom.localeCompare(b.nom) || b.off - a.off);
+    const th = (c: TriDev, n: string, num = false) => `<th data-tri="${c}" class="${num ? 'n ' : ''}${k === c ? 'on' : ''}">${n}${k === c ? (this.triDesc ? ' ▼' : ' ▲') : ''}</th>`;
+    const rows = l.slice(0, 600).map(x => `<tr class="${x.cond.match(/événement|quête/) ? 'cond' : ''}"><td>${esc(x.nom)}${x.rang !== 'normal' ? ` <span class="d">${x.rang === 'boss' ? 'boss' : 'élite'}</span>` : ''}</td><td class="n">${x.niv}</td><td>${iconHtml((ITEMS.resources[x.item] ?? ITEMS.equipment[x.item])?.icon ?? 0)}${esc(x.objet)}</td>
+      <td>${x.eq ? 'équip.' : 'ress.'}</td><td class="n">${pct(x.off)}</td><td class="n">${x.reel ? pct(x.reel) : '—'}</td><td class="n">${x.reel ? unSur(x.reel) : ''}</td><td>${esc(x.cond)}</td></tr>`).join('');
+    return `<table class="bt"><thead><tr>${th('nom', 'Monstre')}${th('niv', 'Niv.', true)}${th('objet', 'Objet')}<th>Type</th>${th('off', 'Dofus', true)}${th('reel', 'Pour toi', true)}<th class="n">Soit</th><th>Condition</th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="8">Aucune ligne.</td></tr>'}</tbody></table>${l.length > 600 ? `<p class="note">${l.length - 600} lignes de plus : affine la recherche.</p>` : ''}`;
+  }
+  private lierTri() {
+    this.el.querySelectorAll<HTMLElement>('[data-tri]').forEach(b => b.onclick = () => {
+      const c = b.dataset.tri as TriDev; if (this.triButin === c) this.triDesc = !this.triDesc; else { this.triButin = c; this.triDesc = c === 'off' || c === 'reel'; }
+      const t = this.el.querySelector('#pt-butt'); if (t) t.innerHTML = this.tableDev(); this.lierTri();
+    });
+  }
+  /** 8B : tue N fois le monstre choisi avec le vrai calcul du butin (src/sim/butin.ts), à part de la partie (graine fixe). */
+  private simuler() {
+    const d = GAME_DATA.monsters[this.simMonstre]; if (!d) return;
+    const ctx = this.world.contexteButin(this.simMonstre, rangDe(d), niveauHorsPartie(this.simMonstre, GAME_DATA)), rng = new Rng(1234);
+    const res: Record<string, number> = {}, rar: Record<string, number> = {}; let kamas = 0, uid = 1;
+    for (let i = 0; i < this.simN; i++) {
+      const b = tirerButin(rng, ctx, () => uid++);
+      for (const r of b.ressources) res[r.id] = (res[r.id] ?? 0) + 1;
+      for (const o of b.objets) rar[o.rarity] = (rar[o.rarity] ?? 0) + 1;
+      kamas += b.kamas;
+    }
+    const lr = Object.entries(res).sort((a, b) => b[1] - a[1]).map(([id, n]) => `<span>${esc(nomObjet(id))}</span><b>${n.toLocaleString('fr-FR')}</b>`).join('');
+    const lo = RARETES_TEST.concat().reverse().filter(r => rar[r]).map(r => `<span style="color:${RARITY_COLORS[r]}">Équipements ${RARITY_NAMES[r]}</span><b>${rar[r]}</b>`).join('');
+    this.simRes = `<span><b style="text-align:left">${this.simN.toLocaleString('fr-FR')} × ${esc(d.name)}</b> (Prospection ${ctx.prospection}, niv. ${ctx.niveau})</span><b></b>${lr}${lo || '<span>Aucun équipement</span><b>0</b>'}<span>Kamas</span><b>${kamas.toLocaleString('fr-FR')}</b>`;
+  }
+  private butin() {
+    const ano = anomaliesButin(ITEMS, GAME_DATA), zones = [...new Set(groupesBestiaire().map(g => g.zone))];
+    const chip = (attr: string, v: string, n: string, on: boolean) => `<button type="button" class="b g ${on ? 'on' : ''}" ${attr}="${v}">${n}</button>`;
+    const mons = Object.entries(GAME_DATA.monsters).filter(([k]) => ITEMS.drops[k]?.length).sort((a, b) => a[1].name.localeCompare(b[1].name));
+    return `${ano.length ? `<div class="ano">${ano.length} anomalie${ano.length > 1 ? 's' : ''} : ${ano.slice(0, 6).map(a => `${a.k} ${a.monstre}${a.item ? ` (${a.item})` : ''}`).join(', ')}</div>` : ''}
+      <input type="text" id="pt-but" placeholder="bouftou, laine, sang…" value="${esc(this.rechercheButin)}" autocomplete="off">
+      <div class="chips">${chip('data-bz', '', 'Toutes zones', !this.zoneButin)}${zones.map(z => chip('data-bz', z, z, this.zoneButin === z)).join('')}${chip('data-bz', 'donjon', 'Donjons', this.zoneButin === 'donjon')}</div>
+      <div class="chips">${chip('data-bt', '', 'Tout', !this.typeButin)}${chip('data-bt', 'eq', 'Équipements', this.typeButin === 'eq')}${chip('data-bt', 'res', 'Ressources', this.typeButin === 'res')}${chip('data-bt', 'cond', 'Quête ou événement', this.typeButin === 'cond')}</div>
+      <div class="btab" id="pt-butt">${this.tableDev()}</div>
+      <p class="note">« Dofus » : chance officielle. « Pour toi » : avec la Prospection et le Chasseur du perso de test, et src/data/butin.json. En orange : ne tombe pas (quête de Dofus, ou seulement pendant un événement).</p>
+      <h4>Simuler</h4>
+      <div class="l"><select id="pt-simm">${mons.map(([k, d]) => `<option value="${k}" ${k === this.simMonstre ? 'selected' : ''}>${esc(d.name)}</option>`).join('')}</select>
+        <span style="display:flex;gap:4px">${[100, 1000, 10000].map(n => chip('data-simn', String(n), n.toLocaleString('fr-FR'), this.simN === n)).join('')}</span><button type="button" class="b" data-sim>Tuer</button></div>
+      ${this.simRes ? `<div class="sim">${this.simRes}</div>` : '<p class="note">Tire le butin avec le vrai calcul du jeu, sans rien donner au perso.</p>'}`;
   }
   private aides() {
     return `${this.inter('invincible', 'Invincible', 'Les coups s\'affichent, les PV ne baissent pas.')}

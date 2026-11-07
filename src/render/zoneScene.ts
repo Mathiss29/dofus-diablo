@@ -313,6 +313,8 @@ export class ZoneScene extends Phaser.Scene {
     if (mini && this.transparence) mini.ignore(this.transparence.calque);
     this.windows?.destroy();
     this.windows = new Windows(this.world);
+    // Bestiaire (maquette « Drops » 1A) : les monstres vaincus du compte ; la partie de test voit tout
+    this.windows.vaincus = () => this.bestiaire; this.windows.toutVoir = !!this.test;
     this.windows.onZaap = i => { this.zaapChoix = i; };
     this.windows.portrait = v(`${ASSETS}/ui/perso_${this.classId}${this.perso?.sexe === 'f' ? '_f' : ''}.png`);
     // perso dessiné en direct dans l'inventaire, l'aperçu des apparats et la garde-robe (Apparence 5A, 6B)
@@ -347,6 +349,7 @@ export class ZoneScene extends Phaser.Scene {
       else if (name === 'Quêtes' && this.world.quetes) this.windows!.toggle('quetes');
       else if (name === 'Succès' && this.world.quetes) this.windows!.toggle('succes');
       else if (name === 'Carte du monde') this.basculerCarte();
+      else if (name === 'Bestiaire') this.windows!.toggle('bestiaire');
       else this.hud.toast(`${name} : arrive dans une prochaine version`);
     };
     this.hud.onPasser = id => this.world.quetes?.passer(id);
@@ -453,7 +456,7 @@ export class ZoneScene extends Phaser.Scene {
     const K = Phaser.Input.Keyboard.KeyCodes, kb = this.input.keyboard!;
     // Déplacement à la souris (clic gauche) ; le clavier sert aux sorts, à la potion et aux menus
     this.keys = kb.addKeys({ SHIFT: K.SHIFT, ALT: K.ALT,
-      SPACE: K.SPACE, S: K.S, E: K.E, K: K.K, I: K.I, C: K.C, J: K.J, ESC: K.ESC, F: K.F, G: K.G, H: K.H, O: K.O, M: K.M, ENTER: K.ENTER,
+      SPACE: K.SPACE, S: K.S, E: K.E, K: K.K, I: K.I, C: K.C, J: K.J, ESC: K.ESC, F: K.F, G: K.G, H: K.H, O: K.O, M: K.M, B: K.B, ENTER: K.ENTER,
       ONE: K.ONE, TWO: K.TWO, THREE: K.THREE, FOUR: K.FOUR, FIVE: K.FIVE, SIX: K.SIX }) as Record<string, Phaser.Input.Keyboard.Key>;
     // Façon Diablo (demande de Mathis, 2026-11-05) : clic gauche sur le sol = y aller (maintenu : suivre le curseur),
     // sur un monstre = s'approcher et l'attaquer (maintenu : continuer), Maj + clic gauche = attaquer sur place ;
@@ -518,6 +521,7 @@ export class ZoneScene extends Phaser.Scene {
     this.keys.C.on('down', () => this.windows?.toggle('car'));
     this.keys.J.on('down', () => this.windows?.toggle('job'));   // Métiers (choix 6A : Chasseur)
     this.keys.O.on('down', () => this.windows?.toggle('opt'));
+    this.keys.B.on('down', () => this.windows?.toggle('bestiaire'));   // Bestiaire (maquette « Drops » 1A)
     this.keys.S.on('down', () => this.windows?.toggle('sorts'));   // Sorts (choix 8A, touche S)   // Réglages (choix 10A + 10B)
     this.keys.ESC.on('down', () => { if (this.panneau?.pose) { this.panneau.posee(); return; } if (this.essai) { this.essai = null; this.game.events.emit('accueil', 'creation'); return; } if (this.dialogueView?.ouvert) { this.dialogueView.touche(-1); return; } this.dialogueView?.fermerMenu(); this.aimId = null; this.aimKey = null; this.windows?.close(); this.carte?.fermer(); });
     // K : changer de classe, seulement sans perso (mode dév #cra / #jeu, partie de test) ; sinon la classe se choisit à la création

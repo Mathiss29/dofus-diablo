@@ -6,6 +6,8 @@ import { LOOKS } from './looks';
 import { DOSSIER, PALETTES, ZONES, apparenceValide, assemblagePour, fiches, objetsPortes, type Apparence, type Assemblage, type FichePerso } from './squelette';
 import { ICON_CSS, iconHtml } from './icons';
 import { PALIERS, lireBestiaire } from './carnet';
+import { dessinerPortraits, groupesBestiaire } from './butinVue';
+import { niveauHorsPartie } from '../sim/butin';
 import { SORTS, niveauRequis, type SortOfficiel } from '../sim/sorts';
 import CLASSES_DOFUS from '../data/classes_dofus.json';
 import JOURNAL from '../data/journal.json';
@@ -541,40 +543,33 @@ export class Accueil {
 
   // --- Bestiaire (Accueil 1A) : les monstres d'Incarnam par sous-zone, dévoilés en chassant ---------------------
   private pageBestiaire(): string {
-    const b = lireBestiaire(), sub = GAME_DATA.zones.incarnam.open?.subareas ?? {}, deja = new Set<string>();
-    const zones = ZONES_ACC.filter(z => z.dispo).flatMap(z => z.sous).map(id => sub[id]).filter(x => x && x.monsters.length);
-    const tous = zones.flatMap(x => [...new Set(x.monsters)]), connus = new Set(tous.filter(m => b[m])).size, nb = new Set(tous).size;
+    // maquette « Drops » 1A + 3A : toutes les sous-zones et donjons des mondes ouverts ; le butin se voit dès le premier vaincu
+    const b = lireBestiaire(), zones = groupesBestiaire();
+    const tous = zones.flatMap(x => x.monstres), connus = tous.filter(m => b[m]).length, nb = tous.length;
     const fiche = (m: string) => {
       const d = GAME_DATA.monsters[m], n = b[m] ?? 0, L = LOOKS[d.look];
       if (!n) return `<div class="card mob inconnu"><canvas data-atlas="${L?.atlas ?? ''}" width="96" height="96"></canvas><b>???</b><span class="lock">Pas encore croisé</span></div>`;
       const res = Object.entries(d.res ?? {}).map(([e, v]) => `${e[0].toUpperCase()}${e.slice(1)} ${v} %`).join(' · ');
-      const drops = (ITEMS.drops[m] ?? []).map(x => `${(ITEMS.resources[x.item] ?? ITEMS.equipment[x.item])?.name ?? x.item} ${x.chance.toLocaleString("fr-FR")} %`).join(', ');
+      const drops = (ITEMS.drops[m] ?? []).filter(x => !x.cond).map(x => `${(ITEMS.resources[x.item] ?? ITEMS.equipment[x.item])?.name ?? x.item} ${x.chance.toLocaleString("fr-FR")} %`).join(', ');
       const pal = (k: keyof typeof PALIERS, txt: string) => n >= PALIERS[k] ? txt : `<span class="lock">à ${PALIERS[k]} vaincus</span>`;
       return `<div class="card mob"><canvas data-atlas="${L?.atlas ?? ''}" width="96" height="96"></canvas><b>${esc(d.name)}</b>
-        <span class="l"><span>Niveau ${d.level ?? '?'}</span><span>${n} vaincu${n > 1 ? 's' : ''}</span></span>
+        <span class="l"><span>Niveau ${niveauHorsPartie(m, GAME_DATA)}</span><span>${n} vaincu${n > 1 ? 's' : ''}</span></span>
         <div class="det"><div class="l"><span>Sorts</span><span>${pal('sorts', esc((d.spells ?? []).map(x => x.name).join(', ') || 'aucun'))}</span></div>
         <div class="l"><span>Résistances</span><span>${pal('res', esc(res || 'aucune'))}</span></div>
-        <div class="l"><span>Butin</span><span>${pal('butin', esc(drops || 'aucun'))}</span></div></div></div>`;
+        <div class="l"><span>Butin</span><span>${esc(drops || 'aucun')}</span></div></div></div>`;
     };
     return `<div class="cover" style="background-image:url(${img('login.jpg')});filter:brightness(.4) saturate(.8)"></div>
     <div class="abs tiny" style="left:calc(8.4*var(--u));top:calc(1.4*var(--u));font-weight:800">Bestiaire du compte</div>
     <button type="button" class="abs dbtn" style="right:calc(2*var(--u));top:calc(1*var(--u));font-size:calc(.8*var(--u));padding:calc(.35*var(--u)) calc(.9*var(--u))" data-go="accueil">Retour</button>
     <div class="abs" style="left:calc(8.4*var(--u));top:calc(3.6*var(--u));display:flex;align-items:baseline;gap:calc(1.2*var(--u))">
       <div class="ttl" style="font-size:calc(4*var(--u))">Bestiaire</div>
-      <div style="font-weight:800;font-size:calc(1.1*var(--u))">${connus} / ${nb} monstres croisés · sorts à ${PALIERS.sorts} vaincus, résistances à ${PALIERS.res}, butin à ${PALIERS.butin}</div></div>
+      <div style="font-weight:800;font-size:calc(1.1*var(--u))">${connus} / ${nb} monstres croisés · sorts à ${PALIERS.sorts} vaincus, résistances à ${PALIERS.res} · chances détaillées en jeu (touche B)</div></div>
     <div class="abs bes" style="left:calc(8.4*var(--u));right:calc(2*var(--u));top:calc(9.5*var(--u));bottom:calc(1.5*var(--u));overflow:auto;align-content:start">
-      ${zones.map(x => `<div class="zt">${esc(x.name)} · niveau ${x.level}</div>` + [...new Set(x.monsters)].filter(m => !deja.has(m) && deja.add(m)).map(fiche).join('')).join('')}
+      ${zones.map(x => `<div class="zt">${esc(x.zone)} · ${esc(x.nom)} · niveau ${x.niveau}</div>` + x.monstres.map(fiche).join('')).join('')}
     </div>`;
   }
   /** Portraits du Bestiaire : la première image de l'animation statique du monstre, prise dans sa planche. */
-  private portraits() {
-    this.root.querySelectorAll<HTMLCanvasElement>('canvas[data-atlas]').forEach(async cv => {
-      const a = cv.dataset.atlas; if (!a) return;
-      const f = await cadre(a); if (!f || !cv.isConnected) return;
-      const ctx = cv.getContext('2d')!, k = Math.min(cv.width / f.w, cv.height / f.h);
-      ctx.drawImage(f.im, f.x, f.y, f.w, f.h, (cv.width - f.w * k) / 2, cv.height - f.h * k, f.w * k, f.h * k);
-    });
-  }
+  private portraits() { dessinerPortraits(this.root); }
 
   // --- Journal (Accueil 3A) : façon « Les nouvelles d'Astrub », un carnet par journée ---------------------------
   private pageJournal(): string {
@@ -764,27 +759,6 @@ export class Accueil {
     s.nom = ''; s.hardcore = false; s.tuto = true; s.tete = 0; s.couleurs = null;
     this.jouer(libre);
   }
-}
-
-interface Cadre { im: HTMLImageElement; x: number; y: number; w: number; h: number }
-const cadres = new Map<string, Promise<Cadre | null>>();
-/** Image de repos d'une planche de monstre (atlas simple ou multi-atlas de TexturePacker). */
-function cadre(atlas: string): Promise<Cadre | null> {
-  if (!cadres.has(atlas)) cadres.set(atlas, (async () => {
-    try {
-      type F = { filename?: string; frame: { x: number; y: number; w: number; h: number } };
-      const j = await (await fetch(v(`assets/sprites/${atlas}.json`))).json();
-      const pages: { image: string; frames: F[] }[] = j.textures ?? [{ image: `${atlas}.avif`, frames: Object.entries(j.frames).map(([filename, f]) => ({ filename, ...(f as F) })) }];
-      let pick: { page: string; f: F } | null = null;
-      for (const pg of pages) for (const f of pg.frames) {
-        if (!pick || (f.filename?.startsWith('AnimStatique_1') && !pick.f.filename?.startsWith('AnimStatique_1'))) pick = { page: pg.image, f };
-      }
-      if (!pick) return null;
-      const im = new Image(); im.crossOrigin = 'anonymous'; im.src = v(`assets/sprites/${pick.page}`); await im.decode();
-      return { im, ...pick.f.frame };
-    } catch { return null; }
-  })());
-  return cadres.get(atlas)!;
 }
 
 /** Succès du compte (gardés par la partie dans le navigateur). */
