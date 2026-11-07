@@ -65,7 +65,7 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
   p.zonesVues = [...new Set([...(s.zonesVues ?? []), ...p.zonesVues])];
   const c = s.cleDonjon;
   if (c && typeof c.nom === 'string' && c.reste > 0) p.cleDonjon = { nom: c.nom, vague: Math.max(1, Math.floor(c.vague) || 1), reste: c.reste };
-  if (s.havreSac && w.dansHavreSac && !w.retour) w.retour = s.havreSac;
+  if (s.havreSac && w.dansRefuge && !w.retour) w.retour = s.havreSac;
   if (s.bar?.length === p.bar.length) p.bar = s.bar.map(k => (k && p.cls.spells[k] ? k : null));
   p.recompute(); p.hp = p.maxHp;
   p.learnSpells(null);

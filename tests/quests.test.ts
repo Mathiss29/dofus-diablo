@@ -31,7 +31,9 @@ describe('quêtes et succès', () => {
       }
     }
     const astrub = JSON.parse(readFileSync(new URL('../public/assets/mondes/astrub/monde.json', import.meta.url), 'utf8')) as WorldData;
-    for (const p of Object.values(Q.pnj)) expect((p.zone === 'astrub' ? astrub : monde).maps.some(m => m.tag === p.carte), p.carte).toBe(true);
+    const lire = (w: string) => JSON.parse(readFileSync(new URL(`../public/assets/mondes/${w}/monde.json`, import.meta.url), 'utf8')) as WorldData;
+    const bastion = lire('bastion'), havresac = lire('havresac');
+    for (const p of Object.values(Q.pnj)) expect((p.zone === 'astrub' ? astrub : p.zone === 'bastion' ? bastion : p.zone === 'havresac' ? havresac : monde).maps.some(m => m.tag === p.carte), p.carte).toBe(true);
     for (const s of Object.values(Q.succes)) for (const o of s.objectifs) if ('succes' in o) expect(Q.succes[o.succes]).toBeDefined();
   });
 

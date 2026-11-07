@@ -26,7 +26,7 @@ describe('Emp, le Méryde du Recyclage (0.2b), et les services du Havre-Sac (maq
     w.player.x = e.x + 40; w.player.y = e.y;
     Q.cliquer('emp');
     for (let i = 0; i < 30 && !Q.dialogue; i++) w.step(1 / 60, NO_INPUT);
-    expect(Q.dialogue?.texte).toMatch(/Havre-Sac/);
+    expect(Q.dialogue?.texte).toMatch(/Bastion des Douze/);
     expect(Q.dialogue!.reponses.map(r => r.a)).toEqual(['suite', 'fermer']);
     Q.repondre(0); expect(Q.dialogue?.texte).toMatch(/disciple/);
     Q.repondre(0); expect(Q.dialogue?.texte).toMatch(/poubelles/);
@@ -75,17 +75,17 @@ describe('Emp, le Méryde du Recyclage (0.2b), et les services du Havre-Sac (maq
     const d = essai();
     expect(d.reponses[0]).toMatchObject({ a: 'sansCle' });
     Q.repondre(0);
-    expect(Q.dialogue?.texte).toMatch(/Goultard, dans ton Havre-Sac/);
+    expect(Q.dialogue?.texte).toMatch(/Goultard, au Bastion des Douze/);
     expect(Q.marqueVendeur).toBe('goultard');
     expect(w.worldGrid!.mapAt(p.x, p.y)?.tag).toBe('7_-24');
   });
-  it('la Potion de Rappel ramène au dernier Zaap', () => {
+  it('la Potion de Rappel ramène au Bastion des Douze, qui se souvient d\'où l\'on vient (maquette Ville 7A)', () => {
     const w = monde(), p = w.player, r = w.pointDeRetour;
     p.resources['548'] = 1;
     const ailleurs = w.worldGrid!.cellToWorld(w.worldGrid!.freeByMap.get('7_-24')![0]);
-    p.x = ailleurs.x; p.y = ailleurs.y;
+    p.x = ailleurs.x; p.y = ailleurs.y; w.drainEvents();
     expect(w.rappel('548')).toBe(true);
-    expect([p.x, p.y]).toEqual([r.x, r.y]);
+    expect(w.drainEvents().find(e => e.k === 'changeZone')).toMatchObject({ zone: 'bastion', retour: { zone: 'astrub', x: ailleurs.x, y: ailleurs.y, point: r } });
     expect(p.resources['548']).toBeUndefined();
   });
 });

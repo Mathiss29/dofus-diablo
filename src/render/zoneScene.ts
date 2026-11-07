@@ -227,7 +227,7 @@ export class ZoneScene extends Phaser.Scene {
       this.load.json(WorldView.key(open.world, 'monde'), v(`${dir}/monde.json`));
       this.load.once(`filecomplete-json-${WorldView.key(open.world, 'monde')}`, (_: string, __: string, data: WorldData) =>
         WorldView.preload(this, data, dir, open.world, open.start));
-      if (!open.havreSac) Particules.preload(this, dir, open.world, v);   // le Havre-Sac n'a pas de particules
+      if (!open.havreSac && !open.bastion) Particules.preload(this, dir, open.world, v);   // le Havre-Sac n'a pas de particules
       return;
     }
     const dir = mapDir(zone.map!.coords), key = dir.replace(/\W/g, '_');
@@ -428,7 +428,7 @@ export class ZoneScene extends Phaser.Scene {
     if (!this.perso || this.slot < 0 || this.mortDefinitive || !this.world) return;
     const p = this.perso;
     p.etat = exporterJoueur(this.world); p.maj = Date.now();
-    p.lieu = this.world.area?.name ?? (this.world.dansHavreSac ? 'Havre-Sac' : p.lieu);
+    p.lieu = this.world.area?.name ?? (this.world.dansHavreSac ? 'Havre-Sac' : this.world.dansBastion ? this.world.zone.name : p.lieu);
     sauverPerso(this.slot, p); sauverBestiaire(this.bestiaire);
   };
   /** Retour à l'écran d'accueil (main.ts relance la partie en vitrine). */
@@ -828,7 +828,7 @@ export class ZoneScene extends Phaser.Scene {
           break;
         }
         case 'lootKamas': this.hud.loot(`+${e.n} kamas`, '#f2d36b'); this.windows?.refresh(); break;
-        case 'bagFull': this.hud.toast('Sac plein : recycle des objets chez Kerubim Crépin (Havre-Sac, touche H) ou Maj + clic dans l\'inventaire'); break;
+        case 'bagFull': this.hud.toast('Sac plein : recycle des objets chez Kerubim Crépin (son guichet du Havre-Sac, touche H) ou Maj + clic dans l\'inventaire'); break;
         case 'monsterCast': this.castName(e.id, e.name); break;
         case 'itemDrop': if (e.rarity === 'epique' || e.rarity === 'legendaire' || e.rarity === 'mythique') this.chime(e.rarity !== 'epique'); break;
         // Métiers UI 10C : bannière aux paliers (10, 20, 30…) avec les recettes débloquées, une ligne dans le fil sinon
@@ -849,7 +849,7 @@ export class ZoneScene extends Phaser.Scene {
           break;
         case 'incantation': this.hud.toast('Havre-Sac : incantation…'); break;
         case 'arche': this.windows?.show('zaap'); break;
-        case 'emmenage': this.hud.toast(`${e.noms.join(', ')} ${e.noms.length > 1 ? 'ont emménagé' : 'a emménagé'} dans ton Havre-Sac (H)`); break;
+        case 'emmenage': this.hud.toast(`${e.noms.join(', ')} ${e.noms.length > 1 ? 'ont emménagé' : 'a emménagé'} au Bastion des Douze (Zaap ou Potion de Rappel)`); break;
         case 'recycle': this.hud.loot(`+${e.pepites} Pépite${e.pepites > 1 ? 's' : ''}${e.n > 1 ? ` (${e.n} recyclés)` : ''}`, '#b9e54b'); break;
         case 'achat': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Objet'} acheté (−${e.prix} Pépites)`, '#b9e54b'); break;
         case 'rappel': this.hud.banner(`Rappel\n${e.name}`, 1200); this.snapCam = true; break;
@@ -860,7 +860,7 @@ export class ZoneScene extends Phaser.Scene {
         case 'recolteNiveau': this.hud.toast(`Il faut ${RECOLTES.metiers[e.metier]?.nom ?? 'ce métier'} niveau ${e.niveau} pour récolter cette ressource`); break;
         case 'cleManquante': {
           const ve = this.world.quetes?.vendeurDe(e.id), nom = ve ? this.world.quetes!.data.pnj[ve].nom : 'un marchand';
-          this.hud.toast(`${ITEMS.resources[e.id]?.name ?? 'Une clé'} requise : ${nom} en vend une, dans ton Havre-Sac (H)`); break;
+          this.hud.toast(`${ITEMS.resources[e.id]?.name ?? 'Une clé'} requise : ${nom} en vend une, au Bastion des Douze`); break;
         }
         case 'lootResource': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Ressource'} x${e.n}`, '#c9c4ab'); this.windows?.refresh(); break;
         case 'levelUp': this.hud.banner(`Niveau ${e.level} !\n+5 points (C)${e.level === 100 ? '\n+1 PA' : ''}`, 1500); this.windows?.refresh(); break;

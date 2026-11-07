@@ -223,11 +223,11 @@ export class WorldGrid extends GridMap {
   mapAt(wx: number, wy: number): WorldMapEntry | undefined { return this.mapOfCell(this.cellAtWorld(wx, wy)); }
   mapByCoords(x: number, y: number): WorldMapEntry | undefined { return this.world.maps.find(m => m.x === x && m.y === y); }
   mapByTag(tag: string): WorldMapEntry | undefined { return this.world.maps.find(m => m.tag === tag); }
-  /** Case de la grande grille pour la case `c` (0-559) de la carte `tag`. */
+  /** Case de la grande grille pour la case `c` de la carte `tag` (0-559 ; une carte de n×m cartes compte nx × 14 colonnes). */
   cellOf(tag: string, c: number): number {
     const m = this.mapByTag(tag);
     if (!m) throw new Error(`Carte absente du monde : ${tag}`);
-    const [X0, Y0] = this.world.origin, r = Math.floor(c / MAP_COLS), k = c % MAP_COLS;
+    const W = (m.n?.[0] ?? 1) * MAP_COLS, [X0, Y0] = this.world.origin, r = Math.floor(c / W), k = c % W;
     return ((m.y - Y0) * MAP_ROWS + r) * this.cols + (m.x - X0) * MAP_COLS + k;
   }
 }

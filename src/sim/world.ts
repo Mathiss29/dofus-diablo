@@ -192,7 +192,9 @@ export class World {
       start = this.openestCell(m.tag);
       this.checkpointName = open.checkpoints[0]?.name ?? '';
       // Havre-Sac : arrivée devant l'arche, qui sert aussi de point de retour
-      if (open.havreSac) { const wg = this.map; start = wg.nearestFree(...xy(wg.cellToWorld(wg.cellOf(m.tag, open.havreSac.arrivee))), wg.freeByMap.get(m.tag)!); this.checkpointName = 'Havre-Sac'; }
+      // Bastion des Douze (maquette Ville) : arrivée sur la place, devant le Zaap
+      const hub = open.havreSac ?? open.bastion;
+      if (hub) { const wg = this.map; start = wg.nearestFree(...xy(wg.cellToWorld(wg.cellOf(m.tag, hub.arrivee))), wg.freeByMap.get(m.tag)!); this.checkpointName = open.havreSac ? 'Havre-Sac' : this.zone.name; }
     }
     this.checkpoint = start;
     this.player = new Player(this.nextId++, start.x, start.y, opts.data.classes[opts.classId ?? 'iop']);
@@ -217,6 +219,12 @@ export class World {
   // --- Havre-Sac (maquette Hub : 2A touche H, 2C Zaap du Havre-Sac, 3A PNJ qui emménagent, 7A Poutch) ---------------
   /** Dans le Havre-Sac. */
   get dansHavreSac() { return !!this.zone.open?.havreSac; }
+  /** Au Bastion des Douze, notre ville (maquette Ville 1A). */
+  get dansBastion() { return !!this.zone.open?.bastion; }
+  /** Havre-Sac ou Bastion : on y garde d'où l'on vient, et leur Zaap mène partout (7A+7B). */
+  get dansRefuge() { return this.dansHavreSac || this.dansBastion; }
+  /** La zone du Bastion existe (absente des données de certains tests). */
+  private get bastionOuvert() { return !!this.opts.data.zones.bastion?.open?.bastion; }
   /** Arrivée en sortant du Havre-Sac : au Zaap choisi (2C), sinon là où l'on était (2A). */
   private sortieHavreSac(opts: WorldOptions) {
     const p = this.player, wg = this.worldGrid!, open = this.zone.open!;
@@ -235,7 +243,7 @@ export class World {
     const p = this.player, z = this.opts.zone;
     p.zonesVues = [...new Set([...vues, z])];
     if (vues.includes(z) || !vues.length) return;   // premier lancement d'un perso : rien à annoncer
-    const noms = Object.values(this.opts.quetes?.pnj ?? {}).filter(d => d.apres === z).map(d => d.nom);
+    const noms = [...new Set(Object.values(this.opts.quetes?.pnj ?? {}).filter(d => d.apres === z).map(d => d.nom))];
     if (noms.length) this.emit({ k: 'emmenage', noms });
   }
   private poserPoutch(c: number) {
@@ -276,11 +284,21 @@ export class World {
     }
     if ((inc.t += dt) < World.INCANTATION) return;
     this.incantation = null;
-    this.emit({ k: 'changeZone', zone: 'havresac', nom: 'Havre-Sac', retour: { zone: this.opts.zone, x: p.x, y: p.y, point: this.pointDeRetour } });
+    this.emit({ k: 'changeZone', zone: 'havresac', nom: 'Havre-Sac', retour: this.ici() });
   }
-  /** Zaap du Havre-Sac (2C) : -1 = ressortir là où l'on était, sinon l'index d'un Zaap découvert. */
+  /** D'où l'on part, pour y revenir (sortie du Havre-Sac ou du Bastion, « Là où j'étais »). */
+  private ici() { const p = this.player; return { zone: this.opts.zone, x: p.x, y: p.y, point: this.pointDeRetour }; }
+  /** Index du Bastion des Douze dans la liste des Zaaps (en tête, maquette Ville 7A). */
+  static readonly ZAAP_BASTION = -2;
+  /** Zaap du Havre-Sac ou du Bastion (2C, Ville 7A+7B) : -1 = ressortir là où l'on était, -2 = le Bastion des Douze,
+   *  sinon l'index d'un Zaap découvert. */
   sortirHavreSac(i: number): boolean {
-    if (!this.dansHavreSac) return false;
+    if (!this.dansRefuge) return false;
+    if (i === World.ZAAP_BASTION) {
+      if (this.dansBastion || !this.bastionOuvert) return false;
+      this.emit({ k: 'changeZone', zone: 'bastion', nom: this.opts.data.zones.bastion.name, ...(this.retour ? { retour: this.retour } : {}) });
+      return true;
+    }
     const z = i >= 0 ? this.player.zaaps[i] : null;
     if (i >= 0 && !z) return false;
     if (z) { this.emit({ k: 'changeZone', zone: z.zone, nom: z.name, zaap: z.name }); return true; }
@@ -407,9 +425,9 @@ export class World {
   /** Arche du Havre-Sac (2C) : cliquer dessus et s'en approcher ouvre la liste des Zaaps (une fois par clic). */
   private archeVue = false;
   private updateArche() {
-    const h = this.zone.open?.havreSac, p = this.player;
-    if (!h || p.dead) return;
-    const wg = this.worldGrid!, a = wg.cellToWorld(wg.cellOf(wg.world.maps[0].tag, h.arche));
+    const o = this.zone.open, p = this.player, c = o?.havreSac?.arche ?? o?.bastion?.zaap;
+    if (c == null || p.dead) return;
+    const wg = this.worldGrid!, a = wg.cellToWorld(wg.cellOf(wg.world.maps[0].tag, c));
     // l'arche est dans le mur : on clique sur son dessin, le perso s'arrête sur les cases devant
     const vise = p.vise(a.x, a.y, 150);
     if (!vise) { this.archeVue = false; return; }
@@ -1377,8 +1395,18 @@ export class World {
   rappel(id: string): boolean {
     const r = this.opts.items?.resources[id], p = this.player;
     if (!r?.rappel || !(p.resources[id] > 0) || p.dead || !this.zone.open) return false;
-    if (this.dansHavreSac) { this.emit({ k: 'status', x: p.x, y: p.y - 60, text: 'Sors du Havre-Sac par son Zaap', color: '#ff9a5a' }); return false; }
+    const non = (text: string) => { this.emit({ k: 'status', x: p.x, y: p.y - 60, text, color: '#ff9a5a' }); return false; };
+    if (this.dansBastion) return non('Tu es déjà au Bastion des Douze');
+    if (this.dansHavreSac && !this.bastionOuvert) return non('Sors du Havre-Sac par son Zaap');
+    if ((this.worldGrid?.mapAt(p.x, p.y)?.tag ?? '').startsWith('temple')) return non('Pas pendant le tutoriel');
     p.resources[id]--; if (!p.resources[id]) delete p.resources[id];
+    // maquette Ville 7A : la Potion de Rappel ramène au Bastion des Douze (le Zaap y ramène ensuite là où l'on était)
+    if (this.bastionOuvert) {
+      p.stopMove();
+      const retour = this.dansHavreSac ? this.retour : this.ici();
+      this.emit({ k: 'changeZone', zone: 'bastion', nom: this.opts.data.zones.bastion.name, ...(retour ? { retour } : {}) });
+      return true;
+    }
     p.x = this.checkpoint.x; p.y = this.checkpoint.y; p.kx = p.ky = 0; p.z = 0; p.stopMove();
     this.passage = null; this.portalLock = null;
     this.emit({ k: 'rappel', name: this.checkpointName });

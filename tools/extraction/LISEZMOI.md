@@ -344,3 +344,18 @@ cases marchables (l'ellipse et les couloirs des trois entrées), et écrit les p
 `map_<id>.json` des salles officielles (bundles `mapdata_assets_world_583/726/739/463/559`). `SEUL=arene_grange,…` pour n'en
 refaire qu'une ; `apercus` donne une image de chaque arène avec les cases marchables en vert. Les vagues (`vagues`,
 `bossVague` dans `zones.json`) se règlent à la main : groupes officiels des anciennes salles, `?` = tiré parmi les monstres du donjon.
+
+## Bastion des Douze (`bastion.py`, maquette « Ville », 7 nov. 2026)
+
+Notre ville (« Ville : 1A 2A 3C 4B+4C … 10B 11B ») : un monde à part (`public/assets/mondes/bastion`), une seule grande carte
+de 4 x 4 places (`"n": [4, 4]`, cases de la grande grille). Archipel : l'île centrale (place du Zaap, maisons d'Astrub, Bonta,
+Brâkmar et Pandala, étals, cyprès) et une île par nation (Bonta, Brâkmar, Pandala, Frigost) reliée par un pont coupé, pour les
+nations libérées plus tard. Les pièces viennent des vraies cartes (aides d'`arenes.py`), lumières additives et voiles retirés.
+Écrit aussi `zones.json > bastion > open.bastion` (arrivée, Zaap, cases des PNJ), que `tools/contenu/quetes.py` relit.
+
+    TEXDIR=dossier_des_gfx python3 -I tools/extraction/bastion.py cartes_dir public/assets/mondes [apercu]
+    python3 tools/contenu/quetes.py && node tools/hebergement/envoi.mjs
+
+`cartes_dir` = les `map_<id>.json` des cartes sources : Astrub 191105026 (Zaap) et 191104002 (`cache-dofus/astrub/cartes.tar`),
+Bonta 212600837, Brâkmar 212861954, Pandala 206307844, Frigost 54170409 (bundles copiés dans `cache-dofus/villes/`, voir son LISEZMOI).
+Le ciel (`ciel.webp`) est celui d'Incarnam.
