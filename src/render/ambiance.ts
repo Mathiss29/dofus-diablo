@@ -20,6 +20,8 @@ export interface Reglages {
   volume: number;
   volMusique: number;
   volEffets: number;
+  /** Cris des monstres, à part des effets (maquette Sons 6A, 70 % au départ). */
+  volMonstres: number;
   volAmbiance: number;
   volInterface: number;
   /** Tout le son coupé (Ctrl+M, 8B ; M = carte du monde). */
@@ -36,7 +38,7 @@ export interface Reglages {
   /** Option 5B : sur un monstre hors de portée, le perso s'approche avant de lancer. */
   approche: boolean;
 }
-export const REGLAGES_DEFAUT: Reglages = { heure: 'auto', lumieres: 1, saturation: 1, chaleur: 0, zoom: 0.8, volume: 1, volMusique: 0.5, volEffets: 0.7, volAmbiance: 0.6, volInterface: 0.7, muet: false, vent: true, eau: true, particules: true, transparence: true, lancer: 'relache', approche: false };
+export const REGLAGES_DEFAUT: Reglages = { heure: 'auto', lumieres: 1, saturation: 1, chaleur: 0, zoom: 0.8, volume: 1, volMusique: 0.5, volEffets: 0.7, volMonstres: 0.7, volAmbiance: 0.6, volInterface: 0.7, muet: false, vent: true, eau: true, particules: true, transparence: true, lancer: 'relache', approche: false };
 const CLE = 'diablofus.reglages';
 
 export function chargerReglages(): Reglages {

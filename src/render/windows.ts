@@ -1049,7 +1049,8 @@ export class Windows {
           { k: 'muet', nom: 'Couper tout le son', aide: 'Ctrl+M', t: 'check' },
           { k: 'volume', nom: 'Volume général', t: 'range', min: 0, max: 100 },
           { k: 'volMusique', nom: 'Musique', t: 'range', min: 0, max: 100 },
-          { k: 'volEffets', nom: 'Effets (sorts, coups, monstres)', t: 'range', min: 0, max: 100 },
+          { k: 'volEffets', nom: 'Effets (sorts, coups)', t: 'range', min: 0, max: 100 },
+          { k: 'volMonstres', nom: 'Monstres (cris)', t: 'range', min: 0, max: 100 },
           { k: 'volAmbiance', nom: 'Ambiance (vent, eau, feu, Zaap)', t: 'range', min: 0, max: 100 },
           { k: 'volInterface', nom: 'Interface (fenêtres, niveau, quêtes)', t: 'range', min: 0, max: 100 },
         ] },
@@ -1085,7 +1086,7 @@ export class Windows {
       const k = e.dataset.rg!;
       e.addEventListener('input', () => { R[k] = +e.value / 100; e.style.setProperty('--v', `${(+e.value - +e.min) / (+e.max - +e.min) * 100}%`); w.querySelector(`[data-o="${k}"]`)!.textContent = `${e.value}${k === 'chaleur' ? '' : '%'}`; apply(); });
       // 8A : aperçu sonore quand on lâche le curseur
-      e.addEventListener('change', () => { if (k === 'volEffets') Son.jouer(MANIFESTE.impacts[0], 'effets'); else if (k === 'volInterface' || k === 'volume') Son.jouer(MANIFESTE.ui.ok, 'interface'); });
+      e.addEventListener('change', () => { if (k === 'volEffets') Son.jouer(MANIFESTE.impacts[0], 'effets'); else if (k === 'volMonstres') { const l = Object.values(MANIFESTE.monstres)[0]?.attaque; Son.jouer(Son.auHasard(l), 'monstres'); } else if (k === 'volInterface' || k === 'volume') Son.jouer(MANIFESTE.ui.ok, 'interface'); });
     });
     w.querySelectorAll<HTMLSelectElement>('[data-sel]').forEach(e => e.addEventListener('change', () => { R[e.dataset.sel!] = e.value; apply(); if (e.dataset.sel === 'heure') this.render(); }));
     w.querySelectorAll<HTMLInputElement>('[data-ck]').forEach(e => e.addEventListener('change', () => {
