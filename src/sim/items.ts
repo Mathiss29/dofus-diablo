@@ -7,7 +7,9 @@ export const STATS = ['vitalite', 'sagesse', 'force', 'intelligence', 'chance', 
   // choix 10C : toutes les autres caractéristiques de Dofus (rôles en temps réel dans src/sim/caracs.ts)
   'portee', 'initiative', 'resTerre', 'resFeu', 'resEau', 'resAir', 'resNeutre', 'redTerre', 'redFeu', 'redEau', 'redAir', 'redNeutre',
   'tacle', 'fuite', 'esquivePA', 'esquivePM', 'retraitPA', 'retraitPM', 'dommagesPoussee', 'resPoussee', 'dommagesCritiques', 'resCritiques',
-  'invocations', 'pods'] as const;
+  'invocations', 'pods',
+  // maquette Recharges 7B : raccourcit toutes les recharges des sorts (plafond 25 %)
+  'reductionRecharges'] as const;
 export type Stat = typeof STATS[number];
 export type Stats = Partial<Record<Stat, number>>;
 /** Les 6 caractéristiques où l'on place ses 5 points par niveau (choix 6C). */
@@ -22,8 +24,10 @@ export const STAT_NAMES: Record<Stat, string> = {
   redTerre: 'Résistance Terre', redFeu: 'Résistance Feu', redEau: 'Résistance Eau', redAir: 'Résistance Air', redNeutre: 'Résistance Neutre',
   tacle: 'Tacle', fuite: 'Fuite', esquivePA: 'Esquive PA', esquivePM: 'Esquive PM', retraitPA: 'Retrait PA', retraitPM: 'Retrait PM',
   dommagesPoussee: 'Dommages Poussée', resPoussee: 'Résistance Poussée', dommagesCritiques: 'Dommages Critiques', resCritiques: 'Résistance Critiques',
-  invocations: 'Invocations', pods: 'Pods',
+  invocations: 'Invocations', pods: 'Pods', reductionRecharges: '% Réduction des recharges',
 };
+/** Plafond de la stat « % Réduction des recharges » (maquette Recharges 7B). */
+export const REDUCTION_RECHARGES_MAX = 25;
 
 export type Slot = 'amulette' | 'anneau' | 'ceinture' | 'bottes' | 'chapeau' | 'cape' | 'bouclier' | 'arme' | 'familier';
 /** Emplacements portés : deux anneaux. */
@@ -118,8 +122,12 @@ export const LEGENDARY = {
   potion: { name: 'Gourde sans fond', text: (v: number) => `Les potions soignent ${v} % de plus`, max: 40 },
   mobilite: { name: 'Pied léger', text: (v: number) => `Les PM se rechargent ${v} % plus vite`, max: 40 },
   vampire: { name: 'Soif de sang', text: (v: number) => `Chaque monstre vaincu rend ${v} PV de plus`, max: 12 },
+  // maquette Recharges 7A : dans l'esprit des bonus de sorts officiels (« -1 au délai de relance de Bond »)
+  relance: { name: 'Relance éclair', text: (v: number, sort?: string) => `La recharge de ${sort ?? 'un sort'} dure ${String(v).replace('.', ',')} s de moins`, max: 2 },
 } as const;
 export type LegendaryId = keyof typeof LEGENDARY;
+/** Effet légendaire tiré ; sort = le sort de la classe visé (Relance éclair). */
+export interface LegendaryFx { id: LegendaryId; value: number; sort?: string }
 export const legendaryPower = (level: number) => Math.min(1, Math.max(0.4, 0.4 + (level - 10) * 0.015));
 
 /** Un objet tiré : ses jets réels, sa rareté, et éventuellement un effet légendaire. */
@@ -128,9 +136,9 @@ export interface Item {
   stats: Stats;
   /** Lignes ajoutées par la rareté (affichées en couleur dans la fiche). */
   extra: Stat[];
-  legendary?: { id: LegendaryId; value: number };
+  legendary?: LegendaryFx;
   /** Mythique : un 2e effet légendaire. */
-  legendary2?: { id: LegendaryId; value: number };
+  legendary2?: LegendaryFx;
   /** Cadenas (maquette 0.2, 8C) : jamais recyclé, ni seul ni en lot. */
   cadenas?: boolean;
   /** Familier : son niveau (1 à 100) et son XP totale. */
@@ -149,7 +157,7 @@ export function rollRarity(rng: Rng, boss: boolean, prospection = 0): Rarity {
  *  commun = jets dans la moitié basse ; rare = jets complets + 1 ligne ; épique = moitié haute + 2 lignes ;
  *  légendaire = jets hauts + 2 lignes + un effet légendaire ; mythique = jets parfaits + 2 lignes + deux effets légendaires.
  *  Les malus de l'objet officiel sont gardés tels quels. */
-export function rollItem(id: string, def: ItemDef, rarity: Rarity, rng: Rng, uid: number): Item {
+export function rollItem(id: string, def: ItemDef, rarity: Rarity, rng: Rng, uid: number, sortsRecharge: string[] = []): Item {
   if (def.familier) return { uid, id, rarity: 'commun', stats: familierStats(def.familier, 1), extra: [], niv: 1, xpF: 0 };   // pas de rareté ni de jet
   const lo = { commun: 0, rare: 0, epique: 0.5, legendaire: 0.7, mythique: 1 }[rarity], hi = { commun: 0.5, rare: 1, epique: 1, legendaire: 1, mythique: 1 }[rarity];
   const stats: Stats = {};
@@ -159,18 +167,21 @@ export function rollItem(id: string, def: ItemDef, rarity: Rarity, rng: Rng, uid
   }
   const extra: Stat[] = [];
   const n = { commun: 0, rare: 1, epique: 2, legendaire: 2, mythique: 2 }[rarity];
-  const pool: Stat[] = ['vitalite', 'force', 'intelligence', 'chance', 'agilite', 'sagesse', 'critique', 'prospection', 'vitesse'];
+  const pool: Stat[] = ['vitalite', 'force', 'intelligence', 'chance', 'agilite', 'sagesse', 'critique', 'prospection', 'vitesse', 'reductionRecharges'];
   for (let i = 0; i < n; i++) {
     const free = pool.filter(s => stats[s] === undefined);
     if (!free.length) break;
-    const s = rng.pick(free), base = s === 'critique' || s === 'vitesse' ? 2 + def.level / 20 : s === 'vitalite' ? 4 + def.level : 2 + def.level / 2;
+    const s = rng.pick(free), base = s === 'critique' || s === 'vitesse' || s === 'reductionRecharges' ? 2 + def.level / 20 : s === 'vitalite' ? 4 + def.level : 2 + def.level / 2;
     stats[s] = Math.max(1, Math.round(base * (rarity === 'mythique' ? 1 : rng.range(0.6, 1))));
     extra.push(s);
   }
   const it: Item = { uid, id, rarity, stats, extra };
   if (rarity === 'legendaire' || rarity === 'mythique') {
-    const ids = Object.keys(LEGENDARY) as LegendaryId[], l = rng.pick(ids);
-    const fx = (k: LegendaryId) => ({ id: k, value: Math.round(LEGENDARY[k].max * legendaryPower(def.level)) });
+    // Relance éclair seulement si la classe a des sorts à vraie recharge ; la valeur va par demi-seconde (0,5 à 2 s)
+    const ids = (Object.keys(LEGENDARY) as LegendaryId[]).filter(k => k !== 'relance' || sortsRecharge.length), l = rng.pick(ids);
+    const fx = (k: LegendaryId): LegendaryFx => k === 'relance'
+      ? { id: k, value: Math.max(0.5, Math.round(LEGENDARY[k].max * legendaryPower(def.level) * 2) / 2), sort: rng.pick(sortsRecharge) }
+      : { id: k, value: Math.round(LEGENDARY[k].max * legendaryPower(def.level)) };
     it.legendary = fx(l);
     if (rarity === 'mythique') it.legendary2 = fx(rng.pick(ids.filter(k => k !== l)));
   }

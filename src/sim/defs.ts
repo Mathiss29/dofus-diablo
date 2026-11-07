@@ -35,6 +35,8 @@ export interface SpellDef {
   cooldown: number;
   /** Applique la relance officielle du grade même à un sort de déplacement (Pas Chassé). */
   relanceOfficielle?: boolean;
+  /** Gros coup (maquette Recharges 5A) : une vraie recharge à la place des lancers par tour, et des dommages multipliés. */
+  grosCoup?: { recharge: number; mult: number };
   duration: number; impactAt: number; cancelAt?: number;
   dmg: number; knock: number; stun?: number;
   hit: HitZone;

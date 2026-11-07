@@ -8,6 +8,8 @@ export interface RetourHavreSac { zone: string; x: number; y: number; point: Poi
 /** Ce que la simulation signale à l'affichage (effets, sons, interface).
  *  La simulation ne dessine rien : elle pousse des événements, l'affichage les consomme. */
 export type SimEvent =
+  /** Maquette Recharges 9C : une recharge de 5 s ou plus vient de revenir. */
+  | { k: 'rechargePrete'; id: string }
   /** Impact d'un coup du joueur : fx = forme de l'effet, size = portée / longueur / rayon, boosted = renforcé par la Rage. */
   | { k: 'spell'; fx: SpellDef['fx']; id: string; x: number; y: number; facing: number; size: number; arc: number; element: Element; big: boolean; boosted: boolean;
       /** Sort d'un monstre de base : éclat seul, sans cercle de zone. */

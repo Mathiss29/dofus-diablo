@@ -546,6 +546,18 @@ export class ZoneScene extends Phaser.Scene {
     g.lineStyle(2, 0xffc04d, 0.45 + 0.35 * k); g.strokeEllipse(s.x, s.y, 80 + 10 * k, 34 + 4 * k);
   }
   /** Son court quand la jauge se remplit (ligne Rage 27B), synthétisé comme le carillon du butin. */
+  /** Maquette Recharges 9C : petit tintement discret quand une grosse recharge revient. */
+  private rechargeSound() {
+    synthe((A, out) => {
+      const t0 = A.currentTime;
+      for (const [f, d] of [[1320, 0], [1980, 0.05]] as const) {
+        const o = A.createOscillator(), g = A.createGain();
+        o.type = 'sine'; o.frequency.setValueAtTime(f, t0 + d);
+        g.gain.setValueAtTime(0, t0 + d); g.gain.linearRampToValueAtTime(0.045, t0 + d + 0.01); g.gain.exponentialRampToValueAtTime(0.001, t0 + d + 0.25);
+        o.connect(g).connect(out); o.start(t0 + d); o.stop(t0 + d + 0.3);
+      }
+    });
+  }
   private rageSound() {
     synthe((A, out) => {
       const o = A.createOscillator(), g = A.createGain(), t0 = A.currentTime;
@@ -722,6 +734,7 @@ export class ZoneScene extends Phaser.Scene {
           this.hud.banner(e.boss ? `Vague ${e.n}\n${M[e.boss].name}` : e.archi ? `Vague ${e.n}\nArchimonstre : ${M[e.archi].name} !` : `Vague ${e.n}`);
           break;
         case 'noResource': this.hud.noResource(e.res); break;
+        case 'rechargePrete': this.rechargeSound(); break;
         case 'rageFull': this.rageSound(); this.hud.toast(`${this.world.player.cls.rage.name} au maximum : ton prochain sort est renforcé !`); break;
         case 'bossDown': this.hud.banner(`${M[e.monster].name} vaincu !`); break;
         case 'playerDeath':

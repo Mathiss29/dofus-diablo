@@ -5,7 +5,7 @@ import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES } fr
 import { v } from './assetUrl';
 import { DOSSIER, PALETTES, ZONES, apparenceValide, assemblagePour, fiches, objetsPortes, type Apparence, type Assemblage, type FichePerso } from './squelette';
 import {
-  BASE_STATS, FAMILIER_MAX, FAMILIER_XP, LEGENDARY, PEPITE, RARITY_COLORS, RARITY_NAMES, STATS, STAT_NAMES, metierXpNeeded, recycleResource, recycleValue,
+  BASE_STATS, REDUCTION_RECHARGES_MAX, FAMILIER_MAX, FAMILIER_XP, LEGENDARY, PEPITE, RARITY_COLORS, RARITY_NAMES, STATS, STAT_NAMES, metierXpNeeded, recycleResource, recycleValue,
   type EquipSlot, type Item, type Rarity, type ResourceDef, type Stat,
 } from '../sim/items';
 import { Player } from '../sim/player';
@@ -539,6 +539,7 @@ export class Windows {
         <div class="sub">Combat</div>
         <div class="stats">
           ${row('Portée', st('portee'), '+1 case de portée par point pour les sorts à distance')}
+          ${row('Réduction des recharges', `${Math.round(p.reductionRecharges * 100)} %`, `Raccourcit les recharges et le retour des charges des sorts (plafond ${REDUCTION_RECHARGES_MAX} %)`)}
           ${row('Initiative', p.initiative, 'Initiative + Force + Intelligence + Chance + Agilité. Le premier coup porté à un monstre fait +1 % par 10 points (jusqu\'à +50 %)')}
           ${row('Tacle', r1(p.tacle), 'Agilité / 10 + Tacle. Ralentit les monstres à ton contact (leur Fuite y résiste)')}
           ${row('Fuite', r1(p.fuite), 'Agilité / 10 + Fuite. Résiste au Tacle des monstres et réduit les ralentissements subis')}
@@ -843,7 +844,7 @@ export class Windows {
       let rows: [string, string][], effets = '';
       if (key) {
         const x = spellDetail(p, key, mob ? undefined : g);
-        rows = [['Coût', mob ? `${x.cost} (déplacement)` : x.cost], ['Recharge', mob ? 'charges de PM' : x.cdS >= 1 ? `${n1(x.cdS)} s` : 'aucune'],
+        rows = [['Coût', mob ? `${x.cost} (déplacement)` : x.cost], ['Recharge', mob ? 'charges de PM' : x.cdS >= 1 ? `${n1(x.cdS)} s` : x.nCh >= 2 ? `${x.nCh} charges (1 toutes les ${n1(p.retourCharge)} s)` : 'aucune'],
           ['Zone', x.zone.replace(/^Zone : /, '')], ['Dommages', x.dmg ? x.dmg.replace(/^Dommages : /, '') : '—']];
         effets = `${x.extra.length ? `<ul class="ef">${x.extra.map(t => `<li>${t}</li>`).join('')}</ul>` : ''}${x.rage ? `<div class="rg">${x.rage}</div>` : ''}`;
       } else {
@@ -1116,7 +1117,7 @@ export class Windows {
     const stats = STATS.filter(k => it.stats[k] !== undefined).map(k => line(k, it.stats[k]!)).join('');
     const weapon = (d.weapon ? `<div>${d.weapon.dmg.map(x => `${x.min}–${x.max} dommages ${x.element}`).join(' · ')}</div>` : '')
       + (d.chasse ? '<div class="ex">Arme de chasse</div>' : '');
-    const leg = [it.legendary, it.legendary2].map(l => l ? `<div class="leg"><b>${LEGENDARY[l.id].name}</b> : ${LEGENDARY[l.id].text(l.value)}</div>` : '').join('');
+    const leg = [it.legendary, it.legendary2].map(l => l ? `<div class="leg"><b>${LEGENDARY[l.id].name}</b> : ${LEGENDARY[l.id].text(l.value, l.sort && this.world.player.cls.spells[l.sort]?.name)}</div>` : '').join('');
     const set = d.set && ITEMS.sets[d.set] ? `<div class="set">${ITEMS.sets[d.set].name}</div>` : '';
     let cmp = '';
     if (cur) {
