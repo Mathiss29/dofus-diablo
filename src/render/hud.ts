@@ -26,7 +26,7 @@ const KEYS = ['&', 'é', '"', "'", '(', '-'];
  *  Seulement les menus utiles au jeu ; les autres (guilde, montures...) viendront avec leur fonctionnalité. */
 const MENUS: [string, string, string][] = [
   ['inventory', 'Inventaire', 'I'], ['characteristic', 'Caractéristiques', 'C'], ['job', 'Métiers', 'J'], ['spells', 'Sorts', 'S'], ['quest', 'Quêtes', ''],
-  ['map', 'Carte du monde', ''], ['bestiary', 'Bestiaire', ''], ['success', 'Succès', ''], ['breach', 'Failles', ''],
+  ['map', 'Carte du monde', ''], ['bestiary', 'Bestiaire', 'B'], ['success', 'Succès', ''], ['breach', 'Failles', ''],
   ['home', 'Havre-Sac', 'H'], ['guide', 'Guide', 'G'], ['options', 'Réglages', 'O'],
 ];
 

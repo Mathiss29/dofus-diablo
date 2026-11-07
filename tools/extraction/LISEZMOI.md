@@ -234,6 +234,7 @@ Les anciennes planches ont été converties par `tools/hebergement/planches_avif
 - Les animations des ressources (looks `{650}`, `{660}`…) ne sont ni dans le client ni dans son cache : la ressource d'un gfx est déduite
   (famille par sous-zone, puis rang de fréquence = rang de niveau) et l'affichage pose l'icône officielle de l'objet.
 - `tools/contenu/drops_ajout.py <tables> <fr.bin>` ajoute le butin officiel des monstres qui n'en ont pas encore, sans réécrire items.json.
+- `tools/contenu/drops_conditions.py <tables>` marque les lignes de butin de quête ou d'événement (`cond`, critères officiels, voir `butin_conditions.py`) et retire celles à 0 %. Les deux scripts d'export le font déjà. Les taux du jeu sont dans `src/data/butin.json`.
 - Icônes des métiers : `Content/Picto/UI/job_assets_2x.bundle` (iconId de la table jobs) -> `public/assets/ui/metier_<métier>.png`.
 
 ## Perso dessiné en direct (maquette Apparence, 6 nov. 2026 : 1A 2A+2C 3A)
