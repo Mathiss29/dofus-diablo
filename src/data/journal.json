@@ -150,7 +150,8 @@
           "Les monstres ne lâchent plus la poursuite au bout de 13 cases : ils te suivent tant qu'ils te voient, gardent leurs blessures s'ils abandonnent, et un coup les ramène avec tout leur groupe. Les groupes voisins viennent aider et les retardataires accélèrent pour rester groupés.",
           "Massacre : dès 5 monstres tués à la suite, compteur à l'écran et jusqu'à +40 % d'XP. Un monstre qui abandonne affiche « Abandonne » et devient transparent ; un « ! » rouge quand un groupe te prend en chasse.",
           "Recharges des sorts : Épée Divine (Iop) et Flèche de Barrage (Crâ) deviennent un gros coup à 8 s qui frappe deux fois plus fort ; les sorts à « 2 lancers par tour » affichent leurs charges, et le voile de recharge tourne comme une horloge avec un tintement quand un gros sort revient.",
-          "Les légendaires tombent comme prévu : 1 monstre sur 1 500, 1 élite sur 150, 1 boss sur 50. Les objets de quête et d'événement de Dofus (Pollenectar, Oueille, caisses de cadeaux…) ne tombent plus en temps normal."
+          "Les légendaires tombent comme prévu : 1 monstre sur 1 500, 1 élite sur 150, 1 boss sur 50. Les objets de quête et d'événement de Dofus (Pollenectar, Oueille, caisses de cadeaux…) ne tombent plus en temps normal.",
+          "Moins de ressources communes : les monstres en lâchent trois fois moins (la Laine de Bouftou passe de 53 % à 17,7 %), pour que le sac ne déborde plus. Les ressources rares et le butin des boss ne changent pas."
         ],
         "Corrections": [
           "Pêche : les bancs de poissons au milieu de l'eau se pêchent enfin depuis la rive (portée officielle de 10 cases), et chaque coin de pêche donne les poissons de sa carte.",

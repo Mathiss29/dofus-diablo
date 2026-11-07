@@ -1,7 +1,7 @@
 {
   "_doc": "Réglages du butin (maquette « Drops » 5A+5C, Mathis 2026-11-07). Lu par src/sim/butin.ts : le jeu, le Bestiaire (B) et l'outil de test (F1) s'en servent tous. Chances en part de 1 (0,06 = 6 %) sauf mention ; « 1 sur N » = N.",
   "prospection": { "_doc": "+1 % de chances de butin par point (100 = ×2) ; raretés : +1 % par 2 points", "chances": 100, "raretes": 200 },
-  "ressources": { "_doc": "coefficients sur les chances officielles de Dofus : ressources communes (chance officielle ≥ seuil, viandes comprises) et rares", "seuil": 20, "communes": 1, "rares": 1 },
+  "ressources": { "_doc": "coefficients sur les chances officielles de Dofus : ressources communes (chance officielle ≥ seuil, viandes comprises) et rares ; les boss gardent les taux de Dofus", "seuil": 20, "communes": 0.3333, "rares": 1, "_choix": "maquette « Taux » (Mathis 2026-11-07) : le sac déborde (1A) -> ressources communes et viandes ÷3 (2C), rares inchangées (3A)" },
   "equipementsOfficiels": { "_doc": "coefficient sur les équipements du butin officiel du monstre (Boufbottes 1,06 %)", "coef": 1 },
   "equipement": {
     "_doc": "équipement officiel aléatoire du niveau du monstre (écart de niveau), tiré à chaque monstre vaincu",

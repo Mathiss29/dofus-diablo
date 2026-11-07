@@ -43,6 +43,12 @@ describe('butin (maquette « Drops »)', () => {
     const d = ITEMS.drops.bouftou.find(x => x.item === '2455')!;   // Sang de Bouftou 8,84 %
     expect(chanceLigne(d, ITEMS, 100) / chanceLigne(d, ITEMS, 0)).toBeCloseTo(2, 5);
   });
+  it('maquette « Taux » 2C : ressources communes et viandes ÷3 (Laine de Bouftou 53 % -> 17,7 %), rares et boss inchangés', () => {
+    const laine = ITEMS.drops.bouftou.find(x => x.item === '384')!, sang = ITEMS.drops.bouftou.find(x => x.item === '2455')!;
+    expect(chanceLigne(laine, ITEMS)).toBeCloseTo(0.53 / 3, 3);
+    expect(chanceLigne(sang, ITEMS)).toBeCloseTo(0.0884, 4);
+    expect(chanceLigne(laine, ITEMS, 0, 'boss')).toBeCloseTo(0.53, 4);
+  });
   it('8C : aucune anomalie (ligne à 0 %, objet inconnu, monstre sans butin)', () => {
     expect(anomaliesButin(ITEMS, GAME_DATA)).toEqual([]);
   });
