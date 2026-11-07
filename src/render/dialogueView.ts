@@ -3,6 +3,7 @@ import { v } from './assetUrl';
 import { ICON_CSS, iconHtml } from './icons';
 import { ITEMS } from '../sim/data';
 import type { Dialogue, InfoDonjon, RecompenseDef } from '../sim/quests';
+import { chrono } from '../sim/quests';
 import type { World } from '../sim/world';
 import { QUEST_ICON, type QuestView } from './questView';
 
@@ -139,7 +140,7 @@ export class DialogueView {
 /** Infos du donjon sous la réplique du gardien (maquette Gardiens 7A + 7B). */
 function infoDonjon(i: InfoDonjon) {
   const cle = i.cle ? ITEMS.resources[i.cle] : null;
-  const l = [i.boss ? `Boss : <b>${esc(i.boss)}</b>` : '', `niveau conseillé <b>${Math.max(1, i.niveau - 2)}-${i.niveau + 2}</b>`, `${i.salles} salles`,
+  const l = [i.boss ? `Boss : <b>${esc(i.boss)}</b>` : '', `niveau conseillé <b>${Math.max(1, i.niveau - 2)}-${i.niveau + 2}</b>`, i.vagues ? `<b>${i.vagues}</b> vagues + le boss` : `${i.salles} salles`, i.meilleur ? `meilleur temps <b>${chrono(i.meilleur)}</b>` : '',
     cle ? `${esc(cle.name)} : <b>${i.cles}</b> dans ton sac` : 'sans clé', i.victoires ? `victoires : <b>${i.victoires}</b>` : ''].filter(Boolean).join(' · ');
   const but = i.butin.map(id => { const e = ITEMS.equipment[id] ?? ITEMS.resources[id]; return e ? `<i title="${esc(e.name)}">${iconHtml(e.icon ?? 0)}</i>` : ''; }).join('');
   return `<div class="inf">${l}${but ? `<div class="but"><span>Butin du boss</span>${but}</div>` : ''}</div>`;

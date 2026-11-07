@@ -327,3 +327,20 @@ dans `/mnt/project-files/cache-dofus/elements-animes/` (LISEZMOI là-bas).
   Planque des Vilinsekts (sous-zone 843) : trois caves de la Cité ([6,-21], [4,-19], [1,-16]), monstres qui réapparaissent (Antennes pour la clé).
 - Kankreblath : `SCALE=1.6 monster_planche.py 3053 kankreblath … 0,2` (son AnimAttaque1 envoie un projectile très loin : planche trop grande).
 - Recettes : `tools/contenu/recettes.py <tables> <fr.bin>` ajoute les recettes officielles des métiers de récolte (consommables, jusqu'au niveau 60).
+
+## Arènes des donjons (`arenes.py`, maquette « Donjons en vagues », 7 nov. 2026)
+
+Chaque donjon est une seule grande salle **créée** avec les vraies pièces de Dofus 3 (choix de Mathis « Donjons : 1B 2D … 16A »).
+`arenes.py` compose les 5 arènes (Grange = la cour ronde choisie, Crypte, Château, Cour, Cache) avec les sols, clôtures,
+murs et objets des salles officielles de chaque donjon (pièces = groupes d'images qui se recouvrent, repérés par leur cadre),
+puis les range sous les intérieurs de leur monde : une carte de 3 x 3 places (`"n": [3, 3]`), sol + atlas de décor,
+cases marchables (l'ellipse et les couloirs des trois entrées), et écrit les points de l'arène dans `zones.json`
+(`open.donjons[].arene` : arrivée, entrées, estrade du boss, portail, coffre ; cases de la grande grille).
+
+    TEXDIR=dossier_des_gfx python3 tools/extraction/arenes.py cartes_dir textures_dir public/assets/mondes [apercus]
+    node tools/hebergement/envoi.mjs
+
+`TEXDIR` = les textures des cartes sorties une par fichier (`<gfx>.png`, comme pour `world_export.py`) ; `cartes_dir` = les
+`map_<id>.json` des salles officielles (bundles `mapdata_assets_world_583/726/739/463/559`). `SEUL=arene_grange,…` pour n'en
+refaire qu'une ; `apercus` donne une image de chaque arène avec les cases marchables en vert. Les vagues (`vagues`,
+`bossVague` dans `zones.json`) se règlent à la main : groupes officiels des anciennes salles, `?` = tiré parmi les monstres du donjon.

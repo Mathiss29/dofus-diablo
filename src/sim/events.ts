@@ -42,6 +42,12 @@ export type SimEvent =
   | { k: 'bossIntro'; id: number; monster: string }
   | { k: 'furieux'; id: number; name: string; x: number; y: number }
   | { k: 'wave'; n: number; boss: string | null; archi: string | null }
+  /** Arène d'un donjon (maquette « Donjons en vagues ») : carte-titre à l'arrivée (11A), vague suivante (nom = vague à thème,
+   *  boss = arrivée du boss), palier du boss (8C), boss vaincu (temps, nouveau record ; portail et coffre, 13A). */
+  | { k: 'areneDebut'; nom: string; boss: string | null; vagues: number; cle: string | null; reprise: number }
+  | { k: 'areneVague'; n: number; total: number; nom: string | null; boss: string | null }
+  | { k: 'arenePalier'; id: number; name: string; n: number }
+  | { k: 'areneFin'; nom: string; temps: number; record: boolean }
   | { k: 'bossDown'; monster: string }
   | { k: 'playerDeath'; wave: number }
   | { k: 'potion'; x: number; y: number; amount: number }

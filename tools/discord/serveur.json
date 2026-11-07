@@ -1,19 +1,30 @@
 {
-  "_lisezmoi": "Plan du serveur Ombrelune Studio géré par le robot (voir LISEZMOI.md). Choix de Mathis (2026-11-06) : seulement la catégorie Diablofus. Un salon sans id est créé, un salon de la catégorie absent du plan est supprimé. Idlus et Re:Arise ne sont jamais touchés, les autres catégories non plus tant qu'elles ne sont pas dans ce fichier.",
+  "_lisezmoi": "Plan du serveur Ombrelune Studio géré par le robot (voir LISEZMOI.md). Choix de Mathis (2026-11-06) : seulement la catégorie Diablofus. Réorganisation (maquette « Salons : 1A 2A 3B 4B 5A+5B 6A 7A 8C 9A », 2026-11-07) : une catégorie en trois blocs (infos, communauté, retours), bugs et idées en forums, forum des carnets retiré. Un salon sans id est créé, un salon de la catégorie absent du plan est supprimé (archivé s'il a des messages). Idlus et Re:Arise ne sont jamais touchés.",
   "actif": true,
   "supprimer": true,
+  "accueil": { "salon": "commencer-ici", "fichier": "commencer-ici.md" },
   "general": [],
   "categories": [
     {
       "categorie": { "id": "1567607043903324252", "nom": "🔥 Diablofus : Les Douze Enfers" },
       "salons": [
-        { "id": "1567607045727850767", "nom": "📜・journal", "type": "texte", "sujet": "Le carnet du jour du Journal de Diablofus, publié par le robot à chaque mise à jour de diablofus.com." },
-        { "nom": "📣・annonces", "sujet": "Les grandes annonces de Diablofus : Les Douze Enfers (versions, sorties)." },
+        { "nom": "🧭・commencer-ici", "type": "texte", "lectureSeule": true, "sujet": "Le lien du jeu, les touches et où signaler un bug. À lire en arrivant." },
+        { "id": "1568323529978544148", "nom": "📣・annonces", "type": "annonces", "lectureSeule": true, "sujet": "Les grandes annonces de Diablofus : Les Douze Enfers (versions, sorties). Suis ce salon pour les recevoir sur ton serveur." },
+        { "id": "1567607045727850767", "nom": "📜・journal", "type": "texte", "lectureSeule": true, "sujet": "Le carnet du jour du Journal de Diablofus, publié par le robot à chaque mise à jour de diablofus.com. Réagis dans #💬・discussion." },
         { "id": "1567607046654787666", "nom": "💬・discussion", "type": "texte", "sujet": "Vos réactions, questions et idées sur Diablofus : Les Douze Enfers" },
-        { "nom": "🖼・captures", "sujet": "Vos plus belles captures de Diablofus." },
-        { "nom": "💡・idées", "sujet": "Proposez vos idées pour Diablofus." },
-        { "nom": "🐛・bugs", "sujet": "Un bug sur diablofus.com ? Décris ce que tu faisais, ta classe et ta zone." },
-        { "nom": "🗞・carnets", "type": "forum", "sujet": "Un post par carnet du Journal : réagis aux nouveautés du jour." }
+        { "nom": "🤝・entraide", "type": "texte", "sujet": "Une question sur le jeu ? Où trouver un monstre, comment ouvrir un donjon, quel sort monter : demande ici." },
+        { "id": "1568323533111828601", "nom": "🖼・captures", "type": "texte", "sujet": "Vos plus belles captures de Diablofus." },
+        { "nom": "🐛・bugs", "type": "forum", "sujet": "Un post par bug. Dis ce que tu faisais, ta classe, ta zone, et joins une capture si tu peux. Choisis une étiquette ; « Corrigé » est posée quand c'est réglé.",
+          "etiquettes": [
+            { "nom": "Combat", "emoji": "⚔️" }, { "nom": "Carte", "emoji": "🗺️" }, { "nom": "Interface", "emoji": "🖥️" },
+            { "nom": "Sauvegarde", "emoji": "💾" }, { "nom": "Plantage", "emoji": "💥" }, { "nom": "Corrigé", "emoji": "✅", "modo": true }
+          ] },
+        { "nom": "💡・idées", "type": "forum", "reaction": "👍", "sujet": "Un post par idée. Vote pour celles que tu aimes avec 👍. « Retenue » et « Faite » sont posées par l'équipe.",
+          "etiquettes": [
+            { "nom": "Classes", "emoji": "🗡️" }, { "nom": "Butin", "emoji": "💎" }, { "nom": "Donjons", "emoji": "🏰" },
+            { "nom": "Interface", "emoji": "🖥️" }, { "nom": "Autre", "emoji": "✨" },
+            { "nom": "Retenue", "emoji": "📌", "modo": true }, { "nom": "Faite", "emoji": "✅", "modo": true }
+          ] }
       ]
     }
   ]

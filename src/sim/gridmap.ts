@@ -39,6 +39,8 @@ export interface WorldMapEntry {
   pages?: number[];
   /** Décor rangé en bâtiments par tools/extraction/batiments.py. */
   batiments?: number;
+  /** Carte plus grande qu'une carte Dofus (arène d'un donjon, tools/extraction/arenes.py) : nombre de places [largeur, hauteur]. */
+  n?: [number, number];
 }
 /** Plusieurs cartes Dofus voisines collées bord à bord en une seule grande grille. */
 export interface WorldData extends MapData { origin: [number, number]; maps: WorldMapEntry[]; /** Ciel commun posé derrière tout le monde. */ sky?: string;
@@ -203,7 +205,11 @@ export class WorldGrid extends GridMap {
   constructor(readonly world: WorldData) {
     super(world);
     const [X0, Y0] = world.origin;
-    for (const m of world.maps) { this.byIndex.set(`${m.x - X0},${m.y - Y0}`, m); this.freeByMap.set(m.tag, []); }
+    for (const m of world.maps) {
+      const [nx, ny] = m.n ?? [1, 1];
+      for (let i = 0; i < nx; i++) for (let j = 0; j < ny; j++) this.byIndex.set(`${m.x - X0 + i},${m.y - Y0 + j}`, m);
+      this.freeByMap.set(m.tag, []);
+    }
     for (const c of this.free) { const m = this.mapOfCell(c); if (m) this.freeByMap.get(m.tag)!.push(c); }
   }
   mapOfCell(c: number): WorldMapEntry | undefined {
