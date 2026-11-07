@@ -23,6 +23,9 @@ export type SimEvent =
   | { k: 'spellFx'; id: string; x: number; y: number; facing: number }
   /** Retrait ou bonus de PA / PM / Puissance (texte flottant façon Dofus). */
   | { k: 'status'; x: number; y: number; text: string; color: string }
+  /** Maquette « Aggro » 6A : série en cours (n monstres, +bonus % d'XP) et fin de série. */
+  | { k: 'massacre'; n: number; bonus: number }
+  | { k: 'massacreFin'; n: number }
   | { k: 'hit'; target: 'monster' | 'player'; id?: number; x: number; y: number; z: number; amount: number; crit: boolean; element?: Element;
       /** Coup d'arme : éclat de la couleur de l'élément (maquette Armes 3B). */
       eclat?: boolean }

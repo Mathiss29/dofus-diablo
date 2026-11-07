@@ -76,6 +76,7 @@ export class EntityView {
     let sy = L.scale * this.k, alpha = 1;
     if (e.anim === 'idle') sy *= 1 + Math.sin(e.age * 4) * 0.02;
     if (e.anim === 'spawn') alpha = e.animT;
+    if ((e as { state?: string }).state === 'return') alpha = 0.5;   // maquette « Aggro » 7A : il abandonne et rentre
     if (e.anim === 'die') alpha = e.animT < 0.7 ? 1 : 1 - (e.animT - 0.7) / 0.3;
     this.sprite.setScale((flip ? -L.scale : L.scale) * this.k, sy).setAlpha(alpha);
     this.sprite.setPosition(p.x, p.y - (L.ignoreZ ? 0 : e.z)).setDepth(p.y);

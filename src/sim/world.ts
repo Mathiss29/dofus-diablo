@@ -3,7 +3,7 @@ import type { AtelierDef, Element, GameData, HitZone, MonsterSpell, SubAreaDef, 
 import type { PointDeRetour, RetourHavreSac, SimEvent, Telegraph } from './events';
 import { GridMap, WorldGrid } from './gridmap';
 import { NO_INPUT, type PlayerInput } from './input';
-import { CASE, Monster, TOUR } from './monster';
+import { AGGRO, CASE, Monster, TOUR } from './monster';
 import { jetOfficiel } from './danger';
 import { FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, recycleResource, recycleValue, rollItem, rollRarity, type Item, type ItemsData, type Rarity } from './items';
 import { Player } from './player';
@@ -121,6 +121,9 @@ export class World {
   waveDelay = 1.2;
   over = false;
   time = 0;
+  /** 6A : série de monstres tués de près (Massacre) : nombre, heure du dernier, et prochain appel à l'aide (4B). */
+  massacre = { n: 0, t: -99 };
+  private appelT = 0;
   private nextId = 1;
   private groups: MonsterGroup[] = [];
   /** Point de retour après une mort (le dernier Zaap atteint). */
@@ -495,9 +498,25 @@ export class World {
     return this.monsters.some(m => !m.dead && m.def.elite && this.groups[m.group]?.map === tag);
   }
   /** Un monstre repère le joueur : tout son groupe passe à l'attaque. */
+  /** Tout le groupe de m se lance à la poursuite, y compris ceux qui rentraient (3A). 7A : un « ! » rouge au réveil. */
   aggroGroup(m: Monster) {
     const g = this.groups[m.group];
-    for (const o of g ? g.members : [m]) if (!o.dead && (o.state === 'idle' || o === m)) o.state = 'chase';
+    let reveil = false;
+    for (const o of g ? g.members : [m]) if (!o.dead && (o.state === 'idle' || o.state === 'return' || o === m)) {
+      if (o.state === 'idle' || o.state === 'return') reveil = true;
+      o.state = 'chase'; o.perduT = 0;
+    }
+    if (reveil && g && !m.mannequin) this.emit({ k: 'status', x: m.x, y: m.y - 30, text: '!', color: '#e0605a' });
+  }
+  /** 4B : un groupe qui voit un combat à quelques cases vient prêter main-forte. */
+  private appelAide() {
+    const r = AGGRO.appelAide.cases * CASE, p = this.player;
+    const actifs = this.monsters.filter(m => !m.dead && m.group >= 0 && m.state !== 'idle' && m.state !== 'return' && m.state !== 'spawn');
+    if (!actifs.length) return;
+    for (const m of this.monsters) {
+      if (m.dead || m.state !== 'idle' || m.group < 0 || m.poseTest || Math.abs(m.x - p.x) + Math.abs(m.y - p.y) > World.SOMMEIL) continue;
+      if (actifs.some(a => a.group !== m.group && Math.hypot(a.x - m.x, a.y - m.y) < r)) this.aggroGroup(m);
+    }
   }
   private updateOpen(dt: number) {
     const p = this.player, open = this.zone.open!;
@@ -586,9 +605,12 @@ export class World {
     if (this.test?.recharges) this.rechargerTout();
     // Monde ouvert : un monstre qui attend loin du joueur dort (pas d'errance ni d'IA) : bien moins de calcul
     for (const m of this.monsters) {
-      if (this.zone.open && m.state === 'idle' && !m.dead && Math.abs(m.x - p.x) + Math.abs(m.y - p.y) > World.SOMMEIL) continue;
+      if (this.zone.open && m.state === 'idle' && !m.dead && Math.abs(m.x - p.x) + Math.abs(m.y - p.y) > World.SOMMEIL) { m.regenCalme(dt); continue; }
       m.update(dt, p, this);
     }
+    if (this.zone.open && !p.dead && (this.appelT -= dt) <= 0) { this.appelT = AGGRO.appelAide.periode; this.appelAide(); }
+    const M = AGGRO.massacre;
+    if (this.massacre.n >= M.min && this.time - this.massacre.t > M.fenetre) { this.emit({ k: 'massacreFin', n: this.massacre.n }); this.massacre.n = 0; }
     this.updateProjectiles(dt);
     this.updateDrops(dt);
     this.separate();
@@ -791,7 +813,8 @@ export class World {
       const vs = def.vsSummon && (m.summoner || (def.vsElite && (m.def.elite || m.def.boss))) ? def.vsSummon : 1;
       const vu = (m.vulnT > 0 ? 1 + m.vuln / 100 : 1) * m.subis;   // dommages subis augmentés (Bond) ou réduits (Cuirasse Laineuse)
       const dmg = Math.max(1, Math.round((p.damage(def.dmg * vs, def.element ?? 'neutre') * this.rng.range(0.9, 1.1) * (crit ? cls.critMult : 1) * first + flat) * (1 - res / 100) * vu));
-      m.hp -= dmg; m.flash = 0.09;
+      m.hp -= dmg; m.flash = 0.09; m.calmeT = 0;
+      if (m.state === 'idle' || m.state === 'return') this.aggroGroup(m);   // 3A + 4A : un coup, même de loin, réveille tout son groupe
       if (def.erosion) { m.maxHp = Math.max(1, m.maxHp - Math.round(dmg * def.erosion)); m.hp = Math.min(m.hp, m.maxHp); }
       // Retrait PA / PM du joueur contre l'Esquive officielle du monstre : chaque point a sa chance de passer
       const pm = this.removed(def.pmLoss ?? 0, p.retrait('PM'), m.def.caracs?.esquivePM ?? 0);
@@ -838,7 +861,7 @@ export class World {
     const left = (dist - t) / CASE;
     if (left <= 0.25) return;
     const p = this.player, dmg = Math.max(1, Math.round((p.level / 2 + p.stat('dommagesPoussee') + 32) * left / 4));
-    m.hp -= dmg; m.flash = 0.09;
+    m.hp -= dmg; m.flash = 0.09; m.calmeT = 0;
     this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 30, amount: dmg, crit: false });
     this.emit({ k: 'status', x: m.x, y: m.y - 20, text: 'Choc !', color: '#f2d36b' });
   }
@@ -858,10 +881,20 @@ export class World {
     const p = this.player;
     p.hp = Math.min(p.maxHp, p.hp + p.cls.healOnKill + p.legendary('vampire'));
     this.dropLoot(m);
-    const xp = p.gainXp(m.def.xp ?? Math.round(m.def.hp / 5), this);
+    const xp = p.gainXp(Math.round((m.def.xp ?? Math.round(m.def.hp / 5)) * this.bonusMassacre()), this);
     if (xp > 0) this.emit({ k: 'xp', x: m.x, y: m.y, z: m.radius * 2 + 30, n: xp });
     this.xpFamilier(FAMILIER_XP.chasse(this.monsterLevel(m), !!m.def.elite, !!m.def.boss));
     if (m.def.boss) { this.emit({ k: 'impact', hitstop: 0.15, shake: 0.02, big: true }); this.emit({ k: 'bossDown', monster: m.type }); }
+  }
+  /** 6A : chaque monstre tué moins de 3 s après le précédent allonge la série ; dès 5, +2 % d'XP par monstre (plafond +40 %). */
+  private bonusMassacre(): number {
+    const M = AGGRO.massacre, S = this.massacre;
+    if (this.time - S.t > M.fenetre) { if (S.n >= M.min) this.emit({ k: 'massacreFin', n: S.n }); S.n = 0; }
+    S.n++; S.t = this.time;
+    if (S.n < M.min) return 1;
+    const bonus = Math.min(M.plafond, M.xpParMonstre * S.n);
+    this.emit({ k: 'massacre', n: S.n, bonus: Math.round(bonus * 100) });
+    return 1 + bonus;
   }
   // --- Butin (choix 24) ----------------------------------------------------
   /** Niveau d'un monstre : celui de la sous-zone où il vit. */

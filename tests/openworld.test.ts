@@ -67,11 +67,11 @@ describe('monde ouvert', () => {
     for (let i = 0; i < 70; i++) w.step(STEP, NO_INPUT);
     expect(mates.some(o => o.state !== 'idle')).toBe(true);
     expect(mates.every(o => o.state !== 'idle' || o.dead)).toBe(true);
-    // le joueur se téléporte loin : laisse dépassée -> retour, PV rendus
+    // le joueur se téléporte loin : perdu de vue -> retour ; maquette « Aggro » 2B : il garde ses blessures
     w.player.x += 5000; m.hp = 1;
     for (let i = 0; i < 60 * 10; i++) w.step(STEP, NO_INPUT);
     expect(m.state).toBe('idle');
-    expect(m.hp).toBe(m.maxHp);
+    expect(m.hp).toBeLessThan(m.maxHp * 0.3);
   });
   it('un groupe vaincu réapparaît quand le joueur est loin, et rend une potion', () => {
     const w = newWorld(5), g = w.monsters[0].group, ev: string[] = [];

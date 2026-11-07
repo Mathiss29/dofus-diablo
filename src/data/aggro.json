@@ -1,0 +1,9 @@
+{
+  "_doc": "Maquette « Aggro » (Mathis, 2026-11-07) : 1B 2B 3A 4A+4B 5A 6A 7A 8A. Distances en cases (1 case = 48 px), durées en secondes.",
+  "perdu": { "cases": 25, "duree": 4 },
+  "gardeFou": 60,
+  "soin": { "parSeconde": 0.02, "calme": 5 },
+  "appelAide": { "cases": 6, "periode": 0.25 },
+  "rattrapage": { "cases": 6, "mult": 1.5, "progressif": 2 },
+  "massacre": { "min": 5, "fenetre": 3, "xpParMonstre": 0.02, "plafond": 0.4 }
+}
