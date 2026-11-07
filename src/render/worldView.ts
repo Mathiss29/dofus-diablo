@@ -47,6 +47,8 @@ export class WorldView {
   private lum = 1;
   private sol = 1;
   /** Décor qui bouge (maquette « Vivant ») : arbres au vent, eau qui glisse ou change de couleur. Coupables dans les Réglages. */
+  /** Débords et originaux en double (DecorPlace.h / cc) : montrés ou cachés selon la carte où est le joueur. */
+  private readonly selonCarte: { im: Phaser.GameObjects.Image; p: DecorPlace; tag: string }[] = [];
   private readonly vivants: { im: Phaser.GameObjects.Image; p: DecorPlace; x0: number; y0: number; ph: number }[] = [];
   vent = true;
   eau = true;
@@ -107,6 +109,7 @@ export class WorldView {
     this.viewT = now;
     if (here.tag !== this.center) {
       this.center = here.tag;
+      this.majSelonCarte();
       // intérieur : pas de ciel, fond noir comme dans Dofus
       // (le Temple Céleste flotte dans le ciel : il le garde)
       this.sky?.setVisible(!here.inside || !!here.ciel);
@@ -327,6 +330,7 @@ export class WorldView {
         const sp = wg.toScreen(p.x, p.y), im = this.scene.add.image(sp.x, sp.y, this.k(p.p !== undefined ? `decor_p${p.p}` : `decor_${m.tag}`), p.f).setScale(S * (p.z ?? 1));
         if (p.c < 0) im.setDepth(SOL + 10 + p.o * 0.01);   // lumière posée sur le sol : au-dessus du sol, sous le décor
         else { const cc = wg.cellCenter(p.c), cs = wg.toScreen(cc.x, cc.y + h / 2); im.setDepth(cs.y + p.o * 0.01); }
+        if (p.h || p.cc) im.setData('tag', m.tag);
         if (p.b) this.light(im, p);
         else im.setTint(this.tint);
         if (p.c < 0 && p.g) im.setDepth(SOL + 2 + p.o * 0.0001);   // eau animée : juste au-dessus du sol, sous les lumières
@@ -336,6 +340,7 @@ export class WorldView {
           this.vivants.push({ im, p, x0: im.x, y0: im.y, ph: (p.x * 0.013 + p.y * 0.007) % (Math.PI * 2) });
         }
         if (p.c >= 0 && !p.b) this.transparence?.ajouter(im, p.bt);
+        if (p.h || p.cc) { this.selonCarte.push({ im, p, tag: m.tag }); if (!this.montre(p, m.tag)) im.setVisible(false); }
         s.objs.push(im);
       }
     }
@@ -360,11 +365,29 @@ export class WorldView {
     }
     this.vivants.length = n;
   }
+  /** Façon Sanstour (Mathis, 2026-11-07) : chaque carte Dofus contient aussi ce qui l'entoure (débords « h »), mais Dofus
+   *  n'affiche que la carte courante. Ici les voisines restent affichées en objets entiers (centre dans leur cadre), et les
+   *  débords de la carte du joueur s'ajoutent, en cachant les originaux des voisines qu'ils recopient (« cc »). */
+  private montre(p: DecorPlace, tag: string) {
+    if (p.h) return tag === this.center;
+    return !p.cc?.includes(this.center);
+  }
+  private majSelonCarte() {
+    let n = 0;
+    for (const e of this.selonCarte) {
+      if (!e.im.active) continue;   // carte déchargée
+      this.selonCarte[n++] = e;
+      const v = this.montre(e.p, e.tag);
+      if (e.p.b) e.im.setVisible(v && (e.p.j ? this.sol : this.lum) > 0.01);
+      else e.im.setVisible(v);   // tout de suite : un fondu cassait le rythme (Mathis, 2026-11-07)
+    }
+    this.selonCarte.length = n;
+  }
   /** Lumière officielle (halo, lueur, rayon) : ajoutée à l'image comme dans Dofus, jamais teintée, plus forte la nuit. */
   private light(im: Phaser.GameObjects.Image, p: DecorPlace) {
     im.setBlendMode(p.b === 'a' ? Phaser.BlendModes.ADD : Phaser.BlendModes.SCREEN).setData('k', p.k ?? 1).setData('j', !!p.j);
     const f = p.j ? this.sol : this.lum;
-    im.setAlpha(Math.min(1, (p.k ?? 1) * f)).setVisible(f > 0.01);
+    im.setAlpha(Math.min(1, (p.k ?? 1) * f)).setVisible(f > 0.01 && ((!p.h && !p.cc) || this.montre(p, im.getData('tag') ?? '')));
   }
   /** Change l'ambiance : teinte des cartes (sol, décor, ciel) et force des lumières. Ne refait le travail que si ça a changé. */
   setAmbiance(tint: number, lum: number, sol: number) {
@@ -378,6 +401,7 @@ export class WorldView {
       if (k === undefined) o.setTint(tint);   // (l'eau qui change de couleur est reteintée à chaque image par animate)
       else { const f = o.getData('j') ? sol : lum; o.setAlpha(Math.min(1, k * f)).setVisible(f > 0.01); }
     }
+    this.majSelonCarte();
   }
   private unload(m: WorldMapEntry) {
     const s = this.slots.get(m.tag)!;

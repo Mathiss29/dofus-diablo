@@ -38,7 +38,7 @@ for m in sorted(maps, key=lambda m: (m['y'], m['x'])):
 decor = []
 for m in maps:
     for d in m['decor']:
-        if d.get('b'): continue   # lumières additives : pas sur la carte
+        if d.get('b') or d.get('h'): continue   # lumières additives, débords (vus seulement depuis leur carte) : pas sur la carte
         decor.append((0 if d['c'] < 0 else 1, d['y'], d.get('o', 0), m, d))
 for _, _, _, m, d in sorted(decor, key=lambda t: t[:3]):
     a = atlas(f"decor_p{d['p']}" if 'p' in d else f"decor_{m['tag']}")

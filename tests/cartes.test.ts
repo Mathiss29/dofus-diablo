@@ -17,7 +17,7 @@ function frames(w: string, cle: string) {
   }
   return pages.get(k)!;
 }
-type Img = { tag: string; mx: number; my: number; x: number; y: number; w: number; h: number; lum: boolean };
+type Img = { tag: string; mx: number; my: number; x: number; y: number; w: number; h: number; lum: boolean; hors: boolean; cc?: string[] };
 function images(w: string, data: WorldData) {
   const L: Img[] = [], manque: string[] = [];
   for (const m of data.maps) for (const p of m.decor) {
@@ -26,7 +26,7 @@ function images(w: string, data: WorldData) {
     const z = p.z ?? 1;
     if (m.inside) continue;
     L.push({ tag: m.tag, mx: m.x, my: m.y, x: p.x + (F.spriteSourceSize.x - F.sourceSize.w / 2) * z, y: p.y + (F.spriteSourceSize.y - F.sourceSize.h / 2) * z,
-      w: F.frame.w * z, h: F.frame.h * z, lum: !!p.b || p.c < 0 });
+      w: F.frame.w * z, h: F.frame.h * z, lum: !!p.b || p.c < 0, hors: !!p.h, cc: p.cc });
   }
   return { L, manque };
 }
@@ -59,9 +59,20 @@ describe.each(['incarnam', 'astrub'])('cartes de %s', (w) => {
     }
     expect(absents).toEqual([]);
   });
-  it('aucun bâtiment posé deux fois par deux cartes voisines', () => {
-    const d = doubles(L, 2, 8000).map(([a, b]) => `${a.tag} / ${b.tag} (${Math.round(a.x)}, ${Math.round(a.y)}) ${a.w}x${a.h}`);
-    expect(d).toEqual([]);
+  it('aucun bâtiment posé deux fois par deux cartes voisines (vu depuis chaque carte)', () => {
+    // méthode « façon Sanstour » : sur la carte C, on voit les images des voisines sans débord (h) ni cachées depuis C (cc),
+    // plus tous les débords de C
+    const parCarte = new Map<string, Img[]>();
+    for (const e of L) (parCarte.get(e.tag) ?? parCarte.set(e.tag, []).get(e.tag)!).push(e);
+    const d = new Set<string>();
+    for (const m of data.maps) {
+      if (m.inside) continue;
+      const vus: Img[] = [];
+      for (const n of data.maps) if (!n.inside && Math.abs(n.x - m.x) <= 1 && Math.abs(n.y - m.y) <= 1)
+        for (const e of parCarte.get(n.tag) ?? []) if ((e.hors ? e.tag === m.tag : true) && !e.cc?.includes(m.tag)) vus.push(e);
+      for (const [a, b] of doubles(vus, 2, 8000)) d.add(`depuis ${m.tag} : ${a.tag} / ${b.tag} (${Math.round(a.x)}, ${Math.round(a.y)}) ${a.w}x${a.h}`);
+    }
+    expect([...d]).toEqual([]);
   });
 });
 

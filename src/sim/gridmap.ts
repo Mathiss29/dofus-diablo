@@ -10,7 +10,10 @@ export interface DecorPlace { f: string; x: number; y: number; c: number; o: num
   /** eau qui glisse : direction x, y, amplitude (px), fréquence */ t?: [number, number, number, number];
   /** couleur qui va et vient : 0xRRGGBB, alpha, fréquence */ ca?: [number, number, number];
   /** décor partagé : numéro de la page d'atlas commune (decor_p<N>) */ p?: number;
-  /** bâtiment (ou arbre) dont l'image fait partie, numéro unique dans le monde (tools/extraction/batiments.py) : il s'efface d'un bloc */ bt?: number }
+  /** bâtiment (ou arbre) dont l'image fait partie, numéro unique dans le monde (tools/extraction/batiments.py) : il s'efface d'un bloc */ bt?: number;
+  /** débord : le centre de l'image sort du cadre de sa carte, elle n'est montrée que quand le joueur est sur cette carte
+   *  (méthode « façon Sanstour », batiments.py COURANTE=1) */ h?: number;
+  /** original caché quand le joueur est sur l'une de ces cartes (leur débord en a déjà une copie) */ cc?: string[] }
 
 /** Données d'une carte Dofus 3 exportée par tools/extraction/map_export.py. */
 export interface MapData {
