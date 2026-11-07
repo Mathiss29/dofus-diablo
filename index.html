@@ -31,6 +31,26 @@
       background: radial-gradient(ellipse at 50% 45%, #232619, #12141b 70%); transition: opacity .25s; }
     #chargement[hidden] { display: none; }
     #chargement.discret { opacity: 0; transition: opacity .2s .15s; }
+    #chargement.discret.lent { transition: opacity .25s .6s; }
+    /* Écran de voyage entre zones (maquette Entrées 15A) : illustration de la zone d'arrivée, nom, niveaux, astuce */
+    #chargement .voyage { display: none; }
+    #chargement.voyage-on { place-content: end stretch; justify-items: start; padding: 0 7vw 9vh; gap: 2.2vh; background: #0b0c10; }
+    #chargement.voyage-on > img { display: none; }
+    #chargement.voyage-on .voyage { display: contents; }
+    #chargement .ill { position: absolute; inset: 0; z-index: -1; background: center / cover no-repeat;
+      animation: approche 9s ease-out both; }
+    #chargement .ill::after { content: ''; position: absolute; inset: 0;
+      background: linear-gradient(180deg, #0b0c1066 0%, #0b0c1000 35%, #0b0c10d9 78%, #0b0c10 100%), radial-gradient(ellipse at 50% 40%, #0000 50%, #000a 100%); }
+    #chargement .txt { order: -1; display: grid; gap: .6vh; text-shadow: 0 2px 8px #000; }
+    #chargement .txt small.vers { font: 700 12px Nunito, system-ui, sans-serif; color: #c9a35a; letter-spacing: .3em; text-transform: uppercase; }
+    #chargement .txt b { font: 400 clamp(30px, 5.4vh, 64px) Rowdies, Lexend, system-ui, sans-serif; color: #f4ead0; line-height: 1; }
+    #chargement .txt span { font: 600 16px Lexend, Nunito, system-ui, sans-serif; color: #d8cfb4; }
+    #chargement .txt em { font-style: normal; color: #ffc14d; }
+    #chargement.voyage-on .barre { width: min(46vw, 640px); }
+    #chargement.voyage-on > small { color: #8e8a78; }
+    #chargement .astuce { order: 1; margin: 1vh 0 0; max-width: 46em; font: 500 15px Lexend, Nunito, system-ui, sans-serif; color: #cfc8b0; }
+    #chargement .astuce em { font: 700 11px Nunito, system-ui, sans-serif; font-style: normal; color: #0b0c10; background: #c9a35a; border-radius: 4px; padding: 2px 6px; margin-right: .7em; letter-spacing: .12em; text-transform: uppercase; vertical-align: 2px; }
+    @keyframes approche { from { transform: scale(1.08); } to { transform: scale(1); } }
     #chargement.discret.vu { opacity: 1; }
     #chargement img { width: min(46vw, 82vh); height: auto; filter: drop-shadow(0 1vh 2.4vh #000c); animation: braise 2.6s ease-in-out infinite; }
     #chargement .barre { width: min(28vw, 50vh); height: 8px; border-radius: 6px; background: #2a2c22; overflow: hidden; box-shadow: 0 0 0 1px #000a; }
@@ -38,7 +58,7 @@
     #chargement small { font: 700 13px Nunito, system-ui, sans-serif; color: #a7a28a; letter-spacing: .06em; }
     @keyframes braise { 0%, 100% { filter: drop-shadow(0 1vh 2.4vh #000c) drop-shadow(0 0 0 #b9e54b00); }
       50% { filter: drop-shadow(0 1vh 2.4vh #000c) drop-shadow(0 0 2.2vh #b9e54b66); } }
-    @media (prefers-reduced-motion: reduce) { #chargement img { animation: none; } }
+    @media (prefers-reduced-motion: reduce) { #chargement img, #chargement .ill { animation: none; } }
   </style>
 </head>
 <body>
@@ -47,6 +67,7 @@
     <img src="assets/logo/logo.webp" alt="Diablofus : Les Douze Enfers" width="1400" height="575">
     <div class="barre"><i></i></div>
     <small>Chargement…</small>
+    <div class="voyage"></div>
   </div>
   <script type="module" src="/src/main.ts"></script>
 </body>

@@ -1,0 +1,24 @@
+{
+  "_note": "Écran de voyage entre zones (maquette Entrées 15A) : illustration de la zone d'arrivée (public/assets/voyage/<zone>.webp, capture en jeu), sous-titre, niveaux, et une astuce tirée au hasard. Le Havre-Sac n'a pas d'écran (14A : même passage qu'une porte).",
+  "zones": {
+    "incarnam": { "sous": "Le monde des âmes, au-dessus des nuages", "niveau": "Niveaux 1 à 10" },
+    "astrub": { "sous": "La cité des débutants et ses champs", "niveau": "Niveaux 10 à 40" },
+    "bastion": { "sous": "Notre ville, à l'abri des monstres", "niveau": "Ville" }
+  },
+  "astuces": [
+    "H : 1,5 s d'incantation et tu es dans ton Havre-Sac. Bouger ou être touché la coupe.",
+    "M ouvre la carte du monde ; Ctrl+M coupe tout le son.",
+    "Survole une porte : son nom s'affiche. Clique dessus ou marche droit dedans pour entrer.",
+    "Pour sortir d'un bâtiment, clique sur le paillasson près de l'entrée.",
+    "En arrivant quelque part, tu es protégé 1,5 s : les monstres attendent ton premier geste.",
+    "La Rage du Iop se remplit en frappant et renforce le sort suivant.",
+    "Ctrl+clic sur un objet le cadenasse : il ne partira pas au recyclage.",
+    "B ouvre le Bestiaire : les monstres déjà vaincus et ce qu'ils laissent tomber.",
+    "Un élite rapporte bien plus qu'un monstre normal, et un boss encore plus.",
+    "Les charges d'un sort se rechargent une à une : garde-en une pour te dégager.",
+    "S ouvre tes sorts, I ton inventaire, J tes métiers.",
+    "Un donjon se fait en 6 vagues puis le boss. La clé reste valable 10 min.",
+    "Le Poutch Ingball de ton Havre-Sac affiche tes dégâts par seconde.",
+    "Alt affiche le nom de tous les objets au sol."
+  ]
+}

@@ -132,7 +132,8 @@ export class Monster extends Entity {
     }
     switch (this.state) {
       case 'idle': {
-        if (!player.dead && dist < (D.aggro ?? open?.aggro ?? 250)) { world.aggroGroup(this); break; }
+        // arrivée protégée (maquette Entrées 13A) : on ne remarque pas le joueur qui vient de passer une porte
+        if (!player.dead && !world.calme && dist < (D.aggro ?? open?.aggro ?? 250)) { world.aggroGroup(this); break; }
         this.regenCalme(dt);
         // Petite errance autour du point de départ
         this.wanderT -= dt;
