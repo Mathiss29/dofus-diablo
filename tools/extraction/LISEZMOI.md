@@ -312,7 +312,7 @@ dans `/mnt/project-files/cache-dofus/elements-animes/` (LISEZMOI là-bas).
   (`mapsinformation`, `worldMap` -1). La porte du dehors = l'élément interactif du bâtiment dans `boundingBoxes` (`m_interactionId`),
   sinon une porte `62977/62986-62989/62995` des `interactiveElements` repérée à l'œil. Salles exportées comme les donjons (atlas par salle,
   deux cartes factices), rangées y = -2, 0, 2 du monde ; portes, ateliers (`open.ateliers`), donjon et sous-zones dans `src/data/zones.json`.
-- Cache de Kankreblath : salles = `dungeons[88].mapIds` (entrée 146676736), porte 39697 case 290 de [3,-17], clé 15991.
+- Cache de Kankreblath : salles = `dungeons[88].mapIds` (entrée 146676736), clé 15991. Entrée officielle : porte 39697 case 290 de [3,-17] → Boutique de Kerubim (103547392) → Grenier de Kerubim (103549440, l'engin 47284 relie les deux) → trou du plancher (case 316) gardé par le Cloportier.
   Planque des Vilinsekts (sous-zone 843) : trois caves de la Cité ([6,-21], [4,-19], [1,-16]), monstres qui réapparaissent (Antennes pour la clé).
 - Kankreblath : `SCALE=1.6 monster_planche.py 3053 kankreblath … 0,2` (son AnimAttaque1 envoie un projectile très loin : planche trop grande).
 - Recettes : `tools/contenu/recettes.py <tables> <fr.bin>` ajoute les recettes officielles des métiers de récolte (consommables, jusqu'au niveau 60).

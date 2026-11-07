@@ -1353,6 +1353,28 @@
       290
      ],
      "b": [
+      "boutique_kerubim",
+      468
+     ],
+     "nom": "Boutique de Kerubim"
+    },
+    {
+     "a": [
+      "boutique_kerubim",
+      319
+     ],
+     "b": [
+      "grenier_kerubim",
+      242
+     ],
+     "nom": "Grenier de Kerubim"
+    },
+    {
+     "a": [
+      "grenier_kerubim",
+      316
+     ],
+     "b": [
       "cache_0",
       552
      ],

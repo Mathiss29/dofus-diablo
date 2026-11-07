@@ -53,14 +53,15 @@ PNJ = {
       'victoire': "Le Royal est tombé ? Mes Bouftous vont redevenir gentils. Enfin, un peu. Enfin, j'espère.",
       'mort': "Piétiné ? Ça arrive. Le Royal pèse plus lourd qu'il n'en a l'air, et il en a déjà l'air.",
       'sansCle': "La Cour ne s'ouvre qu'avec sa clé. {vendeur} en vend."}},
-  # Cache de Kankreblath : le Cloportier (PNJ officiel 2766, look {3050}), qui fait la courte échelle aux aventuriers rapetissés.
-  'cloportier': {'nom': 'Cloportier', 'dofusId': 2766, 'zone': 'astrub', 'carte': '3_-17',
-    'phrase': "Encore un qui s'est glissé dans un trou de sousouris ! Vous proliférez comme des Vilinsekts, vous autres. Ça vous rendrait presque sympathiques.",
-    'discussion': [{'reponse': 'Qui est Kankreblath ?', 'texte': "Le chef des Vilinsekts. Tout ce qui disparaît dans les maisons d'Astrub finit dans sa Cache : cuillères, dés, cartes à jouer… et parfois les aventuriers trop curieux. Pour la clef, va voir ses Vilinsekts dans les caves : huit antennes et un peu de bricolage."}],
-    'gardien': {'donjon': 'Cache de Kankreblath', 'approche': 'Psst ! Par ici, petit. La Cache, c\'est en haut de l\'échelle.',
+  # Cache de Kankreblath : le Cloportier (PNJ officiel 2766, look {3050}). Comme dans Dofus 3, on entre par le trou du Grenier de Kerubim
+  # ([3,-17], au-dessus de sa boutique) après un coup de Baguette Rikiki : c'est lui qui la tient, à côté du trou.
+  'cloportier': {'nom': 'Cloportier', 'dofusId': 2766, 'zone': 'astrub', 'carte': 'grenier_kerubim',
+    'phrase': "Encore un qui veut passer par le trou de sousouris ! Vous proliférez comme des Vilinsekts, vous autres. Ça vous rendrait presque sympathiques.",
+    'discussion': [{'reponse': 'Qui est Kankreblath ?', 'texte': "Le chef des Vilinsekts. Tout ce qui disparaît dans les maisons d'Astrub finit dans sa Cache, sous ce plancher : cuillères, dés, cartes à jouer… et parfois les aventuriers trop curieux. Pour la clef, va voir ses Vilinsekts dans les caves : huit antennes et un peu de bricolage."}],
+    'gardien': {'donjon': 'Cache de Kankreblath', 'approche': "Psst ! Par ici. Un petit coup de Baguette Rikiki et tu passes par le trou.",
       'victoire': "Kankreblath à terre ? Les cuillères d'Astrub vont enfin rentrer à la maison. Enfin, celles qu'il n'a pas mangées.",
-      'mort': "Redescendu par le chemin le plus court, à ce que je vois. Allez, je te refais la courte échelle quand tu veux.",
-      'sansCle': "Il manque un barreau à l'échelle, et ta clef, c'est le barreau. {vendeur} en vend."}},
+      'mort': "Ressorti par le trou en un seul morceau, à ce que je vois. Allez, je te rapetisse encore quand tu veux.",
+      'sansCle': "Rapetisser, je sais faire. Ouvrir sans clef, non. {vendeur} en vend."}},
   'emp': {'nom': 'Emp', 'dofusId': 1640, 'zone': 'astrub', 'carte': '5_-18', 'case': EMP_CASE,
     # Maquette Hub (4A) : ses guichets sont partis au Havre-Sac ; il garde sa discussion officielle et une phrase inédite
     'phrase': "Mes guichets ? Confiés à Kerubim Crépin, dans ton Havre-Sac (touche H). Moins de queue, moins de gaspillage : Waro lui-même n'a rien trouvé à redire.",
