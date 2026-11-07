@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { GAME_DATA } from '../src/sim/data';
-import { GridMap, MAP_COLS, MAP_ROWS, type MapData } from '../src/sim/gridmap';
+import { GridMap, MAP_COLS, MAP_ROWS, WorldGrid, type MapData, type WorldData } from '../src/sim/gridmap';
 import { NO_INPUT } from '../src/sim/input';
 import { World } from '../src/sim/world';
 
@@ -31,5 +31,24 @@ describe('contournement du décor', () => {
       expect(map.walkable(m.x, m.y)).toBe(true);
     }
     expect(proche).toBeLessThan(m.radius + p.radius + 60);
+  });
+
+  it('dans l\'arène de la Crypte, les monstres en route s\'écartent les uns des autres au lieu de se rentrer dedans', () => {
+    const data = JSON.parse(readFileSync(new URL('../public/assets/mondes/incarnam/monde.json', import.meta.url), 'utf8')) as WorldData;
+    const w = new World({ data: GAME_DATA, zone: 'incarnam', map: new WorldGrid(data), seed: 30 }), wg = w.worldGrid!;
+    w.allerArene('arene_crypte');
+    const p = w.player, free = wg.freeByMap.get('arene_crypte')!, pos = wg.cellToWorld(free[free.length >> 1]);
+    let contacts = 0, n = 0;
+    for (let t = 0; t < 60 * 20; t++) {
+      p.hp = p.maxHp; p.dead = false; p.x = pos.x; p.y = pos.y;
+      w.step(STEP, NO_INPUT);
+      for (const m of w.monsters) {
+        if (m.dead || m.state !== 'chase' || Math.hypot(m.x - p.x, m.y - p.y) < 150) continue;
+        n++; if (w.monsters.some(o => o !== m && !o.dead && Math.hypot(o.x - m.x, o.y - m.y) < o.radius + m.radius + 2)) contacts++;
+      }
+      for (const m of w.monsters) if (!m.dead && Math.hypot(m.x - p.x, m.y - p.y) < 90 && w.time > 5) w.killMonster(m);
+    }
+    expect(n).toBeGreaterThan(500);
+    expect(contacts / n).toBeLessThan(0.15);   // environ 0,5 sans l'évitement
   });
 });
