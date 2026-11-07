@@ -1,7 +1,6 @@
 import { v } from './assetUrl';
 import Phaser from 'phaser';
 import { GridMap, MAP_COLS, MAP_ROWS, type DecorPlace, type WorldGrid, type WorldMapEntry } from '../sim/gridmap';
-import { ISO } from '../sim/iso';
 import type { Particules } from './particles';
 import type { Transparence } from './transparence';
 
@@ -30,8 +29,8 @@ export class WorldView {
   sky?: Phaser.GameObjects.Image;
   private center = '';
   private viewT = 0;
-  /** Bouts de portes (sim/world.ts) : un repère doré au sol est posé sur chacun quand sa carte est chargée.
-   *  `vers` = carte où elle mène (préchargée à l'approche, maquette Entrées 2A) ; `sortie` = sortie d'un intérieur (repère plus visible, 8A). */
+  /** Bouts de portes (sim/world.ts). `vers` = carte où elle mène (préchargée à l'approche, maquette Entrées 2A) ;
+   *  `sortie` = sortie d'un intérieur. */
   portes: { tag: string; x: number; y: number; vers?: string; sortie?: boolean }[] = [];
   /** Distance (monde) à laquelle on précharge ce qui est derrière une porte : 6 cases. */
   static readonly APPROCHE = 6 * 48;
@@ -277,15 +276,8 @@ export class WorldView {
     }
     this.brume(m, s);
     s.next = 0;
-    for (const p of this.portes) if (p.tag === m.tag) {
-      const c = ISO.toScreen(p.x, p.y), g = this.scene.add.graphics().setPosition(c.x, c.y).setDepth(c.y - 2);   // comme une ombre : au-dessus du sol et des tapis
-      if (p.sortie) {   // sortie d'un intérieur (8A) : halo plus large et plus vif, double anneau
-        g.fillStyle(0xffd36a, 0.18).fillEllipse(0, 0, 130, 65).fillStyle(0xffd36a, 0.45).fillEllipse(0, 0, 96, 48)
-          .lineStyle(4, 0xfff4c4, 1).strokeEllipse(0, 0, 96, 48).lineStyle(2, 0xffe08a, 0.8).strokeEllipse(0, 0, 118, 59);
-      } else g.fillStyle(0xffd36a, 0.35).fillEllipse(0, 0, 92, 46).lineStyle(3, 0xfff0b0, 1).strokeEllipse(0, 0, 92, 46);
-      this.scene.tweens.add({ targets: g, alpha: p.sortie ? 0.65 : 0.5, duration: 800, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
-      s.objs.push(g);
-    }
+    // plus de repère doré au sol (maquette Entrées 18A, comme Sanstour) : la porte et le paillasson officiels se voient,
+    // et le survol donne le nom et le curseur maison
     s.state = 'ready';
     this.parts?.add(m.tag);
     this.pump(m.tag === this.center ? Infinity : this.presse ? 14 : BUDGET_MS);   // la carte du joueur tout de suite, les voisines au fil des images

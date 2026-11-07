@@ -66,4 +66,31 @@ describe('entrées et sorties (maquette Entrées)', () => {
     expect(ici(b)).toBe(f.tag);
     expect(Math.hypot(b.player.x - f.x, b.player.y - f.y)).toBeGreaterThan(60);   // il est bien passé devant
   });
+  it('sortie : tout le paillasson dessiné autour de la porte réagit au survol et au clic (19A)', () => {
+    const w = monde(), t = porte(w, "Taverne d'Astrub");
+    expect(World.SORTIE_R).toBeGreaterThan(World.PORTE_R);
+    const d = (World.PORTE_R + World.SORTIE_R) / 2;
+    expect(w.porteSous(t.ends[1].x + d, t.ends[1].y)?.sortie).toBe(true);   // bord du paillasson, dedans
+    expect(w.porteSous(t.ends[0].x + d, t.ends[0].y)).toBeNull();           // la porte de la rue garde sa taille
+  });
+  it('arrivée protégée : 1,5 s d\'invulnérabilité, les monstres attendent le premier geste (13A)', () => {
+    const w = monde(), t = porte(w, "Taverne d'Astrub"), p = w.player;
+    p.x = t.ends[0].x + 40; p.y = t.ends[0].y + 20;
+    marcher(w, t.ends[0].x - p.x, t.ends[0].y - p.y, 60);
+    expect(ici(w)).toBe('taverne');
+    expect(w.calme).toBeTruthy();
+    expect(p.invuln).toBeGreaterThan(1);
+    // un monstre juste à côté, au repos : il ne remarque pas le joueur tant que celui-ci ne bouge pas
+    const m = w.monsters.find(o => !o.dead && o.state === 'idle')!;
+    w.proteger();
+    m.x = p.x + 60; m.y = p.y;
+    for (let i = 0; i < 30; i++) w.step(1 / 60, NO_INPUT);
+    expect(m.state).toBe('idle');
+    // quelques pas : le calme cesse, il attaque
+    for (let i = 0; i < 40 && w.calme; i++) w.step(1 / 60, { ...NO_INPUT, move: { x: 1, y: 0 } });
+    expect(w.calme).toBeNull();
+    m.x = p.x + 60; m.y = p.y;
+    for (let i = 0; i < 5; i++) w.step(1 / 60, NO_INPUT);
+    expect(m.state).not.toBe('idle');
+  });
 });

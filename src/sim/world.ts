@@ -151,6 +151,9 @@ export class World {
   area: SubAreaDef | null = null;
   /** Intérieur où se trouve le joueur (maquette Entrées 5A) : nom de la porte qui y mène (« Taverne d'Astrub »), null dehors. */
   lieu: string | null = null;
+  /** Arrivée protégée (maquette Entrées 13A) : après une porte, un Zaap ou un portail, les monstres de l'endroit attendent
+   *  ton premier geste (au plus ARENE.protection s) ; le perso est intouchable pendant ce temps. */
+  calme: { t: number; x: number; y: number } | null = null;
   /** Carte d'un intérieur -> son nom : la carte d'arrivée de chaque porte qui mène dedans (première porte trouvée). */
   readonly lieux = new Map<string, string>();
   /** Portes du monde ouvert : les deux bouts en coordonnées monde, et la carte de chacun. */
@@ -215,6 +218,13 @@ export class World {
     if (open) this.spawnGroups();
     if (open?.havreSac?.poutch != null) this.poserPoutch(open.havreSac.poutch);
     if (open) this.visiter(opts.zonesVues ?? []);
+    if (open && (opts.arrivee || opts.position || opts.zaap)) this.proteger();
+  }
+  /** 13A : arrivée protégée (porte, Zaap, portail, Rappel), comme à l'entrée des arènes. */
+  proteger() {
+    const p = this.player;
+    p.invuln = Math.max(p.invuln, ARENE.protection);
+    this.calme = { t: ARENE.protection, x: p.x, y: p.y };
   }
 
   // --- Havre-Sac (maquette Hub : 2A touche H, 2C Zaap du Havre-Sac, 3A PNJ qui emménagent, 7A Poutch) ---------------
@@ -324,6 +334,14 @@ export class World {
   }
   /** Rayon autour d'une porte qui la déclenche (≈ 1,4 case) et distance d'arrivée de l'autre côté. */
   static readonly PORTE_R = 65;
+  /** Sortie d'un intérieur (maquette Entrées 19A) : tout le paillasson officiel dessiné autour réagit, pas seulement sa case. */
+  static readonly SORTIE_R = 95;
+  /** Ce bout de porte fait sortir d'un intérieur vers le dehors. */
+  private estSortie(po: World['portes'][number], i: number): boolean {
+    const wg = this.worldGrid;
+    return !!wg && !po.vers && !!wg.mapByTag(po.ends[i].tag)?.inside && !wg.mapByTag(po.ends[1 - i].tag)?.inside;
+  }
+  private rayonPorte(po: World['portes'][number], i: number) { return this.estSortie(po, i) ? World.SORTIE_R : World.PORTE_R; }
   static readonly PORTE_ARRIVEE = 80;
   private buildPortes() {
     const wg = this.worldGrid!;
@@ -369,11 +387,11 @@ export class World {
    *  d'un intérieur. Les bouts qu'on ne peut pas prendre dans ce sens (sens unique) sont ignorés. */
   porteSous(x: number, y: number): { x: number; y: number; nom: string; sortie: boolean } | null {
     if (!this.worldGrid) return null;
-    let best: { x: number; y: number; nom: string; sortie: boolean } | null = null, bd = World.PORTE_R;
+    let best: { x: number; y: number; nom: string; sortie: boolean } | null = null, bd = Infinity;
     for (const po of this.portes) for (let i = 0; i < 2; i++) {
       if (i === 1 && po.sens) continue;
       const from = po.ends[i], to = po.ends[1 - i], d = Math.hypot(x - from.x, y - from.y);
-      if (d > bd) continue;
+      if (d > bd || d > this.rayonPorte(po, i)) continue;
       bd = d;
       const dedans = !!this.worldGrid.mapByTag(from.tag)?.inside;
       if (po.vers) { best = { x: from.x, y: from.y, nom: po.nom, sortie: false }; continue; }
@@ -403,12 +421,12 @@ export class World {
     if (p.dead || p.state !== 'free') return;   // pas au milieu d'un sort ou d'un bond
     if (this.portalLock && Math.hypot(p.x - this.portalLock.x, p.y - this.portalLock.y) > R + 30) this.portalLock = null;
     for (const po of this.portes) for (let i = 0; i < 2; i++) {
-      const from = po.ends[i], to = po.ends[1 - i];
-      if ((i === 1 && po.sens) || from === this.portalLock || Math.hypot(p.x - from.x, p.y - from.y) > R) continue;
+      const from = po.ends[i], to = po.ends[1 - i], Rp = this.rayonPorte(po, i);
+      if ((i === 1 && po.sens) || from === this.portalLock || Math.hypot(p.x - from.x, p.y - from.y) > Rp) continue;
       // on passe la porte en cliquant dessus, ou en marchant droit dedans (4B) ; la frôler de côté ne fait rien
       const dp = Math.hypot(from.x - p.x, from.y - p.y);
       const marche = pas > 0.5 && pas < 60 && dp < R * 0.75 && (dp < 8 || (mx * (from.x - p.x) + my * (from.y - p.y)) / (pas * dp) > 0.6);
-      const clic = p.vise(from.x, from.y, R + 40);
+      const clic = p.vise(from.x, from.y, Rp + 40);
       if (!clic && !marche) continue;
       if (po.verrou && !this.salleVide(from.tag)) {
         this.portalLock = from;   // un seul message tant qu'il reste sur la porte
@@ -501,6 +519,7 @@ export class World {
     }
     p.x = best.x; p.y = best.y; p.kx = p.ky = 0; p.z = 0; p.stopMove();
     this.portalLock = to;
+    this.proteger();
     this.emit({ k: 'portal', nom });
   }
 
@@ -740,6 +759,11 @@ export class World {
   private updateOpen(dt: number) {
     const p = this.player, open = this.zone.open!;
     this.updatePortes(dt);
+    // 13A : le calme d'arrivée cesse au premier geste (sort, bond, quelques pas) ou au bout du temps
+    if (this.calme) {
+      const c = this.calme, p = this.player;
+      if ((c.t -= dt) <= 0 || p.state !== 'free' || Math.hypot(p.x - c.x, p.y - c.y) > 60) this.calme = null;
+    }
     this.updateArene(dt);
     for (const g of this.groups) {
       if (g.retire || g.members.some(m => !m.dead)) continue;
@@ -1482,6 +1506,7 @@ export class World {
     }
     p.x = this.checkpoint.x; p.y = this.checkpoint.y; p.kx = p.ky = 0; p.z = 0; p.stopMove();
     this.passage = null; this.portalLock = null;
+    this.proteger();
     this.emit({ k: 'rappel', name: this.checkpointName });
     this.emit({ k: 'portal', nom: this.checkpointName });
     return true;

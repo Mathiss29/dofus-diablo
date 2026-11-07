@@ -10,7 +10,7 @@ import { estPalier, recettesAuNiveau } from '../sim/metiers';
 import { HavreSacView } from './havreSacView';
 import { AreneView } from './areneView';
 import { chrono } from '../sim/quests';
-import type { PointDeRetour, RetourHavreSac } from '../sim/events';
+import type { PointDeRetour, RetourHavreSac, SimEvent } from '../sim/events';
 import { DialogueView } from './dialogueView';
 import { GridMap, WorldGrid, type MapData, type WorldData } from '../sim/gridmap';
 import { ISO } from '../sim/iso';
@@ -35,7 +35,7 @@ import { ambiance, chargerReglages, matriceSaturation, sauverReglages, type Regl
 import { ICON_SHEET, iconFrame } from './icons';
 import { CarteMonde } from './carteMonde';
 import { Windows } from './windows';
-import { Chargement } from './chargement';
+import { Chargement, type Arrivee } from './chargement';
 import { spellTipHtml } from './spellTip';
 import { RARITY_COLORS, RARITY_NAMES, rollItem } from '../sim/items';
 import { exporterJoueur, restaurerJoueur } from '../sim/sauvegarde';
@@ -51,8 +51,8 @@ const ASSETS = 'assets';
 const mapDir = ([x, y]: [number, number]) => `${ASSETS}/cartes/${x}_${y}`;
 const worldDir = (w: string) => `${ASSETS}/mondes/${w}`;
 const hex = (c: string) => parseInt(c.replace('#', ''), 16);
-/** Curseur au survol d'une porte (maquette Entrées 3A) : une porte et une flèche d'entrée. */
-const CURSEUR_PORTE = `url("data:image/svg+xml,${encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='30' height='30'><path d='M4 4h11v22H4z' fill='#3a2614' stroke='#e6b85c' stroke-width='2'/><circle cx='12' cy='15' r='1.4' fill='#ffd77a'/><path d='M17 15h10m-4-4 4 4-4 4' stroke='#1d1408' stroke-width='5' fill='none' stroke-linecap='round'/><path d='M17 15h10m-4-4 4 4-4 4' stroke='#ffd77a' stroke-width='2.6' fill='none' stroke-linecap='round'/></svg>")}") 4 4, pointer`;
+/** Curseur au survol d'une porte ou d'une sortie (maquette Entrées 17A) : la maison officielle de Dofus 3 (uidarkstone « house »). */
+const CURSEUR_PORTE = `url("${v(`${ASSETS}/ui/curseur_porte.png`)}") 1 1, pointer`;
 
 /** Scène d'une zone : charge la carte et les planches de la zone, fait tourner la simulation
  *  à pas fixe, et dessine son état. Toute la logique de jeu est dans World (src/sim). */
@@ -82,6 +82,10 @@ export class ZoneScene extends Phaser.Scene {
   /** Rideau des arrivées (choix 1A + 5A) : 'sortie' = fondu au noir devant une porte ; 'attente' = noir tant que la carte
    *  d'arrivée et ses voisines ne sont pas posées (la partie est en pause). Au-delà de RIDEAU_ECRAN s, l'écran de chargement s'affiche. */
   private rideau: { etat: 'sortie' | 'attente'; t: number; ecran: boolean } | null = null;
+  /** Changement de zone en cours (Entrées 14A) : fondu au noir de 0,2 s, la partie s'arrête, puis la scène repart. */
+  private depart = false;
+  /** Comment on arrive dans cette zone : écran de voyage (15A), noir de porte (Havre-Sac, 14A) ou logo. */
+  private arriveePar: Arrivee = null;
   static readonly RIDEAU_ECRAN = 0.6;
   static readonly RIDEAU_MAX = 10;
   private views = new Map<number, EntityView>();
@@ -146,7 +150,8 @@ export class ZoneScene extends Phaser.Scene {
   /** Arrivée par un portail d'une autre zone (Incarnam <-> Astrub), ou par le Havre-Sac (entrée, sortie, son Zaap). */
   private arrivee?: [string, number];
   private transit: Transit = {};
-  init(data: { zone?: string; classe?: string; slot?: number; vitrine?: boolean; arrivee?: [string, number]; essai?: 'm' | 'f'; apparence?: Apparence } & Transit) {
+  init(data: { zone?: string; classe?: string; slot?: number; vitrine?: boolean; arrivee?: [string, number]; essai?: 'm' | 'f'; apparence?: Apparence; par?: Arrivee } & Transit) {
+    this.depart = false; this.rideau = null; this.arriveePar = data?.par ?? null;
     this.essai = data?.essai ? { sexe: data.essai, t: 0, averti: false } : null;
     this.apparenceEssai = data?.apparence;
     this.vitrine = !!data?.vitrine; this.vitrineT = 0; this.sauveT = 0; this.mortDefinitive = false;
@@ -171,7 +176,7 @@ export class ZoneScene extends Phaser.Scene {
   }
 
   preload() {
-    Chargement.montrer();
+    Chargement.montrer(this.arriveePar);
     this.load.off('progress', Chargement.progres).on('progress', Chargement.progres);   // le chargeur survit aux relances de la scène
     Hud.preload(this);
     // Icônes des objets officiels : une seule planche
@@ -379,7 +384,13 @@ export class ZoneScene extends Phaser.Scene {
       window.addEventListener('beforeunload', quitter); document.addEventListener('visibilitychange', cache);
       this.events.once('shutdown', () => { this.sauver(); window.removeEventListener('beforeunload', quitter); document.removeEventListener('visibilitychange', cache); });
     }
-    Chargement.cacher();
+    // Arrivée loin du départ de la zone (Zaap, Havre-Sac, porte d'une autre zone) : l'écran de voyage reste jusqu'à ce
+    // que la carte du joueur et ses voisines soient posées, au lieu de montrer une carte vide qui se remplit.
+    const wv = this.worldView;
+    if (wv && !this.vitrine && this.arriveePar && !wv.pret(this.world.player.x, this.world.player.y).ok) {
+      this.cameras.main.fadeEffect.start(true, 0, 0, 0, 0, true);
+      this.rideau = { etat: 'attente', t: 0, ecran: true }; wv.presse = true; this.snapCam = true;
+    } else Chargement.cacher();
     // Accès console / tests automatisés (captures) : la partie et le tirage d'objets
     (window as unknown as { diablofus: unknown }).diablofus = { scene: this, world: this.world, rollItem, ITEMS };
   }
@@ -753,6 +764,7 @@ export class ZoneScene extends Phaser.Scene {
       if ((this.sauveT += dt) >= 5) { this.sauveT = 0; this.sauver(); }
     }
     // GEL D'IMAGE : la simulation s'arrête, l'affichage continue (tremblement, chiffres)
+    if (this.depart) { this.render(); return; }   // fondu vers une autre zone : plus rien ne bouge
     if (this.hitstop > 0) { this.hitstop -= dt; this.render(); return; }
     // ARRIVÉE : écran noir tant que les cartes ne sont pas posées, la partie attend (pas de coup reçu dans le noir)
     if (this.rideau?.etat === 'attente') { this.acc = 0; this.render(); return; }
@@ -903,10 +915,27 @@ export class ZoneScene extends Phaser.Scene {
         case 'test': this.hud.toast(e.texte); this.windows?.refresh(); break;
         case 'portalStart': this.baisserRideau(); break;   // fondu de sortie (0,2 s), le perso attend devant la porte
         // portail vers une autre zone : on sauve le perso puis la partie repart là-bas (même emplacement)
-        case 'changeZone': this.sauver(); this.scene.restart({ slot: this.slot, zone: e.zone, arrivee: e.arrivee, position: e.position, point: e.point, zaap: e.zaap, retour: e.retour, vues: this.world.player.zonesVues }); return;
+        case 'changeZone': this.partir(e); return;
         case 'portal': this.attendreCartes(); this.snapCam = true; break;   // noir, la caméra saute avec le joueur
       }
     }
+  }
+
+  /** Vers une autre zone : on sauve le perso, fondu au noir de 0,2 s (sauf s'il est déjà noir : porte, mort),
+   *  puis la partie repart là-bas. Le Havre-Sac passe comme une porte, avec le son du sac (Entrées 14A) ;
+   *  les autres zones ont l'écran de voyage (15A). */
+  private partir(e: Extract<SimEvent, { k: 'changeZone' }>) {
+    if (this.depart) return;
+    this.sauver();
+    this.depart = true;
+    const sac = e.zone === 'havresac';
+    const par: Arrivee = sac ? { mode: 'porte' } : { mode: 'voyage', zone: e.zone, nom: GAME_DATA.zones[e.zone]?.name ?? e.nom };
+    if (sac || this.world.dansHavreSac) Son.jouer(MANIFESTE.ui.ouvrir, 'interface', { vitesse: sac ? 0.8 : 0.9, vol: 0.8 });
+    const go = () => this.scene.restart({ slot: this.slot, zone: e.zone, arrivee: e.arrivee, position: e.position, point: e.point, zaap: e.zaap, retour: e.retour, vues: this.world.player.zonesVues, par });
+    const cam = this.cameras.main, noir = this.rideau?.etat === 'sortie' || (cam.fadeEffect.isRunning && cam.fadeEffect.direction) || (cam.fadeEffect.isComplete && cam.fadeEffect.direction);
+    if (noir || this.vitrine) { go(); return; }
+    cam.fadeOut(World.PASSAGE * 1000, 0, 0, 0);
+    cam.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, go);
   }
 
   /** Fondu au noir de sortie (5A : 0,2 s, la durée World.PASSAGE). */
