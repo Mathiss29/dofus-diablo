@@ -559,6 +559,19 @@ export class World {
     this.traverser({ tag, ...wg.cellToWorld(d.arene!.arrivee) }, d.nom);
     return true;
   }
+  /** Partie rechargée (Ctrl+F5…) alors qu'on était dans une arène : l'arène n'existe plus en mémoire.
+   *  Clé encore valable : on reprend à la vague atteinte, au point d'arrivée. Sinon (boss déjà tombé, clé
+   *  expirée) : retour devant le gardien. Jamais coincé dans une arène vide. */
+  reprendreArene() {
+    const wg = this.worldGrid, p = this.player;
+    if (!wg || this.arene) return;
+    const tag = wg.mapAt(p.x, p.y)?.tag, d = this.zone.open?.donjons?.find(x => x.arene?.tag === tag);
+    if (!d) return;
+    if (this.cleValable(d.nom)) { this.traverser({ tag: tag!, ...wg.cellToWorld(d.arene!.arrivee) }, d.nom); return; }
+    const po = this.entreeDonjon(d.nom);
+    if (po) this.traverser(po.ends[0], d.nom);
+    else { p.x = this.checkpoint.x; p.y = this.checkpoint.y; }
+  }
   /** 13A : le portail de sortie ramène devant le gardien. */
   quitterArene(d: DonjonDef) {
     const po = this.entreeDonjon(d.nom);

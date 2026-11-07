@@ -178,7 +178,8 @@
           "Incarnam dessiné de la même façon : bâtiments entiers, plus de doubles ni de coupures entre les cartes.",
           "Calanques d'Astrub : plus de grandes taches blanches sur la mer, et la mer continue au-delà de la côte au lieu d'un fond bleu nuit.",
           "Les bâtiments ne sautent plus quand tu passes d'une carte à l'autre : chacun reste à sa place, vu de partout.",
-          "Les monstres ne restent plus plantés contre les gros décors (autel, coffre, arbre, mur) : ils en font le tour pour venir te chercher, en arène comme dans le monde ouvert. Fini les vagues tuées gratuitement de l'autre côté de l'autel."
+          "Les monstres ne restent plus plantés contre les gros décors (autel, coffre, arbre, mur) : ils en font le tour pour venir te chercher, en arène comme dans le monde ouvert. Fini les vagues tuées gratuitement de l'autre côté de l'autel.",
+"Donjons : recharger la page (Ctrl+F5) dans une arène ne te laisse plus coincé sans monstres. Les vagues reprennent là où tu en étais tant que ta clé est valable, sinon tu ressors devant le gardien."
         ],
         "En coulisses": [
           "Tous les taux de butin sont dans un seul fichier, et la partie de test (F1) a un onglet Butin : chaque ligne de butin du jeu, et un simulateur qui tue 1 000 monstres d'un coup.",

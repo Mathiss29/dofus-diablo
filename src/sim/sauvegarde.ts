@@ -75,4 +75,5 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
   // départ : là où l'on s'était arrêté, sinon au point de retour
   const r = w.pointDeRetour, ok = w.map.walkable(s.x, s.y);
   p.x = ok ? s.x : r.x; p.y = ok ? s.y : r.y;
+  w.reprendreArene();   // rechargé dans l'arène d'un donjon : vagues reprises, ou retour devant le gardien
 }
