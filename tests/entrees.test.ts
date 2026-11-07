@@ -21,7 +21,7 @@ describe('entrées et sorties (maquette Entrées)', () => {
   it('chaque intérieur porte le nom de sa porte (5A), annoncé en entrant', () => {
     const w = monde();
     expect(w.lieux.get('taverne')).toBe("Taverne d'Astrub");
-    expect(w.lieux.get('grange_0')).toBe('Grange du Tournesol Affamé');
+    expect(w.lieux.get('arene_grange')).toBe('Grange du Tournesol Affamé');
     expect(w.lieux.get('grenier_kerubim')).toBe('Grenier de Kerubim');
     const t = porte(w, "Taverne d'Astrub"), p = w.player;
     p.x = t.ends[1].x; p.y = t.ends[1].y + 120;   // téléporté dedans, loin de la porte
@@ -37,9 +37,10 @@ describe('entrées et sorties (maquette Entrées)', () => {
     const s = w.porteSous(t.ends[1].x, t.ends[1].y - 10)!;
     expect(s.sortie).toBe(true);
     expect(s.nom).toBe(w.opts.zone === 'astrub' ? w.zone.open!.subareas[String(w.worldGrid!.mapByTag(t.ends[0].tag)!.sub)].name : '');
-    const g = w.portes.find(p => p.ends[0].tag === 'grange_1')!;
-    expect(w.porteSous(g.ends[0].x, g.ends[0].y)?.nom).toBe('Salle suivante');
-    expect(w.porteSous(g.ends[1].x, g.ends[1].y)).toBeNull();   // sens unique : on ne revient pas en arrière
+    // donjon en arène : l'entrée y mène, sans retour par là (sortie = portail de la fin)
+    const g = w.entreeDonjon('Grange du Tournesol Affamé')!;
+    expect(w.porteSous(g.ends[0].x, g.ends[0].y)?.nom).toBe('Grange du Tournesol Affamé');
+    expect(w.porteSous(g.ends[1].x, g.ends[1].y)).toBeNull();
     expect(w.porteSous(t.ends[0].x + 300, t.ends[0].y)).toBeNull();
   });
   it('on passe en marchant droit dans la porte, pas en la frôlant (4B)', () => {

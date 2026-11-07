@@ -125,7 +125,11 @@ export interface GardienDef {
   sansCle?: string;
 }
 /** Ligne d'infos sous la réplique du gardien (7A + 7B). */
-export interface InfoDonjon { nom: string; boss: string | null; niveau: number; salles: number; cle: string | null; cles: number; victoires: number; butin: string[] }
+export interface InfoDonjon { nom: string; boss: string | null; niveau: number; salles: number; cle: string | null; cles: number; victoires: number; butin: string[];
+  /** Donjon en arène : nombre de vagues, meilleur temps (s, 12A), vague où l'on reprend avec une clé encore valable (14A). */
+  vagues?: number; meilleur?: number; reprise?: number }
+/** Temps « 3:07 ». */
+export const chrono = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 /** Réponse du cadre vert sous la bulle (maquette Dialogues 3A) : voir une quête, l'accepter, revenir à la liste, fermer. */
 export type Reponse = { texte: string; detail?: string } & (
   { a: 'voir' | 'accepter'; quete: string } | { a: 'retour' } | { a: 'fermer' } | { a: 'service'; service: string } | { a: 'suite'; i: number }
@@ -157,7 +161,9 @@ export interface EtatQuetes {
   /** Donjons (8A) : victoires sur le boss, morts, et dernier résultat pas encore commenté par le gardien. */
   donjons?: Record<string, BilanDonjon>;
 }
-export interface BilanDonjon { v: number; m: number; dernier?: 'v' | 'm' }
+export interface BilanDonjon { v: number; m: number; dernier?: 'v' | 'm';
+  /** Meilleur temps dans l'arène (s, 12A) ; nouveau record à commenter par le gardien. */
+  t?: number; record?: boolean }
 
 export class Quetes {
   enCours: QueteEnCours[] = [];
@@ -245,8 +251,17 @@ export class Quetes {
     const l = boss && I ? (I.drops[boss] ?? []).filter(x => (I.equipment[x.item] || I.resources[x.item]) && (I.equipment[x.item] || x.chance < 100)) : [];
     l.sort((x, y) => +!!I!.equipment[y.item] - +!!I!.equipment[x.item] || y.chance - x.chance);
     const butin = [...new Set(l.map(x => x.item))].slice(0, 8);
+    const arene = !!d?.arene && !!w.worldGrid?.mapByTag(d.arene.tag), reprise = w.cleValable(nom);
     return { nom, boss: boss ? M[boss].name : null, niveau: boss ? M[boss].level ?? 1 : 1, salles: Object.keys(d?.salles ?? {}).length,
-      cle, cles: cle ? w.player.resources[cle] ?? 0 : 0, victoires: this.donjons[nom]?.v ?? 0, butin };
+      cle, cles: cle ? w.player.resources[cle] ?? 0 : 0, victoires: this.donjons[nom]?.v ?? 0, butin,
+      ...(arene ? { vagues: d!.vagues?.length ?? 0, ...(this.donjons[nom]?.t ? { meilleur: this.donjons[nom].t } : {}), ...(reprise ? { reprise } : {}) } : {}) };
+  }
+  /** Fin de l'arène (12A) : garde le meilleur temps ; vrai si c'est un nouveau record. */
+  tempsDonjon(nom: string, t: number): boolean {
+    const b = this.donjons[nom] ??= { v: 0, m: 0 };
+    const record = b.t == null || t < b.t;
+    if (record) { b.t = Math.round(t * 10) / 10; b.record = true; }
+    return record;
   }
   /** Lance les quêtes du départ (le tutoriel, sauté dès le 2e perso si elle le demande). */
   demarrer() {
@@ -381,10 +396,14 @@ export class Quetes {
   /** Dialogue d'un gardien : sa réplique (ou ce qu'il pense de ta dernière visite), les infos du donjon, « Entrer ». */
   private garder(pnj: string, def: PnjDef, intro: string | null, ds: string[]) {
     const g = def.gardien!, b = this.donjons[g.donjon], info = this.infoDonjon(g.donjon);
-    const dernier = b?.dernier === 'v' ? g.victoire : b?.dernier === 'm' ? g.mort : null;
-    if (b) delete b.dernier;
+    // 12A : après une victoire, il commente ton temps (record ou non)
+    const temps = b?.dernier === 'v' && b.t ? (b.record ? ` Nouveau record : ${chrono(b.t)} !` : ` Ton meilleur temps reste ${chrono(b.t)}.`) : '';
+    const dernier = b?.dernier === 'v' ? g.victoire + temps : b?.dernier === 'm' ? g.mort : null;
+    if (b) { delete b.dernier; delete b.record; }
     const nomCle = info.cle ? this.world.opts.items?.resources[info.cle]?.name ?? 'clé' : null;
-    const entrer: Reponse = !info.cle || info.cles > 0
+    const entrer: Reponse = info.reprise
+      ? { a: 'entrer', donjon: g.donjon, texte: 'Y retourner.', detail: `clé encore valable, vague ${Math.min(info.reprise, info.vagues ?? info.reprise)}${info.reprise > (info.vagues ?? 99) ? ' (boss)' : ''}` }
+      : !info.cle || info.cles > 0
       ? { a: 'entrer', donjon: g.donjon, texte: 'Entrer.', ...(nomCle ? { detail: `utiliser 1 ${nomCle}` } : {}) }
       : { a: 'sansCle', donjon: g.donjon, texte: "Je n'ai pas de clé." };
     const dis = def.discussion?.[0];

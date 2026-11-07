@@ -64,10 +64,14 @@ describe('Emp, le Méryde du Recyclage (0.2b), et les services du Havre-Sac (maq
     expect(p.resources['8143']).toBe(1);
     Q.repondre(0);
     for (let i = 0; i < 90; i++) w.step(1 / 60, NO_INPUT);
-    expect(w.worldGrid!.mapAt(p.x, p.y)?.tag).toBe('grange_0');
+    expect(w.worldGrid!.mapAt(p.x, p.y)?.tag).toBe('arene_grange');
     expect(p.resources['8143']).toBeUndefined();
-    // sans clé : « Je n'ai pas de clé », le gardien envoie chez le vendeur (marqué sur la carte M)
+    // 14A : pendant 10 min la clé reste valable (« Y retourner », sans clé dans le sac)
     w.drainEvents();
+    expect(essai().reponses[0]).toMatchObject({ a: 'entrer', texte: 'Y retourner.' });
+    Q.repondre(-1);
+    // sans clé : « Je n'ai pas de clé », le gardien envoie chez le vendeur (marqué sur la carte M)
+    p.cleDonjon = null;
     const d = essai();
     expect(d.reponses[0]).toMatchObject({ a: 'sansCle' });
     Q.repondre(0);

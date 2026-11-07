@@ -44,9 +44,9 @@ export function sauverTest(t: EtatTest) {
 /** États tout prêts (9A) : classe, niveau, zone, tenue et carte d'arrivée. */
 export const ETATS_PRETS: { nom: string; classe: string; niveau: number; zone: string; tenue: Rarity; carte?: [string, string] }[] = [
   { nom: 'Iop 12 · Incarnam · tenue Commune', classe: 'iop', niveau: 12, zone: 'incarnam', tenue: 'commun' },
-  { nom: 'Crâ 20 · Crypte de Kardorim · tenue Épique', classe: 'cra', niveau: 20, zone: 'incarnam', tenue: 'epique', carte: ['crypte_1', 'Crypte de Kardorim'] },
+  { nom: 'Crâ 20 · Crypte de Kardorim · tenue Épique', classe: 'cra', niveau: 20, zone: 'incarnam', tenue: 'epique', carte: ['arene_crypte', 'Crypte de Kardorim'] },
   { nom: 'Crâ 35 · Astrub · tenue Rare', classe: 'cra', niveau: 35, zone: 'astrub', tenue: 'rare' },
-  { nom: 'Iop 30 · Cour du Bouftou Royal · tenue Légendaire', classe: 'iop', niveau: 30, zone: 'astrub', tenue: 'legendaire', carte: ['cour_1', 'Cour du Bouftou Royal'] },
+  { nom: 'Iop 30 · Cour du Bouftou Royal · tenue Légendaire', classe: 'iop', niveau: 30, zone: 'astrub', tenue: 'legendaire', carte: ['arene_cour', 'Cour du Bouftou Royal'] },
 ];
 
 /** Ce que le panneau demande à la scène (qui seule relance la partie ou parle à la simulation). */
@@ -279,7 +279,7 @@ export class PanneauTest {
     if (wg && open) {
       const bouton = (tag: string, nom: string, d: string) => `<button type="button" data-carte="${tag}" data-nom="${esc(nom)}"><span class="n">${esc(nom)}</span><span class="d">${d}</span></button>`;
       const zaaps = open.checkpoints.map(c => { const m = wg.mapByCoords(c.map[0], c.map[1]); return m ? bouton(m.tag, c.name, `Zaap [${c.map.join(',')}]`) : ''; }).join('');
-      const donjons = (open.donjons ?? []).map(d => { const t = Object.keys(d.salles)[0]; return t && wg.mapByTag(t) ? bouton(t, d.nom, 'donjon') : ''; }).join('');
+      const donjons = (open.donjons ?? []).map(d => { const t = d.arene?.tag ?? Object.keys(d.salles)[0]; return t && wg.mapByTag(t) ? bouton(t, d.nom, 'donjon') : ''; }).join('');
       const noms = new Set((open.donjons ?? []).map(d => d.nom));
       const sous = Object.entries(open.subareas).filter(([, s]) => !noms.has(s.name)).sort((a, b) => a[1].level - b[1].level).map(([id, s]) => {
         const maps = wg.world.maps.filter(m => String(m.sub) === id && (wg.freeByMap.get(m.tag)?.length ?? 0) > 20);

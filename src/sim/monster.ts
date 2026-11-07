@@ -82,6 +82,9 @@ export class Monster extends Entity {
   /** Partie de test : posé par le panneau F1 ; mannequin = immobile et increvable (compteur de DPS, 7D). */
   poseTest = false;
   mannequin = false;
+  /** Arène d'un donjon : arrive en courant vers le joueur et ne lâche jamais ; intouchable = palier du boss (8C). */
+  arene = false;
+  intouchable = false;
 
   /** Zone d'une attaque annoncée au sol avant l'impact : seulement pour les élites et les boss (maquette Aperçu 8A, Mathis 2026-11-06). */
   private annonce(world: World, tg: World['telegraphs'][number]) { if (this.def.elite || this.def.boss) world.telegraphs.push(tg); }
@@ -101,7 +104,7 @@ export class Monster extends Entity {
     const D = this.def;
     if (this.dead) { this.t -= dt; this.setAnim('die', 1 - this.t / 0.6); this.applyKnock(dt); return; }
     const open = world.zone.open;
-    if (this.state === 'spawn') { this.t -= dt; this.setAnim('spawn', 1 - this.t / 0.6); if (this.t <= 0) this.state = open ? 'idle' : 'chase'; return; }
+    if (this.state === 'spawn') { this.t -= dt; this.setAnim('spawn', 1 - this.t / 0.6); if (this.t <= 0) this.state = open && !this.arene ? 'idle' : 'chase'; return; }
     if (this.mannequin) { this.stun = 0; this.kx = this.ky = 0; this.setAnim('idle'); return; }
     if (this.stun > 0) { this.stun -= dt; this.setAnim('stun'); this.applyKnock(dt); if (this.state === 'windup') { this.state = 'chase'; this.sig = false; } if (this.state === 'idle') this.state = 'chase'; return; }
     const dx = player.x - this.x, dy = player.y - this.y, dist = Math.hypot(dx, dy) || 1;
@@ -254,6 +257,7 @@ export class Monster extends Entity {
    *  1B : les autres ne lâchent que s'ils t'ont perdu (loin de toi assez longtemps), ou au garde-fou loin de chez eux. */
   private abandonne(dist: number, leash: number, player: Player, dt: number): boolean {
     if (player.dead) return true;
+    if (this.arene) return false;
     const home = Math.hypot(this.x - this.homeX, this.y - this.homeY);
     if (this.def.boss) return dist > leash * 1.5 || home > leash;
     if (home > AGGRO.gardeFou * CASE) return true;
