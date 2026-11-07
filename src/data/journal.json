@@ -147,7 +147,8 @@
           "Donjons repensés : chaque donjon est maintenant une seule grande arène, construite avec les vraies pièces de Dofus (la Grange est une cour ronde avec ses meules, la Crypte une salle d'arches et de sarcophages, le Château une plage entre les remparts de sable…). Les monstres arrivent en 6 vagues par trois entrées marquées d'un cercle rouge, puis le boss descend de son estrade.",
           "Le Cloportier garde l'entrée de la Cache de Kankreblath, en [3,-17] : il te fait la courte échelle avec ta clef.",
           "La Cache de Kankreblath s'ouvre comme dans Dofus : on traverse la Boutique de Kerubim en [3,-17], on monte au grenier, et le Cloportier vous rapetisse d'un coup de Baguette Rikiki pour passer par le trou du plancher.",
-          "Chaque intérieur a son nom : bandeau en entrant et titre en haut de l'écran. Les sorties sont mieux marquées au sol, et l'intérieur se charge dès qu'on approche d'une porte : le noir du passage est plus court."
+          "Chaque intérieur a son nom : bandeau en entrant et titre en haut de l'écran. Les sorties sont mieux marquées au sol, et l'intérieur se charge dès qu'on approche d'une porte : le noir du passage est plus court.",
+          "Les groupes de monstres ne bouchent plus les routes, les portes ni les abords des PNJ et du Zaap : chaque carte a ses coins à monstres, et un groupe vaincu revient sur l'un d'eux."
         ],
         "Combat": [
           "Boss de donjon : à 66 % et 33 % de ses PV, il appelle des renforts et reste intouchable tant qu'ils vivent. À sa mort, un portail te ramène devant le gardien et un coffre t'attend à côté. Chrono et « Vague 3 / 6 » sous la mini-carte, meilleur temps commenté par le gardien ; ta clé reste valable 10 minutes : si tu tombes, tu reprends à la vague atteinte.",
@@ -172,6 +173,7 @@
           "Tous les taux de butin sont dans un seul fichier, et la partie de test (F1) a un onglet Butin : chaque ligne de butin du jeu, et un simulateur qui tue 1 000 monstres d'un coup.",
           "Les cartes sont rangées par bâtiment, et un robot photographie chaque carte d'Astrub et d'Incarnam après chaque export pour repérer les doublons et les images manquantes.",
           "Discord rangé pour le test ouvert : #🧭・commencer-ici (lien, touches, où aller), #🤝・entraide, et des forums #🐛・bugs et #💡・idées avec étiquettes (« Corrigé », « Retenue ») et vote 👍. Le Journal du jour arrive toujours dans #📜・journal.",
+          "Outils de test (F1) : onglet Placement pour poser à la main les groupes de chaque carte, régler leur taille et marquer le repaire de l'élite.",
           "Le robot Discord sait publier des sondages. Le premier arrive bientôt dans #📣・annonces : quelle classe voulez-vous après l'Osamodas ? Les 16 autres classes, avec leurs symboles officiels, puis une finale des 5 premières."
         ]
       }

@@ -1,0 +1,20 @@
+{
+  "_doc": "Maquette « Monstres » (Mathis, 2026-11-07) : 1A+1C 2A 3A 4A+4D 5B 6A 7A. Points des groupes de monstres posés à la main (éditeur F1 › Placement), par monde puis par carte. g = nombre de groupes sur la carte (0 à 4), p = points : c = case Dofus 0-559 de la carte, n = taille du groupe [min, max] (sinon celle de la sous-zone), r = 1 pour le repaire de l'élite. Une carte absente ici garde le placement automatique (src/sim/placement.ts).",
+  "elite": {
+    "_": "4D : chance qu'un groupe soit mené par l'élite de sa sous-zone, sur son repaire et ailleurs (une seule élite en vie à la fois par sous-zone).",
+    "repaire": 0.5,
+    "hasard": 0.12
+  },
+  "auto": {
+    "_": "1C : placement automatique. Distances en pas de case. Les passages relient les bords praticables de la carte, ses portes, ses PNJ, son Zaap et ses ateliers par le plus court chemin.",
+    "pointsEnPlus": 2,
+    "ecartPassage": 3,
+    "ecartLieu": 6,
+    "ecartBord": 4,
+    "ecartPoints": 7
+  },
+  "cartes": {
+    "incarnam": {},
+    "astrub": {}
+  }
+}

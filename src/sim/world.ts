@@ -14,6 +14,7 @@ import { Arene, ARENE } from './arene';
 import { Quetes, type Compte, type EtatQuetes, type QuetesData } from './quests';
 import { appliquerTest, type ReglagesTest } from './outilsTest';
 import { FABRICATION, type Poste } from './metiers';
+import { PLACEMENT, analyserCarte, placementPose, placementValide, proposerPlacement, type AnalyseCarte, type PlacementCarte } from './placement';
 import { RECOLTE, porteeRecolte, quantite, xpRecolte, type Recolte, type RecoltesData } from './recolte';
 
 interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: number;
@@ -46,6 +47,10 @@ interface MonsterGroup {
   id: number; map: string; sub: SubAreaDef; members: Monster[]; timer: number; cleared: boolean; x: number; y: number;
   /** Donjon : monstres fixes du groupe et nom du donjon (ne réapparaît pas tant que le joueur y est). */
   fixe?: string[]; donjon?: string;
+  /** Point du placement de la carte où le groupe s'est posé (-1 : aucun). */
+  point: number;
+  /** Retiré par l'éditeur de placement (F1) : ne revient plus. */
+  retire?: boolean;
 }
 export interface PorteEnd { tag: string; x: number; y: number }
 const xy = (q: { x: number; y: number }): [number, number] => [q.x, q.y];
@@ -75,6 +80,8 @@ export interface WorldOptions {
   apparats?: { objets: Record<string, { slot: string }>; prix: Record<string, number> };
   /** Partie de test (#test) : réglages du panneau F1 ; absent dans une vraie partie. */
   test?: ReglagesTest;
+  /** Éditeur de placement (F1 › Placement) : placements de cartes pas encore envoyés, qui remplacent ceux de src/data/placements.json. */
+  placements?: Record<string, PlacementCarte>;
   /** Courbe d'XP officielle des familiers (XP totale par niveau, src/data/familiers.json). */
   familierXp?: number[];
   /** Sortie du Havre-Sac (maquette Hub 2A) : à cet endroit précis, avec le point de retour d'avant. */
@@ -559,12 +566,7 @@ export class World {
     for (const m of wg.world.maps) {
       const sub = open.subareas[String(m.sub)];
       if (!sub || !wg.freeByMap.get(m.tag)!.length || (m.inside && !sub.interieur) || (sub.cartes && !sub.cartes.includes(m.tag))) continue;
-      for (let i = 0; i < sub.groupsPerMap; i++) {
-        const g: MonsterGroup = { id: this.groups.length, map: m.tag, sub, members: [], timer: 0, cleared: false, x: 0, y: 0 };
-        this.groups.push(g);
-        if (this.groupesPrets(g)) this.spawnGroup(g);
-        else g.cleared = true;   // tutoriel : apparaîtra à l'étape voulue (updateOpen)
-      }
+      this.poserGroupes(m.tag, sub);
     }
     // Donjons : groupes officiels fixes, salle par salle
     for (const d of open.donjons ?? []) for (const [tag, groupes] of Object.entries(d.salles)) {
@@ -573,11 +575,79 @@ export class World {
       if (!m || !wg.freeByMap.get(tag)?.length) continue;
       const sub = open.subareas[String(m.sub)] ?? { name: d.nom, level: this.zone.level, monsters: [], groupsPerMap: 0, groupSize: [0, 0] };
       for (const fixe of groupes) {
-        const g: MonsterGroup = { id: this.groups.length, map: tag, sub, members: [], timer: 0, cleared: false, x: 0, y: 0, fixe, donjon: d.nom };
+        const g: MonsterGroup = { id: this.groups.length, map: tag, sub, members: [], timer: 0, cleared: false, x: 0, y: 0, fixe, donjon: d.nom, point: -1 };
         this.groups.push(g);
         this.spawnGroup(g);
       }
     }
+  }
+  // --- Placement des groupes (maquette « Monstres » : 1A+1C 2A 3A 4A+4D 5B 6A 7A) ---------------------------------
+  /** Placement de chaque carte : posé à la main (éditeur F1, src/data/placements.json), sinon proposé tout seul (1C). */
+  private placements = new Map<string, PlacementCarte>();
+  private analyses = new Map<string, AnalyseCarte>();
+  /** Cartes qui ont des groupes de monstres (sous-zone avec monstres, pas une maison). */
+  private sousZoneGroupes(tag: string): SubAreaDef | null {
+    const wg = this.worldGrid, open = this.zone.open, m = wg?.mapByTag(tag);
+    if (!wg || !open || !m) return null;
+    const sub = open.subareas[String(m.sub)];
+    if (!sub || !wg.freeByMap.get(m.tag)!.length || (m.inside && !sub.interieur) || (sub.cartes && !sub.cartes.includes(m.tag))) return null;
+    return sub;
+  }
+  /** Ce que la proposition automatique laisse libre sur une carte : passages entre sorties, portes, PNJ, Zaap et ateliers. */
+  analyseCarte(tag: string): AnalyseCarte {
+    let a = this.analyses.get(tag);
+    if (a) return a;
+    const wg = this.worldGrid!, open = this.zone.open!, m = wg.mapByTag(tag)!, lieux: { x: number; y: number }[] = [];
+    for (const po of this.portes) for (const e of po.ends) if (e.tag === tag) lieux.push(e);
+    for (const n of this.quetes?.pnjs ?? []) if (n.tag === tag || wg.mapAt(n.x, n.y)?.tag === tag) lieux.push(n);
+    for (const p of this.postes) if (p.tag === tag) lieux.push(p);
+    if (open.checkpoints.some(c => c.map[0] === m.x && c.map[1] === m.y)) lieux.push(this.openestCell(tag));
+    a = analyserCarte(wg, tag, lieux);
+    this.analyses.set(tag, a);
+    return a;
+  }
+  /** Proposition automatique pour une carte (1C, 3A) : ce que l'éditeur montre avant qu'on la retouche. */
+  propositionAuto(tag: string, groupes?: number): PlacementCarte {
+    const sub = this.sousZoneGroupes(tag);
+    return proposerPlacement(this.worldGrid!, tag, groupes ?? sub?.groupsPerMap ?? 0, this.analyseCarte(tag));
+  }
+  /** Placement en vigueur sur une carte (null : pas de groupes ici). */
+  placementDe(tag: string): PlacementCarte | null { return this.placements.get(tag) ?? null; }
+  /** Vrai si le placement de la carte a été posé à la main. */
+  placementPoseMain(tag: string): boolean { return !!(this.opts.placements?.[tag] ?? placementPose(this.zone.open!.world, tag)); }
+  /** Cartes de la zone qui ont des groupes de monstres, dans l'ordre du monde. */
+  cartesAGroupes(): string[] { return (this.worldGrid?.world.maps ?? []).filter(m => this.sousZoneGroupes(m.tag)).map(m => m.tag); }
+  private poserGroupes(tag: string, sub: SubAreaDef) {
+    const pose = this.opts.placements?.[tag] ?? placementPose(this.zone.open!.world, tag);
+    const pl = pose ? placementValide(pose) : this.propositionAuto(tag, sub.groupsPerMap);
+    this.placements.set(tag, pl);
+    for (let i = 0; i < pl.g; i++) {
+      const g: MonsterGroup = { id: this.groups.length, map: tag, sub, members: [], timer: 0, cleared: false, x: 0, y: 0, point: -1 };
+      this.groups.push(g);
+      if (this.groupesPrets(g)) this.spawnGroup(g);
+      else g.cleared = true;   // tutoriel : apparaîtra à l'étape voulue (updateOpen)
+    }
+  }
+  /** Éditeur de placement (F1) : la carte reprend ce placement tout de suite (null : retour au placement d'origine). */
+  reposerCarte(tag: string, pl: PlacementCarte | null) {
+    const sub = this.sousZoneGroupes(tag);
+    if (!sub) return;
+    const opts = this.opts as WorldOptions;
+    opts.placements = { ...opts.placements };
+    if (pl) opts.placements[tag] = placementValide(pl); else delete opts.placements[tag];
+    const vieux = new Set<number>();
+    for (const g of this.groups) if (g.map === tag && !g.fixe && !g.retire) { g.retire = true; vieux.add(g.id); }
+    this.monsters = this.monsters.filter(m => !vieux.has(m.group));
+    this.poserGroupes(tag, sub);
+  }
+  /** 5B : point libre où le groupe se pose (aucun autre groupe en vie dessus), loin du joueur si possible. */
+  private choisirPoint(g: MonsterGroup, pl: PlacementCarte): number {
+    const wg = this.worldGrid!, p = this.player;
+    const pris = new Set(this.groups.filter(o => o !== g && o.map === g.map && !o.retire && !o.cleared && o.point >= 0).map(o => o.point));
+    const libres = pl.p.map((_, i) => i).filter(i => !pris.has(i));
+    if (!libres.length) return pl.p.length ? this.rng.int(pl.p.length) : -1;
+    const loin = libres.filter(i => { const q = wg.cellToWorld(wg.cellOf(g.map, pl.p[i].c)); return Math.hypot(q.x - p.x, q.y - p.y) >= 450; });
+    return this.rng.pick(loin.length ? loin : libres);
   }
   private groupesPrets(g: MonsterGroup) {
     const sub = this.worldGrid!.mapByTag(g.map)?.sub;
@@ -585,7 +655,10 @@ export class World {
   }
   private spawnGroup(g: MonsterGroup) {
     const wg = this.worldGrid!, free = wg.freeByMap.get(g.map)!, p = this.player;
-    // Le groupe se pose sur un coin dégagé (pas au bord d'une falaise ni dans un recoin), loin du joueur
+    const pl = g.fixe ? null : this.placements.get(g.map) ?? null;
+    g.point = pl ? this.choisirPoint(g, pl) : -1;
+    const pt = pl && g.point >= 0 ? pl.p[g.point] : null;
+    // Donjons (et carte sans point) : le groupe se pose sur un coin dégagé (pas au bord d'une falaise ni dans un recoin), loin du joueur
     const ok = this.freeSet(g.map), C = wg.cols;
     const ouvert = (c: number) => { let n = 0; for (let dr = -6; dr <= 6; dr++) for (let dk = -3; dk <= 3; dk++) if (ok.has(c + dr * C + dk)) n++; return n; };
     let pos = wg.randomFree(this.rng, free), best = -1;
@@ -594,17 +667,21 @@ export class World {
       const score = ouvert(c) - (Math.hypot(q.x - p.x, q.y - p.y) < 450 ? 1000 : 0)
         - (this.quetes?.pnjs.some(n => Math.hypot(q.x - n.x, q.y - n.y) < 420) ? 1000 : 0);   // pas de groupe sur un PNJ
       if (score > best) { best = score; pos = q; }
-      if (best >= 80) break;
+      if (best >= 80 || pt) break;
     }
+    if (pt) { const c = wg.cellOf(g.map, pt.c); pos = ok.has(c) ? wg.cellToWorld(c) : wg.nearestFree(...xy(wg.cellToWorld(c)), free); }
     g.x = pos.x; g.y = pos.y; g.members = []; g.cleared = false;
-    const [a, b] = (!g.fixe && this.quetes?.tailleGroupe(this.worldGrid!.mapByTag(g.map)?.sub ?? -1)) || g.sub.groupSize, n = g.fixe ? g.fixe.length : a + this.rng.int(b - a + 1);
+    const [a, b] = (!g.fixe && this.quetes?.tailleGroupe(this.worldGrid!.mapByTag(g.map)?.sub ?? -1)) || pt?.n || g.sub.groupSize, n = g.fixe ? g.fixe.length : a + this.rng.int(b - a + 1);
     const a0 = this.rng.range(0, Math.PI * 2);
     for (let i = 0; i < n; i++) {
       // en cercle autour du chef, chacun sa place (plus de tas de monstres les uns sur les autres)
       const ang = a0 + (i / Math.max(1, n - 1)) * Math.PI * 2 + this.rng.range(-0.3, 0.3), r = i === 0 ? 0 : this.rng.range(90, 150);
-      const q = wg.nearestFree(pos.x + Math.cos(ang) * r, pos.y + Math.sin(ang) * r, free);
-      // l'élite unique de la sous-zone mène un groupe sur 8 environ, s'il n'est pas déjà en vie ailleurs
-      const elite = !g.fixe && i === 0 && g.sub.elite && this.rng.next() < 0.12 && !this.monsters.some(o => !o.dead && o.type === g.sub.elite);
+      let q = wg.nearestFree(pos.x + Math.cos(ang) * r, pos.y + Math.sin(ang) * r, free);
+      // jamais collé à un PNJ : on tourne autour du point jusqu'à trouver une place à plus de 260 px de lui
+      const prochePnj = (z: { x: number; y: number }) => this.quetes?.pnjs.some(o => Math.hypot(o.x - z.x, o.y - z.y) < 260);
+      for (let t = 1; t < 8 && i > 0 && prochePnj(q); t++) q = wg.nearestFree(pos.x + Math.cos(ang + t * 0.8) * r, pos.y + Math.sin(ang + t * 0.8) * r, free);
+      // l'élite unique de la sous-zone mène parfois un groupe (souvent sur son repaire, 4D), s'il n'est pas déjà en vie ailleurs
+      const elite = !g.fixe && i === 0 && g.sub.elite && this.rng.next() < (pt?.r ? PLACEMENT.elite.repaire : PLACEMENT.elite.hasard) && !this.monsters.some(o => !o.dead && o.type === g.sub.elite);
       const mo = this.spawnMonster(g.fixe ? g.fixe[i] : elite ? g.sub.elite! : this.rng.pick(g.sub.monsters), q.x, q.y);
       mo.group = g.id; g.members.push(mo);
       if (elite) this.doreesPresElite(g.map, q.x, q.y);
@@ -646,7 +723,7 @@ export class World {
     this.updatePortes(dt);
     this.updateArene(dt);
     for (const g of this.groups) {
-      if (g.members.some(m => !m.dead)) continue;
+      if (g.retire || g.members.some(m => !m.dead)) continue;
       if (!g.cleared) {
         g.cleared = true; g.timer = open.respawn;
         p.potions = Math.min(p.cls.potion.charges, p.potions + 1);   // un groupe vaincu rend une potion

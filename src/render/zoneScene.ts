@@ -43,6 +43,7 @@ import { lireBestiaire, noter, nouvelleSession, sauverBestiaire, statsVides } fr
 import { dernier, enterrer, lirePersos, sauverPerso, supprimerPerso, type Perso } from './persos';
 import { SonView, synthe } from './sonView';
 import { MANIFESTE, Son } from './son';
+import { retouchesPlacement } from './placementVue';
 import { ETATS_PRETS, PanneauTest, lireTest, modeTest, sauverTest, type EtatTest } from './panneauTest';
 import { REGLAGES_TEST, type CommandeTest } from '../sim/outilsTest';
 
@@ -257,6 +258,7 @@ export class ZoneScene extends Phaser.Scene {
       const open = zone.open;
       const wg = new WorldGrid(this.cache.json.get(WorldView.key(open.world, 'monde')) as WorldData);
       this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, apparats: APPARATS, familierXp: FAMILIERS.xp, recoltes: RECOLTES, compte: chargerCompte(), tuto: this.test ? false : this.perso?.tuto, test: this.test?.reglages,
+        placements: this.test ? retouchesPlacement(open.world) : undefined,   // éditeur F1 › Placement : retouches pas encore envoyées
         // vitrine : les PNJ sont là, mais aucune quête ne démarre
         arrivee: this.arrivee, position: this.transit.position, point: this.transit.point, zaap: this.transit.zaap, retour: this.transit.retour,
         zonesVues: [...new Set([...(this.perso?.etat?.zonesVues ?? this.test?.etat?.zonesVues ?? []), ...(this.transit.vues ?? [])])],
@@ -479,6 +481,12 @@ export class ZoneScene extends Phaser.Scene {
       this.dialogueView?.fermerMenu();
       if (over.length || this.hud.blocks(p.x, p.y)) { this.uiClick = true; return; }
       this.uiClick = false;
+      // partie de test, onglet Placement (maquette « Monstres » 2A) : clic = poser un point, clic droit = le retirer
+      if (this.panneau?.editionPlacement) {
+        this.uiClick = true;
+        const wp = p.positionToCamera(this.cameras.main) as Phaser.Math.Vector2, q = ISO.toWorld(wp.x, wp.y);
+        this.panneau.editeur.clic(q.x, q.y, p.rightButtonDown()); return;
+      }
       // partie de test (7A, 7D) : ce clic pose les monstres choisis dans le panneau (clic droit : annuler)
       const pose = this.panneau?.pose;
       if (pose) {
@@ -1174,6 +1182,7 @@ export class ZoneScene extends Phaser.Scene {
     this.vivant?.maj();
     this.windows?.majPerso(this.time.now);
     this.panneau?.maj(this.time.now);
+    this.panneau?.editeur.dessiner(this, this.panneau.ouvert && this.panneau.ongletPlacement);
     if (this.snapCam && !this.vitrine) { const pv = this.viewOf(w.player).sprite; cam.centerOn(pv.x, pv.y - 30); this.snapCam = false; }
     const s = w.player.skill;
     if (s && 'charge' in s.def && s.def.charge && !s.def.move && s.t < s.def.impactAt) this.fx.chargeSparks(w.player.x, w.player.y);
