@@ -91,8 +91,9 @@ export class RecolteView {
   /** Curseur CSS sur la ressource survolée (outil de son métier), sinon null. */
   curseur(): string | null {
     const r = this.survolee != null ? this.world.recoltes.find(x => x.id === this.survolee) : null;
-    const m = r && this.world.opts.recoltes?.ressources[r.item]?.metier;
-    return m ? `url(assets/ui/curseurs/${OUTIL[m] ?? 'faux'}.png) 4 4, pointer` : null;
+    const def = r && this.world.opts.recoltes?.ressources[r.item];
+    if (!def) return null;
+    return def.metier ? `url(assets/ui/curseurs/${OUTIL[def.metier] ?? 'faux'}.png) 4 4, pointer` : 'pointer';   // puits : sans outil
   }
 
   /** Bulle au survol, comme dans Dofus : nom de la ressource, métier et niveau requis (en rouge s'il manque des niveaux). */
@@ -104,8 +105,9 @@ export class RecolteView {
     const cle = `${id}:${lv}:${r.dore}`;
     if (this.bulle.dataset.cle !== cle) {
       this.bulle.dataset.cle = cle;
-      this.bulle.innerHTML = `<b${r.dore ? ' class="dore"' : ''}>${def.nom}${r.dore ? ' dorée' : ''}</b><span${lv < def.niveau ? ' class="ko"' : ''}>${metier} - Niv ${def.niveau}</span>`
-        + (lv < def.niveau ? `<br><i>Votre niveau : ${lv}</i>` : '');
+      const ko = !!def.metier && lv < def.niveau;   // puits : « Puiser », sans métier ni niveau
+      this.bulle.innerHTML = `<b${r.dore ? ' class="dore"' : ''}>${def.nom}${r.dore ? ' dorée' : ''}</b><span${ko ? ' class="ko"' : ''}>${def.metier ? `${metier} - Niv ${def.niveau}` : 'Puiser'}</span>`
+        + (ko ? `<br><i>Votre niveau : ${lv}</i>` : '');
     }
     const rect = this.scene.game.canvas.getBoundingClientRect(), k = rect.width / this.scene.scale.width;
     const haut = v.dessin ? Math.min(v.img.getBounds().top + 10, v.img.y - 40) : v.img.y - 26;

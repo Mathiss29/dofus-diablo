@@ -10635,6 +10635,21 @@
    "name": "Brandade Fatigante",
    "icon": 49159,
    "level": 40
+  },
+  "380": {
+   "name": "Menthe Sauvage",
+   "icon": 36052,
+   "level": 60
+  },
+  "593": {
+   "name": "Orchidée Freyesque",
+   "icon": 35192,
+   "level": 80
+  },
+  "594": {
+   "name": "Edelweiss",
+   "icon": 35191,
+   "level": 100
   }
  },
  "drops": {
