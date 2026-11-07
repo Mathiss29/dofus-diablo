@@ -1,7 +1,7 @@
 import { Entity } from './entity';
 import type { ClassDef, ComboHit, Element, SkillId, SpellDef } from './defs';
 import { WEAPONS } from './data';
-import { BASE_STATS, EQUIP_SLOTS, METIER_MAX, metierXpNeeded, type EquipSlot, type Item, type ItemsData, type Stat, type Stats } from './items';
+import { BASE_STATS, EQUIP_SLOTS, REDUCTION_RECHARGES_MAX, METIER_MAX, metierXpNeeded, type EquipSlot, type Item, type ItemsData, type Stat, type Stats } from './items';
 import type { PlayerInput } from './input';
 import type { World } from './world';
 import { fuiteFactor, tackleSlow, tacleOf } from './caracs';
@@ -20,8 +20,9 @@ export class Player extends Entity {
   readonly faction = 'player' as const;
   state: 'free' | 'skill' = 'free';
   skill: ActiveSkill | null = null;
-  /** Recharge restante de chaque sort. */
+  /** Recharge restante de chaque sort, et durée totale de la dernière recharge lancée (pour le voile de la barre). */
   cd: Record<string, number> = {};
+  cdMax: Record<string, number> = {};
   combo = 0;
   comboTimer = 0;
   invuln = 0;
@@ -83,7 +84,8 @@ export class Player extends Entity {
   /** Sorts déjà appris (placés une fois seuls dans la barre, choix 7A ; retirés à la main, ils n'y reviennent pas). */
   learned = new Set<string>();
   /** Lancers récents de chaque sort (limite officielle de lancers par tour = par 3 s). */
-  private casts: Record<string, number[]> = {};
+  /** Instants des derniers lancers de chaque sort (charges, 3A). */
+  casts: Record<string, number[]> = {};
   /** Bouclier (Ferveur) : points et temps restant. */
   shield = 0; shieldT = 0;
   /** Sorts officiels de monstres : dommages subis × subis pendant subisT s (Grognement : 1,2), Pacifiste pendant pacifiste s (Hyperleukocytine : ne peut plus infliger de dommages). */
@@ -311,11 +313,52 @@ export class Player extends Entity {
     if (!s || s.pm) return s?.pa ?? 0;
     return this.grade(id)?.pa ?? s.pa ?? 0;
   }
-  /** Lancers encore possibles d'ici 3 s : la limite officielle « lancers par tour » (0 = sans limite). */
+  /** Maquette Recharges 7B : part retirée à toutes les recharges des sorts (stat « % Réduction des recharges », plafond 25 %). */
+  get reductionRecharges(): number { return Math.min(REDUCTION_RECHARGES_MAX, Math.max(0, this.stat('reductionRecharges'))) / 100; }
+  /** Temps de retour d'une charge (3A : la limite officielle « lancers par tour » en charges, chacune revient 3 s après usage). */
+  get retourCharge(): number { return TOUR * (1 - this.reductionRecharges); }
+  /** Charges d'un sort (3A) : « lancers par tour » officiels, à partir de 2. 0 = pas de charges (sort à recharge, 1 lancer par tour, déplacement). */
+  chargesMax(id: SkillId): number {
+    const d = this.spell(id);
+    if (!d || d.pm || d.grosCoup) return 0;
+    const n = this.grade(id)?.parTour ?? 0;
+    return n >= 2 ? n : 0;
+  }
+  /** Lancers des 3 dernières secondes (raccourcies par la réduction des recharges). */
+  private recents(id: SkillId): number[] { return (this.casts[id] ?? []).filter(t => this.age - t < this.retourCharge); }
+  /** Charges disponibles et temps avant le retour de la prochaine. */
+  charges(id: SkillId): { n: number; max: number; prochaine: number } {
+    const max = this.chargesMax(id);
+    if (!max) return { n: 0, max: 0, prochaine: 0 };
+    const r = this.recents(id), n = Math.max(0, max - r.length);
+    return { n, max, prochaine: n < max ? Math.max(0, this.retourCharge - (this.age - Math.min(...r))) : 0 };
+  }
   private castsLeft(id: SkillId): boolean {
-    const g = this.cls.spells[id]?.pm ? null : this.grade(id);
-    if (!g?.parTour) return true;
-    return (this.casts[id] ?? []).filter(t => this.age - t < TOUR).length < g.parTour;
+    const max = this.chargesMax(id);
+    return !max || this.recents(id).length < max;
+  }
+  /** Sorts de la classe à vraie recharge d'au moins 3 s (cibles du pouvoir légendaire Relance éclair, 7A). */
+  get sortsRecharge(): string[] {
+    return Object.keys(this.cls.spells).filter(id => {
+      const d = this.cls.spells[id];
+      if (d.grosCoup || d.cooldown >= 3) return true;
+      if (d.pm && !d.relanceOfficielle) return false;
+      return (this.official(id)?.grades[0].relance ?? 0) > 0;
+    });
+  }
+  /** Recharge complète d'un sort, en secondes (maquette Recharges) :
+   *  gros coup (5A) ; sinon relance officielle × 3 s (2A) ; un sort à 1 lancer par tour attend 3 s (4A) ;
+   *  puis le pouvoir Relance éclair (7A) et la réduction des recharges (7B). */
+  recharge(id: SkillId): number {
+    const d = this.spell(id);
+    if (!d) return 0;
+    const gr = d.pm && !d.relanceOfficielle ? null : this.grade(id);
+    let t = d.grosCoup ? d.grosCoup.recharge : gr ? Math.max(gr.relance * TOUR, d.cooldown, gr.parTour === 1 ? TOUR : 0) : d.cooldown;
+    if (t <= 0) return 0;
+    let bonus = 0;
+    for (const it of Object.values(this.equipment)) for (const l of [it?.legendary, it?.legendary2]) if (l?.id === 'relance' && l.sort === id) bonus += l.value;
+    t = Math.max(t > 1 ? 1 : t, t - bonus);
+    return t * (1 - this.reductionRecharges);
   }
   /** Le sort a-t-il ses ressources (PA, ou une charge de PM pour un déplacement) ? */
   hasResource(id: SkillId): boolean {
@@ -470,12 +513,11 @@ export class Player extends Entity {
     const gm = g && g0 && dmgMoyen(g0) ? dmgMoyen(g) / dmgMoyen(g0) : 1;
     const { range, explode } = this.shot(id);
     this.skill = { id, def, t: 0, impacted: false, sx: this.x, sy: this.y, tx, ty, boosted, gm, explode, range };
-    // Relance officielle aussi pour un déplacement qui la demande (Pas Chassé : 3 tours = 9 s, puis 2 tours = 6 s au niveau 72)
-    const gr = g ?? (def.relanceOfficielle ? this.grade(id) : null);
-    this.cd[id] = gr ? Math.max(gr.relance * TOUR, def.cooldown) : def.cooldown;
+    // Recharge (maquette Recharges) : relance officielle aussi pour un déplacement qui la demande (Pas Chassé : 3 tours = 9 s)
+    this.cd[id] = this.cdMax[id] = this.recharge(id);
     this.pa -= this.paCost(id); this.pm -= def.pm ?? 0;
     (this.casts[id] ??= []).push(this.age);
-    this.casts[id] = this.casts[id].filter(t => this.age - t < TOUR);
+    this.casts[id] = this.casts[id].filter(t => this.age - t < Math.max(TOUR, this.retourCharge));
     if (def.move?.kind === 'leap') this.invuln = Math.max(this.invuln, def.duration + 0.05);
     this.setAnim(def.charge ? `${id}_charge` : def.anim ?? id);
     this.facing = def.move && (tx !== this.x || ty !== this.y) ? Math.atan2(ty - this.y, tx - this.x) : Math.atan2(aim.y - this.y, aim.x - this.x);
@@ -484,7 +526,12 @@ export class Player extends Entity {
 
   update(dt: number, input: PlayerInput, world: World) {
     this.age += dt;
-    for (const k of Object.keys(this.cd)) this.cd[k] = Math.max(0, this.cd[k] - dt);
+    for (const k of Object.keys(this.cd)) {
+      if (this.cd[k] <= 0) continue;
+      this.cd[k] = Math.max(0, this.cd[k] - dt);
+      // 9C : un éclat et un son quand une recharge de 5 s ou plus revient
+      if (this.cd[k] === 0 && (this.cdMax[k] ?? 0) >= 5) world.emit({ k: 'rechargePrete', id: k });
+    }
     this.autoCd = Math.max(0, this.autoCd - dt);
     for (const [k, s] of Object.entries(this.stacks)) { s.t -= dt; if (s.t <= 0) delete this.stacks[k]; }
     this.invuln = Math.max(0, this.invuln - dt);
@@ -664,6 +711,7 @@ export class Player extends Entity {
         const v = d.selfKnock * sig('selfKnock') * 7.13;
         this.kx -= Math.cos(this.facing) * v; this.ky -= Math.sin(this.facing) * v;
       }
+      if (d.grosCoup) mult *= d.grosCoup.mult;   // 5A : gros coup
       const hit = { dmg: (d.dmg * s.gm + (s.id === this.cls.basic ? this.weaponDamage() : 0)) * mult, knock: d.knock * sig('knock'), element: d.element, vsSummon: d.vsSummon && 1 + (d.vsSummon - 1) * sig('summon'), vsElite: sig('summon') > 1,
         pushDmg: d.pushDmg && s.boosted,
         lifesteal: d.lifesteal && d.lifesteal * sig('lifesteal'), erosion: d.erosion && d.erosion * sig('erosion'),

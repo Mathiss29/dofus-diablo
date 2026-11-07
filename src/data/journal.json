@@ -136,13 +136,19 @@
       "capture": "assets/journal/2026-11-07.webp",
       "legende": "Le Cloportier, devant la Cache de Kankreblath, 7 novembre 2026.",
       "lignes": {
+        "Nouveautés": [
+          "Nouvelle caractéristique « % Réduction des recharges » sur les objets (plafond 25 %) et nouveau pouvoir légendaire Relance éclair, qui raccourcit la recharge d'un de tes sorts.",
+          "Portes : au survol, le curseur change et le nom du lieu s'affiche (« Taverne d'Astrub », « Sortie · Cité d'Astrub », « Salle suivante » dans les donjons). On peut aussi passer une porte en marchant droit dedans."
+        ],
         "Le monde": [
           "Le Cloportier garde l'entrée de la Cache de Kankreblath, en [3,-17] : il te fait la courte échelle avec ta clef.",
-          "La Cache de Kankreblath s'ouvre comme dans Dofus : on traverse la Boutique de Kerubim en [3,-17], on monte au grenier, et le Cloportier vous rapetisse d'un coup de Baguette Rikiki pour passer par le trou du plancher."
+          "La Cache de Kankreblath s'ouvre comme dans Dofus : on traverse la Boutique de Kerubim en [3,-17], on monte au grenier, et le Cloportier vous rapetisse d'un coup de Baguette Rikiki pour passer par le trou du plancher.",
+          "Chaque intérieur a son nom : bandeau en entrant et titre en haut de l'écran. Les sorties sont mieux marquées au sol, et l'intérieur se charge dès qu'on approche d'une porte : le noir du passage est plus court."
         ],
         "Combat": [
           "Les monstres ne lâchent plus la poursuite au bout de 13 cases : ils te suivent tant qu'ils te voient, gardent leurs blessures s'ils abandonnent, et un coup les ramène avec tout leur groupe. Les groupes voisins viennent aider et les retardataires accélèrent pour rester groupés.",
-          "Massacre : dès 5 monstres tués à la suite, compteur à l'écran et jusqu'à +40 % d'XP. Un monstre qui abandonne affiche « Abandonne » et devient transparent ; un « ! » rouge quand un groupe te prend en chasse."
+          "Massacre : dès 5 monstres tués à la suite, compteur à l'écran et jusqu'à +40 % d'XP. Un monstre qui abandonne affiche « Abandonne » et devient transparent ; un « ! » rouge quand un groupe te prend en chasse.",
+          "Recharges des sorts : Épée Divine (Iop) et Flèche de Barrage (Crâ) deviennent un gros coup à 8 s qui frappe deux fois plus fort ; les sorts à « 2 lancers par tour » affichent leurs charges, et le voile de recharge tourne comme une horloge avec un tintement quand un gros sort revient."
         ],
         "Corrections": [
           "Pêche : les bancs de poissons au milieu de l'eau se pêchent enfin depuis la rive (portée officielle de 10 cases), et chaque coin de pêche donne les poissons de sa carte.",

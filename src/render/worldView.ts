@@ -30,8 +30,11 @@ export class WorldView {
   sky?: Phaser.GameObjects.Image;
   private center = '';
   private viewT = 0;
-  /** Bouts de portes (sim/world.ts) : un repère doré au sol est posé sur chacun quand sa carte est chargée. */
-  portes: { tag: string; x: number; y: number }[] = [];
+  /** Bouts de portes (sim/world.ts) : un repère doré au sol est posé sur chacun quand sa carte est chargée.
+   *  `vers` = carte où elle mène (préchargée à l'approche, maquette Entrées 2A) ; `sortie` = sortie d'un intérieur (repère plus visible, 8A). */
+  portes: { tag: string; x: number; y: number; vers?: string; sortie?: boolean }[] = [];
+  /** Distance (monde) à laquelle on précharge ce qui est derrière une porte : 6 cases. */
+  static readonly APPROCHE = 6 * 48;
   /** Cartes en téléchargement, et textures prêtes à envoyer à la carte graphique (une par image, voir fetchMap). */
   private readonly fetching = new Set<string>();
   private readonly uploads: { m: WorldMapEntry; add: () => void }[] = [];
@@ -121,7 +124,7 @@ export class WorldView {
         else this.fetchMap(m);
       } else if (jette && s.state !== 'none') this.unload(m);   // 'loading' : la carte arrivera pour rien, build() la jette
     }
-    this.prefetch(here);
+    this.prefetch(here, px, py);
   }
 
   /** En jeu, une carte se charge sans saccade : les images sont téléchargées et décodées hors du fil principal
@@ -158,13 +161,24 @@ export class WorldView {
   }
   /** Préchargement (2A) : quand rien d'autre ne se télécharge, une carte de la 2e couronne à la fois, sans l'afficher.
    *  Les fichiers des cartes lointaines sont oubliés (mémoire). */
-  private prefetch(here: WorldMapEntry) {
+  private prefetch(here: WorldMapEntry, px: number, py: number) {
+    const derriere = this.derrierePortes(here, px, py);
     for (const m of this.wg.world.maps) {
-      if (this.slots.get(m.tag)!.state !== 'none') continue;
+      if (this.slots.get(m.tag)!.state !== 'none' || derriere.has(m.tag)) continue;
       const d = !!m.inside === !!here.inside ? ring(m, here.x, here.y) : Infinity;
       if (d > OUBLI_RING) for (const n of this.fichiers(m)) this.blobs.delete(n);
     }
-    if (here.inside || this.fetching.size) return;
+    if (this.fetching.size) return;
+    // derrière les portes proches d'abord (2A) : l'intérieur, ou en sortant la carte du dehors et ses voisines
+    for (const tag of derriere) {
+      const m = this.wg.mapByTag(tag);
+      if (!m || this.slots.get(tag)!.state !== 'none') continue;
+      const f = this.fichiers(m);
+      if (f.every(n => this.blobs.has(n))) continue;
+      for (const n of f) this.blob(n).catch(() => { /* retenté plus tard */ });
+      return;
+    }
+    if (here.inside) return;
     for (const m of this.wg.world.maps) {
       if (m.inside || ring(m, here.x, here.y) !== PREFETCH_RING || this.slots.get(m.tag)!.state !== 'none') continue;
       const f = this.fichiers(m);
@@ -172,6 +186,21 @@ export class WorldView {
       for (const n of f) this.blob(n).catch(() => { /* retenté plus tard */ });
       return;
     }
+  }
+
+  /** Cartes derrière les portes proches du joueur (dehors : à moins de APPROCHE ; dedans : toutes les portes de la salle).
+   *  Un intérieur seul ; une carte du dehors avec ses voisines (l'arrivée attend la carte et ses 8 voisines, voir pret()). */
+  private derrierePortes(here: WorldMapEntry, px: number, py: number): Set<string> {
+    const r = new Set<string>();
+    for (const p of this.portes) {
+      if (!p.vers || p.vers === here.tag) continue;
+      if (here.inside ? p.tag !== here.tag : Math.hypot(p.x - px, p.y - py) > WorldView.APPROCHE) continue;
+      const m = this.wg.mapByTag(p.vers);
+      if (!m) continue;
+      if (m.inside) { r.add(m.tag); continue; }
+      for (const n of this.wg.world.maps) if (!n.inside && ring(n, m.x, m.y) <= LOAD_RING) r.add(n.tag);
+    }
+    return r;
   }
 
   /** Arrivée (1A) : la carte du joueur et ses 8 voisines (dedans : la salle seule), et celles que la caméra voit,
@@ -247,8 +276,11 @@ export class WorldView {
     s.next = 0;
     for (const p of this.portes) if (p.tag === m.tag) {
       const c = ISO.toScreen(p.x, p.y), g = this.scene.add.graphics().setPosition(c.x, c.y).setDepth(c.y - 2);   // comme une ombre : au-dessus du sol et des tapis
-      g.fillStyle(0xffd36a, 0.35).fillEllipse(0, 0, 92, 46).lineStyle(3, 0xfff0b0, 1).strokeEllipse(0, 0, 92, 46);
-      this.scene.tweens.add({ targets: g, alpha: 0.5, duration: 800, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+      if (p.sortie) {   // sortie d'un intérieur (8A) : halo plus large et plus vif, double anneau
+        g.fillStyle(0xffd36a, 0.18).fillEllipse(0, 0, 130, 65).fillStyle(0xffd36a, 0.45).fillEllipse(0, 0, 96, 48)
+          .lineStyle(4, 0xfff4c4, 1).strokeEllipse(0, 0, 96, 48).lineStyle(2, 0xffe08a, 0.8).strokeEllipse(0, 0, 118, 59);
+      } else g.fillStyle(0xffd36a, 0.35).fillEllipse(0, 0, 92, 46).lineStyle(3, 0xfff0b0, 1).strokeEllipse(0, 0, 92, 46);
+      this.scene.tweens.add({ targets: g, alpha: p.sortie ? 0.65 : 0.5, duration: 800, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
       s.objs.push(g);
     }
     s.state = 'ready';
