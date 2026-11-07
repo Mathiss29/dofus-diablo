@@ -36,8 +36,6 @@ export interface WorldMapEntry {
   pages?: number[];
   /** Décor rangé en bâtiments par tools/extraction/batiments.py. */
   batiments?: number;
-  /** Bâtiments recopiés chez la voisine retirés (tools/extraction/hors_carte.py). */
-  horscarte?: number;
 }
 /** Plusieurs cartes Dofus voisines collées bord à bord en une seule grande grille. */
 export interface WorldData extends MapData { origin: [number, number]; maps: WorldMapEntry[]; /** Ciel commun posé derrière tout le monde. */ sky?: string;

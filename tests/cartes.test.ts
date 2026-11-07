@@ -70,7 +70,6 @@ describe('bâtiments (tools/extraction/batiments.py)', () => {
     const data = lire(w), tailles = new Map<number, number>();
     for (const m of data.maps) {
       expect(m.batiments, m.tag).toBe(1);
-      if (!m.inside) expect(m.horscarte, `${m.tag} : tools/extraction/hors_carte.py`).toBe(1);
       for (const p of m.decor) if (p.bt !== undefined) {
         const F = frames(w, p.p !== undefined ? `p${p.p}` : m.tag)[p.f];
         tailles.set(p.bt, Math.max(tailles.get(p.bt) ?? 0, F.frame.w * F.frame.h * (p.z ?? 1) ** 2));
