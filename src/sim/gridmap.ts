@@ -129,10 +129,19 @@ export class GridMap {
     for (let i = 1; i < n; i++) if (!this.walkable(a.x + (b.x - a.x) * i / n, a.y + (b.y - a.y) * i / n)) return false;
     return true;
   }
+  /** Couloir marchable de demi-largeur `marge` entre deux points : la ligne du milieu et ses deux bords. */
+  clearLineLarge(a: Vec, b: Vec, marge: number): boolean {
+    if (!this.clearLine(a, b)) return false;
+    if (marge <= 0) return true;
+    const d = Math.hypot(b.x - a.x, b.y - a.y) || 1, nx = -(b.y - a.y) / d * marge, ny = (b.x - a.x) / d * marge;
+    return this.clearLine({ x: a.x + nx, y: a.y + ny }, { x: b.x + nx, y: b.y + ny })
+      && this.clearLine({ x: a.x - nx, y: a.y - ny }, { x: b.x - nx, y: b.y - ny });
+  }
   /** Chemin (A*) entre deux points du monde, en points de passage lissés ; vide si inatteignable.
-   *  Si l'arrivée est bloquée, on va à la case libre la plus proche. maxNodes borne le coût d'un clic lointain. */
-  findPath(from: Vec, to: Vec, maxNodes = 6000): Vec[] {
-    if (this.clearLine(from, to) && this.walkable(to.x, to.y)) return [to];
+   *  Si l'arrivée est bloquée, on va à la case libre la plus proche. maxNodes borne le coût d'un clic lointain.
+   *  marge : le lissage garde cette distance (px) avec le décor (les monstres ne frottent pas les coins). */
+  findPath(from: Vec, to: Vec, maxNodes = 6000, marge = 0): Vec[] {
+    if (this.clearLineLarge(from, to, marge) && this.walkable(to.x, to.y)) return [to];
     const start = this.cellAtWorld(from.x, from.y);
     let goal = this.cellAtWorld(to.x, to.y);
     if (start < 0) return [];
@@ -168,7 +177,7 @@ export class GridMap {
     const out: Vec[] = []; let cur = from;
     for (let i = 0; i < pts.length; i++) {
       let j = i;
-      while (j + 1 < pts.length && this.clearLine(cur, pts[j + 1])) j++;
+      while (j + 1 < pts.length && this.clearLineLarge(cur, pts[j + 1], marge)) j++;
       out.push(pts[j]); cur = pts[j]; i = j;
     }
     return out;

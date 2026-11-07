@@ -165,7 +165,8 @@
           "Les légendaires tombent comme prévu : 1 monstre sur 1 500, 1 élite sur 150, 1 boss sur 50. Les objets de quête et d'événement de Dofus (Pollenectar, Oueille, caisses de cadeaux…) ne tombent plus en temps normal.",
           "Moins de ressources communes : les monstres en lâchent trois fois moins (la Laine de Bouftou passe de 53 % à 17,7 %), pour que le sac ne déborde plus. Les ressources rares et le butin des boss ne changent pas.",
           "Les gros groupes de monstres ne font plus mal aux oreilles : 2 cris par sorte à la fois, volume qui baisse quand ils sont nombreux, voix un peu variées, et seuls la moitié des monstres crient en attaquant (élites et boss toujours).",
-          "La Rage (ou la Précision) remplit le bord du portrait et s'embrase quand elle est pleine ; les PV perdus restent un instant en blanc et le cœur bat sous 30 % de vie."
+          "La Rage (ou la Précision) remplit le bord du portrait et s'embrase quand elle est pleine ; les PV perdus restent un instant en blanc et le cœur bat sous 30 % de vie.",
+          "En contournant un décor, les monstres gardent un pas de marge avec les coins au lieu de frotter dessus."
         ],
         "Corrections": [
           "Cache de Kankreblath : l'arène a enfin un plancher partout, plus de trous noirs sur les bords.",

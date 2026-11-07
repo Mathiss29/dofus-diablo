@@ -431,18 +431,21 @@ export class Monster extends Entity {
   private cheminT = 0; private cheminX = 0; private cheminY = 0;
   /** Coût maximal d'un calcul de chemin de monstre (cases explorées). */
   static readonly CHEMIN_MAX = 2500;
+  /** Marge (px) gardée avec le décor quand il le contourne : il ne frotte plus les coins (Mathis, 2026-11-07). */
+  static readonly MARGE = 12;
   /** Le décor (autel, coffre, arbre, mur…) barre la ligne droite vers (tx, ty) : direction du prochain point d'un chemin A*
    *  qui le contourne, recalculé régulièrement ou quand la cible a bougé. null = la voie est libre, on va tout droit. */
   private versCible(tx: number, ty: number, dt: number, world: World): [number, number] | null {
-    if (world.clearShot(this, { x: tx, y: ty })) { this.chemin.length = 0; return null; }
+    const libre = (b: { x: number; y: number }) => world.map.clearLineLarge(this, b, Monster.MARGE);
+    if (libre({ x: tx, y: ty })) { this.chemin.length = 0; return null; }
     this.cheminT -= dt;
     if (!this.chemin.length || this.cheminT <= 0 || Math.hypot(tx - this.cheminX, ty - this.cheminY) > CASE) {
-      this.chemin = world.map.findPath(this, { x: tx, y: ty }, Monster.CHEMIN_MAX);
+      this.chemin = world.map.findPath(this, { x: tx, y: ty }, Monster.CHEMIN_MAX, Monster.MARGE);
       this.cheminX = tx; this.cheminY = ty;
       this.cheminT = 0.4 + (this.id % 5) * 0.06;   // décalés d'un monstre à l'autre : pas tous les calculs à la même image
     }
     // on passe au point suivant quand on touche le point courant ou qu'on voit déjà le suivant
-    while (this.chemin.length > 1 && (Math.hypot(this.chemin[0].x - this.x, this.chemin[0].y - this.y) < 10 || world.clearShot(this, this.chemin[1]))) this.chemin.shift();
+    while (this.chemin.length > 1 && (Math.hypot(this.chemin[0].x - this.x, this.chemin[0].y - this.y) < 10 || libre(this.chemin[1]))) this.chemin.shift();
     const q = this.chemin[0];
     if (!q) return null;
     const ux = q.x - this.x, uy = q.y - this.y, n = Math.hypot(ux, uy);
