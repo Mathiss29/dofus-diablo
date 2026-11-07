@@ -113,7 +113,7 @@ export class GridMap {
     return this.cellAt(m.x, m.y);
   }
   /** Cases voisines (losanges qui se touchent par un côté ou un coin), marchables. */
-  private neighbors(c: number): number[] {
+  neighbors(c: number): number[] {
     const r = Math.floor(c / this.cols), k = c % this.cols, o = r % 2, out: number[] = [];
     const add = (rr: number, kk: number) => {
       if (rr < 0 || rr >= this.rows || kk < 0 || kk >= this.cols) return;

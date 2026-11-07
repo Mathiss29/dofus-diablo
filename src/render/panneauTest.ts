@@ -8,6 +8,7 @@ import { LOOKS } from './looks';
 import { anomaliesButin, lieuxDe, niveauHorsPartie, rangDe, tableButin, tirerButin, type Rang } from '../sim/butin';
 import { Rng } from '../sim/math';
 import { groupesBestiaire, nomObjet, pct, unSur } from './butinVue';
+import { EditeurPlacement } from './placementVue';
 
 /** Une ligne du tableau de butin de l'outil de test (maquette « Drops » 1C, 8A+8B+8C). */
 interface LigneDev { m: string; nom: string; rang: Rang; niv: number; zone: string; item: string; objet: string; eq: boolean; off: number; reel: number; cond: string }
@@ -64,8 +65,8 @@ export interface ActionsTest {
 
 const sansAccent = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 const esc = (s: string) => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
-type Onglet = 'perso' | 'aller' | 'objets' | 'monstres' | 'butin' | 'aides';
-const ONGLETS: [Onglet, string][] = [['perso', 'Perso'], ['aller', 'Aller à'], ['objets', 'Objets'], ['monstres', 'Monstres'], ['butin', 'Butin'], ['aides', 'Aides']];
+type Onglet = 'perso' | 'aller' | 'objets' | 'monstres' | 'butin' | 'placement' | 'aides';
+const ONGLETS: [Onglet, string][] = [['perso', 'Perso'], ['aller', 'Aller à'], ['objets', 'Objets'], ['monstres', 'Monstres'], ['butin', 'Butin'], ['placement', 'Placement'], ['aides', 'Aides']];
 
 const CSS = `
 #ptest-badge{position:fixed;bottom:118px;left:50%;transform:translateX(-50%);z-index:12;pointer-events:none;background:#f0a83a;color:#1b1206;font:13px Rowdies,Lexend,sans-serif;letter-spacing:.12em;padding:5px 12px;border-radius:3px;box-shadow:0 2px 8px #000a}
@@ -94,6 +95,7 @@ const CSS = `
 #ptest .b.g{border-image:none;background:#3a3830;border:1px solid #57554c;color:#e8e2d4;text-shadow:none;padding:5px 8px;border-radius:3px;font:12px Lexend,sans-serif;text-transform:none}
 #ptest .b.g:hover{border-color:#b9e54b}
 #ptest .b.on{background:#4c6e17;border-color:#b9e54b}
+#ptest .b:disabled{opacity:.4;cursor:default}
 #ptest .liste{display:grid;gap:3px}
 #ptest .liste button{all:unset;cursor:pointer;display:flex;align-items:center;gap:8px;padding:4px 7px;background:#1d1c18;border:1px solid #2e2c26;border-radius:3px}
 #ptest .liste button:hover{border-color:#b9e54b}
@@ -155,6 +157,9 @@ export class PanneauTest {
   private simMonstre = 'bouftou';
   private simN = 1000;
   private simRes = '';
+  /** Onglet Placement (maquette « Monstres » 2A) : points des groupes de monstres, carte par carte. */
+  readonly editeur: EditeurPlacement;
+  private carteVue: string | null = null;
 
   constructor(private world: World, private actions: ActionsTest, private zoneId: string) {
     if (!document.getElementById('ptest-css')) { const st = document.createElement('style'); st.id = 'ptest-css'; st.textContent = CSS; document.head.appendChild(st); }
@@ -169,11 +174,15 @@ export class PanneauTest {
     this.el.addEventListener('keyup', e => e.stopPropagation());
     document.body.append(this.badge, this.el);
     this.niveau = world.player.level;
+    this.editeur = new EditeurPlacement(world, c => actions.envoyer(c), () => { if (this.ouvert && this.onglet === 'placement') this.dessiner(); });
   }
+  get ongletPlacement() { return this.onglet === 'placement'; }
+  /** Édition du placement en cours : un clic en jeu pose ou retire un point au lieu de faire marcher. */
+  get editionPlacement() { return this.ouvert && this.onglet === 'placement' && this.editeur.pose && !!this.world.zone.open; }
   get ouvert() { return !this.el.hidden; }
   basculer() { this.el.hidden = !this.el.hidden; if (!this.el.hidden) { this.niveau = this.world.player.level; this.dessiner(); } }
   private lignesDev: LigneDev[] | null = null;
-  destroy() { this.el.remove(); this.badge.remove(); }
+  destroy() { this.el.remove(); this.badge.remove(); this.editeur.destroy(); }
 
   /** Un coup donné à un monstre (événement « hit » de la simulation). */
   noterCoup(n: number) { this.coups.push({ t: this.world.time, n }); this.dernierCoup = n; }
@@ -181,6 +190,8 @@ export class PanneauTest {
   maj(now: number, force = false) {
     const t0 = this.world.time - 10;
     while (this.coups.length && this.coups[0].t < t0) this.coups.shift();
+    // Placement : la fiche suit la carte où l'on marche
+    if (this.ouvert && this.onglet === 'placement') { const c = this.editeur.carte(); if (c !== this.carteVue) { this.carteVue = c; this.dessiner(); } }
     if (!this.ouvert || this.onglet !== 'monstres' || (!force && now - this.majT < 250)) return;
     this.majT = now;
     const total = this.coups.reduce((a, c) => a + c.n, 0), d = this.coups.length ? Math.max(1, this.world.time - this.coups[0].t) : 1;
@@ -241,6 +252,7 @@ export class PanneauTest {
     tous('[data-sim]', () => { this.simuler(); this.dessiner(); });
     // Aides et course / murs
     this.el.querySelectorAll<HTMLInputElement>('[data-reg]').forEach(i => i.onchange = () => this.actions.envoyer({ k: 'reglage', cle: i.dataset.reg as keyof ReglagesTest, on: i.checked }));
+    if (this.onglet === 'placement') this.editeur.lier(this.el);
     this.el.querySelectorAll('select').forEach(s => s.addEventListener('keydown', e => e.stopPropagation()));
     this.maj(this.majT, true);
   }
@@ -423,6 +435,10 @@ export class PanneauTest {
       <div class="l"><select id="pt-simm">${mons.map(([k, d]) => `<option value="${k}" ${k === this.simMonstre ? 'selected' : ''}>${esc(d.name)}</option>`).join('')}</select>
         <span style="display:flex;gap:4px">${[100, 1000, 10000].map(n => chip('data-simn', String(n), n.toLocaleString('fr-FR'), this.simN === n)).join('')}</span><button type="button" class="b" data-sim>Tuer</button></div>
       ${this.simRes ? `<div class="sim">${this.simRes}</div>` : '<p class="note">Tire le butin avec le vrai calcul du jeu, sans rien donner au perso.</p>'}`;
+  }
+  private placement() {
+    if (!this.world.zone.open) return '<p class="note">Le placement des groupes se fait dans les zones en monde ouvert (Incarnam, Astrub).</p>';
+    return this.editeur.html();
   }
   private aides() {
     return `${this.inter('invincible', 'Invincible', 'Les coups s\'affichent, les PV ne baissent pas.')}

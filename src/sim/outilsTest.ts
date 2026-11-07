@@ -1,3 +1,4 @@
+import type { PlacementCarte } from './placement';
 import { degatsMonstre } from './danger';
 import { EQUIP_SLOTS, RARITIES, RARITY_NAMES, rollItem, type EquipSlot, type Rarity, type Slot } from './items';
 import type { Element } from './defs';
@@ -34,7 +35,9 @@ export type CommandeTest =
   | { k: 'monstre'; type: string; n: number; rang: RangTest; x: number; y: number; mannequin: boolean }
   /** Retire tous les monstres posés par le panneau. */
   | { k: 'retirer' }
-  | { k: 'reglage'; cle: keyof ReglagesTest; on: boolean };
+  | { k: 'reglage'; cle: keyof ReglagesTest; on: boolean }
+  /** Éditeur de placement (maquette « Monstres » 2A) : la carte reprend ce placement (null : celui d'origine). */
+  | { k: 'placement'; tag: string; pl: PlacementCarte | null };
 
 /** Arme préférée de la classe pour la tenue toute faite (6B) : l'arme de Dofus de chaque classe. */
 const ARME_CLASSE: Record<string, string> = { iop: 'Épée', cra: 'Arc' };
@@ -120,6 +123,7 @@ export function appliquerTest(w: World, c: CommandeTest) {
       break;
     }
     case 'reglage': if (w.test) w.test[c.cle] = c.on; break;
+    case 'placement': w.reposerCarte(c.tag, c.pl); break;
   }
 }
 
