@@ -5,6 +5,8 @@ import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES } fr
 import type { Compte } from '../sim/quests';
 import { QuestView } from './questView';
 import { RecolteView } from './recolteView';
+import { AtelierView } from './atelierView';
+import { estPalier, recettesAuNiveau } from '../sim/metiers';
 import { HavreSacView } from './havreSacView';
 import type { PointDeRetour, RetourHavreSac } from '../sim/events';
 import { DialogueView } from './dialogueView';
@@ -105,6 +107,8 @@ export class ZoneScene extends Phaser.Scene {
   private havreSacDemande = false;
   private zaapChoix: number | null = null;
   private recolteClick: number | null = null;
+  private atelierView: AtelierView | null = null;
+  private posteClick: number | null = null;
   /** PNJ cliqué (quêtes) et leur affichage. */
   private talkClick: string | null = null;
   private questView: QuestView | null = null;
@@ -269,6 +273,7 @@ export class ZoneScene extends Phaser.Scene {
       this.events.once('shutdown', () => { tr.destroy(); if (this.transparence === tr) this.transparence = null; });
       this.worldView.create();
       if (this.world.zone.open) { const hv = this.havreSacView = new HavreSacView(this, this.world); this.events.once('shutdown', () => { hv.destroy(); if (this.havreSacView === hv) this.havreSacView = null; }); }
+      if (this.world.postes.length) { const av = this.atelierView = new AtelierView(this, this.world, `${ASSETS}/ui/reperes`); this.events.once('shutdown', () => { av.destroy(); if (this.atelierView === av) this.atelierView = null; }); }
       if (this.world.recoltes.length) { const rv = this.recolteView = new RecolteView(this, this.world); this.events.once('shutdown', () => { rv.destroy(); if (this.recolteView === rv) this.recolteView = null; }); }
       if (this.world.quetes) {
         this.questView = new QuestView(this, this.world, this.worldView);
@@ -313,7 +318,10 @@ export class ZoneScene extends Phaser.Scene {
     if (mini && this.transparence) mini.ignore(this.transparence.calque);
     this.windows?.destroy();
     this.windows = new Windows(this.world);
+    // Bestiaire (maquette « Drops » 1A) : les monstres vaincus du compte ; la partie de test voit tout
+    this.windows.vaincus = () => this.bestiaire; this.windows.toutVoir = !!this.test;
     this.windows.onZaap = i => { this.zaapChoix = i; };
+    this.windows.onCarte = m => { if (this.carte?.dispo) this.carte.montrer(m); };   // Métiers UI 8B, 11B : où trouver une ressource
     this.windows.portrait = v(`${ASSETS}/ui/perso_${this.classId}${this.perso?.sexe === 'f' ? '_f' : ''}.png`);
     // perso dessiné en direct dans l'inventaire, l'aperçu des apparats et la garde-robe (Apparence 5A, 6B)
     this.fichePerso();
@@ -347,6 +355,7 @@ export class ZoneScene extends Phaser.Scene {
       else if (name === 'Quêtes' && this.world.quetes) this.windows!.toggle('quetes');
       else if (name === 'Succès' && this.world.quetes) this.windows!.toggle('succes');
       else if (name === 'Carte du monde') this.basculerCarte();
+      else if (name === 'Bestiaire') this.windows!.toggle('bestiaire');
       else this.hud.toast(`${name} : arrive dans une prochaine version`);
     };
     this.hud.onPasser = id => this.world.quetes?.passer(id);
@@ -453,7 +462,7 @@ export class ZoneScene extends Phaser.Scene {
     const K = Phaser.Input.Keyboard.KeyCodes, kb = this.input.keyboard!;
     // Déplacement à la souris (clic gauche) ; le clavier sert aux sorts, à la potion et aux menus
     this.keys = kb.addKeys({ SHIFT: K.SHIFT, ALT: K.ALT,
-      SPACE: K.SPACE, S: K.S, E: K.E, K: K.K, I: K.I, C: K.C, J: K.J, ESC: K.ESC, F: K.F, G: K.G, H: K.H, O: K.O, M: K.M, ENTER: K.ENTER,
+      SPACE: K.SPACE, S: K.S, E: K.E, K: K.K, I: K.I, C: K.C, J: K.J, ESC: K.ESC, F: K.F, G: K.G, H: K.H, O: K.O, M: K.M, B: K.B, ENTER: K.ENTER,
       ONE: K.ONE, TWO: K.TWO, THREE: K.THREE, FOUR: K.FOUR, FIVE: K.FIVE, SIX: K.SIX }) as Record<string, Phaser.Input.Keyboard.Key>;
     // Façon Diablo (demande de Mathis, 2026-11-05) : clic gauche sur le sol = y aller (maintenu : suivre le curseur),
     // sur un monstre = s'approcher et l'attaquer (maintenu : continuer), Maj + clic gauche = attaquer sur place ;
@@ -482,6 +491,8 @@ export class ZoneScene extends Phaser.Scene {
       if (this.keys.SHIFT.isDown) { this.pressed = 'attaque'; this.clickMode = 'place'; return; }
       const n = this.questView?.pnjUnder(p, this.cameras.main);
       if (n) { this.talkClick = n; this.clickMode = null; this.holding = false; return; }
+      const at = this.atelierView?.sous(p, this.cameras.main);
+      if (at != null) { this.posteClick = at; this.clickMode = null; this.holding = false; return; }
       const rc = this.recolteView?.sous(p, this.cameras.main);
       if (rc != null) { this.recolteClick = rc; this.clickMode = null; this.holding = false; return; }
       const d = this.dropUnder(p);
@@ -518,6 +529,7 @@ export class ZoneScene extends Phaser.Scene {
     this.keys.C.on('down', () => this.windows?.toggle('car'));
     this.keys.J.on('down', () => this.windows?.toggle('job'));   // Métiers (choix 6A : Chasseur)
     this.keys.O.on('down', () => this.windows?.toggle('opt'));
+    this.keys.B.on('down', () => this.windows?.toggle('bestiaire'));   // Bestiaire (maquette « Drops » 1A)
     this.keys.S.on('down', () => this.windows?.toggle('sorts'));   // Sorts (choix 8A, touche S)   // Réglages (choix 10A + 10B)
     this.keys.ESC.on('down', () => { if (this.panneau?.pose) { this.panneau.posee(); return; } if (this.essai) { this.essai = null; this.game.events.emit('accueil', 'creation'); return; } if (this.dialogueView?.ouvert) { this.dialogueView.touche(-1); return; } this.dialogueView?.fermerMenu(); this.aimId = null; this.aimKey = null; this.windows?.close(); this.carte?.fermer(); });
     // K : changer de classe, seulement sans perso (mode dév #cra / #jeu, partie de test) ; sinon la classe se choisit à la création
@@ -688,6 +700,9 @@ export class ZoneScene extends Phaser.Scene {
     const ar = this.recolteClick != null ? this.world.approcheRecolte(this.recolteClick) : null;
     if (ar) { input.recolte = this.recolteClick; input.dest = ar; this.clickMode = null; }
     this.recolteClick = null;
+    const ap = this.posteClick != null ? this.world.approchePoste(this.posteClick) : null;
+    if (ap) { input.atelier = this.posteClick; input.dest = ap; this.clickMode = null; }
+    this.posteClick = null;
     if (held && this.clickMode === 'ground') input.dest = aim;
     if (held && this.clickMode === 'target' && this.clickTarget != null) input.target = this.clickTarget;
     // clic bref sur un monstre : on garde la cible jusqu'au premier coup (le perso continue de s'approcher)
@@ -701,7 +716,7 @@ export class ZoneScene extends Phaser.Scene {
     if (this.questView) this.questView.survole = surPnj;
     this.dialogueView?.survol(surPnj, ptr);
     const monstre = this.monsterUnder(ptr), porte = !monstre && !surPnj ? this.porteSurvol(aim) : false;
-    this.game.canvas.style.cursor = monstre ? 'crosshair' : surPnj ? 'pointer' : porte ? CURSEUR_PORTE : this.recolteView?.curseur() ?? 'default';
+    this.game.canvas.style.cursor = monstre ? 'crosshair' : surPnj ? 'pointer' : porte ? CURSEUR_PORTE : this.atelierView?.curseur() ?? this.recolteView?.curseur() ?? 'default';
     return input;
   }
 
@@ -789,7 +804,16 @@ export class ZoneScene extends Phaser.Scene {
         case 'bagFull': this.hud.toast('Sac plein : recycle des objets chez Kerubim Crépin (Havre-Sac, touche H) ou Maj + clic dans l\'inventaire'); break;
         case 'monsterCast': this.castName(e.id, e.name); break;
         case 'itemDrop': if (e.rarity === 'epique' || e.rarity === 'legendaire' || e.rarity === 'mythique') this.chime(e.rarity !== 'epique'); break;
-        case 'metierLevel': this.hud.banner(`${ITEMS.metiers?.[e.metier]?.name ?? 'Métier'} niveau ${e.level} !`, 1500); this.windows?.refresh(); break;
+        // Métiers UI 10C : bannière aux paliers (10, 20, 30…) avec les recettes débloquées, une ligne dans le fil sinon
+        case 'metierLevel': {
+          const nom = ITEMS.metiers?.[e.metier]?.name ?? 'Métier', neuves = recettesAuNiveau(ITEMS, e.metier, e.level).map(r => ITEMS.resources[r.result]?.name).filter(Boolean);
+          if (estPalier(e.level)) this.hud.banner(`${nom} niveau ${e.level} !${neuves.length ? `\n${neuves.length > 1 ? `${neuves.length} nouvelles recettes` : 'Nouvelle recette'} : ${neuves.slice(0, 3).join(', ')}` : ''}`, 2200);
+          else this.hud.loot(`${nom} niveau ${e.level}${neuves.length ? ` · nouvelle recette : ${neuves.join(', ')}` : ''}`, '#b9e54b');
+          this.windows?.refresh(); break;
+        }
+        case 'atelier': this.windows?.artisanat(e.metier); break;
+        case 'fabricationDebut': Son.jouer(MANIFESTE.ui.ok, 'interface', { cle: 'clic', ecart: 0.05 }); this.windows?.refresh(); break;
+        case 'fabricationStop': this.hud.toast('Fabrication interrompue'); this.windows?.refresh(); break;
         case 'craft': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Objet'} x${e.n}`, '#9ad15a'); this.windows?.refresh(); break;
         case 'eat': this.windows?.refresh(); break;
         // PNJ du Havre-Sac (maquette Hub 4A) : la réponse « service » de son dialogue ouvre sa fenêtre (recycler, boutique, apparats, miroir)
@@ -1144,6 +1168,7 @@ export class ZoneScene extends Phaser.Scene {
     }
     this.drawDrops();
     this.recolteView?.update(this.cameras.main, this.input.activePointer);
+    this.atelierView?.update(this.cameras.main, this.input.activePointer);
     this.havreSacView?.update(this.game.loop.delta / 1000);
     this.questView?.update();
     this.dialogueView?.update();

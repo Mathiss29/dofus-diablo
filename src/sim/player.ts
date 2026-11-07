@@ -46,6 +46,8 @@ export class Player extends Entity {
   resources: Record<string, number> = {};
   /** Métiers (choix 6A : Chasseur) : niveau et XP. */
   metiers: Record<string, { level: number; xp: number }> = { chasseur: { level: 1, xp: 0 } };
+  /** Recette suivie à l'écran (Métiers UI 9A) : l'objet fabriqué (id de ressource), sous la quête. */
+  recetteSuivie: string | null = null;
   kamas = 0;
   /** Butin au sol affiché et aspiré (choix 4C, réglé dans l'inventaire) : 0 tout, 1 Rare et plus, 2 Épique et plus. */
   lootFilter = 0;

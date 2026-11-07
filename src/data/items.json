@@ -10656,11 +10656,13 @@
   "bouftou": [
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "17126",
@@ -10695,15 +10697,18 @@
   "pissenlit": [
    {
     "item": "19624",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "quete"
    },
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "306",
@@ -10738,15 +10743,18 @@
   "rose": [
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "19625",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "quete"
    },
    {
     "item": "17124",
@@ -10785,15 +10793,18 @@
   "tournesol": [
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "19626",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "quete"
    },
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "17124",
@@ -10828,15 +10839,18 @@
   "epouvanteur": [
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "19627",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "quete"
    },
    {
     "item": "374",
@@ -10900,7 +10914,8 @@
    },
    {
     "item": "19624",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "quete"
    },
    {
     "item": "306",
@@ -10922,7 +10937,8 @@
    },
    {
     "item": "19625",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "quete"
    },
    {
     "item": "17124",
@@ -10958,7 +10974,8 @@
    },
    {
     "item": "19626",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "quete"
    },
    {
     "item": "2661",
@@ -10980,7 +10997,8 @@
    },
    {
     "item": "28256",
-    "chance": 59.0
+    "chance": 59.0,
+    "cond": "quete"
    },
    {
     "item": "16663",
@@ -11549,7 +11567,8 @@
    },
    {
     "item": "16999",
-    "chance": 48.0
+    "chance": 48.0,
+    "cond": "quete"
    },
    {
     "item": "312",
@@ -11559,11 +11578,13 @@
   "boufton": [
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "17126",
@@ -11598,39 +11619,48 @@
   "royal": [
    {
     "item": "10917",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "10918",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "19718",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "12230",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "10835",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "22318",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "10919",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "886",
@@ -11646,7 +11676,8 @@
    },
    {
     "item": "13526",
-    "chance": 6.0
+    "chance": 6.0,
+    "cond": "quete"
    },
    {
     "item": "16819",
@@ -11695,51 +11726,48 @@
    },
    {
     "item": "20739",
-    "chance": 0.05
+    "chance": 0.05,
+    "cond": "evenement"
    },
    {
     "item": "26256",
-    "chance": 0.05
+    "chance": 0.05,
+    "cond": "evenement"
    },
    {
     "item": "22322",
-    "chance": 0.05
+    "chance": 0.05,
+    "cond": "evenement"
    },
    {
     "item": "32985",
-    "chance": 0.05
+    "chance": 0.05,
+    "cond": "evenement"
    },
    {
     "item": "20136",
-    "chance": 0.05
+    "chance": 0.05,
+    "cond": "evenement"
    },
    {
     "item": "29498",
-    "chance": 0.05
+    "chance": 0.05,
+    "cond": "evenement"
    },
    {
     "item": "24188",
-    "chance": 0.05
+    "chance": 0.05,
+    "cond": "evenement"
    },
    {
     "item": "31042",
-    "chance": 0.05
+    "chance": 0.05,
+    "cond": "evenement"
    },
    {
     "item": "27848",
-    "chance": 0.05
-   },
-   {
-    "item": "21147",
-    "chance": 0.0
-   },
-   {
-    "item": "20052",
-    "chance": 0.0
-   },
-   {
-    "item": "21148",
-    "chance": 0.0
+    "chance": 0.05,
+    "cond": "evenement"
    }
   ],
   "sergent_chafer": [
@@ -11781,7 +11809,8 @@
    },
    {
     "item": "13526",
-    "chance": 6.0
+    "chance": 6.0,
+    "cond": "quete"
    },
    {
     "item": "16501",
@@ -11806,19 +11835,8 @@
    },
    {
     "item": "20136",
-    "chance": 0.05
-   },
-   {
-    "item": "21148",
-    "chance": 0.0
-   },
-   {
-    "item": "21147",
-    "chance": 0.0
-   },
-   {
-    "item": "20052",
-    "chance": 0.0
+    "chance": 0.05,
+    "cond": "evenement"
    }
   ],
   "milimilou": [
@@ -11828,7 +11846,8 @@
    },
    {
     "item": "16526",
-    "chance": 13.2
+    "chance": 13.2,
+    "cond": "quete"
    }
   ],
   "caporale_mynerve": [],
@@ -11836,18 +11855,21 @@
   "percy_klop": [
    {
     "item": "16540",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "quete"
    }
   ],
   "rat_soiffe": [],
   "chef_de_guerre_bouftou": [
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "17126",
@@ -11864,7 +11886,8 @@
    },
    {
     "item": "19633",
-    "chance": 25.0
+    "chance": 25.0,
+    "cond": "quete"
    },
    {
     "item": "2455",
@@ -11890,11 +11913,13 @@
   "boufton_noir": [
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "17126",
@@ -11968,11 +11993,13 @@
   "bouftou_noir": [
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "884",
@@ -12004,15 +12031,18 @@
      "id": 41,
      "min": 1
     },
-    "chasse": true
+    "chasse": true,
+    "cond": "quete"
    },
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "6898",
@@ -12061,47 +12091,22 @@
    },
    {
     "item": "15903",
-    "chance": 0.65
+    "chance": 0.65,
+    "cond": "evenement"
    }
   ],
   "fouduglen_l_ecureuil": [
    {
     "item": "6875",
-    "chance": 100.0
-   },
-   {
-    "item": "14938",
-    "chance": 0.0
-   },
-   {
-    "item": "14939",
-    "chance": 0.0
-   },
-   {
-    "item": "14920",
-    "chance": 0.0
-   },
-   {
-    "item": "14942",
-    "chance": 0.0
-   },
-   {
-    "item": "14940",
-    "chance": 0.0
-   },
-   {
-    "item": "14943",
-    "chance": 0.0
-   },
-   {
-    "item": "14941",
-    "chance": 0.0
+    "chance": 100.0,
+    "cond": "evenement"
    }
   ],
   "piou_rouge": [
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "19649",
@@ -12110,11 +12115,13 @@
      "id": 41,
      "min": 1
     },
-    "chasse": true
+    "chasse": true,
+    "cond": "quete"
    },
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "6900",
@@ -12163,7 +12170,8 @@
    },
    {
     "item": "15902",
-    "chance": 0.65
+    "chance": 0.65,
+    "cond": "evenement"
    }
   ],
   "piou_vert": [
@@ -12174,15 +12182,18 @@
      "id": 41,
      "min": 1
     },
-    "chasse": true
+    "chasse": true,
+    "cond": "quete"
    },
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "6899",
@@ -12231,7 +12242,8 @@
    },
    {
     "item": "15902",
-    "chance": 0.65
+    "chance": 0.65,
+    "cond": "evenement"
    }
   ],
   "piou_bleu": [
@@ -12242,15 +12254,18 @@
      "id": 41,
      "min": 1
     },
-    "chasse": true
+    "chasse": true,
+    "cond": "quete"
    },
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "6897",
@@ -12299,17 +12314,20 @@
    },
    {
     "item": "15902",
-    "chance": 0.65
+    "chance": 0.65,
+    "cond": "evenement"
    }
   ],
   "piou_rose": [
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "19649",
@@ -12318,7 +12336,8 @@
      "id": 41,
      "min": 1
     },
-    "chasse": true
+    "chasse": true,
+    "cond": "quete"
    },
    {
     "item": "17123",
@@ -12367,17 +12386,20 @@
    },
    {
     "item": "15903",
-    "chance": 0.65
+    "chance": 0.65,
+    "cond": "evenement"
    }
   ],
   "piou_jaune": [
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "19649",
@@ -12386,7 +12408,8 @@
      "id": 41,
      "min": 1
     },
-    "chasse": true
+    "chasse": true,
+    "cond": "quete"
    },
    {
     "item": "6902",
@@ -12435,7 +12458,8 @@
    },
    {
     "item": "15903",
-    "chance": 0.65
+    "chance": 0.65,
+    "cond": "evenement"
    }
   ],
   "poutch_ingball": [
@@ -12447,11 +12471,13 @@
   "martoa": [
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "17126",
@@ -12478,11 +12504,13 @@
   "sherpoa": [
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "17126",
@@ -12509,11 +12537,13 @@
   "douzdoa": [
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "17126",
@@ -12540,11 +12570,13 @@
   "pikdoa": [
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "17126",
@@ -12571,11 +12603,13 @@
   "prespic": [
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "407",
@@ -12592,7 +12626,8 @@
    },
    {
     "item": "13293",
-    "chance": 30.0
+    "chance": 30.0,
+    "cond": "quete"
    },
    {
     "item": "1672",
@@ -12608,7 +12643,8 @@
    },
    {
     "item": "32194",
-    "chance": 1.0
+    "chance": 1.0,
+    "cond": "evenement"
    },
    {
     "item": "16825",
@@ -12630,11 +12666,13 @@
   "sanglier": [
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "17126",
@@ -12651,7 +12689,8 @@
    },
    {
     "item": "13293",
-    "chance": 30.0
+    "chance": 30.0,
+    "cond": "quete"
    },
    {
     "item": "652",
@@ -12659,7 +12698,8 @@
    },
    {
     "item": "15381",
-    "chance": 1.0
+    "chance": 1.0,
+    "cond": "evenement"
    },
    {
     "item": "6908",
@@ -12681,11 +12721,13 @@
   "milimulou": [
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "1690",
@@ -12706,7 +12748,8 @@
    },
    {
     "item": "15380",
-    "chance": 1.0
+    "chance": 1.0,
+    "cond": "evenement"
    },
    {
     "item": "16823",
@@ -12716,45 +12759,20 @@
   "frakacia_leukocytine": [
    {
     "item": "6871",
-    "chance": 100.0
-   },
-   {
-    "item": "14941",
-    "chance": 0.0
-   },
-   {
-    "item": "14938",
-    "chance": 0.0
-   },
-   {
-    "item": "14942",
-    "chance": 0.0
-   },
-   {
-    "item": "14943",
-    "chance": 0.0
-   },
-   {
-    "item": "14940",
-    "chance": 0.0
-   },
-   {
-    "item": "14920",
-    "chance": 0.0
-   },
-   {
-    "item": "14939",
-    "chance": 0.0
+    "chance": 100.0,
+    "cond": "evenement"
    }
   ],
   "ecurouille": [
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "17126",
@@ -12779,7 +12797,8 @@
    },
    {
     "item": "15379",
-    "chance": 1.0
+    "chance": 1.0,
+    "cond": "evenement"
    }
   ],
   "tofu_malade": [
@@ -12939,7 +12958,8 @@
   "milirat_strubien": [
    {
     "item": "13174",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "quete"
    },
    {
     "item": "17126",
@@ -12989,11 +13009,13 @@
   "la_ouassingue": [
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "17128",
@@ -13016,11 +13038,13 @@
   "le_ouassingue": [
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "887",
@@ -13043,15 +13067,18 @@
   "gargrouille": [
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "19704",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "quete"
    },
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "486",
@@ -13078,11 +13105,13 @@
   "garglyphe": [
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "2249",
@@ -13113,19 +13142,23 @@
    },
    {
     "item": "19756",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "quete"
    },
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "2269",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "quete"
    },
    {
     "item": "17123",
@@ -13160,15 +13193,18 @@
   "larve_verte": [
    {
     "item": "19756",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "quete"
    },
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "17124",
@@ -13203,15 +13239,18 @@
   "larve_orange": [
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "19756",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "quete"
    },
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "363",
@@ -13246,21 +13285,25 @@
   "sam_sagaz": [
    {
     "item": "17475",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    }
   ],
   "larve_jaune": [
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "19756",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "quete"
    },
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "2563",
@@ -13295,31 +13338,38 @@
   "tournesol_affame": [
    {
     "item": "12230",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "10919",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "10918",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "30075",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "10917",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "8157",
@@ -13327,7 +13377,8 @@
    },
    {
     "item": "13526",
-    "chance": 6.0
+    "chance": 6.0,
+    "cond": "quete"
    },
    {
     "item": "16832",
@@ -13344,29 +13395,20 @@
    },
    {
     "item": "20136",
-    "chance": 0.05
-   },
-   {
-    "item": "21147",
-    "chance": 0.0
-   },
-   {
-    "item": "21148",
-    "chance": 0.0
-   },
-   {
-    "item": "20052",
-    "chance": 0.0
+    "chance": 0.05,
+    "cond": "evenement"
    }
   ],
   "gardienne_champetre": [
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "17124",
@@ -13393,11 +13435,13 @@
   "pichon_orange": [
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "13727",
@@ -13414,7 +13458,8 @@
    },
    {
     "item": "15157",
-    "chance": 12.0
+    "chance": 12.0,
+    "cond": "evenement"
    },
    {
     "item": "8680",
@@ -13436,11 +13481,13 @@
   "pichon_bleu": [
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "13494",
@@ -13457,7 +13504,8 @@
    },
    {
     "item": "15157",
-    "chance": 12.0
+    "chance": 12.0,
+    "cond": "evenement"
    },
    {
     "item": "8680",
@@ -13479,11 +13527,13 @@
   "pichon_blanc": [
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "17124",
@@ -13500,7 +13550,8 @@
    },
    {
     "item": "15157",
-    "chance": 12.0
+    "chance": 12.0,
+    "cond": "evenement"
    },
    {
     "item": "8680",
@@ -13522,11 +13573,13 @@
   "pichon_vert": [
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "17124",
@@ -13543,7 +13596,8 @@
    },
    {
     "item": "15157",
-    "chance": 12.0
+    "chance": 12.0,
+    "cond": "evenement"
    },
    {
     "item": "8680",
@@ -13565,11 +13619,13 @@
   "pichon_kloune": [
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "13502",
@@ -13586,7 +13642,8 @@
    },
    {
     "item": "15157",
-    "chance": 12.0
+    "chance": 12.0,
+    "cond": "evenement"
    },
    {
     "item": "8680",
@@ -13600,27 +13657,33 @@
   "mob_l_eponge": [
    {
     "item": "21171",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "21618",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "10917",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "12230",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "10919",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "10918",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "8682",
@@ -13632,7 +13695,8 @@
    },
    {
     "item": "13526",
-    "chance": 6.0
+    "chance": 6.0,
+    "cond": "quete"
    },
    {
     "item": "16824",
@@ -13649,25 +13713,15 @@
    },
    {
     "item": "20136",
-    "chance": 0.05
-   },
-   {
-    "item": "21147",
-    "chance": 0.0
-   },
-   {
-    "item": "21148",
-    "chance": 0.0
-   },
-   {
-    "item": "20052",
-    "chance": 0.0
+    "chance": 0.05,
+    "cond": "evenement"
    }
   ],
   "cafarcher": [
    {
     "item": "19630",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "quete"
    },
    {
     "item": "17128",
@@ -13688,7 +13742,8 @@
    },
    {
     "item": "16000",
-    "chance": 6.0
+    "chance": 6.0,
+    "cond": "quete"
    },
    {
     "item": "16821",
@@ -13698,7 +13753,8 @@
   "pyrasite": [
    {
     "item": "19630",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "quete"
    },
    {
     "item": "17128",
@@ -13719,7 +13775,8 @@
    },
    {
     "item": "16000",
-    "chance": 6.0
+    "chance": 6.0,
+    "cond": "quete"
    },
    {
     "item": "16821",
@@ -13729,7 +13786,8 @@
   "mirgrillon": [
    {
     "item": "19630",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "quete"
    },
    {
     "item": "16001",
@@ -13750,7 +13808,8 @@
    },
    {
     "item": "16000",
-    "chance": 6.0
+    "chance": 6.0,
+    "cond": "quete"
    },
    {
     "item": "16821",
@@ -13760,7 +13819,8 @@
   "sakarien": [
    {
     "item": "19630",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "quete"
    },
    {
     "item": "16001",
@@ -13781,7 +13841,8 @@
    },
    {
     "item": "16000",
-    "chance": 6.0
+    "chance": 6.0,
+    "cond": "quete"
    },
    {
     "item": "16821",
@@ -13808,7 +13869,8 @@
    },
    {
     "item": "16000",
-    "chance": 6.0
+    "chance": 6.0,
+    "cond": "quete"
    },
    {
     "item": "16821",
@@ -13818,11 +13880,13 @@
   "kankreblath": [
    {
     "item": "12231",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "18794",
-    "chance": 100.0
+    "chance": 100.0,
+    "cond": "evenement"
    },
    {
     "item": "16002",
@@ -13834,7 +13898,8 @@
    },
    {
     "item": "13526",
-    "chance": 6.0
+    "chance": 6.0,
+    "cond": "quete"
    },
    {
     "item": "16821",
@@ -13867,19 +13932,8 @@
    },
    {
     "item": "20136",
-    "chance": 0.05
-   },
-   {
-    "item": "21148",
-    "chance": 0.0
-   },
-   {
-    "item": "20052",
-    "chance": 0.0
-   },
-   {
-    "item": "21147",
-    "chance": 0.0
+    "chance": 0.05,
+    "cond": "evenement"
    }
   ]
  },

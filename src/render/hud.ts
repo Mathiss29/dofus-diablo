@@ -2,7 +2,7 @@ import { RARITY_COLORS } from '../sim/items';
 import { v } from './assetUrl';
 import Phaser from 'phaser';
 import { DANGER } from '../sim/danger';
-import { GAME_DATA } from '../sim/data';
+import { GAME_DATA, ITEMS } from '../sim/data';
 import { ISO } from '../sim/iso';
 import type { SimEvent } from '../sim/events';
 import type { Monster } from '../sim/monster';
@@ -26,7 +26,7 @@ const KEYS = ['&', 'é', '"', "'", '(', '-'];
  *  Seulement les menus utiles au jeu ; les autres (guilde, montures...) viendront avec leur fonctionnalité. */
 const MENUS: [string, string, string][] = [
   ['inventory', 'Inventaire', 'I'], ['characteristic', 'Caractéristiques', 'C'], ['job', 'Métiers', 'J'], ['spells', 'Sorts', 'S'], ['quest', 'Quêtes', ''],
-  ['map', 'Carte du monde', ''], ['bestiary', 'Bestiaire', ''], ['success', 'Succès', ''], ['breach', 'Failles', ''],
+  ['map', 'Carte du monde', ''], ['bestiary', 'Bestiaire', 'B'], ['success', 'Succès', ''], ['breach', 'Failles', ''],
   ['home', 'Havre-Sac', 'H'], ['guide', 'Guide', 'G'], ['options', 'Réglages', 'O'],
 ];
 
@@ -549,6 +549,11 @@ export class Hud {
     const a = world.area, kills = this.areaKills.get(a?.name ?? '') ?? 0, Q = world.quetes;
     const cq = Q && (Q.enCours.find(c => c.id === Q.suivie) ?? Q.enCours[0]);
     let iconW = 0;
+    // Métiers UI 9A : la recette épinglée, sous la quête ; ses ingrédients se cochent au ramassage
+    const rs = world.player.recetteSuivie, rec = rs ? ITEMS.recipes?.find(r => r.result === rs) : undefined, pr = world.player;
+    const recL = rec ? ['', `Recette : ${ITEMS.resources[rec.result]?.name ?? ''}`, ...rec.ingredients.map(([id, n]) => {
+      const a = pr.resources[id] ?? 0; return `${a >= n ? '✓' : '•'} ${ITEMS.resources[id]?.name ?? id}  ${Math.min(a, n)}/${n}`;
+    }), ...(Math.max(1, pr.metierLevel(rec.metier)) < rec.level ? [`  ${ITEMS.metiers?.[rec.metier]?.name ?? ''} niveau ${rec.level} requis`] : [])] : [];
     if (Q && cq) {
       const def = Q.def(cq.id), e = Q.etapeDe(cq);
       const [give, back] = QUEST_ICON[def.type];
@@ -562,7 +567,7 @@ export class Hud {
         });
       const autres = Q.enCours.length - 1;
       this.trackBody.setText([e && !cq.aRendre ? e.nom : '', ...lines, autres > 0 ? `+${autres} autre${autres > 1 ? 's' : ''} quête${autres > 1 ? 's' : ''} (journal)` : '', juice ? '' : 'Effets d\'impact désactivés (F)']
-        .filter(Boolean).join('\n'));
+        .filter(Boolean).concat(recL).join('\n'));
       this.skipBtn.setVisible(!!def.options?.passable);
     } else {
       this.trackIcon.setVisible(false); this.skipBtn.setVisible(false);
@@ -571,7 +576,7 @@ export class Hud {
         a ? `Monstres du coin vaincus : ${kills}` : `Monstres vaincus : ${world.kills}`,
         `Point de retour : ${world.checkpointName}`,
         juice ? '' : 'Effets d\'impact désactivés (F)',
-      ].filter(Boolean).join('\n'));
+      ].filter(Boolean).concat(recL).join('\n'));
     }
     this.succesT = Math.max(0, this.succesT - dt); this.succesLine.setAlpha(Phaser.Math.Clamp(this.succesT, 0, 1));
     const sl = this.succesT > 0 ? this.succesLine.height + 4 : 0;

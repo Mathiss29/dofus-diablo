@@ -77,8 +77,6 @@ export const FAMILIER_XP = {
   chasse: (niveauMonstre: number, elite: boolean, boss: boolean) => niveauMonstre * 2 * (boss ? 10 : elite ? 3 : 1),
   objet: (niveau: number, r: Rarity) => niveau * 5 * PEPITE_RARETE[r],
   ressource: (niveau: number) => Math.max(1, niveau * 2),
-  /** Chance de butin (1A) : un familier de la famille du monstre, comme les légendaires (1/1500, 1/150, 1/50) mais un peu plus souvent. */
-  butin: (elite: boolean, boss: boolean) => boss ? 1 / 40 : elite ? 1 / 120 : 1 / 1000,
 };
 /** Panoplie : bonus[n] s'applique avec n + 1 objets portés. */
 export interface SetDef { name: string; items: number[]; bonus: Record<string, Stats> }
@@ -87,7 +85,9 @@ export interface SetDef { name: string; items: number[]; bonus: Record<string, S
  *  rappel : Potion de Rappel, renvoie au dernier Zaap. pepite : la monnaie d'Emp, le recycleur (objet officiel 14635). */
 export interface ResourceDef { name: string; icon: number; level: number; soin?: number; cle?: string; rappel?: boolean; pepite?: boolean }
 /** Butin d'un monstre ; metier = critère officiel « Pj>41,N » (Chasseur au-dessus du niveau N), chasse = « CU>0 » (arme de chasse). */
-export interface DropDef { item: string; chance: number; metier?: { id: number; min: number }; chasse?: boolean }
+export interface DropDef { item: string; chance: number; metier?: { id: number; min: number }; chasse?: boolean;
+  /** Maquette « Drops » 6B : ne tombe que pendant une quête de Dofus (jamais chez nous) ou un événement (critères officiels). */
+  cond?: 'quete' | 'evenement' }
 /** Recette officielle d'un métier (recipesdataroot). */
 export interface RecipeDef { result: string; metier: string; level: number; ingredients: [string, number][] }
 export interface MetierDef { id: number; name: string; icon: number }
@@ -146,13 +146,6 @@ export interface Item {
 }
 
 /** Tirage de la rareté : le niveau du monstre et la Prospection rendent les bons objets un peu plus fréquents. */
-export function rollRarity(rng: Rng, boss: boolean, prospection = 0): Rarity {
-  const p = 1 + prospection / 200, r = rng.next() * 100;
-  const leg = (boss ? 4 : 0.6) * p, epic = (boss ? 22 : 6) * p, rare = (boss ? 45 : 24) * p;
-  // environ un légendaire sur 20 est Mythique
-  return r < leg / 20 ? 'mythique' : r < leg ? 'legendaire' : r < leg + epic ? 'epique' : r < leg + epic + rare ? 'rare' : 'commun';
-}
-
 /** Tire les jets d'un objet officiel selon sa rareté :
  *  commun = jets dans la moitié basse ; rare = jets complets + 1 ligne ; épique = moitié haute + 2 lignes ;
  *  légendaire = jets hauts + 2 lignes + un effet légendaire ; mythique = jets parfaits + 2 lignes + deux effets légendaires.

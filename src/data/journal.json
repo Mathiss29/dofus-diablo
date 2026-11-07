@@ -138,7 +138,10 @@
       "lignes": {
         "Nouveautés": [
           "Nouvelle caractéristique « % Réduction des recharges » sur les objets (plafond 25 %) et nouveau pouvoir légendaire Relance éclair, qui raccourcit la recharge d'un de tes sorts.",
-          "Portes : au survol, le curseur change et le nom du lieu s'affiche (« Taverne d'Astrub », « Sortie · Cité d'Astrub », « Salle suivante » dans les donjons). On peut aussi passer une porte en marchant droit dedans."
+          "Portes : au survol, le curseur change et le nom du lieu s'affiche (« Taverne d'Astrub », « Sortie · Cité d'Astrub », « Salle suivante » dans les donjons). On peut aussi passer une porte en marchant droit dedans.",
+          "Vraie interface des métiers : la fenêtre Métiers (J) range tes métiers à gauche avec leur niveau, et montre à droite les recettes, les récoltes et le prochain palier. Dans un atelier, clique une machine (four, scie, alambic…) pour ouvrir l'Artisanat : choisis la recette, la quantité, et tout se fabrique en une seconde.",
+          "Métiers : survole un ingrédient pour savoir où le trouver (récolte, monstres et leur chance, boutique) et clique pour le voir sur la carte. Épingle une recette pour suivre ses ingrédients à l'écran ; clic droit sur une ressource du sac pour voir les recettes qui l'utilisent.",
+          "Bestiaire en jeu (touche B) : chaque monstre d'Incarnam et d'Astrub, rangé par sous-zone, avec un onglet Butin qui donne ta vraie chance (Prospection comprise) et « 1 sur N ». Cherche un objet pour voir où le trouver ; l'infobulle des objets le dit aussi."
         ],
         "Le monde": [
           "Le Cloportier garde l'entrée de la Cache de Kankreblath, en [3,-17] : il te fait la courte échelle avec ta clef.",
@@ -148,7 +151,9 @@
         "Combat": [
           "Les monstres ne lâchent plus la poursuite au bout de 13 cases : ils te suivent tant qu'ils te voient, gardent leurs blessures s'ils abandonnent, et un coup les ramène avec tout leur groupe. Les groupes voisins viennent aider et les retardataires accélèrent pour rester groupés.",
           "Massacre : dès 5 monstres tués à la suite, compteur à l'écran et jusqu'à +40 % d'XP. Un monstre qui abandonne affiche « Abandonne » et devient transparent ; un « ! » rouge quand un groupe te prend en chasse.",
-          "Recharges des sorts : Épée Divine (Iop) et Flèche de Barrage (Crâ) deviennent un gros coup à 8 s qui frappe deux fois plus fort ; les sorts à « 2 lancers par tour » affichent leurs charges, et le voile de recharge tourne comme une horloge avec un tintement quand un gros sort revient."
+          "Recharges des sorts : Épée Divine (Iop) et Flèche de Barrage (Crâ) deviennent un gros coup à 8 s qui frappe deux fois plus fort ; les sorts à « 2 lancers par tour » affichent leurs charges, et le voile de recharge tourne comme une horloge avec un tintement quand un gros sort revient.",
+          "Les légendaires tombent comme prévu : 1 monstre sur 1 500, 1 élite sur 150, 1 boss sur 50. Les objets de quête et d'événement de Dofus (Pollenectar, Oueille, caisses de cadeaux…) ne tombent plus en temps normal.",
+          "Moins de ressources communes : les monstres en lâchent trois fois moins (la Laine de Bouftou passe de 53 % à 17,7 %), pour que le sac ne déborde plus. Les ressources rares et le butin des boss ne changent pas."
         ],
         "Corrections": [
           "Pêche : les bancs de poissons au milieu de l'eau se pêchent enfin depuis la rive (portée officielle de 10 cases), et chaque coin de pêche donne les poissons de sa carte.",
@@ -158,6 +163,7 @@
           "Astrub : fini les bâtiments en double. La Banque et 236 autres bâtiments étaient posés deux fois par deux cartes voisines, décalés de quelques pas ; il n'en reste qu'un. Quand tu passes derrière, tout le bâtiment s'efface d'un bloc, porte et enseigne comprises, et les portes ne passent plus derrière leur mur."
         ],
         "En coulisses": [
+          "Tous les taux de butin sont dans un seul fichier, et la partie de test (F1) a un onglet Butin : chaque ligne de butin du jeu, et un simulateur qui tue 1 000 monstres d'un coup.",
           "Les cartes sont rangées par bâtiment, et un robot photographie chaque carte d'Astrub et d'Incarnam après chaque export pour repérer les doublons et les images manquantes."
         ]
       }

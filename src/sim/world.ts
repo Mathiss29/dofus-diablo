@@ -5,12 +5,14 @@ import { GridMap, WorldGrid } from './gridmap';
 import { NO_INPUT, type PlayerInput } from './input';
 import { AGGRO, CASE, Monster, TOUR } from './monster';
 import { jetOfficiel } from './danger';
-import { FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, recycleResource, recycleValue, rollItem, rollRarity, type Item, type ItemsData, type Rarity } from './items';
+import { rangDe, tirerButin, type CtxButin, type Rang } from './butin';
+import { FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, recycleResource, recycleValue, rollItem, type Item, type ItemsData, type Rarity } from './items';
 import { Player } from './player';
 import { initiativeBonus, removalChance } from './caracs';
 import { planWave } from './waves';
 import { Quetes, type Compte, type EtatQuetes, type QuetesData } from './quests';
 import { appliquerTest, type ReglagesTest } from './outilsTest';
+import { FABRICATION, type Poste } from './metiers';
 import { RECOLTE, porteeRecolte, quantite, xpRecolte, type Recolte, type RecoltesData } from './recolte';
 
 interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: number;
@@ -114,6 +116,13 @@ export class World {
   /** Case libre où le perso va pour la ressource cliquée : arrivé là, il récolte même si la ressource est un peu plus loin que la portée. */
   private approche: { x: number; y: number } | null = null;
   enRecolte: { id: number; t: number; hp: number } | null = null;
+  /** Postes des ateliers (Métiers UI 3A) : machines officielles qu'on clique pour ouvrir l'Artisanat. */
+  postes: Poste[] = [];
+  /** Poste cliqué (le perso y va) et case libre où il s'arrête devant. */
+  versPoste: number | null = null;
+  private approcheP: { x: number; y: number } | null = null;
+  /** Fabrication en cours (5B : une barre d'une seconde pour toute la série ; un coup reçu ou un geste l'interrompt). */
+  enFabrication: { recette: number; n: number; t: number; hp: number } | null = null;
   /** Télégraphes du dernier pas (recalculés à chaque pas). */
   telegraphs: Telegraph[] = [];
   wave = 0;
@@ -183,7 +192,7 @@ export class World {
       for (const [id, d] of Object.entries(opts.items.equipment)) for (const m of d.familier?.monstres ?? []) (this.familiersDe[m] ??= []).push(id);
       // sac vide au départ (Mathis, 2026-11-06) : l'équipement vient du tutoriel (panoplie de l'Intrépide, Arc de Chasse du Crâ)
     }
-    if (open) { this.buildPortes(); this.buildRecoltes(); }
+    if (open) { this.buildPortes(); this.buildRecoltes(); this.buildPostes(); }
     if (open && opts.arrivee) this.arriver(opts.arrivee);
     if (open) this.sortieHavreSac(opts);
     // les PNJ d'abord : les groupes de monstres ne se posent pas sur eux
@@ -636,6 +645,11 @@ export class World {
       if (this.enRecolte) this.emit({ k: 'recolteStop' });
       this.versRecolte = null; this.enRecolte = null;
     }
+    // Ateliers (Métiers UI) : clic sur un poste = y aller ; tout autre geste coupe la marche vers le poste et la fabrication
+    if (input.atelier != null) { this.versPoste = input.atelier; this.approcheP = this.approchePoste(input.atelier); this.annulerFabrication(); }
+    else if (input.dest || input.target != null || input.pickup != null || input.talk || input.pressed || input.recolte != null || input.move.x || input.move.y) {
+      this.versPoste = null; this.annulerFabrication();
+    }
     // Havre-Sac : bouger ou agir coupe l'incantation ; H la lance (ou fait sortir) ; le Zaap du Havre-Sac fait sortir
     if (this.incantation && (input.dest || input.target != null || input.pickup != null || input.talk || input.pressed || input.recolte != null || input.move.x || input.move.y)) this.couperIncantation();
     if (input.havreSac) this.havreSac();
@@ -671,6 +685,7 @@ export class World {
       e.kx = 0; e.ky = 0;
     });
     this.monsters = this.monsters.filter(m => !(m.dead && m.t <= 0));
+    this.updateAteliers(dt);
     if (this.zone.open) { this.updateOpen(dt); this.updateRecoltes(dt); this.updateIncantation(dt); this.updateArche(); this.quetes?.update(dt); return; }
     if (!this.over && this.monsters.length === 0) {
       this.waveDelay -= dt;
@@ -947,39 +962,25 @@ export class World {
     const sub = wg && open ? open.subareas[String(wg.mapAt(m.homeX, m.homeY)?.sub)] : undefined;
     return sub?.level ?? this.zone.level;
   }
+  /** Ce que le calcul du butin doit savoir (src/sim/butin.ts) : sert au jeu, au Bestiaire et au simulateur de l'outil de test. */
+  contexteButin(type: string, rang: Rang, niveau: number): CtxButin {
+    const p = this.player;
+    return { type, rang, niveau, prospection: p.stat('prospection'), items: this.opts.items!, familiers: this.familiersDe[type] ?? [], pool: this.equipByLevel,
+      metierNiveau: j => p.metierLevel(j), armeChasse: !!p.huntingWeapon, sortsRecharge: p.sortsRecharge };
+  }
   /** Un monstre vaincu lâche son butin officiel (ressources, parfois un équipement) et, plus rarement, un équipement
-   *  de son niveau pris dans tous les objets de Dofus. Élites et boss lâchent plus et mieux. */
+   *  de son niveau pris dans tous les objets de Dofus. Élites et boss lâchent plus et mieux. Calcul : src/sim/butin.ts. */
   private dropLoot(m: Monster) {
     const I = this.opts.items;
     if (!I) return;
-    const p = this.player, pros = p.stat('prospection'), boss = !!m.def.boss, elite = !!m.def.elite;
-    const lvl = this.monsterLevel(m), more = 1 + pros / 100;
-    const out: Omit<Drop, 'x' | 'y' | 't' | 'uid'>[] = [];
-    for (const d of I.drops[m.type] ?? []) {
-      // viandes (choix 6A) : critère officiel = arme de chasse en main et niveau de Chasseur suffisant
-      const job = d.metier && Object.entries(I.metiers ?? {}).find(([, j]) => j.id === d.metier!.id)?.[0];
-      if (d.metier && (!job || p.metierLevel(job) < d.metier.min || (d.chasse && !p.huntingWeapon))) continue;
-      if (this.rng.next() * 100 >= d.chance * more) continue;
-      if (job) p.gainMetierXp(job, METIER_XP.viande, this);
-      if (I.equipment[d.item]) out.push({ item: rollItem(d.item, I.equipment[d.item], rollRarity(this.rng, boss, pros), this.rng, this.nextId++, this.player.sortsRecharge) });
-      else {   // ressource : directement dans le sac
-        p.resources[d.item] = (p.resources[d.item] ?? 0) + 1;
-        this.emit({ k: 'lootResource', id: d.item, n: 1 });
-      }
+    const p = this.player, b = tirerButin(this.rng, this.contexteButin(m.type, rangDe(m.def), this.monsterLevel(m)), () => this.nextId++);
+    for (const r of b.ressources) {   // ressource : directement dans le sac ; une viande fait monter le Chasseur (choix 6A)
+      if (r.job) p.gainMetierXp(r.job, METIER_XP.viande, this);
+      p.resources[r.id] = (p.resources[r.id] ?? 0) + 1;
+      this.emit({ k: 'lootResource', id: r.id, n: 1 });
     }
-    // familier de la famille du monstre (1A)
-    for (const id of this.familiersDe[m.type] ?? [])
-      if (this.rng.next() < FAMILIER_XP.butin(elite, boss) * more) out.push({ item: rollItem(id, I.equipment[id], 'commun', this.rng, this.nextId++) });
-    const equipChance = boss ? 1 : elite ? 0.3 : 0.06;
-    for (let k = 0; k < (boss ? 2 : 1); k++) {
-      if (this.rng.next() >= equipChance * more) continue;
-      const pool = this.equipByLevel.filter(e => e.level >= lvl - 4 && e.level <= lvl + 6);
-      if (!pool.length) continue;
-      const id = this.rng.pick(pool).id;
-      out.push({ item: rollItem(id, I.equipment[id], rollRarity(this.rng, boss, pros), this.rng, this.nextId++, this.player.sortsRecharge) });
-    }
-    // kamas : un petit tas de pièces, plus gros pour les élites et les boss
-    if (boss || elite || this.rng.next() < 0.6) out.push({ kamas: Math.max(1, Math.round(lvl * this.rng.range(1, 3) * (boss ? 12 : elite ? 4 : 1) * more)) });
+    const out: Omit<Drop, 'x' | 'y' | 't' | 'uid'>[] = b.objets.map(item => ({ item }));
+    if (b.kamas) out.push({ kamas: b.kamas });
     out.forEach((o, i) => {
       const a = (i / Math.max(1, out.length)) * Math.PI * 2 + this.rng.range(0, 1), r = out.length > 1 ? 34 : 0;
       let x = m.x + Math.cos(a) * r, y = m.y + Math.sin(a) * r;
@@ -1239,6 +1240,56 @@ export class World {
     if (!r || Math.max(1, p.metierLevel(r.metier)) < r.level) return 0;
     return Math.min(...r.ingredients.map(([id, q]) => Math.floor((p.resources[id] ?? 0) / q)));
   }
+  /** Postes des ateliers : les machines officielles (ateliers_postes.py), sinon un poste au milieu de la première carte. */
+  private buildPostes() {
+    const wg = this.worldGrid, A = this.zone.open?.ateliers;
+    if (!wg || !A) return;
+    for (const a of A) {
+      const l = (a.postes ?? []).filter(([tag]) => wg.mapByTag(tag));
+      for (const [tag, cell, gfx, dx, dy] of l) {
+        const q = wg.cellToWorld(wg.cellOf(tag, cell));
+        this.postes.push({ id: this.nextId++, atelier: a.nom, metiers: a.metiers, tag, x: q.x, y: q.y, gfx, dessin: dx || dy ? { x: dx, y: dy } : undefined });
+      }
+      const tag = a.cartes.find(t => wg.mapByTag(t) && wg.freeByMap.get(t)?.length);
+      if (!l.length && tag) { const q = this.openestCell(tag); this.postes.push({ id: this.nextId++, atelier: a.nom, metiers: a.metiers, tag, x: q.x, y: q.y }); }
+    }
+  }
+  /** Case libre la plus proche d'un poste (les machines sont sur des cases bloquantes). */
+  approchePoste(id: number) {
+    const po = this.postes.find(x => x.id === id);
+    return po ? this.map.nearestFree(po.x, po.y) : null;
+  }
+  private updateAteliers(dt: number) {
+    const p = this.player, f = this.enFabrication;
+    if (f) {
+      if (p.dead || p.hp < f.hp) { this.annulerFabrication(); return; }
+      p.stopMove(); f.t += dt;
+      if (f.t < FABRICATION.duree) return;
+      this.enFabrication = null;
+      this.craft(f.recette, f.n);
+      return;
+    }
+    if (this.versPoste == null) return;
+    const po = this.postes.find(x => x.id === this.versPoste);
+    if (!po || p.dead) { this.versPoste = null; return; }
+    const arrive = this.approcheP && Math.hypot(this.approcheP.x - p.x, this.approcheP.y - p.y) < 24;
+    if ((Math.hypot(po.x - p.x, po.y - p.y) > FABRICATION.portee && !arrive) || p.state !== 'free') return;
+    this.versPoste = null;
+    p.stopMove(); p.facing = Math.atan2(po.y - p.y, po.x - p.x);
+    this.emit({ k: 'atelier', poste: po.id, metier: po.metiers[0] });
+  }
+  /** Lance la fabrication de n fois la recette i (fenêtre Artisanat) : une barre d'une seconde, puis tout est fait d'un coup. */
+  lancerFabrication(i: number, n = 1): boolean {
+    const r = this.opts.items?.recipes?.[i], p = this.player;
+    if (!r || this.enFabrication || p.dead || this.atelierIci(r.metier) === null) return false;
+    n = Math.min(Math.max(1, Math.floor(n)), this.craftMax(i));
+    if (n <= 0) return false;
+    p.stopMove(); this.versPoste = null;
+    this.enFabrication = { recette: i, n, t: 0, hp: p.hp };
+    this.emit({ k: 'fabricationDebut', recette: i, n, duree: FABRICATION.duree });
+    return true;
+  }
+  annulerFabrication() { if (this.enFabrication) { this.enFabrication = null; this.emit({ k: 'fabricationStop' }); } }
   /** Fait n fois une recette officielle si on a les ingrédients, le niveau de métier et qu'on est à son atelier. Rend le nombre fait. */
   craft(i: number, n = 1): number {
     const r = this.opts.items?.recipes?.[i], p = this.player;
