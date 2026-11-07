@@ -292,6 +292,8 @@ export class Hud {
       }
       case 'rageFull': this.rageFlash = 1.2; break;
       case 'groupCleared': this.loot('Groupe vaincu  ·  +1 potion', '#7be07b'); break;
+      case 'massacre': this.toast(`Massacre ×${e.n}  ·  +${e.bonus} % XP`); break;
+      case 'massacreFin': this.loot(`Massacre de ${e.n} monstres`, '#e6b85c'); break;
     }
   }
 

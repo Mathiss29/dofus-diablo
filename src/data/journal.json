@@ -140,6 +140,10 @@
           "Le Cloportier garde l'entrée de la Cache de Kankreblath, en [3,-17] : il te fait la courte échelle avec ta clef.",
           "La Cache de Kankreblath s'ouvre comme dans Dofus : on traverse la Boutique de Kerubim en [3,-17], on monte au grenier, et le Cloportier vous rapetisse d'un coup de Baguette Rikiki pour passer par le trou du plancher."
         ],
+        "Combat": [
+          "Les monstres ne lâchent plus la poursuite au bout de 13 cases : ils te suivent tant qu'ils te voient, gardent leurs blessures s'ils abandonnent, et un coup les ramène avec tout leur groupe. Les groupes voisins viennent aider et les retardataires accélèrent pour rester groupés.",
+          "Massacre : dès 5 monstres tués à la suite, compteur à l'écran et jusqu'à +40 % d'XP. Un monstre qui abandonne affiche « Abandonne » et devient transparent ; un « ! » rouge quand un groupe te prend en chasse."
+        ],
         "Corrections": [
           "Pêche : les bancs de poissons au milieu de l'eau se pêchent enfin depuis la rive (portée officielle de 10 cases), et chaque coin de pêche donne les poissons de sa carte.",
           "Ressources : chaque arbre, céréale, plante et minerai porte enfin sa vraie ressource (le Merisier en fleurs, le Houblon, la Menthe, l'Edelweiss…) ; les puits ne sont plus du Frêne, on y puise de l'Eau Potable."

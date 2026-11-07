@@ -4,6 +4,10 @@ import type { Player } from './player';
 import type { World } from './world';
 import { tackleSlow, tacleOf } from './caracs';
 import { DANGER } from './danger';
+import AGGRO from '../data/aggro.json';
+
+/** Réglages de poursuite et de retour (src/data/aggro.json, maquette « Aggro » de Mathis). */
+export { AGGRO };
 
 /** Dofus -> temps réel : 1 case = CASE px (pas d'une case à sa voisine en diagonale), 1 tour = TOUR s. */
 export const CASE = 48, TOUR = 3;
@@ -35,7 +39,7 @@ export type FormeSig = { k: 'rect'; len: number; w: number } | { k: 'cercle'; x:
 
 /** Monstre à états : spawn -> chase -> windup (télégraphe) -> lunge | slam -> recover.
  *  En monde ouvert, il attend d'abord près de son point de départ (idle, petite errance), poursuit le joueur
- *  qui s'approche, et rentre chez lui en reprenant ses PV s'il s'en éloigne trop (return). */
+ *  qui s'approche, et rentre chez lui s'il l'a perdu (return) : il y garde ses blessures, sauf les boss. */
 export class Monster extends Entity {
   readonly faction = 'monster' as const;
   state: 'spawn' | 'idle' | 'return' | 'chase' | 'windup' | 'lunge' | 'recover' = 'spawn';
@@ -73,6 +77,8 @@ export class Monster extends Entity {
   /** Boss (maquette « Danger ») : attaque signature en cours (4A) et sa relance, Furieux sous 50 % des PV (5A), entrée annoncée (7A). */
   sig = false; sigCd = 0; sigF: FormeSig | null = null;
   furieux = false; intro = false;
+  /** Aggro (1B, 2B) : temps passé loin du joueur, et temps au calme chez lui (le soin lent ne commence qu'après). */
+  perduT = 0; calmeT = 0;
   /** Partie de test : posé par le panneau F1 ; mannequin = immobile et increvable (compteur de DPS, 7D). */
   poseTest = false;
   mannequin = false;
@@ -117,11 +123,14 @@ export class Monster extends Entity {
     // Tacle du joueur : un monstre à son contact avance moins vite (sa Fuite officielle y résiste)
     const near = Math.hypot(player.x - this.x, player.y - this.y) <= this.radius + player.radius + 12;
     const speed = D.speed * this.haste * (this.furieux ? DANGER.furieux.vitesse : 1) * (near ? 1 - tackleSlow(player.tacle, tacleOf(D.caracs?.fuite ?? 0, D.caracs?.agilite ?? 0)) : 1);
-    if (open && this.state !== 'idle' && this.state !== 'return'
-      && (player.dead || dist > open.leash * 1.5 || Math.hypot(this.x - this.homeX, this.y - this.homeY) > open.leash)) { this.state = 'return'; this.wanderT = 0; }   // joueur perdu de vue ou laisse dépassée
+    if (open && this.state !== 'idle' && this.state !== 'return' && this.abandonne(dist, open.leash, player, dt)) {
+      this.state = 'return'; this.wanderT = 0; this.calmeT = 0;
+      if (!player.dead) world.emit({ k: 'status', x: this.x, y: this.y - 20, text: 'Abandonne', color: '#a89fb6' });   // 7A
+    }
     switch (this.state) {
       case 'idle': {
         if (!player.dead && dist < (D.aggro ?? open?.aggro ?? 250)) { world.aggroGroup(this); break; }
+        this.regenCalme(dt);
         // Petite errance autour du point de départ
         this.wanderT -= dt;
         if (this.wanderT <= 0) {
@@ -133,10 +142,15 @@ export class Monster extends Entity {
         break;
       }
       case 'return': {
-        this.hp = Math.min(this.maxHp, this.hp + this.maxHp * dt * 0.5);
+        // 8A : un boss se soigne en rentrant et repart à neuf ; 2B : les autres gardent leurs blessures
+        if (D.boss) this.hp = Math.min(this.maxHp, this.hp + this.maxHp * dt * 0.5);
         this.wanderT -= dt;
         if (this.wanderT < -6) { this.x = this.homeX; this.y = this.homeY; }   // coincé derrière un obstacle
-        if (!this.moveTo(this.homeX, this.homeY, D.speed * 1.4, dt)) { this.state = 'idle'; this.maxHp = this.def.hp; this.struck = false; this.furieux = false; this.intro = false; this.hp = this.maxHp; this.setAnim('idle'); }
+        if (!this.moveTo(this.homeX, this.homeY, D.speed * 1.4, dt)) {
+          this.state = 'idle'; this.maxHp = this.def.hp; this.struck = false; this.furieux = false; this.intro = false; this.calmeT = 0;
+          this.hp = D.boss ? this.maxHp : Math.min(this.hp, this.maxHp);
+          this.setAnim('idle');
+        }
         else this.setAnim('run');
         break;
       }
@@ -159,7 +173,8 @@ export class Monster extends Entity {
         }
         if (dist > this.radius + player.radius + 4) {
           const [mx, my] = this.contourne(dx / dist, dy / dist, dist, player, world);
-          this.x += mx * speed * dt; this.y += my * speed * dt; this.setAnim('run');
+          const v = speed * this.rattrapage(dist);
+          this.x += mx * v * dt; this.y += my * v * dt; this.setAnim('run');
         }
         else this.setAnim('idle');
         break;
@@ -233,6 +248,28 @@ export class Monster extends Entity {
       }
     }
     this.applyKnock(dt);
+  }
+
+  /** Abandon de la poursuite en monde ouvert. 8A : un boss garde sa laisse courte autour de son arène.
+   *  1B : les autres ne lâchent que s'ils t'ont perdu (loin de toi assez longtemps), ou au garde-fou loin de chez eux. */
+  private abandonne(dist: number, leash: number, player: Player, dt: number): boolean {
+    if (player.dead) return true;
+    const home = Math.hypot(this.x - this.homeX, this.y - this.homeY);
+    if (this.def.boss) return dist > leash * 1.5 || home > leash;
+    if (home > AGGRO.gardeFou * CASE) return true;
+    if (dist > AGGRO.perdu.cases * CASE) this.perduT += dt; else this.perduT = 0;
+    return this.perduT >= AGGRO.perdu.duree;
+  }
+  /** 5A : loin du joueur, un monstre accélère (jusqu'à ×1,5) pour garder le paquet groupé ; au contact, sa vitesse officielle. */
+  rattrapage(dist: number): number {
+    const R = AGGRO.rattrapage, d0 = R.cases * CASE;
+    return dist <= d0 ? 1 : Math.min(R.mult, 1 + (R.mult - 1) * (dist - d0) / (R.progressif * CASE));
+  }
+  /** 2B : chez lui et au calme depuis quelques secondes, il reprend lentement ses PV (2 % par seconde). */
+  regenCalme(dt: number) {
+    if (this.hp >= this.maxHp) return;
+    this.calmeT += dt;
+    if (this.calmeT >= AGGRO.soin.calme) this.hp = Math.min(this.maxHp, this.hp + this.maxHp * AGGRO.soin.parSeconde * dt);
   }
 
   /** Portée d'un sort en pixels (bord à bord). Les sorts au contact gardent la portée de charge du monstre. */
