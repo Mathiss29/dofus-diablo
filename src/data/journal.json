@@ -160,7 +160,8 @@
           "Ressources : chaque arbre, céréale, plante et minerai porte enfin sa vraie ressource (le Merisier en fleurs, le Houblon, la Menthe, l'Edelweiss…) ; les puits ne sont plus du Frêne, on y puise de l'Eau Potable.",
           "Boutique et grenier de Kerubim : le plancher, les murs et tout le bric-à-brac de l'antiquaire sont revenus (ils flottaient dans le noir).",
           "Passer derrière un bâtiment l'efface en entier : plus de façade pâle avec sa porte et son toit restés pleins, qui faisait croire à deux bâtiments collés.",
-          "Astrub : fini les bâtiments en double. La Banque et 236 autres bâtiments étaient posés deux fois par deux cartes voisines, décalés de quelques pas ; il n'en reste qu'un. Quand tu passes derrière, tout le bâtiment s'efface d'un bloc, porte et enseigne comprises, et les portes ne passent plus derrière leur mur."
+          "Astrub : fini les bâtiments en double. La Banque et 236 autres bâtiments étaient posés deux fois par deux cartes voisines, décalés de quelques pas ; il n'en reste qu'un. Quand tu passes derrière, tout le bâtiment s'efface d'un bloc, porte et enseigne comprises, et les portes ne passent plus derrière leur mur.",
+          "Cité d'Astrub dessinée comme dans Dofus : la carte où tu es s'affiche en entier, les voisines en bâtiments entiers. Plus de maison coupée au raccord entre deux cartes, ni de Taverne posée trois fois."
         ],
         "En coulisses": [
           "Tous les taux de butin sont dans un seul fichier, et la partie de test (F1) a un onglet Butin : chaque ligne de butin du jeu, et un simulateur qui tue 1 000 monstres d'un coup.",
