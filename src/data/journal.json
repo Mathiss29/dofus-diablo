@@ -166,7 +166,8 @@
           "Moins de ressources communes : les monstres en lâchent trois fois moins (la Laine de Bouftou passe de 53 % à 17,7 %), pour que le sac ne déborde plus. Les ressources rares et le butin des boss ne changent pas.",
           "Les gros groupes de monstres ne font plus mal aux oreilles : 2 cris par sorte à la fois, volume qui baisse quand ils sont nombreux, voix un peu variées, et seuls la moitié des monstres crient en attaquant (élites et boss toujours).",
           "La Rage (ou la Précision) remplit le bord du portrait et s'embrase quand elle est pleine ; les PV perdus restent un instant en blanc et le cœur bat sous 30 % de vie.",
-          "En contournant un décor, les monstres gardent un pas de marge avec les coins au lieu de frotter dessus."
+          "En contournant un décor, les monstres gardent un pas de marge avec les coins au lieu de frotter dessus.",
+          "Les monstres ne se bousculent plus en venant vers toi : chacun s'écarte de celui qu'il voit devant lui, et la meute arrive en éventail au lieu d'un paquet qui se pousse."
         ],
         "Corrections": [
           "Cache de Kankreblath : l'arène a enfin un plancher partout, plus de trous noirs sur les bords.",
@@ -180,7 +181,7 @@
           "Calanques d'Astrub : plus de grandes taches blanches sur la mer, et la mer continue au-delà de la côte au lieu d'un fond bleu nuit.",
           "Les bâtiments ne sautent plus quand tu passes d'une carte à l'autre : chacun reste à sa place, vu de partout.",
           "Les monstres ne restent plus plantés contre les gros décors (autel, coffre, arbre, mur) : ils en font le tour pour venir te chercher, en arène comme dans le monde ouvert. Fini les vagues tuées gratuitement de l'autre côté de l'autel.",
-"Donjons : recharger la page (Ctrl+F5) dans une arène ne te laisse plus coincé sans monstres. Les vagues reprennent là où tu en étais tant que ta clé est valable, sinon tu ressors devant le gardien."
+          "Donjons : recharger la page (Ctrl+F5) dans une arène ne te laisse plus coincé sans monstres. Les vagues reprennent là où tu en étais tant que ta clé est valable, sinon tu ressors devant le gardien."
         ],
         "En coulisses": [
           "Tous les taux de butin sont dans un seul fichier, et la partie de test (F1) a un onglet Butin : chaque ligne de butin du jeu, et un simulateur qui tue 1 000 monstres d'un coup.",

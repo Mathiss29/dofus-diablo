@@ -10,7 +10,9 @@
   "_": "2A : temps mort (s) entre deux attaques ; encerclement : les monstres contournent ceux qui sont déjà au contact.",
   "pause": [0.5, 1.0],
   "pausePietinement": [0.8, 1.4],
-  "encerclement": 140
+  "encerclement": 140,
+  "_evitement": "Les monstres s'écartent de ceux qu'ils voient devant eux (vue : px en plus des deux rayons ; force : poids du pas de côté) au lieu de se rentrer dedans (Mathis, 2026-11-07).",
+  "evitement": { "vue": 36, "force": 1.4 }
  },
  "grosCoup": {
   "_": "3A : un coup qui retire au moins cette part des PV secoue l'écran, fige l'action et rougit les bords.",
