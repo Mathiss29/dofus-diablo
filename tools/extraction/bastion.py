@@ -2,7 +2,7 @@
 # Le Bastion des Douze (maquette « Ville », ligne de Mathis du 2026-11-07 : Ville : 1A 2A 3C 4B+4C 5A+5B+5C+5F 6A+6B 7A+7B 8A 9A 10B 11B).
 # Notre ville, hors de la carte officielle, reliée à tous les Zaaps. Plan en archipel (10B) : une île centrale (place du Zaap,
 # PNJ de service, taverne) et une île par nation, qui ne s'ouvrira que quand la nation sera libérée (4C). Tout est RECOMPOSÉ
-# par nous avec les vraies pièces des villes de Dofus 3 (11B) : maisons, étals et Zaap d'Astrub, Bonta, Brâkmar, Pandala, Frigost.
+# par nous avec les vraies pièces des villes de Dofus 3 (11B). Île centrale tout en Astrub, chaque nation sur son île (Mathis, 22:58).
 #  cartes_dir = map_<id>.json des cartes officielles d'où viennent les pièces (bundles mapdata : Astrub world_729 dans
 #               cache-dofus/astrub/cartes.tar ; Bonta 811, Brâkmar 812, Pandala 787, Frigost 206 dans cache-dofus/villes/)
 #  mondes_dir = public/assets/mondes : écrit mondes/bastion (monde.json, sol_bastion.webp, decor_bastion.webp/json)
@@ -41,6 +41,17 @@ PIECES = {
     'panda_echoppe': (PANDA, R(1085, 685, 1265, 890)),
     'panda_orange': (PANDA, R(320, 785, 665, 1100)),
     'frig_maison': (FRIG, R(80, 300, 835, 820)),
+    # Astrub seulement sur l'île centrale (Mathis, 2026-11-07 22:58 : pas de mélange au centre, les nations sur leurs îles)
+    'as_maison_bleue': (191105024, R(1310, 140, 1495, 580)),
+    'as_tour_maison': (191104000, R(1155, 655, 1395, 1100)),
+    'as_boutique': (191105028, R(385, 110, 800, 600)),
+    'as_tour_blason': (191105024, R(630, 60, 930, 810)),
+    'as_forge_tour': (191106050, R(1030, 140, 1240, 620)),
+    'as_etal_rouge': (191104000, R(135, 650, 330, 770)),
+    'as_etal_orange': (191105028, R(1190, 955, 1310, 1085)),
+    'as_charrette': (191105028, R(555, 520, 670, 630)),
+    'as_arbre': (191104000, R(540, 800, 715, 1030)),
+    'as_petit_arbre': (191106050, R(383, 675, 440, 820)),
 }
 
 # Lumières officielles (halos, rayons) : Dofus les ajoute à l'image (mélange additif) ; posées telles quelles, elles font de grandes
@@ -74,15 +85,15 @@ PLACE = ell(760, 420, 0, 30)  # la place pavée
 # Bâtiments : pièce, ancre (bas-milieu), miroir, rayon bloqué (cases non marchables autour du pied), PNJ devant (décalage)
 BATIMENTS = [
     ('taverne', (40, -420), False, 300, None),                      # la taverne : lieu de rencontre en multi (8A)
-    ('maison_astrub', (-640, -300), False, 230, ('kerubim', (40, 90))),
-    ('bonta_maison', (650, -300), True, 210, ('otomai', (-30, 90))),
-    ('panda_maison', (-960, 120), False, 250, ('tissebelle', (110, 40))),
-    ('brak_forge', (990, 40), True, 230, ('goultard', (-110, 60))),
-    ('brak_maison', (820, 430), True, 210, ('forgemage', (-170, 0))),     # quartier des artisans : place du forgemage (5B)
-    ('panda_echoppe', (-760, 400), False, 150, ('bouillotte', (110, -20))),
+    ('maison_astrub', (-500, -360), False, 230, ('kerubim', (40, 90))),
+    ('as_tour_blason', (650, -300), True, 200, ('otomai', (-30, 90))),
+    ('as_boutique', (-1000, 200), False, 250, ('tissebelle', (140, 20))),
+    ('as_maison_bleue', (990, 40), True, 190, ('goultard', (-60, 120))),
+    ('as_forge_tour', (700, 470), True, 200, ('forgemage', (-170, -10))),     # quartier des artisans : place du forgemage (5B)
+    ('as_etal_rouge', (-760, 400), False, 150, ('bouillotte', (110, -20))),
 ]
-OBJETS = [('zaap', (0, 10), False, 120), ('bonta_etal', (-330, 470), False, 110), ('bonta_etal2', (330, 470), True, 110),
-          ('bonta_cypres', (-230, -40), False, 50), ('bonta_cypres', (230, -40), True, 50)]
+OBJETS = [('zaap', (0, 10), False, 120), ('as_etal_orange', (-330, 470), False, 100), ('as_charrette', (330, 470), True, 100),
+          ('as_petit_arbre', (-300, -40), False, 50), ('as_petit_arbre', (300, -40), True, 50), ('as_arbre', (480, 180), False, 50)]
 # Îles des nations (4C) : au loin, fermées (pont coupé) tant que la nation n'est pas libérée
 ILES = [('Bonta', (0, -1520), [('bonta_maison', (-60, 40), False), ('bonta_etal', (190, 110), False)], PAVES),
         ('Brâkmar', (2000, -150), [('brak_forge', (0, 160), False)], DIRT),
