@@ -59,6 +59,7 @@ export function appliquerTest(w: World, c: CommandeTest) {
       break;
     }
     case 'aller': {
+      if (w.allerArene(c.tag)) break;
       const wg = w.worldGrid, libres = wg?.freeByMap.get(c.tag);
       if (!wg || !libres?.length) { dire('Carte introuvable dans cette zone'); break; }
       const q = wg.cellToWorld(libres[Math.floor(libres.length / 2)]);

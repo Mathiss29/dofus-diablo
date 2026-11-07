@@ -637,7 +637,110 @@
         "chafer_debutant"
        ]
       ]
-     }
+     },
+     "arene": {
+      "tag": "arene_crypte",
+      "arrivee": 125390,
+      "entrees": [
+       125000,
+       125025,
+       127406
+      ],
+      "boss": 120602,
+      "sortie": 121358,
+      "coffre": 121360
+     },
+     "vagues": [
+      {
+       "m": [
+        "sergent_chafer",
+        "chafer_furtif",
+        "chafer_debutant",
+        "chafer_piquier",
+        "chafer_furtif",
+        "chafer_debutant",
+        "chafer_piquier"
+       ]
+      },
+      {
+       "m": [
+        "chafer_eclaireur",
+        "chafer_eclaireur",
+        "chafer_eclaireur",
+        "sergent_chafer",
+        "chafer_piquier",
+        "chafer_eclaireur",
+        "chafer_furtif",
+        "?"
+       ]
+      },
+      {
+       "m": [
+        "chafer_debutant",
+        "sergent_chafer",
+        "chafer_piquier",
+        "chafer_piquier",
+        "chafer_eclaireur",
+        "sergent_chafer",
+        "chafer_piquier",
+        "?",
+        "?"
+       ]
+      },
+      {
+       "m": [
+        "chafer_eclaireur",
+        "chafer_furtif",
+        "chafer_debutant",
+        "chafer_piquier",
+        "sergent_chafer",
+        "chafer_furtif",
+        "chafer_eclaireur",
+        "?",
+        "?",
+        "?"
+       ]
+      },
+      {
+       "m": [
+        "chafer_piquier",
+        "chafer_furtif",
+        "chafer_furtif",
+        "chafer_debutant",
+        "sergent_chafer",
+        "chafer_eclaireur",
+        "chafer_furtif",
+        "chafer_debutant",
+        "?",
+        "?",
+        "?",
+        "?"
+       ]
+      },
+      {
+       "nom": "Chafer Piquier",
+       "m": [
+        "chafer_piquier",
+        "chafer_piquier",
+        "chafer_piquier",
+        "chafer_piquier",
+        "chafer_piquier",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?"
+       ]
+      }
+     ],
+     "bossVague": [
+      "kardorim",
+      "sergent_chafer",
+      "chafer_piquier",
+      "chafer_furtif"
+     ]
     }
    ],
    "ateliers": [
@@ -1682,7 +1785,105 @@
         "tournesol"
        ]
       ]
-     }
+     },
+     "arene": {
+      "tag": "arene_grange",
+      "arrivee": 401960,
+      "entrees": [
+       401192,
+       401217,
+       405992
+      ],
+      "boss": 392384,
+      "sortie": 393896,
+      "coffre": 393898
+     },
+     "vagues": [
+      {
+       "m": [
+        "tournesol",
+        "rose",
+        "pissenlit",
+        "epouvanteur",
+        "rose",
+        "pissenlit"
+       ]
+      },
+      {
+       "m": [
+        "tournesol",
+        "rose",
+        "epouvanteur",
+        "tournesol",
+        "gardienne_champetre",
+        "pissenlit",
+        "?"
+       ]
+      },
+      {
+       "m": [
+        "pissenlit",
+        "rose",
+        "epouvanteur",
+        "tournesol",
+        "gardienne_champetre",
+        "epouvanteur",
+        "tournesol",
+        "?",
+        "?"
+       ]
+      },
+      {
+       "m": [
+        "rose",
+        "tournesol",
+        "tournesol",
+        "pissenlit",
+        "epouvanteur",
+        "gardienne_champetre",
+        "?",
+        "?",
+        "?"
+       ]
+      },
+      {
+       "m": [
+        "gardienne_champetre",
+        "epouvanteur",
+        "rose",
+        "epouvanteur",
+        "pissenlit",
+        "tournesol",
+        "gardienne_champetre",
+        "?",
+        "?",
+        "?",
+        "?"
+       ]
+      },
+      {
+       "nom": "Épouvanteur",
+       "m": [
+        "epouvanteur",
+        "epouvanteur",
+        "epouvanteur",
+        "epouvanteur",
+        "epouvanteur",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?"
+       ]
+      }
+     ],
+     "bossVague": [
+      "tournesol_affame",
+      "gardienne_champetre",
+      "epouvanteur",
+      "tournesol"
+     ]
     },
     {
      "nom": "Château Ensablé",
@@ -1761,7 +1962,110 @@
         "pichon_blanc"
        ]
       ]
-     }
+     },
+     "arene": {
+      "tag": "arene_chateau",
+      "arrivee": 402016,
+      "entrees": [
+       401248,
+       401273,
+       406048
+      ],
+      "boss": 392440,
+      "sortie": 393952,
+      "coffre": 393954
+     },
+     "vagues": [
+      {
+       "m": [
+        "pichon_orange",
+        "pichon_bleu",
+        "pichon_blanc",
+        "pichon_vert",
+        "pichon_bleu",
+        "pichon_orange",
+        "pichon_vert"
+       ]
+      },
+      {
+       "m": [
+        "pichon_blanc",
+        "pichon_vert",
+        "pichon_orange",
+        "pichon_kloune",
+        "pichon_bleu",
+        "pichon_blanc",
+        "pichon_orange",
+        "?"
+       ]
+      },
+      {
+       "m": [
+        "pichon_kloune",
+        "pichon_bleu",
+        "pichon_vert",
+        "pichon_blanc",
+        "pichon_orange",
+        "pichon_orange",
+        "pichon_vert",
+        "?",
+        "?"
+       ]
+      },
+      {
+       "m": [
+        "pichon_vert",
+        "pichon_kloune",
+        "pichon_blanc",
+        "pichon_bleu",
+        "pichon_blanc",
+        "pichon_orange",
+        "pichon_kloune",
+        "?",
+        "?",
+        "?"
+       ]
+      },
+      {
+       "m": [
+        "pichon_kloune",
+        "pichon_kloune",
+        "pichon_orange",
+        "pichon_bleu",
+        "pichon_vert",
+        "pichon_blanc",
+        "pichon_kloune",
+        "pichon_orange",
+        "?",
+        "?",
+        "?",
+        "?"
+       ]
+      },
+      {
+       "nom": "Pichon Blanc",
+       "m": [
+        "pichon_blanc",
+        "pichon_blanc",
+        "pichon_blanc",
+        "pichon_blanc",
+        "pichon_blanc",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?"
+       ]
+      }
+     ],
+     "bossVague": [
+      "mob_l_eponge",
+      "pichon_kloune",
+      "pichon_bleu",
+      "pichon_blanc"
+     ]
     },
     {
      "nom": "Cour du Bouftou Royal",
@@ -1830,7 +2134,105 @@
         "bouftou"
        ]
       ]
-     }
+     },
+     "arene": {
+      "tag": "arene_cour",
+      "arrivee": 402072,
+      "entrees": [
+       401304,
+       401329,
+       406104
+      ],
+      "boss": 392496,
+      "sortie": 394008,
+      "coffre": 394010
+     },
+     "vagues": [
+      {
+       "m": [
+        "bouftou",
+        "boufton",
+        "boufton_noir",
+        "bouftou",
+        "boufton",
+        "boufton"
+       ]
+      },
+      {
+       "m": [
+        "bouftou",
+        "boufton_noir",
+        "bouftou_noir",
+        "bouftou",
+        "boufton",
+        "boufton_noir",
+        "?"
+       ]
+      },
+      {
+       "m": [
+        "bouftou",
+        "bouftou",
+        "boufton_noir",
+        "boufton",
+        "chef_de_guerre_bouftou",
+        "bouftou",
+        "bouftou_noir",
+        "?",
+        "?"
+       ]
+      },
+      {
+       "m": [
+        "boufton",
+        "bouftou_noir",
+        "boufton_noir",
+        "bouftou",
+        "boufton",
+        "chef_de_guerre_bouftou",
+        "?",
+        "?",
+        "?"
+       ]
+      },
+      {
+       "m": [
+        "bouftou_noir",
+        "bouftou_noir",
+        "bouftou",
+        "bouftou",
+        "bouftou_noir",
+        "boufton_noir",
+        "boufton_noir",
+        "?",
+        "?",
+        "?",
+        "?"
+       ]
+      },
+      {
+       "nom": "Bouftou Noir",
+       "m": [
+        "bouftou_noir",
+        "bouftou_noir",
+        "bouftou_noir",
+        "bouftou_noir",
+        "bouftou_noir",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?"
+       ]
+      }
+     ],
+     "bossVague": [
+      "royal",
+      "bouftou_noir",
+      "chef_de_guerre_bouftou",
+      "bouftou"
+     ]
     },
     {
      "nom": "Cache de Kankreblath",
@@ -1925,7 +2327,122 @@
         "pyrasite"
        ]
       ]
-     }
+     },
+     "arene": {
+      "tag": "arene_cache",
+      "arrivee": 402128,
+      "entrees": [
+       401360,
+       401385,
+       406160
+      ],
+      "boss": 392552,
+      "sortie": 394064,
+      "coffre": 394066
+     },
+     "vagues": [
+      {
+       "m": [
+        "cafarcher",
+        "pyrasite",
+        "mirgrillon",
+        "sakarien",
+        "pyrasite",
+        "cafarcher",
+        "mirgrillon",
+        "sakarien",
+        "mirgrillon"
+       ]
+      },
+      {
+       "m": [
+        "cafarcher",
+        "pyrasite",
+        "mirgrillon",
+        "sakarien",
+        "cafarcher",
+        "ceglumen",
+        "cafarcher",
+        "pyrasite",
+        "mirgrillon",
+        "?"
+       ]
+      },
+      {
+       "m": [
+        "sakarien",
+        "pyrasite",
+        "cafarcher",
+        "mirgrillon",
+        "ceglumen",
+        "sakarien",
+        "mirgrillon",
+        "pyrasite",
+        "cafarcher",
+        "?",
+        "?"
+       ]
+      },
+      {
+       "m": [
+        "cafarcher",
+        "sakarien",
+        "pyrasite",
+        "ceglumen",
+        "ceglumen",
+        "sakarien",
+        "cafarcher",
+        "mirgrillon",
+        "pyrasite",
+        "?",
+        "?",
+        "?"
+       ]
+      },
+      {
+       "m": [
+        "sakarien",
+        "ceglumen",
+        "ceglumen",
+        "sakarien",
+        "pyrasite",
+        "mirgrillon",
+        "ceglumen",
+        "cafarcher",
+        "mirgrillon",
+        "sakarien",
+        "?",
+        "?",
+        "?",
+        "?"
+       ]
+      },
+      {
+       "nom": "Sakarien",
+       "m": [
+        "sakarien",
+        "sakarien",
+        "sakarien",
+        "sakarien",
+        "sakarien",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?"
+       ]
+      }
+     ],
+     "bossVague": [
+      "kankreblath",
+      "ceglumen",
+      "sakarien",
+      "pyrasite"
+     ]
     }
    ],
    "ateliers": [

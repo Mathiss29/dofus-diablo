@@ -260,7 +260,7 @@ Q['mort_au_rat'] = {'nom': 'Mort au rat !', 'type': 'secondaire', 'zone': SZ['ta
 Q['cryptologie'] = {'nom': 'Cryptologie', 'type': 'secondaire', 'pnj': 'klasmor', 'niveau': 10,
   'texte': "Kardorim sera probablement très mécontent de vous voir vous promener dans sa crypte... raison de plus pour le réduire au silence, lui et sa bande de chafers.",
   'etapes': [{'nom': 'Salle du tombeau de Kardorim', 'bulle': "Kardorim dort sous le cimetière. Réduis-le au silence, lui et ses chafers.",
-              'objectifs': [aller('Découvrir la salle du tombeau de Kardorim', carte='crypte_5'), vaincre('Vaincre Kardorim', 1, monstres=['kardorim'])]}],
+              'objectifs': [aller('Entrer dans la crypte de Kardorim', carte='arene_crypte'), vaincre('Vaincre Kardorim', 1, monstres=['kardorim'])]}],
   'recompense': rec(1, 10, objets=[['16524', 5]])}
 
 # --- Succès officiels (achievements) ----------------------------------------------------------------------

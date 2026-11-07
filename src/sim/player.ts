@@ -1,3 +1,4 @@
+import type { CleDonjon } from './arene';
 import { Entity } from './entity';
 import type { ClassDef, ComboHit, Element, SkillId, SpellDef } from './defs';
 import { WEAPONS } from './data';
@@ -57,6 +58,8 @@ export class Player extends Entity {
   /** Zaaps découverts (maquette Hub 2C : le Zaap du Havre-Sac y mène) et zones déjà visitées (3A : les PNJ du Havre-Sac emménagent). */
   zaaps: { zone: string; name: string }[] = [];
   zonesVues: string[] = [];
+  /** Clé d'un donjon encore valable (maquette « Donjons en vagues » 14A) : on y revient à la vague atteinte. */
+  cleDonjon: CleDonjon | null = null;
   /** Apparat (maquette Apparence 5A) : objets d'apparat officiels possédés (id Dofus), et ceux posés par-dessus
    *  la coiffe, la cape ou le bouclier (case Apparence de l'inventaire). « 0 » cache l'objet porté. Rien ne change les stats. */
   apparats: string[] = [];

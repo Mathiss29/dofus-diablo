@@ -8,6 +8,8 @@ import { RecolteView } from './recolteView';
 import { AtelierView } from './atelierView';
 import { estPalier, recettesAuNiveau } from '../sim/metiers';
 import { HavreSacView } from './havreSacView';
+import { AreneView } from './areneView';
+import { chrono } from '../sim/quests';
 import type { PointDeRetour, RetourHavreSac } from '../sim/events';
 import { DialogueView } from './dialogueView';
 import { GridMap, WorldGrid, type MapData, type WorldData } from '../sim/gridmap';
@@ -103,6 +105,7 @@ export class ZoneScene extends Phaser.Scene {
   /** Métiers de récolte (0.2b) : ressources du monde, et celle cliquée. */
   private recolteView: RecolteView | null = null;
   private havreSacView: HavreSacView | null = null;
+  private areneView: AreneView | null = null;
   /** Havre-Sac : touche H ou bouton du HUD (2A), choix dans la fenêtre du Zaap du Havre-Sac (2C), pour le prochain pas. */
   private havreSacDemande = false;
   private zaapChoix: number | null = null;
@@ -262,9 +265,11 @@ export class ZoneScene extends Phaser.Scene {
       this.worldView = new WorldView(this, wg, worldDir(open.world), open.world);
       // bouts de portes : où chacun mène (préchargement 2A) et sorties des intérieurs (repère 8A)
       const dedans = (tag: string) => !!wg.mapByTag(tag)?.inside;
-      this.worldView.portes = this.world.portes.flatMap(p => p.ends.map((e, i) => {
+      // (arrivée dans l'arène d'un donjon : pas de repère, on en sort par le portail de la fin)
+      this.worldView.portes = this.world.portes.flatMap(p => p.ends.flatMap((e, i) => {
         const to = p.ends[1 - i], marche = !p.vers && !(i === 1 && p.sens);
-        return { ...e, vers: marche ? to.tag : undefined, sortie: marche && dedans(e.tag) && !dedans(to.tag) };
+        if (i === 1 && p.sens && open.donjons?.some(d => d.arene?.tag === e.tag)) return [];
+        return [{ ...e, vers: marche ? to.tag : undefined, sortie: marche && dedans(e.tag) && !dedans(to.tag) }];
       }));
       const parts = this.cache.json.get(`${open.world}_particules`) as Record<string, SysData[]> | undefined;
       if (parts) this.worldView.parts = new Particules(this, wg, parts, `${open.world}_particules_img`);
@@ -273,6 +278,7 @@ export class ZoneScene extends Phaser.Scene {
       this.events.once('shutdown', () => { tr.destroy(); if (this.transparence === tr) this.transparence = null; });
       this.worldView.create();
       if (this.world.zone.open) { const hv = this.havreSacView = new HavreSacView(this, this.world); this.events.once('shutdown', () => { hv.destroy(); if (this.havreSacView === hv) this.havreSacView = null; }); }
+      if (this.world.zone.open?.donjons?.some(d => d.arene)) { const av = this.areneView = new AreneView(this, this.world); this.events.once('shutdown', () => { av.destroy(); if (this.areneView === av) this.areneView = null; }); }
       if (this.world.postes.length) { const av = this.atelierView = new AtelierView(this, this.world, `${ASSETS}/ui/reperes`); this.events.once('shutdown', () => { av.destroy(); if (this.atelierView === av) this.atelierView = null; }); }
       if (this.world.recoltes.length) { const rv = this.recolteView = new RecolteView(this, this.world); this.events.once('shutdown', () => { rv.destroy(); if (this.recolteView === rv) this.recolteView = null; }); }
       if (this.world.quetes) {
@@ -299,6 +305,7 @@ export class ZoneScene extends Phaser.Scene {
       scene: this, world: this.world,
       /** Téléporte le joueur sur une case libre de la carte « x_y » (noir puis cartes chargées, comme un portail). */
       aller: (tag: string) => {
+        if (this.world.allerArene(tag)) { this.attendreCartes(); this.snapCam = true; return true; }   // arène d'un donjon : comme par le gardien
         const wg = this.world.worldGrid, libres = wg?.freeByMap.get(tag);
         if (!wg || !libres?.length) return false;
         const q = wg.cellToWorld(libres[Math.floor(libres.length / 2)]);
@@ -771,7 +778,7 @@ export class ZoneScene extends Phaser.Scene {
         case 'playerHurt': this.hud.hurtFlash(this.fx.juice); break;
         case 'grosCoup': if (this.fx.juice) this.hud.grosCoup(); break;
         // Maquette « Danger » : entrée du boss (7A) et phase Furieux (5A)
-        case 'bossIntro': this.hud.banner(`${M[e.monster].name}\n${this.world.area?.name ?? this.world.zone.name}`, 2200); break;
+        case 'bossIntro': if (!this.world.arene) this.hud.banner(`${M[e.monster].name}\n${this.world.area?.name ?? this.world.zone.name}`, 2200); break;
         case 'furieux': this.hud.banner(`${e.name}\nFurieux !`, 1300, true); break;
         case 'wave':
           this.hud.banner(e.boss ? `Vague ${e.n}\n${M[e.boss].name}` : e.archi ? `Vague ${e.n}\nArchimonstre : ${M[e.archi].name} !` : `Vague ${e.n}`);
@@ -779,7 +786,19 @@ export class ZoneScene extends Phaser.Scene {
         case 'noResource': this.hud.noResource(e.res); break;
         case 'rechargePrete': this.rechargeSound(); break;
         case 'rageFull': this.rageSound(); this.hud.toast(`${this.world.player.cls.rage.name} au maximum : ton prochain sort est renforcé !`); break;
-        case 'bossDown': this.hud.banner(`${M[e.monster].name} vaincu !`); break;
+        case 'bossDown': if (!this.world.arene) this.hud.banner(`${M[e.monster].name} vaincu !`); break;
+        // Arène d'un donjon (maquette « Donjons en vagues ») : carte-titre (11A), vagues, paliers du boss (8C), fin (12A, 13A)
+        case 'areneDebut': {
+          const cle = e.cle ? ITEMS.resources[e.cle]?.name : null;
+          this.hud.banner(`${e.nom}\n${e.boss ? `${M[e.boss].name} · ` : ''}${e.vagues} vagues + le boss${e.reprise ? ` · reprise à la vague ${Math.min(e.reprise, e.vagues)}` : cle ? ` · ${cle}` : ''}`, 1500);
+          break;
+        }
+        case 'areneVague':
+          if (e.boss) this.hud.banner(`${M[e.boss].name}\narrive !`, 1600, true);
+          else this.hud.banner(e.nom ? `Vague ${e.n} / ${e.total}\n${e.nom} en nombre !` : `Vague ${e.n} / ${e.total}`, 900);
+          break;
+        case 'arenePalier': this.hud.banner(`${e.name}\nIntouchable : abats ses renforts !`, 1500, true); break;
+        case 'areneFin': this.hud.banner(`${e.nom} terminé !\n${chrono(e.temps)}${e.record ? ' · nouveau record !' : ''} · portail et coffre à l'estrade`, 2600); break;
         case 'playerDeath':
           if (this.essai) { this.hud.banner('Essai terminé', 1500); this.time.delayedCall(1500, () => { if (this.essai) { this.essai = null; this.game.events.emit('accueil', 'creation'); } }); }
           else if (this.perso?.hardcore) {
@@ -1170,6 +1189,7 @@ export class ZoneScene extends Phaser.Scene {
     this.recolteView?.update(this.cameras.main, this.input.activePointer);
     this.atelierView?.update(this.cameras.main, this.input.activePointer);
     this.havreSacView?.update(this.game.loop.delta / 1000);
+    this.areneView?.update(this.game.loop.delta / 1000);
     this.questView?.update();
     this.dialogueView?.update();
     this.hud.draw(this.fx.juice, this.game.loop.delta / 1000);

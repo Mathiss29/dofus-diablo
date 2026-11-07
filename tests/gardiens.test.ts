@@ -70,6 +70,6 @@ describe('gardiens des donjons (maquette Gardiens)', () => {
     expect(Q.dialogue!.reponses[0]).toMatchObject({ a: 'entrer' });
     Q.repondre(0);
     for (let i = 0; i < 90; i++) w.step(1 / 60, NO_INPUT);
-    expect(w.worldGrid!.mapAt(p.x, p.y)?.tag).toBe('crypte_1');
+    expect(w.worldGrid!.mapAt(p.x, p.y)?.tag).toBe('arene_crypte');
   });
 });

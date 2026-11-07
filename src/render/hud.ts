@@ -7,6 +7,7 @@ import { ISO } from '../sim/iso';
 import type { SimEvent } from '../sim/events';
 import type { Monster } from '../sim/monster';
 import type { World } from '../sim/world';
+import { chrono } from '../sim/quests';
 import { QUEST_ICON } from './questView';
 
 const FONT = 'Lexend, Verdana, sans-serif';
@@ -90,6 +91,8 @@ export class Hud {
   // mini-carte
   private miniCam: Phaser.Cameras.Scene2D.Camera | null = null;
   private miniLabel: Txt;
+  /** Arène d'un donjon (12A) : « Vague 3 / 6 » et le chrono, sous la mini-carte. */
+  private areneTxt: Txt;
   private menus: { icon: Img; zone: Phaser.GameObjects.Zone }[] = [];
   private menuTip: Txt;
   // barre du bas
@@ -172,6 +175,7 @@ export class Hud {
     this.boss = { skull: img('iconBossSkull', 4), name: txt(16, { ...bold, color: '#ffe3b0' }).setOrigin(0.5), hp: txt(11, bold).setOrigin(0.5) };
 
     this.miniLabel = txt(11, { color: '#d8d0b8' }).setOrigin(0.5, 0);
+    this.areneTxt = txt(14, { ...bold, color: '#ffe3b0', stroke: '#14130f', strokeThickness: 4 }).setOrigin(0.5, 0);
     this.menuTip = txt(12, { backgroundColor: '#14130f', padding: { x: 6, y: 3 } }, 9).setOrigin(1, 0.5).setVisible(false);
     for (const [icon, label, key] of MENUS) {
       const ic = img(`menu_${icon}`, 4);
@@ -449,6 +453,9 @@ export class Hud {
       }
     }
     this.miniLabel.setPosition(mx + mw / 2, my + mh + 6).setText(world.lieu ?? world.area?.name ?? world.zone.name);
+    const ar = world.arene;
+    this.areneTxt.setVisible(!!ar).setPosition(mx + mw / 2, my + mh + 22);
+    if (ar) this.areneTxt.setText(ar.fini ? `Terminé en ${chrono(ar.chrono)}` : !ar.demarre ? `${ar.total} vagues + le boss` : ar.vague > ar.total ? `Boss · ${chrono(ar.chrono)}` : `Vague ${ar.vague} / ${ar.total} · ${chrono(ar.chrono)}`);
     // Colonne de menus : boutons carrés sombres en relief, comme le bandeau de Dofus 3
     // Boutons carrés sombres serrés les uns contre les autres ; ils rapetissent si l'écran est bas
     const step = Math.min(38, Math.floor((H - 150 - my) / this.menus.length)), bs = step - 2;

@@ -13,7 +13,8 @@ const zone = GAME_DATA.zones.incarnam.open!;
 describe('monde d\'Incarnam (cartes Dofus collées)', () => {
   const wg = new WorldGrid(monde);
   it('la grande grille couvre toutes les cartes', () => {
-    const xs = monde.maps.map(m => m.x), ys = monde.maps.map(m => m.y);
+    const xs = monde.maps.map(m => m.x + (m.n?.[0] ?? 1) - 1).concat(monde.maps.map(m => m.x));
+    const ys = monde.maps.map(m => m.y + (m.n?.[1] ?? 1) - 1).concat(monde.maps.map(m => m.y));
     expect(wg.cols).toBe((Math.max(...xs) - Math.min(...xs) + 1) * MAP_COLS);
     expect(wg.rows).toBe((Math.max(...ys) - Math.min(...ys) + 1) * MAP_ROWS);
     expect(monde.mov).toHaveLength(wg.cols * wg.rows);
@@ -139,36 +140,88 @@ describe('intérieurs (maisons, Mine, Taverne)', () => {
   });
 });
 
-describe('Crypte de Kardorim', () => {
-  const salle = (w: World, tag: string) => w.monsters.filter(m => !m.dead && w.worldGrid!.mapAt(m.homeX, m.homeY)?.tag === tag);
-  it('5 salles de 8 monstres officiels, Kardorim dans la dernière', () => {
-    const w = newWorld();
-    for (let i = 1; i <= 5; i++) expect(salle(w, `crypte_${i}`).length, `salle ${i}`).toBe(8);
-    expect(salle(w, 'crypte_5').filter(m => m.type === 'kardorim').length).toBe(1);
-    expect(w.monsters.filter(m => m.type === 'kardorim').length).toBe(1);
-  });
-  it('la porte de la salle suivante ne s\'ouvre qu\'une fois la salle vidée', () => {
+describe('Crypte de Kardorim (une seule arène, maquette « Donjons en vagues »)', () => {
+  const vivants = (w: World) => w.monsters.filter(m => !m.dead && m.arene);
+  const tuerTout = (w: World) => { for (const m of vivants(w)) if (!m.def.boss) w.killMonster(m); };
+  it('plus de monstres dans les anciennes salles ; la porte du cimetière mène droit à l\'arène, protégé à l\'arrivée', () => {
     const w = newWorld(), wg = w.worldGrid!, p = w.player;
-    const po = w.portes.find(q => q.ends[0].tag === 'crypte_1')!;
-    const go = () => { p.x = po.ends[0].x; p.y = po.ends[0].y; w.step(STEP, { ...NO_INPUT, dest: { x: p.x, y: p.y } }); finirPassage(w); };
-    for (const m of salle(w, 'crypte_1')) m.state = 'spawn';   // ne bougent pas pendant le test
-    go();
-    expect(wg.mapAt(p.x, p.y)?.tag).toBe('crypte_1');
-    expect(w.drainEvents().some(e => e.k === 'status')).toBe(true);
-    for (const m of salle(w, 'crypte_1')) m.dead = true;
-    const loin = wg.cellToWorld(wg.freeByMap.get('-3_-6')![0]); p.x = loin.x; p.y = loin.y; w.step(STEP, NO_INPUT);
-    go();
-    expect(wg.mapAt(p.x, p.y)?.tag).toBe('crypte_2');
+    expect(w.monsters.some(m => wg.mapAt(m.homeX, m.homeY)?.tag.startsWith('crypte_'))).toBe(false);
+    const po = w.entreeDonjon('Crypte de Kardorim')!;
+    expect(po.ends[1].tag).toBe('arene_crypte');
+    expect(po.sens).toBe(true);
+    expect(w.entrerDonjon('Crypte de Kardorim')).toBe(true);
+    finirPassage(w);
+    expect(wg.mapAt(p.x, p.y)?.tag).toBe('arene_crypte');
+    expect(p.invuln).toBeGreaterThan(1);
+    expect(w.arene?.nom).toBe('Crypte de Kardorim');
+    expect(w.drainEvents().some(e => e.k === 'areneDebut')).toBe(true);
+  });
+  it('6 vagues par les entrées (cercle rouge avant), puis Kardorim intouchable à ses paliers, puis portail et coffre', () => {
+    const w = newWorld(), p = w.player;
+    w.allerArene('arene_crypte');
+    const a = w.arene!;
+    // 15A : la vague 1 attend le premier geste, au plus 3 s
+    for (let i = 0; i < 60; i++) w.step(STEP, NO_INPUT);
+    expect(a.vague).toBe(0);
+    for (let i = 0; i < 150; i++) w.step(STEP, NO_INPUT);
+    expect(a.vague).toBe(1);
+    expect(w.telegraphs.some(t => t.kind === 'circle' && t.danger)).toBe(true);
+    const ev: string[] = [];
+    for (let t = 0; t < 60 * 60 && !a.boss; t++) {
+      p.hp = p.maxHp; p.dead = false;
+      w.step(STEP, NO_INPUT); tuerTout(w);
+      for (const e of w.drainEvents()) if (e.k === 'areneVague') ev.push(e.boss ?? e.nom ?? String(e.n));
+    }
+    expect(ev.length).toBe(7);
+    expect(ev.at(-1)).toBe('kardorim');
+    const k = a.boss!;
+    expect(k.type).toBe('kardorim');
+    // 8C : à 66 %, il appelle une vague et devient intouchable tant qu'elle vit
+    k.hp = k.maxHp * 0.6;
+    for (let i = 0; i < 5; i++) w.step(STEP, NO_INPUT);
+    expect(k.intouchable).toBe(true);
+    const hp = k.hp;
+    w.hitCircle(k.x, k.y, 50, { dmg: 500, knock: 0 });
+    expect(k.hp).toBe(hp);
+    for (let t = 0; t < 4 * 60; t++) { p.hp = p.maxHp; w.step(STEP, NO_INPUT); for (const m of vivants(w)) if (m !== k && m.summoner !== k) w.killMonster(m); }
+    expect(k.intouchable).toBe(false);
+    w.killMonster(k);
+    for (let i = 0; i < 3; i++) w.step(STEP, NO_INPUT);
+    expect(a.fini).toBe(true);
+    expect(p.cleDonjon).toBeNull();
+    // 13A : le coffre à côté du portail, puis le portail ramène devant le gardien
+    w.drainEvents();
+    p.x = a.pts.coffre.x; p.y = a.pts.coffre.y; w.step(STEP, NO_INPUT);
+    expect(a.coffreOuvert).toBe(true);
+    expect(w.drainEvents().some(e => e.k === 'status' && e.text === 'Coffre du donjon')).toBe(true);
+    p.x = a.pts.sortie.x; p.y = a.pts.sortie.y; w.step(STEP, NO_INPUT); finirPassage(w);
+    expect(w.worldGrid!.mapAt(p.x, p.y)?.tag).toBe(w.entreeDonjon('Crypte de Kardorim')!.ends[0].tag);
+  });
+  it('14A : mort à la vague 3, on y revient sans clé pendant 10 min, monstres de la vague remis à neuf', () => {
+    const w = newWorld(), p = w.player;
+    w.allerArene('arene_crypte');
+    for (let t = 0; t < 60 * 60 && w.arene!.vague < 3; t++) { p.hp = p.maxHp; w.step(STEP, NO_INPUT); tuerTout(w); }
+    expect(w.arene!.vague).toBe(3);
+    p.hp = 0; p.dead = true; w.respawnPlayer();
+    expect(w.arene).toBeNull();
+    expect(vivants(w).length).toBe(0);
+    expect(p.cleDonjon).toMatchObject({ nom: 'Crypte de Kardorim', vague: 3 });
+    w.allerArene('arene_crypte');
+    for (let i = 0; i < 200; i++) w.step(STEP, NO_INPUT);
+    expect(w.arene!.vague).toBe(3);
+    for (let i = 0; i < 601 * 60; i += 60) w.step(1, NO_INPUT);
+    expect(p.cleDonjon).toBeNull();
   });
   it('Kardorim invoque un seul Kardorib à la fois, qui disparaît avec lui', () => {
-    const w = newWorld(), wg = w.worldGrid!, p = w.player;
-    const k = w.monsters.find(m => m.type === 'kardorim')!;
-    for (const m of w.monsters) if (m !== k && wg.mapAt(m.homeX, m.homeY)?.tag === 'crypte_5') m.dead = true;
+    const w = newWorld(), p = w.player;
+    w.allerArene('arene_crypte');
+    const k = w.spawnMonster('kardorim', p.x + 200, p.y);
     const ribs = () => w.monsters.filter(m => m.type === 'kardorib' && !m.dead);
     let max = 0;
     for (let t = 0; t < 40 * 60; t++) {
       p.x = k.x + 120; p.y = k.y; p.hp = p.maxHp; p.dead = false;
       w.step(STEP, NO_INPUT); max = Math.max(max, ribs().length);
+      for (const m of w.monsters) if (m.arene && m !== k && !m.dead && m.type !== 'kardorib') { m.dead = true; m.t = 0; }
     }
     expect(max).toBe(1);
     expect(ribs()[0]?.summoner).toBe(k);

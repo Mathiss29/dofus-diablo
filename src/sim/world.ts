@@ -1,5 +1,5 @@
 import { angleDiff, Rng } from './math';
-import type { AtelierDef, Element, GameData, HitZone, MonsterSpell, SubAreaDef, ZoneDef } from './defs';
+import type { AtelierDef, DonjonDef, Element, GameData, HitZone, MonsterSpell, SubAreaDef, ZoneDef } from './defs';
 import type { PointDeRetour, RetourHavreSac, SimEvent, Telegraph } from './events';
 import { GridMap, WorldGrid } from './gridmap';
 import { NO_INPUT, type PlayerInput } from './input';
@@ -10,6 +10,7 @@ import { FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PE
 import { Player } from './player';
 import { initiativeBonus, removalChance } from './caracs';
 import { planWave } from './waves';
+import { Arene, ARENE } from './arene';
 import { Quetes, type Compte, type EtatQuetes, type QuetesData } from './quests';
 import { appliquerTest, type ReglagesTest } from './outilsTest';
 import { FABRICATION, type Poste } from './metiers';
@@ -164,7 +165,9 @@ export class World {
   /** Dans le Havre-Sac : d'où l'on vient. */
   retour: RetourHavreSac | null = null;
   /** Poutch Ingball du Havre-Sac (7A) : id du monstre. */
-  poutch: number | null = null;   // au-delà de ce qu'on voit même dézoomé à fond (avant : monstres figés au bord de l'écran)
+  poutch: number | null = null;
+  /** Arène du donjon où l'on se bat (maquette « Donjons en vagues »), null ailleurs. */
+  arene: Arene | null = null;   // au-delà de ce qu'on voit même dézoomé à fond (avant : monstres figés au bord de l'écran)
 
   constructor(readonly opts: WorldOptions) {
     this.rng = new Rng(opts.seed ?? 1);
@@ -298,7 +301,22 @@ export class World {
   static readonly PORTE_ARRIVEE = 80;
   private buildPortes() {
     const wg = this.worldGrid!;
+    // Donjons en arène (1B) : les portes des anciennes salles ne servent plus ; l'entrée mène droit à l'arène, sans retour (sortie = portail, 13A)
+    const ancienne = new Map<string, DonjonDef>();
+    for (const dj of this.zone.open!.donjons ?? []) if (dj.arene && wg.mapByTag(dj.arene.tag)) {
+      // ses salles, et l'antichambre de même nom (grange_0, cache_0)
+      const pref = new Set(Object.keys(dj.salles).map(t => t.replace(/\d+$/, '')));
+      for (const m of wg.world.maps) if (m.inside && pref.has(m.tag.replace(/\d+$/, '')) && /\d$/.test(m.tag)) ancienne.set(m.tag, dj);
+    }
     for (const d of this.zone.open!.portes ?? []) {
+      const dj = ancienne.get(d.b[0]);
+      if (ancienne.has(d.a[0])) continue;
+      if (dj && !d.zone && wg.mapByTag(d.a[0])) {
+        const q = wg.cellToWorld(wg.cellOf(d.a[0], d.a[1])), A = dj.arene!, B = wg.cellToWorld(A.arrivee);
+        this.portes.push({ nom: d.nom, ends: [{ tag: d.a[0], ...wg.nearestFree(q.x, q.y, wg.freeByMap.get(d.a[0])!) }, { tag: A.tag, ...B }], verrou: false, sens: true, cle: d.cle });
+        if (!this.lieux.has(A.tag)) this.lieux.set(A.tag, dj.nom);
+        continue;
+      }
       if (d.zone) {   // portail vers une autre zone : un seul bout ici
         if (!wg.mapByTag(d.a[0])) continue;
         const q = wg.cellToWorld(wg.cellOf(d.a[0], d.a[1])), a = { tag: d.a[0], ...wg.nearestFree(q.x, q.y, wg.freeByMap.get(d.a[0])!) };
@@ -402,6 +420,7 @@ export class World {
   private prendreCle(po: World['portes'][number]): boolean {
     if (!po.cle) return true;
     const p = this.player, r = p.resources[po.cle] ?? 0;
+    if (this.cleValable(po.nom)) return true;   // 14A : clé encore valable, rien n'est repris
     if (r <= 0) {
       this.emit({ k: 'status', x: p.x, y: p.y - 60, text: `Il faut une ${this.opts.items?.resources[po.cle]?.name ?? 'clé'}`, color: '#ff9a5a' });
       this.emit({ k: 'cleManquante', id: po.cle });
@@ -409,6 +428,11 @@ export class World {
     }
     if (r === 1) delete p.resources[po.cle]; else p.resources[po.cle] = r - 1;
     return true;
+  }
+  /** Clé de ce donjon encore valable (14A) : vague atteinte, sinon 0. */
+  cleValable(nom: string): number {
+    const c = this.player.cleDonjon;
+    return c && c.nom === nom && c.reste > 0 ? c.vague : 0;
   }
   /** Porte d'entrée d'un donjon (dehors -> première salle) : celle qui demande la clé, sinon la première qui n'est pas verrouillée. */
   entreeDonjon(nom: string) {
@@ -432,6 +456,14 @@ export class World {
   /** Arrivée de l'autre côté : une case libre juste hors du rayon de la porte d'arrivée, du côté du milieu de la carte (pas collé au bord). */
   private traverser(to: PorteEnd, nom: string) {
     const p = this.player, wg = this.worldGrid!;
+    const dj = this.zone.open?.donjons?.find(d => d.arene?.tag === to.tag);
+    if (dj) {   // arène : pile au point d'arrivée, protégé 1,5 s (15A)
+      p.x = to.x; p.y = to.y; p.kx = p.ky = 0; p.z = 0; p.stopMove(); p.invuln = Math.max(p.invuln, ARENE.protection);
+      this.portalLock = to;
+      this.emit({ k: 'portal', nom });
+      this.lancerArene(dj);
+      return;
+    }
     const free = (wg.freeByMap.get(to.tag) ?? []).map(c => wg.cellToWorld(c));
     const mid = free.reduce((a, q) => ({ x: a.x + q.x / free.length, y: a.y + q.y / free.length }), { x: 0, y: 0 });
     let best = to, bd = Infinity;
@@ -453,7 +485,51 @@ export class World {
   /** Le joueur est dans une salle de ce donjon. */
   dansDonjon(nom: string): boolean {
     const d = this.zone.open?.donjons?.find(x => x.nom === nom), tag = this.worldGrid?.mapAt(this.player.x, this.player.y)?.tag;
-    return !!d && !!tag && tag in d.salles;
+    return !!d && !!tag && (tag in d.salles || tag === d.arene?.tag);
+  }
+
+  // --- Arènes des donjons (maquette « Donjons en vagues ») ---------------------------------------------------
+  /** Arrivée dans l'arène : la clé reste valable 10 min (14A), on reprend à la vague atteinte ; carte-titre (11A). */
+  private lancerArene(d: DonjonDef) {
+    const p = this.player, reprise = this.cleValable(d.nom);
+    this.arene?.abandonner();
+    if (!reprise) p.cleDonjon = { nom: d.nom, vague: 1, reste: ARENE.cle };
+    this.arene = new Arene(this, d, reprise || 1);
+    const boss = this.bossDuDonjon(d.nom), cle = this.entreeDonjon(d.nom)?.cle ?? null;
+    this.emit({ k: 'areneDebut', nom: d.nom, boss, vagues: this.arene.total, cle, reprise: reprise > 1 ? reprise : 0 });
+  }
+  private updateArene(dt: number) {
+    const p = this.player, c = p.cleDonjon;
+    if (c && (c.reste -= dt) <= 0) p.cleDonjon = null;
+    const a = this.arene;
+    if (!a) return;
+    // parti autrement que par le portail (Rappel…) : l'arène se vide
+    if (!this.passage && !p.dead && this.worldGrid!.mapAt(p.x, p.y)?.tag !== a.d.arene!.tag) { a.abandonner(); this.arene = null; return; }
+    a.update(dt);
+  }
+  /** Partie de test (F1) : droit dans l'arène de ce tag, comme par la porte du gardien. Faux si ce n'est pas une arène. */
+  allerArene(tag: string): boolean {
+    const d = this.zone.open?.donjons?.find(x => x.arene?.tag === tag), wg = this.worldGrid;
+    if (!d || !wg?.mapByTag(tag)) return false;
+    this.traverser({ tag, ...wg.cellToWorld(d.arene!.arrivee) }, d.nom);
+    return true;
+  }
+  /** 13A : le portail de sortie ramène devant le gardien. */
+  quitterArene(d: DonjonDef) {
+    const po = this.entreeDonjon(d.nom);
+    if (!po || this.passage) return;
+    this.arene = null;
+    this.player.stopMove();
+    this.passage = { to: po.ends[0], nom: d.nom, t: World.PASSAGE };
+    this.emit({ k: 'portalStart', nom: d.nom });
+  }
+  /** 13A : coffre du donjon à côté du portail : un second butin du boss, et une bourse de kamas. */
+  coffreDonjon(d: DonjonDef, x: number, y: number) {
+    const boss = this.bossDuDonjon(d.nom), M = this.opts.data.monsters;
+    if (!boss) return;
+    const niveau = M[boss].level ?? this.zone.level;
+    this.lacherButin(boss, 'boss', niveau, x, y, 20 * niveau);
+    this.emit({ k: 'status', x, y: y - 50, text: 'Coffre du donjon', color: '#f2d36b' });
   }
 
   /** Case la plus dégagée d'une carte (le plus de cases marchables autour). */
@@ -492,6 +568,7 @@ export class World {
     }
     // Donjons : groupes officiels fixes, salle par salle
     for (const d of open.donjons ?? []) for (const [tag, groupes] of Object.entries(d.salles)) {
+      if (d.arene && wg.mapByTag(d.arene.tag)) break;   // donjon en arène : les monstres arrivent par vagues
       const m = wg.mapByTag(tag);
       if (!m || !wg.freeByMap.get(tag)?.length) continue;
       const sub = open.subareas[String(m.sub)] ?? { name: d.nom, level: this.zone.level, monsters: [], groupsPerMap: 0, groupSize: [0, 0] };
@@ -567,6 +644,7 @@ export class World {
   private updateOpen(dt: number) {
     const p = this.player, open = this.zone.open!;
     this.updatePortes(dt);
+    this.updateArene(dt);
     for (const g of this.groups) {
       if (g.members.some(m => !m.dead)) continue;
       if (!g.cleared) {
@@ -608,6 +686,7 @@ export class World {
   respawnPlayer() {
     const p = this.player;
     if (!this.zone.open || !p.dead) return;
+    if (this.arene) { this.arene.abandonner(); this.arene = null; }
     p.dead = false; p.hp = p.maxHp; p.x = this.checkpoint.x; p.y = this.checkpoint.y; p.kx = p.ky = 0; p.z = 0;
     p.state = 'free'; p.skill = null; p.invuln = 2; p.rage = 0; p.setAnim('idle');
     this.over = false;
@@ -862,6 +941,7 @@ export class World {
     for (const m of this.monsters) {
       if (m.dead || m.state === 'spawn' || !test(m)) continue;
       if (p.pacifiste > 0) { this.emit({ k: 'status', x: m.x, y: m.y - 20, text: 'Pacifiste', color: '#c8c8c8' }); return 0; }   // Hyperleukocytine : aucun dommage
+      if (m.intouchable) { if (this.time - this.intouchableT > 0.6) { this.intouchableT = this.time; this.emit({ k: 'status', x: m.x, y: m.y - 30, text: 'Intouchable', color: '#c8c8c8' }); } continue; }
       n++;
       const crit = this.rng.next() < p.critChance;
       // Choix 19A : résistances officielles du monstre dans l'élément du coup (plafonnées à 50 %, comme Dofus)
@@ -910,7 +990,9 @@ export class World {
   }
   /** Dommages de poussée de Dofus : (niveau / 2 + Dommages Poussée + 32) × cases de poussée restantes / 4,
    *  quand la cible heurte un obstacle ou un autre monstre avant la fin de son recul. */
+  private intouchableT = -9;
   private pushDamage(m: Monster, a: number, dist: number) {
+    if (m.intouchable) return;
     const c = Math.cos(a), s = Math.sin(a), step = 8;
     let t = 0;
     for (; t < dist; t += step) {
@@ -970,10 +1052,13 @@ export class World {
   }
   /** Un monstre vaincu lâche son butin officiel (ressources, parfois un équipement) et, plus rarement, un équipement
    *  de son niveau pris dans tous les objets de Dofus. Élites et boss lâchent plus et mieux. Calcul : src/sim/butin.ts. */
-  private dropLoot(m: Monster) {
+  private dropLoot(m: Monster) { this.lacherButin(m.type, rangDe(m.def), this.monsterLevel(m), m.x, m.y); }
+  private lacherButin(type: string, rang: Rang, niveau: number, mx: number, my: number, kamas = 0) {
     const I = this.opts.items;
     if (!I) return;
-    const p = this.player, b = tirerButin(this.rng, this.contexteButin(m.type, rangDe(m.def), this.monsterLevel(m)), () => this.nextId++);
+    const m = { x: mx, y: my };
+    const p = this.player, b = tirerButin(this.rng, this.contexteButin(type, rang, niveau), () => this.nextId++);
+    b.kamas += kamas;
     for (const r of b.ressources) {   // ressource : directement dans le sac ; une viande fait monter le Chasseur (choix 6A)
       if (r.job) p.gainMetierXp(r.job, METIER_XP.viande, this);
       p.resources[r.id] = (p.resources[r.id] ?? 0) + 1;

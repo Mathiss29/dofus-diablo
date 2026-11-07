@@ -54,15 +54,19 @@ describe('Astrub (0.2a)', () => {
     const retour = passerPortail(w2);
     expect(retour).toMatchObject({ zone: 'incarnam', arrivee: ['4_-3', 174] });
   });
-  it('trois donjons : salles exportées, monstres officiels, portes verrouillées de salle en salle', () => {
-    const w = new World({ data: GAME_DATA, zone: 'astrub', map: new WorldGrid(astrub), seed: 1 });
+  it('quatre donjons en arène : une grande salle de 3 x 3 cartes, monstres officiels, 6 vagues + le boss, entrée à clé', () => {
+    const w = new World({ data: GAME_DATA, zone: 'astrub', map: new WorldGrid(astrub), seed: 1 }), wg = w.worldGrid!;
     for (const d of zone.donjons!) {
-      for (const [tag, groupes] of Object.entries(d.salles)) {
-        expect(w.worldGrid!.mapByTag(tag), tag).toBeDefined();
-        for (const g of groupes) for (const t of g) expect(LOOKS[GAME_DATA.monsters[t]?.look], t).toBeDefined();
-        expect((w as unknown as { groups: { map: string }[] }).groups.filter(g => g.map === tag).length, tag).toBe(groupes.length);
-      }
-      expect(w.portes.filter(p => p.nom === d.nom).length).toBeGreaterThan(Object.keys(d.salles).length - 1);
+      const a = d.arene!, m = wg.mapByTag(a.tag)!;
+      expect(m.n).toEqual([3, 3]);
+      expect(m.inside).toBe(1);
+      for (const c of [a.arrivee, a.boss, a.sortie, a.coffre, ...a.entrees]) expect(wg.mapOfCell(c)?.tag, `${a.tag} ${c}`).toBe(a.tag);
+      for (const c of [a.arrivee, a.boss, a.sortie, ...a.entrees]) expect(astrub.mov[c], `${a.tag} case ${c}`).toBe('1');
+      expect(d.vagues).toHaveLength(6);
+      for (const t of [...d.vagues!.flatMap(v => v.m), ...d.bossVague!]) if (t !== '?') expect(LOOKS[GAME_DATA.monsters[t]?.look], t).toBeDefined();
+      expect(GAME_DATA.monsters[d.bossVague![0]].boss).toBe(true);
+      expect(w.entreeDonjon(d.nom)?.cle).toBeTruthy();
+      expect(w.entreeDonjon(d.nom)?.ends[1].tag).toBe(a.tag);
     }
   });
 });

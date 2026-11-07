@@ -182,7 +182,16 @@ export interface PorteDef { a: [string, number]; b: [string, number]; nom: strin
   /** Portail vers une autre zone (Incarnam <-> Astrub) : b est une case de cette zone-là. */
   zone?: string }
 /** Donjon : ses salles (tag de carte) et, pour chacune, ses groupes de monstres officiels (fixes). */
-export interface DonjonDef { nom: string; salles: Record<string, string[][]> }
+export interface DonjonDef { nom: string; salles: Record<string, string[][]>;
+  /** Arène du donjon (maquette « Donjons en vagues », 1B 2D) : une seule grande salle créée (tools/extraction/arenes.py).
+   *  Cases de la grande grille : arrivée du joueur, entrées des monstres, estrade du boss, portail de sortie, coffre.
+   *  Avec une arène, les salles officielles ne servent plus qu'au Bestiaire et au butin. */
+  arene?: AreneDef;
+  /** Vagues (5A + 5B + 5C) : groupes officiels des anciennes salles, '?' = tiré parmi les monstres du donjon ; nom = vague à thème. */
+  vagues?: { nom?: string; m: string[] }[];
+  /** Dernière vague (8A) : le boss et ses compagnons officiels. */
+  bossVague?: string[] }
+export interface AreneDef { tag: string; arrivee: number; entrees: number[]; boss: number; sortie: number; coffre: number }
 /** Monde ouvert : cartes Dofus collées, groupes de monstres posés sur chaque carte, qui réapparaissent. */
 export interface OpenDef {
   /** Dossier public/assets/mondes/<world>. */
