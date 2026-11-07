@@ -159,6 +159,7 @@
           "Moins de ressources communes : les monstres en lâchent trois fois moins (la Laine de Bouftou passe de 53 % à 17,7 %), pour que le sac ne déborde plus. Les ressources rares et le butin des boss ne changent pas."
         ],
         "Corrections": [
+          "Cache de Kankreblath : l'arène a enfin un plancher partout, plus de trous noirs sur les bords.",
           "Pêche : les bancs de poissons au milieu de l'eau se pêchent enfin depuis la rive (portée officielle de 10 cases), et chaque coin de pêche donne les poissons de sa carte.",
           "Ressources : chaque arbre, céréale, plante et minerai porte enfin sa vraie ressource (le Merisier en fleurs, le Houblon, la Menthe, l'Edelweiss…) ; les puits ne sont plus du Frêne, on y puise de l'Eau Potable.",
           "Boutique et grenier de Kerubim : le plancher, les murs et tout le bric-à-brac de l'antiquaire sont revenus (ils flottaient dans le noir).",
@@ -172,7 +173,8 @@
           "Tous les taux de butin sont dans un seul fichier, et la partie de test (F1) a un onglet Butin : chaque ligne de butin du jeu, et un simulateur qui tue 1 000 monstres d'un coup.",
           "Les cartes sont rangées par bâtiment, et un robot photographie chaque carte d'Astrub et d'Incarnam après chaque export pour repérer les doublons et les images manquantes.",
           "Discord rangé pour le test ouvert : #🧭・commencer-ici (lien, touches, où aller), #🤝・entraide, et des forums #🐛・bugs et #💡・idées avec étiquettes (« Corrigé », « Retenue ») et vote 👍. Le Journal du jour arrive toujours dans #📜・journal.",
-          "Outils de test (F1) : onglet Placement pour poser à la main les groupes de chaque carte, régler leur taille et marquer le repaire de l'élite."
+          "Outils de test (F1) : onglet Placement pour poser à la main les groupes de chaque carte, régler leur taille et marquer le repaire de l'élite.",
+          "Le robot Discord sait publier des sondages. Le premier arrive bientôt dans #📣・annonces : quelle classe voulez-vous après l'Osamodas ? Les 16 autres classes, avec leurs symboles officiels, puis une finale des 5 premières."
         ]
       }
     }

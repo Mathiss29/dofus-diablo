@@ -10,11 +10,15 @@
    node tools/discord/discord_bot.mjs categorie <ancien> <nouveau> → renomme la catégorie du jeu
    node tools/discord/discord_bot.mjs annonce                    → publie DISCORD_TEXTE dans le salon DISCORD_SALON,
                                                                      cherché d'abord dans la catégorie DISCORD_CATEGORIE, avec la mention DISCORD_ROLE (« aucun » par défaut)
+   node tools/discord/discord_bot.mjs sondage <nom> [lancer|finale|resultat]
+                                                                 → sondage natif de tools/discord/sondages/<nom>.json : lancer = émojis des classes, fil, message et sondages ;
+                                                                     finale = les mieux classées dans un dernier sondage ; resultat = classement final
    node tools/discord/discord_bot.mjs captures <dossier>         → publie les images du dossier (10 par message) dans DISCORD_SALON, avec DISCORD_TEXTE au-dessus
    Ajouter --print pour afficher ce qui serait fait sans rien envoyer. */
 import fs from "node:fs";
 import { carte, carnetDuJour, pied, nomPost } from "./journal.mjs";
 import { actions, decrire, ordre, planActuel, TYPES, INTERDIT } from "./plan.mjs";
+import { verifier, messageSondage, remplir, emojiNom, votes, classement, trouverSondage, lignesClassement, texteReponse } from "./sondage.mjs";
 
 const API = process.env.DISCORD_API || "https://discord.com/api/v10";
 const UA = "diablofus-bot (github.com/Mathiss29/dofus-diablo, 1)";
@@ -87,6 +91,107 @@ async function epingler(gid, all, plan) {
   const n = await api("POST", `/channels/${ch}/messages`, { content: t, allowed_mentions: { parse: [] }, flags: 4 });
   await api("PUT", `/channels/${ch}/pins/${n.id}`);
   console.log(`#${plan.accueil.salon} : message d'accueil publié et épinglé.`);
+}
+
+// ---------- sondages (maquette « Sondage » 2026-11-07) ----------
+function mention(conf, gidRole) {
+  if (conf.mention === "everyone") return { texte: "@everyone", allowed: { parse: ["everyone"] } };
+  if (gidRole) return { texte: `<@&${gidRole}>`, allowed: { parse: [], roles: [gidRole] } };
+  return { texte: "", allowed: { parse: [] } };
+}
+// émojis du serveur aux symboles officiels des classes (tools/discord/sondages/symboles/<cle>.png), créés s'ils manquent
+async function emojisClasses(gid, cles, creer) {
+  const ex = new Map((await api("GET", `/guilds/${gid}/emojis`)).map((e) => [e.name, e.id]));
+  const out = new Map();
+  for (const c of cles) {
+    let id = ex.get(emojiNom(c));
+    if (!id && creer) {
+      const f = new URL(`./sondages/symboles/${c}.png`, import.meta.url);
+      if (!fs.existsSync(f)) { console.log("Pas de symbole pour", c); continue; }
+      try { id = (await api("POST", `/guilds/${gid}/emojis`, { name: emojiNom(c), image: "data:image/png;base64," + fs.readFileSync(f).toString("base64") })).id; console.log("Émoji créé :", emojiNom(c)); }
+      catch (e) { console.log(`Émoji ${emojiNom(c)} non créé (${e.message.slice(0, 120)}) : réponse sans symbole.`); }
+    }
+    if (id) out.set(c, id);
+  }
+  return out;
+}
+async function sondage(nom, etape) {
+  const conf = JSON.parse(fs.readFileSync(new URL(`./sondages/${nom}.json`, import.meta.url), "utf8"));
+  const err = verifier(conf);
+  if (err.length) throw new Error("sondages/" + nom + ".json :\n" + err.join("\n"));
+  const toutes = conf.sondages.flatMap((s) => s.reponses);
+  if (DRY && etape === "lancer") {
+    const fil = conf.fil ? `#${conf.fil.salon} › ${conf.fil.nom}` : "";
+    console.log(`[#${conf.salon}] ${remplir(conf.intro, { mention: conf.mention === "everyone" ? "@everyone" : conf.mention, fil })}\n`);
+    for (const s of conf.sondages) console.log(`📊 ${s.question} (${conf.duree} h, plusieurs choix)\n` + s.reponses.map((r) => `   :${emojiNom(r.emoji)}: ${texteReponse(r)}`).join("\n") + "\n");
+    if (conf.fil) console.log(`[fil ${fil}] ${remplir(conf.fil.message, { salon: "#" + conf.salon })}`);
+    return console.log("(essai : rien n'est envoyé ; les émojis manquants seront créés)");
+  }
+  const gid = await guildId(), all = await api("GET", `/guilds/${gid}/channels`);
+  const ch = await findChannel(gid, conf.salon, { salons: all });
+  const moi = (await api("GET", "/users/@me")).id;
+  const recents = await api("GET", `/channels/${ch}/messages?limit=100`);
+  const role = conf.mention && !["everyone", "aucun"].includes(conf.mention) ? await roleId(gid, conf.mention) : null;
+  const men = mention(conf, role);
+  const poster = async (corps) => { if (DRY) return console.log(JSON.stringify(corps, null, 2)); return api("POST", `/channels/${ch}/messages`, corps); };
+
+  if (etape === "lancer") {
+    if (trouverSondage(recents, moi, conf.sondages[0].question)) return console.log("Sondage déjà publié dans #" + conf.salon + ".");
+    const emojis = await emojisClasses(gid, toutes.map((r) => r.emoji), true);
+    let lienFil = "";
+    if (conf.fil) {
+      const chd = await findChannel(gid, conf.fil.salon, { salons: all });
+      const actifs = (await api("GET", `/guilds/${gid}/threads/active`)).threads || [];
+      let fil = actifs.find((t) => t.parent_id === chd && t.name === conf.fil.nom);
+      if (!fil) {
+        fil = await api("POST", `/channels/${chd}/threads`, { name: conf.fil.nom, type: 11, auto_archive_duration: 10080 });
+        await api("POST", `/channels/${fil.id}/messages`, { content: remplir(conf.fil.message, { salon: `<#${ch}>` }), allowed_mentions: { parse: [] } });
+        console.log(`Fil « ${conf.fil.nom} » créé dans #${conf.fil.salon}.`);
+      }
+      lienFil = `<#${fil.id}>`;
+    }
+    await poster({ content: remplir(conf.intro, { mention: men.texte, fil: lienFil }), allowed_mentions: men.allowed });
+    for (const s of conf.sondages) await poster(messageSondage(s.question, s.reponses, conf.duree, emojis));
+    return console.log(`Sondage publié dans #${conf.salon} : ${conf.sondages.length} sondage(s), ${toutes.length} réponses.`);
+  }
+
+  const emojis = await emojisClasses(gid, toutes.map((r) => r.emoji), false);
+  const lire = (question, reponses) => {
+    const m = trouverSondage(recents, moi, question);
+    if (!m) throw new Error("Sondage introuvable dans #" + conf.salon + " : " + question);
+    return { fini: !!m.poll.results?.is_finalized, liste: votes(reponses, m) };
+  };
+  if (etape === "finale") {
+    if (!conf.finale) throw new Error("Pas de finale dans sondages/" + nom + ".json");
+    if (trouverSondage(recents, moi, conf.finale.question)) return console.log("Finale déjà publiée.");
+    const lus = conf.sondages.map((s) => lire(s.question, s.reponses));
+    const tout = classement(lus.flatMap((l) => l.liste));
+    console.log("Classement :\n" + tout.map((r, i) => `${i + 1}. ${r.classe} : ${r.votes}`).join("\n"));
+    if (lus.some((l) => !l.fini) && !process.argv.includes("--forcer")) return console.log("Les sondages ne sont pas encore terminés (--forcer pour publier quand même).");
+    const top = tout.slice(0, conf.finale.nombre);
+    await poster({ content: remplir(conf.finale.intro, { mention: men.texte, nombre: top.length }), allowed_mentions: men.allowed });
+    await poster(messageSondage(conf.finale.question, top, conf.finale.duree, emojis));
+    return console.log(DRY ? "(essai : finale non publiée)" : "Finale publiée : " + top.map((r) => r.classe).join(", "));
+  }
+  if (etape === "resultat") {
+    const m = conf.finale ? trouverSondage(recents, moi, conf.finale.question) : null;
+    let liste, fini;
+    if (m) { // les réponses de la finale sont retrouvées par leur texte
+      liste = votes(m.poll.answers.map((a) => toutes.find((r) => texteReponse(r) === a.poll_media.text)).filter(Boolean), m);
+      fini = !!m.poll.results?.is_finalized;
+    } else {
+      const lus = conf.sondages.map((s) => lire(s.question, s.reponses));
+      liste = lus.flatMap((l) => l.liste); fini = lus.every((l) => l.fini);
+    }
+    const c = classement(liste);
+    console.log("Classement :\n" + c.map((r, i) => `${i + 1}. ${r.classe} : ${r.votes}`).join("\n"));
+    if (!fini && !process.argv.includes("--forcer")) return console.log("Le vote n'est pas encore terminé (--forcer pour publier quand même).");
+    const deja = recents.find((x) => x.author?.id === moi && (x.content || "").startsWith(conf.resultat.split("\n")[0]));
+    if (deja) return console.log("Résultat déjà publié.");
+    await poster({ content: remplir(conf.resultat, { classement: lignesClassement(c, emojis) }), allowed_mentions: { parse: [] } });
+    return console.log(DRY ? "(essai : résultat non publié)" : "Résultat publié dans #" + conf.salon + ".");
+  }
+  throw new Error("Étape inconnue : " + etape + " (lancer, finale ou resultat)");
 }
 
 async function main() {
@@ -188,6 +293,8 @@ async function main() {
     if (roleName !== "aucun" && !role) throw new Error("Rôle introuvable : " + roleName);
     await api("POST", `/channels/${ch}/messages`, { content: (role ? `<@&${role}> ` : "") + text, allowed_mentions: { parse: [], roles: role ? [role] : [] } });
     console.log(`Annonce publiée dans #${salon} :`, text.length, "caractères");
+  } else if (cmd === "sondage") {
+    await sondage(args[0] || "classes", args[1] || "lancer");
   } else if (cmd === "captures") {
     const dir = args[0] || ".", text = texte(), salon = (process.env.DISCORD_SALON || "captures").trim();
     const imgs = fs.readdirSync(dir).filter((f) => /\.(png|jpe?g|webp|gif|mp4|webm)$/i.test(f)).sort();
@@ -203,7 +310,7 @@ async function main() {
     }
     console.log(`Images publiées dans #${salon} :`, imgs.length);
   } else {
-    console.log("Commandes : liste, plan, journal [date], categorie <ancien> <nouveau>, annonce, captures <dossier> (voir l'en-tête du fichier)");
+    console.log("Commandes : liste, plan, journal [date], categorie <ancien> <nouveau>, annonce, sondage <nom> [lancer|finale|resultat], captures <dossier> (voir l'en-tête du fichier)");
     process.exit(1);
   }
 }
