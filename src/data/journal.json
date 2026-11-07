@@ -138,6 +138,10 @@
       "lignes": {
         "Le monde": [
           "Le Cloportier garde l'entrée de la Cache de Kankreblath, en [3,-17] : il te fait la courte échelle avec ta clef."
+        ],
+        "Corrections": [
+          "Pêche : les bancs de poissons au milieu de l'eau se pêchent enfin depuis la rive (portée officielle de 10 cases), et chaque coin de pêche donne les poissons de sa carte.",
+          "Ressources : chaque arbre, céréale, plante et minerai porte enfin sa vraie ressource (le Merisier en fleurs, le Houblon, la Menthe, l'Edelweiss…) ; les puits ne sont plus du Frêne, on y puise de l'Eau Potable."
         ]
       }
     }
