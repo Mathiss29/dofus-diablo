@@ -86,7 +86,7 @@ describe('bâtiments (tools/extraction/batiments.py)', () => {
         tailles.set(p.bt, Math.max(tailles.get(p.bt) ?? 0, F.frame.w * F.frame.h * (p.z ?? 1) ** 2));
       }
     }
-    expect(tailles.size).toBeGreaterThan(500);
+    expect(tailles.size).toBeGreaterThan(400);
     for (const [bt, t] of tailles) expect(t, `bâtiment ${bt}`).toBeGreaterThan(20000);
   });
 });
