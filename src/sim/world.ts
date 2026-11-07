@@ -11,7 +11,7 @@ import { initiativeBonus, removalChance } from './caracs';
 import { planWave } from './waves';
 import { Quetes, type Compte, type EtatQuetes, type QuetesData } from './quests';
 import { appliquerTest, type ReglagesTest } from './outilsTest';
-import { RECOLTE, quantite, xpRecolte, type Recolte, type RecoltesData } from './recolte';
+import { RECOLTE, porteeRecolte, quantite, xpRecolte, type Recolte, type RecoltesData } from './recolte';
 
 interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: number;
   /** Effets officiels : Érosion (part des dommages ôtée aux PV max), retrait de PM / PA. */
@@ -111,6 +111,8 @@ export class World {
   recoltes: Recolte[] = [];
   /** Ressource cliquée (le perso y va) et geste en cours (t = temps écoulé, hp = PV au début : un coup reçu l'interrompt). */
   versRecolte: number | null = null;
+  /** Case libre où le perso va pour la ressource cliquée : arrivé là, il récolte même si la ressource est un peu plus loin que la portée. */
+  private approche: { x: number; y: number } | null = null;
   enRecolte: { id: number; t: number; hp: number } | null = null;
   /** Télégraphes du dernier pas (recalculés à chaque pas). */
   telegraphs: Telegraph[] = [];
@@ -566,7 +568,7 @@ export class World {
       if (this.test.recharges) this.rechargerTout();
     }
     const ents = [p, ...this.monsters], prev = ents.map(e => [e.x, e.y] as const);
-    if (input.recolte != null) { this.versRecolte = input.recolte; this.enRecolte = null; }
+    if (input.recolte != null) { this.versRecolte = input.recolte; this.approche = this.approcheRecolte(input.recolte); this.enRecolte = null; }
     else if (input.dest || input.target != null || input.pickup != null || input.talk || input.pressed || input.move.x || input.move.y) {
       if (this.enRecolte) this.emit({ k: 'recolteStop' });
       this.versRecolte = null; this.enRecolte = null;
@@ -1033,7 +1035,7 @@ export class World {
       const def = R.ressources[r.item], lv = Math.max(1, p.metierLevel(def.metier));
       const n = quantite(this.rng, lv, def.niveau, r.dore);
       p.resources[r.item] = (p.resources[r.item] ?? 0) + n;
-      p.gainMetierXp(def.metier, xpRecolte(def.niveau, r.dore), this);
+      if (def.metier) p.gainMetierXp(def.metier, xpRecolte(def.niveau, r.dore), this);   // puits : sans métier, sans XP
       this.emit({ k: 'recolteFin', id: r.id, item: r.item, n, dore: r.dore });
       r.repousse = RECOLTE.repousse; r.dore = false;
       return;
@@ -1041,10 +1043,14 @@ export class World {
     if (this.versRecolte == null) return;
     const r = this.recoltes.find(x => x.id === this.versRecolte);
     if (!r || r.repousse > 0) { this.versRecolte = null; return; }
-    if (Math.hypot(r.x - p.x, r.y - p.y) > RECOLTE.portee || p.state !== 'free') return;
+    const def = R.ressources[r.item];
+    // Les arbres, minerais et puits sont sur une case bloquante, parfois à 130-190 px de la case libre la plus proche : arrivé sur
+    // cette case, on récolte quand même (avant, le perso s'y arrêtait sans rien faire).
+    const arrive = this.approche && Math.hypot(this.approche.x - p.x, this.approche.y - p.y) < 24;
+    if ((Math.hypot(r.x - p.x, r.y - p.y) > porteeRecolte(def) && !arrive) || p.state !== 'free') return;
     this.versRecolte = null;
-    const def = R.ressources[r.item], lv = Math.max(1, p.metierLevel(def.metier));
-    if (lv < def.niveau) {
+    const lv = Math.max(1, p.metierLevel(def.metier));
+    if (def.metier && lv < def.niveau) {
       p.stopMove();
       this.emit({ k: 'status', x: p.x, y: p.y - 60, text: `${R.metiers[def.metier]?.nom ?? 'Métier'} niveau ${def.niveau} requis`, color: '#ff9a5a' });
       this.emit({ k: 'recolteNiveau', metier: def.metier, niveau: def.niveau });

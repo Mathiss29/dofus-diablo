@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { GAME_DATA, ITEMS, RECOLTES } from '../src/sim/data';
 import { WorldGrid, type WorldData } from '../src/sim/gridmap';
 import { NO_INPUT } from '../src/sim/input';
-import { RECOLTE } from '../src/sim/recolte';
+import { RECOLTE, porteeRecolte } from '../src/sim/recolte';
 import { World } from '../src/sim/world';
 
 const astrub = JSON.parse(readFileSync(new URL('../public/assets/mondes/astrub/monde.json', import.meta.url), 'utf8')) as WorldData;
@@ -21,7 +21,7 @@ describe('Métiers de récolte (0.2b)', () => {
     expect(w.recoltes.length).toBeGreaterThan(1500);   // sans les copies des cartes voisines (recoltes_cases.py)
     for (const [id, r] of Object.entries(RECOLTES.ressources)) {
       expect(ITEMS.resources[id], id).toBeDefined();
-      expect(ITEMS.metiers?.[r.metier], r.metier).toBeDefined();
+      if (r.metier) expect(ITEMS.metiers?.[r.metier], r.metier).toBeDefined();   // vide : puits (« Puiser », sans métier)
     }
     for (const n of ['Blé', 'Bois de Frêne', 'Ortie', 'Fer', 'Goujon']) expect(Object.values(RECOLTES.ressources).some(r => r.nom === n), n).toBe(true);
   });
@@ -50,6 +50,37 @@ describe('Métiers de récolte (0.2b)', () => {
     recolter(w, orme.id, 60);
     expect(p.resources['470']).toBeUndefined();
     expect(w.drainEvents().some(e => e.k === 'recolteNiveau')).toBe(true);
+  });
+  it('chaque dessin porte sa vraie ressource (relevés officiels) : le puits donne de l\'Eau Potable, pas du Frêne', () => {
+    const R = RECOLTES as unknown as Record<string, [string, number, string, number][]>, nom = (h: string) => RECOLTES.ressources[h].nom;
+    const attendu: Record<number, string> = { 224: 'Eau Potable', 4938: 'Eau Potable', 650: 'Bois de Frêne', 656: 'Bois de Merisier', 3222: 'Bois de Noisetier',
+      661: 'Houblon', 701: 'Avoine', 677: 'Trèfle à 5 feuilles', 678: 'Menthe Sauvage', 680: 'Edelweiss', 4922: 'Kobalte' };
+    for (const monde of ['astrub', 'incarnam']) for (const [, , h, g] of R[monde]) {
+      if (attendu[g]) expect(nom(h), `${monde} gfx ${g}`).toBe(attendu[g]);
+      expect([5249, 1953], `${g} n'est pas une ressource`).not.toContain(g);
+    }
+    expect(RECOLTES.ressources['311'].metier).toBe('');
+  });
+  it('chaque ressource se récolte depuis sa case d\'approche (bancs de poissons au milieu de l\'eau, arbres sur case bloquante)', () => {
+    for (const z of ['astrub', 'incarnam']) {
+      const d = JSON.parse(readFileSync(new URL(`../public/assets/mondes/${z}/monde.json`, import.meta.url), 'utf8')) as WorldData;
+      const w = new World({ data: GAME_DATA, zone: z, map: new WorldGrid(d), seed: 3, items: ITEMS, recoltes: RECOLTES });
+      for (const r of w.recoltes.filter(x => RECOLTES.ressources[x.item].metier === 'pecheur')) {
+        const a = w.approcheRecolte(r.id)!;
+        expect(Math.hypot(a.x - r.x, a.y - r.y), `${z} ${r.tag}`).toBeLessThan(porteeRecolte(RECOLTES.ressources[r.item]));
+      }
+    }
+    // Un banc de poissons, un arbre loin de sa case libre, un puits : le perso y va et récolte
+    const w = monde(), p = w.player;
+    const loin = (pred: (h: string) => boolean) => w.recoltes.filter(r => pred(r.item))
+      .map(r => ({ r, d: Math.hypot(w.approcheRecolte(r.id)!.x - r.x, w.approcheRecolte(r.id)!.y - r.y) })).sort((a, b) => b.d - a.d)[0];
+    p.metiers.pecheur = { level: 200, xp: 0 }; p.metiers.bucheron = { level: 200, xp: 0 };
+    for (const { r, d } of [loin(h => h === '1782'), loin(h => RECOLTES.ressources[h].metier === 'bucheron'), loin(h => h === '311')]) {
+      const a = w.approcheRecolte(r.id)!; p.x = a.x; p.y = a.y;
+      recolter(w, r.id);
+      expect(p.resources[r.item], `${RECOLTES.ressources[r.item].nom} à ${Math.round(d)} px`).toBeGreaterThanOrEqual(1);
+    }
+    expect(w.player.metiers['']).toBeUndefined();
   });
   it('chaque emplacement (Astrub, Incarnam) a son dessin officiel : planche, frames prête / coupe / récoltée', () => {
     const R = RECOLTES as unknown as Record<string, [string, number, string, number][]>;
