@@ -303,7 +303,11 @@
     "hitstop": 0.07,
     "shake": 0.008,
     "fx": "burst",
-    "rage": "buff"
+    "rage": "buff",
+    "grosCoup": {
+     "recharge": 8,
+     "mult": 2
+    }
    },
    "ferveur": {
     "name": "Ferveur",
@@ -537,7 +541,11 @@
     "fx": "arc",
     "pa": 3,
     "desc": "Occasionne des dommages Feu aux ennemis et repousse les cibles en zone.",
-    "rage": "radius"
+    "rage": "radius",
+    "grosCoup": {
+     "recharge": 8,
+     "mult": 2
+    }
    },
    "explosive": {
     "name": "Flèche Explosive",

@@ -571,6 +571,7 @@ export class World {
   private rechargerTout() {
     const p = this.player;
     for (const k of Object.keys(p.cd)) p.cd[k] = 0;
+    p.casts = {};   // charges pleines
     p.pa = p.paMax; p.pm = p.pmMax; p.potionCd = 0;
   }
   /** Ligne de tir sans obstacle (cases marchables) entre deux points. */
@@ -917,7 +918,7 @@ export class World {
       if (d.metier && (!job || p.metierLevel(job) < d.metier.min || (d.chasse && !p.huntingWeapon))) continue;
       if (this.rng.next() * 100 >= d.chance * more) continue;
       if (job) p.gainMetierXp(job, METIER_XP.viande, this);
-      if (I.equipment[d.item]) out.push({ item: rollItem(d.item, I.equipment[d.item], rollRarity(this.rng, boss, pros), this.rng, this.nextId++) });
+      if (I.equipment[d.item]) out.push({ item: rollItem(d.item, I.equipment[d.item], rollRarity(this.rng, boss, pros), this.rng, this.nextId++, this.player.sortsRecharge) });
       else {   // ressource : directement dans le sac
         p.resources[d.item] = (p.resources[d.item] ?? 0) + 1;
         this.emit({ k: 'lootResource', id: d.item, n: 1 });
@@ -932,7 +933,7 @@ export class World {
       const pool = this.equipByLevel.filter(e => e.level >= lvl - 4 && e.level <= lvl + 6);
       if (!pool.length) continue;
       const id = this.rng.pick(pool).id;
-      out.push({ item: rollItem(id, I.equipment[id], rollRarity(this.rng, boss, pros), this.rng, this.nextId++) });
+      out.push({ item: rollItem(id, I.equipment[id], rollRarity(this.rng, boss, pros), this.rng, this.nextId++, this.player.sortsRecharge) });
     }
     // kamas : un petit tas de pièces, plus gros pour les élites et les boss
     if (boss || elite || this.rng.next() < 0.6) out.push({ kamas: Math.max(1, Math.round(lvl * this.rng.range(1, 3) * (boss ? 12 : elite ? 4 : 1) * more)) });

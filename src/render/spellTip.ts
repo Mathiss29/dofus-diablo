@@ -32,7 +32,9 @@ export function spellDetail(p: Player, id: SkillId, gOver?: SortGrade) {
   const o = p.official(id), g = gOver ?? p.grade(id);
   const pa = d.pm ? 0 : g?.pa ?? p.paCost(id);
   const cost = d.pm ? `${d.pm} PM` : pa ? `${pa} PA` : 'Sans coût';
-  const cdS = g && !d.pm ? Math.max(d.cooldown, g.relance * 3) : d.cooldown;
+  // Maquette Recharges 9D : recharge réelle (gros coup, relance officielle, réductions) ou charges
+  const cdS = gOver && !d.grosCoup ? Math.max(d.cooldown, gOver.relance * 3, gOver.parTour === 1 ? 3 : 0) : p.recharge(id);
+  const nCh = d.pm || d.grosCoup ? 0 : (gOver ?? g)?.parTour ?? 0;
   const extra = [
     id === p.autoAttack ? `${n1(1 / p.attackInterval())} attaque(s) par seconde (Vitesse d'attaque : +${p.stat('vitesse')} %)` : '',
     d.stun ? `Étourdit ${n1(d.stun)} s` : '',
@@ -44,7 +46,8 @@ export function spellDetail(p: Player, id: SkillId, gOver?: SortGrade) {
     d.pushDmg ? `Repousse la cible de ${Math.max(1, Math.round(d.knock / 48 / 7.13))} case(s)` : '',
     d.move ? `${d.move.kind === 'leap' ? 'Saut' : 'Ruée'} jusqu'à ${Math.round(d.move.maxRange / 48)} cases` : '',
     d.charge ? 'Se charge avant de frapper' : '',
-    g?.parTour && !d.pm ? `${g.parTour} lancer${g.parTour > 1 ? 's' : ''} toutes les 3 s au plus` : '',
+    nCh >= 2 ? `${nCh} charges, chacune revient ${n1(p.retourCharge)} s après usage` : '',
+    d.grosCoup ? `Gros coup : dommages ×${d.grosCoup.mult}` : '',
     d.buff ? `${d.buff.stat === 'portee' ? 'Portée' : d.buff.stat === 'pm' ? 'PM' : 'Dommages'} +${d.buff.n} pendant ${d.buff.t} s` : '',
     d.poLoss ? `-${d.poLoss[0]} Portée à la cible pendant 3 s${d.poLoss.length > 1 && d.poLoss.at(-1) !== d.poLoss[0] ? ` (-${d.poLoss.at(-1)} au dernier grade)` : ''}` : '',
     d.shield ? `Bouclier : ${Math.round(p.maxHp * d.shield.part)} PV pendant ${d.shield.t} s` : '',
@@ -54,9 +57,9 @@ export function spellDetail(p: Player, id: SkillId, gOver?: SortGrade) {
     d.pushDmg ? 'Dommages de poussée si elle heurte un obstacle' : '',
   ].filter(Boolean);
   const gm = o && g && o.grades[0].dmg && g.dmg ? (g.dmg[0] + g.dmg[1]) / (o.grades[0].dmg[0] + o.grades[0].dmg[1]) : 1;
-  const dmg = d.dmg ? `Dommages : <b style="color:${col}">${Math.round(p.damage(d.dmg * gm, d.element))}</b> ${ELEMENT_NAMES[d.element] ?? ''}` : '';
+  const dmg = d.dmg ? `Dommages : <b style="color:${col}">${Math.round(p.damage(d.dmg * gm * (d.grosCoup?.mult ?? 1), d.element))}</b> ${ELEMENT_NAMES[d.element] ?? ''}` : '';
   const rage = d.move?.kind === 'leap' ? '' : `${p.cls.rage.name} pleine : +${Math.round(p.cls.rage.bonus * 100)} % de dommages${d.rage ? `, ${RAGE_TEXT[d.rage](d)}` : ''}`;
-  return { d, col, cost, cdS, dmg, zone: zone(d), extra, rage, grade: o && g ? `Grade ${o.grades.indexOf(g) + 1}/${o.grades.length}` : '' };
+  return { d, col, cost, cdS, nCh, dmg, zone: zone(d), extra, rage, grade: o && g ? `Grade ${o.grades.indexOf(g) + 1}/${o.grades.length}` : '' };
 }
 
 /** Infobulle d'un sort de la barre : description officielle, coût, recharge, dommages réels avec les caractéristiques du perso. */
@@ -72,7 +75,7 @@ export function spellTipHtml(p: Player, id: SkillId): string {
   const x = spellDetail(p, id), slot = p.bar.indexOf(id);
   const key = id === p.autoAttack ? 'Auto-attaque · clic gauche' : slot === 7 ? 'Déplacement · Espace' : slot === 6 ? 'Clic droit' : '';
   return `<h4 style="color:${x.col}">${d.name}</h4>
-    <div class="sub">${[x.cost, x.cdS >= 1 ? `recharge ${n1(x.cdS)} s` : '', x.grade, key].filter(Boolean).join(' · ')}</div>
+    <div class="sub">${[x.cost, x.cdS >= 1 ? `recharge ${n1(x.cdS)} s` : '', x.nCh >= 2 ? `${x.nCh} charges` : '', x.grade, key].filter(Boolean).join(' · ')}</div>
     ${d.desc ? `<div>${d.desc.replace(/\n+/g, '<br>')}</div>` : ''}
     <div class="cmp">${[x.dmg, x.zone, ...x.extra].filter(Boolean).join('<br>')}</div>
     ${x.rage ? `<div class="leg" style="${p.rageFull ? '' : 'opacity:.6'}">${x.rage}</div>` : ''}`;

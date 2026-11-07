@@ -40,7 +40,7 @@ type Fixed = Phaser.GameObjects.Components.ScrollFactor & Phaser.GameObjects.Com
 type Txt = Phaser.GameObjects.Text;
 type Img = Phaser.GameObjects.Image;
 
-interface SlotView { bg: Img; icon: Img | null; cd: Txt; key: Txt; cost: Txt; zone?: Phaser.GameObjects.Zone }
+interface SlotView { bg: Img; icon: Img | null; cd: Txt; key: Txt; cost: Txt; ch: Txt; zone?: Phaser.GameObjects.Zone }
 interface FeedLine { text: Txt; t: number }
 
 /** Interface fixe à l'écran, façon MMO Dofus 3 (choix 13D de la maquette), adaptée au temps réel :
@@ -72,6 +72,8 @@ export class Hud {
   blocks(x: number, y: number) { return this.rects.some(([rx, ry, rw, rh]) => x >= rx && y >= ry && x <= rx + rw && y <= ry + rh); }
 
   private g: Phaser.GameObjects.Graphics;
+  /** Par-dessus les icônes de la barre (voile de recharge, charges, éclat) : g est dessous. */
+  private gSlots: Phaser.GameObjects.Graphics;
   private fixed: <T extends Fixed>(o: T, d?: number) => T;
   // fiche du perso
   private head: Img;
@@ -120,6 +122,8 @@ export class Hud {
   private haloKey: Txt;
   private shortOf = { pa: 0, pm: 0 };
   private rageFlash = 0;
+  /** Maquette Recharges 9C : éclat doré d'un sort dont la recharge vient de revenir. */
+  private eclats: Record<string, number> = {};
   private areaKills = new Map<string, number>();
 
   constructor(private scene: Phaser.Scene, private world: World, private perso?: { nom: string; sexe: 'm' | 'f' }) {
@@ -152,6 +156,7 @@ export class Hud {
     }
     this.vignette = fixed(scene.add.image(0, 0, 'vignetteRouge').setOrigin(0).setAlpha(0), -1);
     this.g = fixed(scene.add.graphics(), 1);
+    this.gSlots = fixed(scene.add.graphics(), 4);
 
     const clsId = Object.keys(GAME_DATA.classes).find(k => GAME_DATA.classes[k] === cls) ?? 'iop';
     this.head = img(HEADS[clsId + (perso?.sexe === 'f' ? '_f' : '')] ?? HEADS[clsId] ?? 'tete_iop');
@@ -184,6 +189,7 @@ export class Hud {
       cd: txt(17, { ...bold, strokeThickness: 4 }, 6).setOrigin(0.5),
       key: txt(12, { ...bold, strokeThickness: 3 }, 6).setOrigin(0, 0).setText(key),
       cost: txt(11, { ...bold, color: css(C.pa) }, 6).setOrigin(1, 1),
+      ch: txt(11, { ...bold, color: '#9fd0ff', strokeThickness: 3 }, 6).setOrigin(0.5),
     });
     // Barre du joueur (Player.bar) : 6 touches, le clic droit (case libre, choix 6A) et Espace ; les icônes suivent la barre
     for (let i = 0; i < 8; i++) this.slots.push(mkSlot(null, i < 6 ? KEYS[i] : i === 6 ? 'Clic D' : 'Esp.'));
@@ -291,6 +297,7 @@ export class Hud {
         break;
       }
       case 'rageFull': this.rageFlash = 1.2; break;
+      case 'rechargePrete': this.eclats[e.id] = 0.8; break;
       case 'groupCleared': this.loot('Groupe vaincu  ·  +1 potion', '#7be07b'); break;
       case 'massacre': this.toast(`Massacre ×${e.n}  ·  +${e.bonus} % XP`); break;
       case 'massacreFin': this.loot(`Massacre de ${e.n} monstres`, '#e6b85c'); break;
@@ -299,10 +306,11 @@ export class Hud {
 
   draw(juice: boolean, dt = 1 / 60) {
     const world = this.world, W = this.scene.scale.width, H = this.scene.scale.height, g = this.g, p = world.player, cls = p.cls;
-    g.clear();
+    g.clear(); this.gSlots.clear();
     this.hurtRect.setSize(W, H); this.vignette.setDisplaySize(W, H);
     this.shortOf.pa = Math.max(0, this.shortOf.pa - dt); this.shortOf.pm = Math.max(0, this.shortOf.pm - dt);
     this.rageFlash = Math.max(0, this.rageFlash - dt);
+    for (const k of Object.keys(this.eclats)) if ((this.eclats[k] -= dt) <= 0) delete this.eclats[k];
     const blink = (v: number) => v > 0 && Math.floor(v * 12) % 2 === 0;
     this.rects = [];
     const panel = (x: number, y: number, w: number, h: number, a = C.panelA) => {
@@ -474,11 +482,25 @@ export class Hud {
         s.icon?.setVisible(!!def);
         if (def && s.icon && s.icon.texture.key !== `sort_${def.icon}`) s.icon.setTexture(`sort_${def.icon}`);
       }
-      if (!id || !def || !s.icon) { s.cd.setText(''); s.cost.setText(''); return; }
-      const cd = p.cd[id] ?? 0, cdMax = Math.max(def.cooldown, (p.grade(id)?.relance ?? 0) * 3), frac = cdMax ? Math.min(1, cd / cdMax) : 0;
+      if (!id || !def || !s.icon) { s.cd.setText(''); s.cost.setText(''); s.ch.setText(''); return; }
+      // Maquette Recharges : voile en horloge (9A) pendant une recharge, ou quand toutes les charges sont parties (3A)
+      const ch = p.charges(id), vide = ch.max > 0 && ch.n === 0;
+      const cdT = p.cd[id] ?? 0, cdMax = p.cdMax[id] || p.recharge(id);
+      const cd = cdT > 0 ? cdT : vide ? ch.prochaine : 0, frac = cdT > 0 ? (cdMax ? Math.min(1, cdT / cdMax) : 0) : vide ? ch.prochaine / p.retourCharge : 0;
       const ok = p.hasResource(id), inner = slot - 8;
       s.icon.setPosition(x, sy).setDisplaySize(inner, inner).setTint(cd > 0 ? 0x8a8a8a : ok ? 0xffffff : 0x6f86b8);
-      if (frac > 0) { g.fillStyle(0x000000, 0.55); g.fillRect(x - inner / 2, sy - inner / 2, inner, inner * frac); }
+      const gs = this.gSlots;
+      if (frac > 0) horloge(gs, x, sy, inner / 2, frac);
+      // 9B : pastille de charges (en bas à gauche) ; un filet bleu montre le retour de la prochaine charge.
+      // Les sorts de base (3 lancers par tour ou plus) ne l'affichent que si l'on entame vraiment leurs charges.
+      if (ch.max && (ch.max === 2 || ch.n < ch.max)) {
+        const px = x - slot / 2 + 10, py = sy + slot / 2 - 10;
+        gs.fillStyle(0x14202e, 0.95); gs.fillCircle(px, py, 8); gs.lineStyle(1.5, 0x5aa8ff, 1); gs.strokeCircle(px, py, 8);
+        s.ch.setPosition(px, py).setText(`${ch.n}`);
+        if (ch.n > 0 && ch.n < ch.max) { gs.fillStyle(0x5aa8ff, 0.8); gs.fillRect(x - inner / 2, sy + inner / 2 - 3, inner * (1 - ch.prochaine / p.retourCharge), 3); }
+      } else s.ch.setText('');
+      const ec = this.eclats[id];
+      if (ec && juice) { gs.lineStyle(3, 0xe6b85c, Math.min(1, ec / 0.5)); gs.strokeRoundedRect(x - slot / 2 - 2, sy - slot / 2 - 2, slot + 4, slot + 4, 8); }
       if (p.skill?.id === id) { g.lineStyle(2, 0xf2d36b, 1); g.strokeRoundedRect(x - slot / 2 + 1, sy - slot / 2 + 1, slot - 2, slot - 2, 6); }
       if (p.rageFull && !def.move) { g.lineStyle(2, C.rage, 0.5 + 0.5 * Math.sin(world.time * 8)); g.strokeRoundedRect(x - slot / 2 - 1, sy - slot / 2 - 1, slot + 2, slot + 2, 7); }
       const st = p.stacks[id];
@@ -505,7 +527,7 @@ export class Hud {
     po.icon!.setPosition(pox, sy).setDisplaySize(30, 30).setAlpha(p.potions > 0 ? 1 : 0.35);
     po.key.setPosition(pox - slot / 2 + 4, sy - slot / 2 + 1);
     po.cost.setPosition(pox + slot / 2 - 3, sy + slot / 2 - 1).setText(String(p.potions)).setColor('#ffffff');
-    if (pcd > 0) { g.fillStyle(0x000000, 0.55); g.fillRect(pox - 23, sy - 23, 46, 46 * pcd); }
+    if (pcd > 0) horloge(this.gSlots, pox, sy, 23, Math.min(1, pcd));
     // Rage : jauge verticale qui clignote une fois pleine
     const rx = pox + slot / 2 + 30, rh = slot - 14, ry = sy - slot / 2 + 2;
     g.fillStyle(C.track, 1); g.fillRoundedRect(rx - 9, ry, 18, rh, 5);
@@ -598,4 +620,15 @@ export class Hud {
     this.zonePlate.setPosition(W / 2, 62).setScale(1.25, 1.15);
     this.zonePlateTxt.setPosition(W / 2, 62);
   }
+}
+
+/** Voile en horloge (maquette Recharges 9A) : la part restante, dans le sens des aiguilles, coupée au carré de l'icône. */
+function horloge(g: Phaser.GameObjects.Graphics, cx: number, cy: number, h: number, frac: number) {
+  const pts: Phaser.Types.Math.Vector2Like[] = [{ x: cx, y: cy }];
+  const a0 = -Math.PI / 2 + (1 - frac) * Math.PI * 2, a1 = Math.PI * 1.5, n = Math.max(2, Math.ceil(frac * 48));
+  for (let i = 0; i <= n; i++) {
+    const a = a0 + (a1 - a0) * (i / n), c = Math.cos(a), si = Math.sin(a), k = h / Math.max(Math.abs(c), Math.abs(si));
+    pts.push({ x: cx + c * k, y: cy + si * k });
+  }
+  g.fillStyle(0x000000, 0.6); g.fillPoints(pts, true);
 }
