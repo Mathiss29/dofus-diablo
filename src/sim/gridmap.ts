@@ -9,7 +9,8 @@ export interface DecorPlace { f: string; x: number; y: number; c: number; o: num
   /** souplesse au vent (0 à 1) */ w?: number;
   /** eau qui glisse : direction x, y, amplitude (px), fréquence */ t?: [number, number, number, number];
   /** couleur qui va et vient : 0xRRGGBB, alpha, fréquence */ ca?: [number, number, number];
-  /** décor partagé : numéro de la page d'atlas commune (decor_p<N>) */ p?: number }
+  /** décor partagé : numéro de la page d'atlas commune (decor_p<N>) */ p?: number;
+  /** bâtiment (ou arbre) dont l'image fait partie, numéro unique dans le monde (tools/extraction/batiments.py) : il s'efface d'un bloc */ bt?: number }
 
 /** Données d'une carte Dofus 3 exportée par tools/extraction/map_export.py. */
 export interface MapData {
@@ -33,6 +34,8 @@ export interface WorldMapEntry {
   ciel?: number;
   /** Décor partagé entre cartes (world_export.py PARTAGE=1) : pages d'atlas communes utilisées par cette carte. */
   pages?: number[];
+  /** Décor rangé en bâtiments par tools/extraction/batiments.py. */
+  batiments?: number;
 }
 /** Plusieurs cartes Dofus voisines collées bord à bord en une seule grande grille. */
 export interface WorldData extends MapData { origin: [number, number]; maps: WorldMapEntry[]; /** Ciel commun posé derrière tout le monde. */ sky?: string;

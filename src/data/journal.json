@@ -159,10 +159,12 @@
           "Pêche : les bancs de poissons au milieu de l'eau se pêchent enfin depuis la rive (portée officielle de 10 cases), et chaque coin de pêche donne les poissons de sa carte.",
           "Ressources : chaque arbre, céréale, plante et minerai porte enfin sa vraie ressource (le Merisier en fleurs, le Houblon, la Menthe, l'Edelweiss…) ; les puits ne sont plus du Frêne, on y puise de l'Eau Potable.",
           "Boutique et grenier de Kerubim : le plancher, les murs et tout le bric-à-brac de l'antiquaire sont revenus (ils flottaient dans le noir).",
-          "Passer derrière un bâtiment l'efface en entier : plus de façade pâle avec sa porte et son toit restés pleins, qui faisait croire à deux bâtiments collés."
+          "Passer derrière un bâtiment l'efface en entier : plus de façade pâle avec sa porte et son toit restés pleins, qui faisait croire à deux bâtiments collés.",
+          "Astrub : fini les bâtiments en double. La Banque et 236 autres bâtiments étaient posés deux fois par deux cartes voisines, décalés de quelques pas ; il n'en reste qu'un. Quand tu passes derrière, tout le bâtiment s'efface d'un bloc, porte et enseigne comprises, et les portes ne passent plus derrière leur mur."
         ],
         "En coulisses": [
-          "Tous les taux de butin sont dans un seul fichier, et la partie de test (F1) a un onglet Butin : chaque ligne de butin du jeu, et un simulateur qui tue 1 000 monstres d'un coup."
+          "Tous les taux de butin sont dans un seul fichier, et la partie de test (F1) a un onglet Butin : chaque ligne de butin du jeu, et un simulateur qui tue 1 000 monstres d'un coup.",
+          "Les cartes sont rangées par bâtiment, et un robot photographie chaque carte d'Astrub et d'Incarnam après chaque export pour repérer les doublons et les images manquantes."
         ]
       }
     }

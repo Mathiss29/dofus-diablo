@@ -335,7 +335,7 @@ export class WorldView {
           if (p.w) { im.setOrigin(0.5, 1); im.y += (im.height * im.scaleY) / 2; }
           this.vivants.push({ im, p, x0: im.x, y0: im.y, ph: (p.x * 0.013 + p.y * 0.007) % (Math.PI * 2) });
         }
-        if (p.c >= 0 && !p.b) this.transparence?.ajouter(im);
+        if (p.c >= 0 && !p.b) this.transparence?.ajouter(im, p.bt);
         s.objs.push(im);
       }
     }
