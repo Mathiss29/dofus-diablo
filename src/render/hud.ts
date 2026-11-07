@@ -372,7 +372,7 @@ export class Hud {
 
     // --- Coordonnées et sous-zone (haut centre) ---
     const map = world.worldGrid?.mapAt(p.x, p.y);
-    this.coords.setPosition(W / 2, 10).setText(map ? `${world.zone.name}${world.area ? ` (${world.area.name})` : ''}` : world.zone.name);   // sans coordonnées (choix 4A : rien ne rappelle les cartes ; elles iront sur la carte du monde, touche M)
+    this.coords.setPosition(W / 2, 10).setText(map ? `${world.zone.name}${world.lieu ?? world.area ? ` (${world.lieu ?? world.area!.name})` : ''}` : world.zone.name);   // dedans : le nom de l'intérieur (maquette Entrées 5A)   // sans coordonnées (choix 4A : rien ne rappelle les cartes ; elles iront sur la carte du monde, touche M)
 
     // --- Jauge de boss ---
     const wgr = world.worldGrid, ici = wgr?.mapAt(world.player.x, world.player.y)?.tag;   // seulement le boss de la carte du joueur
@@ -448,7 +448,7 @@ export class Hud {
         g.beginPath(); g.moveTo(cx, cy + sy * L); g.lineTo(cx, cy); g.lineTo(cx + sx * L, cy); g.strokePath();
       }
     }
-    this.miniLabel.setPosition(mx + mw / 2, my + mh + 6).setText(world.area?.name ?? world.zone.name);
+    this.miniLabel.setPosition(mx + mw / 2, my + mh + 6).setText(world.lieu ?? world.area?.name ?? world.zone.name);
     // Colonne de menus : boutons carrés sombres en relief, comme le bandeau de Dofus 3
     // Boutons carrés sombres serrés les uns contre les autres ; ils rapetissent si l'écran est bas
     const step = Math.min(38, Math.floor((H - 150 - my) / this.menus.length)), bs = step - 2;
