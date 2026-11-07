@@ -78,6 +78,11 @@ export type SimEvent =
   | { k: 'eat'; id: string; heal: number }
   /** Emp (0.2) : objets recyclés contre des Pépites, achat dans sa boutique, Potion de Rappel bue, réponse « service » d'un PNJ. */
   | { k: 'recycle'; n: number; pepites: number }
+  /** Forgemagie : rune posée (issue officielle, lignes perdues), objets brisés en runes, runes fusionnées, mode « viser » terminé. */
+  | { k: 'forge'; uid: number; rune: string; issue: 'critique' | 'neutre' | 'echec' | 'puits'; stat: string; gain: number; pertes: [string, number][]; kamas: number }
+  | { k: 'brisage'; n: number; runes: Record<string, number> }
+  | { k: 'fusion'; de: string; vers: string; n: number }
+  | { k: 'viser'; uid: number; essais: number; atteint: boolean; kamas: number }
   | { k: 'achat'; id: string; prix: number }
   /** Familier : niveau gagné, et repas (XP donnée). */
   | { k: 'familierNiveau'; nom: string; niveau: number }

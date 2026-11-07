@@ -6,7 +6,8 @@ import { NO_INPUT, type PlayerInput } from './input';
 import { AGGRO, CASE, Monster, TOUR } from './monster';
 import { jetOfficiel } from './danger';
 import { rangDe, tirerButin, type CtxButin, type Rang } from './butin';
-import { FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, recycleResource, recycleValue, rollItem, type Item, type ItemsData, type Rarity } from './items';
+import { briser, chanceRune, coutKamas, forger, fusionVers, FUSION_N, RUNES, runesDe } from './forgemagie';
+import { FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, recycleResource, recycleValue, rollItem, type Item, type ItemsData, type Rarity, type Stat } from './items';
 import { Player } from './player';
 import { initiativeBonus, removalChance } from './caracs';
 import { planWave } from './waves';
@@ -1357,6 +1358,78 @@ export class World {
     delete p.resources[id]; this.pepites(n);
     this.emit({ k: 'recycle', n: q, pepites: n });
     return true;
+  }
+  // --- Forgemagie (maquette « Forgemagie » 2A 3B 4B 6A+6D 7A+7B 8D 9B 11B), chez le forgemage --------------------------------
+  /** Objet du sac ou porté, par son uid. */
+  objetForgeable(uid: number): Item | null {
+    const p = this.player, it = p.bag.find(b => b.uid === uid) ?? Object.values(p.equipment).find(e => e?.uid === uid) ?? null;
+    return it && this.opts.items?.equipment[it.id] && !this.opts.items.equipment[it.id].familier ? it : null;
+  }
+  /** Pose une rune du sac sur un objet (payée en kamas, 9B). viser : posée par le forgemage, avec sa commission (8D). */
+  forgemager(uid: number, rune: string, viser = false): boolean {
+    const p = this.player, it = this.objetForgeable(uid), def = it && this.opts.items!.equipment[it.id];
+    if (!it || !def || !((p.resources[rune] ?? 0) > 0)) return false;
+    const kamas = coutKamas(def, rune, viser);
+    if (p.kamas < kamas || 'refus' in chanceRune(def, it, rune)) return false;
+    const r = forger(this.rng, def, it, rune);
+    if (!r) return false;
+    p.kamas -= kamas;
+    if (!--p.resources[rune]) delete p.resources[rune];
+    if (Object.values(p.equipment).includes(it)) p.recompute();
+    this.emit({ k: 'forge', uid, rune, issue: r.issue, stat: r.stat, gain: r.gain, pertes: r.pertes, kamas });
+    return true;
+  }
+  /** Mode « viser » (8D) : le forgemage pose les runes de la caractéristique, de la plus grosse qui passe à la plus petite,
+   *  jusqu'à ce que la ligne atteigne la cible, ou qu'il n'y ait plus de rune ni de kamas (au plus 200 essais). */
+  viserForge(uid: number, stat: Stat, cible: number): number {
+    const p = this.player, it = this.objetForgeable(uid), def = it && this.opts.items!.equipment[it.id];
+    if (!it || !def) return 0;
+    let essais = 0, kamas = 0;
+    const rs = runesDe(stat).reverse();
+    while (essais < 200 && (it.stats[stat] ?? 0) < cible) {
+      const reste = cible - (it.stats[stat] ?? 0);
+      const r = rs.find(id => (p.resources[id] ?? 0) > 0 && RUNES[id].val <= Math.max(reste, RUNES[rs[rs.length - 1]].val) && !('refus' in chanceRune(def, it, id)) && p.kamas >= coutKamas(def, id, true));
+      if (!r) break;
+      kamas += coutKamas(def, r, true);
+      this.forgemager(uid, r, true); essais++;
+    }
+    this.emit({ k: 'viser', uid, essais, atteint: (it.stats[stat] ?? 0) >= cible, kamas });
+    return essais;
+  }
+  /** Brise un objet du sac en runes (7A+7B, chez le forgemage : 11B). Jamais un objet sous cadenas. */
+  briserObjet(uid: number): boolean {
+    const p = this.player, i = p.bag.findIndex(b => b.uid === uid), it = i >= 0 ? p.bag[i] : null, def = it && this.opts.items?.equipment[it.id];
+    if (!it || !def || it.cadenas || def.familier) return false;
+    const g = briser(this.rng, def, it);
+    p.bag.splice(i, 1);
+    for (const [id, n] of Object.entries(g)) p.resources[id] = (p.resources[id] ?? 0) + n;
+    this.emit({ k: 'brisage', n: 1, runes: g });
+    return true;
+  }
+  /** Brisage en lot : tous les objets du sac jusqu'à cette rareté comprise, sauf ceux sous cadenas. */
+  briserLot(jusqua: Rarity): number {
+    const p = this.player, max = RARITIES.indexOf(jusqua), I = this.opts.items, tout: Record<string, number> = {};
+    let n = 0;
+    p.bag = p.bag.filter(it => {
+      const def = I?.equipment[it.id];
+      if (!def || def.familier || it.cadenas || RARITIES.indexOf(it.rarity) > max) return true;
+      for (const [id, k] of Object.entries(briser(this.rng, def, it))) tout[id] = (tout[id] ?? 0) + k;
+      n++; return false;
+    });
+    for (const [id, k] of Object.entries(tout)) p.resources[id] = (p.resources[id] ?? 0) + k;
+    if (n) this.emit({ k: 'brisage', n, runes: tout });
+    return n;
+  }
+  /** Fusion (6D) : 3 runes donnent 1 rune du palier suivant, autant de fois que possible (ou une seule fois). */
+  fusionner(rune: string, tout = false): number {
+    const p = this.player, vers = fusionVers(rune);
+    if (!vers) return 0;
+    const n = Math.min(tout ? Infinity : 1, Math.floor((p.resources[rune] ?? 0) / FUSION_N));
+    if (n <= 0) return 0;
+    p.resources[rune] -= n * FUSION_N; if (!p.resources[rune]) delete p.resources[rune];
+    p.resources[vers] = (p.resources[vers] ?? 0) + n;
+    this.emit({ k: 'fusion', de: rune, vers, n });
+    return n;
   }
   /** Pose ou retire le cadenas d'un objet du sac (8C). */
   cadenas(uid: number): boolean {

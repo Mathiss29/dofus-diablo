@@ -83,7 +83,9 @@ export interface SetDef { name: string; items: number[]; bonus: Record<string, S
 /** soin : la ressource se mange et rend ce nombre de PV (effet officiel 110, ex. Bouillon de Chair +11 PV).
  *  cle : clé officielle d'un donjon (son nom), demandée et prise à l'entrée (maquette 0.2, 5B).
  *  rappel : Potion de Rappel, renvoie au dernier Zaap. pepite : la monnaie d'Emp, le recycleur (objet officiel 14635). */
-export interface ResourceDef { name: string; icon: number; level: number; soin?: number; cle?: string; rappel?: boolean; pepite?: boolean }
+export interface ResourceDef { name: string; icon: number; level: number; soin?: number; cle?: string; rappel?: boolean; pepite?: boolean;
+  /** Rune de forgemagie officielle (src/data/forgemagie.json). */
+  rune?: boolean }
 /** Butin d'un monstre ; metier = critère officiel « Pj>41,N » (Chasseur au-dessus du niveau N), chasse = « CU>0 » (arme de chasse). */
 export interface DropDef { item: string; chance: number; metier?: { id: number; min: number }; chasse?: boolean;
   /** Maquette « Drops » 6B : ne tombe que pendant une quête de Dofus (jamais chez nous) ou un événement (critères officiels). */
@@ -143,7 +145,13 @@ export interface Item {
   cadenas?: boolean;
   /** Familier : son niveau (1 à 100) et son XP totale. */
   niv?: number; xpF?: number;
+  /** Forgemagie (src/sim/forgemagie.ts) : le puits de l'objet (poids gardé de côté) et la ligne ajoutée (exo, 4B). */
+  puits?: number; exo?: Stat;
 }
+
+/** Jet maximum d'une ligne ajoutée par la rareté (aussi le max de forgemagie de ces lignes). */
+export const extraBase = (s: Stat, level: number) =>
+  s === 'critique' || s === 'vitesse' || s === 'reductionRecharges' ? 2 + level / 20 : s === 'vitalite' ? 4 + level : 2 + level / 2;
 
 /** Tirage de la rareté : le niveau du monstre et la Prospection rendent les bons objets un peu plus fréquents. */
 /** Tire les jets d'un objet officiel selon sa rareté :
@@ -164,8 +172,8 @@ export function rollItem(id: string, def: ItemDef, rarity: Rarity, rng: Rng, uid
   for (let i = 0; i < n; i++) {
     const free = pool.filter(s => stats[s] === undefined);
     if (!free.length) break;
-    const s = rng.pick(free), base = s === 'critique' || s === 'vitesse' || s === 'reductionRecharges' ? 2 + def.level / 20 : s === 'vitalite' ? 4 + def.level : 2 + def.level / 2;
-    stats[s] = Math.max(1, Math.round(base * (rarity === 'mythique' ? 1 : rng.range(0.6, 1))));
+    const s = rng.pick(free);
+    stats[s] = Math.max(1, Math.round(extraBase(s, def.level) * (rarity === 'mythique' ? 1 : rng.range(0.6, 1))));
     extra.push(s);
   }
   const it: Item = { uid, id, rarity, stats, extra };

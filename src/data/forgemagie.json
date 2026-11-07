@@ -1,0 +1,555 @@
+{
+ "_doc": "Maquette Forgemagie (Mathis 2026-11-07) : 1A 2A 3B 4B 5A 6A+6D 7A+7B 8A+8B+8D 9B 10A+10C 11B. Lu par src/sim/forgemagie.ts. Runes et poids : tables officielles (tools/extraction/runes_export.py). Les chances ne sont pas officielles (Dofus ne publie pas sa formule).",
+ "chances": {
+  "_doc": "chance qu'une rune passe : sous le max officiel = base - pente × jet/max (plancher min) ; au-dessus du max (overmax) = overmax au max, descend à overmaxMin au plafond ; ligne nouvelle (exo) = exo, ou exoLourde si la rune pèse au moins seuilLourde",
+  "base": 0.75,
+  "pente": 0.45,
+  "min": 0.3,
+  "overmax": 0.2,
+  "overmaxMin": 0.05,
+  "exo": 0.2,
+  "exoLourde": 0.03,
+  "seuilLourde": 50
+ },
+ "critique": {
+  "_doc": "2A : part des réussites sans perte (succès critique) ; sinon succès neutre : une autre ligne perd le poids de la rune (le puits paie d'abord)",
+  "sousMax": 0.55,
+  "overmax": 0.3
+ },
+ "echec": {
+  "_doc": "2A : un échec retire entre 1 et 2 fois le poids de la rune sur les autres lignes ; ce poids va dans le puits",
+  "min": 1,
+  "max": 2
+ },
+ "overmax": {
+  "_doc": "3B : dépassement du jet max officiel selon la rareté",
+  "commun": 0,
+  "rare": 0.1,
+  "epique": 0.2,
+  "legendaire": 0.3,
+  "mythique": 0.4
+ },
+ "exo": {
+  "_doc": "4B : une seule ligne ajoutée, sur un Légendaire ou un Mythique ; poids de la ligne au plus poidsMax (officiel 101)",
+  "raretes": [
+   "legendaire",
+   "mythique"
+  ],
+  "poidsMax": 101
+ },
+ "brisage": {
+  "_doc": "7A+7B : poids rendu par ligne = 3 × jet × poids × niveau ÷ 200 + 1 (officiel), × bonus de rareté",
+  "rarete": {
+   "commun": 1,
+   "rare": 1.5,
+   "epique": 2,
+   "legendaire": 3,
+   "mythique": 4
+  }
+ },
+ "fusion": {
+  "_doc": "6D : 3 runes d'un palier donnent 1 rune du palier suivant (Fo -> Pa Fo -> Ra Fo)",
+  "n": 3
+ },
+ "kamas": {
+  "_doc": "9B : coût d'un essai = niveau de l'objet × poids de la rune × parPoids (au moins 1) ; 8D : le mode « viser » ajoute la commission",
+  "parPoids": 0.5,
+  "commission": 0.5
+ },
+ "runes": {
+  "1519": {
+   "stat": "force",
+   "val": 1,
+   "poids": 1.0
+  },
+  "1521": {
+   "stat": "sagesse",
+   "val": 1,
+   "poids": 3.0
+  },
+  "1522": {
+   "stat": "intelligence",
+   "val": 1,
+   "poids": 1.0
+  },
+  "1523": {
+   "stat": "vitalite",
+   "val": 5,
+   "poids": 1.0
+  },
+  "1524": {
+   "stat": "agilite",
+   "val": 1,
+   "poids": 1.0
+  },
+  "1525": {
+   "stat": "chance",
+   "val": 1,
+   "poids": 1.0
+  },
+  "1545": {
+   "stat": "force",
+   "val": 3,
+   "poids": 3.0
+  },
+  "1546": {
+   "stat": "sagesse",
+   "val": 3,
+   "poids": 9.0
+  },
+  "1547": {
+   "stat": "intelligence",
+   "val": 3,
+   "poids": 3.0
+  },
+  "1548": {
+   "stat": "vitalite",
+   "val": 15,
+   "poids": 3.0
+  },
+  "1549": {
+   "stat": "agilite",
+   "val": 3,
+   "poids": 3.0
+  },
+  "1550": {
+   "stat": "chance",
+   "val": 3,
+   "poids": 3.0
+  },
+  "1551": {
+   "stat": "force",
+   "val": 10,
+   "poids": 10.0
+  },
+  "1552": {
+   "stat": "sagesse",
+   "val": 10,
+   "poids": 30.0
+  },
+  "1553": {
+   "stat": "intelligence",
+   "val": 10,
+   "poids": 10.0
+  },
+  "1554": {
+   "stat": "vitalite",
+   "val": 50,
+   "poids": 10.0
+  },
+  "1555": {
+   "stat": "agilite",
+   "val": 10,
+   "poids": 10.0
+  },
+  "1556": {
+   "stat": "chance",
+   "val": 10,
+   "poids": 10.0
+  },
+  "1557": {
+   "stat": "pa",
+   "val": 1,
+   "poids": 100.0
+  },
+  "1558": {
+   "stat": "pm",
+   "val": 1,
+   "poids": 90.0
+  },
+  "7433": {
+   "stat": "critique",
+   "val": 1,
+   "poids": 10.0
+  },
+  "7434": {
+   "stat": "soins",
+   "val": 1,
+   "poids": 10.0
+  },
+  "7435": {
+   "stat": "dommages",
+   "val": 1,
+   "poids": 20.0
+  },
+  "7436": {
+   "stat": "puissance",
+   "val": 1,
+   "poids": 2.0
+  },
+  "7438": {
+   "stat": "portee",
+   "val": 1,
+   "poids": 51.0
+  },
+  "7442": {
+   "stat": "invocations",
+   "val": 1,
+   "poids": 30.0
+  },
+  "7443": {
+   "stat": "pods",
+   "val": 10,
+   "poids": 2.5
+  },
+  "7444": {
+   "stat": "pods",
+   "val": 30,
+   "poids": 7.5
+  },
+  "7445": {
+   "stat": "pods",
+   "val": 100,
+   "poids": 25.0
+  },
+  "7448": {
+   "stat": "initiative",
+   "val": 10,
+   "poids": 1.0
+  },
+  "7449": {
+   "stat": "initiative",
+   "val": 30,
+   "poids": 3.0
+  },
+  "7450": {
+   "stat": "initiative",
+   "val": 100,
+   "poids": 10.0
+  },
+  "7451": {
+   "stat": "prospection",
+   "val": 1,
+   "poids": 3.0
+  },
+  "7452": {
+   "stat": "redFeu",
+   "val": 1,
+   "poids": 2.0
+  },
+  "7453": {
+   "stat": "redAir",
+   "val": 1,
+   "poids": 2.0
+  },
+  "7454": {
+   "stat": "redEau",
+   "val": 1,
+   "poids": 2.0
+  },
+  "7455": {
+   "stat": "redTerre",
+   "val": 1,
+   "poids": 2.0
+  },
+  "7456": {
+   "stat": "redNeutre",
+   "val": 1,
+   "poids": 2.0
+  },
+  "7457": {
+   "stat": "resFeu",
+   "val": 1,
+   "poids": 6.0
+  },
+  "7458": {
+   "stat": "resAir",
+   "val": 1,
+   "poids": 6.0
+  },
+  "7459": {
+   "stat": "resTerre",
+   "val": 1,
+   "poids": 6.0
+  },
+  "7460": {
+   "stat": "resNeutre",
+   "val": 1,
+   "poids": 6.0
+  },
+  "7560": {
+   "stat": "resEau",
+   "val": 1,
+   "poids": 6.0
+  },
+  "10618": {
+   "stat": "puissance",
+   "val": 3,
+   "poids": 6.0
+  },
+  "10619": {
+   "stat": "puissance",
+   "val": 10,
+   "poids": 20.0
+  },
+  "10662": {
+   "stat": "prospection",
+   "val": 3,
+   "poids": 9.0
+  },
+  "11637": {
+   "stat": "fuite",
+   "val": 1,
+   "poids": 4.0
+  },
+  "11638": {
+   "stat": "fuite",
+   "val": 3,
+   "poids": 12.0
+  },
+  "11639": {
+   "stat": "tacle",
+   "val": 1,
+   "poids": 4.0
+  },
+  "11640": {
+   "stat": "tacle",
+   "val": 3,
+   "poids": 12.0
+  },
+  "11641": {
+   "stat": "esquivePA",
+   "val": 1,
+   "poids": 7.0
+  },
+  "11642": {
+   "stat": "esquivePA",
+   "val": 3,
+   "poids": 21.0
+  },
+  "11643": {
+   "stat": "esquivePM",
+   "val": 1,
+   "poids": 7.0
+  },
+  "11644": {
+   "stat": "esquivePM",
+   "val": 3,
+   "poids": 21.0
+  },
+  "11645": {
+   "stat": "retraitPA",
+   "val": 1,
+   "poids": 7.0
+  },
+  "11646": {
+   "stat": "retraitPA",
+   "val": 3,
+   "poids": 21.0
+  },
+  "11647": {
+   "stat": "retraitPM",
+   "val": 1,
+   "poids": 7.0
+  },
+  "11648": {
+   "stat": "retraitPM",
+   "val": 3,
+   "poids": 21.0
+  },
+  "11649": {
+   "stat": "dommagesPoussee",
+   "val": 1,
+   "poids": 5.0
+  },
+  "11650": {
+   "stat": "dommagesPoussee",
+   "val": 3,
+   "poids": 15.0
+  },
+  "11651": {
+   "stat": "resPoussee",
+   "val": 1,
+   "poids": 2.0
+  },
+  "11652": {
+   "stat": "resPoussee",
+   "val": 3,
+   "poids": 6.0
+  },
+  "11653": {
+   "stat": "dommagesCritiques",
+   "val": 1,
+   "poids": 5.0
+  },
+  "11654": {
+   "stat": "dommagesCritiques",
+   "val": 3,
+   "poids": 15.0
+  },
+  "11655": {
+   "stat": "resCritiques",
+   "val": 1,
+   "poids": 2.0
+  },
+  "11656": {
+   "stat": "resCritiques",
+   "val": 3,
+   "poids": 6.0
+  },
+  "11657": {
+   "stat": "dommagesTerre",
+   "val": 1,
+   "poids": 5.0
+  },
+  "11658": {
+   "stat": "dommagesTerre",
+   "val": 3,
+   "poids": 15.0
+  },
+  "11659": {
+   "stat": "dommagesFeu",
+   "val": 1,
+   "poids": 5.0
+  },
+  "11660": {
+   "stat": "dommagesFeu",
+   "val": 3,
+   "poids": 15.0
+  },
+  "11661": {
+   "stat": "dommagesEau",
+   "val": 1,
+   "poids": 5.0
+  },
+  "11662": {
+   "stat": "dommagesEau",
+   "val": 3,
+   "poids": 15.0
+  },
+  "11663": {
+   "stat": "dommagesAir",
+   "val": 1,
+   "poids": 5.0
+  },
+  "11664": {
+   "stat": "dommagesAir",
+   "val": 3,
+   "poids": 15.0
+  },
+  "11665": {
+   "stat": "dommagesNeutre",
+   "val": 1,
+   "poids": 5.0
+  },
+  "11666": {
+   "stat": "dommagesNeutre",
+   "val": 3,
+   "poids": 15.0
+  },
+  "19337": {
+   "stat": "soins",
+   "val": 3,
+   "poids": 30.0
+  },
+  "19338": {
+   "stat": "redAir",
+   "val": 3,
+   "poids": 6.0
+  },
+  "19339": {
+   "stat": "redEau",
+   "val": 3,
+   "poids": 6.0
+  },
+  "19340": {
+   "stat": "redFeu",
+   "val": 3,
+   "poids": 6.0
+  },
+  "19341": {
+   "stat": "redNeutre",
+   "val": 3,
+   "poids": 6.0
+  },
+  "19342": {
+   "stat": "redTerre",
+   "val": 3,
+   "poids": 6.0
+  },
+  "29683": {
+   "stat": "resPoussee",
+   "val": 10,
+   "poids": 20.0
+  },
+  "29684": {
+   "stat": "dommagesPoussee",
+   "val": 10,
+   "poids": 50.0
+  },
+  "30695": {
+   "stat": "redTerre",
+   "val": 10,
+   "poids": 20.0
+  },
+  "30696": {
+   "stat": "redNeutre",
+   "val": 10,
+   "poids": 20.0
+  },
+  "30697": {
+   "stat": "redFeu",
+   "val": 10,
+   "poids": 20.0
+  },
+  "30698": {
+   "stat": "redEau",
+   "val": 10,
+   "poids": 20.0
+  },
+  "30699": {
+   "stat": "resCritiques",
+   "val": 10,
+   "poids": 20.0
+  },
+  "30700": {
+   "stat": "redAir",
+   "val": 10,
+   "poids": 20.0
+  }
+ },
+ "poids": {
+  "agilite": 1.0,
+  "chance": 1.0,
+  "critique": 10.0,
+  "dommages": 20.0,
+  "dommagesAir": 5.0,
+  "dommagesCritiques": 5.0,
+  "dommagesEau": 5.0,
+  "dommagesFeu": 5.0,
+  "dommagesNeutre": 5.0,
+  "dommagesPoussee": 5.0,
+  "dommagesTerre": 5.0,
+  "esquivePA": 7.0,
+  "esquivePM": 7.0,
+  "force": 1.0,
+  "fuite": 4.0,
+  "initiative": 0.1,
+  "intelligence": 1.0,
+  "invocations": 30.0,
+  "pa": 100.0,
+  "pm": 90.0,
+  "pods": 0.25,
+  "portee": 51.0,
+  "prospection": 3.0,
+  "puissance": 2.0,
+  "redAir": 2.0,
+  "redEau": 2.0,
+  "redFeu": 2.0,
+  "redNeutre": 2.0,
+  "redTerre": 2.0,
+  "resAir": 6.0,
+  "resCritiques": 2.0,
+  "resEau": 6.0,
+  "resFeu": 6.0,
+  "resNeutre": 6.0,
+  "resPoussee": 2.0,
+  "resTerre": 6.0,
+  "retraitPA": 7.0,
+  "retraitPM": 7.0,
+  "sagesse": 3.0,
+  "soins": 10.0,
+  "tacle": 4.0,
+  "vitalite": 0.2
+ }
+}
