@@ -118,7 +118,7 @@ function brisageHtml(world: World): string {
     return `<div class="cell ${it.cadenas ? 'verrou' : ''}" data-buid="${it.uid}" title="poids rendu ≈ ${fr(poidsBrisage(d, it))}">${iconHtml(d.icon)}<i class="r" style="background:${RARITY_COLORS[it.rarity]}"></i>${it.cadenas ? '' : `<span class="pv">${fr(poidsBrisage(d, it))}</span>`}</div>`; }).join('');
   return `<div class="lots">${lotsHtml}</div>
     <div class="hint">Clic : briser l'objet en runes officielles · Ctrl + clic (ou clic droit) : cadenas. Le chiffre est le poids de runes rendu ; une rareté haute rend plus (×1,5 Rare, ×2 Épique, ×3 Légendaire, ×4 Mythique). Les Pépites, c'est chez Kerubim.</div>
-    <div class="grid eg">${objets || '<div class="hint">Ton sac est vide.</div>'}</div>`;
+    <div class="grid eg">${objets || '<div class="hint" style="grid-column:1/-1">Ton sac est vide.</div>'}</div>`;
 }
 
 function fusionHtml(world: World): string {
