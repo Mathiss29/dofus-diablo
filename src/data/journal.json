@@ -128,6 +128,18 @@
           "Parangon des Iop, Crâ et Osamodas écrit en données, pour après le niveau 200."
         ]
       }
+    },
+    {
+      "date": "2026-11-07",
+      "titre": "Le Cloportier monte la garde",
+      "resume": "Chaque donjon d'Astrub a maintenant son gardien : le Cloportier veille sur la Cache de Kankreblath.",
+      "capture": "assets/journal/2026-11-07.webp",
+      "legende": "Le Cloportier, devant la Cache de Kankreblath, 7 novembre 2026.",
+      "lignes": {
+        "Le monde": [
+          "Le Cloportier garde l'entrée de la Cache de Kankreblath, en [3,-17] : il te fait la courte échelle avec ta clef."
+        ]
+      }
     }
   ]
 }

@@ -10,7 +10,7 @@ const astrub = lire('astrub'), incarnam = lire('incarnam');
 const vide = { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} };
 const monde = (zone = 'astrub') => new World({ data: GAME_DATA, zone, map: new WorldGrid(zone === 'astrub' ? astrub : incarnam), seed: 3, items: ITEMS,
   quetes: QUETES, boutiques: BOUTIQUES, reprise: vide });
-const DONJONS: [string, string, string][] = [['mawy', 'Grange du Tournesol Affamé', '8143'], ['igloute', 'Château Ensablé', '8437'], ['rotabla', 'Cour du Bouftou Royal', '1568']];
+const DONJONS: [string, string, string][] = [['mawy', 'Grange du Tournesol Affamé', '8143'], ['igloute', 'Château Ensablé', '8437'], ['rotabla', 'Cour du Bouftou Royal', '1568'], ['cloportier', 'Cache de Kankreblath', '15991']];
 
 describe('gardiens des donjons (maquette Gardiens)', () => {
   it('chaque donjon d\'Astrub a son gardien officiel, à quelques pas de la porte', () => {
