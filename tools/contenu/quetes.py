@@ -103,6 +103,13 @@ PNJ = {
     'services': [{'texte': 'Voir les clés.', 'service': 'boutique'}],
     'discussion': [{'reponse': 'Tu ne viens pas avec moi ?', 'texte': "Si je viens, il ne restera rien à taper pour toi. Je suis gentil, tu vois."},
       {'reponse': 'Pourquoi tu vis ici ?', 'texte': "Au Bastion, chacun a déjà prouvé ce qu'il vaut : personne ne me provoque en duel. J'en avais besoin."}]},
+  # Maquette « Forgemagie » (1A, 11B) : forgemagie, brisage en runes et fusion, devant la forge de Brâkmar.
+  # Look officiel du « Vendeur de runes de Forgemagie » (PNJ 7379, {6201}) ; dialogues inédits.
+  'forgemage': {'nom': 'Malek le Forgemage', 'dofusId': 7379, 'zone': 'bastion', 'carte': 'bastion', 'case': BASTION['forgemage'], 'titre': 'Forgemage',
+    'phrase': "Chaque objet cache des runes. Je les sors, tu les poses, et le puits garde ce qui se perd. Rien ne se perd vraiment, chez moi.",
+    'services': [{'texte': 'Forgemager un objet.', 'service': 'forgemagie'}],
+    'discussion': [{'reponse': 'Et si ça rate ?', 'texte': "Alors une autre ligne paie, et son poids tombe dans le puits. Le puits n'oublie rien : la prochaine rune qu'il couvre passera."},
+      {'reponse': 'Pourquoi te payer en plus des runes ?', 'texte': "Les runes, c'est la matière. Les kamas, c'est le charbon de la forge. Et si tu me laisses viser à ta place, c'est mes bras que tu paies."}]},
 }
 SZ = {'route': 450, 'champs': 444, 'paturages': 445, 'lac': 442, 'foret': 443, 'cimetiere': 449, 'mine': 778, 'taverne': 448, 'crypte': 447, 'temple': 446}
 

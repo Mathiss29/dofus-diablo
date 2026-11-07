@@ -255,4 +255,6 @@ export const PNJ_LOOKS: Record<string, PnjLook> = {
   goultard: { scale: 0.82, anim: 'AnimStatique_1', boucle: 48 },
   tissebelle: { scale: 0.82, anim: 'AnimStatique_1' },
   bouillotte: { scale: 0.82, anim: 'AnimStatique_1' },
+  // Forgemage du Bastion (maquette « Forgemagie ») : look officiel du « Vendeur de runes de Forgemagie » (PNJ 7379, {6201}), sans anim fun
+  forgemage: { scale: 0.82, anim: 'AnimStatique_1' },
 };

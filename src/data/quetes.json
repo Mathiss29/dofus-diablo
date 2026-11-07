@@ -332,6 +332,31 @@
      "texte": "Au Bastion, chacun a déjà prouvé ce qu'il vaut : personne ne me provoque en duel. J'en avais besoin."
     }
    ]
+  },
+  "forgemage": {
+   "nom": "Malek le Forgemage",
+   "dofusId": 7379,
+   "zone": "bastion",
+   "carte": "bastion",
+   "case": 5579,
+   "titre": "Forgemage",
+   "phrase": "Chaque objet cache des runes. Je les sors, tu les poses, et le puits garde ce qui se perd. Rien ne se perd vraiment, chez moi.",
+   "services": [
+    {
+     "texte": "Forgemager un objet.",
+     "service": "forgemagie"
+    }
+   ],
+   "discussion": [
+    {
+     "reponse": "Et si ça rate ?",
+     "texte": "Alors une autre ligne paie, et son poids tombe dans le puits. Le puits n'oublie rien : la prochaine rune qu'il couvre passera."
+    },
+    {
+     "reponse": "Pourquoi te payer en plus des runes ?",
+     "texte": "Les runes, c'est la matière. Les kamas, c'est le charbon de la forge. Et si tu me laisses viser à ta place, c'est mes bras que tu paies."
+    }
+   ]
   }
  },
  "quetes": {
