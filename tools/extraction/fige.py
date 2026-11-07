@@ -12,6 +12,10 @@ def rect(m, d):
     return (d['x'] + (F['spriteSourceSize']['x'] - F['sourceSize']['w'] / 2) * z, d['y'] + (F['spriteSourceSize']['y'] - F['sourceSize']['h'] / 2) * z,
             F['frame']['w'] * z, F['frame']['h'] * z)
 def meme(a, b, tol): return abs(a[0] - b[0]) <= tol and abs(a[1] - b[1]) <= tol and abs(a[2] - b[2]) <= 3 and abs(a[3] - b[3]) <= 3
+def couvre(a, b):
+    # même grande image, un peu décalée ou d'une variante voisine (Taverne recopiée à 41 px) : elles se recouvrent à plus de la moitié
+    ix = max(0, min(a[0] + a[2], b[0] + b[2]) - max(a[0], b[0])); iy = max(0, min(a[1] + a[3], b[1] + b[3]) - max(a[1], b[1]))
+    return min(a[2] * a[3], b[2] * b[3]) > 8000 and ix * iy > 0.5 * min(a[2] * a[3], b[2] * b[3])
 orig = defaultdict(list)
 for m in M['maps']:
     for d in m['decor']:
@@ -22,7 +26,7 @@ for m in M['maps']:
     for d in m['decor']:
         if d.get('h'):
             r = rect(m, d)
-            if any(meme(o, r, 64) for o in orig[m['tag']]): copies.add(d.get('bt', id(d)))
+            if any(meme(o, r, 64) or couvre(o, r) for o in orig[m['tag']]): copies.add(d.get('bt', id(d)))
     L = []
     for d in m['decor']:
         if d.get('h'):
@@ -38,7 +42,7 @@ for m in M['maps']:
     for d in m['decor']:
         if d.get('_promu'):
             r = rect(m, d)
-            if any(meme(rect(n, o), r, 12) for dx in (-1, 0, 1) for dy in (-1, 0, 1) for n in [par.get((m['x'] + dx, m['y'] + dy))]
+            if any(meme(rect(n, o), r, 12) or couvre(rect(n, o), r) for dx in (-1, 0, 1) for dy in (-1, 0, 1) for n in [par.get((m['x'] + dx, m['y'] + dy))]
                    if n and n is not m for o in n['decor']): dbt.add(d.get('bt', id(d)))
     L = []
     for d in m['decor']:
