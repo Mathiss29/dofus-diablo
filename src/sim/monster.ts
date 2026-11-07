@@ -149,7 +149,7 @@ export class Monster extends Entity {
         if (D.boss) this.hp = Math.min(this.maxHp, this.hp + this.maxHp * dt * 0.5);
         this.wanderT -= dt;
         if (this.wanderT < -6) { this.x = this.homeX; this.y = this.homeY; }   // coincé derrière un obstacle
-        if (!this.moveTo(this.homeX, this.homeY, D.speed * 1.4, dt)) {
+        if (!this.moveTo(this.homeX, this.homeY, D.speed * 1.4, dt, world)) {
           this.state = 'idle'; this.maxHp = this.def.hp; this.struck = false; this.furieux = false; this.intro = false; this.calmeT = 0;
           this.hp = D.boss ? this.maxHp : Math.min(this.hp, this.maxHp);
           this.setAnim('idle');
@@ -175,7 +175,7 @@ export class Monster extends Entity {
           }
         }
         if (dist > this.radius + player.radius + 4) {
-          const [mx, my] = this.contourne(dx / dist, dy / dist, dist, player, world);
+          const [mx, my] = this.versCible(player.x, player.y, dt, world) ?? this.contourne(dx / dist, dy / dist, dist, player, world);
           const v = speed * this.rattrapage(dist);
           this.x += mx * v * dt; this.y += my * v * dt; this.setAnim('run');
         }
@@ -415,12 +415,37 @@ export class Monster extends Entity {
   }
   private endCast(world: World) { this.state = 'recover'; this.t = this.def.recover; this.atkCd = world.rng.range(...DANGER.rythme.pause as [number, number]); }
 
-  /** Avance vers (x, y) ; false si déjà arrivé. */
-  private moveTo(x: number, y: number, speed: number, dt: number): boolean {
+  /** Avance vers (x, y) ; false si déjà arrivé. Avec world, contourne le décor (chemin A*). */
+  private moveTo(x: number, y: number, speed: number, dt: number, world?: World): boolean {
     const dx = x - this.x, dy = y - this.y, d = Math.hypot(dx, dy);
     if (d < 6) return false;
-    const st = Math.min(d, speed * dt);
-    this.x += (dx / d) * st; this.y += (dy / d) * st; this.facing = Math.atan2(dy, dx);
+    const st = Math.min(d, speed * dt), dir = world ? this.versCible(x, y, dt, world) : null;
+    const [ux, uy] = dir ?? [dx / d, dy / d];
+    this.x += ux * st; this.y += uy * st; this.facing = Math.atan2(uy, ux);
     return true;
+  }
+
+  /** Chemin à pied autour du décor (points de passage) et quand le recalculer. */
+  private chemin: { x: number; y: number }[] = [];
+  private cheminT = 0; private cheminX = 0; private cheminY = 0;
+  /** Coût maximal d'un calcul de chemin de monstre (cases explorées). */
+  static readonly CHEMIN_MAX = 2500;
+  /** Le décor (autel, coffre, arbre, mur…) barre la ligne droite vers (tx, ty) : direction du prochain point d'un chemin A*
+   *  qui le contourne, recalculé régulièrement ou quand la cible a bougé. null = la voie est libre, on va tout droit. */
+  private versCible(tx: number, ty: number, dt: number, world: World): [number, number] | null {
+    if (world.clearShot(this, { x: tx, y: ty })) { this.chemin.length = 0; return null; }
+    this.cheminT -= dt;
+    if (!this.chemin.length || this.cheminT <= 0 || Math.hypot(tx - this.cheminX, ty - this.cheminY) > CASE) {
+      this.chemin = world.map.findPath(this, { x: tx, y: ty }, Monster.CHEMIN_MAX);
+      this.cheminX = tx; this.cheminY = ty;
+      this.cheminT = 0.4 + (this.id % 5) * 0.06;   // décalés d'un monstre à l'autre : pas tous les calculs à la même image
+    }
+    // on passe au point suivant quand on touche le point courant ou qu'on voit déjà le suivant
+    while (this.chemin.length > 1 && (Math.hypot(this.chemin[0].x - this.x, this.chemin[0].y - this.y) < 10 || world.clearShot(this, this.chemin[1]))) this.chemin.shift();
+    const q = this.chemin[0];
+    if (!q) return null;
+    const ux = q.x - this.x, uy = q.y - this.y, n = Math.hypot(ux, uy);
+    if (n < 1) { this.chemin.shift(); return null; }
+    return [ux / n, uy / n];
   }
 }

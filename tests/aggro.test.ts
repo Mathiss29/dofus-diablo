@@ -31,10 +31,11 @@ describe('aggro des monstres', () => {
     expect(m.state).not.toBe('return');
     expect(Math.hypot(m.x - m.homeX, m.y - m.homeY)).toBeGreaterThan(13 * CASE * 0.5);
     w.drainEvents();
-    w.player.x = m.x + 40 * CASE;
-    run(w, AGGRO.perdu.duree - 1);
+    // le joueur file et reste à 40 cases (il court plus vite que le monstre, qui contourne maintenant le décor sans se coincer)
+    const fuir = (s: number) => { for (let i = 0; i < Math.round(s * 60); i++) { w.player.x = m.x + 40 * CASE; w.player.y = m.y; w.step(STEP, NO_INPUT); } };
+    fuir(AGGRO.perdu.duree - 1);
     expect(m.state).not.toBe('return');
-    run(w, 1.5);
+    fuir(1.5);
     expect(m.state).toBe('return');
     expect(statuts(w)).toContain('Abandonne');   // 7A
   });
