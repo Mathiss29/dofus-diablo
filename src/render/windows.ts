@@ -9,13 +9,15 @@ import { LOOKS } from './looks';
 import { niveauHorsPartie, rangDe } from '../sim/butin';
 import { DOSSIER, PALETTES, ZONES, apparenceValide, assemblagePour, fiches, objetsPortes, type Apparence, type Assemblage, type FichePerso } from './squelette';
 import {
-  BASE_STATS, REDUCTION_RECHARGES_MAX, FAMILIER_MAX, FAMILIER_XP, LEGENDARY, PEPITE, RARITY_COLORS, RARITY_NAMES, STATS, STAT_NAMES, metierXpNeeded, recycleResource, recycleValue,
+  BASE_STATS, REDUCTION_RECHARGES_MAX, FAMILIER_MAX, FAMILIER_XP, LEGENDARY, METIER_XP, PEPITE, RARITY_COLORS, RARITY_NAMES, STATS, STAT_NAMES, metierXpNeeded, recycleResource, recycleValue,
   type EquipSlot, type Item, type Rarity, type ResourceDef, type Stat,
 } from '../sim/items';
 import { Player } from '../sim/player';
 import { dmgMoyen, gradeAuNiveau, type SortOfficiel } from '../sim/sorts';
 import { n1, spellDetail } from './spellTip';
 import type { World } from '../sim/world';
+import { prochainPalier, recettesAvec, recettesDe, sourcesDe } from '../sim/metiers';
+import type { MarqueCarte } from './carteMonde';
 
 const SLOT_NAMES: Record<EquipSlot, string> = {
   chapeau: 'Coiffe', cape: 'Cape', amulette: 'Amulette', anneau1: 'Anneau', anneau2: 'Anneau', ceinture: 'Ceinture',
@@ -223,7 +225,83 @@ const CSS = `
 .dw .sorts .bs i.drop{border-color:#b9e54b;box-shadow:0 0 8px #b9e54b88}
 .dw .sorts .bs.gap{margin-left:12px}
 .dw .sorts .bb .hint{flex-basis:100%}
-.dw .win.job{width:min(560px,96vw);height:min(640px,92vh)}
+.dw .win.job{width:min(940px,96vw);height:min(680px,92vh)}
+/* Métiers UI (2026-11-07) : fenêtre Métiers (J) et fenêtre Artisanat, pièces officielles de Dofus 3 */
+.dw .jb{display:grid;grid-template-columns:230px minmax(0,1fr);min-height:0}
+.dw .jl{background:#0000002e;border-right:1px solid #0b0a07;padding:10px 8px;display:grid;gap:4px;align-content:start;overflow:auto}
+.dw .jm{display:grid;grid-template-columns:40px 1fr;gap:8px;align-items:center;padding:6px 8px;border-radius:3px;cursor:pointer;position:relative}
+.dw .jm img{width:40px;height:40px;object-fit:contain}
+.dw .jm b{font-size:13.5px;display:flex;justify-content:space-between;color:#f4efe0}.dw .jm b small{font-weight:normal;color:#b9e54b}
+.dw .jm:hover{background:#ffffff0d}
+.dw .jm.on{background:#b9e54b1f;box-shadow:inset 3px 0 0 #b9e54b}
+.dw .jm.on::before{content:'';position:absolute;inset:0;background:#b9e54b;-webkit-mask:url(${'assets/ui/d3'}/sectionHeaderSelection.png) left/100% 100%;mask:url(${'assets/ui/d3'}/sectionHeaderSelection.png) left/100% 100%;opacity:.2;pointer-events:none}
+.dw .jm.lock{opacity:.45;cursor:default}
+.dw .xpb{height:5px;margin-top:4px;border-radius:3px;background:#15140f;box-shadow:inset 0 1px 2px #000,0 0 0 1px #3d3b33;overflow:hidden}
+.dw .xpb i{display:block;height:100%;background:linear-gradient(90deg,#8fae3a,#b9e54b)}
+.dw .xpb.big{height:10px;margin:6px 0 3px}
+.dw .jd{padding:12px 18px 14px;display:grid;gap:10px;align-content:start;overflow:auto;min-height:0}
+.dw .jt{display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:center}
+.dw .jt img{width:64px;height:64px;object-fit:contain}
+.dw .jt h3{margin:0;font-size:20px;color:#f4efe0}.dw .jt h3 span{font-size:15px;color:#b9e54b}
+.dw .jt .pal{text-align:right;font-size:12px;color:#cfc9b6;max-width:240px}.dw .jt .pal b{display:block;font-size:14px;color:#f4efe0}
+.dw .otabs{display:flex;justify-content:center;gap:34px}
+.dw .otabs span{position:relative;padding:8px 22px 10px;font-weight:bold;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:#cfc9b6;cursor:pointer}
+.dw .otabs span.on{color:#b9e54b}
+.dw .otabs span.on::after{content:'';position:absolute;left:-26px;right:-26px;bottom:0;height:40px;background:#b9e54b;-webkit-mask:url(assets/ui/d3/headerHighlight.png) center/100% 100%;mask:url(assets/ui/d3/headerHighlight.png) center/100% 100%;opacity:.35;pointer-events:none}
+.dw .jf{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center}
+.dw .jf input[data-jr],.dw .livre input[data-asr]{background:#1a1915 url(assets/ui/d3/btnIcon_magnifierSearch.png) right 8px center/16px no-repeat;padding-right:30px}
+.dw label.ck{display:flex;gap:6px;align-items:center;font-size:12.5px;color:#d9d3c2;cursor:pointer;white-space:nowrap}
+.dw label.ck input{width:24px;height:20px;margin:0;padding:0;appearance:none;-webkit-appearance:none;border:0;border-radius:0;background:url(assets/ui/d3/btn_checkbox_normal.png) center/100% no-repeat;box-shadow:none;cursor:pointer}
+.dw label.ck input:checked{background-image:url(assets/ui/d3/btn_checkbox_selected.png)}
+.dw .recs{display:grid;gap:4px}
+.dw .jd .rec{background:#0000003a;border:1px solid #0000;padding:4px 10px 4px 4px}
+.dw .jd .rec.ok{background:#3a4a1a44;border-color:#5b6f2a66}
+.dw .jd .rec.lock{opacity:.55}
+.dw .rec .rs{width:52px;height:52px;background:url(assets/ui/d3/slot_dark_background_full.png) center/100% no-repeat;display:grid;place-items:center}
+.dw .rec .rs .ic{width:40px;height:40px}
+.dw .rec .ing{cursor:help}.dw .rec .ing:hover b{text-decoration:underline}
+.dw .rec .cb{flex-direction:row;align-items:center;gap:8px}
+.dw .rec .nb{border:6px solid transparent;border-image:url(assets/ui/d3/btn_green_normal.png) 8 fill/6px;color:#1e2a05;font-weight:bold;padding:0 6px}
+.dw .rec .pin{width:24px;height:24px;cursor:pointer;opacity:.4;filter:saturate(.3)}
+.dw .rec .pin:hover{opacity:.8}.dw .rec .pin.on{opacity:1;filter:drop-shadow(0 0 4px #f2d36b)}
+.dw .tip .ou{border-top:1px solid #3a3a2c;margin-top:6px;padding-top:6px;font-size:12px;display:grid;gap:2px}
+.dw .tip .ou .hd{color:#a9a48b;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.dw .tip .ok{color:#9ad15a}.dw .tip .ko{color:#e0625a}
+.dw .win.art{width:min(980px,96vw);height:min(700px,92vh)}
+.dw .ab{display:grid;grid-template-columns:300px minmax(0,1fr);min-height:0}
+.dw .livre{background:#0000002e;border-right:1px solid #0b0a07;padding:10px;display:grid;grid-template-rows:auto auto 1fr;gap:6px;min-height:0}
+.dw .als{overflow:auto;display:grid;gap:2px;align-content:start}
+.dw .al{display:grid;grid-template-columns:40px 1fr auto;gap:8px;align-items:center;padding:3px 6px;border-radius:3px;font-size:12.5px;cursor:pointer;position:relative}
+.dw .al .ic{width:36px;height:36px}.dw .al small{color:#9b9585}.dw .al.non{opacity:.5}
+.dw .al:hover{background:#ffffff0d}
+.dw .al.on{opacity:1;background:#b9e54b1f;box-shadow:inset 3px 0 0 #b9e54b}.dw .al.on::before{content:'';position:absolute;inset:0;background:#b9e54b;-webkit-mask:url(assets/ui/d3/sectionHeaderSelection.png) left/100% 100%;mask:url(assets/ui/d3/sectionHeaderSelection.png) left/100% 100%;opacity:.22;pointer-events:none}
+.dw .plan{padding:14px 22px 20px;display:grid;gap:14px;justify-items:center;align-content:start;position:relative;overflow:auto}
+.dw .plan::before{content:'';position:absolute;left:50%;top:150px;width:420px;height:420px;transform:translate(-50%,-50%);background:#a6e35a;-webkit-mask:url(assets/ui/d3/light_bg_inventory.png) center/contain no-repeat;mask:url(assets/ui/d3/light_bg_inventory.png) center/contain no-repeat;opacity:.16;pointer-events:none}
+.dw .plan>*{position:relative}
+.dw .am{font-size:12px;color:#cfc9b6;display:flex;gap:6px;align-items:center}.dw .am img{width:26px;height:26px}
+.dw .ares{display:grid;justify-items:center;gap:4px;text-align:center}.dw .ares b{font-size:17px;color:#f4efe0}.dw .ares small{color:#b9e54b}
+.dw .ac{width:52px;height:52px;background:url(assets/ui/d3/slot_dark_background_full.png) center/100% no-repeat;display:grid;place-items:center;position:relative;cursor:help}
+.dw .ac.vide{background-image:url(assets/ui/d3/slot_dark_background_empty.png);cursor:default}
+.dw .ac .ic{width:40px;height:40px}
+.dw .ac b{position:absolute;right:4px;bottom:2px;font-size:11px;color:#fff;text-shadow:0 1px 2px #000,0 0 3px #000}.dw .ac b.lack{color:#ff7a6b}
+.dw .ac.manque .ic{filter:grayscale(1) brightness(.55)}.dw .ac.manque{outline:1px solid #d9534f88;outline-offset:-4px}
+.dw .ac.big{width:84px;height:84px}.dw .ac.big .ic{width:64px;height:64px}
+.dw .acs{display:grid;grid-template-columns:repeat(4,52px);gap:8px 14px}
+.dw .acs .lab{grid-column:1/-1;text-align:center;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#9b9585}
+.dw .aq{display:flex;gap:8px;align-items:center}
+.dw .aq .pm{width:34px;height:34px;display:grid;place-items:center;border:6px solid transparent;border-image:url(assets/ui/d3/btn_grey_small_normal.png) 8 fill/6px;cursor:pointer;box-sizing:border-box}
+.dw .aq .pm:hover{border-image-source:url(assets/ui/d3/btn_grey_small_over.png)}
+.dw .aq .pm img{width:14px;height:14px;object-fit:contain;filter:brightness(0) invert(.95)}
+.dw .aq input{width:70px;height:34px;text-align:center;font-weight:bold;font-size:16px}
+.dw .gros{display:grid;place-items:center;width:220px;height:66px;background:url(assets/ui/d3/btn_greenLargeBorder_normal.png) center/100% 100% no-repeat;font:20px Rowdies,Lexend,sans-serif;color:#1e2a05;text-shadow:0 1px 0 #e8ff7a;text-transform:uppercase;cursor:pointer;user-select:none}
+.dw .gros:hover{background-image:url(assets/ui/d3/btn_greenLargeBorder_over.png)}
+.dw .gros:active{background-image:url(assets/ui/d3/btn_greenLargeBorder_pressed.png)}
+.dw .gros.off{background-image:url(assets/ui/d3/btn_greenLargeBorder_disabled.png);color:#3b3b33;text-shadow:none;cursor:default}
+.dw .abar{width:330px;max-width:100%;height:12px;border-radius:6px;background:#15140f;box-shadow:inset 0 1px 2px #000,0 0 0 1px #3d3b33;overflow:hidden}
+.dw .abar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8fae3a,#d6ff6b)}
+.dw .abar i.run{animation:fabbar linear forwards}
+@keyframes fabbar{to{width:100%}}
+.dw .axp{font-size:12px;color:#cfc9b6;display:flex;gap:6px;align-items:center}.dw .axp img{width:20px;height:17px}.dw .axp .lack{color:#ff7a6b}
 .dw .job .in{padding:14px 16px;overflow:auto;display:grid;gap:12px;align-content:start}
 .dw .mh{display:flex;gap:12px;align-items:center}.dw .mh img{width:56px;height:56px}
 .dw .mh b{font-size:17px;color:#f4efe0}.dw .bar{height:8px;border-radius:4px;background:#2c281f;overflow:hidden;margin-top:5px;width:260px;max-width:100%}
@@ -363,7 +441,7 @@ const CSS = `
 .dw .ttl b{font-weight:700}
 `;
 
-type Mode = 'inv' | 'car' | 'job' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap' | 'bestiaire';
+type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap' | 'bestiaire';
 
 /** Fenêtres façon Dofus 3 : « Inventaire » (le perso sur son socle, ses emplacements autour, le sac à onglets)
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
@@ -453,7 +531,7 @@ export class Windows {
 
   private render() {
     if (this.mode === 'guide') this.renderGuide();
-    else if (this.mode === 'car') this.renderCarac(); else if (this.mode === 'job') this.renderJob(); else if (this.mode === 'opt') this.renderOpt();
+    else if (this.mode === 'car') this.renderCarac(); else if (this.mode === 'job') this.renderJob(); else if (this.mode === 'art') this.renderArt(); else if (this.mode === 'opt') this.renderOpt();
     else if (this.mode === 'sorts') this.renderSorts(); else if (this.mode === 'quetes') this.renderQuetes();
     else if (this.mode === 'succes') this.renderSucces(); else if (this.mode === 'emp') this.renderEmp(); else if (this.mode === 'zaap') this.renderZaap();
     else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else this.renderInv();
@@ -538,6 +616,7 @@ export class Windows {
       e.addEventListener('mousemove', ev => this.moveTip(ev));
       e.addEventListener('mouseleave', () => this.hideTip());
       if (r.soin || r.rappel) { e.addEventListener('contextmenu', eat); e.addEventListener('dblclick', eat); }
+      else e.addEventListener('contextmenu', () => { this.hideTip(); this.recettesAvec(id); });
       e.addEventListener('click', ev => { if (ev.altKey && this.world.nourrirFamilier({ res: id, tout: ev.shiftKey })) { ev.preventDefault(); this.changed(); } });
     });
     w.querySelectorAll<HTMLElement>('[data-uid]').forEach(e => {
@@ -593,40 +672,219 @@ export class Windows {
     }));
   }
 
-  /** Fenêtre « Métiers » (choix 6A) : le Chasseur, son niveau, et ses recettes officielles faisables avec le butin du jeu. */
+  // --- Métiers (maquette Métiers UI, 2026-11-07) -------------------------------------------------------------------
+  /** Fenêtre Métiers (J, 1A) : métiers à gauche, détail à droite (niveau, XP, prochain palier 2B), onglets Recettes / Récoltes (2A),
+   *  recherche par recette ou ingrédient et filtres (7A+7B), épingle de suivi (9A), « Où le trouver » au survol des ingrédients (8B). */
+  jobSel = '';
+  private jobOnglet: 'recettes' | 'recoltes' = 'recettes';
+  private jobRecherche = '';
+  private jobFaisables = true;
+  private jobMonNiveau = false;
+  /** Fenêtre Artisanat (3A) : métier de l'atelier, recette choisie, quantité, recherche et filtre du livre. */
+  artMetier = '';
+  private artRecette = -1;
+  private artQte = 1;
+  private artRecherche = '';
+  private artSeulement = false;
+  /** « Montrer sur la carte » (8B, 11B) : ouvre la carte M avec ces cartes et points mis en évidence. */
+  onCarte: (m: MarqueCarte) => void = () => {};
+
+  /** Ouvre l'Artisanat d'un atelier (clic sur une machine). */
+  artisanat(metier: string) {
+    if (this.artMetier !== metier) { this.artMetier = metier; this.artRecette = -1; this.artQte = 1; this.artRecherche = ''; }
+    this.show('art');
+  }
+  /** 12A : « Recettes qui l'utilisent » (clic droit sur une ressource du sac) : J filtré sur l'ingrédient. */
+  recettesAvec(id: string) {
+    const r = recettesAvec(ITEMS, id)[0], nom = ITEMS.resources[id]?.name ?? '';
+    if (!r) return false;
+    this.jobSel = r.metier; this.jobOnglet = 'recettes'; this.jobRecherche = nom; this.jobMonNiveau = false;
+    this.show('job');
+    return true;
+  }
+
+  private sources(id: string) {
+    return sourcesDe(id, ITEMS, { monsterName: k => GAME_DATA.monsters[k]?.name, zones: Object.values(GAME_DATA.zones), recoltes: RECOLTES, boutiques: BOUTIQUES });
+  }
+  /** Bulle « Où le trouver » d'un ingrédient (8B) + « Sert à » (12B). */
+  private ingTip(id: string, besoin?: number) {
+    const r = ITEMS.resources[id], have = this.world.player.resources[id] ?? 0, s = this.sources(id), M = ITEMS.metiers ?? {};
+    const l: string[] = [];
+    if (s.recolte) l.push(`<b>Récolte</b> · ${RECOLTES.metiers[s.recolte.metier]?.nom ?? 'Puiser'}${s.recolte.metier ? ` niveau ${s.recolte.niveau}` : ''}${this.lieuxRecolte(id).length ? ` · ${this.lieuxRecolte(id).slice(0, 3).join(', ')}` : ''}`);
+    for (const m of s.monstres.slice(0, 4)) l.push(`<b>Butin</b> · ${m.nom} (${n1(m.chance)} %)${m.chasse ? ', arme de chasse' : ''} · ${m.lieux.slice(0, 2).join(', ')}`);
+    if (s.monstres.length > 4) l.push(`<span class="hint">+${s.monstres.length - 4} autres monstres</span>`);
+    if (s.recette) l.push(`<b>Fabrication</b> · ${M[s.recette.metier]?.name ?? s.recette.metier} niveau ${s.recette.level}`);
+    if (s.boutique) l.push(`<b>Boutique</b> · ${QUETES.pnj[s.boutique]?.nom ?? s.boutique}, dans ton Havre-Sac (H)`);
+    const sert = recettesAvec(ITEMS, id).map(x => ITEMS.resources[x.result]?.name).filter(Boolean);
+    const ici = this.marquesDe(id);
+    return `<h4>${r?.name ?? id}</h4><div class="sub">${besoin != null ? `<span class="${have >= besoin ? 'ok' : 'ko'}">${have} / ${besoin}</span> dans ton sac` : `${have} dans ton sac`}</div>
+      <div class="ou"><div class="hd">Où le trouver</div>${l.length ? l.map(x => `<div>${x}</div>`).join('') : '<div class="hint">Pas encore dans le jeu.</div>'}</div>
+      ${sert.length ? `<div class="ou"><div class="hd">Sert à</div><div>${sert.slice(0, 5).join(', ')}${sert.length > 5 ? '…' : ''}</div></div>` : ''}
+      ${ici.tags.length || ici.points.length ? '<div class="hint">Clic : montrer sur la carte (M)</div>' : ''}`;
+  }
+  /** Sous-zones du monde actuel où pousse une ressource. */
+  private lieuxRecolte(id: string) {
+    const wg = this.world.worldGrid, sa = this.world.zone.open?.subareas ?? {}, n = new Set<string>();
+    for (const r of this.world.recoltes) if (r.item === id) { const s = wg?.mapByTag(r.tag)?.sub; const nom = s != null ? sa[String(s)]?.name : undefined; if (nom) n.add(nom); }
+    return [...n];
+  }
+  /** Cartes et points du monde actuel où trouver une ressource (récolte, monstres qui la lâchent, entrée des donjons). */
+  private marquesDe(id: string): { tags: string[]; points: { x: number; y: number }[] } {
+    const w = this.world, wg = w.worldGrid, open = w.zone.open;
+    if (!wg || !open) return { tags: [], points: [] };
+    const tags = new Set<string>(), points: { x: number; y: number }[] = [];
+    for (const r of w.recoltes) if (r.item === id) tags.add(r.tag);
+    const s = this.sources(id), subs = new Set<number>();
+    for (const m of s.monstres) {
+      for (const [k, sa] of Object.entries(open.subareas)) if (sa.monsters.includes(m.cle) || sa.elite === m.cle) subs.add(+k);
+      for (const d of open.donjons ?? []) if (Object.values(d.salles).some(g => g.some(x => x.includes(m.cle)))) {
+        const po = w.entreeDonjon(d.nom); if (po) points.push({ x: po.ends[0].x, y: po.ends[0].y });
+      }
+    }
+    for (const m of wg.world.maps) if (!m.inside && subs.has(m.sub) && /^-?\d+_-?\d+$/.test(m.tag)) tags.add(m.tag);
+    return { tags: [...tags], points };
+  }
+  private montrer(id: string) {
+    const m = this.marquesDe(id), r = ITEMS.resources[id];
+    if (!m.tags.length && !m.points.length) return;
+    this.close(false); this.onCarte({ titre: r?.name ?? id, icone: r?.icon ?? 0, ...m });
+  }
+  /** Ligne d'ingrédient (icône, a/besoin, nom) avec sa bulle « Où le trouver ». */
+  private ingHtml(id: string, q: number, fois = 1) {
+    const have = this.world.player.resources[id] ?? 0, r = ITEMS.resources[id];
+    return `<span class="ing" data-ing="${id}" data-q="${q * fois}">${iconHtml(r?.icon ?? 0)}<b class="${have >= q * fois ? 'have' : 'lack'}">${have}/${q * fois}</b> ${r?.name ?? ''}</span>`;
+  }
+  private lierIngredients(w: HTMLElement) {
+    w.querySelectorAll<HTMLElement>('[data-ing]').forEach(e => {
+      const id = e.dataset.ing!, q = e.dataset.q ? +e.dataset.q : undefined;
+      e.addEventListener('mouseenter', ev => { this.tip.innerHTML = this.ingTip(id, q); this.tip.style.display = 'block'; this.moveTip(ev); });
+      e.addEventListener('mousemove', ev => this.moveTip(ev));
+      e.addEventListener('mouseleave', () => this.hideTip());
+      e.addEventListener('click', ev => { ev.stopPropagation(); this.hideTip(); this.montrer(id); });
+    });
+  }
+
   private renderJob() {
-    const w = this.win!, p = this.world.player, M = ITEMS.metiers ?? {}, R = ITEMS.recipes ?? [];
-    const res = (id: string) => ITEMS.resources[id];
-    const jobs = Object.entries(M).map(([k, m]) => {
-      const st = p.metiers[k] ?? { level: 1, xp: 0 }, need = metierXpNeeded(st.level);
-      const recolte = Object.values(RECOLTES.ressources).filter(r => r.metier === k).sort((a, b) => a.niveau - b.niveau);
-      const weapon = recolte.length ? `<div class="note">Clique une ressource sur la carte pour la récolter (1,2 s). Elle repousse en une minute ; une dorée donne ×5.</div>
-        <div class="ings">${recolte.map(r => `<span class="ing ${st.level >= r.niveau ? '' : 'lack'}" title="${r.nom} : niveau ${r.niveau}">${iconHtml(r.icone)}${r.nom} <span class="hint">${r.niveau}</span></span>`).join('')}</div>`
-        : k !== 'chasseur' ? '' : p.huntingWeapon
-        ? `<div class="note ok">Arme de chasse en main : les monstres peuvent lâcher leurs viandes.</div>`
-        : `<div class="note">Équipe une arme avec l'effet « Arme de chasse » (Couteau de Chasse, Arc de Chasse…) pour que les monstres lâchent leurs viandes.</div>`;
-      // ateliers officiels (10A) : on fabrique à l'atelier du métier ; Fabriquer ×N (10B)
-      const ici = this.world.atelierIci(k), ou = this.world.ateliersDe(k).map(a => a.nom);
-      const atelier = ici === null && R.some(r => r.metier === k)
-        ? `<div class="note">Fabrication à l'atelier : ${[...new Set(ou)].join(', ') || 'aucun atelier dans cette zone'}.</div>`
-        : ici ? `<div class="note ok">${ici.nom} : tu peux fabriquer ici.</div>` : '';
-      const recs = R.map((r, i) => ({ r, i })).filter(({ r }) => r.metier === k).map(({ r, i }) => {
-        const out = res(r.result), lvlOk = st.level >= r.level, max = this.world.craftMax(i);
-        const ok = lvlOk && max > 0 && ici !== null;
-        const ings = r.ingredients.map(([id, q]) => { const have = p.resources[id] ?? 0;
-          return `<span class="ing" title="${res(id)?.name ?? id}">${iconHtml(res(id)?.icon ?? 0)}<span class="${have >= q ? 'have' : 'lack'}">${have}/${q}</span> ${res(id)?.name ?? ''}</span>`; }).join('');
-        return `<div class="rec">${iconHtml(out?.icon ?? 0)}<div><b>${out?.name ?? r.result}</b> <span class="hint">niveau ${r.level}${out?.soin ? ` · +${out.soin} PV` : ''}</span>
-          ${lvlOk ? '' : `<div class="lack" style="font-size:12px">${M[k].name} niveau ${r.level} requis</div>`}<div class="ings">${ings}</div></div>
-          <span class="cb"><span class="btn ${ok ? '' : 'off'}" data-craft="${i}" title="Maj+clic : tout fabriquer">Fabriquer</span>${ok && max > 1 ? `<span class="btn" data-craft="${i}" data-n="${max}" title="Avec tout ce que tu as">×${max}</span>` : ''}</span></div>`;
-      }).join('');
-      return `<div class="mh"><img src="assets/ui/metier_${k}.png" alt=""><div><b>${m.name}</b> · niveau ${st.level}
-        <div class="bar"><i style="width:${Math.round((st.xp / need) * 100)}%"></i></div><span class="hint">${st.xp} / ${need} XP · ${k === 'chasseur' ? 'une viande ramassée ou une recette faite' : recolte.length ? 'chaque récolte' : 'chaque objet fabriqué'} fait monter le métier</span></div></div>
-        ${weapon}${atelier}${recs}`;
-    }).join('');
-    w.innerHTML = `${this.title('Métiers', 'job')}<div class="in">${jobs || '<div class="hint">Aucun métier.</div>'}</div>`;
-    w.querySelectorAll<HTMLElement>('[data-craft]').forEach(e => e.addEventListener('click', ev => {
-      const i = +e.dataset.craft!; this.world.craft(i, e.dataset.n ? +e.dataset.n : ev.shiftKey ? this.world.craftMax(i) : 1); this.changed();
-    }));
+    const w = this.win!, p = this.world.player, M = ITEMS.metiers ?? {};
+    const cles = Object.keys(M);
+    if (!M[this.jobSel]) this.jobSel = cles.slice().sort((a, b) => p.metierLevel(b) - p.metierLevel(a))[0] ?? '';
+    const k = this.jobSel, m = M[k];
+    const liste = cles.map(c => {
+      const st = p.metiers[c] ?? { level: 1, xp: 0 };
+      return `<div class="jm ${c === k ? 'on' : ''}" data-met="${c}"><img src="assets/ui/metier_${c}.png" alt=""><div><b>${M[c].name}<small>${Math.max(1, st.level)}</small></b><div class="xpb"><i style="width:${Math.round(st.xp / metierXpNeeded(Math.max(1, st.level)) * 100)}%"></i></div></div></div>`;
+    }).join('') + '<div class="jm lock" title="Fabrication d\'équipement : version 0.3"><img src="assets/ui/menu/job.png" alt=""><div><b>Forgeron, Tailleur…</b><small class="hint">en 0.3</small></div></div>';
+    if (!m) { w.innerHTML = `${this.title('Métiers', 'job')}<div class="in"><div class="hint">Aucun métier.</div></div>`; return; }
+    const st = p.metiers[k] ?? { level: 1, xp: 0 }, lv = Math.max(1, st.level), need = metierXpNeeded(lv);
+    const recolte = Object.entries(RECOLTES.ressources).filter(([, r]) => r.metier === k).sort((a, b) => a[1].niveau - b[1].niveau);
+    const pal = prochainPalier(ITEMS, k, lv);
+    const gain = k === 'chasseur' ? 'une viande ramassée ou un plat cuisiné' : recolte.length ? 'chaque récolte et chaque objet fabriqué' : 'chaque objet fabriqué';
+    const ateliers = [...new Set(this.world.ateliersDe(k).map(a => a.nom))];
+    const tete = `<div class="jt"><img src="assets/ui/metier_${k}.png" alt=""><div><h3>${m.name} <span>niveau ${lv}</span></h3>
+        <div class="xpb big"><i style="width:${Math.round(st.xp / need * 100)}%"></i></div><div class="hint">${st.xp} / ${need} XP · ${gain} fait monter le métier</div></div>
+        ${pal ? `<div class="pal"><b>Prochain palier : ${pal.niveau}</b>${pal.recettes.map(r => ITEMS.resources[r.result]?.name).join(', ')}</div>` : ''}</div>`;
+    const onglets = `<div class="otabs"><span class="${this.jobOnglet === 'recettes' ? 'on' : ''}" data-jo="recettes">Recettes (${recettesDe(ITEMS, k).length})</span><span class="${this.jobOnglet === 'recoltes' ? 'on' : ''}" data-jo="recoltes">Récoltes (${recolte.length})</span></div>`;
+    let corps = '';
+    if (this.jobOnglet === 'recettes') {
+      const q = this.jobRecherche.trim().toLowerCase();
+      let l = recettesDe(ITEMS, k).filter(({ r }) => !q || ITEMS.resources[r.result]?.name.toLowerCase().includes(q) || r.ingredients.some(([id]) => ITEMS.resources[id]?.name.toLowerCase().includes(q)));
+      if (this.jobMonNiveau) l = l.filter(({ r }) => r.level <= lv);
+      if (this.jobFaisables) l = [...l.filter(({ i }) => this.world.craftMax(i) > 0), ...l.filter(({ i }) => this.world.craftMax(i) <= 0)];
+      const filtres = `<div class="jf"><input placeholder="Chercher une recette ou un ingrédient…" value="${this.jobRecherche.replace(/"/g, '&quot;')}" data-jr>
+        <label class="ck"><input type="checkbox" data-jfa ${this.jobFaisables ? 'checked' : ''}>Faisables d'abord</label><label class="ck"><input type="checkbox" data-jmn ${this.jobMonNiveau ? 'checked' : ''}>Mon niveau</label></div>`;
+      const ou = ateliers.length ? `<div class="note">On fabrique en cliquant une machine : ${ateliers.join(', ')}.</div>` : `<div class="note">Pas d'atelier de ${m.name.toLowerCase()} dans cette zone.</div>`;
+      corps = filtres + ou + `<div class="recs">${l.map(({ r, i }) => {
+        const out = ITEMS.resources[r.result], ok = lv >= r.level, max = this.world.craftMax(i), suivie = p.recetteSuivie === r.result;
+        return `<div class="rec ${max > 0 ? 'ok' : ''} ${ok ? '' : 'lock'}"><span class="rs" data-rtip="${r.result}">${iconHtml(out?.icon ?? 0)}</span>
+          <div><b>${out?.name ?? r.result}</b> <span class="hint">niv. ${r.level}${out?.soin ? ` · +${out.soin} PV` : ''}</span>
+          ${ok ? '' : `<div class="lack" style="font-size:12px">Niveau ${r.level} requis</div>`}<div class="ings">${r.ingredients.map(([id, n]) => this.ingHtml(id, n)).join('')}</div></div>
+          <span class="cb">${max > 0 ? `<span class="nb" title="Tu peux en faire ${max}">×${max}</span>` : ''}<img class="pin ${suivie ? 'on' : ''}" data-pin="${r.result}" src="${D3}/pin_mark_yellow.png" alt="" title="${suivie ? 'Ne plus suivre' : 'Suivre cette recette à l\'écran'}"></span></div>`;
+      }).join('') || '<div class="hint">Aucune recette ne correspond.</div>'}</div>`;
+    } else if (recolte.length) {
+      corps = `<div class="recs">${recolte.map(([id, r]) => {
+        const ok = lv >= r.niveau, max = 1 + Math.floor(Math.max(0, lv - r.niveau) / 20), lieux = this.lieuxRecolte(id), voir = this.marquesDe(id).tags.length > 0;
+        return `<div class="rec ${ok ? '' : 'lock'}"><span class="rs" data-ing="${id}">${iconHtml(r.icone)}</span><div><b>${r.nom}</b> <span class="hint">niv. ${r.niveau}</span>
+          ${ok ? `<div style="font-size:12px">${max > 1 ? `1 à ${max}` : '1'} par récolte à ton niveau · ×5 si dorée</div>` : `<div class="lack" style="font-size:12px">Niveau ${r.niveau} requis</div>`}
+          <div class="hint">${lieux.length ? lieux.join(', ') : 'Pas dans cette zone'}</div></div>
+          <span class="cb">${voir ? `<span class="btn" data-voir="${id}">Carte</span>` : ''}</span></div>`;
+      }).join('')}</div>`;
+    } else corps = k === 'chasseur'
+      ? `<div class="note ${p.huntingWeapon ? 'ok' : ''}">${p.huntingWeapon ? 'Arme de chasse en main : les monstres peuvent lâcher leurs viandes.' : 'Le Chasseur ne récolte pas : équipe une arme avec l\'effet « Arme de chasse » (Couteau de Chasse, Arc de Chasse…) et les monstres lâchent leurs viandes.'}</div>`
+      : `<div class="note">${m.name} ne récolte rien : ses ingrédients viennent des autres métiers et du butin des monstres.</div>`;
+    w.innerHTML = `${this.title('Métiers', 'job')}<div class="jb"><div class="jl">${liste}</div><div class="jd">${tete}${onglets}${corps}</div></div>`;
+    w.querySelectorAll<HTMLElement>('[data-met]').forEach(e => e.addEventListener('click', () => { this.jobSel = e.dataset.met!; this.jobRecherche = ''; this.render(); }));
+    w.querySelectorAll<HTMLElement>('[data-jo]').forEach(e => e.addEventListener('click', () => { this.jobOnglet = e.dataset.jo as 'recettes' | 'recoltes'; this.render(); }));
+    const inp = w.querySelector<HTMLInputElement>('[data-jr]');
+    if (inp) {
+      inp.addEventListener('input', () => { this.jobRecherche = inp.value; this.render(); const i2 = this.win!.querySelector<HTMLInputElement>('[data-jr]')!; i2.focus(); i2.setSelectionRange(i2.value.length, i2.value.length); });
+      inp.addEventListener('keydown', e => e.stopPropagation());
+    }
+    w.querySelector<HTMLInputElement>('[data-jfa]')?.addEventListener('change', e => { this.jobFaisables = (e.target as HTMLInputElement).checked; this.render(); });
+    w.querySelector<HTMLInputElement>('[data-jmn]')?.addEventListener('change', e => { this.jobMonNiveau = (e.target as HTMLInputElement).checked; this.render(); });
+    w.querySelectorAll<HTMLElement>('[data-pin]').forEach(e => e.addEventListener('click', () => { const id = e.dataset.pin!; p.recetteSuivie = p.recetteSuivie === id ? null : id; this.changed(); }));
+    w.querySelectorAll<HTMLElement>('[data-voir]').forEach(e => e.addEventListener('click', () => this.montrer(e.dataset.voir!)));
+    w.querySelectorAll<HTMLElement>('[data-rtip]').forEach(e => {
+      const r = ITEMS.resources[e.dataset.rtip!];
+      e.addEventListener('mouseenter', ev => { if (!r) return; this.tip.innerHTML = this.resTip(r, e.dataset.rtip!); this.tip.style.display = 'block'; this.moveTip(ev); });
+      e.addEventListener('mousemove', ev => this.moveTip(ev));
+      e.addEventListener('mouseleave', () => this.hideTip());
+    });
+    this.lierIngredients(w);
+  }
+
+  /** Fenêtre Artisanat (3A, clic sur une machine d'atelier) : livre des recettes du métier, cases remplies en un clic (4A),
+   *  quantité −/+/Max (6A), gros bouton Fabriquer, une barre d'une seconde pour toute la série (5B). */
+  private renderArt() {
+    const w = this.win!, p = this.world.player, k = this.artMetier, M = ITEMS.metiers ?? {}, m = M[k];
+    const lv = Math.max(1, p.metierLevel(k)), ici = this.world.atelierIci(k);
+    const toutes = recettesDe(ITEMS, k), q = this.artRecherche.trim().toLowerCase();
+    let l = toutes.filter(({ r }) => !q || ITEMS.resources[r.result]?.name.toLowerCase().includes(q) || r.ingredients.some(([id]) => ITEMS.resources[id]?.name.toLowerCase().includes(q)));
+    if (this.artSeulement) l = l.filter(({ i }) => this.world.craftMax(i) > 0);
+    if (!toutes.some(x => x.i === this.artRecette)) this.artRecette = (toutes.find(({ i }) => this.world.craftMax(i) > 0) ?? toutes[0])?.i ?? -1;
+    const rec = this.artRecette >= 0 ? ITEMS.recipes![this.artRecette] : null, max = rec ? this.world.craftMax(this.artRecette) : 0;
+    this.artQte = Math.max(1, Math.min(this.artQte, Math.max(1, max)));
+    const f = this.world.enFabrication, out = rec && ITEMS.resources[rec.result];
+    const livre = l.map(({ r, i }) => {
+      const o = ITEMS.resources[r.result], mx = this.world.craftMax(i), ok = lv >= r.level;
+      return `<div class="al ${i === this.artRecette ? 'on' : ''} ${mx > 0 ? '' : 'non'}" data-ar="${i}">${iconHtml(o?.icon ?? 0)}<div>${o?.name ?? r.result}<br><small>niv. ${r.level}</small></div>${mx > 0 ? `<b class="have">×${mx}</b>` : ok ? '<small>manque</small>' : `<small class="lack">niv. ${r.level}</small>`}</div>`;
+    }).join('') || '<div class="hint">Aucune recette.</div>';
+    const cases = rec ? Array.from({ length: 8 }, (_, j) => {
+      const g = rec.ingredients[j];
+      if (!g) return '<span class="ac vide"></span>';
+      const [id, n] = g, have = p.resources[id] ?? 0, besoin = n * this.artQte;
+      return `<span class="ac ${have >= besoin ? '' : 'manque'}" data-ing="${id}" data-q="${besoin}">${iconHtml(ITEMS.resources[id]?.icon ?? 0)}<b class="${have >= besoin ? '' : 'lack'}">${have}/${besoin}</b></span>`;
+    }).join('') : '';
+    const xp = rec ? this.artQte * METIER_XP.parIngredient * rec.ingredients.reduce((s, [, n]) => s + n, 0) : 0;
+    const raison = !rec ? '' : lv < rec.level ? `${m?.name ?? ''} niveau ${rec.level} requis` : ici === null ? 'Tu n\'es plus à l\'atelier' : max <= 0 ? 'Il manque des ingrédients' : '';
+    const peut = !!rec && !raison && !f;
+    w.innerHTML = `${this.title(ici?.nom ?? `Artisanat · ${m?.name ?? ''}`, 'job')}<div class="ab">
+      <div class="livre"><input placeholder="Chercher…" value="${this.artRecherche.replace(/"/g, '&quot;')}" data-asr>
+        <label class="ck"><input type="checkbox" data-aso ${this.artSeulement ? 'checked' : ''}>Seulement ce que je peux faire</label><div class="als">${livre}</div></div>
+      <div class="plan"><div class="am"><img src="assets/ui/metier_${k}.png" alt="">${m?.name ?? ''} niveau ${lv}</div>
+        ${rec && out ? `<div class="ares"><span class="ac big" data-rtip="${rec.result}">${iconHtml(out.icon)}</span><b>${out.name}</b><small>${out.soin ? `Rend ${out.soin} PV · ` : ''}niveau ${rec.level}</small></div>
+        <div class="acs"><span class="lab">Ingrédients</span>${cases}</div>
+        <div class="aq"><span class="pm" data-aq="-1"><img src="${D3}/minus.png" alt="−"></span><input value="${this.artQte}" data-aqv inputmode="numeric"><span class="pm" data-aq="1"><img src="${D3}/plus.png" alt="+"></span><span class="btn ${max > 1 ? '' : 'off'}" data-amax>Max (${max})</span></div>
+        <div class="gros ${peut ? '' : 'off'}" data-fab>${f ? 'Fabrication…' : 'Fabriquer'}</div>
+        <div class="abar"><i class="${f ? 'run' : ''}" style="${f ? `animation-duration:${Math.max(0.05, 1 - f.t)}s` : ''}"></i></div>
+        <div class="axp">${raison ? `<span class="lack">${raison}</span>` : `<img src="${D3}/experience.png" alt="">+${xp} XP de ${m?.name ?? ''} · une seconde pour toute la série`}</div>` : '<div class="hint">Choisis une recette dans le livre.</div>'}
+      </div></div>`;
+    w.querySelectorAll<HTMLElement>('[data-ar]').forEach(e => e.addEventListener('click', () => { this.artRecette = +e.dataset.ar!; this.artQte = Math.max(1, this.world.craftMax(this.artRecette)); this.render(); }));
+    const inp = w.querySelector<HTMLInputElement>('[data-asr]')!;
+    inp.addEventListener('input', () => { this.artRecherche = inp.value; this.render(); const i2 = this.win!.querySelector<HTMLInputElement>('[data-asr]')!; i2.focus(); i2.setSelectionRange(i2.value.length, i2.value.length); });
+    inp.addEventListener('keydown', e => e.stopPropagation());
+    w.querySelector<HTMLInputElement>('[data-aso]')!.addEventListener('change', e => { this.artSeulement = (e.target as HTMLInputElement).checked; this.render(); });
+    w.querySelectorAll<HTMLElement>('[data-aq]').forEach(e => e.addEventListener('click', () => { this.artQte = Math.max(1, Math.min(Math.max(1, max), this.artQte + +e.dataset.aq!)); this.render(); }));
+    const qv = w.querySelector<HTMLInputElement>('[data-aqv]');
+    qv?.addEventListener('keydown', e => e.stopPropagation());
+    qv?.addEventListener('change', () => { this.artQte = Math.max(1, Math.min(Math.max(1, max), Math.floor(+qv.value || 1))); this.render(); });
+    w.querySelector<HTMLElement>('[data-amax]')?.addEventListener('click', () => { this.artQte = Math.max(1, max); this.render(); });
+    w.querySelector<HTMLElement>('[data-fab]')?.addEventListener('click', () => { if (this.world.lancerFabrication(this.artRecette, this.artQte)) this.render(); });
+    w.querySelectorAll<HTMLElement>('[data-rtip]').forEach(e => {
+      const r = ITEMS.resources[e.dataset.rtip!];
+      e.addEventListener('mouseenter', ev => { if (!r) return; this.tip.innerHTML = this.resTip(r, e.dataset.rtip!); this.tip.style.display = 'block'; this.moveTip(ev); });
+      e.addEventListener('mousemove', ev => this.moveTip(ev));
+      e.addEventListener('mouseleave', () => this.hideTip());
+    });
+    this.lierIngredients(w);
   }
 
   /** Journal des quêtes (fenêtre Quêtes de Dofus 3, 10A+10B) : en cours et terminées à gauche, détail à droite
@@ -989,7 +1247,9 @@ export class Windows {
       : r.rappel ? `<div class="up">Retour au dernier Zaap (${this.world.checkpointName})</div><div class="hint">Clic droit : boire</div>`
       : r.cle ? `<div class="up">Ouvre l'entrée : ${r.cle}</div><div class="hint">Prise en entrant dans le donjon</div>`
       : r.pepite ? '<div class="hint">Recycle tes objets chez Kerubim Crépin, dans ton Havre-Sac (H), et dépense-les chez ses voisins.</div>' : '';
-    return `<h4>${r.name}</h4><div class="sub">${sorte} · niveau ${r.level}</div>${effet}${sourcesHtml(id, 3)}`;   // 1B : où le trouver
+    const sert = recettesAvec(ITEMS, id).map(x => ITEMS.resources[x.result]?.name).filter(Boolean);
+    const sertA = sert.length ? `<div class="ou"><div class="hd">Sert à</div><div>${sert.slice(0, 5).join(', ')}${sert.length > 5 ? '…' : ''}</div></div>${!r.soin && !r.rappel ? '<div class="hint">Clic droit : recettes qui l\'utilisent</div>' : ''}` : '';
+    return `<h4>${r.name}</h4><div class="sub">${sorte} · niveau ${r.level}</div>${effet}${sertA}${sourcesHtml(id, 3)}`;   // 1B : où le trouver
   }
 
   /** Emp, le Méryde du Recyclage (maquette 0.2, 7A 8A+8B+8C 9A+9B) : recyclage contre des Pépites, en lot ou objet par objet,

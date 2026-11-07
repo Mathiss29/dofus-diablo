@@ -139,6 +139,8 @@
         "Nouveautés": [
           "Nouvelle caractéristique « % Réduction des recharges » sur les objets (plafond 25 %) et nouveau pouvoir légendaire Relance éclair, qui raccourcit la recharge d'un de tes sorts.",
           "Portes : au survol, le curseur change et le nom du lieu s'affiche (« Taverne d'Astrub », « Sortie · Cité d'Astrub », « Salle suivante » dans les donjons). On peut aussi passer une porte en marchant droit dedans.",
+          "Vraie interface des métiers : la fenêtre Métiers (J) range tes métiers à gauche avec leur niveau, et montre à droite les recettes, les récoltes et le prochain palier. Dans un atelier, clique une machine (four, scie, alambic…) pour ouvrir l'Artisanat : choisis la recette, la quantité, et tout se fabrique en une seconde.",
+          "Métiers : survole un ingrédient pour savoir où le trouver (récolte, monstres et leur chance, boutique) et clique pour le voir sur la carte. Épingle une recette pour suivre ses ingrédients à l'écran ; clic droit sur une ressource du sac pour voir les recettes qui l'utilisent.",
           "Bestiaire en jeu (touche B) : chaque monstre d'Incarnam et d'Astrub, rangé par sous-zone, avec un onglet Butin qui donne ta vraie chance (Prospection comprise) et « 1 sur N ». Cherche un objet pour voir où le trouver ; l'infobulle des objets le dit aussi."
         ],
         "Le monde": [

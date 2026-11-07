@@ -204,7 +204,11 @@ export interface OpenDef {
   havreSac?: { arrivee: number; arche: number; poutch?: number; theme?: number };
 }
 /** Atelier : nom officiel, métiers servis, cartes où il se trouve (la salle de l'atelier, ou la carte du dehors s'il est en plein air). */
-export interface AtelierDef { nom: string; metiers: string[]; cartes: string[] }
+export interface AtelierDef {
+  nom: string; metiers: string[]; cartes: string[];
+  /** Machines officielles (Métiers UI 3A, tools/contenu/ateliers_postes.py) : [carte, case, gfx, décalage x, y du dessin]. */
+  postes?: [string, number, number, number, number][];
+}
 export interface ZoneDef {
   name: string; level: number;
   dofusSubArea?: number; dofusArea?: number;
