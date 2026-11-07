@@ -14,7 +14,7 @@
    Ajouter --print pour afficher ce qui serait fait sans rien envoyer. */
 import fs from "node:fs";
 import { carte, carnetDuJour, pied, nomPost } from "./journal.mjs";
-import { actions, decrire, planActuel, TYPES, INTERDIT } from "./plan.mjs";
+import { actions, decrire, ordre, planActuel, TYPES, INTERDIT } from "./plan.mjs";
 
 const API = process.env.DISCORD_API || "https://discord.com/api/v10";
 const UA = "diablofus-bot (github.com/Mathiss29/dofus-diablo, 1)";
@@ -66,6 +66,29 @@ function texte() {
   return t;
 }
 
+/** Message de #commencer-ici : tools/discord/<fichier>, {jeu} remplacé par l'adresse du jeu. */
+function accueil(plan) {
+  const t = fs.readFileSync(new URL("./" + plan.accueil.fichier, import.meta.url), "utf8").replace(/^<!--[\s\S]*?-->\s*/, "").trim();
+  if (t.length > 2000) throw new Error(`${plan.accueil.fichier} : ${t.length} caractères (2 000 au plus pour un message Discord)`);
+  return t;
+}
+// un seul message du robot, épinglé, réécrit quand le fichier change (maquette « Salons » 5A)
+async function epingler(gid, all, plan) {
+  const ch = await findChannel(gid, plan.accueil.salon, { salons: all, type: TYPES.texte, facultatif: true });
+  if (!ch) return console.log(`#${plan.accueil.salon} introuvable : message d'accueil non publié.`);
+  const lien = async (_, nom) => { const id = await findChannel(gid, nom, { salons: all, facultatif: true }); return id ? `<#${id}>` : "#" + nom; };
+  let t = accueil(plan);
+  for (const [m, nom] of [...t.matchAll(/\{#([^}]+)\}/g)]) t = t.replace(m, await lien(m, nom));
+  const moi = (await api("GET", "/users/@me")).id;
+  const pins = await api("GET", `/channels/${ch}/pins`);
+  const m = (Array.isArray(pins) ? pins : pins.items?.map((i) => i.message) || []).find((x) => x.author?.id === moi);
+  if (m && m.content === t) return;
+  if (m) { await api("PATCH", `/channels/${ch}/messages/${m.id}`, { content: t, allowed_mentions: { parse: [] } }); return console.log(`#${plan.accueil.salon} : message d'accueil réécrit.`); }
+  const n = await api("POST", `/channels/${ch}/messages`, { content: t, allowed_mentions: { parse: [] }, flags: 4 });
+  await api("PUT", `/channels/${ch}/pins/${n.id}`);
+  console.log(`#${plan.accueil.salon} : message d'accueil publié et épinglé.`);
+}
+
 async function main() {
   if (cmd === "liste") {
     const all = await api("GET", `/guilds/${await guildId()}/channels`);
@@ -79,28 +102,38 @@ async function main() {
     const plan = JSON.parse(fs.readFileSync(new URL("./serveur.json", import.meta.url), "utf8"));
     if (!plan.actif) return console.log("serveur.json : plan inactif (\"actif\": false), rien à faire.");
     const gid = await guildId(), all = await api("GET", `/guilds/${gid}/channels`);
-    const todo = actions(plan, all);
-    if (!todo.length) return console.log("Plan : le serveur est déjà à jour.");
+    const todo = actions(plan, all, { everyone: gid });
     for (const a of todo) console.log(decrire(a));
-    if (DRY) return console.log(`(essai : ${todo.length} changement(s) non appliqué(s))`);
+    if (DRY) {
+      const o = ordre(plan, all);
+      if (o.length) console.log("~ ordre : " + o.map((x) => x.nom).join(", "));
+      if (plan.accueil) console.log(`~ message épinglé de #${plan.accueil.salon} : ${accueil(plan).length} caractères`);
+      return console.log(`(essai : ${todo.length} changement(s) non appliqué(s), ordre et message d'accueil vérifiés à l'application)`);
+    }
     const crees = new Map();
     for (const a of todo) {
       if (a.type === "supprimer") await api("DELETE", `/channels/${a.id}`);
       else if (a.type === "renommer") await api("PATCH", `/channels/${a.id}`, { name: a.vers });
       else if (a.type === "modifier") await api("PATCH", `/channels/${a.id}`, a.modif);
+      else if (a.type === "droits") await api("PUT", `/channels/${a.id}/permissions/${a.droits.id}`, { type: a.droits.type, allow: a.droits.allow, deny: a.droits.deny });
       else {
         const parent = a.parent && typeof a.parent === "object" ? crees.get(a.parent.cle) : a.parent;
-        const c = await api("POST", `/guilds/${gid}/channels`, { name: a.nom, type: a.genre, ...(parent ? { parent_id: parent } : {}), ...(a.sujet ? { topic: a.sujet } : {}) });
+        const c = await api("POST", `/guilds/${gid}/channels`, { name: a.nom, type: a.genre, ...(parent ? { parent_id: parent } : {}), ...(a.sujet ? { topic: a.sujet } : {}), ...(a.extra || {}) });
         if (a.cle) crees.set(a.cle, c.id);
       }
     }
-    console.log(`Plan appliqué : ${todo.length} changement(s).`);
+    if (todo.length) console.log(`Plan appliqué : ${todo.length} changement(s).`);
+    const apres = todo.length ? await api("GET", `/guilds/${gid}/channels`) : all;
+    const o = ordre(plan, apres);
+    if (o.length) { await api("PATCH", `/guilds/${gid}/channels`, o.map(({ id, position }) => ({ id, position }))); console.log("Ordre rangé : " + o.map((x) => x.nom).join(", ")); }
+    if (plan.accueil) await epingler(gid, apres, plan);
+    if (!todo.length && !o.length) console.log("Plan : le serveur est déjà à jour.");
   } else if (cmd === "journal") {
     const journal = JSON.parse(fs.readFileSync(new URL("../../src/data/journal.json", import.meta.url), "utf8"));
     const c = carnetDuJour(journal, args[0]);
     if (!c) throw new Error("Aucun carnet " + (args[0] || ""));
     const embed = carte(c, journal.rubriques);
-    const salon = process.env.DISCORD_JOURNAL || "journal", forum = process.env.DISCORD_FORUM || "carnets", roleName = (process.env.DISCORD_ROLE || "aucun").trim();
+    const salon = process.env.DISCORD_JOURNAL || "journal", forum = process.env.DISCORD_FORUM || "", roleName = (process.env.DISCORD_ROLE || "aucun").trim();
     if (DRY) return console.log(`[#${salon} + forum #${forum} @${roleName}]\n` + JSON.stringify(embed, null, 2));
     const gid = await guildId(), all = await api("GET", `/guilds/${gid}/channels`);
     const marque = pied(c.date);
@@ -119,7 +152,8 @@ async function main() {
       }
     } else console.log(`Salon #${salon} introuvable : message du jour non publié.`);
     // 3C : un post par jour dans le forum, où les joueurs répondent ; le premier message est réécrit
-    const fo = await findChannel(gid, forum, { salons: all, type: TYPES.forum, facultatif: true });
+    // maquette « Salons » 8C : le forum des carnets est retiré, le post n'est fait que si DISCORD_FORUM nomme un forum
+    const fo = forum && await findChannel(gid, forum, { salons: all, type: TYPES.forum, facultatif: true });
     if (fo) {
       const debut = nomPost(c).split(" · ")[0] + " · ";
       const fils = (await api("GET", `/guilds/${gid}/threads/active`)).threads || [];
@@ -132,7 +166,7 @@ async function main() {
         await api("POST", `/channels/${fo}/threads`, { name: nomPost(c), auto_archive_duration: 10080, message: { embeds: [embed], allowed_mentions: { parse: [] } } });
         console.log(`Forum #${forum} : post du ${c.date} créé.`);
       }
-    } else console.log(`Forum #${forum} introuvable : pas de post.`);
+    } else if (forum) console.log(`Forum #${forum} introuvable : pas de post.`);
   } else if (cmd === "categorie") {
     const [ancien, nouveau] = args;
     if (!ancien || !nouveau) { console.log("Usage : categorie <ancien nom (ou un morceau)> <nouveau nom>"); process.exit(1); }
