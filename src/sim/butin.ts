@@ -40,9 +40,10 @@ export function rollRarity(rng: Rng, rang: Rang | boolean, pros = 0): Rarity {
 }
 
 /** Chance réelle (part de 1) d'une ligne du butin officiel : chance de Dofus × coefficient de butin.json × Prospection. */
-export function chanceLigne(d: DropDef, items: ItemsData, pros = 0): number {
+export function chanceLigne(d: DropDef, items: ItemsData, pros = 0, rang: Rang = 'normal'): number {
   const R = BUTIN.ressources;
-  const coef = items.equipment[d.item] ? BUTIN.equipementsOfficiels.coef : d.chance >= R.seuil ? R.communes : R.rares;
+  // les boss gardent les taux de Dofus : on en tue peu, et leurs ressources à 100 % sont des trophées
+  const coef = items.equipment[d.item] ? BUTIN.equipementsOfficiels.coef : rang === 'boss' ? 1 : d.chance >= R.seuil ? R.communes : R.rares;
   return Math.min(1, d.chance / 100 * coef * coefProspection(pros));
 }
 
@@ -90,7 +91,7 @@ export function tirerButin(rng: Rng, ctx: CtxButin, uid: () => number): Butin {
   const I = ctx.items, pros = ctx.prospection, more = coefProspection(pros), out: Butin = { ressources: [], objets: [], kamas: 0 };
   for (const d of I.drops[ctx.type] ?? []) {
     if (etatLigne(d, ctx) !== 'ok') continue;
-    if (rng.next() >= chanceLigne(d, I, pros)) continue;
+    if (rng.next() >= chanceLigne(d, I, pros, ctx.rang)) continue;
     if (I.equipment[d.item]) out.objets.push(rollItem(d.item, I.equipment[d.item], rollRarity(rng, ctx.rang, pros), rng, uid(), ctx.sortsRecharge));
     else out.ressources.push({ id: d.item, job: metierDe(d, I) });
   }
@@ -124,7 +125,7 @@ export interface TableButin {
 /** Le butin d'un monstre tel que le joueur le verra tomber (Bestiaire 2B+2C, 4A ; outil de test). */
 export function tableButin(ctx: CtxButin): TableButin {
   const I = ctx.items, pros = ctx.prospection, more = coefProspection(pros);
-  const officiel = (I.drops[ctx.type] ?? []).map(d => ({ d, etat: etatLigne(d, ctx), chance: chanceLigne(d, I, pros), equipement: !!I.equipment[d.item] }))
+  const officiel = (I.drops[ctx.type] ?? []).map(d => ({ d, etat: etatLigne(d, ctx), chance: chanceLigne(d, I, pros, ctx.rang), equipement: !!I.equipment[d.item] }))
     .sort((a, b) => b.d.chance - a.d.chance);
   const R = raretes(ctx.rang, pros), leg = R.legendaire + R.mythique, e = BUTIN.equipement[ctx.rang], pool = poolNiveau(ctx);
   const c = pool.length ? Math.min(1, e.chance * more) : 0;
