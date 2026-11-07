@@ -103,6 +103,23 @@ export class Transparence {
     return res;
   }
 
+  /** Un bâtiment est fait de plusieurs images (murs, toit, porte, fenêtres, enseigne) : n'effacer que celles qui couvrent
+   *  le perso laissait une façade pâle avec sa porte et son toit pleins par-dessus, comme deux bâtiments collés
+   *  (retour de Mathis, 2026-11-07). On efface aussi les images devant le perso qui tiennent pour moitié au moins
+   *  dans ce qui le couvre : la porte et les fenêtres suivent leur mur, le bâtiment d'à côté reste plein. */
+  private batiment(d: Piece[], c: Cache) {
+    if (!d.length) return d;
+    const res = new Set(d);
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    for (const p of d) { x0 = Math.min(x0, p.x0); y0 = Math.min(y0, p.y0); x1 = Math.max(x1, p.x1); y1 = Math.max(y1, p.y1); }
+    for (const p of this.proches(x0, y0, x1, y1)) {
+      if (res.has(p) || p.im.depth <= c.sprite.depth) continue;
+      const w = Math.min(x1, p.x1) - Math.max(x0, p.x0), h = Math.min(y1, p.y1) - Math.max(y0, p.y0);
+      if (w > 0 && h > 0 && w * h * 2 >= (p.x1 - p.x0) * (p.y1 - p.y0)) res.add(p);
+    }
+    return [...res];
+  }
+
   /** À chaque image, après la mise à jour des sprites. */
   update(dt: number, caches: Cache[]) {
     const R = Transparence.reglages;
@@ -116,7 +133,7 @@ export class Transparence {
         if (!c.sprite.visible) continue;
         const d = this.devant(c);
         if (!d.length) continue;
-        if (c.joueur) for (const p of d) cibles.add(p.im);
+        if (c.joueur) for (const p of this.batiment(d, c)) cibles.add(p.im);
         else { this.cachesSil.set(c.id, c); for (const p of d) masquants.add(p.im); }
       }
       this.cibles = cibles;
