@@ -1,6 +1,7 @@
 // Chat à canaux (« Social : » 4A 4C 5A) : en bas à gauche, au-dessus du suivi de quête, comme dans Dofus 3. Onglets Tout, Groupe,
 // Bastion, Privé, Infos ; Entrée pour écrire, Entrée pour envoyer, Échap pour fermer. Commandes : /w (ou /p) nom, /r, /g, /b, /t,
-// /inviter nom, /aide. Sans écrire, seuls les derniers messages restent visibles un moment, puis s'effacent.
+// /inviter nom, /aide. Les onglets et le champ restent toujours affichés ; sans écrire, seuls les derniers messages restent
+// visibles un moment au-dessus, puis s'effacent (survol ou Entrée : tout l'historique).
 import { EnLigne, type Canal, type MessageChat } from './presence';
 import { inviterJoueur, menuJoueur } from './social';
 
@@ -10,7 +11,7 @@ export const COULEURS: Record<Canal, string> = { tout: '#ece6d4', groupe: '#6fc6
 const NOM_CANAL: Record<Canal, string> = { tout: '', groupe: 'Groupe', bastion: 'Bastion', prive: '', infos: '' };
 /** Durée (ms) pendant laquelle un message reste visible chat fermé. */
 const VISIBLE = 20_000;
-// chat fermé, sans message récent : la boîte est vide et ne gêne pas les clics dans le jeu
+// chat fermé : seuls les messages récents et la barre (onglets + champ) prennent de la place à l'écran
 
 const CSS = `
 .chat-df{position:fixed;left:12px;bottom:160px;width:360px;z-index:25;font:13px/1.35 Lexend,sans-serif;color:#ece6d4;transform-origin:0 100%;transform:scale(var(--echelle,1))}
@@ -19,10 +20,10 @@ const CSS = `
 .chat-df .ch-msgs div.vieux{display:none}
 .chat-df .ch-msgs:empty{padding:0}
 .chat-df .ch-msgs b{cursor:pointer}
-.chat-df .ch-bas{display:none}
+.chat-df .ch-bas{background:#0f0e0b99;border-radius:5px;padding:0 6px 6px}
 .chat-df.ouvert .ch-msgs,.chat-df:hover .ch-msgs{background:#0f0e0bd0;overflow-y:auto}
 .chat-df.ouvert .ch-msgs div.vieux,.chat-df:hover .ch-msgs div.vieux{display:block}
-.chat-df.ouvert .ch-bas,.chat-df:hover .ch-bas{display:block;background:#0f0e0bd0;border-radius:0 0 5px 5px;padding:0 6px 6px}
+.chat-df.ouvert .ch-bas,.chat-df:hover .ch-bas{background:#0f0e0bd0;border-radius:0 0 5px 5px}
 .chat-df .ch-t{display:flex;gap:2px;padding:4px 0}
 .chat-df .ch-t span{flex:1;text-align:center;font-size:11px;padding:2px 0;border-radius:3px;background:#2a2822;color:#a9a493;cursor:pointer;position:relative}
 .chat-df .ch-t span.on{background:#4c6e17;color:#fff}
@@ -46,7 +47,7 @@ export class ChatVue {
   constructor() {
     if (!document.getElementById('chat-df-css')) { const st = document.createElement('style'); st.id = 'chat-df-css'; st.textContent = CSS; document.head.appendChild(st); }
     this.root = document.createElement('div'); this.root.className = 'chat-df';
-    this.root.innerHTML = '<div class="ch-msgs"></div><div class="ch-bas"><div class="ch-t"></div><input type="text" maxlength="200" placeholder="Écris ici (/aide pour les commandes)" autocomplete="off" spellcheck="false"></div>';
+    this.root.innerHTML = '<div class="ch-msgs"></div><div class="ch-bas"><div class="ch-t"></div><input type="text" maxlength="200" placeholder="Entrée pour écrire · /aide pour les commandes" autocomplete="off" spellcheck="false"></div>';
     this.msgs = this.root.querySelector('.ch-msgs')!; this.tabs = this.root.querySelector('.ch-t')!; this.champ = this.root.querySelector('input')!;
     // rien ne passe au jeu : ni clic, ni touche tapée dans le champ
     for (const ev of ['pointerdown', 'pointerup', 'wheel', 'contextmenu'] as const) this.root.addEventListener(ev, e => e.stopPropagation());
@@ -57,6 +58,7 @@ export class ChatVue {
     });
     this.champ.addEventListener('keyup', e => e.stopPropagation());
     this.champ.addEventListener('blur', () => this.root.classList.remove('ouvert'));
+    this.champ.addEventListener('focus', () => this.root.classList.add('ouvert'));
     this.msgs.addEventListener('click', e => {
       const n = (e.target as HTMLElement).closest<HTMLElement>('[data-nom]')?.dataset.nom;
       if (n) this.ouvrir(`/w ${n} `);

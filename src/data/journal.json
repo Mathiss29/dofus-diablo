@@ -1052,7 +1052,6 @@
           }
         ],
         "Corrections": [
-          "Tutoriel de l'Osamodas : sa propre trame avec Ganymède (Tofu, Éveil) ; « Ton premier sort » se valide.",
           "Les Chafers Éclaireurs, le Tofu Chimérique et le Petit Gloot blessent enfin à distance.",
           "Le Zaap du Bastion tourbillonne et affiche son nom au survol.",
           "La flèche ne part plus dans le mauvais sens quand le but est dans un bâtiment.",
@@ -1074,7 +1073,8 @@
           "Forgelance : Prélude au Fer et Phalange se visent quand tu es Armé et partent de la Lance si Désarmé.",
           "Plus de léger flou en courant : le décor et les persos défilent pile au pixel près.",
           "Coop sur le serveur : chacun peut sortir de l'arène par le portail, plus seulement le créateur.",
-          "Sur un écran réglé à 125 % ou 150 %, le jeu est dessiné aux vrais pixels : tout est plus net."
+          "Sur un écran réglé à 125 % ou 150 %, le jeu est dessiné aux vrais pixels : tout est plus net.",
+          "Le chat reste affiché en bas à gauche, avec ses onglets et son champ, même quand personne n'écrit."
         ],
         "En coulisses": [
           "Sur Discord, le carnet du jour ne montre que ce qui est jouable par tous.",
