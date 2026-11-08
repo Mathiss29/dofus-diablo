@@ -11,7 +11,7 @@ neuf = {m['tag']: m for m in E['maps']}
 n = 0
 for m in M['maps']:
     e = neuf.get(m['tag'])
-    if not e or m.get('inside'): continue
+    if not e or e.get('garde') or m.get('inside'): continue   # garde : carte gardée telle quelle (CACHE_SOLS + ONLY)
     shutil.copyfile(f"{A}/sol_{m['tag']}.webp", f"{D}/sol_{m['tag']}.webp"); m['sol'] = e['sol']
     if 'bord' in e: shutil.copyfile(f"{A}/bord_{m['tag']}.webp", f"{D}/bord_{m['tag']}.webp"); m['bord'] = e['bord']
     else:

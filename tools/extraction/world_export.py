@@ -87,13 +87,19 @@ DECOR_ONLY = os.environ.get('DECOR_ONLY') == '1'
 # avec DECOR_ONLY : NO_DECOR=1 saute aussi les atlas de décor ; CALQUES=fond,bord réécrit quand même ces calques
 NO_DECOR = os.environ.get('NO_DECOR') == '1'
 CALQUES = set(os.environ.get('CALQUES', 'bord').split(','))
+# CACHE_SOLS=dossier : garde pour chaque carte l'alpha et la couleur moyenne de son sol. Au passage suivant, avec ONLY=<cartes
+# touchées et leurs voisines>, les autres cartes ne sont pas recomposées (quelques minutes au lieu de 30 pour Astrub).
+CACHE_SOLS = os.environ.get('CACHE_SOLS')
+if CACHE_SOLS: os.makedirs(CACHE_SOLS, exist_ok=True)
 sols, entiers, couleurs = {}, {}, {}
-# L'encodage WebP (method=6) est le plus long : il part dans 4 fils en parallèle (PIL libère le verrou pendant l'encodage).
+# L'encodage WebP est le plus long : il part dans 4 fils en parallèle (PIL libère le verrou pendant l'encodage).
+# WEBP_METHOD (4 par défaut, réglage « rapide ») : 6 = compression maximale, 3 à 4 fois plus lent pour quelques % de moins.
+WEBP_METHOD = int(os.environ.get('WEBP_METHOD', '4'))
 from concurrent.futures import ThreadPoolExecutor
 POOL = ThreadPoolExecutor(int(os.environ.get('FILS', os.cpu_count() or 4)))
 PENDING = []
 def webp(im, path, q):
-    PENDING.append(POOL.submit(lambda: im.save(path, 'WEBP', quality=q, method=6)))
+    PENDING.append(POOL.submit(lambda: im.save(path, 'WEBP', quality=q, method=WEBP_METHOD)))
     while len(PENDING) > 8: PENDING.pop(0).result()   # pas plus de 8 images en attente d'encodage (mémoire)
 # Grands mondes (Astrub) : les images gardées pour la fin (sol entier pour le calque « bord », décor partagé) vont sur le disque.
 import tempfile
@@ -210,6 +216,14 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
     for c, cell in enumerate(md['cellsData']):
         r, k = divmod(c, COLS)
         if cell['mov']: mov[(iy * ROWS + r) * COLS * nx + ix * COLS + k] = '1'
+    # CACHE_SOLS + ONLY : une carte hors de ONLY déjà en cache n'est pas recomposée, on relit seulement ce dont les raccords
+    # de ses voisines ont besoin (alpha et couleur moyenne de son sol). Elle est notée "garde" : sols_fusion.py n'y touche pas.
+    cs = f"{CACHE_SOLS}/{tag}" if CACHE_SOLS else None
+    if cs and ONLY and tag not in ONLY and os.path.exists(cs + '.json'):
+        g = json.load(open(cs + '.json'))
+        sols[tag] = (Image.open(cs + '_a.png'), g['x'], g['y']); couleurs[tag] = Image.open(cs + '_c.png').convert('RGBA')
+        monde['maps'].append({'x': x, 'y': y, 'id': sel[(x, y)][0], 'sub': sel[(x, y)][1], 'tag': tag, 'sol': g, 'decor': [], 'garde': 1})
+        continue
     # Sol = exactement une période de la grille (1204 x 860) côté voisin : on coupe pile au raccord ;
     # côté vide, rien n'est coupé (falaises, nuages au bord du monde).
     # Les nuages / rayons translucides qui débordent sur un voisin iraient se couper net au raccord :
@@ -319,6 +333,9 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
     sols[tag] = (sol.getchannel('A'), bx0 + dx, by0 + dy)   # seul l'alpha sert (calque « bord ») : 4 fois moins de mémoire
     # couleur moyenne du sol au huitième (calque « bord » : un débord ne se fond que sur un sol qui lui ressemble)
     couleurs[tag] = sol.resize((max(1, sol.width // 8), max(1, sol.height // 8)), Image.BOX)
+    if cs:
+        sols[tag][0].save(cs + '_a.png'); couleurs[tag].save(cs + '_c.png')
+        json.dump({'x': bx0 + dx, 'y': by0 + dy, 'w': sol.width, 'h': sol.height}, open(cs + '.json', 'w'))
     def calque(lst, nom):
         if not lst: return None
         fx0 = min(ex for _, ex, _ in lst); fy0 = min(ey for _, _, ey in lst)
@@ -374,7 +391,7 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
     monde['maps'].append({'x': x, 'y': y, 'id': sel[(x, y)][0], 'sub': sel[(x, y)][1], 'tag': tag,
                           'sol': {'x': bx0 + dx, 'y': by0 + dy, 'w': sol.width, 'h': sol.height}, 'decor': places,
                           **({'fond': fond} if fond else {}), **({'inside': 1} if extra[(x, y)].get('inside') else {}),
-                          **({'ciel': 1} if extra[(x, y)].get('ciel') else {})})
+                          **({'ciel': 1} if extra[(x, y)].get('ciel') else {}), **({} if write else {'garde': 1})})
     print(tag, 'retirés', len(hard), 'lumières', len(lums), 'eau', len(couche), 'sol', sol.size, 'fond', fond and (fond['w'], fond['h']), 'decor', len(places), asz)
 def pages_partagees():
     """Range toutes les images du décor dans des pages de 2048 x 2048 au plus, dans l'ordre de première utilisation."""
