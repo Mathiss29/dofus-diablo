@@ -279,6 +279,10 @@ acheté chez Emp en Pépites ; la garde-robe (Lykhen à Incarnam, Emp à Astrub)
   en comparant les icônes aux 606 skins qui ont un morceau `Bouclier` (8 sur 10 ; Bouclier Invisible et Tonbarien sans dessin sûr).
 - `python apparat_export.py <tables> <fr.bin> coiffes.json,capes.json <item_assets_1x.bundle>` : `src/data/apparat.json`
   (types 246 coiffe, 247 cape d'apparat), leurs icônes sur `public/assets/ui/apparat.webp`, leurs paires dans les correspondances.
+- Objets ajoutés après coup (0.3, niveaux 26 à 40) : coiffes et capes reprises du catalogue Kaikina (`src/data/coiffes.json`, `capes.json`
+  de son dépôt) ; boucliers et armes en comparant l'icône à chaque morceau `Bouclier_1` / `Arme_1` des 5 548 skins (forme + couleurs,
+  six meilleurs candidats vérifiés à l'œil sur une planche). Arme sans dessin sûr : dessin type de sa famille (voir plus bas).
+  Restent sans dessin : Araknacoiffe, Coiffe et Bouclier Invisibles.
 - `python equipement_export.py <Skins> src/data/items.json equipement_correspondances.json public/assets/sprites/squelette <tables>` :
   `skin_<id>.json/.webp` de chaque objet et `equipement.json` { objets, caches }. `PART=i/n` + `TRAVAIL` différent : plusieurs en parallèle.
 - Une coiffe se pose dans les emplacements vides de la tête (`Chapeau_1`, `ChapeauB_1`, `Masque_1`... = `trou` + transformation
