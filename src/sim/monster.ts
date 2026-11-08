@@ -21,6 +21,9 @@ export function castKind(s: MonsterSpell): CastKind {
   if (s.zone[0] === 'L' && Number(s.zone.slice(1)) >= 2) return 'ligne';   // zone officielle en ligne (Dégraissage L8 : 8 cases devant lui)
   return s.po[1] <= 1 ? 'melee' : 'target';
 }
+/** Sort qui ne sert qu'à ses alliés (Frénésie, Bêlement…). Dans les données, « allies » veut dire que le sort touche
+ *  AUSSI les alliés (cible « a » = tout le monde) : un sort qui fait des dommages (Flèche de Feu, Glougloutte…) vise d'abord le joueur. */
+export function soutienSeul(s: MonsterSpell): boolean { return s.allies && !s.effects.some(e => e.k === 'dmg'); }
 /** Rayon touché par la zone du sort : P = la case visée, X / C n = n cases autour. */
 export function zoneRadius(s: MonsterSpell): number {
   const n = Number(s.zone.slice(1)) || 0;
@@ -209,7 +212,7 @@ export class Monster extends Entity {
           if (this.kind === 'invoque') { /* pas de zone : l'invocation apparaît à son contact */ }
           else if (this.kind === 'target' || this.kind === 'self') {
             if (this.kind === 'self') { this.tx = this.x; this.ty = this.y; }
-            if (!S.allies) this.annonce(world, { kind: 'circle', x: this.tx, y: this.ty, r: zoneRadius(S), progress: k, danger: true });
+            if (!soutienSeul(S)) this.annonce(world, { kind: 'circle', x: this.tx, y: this.ty, r: zoneRadius(S), progress: k, danger: true });
           } else {
             this.facing = Math.atan2(this.dirY, this.dirX);
             const len = this.kind === 'charge' ? this.chargeLen(S) + this.radius : this.kind === 'missile' ? this.missileRange(S) : this.kind === 'ligne' ? ligneLen(S, this.radius) : D.lungeSpeed * D.lungeTime + this.radius;
@@ -281,14 +284,14 @@ export class Monster extends Entity {
   private reach(S: MonsterSpell, player: Player): [number, number] {
     const k = castKind(S), pad = this.radius + player.radius;
     if (k === 'invoque') return [0, CASE * 6];
-    if (k === 'self') return [0, S.allies ? Infinity : zoneRadius(S) + player.radius];
+    if (k === 'self') return [0, soutienSeul(S) ? Infinity : zoneRadius(S) + player.radius];
     if (k === 'melee') return [0, this.def.attackRange + player.radius];
     if (k === 'ligne') return [0, ligneLen(S, this.radius) + player.radius];
     return [S.po[0] >= 2 ? S.po[0] * CASE : 0, this.po(S) * CASE + pad];
   }
   /** Plus grande portée d'un sort offensif à distance, si le monstre n'a aucun sort au contact (sinon 0 : il vient au contact). */
   private spellReach(player: Player): number {
-    const S = (this.def.spells ?? []).filter(s => !s.allies && castKind(s) !== 'self');
+    const S = (this.def.spells ?? []).filter(s => !soutienSeul(s) && castKind(s) !== 'self');
     if (!S.length || S.some(s => s.po[1] <= 1)) return 0;
     return Math.max(...S.map(s => this.reach(s, player)[1]));
   }
@@ -316,7 +319,7 @@ export class Monster extends Entity {
         if (dist < CASE * 6 && world.monsters.filter(m => m.summoner === this && !m.dead).length < max) ok.push(i);
         return;
       }
-      if (s.allies && k === 'self') {
+      if (soutienSeul(s) && k === 'self') {
         if (s.effects.some(e => e.k === 'dommages')) { if (this.furyT <= 0 && dist < CASE * 4) ok.push(i); }   // Frénésie : juste avant le contact
         else if (this.hasteT <= 0 && dist > CASE * 2) ok.push(i);
         return;
@@ -353,11 +356,12 @@ export class Monster extends Entity {
       if (S.allies) {
         for (const m of world.monsters) if (!m.dead && (m === this || (m.group >= 0 && m.group === this.group) || m.summoner === this)
           && Math.hypot(m.x - this.tx, m.y - this.ty) <= Math.min(r, CASE * 8) + m.radius) world.monsterSpellBuff(m, S);
-      } else if (Math.hypot(player.x - this.tx, player.y - this.ty) <= r + player.radius) world.monsterSpellHits(this, S, player);
+      }
+      if (!soutienSeul(S) && Math.hypot(player.x - this.tx, player.y - this.ty) <= r + player.radius) world.monsterSpellHits(this, S, player);
       // Monstre de base : pas de cercle de zone ni de nom de sort, seulement l'éclat de l'impact (comme 8A)
       const zone = this.def.elite || this.def.boss;
-      if (zone && this.kind === 'self' && !S.allies) world.emit({ k: 'slam', x: this.tx, y: this.ty, radius: vis });
-      world.emit({ k: 'spell', fx: 'burst', id: `m${S.id}`, x: this.tx, y: this.ty, facing: 0, size: S.allies ? this.radius * 2 : vis, arc: 0, element: el as never, big: false, boosted: false, ...(zone ? {} : { discret: true }) });
+      if (zone && this.kind === 'self' && !soutienSeul(S)) world.emit({ k: 'slam', x: this.tx, y: this.ty, radius: vis });
+      world.emit({ k: 'spell', fx: 'burst', id: `m${S.id}`, x: this.tx, y: this.ty, facing: 0, size: soutienSeul(S) ? this.radius * 2 : vis, arc: 0, element: el as never, big: false, boosted: false, ...(zone ? {} : { discret: true }) });
     }
     this.endCast(world);
   }
