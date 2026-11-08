@@ -10,12 +10,13 @@ const lire = (w: string) => JSON.parse(readFileSync(new URL(`../public/assets/mo
 const astrub = lire('astrub'), incarnam = lire('incarnam');
 const zone = GAME_DATA.zones.astrub.open!;
 
-/** Clique sur le portail de zone de ce monde et avance jusqu'à l'événement changeZone. */
-function passerPortail(w: World) {
+/** Clique sur le portail de zone de ce monde (son dessin : le perso y marche) et avance jusqu'à l'événement changeZone.
+ *  clic = false : on marche seulement jusqu'à sa case, sans cliquer sur le dessin. */
+function passerPortail(w: World, clic = true) {
   const po = w.portes.find(p => p.vers)!;
   w.player.x = po.ends[0].x + 40; w.player.y = po.ends[0].y;
   for (let i = 0; i < 120; i++) {
-    w.step(1 / 60, { ...NO_INPUT, dest: { x: po.ends[0].x, y: po.ends[0].y } });
+    w.step(1 / 60, { ...NO_INPUT, dest: { x: po.ends[0].x, y: po.ends[0].y }, versPortail: clic && i === 0 ? po.nom : null });
     const e = w.drainEvents().find(e => e.k === 'changeZone');
     if (e && e.k === 'changeZone') return e;
   }
@@ -42,17 +43,26 @@ describe('Astrub (0.2a)', () => {
     const noms = astrub.reperes!.map(r => r.n);
     for (const n of ['Zaap', 'Banque', 'Portail vers Incarnam', 'Grange du Tournesol Affamé']) expect(noms).toContain(n);
   });
+  it('portails dessinés : le bassin d\'Incarnam et l\'arche de la tour d\'Astrub se cliquent, passer à côté ne fait rien', () => {
+    for (const [nom, monde] of [['incarnam', incarnam], ['astrub', astrub]] as const) {
+      const w = new World({ data: GAME_DATA, zone: nom, map: new WorldGrid(monde), seed: 1 }), po = w.portes.find(p => p.vers)!;
+      expect(po.dessin, nom).toBeDefined();
+      // le dessin est loin de la case où l'on s'arrête (dans le vide, en haut de l'escalier), mais sur la même carte
+      expect(w.worldGrid!.mapAt(po.dessin!.x, po.dessin!.y)?.tag).toBe(po.ends[0].tag);
+      expect(passerPortail(w, false), nom).toBeNull();
+    }
+  });
   it('portail Incarnam [4,-3] -> Astrub [6,-19], et retour', () => {
     const w1 = new World({ data: GAME_DATA, zone: 'incarnam', map: new WorldGrid(incarnam), seed: 1 });
     const aller = passerPortail(w1);
-    expect(aller).toMatchObject({ zone: 'astrub', arrivee: ['6_-19', 326] });
+    expect(aller).toMatchObject({ zone: 'astrub', arrivee: ['6_-19', 397] });
     const w2 = new World({ data: GAME_DATA, zone: 'astrub', map: new WorldGrid(astrub), seed: 1, arrivee: aller!.arrivee });
     expect(w2.worldGrid!.mapAt(w2.player.x, w2.player.y)?.tag).toBe('6_-19');
     // on arrive à côté du portail, pas dessus : il ne renvoie pas tout de suite à Incarnam
     for (let i = 0; i < 60; i++) w2.step(1 / 60, NO_INPUT);
     expect(w2.drainEvents().some(e => e.k === 'changeZone')).toBe(false);
     const retour = passerPortail(w2);
-    expect(retour).toMatchObject({ zone: 'incarnam', arrivee: ['4_-3', 174] });
+    expect(retour).toMatchObject({ zone: 'incarnam', arrivee: ['4_-3', 300] });
   });
   it('quatre donjons en arène : une grande salle de 3 x 3 cartes, monstres officiels, 6 vagues + le boss, entrée à clé', () => {
     const w = new World({ data: GAME_DATA, zone: 'astrub', map: new WorldGrid(astrub), seed: 1 }), wg = w.worldGrid!;

@@ -773,6 +773,16 @@
               "Incarnam",
               "Astrub"
             ]
+          },
+          {
+            "titre": "Le passage vers Incarnam",
+            "phrase": "Clique sur l'arche de la tour d'Astrub ou le bassin de la Route des âmes pour changer d'île.",
+            "details": "Le portail s'entoure au survol ; ton personnage y marche puis arrive à côté de l'autre portail.",
+            "icone": "zaap",
+            "etiquettes": [
+              "Astrub",
+              "Incarnam"
+            ]
           }
         ],
         "Combat": [
