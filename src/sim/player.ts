@@ -1099,6 +1099,7 @@ export class Player extends Entity {
         size = CASE * 2 + zb; s.tx = this.x + Math.cos(this.facing) * size * 0.6; s.ty = this.y + Math.sin(this.facing) * size * 0.6;
         hits = world.hitCone(this.x, this.y, this.facing, size, (120 * Math.PI) / 180, { ...hit, dmg: hit.dmg * this.pcv('pc-sacrieur-J') / 100 }, d.stun);
       }
+      else if (hz.shape === 'point' && d.allies && !d.dmg) { size = hz.radius * area + zb; }   // soutien du Forgelance (Phalange, Prélude au Fer) : aucun coup aux monstres
       else if (hz.shape === 'point') { size = hz.radius * area + zb; hits = world.hitCircle(s.tx, s.ty, size, hit, d.stun, this.facing); }   // poussée dans l'axe du lanceur, comme Dofus
       else if (hz.shape === 'circle' && d.vuln && !d.dmg) { size = hz.radius * area + zb; world.markVuln(this.x, this.y, size, d.vuln.n, d.vuln.t); }
       else if (hz.shape === 'circle') {
@@ -1124,7 +1125,8 @@ export class Player extends Entity {
       if (s.id === 'arme') this.frenesie(hits, world);
       this.apresImpactClasse(s.id, s.sx, s.sy, s.tx, s.ty, hit, s.gm, size, world);
       const pt = hz.shape === 'point';
-      if (hz.shape !== 'projectile') world.emit({ k: 'spell', fx: pt ? 'burst' : d.fx, id: s.id, x: pt ? s.tx : this.x, y: pt ? s.ty : this.y, cx: this.x, cy: this.y, facing: this.facing, size,
+      if (d.self && surL && hz.shape === 'circle') size = hz.radius * area + zb;   // Forgelance Désarmé : l'effet se voit autour de la Lance
+      if (hz.shape !== 'projectile') world.emit({ k: 'spell', fx: pt ? 'burst' : d.fx, id: s.id, x: pt ? s.tx : surL ? cx : this.x, y: pt ? s.ty : surL ? cy : this.y, cx: this.x, cy: this.y, facing: this.facing, size,
         arc: hz.shape === 'cone' ? (hz.arc * Math.PI) / 180 : 0, element: d.element, big: d.shake >= 0.012 || s.boosted, boosted: s.boosted });
       else world.emit({ k: 'shoot', id: s.id, x: this.x, y: this.y, facing: this.facing, element: d.element, boosted: s.boosted });
       if (hz.shape !== 'projectile') world.emit({ k: 'impact', hitstop: hits || d.charge ? d.hitstop * (s.boosted ? 1.4 : 1) : 0, shake: d.shake * (s.boosted ? 1.5 : 1), big: d.shake >= 0.012 || s.boosted });
