@@ -132,6 +132,8 @@ export interface WorldOptions {
   /** Zones déjà visitées par le perso (3A : les PNJ du Havre-Sac emménagent au fil de l'histoire). */
   zonesVues?: string[];  /** Date du jour (AAAA-MM-JJ), donnée par l'affichage : premier passage d'un donjon au carnet de route (Tour 8B). */
   aujourdhui?: string;
+  /** Partie tenue par le serveur multijoueur (maquette « Vrai multi : » 1A) : aucun joueur n'est « l'écran ». */
+  partieServeur?: boolean;
 }
 
 /** Le familier porté (maquette Familiers 4A) : il suit le perso et va chercher le butin autour de lui. */
@@ -302,9 +304,11 @@ export class World {
     try { return fn(); } finally { this.acteur = a; }
   }
   /** Retire un joueur (pas celui de cet écran) ; ses bêtes partent avec lui. */
+  /** Retire un joueur. Le premier (le joueur de l'écran) ne part jamais, sauf sur le serveur (partieServeur) où
+   *  personne n'est « l'écran » : là, le suivant prend sa place tant qu'il reste quelqu'un. */
   retirerJoueur(q: Player): boolean {
     const i = this.players.indexOf(q);
-    if (i <= 0) return false;
+    if (i < 0 || (i === 0 && (!this.opts.partieServeur || this.players.length < 2))) return false;
     this.players.splice(i, 1);
     this.betes = this.betes.filter(b => b.owner !== q);
     return true;

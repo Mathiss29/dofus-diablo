@@ -2,7 +2,9 @@
 
 Serveur Node 22 (maquette « Multi : », 2026-11-08) : coop à 2-4 joueurs, Bastion des Douze partagé, comptes Discord et
 sauvegardes en ligne. Pour l'instant : `/sante`, les salons de coop sur `/ws`, et les comptes Discord avec persos en ligne
-(`comptes.mjs`, base SQLite `donnees/diablofus.db`, copie chaque nuit à 4 h 30 dans `donnees/sauvegardes/`, 14 gardées).
+(`comptes.mjs`, base SQLite `donnees/diablofus.db`, copie chaque nuit à 4 h 30 dans `donnees/sauvegardes/`, 14 gardées),
+et les parties tenues par le serveur (`partie.mjs`, maquette « Vrai multi : » 1A) : la simulation du jeu (`src/sim`) est
+construite en un fichier par `construire-sim.mjs` (esbuild) dans `partie/`, à chaque mise à jour.
 
 Il tourne sur le VPS OVH d'Idlus (VPS-3, Ubuntu 24.04), **sans toucher à Idlus** :
 
@@ -88,6 +90,18 @@ sudo systemctl daemon-reload && sudo systemctl restart cloudflared
 ## Bon à savoir
 
 - Cloudflare coupe un WebSocket muet depuis 100 s : le serveur envoie un ping toutes les 30 s (`index.mjs`).
+
+- 2026-11-08 : `maj.sh` récupère aussi la simulation du jeu (`src/sim`, `src/data`, le monde d'Incarnam ; aucune image) et
+  la construit (`construire-sim.mjs`) pour les parties tenues par le serveur. Remplacer `maj.sh` (commit indiqué par Mathis) :
+
+```bash
+cd /tmp && curl -fsSLO https://raw.githubusercontent.com/Mathiss29/dofus-diablo/$COMMIT/serveur/installation/maj.sh
+cat maj.sh   # relire
+sudo install -D -o root -g root -m 755 maj.sh /usr/local/lib/diablofus/maj.sh
+sudo systemctl start diablofus-maj.service && journalctl -u diablofus-maj -n 5 --no-pager && curl -fsS http://127.0.0.1:3100/sante
+```
+
+  La dernière ligne doit montrer `"parties":0` ; la première construction prend quelques secondes (esbuild).
 
 ## Comptes Discord (maquette « Vrai multi : » 11B)
 

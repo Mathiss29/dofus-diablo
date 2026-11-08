@@ -331,6 +331,7 @@ export class PanneauTest {
     tous('[data-allie]', b => this.actions.envoyer({ k: 'allie', classe: b.dataset.allie! }));
     // Coop (maquette « Multi : » 11A) : salon à code sur le serveur
     tous('[data-coop-creer]', () => Coop.creer());
+    tous('[data-coop-serveur]', () => Coop.creer(true));
     tous('[data-coop-quitter]', () => Coop.quitter());
     const cc = q<HTMLInputElement>('#pt-coop');
     const rejoindre = () => { if (cc) Coop.rejoindre(cc.value); };
@@ -500,10 +501,13 @@ export class PanneauTest {
     if (c.etat === 'salon' && c.hote) return `<div class="l"><span>Code du salon</span><b style="font-size:20px;letter-spacing:3px;user-select:all">${esc(c.code ?? '')}</b></div>
       <p class="note">${c.nbJoueurs} joueur${c.nbJoueurs > 1 ? 's' : ''} sur 4. Ton ami ouvre sa partie de test (diablofus.com/#test), F1 › Monstres, et tape ce code : son perso arrive à côté de toi. La partie tourne chez toi.</p>
       <button type="button" class="b g" data-coop-quitter>Fermer le salon</button>`;
+    if (c.etat === 'salon' && c.serveur) return `<div class="l"><span>Code du salon</span><b style="font-size:20px;letter-spacing:3px;user-select:all">${esc(c.code ?? '')}</b></div>
+      <p class="note">La partie tourne sur le serveur, dans l'arène de la Crypte de Kardorim. Tes amis tapent ce code (2 à 4 joueurs) ; chacun peut partir sans couper les autres. Rien n'est gardé ici pour l'instant.</p>
+      <button type="button" class="b g" data-coop-quitter>Quitter le salon</button>`;
     if (c.etat === 'salon') return `<p class="note">Salon <b>${esc(c.code ?? '')}</b> : tu joues dans la partie de l'hôte, avec ton perso. Rien n'est gardé ici, tu retrouves ta partie en quittant.</p>
       <button type="button" class="b g" data-coop-quitter>Quitter le salon</button>`;
     return `${c.erreur ? `<p class="note" style="color:#ff9a5a">${esc(c.erreur)}</p>` : ''}
-      <button type="button" class="b" data-coop-creer>Créer un salon</button>
+      <div class="l" style="justify-content:flex-start;gap:4px"><button type="button" class="b" data-coop-creer>Créer un salon</button><button type="button" class="b g" data-coop-serveur>Partie sur le serveur</button></div>
       <div class="l"><input type="text" id="pt-coop" maxlength="5" placeholder="Code d'un ami" autocomplete="off" style="text-transform:uppercase;width:140px"><button type="button" class="b g" data-coop-rejoindre>Rejoindre</button></div>
       <p class="note">Premier essai de la coop : 2 à 4 joueurs, les monstres et le butin sont chez l'hôte. Bon terrain : une arène de donjon (Crypte de Kardorim).</p>`;
   }
