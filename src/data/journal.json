@@ -867,6 +867,15 @@
             "etiquettes": [
               "Partie de test"
             ]
+          },
+          {
+            "titre": "16 légendaires Iop et Crâ",
+            "phrase": "Pression qui marque, Colère qui frappe autour, Flèche Glacée qui traverse : 2 pouvoirs par emplacement.",
+            "details": "Ferveur qui éclate, Pas Chassé qui lâche des flèches, Abolition qui protège… Ceux de l'Osamodas suivront.",
+            "icone": "degats",
+            "etiquettes": [
+              "Partie de test"
+            ]
           }
         ],
         "Corrections": [

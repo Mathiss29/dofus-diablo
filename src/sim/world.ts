@@ -45,6 +45,10 @@ export interface HitDef { dmg: number; knock: number; element?: Element; lifeste
    *  gel de n s au 3e coup (Givre mordant), +n % de dommages de poussée et étourdi (Clouage), marque +n % (Marque du chasseur),
    *  rebonds en plus (Flèche rebelle), 3 petites explosions à n % (Gerbe de feu). */
   execute?: number; loin?: number; givre?: number; clouage?: number; marque?: number; rebonds?: number; gerbe?: number;
+  /** Légendaires de classe, suite : +n % sur élites et boss (Coup du duelliste), +n % (Œil du cyclone), brûlure de n % si repoussé
+   *  (Barrage incendiaire), cibles traversées en plus (Flèche perçante), vie volée en trop → bouclier jusqu'à n % des PV
+   *  (Sève d'Abolition), sort à prévenir quand il tue (Déferlement sans fin). */
+  vsGros?: number; plus?: number; brule?: number; perce?: number; surplus?: number; tue?: string;
   /** Stase de sang (Sacrieur P) : immobilise n s, une fois par monstre toutes les 5 s. */
   stase?: number }
 /** Zone laissée au sol par un légendaire de classe (Épée jumelle) : frappe une fois chaque monstre qui la traverse. */
@@ -1212,7 +1216,8 @@ export class World {
         else {
           pr.touched.add(target.id);
           this.applyHits(m => m === target, pr.hit, pr.x - pr.dx * 10, pr.y - pr.dy * 10, pr.stun, Math.atan2(pr.dy, pr.dx));
-          if (!pr.pierce) end = !this.rebondir(pr, target);
+          if (pr.hit.perce) pr.hit = { ...pr.hit, dmg: pr.hit.dmg * 0.85, perce: pr.hit.perce - 1 };   // Flèche perçante
+          else if (!pr.pierce) end = !this.rebondir(pr, target);
         }
         this.emit({ k: 'impact', hitstop: 0.03, shake: pr.explode ? 0.008 : 0.003, big: false });
       } else if (end && pr.explode) { this.hitCircle(pr.x, pr.y, pr.explode, pr.hit, pr.stun); this.gerbe(pr); }
@@ -1304,6 +1309,7 @@ export class World {
       const vu = (m.vulnT > 0 ? 1 + m.vuln / 100 : 1) * m.subis;   // dommages subis augmentés (Bond) ou réduits (Cuirasse Laineuse)
       // Légendaires de classe : Marque du chasseur (les autres coups), Œil d'aigle (par case de distance)
       const pc = (m.marqueJusqua > this.time && !def.marque ? 1 + m.marque / 100 : 1)
+        * (def.vsGros && (m.def.elite || m.def.boss) ? 1 + def.vsGros / 100 : 1) * (def.plus ? 1 + def.plus / 100 : 1)
         * (def.loin ? 1 + Math.min(def.loin * 10, def.loin * Math.hypot(m.x - p.x, m.y - p.y) / CASE) / 100 : 1);
       // Sort sans dommages (Attirance, Transposition) : seulement ses effets
       const dmg = def.dmg <= 0 ? 0 : Math.max(1, Math.round((p.damage(def.dmg * vs, def.element ?? 'neutre') * this.rng.range(0.9, 1.1) * (crit ? cls.critMult : 1) * first + flat) * (1 - res / 100) * vu * pc));
@@ -1334,6 +1340,10 @@ export class World {
       const choc = def.pushDmg && kb > 0 && this.pushDamage(m, a, kb / 7.13, def.clouage ?? 0);
       if (!m.def.boss) m.stun = Math.max(m.stun, stun || 0.12);   // petit vacillement : interrompt les télégraphes
       else if (stun) m.stun = Math.max(m.stun, stun * 0.3);
+      if (def.brule && kb > 0 && dmg > 0 && m.hp > 0) {   // Barrage incendiaire : le monstre repoussé brûle 2 s
+        if (m.saigneT <= 0) this.emit({ k: 'status', x: m.x, y: m.y - 34, text: 'Brûle', color: '#ff8a3c' });
+        m.saigne = dmg * def.brule / 100 / 2; m.saigneT = 2;
+      }
       if (choc && def.clouage) { m.stun = Math.max(m.stun, m.def.boss ? 0.15 : 0.5); this.emit({ k: 'status', x: m.x, y: m.y - 34, text: 'Cloué !', color: '#f2d36b' }); }
       if (def.marque) { m.marque = def.marque; m.marqueJusqua = this.time + 4; this.emit({ k: 'status', x: m.x, y: m.y - 34, text: 'Marqué', color: '#ff7b6b' }); }
       if (def.givre && !m.def.boss) {   // Givre mordant : 3 coups en 5 s = gelé (une fois par monstre toutes les 6 s)
@@ -1354,12 +1364,19 @@ export class World {
       }
       if (dmg) this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: dmg, crit, element: el, eclat: def.eclat });
       if (n <= 3) p.rageOnHit(Math.hypot(m.x - p.x, m.y - p.y), this);
-      if (def.lifesteal) p.hp = Math.min(p.maxHp, p.hp + Math.round(dmg * def.lifesteal));
+      if (def.lifesteal) {
+        const soin = Math.round(dmg * def.lifesteal), trop = p.hp + soin - p.maxHp;
+        p.hp = Math.min(p.maxHp, p.hp + soin);
+        if (def.surplus && trop > 0) {   // Sève d'Abolition : la vie volée en trop devient un bouclier (5 s)
+          p.shield = Math.min(Math.round(p.maxHp * def.surplus / 100), Math.max(p.shieldSrc === 'pc-cra-N' ? p.shield : 0, 0) + trop);
+          p.shieldT = p.shieldT0 = 5; p.shieldSrc = 'pc-cra-N';
+        }
+      }
       if (def.lifesteal && dmg > 0 && m.hp > 0 && p.souffrance >= 6 && p.pcv('pc-sacrieur-C')) {   // Coups qui saignent : 2 s de saignement
         if (m.saigneT <= 0) this.emit({ k: 'status', x: m.x, y: m.y - 34, text: 'Saigne', color: '#d0102a' });
         m.saigne = dmg * p.pcv('pc-sacrieur-C') / 100 / 2; m.saigneT = 2;
       }   // la Rage monte avec les coups portés (3 cibles max par coup)
-      if (m.hp <= 0) this.killMonster(m);
+      if (m.hp <= 0) { this.killMonster(m); if (def.tue) p.aTue(def.tue, this); }
     }
     return n;
   }
@@ -1439,6 +1456,11 @@ export class World {
   killMonster(m: Monster) {
     if (m.mannequin) { m.hp = m.maxHp; return; }   // partie de test (7D) : le mannequin ne meurt pas
     m.dead = true; m.t = 0.6; this.kills++;
+    const tq = this.player.dead ? 0 : this.player.pcv('pc-cra-O');
+    if (tq) for (const md of this.player.mods) if (md.src === 'tirs_eloignes') {   // Traque sans fin : prolongé, jusqu'à doubler sa durée
+      const pl = md.plus ?? 0, base = (md.t0 ?? md.t) - pl, g = Math.min(tq, base - pl);
+      if (g > 0) { md.t += g; md.t0 = (md.t0 ?? md.t) + g; md.plus = pl + g; }
+    }
     const pj = this.player, sv = pj.dead ? 0 : pj.pcv('pc-sacrieur-A');
     if (sv) {   // Soif de sang : un monstre tué rend des PV, sans faire redescendre sous Souffrance 6
       let h = pj.hp + pj.maxHp * sv / 100;

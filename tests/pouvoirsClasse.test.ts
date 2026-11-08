@@ -24,12 +24,12 @@ const porter = (w: World, id: string, value: number) => {
 const monstre = (w: World, dx: number, dy = 0, type = 'bouftou') => { const m = w.spawnMonster(type, w.player.x + dx, w.player.y + dy); m.state = 'chase'; return m; };
 
 describe('Légendaires de classe inventés (Légendaires classe : 1A 2A+2D 3C 4A …)', () => {
-  it('23 pouvoirs (+ 17 du Sacrieur), un par emplacement et par classe, chacun sur un vrai sort de sa classe', () => {
-    expect(POUVOIRS_CLASSE).toHaveLength(40);
+  it('39 pouvoirs (+ 17 du Sacrieur), deux par emplacement pour le Iop et le Crâ, chacun sur un vrai sort de sa classe', () => {
+    expect(POUVOIRS_CLASSE).toHaveLength(56);
     expect(PC_PAR_ID['pc-cra-D']).toBeUndefined();   // 6D Pas piégé refusé
     for (const p of POUVOIRS_CLASSE) {
       expect(GAME_DATA.classes[p.classe].spells[p.sort], p.id).toBeDefined();
-      expect(POUVOIRS_CLASSE.filter(q => q.classe === p.classe && q.slot === p.slot)).toHaveLength(p.classe !== 'sacrieur' ? 1 : p.slot === 'bouclier' ? 3 : 2);
+      expect(POUVOIRS_CLASSE.filter(q => q.classe === p.classe && q.slot === p.slot)).toHaveLength(p.classe === 'osamodas' || (p.classe === 'cra' && p.slot === 'bottes') ? 1 : p.classe === 'sacrieur' && p.slot === 'bouclier' ? 3 : 2);
       expect(p.texte(p.jet[1])).not.toMatch(/\btours?\b/i);
     }
   });
@@ -58,8 +58,9 @@ describe('Légendaires de classe inventés (Légendaires classe : 1A 2A+2D 3C 4A
     };
     expect(BOSS_PREFERES.royal).toContain('pc-iop-A');
     const normal = compte(), royal = compte('royal');
-    expect(normal).toBeGreaterThan(0.12); expect(normal).toBeLessThan(0.28);
-    expect(royal).toBeGreaterThan(0.45);
+    // 4A : deux pouvoirs de classe sur les bottes du Iop (Bond sismique, Sillon brûlant), une chance sur deux chacun
+    expect(normal).toBeGreaterThan(0.06); expect(normal).toBeLessThan(0.15);
+    expect(royal).toBeGreaterThan(0.22);
     // jamais un pouvoir d'une autre classe
     for (let i = 0; i < 500; i++) expect(rollItem(id, d, 'legendaire', rng, i, ctx).legendary!.id).not.toMatch(/^pc-(cra|osamodas)/);
   });
@@ -176,12 +177,91 @@ describe('Légendaires de classe : effets', () => {
   });
 });
 
+describe('Légendaires de classe, suite (Légendaires classes suite : 1A-1H 2A-2H 4A 5A 6A)', () => {
+  it('chaque boss préfère aussi un des nouveaux pouvoirs du Iop et du Crâ ; aucun nouveau pour l\'Osamodas (attend son rééquilibrage)', () => {
+    for (const l of Object.values(BOSS_PREFERES)) {
+      expect(l.some(id => /^pc-iop-[I-P]$/.test(id))).toBe(true);
+      expect(l.some(id => /^pc-cra-[I-P]$/.test(id))).toBe(true);
+    }
+    expect(PC_PAR_ID['pc-osamodas-I']).toBeUndefined();
+  });
+
+  it('4A : les deux pouvoirs d\'un emplacement tombent à peu près autant', () => {
+    const w = arena('cra'), [id, d] = de('chapeau'), rng = new Rng(5), n: Record<string, number> = {};
+    for (let i = 0; i < 3000; i++) { const l = rollItem(id, d, 'legendaire', rng, i, w.player.ctxPouvoirs).legendary!; n[l.id] = (n[l.id] ?? 0) + 1; }
+    expect(n['pc-cra-B']).toBeGreaterThan(150); expect(n['pc-cra-K']).toBeGreaterThan(150);
+    expect(Math.abs(n['pc-cra-B'] - n['pc-cra-K'])).toBeLessThan(150);
+  });
+
+  it('Iop J Coup du duelliste : plus de dégâts sur les élites et les boss seulement', () => {
+    const w = arena(), a = monstre(w, 60), b = monstre(w, -60), boss = monstre(w, 0, 90, Object.keys(GAME_DATA.monsters).find(k => GAME_DATA.monsters[k].boss)!);
+    for (const m of [a, b, boss]) m.maxHp = m.hp = 1e6;
+    w.hitCircle(a.x, a.y, 4, { dmg: 100, knock: 0 });
+    w.hitCircle(b.x, b.y, 4, { dmg: 100, knock: 0, vsGros: 70 });
+    expect(Math.abs((1e6 - b.hp) / (1e6 - a.hp) - 1)).toBeLessThan(0.25);   // monstre normal : pas de bonus
+    w.hitCircle(boss.x, boss.y, 4, { dmg: 100, knock: 0, vsGros: 70 });
+    expect(boss.hp).toBeLessThan(1e6);
+  });
+
+  it('Iop K Ferveur bouillonnante : le bouclier de Ferveur qui casse éclate autour du Iop', () => {
+    const w = arena(), p = w.player; porter(w, 'pc-iop-K', 100);
+    const m = monstre(w, 50); m.maxHp = m.hp = 1e6;
+    p.shield = 40; p.shieldT = 6; p.shieldSrc = 'ferveur'; p.ferveurBouclier = 40; p.invuln = 0;
+    p.hurt(60, m.x, m.y, w);
+    expect(m.hp).toBeLessThan(1e6);
+    expect(p.shieldSrc).toBe('');
+  });
+
+  it('Iop N Déferlement sans fin : rechargé quand il tue, pas plus souvent que la fourchette ; Iop O : une charge d\'Épée Céleste en plus', () => {
+    const w = arena(), p = w.player; porter(w, 'pc-iop-N', 4);
+    p.cd.deferlement = 5; p.aTue('deferlement', w); expect(p.cd.deferlement).toBe(0);
+    p.cd.deferlement = 5; p.aTue('deferlement', w); expect(p.cd.deferlement).toBe(5);
+    p.level = 200; p.recompute();
+    const avant = p.chargesMax('epee'); porter(w, 'pc-iop-O', 25);
+    expect(p.chargesMax('epee')).toBe(avant + 1);
+    expect(p.retourDe('epee')).toBeCloseTo(p.retourCharge * 0.75);
+  });
+
+  it('Crâ K Barrage incendiaire : un monstre repoussé brûle ; Crâ L Œil du cyclone : attiré vers le centre', () => {
+    const w = arena('cra'), m = monstre(w, 120); m.maxHp = m.hp = 1e6;
+    w.hitCircle(m.x, m.y, 4, { dmg: 50, knock: 342, brule: 50 });
+    expect(m.saigneT).toBeGreaterThan(0);
+    const n = monstre(w, -120, 40); n.maxHp = n.hp = 1e6; n.kx = n.ky = 0;
+    w.hitCircle(n.x, n.y - 40, 100, { dmg: 10, knock: 0, attire: { px: 96, vers: 'centre' }, plus: 20 });
+    expect(n.ky).toBeLessThan(0);
+  });
+
+  it('Crâ M Flèche perçante : la Flèche Glacée traverse et touche deux monstres en ligne', () => {
+    const w = arena('cra'), p = w.player, a = monstre(w, 80), b = monstre(w, 160);
+    a.maxHp = a.hp = b.maxHp = b.hp = 1e6;
+    w.shoot(p.x, p.y, 0, { shape: 'projectile', speed: 1100, range: 312, width: 16 }, { dmg: 30, knock: 0, perce: 1 }, 0, 1, 'glacee');
+    for (let i = 0; i < 60; i++) w.step(1 / 60, NO_INPUT);
+    expect(a.hp).toBeLessThan(1e6); expect(b.hp).toBeLessThan(1e6);
+  });
+
+  it('Crâ N Sève d\'Abolition : la vie volée en trop devient un bouclier plafonné', () => {
+    const w = arena('cra'), p = w.player, m = monstre(w, 60); m.maxHp = m.hp = 1e6;
+    p.hp = p.maxHp; p.shield = 0;
+    w.hitCircle(m.x, m.y, 4, { dmg: 5000, knock: 0, lifesteal: 0.5, surplus: 20 });
+    expect(p.shield).toBe(Math.round(p.maxHp * 0.2));
+    expect(p.shieldSrc).toBe('pc-cra-N');
+  });
+
+  it('Crâ O Traque sans fin : un monstre tué prolonge Tirs Éloignés, au plus du double', () => {
+    const w = arena('cra'), p = w.player; porter(w, 'pc-cra-O', 1);
+    p.addMod('portee', 2, 3, 'tirs_eloignes');
+    for (let i = 0; i < 6; i++) { const m = monstre(w, 60 + i * 10); w.killMonster(m); }
+    const md = p.mods.find(x => x.src === 'tirs_eloignes')!;
+    expect(md.t).toBeCloseTo(6);
+  });
+});
+
 describe('Légendaires de classe : chaque sort se lance avec son pouvoir porté', () => {
   for (const classe of ['iop', 'cra', 'osamodas']) it(classe, () => {
     const w = arena(classe), p = w.player;
     p.level = 200; p.recompute();
-    for (const c of POUVOIRS_CLASSE.filter(q => q.classe === classe)) porter(w, c.id, c.jet[1]);
     for (const c of POUVOIRS_CLASSE.filter(q => q.classe === classe)) {
+      porter(w, c.id, c.jet[1]);
       expect(p.pcv(c.id)).toBe(c.jet[1]);
       const did = p.cls.spells[c.sort].dofusId, i = p.pairs.findIndex(q => q.some(x => x.id === did));
       if (i >= 0) p.variants[i] = p.pairs[i].findIndex(x => x.id === did);
