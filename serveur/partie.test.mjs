@@ -1,0 +1,70 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { mkdtempSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import WebSocket from 'ws';
+import { creerServeur } from './index.mjs';
+import { creerComptes } from './comptes.mjs';
+import { chargerSim, Partie } from './partie.mjs';
+
+test('partie sur le serveur : deux joueurs, la vague démarre, chacun reçoit son miroir', async () => {
+  const S = await chargerSim();
+  assert.ok(S, 'node construire-sim.mjs');
+  const recus = new Map([[1, []], [2, []]]);
+  const p = new Partie(S, (num, d) => recus.get(num).push(d), 7);
+  p.arrivee(1); p.arrivee(2);
+  p.recu(1, { k: 'bonjour', classe: 'iop', etat: null });
+  p.recu(2, { k: 'bonjour', classe: 'cra', etat: { level: 20 } });
+  assert.deepEqual(recus.get(1)[0].k, 'zone');
+  assert.equal(p.w.players.length, 2);
+  assert.ok(p.w.arene, 'dans l’arène');
+  p.recu(1, { k: 'pret' }); p.recu(2, { k: 'pret' });
+  const q2 = p.w.players[1], x0 = q2.x;
+  p.recu(2, { k: 'entree', i: { move: { x: 1, y: 0 }, test: [{ k: 'tuer' }] } });
+  for (let i = 0; i < 60 * 8; i++) p.avancer(1 / 60);
+  assert.ok(q2.x > x0 + 20, 'l’entrée du joueur 2 le fait bouger');
+  assert.ok(p.w.arene.vague > 0, 'les vagues commencent');
+  const inst = recus.get(2).filter(d => d.k === 'instantane');
+  assert.ok(inst.length > 100 && inst[0].plein, 'instantanés 30 fois par seconde, le premier complet');
+  // le premier joueur part : le second continue seul
+  p.depart(1);
+  assert.equal(p.w.players.length, 1);
+  assert.equal(p.w.players[0], q2);
+  for (let i = 0; i < 60; i++) p.avancer(1 / 60);
+  p.depart(2);
+  assert.equal(p.w, null);
+});
+
+test('salon « serveur » par le WebSocket : créer, rejoindre, instantanés, fermeture quand tout le monde part', async () => {
+  const comptes = creerComptes({ dossier: mkdtempSync(join(tmpdir(), 'df-')), env: {}, origines: new Set() });
+  const s = creerServeur({ comptes });
+  await new Promise(r => s.listen(0, '127.0.0.1', r));
+  const url = `ws://127.0.0.1:${s.address().port}/ws`;
+  const client = async () => {
+    const ws = new WebSocket(url, { origin: 'https://diablofus.com' }), file = [], attente = [];
+    ws.on('message', d => { const m = JSON.parse(String(d)); const a = attente.shift(); if (a) a(m); else file.push(m); });
+    await new Promise(ok => ws.on('open', ok));
+    const lire = () => file.length ? Promise.resolve(file.shift()) : new Promise(ok => attente.push(ok));
+    return { ws, envoi: m => ws.send(JSON.stringify(m)), lire, attendre: async f => { for (;;) { const m = await lire(); if (f(m)) return m; } } };
+  };
+  const a = await client(), b = await client();
+  a.envoi({ k: 'creer', serveur: true });
+  const sa = await a.lire();
+  assert.deepEqual([sa.k, sa.hote, sa.serveur], ['salon', false, true]);
+  a.envoi({ k: 'envoi', d: { k: 'bonjour', classe: 'sacrieur', etat: null } });
+  const z = await a.attendre(m => m.k === 'recu' && m.d.k === 'zone');
+  assert.equal(z.d.zone, 'incarnam');
+  b.envoi({ k: 'rejoindre', code: sa.code });
+  assert.equal((await b.lire()).serveur, true);
+  b.envoi({ k: 'envoi', d: { k: 'bonjour', classe: 'osamodas', etat: null } });
+  await b.attendre(m => m.k === 'recu' && m.d.k === 'zone');
+  b.envoi({ k: 'envoi', d: { k: 'pret' } });
+  const i = await b.attendre(m => m.k === 'recu' && m.d.k === 'instantane');
+  assert.equal(i.d.plein, true);
+  assert.equal((await (await fetch(`http://127.0.0.1:${s.address().port}/sante`)).json()).parties, 1);
+  a.ws.close(); b.ws.close();
+  await new Promise(r => setTimeout(r, 200));
+  assert.equal((await (await fetch(`http://127.0.0.1:${s.address().port}/sante`)).json()).parties, 0);
+  await new Promise(r => { s.close(r); s.closeAllConnections(); });
+});

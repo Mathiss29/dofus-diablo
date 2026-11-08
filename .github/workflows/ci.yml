@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        cas: ['seul:iop', 'seul:cra', 'seul:osamodas', 'seul:sacrieur', 'coop:0', 'coop:1', 'coop:2', 'coop:3']
+        cas: ['seul:iop', 'seul:cra', 'seul:osamodas', 'seul:sacrieur', 'coop:0', 'coop:1', 'coop:2', 'coop:3', 'serveur']
     name: robot (${{ matrix.cas }})
     steps:
       - uses: actions/checkout@v4
@@ -32,7 +32,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: cd serveur && npm ci --omit=dev
+      - run: cd serveur && npm ci --omit=dev && node construire-sim.mjs
       - run: npm i --no-save playwright@1.63.0 && npx playwright install --with-deps chromium
       - run: npx vite build --logLevel error
         env:

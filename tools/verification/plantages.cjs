@@ -5,7 +5,7 @@
 // Jeu servi par `npx vite preview --port 4173`, construit avec VITE_ASSETS_URL=https://assets.diablofus.com et
 // VITE_COOP_URL=ws://localhost:3100/ws, serveur lancé à côté (`cd serveur && node index.mjs`). Lancé à chaque PR (ci.yml).
 // SORTIE=dossier : captures des écrans au moment d'un problème. RAPIDE=1 : moins de temps de jeu par étape.
-// CAS=seul:iop ou CAS=coop:0 (0 à 3) : une seule étape (la CI lance les 8 étapes en même temps, ~5 min au lieu de 18).
+// CAS=seul:iop, CAS=coop:0 (0 à 3) ou CAS=serveur (partie tenue par le serveur) : une seule étape (la CI lance les 9 en même temps).
 const { chromium } = require('playwright');
 const fs = require('fs');
 const SORTIE = process.env.SORTIE ?? 'plantages';
@@ -111,6 +111,35 @@ const garder = id => !CAS || CAS === id;
     await inv.waitForTimeout(4000); await pret(inv);
     await vivant(inv);
     await ouvrirMonstres(h); await h.click('[data-coop-quitter]').catch(() => {}); await h.keyboard.press('F1');
+  }
+
+  // 3. Partie tenue par le serveur (maquette « Vrai multi : » 1A) : les deux sont invités ; le premier part, l'autre continue
+  if (garder('serveur')) {
+    etape = 'partie sur le serveur'; console.log(etape);
+    const j1 = h, j2 = inv ?? await ouvrir('invite');
+    await relancer(j1, 'classe', 'iop'); await relancer(j2, 'classe', 'cra');
+    await ouvrirMonstres(j1); await j1.click('[data-coop-serveur]');
+    // le serveur appelle le joueur dans son arène : la scène repart, on rouvre le panneau pour lire le code
+    await j1.waitForTimeout(5000); await pret(j1); await j1.waitForTimeout(1000);
+    await ouvrirMonstres(j1);
+    const code = (await j1.textContent('.coop b', { timeout: 15000 })).trim();
+    await j1.keyboard.press('F1');
+    await ouvrirMonstres(j2); await j2.fill('#pt-coop', code); await j2.click('[data-coop-rejoindre]');
+    for (const p of [j1, j2]) { await p.waitForTimeout(4000); await pret(p); }
+    await j2.waitForTimeout(3000);
+    for (const p of [j1, j2]) {
+      const n = await p.evaluate(() => window.__df.scene.world.players.length);
+      if (n < 2) probleme(p, `ne voit pas l'autre joueur dans la partie du serveur (${n} joueur)`);
+    }
+    await jouer([j1, j2], JEU);
+    await vivant(j1); await vivant(j2);
+    // le premier joueur part : la partie continue pour l'autre
+    await ouvrirMonstres(j1); await j1.click('[data-coop-quitter]').catch(() => probleme(j1, 'bouton « Quitter le salon » introuvable'));
+    await j1.waitForTimeout(4000); await pret(j1);
+    await jouer([j2], JEU);
+    await vivant(j2); await vivant(j1);
+    await ouvrirMonstres(j2); await j2.click('[data-coop-quitter]').catch(() => {}); await j2.waitForTimeout(4000); await pret(j2);
+    await vivant(j2);
   }
 
   await b.close();

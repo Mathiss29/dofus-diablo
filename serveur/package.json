@@ -3,12 +3,16 @@
   "private": true,
   "type": "module",
   "description": "Serveur multijoueur de Diablofus (coop, Bastion partagé, comptes) : voir LISEZMOI.md",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "start": "node index.mjs",
-    "test": "node --test"
+    "test": "node construire-sim.mjs && node --test",
+    "construire": "node construire-sim.mjs"
   },
   "dependencies": {
+    "esbuild": "0.21.5",
     "ws": "8.18.0"
   }
 }

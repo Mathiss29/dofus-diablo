@@ -6,6 +6,7 @@ import { createServer } from 'node:http';
 import { readFileSync } from 'node:fs';
 import { WebSocketServer } from 'ws';
 import { creerComptes } from './comptes.mjs';
+import { chargerSim, Partie } from './partie.mjs';
 
 const PORT = Number(process.env.PORT ?? 3100);
 const HOTE = process.env.HOTE ?? '127.0.0.1';
@@ -17,7 +18,7 @@ const depart = Date.now();
 
 /** Salons de coop (maquette « Multi : » 3A) : 2 à 4 joueurs, le premier est l'hôte. Le serveur ne regarde pas la partie,
  *  il relaie : instantanés de l'hôte vers ses invités, entrées des invités vers l'hôte. */
-export const SALON = { max: 4, salons: 300, debit: 120, lettres: 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', taille: 5 };
+export const SALON = { max: 4, salons: 300, parties: 20, debit: 120, lettres: 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', taille: 5 };
 const salons = new Map();
 function nouveauCode() {
   for (;;) {
@@ -33,14 +34,52 @@ function quitter(s) {
   if (!sa) return;
   s.salon = null;
   sa.membres.delete(s.num);
+  // partie tenue par le serveur : le joueur sort, les autres continuent ; le salon ferme quand il est vide
+  if (sa.partie) {
+    sa.partie.depart(s.num);
+    if (!sa.membres.size) fermerPartie(sa);
+    return;
+  }
   if (s.num === 1) { for (const m of sa.membres.values()) { m.salon = null; envoyer(m, { k: 'fin', raison: 'hote' }); } salons.delete(sa.code); return; }
   const h = sa.membres.get(1);
   if (h) envoyer(h, { k: 'depart', id: s.num });
+}
+/** Parties tenues par le serveur (maquette « Vrai multi : » 1A) : une boucle commune avance toutes les parties. */
+let boucle = null, avant = 0;
+const parties = () => [...salons.values()].filter(sa => sa.partie);
+function fermerPartie(sa) {
+  salons.delete(sa.code);
+  for (const m of sa.membres.values()) { m.salon = null; envoyer(m, { k: 'fin', raison: 'erreur' }); }
+  if (!parties().length && boucle) { clearInterval(boucle); boucle = null; }
+}
+function tourner() {
+  if (boucle) return;
+  avant = performance.now();
+  boucle = setInterval(() => {
+    const t = performance.now(), dt = (t - avant) / 1000; avant = t;
+    for (const sa of parties()) {
+      try { sa.partie.avancer(dt); }
+      catch (e) { console.warn(`partie ${sa.code} arrêtée :`, e.message); fermerPartie(sa); }
+    }
+  }, 1000 / 60);
+}
+async function creerPartie(s) {
+  const S = await chargerSim();
+  if (s.readyState !== 1) return;
+  if (!S) return envoyer(s, { k: 'refus', raison: 'indisponible' });
+  if (salons.size >= SALON.salons || parties().length >= SALON.parties) return envoyer(s, { k: 'refus', raison: 'plein' });
+  const sa = { code: nouveauCode(), membres: new Map([[1, s]]), suivant: 2 };
+  sa.partie = new Partie(S, (num, d) => { const c = sa.membres.get(num); if (c) envoyer(c, `{"k":"recu","de":0,"d":${JSON.stringify(d)}}`); });
+  sa.partie.arrivee(1);
+  salons.set(sa.code, sa); s.salon = sa; s.num = 1;
+  tourner();
+  return envoyer(s, { k: 'salon', code: sa.code, id: 1, hote: false, serveur: true });
 }
 function recu(s, m, brut) {
   if (m.k === 'ping') return envoyer(s, { k: 'pong', t: m.t ?? null, serveur: Date.now() });
   if (m.k === 'creer') {
     quitter(s);
+    if (m.serveur) return void creerPartie(s);
     if (salons.size >= SALON.salons) return envoyer(s, { k: 'refus', raison: 'plein' });
     const sa = { code: nouveauCode(), membres: new Map([[1, s]]), suivant: 2 };
     salons.set(sa.code, sa); s.salon = sa; s.num = 1;
@@ -52,6 +91,7 @@ function recu(s, m, brut) {
     if (sa.membres.size >= SALON.max) return envoyer(s, { k: 'refus', raison: 'complet' });
     quitter(s);
     s.salon = sa; s.num = sa.suivant++; sa.membres.set(s.num, s);
+    if (sa.partie) { sa.partie.arrivee(s.num); return envoyer(s, { k: 'salon', code: sa.code, id: s.num, hote: false, serveur: true }); }
     envoyer(s, { k: 'salon', code: sa.code, id: s.num, hote: false });
     return envoyer(sa.membres.get(1), { k: 'arrivee', id: s.num });
   }
@@ -59,6 +99,7 @@ function recu(s, m, brut) {
   // relais : l'hôte parle à un invité (a) ou à tous ; un invité parle à l'hôte. d = données de la partie, non lues ici.
   if (m.k === 'envoi' && s.salon) {
     const sa = s.salon, de = s.num;
+    if (sa.partie) return sa.partie.recu(de, m.d);
     const paquet = brut.length < 200_000 ? `{"k":"recu","de":${de},"d":${JSON.stringify(m.d ?? null)}}` : null;
     if (!paquet) return;
     if (de !== 1) return envoyer(sa.membres.get(1), paquet);
@@ -82,7 +123,7 @@ export function creerServeur({ comptes = creerComptes({ dossier: process.env.DON
     const url = new URL(req.url ?? '/', 'http://diablofus');
     if (req.method === 'GET' && (url.pathname === '/sante' || url.pathname === '/')) {
       res.writeHead(200, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' });
-      res.end(JSON.stringify({ ok: true, jeu: 'diablofus', version: VERSION, depuis: Math.round((Date.now() - depart) / 1000), connectes: ws.clients.size, salons: salons.size, connexion: comptes.pret, ...comptes.stats() }));
+      res.end(JSON.stringify({ ok: true, jeu: 'diablofus', version: VERSION, depuis: Math.round((Date.now() - depart) / 1000), connectes: ws.clients.size, salons: salons.size, parties: parties().length, connexion: comptes.pret, ...comptes.stats() }));
       return;
     }
     try { if (await comptes.route(req, res, url)) return; }
@@ -110,7 +151,7 @@ export function creerServeur({ comptes = creerComptes({ dossier: process.env.DON
   // battement : coupe les connexions mortes toutes les 30 s
   const battement = setInterval(() => { for (const s of ws.clients) { if (s.vivant === false) { s.terminate(); continue; } s.vivant = false; s.ping(); } }, 30_000);
   ws.on('connection', s => { s.vivant = true; s.on('pong', () => { s.vivant = true; }); });
-  http.on('close', () => { clearInterval(battement); comptes.fermer(); });
+  http.on('close', () => { clearInterval(battement); comptes.fermer(); for (const sa of parties()) fermerPartie(sa); });
   return http;
 }
 

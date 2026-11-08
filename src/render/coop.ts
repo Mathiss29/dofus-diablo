@@ -29,6 +29,8 @@ type Etat = 'hors' | 'connexion' | 'salon';
 class Salon {
   etat: Etat = 'hors';
   hote = false;
+  /** Partie tenue par le serveur (maquette « Vrai multi : » 1A) : tout le monde est invité, personne ne la fait tourner chez soi. */
+  serveur = false;
   code: string | null = null;
   erreur: string | null = null;
   private ws: WebSocket | null = null;
@@ -54,7 +56,7 @@ class Salon {
   private changer() { for (const f of this.ecouteurs) f(); }
 
   // ——— connexion ———
-  creer() { this.connecter({ k: 'creer' }); }
+  creer(serveur = false) { this.connecter(serveur ? { k: 'creer', serveur: true } : { k: 'creer' }); }
   rejoindre(code: string) { if (code.trim()) this.connecter({ k: 'rejoindre', code: code.trim() }); }
   quitter() {
     const etaitInvite = this.miroir;
@@ -64,7 +66,7 @@ class Salon {
   }
   private fermer() {
     if (this.hote && this.scene) for (const i of this.invites.values()) this.retirer(i);
-    this.etat = 'hors'; this.hote = false; this.code = null; this.invites.clear(); this.recus = []; this.dansZoneHote = false;
+    this.etat = 'hors'; this.hote = false; this.serveur = false; this.code = null; this.invites.clear(); this.recus = []; this.dansZoneHote = false;
     this.changer();
   }
   private connecter(premier: object) {
@@ -89,12 +91,13 @@ class Salon {
   private message(m: { k: string; [k: string]: unknown }) {
     switch (m.k) {
       case 'salon':
-        this.etat = 'salon'; this.hote = !!m.hote; this.code = String(m.code);
+        this.etat = 'salon'; this.hote = !!m.hote; this.serveur = !!m.serveur; this.code = String(m.code);
         if (!this.hote && this.scene) { const w = this.scene.world; this.envoyer({ k: 'bonjour', classe: classeDe(w, w.player), etat: exporterJoueur(w) }); }
         this.changer();
         break;
       case 'refus':
-        this.erreur = m.raison === 'code' ? 'Aucun salon avec ce code' : m.raison === 'complet' ? 'Salon complet (4 joueurs)' : 'Serveur plein, réessaie';
+        this.erreur = m.raison === 'code' ? 'Aucun salon avec ce code' : m.raison === 'complet' ? 'Salon complet (4 joueurs)'
+          : m.raison === 'indisponible' ? 'La partie sur le serveur n’est pas encore installée' : 'Serveur plein, réessaie';
         this.ws?.close(); this.ws = null; this.fermer();
         break;
       case 'arrivee':
@@ -108,9 +111,9 @@ class Salon {
       }
       case 'fin': {
         const miroir = this.miroir;
-        this.erreur = 'L’hôte a fermé le salon';
+        this.erreur = m.raison === 'erreur' ? 'La partie s’est arrêtée sur le serveur' : 'L’hôte a fermé le salon';
         this.ws?.close(); this.ws = null; this.fermer();
-        this.scene?.annonce('Coop : l’hôte a fermé le salon');
+        this.scene?.annonce(`Coop : ${this.erreur?.toLowerCase()}`);
         if (miroir) this.scene?.allerA(null);
         break;
       }
