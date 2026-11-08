@@ -28,19 +28,24 @@ const JOUABLES = new Set(Object.keys(GAME_DATA.classes).filter(k => !EN_ESSAI.ha
 const PLUS_TARD: Record<string, string> = { osamodas: 'En essai : partie de test' };
 const plusTard = (cle: string) => PLUS_TARD[cle] ?? 'Prévue après la 1.0';
 /** Version affichée et textes de l'accueil (Accueil 12A) : ils racontent la zone de la version, pas le moteur. */
-const VERSION = '0.1';
+const VERSION = '0.2';
 const TEXTES: Record<string, { zone: string; slogan: string; ruban: string; lignes: string[] }> = {
   '0.1': {
     zone: 'INCARNAM, LE VILLAGE DANS LES NUAGES', slogan: 'Les nuages d\'Incarnam grouillent de monstres.', ruban: 'En chasse !',
     lignes: ['Le Milimilou rôde dans la forêt, et la Milice cherche des bras.', 'Kardorim ne dort que d\'un œil au fond de sa crypte.', 'Astrub t\'attend sous les nuages, dans la prochaine version.'],
   },
+  '0.2': {
+    zone: 'ASTRUB, LA CITÉ DES AVENTURIERS', slogan: 'Astrub et ses environs grouillent de monstres.', ruban: 'En chasse !',
+    lignes: ['Kankreblath et ses Vilinsekts pillent les maisons de la Cité.', 'Sous les pavés, les égouts grouillent de Rats Strubiens.', 'L\'Osamodas et le butin complet arrivent dans la prochaine version.'],
+  },
 };
 const TEXTE = TEXTES[VERSION];
 /** Pastilles de zones (Accueil 7A) : un clic ouvre la fiche de la zone. */
-const ZONES_ACC: { cle: string; nom: string; sous: string[]; dispo: boolean; plus?: string }[] = [
-  { cle: 'incarnam', nom: 'Incarnam', sous: ['450', '444', '445', '442', '443', '778', '449', '446'], dispo: true },
-  { cle: 'crypte', nom: 'Crypte de Kardorim', sous: ['447'], dispo: true },
-  { cle: 'astrub', nom: 'Astrub', sous: [], dispo: false, plus: 'Arrive en 0.2 : 16 sous-zones, du niveau 10 au 40, et 4 donjons (Tournesol Affamé, Mob l\'Éponge, Bouftou Royal, Kankreblath).' },
+const ZONES_ACC: { cle: string; nom: string; zone: string; sous: string[]; dispo: boolean; plus?: string }[] = [
+  { cle: 'incarnam', nom: 'Incarnam', zone: 'incarnam', sous: ['450', '444', '445', '442', '443', '778', '449', '446'], dispo: true },
+  { cle: 'crypte', nom: 'Crypte de Kardorim', zone: 'incarnam', sous: ['447'], dispo: true },
+  { cle: 'astrub', nom: 'Astrub', zone: 'astrub', sous: ['95', '99', '98', '173', '335', '96', '97', '30', '100', '102', '843'], dispo: true },
+  { cle: 'donjons-astrub', nom: 'Donjons d\'Astrub', zone: 'astrub', sous: ['306', '336', '82', '842'], dispo: true },
 ];
 /** Illustration du dieu de la classe (class_/LevelUp{N} de Dofus 3) ; les autres classes ont le décor du titre. */
 const DIEUX = new Set(['iop', 'cra', 'osamodas']);
@@ -224,9 +229,11 @@ const dateLongue = (d: string) => new Date(`${d}T12:00:00`).toLocaleDateString('
 const CLE_LU = 'diablofus.journal';
 function carnetNonLu(): boolean {
   if (!CARNETS.length) return false;
-  try { return (localStorage.getItem(CLE_LU) ?? '') < CARNETS[0].date; } catch { return false; }
+  try { return (localStorage.getItem(CLE_LU) ?? '') !== luDe(CARNETS[0]); } catch { return false; }
 }
-function marquerLu() { try { if (CARNETS.length) localStorage.setItem(CLE_LU, CARNETS[0].date); } catch { /* rien */ } }
+function marquerLu() { try { if (CARNETS.length) localStorage.setItem(CLE_LU, luDe(CARNETS[0])); } catch { /* rien */ } }
+/** Un carnet compte comme nouveau quand sa date OU son titre change (clôture d'une version le même jour qu'un autre carnet). */
+function luDe(c: Carnet) { return `${c.date}|${c.titre}`; }
 
 export class Accueil {
   private root: HTMLDivElement;
@@ -389,7 +396,7 @@ export class Accueil {
       <span class="pastille" style="position:static">nouveau</span><span>Carnet du ${dateLongue(CARNETS[0].date)}<br><span class="tiny">${esc(CARNETS[0].titre)}</span></span>
       <button type="button" class="mini" data-carnet="${CARNETS[0].date}">Lire</button></div>` : ''}
     <div class="abs" style="right:calc(2*var(--u));bottom:calc(1.6*var(--u));display:flex;gap:calc(.6*var(--u))">
-      ${ZONES_ACC.map(z => `<button type="button" class="chip${z.cle === 'incarnam' ? ' on' : z.dispo ? '' : ' off'}" style="cursor:pointer" data-zone="${z.cle}">${z.nom}${z.dispo ? '' : ' · bientôt'}</button>`).join('')}</div>`;
+      ${ZONES_ACC.map(z => `<button type="button" class="chip${z.cle === 'astrub' ? ' on' : z.dispo ? '' : ' off'}" style="cursor:pointer" data-zone="${z.cle}">${z.nom}${z.dispo ? '' : ' · bientôt'}</button>`).join('')}</div>`;
   }
 
   /** « La dernière fois… » (Accueil 4C) : la dernière partie du perso, sur une note de parchemin. */
@@ -643,7 +650,7 @@ export class Accueil {
         <div class="lst">${l.length ? l.map((c, i) => `<div><span>${new Date(c.date).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })}</span><button type="button" class="mini" data-restaurer="${i}">Restaurer</button><small>${esc(c.resume)}</small></div>`).join('') : '<div><span class="no">Aucune copie pour l\'instant.</span></div>'}</div>`;
     } else {
       const z = ZONES_ACC.find(x => x.cle === k); if (!z) return;
-      const sub = GAME_DATA.zones.incarnam.open?.subareas ?? {}, vues = new Set(lirePersos().flatMap(p => p?.zones ?? []));
+      const sub = GAME_DATA.zones[z.zone]?.open?.subareas ?? {}, vues = new Set(lirePersos().flatMap(p => p?.zones ?? []));
       const lignes = z.sous.map(id => sub[id]).filter(Boolean);
       const nb = lignes.filter(x => vues.has(x.name)).length;
       this.modal = `<h2>${esc(z.nom)}</h2>${z.dispo ? `<div class="tiny">${nb} / ${lignes.length} sous-zone${lignes.length > 1 ? 's' : ''} découverte${nb > 1 ? 's' : ''} par tes personnages</div>
