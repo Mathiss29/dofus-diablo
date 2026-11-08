@@ -176,7 +176,7 @@ export class Monster extends Entity {
           }
         }
         if (dist > this.radius + player.radius + 4) {
-          const [mx, my] = this.versCible(player.x, player.y, dt, world) ?? this.contourne(dx / dist, dy / dist, dist, player, world);
+          const [mx, my] = this.evite(...(this.versCible(player.x, player.y, dt, world) ?? this.contourne(dx / dist, dy / dist, dist, player, world)), world);
           const v = speed * this.rattrapage(dist);
           this.x += mx * v * dt; this.y += my * v * dt; this.setAnim('run');
         }
@@ -414,6 +414,27 @@ export class Monster extends Entity {
     const vx = ux * 0.4 + px * side * 0.9, vy = uy * 0.4 + py * side * 0.9, n = Math.hypot(vx, vy) || 1;
     return [vx / n, vy / n];
   }
+  /** Évitement : un monstre qui en voit un autre devant lui fait un pas de côté (et s'en écarte un peu)
+   *  au lieu de lui rentrer dedans et de se faire repousser. Ceux de derrière sont ignorés. */
+  private evite(ux: number, uy: number, world: World): [number, number] {
+    const E = DANGER.rythme.evitement, px = -uy, py = ux;
+    let ax = 0, ay = 0;
+    for (const o of world.monsters) {
+      if (o === this || o.dead) continue;
+      const reach = this.radius + o.radius + E.vue, dx = o.x - this.x, dy = o.y - this.y;
+      if (Math.abs(dx) > reach || Math.abs(dy) > reach) continue;
+      const d = Math.hypot(dx, dy) || 0.01;
+      if (d >= reach) continue;
+      const devant = (dx * ux + dy * uy) / d;
+      if (devant < -0.2) continue;
+      const w = (1 - d / reach) * (0.5 + 0.5 * Math.max(0, devant)), cote = dx * px + dy * py;
+      const s = Math.abs(cote) > 1 ? (cote > 0 ? -1 : 1) : (this.id % 2 ? 1 : -1);
+      ax += px * s * w - (dx / d) * w * 0.5; ay += py * s * w - (dy / d) * w * 0.5;
+    }
+    if (!ax && !ay) return [ux, uy];
+    const vx = ux + ax * E.force, vy = uy + ay * E.force, n = Math.hypot(vx, vy) || 1;
+    return [vx / n, vy / n];
+  }
   private endCast(world: World) { this.state = 'recover'; this.t = this.def.recover; this.atkCd = world.rng.range(...DANGER.rythme.pause as [number, number]); }
 
   /** Avance vers (x, y) ; false si déjà arrivé. Avec world, contourne le décor (chemin A*). */
@@ -421,7 +442,7 @@ export class Monster extends Entity {
     const dx = x - this.x, dy = y - this.y, d = Math.hypot(dx, dy);
     if (d < 6) return false;
     const st = Math.min(d, speed * dt), dir = world ? this.versCible(x, y, dt, world) : null;
-    const [ux, uy] = dir ?? [dx / d, dy / d];
+    const [ux, uy] = world ? this.evite(...(dir ?? [dx / d, dy / d]), world) : dir ?? [dx / d, dy / d];
     this.x += ux * st; this.y += uy * st; this.facing = Math.atan2(uy, ux);
     return true;
   }
