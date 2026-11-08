@@ -1088,7 +1088,7 @@ export class World {
       }
       else if (e.k === 'soin') m.hp = Math.min(m.maxHp, m.hp + Math.round(this.rng.range(e.min, e.max + 1) * k / mult));
       else if (e.k === 'subis') {   // Grognement, Bave Affaiblissante : le joueur prend plus de dommages
-        p.subis = e.n / 100; p.subisT = Math.max(1, e.dur) * TOUR;
+        p.subis = e.n / 100; p.subisT = p.subisT0 = Math.max(1, e.dur) * TOUR;
         this.emit({ k: 'status', x: p.x, y: p.y, text: `Dommages subis ${e.n > 100 ? '+' : ''}${e.n - 100} %`, color: '#e07cf0' });
       }
       else if (e.k === 'desenvoute') {   // Rinçage : bonus et bouclier raccourcis de n tours
@@ -1098,7 +1098,7 @@ export class World {
         this.emit({ k: 'status', x: p.x, y: p.y, text: 'Désenvoûté', color: '#9ad0ff' });
       }
       else if (e.k === 'etat' && Math.hypot(p.x - m.x, p.y - m.y) <= (e.r + 0.5) * CASE + p.radius) {   // Hyperleukocytine : Pacifiste
-        p.pacifiste = Math.max(p.pacifiste, Math.max(1, e.dur) * TOUR);
+        { const t = Math.max(1, e.dur) * TOUR; if (t >= p.pacifiste) p.pacifisteT0 = t; p.pacifiste = Math.max(p.pacifiste, t); }
         this.emit({ k: 'status', x: p.x, y: p.y - 20, text: 'Pacifiste', color: '#c8c8c8' });
       }
     }
