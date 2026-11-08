@@ -114,6 +114,10 @@ export class ZoneScene extends Phaser.Scene {
   /** Havre-Sac : touche H ou bouton du HUD (2A), choix dans la fenêtre du Zaap du Havre-Sac (2C), pour le prochain pas. */
   private havreSacDemande = false;
   private zaapChoix: number | null = null;
+  /** Clic sur un Zaap du monde (maquette « Zaap : » 1A) et Zaap tout juste découvert (3A : un seul bandeau). */
+  private zaapClick: string | null = null;
+  private zaapAnnonce: string | null = null;
+  private zaapLabel: Phaser.GameObjects.Text | null = null;
   private recolteClick: number | null = null;
   private atelierView: AtelierView | null = null;
   private posteClick: number | null = null;
@@ -172,7 +176,7 @@ export class ZoneScene extends Phaser.Scene {
     else if (location.hash === '#astrub') this.zoneId = 'champs-astrub';
     else if (location.hash.includes('astrub2')) this.zoneId = 'astrub';
     else this.zoneId = 'incarnam';
-    this.views = new Map(); this.dropViews = new Map(); this.worldView = null; this.questView = null; this.dialogueView = null; this.talkClick = null; this.pressed = null; this.aimId = null; this.aimKey = null; this.hoverId = null; this.potion = false; this.hitstop = 0; this.acc = 0;
+    this.views = new Map(); this.dropViews = new Map(); this.worldView = null; this.questView = null; this.dialogueView = null; this.talkClick = null; this.zaapClick = null; this.zaapAnnonce = null; this.pressed = null; this.aimId = null; this.aimKey = null; this.hoverId = null; this.potion = false; this.hitstop = 0; this.acc = 0;
   }
 
   preload() {
@@ -336,6 +340,8 @@ export class ZoneScene extends Phaser.Scene {
     // Bestiaire (maquette « Drops » 1A) : les monstres vaincus du compte ; la partie de test voit tout
     this.windows.vaincus = () => this.bestiaire; this.windows.toutVoir = !!this.test;
     this.windows.onZaap = i => { this.zaapChoix = i; };
+    // maquette « Zaap : » 9A : arrivée par un Zaap, les éclats du tourbillon s'échappent du perso
+    if (this.transit.zaap && this.world.zone.open && !this.vitrine) this.time.delayedCall(300, () => this.tourbillon(this.world.player.x, this.world.player.y, true));
     this.windows.onCarte = m => { if (this.carte?.dispo) this.carte.montrer(m); };   // Métiers UI 8B, 11B : où trouver une ressource
     this.windows.portrait = v(`${ASSETS}/ui/perso_${this.classId}${this.perso?.sexe === 'f' ? '_f' : ''}.png`);
     // perso dessiné en direct dans l'inventaire, l'aperçu des apparats et la garde-robe (Apparence 5A, 6B)
@@ -519,6 +525,8 @@ export class ZoneScene extends Phaser.Scene {
       if (this.keys.SHIFT.isDown) { this.pressed = 'attaque'; this.clickMode = 'place'; return; }
       const n = this.questView?.pnjUnder(p, this.cameras.main);
       if (n) { this.talkClick = n; this.clickMode = null; this.holding = false; return; }
+      const zp = this.zaapSous(p);
+      if (zp) { this.zaapClick = zp.name; this.clickMode = null; this.holding = false; return; }
       const at = this.atelierView?.sous(p, this.cameras.main);
       if (at != null) { this.posteClick = at; this.clickMode = null; this.holding = false; return; }
       const rc = this.recolteView?.sous(p, this.cameras.main);
@@ -665,6 +673,52 @@ export class ZoneScene extends Phaser.Scene {
     return true;
   }
 
+  /** Zaap du monde sous le curseur (1A) : l'arche dessinée autour de sa particule officielle. */
+  private zaapSous(ptr: Phaser.Input.Pointer) {
+    if (this.vitrine || !this.world.zone.open) return null;
+    const wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
+    return this.world.zaapsIci().find(z => { const c = ISO.toScreen(z.x, z.y); return ((wp.x - c.x) / 90) ** 2 + ((wp.y - c.y) / 100) ** 2 <= 1; }) ?? null;
+  }
+  /** Nom d'un Zaap comme dans la fenêtre (Territoire : sa sous-zone). */
+  private nomZaap(name: string) {
+    const o = this.world.zone.open, c = o?.checkpoints.find(k => k.name === name);
+    return (c?.sub != null ? o!.subareas[String(c.sub)]?.name : null) ?? name;
+  }
+  /** Survol d'un Zaap (1A) : son nom au-dessus de l'arche. */
+  private zaapSurvol(ptr: Phaser.Input.Pointer): boolean {
+    const z = this.world.passage || this.world.zaapDepart ? null : this.zaapSous(ptr);
+    if (!z) { this.zaapLabel?.setVisible(false); return false; }
+    if (!this.zaapLabel) {
+      this.zaapLabel = this.add.text(0, 0, '', { fontFamily: 'Lexend, sans-serif', fontSize: '15px', fontStyle: 'bold', color: '#dbeeff', backgroundColor: '#0b0910e0',
+        padding: { x: 9, y: 5 }, align: 'center' }).setOrigin(0.5, 1).setDepth(1e6);
+      this.cameras.getCamera('mini')?.ignore(this.zaapLabel);
+      const lab = this.zaapLabel;
+      this.events.once('shutdown', () => { lab.destroy(); if (this.zaapLabel === lab) this.zaapLabel = null; });
+    }
+    const c = ISO.toScreen(z.x, z.y);
+    this.zaapLabel.setText(`Zaap · ${this.nomZaap(z.name)}\nClic : voyager`).setPosition(c.x, c.y - 110).setScale(1 / this.cameras.main.zoom).setVisible(true);
+    return true;
+  }
+  /** Tourbillon du Zaap (9A) : des éclats bleus happés vers le perso (départ) ou qui s'en échappent (arrivée). */
+  private tourbillon(x: number, y: number, arrivee: boolean) {
+    const c = ISO.toScreen(x, y), g = this.add.graphics().setDepth(c.y + 5), o = { k: 0 };
+    this.cameras.getCamera('mini')?.ignore(g);
+    const N = 22, depart = Math.random() * Math.PI * 2;
+    this.tweens.add({ targets: o, k: 1, duration: arrivee ? 450 : World.ZAAP_DEPART * 1000, ease: arrivee ? 'Sine.easeOut' : 'Sine.easeIn',
+      onUpdate: () => {
+        const k = arrivee ? 1 - o.k : o.k;   // k : 0 = loin, 1 = sur le perso
+        g.clear();
+        g.fillStyle(0x9fd8ff, 0.25 * (1 - Math.abs(0.6 - k))).fillEllipse(c.x, c.y - 40, 70 * (1.2 - k * 0.5), 110 * (1.2 - k * 0.5));
+        for (let i = 0; i < N; i++) {
+          const a = depart + i / N * Math.PI * 2 + k * 5, r = 90 * (1 - k) + 6, h = 20 + (i % 5) * 18;
+          g.fillStyle(i % 3 ? 0x7cc7ff : 0xe8f6ff, arrivee ? o.k < 0.9 ? 1 - o.k : 0 : 0.4 + k * 0.6);
+          g.fillCircle(c.x + Math.cos(a) * r, c.y - h + Math.sin(a) * r * 0.5, 2.5 + (i % 2));
+        }
+      },
+      onComplete: () => g.destroy() });
+    this.fx.ring(x, y, arrivee ? 10 : 90, arrivee ? 90 : 10, 0x7cc7ff, arrivee ? 0.45 : World.ZAAP_DEPART, 4);
+  }
+
   /** Monstre sous le curseur : on vise le corps dessiné (rectangle rogné de la frame), ou à défaut ses pieds ;
    *  s'il y en a plusieurs, le plus proche du curseur. */
   private monsterUnder(ptr: Phaser.Input.Pointer) {
@@ -727,6 +781,9 @@ export class ZoneScene extends Phaser.Scene {
     const np = this.talkClick && this.world.quetes?.pnj(this.talkClick);
     if (np) { input.talk = this.talkClick; input.dest = { x: np.x, y: np.y }; this.clickMode = null; }
     this.talkClick = null;
+    const zq = this.zaapClick ? this.world.devantZaap(this.zaapClick) : null;
+    if (zq) { input.versZaap = this.zaapClick; input.dest = zq; this.clickMode = null; }
+    this.zaapClick = null;
     const ar = this.recolteClick != null ? this.world.approcheRecolte(this.recolteClick) : null;
     if (ar) { input.recolte = this.recolteClick; input.dest = ar; this.clickMode = null; }
     this.recolteClick = null;
@@ -747,7 +804,8 @@ export class ZoneScene extends Phaser.Scene {
     this.dialogueView?.survol(surPnj, ptr);
     const monstre = this.monsterUnder(ptr), porte = !monstre && !surPnj ? this.porteSurvol(aim) : false;
     if (!porte) { this.porteLabel?.setVisible(false); this.worldView?.contour(null); }
-    this.game.canvas.style.cursor = monstre ? 'crosshair' : surPnj ? 'pointer' : porte ? CURSEUR_PORTE : this.atelierView?.curseur() ?? this.recolteView?.curseur() ?? 'default';
+    const zaap = !monstre && !surPnj && !porte && this.zaapSurvol(ptr);
+    this.game.canvas.style.cursor = monstre ? 'crosshair' : surPnj || zaap ? 'pointer' : porte ? CURSEUR_PORTE : this.atelierView?.curseur() ?? this.recolteView?.curseur() ?? 'default';
     return input;
   }
 
@@ -755,6 +813,8 @@ export class ZoneScene extends Phaser.Scene {
     const dt = Math.min(deltaMs / 1000, 0.1);
     this.fx.update(dt);
     this.carte?.update();
+    // fenêtre d'un Zaap du monde : elle se ferme si l'on s'en éloigne
+    if (this.windows?.ouverte === 'zaap' && !this.world.dansRefuge && !this.world.zaapProche() && !this.world.zaapDepart) this.windows.close(false);
     if (this.vitrine) this.updateVitrine(dt);
     else if (this.essai) {
       const e = this.essai; e.t += dt;
@@ -893,7 +953,11 @@ export class ZoneScene extends Phaser.Scene {
           this.hud.toast(`Nouveau sort : ${this.world.player.cls.spells[e.id]?.name ?? e.id}${e.slot >= 0 ? ` (${KEY[e.slot]})` : ' · S pour le placer'}`);
           this.windows?.refresh(); break;
         }
-        case 'checkpoint': this.hud.banner(`Point de retour\n${e.name}`, 1400); break;
+        // 3A : un Zaap tout juste découvert a son bandeau (qui dit aussi « point de retour »)
+        case 'checkpoint': if (e.name === this.zaapAnnonce) this.zaapAnnonce = null; else this.hud.banner(`Point de retour\n${e.name}`, 1400); break;
+        case 'zaapDecouvert': this.zaapAnnonce = e.name; this.hud.banner(`Zaap découvert : ${this.nomZaap(e.name)}\nPoint de retour, et voyage gratuit vers tous tes Zaaps`, 2200); break;
+        case 'zaapDepart': this.windows?.close(false); this.tourbillon(e.x, e.y, false);
+          Son.jouer(MANIFESTE.teleport?.[Math.floor(Math.random() * (MANIFESTE.teleport?.length ?? 1))], 'ambiance', { vol: 0.9 }); break;
         case 'respawn': this.hud.banner('De retour !', 900); this.attendreCartes(); this.snapCam = true; break;
         // même nom que l'intérieur où l'on est déjà annoncé (salles d'un donjon) : pas de second bandeau
         case 'enterArea': if (!this.vitrine && e.name !== this.world.lieu) this.hud.zoneBanner(e.name, this.world.zone.name, e.level, this.decouvrir(e.name)); break;

@@ -114,6 +114,9 @@ export type SimEvent =
   | { k: 'incantation'; duree: number }
   | { k: 'incantationStop' }
   | { k: 'arche' }
+  /** Zaap (maquette « Zaap : » 3A, 9A) : nouveau Zaap découvert ; départ en téléportation (le voyage part dans un instant). */
+  | { k: 'zaapDecouvert'; name: string }
+  | { k: 'zaapDepart'; x: number; y: number }
   | { k: 'emmenage'; noms: string[] }
   /** Le joueur lance un sort ou son attaque (objectifs « utiliser »). */
   | { k: 'cast'; id: string }

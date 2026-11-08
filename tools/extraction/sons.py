@@ -101,6 +101,8 @@ for k, s in {'niveau': '16062_Int_Level_Up', 'objectif': '16074_Int_Jingle_Petit
 
 # kamas (choix Kamas D) : pièces qui tombent, dans la banque du décor
 manifest['kamas'] = [sfx('AMB_Loc', f'AMB_Loc_CoinDrop_{n}', 'ui') for n in ('002', '005', '007', '009')]
+# Zaap (maquette « Zaap : » 9A) : départ en téléportation, dans la banque du décor
+manifest['teleport'] = [sfx('AMB_Loc', f'AMB_Interactive_Teleport_Start_0{n}', 'ambiance') for n in (1, 2, 3)]
 
 # ---- sorts des classes (4A) : son de l'animation du lanceur ----
 S = manifest['sorts']
