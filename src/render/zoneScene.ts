@@ -1205,6 +1205,8 @@ export class ZoneScene extends Phaser.Scene {
   }
   private viewOf(e: Entity): EntityView {
     let v = this.views.get(e.id);
+    // bête éveillée (ou revenue à son rang) : nouvelle planche, nouvelle vue
+    if (v && e instanceof Bete && v.look !== this.lookDe(e)) { v.destroy(); this.views.delete(e.id); v = undefined; }
     if (!v) {
       const look = e.faction === 'player' ? this.look : this.lookDe(e);
       if (e.faction === 'player' && this.assemblage && !this.vivant) {
@@ -1327,6 +1329,8 @@ export class ZoneScene extends Phaser.Scene {
           continue;
         }
       }
+      // bête de l'Osamodas : la planche de son rang suivant arrive d'avance, l'Éveil la change sans trou
+      if (e instanceof Bete && e.def.suivant && LOOKS[`osa_${e.def.suivant}`]) this.planche(LOOKS[`osa_${e.def.suivant}`]);
       if (e !== w.player && !this.planche(this.lookDe(e))) { alive.delete(e.id); continue; }
       this.viewOf(e).sync(e);
     }

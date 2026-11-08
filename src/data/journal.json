@@ -235,7 +235,8 @@
         "Corrections": [
           "Les Chafers Éclaireurs font enfin mal : leur Flèche de Feu était prise pour un sort de soutien et ne blessait jamais. Ils restent à distance pour tirer (même correction pour le Tofu Chimérique, le Petit Gloot et Percy Klop).",
           "Le Zaap du Bastion tourbillonne et scintille comme les autres, et affiche son nom au survol (l'arche du Havre-Sac aussi).",
-          "La flèche ne part plus dans le mauvais sens quand le but est dans un bâtiment (Capitaine des Kerubims dans la Tour de la Milice, Cité d'Astrub, donjons)."
+          "La flèche ne part plus dans le mauvais sens quand le but est dans un bâtiment (Capitaine des Kerubims dans la Tour de la Milice, Cité d'Astrub, donjons).",
+          "Les bêtes de l'Osamodas ne marchent plus sur leur maître : elles le suivent en éventail à deux cases derrière lui et s'écartent quand il recule sur elles."
         ],
         "En coulisses": []
       }

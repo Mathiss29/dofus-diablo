@@ -103,3 +103,19 @@ describe('Osamodas : familier de la meute (15F)', () => {
     expect(coups.every(e => e.k === 'hit' && e.element === 'terre')).toBe(true);
   });
 });
+
+describe('Osamodas : place des bêtes', () => {
+  it('les bêtes suivent à distance, sans marcher sur l\'Osamodas ni l\'une sur l\'autre', () => {
+    const w = osa(), p = w.player;
+    niveau(p, 15);
+    press(w, 'tofu'); idle(w, 0.8);
+    w.betes[0].x = p.x; w.betes[0].y = p.y;   // posée dans ses pieds
+    idle(w, 2);
+    for (const b of w.betes) expect(Math.hypot(b.x - p.x, b.y - p.y)).toBeGreaterThan(p.radius + b.radius);
+    // l'Osamodas recule sur sa bête et s'arrête : elle se pousse
+    const b = w.betes[0];
+    for (let i = 0; i < 90; i++) w.step(STEP, { ...NO_INPUT, dest: { x: b.x, y: b.y } });
+    idle(w, 1.5);
+    expect(Math.hypot(b.x - p.x, b.y - p.y)).toBeGreaterThan(p.radius + b.radius);
+  });
+});

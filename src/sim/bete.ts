@@ -142,12 +142,28 @@ export class Bete extends Entity {
       if (d > Math.max(CASE * 0.6, max * CASE * 0.8)) { this.marcher(cible.x, cible.y, dt, world); return; }
       this.facing = Math.atan2(cible.y - this.y, cible.x - this.x);
       this.setAnim('idle');
-    } else if (dP > R.suivi * CASE) {
-      // suit l'Osamodas, un peu derrière lui
-      const a = p.facing + Math.PI + (this.id % 3 - 1) * 0.7;
-      this.marcher(p.x + Math.cos(a) * CASE, p.y + Math.sin(a) * CASE, dt, world, dP > R.laisse * CASE ? 1.6 : 1.15);
-    } else this.setAnim('idle');
+    } else {
+      // suit l'Osamodas à sa place dans la meute : en éventail derrière lui, à `suivi` cases (pas dans ses pieds, Mathis 2026-11-08)
+      const meute = world.betes.filter(q => !q.dead), i = Math.max(0, meute.indexOf(this)), n = meute.length;
+      const a = p.facing + Math.PI + (n > 1 ? (i / (n - 1) - 0.5) * 1.8 : 0);
+      const sx = p.x + Math.cos(a) * R.suivi * CASE, sy = p.y + Math.sin(a) * R.suivi * CASE;
+      if (Math.hypot(sx - this.x, sy - this.y) > CASE * 0.5) this.marcher(sx, sy, dt, world, dP > R.laisse * CASE ? 1.6 : 1.15);
+      else { this.facing = Math.atan2(p.y - this.y, p.x - this.x); this.setAnim('idle'); }
+    }
+    this.ecarter(world);
     this.applyKnock(dt);
+  }
+
+  /** Ne marche ni sur l'Osamodas ni sur les autres bêtes : on se pousse doucement hors de leur cercle. */
+  private ecarter(world: World) {
+    const voisins: { x: number; y: number; r: number }[] = [{ x: this.owner.x, y: this.owner.y, r: this.owner.radius + 14 },
+      ...world.betes.filter(q => q !== this && !q.dead).map(q => ({ x: q.x, y: q.y, r: q.radius + 6 }))];
+    for (const v of voisins) {
+      const dx = this.x - v.x, dy = this.y - v.y, d = Math.hypot(dx, dy), min = v.r + this.radius;
+      if (d >= min) continue;
+      const ux = d > 0.01 ? dx / d : Math.cos(this.id), uy = d > 0.01 ? dy / d : Math.sin(this.id), k = Math.min(min - d, 6);
+      if (world.walkable(this.x + ux * k, this.y + uy * k)) { this.x += ux * k; this.y += uy * k; }
+    }
   }
 
   private marcher(x: number, y: number, dt: number, world: World, vit = 1.15) {
