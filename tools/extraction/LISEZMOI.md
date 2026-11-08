@@ -294,6 +294,9 @@ acheté chez Emp en Pépites ; la garde-robe (Lykhen à Incarnam, Emp à Astrub)
   `skin_<id>.json/.webp` de chaque objet et `equipement.json` { objets, caches }. `PART=i/n` + `TRAVAIL` différent : plusieurs en parallèle.
 - Une coiffe se pose dans les emplacements vides de la tête (`Chapeau_1`, `ChapeauB_1`, `Masque_1`... = `trou` + transformation
   dans le skin de tête, écrits par `squelette_export.py`), la cape et le bouclier sur les nœuds du même nom.
+  Certaines têtes remplissent elles-mêmes un emplacement (cornes de l'Osamodas dans `Chapeau_5`, chignon du Sacrieur dans
+  `Chapeau_1`, quelques Iopettes) : `skin_mesh.py` y écrit quand même le `trou`, et marque leur contenu `d: <emplacement>`,
+  caché par `squelette.ts` quand un objet s'y pose. Après une modification, réexporter les têtes avec `FORCE=1`.
 - `caches` : parties de la tête qu'une coiffe cache (table `skinslotsrules` : règle par défaut, par classe, par tête).
   Les numéros d'emplacement ne sont pas nommés dans le client : 13 = cheveux, 5 = crâne, 0/1 = oreilles, 11/12 = pattes, déduits des coiffes.
 - À venir (0.2b) : coiffe, cape, bouclier, familier et apparat = d'autres skins posés sur les mêmes nœuds ; leurs dessins

@@ -77,6 +77,7 @@ def compact(m, tex):
     r = {'z': m['tint'] or 0, 'v': v, 't': m['t']}
     c = PARTIE.get(re.sub(r'_[a-zA-Z]$', '', m.get('grp', '')).lower())
     if c: r['c'] = c
+    if m.get('defaut'): r['d'] = m['defaut']   # contenu d'un emplacement, caché quand un objet porté le remplace
     return r
 
 

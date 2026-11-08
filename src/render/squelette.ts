@@ -17,7 +17,7 @@ export interface Apparence {
 
 export interface FichePerso { classe: number; anims: string; corps: number; tetes: number[]; couleurs: number[]; os: string[] }
 /** `c` : partie de la tête (cheveux, crane, oreille, patte) qu'une coiffe peut cacher ; `trou` : emplacement d'objet porté. */
-interface Morceau { z: number; v: number[]; t: number[]; tex?: string; trou?: string; tf?: number[]; c?: string }
+interface Morceau { z: number; v: number[]; t: number[]; tex?: string; trou?: string; tf?: number[]; c?: string; d?: string }
 interface Skin { tex: string; parts: Record<string, Morceau[]> }
 /** [g, n, a, b, tx, c, d, ty, alpha, mulR, mulG, mulB, mulA] */
 type Trace = number[];
@@ -62,6 +62,9 @@ export function apparenceValide(f: FichePerso, a?: Partial<Apparence> | null): A
   return { tete, couleurs: f.couleurs.map((d, i) => (Number.isInteger(c[i]) && c[i] >= 0 && c[i] <= 0xffffff ? c[i] : d)) };
 }
 
+/** Emplacements d'objets portés qu'une tête ou un corps peut remplir lui-même (voir tools/extraction/skin_mesh.py). */
+const EMPLACEMENT = /^(Chapeau|ChapeauB|Cape|CapeBas|Bouclier)_\d+$/;
+
 const hex = (c: number) => '#' + c.toString(16).padStart(6, '0');
 
 /** Un perso assemblé (corps + tête + couleurs) : sait dessiner n'importe quelle image de ses animations. */
@@ -80,7 +83,8 @@ export class Assemblage {
     for (const o of objets) for (const [k, ms] of Object.entries(o.parts)) porte.set(k, [...(porte.get(k) ?? []), ...ms.map(m => ({ ...m, tex: o.tex }))]);
     const poses = new Set<string>();
     const etendre = (ms: Morceau[] | undefined, tex: string): Morceau[] => (ms ?? []).flatMap(m => {
-      if (!m.trou) return m.t?.length && !(m.c && caches.has(m.c)) ? [{ ...m, tex }] : [];
+      // contenu propre à la tête dans un emplacement (cornes de l'Osamodas, chignon du Sacrieur) : remplacé par l'objet porté
+      if (!m.trou) return m.t?.length && !(m.c && caches.has(m.c)) && !(m.d && porte.has(m.d)) ? [{ ...m, tex }] : [];
       const o = porte.get(m.trou); if (!o) return [];
       poses.add(m.trou);
       const f = m.tf!;
@@ -90,10 +94,12 @@ export class Assemblage {
         return { ...x, v };
       });
     });
+    // nœud d'emplacement que la tête dessine elle-même (Chapeau_1 du Sacrieur...) : l'objet porté le remplace
+    const propre = (sk: Skin, n: string) => (EMPLACEMENT.test(n) && porte.has(n) ? undefined : sk.parts[n]);
     this.parts = data.noeuds.map(n => {
-      const t = etendre(tete.parts[n], tete.tex);
+      const t = etendre(propre(tete, n), tete.tex);
       for (const m of t) if (m.tex === tete.tex) this.deTete.add(m);   // la coiffe posée dans un emplacement de la tête a la texture de l'objet
-      return [...etendre(corps.parts[n], corps.tex), ...t];
+      return [...etendre(propre(corps, n), corps.tex), ...t];
     });
     data.noeuds.forEach((n, i) => { if (!poses.has(n)) this.parts[i].push(...(porte.get(n) ?? [])); });
   }
