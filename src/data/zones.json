@@ -3122,16 +3122,16 @@
    "checkpoints": [],
    "subareas": {},
    "bastion": {
-    "arrivee": 10709,
-    "zaap": 9701,
+    "arrivee": 18759,
+    "zaap": 17415,
     "pnj": {
-     "kerubim": 8940,
-     "otomai": 9204,
-     "tissebelle": 10867,
-     "goultard": 10720,
-     "forgemage": 11891,
-     "bouillotte": 11458,
-     "gawdien": 10623
+     "kerubim": 16402,
+     "otomai": 16750,
+     "tissebelle": 18973,
+     "goultard": 18770,
+     "forgemage": 20333,
+     "bouillotte": 19760,
+     "gawdien": 18645
     }
    }
   }
