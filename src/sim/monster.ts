@@ -82,6 +82,10 @@ export class Monster extends Entity {
   struck = false;
   /** Dernière bête de l'Osamodas qui l'a frappé (il la vise en retour, maquette Osamodas 8A). */
   agresseur: number | null = null;
+  /** Laine épaisse (Osamodas E) : provoqué par sa bête jusqu'à ce moment (temps du monde). */
+  provoqueJusqua = -1;
+  /** Légendaires de classe Crâ : Marque du chasseur (+marque % jusqu'à marqueJusqua), Givre mordant (coups récents, dernier gel). */
+  marque = 0; marqueJusqua = -1; glaceCoups: number[] = []; gelA = -99;
   /** Dommages subis × subis pendant subisT s (Cuirasse Laineuse : 0,7). */
   subis = 1; subisT = 0;
   /** Boss (maquette « Danger ») : attaque signature en cours (4A) et sa relance, Furieux sous 50 % des PV (5A), entrée annoncée (7A). */

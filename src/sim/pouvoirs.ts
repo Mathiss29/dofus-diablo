@@ -54,6 +54,8 @@ export interface CtxPouvoirs {
   v03: boolean;
   /** Pouvoir de la classe garanti (quête « Le premier pouvoir », 8C) : jamais d'une autre classe ni d'un sort à venir, ni maison. */
   garanti?: boolean;
+  /** Butin d'un boss : ses légendaires de classe préférés ont 3 fois plus de chance (Légendaires classe 2D). */
+  boss?: string;
 }
 /** Ids Dofus des sorts présents en jeu pour chaque classe : un pouvoir sur un sort pas encore fait n'est jamais tiré. */
 export const EN_JEU: Record<string, number[]> = {};

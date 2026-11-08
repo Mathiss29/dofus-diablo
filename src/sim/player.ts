@@ -1,4 +1,5 @@
 import { ALMANAX } from './almanax';
+import { PC_PAR_ID } from './pouvoirsClasse';
 import { DOFUS, EMPLACEMENTS_DOFUS, PASSIFS } from './dofus';
 import type { CleDonjon } from './arene';
 import type { CommandeFM } from './forgemagie';
@@ -7,7 +8,7 @@ import type { ClassDef, ComboHit, Element, SkillId, SpellDef } from './defs';
 import { WEAPONS } from './data';
 import { BASE_STATS, EQUIP_SLOTS, REDUCTION_RECHARGES_MAX, METIER_MAX, metierXpNeeded, type EquipSlot, type Item, type ItemsData, type Stat, type Stats } from './items';
 import type { PlayerInput } from './input';
-import type { World } from './world';
+import type { HitDef, World } from './world';
 import { coutPoint, coutTotal, fuiteFactor, pointsAchetables, prospectionDeChance, soinRecu, tackleSlow, tacleOf, vitesseAgilite } from './caracs';
 import { CASE, TOUR } from './monster';
 import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type SortGrade, type SortOfficiel } from './sorts';
@@ -225,6 +226,13 @@ export class Player extends Entity {
   }
   /** État d'un pouvoir porté (infobulle) : actif, sort pas encore appris (niveau), autre classe, ou sort absent du jeu. */
   etatPouvoir(id: string): { actif: true } | { actif: false; raison: string } {
+    const c = PC_PAR_ID[id];
+    if (c) {   // légendaire de classe inventé : sa classe, et son sort connu
+      if (c.classe !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas' } as Record<string, string>)[c.classe] ?? 'une autre classe'}` };
+      if (this.knows(c.sort)) return { actif: true };
+      const o = this.official(c.sort), n = o ? this.requiredLevel(o) : 0;
+      return { actif: false, raison: n > this.level ? `s'éveille au niveau ${n}` : 'variante non choisie' };
+    }
     const p = POUVOIR_PAR_ID[id];
     if (!p) return { actif: true };
     if (classeDuPouvoir(id) !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur' } as Record<string, string>)[classeDuPouvoir(id)] ?? 'une autre classe'}` };
@@ -329,6 +337,15 @@ export class Player extends Entity {
     for (const it of Object.values(this.equipment)) for (const l of [it?.legendary, it?.legendary2]) if (l?.id === id) v += l.value;
     return v;
   }
+  /** Légendaire de classe inventé porté (0.3, ligne « Légendaires classe ») : meilleur jet porté, 0 s'il n'est pas de sa classe. */
+  pcv(id: string): number {
+    if (!this.v03 || PC_PAR_ID[id]?.classe !== this.cls.sorts) return 0;
+    let v = 0;
+    for (const it of Object.values(this.equipment)) for (const l of [it?.legendary, it?.legendary2]) if (l?.id === id) v = Math.max(v, l.value);
+    return v;
+  }
+  /** Rage sans fond (Iop C) : dernière recharge offerte de Colère ; Couperet du bourreau (Iop F) : dernière exécution. */
+  rageSansFondA = -99; couperetA = -99;
   /** Recalcule les caractéristiques et les PV max (5 PV par niveau + 1 par point de Vitalité, comme Dofus). */
   recompute() {
     this._pouvoirs = null;
@@ -614,7 +631,14 @@ export class Player extends Entity {
   addRage(n: number, world: World) {
     const R = this.cls.rage, was = this.rageFull;
     this.rage = Math.min(R.max, this.rage + n * (1 + this.legendary('rage') / 100) * (world.quetes?.jaugeX ?? 1));
-    if (!was && this.rageFull) world.emit({ k: 'rageFull' });
+    if (!was && this.rageFull) {
+      world.emit({ k: 'rageFull' });
+      const v = this.pcv('pc-iop-C');   // Rage sans fond : Colère de Iop rechargée tout de suite
+      if (v && this.age - this.rageSansFondA >= v && this.knows('colere')) {
+        this.rageSansFondA = this.age; this.cd.colere = 0; this.casts.colere = [];
+        world.emit({ k: 'status', x: this.x, y: this.y - 50, text: 'Colère rechargée', color: '#ff9a4a' });
+      }
+    }
   }
 
   drinkPotion(world: World): boolean {
@@ -921,9 +945,9 @@ export class Player extends Entity {
       // Cumul (Fureur) : chaque lancer augmente les dommages du suivant
       let mult = boost;
       if (d.stack) {
-        const st = this.stacks[s.id] ?? { n: 0, t: 0 };
-        mult *= 1 + d.stack.per * sig('stack') * st.n;
-        this.stacks[s.id] = { n: Math.min(d.stack.max, st.n + 1), t: d.stack.time };
+        const st = this.stacks[s.id] ?? { n: 0, t: 0 }, fc = s.id === 'fureur' ? this.pcv('pc-iop-D') : 0;   // Fureur croissante
+        mult *= 1 + (d.stack.per + fc / 100) * sig('stack') * st.n;
+        this.stacks[s.id] = { n: Math.min(fc ? 5 : d.stack.max, st.n + 1), t: d.stack.time };
       }
       if (d.buff) {
         const n = Math.round(d.buff.n * sig('buff'));
@@ -977,23 +1001,31 @@ export class Player extends Entity {
         pmLoss: d.pmLoss && Math.round(d.pmLoss * sig('pm')), paLoss: d.paLoss && Math.round(d.paLoss * sig('pa')),
         poLoss: d.poLoss && this.parGrade(s.id, d.poLoss),
         // Maquette Armes 3B : un coup d'arme fait jaillir un éclat de la couleur de son élément sur chaque monstre touché
-        eclat: s.id === 'arme' || undefined, crit: this.critSort(s.id) || undefined };
+        eclat: s.id === 'arme' || undefined, crit: this.critSort(s.id) || undefined,
+        ...this.effetsPouvoirsClasse(s.id) };
       let hits = 0, size = 0;
       // Pouvoirs officiels (0.3) : zone plus grande, ligne ou cône plus long
       const zb = this.zoneBonus(s.id), pp = this.porteePlus(s.id);
       if (d.self) { size = 60; }
       else if (hz.shape === 'cone') { size = hz.range * area + pp + zb; hits = world.hitCone(this.x, this.y, this.facing, size, (hz.arc * Math.PI) / 180, hit, d.stun); }
       else if (hz.shape === 'line') { size = hz.length * area + pp; hits = world.hitLine(this.x, this.y, this.facing, size, hz.width * area + zb, hit, d.stun); }
+      else if (hz.shape === 'point' && s.id === 'epee' && this.pcv('pc-iop-B')) {   // Lame tournoyante : tout autour du Iop
+        size = hz.radius * area + zb; s.tx = this.x; s.ty = this.y;
+        hits = world.hitCircle(this.x, this.y, size, { ...hit, dmg: hit.dmg * this.pcv('pc-iop-B') / 100 }, d.stun);
+      }
       else if (hz.shape === 'point') { size = hz.radius * area + zb; hits = world.hitCircle(s.tx, s.ty, size, hit, d.stun, this.facing); }   // poussée dans l'axe du lanceur, comme Dofus
       else if (hz.shape === 'circle' && d.vuln && !d.dmg) { size = hz.radius * area + zb; world.markVuln(this.x, this.y, size, d.vuln.n, d.vuln.t); }
       else if (hz.shape === 'circle') { size = hz.radius * area + zb; hits = world.hitCircle(this.x, this.y, size, hit, d.stun); }
       else {
         // Flèche : la zone (et les dommages) partent avec le projectile ; l'effet d'impact se joue à l'arrivée
         const shot = { ...hz, range: s.range ?? hz.range, explode: s.explode ?? hz.explode };
-        world.shoot(this.x, this.y, this.facing, shot, hit, d.stun ?? 0, sig('explode'), s.id);
+        const rc = s.id === 'cinglante' ? this.pcv('pc-cra-B') : 0;   // Rafale cinglante : 3 flèches en éventail
+        if (rc) for (const da of [-0.22, 0, 0.22]) world.shoot(this.x, this.y, this.facing + da, shot, { ...hit, dmg: hit.dmg * rc / 100 }, d.stun ?? 0, sig('explode'), s.id);
+        else world.shoot(this.x, this.y, this.facing, shot, hit, d.stun ?? 0, sig('explode'), s.id);
         size = hz.range;
       }
       if (d.echange) world.echanger(this, s.tx, s.ty, CASE * 0.75);   // Assaut, Transposition : après le coup
+      this.apresImpactClasse(s.id, s.sx, s.sy, s.tx, s.ty, hit, s.gm, size, world);
       const pt = hz.shape === 'point';
       if (hz.shape !== 'projectile') world.emit({ k: 'spell', fx: pt ? 'burst' : d.fx, id: s.id, x: pt ? s.tx : this.x, y: pt ? s.ty : this.y, cx: this.x, cy: this.y, facing: this.facing, size,
         arc: hz.shape === 'cone' ? (hz.arc * Math.PI) / 180 : 0, element: d.element, big: d.shake >= 0.012 || s.boosted, boosted: s.boosted });
@@ -1001,6 +1033,54 @@ export class Player extends Entity {
       if (hz.shape !== 'projectile') world.emit({ k: 'impact', hitstop: hits || d.charge ? d.hitstop * (s.boosted ? 1.4 : 1) : 0, shake: d.shake * (s.boosted ? 1.5 : 1), big: d.shake >= 0.012 || s.boosted });
     }
     if (s.t >= d.duration) this.endSkill();
+  }
+
+  /** Champs de coup des légendaires de classe (0.3) : exécution, bonus à distance, gel, clouage, marque, rebonds, gerbe. */
+  private effetsPouvoirsClasse(id: string): Partial<HitDef> {
+    if (!this.v03) return {};
+    const o: Partial<HitDef> = {}, v = (k: string) => this.pcv(k);
+    if (id === 'couperet' && v('pc-iop-F')) o.execute = v('pc-iop-F') / 100;
+    if (v('pc-cra-E') && this.mods.some(m => m.src === 'tirs_eloignes')) o.loin = v('pc-cra-E');
+    if (id === 'glacee' && v('pc-cra-F')) o.givre = v('pc-cra-F');
+    if (id === 'recul' && v('pc-cra-G')) { o.clouage = v('pc-cra-G'); o.pushDmg = true; }
+    if (id === 'abolition' && v('pc-cra-H')) o.marque = v('pc-cra-H');
+    if (id === 'vagabonde' && v('pc-cra-C')) o.rebonds = v('pc-cra-C');
+    if (id === 'explosive' && v('pc-cra-A')) o.gerbe = v('pc-cra-A');
+    return o;
+  }
+  /** Effets des légendaires de classe qui s'ajoutent à l'impact d'un sort (Iop A E G H, Osamodas A B C G H). */
+  private apresImpactClasse(id: string, sx: number, sy: number, tx: number, ty: number, hit: HitDef, gm: number, size: number, world: World) {
+    if (!this.v03) return;
+    const v = (k: string) => this.pcv(k), cri = (text: string) => world.emit({ k: 'status', x: this.x, y: this.y - 60, text, color: '#ffb347' });
+    if (id === 'bond' && v('pc-iop-A')) {   // Bond sismique : onde de choc Terre à l'atterrissage
+      const pr = this.cls.spells.pression;
+      world.hitCircle(this.x, this.y, CASE * 2, { dmg: (pr?.dmg ?? 26) * gm * v('pc-iop-A') / 100, knock: 0, element: 'terre' });
+      world.emit({ k: 'spell', fx: 'burst', id: 'pc-iop-A', x: this.x, y: this.y, cx: this.x, cy: this.y, facing: this.facing, size: CASE * 2, arc: 0, element: 'terre', big: true, boosted: false });
+    }
+    if (id === 'deferlement' && v('pc-iop-E')) {   // Vague de retour : le point de départ de la charge est frappé aussi
+      world.hitCircle(sx, sy, size, { ...hit, dmg: hit.dmg * v('pc-iop-E') / 100 });
+      world.emit({ k: 'spell', fx: 'burst', id: 'pc-iop-E', x: sx, y: sy, cx: sx, cy: sy, facing: this.facing, size, arc: 0, element: hit.element ?? 'eau', big: false, boosted: false });
+    }
+    if (id === 'intimidation' && v('pc-iop-G')) { world.repousser(this.x, this.y, v('pc-iop-G') * CASE, 684); cri('Cri du champion'); }
+    if (id === 'epee_divine' && v('pc-iop-H'))   // Épée jumelle : une épée reste au sol 3 s
+      world.zonesSol.push({ x: this.x, y: this.y, r: size, t: 3, hit: { ...hit, dmg: hit.dmg * v('pc-iop-H') / 100 }, touches: new Set(), id: 'pc-iop-H' });
+    if (id === 'cortege' && v('pc-osamodas-A')) world.horde(this, 2, v('pc-osamodas-A'));
+    if (id === 'fouet' && v('pc-osamodas-B'))   // Coup de fouet : les bêtes près du coup s'emballent
+      for (const b of world.betes) if (!b.dead && Math.hypot(b.x - tx, b.y - ty) <= CASE * 3) { b.hate = v('pc-osamodas-B'); b.hateT = 4; }
+    if (id === 'souffle_draconique' && v('pc-osamodas-C')) {   // Souffle partagé : la Dragoune crache aussi
+      const dr = world.betes.find(b => !b.dead && ['dragoune', 'dragonnet', 'sulfenix'].includes(b.type));
+      if (dr) {
+        const a = Math.atan2(ty - dr.y, tx - dr.x), L = Math.min(240, Math.hypot(tx - dr.x, ty - dr.y)), px = dr.x + Math.cos(a) * L, py = dr.y + Math.sin(a) * L;
+        dr.facing = a;
+        world.hitCircle(px, py, size, { ...hit, dmg: hit.dmg * v('pc-osamodas-C') / 100 }, 0, a);
+        world.emit({ k: 'spell', fx: 'burst', id: 'souffle_draconique', x: px, y: py, cx: dr.x, cy: dr.y, facing: a, size, arc: 0, element: 'feu', big: false, boosted: false });
+      }
+    }
+    if (id === 'saute_granouille' && v('pc-osamodas-G')) for (const b of world.betes) if (!b.dead) {   // Bond du crapaud
+      const a = this.age * 3 + b.id; b.x = this.x + Math.cos(a) * CASE; b.y = this.y + Math.sin(a) * CASE;
+      b.shield = Math.max(b.shield, Math.round(b.maxHp * v('pc-osamodas-G') / 100));
+    }
+    if (id === 'charge_bestiale' && v('pc-osamodas-H')) for (const b of world.betes) if (!b.dead) b.soigner(b.maxHp * v('pc-osamodas-H') / 100, world);
   }
 
   /** Coup reçu : Résistance fixe puis % Résistance de l'élément (plafonnée à 50 %), comme Dofus. */

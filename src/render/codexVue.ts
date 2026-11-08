@@ -3,6 +3,7 @@ import { imprimable, pouvoirsDuCodex, prixImpression, type EntreeCodex } from '.
 import { LEGENDARY, PEPITE, RARITY_COLORS, RARITY_NAMES, lignePouvoir, type Item, type LegendaryId } from '../sim/items';
 import type { Player } from '../sim/player';
 import { POUVOIR_PAR_ID } from '../sim/pouvoirs';
+import { PC_PAR_ID, fourchette } from '../sim/pouvoirsClasse';
 import type { World } from '../sim/world';
 import { iconHtml } from './icons';
 
@@ -27,6 +28,10 @@ const nomSlot = (s: string) => SLOTS.find(x => x[0] === s)?.[1].toLowerCase() ??
 
 /** Ligne d'un pouvoir du Codex (nom du sort + effet), pour ce perso. */
 function ligne(p: Player, id: string, e?: EntreeCodex): string {
+  const c = PC_PAR_ID[id];
+  if (c) {   // légendaire de classe inventé : le jet gardé (4A), sinon la fourchette
+    return `<b style="color:#ff9a3c">${c.nom}</b> : ${c.texte(e?.value ?? c.jet[1]).replace(/\d+(,\d+)?/, e?.value != null ? '$&' : 'jusqu\'à $&')}${e?.value != null ? ` <i>(jet gardé, ${fourchette(c)})</i>` : ''}`;
+  }
   const o = POUVOIR_PAR_ID[id], k = o && Object.keys(p.cls.spells).find(x => p.cls.spells[x].dofusId === o.dofusId);
   const fx = { id, value: o ? 0 : Math.round((LEGENDARY[id as LegendaryId]?.max ?? 0)), sort: e?.sort };
   const { nom, texte } = lignePouvoir(fx, e?.sort && p.cls.spells[e.sort]?.name, !!k && p.zoneSeule(k));
@@ -42,7 +47,7 @@ export function codexPageHtml(p: Player, choix?: { ok: (id: string) => boolean; 
     return `<div class="cp ${e ? 'vu' : ''} ${clic ? 'ch' : choix && e ? 'no' : ''} ${choix?.on === id ? 'on' : ''}" ${clic ? `data-centree="${id}"` : ''}>${ligne(p, id, e)}</div>`;
   };
   const parSlot = SLOTS.map(([s, nom]) => {
-    const l = ids.filter(id => POUVOIR_PAR_ID[id]?.slot === s);
+    const l = ids.filter(id => (POUVOIR_PAR_ID[id] ?? PC_PAR_ID[id])?.slot === s);
     return `<div class="cs"><h4>${nom}</h4>${l.map(cp).join('')}</div>`;
   }).join('');
   const maison = `<div class="cs"><h4>Toutes classes, tout emplacement</h4>${Object.keys(LEGENDARY).map(cp).join('')}</div>`;

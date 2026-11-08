@@ -25,9 +25,10 @@ import { COFFRE, coffreVide, type Coffre } from './coffre';
 export const ARCHI = { chance: 1 / 150, pierre: '9686', pleine: '10418' };
 import { FABRICATION, METIERS_FAB, chanceRare, ingredientsRares, type Poste } from './metiers';
 import { PLACEMENT, analyserCarte, groupesAuto, placementPose, placementValide, proposerPlacement, type AnalyseCarte, type PlacementCarte } from './placement';
+import { PC_PAR_ID } from './pouvoirsClasse';
 import { RECOLTE, porteeRecolte, quantite, xpRecolte, type Recolte, type RecoltesData } from './recolte';
 
-interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: number;
+export interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: number;
   /** Effets officiels : Érosion (part des dommages ôtée aux PV max), retrait de PM / PA. */
   erosion?: number; pmLoss?: number; paLoss?: number; poLoss?: number;
   /** Dommages multipliés sur les invocations (Concentration), et aussi sur les élites et les boss (Rage pleine). */
@@ -39,7 +40,13 @@ interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: nu
   /** Pouvoir légendaire officiel « +N % Critique » sur ce sort (0.3), en part (0,35). */
   crit?: number;
   /** Sacrieur : attire de px vers le lanceur ou vers le centre de la zone (Attirance, Condensation) ; Supplice posé sur la cible. */
-  attire?: { px: number; vers: 'lanceur' | 'centre' }; supplice?: { part: number; t: number } }
+  attire?: { px: number; vers: 'lanceur' | 'centre' }; supplice?: { part: number; t: number };
+  /** Légendaires de classe (0.3) : exécution sous cette part de PV (Couperet du bourreau), +n % par case de distance (Œil d'aigle),
+   *  gel de n s au 3e coup (Givre mordant), +n % de dommages de poussée et étourdi (Clouage), marque +n % (Marque du chasseur),
+   *  rebonds en plus (Flèche rebelle), 3 petites explosions à n % (Gerbe de feu). */
+  execute?: number; loin?: number; givre?: number; clouage?: number; marque?: number; rebonds?: number; gerbe?: number }
+/** Zone laissée au sol par un légendaire de classe (Épée jumelle) : frappe une fois chaque monstre qui la traverse. */
+export interface ZoneSol { x: number; y: number; r: number; t: number; hit: HitDef; touches: Set<number>; id: string }
 /** Butin au sol (choix 1C 2D 6A) : équipements et kamas seulement. Les Communs et les kamas filent vers le joueur
  *  qui passe près ; Rare et plus se ramassent d'un clic. Les ressources vont directement dans le sac. */
 export interface Drop { uid: number; x: number; y: number; item?: Item; kamas?: number; t: number; warned?: boolean;
@@ -156,6 +163,7 @@ export class World {
   enFabrication: { recette: number; n: number; t: number; hp: number; rare?: string | null } | null = null;
   /** Télégraphes du dernier pas (recalculés à chaque pas). */
   telegraphs: Telegraph[] = [];
+  zonesSol: ZoneSol[] = [];
   wave = 0;
   kills = 0;
   waveDelay = 1.2;
@@ -1028,6 +1036,7 @@ export class World {
     const M = AGGRO.massacre;
     if (this.massacre.n >= M.min && this.time - this.massacre.t > M.fenetre) { this.emit({ k: 'massacreFin', n: this.massacre.n }); this.massacre.n = 0; }
     this.updateProjectiles(dt);
+    this.updateZonesSol(dt);
     this.updateDrops(dt);
     this.separate();
     // Cases bloquantes : on glisse le long des obstacles (axe par axe), sauf en plein Bond
@@ -1196,14 +1205,14 @@ export class World {
       const target = this.monsters.find(m => !m.dead && m.state !== 'spawn' && !pr.touched.has(m.id) && Math.hypot(m.x - pr.x, m.y - pr.y) <= m.radius + pr.width);
       let end = pr.left <= 0;
       if (target) {
-        if (pr.explode) { this.hitCircle(pr.x, pr.y, pr.explode, pr.hit, pr.stun); end = true; }
+        if (pr.explode) { this.hitCircle(pr.x, pr.y, pr.explode, pr.hit, pr.stun); this.gerbe(pr); end = true; }
         else {
           pr.touched.add(target.id);
           this.applyHits(m => m === target, pr.hit, pr.x - pr.dx * 10, pr.y - pr.dy * 10, pr.stun, Math.atan2(pr.dy, pr.dx));
-          if (!pr.pierce) end = true;
+          if (!pr.pierce) end = !this.rebondir(pr, target);
         }
         this.emit({ k: 'impact', hitstop: 0.03, shake: pr.explode ? 0.008 : 0.003, big: false });
-      } else if (end && pr.explode) this.hitCircle(pr.x, pr.y, pr.explode, pr.hit, pr.stun);
+      } else if (end && pr.explode) { this.hitCircle(pr.x, pr.y, pr.explode, pr.hit, pr.stun); this.gerbe(pr); }
       if (end) {
         pr.left = 0;
         if (pr.fleche) continue;   // la flèche se plante ou disparaît dans le monstre : pas d'explosion
@@ -1212,6 +1221,49 @@ export class World {
       }
     }
     this.projectiles = this.projectiles.filter(p => p.left > 0);
+  }
+
+  /** Flèche rebelle (Crâ C) : la flèche repart vers le monstre le plus proche pas encore touché, −20 % par rebond. */
+  private rebondir(pr: Projectile, from: Monster): boolean {
+    if (!pr.hit.rebonds) return false;
+    const next = this.monsters.filter(m => !m.dead && m.state !== 'spawn' && !pr.touched.has(m.id) && Math.hypot(m.x - from.x, m.y - from.y) <= CASE * 6)
+      .sort((a, b) => Math.hypot(a.x - from.x, a.y - from.y) - Math.hypot(b.x - from.x, b.y - from.y))[0];
+    if (!next) return false;
+    const d = Math.hypot(next.x - pr.x, next.y - pr.y) || 1;
+    pr.dx = (next.x - pr.x) / d; pr.dy = (next.y - pr.y) / d; pr.left = d + CASE;
+    pr.hit = { ...pr.hit, dmg: pr.hit.dmg * 0.8, rebonds: pr.hit.rebonds - 1 };
+    return true;
+  }
+  /** Gerbe de feu (Crâ A) : 3 petites explosions autour du point d'impact. */
+  private gerbe(pr: Projectile) {
+    const v = pr.hit.gerbe;
+    if (!v) return;
+    for (let i = 0; i < 3; i++) {
+      const a = Math.atan2(pr.dy, pr.dx) + (i * 2 * Math.PI) / 3, x = pr.x + Math.cos(a) * pr.explode * 0.8, y = pr.y + Math.sin(a) * pr.explode * 0.8;
+      this.hitCircle(x, y, CASE, { ...pr.hit, dmg: pr.hit.dmg * v / 100, gerbe: undefined });
+      this.emit({ k: 'spell', fx: 'burst', id: 'pc-cra-A', x, y, facing: a, size: CASE, arc: 0, element: pr.hit.element ?? 'feu', big: false, boosted: false });
+    }
+  }
+  /** Zones au sol des légendaires de classe : chaque monstre qui y passe est frappé une fois. */
+  private updateZonesSol(dt: number) {
+    if (!this.zonesSol.length) return;
+    for (const z of this.zonesSol) {
+      z.t -= dt;
+      this.telegraphs.push({ kind: 'circle', x: z.x, y: z.y, r: z.r, progress: 1, danger: false });
+      const n = this.applyHits(m => !z.touches.has(m.id) && Math.hypot(m.x - z.x, m.y - z.y) <= z.r + m.radius, z.hit, z.x, z.y, 0);
+      if (n) for (const m of this.monsters) if (!m.dead && Math.hypot(m.x - z.x, m.y - z.y) <= z.r + m.radius) z.touches.add(m.id);
+    }
+    this.zonesSol = this.zonesSol.filter(z => z.t > 0);
+  }
+  /** Repousse tous les monstres d'un cercle depuis son centre, sans les frapper (Cri du champion). */
+  repousser(x: number, y: number, r: number, knock: number): number {
+    let k = 0;
+    for (const m of this.monsters) {
+      if (m.dead || m.state === 'spawn' || m.intouchable || Math.hypot(m.x - x, m.y - y) > r + m.radius) continue;
+      const a = Math.atan2(m.y - y, m.x - x), kb = knock / m.def.mass;
+      m.kx += Math.cos(a) * kb; m.ky += Math.sin(a) * kb; k++;
+    }
+    return k;
   }
 
   // --- Zones de frappe (coordonnées monde) --------------------------------
@@ -1247,8 +1299,11 @@ export class World {
       const flat = (crit ? p.stat('dommagesCritiques') : 0) + (def.knock > 0 ? p.stat('dommagesPoussee') : 0);
       const vs = def.vsSummon && (m.summoner || (def.vsElite && (m.def.elite || m.def.boss))) ? def.vsSummon : 1;
       const vu = (m.vulnT > 0 ? 1 + m.vuln / 100 : 1) * m.subis;   // dommages subis augmentés (Bond) ou réduits (Cuirasse Laineuse)
+      // Légendaires de classe : Marque du chasseur (les autres coups), Œil d'aigle (par case de distance)
+      const pc = (m.marqueJusqua > this.time && !def.marque ? 1 + m.marque / 100 : 1)
+        * (def.loin ? 1 + Math.min(def.loin * 10, def.loin * Math.hypot(m.x - p.x, m.y - p.y) / CASE) / 100 : 1);
       // Sort sans dommages (Attirance, Transposition) : seulement ses effets
-      const dmg = def.dmg <= 0 ? 0 : Math.max(1, Math.round((p.damage(def.dmg * vs, def.element ?? 'neutre') * this.rng.range(0.9, 1.1) * (crit ? cls.critMult : 1) * first + flat) * (1 - res / 100) * vu));
+      const dmg = def.dmg <= 0 ? 0 : Math.max(1, Math.round((p.damage(def.dmg * vs, def.element ?? 'neutre') * this.rng.range(0.9, 1.1) * (crit ? cls.critMult : 1) * first + flat) * (1 - res / 100) * vu * pc));
       m.hp -= dmg; m.flash = 0.09; m.calmeT = 0;
       if (dmg && m.suppliceT > 0) p.hp = Math.min(p.maxHp, p.hp + Math.round(dmg * m.supplice));   // Supplice : frapper la cible soigne
       if (def.supplice) { m.supplice = def.supplice.part; m.suppliceT = def.supplice.t; }
@@ -1273,9 +1328,23 @@ export class World {
       const a = pushDir ?? Math.atan2(m.y - oy, m.x - ox);
       const kb = def.knock / m.def.mass;
       m.kx += Math.cos(a) * kb; m.ky += Math.sin(a) * kb;
-      if (def.pushDmg && kb > 0) this.pushDamage(m, a, kb / 7.13);
+      const choc = def.pushDmg && kb > 0 && this.pushDamage(m, a, kb / 7.13, def.clouage ?? 0);
       if (!m.def.boss) m.stun = Math.max(m.stun, stun || 0.12);   // petit vacillement : interrompt les télégraphes
       else if (stun) m.stun = Math.max(m.stun, stun * 0.3);
+      if (choc && def.clouage) { m.stun = Math.max(m.stun, m.def.boss ? 0.15 : 0.5); this.emit({ k: 'status', x: m.x, y: m.y - 34, text: 'Cloué !', color: '#f2d36b' }); }
+      if (def.marque) { m.marque = def.marque; m.marqueJusqua = this.time + 4; this.emit({ k: 'status', x: m.x, y: m.y - 34, text: 'Marqué', color: '#ff7b6b' }); }
+      if (def.givre && !m.def.boss) {   // Givre mordant : 3 coups en 5 s = gelé (une fois par monstre toutes les 6 s)
+        m.glaceCoups = [...m.glaceCoups.filter(t => this.time - t < 5), this.time];
+        if (m.glaceCoups.length >= 3 && this.time - m.gelA >= 6) {
+          m.gelA = this.time; m.glaceCoups = [];
+          m.stun = Math.max(m.stun, def.givre * (m.def.elite ? 0.5 : 1));
+          this.emit({ k: 'status', x: m.x, y: m.y - 34, text: 'Gelé !', color: '#8fd8ff' });
+        }
+      }
+      if (def.execute && m.hp > 0 && !m.def.boss && !m.mannequin && m.hp <= m.maxHp * def.execute * (m.def.elite ? 0.5 : 1) && p.age - p.couperetA >= 4) {
+        p.couperetA = p.age; m.hp = 0;   // Couperet du bourreau
+        this.emit({ k: 'status', x: m.x, y: m.y - 34, text: 'Exécuté !', color: '#ff5050' });
+      }
       if (dmg) this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: dmg, crit, element: el, eclat: def.eclat });
       if (n <= 3) p.rageOnHit(Math.hypot(m.x - p.x, m.y - p.y), this);
       if (def.lifesteal) p.hp = Math.min(p.maxHp, p.hp + Math.round(dmg * def.lifesteal));   // la Rage monte avec les coups portés (3 cibles max par coup)
@@ -1324,8 +1393,8 @@ export class World {
   /** Dommages de poussée de Dofus : (niveau / 2 + Dommages Poussée + 32) × cases de poussée restantes / 4,
    *  quand la cible heurte un obstacle ou un autre monstre avant la fin de son recul. */
   private intouchableT = -9;
-  private pushDamage(m: Monster, a: number, dist: number) {
-    if (m.intouchable) return;
+  private pushDamage(m: Monster, a: number, dist: number, bonus = 0): boolean {
+    if (m.intouchable) return false;
     const c = Math.cos(a), s = Math.sin(a), step = 8;
     let t = 0;
     for (; t < dist; t += step) {
@@ -1333,11 +1402,12 @@ export class World {
       if (!this.walkable(x, y) || this.monsters.some(o => o !== m && !o.dead && Math.hypot(o.x - x, o.y - y) < o.radius)) break;
     }
     const left = (dist - t) / CASE;
-    if (left <= 0.25) return;
-    const p = this.player, dmg = Math.max(1, Math.round((p.level / 2 + p.stat('dommagesPoussee') + 32) * left / 4));
+    if (left <= 0.25) return false;
+    const p = this.player, dmg = Math.max(1, Math.round((p.level / 2 + p.stat('dommagesPoussee') + 32) * left / 4 * (1 + bonus / 100)));
     m.hp -= dmg; m.flash = 0.09; m.calmeT = 0;
     this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 30, amount: dmg, crit: false });
     this.emit({ k: 'status', x: m.x, y: m.y - 20, text: 'Choc !', color: '#f2d36b' });
+    return true;
   }
   /** Points de PA / PM réellement retirés : chacun passe selon Retrait contre Esquive. */
   private removed(n: number, retrait: number, esquive: number): number {
@@ -1383,7 +1453,7 @@ export class World {
   contexteButin(type: string, rang: Rang, niveau: number): CtxButin {
     const p = this.player;
     return { type, rang, niveau, prospection: p.prospection + (this.almanax?.effet === 'butin' ? ALMANAX.butin : 0), items: this.opts.items!, familiers: this.familiersDe[type] ?? [], pool: this.equipByLevel,
-      metierNiveau: j => p.metierLevel(j), armeChasse: !!p.huntingWeapon, pouvoirs: p.ctxPouvoirs };
+      metierNiveau: j => p.metierLevel(j), armeChasse: !!p.huntingWeapon, pouvoirs: rang === 'boss' ? { ...p.ctxPouvoirs, boss: type } : p.ctxPouvoirs };
   }
   /** Un monstre vaincu lâche son butin officiel (ressources, parfois un équipement) et, plus rarement, un équipement
    *  de son niveau pris dans tous les objets de Dofus. Élites et boss lâchent plus et mieux. Calcul : src/sim/butin.ts. */
@@ -1624,7 +1694,9 @@ export class World {
     this.ouvrirCodex(it);
     for (const l of [it.legendary, it.legendary2]) {
       if (!l || !nouveauPourCodex(p.codex, p.cls.sorts, l)) continue;
-      p.codex.push(l.sort ? { id: l.id, sort: l.sort } : { id: l.id });
+      const e = p.codex.find(c => c.id === l.id);
+      if (e) e.value = l.value;   // 4A : légendaire de classe, meilleur jet que celui gardé
+      else p.codex.push(l.sort ? { id: l.id, sort: l.sort } : PC_PAR_ID[l.id] ? { id: l.id, value: l.value } : { id: l.id });
       this.emit({ k: 'codex', id: l.id });
     }
   }
@@ -2071,7 +2143,7 @@ export class World {
     if (!this.betes.length || m.state === 'idle' || m.state === 'return') return p;
     const vivantes = this.betes.filter(b => !b.dead && b.state !== 'spawn');
     const ag = vivantes.find(b => b.id === m.agresseur);
-    if (ag && Math.hypot(ag.x - m.x, ag.y - m.y) < CASE * 4) return ag;
+    if (ag && (m.provoqueJusqua > this.time || Math.hypot(ag.x - m.x, ag.y - m.y) < CASE * 4)) return ag;   // Laine épaisse : provoqué
     const dp = Math.hypot(p.x - m.x, p.y - m.y);
     let best: Cible = p, bd = p.dead ? Infinity : dp * 0.6;
     for (const b of vivantes) { const d = Math.hypot(b.x - m.x, b.y - m.y); if (d < bd) { bd = d; best = b; } }
@@ -2080,7 +2152,7 @@ export class World {
   /** Bête vivante invoquée par ce sort (une par sort, la touche la rappelle ou l'éveille). */
   beteDe(sort: string): Bete | undefined { return this.betes.find(b => b.sort === sort && !b.dead); }
   /** Coût en Invocations (2A) : 1 / 2 / 3 selon le rang ; le joueur en a 1 de base + objets + Cortège Sauvage. */
-  invocationsPrises(): number { return this.betes.filter(b => !b.dead && !b.dompteT).reduce((a, b) => a + BETES[b.base].rang, 0); }
+  invocationsPrises(): number { return this.betes.filter(b => !b.dead && !b.dompteT && !b.finT).reduce((a, b) => a + BETES[b.base].rang, 0); }
   invocationsMax(p: Player): number { if (this.test?.invocations) return 99;   // partie de test (Outil test 7B)
     return REGLES_BETES.invocationsBase + Math.max(0, p.stat('invocations')); }
   /** Fait apparaître la bête d'un sort au point visé (case libre la plus proche). */
@@ -2092,6 +2164,15 @@ export class World {
     this.emit({ k: 'status', x: b.x, y: b.y - 40, text: b.def.name, color: '#9fe07a' });
     this.emit({ k: 'invocation', id: b.id, x: b.x, y: b.y });
     return b;
+  }
+  /** Horde sauvage (Osamodas A) : n bêtes de la meute en plus pendant t s (hors du compte des Invocations). */
+  horde(p: Player, n: number, t: number) {
+    const pool = ['tofu', 'bouftou', 'crapipou', 'dragoune'];
+    for (let i = 0; i < n; i++) {
+      const a = p.facing + Math.PI + (i - 0.5) * 1.2;
+      const b = this.invoquer(p, this.rng.pick(pool), 'horde', p.x + Math.cos(a) * CASE * 1.5, p.y + Math.sin(a) * CASE * 1.5);
+      if (b) b.finT = t;
+    }
   }
   /** 14A Meute bigarrée : +5 % de dommages à la meute par élément différent présent parmi les bêtes. */
   bonusMeute(p: Player): number {
@@ -2126,8 +2207,9 @@ export class World {
     if (!sorts.some(sp => sp.effets.some(e => e.k === 'dmg'))) sorts.push({ id: 0, name: 'Coup', pa: 2, po: [1, 1], anim: 0, zone: 'P1', effets: [{ k: 'dmg', element: 'neutre', min: m.def.dmg, max: m.def.dmg, vol: false }] });
     const def = { dofusId: m.def.dofusId ?? 0, name: m.def.name, look: 0, atlas: m.def.look, rang: 0, element: 'neutre' as const, suivant: null, pv: 0, sorts };
     m.dead = true; m.t = 0;   // le monstre quitte son groupe sans mourir (ni XP ni butin)
-    const b = new Bete(this.nextId++, p, m.type, 'dompte', m.x, m.y, def, Math.max(1, Math.round(m.maxHp * 0.6)));
-    b.dompteT = D.duree; b.state = 'suit';
+    const la = p.pcv('pc-osamodas-F');   // Lien des âmes : reste plus longtemps et garde ses PV
+    const b = new Bete(this.nextId++, p, m.type, 'dompte', m.x, m.y, def, Math.max(1, Math.round(la ? m.maxHp : m.maxHp * 0.6)));
+    b.dompteT = D.duree * (la || 1); b.state = 'suit';
     this.betes.push(b);
     this.emit({ k: 'dompte', id: b.id, name: m.def.name, x: b.x, y: b.y });
     this.emit({ k: 'status', x: b.x, y: b.y - 40, text: `${m.def.name} dompté !`, color: '#9fe07a' });

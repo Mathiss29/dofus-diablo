@@ -61,6 +61,10 @@ export class Bete extends Entity {
   shield = 0;
   /** 15A : monstre dompté, secondes avant qu'il s'enfuie (0 = vraie invocation). */
   dompteT = 0;
+  /** Horde sauvage : secondes avant de repartir (0 = reste). Coup de fouet : vitesse d'attaque +hate % pendant hateT s. */
+  finT = 0; hate = 0; hateT = 0;
+  /** Laine épaisse : prochaine provocation du Bouftou. */
+  provoqueT = 0;
   constructor(id: number, readonly owner: Player, key: string, sort: string, x: number, y: number, def: BeteDef = BETES[key], pv?: number) {
     const d = def;
     super(id, x, y, 16, pv ?? Math.max(1, Math.round(owner.maxHp * d.pv)));
@@ -103,6 +107,11 @@ export class Bete extends Entity {
   mourir(world: World) {
     if (this.dead) return;
     this.hp = 0; this.dead = true; this.t = 0.6; this.cast = null; this.setAnim('die');
+    const te = this.base === 'tofu' && !this.dompteT ? this.owner.pcv('pc-osamodas-D') : 0;   // Tofu explosif
+    if (te) {
+      world.hitCircle(this.x, this.y, CASE * 2, { dmg: te, knock: 0, element: 'air' });
+      world.emit({ k: 'spell', fx: 'burst', id: 'pc-osamodas-D', x: this.x, y: this.y, facing: 0, size: CASE * 2, arc: 0, element: 'air', big: true, boosted: false });
+    }
     world.emit({ k: 'beteMorte', id: this.id, x: this.x, y: this.y, radius: this.radius, name: this.def.name });
   }
   soigner(n: number, world: World) {
@@ -123,7 +132,21 @@ export class Bete extends Entity {
       world.emit({ k: 'status', x: this.x, y: this.y - 40, text: 'S\'enfuit', color: '#a89fb6' });
       this.dead = true; this.t = 0; return;
     }
-    this.pa = Math.min(R.paMax, this.pa + R.regenPA * dt);
+    if (this.finT > 0 && (this.finT -= dt) <= 0) {   // Horde sauvage : la bête repart
+      world.emit({ k: 'status', x: this.x, y: this.y - 40, text: 'Repart', color: '#a89fb6' });
+      this.dead = true; this.t = 0; return;
+    }
+    if (this.hateT > 0 && (this.hateT -= dt) <= 0) this.hate = 0;
+    const le = this.base === 'bouftou' && !this.dompteT ? p.pcv('pc-osamodas-E') : 0;
+    if (le && (this.provoqueT -= dt) <= 0) {   // Laine épaisse : attire les monstres proches à l'arrivée puis toutes les 8 s
+      this.provoqueT = 8;
+      let n = 0;
+      for (const m of world.monsters) if (!m.dead && m.state !== 'idle' && m.state !== 'return' && Math.hypot(m.x - this.x, m.y - this.y) <= CASE * 4) {
+        m.agresseur = this.id; m.provoqueJusqua = world.time + le; n++;
+      }
+      if (n) world.emit({ k: 'status', x: this.x, y: this.y - 40, text: 'Provocation', color: '#f2d36b' });
+    }
+    this.pa = Math.min(R.paMax, this.pa + R.regenPA * (1 + this.hate / 100) * dt);
     const dP = Math.hypot(p.x - this.x, p.y - this.y);
     // laisse (7A) : trop loin de l'Osamodas, elle revient ; vraiment trop loin (porte, Zaap…), elle apparaît à côté de lui
     if (dP > R.laisse * CASE * 2.5) { this.x = p.x - Math.cos(p.facing) * CASE; this.y = p.y - Math.sin(p.facing) * CASE; this.cast = null; this.state = 'suit'; }

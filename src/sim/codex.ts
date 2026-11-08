@@ -1,6 +1,7 @@
 import { POIDS, RUNES, runesDe } from './forgemagie';
 import { LEGENDARY, type Item, type ItemDef, type LegendaryFx, type LegendaryId } from './items';
 import { POUVOIRS, POUVOIR_PAR_ID, classeDuPouvoir } from './pouvoirs';
+import { PC_PAR_ID, POUVOIRS_CLASSE } from './pouvoirsClasse';
 
 /** Codex des pouvoirs (version 0.3, « 0.3 : » 5A+5B+5D 6A+6B 7A+7B 8C, façon Diablo 4) :
  *  briser un Légendaire ou un Mythique chez Malek y enregistre ses pouvoirs une fois pour toutes (5A) ;
@@ -11,25 +12,29 @@ export interface EntreeCodex {
   id: string;
   /** Relance éclair : le sort visé, gardé tel quel. */
   sort?: string;
+  /** Légendaire de classe inventé (4A) : le jet de l'objet brisé ; un meilleur jet brisé le remplace. */
+  value?: number;
 }
 
 /** Pouvoirs que le Codex peut garder pour cette classe : les 40 officiels de la classe et les 5 maison. */
-export const pouvoirsDuCodex = (classe: string) => [...(POUVOIRS[classe] ?? []).map(p => p.id), ...Object.keys(LEGENDARY)];
+export const pouvoirsDuCodex = (classe: string) => [...(POUVOIRS[classe] ?? []).map(p => p.id), ...POUVOIRS_CLASSE.filter(p => p.classe === classe).map(p => p.id), ...Object.keys(LEGENDARY)];
 
 /** Le pouvoir peut-il entrer dans le Codex de ce perso (pas un pouvoir d'une autre classe) ? */
 export function codexAccepte(classe: string, l: LegendaryFx): boolean {
-  const o = POUVOIR_PAR_ID[l.id];
-  return o ? classeDuPouvoir(o.id) === classe : l.id in LEGENDARY;
+  const o = POUVOIR_PAR_ID[l.id], c = PC_PAR_ID[l.id];
+  return o ? classeDuPouvoir(o.id) === classe : c ? c.classe === classe : l.id in LEGENDARY;
 }
 /** Le pouvoir est-il nouveau pour le Codex (sceau « Nouveau pour le Codex », 14D) ? */
 export function nouveauPourCodex(codex: EntreeCodex[], classe: string, l: LegendaryFx): boolean {
-  return codexAccepte(classe, l) && !codex.some(e => e.id === l.id);
+  if (!codexAccepte(classe, l)) return false;
+  const e = codex.find(x => x.id === l.id);
+  return !e || (!!PC_PAR_ID[l.id] && l.value > (e.value ?? 0));   // 4A : un meilleur jet de légendaire de classe compte aussi
 }
 
 /** Objet qui peut recevoir une impression : Rare ou Épique (pas un familier), et pouvoir de son emplacement (ou maison). */
 export function imprimable(def: ItemDef, it: Item, e: EntreeCodex): boolean {
   if (def.familier || (it.rarity !== 'rare' && it.rarity !== 'epique')) return false;
-  const o = POUVOIR_PAR_ID[e.id];
+  const o = POUVOIR_PAR_ID[e.id] ?? PC_PAR_ID[e.id];
   return !o || o.slot === def.slot;
 }
 
@@ -50,6 +55,8 @@ export function prixImpression(def: ItemDef, it: Item): { kamas: number; rune: s
 /** Effet légendaire posé par une impression : un pouvoir maison prend la force du niveau de l'objet (comme au tirage). */
 export function fxImpression(def: ItemDef, e: EntreeCodex, legendaryPower: (n: number) => number): LegendaryFx {
   if (POUVOIR_PAR_ID[e.id]) return { id: e.id, value: 0 };
+  const c = PC_PAR_ID[e.id];
+  if (c) return { id: e.id, value: e.value ?? c.jet[0] };   // 4A : le jet gardé dans le Codex
   const m = LEGENDARY[e.id as LegendaryId];
   return e.id === 'relance'
     ? { id: e.id, value: Math.max(0.5, Math.round(m.max * legendaryPower(def.level) * 2) / 2), sort: e.sort }
