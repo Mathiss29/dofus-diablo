@@ -732,6 +732,15 @@
               "Accueil",
               "Chrome / Edge"
             ]
+          },
+          {
+            "titre": "Des Options complètes",
+            "phrase": "Touches à ta main, taille de l'interface, modules déplaçables, qualité, FPS et alertes.",
+            "details": "Toutes les touches se changent (AZERTY ou QWERTY reconnu), un doublon s'affiche en rouge. Chiffres de dégâts, compteur de DPS, barres de vie et coordonnées sous la mini-carte se règlent aussi.",
+            "icone": "options",
+            "etiquettes": [
+              "Touche O"
+            ]
           }
         ],
         "Le monde": [
@@ -932,7 +941,8 @@
           "Plus de machine collée au paillasson : chez les mineurs et les bijoutiers d'Astrub, elles ont reculé.",
           "La petite barre A Z R T ne s'affiche plus que pour l'Osamodas, plus pour le Sacrieur.",
           "Coiffes bien posées sur l'Osamodas, le Sacrieur et l'Iopette, même vus de dos.",
-          "Les épées du Sacrieur ont leur vrai dessin : plus d'épée toute blanche ni de grande forme bleue."
+          "Les épées du Sacrieur ont leur vrai dessin : plus d'épée toute blanche ni de grande forme bleue.",
+          "L'aide des Aides de quête ne dépasse plus du cadre des Options."
         ],
         "En coulisses": [
           "Sur Discord, le carnet du jour ne montre que ce qui est jouable par tous.",

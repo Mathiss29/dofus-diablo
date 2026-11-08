@@ -12,6 +12,8 @@ import type { World } from '../sim/world';
 import { chrono } from '../sim/quests';
 import { QUEST_ICON } from './questView';
 import { MANIFESTE, Son } from './son';
+import type { Reglages } from './ambiance';
+import * as Touches from './touches';
 
 const FONT = 'Lexend, Verdana, sans-serif';
 const STYLE = { fontFamily: FONT, fontSize: '14px', color: '#e8e2d4', stroke: '#000', strokeThickness: 3 };
@@ -29,8 +31,12 @@ const CARAC_BULLE: Record<NonNullable<EffetActif['carac']>, string> = { pm: 'tx_
 const BORD_BULLE = { sort: 0x6fd36f, monstre: 0xe05a4a, objet: 0xe6b85c };
 /** Tête de chaque classe pour la fiche du perso (icônes de classe de Dofus 3). */
 const HEADS: Record<string, string> = { iop: 'tete_iop', cra: 'tete_cra', iop_f: 'tete_iop_f', cra_f: 'tete_cra_f' };
-/** Touches de la barre de sorts : 1 à 6, soit & é " ' ( - sur un clavier AZERTY. */
-const KEYS = ['&', 'é', '"', "'", '(', '-'];
+/** Nom court d'une touche pour le coin d'un emplacement (« Espace » ne tient pas). */
+const court = (t: string) => t === 'Espace' ? 'Esp.' : t;
+/** Action (render/touches.ts) de chaque menu de la colonne, pour son raccourci dans l'infobulle. */
+const ACTION_MENU: Record<string, string> = { Inventaire: 'inventaire', 'Caractéristiques': 'caracs', 'Métiers': 'metiers', Sorts: 'sorts', 'Carte du monde': 'carte', Bestiaire: 'bestiaire', 'Havre-Sac': 'havresac', Guide: 'guide', 'Réglages': 'options' };
+/** Modules de l'interface qu'on peut déplacer (Réglages 6A), avec leur nom affiché pendant le déplacement. */
+const MODULES: Record<string, string> = { perso: 'Cadre du perso', mini: 'Mini-carte', suivi: 'Suivi de quête', dps: 'Dégâts par seconde' };
 /** Colonne de menus avec les icônes officielles en couleur de Dofus 3 (uiassets_2x) : icône, nom, raccourci (vide si aucun).
  *  Seulement les menus utiles au jeu ; les autres (guilde, montures...) viendront avec leur fonctionnalité. */
 const MENUS: [string, string, string][] = [
@@ -186,7 +192,31 @@ export class Hud {
     });
   }
 
-  blocks(x: number, y: number) { return this.rects.some(([rx, ry, rw, rh]) => x >= rx && y >= ry && x <= rx + rw && y <= ry + rh); }
+  /** Réglages de la partie (maquette « Réglages ») : échelle, modules, compteurs ; branchés par la scène. */
+  reglages: Reglages | null = null;
+  /** Modules déplacés (6A) : la scène sauvegarde les réglages. */
+  onModules: () => void = () => {};
+  /** Échelle de l'interface (7A) : la caméra de l'interface est zoomée depuis le coin haut gauche. */
+  private get k() { return Phaser.Math.Clamp(this.reglages?.echelle || 1, 0.8, 1.5); }
+  /** Rectangle de chaque module déplaçable cette image, et son décalage. */
+  private modRects = new Map<string, [number, number, number, number]>();
+  private modTxt = new Map<string, Txt>();
+  private drag: { id: string; x: number; y: number; ox: number; oy: number } | null = null;
+  /** Place un module (6A) : position de départ + décalage choisi, gardé dans l'écran. */
+  private place(id: string, x: number, y: number, w: number, h: number): [number, number] {
+    const W = this.scene.scale.width / this.k, H = this.scene.scale.height / this.k, o = this.reglages?.modules?.[id] ?? [0, 0];
+    const nx = Phaser.Math.Clamp(x + o[0], 0, Math.max(0, W - w)), ny = Phaser.Math.Clamp(y + o[1], 0, Math.max(0, H - h));
+    this.modRects.set(id, [nx, ny, w, h]);
+    return [nx, ny];
+  }
+  /** Dégâts par seconde (4B) : total des coups portés depuis le début du combat (4 s sans toucher = nouveau combat). */
+  private dps = { total: 0, debut: 0, dernier: -99, aff: 0 };
+  private dpsTxt!: Txt;
+  private fpsTxt!: Txt;
+  /** 9B : bords de l'écran qui pulsent en rouge sous 25 % de PV. */
+  private pulse!: Phaser.GameObjects.Image;
+
+  blocks(x: number, y: number) { x /= this.k; y /= this.k; return this.rects.some(([rx, ry, rw, rh]) => x >= rx && y >= ry && x <= rx + rw && y <= ry + rh); }
 
   private g: Phaser.GameObjects.Graphics;
   /** Par-dessus les icônes de la barre (voile de recharge, charges, éclat) : g est dessous. */
@@ -310,6 +340,22 @@ export class Hud {
       cx.fillStyle = gr; cx.fillRect(0, 0, 256, 256); tx.refresh();
     }
     this.vignette = fixed(scene.add.image(0, 0, 'vignetteRouge').setOrigin(0).setAlpha(0), -1);
+    this.pulse = fixed(scene.add.image(0, 0, 'vignetteRouge').setOrigin(0).setAlpha(0), -1);
+    // Réglages 6A : modules déplaçables quand « Verrouiller la position des modules » est décoché
+    const pt = (p: Phaser.Input.Pointer) => [p.x / this.k, p.y / this.k];
+    scene.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
+      if (this.reglages?.verrou !== false) return;
+      const [x, y] = pt(p);
+      for (const [id, [rx, ry, rw, rh]] of this.modRects) if (x >= rx && y >= ry && x <= rx + rw && y <= ry + rh) {
+        const o = this.reglages.modules?.[id] ?? [0, 0]; this.drag = { id, x, y, ox: o[0], oy: o[1] }; break;
+      }
+    });
+    scene.input.on('pointermove', (p: Phaser.Input.Pointer) => {
+      const d = this.drag, r = this.reglages; if (!d || !r) return;
+      const [x, y] = pt(p); r.modules = { ...r.modules, [d.id]: [Math.round(d.ox + x - d.x), Math.round(d.oy + y - d.y)] };
+    });
+    const lacher = () => { if (!this.drag) return; this.drag = null; this.onModules(); };
+    scene.input.on('pointerup', lacher); scene.input.on('pointerupoutside', lacher);
     this.g = fixed(scene.add.graphics(), 1);
     this.imMenus = fixed(scene.add.image(0, 0, '__DEFAULT').setOrigin(0).setVisible(false), 1);
     this.gSlots = fixed(scene.add.graphics(), 4);
@@ -339,13 +385,16 @@ export class Hud {
     this.boss = { skull: img('iconBossSkull', 4), name: txt(16, { ...bold, color: '#ffe3b0' }).setOrigin(0.5), hp: txt(11, bold).setOrigin(0.5) };
 
     this.miniLabel = txt(11, { color: '#d8d0b8' }).setOrigin(0.5, 0);
+    this.dpsTxt = txt(13, { ...bold, strokeThickness: 0, lineSpacing: 2 }).setVisible(false);
+    this.fpsTxt = txt(11, { ...bold, color: '#b9e54b', strokeThickness: 3 }, 6).setOrigin(0, 0).setVisible(false);
+    for (const [id, n] of Object.entries(MODULES)) this.modTxt.set(id, txt(11, { ...bold, color: '#2a1e05', backgroundColor: '#e6b85c', padding: { x: 5, y: 2 }, strokeThickness: 0 }, 9).setText(n).setVisible(false));
     this.areneTxt = txt(14, { ...bold, color: '#ffe3b0', stroke: '#14130f', strokeThickness: 4 }).setOrigin(0.5, 0);
     this.bulleTip = txt(12, { backgroundColor: '#14130f', padding: { x: 8, y: 5 }, lineSpacing: 2 }, 9).setOrigin(0.5, 1).setVisible(false);
     this.menuTip = txt(12, { backgroundColor: '#14130f', padding: { x: 6, y: 3 } }, 9).setOrigin(1, 0.5).setVisible(false);
     for (const [icon, label, key] of MENUS) {
       const ic = img(`menu_${icon}`, 4);
       const zone = fixed(scene.add.zone(0, 0, 30, 30).setInteractive({ useHandCursor: true }), 4);
-      zone.on('pointerover', () => this.menuTip.setText(key ? `${label} (${key})` : label).setVisible(true).setPosition(zone.x - 22, zone.y));
+      zone.on('pointerover', () => { const t = ACTION_MENU[label] ? Touches.nomAction(ACTION_MENU[label]) : key; this.menuTip.setText(t ? `${label} (${t})` : label).setVisible(true).setPosition(zone.x - 22, zone.y); });
       zone.on('pointerout', () => this.menuTip.setVisible(false));
       zone.on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, ev: Phaser.Types.Input.EventData) => { ev.stopPropagation(); this.onMenu(label); });
       this.menus.push({ icon: ic, zone });
@@ -361,9 +410,9 @@ export class Hud {
       ch: txt(11, { ...bold, color: '#9fd0ff', strokeThickness: 3 }, 6).setOrigin(0.5),
     });
     // Barre du joueur (Player.bar) : 6 touches, le clic droit (case libre, choix 6A) et Espace ; les icônes suivent la barre
-    for (let i = 0; i < 8; i++) this.slots.push(mkSlot(null, i < 6 ? KEYS[i] : i === 6 ? 'Clic D' : 'Esp.'));
+    for (let i = 0; i < 8; i++) this.slots.push(mkSlot(null, ''));   // touches : render/touches.ts, à chaque image (Réglages 3A)
     // Osamodas (maquette 2A) : 4 cases d'invocation sur A Z R T (Player.INVOC à INVOC + 3), au-dessus de la barre ; seulement pour les classes à Éveil (l'Épée Vorace du Sacrieur va dans la barre normale)
-    if (cls.rage.mode === 'eveil' && Object.values(cls.spells).some(s => s.invoque)) for (const k of ['A', 'Z', 'R', 'T']) this.slots.push(mkSlot(null, k));
+    if (cls.rage.mode === 'eveil' && Object.values(cls.spells).some(s => s.invoque)) for (let i = 0; i < 4; i++) this.slots.push(mkSlot(null, ''));
     // Auto-attaque (clic gauche) : l'icône suit l'arme portée
     this.auto = mkSlot(cls.spells[cls.basic ?? cls.mobility].icon, 'Clic');
     this.auto.icon!.setTexture(cls.basic ? `sort_${cls.spells[cls.basic].icon}` : 'arme_0');
@@ -376,7 +425,7 @@ export class Hud {
     };
     this.slots.forEach((sv, i) => hover(sv, () => world.player.bar[i] ?? null));
     hover(this.auto, () => world.player.autoAttack);
-    this.potion = mkSlot(null, 'E');
+    this.potion = mkSlot(null, '');
     this.potion.bg.setTexture('slot_dark_background_full');
     this.potion.icon = img('icon_pv', 3);
     this.xpText = txt(12, bold).setOrigin(0.5);
@@ -473,7 +522,12 @@ export class Hud {
   handle(e: SimEvent) {
     const w = this.world;
     switch (e.k) {
-      case 'hit': if (e.target === 'monster' && e.id !== undefined) { this.targetId = e.id; this.targetT = 5; } break;
+      case 'hit': if (e.target === 'monster') {
+        if (e.id !== undefined) { this.targetId = e.id; this.targetT = 5; }
+        const d = this.dps, t = w.time;
+        if (t - d.dernier > 4) { d.total = 0; d.debut = t; }
+        d.total += e.amount; d.dernier = t;
+      } break;
       case 'kill': {
         const d = GAME_DATA.monsters[e.monster];
         this.loot(`${d.name}  ·  +${d.xp ?? Math.round(d.hp / 5)} XP`);
@@ -490,9 +544,14 @@ export class Hud {
   }
 
   draw(juice: boolean, dt = 1 / 60) {
-    const world = this.world, W = this.scene.scale.width, H = this.scene.scale.height, g = this.g, p = world.player, cls = p.cls;
+    const k = this.k, world = this.world, W = this.scene.scale.width / k, H = this.scene.scale.height / k, g = this.g, p = world.player, cls = p.cls;
+    const R = this.reglages;
+    this.modRects.clear();
     g.clear(); this.gSlots.clear();
-    this.hurtRect.setSize(W, H); this.vignette.setDisplaySize(W, H);
+    this.hurtRect.setSize(W, H); this.vignette.setDisplaySize(W, H); this.pulse.setDisplaySize(W, H);
+    // 9B : sous 25 % de PV, les bords de l'écran battent en rouge
+    const bas = R?.pulsePv !== false && p.hp > 0 && p.hp / p.maxHp < 0.25;
+    this.pulse.setAlpha(bas ? 0.25 + 0.3 * Math.max(0, Math.sin(world.time * 6)) : 0);
     this.shortOf.pa = Math.max(0, this.shortOf.pa - dt); this.shortOf.pm = Math.max(0, this.shortOf.pm - dt);
     this.rageFlash = Math.max(0, this.rageFlash - dt);
     for (const k of Object.keys(this.eclats)) if ((this.eclats[k] -= dt) <= 0) delete this.eclats[k];
@@ -524,7 +583,7 @@ export class Hud {
       g.fillStyle(0x141416, 1);
       for (let i = 1; i < n; i++) g.fillRect(Math.round(x + (w * i) / n) - 1, y, 2, h);
     };
-    const fx = 12, fy = 10, fw = 320, hd = 30, fh = hd + 80;
+    const fw = 320, hd = 30, fh = hd + 80, [fx, fy] = this.place('perso', 12, 10, fw, fh);
     cadre(fx, fy, fw, fh, hd);
     this.embleme.setPosition(fx + 19, fy + hd / 2).setDisplaySize(17, 17 * (this.embleme.height / this.embleme.width || 1));
     const titre = this.world.quetes?.titre;   // titre d'un succès (Tour 7A)
@@ -664,7 +723,7 @@ export class Hud {
     }
 
     // --- Mini-carte et colonne de menus (haut droite) ---
-    const colX = W - 12 - 36, mw = 210, mh = 150, mx = colX - 10 - mw, my = 10;
+    const colX = W - 12 - 36, mw = 210, mh = 150, [mx, my] = this.place('mini', colX - 10 - mw, 10, mw, mh + 20);
     // cadre seulement : l'intérieur est filmé par la caméra de la mini-carte, dessinée avant l'interface
     this.rects.push([mx - 3, my - 3, mw + 6, mh + 6]);
     g.lineStyle(3, 0x24231d, 1); g.strokeRoundedRect(mx - 2, my - 2, mw + 4, mh + 4, 5);
@@ -680,9 +739,9 @@ export class Hud {
     let nPts = 0;
     if (mc) {
       const ps = ISO.toScreen(p.x, p.y);
-      mc.setViewport(mx, my, mw, mh).centerOn(ps.x, ps.y - 20);
+      mc.setViewport(Math.round(mx * this.k), Math.round(my * this.k), Math.round(mw * this.k), Math.round(mh * this.k)).setZoom(0.16 * this.k).centerOn(ps.x, ps.y - 20);
       // monstres (points rouges, dorés pour les élites) par-dessus le décor filmé
-      const toMini = (wx: number, wy: number) => { const s2 = ISO.toScreen(wx, wy); return { x: mx + mw / 2 + (s2.x - ps.x) * mc.zoom, y: my + mh / 2 + (s2.y - ps.y + 20) * mc.zoom }; };
+      const toMini = (wx: number, wy: number) => { const s2 = ISO.toScreen(wx, wy); return { x: mx + mw / 2 + (s2.x - ps.x) * mc.zoom / this.k, y: my + mh / 2 + (s2.y - ps.y + 20) * mc.zoom / this.k }; };
       for (const m of world.monsters) {
         if (m.dead) continue;
         const q = toMini(m.x, m.y);
@@ -728,21 +787,27 @@ export class Hud {
       }
     }
     for (let i = nPts; i < this.ptsMini.length; i++) this.ptsMini[i].setVisible(false);
-    this.miniLabel.setPosition(mx + mw / 2, my + mh + 6).setText(world.lieu ?? world.area?.name ?? world.zone.name);
+    // 6B : coordonnées de la carte, comme dans Sanstour
+    const ici2 = world.worldGrid?.mapAt(p.x, p.y), co = R?.coords !== false && ici2 && !ici2.inside ? `  [${ici2.x},${ici2.y}]` : '';
+    this.miniLabel.setPosition(mx + mw / 2, my + mh + 6).setText(`${world.lieu ?? world.area?.name ?? world.zone.name}${co}`);
+    // 7C : compteur d'images, dans le coin de la mini-carte
+    this.fpsTxt.setVisible(!!R?.compteurFps).setPosition(mx + 6, my + 4);
+    if (R?.compteurFps) this.fpsTxt.setText(`${Math.round(this.scene.game.loop.actualFps)} FPS`);
     const ar = world.arene;
     this.areneTxt.setVisible(!!ar).setPosition(mx + mw / 2, my + mh + 22);
     if (ar) this.areneTxt.setText(ar.fini ? `Terminé en ${chrono(ar.chrono)}` : !ar.demarre ? `${ar.total} vagues + le boss` : ar.vague > ar.total ? `Boss · ${chrono(ar.chrono)}` : `Vague ${ar.vague} / ${ar.total} · ${chrono(ar.chrono)}`);
     // Colonne de menus : boutons carrés sombres en relief, comme le bandeau de Dofus 3
     // Boutons carrés sombres serrés les uns contre les autres ; ils rapetissent si l'écran est bas
-    const step = Math.min(38, Math.floor((H - 150 - my) / this.menus.length)), bs = step - 2;
+    const top = 10;   // la colonne reste en haut même quand la mini-carte est déplacée (6A)
+    const step = Math.min(38, Math.floor((H - 150 - top) / this.menus.length)), bs = step - 2;
     // dessinés une fois dans une image (un Graphics, même inchangé, est retriangulé à chaque image)
-    const cleMenus = `${colX}|${my}|${step}|${this.menus.length}`;
+    const cleMenus = `${colX}|${top}|${step}|${this.menus.length}`;
     const gm = cleMenus !== this.cleMenus ? this.scene.make.graphics({}, false) : null;
     this.menus.forEach((m, i) => {
-      const y = my + bs / 2 + i * step, x = colX + (36 - bs) / 2;
+      const y = top + bs / 2 + i * step, x = colX + (36 - bs) / 2;
       this.rects.push([x, y - bs / 2, bs, bs]);
       if (gm) {
-        const lx = x - colX, ly = y - my;
+        const lx = x - colX, ly = y - top;
         gm.fillStyle(0x1b1a16, 1); gm.fillRoundedRect(lx, ly - bs / 2, bs, bs, 5);
         gm.fillStyle(0x3a3933, 1); gm.fillRoundedRect(lx + 1.5, ly - bs / 2 + 1.5, bs - 3, bs - 3, 4);
         gm.fillStyle(0x47463f, 1); gm.fillRoundedRect(lx + 2, ly - bs / 2 + 2, bs - 4, (bs - 4) / 2, { tl: 3, tr: 3, bl: 0, br: 0 });
@@ -756,7 +821,7 @@ export class Hud {
       const k = `hud_menus_${this.nMenus++ % 2}`;   // deux clés en alternance : l'image n'affiche jamais une texture détruite
       if (this.scene.textures.exists(k)) this.scene.textures.remove(k);
       gm.generateTexture(k, 36, Math.max(1, this.menus.length * step)); gm.destroy();
-      this.imMenus.setTexture(k).setPosition(colX, my).setVisible(true);
+      this.imMenus.setTexture(k).setPosition(colX, top).setVisible(true);
     }
 
     // --- Barre du bas : XP, 6 sorts, clic droit, déplacement, potion, Rage ---
@@ -768,6 +833,10 @@ export class Hud {
     bar(x0 + 12, y0 + 10, totalW - 24, 12, xr, C.xp);
     this.xpText.setPosition(W / 2, y0 + 16).setText(p.level >= cls.maxLevel ? `NIV. ${p.level} (max)` : `XP ${Math.floor(p.xp)} / ${p.xpNeeded}  ·  NIV. ${p.level}`);
     const sy0 = y0 + 30 + slot / 2, sy = sy0;
+    // touches de la barre (Réglages 3A + 3C : celles choisies, écrites selon le clavier ; 5B : clic droit et gauche échangés)
+    const droit = R?.deplacement === 'droit';
+    this.slots.forEach((s, i) => s.key.setText(i < 6 ? court(Touches.nomAction(`sort${i + 1}`)) : i === 6 ? (droit ? 'Clic G' : 'Clic D') : i === 7 ? court(Touches.nomAction('deplacement')) : court(Touches.nomAction(`invoc${i - 7}`))));
+    this.auto.key.setText(droit ? 'Clic D' : 'Clic'); this.potion.key.setText(court(Touches.nomAction('potion')));
     const drawSlot = (s: SlotView, x: number, id: string | null, sy = sy0) => {
       s.bg.setPosition(x, sy).setDisplaySize(slot, slot);
       s.zone?.setPosition(x, sy);
@@ -848,7 +917,7 @@ export class Hud {
       const hw = hj ? 28 : slot + 8, hh = hj ? rh + 10 : slot + 8, hy = hj ? ry + rh / 2 : sy, pulse = 0.55 + 0.45 * Math.sin(world.time * 6);
       g.lineStyle(3, 0xffd66b, pulse); g.strokeRoundedRect(hx - hw / 2, hy - hh / 2, hw, hh, 8);
       g.lineStyle(7, 0xe6b85c, 0.25 * pulse); g.strokeRoundedRect(hx - hw / 2 - 3, hy - hh / 2 - 3, hw + 6, hh + 6, 10);
-      const lab = halo === 'potion' ? 'E' : hj ? cls.rage.name : halo === 7 ? 'Espace' : halo === 6 ? 'Clic droit' : KEYS[halo];
+      const lab = halo === 'potion' ? Touches.nomAction('potion') : hj ? cls.rage.name : halo === 7 ? Touches.nomAction('deplacement') : halo === 6 ? (droit ? 'Clic gauche' : 'Clic droit') : Touches.nomAction(`sort${halo + 1}`);
       this.haloKey.setVisible(true).setText(lab).setPosition(hx, y0 - 4 - 5 * Math.abs(Math.sin(world.time * 3)));
     } else this.haloKey.setVisible(false);
 
@@ -890,7 +959,7 @@ export class Hud {
     const tw2 = Math.max(this.trackTitle.width + iconW + (this.skipBtn.visible ? this.skipBtn.width + 12 : 0), this.trackBody.width, this.succesT > 0 ? this.succesLine.width : 0) + 20;
     const th2 = this.trackTitle.height + this.trackBody.height + 18 + sl;
     // Petite fenêtre : si le suivi touche la barre de sorts, il remonte au-dessus d'elle (le bouton « Passer » reste visible)
-    const tx2 = 12, ty2 = tx2 + tw2 + 8 > x0 ? y0 - 8 - th2 : H - 12 - th2;
+    const [tx2, ty2] = this.place('suivi', 12, 12 + tw2 + 8 > x0 ? y0 - 8 - th2 : H - 12 - th2, tw2, th2);
     panel(tx2, ty2, tw2, th2, 0.8);
     this.rects.push([tx2, ty2, tw2, th2]);
     this.trackIcon.setPosition(tx2 + 18, ty2 + 7 + this.trackTitle.height / 2);
@@ -960,6 +1029,35 @@ export class Hud {
     this.feed.forEach((f, i) => { f.t -= dt; f.text.setPosition(W - 16, feedY - i * 18).setAlpha(Phaser.Math.Clamp(f.t, 0, 1)); });
     for (const f of this.feed.filter(f => f.t <= 0)) f.text.destroy();
     this.feed = this.feed.filter(f => f.t > 0);
+
+    // --- Dégâts par seconde (Réglages 4B) : sous la mini-carte, déplaçable ---
+    const dv = !!R?.dps;
+    this.dpsTxt.setVisible(dv);
+    if (dv) {
+      const d = this.dps, enCours = world.time - d.dernier < 4, duree = Math.max(1, d.dernier - d.debut);
+      const val = d.total / duree;
+      d.aff += (val - d.aff) * Math.min(1, dt * 4);
+      const n = (x: number) => Math.round(x).toLocaleString('fr-FR');
+      const [dx, dy] = this.place('dps', mx + mw - 170, my + mh + 58, 170, 46);
+      panel(dx, dy, 170, 46, 0.8);
+      this.dpsTxt.setPosition(dx + 10, dy + 6).setColor(enCours ? '#ffffff' : '#a8a294')
+        .setText(d.total ? `${n(d.aff)} dégâts / s\n${n(d.total)} en ${n(duree)} s` : 'Dégâts par seconde\nFrappe un monstre');
+    }
+    // --- Modules déverrouillés (6A) : un cadre doré et leur nom, on les glisse ---
+    const libre = R?.verrou === false;
+    for (const [id, t] of this.modTxt) {
+      const r = this.modRects.get(id);
+      t.setVisible(libre && !!r);
+      if (!libre || !r) continue;
+      const [rx, ry, rw, rh] = r, a = this.drag?.id === id ? 1 : 0.55 + 0.35 * Math.sin(world.time * 4);
+      // cadre sombre puis clair : il se voit sur le sol doré d'Incarnam comme sur la nuit
+      const gs2 = this.gSlots, cadreMod = (e: number, c: number, al: number) => {
+        const x1 = rx - e, y1 = ry - e, w1 = rw + 2 * e, h1 = rh + 2 * e;
+        gs2.fillStyle(c, al); gs2.fillRect(x1, y1, w1, 2); gs2.fillRect(x1, y1 + h1 - 2, w1, 2); gs2.fillRect(x1, y1, 2, h1); gs2.fillRect(x1 + w1 - 2, y1, 2, h1);
+      };
+      cadreMod(5, 0x14130f, 0.85); cadreMod(3, 0xffffff, a);
+      t.setPosition(rx + 4, ry - 18 < 0 ? ry + rh + 4 : ry - 18);
+    }
 
     this.center.setPosition(W / 2, H * 0.3);
     this.bannerBg.setPosition(W / 2, H * 0.3 + 8);

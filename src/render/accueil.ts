@@ -301,6 +301,8 @@ export class Accueil {
   private quoiDeNeufVu = false;
 
   /** onJouer : lance la partie de cet emplacement (déjà sauvegardé). */
+  /** Bouton Options de la colonne (Réglages 11A) : branché par main.ts sur la fenêtre Options du jeu. */
+  onOptions: (() => void) | null = null;
   constructor(private onJouer: (slot: number) => void, private onEssayer?: (classe: string, sexe: 'm' | 'f', apparence?: Apparence) => void) {
     if (!document.getElementById('acc-css')) {
       const st = document.createElement('style'); st.id = 'acc-css'; st.textContent = CSS + ICON_CSS.replace('.ic{', '#acc .ic{'); document.head.appendChild(st);
@@ -412,7 +414,7 @@ export class Accueil {
   /** Colonne fine (30E) : icônes en couleur du menu principal de Dofus 3 (uiassets_2x) + texte. Bestiaire, Succès et Journal arrivent plus tard. */
   private side(): string {
     const NAV: [string, string, string][] = [['accueil', 'assets/ui/menu/home.png', 'Accueil'], ['persos', 'assets/ui/menu/character.png', 'Personnages'],
-      ['creation', img('h_80.png'), 'Classes'], ['bestiaire', 'assets/ui/menu/bestiary.png', 'Bestiaire'], ['succes', 'assets/ui/menu/success.png', 'Succès'], ['journal', 'assets/ui/menu/calendar.png', 'Journal']];
+      ['creation', img('h_80.png'), 'Classes'], ['bestiaire', 'assets/ui/menu/bestiary.png', 'Bestiaire'], ['succes', 'assets/ui/menu/success.png', 'Succès'], ['journal', 'assets/ui/menu/calendar.png', 'Journal'], ['options', 'assets/ui/menu/options.png', 'Options']];
     return `<nav class="side"><img class="logo" src="${v('assets/logo/embleme.webp')}" alt="" aria-hidden="true">${NAV.map(([k, ic, l]) =>
       `<button type="button" class="nav${k === this.page ? ' on' : ''}" data-nav="${k}" style="position:relative"><img src="${ic}" alt="">${l}${k === 'journal' && carnetNonLu() ? '<span class="pastille">nouveau</span>' : ''}</button>`).join('')}
       <button type="button" class="play" data-jouer>Jouer</button><div class="ver">VERSION ${VERSION}</div></nav>`;
@@ -719,6 +721,7 @@ export class Accueil {
     const r = this.root, on = (sel: string, f: (e: HTMLElement) => void) => r.querySelectorAll<HTMLElement>(sel).forEach(e => e.addEventListener('click', () => f(e)));
     on('[data-nav]', e => {
       const k = e.dataset.nav!;
+      if (k === 'options') { this.onOptions?.(); return; }   // Réglages 11A : la fenêtre Options du jeu, par-dessus l'accueil
       if (k === 'accueil' || k === 'persos' || k === 'creation' || k === 'succes' || k === 'bestiaire' || k === 'journal') { this.carnet = null; this.go(k); }
       else this.toast(`${e.textContent!.trim()} : arrive dans une prochaine version`);
     });

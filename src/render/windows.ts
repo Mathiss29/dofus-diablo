@@ -1,4 +1,5 @@
-import { REGLAGES_DEFAUT, sauverReglages, type Reglages } from './ambiance';
+import { QUALITES, REGLAGES_DEFAUT, sauverReglages, type Reglages } from './ambiance';
+import * as Touches from './touches';
 import { ICON_CSS, iconHtml } from './icons';
 import { MANIFESTE, Son } from './son';
 import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES } from '../sim/data';
@@ -536,6 +537,33 @@ const CSS = `
 .dw .opt .row input[type=range]{-webkit-appearance:none;appearance:none;height:8px;border-radius:4px;background:linear-gradient(90deg,#8fae3a,#b9e54b) 0/var(--v,50%) 100% no-repeat,#15140f;box-shadow:inset 0 1px 2px #000,0 0 0 1px #3d3b33;cursor:pointer}
 .dw .opt .row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:20px;border-radius:3px;background:linear-gradient(#e8ff8a,#9cc62a);border:1px solid #1e2a05;box-shadow:0 1px 3px #000}
 .dw .opt .row input[type=range]::-moz-range-thumb{width:12px;height:20px;border-radius:3px;background:linear-gradient(#e8ff8a,#9cc62a);border:1px solid #1e2a05}
+.dw .win{transform:translate(-50%,-50%) scale(var(--echelle,1))}
+.dw .opt .main{grid-template-columns:minmax(0,1fr);scroll-behavior:smooth}
+.dw .opt .row{grid-template-columns:minmax(0,1fr) minmax(140px,240px) 46px 18px}
+.dw .opt .row.ck{grid-template-columns:28px minmax(0,1fr) 18px}
+.dw .opt .row>span{min-width:0;overflow-wrap:anywhere}
+.dw .opt .row small{margin-top:3px;line-height:1.35}
+.dw .opt .fl{width:18px;height:18px;cursor:pointer;justify-self:end;opacity:.75;background:currentColor;color:#e8e2cc;-webkit-mask:url(assets/ui/d3/contextMenuDownArrow.png) center/12px no-repeat;mask:url(assets/ui/d3/contextMenuDownArrow.png) center/12px no-repeat;transition:transform .15s}
+.dw .opt .fl:hover{opacity:1;color:#b9e54b}.dw .opt .fl.on{transform:rotate(180deg);color:#b9e54b}
+.dw .opt .obtns{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:6px 0 2px}
+.dw .opt .obtns .btn,.dw .opt .tw .btn{border-image-source:url(assets/ui/d3/btn_grey_small_normal.png);color:#f4efe0;text-shadow:0 1px 2px #000;padding:3px 12px;font-size:12px}
+.dw .opt .obtns .btn:hover,.dw .opt .tw .btn:hover{border-image-source:url(assets/ui/d3/btn_grey_small_over.png)}
+.dw .opt .tw .btn.vert{border-image-source:url(assets/ui/d3/btn_green_normal.png);color:#1e2a05;text-shadow:0 1px 0 #e8ff7a}
+.dw .opt .tw .btn.vert:hover{border-image-source:url(assets/ui/d3/btn_green_over.png)}
+.dw .opt .keys{margin-top:8px}
+.dw .opt .tw{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);width:min(720px,92%);max-height:84%;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto auto;background:#2e2b25 url(assets/ui/d3/block_background_second.jpg) center/cover;border:1px solid #5a5446;border-radius:6px;box-shadow:0 14px 60px #000,0 0 0 9999px #0007;z-index:5}
+.dw .opt .twt{position:relative;text-align:center;padding:11px;border-bottom:1px solid #403b31;font-size:16px;color:#f4efe0}
+.dw .opt .twt .x{position:absolute;right:10px;top:7px;width:28px;height:24px;cursor:pointer;background:url(assets/ui/d3/btn_close_normal.png) center/contain no-repeat;filter:brightness(0) invert(1)}
+.dw .opt .tw p{margin:0;padding:10px 16px 4px;font-size:12.5px;color:#d8d2bf}
+.dw .opt .tg{overflow:auto;padding:4px 16px 8px;display:grid;grid-template-columns:1fr 1fr;gap:4px 22px;align-content:start}
+.dw .opt .tg h4{grid-column:1/-1;margin:8px 0 2px;font-size:13px;color:#b9e54b;font-weight:bold}
+.dw .opt .tl{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;color:#e8e2cc}
+.dw .opt .tk{flex:none;width:150px;background:#0f0e0c;border:1px solid #47423a;color:#f4efe0;font:12.5px Lexend,sans-serif;padding:4px 8px;cursor:pointer;border-radius:2px}
+.dw .opt .tk:hover{border-color:#9b9484}.dw .opt .tk.perso{color:#e6d38a}
+.dw .opt .tk.ecoute{border-color:#b9e54b;color:#b9e54b}.dw .opt .tk.dbl{border-color:#e0605a;color:#ff9a90}
+.dw .opt .tmsg{min-height:18px;padding:2px 16px;font-size:12.5px;color:#ff9a90}
+.dw .opt .tb{display:flex;justify-content:center;gap:12px;padding:10px;border-top:1px solid #403b31}
+@media (max-width:640px){.dw .opt .tg{grid-template-columns:1fr}}
 .dw .guide .ob{grid-template-columns:240px minmax(0,1fr)}
 .dw .guide .nav{grid-template-rows:auto 1fr}
 .dw .guide .nav .it{padding:9px 14px;font-size:14px;color:#e8e2cc}
@@ -614,6 +642,7 @@ export class Windows {
     const style = document.createElement('style'); style.textContent = DOF_CSS + MENU_CSS + ALM_CSS + CSS + ICON_CSS + BUTIN_CSS + FORGE_CSS + CODEX_CSS; document.head.appendChild(style);
     this.root = document.createElement('div'); this.root.className = 'dw'; document.body.appendChild(this.root);
     this.tip = document.createElement('div'); this.tip.className = 'tip'; this.tip.style.display = 'none'; this.root.appendChild(this.tip);
+    window.addEventListener('keydown', this.captureTouche, true);
   }
   get open() { return !!this.win; }
   /** Fenêtre ouverte (ou null). */
@@ -622,9 +651,10 @@ export class Windows {
   toggle(mode: Mode = 'inv') { if (this.win && this.mode === mode) this.close(); else this.show(mode); }
   close(son = true) {
     if (this.win && son) Son.jouer(MANIFESTE.ui.fermer, 'interface', { cle: 'fenetre', ecart: 0.1 });   // 6B
-    this.win?.remove(); this.win = null; this.tip.style.display = 'none';
+    this.win?.remove(); this.win = null; this.tip.style.display = 'none'; this.touchesVue = false; this.touchesEcoute = null;
+    this.root.style.zIndex = '';
   }
-  destroy() { this.root.remove(); }
+  destroy() { this.root.remove(); window.removeEventListener('keydown', this.captureTouche, true); }
 
   show(mode: Mode = 'inv') {
     this.close(false);
@@ -1205,35 +1235,38 @@ export class Windows {
     const w = this.win!, cls = this.world.player.cls, jauge = cls.rage.name, mob = cls.spells[cls.mobility]?.name ?? 'déplacement';
     const iop = cls.rage.mode === 'melee';
     const k = (t: string) => `<b class="k">${t}</b>`;
+    // touches choisies dans Options › Touches (Réglages 3A), écrites selon le clavier
+    const T = (id: string) => k(Touches.nomAction(id) || '—'), dr = this.reglages.deplacement === 'droit';
+    const cG = dr ? 'Clic droit' : 'Clic gauche', cD = dr ? 'Clic gauche' : 'Clic droit';
     const PAGES: { id: string; titre: string; html: string }[] = [
       { id: 'bienvenue', titre: 'Bienvenue', html: `<p class="chapo">Explore le Monde des Douze, rencontre ses habitants et combats en temps réel : tes déplacements et tes sorts se jouent sans attendre.</p>
         <h3>Un monde à parcourir</h3><p>Passe d'une carte à l'autre sans chargement, entre dans les maisons par leurs portes et parle aux PNJ en cliquant dessus. La mini-carte en haut à droite montre les monstres (points rouges), les PNJ qui ont une quête (points verts) et ta destination (point doré).</p>
         <h3>Ton but</h3><p>Suis la quête affichée en bas à gauche. Une flèche au bord de l'écran (verte, bleue pour les quêtes répétables) montre le chemin : la porte, le portail ou le Zaap à prendre, avec le nom du but et la distance en cartes. Clic sur le titre de la quête pour en suivre une autre, sur ses objectifs pour voir le but sur la carte. Un losange vert flotte au-dessus des monstres qui comptent pour tes quêtes, et le Zaap le plus proche du but porte une étoile.</p>` },
-      { id: 'combat', titre: 'Se déplacer et combattre', html: `<h3>À la souris</h3><p>${k('Clic gauche')} sur le sol : y aller (maintenu : suivre le curseur). Sur un monstre : s'approcher et l'attaquer.</p>
-        <p>${k('Maj + clic')} : attaquer sur place, sans bouger.</p><p>${k('Clic droit')} : lancer le sort de la case libre de la barre. Sur un PNJ : ses actions.</p>
-        <h3>Esquiver</h3><p>${k('Espace')} : ${mob}. Il a des charges qui se rechargent toutes seules.</p>
-        <h3>Se soigner</h3><p>${k('E')} : boire une potion. Chaque groupe de monstres vaincu en rend une.</p>
+      { id: 'combat', titre: 'Se déplacer et combattre', html: `<h3>À la souris</h3><p>${k(cG)} sur le sol : y aller (maintenu : suivre le curseur). Sur un monstre : s'approcher et l'attaquer.</p>
+        <p>${k(`Maj + ${cG.toLowerCase()}`)} : attaquer sur place, sans bouger.</p><p>${k(cD)} : lancer le sort de la case libre de la barre. ${k('Clic droit')} sur un PNJ : ses actions.</p>
+        <h3>Esquiver</h3><p>${T('deplacement')} : ${mob}. Il a des charges qui se rechargent toutes seules.</p>
+        <h3>Se soigner</h3><p>${T('potion')} : boire une potion. Chaque groupe de monstres vaincu en rend une.</p>
         <h3>Mourir</h3><p>Tu reviens au dernier point de retour. En mode Hardcore, la mort est définitive.</p>` },
-      { id: 'sorts', titre: `Sorts et ${jauge}`, html: `<h3>La barre de sorts</h3><p>${k('&')} ${k('é')} ${k('"')} ${k("'")} ${k('(')} ${k('-')} lancent les 6 sorts de la barre (1 à 6 sur un clavier QWERTY). Chaque sort coûte des PA, qui remontent tout seuls, et a sa recharge.</p>
-        <p>${k('S')} ouvre la fenêtre des sorts : de nouveaux sorts arrivent aux niveaux officiels de Dofus. Glisse-les dans la barre.</p>
+      { id: 'sorts', titre: `Sorts et ${jauge}`, html: `<h3>La barre de sorts</h3><p>${[1, 2, 3, 4, 5, 6].map(i => T(`sort${i}`)).join(' ')} lancent les 6 sorts de la barre (Options › Touches pour les changer). Chaque sort coûte des PA, qui remontent tout seuls, et a sa recharge.</p>
+        <p>${T('sorts')} ouvre la fenêtre des sorts : de nouveaux sorts arrivent aux niveaux officiels de Dofus. Glisse-les dans la barre.</p>
         <h3>${jauge}</h3><p>${iop ? 'La Rage monte quand tu frappes, surtout au corps à corps, et quand tu es touché.' : 'La Précision monte quand tu touches, surtout de loin (plus de 4 cases).'} Pleine, elle renforce ton prochain sort.</p>
-        <p>Dans ${k('O')} Options, tu peux choisir comment lancer un sort : relâcher la touche, tout de suite, ou comme dans Dofus (touche puis clic).</p>` },
+        <p>Dans ${T('options')} Options, tu peux choisir comment lancer un sort : relâcher la touche, tout de suite, ou comme dans Dofus (touche puis clic).</p>` },
       { id: 'butin', titre: 'Inventaire et butin', html: `<h3>Ramasser</h3><p>Clique sur un objet au sol pour le ramasser. Les objets Épiques et mieux apparaissent aussi sur la mini-carte.</p>
         <h3>Raretés</h3><p>${(['commun', 'rare', 'epique', 'legendaire', 'mythique'] as const).map(r => `<span style="color:${RARITY_COLORS[r]}">${RARITY_NAMES[r]}</span>`).join(' · ')}</p>
-        <h3>S'équiper</h3><p>${k('I')} ouvre l'inventaire. Clic droit sur un objet : l'équiper ou le retirer. Les objets en trop se recyclent chez Kerubim Crépin, ou se brisent en runes chez Malek.</p>
-        <p>${k('C')} ouvre les caractéristiques : chaque niveau donne 5 points à placer.</p>` },
-      { id: 'havresac', titre: 'Le Havre-Sac', html: `<p>${k('H')} (ou l'icône du sac dans la colonne de menus) : 1,5 s d'incantation et tu entres dans ton Havre-Sac, ton monde de poche. Bouger ou être touché coupe l'incantation. Impossible dans un donjon ou poursuivi par des monstres.</p>
-        <p>Le Poutch Ingball compte tes dégâts par seconde, et Kerubim Crépin y garde un guichet de recyclage. ${k('H')} à nouveau te ramène là où tu étais ; l'arche est un Zaap vers le Bastion des Douze et tous ceux que tu as découverts.</p>` },
+        <h3>S'équiper</h3><p>${T('inventaire')} ouvre l'inventaire. Clic droit sur un objet : l'équiper ou le retirer. Les objets en trop se recyclent chez Kerubim Crépin, ou se brisent en runes chez Malek.</p>
+        <p>${T('caracs')} ouvre les caractéristiques : chaque niveau donne 5 points à placer.</p>` },
+      { id: 'havresac', titre: 'Le Havre-Sac', html: `<p>${T('havresac')} (ou l'icône du sac dans la colonne de menus) : 1,5 s d'incantation et tu entres dans ton Havre-Sac, ton monde de poche. Bouger ou être touché coupe l'incantation. Impossible dans un donjon ou poursuivi par des monstres.</p>
+        <p>Le Poutch Ingball compte tes dégâts par seconde, et Kerubim Crépin y garde un guichet de recyclage. ${T('havresac')} à nouveau te ramène là où tu étais ; l'arche est un Zaap vers le Bastion des Douze et tous ceux que tu as découverts.</p>` },
       { id: 'zaaps', titre: 'Les Zaaps', html: `<p>Clique sur l'arche d'un Zaap : ton perso s'en approche et la liste s'ouvre. Le voyage est gratuit, vers le Bastion des Douze et tous les Zaaps que tu as découverts, rangés par zone.</p>
-        <p>Il suffit de passer sur la carte d'un Zaap pour le découvrir : il devient aussi ton point de retour si tu tombes. Ceux que tu n'as pas encore vus sont grisés dans la liste et éteints sur la carte (${k('M')}).</p>` },
+        <p>Il suffit de passer sur la carte d'un Zaap pour le découvrir : il devient aussi ton point de retour si tu tombes. Ceux que tu n'as pas encore vus sont grisés dans la liste et éteints sur la carte (${T('carte')}).</p>` },
       { id: 'bastion', titre: 'Le Bastion des Douze', html: `<p>Notre ville, en archipel au-dessus du Monde des Douze. On y va par n'importe quel Zaap (il est en tête de liste), par l'arche du Havre-Sac, ou avec une Potion de Rappel. Son Zaap te ramène ensuite là où tu étais.</p>
         <p>Les PNJ de service y vivent : Kerubim Crépin recycle tes objets en Pépites, Tissebelle vend les apparats et tient le miroir, Otomaï ses potions, Mère Bouillotte ses plats, Goultard les clés de donjon. Certains emménagent au fil de ton aventure. Chaque nation libérée y ajoutera son île.</p>` },
-      { id: 'metiers', titre: 'Métiers', html: `<p>${k('J')} ouvre les métiers. Le Chasseur récupère de la viande sur les monstres quand tu portes une arme de chasse, et cuisine des plats qui soignent.</p>` },
+      { id: 'metiers', titre: 'Métiers', html: `<p>${T('metiers')} ouvre les métiers. Le Chasseur récupère de la viande sur les monstres quand tu portes une arme de chasse, et cuisine des plats qui soignent.</p>` },
       { id: 'quetes', titre: 'Quêtes et succès', html: `<p>Un PNJ qui a une quête porte une icône au-dessus de la tête. Le suivi en bas à gauche montre l'étape en cours.</p>
         <p>Le journal des quêtes et les succès s'ouvrent depuis la colonne de menus, à droite de l'écran.</p>` },
-      { id: 'touches', titre: 'Toutes les touches', html: `<div class="keys">${[['Clic gauche', 'aller / attaquer (maintenu : continuer)'], ['Maj + clic', 'attaquer sur place'], ['Clic droit', 'sort de la barre (case libre)'],
-          ['& é " \' ( -', 'barre de sorts'], ['Espace', mob], ['E', 'potion'], ['S', 'sorts'], ['I', 'inventaire'], ['C', 'caractéristiques'], ['J', 'métiers'], ['B', 'bestiaire'], ...(this.world.player.v03 ? [['D', 'Dofus']] : []),
-          ['O', 'options'], ['G', 'ce guide'], ['H', 'Havre-Sac'], ['M', 'carte du monde (bientôt)'], ['Ctrl+M', 'couper ou remettre le son'], ['Molette', 'zoom'], ['F', 'effets d\'impact'], ['Échap', 'fermer']]
+      { id: 'touches', titre: 'Toutes les touches', html: `<div class="keys">${[[cG, 'aller / attaquer (maintenu : continuer)'], [`Maj + ${cG.toLowerCase()}`, 'attaquer sur place'], [cD, 'sort de la barre (case libre)'],
+          ...Touches.ACTIONS.filter(a => (a.id !== 'dofus' || this.world.player.v03) && Touches.nomAction(a.id)).map(a => [Touches.nomAction(a.id), a.nom.toLowerCase()]),
+          ['Molette', 'zoom'], ['Échap', 'fermer, menu']]
           .map(([a, b]) => `<b>${a}</b><span>${b}</span>`).join('')}</div>` },
     ];
     const q = this.guideRecherche.trim().toLowerCase();
@@ -1267,32 +1300,65 @@ export class Windows {
     }));
   }
 
+  /** Aides dépliées (Réglages 10A : petite flèche à droite de l'option). */
+  private optAides = new Set<string>();
+  /** Fenêtre des touches (Réglages 3A) ouverte, action qui attend sa nouvelle touche, message (doublon, touche réservée). */
+  private touchesVue = false;
+  private touchesEcoute: string | null = null;
+  private touchesMsg = '';
+  /** Vrai pendant qu'on choisit une touche : la scène n'y réagit pas. */
+  /** Options ouvertes depuis l'écran d'accueil (11A) : les fenêtres passent devant lui jusqu'à leur fermeture. */
+  devant() { this.root.style.zIndex = '30'; }
+  get capteTouches() { return this.touchesVue && this.mode === 'opt' && !!this.win; }
   private renderOpt() {
     const w = this.win!, r = this.reglages;
+    const vieux = w.querySelector<HTMLElement>('.main')?.scrollTop ?? 0;   // la page garde sa place quand une option la redessine
     const heures: [string, string][] = [['auto', 'Heure du PC'], ['jour', 'Jour'], ['soir', 'Soir'], ['nuit', 'Nuit']];
     type Opt = { k: string; nom: string; aide?: string } & ({ t: 'range'; min: number; max: number; unite?: string } | { t: 'check' } | { t: 'select'; choix: [string, string][] });
-    type Sec = { id: string; titre: string; opts: Opt[]; html?: string };
+    type Sec = { id: string; titre: string; opts: Opt[]; html?: string; reset?: () => void };
+    const T = (id: string) => Touches.nomAction(id) || 'aucune touche';
+    const droit = r.deplacement === 'droit';
     const GROUPES: { nom: string; desc: string; secs: Sec[] }[] = [
-      { nom: 'Interface', desc: 'Ces options règlent la façon de lancer les sorts et les effets de jeu.', secs: [
+      { nom: 'Interface', desc: 'Ces options règlent la façon de jouer et ce que l\'écran montre en jeu.', secs: [
         { id: 'general', titre: 'Général', opts: [
           { k: 'lancer', nom: 'Lancer un sort', t: 'select', choix: [['relache', 'Maintenir pour voir, relâcher pour lancer'], ['immediat', 'Tout de suite (aperçu avec Alt)'], ['dofus', 'Comme Dofus : touche puis clic']] },
           { k: 'approche', nom: 'Monstre hors de portée : s\'approcher avant de lancer', t: 'check' },
-          { k: 'juice', nom: 'Effets d\'impact (tremblement, gel d\'image)', aide: 'Touche F', t: 'check' },
+          { k: 'juice', nom: 'Effets d\'impact (tremblement, gel d\'image)', aide: `Touche ${T('impact')}.`, t: 'check' },
           { k: 'flecheQuete', nom: 'Aides de quête', aide: 'Flèche au bord de l\'écran et sur la mini-carte, losange sur les monstres de quête, Zaap conseillé. Clic sur le titre du suivi : changer de quête ; sur ses objectifs : la carte.', t: 'check' },
-        ] },
-        { id: 'touches', titre: 'Touches', opts: [], html: `<div class="keys">${[['Clic gauche', 'aller / attaquer (maintenu : continuer)'], ['Maj + clic', 'attaquer sur place'], ['Clic droit', 'sort de la barre (case libre)'],
-          ['& é " \' ( -', 'barre de sorts'], ['Espace', 'déplacement'], ['E', 'potion'], ['S', 'sorts'], ['I', 'inventaire'], ['C', 'caractéristiques'], ['J', 'métiers'], ['B', 'bestiaire'], ...(this.world.player.v03 ? [['D', 'Dofus']] : []),
-          ['O', 'options'], ['M', 'carte du monde (0.2a)'], ['Ctrl+M', 'couper ou remettre le son'], ['Molette', 'zoom'], ['F', 'effets d\'impact'], ['G', 'guide'], ['H', 'Havre-Sac'], ['Échap', 'fermer']]
-          .map(([k, d]) => `<b>${k}</b><span>${d}</span>`).join('')}</div>` },
-      ] },
-      { nom: 'Affichage', desc: 'Ces options règlent l\'ambiance et l\'image du monde.', secs: [
+          { k: 'chiffres', nom: 'Chiffres de dégâts', aide: 'Les dégâts donnés et reçus, au-dessus des monstres et de ton perso.', t: 'check' },
+          { k: 'tailleChiffres', nom: 'Taille des chiffres', t: 'select', choix: [['petite', 'Petite'], ['normale', 'Normale'], ['grande', 'Grande']] },
+          { k: 'dps', nom: 'Compteur de dégâts par seconde', aide: 'Petit cadre sous la mini-carte. Il repart de zéro quand tu n\'as touché personne pendant 4 s.', t: 'check' },
+          { k: 'barresVie', nom: 'Barres de vie des monstres', t: 'select', choix: [['blesses', 'Monstres blessés'], ['toujours', 'Toujours'], ['survol', 'Monstre survolé']] },
+          { k: 'zoomMolette', nom: 'Zoom à la molette de la souris', t: 'check' },
+          { k: 'deplacement', nom: 'Bouton de déplacement', aide: `L'autre bouton lance le sort de la case « ${droit ? 'Clic G' : 'Clic D'} » de la barre. Le clic droit sur un PNJ ouvre toujours ses actions.`, t: 'select', choix: [['gauche', 'Clic gauche'], ['droit', 'Clic droit']] },
+        ], html: '<div class="obtns"><span class="btn" data-obtn="zoom">Remettre le zoom de départ</span></div>' },
+        { id: 'touches', titre: 'Touches', opts: [
+          { k: 'clavier', nom: 'Clavier', aide: `Détecté : ${Touches.clavier() === 'azerty' ? 'AZERTY' : 'QWERTY'}. Les touches restent à la même place sur le clavier, seul leur nom change.`, t: 'select', choix: [['auto', 'Détecté tout seul'], ['azerty', 'AZERTY'], ['qwerty', 'QWERTY']] },
+        ], reset: () => { r.touches = {}; r.clavier = 'auto'; },
+          html: `<div class="obtns"><span class="btn" data-obtn="touches">Configurer les touches</span><span class="btn" data-obtn="rtouches">Réinitialiser les touches</span></div>
+          <div class="keys">${[[droit ? 'Clic droit' : 'Clic gauche', 'aller / attaquer (maintenu : continuer)'], [`Maj + ${droit ? 'clic droit' : 'clic'}`, 'attaquer sur place'], [droit ? 'Clic gauche' : 'Clic droit', 'sort de la case « clic » de la barre'],
+            [Touches.ACTIONS.slice(0, 6).map(a => Touches.nomAction(a.id)).join(' '), 'barre de sorts'], [T('deplacement'), 'déplacement'], [T('potion'), 'potion'], ['Alt', 'aperçu des sorts, noms'], ['Molette', 'zoom'], ['Échap', 'fermer, menu']]
+            .map(([k, d]) => `<b>${k}</b><span>${d}</span>`).join('')}</div>` },
+        { id: 'modules', titre: 'Modules d\'interface', opts: [
+          { k: 'verrou', nom: 'Verrouiller la position des modules', aide: 'Décoche pour glisser le cadre du perso, la mini-carte, le suivi de quête et le compteur de dégâts où tu veux.', t: 'check' },
+          { k: 'coords', nom: 'Afficher les coordonnées de la carte', aide: 'Sous la mini-carte, comme [6,-19].', t: 'check' },
+        ], reset: () => { r.verrou = true; r.coords = true; r.modules = {}; }, html: '<div class="obtns"><span class="btn" data-obtn="modules">Réinitialiser l\'affichage</span></div>' },
         { id: 'ambiance', titre: 'Ambiance du monde', opts: [
           { k: 'heure', nom: 'Heure', aide: `En ce moment : ${this.heureNom()}`, t: 'select', choix: heures },
           { k: 'lumieres', nom: 'Lumières (halos, feux)', t: 'range', min: 0, max: 200 },
           { k: 'saturation', nom: 'Couleurs (moins = adouci)', t: 'range', min: 50, max: 120 },
           { k: 'chaleur', nom: 'Chaleur de la lumière', t: 'range', min: -100, max: 100, unite: '' },
         ] },
+      ] },
+      { nom: 'Affichage', desc: 'Ces options règlent l\'image du jeu. Sur un petit PC, la qualité Basse ou Moyenne rend le jeu plus fluide.', secs: [
+        { id: 'ecran', titre: 'Écran', opts: [
+          { k: 'pleinEcran', nom: 'Mode d\'affichage', aide: 'F11 passe aussi le navigateur en plein écran.', t: 'select', choix: [['fenetre', 'Fenêtré'], ['plein', 'Plein écran']] },
+          { k: 'echelle', nom: 'Échelle de l\'interface', t: 'range', min: 80, max: 150 },
+        ], reset: () => { r.echelle = 1; } },
         { id: 'graphismes', titre: 'Graphismes', opts: [
+          { k: 'qualite', nom: 'Qualité prédéfinie', aide: 'Basse : sans vent, eau animée ni particules, lumières douces, 30 images par seconde. Moyenne : sans particules, 60 images. Haute : tout, sans limite.', t: 'select', choix: [['basse', 'Basse'], ['moyenne', 'Moyenne'], ['haute', 'Haute'], ['perso', 'Personnalisée']] },
+          { k: 'fps', nom: 'Images par seconde', t: 'select', choix: [['30', '30'], ['60', '60'], ['120', '120'], ['0', 'Sans limite']] },
+          { k: 'compteurFps', nom: 'Afficher le compteur d\'images (FPS)', aide: `Dans le coin de la mini-carte.${Touches.nomAction('fps') ? ` Touche ${Touches.nomAction('fps')}.` : ''}`, t: 'check' },
           { k: 'zoom', nom: 'Zoom de départ', t: 'range', min: 55, max: 120 },
           { k: 'vent', nom: 'Arbres au vent', t: 'check' },
           { k: 'eau', nom: 'Eau animée', t: 'check' },
@@ -1300,9 +1366,9 @@ export class Windows {
           { k: 'particules', nom: 'Particules (spores, braises…)', t: 'check' },
         ] },
       ] },
-      { nom: 'Son', desc: 'Ces options règlent la musique et les sons du jeu. Ctrl+M coupe ou remet tout le son.', secs: [
+      { nom: 'Son', desc: `Ces options règlent la musique et les sons du jeu. ${T('muet')} coupe ou remet tout le son.`, secs: [
         { id: 'son', titre: 'Général', opts: [
-          { k: 'muet', nom: 'Couper tout le son', aide: 'Ctrl+M', t: 'check' },
+          { k: 'muet', nom: 'Couper tout le son', aide: T('muet'), t: 'check' },
           { k: 'volume', nom: 'Volume général', t: 'range', min: 0, max: 100 },
           { k: 'volMusique', nom: 'Musique', t: 'range', min: 0, max: 100 },
           { k: 'volEffets', nom: 'Effets (sorts, coups)', t: 'range', min: 0, max: 100 },
@@ -1312,61 +1378,148 @@ export class Windows {
           { k: 'musiqueBoss', nom: 'Musique de combat des boss', aide: 'Sinon, la musique de la zone continue pendant les combats de boss.', t: 'check' },
         ] },
       ] },
+      { nom: 'Alertes', desc: 'Ces options règlent ce qui te prévient pendant que tu joues.', secs: [
+        { id: 'alertes', titre: 'Alertes', opts: [
+          { k: 'alerteButin', nom: 'Son quand un objet Épique ou mieux tombe', t: 'check' },
+          { k: 'pulsePv', nom: 'Bords de l\'écran qui battent en rouge sous 25 % de PV', t: 'check' },
+        ] },
+      ] },
     ];
-    const val = (k: string) => k === 'juice' ? this.juice.get() : (r as unknown as Record<string, unknown>)[k];
+    const R = r as unknown as Record<string, unknown>;
+    const val = (k: string): unknown => k === 'juice' ? this.juice.get() : k === 'pleinEcran' ? (document.fullscreenElement ? 'plein' : 'fenetre') : k === 'fps' ? String(r.fps ?? 0) : R[k];
     const q = this.optRecherche.trim().toLowerCase();
     const garde = (o: Opt) => !q || `${o.nom} ${o.aide ?? ''}`.toLowerCase().includes(q);
     const ligne = (o: Opt) => {
-      const aide = o.aide ? `<small>${o.aide}</small>` : '';
-      if (o.t === 'check') return `<label class="row ck ${val(o.k) ? 'on' : ''}"><input type="checkbox" data-ck="${o.k}" ${val(o.k) ? 'checked' : ''}><span>${o.nom}${aide}</span></label>`;
-      if (o.t === 'select') return `<label class="row"><span>${o.nom}${aide}</span><select data-sel="${o.k}">${o.choix.map(([k, n]) => `<option value="${k}" ${val(o.k) === k ? 'selected' : ''}>${n}</option>`).join('')}</select></label>`;
+      const ouvert = this.optAides.has(o.k) || (!!q && !!o.aide);
+      const fl = o.aide ? `<i class="fl ${ouvert ? 'on' : ''}" data-aide="${o.k}" title="Aide"></i>` : '<i></i>';
+      const aide = o.aide && ouvert ? `<small>${o.aide}</small>` : '';
+      if (o.t === 'check') return `<label class="row ck ${val(o.k) ? 'on' : ''}"><input type="checkbox" data-ck="${o.k}" ${val(o.k) ? 'checked' : ''}><span>${o.nom}${aide}</span>${fl}</label>`;
+      if (o.t === 'select') return `<label class="row"><span>${o.nom}${aide}</span><select data-sel="${o.k}">${o.choix.map(([k, n]) => `<option value="${k}" ${val(o.k) === k ? 'selected' : ''}>${n}</option>`).join('')}</select>${fl}</label>`;
       const n = Math.round((val(o.k) as number) * 100);
-      return `<label class="row"><span>${o.nom}${aide}</span><input type="range" data-rg="${o.k}" min="${o.min}" max="${o.max}" value="${n}" style="--v:${(n - o.min) / (o.max - o.min) * 100}%"><output data-o="${o.k}">${n}${o.unite ?? '%'}</output></label>`;
+      return `<label class="row"><span>${o.nom}${aide}</span><input type="range" data-rg="${o.k}" min="${o.min}" max="${o.max}" value="${n}" style="--v:${(n - o.min) / (o.max - o.min) * 100}%"><output data-o="${o.k}">${n}${o.unite ?? '%'}</output>${fl}</label>`;
     };
     const RESET = '<i class="rs"></i>';
     const main = GROUPES.map(g => {
       const secs = g.secs.map(s => {
         const lignes = s.opts.filter(garde);
-        if (q && !lignes.length && !(s.html && s.titre.toLowerCase().includes(q))) return '';
-        return `<div class="sec" id="opt-${s.id}"><div class="sh"><b>${s.titre}</b>${s.opts.length ? `<span class="lien" data-reset="${s.id}">${RESET} Réinitialiser</span>` : ''}</div>${lignes.map(ligne).join('')}${s.html ?? ''}</div>`;
+        if (q && !lignes.length && !s.titre.toLowerCase().includes(q)) return '';
+        return `<div class="sec" id="opt-${s.id}"><div class="sh"><b>${s.titre}</b>${s.opts.length || s.reset ? `<span class="lien" data-reset="${s.id}">${RESET} Réinitialiser</span>` : ''}</div>${lignes.map(ligne).join('')}${s.html ?? ''}</div>`;
       }).join('');
       return secs ? `<div class="grp"><h2>${g.nom}</h2><div class="desc">${g.desc}</div>${secs}</div>` : '';
     }).join('') || '<div class="vide">Aucune option ne correspond à la recherche.</div>';
     const nav = GROUPES.map(g => `<div class="cat">${g.nom}</div>${g.secs.map(s => `<div class="it" data-va="${s.id}">${s.titre}</div>`).join('')}`).join('');
+    // Réglages 3A : la fenêtre des touches, par-dessus les Options
+    const dbl = Touches.doublons();
+    const tw = this.touchesVue ? `<div class="tw"><div class="twt"><b>Touches</b><span class="x" data-tfermer title="Fermer"></span></div>
+      <p>Clique sur une touche, puis appuie sur la nouvelle (Alt + touche ou Ctrl + touche possibles). Échap annule, Suppr ou Retour arrière retire la touche.</p>
+      <div class="tg">${[...new Set(Touches.ACTIONS.map(a => a.groupe))].map(gp => `<h4>${gp}</h4>${Touches.ACTIONS.filter(a => a.groupe === gp).map(a =>
+        `<div class="tl"><span>${a.nom}</span><button class="tk ${this.touchesEcoute === a.id ? 'ecoute' : ''} ${dbl.has(a.id) ? 'dbl' : ''} ${a.id in r.touches ? 'perso' : ''}" data-tk="${a.id}">${this.touchesEcoute === a.id ? 'Appuie sur une touche…' : Touches.nomAction(a.id) || '—'}</button></div>`).join('')}`).join('')}</div>
+      <div class="tmsg">${this.touchesMsg || (dbl.size ? 'Une même touche sert à deux actions (en rouge) : seule la première marche.' : '')}</div>
+      <div class="tb"><span class="btn" data-obtn="rtouches">Réinitialiser</span><span class="btn vert" data-tfermer>Fermer</span></div></div>` : '';
     w.innerHTML = `${this.title('Options', 'options')}<div class="ob">
       <div class="nav"><input type="search" placeholder="Rechercher" value="${this.optRecherche.replace(/"/g, '&quot;')}" data-cherche><div class="cats">${nav}</div>
         <div class="bas"><span class="lien" data-tout>${RESET} Tout réinitialiser</span>${this.onAccueil ? '<span class="lien" data-accueil>Sauvegarder et revenir à l\'accueil</span>' : ''}</div></div>
-      <div class="main"><div class="otabs"><span class="on">Options générales</span></div>${main}</div></div>`;
+      <div class="main"><div class="otabs"><span class="on">Options générales</span></div>${main}</div></div>${tw}`;
     const apply = () => { sauverReglages(r); this.onReglages(r); };
-    const R = r as unknown as Record<string, unknown>;
+    const mainEl = w.querySelector<HTMLElement>('.main')!;
+    // 1A : une seule page qui défile ; le menu de gauche s'allume sur la rubrique visible
+    const suivre = () => {
+      let cur = '';
+      for (const sec of Array.from(mainEl.querySelectorAll<HTMLElement>('.sec'))) if (sec.offsetTop - mainEl.offsetTop - 40 <= mainEl.scrollTop) cur = sec.id.slice(4);
+      if (!cur) cur = mainEl.querySelector<HTMLElement>('.sec')?.id.slice(4) ?? '';
+      if (mainEl.scrollTop + mainEl.clientHeight >= mainEl.scrollHeight - 4) cur = Array.from(mainEl.querySelectorAll<HTMLElement>('.sec')).pop()?.id.slice(4) ?? cur;
+      w.querySelectorAll<HTMLElement>('.nav .it').forEach(x => x.classList.toggle('on', x.dataset.va === cur));
+    };
+    mainEl.scrollTop = vieux; mainEl.addEventListener('scroll', suivre); suivre();
+    // 7B : une qualité prédéfinie règle plusieurs options ; en changer une à la main passe en « Personnalisée »
+    const preset = () => {
+      const k = (Object.keys(QUALITES) as (keyof typeof QUALITES)[]).find(n => Object.entries(QUALITES[n]).every(([c, v]) => R[c] === v));
+      r.qualite = k ?? 'perso';
+    };
+    const PRESET = new Set(['vent', 'eau', 'particules', 'lumieres', 'fps']);
     w.querySelectorAll<HTMLInputElement>('[data-rg]').forEach(e => {
       const k = e.dataset.rg!;
-      e.addEventListener('input', () => { R[k] = +e.value / 100; e.style.setProperty('--v', `${(+e.value - +e.min) / (+e.max - +e.min) * 100}%`); w.querySelector(`[data-o="${k}"]`)!.textContent = `${e.value}${k === 'chaleur' ? '' : '%'}`; apply(); });
-      // 8A : aperçu sonore quand on lâche le curseur
-      e.addEventListener('change', () => { if (k === 'volEffets') Son.jouer(MANIFESTE.impacts[0], 'effets'); else if (k === 'volMonstres') { const l = Object.values(MANIFESTE.monstres)[0]?.attaque; Son.jouer(Son.auHasard(l), 'monstres'); } else if (k === 'volInterface' || k === 'volume') Son.jouer(MANIFESTE.ui.ok, 'interface'); });
+      e.addEventListener('input', () => { R[k] = +e.value / 100; e.style.setProperty('--v', `${(+e.value - +e.min) / (+e.max - +e.min) * 100}%`); w.querySelector(`[data-o="${k}"]`)!.textContent = `${e.value}${k === 'chaleur' ? '' : '%'}`; if (PRESET.has(k)) preset(); apply(); });
+      // 8A : aperçu sonore quand on lâche le curseur ; l'échelle de l'interface redessine la fenêtre à sa nouvelle taille
+      e.addEventListener('change', () => { if (k === 'volEffets') Son.jouer(MANIFESTE.impacts[0], 'effets'); else if (k === 'volMonstres') { const l = Object.values(MANIFESTE.monstres)[0]?.attaque; Son.jouer(Son.auHasard(l), 'monstres'); } else if (k === 'volInterface' || k === 'volume') Son.jouer(MANIFESTE.ui.ok, 'interface'); else if (k === 'lumieres') this.render(); });
     });
-    w.querySelectorAll<HTMLSelectElement>('[data-sel]').forEach(e => e.addEventListener('change', () => { R[e.dataset.sel!] = e.value; apply(); if (e.dataset.sel === 'heure') this.render(); }));
-    w.querySelectorAll<HTMLInputElement>('[data-ck]').forEach(e => e.addEventListener('change', () => {
-      const k = e.dataset.ck!;
-      if (k === 'juice') this.juice.set(e.checked); else { R[k] = e.checked; apply(); }
-      e.closest('.row')!.classList.toggle('on', e.checked);
-    }));
-    const defaut = REGLAGES_DEFAUT as unknown as Record<string, unknown>;
-    const reset = (s: Sec) => { for (const o of s.opts) { if (o.k === 'juice') this.juice.set(true); else R[o.k] = defaut[o.k]; } };
-    w.querySelectorAll<HTMLElement>('[data-reset]').forEach(e => e.addEventListener('click', () => {
-      const s = GROUPES.flatMap(g => g.secs).find(x => x.id === e.dataset.reset); if (s) reset(s);
+    w.querySelectorAll<HTMLSelectElement>('[data-sel]').forEach(e => e.addEventListener('change', () => {
+      const k = e.dataset.sel!;
+      if (k === 'pleinEcran') {
+        const p = e.value === 'plein' ? document.documentElement.requestFullscreen?.() : document.fullscreenElement ? document.exitFullscreen?.() : undefined;
+        Promise.resolve(p).catch(() => {}).finally(() => this.refresh()); return;
+      }
+      if (k === 'fps') { r.fps = +e.value; preset(); }
+      else if (k === 'qualite') { if (e.value !== 'perso') Object.assign(r, QUALITES[e.value as keyof typeof QUALITES]); r.qualite = e.value as Reglages['qualite']; }
+      else R[k] = e.value;
+      if (k === 'clavier') Touches.regler(r.clavier);
       apply(); this.render();
     }));
-    w.querySelector('[data-tout]')!.addEventListener('click', () => { GROUPES.forEach(g => g.secs.forEach(reset)); apply(); this.render(); });
-    w.querySelectorAll<HTMLElement>('[data-va]').forEach(e => e.addEventListener('click', () => {
-      w.querySelectorAll('.nav .it').forEach(x => x.classList.toggle('on', x === e));
-      w.querySelector(`#opt-${e.dataset.va}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    w.querySelectorAll<HTMLInputElement>('[data-ck]').forEach(e => e.addEventListener('change', () => {
+      const k = e.dataset.ck!;
+      if (k === 'juice') this.juice.set(e.checked); else { R[k] = e.checked; if (PRESET.has(k)) preset(); apply(); }
+      e.closest('.row')!.classList.toggle('on', e.checked);
+      if (PRESET.has(k)) this.render();
     }));
+    // 10A : la petite flèche déplie l'aide de l'option
+    w.querySelectorAll<HTMLElement>('[data-aide]').forEach(e => e.addEventListener('click', ev => {
+      ev.preventDefault(); ev.stopPropagation();
+      const k = e.dataset.aide!; if (this.optAides.has(k)) this.optAides.delete(k); else this.optAides.add(k);
+      this.render();
+    }));
+    const defaut = REGLAGES_DEFAUT as unknown as Record<string, unknown>;
+    const copie = (v: unknown) => v && typeof v === 'object' ? JSON.parse(JSON.stringify(v)) : v;
+    const reset = (s: Sec) => { for (const o of s.opts) { if (o.k === 'juice') this.juice.set(true); else if (o.k in defaut) R[o.k] = copie(defaut[o.k]); } s.reset?.(); };
+    w.querySelectorAll<HTMLElement>('[data-reset]').forEach(e => e.addEventListener('click', () => {
+      const s = GROUPES.flatMap(g => g.secs).find(x => x.id === e.dataset.reset); if (s) reset(s);
+      Touches.regler(r.clavier); apply(); this.render();
+    }));
+    w.querySelector('[data-tout]')!.addEventListener('click', () => { GROUPES.forEach(g => g.secs.forEach(reset)); Touches.regler(r.clavier); apply(); this.render(); });
+    w.querySelectorAll<HTMLElement>('[data-va]').forEach(e => e.addEventListener('click', () => {
+      const sec = w.querySelector<HTMLElement>(`#opt-${e.dataset.va}`); if (!sec) return;
+      mainEl.scrollTo({ top: sec.offsetTop - mainEl.offsetTop - 8, behavior: 'smooth' });
+    }));
+    w.querySelectorAll<HTMLElement>('[data-obtn]').forEach(e => e.addEventListener('click', () => {
+      const b = e.dataset.obtn;
+      if (b === 'zoom') { apply(); return; }   // la scène remet le zoom de départ à chaque changement de réglages
+      if (b === 'touches') { this.touchesVue = true; this.touchesEcoute = null; this.touchesMsg = ''; }
+      if (b === 'rtouches') { r.touches = {}; this.touchesEcoute = null; this.touchesMsg = ''; apply(); }
+      if (b === 'modules') { r.modules = {}; apply(); }
+      this.render();
+    }));
+    w.querySelectorAll<HTMLElement>('[data-tfermer]').forEach(e => e.addEventListener('click', () => { this.touchesVue = false; this.touchesEcoute = null; this.touchesMsg = ''; this.render(); }));
+    w.querySelectorAll<HTMLElement>('[data-tk]').forEach(e => e.addEventListener('click', () => { this.touchesEcoute = e.dataset.tk!; this.touchesMsg = ''; this.render(); }));
+    w.querySelector('.tw')?.addEventListener('pointerdown', ev => ev.stopPropagation());
     const ch = w.querySelector<HTMLInputElement>('[data-cherche]')!;
     ch.addEventListener('input', () => { this.optRecherche = ch.value; this.render(); const n = this.win?.querySelector<HTMLInputElement>('[data-cherche]'); n?.focus(); n?.setSelectionRange(n.value.length, n.value.length); });
     ch.addEventListener('keydown', e => e.stopPropagation());
     w.querySelector('[data-accueil]')?.addEventListener('click', () => { this.close(); this.onAccueil?.(); });
   }
+  /** Fenêtre des touches : la touche pressée devient celle de l'action choisie (écouteur en capture, avant le jeu). */
+  private captureTouche = (e: KeyboardEvent) => {
+    // Options ouvertes depuis l'écran d'accueil (la partie derrière n'écoute pas le clavier) : Échap les ferme
+    if (!this.capteTouches) { if (e.code === 'Escape' && this.root.style.zIndex && this.win) { e.stopPropagation(); this.close(); } return; }
+    const id = this.touchesEcoute;
+    e.preventDefault(); e.stopPropagation();
+    if (e.code === 'Escape') {
+      if (id) { this.touchesEcoute = null; this.touchesMsg = ''; } else this.touchesVue = false;
+      this.render(); return;
+    }
+    if (!id || e.repeat) return;
+    const r = this.reglages;
+    let c: string | null;
+    if (e.code === 'Delete' || e.code === 'Backspace') c = '';
+    else {
+      c = Touches.combo(e); if (c == null) return;   // Maj, Alt ou Ctrl seuls : on attend la touche
+      if (Touches.RESERVEES.has(e.code)) { this.touchesMsg = `${Touches.nomCode(e.code)} est gardée par le jeu.`; this.render(); return; }
+    }
+    if (c === Touches.parDefaut(id)) delete r.touches[id]; else r.touches = { ...r.touches, [id]: c };
+    Touches.appliquer(r.touches);
+    const autre = c ? Touches.ACTIONS.find(a => a.id !== id && Touches.touche(a.id) === c) : undefined;
+    this.touchesMsg = autre ? `${Touches.nom(c)} sert aussi à « ${autre.nom} » : change l'une des deux.` : '';
+    this.touchesEcoute = null;
+    sauverReglages(r); this.onReglages(r); this.render();
+  };
 
   /** Sort affiché dans la fiche de l'onglet Sorts, et grade montré. */
   private vu: number | null = null;
@@ -1410,7 +1563,7 @@ export class Windows {
         <div class="ds">${vu.desc}</div>
         <div class="hint">Glisse un sort débloqué dans la barre, ou clique-le puis clique une case. Clic sur l'autre sort d'une paire pour l'échanger (un seul des deux, comme dans Dofus). Clic droit sur une case de la barre : la vider.</div>`;
     }
-    const KEYS = ['&', 'é', '"', "'", '(', '-', 'Clic D', 'Espace'];
+    const KEYS = [...[1, 2, 3, 4, 5, 6].map(i => Touches.nomAction(`sort${i}`)), this.reglages.deplacement === 'droit' ? 'Clic G' : 'Clic D', Touches.nomAction('deplacement')];
     const slot = (i: number) => {
       const id = p.bar[i], d = id ? p.cls.spells[id] : null;
       return `<div class="bs ${i === 6 || i === 7 ? 'gap' : ''}"><i data-slot="${i}" title="${d?.name ?? 'vide'}" style="${d ? `background-image:url(assets/ui/sorts/sort_${d.icon}.png)` : ''}"></i>${KEYS[i] ?? ""}</div>`;
