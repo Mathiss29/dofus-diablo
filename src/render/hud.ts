@@ -10,6 +10,7 @@ import type { Monster } from '../sim/monster';
 import type { World } from '../sim/world';
 import { chrono } from '../sim/quests';
 import { QUEST_ICON } from './questView';
+import { MANIFESTE, Son } from './son';
 
 const FONT = 'Lexend, Verdana, sans-serif';
 const STYLE = { fontFamily: FONT, fontSize: '14px', color: '#e8e2d4', stroke: '#000', strokeThickness: 3 };
@@ -174,8 +175,13 @@ export class Hud {
   private arrowIcon: Img; private arrowLabel: Txt; private miniIcon: Img;
   /** Réglages 8A : la flèche peut être coupée. */
   flecheQuete = true;
+  /** Idée 5 : arrivée en vue du but, la flèche grossit et s'efface (0,6 s) avec un petit son. */
+  private flecheAvant: { quete: string; fin: { x: number; y: number }; x: number; y: number; ang: number; coul: number } | null = null;
+  private arrivee: { t: number; x: number; y: number; ang: number; coul: number } | null = null;
   /** Clic sur « Passer » (quête id). */
   onPasser: (id: string) => void = () => {};
+  /** Idée 3 : clic sur les objectifs du suivi = carte M centrée sur le but. */
+  onCarteQuete: () => void = () => {};
   private feed: FeedLine[] = [];
   // bannières
   private bannerBg: Img;
@@ -310,6 +316,10 @@ export class Hud {
     this.arrowIcon = img('qi_quest', 3).setVisible(false);
     this.arrowLabel = txt(12, { ...bold, color: '#f1ecd8', stroke: '#1a140c', strokeThickness: 4, align: 'center', lineSpacing: -1 }, 3).setVisible(false);
     this.miniIcon = img('qi_questObjective', 5).setVisible(false);
+    this.trackBody.setInteractive({ useHandCursor: true }).on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, ev: Phaser.Types.Input.EventData) => {
+      if (!world.quetes?.enCours.length) return;
+      ev.stopPropagation(); this.onCarteQuete();
+    });
     // 7A : un clic sur le suivi passe à la quête suivante
     this.trackTitle.setInteractive({ useHandCursor: true }).on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, ev: Phaser.Types.Input.EventData) => {
       const q = world.quetes; if (!q || q.enCours.length < 2) return;
@@ -762,7 +772,7 @@ export class Hud {
           return `${done ? '✓' : '•'} ${o.texte}${tot > 1 ? `  ${n}/${tot}` : ''}`;
         });
       const autres = Q.enCours.length - 1;
-      this.trackBody.setText([e && !cq.aRendre ? e.nom : '', ...lines, autres > 0 ? `+${autres} autre${autres > 1 ? 's' : ''} quête${autres > 1 ? 's' : ''} (clic sur le titre : changer)` : '', juice ? '' : 'Effets d\'impact désactivés (F)']
+      this.trackBody.setText([e && !cq.aRendre ? e.nom : '', ...lines, autres > 0 ? `+${autres} autre${autres > 1 ? 's' : ''} quête${autres > 1 ? 's' : ''} (clic sur le titre)` : '', juice ? '' : 'Effets d\'impact désactivés (F)']
         .filter(Boolean).concat(recL).join('\n'));
       this.skipBtn.setVisible(!!def.options?.passable);
     } else {
@@ -817,11 +827,32 @@ export class Hud {
         const n = it.cartes, detail = it.autreZone ? `${it.autreZone} · ${it.via === 'zaap' ? `Zaap ${it.zaap ?? ''}`.trim() : 'par le portail'}`
           : it.via === 'zaap' ? `${n} cartes · Zaap ${it.zaap ?? ''}` : n > 0 ? `${n} carte${n > 1 ? 's' : ''}` : '';
         const lb = pt(-58, 0);
+        this.flecheAvant = { quete: cq.id, fin: { x: fin.x, y: fin.y }, x: ax2, y: ay2, ang, coul };
         this.arrowLabel.setText(it.autreZone ? `${it.nom === it.autreZone ? def.nom : it.nom}\n${detail}` : detail ? `${it.nom}\n${detail}` : it.nom).setVisible(true)
           .setOrigin(co > 0.35 ? 1 : co < -0.35 ? 0 : 0.5, si > 0.35 ? 1 : si < -0.35 ? 0 : 0.5).setPosition(lb.x, lb.y);
       }
     }
-    if (!fleche) { this.arrowIcon.setVisible(false); this.arrowLabel.setVisible(false); }
+    if (!fleche) {
+      this.arrowIcon.setVisible(false); this.arrowLabel.setVisible(false);
+      // idée 5 : la porte ou le but vient d'entrer à l'écran, pour la même quête et le même point : on est arrivé
+      const av = this.flecheAvant, fin = it?.pts[it.pts.length - 1];
+      if (av && it && cq && av.quete === cq.id && fin && Math.hypot(fin.x - av.fin.x, fin.y - av.fin.y) < 60) {
+        this.arrivee = { t: 0, x: av.x, y: av.y, ang: av.ang, coul: av.coul };
+        Son.jouer(MANIFESTE.ui.ok, 'interface', { vol: 0.5, vitesse: 1.15, cle: 'arrivee', ecart: 2 });
+      }
+      this.flecheAvant = null;
+    } else this.arrivee = null;
+    if (this.arrivee) {
+      const a = this.arrivee; a.t += dt;
+      const k = a.t / 0.6, sc = 1 + 0.7 * k, co = Math.cos(a.ang), si = Math.sin(a.ang);
+      const pt = (l: number, w2: number) => ({ x: a.x + (co * l - si * w2) * sc, y: a.y + (si * l + co * w2) * sc });
+      if (k >= 1) this.arrivee = null;
+      else {
+        this.arrow.fillStyle(a.coul, 1 - k); this.arrow.lineStyle(3, 0x14230a, 1 - k);
+        const pts = [pt(30, 0), pt(-14, 22), pt(-4, 0), pt(-14, -22)];
+        this.arrow.fillPoints(pts, true); this.arrow.strokePoints(pts, true, true);
+      }
+    }
 
     // --- Butin (bas droite) : les dernières lignes s'effacent ---
     const feedY = W - 16 - Math.max(0, ...this.feed.map(f => f.text.width)) < x0 + totalW + 8 ? y0 - 8 : H - 16;   // pareil pour le butin
