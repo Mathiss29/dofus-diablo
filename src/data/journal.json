@@ -242,7 +242,8 @@
           "Incarnam a ses 3 vrais Zaaps (Route des âmes, Pâturages, Cimetière) ; un Zaap découvert s'annonce et s'allume sur la carte (M).",
           "Toutes les portes d'Astrub s'entourent au survol d'un fin trait lilas, comme dans Dofus 3 et sur Sanstour : il suit la forme officielle de chaque embrasure (Taverne, Banque, Milice, ateliers…), même quand la porte est peinte dans le bâtiment.",
           "Un paillasson attend à la sortie de chaque intérieur, comme sur Sanstour : une dalle de pierre au soleil vert qui luit et pétille, sur la case de sortie officielle. Survole-le, il s'entoure ; clique dessus pour sortir.",
-          "Les Égouts d'Astrub (13 salles, de la plaque d'égout [5,-17] à la sortie [7,-9]) et les Souterrains d'Astrub (9 salles de mine, entrée en [1,-17]) sont ouverts, avec leurs monstres officiels."
+          "Les Égouts d'Astrub (13 salles, de la plaque d'égout [5,-17] à la sortie [7,-9]) et les Souterrains d'Astrub (9 salles de mine, entrée en [1,-17]) sont ouverts, avec leurs monstres officiels.",
+          "0.3 en partie de test : le Gawdien du Dofus (au Bastion), Rathrosk et l'Énergie du Dofus Cacao (à Astrub) sont là, avec leurs dessins officiels."
         ],
         "Combat": [
           "Coûts officiels des points : Sagesse 3 points, Force, Intelligence, Chance et Agilité 1 point jusqu'à 100 puis 2, 3 et 4 par tranche de 100 (tes points déjà placés te sont rendus). La Chance donne +1 Prospection par 10, l'Intelligence et les Soins renforcent tes soins, et l'Agilité fait courir un peu plus vite (+1 % par 20, 10 % au plus).",

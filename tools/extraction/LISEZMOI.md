@@ -447,6 +447,7 @@ officiel du Zaap d'Astrub sur l'arche du Bastion (bastion.py réécrit les parti
 - Icônes : `python3 tools/extraction/icones_ajout.py /mnt/project-files/cache-dofus/astrub/item_assets_1x.bundle <iconIds>`.
 - Quêtes « œuf à reconstituer » dans `tools/contenu/quetes.py` (Gawdien du Dofus au Bastion, place dans `bastion.py` PNJ_PLACE).
   Un nouveau Dofus = une quête avec `'recompense': {'dofus': '<id>'}` ; la fenêtre D lit cette clé pour montrer les fragments.
-- Planches à exporter du PC (bones absents du cache) : Gawdien du Dofus (PNJ 148, look 321), Rathrosk (4357, look 4930),
-  Énergie du Dofus Cacao (4842, look 3401). Sans planche, le PNJ n'apparaît pas.
+- Planches des PNJ (bones pris sur le PC) : `PNJ=1 SCALE=1.32 ANIMS=AnimStatique_1 monster_planche.py 321 pnj_gawdien …`,
+  `ANIMS=AnimStatique_1,AnimAttaque1_1,AnimAttaque2_1,AnimAttaque3_1 … 4930 pnj_rathrosk` (animFunList officielle),
+  `PNJ=1 SCALE=1.58 … 3401 pnj_energie_cacao` (look {3401|||120}). Puis `node tools/hebergement/envoi.mjs`.
 - Trophées (266, type 151, Façonneur) et prysmaradites (25, type 217) : mêmes 6 cases, sous-onglets grisés jusqu'à Amakna.
