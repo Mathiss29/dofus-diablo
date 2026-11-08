@@ -3014,6 +3014,66 @@
        -26.0
       ]
      ]
+    },
+    {
+     "nom": "Atelier des bijoutiers d'Astrub",
+     "metiers": [
+      "bijoutier"
+     ],
+     "cartes": [
+      "6_-15"
+     ]
+    },
+    {
+     "nom": "Atelier des cordonniers d'Astrub",
+     "metiers": [
+      "cordonnier"
+     ],
+     "cartes": [
+      "4_-16"
+     ]
+    },
+    {
+     "nom": "Atelier des tailleurs d'Astrub",
+     "metiers": [
+      "tailleur"
+     ],
+     "cartes": [
+      "7_-15"
+     ]
+    },
+    {
+     "nom": "Atelier des forgerons d'Astrub",
+     "metiers": [
+      "forgeron"
+     ],
+     "cartes": [
+      "7_-16"
+     ]
+    },
+    {
+     "nom": "Atelier des sculpteurs d'Astrub",
+     "metiers": [
+      "sculpteur"
+     ],
+     "cartes": [
+      "2_-16"
+     ]
+    },
+    {
+     "nom": "Atelier des façonneurs d'Astrub",
+     "metiers": [
+      "faconneur"
+     ],
+     "cartes": [
+      "4_-15"
+     ]
+    }
+   ],
+   "coffres": [
+    {
+     "nom": "Coffre de la Banque d'Astrub",
+     "carte": "banque"
     }
    ]
   }
@@ -3037,7 +3097,14 @@
     "arche": 157,
     "poutch": 371,
     "theme": 57
-   }
+   },
+   "coffres": [
+    {
+     "nom": "Coffre du Havre-Sac",
+     "carte": "0_0",
+     "case": 243
+    }
+   ]
   }
  },
  "bastion": {

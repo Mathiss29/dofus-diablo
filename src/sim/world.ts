@@ -18,6 +18,7 @@ import { planWave } from './waves';
 import { Arene, ARENE } from './arene';
 import { Quetes, type Compte, type EtatQuetes, type QuetesData } from './quests';
 import { appliquerTest, type ReglagesTest } from './outilsTest';
+import { COFFRE, coffreVide, type Coffre } from './coffre';
 import { FABRICATION, METIERS_FAB, chanceRare, ingredientsRares, type Poste } from './metiers';
 import { PLACEMENT, analyserCarte, placementPose, placementValide, proposerPlacement, type AnalyseCarte, type PlacementCarte } from './placement';
 import { RECOLTE, porteeRecolte, quantite, xpRecolte, type Recolte, type RecoltesData } from './recolte';
@@ -73,6 +74,8 @@ export interface WorldOptions {
   /** Quêtes et succès (src/data/quetes.json) ; compte = succès et persos déjà créés, gardés par l'affichage. */
   quetes?: QuetesData;
   compte?: Compte;
+  /** Coffre partagé du compte (0.3, src/sim/coffre.ts), gardé par l'affichage ; celui des persos Hardcore est à part (12D). */
+  coffre?: Coffre;
   /** Choix « Tutoriel » à la création du perso : faux = tutoriel passé (équipement de départ quand même donné). Absent = règle du compte (7B). */
   tuto?: boolean;
   /** Partie reprise : avancement des quêtes sauvegardé (sinon les quêtes du départ démarrent). */
@@ -138,6 +141,8 @@ export class World {
   enRecolte: { id: number; t: number; hp: number } | null = null;
   /** Postes des ateliers (Métiers UI 3A) : machines officielles qu'on clique pour ouvrir l'Artisanat. */
   postes: Poste[] = [];
+  /** Coffre partagé du compte (0.3, 12A) : le même objet que celui de l'affichage, qui le sauve. */
+  coffre: Coffre;
   /** Poste cliqué (le perso y va) et case libre où il s'arrête devant. */
   versPoste: number | null = null;
   private approcheP: { x: number; y: number } | null = null;
@@ -192,6 +197,7 @@ export class World {
   arene: Arene | null = null;   // au-delà de ce qu'on voit même dézoomé à fond (avant : monstres figés au bord de l'écran)
 
   constructor(readonly opts: WorldOptions) {
+    this.coffre = opts.coffre ?? coffreVide();
     this.rng = new Rng(opts.seed ?? 1);
     this.zone = opts.data.zones[opts.zone];
     if (!this.zone) throw new Error(`Zone inconnue : ${opts.zone}`);
@@ -1811,8 +1817,11 @@ export class World {
   /** Postes des ateliers : les machines officielles (ateliers_postes.py), sinon un poste au milieu de la première carte. */
   private buildPostes() {
     const wg = this.worldGrid, A = this.zone.open?.ateliers;
-    if (!wg || !A) return;
+    if (!wg) return;
+    this.buildCoffres();
+    if (!A) return;
     for (const a of A) {
+      if (!this.player.v03 && a.metiers.every(m => METIERS_FAB.includes(m))) continue;   // 0.3 : ateliers de fabrication
       const l = (a.postes ?? []).filter(([tag]) => wg.mapByTag(tag));
       for (const [tag, cell, gfx, dx, dy] of l) {
         const q = wg.cellToWorld(wg.cellOf(tag, cell));
@@ -1821,6 +1830,38 @@ export class World {
       const tag = a.cartes.find(t => wg.mapByTag(t) && wg.freeByMap.get(t)?.length);
       if (!l.length && tag) { const q = this.openestCell(tag); this.postes.push({ id: this.nextId++, atelier: a.nom, metiers: a.metiers, tag, x: q.x, y: q.y }); }
     }
+  }
+  /** 12A+12B : le coffre partagé, au Havre-Sac et à la Banque d'Astrub (0.3 : partie de test tant qu'elle n'est pas sortie). */
+  private buildCoffres() {
+    const wg = this.worldGrid;
+    if (!wg || !this.player.v03) return;
+    for (const c of this.zone.open?.coffres ?? []) {
+      if (!wg.mapByTag(c.carte)) continue;
+      const q = c.case != null ? wg.cellToWorld(wg.cellOf(c.carte, c.case)) : this.openestCell(c.carte);
+      this.postes.push({ id: this.nextId++, atelier: c.nom, metiers: [], tag: c.carte, x: q.x, y: q.y, coffre: true, ...(c.case != null ? { gfx: 0 } : {}) });
+    }
+  }
+  /** Le joueur se tient devant un coffre (il peut y ranger et y prendre). */
+  get presCoffre(): boolean {
+    const p = this.player;
+    return this.postes.some(po => po.coffre && Math.hypot(po.x - p.x, po.y - p.y) <= FABRICATION.portee + 60);
+  }
+  /** Range un objet du sac dans l'onglet du coffre (12A). */
+  deposer(uid: number, onglet: number): boolean {
+    const p = this.player, i = p.bag.findIndex(b => b.uid === uid), l = this.coffre.onglets[onglet];
+    if (!this.presCoffre || i < 0 || !l || l.length >= COFFRE.places) return false;
+    l.push(p.bag.splice(i, 1)[0]);
+    this.emit({ k: 'coffre' });
+    return true;
+  }
+  /** Reprend un objet du coffre dans le sac (il prend un numéro de ce perso : il peut venir d'un autre). */
+  retirer(onglet: number, index: number): boolean {
+    const p = this.player, l = this.coffre.onglets[onglet], it = l?.[index];
+    if (!this.presCoffre || !it || p.bag.length >= Player.BAG_SIZE) return false;
+    l.splice(index, 1);
+    p.bag.push({ ...it, uid: this.nextId++ });
+    this.emit({ k: 'coffre' });
+    return true;
   }
   /** Case libre la plus proche d'un poste (les machines sont sur des cases bloquantes). */
   approchePoste(id: number) {
@@ -1844,6 +1885,7 @@ export class World {
     if ((Math.hypot(po.x - p.x, po.y - p.y) > FABRICATION.portee && !arrive) || p.state !== 'free') return;
     this.versPoste = null;
     p.stopMove(); p.facing = Math.atan2(po.y - p.y, po.x - p.x);
+    if (po.coffre) { this.emit({ k: 'coffreOuvert' }); return; }
     this.emit({ k: 'atelier', poste: po.id, metier: po.metiers[0] });
   }
   /** Lance la fabrication de n fois la recette i (fenêtre Artisanat) : une barre d'une seconde, puis tout est fait d'un coup. */

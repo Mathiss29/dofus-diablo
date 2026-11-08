@@ -44,7 +44,7 @@ import { LEGENDARY, RARITY_COLORS, RARITY_NAMES, rollItem } from '../sim/items';
 import { POUVOIR_PAR_ID } from '../sim/pouvoirs';
 import { exporterJoueur, restaurerJoueur } from '../sim/sauvegarde';
 import { lireBestiaire, noter, nouvelleSession, sauverBestiaire, statsVides } from './carnet';
-import { dernier, enterrer, lirePersos, sauverPerso, supprimerPerso, type Perso } from './persos';
+import { dernier, enterrer, lireCoffre, lirePersos, sauverCoffre, sauverPerso, supprimerPerso, type Perso, type SorteCoffre } from './persos';
 import { SonView, synthe } from './sonView';
 import { MANIFESTE, Son } from './son';
 import { retouchesPlacement } from './placementVue';
@@ -275,7 +275,7 @@ export class ZoneScene extends Phaser.Scene {
     if (zone.open) {
       const open = zone.open;
       const wg = new WorldGrid(this.cache.json.get(WorldView.key(open.world, 'monde')) as WorldData);
-      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, apparats: APPARATS, familierXp: FAMILIERS.xp, recoltes: RECOLTES, compte: chargerCompte(), aujourdhui: new Date().toLocaleDateString('sv-SE'), tuto: this.test ? false : this.perso?.tuto, test: this.test?.reglages,
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, apparats: APPARATS, familierXp: FAMILIERS.xp, recoltes: RECOLTES, compte: chargerCompte(), coffre: lireCoffre(this.sorteCoffre), aujourdhui: new Date().toLocaleDateString('sv-SE'), tuto: this.test ? false : this.perso?.tuto, test: this.test?.reglages,
         placements: this.test ? retouchesPlacement(open.world) : undefined,   // éditeur F1 › Placement : retouches pas encore envoyées
         // vitrine : les PNJ sont là, mais aucune quête ne démarre
         arrivee: this.arrivee, position: this.transit.position, point: this.transit.point, zaap: this.transit.zaap, retour: this.transit.retour,
@@ -450,6 +450,8 @@ export class ZoneScene extends Phaser.Scene {
     }, () => { /* hors ligne : on garde l'ancien */ });
   }
   private get look() { return ((this.perso?.sexe ?? this.essai?.sexe) === 'f' && LOOKS[`${this.classId}_f`]) || LOOKS[this.classId]; }
+  /** Coffre partagé (0.3, 12D) : celui des Hardcore est à part, la partie de test a le sien. */
+  private get sorteCoffre(): SorteCoffre { return this.test ? 'test' : this.perso?.hardcore ? 'hardcore' : 'normal'; }
   /** Sauvegarde automatique du perso (toutes les 5 s, en quittant la page, en revenant à l'accueil). */
   private sauver = () => {
     if (this.test && this.world) {
@@ -969,6 +971,9 @@ export class ZoneScene extends Phaser.Scene {
           this.windows?.noteForge({ t: `${e.n > 1 ? `${e.n} objets brisés` : 'Objet brisé'} : ${Object.entries(e.runes).map(([id, k]) => `${k} ${ITEMS.resources[id]?.name ?? id}`).join(', ') || 'aucune rune'}`, c: 'br' }); break; }
         case 'codex': { const o = POUVOIR_PAR_ID[e.id]; this.hud.loot(`Codex : ${o ? o.sort : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id} enregistré`, '#f08a2c');
           this.windows?.noteForge({ t: `Pouvoir enregistré dans le Codex : ${o ? o.officiel : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id}`, c: 'ok' }); break; }
+        case 'coffreOuvert': if (this.windows) { this.windows.coffreHardcore = this.sorteCoffre === 'hardcore'; this.windows.show('coffre'); } break;
+        // l'objet a changé de place : coffre et perso sauvés ensemble (pas d'objet perdu ni doublé si la page se ferme)
+        case 'coffre': sauverCoffre(this.sorteCoffre, this.world.coffre); this.sauver(); this.windows?.refresh(); break;
         case 'codexOuvert': this.hud.loot('Le Codex des pouvoirs s\'ouvre : brise un Légendaire chez Malek pour garder son pouvoir', '#f08a2c'); this.windows?.refresh(); break;
         case 'impression': { const o = POUVOIR_PAR_ID[e.id]; this.hud.loot('Impression réussie : l\'objet devient Légendaire', '#f08a2c');
           this.windows?.noteForge({ t: `Impression : ${o ? o.officiel : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id}`, c: 'ok' }); break; }

@@ -216,6 +216,8 @@ export interface OpenDef {
   donjons?: DonjonDef[];
   /** Ateliers officiels (table hints de Dofus 3, maquette Métiers 10A) : cartes (tags) où l'on fabrique pour ces métiers. */
   ateliers?: AtelierDef[];
+  /** Coffre partagé (0.3, 12A+12B) : où on l'ouvre (Havre-Sac, Banque d'Astrub). Sans case : la case la plus dégagée de la carte. */
+  coffres?: { nom: string; carte: string; case?: number }[];
   /** Le Havre-Sac (maquette Hub) : case d'arrivée et case de l'arche officielle (le Zaap du Havre-Sac, 2C), case du Poutch (7A),
    *  thème officiel en jeu (src/data/havresac_themes.json, 5A : les autres thèmes se débloqueront). */
   havreSac?: { arrivee: number; arche: number; poutch?: number; theme?: number };

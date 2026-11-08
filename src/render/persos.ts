@@ -1,4 +1,5 @@
 import type { EtatJoueur } from '../sim/sauvegarde';
+import { relireCoffre, type Coffre } from '../sim/coffre';
 import type { Apparence } from './squelette';
 import type { Session, StatsPerso } from './carnet';
 
@@ -121,4 +122,14 @@ export function prendreSecours(force = false) {
 export function restaurerSecours(i: number): string | null {
   const s = lireSecours()[i];
   return s ? importer(JSON.stringify(s.fichier)) : 'Copie introuvable.';
+}
+
+/** Coffre partagé (0.3, 12A+12D) : un pour les persos normaux, un pour les Hardcore, un pour la partie de test. */
+export type SorteCoffre = 'normal' | 'hardcore' | 'test';
+const CLE_COFFRE: Record<SorteCoffre, string> = { normal: 'diablofus.coffre', hardcore: 'diablofus.coffre.hardcore', test: 'diablofus.coffre.test' };
+export function lireCoffre(sorte: SorteCoffre): Coffre {
+  try { return relireCoffre(JSON.parse(localStorage.getItem(CLE_COFFRE[sorte]) ?? 'null')); } catch { return relireCoffre(null); }
+}
+export function sauverCoffre(sorte: SorteCoffre, c: Coffre) {
+  try { localStorage.setItem(CLE_COFFRE[sorte], JSON.stringify(c)); } catch { /* pas de stockage : le coffre vit le temps de la partie */ }
 }

@@ -96,6 +96,8 @@ export type SimEvent =
   /** Codex (0.3) : un pouvoir enregistré en brisant un Légendaire ; une impression sur un objet Rare ou Épique. */
   | { k: 'codex'; id: string }
   | { k: 'codexOuvert' }
+  /** Coffre partagé (0.3) : ouvert devant le coffre ; changé (l'affichage le sauve avec le perso). */
+  | { k: 'coffreOuvert' } | { k: 'coffre' }
   | { k: 'impression'; uid: number; id: string }
   /** Collection d'apparences (1C) : premier exemplaire d'une coiffe, cape ou bouclier brisé ou recyclé. */
   | { k: 'apparence'; id: string }
