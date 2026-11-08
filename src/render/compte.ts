@@ -4,7 +4,7 @@
 // (au plus toutes les 30 s par emplacement, et tout de suite quand on quitte la page ou revient à l'accueil).
 import { EMPLACEMENTS, lireCoffreBrut, lirePersos, lirePersosLocaux, remplacerCoffreEnLigne, remplacerPersosEnLigne, sourceEnLigne, type Perso } from './persos';
 
-const API = (import.meta.env.VITE_API_URL as string | undefined) ?? 'https://api.diablofus.com';
+export const API = (import.meta.env.VITE_API_URL as string | undefined) ?? 'https://api.diablofus.com';
 const CLE_JETON = 'diablofus.jeton', CLE_MODE = 'diablofus.mode';
 const ECART = 30_000;
 
