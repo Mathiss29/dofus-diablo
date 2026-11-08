@@ -10,15 +10,19 @@
 # Une seule carte de 4 x 4 places (n = [4, 4]) : le sol de l'île centrale en une image, les îles des nations en objets entiers.
 import sys, os, json, math, random
 from PIL import Image, ImageDraw, ImageFilter
+if sys.argv[1:2] == ['--liste']:   # liste des cartes sources des îles en grand, pour particules.py (voir LISEZMOI)
+    LISTE = True; sys.argv[1:2] = ['', '']
+else: LISTE = False
 cdir, mondes = sys.argv[1:3]
 apercu = sys.argv[3] if len(sys.argv) > 3 else None
-# particules officielles des cartes de Brâkmar (sortie de particules.py, voir LISEZMOI) : dossier, ou rien = pas de particules
-PARTS = os.environ.get('PARTICULES_BRAKMAR')
+# particules officielles des cartes des îles en grand (sortie de particules.py sur la liste de `bastion.py --liste`, voir LISEZMOI) :
+# dossier, ou rien = pas de particules
+PARTS = os.environ.get('PARTICULES') or os.environ.get('PARTICULES_BRAKMAR')
 sys.argv = ['arenes.py', cdir, '', mondes]
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import arenes as A
 from arenes import W, H, OX, OY, COLS, ROWS, MW, MH, gfx, styled, piece, ell
-NS = 6   # 6 x 6 places : l'île de Brâkmar, en grand, tient à droite
+NS = 8   # 8 x 8 places : les quatre îles des nations, en grand, tiennent autour de l'île centrale
 CX, CY = OX + NS * MW / 2, OY + NS * MH / 2
 BOX = (-1400, -1000, 1400, 1000)            # sol : l'île centrale et son dessous
 A.BOX = BOX
@@ -27,6 +31,7 @@ ZONES = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../src/data
 # --- Pièces officielles (cadres pris sur les planches des cartes, repère carte) ---------------------------------------
 def R(x0, y0, x1, y1, s=0.6, b=(-1300, -1100)):   # cadre en pixels de la planche (échelle 0,6) -> repère de la carte
     return (x0 / s + b[0], y0 / s + b[1], x1 / s + b[0], y1 / s + b[1])
+def R5(x0, y0, x1, y1): return R(x0, y0, x1, y1, 0.5, (-1700, -1600))   # planches à l'échelle 0,5 (îles de Bonta, Pandala, Frigost)
 AS_ZAAP, AS_BANQUE, BONTA, BRAK, PANDA, FRIG = 191105026, 191104002, 212600837, 212861954, 206307844, 54170409
 PIECES = {
     'zaap': (AS_ZAAP, R(800, 490, 955, 625)),
@@ -66,9 +71,47 @@ PIECES = {
     'bk_machine': (212862467, R(880, 180, 1360, 740)),
     'bk_banniere': (212862467, R(670, 160, 720, 330)),
     'bk_chaine': (212862467, R(180, 20, 260, 690)),
+    # Bonta en grand (Mathis 2026-11-08 05:42 : « j'aime bien », sans la statue, remplacée par la fontaine du marché)
+    'bo_palais': (212599810, R5(840, 90, 1580, 930)),
+    'bo_maisons': (212599810, R5(300, 770, 1240, 1150)),
+    'bo_maison_bleue': (212599810, R5(250, 270, 700, 800)),
+    'bo_paire': (212599808, R5(170, 270, 640, 760)),
+    'bo_fontaine': (212599296, R(600, 610, 940, 830)),
+    'bo_banniere': (212730625, R(1010, 710, 1110, 1000)),
+    'bo_charrette': (212730625, R(1095, 870, 1260, 1060)),
+    'bo_cypres': (212731137, R(580, 850, 640, 1035)),
+    'bo_etal': (212599296, R(390, 750, 600, 990)),
+    # Pandala en grand (village de Pandala ; escalier du temple posé sur l'herbe, retour de Mathis 05:45)
+    'pa_temple': (206308866, R5(760, 360, 1460, 940)),
+    'pa_longue': (206308866, R5(200, 300, 720, 760)),
+    'pa_gong': (206308866, R5(1060, 920, 1360, 1220)),
+    'pa_cartes': (206308866, R5(640, 940, 880, 1160)),
+    'pa_blanche': (206308867, R5(200, 800, 700, 1200)),
+    'pa_porte_bleue': (206307841, R5(360, 810, 660, 1150)),
+    'pa_tour_blanche': (206308354, R5(200, 380, 600, 880)),
+    'pa_marche': (206307843, R5(600, 640, 1040, 840)),
+    'pa_rocher': (206307843, R5(360, 420, 600, 680)),
+    'pa_des': (206307843, R5(840, 880, 1160, 1200)),
+    # Frigost en grand (pièces de la Bourgade : banque en coffre-fort, maison-tonneau, boutique)
+    'fr_machine': (54172460, R5(780, 560, 1120, 900)),
+    'fr_maison1': (54172460, R5(960, 900, 1280, 1240)),
+    'fr_maison2': (54172460, R5(420, 820, 720, 1200)),
+    'fr_coffre': (54172457, R5(800, 580, 1060, 880)),
+    'fr_tonneau': (54172457, R5(400, 640, 680, 940)),
+    'fr_boutique': (54171944, R5(700, 550, 1000, 950)),
+    'fr_maison_bas': (54171944, R5(720, 910, 960, 1270)),
 }
 # coordonnées (carte) des cartes de Brâkmar, pour retrouver leurs particules
 BK_CARTES = {212861954: (-26, 36), 212862466: (-25, 36), 212861955: (-26, 37), 212862467: (-25, 37)}
+# images retirées d'une pièce : les toits des maisons voisines pris avec le temple de Pandala (retour de Mathis 05:50)
+SANS = {'pa_temple': {66546, 66547}}
+# coordonnées de toutes les cartes sources des îles en grand (particules : un seul passage de particules.py sur cette liste)
+CARTES = {**BK_CARTES, 212599810: (-32, -57), 212599808: (-32, -59), 212599296: (-33, -59), 212730625: (-34, -59), 212731137: (-35, -59),
+          206308866: (22, -29), 206308867: (22, -28), 206307841: (20, -30), 206308354: (21, -29), 206307843: (20, -28),
+          54172460: (-77, -44), 54172457: (-77, -41), 54171944: (-76, -40)}
+X0P, Y0P = min(x for x, _ in CARTES.values()), min(y for _, y in CARTES.values())
+if LISTE:
+    print(json.dumps({f'{x},{y}': [m] for m, (x, y) in CARTES.items()})); raise SystemExit
 
 # Lumières officielles (halos, rayons) : Dofus les ajoute à l'image (mélange additif) ; posées telles quelles, elles font de grandes
 # taches claires. Elles sont retirées des cartes sources avant d'en tirer les pièces (comme dans world_export.py).
@@ -116,10 +159,10 @@ BATIMENTS = [
 OBJETS = [('zaap', (0, 10), False, 120), ('as_etal_orange', (-330, 470), False, 100), ('as_charrette', (330, 470), True, 100),
           ('as_petit_arbre', (-300, -40), False, 50), ('as_petit_arbre', (300, -40), True, 50), ('as_arbre', (480, 180), False, 50)]
 # Îles des nations (4C) : au loin, fermées (pont coupé) tant que la nation n'est pas libérée
-ILES = [('Bonta', (0, -1520), [('bonta_maison', (-60, 40), False), ('bonta_etal', (190, 110), False)], PAVES),
-        ('Brâkmar', (2420, -150), 'grand', None),     # île en grand : ile_brakmar()
-        ('Pandala', (-2000, -150), [('panda_orange', (0, 60), False)], HERBE),
-        ('Frigost', (0, 1250), [('frig_maison', (40, 420), False)], DIRT)]
+ILES = [('Bonta', (0, -2050), 'grand', None),       # îles en grand : ile_brakmar(), ile_grande()
+        ('Brâkmar', (2520, -150), 'grand', None),
+        ('Pandala', (-2520, -150), 'grand', None),
+        ('Frigost', (0, 1650), 'grand', None)]
 # PNJ sans bâtiment : point du Bastion (Gawdien du Dofus, quêtes des Dofus 0.3 : sur la place, à gauche de l'arrivée)
 PNJ_PLACE = {'gawdien': (-215, 138)}
 # zaap : le milieu du dessin de l'arche (on clique dessus), pas son pied
@@ -136,7 +179,7 @@ def dessous(cv, f, ox, oy, rx, ry, cx=0, cy=0, haut=220):
 
 def composer():
     random.seed(12)
-    P = {n: piece(m, r) for n, (m, r) in PIECES.items()}
+    P = {n: [q for q in piece(m, r) if q['g'] not in SANS.get(n, ())] for n, (m, r) in PIECES.items()}
     a = A.Arene(12)
     a.sol(ILE, HERBE + DIRT, 0, edge=0.06)
     a.sol(PLACE, DIRT, 1, edge=0.1)
@@ -183,24 +226,95 @@ def ile(nom, cx, cy, pieces, sol_tiles, P):
     cv.thumbnail((800, 800))   # au loin : réduite (elle reste nette à l'écran, le jeu la remet à sa taille)
     return cv, box
 
-BK_ECHELLE = 0.75   # l'île de Brâkmar est rendue en grand puis posée aux 3/4 (elle tient dans le Bastion)
+ECHELLE = 0.75   # les îles en grand sont rendues à l'échelle 1 puis posées aux 3/4 (elles tiennent dans le Bastion)
 BK_POSE = [('bk_temple', (0, -330), False), ('bk_hangar', (-820, -60), False), ('bk_maison_toit', (780, -40), True),
            ('bk_machine', (950, 360), True), ('bk_maison_noire', (-760, 420), False), ('bk_maison_haute', (-1080, 200), False),
            ('bk_fonderie', (-260, 560), False), ('bk_ascenseur', (330, 600), False), ('bk_chaine', (-420, 120), False),
            ('bk_chaine', (430, 140), False), ('bk_banniere', (-150, 230), False), ('bk_banniere', (150, 250), True),
            ('bk_roche', (-1180, -180), False), ('bk_roche', (1180, -120), True)]
+# Bonta, Pandala, Frigost en grand (exemples validés par Mathis le 2026-11-08) : sol (tuiles, pas), semis au sol (tuiles, nombre,
+# anneau de l'ellipse lo..hi), objets seuls (gfx, x, y, miroir), pièces posées (pièce, pied, miroir), couleurs du dessous (haut, bas)
+GRANDES = {
+    'Bonta': dict(graine=7, sol=([260084, 260085, 260086, 260087], (172, 86)), semis=[([34521, 34522, 34523], 70, 0.82, 1.0)], objets=[],
+                  dessous=((150, 128, 96), (60, 50, 40)),
+                  pose=[('bo_palais', (0, -120), False), ('bo_maison_bleue', (-1020, -20), False), ('bo_paire', (-720, 420), False),
+                        ('bo_maisons', (720, 470), True), ('bo_fontaine', (0, 600), False), ('bo_banniere', (-380, 60), False),
+                        ('bo_banniere', (380, 60), True), ('bo_charrette', (-1100, 560), False), ('bo_etal', (460, 720), False),
+                        ('bo_cypres', (-560, -140), False), ('bo_cypres', (560, -140), True), ('bo_cypres', (-1250, 250), False),
+                        ('bo_cypres', (1250, 250), True), ('bo_cypres', (-420, 760), False)]),
+    'Pandala': dict(graine=7, sol=([700836], (86, 43)), objets=[], dessous=((120, 110, 70), (50, 46, 30)),
+                    semis=[([60985, 60986, 60987], 1100, 0.0, 0.5), ([66663, 66664, 66665, 66666], 120, 0.3, 0.95), ([66100, 66097], 16, 0.8, 1.0)],
+                    pose=[('pa_temple', (0, -230), False), ('pa_longue', (-930, 90), False), ('pa_tour_blanche', (860, -140), True),
+                          ('pa_gong', (-430, 470), False), ('pa_cartes', (980, 420), True), ('pa_blanche', (-980, 560), False),
+                          ('pa_des', (420, 640), False), ('pa_marche', (60, 220), False), ('pa_rocher', (-1200, -330), False),
+                          ('pa_rocher', (1240, -240), True), ('pa_porte_bleue', (1180, 120), True)]),
+    'Frigost': dict(graine=7, sol=([21227], (172, 86)), meteo=('Neige', 7), dessous=((150, 160, 175), (55, 60, 75)),
+                    semis=[([801182, 801183, 801184, 801171], 70, 0.6, 1.0), ([73485, 73486, 403509, 403510], 40, 0.5, 0.95)],
+                    pose=[('fr_coffre', (0, -260), False), ('fr_machine', (-620, -150), False), ('fr_tonneau', (720, -200), True),
+                          ('fr_maison2', (-1000, 430), False), ('fr_boutique', (-380, 470), False), ('fr_maison1', (1020, 260), True),
+                          ('fr_maison_bas', (520, 600), True)],
+                    objets=[(801186, -1000, -250, False), (801175, -880, -380, True), (801174, -1150, -60, False), (801186, 1000, -330, True),
+                            (801175, 600, -480, False), (21614, -380, -470, True), (801186, -260, -120, False), (801175, 280, -110, True),
+                            (801174, -1250, 250, False), (801186, 1250, -60, True), (21614, 300, 300, False), (21826, -100, 250, False),
+                            (20873, 180, 520, False), (403382, -560, 150, False), (801175, 900, 600, False), (21826, 1100, 520, True)]),
+}
 def _ancre(mid, rect):
     """Ancre (bas-milieu) d'une pièce dans le repère de sa carte : comme piece() d'arenes.py."""
     x0, y0, x1, y1 = rect; bx = []
     for b, e in A._boites(mid):
         if x0 <= (b[0] + b[2]) / 2 <= x1 and y0 <= (b[1] + b[3]) / 2 <= y1: bx.append(b)
     return (min(b[0] for b in bx) + max(b[2] for b in bx)) / 2, max(b[3] for b in bx)
+def _particules():
+    return json.load(open(f'{PARTS}/particules.json')) if PARTS else {}
+def _poser(P, pose, els, parts, lums, data):
+    """Pose les pièces d'une île en grand, avec leurs particules officielles (étincelles, fumées, neige…) et leurs lumières
+    (lueurs des enseignes, des fenêtres), qui suivent le bâtiment ; tout dans le repère de l'île (échelle 1)."""
+    n = 0
+    for pn, (px, py), fl in pose:
+        for q in P[pn]:
+            n += 1; els.append(dict(g=q['g'], x=px + (-q['x'] if fl else q['x']), y=py + q['y'], sx=-q['sx'] if fl else q['sx'], sy=q['sy'], c=q['c'], k=(1, py + q['fy'], q['o'], n)))
+        mid, rect = PIECES[pn]; ax, ay = _ancre(mid, rect); x0, y0, x1, y1 = rect
+        def ici(x, y): return (px + (ax - x if fl else x - ax), py + y - ay)
+        cx, cy = CARTES[mid]
+        for sy_ in data.get(f'{cx}_{cy}', []):
+            lx, ly = sy_['x'] - (cx - X0P) * MW, sy_['y'] - (cy - Y0P) * MH
+            if x0 <= lx <= x1 and y0 <= ly <= y1:
+                X, Y = ici(lx, ly); parts.append({**sy_, 'x': X, 'y': Y})
+        for e in LUMS.get(mid, []):
+            t = e['transform']; lx, ly = t['m31'], -t['m32']
+            if x0 <= lx <= x1 and y0 <= ly <= y1:
+                X, Y = ici(lx, ly); lums.append(dict(g=e['gfxId'], x=X, y=Y, sx=-t['m11'] if fl else t['m11'], sy=t['m22'], c=e['color']['value']))
+def _rendre_ile(els, rx, ry, c0, c1):
+    """Image de l'île : dessous (dégradé c0 -> c1 en descendant) puis sol et pièces ; rend (image réduite, cadre)."""
+    xs, ys = [], []
+    for e in els:
+        im = gfx(e['g'])
+        if im is None: continue
+        w, h = im.width * abs(e['sx']), im.height * abs(e['sy']); xs += [e['x'] - w / 2, e['x'] + w / 2]; ys += [e['y'] - h / 2, e['y'] + h / 2]
+    box = (min(xs) - 40, min(ys) - 40, max(xs) + 40, max(ys) + 320)
+    cv = Image.new('RGBA', (int(box[2] - box[0]), int(box[3] - box[1])))
+    d = Image.new('RGBA', cv.size); dd = ImageDraw.Draw(d); ox, oy = box[0], box[1] - 30; haut = 340
+    for i in range(haut, 0, -4):
+        k = i / haut; w = rx * (1 - 0.55 * k ** 1.6)
+        col = tuple(int(a + (b - a) * k) for a, b in zip(c0, c1)) + (255,)
+        dd.ellipse((-w - ox, -ry * (1 - 0.3 * k) + i - oy, w - ox, ry * (1 - 0.3 * k) + i - oy), fill=col)
+    cv.alpha_composite(d.filter(ImageFilter.GaussianBlur(2)))
+    cv.alpha_composite(A.rendre(els, box, None))
+    cv.thumbnail((1400, 1400))
+    return cv, box
+def _sol(els, f, rx, ry, tiles, pas):
+    sx_, sy_ = pas
+    for r in range(-int(2 * ry / sy_) - 2, int(2 * ry / sy_) + 3):
+        for c in range(-int(rx / sx_) - 2, int(rx / sx_) + 3):
+            x = c * sx_ + (r % 2) * sx_ / 2; y = r * sy_ / 2
+            if f(x, y) <= 0.93 or (f(x, y) <= 1 and random.random() < 0.5):
+                els.append(dict(g=random.choice(tiles), x=x, y=y, sx=random.choice([1, -1]), sy=1, c=0xFF808080, k=(0, 0, y)))
 def ile_brakmar(P):
     """L'île de Brâkmar en grand : plaques de métal, fissures de lave, Grand Temple, hangar, machine, fonderie…
     Rend (image, cadre, particules, lumières) ; particules et lumières dans le repère de l'île (échelle 1)."""
     random.seed(7)
     SOL = [67895, 67890, 67893]; GRAND = [303959, 304159, 304151]; LAVE = 68712; FEU = [68715, 68714]
-    rx, ry = 1350, 780; f = ell(rx, ry); els = []; laves = []; feux = []
+    rx, ry = 1350, 780; f = ell(rx, ry); els = []; laves = []
     for r in range(-int(ry / 21.5) - 1, int(ry / 21.5) + 2):
         for c in range(-int(rx / 86) - 2, int(rx / 86) + 3):
             x = c * 86 + (r % 2) * 43; y = r * 21.5
@@ -212,26 +326,10 @@ def ile_brakmar(P):
     for _ in range(22):
         x, y = random.uniform(-rx, rx), random.uniform(-ry, ry)
         if 0.3 < f(x, y) < 0.85: els.append(dict(g=LAVE, x=x, y=y, sx=1, sy=1, c=0xFF808080, k=(0, 2, y))); laves.append((x, y))
-    n = 0; parts = []; lums = []
-    data = json.load(open(f'{PARTS}/particules.json')) if PARTS else {}
-    for pn, (px, py), fl in BK_POSE:
-        for q in P[pn]:
-            n += 1; els.append(dict(g=q['g'], x=px + (-q['x'] if fl else q['x']), y=py + q['y'], sx=-q['sx'] if fl else q['sx'], sy=q['sy'], c=q['c'], k=(1, py + q['fy'], q['o'], n)))
-        mid, rect = PIECES[pn]; ax, ay = _ancre(mid, rect); x0, y0, x1, y1 = rect
-        def ici(x, y): return (px + (ax - x if fl else x - ax), py + y - ay)
-        # particules officielles de la pièce (étincelles, bulles, fumées) : elles suivent le bâtiment
-        cx, cy = BK_CARTES[mid]
-        for sy_ in data.get(f'{cx}_{cy}', []):
-            lx, ly = sy_['x'] - (cx + 26) * MW, sy_['y'] - (cy - 36) * MH
-            if x0 <= lx <= x1 and y0 <= ly <= y1:
-                X, Y = ici(lx, ly); parts.append({**sy_, 'x': X, 'y': Y})
-        # lumières officielles de la pièce (lueurs des enseignes, de la lave)
-        for e in LUMS.get(mid, []):
-            t = e['transform']; lx, ly = t['m31'], -t['m32']
-            if x0 <= lx <= x1 and y0 <= ly <= y1:
-                X, Y = ici(lx, ly); lums.append(dict(g=e['gfxId'], x=X, y=Y, sx=-t['m11'] if fl else t['m11'], sy=t['m22'], c=e['color']['value']))
+    parts = []; lums = []; data = _particules()
+    _poser(P, BK_POSE, els, parts, lums, {k: v for k, v in data.items() if tuple(map(int, k.split('_'))) in BK_CARTES.values()})
     # bulles de lave sur nos fissures, braises au bord (systèmes officiels de Brâkmar, copiés)
-    tous = [x for v in data.values() for x in v]
+    tous = [x for k, v in data.items() if tuple(map(int, k.split('_'))) in BK_CARTES.values() for x in v]
     bulle = next((x for x in tous if x['n'] == 'Bulles'), None); etin = next((x for x in tous if x['n'] == 'ETINCELLES_BasDroite'), None)
     for x, y in laves:
         if bulle: parts.append({**bulle, 'x': round(x, 1), 'y': round(y, 1)})
@@ -240,20 +338,27 @@ def ile_brakmar(P):
         if 0.85 < f(x, y) < 1:
             els.append(dict(g=random.choice(FEU), x=x, y=y, sx=1, sy=1, c=0xFF808080, k=(1, y, 0, 9999)))
             if etin: parts.append({**etin, 'x': round(x, 1), 'y': round(y - 20, 1)})
-    xs, ys = [], []
-    for e in els:
-        im = gfx(e['g'])
-        if im is None: continue
-        w, h = im.width * abs(e['sx']), im.height * abs(e['sy']); xs += [e['x'] - w / 2, e['x'] + w / 2]; ys += [e['y'] - h / 2, e['y'] + h / 2]
-    box = (min(xs) - 40, min(ys) - 40, max(xs) + 40, max(ys) + 320)
-    cv = Image.new('RGBA', (int(box[2] - box[0]), int(box[3] - box[1])))
-    d = Image.new('RGBA', cv.size); dd = ImageDraw.Draw(d); ox, oy = box[0], box[1] - 30; haut = 340
-    for i in range(haut, 0, -4):   # dessous : basalte sombre
-        k = i / haut; w = rx * (1 - 0.55 * k ** 1.6)
-        dd.ellipse((-w - ox, -ry * (1 - 0.3 * k) + i - oy, w - ox, ry * (1 - 0.3 * k) + i - oy), fill=(int(40 - 25 * k), int(32 - 22 * k), int(36 - 22 * k), 255))
-    cv.alpha_composite(d.filter(ImageFilter.GaussianBlur(2)))
-    cv.alpha_composite(A.rendre(els, box, None))
-    cv.thumbnail((1400, 1400))
+    cv, box = _rendre_ile(els, rx, ry, (40, 32, 36), (15, 10, 14))
+    return cv, box, parts, lums
+def ile_grande(nom, P):
+    """Bonta, Pandala ou Frigost en grand (GRANDES) : sol, semis, pièces avec particules et lumières, objets seuls."""
+    g = GRANDES[nom]; random.seed(g['graine'])
+    rx, ry = 1350, 780; f = ell(rx, ry); els = []
+    _sol(els, f, rx, ry, *g['sol'])
+    for tiles, n, lo, hi in g['semis']:
+        for _ in range(n):
+            x, y = random.uniform(-rx, rx), random.uniform(-ry, ry)
+            if lo <= f(x, y) < hi: els.append(dict(g=random.choice(tiles), x=x, y=y, sx=random.choice([1, -1]), sy=1, c=0xFF808080, k=(0, 1, y, 0)))
+    parts = []; lums = []; data = _particules()
+    _poser(P, g['pose'], els, parts, lums, data)
+    if g.get('meteo'):   # neige officielle de Frigost sur toute l'île (systèmes copiés)
+        nm, n = g['meteo']; sy_ = next((x for v in data.values() for x in v if x['n'] == nm), None)
+        for i in range(n if sy_ else 0):
+            parts.append({**sy_, 'x': round(-rx * 0.8 + i * rx * 1.6 / max(1, n - 1), 1), 'y': round(random.uniform(-ry, ry) * 0.5, 1)})
+    for i, (gi, x, y, fl) in enumerate(g['objets']):
+        im = gfx(gi)
+        if im is not None: els.append(dict(g=gi, x=x, y=y, sx=-1 if fl else 1, sy=1, c=0xFF808080, k=(1, y + im.height / 2, 0, 5000 + i)))
+    cv, box = _rendre_ile(els, rx, ry, *g['dessous'])
     return cv, box, parts, lums
 
 def exporter():
@@ -295,7 +400,7 @@ def exporter():
     for nom, (ix, iy), pcs, tiles in ILES:
         k = 1
         if pcs == 'grand':
-            im, box, bp, bl = ile_brakmar(P); k = BK_ECHELLE
+            im, box, bp, bl = (ile_brakmar(P) if nom == 'Brâkmar' else ile_grande(nom, P)); k = ECHELLE
         else: im, box = ile(nom, ix, iy, pcs, tiles, P)
         z = (box[2] - box[0]) * k / im.width
         key = ('ile', nom); variants[key] = ('ile_' + nom.lower().replace('â', 'a'), im)
@@ -345,7 +450,7 @@ def exporter():
     pts['pnj'] = {k: case(*v) for k, v in pnj.items()}
     if apercu:
         os.makedirs(apercu, exist_ok=True)
-        big = (-2600, -2300, 2600, 1800); cv = Image.new('RGBA', (big[2] - big[0], big[3] - big[1]), (14, 40, 52, 255))
+        big = (-3900, -3600, 3900, 2900); cv = Image.new('RGBA', (big[2] - big[0], big[3] - big[1]), (14, 40, 52, 255))
         cv.alpha_composite(sol, (BOX[0] - big[0], BOX[1] - big[1]))
         allp = sorted(places, key=lambda p: (p['c'] // cols, p['c'] % cols, p['o']))
         inv = {v[0]: v[1] for v in variants.values()}
