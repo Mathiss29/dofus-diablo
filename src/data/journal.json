@@ -735,6 +735,16 @@
             "etiquettes": [
               "Partie de test"
             ]
+          },
+          {
+            "titre": "Les ateliers de fabrication",
+            "phrase": "Bijoutiers, cordonniers, tailleurs et façonneurs ont leur atelier dans la Cité d'Astrub.",
+            "details": "Forgerons et sculpteurs travaillent chez les mineurs et les bûcherons, sur les mêmes machines.",
+            "icone": "metier",
+            "etiquettes": [
+              "Partie de test",
+              "Astrub"
+            ]
           }
         ],
         "Combat": [

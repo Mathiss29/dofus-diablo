@@ -8,6 +8,7 @@
 # Atelier sans machine dessinée (Atelier des alchimistes d'Astrub, ateliers en plein air d'Incarnam) : pas de poste, le jeu pose
 # l'icône de l'atelier sur la case la plus dégagée de sa première carte.
 #
+# Forgerons et sculpteurs partagent la salle des mineurs et celle des bûcherons (mêmes machines : le jeu réunit les postes d'une case).
 # Cartes : tools/extraction/map_dump.py <mapdata_assets_world_N.bundle> <dossier> <ids> (N = mapId >> 18 ; ids dans monde.json).
 import json, sys, os
 monde, cartes = sys.argv[1:3]
@@ -19,6 +20,10 @@ MACHINES = {
     49512, 49513, 49515,           # pêcheurs : plans de travail
     49400, 49401, 49502, 49521,    # chasseurs : plans de travail
     49504,                         # bricoleurs : établi
+    49498, 49500, 49501,           # bijoutiers (0.3)
+    402707,                        # cordonniers (0.3)
+    49499,                         # tailleurs (0.3)
+    49503,                         # façonneurs (0.3)
 }
 R = os.path.join(os.path.dirname(__file__), '..', '..')
 ZONES = os.path.join(R, 'src', 'data', 'zones.json')

@@ -455,6 +455,7 @@ export class World {
       for (const m of wg.world.maps) if (m.inside && pref.has(m.tag.replace(/\d+$/, '')) && /\d$/.test(m.tag)) ancienne.set(m.tag, dj);
     }
     for (const d of this.zone.open!.portes ?? []) {
+      if (d.v03 && !this.player.v03) continue;
       const dj = ancienne.get(d.b[0]);
       if (ancienne.has(d.a[0])) continue;
       if (dj && !d.zone && wg.mapByTag(d.a[0])) {
@@ -1847,6 +1848,9 @@ export class World {
       const l = (a.postes ?? []).filter(([tag]) => wg.mapByTag(tag));
       for (const [tag, cell, gfx, dx, dy] of l) {
         const q = wg.cellToWorld(wg.cellOf(tag, cell));
+        // une machine partagée par deux ateliers (mineurs et forgerons, bûcherons et sculpteurs) : un seul poste, tous les métiers
+        const deja = this.postes.find(po => po.tag === tag && po.x === q.x && po.y === q.y && !po.coffre);
+        if (deja) { deja.metiers = [...new Set([...deja.metiers, ...a.metiers])]; continue; }
         this.postes.push({ id: this.nextId++, atelier: a.nom, metiers: a.metiers, tag, x: q.x, y: q.y, gfx, dessin: dx || dy ? { x: dx, y: dy } : undefined });
       }
       const tag = a.cartes.find(t => wg.mapByTag(t) && wg.freeByMap.get(t)?.length);
