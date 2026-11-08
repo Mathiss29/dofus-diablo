@@ -4,6 +4,7 @@ import { Accueil } from './render/accueil';
 import './render/phaserRapide';
 import { preparerInstallation } from './render/installation';
 import { Compte } from './render/compte';
+import { brancherDensite } from './render/pixel';
 
 // Compte Discord (maquette « Vrai multi : ») : lit le jeton renvoyé par le serveur (#connexion=…) avant de regarder l'adresse
 Compte.demarrer();
@@ -22,6 +23,8 @@ const game = new Phaser.Game({
   loader: { crossOrigin: 'anonymous' },
   scale: { mode: Phaser.Scale.RESIZE, width: '100%', height: '100%' },
 });
+// Écran aux vrais pixels (maquette « Décors : » 1A) : canevas à la densité de l'écran, avant que Phaser le dimensionne
+brancherDensite(game);
 
 // Mode dév (#cra, #astrub, #jeu) : directement en jeu, sans perso ni sauvegarde. #test : partie de test (perso à part, outils sur F1). Sinon : écran d'accueil (17A),
 // avec la partie en vitrine derrière ; « Jouer » relance la scène avec le perso choisi.
