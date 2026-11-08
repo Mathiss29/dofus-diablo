@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { auPixel } from './pixel';
 import { ISO } from '../sim/iso';
 import { clamp } from '../sim/math';
 import type { Entity } from '../sim/entity';
@@ -114,7 +115,9 @@ export class EntityView {
     if ((e as { state?: string }).state === 'return') alpha = 0.5;   // maquette « Aggro » 7A : il abandonne et rentre
     if (e.anim === 'die') alpha = e.animT < 0.7 ? 1 : 1 - (e.animT - 0.7) / 0.3;
     this.sprite.setScale((flip ? -L.scale : L.scale) * this.k, sy).setAlpha(alpha);
-    this.sprite.setPosition(p.x, p.y - (L.ignoreZ ? 0 : e.z)).setDepth(p.y);
+    // posé pile sur un pixel de l'écran : il ne « bave » plus quand la caméra le suit (voir pixel.ts)
+    const cam = this.sprite.scene.cameras.main, pp = auPixel(cam, p.x, p.y - (L.ignoreZ ? 0 : e.z));
+    this.sprite.setPosition(pp.x, pp.y).setDepth(p.y);
     if (e.flash > 0) this.sprite.setTintFill(0xffffff);
     else if (L.tint || EntityView.ambiance !== 0xffffff) this.sprite.setTint(mulTint(L.tint ?? 0xffffff, EntityView.ambiance));
     else this.sprite.clearTint();
