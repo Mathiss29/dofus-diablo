@@ -80,7 +80,7 @@ export class CarteMonde {
     const wg = this.world.worldGrid, open = this.world.zone.open;
     if (!wg || !open || !this.dispo) return;
     const root = document.createElement('div'); root.className = 'dw cm'; this.root = root;
-    root.innerHTML = `<div class="win carte"><div class="ttl"><b>Carte du monde · ${this.world.zone.name}</b><span class="x">×</span></div>
+    root.innerHTML = `<div class="win carte"><div class="ttl"><b>Carte du monde · ${this.world.zone.name}</b><span class="x" title="Fermer (Échap)"></span></div>
       <div class="vue"><div class="plan"><img src="${this.image}" alt=""></div>
       <div class="leg"><span><i style="background:#ff5a4a;border-radius:50%"></i>Toi</span><span><i style="background:#c58cff;border-radius:50%"></i>Portail</span></div>
       <div class="aide">Glisser pour se déplacer · molette pour zoomer · M ou Échap pour fermer</div></div></div>`;
