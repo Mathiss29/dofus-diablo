@@ -1,5 +1,7 @@
 import { v } from './assetUrl';
 import Phaser from 'phaser';
+import { ISO } from '../sim/iso';
+import LISERES from '../data/liseres_portes.json';
 import { GridMap, MAP_COLS, MAP_ROWS, type DecorPlace, type WorldGrid, type WorldMapEntry } from '../sim/gridmap';
 import type { Particules } from './particles';
 import type { Transparence } from './transparence';
@@ -7,6 +9,8 @@ import type { Transparence } from './transparence';
 /** Profondeur du sol. Le reste (perso, monstres, décor) est trié par sa hauteur à l'écran, qui descend sous -10 000 au nord
  *  d'Astrub (Tainéla, Cour du Bouftou Royal) : un sol à -10 000 passait alors au-dessus du perso et des PNJ. */
 export const SOL = -1e8;
+/** Liseré d'une porte peinte dans le bâtiment (src/data/liseres_portes.json). */
+type Lisere = { forme: 'arche' | 'panneau'; g: number; d: number; bg: number; bd: number; h: number };
 
 /** Rayon (en cartes) chargé autour du joueur, et rayon au-delà duquel une carte est déchargée.
  *  Entre les deux, une carte déjà chargée reste : pas de va-et-vient quand on longe un bord. */
@@ -88,7 +92,28 @@ export class WorldView {
     if (this.scene.textures.exists(this.k('ciel'))) this.sky = this.scene.add.image(0, 0, this.k('ciel')).setScrollFactor(0).setDepth(SOL - 1e7).setTint(this.tint);
     for (const m of this.wg.world.maps) if (this.texturesReady(m)) { this.slots.get(m.tag)!.state = 'loading'; this.build(m); }
     this.pump(Infinity);   // au lancement, tout de suite (l'écran de chargement couvre)
+    // paillasson à chaque sortie d'intérieur (Dofus 3 n'en dessine pas ; Sanstour en pose un, Mathis 2026-11-08) :
+    // à plat sur la case de sortie, visible seulement dans sa salle, et il s'entoure au survol comme une porte
+    if (this.scene.textures.exists('paillasson')) for (const e of this.portes) if (e.sortie) {
+      const c = this.caseDeSol(e), s = ISO.toScreen(c.x, c.y);
+      const im = this.scene.add.image(s.x, s.y, 'paillasson').setScale(WorldView.PAILLASSON).setDepth(SOL + 3).setData('po', 1).setVisible(false).setTint(this.tint);
+      this.paillassons.push({ im, tag: e.tag });
+    }
   }
+  /** Case du paillasson : le bout de sortie est au bord de la salle, souvent dans le noir (Taverne : pointe du couloir
+   *  sous le coin du plancher). On avance d'une case vers le milieu de la salle, puis on prend la case libre la plus proche. */
+  private caseDeSol(e: { tag: string; x: number; y: number }) {
+    const wg = this.wg, libres = (wg.freeByMap.get(e.tag) ?? []).map(c => wg.cellToWorld(c));
+    if (!libres.length) return e;
+    const mx = libres.reduce((t, q) => t + q.x, 0) / libres.length, my = libres.reduce((t, q) => t + q.y, 0) / libres.length;
+    const d = Math.hypot(mx - e.x, my - e.y) || 1, x = e.x + (mx - e.x) / d * WorldView.PAILLASSON_AVANCE, y = e.y + (my - e.y) / d * WorldView.PAILLASSON_AVANCE;
+    return libres.reduce((b, q) => Math.hypot(q.x - x, q.y - y) < Math.hypot(b.x - x, b.y - y) ? q : b);
+  }
+  /** De combien le paillasson avance dans la salle depuis le bout de sortie (px du monde, ≈ une case). */
+  static readonly PAILLASSON_AVANCE = 80;
+  /** Échelle du paillasson (le tapis fait une case). */
+  static readonly PAILLASSON = 1.15;
+  private paillassons: { im: Phaser.GameObjects.Image; tag: string }[] = [];
 
   isReady(tag: string | undefined) { return !!tag && this.slots.get(tag)?.state === 'ready'; }
 
@@ -112,6 +137,7 @@ export class WorldView {
       // intérieur : pas de ciel, fond noir comme dans Dofus
       // (le Temple Céleste flotte dans le ciel : il le garde)
       this.sky?.setVisible(!here.inside || !!here.ciel);
+      for (const p of this.paillassons) p.im.setVisible(p.tag === here.tag);
       this.scene.cameras.main.setBackgroundColor(here.inside && !here.ciel ? '#000000' : here.mer !== undefined ? `#${here.mer.toString(16).padStart(6, '0')}` : '#0d2b36');
     }
     const seen = (m: WorldMapEntry, marge: number) => this.seen(m, here, marge);
@@ -342,21 +368,45 @@ export class WorldView {
   }
   /** Contour de la porte survolée (façon Sanstour, comme les éléments interactifs de Dofus 3) : le dessin pile au-dessus
    *  de la porte (sx, sy : la case de la porte à l'écran) reçoit un liseré clair. null = plus rien de survolé. */
-  contour(sx: number | null, sy = 0) {
+  contour(sx: number | null, sy = 0, porte = '') {
     const cle = sx === null ? '' : `${Math.round(sx)},${Math.round(sy)}`, t = this.scene.time.now;
     // même porte : rien à refaire, sauf si son dessin n'était pas encore posé (carte voisine en chargement) : on recherche 4 fois par seconde
     if (cle === this.contourCle && (this.contourIm || !cle || t - this.contourT < 250)) return;
     this.contourCle = cle; this.contourT = t;
-    if (this.contourIm?.active) this.contourIm.preFX?.clear();
+    if (this.contourIm?.active) { this.contourIm.preFX?.clear(); if (this.contourIm.texture.key === 'paillasson') this.contourIm.setDepth(SOL + 3); }
     this.contourIm = null;
+    this.lisere?.clear();
     if (sx === null) return;
+    // porte peinte dans le bâtiment : liseré mesuré à la main autour de l'embrasure (src/data/liseres_portes.json)
+    const l = (LISERES as unknown as Record<string, Record<string, Lisere>>)[this.prefix]?.[porte];
+    if (l) { this.dessinerLisere(sx, sy, l); return; }
     const im = this.dessinPorte(sx, sy);
     if (!im?.preFX) return;   // pas de dessin à elle, ou pas de WebGL : pas de contour
     im.preFX.setPadding(4);
     im.preFX.addGlow(0xf6f0ff, 5, 0, false, 0.12, 3);
+    // paillasson survolé : il passe devant le bord noir de la salle, qui le cache parfois (Banque, Bricoleurs)
+    if (im.texture.key === 'paillasson') im.setDepth(1e6 - 6);
     this.contourIm = im;
   }
   private contourCle = '';
+  private lisere: Phaser.GameObjects.Graphics | null = null;
+  /** Liseré en arche (ou en panneau) autour d'une embrasure, même teinte que le contour des portes dessinées à part. */
+  private dessinerLisere(sx: number, sy: number, l: Lisere) {
+    const g = this.lisere ??= this.scene.add.graphics().setDepth(1e6 - 5);
+    this.scene.cameras.getCamera('mini')?.ignore(g);
+    const x0 = sx + l.g, x1 = sx + l.d, b0 = sy + l.bg, b1 = sy + l.bd, h = sy + l.h, pente = b1 - b0;
+    const path = new Phaser.Curves.Path(x0, b0);
+    if (l.forme === 'panneau') path.lineTo(x0, h).lineTo(x1, h + pente).lineTo(x1, b1);
+    else {
+      // côtés droits jusqu'à la naissance de l'arche, puis l'arc ; le sommet suit la pente du bas (vue de trois quarts)
+      const k = (x1 - x0) * 0.5, s0 = h + k, s1 = h + k + pente, haut = h + pente / 2;
+      const c = (haut - 0.25 * (s0 + s1) / 2) / 0.75;
+      path.lineTo(x0, s0).cubicBezierTo(x1, s1, x0, c, x1, c).lineTo(x1, b1);
+    }
+    g.lineStyle(7, 0xf6f0ff, 0.18); path.draw(g, 48);
+    g.lineStyle(4, 0xf6f0ff, 0.35); path.draw(g, 48);
+    g.lineStyle(2, 0xffffff, 0.95); path.draw(g, 48);
+  }
   private contourT = 0;
   private contourIm: Phaser.GameObjects.Image | null = null;
   /** Le dessin de la porte : l'image marquée « porte » (gfx officiel, portes_contour.py) la plus proche, si elle touche
@@ -364,9 +414,9 @@ export class WorldView {
   private dessinPorte(sx: number, sy: number): Phaser.GameObjects.Image | null {
     const px = sx, py = sy - 50;
     let best: Phaser.GameObjects.Image | null = null, bd = WorldView.CONTOUR_MAX;
-    for (const s of this.slots.values()) {
-      if (s.state !== 'ready') continue;
-      for (const o of s.objs) {
+    const listes = [...[...this.slots.values()].filter(s => s.state === 'ready').map(s => s.objs), this.paillassons.map(p => p.im)];
+    for (const objs of listes) {
+      for (const o of objs) {
         if (!(o instanceof Phaser.GameObjects.Image) || !o.visible || !o.getData('po') || o.displayWidth > 200) continue;
         const x0 = o.x - o.displayOriginX * o.scaleX, y0 = o.y - o.displayOriginY * o.scaleY;
         const d = Math.hypot(Math.max(x0 - px, 0, px - x0 - o.displayWidth), Math.max(y0 - py, 0, py - y0 - o.displayHeight));
@@ -427,6 +477,7 @@ export class WorldView {
     this.tint = tint; this.lum = lum; this.sol = sol;
     this.parts?.setAmbiance(tint, lum);
     this.sky?.setTint(tint);
+    for (const p of this.paillassons) p.im.setTint(tint);
     for (const s of this.slots.values()) for (const o of s.objs) {
       if (!(o instanceof Phaser.GameObjects.Image)) continue;
       const k = o.getData('k') as number | undefined;

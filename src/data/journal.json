@@ -212,7 +212,9 @@
           "Le prochain donjon de la quête suivie est marqué sur la carte (M).",
           "L'île de Brâkmar du Bastion, en grand : Grand Temple, hangar, fonderie, machine et chaînes géantes, avec les étincelles, les bulles de lave et les lueurs des enseignes du vrai Brâkmar. Elle attend la libération de la nation.",
           "Survole une porte d'Astrub : quand elle a son propre dessin (ateliers des paysans, des alchimistes et des bûcherons, Tour du Conseil…), un fin liseré blanc l'entoure, comme sur Sanstour.",
-          "Incarnam a ses 3 vrais Zaaps (Route des âmes, Pâturages, Cimetière) ; un Zaap découvert s'annonce et s'allume sur la carte (M)."
+          "Incarnam a ses 3 vrais Zaaps (Route des âmes, Pâturages, Cimetière) ; un Zaap découvert s'annonce et s'allume sur la carte (M).",
+          "Les portes peintes dans leur bâtiment (Taverne, Banque, Milice, ateliers des chasseurs, des pêcheurs, des mineurs et des bricoleurs, Planque des Vilinsekts) s'entourent aussi au survol, d'un liseré qui suit leur embrasure.",
+          "Un paillasson attend à la sortie de chaque intérieur : survole-le, il s'éclaire ; clique dessus pour sortir."
         ],
         "Combat": [
           "Coûts officiels des points : Sagesse 3 points, Force, Intelligence, Chance et Agilité 1 point jusqu'à 100 puis 2, 3 et 4 par tranche de 100 (tes points déjà placés te sont rendus). La Chance donne +1 Prospection par 10, l'Intelligence et les Soins renforcent tes soins, et l'Agilité fait courir un peu plus vite (+1 % par 20, 10 % au plus)."

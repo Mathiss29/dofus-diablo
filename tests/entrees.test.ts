@@ -103,3 +103,22 @@ describe('entrées et sorties (maquette Entrées)', () => {
     }
   });
 });
+
+describe('portes peintes et paillasson (Mathis 2026-11-08)', () => {
+  it('chaque liseré mesuré correspond à une vraie porte d’Astrub, sur la carte de son bout', async () => {
+    const L = (await import('../src/data/liseres_portes.json')).default as unknown as Record<string, Record<string, { forme: string; g: number; d: number; h: number }>>;
+    const w = monde(), wg = w.worldGrid!;
+    const cles = new Set(w.portes.flatMap(p => p.ends.map(e => `${p.nom}@${wg.mapAt(e.x, e.y)?.tag}`)));
+    expect(Object.keys(L.astrub).length).toBeGreaterThanOrEqual(8);
+    for (const [k, l] of Object.entries(L.astrub)) {
+      expect(cles.has(k), k).toBe(true);
+      expect(['arche', 'panneau']).toContain(l.forme);
+      expect(l.d, k).toBeGreaterThan(l.g);
+      expect(l.h, k).toBeLessThan(-80);   // l'embrasure monte au-dessus de la case de la porte
+    }
+  });
+  it('le paillasson (tapis officiel du Havre-Sac) est dans les images de l’interface', () => {
+    const png = readFileSync(new URL('../public/assets/ui/paillasson.png', import.meta.url));
+    expect(png.subarray(1, 4).toString()).toBe('PNG');
+  });
+});
