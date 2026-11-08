@@ -79,6 +79,29 @@ test('présence : qui est en ligne, passants du Bastion, invitation', async () =
   assert.match((await b.attendre(m => m.k === 'info')).texte, /Bastion/);
   for (let i = 0; i < 6; i++) a.envoi({ k: 'dire', canal: 'tout', texte: 'spam' + i });
   assert.match((await a.attendre(m => m.k === 'info')).texte, /Doucement/);
+  // amis (2A 2B) : demande par le nom du perso, l'autre accepte ; la liste montre le perso joué
+  await new Promise(r => setTimeout(r, 5100));   // fin de la rafale de messages
+  a.envoi({ k: 'ami+', nom: 'brak' });
+  assert.match((await b.attendre(m => m.k === 'info')).texte, /Lyra veut être ton ami/);
+  const rb = await b.attendre(m => m.k === 'amis');
+  assert.deepEqual(rb.recues.map(x => x.nom), ['Lyra']);
+  b.envoi({ k: 'ami+', id: rb.recues[0].id });
+  assert.match((await a.attendre(m => m.k === 'info' && /amis/.test(m.texte))).texte, /Brak et toi êtes amis/);
+  const la = await a.attendre(m => m.k === 'amis' && m.amis.length === 1);
+  assert.deepEqual([la.amis[0].discord, la.amis[0].perso.nom, la.amis[0].perso.zone], ['BrakDiscord', 'Brak', 'astrub']);
+  // réglage « refuser les invitations des inconnus » : un ami passe quand même
+  b.envoi({ k: 'reglagesSociaux', horsLigne: false, inconnus: true });
+  assert.equal((await b.attendre(m => m.k === 'amis' && m.inconnus)).inconnus, true);
+  await new Promise(r => setTimeout(r, 3100));
+  a.envoi({ k: 'inviter', id: l[0].id });
+  assert.equal((await b.attendre(m => m.k === 'invitation')).de, 'Lyra');
+  // ignorer (2D) : plus amis, ses messages n'arrivent plus
+  b.envoi({ k: 'ignorer', id: 1 });   // Lyra
+  assert.deepEqual((await b.attendre(m => m.k === 'amis' && m.ignores.length)).ignores.map(x => x.nom), ['Lyra']);
+  assert.equal((await a.attendre(m => m.k === 'amis' && m.amis.length === 0)).amis.length, 0);
+  a.envoi({ k: 'dire', canal: 'prive', a: 'Brak', texte: 'tu me lis ?' });
+  b.envoi({ k: 'dire', canal: 'tout', texte: 'témoin' });
+  assert.equal((await b.attendre(m => m.k === 'chat')).texte, 'témoin');
   assert.equal((await (await fetch(`http://127.0.0.1:${s.address().port}/sante`)).json()).enLigne, 2);
   a.ws.close(); b.ws.close();
   await new Promise(r => setTimeout(r, 100));

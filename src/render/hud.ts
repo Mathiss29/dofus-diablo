@@ -283,7 +283,10 @@ export class Hud {
   private miniLabel: Txt;
   /** Arène d'un donjon (12A) : « Vague 3 / 6 » et le chrono, sous la mini-carte. */
   private areneTxt: Txt;
-  private menus: { icon: Img; zone: Phaser.GameObjects.Zone }[] = [];
+  private menus: { icon: Img; zone: Phaser.GameObjects.Zone; label: string }[] = [];
+  /** Social 5B : pastille sur le bouton Social (demandes d'ami en attente), branchée par la scène. */
+  pastilleSocial: () => number = () => 0;
+  private pastille!: Txt;
   private menuTip: Txt;
   // barre du bas
   private slots: SlotView[] = [];
@@ -424,13 +427,14 @@ export class Hud {
     this.areneTxt = txt(14, { ...bold, color: '#ffe3b0', stroke: '#14130f', strokeThickness: 4 }).setOrigin(0.5, 0);
     this.bulleTip = txt(12, { backgroundColor: '#14130f', padding: { x: 8, y: 5 }, lineSpacing: 2 }, 9).setOrigin(0.5, 1).setVisible(false);
     this.menuTip = txt(12, { backgroundColor: '#14130f', padding: { x: 6, y: 3 } }, 9).setOrigin(1, 0.5).setVisible(false);
+    this.pastille = txt(10, { ...bold, color: '#ffffff', backgroundColor: '#d8402f', padding: { x: 4, y: 1 }, strokeThickness: 0 }, 6).setOrigin(0.5).setVisible(false);
     for (const [icon, label, key] of MENUS) {
       const ic = img(`menu_${icon}`, 4);
       const zone = fixed(scene.add.zone(0, 0, 30, 30).setInteractive({ useHandCursor: true }), 4);
       zone.on('pointerover', () => { const t = ACTION_MENU[label] ? Touches.nomAction(ACTION_MENU[label]) : key; this.menuTip.setText(t ? `${label} (${t})` : label).setVisible(true).setPosition(zone.x - 22, zone.y); });
       zone.on('pointerout', () => this.menuTip.setVisible(false));
       zone.on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, ev: Phaser.Types.Input.EventData) => { ev.stopPropagation(); this.onMenu(label); });
-      this.menus.push({ icon: ic, zone });
+      this.menus.push({ icon: ic, zone, label });
     }
 
     const anyIcon = Object.values(cls.spells)[0].icon;
@@ -851,6 +855,7 @@ export class Hud {
       const s = bs - 8, f = m.icon.frame, k = Math.min(s / f.width, s / f.height);
       m.icon.setPosition(x + bs / 2, y).setDisplaySize(f.width * k, f.height * k);
       m.zone.setPosition(x + bs / 2, y).setSize(bs, bs);
+      if (m.label === 'Social') { const n = this.pastilleSocial(); this.pastille.setVisible(n > 0).setText(String(n)).setPosition(x + bs - 3, y - bs / 2 + 4); }
     });
     if (gm) {
       this.cleMenus = cleMenus;

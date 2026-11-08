@@ -2,7 +2,7 @@
 // Bastion, Privé, Infos ; Entrée pour écrire, Entrée pour envoyer, Échap pour fermer. Commandes : /w (ou /p) nom, /r, /g, /b, /t,
 // /inviter nom, /aide. Sans écrire, seuls les derniers messages restent visibles un moment, puis s'effacent.
 import { EnLigne, type Canal, type MessageChat } from './presence';
-import { Coop } from './coop';
+import { inviterJoueur, menuJoueur } from './social';
 
 const ONGLETS: [Canal | 'tout', string][] = [['tout', 'Tout'], ['groupe', 'Groupe'], ['bastion', 'Bastion'], ['prive', 'Privé'], ['infos', 'Infos']];
 /** Couleur de chaque canal. */
@@ -61,6 +61,13 @@ export class ChatVue {
       const n = (e.target as HTMLElement).closest<HTMLElement>('[data-nom]')?.dataset.nom;
       if (n) this.ouvrir(`/w ${n} `);
     });
+    // clic droit sur un nom : le menu du joueur (Social 6A)
+    this.msgs.addEventListener('contextmenu', e => {
+      const b = (e.target as HTMLElement).closest<HTMLElement>('[data-nom]'), id = Number(b?.dataset.id);
+      if (!b || !id || id === EnLigne.moi) return;
+      e.preventDefault(); menuJoueur(e.clientX, e.clientY, { id, nom: b.dataset.nom! });
+    });
+    EnLigne.chuchoter = nom => this.ouvrir(`/w ${nom} `);
     document.body.appendChild(this.root);
     this.rendreOnglets(); this.rendre();
     this.finLecture = EnLigne.lire(m => {
@@ -85,7 +92,7 @@ export class ChatVue {
     const b = Math.max(12, Math.round(window.innerHeight - hautSuivi + 8)) + 'px';
     if (this.root.style.bottom !== b) this.root.style.bottom = b;
   }
-  destroy() { this.finLecture(); clearInterval(this.minute); this.root.remove(); }
+  destroy() { EnLigne.chuchoter = () => {}; this.finLecture(); clearInterval(this.minute); this.root.remove(); }
 
   private rendreOnglets() {
     this.tabs.innerHTML = ONGLETS.map(([k, n]) => `<span data-o="${k}" class="${k === this.onglet ? 'on' : ''}${this.neufs.has(k as Canal) ? ' neuf' : ''}" style="${k === this.onglet ? '' : `color:${COULEURS[k as Canal]}`}">${n}</span>`).join('');
@@ -123,11 +130,13 @@ export class ChatVue {
         case 'inviter': case 'invite': {
           const n = reste.trim().toLowerCase(), j = EnLigne.enLigne.find(x => x.nom.toLowerCase() === n);
           if (!j) { EnLigne.demanderEnLigne(); this.info(n ? `${reste.trim()} n’est pas dans la liste des joueurs en ligne (onglet Discord de Social)` : 'Écris /inviter nom'); return; }
-          if (Coop.etat === 'salon' && Coop.serveur) EnLigne.inviter(j.id); else this.info('Crée d’abord un groupe (Social › Groupe), puis invite');
+          inviterJoueur(j.id);
           return;
         }
+        case 'ami': if (reste.trim()) EnLigne.ajouterAmi(reste.trim()); else this.info('Écris /ami nom'); return;
+        case 'ignorer': if (reste.trim()) EnLigne.ignorer(reste.trim()); else this.info('Écris /ignorer nom'); return;
         case 'aide': case 'help': case '?':
-          this.info('/w nom message : chuchoter · /r : répondre · /g, /b, /t : Groupe, Bastion, Tout · /inviter nom · clic sur un nom : lui chuchoter');
+          this.info('/w nom message : chuchoter · /r : répondre · /g, /b, /t : Groupe, Bastion, Tout · /inviter nom · /ami nom · /ignorer nom · clic sur un nom : lui chuchoter, clic droit : son menu');
           return;
         default: this.info(`Commande inconnue : /${c} (/aide pour la liste)`); return;
       }
@@ -142,8 +151,8 @@ const esc = (s: string) => s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt
 /** Une ligne du chat : « (Groupe) Lyra : … », « de Lyra : … », « à Brak : … », ou une info. */
 function ligne(m: MessageChat): string {
   if (m.canal === 'infos') return esc(m.texte);
-  const nom = (n: string) => `<b data-nom="${esc(n)}">${esc(n)}</b>`;
-  if (m.canal === 'prive') return m.vers ? `à ${nom(m.vers)} : ${esc(m.texte)}` : `de ${nom(m.de)} : ${esc(m.texte)}`;
+  const nom = (n: string, id = m.id) => `<b data-nom="${esc(n)}" data-id="${id ?? ''}">${esc(n)}</b>`;
+  if (m.canal === 'prive') return m.vers ? `à ${nom(m.vers, 0)} : ${esc(m.texte)}` : `de ${nom(m.de)} : ${esc(m.texte)}`;
   const c = NOM_CANAL[m.canal];
   return `${c ? `(${c}) ` : ''}${nom(m.de)} : ${esc(m.texte)}`;
 }

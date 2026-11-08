@@ -815,6 +815,16 @@
               "Touche Entrée",
               "Perso en ligne"
             ]
+          },
+          {
+            "titre": "Amis et ignorés",
+            "phrase": "Ajoute tes amis par le nom de leur perso : tu vois qui est en ligne, où, et tu les invites d'un clic.",
+            "details": "Clic droit sur un joueur pour l'inviter, lui chuchoter ou l'ignorer. Tu peux aussi apparaître hors ligne.",
+            "icone": "perso",
+            "etiquettes": [
+              "Touche P",
+              "Perso en ligne"
+            ]
           }
         ],
         "Le monde": [
@@ -1078,7 +1088,8 @@
           "Comptes Discord prêts : bouton de connexion et persos sauvés en ligne, ouverts dès que le serveur a sa clé.",
           "Partie de test : la coop peut tourner sur le serveur (Crypte), un joueur qui part ne coupe plus les autres.",
           "Le serveur sait qui est en ligne et relaie les positions des joueurs du Bastion dix fois par seconde.",
-          "Chat : messages nettoyés par le serveur et limités à cinq toutes les cinq secondes."
+          "Chat : messages nettoyés par le serveur et limités à cinq toutes les cinq secondes.",
+          "Les joueurs ignorés ne peuvent plus t'écrire ni t'inviter : le serveur ne leur transmet plus rien."
         ]
       }
     }
