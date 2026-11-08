@@ -1158,6 +1158,7 @@ export class World {
           const c: Cible | undefined = [p, ...this.betes].find(q => !q.dead && Math.hypot(q.x - pr.x, q.y - pr.y) <= q.radius + pr.width);
           if (c) {
             if (pr.from) this.monsterSpellHits(pr.from.monster, pr.from.spell, c);
+            else if (c === p) p.hurt(pr.hit.dmg, pr.x - pr.dx * 20, pr.y - pr.dy * 20, this, pr.hit.element, true);   // un projectile : coup à distance (Dofus Cacao)
             else c.hurt(pr.hit.dmg, pr.x - pr.dx * 20, pr.y - pr.dy * 20, this, pr.hit.element);
             pr.left = 0;
           }

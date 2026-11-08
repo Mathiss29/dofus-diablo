@@ -1,0 +1,381 @@
+{
+ "_": "Dofus officiels (0.3, tools/contenu/dofus.py) : stats au jet maximum, passif traduit en temps réel, source. jeu = passif codé (src/sim/dofus.ts).",
+ "dofus": {
+  "7113": {
+   "nom": "Dofawa",
+   "niveau": 6,
+   "icon": 23009,
+   "stats": {
+    "vitalite": 1
+   },
+   "source": "Les Enfers (n'importe quel seigneur)"
+  },
+  "19629": {
+   "nom": "Dofus Argenté",
+   "niveau": 20,
+   "icon": 23025,
+   "stats": {},
+   "passif": {
+    "nom": "Souvenir d'Argent",
+    "texte": "Quand vos PV passent sous 20 %, vous êtes soigné tout de suite de 20 % de vos PV. Recharge 120 s."
+   },
+   "cle": "argente",
+   "jeu": true,
+   "source": "Quête « L'œuf d'argent » (Gawdien du Dofus, Bastion des Douze)"
+  },
+  "30356": {
+   "nom": "Jyfus",
+   "niveau": 20,
+   "icon": 23038,
+   "stats": {
+    "vitalite": 20
+   },
+   "source": "Les Enfers (n'importe quel seigneur)"
+  },
+  "20987": {
+   "nom": "Dofus Cacao",
+   "niveau": 50,
+   "icon": 23029,
+   "stats": {
+    "tacle": 10
+   },
+   "passif": {
+    "nom": "Bénédiction chocolatée",
+    "texte": "Touché par une attaque à distance alors qu'un ennemi est au contact : bouclier instantané de 2 % de vos PV max pendant 5 s (une fois par seconde au plus)."
+   },
+   "cle": "cacao",
+   "jeu": true,
+   "source": "Quête « L'œuf en chocolat » (Gawdien du Dofus, Bastion des Douze)"
+  },
+  "972": {
+   "nom": "Dofus Cawotte",
+   "niveau": 60,
+   "icon": 23006,
+   "stats": {
+    "sagesse": 60
+   },
+   "passif": {
+    "nom": "Sagesse Wabbit",
+    "texte": "Quand un ennemi tente de vous retirer des PA ou des PM, vous gagnez tout de suite 25 Esquive PA ou PM pendant 3 s (cumulable 2 fois)."
+   },
+   "cle": "cawotte",
+   "source": "Quête, avec Amakna"
+  },
+  "10907": {
+   "nom": "Dokille",
+   "niveau": 80,
+   "icon": 23017,
+   "stats": {
+    "prospection": 10
+   },
+   "source": "Les Enfers (n'importe quel seigneur)"
+  },
+  "17078": {
+   "nom": "Dokoko",
+   "niveau": 80,
+   "icon": 23022,
+   "stats": {},
+   "passif": {
+    "nom": "Le Singe et la Lune",
+    "texte": "Tant que vous vous battez (coup donné ou reçu dans les 5 dernières secondes), vous êtes soigné de 10 % de vos PV toutes les 9 s."
+   },
+   "source": "Les Enfers (n'importe quel seigneur)"
+  },
+  "8072": {
+   "nom": "Dofus Kaliptus",
+   "niveau": 100,
+   "icon": 23010,
+   "stats": {
+    "prospection": 30
+   },
+   "source": "Repaire de Skeunk"
+  },
+  "16061": {
+   "nom": "Dofus des Veilleurs",
+   "niveau": 100,
+   "icon": 23020,
+   "stats": {
+    "esquivePA": 20
+   },
+   "passif": {
+    "nom": "Veille Dimensionnelle",
+    "texte": "Aura : vos alliés et invocations en ligne droite avec vous (8 directions, jusqu'à 6 cases) sont soignés de 7 % de leurs PV toutes les 3 s."
+   },
+   "cle": "veilleurs",
+   "source": "Quête, avec Amakna"
+  },
+  "737": {
+   "nom": "Dofus Émeraude",
+   "niveau": 100,
+   "icon": 23002,
+   "stats": {
+    "vitalite": 200
+   },
+   "passif": {
+    "nom": "Vert Émeraude",
+    "texte": "Chaque ennemi au contact vous donne en continu 2 % de vos PV max en bouclier (1 % pour une invocation), jusqu'à 10 %. Le bouclier se reforme dès qu'un ennemi arrive au contact, sans rien attendre."
+   },
+   "source": "Les Enfers : Torkélonia"
+  },
+  "13344": {
+   "nom": "Dolmanax",
+   "niveau": 100,
+   "icon": 23018,
+   "stats": {
+    "chance": 70,
+    "intelligence": 70,
+    "force": 70,
+    "agilite": 70
+   },
+   "source": "Les Enfers (n'importe quel seigneur)"
+  },
+  "694": {
+   "nom": "Dofus Pourpre",
+   "niveau": 110,
+   "icon": 23001,
+   "stats": {
+    "puissance": 80
+   },
+   "passif": {
+    "nom": "Pourpre Profond",
+    "texte": "Chaque coup reçu vous donne tout de suite +1 % de dommages finaux pendant 6 s (cumulable 10 fois)."
+   },
+   "source": "Les Enfers : Solar"
+  },
+  "15235": {
+   "nom": "Dotruche",
+   "niveau": 110,
+   "icon": 23019,
+   "stats": {
+    "soins": 25
+   },
+   "source": "Les Enfers (n'importe quel seigneur)"
+  },
+  "23237": {
+   "nom": "Domakuro",
+   "niveau": 120,
+   "icon": 23032,
+   "stats": {
+    "invocations": 1
+   },
+   "passif": {
+    "nom": "Rivière d'Encre",
+    "texte": "Chaque seconde où vous ne lancez aucun sort d'attaque, vous et vos invocations gagnez +4 Dommages, jusqu'à +16, gardés tant que vous vous battez. Lancer un sort d'attaque retire 8 Dommages. Pensé pour l'invocateur qui laisse frapper ses invocations."
+   },
+   "source": "Les Enfers (n'importe quel seigneur)"
+  },
+  "23408": {
+   "nom": "Dorigami",
+   "niveau": 150,
+   "icon": 23033,
+   "stats": {
+    "esquivePM": 20
+   },
+   "passif": {
+    "nom": "Tigre de Papier",
+    "texte": "Au premier coup après 6 s de calme, bouclier instantané de 10 % de vos PV max pendant 5 s. Dans les 15 s qui suivent, achever une invocation ajoute +5 % (cumulable 4 fois) et achever un monstre +15 % (cumulable 2 fois)."
+   },
+   "source": "Les Enfers (n'importe quel seigneur)"
+  },
+  "7754": {
+   "nom": "Dofus Ocre",
+   "niveau": 160,
+   "icon": 23012,
+   "stats": {
+    "pa": 1
+   },
+   "passif": {
+    "nom": "Jaune Ocre",
+    "texte": "Tant que vous n'avez pas été touché depuis 3 s, vos PA se régénèrent 33 % plus vite (1 PA de plus toutes les 3 s). Dès qu'un ennemi vous touche : +20 Fuite pendant 3 s."
+   },
+   "source": "Sa propre quête (plus tard)"
+  },
+  "739": {
+   "nom": "Dofus Turquoise",
+   "niveau": 160,
+   "icon": 23003,
+   "stats": {
+    "critique": 10
+   },
+   "passif": {
+    "nom": "Bleu Turquoise",
+    "texte": "Chaque coup critique vous donne tout de suite +1 % de dommages finaux pendant 9 s (cumulable 10 fois)."
+   },
+   "source": "Les Enfers : Meno"
+  },
+  "31794": {
+   "nom": "Dofoozbz",
+   "niveau": 170,
+   "icon": 23039,
+   "stats": {
+    "invocations": 2
+   },
+   "passif": {
+    "nom": "Éclosion Explosive",
+    "texte": "Quand une de vos invocations est attaquée, +1 % de dommages finaux pendant 6 s (cumulable 10 fois). Si un ennemi l'achève, elle explose aussitôt : 10 dommages dans votre meilleur élément, cercle de 2 cases."
+   },
+   "source": "Les Enfers (n'importe quel seigneur)"
+  },
+  "18043": {
+   "nom": "Dofus Abyssal",
+   "niveau": 180,
+   "icon": 23023,
+   "stats": {},
+   "passif": {
+    "nom": "Descente aux Abysses",
+    "texte": "Aucun ennemi au contact : vos charges de PM se rechargent 33 % plus vite. Un ennemi au contact : vos PA se régénèrent 33 % plus vite. Bascule instantanée."
+   },
+   "source": "Les Enfers : Dantinéa"
+  },
+  "20286": {
+   "nom": "Dofus Argenté Scintillant",
+   "niveau": 180,
+   "icon": 23027,
+   "stats": {
+    "vitalite": 300
+   },
+   "passif": {
+    "nom": "Promesse d'Argent",
+    "texte": "Quand vos PV passent sous 20 %, vous êtes tout de suite soigné de 30 % de vos PV, invulnérable 1 s, et vous gagnez +20 % de dommages finaux pendant 5 s. Recharge 120 s."
+   },
+   "source": "Quête au niveau 200, avec le Dofus Argenté"
+  },
+  "19398": {
+   "nom": "Dofus Forgelave",
+   "niveau": 180,
+   "icon": 23024,
+   "stats": {
+    "resPoussee": 100
+   },
+   "passif": {
+    "nom": "Forge du Volcan",
+    "texte": "Bouclier instantané de 5 % de vos PV max pendant 5 s pour chaque type d'effet subi d'un ennemi (dommages de poussée ; poussée ou attirance ; téléportation ou échange de place ; portage), une fois par type toutes les 3 s."
+   },
+   "source": "Les Enfers : Kabahal"
+  },
+  "7115": {
+   "nom": "Dofus Ivoire",
+   "niveau": 180,
+   "icon": 23011,
+   "stats": {
+    "resAir": 4,
+    "resEau": 4,
+    "resFeu": 4,
+    "resTerre": 4,
+    "resNeutre": 4
+   },
+   "passif": {
+    "nom": "Blanc Ivoire",
+    "texte": "Un coup reçu sur cinq est réduit de 50 %."
+   },
+   "source": "Les Enfers : Ilyzaelle"
+  },
+  "8698": {
+   "nom": "Dofus Nébuleux",
+   "niveau": 180,
+   "icon": 23016,
+   "stats": {},
+   "passif": {
+    "nom": "Rêve Nébuleux",
+    "texte": "Le Dofus alterne toutes les 5 s : phase rouge -10 % soins, +20 % dommages finaux ; phase bleue -10 % dommages finaux, +20 % soins. Un halo autour du personnage montre la phase."
+   },
+   "source": "Les Enfers : Éternel Conflit"
+  },
+  "29136": {
+   "nom": "Dofus Sylvestre",
+   "niveau": 180,
+   "icon": 23036,
+   "stats": {
+    "portee": 2
+   },
+   "passif": {
+    "nom": "Garde Champêtre",
+    "texte": "Chaque charge de PM utilisée donne tout de suite +8 Puissance pendant 6 s. Si vous n'utilisez aucun PM pendant 3 s, vous êtes soigné de 8 % de vos PV (une fois toutes les 3 s)."
+   },
+   "source": "Les Enfers : Belladone"
+  },
+  "7112": {
+   "nom": "Dofus Tacheté",
+   "niveau": 180,
+   "icon": 23008,
+   "stats": {
+    "resCritiques": 30
+   },
+   "passif": {
+    "nom": "Harmonie de Pandala",
+    "texte": "Tant que vous infligez des dommages (coup dans les 3 dernières secondes), vous et vos alliés porteurs du Dorigami gagnez +20 Dommages. Sinon, vous et vos alliés porteurs du Domakuro gardez un bouclier de 5 % de vos PV max."
+   },
+   "source": "Les Enfers : Bethel Akarna"
+  },
+  "29135": {
+   "nom": "Dofus Verdoyant",
+   "niveau": 180,
+   "icon": 23037,
+   "stats": {
+    "portee": 1
+   },
+   "source": "Les Enfers (n'importe quel seigneur)"
+  },
+  "6980": {
+   "nom": "Dofus Vulbis",
+   "niveau": 180,
+   "icon": 23004,
+   "stats": {
+    "pm": 1
+   },
+   "passif": {
+    "nom": "Rouge Vermeil",
+    "texte": "Tant que vous n'avez pas été touché depuis 3 s : +10 % de dommages finaux. Dès qu'un ennemi vous touche, le bonus s'éteint et vous gagnez +20 Tacle pendant 3 s."
+   },
+   "source": "Crocabulia (boss de donjon), très rare"
+  },
+  "7043": {
+   "nom": "Dofus des Glaces",
+   "niveau": 180,
+   "icon": 23005,
+   "stats": {
+    "dommagesAir": 25,
+    "dommagesEau": 25,
+    "dommagesFeu": 25,
+    "dommagesNeutre": 25,
+    "dommagesTerre": 25
+   },
+   "source": "Les Enfers : Harebourg"
+  },
+  "26066": {
+   "nom": "Dofus du Cauchemar",
+   "niveau": 180,
+   "icon": 23034,
+   "stats": {
+    "initiative": 1000
+   },
+   "passif": {
+    "nom": "Éternel Cauchemar",
+    "texte": "Désenvoûté ou entravé (ralenti, immobilisé) : bouclier instantané de 5 % de vos PV max pendant 5 s. Dommages de poussée infligés ou subis : +100 Puissance pendant 3 s. Les deux en moins de 3 s : +10 % de dommages infligés et subis pendant 3 s. Chaque effet une fois toutes les 3 s."
+   },
+   "source": "Les Enfers (n'importe quel seigneur)"
+  },
+  "7114": {
+   "nom": "Dofus Ébène",
+   "niveau": 180,
+   "icon": 23007,
+   "stats": {
+    "fuite": 40
+   },
+   "passif": {
+    "nom": "Noir Ébène",
+    "texte": "Un coup en mêlée donne +2 % de dommages à distance, un coup à distance +2 % de dommages en mêlée, pendant 9 s (cumulable 5 fois). Les deux en moins de 3 s : votre prochaine attaque empoisonne de 16 dommages dans son élément sur 6 s (cumulable 2 fois, recharge 6 s, remise à zéro si la cible meurt)."
+   },
+   "source": "Les Enfers : Dazak"
+  },
+  "27803": {
+   "nom": "Dom de Pin",
+   "niveau": 180,
+   "icon": 23035,
+   "stats": {
+    "portee": 1
+   },
+   "source": "Les Enfers (n'importe quel seigneur)"
+  }
+ }
+}

@@ -120,6 +120,8 @@ export type SimEvent =
   | { k: 'recolteNiveau'; metier: string; niveau: number }
   | { k: 'service'; service: string; pnj: string }
   | { k: 'almanax'; bonus: string; pepites: number }
+  | { k: 'dofusPassif'; dofus: string; x: number; y: number; n?: number }
+  | { k: 'dofusGagne'; id: string }
   | { k: 'lootKamas'; n: number }
   /** Sac plein : l'objet reste au sol. */
   | { k: 'bagFull' }

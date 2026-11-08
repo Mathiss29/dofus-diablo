@@ -120,6 +120,8 @@ ILES = [('Bonta', (0, -1520), [('bonta_maison', (-60, 40), False), ('bonta_etal'
         ('Brâkmar', (2420, -150), 'grand', None),     # île en grand : ile_brakmar()
         ('Pandala', (-2000, -150), [('panda_orange', (0, 60), False)], HERBE),
         ('Frigost', (0, 1250), [('frig_maison', (40, 420), False)], DIRT)]
+# PNJ sans bâtiment : point du Bastion (Gawdien du Dofus, quêtes des Dofus 0.3 : sur la place, à gauche de l'arrivée)
+PNJ_PLACE = {'gawdien': (-215, 138)}
 # zaap : le milieu du dessin de l'arche (on clique dessus), pas son pied
 POINTS = dict(arrivee=(0, 160), zaap=(0, -100))
 
@@ -145,6 +147,7 @@ def composer():
         a.put(P[n], x, y, f, bloque=r)
         if q: pnj[q[0]] = (x + q[1][0], y + q[1][1])
     for n, (x, y), f, r in OBJETS: a.put(P[n], x, y, f, bloque=r)
+    pnj.update(PNJ_PLACE)
     # ponts coupés vers les îles des nations : planches qui s'arrêtent dans le vide, barrière au bout
     for nom, (ix, iy), _, _ in ILES:
         L = math.hypot(ix, iy); ux, uy = ix / L, iy / L
