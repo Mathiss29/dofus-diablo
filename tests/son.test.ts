@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { gainDistance, MANIFESTE, regrouper, sonDuDecor, suivante } from '../src/render/son';
+import { gainDistance, MANIFESTE, palierBoss, regrouper, sonDuDecor, suivante } from '../src/render/son';
 import { GAME_DATA } from '../src/sim/data';
 import { existsSync } from 'node:fs';
 import LOURDS from '../src/data/fichiers-lourds.json';
@@ -29,8 +29,16 @@ describe('Son (maquette Son, 2026-11-06)', () => {
     const M = MANIFESTE, f: string[] = [...Object.values(M.ambiances), ...Object.values(M.ui), ...M.impacts,
       ...Object.values(M.sorts).flatMap(s => Object.values(s)), ...Object.values(M.gfx).flat(),
       ...Object.values(M.monstres).flatMap(m => [...m.attaque, ...m.hit, ...m.mort]),
-      ...Object.values(M.musiques).flatMap(m => typeof m === 'string' ? [m] : [m.calme, m.renfort ?? m.calme])];
+      ...Object.values(M.musiques).flatMap(m => typeof m === 'string' ? [m] : 'pistes' in m ? m.pistes : [m.calme, m.renfort ?? m.calme])];
     for (const x of f) expect(existsSync(`public/assets/son/${x}`) || `son/${x}` in LOURDS, x).toBe(true);
+  });
+  it('musique boss 7B : chaque boss a sa musique officielle en 4 pistes, qui montent avec ses PV perdus', () => {
+    for (const [k, m] of Object.entries(GAME_DATA.monsters)) if (m.boss) {
+      const mus = MANIFESTE.musiques[MANIFESTE.boss?.[k] ?? ''];
+      expect(mus && typeof mus === 'object' && 'pistes' in mus && mus.pistes.length, k).toBe(4);
+    }
+    expect([1000, 760, 740, 500, 240, 0].map(hp => palierBoss(hp, 1000))).toEqual([0, 0, 1, 2, 3, 3]);
+    expect(MANIFESTE.musiques.combat_amakna_victoire).toBeTruthy();
   });
   it('les monstres d\'Incarnam ont leurs sons, et chaque sort Iop a le son de son animation', () => {
     const inc = GAME_DATA.zones.incarnam.open!;

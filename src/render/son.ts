@@ -19,9 +19,13 @@ import { v } from './assetUrl';
  *  tampons Web Audio. */
 
 export type Bus = 'musique' | 'effets' | 'monstres' | 'ambiance' | 'interface';
-export interface Volumes { general: number; musique: number; effets: number; monstres: number; ambiance: number; interface: number; muet: boolean }
+export interface Volumes { general: number; musique: number; effets: number; monstres: number; ambiance: number; interface: number; muet: boolean;
+  /** Maquette « Musique boss » 8A : réglage Oui/Non de la musique de combat des boss. */
+  musiqueBoss: boolean }
 type Manifest = {
-  musiques: Record<string, string | { calme: string; renfort?: string }>;
+  musiques: Record<string, string | { calme: string; renfort?: string } | { pistes: string[] }>;
+  /** Musique officielle de chaque boss (maquette « Musique boss » 7B) : clé de `musiques` dont les pistes s'ajoutent avec ses PV perdus. */
+  boss?: Record<string, string>;
   ambiances: Record<string, string>; ui: Record<string, string>;
   sorts: Record<string, Record<string, string>>; gfx: Record<string, string[]>;
   monstres: Record<string, { attaque: string[]; hit: string[]; mort: string[] }>; impacts: string[];
@@ -53,6 +57,12 @@ export function regrouper(pts: { x: number; y: number }[], rayon: number) {
     else out.push({ x: p.x, y: p.y, n: 1 });
   }
   return out;
+}
+/** Musique de boss en couches (7B) : une piste de plus à chaque quart de PV perdu (4 pistes -> paliers 0 à 3). */
+export function palierBoss(hp: number, maxHp: number, pistes = 4) {
+  if (maxHp <= 0) return 0;
+  const perdu = Math.max(0, Math.min(1, 1 - hp / maxHp));
+  return Math.min(pistes - 1, Math.floor(perdu * pistes));
 }
 /** Morceau suivant de la liste : jamais deux fois le même d'affilée. */
 export function suivante(liste: string[], derniere: string | null, r: number) {
@@ -95,14 +105,14 @@ type EtatMusique =
   | { k: 'menu'; f: Flux }
   | { k: 'explo'; calme: Flux; renfort: Flux | null; nom: string }
   | { k: 'silence'; reste: number }
-  | { k: 'combat'; f: Flux; boucle: Flux | null; suite: boolean }
+  | { k: 'combat'; f: Flux; boucle: Flux | null; suite: boolean; couches: Flux[] }
   | { k: 'jingle'; f: Flux };
 
 class Moteur {
   ctx: AudioContext | null = null;
   private master!: GainNode;
   private bus = {} as Record<Bus, GainNode>;
-  private vol: Volumes = { general: 1, musique: 0.5, effets: 0.7, monstres: 0.7, ambiance: 0.6, interface: 0.7, muet: false };
+  private vol: Volumes = { general: 1, musique: 0.5, effets: 0.7, monstres: 0.7, ambiance: 0.6, interface: 0.7, muet: false, musiqueBoss: true };
   private cache = new Map<string, AudioBuffer | null | Promise<AudioBuffer | null>>();
   /** Ce que la musique doit jouer : le menu, la liste d'une zone, ou rien. */
   private voulu: 'menu' | 'zone' | 'rien' = 'rien';
@@ -111,11 +121,18 @@ class Moteur {
   private derniere: string | null = null;
   private intensite = 0;
   private combatVoulu = false;
+  /** Musique du combat en cours ou à venir : celle du boss (7B), sinon la musique de combat de la zone (7A). */
+  private combatCle: string | null = null;
+  private prevu: string | null = null;
+  /** Musique de combat de la zone : Incarnam, ou Amakna à Astrub (7A). */
+  private combatZone: 'incarnam' | 'amakna' = 'incarnam';
+  /** Couches de la musique du boss à jouer (palierBoss). */
+  private palier = 0;
   private anciens: Flux[] = [];
   /** Morceau d'exploration mis de côté pendant un combat de boss (6A) : il reprend là où il en était. */
   private misDeCote: { calme: Flux; renfort: Flux | null; nom: string; pause: ReturnType<typeof setTimeout> | null } | null = null;
   /** Intro et boucle de combat chargées à l'avance (4A) : pas de blanc quand un boss arrive. */
-  private pret: { intro: Flux; boucle: Flux } | null = null;
+  private pret: { cle: string; intro: Flux; boucle: Flux | null; couches: Flux[] } | null = null;
   private fonds = new Map<string, Flux>();
   private decor = new Map<string, { f: Flux | null; muet: number }>();
   /** Cris de monstres en cours (maquette Sons 1A : au plus 2 par type ; le plus faible, donc le plus loin, cède sa place). */
@@ -169,21 +186,26 @@ class Moteur {
   /** Accueil et premier chargement (1A). */
   menu() { this.voulu = 'menu'; this.combatVoulu = false; this.oublierExplo(); }
   /** Musique d'une zone : liste de morceaux joués en alternance (2A + 2B). */
-  zone(liste: string[]) {
-    this.voulu = liste.length ? 'zone' : 'rien'; this.liste = liste;
+  zone(liste: string[], combat: 'incarnam' | 'amakna' = 'incarnam') {
+    this.voulu = liste.length ? 'zone' : 'rien'; this.liste = liste; this.combatZone = combat;
     if (this.misDeCote && !liste.includes(this.misDeCote.nom)) this.oublierExplo();
   }
   /** 0 = on explore, 1 = des monstres nous attaquent (3A). */
   setIntensite(i: number) { this.intensite = i; }
-  /** Un boss se bat contre nous (3B). */
-  setCombat(on: boolean) { this.combatVoulu = on; }
+  /** Un boss se bat contre nous (3B) ; musique = sa musique de boss (sons.json « boss »), sinon celle de la zone. */
+  setCombat(on: boolean, musique: string | null = null) { this.combatVoulu = on; if (on) this.combatCle = musique; }
+  /** Couches de la musique du boss (7B) : 0 = la base, 3 = toutes les pistes. */
+  setPalier(n: number) { this.palier = n; }
+  /** Boss présent dans les parages (ou attendu dans l'arène) : sa musique est chargée à l'avance (4A). */
+  prevoir(musique: string | null) { this.prevu = musique; }
   /** Fin du combat contre le boss : jingle de victoire ou de défaite, puis l'exploration reprend. */
   finCombat(victoire: boolean) {
+    const jouait = this.etat.k === 'combat';
     this.combatVoulu = false;
-    if (!this.ctx) return;
+    if (!this.ctx || !jouait) return;   // 8A : musique des boss coupée, pas de jingle non plus
     // 6B : le combat s'efface en 1 s sous le jingle, qui monte en 0,3 s
     this.lacher(1);
-    const f = new Flux(this.ctx, MANIFESTE.musiques[victoire ? 'combat_victoire' : 'combat_defaite'] as string, this.bus.musique, false, 0);
+    const f = new Flux(this.ctx, MANIFESTE.musiques[`${this.prefixe()}${victoire ? 'victoire' : 'defaite'}`] as string, this.bus.musique, false, 0);
     f.vers(this.ctx, 1, 0.3); f.jouer(); this.etat = { k: 'jingle', f };
   }
   /** Après le combat : le morceau mis de côté reprend en fondu de 3 s (6A), sinon un court silence puis le morceau suivant. */
@@ -205,13 +227,20 @@ class Moteur {
   }
   private lacher(duree: number) {
     const e = this.etat, c = this.ctx!;
-    const fl = e.k === 'menu' || e.k === 'jingle' ? [e.f] : e.k === 'combat' ? [e.f, e.boucle] : e.k === 'explo' ? [e.calme, e.renfort] : [];
+    const fl = e.k === 'menu' || e.k === 'jingle' ? [e.f] : e.k === 'combat' ? [e.f, e.boucle, ...e.couches] : e.k === 'explo' ? [e.calme, e.renfort] : [];
     for (const f of fl) if (f) { f.vers(c, 0, duree); this.anciens.push(f); setTimeout(() => { f.arreter(); this.anciens = this.anciens.filter(x => x !== f); }, duree * 1000 + 100); }
     this.etat = { k: 'rien' };
   }
   private piste(nom: string): { calme: string; renfort?: string } {
     const m = MANIFESTE.musiques[nom];
-    return typeof m === 'string' ? { calme: m } : m;
+    return typeof m === 'string' ? { calme: m } : 'pistes' in m ? { calme: m.pistes[0] } : m;
+  }
+  /** 7A : fichiers de la musique de combat de la zone (combat_… à Incarnam, combat_amakna_… à Astrub). */
+  private prefixe() { return this.combatZone === 'amakna' && MANIFESTE.musiques.combat_amakna_intro ? 'combat_amakna_' : 'combat_'; }
+  /** Clé de la musique de combat voulue : celle du boss si elle existe, sinon « zone:<préfixe> ». */
+  private cleCombat(musique: string | null) {
+    const m = musique ? MANIFESTE.musiques[musique] : undefined;
+    return m && typeof m === 'object' && 'pistes' in m ? musique! : `zone:${this.prefixe()}`;
   }
 
   /** À chaque image : enchaîne les morceaux, fait monter ou descendre les pistes, place les sons du décor. */
@@ -226,7 +255,8 @@ class Moteur {
     if (this.voulu === 'rien') { if (e.k !== 'rien') this.lacher(1.5); this.oublierExplo(); return; }
     // zone
     if (e.k === 'menu') { this.lacher(2.5); this.etat = { k: 'silence', reste: 2 }; return; }
-    if (this.combatVoulu && e.k !== 'combat') {
+    const combat = this.combatVoulu && this.vol.musiqueBoss;
+    if (combat && e.k !== 'combat') {
       // 4A + 6A : l'exploration descend en 1,5 s et se met en pause (on la reprendra), le combat monte en même temps
       if (e.k === 'explo') {
         const m = { calme: e.calme, renfort: e.renfort, nom: e.nom, pause: null as ReturnType<typeof setTimeout> | null };
@@ -234,12 +264,20 @@ class Moteur {
         m.pause = setTimeout(() => { m.pause = null; if (this.misDeCote === m) { m.calme.el.pause(); m.renfort?.el.pause(); } }, 1600);
         this.oublierExplo(); this.misDeCote = m; this.etat = { k: 'rien' };
       } else this.lacher(1.5);
-      const p = this.pret ?? this.chargerCombat(); this.pret = null;
+      const cle = this.cleCombat(this.combatCle);
+      if (this.pret && this.pret.cle !== cle) this.jeterPret();
+      const p = this.pret ?? this.chargerCombat(cle); this.pret = null;
       p.intro.vers(c, 1, 1.5); p.intro.jouer();
-      this.etat = { k: 'combat', f: p.intro, boucle: p.boucle, suite: false }; return;
+      // 7B : toutes les couches partent ensemble (calées), seules celles du palier montent
+      for (const [i, f] of p.couches.entries()) { f.jouer(); f.vers(c, this.palier > i ? 1 : 0, 1.5); }
+      this.etat = { k: 'combat', f: p.intro, boucle: p.boucle, suite: false, couches: p.couches }; return;
     }
-    // 4A : intro et boucle de combat prêtes avant qu'un boss n'arrive
-    if (!this.pret && e.k !== 'combat') this.pret = this.chargerCombat();
+    // 4A : musique de combat (celle du boss attendu, sinon celle de la zone) prête avant qu'un boss n'arrive
+    if (e.k !== 'combat') {
+      const cle = this.cleCombat(this.prevu);
+      if (this.pret && this.pret.cle !== cle) this.jeterPret();
+      if (!this.pret) this.pret = this.chargerCombat(cle);
+    }
     switch (e.k) {
       case 'rien': this.etat = { k: 'silence', reste: 1 }; break;
       case 'silence':
@@ -259,7 +297,14 @@ class Moteur {
         break;
       }
       case 'combat':
-        if (!this.combatVoulu) { this.lacher(2); this.apresCombat(); break; }
+        if (!combat) { this.lacher(2); this.apresCombat(); break; }
+        // 7B : couches du boss selon ses PV perdus, calées sur la piste de base
+        for (const [i, f] of e.couches.entries()) {
+          const cible = this.palier > i ? 1 : 0, g = f.gain.gain.value;
+          if (Math.abs(g - cible) > 0.02) f.vers(c, cible, cible > g ? 1.5 : 4);
+          if (!e.f.el.paused && Math.abs(f.el.currentTime - e.f.el.currentTime) > 0.08) f.el.currentTime = e.f.el.currentTime;
+          if (f.el.paused && !e.f.el.paused) f.jouer();
+        }
         // 5A : la boucle (déjà chargée) démarre pile à la fin de l'intro, sans blanc
         if (e.boucle && !e.suite) {
           const reste = e.f.el.duration - e.f.el.currentTime;
@@ -269,17 +314,27 @@ class Moteur {
             setTimeout(() => { b.vers(c, 1, 0.01); b.jouer(); }, Math.max(0, (e.f.el.ended ? 0 : reste - 0.02) * 1000));
           }
         }
-        if (e.boucle && e.suite && e.f.el.ended) { e.f.arreter(); this.etat = { k: 'combat', f: e.boucle, boucle: null, suite: true }; }
+        if (e.boucle && e.suite && e.f.el.ended) { e.f.arreter(); this.etat = { k: 'combat', f: e.boucle, boucle: null, suite: true, couches: e.couches }; }
         break;
       case 'jingle':
         if (e.f.el.ended) { e.f.arreter(); this.apresCombat(); }
         break;
     }
   }
-  private chargerCombat() {
-    const c = this.ctx!;
-    return { intro: new Flux(c, MANIFESTE.musiques.combat_intro as string, this.bus.musique, false),
-      boucle: new Flux(c, MANIFESTE.musiques.combat_centrale as string, this.bus.musique, true) };
+  private chargerCombat(cle: string) {
+    const c = this.ctx!, M = MANIFESTE.musiques, b = this.bus.musique;
+    if (cle.startsWith('zone:')) {
+      const z = cle.slice(5);
+      return { cle, intro: new Flux(c, M[`${z}intro`] as string, b, false), boucle: new Flux(c, M[`${z}centrale`] as string, b, true), couches: [] };
+    }
+    // 7B : musique de boss en boucle, piste de base + couches
+    const [base, ...autres] = (M[cle] as { pistes: string[] }).pistes;
+    return { cle, intro: new Flux(c, base, b, true), boucle: null, couches: autres.map(f => new Flux(c, f, b, true)) };
+  }
+  private jeterPret() {
+    const p = this.pret; if (!p) return;
+    for (const f of [p.intro, p.boucle, ...p.couches]) f?.arreter();
+    this.pret = null;
   }
   private lancerMorceau() {
     const c = this.ctx!, nom = suivante(this.liste, this.derniere, Math.random());

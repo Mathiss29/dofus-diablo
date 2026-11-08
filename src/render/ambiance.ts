@@ -24,6 +24,8 @@ export interface Reglages {
   volMonstres: number;
   volAmbiance: number;
   volInterface: number;
+  /** Maquette « Musique boss » 8A : musique de combat contre les boss (sinon la musique de zone continue). */
+  musiqueBoss: boolean;
   /** Tout le son coupé (Ctrl+M, 8B ; M = carte du monde). */
   muet: boolean;
   /** Cartes vivantes (maquette « Vivant », 5A) : arbres au vent, eau animée. */
@@ -40,7 +42,7 @@ export interface Reglages {
   /** Flèche des quêtes au bord de l'écran et sur la mini-carte (maquette Flèche 8A). */
   flecheQuete: boolean;
 }
-export const REGLAGES_DEFAUT: Reglages = { heure: 'auto', lumieres: 1, saturation: 1, chaleur: 0, zoom: 0.8, volume: 1, volMusique: 0.5, volEffets: 0.7, volMonstres: 0.7, volAmbiance: 0.6, volInterface: 0.7, muet: false, vent: true, eau: true, particules: true, transparence: true, lancer: 'relache', approche: false, flecheQuete: true };
+export const REGLAGES_DEFAUT: Reglages = { heure: 'auto', lumieres: 1, saturation: 1, chaleur: 0, zoom: 0.8, volume: 1, volMusique: 0.5, volEffets: 0.7, volMonstres: 0.7, volAmbiance: 0.6, volInterface: 0.7, musiqueBoss: true, muet: false, vent: true, eau: true, particules: true, transparence: true, lancer: 'relache', approche: false, flecheQuete: true };
 const CLE = 'diablofus.reglages';
 
 export function chargerReglages(): Reglages {

@@ -19,6 +19,50 @@
   "astrub": {
    "calme": "musique/astrub_calme.mp3",
    "renfort": "musique/astrub_renfort.mp3"
+  },
+  "combat_amakna_intro": "musique/combat_amakna_intro.mp3",
+  "combat_amakna_centrale": "musique/combat_amakna_centrale.mp3",
+  "combat_amakna_victoire": "musique/combat_amakna_victoire.mp3",
+  "combat_amakna_defaite": "musique/combat_amakna_defaite.mp3",
+  "boss_bestial": {
+   "pistes": [
+    "musique/boss_bestial_0.mp3",
+    "musique/boss_bestial_1.mp3",
+    "musique/boss_bestial_2.mp3",
+    "musique/boss_bestial_3.mp3"
+   ]
+  },
+  "boss_lugubre": {
+   "pistes": [
+    "musique/boss_lugubre_0.mp3",
+    "musique/boss_lugubre_1.mp3",
+    "musique/boss_lugubre_2.mp3",
+    "musique/boss_lugubre_3.mp3"
+   ]
+  },
+  "boss_feerique": {
+   "pistes": [
+    "musique/boss_feerique_0.mp3",
+    "musique/boss_feerique_1.mp3",
+    "musique/boss_feerique_2.mp3",
+    "musique/boss_feerique_3.mp3"
+   ]
+  },
+  "boss_magique": {
+   "pistes": [
+    "musique/boss_magique_0.mp3",
+    "musique/boss_magique_1.mp3",
+    "musique/boss_magique_2.mp3",
+    "musique/boss_magique_3.mp3"
+   ]
+  },
+  "boss_souterrain": {
+   "pistes": [
+    "musique/boss_souterrain_0.mp3",
+    "musique/boss_souterrain_1.mp3",
+    "musique/boss_souterrain_2.mp3",
+    "musique/boss_souterrain_3.mp3"
+   ]
   }
  },
  "ambiances": {
@@ -2237,5 +2281,12 @@
   "ambiance/AMB_Interactive_Teleport_Start_01.mp3",
   "ambiance/AMB_Interactive_Teleport_Start_02.mp3",
   "ambiance/AMB_Interactive_Teleport_Start_03.mp3"
- ]
+ ],
+ "boss": {
+  "royal": "boss_bestial",
+  "kardorim": "boss_lugubre",
+  "tournesol_affame": "boss_feerique",
+  "mob_l_eponge": "boss_magique",
+  "kankreblath": "boss_souterrain"
+ }
 }

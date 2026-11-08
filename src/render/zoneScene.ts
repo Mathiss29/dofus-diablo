@@ -655,7 +655,7 @@ export class ZoneScene extends Phaser.Scene {
   /** Volumes des Réglages vers le son (8A), et l'icône du son sur le HUD (8B). */
   private appliquerSon() {
     const r = this.reglages;
-    Son.volumes({ general: r.volume, musique: r.volMusique, effets: r.volEffets, monstres: r.volMonstres, ambiance: r.volAmbiance, interface: r.volInterface, muet: r.muet });
+    Son.volumes({ general: r.volume, musique: r.volMusique, effets: r.volEffets, monstres: r.volMonstres, ambiance: r.volAmbiance, interface: r.volInterface, muet: r.muet, musiqueBoss: r.musiqueBoss !== false });
     this.hud.muet = r.muet;
   }
   /** M : carte du monde (0.2 18A). */
