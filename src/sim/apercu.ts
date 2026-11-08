@@ -1,5 +1,4 @@
 import type { SkillId } from './defs';
-import { CASE } from './monster';
 import type { World } from './world';
 
 /** Aperçu d'un sort avant de le lancer (maquette Aperçu, 2026-11-06 : 3A portée, 3B zone, 3C ennemis touchés).
@@ -26,15 +25,15 @@ export function apercuSort(world: World, id: SkillId, aim: { x: number; y: numbe
   const area = Math.max(sig('length'), sig('radius'));
   const vivants = world.monsters.filter(m => !m.dead && m.state !== 'spawn');
   const dans = (test: (m: (typeof vivants)[number]) => boolean) => vivants.filter(test).map(m => m.id);
-  const hz = d.hit;
+  const hz = d.hit, zb = p.zoneBonus(id), pp = p.porteePlus(id);   // pouvoirs officiels (0.3)
   if (d.self) return { portee: 0, zone: null, cibles: [] };
   if (d.move) {
-    const at = p.landing(id, aim, world), r = hz.shape === 'circle' ? hz.radius * area : 0;
-    return { portee: d.move.maxRange * sig('dash'), zone: r ? { kind: 'circle', x: at.x, y: at.y, r } : null,
+    const at = p.landing(id, aim, world), r = hz.shape === 'circle' ? hz.radius * area + zb : 0;
+    return { portee: d.move.maxRange * sig('dash') + pp, zone: r ? { kind: 'circle', x: at.x, y: at.y, r } : null,
       cibles: r ? dans(m => Math.hypot(m.x - at.x, m.y - at.y) <= r + m.radius) : [] };
   }
   if (hz.shape === 'cone') {
-    const range = hz.range * area, arc = (hz.arc * Math.PI) / 180;
+    const range = hz.range * area + pp + zb, arc = (hz.arc * Math.PI) / 180;
     return { portee: range, zone: { kind: 'cone', x: p.x, y: p.y, facing, range, arc }, cibles: dans(m => {
       const dx = m.x - p.x, dy = m.y - p.y, l = Math.hypot(dx, dy);
       const da = Math.abs(Math.atan2(Math.sin(Math.atan2(dy, dx) - facing), Math.cos(Math.atan2(dy, dx) - facing)));
@@ -42,23 +41,23 @@ export function apercuSort(world: World, id: SkillId, aim: { x: number; y: numbe
     }) };
   }
   if (hz.shape === 'line') {
-    const length = hz.length * area, width = hz.width * area, c = Math.cos(facing), s = Math.sin(facing);
+    const length = hz.length * area + pp, width = hz.width * area + zb, c = Math.cos(facing), s = Math.sin(facing);
     return { portee: length, zone: { kind: 'line', x: p.x, y: p.y, facing, length, width }, cibles: dans(m => {
       const dx = m.x - p.x, dy = m.y - p.y, t = dx * c + dy * s;
       return t >= -m.radius && t <= length + m.radius && Math.abs(-dx * s + dy * c) <= width + m.radius;
     }) };
   }
   if (hz.shape === 'point') {
-    const at = p.landing(id, aim, world), r = hz.radius * area;
-    return { portee: (p.shot(id).range ?? hz.range) + p.stat('portee') * CASE, zone: { kind: 'circle', x: at.x, y: at.y, r },
+    const at = p.landing(id, aim, world), r = hz.radius * area + zb;
+    return { portee: (p.shot(id).range ?? hz.range) + p.porteeStat(id), zone: { kind: 'circle', x: at.x, y: at.y, r },
       cibles: dans(m => Math.hypot(m.x - at.x, m.y - at.y) <= r + m.radius) };
   }
   if (hz.shape === 'circle') {
-    const r = hz.radius * area;
+    const r = hz.radius * area + zb;
     return { portee: r, zone: { kind: 'circle', x: p.x, y: p.y, r }, cibles: dans(m => Math.hypot(m.x - p.x, m.y - p.y) <= r + m.radius) };
   }
   // Flèche : elle file jusqu'au premier ennemi sur sa route (tous avec « traverse »), puis explose s'il y a lieu
-  const shot = p.shot(id), range = (shot.range ?? hz.range) + p.stat('portee') * CASE, explode = (shot.explode ?? hz.explode ?? 0) * sig('explode');
+  const shot = p.shot(id), range = (shot.range ?? hz.range) + p.porteeStat(id), explode = (shot.explode ?? hz.explode ?? 0) * sig('explode');
   const c = Math.cos(facing), s = Math.sin(facing);
   const route = vivants.map(m => ({ m, t: (m.x - p.x) * c + (m.y - p.y) * s, perp: Math.abs(-(m.x - p.x) * s + (m.y - p.y) * c) }))
     .filter(q => q.t > 0 && q.t <= range + q.m.radius && q.perp <= q.m.radius + hz.width).sort((a, b) => a.t - b.t);

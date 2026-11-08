@@ -11,6 +11,7 @@ import { CASE, TOUR } from './monster';
 import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type SortGrade, type SortOfficiel } from './sorts';
 import { porteeSort } from './apercu';
 import { DANGER } from './danger';
+import { POUVOIR_PAR_ID, classeDuPouvoir, gradeAvecPouvoirs, type CtxPouvoirs, type PouvoirDef } from './pouvoirs';
 
 type ActiveSkill =
   | { id: 'attaque'; def: ComboHit; t: number; impacted: boolean; idx: number; boosted: false }
@@ -139,7 +140,77 @@ export class Player extends Entity {
     const o = this.official(id), g = this.grade(id);
     return v[Math.min(v.length - 1, Math.max(0, o && g ? o.grades.indexOf(g) : 0))];
   }
-  grade(id: SkillId): SortGrade | null { const o = this.official(id); return o ? gradeAuNiveau(o, this.level) : null; }
+  grade(id: SkillId): SortGrade | null {
+    const o = this.official(id);
+    return o ? gradeAvecPouvoirs(gradeAuNiveau(o, this.level), this.pouvoirsDuSort(id)) : null;
+  }
+  // --- Pouvoirs légendaires officiels (version 0.3, src/sim/pouvoirs.ts) ---------------------------
+  /** 0.3 visible pour ce perso (partie de test, ou sortie publique). */
+  v03 = false;
+  private _pouvoirs: PouvoirDef[] | null = null;
+  /** Pouvoirs officiels de sa classe portés, chacun une seule fois (5A : deux anneaux au même pouvoir ne cumulent pas). */
+  get pouvoirsPortes(): PouvoirDef[] {
+    if (this._pouvoirs) return this._pouvoirs;
+    const m = new Map<string, PouvoirDef>();
+    for (const it of Object.values(this.equipment)) for (const l of [it?.legendary, it?.legendary2]) {
+      const p = l && POUVOIR_PAR_ID[l.id];
+      if (p && classeDuPouvoir(p.id) === this.cls.sorts) m.set(p.id, p);
+    }
+    return (this._pouvoirs = [...m.values()]);
+  }
+  /** Pouvoirs officiels portés qui visent ce sort. */
+  pouvoirsDuSort(id: SkillId): PouvoirDef[] {
+    const did = this.cls.spells[id]?.dofusId;
+    return did ? this.pouvoirsPortes.filter(p => p.dofusId === did) : [];
+  }
+  private aPouvoir(id: SkillId, effet: PouvoirDef['effet']): number {
+    return this.pouvoirsDuSort(id).filter(p => p.effet === effet).reduce((a, p) => a + p.n, 0);
+  }
+  /** Sort lancé autour du perso (zone sans case visée) : la portée et la ligne de vue y deviennent de la taille de zone. */
+  zoneSeule(id: SkillId): boolean { const d = this.spell(id); return !!d && d.hit.shape === 'circle' && !d.move; }
+  /** Bonus de critique du sort (pouvoir « +N % Critique »), en part. */
+  critSort(id: SkillId): number { return this.aPouvoir(id, 'crit') / 100; }
+  /** Taille de zone en plus, en px : « lancer en ligne désactivé » = +1 case (6A) ; ligne de vue et portée d'un sort sans case visée. */
+  zoneBonus(id: SkillId): number {
+    const z = this.aPouvoir(id, 'ligne') * CASE / 2;
+    return this.zoneSeule(id) ? z + (this.aPouvoir(id, 'ldv') ? CASE / 2 : 0) + this.aPouvoir(id, 'po') * CASE / 2 : z;
+  }
+  /** Portée en plus d'une ligne, d'un cône ou d'un déplacement (« +N Portée maximale »), en px. */
+  porteePlus(id: SkillId): number {
+    const d = this.spell(id);
+    return d && !this.zoneSeule(id) && (d.move || d.hit.shape === 'line' || d.hit.shape === 'cone') ? this.aPouvoir(id, 'po') * CASE : 0;
+  }
+  /** La stat Portée s'applique-t-elle (« portée modifiable » officielle, ou le pouvoir qui la rend modifiable) ? */
+  porteeModifiable(id: SkillId): boolean {
+    const o = this.official(id);
+    return !this.v03 || !o || o.pom === undefined || o.pom === 1 || this.aPouvoir(id, 'pom') > 0;
+  }
+  /** Portée ajoutée par la stat Portée de l'équipement, en px (0 si le sort n'a pas une portée modifiable). */
+  porteeStat(id: SkillId): number { return this.porteeModifiable(id) ? this.stat('portee') * CASE : 0; }
+  /** Le sort demande-t-il une ligne de vue vers la case visée (officiel, sauf pouvoir « ligne de vue désactivée ») ? */
+  demandeVue(id: SkillId): boolean { return this.official(id)?.ldv === 1 && !this.aPouvoir(id, 'ldv'); }
+  /** Pour tirer le pouvoir d'un Légendaire : classe, sorts connus, sorts du jeu à venir. */
+  get ctxPouvoirs(): CtxPouvoirs {
+    const connus: number[] = [], aVenir: { dofusId: number; niveau: number }[] = [];
+    for (const [k, d] of Object.entries(this.cls.spells)) {
+      if (!d.dofusId) continue;
+      if (this.knows(k)) { connus.push(d.dofusId); continue; }
+      const o = this.official(k), n = o ? this.requiredLevel(o) : 0;
+      if (o && n > this.level) aVenir.push({ dofusId: d.dofusId, niveau: n });
+    }
+    return { classe: this.cls.sorts, connus, aVenir, sortsRecharge: this.sortsRecharge, v03: this.v03 };
+  }
+  /** État d'un pouvoir porté (infobulle) : actif, sort pas encore appris (niveau), autre classe, ou sort absent du jeu. */
+  etatPouvoir(id: string): { actif: true } | { actif: false; raison: string } {
+    const p = POUVOIR_PAR_ID[id];
+    if (!p) return { actif: true };
+    if (classeDuPouvoir(id) !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas' } as Record<string, string>)[classeDuPouvoir(id)] ?? 'une autre classe'}` };
+    const k = Object.keys(this.cls.spells).find(x => this.cls.spells[x].dofusId === p.dofusId);
+    if (!k) return { actif: false, raison: 'sort pas encore en jeu' };
+    if (this.knows(k)) return { actif: true };
+    const o = this.official(k), n = o ? this.requiredLevel(o) : 0;
+    return { actif: false, raison: n > this.level ? `s'éveille au niveau ${n}` : 'variante non choisie' };
+  }
   /** Le sort est-il connu : niveau atteint et choisi dans sa paire ? */
   knows(id: SkillId): boolean {
     const d = this.cls.spells[id];
@@ -237,6 +308,7 @@ export class Player extends Entity {
   }
   /** Recalcule les caractéristiques et les PV max (5 PV par niveau + 1 par point de Vitalité, comme Dofus). */
   recompute() {
+    this._pouvoirs = null;
     const st: Stats = {}, add = (k: Stat, v: number) => { st[k] = (st[k] ?? 0) + v; };
     for (const [k, v] of Object.entries(this.base) as [Stat, number][]) add(k, v);
     const sets: Record<string, number> = {};
@@ -518,14 +590,16 @@ export class Player extends Entity {
     const def = this.spell(id);
     let tx = this.x, ty = this.y;
     if (def?.hit.shape === 'point' && !def.move) {   // case visée, ramenée à la portée du sort
-      const R = (this.shot(id).range ?? def.hit.range) + this.stat('portee') * CASE, dx = aim.x - this.x, dy = aim.y - this.y, d = Math.hypot(dx, dy);
-      const L = Math.min(d, R) / (d || 1);
-      return { x: this.x + dx * L, y: this.y + dy * L };
+      const R = (this.shot(id).range ?? def.hit.range) + this.porteeStat(id), dx = aim.x - this.x, dy = aim.y - this.y, d = Math.hypot(dx, dy);
+      let L = Math.min(d, R) / (d || 1);
+      // Ligne de vue officielle (0.3) : la case visée derrière un obstacle est ramenée devant lui
+      if (this.v03 && this.demandeVue(id)) for (let i = 0; i < 20 && L > 0 && !world.clearShot(this, { x: this.x + dx * L, y: this.y + dy * L }); i++) L -= Math.min(d, R) / (d || 1) / 20;
+      return { x: this.x + dx * Math.max(0, L), y: this.y + dy * Math.max(0, L) };
     }
     if (!def?.move) return { x: tx, y: ty };
     const dx = aim.x - this.x, dy = aim.y - this.y, d = Math.hypot(dx, dy) || 1;
     const sig = this.rageFull && def.rage === 'dash' ? this.cls.rage.signature : 1;   // Déferlement renforcé : avance plus loin
-    let L = Math.min(def.move.maxRange * sig, d);
+    let L = Math.min(def.move.maxRange * sig + this.porteePlus(id), d);
     if (def.move.kind === 'dash') {
       // la ruée s'arrête devant le premier ennemi sur sa route
       for (const m of world.monsters) {
@@ -792,14 +866,16 @@ export class Player extends Entity {
         pmLoss: d.pmLoss && Math.round(d.pmLoss * sig('pm')), paLoss: d.paLoss && Math.round(d.paLoss * sig('pa')),
         poLoss: d.poLoss && this.parGrade(s.id, d.poLoss),
         // Maquette Armes 3B : un coup d'arme fait jaillir un éclat de la couleur de son élément sur chaque monstre touché
-        eclat: s.id === 'arme' || undefined };
+        eclat: s.id === 'arme' || undefined, crit: this.critSort(s.id) || undefined };
       let hits = 0, size = 0;
+      // Pouvoirs officiels (0.3) : zone plus grande, ligne ou cône plus long
+      const zb = this.zoneBonus(s.id), pp = this.porteePlus(s.id);
       if (d.self) { size = 60; }
-      else if (hz.shape === 'cone') { size = hz.range * area; hits = world.hitCone(this.x, this.y, this.facing, size, (hz.arc * Math.PI) / 180, hit, d.stun); }
-      else if (hz.shape === 'line') { size = hz.length * area; hits = world.hitLine(this.x, this.y, this.facing, size, hz.width * area, hit, d.stun); }
-      else if (hz.shape === 'point') { size = hz.radius * area; hits = world.hitCircle(s.tx, s.ty, size, hit, d.stun, this.facing); }   // poussée dans l'axe du lanceur, comme Dofus
-      else if (hz.shape === 'circle' && d.vuln && !d.dmg) { size = hz.radius * area; world.markVuln(this.x, this.y, size, d.vuln.n, d.vuln.t); }
-      else if (hz.shape === 'circle') { size = hz.radius * area; hits = world.hitCircle(this.x, this.y, size, hit, d.stun); }
+      else if (hz.shape === 'cone') { size = hz.range * area + pp + zb; hits = world.hitCone(this.x, this.y, this.facing, size, (hz.arc * Math.PI) / 180, hit, d.stun); }
+      else if (hz.shape === 'line') { size = hz.length * area + pp; hits = world.hitLine(this.x, this.y, this.facing, size, hz.width * area + zb, hit, d.stun); }
+      else if (hz.shape === 'point') { size = hz.radius * area + zb; hits = world.hitCircle(s.tx, s.ty, size, hit, d.stun, this.facing); }   // poussée dans l'axe du lanceur, comme Dofus
+      else if (hz.shape === 'circle' && d.vuln && !d.dmg) { size = hz.radius * area + zb; world.markVuln(this.x, this.y, size, d.vuln.n, d.vuln.t); }
+      else if (hz.shape === 'circle') { size = hz.radius * area + zb; hits = world.hitCircle(this.x, this.y, size, hit, d.stun); }
       else {
         // Flèche : la zone (et les dommages) partent avec le projectile ; l'effet d'impact se joue à l'arrivée
         const shot = { ...hz, range: s.range ?? hz.range, explode: s.explode ?? hz.explode };

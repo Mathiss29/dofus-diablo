@@ -11,10 +11,11 @@ import { LOOKS } from './looks';
 import { niveauHorsPartie, rangDe } from '../sim/butin';
 import { DOSSIER, PALETTES, ZONES, apparenceValide, assemblagePour, fiches, objetsPortes, type Apparence, type Assemblage, type FichePerso } from './squelette';
 import {
-  BASE_STATS, REDUCTION_RECHARGES_MAX, FAMILIER_MAX, FAMILIER_XP, LEGENDARY, METIER_XP, PEPITE, RARITY_COLORS, RARITY_NAMES, STATS, STAT_NAMES, metierXpNeeded, recycleResource, recycleValue,
+  BASE_STATS, REDUCTION_RECHARGES_MAX, FAMILIER_MAX, FAMILIER_XP, METIER_XP, lignePouvoir, PEPITE, RARITY_COLORS, RARITY_NAMES, STATS, STAT_NAMES, metierXpNeeded, recycleResource, recycleValue,
   type EquipSlot, type Item, type Rarity, type ResourceDef, type Stat,
 } from '../sim/items';
 import { Player } from '../sim/player';
+import { POUVOIR_PAR_ID } from '../sim/pouvoirs';
 import { dmgMoyen, gradeAuNiveau, type SortOfficiel } from '../sim/sorts';
 import { n1, spellDetail } from './spellTip';
 import { World } from '../sim/world';
@@ -212,7 +213,7 @@ const CSS = `
 .dw .pts{color:#b9e54b;font-weight:bold}
 .dw .tip{position:fixed;pointer-events:none;z-index:11;min-width:240px;max-width:320px;background:#14130ff4;border:1px solid #57554c;border-radius:4px;padding:10px 12px;box-shadow:0 6px 20px #000a;line-height:1.45}
 .dw .tip h4{margin:0 0 2px;font-size:15px}.dw .tip .sub{color:#a9a48b;font-size:12px;margin-bottom:6px}
-.dw .tip .up{color:#7be07b}.dw .tip .down{color:#e0625a}.dw .tip .ex{color:#6fb2e8}.dw .tip .leg{color:#f08a2c;margin-top:4px}
+.dw .tip .up{color:#7be07b}.dw .tip .down{color:#e0625a}.dw .tip .ex{color:#6fb2e8}.dw .tip .leg{color:#f08a2c;margin-top:4px}.dw .tip .leg.off{color:#8a7f70}.dw .tip .leg.off i{font-style:normal;color:#a89c88}
 .dw .tip .set{color:#9ad15a;margin-top:6px;font-size:12px}.dw .tip .sig{color:#e6b85c;margin-top:6px;font-style:italic;font-size:12px}.dw .tip .hint{color:#7f7a64;font-size:11px;margin-top:6px}
 .dw .win.opt{width:min(1000px,96vw);height:min(720px,92vh)}
 .dw .opt .ob{display:grid;grid-template-columns:270px minmax(0,1fr);min-height:0}
@@ -1763,7 +1764,15 @@ export class Windows {
     const stats = STATS.filter(k => it.stats[k] !== undefined).map(k => line(k, it.stats[k]!)).join('');
     const weapon = (d.weapon ? `<div>${d.weapon.dmg.map(x => `${x.min}–${x.max} dommages ${x.element}`).join(' · ')}</div>` : '')
       + (d.chasse ? '<div class="ex">Arme de chasse</div>' : '');
-    const leg = [it.legendary, it.legendary2].map(l => l ? `<div class="leg"><b>${LEGENDARY[l.id].name}</b> : ${LEGENDARY[l.id].text(l.value, l.sort && this.world.player.cls.spells[l.sort]?.name)}</div>` : '').join('');
+    const leg = [it.legendary, it.legendary2].map(l => {
+      if (!l) return '';
+      // Pouvoir officiel (0.3) : grisé s'il ne sert pas encore (sort à venir, autre classe)
+      const o = POUVOIR_PAR_ID[l.id], k = o && Object.keys(p.cls.spells).find(x => p.cls.spells[x].dofusId === o.dofusId);
+      const { nom, texte } = lignePouvoir(l, l.sort && p.cls.spells[l.sort]?.name, !!k && p.zoneSeule(k));
+      const e = p.etatPouvoir(l.id);
+      return e.actif ? `<div class="leg"><b>${nom}</b> : ${texte}</div>`
+        : `<div class="leg off"><b>${nom}</b> : ${texte} <i>(${e.raison})</i></div>`;
+    }).join('');
     const set = d.set && ITEMS.sets[d.set] ? `<div class="set">${ITEMS.sets[d.set].name}</div>` : '';
     let cmp = '';
     if (cur) {

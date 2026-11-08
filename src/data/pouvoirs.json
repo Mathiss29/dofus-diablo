@@ -1,0 +1,1208 @@
+{
+ "cra": [
+  {
+   "id": "cra-01",
+   "slot": "chapeau",
+   "piece": "Coiffe de Robbie Capuche",
+   "sort": "Flèche d'Abolition",
+   "dofusId": 32453,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Flèche d'Abolition : +1 lancer(s) par tour"
+  },
+  {
+   "id": "cra-02",
+   "slot": "chapeau",
+   "piece": "Coiffe de Robbie Capuche",
+   "sort": "Flèche Persécutrice",
+   "dofusId": 32433,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Flèche Persécutrice : -1 PA"
+  },
+  {
+   "id": "cra-03",
+   "slot": "chapeau",
+   "piece": "Coiffe de Robbie Capuche",
+   "sort": "Flèche Cinglante",
+   "dofusId": 32427,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Flèche Cinglante : +1 lancer(s) par tour"
+  },
+  {
+   "id": "cra-04",
+   "slot": "chapeau",
+   "piece": "Coiffe de Robbie Capuche",
+   "sort": "Flèche Assaillante",
+   "dofusId": 32458,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Flèche Assaillante : Portée modifiable"
+  },
+  {
+   "id": "cra-05",
+   "slot": "chapeau",
+   "piece": "Coiffe de Robbie Capuche",
+   "sort": "Flèche Détonante",
+   "dofusId": 32444,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Flèche Détonante : +1 lancer(s) par tour"
+  },
+  {
+   "id": "cra-06",
+   "slot": "amulette",
+   "piece": "Coiffe de Robbie Capuche",
+   "sort": "Flèche Ralentissante",
+   "dofusId": 32439,
+   "effet": "dmg",
+   "n": 6,
+   "officiel": "Flèche Ralentissante : +6 dégâts de base"
+  },
+  {
+   "id": "cra-07",
+   "slot": "arme",
+   "piece": "Coiffe de Robbie Capuche",
+   "sort": "Flèche d'Immobilisation",
+   "dofusId": 32436,
+   "effet": "parCible",
+   "n": 1,
+   "officiel": "Flèche d'Immobilisation : +1 lancer(s) par cible"
+  },
+  {
+   "id": "cra-08",
+   "slot": "bouclier",
+   "piece": "Coiffe de Robbie Capuche",
+   "sort": "Flèche Tyrannique",
+   "dofusId": 32448,
+   "effet": "po",
+   "n": 3,
+   "officiel": "Flèche Tyrannique : +3 Portée maximale"
+  },
+  {
+   "id": "cra-09",
+   "slot": "cape",
+   "piece": "Cape Hulco",
+   "sort": "Flèche de Recul",
+   "dofusId": 32426,
+   "effet": "parCible",
+   "n": 1,
+   "officiel": "Flèche de Recul : +1 lancer(s) par cible"
+  },
+  {
+   "id": "cra-10",
+   "slot": "cape",
+   "piece": "Cape Hulco",
+   "sort": "Flèche Éclatante",
+   "dofusId": 32449,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Flèche Éclatante : +1 lancer(s) par tour"
+  },
+  {
+   "id": "cra-11",
+   "slot": "cape",
+   "piece": "Cape Hulco",
+   "sort": "Flèche de Dispersion",
+   "dofusId": 32428,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Flèche de Dispersion : +1 lancer(s) par tour"
+  },
+  {
+   "id": "cra-12",
+   "slot": "cape",
+   "piece": "Cape Hulco",
+   "sort": "Flèches Enflammées",
+   "dofusId": 32447,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Flèches Enflammées : Portée modifiable"
+  },
+  {
+   "id": "cra-13",
+   "slot": "cape",
+   "piece": "Cape Hulco",
+   "sort": "Flèche Vagabonde",
+   "dofusId": 32455,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Flèche Vagabonde : +1 lancer(s) par tour"
+  },
+  {
+   "id": "cra-14",
+   "slot": "amulette",
+   "piece": "Cape Hulco",
+   "sort": "Flèche Évasive",
+   "dofusId": 32531,
+   "effet": "parCible",
+   "n": 1,
+   "officiel": "Flèche Évasive : +1 lancer(s) par cible"
+  },
+  {
+   "id": "cra-15",
+   "slot": "arme",
+   "piece": "Cape Hulco",
+   "sort": "Œil pour Œil",
+   "dofusId": 32454,
+   "effet": "po",
+   "n": 3,
+   "officiel": "Œil pour Œil : +3 Portée maximale"
+  },
+  {
+   "id": "cra-16",
+   "slot": "bouclier",
+   "piece": "Cape Hulco",
+   "sort": "Flèche Paralysante",
+   "dofusId": 32441,
+   "effet": "dmg",
+   "n": 6,
+   "officiel": "Flèche Paralysante : +6 dégâts de base"
+  },
+  {
+   "id": "cra-17",
+   "slot": "ceinture",
+   "piece": "Sangle Cible",
+   "sort": "Flèche Glacée",
+   "dofusId": 32435,
+   "effet": "dmg",
+   "n": 4,
+   "officiel": "Flèche Glacée : +4 dégâts de base"
+  },
+  {
+   "id": "cra-18",
+   "slot": "ceinture",
+   "piece": "Sangle Cible",
+   "sort": "Flèche Harcelante",
+   "dofusId": 32708,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Flèche Harcelante : -1 PA"
+  },
+  {
+   "id": "cra-19",
+   "slot": "ceinture",
+   "piece": "Sangle Cible",
+   "sort": "Œil de Taupe",
+   "dofusId": 32437,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Œil de Taupe : -1 PA"
+  },
+  {
+   "id": "cra-20",
+   "slot": "ceinture",
+   "piece": "Sangle Cible",
+   "sort": "Pluie de Flèches",
+   "dofusId": 32431,
+   "effet": "crit",
+   "n": 35,
+   "officiel": "Pluie de Flèches : +35% Critique"
+  },
+  {
+   "id": "cra-21",
+   "slot": "ceinture",
+   "piece": "Sangle Cible",
+   "sort": "Flèche d'Expiation",
+   "dofusId": 32438,
+   "effet": "pomin",
+   "n": 5,
+   "officiel": "Flèche d'Expiation : -5 Portée minimale"
+  },
+  {
+   "id": "cra-22",
+   "slot": "amulette",
+   "piece": "Sangle Cible",
+   "sort": "Flèche de Rédemption",
+   "dofusId": 32442,
+   "effet": "pomin",
+   "n": 3,
+   "officiel": "Flèche de Rédemption : -3 Portée minimale"
+  },
+  {
+   "id": "cra-23",
+   "slot": "arme",
+   "piece": "Sangle Cible",
+   "sort": "Flèche Perforante",
+   "dofusId": 32429,
+   "effet": "po",
+   "n": 3,
+   "officiel": "Flèche Perforante : +3 Portée maximale"
+  },
+  {
+   "id": "cra-24",
+   "slot": "bouclier",
+   "piece": "Sangle Cible",
+   "sort": "Flèche Boomerang",
+   "dofusId": 32432,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Flèche Boomerang : +1 lancer(s) par tour"
+  },
+  {
+   "id": "cra-25",
+   "slot": "anneau",
+   "piece": "Anneau Bhli",
+   "sort": "Flèche de Barrage",
+   "dofusId": 32443,
+   "effet": "po",
+   "n": 3,
+   "officiel": "Flèche de Barrage : +3 Portée maximale"
+  },
+  {
+   "id": "cra-26",
+   "slot": "anneau",
+   "piece": "Anneau Bhli",
+   "sort": "Carreaux Destructeurs",
+   "dofusId": 32459,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Carreaux Destructeurs : +2 Portée maximale"
+  },
+  {
+   "id": "cra-27",
+   "slot": "anneau",
+   "piece": "Anneau Bhli",
+   "sort": "Flèche Explosive",
+   "dofusId": 32445,
+   "effet": "crit",
+   "n": 30,
+   "officiel": "Flèche Explosive : +30% Critique"
+  },
+  {
+   "id": "cra-28",
+   "slot": "anneau",
+   "piece": "Anneau Bhli",
+   "sort": "Flèche Massacrante",
+   "dofusId": 32457,
+   "effet": "po",
+   "n": 3,
+   "officiel": "Flèche Massacrante : +3 Portée maximale"
+  },
+  {
+   "id": "cra-29",
+   "slot": "anneau",
+   "piece": "Anneau Bhli",
+   "sort": "Flèche Punitive",
+   "dofusId": 32456,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Flèche Punitive : +1 lancer(s) par tour"
+  },
+  {
+   "id": "cra-30",
+   "slot": "amulette",
+   "piece": "Anneau Bhli",
+   "sort": "Flèche du Jugement",
+   "dofusId": 32460,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Flèche du Jugement : -1 PA"
+  },
+  {
+   "id": "cra-31",
+   "slot": "arme",
+   "piece": "Anneau Bhli",
+   "sort": "Flèche Dévorante",
+   "dofusId": 32446,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Flèche Dévorante : +1 lancer(s) par tour"
+  },
+  {
+   "id": "cra-32",
+   "slot": "bouclier",
+   "piece": "Anneau Bhli",
+   "sort": "Flèche Fulminante",
+   "dofusId": 32450,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Flèche Fulminante : -1 PA"
+  },
+  {
+   "id": "cra-33",
+   "slot": "bottes",
+   "piece": "Bottes Deuradi",
+   "sort": "Pas Chassé",
+   "dofusId": 32464,
+   "effet": "po",
+   "n": 1,
+   "officiel": "Pas Chassé : +1 Portée maximale"
+  },
+  {
+   "id": "cra-34",
+   "slot": "bottes",
+   "piece": "Bottes Deuradi",
+   "sort": "Balise Tactique",
+   "dofusId": 32467,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Balise Tactique : -1 de relance"
+  },
+  {
+   "id": "cra-35",
+   "slot": "bottes",
+   "piece": "Bottes Deuradi",
+   "sort": "Tirs Éloignés",
+   "dofusId": 32465,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Tirs Éloignés : -1 de relance"
+  },
+  {
+   "id": "cra-36",
+   "slot": "bottes",
+   "piece": "Bottes Deuradi",
+   "sort": "Tir Perçant",
+   "dofusId": 32471,
+   "effet": "parCible",
+   "n": 1,
+   "officiel": "Tir Perçant : +1 lancer(s) par cible"
+  },
+  {
+   "id": "cra-37",
+   "slot": "bottes",
+   "piece": "Bottes Deuradi",
+   "sort": "Balise de Survie",
+   "dofusId": 32474,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Balise de Survie : -1 PA"
+  },
+  {
+   "id": "cra-38",
+   "slot": "amulette",
+   "piece": "Bottes Deuradi",
+   "sort": "Représailles",
+   "dofusId": 32472,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Représailles : -1 PA"
+  },
+  {
+   "id": "cra-39",
+   "slot": "arme",
+   "piece": "Bottes Deuradi",
+   "sort": "Tir de Repli",
+   "dofusId": 32470,
+   "effet": "parCible",
+   "n": 1,
+   "officiel": "Tir de Repli : +1 lancer(s) par cible"
+  },
+  {
+   "id": "cra-40",
+   "slot": "bouclier",
+   "piece": "Bottes Deuradi",
+   "sort": "Vendetta",
+   "dofusId": 32473,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Vendetta : +1 lancer(s) par tour"
+  }
+ ],
+ "iop": [
+  {
+   "id": "iop-01",
+   "slot": "chapeau",
+   "piece": "Casque Keutumedi",
+   "sort": "Pression",
+   "dofusId": 13106,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Pression : ligne de vue désactivée"
+  },
+  {
+   "id": "iop-02",
+   "slot": "chapeau",
+   "piece": "Casque Keutumedi",
+   "sort": "Fracture",
+   "dofusId": 13139,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Fracture : +2 Portée maximale"
+  },
+  {
+   "id": "iop-03",
+   "slot": "chapeau",
+   "piece": "Casque Keutumedi",
+   "sort": "Épée Destructrice",
+   "dofusId": 13119,
+   "effet": "po",
+   "n": 3,
+   "officiel": "Épée Destructrice : +3 Portée maximale"
+  },
+  {
+   "id": "iop-04",
+   "slot": "chapeau",
+   "piece": "Casque Keutumedi",
+   "sort": "Fustigation",
+   "dofusId": 14818,
+   "effet": "po",
+   "n": 3,
+   "officiel": "Fustigation : +3 Portée maximale"
+  },
+  {
+   "id": "iop-05",
+   "slot": "chapeau",
+   "piece": "Casque Keutumedi",
+   "sort": "Intimidation",
+   "dofusId": 13108,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Intimidation : ligne de vue désactivée"
+  },
+  {
+   "id": "iop-06",
+   "slot": "amulette",
+   "piece": "Casque Keutumedi",
+   "sort": "Conquête",
+   "dofusId": 13148,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Conquête : -1 de relance"
+  },
+  {
+   "id": "iop-07",
+   "slot": "arme",
+   "piece": "Casque Keutumedi",
+   "sort": "Bond",
+   "dofusId": 13107,
+   "effet": "po",
+   "n": 1,
+   "officiel": "Bond : +1 Portée maximale"
+  },
+  {
+   "id": "iop-08",
+   "slot": "bouclier",
+   "piece": "Casque Keutumedi",
+   "sort": "Agitation",
+   "dofusId": 13143,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Agitation : -1 PA"
+  },
+  {
+   "id": "iop-09",
+   "slot": "cape",
+   "piece": "Cape Aurale",
+   "sort": "Souffle",
+   "dofusId": 13116,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Souffle : +1 lancer(s) par tour"
+  },
+  {
+   "id": "iop-10",
+   "slot": "cape",
+   "piece": "Cape Aurale",
+   "sort": "Rassemblement",
+   "dofusId": 13136,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Rassemblement : +1 lancer(s) par tour"
+  },
+  {
+   "id": "iop-11",
+   "slot": "cape",
+   "piece": "Cape Aurale",
+   "sort": "Tempête de Puissance",
+   "dofusId": 13121,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Tempête de Puissance : Portée modifiable"
+  },
+  {
+   "id": "iop-12",
+   "slot": "cape",
+   "piece": "Cape Aurale",
+   "sort": "Tannée",
+   "dofusId": 13131,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Tannée : +2 Portée maximale"
+  },
+  {
+   "id": "iop-13",
+   "slot": "cape",
+   "piece": "Cape Aurale",
+   "sort": "Épée Céleste",
+   "dofusId": 13122,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Épée Céleste : +2 Portée maximale"
+  },
+  {
+   "id": "iop-14",
+   "slot": "amulette",
+   "piece": "Cape Aurale",
+   "sort": "Zénith",
+   "dofusId": 13145,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Zénith : -1 PA"
+  },
+  {
+   "id": "iop-15",
+   "slot": "arme",
+   "piece": "Cape Aurale",
+   "sort": "Épée du Destin",
+   "dofusId": 13111,
+   "effet": "ligne",
+   "n": 1,
+   "officiel": "Épée du Destin : lancer en ligne désactivé"
+  },
+  {
+   "id": "iop-16",
+   "slot": "bouclier",
+   "piece": "Cape Aurale",
+   "sort": "Tumulte",
+   "dofusId": 13144,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Tumulte : Portée modifiable"
+  },
+  {
+   "id": "iop-17",
+   "slot": "ceinture",
+   "piece": "Sangle Hynère",
+   "sort": "Ferveur",
+   "dofusId": 14676,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Ferveur : ligne de vue désactivée"
+  },
+  {
+   "id": "iop-18",
+   "slot": "ceinture",
+   "piece": "Sangle Hynère",
+   "sort": "Menace",
+   "dofusId": 13130,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Menace : +2 Portée maximale"
+  },
+  {
+   "id": "iop-19",
+   "slot": "ceinture",
+   "piece": "Sangle Hynère",
+   "sort": "Endurance",
+   "dofusId": 13133,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Endurance : +2 Portée maximale"
+  },
+  {
+   "id": "iop-20",
+   "slot": "ceinture",
+   "piece": "Sangle Hynère",
+   "sort": "Pugilat",
+   "dofusId": 13146,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Pugilat : +1 lancer(s) par tour"
+  },
+  {
+   "id": "iop-21",
+   "slot": "ceinture",
+   "piece": "Sangle Hynère",
+   "sort": "Épée de Iop",
+   "dofusId": 13125,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Épée de Iop : Portée modifiable"
+  },
+  {
+   "id": "iop-22",
+   "slot": "amulette",
+   "piece": "Sangle Hynère",
+   "sort": "Fendoir",
+   "dofusId": 13134,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Fendoir : Portée modifiable"
+  },
+  {
+   "id": "iop-23",
+   "slot": "arme",
+   "piece": "Sangle Hynère",
+   "sort": "Fureur",
+   "dofusId": 13156,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Fureur : +2 Portée maximale"
+  },
+  {
+   "id": "iop-24",
+   "slot": "bouclier",
+   "piece": "Sangle Hynère",
+   "sort": "Colère de Iop",
+   "dofusId": 13124,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Colère de Iop : -1 PA"
+  },
+  {
+   "id": "iop-25",
+   "slot": "bottes",
+   "piece": "Bottes Antrin",
+   "sort": "Épée Divine",
+   "dofusId": 13110,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Épée Divine : +2 Portée maximale"
+  },
+  {
+   "id": "iop-26",
+   "slot": "bottes",
+   "piece": "Bottes Antrin",
+   "sort": "Épée du Jugement",
+   "dofusId": 13117,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Épée du Jugement : Portée modifiable"
+  },
+  {
+   "id": "iop-27",
+   "slot": "bottes",
+   "piece": "Bottes Antrin",
+   "sort": "Déferlement",
+   "dofusId": 13126,
+   "effet": "ligne",
+   "n": 1,
+   "officiel": "Déferlement : lancer en ligne désactivé"
+  },
+  {
+   "id": "iop-28",
+   "slot": "bottes",
+   "piece": "Bottes Antrin",
+   "sort": "Anneau Destructeur",
+   "dofusId": 13135,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Anneau Destructeur : +2 Portée maximale"
+  },
+  {
+   "id": "iop-29",
+   "slot": "bottes",
+   "piece": "Bottes Antrin",
+   "sort": "Vitalité",
+   "dofusId": 13120,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Vitalité : -1 PA"
+  },
+  {
+   "id": "iop-30",
+   "slot": "amulette",
+   "piece": "Bottes Antrin",
+   "sort": "Violence",
+   "dofusId": 13137,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Violence : -1 PA"
+  },
+  {
+   "id": "iop-31",
+   "slot": "arme",
+   "piece": "Bottes Antrin",
+   "sort": "Précipitation",
+   "dofusId": 13114,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Précipitation : -1 PA"
+  },
+  {
+   "id": "iop-32",
+   "slot": "bouclier",
+   "piece": "Bottes Antrin",
+   "sort": "Détermination",
+   "dofusId": 13132,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Détermination : -1 PA"
+  },
+  {
+   "id": "iop-33",
+   "slot": "anneau",
+   "piece": "Bague Harre",
+   "sort": "Couperet",
+   "dofusId": 13115,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Couperet : +2 Portée maximale"
+  },
+  {
+   "id": "iop-34",
+   "slot": "anneau",
+   "piece": "Bague Harre",
+   "sort": "Accumulation",
+   "dofusId": 13138,
+   "effet": "ligne",
+   "n": 1,
+   "officiel": "Accumulation : lancer en ligne désactivé"
+  },
+  {
+   "id": "iop-35",
+   "slot": "anneau",
+   "piece": "Bague Harre",
+   "sort": "Concentration",
+   "dofusId": 13123,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Concentration : +2 Portée maximale"
+  },
+  {
+   "id": "iop-36",
+   "slot": "anneau",
+   "piece": "Bague Harre",
+   "sort": "Sentence",
+   "dofusId": 13147,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Sentence : ligne de vue désactivée"
+  },
+  {
+   "id": "iop-37",
+   "slot": "anneau",
+   "piece": "Bague Harre",
+   "sort": "Vertu",
+   "dofusId": 13142,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Vertu : -1 PA"
+  },
+  {
+   "id": "iop-38",
+   "slot": "amulette",
+   "piece": "Bague Harre",
+   "sort": "Massacre",
+   "dofusId": 13112,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Massacre : -1 de relance"
+  },
+  {
+   "id": "iop-39",
+   "slot": "arme",
+   "piece": "Bague Harre",
+   "sort": "Puissance",
+   "dofusId": 13118,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Puissance : -1 PA"
+  },
+  {
+   "id": "iop-40",
+   "slot": "bouclier",
+   "piece": "Bague Harre",
+   "sort": "Vindicte",
+   "dofusId": 14677,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Vindicte : -1 PA"
+  }
+ ],
+ "osamodas": [
+  {
+   "id": "osamodas-01",
+   "slot": "chapeau",
+   "piece": "Capuche Apin",
+   "sort": "Tofu",
+   "dofusId": 31115,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Tofu : +2 Portée maximale"
+  },
+  {
+   "id": "osamodas-02",
+   "slot": "chapeau",
+   "piece": "Capuche Apin",
+   "sort": "Griffes du Chtigre",
+   "dofusId": 31134,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Griffes du Chtigre : Portée modifiable"
+  },
+  {
+   "id": "osamodas-03",
+   "slot": "chapeau",
+   "piece": "Capuche Apin",
+   "sort": "Bouftou",
+   "dofusId": 31116,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Bouftou : +2 Portée maximale"
+  },
+  {
+   "id": "osamodas-04",
+   "slot": "chapeau",
+   "piece": "Capuche Apin",
+   "sort": "Serres du Vautour",
+   "dofusId": 31133,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Serres du Vautour : +2 Portée maximale"
+  },
+  {
+   "id": "osamodas-05",
+   "slot": "chapeau",
+   "piece": "Capuche Apin",
+   "sort": "Crapipou",
+   "dofusId": 31117,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Crapipou : +2 Portée maximale"
+  },
+  {
+   "id": "osamodas-06",
+   "slot": "amulette",
+   "piece": "Capuche Apin",
+   "sort": "Toison d'Or",
+   "dofusId": 31138,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Toison d'Or : +1 lancer(s) par tour"
+  },
+  {
+   "id": "osamodas-07",
+   "slot": "arme",
+   "piece": "Capuche Apin",
+   "sort": "Dragoune",
+   "dofusId": 31118,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Dragoune : +2 Portée maximale"
+  },
+  {
+   "id": "osamodas-08",
+   "slot": "bouclier",
+   "piece": "Capuche Apin",
+   "sort": "Morsure du Serpent",
+   "dofusId": 31112,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Morsure du Serpent : Portée modifiable"
+  },
+  {
+   "id": "osamodas-09",
+   "slot": "cape",
+   "piece": "Cape Lyne",
+   "sort": "Cri du Corbac",
+   "dofusId": 31110,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Cri du Corbac : +2 Portée maximale"
+  },
+  {
+   "id": "osamodas-10",
+   "slot": "cape",
+   "piece": "Cape Lyne",
+   "sort": "Crocs du Mulou",
+   "dofusId": 31113,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Crocs du Mulou : Portée modifiable"
+  },
+  {
+   "id": "osamodas-11",
+   "slot": "cape",
+   "piece": "Cape Lyne",
+   "sort": "Pics du Prespic",
+   "dofusId": 31111,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Pics du Prespic : +2 Portée maximale"
+  },
+  {
+   "id": "osamodas-12",
+   "slot": "cape",
+   "piece": "Cape Lyne",
+   "sort": "Déplumage",
+   "dofusId": 31137,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Déplumage : -1 PA"
+  },
+  {
+   "id": "osamodas-13",
+   "slot": "cape",
+   "piece": "Cape Lyne",
+   "sort": "Dents du Piranya",
+   "dofusId": 31135,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Dents du Piranya : Portée modifiable"
+  },
+  {
+   "id": "osamodas-14",
+   "slot": "amulette",
+   "piece": "Cape Lyne",
+   "sort": "Cœur Sauvage",
+   "dofusId": 31140,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Cœur Sauvage : Portée modifiable"
+  },
+  {
+   "id": "osamodas-15",
+   "slot": "arme",
+   "piece": "Cape Lyne",
+   "sort": "Cri de l'Ours",
+   "dofusId": 31132,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Cri de l'Ours : +2 Portée maximale"
+  },
+  {
+   "id": "osamodas-16",
+   "slot": "bouclier",
+   "piece": "Cape Lyne",
+   "sort": "Bave du Crapaud",
+   "dofusId": 31139,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Bave du Crapaud : -1 PA"
+  },
+  {
+   "id": "osamodas-17",
+   "slot": "ceinture",
+   "piece": "Ceinture Bodiézèle",
+   "sort": "Fouet",
+   "dofusId": 31114,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Fouet : Portée modifiable"
+  },
+  {
+   "id": "osamodas-18",
+   "slot": "ceinture",
+   "piece": "Ceinture Bodiézèle",
+   "sort": "Cravache",
+   "dofusId": 31136,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Cravache : Portée modifiable"
+  },
+  {
+   "id": "osamodas-19",
+   "slot": "ceinture",
+   "piece": "Ceinture Bodiézèle",
+   "sort": "Piqûre Motivante",
+   "dofusId": 31120,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Piqûre Motivante : Portée modifiable"
+  },
+  {
+   "id": "osamodas-20",
+   "slot": "ceinture",
+   "piece": "Ceinture Bodiézèle",
+   "sort": "Communion Animale",
+   "dofusId": 31142,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Communion Animale : -1 PA"
+  },
+  {
+   "id": "osamodas-21",
+   "slot": "ceinture",
+   "piece": "Ceinture Bodiézèle",
+   "sort": "Discipline",
+   "dofusId": 31125,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Discipline : Portée modifiable"
+  },
+  {
+   "id": "osamodas-22",
+   "slot": "amulette",
+   "piece": "Ceinture Bodiézèle",
+   "sort": "Martinet",
+   "dofusId": 31147,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Martinet : Portée modifiable"
+  },
+  {
+   "id": "osamodas-23",
+   "slot": "arme",
+   "piece": "Ceinture Bodiézèle",
+   "sort": "Esprit Glouton",
+   "dofusId": 31131,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Esprit Glouton : +2 Portée maximale"
+  },
+  {
+   "id": "osamodas-24",
+   "slot": "bouclier",
+   "piece": "Ceinture Bodiézèle",
+   "sort": "Esprit Facétieux",
+   "dofusId": 31153,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Esprit Facétieux : +2 Portée maximale"
+  },
+  {
+   "id": "osamodas-25",
+   "slot": "bottes",
+   "piece": "Bottes Swana",
+   "sort": "Saute-granouille",
+   "dofusId": 31121,
+   "effet": "po",
+   "n": 1,
+   "officiel": "Saute-granouille : +1 Portée maximale"
+  },
+  {
+   "id": "osamodas-26",
+   "slot": "bottes",
+   "piece": "Bottes Swana",
+   "sort": "Tornade de Plumes",
+   "dofusId": 31143,
+   "effet": "po",
+   "n": 1,
+   "officiel": "Tornade de Plumes : +1 Portée maximale"
+  },
+  {
+   "id": "osamodas-27",
+   "slot": "bottes",
+   "piece": "Bottes Swana",
+   "sort": "Ventritofu",
+   "dofusId": 31126,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Ventritofu : +2 Portée maximale"
+  },
+  {
+   "id": "osamodas-28",
+   "slot": "bottes",
+   "piece": "Bottes Swana",
+   "sort": "Craquolosse",
+   "dofusId": 31149,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Craquolosse : +2 Portée maximale"
+  },
+  {
+   "id": "osamodas-29",
+   "slot": "bottes",
+   "piece": "Bottes Swana",
+   "sort": "Crapipaud",
+   "dofusId": 31128,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Crapipaud : +2 Portée maximale"
+  },
+  {
+   "id": "osamodas-30",
+   "slot": "amulette",
+   "piece": "Bottes Swana",
+   "sort": "Sulfénix",
+   "dofusId": 31151,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Sulfénix : +2 Portée maximale"
+  },
+  {
+   "id": "osamodas-31",
+   "slot": "arme",
+   "piece": "Bottes Swana",
+   "sort": "Charge Bestiale",
+   "dofusId": 31123,
+   "effet": "ligne",
+   "n": 1,
+   "officiel": "Charge Bestiale : lancer en ligne désactivé"
+  },
+  {
+   "id": "osamodas-32",
+   "slot": "bouclier",
+   "piece": "Bottes Swana",
+   "sort": "Chant du Phénix",
+   "dofusId": 31145,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Chant du Phénix : +2 Portée maximale"
+  },
+  {
+   "id": "osamodas-33",
+   "slot": "anneau",
+   "piece": "Bague Héra",
+   "sort": "Souffle Draconique",
+   "dofusId": 31122,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Souffle Draconique : Portée modifiable"
+  },
+  {
+   "id": "osamodas-34",
+   "slot": "anneau",
+   "piece": "Bague Héra",
+   "sort": "Frappe du Craqueleur",
+   "dofusId": 31144,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Frappe du Craqueleur : +2 Portée maximale"
+  },
+  {
+   "id": "osamodas-35",
+   "slot": "anneau",
+   "piece": "Bague Héra",
+   "sort": "Bouflourd",
+   "dofusId": 31127,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Bouflourd : +2 Portée maximale"
+  },
+  {
+   "id": "osamodas-36",
+   "slot": "anneau",
+   "piece": "Bague Héra",
+   "sort": "Crocoléreux",
+   "dofusId": 31150,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Crocoléreux : +2 Portée maximale"
+  },
+  {
+   "id": "osamodas-37",
+   "slot": "anneau",
+   "piece": "Bague Héra",
+   "sort": "Dragonnet",
+   "dofusId": 31129,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Dragonnet : +2 Portée maximale"
+  },
+  {
+   "id": "osamodas-38",
+   "slot": "amulette",
+   "piece": "Bague Héra",
+   "sort": "Scarafoudre",
+   "dofusId": 31148,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Scarafoudre : +2 Portée maximale"
+  },
+  {
+   "id": "osamodas-39",
+   "slot": "arme",
+   "piece": "Bague Héra",
+   "sort": "Aéropique",
+   "dofusId": 31124,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Aéropique : +2 Portée maximale"
+  },
+  {
+   "id": "osamodas-40",
+   "slot": "bouclier",
+   "piece": "Bague Héra",
+   "sort": "Tourbillon",
+   "dofusId": 31146,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Tourbillon : +2 Portée maximale"
+  }
+ ]
+}

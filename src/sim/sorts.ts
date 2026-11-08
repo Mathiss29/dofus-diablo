@@ -9,7 +9,9 @@ export interface SortGrade {
   /** Premier effet de dommages : [min, max], élément, vol de vie. */
   dmg?: [number, number]; element?: Element; vol?: boolean;
 }
-export interface SortOfficiel { id: number; name: string; icon: number; desc: string; grades: SortGrade[] }
+export interface SortOfficiel { id: number; name: string; icon: number; desc: string; grades: SortGrade[];
+  /** Drapeaux officiels du sort (spelllevels m_flags) : lancer en ligne, ligne de vue, portée modifiable (1 = oui). */
+  ligne?: number; ldv?: number; pom?: number }
 export type PaireSorts = [SortOfficiel, SortOfficiel];
 
 export const SORTS = sorts as unknown as Record<string, PaireSorts[]>;

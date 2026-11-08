@@ -42,8 +42,12 @@ def grade(l):
 
 def spell(sid):
     s = S[sid]
+    lv = [L[i] for i in s['spellLevels'] if i in L]
+    # m_flags du premier grade (bits déduits des pouvoirs officiels des panoplies de classe, 2026-11-08) :
+    # bit 0 = lancer en ligne, bit 2 = ligne de vue, bit 6 = portée modifiable
+    f = lv[0]['m_flags'] if lv else 0
     return {'id': sid, 'name': tr(s['nameId']), 'icon': s['iconId'], 'desc': tr(s['descriptionId']),
-            'grades': [grade(L[i]) for i in s['spellLevels'] if i in L]}
+            'grades': [grade(l) for l in lv], 'ligne': f & 1, 'ldv': (f >> 2) & 1, 'pom': (f >> 6) & 1}
 
 
 res = {}
