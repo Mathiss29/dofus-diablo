@@ -85,7 +85,9 @@ export interface SetDef { name: string; items: number[]; bonus: Record<string, S
  *  rappel : Potion de Rappel, renvoie au dernier Zaap. pepite : la monnaie d'Emp, le recycleur (objet officiel 14635). */
 export interface ResourceDef { name: string; icon: number; level: number; soin?: number; cle?: string; rappel?: boolean; pepite?: boolean;
   /** Rune de forgemagie officielle (src/data/forgemagie.json). */
-  rune?: boolean }
+  rune?: boolean;
+  /** Rune de Signature officielle (7508) : grave le nom du perso sur un objet (maquette Forgemagie UI 6A). */
+  signature?: boolean }
 /** Butin d'un monstre ; metier = critère officiel « Pj>41,N » (Chasseur au-dessus du niveau N), chasse = « CU>0 » (arme de chasse). */
 export interface DropDef { item: string; chance: number; metier?: { id: number; min: number }; chasse?: boolean;
   /** Maquette « Drops » 6B : ne tombe que pendant une quête de Dofus (jamais chez nous) ou un événement (critères officiels). */
@@ -147,6 +149,8 @@ export interface Item {
   niv?: number; xpF?: number;
   /** Forgemagie (src/sim/forgemagie.ts) : le puits de l'objet (poids gardé de côté) et la ligne ajoutée (exo, 4B). */
   puits?: number; exo?: Stat;
+  /** Signé à la Rune de Signature (Forgemagie UI 6A) : le nom du perso, montré dans l'infobulle. */
+  signe?: string;
 }
 
 /** Jet maximum d'une ligne ajoutée par la rareté (aussi le max de forgemagie de ces lignes). */

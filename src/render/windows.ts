@@ -5,7 +5,7 @@ import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES } fr
 import { v } from './assetUrl';
 import { BUTIN_CSS, butinMonstre, dessinerPortraits, esc as escB, groupesBestiaire, nomObjet, iconeObjet, sourcesHtml } from './butinVue';
 import { PALIERS } from './carnet';
-import { FORGE_CSS, etatForge, forgeHtml, texteForge } from './forgeVue';
+import { FORGE_CSS, etatForge, forgeHtml, lotConcasseur, mmss, texteForge, type LigneLog } from './forgeVue';
 import { RUNES } from '../sim/forgemagie';
 import { LOOKS } from './looks';
 import { niveauHorsPartie, rangDe } from '../sim/butin';
@@ -212,7 +212,7 @@ const CSS = `
 .dw .tip{position:fixed;pointer-events:none;z-index:11;min-width:240px;max-width:320px;background:#14130ff4;border:1px solid #57554c;border-radius:4px;padding:10px 12px;box-shadow:0 6px 20px #000a;line-height:1.45}
 .dw .tip h4{margin:0 0 2px;font-size:15px}.dw .tip .sub{color:#a9a48b;font-size:12px;margin-bottom:6px}
 .dw .tip .up{color:#7be07b}.dw .tip .down{color:#e0625a}.dw .tip .ex{color:#6fb2e8}.dw .tip .leg{color:#f08a2c;margin-top:4px}
-.dw .tip .set{color:#9ad15a;margin-top:6px;font-size:12px}.dw .tip .hint{color:#7f7a64;font-size:11px;margin-top:6px}
+.dw .tip .set{color:#9ad15a;margin-top:6px;font-size:12px}.dw .tip .sig{color:#e6b85c;margin-top:6px;font-style:italic;font-size:12px}.dw .tip .hint{color:#7f7a64;font-size:11px;margin-top:6px}
 .dw .win.opt{width:min(1000px,96vw);height:min(720px,92vh)}
 .dw .opt .ob{display:grid;grid-template-columns:270px minmax(0,1fr);min-height:0}
 .dw .opt .nav{background:#2a2823;border-right:1px solid #0d0c0a;display:grid;grid-template-rows:auto 1fr auto;min-height:0}
@@ -1403,11 +1403,12 @@ export class Windows {
   private changed() { this.hideTip(); this.render(); this.onChange(); }
   /** Bulle d'une ressource : consommable, clé de donjon, Potion de Rappel ou Pépite. */
   private resTip(r: ResourceDef, id: string) {
-    const sorte = r.soin || r.rappel ? 'Consommable' : r.cle ? 'Clé de donjon' : r.pepite ? 'Monnaie du Bastion' : r.rune ? 'Rune de forgemagie' : 'Ressource';
+    const sorte = r.soin || r.rappel ? 'Consommable' : r.cle ? 'Clé de donjon' : r.pepite ? 'Monnaie du Bastion' : r.rune || r.signature ? 'Rune de forgemagie' : 'Ressource';
     const effet = r.soin ? `<div class="up">+${r.soin} PV</div><div class="hint">Clic droit : manger</div>`
       : r.rappel ? `<div class="up">Retour au dernier Zaap (${this.world.checkpointName})</div><div class="hint">Clic droit : boire</div>`
       : r.cle ? `<div class="up">Ouvre l'entrée : ${r.cle}</div><div class="hint">Prise en entrant dans le donjon</div>`
       : r.pepite ? '<div class="hint">Recycle tes objets chez Kerubim Crépin (au Bastion des Douze, ou à son guichet du Havre-Sac) et dépense-les chez ses voisins du Bastion.</div>'
+      : r.signature ? '<div class="up">Grave ton nom sur un objet</div><div class="hint">Case Signature de la fenêtre du forgemage, au Bastion des Douze ; Malek en vend aussi.</div>'
       : r.rune && RUNES[id] ? `<div class="up">+${RUNES[id].val} ${STAT_NAMES[RUNES[id].stat]} · poids ${String(RUNES[id].poids).replace('.', ',')}</div><div class="hint">Se pose chez le forgemage du Bastion des Douze ; s'obtient en brisant des objets chez lui.</div>` : '';
     const sert = recettesAvec(ITEMS, id).map(x => ITEMS.resources[x.result]?.name).filter(Boolean);
     const sertA = sert.length ? `<div class="ou"><div class="hd">Sert à</div><div>${sert.slice(0, 5).join(', ')}${sert.length > 5 ? '…' : ''}</div></div>${!r.soin && !r.rappel ? '<div class="hint">Clic droit : recettes qui l\'utilisent</div>' : ''}` : '';
@@ -1494,41 +1495,88 @@ export class Windows {
       e.addEventListener('click', ev => { if (ev.ctrlKey || ev.metaKey) cad(); else { this.world.recycle(uid); this.changed(); } });
     });
   }
-  /** Forgemage (maquette « Forgemagie ») : forgemagie, brisage et fusion ; la partie de test l'ouvre aussi (F1, 10C). */
-  ouvrirForge(uid?: number) { if (uid != null) this.forge.uid = uid; this.forge.onglet = 'forge'; this.show('forge'); }
-  /** Résultats renvoyés par la partie (événements forge, brisage, fusion, viser) : le journal de la fenêtre. */
-  noteForge(l: { t: string; c: string }) { this.forge.log = [l, ...this.forge.log].slice(0, 12); if (this.mode === 'forge' && this.win) this.render(); }
+  /** Forgemage (maquettes « Forgemagie » et « Forgemagie UI ») : forgemagie, commande à Malek, Concasseur et fusion ; la partie de test l'ouvre aussi (F1). */
+  ouvrirForge(uid?: number) { if (uid != null) this.forge.uid = uid; this.forge.onglet = this.world.player.commandeFM?.prete ? 'malek' : 'forge'; this.show('forge'); }
+  /** Nom du perso (Rune de Signature, Forgemagie UI 6A) : donné par la scène. */
+  nomPerso: () => string = () => '';
+  /** Résultats renvoyés par la partie (forge, brisage, fusion, commande) : l'historique de la fenêtre (5A). */
+  noteForge(l: LigneLog) { this.forge.log = [l, ...this.forge.log].slice(0, 40); if (this.mode === 'forge' && this.win) this.render(); }
   noteForgeEvt(e: Parameters<typeof texteForge>[0]) { this.noteForge(texteForge(e)); }
+  /** Commande de Malek qui avance : l'onglet se met à jour (compte à rebours). */
+  majForge() {
+    if (this.mode !== 'forge' || !this.win) return;
+    if (this.forge.onglet === 'malek') { this.render(); return; }
+    const c = this.world.player.commandeFM, t = this.win.querySelector<HTMLElement>('[data-fo="malek"]');
+    if (t) t.textContent = c ? (c.prete ? 'Malek ✓' : `Malek · ${mmss(c.reste)}`) : 'Commande à Malek';
+  }
   private renderForge() {
     const w = this.win!, f = this.forge, p = this.world.player;
+    // garder la saisie en cours (objectif, plancher, budget) quand la fenêtre se redessine
+    const actif = document.activeElement as HTMLInputElement | null, cle = actif && w.contains(actif) ? Array.from(actif.attributes).find(a => a.name.startsWith('data-'))?.name : null;
+    const champ = cle ? actif!.getAttribute(cle) : null;
     w.innerHTML = `${this.title('Forgemage', 'job')}<div class="in emp fm">${forgeHtml(this.world, f)}</div>`;
+    if (cle) { const el = w.querySelector<HTMLInputElement>(champ ? `[${cle}="${champ}"]` : `[${cle}]`); if (el) { el.focus(); const n = el.value.length; try { el.setSelectionRange(n, n); } catch { /* champ nombre */ } } }
+    const tip = (e: HTMLElement, it: Item) => {
+      e.addEventListener('mouseenter', ev => this.showTip(it, ev, false));
+      e.addEventListener('mousemove', ev => this.moveTip(ev));
+      e.addEventListener('mouseleave', () => this.hideTip());
+    };
     w.querySelectorAll<HTMLElement>('[data-fo]').forEach(e => e.addEventListener('click', () => { f.onglet = e.dataset.fo as typeof f.onglet; this.render(); }));
     w.querySelectorAll<HTMLElement>('[data-fuid]').forEach(e => {
       const it = this.world.objetForgeable(+e.dataset.fuid!)!;
-      e.addEventListener('click', () => { f.uid = it.uid; this.render(); });
-      e.addEventListener('mouseenter', ev => this.showTip(it, ev, false));
-      e.addEventListener('mousemove', ev => this.moveTip(ev));
-      e.addEventListener('mouseleave', () => this.hideTip());
+      e.addEventListener('click', () => { f.uid = it.uid; f.rune = null; this.render(); }); tip(e, it);
     });
     w.querySelectorAll<HTMLElement>('[data-frune]').forEach(e => e.addEventListener('click', () => {
-      if (f.uid != null && this.world.forgemager(f.uid, e.dataset.frune!)) this.changed();
+      const id = e.dataset.frune!;
+      if (e.classList.contains('off') || f.uid == null) return;
+      if (f.avance) { if (this.world.forgemager(f.uid, id)) this.changed(); }
+      else { f.rune = id; this.render(); }
     }));
-    w.querySelector<HTMLSelectElement>('[data-vstat]')?.addEventListener('change', ev => { f.vstat = (ev.target as HTMLSelectElement).value as Stat; f.vcible = 0; this.render(); });
-    const vc = w.querySelector<HTMLInputElement>('[data-vcible]');
-    vc?.addEventListener('keydown', ev => ev.stopPropagation());
-    vc?.addEventListener('change', () => { f.vcible = +vc.value; });
-    w.querySelector<HTMLElement>('[data-viser]')?.addEventListener('click', () => {
-      if (f.uid != null && f.vstat) { if (vc) f.vcible = +vc.value; this.world.viserForge(f.uid, f.vstat, f.vcible); this.changed(); }
+    w.querySelector<HTMLElement>('[data-fusionner]')?.addEventListener('click', ev => {
+      if ((ev.currentTarget as HTMLElement).classList.contains('off') || f.uid == null || !f.rune) return;
+      if (this.world.forgemager(f.uid, f.rune)) this.changed();
     });
-    w.querySelectorAll<HTMLElement>('[data-blot]').forEach(e => e.addEventListener('click', () => { this.world.briserLot(e.dataset.blot as Rarity); this.changed(); }));
-    w.querySelectorAll<HTMLElement>('[data-buid]').forEach(e => {
-      const uid = +e.dataset.buid!, it = p.bag.find(b => b.uid === uid)!;
-      const cad = () => { this.world.cadenas(uid); this.changed(); };
-      e.addEventListener('mouseenter', ev => this.showTip(it, ev, false));
-      e.addEventListener('mousemove', ev => this.moveTip(ev));
-      e.addEventListener('mouseleave', () => this.hideTip());
+    w.querySelector<HTMLInputElement>('[data-avance]')?.addEventListener('change', ev => { f.avance = (ev.target as HTMLInputElement).checked; f.rune = null; this.render(); });
+    w.querySelectorAll<HTMLElement>('[data-oeil]').forEach(e => e.addEventListener('click', () => {
+      const s = e.dataset.oeil as Stat; f.caches = f.caches.includes(s) ? f.caches.filter(x => x !== s) : [...f.caches, s]; this.render();
+    }));
+    w.querySelector<HTMLElement>('[data-fsigne]')?.addEventListener('click', () => {
+      if (f.uid != null && this.world.signer(f.uid, this.nomPerso())) this.changed();
+    });
+    // commande à Malek (9A-9E)
+    w.querySelectorAll<HTMLElement>('[data-muid]').forEach(e => {
+      const it = this.world.objetForgeable(+e.dataset.muid!)!;
+      e.addEventListener('click', () => { f.cmdUid = it.uid; f.estim = null; this.render(); }); tip(e, it);
+    });
+    const nombre = (el: HTMLInputElement) => { const n = Math.floor(+el.value); return el.value === '' || !(n > 0) ? undefined : n; };
+    w.querySelectorAll<HTMLInputElement>('[data-obj],[data-plancher],[data-budget]').forEach(el => {
+      el.addEventListener('keydown', ev => ev.stopPropagation());
+      el.addEventListener('input', () => {
+        const n = nombre(el);
+        if (el.dataset.budget != null) f.cmd.budget = n ?? 0;
+        else { const o = el.dataset.obj != null ? f.cmd.objectifs : f.cmd.planchers, s = (el.dataset.obj ?? el.dataset.plancher) as Stat; if (n == null) delete o[s]; else o[s] = n; }
+        f.estim = null;
+      });
+    });
+    w.querySelector<HTMLElement>('[data-estimer]')?.addEventListener('click', () => { if (f.cmdUid != null) { f.estim = this.world.estimerCommande(f.cmdUid, f.cmd); this.render(); } });
+    w.querySelector<HTMLElement>('[data-confier]')?.addEventListener('click', ev => {
+      if (f.cmdUid == null) return;
+      if (this.world.confierCommande(f.cmdUid, f.cmd)) { f.estim = null; this.changed(); } else this.flash(ev.currentTarget as HTMLElement);
+    });
+    w.querySelector<HTMLElement>('[data-reprendre]')?.addEventListener('click', () => { if (this.world.retirerCommande()) this.changed(); });
+    // Concasseur (8A)
+    w.querySelectorAll<HTMLElement>('[data-blot]').forEach(e => e.addEventListener('click', () => { lotConcasseur(this.world, f, e.dataset.blot as Rarity); this.render(); }));
+    w.querySelector<HTMLElement>('[data-briser]')?.addEventListener('click', () => { if (f.brise.length && this.world.briserChoix(f.brise)) { f.brise = []; this.changed(); } });
+    w.querySelectorAll<HTMLElement>('[data-buid],[data-bout]').forEach(e => {
+      const uid = +(e.dataset.buid ?? e.dataset.bout!), it = p.bag.find(b => b.uid === uid)!;
+      const cad = (ev: Event) => { ev.preventDefault(); this.world.cadenas(uid); this.changed(); };
+      tip(e, it);
       e.addEventListener('contextmenu', cad);
-      e.addEventListener('click', ev => { if (ev.ctrlKey || ev.metaKey) cad(); else { this.world.briserObjet(uid); this.changed(); } });
+      e.addEventListener('click', ev => {
+        if (ev.ctrlKey || ev.metaKey) return cad(ev);
+        if (it.cadenas) return;
+        f.brise = f.brise.includes(uid) ? f.brise.filter(x => x !== uid) : [...f.brise, uid]; this.hideTip(); this.render();
+      });
     });
     w.querySelectorAll<HTMLElement>('[data-fus]').forEach(e => e.addEventListener('click', () => { this.world.fusionner(e.dataset.fus!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-fust]').forEach(e => e.addEventListener('click', () => { this.world.fusionner(e.dataset.fust!, true); this.changed(); }));
@@ -1725,7 +1773,7 @@ export class Windows {
     } else if (p.equipment.familier && !worn) fam = `<div class="hint">Alt + clic : le donner à manger au familier (+${FAMILIER_XP.objet(d.level, it.rarity)} XP)</div>`;
     this.tip.innerHTML = `<h4 style="color:${RARITY_COLORS[it.rarity]}">${d.name}</h4>
       <div class="sub">${d.familier ? 'Familier' : `${RARITY_NAMES[it.rarity]} · ${d.weapon?.type ?? SLOT_NAMES[(slot ?? 'amulette') as EquipSlot]}`} · niveau ${d.level}</div>
-      ${weapon}${stats}${fam}${leg}${set}${lvl}${cmp}${sourcesHtml(it.id, 3)}
+      ${weapon}${stats}${fam}${leg}${set}${it.signe ? `<div class="sig">Signé par ${it.signe.replace(/[&<>"]/g, '')}</div>` : ''}${lvl}${cmp}${sourcesHtml(it.id, 3)}
       <div class="hint">${worn ? 'Clic droit : retirer' : it.cadenas ? 'Sous cadenas : jamais recyclé · Ctrl + clic : l\'ôter' : `Clic droit : équiper · Maj + clic : recycler (${recycleValue(d, it)} Pépites) · Ctrl + clic : cadenas`}</div>`;
     this.tip.style.display = 'block'; this.moveTip(ev);
   }

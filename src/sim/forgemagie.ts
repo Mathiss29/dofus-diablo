@@ -156,3 +156,80 @@ export function lignes(def: ItemDef, it: Item): { s: Stat; v: number; max: numbe
 }
 /** Somme des runes gagnées (pour les messages). */
 export const totalRunes = (g: Record<string, number>) => Object.values(g).reduce((a, b) => a + b, 0);
+
+// --- Commande à Malek (maquette « Forgemagie UI » 9A+9B+9C+9D+9E, Mathis 2026-11-08) -----------------------------------------
+/** Ce que le joueur demande : une valeur par ligne (9A), un plancher par ligne protégée (9C) et un budget en kamas (9B). */
+export interface Commande { objectifs: Partial<Record<Stat, number>>; planchers: Partial<Record<Stat, number>>; budget: number }
+/** Pourquoi Malek s'arrête : objectifs atteints, ligne protégée sous son plancher, budget, ou plus de rune utile. */
+export type FinCommande = 'ok' | 'plancher' | 'budget' | 'runes';
+export interface RapportCommande { essais: number; kamas: number; fin: FinCommande; finStat?: Stat; runes: Record<string, number>; issues: Partial<Record<Issue, number>> }
+/** Commande confiée (9E) : l'objet chez Malek, le temps qu'il reste, et ce qu'il a fait. */
+export interface CommandeFM { item: Item; reste: number; total: number; rapport: RapportCommande; avant: Partial<Record<Stat, number>>; prete?: boolean }
+export const REGLES_COMMANDE = FM.commande;
+
+/** Prochaine rune de Malek : la ligne la plus en retard sur son objectif, la plus grosse rune qui ne dépasse pas l'écart
+ *  (sinon la plus petite qui passe). null : plus rien d'utile dans le stock. */
+export function runeCommande(def: ItemDef, it: Item, stock: Record<string, number>, cmd: Commande): string | null {
+  const manque = (Object.keys(cmd.objectifs) as Stat[]).filter(s => (it.stats[s] ?? 0) < (cmd.objectifs[s] ?? 0))
+    .sort((a, b) => (it.stats[a] ?? 0) / cmd.objectifs[a]! - (it.stats[b] ?? 0) / cmd.objectifs[b]!);
+  for (const s of manque) {
+    const ecart = cmd.objectifs[s]! - (it.stats[s] ?? 0);
+    const ok = runesDe(s).filter(id => (stock[id] ?? 0) > 0 && !('refus' in chanceRune(def, it, id)));
+    const r = [...ok].reverse().find(id => RUNES[id].val <= ecart) ?? ok[0];
+    if (r) return r;
+  }
+  return null;
+}
+
+/** Malek exécute la commande sur l'objet (modifié) avec les runes du stock (modifié) et au plus `kamas` kamas, commission comprise. */
+export function executerCommande(rng: Rng, def: ItemDef, it: Item, stock: Record<string, number>, kamas: number, cmd0: Commande): RapportCommande {
+  // un objectif au-dessus du plafond de la ligne (overmax compris) est ramené au plafond
+  const cmd: Commande = { ...cmd0, objectifs: Object.fromEntries((Object.keys(cmd0.objectifs) as Stat[]).map(s => [s, Math.min(cmd0.objectifs[s]!, plafond(def, it, s))])) };
+  const R: RapportCommande = { essais: 0, kamas: 0, fin: 'ok', runes: {}, issues: {} }, budget = Math.min(kamas, cmd.budget);
+  for (let i = 0; i < FM.commande.essaisMax; i++) {
+    const casse = (Object.keys(cmd.planchers) as Stat[]).find(s => (cmd.planchers[s] ?? 0) > 0 && (it.stats[s] ?? 0) < cmd.planchers[s]!);
+    if (casse) { R.fin = 'plancher'; R.finStat = casse; return R; }
+    if (!(Object.keys(cmd.objectifs) as Stat[]).some(s => (it.stats[s] ?? 0) < (cmd.objectifs[s] ?? 0))) { R.fin = 'ok'; return R; }
+    const r = runeCommande(def, it, stock, cmd);
+    if (!r) { R.fin = 'runes'; return R; }
+    const k = coutKamas(def, r, true);
+    if (R.kamas + k > budget) { R.fin = 'budget'; return R; }
+    const res = forger(rng, def, it, r);
+    if (!res) { R.fin = 'runes'; return R; }
+    R.kamas += k; R.essais++;
+    stock[r]--; R.runes[r] = (R.runes[r] ?? 0) + 1;
+    R.issues[res.issue] = (R.issues[res.issue] ?? 0) + 1;
+  }
+  R.fin = 'budget';
+  return R;
+}
+
+export interface Estimation { reussite: number; kamas: number; runes: number; fins: Partial<Record<FinCommande, number>> }
+/** 9D : Malek simule la commande `n` fois sur des copies (rien ne change) : chance de tout atteindre, kamas et runes moyens. */
+export function estimerCommande(rng: Rng, def: ItemDef, it: Item, stock: Record<string, number>, kamas: number, cmd: Commande, n = FM.commande.simulations): Estimation {
+  const E: Estimation = { reussite: 0, kamas: 0, runes: 0, fins: {} }, base = JSON.stringify(it);
+  for (let i = 0; i < n; i++) {
+    const r = executerCommande(rng, def, JSON.parse(base) as Item, { ...stock }, kamas, cmd);
+    if (r.fin === 'ok') E.reussite++;
+    E.kamas += r.kamas; E.runes += r.essais; E.fins[r.fin] = (E.fins[r.fin] ?? 0) + 1;
+  }
+  E.reussite /= n; E.kamas = Math.round(E.kamas / n); E.runes = Math.round(E.runes / n * 10) / 10;
+  for (const f of Object.keys(E.fins) as FinCommande[]) E.fins[f]! /= n;
+  return E;
+}
+/** Temps de travail de Malek (9E) : quelques secondes par rune posée, entre un minimum et un maximum. */
+export const dureeCommande = (essais: number, test = false) =>
+  test ? FM.commande.test : Math.max(FM.commande.min, Math.min(FM.commande.max, essais * FM.commande.parRune));
+
+/** Aperçu du brisage (8A, façon Concasseur) : runes sûres de chaque objet (sans le petit reste au hasard). */
+export function apercuBrisage(def: ItemDef, it: Item): Record<string, number> {
+  const gains: Record<string, number> = {}, bonus = (FM.brisage.rarete as Record<Rarity, number>)[it.rarity] ?? 1;
+  for (const [s, v] of Object.entries(it.stats) as [Stat, number][]) {
+    const w0 = POIDS[s], rs = runesDe(s);
+    if (w0 == null || v <= 0 || !rs.length) continue;
+    let w = (3 * v * w0 * def.level / 200 + 1) * bonus;
+    for (const id of [...rs].reverse()) { const n = Math.floor(w / RUNES[id].poids + 1e-9); if (n > 0) { gains[id] = (gains[id] ?? 0) + n; w -= n * RUNES[id].poids; } }
+  }
+  return gains;
+}
+export const SIGNATURE = FM.signature;

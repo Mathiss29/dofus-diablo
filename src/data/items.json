@@ -11200,6 +11200,12 @@
    "name": "Poupée maléfique de Dopeul Crâ",
    "icon": 61682,
    "level": 1
+  },
+  "7508": {
+   "name": "Rune de Signature",
+   "icon": 50037,
+   "level": 100,
+   "signature": true
   }
  },
  "drops": {
