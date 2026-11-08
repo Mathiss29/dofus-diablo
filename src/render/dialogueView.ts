@@ -4,6 +4,7 @@ import { ICON_CSS, iconHtml } from './icons';
 import { ITEMS } from '../sim/data';
 import type { Dialogue, InfoDonjon, RecompenseDef } from '../sim/quests';
 import { chrono } from '../sim/quests';
+import { PEPITE, RARITY_COLORS, RARITY_NAMES } from '../sim/items';
 import type { World } from '../sim/world';
 import { QUEST_ICON, type QuestView } from './questView';
 
@@ -152,6 +153,8 @@ function recompense(r: RecompenseDef, classe: string) {
   return [r.xp ? `<span>${r.xp} XP</span>` : '', r.kamas ? `<span><img src="assets/ui/inv/kamas.png" alt="" style="width:16px">${r.kamas} kamas</span>` : '',
     un ? `<span>${iconHtml(obj(un)?.icon ?? 0)}${esc(obj(un)?.name ?? un)}</span>` : '',
     ...(r.objets ?? []).map(([o, n]) => `<span>${iconHtml(obj(o)?.icon ?? 0)}${n} × ${esc(obj(o)?.name ?? o)}</span>`),
+    r.sac ? `<span style="color:${RARITY_COLORS[r.sac]}">Sac ${RARITY_NAMES[r.sac]} garanti</span>` : '',
+    r.pepites ? `<span>${iconHtml(ITEMS.resources[PEPITE]?.icon ?? 0)}${r.pepites} Pépites</span>` : '',
     r.potions ? '<span>Potions remplies</span>' : ''].filter(Boolean).join('');
 }
 const esc = (s: string) => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));

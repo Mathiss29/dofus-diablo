@@ -68,6 +68,8 @@ export type SimEvent =
   | { k: 'itemDrop'; x: number; y: number; rarity: Rarity }
   | { k: 'loot'; item: Item }
   | { k: 'lootResource'; id: string; n: number }
+  /** Sac à rareté garantie reçu en récompense (contrat, Avis de recherche). */
+  | { k: 'sacQuete'; id: string; rarity: Rarity }
   /** Métiers : niveau gagné, recette faite, plat mangé. */
   | { k: 'metierLevel'; metier: string; level: number }
   | { k: 'craft'; id: string; n: number }

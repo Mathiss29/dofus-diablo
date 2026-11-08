@@ -17,6 +17,7 @@ const STEP = 1 / 60;
 describe('quêtes et succès', () => {
   it('les données renvoient à des PNJ, monstres, objets et quêtes qui existent', () => {
     const I = ITEMS as unknown as ItemsData;
+    const astrub = JSON.parse(readFileSync(new URL('../public/assets/mondes/astrub/monde.json', import.meta.url), 'utf8')) as WorldData;
     for (const [id, q] of Object.entries(Q.quetes)) {
       if (q.pnj) expect(Q.pnj[q.pnj], id).toBeDefined();
       if (q.rendre) expect(Q.pnj[q.rendre], id).toBeDefined();
@@ -24,13 +25,13 @@ describe('quêtes et succès', () => {
       for (const r of q.requiert ?? []) expect(Q.quetes[r], id).toBeDefined();
       for (const [o] of q.recompense.objets ?? []) expect(I.resources[o] ?? I.equipment[o], `${id} ${o}`).toBeDefined();
       const etapes = Array.isArray(q.etapes) ? q.etapes : Object.values(q.etapes).flat();
+      const ici = q.pnj && Q.pnj[q.pnj]?.zone === 'astrub' ? astrub : monde;
       for (const o of etapes.flatMap(e => e.objectifs)) {
-        if (o.t === 'elite') { expect(GAME_DATA.monsters[o.monstre], o.monstre).toBeDefined(); expect(monde.maps.some(m => m.tag === o.carte), o.carte).toBe(true); }
+        if (o.t === 'elite') { expect(GAME_DATA.monsters[o.monstre], o.monstre).toBeDefined(); expect(ici.maps.some(m => m.tag === o.carte), o.carte).toBe(true); }
         if (o.t === 'vaincre') for (const m of o.monstres ?? []) expect(GAME_DATA.monsters[m], m).toBeDefined();
         if ((o.t === 'aller' || o.t === 'parler') && o.pnj) expect(Q.pnj[o.pnj], o.pnj).toBeDefined();
       }
     }
-    const astrub = JSON.parse(readFileSync(new URL('../public/assets/mondes/astrub/monde.json', import.meta.url), 'utf8')) as WorldData;
     const lire = (w: string) => JSON.parse(readFileSync(new URL(`../public/assets/mondes/${w}/monde.json`, import.meta.url), 'utf8')) as WorldData;
     const bastion = lire('bastion'), havresac = lire('havresac');
     for (const p of Object.values(Q.pnj)) expect((p.zone === 'astrub' ? astrub : p.zone === 'bastion' ? bastion : p.zone === 'havresac' ? havresac : monde).maps.some(m => m.tag === p.carte), p.carte).toBe(true);

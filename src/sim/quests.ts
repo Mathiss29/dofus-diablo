@@ -1,5 +1,7 @@
 import type { SimEvent } from './events';
 import type { World } from './world';
+import { PEPITE, type Rarity } from './items';
+import { contrat, semaine, tirerContrats, type CtxContrats } from './contrats';
 
 /** Quêtes et succès (maquette « Quêtes et succès », tranchée le 2026-11-06).
  *  Une quête est une suite d'étapes ; une étape a un ou plusieurs objectifs qui avancent en même temps (3A+3B).
@@ -54,6 +56,10 @@ export interface RecompenseDef {
   potions?: boolean;
   /** XP donnée jusqu'à atteindre ce niveau. */
   niveau?: number;
+  /** Sac à rareté garantie (Quêtes roadmap 5A) : un équipement tiré au niveau de la quête, de cette rareté. */
+  sac?: Rarity;
+  /** Pépites (la monnaie d'Emp, 5B). */
+  pepites?: number;
 }
 export type QueteType = 'tutoriel' | 'principale' | 'secondaire' | 'prime' | 'evenement';
 export interface QueteDef {
@@ -93,6 +99,10 @@ export interface QueteDef {
   merci?: string;
   /** Chapitre du tour du monde dont les donjons ne sont pas encore dans le jeu : visible au carnet de route, pas encore proposé. */
   bientot?: boolean;
+  /** Répétable (Avis de recherche : une traque par semaine, 3A) : on peut la reprendre au jour ou à la semaine suivante. */
+  repetable?: 'jour' | 'semaine';
+  /** Contrat du jour ou de la semaine (src/sim/contrats.ts) : la période où il a été proposé. */
+  contrat?: string;
 }
 export interface PnjDef {
   nom: string; dofusId: number;
@@ -117,6 +127,8 @@ export interface PnjDef {
   /** Gardien de l'entrée d'un donjon (maquette Gardiens) : il fait entrer avec la clé. Répliques inédites. Sans case, il se poste
    *  à quelques pas de la porte d'entrée. */
   gardien?: GardienDef;
+  /** Tient le tableau des contrats du jour (Quêtes roadmap 3C). */
+  contrats?: boolean;
 }
 export interface GardienDef {
   /** Nom du donjon (zones.json, open.donjons[].nom). */
@@ -137,7 +149,7 @@ export const chrono = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(
 /** Réponse du cadre vert sous la bulle (maquette Dialogues 3A) : voir une quête, l'accepter, revenir à la liste, fermer. */
 export type Reponse = { texte: string; detail?: string } & (
   { a: 'voir' | 'accepter'; quete: string } | { a: 'retour' } | { a: 'fermer' } | { a: 'service'; service: string } | { a: 'suite'; i: number }
-  | { a: 'entrer'; donjon: string } | { a: 'sansCle'; donjon: string }
+  | { a: 'entrer'; donjon: string } | { a: 'sansCle'; donjon: string } | { a: 'contrats' }
 );
 /** Dialogue ouvert avec un PNJ (bulle officielle à ruban, réponses 1 à 4). Le jeu continue derrière (4A). */
 export interface Dialogue { pnj: string; texte: string; reponses: Reponse[]; quete?: string; recompense?: RecompenseDef; donjon?: InfoDonjon }
@@ -152,7 +164,9 @@ export interface SuccesDef {
   /** XP officielle (ratio des données × XP du niveau), objet officiel. */
   recompense?: { xp?: number; objet?: string; /** Titre affiché sous le nom du perso (Tour 7A). */ titre?: string };
 }
-export interface QuetesData { pnj: Record<string, PnjDef>; quetes: Record<string, QueteDef>; succes: Record<string, SuccesDef> }
+export interface QuetesData { pnj: Record<string, PnjDef>; quetes: Record<string, QueteDef>; succes: Record<string, SuccesDef>;
+  /** Contrats du jour : titres officiels et une ligne de texte par sous-zone (2A). */
+  contrats?: { titres: Record<string, [string, string][]> } }
 
 /** Une quête en cours. */
 export interface QueteEnCours { id: string; etape: number; compte: number[]; /** Étapes finies, en attente du rendu au PNJ. */ aRendre: boolean }
@@ -164,7 +178,12 @@ export interface EtatQuetes {
   decouvertes: number[]; vaincus: string[]; objets: Record<string, number>;
   /** Donjons (8A) : victoires sur le boss, morts, et dernier résultat pas encore commenté par le gardien. */
   donjons?: Record<string, BilanDonjon>;
+  /** Quêtes répétables finies : id -> période (jour AAAA-MM-JJ ou semaine AAAA-Snn) où elles l'ont été. */
+  refaites?: Record<string, string>;
+  /** Tableau des contrats (4A) : ceux proposés aujourd'hui et cette semaine (gardés pour que monter de niveau ne les change pas). */
+  tableau?: Tableau;
 }
+export interface Tableau { jour: string; ids: string[]; semaine: string; hebdo: string[] }
 export interface BilanDonjon { v: number; m: number; dernier?: 'v' | 'm';
   /** Meilleur temps dans l'arène (s, 12A) ; nouveau record à commenter par le gardien. */
   t?: number; record?: boolean;
@@ -190,6 +209,12 @@ export class Quetes {
   donjons: Record<string, BilanDonjon> = {};
   /** Vendeur de clés montré par un gardien (6A) : la carte M le met en avant. */
   marqueVendeur: string | null = null;
+  /** Répétables finies (Avis, contrats) : id -> période. */
+  refaites: Record<string, string> = {};
+  /** Contrats proposés aujourd'hui et cette semaine. */
+  tableau: Tableau | null = null;
+  /** Contrats déjà écrits (src/sim/contrats.ts), par id. */
+  private dyn = new Map<string, QueteDef | null>();
   /** Donjon où se trouve le perso et moment où il y est entré (temps du premier passage, Tour 8B). */
   private dansDonjon: { nom: string; t: number } | null = null;
   /** Gardiens qui ont déjà dit leur bulle d'approche pendant cette visite (9A). */
@@ -292,12 +317,15 @@ export class Quetes {
   /** Avancement des quêtes du perso (sauvegarde, src/sim/sauvegarde.ts). */
   exporter(): EtatQuetes {
     return JSON.parse(JSON.stringify({ enCours: this.enCours, finies: [...this.finies], etapesFinies: [...this.etapesFinies], suivie: this.suivie,
-      decouvertes: [...this.decouvertes], vaincus: [...this.vaincus], objets: this.objets, donjons: this.donjons }));
+      decouvertes: [...this.decouvertes], vaincus: [...this.vaincus], objets: this.objets, donjons: this.donjons, refaites: this.refaites,
+      ...(this.tableau ? { tableau: this.tableau } : {}) }));
   }
   /** Reprend une partie sauvegardée au lieu de demarrer() : mêmes quêtes, mêmes étapes, et les élites de l'étape en cours reviennent. */
   reprendre(e: EtatQuetes) {
-    this.enCours = (e.enCours ?? []).filter(c => this.data.quetes[c.id] && this.etapeDe(c));
-    this.finies = new Set(e.finies ?? []); this.etapesFinies = new Set(e.etapesFinies ?? []);
+    this.refaites = { ...e.refaites }; this.tableau = e.tableau ?? null;
+    this.enCours = (e.enCours ?? []).filter(c => this.existe(c.id) && this.etapeDe(c));
+    // les contrats finis des jours passés ne servent plus à rien
+    this.finies = new Set((e.finies ?? []).filter(id => !id.startsWith('ctr:') || this.enPeriode(id))); this.etapesFinies = new Set((e.etapesFinies ?? []).filter(k => !k.startsWith('ctr:')));
     this.suivie = e.suivie && this.enCours.some(c => c.id === e.suivie) ? e.suivie : this.enCours[0]?.id ?? null;
     this.decouvertes = new Set(e.decouvertes ?? []); this.vaincus = new Set(e.vaincus ?? []); this.objets = { ...e.objets };
     this.donjons = JSON.parse(JSON.stringify(e.donjons ?? {}));
@@ -306,7 +334,45 @@ export class Quetes {
     });
   }
 
-  def(id: string) { return this.data.quetes[id]; }
+  def(id: string): QueteDef { return this.data.quetes[id] ?? this.ecrireContrat(id)!; }
+  /** La quête existe (écrite dans quetes.json, ou contrat dont la sous-zone existe). */
+  existe(id: string) { return !!(this.data.quetes[id] ?? this.ecrireContrat(id)); }
+
+  // --- Répétables et contrats du jour (Quêtes roadmap 1C, 3A+3C, 4A) ----------
+  /** Aujourd'hui (AAAA-MM-JJ, heure du PC) et la semaine. */
+  get jour() { return this.world.opts.aujourdhui ?? ''; }
+  periode(rep: 'jour' | 'semaine') { return rep === 'jour' ? this.jour : semaine(this.jour); }
+  /** Un contrat de la période en cours (les autres ne sont plus proposés). */
+  private enPeriode(id: string) { const p = id.split(':')[1]; return p === this.jour || p === semaine(this.jour); }
+  private ecrireContrat(id: string): QueteDef | null {
+    if (!id.startsWith('ctr:')) return null;
+    if (!this.dyn.has(id)) this.dyn.set(id, contrat(id, this.ctxContrats()));
+    return this.dyn.get(id)!;
+  }
+  /** Ce que src/sim/contrats.ts doit savoir de la zone. */
+  private ctxContrats(): CtxContrats {
+    const w = this.world, I = w.opts.items, M = w.opts.data.monsters, wg = w.worldGrid;
+    const pnj = Object.entries(this.data.pnj).find(([, d]) => d.contrats && (d.zone ?? 'incarnam') === w.opts.zone)?.[0] ?? '';
+    return { sousZones: Object.fromEntries(Object.entries(w.zone.open?.subareas ?? {}).filter(([, s]) => s.monsters.length)),
+      nomMonstre: id => M[id]?.name ?? id,
+      ressourcesDe: id => (I?.drops[id] ?? []).filter(d => I!.resources[d.item] && d.chance >= 5 && d.chance < 100).map(d => d.item),
+      nomRessource: id => I?.resources[id]?.name ?? id,
+      cartesDe: sub => (wg?.world.maps ?? []).filter(m => String(m.sub) === sub && (wg!.freeByMap.get(m.tag)?.length ?? 0) > 40).map(m => m.tag),
+      titres: this.data.contrats?.titres ?? {}, pnj };
+  }
+  /** Les contrats du tableau (3 du jour + 1 de la semaine), tirés au premier coup d'œil de la période. */
+  contrats(): string[] {
+    const j = this.jour, s = semaine(j), lvl = this.world.player.level, ctx = this.ctxContrats();
+    if (!j || !ctx.pnj) return [];
+    const t = this.tableau ??= { jour: '', ids: [], semaine: '', hebdo: [] };
+    if (t.jour !== j) { t.jour = j; t.ids = tirerContrats(j, false, lvl, ctx); }
+    if (t.semaine !== s) { t.semaine = s; t.hebdo = tirerContrats(s, true, lvl, ctx); }
+    return [...t.ids, ...t.hebdo].filter(id => this.existe(id));
+  }
+  /** Contrats qu'on peut encore prendre (ni en cours, ni finis cette période). */
+  contratsLibres(): string[] { return this.contrats().filter(id => !this.finies.has(id) && !this.enCours.some(c => c.id === id)); }
+  /** Une répétable finie peut être reprise à la période suivante. */
+  private reprenable(id: string) { const q = this.def(id); return !!q.repetable && this.refaites[id] !== this.periode(q.repetable); }
   etapes(id: string): EtapeDef[] {
     const e = this.def(id).etapes;
     return Array.isArray(e) ? e : e[this.classe] ?? Object.values(e)[0];
@@ -320,7 +386,7 @@ export class Quetes {
   aDonnerTous(pnj: string): string[] {
     const lvl = this.world.player.level, out: string[] = [];
     for (const [id, q] of Object.entries(this.data.quetes)) {
-      if (q.pnj !== pnj || q.bientot || this.finies.has(id) || this.enCours.some(c => c.id === id) || q.auDepart) continue;
+      if (q.pnj !== pnj || q.bientot || (this.finies.has(id) && !this.reprenable(id)) || this.enCours.some(c => c.id === id) || q.auDepart) continue;
       if (q.niveau > lvl + 2 || !(q.requiert ?? []).every(r => this.finies.has(r))) continue;
       // une quête qui suit une autre (fil principal) démarre seule à la fin de la précédente : son PNJ ne la propose pas
       if (Object.values(this.data.quetes).some(o => o.suivante === id)) continue;
@@ -335,7 +401,7 @@ export class Quetes {
   /** Icône officielle au-dessus d'un PNJ (8D) : quête à donner, à rendre, ou rien. */
   icone(pnj: string): { quete: string; rendre: boolean } | null {
     const r = this.aRendre(pnj); if (r) return { quete: r, rendre: true };
-    const d = this.aDonner(pnj); return d ? { quete: d, rendre: false } : null;
+    const d = this.aDonner(pnj) ?? (this.data.pnj[pnj]?.contrats ? this.contratsLibres()[0] : null); return d ? { quete: d, rendre: false } : null;
   }
   /** Le PNJ attend qu'on lui parle pour un objectif « parler ». */
   attendParler(pnj: string): string | null {
@@ -343,7 +409,8 @@ export class Quetes {
   }
 
   prendre(id: string) {
-    if (this.finies.has(id) || this.enCours.some(c => c.id === id)) return;
+    if (this.finies.has(id) && this.existe(id) && this.reprenable(id)) this.finies.delete(id);
+    if (this.finies.has(id) || this.enCours.some(c => c.id === id) || !this.existe(id)) return;
     const c: QueteEnCours = { id, etape: 0, compte: [], aRendre: false };
     this.enCours.push(c);
     this.suivie ??= id;
@@ -396,9 +463,10 @@ export class Quetes {
   private ouvrir(pnj: string, intro: string | null, liste = false) {
     const ds = this.aDonnerTous(pnj), def = this.data.pnj[pnj], dis = def?.discussion?.[0];
     if (def?.gardien) { this.garder(pnj, def, intro, ds); return; }
-    if (ds.length === 1 && !liste) { this.offre(pnj, ds[0], intro); return; }
+    if (ds.length === 1 && !liste && !def?.contrats) { this.offre(pnj, ds[0], intro); return; }
     this.dialogue = { pnj, texte: intro ?? def?.phrase ?? 'Bonne route, aventurier.',
       reponses: [...ds.map(id => ({ a: 'voir' as const, quete: id, texte: this.def(id).nom })),
+        ...(def?.contrats ? [{ a: 'contrats' as const, texte: 'Le tableau des contrats.', detail: `${this.contratsLibres().length} à prendre` }] : []),
         ...(def?.services ?? []).map(s => ({ a: 'service' as const, service: s.service, texte: s.texte })),
         ...(dis && !ds.length ? [{ a: 'suite' as const, i: 0, texte: dis.reponse }] : []),
         { a: 'fermer', texte: def?.adieu ?? 'Au revoir.' }] };
@@ -431,6 +499,14 @@ export class Quetes {
       ...(def?.services ?? []).map(s => ({ a: 'service' as const, service: s.service, texte: s.texte })).slice(0, n ? 2 : 3),
       { a: 'fermer', texte: def?.adieu ?? 'Au revoir.' }] };
   }
+  /** Le tableau des contrats (3C) : ceux du jour et celui de la semaine, ou « reviens demain ». */
+  private tableauContrats(pnj: string) {
+    const l = this.contratsLibres(), fait = this.contrats().length - l.length;
+    this.dialogue = { pnj, texte: l.length ? `Voilà les contrats du jour. Ils changent à minuit, celui de la semaine change le lundi.${fait ? ` Tu en as déjà pris ${fait}.` : ''}`
+      : "Plus rien pour aujourd'hui. Reviens demain, les fauteurs de troubles d'Astrub ne prennent jamais de vacances.",
+      reponses: [...l.map(id => ({ a: 'voir' as const, quete: id, texte: this.def(id).nom, detail: `niv ${this.def(id).niveau}` })),
+        { a: 'retour', texte: 'Retour.' }, { a: 'fermer', texte: 'Au revoir.' }] };
+  }
   private offre(pnj: string, id: string, intro: string | null) {
     const q = this.def(id);
     this.dialogue = { pnj, quete: id, recompense: q.recompense, texte: intro ? `${intro}\n\n${q.texte}` : q.texte, reponses: [
@@ -453,6 +529,7 @@ export class Quetes {
       this.marqueVendeur = v;
       this.dialogue = { pnj: d.pnj, donjon: d.donjon, texte: t, reponses: [{ a: 'fermer', texte: def?.adieu ?? 'Au revoir.' }] };
     }
+    else if (r.a === 'contrats') this.tableauContrats(d.pnj);
     else if (r.a === 'service') { this.dialogue = null; this.world.emit({ k: 'service', service: r.service, pnj: d.pnj }); }
     else { this.dialogue = null; this.prendre(r.quete); this.suivie = r.quete; }
   }
@@ -579,6 +656,7 @@ export class Quetes {
     const q = this.def(id), w = this.world, p = w.player, c = this.enCours.find(x => x.id === id);
     this.enCours = this.enCours.filter(c => c.id !== id);
     if (this.finies.has(id)) return;
+    if (q.repetable) this.refaites[id] = this.periode(q.repetable);
     // quête passée : les objets des étapes pas encore atteintes sont quand même donnés et portés (équipement de départ du tutoriel)
     if (sautee) {
       const dons = this.etapes(id).flatMap((e, i) => i > (c?.etape ?? -1) ? this.dons(e) : []);
@@ -596,6 +674,8 @@ export class Quetes {
     const obj = r.objetParClasse?.[this.classe] ?? r.objet;
     if (obj) w.donnerObjet(obj);
     for (const [o, n] of r.objets ?? []) w.donnerObjet(o, n);
+    if (r.sac) w.donnerSac(r.sac, q.niveau);
+    if (r.pepites) w.donnerObjet(PEPITE, r.pepites);
     for (const o of this.etapes(id).flatMap(e => e.objectifs)) if (o.t === 'ramasser') delete this.objets[o.objet];
     if (this.suivie === id) this.suivie = null;
     w.emit({ k: 'queteFin', id, sautee });

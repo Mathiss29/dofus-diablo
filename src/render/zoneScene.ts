@@ -967,17 +967,18 @@ export class ZoneScene extends Phaser.Scene {
         case 'enterArea': if (!this.vitrine && e.name !== this.world.lieu) this.hud.zoneBanner(e.name, this.world.zone.name, e.level, this.decouvrir(e.name)); break;
         case 'enterLieu': if (!this.vitrine) this.hud.zoneBanner(e.name, e.region, e.level, this.decouvrir(e.name)); break;
         case 'queteDebut': {
-          const q = QUETES.quetes[e.id];
+          const q = this.world.quetes!.def(e.id);
           if (q.type !== 'tutoriel') this.hud.toast(`Nouvelle quête : ${q.nom}`);
           this.windows?.refresh(); break;
         }
         case 'queteEtape': this.windows?.refresh(); break;
         case 'queteFin': {
-          const q = QUETES.quetes[e.id];
+          const q = this.world.quetes!.def(e.id);
           if (!e.sautee) this.hud.banner(`Quête terminée\n${q.nom}`, 1600);
           if (q.type === 'tutoriel' && !this.test) sauverCompte(this.world, 1);   // partie de test : rien ne compte (10A)
           this.windows?.refresh(); break;
         }
+        case 'sacQuete': { const it = ITEMS.equipment[e.id]; if (it) this.hud.loot(`Sac de quête : ${it.name}`, RARITY_COLORS[e.rarity]); break; }
         case 'objetQuete': this.hud.loot(`${e.nom}  ${e.n}/${e.sur}`, '#9ad15a'); break;
         case 'succes': {
           const s = QUETES.succes[e.id];
