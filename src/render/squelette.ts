@@ -47,6 +47,9 @@ export const EMPLACEMENTS_VISIBLES = ['chapeau', 'cape', 'bouclier'] as const;
 export type EmplacementVisible = typeof EMPLACEMENTS_VISIBLES[number];
 /** Objets visibles d'après l'équipement et l'apparat du joueur (en jeu ou d'une sauvegarde).
  *  L'arme (maquette Armes 8A) se pose sur le nœud Arme_1/Arme_5 que seules les animations d'arme (AnimArme…) montrent. */
+/** Lance du Forgelance tenue en main (skin officiel 3650 : morceaux Lance_1/Lance_5 posés sur les nœuds du squelette) :
+ *  dessinée quand il est Armé, retirée quand la Lance est plantée. */
+export const LANCE_EN_MAIN = 'skin:3650';
 export function objetsPortes(eq?: Partial<Record<string, { id: string } | undefined>>, apparat?: Partial<Record<EmplacementVisible, string>>): string[] {
   const o = objetsVisibles({ chapeau: eq?.chapeau?.id, cape: eq?.cape?.id, bouclier: eq?.bouclier?.id }, apparat);
   return eq?.arme?.id ? [...o, eq.arme.id] : o;
@@ -111,7 +114,8 @@ export class Assemblage {
     const a = apparenceValide(f, app);
     const tid = f.tetes[a.tete];
     const eq = objets.length ? await equipement() : { objets: {}, caches: {} };
-    const ids = [...new Set(objets.map(o => eq.objets[o]).filter((x): x is number => x != null))];
+    // « skin:3650 » : dessin donné directement (Lance du Forgelance en main), sinon idObjet -> skin via equipement.json
+    const ids = [...new Set(objets.map(o => o.startsWith('skin:') ? +o.slice(5) : eq.objets[o]).filter((x): x is number => x != null))];
     // cheveux, oreilles... cachés par la coiffe : règle de la tête, sinon de la classe, sinon par défaut
     const caches = new Set(ids.flatMap(id => { const r = eq.caches[id]; return r ? r[`t${tid}`] ?? r[`b${f.classe}`] ?? r['0'] ?? [] : []; }));
     const [data, corps, tete, ...os] = await Promise.all([charge<AnimsData>(f.anims), charge<Skin>(`skin_${f.corps}.json`), charge<Skin>(`skin_${tid}.json`),
