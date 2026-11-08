@@ -2385,6 +2385,55 @@
     "pepites": 17
    }
   },
+  "premier_pouvoir": {
+   "nom": "Le premier pouvoir",
+   "type": "secondaire",
+   "pnj": "forgemage",
+   "rendre": "forgemage",
+   "niveau": 25,
+   "serie": "Codex des pouvoirs",
+   "v03": true,
+   "codex": true,
+   "texte": "Malek parle d'un livre où la forge garde les pouvoirs des objets brisés. Pour l'ouvrir, il lui faut un vrai pouvoir sous le marteau. Le Chef de Guerre Bouftou de Tainéla en porte un, mal accroché, et le Bouftou Royal un autre, bien accroché.",
+   "etapes": [
+    {
+     "nom": "Le pouvoir mal accroché",
+     "bulle": "Le Chef de Guerre Bouftou garde Tainéla. Il porte une corne qui brille un peu trop pour une corne. Rapporte-la.",
+     "objectifs": [
+      {
+       "t": "elite",
+       "texte": "Vaincre le Chef de Guerre Bouftou de Tainéla",
+       "monstre": "chef_de_guerre_bouftou",
+       "carte": "1_-33",
+       "pv": 3,
+       "nom": "Chef de Guerre Bouftou, porte-pouvoir"
+      }
+     ]
+    },
+    {
+     "nom": "Le pouvoir bien accroché",
+     "bulle": "La corne a chanté sous mon marteau, puis elle s'est tue. Il en faut une plus grosse. Le Bouftou Royal en a une, sur la tête.",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Bouftou Royal (Cour du Bouftou Royal)",
+       "donjon": "Cour du Bouftou Royal",
+       "boss": "Bouftou Royal",
+       "niveau": 30,
+       "region": "Astrub"
+      }
+     ]
+    }
+   ],
+   "merci": "La couronne a parlé : le Codex est ouvert. Brise-moi un Légendaire et son pouvoir reste écrit dedans, pour toujours. Tiens, celui-là porte un pouvoir de ta classe. Ne le brise pas tout de suite, porte-le d'abord.",
+   "recompense": {
+    "xp": 6000,
+    "kamas": 1200,
+    "sac": "legendaire",
+    "pouvoirClasse": true,
+    "pepites": 30
+   }
+  },
   "dopeul": {
    "nom": "Chasse au Dopeul",
    "type": "prime",
@@ -3054,6 +3103,25 @@
     }
    ]
   },
+  "garde_robe_50": {
+   "nom": "Panoplie du Tofu",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Tofu.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Cape du Tofu",
+     "apparence": "8112"
+    },
+    {
+     "nom": "Kaskofu",
+     "apparence": "8114"
+    }
+   ]
+  },
   "garde_robe_60": {
    "nom": "Panoplie du Piou Rouge",
    "dofusId": 0,
@@ -3233,6 +3301,25 @@
     }
    ]
   },
+  "garde_robe_868": {
+   "nom": "Panoplie de Bowisse",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie de Bowisse.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Cape de Bowisse",
+     "apparence": "744"
+    },
+    {
+     "nom": "Bouclier de Bowisse",
+     "apparence": "18665"
+    }
+   ]
+  },
   "garde_robe_870": {
    "nom": "Panoplie prototype du pilote",
    "dofusId": 0,
@@ -3329,6 +3416,109 @@
     {
      "nom": "Cape Syché",
      "apparence": "16504"
+    }
+   ]
+  },
+  "garde_robe_4": {
+   "nom": "Panoplie du Bouftou Royal",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Bouftou Royal.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 15,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Boufcoiffe Royale",
+     "apparence": "2438"
+    },
+    {
+     "nom": "Cape Bouffante Royale",
+     "apparence": "2445"
+    },
+    {
+     "nom": "Cuirasse Royale du Bouftou",
+     "apparence": "30687"
+    }
+   ]
+  },
+  "garde_robe_31": {
+   "nom": "Panoplie du Prespic",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Prespic.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 15,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Coiffe du Prespic",
+     "apparence": "6926"
+    },
+    {
+     "nom": "Cape du Prespic",
+     "apparence": "6927"
+    },
+    {
+     "nom": "Bouclier hérissé du Prespic",
+     "apparence": "30681"
+    }
+   ]
+  },
+  "garde_robe_33": {
+   "nom": "Panoplie Larvesque",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie Larvesque.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Larvasac",
+     "apparence": "7108"
+    },
+    {
+     "nom": "Larvacoiffe",
+     "apparence": "7109"
+    }
+   ]
+  },
+  "garde_robe_873": {
+   "nom": "Panoplie améliorée du pilote",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie améliorée du pilote.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Casque amélioré",
+     "apparence": "8918"
+    },
+    {
+     "nom": "Ailes en bois améliorées",
+     "apparence": "8919"
+    }
+   ]
+  },
+  "garde_robe_364": {
+   "nom": "Microplie",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Microplie.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Cape Lumette",
+     "apparence": "15993"
+    },
+    {
+     "nom": "Casque Noix",
+     "apparence": "15994"
     }
    ]
   }

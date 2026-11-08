@@ -8,9 +8,9 @@ import { AGGRO, CASE, Monster, TOUR, type Cible } from './monster';
 import { jetOfficiel } from './danger';
 import { poolNiveau, rangDe, tirerButin, type CtxButin, type Rang } from './butin';
 import { briser, chanceRune, coutKamas, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
-import { NIVEAU_OBJETS_02, V03_PUBLIC } from './pouvoirs';
+import { NIVEAU_OBJETS_02, V03_PUBLIC, slotAPouvoirConnu } from './pouvoirs';
 import { fxImpression, imprimable, nouveauPourCodex, prixImpression } from './codex';
-import { legendaryPower, FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, recycleResource, recycleValue, rollItem, type EquipSlot, type Item, type ItemsData, type Rarity } from './items';
+import { legendaryPower, FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, recycleResource, recycleValue, rollItem, type EquipSlot, type Item, type ItemsData, type Rarity, type RecipeDef } from './items';
 import { Player } from './player';
 import { Bete, BETES, REGLES_BETES, type EffetBete, type SortBete } from './bete';
 import { initiativeBonus, removalChance } from './caracs';
@@ -18,7 +18,7 @@ import { planWave } from './waves';
 import { Arene, ARENE } from './arene';
 import { Quetes, type Compte, type EtatQuetes, type QuetesData } from './quests';
 import { appliquerTest, type ReglagesTest } from './outilsTest';
-import { FABRICATION, type Poste } from './metiers';
+import { FABRICATION, METIERS_FAB, chanceRare, ingredientsRares, type Poste } from './metiers';
 import { PLACEMENT, analyserCarte, placementPose, placementValide, proposerPlacement, type AnalyseCarte, type PlacementCarte } from './placement';
 import { RECOLTE, porteeRecolte, quantite, xpRecolte, type Recolte, type RecoltesData } from './recolte';
 
@@ -142,7 +142,7 @@ export class World {
   versPoste: number | null = null;
   private approcheP: { x: number; y: number } | null = null;
   /** Fabrication en cours (5B : une barre d'une seconde pour toute la série ; un coup reçu ou un geste l'interrompt). */
-  enFabrication: { recette: number; n: number; t: number; hp: number } | null = null;
+  enFabrication: { recette: number; n: number; t: number; hp: number; rare?: string | null } | null = null;
   /** Télégraphes du dernier pas (recalculés à chaque pas). */
   telegraphs: Telegraph[] = [];
   wave = 0;
@@ -1357,6 +1357,7 @@ export class World {
         if (p.bag.length >= Player.BAG_SIZE) { if (!d.warned) this.emit({ k: 'bagFull' }); d.warned = true; d.familier = false; continue; }   // sac plein : l'objet reste au sol
         p.bag.push(d.item);
         this.emit({ k: 'loot', item: d.item });
+        this.ouvrirCodex(d.item);
       } else if (d.kamas) {
         p.kamas += d.kamas;
         this.emit({ k: 'lootKamas', n: d.kamas });
@@ -1528,10 +1529,18 @@ export class World {
     this.emit({ k: 'apparence', id });
   }
   // --- Codex des pouvoirs (version 0.3, src/sim/codex.ts) -----------------------------------------------
+  /** 8C : le Codex s'ouvre à la fin de la quête « Le premier pouvoir », ou au premier Légendaire (ou Mythique) trouvé. Sans objet : la quête. */
+  ouvrirCodex(it?: Item) {
+    const p = this.player;
+    if (!p.v03 || p.codexOuvert || (it && it.rarity !== 'legendaire' && it.rarity !== 'mythique')) return;
+    p.codexOuvert = true;
+    this.emit({ k: 'codexOuvert' });
+  }
   /** 5A : briser un Légendaire ou un Mythique chez Malek garde ses pouvoirs (ceux de sa classe et les pouvoirs maison). */
   private enregistrerCodex(it: Item) {
     const p = this.player;
     if (!p.v03) return;
+    this.ouvrirCodex(it);
     for (const l of [it.legendary, it.legendary2]) {
       if (!l || !nouveauPourCodex(p.codex, p.cls.sorts, l)) continue;
       p.codex.push(l.sort ? { id: l.id, sort: l.sort } : { id: l.id });
@@ -1782,10 +1791,22 @@ export class World {
   /** Ateliers de ce métier dans la zone (pour dire où aller). */
   ateliersDe(metier: string): AtelierDef[] { return (this.zone.open?.ateliers ?? []).filter(a => a.metiers.includes(metier)); }
   /** Combien de fois on peut faire la recette i avec le sac actuel. */
-  craftMax(i: number): number {
+  craftMax(i: number, rare: string | null = null): number {
     const r = this.opts.items?.recipes?.[i], p = this.player;
-    if (!r || Math.max(1, p.metierLevel(r.metier)) < r.level) return 0;
-    return Math.min(...r.ingredients.map(([id, q]) => Math.floor((p.resources[id] ?? 0) / q)));
+    if (!r || !this.recetteVisible(r) || Math.max(1, p.metierLevel(r.metier)) < r.level) return 0;
+    let n = Math.min(...r.ingredients.map(([id, q]) => Math.floor((p.resources[id] ?? 0) / q)));
+    if (this.opts.items?.equipment[r.result]) {
+      n = Math.min(n, Player.BAG_SIZE - p.bag.length);   // un objet par place du sac
+      if (rare) n = this.ingredientsRares.has(rare) ? Math.min(n, Math.floor((p.resources[rare] ?? 0) / (1 + (r.ingredients.find(([x]) => x === rare)?.[1] ?? 0)))) : 0;
+    }
+    return Math.max(0, n);
+  }
+  /** 0.3 (9A) : les métiers de fabrication d'équipement n'existent qu'en partie de test tant que la 0.3 n'est pas sortie. */
+  recetteVisible(r: RecipeDef): boolean { return this.player.v03 || !METIERS_FAB.includes(r.metier); }
+  private _rares: Set<string> | null = null;
+  /** 10B : ressources de boss ou d'élite qui garantissent un objet fabriqué Rare. */
+  get ingredientsRares(): Set<string> {
+    return this._rares ??= this.opts.items ? ingredientsRares(this.opts.items, this.opts.data.monsters) : new Set();
   }
   /** Postes des ateliers : les machines officielles (ateliers_postes.py), sinon un poste au milieu de la première carte. */
   private buildPostes() {
@@ -1813,7 +1834,7 @@ export class World {
       p.stopMove(); f.t += dt;
       if (f.t < FABRICATION.duree) return;
       this.enFabrication = null;
-      this.craft(f.recette, f.n);
+      this.craft(f.recette, f.n, f.rare);
       return;
     }
     if (this.versPoste == null) return;
@@ -1826,24 +1847,40 @@ export class World {
     this.emit({ k: 'atelier', poste: po.id, metier: po.metiers[0] });
   }
   /** Lance la fabrication de n fois la recette i (fenêtre Artisanat) : une barre d'une seconde, puis tout est fait d'un coup. */
-  lancerFabrication(i: number, n = 1): boolean {
+  lancerFabrication(i: number, n = 1, rare: string | null = null): boolean {
     const r = this.opts.items?.recipes?.[i], p = this.player;
     if (!r || this.enFabrication || p.dead || this.atelierIci(r.metier) === null) return false;
-    n = Math.min(Math.max(1, Math.floor(n)), this.craftMax(i));
+    n = Math.min(Math.max(1, Math.floor(n)), this.craftMax(i, rare));
     if (n <= 0) return false;
     p.stopMove(); this.versPoste = null;
-    this.enFabrication = { recette: i, n, t: 0, hp: p.hp };
+    this.enFabrication = { recette: i, n, t: 0, hp: p.hp, rare };
     this.emit({ k: 'fabricationDebut', recette: i, n, duree: FABRICATION.duree });
     return true;
   }
   annulerFabrication() { if (this.enFabrication) { this.enFabrication = null; this.emit({ k: 'fabricationStop' }); } }
   /** Fait n fois une recette officielle si on a les ingrédients, le niveau de métier et qu'on est à son atelier. Rend le nombre fait. */
-  craft(i: number, n = 1): number {
-    const r = this.opts.items?.recipes?.[i], p = this.player;
+  craft(i: number, n = 1, rare: string | null = null): number {
+    const r = this.opts.items?.recipes?.[i], p = this.player, def = this.opts.items?.equipment[r?.result ?? ''];
     if (!r || this.atelierIci(r.metier) === null) return 0;
-    n = Math.min(Math.max(1, Math.floor(n)), this.craftMax(i));
+    if (!def) rare = null;
+    n = Math.min(Math.max(1, Math.floor(n)), this.craftMax(i, rare));
     if (n <= 0) return 0;
-    for (const [id, q] of r.ingredients) { p.resources[id] -= q * n; if (p.resources[id] <= 0) delete p.resources[id]; }
+    const retirer = (id: string, q: number) => { p.resources[id] -= q; if (p.resources[id] <= 0) delete p.resources[id]; };
+    for (const [id, q] of r.ingredients) retirer(id, q * n);
+    if (def) {
+      // 0.3 (9A, 10A+10B, 11E) : un objet par recette, Commun ou Rare, jamais plus ; l'ingrédient rare garantit Rare
+      if (rare) retirer(rare, n);
+      const ch = chanceRare(Math.max(1, p.metierLevel(r.metier)));
+      let rares = 0;
+      for (let k = 0; k < n; k++) {
+        const it = rollItem(r.result, def, rare || this.rng.next() < ch ? 'rare' : 'commun', this.rng, this.nextId++);
+        if (it.rarity === 'rare') rares++;
+        p.bag.push(it);
+      }
+      p.gainMetierXp(r.metier, n * METIER_XP.parIngredient * r.ingredients.reduce((s, [, q]) => s + q, 0), this);
+      this.emit({ k: 'craft', id: r.result, n, rares });
+      return n;
+    }
     p.resources[r.result] = (p.resources[r.result] ?? 0) + n;
     p.gainMetierXp(r.metier, n * METIER_XP.parIngredient * r.ingredients.reduce((s, [, q]) => s + q, 0), this);
     this.emit({ k: 'craft', id: r.result, n });
@@ -1867,15 +1904,18 @@ export class World {
     else { p.resources[id] = (p.resources[id] ?? 0) + n; this.emit({ k: 'lootResource', id, n }); }
   }
   /** Sac à rareté garantie (récompense de contrat, d'Avis de recherche, Quêtes roadmap 5A) : un équipement de ce niveau, de cette rareté. */
-  donnerSac(rarete: Rarity, niveau: number) {
-    const I = this.opts.items, p = this.player;
+  /** garanti (quête « Le premier pouvoir », 8C) : un pouvoir officiel de la classe, sur un sort connu, donc un emplacement qui en a un. */
+  donnerSac(rarete: Rarity, niveau: number, garanti = false) {
+    const I = this.opts.items, p = this.player, ctx = { ...p.ctxPouvoirs, garanti: garanti && p.v03 };
     if (!I) return;
-    let pool = poolNiveau({ pool: this.equipByLevel, niveau });
-    if (!pool.length) pool = [...this.equipByLevel].sort((x, y) => Math.abs(x.level - niveau) - Math.abs(y.level - niveau)).slice(0, 20);
+    const okSlot = (e: { id: string }) => !ctx.garanti || (!I.equipment[e.id].familier && slotAPouvoirConnu(ctx, I.equipment[e.id].slot));
+    let pool = poolNiveau({ pool: this.equipByLevel, niveau }).filter(okSlot);
+    if (!pool.length) pool = this.equipByLevel.filter(okSlot).sort((x, y) => Math.abs(x.level - niveau) - Math.abs(y.level - niveau)).slice(0, 20);
     if (!pool.length) return;
-    const id = this.rng.pick(pool).id, it = rollItem(id, I.equipment[id], rarete, this.rng, this.nextId++, p.ctxPouvoirs);
+    const id = this.rng.pick(pool).id, it = rollItem(id, I.equipment[id], rarete, this.rng, this.nextId++, ctx);
     p.bag.push(it);
     this.emit({ k: 'sacQuete', id, rarity: rarete });
+    this.ouvrirCodex(it);
   }
   // --- Bêtes de l'Osamodas (maquette Osamodas, 2026-11-08) ---------------------------
   /** 8A : un monstre en chasse frappe la bête qui l'a frappé (si elle est à moins de 4 cases), ou la bête bien plus proche que le joueur. */

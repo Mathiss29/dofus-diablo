@@ -1,5 +1,5 @@
 {
-"_": "Squelette (b) et échelle (s, défaut 100) de chaque familier / familier d'apparat, par id d'objet. Dans Dofus 3, item.appearanceId N'EST PAS le squelette : c'est le serveur qui envoie le dessin. src=capture : mesuré sur des captures du jeu officiel (JondoEmu, datos/cosmetic_skins.json + equipment_skins.json, champ pets) ; src=pnj : PNJ ou monstre du même nom dans npcs/monsters (vérifié sur le Croum : 248, échelle 95 des deux côtés). src=image : comparé à l'œil avec l'icône de l'objet (Chienchien = 1201, comme le PNJ Chienchien des glaces ; Jeune Boufton Céleste = 3239, comme le Tiboufton céleste).",
+"_": "Squelette (b) et échelle (s, défaut 100) de chaque familier / familier d'apparat, par id d'objet. Dans Dofus 3, item.appearanceId N'EST PAS le squelette : c'est le serveur qui envoie le dessin. src=capture : mesuré sur des captures du jeu officiel (JondoEmu, datos/cosmetic_skins.json + equipment_skins.json, champ pets) ; src=pnj : PNJ ou monstre du même nom dans npcs/monsters (vérifié sur le Croum : 248, échelle 95 des deux côtés). src=image : comparé à l'œil avec l'icône de l'objet (Chienchien = 1201, comme le PNJ Chienchien des glaces ; Jeune Boufton Céleste = 3239, comme le Tiboufton céleste). porteur=1 : le familier prend les couleurs de son porteur (capture : couleur identique octet pour octet à celle du perso).",
 "familiers": {
 "1711": {
 "b": 1201,
@@ -634,7 +634,8 @@
 },
 "20325": {
 "b": 5079,
-"s": 85
+"s": 85,
+"porteur": 1
 },
 "20326": {
 "b": 5080,
@@ -646,7 +647,8 @@
 },
 "20330": {
 "b": 5056,
-"s": 65
+"s": 65,
+"porteur": 1
 },
 "20662": {
 "b": 5107,
@@ -706,11 +708,13 @@
 },
 "21779": {
 "b": 5495,
-"s": 75
+"s": 75,
+"porteur": 1
 },
 "21780": {
 "b": 5480,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "21781": {
 "b": 5479,
@@ -718,7 +722,8 @@
 },
 "22252": {
 "b": 5566,
-"s": 80
+"s": 80,
+"porteur": 1
 },
 "22258": {
 "b": 5604,
@@ -754,7 +759,8 @@
 },
 "23091": {
 "b": 5719,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "23093": {
 "b": 5721,
@@ -802,7 +808,8 @@
 },
 "23783": {
 "b": 6006,
-"s": 130
+"s": 130,
+"porteur": 1
 },
 "23807": {
 "b": 6061,
@@ -810,7 +817,8 @@
 },
 "23910": {
 "b": 6228,
-"s": 80
+"s": 80,
+"porteur": 1
 },
 "24068": {
 "b": 6132,
@@ -830,7 +838,8 @@
 },
 "24955": {
 "b": 6232,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "25019": {
 "b": 6266,
@@ -838,7 +847,8 @@
 },
 "25021": {
 "b": 6277,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "25027": {
 "b": 6267,
@@ -846,7 +856,8 @@
 },
 "25033": {
 "b": 6276,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "25224": {
 "b": 6364,
@@ -854,7 +865,8 @@
 },
 "25277": {
 "b": 6329,
-"s": 120
+"s": 120,
+"porteur": 1
 },
 "25351": {
 "b": 6301,
@@ -862,7 +874,8 @@
 },
 "25372": {
 "b": 6367,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "25377": {
 "b": 6366,
@@ -878,7 +891,8 @@
 },
 "25750": {
 "b": 6375,
-"s": 90
+"s": 90,
+"porteur": 1
 },
 "25770": {
 "b": 6381,
@@ -890,7 +904,8 @@
 },
 "25800": {
 "b": 6376,
-"s": 80
+"s": 80,
+"porteur": 1
 },
 "25801": {
 "b": 6377,
@@ -898,11 +913,13 @@
 },
 "25802": {
 "b": 6377,
-"s": 80
+"s": 80,
+"porteur": 1
 },
 "25941": {
 "b": 6423,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "25947": {
 "b": 6425,
@@ -910,11 +927,13 @@
 },
 "25987": {
 "b": 6779,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "25992": {
 "b": 6448,
-"s": 80
+"s": 80,
+"porteur": 1
 },
 "25993": {
 "b": 6450,
@@ -962,7 +981,8 @@
 },
 "26241": {
 "b": 6731,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "26286": {
 "b": 6775,
@@ -982,7 +1002,8 @@
 },
 "26696": {
 "b": 6783,
-"s": 80
+"s": 80,
+"porteur": 1
 },
 "26748": {
 "b": 6851,
@@ -994,11 +1015,13 @@
 },
 "26808": {
 "b": 6908,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "26869": {
 "b": 6645,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "27047": {
 "b": 6890,
@@ -1014,7 +1037,8 @@
 },
 "27073": {
 "b": 6918,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "27076": {
 "b": 6919,
@@ -1022,7 +1046,8 @@
 },
 "27078": {
 "b": 6920,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "27105": {
 "b": 6941,
@@ -1030,7 +1055,8 @@
 },
 "27319": {
 "b": 6959,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "27379": {
 "b": 6909,
@@ -1059,7 +1085,8 @@
 },
 "27519": {
 "b": 7075,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "27637": {
 "b": 7154,
@@ -1071,7 +1098,8 @@
 },
 "27719": {
 "b": 7155,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "27722": {
 "b": 7042,
@@ -1103,7 +1131,8 @@
 },
 "27849": {
 "b": 7295,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "27941": {
 "b": 7294,
@@ -1115,7 +1144,8 @@
 },
 "28344": {
 "b": 7317,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "28427": {
 "b": 7288,
@@ -1135,7 +1165,8 @@
 },
 "29121": {
 "b": 7622,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "29123": {
 "b": 7623,
@@ -1147,7 +1178,8 @@
 },
 "29215": {
 "b": 7624,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "29271": {
 "b": 7619,
@@ -1187,7 +1219,8 @@
 },
 "29572": {
 "b": 7964,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "29647": {
 "b": 8070,
@@ -1223,11 +1256,13 @@
 },
 "30231": {
 "b": 7386,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "30334": {
 "b": 8835,
-"s": 75
+"s": 75,
+"porteur": 1
 },
 "30434": {
 "b": 9032,
@@ -1243,15 +1278,18 @@
 },
 "30843": {
 "b": 9155,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "30956": {
 "b": 9145,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "31051": {
 "b": 9239,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "31428": {
 "b": 7002,
@@ -1327,7 +1365,8 @@
 },
 "31905": {
 "b": 9649,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "32076": {
 "b": 9705,
@@ -1343,7 +1382,8 @@
 },
 "32449": {
 "b": 9804,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "32503": {
 "b": 9838,
@@ -1403,7 +1443,8 @@
 },
 "34277": {
 "b": 9965,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "34296": {
 "b": 10037,
@@ -1419,7 +1460,8 @@
 },
 "34416": {
 "b": 10125,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "34444": {
 "b": 10108,
@@ -1427,7 +1469,8 @@
 },
 "34485": {
 "b": 10145,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "34487": {
 "b": 10131,
@@ -1435,7 +1478,8 @@
 },
 "34536": {
 "b": 10132,
-"s": 100
+"s": 100,
+"porteur": 1
 },
 "34558": {
 "b": 10174,

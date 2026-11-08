@@ -21,7 +21,9 @@ import { POUVOIR_PAR_ID } from '../sim/pouvoirs';
 import { dmgMoyen, gradeAuNiveau, type SortOfficiel } from '../sim/sorts';
 import { n1, spellDetail } from './spellTip';
 import { World } from '../sim/world';
-import { prochainPalier, recettesAvec, recettesDe, sourcesDe } from '../sim/metiers';
+import { METIERS_FAB, chanceRare, prochainPalier, recettesAvec, recettesDe, sourcesDe } from '../sim/metiers';
+/** Produit d'une recette : ressource, ou équipement (métiers de fabrication, 0.3). */
+const produit = (id: string): { name: string; icon: number; soin?: number } | undefined => ITEMS.resources[id] ?? ITEMS.equipment[id];
 import { chrono } from '../sim/quests';
 import type { MarqueCarte } from './carteMonde';
 
@@ -59,6 +61,8 @@ function apparatHtml(id: string) {
   return `<i class="ic" style="background-image:url(assets/ui/apparat.webp);background-size:${APPARATS.cols * 100}% ${APPARATS.rows * 100}%;background-position:${x.toFixed(3)}% ${y.toFixed(3)}%"></i>`;
 }
 const hexa = (c: number) => '#' + c.toString(16).padStart(6, '0');
+/** Familier « aux couleurs du porteur » (comme dans Dofus 3) : mention dans sa fiche. */
+const porteur = (id: string) => FAMILIERS.familiers[id]?.porteur ? '<div class="hint" style="color:#e8c46a">Prend les couleurs de son porteur</div>' : '';
 type Visible = 'chapeau' | 'cape' | 'bouclier' | 'familier';
 const VISIBLES: [Visible, string][] = [['chapeau', 'Coiffe'], ['cape', 'Cape'], ['bouclier', 'Bouclier'], ['familier', 'Familier']];
 
@@ -339,6 +343,7 @@ const CSS = `
 .dw .ac .ic{width:40px;height:40px}
 .dw .ac b{position:absolute;right:4px;bottom:2px;font-size:11px;color:#fff;text-shadow:0 1px 2px #000,0 0 3px #000}.dw .ac b.lack{color:#ff7a6b}
 .dw .ac.manque .ic{filter:grayscale(1) brightness(.55)}.dw .ac.manque{outline:1px solid #d9534f88;outline-offset:-4px}
+.dw .ac.on{outline:2px solid #6fb2e8;outline-offset:-4px;cursor:pointer}.dw .ac[data-arare]{cursor:pointer}
 .dw .ac.big{width:84px;height:84px}.dw .ac.big .ic{width:64px;height:64px}
 .dw .acs{display:grid;grid-template-columns:repeat(4,52px);gap:8px 14px}
 .dw .acs .lab{grid-column:1/-1;text-align:center;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#9b9585}
@@ -675,7 +680,7 @@ export class Windows {
     w.querySelectorAll<HTMLElement>('[data-app]').forEach(e => {
       const id = e.dataset.app!, d = APPARATS.objets[id];
       const porter = () => { this.world.porterApparat(d.slot, p.apparat[d.slot] === id ? null : id); this.changed(); };
-      e.addEventListener('mouseenter', ev => { this.tip.innerHTML = `<h4>${d.name}</h4><div class="sub">${d.collection ? `${SLOT_NAMES[d.slot]} · apparence de ta collection` : `${d.slot === 'chapeau' ? 'Coiffe' : d.slot === 'cape' ? 'Cape' : 'Familier'} d'apparat`}</div><div class="hint">Change seulement l'apparence. Clic droit : porter / retirer</div>`; this.tip.style.display = 'block'; this.moveTip(ev); });
+      e.addEventListener('mouseenter', ev => { this.tip.innerHTML = `<h4>${d.name}</h4><div class="sub">${d.collection ? `${SLOT_NAMES[d.slot]} · apparence de ta collection` : `${d.slot === 'chapeau' ? 'Coiffe' : d.slot === 'cape' ? 'Cape' : 'Familier'} d'apparat`}</div>${porteur(id)}<div class="hint">Change seulement l'apparence. Clic droit : porter / retirer</div>`; this.tip.style.display = 'block'; this.moveTip(ev); });
       e.addEventListener('mousemove', ev => this.moveTip(ev));
       e.addEventListener('mouseleave', () => this.hideTip());
       e.addEventListener('contextmenu', porter); e.addEventListener('dblclick', porter);
@@ -829,6 +834,8 @@ export class Windows {
   private artQte = 1;
   private artRecherche = '';
   private artSeulement = false;
+  /** 10B : ingrédient rare ajouté à la fabrication d'un équipement (Rare garanti). */
+  private artRare: string | null = null;
   /** « Montrer sur la carte » (8B, 11B) : ouvre la carte M avec ces cartes et points mis en évidence. */
   onCarte: (m: MarqueCarte) => void = () => {};
 
@@ -858,7 +865,7 @@ export class Windows {
     if (s.monstres.length > 4) l.push(`<span class="hint">+${s.monstres.length - 4} autres monstres</span>`);
     if (s.recette) l.push(`<b>Fabrication</b> · ${M[s.recette.metier]?.name ?? s.recette.metier} niveau ${s.recette.level}`);
     if (s.boutique) l.push(`<b>Boutique</b> · ${QUETES.pnj[s.boutique]?.nom ?? s.boutique}, au Bastion des Douze`);
-    const sert = recettesAvec(ITEMS, id).map(x => ITEMS.resources[x.result]?.name).filter(Boolean);
+    const sert = recettesAvec(ITEMS, id).map(x => produit(x.result)?.name).filter(Boolean);
     const ici = this.marquesDe(id);
     return `<h4>${r?.name ?? id}</h4><div class="sub">${besoin != null ? `<span class="${have >= besoin ? 'ok' : 'ko'}">${have} / ${besoin}</span> dans ton sac` : `${have} dans ton sac`}</div>
       <div class="ou"><div class="hd">Où le trouver</div>${l.length ? l.map(x => `<div>${x}</div>`).join('') : '<div class="hint">Pas encore dans le jeu.</div>'}</div>
@@ -909,13 +916,13 @@ export class Windows {
 
   private renderJob() {
     const w = this.win!, p = this.world.player, M = ITEMS.metiers ?? {};
-    const cles = Object.keys(M);
+    const cles = Object.keys(M).filter(c => p.v03 || !METIERS_FAB.includes(c));
     if (!M[this.jobSel]) this.jobSel = cles.slice().sort((a, b) => p.metierLevel(b) - p.metierLevel(a))[0] ?? '';
     const k = this.jobSel, m = M[k];
     const liste = cles.map(c => {
       const st = p.metiers[c] ?? { level: 1, xp: 0 };
       return `<div class="jm ${c === k ? 'on' : ''}" data-met="${c}"><img src="assets/ui/metier_${c}.png" alt=""><div><b>${M[c].name}<small>${Math.max(1, st.level)}</small></b><div class="xpb"><i style="width:${Math.round(st.xp / metierXpNeeded(Math.max(1, st.level)) * 100)}%"></i></div></div></div>`;
-    }).join('') + '<div class="jm lock" title="Fabrication d\'équipement : version 0.3"><img src="assets/ui/menu/job.png" alt=""><div><b>Forgeron, Tailleur…</b><small class="hint">en 0.3</small></div></div>';
+    }).join('') + (p.v03 ? '' : '<div class="jm lock" title="Fabrication d\'équipement : version 0.3"><img src="assets/ui/menu/job.png" alt=""><div><b>Forgeron, Tailleur…</b><small class="hint">en 0.3</small></div></div>');
     if (!m) { w.innerHTML = `${this.title('Métiers', 'job')}<div class="in"><div class="hint">Aucun métier.</div></div>`; return; }
     const st = p.metiers[k] ?? { level: 1, xp: 0 }, lv = Math.max(1, st.level), need = metierXpNeeded(lv);
     const recolte = Object.entries(RECOLTES.ressources).filter(([, r]) => r.metier === k).sort((a, b) => a[1].niveau - b[1].niveau);
@@ -924,19 +931,19 @@ export class Windows {
     const ateliers = [...new Set(this.world.ateliersDe(k).map(a => a.nom))];
     const tete = `<div class="jt"><img src="assets/ui/metier_${k}.png" alt=""><div><h3>${m.name} <span>niveau ${lv}</span></h3>
         <div class="xpb big"><i style="width:${Math.round(st.xp / need * 100)}%"></i></div><div class="hint">${st.xp} / ${need} XP · ${gain} fait monter le métier</div></div>
-        ${pal ? `<div class="pal"><b>Prochain palier : ${pal.niveau}</b>${pal.recettes.map(r => ITEMS.resources[r.result]?.name).join(', ')}</div>` : ''}</div>`;
+        ${pal ? `<div class="pal"><b>Prochain palier : ${pal.niveau}</b>${pal.recettes.map(r => produit(r.result)?.name).join(', ')}</div>` : ''}</div>`;
     const onglets = `<div class="otabs"><span class="${this.jobOnglet === 'recettes' ? 'on' : ''}" data-jo="recettes">Recettes (${recettesDe(ITEMS, k).length})</span><span class="${this.jobOnglet === 'recoltes' ? 'on' : ''}" data-jo="recoltes">Récoltes (${recolte.length})</span></div>`;
     let corps = '';
     if (this.jobOnglet === 'recettes') {
       const q = this.jobRecherche.trim().toLowerCase();
-      let l = recettesDe(ITEMS, k).filter(({ r }) => !q || ITEMS.resources[r.result]?.name.toLowerCase().includes(q) || r.ingredients.some(([id]) => ITEMS.resources[id]?.name.toLowerCase().includes(q)));
+      let l = recettesDe(ITEMS, k).filter(({ r }) => !q || produit(r.result)?.name.toLowerCase().includes(q) || r.ingredients.some(([id]) => ITEMS.resources[id]?.name.toLowerCase().includes(q)));
       if (this.jobMonNiveau) l = l.filter(({ r }) => r.level <= lv);
       if (this.jobFaisables) l = [...l.filter(({ i }) => this.world.craftMax(i) > 0), ...l.filter(({ i }) => this.world.craftMax(i) <= 0)];
       const filtres = `<div class="jf"><input placeholder="Chercher une recette ou un ingrédient…" value="${this.jobRecherche.replace(/"/g, '&quot;')}" data-jr>
         <label class="ck"><input type="checkbox" data-jfa ${this.jobFaisables ? 'checked' : ''}>Faisables d'abord</label><label class="ck"><input type="checkbox" data-jmn ${this.jobMonNiveau ? 'checked' : ''}>Mon niveau</label></div>`;
       const ou = ateliers.length ? `<div class="note">On fabrique en cliquant une machine : ${ateliers.join(', ')}.</div>` : `<div class="note">Pas d'atelier de ${m.name.toLowerCase()} dans cette zone.</div>`;
       corps = filtres + ou + `<div class="recs">${l.map(({ r, i }) => {
-        const out = ITEMS.resources[r.result], ok = lv >= r.level, max = this.world.craftMax(i), suivie = p.recetteSuivie === r.result;
+        const out = produit(r.result), ok = lv >= r.level, max = this.world.craftMax(i), suivie = p.recetteSuivie === r.result;
         return `<div class="rec ${max > 0 ? 'ok' : ''} ${ok ? '' : 'lock'}"><span class="rs" data-rtip="${r.result}">${iconHtml(out?.icon ?? 0)}</span>
           <div><b>${out?.name ?? r.result}</b> <span class="hint">niv. ${r.level}${out?.soin ? ` · +${out.soin} PV` : ''}</span>
           ${ok ? '' : `<div class="lack" style="font-size:12px">Niveau ${r.level} requis</div>`}<div class="ings">${r.ingredients.map(([id, n]) => this.ingHtml(id, n)).join('')}</div></div>
@@ -966,8 +973,8 @@ export class Windows {
     w.querySelectorAll<HTMLElement>('[data-pin]').forEach(e => e.addEventListener('click', () => { const id = e.dataset.pin!; p.recetteSuivie = p.recetteSuivie === id ? null : id; this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-voir]').forEach(e => e.addEventListener('click', () => this.montrer(e.dataset.voir!)));
     w.querySelectorAll<HTMLElement>('[data-rtip]').forEach(e => {
-      const r = ITEMS.resources[e.dataset.rtip!];
-      e.addEventListener('mouseenter', ev => { if (!r) return; this.tip.innerHTML = this.resTip(r, e.dataset.rtip!); this.tip.style.display = 'block'; this.moveTip(ev); });
+      const r = ITEMS.resources[e.dataset.rtip!], eq = ITEMS.equipment[e.dataset.rtip!];
+      e.addEventListener('mouseenter', ev => { if (!r && !eq) return; this.tip.innerHTML = r ? this.resTip(r, e.dataset.rtip!) : this.equipFabTip(e.dataset.rtip!); this.tip.style.display = 'block'; this.moveTip(ev); });
       e.addEventListener('mousemove', ev => this.moveTip(ev));
       e.addEventListener('mouseleave', () => this.hideTip());
     });
@@ -980,14 +987,18 @@ export class Windows {
     const w = this.win!, p = this.world.player, k = this.artMetier, M = ITEMS.metiers ?? {}, m = M[k];
     const lv = Math.max(1, p.metierLevel(k)), ici = this.world.atelierIci(k);
     const toutes = recettesDe(ITEMS, k), q = this.artRecherche.trim().toLowerCase();
-    let l = toutes.filter(({ r }) => !q || ITEMS.resources[r.result]?.name.toLowerCase().includes(q) || r.ingredients.some(([id]) => ITEMS.resources[id]?.name.toLowerCase().includes(q)));
+    let l = toutes.filter(({ r }) => !q || produit(r.result)?.name.toLowerCase().includes(q) || r.ingredients.some(([id]) => ITEMS.resources[id]?.name.toLowerCase().includes(q)));
     if (this.artSeulement) l = l.filter(({ i }) => this.world.craftMax(i) > 0);
     if (!toutes.some(x => x.i === this.artRecette)) this.artRecette = (toutes.find(({ i }) => this.world.craftMax(i) > 0) ?? toutes[0])?.i ?? -1;
-    const rec = this.artRecette >= 0 ? ITEMS.recipes![this.artRecette] : null, max = rec ? this.world.craftMax(this.artRecette) : 0;
+    const rec = this.artRecette >= 0 ? ITEMS.recipes![this.artRecette] : null, equip = !!rec && !!ITEMS.equipment[rec.result];
+    // 10B : ingrédients rares du sac (ressources de boss ou d'élite) ; un par objet, Rare garanti
+    const rares = equip ? [...this.world.ingredientsRares].filter(id => (p.resources[id] ?? 0) > 0) : [];
+    if (this.artRare && !rares.includes(this.artRare)) this.artRare = null;
+    const max = rec ? this.world.craftMax(this.artRecette, equip ? this.artRare : null) : 0;
     this.artQte = Math.max(1, Math.min(this.artQte, Math.max(1, max)));
-    const f = this.world.enFabrication, out = rec && ITEMS.resources[rec.result];
+    const f = this.world.enFabrication, out = rec && produit(rec.result);
     const livre = l.map(({ r, i }) => {
-      const o = ITEMS.resources[r.result], mx = this.world.craftMax(i), ok = lv >= r.level;
+      const o = produit(r.result), mx = this.world.craftMax(i), ok = lv >= r.level;
       return `<div class="al ${i === this.artRecette ? 'on' : ''} ${mx > 0 ? '' : 'non'}" data-ar="${i}">${iconHtml(o?.icon ?? 0)}<div>${o?.name ?? r.result}<br><small>niv. ${r.level}</small></div>${mx > 0 ? `<b class="have">×${mx}</b>` : ok ? '<small>manque</small>' : `<small class="lack">niv. ${r.level}</small>`}</div>`;
     }).join('') || '<div class="hint">Aucune recette.</div>';
     const cases = rec ? Array.from({ length: 8 }, (_, j) => {
@@ -1003,8 +1014,10 @@ export class Windows {
       <div class="livre"><input placeholder="Chercher…" value="${this.artRecherche.replace(/"/g, '&quot;')}" data-asr>
         <label class="ck"><input type="checkbox" data-aso ${this.artSeulement ? 'checked' : ''}>Seulement ce que je peux faire</label><div class="als">${livre}</div></div>
       <div class="plan"><div class="am"><img src="assets/ui/metier_${k}.png" alt="">${m?.name ?? ''} niveau ${lv}</div>
-        ${rec && out ? `<div class="ares"><span class="ac big" data-rtip="${rec.result}">${iconHtml(out.icon)}</span><b>${out.name}</b><small>${out.soin ? `Rend ${out.soin} PV · ` : ''}niveau ${rec.level}</small></div>
+        ${rec && out ? `<div class="ares"><span class="ac big" data-rtip="${rec.result}">${iconHtml(out.icon)}</span><b>${out.name}</b><small>${out.soin ? `Rend ${out.soin} PV · ` : ''}${equip ? `${ITEMS.equipment[rec.result].slot.replace(/^./, c => c.toUpperCase())} · ` : ''}niveau ${rec.level}</small></div>
         <div class="acs"><span class="lab">Ingrédients</span>${cases}</div>
+        ${equip ? `<div class="acs"><span class="lab">Ingrédient rare</span>${rares.map(id => `<span class="ac ${this.artRare === id ? 'on' : ''}" data-arare="${id}" data-ing="${id}">${iconHtml(ITEMS.resources[id]?.icon ?? 0)}<b>${p.resources[id]}</b></span>`).join('') || '<span class="hint">Aucun dans ton sac : les boss et les élites en lâchent.</span>'}</div>
+        <div class="axp" style="color:${RARITY_COLORS.rare}">${this.artRare ? `Rare garanti (1 ${ITEMS.resources[this.artRare]?.name} par objet)` : `Commun ou Rare : ${Math.round(chanceRare(lv) * 100)} % de chance de Rare à ton niveau · ajoute un ingrédient rare pour le garantir`}</div>` : ''}
         <div class="aq"><span class="pm" data-aq="-1"><img src="${D3}/minus.png" alt="−"></span><input value="${this.artQte}" data-aqv inputmode="numeric"><span class="pm" data-aq="1"><img src="${D3}/plus.png" alt="+"></span><span class="btn ${max > 1 ? '' : 'off'}" data-amax>Max (${max})</span></div>
         <div class="gros ${peut ? '' : 'off'}" data-fab>${f ? 'Fabrication…' : 'Fabriquer'}</div>
         <div class="abar"><i class="${f ? 'run' : ''}" style="${f ? `animation-duration:${Math.max(0.05, 1 - f.t)}s` : ''}"></i></div>
@@ -1020,10 +1033,11 @@ export class Windows {
     qv?.addEventListener('keydown', e => e.stopPropagation());
     qv?.addEventListener('change', () => { this.artQte = Math.max(1, Math.min(Math.max(1, max), Math.floor(+qv.value || 1))); this.render(); });
     w.querySelector<HTMLElement>('[data-amax]')?.addEventListener('click', () => { this.artQte = Math.max(1, max); this.render(); });
-    w.querySelector<HTMLElement>('[data-fab]')?.addEventListener('click', () => { if (this.world.lancerFabrication(this.artRecette, this.artQte)) this.render(); });
+    w.querySelector<HTMLElement>('[data-fab]')?.addEventListener('click', () => { if (this.world.lancerFabrication(this.artRecette, this.artQte, equip ? this.artRare : null)) this.render(); });
+    w.querySelectorAll<HTMLElement>('[data-arare]').forEach(e => e.addEventListener('click', ev => { ev.stopPropagation(); this.hideTip(); this.artRare = this.artRare === e.dataset.arare ? null : e.dataset.arare!; this.render(); }));
     w.querySelectorAll<HTMLElement>('[data-rtip]').forEach(e => {
-      const r = ITEMS.resources[e.dataset.rtip!];
-      e.addEventListener('mouseenter', ev => { if (!r) return; this.tip.innerHTML = this.resTip(r, e.dataset.rtip!); this.tip.style.display = 'block'; this.moveTip(ev); });
+      const r = ITEMS.resources[e.dataset.rtip!], eq = ITEMS.equipment[e.dataset.rtip!];
+      e.addEventListener('mouseenter', ev => { if (!r && !eq) return; this.tip.innerHTML = r ? this.resTip(r, e.dataset.rtip!) : this.equipFabTip(e.dataset.rtip!); this.tip.style.display = 'block'; this.moveTip(ev); });
       e.addEventListener('mousemove', ev => this.moveTip(ev));
       e.addEventListener('mouseleave', () => this.hideTip());
     });
@@ -1327,9 +1341,9 @@ export class Windows {
       return `<div class="bs ${i === 6 || i === 7 ? 'gap' : ''}"><i data-slot="${i}" title="${d?.name ?? 'vide'}" style="${d ? `background-image:url(assets/ui/sorts/sort_${d.icon}.png)` : ''}"></i>${KEYS[i] ?? ""}</div>`;
     };
     // Codex (0.3, 7B) : consultable partout depuis la fenêtre des Sorts
-    const codexBtn = p.v03 ? `<span class="btn" data-vcodex>${this.sortsCodex ? 'Retour aux sorts' : `Codex · ${p.codex.length}`}</span>` : '';
+    const codexBtn = p.v03 && p.codexOuvert ? `<span class="btn" data-vcodex>${this.sortsCodex ? 'Retour aux sorts' : `Codex · ${p.codex.length}`}</span>` : '';
     w.innerHTML = `${this.title('Sorts', 'spells')}<div class="sb">
-      ${this.sortsCodex && p.v03 ? `<div class="fi" style="grid-column:1/-1;overflow:auto">${codexPageHtml(p)}</div>` : `<div class="ls">${pairs.map((pr, i) => `<div class="pr">${row(pr, i)}</div>`).join('')}</div>
+      ${this.sortsCodex && p.v03 && p.codexOuvert ? `<div class="fi" style="grid-column:1/-1;overflow:auto">${codexPageHtml(p)}</div>` : `<div class="ls">${pairs.map((pr, i) => `<div class="pr">${row(pr, i)}</div>`).join('')}</div>
       <div class="fi">${fiche}</div>`}
       <div class="bb">${p.bar.map((_, i) => slot(i)).join('')}<span class="hint">${p.cls.name} niveau ${p.level} · ${all.filter(s => p.level >= p.requiredLevel(s)).length} sorts débloqués sur ${all.length}</span>${codexBtn}</div>
     </div>`;
@@ -1413,6 +1427,13 @@ export class Windows {
 
   private changed() { this.hideTip(); this.render(); this.onChange(); }
   /** Bulle d'une ressource : consommable, clé de donjon, Potion de Rappel ou Pépite. */
+  /** Équipement fabriqué (0.3) : ses lignes officielles (min à max), Commun ou Rare. */
+  private equipFabTip(id: string) {
+    const d = ITEMS.equipment[id], lv = Math.max(1, this.world.player.metierLevel(ITEMS.recipes?.find(r => r.result === id)?.metier ?? ''));
+    const st = (Object.entries(d.stats) as [Stat, [number, number]][]).map(([k, [a, b]]) => `<div class="${a < 0 ? 'down' : ''}">${a === b ? a : `${a} à ${b}`} ${STAT_NAMES[k]}</div>`).join('');
+    return `<h4>${d.name}</h4><div class="sub">${d.slot.replace(/^./, c => c.toUpperCase())} · niveau ${d.level}</div>${st}
+      <div class="hint">Fabriqué : Commun, ou Rare (${Math.round(chanceRare(lv) * 100)} % à ton niveau, garanti avec un ingrédient rare). Jamais de pouvoir légendaire.</div>`;
+  }
   private resTip(r: ResourceDef, id: string) {
     const sorte = r.soin || r.rappel ? 'Consommable' : r.cle ? 'Clé de donjon' : r.pepite ? 'Monnaie du Bastion' : r.rune || r.signature ? 'Rune de forgemagie' : 'Ressource';
     const effet = r.soin ? `<div class="up">+${r.soin} PV</div><div class="hint">Clic droit : manger</div>`
@@ -1421,7 +1442,7 @@ export class Windows {
       : r.pepite ? '<div class="hint">Recycle tes objets chez Kerubim Crépin (au Bastion des Douze, ou à son guichet du Havre-Sac) et dépense-les chez ses voisins du Bastion.</div>'
       : r.signature ? '<div class="up">Grave ton nom sur un objet</div><div class="hint">Case Signature de la fenêtre du forgemage, au Bastion des Douze ; Malek en vend aussi.</div>'
       : r.rune && RUNES[id] ? `<div class="up">+${RUNES[id].val} ${STAT_NAMES[RUNES[id].stat]} · poids ${String(RUNES[id].poids).replace('.', ',')}</div><div class="hint">Se pose chez le forgemage du Bastion des Douze ; s'obtient en brisant des objets chez lui.</div>` : '';
-    const sert = recettesAvec(ITEMS, id).map(x => ITEMS.resources[x.result]?.name).filter(Boolean);
+    const sert = recettesAvec(ITEMS, id).map(x => produit(x.result)?.name).filter(Boolean);
     const sertA = sert.length ? `<div class="ou"><div class="hd">Sert à</div><div>${sert.slice(0, 5).join(', ')}${sert.length > 5 ? '…' : ''}</div></div>${!r.soin && !r.rappel ? '<div class="hint">Clic droit : recettes qui l\'utilisent</div>' : ''}` : '';
     return `<h4>${r.name}</h4><div class="sub">${sorte} · niveau ${r.level}</div>${effet}${sertA}${sourcesHtml(id, 3)}`;   // 1B : où le trouver
   }
@@ -1461,7 +1482,7 @@ export class Windows {
           <span class="hint">${l.length} apparat${l.length > 1 ? 's' : ''}</span></div>
         <div class="cata"><div class="apercu">${this.perso ? this.canevas('', objets) : ''}<div class="hint" style="text-align:center">${essai ? essai.name : 'Survole un apparat pour l\'essayer'}</div></div>
         <div class="shop">${l.slice(0, 120).map(([id, d]) => { const a = p.apparats.includes(id), prix = APPARATS.prix[d.slot] ?? 0;
-          return `<div class="rec" data-essai="${id}">${apparatHtml(id)}<div><b>${d.name}</b> <span class="hint">${d.slot === 'chapeau' ? 'Coiffe' : d.slot === 'cape' ? 'Cape' : 'Familier'} d'apparat</span></div>
+          return `<div class="rec" data-essai="${id}">${apparatHtml(id)}<div><b>${d.name}</b> <span class="hint">${d.slot === 'chapeau' ? 'Coiffe' : d.slot === 'cape' ? 'Cape' : 'Familier'} d'apparat</span>${porteur(id)}</div>
             ${a ? '<span class="hint">Déjà à toi</span>' : `<span class="btn ${pep >= prix ? '' : 'off'}" data-aachat="${id}">${prix} ${iconHtml(ITEMS.resources[PEPITE].icon)}</span>`}</div>`; }).join('')}
           ${l.length > 120 ? `<div class="hint">… et ${l.length - 120} autres : affine la recherche.</div>` : ''}</div></div>`;
     } else {
@@ -1806,7 +1827,7 @@ export class Windows {
     if (d.familier) {   // familier : son niveau, son XP, et ses bonus au niveau 100
       const n = it.niv ?? 1, c = FAMILIERS.xp, a = c[n - 1] ?? 0, b = c[n] ?? a, x = it.xpF ?? 0;
       const max = STATS.filter(k => d.stats[k]).map(k => `${d.stats[k]![1]} ${STAT_NAMES[k]}`).join(' · ');
-      fam = `<div class="ex">Familier niveau ${n} / ${FAMILIER_MAX}</div>${n < FAMILIER_MAX ? `<div class="xpf"><i style="width:${Math.round(100 * Math.min(1, (x - a) / Math.max(1, b - a)))}%"></i></div>` : ''}
+      fam = `<div class="ex">Familier niveau ${n} / ${FAMILIER_MAX}</div>${porteur(it.id)}${n < FAMILIER_MAX ? `<div class="xpf"><i style="width:${Math.round(100 * Math.min(1, (x - a) / Math.max(1, b - a)))}%"></i></div>` : ''}
         ${max ? `<div class="hint">Au niveau 100 : ${max}</div>` : ''}
         <div class="hint">Il gagne de l'XP quand tu chasses, et quand tu le nourris (Alt + clic sur un objet ou une ressource du sac).</div>`;
     } else if (p.equipment.familier && !worn) fam = `<div class="hint">Alt + clic : le donner à manger au familier (+${FAMILIER_XP.objet(d.level, it.rarity)} XP)</div>`;

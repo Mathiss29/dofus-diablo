@@ -411,3 +411,14 @@ officiel du Zaap d'Astrub sur l'arche du Bastion (bastion.py réécrit les parti
   (n'ajoute que les équipements et panoplies, sans toucher aux recettes, au butin et aux runes) et `icones_ajout.py` avec les icônes affichées.
   Le jeu ne les tire et ne les affiche qu'en 0.3 (`NIVEAU_OBJETS_02` dans `src/sim/pouvoirs.ts`). Leurs dessins portés (coiffes, capes,
   boucliers) restent à exporter (`equipement_export.py`, correspondances à compléter).
+
+## Métiers de fabrication (version 0.3, choix 9A 10A+10B)
+- `python tools/contenu/recettes_equipement.py <tables> <fr.bin>` (MAX=40 par défaut) : ajoute à `items.json` les 6 métiers de fabrication
+  (Bijoutier 16, Cordonnier 15, Tailleur 27, Forgeron 11, Sculpteur 13, Façonneur 60) et leurs recettes officielles d'équipement dont tous
+  les ingrédients existent dans le jeu, plus les produits intermédiaires des métiers de récolte qu'elles demandent (Substrats, Eau
+  Ferrugineuse). Puis `icones_ajout.py` avec les icônes qu'il liste.
+- Icônes des 6 métiers : mêmes images que `job_assets_2x.bundle`, prises sur `api.dofusdb.fr/img/jobs/<iconId>.png` (vérifié : l'icône du
+  Paysan est identique à la nôtre).
+- En jeu (`src/sim/metiers.ts`) : un objet fabriqué sort Commun ou Rare (10 % au niveau 1 du métier, 50 % au niveau 200) ; un ingrédient
+  rare (ressource que seuls des boss ou des élites lâchent, hors objets d'événement à 100 %) garantit Rare. Caché hors partie de test
+  tant que `V03_PUBLIC` est faux. Les ateliers de la Cité pour ces métiers restent à exporter.

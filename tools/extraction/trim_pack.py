@@ -39,6 +39,7 @@ for pg, P in enumerate(pages):
     # FORMAT=AVIF pour les planches de monstres, PNJ et persos (choix « AVIF : 1A » du 6 nov. 2026), WebP pour le reste
     buf = io.BytesIO()
     if FMT == 'avif': P['sheet'].save(buf, 'AVIF', quality=int(os.environ.get('QUALITY', 50)), speed=6)
+    elif os.environ.get('SANS_PERTE'): P['sheet'].save(buf, 'WEBP', lossless=True, method=6)   # carte des zones de couleur des familiers
     else: P['sheet'].save(buf, 'WEBP', quality=int(os.environ.get('QUALITY', 88)), method=6)
     # multiatlas : nom avec l'empreinte du contenu, pour que le navigateur ne garde pas une ancienne page en cache
     tag = ('.' + hashlib.md5(buf.getvalue()).hexdigest()[:8]) if maxH else ''

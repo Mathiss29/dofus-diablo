@@ -114,11 +114,11 @@ export function forgeHtml(world: World, e: EtatForge): string {
   const p = world.player;
   const onglet = (k: OngletForge, n: string) => `<span class="eo ${e.onglet === k ? 'on' : ''}" data-fo="${k}">${n}</span>`;
   const c = p.commandeFM, malek = c ? (c.prete ? 'Malek ✓' : `Malek · ${mmss(c.reste)}`) : 'Commande à Malek';
-  const tete = `<div class="eh"><div class="eos">${onglet('forge', 'Forgemagie')}${onglet('malek', malek)}${onglet('brisage', 'Concasseur')}${onglet('fusion', 'Fusion')}${p.v03 ? onglet('codex', `Codex · ${p.codex.length}`) : ''}</div>
+  const tete = `<div class="eh"><div class="eos">${onglet('forge', 'Forgemagie')}${onglet('malek', malek)}${onglet('brisage', 'Concasseur')}${onglet('fusion', 'Fusion')}${p.v03 && p.codexOuvert ? onglet('codex', `Codex · ${p.codex.length}`) : ''}</div>
     <span class="k" title="Kamas">${p.kamas.toLocaleString('fr-FR')} kamas</span></div>`;
   if (e.onglet === 'brisage') return tete + brisageHtml(world, e);
   if (e.onglet === 'fusion') return tete + fusionHtml(world);
-  if (e.onglet === 'codex' && p.v03) return tete + codexOngletHtml(world, e.codex);
+  if (e.onglet === 'codex' && p.v03 && p.codexOuvert) return tete + codexOngletHtml(world, e.codex);
   if (e.onglet === 'malek') return tete + malekHtml(world, e);
   return tete + forgeOngletHtml(world, e);
 }

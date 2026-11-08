@@ -81,7 +81,7 @@ export type SimEvent =
   | { k: 'queteInfo'; texte: string }
   /** Métiers : niveau gagné, recette faite, plat mangé. */
   | { k: 'metierLevel'; metier: string; level: number }
-  | { k: 'craft'; id: string; n: number }
+  | { k: 'craft'; id: string; n: number; /** Équipement fabriqué (0.3) : combien sont sortis Rares. */ rares?: number }
   /** Métiers UI : arrivé au poste d'un atelier (ouvre l'Artisanat) ; fabrication lancée (barre de 1 s) ou interrompue. */
   | { k: 'atelier'; poste: number; metier: string }
   | { k: 'fabricationDebut'; recette: number; n: number; duree: number }
@@ -95,6 +95,7 @@ export type SimEvent =
   | { k: 'brisage'; n: number; runes: Record<string, number>; auto?: string }
   /** Codex (0.3) : un pouvoir enregistré en brisant un Légendaire ; une impression sur un objet Rare ou Épique. */
   | { k: 'codex'; id: string }
+  | { k: 'codexOuvert' }
   | { k: 'impression'; uid: number; id: string }
   /** Collection d'apparences (1C) : premier exemplaire d'une coiffe, cape ou bouclier brisé ou recyclé. */
   | { k: 'apparence'; id: string }

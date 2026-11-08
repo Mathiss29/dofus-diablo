@@ -27,7 +27,7 @@ describe('quêtes et succès', () => {
       const etapes = Array.isArray(q.etapes) ? q.etapes : Object.values(q.etapes).flat();
       const ici = q.pnj && Q.pnj[q.pnj]?.zone === 'astrub' ? astrub : monde;
       for (const o of etapes.flatMap(e => e.objectifs)) {
-        if (o.t === 'elite') { expect(GAME_DATA.monsters[o.monstre], o.monstre).toBeDefined(); expect(ici.maps.some(m => m.tag === o.carte), o.carte).toBe(true); }
+        if (o.t === 'elite') { expect(GAME_DATA.monsters[o.monstre], o.monstre).toBeDefined(); expect([ici, astrub].some(g => g.maps.some(m => m.tag === o.carte)), o.carte).toBe(true); }   // quête de Malek (Bastion) : élite d'Astrub
         if (o.t === 'vaincre') for (const m of o.monstres ?? []) expect(GAME_DATA.monsters[m], m).toBeDefined();
         if ((o.t === 'aller' || o.t === 'parler') && o.pnj) expect(Q.pnj[o.pnj], o.pnj).toBeDefined();
       }

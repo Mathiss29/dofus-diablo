@@ -314,7 +314,7 @@ export class ZoneScene extends Phaser.Scene {
       drawMap(this, map, `${key}_sol`, `${key}_decor`);
     }
     this.fx = new FX(this, t => hex(GAME_DATA.monsters[t].color));
-    const fv = this.familierView = new FamilierView(this, a => this.planche({ atlas: a, multi: true } as Look));
+    const fv = this.familierView = new FamilierView(this, a => this.planche({ atlas: a, multi: true } as Look), () => this.assemblage?.couleursPerso);
     this.events.once('shutdown', () => { fv.destroy(); if (this.familierView === fv) this.familierView = null; });
     if (this.perso?.etat) restaurerJoueur(this.world, this.perso.etat);
     else if (this.test?.etat) restaurerJoueur(this.world, this.test.etat);
@@ -952,7 +952,7 @@ export class ZoneScene extends Phaser.Scene {
         case 'atelier': this.windows?.artisanat(e.metier); break;
         case 'fabricationDebut': Son.jouer(MANIFESTE.ui.ok, 'interface', { cle: 'clic', ecart: 0.05 }); this.windows?.refresh(); break;
         case 'fabricationStop': this.hud.toast('Fabrication interrompue'); this.windows?.refresh(); break;
-        case 'craft': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Objet'} x${e.n}`, '#9ad15a'); this.windows?.refresh(); break;
+        case 'craft': this.hud.loot(`${(ITEMS.resources[e.id] ?? ITEMS.equipment[e.id])?.name ?? 'Objet'} x${e.n}${e.rares ? ` (${e.rares} Rare${e.rares > 1 ? 's' : ''})` : ''}`, e.rares ? '#6fb2e8' : '#9ad15a'); this.windows?.refresh(); break;
         case 'eat': this.windows?.refresh(); break;
         // PNJ du Havre-Sac (maquette Hub 4A) : la réponse « service » de son dialogue ouvre sa fenêtre (recycler, boutique, apparats, miroir)
         case 'service': if (this.windows && (e.service === 'recycler' || e.service === 'boutique' || e.service === 'apparat')) { this.windows.empPnj = e.pnj; this.windows.empOnglet = e.service; this.windows.show('emp'); }
@@ -969,6 +969,7 @@ export class ZoneScene extends Phaser.Scene {
           this.windows?.noteForge({ t: `${e.n > 1 ? `${e.n} objets brisés` : 'Objet brisé'} : ${Object.entries(e.runes).map(([id, k]) => `${k} ${ITEMS.resources[id]?.name ?? id}`).join(', ') || 'aucune rune'}`, c: 'br' }); break; }
         case 'codex': { const o = POUVOIR_PAR_ID[e.id]; this.hud.loot(`Codex : ${o ? o.sort : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id} enregistré`, '#f08a2c');
           this.windows?.noteForge({ t: `Pouvoir enregistré dans le Codex : ${o ? o.officiel : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id}`, c: 'ok' }); break; }
+        case 'codexOuvert': this.hud.loot('Le Codex des pouvoirs s\'ouvre : brise un Légendaire chez Malek pour garder son pouvoir', '#f08a2c'); this.windows?.refresh(); break;
         case 'impression': { const o = POUVOIR_PAR_ID[e.id]; this.hud.loot('Impression réussie : l\'objet devient Légendaire', '#f08a2c');
           this.windows?.noteForge({ t: `Impression : ${o ? o.officiel : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id}`, c: 'ok' }); break; }
         case 'apparence': this.hud.loot(`Apparence débloquée : ${ITEMS.equipment[e.id]?.name ?? 'objet'}`, '#e6b85c'); break;

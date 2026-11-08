@@ -1,10 +1,10 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { GAME_DATA, ITEMS } from '../src/sim/data';
-import { GridMap, type MapData } from '../src/sim/gridmap';
+import { GAME_DATA, ITEMS, QUETES } from '../src/sim/data';
+import { GridMap, WorldGrid, type MapData, type WorldData } from '../src/sim/gridmap';
 import { PEPITE, type Item } from '../src/sim/items';
 import { prixImpression } from '../src/sim/codex';
-import { POUVOIRS } from '../src/sim/pouvoirs';
+import { POUVOIRS, POUVOIR_PAR_ID, classeDuPouvoir } from '../src/sim/pouvoirs';
 import { exporterJoueur, restaurerJoueur } from '../src/sim/sauvegarde';
 import { World } from '../src/sim/world';
 
@@ -13,6 +13,9 @@ const arena = (test = true) => new World({ data: GAME_DATA, zone: 'champs-astrub
   ...(test ? { test: {} as never } : {}) });
 const de = (slot: string) => Object.entries(ITEMS.equipment).find(([, d]) => d.slot === slot && !d.familier && d.level <= 20 && Object.keys(d.stats).length)!;
 const objet = (w: World, slot: string, o: Partial<Item>): Item => { const [id, d] = de(slot); return { uid: w.newUid(), id, rarity: 'rare', stats: Object.fromEntries(Object.entries(d.stats).map(([k, v]) => [k, v[1]])), extra: [], ...o }; };
+const astrub = JSON.parse(readFileSync(new URL('../public/assets/mondes/astrub/monde.json', import.meta.url), 'utf8')) as WorldData;
+const monde = (test = true) => new World({ data: GAME_DATA, zone: 'astrub', map: new WorldGrid(astrub), seed: 4, classId: 'iop', items: ITEMS, quetes: QUETES,
+  reprise: { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} }, ...(test ? { test: {} as never } : {}) });
 const bond = POUVOIRS.iop.find(p => p.slot === 'chapeau')!;   // un pouvoir de chapeau
 
 describe('Codex des pouvoirs (version 0.3 : 5A+5B+5D 6A+6B 7A+7B)', () => {
@@ -66,5 +69,32 @@ describe('Codex des pouvoirs (version 0.3 : 5A+5B+5D 6A+6B 7A+7B)', () => {
     const w = arena(); w.player.codex = [{ id: bond.id }, { id: 'relance', sort: 'bond' }];
     const s = exporterJoueur(w), v = arena(); restaurerJoueur(v, s);
     expect(v.player.codex).toEqual([{ id: bond.id }, { id: 'relance', sort: 'bond' }]);
+  });
+
+  it('8C : « Le premier pouvoir » chez Malek (partie de test seulement) ouvre le Codex et donne un Légendaire au pouvoir de la classe', () => {
+    const v = monde(false); v.player.fixerNiveau(25, null);
+    expect(v.quetes!.aDonnerTous('forgemage')).not.toContain('premier_pouvoir');
+    const w = monde(), p = w.player; p.fixerNiveau(25, null);
+    expect(w.quetes!.aDonnerTous('forgemage')).toContain('premier_pouvoir');
+    expect(w.worldGrid!.mapByTag('1_-33')).toBeTruthy();   // l'élite de Tainéla
+    expect(p.codexOuvert).toBe(false);
+    const avant = p.bag.length;
+    w.quetes!.terminer('premier_pouvoir');
+    expect(p.codexOuvert).toBe(true);
+    const it = p.bag.slice(avant).find(b => b.rarity === 'legendaire')!, o = POUVOIR_PAR_ID[it.legendary!.id];
+    expect(o).toBeDefined();
+    expect(classeDuPouvoir(o.id)).toBe('iop');
+    expect(p.ctxPouvoirs.connus).toContain(o.dofusId);
+    expect(o.slot).toBe(ITEMS.equipment[it.id].slot);
+  });
+
+  it('8C : sans la quête, le Codex s\'ouvre au premier Légendaire trouvé ; gardé dans la sauvegarde', () => {
+    const w = arena(), p = w.player;
+    w.ouvrirCodex(objet(w, 'chapeau', {}));
+    expect(p.codexOuvert).toBe(false);
+    w.ouvrirCodex(objet(w, 'chapeau', { rarity: 'legendaire', legendary: { id: 'rage', value: 20 } }));
+    expect(p.codexOuvert).toBe(true);
+    const v = arena(); restaurerJoueur(v, exporterJoueur(w));
+    expect(v.player.codexOuvert).toBe(true);
   });
 });

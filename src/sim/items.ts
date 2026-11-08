@@ -58,6 +58,8 @@ export interface FamilierDef {
   monstres?: string[]; succes?: string;
   /** Familier d'apparat (5A) : change seulement l'apparence du familier porté. */
   apparat?: boolean;
+  /** Prend les couleurs de son porteur (comme dans Dofus 3) ; `zones` = carte de ses zones de couleur (assets/sprites). */
+  porteur?: boolean; zones?: string;
 }
 export const FAMILIER_MAX = 100;
 /** Bonus d'un familier à ce niveau (officiel : valeur au niveau 0 + gain × niveau). */
