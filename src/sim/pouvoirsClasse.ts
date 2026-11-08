@@ -66,6 +66,15 @@ export const POUVOIRS_CLASSE: PouvoirClasseDef[] = [
   pc('osamodas', 'F', 'Lien des âmes', 'laisse_spirituelle', 'anneau', [1.6, 2.2], 0.1, v => `Le monstre dompté par Laisse Spirituelle reste ${n(v)} fois plus longtemps et garde ses PV.`),
   pc('osamodas', 'G', 'Bond du crapaud', 'saute_granouille', 'bottes', [10, 20], 5, v => `Saute-granouille emmène la meute : les bêtes atterrissent autour de l'Osamodas avec un bouclier de ${v} % de leurs PV.`),
   pc('osamodas', 'H', 'Rage de la meute', 'charge_bestiale', 'bouclier', [8, 14], 1, v => `Charge Bestiale soigne chaque bête de la meute de ${v} % de ses PV.`),
+  // Osamodas, suite (ligne « Légendaires classes suite : 3A-3H », après le rééquilibrage de l'Osamodas) ------------------------
+  pc('osamodas', 'I', 'Nuée de corbacs', 'cri_corbac', 'chapeau', [1, 3], 1, v => `Cri du Corbac touche aussi ${v} monstre${v > 1 ? 's' : ''} de plus près de sa cible, et vole de la vie sur chacun.`),
+  pc('osamodas', 'J', 'Tapis de piquants', 'pics_prespic', 'cape', [40, 60], 5, v => `Pics du Prespic laisse des épines au sol 3 s : elles frappent une fois chaque monstre qui passe (${v} % des dégâts).`),
+  pc('osamodas', 'K', 'Festin du piranya', 'dents_piranya', 'amulette', [20, 40], 5, v => `Dents du Piranya soigne aussi chaque bête de la meute de ${v} % des dégâts qu'il fait.`),
+  pc('osamodas', 'L', "Peau de l'ours", 'cri_ours', 'bouclier', [8, 14], 1, v => `Cri de l'Ours donne à l'Osamodas et à ses bêtes proches un bouclier de ${v} % de leurs PV pendant 5 s.`),
+  pc('osamodas', 'M', 'Venin qui court', 'crapipou', 'ceinture', [30, 50], 5, v => `Les coups du Crapipou empoisonnent aussi les monstres à 1 case de sa cible (${v} % de ses dégâts, sur 2 s).`),
+  pc('osamodas', 'N', 'Flamme de lignée', 'dragoune', 'arme', [25, 45], 5, v => `La Dragoune fait ${v} % de dégâts en plus aux monstres sous la moitié de leurs PV.`),
+  pc('osamodas', 'O', "Piqûre d'éveil", 'piqure', 'anneau', [4, 6], 0.5, v => `Piqûre Motivante éveille tout de suite la bête la plus proche (elle monte d'un rang) pendant ${n(v)} s. Une fois toutes les 20 s.`),
+  pc('osamodas', 'P', 'Charge de la meute', 'charge_bestiale', 'bottes', [40, 60], 5, v => `Pendant Charge Bestiale, chaque bête bondit sur la cible et la frappe (${v} % des dégâts du sort).`),
   // --- Sacrieur (maquette Sacrieur) ---------------------------------------------------------------------------------------
   pc('sacrieur', 'A', 'Soif de sang', 'absorption', 'anneau', [2, 4], 0.5, v => `Chaque monstre tué te rend ${n(v)} % de tes PV, sans te faire redescendre sous Souffrance 6 si tu y es.`),
   pc('sacrieur', 'B', 'Frénésie', 'absorption', 'arme', [4, 6], 0.5, v => `À Souffrance 8+, chaque coup de poing ou d'arme qui touche donne +${n(v)} % de Vitesse d'attaque (5 fois au plus, 3 s sans frapper pour retomber).`),
@@ -94,11 +103,11 @@ export const estPouvoirClasse = (id: string) => !!PC_PAR_ID[id];
 
 /** 2D : pouvoirs préférés de chaque boss (chance triplée sur son butin), un par classe. */
 export const BOSS_PREFERES: Record<string, string[]> = {
-  royal: ['pc-iop-A', 'pc-cra-G', 'pc-osamodas-E', 'pc-sacrieur-E', 'pc-sacrieur-L', 'pc-iop-K', 'pc-cra-P'],
-  kardorim: ['pc-iop-F', 'pc-cra-H', 'pc-osamodas-F', 'pc-sacrieur-D', 'pc-sacrieur-O', 'pc-iop-J', 'pc-cra-O'],
-  tournesol_affame: ['pc-iop-H', 'pc-cra-A', 'pc-osamodas-D', 'pc-sacrieur-A', 'pc-sacrieur-J', 'pc-iop-L', 'pc-cra-K'],
-  mob_l_eponge: ['pc-iop-E', 'pc-cra-F', 'pc-osamodas-B', 'pc-sacrieur-C', 'pc-sacrieur-P', 'pc-iop-M', 'pc-cra-M'],
-  kankreblath: ['pc-iop-B', 'pc-cra-C', 'pc-osamodas-C', 'pc-sacrieur-B', 'pc-sacrieur-K', 'pc-iop-O', 'pc-cra-J'],
+  royal: ['pc-iop-A', 'pc-cra-G', 'pc-osamodas-E', 'pc-sacrieur-E', 'pc-sacrieur-L', 'pc-iop-K', 'pc-cra-P', 'pc-osamodas-L'],
+  kardorim: ['pc-iop-F', 'pc-cra-H', 'pc-osamodas-F', 'pc-sacrieur-D', 'pc-sacrieur-O', 'pc-iop-J', 'pc-cra-O', 'pc-osamodas-O'],
+  tournesol_affame: ['pc-iop-H', 'pc-cra-A', 'pc-osamodas-D', 'pc-sacrieur-A', 'pc-sacrieur-J', 'pc-iop-L', 'pc-cra-K', 'pc-osamodas-J'],
+  mob_l_eponge: ['pc-iop-E', 'pc-cra-F', 'pc-osamodas-B', 'pc-sacrieur-C', 'pc-sacrieur-P', 'pc-iop-M', 'pc-cra-M', 'pc-osamodas-K'],
+  kankreblath: ['pc-iop-B', 'pc-cra-C', 'pc-osamodas-C', 'pc-sacrieur-B', 'pc-sacrieur-K', 'pc-iop-O', 'pc-cra-J', 'pc-osamodas-P'],
 };
 /** 2A : part des pouvoirs de Légendaire qui sont des pouvoirs de classe inventés. */
 export const CHANCE_POUVOIR_CLASSE = 0.2;
@@ -112,7 +121,7 @@ export function jetPouvoirClasse(d: PouvoirClasseDef, rng: Rng, parfait: boolean
 /** Texte de la fourchette pour la fiche (3C). */
 export const fourchette = (d: PouvoirClasseDef) => `${n(d.jet[0])} à ${n(d.jet[1])}`;
 
-/** Pouvoir de classe de cet emplacement (2 par emplacement et par classe, 3 pour le bouclier du Sacrieur,
+/** Pouvoir de classe de cet emplacement (2 par emplacement et par classe, 3 pour le bouclier du Sacrieur, 1 pour les bottes du Crâ,
  *  tirés au hasard avec rng), sauf s'il est déjà sur l'objet. */
 export function pouvoirClasseDuSlot(classe: string, slot: Slot, exclus: Set<string> = new Set(), rng?: Rng): PouvoirClasseDef | null {
   const l = POUVOIRS_CLASSE.filter(p => p.classe === classe && p.slot === slot && !exclus.has(p.id));
