@@ -1,5 +1,8 @@
 """Morceaux de skin (corps, tête) -> maillages, avec la zone de couleur ColorGray_N. Partagé par build_char.py et squelette_export.py."""
 import re
+# Emplacements d'objets portés qu'une tête peut remplir elle-même (cornes de l'Osamodas, chignon du Sacrieur dans Chapeau_1/Chapeau_5) :
+# ils restent des emplacements (l'objet y est posé) et leur contenu est marqué « d » pour être caché quand un objet le remplace.
+EMPLACEMENT = re.compile(r'^(Chapeau|ChapeauB|Cape|CapeBas|Bouclier)_\d+$')
 _texs = {}
 def _gris(tex, pts):
     """Vrai si la zone de texture du morceau est en niveaux de gris (morceau fait pour être teinté)."""
@@ -40,7 +43,11 @@ def mesh_from(skin, key_idx, tex, colors, tint=None, trous=False):
                 c = int(mm.group(1)); voisin[par] = c
                 for m in attente.pop(par, []):
                     if colors and c - 1 < len(colors): m['tint'] = colors[c - 1]
-            if n > 0: stack.append([n, name])
+            if n > 0:
+                if trous and EMPLACEMENT.match(name):
+                    t = e['transform']
+                    res.append({'trou': name, 'tf': [t['rX'], t['uX'], t['tX'], t['rY'], t['uY'], t['tY']]})
+                stack.append([n, name])
             # emplacement vide (entries = 0) : l'objet porté y est posé (Chapeau_1, Masque_1... d'un autre skin), avec cette transformation
             elif n == 0 and trous and name:
                 t = e['transform']
@@ -63,6 +70,9 @@ def mesh_from(skin, key_idx, tex, colors, tint=None, trous=False):
         # partie de la tête (cheveux, oreille...) : la dernière famille nommée au-dessus de la feuille ; une coiffe peut la cacher
         for _, nm in reversed(stack):
             if nm and not nm.startswith('Color'): m['grp'] = re.sub(r'_\d+$', '', nm); break
+        if trous:
+            for _, nm in stack:
+                if EMPLACEMENT.match(nm): m['defaut'] = nm
         if ci is None and colors and stack and _gris(tex, pts):
             par = id(stack[-1]); c = voisin.get(par)
             if c and c - 1 < len(colors): m['tint'] = colors[c - 1]
