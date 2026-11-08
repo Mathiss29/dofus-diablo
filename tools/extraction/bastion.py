@@ -164,7 +164,12 @@ ILES = [('Bonta', (0, -2050), 'grand', None),       # îles en grand : ile_brakm
         ('Pandala', (-2520, -150), 'grand', None),
         ('Frigost', (0, 1650), 'grand', None)]
 # PNJ sans bâtiment : point du Bastion (Gawdien du Dofus, quêtes des Dofus 0.3 : sur la place, à gauche de l'arrivée)
-PNJ_PLACE = {'gawdien': (-215, 138)}
+PNJ_PLACE = {'gawdien': (-215, 138),
+             # maquette Ville 5F : deux Gardes d'Amakna de part et d'autre du Zaap, le Héraut d'Ecaflip crie les nouvelles sur la place
+             'garde_zaap1': (-190, -10), 'garde_zaap2': (190, -10), 'crieur': (260, 190)}
+# 5F : un garde de chaque nation au départ de son pont coupé (il attend que sa nation soit libérée) ; le point du bord sert
+# aussi à la musique (couche de la nation qui monte quand on s'approche de son île, src/render/sonView.ts)
+GARDES = {'Bonta': 'garde_bonta', 'Brâkmar': 'garde_brakmar', 'Pandala': 'garde_pandala', 'Frigost': 'garde_frigost'}
 # zaap : le milieu du dessin de l'arche (on clique dessus), pas son pied
 POINTS = dict(arrivee=(0, 160), zaap=(0, -100))
 
@@ -197,7 +202,14 @@ def composer():
         t0 = 1 / math.sqrt((ux / 1180) ** 2 + (uy / 660) ** 2)   # bord de l'île centrale dans cette direction
         for t in range(int(t0 - 120), int(t0 + 240), 46): a.bg(63321 if (t // 46) % 2 else 63319, ux * t, uy * t, lvl=4)
         a.one(62767, ux * (t0 + 250), uy * (t0 + 250), 1 if ux * uy >= 0 else -1)
+        # garde : sur l'île, à côté du départ du pont (décalé sur le côté pour ne pas boucher le passage) : le point marchable
+        # (même règle que les cases de monde.json) le plus proche du départ du pont, à plus de 80 px de son axe
+        libre = lambda x, y: ILE(x, y) <= 0.8 and not any(math.hypot(x - bx, (y - by) * 2) < r + 40 for bx, by, r in a.bloque)
+        cands = [(ux * (t0 - d) - uy * l, uy * (t0 - d) + ux * l) for d in range(150, 700, 25) for l in range(-300, 301, 20) if abs(l) >= 80]
+        pnj[GARDES[nom]] = min((c for c in cands if libre(*c)), key=lambda c: math.hypot(c[0] - ux * (t0 - 150), c[1] - uy * (t0 - 150)))
+        BORDS[nom] = (ux * (t0 - 120), uy * (t0 - 120))
     return a, P, pnj
+BORDS = {}
 
 def ile(nom, cx, cy, pieces, sol_tiles, P):
     """Une île de nation, rendue en une image (sol, dessous, bâtiments) : posée comme un seul objet, non marchable."""
@@ -448,6 +460,7 @@ def exporter():
         print('particules :', len(parts))
     pts = {k: case(*v) for k, v in POINTS.items()}
     pts['pnj'] = {k: case(*v) for k, v in pnj.items()}
+    pts['iles'] = {nom.lower().replace('â', 'a'): case(*v) for nom, v in BORDS.items()}
     if apercu:
         os.makedirs(apercu, exist_ok=True)
         big = (-3900, -3600, 3900, 2900); cv = Image.new('RGBA', (big[2] - big[0], big[3] - big[1]), (14, 40, 52, 255))
@@ -472,6 +485,6 @@ if __name__ == '__main__':
     Z = json.load(open(ZONES))
     b = Z.setdefault('bastion', {'name': 'Bastion des Douze', 'level': 1, 'open': {'world': 'bastion', 'start': [0, 0], 'aggro': 0, 'leash': 0,
                      'respawn': 60, 'checkpoints': [], 'subareas': {}}})
-    b['open']['bastion'] = {'arrivee': pts['arrivee'], 'zaap': pts['zaap'], 'pnj': pts['pnj']}
+    b['open']['bastion'] = {'arrivee': pts['arrivee'], 'zaap': pts['zaap'], 'pnj': pts['pnj'], 'iles': pts['iles']}
     json.dump(Z, open(ZONES, 'w'), ensure_ascii=False, indent=1)
     print(pts)

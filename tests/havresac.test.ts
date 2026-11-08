@@ -7,6 +7,7 @@ import { exporterJoueur, restaurerJoueur } from '../src/sim/sauvegarde';
 import { World, type WorldOptions } from '../src/sim/world';
 import type { SimEvent } from '../src/sim/events';
 import THEMES from '../src/data/havresac_themes.json';
+import { poidsCouches } from '../src/render/sonView';
 
 const lire = (w: string) => JSON.parse(readFileSync(new URL(`../public/assets/mondes/${w}/monde.json`, import.meta.url), 'utf8')) as WorldData;
 const HS = lire('havresac'), AS = lire('astrub'), BA = lire('bastion');
@@ -31,8 +32,8 @@ describe('Havre-Sac (maquette Hub : 1A 2A+2C 3A 4A 7A 8A 9A)', () => {
   });
   it('les PNJ de service vivent au Bastion (Ville 5A) ; Kerubim, Otomaï et Goultard emménagent après la première visite d\'Astrub (3A)', () => {
     const ids = (w: World) => w.quetes!.pnjs.map(p => p.id).sort();
-    expect(ids(monde('bastion'))).toEqual(['bouillotte', 'forgemage', 'tissebelle']);
-    expect(ids(monde('bastion', { zonesVues: ['incarnam', 'astrub'] }))).toEqual(['bouillotte', 'forgemage', 'goultard', 'kerubim', 'otomai', 'tissebelle']);
+    expect(ids(monde('bastion'))).toEqual(['bouillotte', 'crieur', 'forgemage', 'garde_bonta', 'garde_brakmar', 'garde_frigost', 'garde_pandala', 'garde_zaap1', 'garde_zaap2', 'tissebelle']);
+    expect(ids(monde('bastion', { zonesVues: ['incarnam', 'astrub'] }))).toEqual(['bouillotte', 'crieur', 'forgemage', 'garde_bonta', 'garde_brakmar', 'garde_frigost', 'garde_pandala', 'garde_zaap1', 'garde_zaap2', 'goultard', 'kerubim', 'otomai', 'tissebelle']);
     // Ville 6B : Kerubim garde un guichet de recyclage au Havre-Sac
     expect(ids(monde('havresac'))).toEqual([]);
     expect(ids(monde('havresac', { zonesVues: ['astrub'] }))).toEqual(['kerubim_guichet']);
@@ -175,5 +176,29 @@ describe('Bastion des Douze (maquette Ville : 1A 2A 3C 7A+7B 10B)', () => {
     const h = monde('havresac', { retour }); h.player.resources['548'] = 1; h.drainEvents();
     expect(h.rappel('548')).toBe(true);
     expect(h.drainEvents().find(e => e.k === 'changeZone')).toMatchObject({ zone: 'bastion', retour });
+  });
+  it('la ville vit (Ville 5F) : des habitants officiels flânent sur l\'île, le Héraut crie les nouvelles', () => {
+    const w = monde('bastion'), P = w.passants!;
+    expect(P.liste.map(p => p.def.nom)).toContain('Paysan Bontarien');
+    expect(P.liste.length).toBe(7);
+    const depart = P.liste.map(p => [p.x, p.y]);
+    const ev = pas(w, 60 * 20);
+    // ils marchent (et restent sur des cases marchables), sans toucher à la partie
+    expect(P.liste.filter((p, i) => Math.hypot(p.x - depart[i][0], p.y - depart[i][1]) > 100).length).toBeGreaterThan(3);
+    for (const p of P.liste) expect(w.walkable(p.x, p.y), p.def.nom).toBe(true);
+    // le crieur (le joueur est sur la place) : une bulle toutes les 14 s, à tour de rôle
+    const cris = ev.filter(e => e.k === 'bulle' && e.pnj === 'crieur');
+    expect(cris.length).toBeGreaterThanOrEqual(1);
+    expect(QUETES.pnj.crieur.cris).toContain((cris[0] as { texte: string }).texte);
+    // ailleurs, pas d'habitants
+    expect(monde('havresac').passants).toBeNull();
+  });
+  it('musique du Bastion : la couche de chaque nation monte près de son île, Astrub au centre', () => {
+    const iles = [{ n: 'bonta', x: 0, y: -1000 }, { n: 'brakmar', x: 1500, y: 0 }];
+    expect(poidsCouches(iles, { x: 0, y: 0 })).toEqual({ bonta: 0, brakmar: 0, astrub: 1 });
+    const pres = poidsCouches(iles, { x: 0, y: -900 });
+    expect(pres.bonta).toBe(1); expect(pres.astrub).toBe(0);
+    const B = GAME_DATA.zones.bastion.open!.bastion!;
+    expect(Object.keys(B.iles!).sort()).toEqual(['bonta', 'brakmar', 'frigost', 'pandala']);
   });
 });

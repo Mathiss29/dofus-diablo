@@ -5,6 +5,7 @@ import Phaser from 'phaser';
 import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES } from '../sim/data';
 import type { Compte } from '../sim/quests';
 import { QuestView } from './questView';
+import { PassantsView } from './passantsView';
 import { RecolteView } from './recolteView';
 import { AtelierView } from './atelierView';
 import { estPalier, recettesAuNiveau } from '../sim/metiers';
@@ -129,6 +130,7 @@ export class ZoneScene extends Phaser.Scene {
   /** PNJ cliqué (quêtes) et leur affichage. */
   private talkClick: string | null = null;
   private questView: QuestView | null = null;
+  private passantsView: PassantsView | null = null;
   private dialogueView: DialogueView | null = null;
   private acc = 0;
   /** Le clic en cours a commencé sur l'interface : maintenir le bouton ne fait pas attaquer. */
@@ -181,7 +183,7 @@ export class ZoneScene extends Phaser.Scene {
     else if (location.hash === '#astrub') this.zoneId = 'champs-astrub';
     else if (location.hash.includes('astrub2')) this.zoneId = 'astrub';
     else this.zoneId = 'incarnam';
-    this.views = new Map(); this.dropViews = new Map(); this.worldView = null; this.questView = null; this.dialogueView = null; this.talkClick = null; this.zaapClick = null; this.zaapAnnonce = null; this.pressed = null; this.aimId = null; this.aimKey = null; this.hoverId = null; this.potion = false; this.hitstop = 0; this.acc = 0;
+    this.views = new Map(); this.dropViews = new Map(); this.worldView = null; this.questView = null; this.passantsView = null; this.dialogueView = null; this.talkClick = null; this.zaapClick = null; this.zaapAnnonce = null; this.pressed = null; this.aimId = null; this.aimKey = null; this.hoverId = null; this.potion = false; this.hitstop = 0; this.acc = 0;
   }
 
   preload() {
@@ -205,7 +207,8 @@ export class ZoneScene extends Phaser.Scene {
     if (zone.open) {
       for (const q of Object.values(QUETES.quetes)) for (const e of Array.isArray(q.etapes) ? q.etapes : Object.values(q.etapes).flat())
         for (const o of e.objectifs) if (o.t === 'elite' && GAME_DATA.monsters[o.monstre]) types.add(o.monstre);
-      QuestView.preload(this, QUETES, V03_PUBLIC || !!this.test);
+      QuestView.preload(this, QUETES, V03_PUBLIC || !!this.test, this.zoneId);
+      if (zone.open.bastion) PassantsView.preload(this);
     }
     else {
       const w = zone.waves!;
@@ -304,6 +307,7 @@ export class ZoneScene extends Phaser.Scene {
       if (this.world.recoltes.length) { const rv = this.recolteView = new RecolteView(this, this.world); this.events.once('shutdown', () => { rv.destroy(); if (this.recolteView === rv) this.recolteView = null; }); }
       if (this.world.quetes) {
         this.questView = new QuestView(this, this.world, this.worldView);
+        if (this.world.passants) this.passantsView = new PassantsView(this, this.world.passants);
         const dv = this.dialogueView = new DialogueView(this, this.world, this.questView);
         this.events.once('shutdown', () => dv.destroy());
       }
@@ -1401,6 +1405,7 @@ export class ZoneScene extends Phaser.Scene {
     this.havreSacView?.update(this.game.loop.delta / 1000);
     this.areneView?.update(this.game.loop.delta / 1000);
     this.questView?.update();
+    this.passantsView?.update();
     this.dialogueView?.update();
     EntityView.temps = this.world.time;
     this.hud.draw(this.fx.juice, this.game.loop.delta / 1000);

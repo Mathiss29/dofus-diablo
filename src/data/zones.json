@@ -3323,7 +3323,20 @@
      "goultard": 18770,
      "forgemage": 20333,
      "bouillotte": 19760,
-     "gawdien": 18645
+     "gawdien": 18645,
+     "garde_zaap1": 17861,
+     "garde_zaap2": 17865,
+     "crieur": 18762,
+     "garde_bonta": 15958,
+     "garde_brakmar": 17203,
+     "garde_pandala": 17179,
+     "garde_frigost": 20552
+    },
+    "iles": {
+     "bonta": 14951,
+     "brakmar": 17540,
+     "pandala": 17515,
+     "frigost": 20775
     }
    }
   }

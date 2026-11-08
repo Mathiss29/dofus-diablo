@@ -1,0 +1,12 @@
+{
+ "_note": "Habitants qui se promènent au Bastion des Douze (maquette Ville 5F). PNJ officiels à look de personnage (table npcs), planches faites par tools/extraction/habitant_planche.py (repos + marche).",
+ "habitants": [
+  { "id": "paysan_bonta", "nom": "Paysan Bontarien", "dofusId": 2136 },
+  { "id": "paysanne_bonta", "nom": "Paysanne Bontarienne", "dofusId": 2135 },
+  { "id": "eleveuse_brakmar", "nom": "Éleveuse brâkmarienne", "dofusId": 7922 },
+  { "id": "briscard_brakmar", "nom": "Briscard Brâkmarien", "dofusId": 3211 },
+  { "id": "artisan_pandawa", "nom": "Artisan Pandawa", "dofusId": 5813 },
+  { "id": "bucheronne_astrub", "nom": "Bûcheronne astrubienne", "dofusId": 5246 },
+  { "id": "ingenieur_frigost", "nom": "Ingénieur frigostien", "dofusId": 2062 }
+ ]
+}

@@ -382,6 +382,13 @@ remet le tourbillon officiel du Zaap d'Astrub sur l'arche du Bastion (bastion.py
 avec NS = 8), puis `python3 tools/contenu/quetes.py` et `node tools/hebergement/envoi.mjs`.
 Exemples d'îles hors jeu (planches de pièces, essais de plan) : `/mnt/project-files/ville/ex_ile.py`, `conf_<nation>.py`, `pieces.py`.
 
+Ville vivante (maquette Ville 5F, 8 nov. 2026) :
+- Habitants qui flânent (`src/data/passants.json`, `src/sim/passants.ts`) : PNJ officiels à look de personnage (table npcs, `{1|corps,tête,skins|couleurs}`),
+  planche repos + marche : `BREEDS=breeds.json python3 habitant_planche.py <persos> '<look>' public/assets/sprites/hab_<id>` (skins d'objets
+  et `bone_1-movement` pris sur le PC dans `Characters/`). Gardes et crieur = PNJ de `quetes.py` : `PNJ=1 SCALE=1,32 x échelle du look monster_planche.py`
+  (6407 Bonta, 6384 Brâkmar, 5795 + `COULEURS` Pandala, 1282 Frigost, 1845 Amakna, 3460 Héraut d'Ecaflip), places dans `bastion.py` (`PNJ_PLACE`, `GARDES`).
+- Musique : `python3 sons_bastion.py <Musiques.bank> <fsb5> .` (havres de guilde officiels : base + une couche par nation ; `zones.json > bastion > iles`).
+
 ## Zaaps (`zaaps.py`, maquette « Zaap : », 8 nov. 2026)
 
 `python3 -I tools/extraction/zaaps.py <zone>` écrit les Zaaps officiels d'une zone (repères « Zaap » de monde.json, arche = particule

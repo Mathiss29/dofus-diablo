@@ -462,6 +462,111 @@
     }
    ]
   },
+  "garde_bonta": {
+   "nom": "Soldat d'élite bontarien",
+   "dofusId": 995,
+   "zone": "bastion",
+   "carte": "bastion",
+   "case": 15958,
+   "titre": "Garde du pont de Bonta",
+   "phrase": "Le pont de Bonta est coupé. Les ordres sont clairs : personne ne passe tant que la cité n'est pas libérée. Même pas moi, et j'ai le mal du pays.",
+   "discussion": [
+    {
+     "reponse": "Qu'est-ce qui se passe là-bas ?",
+     "texte": "Les Enfers ont mordu la cité. Les remparts tiennent, mais les rues grouillent. Quand quelqu'un aura fait le ménage, on rebâtira ce pont planche par planche."
+    }
+   ]
+  },
+  "garde_brakmar": {
+   "nom": "Soldat brâkmarien",
+   "dofusId": 7382,
+   "zone": "bastion",
+   "carte": "bastion",
+   "case": 17203,
+   "titre": "Garde du pont de Brâkmar",
+   "phrase": "Brâkmar, c'est par là. Enfin, ça le sera. Pour l'instant c'est surtout du vide, et le vide ne paie pas sa tournée.",
+   "discussion": [
+    {
+     "reponse": "Tu ne te bats pas avec le Bontarien ?",
+     "texte": "Ici, c'est la trêve des Douze. On se regarde de travers, c'est tout. Et le soir on joue aux osselets, mais ça, tu ne l'as pas entendu."
+    }
+   ]
+  },
+  "garde_pandala": {
+   "nom": "Garde Pandalien",
+   "dofusId": 5910,
+   "zone": "bastion",
+   "carte": "bastion",
+   "case": 17179,
+   "titre": "Garde du pont de Pandala",
+   "phrase": "Pandala attend. Le bambou aussi. Le bambou attend toujours, c'est sa force.",
+   "discussion": [
+    {
+     "reponse": "Tu attends quoi, exactement ?",
+     "texte": "Quelqu'un d'assez solide pour traverser les quatre éléments de l'île. Toi, peut-être. Reviens quand tu tiendras debout après trois verres de lait de Bambou."
+    }
+   ]
+  },
+  "garde_frigost": {
+   "nom": "Marin frigostien",
+   "dofusId": 4175,
+   "zone": "bastion",
+   "carte": "bastion",
+   "case": 20552,
+   "titre": "Garde du pont de Frigost",
+   "phrase": "Frigost est de l'autre côté. Je garde le pont au chaud… façon de parler. Il gèle rien qu'à le regarder.",
+   "discussion": [
+    {
+     "reponse": "Pourquoi un marin garde un pont ?",
+     "texte": "Parce qu'un pont, c'est un bateau qui a peur de l'eau. Et parce que personne d'autre ne supporte ce froid."
+    }
+   ]
+  },
+  "garde_zaap1": {
+   "nom": "Garde d'Amakna",
+   "sprite": "garde_amakna",
+   "dofusId": 2260,
+   "zone": "bastion",
+   "carte": "bastion",
+   "case": 17861,
+   "titre": "Garde du Zaap",
+   "phrase": "Bienvenue au Bastion des Douze. Le Zaap est à toi, les bagarres sont pour dehors."
+  },
+  "garde_zaap2": {
+   "nom": "Garde d'Amakna",
+   "sprite": "garde_amakna",
+   "dofusId": 2261,
+   "zone": "bastion",
+   "carte": "bastion",
+   "case": 17865,
+   "titre": "Garde du Zaap",
+   "phrase": "Tout ce qui sort de ce Zaap passe devant moi. Tu as l'air d'un honnête aventurier. Plutôt."
+  },
+  "crieur": {
+   "nom": "Héraut d'Ecaflip",
+   "sprite": "heraut_ecaflip",
+   "dofusId": 3098,
+   "zone": "bastion",
+   "carte": "bastion",
+   "case": 18762,
+   "titre": "Crieur du Bastion",
+   "phrase": "Une nouvelle à crier ? Donne-la-moi, je la crie trois fois plus fort et deux fois plus belle. Ecaflip aime les belles histoires.",
+   "discussion": [
+    {
+     "reponse": "Pourquoi un héraut d'Ecaflip ?",
+     "texte": "Les Douze ont tiré au sort qui crierait les nouvelles. Ecaflip a gagné. Bizarrement, il gagne toujours."
+    }
+   ],
+   "cris": [
+    "Oyez, oyez ! Almanax du jour : {almanax} ! Les offrandes, c'est au Représentant des Temples !",
+    "Oyez ! Les ponts sont coupés : Bonta, Brâkmar, Pandala et Frigost attendent ceux qui les libéreront !",
+    "Oyez ! Kerubim Crépin rachète tout, même les chaussettes. Surtout les chaussettes !",
+    "Oyez ! Malek le Forgemage brise vos objets en runes. Il dit que c'est pour votre bien !",
+    "Oyez, oyez ! Mère Bouillotte a encore fait trop de soupe. Ventres creux, au rapport !",
+    "Oyez ! Goultard vend des clés de donjon. Le courage, lui, n'est pas en vente : apportez le vôtre !",
+    "Oyez ! N'importe quel Zaap mène au Bastion des Douze. Les Douze vous saluent, aventuriers !"
+   ]
+  },
   "forgemage": {
    "nom": "Malek le Forgemage",
    "dofusId": 7379,

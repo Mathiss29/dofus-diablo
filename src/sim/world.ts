@@ -18,6 +18,7 @@ import { planWave } from './waves';
 import { Arene, ARENE } from './arene';
 import { Quetes, type Compte, type EtatQuetes, type QuetesData } from './quests';
 import { appliquerTest, type ReglagesTest } from './outilsTest';
+import { Passants } from './passants';
 import { ALMANAX, jourAlmanax, type JourAlmanax } from './almanax';
 import { COFFRE, coffreVide, type Coffre } from './coffre';
 /** Archimonstres (0.3, 15B) : chance qu'un monstre d'un groupe soit son archimonstre ; pierres d'âme officielles (vide, pleine). */
@@ -189,6 +190,8 @@ export class World {
   /** Partie de test : invincible, recharges, course, murs (null dans une vraie partie). */
   test: ReglagesTest | null = null;
   quetes: Quetes | null = null;
+  /** Habitants qui flânent au Bastion des Douze (maquette Ville 5F), décor vivant. */
+  passants: Passants | null = null;
   /** Havre-Sac (maquette Hub 2A) : incantation en cours (t écoulé, PV au début : un coup reçu la coupe). */
   incantation: { t: number; hp: number } | null = null;
   static readonly INCANTATION = 1.5;
@@ -236,6 +239,7 @@ export class World {
     if (open && opts.quetes) this.quetes = new Quetes(opts.quetes, this, opts.compte);
     // les quêtes d'abord : le tutoriel retient les groupes du Temple jusqu'à son étape « Frapper »
     if (this.quetes) { if (opts.reprise) this.quetes.reprendre(opts.reprise); else this.quetes.demarrer(); }
+    if (open?.bastion && this.map instanceof WorldGrid) this.passants = new Passants(this.map, this.map.mapByCoords(...open.start)!.tag, opts.seed ?? 1, -100);
     if (open) this.spawnGroups();
     if (open?.havreSac?.poutch != null) this.poserPoutch(open.havreSac.poutch);
     if (open) this.visiter(opts.zonesVues ?? []);
@@ -1019,7 +1023,7 @@ export class World {
     });
     this.monsters = this.monsters.filter(m => !(m.dead && m.t <= 0));
     this.updateAteliers(dt);
-    if (this.zone.open) { this.updateOpen(dt); this.updateRecoltes(dt); this.updateIncantation(dt); this.updateArche(); this.updateZaap(dt); this.quetes?.update(dt); return; }
+    if (this.zone.open) { this.updateOpen(dt); this.updateRecoltes(dt); this.updateIncantation(dt); this.updateArche(); this.updateZaap(dt); this.quetes?.update(dt); this.passants?.update(dt); return; }
     if (!this.over && this.monsters.length === 0) {
       this.waveDelay -= dt;
       if (this.waveDelay <= 0) { this.spawnWave(); this.waveDelay = 2; }

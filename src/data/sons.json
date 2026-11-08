@@ -63,6 +63,16 @@
     "musique/boss_souterrain_2.mp3",
     "musique/boss_souterrain_3.mp3"
    ]
+  },
+  "bastion": {
+   "calme": "musique/bastion_base.mp3",
+   "couches": {
+    "astrub": "musique/bastion_astrub.mp3",
+    "bonta": "musique/bastion_bonta.mp3",
+    "brakmar": "musique/bastion_brakmar.mp3",
+    "pandala": "musique/bastion_pandala.mp3",
+    "frigost": "musique/bastion_frigost.mp3"
+   }
   }
  },
  "ambiances": {

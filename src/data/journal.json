@@ -707,6 +707,15 @@
             ]
           },
           {
+            "titre": "Le Bastion s'anime",
+            "phrase": "Des habitants des nations flânent, des gardes veillent et un héraut crie les nouvelles.",
+            "details": "Gardes de Bonta, Brâkmar, Pandala et Frigost à leur pont. La musique des havres de guilde change près de chaque île.",
+            "icone": "havre",
+            "etiquettes": [
+              "Bastion"
+            ]
+          },
+          {
             "titre": "Les Zaaps d'Incarnam",
             "phrase": "Route des âmes, Pâturages et Cimetière ; un Zaap découvert s'allume sur la carte.",
             "icone": "zaap",

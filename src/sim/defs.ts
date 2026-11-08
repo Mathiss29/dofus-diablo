@@ -227,7 +227,9 @@ export interface OpenDef {
   havreSac?: { arrivee: number; arche: number; poutch?: number; theme?: number };
   /** Bastion des Douze (maquette Ville, 1A 10B 11B) : notre ville en archipel, hors de la carte officielle. Case d'arrivée,
    *  case du Zaap (il ouvre la liste des Zaaps, 7A) et cases des PNJ de service (tools/extraction/bastion.py). */
-  bastion?: { arrivee: number; zaap: number; pnj?: Record<string, number> };
+  bastion?: { arrivee: number; zaap: number; pnj?: Record<string, number>;
+    /** Bord de l'île centrale vers l'île de chaque nation (musique : couche de la nation, Ville 5F). */
+    iles?: Record<string, number> };
 }
 /** Atelier : nom officiel, métiers servis, cartes où il se trouve (la salle de l'atelier, ou la carte du dehors s'il est en plein air). */
 export interface AtelierDef {

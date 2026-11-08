@@ -27,6 +27,8 @@ export class SonView {
   private emetteurs: { k: string; x: number; y: number }[] = [];
   private fondT = 0;
   private horloge = 0;
+  /** Bastion : bord de l'île centrale vers chaque île de nation (écran), pour la couche de musique de la nation. */
+  private iles: { n: string; x: number; y: number }[] = [];
 
   constructor(private world: World, private look: Look, classId: string, private vitrine: boolean, parts?: Record<string, SysData[]>, wg?: WorldGrid) {
     this.classe = classId;
@@ -34,6 +36,8 @@ export class SonView {
     if (vitrine) Son.menu();
     // Musique boss 7A : à Astrub, musique de combat officielle d'Amakna
     else if (world.opts.zone === 'astrub') Son.zone(world.zone.open ? ['astrub'] : [], 'amakna');
+    // Bastion (Ville 5F) : musique officielle des havres de guilde, une couche par nation (Astrub au centre)
+    else if (world.zone.open?.bastion && MANIFESTE.musiques.bastion) { Son.zone(['bastion']); this.iles = this.bordsIles(wg); }
     else Son.zone(world.zone.open ? ['incarnam1', 'incarnam2', 'incarnam_explo01'] : []);
     // 7B : sources de sons du décor, d'après les particules officielles (feux, eau, Zaap), regroupées
     if (parts && wg) {
@@ -46,6 +50,12 @@ export class SonView {
       for (const [k, l] of pts) for (const g of regrouper(l, 350)) this.emetteurs.push({ k, x: g.x, y: g.y });
     }
     if (!vitrine) this.precharger();
+  }
+
+  private bordsIles(wg?: WorldGrid) {
+    const b = this.world.zone.open?.bastion, m = wg?.mapByTag('bastion');
+    if (!b?.iles || !wg || !m) return [];
+    return Object.entries(b.iles).map(([n, c]) => { const q = wg.cellToWorld(wg.cellOf('bastion', c)), s = ISO.toScreen(q.x, q.y); return { n, x: s.x, y: s.y }; });
   }
 
   /** Sons de la classe, des effets et des monstres de la zone : chargés en fond dès l'arrivée. */
@@ -160,6 +170,7 @@ export class SonView {
     }
     for (const id of this.etats.keys()) if (!vus.has(id)) this.etats.delete(id);
     Son.setIntensite(Math.min(1, attaquants / 2));
+    if (this.iles.length) Son.setCouches(poidsCouches(this.iles, ISO.toScreen(p.x, p.y)));
     // 3B : boss engagé -> musique de combat ; tué -> victoire ; perdu de vue -> l'exploration reprend
     if (adv && !this.adversaire) { this.adversaire = adv; Son.setCombat(true, MANIFESTE.boss?.[adv.type] ?? null); }
     else if (this.adversaire && !adv) {
@@ -192,4 +203,14 @@ export class SonView {
 export function synthe(fn: (ctx: AudioContext, out: AudioNode) => void) {
   const s = Son.synth(); if (!s) return;
   try { fn(s.ctx, s.out); } catch { /* son indisponible */ }
+}
+
+/** Couches de la musique du Bastion : chaque nation monte quand on approche du bord vers son île (pleine à 250 px, rien au-delà
+ *  de 1000 px) ; la couche d'Astrub (île centrale) remplit le reste, si bien qu'une couche joue toujours. */
+export function poidsCouches(iles: { n: string; x: number; y: number }[], p: { x: number; y: number }): Record<string, number> {
+  const r: Record<string, number> = {};
+  let max = 0;
+  for (const i of iles) { const d = Math.hypot(i.x - p.x, i.y - p.y), k = Math.max(0, Math.min(1, (1000 - d) / 750)); r[i.n] = k; max = Math.max(max, k); }
+  r.astrub = 1 - max;
+  return r;
 }

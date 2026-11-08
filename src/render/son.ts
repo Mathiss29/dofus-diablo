@@ -23,7 +23,7 @@ export interface Volumes { general: number; musique: number; effets: number; mon
   /** Maquette « Musique boss » 8A : réglage Oui/Non de la musique de combat des boss. */
   musiqueBoss: boolean }
 type Manifest = {
-  musiques: Record<string, string | { calme: string; renfort?: string } | { pistes: string[] }>;
+  musiques: Record<string, string | { calme: string; renfort?: string; couches?: Record<string, string> } | { pistes: string[] }>;
   /** Musique officielle de chaque boss (maquette « Musique boss » 7B) : clé de `musiques` dont les pistes s'ajoutent avec ses PV perdus. */
   boss?: Record<string, string>;
   ambiances: Record<string, string>; ui: Record<string, string>;
@@ -103,7 +103,7 @@ class Flux {
 type EtatMusique =
   | { k: 'rien' }
   | { k: 'menu'; f: Flux }
-  | { k: 'explo'; calme: Flux; renfort: Flux | null; nom: string }
+  | { k: 'explo'; calme: Flux; renfort: Flux | null; nom: string; couches?: { n: string; f: Flux }[] }
   | { k: 'silence'; reste: number }
   | { k: 'combat'; f: Flux; boucle: Flux | null; suite: boolean; couches: Flux[] }
   | { k: 'jingle'; f: Flux };
@@ -165,7 +165,7 @@ class Moteur {
   /** Relance les flux bloqués avant le premier geste du joueur. */
   private relancer() {
     const e = this.etat;
-    const fl = e.k === 'menu' || e.k === 'combat' || e.k === 'jingle' ? [e.f] : e.k === 'explo' ? [e.calme, e.renfort] : [];
+    const fl = e.k === 'menu' || e.k === 'combat' || e.k === 'jingle' ? [e.f] : e.k === 'explo' ? [e.calme, e.renfort, ...(e.couches ?? []).map(x => x.f)] : [];
     for (const f of [...fl, ...this.fonds.values()]) if (f?.el.paused) f.jouer();
   }
 
@@ -192,6 +192,9 @@ class Moteur {
   }
   /** 0 = on explore, 1 = des monstres nous attaquent (3A). */
   setIntensite(i: number) { this.intensite = i; }
+  private poidsCouches: Record<string, number> = {};
+  /** Volume (0 à 1) de chaque couche de la musique en cours (Bastion : une couche par nation, selon l'île la plus proche). */
+  setCouches(p: Record<string, number>) { this.poidsCouches = p; }
   /** Un boss se bat contre nous (3B) ; musique = sa musique de boss (sons.json « boss »), sinon celle de la zone. */
   setCombat(on: boolean, musique: string | null = null) { this.combatVoulu = on; if (on) this.combatCle = musique; }
   /** Couches de la musique du boss (7B) : 0 = la base, 3 = toutes les pistes. */
@@ -227,11 +230,11 @@ class Moteur {
   }
   private lacher(duree: number) {
     const e = this.etat, c = this.ctx!;
-    const fl = e.k === 'menu' || e.k === 'jingle' ? [e.f] : e.k === 'combat' ? [e.f, e.boucle, ...e.couches] : e.k === 'explo' ? [e.calme, e.renfort] : [];
+    const fl = e.k === 'menu' || e.k === 'jingle' ? [e.f] : e.k === 'combat' ? [e.f, e.boucle, ...e.couches] : e.k === 'explo' ? [e.calme, e.renfort, ...(e.couches ?? []).map(x => x.f)] : [];
     for (const f of fl) if (f) { f.vers(c, 0, duree); this.anciens.push(f); setTimeout(() => { f.arreter(); this.anciens = this.anciens.filter(x => x !== f); }, duree * 1000 + 100); }
     this.etat = { k: 'rien' };
   }
-  private piste(nom: string): { calme: string; renfort?: string } {
+  private piste(nom: string): { calme: string; renfort?: string; couches?: Record<string, string> } {
     const m = MANIFESTE.musiques[nom];
     return typeof m === 'string' ? { calme: m } : 'pistes' in m ? { calme: m.pistes[0] } : m;
   }
@@ -259,6 +262,7 @@ class Moteur {
     if (combat && e.k !== 'combat') {
       // 4A + 6A : l'exploration descend en 1,5 s et se met en pause (on la reprendra), le combat monte en même temps
       if (e.k === 'explo') {
+        for (const x of e.couches ?? []) { x.f.vers(c, 0, 1.5); setTimeout(() => x.f.arreter(), 1600); }   // couches du Bastion : lâchées
         const m = { calme: e.calme, renfort: e.renfort, nom: e.nom, pause: null as ReturnType<typeof setTimeout> | null };
         e.calme.vers(c, 0, 1.5); e.renfort?.vers(c, 0, 1.5);
         m.pause = setTimeout(() => { m.pause = null; if (this.misDeCote === m) { m.calme.el.pause(); m.renfort?.el.pause(); } }, 1600);
@@ -293,6 +297,13 @@ class Moteur {
           // les deux pistes restent calées
           if (!e.calme.el.paused && Math.abs(e.renfort.el.currentTime - e.calme.el.currentTime) > 0.08) e.renfort.el.currentTime = e.calme.el.currentTime;
           if (e.renfort.el.paused && !e.calme.el.paused) e.renfort.jouer();
+        }
+        // Bastion (Ville 5F) : la couche de chaque nation monte quand on s'approche de son île, calée sur la piste de base
+        for (const x of e.couches ?? []) {
+          const cible = this.poidsCouches[x.n] ?? 0, g = x.f.gain.gain.value;
+          if (Math.abs(g - cible) > 0.02) x.f.vers(c, cible, 3);
+          if (!e.calme.el.paused && Math.abs(x.f.el.currentTime - e.calme.el.currentTime) > 0.08 && !x.f.el.ended) x.f.el.currentTime = e.calme.el.currentTime;
+          if (x.f.el.paused && !x.f.el.ended && !e.calme.el.paused) x.f.jouer();
         }
         break;
       }
@@ -342,9 +353,10 @@ class Moteur {
     const p = this.piste(nom);
     const calme = new Flux(c, p.calme, this.bus.musique, false);
     const renfort = p.renfort ? new Flux(c, p.renfort, this.bus.musique, false, this.intensite) : null;
+    const couches = Object.entries(p.couches ?? {}).map(([n, u]) => ({ n, f: new Flux(c, u, this.bus.musique, false, this.poidsCouches[n] ?? 0) }));
     calme.vers(c, 1, 2);
-    calme.jouer(); renfort?.jouer();
-    this.etat = { k: 'explo', calme, renfort, nom };
+    calme.jouer(); renfort?.jouer(); for (const x of couches) x.f.jouer();
+    this.etat = { k: 'explo', calme, renfort, nom, couches };
   }
 
   // ----- ambiance (7A) et décor (7B) -----
