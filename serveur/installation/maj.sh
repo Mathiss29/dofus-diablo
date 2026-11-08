@@ -1,5 +1,5 @@
 #!/bin/bash
-# /home/diablofus/maj.sh : mise à jour du serveur Diablofus depuis le dépôt public (lancée toutes les 5 min par diablofus-maj.timer).
+# /usr/local/lib/diablofus/maj.sh : mise à jour du serveur Diablofus depuis le dépôt public (lancée toutes les 5 min par diablofus-maj.timer).
 # Le VPS va chercher le code lui-même : aucune clé ni aucun secret à donner à GitHub.
 set -euo pipefail
 cd /home/diablofus
