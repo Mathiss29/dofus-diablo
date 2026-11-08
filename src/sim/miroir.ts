@@ -94,7 +94,8 @@ function champs(o: object, refus: Set<string>): Champs {
 /** Côté hôte : un émetteur par invité, qui se souvient de ce qu'il lui a déjà envoyé. */
 export class Emetteur {
   private n = 0;
-  private vu = new Map<string, string>();
+  /** Ce que l'invité a déjà, par objet (entité, liste, arène) puis par champ. */
+  private vu = new Map<string, Map<string, string>>();
   private evs: Val[] = [];
   constructor(readonly moi: number) {}
   /** Événement de la partie à transmettre au prochain instantané. */
@@ -106,24 +107,36 @@ export class Emetteur {
     const plein = this.vu.size === 0;
     const s: Instantane = { n: ++this.n, moi: this.moi, t: arrondir(w.time), ids: { j: [], m: [], b: [] }, e: [] };
     if (plein) s.plein = true;
-    const diff = (cle: string, v: Val) => { const j = JSON.stringify(v); if (this.vu.get(cle) === j) return false; this.vu.set(cle, j); return true; };
+    const diff = (objet: string, champ: string, v: Val) => {
+      const j = JSON.stringify(v);
+      let m = this.vu.get(objet);
+      if (!m) this.vu.set(objet, m = new Map());
+      if (m.get(champ) === j) return false;
+      m.set(champ, j); return true;
+    };
+    const presents = new Set<string>();
     const moi = w.players.find(p => p.id === this.moi) ?? w.players[0];
     const pres = (o: { x: number; y: number }) => Math.abs(o.x - moi.x) + Math.abs(o.y - moi.y) <= COOP.vue;
     const ent = (sorte: Sorte, o: Entity, extra: Champs = {}) => {
       if (sorte !== 'j' && !pres(o)) return;
       s.ids[sorte].push(o.id);
       const c = { ...champs(o, REFUS[sorte]), ...extra }, d: Champs = {};
-      for (const [k, v] of Object.entries(c)) if (diff(`${sorte}${o.id}.${k}`, v)) d[k] = v;
+      const cle = `${sorte}${o.id}`;
+      presents.add(cle);
+      for (const [k, v] of Object.entries(c)) if (diff(cle, k, v)) d[k] = v;
       if (Object.keys(d).length) s.e.push([sorte, o.id, d]);
     };
     for (const p of w.players) ent('j', p, { classe: classeDe(w, p) });
     for (const m of w.monsters) ent('m', m);
     for (const b of w.betes) ent('b', b);
-    for (const k of LISTES) { const v = versReseau((w[k] as { x: number; y: number }[]).filter(pres)) ?? []; if (diff(`l.${k}`, v)) (s.l ??= {})[k] = v; }
+    for (const k of LISTES) { const v = versReseau((w[k] as { x: number; y: number }[]).filter(pres)) ?? []; if (diff('l', k, v)) (s.l ??= {})[k] = v; }
     const a = w.arene ? { ...champs(w.arene, REFUS.a), nomDonjon: w.arene.d.nom } : null;
-    if (diff('a', a)) s.a = a;
+    if (diff('a', '', a)) s.a = a;
     const wc: Champs = { kills: w.kills, cibleMeute: w.cibleMeute };
-    if (diff('w', wc)) s.w = wc;
+    if (diff('w', '', wc)) s.w = wc;
+    // une entité sortie de la vue (ou morte et retirée) est oubliée : si elle revient, elle repart avec tous ses champs
+    // (l'invité l'a effacée de son miroir, il la recrée de zéro)
+    for (const cle of this.vu.keys()) if (/^[jmb]\d/.test(cle) && !presents.has(cle)) this.vu.delete(cle);
     if (this.evs.length) { s.ev = this.evs; this.evs = []; }
     return s;
   }
@@ -140,6 +153,8 @@ function depuisReseau(v: Val, w: World, avant?: unknown): unknown {
   for (const [k, x] of Object.entries(v)) o[k] = depuisReseau(x, w);
   return o;
 }
+/** Champs de base d'une entité créée sans constructeur (au cas où l'instantané ne les donne pas tous : l'affichage en a besoin). */
+const NEUF = { x: 0, y: 0, z: 0, facing: 0, anim: 'idle', animT: 0, age: 0, flash: 0, kx: 0, ky: 0, dead: false, hp: 1, maxHp: 1, radius: 16 };
 const entiteMiroir = (w: World, id: number): Entity | undefined =>
   w.players.find(p => p.id === id) ?? w.monsters.find(m => m.id === id) ?? w.betes.find(b => b.id === id);
 const poser = (o: object, k: string, v: unknown) => { (o as Record<string, unknown>)[k] = v; };
@@ -159,23 +174,22 @@ export function appliquerInstantane(w: World, s: Instantane): SimEvent[] {
     q.items = moi.items;
     w.players.push(q);
   }
+  // un monstre ou une bête qui change de type (Éveil des bêtes de l'Osamodas…) reste le même objet : seul def suit
   for (const id of s.ids.m) {
-    const c = champsDe.get(`m${id}`), ancien = w.monsters.find(m => m.id === id);
-    if (ancien && (!c?.type || c.type === ancien.type)) continue;
-    const def = D.monsters[String(c?.type)];
+    const c = champsDe.get(`m${id}`), ancien = w.monsters.find(m => m.id === id), def = D.monsters[String(c?.type)];
+    if (ancien) { if (def) poser(ancien, 'def', def); continue; }
     if (!def) continue;
-    const m = Object.create(Monster.prototype) as Monster;
+    const m = Object.assign(Object.create(Monster.prototype) as Monster, NEUF);
     poser(m, 'def', def); poser(m, 'id', id);
-    if (ancien) w.monsters[w.monsters.indexOf(ancien)] = m; else w.monsters.push(m);
+    w.monsters.push(m);
   }
   for (const id of s.ids.b) {
-    const c = champsDe.get(`b${id}`), ancien = w.betes.find(b => b.id === id);
-    if (ancien && (!c?.type || c.type === ancien.type)) continue;
-    const def = BETES[String(c?.type)];
+    const c = champsDe.get(`b${id}`), ancien = w.betes.find(b => b.id === id), def = BETES[String(c?.type)];
+    if (ancien) { if (def) poser(ancien, 'def', def); continue; }
     if (!def) continue;
-    const b = Object.create(Bete.prototype) as Bete;
+    const b = Object.assign(Object.create(Bete.prototype) as Bete, NEUF);
     poser(b, 'def', def); poser(b, 'id', id);
-    if (ancien) w.betes[w.betes.indexOf(ancien)] = b; else w.betes.push(b);
+    w.betes.push(b);
   }
   const garder = <T extends Entity>(l: T[], ids: number[]) => { const k = new Set(ids); return l.filter(o => k.has(o.id)); };
   w.monsters = garder(w.monsters, s.ids.m);
@@ -188,7 +202,6 @@ export function appliquerInstantane(w: World, s: Instantane): SimEvent[] {
     for (const [k, v] of Object.entries(c)) {
       if (k === 'classe' || (so === 'j' && REFUS.j.has(k))) continue;
       poser(o, k, depuisReseau(v, w, (o as unknown as Record<string, unknown>)[k]));
-      if (k === 'type' && so === 'b') poser(o, 'def', BETES[String(v)] ?? (o as Bete).def);
     }
     if (so === 'j' && 'equipment' in c) poser(o, '_pouvoirs', null);
   }

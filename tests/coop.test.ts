@@ -6,6 +6,7 @@ import { NO_INPUT } from '../src/sim/input';
 import { World } from '../src/sim/world';
 import { appliquerInstantane, COOP, Emetteur, entreeInvite, type Instantane } from '../src/sim/miroir';
 import { exporterJoueur, restaurerJoueur } from '../src/sim/sauvegarde';
+import { Bete, BETES } from '../src/sim/bete';
 
 /** Coop (maquette « Multi : » 3A, 11A) : l'hôte fait tourner l'arène, l'invité recopie des instantanés dans un monde miroir. */
 const incarnam = JSON.parse(readFileSync(new URL('../public/assets/mondes/incarnam/monde.json', import.meta.url), 'utf8')) as WorldData;
@@ -86,5 +87,44 @@ describe('coop : instantanés de l’hôte et monde miroir de l’invité', () =
     expect(e).not.toHaveProperty('havreSac');
     expect(e.pressed).toBe('attaque');
     expect(entreeInvite(null).move).toEqual({ x: 0, y: 0 });
+  });
+});
+
+describe('coop : un monstre qui sort de la vue puis revient', () => {
+  it('repart avec tous ses champs (sinon l’affichage de l’invité plante)', () => {
+    const { hote, invite, q, em, tic } = partie();
+    tic(60 * 6);
+    const m = hote.monsters.find(x => x.arene && !x.dead)!;
+    const x0 = m.x, y0 = m.y;
+    m.x += COOP.vue * 2;
+    appliquerInstantane(invite, reseau(em.instantane(hote)));
+    expect(invite.monsters.some(x => x.id === m.id)).toBe(false);
+    m.x = x0; m.y = y0;
+    appliquerInstantane(invite, reseau(em.instantane(hote)));
+    const r = invite.monsters.find(x => x.id === m.id)!;
+    expect(r).toBeTruthy();
+    expect(typeof r.anim).toBe('string');
+    expect(r.maxHp).toBe(m.maxHp);
+    void q;
+  });
+});
+
+describe('coop : une bête qui s’éveille (change de type)', () => {
+  it('reste la même bête dans le miroir, avec son animation et sa nouvelle fiche', () => {
+    const hote = monde(3, 'osamodas'), invite = monde(9);
+    hote.allerArene('arene_crypte');
+    const q = hote.ajouterJoueur('iop'), em = new Emetteur(q.id);
+    const p = hote.player;
+    const b = new Bete(9999, p, 'tofu', 'tofu', p.x + 20, p.y, BETES.tofu);
+    hote.betes.push(b);
+    appliquerInstantane(invite, reseau(em.instantane(hote)));
+    const avant = invite.betes.find(x => x.id === 9999)!;
+    expect(avant.anim).toBe(b.anim);
+    expect(b.eveiller(hote)).toBe(true);
+    appliquerInstantane(invite, reseau(em.instantane(hote)));
+    const apres = invite.betes.find(x => x.id === 9999)!;
+    expect(apres).toBe(avant);
+    expect(apres.def).toBe(BETES[b.type]);
+    expect(typeof apres.anim).toBe('string');
   });
 });

@@ -966,7 +966,8 @@
           "La petite barre A Z R T ne s'affiche plus que pour l'Osamodas, plus pour le Sacrieur.",
           "Coiffes bien posées sur l'Osamodas, le Sacrieur et l'Iopette, même vus de dos.",
           "Les épées du Sacrieur ont leur vrai dessin : plus d'épée toute blanche ni de grande forme bleue.",
-          "L'aide des Aides de quête ne dépasse plus du cadre des Options."
+          "L'aide des Aides de quête ne dépasse plus du cadre des Options.",
+          "Coop : l'invité ne se fige plus quand une bête s'éveille ; en cas de souci, il recharge la partie de l'hôte."
         ],
         "En coulisses": [
           "Sur Discord, le carnet du jour ne montre que ce qui est jouable par tous.",
