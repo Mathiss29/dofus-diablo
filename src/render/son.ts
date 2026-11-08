@@ -8,7 +8,9 @@ import { v } from './assetUrl';
  *  - Musique : celle du menu sur l'accueil et le premier chargement, puis les musiques d'Incarnam en alternance avec un
  *    silence de 20 à 40 s entre deux morceaux. Chaque musique a une piste calme et une piste « renfort » (les autres pistes
  *    officielles mélangées) qui monte quand des monstres nous attaquent (3A). Contre un boss (plus les élites depuis le 2026-11-08) : musique de combat
- *    officielle (intro puis boucle), jingle de victoire ou de défaite (3B).
+ *    officielle (intro puis boucle), jingle de victoire ou de défaite (3B). Maquette « Musique élites » (Mathis, 2026-11-08) : fondu
+ *    croisé de 1,5 s avec les pistes de combat chargées à l'avance (4A), boucle collée à l'intro (5A), jingle en fondu (6B) et
+ *    morceau d'exploration mis de côté pendant le combat, qui reprend là où il en était (6A).
  *  - Effets : son de l'animation du lanceur (même numéro que l'animation : AnimAttaque801), son de l'effet du sort (gfx),
  *    impacts, cris des monstres sur leur bus (maquette Sons : 2 par sorte, volume qui baisse avec le nombre, hauteur variée,
  *    compresseur doux), interface.
@@ -93,7 +95,7 @@ type EtatMusique =
   | { k: 'menu'; f: Flux }
   | { k: 'explo'; calme: Flux; renfort: Flux | null; nom: string }
   | { k: 'silence'; reste: number }
-  | { k: 'combat'; f: Flux; boucle: boolean }
+  | { k: 'combat'; f: Flux; boucle: Flux | null; suite: boolean }
   | { k: 'jingle'; f: Flux };
 
 class Moteur {
@@ -110,6 +112,10 @@ class Moteur {
   private intensite = 0;
   private combatVoulu = false;
   private anciens: Flux[] = [];
+  /** Morceau d'exploration mis de côté pendant un combat de boss (6A) : il reprend là où il en était. */
+  private misDeCote: { calme: Flux; renfort: Flux | null; nom: string; pause: ReturnType<typeof setTimeout> | null } | null = null;
+  /** Intro et boucle de combat chargées à l'avance (4A) : pas de blanc quand un boss arrive. */
+  private pret: { intro: Flux; boucle: Flux } | null = null;
   private fonds = new Map<string, Flux>();
   private decor = new Map<string, { f: Flux | null; muet: number }>();
   /** Cris de monstres en cours (maquette Sons 1A : au plus 2 par type ; le plus faible, donc le plus loin, cède sa place). */
@@ -161,9 +167,12 @@ class Moteur {
 
   // ----- musique -----
   /** Accueil et premier chargement (1A). */
-  menu() { this.voulu = 'menu'; this.combatVoulu = false; }
+  menu() { this.voulu = 'menu'; this.combatVoulu = false; this.oublierExplo(); }
   /** Musique d'une zone : liste de morceaux joués en alternance (2A + 2B). */
-  zone(liste: string[]) { this.voulu = liste.length ? 'zone' : 'rien'; this.liste = liste; }
+  zone(liste: string[]) {
+    this.voulu = liste.length ? 'zone' : 'rien'; this.liste = liste;
+    if (this.misDeCote && !liste.includes(this.misDeCote.nom)) this.oublierExplo();
+  }
   /** 0 = on explore, 1 = des monstres nous attaquent (3A). */
   setIntensite(i: number) { this.intensite = i; }
   /** Un boss se bat contre nous (3B). */
@@ -172,13 +181,31 @@ class Moteur {
   finCombat(victoire: boolean) {
     this.combatVoulu = false;
     if (!this.ctx) return;
-    this.lacher(0.4);
-    const f = new Flux(this.ctx, MANIFESTE.musiques[victoire ? 'combat_victoire' : 'combat_defaite'] as string, this.bus.musique, false, 1);
-    f.jouer(); this.etat = { k: 'jingle', f };
+    // 6B : le combat s'efface en 1 s sous le jingle, qui monte en 0,3 s
+    this.lacher(1);
+    const f = new Flux(this.ctx, MANIFESTE.musiques[victoire ? 'combat_victoire' : 'combat_defaite'] as string, this.bus.musique, false, 0);
+    f.vers(this.ctx, 1, 0.3); f.jouer(); this.etat = { k: 'jingle', f };
+  }
+  /** Après le combat : le morceau mis de côté reprend en fondu de 3 s (6A), sinon un court silence puis le morceau suivant. */
+  private apresCombat() {
+    const m = this.misDeCote, c = this.ctx!;
+    this.misDeCote = null;
+    if (!m || m.calme.el.ended) { if (m) { m.calme.arreter(); m.renfort?.arreter(); } this.etat = { k: 'silence', reste: 3 }; return; }
+    if (m.pause) clearTimeout(m.pause);
+    m.calme.jouer(); m.renfort?.jouer();
+    m.calme.vers(c, 1, 3);
+    m.renfort?.vers(c, this.intensite, 3);
+    this.etat = { k: 'explo', calme: m.calme, renfort: m.renfort, nom: m.nom };
+  }
+  private oublierExplo() {
+    const m = this.misDeCote; if (!m) return;
+    if (m.pause) clearTimeout(m.pause);
+    m.calme.arreter(); m.renfort?.arreter();
+    this.misDeCote = null;
   }
   private lacher(duree: number) {
     const e = this.etat, c = this.ctx!;
-    const fl = e.k === 'menu' || e.k === 'combat' || e.k === 'jingle' ? [e.f] : e.k === 'explo' ? [e.calme, e.renfort] : [];
+    const fl = e.k === 'menu' || e.k === 'jingle' ? [e.f] : e.k === 'combat' ? [e.f, e.boucle] : e.k === 'explo' ? [e.calme, e.renfort] : [];
     for (const f of fl) if (f) { f.vers(c, 0, duree); this.anciens.push(f); setTimeout(() => { f.arreter(); this.anciens = this.anciens.filter(x => x !== f); }, duree * 1000 + 100); }
     this.etat = { k: 'rien' };
   }
@@ -196,14 +223,23 @@ class Moteur {
       if (e.k !== 'menu') { this.lacher(1.5); const f = new Flux(c, MANIFESTE.musiques.menu as string, this.bus.musique, true); f.vers(c, 1, 1.5); f.jouer(); this.etat = { k: 'menu', f }; }
       return;
     }
-    if (this.voulu === 'rien') { if (e.k !== 'rien') this.lacher(1.5); return; }
+    if (this.voulu === 'rien') { if (e.k !== 'rien') this.lacher(1.5); this.oublierExplo(); return; }
     // zone
     if (e.k === 'menu') { this.lacher(2.5); this.etat = { k: 'silence', reste: 2 }; return; }
     if (this.combatVoulu && e.k !== 'combat') {
-      this.lacher(1.2);
-      const f = new Flux(c, MANIFESTE.musiques.combat_intro as string, this.bus.musique, false, 1);
-      f.jouer(); this.etat = { k: 'combat', f, boucle: false }; return;
+      // 4A + 6A : l'exploration descend en 1,5 s et se met en pause (on la reprendra), le combat monte en même temps
+      if (e.k === 'explo') {
+        const m = { calme: e.calme, renfort: e.renfort, nom: e.nom, pause: null as ReturnType<typeof setTimeout> | null };
+        e.calme.vers(c, 0, 1.5); e.renfort?.vers(c, 0, 1.5);
+        m.pause = setTimeout(() => { m.pause = null; if (this.misDeCote === m) { m.calme.el.pause(); m.renfort?.el.pause(); } }, 1600);
+        this.oublierExplo(); this.misDeCote = m; this.etat = { k: 'rien' };
+      } else this.lacher(1.5);
+      const p = this.pret ?? this.chargerCombat(); this.pret = null;
+      p.intro.vers(c, 1, 1.5); p.intro.jouer();
+      this.etat = { k: 'combat', f: p.intro, boucle: p.boucle, suite: false }; return;
     }
+    // 4A : intro et boucle de combat prêtes avant qu'un boss n'arrive
+    if (!this.pret && e.k !== 'combat') this.pret = this.chargerCombat();
     switch (e.k) {
       case 'rien': this.etat = { k: 'silence', reste: 1 }; break;
       case 'silence':
@@ -223,17 +259,27 @@ class Moteur {
         break;
       }
       case 'combat':
-        if (!this.combatVoulu) { this.lacher(2); this.etat = { k: 'silence', reste: 3 }; break; }
-        if (!e.boucle && e.f.el.ended) {
-          e.f.arreter();
-          const f = new Flux(c, MANIFESTE.musiques.combat_centrale as string, this.bus.musique, true, 1);
-          f.jouer(); this.etat = { k: 'combat', f, boucle: true };
+        if (!this.combatVoulu) { this.lacher(2); this.apresCombat(); break; }
+        // 5A : la boucle (déjà chargée) démarre pile à la fin de l'intro, sans blanc
+        if (e.boucle && !e.suite) {
+          const reste = e.f.el.duration - e.f.el.currentTime;
+          if (e.f.el.ended || (isFinite(reste) && reste < 0.4 && !e.f.el.paused)) {
+            e.suite = true;
+            const b = e.boucle;
+            setTimeout(() => { b.vers(c, 1, 0.01); b.jouer(); }, Math.max(0, (e.f.el.ended ? 0 : reste - 0.02) * 1000));
+          }
         }
+        if (e.boucle && e.suite && e.f.el.ended) { e.f.arreter(); this.etat = { k: 'combat', f: e.boucle, boucle: null, suite: true }; }
         break;
       case 'jingle':
-        if (e.f.el.ended) { e.f.arreter(); this.etat = { k: 'silence', reste: 3 }; }
+        if (e.f.el.ended) { e.f.arreter(); this.apresCombat(); }
         break;
     }
+  }
+  private chargerCombat() {
+    const c = this.ctx!;
+    return { intro: new Flux(c, MANIFESTE.musiques.combat_intro as string, this.bus.musique, false),
+      boucle: new Flux(c, MANIFESTE.musiques.combat_centrale as string, this.bus.musique, true) };
   }
   private lancerMorceau() {
     const c = this.ctx!, nom = suivante(this.liste, this.derniere, Math.random());
