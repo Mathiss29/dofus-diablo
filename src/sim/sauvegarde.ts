@@ -39,6 +39,8 @@ export interface EtatJoueur {
   codexOuvert?: boolean;
   ames?: string[];
   prereglages?: (Prereglage | null)[];
+  /** Jour de la dernière offrande à l'Almanax (15C). */
+  almanaxJour?: string | null;
 }
 
 const copie = <T>(o: T): T => JSON.parse(JSON.stringify(o)) as T;
@@ -50,7 +52,7 @@ export function exporterJoueur(w: World): EtatJoueur {
     base: p.base, bag: p.bag, equipment: p.equipment, resources: p.resources, metiers: p.metiers, recetteSuivie: p.recetteSuivie,
     bar: p.bar, variants: p.variants, learned: [...p.learned],
     x: p.x, y: p.y, retour: w.pointDeRetour, quetes: w.quetes?.exporter(), zone: w.opts.zone,
-    apparats: p.apparats, apparat: p.apparat, codex: p.codex, codexOuvert: p.codexOuvert, ames: p.ames, prereglages: p.prereglages,
+    apparats: p.apparats, apparat: p.apparat, codex: p.codex, codexOuvert: p.codexOuvert, ames: p.ames, prereglages: p.prereglages, almanaxJour: p.almanaxJour,
     zaaps: p.zaaps, zonesVues: p.zonesVues, cleDonjon: p.cleDonjon, commandeFM: p.commandeFM, ...(w.retour ? { havreSac: w.retour } : {}),
   });
 }
@@ -74,6 +76,7 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
     const r = s.prereglages![i];
     return r && typeof r === 'object' && r.equipement && Array.isArray(r.bar) ? { nom: String(r.nom ?? `Préréglage ${i + 1}`), equipement: r.equipement, bar: r.bar, variants: Array.isArray(r.variants) ? r.variants : [] } : null;
   });
+  p.almanaxJour = typeof s.almanaxJour === 'string' ? s.almanaxJour : null;
   p.ames = Array.isArray(s.ames) ? s.ames.filter(a => typeof a === 'string') : [];
   p.codexOuvert = !!s.codexOuvert || (Array.isArray(s.codex) && s.codex.length > 0);
   p.codex = Array.isArray(s.codex) ? s.codex.filter(c => typeof c?.id === 'string').map(c => ({ id: c.id, ...(typeof c.sort === 'string' ? { sort: c.sort } : {}) })) : [];

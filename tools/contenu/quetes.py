@@ -75,6 +75,8 @@ PNJ = {
   # Chasse au Dopeul (Quêtes roadmap 7B) : le Représentant des Temples (PNJ officiel 2872, look {83|||80}) près du Zaap d'Astrub,
   # tant que les temples de classe ne sont pas dans le jeu. Le Dopeul est le double officiel de ta classe (Dopeul Iop 167, Dopeul Crâ 168).
   'temples': {'nom': 'Représentant des Temples', 'dofusId': 2872, 'zone': 'astrub', 'carte': '4_-18',
+    # Almanax (0.3, 15C) : l'offrande du jour se fait auprès de lui (fenêtre Almanax de l'affichage).
+    'services': [{'texte': "Faire l'offrande du jour (Almanax).", 'service': 'almanax', 'v03': True}],
     'phrase': "Les temples de Iop et de Crâ sont loin d'Astrub, alors c'est moi qui fais le lien. Et qui envoie les Dopeuls. Ils adorent ça.",
     'discussion': [{'reponse': "C'est quoi, un Dopeul ?", 'texte': "Ton double, en plus violet et en plus vexé. Il connaît tes sorts aussi bien que toi. Une fois par jour, il vient voir si tu as progressé."}]},
   # Quêtes officielles d'Astrub écrites en ARPG (Quêtes roadmap 2C) : leurs PNJ officiels, à l'endroit où l'on rend la quête dans Dofus 3.

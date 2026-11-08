@@ -430,3 +430,11 @@ officiel du Zaap d'Astrub sur l'arche du Bastion (bastion.py réécrit les parti
 - Dessin : dans Dofus, l'archimonstre a le gfxId de son monstre (vérifié pour les 32 d'Astrub et des Champs) ; `render/looks.ts` reprend
   la planche du monstre à l'échelle officielle de l'archimonstre (`archiEchelle`), ×1,15 et dorée. Pas de planche à exporter.
 - Pierres d'âme officielles : Petite pierre d'âme (9686, vendue par Otomaï en 0.3) et Pierre d'âme d'Archimonstre (10418, la pierre pleine).
+
+## Almanax (version 0.3, choix 15C)
+- `python tools/contenu/almanax.py [almanax_brut.json]` : calendrier officiel (`almanax-calendars`) et offrande de chaque jour
+  (`quest-objectives`, « Ramener à … ») lus sur api.dofusdb.fr, écrits dans `src/data/almanax.json` (366 jours). Le bonus officiel est
+  traduit en effet temps réel (XP, Prospection, récolte, gibier, XP de métier, chance de Rare) ; sans équivalent : Pépites doublées.
+- Offrande : l'objet officiel s'il s'obtient dans le jeu (butin, récolte, fabrication), sinon une ressource du jeu de niveau proche,
+  toujours la même pour la date (`officielle: false`). On la fait auprès du Représentant des Temples (Astrub [4,-18]) ; le bonus dure
+  jusqu'à minuit (heure du PC). Réglages dans `src/sim/almanax.ts`.

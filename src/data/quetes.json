@@ -183,6 +183,13 @@
    "dofusId": 2872,
    "zone": "astrub",
    "carte": "4_-18",
+   "services": [
+    {
+     "texte": "Faire l'offrande du jour (Almanax).",
+     "service": "almanax",
+     "v03": true
+    }
+   ],
    "phrase": "Les temples de Iop et de Crâ sont loin d'Astrub, alors c'est moi qui fais le lien. Et qui envoie les Dopeuls. Ils adorent ça.",
    "discussion": [
     {

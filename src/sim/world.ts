@@ -18,6 +18,7 @@ import { planWave } from './waves';
 import { Arene, ARENE } from './arene';
 import { Quetes, type Compte, type EtatQuetes, type QuetesData } from './quests';
 import { appliquerTest, type ReglagesTest } from './outilsTest';
+import { ALMANAX, jourAlmanax, type JourAlmanax } from './almanax';
 import { COFFRE, coffreVide, type Coffre } from './coffre';
 /** Archimonstres (0.3, 15B) : chance qu'un monstre d'un groupe soit son archimonstre ; pierres d'âme officielles (vide, pleine). */
 export const ARCHI = { chance: 1 / 150, pierre: '9686', pleine: '10418' };
@@ -1291,7 +1292,8 @@ export class World {
     p.soigner(p.cls.healOnKill + p.legendary('vampire'));
     this.dropLoot(m);
     if (m.def.archiDe) this.capturer(m);
-    const xp = p.gainXp(Math.round((m.def.xp ?? Math.round(m.def.hp / 5)) * this.bonusMassacre()), this);
+    const alm = this.almanax?.effet === 'xp' ? 1 + ALMANAX.xp : 1;   // 15C
+    const xp = p.gainXp(Math.round((m.def.xp ?? Math.round(m.def.hp / 5)) * this.bonusMassacre() * alm), this);
     if (xp > 0) this.emit({ k: 'xp', x: m.x, y: m.y, z: m.radius * 2 + 30, n: xp });
     this.xpFamilier(FAMILIER_XP.chasse(this.monsterLevel(m), !!m.def.elite, !!m.def.boss));
     if (m.def.boss) { this.emit({ k: 'impact', hitstop: 0.15, shake: 0.02, big: true }); this.emit({ k: 'bossDown', monster: m.type }); }
@@ -1316,7 +1318,7 @@ export class World {
   /** Ce que le calcul du butin doit savoir (src/sim/butin.ts) : sert au jeu, au Bestiaire et au simulateur de l'outil de test. */
   contexteButin(type: string, rang: Rang, niveau: number): CtxButin {
     const p = this.player;
-    return { type, rang, niveau, prospection: p.prospection, items: this.opts.items!, familiers: this.familiersDe[type] ?? [], pool: this.equipByLevel,
+    return { type, rang, niveau, prospection: p.prospection + (this.almanax?.effet === 'butin' ? ALMANAX.butin : 0), items: this.opts.items!, familiers: this.familiersDe[type] ?? [], pool: this.equipByLevel,
       metierNiveau: j => p.metierLevel(j), armeChasse: !!p.huntingWeapon, pouvoirs: p.ctxPouvoirs };
   }
   /** Un monstre vaincu lâche son butin officiel (ressources, parfois un équipement) et, plus rarement, un équipement
@@ -1330,8 +1332,9 @@ export class World {
     b.kamas += kamas;
     for (const r of b.ressources) {   // ressource : directement dans le sac ; une viande fait monter le Chasseur (choix 6A)
       if (r.job) p.gainMetierXp(r.job, METIER_XP.viande, this);
-      p.resources[r.id] = (p.resources[r.id] ?? 0) + 1;
-      this.emit({ k: 'lootResource', id: r.id, n: 1 });
+      const q = r.job && this.almanax?.effet === 'gibier' ? ALMANAX.gibier : 1;   // 15C : jour du gibier
+      p.resources[r.id] = (p.resources[r.id] ?? 0) + q;
+      this.emit({ k: 'lootResource', id: r.id, n: q });
     }
     const out: Omit<Drop, 'x' | 'y' | 't' | 'uid'>[] = b.objets.map(item => ({ item }));
     if (b.kamas) out.push({ kamas: b.kamas });
@@ -1504,7 +1507,7 @@ export class World {
       if (g.t < RECOLTE.duree) return;
       this.enRecolte = null;
       const def = R.ressources[r.item], lv = Math.max(1, p.metierLevel(def.metier));
-      const n = quantite(this.rng, lv, def.niveau, r.dore);
+      const n = quantite(this.rng, lv, def.niveau, r.dore) + (def.metier && this.almanax?.effet === 'recolte' ? ALMANAX.recolte : 0);   // 15C
       p.resources[r.item] = (p.resources[r.item] ?? 0) + n;
       if (def.metier) p.gainMetierXp(def.metier, xpRecolte(def.niveau, r.dore), this);   // puits : sans métier, sans XP
       this.emit({ k: 'recolteFin', id: r.id, item: r.item, n, dore: r.dore });
@@ -1859,6 +1862,23 @@ export class World {
       this.postes.push({ id: this.nextId++, atelier: c.nom, metiers: [], tag: c.carte, x: q.x, y: q.y, coffre: true, ...(c.case != null ? { gfx: 0 } : {}) });
     }
   }
+  // --- Almanax (0.3, 15C) ---------------------------------------------------
+  /** Jour de l'Almanax d'aujourd'hui (date du PC), en 0.3 seulement. */
+  get almanaxDuJour(): JourAlmanax | null { return this.player.v03 ? jourAlmanax(this.opts.aujourdhui) : null; }
+  /** Bonus de l'Almanax actif : l'offrande du jour a été faite. */
+  get almanax(): JourAlmanax | null { const j = this.almanaxDuJour; return j && this.player.almanaxJour === this.opts.aujourdhui ? j : null; }
+  /** Fait l'offrande du jour : prend l'objet, donne les Pépites et le bonus jusqu'à minuit. */
+  offrirAlmanax(): boolean {
+    const p = this.player, j = this.almanaxDuJour;
+    if (!j || this.almanax || (p.resources[j.offrande] ?? 0) < j.n) return false;
+    p.resources[j.offrande] -= j.n;
+    if (p.resources[j.offrande] <= 0) delete p.resources[j.offrande];
+    const pep = ALMANAX.pepites * (j.effet === 'pepites' ? 2 : 1);
+    p.resources[PEPITE] = (p.resources[PEPITE] ?? 0) + pep;
+    p.almanaxJour = this.opts.aujourdhui!;
+    this.emit({ k: 'almanax', bonus: j.bonus, pepites: pep });
+    return true;
+  }
   /** Le joueur se tient devant un coffre (il peut y ranger et y prendre). */
   get presCoffre(): boolean {
     const p = this.player;
@@ -1930,7 +1950,7 @@ export class World {
     if (def) {
       // 0.3 (9A, 10A+10B, 11E) : un objet par recette, Commun ou Rare, jamais plus ; l'ingrédient rare garantit Rare
       if (rare) retirer(rare, n);
-      const ch = chanceRare(Math.max(1, p.metierLevel(r.metier)));
+      const ch = chanceRare(Math.max(1, p.metierLevel(r.metier))) + (this.almanax?.effet === 'fabrication' ? ALMANAX.fabrication : 0);   // 15C
       let rares = 0;
       for (let k = 0; k < n; k++) {
         const it = rollItem(r.result, def, rare || this.rng.next() < ch ? 'rare' : 'commun', this.rng, this.nextId++);

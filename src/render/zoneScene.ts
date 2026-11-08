@@ -970,6 +970,7 @@ export class ZoneScene extends Phaser.Scene {
         case 'service': if (this.windows && (e.service === 'recycler' || e.service === 'boutique' || e.service === 'apparat')) { this.windows.empPnj = e.pnj; this.windows.empOnglet = e.service; this.windows.show('emp'); }
           else if (this.windows && e.service === 'forgemagie') this.windows.ouvrirForge();
           else if (this.windows && e.service === 'garde-robe') this.windows.show('garde');
+          else if (this.windows && e.service === 'almanax') this.windows.show('almanax');
           break;
         case 'incantation': this.hud.toast('Havre-Sac : incantation…'); break;
         case 'arche': this.windows?.show('zaap'); break;
@@ -982,6 +983,7 @@ export class ZoneScene extends Phaser.Scene {
         case 'codex': { const o = POUVOIR_PAR_ID[e.id]; this.hud.loot(`Codex : ${o ? o.sort : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id} enregistré`, '#f08a2c');
           this.windows?.noteForge({ t: `Pouvoir enregistré dans le Codex : ${o ? o.officiel : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id}`, c: 'ok' }); break; }
         case 'capture': this.hud.loot(`${GAME_DATA.monsters[e.monster]?.name ?? 'Archimonstre'} capturé dans une pierre d'âme${e.neuf ? ' (nouveau)' : ''}`, '#ffd27a'); this.windows?.refresh(); break;
+        case 'almanax': this.hud.loot(`Almanax : offrande faite, +${e.pepites} Pépites et « ${e.bonus} » jusqu'à minuit`, '#ffd27a'); this.sauver(); this.windows?.refresh(); break;
         case 'coffreOuvert': if (this.windows) { this.windows.coffreHardcore = this.sorteCoffre === 'hardcore'; this.windows.show('coffre'); } break;
         // l'objet a changé de place : coffre et perso sauvés ensemble (pas d'objet perdu ni doublé si la page se ferme)
         case 'coffre': sauverCoffre(this.sorteCoffre, this.world.coffre); this.sauver(); this.windows?.refresh(); break;
