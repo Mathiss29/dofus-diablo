@@ -1,8 +1,8 @@
 """Exporte les objets officiels utiles au jeu dans src/data/items.json, et range leurs icônes sur une planche.
 
-python items_export.py <donnees> <icones_item_1x> <monsters.json du jeu> <src/data/items.json> <public/assets/ui/objets (sans extension)> [niveau_max]
+python items_export.py <donnees> <icones_item_2x> <monsters.json du jeu> <src/data/items.json> <public/assets/ui/objets (sans extension)> [niveau_max]
   donnees : tables sorties par data_dump.py (items.json, itemsets.json, itemtypes.json, monsters.json de Dofus)
-  icones  : dossier png/item_1x du catalogue (catalogue.py), une icône par iconId
+  icones  : dossier png/item_2x du catalogue (catalogue.py), une icône de 128 px par iconId
 Garde : les équipements jusqu'au niveau max (25 par défaut) avec leurs lignes de caractéristiques (min, max),
 leurs panoplies (bonus par nombre d'objets portés), et les ressources lâchées par les monstres du jeu (choix 24E)."""
 import ast, json, os, re, shutil, sys
@@ -133,22 +133,24 @@ recipes.sort(key=lambda r: r['level'])
 
 json.dump({'equipment': items, 'sets': sets, 'resources': resources, 'drops': drops, 'recipes': recipes, 'metiers': metiers},
           open(out, 'w'), ensure_ascii=False, indent=1)
-# Une seule planche pour toutes les icônes (case de 64 px, ordre des iconId) : <icon_out>.webp + src/data/icones_objets.json
+# Une seule planche pour toutes les icônes (ordre des iconId) : <icon_out>-hd.webp (cases de 128 px, fenêtres) et
+# <icon_out>.webp (la même réduite à 64 px, Phaser) + src/data/icones_objets.json. Ensuite, icones_ajout.py ajoute les icônes une à une.
 # (des centaines de petits fichiers ralentissent le chargement et dépassent les limites de publication)
 from PIL import Image
-C, miss, cells = 64, 0, []
+C, CHD, miss, cells = 64, 128, 0, []
 for i in sorted(used_icons):
     src = os.path.join(icons, f'{i}.png')
     if os.path.exists(src): cells.append((i, src))
     else: miss += 1
 cols = 20; rows = (len(cells) + cols - 1) // cols
-sheet = Image.new('RGBA', (cols * C, rows * C))
+sheet = Image.new('RGBA', (cols * CHD, rows * CHD))
 frames = {}
 for n, (i, src) in enumerate(cells):
-    im = Image.open(src).convert('RGBA'); im.thumbnail((C, C))
-    x, y = (n % cols) * C, (n // cols) * C
-    sheet.paste(im, (x + (C - im.width) // 2, y + (C - im.height) // 2))
+    im = Image.open(src).convert('RGBA'); im.thumbnail((CHD, CHD), Image.LANCZOS)
+    x, y = (n % cols) * CHD, (n // cols) * CHD
+    sheet.paste(im, (x + (CHD - im.width) // 2, y + (CHD - im.height) // 2))
     frames[str(i)] = n
-sheet.save(icon_out + '.webp', 'WEBP', lossless=True, method=6)
+sheet.save(icon_out + '-hd.webp', 'WEBP', quality=90, alpha_quality=100, method=6)
+sheet.resize((cols * C, rows * C), Image.LANCZOS).save(icon_out + '.webp', 'WEBP', quality=90, method=6)
 json.dump({'cell': C, 'cols': cols, 'rows': rows, 'icons': frames}, open(os.path.join(os.path.dirname(out), 'icones_objets.json'), 'w'))
 print(len(items), 'équipements,', len(sets), 'panoplies,', len(resources), 'ressources,', len(cells), 'icônes (', miss, 'manquantes )')

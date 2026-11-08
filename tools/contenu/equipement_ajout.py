@@ -3,7 +3,7 @@
 # Les objets déjà dans le butin officiel des monstres (drops) tombent alors comme équipement (avant : rangés par erreur
 # avec les ressources, ex. Boufcoiffe Royale du Bouftou Royal).
 # Usage : FR=<fr.bin> python tools/extraction/items_export.py <tables> <icônes> src/data/monsters.json /tmp/x/items.json /tmp/x/objets 40
-#         python tools/contenu/equipement_ajout.py /tmp/x/items.json   puis   icones_ajout.py <item_assets_1x.bundle> <iconId…> (affichés)
+#         python tools/contenu/equipement_ajout.py /tmp/x/items.json   puis   icones_ajout.py <item_assets_2x.bundle> <iconId…> (affichés)
 import json, os, sys
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..')
 P = os.path.join(ROOT, 'src/data/items.json')
