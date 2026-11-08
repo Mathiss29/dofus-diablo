@@ -234,7 +234,8 @@
           "Croiser un élite ne coupe plus ta musique : seuls les boss lancent la musique de combat.",
           "Musique des boss plus fluide : fondu croisé à l'arrivée du boss, boucle sans blanc, et ton morceau d'exploration reprend là où il en était après le combat.",
           "Avec l'Osamodas : Alt + clic lance toute la meute sur un monstre, Maj montre le fil de laisse et les PV de chaque bête, la Laisse Spirituelle dompte un monstre presque vaincu pendant 20 s, et ton familier mord.",
-          "Chaque boss a sa musique officielle de Dofus 3, qui s'enrichit d'un instrument à chaque quart de vie qu'il perd. À Astrub, c'est la musique de combat d'Amakna. Tu peux couper la musique des boss dans Options, Son."
+          "Chaque boss a sa musique officielle de Dofus 3, qui s'enrichit d'un instrument à chaque quart de vie qu'il perd. À Astrub, c'est la musique de combat d'Amakna. Tu peux couper la musique des boss dans Options, Son.",
+          "Bulles d'effets actifs au-dessus de la barre de sorts : chaque bonus de sort (Cortège Sauvage, Pas Chassé, Épée Divine…), les charges et le bouclier ont leur bulle avec un anneau qui se vide et les secondes restantes ; les malus des monstres en rouge ; survole une bulle pour le détail."
         ],
         "Corrections": [
           "Les Chafers Éclaireurs font enfin mal : leur Flèche de Feu était prise pour un sort de soutien et ne blessait jamais. Ils restent à distance pour tirer (même correction pour le Tofu Chimérique, le Petit Gloot et Percy Klop).",

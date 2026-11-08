@@ -101,7 +101,7 @@ export class Player extends Entity {
   /** Instants des derniers lancers de chaque sort (charges, 3A). */
   casts: Record<string, number[]> = {};
   /** Bouclier (Ferveur) : points et temps restant. */
-  shield = 0; shieldT = 0;
+  shield = 0; shieldT = 0; shieldT0 = 0; shieldSrc = '';
   /** Sorts officiels de monstres : dommages subis × subis pendant subisT s (Grognement : 1,2), Pacifiste pendant pacifiste s (Hyperleukocytine : ne peut plus infliger de dommages). */
   subis = 1; subisT = 0; pacifiste = 0;
   private repathT = 0;
@@ -189,11 +189,13 @@ export class Player extends Entity {
   // --- Caractéristiques -------------------------------------------------------
   stat(k: Stat): number { let v = this.stats[k] ?? 0; for (const m of this.mods) if (m.k === k) v += m.n; return v; }
   /** Bonus / malus temporaires (sorts de monstres : -40 Puissance pendant un tour…). */
-  mods: { k: Stat; n: number; t: number; src?: string }[] = [];
-  addMod(k: Stat, n: number, t: number, src?: string) { this.mods.push({ k, n, t, src }); }
+  mods: { k: Stat; n: number; t: number; src?: string; t0?: number }[] = [];
+  addMod(k: Stat, n: number, t: number, src?: string) { this.mods.push({ k, n, t, src, t0: t }); }
   /** Ralentissement (retrait de PM) : fraction de vitesse perdue et durée restante. */
   slowK = 0; slowT = 0;
-  slow(t: number, k: number) { k *= fuiteFactor(this.fuite); this.slowK = this.slowT > 0 ? Math.max(this.slowK, k) : k; this.slowT = Math.max(this.slowT, t); }
+  /** Durées de départ des malus (bulles d'effets actifs : l'anneau se vide de t0 à 0). */
+  slowT0 = 0; subisT0 = 0; pacifisteT0 = 0;
+  slow(t: number, k: number) { k *= fuiteFactor(this.fuite); this.slowK = this.slowT > 0 ? Math.max(this.slowK, k) : k; if (t >= this.slowT) this.slowT0 = t; this.slowT = Math.max(this.slowT, t); }
   get speed(): number { return this.cls.speed * (1 + vitesseAgilite(this.stat('agilite'))) * this.vitesseTest * (this.slowT > 0 ? 1 - this.slowK : 1); }
   /** Partie de test (5D) : course ×3. */
   vitesseTest = 1;
@@ -778,7 +780,7 @@ export class Player extends Entity {
       }
       if (d.rappel) for (const b of world.betes) if (!b.dead) { const a = this.age * 3 + b.id; b.x = this.x + Math.cos(a) * CASE; b.y = this.y + Math.sin(a) * CASE; }
       if (d.dompte) world.dompter(this, s.tx, s.ty, d.dompte);
-      if (d.shield) { this.shield = Math.max(this.shield, Math.round(this.maxHp * d.shield.part * sig('shield'))); this.shieldT = d.shield.t; }
+      if (d.shield) { this.shield = Math.max(this.shield, Math.round(this.maxHp * d.shield.part * sig('shield'))); this.shieldT = this.shieldT0 = d.shield.t; this.shieldSrc = s.id; }
       if (d.selfKnock) {   // « Recule de n cases » : à l'opposé du tir (freinage de applyKnock : distance = vitesse / 7,13)
         const v = d.selfKnock * sig('selfKnock') * 7.13;
         this.kx -= Math.cos(this.facing) * v; this.ky -= Math.sin(this.facing) * v;
