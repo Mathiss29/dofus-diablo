@@ -92,6 +92,8 @@ export class Monster extends Entity {
   /** Partie de test : posé par le panneau F1 ; mannequin = immobile et increvable (compteur de DPS, 7D). */
   poseTest = false;
   mannequin = false;
+  /** Partie de test (maquette « Outil test » 8B) : le mannequin frappe le perso N fois par seconde (0 : il ne frappe pas). */
+  frappe = 0; frappeT = 0;
   /** Arène d'un donjon : arrive en courant vers le joueur et ne lâche jamais ; intouchable = palier du boss (8C). */
   arene = false;
   intouchable = false;
@@ -115,7 +117,14 @@ export class Monster extends Entity {
     if (this.dead) { this.t -= dt; this.setAnim('die', 1 - this.t / 0.6); this.applyKnock(dt); return; }
     const open = world.zone.open;
     if (this.state === 'spawn') { this.t -= dt; this.setAnim('spawn', 1 - this.t / 0.6); if (this.t <= 0) this.state = open && !this.arene ? 'idle' : 'chase'; return; }
-    if (this.mannequin) { this.stun = 0; this.kx = this.ky = 0; this.setAnim('idle'); return; }
+    if (this.mannequin) {
+      this.stun = 0; this.kx = this.ky = 0; this.setAnim('idle');
+      // 8B : mannequin qui frappe (classes qui se renforcent en prenant des coups) : à portée, des coups de ses dommages normaux
+      if (this.frappe > 0 && (this.frappeT -= dt) <= 0 && player === world.player && Math.hypot(player.x - this.x, player.y - this.y) < 260) {
+        this.frappeT = 1 / this.frappe; player.hurt(D.dmg, this.x, this.y, world);
+      }
+      return;
+    }
     if (this.stun > 0) { this.stun -= dt; this.setAnim('stun'); this.applyKnock(dt); if (this.state === 'windup') { this.state = 'chase'; this.sig = false; } if (this.state === 'idle') this.state = 'chase'; return; }
     const dx = player.x - this.x, dy = player.y - this.y, dist = Math.hypot(dx, dy) || 1;
     this.atkCd -= dt;

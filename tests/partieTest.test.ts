@@ -6,6 +6,8 @@ import { NO_INPUT, type PlayerInput } from '../src/sim/input';
 import { EQUIP_SLOTS } from '../src/sim/items';
 import { REGLAGES_TEST, caracPrincipale, type CommandeTest } from '../src/sim/outilsTest';
 import { World } from '../src/sim/world';
+import { DOFUS } from '../src/sim/dofus';
+import { jourAlmanax } from '../src/sim/almanax';
 
 const astrub = JSON.parse(readFileSync(new URL('../public/assets/mondes/astrub/monde.json', import.meta.url), 'utf8')) as WorldData;
 const monde = (classId = 'iop', test = true) => new World({ data: GAME_DATA, zone: 'astrub', map: new WorldGrid(astrub), seed: 3, classId, items: ITEMS, quetes: QUETES,
@@ -73,5 +75,61 @@ describe('Partie de test (panneau F1)', () => {
     const w = monde(), wg = w.worldGrid!;
     ordre(w, { k: 'aller', tag: 'cour_1', nom: 'Cour du Bouftou Royal' });
     expect(wg.mapAt(w.player.x, w.player.y)?.tag).toBe('cour_1');
+  });
+
+  it('Outil test 0.3 : Dofus codés portés, remplir les 6 cases, tout retirer', () => {
+    const w = monde(), p = w.player;
+    ordre(w, { k: 'dofus', id: 'codes', porter: true });
+    const codes = Object.keys(DOFUS).filter(id => DOFUS[id].jeu);
+    expect(codes.length).toBeGreaterThanOrEqual(2);
+    for (const id of codes) expect(p.dofusPortes).toContain(id);
+    expect(p.porteDofus('argente')).toBe(true);
+    for (const id of Object.keys(DOFUS).slice(0, 8)) ordre(w, { k: 'dofus', id, porter: false });
+    ordre(w, { k: 'dofusRemplir' });
+    expect(p.dofusPortes.every(Boolean)).toBe(true);
+    expect(new Set(p.dofusPortes).size).toBe(6);
+    ordre(w, { k: 'dofusVider' });
+    expect(p.dofus).toEqual([]);
+    expect(p.dofusPortes.every(x => x === null)).toBe(true);
+  });
+  it('Outil test 0.3 : sauter à une étape (élites apparues), finir (Dofus donné), remettre à zéro', () => {
+    const w = monde(), p = w.player, Q = w.quetes!;
+    ordre(w, { k: 'quete', id: 'oeuf_argent', geste: 'etape', etape: 1 });
+    const c = Q.enCours.find(x => x.id === 'oeuf_argent')!;
+    expect(c.etape).toBe(1);
+    expect(w.monsters.filter(m => m.def.elite && !m.dead && m.def.name.includes('argent')).length).toBe(3);
+    ordre(w, { k: 'quete', id: 'oeuf_argent', geste: 'aller' });
+    expect(w.monsters.some(m => m.def.name.includes('argent') && Math.hypot(m.x - p.x, m.y - p.y) < 400)).toBe(true);
+    ordre(w, { k: 'quete', id: 'oeuf_argent', geste: 'finir' });
+    expect(Q.finies.has('oeuf_argent')).toBe(true);
+    expect(p.porteDofus('argente')).toBe(true);
+    ordre(w, { k: 'quete', id: 'oeuf_argent', geste: 'zero' });
+    expect(Q.finies.has('oeuf_argent')).toBe(false);
+    expect(Q.enCours.some(x => x.id === 'oeuf_argent')).toBe(false);
+    ordre(w, { k: 'quete', id: 'oeuf_cacao', geste: 'prendre' });   // sans avoir fini l'œuf d'argent
+    expect(Q.enCours.some(x => x.id === 'oeuf_cacao')).toBe(true);
+  });
+  it('Outil test 0.3 : changer le jour de l\'Almanax et recevoir son offrande', () => {
+    const w = monde(), p = w.player;
+    ordre(w, { k: 'jour', date: '2026-03-14' });
+    const j = jourAlmanax('2026-03-14')!;
+    expect(w.almanaxDuJour).toEqual(j);
+    ordre(w, { k: 'offrande' });
+    expect(p.resources[j.offrande]).toBe(j.n);
+    expect(w.offrirAlmanax()).toBe(true);
+    expect(w.almanax).toEqual(j);
+  });
+  it('Outil test 0.3 : archimonstres ×100, invocations sans limite, mannequin qui frappe', () => {
+    const w = monde('osamodas'), p = w.player;
+    expect(w.invocationsMax(p)).toBeLessThan(99);
+    ordre(w, { k: 'reglage', cle: 'invocations', on: true }, { k: 'reglage', cle: 'archis', on: true });
+    expect(w.invocationsMax(p)).toBe(99);
+    expect(w.test!.archis).toBe(true);
+    const hp = p.hp;
+    ordre(w, { k: 'monstre', type: 'bouftou', n: 1, rang: 'normal', x: p.x + 60, y: p.y, mannequin: true, frappe: 3 });
+    const man = w.monsters.find(m => m.mannequin)!;
+    for (let i = 0; i < 120; i++) w.step(1 / 60, NO_INPUT);
+    expect(man.frappe).toBe(3);
+    expect(p.hp).toBeLessThan(hp);
   });
 });

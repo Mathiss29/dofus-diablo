@@ -687,6 +687,16 @@
             ]
           },
           {
+            "titre": "Outils de test à jour",
+            "phrase": "Le panneau F1 saute droit aux Dofus, aux quêtes, à l'Almanax et aux nouveaux lieux.",
+            "details": "Onglet Progression, recherche partout, archimonstres ×100, mannequin qui frappe et compteur de dégâts reçus.",
+            "icone": "guide",
+            "etiquettes": [
+              "Partie de test",
+              "Touche F1"
+            ]
+          },
+          {
             "titre": "Le Sacrieur arrive en essai",
             "phrase": "La classe Sacrieur se joue dans la partie de test, avec ses 16 sorts officiels jusqu'au niveau 60.",
             "details": "Plus tu perds de PV, plus ta Souffrance monte : tu frappes plus fort et tu encaisses mieux. Sortie avec la 0.4.",
@@ -763,6 +773,35 @@
               "Partie de test",
               "Astrub"
             ]
+          },
+          {
+            "titre": "La mer part de la côte",
+            "phrase": "Aux Calanques, l'eau des cartes se fond dans le large, sans coin ni marche rectangulaire.",
+            "details": "Le bord du monde s'arrondit aussi : il suit la côte, plus le cadre des cartes.",
+            "icone": "carte",
+            "etiquettes": [
+              "Astrub"
+            ]
+          },
+          {
+            "titre": "Des monstres mieux placés",
+            "phrase": "Plus de groupe qui t'attend à l'entrée d'une carte, et autant de monstres que la carte peut en tenir.",
+            "details": "Une petite carte a un groupe, une grande jusqu'à trois. Les monstres d'un groupe restent serrés autour de leur chef.",
+            "icone": "bestiaire",
+            "etiquettes": [
+              "Incarnam",
+              "Astrub"
+            ]
+          },
+          {
+            "titre": "Le passage vers Incarnam",
+            "phrase": "Clique sur l'arche de la tour d'Astrub ou le bassin de la Route des âmes pour changer d'île.",
+            "details": "Le portail s'entoure au survol ; ton personnage y marche puis arrive à côté de l'autre portail.",
+            "icone": "zaap",
+            "etiquettes": [
+              "Astrub",
+              "Incarnam"
+            ]
           }
         ],
         "Combat": [
@@ -811,7 +850,8 @@
           "Les bêtes de l'Osamodas suivent leur maître au lieu de lui marcher dessus.",
           "Le Dragonnet de l'Osamodas est enfin animé.",
           "« Lire tout le carnet » ferme bien la fenêtre « Quoi de neuf ? ».",
-          "Un monstre près d'un arbre ou d'un minerai se vise enfin : il passe avant la ressource."
+          "Un monstre près d'un arbre ou d'un minerai se vise enfin : il passe avant la ressource.",
+          "Plus de bandes d'eau ou de sable aux raccords des cartes, ni de sable en escalier au bord du monde."
         ],
         "En coulisses": [
           "Sur Discord, le carnet du jour ne montre que ce qui est jouable par tous.",

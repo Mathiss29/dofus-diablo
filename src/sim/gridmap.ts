@@ -36,6 +36,8 @@ export interface WorldMapEntry {
   survols?: { f: string; x: number; y: number }[];
   /** Carte du rivage : couleur de la mer (0xRRGGBB) dans laquelle son bord du monde se fond, au lieu du fond bleu nuit. */
   mer?: number;
+  /** Carte du rivage : terre ('1') ou mer ('0') par carrés de k px du monde dans son cadre (tools/extraction/mer.py). */
+  rivage?: { k: number; w: number; h: number; d: string };
   /** Intérieur (maison, mine…) : rangé à part dans la grille, on y entre par une porte. */
   inside?: number;
   /** Intérieur à ciel ouvert (Temple Céleste) : le ciel reste derrière. */

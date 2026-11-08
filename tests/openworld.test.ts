@@ -117,7 +117,7 @@ describe('intérieurs (maisons, Mine, Taverne)', () => {
       p.x = c!.x; p.y = c!.y; p.hp = p.maxHp;
       w.step(STEP, NO_INPUT);
       expect(wg.mapAt(p.x, p.y)?.tag, 'en passant devant, on n\'entre pas').toBe(from.tag);
-      w.step(STEP, { ...NO_INPUT, dest: { x: from.x, y: from.y } });   // clic sur la porte
+      w.step(STEP, { ...NO_INPUT, dest: { x: from.x, y: from.y }, versPortail: po.dessin ? po.nom : null });   // clic sur la porte (ou le dessin du portail)
       expect(w.passage, 'le perso attend le fondu devant la porte').not.toBeNull();
       expect(wg.mapAt(p.x, p.y)?.tag).toBe(from.tag);
       finirPassage(w);

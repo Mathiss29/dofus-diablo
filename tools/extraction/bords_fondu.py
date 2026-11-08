@@ -12,17 +12,22 @@ from PIL import Image
 D = sys.argv[1]
 M = json.load(open(f'{D}/monde.json'))
 outs = [m for m in M['maps'] if not m.get('inside') and not m.get('ciel')]
-sols = {m['tag']: np.asarray(Image.open(f"{D}/sol_{m['tag']}.webp").convert('RGBA'))[..., 3] for m in outs}
+# ONLY=<cartes> : ne traite que ces bords (après un réexport partiel) ; les sols ne sont lus qu'au besoin
+import os
+ONLY = set(filter(None, os.environ.get('ONLY', '').split(',')))
+class Sols(dict):
+    def __missing__(self, t): self[t] = v = np.asarray(Image.open(f"{D}/sol_{t}.webp").convert('RGBA'))[..., 3]; return v
+sols = Sols()
 n = 0
 for m in outs:
     b = m.get('bord')
-    if not b or b.get('fondu'): continue
+    if not b or b.get('fondu') or (ONLY and m['tag'] not in ONLY): continue
     im = np.asarray(Image.open(f"{D}/bord_{m['tag']}.webp").convert('RGBA')).astype(np.float32)
     h, w = im.shape[:2]
     autre = np.zeros((h, w), np.float32)
     for o in outs:
         # seules comptent les voisines « avant » (au-dessus, ou à gauche sur la même rangée) : sur elles, pas de débord
-        if o is m or (o['y'], o['x']) > (m['y'], m['x']): continue
+        if o is m or (o['y'], o['x']) > (m['y'], m['x']) or abs(o['x'] - m['x']) > 3 or abs(o['y'] - m['y']) > 3: continue
         s = o['sol']; x0, y0 = max(b['x'], s['x']), max(b['y'], s['y']); x1, y1 = min(b['x'] + w, s['x'] + s['w']), min(b['y'] + h, s['y'] + s['h'])
         if x0 >= x1 or y0 >= y1: continue
         a2 = sols[o['tag']][y0 - s['y']:y1 - s['y'], x0 - s['x']:x1 - s['x']].astype(np.float32)
@@ -30,7 +35,7 @@ for m in outs:
     # 1 là où la voisine d'avant n'a rien, 0 sur son sol (progressif sur ses bords translucides)
     k = 1 - np.clip(autre / 255, 0, 1)
     im[..., 3] *= k
-    Image.fromarray(im.clip(0, 255).astype(np.uint8), 'RGBA').save(f"{D}/bord_{m['tag']}.webp", 'WEBP', quality=80, method=6)
+    Image.fromarray(im.clip(0, 255).astype(np.uint8), 'RGBA').save(f"{D}/bord_{m['tag']}.webp", 'WEBP', quality=80, method=4)   # (réglage rapide, comme world_export.py)
     b['fondu'] = 1; n += 1
 json.dump(M, open(f'{D}/monde.json', 'w'))
 print('bords traités :', n)

@@ -11,7 +11,11 @@
     "ecartPassage": 3,
     "ecartLieu": 6,
     "ecartBord": 4,
-    "ecartPoints": 7
+    "ecartPoints": 7,
+    "_2": "Retouche du 2026-11-08 (Mathis : « le placement sur Incarnam n'est pas top ») : le nombre de groupes suit la taille de la carte (groupsPerMap pour casesParGroupe cases libres, 1 au moins, groupsPerMap + 1 au plus), aucun point à moins de loinSortie px d'une entrée de carte (rayon d'éveil 250 + marge), et un groupe se serre autour de son chef (rayonGroupe px, membres du même côté des obstacles).",
+    "casesParGroupe": 150,
+    "loinSortie": 420,
+    "rayonGroupe": [70, 115]
   },
   "cartes": {
     "incarnam": {},

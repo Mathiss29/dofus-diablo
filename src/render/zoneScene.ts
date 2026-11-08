@@ -50,7 +50,7 @@ import { dernier, enterrer, lireCoffre, lirePersos, sauverCoffre, sauverPerso, s
 import { SonView, synthe } from './sonView';
 import { MANIFESTE, Son } from './son';
 import { retouchesPlacement } from './placementVue';
-import { ETATS_PRETS, PanneauTest, lireTest, modeTest, sauverTest, type EtatTest } from './panneauTest';
+import { etatsPrets, jourDuPC, PanneauTest, lireTest, modeTest, sauverTest, type EtatTest } from './panneauTest';
 import { REGLAGES_TEST, type CommandeTest } from '../sim/outilsTest';
 
 const ASSETS = 'assets';
@@ -122,6 +122,8 @@ export class ZoneScene extends Phaser.Scene {
   private zaapChoix: number | null = null;
   /** Clic sur un Zaap du monde (maquette « Zaap : » 1A) et Zaap tout juste découvert (3A : un seul bandeau). */
   private zaapClick: string | null = null;
+  /** Clic sur un portail dessiné (bassin d'Incarnam, arche de la tour d'Astrub) : son nom ; le perso y va et passe. */
+  private portailClick: string | null = null;
   private zaapAnnonce: string | null = null;
   private zaapLabel: Phaser.GameObjects.Text | null = null;
   private recolteClick: number | null = null;
@@ -282,7 +284,7 @@ export class ZoneScene extends Phaser.Scene {
     if (zone.open) {
       const open = zone.open;
       const wg = new WorldGrid(this.cache.json.get(WorldView.key(open.world, 'monde')) as WorldData);
-      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, apparats: APPARATS, familierXp: FAMILIERS.xp, recoltes: RECOLTES, compte: chargerCompte(), coffre: lireCoffre(this.sorteCoffre), aujourdhui: new Date().toLocaleDateString('sv-SE'), tuto: this.test ? false : this.perso?.tuto, test: this.test?.reglages,
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, apparats: APPARATS, familierXp: FAMILIERS.xp, recoltes: RECOLTES, compte: chargerCompte(), coffre: lireCoffre(this.sorteCoffre), aujourdhui: this.test?.jour ?? jourDuPC(), tuto: this.test ? false : this.perso?.tuto, test: this.test?.reglages,
         placements: this.test ? retouchesPlacement(open.world) : undefined,   // éditeur F1 › Placement : retouches pas encore envoyées
         // vitrine : les PNJ sont là, mais aucune quête ne démarre
         arrivee: this.arrivee, position: this.transit.position, point: this.transit.point, zaap: this.transit.zaap, retour: this.transit.retour,
@@ -359,6 +361,8 @@ export class ZoneScene extends Phaser.Scene {
     this.windows.onZaap = i => { this.zaapChoix = i; };
     // maquette « Zaap : » 9A : arrivée par un Zaap, les éclats du tourbillon s'échappent du perso
     if (this.transit.zaap && this.world.zone.open && !this.vitrine) this.time.delayedCall(300, () => this.tourbillon(this.world.player.x, this.world.player.y, true));
+    // arrivée par un portail d'une autre zone : un anneau turquoise s'ouvre autour du perso, posé à côté du portail
+    if (this.arrivee && this.world.zone.open && !this.vitrine) this.time.delayedCall(300, () => this.fx.ring(this.world.player.x, this.world.player.y, 10, 110, 0x5ff2dc, 0.6, 5));
     this.windows.onCarte = m => { if (this.carte?.dispo) this.carte.montrer(m); };   // Métiers UI 8B, 11B : où trouver une ressource
     this.windows.portrait = v(`${ASSETS}/ui/perso_${this.classId}${this.perso?.sexe === 'f' ? '_f' : ''}.png`);
     // perso dessiné en direct dans l'inventaire, l'aperçu des apparats et la garde-robe (Apparence 5A, 6B)
@@ -465,6 +469,7 @@ export class ZoneScene extends Phaser.Scene {
     if (this.test && this.world) {
       const t = this.test;
       t.etat = exporterJoueur(this.world); t.zone = this.zoneId; t.reglages = { ...REGLAGES_TEST, ...this.world.test };
+      const j = this.world.opts.aujourdhui; t.jour = j && j !== jourDuPC() ? j : undefined;   // Outil test 5A
       sauverTest(t); return;
     }
     if (!this.perso || this.slot < 0 || this.mortDefinitive || !this.world) return;
@@ -493,15 +498,15 @@ export class ZoneScene extends Phaser.Scene {
         this.relancerTest({ ...this.test, classe: id, zone: this.zoneId, reglages: reglages(), apres: undefined,
           etat: { ...exporterJoueur(this.world), variants: [], bar: [], learned: [] } });
       },
-      zone: (id: string, carte?: [string, string]) => {
+      zone: (id: string, apres?: CommandeTest[]) => {
         if (!this.test) return;
-        this.relancerTest({ ...this.test, zone: id, reglages: reglages(), etat: exporterJoueur(this.world),
-          apres: carte ? [{ k: 'aller', tag: carte[0], nom: carte[1] }] : undefined });
+        const j = this.world.opts.aujourdhui;
+        this.relancerTest({ ...this.test, zone: id, reglages: reglages(), etat: exporterJoueur(this.world), jour: j && j !== jourDuPC() ? j : undefined, apres });
       },
       // 9A : un perso tout neuf, monté au niveau, habillé, puis sur la bonne carte
       pret: (i: number) => {
-        const e = ETATS_PRETS[i]; if (!e || !this.test) return;
-        const apres: CommandeTest[] = [{ k: 'niveau', n: e.niveau, auto: true }, { k: 'tenue', rarete: e.tenue }];
+        const e = etatsPrets()[i]; if (!e || !this.test) return;
+        const apres: CommandeTest[] = [{ k: 'niveau', n: e.niveau, auto: true }, { k: 'tenue', rarete: e.tenue }, ...e.apres ?? []];
         if (e.carte) apres.push({ k: 'aller', tag: e.carte[0], nom: e.carte[1] });
         this.relancerTest({ classe: e.classe, sexe: this.test.sexe, zone: e.zone, reglages: reglages(), apres, zones: [] });
       },
@@ -553,6 +558,8 @@ export class ZoneScene extends Phaser.Scene {
       if (n) { this.talkClick = n; this.clickMode = null; this.holding = false; return; }
       const zp = this.zaapSous(p);
       if (zp) { this.zaapClick = zp.name; this.clickMode = null; this.holding = false; return; }
+      const pt = this.portailSous(p);
+      if (pt) { this.portailClick = pt.nom; this.clickMode = null; this.holding = false; this.moveMarker(p); return; }
       const d = this.dropUnder(p);
       if (d != null) { this.pickClick = d; this.clickMode = null; this.holding = false; return; }
       // un monstre passe avant les ressources et les ateliers derrière lui : sinon impossible de viser un mob près d'un arbre
@@ -704,7 +711,7 @@ export class ZoneScene extends Phaser.Scene {
   private porteLabel: Phaser.GameObjects.Text | null = null;
   private porteSurvol(aim: { x: number; y: number }): boolean {
     const po = this.vitrine || this.world.passage ? null : this.world.porteSous(aim.x, aim.y);
-    if (!po) { this.porteLabel?.setVisible(false); this.worldView?.contour(null); return false; }
+    if (!po) { this.porteLabel?.setVisible(false); return false; }   // le contour s'efface plus loin (sauf sur un portail dessiné)
     if (!this.porteLabel) {
       this.porteLabel = this.add.text(0, 0, '', { fontFamily: 'Lexend, sans-serif', fontSize: '15px', fontStyle: 'bold', color: '#f3e3bf', backgroundColor: '#0b0910e0',
         padding: { x: 9, y: 5 }, align: 'center' }).setOrigin(0.5, 1).setDepth(1e6);
@@ -748,6 +755,33 @@ export class ZoneScene extends Phaser.Scene {
     }
     const c = ISO.toScreen(z.x, z.y);
     this.zaapLabel.setText(`Zaap · ${this.nomZaap(z.name)}\nClic : voyager`).setPosition(c.x, c.y - 110).setScale(1 / this.cameras.main.zoom).setVisible(true);
+    return true;
+  }
+  /** Portail dessiné sous le curseur (bassin d'Incarnam, arche de la tour d'Astrub) : l'ovale de son dessin à l'écran. */
+  private portailSous(ptr: Phaser.Input.Pointer) {
+    if (this.vitrine || this.world.passage || !this.world.zone.open) return null;
+    const wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
+    return this.world.portes.find(po => {
+      const d = po.dessin; if (!d) return false;
+      const c = ISO.toScreen(d.x, d.y);
+      return ((wp.x - c.x) / d.rx) ** 2 + ((wp.y - c.y) / d.ry) ** 2 <= 1;
+    }) ?? null;
+  }
+  /** Survol d'un portail dessiné : son contour officiel, et où il mène au-dessus. */
+  private portailLabel: Phaser.GameObjects.Text | null = null;
+  private portailSurvol(ptr: Phaser.Input.Pointer): boolean {
+    const po = this.portailSous(ptr);
+    if (!po) { this.portailLabel?.setVisible(false); return false; }
+    if (!this.portailLabel) {
+      this.portailLabel = this.add.text(0, 0, '', { fontFamily: 'Lexend, sans-serif', fontSize: '15px', fontStyle: 'bold', color: '#c9fff4', backgroundColor: '#0b0910e0',
+        padding: { x: 9, y: 5 }, align: 'center' }).setOrigin(0.5, 1).setDepth(1e6);
+      this.cameras.getCamera('mini')?.ignore(this.portailLabel);
+      const lab = this.portailLabel;
+      this.events.once('shutdown', () => { lab.destroy(); if (this.portailLabel === lab) this.portailLabel = null; });
+    }
+    const d = po.dessin!, c = ISO.toScreen(d.x, d.y);
+    this.worldView?.contour(c.x, c.y + 50);   // le contour officiel du portail (survols de la carte), comme les portes
+    this.portailLabel.setText(`Portail · ${po.nom}\nClic : y aller`).setPosition(c.x, c.y - d.ry - 6).setScale(1 / this.cameras.main.zoom).setVisible(true);
     return true;
   }
   /** Tourbillon du Zaap (9A) : des éclats bleus happés vers le perso (départ) ou qui s'en échappent (arrivée). */
@@ -838,6 +872,10 @@ export class ZoneScene extends Phaser.Scene {
     const zq = this.zaapClick ? refuge ? { x: zr!.x, y: zr!.y } : this.world.devantZaap(this.zaapClick) : null;
     if (zq) { if (!refuge) input.versZaap = this.zaapClick; input.dest = zq; this.clickMode = null; }
     this.zaapClick = null;
+    // portail dessiné : on marche jusqu'à sa case ; World le passe en y arrivant (fondu, puis l'autre zone)
+    const pc = this.portailClick && this.world.portes.find(o => o.dessin && o.nom === this.portailClick);
+    if (pc) { input.dest = { x: pc.ends[0].x, y: pc.ends[0].y }; input.versPortail = pc.nom; this.clickMode = null; }
+    this.portailClick = null;
     const ar = this.recolteClick != null ? this.world.approcheRecolte(this.recolteClick) : null;
     if (ar) { input.recolte = this.recolteClick; input.dest = ar; this.clickMode = null; }
     this.recolteClick = null;
@@ -857,9 +895,11 @@ export class ZoneScene extends Phaser.Scene {
     if (this.questView) this.questView.survole = surPnj;
     this.dialogueView?.survol(surPnj, ptr);
     const monstre = this.monsterUnder(ptr), porte = !monstre && !surPnj ? this.porteSurvol(aim) : false;
-    if (!porte) { this.porteLabel?.setVisible(false); this.worldView?.contour(null); }
     const zaap = !monstre && !surPnj && !porte && this.zaapSurvol(ptr);
-    this.game.canvas.style.cursor = monstre ? 'crosshair' : surPnj || zaap ? 'pointer' : porte ? CURSEUR_PORTE : this.atelierView?.curseur() ?? this.recolteView?.curseur() ?? 'default';
+    const portail = !monstre && !surPnj && !porte && !zaap && this.portailSurvol(ptr);
+    if (!porte) this.porteLabel?.setVisible(false);
+    if (!porte && !portail) this.worldView?.contour(null);
+    this.game.canvas.style.cursor = monstre ? 'crosshair' : surPnj || zaap ? 'pointer' : porte || portail ? CURSEUR_PORTE : this.atelierView?.curseur() ?? this.recolteView?.curseur() ?? 'default';
     return input;
   }
 
@@ -910,6 +950,9 @@ export class ZoneScene extends Phaser.Scene {
       this.hud.handle(e);
       this.havreSacView?.handle(e);
       if (this.panneau && e.k === 'hit' && e.target === 'monster') this.panneau.noterCoup(e.amount);
+      if (this.panneau && e.k === 'hit' && e.target === 'player') this.panneau.noterRecu(e.amount);   // Outil test 8C
+      if (this.panneau && (e.k === 'test' || e.k === 'queteDebut' || e.k === 'queteEtape' || e.k === 'queteFin' || e.k === 'lootResource')) this.panneau.rafraichir();
+      if (this.panneau && e.k === 'heal' && Math.hypot(e.x - this.world.player.x, e.y - this.world.player.y) < 8) this.panneau.noterSoin(e.amount);
       this.son.handle(e);
       const M = GAME_DATA.monsters;
       switch (e.k) {
@@ -1059,7 +1102,11 @@ export class ZoneScene extends Phaser.Scene {
           this.hud.succes(s.nom, s.points); if (!this.test) sauverCompte(this.world); this.windows?.refresh(); break;
         }
         case 'test': this.hud.toast(e.texte); this.windows?.refresh(); break;
-        case 'portalStart': this.baisserRideau(); break;   // fondu de sortie (0,2 s), le perso attend devant la porte
+        case 'portalStart': {
+          // portail dessiné (bassin, arche) : l'anneau turquoise se referme sur le perso pendant le fondu
+          if (this.world.portes.some(o => o.dessin && o.nom === e.nom)) this.fx.ring(this.world.player.x, this.world.player.y, 110, 10, 0x5ff2dc, World.PASSAGE + 0.1, 5);
+          this.baisserRideau(); break;
+        }   // fondu de sortie (0,2 s), le perso attend devant la porte
         // portail vers une autre zone : on sauve le perso puis la partie repart là-bas (même emplacement)
         case 'changeZone': this.partir(e); return;
         case 'portal': this.attendreCartes(); this.snapCam = true; break;   // noir, la caméra saute avec le joueur
