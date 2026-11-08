@@ -225,13 +225,15 @@
           "Survole une porte d'Astrub : quand elle a son propre dessin (ateliers des paysans, des alchimistes et des bûcherons, Tour du Conseil…), un fin liseré blanc l'entoure, comme sur Sanstour.",
           "Incarnam a ses 3 vrais Zaaps (Route des âmes, Pâturages, Cimetière) ; un Zaap découvert s'annonce et s'allume sur la carte (M).",
           "Toutes les portes d'Astrub s'entourent au survol d'un fin trait lilas, comme dans Dofus 3 et sur Sanstour : il suit la forme officielle de chaque embrasure (Taverne, Banque, Milice, ateliers…), même quand la porte est peinte dans le bâtiment.",
-          "Un paillasson attend à la sortie de chaque intérieur, comme sur Sanstour : une dalle de pierre au soleil vert qui luit et pétille, sur la case de sortie officielle. Survole-le, il s'entoure ; clique dessus pour sortir."
+          "Un paillasson attend à la sortie de chaque intérieur, comme sur Sanstour : une dalle de pierre au soleil vert qui luit et pétille, sur la case de sortie officielle. Survole-le, il s'entoure ; clique dessus pour sortir.",
+          "Les Égouts d'Astrub (13 salles, de la plaque d'égout [5,-17] à la sortie [7,-9]) et les Souterrains d'Astrub (9 salles de mine, entrée en [1,-17]) sont ouverts, avec leurs monstres officiels."
         ],
         "Combat": [
           "Coûts officiels des points : Sagesse 3 points, Force, Intelligence, Chance et Agilité 1 point jusqu'à 100 puis 2, 3 et 4 par tranche de 100 (tes points déjà placés te sont rendus). La Chance donne +1 Prospection par 10, l'Intelligence et les Soins renforcent tes soins, et l'Agilité fait courir un peu plus vite (+1 % par 20, 10 % au plus).",
           "Croiser un élite ne coupe plus ta musique : seuls les boss lancent la musique de combat.",
           "Musique des boss plus fluide : fondu croisé à l'arrivée du boss, boucle sans blanc, et ton morceau d'exploration reprend là où il en était après le combat.",
-          "Avec l'Osamodas : Alt + clic lance toute la meute sur un monstre, Maj montre le fil de laisse et les PV de chaque bête, la Laisse Spirituelle dompte un monstre presque vaincu pendant 20 s, et ton familier mord."
+          "Avec l'Osamodas : Alt + clic lance toute la meute sur un monstre, Maj montre le fil de laisse et les PV de chaque bête, la Laisse Spirituelle dompte un monstre presque vaincu pendant 20 s, et ton familier mord.",
+          "Chaque boss a sa musique officielle de Dofus 3, qui s'enrichit d'un instrument à chaque quart de vie qu'il perd. À Astrub, c'est la musique de combat d'Amakna. Tu peux couper la musique des boss dans Options, Son."
         ],
         "Corrections": [
           "Les Chafers Éclaireurs font enfin mal : leur Flèche de Feu était prise pour un sort de soutien et ne blessait jamais. Ils restent à distance pour tirer (même correction pour le Tofu Chimérique, le Petit Gloot et Percy Klop).",

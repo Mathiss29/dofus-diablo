@@ -1216,6 +1216,7 @@ export class Windows {
           { k: 'volMonstres', nom: 'Monstres (cris)', t: 'range', min: 0, max: 100 },
           { k: 'volAmbiance', nom: 'Ambiance (vent, eau, feu, Zaap)', t: 'range', min: 0, max: 100 },
           { k: 'volInterface', nom: 'Interface (fenêtres, niveau, quêtes)', t: 'range', min: 0, max: 100 },
+          { k: 'musiqueBoss', nom: 'Musique de combat des boss', aide: 'Sinon, la musique de la zone continue pendant les combats de boss.', t: 'check' },
         ] },
       ] },
     ];
