@@ -1,4 +1,5 @@
 import type { Rng } from './math';
+import { POUVOIR_PAR_ID, textePouvoir, tirerPouvoirs, type CtxPouvoirs } from './pouvoirs';
 
 /** Caractéristiques du perso (noms Dofus). Les élémentaires boostent les sorts de leur élément :
  *  terre = force, feu = intelligence, eau = chance, air = agilité (comme dans Dofus : +1 % par point). */
@@ -130,8 +131,18 @@ export const LEGENDARY = {
   relance: { name: 'Relance éclair', text: (v: number, sort?: string) => `La recharge de ${sort ?? 'un sort'} dure ${String(v).replace('.', ',')} s de moins`, max: 2 },
 } as const;
 export type LegendaryId = keyof typeof LEGENDARY;
-/** Effet légendaire tiré ; sort = le sort de la classe visé (Relance éclair). */
-export interface LegendaryFx { id: LegendaryId; value: number; sort?: string }
+/** Effet légendaire tiré : un pouvoir maison (id de LEGENDARY ; sort = le sort visé par Relance éclair)
+ *  ou, depuis la 0.3, un pouvoir officiel de classe (id de src/data/pouvoirs.json, ex. « iop-07 », value 0). */
+export interface LegendaryFx { id: LegendaryId | string; value: number; sort?: string }
+/** Pouvoir officiel de classe (0.3) ? */
+export const estOfficiel = (l: LegendaryFx) => !!POUVOIR_PAR_ID[l.id];
+/** Nom et texte d'un pouvoir pour l'infobulle (nomSort : nom du sort visé par Relance éclair). */
+export function lignePouvoir(l: LegendaryFx, nomSort?: string, zone = false): { nom: string; texte: string } {
+  const o = POUVOIR_PAR_ID[l.id];
+  if (o) return { nom: o.sort, texte: textePouvoir(o, zone) };
+  const m = LEGENDARY[l.id as LegendaryId];
+  return m ? { nom: m.name, texte: m.text(l.value, nomSort) } : { nom: l.id, texte: '' };
+}
 export const legendaryPower = (level: number) => Math.min(1, Math.max(0.4, 0.4 + (level - 10) * 0.015));
 
 /** Un objet tiré : ses jets réels, sa rareté, et éventuellement un effet légendaire. */
@@ -162,7 +173,7 @@ export const extraBase = (s: Stat, level: number) =>
  *  commun = jets dans la moitié basse ; rare = jets complets + 1 ligne ; épique = moitié haute + 2 lignes ;
  *  légendaire = jets hauts + 2 lignes + un effet légendaire ; mythique = jets parfaits + 2 lignes + deux effets légendaires.
  *  Les malus de l'objet officiel sont gardés tels quels. */
-export function rollItem(id: string, def: ItemDef, rarity: Rarity, rng: Rng, uid: number, sortsRecharge: string[] = []): Item {
+export function rollItem(id: string, def: ItemDef, rarity: Rarity, rng: Rng, uid: number, ctx: string[] | CtxPouvoirs = []): Item {
   if (def.familier) return { uid, id, rarity: 'commun', stats: familierStats(def.familier, 1), extra: [], niv: 1, xpF: 0 };   // pas de rareté ni de jet
   const lo = { commun: 0, rare: 0, epique: 0.5, legendaire: 0.7, mythique: 1 }[rarity], hi = { commun: 0.5, rare: 1, epique: 1, legendaire: 1, mythique: 1 }[rarity];
   const stats: Stats = {};
@@ -182,13 +193,26 @@ export function rollItem(id: string, def: ItemDef, rarity: Rarity, rng: Rng, uid
   }
   const it: Item = { uid, id, rarity, stats, extra };
   if (rarity === 'legendaire' || rarity === 'mythique') {
+    const sortsRecharge = Array.isArray(ctx) ? ctx : ctx.sortsRecharge;
     // Relance éclair seulement si la classe a des sorts à vraie recharge ; la valeur va par demi-seconde (0,5 à 2 s)
-    const ids = (Object.keys(LEGENDARY) as LegendaryId[]).filter(k => k !== 'relance' || sortsRecharge.length), l = rng.pick(ids);
+    const ids = (Object.keys(LEGENDARY) as LegendaryId[]).filter(k => k !== 'relance' || sortsRecharge.length);
     const fx = (k: LegendaryId): LegendaryFx => k === 'relance'
       ? { id: k, value: Math.max(0.5, Math.round(LEGENDARY[k].max * legendaryPower(def.level) * 2) / 2), sort: rng.pick(sortsRecharge) }
       : { id: k, value: Math.round(LEGENDARY[k].max * legendaryPower(def.level)) };
-    it.legendary = fx(l);
-    if (rarity === 'mythique') it.legendary2 = fx(rng.pick(ids.filter(k => k !== l)));
+    const n = rarity === 'mythique' ? 2 : 1;
+    if (!Array.isArray(ctx) && ctx.v03) {
+      // 0.3 : pouvoirs officiels de la classe sur leur emplacement + pouvoirs maison « toutes classes » (3B)
+      const pris = new Set<string>();
+      const res = tirerPouvoirs(rng, ctx, def.slot, n).map(t => {
+        if ('officiel' in t) return { id: t.officiel, value: 0 };
+        const k = rng.pick(ids.filter(x => !pris.has(x))); pris.add(k); return fx(k);
+      });
+      it.legendary = res[0]; if (res[1]) it.legendary2 = res[1];
+    } else {
+      const l = rng.pick(ids);
+      it.legendary = fx(l);
+      if (n === 2) it.legendary2 = fx(rng.pick(ids.filter(k => k !== l)));
+    }
   }
   return it;
 }

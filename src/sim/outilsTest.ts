@@ -73,7 +73,7 @@ export function appliquerTest(w: World, c: CommandeTest) {
     case 'objet': {
       const d = I?.equipment[c.id];
       if (d) {
-        for (let i = 0; i < c.n; i++) p.bag.push(rollItem(c.id, d, c.rarete, w.rng, w.newUid(), p.sortsRecharge));
+        for (let i = 0; i < c.n; i++) p.bag.push(rollItem(c.id, d, c.rarete, w.rng, w.newUid(), p.ctxPouvoirs));
         dire(`${d.name} (${RARITY_NAMES[c.rarete]}) dans le sac`);
       } else if (I?.resources[c.id]) {
         p.resources[c.id] = (p.resources[c.id] ?? 0) + c.n;
@@ -91,7 +91,7 @@ export function appliquerTest(w: World, c: CommandeTest) {
         if (!pool.length) continue;
         const max = Math.max(...pool.map(([, d]) => d.level)), [id, d] = w.rng.pick(pool.filter(([, d]) => d.level === max));
         pris.add(id);
-        p.equipment[slot] = rollItem(id, d, c.rarete, w.rng, w.newUid(), p.sortsRecharge);
+        p.equipment[slot] = rollItem(id, d, c.rarete, w.rng, w.newUid(), p.ctxPouvoirs);
       }
       p.recompute(); p.hp = p.maxHp;
       dire(`Tenue ${RARITY_NAMES[c.rarete]} du niveau ${Math.min(p.level, 25)} équipée`);

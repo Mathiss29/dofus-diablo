@@ -8,6 +8,7 @@ import { AGGRO, CASE, Monster, TOUR, type Cible } from './monster';
 import { jetOfficiel } from './danger';
 import { poolNiveau, rangDe, tirerButin, type CtxButin, type Rang } from './butin';
 import { briser, chanceRune, coutKamas, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
+import { V03_PUBLIC } from './pouvoirs';
 import { FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, recycleResource, recycleValue, rollItem, type EquipSlot, type Item, type ItemsData, type Rarity } from './items';
 import { Player } from './player';
 import { Bete, BETES, REGLES_BETES, type EffetBete, type SortBete } from './bete';
@@ -28,7 +29,9 @@ interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: nu
   /** Dommages de poussée officiels si la cible heurte un obstacle ou un monstre. */
   pushDmg?: boolean;
   /** Coup d'arme (maquette Armes 3B) : l'affichage fait jaillir un éclat de la couleur de l'élément. */
-  eclat?: boolean }
+  eclat?: boolean;
+  /** Pouvoir légendaire officiel « +N % Critique » sur ce sort (0.3), en part (0,35). */
+  crit?: number }
 /** Butin au sol (choix 1C 2D 6A) : équipements et kamas seulement. Les Communs et les kamas filent vers le joueur
  *  qui passe près ; Rare et plus se ramassent d'un clic. Les ressources vont directement dans le sac. */
 export interface Drop { uid: number; x: number; y: number; item?: Item; kamas?: number; t: number; warned?: boolean;
@@ -209,6 +212,7 @@ export class World {
     }
     this.checkpoint = start;
     this.player = new Player(this.nextId++, start.x, start.y, opts.data.classes[opts.classId ?? 'iop']);
+    this.player.v03 = V03_PUBLIC || !!opts.test;
     if (opts.items) {
       this.player.items = opts.items;
       this.equipByLevel = Object.entries(opts.items.equipment).filter(([, d]) => !d.familier).map(([id, d]) => ({ id, level: d.level }));
@@ -1030,7 +1034,7 @@ export class World {
 
   // --- Flèches ---------------------------------------------------------------
   shoot(x: number, y: number, facing: number, hz: Extract<HitZone, { shape: 'projectile' }>, hit: HitDef, stun: number, area: number, spell: string) {
-    this.projectiles.push({ id: this.nextId++, spell, x, y, dx: Math.cos(facing), dy: Math.sin(facing), left: hz.range + this.player.stat('portee') * CASE, speed: hz.speed,
+    this.projectiles.push({ id: this.nextId++, spell, x, y, dx: Math.cos(facing), dy: Math.sin(facing), left: hz.range + this.player.porteeStat(spell), speed: hz.speed,
       width: hz.width, explode: (hz.explode ?? 0) * area, pierce: !!hz.pierce, hit, stun, touched: new Set(), fleche: hz.fleche || undefined });
   }
   /** Projectile d'un monstre vers le joueur. */
@@ -1193,7 +1197,7 @@ export class World {
       if (p.pacifiste > 0) { this.emit({ k: 'status', x: m.x, y: m.y - 20, text: 'Pacifiste', color: '#c8c8c8' }); return 0; }   // Hyperleukocytine : aucun dommage
       if (m.intouchable) { if (this.time - this.intouchableT > 0.6) { this.intouchableT = this.time; this.emit({ k: 'status', x: m.x, y: m.y - 30, text: 'Intouchable', color: '#c8c8c8' }); } continue; }
       n++; this.cibleMeute = m.id;
-      const crit = this.rng.next() < p.critChance;
+      const crit = this.rng.next() < p.critChance + (def.crit ?? 0);
       // Choix 19A : résistances officielles du monstre dans l'élément du coup (plafonnées à 50 %, comme Dofus)
       const el = p.resolveElement(def.element ?? 'neutre'), res = Math.min(50, m.def.res?.[el] ?? 0);
       // Initiative : le premier coup porté à un monstre est renforcé ; Dommages Critiques et Dommages Poussée s'ajoutent au coup
@@ -1298,7 +1302,7 @@ export class World {
   contexteButin(type: string, rang: Rang, niveau: number): CtxButin {
     const p = this.player;
     return { type, rang, niveau, prospection: p.prospection, items: this.opts.items!, familiers: this.familiersDe[type] ?? [], pool: this.equipByLevel,
-      metierNiveau: j => p.metierLevel(j), armeChasse: !!p.huntingWeapon, sortsRecharge: p.sortsRecharge };
+      metierNiveau: j => p.metierLevel(j), armeChasse: !!p.huntingWeapon, pouvoirs: p.ctxPouvoirs };
   }
   /** Un monstre vaincu lâche son butin officiel (ressources, parfois un équipement) et, plus rarement, un équipement
    *  de son niveau pris dans tous les objets de Dofus. Élites et boss lâchent plus et mieux. Calcul : src/sim/butin.ts. */
@@ -1838,7 +1842,7 @@ export class World {
     let pool = poolNiveau({ pool: this.equipByLevel, niveau });
     if (!pool.length) pool = [...this.equipByLevel].sort((x, y) => Math.abs(x.level - niveau) - Math.abs(y.level - niveau)).slice(0, 20);
     if (!pool.length) return;
-    const id = this.rng.pick(pool).id, it = rollItem(id, I.equipment[id], rarete, this.rng, this.nextId++, p.sortsRecharge);
+    const id = this.rng.pick(pool).id, it = rollItem(id, I.equipment[id], rarete, this.rng, this.nextId++, p.ctxPouvoirs);
     p.bag.push(it);
     this.emit({ k: 'sacQuete', id, rarity: rarete });
   }

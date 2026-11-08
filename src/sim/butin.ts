@@ -1,5 +1,6 @@
 import BUTIN from '../data/butin.json';
 import type { GameData, MonsterDef } from './defs';
+import type { CtxPouvoirs } from './pouvoirs';
 import { rollItem, type DropDef, type Item, type ItemsData, type Rarity } from './items';
 import type { Rng } from './math';
 
@@ -59,7 +60,8 @@ export interface CtxButin {
   armeChasse: boolean;
   /** Un événement est en cours : ses objets officiels peuvent tomber (6B ; aucun pour l'instant). */
   evenement?: boolean;
-  sortsRecharge?: string[];
+  /** Tirage des pouvoirs légendaires (classe, sorts connus ; anciens pouvoirs seuls si absent). */
+  pouvoirs?: CtxPouvoirs;
 }
 /** État d'une ligne : tombe, ne tombe que pendant un événement ou une quête (6B), ou demande un métier qu'on n'a pas. */
 export type EtatLigne = 'ok' | 'evenement' | 'quete' | 'metier';
@@ -92,7 +94,7 @@ export function tirerButin(rng: Rng, ctx: CtxButin, uid: () => number): Butin {
   for (const d of I.drops[ctx.type] ?? []) {
     if (etatLigne(d, ctx) !== 'ok') continue;
     if (rng.next() >= chanceLigne(d, I, pros, ctx.rang)) continue;
-    if (I.equipment[d.item]) out.objets.push(rollItem(d.item, I.equipment[d.item], rollRarity(rng, ctx.rang, pros), rng, uid(), ctx.sortsRecharge));
+    if (I.equipment[d.item]) out.objets.push(rollItem(d.item, I.equipment[d.item], rollRarity(rng, ctx.rang, pros), rng, uid(), ctx.pouvoirs));
     else out.ressources.push({ id: d.item, job: metierDe(d, I) });
   }
   // familier de la famille du monstre (Familiers 1A)
@@ -102,7 +104,7 @@ export function tirerButin(rng: Rng, ctx: CtxButin, uid: () => number): Butin {
   for (let k = 0; k < e.tirages; k++) {
     if (rng.next() >= Math.min(1, e.chance * more) || !pool.length) continue;
     const id = rng.pick(pool).id;
-    out.objets.push(rollItem(id, I.equipment[id], rollRarity(rng, ctx.rang, pros), rng, uid(), ctx.sortsRecharge));
+    out.objets.push(rollItem(id, I.equipment[id], rollRarity(rng, ctx.rang, pros), rng, uid(), ctx.pouvoirs));
   }
   // kamas : un petit tas de pièces, plus gros pour les élites et les boss
   const K = kamasDe(ctx.rang);

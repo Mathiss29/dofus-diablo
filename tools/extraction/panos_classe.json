@@ -1,0 +1,3119 @@
+[
+ {
+  "set": "Panoplie du Prince des voleurs",
+  "classe": "Crâ",
+  "items": [
+   {
+    "nom": "Coiffe de Robbie Capuche",
+    "niv": 40,
+    "type": "Chapeau",
+    "icon": 16186,
+    "stats": [],
+    "sorts": [
+     "Flèche d'Abolition : +1 lancer(s) par tour",
+     "Flèche Persécutrice : -1 PA",
+     "Flèche Cinglante : +1 lancer(s) par tour",
+     "Flèche Assaillante : Portée modifiable",
+     "Flèche Détonante : +1 lancer(s) par tour",
+     "Flèche Ralentissante : +6 dégâts de base",
+     "Flèche d'Immobilisation : +1 lancer(s) par cible",
+     "Flèche Tyrannique : +3 Portée maximale"
+    ]
+   },
+   {
+    "nom": "Cape Hulco",
+    "niv": 80,
+    "type": "Cape",
+    "icon": 17132,
+    "stats": [],
+    "sorts": [
+     "Flèche de Recul : +1 lancer(s) par cible",
+     "Flèche Éclatante : +1 lancer(s) par tour",
+     "Flèche de Dispersion : +1 lancer(s) par tour",
+     "Flèches Enflammées : Portée modifiable",
+     "Flèche Vagabonde : +1 lancer(s) par tour",
+     "Flèche Évasive : +1 lancer(s) par cible",
+     "Œil pour Œil : +3 Portée maximale",
+     "Flèche Paralysante : +6 dégâts de base"
+    ]
+   },
+   {
+    "nom": "Sangle Cible",
+    "niv": 130,
+    "type": "Ceinture",
+    "icon": 10125,
+    "stats": [],
+    "sorts": [
+     "Flèche Glacée : +4 dégâts de base",
+     "Flèche Harcelante : -1 PA",
+     "Œil de Taupe : -1 PA",
+     "Pluie de Flèches : +35% Critique",
+     "Flèche d'Expiation : -5 Portée minimale",
+     "Flèche de Rédemption : -3 Portée minimale",
+     "Flèche Perforante : +3 Portée maximale",
+     "Flèche Boomerang : +1 lancer(s) par tour"
+    ]
+   },
+   {
+    "nom": "Anneau Bhli",
+    "niv": 150,
+    "type": "Anneau",
+    "icon": 9126,
+    "stats": [],
+    "sorts": [
+     "Flèche de Barrage : +3 Portée maximale",
+     "Carreaux Destructeurs : +2 Portée maximale",
+     "Flèche Explosive : +30% Critique",
+     "Flèche Massacrante : +3 Portée maximale",
+     "Flèche Punitive : +1 lancer(s) par tour",
+     "Flèche du Jugement : -1 PA",
+     "Flèche Dévorante : +1 lancer(s) par tour",
+     "Flèche Fulminante : -1 PA"
+    ]
+   },
+   {
+    "nom": "Bottes Deuradi",
+    "niv": 100,
+    "type": "Bottes",
+    "icon": 11111,
+    "stats": [
+     "1 PM"
+    ],
+    "sorts": [
+     "Pas Chassé : +1 Portée maximale",
+     "Balise Tactique : -1 de relance",
+     "Tirs Éloignés : -1 de relance",
+     "Tir Perçant : +1 lancer(s) par cible",
+     "Balise de Survie : -1 PA",
+     "Représailles : -1 PA",
+     "Tir de Repli : +1 lancer(s) par cible",
+     "Vendetta : +1 lancer(s) par tour"
+    ]
+   }
+  ],
+  "bonus": [
+   {
+    "n": 2,
+    "lignes": [
+     "20 Agilité",
+     "20 Intelligence",
+     "20 Chance",
+     "20 Force",
+     "20 Sagesse",
+     "100 Vitalité",
+     "3 Dommage",
+     "3 Soin",
+     "10 Prospection"
+    ]
+   },
+   {
+    "n": 3,
+    "lignes": [
+     "40 Agilité",
+     "40 Intelligence",
+     "40 Chance",
+     "40 Force",
+     "40 Sagesse",
+     "200 Vitalité",
+     "7 Dommage",
+     "7 Soin",
+     "20 Prospection"
+    ]
+   },
+   {
+    "n": 4,
+    "lignes": [
+     "70 Agilité",
+     "70 Intelligence",
+     "70 Chance",
+     "70 Force",
+     "70 Sagesse",
+     "500 Vitalité",
+     "12 Dommage",
+     "12 Soin",
+     "1 Invocation",
+     "30 Prospection",
+     "5% Résistance Air",
+     "5% Résistance Eau",
+     "5% Résistance Feu",
+     "5% Résistance Neutre",
+     "5% Résistance Terre"
+    ]
+   },
+   {
+    "n": 5,
+    "lignes": [
+     "100 Agilité",
+     "100 Intelligence",
+     "100 Chance",
+     "100 Force",
+     "100 Sagesse",
+     "800 Vitalité",
+     "20 Dommage",
+     "20 Soin",
+     "1 PA",
+     "1 Invocation",
+     "40 Prospection",
+     "10% Résistance Air",
+     "10% Résistance Eau",
+     "10% Résistance Feu",
+     "10% Résistance Neutre",
+     "10% Résistance Terre"
+    ]
+   }
+  ]
+ },
+ {
+  "set": "Panoplie de Gouttière",
+  "classe": "Ecaflip",
+  "items": [
+   {
+    "nom": "Chapeau Leufère",
+    "niv": 40,
+    "type": "Chapeau",
+    "icon": 16185,
+    "stats": [],
+    "sorts": [
+     "Réflexes : +1 lancer(s) par cible",
+     "Lapement : +35% Critique",
+     "Yams : +1 lancer(s) par cible",
+     "Langue Râpeuse : +35% Critique",
+     "Topkaj : +1 lancer(s) par cible",
+     "Griffe Joueuse : +35% Critique",
+     "Pile ou Face : +1 lancer(s) par cible",
+     "Fanfaronnade : +30% Critique"
+    ]
+   },
+   {
+    "nom": "Cape Aillé",
+    "niv": 80,
+    "type": "Cape",
+    "icon": 17133,
+    "stats": [],
+    "sorts": [
+     "Pelotage : Portée modifiable",
+     "Griffe de Ceangal : Portée modifiable",
+     "Coussinets : +35% Critique",
+     "Feulement : +35% Critique",
+     "Perception : -1 PA",
+     "Prédation : -1 PA",
+     "Château de Cartes : -1 de relance",
+     "Bonne Étoile : -1 PA"
+    ]
+   },
+   {
+    "nom": "Ceinture Buhlent",
+    "niv": 130,
+    "type": "Ceinture",
+    "icon": 10117,
+    "stats": [],
+    "sorts": [
+     "Jass : +40% Critique",
+     "Infortune : Portée modifiable",
+     "Baraka : +40% Critique",
+     "Toupet : Portée modifiable",
+     "Blakjak : +40% Critique",
+     "Destin d'Ecaflip : Portée modifiable",
+     "Belote : +40% Critique",
+     "Péril : Portée modifiable"
+    ]
+   },
+   {
+    "nom": "Charentaises à poils",
+    "niv": 100,
+    "type": "Bottes",
+    "icon": 11105,
+    "stats": [
+     "1 PM"
+    ],
+    "sorts": [
+     "Esprit Félin : +1 Portée maximale",
+     "Kraps : Portée modifiable",
+     "Félintion : +35% Critique",
+     "Mésaventure : ligne de vue désactivée",
+     "Bond du Félin : +1 lancer(s) par tour",
+     "Entrechat : +1 lancer(s) par tour",
+     "Griffe Invocatrice : -1 de relance",
+     "Caresse Invocatrice : -1 de relance"
+    ]
+   },
+   {
+    "nom": "Bague Houx",
+    "niv": 150,
+    "type": "Anneau",
+    "icon": 9127,
+    "stats": [],
+    "sorts": [
+     "Seconde Chance : -1 de relance",
+     "Neuf Vies : -1 PA",
+     "Tout ou Rien : +2 Portée maximale",
+     "Tromperie : +1 lancer(s) par cible",
+     "Bluff : +40% Critique",
+     "Rekop : +40% Critique",
+     "Odorat : -1 PA",
+     "Roue de la Fortune : -1 PA"
+    ]
+   }
+  ],
+  "bonus": [
+   {
+    "n": 2,
+    "lignes": [
+     "20 Agilité",
+     "20 Intelligence",
+     "20 Chance",
+     "20 Force",
+     "20 Sagesse",
+     "100 Vitalité",
+     "3 Dommage",
+     "3 Soin",
+     "10 Prospection"
+    ]
+   },
+   {
+    "n": 3,
+    "lignes": [
+     "40 Agilité",
+     "40 Intelligence",
+     "40 Chance",
+     "40 Force",
+     "40 Sagesse",
+     "200 Vitalité",
+     "7 Dommage",
+     "7 Soin",
+     "20 Prospection"
+    ]
+   },
+   {
+    "n": 4,
+    "lignes": [
+     "70 Agilité",
+     "70 Intelligence",
+     "70 Force",
+     "70 Chance",
+     "70 Sagesse",
+     "500 Vitalité",
+     "1 Invocation",
+     "12 Dommage",
+     "12 Soin",
+     "30 Prospection",
+     "5% Résistance Air",
+     "5% Résistance Eau",
+     "5% Résistance Feu",
+     "5% Résistance Neutre",
+     "5% Résistance Terre"
+    ]
+   },
+   {
+    "n": 5,
+    "lignes": [
+     "100 Agilité",
+     "100 Intelligence",
+     "100 Chance",
+     "100 Force",
+     "100 Sagesse",
+     "800 Vitalité",
+     "20 Dommage",
+     "20 Soin",
+     "1 Invocation",
+     "1 PA",
+     "40 Prospection",
+     "10% Résistance Air",
+     "10% Résistance Eau",
+     "10% Résistance Feu",
+     "10% Résistance Neutre",
+     "10% Résistance Terre"
+    ]
+   }
+  ]
+ },
+ {
+  "set": "Panoplie Transcendante",
+  "classe": "Eliotrope",
+  "items": [
+   {
+    "nom": "Masque Rosmique",
+    "niv": 40,
+    "type": "Chapeau",
+    "icon": 16462,
+    "stats": [],
+    "sorts": [
+     "Commotion : Portée modifiable",
+     "Convulsion : Portée modifiable",
+     "Rayon de Wakfu : +3 Portée maximale",
+     "Faisceau : +3 Portée maximale",
+     "Affront : +2 Portée maximale",
+     "Mépris : -1 PA",
+     "Audace : Portée modifiable",
+     "Tribulation : -1 PA"
+    ]
+   },
+   {
+    "nom": "Cape Ortail",
+    "niv": 80,
+    "type": "Cape",
+    "icon": 17340,
+    "stats": [],
+    "sorts": [
+     "Neutral : ligne de vue désactivée",
+     "Interruption : +1 lancer(s) par tour",
+     "Portail : +1 Portée maximale",
+     "Errance : +1 Portée maximale",
+     "Transcendance : -1 de relance",
+     "Exil : +2 Portée maximale",
+     "Stupeur : +1 Portée maximale",
+     "Sillage : -1 PA"
+    ]
+   },
+   {
+    "nom": "Bottes Ransitoires",
+    "niv": 100,
+    "type": "Bottes",
+    "icon": 11286,
+    "stats": [
+     "1 PM"
+    ],
+    "sorts": [
+     "Affliction : +2 Portée maximale",
+     "Outrage : ligne de vue désactivée",
+     "Offense : -1 PA",
+     "Aplomb : +2 Portée maximale",
+     "Odyssée : Portée modifiable",
+     "Exode : -1 PA",
+     "Entraide : -1 de relance",
+     "Coalition : -1 PA"
+    ]
+   },
+   {
+    "nom": "Ceinture Billonnante",
+    "niv": 130,
+    "type": "Ceinture",
+    "icon": 10290,
+    "stats": [],
+    "sorts": [
+     "Distribution : -1 de relance",
+     "Conjuration : Portée modifiable",
+     "Sinécure : +1 Portée maximale",
+     "Persiflage : +2 Portée maximale",
+     "Sarcasme : Portée modifiable",
+     "Raillerie : +2 Portée maximale",
+     "Cicatrisation : -1 PA",
+     "Orgueil : Portée modifiable"
+    ]
+   },
+   {
+    "nom": "Anneau Vae",
+    "niv": 150,
+    "type": "Anneau",
+    "icon": 9305,
+    "stats": [],
+    "sorts": [
+     "Brimade : +1 Portée maximale",
+     "Sermon : -1 PA",
+     "Poing Fulgurant : Portée modifiable",
+     "Insolence : +2 Portée maximale",
+     "Thérapie : +1 Portée maximale",
+     "Camouflet : +2 Portée maximale",
+     "Extinction : +2 Portée maximale",
+     "Cataclysme : lancer en ligne désactivé"
+    ]
+   }
+  ],
+  "bonus": [
+   {
+    "n": 2,
+    "lignes": [
+     "20 Agilité",
+     "20 Intelligence",
+     "20 Chance",
+     "20 Force",
+     "20 Sagesse",
+     "100 Vitalité",
+     "10 Prospection",
+     "3 Soin",
+     "3 Dommage"
+    ]
+   },
+   {
+    "n": 3,
+    "lignes": [
+     "40 Agilité",
+     "40 Intelligence",
+     "40 Chance",
+     "40 Force",
+     "40 Sagesse",
+     "200 Vitalité",
+     "20 Prospection",
+     "7 Soin",
+     "7 Dommage"
+    ]
+   },
+   {
+    "n": 4,
+    "lignes": [
+     "70 Agilité",
+     "70 Intelligence",
+     "70 Chance",
+     "70 Force",
+     "70 Sagesse",
+     "500 Vitalité",
+     "30 Prospection",
+     "12 Soin",
+     "12 Dommage",
+     "1 Invocation",
+     "5% Résistance Air",
+     "5% Résistance Feu",
+     "5% Résistance Eau",
+     "5% Résistance Terre",
+     "5% Résistance Neutre"
+    ]
+   },
+   {
+    "n": 5,
+    "lignes": [
+     "100 Agilité",
+     "100 Intelligence",
+     "100 Chance",
+     "100 Force",
+     "100 Sagesse",
+     "800 Vitalité",
+     "40 Prospection",
+     "20 Soin",
+     "20 Dommage",
+     "1 Invocation",
+     "10% Résistance Air",
+     "10% Résistance Feu",
+     "10% Résistance Eau",
+     "10% Résistance Terre",
+     "10% Résistance Neutre",
+     "1 PA",
+     "Change les paroles"
+    ]
+   }
+  ]
+ },
+ {
+  "set": "Panoplie Altruiste",
+  "classe": "Eniripsa",
+  "items": [
+   {
+    "nom": "Coiffe Fère",
+    "niv": 40,
+    "type": "Chapeau",
+    "icon": 16184,
+    "stats": [],
+    "sorts": [
+     "Mot Stimulant : ligne de vue désactivée",
+     "Mot de Déclin : ligne de vue désactivée",
+     "Mot Tapageur : +40% Critique",
+     "Cri Assourdissant : +2 Portée maximale",
+     "Mot Vampirique : ligne de vue désactivée",
+     "Sanglots : +2 Portée maximale",
+     "Lamentations : -1 PA",
+     "Vacarme : +2 Portée maximale"
+    ]
+   },
+   {
+    "nom": "Cape Sulhit",
+    "niv": 80,
+    "type": "Cape",
+    "icon": 17134,
+    "stats": [],
+    "sorts": [
+     "Mot Vivifiant : ligne de vue désactivée",
+     "Mot Galvanisant : ligne de vue désactivée",
+     "Juron : +40% Critique",
+     "Pinceau Tribal : +1 lancer(s) par cible",
+     "Chapardage : +40% Critique",
+     "Mot Distrayant : +1 lancer(s) par tour",
+     "Onguent Ancestral : +35% Critique",
+     "Chœur Strident : +1 lancer(s) par tour"
+    ]
+   },
+   {
+    "nom": "Sangle Holon",
+    "niv": 130,
+    "type": "Ceinture",
+    "icon": 10120,
+    "stats": [],
+    "sorts": [
+     "Mot Accablant : ligne de vue désactivée",
+     "Mot Décourageant : ligne de vue désactivée",
+     "Mot Espiègle : +1 lancer(s) par tour",
+     "Mot Malicieux : +35% Critique",
+     "Cri de Guerre : -1 PA",
+     "Mot Rituel : -1 de relance",
+     "Peinture de Guerre : ligne de vue désactivée",
+     "Mot Secret : -1 PA"
+    ]
+   },
+   {
+    "nom": "Bottes Ulisme",
+    "niv": 100,
+    "type": "Bottes",
+    "icon": 11104,
+    "stats": [
+     "1 PM"
+    ],
+    "sorts": [
+     "Mot de Jouvence : ligne de vue désactivée",
+     "Mot Déprimant : ligne de vue désactivée",
+     "Mot Interdit : Portée modifiable",
+     "Mot Exsangue : ligne de vue désactivée",
+     "Mot Fleuri : +35% Critique",
+     "Bosquet Enchanté : lancer en ligne désactivé",
+     "Cryothérapie : -1 PA",
+     "Murmure : +2 Portée maximale"
+    ]
+   },
+   {
+    "nom": "Anneau Zamour",
+    "niv": 150,
+    "type": "Anneau",
+    "icon": 9132,
+    "stats": [],
+    "sorts": [
+     "Mot de Frayeur : ligne de vue désactivée",
+     "Scalpel : -1 de relance",
+     "Mot de Reconstitution : ligne de vue désactivée",
+     "Mot de Solidarité : ligne de vue désactivée",
+     "Mot Farceur : +1 lancer(s) par cible",
+     "Mot Défendu : -1 PA",
+     "Mot Turbulent : -1 PA",
+     "Mot Furieux : -1 PA"
+    ]
+   }
+  ],
+  "bonus": [
+   {
+    "n": 2,
+    "lignes": [
+     "20 Agilité",
+     "20 Intelligence",
+     "20 Chance",
+     "20 Force",
+     "20 Sagesse",
+     "100 Vitalité",
+     "3 Dommage",
+     "3 Soin",
+     "10 Prospection"
+    ]
+   },
+   {
+    "n": 3,
+    "lignes": [
+     "40 Agilité",
+     "40 Intelligence",
+     "40 Chance",
+     "40 Force",
+     "40 Sagesse",
+     "200 Vitalité",
+     "7 Dommage",
+     "7 Soin",
+     "20 Prospection"
+    ]
+   },
+   {
+    "n": 4,
+    "lignes": [
+     "70 Agilité",
+     "70 Intelligence",
+     "70 Chance",
+     "70 Force",
+     "70 Sagesse",
+     "500 Vitalité",
+     "12 Dommage",
+     "12 Soin",
+     "1 Invocation",
+     "30 Prospection",
+     "5% Résistance Air",
+     "5% Résistance Eau",
+     "5% Résistance Feu",
+     "5% Résistance Neutre",
+     "5% Résistance Terre"
+    ]
+   },
+   {
+    "n": 5,
+    "lignes": [
+     "100 Agilité",
+     "100 Intelligence",
+     "100 Chance",
+     "100 Force",
+     "100 Sagesse",
+     "20 Dommage",
+     "20 Soin",
+     "1 PA",
+     "1 Invocation",
+     "40 Prospection",
+     "800 Vitalité",
+     "10% Résistance Air",
+     "10% Résistance Eau",
+     "10% Résistance Feu",
+     "10% Résistance Neutre",
+     "10% Résistance Terre"
+    ]
+   }
+  ]
+ },
+ {
+  "set": "Panoplie Vénérable",
+  "classe": "Enutrof",
+  "items": [
+   {
+    "nom": "Chapeau Taufeu",
+    "niv": 40,
+    "type": "Chapeau",
+    "icon": 16183,
+    "stats": [],
+    "sorts": [
+     "Remblai : +2 Portée maximale",
+     "Feu de Mine : +35% Critique",
+     "Roulage de Pelle : +2 Portée maximale",
+     "Éboulement : +2 Portée maximale",
+     "Clef du Trésor : -1 de relance",
+     "Clef de Bras : +1 lancer(s) par tour",
+     "Pelle Animée : +3 Portée maximale",
+     "Bêche Animée : +3 Portée maximale"
+    ]
+   },
+   {
+    "nom": "Cape Haharnum",
+    "niv": 80,
+    "type": "Cape",
+    "icon": 17135,
+    "stats": [],
+    "sorts": [
+     "Lancer de Pièces : +3 Portée maximale",
+     "Monnaie Sonnante : +2 Portée maximale",
+     "Banqueroute : +35% Critique",
+     "Décadence : +1 lancer(s) par tour",
+     "Avarice : -1 PA",
+     "Sac Animé : +3 Portée maximale",
+     "Musette Animée : -1 de relance",
+     "Lancer de Pelle : +35% Critique"
+    ]
+   },
+   {
+    "nom": "Ceinture Gessant",
+    "niv": 130,
+    "type": "Ceinture",
+    "icon": 10127,
+    "stats": [],
+    "sorts": [
+     "Pelle Fantomatique : +2 Portée maximale",
+     "Dernier Recours : Portée modifiable",
+     "Opportunité : +1 lancer(s) par tour",
+     "Coup de Grisou : Portée modifiable",
+     "Boîte de Pandore : -1 PA",
+     "Boîte à Outils : -1 PA",
+     "Coffre Animé : -1 PA",
+     "Malle Animée : -1 PA"
+    ]
+   },
+   {
+    "nom": "Anneau Stalgik",
+    "niv": 150,
+    "type": "Anneau",
+    "icon": 9131,
+    "stats": [],
+    "sorts": [
+     "Abattement : +2 Portée maximale",
+     "Souterrain : lancer en ligne désactivé",
+     "Bêche des Anciens : Portée modifiable",
+     "Pelle des Anciens : +2 Portée maximale",
+     "Gisement : Portée modifiable",
+     "Péremption : -1 PA",
+     "Tamisage : +1 lancer(s) par tour",
+     "Obsolescence : +2 Portée maximale"
+    ]
+   },
+   {
+    "nom": "Chaussures Lepon-Davignon",
+    "niv": 100,
+    "type": "Bottes",
+    "icon": 11109,
+    "stats": [
+     "1 PM"
+    ],
+    "sorts": [
+     "Force de l'Âge : +2 Portée maximale",
+     "Orpaillage : +2 Portée maximale",
+     "Pelle Aurifère : +35% Critique",
+     "Tourbière : -1 PA",
+     "Ruée vers l'Or : -1 de relance",
+     "Déambulation : lancer en ligne désactivé",
+     "Maladresse : +2 Portée maximale",
+     "Âge d'Or : -1 de relance"
+    ]
+   }
+  ],
+  "bonus": [
+   {
+    "n": 2,
+    "lignes": [
+     "20 Agilité",
+     "20 Intelligence",
+     "20 Chance",
+     "20 Force",
+     "20 Sagesse",
+     "100 Vitalité",
+     "3 Dommage",
+     "3 Soin",
+     "10 Prospection"
+    ]
+   },
+   {
+    "n": 3,
+    "lignes": [
+     "40 Agilité",
+     "40 Intelligence",
+     "40 Chance",
+     "40 Force",
+     "40 Sagesse",
+     "200 Vitalité",
+     "7 Dommage",
+     "7 Soin",
+     "20 Prospection"
+    ]
+   },
+   {
+    "n": 4,
+    "lignes": [
+     "70 Agilité",
+     "70 Intelligence",
+     "70 Chance",
+     "70 Force",
+     "70 Sagesse",
+     "500 Vitalité",
+     "12 Dommage",
+     "12 Soin",
+     "1 Invocation",
+     "30 Prospection",
+     "5% Résistance Air",
+     "5% Résistance Eau",
+     "5% Résistance Feu",
+     "5% Résistance Neutre",
+     "5% Résistance Terre"
+    ]
+   },
+   {
+    "n": 5,
+    "lignes": [
+     "100 Agilité",
+     "100 Intelligence",
+     "100 Chance",
+     "100 Force",
+     "100 Sagesse",
+     "800 Vitalité",
+     "20 Dommage",
+     "20 Soin",
+     "1 PA",
+     "1 Invocation",
+     "40 Prospection",
+     "10% Résistance Air",
+     "10% Résistance Eau",
+     "10% Résistance Feu",
+     "10% Résistance Neutre",
+     "10% Résistance Terre"
+    ]
+   }
+  ]
+ },
+ {
+  "set": "Panoplie de l'Héritage",
+  "classe": "Forgelance",
+  "items": [
+   {
+    "nom": "Heaume Erik",
+    "niv": 40,
+    "type": "Chapeau",
+    "icon": 16753,
+    "stats": [],
+    "sorts": [
+     "Lance du Lac : +3 Portée maximale",
+     "Épieu Sismique : +3 Portée maximale",
+     "Lance-pierre : +2 Portée maximale",
+     "Javelot-foudre : +2 Portée maximale",
+     "Lance à Incendie : Portée modifiable",
+     "Pluie d'Airain : +2 Portée maximale",
+     "Javeline de Myr : +3 Portée maximale",
+     "Moulin Rouge : +1 lancer(s) par tour"
+    ]
+   },
+   {
+    "nom": "Cape Anthéon",
+    "niv": 80,
+    "type": "Cape",
+    "icon": 17567,
+    "stats": [],
+    "sorts": [
+     "Balestra : -1 PA",
+     "Moulin à Vent : -1 PA",
+     "Talon d'Argile : +2 Portée maximale",
+     "Fente : +1 lancer(s) par tour",
+     "Muspel : -1 PA",
+     "Ydra : -1 PA",
+     "Noa : Portée modifiable",
+     "Elding : -1 PA"
+    ]
+   },
+   {
+    "nom": "Baudrier Popée",
+    "niv": 130,
+    "type": "Ceinture",
+    "icon": 10354,
+    "stats": [],
+    "sorts": [
+     "Trident de la Mer : +3 Portée maximale",
+     "Maelstrom : +2 Portée maximale",
+     "Estoc Brûlant : +2 Portée maximale",
+     "Octave : Portée modifiable",
+     "Jormun : +1 lancer(s) par tour",
+     "Fer Rouge : +2 Portée maximale",
+     "Chevalerie : -1 de relance",
+     "Renommée : -1 de relance"
+    ]
+   },
+   {
+    "nom": "Jambières Hitaj",
+    "niv": 100,
+    "type": "Bottes",
+    "icon": 11379,
+    "stats": [
+     "1 PM"
+    ],
+    "sorts": [
+     "Effondrement : +2 Portée maximale",
+     "Lance-cyclone : Portée modifiable",
+     "Volée d'Airain : +3 Portée maximale",
+     "Soulèvement : +1 Portée maximale",
+     "Terre du Milieu : +1 lancer(s) par tour",
+     "Dégagement : -1 PA",
+     "Phalange : -1 PA",
+     "Oriflamme : -1 PA"
+    ]
+   },
+   {
+    "nom": "Gants Tologie",
+    "niv": 150,
+    "type": "Anneau",
+    "icon": 9381,
+    "stats": [],
+    "sorts": [
+     "Charge Héroïque : -1 PA",
+     "Galanterie : +2 Portée maximale",
+     "Kyrja : -1 de relance",
+     "Vajra : -1 de relance",
+     "Prélude au Fer : -1 PA",
+     "Crépuscule : -1 PA",
+     "Éclipse : -1 de relance",
+     "Holmgang : -1 PA"
+    ]
+   }
+  ],
+  "bonus": [
+   {
+    "n": 2,
+    "lignes": [
+     "20 Agilité",
+     "20 Intelligence",
+     "20 Force",
+     "20 Chance",
+     "20 Sagesse",
+     "100 Vitalité",
+     "3 Dommage",
+     "3 Soin",
+     "10 Prospection"
+    ]
+   },
+   {
+    "n": 3,
+    "lignes": [
+     "40 Agilité",
+     "40 Intelligence",
+     "40 Force",
+     "40 Chance",
+     "40 Sagesse",
+     "200 Vitalité",
+     "7 Dommage",
+     "7 Soin",
+     "20 Prospection"
+    ]
+   },
+   {
+    "n": 4,
+    "lignes": [
+     "70 Agilité",
+     "70 Intelligence",
+     "70 Force",
+     "70 Chance",
+     "70 Sagesse",
+     "500 Vitalité",
+     "12 Dommage",
+     "12 Soin",
+     "1 Invocation",
+     "30 Prospection",
+     "5% Résistance Air",
+     "5% Résistance Eau",
+     "5% Résistance Feu",
+     "5% Résistance Neutre",
+     "5% Résistance Terre"
+    ]
+   },
+   {
+    "n": 5,
+    "lignes": [
+     "100 Agilité",
+     "100 Intelligence",
+     "100 Force",
+     "100 Chance",
+     "100 Sagesse",
+     "800 Vitalité",
+     "20 Dommage",
+     "20 Soin",
+     "1 PA",
+     "1 Invocation",
+     "40 Prospection",
+     "10% Résistance Air",
+     "10% Résistance Eau",
+     "10% Résistance Feu",
+     "10% Résistance Neutre",
+     "10% Résistance Terre"
+    ]
+   }
+  ]
+ },
+ {
+  "set": "Panoplie Indestructible",
+  "classe": "Féca",
+  "items": [
+   {
+    "nom": "Bonnet Toual",
+    "niv": 40,
+    "type": "Chapeau",
+    "icon": 16182,
+    "stats": [],
+    "sorts": [
+     "Somnolence : ligne de vue désactivée",
+     "Manœuvre : +1 Portée maximale",
+     "Bulle : ligne de vue désactivée",
+     "Sonnailles : -1 PA",
+     "Rempart : +3 Portée maximale",
+     "Fortification : ligne de vue désactivée",
+     "Barricade : -1 PA",
+     "Pavois : -1 PA"
+    ]
+   },
+   {
+    "nom": "Cape Hadosse",
+    "niv": 80,
+    "type": "Cape",
+    "icon": 17136,
+    "stats": [],
+    "sorts": [
+     "Léthargie : ligne de vue désactivée",
+     "Regroupement : -1 PA",
+     "Renfort : +1 lancer(s) par tour",
+     "Ataraxie : -1 PA",
+     "Bastion : -1 PA",
+     "Trêve : -1 PA",
+     "Giboulée : -1 PA",
+     "Frisson : +2 Portée maximale"
+    ]
+   },
+   {
+    "nom": "Gaine Hage",
+    "niv": 130,
+    "type": "Ceinture",
+    "icon": 10126,
+    "stats": [],
+    "sorts": [
+     "Retour du Bâton : +3 Portée maximale",
+     "Tétanie : +2 Portée maximale",
+     "Terre Battue : -1 PA",
+     "Refuge : ligne de vue désactivée",
+     "Typhon : ligne de vue désactivée",
+     "Prairie : -1 PA",
+     "Pâturage : ligne de vue désactivée",
+     "Bourrasque : ligne de vue désactivée"
+    ]
+   },
+   {
+    "nom": "Anneau Tassion",
+    "niv": 150,
+    "type": "Anneau",
+    "icon": 9130,
+    "stats": [],
+    "sorts": [
+     "Houlette : ligne de vue désactivée",
+     "Torpeur : Portée modifiable",
+     "Défiance : ligne de vue désactivée",
+     "Barrière : ligne de vue désactivée",
+     "Transhumance : +2 Portée maximale",
+     "Égide : Portée modifiable",
+     "Silbo : +1 lancer(s) par tour",
+     "Escapade : +3 Portée maximale"
+    ]
+   },
+   {
+    "nom": "Bottes Antouche",
+    "niv": 100,
+    "type": "Bottes",
+    "icon": 11110,
+    "stats": [
+     "1 PM"
+    ],
+    "sorts": [
+     "Langueur : +2 Portée maximale",
+     "Atonie : -1 PA",
+     "Terre Brûlée : -1 PA",
+     "Vigie : ligne de vue désactivée",
+     "Nimbus : +2 Portée maximale",
+     "Stratus : -1 PA",
+     "Vallée : -1 PA",
+     "Verglas : ligne de vue désactivée"
+    ]
+   }
+  ],
+  "bonus": [
+   {
+    "n": 2,
+    "lignes": [
+     "20 Agilité",
+     "20 Intelligence",
+     "20 Force",
+     "20 Chance",
+     "20 Sagesse",
+     "100 Vitalité",
+     "3 Dommage",
+     "3 Soin",
+     "10 Prospection"
+    ]
+   },
+   {
+    "n": 3,
+    "lignes": [
+     "40 Agilité",
+     "40 Intelligence",
+     "40 Force",
+     "40 Chance",
+     "40 Sagesse",
+     "200 Vitalité",
+     "7 Dommage",
+     "7 Soin",
+     "20 Prospection"
+    ]
+   },
+   {
+    "n": 4,
+    "lignes": [
+     "70 Agilité",
+     "70 Intelligence",
+     "70 Chance",
+     "70 Force",
+     "70 Sagesse",
+     "500 Vitalité",
+     "12 Dommage",
+     "12 Soin",
+     "30 Prospection",
+     "1 Invocation",
+     "5% Résistance Air",
+     "5% Résistance Eau",
+     "5% Résistance Feu",
+     "5% Résistance Neutre",
+     "5% Résistance Terre"
+    ]
+   },
+   {
+    "n": 5,
+    "lignes": [
+     "100 Agilité",
+     "100 Intelligence",
+     "100 Chance",
+     "100 Force",
+     "100 Sagesse",
+     "800 Vitalité",
+     "20 Dommage",
+     "20 Soin",
+     "1 Invocation",
+     "1 PA",
+     "40 Prospection",
+     "10% Résistance Air",
+     "10% Résistance Eau",
+     "10% Résistance Feu",
+     "10% Résistance Neutre",
+     "10% Résistance Terre"
+    ]
+   }
+  ]
+ },
+ {
+  "set": "Panoplie Quadramentale",
+  "classe": "Huppermage",
+  "items": [
+   {
+    "nom": "Coiffe Ondamentale",
+    "niv": 40,
+    "type": "Chapeau",
+    "icon": 16490,
+    "stats": [],
+    "sorts": [
+     "Éther : +2 Portée maximale",
+     "Cataracte : +3 Portée maximale",
+     "Onde Sismique : +2 Portée maximale",
+     "Onde Céleste : +2 Portée maximale",
+     "Lance-flamme : +2 Portée maximale",
+     "Lances Telluriques : +2 Portée maximale",
+     "Stalagmite : +3 Portée maximale",
+     "Tison : ligne de vue désactivée"
+    ]
+   },
+   {
+    "nom": "Cape Rimordiale",
+    "niv": 80,
+    "type": "Cape",
+    "icon": 17359,
+    "stats": [],
+    "sorts": [
+     "Météore : +2 Portée maximale",
+     "Avalanche : ligne de vue désactivée",
+     "Lame Astrale : ligne de vue désactivée",
+     "Déflagration : +2 Portée maximale",
+     "Lance Solaire : ligne de vue désactivée",
+     "Comète : +2 Portée maximale",
+     "Déluge : ligne de vue désactivée",
+     "Astéroïde : +2 Portée maximale"
+    ]
+   },
+   {
+    "nom": "Bottes Initiales",
+    "niv": 100,
+    "type": "Bottes",
+    "icon": 11303,
+    "stats": [
+     "1 PM"
+    ],
+    "sorts": [
+     "Trait Ardent : -1 PA",
+     "Stalactite : +1 lancer(s) par cible",
+     "Glacier : -1 PA",
+     "Ouragan : +1 lancer(s) par cible",
+     "Rafale : -1 PA",
+     "Brèche : +1 lancer(s) par cible",
+     "Orage : -1 PA",
+     "Volcan : +1 lancer(s) par cible"
+    ]
+   },
+   {
+    "nom": "L'Élémenture",
+    "niv": 130,
+    "type": "Ceinture",
+    "icon": 10306,
+    "stats": [],
+    "sorts": [
+     "Drain Élémentaire : +2 Portée maximale",
+     "Tribut : ligne de vue désactivée",
+     "Cycle Élémentaire : Portée modifiable",
+     "Courant Quadramental : Portée modifiable",
+     "Propagation : ligne de vue désactivée",
+     "Prisme Runique : -1 PA",
+     "Supernova : +2 Portée maximale",
+     "Torrent Arcanique : lancer en ligne désactivé"
+    ]
+   },
+   {
+    "nom": "Anneau Riginel",
+    "niv": 150,
+    "type": "Anneau",
+    "icon": 9312,
+    "stats": [],
+    "sorts": [
+     "Runification : +2 Portée maximale",
+     "Manifestation : +2 Portée maximale",
+     "Bouclier Élémentaire : -1 PA",
+     "Gardien Élémentaire : -1 de relance",
+     "Polarité : +1 Portée maximale",
+     "Convection : +1 Portée maximale",
+     "Sublimation : Portée modifiable",
+     "Surcharge Runique : -1 PA"
+    ]
+   }
+  ],
+  "bonus": [
+   {
+    "n": 2,
+    "lignes": [
+     "20 Agilité",
+     "20 Intelligence",
+     "20 Chance",
+     "20 Force",
+     "20 Sagesse",
+     "100 Vitalité",
+     "10 Prospection",
+     "3 Soin",
+     "3 Dommage"
+    ]
+   },
+   {
+    "n": 3,
+    "lignes": [
+     "40 Agilité",
+     "40 Intelligence",
+     "40 Chance",
+     "40 Force",
+     "40 Sagesse",
+     "200 Vitalité",
+     "20 Prospection",
+     "7 Soin",
+     "7 Dommage"
+    ]
+   },
+   {
+    "n": 4,
+    "lignes": [
+     "70 Agilité",
+     "70 Intelligence",
+     "70 Chance",
+     "70 Force",
+     "70 Sagesse",
+     "500 Vitalité",
+     "30 Prospection",
+     "12 Soin",
+     "12 Dommage",
+     "1 Invocation",
+     "5% Résistance Air",
+     "5% Résistance Feu",
+     "5% Résistance Eau",
+     "5% Résistance Terre",
+     "5% Résistance Neutre"
+    ]
+   },
+   {
+    "n": 5,
+    "lignes": [
+     "100 Agilité",
+     "100 Intelligence",
+     "100 Chance",
+     "100 Force",
+     "100 Sagesse",
+     "800 Vitalité",
+     "40 Prospection",
+     "20 Soin",
+     "20 Dommage",
+     "1 Invocation",
+     "10% Résistance Air",
+     "10% Résistance Feu",
+     "10% Résistance Eau",
+     "10% Résistance Terre",
+     "10% Résistance Neutre",
+     "1 PA"
+    ]
+   }
+  ]
+ },
+ {
+  "set": "Panoplie Téméraire",
+  "classe": "Iop",
+  "items": [
+   {
+    "nom": "Casque Keutumedi",
+    "niv": 40,
+    "type": "Chapeau",
+    "icon": 16175,
+    "stats": [],
+    "sorts": [
+     "Pression : ligne de vue désactivée",
+     "Fracture : +2 Portée maximale",
+     "Épée Destructrice : +3 Portée maximale",
+     "Fustigation : +3 Portée maximale",
+     "Intimidation : ligne de vue désactivée",
+     "Conquête : -1 de relance",
+     "Bond : +1 Portée maximale",
+     "Agitation : -1 PA"
+    ]
+   },
+   {
+    "nom": "Cape Aurale",
+    "niv": 80,
+    "type": "Cape",
+    "icon": 17131,
+    "stats": [],
+    "sorts": [
+     "Souffle : +1 lancer(s) par tour",
+     "Rassemblement : +1 lancer(s) par tour",
+     "Tempête de Puissance : Portée modifiable",
+     "Tannée : +2 Portée maximale",
+     "Épée Céleste : +2 Portée maximale",
+     "Zénith : -1 PA",
+     "Épée du Destin : lancer en ligne désactivé",
+     "Tumulte : Portée modifiable"
+    ]
+   },
+   {
+    "nom": "Sangle Hynère",
+    "niv": 130,
+    "type": "Ceinture",
+    "icon": 10116,
+    "stats": [],
+    "sorts": [
+     "Ferveur : ligne de vue désactivée",
+     "Menace : +2 Portée maximale",
+     "Endurance : +2 Portée maximale",
+     "Pugilat : +1 lancer(s) par tour",
+     "Épée de Iop : Portée modifiable",
+     "Fendoir : Portée modifiable",
+     "Fureur : +2 Portée maximale",
+     "Colère de Iop : -1 PA"
+    ]
+   },
+   {
+    "nom": "Bottes Antrin",
+    "niv": 100,
+    "type": "Bottes",
+    "icon": 11100,
+    "stats": [
+     "1 PM"
+    ],
+    "sorts": [
+     "Épée Divine : +2 Portée maximale",
+     "Épée du Jugement : Portée modifiable",
+     "Déferlement : lancer en ligne désactivé",
+     "Anneau Destructeur : +2 Portée maximale",
+     "Vitalité : -1 PA",
+     "Violence : -1 PA",
+     "Précipitation : -1 PA",
+     "Détermination : -1 PA"
+    ]
+   },
+   {
+    "nom": "Bague Harre",
+    "niv": 150,
+    "type": "Anneau",
+    "icon": 9129,
+    "stats": [],
+    "sorts": [
+     "Couperet : +2 Portée maximale",
+     "Accumulation : lancer en ligne désactivé",
+     "Concentration : +2 Portée maximale",
+     "Sentence : ligne de vue désactivée",
+     "Vertu : -1 PA",
+     "Massacre : -1 de relance",
+     "Puissance : -1 PA",
+     "Vindicte : -1 PA"
+    ]
+   }
+  ],
+  "bonus": [
+   {
+    "n": 2,
+    "lignes": [
+     "20 Agilité",
+     "20 Intelligence",
+     "10 Prospection",
+     "3 Soin",
+     "3 Dommage",
+     "100 Vitalité",
+     "20 Sagesse",
+     "20 Chance",
+     "20 Force"
+    ]
+   },
+   {
+    "n": 3,
+    "lignes": [
+     "20 Prospection",
+     "7 Soin",
+     "7 Dommage",
+     "200 Vitalité",
+     "40 Sagesse",
+     "40 Chance",
+     "40 Force",
+     "40 Intelligence",
+     "40 Agilité"
+    ]
+   },
+   {
+    "n": 4,
+    "lignes": [
+     "5% Résistance Terre",
+     "5% Résistance Neutre",
+     "5% Résistance Feu",
+     "5% Résistance Eau",
+     "5% Résistance Air",
+     "30 Prospection",
+     "1 Invocation",
+     "12 Soin",
+     "12 Dommage",
+     "500 Vitalité",
+     "70 Sagesse",
+     "70 Chance",
+     "70 Force",
+     "70 Intelligence",
+     "70 Agilité"
+    ]
+   },
+   {
+    "n": 5,
+    "lignes": [
+     "10% Résistance Terre",
+     "10% Résistance Neutre",
+     "10% Résistance Feu",
+     "10% Résistance Eau",
+     "10% Résistance Air",
+     "40 Prospection",
+     "1 Invocation",
+     "1 PA",
+     "20 Soin",
+     "20 Dommage",
+     "800 Vitalité",
+     "100 Sagesse",
+     "100 Chance",
+     "100 Force",
+     "100 Intelligence",
+     "100 Agilité"
+    ]
+   }
+  ]
+ },
+ {
+  "set": "Panoplie de l'Innombrable",
+  "classe": "Osamodas",
+  "items": [
+   {
+    "nom": "Capuche Apin",
+    "niv": 40,
+    "type": "Chapeau",
+    "icon": 16181,
+    "stats": [],
+    "sorts": [
+     "Tofu : +2 Portée maximale",
+     "Griffes du Chtigre : Portée modifiable",
+     "Bouftou : +2 Portée maximale",
+     "Serres du Vautour : +2 Portée maximale",
+     "Crapipou : +2 Portée maximale",
+     "Toison d'Or : +1 lancer(s) par tour",
+     "Dragoune : +2 Portée maximale",
+     "Morsure du Serpent : Portée modifiable"
+    ]
+   },
+   {
+    "nom": "Cape Lyne",
+    "niv": 80,
+    "type": "Cape",
+    "icon": 17137,
+    "stats": [],
+    "sorts": [
+     "Cri du Corbac : +2 Portée maximale",
+     "Crocs du Mulou : Portée modifiable",
+     "Pics du Prespic : +2 Portée maximale",
+     "Déplumage : -1 PA",
+     "Dents du Piranya : Portée modifiable",
+     "Cœur Sauvage : Portée modifiable",
+     "Cri de l'Ours : +2 Portée maximale",
+     "Bave du Crapaud : -1 PA"
+    ]
+   },
+   {
+    "nom": "Ceinture Bodiézèle",
+    "niv": 130,
+    "type": "Ceinture",
+    "icon": 10123,
+    "stats": [],
+    "sorts": [
+     "Fouet : Portée modifiable",
+     "Cravache : Portée modifiable",
+     "Piqûre Motivante : Portée modifiable",
+     "Communion Animale : -1 PA",
+     "Discipline : Portée modifiable",
+     "Martinet : Portée modifiable",
+     "Esprit Glouton : +2 Portée maximale",
+     "Esprit Facétieux : +2 Portée maximale"
+    ]
+   },
+   {
+    "nom": "Bottes Swana",
+    "niv": 100,
+    "type": "Bottes",
+    "icon": 11107,
+    "stats": [
+     "1 PM"
+    ],
+    "sorts": [
+     "Saute-granouille : +1 Portée maximale",
+     "Tornade de Plumes : +1 Portée maximale",
+     "Ventritofu : +2 Portée maximale",
+     "Craquolosse : +2 Portée maximale",
+     "Crapipaud : +2 Portée maximale",
+     "Sulfénix : +2 Portée maximale",
+     "Charge Bestiale : lancer en ligne désactivé",
+     "Chant du Phénix : +2 Portée maximale"
+    ]
+   },
+   {
+    "nom": "Bague Héra",
+    "niv": 150,
+    "type": "Anneau",
+    "icon": 9128,
+    "stats": [],
+    "sorts": [
+     "Souffle Draconique : Portée modifiable",
+     "Frappe du Craqueleur : +2 Portée maximale",
+     "Bouflourd : +2 Portée maximale",
+     "Crocoléreux : +2 Portée maximale",
+     "Dragonnet : +2 Portée maximale",
+     "Scarafoudre : +2 Portée maximale",
+     "Aéropique : +2 Portée maximale",
+     "Tourbillon : +2 Portée maximale"
+    ]
+   }
+  ],
+  "bonus": [
+   {
+    "n": 2,
+    "lignes": [
+     "20 Agilité",
+     "20 Intelligence",
+     "3 Dommage",
+     "20 Chance",
+     "20 Force",
+     "20 Sagesse",
+     "100 Vitalité",
+     "3 Soin",
+     "10 Prospection"
+    ]
+   },
+   {
+    "n": 3,
+    "lignes": [
+     "7 Dommage",
+     "40 Agilité",
+     "40 Intelligence",
+     "40 Chance",
+     "40 Force",
+     "40 Sagesse",
+     "200 Vitalité",
+     "7 Soin",
+     "20 Prospection"
+    ]
+   },
+   {
+    "n": 4,
+    "lignes": [
+     "12 Dommage",
+     "70 Agilité",
+     "70 Intelligence",
+     "70 Chance",
+     "70 Force",
+     "70 Sagesse",
+     "500 Vitalité",
+     "12 Soin",
+     "2 Invocation",
+     "30 Prospection",
+     "5% Résistance Air",
+     "5% Résistance Eau",
+     "5% Résistance Feu",
+     "5% Résistance Neutre",
+     "5% Résistance Terre"
+    ]
+   },
+   {
+    "n": 5,
+    "lignes": [
+     "20 Dommage",
+     "100 Agilité",
+     "100 Intelligence",
+     "100 Chance",
+     "100 Force",
+     "100 Sagesse",
+     "800 Vitalité",
+     "20 Soin",
+     "1 PA",
+     "3 Invocation",
+     "40 Prospection",
+     "10% Résistance Air",
+     "10% Résistance Eau",
+     "10% Résistance Feu",
+     "10% Résistance Neutre",
+     "10% Résistance Terre"
+    ]
+   }
+  ]
+ },
+ {
+  "set": "Panoplie Enragée",
+  "classe": "Ouginak",
+  "items": [
+   {
+    "nom": "Anneau Nos",
+    "niv": 150,
+    "type": "Anneau",
+    "icon": 9325,
+    "stats": [],
+    "sorts": [
+     "Dogue : +1 lancer(s) par cible",
+     "Dépouille : ligne de vue désactivée",
+     "Carcasse : +1 lancer(s) par cible",
+     "Battue : ligne de vue désactivée",
+     "Aboiement : -1 PA",
+     "Rogne : -1 de relance",
+     "Appel de la Meute : -1 de relance",
+     "Nouvelle Lune : -1 de relance"
+    ]
+   },
+   {
+    "nom": "Bottes Harcie",
+    "niv": 100,
+    "type": "Bottes",
+    "icon": 11322,
+    "stats": [
+     "1 PM"
+    ],
+    "sorts": [
+     "Rabattage : ligne de vue désactivée",
+     "Limier : ligne de vue désactivée",
+     "Tétanisation : ligne de vue désactivée",
+     "Pelage Protecteur : -1 PA",
+     "Férocité : -1 PA",
+     "Flair : -1 PA",
+     "Acharnement : lancer en ligne désactivé",
+     "Aboi : +1 lancer(s) par cible"
+    ]
+   },
+   {
+    "nom": "Cape Hoile",
+    "niv": 80,
+    "type": "Cape",
+    "icon": 17381,
+    "stats": [],
+    "sorts": [
+     "Tibia : +25% Critique",
+     "Humérus : +1 Portée maximale",
+     "Amarok : ligne de vue désactivée",
+     "Cerbère : -1 PA",
+     "Convergence : lancer en ligne désactivé",
+     "Pistage : lancer en ligne désactivé",
+     "Arcanin : +1 lancer(s) par tour",
+     "Caninos : +1 lancer(s) par tour"
+    ]
+   },
+   {
+    "nom": "Chapeau Devin",
+    "niv": 40,
+    "type": "Chapeau",
+    "icon": 16514,
+    "stats": [],
+    "sorts": [
+     "Molosse : +30% Critique",
+     "Mâchoire : ligne de vue désactivée",
+     "Os à Moelle : +1 lancer(s) par cible",
+     "Muselière : -1 PA",
+     "Charogne : ligne de vue désactivée",
+     "Radius : ligne de vue désactivée",
+     "Traque : lancer en ligne désactivé",
+     "Dépeçage : lancer en ligne désactivé"
+    ]
+   },
+   {
+    "nom": "Ceinture Leumant",
+    "niv": 130,
+    "type": "Ceinture",
+    "icon": 10321,
+    "stats": [],
+    "sorts": [
+     "Vertèbre : -1 PA",
+     "Cubitus : ligne de vue désactivée",
+     "Calcanéus : lancer en ligne désactivé",
+     "Apaisement : -1 PA",
+     "Affection : -1 PA",
+     "Panique : +1 lancer(s) par tour",
+     "Poursuite : lancer en ligne désactivé",
+     "Chasse : ligne de vue désactivée"
+    ]
+   }
+  ],
+  "bonus": [
+   {
+    "n": 2,
+    "lignes": [
+     "20 Agilité",
+     "20 Intelligence",
+     "10 Prospection",
+     "3 Soin",
+     "3 Dommage",
+     "100 Vitalité",
+     "20 Sagesse",
+     "20 Force",
+     "20 Chance"
+    ]
+   },
+   {
+    "n": 3,
+    "lignes": [
+     "20 Prospection",
+     "7 Soin",
+     "7 Dommage",
+     "200 Vitalité",
+     "40 Sagesse",
+     "40 Force",
+     "40 Chance",
+     "40 Intelligence",
+     "40 Agilité"
+    ]
+   },
+   {
+    "n": 4,
+    "lignes": [
+     "5% Résistance Feu",
+     "5% Résistance Terre",
+     "5% Résistance Neutre",
+     "5% Résistance Eau",
+     "5% Résistance Air",
+     "30 Prospection",
+     "1 Invocation",
+     "12 Soin",
+     "12 Dommage",
+     "500 Vitalité",
+     "70 Sagesse",
+     "70 Force",
+     "70 Chance",
+     "70 Intelligence",
+     "70 Agilité"
+    ]
+   },
+   {
+    "n": 5,
+    "lignes": [
+     "10% Résistance Terre",
+     "10% Résistance Neutre",
+     "10% Résistance Feu",
+     "10% Résistance Eau",
+     "10% Résistance Air",
+     "40 Prospection",
+     "800 Vitalité",
+     "1 PA",
+     "1 Invocation",
+     "20 Soin",
+     "20 Dommage",
+     "100 Sagesse",
+     "100 Force",
+     "100 Chance",
+     "100 Intelligence",
+     "100 Agilité"
+    ]
+   }
+  ]
+ },
+ {
+  "set": "Panoplie Ethylique",
+  "classe": "Pandawa",
+  "items": [
+   {
+    "nom": "Chapeau Lithique",
+    "niv": 40,
+    "type": "Chapeau",
+    "icon": 16176,
+    "stats": [],
+    "sorts": [
+     "Gueule de Bois : +2 Portée maximale",
+     "Brancard : +1 Portée maximale",
+     "Ribote : ligne de vue désactivée",
+     "Alcoshu : ligne de vue désactivée",
+     "Stabilisation : -1 de relance",
+     "Varappe : -1 PA",
+     "Schnaps : +30% Critique",
+     "Souffle Enflammé : -1 PA"
+    ]
+   },
+   {
+    "nom": "Cape Wéra",
+    "niv": 80,
+    "type": "Cape",
+    "icon": 17142,
+    "stats": [],
+    "sorts": [
+     "Paume Explosive : +40% Critique",
+     "Pandikulation : +1 Portée maximale",
+     "Liqueur : +40% Critique",
+     "Flasque Explosive : +40% Critique",
+     "Pandatak : +35% Critique",
+     "Épouvante : +1 lancer(s) par cible",
+     "Consolation : +1 lancer(s) par tour",
+     "Distillation : Portée modifiable"
+    ]
+   },
+   {
+    "nom": "Sangle Huée",
+    "niv": 130,
+    "type": "Ceinture",
+    "icon": 10124,
+    "stats": [],
+    "sorts": [
+     "Souillure : +2 Portée maximale",
+     "Brassage : +2 Portée maximale",
+     "Bambouseraie : -1 PA",
+     "Fermentation : -1 PA",
+     "Bambou : Portée modifiable",
+     "Lien Spiritueux : -1 de relance",
+     "Pandanlku : -1 de relance",
+     "Main de Pandawa : +5 Dommages"
+    ]
+   },
+   {
+    "nom": "Geta Bernacle",
+    "niv": 100,
+    "type": "Bottes",
+    "icon": 11108,
+    "stats": [
+     "1 PM"
+    ],
+    "sorts": [
+     "Pandjiu : Portée modifiable",
+     "Propulsion : +1 Portée maximale",
+     "Absinthe : Portée modifiable",
+     "Cascade : +1 Portée maximale",
+     "Ivresse : -1 PA",
+     "Ébriété : -1 PA",
+     "Vague à Lame : +35% Critique",
+     "Nausée : lancer en ligne désactivé"
+    ]
+   },
+   {
+    "nom": "Anneau Raille",
+    "niv": 150,
+    "type": "Anneau",
+    "icon": 9133,
+    "stats": [],
+    "sorts": [
+     "Ethylo : +40% Critique",
+     "Éviction : +1 lancer(s) par tour",
+     "Eau-de-vie : +2 Portée maximale",
+     "Bistouille : +35% Critique",
+     "Lait de Bambou : -1 de relance",
+     "Prohibition : lancer en ligne désactivé",
+     "Engourdissement : -1 PA",
+     "Souffle Alcoolisé : +40% Critique"
+    ]
+   }
+  ],
+  "bonus": [
+   {
+    "n": 2,
+    "lignes": [
+     "20 Agilité",
+     "20 Intelligence",
+     "20 Force",
+     "20 Chance",
+     "20 Sagesse",
+     "100 Vitalité",
+     "3 Dommage",
+     "3 Soin",
+     "10 Prospection"
+    ]
+   },
+   {
+    "n": 3,
+    "lignes": [
+     "40 Agilité",
+     "40 Intelligence",
+     "40 Chance",
+     "40 Force",
+     "40 Sagesse",
+     "200 Vitalité",
+     "7 Dommage",
+     "7 Soin",
+     "20 Prospection"
+    ]
+   },
+   {
+    "n": 4,
+    "lignes": [
+     "70 Agilité",
+     "70 Intelligence",
+     "70 Chance",
+     "70 Force",
+     "70 Sagesse",
+     "500 Vitalité",
+     "12 Dommage",
+     "12 Soin",
+     "30 Prospection",
+     "1 Invocation",
+     "5% Résistance Air",
+     "5% Résistance Eau",
+     "5% Résistance Feu",
+     "5% Résistance Neutre",
+     "5% Résistance Terre"
+    ]
+   },
+   {
+    "n": 5,
+    "lignes": [
+     "100 Agilité",
+     "100 Intelligence",
+     "100 Force",
+     "100 Chance",
+     "100 Sagesse",
+     "800 Vitalité",
+     "20 Dommage",
+     "20 Soin",
+     "1 Invocation",
+     "1 PA",
+     "40 Prospection",
+     "10% Résistance Air",
+     "10% Résistance Eau",
+     "10% Résistance Feu",
+     "10% Résistance Neutre",
+     "10% Résistance Terre"
+    ]
+   }
+  ]
+ },
+ {
+  "set": "Panoplie Explosive",
+  "classe": "Roublard",
+  "items": [
+   {
+    "nom": "Coiffe Ainte",
+    "niv": 40,
+    "type": "Chapeau",
+    "icon": 16311,
+    "stats": [],
+    "sorts": [
+     "Sismobombe : ligne de vue désactivée",
+     "Sismobombe Résiliente : ligne de vue désactivée",
+     "Bombarde : ligne de vue désactivée",
+     "Mitraille : +2 Portée maximale",
+     "Tornabombe : ligne de vue désactivée",
+     "Tornabombe Résiliente : ligne de vue désactivée",
+     "Espingole : ligne de vue désactivée",
+     "Oblitération : +2 Portée maximale"
+    ]
+   },
+   {
+    "nom": "Cape Endaison",
+    "niv": 80,
+    "type": "Cape",
+    "icon": 17228,
+    "stats": [],
+    "sorts": [
+     "Bombe à Eau : ligne de vue désactivée",
+     "Bombe à Eau Résiliente : ligne de vue désactivée",
+     "Recel : Portée modifiable",
+     "Plombage : +2 Portée maximale",
+     "Explobombe : ligne de vue désactivée",
+     "Explobombe Résiliente : ligne de vue désactivée",
+     "Pulsar : Portée modifiable",
+     "Shrapnel : +40% Critique"
+    ]
+   },
+   {
+    "nom": "Bottes Opsy",
+    "niv": 100,
+    "type": "Bottes",
+    "icon": 11198,
+    "stats": [
+     "1 PM"
+    ],
+    "sorts": [
+     "Mousquet : +2 Portée maximale",
+     "Grenaille : +1 Portée maximale",
+     "Botte : -1 PA",
+     "Ruse : +2 Portée maximale",
+     "Aimantation : -1 PA",
+     "Croisement : Portée modifiable",
+     "Dagues Boomerang : +35% Critique",
+     "Tromblon : ligne de vue désactivée"
+    ]
+   },
+   {
+    "nom": "Sangle Hyssérine",
+    "niv": 130,
+    "type": "Ceinture",
+    "icon": 10210,
+    "stats": [],
+    "sorts": [
+     "Poudre : ligne de vue désactivée",
+     "Bombe Collante : +1 lancer(s) par tour",
+     "Resquille : -1 PA",
+     "Arquebuse : lancer en ligne désactivé",
+     "Extraction : lancer en ligne désactivé",
+     "Cadence : -1 PA",
+     "Détonateur : +2 Portée maximale",
+     "Étoupille : ligne de vue désactivée"
+    ]
+   },
+   {
+    "nom": "Mitaine Aibre",
+    "niv": 150,
+    "type": "Anneau",
+    "icon": 9234,
+    "stats": [],
+    "sorts": [
+     "Kaboom : -1 de relance",
+     "Imposture : +1 Portée maximale",
+     "Entourloupe : -1 de relance",
+     "Bombe Ambulante : +2 Portée maximale",
+     "Roublardise : -1 de relance",
+     "Stratagème : +2 Portée maximale",
+     "Dernier Souffle : -1 PA",
+     "Piège Magnétique : +1 lancer(s) par tour"
+    ]
+   }
+  ],
+  "bonus": [
+   {
+    "n": 2,
+    "lignes": [
+     "20 Agilité",
+     "20 Intelligence",
+     "10 Prospection",
+     "3 Soin",
+     "3 Dommage",
+     "100 Vitalité",
+     "20 Sagesse",
+     "20 Chance",
+     "20 Force"
+    ]
+   },
+   {
+    "n": 3,
+    "lignes": [
+     "20 Prospection",
+     "7 Soin",
+     "7 Dommage",
+     "200 Vitalité",
+     "40 Sagesse",
+     "40 Force",
+     "40 Chance",
+     "40 Intelligence",
+     "40 Agilité"
+    ]
+   },
+   {
+    "n": 4,
+    "lignes": [
+     "5% Résistance Terre",
+     "5% Résistance Neutre",
+     "5% Résistance Feu",
+     "5% Résistance Eau",
+     "5% Résistance Air",
+     "1 Invocation",
+     "30 Prospection",
+     "12 Soin",
+     "12 Dommage",
+     "500 Vitalité",
+     "70 Sagesse",
+     "70 Force",
+     "70 Chance",
+     "70 Intelligence",
+     "70 Agilité"
+    ]
+   },
+   {
+    "n": 5,
+    "lignes": [
+     "10% Résistance Terre",
+     "10% Résistance Neutre",
+     "10% Résistance Feu",
+     "10% Résistance Eau",
+     "10% Résistance Air",
+     "40 Prospection",
+     "1 PA",
+     "1 Invocation",
+     "20 Soin",
+     "20 Dommage",
+     "800 Vitalité",
+     "100 Sagesse",
+     "100 Chance",
+     "100 Force",
+     "100 Intelligence",
+     "100 Agilité"
+    ]
+   }
+  ]
+ },
+ {
+  "set": "Panoplie Exsangue",
+  "classe": "Sacrieur",
+  "items": [
+   {
+    "nom": "Bonnet Spairance",
+    "niv": 40,
+    "type": "Chapeau",
+    "icon": 16180,
+    "stats": [],
+    "sorts": [
+     "Stase : +2 Portée maximale",
+     "Projection : ligne de vue désactivée",
+     "Hostilité : ligne de vue désactivée",
+     "Mutilation : -1 PA",
+     "Pacte de Sang : -1 de relance",
+     "Douleur Cuisante : +2 Portée maximale",
+     "Transposition : -1 PA",
+     "Fluctuation : -1 de relance"
+    ]
+   },
+   {
+    "nom": "Cape Ytale",
+    "niv": 80,
+    "type": "Cape",
+    "icon": 17138,
+    "stats": [],
+    "sorts": [
+     "Hémorragie : +2 Portée maximale",
+     "Décimation : +2 Portée maximale",
+     "Attirance : ligne de vue désactivée",
+     "Perfusion : -1 de relance",
+     "Ravage : lancer en ligne désactivé",
+     "Fulgurance : case occupée nécessaire désactivée",
+     "Transfusion : +2 Portée maximale",
+     "Liens du Sang : -1 de relance"
+    ]
+   },
+   {
+    "nom": "Sangle Hans",
+    "niv": 130,
+    "type": "Ceinture",
+    "icon": 10122,
+    "stats": [],
+    "sorts": [
+     "Hécatombe : +2 Portée maximale",
+     "Entaille : +2 Portée maximale",
+     "Dissolution : +2 Portée maximale",
+     "Carnage : +2 Portée maximale",
+     "Punition : +2 Portée maximale",
+     "Folie Sanguinaire : -1 de relance",
+     "Épée Vorace : -2 de relance",
+     "Épée Dansante : -2 de relance"
+    ]
+   },
+   {
+    "nom": "Tong Aclou",
+    "niv": 100,
+    "type": "Bottes",
+    "icon": 11106,
+    "stats": [
+     "1 PM"
+    ],
+    "sorts": [
+     "Assaut : ligne de vue désactivée",
+     "Aversion : +1 lancer(s) par tour",
+     "Immolation : +2 Portée maximale",
+     "Sacrifice : -1 de relance",
+     "Pénitence : -1 de relance",
+     "Absorption : +1 Portée maximale",
+     "Furie : +2 Portée maximale",
+     "Bain de Sang : +25% Critique"
+    ]
+   },
+   {
+    "nom": "Anneau Pitale",
+    "niv": 150,
+    "type": "Anneau",
+    "icon": 9137,
+    "stats": [],
+    "sorts": [
+     "Déchaînement : +2 Portée maximale",
+     "Condensation : +2 Portée maximale",
+     "Afflux : +1 lancer(s) par tour",
+     "Libation : -1 de relance",
+     "Châtiment : -1 de relance",
+     "Supplice : +2 Portée maximale",
+     "Nervosité : +2 Portée maximale",
+     "Désolation : +2 Portée maximale"
+    ]
+   }
+  ],
+  "bonus": [
+   {
+    "n": 2,
+    "lignes": [
+     "20 Agilité",
+     "20 Intelligence",
+     "20 Force",
+     "20 Chance",
+     "20 Sagesse",
+     "100 Vitalité",
+     "3 Dommage",
+     "3 Soin",
+     "10 Prospection"
+    ]
+   },
+   {
+    "n": 3,
+    "lignes": [
+     "40 Agilité",
+     "40 Intelligence",
+     "40 Chance",
+     "40 Force",
+     "40 Sagesse",
+     "200 Vitalité",
+     "7 Dommage",
+     "7 Soin",
+     "20 Prospection"
+    ]
+   },
+   {
+    "n": 4,
+    "lignes": [
+     "70 Agilité",
+     "70 Intelligence",
+     "70 Chance",
+     "70 Force",
+     "70 Sagesse",
+     "500 Vitalité",
+     "12 Dommage",
+     "12 Soin",
+     "1 Invocation",
+     "30 Prospection",
+     "5% Résistance Air",
+     "5% Résistance Eau",
+     "5% Résistance Feu",
+     "5% Résistance Neutre",
+     "5% Résistance Terre"
+    ]
+   },
+   {
+    "n": 5,
+    "lignes": [
+     "100 Chance",
+     "100 Agilité",
+     "100 Force",
+     "100 Intelligence",
+     "100 Sagesse",
+     "800 Vitalité",
+     "20 Dommage",
+     "20 Soin",
+     "1 Invocation",
+     "1 PA",
+     "40 Prospection",
+     "10% Résistance Air",
+     "10% Résistance Eau",
+     "10% Résistance Feu",
+     "10% Résistance Neutre",
+     "10% Résistance Terre"
+    ]
+   }
+  ]
+ },
+ {
+  "set": "Panoplie Sauvage",
+  "classe": "Sadida",
+  "items": [
+   {
+    "nom": "Chapeau Tyron",
+    "niv": 40,
+    "type": "Chapeau",
+    "icon": 16178,
+    "stats": [],
+    "sorts": [
+     "Buisson Ardent : +3 Portée maximale",
+     "Feu de Brousse : -1 PA",
+     "Cigüe : +3 Portée maximale",
+     "Vent Empoisonné : +1 lancer(s) par tour",
+     "Sève Paralysante : -1 PA",
+     "Miasmes : -1 PA",
+     "La Bloqueuse : -1 de relance",
+     "La Bloqueuse Transmutée : -1 de relance"
+    ]
+   },
+   {
+    "nom": "Cape Hitton",
+    "niv": 80,
+    "type": "Cape",
+    "icon": 17139,
+    "stats": [],
+    "sorts": [
+     "Tremblement : -1 PA",
+     "Mandragore : lancer en ligne désactivé",
+     "Inoculation : -1 PA",
+     "Force de la Nature : Portée modifiable",
+     "Puissance Sylvestre : -1 de relance",
+     "Influence Végétale : -1 de relance",
+     "La Folle : -1 de relance",
+     "La Folle Transmutée : -1 de relance"
+    ]
+   },
+   {
+    "nom": "Ceinture Luthe",
+    "niv": 130,
+    "type": "Ceinture",
+    "icon": 10121,
+    "stats": [],
+    "sorts": [
+     "Herbes Folles : -1 PA",
+     "Malédiction Vaudou : -1 PA",
+     "Sacrifice Vaudou : +1 lancer(s) par cible",
+     "Chardons Ardents : -1 de relance",
+     "Ronce Apaisante : lancer en ligne désactivé",
+     "Rempotage : Portée modifiable",
+     "La Sacrifiée : -1 de relance",
+     "La Sacrifiée Transmutée : -1 de relance"
+    ]
+   },
+   {
+    "nom": "Bottes Hanik",
+    "niv": 100,
+    "type": "Bottes",
+    "icon": 11101,
+    "stats": [
+     "1 PM"
+    ],
+    "sorts": [
+     "Ronce : +3 Portée maximale",
+     "Ronce Insolente : -1 PA",
+     "Larme de Sadida : lancer en ligne désactivé",
+     "Montée de Sève : +1 lancer(s) par tour",
+     "Fléau : Portée modifiable",
+     "Forêt Hantée : lancer en ligne désactivé",
+     "Arbre : -1 PA",
+     "Arbre Feuillu : -1 PA"
+    ]
+   },
+   {
+    "nom": "Anneau Pwal",
+    "niv": 150,
+    "type": "Anneau",
+    "icon": 9136,
+    "stats": [],
+    "sorts": [
+     "Ronces Agressives : +1 lancer(s) par cible",
+     "Fétiches Calcinés : +3 Portée maximale",
+     "Contagion : +1 lancer(s) par tour",
+     "Mangrove : -1 PA",
+     "La Gonflable : -1 de relance",
+     "La Gonflable Transmutée : -1 de relance",
+     "La Surpuissante : -1 de relance",
+     "La Surpuissante Transmutée : -1 de relance"
+    ]
+   }
+  ],
+  "bonus": [
+   {
+    "n": 2,
+    "lignes": [
+     "20 Agilité",
+     "20 Intelligence",
+     "20 Force",
+     "20 Chance",
+     "20 Sagesse",
+     "100 Vitalité",
+     "3 Dommage",
+     "3 Soin",
+     "10 Prospection"
+    ]
+   },
+   {
+    "n": 3,
+    "lignes": [
+     "40 Agilité",
+     "40 Intelligence",
+     "40 Force",
+     "40 Chance",
+     "40 Sagesse",
+     "200 Vitalité",
+     "7 Dommage",
+     "7 Soin",
+     "20 Prospection"
+    ]
+   },
+   {
+    "n": 4,
+    "lignes": [
+     "70 Agilité",
+     "70 Intelligence",
+     "70 Chance",
+     "70 Force",
+     "70 Sagesse",
+     "500 Vitalité",
+     "12 Dommage",
+     "12 Soin",
+     "2 Invocation",
+     "30 Prospection",
+     "5% Résistance Air",
+     "5% Résistance Eau",
+     "5% Résistance Feu",
+     "5% Résistance Neutre",
+     "5% Résistance Terre"
+    ]
+   },
+   {
+    "n": 5,
+    "lignes": [
+     "100 Agilité",
+     "100 Intelligence",
+     "100 Chance",
+     "100 Force",
+     "100 Sagesse",
+     "800 Vitalité",
+     "20 Dommage",
+     "20 Soin",
+     "3 Invocation",
+     "1 PA",
+     "40 Prospection",
+     "10% Résistance Air",
+     "10% Résistance Eau",
+     "10% Résistance Feu",
+     "10% Résistance Neutre",
+     "10% Résistance Terre"
+    ]
+   }
+  ]
+ },
+ {
+  "set": "Panoplie Criminelle",
+  "classe": "Sram",
+  "items": [
+   {
+    "nom": "Chapeau Grave",
+    "niv": 40,
+    "type": "Chapeau",
+    "icon": 16179,
+    "stats": [],
+    "sorts": [
+     "Piège Fangeux : +2 Portée maximale",
+     "Épidémie : lancer en ligne désactivé",
+     "Piège Funeste : +2 Portée maximale",
+     "Effraction : Portée modifiable",
+     "Piège Répulsif : +3 Portée maximale",
+     "Piège Effroyable : +3 Portée maximale",
+     "Piège Sournois : +3 Portée maximale",
+     "Guet-apens : +3 Portée maximale"
+    ]
+   },
+   {
+    "nom": "Cape Routh",
+    "niv": 80,
+    "type": "Cape",
+    "icon": 17140,
+    "stats": [],
+    "sorts": [
+     "Sournoiserie : Portée modifiable",
+     "Coupe-gorge : Portée modifiable",
+     "Cruauté : +35% Critique",
+     "Poisse : -1 PA",
+     "Piège Scélérat : +3 Portée maximale",
+     "Piège à Fragmentation : -1 PA",
+     "Peur : +1 Portée maximale",
+     "Méprise : -1 PA"
+    ]
+   },
+   {
+    "nom": "Sangle Glinglin",
+    "niv": 130,
+    "type": "Ceinture",
+    "icon": 10118,
+    "stats": [],
+    "sorts": [
+     "Extorsion : +2 Portée maximale",
+     "Perquisition : Portée modifiable",
+     "Arnaque : lancer en ligne désactivé",
+     "Pillage : Portée modifiable",
+     "Larcin : +2 Portée maximale",
+     "Attaque Mortelle : +1 Portée maximale",
+     "Fourberie : +2 Portée maximale",
+     "Injection Toxique : -1 PA"
+    ]
+   },
+   {
+    "nom": "Bottes Hox",
+    "niv": 100,
+    "type": "Bottes",
+    "icon": 11102,
+    "stats": [
+     "1 PM"
+    ],
+    "sorts": [
+     "Truanderie : +35% Critique",
+     "Chausse-trappe : Portée modifiable",
+     "Arsenic : lancer en ligne désactivé",
+     "Toxines : -1 PA",
+     "Fourvoiement : +1 Portée maximale",
+     "Perfidie : +1 Portée maximale",
+     "Piège d'Immobilisation : -1 PA",
+     "Fosse Commune : -1 PA"
+    ]
+   },
+   {
+    "nom": "Anneau Hell",
+    "niv": 150,
+    "type": "Anneau",
+    "icon": 9134,
+    "stats": [],
+    "sorts": [
+     "Piège de Dérive : +3 Portée maximale",
+     "Piège Insidieux : +3 Portée maximale",
+     "Piège Mortel : lancer en ligne désactivé",
+     "Calamité : -1 PA",
+     "Concentration de Chakra : lancer en ligne désactivé",
+     "Manigance : -1 PA",
+     "Invisibilité : -1 PA",
+     "Brume : -1 PA"
+    ]
+   }
+  ],
+  "bonus": [
+   {
+    "n": 2,
+    "lignes": [
+     "20 Agilité",
+     "20 Intelligence",
+     "10 Prospection",
+     "3 Soin",
+     "3 Dommage",
+     "100 Vitalité",
+     "20 Sagesse",
+     "20 Force",
+     "20 Chance"
+    ]
+   },
+   {
+    "n": 3,
+    "lignes": [
+     "20 Prospection",
+     "7 Soin",
+     "7 Dommage",
+     "200 Vitalité",
+     "40 Sagesse",
+     "40 Force",
+     "40 Chance",
+     "40 Intelligence",
+     "40 Agilité"
+    ]
+   },
+   {
+    "n": 4,
+    "lignes": [
+     "5% Résistance Feu",
+     "5% Résistance Terre",
+     "5% Résistance Neutre",
+     "5% Résistance Eau",
+     "5% Résistance Air",
+     "30 Prospection",
+     "1 Invocation",
+     "12 Soin",
+     "12 Dommage",
+     "500 Vitalité",
+     "70 Sagesse",
+     "70 Force",
+     "70 Chance",
+     "70 Intelligence",
+     "70 Agilité"
+    ]
+   },
+   {
+    "n": 5,
+    "lignes": [
+     "10% Résistance Terre",
+     "10% Résistance Neutre",
+     "10% Résistance Feu",
+     "10% Résistance Eau",
+     "10% Résistance Air",
+     "40 Prospection",
+     "800 Vitalité",
+     "1 PA",
+     "1 Invocation",
+     "20 Soin",
+     "20 Dommage",
+     "100 Sagesse",
+     "100 Force",
+     "100 Chance",
+     "100 Intelligence",
+     "100 Agilité"
+    ]
+   }
+  ]
+ },
+ {
+  "set": "Panoplie Submersible",
+  "classe": "Steamer",
+  "items": [
+   {
+    "nom": "Scaphandre Ojine",
+    "niv": 40,
+    "type": "Chapeau",
+    "icon": 16338,
+    "stats": [],
+    "sorts": [
+     "Sabotage : Portée modifiable",
+     "Périscope : +2 Portée maximale",
+     "Marée : ligne de vue désactivée",
+     "Scaphandre : -1 PA",
+     "Blindage : -1 PA",
+     "Évolution : Portée modifiable",
+     "Surtension : Portée modifiable",
+     "Vapor : Portée modifiable"
+    ]
+   },
+   {
+    "nom": "Sac Rebleux",
+    "niv": 80,
+    "type": "Cape",
+    "icon": 81064,
+    "stats": [],
+    "sorts": [
+     "Ancrage : Portée modifiable",
+     "Amarrage : ligne de vue désactivée",
+     "Soupape : ligne de vue désactivée",
+     "Aspiration : ligne de vue désactivée",
+     "Piston : +2 Portée maximale",
+     "Compas : ligne de vue désactivée",
+     "Brise l'Âme : -1 de relance",
+     "Court-circuit : ligne de vue désactivée"
+    ]
+   },
+   {
+    "nom": "Bottes Omates",
+    "niv": 100,
+    "type": "Bottes",
+    "icon": 11220,
+    "stats": [
+     "1 PM"
+    ],
+    "sorts": [
+     "Foène : Portée modifiable",
+     "Gouvernail : ligne de vue désactivée",
+     "Torpille : +3 Portée maximale",
+     "Cabestan : Portée modifiable",
+     "Secourisme : +2 Portée maximale",
+     "Sauvetage : +2 Portée maximale",
+     "Gardienne : ligne de vue désactivée",
+     "Foreuse : ligne de vue désactivée"
+    ]
+   },
+   {
+    "nom": "Ceinture Blot",
+    "niv": 130,
+    "type": "Ceinture",
+    "icon": 10230,
+    "stats": [],
+    "sorts": [
+     "Turbine : +2 Portée maximale",
+     "Flibuste : +2 Portée maximale",
+     "Écume : +3 Portée maximale",
+     "Ressac : ligne de vue désactivée",
+     "Sonar : +1 lancer(s) par tour",
+     "Embuscade : Portée modifiable",
+     "Harponneuse : ligne de vue désactivée",
+     "Chalutier : ligne de vue désactivée"
+    ]
+   },
+   {
+    "nom": "Steamanneau Maître",
+    "niv": 150,
+    "type": "Anneau",
+    "icon": 9250,
+    "stats": [],
+    "sorts": [
+     "Longue-vue : +2 Portée maximale",
+     "Corrosion : +2 Portée maximale",
+     "Harmattan : -1 PA",
+     "Courant : ligne de vue désactivée",
+     "Plongée : +1 lancer(s) par tour",
+     "Submersion : +1 lancer(s) par tour",
+     "Tactirelle : ligne de vue désactivée",
+     "Bathyscaphe : ligne de vue désactivée"
+    ]
+   }
+  ],
+  "bonus": [
+   {
+    "n": 2,
+    "lignes": [
+     "20 Agilité",
+     "20 Intelligence",
+     "20 Force",
+     "20 Chance",
+     "20 Sagesse",
+     "100 Vitalité",
+     "3 Dommage",
+     "3 Soin",
+     "10 Prospection"
+    ]
+   },
+   {
+    "n": 3,
+    "lignes": [
+     "40 Agilité",
+     "40 Intelligence",
+     "40 Force",
+     "40 Chance",
+     "40 Sagesse",
+     "200 Vitalité",
+     "7 Dommage",
+     "7 Soin",
+     "20 Prospection"
+    ]
+   },
+   {
+    "n": 4,
+    "lignes": [
+     "70 Agilité",
+     "70 Intelligence",
+     "70 Force",
+     "70 Chance",
+     "70 Sagesse",
+     "500 Vitalité",
+     "12 Dommage",
+     "12 Soin",
+     "1 Invocation",
+     "30 Prospection",
+     "5% Résistance Air",
+     "5% Résistance Eau",
+     "5% Résistance Feu",
+     "5% Résistance Neutre",
+     "5% Résistance Terre"
+    ]
+   },
+   {
+    "n": 5,
+    "lignes": [
+     "100 Agilité",
+     "100 Intelligence",
+     "100 Force",
+     "100 Chance",
+     "100 Sagesse",
+     "800 Vitalité",
+     "20 Dommage",
+     "20 Soin",
+     "1 PA",
+     "1 Invocation",
+     "40 Prospection",
+     "10% Résistance Air",
+     "10% Résistance Eau",
+     "10% Résistance Feu",
+     "10% Résistance Neutre",
+     "10% Résistance Terre"
+    ]
+   }
+  ]
+ },
+ {
+  "set": "Panoplie Intemporelle",
+  "classe": "Xélor",
+  "items": [
+   {
+    "nom": "Bonnet Nufar",
+    "niv": 40,
+    "type": "Chapeau",
+    "icon": 16177,
+    "stats": [],
+    "sorts": [
+     "Perturbation : +1 Portée maximale",
+     "Rouage : +1 Portée maximale",
+     "Gelure : lancer en ligne désactivé",
+     "Poussière : +1 Portée maximale",
+     "Souvenir : ligne de vue désactivée",
+     "Permutation : +1 Portée maximale",
+     "Frappe de Xélor : +1 Portée maximale",
+     "Pendule : +1 Portée maximale"
+    ]
+   },
+   {
+    "nom": "Cape Huchon",
+    "niv": 80,
+    "type": "Cape",
+    "icon": 17141,
+    "stats": [],
+    "sorts": [
+     "Engrenage : +1 Portée maximale",
+     "Compte-goutte : +3 Portée maximale",
+     "Horloge : lancer en ligne désactivé",
+     "Clepsydre : Portée modifiable",
+     "Désynchronisation : -1 PA",
+     "Espace-temps : -1 PA",
+     "Rembobinage : lancer en ligne désactivé",
+     "Rémanence : -1 PA"
+    ]
+   },
+   {
+    "nom": "Ceinture Lupine",
+    "niv": 130,
+    "type": "Ceinture",
+    "icon": 10119,
+    "stats": [],
+    "sorts": [
+     "Flétrissement : +2 Portée maximale",
+     "Aiguille : +1 lancer(s) par tour",
+     "Ralentissement : ligne de vue désactivée",
+     "Sablier de Xélor : +1 lancer(s) par tour",
+     "Régulateur : +2 Portée maximale",
+     "Pétrification : +1 lancer(s) par cible",
+     "Gousset : +1 lancer(s) par cible",
+     "Réfraction : +1 lancer(s) par tour"
+    ]
+   },
+   {
+    "nom": "Bottes Hairo",
+    "niv": 100,
+    "type": "Bottes",
+    "icon": 11103,
+    "stats": [
+     "1 PM"
+    ],
+    "sorts": [
+     "Dessèchement : -1 PA",
+     "Distorsion : +2 Portée maximale",
+     "Sables du Temps : -1 PA",
+     "Flou Temporel : -1 PA",
+     "Conservation : -1 de relance",
+     "Fuite du Temps : +1 lancer(s) par cible",
+     "Prémonition : -1 PA",
+     "Rayon Obscur : -1 PA"
+    ]
+   },
+   {
+    "nom": "Anneau Tilus",
+    "niv": 150,
+    "type": "Anneau",
+    "icon": 9135,
+    "stats": [],
+    "sorts": [
+     "Téléportation : -1 de relance",
+     "Astrolabe : -1 de relance",
+     "Complice : +1 lancer(s) par tour",
+     "Cadran de Xélor : -1 de relance",
+     "Paradoxe : -1 PA",
+     "Faille : -1 PA",
+     "Synchro : Portée modifiable",
+     "Glas : Portée modifiable"
+    ]
+   }
+  ],
+  "bonus": [
+   {
+    "n": 2,
+    "lignes": [
+     "20 Agilité",
+     "20 Intelligence",
+     "20 Force",
+     "20 Chance",
+     "20 Sagesse",
+     "100 Vitalité",
+     "3 Dommage",
+     "3 Soin",
+     "10 Prospection"
+    ]
+   },
+   {
+    "n": 3,
+    "lignes": [
+     "40 Agilité",
+     "40 Intelligence",
+     "40 Chance",
+     "40 Force",
+     "40 Sagesse",
+     "200 Vitalité",
+     "7 Dommage",
+     "7 Soin",
+     "20 Prospection"
+    ]
+   },
+   {
+    "n": 4,
+    "lignes": [
+     "70 Agilité",
+     "70 Intelligence",
+     "70 Chance",
+     "70 Force",
+     "70 Sagesse",
+     "500 Vitalité",
+     "12 Soin",
+     "12 Dommage",
+     "30 Prospection",
+     "1 Invocation",
+     "5% Résistance Air",
+     "5% Résistance Eau",
+     "5% Résistance Feu",
+     "5% Résistance Neutre",
+     "5% Résistance Terre"
+    ]
+   },
+   {
+    "n": 5,
+    "lignes": [
+     "100 Agilité",
+     "100 Intelligence",
+     "100 Force",
+     "100 Chance",
+     "100 Sagesse",
+     "800 Vitalité",
+     "20 Dommage",
+     "20 Soin",
+     "1 Invocation",
+     "1 PA",
+     "40 Prospection",
+     "10% Résistance Air",
+     "10% Résistance Eau",
+     "10% Résistance Feu",
+     "10% Résistance Neutre",
+     "10% Résistance Terre"
+    ]
+   }
+  ]
+ },
+ {
+  "set": "Panoplie Lunatique",
+  "classe": "Zobal",
+  "items": [
+   {
+    "nom": "Masque Arpone",
+    "niv": 40,
+    "type": "Chapeau",
+    "icon": 16312,
+    "stats": [],
+    "sorts": [
+     "Appeau : +2 Portée maximale",
+     "Masque du Pleutre : Portée modifiable",
+     "Masque du Couard : Portée modifiable",
+     "Brincadeira : ligne de vue désactivée",
+     "Picada : +2 Portée maximale",
+     "Cavalcade : +3 Portée maximale",
+     "Tortoruga : -1 PA",
+     "Armadur : -1 PA"
+    ]
+   },
+   {
+    "nom": "Cape Aircussion",
+    "niv": 80,
+    "type": "Cape",
+    "icon": 17229,
+    "stats": [],
+    "sorts": [
+     "Apostasie : +2 Portée maximale",
+     "Masque de l'Intrépide : Portée modifiable",
+     "Masque de l'Infatigable : Portée modifiable",
+     "Catalepsie : +1 lancer(s) par tour",
+     "Inferno : +2 Portée maximale",
+     "Distance : ligne de vue désactivée",
+     "Parafuso : +2 Portée maximale",
+     "Martelo : +2 Portée maximale"
+    ]
+   },
+   {
+    "nom": "Sabots Taj",
+    "niv": 100,
+    "type": "Bottes",
+    "icon": 11199,
+    "stats": [
+     "1 PM"
+    ],
+    "sorts": [
+     "Masque du Psychopathe : Portée modifiable",
+     "Masque de l'Hystérique : Portée modifiable",
+     "Furia : lancer en ligne désactivé",
+     "Bocciara : ligne de vue désactivée",
+     "Cabriole : +1 Portée maximale",
+     "Purgatorio : ligne de vue désactivée",
+     "Transe : -1 PA",
+     "Névrose : ligne de vue désactivée"
+    ]
+   },
+   {
+    "nom": "Corde Ure",
+    "niv": 130,
+    "type": "Ceinture",
+    "icon": 10211,
+    "stats": [],
+    "sorts": [
+     "Reuche : lancer en ligne désactivé",
+     "Scudo : -1 PA",
+     "Ponteira : ligne de vue désactivée",
+     "Agular : +2 Portée maximale",
+     "Boliche : +2 Portée maximale",
+     "Ronda : -1 PA",
+     "Apathie : +30% Critique",
+     "Rétention : +2 Portée maximale"
+    ]
+   },
+   {
+    "nom": "Bracelet Jande",
+    "niv": 150,
+    "type": "Anneau",
+    "icon": 9235,
+    "stats": [],
+    "sorts": [
+     "Appui : +1 Portée maximale",
+     "Pivot : +1 Portée maximale",
+     "Débandade : +1 Portée maximale",
+     "Comédie : ligne de vue désactivée",
+     "Plastron : +2 Portée maximale",
+     "Ginga : ligne de vue désactivée",
+     "Carnavalo : +2 Portée maximale",
+     "Transfiguration : ligne de vue désactivée"
+    ]
+   }
+  ],
+  "bonus": [
+   {
+    "n": 2,
+    "lignes": [
+     "20 Agilité",
+     "20 Intelligence",
+     "10 Prospection",
+     "3 Soin",
+     "3 Dommage",
+     "100 Vitalité",
+     "20 Sagesse",
+     "20 Chance",
+     "20 Force"
+    ]
+   },
+   {
+    "n": 3,
+    "lignes": [
+     "20 Prospection",
+     "7 Soin",
+     "7 Dommage",
+     "200 Vitalité",
+     "40 Sagesse",
+     "40 Force",
+     "40 Chance",
+     "40 Intelligence",
+     "40 Agilité"
+    ]
+   },
+   {
+    "n": 4,
+    "lignes": [
+     "5% Résistance Terre",
+     "5% Résistance Neutre",
+     "5% Résistance Feu",
+     "5% Résistance Eau",
+     "5% Résistance Air",
+     "1 Invocation",
+     "30 Prospection",
+     "12 Soin",
+     "12 Dommage",
+     "500 Vitalité",
+     "70 Sagesse",
+     "70 Force",
+     "70 Chance",
+     "70 Intelligence",
+     "70 Agilité"
+    ]
+   },
+   {
+    "n": 5,
+    "lignes": [
+     "10% Résistance Terre",
+     "10% Résistance Neutre",
+     "10% Résistance Feu",
+     "10% Résistance Eau",
+     "10% Résistance Air",
+     "40 Prospection",
+     "1 PA",
+     "1 Invocation",
+     "20 Soin",
+     "20 Dommage",
+     "800 Vitalité",
+     "100 Sagesse",
+     "100 Chance",
+     "100 Force",
+     "100 Intelligence",
+     "100 Agilité"
+    ]
+   }
+  ]
+ }
+]

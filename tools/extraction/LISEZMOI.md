@@ -394,3 +394,12 @@ officiel du Zaap d'Astrub sur l'arche du Bastion (bastion.py réécrit les parti
 - Salles rangées sous les intérieurs (rangées y = 8 et 10, plus (8..12, 2) et (12, 4)) : la grille d'Astrub passe de 1640 à 1840 lignes.
   Export à part : `world_export.py` sur une liste des 22 salles + deux cartes factices en (-4,-34) et (13,11) (même origine, même largeur), `ONLY=<les 22 tags>`,
   puis `COURANTE=1 batiments.py` sur ce dossier (sans les factices), puis fusion dans `monde.json` (entrées des salles + cases marchables de leurs régions, lignes ajoutées).
+
+## Pouvoirs légendaires officiels (version 0.3)
+
+- `python3 tools/extraction/pouvoirs.py tools/extraction/panos_classe.json src/data/sorts.json src/data/pouvoirs.json` : les 40 effets de sort
+  officiels de la panoplie de chaque classe jouable (Téméraire, Prince des voleurs, Innombrable), 5 par emplacement (choix 2B : les 3 derniers
+  de chaque pièce vont à l'amulette, l'arme et le bouclier). La traduction en temps réel est dans `src/sim/pouvoirs.ts`.
+- `class_spells.py` écrit aussi les drapeaux officiels de chaque sort (spelllevels `m_flags` du premier grade) : `ligne` (bit 0, lancer en ligne),
+  `ldv` (bit 2, ligne de vue), `pom` (bit 6, portée modifiable). Bits retrouvés en croisant les pouvoirs « Portée modifiable », « ligne de vue
+  désactivée » et « lancer en ligne désactivé » des panoplies (tous les sorts visés ont le bit attendu).
