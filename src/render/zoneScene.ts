@@ -952,7 +952,7 @@ export class ZoneScene extends Phaser.Scene {
         case 'atelier': this.windows?.artisanat(e.metier); break;
         case 'fabricationDebut': Son.jouer(MANIFESTE.ui.ok, 'interface', { cle: 'clic', ecart: 0.05 }); this.windows?.refresh(); break;
         case 'fabricationStop': this.hud.toast('Fabrication interrompue'); this.windows?.refresh(); break;
-        case 'craft': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Objet'} x${e.n}`, '#9ad15a'); this.windows?.refresh(); break;
+        case 'craft': this.hud.loot(`${(ITEMS.resources[e.id] ?? ITEMS.equipment[e.id])?.name ?? 'Objet'} x${e.n}${e.rares ? ` (${e.rares} Rare${e.rares > 1 ? 's' : ''})` : ''}`, e.rares ? '#6fb2e8' : '#9ad15a'); this.windows?.refresh(); break;
         case 'eat': this.windows?.refresh(); break;
         // PNJ du Havre-Sac (maquette Hub 4A) : la réponse « service » de son dialogue ouvre sa fenêtre (recycler, boutique, apparats, miroir)
         case 'service': if (this.windows && (e.service === 'recycler' || e.service === 'boutique' || e.service === 'apparat')) { this.windows.empPnj = e.pnj; this.windows.empOnglet = e.service; this.windows.show('emp'); }

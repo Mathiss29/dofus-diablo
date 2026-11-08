@@ -19120,6 +19120,26 @@
    "icon": 50037,
    "level": 100,
    "signature": true
+  },
+  "27413": {
+   "name": "Eau Ferrugineuse",
+   "icon": 39404,
+   "level": 10
+  },
+  "7652": {
+   "name": "Potion de Souvenir",
+   "icon": 12002,
+   "level": 30
+  },
+  "2539": {
+   "name": "Substrat de Buisson",
+   "icon": 26016,
+   "level": 20
+  },
+  "12745": {
+   "name": "Substrat de Bocage",
+   "icon": 12729,
+   "level": 40
   }
  },
  "drops": {
@@ -22449,6 +22469,123 @@
    ]
   },
   {
+   "result": "766",
+   "metier": "bijoutier",
+   "level": 1,
+   "ingredients": [
+    [
+     "519",
+     3
+    ],
+    [
+     "312",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "787",
+   "metier": "bijoutier",
+   "level": 1,
+   "ingredients": [
+    [
+     "16522",
+     3
+    ],
+    [
+     "16512",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "852",
+   "metier": "bijoutier",
+   "level": 1,
+   "ingredients": [
+    [
+     "16518",
+     3
+    ],
+    [
+     "303",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "853",
+   "metier": "bijoutier",
+   "level": 1,
+   "ingredients": [
+    [
+     "16515",
+     3
+    ],
+    [
+     "1984",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8537",
+   "metier": "bijoutier",
+   "level": 1,
+   "ingredients": [
+    [
+     "16518",
+     2
+    ],
+    [
+     "289",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "8538",
+   "metier": "bijoutier",
+   "level": 1,
+   "ingredients": [
+    [
+     "16512",
+     2
+    ],
+    [
+     "1782",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "19622",
+   "metier": "bijoutier",
+   "level": 1,
+   "ingredients": [
+    [
+     "289",
+     1
+    ],
+    [
+     "303",
+     1
+    ],
+    [
+     "312",
+     1
+    ],
+    [
+     "421",
+     1
+    ],
+    [
+     "1782",
+     1
+    ]
+   ]
+  },
+  {
    "result": "8545",
    "metier": "bricoleur",
    "level": 1,
@@ -22493,6 +22630,216 @@
     [
      "17421",
      1
+    ]
+   ]
+  },
+  {
+   "result": "860",
+   "metier": "cordonnier",
+   "level": 1,
+   "ingredients": [
+    [
+     "16518",
+     3
+    ],
+    [
+     "421",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "861",
+   "metier": "cordonnier",
+   "level": 1,
+   "ingredients": [
+    [
+     "16515",
+     3
+    ],
+    [
+     "16513",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8341",
+   "metier": "cordonnier",
+   "level": 1,
+   "ingredients": [
+    [
+     "1984",
+     3
+    ],
+    [
+     "421",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8535",
+   "metier": "cordonnier",
+   "level": 1,
+   "ingredients": [
+    [
+     "16513",
+     2
+    ],
+    [
+     "1782",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "8536",
+   "metier": "cordonnier",
+   "level": 1,
+   "ingredients": [
+    [
+     "16522",
+     2
+    ],
+    [
+     "421",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "15240",
+   "metier": "cordonnier",
+   "level": 1,
+   "ingredients": [
+    [
+     "16513",
+     3
+    ],
+    [
+     "310",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "15241",
+   "metier": "cordonnier",
+   "level": 1,
+   "ingredients": [
+    [
+     "16524",
+     3
+    ],
+    [
+     "16518",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "18676",
+   "metier": "faconneur",
+   "level": 1,
+   "ingredients": [
+    [
+     "16489",
+     1
+    ],
+    [
+     "27413",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "30701",
+   "metier": "faconneur",
+   "level": 1,
+   "ingredients": [
+    [
+     "16489",
+     1
+    ],
+    [
+     "16663",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "1934",
+   "metier": "forgeron",
+   "level": 1,
+   "ingredients": [
+    [
+     "519",
+     3
+    ],
+    [
+     "16511",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "2376",
+   "metier": "forgeron",
+   "level": 1,
+   "ingredients": [
+    [
+     "312",
+     1
+    ],
+    [
+     "303",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "2587",
+   "metier": "forgeron",
+   "level": 1,
+   "ingredients": [
+    [
+     "312",
+     1
+    ],
+    [
+     "16511",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "9961",
+   "metier": "forgeron",
+   "level": 1,
+   "ingredients": [
+    [
+     "16513",
+     3
+    ],
+    [
+     "303",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "30828",
+   "metier": "forgeron",
+   "level": 1,
+   "ingredients": [
+    [
+     "16440",
+     1
+    ],
+    [
+     "16663",
+     2
     ]
    ]
   },
@@ -22564,6 +22911,1356 @@
    ]
   },
   {
+   "result": "1356",
+   "metier": "sculpteur",
+   "level": 1,
+   "ingredients": [
+    [
+     "16513",
+     3
+    ],
+    [
+     "16511",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "1942",
+   "metier": "sculpteur",
+   "level": 1,
+   "ingredients": [
+    [
+     "519",
+     3
+    ],
+    [
+     "303",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "940",
+   "metier": "tailleur",
+   "level": 1,
+   "ingredients": [
+    [
+     "16515",
+     3
+    ],
+    [
+     "16518",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "1697",
+   "metier": "tailleur",
+   "level": 1,
+   "ingredients": [
+    [
+     "421",
+     3
+    ],
+    [
+     "16511",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "8533",
+   "metier": "tailleur",
+   "level": 1,
+   "ingredients": [
+    [
+     "16511",
+     2
+    ],
+    [
+     "421",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "8534",
+   "metier": "tailleur",
+   "level": 1,
+   "ingredients": [
+    [
+     "1984",
+     2
+    ],
+    [
+     "289",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "849",
+   "metier": "bijoutier",
+   "level": 2,
+   "ingredients": [
+    [
+     "16522",
+     3
+    ],
+    [
+     "16515",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "850",
+   "metier": "bijoutier",
+   "level": 2,
+   "ingredients": [
+    [
+     "16522",
+     3
+    ],
+    [
+     "1984",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "851",
+   "metier": "bijoutier",
+   "level": 2,
+   "ingredients": [
+    [
+     "16515",
+     3
+    ],
+    [
+     "303",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "17524",
+   "metier": "cordonnier",
+   "level": 2,
+   "ingredients": [
+    [
+     "16512",
+     3
+    ],
+    [
+     "16513",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "9972",
+   "metier": "forgeron",
+   "level": 2,
+   "ingredients": [
+    [
+     "16513",
+     3
+    ],
+    [
+     "421",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "9974",
+   "metier": "forgeron",
+   "level": 2,
+   "ingredients": [
+    [
+     "16513",
+     3
+    ],
+    [
+     "312",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "942",
+   "metier": "tailleur",
+   "level": 2,
+   "ingredients": [
+    [
+     "519",
+     3
+    ],
+    [
+     "1984",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "786",
+   "metier": "bijoutier",
+   "level": 3,
+   "ingredients": [
+    [
+     "16513",
+     3
+    ],
+    [
+     "519",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "298",
+   "metier": "cordonnier",
+   "level": 3,
+   "ingredients": [
+    [
+     "16515",
+     3
+    ],
+    [
+     "421",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "134",
+   "metier": "sculpteur",
+   "level": 3,
+   "ingredients": [
+    [
+     "16515",
+     3
+    ],
+    [
+     "312",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "941",
+   "metier": "tailleur",
+   "level": 3,
+   "ingredients": [
+    [
+     "16511",
+     3
+    ],
+    [
+     "303",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "949",
+   "metier": "tailleur",
+   "level": 3,
+   "ingredients": [
+    [
+     "16518",
+     3
+    ],
+    [
+     "311",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "768",
+   "metier": "bijoutier",
+   "level": 4,
+   "ingredients": [
+    [
+     "16511",
+     3
+    ],
+    [
+     "312",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "2475",
+   "metier": "bijoutier",
+   "level": 4,
+   "ingredients": [
+    [
+     "16489",
+     1
+    ],
+    [
+     "287",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "784",
+   "metier": "cordonnier",
+   "level": 4,
+   "ingredients": [
+    [
+     "385",
+     3
+    ],
+    [
+     "303",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "892",
+   "metier": "cordonnier",
+   "level": 4,
+   "ingredients": [
+    [
+     "16515",
+     3
+    ],
+    [
+     "16512",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "7177",
+   "metier": "tailleur",
+   "level": 4,
+   "ingredients": [
+    [
+     "16513",
+     3
+    ],
+    [
+     "16522",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "279",
+   "metier": "bijoutier",
+   "level": 5,
+   "ingredients": [
+    [
+     "16518",
+     3
+    ],
+    [
+     "385",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "2478",
+   "metier": "bijoutier",
+   "level": 5,
+   "ingredients": [
+    [
+     "16489",
+     1
+    ],
+    [
+     "519",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "769",
+   "metier": "cordonnier",
+   "level": 5,
+   "ingredients": [
+    [
+     "16511",
+     3
+    ],
+    [
+     "16515",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "18714",
+   "metier": "faconneur",
+   "level": 5,
+   "ingredients": [
+    [
+     "16489",
+     1
+    ],
+    [
+     "16513",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "2589",
+   "metier": "forgeron",
+   "level": 5,
+   "ingredients": [
+    [
+     "16440",
+     2
+    ],
+    [
+     "1984",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "829",
+   "metier": "sculpteur",
+   "level": 5,
+   "ingredients": [
+    [
+     "385",
+     3
+    ],
+    [
+     "421",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "767",
+   "metier": "bijoutier",
+   "level": 6,
+   "ingredients": [
+    [
+     "385",
+     3
+    ],
+    [
+     "312",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "862",
+   "metier": "cordonnier",
+   "level": 6,
+   "ingredients": [
+    [
+     "16512",
+     3
+    ],
+    [
+     "1984",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "863",
+   "metier": "cordonnier",
+   "level": 6,
+   "ingredients": [
+    [
+     "1984",
+     3
+    ],
+    [
+     "16511",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "2477",
+   "metier": "cordonnier",
+   "level": 6,
+   "ingredients": [
+    [
+     "16489",
+     2
+    ],
+    [
+     "1984",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "147",
+   "metier": "forgeron",
+   "level": 6,
+   "ingredients": [
+    [
+     "310",
+     3
+    ],
+    [
+     "312",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "153",
+   "metier": "forgeron",
+   "level": 6,
+   "ingredients": [
+    [
+     "16522",
+     3
+    ],
+    [
+     "303",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "697",
+   "metier": "tailleur",
+   "level": 6,
+   "ingredients": [
+    [
+     "16511",
+     2
+    ],
+    [
+     "16515",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "1698",
+   "metier": "tailleur",
+   "level": 6,
+   "ingredients": [
+    [
+     "16512",
+     4
+    ],
+    [
+     "16511",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "325",
+   "metier": "bijoutier",
+   "level": 7,
+   "ingredients": [
+    [
+     "16523",
+     3
+    ],
+    [
+     "519",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8216",
+   "metier": "bijoutier",
+   "level": 7,
+   "ingredients": [
+    [
+     "6902",
+     3
+    ],
+    [
+     "16513",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8224",
+   "metier": "bijoutier",
+   "level": 7,
+   "ingredients": [
+    [
+     "6903",
+     3
+    ],
+    [
+     "16524",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "16505",
+   "metier": "bijoutier",
+   "level": 7,
+   "ingredients": [
+    [
+     "16524",
+     3
+    ],
+    [
+     "310",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "837",
+   "metier": "cordonnier",
+   "level": 7,
+   "ingredients": [
+    [
+     "16522",
+     3
+    ],
+    [
+     "312",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "864",
+   "metier": "cordonnier",
+   "level": 7,
+   "ingredients": [
+    [
+     "16512",
+     3
+    ],
+    [
+     "312",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "2476",
+   "metier": "cordonnier",
+   "level": 7,
+   "ingredients": [
+    [
+     "16489",
+     2
+    ],
+    [
+     "16524",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "2803",
+   "metier": "cordonnier",
+   "level": 7,
+   "ingredients": [
+    [
+     "16522",
+     3
+    ],
+    [
+     "310",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "8227",
+   "metier": "cordonnier",
+   "level": 7,
+   "ingredients": [
+    [
+     "6898",
+     3
+    ],
+    [
+     "16515",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8237",
+   "metier": "cordonnier",
+   "level": 7,
+   "ingredients": [
+    [
+     "6900",
+     3
+    ],
+    [
+     "1984",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "44",
+   "metier": "forgeron",
+   "level": 7,
+   "ingredients": [
+    [
+     "16512",
+     3
+    ],
+    [
+     "303",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "97",
+   "metier": "forgeron",
+   "level": 7,
+   "ingredients": [
+    [
+     "16524",
+     3
+    ],
+    [
+     "16515",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "91",
+   "metier": "sculpteur",
+   "level": 7,
+   "ingredients": [
+    [
+     "16522",
+     3
+    ],
+    [
+     "421",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "700",
+   "metier": "tailleur",
+   "level": 7,
+   "ingredients": [
+    [
+     "16511",
+     3
+    ],
+    [
+     "16515",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "937",
+   "metier": "tailleur",
+   "level": 7,
+   "ingredients": [
+    [
+     "16523",
+     3
+    ],
+    [
+     "16512",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8232",
+   "metier": "tailleur",
+   "level": 7,
+   "ingredients": [
+    [
+     "6897",
+     3
+    ],
+    [
+     "16515",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8247",
+   "metier": "tailleur",
+   "level": 7,
+   "ingredients": [
+    [
+     "6899",
+     3
+    ],
+    [
+     "16524",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "70",
+   "metier": "bijoutier",
+   "level": 8,
+   "ingredients": [
+    [
+     "16524",
+     3
+    ],
+    [
+     "385",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "77",
+   "metier": "bijoutier",
+   "level": 8,
+   "ingredients": [
+    [
+     "16524",
+     3
+    ],
+    [
+     "1984",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "84",
+   "metier": "bijoutier",
+   "level": 8,
+   "ingredients": [
+    [
+     "16524",
+     3
+    ],
+    [
+     "303",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "841",
+   "metier": "bijoutier",
+   "level": 8,
+   "ingredients": [
+    [
+     "16512",
+     3
+    ],
+    [
+     "421",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8218",
+   "metier": "bijoutier",
+   "level": 8,
+   "ingredients": [
+    [
+     "6903",
+     3
+    ],
+    [
+     "16513",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8221",
+   "metier": "bijoutier",
+   "level": 8,
+   "ingredients": [
+    [
+     "6898",
+     3
+    ],
+    [
+     "16513",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "16843",
+   "metier": "bijoutier",
+   "level": 8,
+   "ingredients": [
+    [
+     "1984",
+     3
+    ],
+    [
+     "421",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "259",
+   "metier": "cordonnier",
+   "level": 8,
+   "ingredients": [
+    [
+     "1984",
+     3
+    ],
+    [
+     "303",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "263",
+   "metier": "cordonnier",
+   "level": 8,
+   "ingredients": [
+    [
+     "16511",
+     3
+    ],
+    [
+     "385",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "1624",
+   "metier": "cordonnier",
+   "level": 8,
+   "ingredients": [
+    [
+     "16512",
+     3
+    ],
+    [
+     "16524",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8226",
+   "metier": "cordonnier",
+   "level": 8,
+   "ingredients": [
+    [
+     "6897",
+     3
+    ],
+    [
+     "16524",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8241",
+   "metier": "cordonnier",
+   "level": 8,
+   "ingredients": [
+    [
+     "6899",
+     3
+    ],
+    [
+     "1984",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "673",
+   "metier": "forgeron",
+   "level": 8,
+   "ingredients": [
+    [
+     "16489",
+     1
+    ],
+    [
+     "399",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "771",
+   "metier": "forgeron",
+   "level": 8,
+   "ingredients": [
+    [
+     "16522",
+     5
+    ],
+    [
+     "310",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "16527",
+   "metier": "forgeron",
+   "level": 8,
+   "ingredients": [
+    [
+     "16526",
+     1
+    ],
+    [
+     "16524",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "188",
+   "metier": "sculpteur",
+   "level": 8,
+   "ingredients": [
+    [
+     "1984",
+     3
+    ],
+    [
+     "312",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "2473",
+   "metier": "tailleur",
+   "level": 8,
+   "ingredients": [
+    [
+     "16440",
+     1
+    ],
+    [
+     "16518",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8231",
+   "metier": "tailleur",
+   "level": 8,
+   "ingredients": [
+    [
+     "6900",
+     3
+    ],
+    [
+     "16513",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8246",
+   "metier": "tailleur",
+   "level": 8,
+   "ingredients": [
+    [
+     "6902",
+     3
+    ],
+    [
+     "385",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "16503",
+   "metier": "tailleur",
+   "level": 8,
+   "ingredients": [
+    [
+     "16513",
+     3
+    ],
+    [
+     "16518",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "16504",
+   "metier": "tailleur",
+   "level": 8,
+   "ingredients": [
+    [
+     "16512",
+     3
+    ],
+    [
+     "385",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "103",
+   "metier": "bijoutier",
+   "level": 9,
+   "ingredients": [
+    [
+     "310",
+     3
+    ],
+    [
+     "16522",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "112",
+   "metier": "bijoutier",
+   "level": 9,
+   "ingredients": [
+    [
+     "16523",
+     3
+    ],
+    [
+     "303",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "121",
+   "metier": "bijoutier",
+   "level": 9,
+   "ingredients": [
+    [
+     "16524",
+     3
+    ],
+    [
+     "312",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "280",
+   "metier": "bijoutier",
+   "level": 9,
+   "ingredients": [
+    [
+     "16523",
+     3
+    ],
+    [
+     "312",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "324",
+   "metier": "bijoutier",
+   "level": 9,
+   "ingredients": [
+    [
+     "310",
+     3
+    ],
+    [
+     "16511",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8215",
+   "metier": "bijoutier",
+   "level": 9,
+   "ingredients": [
+    [
+     "6898",
+     3
+    ],
+    [
+     "16524",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8220",
+   "metier": "bijoutier",
+   "level": 9,
+   "ingredients": [
+    [
+     "6897",
+     3
+    ],
+    [
+     "310",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "255",
+   "metier": "cordonnier",
+   "level": 9,
+   "ingredients": [
+    [
+     "16524",
+     3
+    ],
+    [
+     "16523",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8225",
+   "metier": "cordonnier",
+   "level": 9,
+   "ingredients": [
+    [
+     "6900",
+     3
+    ],
+    [
+     "385",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8240",
+   "metier": "cordonnier",
+   "level": 9,
+   "ingredients": [
+    [
+     "6902",
+     3
+    ],
+    [
+     "16524",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "13423",
+   "metier": "cordonnier",
+   "level": 9,
+   "ingredients": [
+    [
+     "16524",
+     3
+    ],
+    [
+     "421",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "140",
+   "metier": "sculpteur",
+   "level": 9,
+   "ingredients": [
+    [
+     "16518",
+     3
+    ],
+    [
+     "310",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "2474",
+   "metier": "tailleur",
+   "level": 9,
+   "ingredients": [
+    [
+     "16440",
+     2
+    ],
+    [
+     "16524",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8236",
+   "metier": "tailleur",
+   "level": 9,
+   "ingredients": [
+    [
+     "6899",
+     3
+    ],
+    [
+     "16515",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8248",
+   "metier": "tailleur",
+   "level": 9,
+   "ingredients": [
+    [
+     "6903",
+     3
+    ],
+    [
+     "16515",
+     3
+    ]
+   ]
+  },
+  {
    "result": "14646",
    "metier": "alchimiste",
    "level": 10,
@@ -22593,6 +24290,276 @@
     [
      "16525",
      4
+    ]
+   ]
+  },
+  {
+   "result": "785",
+   "metier": "bijoutier",
+   "level": 10,
+   "ingredients": [
+    [
+     "310",
+     3
+    ],
+    [
+     "303",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8214",
+   "metier": "bijoutier",
+   "level": 10,
+   "ingredients": [
+    [
+     "6897",
+     3
+    ],
+    [
+     "385",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8219",
+   "metier": "bijoutier",
+   "level": 10,
+   "ingredients": [
+    [
+     "6900",
+     3
+    ],
+    [
+     "310",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "12421",
+   "metier": "bijoutier",
+   "level": 10,
+   "ingredients": [
+    [
+     "16523",
+     4
+    ],
+    [
+     "312",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "12423",
+   "metier": "bijoutier",
+   "level": 10,
+   "ingredients": [
+    [
+     "16515",
+     3
+    ],
+    [
+     "16523",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "12598",
+   "metier": "bijoutier",
+   "level": 10,
+   "ingredients": [
+    [
+     "16511",
+     4
+    ],
+    [
+     "312",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "12754",
+   "metier": "bijoutier",
+   "level": 10,
+   "ingredients": [
+    [
+     "16524",
+     3
+    ],
+    [
+     "16515",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "12756",
+   "metier": "bijoutier",
+   "level": 10,
+   "ingredients": [
+    [
+     "16512",
+     3
+    ],
+    [
+     "27413",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "14593",
+   "metier": "bijoutier",
+   "level": 10,
+   "ingredients": [
+    [
+     "16511",
+     3
+    ],
+    [
+     "16523",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "14597",
+   "metier": "bijoutier",
+   "level": 10,
+   "ingredients": [
+    [
+     "16513",
+     3
+    ],
+    [
+     "1984",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "14605",
+   "metier": "bijoutier",
+   "level": 10,
+   "ingredients": [
+    [
+     "310",
+     3
+    ],
+    [
+     "421",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "14609",
+   "metier": "bijoutier",
+   "level": 10,
+   "ingredients": [
+    [
+     "16512",
+     3
+    ],
+    [
+     "421",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "14613",
+   "metier": "bijoutier",
+   "level": 10,
+   "ingredients": [
+    [
+     "310",
+     3
+    ],
+    [
+     "16512",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "14617",
+   "metier": "bijoutier",
+   "level": 10,
+   "ingredients": [
+    [
+     "16518",
+     3
+    ],
+    [
+     "303",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "14621",
+   "metier": "bijoutier",
+   "level": 10,
+   "ingredients": [
+    [
+     "16524",
+     3
+    ],
+    [
+     "16518",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "14806",
+   "metier": "bijoutier",
+   "level": 10,
+   "ingredients": [
+    [
+     "385",
+     3
+    ],
+    [
+     "421",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "17487",
+   "metier": "bijoutier",
+   "level": 10,
+   "ingredients": [
+    [
+     "519",
+     3
+    ],
+    [
+     "27413",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "17508",
+   "metier": "bijoutier",
+   "level": 10,
+   "ingredients": [
+    [
+     "16518",
+     3
+    ],
+    [
+     "16522",
+     3
     ]
    ]
   },
@@ -22647,6 +24614,246 @@
    ]
   },
   {
+   "result": "8229",
+   "metier": "cordonnier",
+   "level": 10,
+   "ingredients": [
+    [
+     "6899",
+     3
+    ],
+    [
+     "16513",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8242",
+   "metier": "cordonnier",
+   "level": 10,
+   "ingredients": [
+    [
+     "6903",
+     3
+    ],
+    [
+     "310",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "12599",
+   "metier": "cordonnier",
+   "level": 10,
+   "ingredients": [
+    [
+     "310",
+     3
+    ],
+    [
+     "16518",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "12753",
+   "metier": "cordonnier",
+   "level": 10,
+   "ingredients": [
+    [
+     "310",
+     3
+    ],
+    [
+     "27413",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "12757",
+   "metier": "cordonnier",
+   "level": 10,
+   "ingredients": [
+    [
+     "310",
+     3
+    ],
+    [
+     "421",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "14589",
+   "metier": "cordonnier",
+   "level": 10,
+   "ingredients": [
+    [
+     "16512",
+     3
+    ],
+    [
+     "16511",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "14601",
+   "metier": "cordonnier",
+   "level": 10,
+   "ingredients": [
+    [
+     "16511",
+     3
+    ],
+    [
+     "421",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "14625",
+   "metier": "cordonnier",
+   "level": 10,
+   "ingredients": [
+    [
+     "16518",
+     3
+    ],
+    [
+     "303",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "14629",
+   "metier": "cordonnier",
+   "level": 10,
+   "ingredients": [
+    [
+     "16522",
+     3
+    ],
+    [
+     "16515",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "14633",
+   "metier": "cordonnier",
+   "level": 10,
+   "ingredients": [
+    [
+     "16513",
+     3
+    ],
+    [
+     "385",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "14644",
+   "metier": "cordonnier",
+   "level": 10,
+   "ingredients": [
+    [
+     "16511",
+     3
+    ],
+    [
+     "303",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "14798",
+   "metier": "cordonnier",
+   "level": 10,
+   "ingredients": [
+    [
+     "16524",
+     3
+    ],
+    [
+     "310",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "14803",
+   "metier": "cordonnier",
+   "level": 10,
+   "ingredients": [
+    [
+     "16523",
+     3
+    ],
+    [
+     "303",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "17502",
+   "metier": "cordonnier",
+   "level": 10,
+   "ingredients": [
+    [
+     "16523",
+     3
+    ],
+    [
+     "27413",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "18668",
+   "metier": "faconneur",
+   "level": 10,
+   "ingredients": [
+    [
+     "16489",
+     1
+    ],
+    [
+     "388",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "27413",
+   "metier": "mineur",
+   "level": 10,
+   "ingredients": [
+    [
+     "312",
+     10
+    ],
+    [
+     "311",
+     10
+    ]
+   ]
+  },
+  {
    "result": "521",
    "metier": "paysan",
    "level": 10,
@@ -22669,6 +24876,411 @@
    ]
   },
   {
+   "result": "1503",
+   "metier": "sculpteur",
+   "level": 10,
+   "ingredients": [
+    [
+     "16518",
+     3
+    ],
+    [
+     "16523",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "1699",
+   "metier": "tailleur",
+   "level": 10,
+   "ingredients": [
+    [
+     "388",
+     5
+    ],
+    [
+     "16511",
+     8
+    ]
+   ]
+  },
+  {
+   "result": "8233",
+   "metier": "tailleur",
+   "level": 10,
+   "ingredients": [
+    [
+     "6902",
+     3
+    ],
+    [
+     "310",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8245",
+   "metier": "tailleur",
+   "level": 10,
+   "ingredients": [
+    [
+     "6898",
+     3
+    ],
+    [
+     "310",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "10834",
+   "metier": "tailleur",
+   "level": 10,
+   "ingredients": [
+    [
+     "16522",
+     3
+    ],
+    [
+     "16523",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "278",
+   "metier": "bijoutier",
+   "level": 11,
+   "ingredients": [
+    [
+     "2455",
+     1
+    ],
+    [
+     "6902",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "2399",
+   "metier": "bijoutier",
+   "level": 11,
+   "ingredients": [
+    [
+     "16489",
+     2
+    ],
+    [
+     "6902",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8213",
+   "metier": "bijoutier",
+   "level": 11,
+   "ingredients": [
+    [
+     "6900",
+     3
+    ],
+    [
+     "16515",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8223",
+   "metier": "bijoutier",
+   "level": 11,
+   "ingredients": [
+    [
+     "6899",
+     3
+    ],
+    [
+     "310",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8228",
+   "metier": "cordonnier",
+   "level": 11,
+   "ingredients": [
+    [
+     "6902",
+     3
+    ],
+    [
+     "16515",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8239",
+   "metier": "cordonnier",
+   "level": 11,
+   "ingredients": [
+    [
+     "6898",
+     3
+    ],
+    [
+     "1984",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "6914",
+   "metier": "forgeron",
+   "level": 11,
+   "ingredients": [
+    [
+     "27413",
+     2
+    ],
+    [
+     "16512",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "165",
+   "metier": "sculpteur",
+   "level": 11,
+   "ingredients": [
+    [
+     "2491",
+     3
+    ],
+    [
+     "2563",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8235",
+   "metier": "tailleur",
+   "level": 11,
+   "ingredients": [
+    [
+     "6903",
+     3
+    ],
+    [
+     "1984",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8244",
+   "metier": "tailleur",
+   "level": 11,
+   "ingredients": [
+    [
+     "6897",
+     3
+    ],
+    [
+     "16513",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "355",
+   "metier": "bijoutier",
+   "level": 12,
+   "ingredients": [
+    [
+     "364",
+     3
+    ],
+    [
+     "2491",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8126",
+   "metier": "bijoutier",
+   "level": 12,
+   "ingredients": [
+    [
+     "306",
+     3
+    ],
+    [
+     "8157",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "8217",
+   "metier": "bijoutier",
+   "level": 12,
+   "ingredients": [
+    [
+     "6899",
+     3
+    ],
+    [
+     "385",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8222",
+   "metier": "bijoutier",
+   "level": 12,
+   "ingredients": [
+    [
+     "6902",
+     3
+    ],
+    [
+     "1984",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "16502",
+   "metier": "bijoutier",
+   "level": 12,
+   "ingredients": [
+    [
+     "16523",
+     3
+    ],
+    [
+     "16525",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "924",
+   "metier": "cordonnier",
+   "level": 12,
+   "ingredients": [
+    [
+     "27413",
+     2
+    ],
+    [
+     "6902",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "3207",
+   "metier": "cordonnier",
+   "level": 12,
+   "ingredients": [
+    [
+     "16489",
+     2
+    ],
+    [
+     "6900",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8230",
+   "metier": "cordonnier",
+   "level": 12,
+   "ingredients": [
+    [
+     "6903",
+     3
+    ],
+    [
+     "385",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8238",
+   "metier": "cordonnier",
+   "level": 12,
+   "ingredients": [
+    [
+     "6897",
+     3
+    ],
+    [
+     "1984",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "340",
+   "metier": "forgeron",
+   "level": 12,
+   "ingredients": [
+    [
+     "2662",
+     1
+    ],
+    [
+     "6903",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "2590",
+   "metier": "forgeron",
+   "level": 12,
+   "ingredients": [
+    [
+     "27413",
+     2
+    ],
+    [
+     "16524",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "6924",
+   "metier": "forgeron",
+   "level": 12,
+   "ingredients": [
+    [
+     "2659",
+     3
+    ],
+    [
+     "27413",
+     2
+    ]
+   ]
+  },
+  {
    "result": "389",
    "metier": "paysan",
    "level": 12,
@@ -22676,6 +25288,786 @@
     [
      "288",
      10
+    ]
+   ]
+  },
+  {
+   "result": "1366",
+   "metier": "sculpteur",
+   "level": 12,
+   "ingredients": [
+    [
+     "2455",
+     1
+    ],
+    [
+     "388",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8234",
+   "metier": "tailleur",
+   "level": 12,
+   "ingredients": [
+    [
+     "6898",
+     3
+    ],
+    [
+     "385",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8243",
+   "metier": "tailleur",
+   "level": 12,
+   "ingredients": [
+    [
+     "6900",
+     3
+    ],
+    [
+     "16524",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "16500",
+   "metier": "tailleur",
+   "level": 12,
+   "ingredients": [
+    [
+     "16512",
+     3
+    ],
+    [
+     "16525",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "16501",
+   "metier": "tailleur",
+   "level": 12,
+   "ingredients": [
+    [
+     "16524",
+     3
+    ],
+    [
+     "16525",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "1490",
+   "metier": "bijoutier",
+   "level": 13,
+   "ingredients": [
+    [
+     "16489",
+     2
+    ],
+    [
+     "366",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "208",
+   "metier": "forgeron",
+   "level": 13,
+   "ingredients": [
+    [
+     "16489",
+     2
+    ],
+    [
+     "362",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "357",
+   "metier": "forgeron",
+   "level": 13,
+   "ingredients": [
+    [
+     "8680",
+     1
+    ],
+    [
+     "2659",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "1350",
+   "metier": "sculpteur",
+   "level": 13,
+   "ingredients": [
+    [
+     "2662",
+     1
+    ],
+    [
+     "2563",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "6795",
+   "metier": "tailleur",
+   "level": 13,
+   "ingredients": [
+    [
+     "374",
+     3
+    ],
+    [
+     "2662",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1087",
+   "metier": "bijoutier",
+   "level": 14,
+   "ingredients": [
+    [
+     "13487",
+     3
+    ],
+    [
+     "2491",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "773",
+   "metier": "tailleur",
+   "level": 14,
+   "ingredients": [
+    [
+     "6902",
+     3
+    ],
+    [
+     "13502",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "774",
+   "metier": "tailleur",
+   "level": 14,
+   "ingredients": [
+    [
+     "2662",
+     1
+    ],
+    [
+     "13727",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "6797",
+   "metier": "tailleur",
+   "level": 14,
+   "ingredients": [
+    [
+     "306",
+     3
+    ],
+    [
+     "2665",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1494",
+   "metier": "bijoutier",
+   "level": 15,
+   "ingredients": [
+    [
+     "2539",
+     1
+    ],
+    [
+     "364",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "2396",
+   "metier": "bijoutier",
+   "level": 15,
+   "ingredients": [
+    [
+     "13727",
+     3
+    ],
+    [
+     "388",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "6789",
+   "metier": "bijoutier",
+   "level": 15,
+   "ingredients": [
+    [
+     "2659",
+     3
+    ],
+    [
+     "641",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "6791",
+   "metier": "bijoutier",
+   "level": 15,
+   "ingredients": [
+    [
+     "309",
+     3
+    ],
+    [
+     "2663",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "6925",
+   "metier": "cordonnier",
+   "level": 15,
+   "ingredients": [
+    [
+     "388",
+     3
+    ],
+    [
+     "2563",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "29463",
+   "metier": "faconneur",
+   "level": 15,
+   "ingredients": [
+    [
+     "2574",
+     2
+    ],
+    [
+     "16489",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1059",
+   "metier": "forgeron",
+   "level": 15,
+   "ingredients": [
+    [
+     "374",
+     3
+    ],
+    [
+     "16489",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "1375",
+   "metier": "forgeron",
+   "level": 15,
+   "ingredients": [
+    [
+     "27413",
+     2
+    ],
+    [
+     "288",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "1399",
+   "metier": "forgeron",
+   "level": 15,
+   "ingredients": [
+    [
+     "27413",
+     2
+    ],
+    [
+     "13727",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "6792",
+   "metier": "sculpteur",
+   "level": 15,
+   "ingredients": [
+    [
+     "288",
+     1
+    ],
+    [
+     "2661",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1702",
+   "metier": "tailleur",
+   "level": 15,
+   "ingredients": [
+    [
+     "881",
+     8
+    ],
+    [
+     "885",
+     8
+    ]
+   ]
+  },
+  {
+   "result": "6923",
+   "metier": "bijoutier",
+   "level": 16,
+   "ingredients": [
+    [
+     "288",
+     1
+    ],
+    [
+     "2539",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "235",
+   "metier": "forgeron",
+   "level": 16,
+   "ingredients": [
+    [
+     "306",
+     3
+    ],
+    [
+     "6903",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "327",
+   "metier": "forgeron",
+   "level": 16,
+   "ingredients": [
+    [
+     "363",
+     3
+    ],
+    [
+     "374",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "934",
+   "metier": "tailleur",
+   "level": 16,
+   "ingredients": [
+    [
+     "641",
+     1
+    ],
+    [
+     "6902",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "157",
+   "metier": "bijoutier",
+   "level": 17,
+   "ingredients": [
+    [
+     "13726",
+     3
+    ],
+    [
+     "363",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "2393",
+   "metier": "bijoutier",
+   "level": 17,
+   "ingredients": [
+    [
+     "2539",
+     1
+    ],
+    [
+     "13727",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "6961",
+   "metier": "bijoutier",
+   "level": 17,
+   "ingredients": [
+    [
+     "13502",
+     1
+    ],
+    [
+     "364",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "734",
+   "metier": "cordonnier",
+   "level": 17,
+   "ingredients": [
+    [
+     "373",
+     3
+    ],
+    [
+     "2563",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "214",
+   "metier": "forgeron",
+   "level": 17,
+   "ingredients": [
+    [
+     "13726",
+     3
+    ],
+    [
+     "747",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "241",
+   "metier": "forgeron",
+   "level": 17,
+   "ingredients": [
+    [
+     "6903",
+     3
+    ],
+    [
+     "366",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "502",
+   "metier": "forgeron",
+   "level": 17,
+   "ingredients": [
+    [
+     "407",
+     3
+    ],
+    [
+     "2539",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "821",
+   "metier": "forgeron",
+   "level": 17,
+   "ingredients": [
+    [
+     "643",
+     1
+    ],
+    [
+     "747",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "8127",
+   "metier": "forgeron",
+   "level": 17,
+   "ingredients": [
+    [
+     "8157",
+     2
+    ],
+    [
+     "306",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "710",
+   "metier": "tailleur",
+   "level": 17,
+   "ingredients": [
+    [
+     "2539",
+     1
+    ],
+    [
+     "288",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "775",
+   "metier": "tailleur",
+   "level": 17,
+   "ingredients": [
+    [
+     "2662",
+     1
+    ],
+    [
+     "309",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "7122",
+   "metier": "bijoutier",
+   "level": 18,
+   "ingredients": [
+    [
+     "6898",
+     3
+    ],
+    [
+     "306",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "6908",
+   "metier": "cordonnier",
+   "level": 18,
+   "ingredients": [
+    [
+     "387",
+     3
+    ],
+    [
+     "1672",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "328",
+   "metier": "forgeron",
+   "level": 18,
+   "ingredients": [
+    [
+     "6899",
+     3
+    ],
+    [
+     "2659",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "342",
+   "metier": "forgeron",
+   "level": 18,
+   "ingredients": [
+    [
+     "2539",
+     1
+    ],
+    [
+     "373",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "947",
+   "metier": "tailleur",
+   "level": 18,
+   "ingredients": [
+    [
+     "641",
+     1
+    ],
+    [
+     "2322",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8131",
+   "metier": "tailleur",
+   "level": 18,
+   "ingredients": [
+    [
+     "2665",
+     1
+    ],
+    [
+     "8157",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "458",
+   "metier": "bijoutier",
+   "level": 19,
+   "ingredients": [
+    [
+     "2539",
+     1
+    ],
+    [
+     "310",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "6910",
+   "metier": "bijoutier",
+   "level": 19,
+   "ingredients": [
+    [
+     "387",
+     3
+    ],
+    [
+     "653",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "8128",
+   "metier": "cordonnier",
+   "level": 19,
+   "ingredients": [
+    [
+     "641",
+     3
+    ],
+    [
+     "8157",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "230",
+   "metier": "forgeron",
+   "level": 19,
+   "ingredients": [
+    [
+     "2662",
+     1
+    ],
+    [
+     "6900",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "267",
+   "metier": "sculpteur",
+   "level": 19,
+   "ingredients": [
+    [
+     "13727",
+     3
+    ],
+    [
+     "374",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8125",
+   "metier": "tailleur",
+   "level": 19,
+   "ingredients": [
+    [
+     "374",
+     3
+    ],
+    [
+     "8157",
+     2
     ]
    ]
   },
@@ -22702,6 +26094,141 @@
     [
      "8157",
      4
+    ]
+   ]
+  },
+  {
+   "result": "1496",
+   "metier": "bijoutier",
+   "level": 20,
+   "ingredients": [
+    [
+     "2665",
+     1
+    ],
+    [
+     "309",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "2419",
+   "metier": "bijoutier",
+   "level": 20,
+   "ingredients": [
+    [
+     "383",
+     3
+    ],
+    [
+     "885",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "2425",
+   "metier": "bijoutier",
+   "level": 20,
+   "ingredients": [
+    [
+     "384",
+     3
+    ],
+    [
+     "2455",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "6722",
+   "metier": "bijoutier",
+   "level": 20,
+   "ingredients": [
+    [
+     "1672",
+     1
+    ],
+    [
+     "407",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "6723",
+   "metier": "bijoutier",
+   "level": 20,
+   "ingredients": [
+    [
+     "2576",
+     1
+    ],
+    [
+     "387",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8123",
+   "metier": "bijoutier",
+   "level": 20,
+   "ingredients": [
+    [
+     "2659",
+     3
+    ],
+    [
+     "8157",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "8253",
+   "metier": "bijoutier",
+   "level": 20,
+   "ingredients": [
+    [
+     "8682",
+     2
+    ],
+    [
+     "13727",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8254",
+   "metier": "bijoutier",
+   "level": 20,
+   "ingredients": [
+    [
+     "8682",
+     1
+    ],
+    [
+     "13487",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "9416",
+   "metier": "bijoutier",
+   "level": 20,
+   "ingredients": [
+    [
+     "6898",
+     3
+    ],
+    [
+     "6902",
+     3
     ]
    ]
   },
@@ -22760,6 +26287,21 @@
    ]
   },
   {
+   "result": "2539",
+   "metier": "bucheron",
+   "level": 20,
+   "ingredients": [
+    [
+     "7652",
+     1
+    ],
+    [
+     "16490",
+     1
+    ]
+   ]
+  },
+  {
    "result": "17169",
    "metier": "chasseur",
    "level": 20,
@@ -22785,6 +26327,216 @@
     ],
     [
      "289",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "2422",
+   "metier": "cordonnier",
+   "level": 20,
+   "ingredients": [
+    [
+     "384",
+     3
+    ],
+    [
+     "383",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "2428",
+   "metier": "cordonnier",
+   "level": 20,
+   "ingredients": [
+    [
+     "882",
+     3
+    ],
+    [
+     "885",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "6721",
+   "metier": "cordonnier",
+   "level": 20,
+   "ingredients": [
+    [
+     "2576",
+     1
+    ],
+    [
+     "407",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "6724",
+   "metier": "cordonnier",
+   "level": 20,
+   "ingredients": [
+    [
+     "653",
+     1
+    ],
+    [
+     "394",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8124",
+   "metier": "cordonnier",
+   "level": 20,
+   "ingredients": [
+    [
+     "309",
+     3
+    ],
+    [
+     "8157",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "8256",
+   "metier": "cordonnier",
+   "level": 20,
+   "ingredients": [
+    [
+     "8682",
+     2
+    ],
+    [
+     "13494",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8257",
+   "metier": "cordonnier",
+   "level": 20,
+   "ingredients": [
+    [
+     "8682",
+     1
+    ],
+    [
+     "13487",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "15099",
+   "metier": "cordonnier",
+   "level": 20,
+   "ingredients": [
+    [
+     "362",
+     3
+    ],
+    [
+     "2563",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "15100",
+   "metier": "cordonnier",
+   "level": 20,
+   "ingredients": [
+    [
+     "364",
+     3
+    ],
+    [
+     "363",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "18666",
+   "metier": "faconneur",
+   "level": 20,
+   "ingredients": [
+    [
+     "384",
+     3
+    ],
+    [
+     "885",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "19116",
+   "metier": "faconneur",
+   "level": 20,
+   "ingredients": [
+    [
+     "16525",
+     3
+    ],
+    [
+     "747",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "1370",
+   "metier": "forgeron",
+   "level": 20,
+   "ingredients": [
+    [
+     "2659",
+     3
+    ],
+    [
+     "747",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "2416",
+   "metier": "forgeron",
+   "level": 20,
+   "ingredients": [
+    [
+     "885",
+     3
+    ],
+    [
+     "882",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "8255",
+   "metier": "forgeron",
+   "level": 20,
+   "ingredients": [
+    [
+     "8682",
+     2
+    ],
+    [
+     "13727",
      1
     ]
    ]
@@ -22835,6 +26587,1226 @@
    ]
   },
   {
+   "result": "334",
+   "metier": "sculpteur",
+   "level": 20,
+   "ingredients": [
+    [
+     "2539",
+     2
+    ],
+    [
+     "13494",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "337",
+   "metier": "sculpteur",
+   "level": 20,
+   "ingredients": [
+    [
+     "13494",
+     3
+    ],
+    [
+     "364",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "6725",
+   "metier": "sculpteur",
+   "level": 20,
+   "ingredients": [
+    [
+     "652",
+     1
+    ],
+    [
+     "394",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "696",
+   "metier": "tailleur",
+   "level": 20,
+   "ingredients": [
+    [
+     "2322",
+     3
+    ],
+    [
+     "306",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "744",
+   "metier": "tailleur",
+   "level": 20,
+   "ingredients": [
+    [
+     "384",
+     3
+    ],
+    [
+     "2539",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "976",
+   "metier": "tailleur",
+   "level": 20,
+   "ingredients": [
+    [
+     "13727",
+     3
+    ],
+    [
+     "287",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1021",
+   "metier": "tailleur",
+   "level": 20,
+   "ingredients": [
+    [
+     "643",
+     1
+    ],
+    [
+     "2539",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "1703",
+   "metier": "tailleur",
+   "level": 20,
+   "ingredients": [
+    [
+     "384",
+     20
+    ],
+    [
+     "882",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "1704",
+   "metier": "tailleur",
+   "level": 20,
+   "ingredients": [
+    [
+     "1672",
+     3
+    ],
+    [
+     "653",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "2411",
+   "metier": "tailleur",
+   "level": 20,
+   "ingredients": [
+    [
+     "383",
+     3
+    ],
+    [
+     "882",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "2414",
+   "metier": "tailleur",
+   "level": 20,
+   "ingredients": [
+    [
+     "882",
+     3
+    ],
+    [
+     "2455",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "6719",
+   "metier": "tailleur",
+   "level": 20,
+   "ingredients": [
+    [
+     "1672",
+     1
+    ],
+    [
+     "387",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "6720",
+   "metier": "tailleur",
+   "level": 20,
+   "ingredients": [
+    [
+     "652",
+     1
+    ],
+    [
+     "407",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8258",
+   "metier": "tailleur",
+   "level": 20,
+   "ingredients": [
+    [
+     "8682",
+     2
+    ],
+    [
+     "13726",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "8259",
+   "metier": "tailleur",
+   "level": 20,
+   "ingredients": [
+    [
+     "8682",
+     2
+    ],
+    [
+     "13494",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "10971",
+   "metier": "tailleur",
+   "level": 20,
+   "ingredients": [
+    [
+     "388",
+     3
+    ],
+    [
+     "643",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "16171",
+   "metier": "tailleur",
+   "level": 20,
+   "ingredients": [
+    [
+     "8157",
+     3
+    ],
+    [
+     "747",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "16172",
+   "metier": "tailleur",
+   "level": 20,
+   "ingredients": [
+    [
+     "8682",
+     3
+    ],
+    [
+     "747",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "8109",
+   "metier": "bijoutier",
+   "level": 21,
+   "ingredients": [
+    [
+     "366",
+     4
+    ],
+    [
+     "288",
+     1
+    ],
+    [
+     "8682",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "271",
+   "metier": "forgeron",
+   "level": 21,
+   "ingredients": [
+    [
+     "310",
+     5
+    ],
+    [
+     "747",
+     2
+    ],
+    [
+     "6902",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "781",
+   "metier": "tailleur",
+   "level": 21,
+   "ingredients": [
+    [
+     "366",
+     4
+    ],
+    [
+     "2322",
+     4
+    ],
+    [
+     "306",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "616",
+   "metier": "bijoutier",
+   "level": 22,
+   "ingredients": [
+    [
+     "747",
+     2
+    ],
+    [
+     "641",
+     1
+    ],
+    [
+     "6902",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "8108",
+   "metier": "bijoutier",
+   "level": 22,
+   "ingredients": [
+    [
+     "366",
+     4
+    ],
+    [
+     "6900",
+     4
+    ],
+    [
+     "8682",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "1623",
+   "metier": "cordonnier",
+   "level": 22,
+   "ingredients": [
+    [
+     "309",
+     4
+    ],
+    [
+     "362",
+     4
+    ],
+    [
+     "388",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "6909",
+   "metier": "cordonnier",
+   "level": 22,
+   "ingredients": [
+    [
+     "387",
+     4
+    ],
+    [
+     "2576",
+     1
+    ],
+    [
+     "8157",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "8113",
+   "metier": "cordonnier",
+   "level": 22,
+   "ingredients": [
+    [
+     "366",
+     4
+    ],
+    [
+     "384",
+     4
+    ],
+    [
+     "8682",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "67",
+   "metier": "forgeron",
+   "level": 22,
+   "ingredients": [
+    [
+     "13487",
+     4
+    ],
+    [
+     "2455",
+     2
+    ],
+    [
+     "6899",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "1377",
+   "metier": "forgeron",
+   "level": 22,
+   "ingredients": [
+    [
+     "2539",
+     2
+    ],
+    [
+     "653",
+     2
+    ],
+    [
+     "1690",
+     6
+    ]
+   ]
+  },
+  {
+   "result": "331",
+   "metier": "sculpteur",
+   "level": 22,
+   "ingredients": [
+    [
+     "2539",
+     2
+    ],
+    [
+     "2662",
+     1
+    ],
+    [
+     "6902",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "701",
+   "metier": "tailleur",
+   "level": 22,
+   "ingredients": [
+    [
+     "373",
+     4
+    ],
+    [
+     "747",
+     2
+    ],
+    [
+     "6898",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "772",
+   "metier": "tailleur",
+   "level": 22,
+   "ingredients": [
+    [
+     "6900",
+     4
+    ],
+    [
+     "362",
+     4
+    ],
+    [
+     "374",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "954",
+   "metier": "tailleur",
+   "level": 22,
+   "ingredients": [
+    [
+     "6903",
+     4
+    ],
+    [
+     "641",
+     1
+    ],
+    [
+     "364",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "8111",
+   "metier": "cordonnier",
+   "level": 23,
+   "ingredients": [
+    [
+     "366",
+     4
+    ],
+    [
+     "363",
+     4
+    ],
+    [
+     "8682",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1403",
+   "metier": "forgeron",
+   "level": 23,
+   "ingredients": [
+    [
+     "6900",
+     4
+    ],
+    [
+     "6903",
+     4
+    ],
+    [
+     "288",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "8114",
+   "metier": "tailleur",
+   "level": 23,
+   "ingredients": [
+    [
+     "366",
+     4
+    ],
+    [
+     "1681",
+     4
+    ],
+    [
+     "8682",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1426",
+   "metier": "forgeron",
+   "level": 24,
+   "ingredients": [
+    [
+     "6899",
+     4
+    ],
+    [
+     "2663",
+     1
+    ],
+    [
+     "6898",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "1095",
+   "metier": "sculpteur",
+   "level": 24,
+   "ingredients": [
+    [
+     "309",
+     4
+    ],
+    [
+     "373",
+     4
+    ],
+    [
+     "8157",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "18659",
+   "metier": "faconneur",
+   "level": 25,
+   "ingredients": [
+    [
+     "8682",
+     3
+    ],
+    [
+     "13502",
+     2
+    ],
+    [
+     "8680",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "354",
+   "metier": "forgeron",
+   "level": 25,
+   "ingredients": [
+    [
+     "2491",
+     4
+    ],
+    [
+     "1681",
+     1
+    ],
+    [
+     "366",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "676",
+   "metier": "forgeron",
+   "level": 25,
+   "ingredients": [
+    [
+     "2539",
+     2
+    ],
+    [
+     "653",
+     1
+    ],
+    [
+     "394",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "8110",
+   "metier": "sculpteur",
+   "level": 25,
+   "ingredients": [
+    [
+     "366",
+     4
+    ],
+    [
+     "2659",
+     4
+    ],
+    [
+     "8682",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "732",
+   "metier": "bijoutier",
+   "level": 26,
+   "ingredients": [
+    [
+     "6897",
+     4
+    ],
+    [
+     "2539",
+     2
+    ],
+    [
+     "366",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "1657",
+   "metier": "bijoutier",
+   "level": 26,
+   "ingredients": [
+    [
+     "747",
+     2
+    ],
+    [
+     "2661",
+     1
+    ],
+    [
+     "384",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "7106",
+   "metier": "bijoutier",
+   "level": 26,
+   "ingredients": [
+    [
+     "2563",
+     5
+    ],
+    [
+     "364",
+     5
+    ],
+    [
+     "643",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "2810",
+   "metier": "cordonnier",
+   "level": 26,
+   "ingredients": [
+    [
+     "407",
+     2
+    ],
+    [
+     "1681",
+     1
+    ],
+    [
+     "363",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "7212",
+   "metier": "forgeron",
+   "level": 26,
+   "ingredients": [
+    [
+     "747",
+     2
+    ],
+    [
+     "394",
+     5
+    ],
+    [
+     "2576",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "8112",
+   "metier": "tailleur",
+   "level": 26,
+   "ingredients": [
+    [
+     "366",
+     4
+    ],
+    [
+     "388",
+     4
+    ],
+    [
+     "8682",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "9454",
+   "metier": "bijoutier",
+   "level": 27,
+   "ingredients": [
+    [
+     "364",
+     4
+    ],
+    [
+     "6898",
+     4
+    ],
+    [
+     "6903",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "130",
+   "metier": "cordonnier",
+   "level": 27,
+   "ingredients": [
+    [
+     "13726",
+     4
+    ],
+    [
+     "2491",
+     4
+    ],
+    [
+     "2563",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "356",
+   "metier": "cordonnier",
+   "level": 27,
+   "ingredients": [
+    [
+     "374",
+     4
+    ],
+    [
+     "384",
+     4
+    ],
+    [
+     "8157",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1700",
+   "metier": "cordonnier",
+   "level": 27,
+   "ingredients": [
+    [
+     "6897",
+     4
+    ],
+    [
+     "363",
+     4
+    ],
+    [
+     "13494",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "2371",
+   "metier": "cordonnier",
+   "level": 27,
+   "ingredients": [
+    [
+     "373",
+     4
+    ],
+    [
+     "2455",
+     2
+    ],
+    [
+     "374",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "237",
+   "metier": "forgeron",
+   "level": 27,
+   "ingredients": [
+    [
+     "2539",
+     2
+    ],
+    [
+     "373",
+     4
+    ],
+    [
+     "6845",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "782",
+   "metier": "forgeron",
+   "level": 27,
+   "ingredients": [
+    [
+     "2539",
+     2
+    ],
+    [
+     "394",
+     4
+    ],
+    [
+     "8680",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "896",
+   "metier": "forgeron",
+   "level": 27,
+   "ingredients": [
+    [
+     "2539",
+     2
+    ],
+    [
+     "1681",
+     1
+    ],
+    [
+     "6899",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "329",
+   "metier": "sculpteur",
+   "level": 27,
+   "ingredients": [
+    [
+     "6899",
+     4
+    ],
+    [
+     "747",
+     2
+    ],
+    [
+     "2322",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "7173",
+   "metier": "sculpteur",
+   "level": 27,
+   "ingredients": [
+    [
+     "6899",
+     4
+    ],
+    [
+     "2455",
+     2
+    ],
+    [
+     "309",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "7108",
+   "metier": "tailleur",
+   "level": 27,
+   "ingredients": [
+    [
+     "364",
+     5
+    ],
+    [
+     "362",
+     5
+    ],
+    [
+     "643",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "2443",
+   "metier": "bijoutier",
+   "level": 28,
+   "ingredients": [
+    [
+     "383",
+     6
+    ],
+    [
+     "886",
+     1
+    ],
+    [
+     "880",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "2233",
+   "metier": "cordonnier",
+   "level": 28,
+   "ingredients": [
+    [
+     "309",
+     4
+    ],
+    [
+     "6897",
+     4
+    ],
+    [
+     "6899",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "11082",
+   "metier": "cordonnier",
+   "level": 28,
+   "ingredients": [
+    [
+     "2539",
+     2
+    ],
+    [
+     "641",
+     1
+    ],
+    [
+     "884",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "1378",
+   "metier": "forgeron",
+   "level": 28,
+   "ingredients": [
+    [
+     "2539",
+     2
+    ],
+    [
+     "6841",
+     4
+    ],
+    [
+     "6844",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "1483",
+   "metier": "bijoutier",
+   "level": 29,
+   "ingredients": [
+    [
+     "13487",
+     4
+    ],
+    [
+     "641",
+     1
+    ],
+    [
+     "366",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "296",
+   "metier": "forgeron",
+   "level": 29,
+   "ingredients": [
+    [
+     "13727",
+     4
+    ],
+    [
+     "306",
+     4
+    ],
+    [
+     "13726",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "1368",
+   "metier": "forgeron",
+   "level": 29,
+   "ingredients": [
+    [
+     "2322",
+     4
+    ],
+    [
+     "2539",
+     2
+    ],
+    [
+     "6899",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "742",
+   "metier": "sculpteur",
+   "level": 29,
+   "ingredients": [
+    [
+     "364",
+     4
+    ],
+    [
+     "2539",
+     2
+    ],
+    [
+     "374",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "2445",
+   "metier": "tailleur",
+   "level": 29,
+   "ingredients": [
+    [
+     "384",
+     5
+    ],
+    [
+     "886",
+     1
+    ],
+    [
+     "880",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "10828",
+   "metier": "tailleur",
+   "level": 29,
+   "ingredients": [
+    [
+     "882",
+     4
+    ],
+    [
+     "2539",
+     2
+    ],
+    [
+     "309",
+     4
+    ]
+   ]
+  },
+  {
    "result": "9887",
    "metier": "alchimiste",
    "level": 30,
@@ -22875,6 +27847,78 @@
     ],
     [
      "289",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "7652",
+   "metier": "alchimiste",
+   "level": 30,
+   "ingredients": [
+    [
+     "428",
+     10
+    ],
+    [
+     "421",
+     20
+    ]
+   ]
+  },
+  {
+   "result": "1498",
+   "metier": "bijoutier",
+   "level": 30,
+   "ingredients": [
+    [
+     "2661",
+     1
+    ],
+    [
+     "364",
+     4
+    ],
+    [
+     "746",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "2397",
+   "metier": "bijoutier",
+   "level": 30,
+   "ingredients": [
+    [
+     "2468",
+     1
+    ],
+    [
+     "2322",
+     4
+    ],
+    [
+     "2574",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "9455",
+   "metier": "bijoutier",
+   "level": 30,
+   "ingredients": [
+    [
+     "2663",
+     1
+    ],
+    [
+     "6902",
+     4
+    ],
+    [
+     "746",
      1
     ]
    ]
@@ -22949,6 +27993,291 @@
    ]
   },
   {
+   "result": "2442",
+   "metier": "cordonnier",
+   "level": 30,
+   "ingredients": [
+    [
+     "882",
+     3
+    ],
+    [
+     "886",
+     2
+    ],
+    [
+     "880",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "2444",
+   "metier": "cordonnier",
+   "level": 30,
+   "ingredients": [
+    [
+     "885",
+     5
+    ],
+    [
+     "886",
+     2
+    ],
+    [
+     "880",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "9413",
+   "metier": "cordonnier",
+   "level": 30,
+   "ingredients": [
+    [
+     "364",
+     4
+    ],
+    [
+     "12745",
+     1
+    ],
+    [
+     "384",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "15548",
+   "metier": "cordonnier",
+   "level": 30,
+   "ingredients": [
+    [
+     "364",
+     4
+    ],
+    [
+     "2563",
+     4
+    ],
+    [
+     "384",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "17293",
+   "metier": "cordonnier",
+   "level": 30,
+   "ingredients": [
+    [
+     "2451",
+     1
+    ],
+    [
+     "6900",
+     4
+    ],
+    [
+     "13502",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "17300",
+   "metier": "cordonnier",
+   "level": 30,
+   "ingredients": [
+    [
+     "362",
+     4
+    ],
+    [
+     "6897",
+     4
+    ],
+    [
+     "384",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "17302",
+   "metier": "cordonnier",
+   "level": 30,
+   "ingredients": [
+    [
+     "362",
+     4
+    ],
+    [
+     "384",
+     4
+    ],
+    [
+     "2451",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "17495",
+   "metier": "cordonnier",
+   "level": 30,
+   "ingredients": [
+    [
+     "2563",
+     4
+    ],
+    [
+     "8680",
+     4
+    ],
+    [
+     "13726",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "18665",
+   "metier": "faconneur",
+   "level": 30,
+   "ingredients": [
+    [
+     "2466",
+     1
+    ],
+    [
+     "2451",
+     1
+    ],
+    [
+     "2249",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "30687",
+   "metier": "faconneur",
+   "level": 30,
+   "ingredients": [
+    [
+     "880",
+     1
+    ],
+    [
+     "886",
+     2
+    ],
+    [
+     "2455",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "1373",
+   "metier": "forgeron",
+   "level": 30,
+   "ingredients": [
+    [
+     "13502",
+     1
+    ],
+    [
+     "746",
+     1
+    ],
+    [
+     "13727",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "1374",
+   "metier": "forgeron",
+   "level": 30,
+   "ingredients": [
+    [
+     "6899",
+     4
+    ],
+    [
+     "8680",
+     1
+    ],
+    [
+     "2491",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "1504",
+   "metier": "forgeron",
+   "level": 30,
+   "ingredients": [
+    [
+     "288",
+     1
+    ],
+    [
+     "363",
+     4
+    ],
+    [
+     "2322",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "2440",
+   "metier": "forgeron",
+   "level": 30,
+   "ingredients": [
+    [
+     "884",
+     5
+    ],
+    [
+     "886",
+     2
+    ],
+    [
+     "880",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "17525",
+   "metier": "forgeron",
+   "level": 30,
+   "ingredients": [
+    [
+     "2659",
+     4
+    ],
+    [
+     "2455",
+     2
+    ],
+    [
+     "309",
+     4
+    ]
+   ]
+  },
+  {
    "result": "524",
    "metier": "paysan",
    "level": 30,
@@ -22979,12 +28308,1627 @@
    ]
   },
   {
+   "result": "332",
+   "metier": "sculpteur",
+   "level": 30,
+   "ingredients": [
+    [
+     "364",
+     4
+    ],
+    [
+     "12745",
+     1
+    ],
+    [
+     "2491",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "1104",
+   "metier": "sculpteur",
+   "level": 30,
+   "ingredients": [
+    [
+     "12745",
+     1
+    ],
+    [
+     "8680",
+     1
+    ],
+    [
+     "13494",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "1351",
+   "metier": "sculpteur",
+   "level": 30,
+   "ingredients": [
+    [
+     "13726",
+     4
+    ],
+    [
+     "6900",
+     4
+    ],
+    [
+     "388",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "758",
+   "metier": "tailleur",
+   "level": 30,
+   "ingredients": [
+    [
+     "12745",
+     1
+    ],
+    [
+     "1681",
+     1
+    ],
+    [
+     "6900",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "790",
+   "metier": "tailleur",
+   "level": 30,
+   "ingredients": [
+    [
+     "2468",
+     1
+    ],
+    [
+     "12745",
+     1
+    ],
+    [
+     "373",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "8918",
+   "metier": "tailleur",
+   "level": 30,
+   "ingredients": [
+    [
+     "373",
+     4
+    ],
+    [
+     "12745",
+     1
+    ],
+    [
+     "2322",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "1486",
+   "metier": "bijoutier",
+   "level": 31,
+   "ingredients": [
+    [
+     "383",
+     6
+    ],
+    [
+     "387",
+     5
+    ],
+    [
+     "304",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "2441",
+   "metier": "bijoutier",
+   "level": 31,
+   "ingredients": [
+    [
+     "886",
+     1
+    ],
+    [
+     "880",
+     1
+    ],
+    [
+     "882",
+     6
+    ]
+   ]
+  },
+  {
+   "result": "6999",
+   "metier": "bijoutier",
+   "level": 31,
+   "ingredients": [
+    [
+     "884",
+     1
+    ],
+    [
+     "746",
+     1
+    ],
+    [
+     "1690",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "8881",
+   "metier": "bijoutier",
+   "level": 31,
+   "ingredients": [
+    [
+     "884",
+     2
+    ],
+    [
+     "2468",
+     1
+    ],
+    [
+     "885",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "10965",
+   "metier": "bijoutier",
+   "level": 31,
+   "ingredients": [
+    [
+     "881",
+     6
+    ],
+    [
+     "2467",
+     1
+    ],
+    [
+     "387",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "11083",
+   "metier": "bijoutier",
+   "level": 31,
+   "ingredients": [
+    [
+     "407",
+     4
+    ],
+    [
+     "12745",
+     1
+    ],
+    [
+     "885",
+     6
+    ]
+   ]
+  },
+  {
+   "result": "18640",
+   "metier": "bijoutier",
+   "level": 31,
+   "ingredients": [
+    [
+     "1672",
+     1
+    ],
+    [
+     "6844",
+     4
+    ],
+    [
+     "746",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "156",
+   "metier": "cordonnier",
+   "level": 31,
+   "ingredients": [
+    [
+     "2468",
+     1
+    ],
+    [
+     "387",
+     4
+    ],
+    [
+     "746",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "10964",
+   "metier": "cordonnier",
+   "level": 31,
+   "ingredients": [
+    [
+     "304",
+     4
+    ],
+    [
+     "881",
+     5
+    ],
+    [
+     "6845",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "18639",
+   "metier": "cordonnier",
+   "level": 31,
+   "ingredients": [
+    [
+     "387",
+     4
+    ],
+    [
+     "12745",
+     1
+    ],
+    [
+     "407",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "484",
+   "metier": "forgeron",
+   "level": 31,
+   "ingredients": [
+    [
+     "304",
+     6
+    ],
+    [
+     "383",
+     1
+    ],
+    [
+     "387",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "273",
+   "metier": "sculpteur",
+   "level": 31,
+   "ingredients": [
+    [
+     "884",
+     1
+    ],
+    [
+     "304",
+     6
+    ],
+    [
+     "746",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "867",
+   "metier": "bijoutier",
+   "level": 32,
+   "ingredients": [
+    [
+     "407",
+     5
+    ],
+    [
+     "6843",
+     5
+    ],
+    [
+     "304",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "2389",
+   "metier": "bijoutier",
+   "level": 32,
+   "ingredients": [
+    [
+     "653",
+     1
+    ],
+    [
+     "12745",
+     1
+    ],
+    [
+     "387",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "2394",
+   "metier": "bijoutier",
+   "level": 32,
+   "ingredients": [
+    [
+     "306",
+     4
+    ],
+    [
+     "309",
+     4
+    ],
+    [
+     "885",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "11051",
+   "metier": "bijoutier",
+   "level": 32,
+   "ingredients": [
+    [
+     "407",
+     6
+    ],
+    [
+     "1690",
+     4
+    ],
+    [
+     "746",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "2710",
+   "metier": "cordonnier",
+   "level": 32,
+   "ingredients": [
+    [
+     "882",
+     1
+    ],
+    [
+     "387",
+     4
+    ],
+    [
+     "746",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "9412",
+   "metier": "cordonnier",
+   "level": 32,
+   "ingredients": [
+    [
+     "304",
+     5
+    ],
+    [
+     "2468",
+     1
+    ],
+    [
+     "6844",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "10956",
+   "metier": "cordonnier",
+   "level": 32,
+   "ingredients": [
+    [
+     "884",
+     1
+    ],
+    [
+     "304",
+     4
+    ],
+    [
+     "746",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "10963",
+   "metier": "cordonnier",
+   "level": 32,
+   "ingredients": [
+    [
+     "383",
+     5
+    ],
+    [
+     "881",
+     4
+    ],
+    [
+     "304",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "674",
+   "metier": "forgeron",
+   "level": 32,
+   "ingredients": [
+    [
+     "12745",
+     1
+    ],
+    [
+     "6845",
+     5
+    ],
+    [
+     "2467",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "336",
+   "metier": "sculpteur",
+   "level": 32,
+   "ingredients": [
+    [
+     "882",
+     4
+    ],
+    [
+     "12745",
+     1
+    ],
+    [
+     "304",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "712",
+   "metier": "tailleur",
+   "level": 32,
+   "ingredients": [
+    [
+     "407",
+     4
+    ],
+    [
+     "885",
+     5
+    ],
+    [
+     "387",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "2438",
+   "metier": "tailleur",
+   "level": 32,
+   "ingredients": [
+    [
+     "882",
+     5
+    ],
+    [
+     "884",
+     1
+    ],
+    [
+     "886",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "326",
+   "metier": "bijoutier",
+   "level": 33,
+   "ingredients": [
+    [
+     "304",
+     5
+    ],
+    [
+     "1672",
+     1
+    ],
+    [
+     "6843",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "10955",
+   "metier": "bijoutier",
+   "level": 33,
+   "ingredients": [
+    [
+     "2576",
+     1
+    ],
+    [
+     "746",
+     1
+    ],
+    [
+     "304",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "6929",
+   "metier": "cordonnier",
+   "level": 33,
+   "ingredients": [
+    [
+     "407",
+     6
+    ],
+    [
+     "12745",
+     1
+    ],
+    [
+     "886",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "7107",
+   "metier": "cordonnier",
+   "level": 33,
+   "ingredients": [
+    [
+     "362",
+     5
+    ],
+    [
+     "2563",
+     5
+    ],
+    [
+     "486",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "10990",
+   "metier": "cordonnier",
+   "level": 33,
+   "ingredients": [
+    [
+     "881",
+     5
+    ],
+    [
+     "6845",
+     5
+    ],
+    [
+     "383",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "66",
+   "metier": "forgeron",
+   "level": 33,
+   "ingredients": [
+    [
+     "387",
+     5
+    ],
+    [
+     "2468",
+     1
+    ],
+    [
+     "885",
+     6
+    ]
+   ]
+  },
+  {
+   "result": "456",
+   "metier": "forgeron",
+   "level": 33,
+   "ingredients": [
+    [
+     "12745",
+     1
+    ],
+    [
+     "886",
+     1
+    ],
+    [
+     "450",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "1369",
+   "metier": "forgeron",
+   "level": 33,
+   "ingredients": [
+    [
+     "881",
+     4
+    ],
+    [
+     "304",
+     6
+    ],
+    [
+     "6843",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "1120",
+   "metier": "sculpteur",
+   "level": 33,
+   "ingredients": [
+    [
+     "1672",
+     1
+    ],
+    [
+     "884",
+     2
+    ],
+    [
+     "12745",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "952",
+   "metier": "tailleur",
+   "level": 33,
+   "ingredients": [
+    [
+     "1690",
+     4
+    ],
+    [
+     "2576",
+     1
+    ],
+    [
+     "383",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "9402",
+   "metier": "cordonnier",
+   "level": 34,
+   "ingredients": [
+    [
+     "407",
+     6
+    ],
+    [
+     "884",
+     1
+    ],
+    [
+     "387",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "11052",
+   "metier": "cordonnier",
+   "level": 34,
+   "ingredients": [
+    [
+     "884",
+     2
+    ],
+    [
+     "12745",
+     1
+    ],
+    [
+     "885",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "919",
+   "metier": "forgeron",
+   "level": 34,
+   "ingredients": [
+    [
+     "885",
+     5
+    ],
+    [
+     "2455",
+     2
+    ],
+    [
+     "450",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "1058",
+   "metier": "forgeron",
+   "level": 34,
+   "ingredients": [
+    [
+     "881",
+     4
+    ],
+    [
+     "885",
+     1
+    ],
+    [
+     "884",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "658",
+   "metier": "sculpteur",
+   "level": 34,
+   "ingredients": [
+    [
+     "6845",
+     5
+    ],
+    [
+     "6843",
+     5
+    ],
+    [
+     "885",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "791",
+   "metier": "sculpteur",
+   "level": 34,
+   "ingredients": [
+    [
+     "653",
+     1
+    ],
+    [
+     "881",
+     5
+    ],
+    [
+     "450",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "779",
+   "metier": "tailleur",
+   "level": 34,
+   "ingredients": [
+    [
+     "387",
+     4
+    ],
+    [
+     "653",
+     1
+    ],
+    [
+     "884",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "955",
+   "metier": "tailleur",
+   "level": 34,
+   "ingredients": [
+    [
+     "885",
+     1
+    ],
+    [
+     "12745",
+     1
+    ],
+    [
+     "387",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "2070",
+   "metier": "tailleur",
+   "level": 34,
+   "ingredients": [
+    [
+     "394",
+     5
+    ],
+    [
+     "2453",
+     1
+    ],
+    [
+     "407",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "7109",
+   "metier": "tailleur",
+   "level": 34,
+   "ingredients": [
+    [
+     "363",
+     5
+    ],
+    [
+     "643",
+     1
+    ],
+    [
+     "2563",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "638",
+   "metier": "bijoutier",
+   "level": 35,
+   "ingredients": [
+    [
+     "394",
+     5
+    ],
+    [
+     "882",
+     1
+    ],
+    [
+     "407",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "10987",
+   "metier": "cordonnier",
+   "level": 35,
+   "ingredients": [
+    [
+     "387",
+     4
+    ],
+    [
+     "383",
+     4
+    ],
+    [
+     "407",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "30681",
+   "metier": "faconneur",
+   "level": 35,
+   "ingredients": [
+    [
+     "407",
+     4
+    ],
+    [
+     "12745",
+     1
+    ],
+    [
+     "652",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "1379",
+   "metier": "forgeron",
+   "level": 35,
+   "ingredients": [
+    [
+     "653",
+     1
+    ],
+    [
+     "12745",
+     1
+    ],
+    [
+     "881",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "1357",
+   "metier": "sculpteur",
+   "level": 35,
+   "ingredients": [
+    [
+     "383",
+     4
+    ],
+    [
+     "746",
+     1
+    ],
+    [
+     "6845",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "2095",
+   "metier": "tailleur",
+   "level": 35,
+   "ingredients": [
+    [
+     "387",
+     4
+    ],
+    [
+     "2453",
+     1
+    ],
+    [
+     "383",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "1495",
+   "metier": "bijoutier",
+   "level": 36,
+   "ingredients": [
+    [
+     "394",
+     5
+    ],
+    [
+     "885",
+     1
+    ],
+    [
+     "407",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "9942",
+   "metier": "bijoutier",
+   "level": 36,
+   "ingredients": [
+    [
+     "885",
+     1
+    ],
+    [
+     "387",
+     5
+    ],
+    [
+     "16001",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "15992",
+   "metier": "bijoutier",
+   "level": 36,
+   "ingredients": [
+    [
+     "884",
+     2
+    ],
+    [
+     "16001",
+     5
+    ],
+    [
+     "16002",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "592",
+   "metier": "sculpteur",
+   "level": 36,
+   "ingredients": [
+    [
+     "882",
+     4
+    ],
+    [
+     "12745",
+     1
+    ],
+    [
+     "387",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "704",
+   "metier": "tailleur",
+   "level": 36,
+   "ingredients": [
+    [
+     "6845",
+     4
+    ],
+    [
+     "6844",
+     4
+    ],
+    [
+     "886",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "2382",
+   "metier": "tailleur",
+   "level": 36,
+   "ingredients": [
+    [
+     "884",
+     2
+    ],
+    [
+     "1672",
+     1
+    ],
+    [
+     "407",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "6926",
+   "metier": "tailleur",
+   "level": 36,
+   "ingredients": [
+    [
+     "407",
+     5
+    ],
+    [
+     "886",
+     1
+    ],
+    [
+     "1672",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "916",
+   "metier": "bijoutier",
+   "level": 37,
+   "ingredients": [
+    [
+     "884",
+     1
+    ],
+    [
+     "407",
+     5
+    ],
+    [
+     "12745",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "9452",
+   "metier": "bijoutier",
+   "level": 37,
+   "ingredients": [
+    [
+     "362",
+     4
+    ],
+    [
+     "2455",
+     2
+    ],
+    [
+     "13502",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "10189",
+   "metier": "bijoutier",
+   "level": 37,
+   "ingredients": [
+    [
+     "2451",
+     1
+    ],
+    [
+     "383",
+     5
+    ],
+    [
+     "1690",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "2367",
+   "metier": "cordonnier",
+   "level": 37,
+   "ingredients": [
+    [
+     "884",
+     1
+    ],
+    [
+     "6841",
+     5
+    ],
+    [
+     "2451",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "10191",
+   "metier": "cordonnier",
+   "level": 37,
+   "ingredients": [
+    [
+     "6843",
+     5
+    ],
+    [
+     "304",
+     4
+    ],
+    [
+     "746",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1151",
+   "metier": "sculpteur",
+   "level": 37,
+   "ingredients": [
+    [
+     "387",
+     5
+    ],
+    [
+     "882",
+     5
+    ],
+    [
+     "1690",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "709",
+   "metier": "tailleur",
+   "level": 37,
+   "ingredients": [
+    [
+     "383",
+     4
+    ],
+    [
+     "387",
+     4
+    ],
+    [
+     "882",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "2096",
+   "metier": "tailleur",
+   "level": 37,
+   "ingredients": [
+    [
+     "881",
+     4
+    ],
+    [
+     "387",
+     4
+    ],
+    [
+     "2451",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "6927",
+   "metier": "tailleur",
+   "level": 37,
+   "ingredients": [
+    [
+     "407",
+     5
+    ],
+    [
+     "886",
+     1
+    ],
+    [
+     "746",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1480",
+   "metier": "bijoutier",
+   "level": 38,
+   "ingredients": [
+    [
+     "653",
+     1
+    ],
+    [
+     "12745",
+     1
+    ],
+    [
+     "881",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "6928",
+   "metier": "bijoutier",
+   "level": 38,
+   "ingredients": [
+    [
+     "407",
+     5
+    ],
+    [
+     "12745",
+     1
+    ],
+    [
+     "886",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "9922",
+   "metier": "cordonnier",
+   "level": 38,
+   "ingredients": [
+    [
+     "884",
+     1
+    ],
+    [
+     "383",
+     1
+    ],
+    [
+     "387",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "10190",
+   "metier": "cordonnier",
+   "level": 38,
+   "ingredients": [
+    [
+     "387",
+     5
+    ],
+    [
+     "653",
+     1
+    ],
+    [
+     "6843",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "17506",
+   "metier": "cordonnier",
+   "level": 38,
+   "ingredients": [
+    [
+     "882",
+     1
+    ],
+    [
+     "387",
+     5
+    ],
+    [
+     "746",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "17507",
+   "metier": "cordonnier",
+   "level": 38,
+   "ingredients": [
+    [
+     "2322",
+     5
+    ],
+    [
+     "881",
+     5
+    ],
+    [
+     "746",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1112",
+   "metier": "sculpteur",
+   "level": 38,
+   "ingredients": [
+    [
+     "6844",
+     5
+    ],
+    [
+     "882",
+     2
+    ],
+    [
+     "383",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "6459",
+   "metier": "bijoutier",
+   "level": 39,
+   "ingredients": [
+    [
+     "6843",
+     5
+    ],
+    [
+     "2453",
+     1
+    ],
+    [
+     "6845",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "12658",
+   "metier": "bijoutier",
+   "level": 39,
+   "ingredients": [
+    [
+     "2467",
+     1
+    ],
+    [
+     "6841",
+     5
+    ],
+    [
+     "12745",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "10173",
+   "metier": "cordonnier",
+   "level": 39,
+   "ingredients": [
+    [
+     "2662",
+     1
+    ],
+    [
+     "364",
+     5
+    ],
+    [
+     "746",
+     1
+    ]
+   ]
+  },
+  {
    "result": "16285",
    "metier": "alchimiste",
    "level": 40,
    "ingredients": [
     [
      "16002",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "159",
+   "metier": "bijoutier",
+   "level": 40,
+   "ingredients": [
+    [
+     "2467",
+     1
+    ],
+    [
+     "12745",
+     2
+    ],
+    [
+     "6845",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "6464",
+   "metier": "bijoutier",
+   "level": 40,
+   "ingredients": [
+    [
+     "653",
+     1
+    ],
+    [
+     "12745",
+     2
+    ],
+    [
+     "1690",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "7000",
+   "metier": "bijoutier",
+   "level": 40,
+   "ingredients": [
+    [
+     "387",
+     5
+    ],
+    [
+     "6844",
+     4
+    ],
+    [
+     "394",
      4
     ]
    ]
@@ -23032,6 +29976,173 @@
     [
      "303",
      10
+    ]
+   ]
+  },
+  {
+   "result": "12745",
+   "metier": "bucheron",
+   "level": 40,
+   "ingredients": [
+    [
+     "7652",
+     1
+    ],
+    [
+     "16491",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "10640",
+   "metier": "cordonnier",
+   "level": 40,
+   "ingredients": [
+    [
+     "882",
+     1
+    ],
+    [
+     "12745",
+     2
+    ],
+    [
+     "304",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "11057",
+   "metier": "cordonnier",
+   "level": 40,
+   "ingredients": [
+    [
+     "394",
+     5
+    ],
+    [
+     "12745",
+     2
+    ],
+    [
+     "884",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "17301",
+   "metier": "cordonnier",
+   "level": 40,
+   "ingredients": [
+    [
+     "884",
+     1
+    ],
+    [
+     "304",
+     5
+    ],
+    [
+     "881",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "17503",
+   "metier": "cordonnier",
+   "level": 40,
+   "ingredients": [
+    [
+     "383",
+     5
+    ],
+    [
+     "407",
+     5
+    ],
+    [
+     "746",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "65",
+   "metier": "forgeron",
+   "level": 40,
+   "ingredients": [
+    [
+     "407",
+     5
+    ],
+    [
+     "881",
+     5
+    ],
+    [
+     "6841",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "1031",
+   "metier": "forgeron",
+   "level": 40,
+   "ingredients": [
+    [
+     "653",
+     1
+    ],
+    [
+     "407",
+     5
+    ],
+    [
+     "746",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "1371",
+   "metier": "forgeron",
+   "level": 40,
+   "ingredients": [
+    [
+     "882",
+     5
+    ],
+    [
+     "12745",
+     2
+    ],
+    [
+     "6844",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "7200",
+   "metier": "forgeron",
+   "level": 40,
+   "ingredients": [
+    [
+     "6841",
+     5
+    ],
+    [
+     "394",
+     5
+    ],
+    [
+     "746",
+     2
     ]
    ]
   },
@@ -23089,6 +30200,120 @@
     [
      "1844",
      1
+    ]
+   ]
+  },
+  {
+   "result": "320",
+   "metier": "sculpteur",
+   "level": 40,
+   "ingredients": [
+    [
+     "407",
+     5
+    ],
+    [
+     "884",
+     1
+    ],
+    [
+     "746",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "1355",
+   "metier": "sculpteur",
+   "level": 40,
+   "ingredients": [
+    [
+     "407",
+     5
+    ],
+    [
+     "6844",
+     4
+    ],
+    [
+     "746",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "1367",
+   "metier": "sculpteur",
+   "level": 40,
+   "ingredients": [
+    [
+     "652",
+     1
+    ],
+    [
+     "12745",
+     2
+    ],
+    [
+     "6843",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "7110",
+   "metier": "sculpteur",
+   "level": 40,
+   "ingredients": [
+    [
+     "363",
+     5
+    ],
+    [
+     "364",
+     5
+    ],
+    [
+     "16001",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "15990",
+   "metier": "sculpteur",
+   "level": 40,
+   "ingredients": [
+    [
+     "652",
+     1
+    ],
+    [
+     "8157",
+     1
+    ],
+    [
+     "1672",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "15994",
+   "metier": "tailleur",
+   "level": 40,
+   "ingredients": [
+    [
+     "383",
+     4
+    ],
+    [
+     "16001",
+     5
+    ],
+    [
+     "16002",
+     3
     ]
    ]
   },
@@ -23193,6 +30418,36 @@
    "id": 65,
    "name": "Bricoleur",
    "icon": 34
+  },
+  "bijoutier": {
+   "id": 16,
+   "name": "Bijoutier",
+   "icon": 15
+  },
+  "cordonnier": {
+   "id": 15,
+   "name": "Cordonnier",
+   "icon": 5
+  },
+  "tailleur": {
+   "id": 27,
+   "name": "Tailleur",
+   "icon": 20
+  },
+  "forgeron": {
+   "id": 11,
+   "name": "Forgeron",
+   "icon": 10
+  },
+  "sculpteur": {
+   "id": 13,
+   "name": "Sculpteur",
+   "icon": 6
+  },
+  "faconneur": {
+   "id": 60,
+   "name": "Façonneur",
+   "icon": 40
   }
  }
 }
