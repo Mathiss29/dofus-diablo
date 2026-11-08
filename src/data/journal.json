@@ -214,7 +214,9 @@
           "Commande à Malek : fixe une valeur à atteindre et un plancher à ne pas casser sur chaque ligne, un budget, demande-lui son estimation (chances, kamas, runes), puis laisse-lui l'objet et reviens le chercher quelques minutes plus tard.",
           "Collection d'apparences : briser ou recycler une coiffe, une cape ou un bouclier pour la première fois garde son apparence dans l'onglet Apparats de l'inventaire, et chaque panoplie complétée donne un succès (catégorie Collection).",
           "Nouvelle case dans l'inventaire : « Briser les Communs au ramassage ». Les objets Communs partent en runes dès que tu les ramasses. Le recyclage se fait désormais seulement chez Kerubim Crépin (plus de Maj + clic dans le sac).",
-          "L'Osamodas arrive en essai dans la partie de test (diablofus.com/#test, classe à choisir avec F1) : ses 15 premiers sorts officiels, le Tofu dès le niveau 1 puis Bouftou, Crapipou et Dragoune sur A Z R T. Les bêtes ont leurs vrais sorts, te soignent quand tu faiblis et s'éveillent quand la jauge d'Éveil est pleine (rappuie sur leur touche)."
+          "L'Osamodas arrive en essai dans la partie de test (diablofus.com/#test, classe à choisir avec F1) : ses 15 premiers sorts officiels, le Tofu dès le niveau 1 puis Bouftou, Crapipou et Dragoune sur A Z R T. Les bêtes ont leurs vrais sorts, te soignent quand tu faiblis et s'éveillent quand la jauge d'Éveil est pleine (rappuie sur leur touche).",
+          "La flèche des quêtes suit le vrai trajet : la porte du bâtiment, le passage vers la carte voisine, le portail d'Astrub ou un Zaap. Plus grande, aux couleurs officielles de la quête, elle affiche le nom du but et le nombre de cartes ; l'icône de la quête est sur la mini-carte et le trajet en pointillés sur la carte (M).",
+          "Clic sur le titre de la quête suivie (en bas à gauche) : passe à la quête suivante. La flèche se coupe dans Réglages > Interface."
         ],
         "Le monde": [
           "Le prochain donjon de la quête suivie est marqué sur la carte (M).",
@@ -231,7 +233,8 @@
         ],
         "Corrections": [
           "Les Chafers Éclaireurs font enfin mal : leur Flèche de Feu était prise pour un sort de soutien et ne blessait jamais. Ils restent à distance pour tirer (même correction pour le Tofu Chimérique, le Petit Gloot et Percy Klop).",
-          "Le Zaap du Bastion tourbillonne et scintille comme les autres, et affiche son nom au survol (l'arche du Havre-Sac aussi)."
+          "Le Zaap du Bastion tourbillonne et scintille comme les autres, et affiche son nom au survol (l'arche du Havre-Sac aussi).",
+          "La flèche ne part plus dans le mauvais sens quand le but est dans un bâtiment (Capitaine des Kerubims dans la Tour de la Milice, Cité d'Astrub, donjons)."
         ],
         "En coulisses": []
       }

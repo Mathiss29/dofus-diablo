@@ -357,7 +357,8 @@ export class ZoneScene extends Phaser.Scene {
     };
     if (this.perso) this.windows.onAccueil = () => this.versAccueil();   // rendu en grand (perso_planche : render.cjs échelle 2,2)
     this.windows.reglages = this.reglages;
-    this.windows.onReglages = r => { this.zoom = Phaser.Math.Clamp(r.zoom, ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]); this.updateAmbiance(true); this.appliquerSon(); };
+    this.hud.flecheQuete = this.reglages.flecheQuete;
+    this.windows.onReglages = r => { this.hud.flecheQuete = r.flecheQuete; this.zoom = Phaser.Math.Clamp(r.zoom, ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]); this.updateAmbiance(true); this.appliquerSon(); };
     this.windows.juice = { get: () => this.fx.juice, set: on => { this.fx.juice = on; } };
     this.windows.nomPerso = () => this.perso?.nom ?? 'Aventurier';
     this.windows.heureNom = () => ambiance(this.reglages, new Date(), !!this.world.worldGrid?.mapAt(this.world.player.x, this.world.player.y)?.inside).nom;

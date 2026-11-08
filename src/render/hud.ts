@@ -119,6 +119,10 @@ export class Hud {
   private trackTitle: Txt; private trackBody: Txt;
   /** Quêtes : icône de la quête suivie, bouton « Passer » (tutoriel, 7A), ligne de succès discrète (19B), flèche au bord de l'écran (8B). */
   private trackIcon: Img; private skipBtn: Txt; private succesLine: Txt; private succesT = 0; private arrow: Phaser.GameObjects.Graphics;
+  /** Flèche des quêtes (maquette Flèche 2A 3A+3B 6A) : icône officielle de la quête et nom du but + distance. */
+  private arrowIcon: Img; private arrowLabel: Txt; private miniIcon: Img;
+  /** Réglages 8A : la flèche peut être coupée. */
+  flecheQuete = true;
   /** Clic sur « Passer » (quête id). */
   onPasser: (id: string) => void = () => {};
   private feed: FeedLine[] = [];
@@ -252,6 +256,16 @@ export class Hud {
       ev.stopPropagation(); const q = world.quetes, id = q?.suivie; if (id) this.onPasser(id);
     });
     this.arrow = fixed(scene.add.graphics(), 3);
+    this.arrowIcon = img('qi_quest', 3).setVisible(false);
+    this.arrowLabel = txt(12, { ...bold, color: '#f1ecd8', stroke: '#1a140c', strokeThickness: 4, align: 'center', lineSpacing: -1 }, 3).setVisible(false);
+    this.miniIcon = img('qi_questObjective', 5).setVisible(false);
+    // 7A : un clic sur le suivi passe à la quête suivante
+    this.trackTitle.setInteractive({ useHandCursor: true }).on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, ev: Phaser.Types.Input.EventData) => {
+      const q = world.quetes; if (!q || q.enCours.length < 2) return;
+      ev.stopPropagation();
+      const i = q.enCours.findIndex(c => c.id === q.suivie);
+      q.suivie = q.enCours[(i + 1) % q.enCours.length].id;
+    });
 
     this.bannerBg = img('background_levelup_banner', 7).setAlpha(0);
     this.center = txt(34, { ...bold, stroke: '#3a2208', strokeThickness: 6, align: 'center', lineSpacing: -4 }, 8).setOrigin(0.5).setAlpha(0);
@@ -518,6 +532,7 @@ export class Hud {
       g.lineStyle(2, 0xe05040, 1); g.lineBetween(ix + 14, iy + 2, ix + 22, iy + 12); g.lineBetween(ix + 22, iy + 2, ix + 14, iy + 12);
     }
     const mc = this.miniCam;
+    this.miniIcon.setVisible(false);
     if (mc) {
       const ps = ISO.toScreen(p.x, p.y);
       mc.setViewport(mx, my, mw, mh).centerOn(ps.x, ps.y - 20);
@@ -546,13 +561,16 @@ export class Hud {
           if (q.x < mx || q.y < my || q.x > mx + mw || q.y > my + mh) continue;
           g.fillStyle(0x9ad15a, 1); g.lineStyle(1, 0x000000, 1); g.fillCircle(q.x, q.y, 3); g.strokeCircle(q.x, q.y, 3);
         }
-        const tq = Q.cible();
-        if (tq) {
-          const q = toMini(tq.x, tq.y), cx = Phaser.Math.Clamp(q.x, mx + 6, mx + mw - 6), cy = Phaser.Math.Clamp(q.y, my + 6, my + mh - 6);
-          const k = 0.5 + 0.5 * Math.sin(world.time * 5);
-          g.fillStyle(C.gold, 1); g.lineStyle(1.5, 0x3a2208, 1); g.fillCircle(cx, cy, 4); g.strokeCircle(cx, cy, 4);
-          g.lineStyle(1.5, C.gold, 0.4 + 0.5 * k); g.strokeCircle(cx, cy, 6 + 3 * k);
-        }
+        const it = this.flecheQuete ? Q.itineraire() : null, cq2 = Q.enCours.find(c => c.id === Q.suivie) ?? Q.enCours[0];
+        if (it && cq2) {
+          // 5A : l'icône officielle de la quête (au bord de la mini-carte si le but est loin), sur le but ou la prochaine porte
+          const tq = it.but && !it.pts.some(o => o.genre === 'porte' || o.genre === 'zaap' || o.genre === 'portail') ? it.but : it.pts[it.pts.length - 1];
+          const q = toMini(tq.x, tq.y), cx = Phaser.Math.Clamp(q.x, mx + 8, mx + mw - 8), cy = Phaser.Math.Clamp(q.y, my + 8, my + mh - 8);
+          const k = 0.5 + 0.5 * Math.sin(world.time * 5), [, back] = QUEST_ICON[Q.def(cq2.id).type];
+          g.lineStyle(1.5, C.gold, 0.4 + 0.5 * k); g.strokeCircle(cx, cy, 9 + 3 * k);
+          this.miniIcon.setTexture(`qi_${back}`).setVisible(true).setPosition(cx, cy);
+          this.miniIcon.setScale(16 / Math.max(this.miniIcon.width, this.miniIcon.height));
+        } else this.miniIcon.setVisible(false);
       }
       // le perso (losange bleu) et les coins du cadre, comme dans Dofus 3
       const q = toMini(p.x, p.y);
@@ -692,7 +710,7 @@ export class Hud {
           return `${done ? '✓' : '•'} ${o.texte}${tot > 1 ? `  ${n}/${tot}` : ''}`;
         });
       const autres = Q.enCours.length - 1;
-      this.trackBody.setText([e && !cq.aRendre ? e.nom : '', ...lines, autres > 0 ? `+${autres} autre${autres > 1 ? 's' : ''} quête${autres > 1 ? 's' : ''} (journal)` : '', juice ? '' : 'Effets d\'impact désactivés (F)']
+      this.trackBody.setText([e && !cq.aRendre ? e.nom : '', ...lines, autres > 0 ? `+${autres} autre${autres > 1 ? 's' : ''} quête${autres > 1 ? 's' : ''} (clic sur le titre : changer)` : '', juice ? '' : 'Effets d\'impact désactivés (F)']
         .filter(Boolean).concat(recL).join('\n'));
       this.skipBtn.setVisible(!!def.options?.passable);
     } else {
@@ -717,23 +735,41 @@ export class Hud {
     this.skipBtn.setPosition(tx2 + tw2 - this.skipBtn.width - 8, ty2 + 6);
     this.trackBody.setPosition(tx2 + 10, ty2 + 10 + this.trackTitle.height);
     this.succesLine.setPosition(tx2 + 10, ty2 + 12 + this.trackTitle.height + this.trackBody.height);
-    // flèche au bord de l'écran vers la destination de la quête suivie, quand elle est hors de l'écran (8B)
+    // flèche au bord de l'écran (maquette Flèche 1A 2A 3A+3B 6A) : elle suit le trajet (passages, portes, portail, Zaap),
+    // couleur et icône officielles du type de quête, nom du but et distance en cartes ; seulement quand le point est hors de l'écran
     this.arrow.clear();
-    const tq = Q?.cible(), cam = this.scene.cameras.main;
-    if (tq) {
-      const s2 = ISO.toScreen(tq.x, tq.y), r = cam.worldView;
-      const sx = (s2.x - r.x) * cam.zoom, sy2 = (s2.y - r.y) * cam.zoom, m = 46;
-      if (sx < 0 || sy2 < 0 || sx > W || sy2 > H) {
-        const cx = W / 2, cy = H / 2, ang = Math.atan2(sy2 - cy, sx - cx);
-        const kx = (W / 2 - m) / Math.max(1e-6, Math.abs(Math.cos(ang))), ky = (H / 2 - m) / Math.max(1e-6, Math.abs(Math.sin(ang))), d = Math.min(kx, ky);
-        // pas sous la colonne de menus (droite) ni sous la barre de sorts (bas)
-        const ax2 = Phaser.Math.Clamp(cx + Math.cos(ang) * d, m, W - 70), ay2 = Phaser.Math.Clamp(cy + Math.sin(ang) * d, m, H - 120), pul = 0.75 + 0.25 * Math.sin(world.time * 5);
-        const pt = (l: number, w2: number) => ({ x: ax2 + Math.cos(ang) * l - Math.sin(ang) * w2, y: ay2 + Math.sin(ang) * l + Math.cos(ang) * w2 });
-        const t0 = pt(18, 0), t1 = pt(-10, 13), t2 = pt(-4, 0), t3 = pt(-10, -13);
-        this.arrow.fillStyle(C.gold, pul); this.arrow.lineStyle(2, 0x3a2208, 1);
+    const it = this.flecheQuete && cq ? Q?.itineraire() : null, cam = this.scene.cameras.main;
+    let fleche = false;
+    if (it && Q && cq) {
+      // visible tant que la porte (ou le but) n'est pas à l'écran ; la pointe suit le prochain passage du trajet
+      const ecran = (x: number, y: number) => { const s2 = ISO.toScreen(x, y), r = cam.worldView; return { x: (s2.x - r.x) * cam.zoom, y: (s2.y - r.y) * cam.zoom }; };
+      const fin = it.pts[it.pts.length - 1] ?? it, ef = ecran(fin.x, fin.y), e2 = ecran(it.x, it.y), sx = e2.x, sy2 = e2.y, m = 58;
+      if (ef.x < 0 || ef.y < 0 || ef.x > W || ef.y > H) {
+        fleche = true;
+        const cx = W / 2, cy = H / 2, ang = Math.atan2(sy2 - cy, sx - cx), co = Math.cos(ang), si = Math.sin(ang);
+        const kx = (W / 2 - m) / Math.max(1e-6, Math.abs(co)), ky = (H / 2 - m) / Math.max(1e-6, Math.abs(si)), d = Math.min(kx, ky);
+        // pas sous le cadre du perso, la mini-carte ni le bandeau (haut), la colonne de menus (droite) ni la barre de sorts (bas)
+        const ax2 = Phaser.Math.Clamp(cx + co * d, m, W - 84), ay2 = Phaser.Math.Clamp(cy + si * d, 150, H - 150), pul = 0.8 + 0.2 * Math.sin(world.time * 5);
+        const pt = (l: number, w2: number) => ({ x: ax2 + co * l - si * w2, y: ay2 + si * l + co * w2 });
+        const def = Q.def(cq.id), bleu = def.type === 'prime' || !!def.repetable, coul = bleu ? 0x37c3ea : 0x86cc1c;
+        const t0 = pt(30, 0), t1 = pt(-14, 22), t2 = pt(-4, 0), t3 = pt(-14, -22), ombre = [t0, t1, t2, t3].map(o => ({ x: o.x + 2, y: o.y + 3 }));
+        this.arrow.fillStyle(0x000000, 0.4); this.arrow.fillPoints(ombre, true);
+        this.arrow.fillStyle(coul, pul); this.arrow.lineStyle(3, 0x14230a, 1);
         this.arrow.fillPoints([t0, t1, t2, t3], true); this.arrow.strokePoints([t0, t1, t2, t3], true, true);
+        this.arrow.fillStyle(0xffffff, 0.35); this.arrow.fillTriangle(pt(26, 0).x, pt(26, 0).y, pt(-8, -15).x, pt(-8, -15).y, pt(-2, 0).x, pt(-2, 0).y);
+        // icône officielle de la quête, derrière la pointe
+        const [give, back] = QUEST_ICON[def.type], ic = pt(-36, 0);
+        this.arrowIcon.setTexture(`qi_${cq.aRendre ? back : give}`).setVisible(true).setPosition(ic.x, ic.y);
+        this.arrowIcon.setScale(36 / Math.max(this.arrowIcon.width, this.arrowIcon.height));
+        // 3A + 3B : le but et la distance (ou la zone, le portail, le Zaap)
+        const n = it.cartes, detail = it.autreZone ? `${it.autreZone} · ${it.via === 'zaap' ? `Zaap ${it.zaap ?? ''}`.trim() : 'par le portail'}`
+          : it.via === 'zaap' ? `${n} cartes · Zaap ${it.zaap ?? ''}` : n > 0 ? `${n} carte${n > 1 ? 's' : ''}` : '';
+        const lb = pt(-58, 0);
+        this.arrowLabel.setText(it.autreZone ? `${it.nom === it.autreZone ? def.nom : it.nom}\n${detail}` : detail ? `${it.nom}\n${detail}` : it.nom).setVisible(true)
+          .setOrigin(co > 0.35 ? 1 : co < -0.35 ? 0 : 0.5, si > 0.35 ? 1 : si < -0.35 ? 0 : 0.5).setPosition(lb.x, lb.y);
       }
     }
+    if (!fleche) { this.arrowIcon.setVisible(false); this.arrowLabel.setVisible(false); }
 
     // --- Butin (bas droite) : les dernières lignes s'effacent ---
     const feedY = W - 16 - Math.max(0, ...this.feed.map(f => f.text.width)) < x0 + totalW + 8 ? y0 - 8 : H - 16;   // pareil pour le butin
