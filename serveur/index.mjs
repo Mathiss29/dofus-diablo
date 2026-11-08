@@ -74,14 +74,15 @@ function tourner() {
     }
   }, 1000 / 60);
 }
-async function creerPartie(s) {
+/** monde : la partie est Incarnam en monde ouvert (étape 4, monde partagé), sinon l'arène de la Crypte. */
+async function creerPartie(s, monde = false) {
   const S = await chargerSim();
   if (s.readyState !== 1) return;
   if (!S) return envoyer(s, { k: 'refus', raison: 'indisponible' });
   if (salons.size >= SALON.salons || parties().length >= SALON.parties) return envoyer(s, { k: 'refus', raison: 'plein' });
   const sa = { code: nouveauCode(), membres: new Map([[1, s]]), suivant: 2 };
   sa.partie = new Partie(S, (num, d) => { const c = sa.membres.get(num); if (c) envoyer(c, `{"k":"recu","de":0,"d":${JSON.stringify(d)}}`); },
-    undefined, (c, perso) => lesComptes?.sauverPartie(c.compte, c.emplacement, perso));
+    undefined, (c, perso) => lesComptes?.sauverPartie(c.compte, c.emplacement, perso), { monde });
   sa.partie.arrivee(1);
   salons.set(sa.code, sa); s.salon = sa; s.num = 1;
   tourner();
@@ -107,7 +108,7 @@ function recu(s, m, brut) {
   if (m.k === 'ping') return envoyer(s, { k: 'pong', t: m.t ?? null, serveur: Date.now() });
   if (m.k === 'creer') {
     quitter(s);
-    if (m.serveur) return void creerPartie(s);
+    if (m.serveur) return void creerPartie(s, m.monde === true);
     if (salons.size >= SALON.salons) return envoyer(s, { k: 'refus', raison: 'plein' });
     const sa = { code: nouveauCode(), membres: new Map([[1, s]]), suivant: 2 };
     salons.set(sa.code, sa); s.salon = sa; s.num = 1;

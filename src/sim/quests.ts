@@ -377,6 +377,15 @@ export class Quetes {
     });
   }
 
+  /** Chez l'invité (monde partagé) : recopie ses quêtes tenues par l'hôte ou le serveur, sans rien faire apparaître ni avancer. */
+  recopier(e: EtatQuetes & { dialogue?: Dialogue | null }) {
+    this.enCours = (e.enCours ?? []).filter(c => this.existe(c.id));
+    this.finies = new Set(e.finies ?? []); this.etapesFinies = new Set(e.etapesFinies ?? []);
+    this.suivie = e.suivie ?? null; this.refaites = { ...e.refaites }; this.tableau = e.tableau ?? null;
+    this.decouvertes = new Set(e.decouvertes ?? []); this.vaincus = new Set(e.vaincus ?? []); this.objets = { ...e.objets };
+    this.donjons = JSON.parse(JSON.stringify(e.donjons ?? {}));
+    if ('dialogue' in e) this.dialogue = e.dialogue ?? null;
+  }
   def(id: string): QueteDef { return this.data.quetes[id] ?? this.ecrireContrat(id) ?? this.ecrireDefi(id)!; }
   /** La quête existe (écrite dans quetes.json, ou contrat dont la sous-zone existe). */
   existe(id: string) { return !!(this.data.quetes[id] ?? this.ecrireContrat(id) ?? this.ecrireDefi(id)); }

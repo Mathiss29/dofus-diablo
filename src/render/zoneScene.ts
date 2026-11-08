@@ -416,7 +416,7 @@ export class ZoneScene extends Phaser.Scene {
       EnLigne.annoncer(this.slot, Coop.miroir ? '__groupe' : this.zoneId, p.x, p.y, objetsPortes(p.equipment, p.apparat));
       // invitation dans un groupe : on le rejoint sans bouger ; donjon lancé par le chef : on le rejoint (on y part)
       EnLigne.onInvitation = (de, g) => montrerInvitation(de, 't\'invite dans son groupe', () => EnLigne.repondreGroupe(g, true), () => EnLigne.repondreGroupe(g, false));
-      EnLigne.onDonjon = (de, code, lieu) => montrerInvitation(de, `part en donjon${lieu ? ` (${lieu})` : ''}`, () => {
+      EnLigne.onDonjon = (de, code, lieu) => montrerInvitation(de, lieu === 'Incarnam' ? 'te propose de jouer ensemble à Incarnam' : `part en donjon${lieu ? ` (${lieu})` : ''}`, () => {
         const j = CompteEnLigne.jeton; if (!j) return;
         if (Coop.etat !== 'hors') { this.hud.toast('Quitte d\'abord ton donjon (Social › Groupe)'); return; }
         Coop.rejoindre(code, { jeton: j, emplacement: this.slot });

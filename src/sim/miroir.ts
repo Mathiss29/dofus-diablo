@@ -1,6 +1,7 @@
 import type { World } from './world';
 import type { PlayerInput } from './input';
 import type { SimEvent } from './events';
+import type { Dialogue, EtatQuetes } from './quests';
 import { Entity } from './entity';
 import { Player } from './player';
 import { Monster } from './monster';
@@ -32,6 +33,8 @@ export interface Instantane {
   a?: Champs | null;
   /** Événements à jouer chez l'invité (sons, chiffres, effets). */
   ev?: Val[];
+  /** Ses quêtes à lui (monde partagé) et le dialogue ouvert, quand ils changent. */
+  q?: Val;
 }
 
 export const COOP = {
@@ -142,6 +145,8 @@ export class Emetteur {
     // une entité sortie de la vue (ou morte et retirée) est oubliée : si elle revient, elle repart avec tous ses champs
     // (l'invité l'a effacée de son miroir, il la recrée de zéro)
     for (const cle of this.vu.keys()) if (/^[jmb]\d/.test(cle) && !presents.has(cle)) this.vu.delete(cle);
+    // monde partagé : ses quêtes (suivi, PNJ, carnet) et son dialogue, quand ils changent
+    if (moi.quetes) { const q = versReseau({ ...moi.quetes.exporter(), dialogue: moi.quetes.dialogue }); if (q !== undefined && diff('q', '', q)) s.q = q; }
     if (this.evs.length) { s.ev = this.evs; this.evs = []; }
     return s;
   }
@@ -222,6 +227,7 @@ export function appliquerInstantane(w: World, s: Instantane): SimEvent[] {
   }
   for (const [k, v] of Object.entries(s.w ?? {})) poser(w, k, depuisReseau(v, w));
   poser(w, 'time', s.t);
+  if (s.q && typeof s.q === 'object' && w.quetes) w.quetes.recopier(s.q as unknown as EtatQuetes & { dialogue?: Dialogue | null });
   const evs = (s.ev ?? []).map(e => depuisReseau(e, w) as SimEvent);
   if (moi.hp < hpAvant && !moi.dead) evs.push({ k: 'playerHurt' });
   if (moi.level > niveauAvant) evs.push({ k: 'status', x: moi.x, y: moi.y - 80, text: `Niveau ${moi.level} !`, color: '#ffd76a' });
@@ -229,6 +235,13 @@ export function appliquerInstantane(w: World, s: Instantane): SimEvent[] {
 }
 
 /** Entrées d'un invité gardées par l'hôte : seulement ce qui sert au combat (pas de quêtes, fenêtres, Zaaps ni outils de test). */
+/** Gestes d'un seul pas (monde partagé) : gardés entre deux envois ou deux pas, puis joués une seule fois. */
+export type UneFois = Pick<PlayerInput, 'talk' | 'reponse' | 'versPortail'>;
+export function garderUneFois(u: UneFois, i: Partial<PlayerInput>) {
+  if (i.talk) u.talk = i.talk;
+  if (i.reponse != null) u.reponse = i.reponse;
+  if (i.versPortail) u.versPortail = i.versPortail;
+}
 export function entreeInvite(i: Partial<PlayerInput> | null | undefined): PlayerInput {
   const v = (p: unknown) => (p && typeof p === 'object' && Number.isFinite((p as { x: number }).x) && Number.isFinite((p as { y: number }).y)
     ? { x: (p as { x: number }).x, y: (p as { y: number }).y } : null);
@@ -239,5 +252,7 @@ export function entreeInvite(i: Partial<PlayerInput> | null | undefined): Player
     pressed: typeof i?.pressed === 'string' ? i.pressed : null, holdAttack: !!i?.holdAttack, potion: !!i?.potion,
     dest: v(i?.dest), pickup: n(i?.pickup), target: n(i?.target), castOn: n(i?.castOn), approach: !!i?.approach, meute: n(i?.meute),
     versPortail: typeof i?.versPortail === 'string' ? i.versPortail.slice(0, 80) : null,
+    // monde partagé : parler à un PNJ, lui répondre
+    talk: typeof i?.talk === 'string' ? i.talk.slice(0, 60) : null, reponse: Number.isInteger(i?.reponse) && i!.reponse! >= -1 && i!.reponse! < 20 ? i!.reponse : null,
   };
 }
