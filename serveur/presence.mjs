@@ -12,7 +12,14 @@ export const PRESENCE = {
   voisins: 24,
   /** Invitations : au plus une toutes les … ms par joueur. */
   ecartInvitation: 3000,
+  /** Chat : longueur d'un message, et au plus … messages par tranche de … ms. */
+  longueurChat: 200,
+  rafaleChat: 5,
+  fenetreChat: 5000,
 };
+const CANAUX = new Set(['tout', 'groupe', 'bastion', 'prive']);
+/** Texte d'un message de chat : une ligne, sans caractères de contrôle. */
+const propre = t => (typeof t === 'string' ? t.replace(/[\u0000-\u001f\u007f\u200b-\u200f\u2028-\u202e]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, PRESENCE.longueurChat) : '');
 
 const ent = (x, a, b) => (Number.isInteger(x) && x >= a && x <= b ? x : null);
 const fini = x => (typeof x === 'number' && Number.isFinite(x) ? x : 0);
@@ -44,6 +51,7 @@ export function creerPresence({ comptes, envoyer }) {
       joueurs.set(s, {
         compte: c.compte, emplacement: c.emplacement, profil: profilDe(c.perso, m.objets), zone: typeof m.zone === 'string' ? m.zone.slice(0, 40) : '',
         x: fini(m.x), y: fini(m.y), f: fini(m.f), a: 'idle', vus: avant?.vus ?? new Set(), invite: avant?.invite ?? 0, salon: avant?.salon ?? null,
+        dits: avant?.dits ?? [],
       });
       // profil changé (niveau, apparence, objets) : les voisins le recevront de nouveau
       for (const j of joueurs.values()) j.vus.delete(c.compte);
@@ -51,7 +59,7 @@ export function creerPresence({ comptes, envoyer }) {
       return true;
     }
     const j = joueurs.get(s);
-    if (!j) return m.k === 'pos' || m.k === 'enligne' || m.k === 'inviter' || m.k === 'groupe';
+    if (!j) return m.k === 'pos' || m.k === 'enligne' || m.k === 'inviter' || m.k === 'groupe' || m.k === 'dire';
     if (m.k === 'pos') {
       if (typeof m.zone === 'string') j.zone = m.zone.slice(0, 40);
       j.x = fini(m.x); j.y = fini(m.y); j.f = fini(m.f);
@@ -74,6 +82,29 @@ export function creerPresence({ comptes, envoyer }) {
       j.invite = t;
       envoyer(cible, { k: 'invitation', de: j.profil.nom, code: j.salon });
       envoyer(s, { k: 'info', texte: `Invitation envoyée à ${joueurs.get(cible).profil.nom}` });
+      return true;
+    }
+    // chat (« Social : » 4A 4C) : Tout (tous les joueurs en ligne), Groupe, Bastion (ceux qui y sont), Privé (un joueur, par le nom de son perso)
+    if (m.k === 'dire') {
+      const texte = propre(m.texte), canal = CANAUX.has(m.canal) ? m.canal : 'tout', t = Date.now();
+      if (!texte) return true;
+      j.dits = j.dits.filter(d => t - d < PRESENCE.fenetreChat);
+      if (j.dits.length >= PRESENCE.rafaleChat) return envoyer(s, { k: 'info', texte: 'Doucement : attends un peu avant d’écrire de nouveau' }), true;
+      j.dits.push(t);
+      const msg = { k: 'chat', canal, id: j.compte, de: j.profil.nom, texte };
+      if (canal === 'prive') {
+        const nom = String(m.a ?? '').trim().toLowerCase();
+        const cible = [...joueurs].find(([, o]) => o.profil.nom.toLowerCase() === nom);
+        if (!cible) return envoyer(s, { k: 'info', texte: `Personne nommé ${String(m.a ?? '').slice(0, 20)} n’est en ligne` }), true;
+        if (cible[0] !== s) envoyer(cible[0], msg);
+        envoyer(s, { ...msg, vers: cible[1].profil.nom });
+        return true;
+      }
+      if (canal === 'groupe' && !j.salon) return envoyer(s, { k: 'info', texte: 'Tu n’es pas dans un groupe' }), true;
+      if (canal === 'bastion' && j.zone !== PRESENCE.partagee) return envoyer(s, { k: 'info', texte: 'Le canal Bastion, c’est pour ceux qui sont au Bastion des Douze' }), true;
+      for (const [t2, o] of joueurs) {
+        if (canal === 'groupe' ? o.salon === j.salon : canal === 'bastion' ? o.zone === PRESENCE.partagee : true) envoyer(t2, msg);
+      }
       return true;
     }
     return false;

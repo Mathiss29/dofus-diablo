@@ -19,6 +19,7 @@ export const ACTIONS: Action[] = [
   { id: 'dofus', nom: 'Dofus', groupe: 'Fenêtres', def: 'D' },
   { id: 'guide', nom: 'Guide', groupe: 'Fenêtres', def: 'G' },
   { id: 'social', nom: 'Social (groupe)', groupe: 'Fenêtres', def: 'P' },
+  { id: 'chat', nom: 'Écrire dans le chat', groupe: 'Fenêtres', def: 'Enter' },
   { id: 'options', nom: 'Options', groupe: 'Fenêtres', def: 'O' },
   { id: 'carte', nom: 'Carte du monde', groupe: 'Fenêtres', def: 'M' },
   { id: 'havresac', nom: 'Havre-Sac', groupe: 'Fenêtres', def: 'H' },

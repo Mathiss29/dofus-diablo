@@ -247,6 +247,8 @@ export class Hud {
   /** 9B : bords de l'écran qui pulsent en rouge sous 25 % de PV. */
   private pulse!: Phaser.GameObjects.Image;
 
+  /** Haut du suivi de quête, en pixels CSS de la page (le chat se pose juste au-dessus). */
+  hautSuivi() { const r = this.modRects.get('suivi'); return r ? r[1] * this.k / densite() : window.innerHeight - 140; }
   blocks(x: number, y: number) { x /= this.k; y /= this.k; return this.rects.some(([rx, ry, rw, rh]) => x >= rx && y >= ry && x <= rx + rw && y <= ry + rh); }
 
   private g: Phaser.GameObjects.Graphics;

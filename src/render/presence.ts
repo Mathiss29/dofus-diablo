@@ -8,6 +8,9 @@ import type { Apparence } from './squelette';
 export interface Profil { id: number; nom: string; classe: string; sexe: 'm' | 'f'; niveau: number; apparence: Apparence | null; objets: string[] }
 /** Un joueur du Bastion vu ici : sa position reçue (tx, ty) et celle affichée (x, y), qui la rejoint en douceur. */
 export interface Passant { id: number; profil: Profil | null; x: number; y: number; tx: number; ty: number; f: number; a: string; vu: number; age: number }
+export type Canal = 'tout' | 'groupe' | 'bastion' | 'prive' | 'infos';
+/** Un message du chat (« Social : » 4A) : reçu du serveur, ou une info du jeu (canal Infos). */
+export interface MessageChat { canal: Canal; de: string; id: number | null; texte: string; vers?: string; t: number }
 export interface JoueurEnLigne { id: number; nom: string; classe: string; niveau: number; zone: string; groupe: boolean }
 
 class Presence {
@@ -25,12 +28,24 @@ class Presence {
   /** Invitation reçue (« Social : » 7A) et petits messages du serveur. */
   onInvitation: (de: string, code: string) => void = () => {};
   onInfo: (texte: string) => void = () => {};
+  /** Le chat : les derniers messages, et qui les écoute (fenêtre de chat, bulles). */
+  readonly messages: MessageChat[] = [];
+  private lecteurs = new Set<(m: MessageChat) => void>();
 
   constructor() {
     // le groupe joué (partie du serveur) : le serveur s'en sert pour les invitations
     Coop.ecouter(() => this.envoyer({ k: 'groupe', code: Coop.etat === 'salon' && Coop.serveur ? Coop.code : null }));
   }
   ecouter(f: () => void) { this.ecouteurs.add(f); return () => this.ecouteurs.delete(f); }
+  lire(f: (m: MessageChat) => void) { this.lecteurs.add(f); return () => { this.lecteurs.delete(f); }; }
+  /** Ajoute un message au chat (reçu, ou info du jeu dans le canal Infos). */
+  noter(m: Omit<MessageChat, 't'>) {
+    const n = { ...m, t: performance.now() };
+    this.messages.push(n); if (this.messages.length > 150) this.messages.shift();
+    for (const f of this.lecteurs) f(n);
+  }
+  /** Envoie un message (canal Privé : a = nom du perso). */
+  dire(canal: Exclude<Canal, 'infos'>, texte: string, a?: string) { this.envoyer({ k: 'dire', canal, texte, ...(a ? { a } : {}) }); }
   private changer() { for (const f of this.ecouteurs) f(); }
   get connecte() { return this.moi != null && this.ws?.readyState === WebSocket.OPEN; }
 
@@ -95,8 +110,12 @@ class Presence {
       }
       for (const id of [...this.passants.keys()]) if (!vus.has(id)) this.passants.delete(id);
     } else if (m.k === 'enligne') { this.enLigne = m.l as JoueurEnLigne[]; this.changer(); }
-    else if (m.k === 'invitation') this.onInvitation(String(m.de), String(m.code));
-    else if (m.k === 'info') this.onInfo(String(m.texte));
+    else if (m.k === 'invitation') { this.onInvitation(String(m.de), String(m.code)); this.noter({ canal: 'infos', de: '', id: null, texte: `${String(m.de)} t'invite dans son groupe` }); }
+    else if (m.k === 'info') { this.onInfo(String(m.texte)); this.noter({ canal: 'infos', de: '', id: null, texte: String(m.texte) }); }
+    else if (m.k === 'chat') {
+      const c = String(m.canal);
+      this.noter({ canal: (['tout', 'groupe', 'bastion', 'prive'].includes(c) ? c : 'tout') as Canal, de: String(m.de), id: Number(m.id), texte: String(m.texte), ...(m.vers ? { vers: String(m.vers) } : {}) });
+    }
   }
 
   /** À chaque image : les passants rejoignent leur dernière position reçue (10 envois par seconde, lissés). */
