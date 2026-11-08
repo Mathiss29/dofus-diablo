@@ -309,8 +309,12 @@ export class Player extends Entity {
   slowK = 0; slowT = 0;
   /** Durées de départ des malus (bulles d'effets actifs : l'anneau se vide de t0 à 0). */
   slowT0 = 0; subisT0 = 0; pacifisteT0 = 0;
-  slow(t: number, k: number) { k *= fuiteFactor(this.fuite); this.slowK = this.slowT > 0 ? Math.max(this.slowK, k) : k; if (t >= this.slowT) this.slowT0 = t; this.slowT = Math.max(this.slowT, t); }
-  get speed(): number { return this.cls.speed * (1 + vitesseAgilite(this.stat('agilite'))) * this.vitesseTest * (this.slowT > 0 ? 1 - this.slowK : 1); }
+  /** Forgelance : Lance de Mani (insensible aux ralentissements), Lance d'Elding et Prélude glorieux (vitesse de course en plus),
+   *  Lance de Noa (soins reçus en plus) : durées restantes. */
+  insensibleT = 0; courseK = 0; courseT = 0; soinsRecusT = 0;
+  courir(k: number, t: number) { this.courseK = this.courseT > 0 ? Math.max(this.courseK, k) : k; this.courseT = Math.max(this.courseT, t); }
+  slow(t: number, k: number) { if (this.insensibleT > 0) return; k *= fuiteFactor(this.fuite); this.slowK = this.slowT > 0 ? Math.max(this.slowK, k) : k; if (t >= this.slowT) this.slowT0 = t; this.slowT = Math.max(this.slowT, t); }
+  get speed(): number { return this.cls.speed * (1 + vitesseAgilite(this.stat('agilite'))) * this.vitesseTest * (this.slowT > 0 ? 1 - this.slowK : 1) * (this.courseT > 0 ? 1 + this.courseK : 1); }
   /** Partie de test (5D) : course ×3. */
   vitesseTest = 1;
   /** Tacle et Fuite (base Agilité / 10), Retrait et Esquive PA / PM (base Sagesse / 10), comme dans Dofus. */
@@ -323,7 +327,7 @@ export class Player extends Entity {
   /** Soigne le perso (potion, nourriture, soin à chaque monstre tué) : Intelligence et Soins s'y ajoutent (Caracs 3B + 3C). Renvoie les PV rendus. */
   soigner(base: number): number {
     if (this.dead || base <= 0) return 0;
-    const n = Math.min(this.maxHp - this.hp, Math.round(soinRecu(base, this.stat('intelligence'), this.stat('soins'))));
+    const n = Math.min(this.maxHp - this.hp, Math.round(soinRecu(base, this.stat('intelligence'), this.stat('soins')) * (this.soinsRecusT > 0 ? 1.2 : 1)));
     this.hp += Math.max(0, n);
     return Math.max(0, n);
   }
@@ -365,6 +369,12 @@ export class Player extends Entity {
   piqureA = -99;
   /** Un sort qui le demande (HitDef.tue) vient de tuer un monstre. */
   aTue(id: string, world: World) {
+    const ta = this.pcv('pc-forgelance-L');
+    if (id === 'talon_argile' && ta && this.age - this.talonA >= ta) {   // Talon d'acier
+      this.talonA = this.age;
+      for (const k of ['talon_argile', 'charge_heroique']) { this.cd[k] = 0; this.casts[k] = []; }
+      world.emit({ k: 'status', x: this.x, y: this.y - 50, text: "Talon d'acier", color: '#e8b860' });
+    }
     const v = this.pcv('pc-iop-N');
     if (id === 'deferlement' && v && this.age - this.deferlementA >= v) {
       this.deferlementA = this.age; this.cd.deferlement = 0; this.casts.deferlement = [];
@@ -768,6 +778,7 @@ export class Player extends Entity {
       return;
     }
     const def = this.spell(id)!;
+    if (this.cls.lance && !def.pm) this.incendies = id === 'lance_incendie' ? this.incendies + 1 : 0;   // Lance ardente : d'affilée
     if (def.lance?.rappel && this.lance) this.rappelerLance(world);   // Charge Héroïque, Talon d'Argile, Kyrja : la Lance revient d'abord
     const { x: tx, y: ty } = this.landing(id, aim, world);
     // Rage pleine : ce sort est renforcé (pas les déplacements)
@@ -823,6 +834,10 @@ export class Player extends Entity {
     this.pm = Math.min(this.pmMax, this.pm + dt * (1 + this.legendary('mobilite') / 100) / this.cls.pm.recharge);
     this.flash = Math.max(0, this.flash - dt);
     if (this.slowT > 0) this.slowT -= dt;
+    if (this.insensibleT > 0) this.insensibleT -= dt;
+    if (this.courseT > 0) this.courseT -= dt;
+    if (this.soinsRecusT > 0) this.soinsRecusT -= dt;
+    if (this.zonesFL.length) this.majZonesFL(dt, world);
     if (this.mods.length) {
       for (const m of this.mods) m.t -= dt;
       const vita = this.mods.some(m => m.t <= 0 && m.k === 'vitalite');
@@ -1053,7 +1068,11 @@ export class Player extends Entity {
       const L = this.lance, surL = !!(d.lance?.surLance && L), cx = surL && hz.shape === 'circle' ? L!.x : this.x, cy = surL && hz.shape === 'circle' ? L!.y : this.y;
       const rz = hz.shape === 'circle' || hz.shape === 'point' ? hz.radius : 0;
       if (d.allies || d.dissipe) this.effetsAllies(d, hz.shape === 'point' ? s.tx : cx, hz.shape === 'point' ? s.ty : cy, rz, world);
-      if (d.parEnnemi) mult *= 1 + d.parEnnemi * world.monsters.filter(m => !m.dead && Math.hypot(m.x - s.tx, m.y - s.ty) <= rz + m.radius).length;
+      const nZone = d.parEnnemi ? world.monsters.filter(m => !m.dead && Math.hypot(m.x - s.tx, m.y - s.ty) <= rz + m.radius).length : 0;
+      if (d.parEnnemi) mult *= 1 + (d.parEnnemi + (s.id === 'muspel' ? this.pcv('pc-forgelance-O') / 100 : 0)) * nZone;   // Muspel insatiable
+      if (s.id === 'muspel' && nZone && this.pcv('pc-forgelance-O')) this.cd.muspel = Math.max(0, (this.cd.muspel ?? 0) - 0.5 * nZone);
+      const depuisLance = !!(d.lance?.surLance && L) && (hz.shape === 'circle' || Math.hypot(s.tx - L!.x, s.ty - L!.y) < CASE);
+      if (depuisLance && this.pcv('pc-forgelance-enracinee')) { const v = this.pcv('pc-forgelance-enracinee'); mult *= 1 + Math.min(v * 7, v * L!.t) / 100; }   // Lance enracinée
       // Transfusion : dommages en part des PV restants ; Attirance (plus forte à Souffrance 6+), Condensation, Supplice
       const base = d.dmgPV ? this.hp * d.dmgPV : d.dmg * s.gm;
       const attire = d.attire && { px: ((this.souffrance >= 6 && d.souffrance6?.attire) || d.attire.cases) * CASE, vers: d.attire.vers };
@@ -1082,7 +1101,10 @@ export class Player extends Entity {
       }
       else if (hz.shape === 'point') { size = hz.radius * area + zb; hits = world.hitCircle(s.tx, s.ty, size, hit, d.stun, this.facing); }   // poussée dans l'axe du lanceur, comme Dofus
       else if (hz.shape === 'circle' && d.vuln && !d.dmg) { size = hz.radius * area + zb; world.markVuln(this.x, this.y, size, d.vuln.n, d.vuln.t); }
-      else if (hz.shape === 'circle') { size = hz.radius * area + zb; hits = world.hitCircle(cx, cy, size, hit, d.stun); }
+      else if (hz.shape === 'circle') {
+        size = hz.radius * area + zb; hits = world.hitCircle(cx, cy, size, hit, d.stun);
+        if (surL && this.jumelleT > 0 && hit.dmg > 0) hits += world.hitCircle(this.x, this.y, size, { ...hit, dmg: hit.dmg * this.jumelleV / 100 }, d.stun);   // Lance jumelle
+      }
       else {
         // Flèche : la zone (et les dommages) partent avec le projectile ; l'effet d'impact se joue à l'arrivée
         const shot = { ...hz, range: s.range ?? hz.range, explode: s.explode ?? hz.explode };
@@ -1095,6 +1117,8 @@ export class Player extends Entity {
       if (d.lance && this.cls.lance) this.apresImpactLance(d, s.tx, s.ty, world);
       if (d.traverse) {   // Balestra : de l'autre côté de la cible, puis petit recul
         const fx2 = Math.cos(this.facing), fy2 = Math.sin(this.facing), nx = this.x + fx2 * d.traverse * CASE, ny = this.y + fy2 * d.traverse * CASE;
+        const bt = s.id === 'balestra' ? this.pcv('pc-forgelance-J') : 0;   // Balestra tranchante : frappe ce qu'il traverse
+        if (bt) world.hitLine(this.x, this.y, this.facing, d.traverse * CASE, 30, { ...hit, dmg: hit.dmg * bt / 100, knock: 0 });
         if (world.walkable(nx, ny)) { this.x = nx; this.y = ny; }
       }
       if (s.id === 'arme') this.frenesie(hits, world);
@@ -1114,6 +1138,7 @@ export class Player extends Entity {
     if (!world.walkable(x, y)) { const a = Math.atan2(y - this.y, x - this.x); for (let i = 0; i < 12 && !world.walkable(x, y); i++) { x -= Math.cos(a) * CASE / 3; y -= Math.sin(a) * CASE / 3; } }
     const o = this.lance;
     this.lance = { x, y, t: 0 };
+    if (this.pcv('pc-forgelance-B')) { this.jumelleT = 4; this.jumelleV = this.pcv('pc-forgelance-B'); }   // Lance jumelle
     world.emit({ k: 'lance', quoi: 'plante', id: this.id, x, y, ox: o?.x ?? this.x, oy: o?.y ?? this.y });
   }
   /** Reprend la Lance : rappel (1B : elle revient en frappant ce qu'elle traverse) ou à pied (Reprise de Volée, bonus doublé, 3B).
@@ -1124,13 +1149,16 @@ export class Player extends Entity {
     this.lance = null;
     if (comment === 'rappel') {   // Rappel tranchant : la Lance revient en ligne droite et frappe tout ce qu'elle traverse
       const d = Math.hypot(this.x - L.x, this.y - L.y);
-      if (d > CASE) world.hitLine(L.x, L.y, Math.atan2(this.y - L.y, this.x - L.x), d, 26, { dmg: C.tranchant, knock: 0, element: 'meilleur' });
+      const rf = this.pcv('pc-forgelance-C');   // Rappel foudroyant : plus fort, et étourdit
+      if (d > CASE) world.hitLine(L.x, L.y, Math.atan2(this.y - L.y, this.x - L.x), d, 26, { dmg: C.tranchant * (rf || 1), knock: 0, element: 'meilleur' }, rf ? 0.5 : undefined);
     }
+    this.zonesFL = this.zonesFL.filter(z => !z.surLance);   // Lance ardente : le sol cesse de brûler
     if (comment !== 'seule') {
       const n = comment === 'pied' ? C.aPied : C.reprise;
       this.mods = this.mods.filter(m => m.src !== 'reprise');
       this.addMod('puissance', n, C.duree, 'reprise');
       world.emit({ k: 'status', x: this.x, y: this.y - 60, text: `${comment === 'pied' ? 'Reprise de Volée' : 'Reprise'} +${n} Puissance`, color: '#e8b860' });
+      this.reprisesLegendaires(L, comment, world);
     }
     world.emit({ k: 'lance', quoi: comment === 'pied' ? 'reprise' : 'rappel', id: this.id, x: this.x, y: this.y, ox: L.x, oy: L.y });
   }
@@ -1140,6 +1168,7 @@ export class Player extends Entity {
     const L = this.lance!, C = this.cls.lance;
     if (!C || this.dead) { this.lance = null; return; }
     L.t += dt;
+    if (this.jumelleT > 0) this.jumelleT -= dt;
     const d = Math.hypot(this.x - L.x, this.y - L.y);
     if (d > C.portee) this.reprendreLance(world, 'seule');
     else if (L.t > 0.5 && d <= C.glyphe + this.radius && this.state === 'free') this.reprendreLance(world, 'pied');
@@ -1161,6 +1190,7 @@ export class Player extends Entity {
         if (q.dead || Math.hypot(q.x - x, q.y - y) > r + q.radius) continue;
         if (a.shield) { q.shield = Math.max(q.shield, Math.round(q.maxHp * a.shield)); q.shieldT = q.shieldT0 = a.t; q.shieldSrc = 'phalange'; }
         if (a.puissance) { q.mods = q.mods.filter(m => m.src !== 'prelude'); q.addMod('puissance', a.puissance, a.t, 'prelude'); }
+        if (a.puissance && this.pcv('pc-forgelance-P')) q.courir(this.pcv('pc-forgelance-P') / 100, 4);   // Prélude glorieux
       }
       if (a.shield) for (const b of world.betes) if (!b.dead && Math.hypot(b.x - x, b.y - y) <= r + b.radius) { b.shield = Math.max(b.shield, Math.round(b.maxHp * a.shield)); b.shieldT = a.t; }
     }
@@ -1211,6 +1241,12 @@ export class Player extends Entity {
     if (id === 'glacee' && v('pc-cra-M')) o.perce = v('pc-cra-M') - 1;
     if (id === 'abolition' && v('pc-cra-N')) o.surplus = v('pc-cra-N');
     if (id === 'dents_piranya' && v('pc-osamodas-K')) o.festin = true;
+    // Forgelance (« Légendaires forgelance : 4A-4P »)
+    if (id === 'charge_heroique' && v('pc-forgelance-D')) o.choc = 100;
+    if (id === 'kyrja' && v('pc-forgelance-K')) o.partage = v('pc-forgelance-K');
+    if (id === 'talon_argile' && v('pc-forgelance-L')) o.tue = 'talon_argile';
+    if (id === 'volee_airain' && v('pc-forgelance-M') && this.lance) o.enclume = { x: this.lance.x, y: this.lance.y, k: v('pc-forgelance-M') };
+    if (id === 'estoc_brulant' && v('pc-forgelance-N')) o.plusChoc = v('pc-forgelance-N');
     return o;
   }
   /** Effets des légendaires de classe qui s'ajoutent à l'impact d'un sort (Iop A E G H, Osamodas A B C G H). */
@@ -1312,6 +1348,88 @@ export class Player extends Entity {
       }
     }
     if (id === 'charge_bestiale' && v('pc-osamodas-H')) for (const b of world.betes) if (!b.dead) b.soigner(b.maxHp * v('pc-osamodas-H') / 100, world);
+    // --- Forgelance ---
+    if (id === 'trident' && v('pc-forgelance-A'))   // Tourbillon abyssal : 2 s, attire et frappe chaque demi-seconde
+      this.zonesFL.push({ x: tx, y: ty, r: Math.max(size, CASE * 1.5), t: 2, next: 0.5, hit: { ...hit, dmg: hit.dmg * v('pc-forgelance-A') / 100 * 0.5, knock: 0, attire: { px: CASE * 0.6, vers: 'centre' } }, id: 'pc-forgelance-A' });
+    if (id === 'charge_heroique' && v('pc-forgelance-D')) {   // Charge du champion : ce qu'elle traverse
+      const L = Math.hypot(this.x - sx, this.y - sy);
+      if (L > CASE * 0.5) world.hitLine(sx, sy, Math.atan2(this.y - sy, this.x - sx), L, 30, { ...hit, dmg: hit.dmg * v('pc-forgelance-D') / 100, knock: 0, choc: undefined });
+    }
+    if (id === 'saut' && v('pc-forgelance-F')) {   // Saut écrasant : onde Terre à l'arrivée
+      const lp = this.cls.spells.lance_pierre;
+      world.hitCircle(this.x, this.y, CASE * 2, { dmg: (lp?.dmg ?? 24) * gm * v('pc-forgelance-F') / 100, knock: 342, element: 'terre', pushDmg: true });
+      world.emit({ k: 'spell', fx: 'burst', id: 'pc-forgelance-F', x: this.x, y: this.y, cx: this.x, cy: this.y, facing: this.facing, size: CASE * 2, arc: 0, element: 'terre', big: true, boosted: false });
+    }
+    if (id === this.cls.basic && this.cls.lance && this.arme && v('pc-forgelance-G') && ++this.estocs % 3 === 0) {   // Fer de la forge
+      world.hitLine(this.x, this.y, this.facing, CASE * 4, 30, { dmg: hit.dmg * v('pc-forgelance-G') / 100, knock: 0, element: 'feu' });
+      world.emit({ k: 'spell', fx: 'line', id: 'pc-forgelance-G', x: this.x, y: this.y, cx: this.x, cy: this.y, facing: this.facing, size: CASE * 4, arc: 0, element: 'feu', big: false, boosted: false });
+    }
+    if (id === 'lance_incendie' && v('pc-forgelance-I') && this.incendies >= 3 && this.lance && !this.zonesFL.some(z => z.surLance)) {   // Lance ardente
+      this.zonesFL.push({ x: this.lance.x, y: this.lance.y, r: CASE * 2, t: Infinity, next: 0.5, hit: { ...hit, dmg: hit.dmg * v('pc-forgelance-I') / 100 * 0.5, knock: 0 }, id: 'pc-forgelance-I', surLance: true });
+      cri('Lance ardente');
+    }
+    if (id === 'estoc_brulant' && v('pc-forgelance-N')) {   // Estoc en avant : 2 cases en avant avec le coup
+      for (let i = 0; i < 8; i++) { const nx = this.x + Math.cos(this.facing) * CASE / 4, ny = this.y + Math.sin(this.facing) * CASE / 4; if (!world.walkable(nx, ny)) break; this.x = nx; this.y = ny; }
+    }
+  }
+  /** Zones à nous (Tourbillon abyssal, Lance ardente) : frappent tout ce qui est dedans chaque demi-seconde. */
+  zonesFL: { x: number; y: number; r: number; t: number; next: number; hit: HitDef; id: string; surLance?: boolean }[] = [];
+  /** Lance jumelle (B) ; Fer de la forge (G) : estocs portés ; Lance ardente (I) : Lances à Incendie d'affilée ; Talon d'acier (L) : dernière remise à zéro. */
+  jumelleT = 0; jumelleV = 0; estocs = 0; incendies = 0; talonA = -99;
+  /** Les 7 lances (2A) : instants des derniers déclenchements (2 fois, puis 12 s). */
+  lancesA: Record<string, number[]> = {};
+  private majZonesFL(dt: number, world: World) {
+    for (const z of this.zonesFL) {
+      z.t -= dt; z.next -= dt;
+      if (z.surLance && this.lance) { z.x = this.lance.x; z.y = this.lance.y; }
+      if (z.next <= 0 && z.t > 0) {
+        z.next += 0.5;
+        world.applyHits(m => Math.hypot(m.x - z.x, m.y - z.y) <= z.r + m.radius, z.hit, z.x, z.y, 0);
+        world.emit({ k: 'spell', fx: 'burst', id: z.id, x: z.x, y: z.y, cx: z.x, cy: z.y, facing: 0, size: z.r, arc: 0, element: z.hit.element ?? 'eau', big: false, boosted: false });
+      }
+    }
+    this.zonesFL = this.zonesFL.filter(z => z.t > 0 && (!z.surLance || this.lance));
+  }
+  /** Les 7 lances (2A) et Phalange vivante (H), à chaque reprise de la Lance (pas au retour automatique). */
+  private reprisesLegendaires(L: { x: number; y: number }, comment: 'rappel' | 'pied', world: World) {
+    if (!this.v03) return;
+    const v = (k: string) => this.pcv(`pc-forgelance-${k}`), cri = (text: string) => world.emit({ k: 'status', x: this.x, y: this.y - 80, text, color: '#f1c878' });
+    const pret = (k: string) => {   // 2 fois, puis 12 s d'attente
+      const l = (this.lancesA[k] ?? []).filter(t => this.age - t < 12);
+      if (l.length >= 2) { this.lancesA[k] = l; return false; }
+      this.lancesA[k] = [...l, this.age]; return true;
+    };
+    const proches = (x: number, y: number, r: number) => world.monsters.filter(m => !m.dead && m.state !== 'spawn' && Math.hypot(m.x - x, m.y - y) <= r + m.radius);
+    if (v('noa') && pret('noa')) { this.hp = Math.min(this.maxHp, this.hp + Math.round(this.maxHp * v('noa') / 100)); this.soinsRecusT = 6; cri('Lance de Noa'); }
+    if (v('sigel') && pret('sigel')) { this.addMod('puissance', v('sigel'), 6, 'sigel'); this.addMod('critique', v('sigel') / 4, 6, 'sigel'); cri('Lance de Sigel'); }
+    if (v('jormun') && pret('jormun')) {
+      if (comment === 'pied') world.hitCircle(L.x, L.y, v('jormun') * CASE, { dmg: 0, knock: 0, attire: { px: v('jormun') * CASE, vers: 'lanceur' } });
+      else world.repousser(L.x, L.y, v('jormun') * CASE, 684);
+      cri('Lance de Jormun');
+    }
+    if (v('ydra') && pret('ydra')) {
+      this.shield = Math.max(this.shield, Math.round(this.maxHp * v('ydra') / 100)); this.shieldT = this.shieldT0 = 6; this.shieldSrc = 'pc-forgelance-ydra';
+      for (const m of proches(this.x, this.y, CASE * 1.2)) { m.haste = Math.min(m.haste, 0.5); m.hasteT = Math.max(m.hasteT, 1); }
+      cri("Lance d'Ydra");
+    }
+    if (v('mani') && pret('mani')) { this.insensibleT = v('mani'); this.slowT = 0; cri('Lance de Mani'); }
+    if (v('elding') && pret('elding')) {
+      this.courir(v('elding') / 100, 4);
+      for (const m of proches(this.x, this.y, CASE * 2)) { m.haste = Math.min(m.haste, 0.6); m.hasteT = Math.max(m.hasteT, 2); }
+      cri("Lance d'Elding");
+    }
+    if (v('muspel') && pret('muspel')) {
+      const a = v('muspel');
+      for (const k of Object.keys(this.cd)) this.cd[k] = Math.max(0, this.cd[k] - a);
+      for (const k of Object.keys(this.casts)) this.casts[k] = this.casts[k].map(t => t - a);
+      for (const m of proches(this.x, this.y, CASE * 2)) m.atkCd = Math.max(m.atkCd, 0) + 0.6;
+      cri('Lance de Muspel');
+    }
+    const ph = v('H'), P = this.cls.spells.phalange?.allies?.shield;
+    if (ph && P) for (const q of world.players) {   // Phalange vivante : le bouclier de Phalange encore actif se renouvelle
+      if (q.dead || q.shieldSrc !== 'phalange' || q.shieldT <= 0 || Math.hypot(q.x - this.x, q.y - this.y) > CASE * 3) continue;
+      q.shield = Math.min(Math.round(q.maxHp * P), q.shield + Math.round(q.maxHp * P * ph / 100)); q.shieldT = q.shieldT0;
+    }
   }
 
   /** Coup reçu : Résistance fixe puis % Résistance de l'élément (plafonnée à 50 %), comme Dofus. */
@@ -1368,13 +1486,15 @@ export class Player extends Entity {
     if (this.invuln > 0 || this.dead) return false;
     const E = element === 'meilleur' ? 'Neutre' : `${element[0].toUpperCase()}${element.slice(1)}`;
     const S = this.cls.souffrance, sf = S ? this.souffrance : 0;   // Souffrance : dommages subis réduits
-    const garde = this.arme ? this.cls.lance!.garde : 1;   // Forgelance Armé : la Garde (×0,85, officiel)
+    const gf = this.arme ? this.pcv('pc-forgelance-E') : 0;   // Garde de fer : Garde plus forte
+    const garde = this.arme ? (gf ? 1 - gf / 100 : this.cls.lance!.garde) : 1;   // Forgelance Armé : la Garde (×0,85, officiel)
     let dmg = Math.max(1, Math.round((raw - this.stat(`red${E}` as Stat)) * (1 - Math.min(50, this.stat(`res${E}` as Stat)) / 100) * this.subis * (sf ? S!.subis[sf - 1] / 100 : 1) * garde));
     // Couronne d'Épines : les coups de mêlée sont renvoyés à celui qui frappe
     if (this.renvoiT > 0) {
       const auContact = !(loin ?? Math.hypot(fromX - this.x, fromY - this.y) > CASE * 1.6), ea = auContact ? 100 : this.pcv('pc-sacrieur-O');   // Épines acérées : aussi à distance
       if (ea) world.renvoyer(fromX, fromY, dmg * this.renvoiPart * ea / 100);
     }
+    if (gf && !(loin ?? Math.hypot(fromX - this.x, fromY - this.y) > CASE * 1.6)) world.renvoyer(fromX, fromY, dmg * (gf - 3) / 100);   // Garde de fer : renvoi en mêlée
     if (this.shield > 0) {   // le bouclier prend les coups d'abord
       const a = Math.min(this.shield, dmg); this.shield -= a; dmg -= a;
       const fb = this.shield <= 0 && this.shieldSrc === 'ferveur' ? this.pcv('pc-iop-K') : 0;

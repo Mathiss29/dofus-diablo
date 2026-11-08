@@ -1,6 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { GAME_DATA } from '../src/sim/data';
+import { GAME_DATA, ITEMS } from '../src/sim/data';
+import type { EquipSlot } from '../src/sim/items';
+import { POUVOIRS } from '../src/sim/pouvoirs';
+import { BOSS_PREFERES, PC_PAR_ID, POUVOIRS_CLASSE } from '../src/sim/pouvoirsClasse';
 import { GridMap, type MapData } from '../src/sim/gridmap';
 import { NO_INPUT, type PlayerInput } from '../src/sim/input';
 import { CASE } from '../src/sim/monster';
@@ -118,5 +121,69 @@ describe('Tutoriel Forgelance (16A)', () => {
     expect(et.map(e => e.nom)).toContain('Planter la Lance');
     const sp = GAME_DATA.classes.forgelance.spells;
     for (const e of et) for (const o of e.objectifs) if (o.sort) expect(sp[o.sort], o.sort).toBeTruthy();
+  });
+});
+
+describe('Légendaires du Forgelance (« Légendaires forgelance : 1A 2A 3B 4A-4P 5A 6A »)', () => {
+  const flTest = () => { const w = new World({ data: GAME_DATA, zone: 'champs-astrub', map: new GridMap(carte), seed: 7, classId: 'forgelance', items: ITEMS, test: {} as never }); w.waveDelay = 1e9; w.test!.invincible = false; return w; };
+  const porter = (w: World, id: string, value: number) => {
+    const c = PC_PAR_ID[id], [iid] = Object.entries(ITEMS.equipment).find(([, d]) => d.slot === c.slot && !d.familier && d.level <= 20)!;
+    w.player.equipment[(c.slot === 'anneau' ? 'anneau1' : c.slot) as EquipSlot] = { uid: w.newUid(), id: iid, rarity: 'legendaire', stats: {}, extra: [], legendary: { id, value } };
+    w.player.recompute();
+  };
+
+  it('40 officiels (Panoplie de l\'Héritage), 7 lances, Lance enracinée et 16 inventés, un boss préféré pour chacun des 10 inventés choisis', () => {
+    expect(POUVOIRS.forgelance).toHaveLength(40);
+    const l = POUVOIRS_CLASSE.filter(p => p.classe === 'forgelance');
+    expect(l).toHaveLength(24);
+    const w = flTest(); niveau(w.player, 60);
+    for (const p of l) expect(w.player.etatPouvoir(p.id).actif, p.id).toBe(true);
+    expect(Object.values(BOSS_PREFERES).flat().filter(id => id.startsWith('pc-forgelance-'))).toHaveLength(10);
+  });
+
+  it('les lances se déclenchent à la reprise : 2 fois, puis 12 s d\'attente (Sigel, Muspel, Mani)', () => {
+    const w = flTest(), p = w.player;
+    porter(w, 'pc-forgelance-sigel', 40); porter(w, 'pc-forgelance-muspel', 1.5); porter(w, 'pc-forgelance-mani', 3);
+    const reprise = () => { p.lance = { x: p.x + 200, y: p.y, t: 1 }; p.rappelerLance(w); };
+    p.cd.trident = 5;
+    reprise();
+    expect(p.mods.filter(m => m.src === 'sigel' && m.k === 'puissance')[0]?.n).toBe(40);
+    expect(p.cd.trident).toBeCloseTo(3.5);
+    p.slow(2, 0.5); expect(p.slowT).toBe(0);   // Mani : insensible
+    reprise(); reprise();
+    expect(p.mods.filter(m => m.src === 'sigel' && m.k === 'puissance')).toHaveLength(2);   // la 3e attend
+    idle(w, 12.1); reprise();
+    expect(p.lancesA['sigel']).toHaveLength(1);
+  });
+
+  it('Garde de fer : Armé, la Garde monte (−25 %) ; Lance jumelle à la pose', () => {
+    const w = flTest(), p = w.player;
+    const coup = () => { const h = p.hp; p.invuln = 0; p.shield = 0; p.hurt(100, p.x + 20, p.y, w); return h - p.hp; };
+    const base = coup(); p.hp = p.maxHp;
+    porter(w, 'pc-forgelance-E', 25);
+    expect(coup()).toBeLessThan(base);
+    porter(w, 'pc-forgelance-B', 50); p.planterLance(p.x + 150, p.y, w);
+    expect(p.jumelleT).toBe(4);
+  });
+
+  it('Tourbillon abyssal frappe au fil du temps ; Talon d\'acier remet les recharges à zéro quand il tue', () => {
+    const w = flTest(), p = w.player; porter(w, 'pc-forgelance-A', 20);
+    const m = mannequin(w, p.x + 150, p.y);
+    press(w, 'trident', { x: m.x, y: m.y }); idle(w, 0.6);
+    const apres = m.hp; idle(w, 1.5);
+    expect(m.hp).toBeLessThan(apres);
+    porter(w, 'pc-forgelance-L', 2);
+    p.cd.charge_heroique = 6; p.cd.talon_argile = 6; p.aTue('talon_argile', w);
+    expect(p.cd.charge_heroique).toBe(0);
+  });
+
+  it('Enclume : un monstre repoussé contre la Lance prend la poussée multipliée', () => {
+    const essai = (k: number) => {
+      const w = flTest(), p = w.player, m = mannequin(w, p.x + 60, p.y);
+      const h = m.hp;
+      w.hitCircle(m.x, m.y, 10, { dmg: 0.01, knock: 684, pushDmg: true, enclume: k ? { x: m.x + 40, y: m.y, k } : undefined }, 0, 0);
+      return h - m.hp;
+    };
+    expect(essai(3)).toBeGreaterThan(essai(0));
   });
 });

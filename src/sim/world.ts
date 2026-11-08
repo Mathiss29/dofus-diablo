@@ -54,7 +54,10 @@ export interface HitDef { dmg: number; knock: number; element?: Element; lifeste
   /** Festin du piranya (Osamodas K) : les dégâts du coup sont comptés dans World.festin. */
   festin?: boolean;
   /** Stase de sang (Sacrieur P) : immobilise n s, une fois par monstre toutes les 5 s. */
-  stase?: number }
+  stase?: number;
+  /** Forgelance : +n % de dommages de poussée (Charge du champion), vie volée partagée à n % avec les alliés à 3 cases (Kyrja du champion),
+   *  la Lance plantée compte comme un mur et multiplie la poussée par k (Enclume), +n % de dégâts si la cible heurte un obstacle (Estoc en avant). */
+  choc?: number; partage?: number; enclume?: { x: number; y: number; k: number }; plusChoc?: number }
 /** Zone laissée au sol par un légendaire de classe (Épée jumelle) : frappe une fois chaque monstre qui la traverse. */
 export interface ZoneSol { x: number; y: number; r: number; t: number; hit: HitDef; touches: Set<number>; id: string }
 /** Butin au sol (choix 1C 2D 6A) : équipements et kamas seulement. Les Communs et les kamas filent vers le joueur
@@ -1402,7 +1405,11 @@ export class World {
       const a = pushDir ?? Math.atan2(m.y - oy, m.x - ox);
       const kb = def.knock / m.def.mass;
       m.kx += Math.cos(a) * kb; m.ky += Math.sin(a) * kb;
-      const choc = def.pushDmg && kb > 0 && this.pushDamage(m, a, kb / 7.13, def.clouage ?? 0);
+      const choc = def.pushDmg && kb > 0 && this.pushDamage(m, a, kb / 7.13, (def.clouage ?? 0) + (def.choc ?? 0), def.enclume);
+      if (choc && def.plusChoc && dmg > 0 && m.hp > 0) {   // Estoc en avant : la cible heurte un obstacle
+        const sup = Math.max(1, Math.round(dmg * def.plusChoc / 100)); m.hp -= sup;
+        this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 20, amount: sup, crit: false, element: el });
+      }
       if (!m.def.boss) m.stun = Math.max(m.stun, stun || 0.12);   // petit vacillement : interrompt les télégraphes
       else if (stun) m.stun = Math.max(m.stun, stun * 0.3);
       if (def.brule && kb > 0 && dmg > 0 && m.hp > 0) {   // Barrage incendiaire : le monstre repoussé brûle 2 s
@@ -1432,6 +1439,11 @@ export class World {
       if (def.lifesteal) {
         const soin = Math.round(dmg * def.lifesteal), trop = p.hp + soin - p.maxHp;
         p.hp = Math.min(p.maxHp, p.hp + soin);
+        if (def.partage && soin > 0) {   // Kyrja du champion : les alliés à 3 cases en profitent
+          const n = soin * def.partage / 100;
+          for (const q of this.players) if (q !== p && !q.dead && Math.hypot(q.x - p.x, q.y - p.y) <= CASE * 3) q.hp = Math.min(q.maxHp, q.hp + Math.round(n));
+          for (const b of this.betes) if (!b.dead && Math.hypot(b.x - p.x, b.y - p.y) <= CASE * 3) b.soigner(n, this);
+        }
         if (def.surplus && trop > 0) {   // Sève d'Abolition : la vie volée en trop devient un bouclier (5 s)
           p.shield = Math.min(Math.round(p.maxHp * def.surplus / 100), Math.max(p.shieldSrc === 'pc-cra-N' ? p.shield : 0, 0) + trop);
           p.shieldT = p.shieldT0 = 5; p.shieldSrc = 'pc-cra-N';
@@ -1486,17 +1498,19 @@ export class World {
   /** Dommages de poussée de Dofus : (niveau / 2 + Dommages Poussée + 32) × cases de poussée restantes / 4,
    *  quand la cible heurte un obstacle ou un autre monstre avant la fin de son recul. */
   private intouchableT = -9;
-  private pushDamage(m: Monster, a: number, dist: number, bonus = 0): boolean {
+  private pushDamage(m: Monster, a: number, dist: number, bonus = 0, enclume?: { x: number; y: number; k: number }): boolean {
     if (m.intouchable) return false;
     const c = Math.cos(a), s = Math.sin(a), step = 8;
-    let t = 0;
+    let t = 0, lance = false;
     for (; t < dist; t += step) {
       const x = m.x + c * (t + m.radius), y = m.y + s * (t + m.radius);
+      if (enclume && Math.hypot(enclume.x - x, enclume.y - y) < 18) { lance = true; break; }   // Enclume : la Lance plantée arrête le monstre
       if (!this.walkable(x, y) || this.monsters.some(o => o !== m && !o.dead && Math.hypot(o.x - x, o.y - y) < o.radius)) break;
     }
+    if (lance) { m.kx = m.ky = 0; }
     const left = (dist - t) / CASE;
     if (left <= 0.25) return false;
-    const p = this.player, dmg = Math.max(1, Math.round((p.level / 2 + p.stat('dommagesPoussee') + 32) * left / 4 * (1 + bonus / 100)));
+    const p = this.player, dmg = Math.max(1, Math.round((p.level / 2 + p.stat('dommagesPoussee') + 32) * left / 4 * (1 + bonus / 100) * (lance ? enclume!.k : 1)));
     m.hp -= dmg; m.flash = 0.09; m.calmeT = 0;
     this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 30, amount: dmg, crit: false });
     this.emit({ k: 'status', x: m.x, y: m.y - 20, text: 'Choc !', color: '#f2d36b' });
