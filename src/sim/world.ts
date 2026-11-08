@@ -177,7 +177,9 @@ export class World {
   /** Carte d'un intérieur -> son nom : la carte d'arrivée de chaque porte qui mène dedans (première porte trouvée). */
   readonly lieux = new Map<string, string>();
   /** Portes du monde ouvert : les deux bouts en coordonnées monde, et la carte de chacun. */
-  portes: { nom: string; ends: [PorteEnd, PorteEnd]; verrou: boolean; sens: boolean; cle?: string; vers?: { zone: string; arrivee: [string, number] } }[] = [];
+  portes: { nom: string; ends: [PorteEnd, PorteEnd]; verrou: boolean; sens: boolean; cle?: string; vers?: { zone: string; arrivee: [string, number] };
+    /** Portail cliquable (PorteDef.dessin) : milieu du dessin dans le monde et taille de la zone de clic à l'écran. */
+    dessin?: { x: number; y: number; rx: number; ry: number } }[] = [];
   /** Bout de porte par lequel le joueur vient d'arriver : inactif tant qu'il ne s'en est pas éloigné. */
   private portalLock: PorteEnd | null = null;
   /** Porte franchie : le joueur s'arrête devant pendant le fondu de sortie (PASSAGE s), puis arrive de l'autre côté. */
@@ -388,6 +390,8 @@ export class World {
   }
   /** Zaap vers lequel on marche après un clic dessus (1A). */
   versZaap: string | null = null;
+  /** Portail dessiné vers lequel on marche après un clic dessus (on ne le prend pas en passant à côté). */
+  versPortail: string | null = null;
   /** Départ en cours (9A) : le changement de zone part à la fin. */
   zaapDepart: { t: number; e: SimEvent } | null = null;
   private partirParZaap(e: SimEvent) {
@@ -471,7 +475,9 @@ export class World {
       if (d.zone) {   // portail vers une autre zone : un seul bout ici
         if (!wg.mapByTag(d.a[0])) continue;
         const q = wg.cellToWorld(wg.cellOf(d.a[0], d.a[1])), a = { tag: d.a[0], ...wg.nearestFree(q.x, q.y, wg.freeByMap.get(d.a[0])!) };
-        this.portes.push({ nom: d.nom, ends: [a, a], verrou: false, sens: true, vers: { zone: d.zone, arrivee: d.b } });
+        const dz = d.dessin && wg.cellToWorld(wg.cellOf(d.a[0], d.dessin[0]));
+        this.portes.push({ nom: d.nom, ends: [a, a], verrou: false, sens: true, vers: { zone: d.zone, arrivee: d.b },
+          dessin: dz ? { ...dz, rx: d.dessin![1], ry: d.dessin![2] } : undefined });
         continue;
       }
       if (!wg.mapByTag(d.a[0]) || !wg.mapByTag(d.b[0])) continue;   // intérieur pas (encore) exporté dans ce monde
@@ -496,7 +502,7 @@ export class World {
     if (!this.worldGrid) return null;
     let best: { x: number; y: number; nom: string; sortie: boolean } | null = null, bd = Infinity;
     for (const po of this.portes) for (let i = 0; i < 2; i++) {
-      if (i === 1 && po.sens) continue;
+      if ((i === 1 && po.sens) || po.dessin) continue;   // portail dessiné : survol sur son dessin (zoneScene.portailSous)
       const from = po.ends[i], to = po.ends[1 - i], d = Math.hypot(x - from.x, y - from.y);
       if (d > bd || d > this.rayonPorte(po, i)) continue;
       bd = d;
@@ -534,7 +540,7 @@ export class World {
       const dp = Math.hypot(from.x - p.x, from.y - p.y);
       const marche = pas > 0.5 && pas < 60 && dp < R * 0.75 && (dp < 8 || (mx * (from.x - p.x) + my * (from.y - p.y)) / (pas * dp) > 0.6);
       const clic = p.vise(from.x, from.y, Rp + 40);
-      if (!clic && !marche) continue;
+      if (po.dessin ? this.versPortail !== po.nom : !clic && !marche) continue;   // un portail dessiné ne se prend qu'en cliquant dessus
       if (po.verrou && !this.salleVide(from.tag)) {
         this.portalLock = from;   // un seul message tant qu'il reste sur la porte
         this.emit({ k: 'status', x: p.x, y: p.y - 60, text: 'Vaincs les monstres de la salle', color: '#ff9a5a' });
@@ -563,7 +569,7 @@ export class World {
   }
   /** Le perso s'arrête devant la porte pendant le fondu de sortie, puis passe (traverser). */
   private passer(po: World['portes'][number], to: PorteEnd) {
-    this.player.stopMove();
+    this.player.stopMove(); this.versPortail = null;
     this.passage = { to, nom: po.nom, t: World.PASSAGE, vers: po.vers };
     this.emit({ k: 'portalStart', nom: po.nom });
   }
@@ -1000,6 +1006,8 @@ export class World {
     if (input.zaap != null) this.voyagerZaap(input.zaap);
     if (input.versZaap) this.versZaap = input.versZaap;
     else if (input.dest || input.target != null || input.pickup != null || input.talk || input.pressed || input.recolte != null || input.atelier != null || input.move.x || input.move.y) this.versZaap = null;
+    if (input.versPortail) this.versPortail = input.versPortail;
+    else if (input.dest || input.target != null || input.pickup != null || input.talk || input.pressed || input.recolte != null || input.atelier != null || input.move.x || input.move.y) this.versPortail = null;
     if (this.quetes) {
       if (input.reponse != null) this.quetes.repondre(input.reponse);
       if (input.talk) this.quetes.cliquer(input.talk);

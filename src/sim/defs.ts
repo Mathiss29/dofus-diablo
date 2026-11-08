@@ -191,7 +191,11 @@ export interface PorteDef { a: [string, number]; b: [string, number]; nom: strin
   /** Clé officielle demandée et prise en passant de a vers b (entrée d'un donjon, maquette 0.2 5B) : id de la ressource. */
   cle?: string;
   /** Portail vers une autre zone (Incarnam <-> Astrub) : b est une case de cette zone-là. */
-  zone?: string }
+  zone?: string;
+  /** Portail dessiné hors des cases marchables (le bassin d'Incarnam, l'arche de la tour d'Astrub) : [case du milieu du dessin,
+   *  demi-largeur, demi-hauteur] en pixels d'écran (zoom 1). On clique sur le dessin, le perso va jusqu'à a puis passe ;
+   *  le frôler à pied ne fait rien (comme les portails de Dofus). */
+  dessin?: [number, number, number] }
 /** Donjon : ses salles (tag de carte) et, pour chacune, ses groupes de monstres officiels (fixes). */
 export interface DonjonDef { nom: string; salles: Record<string, string[][]>;
   /** Arène du donjon (maquette « Donjons en vagues », 1B 2D) : une seule grande salle créée (tools/extraction/arenes.py).
