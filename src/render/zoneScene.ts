@@ -61,6 +61,8 @@ import { appliquerInstantane } from '../sim/miroir';
 import { EnLigne } from './presence';
 import { Compte as CompteEnLigne } from './compte';
 import { PassantsEnLigne } from './passantsEnLigne';
+import { ChatVue } from './chat';
+import { BullesChat } from './bullesChat';
 import { montrerInvitation } from './social';
 
 const ASSETS = 'assets';
@@ -412,6 +414,9 @@ export class ZoneScene extends Phaser.Scene {
       EnLigne.annoncer(this.slot, Coop.miroir ? '__groupe' : this.zoneId, p.x, p.y, objetsPortes(p.equipment, p.apparat));
       EnLigne.onInvitation = (de, code) => montrerInvitation(de, () => { const j = CompteEnLigne.jeton; if (j) Coop.rejoindre(code, { jeton: j, emplacement: this.slot }); });
       EnLigne.onInfo = t => this.hud.toast(t);
+      // chat à canaux (Social 4A) et bulles au-dessus des têtes (4B)
+      const ch = this.chat = new ChatVue(), bu = this.bullesChat = new BullesChat(this);
+      this.events.once('shutdown', () => { ch.destroy(); bu.destroy(); if (this.chat === ch) this.chat = null; if (this.bullesChat === bu) this.bullesChat = null; });
     } else EnLigne.arreter();
     const pel = this.passantsEnLigne = new PassantsEnLigne(this);
     this.events.once('shutdown', () => { pel.destroy(); if (this.passantsEnLigne === pel) this.passantsEnLigne = null; });
@@ -924,6 +929,7 @@ export class ZoneScene extends Phaser.Scene {
       case 'dofus': if (p.v03) w?.toggle('dofus'); break;
       case 'guide': w?.toggle('guide'); break;
       case 'social': w?.toggle('social'); break;
+      case 'chat': this.chat?.ouvrir(); break;
       case 'options': w?.toggle('opt'); break;
       case 'carte': this.basculerCarte(); break;   // M, comme dans Dofus (maquette 0.2, 18A)
       case 'havresac': this.havreSacDemande = true; break;
@@ -1009,6 +1015,8 @@ export class ZoneScene extends Phaser.Scene {
   /** Coop, chez l'invité : la partie tourne chez l'hôte, cette scène recopie ses instantanés et lui envoie les entrées. */
   private miroir = false;
   private passantsEnLigne: PassantsEnLigne | null = null;
+  private chat: ChatVue | null = null;
+  private bullesChat: BullesChat | null = null;
   private updateMiroir(dt: number) {
     this.acc += dt;
     if (this.acc >= ZoneScene.STEP) { this.acc %= ZoneScene.STEP; Coop.entree(this.readInput(), performance.now()); }
@@ -1618,6 +1626,8 @@ export class ZoneScene extends Phaser.Scene {
       EnLigne.position(this.miroir ? '__groupe' : this.zoneId, p.x, p.y, p.facing, p.anim === 'run' ? 'run' : 'idle', this.time.now);
     }
     this.passantsEnLigne?.maj(w.dansBastion && !this.miroir && !this.vitrine, this.game.loop.delta / 1000, w.player.x, w.player.y);
+    this.bullesChat?.maj(w, !!this.miroir);
+    this.chat?.placer(this.hud.hautSuivi());
     this.dessinerLaisse();
     this.dessinerSouffrance();
     this.dessinerLances();

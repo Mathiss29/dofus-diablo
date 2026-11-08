@@ -805,6 +805,16 @@
               "Touche P",
               "Bastion des Douze"
             ]
+          },
+          {
+            "titre": "Le chat arrive",
+            "phrase": "Entrée pour écrire : canaux Tout, Groupe, Bastion, Privé et Infos, et bulles au-dessus des têtes.",
+            "details": "/w nom pour chuchoter, /r pour répondre, /aide pour les autres commandes. Clic sur un nom pour lui écrire.",
+            "icone": "perso",
+            "etiquettes": [
+              "Touche Entrée",
+              "Perso en ligne"
+            ]
           }
         ],
         "Le monde": [
@@ -1066,7 +1076,8 @@
           "Le serveur du multi a deux fois plus de mémoire, pour préparer les parties en ligne.",
           "Comptes Discord prêts : bouton de connexion et persos sauvés en ligne, ouverts dès que le serveur a sa clé.",
           "Partie de test : la coop peut tourner sur le serveur (Crypte), un joueur qui part ne coupe plus les autres.",
-          "Le serveur sait qui est en ligne et relaie les positions des joueurs du Bastion dix fois par seconde."
+          "Le serveur sait qui est en ligne et relaie les positions des joueurs du Bastion dix fois par seconde.",
+          "Chat : messages nettoyés par le serveur et limités à cinq toutes les cinq secondes."
         ]
       }
     }

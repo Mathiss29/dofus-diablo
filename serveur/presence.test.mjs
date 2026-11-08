@@ -64,6 +64,21 @@ test('présence : qui est en ligne, passants du Bastion, invitation', async () =
   a.envoi({ k: 'inviter', id: l[0].id });
   const inv = await b.attendre(m => m.k === 'invitation');
   assert.deepEqual([inv.de, inv.code], ['Lyra', 'ABCDE']);
+  // chat : Tout, Privé (par le nom du perso), Groupe (même code), Bastion (seulement là-bas), messages nettoyés
+  a.envoi({ k: 'dire', canal: 'tout', texte: '  salut\n  tout le monde ' });
+  assert.deepEqual((({ canal, de, texte }) => [canal, de, texte])(await b.attendre(m => m.k === 'chat')), ['tout', 'Lyra', 'salut tout le monde']);
+  b.envoi({ k: 'dire', canal: 'prive', a: 'lyra', texte: 'coucou' });
+  assert.equal((await a.attendre(m => m.k === 'chat' && m.canal === 'prive')).texte, 'coucou');
+  assert.equal((await b.attendre(m => m.k === 'chat')).vers, 'Lyra');
+  b.envoi({ k: 'dire', canal: 'groupe', texte: 'x' });
+  assert.match((await b.attendre(m => m.k === 'info')).texte, /groupe/);
+  b.envoi({ k: 'groupe', code: 'ABCDE' });
+  b.envoi({ k: 'dire', canal: 'groupe', texte: 'on y va' });
+  assert.equal((await a.attendre(m => m.k === 'chat' && m.canal === 'groupe')).texte, 'on y va');
+  b.envoi({ k: 'dire', canal: 'bastion', texte: 'x' });
+  assert.match((await b.attendre(m => m.k === 'info')).texte, /Bastion/);
+  for (let i = 0; i < 6; i++) a.envoi({ k: 'dire', canal: 'tout', texte: 'spam' + i });
+  assert.match((await a.attendre(m => m.k === 'info')).texte, /Doucement/);
   assert.equal((await (await fetch(`http://127.0.0.1:${s.address().port}/sante`)).json()).enLigne, 2);
   a.ws.close(); b.ws.close();
   await new Promise(r => setTimeout(r, 100));
