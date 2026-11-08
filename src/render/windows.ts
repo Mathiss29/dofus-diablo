@@ -175,6 +175,7 @@ const CSS = `
 .dw .cell.low{opacity:.5}
 .dw .cell .cad{position:absolute;right:3px;top:3px;width:16px;height:19px;filter:drop-shadow(0 1px 1px #000)}
 .dw .win.emp{width:min(760px,96vw);height:min(640px,92vh)}
+.dw .prer{position:absolute;top:30px;left:0;right:0;z-index:2;display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;font-size:12px;color:#c9c2ad;text-shadow:0 1px 2px #000}.dw .prer .btn{min-width:30px;padding:3px 8px;text-align:center}.dw .prer .btn.vide{opacity:.55}.dw .prer small{color:#d6cfb8;flex-basis:100%;text-align:center}
 .dw .win.coffre{width:min(760px,96vw);height:min(680px,92vh)}
 /* Zaap (maquette « Zaap : » 5A+5D) : la vraie fenêtre de Dofus 3 (Territoire / Région / Coordonnées / Niveau), groupée par zone */
 .dw .win.zaap{width:min(860px,96vw);height:min(620px,92vh)}
@@ -630,7 +631,8 @@ export class Windows {
         <div class="left">
           <div class="perso">
             <div class="slots">${LEFT.map(slot).join('')}</div>
-            <div class="stage"><div class="lv">${p.cls.name} · niveau ${p.level}</div><img class="socle" src="assets/ui/socle.png" alt="">${this.perso ? this.canevas('who', objetsPortes(p.equipment, p.apparat)) : `<img class="who" src="${this.portrait}" alt="">`}</div>
+            <div class="stage"><div class="lv">${p.cls.name} · niveau ${p.level}</div>${p.v03 ? `<div class="prer"><span title="Préréglages : équipement, barre de sorts et variantes. Clic : mettre ; Maj + clic : enregistrer ce que tu portes">Préréglages</span>${p.prereglages.map((r, i) =>
+            `<span class="btn ${r ? '' : 'vide'}" data-prer="${i}" title="${r ? `${r.nom} : clic pour le mettre, Maj + clic pour le remplacer` : 'Vide : Maj + clic (ou clic) pour enregistrer ce que tu portes'}">${i + 1}</span>`).join('')}<small data-prerm>${this.prerMsg}</small></div>` : ''}<img class="socle" src="assets/ui/socle.png" alt="">${this.perso ? this.canevas('who', objetsPortes(p.equipment, p.apparat)) : `<img class="who" src="${this.portrait}" alt="">`}</div>
             <div class="slots">${RIGHT.map(slot).join('')}</div>
           </div>
           <div class="appa"><span title="Apparat : change seulement l'apparence. Clic : choisir ; clic droit : retirer, ou cacher l'objet porté">Apparence</span>${VISIBLES.map(([k, n]) => {
@@ -657,6 +659,14 @@ export class Windows {
         </div>
       </div>`;
     w.querySelectorAll<HTMLElement>('[data-tab]').forEach(e => e.addEventListener('click', () => { this.tab = e.dataset.tab!; this.render(); }));
+    // 13A+13D : préréglages ; refusé moins de 5 s après un coup reçu
+    w.querySelectorAll<HTMLElement>('[data-prer]').forEach(e => e.addEventListener('click', ev => {
+      const i = +e.dataset.prer!;
+      if (ev.shiftKey || !p.prereglages[i]) { p.enregistrerPrereglage(i); this.prerMsg = `Préréglage ${i + 1} enregistré`; }
+      else if (p.mettrePrereglage(i)) this.prerMsg = `${p.prereglages[i]!.nom} mis`;
+      else this.prerMsg = p.attentePrereglage > 0 ? `Touché il y a moins de ${Player.PREREGLAGE_DELAI} s : attends ${Math.ceil(p.attentePrereglage)} s` : 'Impossible pour l\'instant';
+      this.changed();
+    }));
     w.querySelector<HTMLSelectElement>('[data-sort]')!.addEventListener('change', e => { this.sort = (e.target as HTMLSelectElement).value; this.render(); });
     w.querySelector<HTMLSelectElement>('[data-kind]')!.addEventListener('change', e => { this.kind = (e.target as HTMLSelectElement).value; this.render(); });
     w.querySelector<HTMLSelectElement>('[data-filter]')!.addEventListener('change', e => { p.lootFilter = +(e.target as HTMLSelectElement).value; this.render(); });
@@ -1452,6 +1462,8 @@ export class Windows {
   /** Emp, le Méryde du Recyclage (maquette 0.2, 7A 8A+8B+8C 9A+9B) : recyclage contre des Pépites, en lot ou objet par objet,
    *  cadenas, et sa boutique payée en Pépites. S'ouvre par la réponse « service » de son dialogue. */
   /** Onglet du coffre affiché, et sorte de coffre (Hardcore : le sien, 12D). */
+  /** Dernier message des préréglages (sous les boutons). */
+  private prerMsg = '';
   coffreOnglet = 0;
   coffreHardcore = false;
   /** Coffre partagé (0.3, 12A+12B+12D) : 5 onglets d'objets, partagés par les persos du compte. Clic : ranger ou reprendre. */
@@ -1854,8 +1866,12 @@ export class Windows {
       const ks = STATS.filter(k => (it.stats[k] ?? 0) !== (cur.stats[k] ?? 0));
       cmp = `<div class="cmp">Par rapport à ${ITEMS.equipment[cur.id]?.name ?? 'l\'objet porté'} :<br>${ks.map(k => {
         const dv = (it.stats[k] ?? 0) - (cur.stats[k] ?? 0);
-        return `<span class="${dv > 0 ? 'up' : 'down'}">${dv > 0 ? '+' : ''}${dv} ${STAT_NAMES[k]}</span>`;
-      }).join('<br>') || 'identique'}</div>`;
+        return `<span class="${dv > 0 ? 'up' : 'down'}">${p.v03 ? (dv > 0 ? '▲ ' : '▼ ') : ''}${dv > 0 ? '+' : ''}${dv} ${STAT_NAMES[k]}</span>`;
+      }).join('<br>') || 'identique'}${p.v03 ? [cur.legendary, cur.legendary2].map(l => {   // 14A : le pouvoir de l'objet porté, rappelé
+        if (!l) return '';
+        const { nom } = lignePouvoir(l, l.sort && p.cls.spells[l.sort]?.name, false);
+        return `<br><span class="leg">Tu perds : ${nom}</span>`;
+      }).join('') : ''}</div>`;
     }
     const lvl = d.level > p.level ? `<div class="down">Niveau ${d.level} requis</div>` : '';
     let fam = '';

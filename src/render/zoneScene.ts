@@ -648,14 +648,24 @@ export class ZoneScene extends Phaser.Scene {
     });
   }
 
-  private chime(legendary: boolean) {
+  /** Son d'un beau butin. 0.3 (14C) : le Mythique a le sien, plus grave et plus fort que le Légendaire (un gong puis l'arpège). */
+  private chime(rarete: 'epique' | 'legendaire' | 'mythique') {
     synthe((A, out) => {
-      const notes = legendary ? [784, 988, 1319, 1568] : [880, 1175];
+      const mythe = rarete === 'mythique';
+      if (mythe) {
+        for (const [f, v] of [[196, 0.22], [294, 0.14]] as const) {
+          const o = A.createOscillator(), g = A.createGain(), t0 = A.currentTime;
+          o.type = 'sine'; o.frequency.value = f;
+          g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(v, t0 + 0.01); g.gain.exponentialRampToValueAtTime(0.001, t0 + 1.6);
+          o.connect(g).connect(out); o.start(t0); o.stop(t0 + 1.7);
+        }
+      }
+      const notes = mythe ? [587, 880, 1175, 1480, 1760] : rarete === 'legendaire' ? [784, 988, 1319, 1568] : [880, 1175];
       notes.forEach((f, i) => {
-        const o = A.createOscillator(), g = A.createGain(), t0 = A.currentTime + i * 0.09;
+        const o = A.createOscillator(), g = A.createGain(), t0 = A.currentTime + (mythe ? 0.18 : 0) + i * 0.09;
         o.type = 'triangle'; o.frequency.value = f;
-        g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(0.15, t0 + 0.02); g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.6);
-        o.connect(g).connect(out); o.start(t0); o.stop(t0 + 0.65);
+        g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(mythe ? 0.2 : 0.15, t0 + 0.02); g.gain.exponentialRampToValueAtTime(0.001, t0 + (mythe ? 0.9 : 0.6));
+        o.connect(g).connect(out); o.start(t0); o.stop(t0 + (mythe ? 0.95 : 0.65));
       });
     });
   }
@@ -943,7 +953,7 @@ export class ZoneScene extends Phaser.Scene {
         case 'lootKamas': this.hud.loot(`+${e.n} kamas`, '#f2d36b'); this.windows?.refresh(); break;
         case 'bagFull': this.hud.toast('Sac plein : recycle des objets chez Kerubim Crépin (son guichet du Havre-Sac, touche H) ou Maj + clic dans l\'inventaire'); break;
         case 'monsterCast': this.castName(e.id, e.name); break;
-        case 'itemDrop': if (e.rarity === 'epique' || e.rarity === 'legendaire' || e.rarity === 'mythique') this.chime(e.rarity !== 'epique'); break;
+        case 'itemDrop': if (e.rarity === 'epique' || e.rarity === 'legendaire' || e.rarity === 'mythique') this.chime(e.rarity === 'mythique' && !this.world.player.v03 ? 'legendaire' : e.rarity); break;   // 14C : son du Mythique en 0.3
         // Métiers UI 10C : bannière aux paliers (10, 20, 30…) avec les recettes débloquées, une ligne dans le fil sinon
         case 'metierLevel': {
           const nom = ITEMS.metiers?.[e.metier]?.name ?? 'Métier', neuves = recettesAuNiveau(ITEMS, e.metier, e.level).map(r => ITEMS.resources[r.result]?.name).filter(Boolean);
