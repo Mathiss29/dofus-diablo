@@ -4,7 +4,9 @@
   "_": "1A : un coup moyen retire cette part des PV d'un perso du même niveau (PV de référence = base + parNiveau × (niveau - 1), Iop sans équipement). La force du sort officiel module de min à max (racine de jet / jetRef).",
   "part": { "normal": 0.07, "elite": 0.11, "boss": 0.15 },
   "pvRef": { "base": 220, "parNiveau": 5 },
-  "jetRef": 20, "min": 0.7, "max": 1.3
+  "jetRef": 20, "min": 0.7, "max": 1.3,
+  "_equipement": "Maquette « Dégâts » (Mathis 2026-11-08 : 1B+1C 2B) : pour ces rangs, les PV de référence comptent aussi l'équipement moyen du niveau (Vitalité ≈ base + parNiveau × (niveau - 1)), et jamais moins que les PV sans équipement × plancher (+35 %). Les boss ne changent pas.",
+  "equipement": { "rangs": ["normal", "elite"], "base": 40, "parNiveau": 5, "plancher": 1.35 }
  },
  "rythme": {
   "_": "2A : temps mort (s) entre deux attaques ; encerclement : les monstres contournent ceux qui sont déjà au contact.",

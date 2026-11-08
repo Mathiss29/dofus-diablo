@@ -24,7 +24,9 @@ describe('Danger des monstres (maquette 1A 2A 3A 4A 5A 7A 8A)', () => {
   it('1A : les dégâts suivent le rang et le niveau, plus de 14 fixes à Astrub', () => {
     for (const [k, d] of Object.entries(M)) {
       if (k === 'poutch_ingball') continue;
-      const part = d.dmg / pv(d.level ?? 1), base = DANGER.degats.part[d.boss ? 'boss' : d.elite ? 'elite' : 'normal'];
+      const E = DANGER.degats.equipement, l = d.level ?? 1, rang = d.boss ? 'boss' : d.elite ? 'elite' : 'normal';
+      const ref = E.rangs.includes(rang) ? Math.max(pv(l) * E.plancher, pv(l) + E.base + E.parNiveau * (l - 1)) : pv(l);   // maquette « Dégâts » 1B+1C
+      const part = d.dmg / ref, base = DANGER.degats.part[d.boss ? 'boss' : d.elite ? 'elite' : 'normal'];
       expect(part, k).toBeGreaterThanOrEqual(base * DANGER.degats.min - 0.01);
       expect(part, k).toBeLessThanOrEqual(base * DANGER.degats.max + 0.01);
       expect(d.dmg).toBe(degatsMonstre(d));

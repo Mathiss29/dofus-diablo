@@ -332,7 +332,8 @@ export class Monster extends Entity {
     const S = this.def.spells!, ok: number[] = [];
     if (this.def.signature != null && this.sigCd <= 0) {
       const s = S.find(x => x.id === this.def.signature);
-      if (s && this.trySignature(s, dist, player, world)) return true;
+      const vise = this.joueurProche(world) ?? player, dv = Math.hypot(vise.x - this.x, vise.y - this.y);
+      if (s && this.trySignature(s, dv, vise, world)) return true;   // 3B : le grand sort vise le joueur, même si une bête a l'aggro
     }
     S.forEach((s, i) => {
       if (this.spellCd[i] > 0) return;
@@ -405,6 +406,12 @@ export class Monster extends Entity {
     const [a, b] = this.reach(S, player);   // sort à distance : grand cercle là où est le joueur
     return dist >= a && dist <= b ? { k: 'cercle', x: player.x, y: player.y, r: Math.max(zoneRadius(S), CASE) * Z } : null;
   }
+  /** Joueur vivant le plus proche (multi : n'importe lequel des joueurs). */
+  private joueurProche(world: World): Cible | null {
+    let best: Cible | null = null, bd = Infinity;
+    for (const q of world.players) { if (q.dead) continue; const d = Math.hypot(q.x - this.x, q.y - this.y); if (d < bd) { bd = d; best = q; } }
+    return best;
+  }
   private sigWindup(): number { return DANGER.signature.telegraphe * (this.furieux ? 0.85 : 1); }
   private trySignature(S: MonsterSpell, dist: number, player: Cible, world: World): boolean {
     const dx = player.x - this.x, dy = player.y - this.y, d = Math.hypot(dx, dy) || 1;
@@ -420,9 +427,12 @@ export class Monster extends Entity {
   /** Impact de la signature : tout ce qui est dans la zone annoncée prend les dégâts ×2,5. Puis une fenêtre pour riposter. */
   private releaseSignature(player: Cible, world: World) {
     const S = this.spell!, F = this.sigF!, el = (S.effects.find(e => e.k === 'dmg') as { element: string } | undefined)?.element ?? 'neutre';
-    const touche = F.k === 'rect' ? dansRect(player.x, player.y, player.radius, this.x, this.y, this.facing, F.len, F.w)
-      : Math.hypot(player.x - F.x, player.y - F.y) <= F.r + player.radius;
-    if (touche) world.monsterSpellHits(this, S, player, DANGER.signature.degats);
+    const dans = (c: Cible) => F.k === 'rect' ? dansRect(c.x, c.y, c.radius, this.x, this.y, this.facing, F.len, F.w)
+      : Math.hypot(c.x - F.x, c.y - F.y) <= F.r + c.radius;
+    // 3B : tous les joueurs dans la zone annoncée prennent le coup, et la bête visée si c'en est une
+    const cibles = new Set<Cible>(world.players.filter(q => !q.dead));
+    if (!world.players.includes(player as never)) cibles.add(player);
+    for (const c of cibles) if (dans(c)) world.monsterSpellHits(this, S, c, DANGER.signature.degats);
     if (F.k === 'rect') world.emit({ k: 'spell', fx: 'line', id: `m${S.id}`, x: this.x, y: this.y, facing: this.facing, size: F.len, arc: 0, element: el as never, big: true, boosted: false });
     else {
       world.emit({ k: 'slam', x: F.x, y: F.y, radius: F.r });
