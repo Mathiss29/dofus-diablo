@@ -648,7 +648,7 @@ export class ZoneScene extends Phaser.Scene {
   private porteLabel: Phaser.GameObjects.Text | null = null;
   private porteSurvol(aim: { x: number; y: number }): boolean {
     const po = this.vitrine || this.world.passage ? null : this.world.porteSous(aim.x, aim.y);
-    if (!po) { this.porteLabel?.setVisible(false); return false; }
+    if (!po) { this.porteLabel?.setVisible(false); this.worldView?.contour(null); return false; }
     if (!this.porteLabel) {
       this.porteLabel = this.add.text(0, 0, '', { fontFamily: 'Lexend, sans-serif', fontSize: '15px', fontStyle: 'bold', color: '#f3e3bf', backgroundColor: '#0b0910e0',
         padding: { x: 9, y: 5 }, align: 'center' }).setOrigin(0.5, 1).setDepth(1e6);
@@ -657,6 +657,8 @@ export class ZoneScene extends Phaser.Scene {
       this.events.once('shutdown', () => { lab.destroy(); if (this.porteLabel === lab) this.porteLabel = null; });
     }
     const c = ISO.toScreen(po.x, po.y);
+    // contour du dessin de la porte (façon Sanstour) ; une sortie d'intérieur n'a pas de porte dessinée
+    if (po.sortie) this.worldView?.contour(null); else this.worldView?.contour(c.x, c.y);
     this.porteLabel.setText(po.sortie ? `Sortie · ${po.nom}` : po.nom).setColor(po.sortie ? '#ffe08a' : '#f3e3bf')
       // une sortie est un repère au sol, souvent sous le perso : son nom va dessous ; une porte dans un mur, au-dessus
       .setOrigin(0.5, po.sortie ? 0 : 1).setPosition(c.x, po.sortie ? c.y + 34 : c.y - 96).setScale(1 / this.cameras.main.zoom).setVisible(true);
@@ -744,6 +746,7 @@ export class ZoneScene extends Phaser.Scene {
     if (this.questView) this.questView.survole = surPnj;
     this.dialogueView?.survol(surPnj, ptr);
     const monstre = this.monsterUnder(ptr), porte = !monstre && !surPnj ? this.porteSurvol(aim) : false;
+    if (!porte) { this.porteLabel?.setVisible(false); this.worldView?.contour(null); }
     this.game.canvas.style.cursor = monstre ? 'crosshair' : surPnj ? 'pointer' : porte ? CURSEUR_PORTE : this.atelierView?.curseur() ?? this.recolteView?.curseur() ?? 'default';
     return input;
   }

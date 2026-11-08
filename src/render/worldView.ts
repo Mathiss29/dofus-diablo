@@ -325,6 +325,7 @@ export class WorldView {
         if (p.c < 0) im.setDepth(SOL + 10 + p.o * 0.01);   // lumière posée sur le sol : au-dessus du sol, sous le décor
         else { const cc = wg.cellCenter(p.c), cs = wg.toScreen(cc.x, cc.y + h / 2); im.setDepth(cs.y + p.o * 0.01); }
         if (p.h || p.cc) im.setData('tag', m.tag);
+        if (p.po) im.setData('po', p.po);
         if (p.b) this.light(im, p);
         else im.setTint(this.tint);
         if (p.c < 0 && p.g) im.setDepth(SOL + 2 + p.o * 0.0001);   // eau animée : juste au-dessus du sol, sous les lumières
@@ -339,6 +340,43 @@ export class WorldView {
       }
     }
   }
+  /** Contour de la porte survolée (façon Sanstour, comme les éléments interactifs de Dofus 3) : le dessin pile au-dessus
+   *  de la porte (sx, sy : la case de la porte à l'écran) reçoit un liseré clair. null = plus rien de survolé. */
+  contour(sx: number | null, sy = 0) {
+    const cle = sx === null ? '' : `${Math.round(sx)},${Math.round(sy)}`, t = this.scene.time.now;
+    // même porte : rien à refaire, sauf si son dessin n'était pas encore posé (carte voisine en chargement) : on recherche 4 fois par seconde
+    if (cle === this.contourCle && (this.contourIm || !cle || t - this.contourT < 250)) return;
+    this.contourCle = cle; this.contourT = t;
+    if (this.contourIm?.active) this.contourIm.preFX?.clear();
+    this.contourIm = null;
+    if (sx === null) return;
+    const im = this.dessinPorte(sx, sy);
+    if (!im?.preFX) return;   // pas de dessin à elle, ou pas de WebGL : pas de contour
+    im.preFX.setPadding(4);
+    im.preFX.addGlow(0xf6f0ff, 5, 0, false, 0.12, 3);
+    this.contourIm = im;
+  }
+  private contourCle = '';
+  private contourT = 0;
+  private contourIm: Phaser.GameObjects.Image | null = null;
+  /** Le dessin de la porte : l'image marquée « porte » (gfx officiel, portes_contour.py) la plus proche, si elle touche
+   *  presque le haut de la case. Une porte peinte dans le bâtiment n'a pas d'image à elle : pas de contour. */
+  private dessinPorte(sx: number, sy: number): Phaser.GameObjects.Image | null {
+    const px = sx, py = sy - 50;
+    let best: Phaser.GameObjects.Image | null = null, bd = WorldView.CONTOUR_MAX;
+    for (const s of this.slots.values()) {
+      if (s.state !== 'ready') continue;
+      for (const o of s.objs) {
+        if (!(o instanceof Phaser.GameObjects.Image) || !o.visible || !o.getData('po') || o.displayWidth > 200) continue;
+        const x0 = o.x - o.displayOriginX * o.scaleX, y0 = o.y - o.displayOriginY * o.scaleY;
+        const d = Math.hypot(Math.max(x0 - px, 0, px - x0 - o.displayWidth), Math.max(y0 - py, 0, py - y0 - o.displayHeight));
+        if (d < bd || (d === bd && best && o.displayWidth < best.displayWidth)) { bd = d; best = o; }
+      }
+    }
+    return best;
+  }
+  /** Distance maximale (px) entre le haut de la case de la porte et le dessin de la porte. */
+  static readonly CONTOUR_MAX = 70;
   /** Fait bouger le décor vivant (arbres au vent, eau). Amplitudes officielles ; vitesses ralenties (trop rapides pour Mathis, 2026-11-06). */
   private animate(t: number) {
     let n = 0;

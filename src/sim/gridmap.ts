@@ -13,7 +13,8 @@ export interface DecorPlace { f: string; x: number; y: number; c: number; o: num
   /** bâtiment (ou arbre) dont l'image fait partie, numéro unique dans le monde (tools/extraction/batiments.py) : il s'efface d'un bloc */ bt?: number;
   /** débord : le centre de l'image sort du cadre de sa carte, elle n'est montrée que quand le joueur est sur cette carte
    *  (méthode « façon Sanstour », batiments.py COURANTE=1) */ h?: number;
-  /** original caché quand le joueur est sur l'une de ces cartes (leur débord en a déjà une copie) */ cc?: string[] }
+  /** original caché quand le joueur est sur l'une de ces cartes (leur débord en a déjà une copie) */ cc?: string[];
+  /** porte dessinée à part (gfx officiel de porte) : contour au survol (tools/extraction/portes_contour.py) */ po?: number }
 
 /** Données d'une carte Dofus 3 exportée par tools/extraction/map_export.py. */
 export interface MapData {

@@ -4,6 +4,7 @@ import { BOUTIQUES, GAME_DATA, ITEMS, QUETES } from '../src/sim/data';
 import { WorldGrid, type WorldData } from '../src/sim/gridmap';
 import { NO_INPUT } from '../src/sim/input';
 import { World } from '../src/sim/world';
+import { ISO } from '../src/sim/iso';
 
 const astrub = JSON.parse(readFileSync(new URL('../public/assets/mondes/astrub/monde.json', import.meta.url), 'utf8')) as WorldData;
 const vide = { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} };
@@ -92,5 +93,13 @@ describe('entrées et sorties (maquette Entrées)', () => {
     m.x = p.x + 60; m.y = p.y;
     for (let i = 0; i < 5; i++) w.step(1 / 60, NO_INPUT);
     expect(m.state).not.toBe('idle');
+  });
+  it('contour au survol : les portes dessinées à part sont marquées dans le décor (portes_contour.py)', () => {
+    const w = monde(), wg = w.worldGrid!;
+    const po = astrub.maps.flatMap(m => m.decor.filter(p => p.po)).map(p => wg.toScreen(p.x, p.y));
+    for (const nom of ['Atelier des paysans', 'Atelier des alchimistes', 'Atelier des bûcherons et des sculpteurs', 'Tour du Conseil']) {
+      const e = ISO.toScreen(porte(w, nom).ends[0].x, porte(w, nom).ends[0].y);
+      expect(Math.min(...po.map(q => Math.hypot(q.x - e.x, q.y - (e.y - 50)))), nom).toBeLessThan(160);
+    }
   });
 });
