@@ -12,6 +12,11 @@ export type Canal = 'tout' | 'groupe' | 'bastion' | 'prive' | 'infos';
 /** Un message du chat (« Social : » 4A) : reçu du serveur, ou une info du jeu (canal Infos). */
 export interface MessageChat { canal: Canal; de: string; id: number | null; texte: string; vers?: string; t: number }
 export interface JoueurEnLigne { id: number; nom: string; classe: string; niveau: number; zone: string; groupe: boolean; ami?: boolean }
+/** Mon groupe (« Social : » 7A 7B), tenu par le serveur de présence : on se groupe sans bouger. */
+export interface Groupe {
+  id: number; chef: number; donjon: string | null;
+  membres: { id: number; nom: string; enLigne: boolean; classe?: string; niveau?: number; zone?: string }[];
+}
 /** Amis et ignorés (« Social : » 2A-2D, 8A), tenus par le serveur. */
 export interface Amis {
   amis: { id: number; discord: string; vu: number; perso?: { nom: string; classe: string; niveau: number; zone: string; groupe: boolean; avecMoi: boolean } }[];
@@ -25,6 +30,9 @@ class Presence {
   private profils = new Map<number, Profil>();
   enLigne: JoueurEnLigne[] = [];
   amis: Amis | null = null;
+  groupe: Groupe | null = null;
+  /** Le chef du groupe a lancé un donjon (code de la partie du serveur). */
+  onDonjon: (de: string, code: string, lieu: string) => void = () => {};
   /** Mon numéro de compte côté serveur (null : pas annoncé). */
   moi: number | null = null;
   private ws: WebSocket | null = null;
@@ -33,7 +41,7 @@ class Presence {
   private dernier = { t: 0, zone: '', x: 0, y: 0, a: '' };
   private ecouteurs = new Set<() => void>();
   /** Invitation reçue (« Social : » 7A) et petits messages du serveur. */
-  onInvitation: (de: string, code: string) => void = () => {};
+  onInvitation: (de: string, groupe: number) => void = () => {};
   onInfo: (texte: string) => void = () => {};
   /** Le chat : les derniers messages, et qui les écoute (fenêtre de chat, bulles). */
   readonly messages: MessageChat[] = [];
@@ -70,7 +78,7 @@ class Presence {
   arreter() {
     this.voulu = null; clearTimeout(this.relance);
     const ws = this.ws; this.ws = null; ws?.close();
-    this.moi = null; this.passants.clear(); this.enLigne = []; this.amis = null; this.changer();
+    this.moi = null; this.passants.clear(); this.enLigne = []; this.amis = null; this.groupe = null; this.changer();
   }
   private connecter() {
     let ws: WebSocket;
@@ -111,6 +119,14 @@ class Presence {
   ignorer(qui: string | number, nom?: string) { this.envoyer(typeof qui === 'number' ? { k: 'ignorer', id: qui, ...(nom ? { nom } : {}) } : { k: 'ignorer', nom: qui }); }
   reglerSocial(horsLigne: boolean, inconnus: boolean) { this.envoyer({ k: 'reglagesSociaux', horsLigne, inconnus }); }
   inviter(id: number) { this.envoyer({ k: 'inviter', id }); }
+  creerGroupe() { this.envoyer({ k: 'grpCreer' }); }
+  repondreGroupe(groupe: number, oui: boolean) { this.envoyer({ k: oui ? 'grpOui' : 'grpNon', groupe }); }
+  quitterGroupe() { this.envoyer({ k: 'grpQuitter' }); }
+  exclure(id: number) { this.envoyer({ k: 'grpExclure', id }); }
+  passerChef(id: number) { this.envoyer({ k: 'grpChef', id }); }
+  /** Chef : le donjon est lancé (code de la partie), les autres reçoivent « Rejoindre ». */
+  annoncerDonjon(code: string | null, lieu = '') { this.envoyer({ k: 'grpDonjon', code, lieu }); }
+  get chef() { return !!this.groupe && this.groupe.chef === this.moi; }
 
   private message(m: { k: string; [k: string]: unknown }) {
     if (m.k === 'presence') {
@@ -130,7 +146,13 @@ class Presence {
       for (const id of [...this.passants.keys()]) if (!vus.has(id)) this.passants.delete(id);
     } else if (m.k === 'enligne') { this.enLigne = m.l as JoueurEnLigne[]; this.changer(); }
     else if (m.k === 'amis') { this.amis = m as unknown as Amis; this.changer(); }
-    else if (m.k === 'invitation') { this.onInvitation(String(m.de), String(m.code)); this.noter({ canal: 'infos', de: '', id: null, texte: `${String(m.de)} t'invite dans son groupe` }); }
+    else if (m.k === 'groupe') {
+      const avant = JSON.stringify(this.groupe);
+      this.groupe = m.id == null ? null : m as unknown as Groupe;
+      if (JSON.stringify(this.groupe) !== avant) this.changer();
+    }
+    else if (m.k === 'donjon') { this.onDonjon(String(m.de), String(m.code), String(m.lieu ?? '')); this.noter({ canal: 'infos', de: '', id: null, texte: `${String(m.de)} part en donjon : rejoins-le` }); }
+    else if (m.k === 'invitation') { this.onInvitation(String(m.de), Number(m.groupe)); this.noter({ canal: 'infos', de: '', id: null, texte: `${String(m.de)} t'invite dans son groupe` }); }
     else if (m.k === 'info') { this.onInfo(String(m.texte)); this.noter({ canal: 'infos', de: '', id: null, texte: String(m.texte) }); }
     else if (m.k === 'chat') {
       const c = String(m.canal);

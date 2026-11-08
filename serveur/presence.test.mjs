@@ -57,22 +57,26 @@ test('présence : qui est en ligne, passants du Bastion, invitation', async () =
   a.envoi({ k: 'enligne' });
   const l = (await a.attendre(m => m.k === 'enligne')).l;
   assert.deepEqual(l.map(x => [x.nom, x.zone, x.groupe]), [['Brak', 'astrub', false]]);
-  // invitation : il faut un groupe
-  a.envoi({ k: 'inviter', id: l[0].id });
-  assert.match((await a.attendre(m => m.k === 'info')).texte, /groupe/);
-  a.envoi({ k: 'groupe', code: 'ABCDE' });
+  // groupe (7A) : inviter crée le groupe sans bouger personne ; l'invité accepte
+  b.envoi({ k: 'dire', canal: 'groupe', texte: 'x' });
+  assert.match((await b.attendre(m => m.k === 'info')).texte, /pas dans un groupe/);
   a.envoi({ k: 'inviter', id: l[0].id });
   const inv = await b.attendre(m => m.k === 'invitation');
-  assert.deepEqual([inv.de, inv.code], ['Lyra', 'ABCDE']);
+  assert.equal(inv.de, 'Lyra');
+  b.envoi({ k: 'grpOui', groupe: inv.groupe });
+  const g = await a.attendre(m => m.k === 'groupe' && m.membres?.length === 2);
+  assert.deepEqual([g.chef, g.membres.map(x => [x.nom, x.zone])], [1, [['Lyra', 'bastion'], ['Brak', 'astrub']]]);
+  // le chef lance un donjon : l'autre reçoit le code
+  b.envoi({ k: 'grpDonjon', code: 'ZZZZZ' });
+  assert.match((await b.attendre(m => m.k === 'info')).texte, /chef/);
+  a.envoi({ k: 'grpDonjon', code: 'QWERT', lieu: 'Crypte' });
+  assert.deepEqual((({ de, code }) => [de, code])(await b.attendre(m => m.k === 'donjon')), ['Lyra', 'QWERT']);
   // chat : Tout, Privé (par le nom du perso), Groupe (même code), Bastion (seulement là-bas), messages nettoyés
   a.envoi({ k: 'dire', canal: 'tout', texte: '  salut\n  tout le monde ' });
   assert.deepEqual((({ canal, de, texte }) => [canal, de, texte])(await b.attendre(m => m.k === 'chat')), ['tout', 'Lyra', 'salut tout le monde']);
   b.envoi({ k: 'dire', canal: 'prive', a: 'lyra', texte: 'coucou' });
   assert.equal((await a.attendre(m => m.k === 'chat' && m.canal === 'prive')).texte, 'coucou');
   assert.equal((await b.attendre(m => m.k === 'chat')).vers, 'Lyra');
-  b.envoi({ k: 'dire', canal: 'groupe', texte: 'x' });
-  assert.match((await b.attendre(m => m.k === 'info')).texte, /groupe/);
-  b.envoi({ k: 'groupe', code: 'ABCDE' });
   b.envoi({ k: 'dire', canal: 'groupe', texte: 'on y va' });
   assert.equal((await a.attendre(m => m.k === 'chat' && m.canal === 'groupe')).texte, 'on y va');
   b.envoi({ k: 'dire', canal: 'bastion', texte: 'x' });
@@ -92,6 +96,9 @@ test('présence : qui est en ligne, passants du Bastion, invitation', async () =
   // réglage « refuser les invitations des inconnus » : un ami passe quand même
   b.envoi({ k: 'reglagesSociaux', horsLigne: false, inconnus: true });
   assert.equal((await b.attendre(m => m.k === 'amis' && m.inconnus)).inconnus, true);
+  // Brak quitte le groupe (seul, Lyra le voit dissous), puis Lyra, son amie, peut l'inviter de nouveau
+  b.envoi({ k: 'grpQuitter' });
+  assert.match((await a.attendre(m => m.k === 'info' && /dissous/.test(m.texte))).texte, /dissous/);
   await new Promise(r => setTimeout(r, 3100));
   a.envoi({ k: 'inviter', id: l[0].id });
   assert.equal((await b.attendre(m => m.k === 'invitation')).de, 'Lyra');

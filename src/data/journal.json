@@ -827,6 +827,16 @@
             ]
           },
           {
+            "titre": "Se grouper sans bouger",
+            "phrase": "Invite tes amis dans ton groupe où que vous soyez : personne n'est téléporté.",
+            "details": "Le chef lance ensuite la Crypte et les autres reçoivent « Rejoindre ». Chef, exclure et passer la couronne dans Social › Groupe.",
+            "icone": "perso",
+            "etiquettes": [
+              "Touche P",
+              "Perso en ligne"
+              ]
+            },
+            {
             "titre": "Un accueil pour les nouveaux",
             "phrase": "La première visite présente le jeu, avec un gros bouton « Jouer gratuitement » et le Discord.",
             "details": "Le « Quoi de neuf » attend ta deuxième visite. Un lien « C'est quoi Diablofus ? » répond aux questions courantes.",
@@ -1083,7 +1093,8 @@
           "Plus de léger flou en courant : le décor et les persos défilent pile au pixel près.",
           "Coop sur le serveur : chacun peut sortir de l'arène par le portail, plus seulement le créateur.",
           "Sur un écran réglé à 125 % ou 150 %, le jeu est dessiné aux vrais pixels : tout est plus net.",
-          "Le chat reste affiché en bas à gauche, avec ses onglets et son champ, même quand personne n'écrit."
+          "Le chat reste affiché en bas à gauche, avec ses onglets et son champ, même quand personne n'écrit.",
+          "Forgelance : la Lance se voit dans ta main quand tu es Armé, et disparaît quand tu la plantes."
         ],
         "En coulisses": [
           "Sur Discord, le carnet du jour ne montre que ce qui est jouable par tous.",
