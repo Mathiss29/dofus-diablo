@@ -11,6 +11,7 @@ import { CASE, TOUR } from './monster';
 import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type SortGrade, type SortOfficiel } from './sorts';
 import { porteeSort } from './apercu';
 import { DANGER } from './danger';
+import type { EntreeCodex } from './codex';
 import { POUVOIR_PAR_ID, classeDuPouvoir, gradeAvecPouvoirs, type CtxPouvoirs, type PouvoirDef } from './pouvoirs';
 
 type ActiveSkill =
@@ -69,6 +70,8 @@ export class Player extends Entity {
   /** Apparat (maquette Apparence 5A) : objets d'apparat officiels possédés (id Dofus), et ceux posés par-dessus
    *  la coiffe, la cape ou le bouclier (case Apparence de l'inventaire). « 0 » cache l'objet porté. Rien ne change les stats. */
   apparats: string[] = [];
+  /** Codex des pouvoirs (0.3, src/sim/codex.ts) : pouvoirs enregistrés en brisant un Légendaire ou un Mythique chez Malek. */
+  codex: EntreeCodex[] = [];
   apparat: Partial<Record<'chapeau' | 'cape' | 'bouclier' | 'familier', string>> = {};
   /** Caractéristiques totales (points + équipement + panoplies), recalculées à chaque changement. */
   stats: Stats = {};

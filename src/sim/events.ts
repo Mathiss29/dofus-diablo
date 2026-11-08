@@ -93,6 +93,9 @@ export type SimEvent =
   | { k: 'forge'; uid: number; rune: string; issue: 'critique' | 'neutre' | 'echec' | 'puits'; stat: string; gain: number; pertes: [string, number][]; kamas: number; exo: boolean }
   /** auto : objet Commun brisé dès le ramassage (« Équipement en trop » 5B), id de cet objet. */
   | { k: 'brisage'; n: number; runes: Record<string, number>; auto?: string }
+  /** Codex (0.3) : un pouvoir enregistré en brisant un Légendaire ; une impression sur un objet Rare ou Épique. */
+  | { k: 'codex'; id: string }
+  | { k: 'impression'; uid: number; id: string }
   /** Collection d'apparences (1C) : premier exemplaire d'une coiffe, cape ou bouclier brisé ou recyclé. */
   | { k: 'apparence'; id: string }
   | { k: 'fusion'; de: string; vers: string; n: number }

@@ -5,6 +5,8 @@ import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES } fr
 import { v } from './assetUrl';
 import { BUTIN_CSS, butinMonstre, dessinerPortraits, esc as escB, groupesBestiaire, nomObjet, iconeObjet, sourcesHtml } from './butinVue';
 import { PALIERS } from './carnet';
+import { CODEX_CSS, codexPageHtml } from './codexVue';
+import { nouveauPourCodex } from '../sim/codex';
 import { FORGE_CSS, etatForge, forgeHtml, lotConcasseur, mmss, texteForge, type LigneLog } from './forgeVue';
 import { RUNES } from '../sim/forgemagie';
 import { LOOKS } from './looks';
@@ -558,7 +560,7 @@ export class Windows {
   private forge = etatForge();
 
   constructor(private world: World) {
-    const style = document.createElement('style'); style.textContent = CSS + ICON_CSS + BUTIN_CSS + FORGE_CSS; document.head.appendChild(style);
+    const style = document.createElement('style'); style.textContent = CSS + ICON_CSS + BUTIN_CSS + FORGE_CSS + CODEX_CSS; document.head.appendChild(style);
     this.root = document.createElement('div'); this.root.className = 'dw'; document.body.appendChild(this.root);
     this.tip = document.createElement('div'); this.tip.className = 'tip'; this.tip.style.display = 'none'; this.root.appendChild(this.tip);
   }
@@ -1322,13 +1324,16 @@ export class Windows {
     const KEYS = ['&', 'é', '"', "'", '(', '-', 'Clic D', 'Espace'];
     const slot = (i: number) => {
       const id = p.bar[i], d = id ? p.cls.spells[id] : null;
-      return `<div class="bs ${i === 6 || i === 7 ? 'gap' : ''}"><i data-slot="${i}" title="${d?.name ?? 'vide'}" style="${d ? `background-image:url(assets/ui/sorts/sort_${d.icon}.png)` : ''}"></i>${KEYS[i]}</div>`;
+      return `<div class="bs ${i === 6 || i === 7 ? 'gap' : ''}"><i data-slot="${i}" title="${d?.name ?? 'vide'}" style="${d ? `background-image:url(assets/ui/sorts/sort_${d.icon}.png)` : ''}"></i>${KEYS[i] ?? ""}</div>`;
     };
+    // Codex (0.3, 7B) : consultable partout depuis la fenêtre des Sorts
+    const codexBtn = p.v03 ? `<span class="btn" data-vcodex>${this.sortsCodex ? 'Retour aux sorts' : `Codex · ${p.codex.length}`}</span>` : '';
     w.innerHTML = `${this.title('Sorts', 'spells')}<div class="sb">
-      <div class="ls">${pairs.map((pr, i) => `<div class="pr">${row(pr, i)}</div>`).join('')}</div>
-      <div class="fi">${fiche}</div>
-      <div class="bb">${p.bar.map((_, i) => slot(i)).join('')}<span class="hint">${p.cls.name} niveau ${p.level} · ${all.filter(s => p.level >= p.requiredLevel(s)).length} sorts débloqués sur ${all.length}</span></div>
+      ${this.sortsCodex && p.v03 ? `<div class="fi" style="grid-column:1/-1;overflow:auto">${codexPageHtml(p)}</div>` : `<div class="ls">${pairs.map((pr, i) => `<div class="pr">${row(pr, i)}</div>`).join('')}</div>
+      <div class="fi">${fiche}</div>`}
+      <div class="bb">${p.bar.map((_, i) => slot(i)).join('')}<span class="hint">${p.cls.name} niveau ${p.level} · ${all.filter(s => p.level >= p.requiredLevel(s)).length} sorts débloqués sur ${all.length}</span>${codexBtn}</div>
     </div>`;
+    w.querySelector<HTMLElement>('[data-vcodex]')?.addEventListener('click', () => { this.sortsCodex = !this.sortsCodex; this.render(); });
     w.querySelectorAll<HTMLElement>('.sp').forEach(e => e.addEventListener('click', () => {
       const id = +e.dataset.s!, i = +e.dataset.p!, v = +e.dataset.v! as 0 | 1;
       if (this.vu === id && (p.variants[i] ?? 0) !== v) p.setVariant(i, v);
@@ -1502,6 +1507,8 @@ export class Windows {
     });
   }
   /** Forgemage (maquettes « Forgemagie » et « Forgemagie UI ») : forgemagie, commande à Malek, Concasseur et fusion ; la partie de test l'ouvre aussi (F1). */
+  /** Fenêtre des Sorts : page du Codex affichée à la place des sorts (0.3). */
+  private sortsCodex = false;
   ouvrirForge(uid?: number) { if (uid != null) this.forge.uid = uid; this.forge.onglet = this.world.player.commandeFM?.prete ? 'malek' : 'forge'; this.show('forge'); }
   /** Nom du perso (Rune de Signature, Forgemagie UI 6A) : donné par la scène. */
   nomPerso: () => string = () => '';
@@ -1549,6 +1556,16 @@ export class Windows {
     w.querySelector<HTMLElement>('[data-fsigne]')?.addEventListener('click', () => {
       if (f.uid != null && this.world.signer(f.uid, this.nomPerso())) this.changed();
     });
+    // Codex (0.3) : objet Rare ou Épique, pouvoir du Codex, impression
+    w.querySelectorAll<HTMLElement>('[data-cuid]').forEach(e => {
+      const it = this.world.objetForgeable(+e.dataset.cuid!)!;
+      e.addEventListener('click', () => { f.codex.uid = it.uid; f.codex.entree = null; this.render(); }); tip(e, it);
+    });
+    w.querySelectorAll<HTMLElement>('[data-centree]').forEach(e => e.addEventListener('click', () => { f.codex.entree = e.dataset.centree!; this.render(); }));
+    w.querySelectorAll<HTMLElement>('[data-cimp]').forEach(e => e.addEventListener('click', () => {
+      if (e.classList.contains('off') || f.codex.uid == null || !f.codex.entree) return;
+      if (this.world.imprimerCodex(f.codex.uid, f.codex.entree, e.dataset.cimp as 'kamas' | 'pepites')) { f.codex.entree = null; this.changed(); }
+    }));
     // commande à Malek (9A-9E)
     w.querySelectorAll<HTMLElement>('[data-muid]').forEach(e => {
       const it = this.world.objetForgeable(+e.dataset.muid!)!;
@@ -1773,6 +1790,8 @@ export class Windows {
       return e.actif ? `<div class="leg"><b>${nom}</b> : ${texte}</div>`
         : `<div class="leg off"><b>${nom}</b> : ${texte} <i>(${e.raison})</i></div>`;
     }).join('');
+    // 14D : sceau « Nouveau pour le Codex » (0.3) sur un pouvoir pas encore enregistré
+    const neuf = p.v03 && [it.legendary, it.legendary2].some(l => l && nouveauPourCodex(p.codex, p.cls.sorts, l)) ? '<div class="leg">✦ Nouveau pour le Codex : brise-le chez Malek pour le garder</div>' : '';
     const set = d.set && ITEMS.sets[d.set] ? `<div class="set">${ITEMS.sets[d.set].name}</div>` : '';
     let cmp = '';
     if (cur) {
@@ -1793,7 +1812,7 @@ export class Windows {
     } else if (p.equipment.familier && !worn) fam = `<div class="hint">Alt + clic : le donner à manger au familier (+${FAMILIER_XP.objet(d.level, it.rarity)} XP)</div>`;
     this.tip.innerHTML = `<h4 style="color:${RARITY_COLORS[it.rarity]}">${d.name}</h4>
       <div class="sub">${d.familier ? 'Familier' : `${RARITY_NAMES[it.rarity]} · ${d.weapon?.type ?? SLOT_NAMES[(slot ?? 'amulette') as EquipSlot]}`} · niveau ${d.level}</div>
-      ${weapon}${stats}${fam}${leg}${set}${it.signe ? `<div class="sig">Signé par ${it.signe.replace(/[&<>"]/g, '')}</div>` : ''}${lvl}${cmp}${sourcesHtml(it.id, 3)}
+      ${weapon}${stats}${fam}${leg}${neuf}${set}${it.signe ? `<div class="sig">Signé par ${it.signe.replace(/[&<>"]/g, '')}</div>` : ''}${lvl}${cmp}${sourcesHtml(it.id, 3)}
       <div class="hint">${worn ? 'Clic droit : retirer' : it.cadenas ? 'Sous cadenas : jamais recyclé · Ctrl + clic : l\'ôter' : `Clic droit : équiper · Ctrl + clic : cadenas (recyclage chez Kerubim : ${recycleValue(d, it)} Pépites)`}</div>`;
     this.tip.style.display = 'block'; this.moveTip(ev);
   }
