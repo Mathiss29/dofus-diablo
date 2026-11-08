@@ -225,5 +225,12 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
     return true;
   }
 
-  return { route, copieNocturne, pret, persoPartie, sauverPartie, stats: () => q.nb.get(), fermer: () => { clearInterval(minuterie); db.close(); } };
+  /** Compte d'un jeton (présence au Bastion, chat) : null si le jeton ne vaut rien. */
+  function compteDuJeton(jeton) {
+    if (typeof jeton !== 'string' || !/^[0-9a-f]{64}$/.test(jeton)) return null;
+    const c = q.session.get(empreinte(jeton), maintenant());
+    return c ? { id: c.id, nom: c.nom, testeur: vue(c).testeur, admin: vue(c).admin } : null;
+  }
+
+  return { route, copieNocturne, pret, persoPartie, sauverPartie, compteDuJeton, stats: () => q.nb.get(), fermer: () => { clearInterval(minuterie); db.close(); } };
 }

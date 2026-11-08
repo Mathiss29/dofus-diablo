@@ -58,6 +58,10 @@ import { etatsPrets, jourDuPC, PanneauTest, lireTest, modeTest, sauverTest, type
 import { REGLAGES_TEST, type CommandeTest } from '../sim/outilsTest';
 import { Coop } from './coop';
 import { appliquerInstantane } from '../sim/miroir';
+import { EnLigne } from './presence';
+import { Compte as CompteEnLigne } from './compte';
+import { PassantsEnLigne } from './passantsEnLigne';
+import { montrerInvitation } from './social';
 
 const ASSETS = 'assets';
 const mapDir = ([x, y]: [number, number]) => `${ASSETS}/cartes/${x}_${y}`;
@@ -402,6 +406,15 @@ export class ZoneScene extends Phaser.Scene {
     Coop.attacher({ world: wc, annonce: t => this.hud.toast(t), nom: this.perso?.nom ?? '', sauver: () => this.sauver(),
       allerA: (zone, position) => { if (this.world === wc) this.scene.restart(zone ? { slot: this.slot, zone, position } : { slot: this.slot }); } });
     this.events.once('shutdown', () => Coop.detacher(wc));
+    // Présence en ligne (Bastion partagé) : seulement avec un perso du compte, hors partie de test et hors vitrine
+    if (this.perso && persosEnLigne() && !this.test && !this.vitrine && !this.essai && this.slot >= 0) {
+      const p = this.world.player;
+      EnLigne.annoncer(this.slot, Coop.miroir ? '__groupe' : this.zoneId, p.x, p.y, objetsPortes(p.equipment, p.apparat));
+      EnLigne.onInvitation = (de, code) => montrerInvitation(de, () => { const j = CompteEnLigne.jeton; if (j) Coop.rejoindre(code, { jeton: j, emplacement: this.slot }); });
+      EnLigne.onInfo = t => this.hud.toast(t);
+    } else EnLigne.arreter();
+    const pel = this.passantsEnLigne = new PassantsEnLigne(this);
+    this.events.once('shutdown', () => { pel.destroy(); if (this.passantsEnLigne === pel) this.passantsEnLigne = null; });
     this.carte?.destroy();
     this.carte = zone.open ? new CarteMonde(this.world, v(`${worldDir(zone.open.world)}/carte.webp`), `${ASSETS}/ui/reperes`) : null;
     this.events.once('shutdown', () => { this.windows?.destroy(); this.windows = null; this.carte?.destroy(); this.carte = null; });
@@ -995,6 +1008,7 @@ export class ZoneScene extends Phaser.Scene {
   private secCommande = -1;
   /** Coop, chez l'invité : la partie tourne chez l'hôte, cette scène recopie ses instantanés et lui envoie les entrées. */
   private miroir = false;
+  private passantsEnLigne: PassantsEnLigne | null = null;
   private updateMiroir(dt: number) {
     this.acc += dt;
     if (this.acc >= ZoneScene.STEP) { this.acc %= ZoneScene.STEP; Coop.entree(this.readInput(), performance.now()); }
@@ -1598,6 +1612,12 @@ export class ZoneScene extends Phaser.Scene {
     }
     for (const [id, v] of this.views) if (!alive.has(id)) { v.destroy(); this.views.delete(id); }
     for (const [id, vv] of this.vivantsAllies) if (!w.players.some(q => q.id === id)) { vv?.destroy(); this.vivantsAllies.delete(id); }
+    // Bastion partagé : les autres joueurs en ligne s'y promènent ; on donne aussi sa position
+    if (EnLigne.connecte && !this.vitrine) {
+      const p = w.player;
+      EnLigne.position(this.miroir ? '__groupe' : this.zoneId, p.x, p.y, p.facing, p.anim === 'run' ? 'run' : 'idle', this.time.now);
+    }
+    this.passantsEnLigne?.maj(w.dansBastion && !this.miroir && !this.vitrine, this.game.loop.delta / 1000, w.player.x, w.player.y);
     this.dessinerLaisse();
     this.dessinerSouffrance();
     this.dessinerLances();

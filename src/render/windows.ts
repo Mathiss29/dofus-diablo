@@ -46,7 +46,8 @@ const ALM_CSS = `.dw .win.almanax{width:420px}.dw .alm{padding:10px 14px 14px;di
 .dw .alm-b b{color:#ffe7b0}.dw .alm-b p{margin:4px 0 0;font-size:12px;opacity:.75;font-style:italic}
 .dw .alm-e{color:#b9e54b;font-weight:bold}.dw .alm-o{display:flex;gap:10px;align-items:center}.dw .alm-o small{display:block}
 .dw .alm-r{font-size:13px}.dw .alm-f{color:#b9e54b;text-align:center;padding:6px}.dw .alm .btn{align-self:center}`;
-import { SOCIAL_CSS, majMembres, rendreSocial } from './social';
+import { SOCIAL_CSS, rendreSocial, tickSocial } from './social';
+import { EnLigne } from './presence';
 import { Coop } from './coop';
 import { FORGE_CSS, etatForge, forgeHtml, lotConcasseur, mmss, texteForge, type LigneLog } from './forgeVue';
 import { RUNES } from '../sim/forgemagie';
@@ -647,9 +648,11 @@ export class Windows {
     window.addEventListener('keydown', this.captureTouche, true);
     // fenêtre Social : suit le groupe (arrivées, départs, vie des membres)
     this.finCoop = Coop.ecouter(() => { if (this.ouverte === 'social') this.refresh(); });
-    this.minuteSocial = window.setInterval(() => { if (this.ouverte === 'social' && Coop.etat === 'salon') majMembres(this.win!, this.ctxSocial()); }, 1000);
+    this.finEnLigne = EnLigne.ecouter(() => { if (this.ouverte === 'social') this.refresh(); });
+    this.minuteSocial = window.setInterval(() => { if (this.ouverte === 'social') tickSocial(this.win!, this.ctxSocial()); }, 1000);
   }
   private finCoop: () => void;
+  private finEnLigne: () => void;
   private minuteSocial: number;
   /** Fenêtre Social : emplacement du perso joué (-1 : aucun) et partie de test, posés par la scène. */
   socialSlot = -1;
@@ -666,7 +669,7 @@ export class Windows {
     this.win?.remove(); this.win = null; this.tip.style.display = 'none'; this.touchesVue = false; this.touchesEcoute = null;
     this.root.style.zIndex = '';
   }
-  destroy() { this.root.remove(); window.removeEventListener('keydown', this.captureTouche, true); this.finCoop(); clearInterval(this.minuteSocial); }
+  destroy() { this.root.remove(); window.removeEventListener('keydown', this.captureTouche, true); this.finCoop(); this.finEnLigne(); clearInterval(this.minuteSocial); }
 
   show(mode: Mode = 'inv') {
     this.close(false);

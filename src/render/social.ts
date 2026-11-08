@@ -1,13 +1,13 @@
 // Fenêtre Social façon Dofus 3 (maquette « Social : 1A+1B 2A… 7A+7B+7C … 9A ») : onglets Amis, Discord, Groupe, Ignorés.
-// Premier morceau (choix de Mathis, 2026-11-08) : l'onglet Groupe, pour jouer à plusieurs dans le vrai jeu avec son perso
-// en ligne ; la partie tourne sur le serveur, qui lit et sauve le perso du compte. Les autres onglets viennent avec le
-// Bastion partagé. Ouverte par la touche Social (P) ou le bouton de la colonne de menus.
+// Onglet Groupe (jouer à plusieurs avec son perso en ligne ; la partie tourne sur le serveur, qui lit et sauve le perso du
+// compte) et onglet Discord (joueurs connectés, invitation). Amis et Ignorés viennent ensuite. Touche Social (P).
 import { GAME_DATA } from '../sim/data';
 import type { World } from '../sim/world';
 import { classeDe } from '../sim/miroir';
 import { Coop } from './coop';
 import { Compte } from './compte';
 import { lirePersos } from './persos';
+import { EnLigne } from './presence';
 
 export const SOCIAL_CSS = `.dw .win.social{width:440px}
 .dw .soc{padding:8px 14px 14px;display:flex;flex-direction:column;gap:10px}
@@ -41,10 +41,31 @@ function membres(w: World) {
   return w.players.map(p => ({ p, moi: p === w.player, cls: classeDe(w, p) }));
 }
 
+/** Onglet ouvert (gardé d'une ouverture à l'autre), et joueur à inviter dès que son groupe existe. */
+let onglet: 'groupe' | 'discord' = 'groupe';
+let aInviter: number | null = null;
+Coop.ecouter(() => {
+  if (aInviter != null && Coop.etat === 'salon' && Coop.serveur) { EnLigne.inviter(aInviter); aInviter = null; }
+  else if (Coop.etat === 'hors') aInviter = null;
+});
+
+/** Chaque seconde, fenêtre ouverte : la liste des membres du groupe, et celle des joueurs en ligne toutes les 3 s. */
+let tic = 0;
+export function tickSocial(win: HTMLDivElement, c: ContexteSocial) {
+  if (onglet === 'discord') { if (tic++ % 3 === 0) EnLigne.demanderEnLigne(); }
+  else if (Coop.etat === 'salon') majMembres(win, c);
+}
+
 export function rendreSocial(win: HTMLDivElement, titre: string, c: ContexteSocial) {
-  const onglet = (n: string, on: boolean) => `<span class="${on ? 'on' : 'off'}" ${on ? '' : 'title="Avec le Bastion partagé"'}>${n}</span>`;
-  win.innerHTML = `${titre}<div class="soc"><div class="soc-t">${onglet('Amis', false)}${onglet('Discord', false)}${onglet('Groupe', true)}${onglet('Ignorés', false)}</div>${groupe(c)}</div>`;
+  const tab = (k: string, n: string) => k ? `<span class="${onglet === k ? 'on' : ''}" data-soc-o="${k}" style="cursor:pointer">${n}</span>` : `<span class="off" title="Bientôt">${n}</span>`;
+  win.innerHTML = `${titre}<div class="soc"><div class="soc-t">${tab('', 'Amis')}${tab('discord', 'Discord')}${tab('groupe', 'Groupe')}${tab('', 'Ignorés')}</div>
+    ${onglet === 'discord' ? discord(c) : groupe(c)}</div>`;
   const $ = <T extends HTMLElement>(s: string) => win.querySelector<T>(s);
+  win.querySelectorAll<HTMLElement>('[data-soc-o]').forEach(e => e.addEventListener('click', () => {
+    onglet = e.dataset.socO as 'groupe' | 'discord';
+    if (onglet === 'discord') EnLigne.demanderEnLigne();
+    c.refaire();
+  }));
   const compte = () => (c.slot >= 0 && Compte.jeton ? { jeton: Compte.jeton, emplacement: c.slot } : null);
   $('[data-soc-creer]')?.addEventListener('click', () => Coop.creer(true, compte()));
   const rej = () => { const v = $<HTMLInputElement>('[data-soc-code]')?.value ?? ''; if (v.trim()) Coop.rejoindre(v, compte()); };
@@ -52,6 +73,47 @@ export function rendreSocial(win: HTMLDivElement, titre: string, c: ContexteSoci
   $<HTMLInputElement>('[data-soc-code]')?.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') rej(); });
   $('[data-soc-quitter]')?.addEventListener('click', () => Coop.quitter());
   $('[data-soc-copier]')?.addEventListener('click', () => { void navigator.clipboard?.writeText(Coop.code ?? '').catch(() => {}); });
+  // 7A : inviter un joueur ; sans groupe, on en crée un (on part dans la Crypte) et l'invitation part dès qu'il existe
+  win.querySelectorAll<HTMLElement>('[data-soc-inviter]').forEach(e => e.addEventListener('click', () => {
+    const id = Number(e.dataset.socInviter);
+    if (Coop.etat === 'salon' && Coop.serveur) EnLigne.inviter(id);
+    else if (Coop.etat === 'hors') { aInviter = id; Coop.creer(true, compte()); }
+  }));
+}
+/** Onglet Discord (« Social : » 1B) : les joueurs connectés avec leur perso en ligne, sans avoir à les ajouter. */
+function discord(c: ContexteSocial): string {
+  if (c.test || !Compte.enLigne || c.slot < 0) return `<p>Connecte-toi avec Discord et joue un perso <b>« En ligne »</b> pour voir les autres joueurs.</p>`;
+  if (!EnLigne.connecte) return '<p class="note">Connexion au serveur…</p>';
+  const L = EnLigne.enLigne;
+  if (!L.length) return '<p>Personne d\'autre n\'est en ligne pour l\'instant.</p>';
+  const lieu = (z: string) => z === '__groupe' ? 'en donjon de groupe' : GAME_DATA.zones[z]?.name ?? z;
+  const peutInviter = !lirePersos()[c.slot]?.hardcore && (!Compte.infos || Compte.infos.testeur);
+  return `<p class="note">${L.length} joueur${L.length > 1 ? 's' : ''} en ligne. Au Bastion des Douze, vous vous croisez.</p>
+    <div style="display:flex;flex-direction:column;gap:6px;max-height:340px;overflow:auto">${L.map(j => {
+      const cls = GAME_DATA.classes[j.classe] ? j.classe : 'iop';
+      return `<div class="mbr"><img src="assets/accueil/c_${cls}.png" alt="">
+        <div><b>${esc(j.nom)}</b><small>${GAME_DATA.classes[cls].name} · niveau ${j.niveau} · ${esc(lieu(j.zone))}</small></div>
+        ${peutInviter && !j.groupe ? `<span class="btn" data-soc-inviter="${j.id}" title="L'inviter dans ton groupe">Inviter</span>` : j.groupe ? '<small>en groupe</small>' : '<span></span>'}</div>`;
+    }).join('')}</div>`;
+}
+
+/** Invitation reçue (7A) : une petite carte en haut de l'écran, Rejoindre ou Non (elle s'en va seule au bout de 30 s). */
+export function montrerInvitation(de: string, rejoindre: () => void) {
+  document.querySelector('.invitation-groupe')?.remove();
+  const d = document.createElement('div');
+  d.className = 'invitation-groupe';
+  d.style.cssText = 'position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:40;background:#1b1a16f2;border:1px solid #b9e54b;border-radius:6px;padding:10px 14px;display:flex;gap:10px;align-items:center;font:14px Lexend,sans-serif;color:#f4efe0;box-shadow:0 8px 30px #000a';
+  d.innerHTML = `<span><b>${esc(de)}</b> t'invite dans son groupe</span>`;
+  const bouton = (t: string, vert: boolean, f: () => void) => {
+    const b = document.createElement('button'); b.textContent = t;
+    b.style.cssText = `cursor:pointer;border-radius:3px;padding:5px 12px;font-weight:bold;color:#fff;border:1px solid ${vert ? '#b9e54b' : '#8a8676'};background:${vert ? 'linear-gradient(#6f9a2a,#4c6e17)' : 'linear-gradient(#5a5850,#3d3c36)'}`;
+    b.addEventListener('click', () => { d.remove(); f(); }); b.addEventListener('pointerdown', e => e.stopPropagation());
+    d.appendChild(b);
+  };
+  bouton('Rejoindre', true, () => { if (Coop.etat === 'salon') Coop.quitter(); rejoindre(); });
+  bouton('Non', false, () => {});
+  document.body.appendChild(d);
+  setTimeout(() => d.remove(), 30_000);
 }
 
 function groupe(c: ContexteSocial): string {
