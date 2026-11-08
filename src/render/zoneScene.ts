@@ -191,8 +191,9 @@ export class ZoneScene extends Phaser.Scene {
     if (!this.textures.exists('kamas_tas')) this.load.image('kamas_tas', v(`${ASSETS}/ui/kamas_tas.png`));
     if (!this.textures.exists('fleche_arme')) this.load.image('fleche_arme', v(`${ASSETS}/fx/fleche_arme.webp`));   // Armes 4B
     if (!this.textures.exists('kamas_piece')) this.load.image('kamas_piece', v(`${ASSETS}/ui/kamas_piece.png`));
-    // paillasson posé à chaque sortie d'intérieur (Mathis, 2026-11-08) : un tapis officiel du Havre-Sac (gfx 71133)
-    if (!this.textures.exists('paillasson')) this.load.image('paillasson', v(`${ASSETS}/ui/paillasson.png`));
+    // paillasson posé à chaque sortie d'intérieur, comme Sanstour (Mathis, 2026-11-08) : dalle, soleil vert, étincelles
+    for (const n of ['paillasson', 'paillasson_soleil', 'paillasson_etincelle'])
+      if (!this.textures.exists(n)) this.load.image(n, v(`${ASSETS}/ui/${n}.png`));
     if (!this.textures.exists(ICON_SHEET.key)) this.load.spritesheet(ICON_SHEET.key, v(`${ASSETS}/${ICON_SHEET.url}`), { frameWidth: ICON_SHEET.cell, frameHeight: ICON_SHEET.cell });
     const zone = GAME_DATA.zones[this.zoneId];
     // On ne charge que les planches utiles à cette zone

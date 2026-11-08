@@ -115,8 +115,10 @@ describe('contour officiel des portes et paillasson (Mathis 2026-11-08)', () => 
     for (const nom of ["Taverne d'Astrub", "Banque d'Astrub", "Milice d'Astrub", 'Atelier des chasseurs', 'Atelier des pêcheurs', 'Atelier des mineurs et des forgerons'])
       expect(pres(nom), nom).toBeLessThan(200);
   });
-  it('le paillasson (tapis officiel du Havre-Sac) est dans les images de l’interface', () => {
-    const png = readFileSync(new URL('../public/assets/ui/paillasson.png', import.meta.url));
-    expect(png.subarray(1, 4).toString()).toBe('PNG');
+  it('le paillasson façon Sanstour (dalle, soleil vert, étincelles) est dans les images de l’interface', () => {
+    for (const n of ['paillasson', 'paillasson_soleil', 'paillasson_etincelle']) {
+      const png = readFileSync(new URL(`../public/assets/ui/${n}.png`, import.meta.url));
+      expect(png.subarray(1, 4).toString(), n).toBe('PNG');
+    }
   });
 });

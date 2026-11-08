@@ -92,14 +92,38 @@ export class WorldView {
     if (this.scene.textures.exists(this.k('ciel'))) this.sky = this.scene.add.image(0, 0, this.k('ciel')).setScrollFactor(0).setDepth(SOL - 1e7).setTint(this.tint);
     for (const m of this.wg.world.maps) if (this.texturesReady(m)) { this.slots.get(m.tag)!.state = 'loading'; this.build(m); }
     this.pump(Infinity);   // au lancement, tout de suite (l'écran de chargement couvre)
-    // paillasson à chaque sortie d'intérieur (Dofus 3 n'en dessine pas ; Sanstour en pose un, Mathis 2026-11-08) :
-    // à plat sur la case de sortie, visible seulement dans sa salle, et il s'entoure au survol comme une porte
+    // paillasson à chaque sortie d'intérieur, comme Sanstour (Mathis 2026-11-08) : dalle de pierre au soleil vert qui luit,
+    // posée sur la case de sortie officielle (la boîte de survol de la carte Dofus 3 quand elle existe), visible dans sa salle
     if (this.scene.textures.exists('paillasson')) for (const e of this.portes) if (e.sortie) {
-      const c = this.caseDeSol(e), s = ISO.toScreen(c.x, c.y);
+      const s = this.caseDeSortie(e);
       const im = this.scene.add.image(s.x, s.y, 'paillasson').setScale(WorldView.PAILLASSON).setDepth(SOL + 3).setData('po', 1).setVisible(false).setTint(this.tint);
-      this.paillassons.push({ im, tag: e.tag });
+      const soleil = this.scene.textures.exists('paillasson_soleil')
+        ? this.scene.add.image(s.x, s.y, 'paillasson_soleil').setScale(WorldView.SOLEIL).setDepth(SOL + 4).setBlendMode(Phaser.BlendModes.ADD).setVisible(false) : null;
+      const etincelles = this.scene.textures.exists('paillasson_etincelle') ? this.scene.add.particles(s.x, s.y, 'paillasson_etincelle', {
+        speedY: { min: -28, max: -12 }, speedX: { min: -5, max: 5 }, lifespan: 1300, frequency: 260, scale: { start: 0.9, end: 0 },
+        alpha: { start: 0.9, end: 0 }, blendMode: 'ADD', emitting: false,
+        emitZone: { type: 'random', source: new Phaser.Geom.Ellipse(0, 0, 44, 18) } as Phaser.Types.GameObjects.Particles.EmitZoneData,
+      }).setDepth(SOL + 5) : null;
+      this.paillassons.push({ im, soleil, etincelles, tag: e.tag });
     }
   }
+  /** Où poser le paillasson : la boîte de survol officielle la plus proche du bout de sortie (la case de sortie que Dofus 3
+   *  entoure, Taverne : au coin du plancher), sinon une case de plancher. Point à l'écran. */
+  private caseDeSortie(e: { tag: string; x: number; y: number }) {
+    const fin = ISO.toScreen(e.x, e.y), m = this.wg.mapByTag(e.tag);
+    let best: { x: number; y: number } | null = null, bd = WorldView.PAILLASSON_BOITE;
+    for (const q of m?.survols ?? []) {
+      const c = this.wg.toScreen(q.x, q.y), d = Math.hypot(c.x - fin.x, c.y - fin.y);
+      if (d < bd) { bd = d; best = c; }
+    }
+    if (best) return best;
+    const c = this.caseDeSol(e);
+    return ISO.toScreen(c.x, c.y);
+  }
+  /** Taille du soleil vert du paillasson. */
+  static readonly SOLEIL = 0.75;
+  /** Distance max (px à l'écran) entre le bout de sortie et la boîte de survol officielle de la case de sortie. */
+  static readonly PAILLASSON_BOITE = 120;
   /** Case du paillasson : le bout de sortie est au bord de la salle, souvent dans le noir (Taverne : pointe du couloir
    *  sous le coin du plancher). On avance d'une case vers le milieu de la salle, puis on prend la case libre la plus proche. */
   private caseDeSol(e: { tag: string; x: number; y: number }) {
@@ -110,10 +134,10 @@ export class WorldView {
     return libres.reduce((b, q) => Math.hypot(q.x - x, q.y - y) < Math.hypot(b.x - x, b.y - y) ? q : b);
   }
   /** De combien le paillasson avance dans la salle depuis le bout de sortie (px du monde, ≈ une case). */
-  static readonly PAILLASSON_AVANCE = 80;
+  static readonly PAILLASSON_AVANCE = 55;
   /** Échelle du paillasson (le tapis fait une case). */
-  static readonly PAILLASSON = 1.15;
-  private paillassons: { im: Phaser.GameObjects.Image; tag: string }[] = [];
+  static readonly PAILLASSON = 0.95;
+  private paillassons: { im: Phaser.GameObjects.Image; soleil: Phaser.GameObjects.Image | null; etincelles: Phaser.GameObjects.Particles.ParticleEmitter | null; tag: string }[] = [];
 
   isReady(tag: string | undefined) { return !!tag && this.slots.get(tag)?.state === 'ready'; }
 
@@ -137,7 +161,11 @@ export class WorldView {
       // intérieur : pas de ciel, fond noir comme dans Dofus
       // (le Temple Céleste flotte dans le ciel : il le garde)
       this.sky?.setVisible(!here.inside || !!here.ciel);
-      for (const p of this.paillassons) p.im.setVisible(p.tag === here.tag);
+      for (const p of this.paillassons) {
+        const v = p.tag === here.tag;
+        p.im.setVisible(v); p.soleil?.setVisible(v); p.etincelles?.setVisible(v);
+        if (p.etincelles) p.etincelles.emitting = v;
+      }
       this.scene.cameras.main.setBackgroundColor(here.inside && !here.ciel ? '#000000' : here.mer !== undefined ? `#${here.mer.toString(16).padStart(6, '0')}` : '#0d2b36');
     }
     const seen = (m: WorldMapEntry, marge: number) => this.seen(m, here, marge);
@@ -373,7 +401,7 @@ export class WorldView {
     // même porte : rien à refaire, sauf si son dessin n'était pas encore posé (carte voisine en chargement) : on recherche 4 fois par seconde
     if (cle === this.contourCle && (this.contourIm || this.survolIm?.visible || !cle || t - this.contourT < 250)) return;
     this.contourCle = cle; this.contourT = t;
-    if (this.contourIm?.active) { this.contourIm.preFX?.clear(); if (this.contourIm.texture.key === 'paillasson') this.contourIm.setDepth(SOL + 3); }
+    if (this.contourIm?.active) { this.contourIm.preFX?.clear(); if (this.contourIm.texture.key === 'paillasson') this.devant(this.contourIm, false); }
     this.contourIm = null;
     this.survolIm?.setVisible(false);
     if (sx === null) return;
@@ -383,9 +411,14 @@ export class WorldView {
     if (!im?.preFX) return;   // rien à entourer, ou pas de WebGL
     im.preFX.setPadding(4);
     im.preFX.addGlow(WorldView.LILAS, 4, 0, false, 0.12, 3);
-    // paillasson survolé : il passe devant le bord noir de la salle, qui le cache parfois (Banque, Bricoleurs)
-    if (im.texture.key === 'paillasson') im.setDepth(1e6 - 6);
+    // paillasson survolé : il passe devant le bord noir de la salle, qui le cache parfois
+    if (im.texture.key === 'paillasson') this.devant(im, true);
     this.contourIm = im;
+  }
+  /** Paillasson (et son soleil, ses étincelles) devant le bord noir de la salle pendant le survol, ou de retour au sol. */
+  private devant(im: Phaser.GameObjects.Image, oui: boolean) {
+    const p = this.paillassons.find(q => q.im === im);
+    im.setDepth(oui ? 1e6 - 7 : SOL + 3); p?.soleil?.setDepth(oui ? 1e6 - 6.5 : SOL + 4); p?.etincelles?.setDepth(oui ? 1e6 - 6 : SOL + 5);
   }
   /** Teinte du contour (le lilas de Sanstour). */
   static readonly LILAS = 0xe2d8ff;
@@ -435,6 +468,7 @@ export class WorldView {
   static readonly CONTOUR_MAX = 70;
   /** Fait bouger le décor vivant (arbres au vent, eau). Amplitudes officielles ; vitesses ralenties (trop rapides pour Mathis, 2026-11-06). */
   private animate(t: number) {
+    for (const p of this.paillassons) if (p.soleil?.visible) p.soleil.setAlpha(0.85 + 0.15 * Math.sin(t * 2.4)).setScale(WorldView.SOLEIL * (0.92 + 0.08 * Math.sin(t * 2.4)));
     let n = 0;
     for (const v of this.vivants) {
       if (!v.im.active) continue;   // carte déchargée : on l'oublie
