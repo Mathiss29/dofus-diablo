@@ -978,6 +978,7 @@ export class ZoneScene extends Phaser.Scene {
           if (q.type === 'tutoriel' && !this.test) sauverCompte(this.world, 1);   // partie de test : rien ne compte (10A)
           this.windows?.refresh(); break;
         }
+        case 'queteInfo': this.hud.toast(e.texte); break;
         case 'sacQuete': { const it = ITEMS.equipment[e.id]; if (it) this.hud.loot(`Sac de quête : ${it.name}`, RARITY_COLORS[e.rarity]); break; }
         case 'objetQuete': this.hud.loot(`${e.nom}  ${e.n}/${e.sur}`, '#9ad15a'); break;
         case 'succes': {

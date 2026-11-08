@@ -70,6 +70,8 @@ export type SimEvent =
   | { k: 'lootResource'; id: string; n: number }
   /** Sac à rareté garantie reçu en récompense (contrat, Avis de recherche). */
   | { k: 'sacQuete'; id: string; rarity: Rarity }
+  /** Message court d'un objectif de quête (défense, contre la montre, défi raté). */
+  | { k: 'queteInfo'; texte: string }
   /** Métiers : niveau gagné, recette faite, plat mangé. */
   | { k: 'metierLevel'; metier: string; level: number }
   | { k: 'craft'; id: string; n: number }

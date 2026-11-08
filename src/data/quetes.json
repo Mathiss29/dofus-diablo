@@ -178,6 +178,19 @@
     }
    ]
   },
+  "temples": {
+   "nom": "Représentant des Temples",
+   "dofusId": 2872,
+   "zone": "astrub",
+   "carte": "4_-18",
+   "phrase": "Les temples de Iop et de Crâ sont loin d'Astrub, alors c'est moi qui fais le lien. Et qui envoie les Dopeuls. Ils adorent ça.",
+   "discussion": [
+    {
+     "reponse": "C'est quoi, un Dopeul ?",
+     "texte": "Ton double, en plus violet et en plus vexé. Il connaît tes sorts aussi bien que toi. Une fois par jour, il vient voir si tu as progressé."
+    }
+   ]
+  },
   "cindy": {
    "nom": "Cindy Cah",
    "dofusId": 4366,
@@ -2063,6 +2076,53 @@
     "kamas": 2000,
     "sac": "epique",
     "pepites": 60
+   }
+  },
+  "dopeul": {
+   "nom": "Chasse au Dopeul",
+   "type": "prime",
+   "pnj": "temples",
+   "rendre": "temples",
+   "niveau": 12,
+   "repetable": "jour",
+   "serie": "Temples",
+   "texte": "Ton Dopeul t'attend aux portes des Champs d'Astrub. Il connaît tous tes sorts. Bats-le, et reviens me voir : le maître des combats paie toujours sa dette.\n\nUne fois par jour.",
+   "etapes": {
+    "iop": [
+     {
+      "nom": "Vaincre le Dopeul",
+      "objectifs": [
+       {
+        "t": "elite",
+        "texte": "Vaincre le Dopeul Iop",
+        "monstre": "dopeul_iop",
+        "carte": "5_-25",
+        "pv": 2
+       }
+      ]
+     }
+    ],
+    "cra": [
+     {
+      "nom": "Vaincre le Dopeul",
+      "objectifs": [
+       {
+        "t": "elite",
+        "texte": "Vaincre le Dopeul Crâ",
+        "monstre": "dopeul_cra",
+        "carte": "5_-25",
+        "pv": 2
+       }
+      ]
+     }
+    ]
+   },
+   "merci": "Ton Dopeul est rentré au temple en boudant. C'est bon signe.",
+   "recompense": {
+    "xp": 2250,
+    "kamas": 450,
+    "sac": "rare",
+    "pepites": 10
    }
   },
   "avis_fouduglen": {

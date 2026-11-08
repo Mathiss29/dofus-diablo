@@ -104,3 +104,71 @@ describe('Contrats du jour et Avis de recherche (Quêtes roadmap 1C, 3A+3C, 4A, 
     expect(Q.def('vil_3').etapes).toBeTruthy();
   });
 });
+
+describe('Nouveaux objectifs, défis de donjon et Chasse au Dopeul (Quêtes roadmap 3B, 6A+6D, 7B)', () => {
+  /** Une quête d'essai avec un seul objectif, prise tout de suite. */
+  function essai(w: World, o: object) {
+    const Q = w.quetes!;
+    (Q.data.quetes as Record<string, unknown>)['essai_obj'] = { nom: 'Essai', type: 'secondaire', niveau: 1, texte: '', recompense: {}, etapes: [{ nom: 'Essai', objectifs: [o] }] };
+    Q.prendre('essai_obj');
+    return Q.enCours.find(c => c.id === 'essai_obj')!;
+  }
+  it('défense : 60 s tenues sur la carte avec des vagues ; quitter la carte remet le compte à zéro', () => {
+    const w = monde(), p = w.player; p.level = 30;
+    const c = essai(w, { t: 'defense', carte: '5_-25', s: 60, texte: 'Tenir' });
+    const z = w.openestCellOf('5_-25'), n0 = w.monsters.filter(m => !m.dead).length;
+    p.x = z.x; p.y = z.y;
+    for (let i = 0; i < 60 * 20; i++) { w.step(1 / 60, NO_INPUT); p.hp = p.maxHp; }
+    expect(c.compte[0]).toBeGreaterThanOrEqual(19);
+    expect(w.monsters.filter(m => !m.dead).length).toBeGreaterThan(n0);
+    const ailleurs = w.openestCellOf('5_-19'); p.x = ailleurs.x; p.y = ailleurs.y; for (let i = 0; i < 200; i++) w.step(1 / 60, NO_INPUT);
+    expect(c.compte[0]).toBe(0);
+    p.x = z.x; p.y = z.y;
+    for (let i = 0; i < 60 * 62; i++) { w.step(1 / 60, NO_INPUT); p.hp = p.maxHp; p.x = z.x; p.y = z.y; }
+    expect(w.quetes!.finies.has('essai_obj')).toBe(true);
+    delete (w.quetes!.data.quetes as Record<string, unknown>)['essai_obj'];
+  });
+  it('contre la montre : la carte vidée à temps valide l\'objectif', () => {
+    const w = monde(), p = w.player; p.level = 30;
+    essai(w, { t: 'chrono', carte: '5_-25', s: 90, texte: 'Vider' });
+    const z = w.openestCellOf('5_-25'); p.x = z.x; p.y = z.y;
+    for (let i = 0; i < 30; i++) w.step(1 / 60, NO_INPUT);
+    const wg = w.worldGrid!;
+    for (const m of w.monsters) if (!m.dead && wg.mapAt(m.x, m.y)?.tag === '5_-25') { m.hp = 0; m.dead = true; }
+    w.step(1 / 60, NO_INPUT);
+    expect(w.quetes!.finies.has('essai_obj')).toBe(true);
+    delete (w.quetes!.data.quetes as Record<string, unknown>)['essai_obj'];
+  });
+  it('défi du jour : proposé par le gardien, réussi sans potion, raté avec une potion', () => {
+    const w = monde(), Q = w.quetes!, p = w.player; p.level = 30;
+    const id = Q.defiLibre('Cour du Bouftou Royal')!;
+    expect(id).toBe('defi:2026-11-08:Cour du Bouftou Royal');
+    expect(Q.def(id).rendre).toBe(Q.gardienDe('Cour du Bouftou Royal'));
+    rendre(w, Q.gardienDe('Cour du Bouftou Royal')!);
+    expect(Q.dialogue!.reponses.some(r => r.a === 'voir' && r.quete === id)).toBe(true);
+    Q.dialogue = null;
+    Q.prendre(id);
+    p.resources['1568'] = 1; w.entrerDonjon('Cour du Bouftou Royal');
+    for (let i = 0; i < 30; i++) w.step(1 / 60, NO_INPUT);
+    const o = (Q.def(id).etapes as { objectifs: { regle: string }[] }[])[0].objectifs[0];
+    if (o.regle === 'sansPotion') Q.observer({ k: 'potion', x: p.x, y: p.y, amount: 1 });
+    else for (let i = 0; i < 60 * 600; i += 60) w.time += 1;
+    w.emit({ k: 'kill', x: p.x, y: p.y, radius: 1, monster: w.bossDuDonjon('Cour du Bouftou Royal')! });
+    w.step(1 / 60, NO_INPUT);
+    expect(Q.enCours.find(c => c.id === id)?.compte[0]).toBe(0);
+  });
+  it('Chasse au Dopeul : le Dopeul de ta classe, une fois par jour', () => {
+    const w = monde(), Q = w.quetes!, p = w.player; p.level = 12;
+    expect(Q.pnj('temples')?.tag).toBe('4_-18');
+    expect(Q.aDonnerTous('temples')).toEqual(['dopeul']);
+    Q.prendre('dopeul');
+    const m = w.monsters.find(x => !x.dead && x.type === 'dopeul_iop' && Q.estEliteDeQuete(x.id))!;
+    expect(m).toBeTruthy();
+    Q.eliteVaincu(m.id); w.step(1 / 60, NO_INPUT);
+    rendre(w, 'temples');
+    expect(Q.finies.has('dopeul')).toBe(true);
+    expect(Q.aDonnerTous('temples')).toEqual([]);
+    const w2 = monde('2026-11-09', Q.exporter()); w2.player.level = 12;
+    expect(w2.quetes!.aDonnerTous('temples')).toEqual(['dopeul']);
+  });
+});

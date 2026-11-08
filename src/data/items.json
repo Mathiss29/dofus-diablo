@@ -11190,6 +11190,16 @@
    "icon": 78297,
    "level": 40,
    "rune": true
+  },
+  "21928": {
+   "name": "Poupée maléfique de Dopeul Iop",
+   "icon": 61675,
+   "level": 1
+  },
+  "21923": {
+   "name": "Poupée maléfique de Dopeul Crâ",
+   "icon": 61682,
+   "level": 1
   }
  },
  "drops": {
@@ -14474,6 +14484,20 @@
     "item": "20136",
     "chance": 0.05,
     "cond": "evenement"
+   }
+  ],
+  "dopeul_iop": [
+   {
+    "item": "21928",
+    "chance": 25.0,
+    "cond": "quete"
+   }
+  ],
+  "dopeul_cra": [
+   {
+    "item": "21923",
+    "chance": 25.0,
+    "cond": "quete"
    }
   ]
  },

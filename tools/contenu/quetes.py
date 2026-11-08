@@ -72,6 +72,11 @@ PNJ = {
   'geolier': {'nom': "Gardien des Geôles d'Astrub", 'dofusId': 606, 'zone': 'astrub', 'carte': '5_-19', 'titre': "Milice d'Astrub", 'contrats': True,
     'phrase': "Les geôles d'Astrub ont de la place. Beaucoup de place. Trop de place. Ramène-moi du monde, la Milice paie bien.",
     'discussion': [{'reponse': 'Comment marchent les contrats ?', 'texte': "Trois contrats par jour, tirés au sort à minuit, et un gros contrat chaque semaine. Tu fais le travail, tu reviens me voir, tu repars avec un sac de matériel et des Pépites. Les Avis de recherche, c'est une traque par semaine et par bandit."}]},
+  # Chasse au Dopeul (Quêtes roadmap 7B) : le Représentant des Temples (PNJ officiel 2872, look {83|||80}) près du Zaap d'Astrub,
+  # tant que les temples de classe ne sont pas dans le jeu. Le Dopeul est le double officiel de ta classe (Dopeul Iop 167, Dopeul Crâ 168).
+  'temples': {'nom': 'Représentant des Temples', 'dofusId': 2872, 'zone': 'astrub', 'carte': '4_-18',
+    'phrase': "Les temples de Iop et de Crâ sont loin d'Astrub, alors c'est moi qui fais le lien. Et qui envoie les Dopeuls. Ils adorent ça.",
+    'discussion': [{'reponse': "C'est quoi, un Dopeul ?", 'texte': "Ton double, en plus violet et en plus vexé. Il connaît tes sorts aussi bien que toi. Une fois par jour, il vient voir si tu as progressé."}]},
   # Fil court « Les Vilinsekts » (Quêtes roadmap 1A) : Cindy Cah (PNJ officiel 4366, look {4960|||90}) donne « Les as de la cambriole » en [5,-17].
   'cindy': {'nom': 'Cindy Cah', 'dofusId': 4366, 'zone': 'astrub', 'carte': '5_-17',
     'phrase': "Ma cuillère en argent a disparu. Puis mon dé à coudre. Puis mon voisin a perdu son jeu de cartes. À Astrub, on ne perd rien : on se fait voler par des Vilinsekts."},
@@ -362,6 +367,13 @@ Q['vil_3'] = {'nom': 'Les as de la cambriole', 'type': 'principale', 'pnj': 'cin
               'objectifs': [{'t': 'donjon', 'texte': 'Vaincre Kankreblath (Cache de Kankreblath)', 'donjon': 'Cache de Kankreblath', 'boss': 'Kankreblath', 'niveau': 40, 'region': 'Astrub'}]}],
   'merci': "Ma cuillère ! Toute tordue, mais c'est la mienne. Astrub te doit une fière chandelle. Et moi, une cuillère.",
   'recompense': {**rec(5, 40), 'sac': 'epique', 'pepites': 60}}
+
+# --- Chasse au Dopeul (officielle, répétable une fois par jour, Quêtes roadmap 7B) --------------------------------------------------
+Q['dopeul'] = {'nom': 'Chasse au Dopeul', 'type': 'prime', 'pnj': 'temples', 'rendre': 'temples', 'niveau': 12, 'repetable': 'jour', 'serie': 'Temples',
+  'texte': "Ton Dopeul t'attend aux portes des Champs d'Astrub. Il connaît tous tes sorts. Bats-le, et reviens me voir : le maître des combats paie toujours sa dette.\n\nUne fois par jour.",
+  'etapes': {c: [{'nom': 'Vaincre le Dopeul', 'objectifs': [elite(f'Vaincre le Dopeul {n}', f'dopeul_{c}', '5_-25', pv=2)]}] for c, n in (('iop', 'Iop'), ('cra', 'Crâ'))},
+  'merci': "Ton Dopeul est rentré au temple en boudant. C'est bon signe.",
+  'recompense': {**rec(3, 15), 'sac': 'rare', 'pepites': 10}}
 
 # --- Avis de recherche d'Astrub (officiels, 3A) : une traque par semaine, rendue aux Geôles (Gardien des Geôles d'Astrub) -------------
 G = {'type': 'prime', 'pnj': 'geolier', 'rendre': 'geolier', 'serie': 'Avis de recherche', 'repetable': 'semaine'}
