@@ -31,6 +31,12 @@ describe("carte Discord du Journal", () => {
     expect(e.fields).toHaveLength(1);
     expect(e.fields[0].value).toBe("• Version 0.2 terminée. Prochaine étape : l'Osamodas.\n• Les Zaaps marchent.");
   });
+  it("affiche une entrée en « **titre** · phrase », sans les détails, et filtre ses étiquettes de test", () => {
+    const e = carte({ date: "2026-11-08", titre: "T", resume: "R", lignes: {
+      "Nouveautés": [{ titre: "Les Zaaps marchent", phrase: "Voyage gratuit.", details: "Vraie fenêtre." },
+        { titre: "Le Codex", phrase: "Garde tes pouvoirs.", etiquettes: ["Partie de test"] }] } });
+    expect(e.fields[0].value).toBe("• **Les Zaaps marchent** · Voyage gratuit.");
+  });
   it("prend le carnet le plus récent", () => {
     expect(carnetDuJour(journal).date).toBe([...journal.carnets].map((c) => c.date).sort().pop());
   });

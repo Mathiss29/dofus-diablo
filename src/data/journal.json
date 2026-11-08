@@ -7,6 +7,37 @@
     "Corrections",
     "En coulisses"
   ],
+  "icones": {
+    "carte": "ui/menu/map.png",
+    "zaap": "ui/menu/breach.png",
+    "caracs": "ui/menu/characteristic.png",
+    "quete": "ui/menu/quest.png",
+    "contrat": "ui/quetes/questRepeatable.png",
+    "succes": "ui/menu/success.png",
+    "boss": "ui/iconBossSkull.png",
+    "sorts": "ui/menu/spells.png",
+    "sac": "ui/menu/inventory.png",
+    "metier": "ui/menu/job.png",
+    "paysan": "ui/metier_paysan.png",
+    "bricoleur": "ui/metier_bricoleur.png",
+    "bestiaire": "ui/menu/bestiary.png",
+    "guide": "ui/menu/guide.png",
+    "options": "ui/menu/options.png",
+    "perso": "ui/menu/character.png",
+    "havre": "ui/menu/home.png",
+    "kamas": "ui/kamas_tas.png",
+    "journal": "ui/menu/calendar.png",
+    "dofus": "ui/inv/s_dofus.png",
+    "apparat": "ui/inv/tab_cosmetics.png",
+    "arme": "ui/inv/s_weapon.png",
+    "cle": "ui/inv/tab_key.png",
+    "forge": "ui/d3/forge/concasseur.webp",
+    "vie": "ui/d3/caracs/tx_lifePoints.png",
+    "pa": "ui/d3/caracs/tx_actionPoints.png",
+    "degats": "ui/d3/caracs/tx_damage.png",
+    "principale": "ui/quetes/questPrincipale.png",
+    "xp": "ui/d3/experience.png"
+  },
   "carnets": [
     {
       "date": "2026-11-06",
@@ -16,96 +47,261 @@
       "legende": "Le Temple Céleste, 6 novembre 2026.",
       "lignes": {
         "Nouveautés": [
-          "Tutoriel jouable dans le Temple Céleste avec Ganymède, une trame par classe.",
-          "Quêtes et succès : suivi à l'écran, flèche, journal des quêtes, fenêtre Succès et les quêtes d'Incarnam.",
-          "Accueil, création de personnage devant le dieu de ta classe et « Mes personnages » (3 emplacements).",
-          "Dialogues avec les PNJ dans le style de Dofus 3.",
-          "Musique et sons officiels de Dofus 3, avec une musique qui monte quand on t'attaque.",
-          "Bestiaire qui se dévoile en chassant : sorts à 10 vaincus, résistances à 25, butin à 50.",
-          "Onglet Succès, fiches de zones et « La dernière fois… » sur l'accueil, résumé de chaque personnage.",
-          "Sauvegarde exportable en fichier .diablofus et 3 copies de secours restaurables.",
-          "Cimetière des héros : les personnages Hardcore tombés y laissent une stèle.",
-          "Kamas au sol : vraies pièces de Dofus, gerbe qui rebondit, reflet doré et tintement.",
-          "Logo du jeu sur l'accueil, l'onglet du navigateur et l'écran de chargement.",
-          "Guide sur la touche H dans une fenêtre façon Dofus 3, suivi de quête et butin en petite fenêtre au-dessus de la barre.",
-          "Journal façon « Les nouvelles » : un carnet par journée, avec une pastille quand un nouveau carnet t'attend.",
-          "Essayer une classe 60 secondes dans les Champs d'Astrub avant de créer ton personnage.",
-          "Création de personnage : survole un sort pour voir le personnage attaquer et lire le texte officiel du sort.",
-          "Fond de l'accueil : la carte où ton dernier personnage s'est arrêté ; équipement porté affiché dans « Mes personnages ».",
-          "Carte du monde sur la touche M, avec les Zaaps, la Banque, les ateliers et les donjons.",
-          "Emp, le Méryde du Recyclage, t'attend à côté du Zaap d'Astrub : recycle tes objets contre des Pépites, en lot ou un par un (Ctrl + clic pose un cadenas), et dépense-les dans sa boutique.",
-          "Potion de Rappel : clic droit dans l'inventaire et te voilà de retour au dernier Zaap.",
-          "Métiers de récolte : Paysan, Bûcheron, Mineur, Alchimiste et Pêcheur. Clique le blé, les arbres, les minerais, les plantes et les coins de pêche d'Astrub ; ils repoussent en une minute, et une ressource dorée en donne cinq fois plus.",
-          "Bricoleur : fabrique les clés des donjons d'Astrub (et celle de la Crypte) avec leurs recettes officielles.",
-          "Ton apparence : à la création, choisis l'une des têtes officielles de ta classe (15 pour l'Iop, 17 pour le Crâ), règle librement tes 6 couleurs ou prends une palette toute faite. Ton perso la garde en jeu.",
-          "Le jeu a sa propre adresse : diablofus.com (l'ancienne redirige automatiquement).",
-          "Ressources à récolter : bulle au survol avec le métier et le niveau requis, et le curseur de l'outil (faux, hache, pioche, filet) comme dans Dofus.",
-          "Coiffes, capes et boucliers se voient sur ton personnage ; les cheveux se rangent sous la coiffe.",
-          "Apparats officiels : près de 700 coiffes et capes chez Emp contre des Pépites, à porter dans la case Apparence de l'inventaire (ou pour cacher un objet). Garde-robe gratuite chez Lykhen et chez Emp pour changer de tête et de couleurs.",
-          "Les vraies ressources à récolter dans les champs, les forêts et les mines d'Astrub et d'Incarnam (blé, arbres, minerais, ortie, remous de pêche), avec leur animation de coupe.",
-          "Familiers : une case Familier dans l'inventaire. Le familier te suit, ramasse le butin et les kamas autour de toi, monte du niveau 1 au niveau 100 en chassant ou quand tu le nourris (Alt + clic), et ses bonus officiels grandissent avec lui.",
-          "Où les trouver : Pioute chez les Pious, Tofüm chez les Tofus, Jeune Boufton Céleste chez les Bouftous d'Incarnam, Fotome sur Kardorim, Chienchien en récompense du succès « Dans les nuages ». Plus de 100 familiers d'apparat chez Emp.",
-          "Voir à travers le décor : le bâtiment ou l'arbre qui cache ton perso s'efface en fondu, et les monstres cachés apparaissent en silhouette rouge (case dans Options > Affichage).",
-          "Ateliers officiels : on fabrique dans l'atelier de son métier (à Astrub et Incarnam), avec un bouton ×N pour tout fabriquer d'un coup. 37 recettes officielles en plus : pains, potions, poissons, viandes, alliages, planches.",
-          "« Quoi de neuf ? » au lancement : les nouveautés du dernier carnet en cinq lignes.",
-          "Récolte animée : on fauche, on coupe, on pioche, on cueille et on pêche avec les gestes et les sons officiels. La Lance est prête pour les prochains niveaux d'objets.",
-          "Le Havre-Sac : touche H (ou l'icône du sac) pour rejoindre ton monde de poche, où vivent Kerubim Crépin, Tissebelle, Otomaï, Mère Bouillotte et Goultard ; son arche est un Zaap vers tous ceux que tu as découverts, et le Poutch Ingball compte tes dégâts par seconde."
+          {
+            "titre": "Le tutoriel du Temple Céleste",
+            "phrase": "Ganymède te guide dans le Temple Céleste, avec une trame par classe.",
+            "icone": "principale",
+            "image": "assets/journal/une/2026-11-06-1.webp"
+          },
+          {
+            "titre": "Quêtes et succès",
+            "phrase": "Suivi à l'écran, flèche, journal des quêtes et fenêtre Succès.",
+            "details": "Les premières quêtes d'Incarnam sont jouables.",
+            "icone": "quete",
+            "etiquettes": [
+              "Incarnam"
+            ]
+          },
+          {
+            "titre": "Accueil et création de personnage",
+            "phrase": "Crée ton héros devant le dieu de ta classe, jusqu'à 3 personnages.",
+            "details": "Survole un sort pour voir ton personnage attaquer. Essaie une classe 60 secondes dans les Champs d'Astrub avant de choisir.",
+            "icone": "perso"
+          },
+          {
+            "titre": "Ton apparence",
+            "phrase": "Choisis ta tête officielle et règle tes 6 couleurs.",
+            "details": "15 têtes pour l'Iop, 17 pour le Crâ, ou une palette toute faite. Coiffes, capes et boucliers se voient sur toi.",
+            "icone": "apparat"
+          },
+          {
+            "titre": "Dialogues et Guide",
+            "phrase": "Les PNJ parlent comme dans Dofus 3, et le Guide s'ouvre sur une touche.",
+            "details": "Le suivi de quête et le butin s'affichent en petite fenêtre au-dessus de la barre de sorts.",
+            "icone": "guide",
+            "etiquettes": [
+              "Touche G"
+            ]
+          },
+          {
+            "titre": "Musique et sons officiels",
+            "phrase": "Les musiques de Dofus 3, qui montent quand on t'attaque.",
+            "icone": "options"
+          },
+          {
+            "titre": "Le Bestiaire",
+            "phrase": "Il se dévoile en chassant : sorts, résistances puis butin.",
+            "details": "Sorts à 10 monstres vaincus, résistances à 25, butin à 50.",
+            "icone": "bestiaire"
+          },
+          {
+            "titre": "Sauvegarde exportable",
+            "phrase": "Exporte ta partie en fichier .diablofus, avec 3 copies de secours.",
+            "details": "Les héros Hardcore tombés laissent une stèle dans le Cimetière des héros.",
+            "icone": "sac"
+          },
+          {
+            "titre": "Kamas au sol",
+            "phrase": "Les vraies pièces de Dofus giclent, rebondissent et tintent.",
+            "icone": "kamas"
+          },
+          {
+            "titre": "Carte du monde",
+            "phrase": "La touche M montre les Zaaps, la Banque, les ateliers et les donjons.",
+            "icone": "carte",
+            "etiquettes": [
+              "Touche M"
+            ]
+          },
+          {
+            "titre": "Métiers de récolte",
+            "phrase": "Paysan, Bûcheron, Mineur, Alchimiste et Pêcheur, avec les vrais gestes.",
+            "details": "Les ressources repoussent en une minute ; une ressource dorée en donne cinq fois plus. Bulle au survol avec le métier et le niveau requis.",
+            "icone": "paysan"
+          },
+          {
+            "titre": "Ateliers et recettes",
+            "phrase": "Fabrique dans l'atelier de ton métier, tout d'un coup avec ×N.",
+            "details": "37 recettes officielles : pains, potions, poissons, viandes, alliages et planches. Le Bricoleur fabrique les clés des donjons.",
+            "icone": "metier"
+          },
+          {
+            "titre": "Emp et la Potion de Rappel",
+            "phrase": "Recycle tes objets en Pépites et rentre au Zaap d'un clic droit.",
+            "details": "Ctrl + clic pose un cadenas sur un objet. La boutique d'Emp vend Potions de Rappel et clés de donjon.",
+            "icone": "kamas"
+          },
+          {
+            "titre": "Apparats et garde-robe",
+            "phrase": "Près de 700 coiffes et capes à porter par-dessus ton équipement.",
+            "details": "La garde-robe change ta tête et tes couleurs gratuitement.",
+            "icone": "apparat"
+          },
+          {
+            "titre": "Familiers",
+            "phrase": "Ton familier te suit, ramasse le butin et grandit jusqu'au niveau 100.",
+            "details": "Nourris-le avec Alt + clic. Pioute chez les Pious, Tofüm chez les Tofus, Fotome sur Kardorim, Chienchien avec le succès « Dans les nuages ».",
+            "icone": "perso"
+          },
+          {
+            "titre": "Voir à travers le décor",
+            "phrase": "Le bâtiment qui te cache s'efface et les monstres cachés passent en rouge.",
+            "details": "Se règle dans Options > Affichage.",
+            "icone": "carte",
+            "image": "assets/journal/une/2026-11-06-3.webp"
+          },
+          {
+            "titre": "Le Havre-Sac",
+            "phrase": "Ton monde de poche : Kerubim, Otomaï, Goultard et les autres y vivent.",
+            "details": "Son arche est un Zaap vers tous ceux que tu as découverts, et le Poutch Ingball compte tes dégâts par seconde.",
+            "icone": "havre",
+            "etiquettes": [
+              "Touche H"
+            ],
+            "image": "assets/journal/une/2026-11-06-2.webp"
+          },
+          {
+            "titre": "Le Journal",
+            "phrase": "Un carnet par journée, et « Quoi de neuf ? » au lancement.",
+            "details": "Une pastille signale un nouveau carnet. Le fond de l'accueil montre la carte où ton dernier personnage s'est arrêté.",
+            "icone": "journal"
+          },
+          {
+            "titre": "diablofus.com",
+            "phrase": "Le jeu a son adresse et son logo ; l'ancienne adresse redirige.",
+            "icone": "journal"
+          }
         ],
         "Le monde": [
-          "Crypte de Kardorim, avec le vrai Sergent Chafer.",
-          "Jour et nuit sur l'heure de ton PC, lumières et particules officielles des cartes.",
-          "Monde sans coupure : portes en fondu, arrivées sans vide, cartes préchargées.",
-          "Plus de bande ni de décor en double entre deux cartes.",
-          "PNJ vivants : animations officielles, taille officielle, ombre.",
-          "Tour de la Milice avec son rez-de-chaussée et son escalier.",
-          "Astrub s'ouvre : 359 cartes, les monstres officiels de chaque sous-zone, et le portail d'Incarnam qui y descend.",
-          "Trois donjons d'Astrub : la Grange du Tournesol Affamé, le Château Ensablé et la Cour du Bouftou Royal. Chacun demande sa clé officielle, prise à l'entrée (Emp en vend).",
-          "Les monstres d'Astrub lâchent leurs ressources officielles : pétales, laines, cornes… de quoi fabriquer les clés.",
-          "Cuirasse Laineuse, Rinçage, Grognement et Hyperleukocytine ont enfin leurs effets officiels.",
-          "Un gardien devant chaque donjon : Mawy Ingalsse à la Grange, le Capitaine Igloute au Château Ensablé, Rotabla à la Cour du Bouftou Royal et Klasmor à la Crypte. Ils te font entrer avec ta clé, montrent le boss et son butin, et se souviennent de tes victoires.",
-          "La Cité d'Astrub s'ouvre : Banque, Taverne, Milice, Tour du Conseil et sept ateliers se visitent.",
-          "Les Vilinsekts ont envahi trois caves de la Cité, et Kankreblath attend dans sa Cache (donjon niveau 40, sa clé se fabrique au Bricoleur ou s'achète chez Emp).",
-          "Une élite fait briller les ressources autour d'elle : elles repoussent plus souvent dorées tant qu'elle vit.",
-          "Emp ferme ses guichets : recyclage, boutiques, apparats et garde-robe déménagent au Havre-Sac. Le Guide passe sur la touche G."
+          {
+            "titre": "La Crypte de Kardorim",
+            "phrase": "Le premier donjon, avec le vrai Sergent Chafer.",
+            "icone": "boss"
+          },
+          {
+            "titre": "Astrub s'ouvre",
+            "phrase": "359 cartes et les monstres officiels de chaque sous-zone.",
+            "details": "Le portail d'Incarnam y descend. Les monstres lâchent leurs ressources officielles.",
+            "icone": "carte",
+            "etiquettes": [
+              "Astrub"
+            ]
+          },
+          {
+            "titre": "La Cité d'Astrub",
+            "phrase": "Banque, Taverne, Milice, Tour du Conseil et sept ateliers se visitent.",
+            "icone": "carte",
+            "etiquettes": [
+              "Astrub"
+            ]
+          },
+          {
+            "titre": "Trois donjons d'Astrub",
+            "phrase": "La Grange, le Château Ensablé et la Cour du Bouftou Royal, chacun avec sa clé.",
+            "details": "Un gardien devant chaque donjon te fait entrer, montre le boss et son butin et se souvient de tes victoires.",
+            "icone": "cle"
+          },
+          {
+            "titre": "Les Vilinsekts et Kankreblath",
+            "phrase": "Trois caves envahies dans la Cité, et Kankreblath dans sa Cache.",
+            "details": "Donjon niveau 40 ; sa clé se fabrique au Bricoleur ou s'achète chez Emp.",
+            "icone": "boss",
+            "etiquettes": [
+              "Niv. 40"
+            ]
+          },
+          {
+            "titre": "Jour et nuit",
+            "phrase": "Sur l'heure de ton PC, avec les lumières et particules officielles.",
+            "icone": "journal"
+          },
+          {
+            "titre": "PNJ vivants",
+            "phrase": "Animations, taille et ombre officielles pour tous les PNJ.",
+            "icone": "perso"
+          },
+          {
+            "titre": "Monde sans coupure",
+            "phrase": "Portes en fondu, arrivées sans vide et cartes préchargées.",
+            "details": "Plus de bande ni de décor en double entre deux cartes. La Tour de la Milice a son escalier.",
+            "icone": "carte"
+          },
+          {
+            "titre": "Les élites font briller la récolte",
+            "phrase": "Tant qu'une élite vit, les ressources autour repoussent plus souvent dorées.",
+            "icone": "paysan"
+          },
+          {
+            "titre": "Emp passe au Havre-Sac",
+            "phrase": "Recyclage, boutiques, apparats et garde-robe déménagent au Havre-Sac.",
+            "details": "Le Guide passe sur la touche G.",
+            "icone": "havre",
+            "etiquettes": [
+              "Touche G"
+            ]
+          }
         ],
         "Combat": [
-          "Pas Chassé du Crâ rééquilibré : il ne s'enchaîne plus en boucle, relance officielle de 9 s (6 s dès le niveau 72).",
-          "Aperçu de la portée et de la zone des sorts avant de lancer.",
-          "Bouclier violet sur la barre de vie, Ferveur qui protège.",
-          "Sorts Iop et Crâ vérifiés contre les données officielles, onglet Sorts détaillé.",
-          "Annonces d'attaque au sol pour les élites et les boss seulement.",
-          "+1 PA au niveau 100, comme dans Dofus.",
-          "Les monstres tapent selon leur rang et leur niveau (ceux d'Astrub tapaient tous 14), et les groupes t'encerclent au lieu de faire la queue.",
-          "Les boss ont une attaque signature annoncée au sol (Dégraissage de Mob l'Éponge en vraie ligne de 8 cases, Kankroulahoup…), deviennent Furieux à mi-vie et font leur entrée ; un gros coup reçu rougit les bords de l'écran.",
-          "Kankreblath lance enfin sa Blathération, son grand trait qui traverse la salle.",
-          "Chaque arme se voit en main pendant l'attaque, avec son geste officiel accéléré par la Vitesse d'attaque ; l'arc tire une vraie flèche qui se plante au sol quand elle rate, et chaque coup laisse un éclat de l'élément de l'arme."
+          {
+            "titre": "Aperçu des sorts",
+            "phrase": "La portée et la zone s'affichent avant de lancer.",
+            "details": "Sorts Iop et Crâ vérifiés contre les données officielles, onglet Sorts détaillé.",
+            "icone": "sorts"
+          },
+          {
+            "titre": "Bouclier violet",
+            "phrase": "Le bouclier s'affiche sur la barre de vie ; la Ferveur protège.",
+            "icone": "vie"
+          },
+          {
+            "titre": "Pas Chassé rééquilibré",
+            "phrase": "Il ne s'enchaîne plus en boucle : 9 s de recharge, 6 s dès le niveau 72.",
+            "icone": "sorts",
+            "etiquettes": [
+              "Crâ"
+            ]
+          },
+          {
+            "titre": "+1 PA au niveau 100",
+            "phrase": "Comme dans Dofus.",
+            "icone": "pa"
+          },
+          {
+            "titre": "Des monstres plus justes",
+            "phrase": "Ils tapent selon leur rang et leur niveau, et les groupes t'encerclent.",
+            "details": "Avant, ceux d'Astrub tapaient tous 14.",
+            "icone": "degats"
+          },
+          {
+            "titre": "Des boss qui s'annoncent",
+            "phrase": "Attaque signature au sol, Furieux à mi-vie et entrée en scène.",
+            "details": "Dégraissage de Mob l'Éponge, Kankroulahoup, Blathération de Kankreblath. Seuls élites et boss annoncent leurs attaques.",
+            "icone": "boss"
+          },
+          {
+            "titre": "L'arme en main",
+            "phrase": "Chaque arme se voit pendant l'attaque, avec son geste officiel.",
+            "details": "La Vitesse d'attaque accélère le geste. L'arc tire une vraie flèche qui se plante au sol quand elle rate.",
+            "icone": "arme"
+          }
         ],
         "Corrections": [
-          "La Cape de l'Intrépide portée montre enfin son vrai dessin (cape jaune à l'emblème vert) et plus une autre cape.",
-          "Plus de mini-gel en changeant de carte.",
-          "PNJ qui tremblaient quand la caméra défilait.",
-          "Gros personnage du socle net, même avec l'affichage Windows à 125 %.",
+          "La Cape de l'Intrépide montre enfin son vrai dessin.",
+          "Plus de mini-gel ni de tremblement en changeant de carte ou quand la caméra défile.",
+          "Astrub prend dix fois moins de mémoire : le jeu ne plante plus en la traversant.",
+          "Perso plus net en jeu et sur le socle, même avec l'affichage Windows à 125 %.",
+          "Têtes de création : masques, bandeaux et mèches reprennent leur vraie couleur.",
           "Sac vide au départ : plus d'arme de chasse donnée d'office.",
-          "Astrub prend environ dix fois moins de mémoire : le jeu ne plante plus quand on traverse Astrub ou qu'on se téléporte plusieurs fois.",
-          "Têtes de création : masques, bandeaux et mèches reprennent leur vraie couleur (plus de calotte rouge ni de cheveux gris), vérifiées une par une contre les portraits officiels.",
-          "Perso plus net en jeu et sur le socle : il est dessiné en 2x puis réduit, les contours ne font plus d'escaliers.",
-          "Château Ensablé : plus de grandes taches blanches sur la mer, et le bord du sable est arrondi au lieu d'être en dents de scie.",
-          "Cité d'Astrub et Tainéla : plus de maisons posées deux fois côte à côte ni de grands rectangles clairs, et le bord du monde se fond dans la brume au lieu de s'arrêter en escalier.",
-          "Le décor et les ressources ne tremblent plus quand la caméra te suit.",
-          "Longues balades dans Astrub : les dessins des monstres qu'on ne croise plus sont libérés, le jeu ne s'alourdit plus au fil des cartes.",
-          "Cliquer sur la porte d'un donjon ne brûle plus la clé par erreur : on entre en choisissant « Entrer » chez le gardien.",
-          "Au nord d'Astrub (Tainéla, Cour du Bouftou Royal, Grange), le sol passait par-dessus tout : perso, PNJ, maisons et arbres réapparaissent.",
-          "Les ressources à récolter ne scintillent plus quand tu bouges, ne flottent plus au-dessus du vide et ne sont plus en double ; la grande lueur jaune de la Cité d'Astrub est retirée, et la mer des Calanques et des Prairies n'a plus de grandes taches blanches."
+          "Cliquer la porte d'un donjon ne brûle plus la clé : on entre avec « Entrer » chez le gardien.",
+          "Plus de maisons en double, de taches blanches sur la mer ni de sol par-dessus le décor.",
+          "Les ressources ne scintillent plus, ne flottent plus et ne sont plus en double."
         ],
         "En coulisses": [
-          "Fenêtres refaites avec les vraies images de Dofus 3 et ses polices (Lexend, Rowdies).",
-          "Ce journal : un carnet par journée, écrit à chaque mise à jour.",
-          "Le jeu se prépare à grandir : cartes, sprites et sons pourront bientôt venir d'un stockage dédié, et après une mise à jour ton navigateur ne retélécharge plus que ce qui a changé.",
-          "Les planches des monstres, des PNJ et des persos passent en AVIF : environ un tiers plus légères, donc plus rapides à charger.",
-          "Les images et les sons du jeu sont maintenant servis depuis assets.diablofus.com : place pour tout le Monde des Douze, et tu ne retélécharges que ce qui a changé.",
-          "Ton perso est désormais dessiné en direct depuis son squelette Dofus, comme dans Dofus 3 : la porte est ouverte aux coiffes, capes, boucliers, familiers et à l'apparat.",
-          "Partie de test sur diablofus.com/#test : un perso à part, et sur F1 le niveau, les zones, les objets, les monstres, un mannequin avec compteur de DPS et le mode invincible.",
-          "Le carnet du jour arrive maintenant tout seul sur le Discord d'Ombrelune Studio, avec un post de forum pour en discuter."
+          "Fenêtres refaites avec les vraies images et polices de Dofus 3.",
+          "Ton perso est dessiné en direct depuis son squelette Dofus, comme dans Dofus 3.",
+          "Images et sons servis depuis assets.diablofus.com, en AVIF un tiers plus léger.",
+          "Partie de test sur diablofus.com/#test, avec ses outils sur F1.",
+          "Le carnet du jour arrive tout seul sur le Discord d'Ombrelune Studio."
         ]
       }
     },
@@ -117,15 +313,30 @@
       "legende": "Le village d'Incarnam, 5 novembre 2026.",
       "lignes": {
         "Le monde": [
-          "Lac, Forêt et Cimetière d'Incarnam jouables.",
-          "Intérieurs d'Incarnam : Mine, Taverne et maisons.",
-          "Plus de coupures nettes entre les cartes."
+          {
+            "titre": "Lac, Forêt et Cimetière",
+            "phrase": "Trois nouveaux coins d'Incarnam à explorer.",
+            "icone": "carte",
+            "etiquettes": [
+              "Incarnam"
+            ]
+          },
+          {
+            "titre": "Les intérieurs d'Incarnam",
+            "phrase": "La Mine, la Taverne et les maisons se visitent.",
+            "icone": "havre"
+          },
+          {
+            "titre": "Cartes sans coupure",
+            "phrase": "Plus de coupure nette quand tu passes d'une carte à l'autre.",
+            "icone": "carte"
+          }
         ],
         "Corrections": [
           "Les monstres ne flottent plus au-dessus du sol."
         ],
         "En coulisses": [
-          "Parangon des Iop, Crâ et Osamodas écrit en données, pour après le niveau 200."
+          "Le Parangon des Iop, Crâ et Osamodas est écrit, pour après le niveau 200."
         ]
       }
     },
@@ -137,134 +348,436 @@
       "legende": "Le Cloportier, devant la Cache de Kankreblath, 7 novembre 2026.",
       "lignes": {
         "Nouveautés": [
-          "Le Bastion des Douze, notre ville : un archipel bâti avec les vraies pièces de Dofus : l'île centrale aux couleurs d'Astrub, et une île en attente pour chaque nation (Bonta, Brâkmar, Pandala, Frigost). On y va par n'importe quel Zaap (en tête de liste), par l'arche du Havre-Sac ou avec une Potion de Rappel ; son Zaap te ramène là où tu étais.",
-          "Kerubim, Tissebelle, Otomaï, Mère Bouillotte et Goultard ont quitté le Havre-Sac pour le Bastion. Kerubim garde un guichet de recyclage dans ton Havre-Sac.",
-          "Nouvelle caractéristique « % Réduction des recharges » sur les objets (plafond 25 %) et nouveau pouvoir légendaire Relance éclair, qui raccourcit la recharge d'un de tes sorts.",
-          "Portes : au survol, le curseur change et le nom du lieu s'affiche (« Taverne d'Astrub », « Sortie · Cité d'Astrub », « Salle suivante » dans les donjons). On peut aussi passer une porte en marchant droit dedans.",
-          "Vraie interface des métiers : la fenêtre Métiers (J) range tes métiers à gauche avec leur niveau, et montre à droite les recettes, les récoltes et le prochain palier. Dans un atelier, clique une machine (four, scie, alambic…) pour ouvrir l'Artisanat : choisis la recette, la quantité, et tout se fabrique en une seconde.",
-          "Métiers : survole un ingrédient pour savoir où le trouver (récolte, monstres et leur chance, boutique) et clique pour le voir sur la carte. Épingle une recette pour suivre ses ingrédients à l'écran ; clic droit sur une ressource du sac pour voir les recettes qui l'utilisent.",
-          "Bestiaire en jeu (touche B) : chaque monstre d'Incarnam et d'Astrub, rangé par sous-zone, avec un onglet Butin qui donne ta vraie chance (Prospection comprise) et « 1 sur N ». Cherche un objet pour voir où le trouver ; l'infobulle des objets le dit aussi.",
-          "Options : nouveau curseur « Monstres » pour régler les cris à part des sorts.",
-          "Forgemagie chez Malek, le forgemage du Bastion des Douze : brise tes objets en runes officielles (Rune Fo, Pa Fo, Ra Fo…), fusionne-les, puis pose-les sur ton équipement avec les vraies règles de Dofus (succès critique, neutre, échec et puits). Il peut aussi viser une valeur pour toi, contre une commission en kamas.",
-          "Nouveau cadre du personnage façon Sanstour : ta tête qui respire dans le portrait, PV, PA et PM avec les icônes officielles, une encoche par point.",
-          "Écran de voyage entre deux zones : une vue de l'endroit où tu arrives, ses niveaux et une astuce pendant le chargement. Le Havre-Sac, lui, s'ouvre comme une porte, en un fondu, avec un bruit de sac."
+          {
+            "titre": "Le Bastion des Douze",
+            "phrase": "Notre ville : un archipel avec une île pour chaque nation.",
+            "details": "On y va par n'importe quel Zaap, l'arche du Havre-Sac ou une Potion de Rappel. Kerubim, Otomaï, Goultard et les autres y vivent.",
+            "icone": "havre",
+            "image": "assets/journal/une/2026-11-07-1.webp"
+          },
+          {
+            "titre": "Forgemagie chez Malek",
+            "phrase": "Brise tes objets en runes et pose-les sur ton équipement.",
+            "details": "Vraies règles de Dofus : succès critique, neutre, échec et puits. Malek peut viser une valeur pour toi contre des kamas.",
+            "icone": "forge",
+            "etiquettes": [
+              "Bastion"
+            ]
+          },
+          {
+            "titre": "Fenêtre des Métiers",
+            "phrase": "Tes métiers, leurs recettes et le prochain palier, comme dans Dofus 3.",
+            "details": "Dans un atelier, clique une machine pour fabriquer. Survole un ingrédient pour savoir où le trouver, épingle une recette pour la suivre.",
+            "icone": "metier",
+            "etiquettes": [
+              "Touche J"
+            ]
+          },
+          {
+            "titre": "Bestiaire en jeu",
+            "phrase": "Chaque monstre par sous-zone, avec ta vraie chance de butin.",
+            "details": "Cherche un objet pour voir où le trouver ; l'infobulle des objets le dit aussi.",
+            "icone": "bestiaire",
+            "etiquettes": [
+              "Touche B"
+            ],
+            "image": "assets/journal/une/2026-11-07-3.webp"
+          },
+          {
+            "titre": "Cadre du personnage",
+            "phrase": "Ta tête qui respire, et PV, PA, PM avec les icônes officielles.",
+            "icone": "perso"
+          },
+          {
+            "titre": "Portes et écran de voyage",
+            "phrase": "Le nom du lieu au survol, et une vue de l'arrivée pendant le chargement.",
+            "details": "Tu peux aussi passer une porte en marchant droit dedans.",
+            "icone": "carte"
+          },
+          {
+            "titre": "% Réduction des recharges",
+            "phrase": "Nouvelle caractéristique d'objet, plafonnée à 25 %.",
+            "details": "Nouveau pouvoir légendaire Relance éclair : il raccourcit la recharge d'un de tes sorts.",
+            "icone": "sorts"
+          },
+          {
+            "titre": "Volume des monstres",
+            "phrase": "Un curseur à part pour les cris des monstres, dans Options.",
+            "icone": "options"
+          }
         ],
         "Le monde": [
-          "Donjons repensés : chaque donjon est maintenant une seule grande arène, construite avec les vraies pièces de Dofus (la Grange est une cour ronde avec ses meules, la Crypte une salle d'arches et de sarcophages, le Château une plage entre les remparts de sable…). Les monstres arrivent en 6 vagues par trois entrées marquées d'un cercle rouge, puis le boss descend de son estrade.",
-          "Le Cloportier garde l'entrée de la Cache de Kankreblath, en [3,-17] : il te fait la courte échelle avec ta clef.",
-          "La Cache de Kankreblath s'ouvre comme dans Dofus : on traverse la Boutique de Kerubim en [3,-17], on monte au grenier, et le Cloportier vous rapetisse d'un coup de Baguette Rikiki pour passer par le trou du plancher.",
-          "Chaque intérieur a son nom : bandeau en entrant et titre en haut de l'écran. Les sorties sont mieux marquées au sol, et l'intérieur se charge dès qu'on approche d'une porte : le noir du passage est plus court.",
-          "Les groupes de monstres ne bouchent plus les routes, les portes ni les abords des PNJ et du Zaap : chaque carte a ses coins à monstres, et un groupe vaincu revient sur l'un d'eux.",
-          "Portes façon Dofus : curseur en forme de maison au survol, plus d'anneaux dorés au sol, et pour sortir d'une maison on clique n'importe où sur le paillasson. En arrivant quelque part (porte, Zaap, Rappel), tu as 1,5 s de protection et les monstres attendent ton premier geste."
+          {
+            "titre": "Donjons en vagues",
+            "phrase": "Chaque donjon est une grande arène : 6 vagues, puis le boss.",
+            "details": "Arènes faites avec les vraies pièces de Dofus. Les monstres entrent par trois portes marquées d'un cercle rouge.",
+            "icone": "boss",
+            "image": "assets/journal/une/2026-11-07-2.webp"
+          },
+          {
+            "titre": "La Cache de Kankreblath",
+            "phrase": "Le Cloportier te rapetisse au grenier de Kerubim pour y entrer.",
+            "icone": "cle",
+            "etiquettes": [
+              "Astrub [3,-17]"
+            ]
+          },
+          {
+            "titre": "Intérieurs nommés",
+            "phrase": "Bandeau et titre en entrant ; le passage d'une porte est plus court.",
+            "icone": "havre"
+          },
+          {
+            "titre": "Routes dégagées",
+            "phrase": "Les groupes de monstres ne bouchent plus routes, portes, PNJ ni Zaap.",
+            "details": "En arrivant quelque part, tu as 1,5 s de protection.",
+            "icone": "carte"
+          }
         ],
         "Combat": [
-          "Boss de donjon : à 66 % et 33 % de ses PV, il appelle des renforts et reste intouchable tant qu'ils vivent. À sa mort, un portail te ramène devant le gardien et un coffre t'attend à côté. Chrono et « Vague 3 / 6 » sous la mini-carte, meilleur temps commenté par le gardien ; ta clé reste valable 10 minutes : si tu tombes, tu reprends à la vague atteinte.",
-          "Les monstres ne lâchent plus la poursuite au bout de 13 cases : ils te suivent tant qu'ils te voient, gardent leurs blessures s'ils abandonnent, et un coup les ramène avec tout leur groupe. Les groupes voisins viennent aider et les retardataires accélèrent pour rester groupés.",
-          "Massacre : dès 5 monstres tués à la suite, compteur à l'écran et jusqu'à +40 % d'XP. Un monstre qui abandonne affiche « Abandonne » et devient transparent ; un « ! » rouge quand un groupe te prend en chasse.",
-          "Recharges des sorts : Épée Divine (Iop) et Flèche de Barrage (Crâ) deviennent un gros coup à 8 s qui frappe deux fois plus fort ; les sorts à « 2 lancers par tour » affichent leurs charges, et le voile de recharge tourne comme une horloge avec un tintement quand un gros sort revient.",
-          "Les légendaires tombent comme prévu : 1 monstre sur 1 500, 1 élite sur 150, 1 boss sur 50. Les objets de quête et d'événement de Dofus (Pollenectar, Oueille, caisses de cadeaux…) ne tombent plus en temps normal.",
-          "Moins de ressources communes : les monstres en lâchent trois fois moins (la Laine de Bouftou passe de 53 % à 17,7 %), pour que le sac ne déborde plus. Les ressources rares et le butin des boss ne changent pas.",
-          "Les gros groupes de monstres ne font plus mal aux oreilles : 2 cris par sorte à la fois, volume qui baisse quand ils sont nombreux, voix un peu variées, et seuls la moitié des monstres crient en attaquant (élites et boss toujours).",
-          "La Rage (ou la Précision) remplit le bord du portrait et s'embrase quand elle est pleine ; les PV perdus restent un instant en blanc et le cœur bat sous 30 % de vie.",
-          "En contournant un décor, les monstres gardent un pas de marge avec les coins au lieu de frotter dessus.",
-          "Les monstres ne se bousculent plus en venant vers toi : chacun s'écarte de celui qu'il voit devant lui, et la meute arrive en éventail au lieu d'un paquet qui se pousse."
+          {
+            "titre": "Boss de donjon",
+            "phrase": "À 66 % et 33 % de vie, il appelle des renforts et devient intouchable.",
+            "details": "Chrono et « Vague 3 / 6 » sous la mini-carte. Ta clé reste valable 10 minutes : si tu tombes, tu reprends à la vague atteinte.",
+            "icone": "boss"
+          },
+          {
+            "titre": "Des monstres tenaces",
+            "phrase": "Ils te suivent tant qu'ils te voient, et leurs voisins viennent aider.",
+            "details": "Un monstre qui abandonne garde ses blessures. La meute arrive en éventail au lieu de se pousser.",
+            "icone": "degats"
+          },
+          {
+            "titre": "Massacre",
+            "phrase": "Dès 5 monstres tués à la suite, jusqu'à +40 % d'XP.",
+            "icone": "xp"
+          },
+          {
+            "titre": "Gros coups à recharge",
+            "phrase": "Épée Divine et Flèche de Barrage frappent deux fois plus fort toutes les 8 s.",
+            "details": "Les sorts à plusieurs lancers affichent leurs charges, et la recharge tourne comme une horloge.",
+            "icone": "sorts"
+          },
+          {
+            "titre": "Rage et vie lisibles",
+            "phrase": "La Rage remplit le bord du portrait ; le cœur bat sous 30 % de vie.",
+            "icone": "vie"
+          },
+          {
+            "titre": "Butin rééquilibré",
+            "phrase": "Légendaires à 1 sur 1 500, et trois fois moins de ressources communes.",
+            "details": "Élites 1 sur 150, boss 1 sur 50. Les objets de quête et d'événement ne tombent plus en temps normal.",
+            "icone": "kamas"
+          },
+          {
+            "titre": "Cris des monstres apaisés",
+            "phrase": "Moins de cris à la fois et un volume qui baisse quand ils sont nombreux.",
+            "icone": "options"
+          }
         ],
         "Corrections": [
-          "Cache de Kankreblath : l'arène a enfin un plancher partout, plus de trous noirs sur les bords.",
-          "Pêche : les bancs de poissons au milieu de l'eau se pêchent enfin depuis la rive (portée officielle de 10 cases), et chaque coin de pêche donne les poissons de sa carte.",
-          "Ressources : chaque arbre, céréale, plante et minerai porte enfin sa vraie ressource (le Merisier en fleurs, le Houblon, la Menthe, l'Edelweiss…) ; les puits ne sont plus du Frêne, on y puise de l'Eau Potable.",
-          "Boutique et grenier de Kerubim : le plancher, les murs et tout le bric-à-brac de l'antiquaire sont revenus (ils flottaient dans le noir).",
-          "Passer derrière un bâtiment l'efface en entier : plus de façade pâle avec sa porte et son toit restés pleins, qui faisait croire à deux bâtiments collés.",
-          "Astrub : fini les bâtiments en double. La Banque et 236 autres bâtiments étaient posés deux fois par deux cartes voisines, décalés de quelques pas ; il n'en reste qu'un. Quand tu passes derrière, tout le bâtiment s'efface d'un bloc, porte et enseigne comprises, et les portes ne passent plus derrière leur mur.",
-          "Cité d'Astrub dessinée comme dans Dofus : la carte où tu es s'affiche en entier, les voisines en bâtiments entiers. Plus de maison coupée au raccord entre deux cartes, ni de Taverne posée trois fois.",
-          "Incarnam dessiné de la même façon : bâtiments entiers, plus de doubles ni de coupures entre les cartes.",
-          "Calanques d'Astrub : plus de grandes taches blanches sur la mer, et la mer continue au-delà de la côte au lieu d'un fond bleu nuit.",
-          "Les bâtiments ne sautent plus quand tu passes d'une carte à l'autre : chacun reste à sa place, vu de partout.",
-          "Les monstres ne restent plus plantés contre les gros décors (autel, coffre, arbre, mur) : ils en font le tour pour venir te chercher, en arène comme dans le monde ouvert. Fini les vagues tuées gratuitement de l'autre côté de l'autel.",
-          "Donjons : recharger la page (Ctrl+F5) dans une arène ne te laisse plus coincé sans monstres. Les vagues reprennent là où tu en étais tant que ta clé est valable, sinon tu ressors devant le gardien."
+          "Cache de Kankreblath : l'arène a un plancher partout.",
+          "Pêche : les bancs au milieu de l'eau se pêchent depuis la rive.",
+          "Chaque arbre, plante et minerai porte sa vraie ressource ; les puits donnent de l'Eau Potable.",
+          "Boutique de Kerubim : plancher, murs et bric-à-brac sont revenus.",
+          "Astrub et Incarnam : plus de bâtiments en double, coupés ou qui sautent entre deux cartes.",
+          "Passer derrière un bâtiment l'efface en entier, porte et enseigne comprises.",
+          "Les monstres contournent les gros décors au lieu de rester plantés contre.",
+          "Recharger la page dans un donjon ne te laisse plus coincé sans monstres."
         ],
         "En coulisses": [
-          "Tous les taux de butin sont dans un seul fichier, et la partie de test (F1) a un onglet Butin : chaque ligne de butin du jeu, et un simulateur qui tue 1 000 monstres d'un coup.",
-          "Les cartes sont rangées par bâtiment, et un robot photographie chaque carte d'Astrub et d'Incarnam après chaque export pour repérer les doublons et les images manquantes.",
-          "Discord rangé pour le test ouvert : #🧭・commencer-ici (lien, touches, où aller), #🤝・entraide, et des forums #🐛・bugs et #💡・idées avec étiquettes (« Corrigé », « Retenue ») et vote 👍. Le Journal du jour arrive toujours dans #📜・journal.",
-          "Outils de test (F1) : onglet Placement pour poser à la main les groupes de chaque carte, régler leur taille et marquer le repaire de l'élite.",
-          "Le robot Discord sait publier des sondages. Le premier arrive bientôt dans #📣・annonces : quelle classe voulez-vous après l'Osamodas ? Les 16 autres classes, avec leurs symboles officiels, puis une finale des 5 premières.",
-          "Partie de test : F1 › Objets › Forgemagie ouvre la fenêtre du forgemage et donne des runes, pour régler les chances en jouant."
+          "Taux de butin dans un seul fichier, et un simulateur dans la partie de test (F1).",
+          "Un robot photographie chaque carte après export pour repérer doublons et trous.",
+          "Discord rangé pour le test ouvert : commencer-ici, entraide, bugs et idées.",
+          "Partie de test : poser les groupes de monstres à la main, et la forgemagie sur F1.",
+          "Le robot Discord lance un sondage : quelle classe après l'Osamodas ?"
         ]
       }
     },
     {
       "date": "2026-11-08",
       "titre": "Astrub au complet : la 0.2 est terminée",
-      "resume": "Les Égouts et les Souterrains ouvrent, le tour du monde commence chez Metag Robill, les Zaaps et les contrats du jour sont là : Astrub est entière, la 0.2 est finie.",
+      "resume": "La 0.2 est finie : Égouts, Souterrains, tour du monde, Zaaps et contrats du jour.",
       "capture": "assets/journal/2026-11-08.webp",
       "legende": "Metag Robill, devant la Grange du Tournesol Affamé, 8 novembre 2026.",
       "lignes": {
         "Nouveautés": [
-          "Version 0.2 terminée : Astrub est jouable en entier, de la Cité aux Égouts, avec ses 4 donjons, la Planque des Vilinsekts et la Cache de Kankreblath. Prochaine étape : la 0.3, le butin complet et l'Osamodas.",
-          "Le tour du monde : Metag Robill, devant la Grange du Tournesol Affamé, t'envoie vaincre le boss de chaque donjon, chapitre après chapitre. Les chapitres 1 et 2 (Kardorim, Tournesol Affamé, Mob l'Éponge, Bouftou Royal, Kankreblath) sont jouables ; les donjons déjà vaincus comptent.",
-          "Carnet de route : une page par donjon du tour du monde, tamponnée au premier passage avec la date et le temps mis jusqu'au boss (fenêtre Quêtes).",
-          "Nouvelle fenêtre Caractéristiques (C) façon Dofus 3 : coût, + et ++ (choisis combien de points placer), détail base / objets / bonus, stats en bas et bouton Détails. Survole une caractéristique pour voir ce qu'elle te donne et ce que rapporte le point suivant. Le bouton ↺ rend tous tes points, gratuitement, hors donjon.",
-          "Les Zaaps marchent : clique sur l'arche, choisis ta destination dans la vraie fenêtre de Dofus 3 (par zone, niveau en couleur) et pars dans un tourbillon, gratuitement. Les Zaaps pas encore vus sont grisés.",
-          "Contrats du jour : le Gardien des Geôles d'Astrub, devant la Prison près du Zaap, propose 3 contrats par jour (nouveaux à minuit) et un gros contrat chaque semaine, habillés des quêtes officielles d'Astrub. Récompense : XP, kamas, un sac Rare (Épique pour la semaine) et des Pépites.",
-          "Avis de recherche : Fouduglen l'écureuil, Sam Sagaz et Frakacia Leukocytine sont à traquer une fois par semaine, prime à rendre aux Geôles. Et Cindy Cah lance le fil « Les Vilinsekts » au niveau 30 : les planques, trois lieutenants, puis Kankreblath.",
-          "Défis de donjon : chaque gardien propose un défi du jour (sans potion, ou contre la montre) sur son donjon, pour un sac Épique. Et le Représentant des Temples, près du Zaap, t'envoie affronter ton Dopeul une fois par jour : ton double officiel, avec tes sorts.",
-          "Nouveaux contrats : tenir 60 secondes face à des vagues de monstres, ou vider une carte avant la fin du chrono.",
-          "Six quêtes d'Astrub à faire, écrites pour l'action : Hazel Ementaire et ses Pious aigris, Nepra Lido et les piquants des Prespics, Jim Fleps (Crime et châtiment), Sel Dawa et la trempette aux Calanques, le Disciple de Sêpt chez les bûcherons et Becky Gorr contre les profanateurs.",
-          "Nouvelle fenêtre de forgemagie façon Dofus 3 chez Malek : cases Objet, Rune et Signature, bouton Fusionner (ou mode avancé : un clic sur la rune), les runes de chaque ligne au bout de la ligne avec leur chance, l'œil pour masquer une ligne et l'historique avec l'icône de chaque rune. La Rune de Signature grave ton nom sur l'objet, et le Concasseur montre les runes qui vont sortir avant de briser.",
-          "Commande à Malek : fixe une valeur à atteindre et un plancher à ne pas casser sur chaque ligne, un budget, demande-lui son estimation (chances, kamas, runes), puis laisse-lui l'objet et reviens le chercher quelques minutes plus tard.",
-          "Collection d'apparences : briser ou recycler une coiffe, une cape ou un bouclier pour la première fois garde son apparence dans l'onglet Apparats de l'inventaire, et chaque panoplie complétée donne un succès (catégorie Collection).",
-          "Nouvelle case dans l'inventaire : « Briser les Communs au ramassage ». Les objets Communs partent en runes dès que tu les ramasses. Le recyclage se fait désormais seulement chez Kerubim Crépin (plus de Maj + clic dans le sac).",
-          "L'Osamodas arrive en essai dans la partie de test (diablofus.com/#test, classe à choisir avec F1) : ses 15 premiers sorts officiels, le Tofu dès le niveau 1 puis Bouftou, Crapipou et Dragoune sur A Z R T. Les bêtes ont leurs vrais sorts, te soignent quand tu faiblis et s'éveillent quand la jauge d'Éveil est pleine (rappuie sur leur touche).",
-          "La flèche des quêtes suit le vrai trajet : la porte du bâtiment, le passage vers la carte voisine, le portail d'Astrub ou un Zaap. Plus grande, aux couleurs officielles de la quête, elle affiche le nom du but et le nombre de cartes ; l'icône de la quête est sur la mini-carte et le trajet en pointillés sur la carte (M).",
-          "Clic sur le titre de la quête suivie (en bas à gauche) : passe à la quête suivante. La flèche se coupe dans Réglages > Interface.",
-          "Osamodas : chaque bête a son petit cadre sous le tien (portrait, PV, PA, temps d'Éveil ou de domptage), et les sorts de l'Osamodas et de ses 14 bêtes jouent leurs effets officiels de Dofus 3.",
-          "Aides de quête : un losange vert flotte au-dessus des monstres qui comptent pour tes quêtes, le Zaap le plus proche du but porte une étoile dans la fenêtre du Zaap, un clic sur les objectifs du suivi ouvre la carte (M) sur le but, et la flèche grossit puis s'efface avec un petit son quand le but entre à l'écran.",
-          "356 familiers et familiers d'apparat dessinés au lieu de 148 : bien plus de choix chez Emp et dans la garde-robe.",
-          "Version 0.3 en essai dans la partie de test (diablofus.com/#test) : un Légendaire porte maintenant un des 40 pouvoirs officiels de ta classe, propres à son emplacement (Bond +1 case de portée, Colère de Iop 1 PA de moins, Flèche Cinglante +1 charge…), ou un des 5 pouvoirs maison. Il vise d'abord un sort que tu connais ; un pouvoir d'un sort à venir ou d'une autre classe s'affiche en gris.",
-          "0.3 en partie de test : 256 équipements officiels du niveau 26 au 40 et 46 nouvelles panoplies. Ils tombent des monstres d'Astrub selon le vrai butin de Dofus : le Bouftou Royal lâche enfin sa panoplie royale comme équipement (avant, elle arrivait dans le sac comme une ressource).",
-          "0.3 en partie de test : le Codex. Brise un Légendaire ou un Mythique au Concasseur de Malek : son pouvoir est gardé pour toujours. Dans l'onglet Codex de Malek, imprime-le sur un objet Rare ou Épique du même emplacement, qui devient Légendaire (kamas et runes de l'objet, ou Pépites). Le Codex se consulte aussi depuis la fenêtre des Sorts, et un sceau « Nouveau pour le Codex » signale un pouvoir pas encore gardé.",
-          "0.3 en partie de test : les nouveaux équipements se voient sur ton personnage. 41 coiffes et capes, 5 boucliers et 71 armes du niveau 26 au 40 ont leur vrai dessin de Dofus (de la Dora au Casque Noix, de la Cape Bouffante Royale au Bouclier hérissé du Prespic). Le Bouclier Tonbarien, déjà en jeu, s'affiche enfin aussi.",
-          "0.3 en partie de test : nouvelle quête de Malek, « Le premier pouvoir ». Bats le Chef de Guerre Bouftou de Tainéla puis le Bouftou Royal : le Codex s'ouvre et tu reçois un Légendaire au pouvoir de ta classe, garanti. Sans la quête, le Codex s'ouvre aussi dès ton premier Légendaire trouvé.",
-          "0.3 en partie de test : six métiers de fabrication (Bijoutier, Cordonnier, Tailleur, Forgeron, Sculpteur, Façonneur) et 431 recettes officielles d'équipement jusqu'au niveau 40. L'objet sort Commun ou Rare : la chance de Rare monte avec le niveau du métier, et un ingrédient rare de boss ou d'élite (Crâne de Kardorim…) la garantit. Les ateliers de la Cité arrivent juste après.",
-          "44 familiers d'apparat prennent maintenant les couleurs de ton perso, comme dans Dofus 3 (Krozti, Dragoune Chromatique, Chacha de Voyage…) : leur fiche le précise.",
-          "0.3 en partie de test : le coffre partagé. Cinq onglets d'objets, ouverts au Havre-Sac ou à la Banque d'Astrub, communs à tous tes persos (les persos Hardcore ont le leur). Les six ateliers de fabrication sont posés devant leurs ateliers officiels de la Cité, en attendant leurs intérieurs.",
-          "0.3 en partie de test : trois préréglages dans l'inventaire (équipement, barre de sorts et variantes), changés d'un clic sauf si un monstre t'a touché il y a moins de 5 s. Le Mythique a son propre son, et la comparaison avec l'objet porté montre des flèches et le pouvoir que tu perdrais.",
-          "0.3 en partie de test : les 28 archimonstres officiels d'Astrub (Tofurapin, Arachitik, Radoutable, Milipussien…) prennent parfois la place d'un monstre de groupe, plus forts et dorés. Achète une Petite pierre d'âme chez Otomaï : vaincu avec elle dans ton sac, l'archimonstre est capturé.",
-          "0.3 en partie de test : l'Almanax. Chaque jour du calendrier officiel a son offrande ; apporte-la au Représentant des Temples, près du Zaap d'Astrub, contre des Pépites et le bonus du jour jusqu'à minuit (XP, butin, récolte, gibier, métiers ou fabrication).",
-          "0.3 en partie de test : les premiers Dofus. Le Gawdien du Dofus, au Bastion, confie les quêtes de l'œuf d'argent et de l'œuf en chocolat : trois fragments sur trois élites, puis la coquille gardée par un boss. Le Dofus Argenté soigne quand tout va mal, le Cacao protège dans la mêlée.",
-          "0.3 en partie de test : six cases de Dofus dans l'inventaire (glisser-déposer depuis le sac) et la fenêtre des Dofus sur la touche D : les 31 Dofus, ceux à trouver en gris avec leur source, les fragments de la quête en cours, et des succès à 2, 6, 12 et 31 Dofus."
+          {
+            "titre": "La 0.2 est terminée",
+            "phrase": "Astrub est jouable en entier, de la Cité aux Égouts.",
+            "details": "4 donjons, la Planque des Vilinsekts et la Cache de Kankreblath. Prochaine étape : la 0.3, le butin complet et l'Osamodas.",
+            "icone": "principale"
+          },
+          {
+            "titre": "Le tour du monde",
+            "phrase": "Metag Robill t'envoie vaincre le boss de chaque donjon, chapitre après chapitre.",
+            "details": "Chapitres 1 et 2 jouables. Le carnet de route tamponne chaque donjon avec la date et ton temps (fenêtre Quêtes).",
+            "icone": "quete",
+            "etiquettes": [
+              "Astrub"
+            ],
+            "image": "assets/journal/une/2026-11-08-1.webp"
+          },
+          {
+            "titre": "Les Zaaps marchent",
+            "phrase": "Clique sur l'arche, choisis ta destination et voyage gratuitement.",
+            "details": "La vraie fenêtre de Dofus 3, classée par zone, niveau en couleur. Les Zaaps pas encore vus sont grisés.",
+            "icone": "zaap",
+            "image": "assets/journal/une/2026-11-08-2.webp"
+          },
+          {
+            "titre": "Fenêtre Caractéristiques",
+            "phrase": "Place tes points avec + et ++ et vois ce que rapporte le point suivant.",
+            "details": "Détail base / objets / bonus et bouton Détails. Le bouton ↺ rend tous tes points, gratuitement, hors donjon.",
+            "icone": "caracs",
+            "etiquettes": [
+              "Touche C"
+            ]
+          },
+          {
+            "titre": "Contrats du jour",
+            "phrase": "3 contrats par jour et un gros chaque semaine, aux Geôles près du Zaap.",
+            "details": "Tenir 60 s face aux vagues ou vider une carte au chrono, nouveaux à minuit. Récompense : XP, kamas, sac Rare ou Épique et Pépites.",
+            "icone": "contrat",
+            "etiquettes": [
+              "Astrub"
+            ]
+          },
+          {
+            "titre": "Avis de recherche",
+            "phrase": "Trois fuyards à traquer chaque semaine, prime à rendre aux Geôles.",
+            "details": "Fouduglen l'écureuil, Sam Sagaz et Frakacia Leukocytine. Cindy Cah lance aussi le fil « Les Vilinsekts » au niveau 30.",
+            "icone": "boss",
+            "etiquettes": [
+              "Niv. 30"
+            ]
+          },
+          {
+            "titre": "Défis de donjon et Dopeul",
+            "phrase": "Un défi du jour par donjon, et ton double à affronter chaque jour.",
+            "details": "Défis sans potion ou contre la montre, pour un sac Épique. Le Représentant des Temples t'envoie affronter ton Dopeul.",
+            "icone": "boss",
+            "etiquettes": [
+              "Sac Épique"
+            ]
+          },
+          {
+            "titre": "Six quêtes d'Astrub",
+            "phrase": "Des quêtes écrites pour l'action, avec les PNJ d'Astrub.",
+            "details": "Hazel Ementaire, Nepra Lido, Jim Fleps, Sel Dawa, le Disciple de Sêpt et Becky Gorr.",
+            "icone": "quete",
+            "etiquettes": [
+              "Astrub"
+            ]
+          },
+          {
+            "titre": "Forgemagie façon Dofus 3",
+            "phrase": "La vraie fenêtre de Malek : objet, rune, signature et historique.",
+            "details": "La Rune de Signature grave ton nom. Passe aussi commande à Malek : une valeur à atteindre, un budget, et reviens chercher l'objet.",
+            "icone": "forge",
+            "etiquettes": [
+              "Bastion"
+            ],
+            "image": "assets/journal/une/2026-11-08-3.webp"
+          },
+          {
+            "titre": "Collection d'apparences",
+            "phrase": "Briser ou recycler une coiffe, une cape ou un bouclier garde son apparence.",
+            "details": "Chaque panoplie complétée donne un succès (catégorie Collection).",
+            "icone": "apparat"
+          },
+          {
+            "titre": "Briser les Communs",
+            "phrase": "Une case de l'inventaire brise les Communs dès le ramassage.",
+            "details": "Le recyclage se fait désormais seulement chez Kerubim Crépin.",
+            "icone": "sac"
+          },
+          {
+            "titre": "Une flèche de quête plus maline",
+            "phrase": "Elle suit le vrai trajet : porte, carte voisine, portail ou Zaap.",
+            "details": "Losange vert sur les monstres utiles, étoile sur le Zaap conseillé, clic sur un objectif pour ouvrir la carte. Se coupe dans Réglages > Interface.",
+            "icone": "carte"
+          },
+          {
+            "titre": "Plus de familiers",
+            "phrase": "356 familiers dessinés au lieu de 148, dont 44 à tes couleurs.",
+            "details": "Bien plus de choix chez Emp et dans la garde-robe.",
+            "icone": "apparat"
+          },
+          {
+            "titre": "L'Osamodas en essai",
+            "phrase": "Ses 15 premiers sorts et 4 bêtes sur A Z R T.",
+            "details": "Les bêtes ont leurs vrais sorts et leur cadre sous le tien, te soignent et s'éveillent quand la jauge est pleine. Classe à choisir avec F1.",
+            "icone": "sorts",
+            "etiquettes": [
+              "Partie de test"
+            ]
+          },
+          {
+            "titre": "Légendaires à pouvoir",
+            "phrase": "Un Légendaire porte un des 40 pouvoirs officiels de ta classe.",
+            "details": "Bond +1 case de portée, Colère de Iop 1 PA de moins… Un pouvoir d'un sort que tu n'as pas encore s'affiche en gris.",
+            "icone": "dofus",
+            "etiquettes": [
+              "Partie de test"
+            ]
+          },
+          {
+            "titre": "256 équipements officiels",
+            "phrase": "Du niveau 26 au 40, 46 panoplies, avec leur vrai dessin sur toi.",
+            "details": "Ils tombent des monstres d'Astrub selon le vrai butin de Dofus ; le Bouftou Royal lâche enfin sa panoplie.",
+            "icone": "arme",
+            "etiquettes": [
+              "Partie de test"
+            ]
+          },
+          {
+            "titre": "Le Codex",
+            "phrase": "Brise un Légendaire : son pouvoir est gardé pour toujours.",
+            "details": "Imprime-le chez Malek sur un objet Rare ou Épique. La quête « Le premier pouvoir » t'en offre un garanti.",
+            "icone": "forge",
+            "etiquettes": [
+              "Partie de test"
+            ]
+          },
+          {
+            "titre": "Métiers de fabrication",
+            "phrase": "Six métiers et 431 recettes d'équipement jusqu'au niveau 40.",
+            "details": "L'objet sort Commun ou Rare ; un ingrédient rare de boss garantit le Rare.",
+            "icone": "metier",
+            "etiquettes": [
+              "Partie de test"
+            ]
+          },
+          {
+            "titre": "Coffre et préréglages",
+            "phrase": "Un coffre commun à tes persos, et 3 préréglages d'équipement.",
+            "details": "Le coffre s'ouvre au Havre-Sac ou à la Banque d'Astrub. Un préréglage change d'un clic, sauf si on t'a touché il y a moins de 5 s.",
+            "icone": "sac",
+            "etiquettes": [
+              "Partie de test"
+            ]
+          },
+          {
+            "titre": "Archimonstres",
+            "phrase": "Les 28 archimonstres d'Astrub, à capturer avec une pierre d'âme.",
+            "details": "Plus forts et dorés, ils prennent parfois la place d'un monstre de groupe. Petite pierre d'âme chez Otomaï.",
+            "icone": "bestiaire",
+            "etiquettes": [
+              "Partie de test"
+            ]
+          },
+          {
+            "titre": "L'Almanax",
+            "phrase": "Chaque jour, une offrande à rapporter contre le bonus du jour.",
+            "details": "Au Représentant des Temples, près du Zaap d'Astrub : Pépites et bonus jusqu'à minuit.",
+            "icone": "journal",
+            "etiquettes": [
+              "Partie de test"
+            ]
+          },
+          {
+            "titre": "Les premiers Dofus",
+            "phrase": "Les quêtes de l'œuf d'argent et de l'œuf en chocolat.",
+            "details": "Le Gawdien du Dofus, au Bastion, les confie. Six cases de Dofus dans l'inventaire et la fenêtre des Dofus sur la touche D.",
+            "icone": "dofus",
+            "etiquettes": [
+              "Partie de test",
+              "Touche D"
+            ]
+          }
         ],
         "Le monde": [
-          "Le prochain donjon de la quête suivie est marqué sur la carte (M).",
-          "L'île de Brâkmar du Bastion, en grand : Grand Temple, hangar, fonderie, machine et chaînes géantes, avec les étincelles, les bulles de lave et les lueurs des enseignes du vrai Brâkmar. Elle attend la libération de la nation.",
-          "Bonta, Pandala et Frigost rejoignent Brâkmar en grand autour du Bastion des Douze : palais au dôme et fontaine du marché de Bonta, temple de bambou et pavillon au gong de Pandala, banque en coffre-fort de la Bourgade sous la neige de Frigost, en vraies pièces avec leurs effets officiels. Les ponts restent coupés jusqu'à la libération des nations.",
-          "Survole une porte d'Astrub : quand elle a son propre dessin (ateliers des paysans, des alchimistes et des bûcherons, Tour du Conseil…), un fin liseré blanc l'entoure, comme sur Sanstour.",
-          "Incarnam a ses 3 vrais Zaaps (Route des âmes, Pâturages, Cimetière) ; un Zaap découvert s'annonce et s'allume sur la carte (M).",
-          "Toutes les portes d'Astrub s'entourent au survol d'un fin trait lilas, comme dans Dofus 3 et sur Sanstour : il suit la forme officielle de chaque embrasure (Taverne, Banque, Milice, ateliers…), même quand la porte est peinte dans le bâtiment.",
-          "Un paillasson attend à la sortie de chaque intérieur, comme sur Sanstour : une dalle de pierre au soleil vert qui luit et pétille, sur la case de sortie officielle. Survole-le, il s'entoure ; clique dessus pour sortir.",
-          "Les Égouts d'Astrub (13 salles, de la plaque d'égout [5,-17] à la sortie [7,-9]) et les Souterrains d'Astrub (9 salles de mine, entrée en [1,-17]) sont ouverts, avec leurs monstres officiels.",
-          "0.3 en partie de test : le Gawdien du Dofus (au Bastion), Rathrosk et l'Énergie du Dofus Cacao (à Astrub) sont là, avec leurs dessins officiels."
+          {
+            "titre": "Égouts et Souterrains",
+            "phrase": "Deux nouveaux lieux d'Astrub, avec leurs monstres officiels.",
+            "details": "Égouts : 13 salles, entrée en [5,-17]. Souterrains : 9 salles de mine, entrée en [1,-17].",
+            "icone": "carte",
+            "etiquettes": [
+              "Astrub"
+            ]
+          },
+          {
+            "titre": "Les îles du Bastion",
+            "phrase": "Brâkmar, Bonta, Pandala et Frigost en grand autour du Bastion.",
+            "details": "Vraies pièces et effets officiels. Les ponts restent coupés jusqu'à la libération des nations.",
+            "icone": "havre",
+            "etiquettes": [
+              "Bastion"
+            ]
+          },
+          {
+            "titre": "Les Zaaps d'Incarnam",
+            "phrase": "Route des âmes, Pâturages et Cimetière ; un Zaap découvert s'allume sur la carte.",
+            "icone": "zaap",
+            "etiquettes": [
+              "Incarnam"
+            ]
+          },
+          {
+            "titre": "Portes et paillassons",
+            "phrase": "Les portes s'entourent au survol, un paillasson marque chaque sortie.",
+            "details": "Le contour suit la forme officielle de chaque embrasure, comme dans Dofus 3.",
+            "icone": "havre"
+          },
+          {
+            "titre": "Donjon suivant sur la carte",
+            "phrase": "Le prochain donjon de la quête suivie est marqué sur la carte.",
+            "icone": "carte",
+            "etiquettes": [
+              "Touche M"
+            ]
+          },
+          {
+            "titre": "Les PNJ des Dofus",
+            "phrase": "Le Gawdien du Dofus, Rathrosk et l'Énergie du Dofus Cacao.",
+            "icone": "perso",
+            "etiquettes": [
+              "Partie de test"
+            ]
+          }
         ],
         "Combat": [
-          "Coûts officiels des points : Sagesse 3 points, Force, Intelligence, Chance et Agilité 1 point jusqu'à 100 puis 2, 3 et 4 par tranche de 100 (tes points déjà placés te sont rendus). La Chance donne +1 Prospection par 10, l'Intelligence et les Soins renforcent tes soins, et l'Agilité fait courir un peu plus vite (+1 % par 20, 10 % au plus).",
-          "Croiser un élite ne coupe plus ta musique : seuls les boss lancent la musique de combat.",
-          "Musique des boss plus fluide : fondu croisé à l'arrivée du boss, boucle sans blanc, et ton morceau d'exploration reprend là où il en était après le combat.",
-          "Avec l'Osamodas : Alt + clic lance toute la meute sur un monstre, Maj montre le fil de laisse et les PV de chaque bête, la Laisse Spirituelle dompte un monstre presque vaincu pendant 20 s, et ton familier mord.",
-          "Chaque boss a sa musique officielle de Dofus 3, qui s'enrichit d'un instrument à chaque quart de vie qu'il perd. À Astrub, c'est la musique de combat d'Amakna. Tu peux couper la musique des boss dans Options, Son.",
-          "Bulles d'effets actifs au-dessus de la barre de sorts : chaque bonus de sort (Cortège Sauvage, Pas Chassé, Épée Divine…), les charges et le bouclier ont leur bulle avec un anneau qui se vide et les secondes restantes ; les malus des monstres en rouge ; survole une bulle pour le détail."
+          {
+            "titre": "Coûts officiels des points",
+            "phrase": "Sagesse à 3 points, les autres à 1 jusqu'à 100 puis plus cher.",
+            "details": "Tes points déjà placés te sont rendus. La Chance donne de la Prospection, l'Agilité fait courir un peu plus vite.",
+            "icone": "caracs"
+          },
+          {
+            "titre": "Musiques de boss",
+            "phrase": "Chaque boss a sa musique officielle, qui s'enrichit quand il faiblit.",
+            "details": "Seuls les boss lancent la musique de combat, avec un fondu croisé à leur arrivée. Se coupe dans Options, Son.",
+            "icone": "options"
+          },
+          {
+            "titre": "Bulles d'effets actifs",
+            "phrase": "Tes bonus, charges et bouclier en bulles au-dessus de la barre de sorts.",
+            "details": "Un anneau se vide avec les secondes restantes ; les malus en rouge.",
+            "icone": "sorts"
+          },
+          {
+            "titre": "La meute de l'Osamodas",
+            "phrase": "Alt + clic lance toute la meute sur un monstre.",
+            "details": "Maj montre la laisse et les PV des bêtes. La Laisse Spirituelle dompte un monstre presque vaincu pendant 20 s.",
+            "icone": "sorts",
+            "etiquettes": [
+              "Partie de test"
+            ]
+          }
         ],
         "Corrections": [
-          "Les Chafers Éclaireurs font enfin mal : leur Flèche de Feu était prise pour un sort de soutien et ne blessait jamais. Ils restent à distance pour tirer (même correction pour le Tofu Chimérique, le Petit Gloot et Percy Klop).",
-          "Le Zaap du Bastion tourbillonne et scintille comme les autres, et affiche son nom au survol (l'arche du Havre-Sac aussi).",
-          "La flèche ne part plus dans le mauvais sens quand le but est dans un bâtiment (Capitaine des Kerubims dans la Tour de la Milice, Cité d'Astrub, donjons).",
-          "Les bêtes de l'Osamodas ne marchent plus sur leur maître : elles le suivent en éventail à deux cases derrière lui et s'écartent quand il recule sur elles.",
-          "Les familiers ont enfin leur vrai visage : le Chienchien n'est plus un vieux sage ni le Tanuk un cube de glace. Presque tous montraient un autre dessin que le leur.",
-          "Osamodas : le Dragonnet (Éveil de la Dragoune) ne glisse plus figé ; il prend l'apparence animée du Dragonnet Rouge officiel (repos, course, trois attaques).",
-          "Dans la fenêtre « Quoi de neuf ? », « Lire tout le carnet » la ferme bien avant d'ouvrir le carnet."
+          "Les Chafers Éclaireurs, le Tofu Chimérique et le Petit Gloot blessent enfin à distance.",
+          "Le Zaap du Bastion tourbillonne et affiche son nom au survol.",
+          "La flèche ne part plus dans le mauvais sens quand le but est dans un bâtiment.",
+          "Les familiers ont leur vrai visage : le Chienchien n'est plus un vieux sage.",
+          "Les bêtes de l'Osamodas suivent leur maître au lieu de lui marcher dessus.",
+          "Le Dragonnet de l'Osamodas est enfin animé.",
+          "« Lire tout le carnet » ferme bien la fenêtre « Quoi de neuf ? »."
         ],
         "En coulisses": [
-          "Sur le Discord, le carnet du jour ne montre plus que ce qui est jouable par tous, avec l'annonce du jour en tête ; les essais de la partie de test restent dans ce Journal."
+          "Sur Discord, le carnet du jour ne montre que ce qui est jouable par tous.",
+          "Les carnets du Journal se lisent d'un coup d'œil : un titre, une phrase, les détails à déplier."
         ]
       }
     }

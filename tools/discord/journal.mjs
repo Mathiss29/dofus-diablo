@@ -15,7 +15,12 @@ export const nomPost = (c) => `${dateFr(c.date)} · ${c.titre}`.slice(0, 100);
 /** Lignes réservées à la partie de test (0.3, Osamodas en essai) : gardées dans le Journal du jeu, pas sur Discord
     tant que ce contenu n'est pas public. À retirer de la liste quand il sort pour tout le monde. */
 export const CACHE_DISCORD = [/partie de test/i, /#test\b/i, /\bOsamodas\b/i];
-export const publique = (l) => !CACHE_DISCORD.some((r) => r.test(l));
+export const publique = (l) => !CACHE_DISCORD.some((r) => r.test(texteComplet(l)));
+
+/** Carnets lisibles (10A) : une entrée { titre, phrase, details, etiquettes } s'affiche « **titre** · phrase » ;
+    les détails restent sur le site. Les vieilles lignes (texte simple) passent telles quelles. */
+export const texte = (l) => (typeof l === "string" ? l : `**${l.titre}** · ${l.phrase}`);
+const texteComplet = (l) => (typeof l === "string" ? l : [l.titre, l.phrase, l.details, ...(l.etiquettes || [])].filter(Boolean).join(" "));
 
 const couper = (s, n) => (s.length <= n ? s : s.slice(0, n - 1) + "…");
 
@@ -26,13 +31,13 @@ function champ(nom, lignes, budget, une = false) {
   let taille = 0;
   // « À la une » : la première ligne des Nouveautés (l'annonce du jour) reste en tête, même dans un gros carnet
   if (une && lignes.length > 1) {
-    const l = "• " + couper(lignes[0], 300);
+    const l = "• " + couper(texte(lignes[0]), 300);
     pris.push(l); taille += l.length + 1;
     lignes = lignes.slice(1);
   }
   const deja = pris.length;
   for (let i = lignes.length - 1; i >= 0; i--) {
-    const l = "• " + couper(lignes[i], 300);
+    const l = "• " + couper(texte(lignes[i]), 300);
     const reste = i; // lignes encore non montrées si on s'arrête après celle-ci
     const suite = reste ? `\n*… et ${reste} autre${reste > 1 ? "s" : ""}*` : "";
     if (taille + l.length + 1 + suite.length > Math.min(CHAMP, budget)) break;
