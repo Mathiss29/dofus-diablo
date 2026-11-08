@@ -14,7 +14,11 @@ export const PARTIE = {
   arene: 'arene_crypte',
   /** Au-delà de ce retard (serveur surchargé un instant), on rattrape au plus ce nombre de pas d'un coup. */
   rattrapage: 8,
+  /** Les persos du compte sont sauvés toutes les … secondes (et quand le joueur part). */
+  sauvegarde: 60,
 };
+/** Ce que la partie garde du perso d'avant : où il était dans SON monde (la partie se passe ailleurs) et ses quêtes. */
+const GARDES = ['zone', 'x', 'y', 'retour', 'havreSac', 'quetes', 'zaaps', 'zonesVues', 'cleDonjon'];
 
 let sim = null;
 /** Charge la simulation construite (une seule fois) ; null si elle n'a pas été construite. */
@@ -29,8 +33,9 @@ export async function chargerSim(dossier = new URL('./partie/', import.meta.url)
 
 export class Partie {
   /** @param {any} S la simulation chargée ; envoyer(num, données) parle à un joueur du salon. */
-  constructor(S, envoyer, seed = Math.floor(Math.random() * 2 ** 31)) {
-    this.S = S; this.envoyer = envoyer; this.seed = seed;
+  /** sauver(compte, perso) : écrit le perso d'un compte (comptes.mjs) ; absent = rien n'est gardé. */
+  constructor(S, envoyer, seed = Math.floor(Math.random() * 2 ** 31), sauver = null) {
+    this.S = S; this.envoyer = envoyer; this.seed = seed; this.sauver = sauver; this.depuisSauvegarde = 0;
     this.w = null;
     this.membres = new Map();
     this.n = 0; this.reste = 0; this.erreurs = 0;
@@ -41,6 +46,7 @@ export class Partie {
   }
   depart(num) {
     const m = this.membres.get(num);
+    if (m) this.sauverMembre(m);
     this.membres.delete(num);
     const q = m && this.w?.players.find(p => p.id === m.joueur);
     if (q && !this.w.retirerJoueur(q)) this.w = null;   // c'était le dernier : la partie s'arrête
@@ -63,8 +69,11 @@ export class Partie {
   poser(num, m, d) {
     const S = this.S;
     if (m.joueur != null) return;
-    const classe = typeof d.classe === 'string' && S.GAME_DATA.classes[d.classe] ? d.classe : 'iop';
-    const etat = d.etat && typeof d.etat === 'object' ? { ...d.etat, zone: '__coop', havreSac: undefined } : null;
+    // perso du compte (d.compte, posé par index.mjs après avoir vérifié le jeton) : c'est lui qui compte, pas ce qu'envoie le jeu
+    if (d.compte) { m.compte = d.compte; m.arrivee = Date.now(); }
+    const source = d.compte ? d.compte.perso : d;
+    const classe = typeof source.classe === 'string' && S.GAME_DATA.classes[source.classe] ? source.classe : 'iop';
+    const etat = source.etat && typeof source.etat === 'object' ? { ...source.etat, zone: '__coop', havreSac: undefined } : null;
     let q;
     if (!this.w) {
       this.w = new S.World({ data: S.GAME_DATA, zone: 'incarnam', map: new S.WorldGrid(S.monde), seed: this.seed, classId: classe, items: S.ITEMS, partieServeur: true });
@@ -80,6 +89,7 @@ export class Partie {
     if (etat) { try { this.w.commeJoueur(q, () => S.restaurerJoueur(this.w, etat)); } catch (e) { console.warn('partie : perso illisible', e.message); } }
     if (this.w.players[0] !== q) { const f = this.w.map.nearestFree(this.w.players[0].x + 40, this.w.players[0].y); q.x = f.x; q.y = f.y; }
     q.hp = q.maxHp;
+    q.nom = typeof source.nom === 'string' ? source.nom.slice(0, 20) : '';
     m.joueur = q.id; m.em = new S.Emetteur(q.id); m.pret = false;
     this.envoyer(num, { k: 'zone', zone: this.w.opts.zone, x: q.x, y: q.y, id: q.id });
   }
@@ -101,8 +111,11 @@ export class Partie {
       try { w.step(PARTIE.pas, entrees[premier.id] ?? S.NO_INPUT, autres); this.erreurs = 0; }
       catch (e) { if (++this.erreurs > 30) throw e; console.warn('partie : pas raté', e.message); }
       const evs = w.drainEvents();
+      // portail de sortie : ce joueur quitte la partie (son jeu ferme la connexion, il est alors sauvé et retiré)
+      for (const e of evs) if (e.k === 'sortieArene') for (const [num, m] of this.membres) if (m.joueur === e.joueur && !m.sorti) { m.sorti = true; this.envoyer(num, { k: 'sortie' }); }
       for (const m of this.membres.values()) if (m.em) for (const e of evs) m.em.noter(e);
       this.relever(PARTIE.pas);
+      if ((this.depuisSauvegarde += PARTIE.pas) >= PARTIE.sauvegarde) { this.depuisSauvegarde = 0; for (const m of this.membres.values()) this.sauverMembre(m); }
       if (++this.n % S.COOP.tous) continue;
       for (const [num, m] of this.membres) if (m.pret && m.em) this.envoyer(num, { k: 'instantane', ...m.em.instantane(w) });
     }
@@ -119,7 +132,23 @@ export class Partie {
       m.mortDepuis = 0;
     }
   }
-  /** État du perso d'un joueur (pour le sauver sur son compte, étape suivante). */
+  /** Sauve le perso d'un membre venu avec son compte : son état dans la partie, mais sa place et ses quêtes d'avant. */
+  sauverMembre(m) {
+    if (!m.compte || !this.sauver || !this.w) return;
+    const q = this.w.players.find(p => p.id === m.joueur);
+    if (!q) return;
+    try {
+      const avant = m.compte.perso, etat = this.w.commeJoueur(q, () => this.S.exporterJoueur(this.w));
+      for (const k of GARDES) { if (avant.etat && k in avant.etat) etat[k] = avant.etat[k]; else delete etat[k]; }
+      const t = Date.now(), temps = (avant.temps ?? 0) + Math.round((t - m.arrivee) / 1000);
+      m.arrivee = t;
+      m.compte.perso = { ...avant, etat, temps };
+      this.sauver(m.compte, m.compte.perso);
+    } catch (e) { console.warn('partie : sauvegarde ratée', e.message); }
+  }
+  /** Sauve tout le monde (serveur qui s'arrête). */
+  sauverTout() { for (const m of this.membres.values()) this.sauverMembre(m); }
+  /** État du perso d'un joueur. */
   etatDe(num) {
     const m = this.membres.get(num), q = m && this.w?.players.find(p => p.id === m.joueur);
     return q ? this.w.commeJoueur(q, () => this.S.exporterJoueur(this.w)) : null;

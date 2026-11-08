@@ -35,7 +35,7 @@ const HEADS: Record<string, string> = { iop: 'tete_iop', cra: 'tete_cra', iop_f:
 /** Nom court d'une touche pour le coin d'un emplacement (« Espace » ne tient pas). */
 const court = (t: string) => t === 'Espace' ? 'Esp.' : t;
 /** Action (render/touches.ts) de chaque menu de la colonne, pour son raccourci dans l'infobulle. */
-const ACTION_MENU: Record<string, string> = { Inventaire: 'inventaire', 'Caractéristiques': 'caracs', 'Métiers': 'metiers', Sorts: 'sorts', 'Carte du monde': 'carte', Bestiaire: 'bestiaire', 'Havre-Sac': 'havresac', Guide: 'guide', 'Réglages': 'options' };
+const ACTION_MENU: Record<string, string> = { Inventaire: 'inventaire', 'Caractéristiques': 'caracs', 'Métiers': 'metiers', Sorts: 'sorts', 'Carte du monde': 'carte', Bestiaire: 'bestiaire', 'Havre-Sac': 'havresac', Social: 'social', Guide: 'guide', 'Réglages': 'options' };
 /** Modules de l'interface qu'on peut déplacer (Réglages 6A), avec leur nom affiché pendant le déplacement. */
 const MODULES: Record<string, string> = { perso: 'Cadre du perso', mini: 'Mini-carte', suivi: 'Suivi de quête', dps: 'Dégâts par seconde' };
 /** Colonne de menus avec les icônes officielles en couleur de Dofus 3 (uiassets_2x) : icône, nom, raccourci (vide si aucun).
@@ -43,7 +43,7 @@ const MODULES: Record<string, string> = { perso: 'Cadre du perso', mini: 'Mini-c
 const MENUS: [string, string, string][] = [
   ['inventory', 'Inventaire', 'I'], ['characteristic', 'Caractéristiques', 'C'], ['job', 'Métiers', 'J'], ['spells', 'Sorts', 'S'], ['quest', 'Quêtes', ''],
   ['map', 'Carte du monde', ''], ['bestiary', 'Bestiaire', 'B'], ['success', 'Succès', ''], ['breach', 'Failles', ''],
-  ['home', 'Havre-Sac', 'H'], ['guide', 'Guide', 'G'], ['options', 'Réglages', 'O'],
+  ['home', 'Havre-Sac', 'H'], ['social', 'Social', 'P'], ['guide', 'Guide', 'G'], ['options', 'Réglages', 'O'],
 ];
 
 const C = {
@@ -146,7 +146,36 @@ export class Hud {
     else this.bulleTip.setVisible(false);
   }
   private betesUi: { img: Phaser.GameObjects.Image; nom: Phaser.GameObjects.Text; pv: Phaser.GameObjects.Text; info: Phaser.GameObjects.Text }[] = [];
-  private cadresBetes(g: Phaser.GameObjects.Graphics, x0: number, y0: number, juice: boolean) {
+  /** Portraits du groupe (maquette « Social : » 3A) : les autres joueurs de la partie sous le cadre du perso (et de ses bêtes) :
+   *  emblème de la classe, nom, niveau, PV, « à terre ». */
+  private groupeUi: { img: Phaser.GameObjects.Image; nom: Txt; info: Txt }[] = [];
+  private cadresGroupe(g: Phaser.GameObjects.Graphics, x0: number, y0: number, juice: boolean) {
+    const w = this.world, L = w.players.filter(p => p !== w.player).slice(0, 3), W = 236, H = 40, gap = 5;
+    while (this.groupeUi.length < L.length) {
+      const st = { ...STYLE, fontStyle: 'bold', strokeThickness: 0 };
+      this.groupeUi.push({
+        img: this.fixed(this.scene.add.image(0, 0, '__DEFAULT'), 3),
+        nom: this.fixed(this.scene.add.text(0, 0, '', { ...st, fontSize: '13px', color: '#ffffff' }).setOrigin(0, 0.5), 5),
+        info: this.fixed(this.scene.add.text(0, 0, '', { ...st, fontSize: '11px', color: '#c9c4ab' }).setOrigin(1, 0.5), 5),
+      });
+    }
+    this.groupeUi.forEach((u, i) => { const on = i < L.length; u.img.setVisible(on); u.nom.setVisible(on); u.info.setVisible(on); });
+    L.forEach((p, i) => {
+      const u = this.groupeUi[i], y = y0 + i * (H + gap), cls = Object.keys(GAME_DATA.classes).find(k => GAME_DATA.classes[k] === p.cls) ?? 'iop';
+      this.rects.push([x0, y, W, H]);
+      g.fillStyle(0x08080a, 0.78); g.fillRoundedRect(x0, y, W, H, 8);
+      const key = `embleme_${cls}`;
+      if (this.scene.textures.exists(key)) { if (u.img.texture.key !== key) u.img.setTexture(key); u.img.setPosition(x0 + 20, y + H / 2).setDisplaySize(26, 26 * (u.img.height / u.img.width || 1)).setAlpha(p.dead ? 0.4 : 1); }
+      const bx = x0 + 40, tx = x0 + W - 8, bw = tx - bx;
+      u.nom.setPosition(bx, y + 12).setText(p.nom || GAME_DATA.classes[cls].name);
+      u.info.setPosition(tx, y + 12).setText(p.dead ? 'à terre' : `niv. ${p.level}`).setColor(p.dead ? '#ff8a7a' : '#c9c4ab');
+      const hr = Phaser.Math.Clamp(p.hp / (p.maxHp || 1), 0, 1);
+      g.fillStyle(0x2b2b2e, 1); g.fillRoundedRect(bx, y + 24, bw, 8, 3);
+      if (hr > 0) { g.fillStyle(hr < 0.3 && juice && Math.floor(w.time * 6) % 2 ? 0xff8a7a : C.hp, 1); g.fillRoundedRect(bx, y + 24, Math.max(5, bw * hr), 8, 3); }
+      if (p.shield > 0) { g.fillStyle(0x9a6bff, 0.9); g.fillRoundedRect(bx, y + 24, Math.max(4, bw * Math.min(1, p.shield / (p.maxHp || 1))), 3, 1); }
+    });
+  }
+  private cadresBetes(g: Phaser.GameObjects.Graphics, x0: number, y0: number, juice: boolean): number {
     const L = this.world.betes.filter(b => !b.dead).slice(0, 6), W = 236, H = 50, gap = 5;
     while (this.betesUi.length < L.length) {
       const st = { ...STYLE, fontStyle: 'bold', strokeThickness: 0 };
@@ -191,6 +220,7 @@ export class Hud {
       g.fillStyle(0x141416, 1);
       for (let j = 1; j < n; j++) g.fillRect(Math.round(bx + (pw * j) / n) - 1, y + 36, 2, 6);
     });
+    return L.length;
   }
 
   /** Réglages de la partie (maquette « Réglages ») : échelle, modules, compteurs ; branchés par la scène. */
@@ -673,7 +703,8 @@ export class Hud {
     barre(bx, ry2 - 5, bw, p.pm / p.pmMax, blink(this.shortOf.pm) ? 0xff5040 : C.pm, Math.round(p.pmMax));
     this.pmText.setPosition(tx, ry2).setText(`${Math.floor(p.pm)} / ${Math.round(p.pmMax)}`);
     this.pmLab.setPosition(tx - this.pmText.width - 4, ry2 + 1);
-    this.cadresBetes(g, fx, fy + fh + 6, juice);
+    const nbBetes = this.cadresBetes(g, fx, fy + fh + 6, juice);
+    this.cadresGroupe(g, fx, fy + fh + 6 + nbBetes * 55, juice);
 
     // --- Fiche de la cible (à côté), même style (9A) : le dernier monstre touché, ou le PNJ pendant un dialogue ---
     this.targetT -= dt;

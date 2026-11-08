@@ -768,6 +768,8 @@ export class World {
   }
   /** 13A : le portail de sortie ramène devant le gardien. */
   quitterArene(d: DonjonDef) {
+    // partie tenue par le serveur : l'arène est toute la partie ; celui qui sort quitte le groupe et retrouve son monde
+    if (this.opts.partieServeur) { this.player.stopMove(); this.emit({ k: 'sortieArene', joueur: this.player.id }); return; }
     const po = this.entreeDonjon(d.nom);
     if (!po || this.passage) return;
     this.arene = null;

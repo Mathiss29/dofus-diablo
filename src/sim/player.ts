@@ -28,6 +28,8 @@ export interface Prereglage { nom: string; equipement: Partial<Record<EquipSlot,
 
 export class Player extends Entity {
   readonly faction = 'player' as const;
+  /** Nom du perso (coop : portraits du groupe, fenêtre Social) ; vide = celui de l'écran ne s'en sert pas. */
+  nom = '';
   state: 'free' | 'skill' = 'free';
   skill: ActiveSkill | null = null;
   /** Recharge restante de chaque sort, et durée totale de la dernière recharge lancée (pour le voile de la barre). */
