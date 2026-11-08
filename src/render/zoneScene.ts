@@ -27,7 +27,7 @@ import { FX } from './fx';
 import { FamilierView } from './familierView';
 import { Hud } from './hud';
 import { LOOKS, type Look } from './looks';
-import { Bete } from '../sim/bete';
+import { BETES, Bete } from '../sim/bete';
 import { Player } from '../sim/player';
 import { drawMap } from './mapView';
 import { Transparence, type Cache } from './transparence';
@@ -212,7 +212,9 @@ export class ZoneScene extends Phaser.Scene {
     // invocations (ex. Kardorib) : monstres appelés par un sort, absents des listes de sous-zones
     for (const t of [...types]) for (const s of GAME_DATA.monsters[t].spells ?? []) for (const e of s.effects) if (e.k === 'invoque') types.add(e.monster);
     // Effets officiels des sorts : ceux de la classe et des monstres de la zone
-    SpellFx.preload(this, [...Object.keys(GAME_DATA.classes[this.classId].spells),
+    // Osamodas : effets officiels des sorts de ses 4 bêtes de base (b<id du sort>) ; ceux des rangs éveillés arrivent à la demande
+    const sortsBetes = GAME_DATA.classes[this.classId].rage.mode === 'eveil' ? Object.values(BETES).filter(b => b.rang === 1).flatMap(b => b.sorts.map(s => `b${s.id}`)) : [];
+    SpellFx.preload(this, [...Object.keys(GAME_DATA.classes[this.classId].spells), ...sortsBetes,
       ...[...types].flatMap(t => (GAME_DATA.monsters[t].spells ?? []).map(s => `m${s.id}`))]);
     // monde ouvert : les planches des monstres arrivent à la demande (planche()), quand un monstre est près de l'écran
     // (Astrub : 38 monstres, 70 Mo de planches) ; les zones à vagues les chargent toutes d'avance

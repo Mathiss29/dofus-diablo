@@ -10,7 +10,8 @@ import sys, os, json, math, subprocess, glob, shutil, tempfile
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
 from monster_spells import table, P
 
-SCALE = os.environ.get('SCALE', '0.7')  # comme les personnages (perso_planche.py)
+SCALE = os.environ.get('SCALE', '0.7')
+LOURDS = json.load(open('src/data/fichiers-lourds.json')) if os.path.exists('src/data/fichiers-lourds.json') else {}  # comme les personnages (perso_planche.py)
 
 def legacy(raw):
     kv = dict(x.split(':', 1) for x in raw.split(',') if ':' in x)
@@ -71,6 +72,10 @@ def main(d, bones, outdir='public/assets/fx'):
     for cls in json.load(open('src/data/classes.json')).values():
         for k, s in cls['spells'].items():
             if s.get('dofusId'): spells[k] = scripts_of(S[s['dofusId']], SC)
+    # bêtes de l'Osamodas (src/data/betes.json) : b<id du sort>
+    for k, b in json.load(open('src/data/betes.json')).items():
+        if k == '_regles': continue
+        for s in b['sorts']: spells[f"b{s['id']}"] = scripts_of(S[s['id']], SC)
     for m in json.load(open('src/data/monsters.json')).values():
         for s in m.get('spells', []):
             spells[f"m{s['id']}"] = scripts_of(S[s['id']], SC)
@@ -80,7 +85,8 @@ def main(d, bones, outdir='public/assets/fx'):
     gfx = {}
     old = json.load(open('src/data/spellfx.json'))['gfx'] if os.path.exists('src/data/spellfx.json') else {}
     for g in ids:
-        if str(g) in old and os.path.exists(os.path.join(outdir, f'fx_{g}.webp')) and not os.environ.get('FORCE'):
+        # déjà rendu : présent en local, ou déjà sur R2 (empreinte dans fichiers-lourds.json, clone neuf sans fichiers lourds)
+        if str(g) in old and (os.path.exists(os.path.join(outdir, f'fx_{g}.webp')) or f'fx/fx_{g}.webp' in LOURDS) and not os.environ.get('FORCE'):
             gfx[g] = old[str(g)]; continue   # déjà rendu (FORCE=1 pour tout refaire)
         if not os.path.exists(os.path.join(bones, f'bones_assets_bone_{g}.bundle')): print('  manquant', g); continue
         r = render(g, bones, outdir, tmp)

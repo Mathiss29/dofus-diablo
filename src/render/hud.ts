@@ -1,6 +1,7 @@
 import { RARITY_COLORS } from '../sim/items';
 import { v } from './assetUrl';
 import Phaser from 'phaser';
+import { REGLES_BETES } from '../sim/bete';
 import { DANGER } from '../sim/danger';
 import { GAME_DATA, ITEMS } from '../sim/data';
 import { ISO } from '../sim/iso';
@@ -73,6 +74,56 @@ export class Hud {
   private rects: [number, number, number, number][] = [];
   /** Son coupé (Ctrl+M, maquette Son 8B ; M = carte du monde, 0.2 18A) : petit haut-parleur barré dans le coin de la mini-carte. */
   muet = false;
+  /** Cadres des bêtes de l'Osamodas (demande de Mathis, 2026-11-08) : sous le cadre du perso, même style en plus petit :
+   *  portrait (repos de sa planche), nom, temps d'Éveil ou de domptage, PV et PA (encoches). */
+  private betesUi: { img: Phaser.GameObjects.Image; nom: Phaser.GameObjects.Text; pv: Phaser.GameObjects.Text; info: Phaser.GameObjects.Text }[] = [];
+  private cadresBetes(g: Phaser.GameObjects.Graphics, x0: number, y0: number, juice: boolean) {
+    const L = this.world.betes.filter(b => !b.dead).slice(0, 6), W = 236, H = 50, gap = 5;
+    while (this.betesUi.length < L.length) {
+      const st = { ...STYLE, fontStyle: 'bold', strokeThickness: 0 };
+      this.betesUi.push({
+        img: this.fixed(this.scene.add.image(0, 0, '__DEFAULT'), 3),
+        nom: this.fixed(this.scene.add.text(0, 0, '', { ...st, fontSize: '13px', color: '#ffffff' }).setOrigin(0, 0.5), 5),
+        pv: this.fixed(this.scene.add.text(0, 0, '', { ...st, fontSize: '12px' }).setOrigin(1, 0.5), 5),
+        info: this.fixed(this.scene.add.text(0, 0, '', { ...st, fontSize: '11px', color: '#ffd87a' }).setOrigin(1, 0.5), 5),
+      });
+    }
+    this.betesUi.forEach((u, i) => { const on = i < L.length; u.img.setVisible(on); u.nom.setVisible(on); u.pv.setVisible(on); u.info.setVisible(on); });
+    L.forEach((b, i) => {
+      const u = this.betesUi[i], y = y0 + i * (H + gap), R = REGLES_BETES;
+      this.rects.push([x0, y, W, H]);
+      g.fillStyle(0x08080a, 0.78); g.fillRoundedRect(x0, y, W, H, 8);
+      // portrait : première image du repos, dans une case de 40 px
+      const ps = 40, px = x0 + 5, py = y + 5;
+      g.fillStyle(0x1c2620, 1); g.fillRoundedRect(px, py, ps, ps, 5);
+      const eveil = b.eveilT > 0, dompte = b.dompteT > 0;
+      g.lineStyle(2, eveil ? 0xffc04d : dompte ? 0x7fd0ff : 0x8c8c86, 1); g.strokeRoundedRect(px + 1, py + 1, ps - 2, ps - 2, 5);
+      const tex = this.scene.textures.exists(b.look) ? this.scene.textures.get(b.look) : null;
+      const fr = tex && (tex.has('AnimStatique_1_0') ? 'AnimStatique_1_0' : tex.getFrameNames()[0]);
+      if (tex && fr) {
+        if (u.img.texture.key !== b.look || u.img.frame.name !== fr) u.img.setTexture(b.look, fr);
+        // planche rognée : on centre le dessin lui-même (pas la cellule de rendu, presque vide)
+        const f = u.img.frame, ss = (f as unknown as { data: { spriteSourceSize?: { x: number; y: number; w: number; h: number } } }).data.spriteSourceSize;
+        const r = f.trimmed && ss ? ss : { x: 0, y: 0, w: f.realWidth, h: f.realHeight }, k = (ps - 6) / Math.max(r.w, r.h);
+        u.img.setDisplayOrigin(r.x + r.w / 2, r.y + r.h / 2).setPosition(px + ps / 2, py + ps / 2).setScale(k).setVisible(true);
+      } else u.img.setVisible(false);
+      // nom, temps restant (Éveil / domptage)
+      const tx = x0 + W - 8, bx = px + ps + 8, bw = tx - bx;
+      u.nom.setPosition(bx, y + 12).setText(b.def.name);
+      u.info.setPosition(tx, y + 12).setText(eveil ? `Éveil ${Math.ceil(b.eveilT)} s` : dompte ? `Dompté ${Math.ceil(b.dompteT)} s` : '').setColor(eveil ? '#ffd87a' : '#9fd0ff');
+      // PV (barre + chiffres) et PA de la bête (encoches)
+      const hr = Phaser.Math.Clamp(b.hp / b.maxHp, 0, 1);
+      g.fillStyle(0x2b2b2e, 1); g.fillRoundedRect(bx, y + 22, bw - 62, 9, 3);
+      if (hr > 0) { g.fillStyle(hr < 0.3 && juice && Math.floor(this.world.time * 6) % 2 ? 0xff8a7a : C.hp, 1); g.fillRoundedRect(bx, y + 22, Math.max(5, (bw - 62) * hr), 9, 3); }
+      u.pv.setPosition(tx, y + 27).setText(`${Math.max(0, Math.ceil(b.hp))} / ${b.maxHp}`);
+      const pw = bw - 62, n = R.paMax;
+      g.fillStyle(0x2b2b2e, 1); g.fillRoundedRect(bx, y + 36, pw, 6, 2);
+      g.fillStyle(C.pa, 1); g.fillRoundedRect(bx, y + 36, Math.max(0, pw * Math.min(1, b.pa / n)), 6, 2);
+      g.fillStyle(0x141416, 1);
+      for (let j = 1; j < n; j++) g.fillRect(Math.round(bx + (pw * j) / n) - 1, y + 36, 2, 6);
+    });
+  }
+
   blocks(x: number, y: number) { return this.rects.some(([rx, ry, rw, rh]) => x >= rx && y >= ry && x <= rx + rw && y <= ry + rh); }
 
   private g: Phaser.GameObjects.Graphics;
@@ -468,6 +519,7 @@ export class Hud {
     barre(bx, ry2 - 5, bw, p.pm / p.pmMax, blink(this.shortOf.pm) ? 0xff5040 : C.pm, Math.round(p.pmMax));
     this.pmText.setPosition(tx, ry2).setText(`${Math.floor(p.pm)} / ${Math.round(p.pmMax)}`);
     this.pmLab.setPosition(tx - this.pmText.width - 4, ry2 + 1);
+    this.cadresBetes(g, fx, fy + fh + 6, juice);
 
     // --- Fiche de la cible (à côté), même style (9A) : le dernier monstre touché, ou le PNJ pendant un dialogue ---
     this.targetT -= dt;

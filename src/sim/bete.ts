@@ -262,6 +262,6 @@ export class Bete extends Entity {
         p.shield = Math.max(p.shield, Math.round(p.maxHp * e.n / 1000)); p.shieldT = TOUR * 2;
       }
     }
-    world.emit({ k: 'spell', fx: 'burst', id: `b${S.id}`, x: cx, y: cy, facing: this.facing, size: Math.max(r, 24), arc: 0, element: allie ? 'eau' : el, big: false, boosted: this.eveilT > 0, discret: true });
+    world.emit({ k: 'spell', fx: 'burst', id: `b${S.id}`, x: cx, y: cy, facing: this.facing, size: Math.max(r, 24), arc: 0, element: allie ? 'eau' : el, big: false, boosted: this.eveilT > 0, discret: true, cx: this.x, cy: this.y });
   }
 }
