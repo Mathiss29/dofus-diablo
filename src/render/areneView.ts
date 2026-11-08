@@ -3,15 +3,16 @@ import { ISO } from '../sim/iso';
 import { RARITIES, RARITY_COLORS } from '../sim/items';
 import type { World } from '../sim/world';
 import { dossier, v } from './assetUrl';
+import { textureUneFois } from './uneFois';
 
 const SP = 'assets/sprites';
 /** Maquette « Coffres » (1A 2A 3A+3B 4A+4B+4C 5A 6B 7A 8A) : de vrais coffres vivants de Dofus 3, rendus depuis leur squelette
  *  (tools/extraction/monster_planche.py, SCALE 2,5, ANIMS repos, coup reçu, gueule, mort). Malle Animée (os 4543, invocation de
- *  l'Enutrof) partout ; Coffret précieux (os 2674) pour les donjons marqués coffre: 'precieux' (Enfers, donjons à clés).
+ *  l'Enutrof) partout ; Coffret précieux (os 2674, SCALE 1,8 : une seule page) pour les donjons marqués coffre: 'precieux' (Enfers, donjons à clés).
  *  gueule = l'animation où il ouvre la gueule, coupée à son ouverture maximale (part de l'animation). */
 const COFFRES = {
   malle: { atlas: 'coffre_malle', gueule: 'AnimAttaque2_1', jusqua: 13 / 29, echelle: 0.55 },
-  precieux: { atlas: 'coffre_precieux', gueule: 'AnimAttaque1_1', jusqua: 16 / 33, echelle: 0.45 },
+  precieux: { atlas: 'coffre_precieux', gueule: 'AnimAttaque1_1', jusqua: 16 / 33, echelle: 0.62 },
 };
 const FPS = 30;
 /** 3B : un petit sursaut (coup reçu officiel) toutes les 5 s, pour qu'on le sente vivant. */
@@ -37,10 +38,9 @@ export class AreneView {
     this.nom = scene.add.text(0, 0, 'Sortie', { fontFamily: 'Rowdies, Lexend, sans-serif', fontSize: '15px', color: '#cfe8ff', stroke: '#000', strokeThickness: 4 })
       .setOrigin(0.5, 1).setVisible(false);
     // planches chargées d'avance : le coffre doit être prêt à la mort du boss
-    const L = scene.load;
-    for (const c of Object.values(COFFRES)) if (!scene.textures.exists(c.atlas)) L.multiatlas(c.atlas, v(`${SP}/${c.atlas}.json`), dossier(`${SP}/`));
-    if (!L.isLoading()) L.start();
+    for (const c of Object.values(COFFRES)) this.planche(c.atlas);
   }
+  private planche(a: string) { return textureUneFois(this.scene, a, l => l.multiatlas(a, v(`${SP}/${a}.json`), dossier(`${SP}/`))); }
   destroy() { this.portail.destroy(); this.lueur.destroy(); this.coffre?.destroy(); this.nom.destroy(); }
 
   update(dt: number) {
@@ -72,7 +72,7 @@ export class AreneView {
       q.lineStyle(2, couleur, (0.5 + 0.3 * pulse) * fondu).strokeEllipse(c.x, c.y, 120 + 10 * pulse, 50 + 4 * pulse);
       if (couleur !== 0xffd36b) q.fillStyle(couleur, 0.22 * fondu).fillRect(c.x - 8, c.y - 160, 16, 160);   // faisceau, comme le butin au sol
     }
-    if (!this.scene.textures.exists(C.atlas)) return;   // planche pas encore arrivée
+    if (!this.planche(C.atlas)) return;   // planche pas encore arrivée
     if (!this.coffre || this.atlas !== C.atlas) {
       this.coffre?.destroy();
       const tex = this.scene.textures.get(C.atlas), meta = (tex.customData as { meta?: { cell: number[]; origin: number[] } }).meta ?? { cell: [1, 1], origin: [0.5, 0.85] };
