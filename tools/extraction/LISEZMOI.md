@@ -140,6 +140,12 @@ Temple Céleste (départ du tutoriel, sous-zone 446) : 3 salles du bundle `mapda
 
 Raccords entre cartes : chaque carte a un calque `bord_x_y.webp` avec ce qu'elle dessine au-delà de son cadre. Il est posé en entier là où la voisine est vide (falaises), et en fondu sur 160 px ailleurs (ombres, fonds de ciel). Pour le refaire sans réécrire le reste : `DECOR_ONLY=1 NO_DECOR=1 CALQUES=bord`.
 
+Raccords de la mer et du sable (maquette « Raccords : 1A 2A 3A 4A », 2026-11-08) :
+- Calque `bord` : sur le sol d'une voisine, le débord ne se fond (160 px) que là où sa couleur moyenne ressemble à celle de la voisine (`ECART`, 110 par défaut : herbe sur herbe, sable sur sable) ; les ombres translucides (arbres, rochers, îles) continuent partout. Avant, l'eau qu'une carte peint hors de son cadre passait en bande sur le sable de la voisine. Toujours suivi de `bords_fondu.py`. `OMBRES_SEULES=0` : ancien calque.
+- Losanges de sable hors du cadre (et sur la dernière case d'un côté sans voisine) : rognés par le contour arrondi de la plage, au lieu de finir en escalier sur la mer (`SABLE_ESCALIER=1` : ancien).
+- `mer.py` écrit aussi `rivage` (terre/mer par carrés de 16 px du cadre) : le jeu (`WorldView.poserRivage`) fond l'eau officielle dans la couleur de la mer depuis la vraie côte ; le bord du monde (`WorldView.poserBrume`) est une seule image floutée qui suit le contour des cartes.
+- Réexport des sols seuls : `NO_DECOR=1 TEXDIR=… world_export.py <liste du dehors> … <export à part>`, `bords_fondu.py <export à part>`, puis `sols_fusion.py <export à part> public/assets/mondes/<nom>` (ne touche ni au décor ni aux portes), puis `SOLS=… mer.py` sur les cartes du rivage.
+
 Les éléments interactifs qui ont une image fixe (portes, cadres de mine, panneaux) sont posés avec le décor. Les animés (minerais, céréales) manquent encore.
 
 ## Donjons (Crypte de Kardorim)

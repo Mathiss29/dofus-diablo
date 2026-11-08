@@ -10,7 +10,7 @@
 import sys, json, glob, os, warnings
 warnings.filterwarnings('ignore')
 import UnityPy
-from PIL import Image, ImageStat, ImageFilter
+from PIL import Image, ImageStat, ImageFilter, ImageChops
 import numpy as np
 from collections import Counter
 UnityPy.config.FALLBACK_UNITY_VERSION = "6000.3.16f1"
@@ -87,13 +87,19 @@ DECOR_ONLY = os.environ.get('DECOR_ONLY') == '1'
 # avec DECOR_ONLY : NO_DECOR=1 saute aussi les atlas de décor ; CALQUES=fond,bord réécrit quand même ces calques
 NO_DECOR = os.environ.get('NO_DECOR') == '1'
 CALQUES = set(os.environ.get('CALQUES', 'bord').split(','))
-sols, entiers = {}, {}
-# L'encodage WebP (method=6) est le plus long : il part dans 4 fils en parallèle (PIL libère le verrou pendant l'encodage).
+# CACHE_SOLS=dossier : garde pour chaque carte l'alpha et la couleur moyenne de son sol. Au passage suivant, avec ONLY=<cartes
+# touchées et leurs voisines>, les autres cartes ne sont pas recomposées (quelques minutes au lieu de 30 pour Astrub).
+CACHE_SOLS = os.environ.get('CACHE_SOLS')
+if CACHE_SOLS: os.makedirs(CACHE_SOLS, exist_ok=True)
+sols, entiers, couleurs = {}, {}, {}
+# L'encodage WebP est le plus long : il part dans 4 fils en parallèle (PIL libère le verrou pendant l'encodage).
+# WEBP_METHOD (4 par défaut, réglage « rapide ») : 6 = compression maximale, 3 à 4 fois plus lent pour quelques % de moins.
+WEBP_METHOD = int(os.environ.get('WEBP_METHOD', '4'))
 from concurrent.futures import ThreadPoolExecutor
 POOL = ThreadPoolExecutor(int(os.environ.get('FILS', os.cpu_count() or 4)))
 PENDING = []
 def webp(im, path, q):
-    PENDING.append(POOL.submit(lambda: im.save(path, 'WEBP', quality=q, method=6)))
+    PENDING.append(POOL.submit(lambda: im.save(path, 'WEBP', quality=q, method=WEBP_METHOD)))
     while len(PENDING) > 8: PENDING.pop(0).result()   # pas plus de 8 images en attente d'encodage (mémoire)
 # Grands mondes (Astrub) : les images gardées pour la fin (sol entier pour le calque « bord », décor partagé) vont sur le disque.
 import tempfile
@@ -149,6 +155,12 @@ def vague(xy, mk, e):
     écume sur ses bords. Posée telle quelle, elle faisait de grandes taches blanches sur la mer : on ne la pose pas."""
     sd = maps[xy][mk].get('shaderData', []); i = e.get('materialIndex', -1); R = REFS[xy]
     return 0 <= i < len(sd) and any('waveTexID' in (R.get(p['rid']) or {}) for p in (R.get(sd[i]['rid']) or {}).get('shaderParameters', []))
+def translucide(im):
+    """Ombre (arbre, rocher, île) : la plupart de ses pixels visibles sont transparents (le sable, l'eau, l'herbe sont opaques).
+    Les grands voiles qui couvrent toute une carte n'en sont pas : en fondu sur la voisine, ils y faisaient des bandes sombres."""
+    if im.width > 1000 or im.width * im.height > 500000: return False
+    a = np.asarray(im.getchannel('A')); v = a > 8
+    return v.any() and (a[v] < 200).mean() > 0.7
 def cache(e):
     """Élément caché par défaut (couleur d'alpha 0) : montré par une mise en scène du serveur (ex. Dofus posé sur son socle)."""
     return (e['color']['value'] >> 24) & 255 == 0
@@ -204,6 +216,14 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
     for c, cell in enumerate(md['cellsData']):
         r, k = divmod(c, COLS)
         if cell['mov']: mov[(iy * ROWS + r) * COLS * nx + ix * COLS + k] = '1'
+    # CACHE_SOLS + ONLY : une carte hors de ONLY déjà en cache n'est pas recomposée, on relit seulement ce dont les raccords
+    # de ses voisines ont besoin (alpha et couleur moyenne de son sol). Elle est notée "garde" : sols_fusion.py n'y touche pas.
+    cs = f"{CACHE_SOLS}/{tag}" if CACHE_SOLS else None
+    if cs and ONLY and tag not in ONLY and os.path.exists(cs + '.json'):
+        g = json.load(open(cs + '.json'))
+        sols[tag] = (Image.open(cs + '_a.png'), g['x'], g['y']); couleurs[tag] = Image.open(cs + '_c.png').convert('RGBA')
+        monde['maps'].append({'x': x, 'y': y, 'id': sel[(x, y)][0], 'sub': sel[(x, y)][1], 'tag': tag, 'sol': g, 'decor': [], 'garde': 1})
+        continue
     # Sol = exactement une période de la grille (1204 x 860) côté voisin : on coupe pile au raccord ;
     # côté vide, rien n'est coupé (falaises, nuages au bord du monde).
     # Les nuages / rayons translucides qui débordent sur un voisin iraient se couper net au raccord :
@@ -243,6 +263,25 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
         lisse.putalpha(al)
         garde = set(tuiles)
         els = [((lisse, tx0 - P, ty0 - P) if i == tuiles[0] else t) for i, t in enumerate(els) if i not in garde or i == tuiles[0]]
+    # Dehors, hors du cadre (jamais montré par Dofus, la caméra s'arrête au cadre) : les losanges de sable y finissent en escalier
+    # sur la mer. Chez nous ce bord se voit (débords sur les voisines, bord du monde) : on rogne chaque losange par le contour arrondi
+    # de l'ensemble, sans rien changer dans le cadre ni l'ordre de dessin (maquette Raccords, 2026-11-08 ; SABLE_ESCALIER=1 : ancien).
+    if tuiles and not extra[(x, y)].get('inside') and os.environ.get('SABLE_ESCALIER') != '1':
+        tx0 = min(els[i][1] for i in tuiles); ty0 = min(els[i][2] for i in tuiles)
+        tx1 = max(els[i][1] + els[i][0].width for i in tuiles); ty1 = max(els[i][2] + els[i][0].height for i in tuiles)
+        P = 24; ua = Image.new('L', (tx1 - tx0 + 2 * P, ty1 - ty0 + 2 * P))
+        for i in tuiles:
+            im, ex, ey = els[i]; ua.paste(255, (ex - tx0 + P, ey - ty0 + P), im.getchannel('A').point(lambda q: 255 if q > 128 else 0))
+        rond = ua.filter(ImageFilter.GaussianBlur(14)).point(lambda q: 0 if q < 150 else 255 if q > 225 else (q - 150) * 255 // 75)
+        # dans le cadre : tel quel, sauf la dernière case d'un côté sans voisine (bord de l'écran dans Dofus, bord du monde chez nous)
+        lib = {'l': (x - 1, y) not in sel, 't': (x, y - 1) not in sel, 'r': (x + 1, y) not in sel, 'b': (x, y + 1) not in sel}
+        cx0, cy0 = x0m + W * lib['l'], y0m + H * lib['t']; cx1, cy1 = x1m - W * lib['r'], y1m - H * lib['b']
+        rond.paste(255, (cx0 - tx0 + P, cy0 - ty0 + P, cx1 - tx0 + P, cy1 - ty0 + P))
+        for i in tuiles:
+            im, ex, ey = els[i]
+            if ex >= cx0 and ey >= cy0 and ex + im.width <= cx1 and ey + im.height <= cy1: continue
+            m = rond.crop((ex - tx0 + P, ey - ty0 + P, ex - tx0 + P + im.width, ey - ty0 + P + im.height))
+            im = im.copy(); im.putalpha(ImageChops.multiply(im.getchannel('A'), m)); els[i] = (im, ex, ey)
     nb = {'l': (x - 1, y) in sel, 't': (x, y - 1) in sel, 'r': (x + 1, y) in sel, 'b': (x, y + 1) in sel}
     def crosses(ex, ey, im):
         return (nb['l'] and ex < x0m) or (nb['t'] and ey < y0m) or (nb['r'] and ex + im.width > x1m) or (nb['b'] and ey + im.height > y1m)
@@ -286,8 +325,17 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
         if (ux0, uy0, ux1, uy1) != (bx0, by0, bx1, by1):
             full = Image.new('RGBA', (ux1 - ux0, uy1 - uy0))
             for im, ex, ey in sol_els: full.alpha_composite(im, (ex - ux0, ey - uy0))
-            entiers[tag] = (Disque(full, f'{TMP}/entier_{tag}.png'), ux0 + dx, uy0 + dy, (x0m + dx, y0m + dy, x1m + dx, y1m + dy), (bx0 + dx, by0 + dy, bx1 + dx, by1 + dy), write)
+            # ombres et voiles translucides seuls : eux continuent en fondu sur le sol des voisines (sinon coupés net au raccord)
+            voile = Image.new('RGBA', full.size)
+            for im, ex, ey in sol_els:
+                if translucide(im): voile.alpha_composite(im, (ex - ux0, ey - uy0))
+            entiers[tag] = (Disque(full, f'{TMP}/entier_{tag}.png'), ux0 + dx, uy0 + dy, (x0m + dx, y0m + dy, x1m + dx, y1m + dy), (bx0 + dx, by0 + dy, bx1 + dx, by1 + dy), write, Disque(voile, f'{TMP}/voile_{tag}.png'))
     sols[tag] = (sol.getchannel('A'), bx0 + dx, by0 + dy)   # seul l'alpha sert (calque « bord ») : 4 fois moins de mémoire
+    # couleur moyenne du sol au huitième (calque « bord » : un débord ne se fond que sur un sol qui lui ressemble)
+    couleurs[tag] = sol.resize((max(1, sol.width // 8), max(1, sol.height // 8)), Image.BOX)
+    if cs:
+        sols[tag][0].save(cs + '_a.png'); couleurs[tag].save(cs + '_c.png')
+        json.dump({'x': bx0 + dx, 'y': by0 + dy, 'w': sol.width, 'h': sol.height}, open(cs + '.json', 'w'))
     def calque(lst, nom):
         if not lst: return None
         fx0 = min(ex for _, ex, _ in lst); fy0 = min(ey for _, _, ey in lst)
@@ -343,7 +391,7 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
     monde['maps'].append({'x': x, 'y': y, 'id': sel[(x, y)][0], 'sub': sel[(x, y)][1], 'tag': tag,
                           'sol': {'x': bx0 + dx, 'y': by0 + dy, 'w': sol.width, 'h': sol.height}, 'decor': places,
                           **({'fond': fond} if fond else {}), **({'inside': 1} if extra[(x, y)].get('inside') else {}),
-                          **({'ciel': 1} if extra[(x, y)].get('ciel') else {})})
+                          **({'ciel': 1} if extra[(x, y)].get('ciel') else {}), **({} if write else {'garde': 1})})
     print(tag, 'retirés', len(hard), 'lumières', len(lums), 'eau', len(couche), 'sol', sol.size, 'fond', fond and (fond['w'], fond['h']), 'decor', len(places), asz)
 def pages_partagees():
     """Range toutes les images du décor dans des pages de 2048 x 2048 au plus, dans l'ordre de première utilisation."""
@@ -375,31 +423,52 @@ if PARTAGE:
     print('pages de décor partagées', max(PG.values()) + 1, 'images', len(PG))
 # Calque « bord » : ce qu'une carte dessine au-delà de son cadre, posé par-dessus les cartes voisines.
 #  - là où la voisine n'a rien (trou, ciel) : en entier (falaises et rochers qui débordent) ;
-#  - ailleurs : en fondu sur BORD px (ombres, fonds de ciel… plus de coupure nette au raccord).
+#  - là où la voisine a son propre sol, en fondu sur BORD px, mais seulement là où il ressemble à ce que la voisine dessine
+#    (couleurs moyennes proches : herbe sur herbe, sable sur sable) ; les ombres et voiles translucides continuent partout.
+#    Avant, tout le débord (eau ou sable jamais vus dans Dofus) passait en fondu : des bandes d'eau ou de sable le long des raccords
+#    (maquette Raccords, 2026-11-08). Couper net partout faisait des coutures dans l'herbe d'Incarnam. OMBRES_SEULES=0 : ancien calque.
 import numpy as np
-BORD = 160
+BORD = int(os.environ.get('BORD', '160'))
+OMBRES = os.environ.get('OMBRES_SEULES') != '0'
+ECART = float(os.environ.get('ECART', '110'))   # écart de couleur (0-441) au-delà duquel le débord ne se fond plus
 for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
     tag = extra[(x, y)].get('tag', f'{x}_{y}')
     if tag not in entiers: continue
-    full, ux, uy, (rx0, ry0, rx1, ry1), (sx0, sy0, sx1, sy1), write = entiers[tag]
-    full = full.load()
-    A = np.asarray(full).astype(np.float32)
+    full, ux, uy, (rx0, ry0, rx1, ry1), (sx0, sy0, sx1, sy1), write, voile = entiers[tag]
+    A = np.asarray(full.load()).astype(np.float32)
     h, w = A.shape[:2]
     gx = ux + np.arange(w)[None, :]; gy = uy + np.arange(h)[:, None]
     hors = ~((gx >= sx0) & (gx < sx1) & (gy >= sy0) & (gy < sy1))   # pas déjà dans le sol de la carte
-    # alpha du sol des autres cartes sous chaque pixel
-    autre = np.zeros((h, w), np.float32)
+    # alpha et couleur moyenne du sol des autres cartes sous chaque pixel
+    autre = np.zeros((h, w), np.float32); coul = np.zeros((h, w, 3), np.float32)
     for t2, (s2, ox, oy) in sols.items():
         if t2 == tag: continue
         x0, y0 = max(ux, ox), max(uy, oy); x1, y1 = min(ux + w, ox + s2.width), min(uy + h, oy + s2.height)
         if x0 >= x1 or y0 >= y1: continue
         a2 = np.asarray(s2.crop((x0 - ox, y0 - oy, x1 - ox, y1 - oy))).astype(np.float32)
-        sub = autre[y0 - uy:y1 - uy, x0 - ux:x1 - ux]; np.maximum(sub, a2, out=sub)
+        c2 = np.asarray(couleurs[t2].convert('RGB').resize(s2.size, Image.BILINEAR).crop((x0 - ox, y0 - oy, x1 - ox, y1 - oy))).astype(np.float32)
+        sub = autre[y0 - uy:y1 - uy, x0 - ux:x1 - ux]; plus = a2 > sub
+        coul[y0 - uy:y1 - uy, x0 - ux:x1 - ux][plus] = c2[plus]; np.maximum(sub, a2, out=sub)
     d = np.maximum(np.maximum(rx0 - gx, gx - rx1), np.maximum(ry0 - gy, gy - ry1)).clip(0)
-    f = np.where(autre < 128, 1.0, np.clip(1 - d / BORD, 0, 1)) * hors
-    A[..., 3] *= f
+    vide = (autre < 128) & hors
+    fondu = np.clip(1 - d / BORD, 0, 1) * hors * ~vide
+    if OMBRES:
+        # couleur moyenne du débord, à la même échelle que celle des voisines
+        moy = np.asarray(Image.fromarray(A.astype(np.uint8), 'RGBA').convert('RGB').resize((max(1, w // 8), max(1, h // 8)), Image.BOX).resize((w, h), Image.BILINEAR)).astype(np.float32)
+        proche = np.clip(1 - (np.sqrt(((moy - coul) ** 2).sum(-1)) - ECART / 2) / (ECART / 2), 0, 1)
+        V = np.asarray(voile.load()).astype(np.float32)
+        V[..., 3] *= fondu
+        A2 = A.copy(); A2[..., 3] *= fondu * proche
+        # ombres posées par-dessus le débord ressemblant (« over » en alpha prémultiplié)
+        av, a2_ = V[..., 3:4] / 255, A2[..., 3:4] / 255; ao = av + a2_ * (1 - av)
+        rgb = np.where(ao > 0, (V[..., :3] * av + A2[..., :3] * a2_ * (1 - av)) / np.maximum(ao, 1e-6), 0)
+        B = np.concatenate([rgb, ao * 255], -1)
+    else:
+        B = A.copy(); B[..., 3] *= fondu
+    A[..., 3] *= vide
+    A = np.where(vide[..., None], A, B)
     if not (A[..., 3] > 4).any(): continue
-    im = Image.fromarray(A.astype(np.uint8), 'RGBA'); b = im.getbbox()
+    im = Image.fromarray(A.clip(0, 255).astype(np.uint8), 'RGBA'); b = im.getbbox()
     im = im.crop(b)
     if write and 'bord' in CALQUES: webp(im, f'{out}/bord_{tag}.webp', 80)
     e = next(m for m in monde['maps'] if m['tag'] == tag)
