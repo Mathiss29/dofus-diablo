@@ -55,6 +55,8 @@ import { MANIFESTE, Son } from './son';
 import { retouchesPlacement } from './placementVue';
 import { etatsPrets, jourDuPC, PanneauTest, lireTest, modeTest, sauverTest, type EtatTest } from './panneauTest';
 import { REGLAGES_TEST, type CommandeTest } from '../sim/outilsTest';
+import { Coop } from './coop';
+import { appliquerInstantane } from '../sim/miroir';
 
 const ASSETS = 'assets';
 const mapDir = ([x, y]: [number, number]) => `${ASSETS}/cartes/${x}_${y}`;
@@ -387,6 +389,12 @@ export class ZoneScene extends Phaser.Scene {
     this.windows.heureNom = () => ambiance(this.reglages, new Date(), !!this.world.worldGrid?.mapAt(this.world.player.x, this.world.player.y)?.inside).nom;
     this.panneau?.destroy(); this.panneau = null;
     if (this.test) { const pt = this.panneau = new PanneauTest(this.world, this.actionsTest(), this.zoneId); this.events.once('shutdown', () => { pt.destroy(); if (this.panneau === pt) this.panneau = null; }); }
+    // Coop (maquette « Multi : » 3A) : l'hôte repose ses invités ici ; chez l'invité, ce monde n'est qu'un miroir de celui de l'hôte
+    this.miroir = Coop.miroir;
+    const wc = this.world;
+    Coop.attacher({ world: wc, annonce: t => this.hud.toast(t),
+      allerA: (zone, position) => { if (this.world === wc) this.scene.restart(zone ? { slot: this.slot, zone, position } : { slot: this.slot }); } });
+    this.events.once('shutdown', () => Coop.detacher(wc));
     this.carte?.destroy();
     this.carte = zone.open ? new CarteMonde(this.world, v(`${worldDir(zone.open.world)}/carte.webp`), `${ASSETS}/ui/reperes`) : null;
     this.events.once('shutdown', () => { this.windows?.destroy(); this.windows = null; this.carte?.destroy(); this.carte = null; });
@@ -486,6 +494,7 @@ export class ZoneScene extends Phaser.Scene {
   private get sorteCoffre(): SorteCoffre { return this.test ? 'test' : this.perso?.hardcore ? 'hardcore' : 'normal'; }
   /** Sauvegarde automatique du perso (toutes les 5 s, en quittant la page, en revenant à l'accueil). */
   private sauver = () => {
+    if (this.miroir) return;   // coop, chez l'invité : le monde est celui de l'hôte, rien à garder
     if (this.test && this.world) {
       const t = this.test;
       t.etat = exporterJoueur(this.world); t.zone = this.zoneId; t.reglages = { ...REGLAGES_TEST, ...this.world.test };
@@ -968,6 +977,16 @@ export class ZoneScene extends Phaser.Scene {
   }
 
   private secCommande = -1;
+  /** Coop, chez l'invité : la partie tourne chez l'hôte, cette scène recopie ses instantanés et lui envoie les entrées. */
+  private miroir = false;
+  private updateMiroir(dt: number) {
+    this.acc += dt;
+    if (this.acc >= ZoneScene.STEP) { this.acc %= ZoneScene.STEP; Coop.entree(this.readInput(), performance.now()); }
+    for (const s of Coop.prendre()) this.world.rejouer(appliquerInstantane(this.world, s));
+    this.consumeEvents();
+    this.hitstop = 0;
+    this.render();
+  }
   update(_: number, deltaMs: number) {
     const dt = Math.min(deltaMs / 1000, 0.1);
     this.fx.update(dt);
@@ -990,6 +1009,7 @@ export class ZoneScene extends Phaser.Scene {
     }
     // GEL D'IMAGE : la simulation s'arrête, l'affichage continue (tremblement, chiffres)
     if (this.depart) { this.render(); return; }   // fondu vers une autre zone : plus rien ne bouge
+    if (this.miroir) { this.updateMiroir(dt); return; }
     if (this.hitstop > 0) { this.hitstop -= dt; this.render(); return; }
     // ARRIVÉE : écran noir tant que les cartes ne sont pas posées, la partie attend (pas de coup reçu dans le noir)
     if (this.rideau?.etat === 'attente') { this.acc = 0; this.render(); return; }
@@ -999,9 +1019,12 @@ export class ZoneScene extends Phaser.Scene {
     let input = this.vitrine ? { move: { x: 0, y: 0 }, aim: { x: 0, y: 0 }, pressed: null } as PlayerInput : this.readInput();
     while (this.acc >= ZoneScene.STEP && this.hitstop <= 0) {
       this.acc -= ZoneScene.STEP;
-      this.world.step(ZoneScene.STEP, input, this.world.players.length > 1 ? entreesAllies(this.world) : undefined);   // alliés de test (F1)
+      // alliés de test (F1) conduits par le jeu, invités de la coop par leurs propres entrées
+      const autres = this.world.players.length > 1 ? { ...entreesAllies(this.world), ...Coop.entrees() } : undefined;
+      this.world.step(ZoneScene.STEP, input, autres);
       input = { ...input, pressed: null, potion: false, reponse: null, test: null, havreSac: false, zaap: null };
       this.consumeEvents();
+      Coop.apresPas(this.world, ZoneScene.STEP);
     }
     if (this.hitstop > 0) this.acc = 0;
     this.render();
@@ -1009,6 +1032,7 @@ export class ZoneScene extends Phaser.Scene {
 
   private consumeEvents() {
     for (const e of this.world.drainEvents()) {
+      Coop.noter(e);
       if (this.perso?.stats && this.perso.session) noter(e, this.perso.stats, this.perso.session, this.bestiaire, GAME_DATA.monsters, ITEMS.equipment);
       this.fx.handle(e);
       this.hud.handle(e);

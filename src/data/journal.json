@@ -741,6 +741,16 @@
             "etiquettes": [
               "Touche O"
             ]
+          },
+          {
+            "titre": "Premier essai de la coop",
+            "phrase": "Crée un salon et donne son code : un ami rejoint ta partie avec son propre perso et combat à tes côtés.",
+            "details": "Partie de test, F1 › Monstres › Jouer à plusieurs. La partie tourne chez l'hôte ; bon terrain : l'arène de la Crypte de Kardorim.",
+            "icone": "perso",
+            "etiquettes": [
+              "Partie de test",
+              "Touche F1"
+            ]
           }
         ],
         "Le monde": [
@@ -927,13 +937,18 @@
             "icone": "options"
           },
           {
+            "titre": "Mutilation sans fin",
+            "phrase": "Mutilation reste active jusqu'à ce que tu la relances, et sacrifie tes PV toutes les 3 s.",
+            "details": "La Puissance plafonne à 3 crans (+100). La relancer donne toujours la Coagulation.",
+            "icone": "sorts",
+            "etiquettes": ["Sacrieur", "Partie de test"]
+          },
+          {
             "titre": "Cortège Sauvage n'est plus infini",
             "phrase": "Après les 6 s de Cortège Sauvage, les bêtes en trop repartent, les plus anciennes d'abord.",
             "details": "Avant, la meute gonflée restait pour toujours.",
             "icone": "degats",
-            "etiquettes": [
-              "Osamodas"
-            ]
+            "etiquettes": ["Osamodas"]
           }
         ],
         "Corrections": [

@@ -127,7 +127,7 @@ export class Player extends Entity {
   subis = 1; subisT = 0; pacifiste = 0;
   /** Sacrieur : palier de Souffrance gardé après un soin (maquette 3B) et secondes restantes ; Mutilation en cours ; Couronne d'Épines (renvoi). */
   souffPic = 0; souffT = 0;
-  mutil: { n: number; t: number; next: number } | null = null;
+  mutil: { n: number; next: number } | null = null;
   renvoiT = 0; renvoiPart = 0;
   /** Dernier souffle (légendaire Sacrieur D) : dernière fois qu'il a sauvé le perso. */
   dernierSouffleA = -999;
@@ -789,11 +789,12 @@ export class Player extends Entity {
     if (this.renvoiT > 0) this.renvoiT -= dt;
     if (this.mutil) {   // Mutilation : re-sacrifie toutes les `periode` s et gagne un cran de Puissance
       const M = this.cls.spells.mutilation?.mutilation;
-      this.mutil.t -= dt; this.mutil.next -= dt;
-      if (!M || this.mutil.t <= 0 || this.dead) { this.mutil = null; this.mods = this.mods.filter(m => m.src !== 'mutilation'); }
-      else if (this.mutil.next <= 0 && this.mutil.n < M.crans) {
-        this.sacrifier(M.sacrifice, world); this.addMod('puissance', M.cran, this.mutil.t, 'mutilation');
-        this.mutil.n++; this.mutil.next = M.periode;
+      this.mutil.next -= dt;   // sans limite de durée : reste active jusqu'à la relance (Coagulation) ou la mort
+      if (!M || this.dead) { this.mutil = null; this.mods = this.mods.filter(m => m.src !== 'mutilation'); }
+      else if (this.mutil.next <= 0) {   // au-delà des crans : continue de sacrifier toutes les `periode` s (choix de Mathis), sans Puissance en plus
+        this.sacrifier(M.sacrifice, world);
+        if (this.mutil.n < M.crans) { this.addMod('puissance', M.cran, Infinity, 'mutilation'); this.mutil.n++; }
+        this.mutil.next = M.periode;
       }
     }
     if (this.subisT > 0 && (this.subisT -= dt) <= 0) this.subis = 1;
@@ -1021,8 +1022,8 @@ export class Player extends Entity {
           this.mutil = null; this.mods = this.mods.filter(m => m.src !== 'mutilation');
           world.emit({ k: 'status', x: this.x, y: this.y - 60, text: 'Coagulation', color: '#e06060' });
         } else {
-          this.sacrifier(M.sacrifice, world); this.addMod('puissance', M.puissance, M.duree, 'mutilation');
-          this.mutil = { n: 1, t: M.duree, next: M.periode };
+          this.sacrifier(M.sacrifice, world); this.addMod('puissance', M.puissance, Infinity, 'mutilation');
+          this.mutil = { n: 1, next: M.periode };
         }
       }
       if (d.selfKnock) {   // « Recule de n cases » : à l'opposé du tir (freinage de applyKnock : distance = vitesse / 7,13)
