@@ -8,6 +8,7 @@ Après chaque déploiement de diablofus.com (workflow « Pages », job `discord`
 2. **Carnet du jour** : la carte du carnet le plus récent de `src/data/journal.json` (titre, résumé, rubriques, capture, lien) est
    - publiée dans `#journal` une fois par jour avec la mention du rôle `Diablofus`, puis réécrite à chaque déploiement du même jour ;
    - (facultatif) publiée dans un forum si `DISCORD_FORUM` le nomme : un post par jour, dont le premier message est réécrit. Le forum `#carnets` a été retiré le 2026-11-07 (maquette « Salons » 8C).
+   Les lignes de la partie de test (`CACHE_DISCORD` dans `journal.mjs` : « partie de test », « #test », « Osamodas ») ne vont pas sur Discord ; la première ligne des Nouveautés (l'annonce du jour) reste toujours en tête. Retirer un motif de `CACHE_DISCORD` quand le contenu sort pour tout le monde.
    Les noms sont cherchés sans les émojis (« 📜・journal » = journal), d'abord dans la catégorie du jeu. Un gros carnet montre les lignes les plus récentes puis « … et N autres » (limite Discord de 6 000 caractères).
 
 Sans le secret `DISCORD_BOT_TOKEN`, le job ne fait rien et reste vert.

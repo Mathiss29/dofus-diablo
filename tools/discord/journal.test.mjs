@@ -20,8 +20,16 @@ describe("carte Discord du Journal", () => {
   it("montre les lignes les plus récentes et compte les autres", () => {
     const lignes = Array.from({ length: 80 }, (_, i) => `Ligne numéro ${i} avec un peu de texte pour remplir la carte du jour.`);
     const e = carte({ date: "2026-11-06", titre: "T", resume: "R", lignes: { "Nouveautés": lignes } });
-    expect(e.fields[0].value.startsWith("• Ligne numéro 79")).toBe(true);
+    // la première ligne des Nouveautés (l'annonce du jour) reste à la une, puis les plus récentes
+    expect(e.fields[0].value.startsWith("• Ligne numéro 0 avec un peu de texte pour remplir la carte du jour.\n• Ligne numéro 79")).toBe(true);
     expect(e.fields[0].value).toMatch(/… et \d+ autres/);
+  });
+  it("laisse les lignes de la partie de test hors de Discord", () => {
+    const e = carte({ date: "2026-11-08", titre: "T", resume: "R", lignes: {
+      "Nouveautés": ["Version 0.2 terminée. Prochaine étape : l'Osamodas.", "0.3 en partie de test : le Codex.", "Essai sur diablofus.com/#test.", "Les Zaaps marchent."],
+      "Corrections": ["Osamodas : le Dragonnet ne glisse plus."] } });
+    expect(e.fields).toHaveLength(1);
+    expect(e.fields[0].value).toBe("• Version 0.2 terminée. Prochaine étape : l'Osamodas.\n• Les Zaaps marchent.");
   });
   it("prend le carnet le plus récent", () => {
     expect(carnetDuJour(journal).date).toBe([...journal.carnets].map((c) => c.date).sort().pop());

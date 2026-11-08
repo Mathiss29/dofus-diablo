@@ -262,7 +262,9 @@
           "Osamodas : le Dragonnet (Éveil de la Dragoune) ne glisse plus figé ; il prend l'apparence animée du Dragonnet Rouge officiel (repos, course, trois attaques).",
           "Dans la fenêtre « Quoi de neuf ? », « Lire tout le carnet » la ferme bien avant d'ouvrir le carnet."
         ],
-        "En coulisses": []
+        "En coulisses": [
+          "Sur le Discord, le carnet du jour ne montre plus que ce qui est jouable par tous, avec l'annonce du jour en tête ; les essais de la partie de test restent dans ce Journal."
+        ]
       }
     }
   ]

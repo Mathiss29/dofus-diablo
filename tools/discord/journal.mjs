@@ -12,13 +12,25 @@ export const pied = (iso) => `Carnet du ${iso} · ${SITE.replace("https://", "")
 /** Nom du post de forum : commence par la date, pour le retrouver même si le titre change dans la journée. */
 export const nomPost = (c) => `${dateFr(c.date)} · ${c.titre}`.slice(0, 100);
 
+/** Lignes réservées à la partie de test (0.3, Osamodas en essai) : gardées dans le Journal du jeu, pas sur Discord
+    tant que ce contenu n'est pas public. À retirer de la liste quand il sort pour tout le monde. */
+export const CACHE_DISCORD = [/partie de test/i, /#test\b/i, /\bOsamodas\b/i];
+export const publique = (l) => !CACHE_DISCORD.some((r) => r.test(l));
+
 const couper = (s, n) => (s.length <= n ? s : s.slice(0, n - 1) + "…");
 
 /** Les lignes les plus récentes d'abord (chaque PR ajoute à la fin), tant que ça tient. */
-function champ(nom, lignes, budget) {
+function champ(nom, lignes, budget, une = false) {
   const tete = `${EMOJI[nom] || "•"} ${nom}`;
   const pris = [];
   let taille = 0;
+  // « À la une » : la première ligne des Nouveautés (l'annonce du jour) reste en tête, même dans un gros carnet
+  if (une && lignes.length > 1) {
+    const l = "• " + couper(lignes[0], 300);
+    pris.push(l); taille += l.length + 1;
+    lignes = lignes.slice(1);
+  }
+  const deja = pris.length;
   for (let i = lignes.length - 1; i >= 0; i--) {
     const l = "• " + couper(lignes[i], 300);
     const reste = i; // lignes encore non montrées si on s'arrête après celle-ci
@@ -27,7 +39,7 @@ function champ(nom, lignes, budget) {
     pris.push(l);
     taille += l.length + 1;
   }
-  const caches = lignes.length - pris.length;
+  const caches = lignes.length + deja - pris.length;
   if (!pris.length) return { name: tete, value: `*${lignes.length} ligne${lignes.length > 1 ? "s" : ""} dans le Journal du jeu*` };
   return { name: tete, value: pris.join("\n") + (caches ? `\n*… et ${caches} autre${caches > 1 ? "s" : ""}*` : "") };
 }
@@ -44,10 +56,12 @@ export function carte(c, rubriques = Object.keys(EMOJI)) {
   if (c.capture) e.image = { url: `${SITE}/${c.capture.replace(/^\/+/, "")}` };
   let budget = TOTAL - e.title.length - e.description.length - e.footer.text.length;
   const noms = [...rubriques, ...Object.keys(c.lignes || {}).filter((r) => !rubriques.includes(r))];
-  const pleines = noms.filter((r) => (c.lignes?.[r] || []).length);
+  // l'annonce « à la une » (1re ligne des Nouveautés) est toujours publique ; les autres lignes sont filtrées
+  const lignes = Object.fromEntries(noms.map((r) => [r, (c.lignes?.[r] || []).filter((l, i) => (r === "Nouveautés" && i === 0) || publique(l))]));
+  const pleines = noms.filter((r) => lignes[r].length);
   pleines.forEach((r, i) => {
     const part = Math.floor(budget / (pleines.length - i)) - r.length - 4;
-    const f = champ(r, c.lignes[r], part);
+    const f = champ(r, lignes[r], part, r === "Nouveautés");
     budget -= f.name.length + f.value.length;
     e.fields.push(f);
   });
