@@ -194,6 +194,9 @@ describe('Crypte de Kardorim (une seule arène, maquette « Donjons en vagues »
     w.drainEvents();
     p.x = a.pts.coffre.x; p.y = a.pts.coffre.y; w.step(STEP, NO_INPUT);
     expect(a.coffreOuvert).toBe(true);
+    // Coffres 2A : le butin jaillit quand il éclate en pièces d'or, pas avant
+    expect(w.drainEvents().some(e => e.k === 'status' && e.text === 'Coffre du donjon')).toBe(false);
+    for (let i = 0; i < 60; i++) w.step(STEP, NO_INPUT);
     expect(w.drainEvents().some(e => e.k === 'status' && e.text === 'Coffre du donjon')).toBe(true);
     p.x = a.pts.sortie.x; p.y = a.pts.sortie.y; w.step(STEP, NO_INPUT); finirPassage(w);
     expect(w.worldGrid!.mapAt(p.x, p.y)?.tag).toBe(w.entreeDonjon('Crypte de Kardorim')!.ends[0].tag);

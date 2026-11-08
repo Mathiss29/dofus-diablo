@@ -50,7 +50,7 @@ const REFUS: Record<Sorte | 'a', Set<string>> = {
   // minuteries de l'IA des monstres : l'hôte seul s'en sert
   m: new Set(['def', 'atkCd', 'spellCd', 'sigCd', 'cheminT', 'wanderT', 'wanderX', 'wanderY', 'repathT']),
   b: new Set(['def']),
-  a: new Set(['w', 'd']),
+  a: new Set(['w', 'd', 'butin']),
 };
 /** Listes du monde recopiées telles quelles. */
 const LISTES = ['projectiles', 'drops', 'telegraphs', 'zonesSol'] as const;

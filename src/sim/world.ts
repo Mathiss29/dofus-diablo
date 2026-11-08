@@ -6,7 +6,7 @@ import { ISO } from './iso';
 import { NO_INPUT, type PlayerInput } from './input';
 import { AGGRO, CASE, Monster, TOUR, type Cible } from './monster';
 import { jetOfficiel } from './danger';
-import { poolNiveau, rangDe, tirerButin, type CtxButin, type Rang } from './butin';
+import { poolNiveau, rangDe, tirerButin, type Butin, type CtxButin, type Rang } from './butin';
 import { briser, chanceRune, coutKamas, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
 import { NIVEAU_OBJETS_02, V03_PUBLIC, slotAPouvoirConnu } from './pouvoirs';
 import { fxImpression, imprimable, nouveauPourCodex, prixImpression } from './codex';
@@ -775,12 +775,19 @@ export class World {
     this.passage = { to: po.ends[0], nom: d.nom, t: World.PASSAGE };
     this.emit({ k: 'portalStart', nom: d.nom });
   }
-  /** 13A : coffre du donjon à côté du portail : un second butin du boss, et une bourse de kamas. */
-  coffreDonjon(d: DonjonDef, x: number, y: number) {
+  /** 13A : coffre du donjon à côté du portail : un second butin du boss, et une bourse de kamas. Tiré à la mort du boss
+   *  (maquette Coffres 4C : le coffre luit de la couleur du meilleur objet avant qu'on l'ouvre), posé à l'ouverture. */
+  tirerCoffreDonjon(d: DonjonDef): Butin | null {
     const boss = this.bossDuDonjon(d.nom), M = this.opts.data.monsters;
-    if (!boss) return;
+    if (!boss || !this.opts.items) return null;
     const niveau = M[boss].level ?? this.zone.level;
-    this.lacherButin(boss, 'boss', niveau, x, y, 20 * niveau);
+    const b = tirerButin(this.rng, this.contexteButin(boss, 'boss', niveau), () => this.nextId++);
+    b.kamas += 20 * niveau;
+    return b;
+  }
+  /** Le coffre s'ouvre : son butin jaillit là où il était. */
+  ouvrirCoffreDonjon(b: Butin | null, x: number, y: number) {
+    if (b) this.poserButin(b, x, y);
     this.emit({ k: 'status', x, y: y - 50, text: 'Coffre du donjon', color: '#f2d36b' });
   }
 
@@ -1595,11 +1602,14 @@ export class World {
    *  de son niveau pris dans tous les objets de Dofus. Élites et boss lâchent plus et mieux. Calcul : src/sim/butin.ts. */
   private dropLoot(m: Monster) { this.lacherButin(m.type, rangDe(m.def), this.monsterLevel(m), m.x, m.y); }
   private lacherButin(type: string, rang: Rang, niveau: number, mx: number, my: number, kamas = 0) {
-    const I = this.opts.items;
-    if (!I) return;
-    const m = { x: mx, y: my };
-    const p = this.player, b = tirerButin(this.rng, this.contexteButin(type, rang, niveau), () => this.nextId++);
+    if (!this.opts.items) return;
+    const b = tirerButin(this.rng, this.contexteButin(type, rang, niveau), () => this.nextId++);
     b.kamas += kamas;
+    this.poserButin(b, mx, my);
+  }
+  /** Butin tiré : ressources dans le sac du joueur qui agit, objets et kamas au sol autour de (mx, my). */
+  private poserButin(b: Butin, mx: number, my: number) {
+    const m = { x: mx, y: my }, p = this.player;
     for (const r of b.ressources) {   // ressource : directement dans le sac ; une viande fait monter le Chasseur (choix 6A)
       if (r.job) p.gainMetierXp(r.job, METIER_XP.viande, this);
       const q = r.job && this.almanax?.effet === 'gibier' ? ALMANAX.gibier : 1;   // 15C : jour du gibier
