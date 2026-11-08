@@ -84,7 +84,10 @@ export type SimEvent =
   | { k: 'recycle'; n: number; pepites: number }
   /** Forgemagie : rune posée (issue officielle, lignes perdues), objets brisés en runes, runes fusionnées, mode « viser » terminé. */
   | { k: 'forge'; uid: number; rune: string; issue: 'critique' | 'neutre' | 'echec' | 'puits'; stat: string; gain: number; pertes: [string, number][]; kamas: number; exo: boolean }
-  | { k: 'brisage'; n: number; runes: Record<string, number> }
+  /** auto : objet Commun brisé dès le ramassage (« Équipement en trop » 5B), id de cet objet. */
+  | { k: 'brisage'; n: number; runes: Record<string, number>; auto?: string }
+  /** Collection d'apparences (1C) : premier exemplaire d'une coiffe, cape ou bouclier brisé ou recyclé. */
+  | { k: 'apparence'; id: string }
   | { k: 'fusion'; de: string; vers: string; n: number }
   /** Commande à Malek (Forgemagie UI 9E) : confiée, prête (l'objet attend chez lui), reprise. */
   | { k: 'commande'; etat: 'confiee' | 'prete' | 'retiree'; reste: number; essais: number }

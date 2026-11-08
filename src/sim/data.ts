@@ -36,7 +36,13 @@ export const BOUTIQUES = Object.fromEntries(Object.entries(boutique).filter(([k]
 export const RECOLTES = recoltes as unknown as RecoltesData;
 /** Objets d'apparat officiels (src/data/apparat.json, apparat_export.py) : nom, emplacement, case de l'icône sur ui/apparat.webp ;
  *  prix chez Emp par emplacement (boutique.json, apparat_prix). */
-export interface ApparatDef { name: string; slot: 'chapeau' | 'cape' | 'familier'; icon: number; case: number }
+export interface ApparatDef { name: string; slot: 'chapeau' | 'cape' | 'bouclier' | 'familier'; icon: number; case: number;
+  /** Collection d'apparences (maquette « Équipement en trop » 1C) : coiffe, cape ou bouclier du jeu, débloqué en brisant ou
+   *  recyclant son premier exemplaire ; jamais vendu par Tissebelle. */
+  collection?: boolean }
 export const APPARATS = { ...(apparat as unknown as { cell: number; cols: number; rows: number; objets: Record<string, ApparatDef> }), prix: boutique.apparat_prix as Record<string, number> };
 // familiers d'apparat (5A) : leur icône est sur la planche des objets (case -1)
 for (const [id, f] of Object.entries(FAMILIERS.familiers)) if (f.apparat) APPARATS.objets[id] = { name: f.nom, slot: 'familier', icon: f.icon, case: -1 };
+// collection d'apparences (1C) : les coiffes, capes et boucliers du jeu, icône sur la planche des objets (case -1)
+for (const [id, d] of Object.entries(ITEMS.equipment))
+  if ((d.slot === 'chapeau' || d.slot === 'cape' || d.slot === 'bouclier') && !APPARATS.objets[id]) APPARATS.objets[id] = { name: d.name, slot: d.slot, icon: d.icon, case: -1, collection: true };

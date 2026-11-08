@@ -943,8 +943,10 @@ export class ZoneScene extends Phaser.Scene {
         case 'emmenage': this.hud.toast(`${e.noms.join(', ')} ${e.noms.length > 1 ? 'ont emménagé' : 'a emménagé'} au Bastion des Douze (Zaap ou Potion de Rappel)`); break;
         case 'forge': this.windows?.noteForgeEvt(e); break;
         case 'brisage': { const n = Object.values(e.runes).reduce((a, b) => a + b, 0);
+          if (e.auto) { this.hud.loot(`${ITEMS.equipment[e.auto]?.name ?? 'Objet'} brisé : ${n} rune${n > 1 ? 's' : ''}`, '#b77cf0'); this.windows?.refresh(); break; }
           this.hud.loot(`${n} rune${n > 1 ? 's' : ''} (${e.n} objet${e.n > 1 ? 's' : ''} brisé${e.n > 1 ? 's' : ''})`, '#b77cf0');
           this.windows?.noteForge({ t: `${e.n > 1 ? `${e.n} objets brisés` : 'Objet brisé'} : ${Object.entries(e.runes).map(([id, k]) => `${k} ${ITEMS.resources[id]?.name ?? id}`).join(', ') || 'aucune rune'}`, c: 'br' }); break; }
+        case 'apparence': this.hud.loot(`Apparence débloquée : ${ITEMS.equipment[e.id]?.name ?? 'objet'}`, '#e6b85c'); break;
         case 'fusion': this.windows?.noteForge({ t: `Fusion : ${e.n} ${ITEMS.resources[e.vers]?.name ?? e.vers}`, c: 'br' }); break;
         case 'commande':
           if (e.etat === 'confiee') this.windows?.noteForge({ t: `Objet confié à Malek : ${e.essais} rune${e.essais > 1 ? 's' : ''} à poser, prêt dans ${mmss(e.reste)}`, c: 'ne' });
