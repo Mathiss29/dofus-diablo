@@ -79,10 +79,12 @@ export type SimEvent =
   /** Emp (0.2) : objets recyclés contre des Pépites, achat dans sa boutique, Potion de Rappel bue, réponse « service » d'un PNJ. */
   | { k: 'recycle'; n: number; pepites: number }
   /** Forgemagie : rune posée (issue officielle, lignes perdues), objets brisés en runes, runes fusionnées, mode « viser » terminé. */
-  | { k: 'forge'; uid: number; rune: string; issue: 'critique' | 'neutre' | 'echec' | 'puits'; stat: string; gain: number; pertes: [string, number][]; kamas: number }
+  | { k: 'forge'; uid: number; rune: string; issue: 'critique' | 'neutre' | 'echec' | 'puits'; stat: string; gain: number; pertes: [string, number][]; kamas: number; exo: boolean }
   | { k: 'brisage'; n: number; runes: Record<string, number> }
   | { k: 'fusion'; de: string; vers: string; n: number }
-  | { k: 'viser'; uid: number; essais: number; atteint: boolean; kamas: number }
+  /** Commande à Malek (Forgemagie UI 9E) : confiée, prête (l'objet attend chez lui), reprise. */
+  | { k: 'commande'; etat: 'confiee' | 'prete' | 'retiree'; reste: number; essais: number }
+  | { k: 'signature'; uid: number; nom: string }
   | { k: 'achat'; id: string; prix: number }
   /** Familier : niveau gagné, et repas (XP donnée). */
   | { k: 'familierNiveau'; nom: string; niveau: number }

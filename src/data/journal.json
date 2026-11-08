@@ -204,7 +204,9 @@
           "Le tour du monde : Metag Robill, devant la Grange du Tournesol Affamé, t'envoie vaincre le boss de chaque donjon, chapitre après chapitre. Les chapitres 1 et 2 (Kardorim, Tournesol Affamé, Mob l'Éponge, Bouftou Royal, Kankreblath) sont jouables ; les donjons déjà vaincus comptent.",
           "Carnet de route : une page par donjon du tour du monde, tamponnée au premier passage avec la date et le temps mis jusqu'au boss (fenêtre Quêtes).",
           "Nouvelle fenêtre Caractéristiques (C) façon Dofus 3 : coût, + et ++ (choisis combien de points placer), détail base / objets / bonus, stats en bas et bouton Détails. Survole une caractéristique pour voir ce qu'elle te donne et ce que rapporte le point suivant. Le bouton ↺ rend tous tes points, gratuitement, hors donjon.",
-          "Les Zaaps marchent : clique sur l'arche, choisis ta destination dans la vraie fenêtre de Dofus 3 (par zone, niveau en couleur) et pars dans un tourbillon, gratuitement. Les Zaaps pas encore vus sont grisés."
+          "Les Zaaps marchent : clique sur l'arche, choisis ta destination dans la vraie fenêtre de Dofus 3 (par zone, niveau en couleur) et pars dans un tourbillon, gratuitement. Les Zaaps pas encore vus sont grisés.",
+          "Nouvelle fenêtre de forgemagie façon Dofus 3 chez Malek : cases Objet, Rune et Signature, bouton Fusionner (ou mode avancé : un clic sur la rune), les runes de chaque ligne au bout de la ligne avec leur chance, l'œil pour masquer une ligne et l'historique avec l'icône de chaque rune. La Rune de Signature grave ton nom sur l'objet, et le Concasseur montre les runes qui vont sortir avant de briser.",
+          "Commande à Malek : fixe une valeur à atteindre et un plancher à ne pas casser sur chaque ligne, un budget, demande-lui son estimation (chances, kamas, runes), puis laisse-lui l'objet et reviens le chercher quelques minutes plus tard."
         ],
         "Le monde": [
           "Le prochain donjon de la quête suivie est marqué sur la carte (M).",

@@ -35,6 +35,7 @@ import { ambiance, chargerReglages, matriceSaturation, sauverReglages, type Regl
 import { ICON_SHEET, iconFrame } from './icons';
 import { CarteMonde } from './carteMonde';
 import { Windows } from './windows';
+import { mmss } from './forgeVue';
 import { Chargement, type Arrivee } from './chargement';
 import { spellTipHtml } from './spellTip';
 import { RARITY_COLORS, RARITY_NAMES, rollItem } from '../sim/items';
@@ -353,6 +354,7 @@ export class ZoneScene extends Phaser.Scene {
     this.windows.reglages = this.reglages;
     this.windows.onReglages = r => { this.zoom = Phaser.Math.Clamp(r.zoom, ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]); this.updateAmbiance(true); this.appliquerSon(); };
     this.windows.juice = { get: () => this.fx.juice, set: on => { this.fx.juice = on; } };
+    this.windows.nomPerso = () => this.perso?.nom ?? 'Aventurier';
     this.windows.heureNom = () => ambiance(this.reglages, new Date(), !!this.world.worldGrid?.mapAt(this.world.player.x, this.world.player.y)?.inside).nom;
     this.panneau?.destroy(); this.panneau = null;
     if (this.test) { const pt = this.panneau = new PanneauTest(this.world, this.actionsTest(), this.zoneId); this.events.once('shutdown', () => { pt.destroy(); if (this.panneau === pt) this.panneau = null; }); }
@@ -813,12 +815,16 @@ export class ZoneScene extends Phaser.Scene {
     return input;
   }
 
+  private secCommande = -1;
   update(_: number, deltaMs: number) {
     const dt = Math.min(deltaMs / 1000, 0.1);
     this.fx.update(dt);
     this.carte?.update();
     // fenêtre d'un Zaap du monde : elle se ferme si l'on s'en éloigne
     if (this.windows?.ouverte === 'zaap' && !this.world.dansRefuge && !this.world.zaapProche() && !this.world.zaapDepart) this.windows.close(false);
+    // commande chez Malek (Forgemagie UI 9E) : compte à rebours de la fenêtre, une fois par seconde
+    const cmd = this.world.player.commandeFM;
+    if (cmd && !cmd.prete && Math.ceil(cmd.reste) !== this.secCommande) { this.secCommande = Math.ceil(cmd.reste); this.windows?.majForge(); }
     if (this.vitrine) this.updateVitrine(dt);
     else if (this.essai) {
       const e = this.essai; e.t += dt;
@@ -937,7 +943,11 @@ export class ZoneScene extends Phaser.Scene {
           this.hud.loot(`${n} rune${n > 1 ? 's' : ''} (${e.n} objet${e.n > 1 ? 's' : ''} brisé${e.n > 1 ? 's' : ''})`, '#b77cf0');
           this.windows?.noteForge({ t: `${e.n > 1 ? `${e.n} objets brisés` : 'Objet brisé'} : ${Object.entries(e.runes).map(([id, k]) => `${k} ${ITEMS.resources[id]?.name ?? id}`).join(', ') || 'aucune rune'}`, c: 'br' }); break; }
         case 'fusion': this.windows?.noteForge({ t: `Fusion : ${e.n} ${ITEMS.resources[e.vers]?.name ?? e.vers}`, c: 'br' }); break;
-        case 'viser': this.windows?.noteForge({ t: e.essais ? `Le forgemage a posé ${e.essais} rune${e.essais > 1 ? 's' : ''} (${e.kamas} kamas) : ${e.atteint ? 'objectif atteint' : 'objectif pas atteint (plus de runes ou de kamas)'}` : 'Aucune rune possible pour cet objectif', c: e.atteint ? 'ok' : 'ne' }); break;
+        case 'commande':
+          if (e.etat === 'confiee') this.windows?.noteForge({ t: `Objet confié à Malek : ${e.essais} rune${e.essais > 1 ? 's' : ''} à poser, prêt dans ${mmss(e.reste)}`, c: 'ne' });
+          else if (e.etat === 'prete') { this.hud.toast('Malek le Forgemage a fini ta commande : ton objet t\'attend au Bastion des Douze'); this.windows?.noteForge({ t: 'Malek a fini ta commande', c: 'ok' }); }
+          this.windows?.majForge(); break;
+        case 'signature': this.hud.loot(`Objet signé : ${e.nom}`, '#e6b85c'); break;
         case 'recycle': this.hud.loot(`+${e.pepites} Pépite${e.pepites > 1 ? 's' : ''}${e.n > 1 ? ` (${e.n} recyclés)` : ''}`, '#b9e54b'); break;
         case 'achat': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Objet'} acheté (−${e.prix} Pépites)`, '#b9e54b'); break;
         case 'rappel': this.hud.banner(`Rappel\n${e.name}`, 1200); this.snapCam = true; break;

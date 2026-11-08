@@ -11190,6 +11190,12 @@
    "icon": 78297,
    "level": 40,
    "rune": true
+  },
+  "7508": {
+   "name": "Rune de Signature",
+   "icon": 50037,
+   "level": 100,
+   "signature": true
   }
  },
  "drops": {

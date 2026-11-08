@@ -3,6 +3,7 @@ import type { EtatQuetes } from './quests';
 import type { RetourHavreSac } from './events';
 import type { World } from './world';
 import type { CleDonjon } from './arene';
+import type { CommandeFM } from './forgemagie';
 
 /** État du joueur gardé entre deux parties (écran « Mes personnages », 3 emplacements, choix 16B).
  *  Pur JSON : l'affichage le range où il veut (navigateur pour l'instant). */
@@ -29,6 +30,8 @@ export interface EtatJoueur {
   havreSac?: RetourHavreSac;
   /** Clé d'un donjon encore valable (14A). */
   cleDonjon?: CleDonjon | null;
+  /** Commande chez Malek le Forgemage (Forgemagie UI 9E). */
+  commandeFM?: CommandeFM | null;
 }
 
 const copie = <T>(o: T): T => JSON.parse(JSON.stringify(o)) as T;
@@ -41,7 +44,7 @@ export function exporterJoueur(w: World): EtatJoueur {
     bar: p.bar, variants: p.variants, learned: [...p.learned],
     x: p.x, y: p.y, retour: w.pointDeRetour, quetes: w.quetes?.exporter(), zone: w.opts.zone,
     apparats: p.apparats, apparat: p.apparat,
-    zaaps: p.zaaps, zonesVues: p.zonesVues, cleDonjon: p.cleDonjon, ...(w.retour ? { havreSac: w.retour } : {}),
+    zaaps: p.zaaps, zonesVues: p.zonesVues, cleDonjon: p.cleDonjon, commandeFM: p.commandeFM, ...(w.retour ? { havreSac: w.retour } : {}),
   });
 }
 
@@ -65,6 +68,8 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
   p.zonesVues = [...new Set([...(s.zonesVues ?? []), ...p.zonesVues])];
   const c = s.cleDonjon;
   if (c && typeof c.nom === 'string' && c.reste > 0) p.cleDonjon = { nom: c.nom, vague: Math.max(1, Math.floor(c.vague) || 1), reste: c.reste };
+  const f = s.commandeFM;
+  if (f?.item && f.rapport && typeof f.reste === 'number') p.commandeFM = { ...f, item: uid(f.item), reste: Math.max(0, f.reste) };
   if (s.havreSac && w.dansRefuge && !w.retour) w.retour = s.havreSac;
   if (s.bar?.length === p.bar.length) p.bar = s.bar.map(k => (k && p.cls.spells[k] ? k : null));
   p.recompute();
