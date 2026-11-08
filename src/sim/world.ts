@@ -6,7 +6,7 @@ import { ISO } from './iso';
 import { NO_INPUT, type PlayerInput } from './input';
 import { AGGRO, CASE, Monster, TOUR } from './monster';
 import { jetOfficiel } from './danger';
-import { rangDe, tirerButin, type CtxButin, type Rang } from './butin';
+import { poolNiveau, rangDe, tirerButin, type CtxButin, type Rang } from './butin';
 import { briser, chanceRune, coutKamas, forger, fusionVers, FUSION_N, RUNES, runesDe } from './forgemagie';
 import { FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, recycleResource, recycleValue, rollItem, type Item, type ItemsData, type Rarity, type Stat } from './items';
 import { Player } from './player';
@@ -1704,6 +1704,17 @@ export class World {
     const I = this.opts.items, p = this.player;
     if (I?.equipment[id]) { for (let i = 0; i < n; i++) p.bag.push(rollItem(id, I.equipment[id], 'commun', this.rng, this.nextId++)); }
     else { p.resources[id] = (p.resources[id] ?? 0) + n; this.emit({ k: 'lootResource', id, n }); }
+  }
+  /** Sac à rareté garantie (récompense de contrat, d'Avis de recherche, Quêtes roadmap 5A) : un équipement de ce niveau, de cette rareté. */
+  donnerSac(rarete: Rarity, niveau: number) {
+    const I = this.opts.items, p = this.player;
+    if (!I) return;
+    let pool = poolNiveau({ pool: this.equipByLevel, niveau });
+    if (!pool.length) pool = [...this.equipByLevel].sort((x, y) => Math.abs(x.level - niveau) - Math.abs(y.level - niveau)).slice(0, 20);
+    if (!pool.length) return;
+    const id = this.rng.pick(pool).id, it = rollItem(id, I.equipment[id], rarete, this.rng, this.nextId++, p.sortsRecharge);
+    p.bag.push(it);
+    this.emit({ k: 'sacQuete', id, rarity: rarete });
   }
   onPlayerDeath() { this.over = true; this.emit({ k: 'playerDeath', wave: this.wave }); }
 

@@ -1033,8 +1033,8 @@ export class Windows {
         secondaire: ['quest', 'questObjective'], prime: ['questRepeatable', 'questRepeatableObjective'], evenement: ['questEvent', 'questObjective'] };
       return `${QI}/${m[t][rendre ? 1 : 0]}.png`;
     };
-    const ids = Q.enCours.map(c => c.id), fin = [...Q.finies].filter(id => Q.data.quetes[id]);
-    if (!this.queteVue || !Q.data.quetes[this.queteVue]) this.queteVue = Q.suivie ?? ids[0] ?? fin[0] ?? null;
+    const ids = Q.enCours.map(c => c.id), fin = [...Q.finies].filter(id => Q.existe(id));
+    if (!this.queteVue || !Q.existe(this.queteVue)) this.queteVue = Q.suivie ?? ids[0] ?? fin[0] ?? null;
     const item = (id: string, done: boolean) => {
       const q = Q.def(id), c = Q.enCours.find(x => x.id === id);
       return `<div class="qi ${this.queteVue === id ? 'on' : ''} ${done ? 'fin' : ''}" data-q="${id}"><img src="${icon(id, !!c?.aRendre)}" alt="">
@@ -1056,6 +1056,8 @@ export class Windows {
       const r = q.recompense, res = (o: string) => ITEMS.resources[o] ?? ITEMS.equipment[o];
       const rw = [r.xp ? `<span><b>${r.xp}</b> XP</span>` : '', r.kamas ? `<span><img src="${INV}/kamas.png" alt="" style="width:16px">${r.kamas} kamas</span>` : '',
         ...(r.objets ?? []).map(([o, n]) => `<span title="${res(o)?.name ?? o}">${iconHtml(res(o)?.icon ?? 0)}${n} × ${res(o)?.name ?? o}</span>`),
+        r.sac ? `<span style="color:${RARITY_COLORS[r.sac]}">Sac ${RARITY_NAMES[r.sac]} garanti</span>` : '',
+        r.pepites ? `<span>${iconHtml(ITEMS.resources[PEPITE]?.icon ?? 0)}${r.pepites} Pépites</span>` : '',
         r.potions ? '<span>Potions remplies</span>' : ''].filter(Boolean).join('');
       det = `<div><h3>${q.nom}</h3><div class="sub">${q.serie ? `${q.serie} · ` : ''}Niveau ${q.niveau}${pnj ? ` · ${pnj}` : ''}${done ? ' · Terminée' : ''}</div></div>
         <p>${q.texte}</p>${steps}<div class="qh">Récompenses</div><div class="rw">${rw || '<span class="hint">Aucune</span>'}</div>

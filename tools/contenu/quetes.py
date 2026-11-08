@@ -67,6 +67,14 @@ PNJ = {
       'sansCle': "Rapetisser, je sais faire. Ouvrir sans clef, non. {vendeur} en vend."}},
   # Le tour du monde (maquette Tour 2A) : Metag Robill (PNJ officiel 4370, look {1125}), guerrier posté devant la Grange du Tournesol
   # Affamé comme dans Dofus 3. Répliques inédites (9A) : un fanfaron qui a « déjà tout fait ».
+  # Milice d'Astrub (Quêtes roadmap 3A+3C) : le Gardien des Geôles d'Astrub (PNJ officiel 606, look {58|||90}) devant la Prison [5,-19],
+  # là où les Avis de recherche officiels envoient les primes. Il tient aussi le tableau des contrats du jour. Répliques inédites.
+  'geolier': {'nom': "Gardien des Geôles d'Astrub", 'dofusId': 606, 'zone': 'astrub', 'carte': '5_-19', 'titre': "Milice d'Astrub", 'contrats': True,
+    'phrase': "Les geôles d'Astrub ont de la place. Beaucoup de place. Trop de place. Ramène-moi du monde, la Milice paie bien.",
+    'discussion': [{'reponse': 'Comment marchent les contrats ?', 'texte': "Trois contrats par jour, tirés au sort à minuit, et un gros contrat chaque semaine. Tu fais le travail, tu reviens me voir, tu repars avec un sac de matériel et des Pépites. Les Avis de recherche, c'est une traque par semaine et par bandit."}]},
+  # Fil court « Les Vilinsekts » (Quêtes roadmap 1A) : Cindy Cah (PNJ officiel 4366, look {4960|||90}) donne « Les as de la cambriole » en [5,-17].
+  'cindy': {'nom': 'Cindy Cah', 'dofusId': 4366, 'zone': 'astrub', 'carte': '5_-17',
+    'phrase': "Ma cuillère en argent a disparu. Puis mon dé à coudre. Puis mon voisin a perdu son jeu de cartes. À Astrub, on ne perd rien : on se fait voler par des Vilinsekts."},
   'metag': {'nom': 'Metag Robill', 'dofusId': 4370, 'zone': 'astrub', 'carte': '7_-24',
     'phrase': "Tous les donjons du monde, je les ai faits. Deux fois. La deuxième, c'était pour vérifier que j'avais bien gagné la première.",
     'discussion': [{'reponse': 'Tu les as vraiment tous faits ?', 'texte': "Évidemment. Enfin, presque. Il y en a un ou deux où je me suis arrêté devant la porte, pour laisser leur chance aux jeunes. Comme toi."}]},
@@ -332,6 +340,70 @@ for qid, nom, niv, ratio, bientot, texte, bulle, merci, objs, objets in TDM:
               **({'merci': merci} if merci else {}), **({'bientot': True} if bientot else {})}
     avant.append(qid)
 
+# --- Fil court « Les Vilinsekts » (Quêtes roadmap 1A : 3 chapitres jusqu'au boss de la zone) --------------------------------
+SZ_PLANQUE = 843
+Q['vil_1'] = {'nom': "Tournée d'inspection", 'type': 'principale', 'pnj': 'cindy', 'niveau': 30, 'suivante': 'vil_2', 'serie': 'Les Vilinsekts',
+  'texte': "Cuillères, dés à coudre, cartes à jouer : tout disparaît dans les maisons d'Astrub. La Milice a trouvé trois trous de sousouris dans les caves de la Cité. Va voir ce qui en sort.",
+  'etapes': [{'nom': 'Les trous de sousouris', 'bulle': "Trois caves, trois trous. Il y en a un près du Zaap. Prends une lanterne, et un balai.",
+              'objectifs': [aller('Entrer dans une Planque des Vilinsekts', sousZone=SZ_PLANQUE)]},
+             {'nom': 'Ça grouille', 'objectifs': [vaincre('Vaincre 10 Vilinsekts', 10, sousZone=SZ_PLANQUE)]}],
+  'recompense': rec(2.5, 30)}
+Q['vil_2'] = {'nom': 'Tel est pris qui croyait prendre', 'type': 'principale', 'pnj': 'cindy', 'niveau': 35, 'suivante': 'vil_3', 'serie': 'Les Vilinsekts',
+  'texte': "Ces Vilinsekts ont des chefs. Trois lieutenants de Kankreblath gardent les planques : sans eux, la bande ne sait plus où cacher son butin.",
+  'etapes': [{'nom': 'Les lieutenants', 'bulle': "Un lieutenant par planque. Quand les trois tombent, Kankreblath est tout seul avec ses cuillères.",
+              'objectifs': [elite('Vaincre Cafarcher, lieutenant de Kankreblath', 'cafarcher', 'planque_6_-21', pv=3, nom='Cafarcher, lieutenant'),
+                            elite('Vaincre Pyrasite, lieutenant de Kankreblath', 'pyrasite', 'planque_4_-19', pv=3, nom='Pyrasite, lieutenant'),
+                            elite('Vaincre Sakarien, lieutenant de Kankreblath', 'sakarien', 'planque_1_-16', pv=3, nom='Sakarien, lieutenant')]}],
+  'recompense': {**rec(3, 35), 'sac': 'rare'}}
+Q['vil_3'] = {'nom': 'Les as de la cambriole', 'type': 'principale', 'pnj': 'cindy', 'rendre': 'cindy', 'niveau': 40, 'serie': 'Les Vilinsekts',
+  'texte': "Tout ce qu'ils volent finit dans la Cache de Kankreblath, sous le grenier de Kerubim. Rapporte-moi des Caissettes de Babioles pour prouver que c'est bien eux, puis va reprendre le reste. Le Cloportier sait comment passer par le trou.",
+  'etapes': [{'nom': 'Les preuves', 'objectifs': [{'t': 'recolter', 'texte': 'Récupérer 15 Caissettes de Babioles', 'ressource': '19630', 'n': 15}]},
+             {'nom': 'La Cache', 'bulle': "Il est sous le plancher du grenier. Le Cloportier te rapetissera, il adore ça.",
+              'objectifs': [{'t': 'donjon', 'texte': 'Vaincre Kankreblath (Cache de Kankreblath)', 'donjon': 'Cache de Kankreblath', 'boss': 'Kankreblath', 'niveau': 40, 'region': 'Astrub'}]}],
+  'merci': "Ma cuillère ! Toute tordue, mais c'est la mienne. Astrub te doit une fière chandelle. Et moi, une cuillère.",
+  'recompense': {**rec(5, 40), 'sac': 'epique', 'pepites': 60}}
+
+# --- Avis de recherche d'Astrub (officiels, 3A) : une traque par semaine, rendue aux Geôles (Gardien des Geôles d'Astrub) -------------
+G = {'type': 'prime', 'pnj': 'geolier', 'rendre': 'geolier', 'serie': 'Avis de recherche', 'repetable': 'semaine'}
+for qid, nom, niv, monstre, carte, texte in [
+    ('avis_fouduglen', "On recherche Fouduglen l'écureuil", 20, 'fouduglen_l_ecureuil', '2_-18', "Fouduglen parcourt la ville d'Astrub à la recherche des glands succulents à se mettre sous la dent."),
+    ('avis_sam', 'On recherche Sam Sagaz', 20, 'sam_sagaz', '7_-12', "Sam Sagaz a été aperçu dans les prairies d'Astrub.\nIl est condamné à l'emprisonnement dans les geôles de la milice."),
+    ('avis_frakacia', 'On recherche Frakacia Leukocytine', 30, 'frakacia_leukocytine', '0_-25', "Certains disent avoir vu Frakacia Leukocytine du côté de la Forêt d'Astrub.\nElle est recherchée pour ponctions illégales d'hémoglobine.\nCondamnée à l'emprisonnement à Astrub.")]:
+    Q[qid] = {**G, 'nom': nom, 'niveau': niv, 'texte': texte + "\n\nUne traque par semaine : l'avis revient le lundi.",
+              'etapes': [{'nom': nom, 'objectifs': [elite(f"Capturer {nom.replace('On recherche ', '')}", monstre, carte)]}],
+              'merci': "Au trou ! La Milice te remercie, et la prime est à toi.",
+              'recompense': {**rec(4, niv), 'sac': 'epique', 'pepites': niv}}
+
+# --- Contrats du jour (Quêtes roadmap 2A) : titres officiels des quêtes d'Astrub et une ligne de contexte par sous-zone -------------
+CONTRATS = {'titres': {
+  '95': [("Les paroles s'envolent, les aigris restent", "Des Pious se battent pour une miette sur la place du Zaap. La Milice compte sur toi pour ramener le calme."),
+         ('Combat de rue', "Les ruelles de la Cité sont devenues un ring. Fais le ménage avant que les marchands ne ferment boutique."),
+         ('Crise sanitaire', "Les Pious nichent partout et les toits d'Astrub ne s'en remettent pas. Nettoie, la Milice paiera le savon.")],
+  '98': [('Le repos est dans le champ', "Les fleurs des Champs d'Astrub ont décidé de mordre. Les paysans voudraient faire la sieste en paix."),
+         ("Qui sème le vent récolte l'Artempeth", "Les Tournesols et leurs amis envahissent les récoltes. Coupe-les court."),
+         ("C'est pourtant naturel", "Une Rose qui attaque, ce n'est pas naturel. Va expliquer ça aux Champs.")],
+  '173': [('La petite mission dans la prairie', "Les Larves pullulent dans les Prairies d'Astrub. Une petite mission, qu'ils disaient."),
+          ('On marche sur des œufs', "Les Larves pondent partout. Avance doucement, frappe fort."),
+          ('Série animalière', "Les naturalistes d'Astrub veulent moins de Larves dans leurs croquis. Aide-les.")],
+  '335': [("Comme un pichon hors de l'eau", "Les Pichons des Calanques sortent de l'eau pour mordre les baigneurs. Renvoie-les au fond."),
+          ("Ça tombe à l'eau", "Les pêcheurs des Calanques n'attrapent plus rien : les Pichons les attrapent d'abord."),
+          ("Trempette dans un verre d'eau", "Une baignade tranquille aux Calanques ? Pas tant que les Pichons font la loi.")],
+  '96': [('Golémancien', "Les Doas de la Carrière d'Astrub ont pris goût aux mineurs. Remets-les à leur place : dans la roche."),
+         ('Ça sent le gaz', "Quelque chose remue au fond de la Carrière. Ce n'est sûrement pas un mineur."),
+         ('Le génie se meut', "Les pierres de la Carrière bougent toutes seules. La Milice préférerait qu'elles arrêtent.")],
+  '97': [('Balade en forêt', "La Forêt d'Astrub n'est plus une promenade. Les Sangliers chargent tout ce qui bouge."),
+         ('Le rebelle de la forêt', "Les bûcherons n'osent plus entrer dans la Forêt d'Astrub. Ouvre-leur le chemin."),
+         ("Légende d'automne", "Les feuilles tombent, les Prespics aussi si tu t'y prends bien.")],
+  '30': [('Les touffes des héros', "Les Bouftous de Tainéla piétinent tout. Un héros, ça se reconnaît à sa laine sur les bottes."),
+         ('Déjeuner à la fourchette', "Les bergers de Tainéla ont faim et les Bouftous ne se laissent pas faire. Donne-leur un coup de main."),
+         ('Restauration rapide', "Les auberges d'Astrub manquent de gigot. Tainéla en déborde. Fais le lien.")],
+  '102': [("L'invasion des profanateurs de sépultures", "Le Cimetière d'Astrub ne dort plus. Recouche ses habitants, de force s'il le faut."),
+          ('Six pieds sous terre', "Les Ouassingues creusent, les Gargrouilles volent. Le gardien du Cimetière n'en dort plus."),
+          ('La coupe des vices', "Des pierres tombales qui marchent, ce n'est pas bon pour le commerce des fleurs.")],
+  '843': [('De vrais rats de bibliothèque', "Les Vilinsekts ont vidé une bibliothèque entière dans leurs planques. Va chercher les livres, et les voleurs."),
+          ("Les deux font l'impair", "Les Vilinsekts volent toujours par deux. Les attraper par deux, c'est mieux.")],
+}}
+
 # --- Succès officiels (achievements) ----------------------------------------------------------------------
 def suc(nom, did, desc, cat, sous, pts, icone, obj, ratio=0, objet=None):
     s = {'nom': nom, 'dofusId': did, 'description': desc, 'categorie': cat, 'sousCategorie': sous, 'points': pts, 'icone': icone, 'objectifs': obj}
@@ -361,5 +433,5 @@ S['dans_les_nuages'] = suc('Dans les nuages', 840, 'Obtenir les Succès suivants
 S['tour_du_monde'] = suc('Le tour du monde en 27 donjons', 559, 'Terminer la série des quêtes du tour du monde.', 'Donjons', 'Le tour du monde', 50, 203,
     [{'nom': q[1], 'quete': q[0]} for q in TDM], 5)
 S['tour_du_monde']['recompense']['titre'] = 'Globe-trotteur'
-json.dump({'pnj': PNJ, 'quetes': Q, 'succes': S}, open(OUT, 'w'), ensure_ascii=False, indent=1)
+json.dump({'pnj': PNJ, 'quetes': Q, 'succes': S, 'contrats': CONTRATS}, open(OUT, 'w'), ensure_ascii=False, indent=1)
 print(len(Q), 'quêtes', len(S), 'succès')
