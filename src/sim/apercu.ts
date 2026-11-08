@@ -26,6 +26,11 @@ export function apercuSort(world: World, id: SkillId, aim: { x: number; y: numbe
   const vivants = world.monsters.filter(m => !m.dead && m.state !== 'spawn');
   const dans = (test: (m: (typeof vivants)[number]) => boolean) => vivants.filter(test).map(m => m.id);
   const hz = d.hit, zb = p.zoneBonus(id), pp = p.porteePlus(id);   // pouvoirs officiels (0.3)
+  // Forgelance Désarmé : Phalange et Prélude au Fer se lancent sur la Lance plantée (zone autour d'elle)
+  if (d.self && d.lance?.surLance && p.lance && hz.shape === 'circle') {
+    const L = p.lance, r = hz.radius * area + zb;
+    return { portee: 0, zone: { kind: 'circle', x: L.x, y: L.y, r }, cibles: dans(m => Math.hypot(m.x - L.x, m.y - L.y) <= r + m.radius) };
+  }
   if (d.self) return { portee: 0, zone: null, cibles: [] };
   if (d.move) {
     const at = p.landing(id, aim, world), r = hz.shape === 'circle' ? hz.radius * area + zb : 0;

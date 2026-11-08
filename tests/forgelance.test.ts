@@ -8,6 +8,7 @@ import { GridMap, type MapData } from '../src/sim/gridmap';
 import { NO_INPUT, type PlayerInput } from '../src/sim/input';
 import { CASE } from '../src/sim/monster';
 import { World } from '../src/sim/world';
+import { apercuSort } from '../src/sim/apercu';
 
 const carte = JSON.parse(readFileSync(new URL('../public/assets/cartes/5_-27/carte.json', import.meta.url), 'utf8')) as MapData;
 const STEP = 1 / 60;
@@ -104,6 +105,21 @@ describe('Forgelance (maquette Forgelance, 2026-11-08)', () => {
     press(w, 'phalange'); idle(w, 0.5);
     expect(p.shield).toBeGreaterThan(0);
     expect(q.shield).toBeGreaterThan(0);
+  });
+
+  it('Prélude au Fer, Désarmé : se lance sur la Lance (aperçu, effet et bonus autour d\'elle, pas autour du joueur)', () => {
+    const w = fl(), p = w.player;
+    niveau(p, 60);
+    const q = w.ajouterJoueur('iop'), L = { x: p.x + 220, y: p.y };
+    p.lance = { ...L, t: 1 }; q.x = L.x + 20; q.y = L.y;
+    const ap = apercuSort(w, 'prelude_fer', L);
+    expect(ap?.zone).toMatchObject({ kind: 'circle', x: L.x, y: L.y });
+    w.drainEvents();
+    press(w, 'prelude_fer'); idle(w, 0.3);
+    expect(q.mods.some(m => m.src === 'prelude')).toBe(true);
+    expect(p.mods.some(m => m.src === 'prelude')).toBe(false);   // le joueur est loin de sa Lance
+    const fx = w.drainEvents().find(e => e.k === 'spell' && e.id === 'prelude_fer') as { x: number; y: number } | undefined;
+    expect(fx?.x).toBeCloseTo(L.x);
   });
 
   it('chaque Forgelance a sa propre Lance en coop', () => {
