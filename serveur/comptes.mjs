@@ -207,5 +207,23 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
   }, 30_000);
   minuterie.unref();
 
-  return { route, copieNocturne, pret, stats: () => q.nb.get(), fermer: () => { clearInterval(minuterie); db.close(); } };
+  // ——— parties tenues par le serveur (maquette « Vrai multi : » 1A, 4A) : le serveur lit le perso du compte et le sauve lui-même ———
+  /** Perso d'un emplacement pour une partie : null si le jeton ne vaut rien ou si l'emplacement est vide. */
+  function persoPartie(jeton, n) {
+    const i = emplacement(n);
+    if (typeof jeton !== 'string' || !/^[0-9a-f]{64}$/.test(jeton) || i == null) return null;
+    const c = q.session.get(empreinte(jeton), maintenant());
+    const r = c && q.persos.all(c.id).find(x => x.emplacement === i);
+    if (!r) return null;
+    try { return { compte: c.id, emplacement: i, perso: JSON.parse(r.donnees), testeur: vue(c).testeur }; } catch { return null; }
+  }
+  /** Sauve le perso joué dans une partie, daté de maintenant : une copie plus ancienne envoyée par le jeu sera refusée (409). */
+  function sauverPartie(compte, n, perso) {
+    if (!q.perso.get(compte, n)) return false;   // supprimé entre-temps : on ne le recrée pas
+    const maj = maintenant();
+    q.ecrire.run(compte, n, JSON.stringify({ ...perso, maj }), maj);
+    return true;
+  }
+
+  return { route, copieNocturne, pret, persoPartie, sauverPartie, stats: () => q.nb.get(), fermer: () => { clearInterval(minuterie); db.close(); } };
 }
