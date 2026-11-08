@@ -32,7 +32,7 @@ export class WorldView {
   private viewT = 0;
   /** Bouts de portes (sim/world.ts). `vers` = carte où elle mène (préchargée à l'approche, maquette Entrées 2A) ;
    *  `sortie` = sortie d'un intérieur. */
-  portes: { tag: string; x: number; y: number; vers?: string; sortie?: boolean; dedans?: boolean }[] = [];
+  portes: { tag: string; x: number; y: number; vers?: string; sortie?: boolean }[] = [];
   /** Distance (monde) à laquelle on précharge ce qui est derrière une porte : 6 cases. */
   static readonly APPROCHE = 6 * 48;
   /** Cartes en téléchargement, et textures prêtes à envoyer à la carte graphique (une par image, voir fetchMap). */
@@ -93,9 +93,8 @@ export class WorldView {
     for (const m of this.wg.world.maps) if (this.texturesReady(m)) { this.slots.get(m.tag)!.state = 'loading'; this.build(m); }
     this.pump(Infinity);   // au lancement, tout de suite (l'écran de chargement couvre)
     // paillasson à chaque sortie d'intérieur, comme Sanstour (Mathis 2026-11-08) : dalle de pierre au soleil vert qui luit,
-    // posée sur la case de sortie officielle (la boîte de survol de la carte Dofus 3 quand elle existe), visible dans sa salle.
-    // Aussi aux passages entre deux salles (boutique <-> grenier de Kerubim) : sinon rien ne les montre
-    if (this.scene.textures.exists('paillasson')) for (const e of this.portes) if (e.sortie || e.dedans) {
+    // posée sur la case de sortie officielle (la boîte de survol de la carte Dofus 3 quand elle existe), visible dans sa salle
+    if (this.scene.textures.exists('paillasson')) for (const e of this.portes) if (e.sortie) {
       const s = this.caseDeSortie(e);
       const im = this.scene.add.image(s.x, s.y, 'paillasson').setScale(WorldView.PAILLASSON).setDepth(SOL + 3).setData('po', 1).setVisible(false).setTint(this.tint);
       const soleil = this.scene.textures.exists('paillasson_soleil')
@@ -420,23 +419,6 @@ export class WorldView {
   private devant(im: Phaser.GameObjects.Image, oui: boolean) {
     const p = this.paillassons.find(q => q.im === im);
     im.setDepth(oui ? 1e6 - 7 : SOL + 3); p?.soleil?.setDepth(oui ? 1e6 - 6.5 : SOL + 4); p?.etincelles?.setDepth(oui ? 1e6 - 6 : SOL + 5);
-  }
-  /** Forme de porte officielle sous le pointeur (sx, sy : point du monde à l'écran), lue au pixel dans l'atlas des
-   *  contours (l'intérieur y est gardé à 1/255). Rend son centre à l'écran, ou null. */
-  survolSous(sx: number, sy: number): { x: number; y: number } | null {
-    const cle = `survols_${this.prefix}`;
-    if (!this.scene.textures.exists(cle)) return null;
-    const tex = this.scene.textures.get(cle), S = GridMap.S;
-    for (const m of this.wg.world.maps) {
-      if (!m.survols || this.slots.get(m.tag)?.state !== 'ready') continue;
-      for (const q of m.survols) {
-        const fr = tex.get(q.f), c = this.wg.toScreen(q.x, q.y);
-        const lx = Math.floor((sx - c.x) / S + fr.width / 2), ly = Math.floor((sy - c.y) / S + fr.height / 2);
-        if (lx < 0 || ly < 0 || lx >= fr.width || ly >= fr.height) continue;
-        if ((this.scene.textures.getPixelAlpha(lx, ly, cle, q.f) ?? 0) > 0) return c;
-      }
-    }
-    return null;
   }
   /** Teinte du contour (le lilas de Sanstour). */
   static readonly LILAS = 0xe2d8ff;

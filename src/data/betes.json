@@ -668,7 +668,7 @@
  "dragonnet": {
   "dofusId": 8077,
   "name": "Dragonnet",
-  "look": 9469,
+  "look": 403,
   "atlas": "osa_dragonnet",
   "rang": 2,
   "element": "feu",

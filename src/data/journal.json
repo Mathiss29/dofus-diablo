@@ -229,8 +229,7 @@
           "Incarnam a ses 3 vrais Zaaps (Route des âmes, Pâturages, Cimetière) ; un Zaap découvert s'annonce et s'allume sur la carte (M).",
           "Toutes les portes d'Astrub s'entourent au survol d'un fin trait lilas, comme dans Dofus 3 et sur Sanstour : il suit la forme officielle de chaque embrasure (Taverne, Banque, Milice, ateliers…), même quand la porte est peinte dans le bâtiment.",
           "Un paillasson attend à la sortie de chaque intérieur, comme sur Sanstour : une dalle de pierre au soleil vert qui luit et pétille, sur la case de sortie officielle. Survole-le, il s'entoure ; clique dessus pour sortir.",
-          "Les Égouts d'Astrub (13 salles, de la plaque d'égout [5,-17] à la sortie [7,-9]) et les Souterrains d'Astrub (9 salles de mine, entrée en [1,-17]) sont ouverts, avec leurs monstres officiels.",
-          "Entrer et sortir plus simplement : clique n'importe où dans le contour d'une porte pour y entrer, et la souris un peu au-dessus d'une porte sans contour (boutique de Kerubim) suffit. Les passages entre deux salles (boutique et grenier de Kerubim) ont aussi leur paillasson, et un clic sur la porte par laquelle tu viens d'arriver te fait ressortir tout de suite."
+          "Les Égouts d'Astrub (13 salles, de la plaque d'égout [5,-17] à la sortie [7,-9]) et les Souterrains d'Astrub (9 salles de mine, entrée en [1,-17]) sont ouverts, avec leurs monstres officiels."
         ],
         "Combat": [
           "Coûts officiels des points : Sagesse 3 points, Force, Intelligence, Chance et Agilité 1 point jusqu'à 100 puis 2, 3 et 4 par tranche de 100 (tes points déjà placés te sont rendus). La Chance donne +1 Prospection par 10, l'Intelligence et les Soins renforcent tes soins, et l'Agilité fait courir un peu plus vite (+1 % par 20, 10 % au plus).",
@@ -245,7 +244,8 @@
           "Le Zaap du Bastion tourbillonne et scintille comme les autres, et affiche son nom au survol (l'arche du Havre-Sac aussi).",
           "La flèche ne part plus dans le mauvais sens quand le but est dans un bâtiment (Capitaine des Kerubims dans la Tour de la Milice, Cité d'Astrub, donjons).",
           "Les bêtes de l'Osamodas ne marchent plus sur leur maître : elles le suivent en éventail à deux cases derrière lui et s'écartent quand il recule sur elles.",
-          "Les familiers ont enfin leur vrai visage : le Chienchien n'est plus un vieux sage ni le Tanuk un cube de glace. Presque tous montraient un autre dessin que le leur."
+          "Les familiers ont enfin leur vrai visage : le Chienchien n'est plus un vieux sage ni le Tanuk un cube de glace. Presque tous montraient un autre dessin que le leur.",
+          "Osamodas : le Dragonnet (Éveil de la Dragoune) ne glisse plus figé ; il prend l'apparence animée du Dragonnet Rouge officiel (repos, course, trois attaques)."
         ],
         "En coulisses": []
       }
