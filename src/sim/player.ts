@@ -53,6 +53,8 @@ export class Player extends Entity {
   kamas = 0;
   /** Butin au sol affiché et aspiré (choix 4C, réglé dans l'inventaire) : 0 tout, 1 Rare et plus, 2 Épique et plus. */
   lootFilter = 0;
+  /** « Équipement en trop » 5B : les objets Communs ramassés sont brisés tout seuls, leurs runes vont au sac (réglage à cocher). */
+  autoBrisage = false;
   /** Objet au sol que l'on va ramasser (clic). */
   pickupId: number | null = null;
   equipment: Partial<Record<EquipSlot, Item>> = {};

@@ -499,5 +499,14 @@ S['dans_les_nuages'] = suc('Dans les nuages', 840, 'Obtenir les Succès suivants
 S['tour_du_monde'] = suc('Le tour du monde en 27 donjons', 559, 'Terminer la série des quêtes du tour du monde.', 'Donjons', 'Le tour du monde', 50, 203,
     [{'nom': q[1], 'quete': q[0]} for q in TDM], 5)
 S['tour_du_monde']['recompense']['titre'] = 'Globe-trotteur'
+
+# Collection d'apparences (maquette « Équipement en trop » 1C) : un succès par panoplie dont on a collectionné
+# toutes les pièces visibles (coiffe, cape, bouclier ; au moins deux), en les brisant ou en les recyclant
+ITEMS = json.load(open(os.path.join(os.path.dirname(__file__), '..', '..', 'src', 'data', 'items.json'), encoding='utf-8'))
+for sid, pano in ITEMS['sets'].items():
+    vis = [str(i) for i in pano['items'] if ITEMS['equipment'].get(str(i), {}).get('slot') in ('chapeau', 'cape', 'bouclier')]
+    if len(vis) < 2: continue
+    S['garde_robe_' + sid] = suc(pano['name'], 0, f"Collectionner l'apparence de chaque pièce visible : {pano['name']}.", 'Collection', 'Garde-robe',
+        5 * len(vis), 82, [{'nom': ITEMS['equipment'][i]['name'], 'apparence': i} for i in vis])
 json.dump({'pnj': PNJ, 'quetes': Q, 'succes': S, 'contrats': CONTRATS}, open(OUT, 'w'), ensure_ascii=False, indent=1)
 print(len(Q), 'quêtes', len(S), 'succès')

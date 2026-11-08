@@ -79,7 +79,7 @@ export interface WorldOptions {
   /** Boutiques des PNJ (src/data/boutique.json) : articles et prix en Pépites. */
   boutiques?: Record<string, { id: string; prix: number }[]>;
   /** Objets d'apparat officiels (src/data/apparat.json) et leur prix en Pépites chez Emp (boutique.json, apparat_prix). */
-  apparats?: { objets: Record<string, { slot: string }>; prix: Record<string, number> };
+  apparats?: { objets: Record<string, { slot: string; collection?: boolean }>; prix: Record<string, number> };
   /** Partie de test (#test) : réglages du panneau F1 ; absent dans une vraie partie. */
   test?: ReglagesTest;
   /** Éditeur de placement (F1 › Placement) : placements de cartes pas encore envoyés, qui remplacent ceux de src/data/placements.json. */
@@ -1317,6 +1317,14 @@ export class World {
       } else if (p.pickupId !== d.uid || dist > 44) continue;
       if (d.item) {
         if (p.pickupId === d.uid) p.pickupId = null;
+        const def = this.opts.items?.equipment[d.item.id];
+        if (p.autoBrisage && d.item.rarity === 'commun' && def && !def.familier) {   // 5B : brisé dès le ramassage, ses runes vont au sac
+          const g = briser(this.rng, def, d.item);
+          for (const [id, n] of Object.entries(g)) p.resources[id] = (p.resources[id] ?? 0) + n;
+          this.collectionner(d.item.id);
+          this.emit({ k: 'brisage', n: 1, runes: g, auto: d.item.id });
+          d.t = -1; continue;
+        }
         if (p.bag.length >= Player.BAG_SIZE) { if (!d.warned) this.emit({ k: 'bagFull' }); d.warned = true; d.familier = false; continue; }   // sac plein : l'objet reste au sol
         p.bag.push(d.item);
         this.emit({ k: 'loot', item: d.item });
@@ -1453,12 +1461,20 @@ export class World {
   }
 
   // --- Emp, le Méryde du Recyclage (maquette 0.2, 8A+8B+8C, 9A+9B) ---------------------------------------------
+  /** Collection d'apparences (1C) : le premier exemplaire brisé ou recyclé d'une coiffe, cape ou bouclier débloque son apparence. */
+  private collectionner(id: string) {
+    const p = this.player;
+    if (!this.opts.apparats?.objets[id]?.collection || p.apparats.includes(id)) return;
+    p.apparats.push(id);
+    this.emit({ k: 'apparence', id });
+  }
   private pepites(n: number) { const p = this.player; p.resources[PEPITE] = (p.resources[PEPITE] ?? 0) + n; }
   /** Recycle un objet du sac contre des Pépites (un objet sous cadenas n'est jamais recyclé). */
   recycle(uid: number): boolean {
     const p = this.player, i = p.bag.findIndex(b => b.uid === uid), d = i >= 0 && this.opts.items?.equipment[p.bag[i].id];
     if (i < 0 || p.bag[i].cadenas) return false;
     const n = d ? recycleValue(d, p.bag[i]) : 1;
+    this.collectionner(p.bag[i].id);
     p.bag.splice(i, 1); this.pepites(n);
     this.emit({ k: 'recycle', n: 1, pepites: n });
     return true;
@@ -1469,7 +1485,7 @@ export class World {
     let n = 0, pep = 0;
     p.bag = p.bag.filter(it => {
       if (it.cadenas || RARITIES.indexOf(it.rarity) > max) return true;
-      const d = I?.equipment[it.id]; n++; pep += d ? recycleValue(d, it) : 1; return false;
+      const d = I?.equipment[it.id]; n++; pep += d ? recycleValue(d, it) : 1; this.collectionner(it.id); return false;
     });
     if (n) { this.pepites(pep); this.emit({ k: 'recycle', n, pepites: pep }); }
     return n;
@@ -1568,7 +1584,7 @@ export class World {
       const def = I?.equipment[it.id];
       if (!uids.includes(it.uid) || !def || def.familier || it.cadenas) return true;
       for (const [id, k] of Object.entries(briser(this.rng, def, it))) tout[id] = (tout[id] ?? 0) + k;
-      n++; return false;
+      this.collectionner(it.id); n++; return false;
     });
     for (const [id, k] of Object.entries(tout)) p.resources[id] = (p.resources[id] ?? 0) + k;
     if (n) this.emit({ k: 'brisage', n, runes: tout });
@@ -1579,7 +1595,7 @@ export class World {
     const p = this.player, i = p.bag.findIndex(b => b.uid === uid), it = i >= 0 ? p.bag[i] : null, def = it && this.opts.items?.equipment[it.id];
     if (!it || !def || it.cadenas || def.familier) return false;
     const g = briser(this.rng, def, it);
-    p.bag.splice(i, 1);
+    p.bag.splice(i, 1); this.collectionner(it.id);
     for (const [id, n] of Object.entries(g)) p.resources[id] = (p.resources[id] ?? 0) + n;
     this.emit({ k: 'brisage', n: 1, runes: g });
     return true;
@@ -1592,7 +1608,7 @@ export class World {
       const def = I?.equipment[it.id];
       if (!def || def.familier || it.cadenas || RARITIES.indexOf(it.rarity) > max) return true;
       for (const [id, k] of Object.entries(briser(this.rng, def, it))) tout[id] = (tout[id] ?? 0) + k;
-      n++; return false;
+      this.collectionner(it.id); n++; return false;
     });
     for (const [id, k] of Object.entries(tout)) p.resources[id] = (p.resources[id] ?? 0) + k;
     if (n) this.emit({ k: 'brisage', n, runes: tout });
@@ -1628,7 +1644,7 @@ export class World {
   /** Achat d'un objet d'apparat chez Emp (Apparence 5A) : il rejoint la collection du perso, une fois pour toutes. */
   acheterApparat(id: string): boolean {
     const d = this.opts.apparats?.objets[id], prix = d && this.opts.apparats!.prix[d.slot], p = this.player;
-    if (!d || prix == null || p.apparats.includes(id) || (p.resources[PEPITE] ?? 0) < prix) return false;
+    if (!d || d.collection || prix == null || p.apparats.includes(id) || (p.resources[PEPITE] ?? 0) < prix) return false;
     p.resources[PEPITE] -= prix; if (!p.resources[PEPITE]) delete p.resources[PEPITE];
     p.apparats.push(id);
     this.emit({ k: 'achat', id, prix });
