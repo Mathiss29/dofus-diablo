@@ -704,6 +704,15 @@
             "etiquettes": [
               "Partie de test"
             ]
+          },
+          {
+            "titre": "Les légendaires de classe",
+            "phrase": "23 pouvoirs inventés qui changent la façon dont marche un sort de ta classe.",
+            "details": "Leur jet est tiré au hasard, un Mythique a le jet parfait. Chez Malek, le Codex garde le meilleur jet brisé.",
+            "icone": "sorts",
+            "etiquettes": [
+              "Partie de test"
+            ]
           }
         ],
         "Le monde": [

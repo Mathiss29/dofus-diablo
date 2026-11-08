@@ -44,6 +44,7 @@ import {
 } from '../sim/items';
 import { Player } from '../sim/player';
 import { POUVOIR_PAR_ID } from '../sim/pouvoirs';
+import { PC_PAR_ID } from '../sim/pouvoirsClasse';
 import { dmgMoyen, gradeAuNiveau, type SortOfficiel } from '../sim/sorts';
 import { n1, spellDetail } from './spellTip';
 import { World } from '../sim/world';
@@ -1984,8 +1985,9 @@ export class Windows {
       const o = POUVOIR_PAR_ID[l.id], k = o && Object.keys(p.cls.spells).find(x => p.cls.spells[x].dofusId === o.dofusId);
       const { nom, texte } = lignePouvoir(l, l.sort && p.cls.spells[l.sort]?.name, !!k && p.zoneSeule(k));
       const e = p.etatPouvoir(l.id);
-      return e.actif ? `<div class="leg"><b>${nom}</b> : ${texte}</div>`
-        : `<div class="leg off"><b>${nom}</b> : ${texte} <i>(${e.raison})</i></div>`;
+      const pc = PC_PAR_ID[l.id] ? '<span style="color:#ff9a3c;font-size:11px">Pouvoir de classe</span><br>' : '';
+      return e.actif ? `<div class="leg">${pc}<b>${nom}</b> : ${texte}</div>`
+        : `<div class="leg off">${pc}<b>${nom}</b> : ${texte} <i>(${e.raison})</i></div>`;
     }).join('');
     // 14D : sceau « Nouveau pour le Codex » (0.3) sur un pouvoir pas encore enregistré
     const neuf = p.v03 && [it.legendary, it.legendary2].some(l => l && nouveauPourCodex(p.codex, p.cls.sorts, l)) ? '<div class="leg">✦ Nouveau pour le Codex : brise-le chez Malek pour le garder</div>' : '';

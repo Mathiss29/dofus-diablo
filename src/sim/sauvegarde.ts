@@ -84,7 +84,7 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
   p.almanaxJour = typeof s.almanaxJour === 'string' ? s.almanaxJour : null;
   p.ames = Array.isArray(s.ames) ? s.ames.filter(a => typeof a === 'string') : [];
   p.codexOuvert = !!s.codexOuvert || (Array.isArray(s.codex) && s.codex.length > 0);
-  p.codex = Array.isArray(s.codex) ? s.codex.filter(c => typeof c?.id === 'string').map(c => ({ id: c.id, ...(typeof c.sort === 'string' ? { sort: c.sort } : {}) })) : [];
+  p.codex = Array.isArray(s.codex) ? s.codex.filter(c => typeof c?.id === 'string').map(c => ({ id: c.id, ...(typeof c.sort === 'string' ? { sort: c.sort } : {}), ...(typeof c.value === 'number' && isFinite(c.value) ? { value: c.value } : {}) })) : [];
   p.learned = new Set(s.learned ?? []);
   if (Array.isArray(s.zaaps)) p.zaaps = s.zaaps.filter(z => typeof z?.zone === 'string' && typeof z?.name === 'string');
   p.zonesVues = [...new Set([...(s.zonesVues ?? []), ...p.zonesVues])];

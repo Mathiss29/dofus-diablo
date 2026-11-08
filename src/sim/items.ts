@@ -1,4 +1,5 @@
 import type { Rng } from './math';
+import { pouvoirClasseDuSlot, chancePouvoirClasse, jetPouvoirClasse, PC_PAR_ID, fourchette } from './pouvoirsClasse';
 import { POUVOIR_PAR_ID, textePouvoir, tirerPouvoirs, type CtxPouvoirs } from './pouvoirs';
 
 /** Caractéristiques du perso (noms Dofus). Les élémentaires boostent les sorts de leur élément :
@@ -142,6 +143,8 @@ export const estOfficiel = (l: LegendaryFx) => !!POUVOIR_PAR_ID[l.id];
 export function lignePouvoir(l: LegendaryFx, nomSort?: string, zone = false): { nom: string; texte: string } {
   const o = POUVOIR_PAR_ID[l.id];
   if (o) return { nom: o.sort, texte: textePouvoir(o, zone) };
+  const c = PC_PAR_ID[l.id];
+  if (c) return { nom: c.nom, texte: `${c.texte(l.value)} (jet ${fourchette(c)})` };
   const m = LEGENDARY[l.id as LegendaryId];
   return m ? { nom: m.name, texte: m.text(l.value, nomSort) } : { nom: l.id, texte: '' };
 }
@@ -209,6 +212,12 @@ export function rollItem(id: string, def: ItemDef, rarity: Rarity, rng: Rng, uid
         if ('officiel' in t) return { id: t.officiel, value: 0 };
         const k = rng.pick(ids.filter(x => !pris.has(x))); pris.add(k); return fx(k);
       });
+      // Légendaires de classe inventés (2A + 2D) : le pouvoir de la classe sur cet emplacement remplace parfois le tirage ;
+      // jet aléatoire dans sa fourchette, parfait sur un Mythique (3C). Jamais sur le Légendaire garanti de la quête (8C).
+      const pcd = !ctx.garanti && def.slot !== 'familier' ? pouvoirClasseDuSlot(ctx.classe, def.slot) : null;
+      if (pcd) for (let i = 0; i < res.length; i++) if (rng.next() < chancePouvoirClasse(pcd, ctx.boss)) {
+        res[i] = { id: pcd.id, value: jetPouvoirClasse(pcd, rng, rarity === 'mythique') }; break;
+      }
       it.legendary = res[0]; if (res[1]) it.legendary2 = res[1];
     } else {
       const l = rng.pick(ids);

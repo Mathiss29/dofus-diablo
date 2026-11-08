@@ -44,6 +44,7 @@ import { Chargement, type Arrivee } from './chargement';
 import { spellTipHtml } from './spellTip';
 import { LEGENDARY, RARITY_COLORS, RARITY_NAMES, rollItem } from '../sim/items';
 import { POUVOIR_PAR_ID, V03_PUBLIC } from '../sim/pouvoirs';
+import { PC_PAR_ID } from '../sim/pouvoirsClasse';
 import { exporterJoueur, restaurerJoueur } from '../sim/sauvegarde';
 import { lireBestiaire, noter, nouvelleSession, sauverBestiaire, statsVides } from './carnet';
 import { dernier, enterrer, lireCoffre, lirePersos, sauverCoffre, sauverPerso, supprimerPerso, type Perso, type SorteCoffre } from './persos';
@@ -1035,8 +1036,8 @@ export class ZoneScene extends Phaser.Scene {
           if (e.auto) { this.hud.loot(`${ITEMS.equipment[e.auto]?.name ?? 'Objet'} brisé : ${n} rune${n > 1 ? 's' : ''}`, '#b77cf0'); this.windows?.refresh(); break; }
           this.hud.loot(`${n} rune${n > 1 ? 's' : ''} (${e.n} objet${e.n > 1 ? 's' : ''} brisé${e.n > 1 ? 's' : ''})`, '#b77cf0');
           this.windows?.noteForge({ t: `${e.n > 1 ? `${e.n} objets brisés` : 'Objet brisé'} : ${Object.entries(e.runes).map(([id, k]) => `${k} ${ITEMS.resources[id]?.name ?? id}`).join(', ') || 'aucune rune'}`, c: 'br' }); break; }
-        case 'codex': { const o = POUVOIR_PAR_ID[e.id]; this.hud.loot(`Codex : ${o ? o.sort : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id} enregistré`, '#f08a2c');
-          this.windows?.noteForge({ t: `Pouvoir enregistré dans le Codex : ${o ? o.officiel : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id}`, c: 'ok' }); break; }
+        case 'codex': { const o = POUVOIR_PAR_ID[e.id], c = PC_PAR_ID[e.id]; this.hud.loot(`Codex : ${o ? o.sort : c ? c.nom : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id} enregistré`, '#f08a2c');
+          this.windows?.noteForge({ t: `Pouvoir enregistré dans le Codex : ${o ? o.officiel : c ? c.nom : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id}`, c: 'ok' }); break; }
         case 'capture': this.hud.loot(`${GAME_DATA.monsters[e.monster]?.name ?? 'Archimonstre'} capturé dans une pierre d'âme${e.neuf ? ' (nouveau)' : ''}`, '#ffd27a'); this.windows?.refresh(); break;
         case 'dofusGagne': this.hud.loot(`${DOFUS[e.id]?.nom ?? 'Dofus'} obtenu ! Il est dans tes emplacements de Dofus (Inventaire)`, '#e8c76b'); this.sauver(); this.windows?.refresh(); break;
         case 'dofusPassif': if (e.dofus === 'argente') this.hud.loot(`Souvenir d'Argent : +${e.n ?? 0} PV`, '#e8c76b'); break;   // le bouclier du Cacao se voit déjà (bouclier violet)
@@ -1045,8 +1046,8 @@ export class ZoneScene extends Phaser.Scene {
         // l'objet a changé de place : coffre et perso sauvés ensemble (pas d'objet perdu ni doublé si la page se ferme)
         case 'coffre': sauverCoffre(this.sorteCoffre, this.world.coffre); this.sauver(); this.windows?.refresh(); break;
         case 'codexOuvert': this.hud.loot('Le Codex des pouvoirs s\'ouvre : brise un Légendaire chez Malek pour garder son pouvoir', '#f08a2c'); this.windows?.refresh(); break;
-        case 'impression': { const o = POUVOIR_PAR_ID[e.id]; this.hud.loot('Impression réussie : l\'objet devient Légendaire', '#f08a2c');
-          this.windows?.noteForge({ t: `Impression : ${o ? o.officiel : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id}`, c: 'ok' }); break; }
+        case 'impression': { const o = POUVOIR_PAR_ID[e.id], c = PC_PAR_ID[e.id]; this.hud.loot('Impression réussie : l\'objet devient Légendaire', '#f08a2c');
+          this.windows?.noteForge({ t: `Impression : ${o ? o.officiel : c ? c.nom : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id}`, c: 'ok' }); break; }
         case 'apparence': this.hud.loot(`Apparence débloquée : ${ITEMS.equipment[e.id]?.name ?? 'objet'}`, '#e6b85c'); break;
         case 'fusion': this.windows?.noteForge({ t: `Fusion : ${e.n} ${ITEMS.resources[e.vers]?.name ?? e.vers}`, c: 'br' }); break;
         case 'commande':
