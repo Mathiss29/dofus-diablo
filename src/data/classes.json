@@ -1068,7 +1068,7 @@
     "icon": 12776,
     "element": "neutre",
     "cooldown": 0,
-    "desc": "Augmente les Invocations du lanceur et réduit le coût en PA des sorts d'invocation Osamodas.\n\nToutes les invocations Osamodas meurent au début du tour du lanceur tant qu'il est sous les effets du sort.",
+    "desc": "Augmente les Invocations du lanceur pendant 6 s.\n\nQuand l'effet se termine, les invocations en trop repartent, en commençant par les plus anciennes.",
     "duration": 0.4,
     "impactAt": 0.16,
     "cancelAt": 0.26,

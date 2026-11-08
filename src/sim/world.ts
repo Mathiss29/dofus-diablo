@@ -1087,6 +1087,7 @@ export class World {
       m.update(dt, this.cibleDe(m), this);
     }
     for (const b of this.betes) b.update(dt, this);
+    for (const q of this.players) this.renvoyerSurplus(q);
     this.betes = this.betes.filter(b => !(b.dead && b.t <= 0));
     if (this.zone.open && !p.dead && (this.appelT -= dt) <= 0) { this.appelT = AGGRO.appelAide.periode; this.appelAide(); }
     const M = AGGRO.massacre;
@@ -2263,7 +2264,17 @@ export class World {
   /** Bête vivante invoquée par ce sort (une par sort, la touche la rappelle ou l'éveille). */
   beteDe(sort: string): Bete | undefined { return this.betes.find(b => b.sort === sort && !b.dead); }
   /** Coût en Invocations (2A) : 1 / 2 / 3 selon le rang ; le joueur en a 1 de base + objets + Cortège Sauvage. */
-  invocationsPrises(): number { return this.betes.filter(b => !b.dead && !b.dompteT && !b.finT).reduce((a, b) => a + BETES[b.base].rang, 0); }
+  invocationsPrises(p?: Player): number { return this.betes.filter(b => !b.dead && !b.dompteT && !b.finT && !b.horsCompte && (!p || b.owner === p)).reduce((a, b) => a + BETES[b.base].rang, 0); }
+  /** Cortège Sauvage : quand le bonus d'Invocations retombe, les bêtes en trop repartent (les plus anciennes d'abord). */
+  renvoyerSurplus(p: Player) {
+    const max = this.invocationsMax(p);
+    for (const b of this.betes) {
+      if (this.invocationsPrises(p) <= max) return;
+      if (b.dead || b.owner !== p || b.dompteT || b.finT || b.horsCompte) continue;
+      this.emit({ k: 'status', x: b.x, y: b.y - 40, text: 'Repart', color: '#a89fb6' });
+      for (const q of this.betes) if (q === b || (q.horsCompte && !q.dead && q.owner === p && q.sort === b.sort)) { q.dead = true; q.t = 0; }
+    }
+  }
   invocationsMax(p: Player): number { if (this.test?.invocations) return 99;   // partie de test (Outil test 7B)
     return REGLES_BETES.invocationsBase + Math.max(0, p.stat('invocations')); }
   /** Fait apparaître la bête d'un sort au point visé (case libre la plus proche). */

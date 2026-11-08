@@ -925,6 +925,15 @@
             "phrase": "Moins de saccades au premier lancer d'un sort et quand tu frappes un gros groupe.",
             "details": "Ton perso, les ombres, les barres de vie et l'interface coûtent bien moins cher à afficher à chaque image.",
             "icone": "options"
+          },
+          {
+            "titre": "Cortège Sauvage n'est plus infini",
+            "phrase": "Après les 6 s de Cortège Sauvage, les bêtes en trop repartent, les plus anciennes d'abord.",
+            "details": "Avant, la meute gonflée restait pour toujours.",
+            "icone": "degats",
+            "etiquettes": [
+              "Osamodas"
+            ]
           }
         ],
         "Corrections": [

@@ -990,12 +990,13 @@ export class Player extends Entity {
       }
       if (d.invoque) {
         const key = d.invoque, cout = 1, max = world.invocationsMax(this);
-        while (world.betes.length && world.invocationsPrises() + cout > max) {   // place pour la nouvelle : la plus ancienne s'en va
-          const old = world.betes.find(b => !b.dead); if (!old) break; old.mourir(world);
+        while (world.invocationsPrises(this) + cout > max) {   // place pour la nouvelle : la plus ancienne s'en va
+          const old = world.betes.find(b => !b.dead && b.owner === this && !b.dompteT && !b.finT && !b.horsCompte); if (!old) break; old.mourir(world);
+          for (const j of world.betes) if (j.horsCompte && !j.dead && j.owner === this && j.sort === old.sort) j.mourir(world);   // sa jumelle part avec elle
         }
         const b = world.invoquer(this, key, s.id, s.tx, s.ty), ej = key === 'epee_vorace' ? this.pcv('pc-sacrieur-N') : 0;
         if (b && ej) {   // Épées jumelles : deux épées plus faibles
-          const b2 = world.invoquer(this, key, s.id, s.tx + CASE, s.ty);
+          const b2 = world.invoquer(this, key, s.id, s.tx + CASE, s.ty); if (b2) b2.horsCompte = true;
           for (const e of [b, b2]) if (e) { e.force = ej / 100; e.maxHp = Math.max(1, Math.round(e.maxHp * ej / 100)); e.hp = e.maxHp; }
         }
       }
