@@ -1,4 +1,5 @@
 import type { CleDonjon } from './arene';
+import type { CommandeFM } from './forgemagie';
 import { Entity } from './entity';
 import type { ClassDef, ComboHit, Element, SkillId, SpellDef } from './defs';
 import { WEAPONS } from './data';
@@ -60,6 +61,8 @@ export class Player extends Entity {
   zonesVues: string[] = [];
   /** Clé d'un donjon encore valable (maquette « Donjons en vagues » 14A) : on y revient à la vague atteinte. */
   cleDonjon: CleDonjon | null = null;
+  /** Commande en cours chez Malek le Forgemage (maquette Forgemagie UI 9E) : l'objet lui est confié, il revient quand c'est fini. */
+  commandeFM: CommandeFM | null = null;
   /** Apparat (maquette Apparence 5A) : objets d'apparat officiels possédés (id Dofus), et ceux posés par-dessus
    *  la coiffe, la cape ou le bouclier (case Apparence de l'inventaire). « 0 » cache l'objet porté. Rien ne change les stats. */
   apparats: string[] = [];

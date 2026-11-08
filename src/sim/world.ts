@@ -7,8 +7,8 @@ import { NO_INPUT, type PlayerInput } from './input';
 import { AGGRO, CASE, Monster, TOUR } from './monster';
 import { jetOfficiel } from './danger';
 import { poolNiveau, rangDe, tirerButin, type CtxButin, type Rang } from './butin';
-import { briser, chanceRune, coutKamas, forger, fusionVers, FUSION_N, RUNES, runesDe } from './forgemagie';
-import { FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, recycleResource, recycleValue, rollItem, type Item, type ItemsData, type Rarity, type Stat } from './items';
+import { briser, chanceRune, coutKamas, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
+import { FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, recycleResource, recycleValue, rollItem, type EquipSlot, type Item, type ItemsData, type Rarity } from './items';
 import { Player } from './player';
 import { initiativeBonus, removalChance } from './caracs';
 import { planWave } from './waves';
@@ -868,6 +868,7 @@ export class World {
       if ((c.t -= dt) <= 0 || p.state !== 'free' || Math.hypot(p.x - c.x, p.y - c.y) > 60) this.calme = null;
     }
     this.updateArene(dt);
+    this.updateCommande(dt);
     for (const g of this.groups) {
       if (g.retire || g.members.some(m => !m.dead)) continue;
       if (!g.cleared) {
@@ -1505,25 +1506,73 @@ export class World {
     p.kamas -= kamas;
     if (!--p.resources[rune]) delete p.resources[rune];
     if (Object.values(p.equipment).includes(it)) p.recompute();
-    this.emit({ k: 'forge', uid, rune, issue: r.issue, stat: r.stat, gain: r.gain, pertes: r.pertes, kamas });
+    this.emit({ k: 'forge', uid, rune, issue: r.issue, stat: r.stat, gain: r.gain, pertes: r.pertes, kamas, exo: it.exo === r.stat });
     return true;
   }
-  /** Mode « viser » (8D) : le forgemage pose les runes de la caractéristique, de la plus grosse qui passe à la plus petite,
-   *  jusqu'à ce que la ligne atteigne la cible, ou qu'il n'y ait plus de rune ni de kamas (au plus 200 essais). */
-  viserForge(uid: number, stat: Stat, cible: number): number {
+  // --- Commande à Malek (maquette « Forgemagie UI » 9A-9E) : objectifs, planchers, budget ; estimée, puis confiée --------------
+  /** Runes du sac (stock de Malek pour une commande). */
+  private stockRunes(): Record<string, number> {
+    const r = this.player.resources; return Object.fromEntries(Object.keys(r).filter(id => RUNES[id] && r[id] > 0).map(id => [id, r[id]]));
+  }
+  /** 9D : estimation de la commande (simulée sur des copies, rien ne change). */
+  estimerCommande(uid: number, cmd: Commande): Estimation | null {
+    const it = this.objetForgeable(uid), def = it && this.opts.items!.equipment[it.id];
+    return it && def ? estimerCommande(this.rng, def, it, this.stockRunes(), this.player.kamas, cmd) : null;
+  }
+  /** 9E : confie l'objet à Malek (une commande à la fois). Il pose les runes du sac, paie avec les kamas (commission comprise,
+   *  au plus le budget), et rend l'objet quand le temps de travail est passé. L'objet porté est d'abord retiré. */
+  confierCommande(uid: number, cmd: Commande): boolean {
     const p = this.player, it = this.objetForgeable(uid), def = it && this.opts.items!.equipment[it.id];
-    if (!it || !def) return 0;
-    let essais = 0, kamas = 0;
-    const rs = runesDe(stat).reverse();
-    while (essais < 200 && (it.stats[stat] ?? 0) < cible) {
-      const reste = cible - (it.stats[stat] ?? 0);
-      const r = rs.find(id => (p.resources[id] ?? 0) > 0 && RUNES[id].val <= Math.max(reste, RUNES[rs[rs.length - 1]].val) && !('refus' in chanceRune(def, it, id)) && p.kamas >= coutKamas(def, id, true));
-      if (!r) break;
-      kamas += coutKamas(def, r, true);
-      this.forgemager(uid, r, true); essais++;
-    }
-    this.emit({ k: 'viser', uid, essais, atteint: (it.stats[stat] ?? 0) >= cible, kamas });
-    return essais;
+    if (!it || !def || p.commandeFM || !runeCommande(def, it, this.stockRunes(), cmd)) return false;
+    const avant = { ...it.stats }, stock = this.stockRunes();
+    const rapport = executerCommande(this.rng, def, it, stock, p.kamas, cmd);
+    if (!rapport.essais) return false;
+    const slot = (Object.keys(p.equipment) as EquipSlot[]).find(k => p.equipment[k] === it);
+    if (slot) { delete p.equipment[slot]; p.recompute(); } else p.bag = p.bag.filter(b => b !== it);
+    p.kamas -= rapport.kamas;
+    for (const [id, n] of Object.entries(rapport.runes)) { p.resources[id] -= n; if (p.resources[id] <= 0) delete p.resources[id]; }
+    const total = dureeCommande(rapport.essais, !!this.test);
+    p.commandeFM = { item: it, reste: total, total, rapport, avant };
+    this.emit({ k: 'commande', etat: 'confiee', reste: total, essais: rapport.essais });
+    return true;
+  }
+  private updateCommande(dt: number) {
+    const c = this.player.commandeFM;
+    if (!c || c.prete) return;
+    if ((c.reste -= dt) <= 0) { c.reste = 0; c.prete = true; this.emit({ k: 'commande', etat: 'prete', reste: 0, essais: c.rapport.essais }); }
+  }
+  /** Reprend l'objet chez Malek une fois la commande finie ; il retourne dans le sac. */
+  retirerCommande(): CommandeFM | null {
+    const p = this.player, c = p.commandeFM;
+    if (!c?.prete) return null;
+    p.bag.push(c.item); p.commandeFM = null;
+    this.emit({ k: 'commande', etat: 'retiree', reste: 0, essais: c.rapport.essais });
+    return c;
+  }
+  /** 6A : grave le nom du perso sur l'objet avec une Rune de Signature (achetée à Malek s'il n'y en a pas dans le sac). */
+  signer(uid: number, nom: string): boolean {
+    const p = this.player, it = this.objetForgeable(uid), id = SIGNATURE.rune;
+    if (!it || it.signe || !nom) return false;
+    if ((p.resources[id] ?? 0) > 0) { if (!--p.resources[id]) delete p.resources[id]; }
+    else if (p.kamas >= SIGNATURE.kamas) p.kamas -= SIGNATURE.kamas;
+    else return false;
+    it.signe = nom;
+    this.emit({ k: 'signature', uid, nom });
+    return true;
+  }
+  /** 8A (Concasseur) : brise d'un coup les objets choisis (jamais un objet sous cadenas). */
+  briserChoix(uids: number[]): number {
+    const p = this.player, I = this.opts.items, tout: Record<string, number> = {};
+    let n = 0;
+    p.bag = p.bag.filter(it => {
+      const def = I?.equipment[it.id];
+      if (!uids.includes(it.uid) || !def || def.familier || it.cadenas) return true;
+      for (const [id, k] of Object.entries(briser(this.rng, def, it))) tout[id] = (tout[id] ?? 0) + k;
+      n++; return false;
+    });
+    for (const [id, k] of Object.entries(tout)) p.resources[id] = (p.resources[id] ?? 0) + k;
+    if (n) this.emit({ k: 'brisage', n, runes: tout });
+    return n;
   }
   /** Brise un objet du sac en runes (7A+7B, chez le forgemage : 11B). Jamais un objet sous cadenas. */
   briserObjet(uid: number): boolean {

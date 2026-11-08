@@ -1,5 +1,5 @@
 {
- "_doc": "Maquette Forgemagie (Mathis 2026-11-07) : 1A 2A 3B 4B 5A 6A+6D 7A+7B 8A+8B+8D 9B 10A+10C 11B. Lu par src/sim/forgemagie.ts. Runes et poids : tables officielles (tools/extraction/runes_export.py). Les chances ne sont pas officielles (Dofus ne publie pas sa formule).",
+ "_doc": "Maquette Forgemagie (Mathis 2026-11-07) : 1A 2A 3B 4B 5A 6A+6D 7A+7B 8A+8B+8D 9B 10A+10C 11B. Fenêtre (Mathis 2026-11-08) : Forgemagie UI : 1B 2A 4A+4B+4C 5A 6A 7A 8A 9A+9B+9C+9D+9E. Lu par src/sim/forgemagie.ts. Runes et poids : tables officielles (tools/extraction/runes_export.py). Les chances ne sont pas officielles (Dofus ne publie pas sa formule).",
  "chances": {
   "_doc": "chance qu'une rune passe : sous le max officiel = base - pente × jet/max (plancher min) ; au-dessus du max (overmax) = overmax au max, descend à overmaxMin au plafond ; ligne nouvelle (exo) = exo, ou exoLourde si la rune pèse au moins seuilLourde",
   "base": 0.75,
@@ -55,6 +55,20 @@
   "_doc": "9B : coût d'un essai = niveau de l'objet × poids de la rune × parPoids (au moins 1) ; 8D : le mode « viser » ajoute la commission",
   "parPoids": 0.5,
   "commission": 0.5
+ },
+ "signature": {
+  "_doc": "6A : la Rune de Signature officielle (7508) grave le nom du perso sur l'objet ; Malek la vend s'il n'y en a pas dans le sac",
+  "rune": "7508",
+  "kamas": 500
+ },
+ "commande": {
+  "_doc": "9A-9E : commande à Malek. Il pose les runes (commission comprise) jusqu'aux objectifs, au budget ou à un plancher ; estimation sur `simulations` essais ; l'objet revient après `parRune` secondes par rune posée (entre min et max), une commande à la fois",
+  "essaisMax": 300,
+  "simulations": 200,
+  "parRune": 6,
+  "min": 30,
+  "max": 300,
+  "test": 3
  },
  "runes": {
   "1519": {

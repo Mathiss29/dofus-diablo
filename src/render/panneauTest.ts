@@ -357,8 +357,9 @@ export class PanneauTest {
         <button type="button" class="b" data-forge>Ouvrir la forgemagie</button>
         <button type="button" class="b g" data-res="${petites}:30">Petites runes ×30</button>
         <button type="button" class="b g" data-res="${grosses}:5">Runes Pa et Ra ×5</button>
+        <button type="button" class="b g" data-res="7508:3">Runes de Signature ×3</button>
       </div>
-      <span class="note">Le forgemage s'ouvre ici avant d'avoir sa place au Bastion des Douze : pose des runes, brise des objets, règle les chances en jouant.</span>`;
+      <span class="note">La fenêtre de Malek (Bastion des Douze), ouverte d'ici : pose des runes, passe une commande (prête en 3 secondes en test), brise au Concasseur.</span>`;
   }
 
   private static monstres() {
