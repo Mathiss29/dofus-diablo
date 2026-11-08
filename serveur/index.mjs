@@ -7,6 +7,7 @@ import { readFileSync } from 'node:fs';
 import { WebSocketServer } from 'ws';
 import { creerComptes } from './comptes.mjs';
 import { chargerSim, Partie } from './partie.mjs';
+import { creerPresence } from './presence.mjs';
 
 const PORT = Number(process.env.PORT ?? 3100);
 const HOTE = process.env.HOTE ?? '127.0.0.1';
@@ -99,7 +100,10 @@ function bonjourCompte(s, sa, d) {
   enJeu.add(cle);
   return { ...reste, compte: c };
 }
+/** Présence en ligne et Bastion partagé (presence.mjs), créée avec le serveur. */
+let presence = null;
 function recu(s, m, brut) {
+  if (presence?.recu(s, m)) return;
   if (m.k === 'ping') return envoyer(s, { k: 'pong', t: m.t ?? null, serveur: Date.now() });
   if (m.k === 'creer') {
     quitter(s);
@@ -135,6 +139,8 @@ function recu(s, m, brut) {
 /** @param {{ comptes?: ReturnType<typeof creerComptes> }} [o] */
 export function creerServeur({ comptes = creerComptes({ dossier: process.env.DONNEES ?? new URL('./donnees', import.meta.url).pathname, origines: ORIGINES }) } = {}) {
   lesComptes = comptes;
+  presence?.fermer();
+  presence = creerPresence({ comptes, envoyer });
   const http = createServer(async (req, res) => {
     const o = req.headers.origin;
     if (o && ORIGINES.has(o)) {
@@ -148,7 +154,7 @@ export function creerServeur({ comptes = creerComptes({ dossier: process.env.DON
     const url = new URL(req.url ?? '/', 'http://diablofus');
     if (req.method === 'GET' && (url.pathname === '/sante' || url.pathname === '/')) {
       res.writeHead(200, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' });
-      res.end(JSON.stringify({ ok: true, jeu: 'diablofus', version: VERSION, depuis: Math.round((Date.now() - depart) / 1000), connectes: ws.clients.size, salons: salons.size, parties: parties().length, connexion: comptes.pret, ...comptes.stats() }));
+      res.end(JSON.stringify({ ok: true, jeu: 'diablofus', version: VERSION, depuis: Math.round((Date.now() - depart) / 1000), connectes: ws.clients.size, salons: salons.size, parties: parties().length, enLigne: presence?.nombre() ?? 0, connexion: comptes.pret, ...comptes.stats() }));
       return;
     }
     try { if (await comptes.route(req, res, url)) return; }
@@ -171,12 +177,12 @@ export function creerServeur({ comptes = creerComptes({ dossier: process.env.DON
       let m; try { m = JSON.parse(brut); } catch { return; }
       if (m && typeof m === 'object') recu(socket, m, brut);
     });
-    socket.on('close', () => quitter(socket));
+    socket.on('close', () => { quitter(socket); presence?.quitter(socket); });
   });
   // battement : coupe les connexions mortes toutes les 30 s
   const battement = setInterval(() => { for (const s of ws.clients) { if (s.vivant === false) { s.terminate(); continue; } s.vivant = false; s.ping(); } }, 30_000);
   ws.on('connection', s => { s.vivant = true; s.on('pong', () => { s.vivant = true; }); });
-  http.on('close', () => { clearInterval(battement); for (const sa of parties()) fermerPartie(sa); comptes.fermer(); });
+  http.on('close', () => { clearInterval(battement); presence?.fermer(); for (const sa of parties()) fermerPartie(sa); comptes.fermer(); });
   return http;
 }
 
