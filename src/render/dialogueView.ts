@@ -122,6 +122,7 @@ export class DialogueView {
     m.style.left = `${r.left + ptr.x * k + 6}px`; m.style.top = `${r.top + ptr.y * k + 6}px`;
     this.root.appendChild(m); this.menu = m;
   }
+  get menuOuvert() { return !!this.menu; }
   fermerMenu() { this.menu?.remove(); this.menu = null; }
 
   /** Survol (8B) : nom du PNJ et ce qu'il propose. */

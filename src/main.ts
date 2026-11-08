@@ -22,7 +22,7 @@ const zone = () => game.scene.getScene('zone') as ZoneScene;
 const accueil = new Accueil(slot => { accueil.hide(); zone().scene.restart({ slot }); },
   // Accueil 8B : essayer une classe 60 s dans les Champs d'Astrub, puis retour à la création
   (classe, sexe, apparence) => { accueil.hide(); zone().scene.restart({ classe, zone: 'champs-astrub', essai: sexe, apparence }); });
-game.events.on('accueil', (page?: 'creation') => { zone().scene.restart({ vitrine: true }); accueil.show(page ?? 'accueil'); });
+game.events.on('accueil', (page?: 'creation' | 'persos') => { zone().scene.restart({ vitrine: true }); accueil.show(page ?? 'accueil'); });
 if (!dev) accueil.show();
 
 // Accès console / tests automatisés
