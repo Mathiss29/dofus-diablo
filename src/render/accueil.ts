@@ -213,7 +213,34 @@ const CSS = `
 #acc .som canvas{width:calc(6*var(--u));height:calc(6*var(--u));margin:calc(1.4*var(--u)) 0 0 calc(2*var(--u));animation:acc-flotte 3s ease-in-out infinite}
 @keyframes acc-flotte{50%{transform:translateY(calc(-.5*var(--u)))}}
 #acc .cn h3{font-family:var(--disp);font-weight:400;font-size:calc(2*var(--u));color:#e6fa9c;margin:0 0 calc(.8*var(--u))}
-#acc .cn p{font-size:calc(.95*var(--u));line-height:1.65;font-weight:700;color:#f1ecd8;margin:0 0 calc(1*var(--u))}
+#acc .som small{font-family:inherit;font-size:calc(.7*var(--u));color:#a8a58e;font-weight:700}
+#acc .jres{font-size:calc(1*var(--u));line-height:1.6;color:#f1ecd8;margin-top:calc(.6*var(--u));max-width:calc(52*var(--u))}
+#acc .june{display:grid;grid-template-columns:repeat(3,1fr);gap:calc(1*var(--u));margin-top:calc(1.6*var(--u))}
+#acc .june>div{background:#332e21;border-radius:calc(.3*var(--u));overflow:hidden}
+#acc .june>div>img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
+#acc .june>div>div{padding:calc(.6*var(--u)) calc(.8*var(--u)) calc(.8*var(--u))}
+#acc .june b{display:flex;align-items:center;gap:calc(.4*var(--u));font-size:calc(.95*var(--u));color:#fbf3d4}
+#acc .june b img{width:calc(1.3*var(--u));height:calc(1.3*var(--u));object-fit:contain}
+#acc .june p{margin:calc(.25*var(--u)) 0 0;font-size:calc(.8*var(--u));line-height:1.45;color:#c9c4ab}
+#acc .je{display:grid;grid-template-columns:calc(2.4*var(--u)) 1fr;gap:calc(.9*var(--u));padding:calc(.7*var(--u)) 0;border-top:1px solid #3a3426}
+#acc .je>img{width:calc(2.4*var(--u));height:calc(2.4*var(--u));object-fit:contain}
+#acc .jt{display:flex;flex-wrap:wrap;align-items:center;gap:calc(.4*var(--u))}
+#acc .jt b{font-size:calc(1.05*var(--u));color:#fbf3d4;margin-right:calc(.2*var(--u))}
+#acc .tag{font-size:calc(.65*var(--u));font-weight:700;color:var(--lime);border:1px solid #5d6b2c;border-radius:calc(1*var(--u));padding:0 calc(.5*var(--u));line-height:1.6;white-space:nowrap}
+#acc .cn .jp{font-size:calc(.95*var(--u));line-height:1.55;font-weight:400;color:#f1ecd8;margin:calc(.15*var(--u)) 0 0}
+#acc .je details{margin-top:calc(.2*var(--u))}
+#acc .je summary{cursor:pointer;list-style:none;color:var(--lime);font-size:calc(.75*var(--u));font-weight:700;width:max-content}
+#acc .je summary::-webkit-details-marker{display:none}
+#acc .je summary::before{content:'▸ '}#acc .je details[open] summary::before{content:'▾ '}
+#acc .cn .je details p{font-size:calc(.85*var(--u));line-height:1.55;font-weight:400;color:#c9c4ab;border-left:2px solid #4a4433;padding-left:calc(.7*var(--u));margin:calc(.3*var(--u)) 0 0}
+#acc .jcourt{margin:0 0 calc(.6*var(--u));padding-left:calc(1.2*var(--u));color:#c9c4ab;font-size:calc(.9*var(--u));line-height:1.55}
+#acc .jcourt li{margin:calc(.25*var(--u)) 0}
+#acc .cn h3{margin-top:calc(1.6*var(--u))}
+#acc .qdn{display:grid;grid-template-columns:1fr 1fr;gap:calc(.6*var(--u));margin-top:calc(.8*var(--u))}
+#acc .qdn>div{display:grid;grid-template-columns:calc(2.2*var(--u)) 1fr;column-gap:calc(.7*var(--u));align-content:start;background:#25261bcc;border:1px solid #3c3c2a;border-radius:calc(.4*var(--u));padding:calc(.7*var(--u)) calc(.8*var(--u))}
+#acc .qdn img{width:calc(2.2*var(--u));height:calc(2.2*var(--u));object-fit:contain;grid-row:span 2}
+#acc .qdn b{font-size:calc(.9*var(--u));color:#fbf3d4}
+#acc .qdn span:last-child{font-size:calc(.75*var(--u));line-height:1.45;color:#c9c4ab;font-weight:600}
 #acc .hero{opacity:0}
 #acc .hero.vu{opacity:1;animation:acc-app .5s ease-out}
 @keyframes acc-app{0%{opacity:0;filter:brightness(3) blur(2px);transform-origin:50% 100%;scale:.92}60%{opacity:1;filter:brightness(1.6)}100%{filter:none;scale:1}}
@@ -223,8 +250,24 @@ const CSS = `
 
 type Page = 'accueil' | 'creation' | 'persos' | 'succes' | 'bestiaire' | 'journal';
 /** Journal (Accueil 3A+3B+3C+3E) : un carnet par journée de travail, écrit à chaque mise à jour (src/data/journal.json). */
-interface Carnet { date: string; titre: string; resume: string; capture?: string; legende?: string; lignes: Record<string, string[]> }
+/** Carnets lisibles (Carnets : 1A…10A) : une entrée = titre court + une phrase, détails repliables, icône officielle, étiquettes.
+ *  Corrections et En coulisses restent une ligne courte. `image` met l'entrée « À la une » (3 tuiles en haut du carnet). */
+export interface Entree { titre: string; phrase: string; details?: string; icone?: string; etiquettes?: string[]; image?: string }
+type Ligne = string | Entree;
+interface Carnet { date: string; titre: string; resume: string; capture?: string; legende?: string; lignes: Record<string, Ligne[]> }
 const CARNETS = (JOURNAL.carnets as Carnet[]).slice().sort((a, b) => b.date.localeCompare(a.date));
+const ICONES = (JOURNAL as { icones?: Record<string, string> }).icones ?? {};
+/** Rubriques écrites en lignes courtes, sans icône ni détails (7A). */
+const COURTES = ['Corrections', 'En coulisses'];
+const icone = (k?: string) => (k && ICONES[k] ? v(`assets/${ICONES[k]}`) : '');
+const entrees = (ls: Ligne[] = []) => ls.filter((l): l is Entree => typeof l !== 'string');
+function entreeHtml(l: Ligne): string {
+  if (typeof l === 'string') return `<div class="je"><span></span><div><p class="jp">${esc(l)}</p></div></div>`;
+  const ic = icone(l.icone);
+  return `<div class="je">${ic ? `<img src="${ic}" alt="">` : '<span></span>'}<div>
+    <div class="jt"><b>${esc(l.titre)}</b>${(l.etiquettes ?? []).map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
+    <p class="jp">${esc(l.phrase)}</p>${l.details ? `<details><summary>Détails</summary><p>${esc(l.details)}</p></details>` : ''}</div></div>`;
+}
 const dateLongue = (d: string) => new Date(`${d}T12:00:00`).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 const CLE_LU = 'diablofus.journal';
 function carnetNonLu(): boolean {
@@ -586,15 +629,20 @@ export class Accueil {
     const zone = JOURNAL.zone, c = this.carnet ? CARNETS.find(x => x.date === this.carnet) : null;
     if (c) {
       const rub = JOURNAL.rubriques.filter(r => c.lignes[r]?.length);
+      const une = Object.values(c.lignes).flatMap(entrees).filter(e => e.image).slice(0, 3);
       return `<div class="jr" data-jr><div class="in">
         <button type="button" class="lire" data-carnet="" style="color:var(--lime)">← Tous les carnets</button>
         <div class="tiny" style="margin-top:calc(1.6*var(--u));font-weight:800">Mises à jour · ${dateLongue(c.date)}</div>
         <h1 style="font-size:calc(3.6*var(--u));margin-top:calc(.4*var(--u))">${dateLongue(c.date)}</h1>
-        <div style="font-weight:800;font-size:calc(1.2*var(--u));color:#e6fa9c;margin-top:calc(.4*var(--u))">${esc(c.titre)}</div>
-        <div class="cn"><nav class="som"><b>DANS CE CARNET</b>${rub.map((r, i) => `<button type="button" data-rub="${i}">${esc(r)}</button>`).join('')}
+        <div style="font-weight:800;font-size:calc(1.2*var(--u));color:#fbf3d4;margin-top:calc(.4*var(--u))">${esc(c.titre)}</div>
+        <div class="jres">${esc(c.resume)}</div>
+        ${une.length ? `<div class="june">${une.map(e => `<div><img src="${v(e.image!)}" alt=""><div><b>${icone(e.icone) ? `<img src="${icone(e.icone)}" alt="">` : ''}${esc(e.titre)}</b><p>${esc(e.phrase)}</p></div></div>`).join('')}</div>` : ''}
+        <div class="cn"><nav class="som"><b>DANS CE CARNET</b>${rub.map((r, i) => `<button type="button" data-rub="${i}">${esc(r)} <small>${c.lignes[r].length}</small></button>`).join('')}
           <canvas data-atlas="${LOOKS.tofu_chimerique?.atlas ?? ''}" width="120" height="120" aria-hidden="true"></canvas></nav>
-          <div>${c.capture ? `<div class="photo" style="transform:none;margin-bottom:calc(2*var(--u))"><img src="${v(c.capture)}" alt=""><small>${esc(c.legende ?? '')}</small></div>` : ''}
-          ${rub.map((r, i) => `<h3 id="rub-${i}">${esc(r)}</h3>${c.lignes[r].map(l => `<p>${esc(l)}</p>`).join('')}`).join('')}</div></div>
+          <div>${!une.length && c.capture ? `<div class="photo" style="transform:none;margin-bottom:calc(2*var(--u))"><img src="${v(c.capture)}" alt=""><small>${esc(c.legende ?? '')}</small></div>` : ''}
+          ${rub.map((r, i) => `<h3 id="rub-${i}">${esc(r)}</h3>${COURTES.includes(r)
+            ? `<ul class="jcourt">${c.lignes[r].map(l => `<li>${esc(typeof l === 'string' ? l : `${l.titre} : ${l.phrase}`)}</li>`).join('')}</ul>`
+            : c.lignes[r].map(entreeHtml).join('')}`).join('')}</div></div>
       </div></div>`;
     }
     const [une, ...autres] = CARNETS;
@@ -634,9 +682,11 @@ export class Accueil {
   /** Fiches ouvertes par-dessus la page. */
   private ouvrir(k: string) {
     if (k === 'quoi-de-neuf') {
-      const c = CARNETS[0], l = (c.lignes['Nouveautés'] ?? Object.values(c.lignes).flat()).slice(0, 5);
+      // 6A : 4 tuiles icône + titre + phrase, les nouveautés « À la une » d'abord
+      const c = CARNETS[0], tout = entrees(c.lignes['Nouveautés'] ?? Object.values(c.lignes).flat());
+      const l = [...tout.filter(e => e.image), ...tout.filter(e => !e.image)].slice(0, 4);
       this.modal = `<h2>Quoi de neuf ?</h2><div class="tiny">Carnet du ${dateLongue(c.date)} · ${esc(c.titre)}</div>
-        <div class="lst" style="gap:calc(.5*var(--u))">${l.map(x => `<div><span class="ok">✦ ${esc(x)}</span></div>`).join('')}</div>
+        <div class="qdn">${l.map(e => `<div>${icone(e.icone) ? `<img src="${icone(e.icone)}" alt="">` : '<span></span>'}<b>${esc(e.titre)}</b><span>${esc(e.phrase)}</span></div>`).join('')}</div>
         <div style="display:flex;gap:calc(.8*var(--u));margin-top:calc(1*var(--u))"><button type="button" class="lbtn" data-carnet="${c.date}">Lire tout le carnet</button>
         <button type="button" class="dbtn" data-fermer-btn>Plus tard</button></div>`;
     } else if (k === 'cimetiere') {
