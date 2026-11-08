@@ -190,6 +190,9 @@ export class ZoneScene extends Phaser.Scene {
     else if (location.hash === '#astrub') this.zoneId = 'champs-astrub';
     else if (location.hash.includes('astrub2')) this.zoneId = 'astrub';
     else this.zoneId = 'incarnam';
+    // dessins gardés d'une partie à l'autre : ils appartenaient à la scène d'avant (détruits avec elle), on les refait
+    // (avant : Sacrieur qui change de zone ou rejoint une coop -> goutte de souffrance d'une scène détruite, jeu figé)
+    this.rageAura = undefined; this.goutteSouffrance = undefined; this.sangG = undefined; this.laisseG = undefined; this.gouttesSol = [];
     this.views = new Map(); this.dropViews = new Map(); this.worldView = null; this.questView = null; this.passantsView = null; this.dialogueView = null; this.talkClick = null; this.zaapClick = null; this.zaapAnnonce = null; this.pressed = null; this.aimId = null; this.aimKey = null; this.hoverId = null; this.potion = false; this.hitstop = 0; this.acc = 0;
   }
 
