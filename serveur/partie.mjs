@@ -34,8 +34,9 @@ export async function chargerSim(dossier = new URL('./partie/', import.meta.url)
 export class Partie {
   /** @param {any} S la simulation chargée ; envoyer(num, données) parle à un joueur du salon. */
   /** sauver(compte, perso) : écrit le perso d'un compte (comptes.mjs) ; absent = rien n'est gardé. */
-  constructor(S, envoyer, seed = Math.floor(Math.random() * 2 ** 31), sauver = null) {
-    this.S = S; this.envoyer = envoyer; this.seed = seed; this.sauver = sauver; this.depuisSauvegarde = 0;
+  /** donjonFini(nom, temps, membres) : fin d'un donjon (Ladder 2D), avec les persos de comptes encore là. */
+  constructor(S, envoyer, seed = Math.floor(Math.random() * 2 ** 31), sauver = null, donjonFini = null) {
+    this.S = S; this.envoyer = envoyer; this.seed = seed; this.sauver = sauver; this.donjonFini = donjonFini; this.depuisSauvegarde = 0;
     this.w = null;
     this.membres = new Map();
     this.n = 0; this.reste = 0; this.erreurs = 0;
@@ -114,6 +115,12 @@ export class Partie {
       // portail de sortie : ce joueur quitte la partie (son jeu ferme la connexion, il est alors sauvé et retiré)
       for (const e of evs) if (e.k === 'sortieArene') for (const [num, m] of this.membres) if (m.joueur === e.joueur && !m.sorti) { m.sorti = true; this.envoyer(num, { k: 'sortie' }); }
       for (const m of this.membres.values()) if (m.em) for (const e of evs) m.em.noter(e);
+      // Ladder 2D + 4B : chrono du donjon, compté seulement ici (partie tenue par le serveur)
+      for (const e of evs) if (e.k === 'areneFin' && this.donjonFini) {
+        const L = [...this.membres.values()].filter(m => m.compte && m.joueur != null)
+          .map(m => ({ compte: m.compte.compte, emplacement: m.compte.emplacement, nom: m.compte.perso.nom, classe: m.compte.perso.classe }));
+        try { this.donjonFini(e.nom, e.temps, L); } catch (err) { console.warn('partie : record raté', err.message); }
+      }
       this.relever(PARTIE.pas);
       if ((this.depuisSauvegarde += PARTIE.pas) >= PARTIE.sauvegarde) { this.depuisSauvegarde = 0; for (const m of this.membres.values()) this.sauverMembre(m); }
       if (++this.n % S.COOP.tous) continue;

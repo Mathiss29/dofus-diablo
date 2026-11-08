@@ -127,6 +127,24 @@ sudo systemctl restart diablofus && sleep 2 && curl -fsS http://127.0.0.1:3100/s
 l'utilisateur `diablofus` ne peut pas le lire directement. Sans ce fichier, tout le reste marche et le bouton de connexion
 du jeu dit simplement « connexion indisponible ».
 
+## Classement (Ladder, maquette « Ladder : »)
+
+Le serveur calcule le classement une fois par minute (`classement.mjs`) depuis les persos en ligne : `GET /classement`
+(lisible sans être connecté), `GET /classement/fiche/<compte>-<emplacement>`, `GET|PUT /classement/moi` (se cacher, avec le
+jeton). Un perso Hardcore mort passe par `POST /tombes/<emplacement>` : sa ligne reste dans « Tombés en Hardcore ». Les
+records de donjon ne viennent que des parties tenues par le serveur. Rien à installer : les tables se créent seules.
+
+**Facultatif, annonces sur Discord** (« Les premiers », nouveau 1er du classement) : Mathis crée un webhook dans le salon
+#annonces (Paramètres du salon › Intégrations › Webhooks › Nouveau webhook, nom « Diablofus », Copier l'URL). L'URL est
+un secret : elle va directement au projet Idlus, qui l'ajoute sur le VPS :
+
+```bash
+echo "DISCORD_ANNONCES=$URL_DU_WEBHOOK" | sudo tee -a /etc/diablofus/discord.env >/dev/null
+sudo systemctl restart diablofus
+```
+
+Sans cette ligne, le classement marche pareil, sans annonces.
+
 ## Plus tard
 
 - Copie de la base aussi sur R2 (5B), avec une clé R2 limitée à un seul dossier.

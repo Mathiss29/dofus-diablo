@@ -5,6 +5,7 @@ import './render/phaserRapide';
 import { preparerInstallation } from './render/installation';
 import { Compte } from './render/compte';
 import { brancherDensite } from './render/pixel';
+import { adresseLadder } from './render/ladder';
 
 // Compte Discord (maquette « Vrai multi : ») : lit le jeton renvoyé par le serveur (#connexion=…) avant de regarder l'adresse
 Compte.demarrer();
@@ -28,7 +29,9 @@ brancherDensite(game);
 
 // Mode dév (#cra, #astrub, #jeu) : directement en jeu, sans perso ni sauvegarde. #test : partie de test (perso à part, outils sur F1). Sinon : écran d'accueil (17A),
 // avec la partie en vitrine derrière ; « Jouer » relance la scène avec le perso choisi.
-const dev = /cra|astrub|jeu|test/.test(location.hash);
+// (#ladder/Nom n'en est pas un, même si le nom contient « cra »)
+const lad = adresseLadder();
+const dev = !lad && /cra|astrub|jeu|test/.test(location.hash);
 game.scene.add('zone', ZoneScene, true, dev ? {} : { vitrine: true });
 const zone = () => game.scene.getScene('zone') as ZoneScene;
 const accueil = new Accueil(slot => { accueil.hide(); zone().scene.restart({ slot }); },
@@ -36,7 +39,9 @@ const accueil = new Accueil(slot => { accueil.hide(); zone().scene.restart({ slo
   (classe, sexe, apparence) => { accueil.hide(); zone().scene.restart({ classe, zone: 'champs-astrub', essai: sexe, apparence }); });
 accueil.onOptions = () => zone().ouvrirOptions();
 game.events.on('accueil', (page?: 'creation' | 'persos') => { void Compte.toutEnvoyer(); zone().scene.restart({ vitrine: true }); accueil.show(page ?? 'accueil'); });
-if (!dev) accueil.show();
+// Ladder (maquette « Ladder : » 1C) : diablofus.com/#ladder ouvre le classement, #ladder/Nom la fiche d'un perso
+if (!dev) { if (lad) accueil.ouvrirLadder(lad.nom); else accueil.show(); }
+addEventListener('hashchange', () => { const l = adresseLadder(); if (l && accueil.visible) accueil.ouvrirLadder(l.nom); });
 
 // Accès console / tests automatisés
 (window as unknown as { game: Phaser.Game }).game = game;

@@ -157,7 +157,7 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
       catch (err) { console.warn('connexion Discord :', err.message); vers(res, `${e.retour}#connexion-erreur=discord`); }
       return true;
     }
-    if (!['/moi', '/deconnexion', '/import'].includes(p) && !p.startsWith('/persos/') && !p.startsWith('/coffres/')) return false;
+    if (!['/moi', '/deconnexion', '/import'].includes(p) && !p.startsWith('/persos/') && !p.startsWith('/coffres/') && !p.startsWith('/tombes/')) return false;
     const c = connecte(req);
     if (!c) return json(res, 401, { erreur: 'connexion' }), true;
     try {
@@ -175,6 +175,14 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
         const b = await lireCorps(req);
         if (!b.coffre || typeof b.coffre !== 'object') return json(res, 400, { erreur: 'coffre' }), true;
         q.coffre.run(c.id, sorte, JSON.stringify(b.coffre), maintenant());
+        return json(res, 200, { ok: true }), true;
+      }
+      // Ladder 3B : un perso Hardcore est mort ; le classement garde sa ligne (« Tombés »), puis le perso est effacé
+      if (p.startsWith('/tombes/')) {
+        const i = emplacement(p.slice('/tombes/'.length));
+        if (m !== 'POST' || i == null) return json(res, 404, { erreur: 'emplacement' }), true;
+        const b = await lireCorps(req), r = q.persos.all(c.id).find(x => x.emplacement === i);
+        if (r) { try { api.surTombe?.(c.id, JSON.parse(r.donnees), b && typeof b === 'object' ? b : {}); } catch (err) { console.warn('tombe :', err.message); } q.effacer.run(c.id, i); }
         return json(res, 200, { ok: true }), true;
       }
       if (m === 'POST' && p === '/deconnexion') { q.sortir.run(empreinte(req.headers.authorization.slice(7))); return json(res, 200, { ok: true }), true; }
@@ -296,5 +304,10 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
     regler(moi, horsLigne, inconnus) { q.regler.run(moi, horsLigne ? 1 : 0, inconnus ? 1 : 0); },
   };
 
-  return { route, copieNocturne, pret, persoPartie, sauverPartie, compteDuJeton, social, stats: () => q.nb.get(), fermer: () => { clearInterval(minuterie); db.close(); } };
+  const api = { route, copieNocturne, pret, persoPartie, sauverPartie, compteDuJeton, social, stats: () => q.nb.get(), fermer: () => { clearInterval(minuterie); db.close(); },
+    /** Pour le classement (classement.mjs) : la base, le compte d'une requête, le corps JSON d'une requête. */
+    db, connecte, lireCorps,
+    /** Ladder 3B : appelé avec (compte, perso, stèle) quand un perso Hardcore meurt, avant qu'il soit effacé. */
+    surTombe: null };
+  return api;
 }

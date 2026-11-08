@@ -835,6 +835,17 @@
               "Touche P",
               "Perso en ligne"
             ]
+          },
+          {
+            "titre": "Le Ladder des aventuriers",
+            "phrase": "Un classement en ligne : niveau, Hardcore, métiers, exploration et records de donjon.",
+            "details": "Clique un nom pour voir sa fiche et son équipement. « Les premiers » grave pour toujours le premier niveau 50, le premier Dofus…",
+            "icone": "succes",
+            "etiquettes": [
+              "Touche L",
+              "Accueil › Ladder",
+              "Perso en ligne"
+            ]
           }
         ],
         "Le monde": [
@@ -1100,7 +1111,8 @@
           "Partie de test : la coop peut tourner sur le serveur (Crypte), un joueur qui part ne coupe plus les autres.",
           "Le serveur sait qui est en ligne et relaie les positions des joueurs du Bastion dix fois par seconde.",
           "Chat : messages nettoyés par le serveur et limités à cinq toutes les cinq secondes.",
-          "Les joueurs ignorés ne peuvent plus t'écrire ni t'inviter : le serveur ne leur transmet plus rien."
+          "Les joueurs ignorés ne peuvent plus t'écrire ni t'inviter : le serveur ne leur transmet plus rien.",
+          "Le serveur calcule le classement chaque minute ; les records de donjon ne comptent que sur ses parties."
         ]
       }
     }

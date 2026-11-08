@@ -8,6 +8,7 @@ import { WebSocketServer } from 'ws';
 import { creerComptes } from './comptes.mjs';
 import { chargerSim, Partie } from './partie.mjs';
 import { creerPresence } from './presence.mjs';
+import { annonceurDiscord, creerClassement } from './classement.mjs';
 
 const PORT = Number(process.env.PORT ?? 3100);
 const HOTE = process.env.HOTE ?? '127.0.0.1';
@@ -81,7 +82,7 @@ async function creerPartie(s) {
   if (salons.size >= SALON.salons || parties().length >= SALON.parties) return envoyer(s, { k: 'refus', raison: 'plein' });
   const sa = { code: nouveauCode(), membres: new Map([[1, s]]), suivant: 2 };
   sa.partie = new Partie(S, (num, d) => { const c = sa.membres.get(num); if (c) envoyer(c, `{"k":"recu","de":0,"d":${JSON.stringify(d)}}`); },
-    undefined, (c, perso) => lesComptes?.sauverPartie(c.compte, c.emplacement, perso));
+    undefined, (c, perso) => lesComptes?.sauverPartie(c.compte, c.emplacement, perso), (nom, temps, L) => leClassement?.noterDonjon(nom, temps, L));
   sa.partie.arrivee(1);
   salons.set(sa.code, sa); s.salon = sa; s.num = 1;
   tourner();
@@ -102,6 +103,8 @@ function bonjourCompte(s, sa, d) {
 }
 /** Présence en ligne et Bastion partagé (presence.mjs), créée avec le serveur. */
 let presence = null;
+/** Classement des aventuriers (classement.mjs, maquette « Ladder : »), créé avec le serveur. */
+let leClassement = null;
 function recu(s, m, brut) {
   if (presence?.recu(s, m)) return;
   if (m.k === 'ping') return envoyer(s, { k: 'pong', t: m.t ?? null, serveur: Date.now() });
@@ -136,11 +139,14 @@ function recu(s, m, brut) {
   }
 }
 
-/** @param {{ comptes?: ReturnType<typeof creerComptes> }} [o] */
-export function creerServeur({ comptes = creerComptes({ dossier: process.env.DONNEES ?? new URL('./donnees', import.meta.url).pathname, origines: ORIGINES }) } = {}) {
+/** @param {{ comptes?: ReturnType<typeof creerComptes>, annoncer?: (texte: string) => void }} [o] */
+export function creerServeur({ comptes = creerComptes({ dossier: process.env.DONNEES ?? new URL('./donnees', import.meta.url).pathname, origines: ORIGINES }), annoncer = annonceurDiscord(process.env.DISCORD_ANNONCES) } = {}) {
   lesComptes = comptes;
   presence?.fermer();
   presence = creerPresence({ comptes, envoyer });
+  leClassement?.fermer();
+  leClassement = creerClassement({ comptes, enLigne: () => presence?.enLigne() ?? [], annoncer });
+  comptes.surTombe = (c, perso, stele) => leClassement?.tomber(c, perso, stele);
   const http = createServer(async (req, res) => {
     const o = req.headers.origin;
     if (o && ORIGINES.has(o)) {
@@ -157,7 +163,7 @@ export function creerServeur({ comptes = creerComptes({ dossier: process.env.DON
       res.end(JSON.stringify({ ok: true, jeu: 'diablofus', version: VERSION, depuis: Math.round((Date.now() - depart) / 1000), connectes: ws.clients.size, salons: salons.size, parties: parties().length, enLigne: presence?.nombre() ?? 0, connexion: comptes.pret, ...comptes.stats() }));
       return;
     }
-    try { if (await comptes.route(req, res, url)) return; }
+    try { if (await leClassement.route(req, res, url) || await comptes.route(req, res, url)) return; }
     catch (err) { console.warn('requête :', err.message); if (!res.headersSent) { res.writeHead(500); res.end(); } return; }
     res.writeHead(404, { 'content-type': 'text/plain; charset=utf-8' }); res.end('introuvable');
   });
@@ -182,7 +188,7 @@ export function creerServeur({ comptes = creerComptes({ dossier: process.env.DON
   // battement : coupe les connexions mortes toutes les 30 s
   const battement = setInterval(() => { for (const s of ws.clients) { if (s.vivant === false) { s.terminate(); continue; } s.vivant = false; s.ping(); } }, 30_000);
   ws.on('connection', s => { s.vivant = true; s.on('pong', () => { s.vivant = true; }); });
-  http.on('close', () => { clearInterval(battement); presence?.fermer(); for (const sa of parties()) fermerPartie(sa); comptes.fermer(); });
+  http.on('close', () => { clearInterval(battement); presence?.fermer(); leClassement?.fermer(); for (const sa of parties()) fermerPartie(sa); comptes.fermer(); });
   return http;
 }
 
