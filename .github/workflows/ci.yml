@@ -15,3 +15,32 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+  # Robot chasseur de plantages et de gels (tools/verification/plantages.cjs) : chaque classe seule, puis la coop à deux
+  # navigateurs avec le serveur lancé à côté. Les images viennent de R2 (assets.diablofus.com).
+  robot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: cd serveur && npm ci --omit=dev
+      - run: npm i --no-save playwright@1.63.0 && npx playwright install --with-deps chromium
+      - run: npx vite build --logLevel error
+        env:
+          VITE_ASSETS_URL: https://assets.diablofus.com
+          VITE_COOP_URL: ws://localhost:3100/ws
+      - name: Chasse aux plantages
+        run: |
+          (cd serveur && node index.mjs &)
+          (npx vite preview --port 4173 &)
+          for i in $(seq 60); do curl -sf http://localhost:4173 >/dev/null && curl -sf http://127.0.0.1:3100/sante >/dev/null && break; sleep 1; done
+          SORTIE=plantages node tools/verification/plantages.cjs
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: plantages
+          path: plantages/

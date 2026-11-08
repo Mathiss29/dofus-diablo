@@ -988,7 +988,8 @@
           "Les carnets du Journal se lisent d'un coup d'œil : un titre, une phrase, les détails à déplier.",
           "Premier pas vers le jeu à plusieurs : le moteur sait déjà faire combattre plusieurs héros ensemble.",
           "Partie de test : F1 ajoute jusqu'à 3 alliés conduits par le jeu, premier aperçu du jeu à plusieurs.",
-          "Le serveur du jeu à plusieurs est en ligne sur api.diablofus.com et se met à jour tout seul."
+          "Le serveur du jeu à plusieurs est en ligne sur api.diablofus.com et se met à jour tout seul.",
+          "Un robot joue chaque classe, seule et en coop, à chaque mise à jour pour attraper plantages et gels."
         ]
       }
     }
