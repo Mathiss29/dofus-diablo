@@ -867,7 +867,7 @@ export class World {
       let type = g.fixe ? g.fixe[i] : elite ? g.sub.elite! : this.rng.pick(g.sub.monsters);
       // 0.3 (15B) : parfois l'archimonstre officiel prend la place du monstre (un seul en vie à la fois par sorte)
       const archi = `archi_${type}`;
-      if (!g.fixe && !elite && this.player.v03 && this.opts.data.monsters[archi]?.archiDe === type && this.rng.next() < ARCHI.chance
+      if (!g.fixe && !elite && this.player.v03 && this.opts.data.monsters[archi]?.archiDe === type && this.rng.next() < ARCHI.chance * (this.test?.archis ? 100 : 1)   // partie de test (Outil test 4C) : ×100
         && !this.monsters.some(o => !o.dead && o.type === archi)) type = archi;
       const mo = this.spawnMonster(type, q.x, q.y);
       mo.group = g.id; g.members.push(mo);
@@ -2042,7 +2042,8 @@ export class World {
   beteDe(sort: string): Bete | undefined { return this.betes.find(b => b.sort === sort && !b.dead); }
   /** Coût en Invocations (2A) : 1 / 2 / 3 selon le rang ; le joueur en a 1 de base + objets + Cortège Sauvage. */
   invocationsPrises(): number { return this.betes.filter(b => !b.dead && !b.dompteT).reduce((a, b) => a + BETES[b.base].rang, 0); }
-  invocationsMax(p: Player): number { return REGLES_BETES.invocationsBase + Math.max(0, p.stat('invocations')); }
+  invocationsMax(p: Player): number { if (this.test?.invocations) return 99;   // partie de test (Outil test 7B)
+    return REGLES_BETES.invocationsBase + Math.max(0, p.stat('invocations')); }
   /** Fait apparaître la bête d'un sort au point visé (case libre la plus proche). */
   invoquer(p: Player, key: string, sort: string, x: number, y: number): Bete | null {
     if (!BETES[key]) return null;

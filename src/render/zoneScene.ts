@@ -50,7 +50,7 @@ import { dernier, enterrer, lireCoffre, lirePersos, sauverCoffre, sauverPerso, s
 import { SonView, synthe } from './sonView';
 import { MANIFESTE, Son } from './son';
 import { retouchesPlacement } from './placementVue';
-import { ETATS_PRETS, PanneauTest, lireTest, modeTest, sauverTest, type EtatTest } from './panneauTest';
+import { etatsPrets, jourDuPC, PanneauTest, lireTest, modeTest, sauverTest, type EtatTest } from './panneauTest';
 import { REGLAGES_TEST, type CommandeTest } from '../sim/outilsTest';
 
 const ASSETS = 'assets';
@@ -281,7 +281,7 @@ export class ZoneScene extends Phaser.Scene {
     if (zone.open) {
       const open = zone.open;
       const wg = new WorldGrid(this.cache.json.get(WorldView.key(open.world, 'monde')) as WorldData);
-      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, apparats: APPARATS, familierXp: FAMILIERS.xp, recoltes: RECOLTES, compte: chargerCompte(), coffre: lireCoffre(this.sorteCoffre), aujourdhui: new Date().toLocaleDateString('sv-SE'), tuto: this.test ? false : this.perso?.tuto, test: this.test?.reglages,
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, apparats: APPARATS, familierXp: FAMILIERS.xp, recoltes: RECOLTES, compte: chargerCompte(), coffre: lireCoffre(this.sorteCoffre), aujourdhui: this.test?.jour ?? jourDuPC(), tuto: this.test ? false : this.perso?.tuto, test: this.test?.reglages,
         placements: this.test ? retouchesPlacement(open.world) : undefined,   // éditeur F1 › Placement : retouches pas encore envoyées
         // vitrine : les PNJ sont là, mais aucune quête ne démarre
         arrivee: this.arrivee, position: this.transit.position, point: this.transit.point, zaap: this.transit.zaap, retour: this.transit.retour,
@@ -466,6 +466,7 @@ export class ZoneScene extends Phaser.Scene {
     if (this.test && this.world) {
       const t = this.test;
       t.etat = exporterJoueur(this.world); t.zone = this.zoneId; t.reglages = { ...REGLAGES_TEST, ...this.world.test };
+      const j = this.world.opts.aujourdhui; t.jour = j && j !== jourDuPC() ? j : undefined;   // Outil test 5A
       sauverTest(t); return;
     }
     if (!this.perso || this.slot < 0 || this.mortDefinitive || !this.world) return;
@@ -494,15 +495,15 @@ export class ZoneScene extends Phaser.Scene {
         this.relancerTest({ ...this.test, classe: id, zone: this.zoneId, reglages: reglages(), apres: undefined,
           etat: { ...exporterJoueur(this.world), variants: [], bar: [], learned: [] } });
       },
-      zone: (id: string, carte?: [string, string]) => {
+      zone: (id: string, apres?: CommandeTest[]) => {
         if (!this.test) return;
-        this.relancerTest({ ...this.test, zone: id, reglages: reglages(), etat: exporterJoueur(this.world),
-          apres: carte ? [{ k: 'aller', tag: carte[0], nom: carte[1] }] : undefined });
+        const j = this.world.opts.aujourdhui;
+        this.relancerTest({ ...this.test, zone: id, reglages: reglages(), etat: exporterJoueur(this.world), jour: j && j !== jourDuPC() ? j : undefined, apres });
       },
       // 9A : un perso tout neuf, monté au niveau, habillé, puis sur la bonne carte
       pret: (i: number) => {
-        const e = ETATS_PRETS[i]; if (!e || !this.test) return;
-        const apres: CommandeTest[] = [{ k: 'niveau', n: e.niveau, auto: true }, { k: 'tenue', rarete: e.tenue }];
+        const e = etatsPrets()[i]; if (!e || !this.test) return;
+        const apres: CommandeTest[] = [{ k: 'niveau', n: e.niveau, auto: true }, { k: 'tenue', rarete: e.tenue }, ...e.apres ?? []];
         if (e.carte) apres.push({ k: 'aller', tag: e.carte[0], nom: e.carte[1] });
         this.relancerTest({ classe: e.classe, sexe: this.test.sexe, zone: e.zone, reglages: reglages(), apres, zones: [] });
       },
@@ -946,6 +947,9 @@ export class ZoneScene extends Phaser.Scene {
       this.hud.handle(e);
       this.havreSacView?.handle(e);
       if (this.panneau && e.k === 'hit' && e.target === 'monster') this.panneau.noterCoup(e.amount);
+      if (this.panneau && e.k === 'hit' && e.target === 'player') this.panneau.noterRecu(e.amount);   // Outil test 8C
+      if (this.panneau && (e.k === 'test' || e.k === 'queteDebut' || e.k === 'queteEtape' || e.k === 'queteFin' || e.k === 'lootResource')) this.panneau.rafraichir();
+      if (this.panneau && e.k === 'heal' && Math.hypot(e.x - this.world.player.x, e.y - this.world.player.y) < 8) this.panneau.noterSoin(e.amount);
       this.son.handle(e);
       const M = GAME_DATA.monsters;
       switch (e.k) {
