@@ -15,6 +15,7 @@ const CSS = `
 .cm .plan{position:absolute;left:0;top:0;transform-origin:0 0}
 .cm .plan img{display:block;user-select:none;-webkit-user-drag:none}
 .cm .mk{position:absolute;transform:translate(-50%,-50%);pointer-events:none;white-space:nowrap}
+.cm .mk.qt img{width:30px;height:30px;filter:drop-shadow(0 0 6px #ffd76a)}
 .cm .sz{font:bold 12px Lexend,sans-serif;color:#f4efe0;text-shadow:0 0 3px #000,0 1px 2px #000;opacity:.92}
 .cm .zp{width:14px;height:14px;background:#6fd3ff;border:2px solid #fff;transform:translate(-50%,-50%) rotate(45deg);box-shadow:0 0 8px #6fd3ff}
 .cm .pt{width:14px;height:14px;border-radius:50%;background:#c58cff;border:2px solid #fff;box-shadow:0 0 8px #c58cff}
@@ -119,6 +120,9 @@ export class CarteMonde {
       const cle = this.world.entreeDonjon(g.donjon)?.cle ?? '8545', c = this.duJeu(n.x, n.y);
       const d = this.marque('mk gd', c.x, c.y + 20); d.innerHTML = iconHtml(ITEMS.resources[cle]?.icon ?? 0); d.title = `${n.def.nom} · ${g.donjon}`;
     }
+    // quête suivie (Tour 8A) : là où aller (prochain donjon du tour du monde, PNJ à qui rendre…)
+    const qc = Q?.cible(), qs = Q?.suivie && Q.def(Q.suivie);
+    if (qc && qs) { const c = this.duJeu(qc.x, qc.y), d = this.marque('mk qt', c.x, c.y); d.innerHTML = `<img src="${v('assets/ui/quetes/questObjective.png')}" alt="">`; d.title = qs.nom; }
     const ve = Q?.marqueVendeur && Q.pnj(Q.marqueVendeur);
     if (ve) { const c = this.duJeu(ve.x, ve.y), d = this.marque('mk vd', c.x, c.y); d.innerHTML = iconHtml(ITEMS.resources['8143']?.icon ?? 0); d.title = `${ve.def.nom} · clés de donjon`; }
     // Métiers UI : où trouver la ressource demandée (cartes de récolte ou des monstres qui la lâchent, entrées des donjons)

@@ -247,6 +247,8 @@ export const PNJ_LOOKS: Record<string, PnjLook> = {
   igloute: { scale: 0.82, anim: 'AnimStatique_1' },
   rotabla: { scale: 0.82, anim: 'AnimStatique_1', fun: [['AnimAttaque0_1', 1], ['AnimAttaque1_1', 2], ['AnimAttaque2_1', 3]] },
   // Cloportier (PNJ 2766, {3050}), gardien de la Cache de Kankreblath
+  // Metag Robill (PNJ 4370, {1125}), qui donne le tour du monde devant la Grange
+  metag: { scale: 0.82, anim: 'AnimStatique_1' },
   cloportier: { scale: 0.82, anim: 'AnimStatique_1' },
   // PNJ du Havre-Sac (maquette Hub 3A) : Kerubim Crépin (PNJ 3043, {2841|||130}), Otomaï (PNJ 914, {891|||84}, animFunList officielle),
   // Goultard (PNJ 1216, {7551|||155}, repos animé en boucle), Tissebelle et Mère Bouillotte (looks des Prêtresses de Sadida et de Pandawa)

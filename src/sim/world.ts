@@ -93,7 +93,8 @@ export interface WorldOptions {
   /** Dans le Havre-Sac : d'où l'on vient (pour en ressortir au même endroit). */
   retour?: RetourHavreSac;
   /** Zones déjà visitées par le perso (3A : les PNJ du Havre-Sac emménagent au fil de l'histoire). */
-  zonesVues?: string[];
+  zonesVues?: string[];  /** Date du jour (AAAA-MM-JJ), donnée par l'affichage : premier passage d'un donjon au carnet de route (Tour 8B). */
+  aujourdhui?: string;
 }
 
 /** Le familier porté (maquette Familiers 4A) : il suit le perso et va chercher le butin autour de lui. */

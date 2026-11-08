@@ -163,6 +163,19 @@
     "sansCle": "Rapetisser, je sais faire. Ouvrir sans clef, non. {vendeur} en vend."
    }
   },
+  "metag": {
+   "nom": "Metag Robill",
+   "dofusId": 4370,
+   "zone": "astrub",
+   "carte": "7_-24",
+   "phrase": "Tous les donjons du monde, je les ai faits. Deux fois. La deuxième, c'était pour vérifier que j'avais bien gagné la première.",
+   "discussion": [
+    {
+     "reponse": "Tu les as vraiment tous faits ?",
+     "texte": "Évidemment. Enfin, presque. Il y en a un ou deux où je me suis arrêté devant la porte, pour laisser leur chance aux jeunes. Comme toi."
+    }
+   ]
+  },
   "emp": {
    "nom": "Emp",
    "dofusId": 1640,
@@ -1467,6 +1480,442 @@
      ]
     ]
    }
+  },
+  "tdm_1": {
+   "type": "secondaire",
+   "pnj": "metag",
+   "rendre": "metag",
+   "serie": "Le tour du monde",
+   "nom": "Le tour du monde",
+   "niveau": 15,
+   "requiert": [],
+   "texte": "Metag Robill cherche une relique aux fabuleux pouvoirs. Avant de t'en parler, il veut voir ce que tu vaux : trois donjons pour commencer, près d'Incarnam et d'Astrub.",
+   "etapes": [
+    {
+     "nom": "Le tour du monde",
+     "bulle": "Une relique qui rend invincible, voilà ce que je cherche. Je ne la partagerai pas avec un débutant. Commence par les petits donjons du coin : j'y suis déjà allé, c'est facile. Enfin, pour moi.",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Kardorim (Crypte de Kardorim)",
+       "donjon": "Crypte de Kardorim",
+       "boss": "Kardorim",
+       "niveau": 10,
+       "region": "Incarnam"
+      },
+      {
+       "t": "donjon",
+       "texte": "Vaincre Tournesol Affamé (Grange du Tournesol Affamé)",
+       "donjon": "Grange du Tournesol Affamé",
+       "boss": "Tournesol Affamé",
+       "niveau": 20,
+       "region": "Astrub"
+      },
+      {
+       "t": "donjon",
+       "texte": "Vaincre Mob l'Éponge (Château Ensablé)",
+       "donjon": "Château Ensablé",
+       "boss": "Mob l'Éponge",
+       "niveau": 20,
+       "region": "Astrub"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 1200,
+    "kamas": 240,
+    "objets": [
+     [
+      "16525",
+      1
+     ],
+     [
+      "8157",
+      1
+     ],
+     [
+      "8682",
+      1
+     ],
+     [
+      "1568",
+      1
+     ]
+    ]
+   },
+   "merci": "Trois boss, et tu tiens encore debout ? Pas mal. Moi, je les avais faits avant le petit-déjeuner. Tiens, ta paie, et une clé pour la suite : la Cour du Bouftou Royal t'attend."
+  },
+  "tdm_2": {
+   "type": "secondaire",
+   "pnj": "metag",
+   "rendre": "metag",
+   "serie": "Le tour du monde",
+   "nom": "Revenons à nos bouftons",
+   "niveau": 25,
+   "requiert": [
+    "tdm_1"
+   ],
+   "texte": "Metag n'est pas encore convaincu. Il t'envoie chez le Bouftou Royal, puis sous le plancher du Grenier de Kerubim, chez Kankreblath.",
+   "etapes": [
+    {
+     "nom": "Revenons à nos bouftons",
+     "bulle": "Un Bouftou couronné et un cafard qui collectionne les cuillères. Moi, je les ai battus d'une seule main. L'autre tenait mon sandwich.",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Bouftou Royal (Cour du Bouftou Royal)",
+       "donjon": "Cour du Bouftou Royal",
+       "boss": "Bouftou Royal",
+       "niveau": 30,
+       "region": "Astrub"
+      },
+      {
+       "t": "donjon",
+       "texte": "Vaincre Kankreblath (Cache de Kankreblath)",
+       "donjon": "Cache de Kankreblath",
+       "boss": "Kankreblath",
+       "niveau": 40,
+       "region": "Astrub"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 2400,
+    "kamas": 480,
+    "objets": [
+     [
+      "880",
+      1
+     ],
+     [
+      "16002",
+      1
+     ]
+    ]
+   },
+   "merci": "Le Bouftou Royal et Kankreblath ? Bon, d'accord, tu commences à me plaire. La suite se passe à Amakna. Quand les routes seront ouvertes, je t'y attends."
+  },
+  "tdm_3": {
+   "type": "secondaire",
+   "pnj": "metag",
+   "rendre": "metag",
+   "serie": "Le tour du monde",
+   "nom": "Le maître des clefs",
+   "niveau": 40,
+   "requiert": [
+    "tdm_2"
+   ],
+   "texte": "Deux donjons d'Amakna, gardés par des maîtres des clefs.",
+   "etapes": [
+    {
+     "nom": "Le maître des clefs",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Chafer Rōnin (Donjon des Squelettes)",
+       "donjon": "Donjon des Squelettes",
+       "boss": "Chafer Rōnin",
+       "niveau": 40,
+       "region": "Amakna"
+      },
+      {
+       "t": "donjon",
+       "texte": "Vaincre Batofu (Donjon des Tofus)",
+       "donjon": "Donjon des Tofus",
+       "boss": "Batofu",
+       "niveau": 40,
+       "region": "Amakna"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 4800,
+    "kamas": 960
+   },
+   "bientot": true
+  },
+  "tdm_4": {
+   "type": "secondaire",
+   "pnj": "metag",
+   "rendre": "metag",
+   "serie": "Le tour du monde",
+   "nom": "Les sbires du maître",
+   "niveau": 50,
+   "requiert": [
+    "tdm_3"
+   ],
+   "texte": "Six donjons d'Amakna et d'ailleurs, jusqu'aux Pitons Rocheux des Craqueleurs.",
+   "etapes": [
+    {
+     "nom": "Les sbires du maître",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Scarabosse Doré (Donjon des Scarafeuilles)",
+       "donjon": "Donjon des Scarafeuilles",
+       "boss": "Scarabosse Doré",
+       "niveau": 40,
+       "region": "Amakna"
+      },
+      {
+       "t": "donjon",
+       "texte": "Vaincre Coffre des Forgerons (Donjon des Forgerons)",
+       "donjon": "Donjon des Forgerons",
+       "boss": "Coffre des Forgerons",
+       "niveau": 50,
+       "region": "Amakna"
+      },
+      {
+       "t": "donjon",
+       "texte": "Vaincre Bworkette (Donjon des Bworks)",
+       "donjon": "Donjon des Bworks",
+       "boss": "Bworkette",
+       "niveau": 50,
+       "region": "Amakna"
+      },
+      {
+       "t": "donjon",
+       "texte": "Vaincre Shin Larve (Donjon des Larves)",
+       "donjon": "Donjon des Larves",
+       "boss": "Shin Larve",
+       "niveau": 50,
+       "region": "Amakna"
+      },
+      {
+       "t": "donjon",
+       "texte": "Vaincre Rakoopeur (Refuge Sylvestre)",
+       "donjon": "Refuge Sylvestre",
+       "boss": "Rakoopeur",
+       "niveau": 50,
+       "region": "?"
+      },
+      {
+       "t": "donjon",
+       "texte": "Vaincre Craqueleur Légendaire (Pitons Rocheux des Craqueleurs)",
+       "donjon": "Pitons Rocheux des Craqueleurs",
+       "boss": "Craqueleur Légendaire",
+       "niveau": 70,
+       "region": "Amakna"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 25200,
+    "kamas": 5040
+   },
+   "bientot": true
+  },
+  "tdm_5": {
+   "type": "secondaire",
+   "pnj": "metag",
+   "rendre": "metag",
+   "serie": "Le tour du monde",
+   "nom": "Un juge hystérique",
+   "niveau": 90,
+   "requiert": [
+    "tdm_4"
+   ],
+   "texte": "Six donjons du monde entier, de la Forêt des Abraknydes aux égouts de Bonta et de Brâkmar.",
+   "etapes": [
+    {
+     "nom": "Un juge hystérique",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Abraknyde Ancestral (Domaine Ancestral)",
+       "donjon": "Domaine Ancestral",
+       "boss": "Abraknyde Ancestral",
+       "niveau": 90,
+       "region": "Forêt des Abraknydes"
+      },
+      {
+       "t": "donjon",
+       "texte": "Vaincre Dragon Cochon (Antre du Dragon Cochon)",
+       "donjon": "Antre du Dragon Cochon",
+       "boss": "Dragon Cochon",
+       "niveau": 100,
+       "region": "Labyrinthe du Dragon Cochon"
+      },
+      {
+       "t": "donjon",
+       "texte": "Vaincre Koulosse (Caverne du Koulosse)",
+       "donjon": "Caverne du Koulosse",
+       "boss": "Koulosse",
+       "niveau": 100,
+       "region": "Montagne des Koalaks"
+      },
+      {
+       "t": "donjon",
+       "texte": "Vaincre Meulou (Tanière du Meulou)",
+       "donjon": "Tanière du Meulou",
+       "boss": "Meulou",
+       "niveau": 100,
+       "region": "Landes de Sidimote"
+      },
+      {
+       "t": "donjon",
+       "texte": "Vaincre Rat Blanc (Garde-manger du Rat Blanc)",
+       "donjon": "Garde-manger du Rat Blanc",
+       "boss": "Rat Blanc",
+       "niveau": 110,
+       "region": "Bonta"
+      },
+      {
+       "t": "donjon",
+       "texte": "Vaincre Rat Noir (Sousouricière du Rat Noir)",
+       "donjon": "Sousouricière du Rat Noir",
+       "boss": "Rat Noir",
+       "niveau": 110,
+       "region": "Brâkmar"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 39600,
+    "kamas": 7920
+   },
+   "bientot": true
+  },
+  "tdm_6": {
+   "type": "secondaire",
+   "pnj": "metag",
+   "rendre": "metag",
+   "serie": "Le tour du monde",
+   "nom": "Des donjons, encore des donjons",
+   "niveau": 110,
+   "requiert": [
+    "tdm_5"
+   ],
+   "texte": "Cinq grands donjons, de Cania à Frigost.",
+   "etapes": [
+    {
+     "nom": "Des donjons, encore des donjons",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Maître Corbac (Bibliothèque du Maître Corbac)",
+       "donjon": "Bibliothèque du Maître Corbac",
+       "boss": "Maître Corbac",
+       "niveau": 110,
+       "region": "Plaines de Cania"
+      },
+      {
+       "t": "donjon",
+       "texte": "Vaincre Royalmouth (Serre du Royalmouth)",
+       "donjon": "Serre du Royalmouth",
+       "boss": "Royalmouth",
+       "niveau": 120,
+       "region": "Île de Frigost"
+      },
+      {
+       "t": "donjon",
+       "texte": "Vaincre Minotoror (Labyrinthe du Minotoror)",
+       "donjon": "Labyrinthe du Minotoror",
+       "boss": "Minotoror",
+       "niveau": 120,
+       "region": "Île du Minotoror"
+      },
+      {
+       "t": "donjon",
+       "texte": "Vaincre Tofu Royal (Tofulailler Royal)",
+       "donjon": "Tofulailler Royal",
+       "boss": "Tofu Royal",
+       "niveau": 120,
+       "region": "Amakna"
+      },
+      {
+       "t": "donjon",
+       "texte": "Vaincre Crocabulia (Sanctuaire des Dragoeufs)",
+       "donjon": "Sanctuaire des Dragoeufs",
+       "boss": "Crocabulia",
+       "niveau": 120,
+       "region": "Amakna"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 36000,
+    "kamas": 7200
+   },
+   "bientot": true
+  },
+  "tdm_7": {
+   "type": "secondaire",
+   "pnj": "metag",
+   "rendre": "metag",
+   "serie": "Le tour du monde",
+   "nom": "La voie du guerrier",
+   "niveau": 120,
+   "requiert": [
+    "tdm_6"
+   ],
+   "texte": "Les six derniers, jusqu'à la Grotte du Bworker.",
+   "etapes": [
+    {
+     "nom": "La voie du guerrier",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Skeunk (Repaire de Skeunk)",
+       "donjon": "Repaire de Skeunk",
+       "boss": "Skeunk",
+       "niveau": 120,
+       "region": "Montagne des Koalaks"
+      },
+      {
+       "t": "donjon",
+       "texte": "Vaincre Tanukouï San (Atelier du Tanukouï San)",
+       "donjon": "Atelier du Tanukouï San",
+       "boss": "Tanukouï San",
+       "niveau": 130,
+       "region": "Île de Pandala"
+      },
+      {
+       "t": "donjon",
+       "texte": "Vaincre Founoroshi (Fabrique de foux d'artifice)",
+       "donjon": "Fabrique de foux d'artifice",
+       "boss": "Founoroshi",
+       "niveau": 140,
+       "region": "Île de Pandala"
+      },
+      {
+       "t": "donjon",
+       "texte": "Vaincre Chêne Mou (Clairière du Chêne Mou)",
+       "donjon": "Clairière du Chêne Mou",
+       "boss": "Chêne Mou",
+       "niveau": 140,
+       "region": "Forêt des Abraknydes"
+      },
+      {
+       "t": "donjon",
+       "texte": "Vaincre Minotot (Salle du Minotot)",
+       "donjon": "Salle du Minotot",
+       "boss": "Minotot",
+       "niveau": 160,
+       "region": "Île du Minotoror"
+      },
+      {
+       "t": "donjon",
+       "texte": "Vaincre Bworker (Grotte du Bworker)",
+       "donjon": "Grotte du Bworker",
+       "boss": "Bworker",
+       "niveau": 180,
+       "region": "Landes de Sidimote"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 64800,
+    "kamas": 12960
+   },
+   "bientot": true
   }
  },
  "succes": {
@@ -1792,6 +2241,49 @@
    "recompense": {
     "xp": 500,
     "objet": "1711"
+   }
+  },
+  "tour_du_monde": {
+   "nom": "Le tour du monde en 27 donjons",
+   "dofusId": 559,
+   "description": "Terminer la série des quêtes du tour du monde.",
+   "categorie": "Donjons",
+   "sousCategorie": "Le tour du monde",
+   "points": 50,
+   "icone": 203,
+   "objectifs": [
+    {
+     "nom": "Le tour du monde",
+     "quete": "tdm_1"
+    },
+    {
+     "nom": "Revenons à nos bouftons",
+     "quete": "tdm_2"
+    },
+    {
+     "nom": "Le maître des clefs",
+     "quete": "tdm_3"
+    },
+    {
+     "nom": "Les sbires du maître",
+     "quete": "tdm_4"
+    },
+    {
+     "nom": "Un juge hystérique",
+     "quete": "tdm_5"
+    },
+    {
+     "nom": "Des donjons, encore des donjons",
+     "quete": "tdm_6"
+    },
+    {
+     "nom": "La voie du guerrier",
+     "quete": "tdm_7"
+    }
+   ],
+   "recompense": {
+    "xp": 2500,
+    "titre": "Globe-trotteur"
    }
   }
  }

@@ -5,6 +5,7 @@
 import json, os
 OUT = os.path.join(os.path.dirname(__file__), '..', '..', 'src', 'data', 'quetes.json')
 
+RES = json.load(open(os.path.join(os.path.dirname(__file__), '..', '..', 'src', 'data', 'items.json')))['resources']
 EMP_CASE = 300
 # Cases des PNJ au Bastion des Douze (posées par tools/extraction/bastion.py)
 BASTION = json.load(open(os.path.join(os.path.dirname(__file__), '..', '..', 'src', 'data', 'zones.json'), encoding='utf-8'))['bastion']['open']['bastion']['pnj']
@@ -64,6 +65,11 @@ PNJ = {
       'victoire': "Kankreblath à terre ? Les cuillères d'Astrub vont enfin rentrer à la maison. Enfin, celles qu'il n'a pas mangées.",
       'mort': "Ressorti par le trou en un seul morceau, à ce que je vois. Allez, je te rapetisse encore quand tu veux.",
       'sansCle': "Rapetisser, je sais faire. Ouvrir sans clef, non. {vendeur} en vend."}},
+  # Le tour du monde (maquette Tour 2A) : Metag Robill (PNJ officiel 4370, look {1125}), guerrier posté devant la Grange du Tournesol
+  # Affamé comme dans Dofus 3. Répliques inédites (9A) : un fanfaron qui a « déjà tout fait ».
+  'metag': {'nom': 'Metag Robill', 'dofusId': 4370, 'zone': 'astrub', 'carte': '7_-24',
+    'phrase': "Tous les donjons du monde, je les ai faits. Deux fois. La deuxième, c'était pour vérifier que j'avais bien gagné la première.",
+    'discussion': [{'reponse': 'Tu les as vraiment tous faits ?', 'texte': "Évidemment. Enfin, presque. Il y en a un ou deux où je me suis arrêté devant la porte, pour laisser leur chance aux jeunes. Comme toi."}]},
   'emp': {'nom': 'Emp', 'dofusId': 1640, 'zone': 'astrub', 'carte': '5_-18', 'case': EMP_CASE,
     # Maquette Hub (4A) puis Ville : ses guichets sont partis chez Kerubim, au Bastion des Douze ; discussion officielle et phrase inédite
     'phrase': "Mes guichets ? Confiés à Kerubim Crépin, au Bastion des Douze (par n'importe quel Zaap). Moins de queue, moins de gaspillage : Waro lui-même n'a rien trouvé à redire.",
@@ -278,6 +284,54 @@ Q['cryptologie'] = {'nom': 'Cryptologie', 'type': 'secondaire', 'pnj': 'klasmor'
               'objectifs': [aller('Entrer dans la crypte de Kardorim', carte='arene_crypte'), vaincre('Vaincre Kardorim', 1, monstres=['kardorim'])]}],
   'recompense': rec(1, 10, objets=[['16524', 5]])}
 
+# --- Le tour du monde (Metag Robill) : maquette Tour, tranchée le 2026-11-07 (Tour : 1B 2A 3A 4A 5A 6A+6B 7A+7B 8A+8B 9A 10A) ------
+# Série officielle (quêtes 2005, 2006, 153 à 157 : 27 donjons du niveau 20 au niveau 180) en 7 chapitres rendus à Metag (3A), donjons
+# dans n'importe quel ordre (4A), objectif « vaincre le boss du donjon », victoire d'avant la quête comprise (5A). 1B : nos donjons absents
+# de la série (Kardorim, Château Ensablé, Kankreblath) s'y ajoutent. Récompenses : XP et kamas officiels, la ressource de chaque boss (6A),
+# une clé du chapitre suivant (6B). Les chapitres dont les donjons ne sont pas encore dans le jeu sont « bientôt » (10A) : visibles dans le
+# carnet de route (8B), pas encore proposés. Fin : succès « Le tour du monde en 27 donjons » et le titre Globe-trotteur (7A) ; 7B = la
+# suite mènera à nos propres quêtes des Dofus.
+T = {'type': 'secondaire', 'pnj': 'metag', 'rendre': 'metag', 'serie': 'Le tour du monde'}
+def dj(nom, boss, niveau, region): return {'t': 'donjon', 'texte': f'Vaincre {boss} ({nom})', 'donjon': nom, 'boss': boss, 'niveau': niveau, 'region': region}
+TDM = [
+  ('tdm_1', 'Le tour du monde', 15, 1.2, False,
+   "Metag Robill cherche une relique aux fabuleux pouvoirs. Avant de t'en parler, il veut voir ce que tu vaux : trois donjons pour commencer, près d'Incarnam et d'Astrub.",
+   "Une relique qui rend invincible, voilà ce que je cherche. Je ne la partagerai pas avec un débutant. Commence par les petits donjons du coin : j'y suis déjà allé, c'est facile. Enfin, pour moi.",
+   "Trois boss, et tu tiens encore debout ? Pas mal. Moi, je les avais faits avant le petit-déjeuner. Tiens, ta paie, et une clé pour la suite : la Cour du Bouftou Royal t'attend.",
+   [dj('Crypte de Kardorim', 'Kardorim', 10, 'Incarnam'), dj('Grange du Tournesol Affamé', 'Tournesol Affamé', 20, 'Astrub'), dj('Château Ensablé', "Mob l'Éponge", 20, 'Astrub')],
+   [['16525', 1], ['8157', 1], ['8682', 1], ['1568', 1]]),
+  ('tdm_2', 'Revenons à nos bouftons', 25, 1.2, False,
+   "Metag n'est pas encore convaincu. Il t'envoie chez le Bouftou Royal, puis sous le plancher du Grenier de Kerubim, chez Kankreblath.",
+   "Un Bouftou couronné et un cafard qui collectionne les cuillères. Moi, je les ai battus d'une seule main. L'autre tenait mon sandwich.",
+   "Le Bouftou Royal et Kankreblath ? Bon, d'accord, tu commences à me plaire. La suite se passe à Amakna. Quand les routes seront ouvertes, je t'y attends.",
+   [dj('Cour du Bouftou Royal', 'Bouftou Royal', 30, 'Astrub'), dj('Cache de Kankreblath', 'Kankreblath', 40, 'Astrub')],
+   [['880', 1], ['16002', 1]]),
+  ('tdm_3', 'Le maître des clefs', 40, 2.4, True, "Deux donjons d'Amakna, gardés par des maîtres des clefs.", '', '',
+   [dj('Donjon des Squelettes', 'Chafer Rōnin', 40, 'Amakna'), dj('Donjon des Tofus', 'Batofu', 40, 'Amakna')], []),
+  ('tdm_4', 'Les sbires du maître', 50, 7.2, True, "Six donjons d'Amakna et d'ailleurs, jusqu'aux Pitons Rocheux des Craqueleurs.", '', '',
+   [dj('Donjon des Scarafeuilles', 'Scarabosse Doré', 40, 'Amakna'), dj('Donjon des Forgerons', 'Coffre des Forgerons', 50, 'Amakna'), dj('Donjon des Bworks', 'Bworkette', 50, 'Amakna'),
+    dj('Donjon des Larves', 'Shin Larve', 50, 'Amakna'), dj('Refuge Sylvestre', 'Rakoopeur', 50, '?'), dj('Pitons Rocheux des Craqueleurs', 'Craqueleur Légendaire', 70, 'Amakna')],
+   [['8389', 1], ['8386', 1], ['8394', 1], ['8137', 1]]),
+  ('tdm_5', 'Un juge hystérique', 90, 7.2, True, "Six donjons du monde entier, de la Forêt des Abraknydes aux égouts de Bonta et de Brâkmar.", '', '',
+   [dj('Domaine Ancestral', 'Abraknyde Ancestral', 90, 'Forêt des Abraknydes'), dj('Antre du Dragon Cochon', 'Dragon Cochon', 100, 'Labyrinthe du Dragon Cochon'),
+    dj('Caverne du Koulosse', 'Koulosse', 100, 'Montagne des Koalaks'), dj('Tanière du Meulou', 'Meulou', 100, 'Landes de Sidimote'),
+    dj('Garde-manger du Rat Blanc', 'Rat Blanc', 110, 'Bonta'), dj('Sousouricière du Rat Noir', 'Rat Noir', 110, 'Brâkmar')], []),
+  ('tdm_6', 'Des donjons, encore des donjons', 110, 6.0, True, "Cinq grands donjons, de Cania à Frigost.", '', '',
+   [dj('Bibliothèque du Maître Corbac', 'Maître Corbac', 110, 'Plaines de Cania'), dj('Serre du Royalmouth', 'Royalmouth', 120, 'Île de Frigost'),
+    dj('Labyrinthe du Minotoror', 'Minotoror', 120, 'Île du Minotoror'), dj('Tofulailler Royal', 'Tofu Royal', 120, 'Amakna'), dj('Sanctuaire des Dragoeufs', 'Crocabulia', 120, 'Amakna')], []),
+  ('tdm_7', 'La voie du guerrier', 120, 7.2, True, "Les six derniers, jusqu'à la Grotte du Bworker.", '', '',
+   [dj('Repaire de Skeunk', 'Skeunk', 120, 'Montagne des Koalaks'), dj('Atelier du Tanukouï San', 'Tanukouï San', 130, 'Île de Pandala'),
+    dj("Fabrique de foux d'artifice", 'Founoroshi', 140, 'Île de Pandala'), dj('Clairière du Chêne Mou', 'Chêne Mou', 140, 'Forêt des Abraknydes'),
+    dj('Salle du Minotot', 'Minotot', 160, 'Île du Minotoror'), dj('Grotte du Bworker', 'Bworker', 180, 'Landes de Sidimote')], []),
+]
+avant = []
+for qid, nom, niv, ratio, bientot, texte, bulle, merci, objs, objets in TDM:
+    Q[qid] = {**T, 'nom': nom, 'niveau': niv, 'requiert': list(avant[-1:]), 'texte': texte,
+              'etapes': [{'nom': nom, **({'bulle': bulle} if bulle else {}), 'objectifs': objs}],
+              'recompense': rec(ratio, max(o['niveau'] for o in objs), objets=[o for o in objets if o[0] in RES] or None),
+              **({'merci': merci} if merci else {}), **({'bientot': True} if bientot else {})}
+    avant.append(qid)
+
 # --- Succès officiels (achievements) ----------------------------------------------------------------------
 def suc(nom, did, desc, cat, sous, pts, icone, obj, ratio=0, objet=None):
     s = {'nom': nom, 'dofusId': did, 'description': desc, 'categorie': cat, 'sousCategorie': sous, 'points': pts, 'icone': icone, 'objectifs': obj}
@@ -304,5 +358,8 @@ for k, did, nom, sz, ratio in EXPLO:
 S['dans_les_nuages'] = suc('Dans les nuages', 840, 'Obtenir les Succès suivants.', 'Exploration', 'Incarnam', 10, 82,
     [{'nom': nom, 'succes': 'zone_' + k} for k, _, nom, _, _ in EXPLO], 1, '1711')   # Chienchien (maquette Familiers 1C)
 
+S['tour_du_monde'] = suc('Le tour du monde en 27 donjons', 559, 'Terminer la série des quêtes du tour du monde.', 'Donjons', 'Le tour du monde', 50, 203,
+    [{'nom': q[1], 'quete': q[0]} for q in TDM], 5)
+S['tour_du_monde']['recompense']['titre'] = 'Globe-trotteur'
 json.dump({'pnj': PNJ, 'quetes': Q, 'succes': S}, open(OUT, 'w'), ensure_ascii=False, indent=1)
 print(len(Q), 'quêtes', len(S), 'succès')
