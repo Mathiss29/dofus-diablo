@@ -671,7 +671,7 @@ export class ZoneScene extends Phaser.Scene {
     const c = ISO.toScreen(po.x, po.y);
     // contour du dessin de la porte (façon Sanstour)
     // une sortie d'intérieur : c'est le paillasson posé sur la case qui s'entoure
-    this.worldView?.contour(c.x, po.sortie ? c.y + 50 : c.y, `${po.nom}@${this.world.worldGrid?.mapAt(po.x, po.y)?.tag ?? ''}`);
+    this.worldView?.contour(c.x, po.sortie ? c.y + 50 : c.y);
     this.porteLabel.setText(po.sortie ? `Sortie · ${po.nom}` : po.nom).setColor(po.sortie ? '#ffe08a' : '#f3e3bf')
       // une sortie est un repère au sol, souvent sous le perso : son nom va dessous ; une porte dans un mur, au-dessus
       .setOrigin(0.5, po.sortie ? 0 : 1).setPosition(c.x, po.sortie ? c.y + 34 : c.y - 96).setScale(1 / this.cameras.main.zoom).setVisible(true);

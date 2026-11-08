@@ -1,7 +1,6 @@
 import { v } from './assetUrl';
 import Phaser from 'phaser';
 import { ISO } from '../sim/iso';
-import LISERES from '../data/liseres_portes.json';
 import { GridMap, MAP_COLS, MAP_ROWS, type DecorPlace, type WorldGrid, type WorldMapEntry } from '../sim/gridmap';
 import type { Particules } from './particles';
 import type { Transparence } from './transparence';
@@ -9,8 +8,6 @@ import type { Transparence } from './transparence';
 /** Profondeur du sol. Le reste (perso, monstres, décor) est trié par sa hauteur à l'écran, qui descend sous -10 000 au nord
  *  d'Astrub (Tainéla, Cour du Bouftou Royal) : un sol à -10 000 passait alors au-dessus du perso et des PNJ. */
 export const SOL = -1e8;
-/** Liseré d'une porte peinte dans le bâtiment (src/data/liseres_portes.json). */
-type Lisere = { forme: 'arche' | 'panneau'; g: number; d: number; bg: number; bd: number; h: number };
 
 /** Rayon (en cartes) chargé autour du joueur, et rayon au-delà duquel une carte est déchargée.
  *  Entre les deux, une carte déjà chargée reste : pas de va-et-vient quand on longe un bord. */
@@ -79,6 +76,9 @@ export class WorldView {
   /** À appeler dans preload() : le ciel et les cartes autour du départ, pour ne rien voir apparaître au lancement. */
   static preload(scene: Phaser.Scene, world: { sky?: string; maps: WorldMapEntry[] }, dir: string, prefix: string, start: [number, number]) {
     if (world.sky) scene.load.image(WorldView.key(prefix, 'ciel'), v(`${dir}/${world.sky}`));
+    // contours officiels des portes au survol (tools/extraction/survols.py)
+    if (world.maps.some(m => m.survols?.length) && !scene.textures.exists(`survols_${prefix}`))
+      scene.load.atlas(`survols_${prefix}`, v(`assets/ui/survols_${prefix}.png`), v(`assets/ui/survols_${prefix}.json`));
     for (const m of world.maps) if (ring(m, start[0], start[1]) <= LOAD_RING) WorldView.queue(scene, m, dir, prefix);
   }
   private static queue(scene: Phaser.Scene, m: WorldMapEntry, dir: string, prefix: string) {
@@ -367,46 +367,52 @@ export class WorldView {
     }
   }
   /** Contour de la porte survolée (façon Sanstour, comme les éléments interactifs de Dofus 3) : le dessin pile au-dessus
-   *  de la porte (sx, sy : la case de la porte à l'écran) reçoit un liseré clair. null = plus rien de survolé. */
-  contour(sx: number | null, sy = 0, porte = '') {
+   *  de la porte (sx, sy : la case de la porte à l'écran) reçoit un trait lilas. null = plus rien de survolé. */
+  contour(sx: number | null, sy = 0) {
     const cle = sx === null ? '' : `${Math.round(sx)},${Math.round(sy)}`, t = this.scene.time.now;
     // même porte : rien à refaire, sauf si son dessin n'était pas encore posé (carte voisine en chargement) : on recherche 4 fois par seconde
-    if (cle === this.contourCle && (this.contourIm || !cle || t - this.contourT < 250)) return;
+    if (cle === this.contourCle && (this.contourIm || this.survolIm?.visible || !cle || t - this.contourT < 250)) return;
     this.contourCle = cle; this.contourT = t;
     if (this.contourIm?.active) { this.contourIm.preFX?.clear(); if (this.contourIm.texture.key === 'paillasson') this.contourIm.setDepth(SOL + 3); }
     this.contourIm = null;
-    this.lisere?.clear();
+    this.survolIm?.setVisible(false);
     if (sx === null) return;
-    // porte peinte dans le bâtiment : liseré mesuré à la main autour de l'embrasure (src/data/liseres_portes.json)
-    const l = (LISERES as unknown as Record<string, Record<string, Lisere>>)[this.prefix]?.[porte];
-    if (l) { this.dessinerLisere(sx, sy, l); return; }
+    // le trait officiel de la porte (boîte de survol de la carte Dofus 3, ou dessin de la porte), comme Dofus 3 et Sanstour
+    if (this.montrerSurvol(sx, sy)) return;
     const im = this.dessinPorte(sx, sy);
-    if (!im?.preFX) return;   // pas de dessin à elle, ou pas de WebGL : pas de contour
+    if (!im?.preFX) return;   // rien à entourer, ou pas de WebGL
     im.preFX.setPadding(4);
-    im.preFX.addGlow(0xf6f0ff, 5, 0, false, 0.12, 3);
+    im.preFX.addGlow(WorldView.LILAS, 4, 0, false, 0.12, 3);
     // paillasson survolé : il passe devant le bord noir de la salle, qui le cache parfois (Banque, Bricoleurs)
     if (im.texture.key === 'paillasson') im.setDepth(1e6 - 6);
     this.contourIm = im;
   }
-  private contourCle = '';
-  private lisere: Phaser.GameObjects.Graphics | null = null;
-  /** Liseré en arche (ou en panneau) autour d'une embrasure, même teinte que le contour des portes dessinées à part. */
-  private dessinerLisere(sx: number, sy: number, l: Lisere) {
-    const g = this.lisere ??= this.scene.add.graphics().setDepth(1e6 - 5);
-    this.scene.cameras.getCamera('mini')?.ignore(g);
-    const x0 = sx + l.g, x1 = sx + l.d, b0 = sy + l.bg, b1 = sy + l.bd, h = sy + l.h, pente = b1 - b0;
-    const path = new Phaser.Curves.Path(x0, b0);
-    if (l.forme === 'panneau') path.lineTo(x0, h).lineTo(x1, h + pente).lineTo(x1, b1);
-    else {
-      // côtés droits jusqu'à la naissance de l'arche, puis l'arc ; le sommet suit la pente du bas (vue de trois quarts)
-      const k = (x1 - x0) * 0.5, s0 = h + k, s1 = h + k + pente, haut = h + pente / 2;
-      const c = (haut - 0.25 * (s0 + s1) / 2) / 0.75;
-      path.lineTo(x0, s0).cubicBezierTo(x1, s1, x0, c, x1, c).lineTo(x1, b1);
+  /** Teinte du contour (le lilas de Sanstour). */
+  static readonly LILAS = 0xe2d8ff;
+  private survolIm: Phaser.GameObjects.Image | null = null;
+  /** Le contour officiel le plus proche du haut de la case de la porte (survols de monde.json, sur les cartes affichées). */
+  private montrerSurvol(sx: number, sy: number): boolean {
+    const cle = `survols_${this.prefix}`;
+    if (!this.scene.textures.exists(cle)) return false;
+    const tex = this.scene.textures.get(cle), S = GridMap.S, px = sx, py = sy - 50;
+    let best: { x: number; y: number; f: string; w: number } | null = null, bd = WorldView.CONTOUR_MAX;
+    for (const m of this.wg.world.maps) {
+      if (!m.survols || this.slots.get(m.tag)?.state !== 'ready') continue;
+      for (const q of m.survols) {
+        const fr = tex.get(q.f), w = fr.width * S, h = fr.height * S, c = this.wg.toScreen(q.x, q.y), x0 = c.x - w / 2, y0 = c.y - h / 2;
+        const d = Math.hypot(Math.max(x0 - px, 0, px - x0 - w), Math.max(y0 - py, 0, py - y0 - h));
+        if (d < bd || (d === bd && best && w < best.w)) { bd = d; best = { ...c, f: q.f, w }; }
+      }
     }
-    g.lineStyle(7, 0xf6f0ff, 0.18); path.draw(g, 48);
-    g.lineStyle(4, 0xf6f0ff, 0.35); path.draw(g, 48);
-    g.lineStyle(2, 0xffffff, 0.95); path.draw(g, 48);
+    if (!best) return false;
+    if (!this.survolIm) {
+      this.survolIm = this.scene.add.image(0, 0, cle).setDepth(1e6 - 5);
+      this.scene.cameras.getCamera('mini')?.ignore(this.survolIm);
+    }
+    this.survolIm.setTexture(cle, best.f).setPosition(best.x, best.y).setScale(S).setVisible(true);
+    return true;
   }
+  private contourCle = '';
   private contourT = 0;
   private contourIm: Phaser.GameObjects.Image | null = null;
   /** Le dessin de la porte : l'image marquée « porte » (gfx officiel, portes_contour.py) la plus proche, si elle touche
