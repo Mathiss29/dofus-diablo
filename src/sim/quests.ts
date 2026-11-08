@@ -1,7 +1,7 @@
 import type { SimEvent } from './events';
 import type { World } from './world';
 import { PEPITE, type Rarity } from './items';
-import { contrat, semaine, tirerContrats, type CtxContrats } from './contrats';
+import { contrat, hache, semaine, tirerContrats, type CtxContrats } from './contrats';
 
 /** Quêtes et succès (maquette « Quêtes et succès », tranchée le 2026-11-06).
  *  Une quête est une suite d'étapes ; une étape a un ou plusieurs objectifs qui avancent en même temps (3A+3B).
@@ -33,6 +33,12 @@ export type ObjectifDef = { texte: string } & (
   | { t: 'fabriquer'; objet: string; n?: number }
   /** Le tour du monde : vaincre le boss de ce donjon (une victoire d'avant la quête compte, 5A). boss, niveau et région : carnet de route. */
   | { t: 'donjon'; donjon: string; boss: string; niveau: number; region: string }
+  /** Défense (Quêtes roadmap 6A) : tenir s secondes sur cette carte pendant que des vagues de monstres de la sous-zone arrivent. */
+  | { t: 'defense'; carte: string; s: number }
+  /** Contre la montre (6D) : vider cette carte de ses monstres en moins de s secondes après y être entré. */
+  | { t: 'chrono'; carte: string; s: number }
+  /** Défi de donjon du jour (3B) : vaincre le boss de ce donjon en respectant la règle (sans potion, ou en moins de s secondes). */
+  | { t: 'defi'; donjon: string; regle: 'sansPotion' | 'chrono'; s?: number }
 );
 export interface EtapeDef {
   nom: string;
@@ -146,6 +152,8 @@ export interface InfoDonjon { nom: string; boss: string | null; niveau: number; 
   vagues?: number; meilleur?: number; reprise?: number }
 /** Temps « 3:07 ». */
 export const chrono = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+/** Durée lisible : « 4 min 30 s ». */
+const chronoTexte = (s: number) => { const m = Math.floor(s / 60), r = Math.round(s % 60); return m ? `${m} min${r ? ` ${r} s` : ''}` : `${r} s`; };
 /** Réponse du cadre vert sous la bulle (maquette Dialogues 3A) : voir une quête, l'accepter, revenir à la liste, fermer. */
 export type Reponse = { texte: string; detail?: string } & (
   { a: 'voir' | 'accepter'; quete: string } | { a: 'retour' } | { a: 'fermer' } | { a: 'service'; service: string } | { a: 'suite'; i: number }
@@ -213,6 +221,12 @@ export class Quetes {
   refaites: Record<string, string> = {};
   /** Contrats proposés aujourd'hui et cette semaine. */
   tableau: Tableau | null = null;
+  /** Défense en cours : quête, objectif, temps tenu, prochaine vague. */
+  private defense: { q: string; i: number; t: number; vague: number; hors: number } | null = null;
+  /** Contre la montre en cours : quête, objectif, temps écoulé. */
+  private course: { q: string; i: number; t: number; n0: number } | null = null;
+  /** Potion bue depuis l'entrée dans le donjon (défi « sans potion »). */
+  private potionDonjon = false;
   /** Contrats déjà écrits (src/sim/contrats.ts), par id. */
   private dyn = new Map<string, QueteDef | null>();
   /** Donjon où se trouve le perso et moment où il y est entré (temps du premier passage, Tour 8B). */
@@ -325,7 +339,8 @@ export class Quetes {
     this.refaites = { ...e.refaites }; this.tableau = e.tableau ?? null;
     this.enCours = (e.enCours ?? []).filter(c => this.existe(c.id) && this.etapeDe(c));
     // les contrats finis des jours passés ne servent plus à rien
-    this.finies = new Set((e.finies ?? []).filter(id => !id.startsWith('ctr:') || this.enPeriode(id))); this.etapesFinies = new Set((e.etapesFinies ?? []).filter(k => !k.startsWith('ctr:')));
+    const vieux = (id: string) => (id.startsWith('ctr:') || id.startsWith('defi:')) && !this.enPeriode(id);
+    this.finies = new Set((e.finies ?? []).filter(id => !vieux(id))); this.etapesFinies = new Set((e.etapesFinies ?? []).filter(k => !k.startsWith('ctr:') && !k.startsWith('defi:')));
     this.suivie = e.suivie && this.enCours.some(c => c.id === e.suivie) ? e.suivie : this.enCours[0]?.id ?? null;
     this.decouvertes = new Set(e.decouvertes ?? []); this.vaincus = new Set(e.vaincus ?? []); this.objets = { ...e.objets };
     this.donjons = JSON.parse(JSON.stringify(e.donjons ?? {}));
@@ -334,9 +349,9 @@ export class Quetes {
     });
   }
 
-  def(id: string): QueteDef { return this.data.quetes[id] ?? this.ecrireContrat(id)!; }
+  def(id: string): QueteDef { return this.data.quetes[id] ?? this.ecrireContrat(id) ?? this.ecrireDefi(id)!; }
   /** La quête existe (écrite dans quetes.json, ou contrat dont la sous-zone existe). */
-  existe(id: string) { return !!(this.data.quetes[id] ?? this.ecrireContrat(id)); }
+  existe(id: string) { return !!(this.data.quetes[id] ?? this.ecrireContrat(id) ?? this.ecrireDefi(id)); }
 
   // --- Répétables et contrats du jour (Quêtes roadmap 1C, 3A+3C, 4A) ----------
   /** Aujourd'hui (AAAA-MM-JJ, heure du PC) et la semaine. */
@@ -344,6 +359,28 @@ export class Quetes {
   periode(rep: 'jour' | 'semaine') { return rep === 'jour' ? this.jour : semaine(this.jour); }
   /** Un contrat de la période en cours (les autres ne sont plus proposés). */
   private enPeriode(id: string) { const p = id.split(':')[1]; return p === this.jour || p === semaine(this.jour); }
+  /** Défi du jour d'un donjon en arène (3B) : « defi:<jour>:<donjon> », règle tirée de la date. Rendu au gardien. */
+  private ecrireDefi(id: string): QueteDef | null {
+    if (!id.startsWith('defi:')) return null;
+    if (this.dyn.has(id)) return this.dyn.get(id)!;
+    const [, jour, donjon] = id.split(':'), w = this.world, boss = w.bossDuDonjon(donjon), g = this.gardienDe(donjon);
+    let q: QueteDef | null = null;
+    if (boss && g) {
+      const M = w.opts.data.monsters[boss], lvl = M.level ?? 20, chrono = hache(id) % 2 === 1, s = 240 + Math.round(lvl / 10) * 30;
+      const o: ObjectifDef = chrono ? { t: 'defi', donjon, regle: 'chrono', s, texte: `Vaincre ${M.name} en moins de ${chronoTexte(s)} après l'entrée` }
+        : { t: 'defi', donjon, regle: 'sansPotion', texte: `Vaincre ${M.name} sans boire de potion` };
+      q = { nom: `Défi du jour : ${chrono ? 'contre la montre' : 'sans potion'}`, type: 'prime', pnj: g, rendre: g, niveau: lvl, serie: 'Défi de donjon', contrat: jour,
+        texte: `${donjon}, une fois par jour. ${chrono ? `Le chrono part quand tu passes la porte : ${chronoTexte(s)} pour atteindre le boss et le battre.` : 'Pas une gorgée de potion entre la porte et le boss.'} Si tu rates, ressors et retente.`,
+        etapes: [{ nom: donjon, objectifs: [o] }], recompense: { xp: Math.round(4 * lvl * 50), kamas: Math.round(4 * lvl * 10), sac: 'epique', pepites: lvl } };
+    }
+    this.dyn.set(id, q);
+    return q;
+  }
+  /** Défi du jour de ce donjon, s'il est encore à prendre. */
+  defiLibre(donjon: string): string | null {
+    const id = `defi:${this.jour}:${donjon}`;
+    return this.jour && this.existe(id) && !this.finies.has(id) && !this.enCours.some(c => c.id === id) ? id : null;
+  }
   private ecrireContrat(id: string): QueteDef | null {
     if (!id.startsWith('ctr:')) return null;
     if (!this.dyn.has(id)) this.dyn.set(id, contrat(id, this.ctxContrats()));
@@ -401,7 +438,9 @@ export class Quetes {
   /** Icône officielle au-dessus d'un PNJ (8D) : quête à donner, à rendre, ou rien. */
   icone(pnj: string): { quete: string; rendre: boolean } | null {
     const r = this.aRendre(pnj); if (r) return { quete: r, rendre: true };
-    const d = this.aDonner(pnj) ?? (this.data.pnj[pnj]?.contrats ? this.contratsLibres()[0] : null); return d ? { quete: d, rendre: false } : null;
+    const def = this.data.pnj[pnj];
+    const d = this.aDonner(pnj) ?? (def?.contrats ? this.contratsLibres()[0] : null) ?? (def?.gardien ? this.defiLibre(def.gardien.donjon) : null);
+    return d ? { quete: d, rendre: false } : null;
   }
   /** Le PNJ attend qu'on lui parle pour un objectif « parler ». */
   attendParler(pnj: string): string | null {
@@ -486,7 +525,7 @@ export class Quetes {
       : { a: 'sansCle', donjon: g.donjon, texte: "Je n'ai pas de clé." };
     const dis = def.discussion?.[0];
     this.dialogue = { pnj, donjon: info, texte: intro ?? dernier ?? def.phrase ?? 'Bonne route, aventurier.',
-      reponses: [entrer, ...ds.map(id => ({ a: 'voir' as const, quete: id, texte: this.def(id).nom })),
+      reponses: [entrer, ...[...ds, ...(this.defiLibre(g.donjon) ? [this.defiLibre(g.donjon)!] : [])].map(id => ({ a: 'voir' as const, quete: id, texte: this.def(id).nom })),
         ...(dis ? [{ a: 'suite' as const, i: 0, texte: dis.reponse }] : []), { a: 'fermer' as const, texte: def.adieu ?? 'Au revoir.' }].slice(0, 4) };
     if (this.dialogue.reponses.at(-1)!.a !== 'fermer') this.dialogue.reponses[3] = { a: 'fermer', texte: def.adieu ?? 'Au revoir.' };
   }
@@ -542,6 +581,12 @@ export class Quetes {
       const ici = w.donjonIci();   // victoire sur le boss du donjon (8A)
       if (ici && w.bossDuDonjon(ici) === e.monster) {
         const b = this.donjons[ici] ??= { v: 0, m: 0 }; b.v++; b.dernier = 'v';
+        const tps = this.dansDonjon?.nom === ici ? w.time - this.dansDonjon.t : Infinity;
+        for (const c of this.enCours) this.etapeDe(c)?.objectifs.forEach((o, i) => {
+          if (o.t !== 'defi' || o.donjon !== ici) return;
+          const ok = o.regle === 'sansPotion' ? !this.potionDonjon && this.dansDonjon?.nom === ici : tps <= (o.s ?? 300);
+          if (ok) c.compte[i] = 1; else w.emit({ k: 'queteInfo', texte: o.regle === 'sansPotion' ? 'Défi raté : une potion a été bue.' : `Défi raté : ${chronoTexte(tps)}, trop lent.` });
+        });
         if (!b.premier) b.premier = { ...(w.opts.aujourdhui ? { d: w.opts.aujourdhui } : {}),
           ...(this.dansDonjon?.nom === ici ? { t: Math.round(w.time - this.dansDonjon.t) } : {}) };
       }
@@ -556,6 +601,7 @@ export class Quetes {
       });
     } else if (e.k === 'cast' || e.k === 'rageSpent' || e.k === 'potion') {
       const p = w.player;
+      if (e.k === 'potion' && this.dansDonjon) this.potionDonjon = true;
       for (const c of this.enCours) this.etapeDe(c)?.objectifs.forEach((o, i) => {
         if (o.t !== 'utiliser') return;
         const ok = e.k === 'potion' ? o.quoi === 'potion'
@@ -599,7 +645,9 @@ export class Quetes {
     }
     if (map) this.decouvertes.add(map.sub);
     const ici = map?.inside ? w.donjonIci() : null;   // entrée dans un donjon : départ du chrono du premier passage
-    if (ici !== (this.dansDonjon?.nom ?? null)) this.dansDonjon = ici ? { nom: ici, t: w.time } : null;
+    if (ici !== (this.dansDonjon?.nom ?? null)) { this.dansDonjon = ici ? { nom: ici, t: w.time } : null; this.potionDonjon = false; }
+    this.majDefense(dt, map?.tag ?? null);
+    this.majCourse(dt, map?.tag ?? null);
     // bulle du gardien quand on passe devant (9A), une fois par visite
     for (const n of this.pnjs) {
       if (!n.def.gardien) continue;
@@ -636,7 +684,55 @@ export class Quetes {
   }
 
   /** Total d'un objectif (pour le suivi : « 2/4 »). */
-  total(o: ObjectifDef): number { return o.t === 'vaincre' || o.t === 'ramasser' || o.t === 'recolter' ? o.n : o.t === 'fabriquer' ? o.n ?? 1 : 1; }
+  total(o: ObjectifDef): number { return o.t === 'vaincre' || o.t === 'ramasser' || o.t === 'recolter' ? o.n : o.t === 'fabriquer' ? o.n ?? 1 : o.t === 'defense' ? o.s : 1; }
+
+  /** Objectif pas fini de ce type dans les quêtes en cours (le premier). */
+  private objectifActif<T extends ObjectifDef['t']>(t: T, carte: string | null): { c: QueteEnCours; i: number; o: Extract<ObjectifDef, { t: T }> } | null {
+    if (!carte) return null;
+    for (const c of this.enCours) {
+      if (c.aRendre) continue;
+      const e = this.etapeDe(c); if (!e) continue;
+      for (let i = 0; i < e.objectifs.length; i++) {
+        const o = e.objectifs[i] as ObjectifDef;
+        if (o.t === t && 'carte' in o && o.carte === carte && c.compte[i] < this.total(o)) return { c, i, o: o as Extract<ObjectifDef, { t: T }> };
+      }
+    }
+    return null;
+  }
+  /** Défense (6A) : sur la carte, le temps tenu monte et une vague arrive toutes les 12 s ; quitter la carte ou mourir remet à zéro. */
+  private majDefense(dt: number, carte: string | null) {
+    const w = this.world, p = w.player, a = this.objectifActif('defense', carte);
+    if (!a && this.defense && !p.dead && (this.defense.hors += dt) < 3) return;   // repoussé hors de la carte un instant : on tient encore
+    if (!a || p.dead) {
+      if (this.defense) { const c = this.enCours.find(x => x.id === this.defense!.q); if (c && c.compte[this.defense.i] < this.total(this.etapeDe(c)!.objectifs[this.defense.i])) c.compte[this.defense.i] = 0; this.defense = null; }
+      return;
+    }
+    const d = this.defense ??= { q: a.c.id, i: a.i, t: 0, vague: 0, hors: 0 };
+    d.hors = 0; d.t += dt; d.vague -= dt;
+    if (d.vague <= 0) {
+      d.vague = 12;
+      const sub = w.worldGrid?.mapByTag(a.o.carte)?.sub, sz = w.zone.open?.subareas[String(sub)], free = w.worldGrid?.freeByMap.get(a.o.carte) ?? [];
+      if (sz?.monsters.length && free.length) for (let k = 0; k < 3; k++) {
+        const ang = w.rng.range(0, Math.PI * 2), z = w.worldGrid!.nearestFree(p.x + Math.cos(ang) * 320, p.y + Math.sin(ang) * 220, free);
+        w.spawnMonster(w.rng.pick(sz.monsters), z.x, z.y);
+      }
+      if (d.t < 1) w.emit({ k: 'queteInfo', texte: `Tiens bon ${a.o.s} secondes !` });
+    }
+    a.c.compte[a.i] = Math.min(a.o.s, Math.floor(d.t));
+    if (d.t >= a.o.s) this.defense = null;
+  }
+  /** Contre la montre (6D) : le chrono part à l'entrée sur la carte ; carte vidée à temps = fait, sinon il faut ressortir et revenir. */
+  private majCourse(dt: number, carte: string | null) {
+    const w = this.world, a = this.objectifActif('chrono', carte);
+    if (!a) { this.course = null; return; }
+    if (!this.course || this.course.q !== a.c.id) { this.course = { q: a.c.id, i: a.i, t: 0, n0: 0 }; w.emit({ k: 'queteInfo', texte: `Chrono lancé : ${chronoTexte(a.o.s)} pour vider la carte !` }); }
+    const k = this.course; if (k.t < 0) return;   // raté : attendre de ressortir
+    k.t += dt;
+    const wg = w.worldGrid!, restants = w.monsters.filter(m => !m.dead && wg.mapAt(m.x, m.y)?.tag === a.o.carte && !this.elites.has(m.id)).length;
+    k.n0 = Math.max(k.n0, restants);
+    if (restants === 0 && k.n0 > 0) { a.c.compte[a.i] = 1; this.course = null; }
+    else if (k.t > a.o.s) { k.t = -1; w.emit({ k: 'queteInfo', texte: `Trop lent ! Ressors de la carte et reviens pour retenter.` }); }
+  }
 
   /** Étapes finies -> étape suivante, puis rendu ou fin de quête. */
   private verifier() {
@@ -800,6 +896,8 @@ export class Quetes {
         if (m) return { x: m.x, y: m.y };
         return proche((_, t) => t === o.carte);
       }
+      if (o.t === 'defense' || o.t === 'chrono') return proche((_, t) => t === o.carte);
+      if (o.t === 'defi') { const po = w.entreeDonjon(o.donjon); if (po) return { x: po.ends[0].x, y: po.ends[0].y }; continue; }
       if (o.t === 'donjon') { const po = w.entreeDonjon(o.donjon); if (po) return { x: po.ends[0].x, y: po.ends[0].y }; continue; }
       if (o.t === 'activer') { const cp = w.zone.open?.checkpoints.find(k => k.name === o.zaap); if (cp) return proche((_, t) => t === `${cp.map[0]}_${cp.map[1]}`); }
       if ('sousZone' in o && o.sousZone != null) {

@@ -205,6 +205,8 @@ export const LOOKS: Record<string, Look> = {
   larve_bleue: { atlas: 'larve_bleue', scale: 0.71, map: MONSTER_MAP(6 / 27, 'AnimAttaque0', { 0: 6 / 27, 1: 10 / 25, 2: 7 / 26 }), height: 61, multi: true },
   larve_verte: { atlas: 'larve_verte', scale: 0.71, map: MONSTER_MAP(6 / 27, 'AnimAttaque0', { 0: 6 / 27, 1: 10 / 25 }), height: 52, multi: true },
   larve_orange: { atlas: 'larve_orange', scale: 0.71, map: MONSTER_MAP(6 / 27, 'AnimAttaque0', { 0: 6 / 27, 1: 10 / 25, 2: 7 / 26 }), height: 80, multi: true },
+  dopeul_iop: { atlas: 'dopeul_iop', scale: 0.8, map: MONSTER_MAP(18 / 30, 'AnimAttaque0', { 0: 18 / 30, 1: 31 / 48, 2: 37 / 49 }), height: 124, multi: true },
+  dopeul_cra: { atlas: 'dopeul_cra', scale: 0.8, map: MONSTER_MAP(18 / 30, 'AnimAttaque0', { 0: 18 / 30, 1: 31 / 48, 2: 37 / 49 }), height: 124, multi: true },
   sam_sagaz: { atlas: 'sam_sagaz', scale: 0.55, map: MONSTER_MAP(15 / 32, 'AnimAttaque1', { 0: 18 / 40, 1: 15 / 32, 2: 35 / 70 }), height: 204, multi: true },
   larve_jaune: { atlas: 'larve_jaune', scale: 0.71, map: MONSTER_MAP(6 / 27, 'AnimAttaque0', { 0: 6 / 27, 1: 10 / 25 }), height: 67, multi: true },
   tournesol_affame: { atlas: 'tournesol_affame', scale: 0.47, map: MONSTER_MAP(11 / 25, 'AnimAttaque0', { 0: 11 / 25, 1: 7 / 15, 2: 7 / 20 }), height: 400, multi: true },
@@ -251,6 +253,7 @@ export const PNJ_LOOKS: Record<string, PnjLook> = {
   metag: { scale: 0.82, anim: 'AnimStatique_1' },
   geolier: { scale: 0.74, anim: 'AnimStatique_1' },
   cindy: { scale: 0.74, anim: 'AnimStatique_1' },
+  temples: { scale: 0.66, anim: 'AnimStatique_1' },
   cloportier: { scale: 0.82, anim: 'AnimStatique_1' },
   // PNJ du Havre-Sac (maquette Hub 3A) : Kerubim Crépin (PNJ 3043, {2841|||130}), Otomaï (PNJ 914, {891|||84}, animFunList officielle),
   // Goultard (PNJ 1216, {7551|||155}, repos animé en boucle), Tissebelle et Mère Bouillotte (looks des Prêtresses de Sadida et de Pandawa)

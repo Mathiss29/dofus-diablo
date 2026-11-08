@@ -7892,5 +7892,631 @@
    "retraitPA": 0
   },
   "signature": 5283
+ },
+ "dopeul_iop": {
+  "speed": 100,
+  "radius": 24,
+  "mass": 2.5,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "color": "#8f6fd8",
+  "dofusId": 167,
+  "name": "Dopeul Iop",
+  "look": "dopeul_iop",
+  "hp": 500,
+  "spells": [
+   {
+    "id": 2102,
+    "name": "Pression du Dopeul",
+    "pa": 3,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 15,
+      "max": 19,
+      "steal": false
+     }
+    ],
+    "gfx": 20803
+   },
+   {
+    "id": 2103,
+    "name": "Bond du Dopeul",
+    "pa": 5,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "subis",
+      "n": 114,
+      "dur": 0
+     }
+    ],
+    "gfx": 20801
+   },
+   {
+    "id": 2104,
+    "name": "Duel du Dopeul",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 8,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "pm",
+      "n": -10,
+      "dur": 1
+     },
+     {
+      "k": "pm",
+      "n": -10,
+      "dur": 2
+     }
+    ],
+    "gfx": 2010
+   },
+   {
+    "id": 2105,
+    "name": "Epée du destin du Dopeul",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 2,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 33,
+      "max": 37,
+      "steal": false
+     }
+    ],
+    "gfx": 2012
+   },
+   {
+    "id": 2106,
+    "name": "Couper du Dopeul",
+    "pa": 3,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "L2",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 9,
+      "max": 13,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -2,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 2107,
+    "name": "Puissance du Dopeul",
+    "pa": 3,
+    "po": [
+     0,
+     1
+    ],
+    "relance": 4,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 150,
+      "pct": true,
+      "dur": 2
+     }
+    ],
+    "gfx": 925
+   },
+   {
+    "id": 2108,
+    "name": "Vitalité du Dopeul",
+    "pa": 3,
+    "po": [
+     0,
+     1
+    ],
+    "relance": 2,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [],
+    "gfx": 112
+   },
+   {
+    "id": 2109,
+    "name": "Tempête de Puissance du Dopeul",
+    "pa": 3,
+    "po": [
+     3,
+     4
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 25,
+      "max": 29,
+      "steal": false
+     }
+    ],
+    "gfx": 20810
+   },
+   {
+    "id": 2110,
+    "name": "Colère de Iop du Dopeul",
+    "pa": 7,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 41,
+      "max": 60,
+      "steal": false
+     }
+    ],
+    "gfx": 21108
+   },
+   {
+    "id": 2111,
+    "name": "Epée de Iop du Dopeul",
+    "pa": 4,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "X3",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 26,
+      "max": 30,
+      "steal": false
+     }
+    ],
+    "gfx": 930
+   }
+  ],
+  "xp": 200,
+  "level": 20,
+  "res": {
+   "terre": 2,
+   "feu": 2,
+   "eau": 2,
+   "air": 2,
+   "neutre": 2
+  },
+  "caracs": {
+   "force": 80,
+   "intelligence": 80,
+   "chance": 80,
+   "agilite": 80,
+   "sagesse": 50,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "dopeul_cra": {
+  "speed": 100,
+  "radius": 24,
+  "mass": 2.5,
+  "dmg": 14,
+  "attackRange": 260,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "color": "#8f6fd8",
+  "dofusId": 168,
+  "name": "Dopeul Crâ",
+  "look": "dopeul_cra",
+  "hp": 500,
+  "spells": [
+   {
+    "id": 2112,
+    "name": "Flèche Magique du Dopeul",
+    "pa": 4,
+    "po": [
+     1,
+     7
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 15,
+      "max": 17,
+      "steal": false
+     }
+    ],
+    "missile": 20903,
+    "gfx": 946
+   },
+   {
+    "id": 2113,
+    "name": "Tir Critique du Dopeul",
+    "pa": 2,
+    "po": [
+     0,
+     5
+    ],
+    "relance": 5,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 2114,
+    "name": "Flèche Glacée du Dopeul",
+    "pa": 3,
+    "po": [
+     3,
+     9
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 9,
+      "max": 10,
+      "steal": false
+     },
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 1
+     }
+    ],
+    "missile": 20901,
+    "gfx": 20902
+   },
+   {
+    "id": 2115,
+    "name": "Tir Puissant du Dopeul",
+    "pa": 3,
+    "po": [
+     0,
+     1
+    ],
+    "relance": 6,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [],
+    "gfx": 20904
+   },
+   {
+    "id": 2116,
+    "name": "Oeil de Taupe du Dopeul",
+    "pa": 3,
+    "po": [
+     5,
+     5
+    ],
+    "relance": 4,
+    "anim": 1,
+    "zone": "C2",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 11,
+      "max": 13,
+      "steal": true
+     }
+    ],
+    "gfx": 20909
+   },
+   {
+    "id": 2117,
+    "name": "Flèche de Recul du Dopeul",
+    "pa": 4,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 16,
+      "max": 19,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "id": 2118,
+    "name": "Flèche d'Immobilisation du Dopeul",
+    "pa": 2,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 5,
+      "max": 6,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 0
+     }
+    ],
+    "missile": 1109,
+    "gfx": 114
+   },
+   {
+    "id": 2119,
+    "name": "Flèche Punitive du Dopeul",
+    "pa": 4,
+    "po": [
+     6,
+     8
+    ],
+    "relance": 2,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 15,
+      "max": 17,
+      "steal": false
+     }
+    ],
+    "missile": 20911,
+    "gfx": 20912
+   },
+   {
+    "id": 2120,
+    "name": "Tir Eloigné du Dopeul",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 5,
+    "anim": 1,
+    "zone": "C2",
+    "allies": true,
+    "effects": [],
+    "gfx": 978
+   },
+   {
+    "id": 2121,
+    "name": "Flèche Destructrice du Dopeul",
+    "pa": 4,
+    "po": [
+     5,
+     8
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 14,
+      "max": 16,
+      "steal": false
+     }
+    ],
+    "gfx": 20914
+   },
+   {
+    "id": 2122,
+    "name": "Flèche Persécutrice du Dopeul",
+    "pa": 3,
+    "po": [
+     5,
+     8
+    ],
+    "relance": 0,
+    "anim": 902,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 6,
+      "max": 8,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 6,
+      "max": 8,
+      "steal": false
+     }
+    ],
+    "missile": 20906,
+    "gfx": 20907
+   },
+   {
+    "id": 2123,
+    "name": "Flèche Absorbante du Dopeul",
+    "pa": 4,
+    "po": [
+     6,
+     8
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 14,
+      "max": 16,
+      "steal": true
+     }
+    ],
+    "missile": 1109,
+    "gfx": 20915
+   },
+   {
+    "id": 2124,
+    "name": "Flèche Explosive du Dopeul",
+    "pa": 4,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "C2",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 22,
+      "max": 26,
+      "steal": false
+     }
+    ],
+    "missile": 20918,
+    "gfx": 20919
+   },
+   {
+    "id": 2125,
+    "name": "Maîtrise de l'Arc du Dopeul",
+    "pa": 2,
+    "po": [
+     0,
+     1
+    ],
+    "relance": 5,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 32,
+      "dur": 3
+     }
+    ],
+    "gfx": 20920
+   }
+  ],
+  "xp": 200,
+  "level": 20,
+  "res": {
+   "terre": 2,
+   "feu": 2,
+   "eau": 2,
+   "air": 2,
+   "neutre": 2
+  },
+  "caracs": {
+   "force": 80,
+   "intelligence": 80,
+   "chance": 80,
+   "agilite": 80,
+   "sagesse": 50,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
  }
 }

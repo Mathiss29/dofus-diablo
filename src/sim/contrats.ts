@@ -76,7 +76,7 @@ export function contrat(id: string, ctx: CtxContrats): QueteDef | null {
   const [titre, ligne] = pick(titres);
   const monstre = pick(sz.monsters), nom = ctx.nomMonstre(monstre), cartes = ctx.cartesDe(sub);
   const objs: ObjectifDef[] = [];
-  const genre = hebdo ? 'semaine' : pick(['vaincre', 'vaincre', 'butin', 'elite'] as const);
+  const genre = hebdo ? 'semaine' : pick(['vaincre', 'vaincre', 'butin', 'elite', 'defense', 'chrono'] as const);
   const res = sz.monsters.flatMap(m => ctx.ressourcesDe(m).map(id => ({ m, id })));
   if (genre === 'semaine') {
     objs.push({ t: 'vaincre', n: 40, sousZone: +sub, texte: `Vaincre 40 monstres : ${sz.name}` });
@@ -84,6 +84,12 @@ export function contrat(id: string, ctx: CtxContrats): QueteDef | null {
   } else if (genre === 'butin' && res.length) {
     const x = pick(res), n = 4 + Math.floor(r() * 3);
     objs.push({ t: 'ramasser', objet: ctx.nomRessource(x.id), n, chance: 0.3, sousZone: +sub, texte: `Rapporter ${n} × ${ctx.nomRessource(x.id)} : ${sz.name}` });
+  } else if (genre === 'defense' && cartes.length) {
+    const carte = pick(cartes);
+    objs.push({ t: 'defense', carte, s: 60, texte: `Tenir 60 s face aux vagues (${sz.name}, carte ${carte.replace('_', ',')})` });
+  } else if (genre === 'chrono' && cartes.length) {
+    const carte = pick(cartes);
+    objs.push({ t: 'chrono', carte, s: 90, texte: `Vider la carte ${carte.replace('_', ',')} en moins de 90 s (${sz.name})` });
   } else if (genre === 'elite' && cartes.length) {
     objs.push({ t: 'elite', monstre, carte: pick(cartes), pv: 3, nom: `${nom} enragé`, texte: `Vaincre ${nom} enragé` });
     objs.push({ t: 'vaincre', n: 6, sousZone: +sub, texte: `Vaincre 6 monstres : ${sz.name}` });
