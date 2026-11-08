@@ -18,7 +18,7 @@ const RELEVE = 5;
 export interface SceneCoop {
   world: World;
   /** Invité : aller dans la zone de l'hôte (la scène repart), ou revenir à sa propre partie (zone = null). */
-  allerA(zone: string | null, position?: { x: number; y: number }): void;
+  allerA(zone: string | null, position?: { x: number; y: number }, arrivee?: [string, number]): void;
   annonce(texte: string): void;
   /** Nom du perso joué (portraits du groupe). */
   nom: string;
@@ -30,6 +30,8 @@ export interface PersoCompte { jeton: string; emplacement: number }
 interface Invite {
   joueur: number | null; classe: string; nom: string; etat: EtatJoueur | null; em: Emetteur | null; pret: boolean;
   entree: PlayerInput; pressed: SkillId | null; potion: boolean; mortDepuis: number;
+  /** Parti par une porte vers une autre zone : on ne le lui redit pas. */
+  sorti?: boolean;
 }
 type Etat = 'hors' | 'connexion' | 'salon';
 
@@ -67,17 +69,18 @@ class Salon {
   // ——— connexion ———
   creer(serveur = false, compte: PersoCompte | null = null) { this.compte = compte; this.connecter(serveur ? { k: 'creer', serveur: true } : { k: 'creer' }); }
   rejoindre(code: string, compte: PersoCompte | null = null) { if (code.trim()) { this.compte = compte; this.connecter({ k: 'rejoindre', code: code.trim().toUpperCase() }); } }
-  quitter() {
+  /** vers : l'invité a pris une porte vers une autre zone, il y part seul (sinon, retour à sa propre partie). */
+  quitter(vers?: { zone: string; arrivee?: [string, number] }) {
     const etaitInvite = this.miroir, compte = !!this.compte;
     this.ws?.close(); this.ws = null;
     this.fermer();
-    if (etaitInvite) this.revenir(compte);
+    if (etaitInvite) this.revenir(compte, vers);
   }
   /** Retour à sa propre partie ; avec le perso du compte, on relit d'abord ce que le serveur en a sauvé (butin, XP). */
-  private revenir(compte: boolean) {
-    const s = this.scene;
-    if (!compte) { s?.allerA(null); return; }
-    void Compte.charger().finally(() => (this.scene ?? s)?.allerA(null));
+  private revenir(compte: boolean, vers?: { zone: string; arrivee?: [string, number] }) {
+    const s = this.scene, aller = (x: SceneCoop | null) => (vers ? x?.allerA(vers.zone, undefined, vers.arrivee) : x?.allerA(null));
+    if (!compte) { aller(s); return; }
+    void Compte.charger().finally(() => aller(this.scene ?? s));
   }
   private fermer() {
     if (this.hote && this.scene) for (const i of this.invites.values()) this.retirer(i);
@@ -171,7 +174,13 @@ class Salon {
       } else if (d.k === 'pret') { i.pret = true; i.em?.toutRenvoyer(); }
       return;
     }
-    if (d.k === 'sortie') { this.scene?.annonce('Tu quittes le groupe par le portail'); this.quitter(); return; }
+    if (d.k === 'sortie') {
+      const v = d.vers as { zone?: unknown; arrivee?: unknown } | undefined;
+      const vers = v && typeof v.zone === 'string' && GAME_DATA.zones[v.zone]
+        ? { zone: v.zone, ...(Array.isArray(v.arrivee) && typeof v.arrivee[0] === 'string' ? { arrivee: [v.arrivee[0], Number(v.arrivee[1]) || 0] as [string, number] } : {}) } : undefined;
+      this.scene?.annonce(vers ? `Tu pars seul vers ${GAME_DATA.zones[vers.zone].name}` : 'Tu quittes le groupe par le portail');
+      this.quitter(vers); return;
+    }
     if (d.k === 'zone' && typeof d.zone === 'string' && GAME_DATA.zones[d.zone]) {
       this.dansZoneHote = true; this.recus = []; this.monId = Number(d.id) || 0;
       this.scene?.allerA(d.zone, { x: Number(d.x), y: Number(d.y) });
@@ -237,9 +246,14 @@ class Salon {
   /** Après chaque pas : invités morts relevés, puis un instantané tous les COOP.tous pas. */
   apresPas(w: World, dt: number) {
     if (!this.hote || !this.invites.size) return;
-    for (const i of this.invites.values()) {
+    for (const [id, i] of this.invites) {
       const q = w.players.find(p => p.id === i.joueur);
       if (!q) continue;
+      // ses événements à lui (butin, bandeaux, quêtes) ; une porte vers une autre zone : il y part seul, le groupe reste ici
+      for (const e of w.evenementsDe(q)) {
+        if (e.k === 'changeZone') { if (!i.sorti) { i.sorti = true; this.envoyer({ k: 'sortie', vers: { zone: e.zone, arrivee: e.arrivee } }, id); } }
+        else i.em?.noterPerso(e);
+      }
       if (!q.dead) { i.mortDepuis = 0; continue; }
       if ((i.mortDepuis += dt) < RELEVE) continue;
       const f = w.map.nearestFree(w.players[0].x + 40, w.players[0].y);

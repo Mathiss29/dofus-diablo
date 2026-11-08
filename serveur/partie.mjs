@@ -113,7 +113,18 @@ export class Partie {
       const evs = w.drainEvents();
       // portail de sortie : ce joueur quitte la partie (son jeu ferme la connexion, il est alors sauvé et retiré)
       for (const e of evs) if (e.k === 'sortieArene') for (const [num, m] of this.membres) if (m.joueur === e.joueur && !m.sorti) { m.sorti = true; this.envoyer(num, { k: 'sortie' }); }
-      for (const m of this.membres.values()) if (m.em) for (const e of evs) m.em.noter(e);
+      for (const [num, m] of this.membres) {
+        if (!m.em) continue;
+        for (const e of evs) m.em.noter(e);
+        // ses événements à lui (butin, bandeaux, quêtes) ; une porte vers une autre zone : il y part seul, la partie continue
+        const q = w.players.find(p => p.id === m.joueur);
+        if (!q) continue;
+        const siens = q === w.players[0] ? evs.filter(e => S.EVENEMENTS_PERSONNELS.has(e.k)) : w.evenementsDe(q);
+        for (const e of siens) {
+          if (e.k !== 'changeZone') m.em.noterPerso(e);
+          else if (!m.sorti) { m.sorti = true; this.envoyer(num, { k: 'sortie', vers: { zone: e.zone, arrivee: e.arrivee } }); }
+        }
+      }
       this.relever(PARTIE.pas);
       if ((this.depuisSauvegarde += PARTIE.pas) >= PARTIE.sauvegarde) { this.depuisSauvegarde = 0; for (const m of this.membres.values()) this.sauverMembre(m); }
       if (++this.n % S.COOP.tous) continue;

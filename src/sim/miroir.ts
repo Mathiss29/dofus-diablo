@@ -46,7 +46,7 @@ export const COOP = {
 /** Champs jamais envoyés : données du jeu (recréées de l'autre côté), sac et progression propres à chaque joueur, caches. */
 const REFUS: Record<Sorte | 'a', Set<string>> = {
   j: new Set(['cls', 'items', 'bag', 'resources', 'codex', 'learned', 'zonesVues', 'metiers', 'prereglages', 'ames', 'apparats', 'dofus',
-    'commandeFM', 'quetes', 'cleDonjon', 'recetteSuivie', 'zaaps', '_pouvoirs', 'almanaxJour', 'codexOuvert', 'lootFilter', 'autoBrisage', 'kamas', 'v03', 'repathT', 'bufferT', 'buffer']),
+    'commandeFM', 'quetes', 'monde', 'evenements', 'cleDonjon', 'recetteSuivie', 'zaaps', '_pouvoirs', 'almanaxJour', 'codexOuvert', 'lootFilter', 'autoBrisage', 'kamas', 'v03', 'repathT', 'bufferT', 'buffer']),
   // minuteries de l'IA des monstres : l'hôte seul s'en sert
   m: new Set(['def', 'atkCd', 'spellCd', 'sigCd', 'cheminT', 'wanderT', 'wanderX', 'wanderY', 'repathT']),
   b: new Set(['def']),
@@ -60,6 +60,9 @@ const EVENEMENTS = new Set<SimEvent['k']>(['spell', 'shoot', 'slam', 'monsterCas
   'beteMorte', 'heal', 'invocation', 'eveil', 'echange', 'souffrance', 'sacrifice', 'dompte', 'impact', 'grosCoup', 'bossIntro', 'furieux', 'wave',
   'areneDebut', 'areneVague', 'arenePalier', 'areneFin', 'bossDown', 'itemDrop', 'cast', 'bulle', 'rageSpent']);
 export const evenementPartage = (e: SimEvent) => EVENEMENTS.has(e.k);
+/** Événements propres à l'invité (World.evenementsDe) qu'il peut jouer chez lui : bandeaux, butin, quêtes, métiers. */
+const PERSONNELS_AFFICHES = new Set<SimEvent['k']>(['levelUp', 'newSpell', 'enterArea', 'enterLieu', 'loot', 'lootResource', 'lootKamas', 'bagFull',
+  'queteInfo', 'objetQuete', 'succes', 'checkpoint', 'zaapDecouvert', 'recolteFin', 'recolteStop', 'metierLevel', 'dofusGagne', 'portal']);
 
 const arrondir = (v: number) => (Number.isInteger(v) || !Number.isFinite(v) ? v : Math.round(v * COOP.arrondi) / COOP.arrondi);
 const estEntite = (v: object): v is Entity => v instanceof Entity;
@@ -100,6 +103,8 @@ export class Emetteur {
   constructor(readonly moi: number) {}
   /** Événement de la partie à transmettre au prochain instantané. */
   noter(e: SimEvent) { if (evenementPartage(e) && this.evs.length < 200) { const v = versReseau(e); if (v !== undefined) this.evs.push(v); } }
+  /** Événement propre à cet invité (World.evenementsDe) : seuls ceux qu'il sait afficher partent. */
+  noterPerso(e: SimEvent) { if (PERSONNELS_AFFICHES.has(e.k) && this.evs.length < 200) { const v = versReseau(e); if (v !== undefined) this.evs.push(v); } }
   /** Renvoie tout au prochain instantané (invité qui vient d'arriver ou de changer de zone). */
   toutRenvoyer() { this.vu.clear(); }
 
@@ -233,5 +238,6 @@ export function entreeInvite(i: Partial<PlayerInput> | null | undefined): Player
     move: l > 1 ? { x: mv.x / l, y: mv.y / l } : mv, aim: v(i?.aim) ?? { x: 0, y: 0 },
     pressed: typeof i?.pressed === 'string' ? i.pressed : null, holdAttack: !!i?.holdAttack, potion: !!i?.potion,
     dest: v(i?.dest), pickup: n(i?.pickup), target: n(i?.target), castOn: n(i?.castOn), approach: !!i?.approach, meute: n(i?.meute),
+    versPortail: typeof i?.versPortail === 'string' ? i.versPortail.slice(0, 80) : null,
   };
 }
