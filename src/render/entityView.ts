@@ -92,11 +92,12 @@ export class EntityView {
     if (!this.sprite.visible) { this.sprite.setVisible(true); this.bar.setVisible(true); }
     const L = this.look, p = ISO.toScreen(e.x, e.y);
     const fd = ISO.toScreen(Math.cos(e.facing), Math.sin(e.facing));
-    const st = L.map[e.anim] ?? L.map[e.anim.replace(/\d+$/, '')] ?? L.map.idle;   // windup1 -> windup si l'animation du sort manque
+    const arme = (e as { arme?: boolean }).arme && L.map[`${e.anim}_arme`];   // Forgelance Armé : variante qui montre la Lance en main
+    const st = arme || (L.map[e.anim] ?? L.map[e.anim.replace(/\d+$/, '')] ?? L.map.idle);   // windup1 -> windup si l'animation du sort manque
     // secteur de 45° mesuré après avoir « redressé » la vue isométrique (y x 2) : 0 = droite, 2 = bas, 6 = haut
     const sector = ((Math.round(Math.atan2(fd.y * 2, fd.x) / (Math.PI / 4)) % 8) + 8) % 8;
     let o = MIRROR[sector] ?? sector, flip = sector in MIRROR;
-    if (!this.counts[`${st.anim}_${o}`]) {   // animation à 2 orientations : la diagonale la plus proche
+    if (st.diag || !this.counts[`${st.anim}_${o}`]) {   // animation à 2 orientations : la diagonale la plus proche
       const back = fd.y < -0.05;
       o = back ? 5 : 1; flip = back ? fd.x > 0 : fd.x < 0;
     }

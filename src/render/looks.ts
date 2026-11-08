@@ -3,7 +3,8 @@ import MONSTRES from '../data/monsters.json';
  *  jouer pour chaque état de gameplay. from/to = fractions de l'animation d'origine,
  *  choisies pour que la frame d'impact tombe au moment du dégât. */
 
-export interface AnimSlice { anim: string; from?: number; to?: number; loop?: boolean; fps?: number }
+/** `diag` : seulement les diagonales (comme une animation à 2 orientations), même si l'animation en a d'autres. */
+export interface AnimSlice { anim: string; from?: number; to?: number; loop?: boolean; fps?: number; diag?: boolean }
 export interface Look {
   atlas: string;
   scale: number;
@@ -180,6 +181,10 @@ const FL_MAP: Record<string, AnimSlice> = {
   ...WEAPON_MAP,
   idle: { anim: 'AnimStatiqueExplo0', loop: true, fps: 20 },
   run: { anim: 'AnimCourse', loop: true, fps: 32 },
+  // Armé : Lance en main (skin 3650). La pose d'exploration et la course de face, de dos et de profil n'ont pas de nœud de Lance
+  // dans le squelette officiel : garde de combat au repos, course en diagonale seulement.
+  idle_arme: { anim: 'AnimStatiqueCombat0', loop: true, fps: 20 },
+  run_arme: { anim: 'AnimCourse', loop: true, fps: 32, diag: true },
   attack1: { anim: 'AnimArme0', from: 3 / 28, to: 17 / 28 },
   attack2: { anim: 'AnimArme0', from: 3 / 28, to: 17 / 28 },
   attack3: { anim: 'AnimArme0', from: 3 / 28, to: 24 / 28 },

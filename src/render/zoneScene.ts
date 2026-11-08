@@ -26,7 +26,7 @@ import { DANGER } from '../sim/danger';
 import { EntityView } from './entityView';
 import * as Touches from './touches';
 import { Attente, PersoVivant } from './persoVivant';
-import { Assemblage, apparenceValide, fiches, objetsPortes, type Apparence } from './squelette';
+import { Assemblage, LANCE_EN_MAIN, apparenceValide, fiches, objetsPortes, type Apparence } from './squelette';
 import { SpellFx } from './spellFx';
 import { FX } from './fx';
 import { FamilierView } from './familierView';
@@ -247,7 +247,7 @@ export class ZoneScene extends Phaser.Scene {
     const looks = [...(zone.open ? [] : [...types].map(t => LOOKS[GAME_DATA.monsters[t].look]))];
     this.assemblage = null;
     // coiffe, cape et bouclier portés (et leur apparat) dessinés dès le départ, d'après la sauvegarde (Apparence 4A+4B+5A)
-    const e0 = this.perso?.etat, obj0 = objetsPortes(e0?.equipment, e0?.apparat);
+    const e0 = this.perso?.etat, obj0 = [...objetsPortes(e0?.equipment, e0?.apparat), ...(GAME_DATA.classes[this.classId]?.lance ? [LANCE_EN_MAIN] : [])];
     this.apparenceCle = this.cleApparence(obj0);
     const pret = Assemblage.creer(this.clePerso, this.perso?.apparence ?? this.apparenceEssai, obj0).then(a => { this.assemblage = a; }, () => {
       const L = this.look;
@@ -497,7 +497,7 @@ export class ZoneScene extends Phaser.Scene {
     if (vv !== undefined) return vv !== null;
     this.vivantsAllies.set(q.id, null);
     const cle = Object.keys(GAME_DATA.classes).find(c => GAME_DATA.classes[c] === q.cls) ?? 'iop';
-    Assemblage.creer(`${cle}_m`, null, objetsPortes(q.equipment, q.apparat)).then(a => {
+    Assemblage.creer(`${cle}_m`, null, this.objetsDe(q)).then(a => {
       if (!this.sys.isActive() || !this.world.players.includes(q)) return;
       this.vivantsAllies.set(q.id, this.nouveauVivant(a));
     }, () => { /* hors ligne : l'allié reste invisible */ });
@@ -508,10 +508,12 @@ export class ZoneScene extends Phaser.Scene {
     this.events.once('shutdown', () => { vv.destroy(); if (this.vivant === vv) this.vivant = null; });
     return vv;
   }
+  /** Objets dessinés sur un joueur : coiffe, cape, bouclier, apparats, et la Lance en main du Forgelance Armé. */
+  private objetsDe(p: Player) { return [...objetsPortes(p.equipment, p.apparat), ...(p.arme ? [LANCE_EN_MAIN] : [])]; }
   /** Réassemble le perso quand son apparence change ; l'ancien reste affiché jusqu'à ce que le nouveau soit prêt. */
   private majApparence() {
     if (!this.assemblage) return;   // perso en planche (secours hors ligne)
-    const p = this.world.player, objets = objetsPortes(p.equipment, p.apparat), k = this.cleApparence(objets);
+    const p = this.world.player, objets = this.objetsDe(p), k = this.cleApparence(objets);
     if (k === this.apparenceCle) return;
     this.apparenceCle = k;
     Assemblage.creer(this.clePerso, this.perso?.apparence ?? this.apparenceEssai, objets).then(a => {

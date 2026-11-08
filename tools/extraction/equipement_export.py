@@ -30,7 +30,7 @@ def compact(m):
 
 
 fait = set()
-ids = sorted(set(C.values()))
+ids = sorted(set(C.values()) | {3650})   # + 3650 : Lance du Forgelance tenue en main (LANCE_EN_MAIN, squelette.ts)
 if os.environ.get('PART'): i, n = map(int, os.environ['PART'].split('/')); ids = ids[i::n]   # plusieurs exports en parallèle (TRAVAIL différents)
 for sid in ids:
     if not os.environ.get('FORCE') and os.path.exists(os.path.join(out, f'skin_{sid}.json')): fait.add(sid); continue
