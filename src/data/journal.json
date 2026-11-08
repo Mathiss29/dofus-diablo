@@ -941,7 +941,22 @@
             "phrase": "Mutilation reste active jusqu'à ce que tu la relances, et sacrifie tes PV toutes les 3 s.",
             "details": "La Puissance plafonne à 3 crans (+100). La relancer donne toujours la Coagulation.",
             "icone": "sorts",
-            "etiquettes": ["Sacrieur", "Partie de test"]
+            "etiquettes": [
+              "Sacrieur",
+              "Partie de test"
+            ]
+          },
+          {
+            "titre": "Monstres plus menaçants",
+            "phrase": "Les monstres et les élites frappent plus fort : au moins +35 %, davantage aux niveaux élevés.",
+            "details": "Leurs coups tiennent compte de l'équipement moyen de ton niveau. Les boss ne changent pas.",
+            "icone": "degats"
+          },
+          {
+            "titre": "Le grand sort des boss",
+            "phrase": "Le grand sort annoncé au sol d'un boss vise toujours le joueur, même derrière les bêtes.",
+            "details": "Les bêtes de l'Osamodas ne peuvent plus le protéger de ce coup.",
+            "icone": "boss"
           }
         ],
         "Corrections": [

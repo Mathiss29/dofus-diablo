@@ -23,8 +23,10 @@ export function jetOfficiel(d: MonsterDef): number {
  *  modulée par la force de son sort officiel (un petit sort tape moins, un gros sort plus). */
 export function degatsMonstre(d: MonsterDef): number {
   const D = DANGER.degats, lvl = d.level ?? 1;
-  const pv = D.pvRef.base + D.pvRef.parNiveau * (lvl - 1);
+  const nu = D.pvRef.base + D.pvRef.parNiveau * (lvl - 1), E = D.equipement, rang = rangOf(d);
+  // maquette « Dégâts » 1B+1C : normaux et élites visent les PV d'un perso équipé de leur niveau (au moins +35 %)
+  const pv = E.rangs.includes(rang) ? Math.max(nu * E.plancher, nu + E.base + E.parNiveau * (lvl - 1)) : nu;
   const jet = jetOfficiel(d);
   const mod = jet > 0 ? Math.min(D.max, Math.max(D.min, Math.sqrt(jet / D.jetRef))) : 1;
-  return Math.max(1, Math.round(pv * D.part[rangOf(d)] * mod));
+  return Math.max(1, Math.round(pv * D.part[rang] * mod));
 }
