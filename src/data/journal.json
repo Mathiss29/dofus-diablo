@@ -216,7 +216,8 @@
           "Nouvelle case dans l'inventaire : « Briser les Communs au ramassage ». Les objets Communs partent en runes dès que tu les ramasses. Le recyclage se fait désormais seulement chez Kerubim Crépin (plus de Maj + clic dans le sac).",
           "L'Osamodas arrive en essai dans la partie de test (diablofus.com/#test, classe à choisir avec F1) : ses 15 premiers sorts officiels, le Tofu dès le niveau 1 puis Bouftou, Crapipou et Dragoune sur A Z R T. Les bêtes ont leurs vrais sorts, te soignent quand tu faiblis et s'éveillent quand la jauge d'Éveil est pleine (rappuie sur leur touche).",
           "La flèche des quêtes suit le vrai trajet : la porte du bâtiment, le passage vers la carte voisine, le portail d'Astrub ou un Zaap. Plus grande, aux couleurs officielles de la quête, elle affiche le nom du but et le nombre de cartes ; l'icône de la quête est sur la mini-carte et le trajet en pointillés sur la carte (M).",
-          "Clic sur le titre de la quête suivie (en bas à gauche) : passe à la quête suivante. La flèche se coupe dans Réglages > Interface."
+          "Clic sur le titre de la quête suivie (en bas à gauche) : passe à la quête suivante. La flèche se coupe dans Réglages > Interface.",
+          "Osamodas : chaque bête a son petit cadre sous le tien (portrait, PV, PA, temps d'Éveil ou de domptage), et les sorts de l'Osamodas et de ses 14 bêtes jouent leurs effets officiels de Dofus 3."
         ],
         "Le monde": [
           "Le prochain donjon de la quête suivie est marqué sur la carte (M).",
