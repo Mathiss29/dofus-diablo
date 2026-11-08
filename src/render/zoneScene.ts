@@ -550,13 +550,16 @@ export class ZoneScene extends Phaser.Scene {
       if (n) { this.talkClick = n; this.clickMode = null; this.holding = false; return; }
       const zp = this.zaapSous(p);
       if (zp) { this.zaapClick = zp.name; this.clickMode = null; this.holding = false; return; }
-      const at = this.atelierView?.sous(p, this.cameras.main);
-      if (at != null) { this.posteClick = at; this.clickMode = null; this.holding = false; return; }
-      const rc = this.recolteView?.sous(p, this.cameras.main);
-      if (rc != null) { this.recolteClick = rc; this.clickMode = null; this.holding = false; return; }
       const d = this.dropUnder(p);
       if (d != null) { this.pickClick = d; this.clickMode = null; this.holding = false; return; }
+      // un monstre passe avant les ressources et les ateliers derrière lui : sinon impossible de viser un mob près d'un arbre
       const m = this.monsterUnder(p);
+      if (!m) {
+        const at = this.atelierView?.sous(p, this.cameras.main);
+        if (at != null) { this.posteClick = at; this.clickMode = null; this.holding = false; return; }
+        const rc = this.recolteView?.sous(p, this.cameras.main);
+        if (rc != null) { this.recolteClick = rc; this.clickMode = null; this.holding = false; return; }
+      }
       this.clickMode = m ? 'target' : 'ground';
       this.clickTarget = m?.id ?? null;
       if (!m) this.moveMarker(p);
@@ -1400,8 +1403,10 @@ export class ZoneScene extends Phaser.Scene {
       this.fx.apercu(id && !p.dead ? apercuSort(w, id, aim) : null, p, w.monsters.filter(q => !q.dead), !!this.keys?.SHIFT?.isDown && !p.dead ? p.attackReach() : 0);
     }
     this.drawDrops();
-    this.recolteView?.update(this.cameras.main, this.input.activePointer);
-    this.atelierView?.update(this.cameras.main, this.input.activePointer);
+    // monstre sous le curseur : pas de halo ni de bulle sur la ressource ou l'atelier derrière lui
+    const mobSurvol = !!this.monsterUnder(this.input.activePointer);
+    this.recolteView?.update(this.cameras.main, this.input.activePointer, mobSurvol);
+    this.atelierView?.update(this.cameras.main, this.input.activePointer, mobSurvol);
     this.havreSacView?.update(this.game.loop.delta / 1000);
     this.areneView?.update(this.game.loop.delta / 1000);
     this.questView?.update();

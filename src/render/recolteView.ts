@@ -137,10 +137,10 @@ export class RecolteView {
     return best;
   }
 
-  update(cam: Phaser.Cameras.Scene2D.Camera, ptr: Phaser.Input.Pointer) {
+  update(cam: Phaser.Cameras.Scene2D.Camera, ptr: Phaser.Input.Pointer, masque = false) {
     const w = this.world, R = w.opts.recoltes, cx = cam.midPoint.x, cy = cam.midPoint.y;
     if (!R) return;
-    this.survolee = this.sous(ptr, cam);
+    this.survolee = masque ? null : this.sous(ptr, cam);
     const vus = new Set<number>();
     for (const r of w.recoltes) {
       const s = ISO.toScreen(r.x, r.y);
