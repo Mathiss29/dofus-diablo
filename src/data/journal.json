@@ -925,6 +925,13 @@
             "phrase": "Moins de saccades au premier lancer d'un sort et quand tu frappes un gros groupe.",
             "details": "Ton perso, les ombres, les barres de vie et l'interface coûtent bien moins cher à afficher à chaque image.",
             "icone": "options"
+          },
+          {
+            "titre": "Mutilation sans fin",
+            "phrase": "Mutilation reste active jusqu'à ce que tu la relances, et sacrifie tes PV toutes les 3 s.",
+            "details": "La Puissance plafonne à 3 crans (+100). La relancer donne toujours la Coagulation.",
+            "icone": "sorts",
+            "etiquettes": ["Sacrieur", "Partie de test"]
           }
         ],
         "Corrections": [

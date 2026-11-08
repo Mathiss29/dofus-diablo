@@ -122,13 +122,13 @@ export class Hud {
       const bord = BORD_BULLE[e.sorte];
       g.fillStyle(0x14130f, 0.92 * a); g.fillCircle(x, y, r + 3);
       gs.lineStyle(3, 0x000000, 0.55 * a); gs.strokeCircle(x, y, r + 1.5);
-      const frac = e.tMax > 0 ? Math.max(0, Math.min(1, e.t / e.tMax)) : 1;
+      const frac = !isFinite(e.t) ? 1 : e.tMax > 0 ? Math.max(0, Math.min(1, e.t / e.tMax)) : 1;
       gs.lineStyle(3, bord, a); gs.beginPath(); gs.arc(x, y, r + 1.5, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * frac, false); gs.strokePath();
       const key = e.sort != null ? `sort_${e.sort}` : `carac_${CARAC_BULLE[e.carac ?? 'vie']}`;
       if (b.img.texture.key !== key && this.scene.textures.exists(key)) b.img.setTexture(key);
       const s = e.sort != null ? r * 1.4 : r * 1.2, fr = b.img.frame, kk = Math.min(s / fr.width, s / fr.height);
       b.img.setVisible(true).setPosition(x, y).setDisplaySize(fr.width * kk, fr.height * kk).setAlpha(a);
-      b.t.setVisible(true).setPosition(x, y + R + 3).setText(e.t >= 1 ? `${Math.ceil(e.t)}s` : `${e.t.toFixed(1)}s`.replace('.', ','))
+      b.t.setVisible(true).setPosition(x, y + R + 3).setText(!isFinite(e.t) ? '∞' : e.t >= 1 ? `${Math.ceil(e.t)}s` : `${e.t.toFixed(1)}s`.replace('.', ','))
         .setColor(e.t < 2 ? '#ff8a7a' : '#ffffff').setAlpha(a);
       if (e.charges) {
         const cx = x + R - 2, cy = y - R + 2;

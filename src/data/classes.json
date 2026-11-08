@@ -1461,7 +1461,6 @@
      "cran": 25,
      "crans": 3,
      "periode": 3,
-     "duree": 15,
      "coagulation": [
       0.15,
       0.25

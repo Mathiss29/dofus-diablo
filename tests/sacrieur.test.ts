@@ -72,6 +72,12 @@ describe('Sacrieur (maquette Sacrieur, 2026-11-08)', () => {
     expect(p.stat('puissance')).toBeGreaterThanOrEqual(50);
     p.hp = p.maxHp; idle(w, 3.5);
     expect(p.mutil?.n).toBe(2);
+    idle(w, 60);   // sans limite de durée : toujours active, plafonnée à 3 crans, mais le sacrifice continue
+    expect(p.mutil?.n).toBe(3);
+    expect(p.stat('puissance')).toBeGreaterThanOrEqual(100);
+    p.hp = p.maxHp; idle(w, 3.1);
+    expect(p.hp).toBeLessThan(p.maxHp);
+    expect(p.dead).toBe(false);
     p.pa = p.paMax; press(w, 'mutilation'); idle(w, 0.6);
     expect(p.mutil).toBeNull();
     expect(p.shield).toBeGreaterThan(0);
