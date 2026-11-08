@@ -222,6 +222,8 @@ export class Hud {
     });
     // Barre du joueur (Player.bar) : 6 touches, le clic droit (case libre, choix 6A) et Espace ; les icônes suivent la barre
     for (let i = 0; i < 8; i++) this.slots.push(mkSlot(null, i < 6 ? KEYS[i] : i === 6 ? 'Clic D' : 'Esp.'));
+    // Osamodas (maquette 2A) : 4 cases d'invocation sur A Z R T (Player.INVOC à INVOC + 3), au-dessus de la barre
+    if (Object.values(cls.spells).some(s => s.invoque)) for (const k of ['A', 'Z', 'R', 'T']) this.slots.push(mkSlot(null, k));
     // Auto-attaque (clic gauche) : l'icône suit l'arme portée
     this.auto = mkSlot(cls.spells[cls.basic ?? cls.mobility].icon, 'Clic');
     this.auto.icon!.setTexture(cls.basic ? `sort_${cls.spells[cls.basic].icon}` : 'arme_0');
@@ -588,8 +590,8 @@ export class Hud {
     const xr = p.level >= cls.maxLevel ? 1 : p.xp / p.xpNeeded;
     bar(x0 + 12, y0 + 10, totalW - 24, 12, xr, C.xp);
     this.xpText.setPosition(W / 2, y0 + 16).setText(p.level >= cls.maxLevel ? `NIV. ${p.level} (max)` : `XP ${Math.floor(p.xp)} / ${p.xpNeeded}  ·  NIV. ${p.level}`);
-    const sy = y0 + 30 + slot / 2;
-    const drawSlot = (s: SlotView, x: number, id: string | null) => {
+    const sy0 = y0 + 30 + slot / 2, sy = sy0;
+    const drawSlot = (s: SlotView, x: number, id: string | null, sy = sy0) => {
       s.bg.setPosition(x, sy).setDisplaySize(slot, slot);
       s.zone?.setPosition(x, sy);
       s.key.setPosition(x - slot / 2 + 4, sy - slot / 2 + 1);
@@ -638,6 +640,13 @@ export class Hud {
     drawSlot(this.slots[6], cdx, p.bar[6]);
     const mvx = cdx + slot + gap + 16;
     drawSlot(this.slots[7], mvx, p.bar[7]);
+    // invocations de l'Osamodas : une rangée de 4 au-dessus des sorts
+    if (this.slots.length > 8) {
+      // calée à droite, au-dessus du clic droit et d'Espace (le bandeau « Partie de test » occupe le milieu)
+      const iy = y0 - slot / 2 - 14, iw = 4 * slot + 3 * gap + 16, ix = x0 + totalW - iw;
+      panel(ix, iy - slot / 2 - 8, iw, slot + 16);
+      for (let i = 0; i < 4; i++) drawSlot(this.slots[8 + i], ix + 8 + slot / 2 + i * (slot + gap), p.bar[8 + i], iy);
+    }
     // Potion (E) : charges, +1 par groupe vaincu
     const po = this.potion, pox = mvx + slot + gap, pcd = p.potionCd / cls.potion.cooldown;
     po.bg.setPosition(pox, sy).setDisplaySize(slot, slot);

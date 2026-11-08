@@ -375,3 +375,12 @@ officiel du Zaap d'Astrub sur l'arche du Bastion (bastion.py réécrit les parti
 
 `python3 -I tools/extraction/zaaps.py <zone>` écrit les Zaaps officiels d'une zone (repères « Zaap » de monde.json, arche = particule
 « Vortex » de particules.json) dans `zones.json`. À lancer pour chaque nouvelle zone exportée (Amakna…).
+
+## Osamodas (maquette Osamodas, 8 nov. 2026)
+
+- Données des bêtes : `python osa_betes.py <tables> <fr.bin> src/data/betes.json` (monstres 8070-8083, sorts au grade 1 ; `_regles` gardé).
+- Squelettes des 14 bêtes : `/mnt/project-files/cache-dofus/osamodas-bones/`. Planches : `monster_planche.py <os> osa_<bête> <dossier> public/assets/sprites 0,1,2`
+  (SCALE=1.6 pour Craquolosse et Sulfénix ; `SCALE=1.25 BOX=-220,-420,220,120` pour Dragonnet, Scarafoudre et Gobgobs, sinon la boîte
+  automatique dépasse la taille d'un canevas). Le Dragonnet n'a ni repos ni course : `ANIMS=AnimAttaque0_1:1:AnimStatique_1,...`.
+- Perso : `squelette_export.py` (classe 2) ; portraits `ui/perso_osamodas(_f).png` rendus depuis la scène de `perso_planche.py`
+  (`ANIMS=AnimStatiqueExplo0`, `render.cjs` BOX=-150,-280,150,40 à l'échelle 3,2, rognés à 437 px de haut).

@@ -213,7 +213,8 @@
           "Nouvelle fenêtre de forgemagie façon Dofus 3 chez Malek : cases Objet, Rune et Signature, bouton Fusionner (ou mode avancé : un clic sur la rune), les runes de chaque ligne au bout de la ligne avec leur chance, l'œil pour masquer une ligne et l'historique avec l'icône de chaque rune. La Rune de Signature grave ton nom sur l'objet, et le Concasseur montre les runes qui vont sortir avant de briser.",
           "Commande à Malek : fixe une valeur à atteindre et un plancher à ne pas casser sur chaque ligne, un budget, demande-lui son estimation (chances, kamas, runes), puis laisse-lui l'objet et reviens le chercher quelques minutes plus tard.",
           "Collection d'apparences : briser ou recycler une coiffe, une cape ou un bouclier pour la première fois garde son apparence dans l'onglet Apparats de l'inventaire, et chaque panoplie complétée donne un succès (catégorie Collection).",
-          "Nouvelle case dans l'inventaire : « Briser les Communs au ramassage ». Les objets Communs partent en runes dès que tu les ramasses. Le recyclage se fait désormais seulement chez Kerubim Crépin (plus de Maj + clic dans le sac)."
+          "Nouvelle case dans l'inventaire : « Briser les Communs au ramassage ». Les objets Communs partent en runes dès que tu les ramasses. Le recyclage se fait désormais seulement chez Kerubim Crépin (plus de Maj + clic dans le sac).",
+          "L'Osamodas arrive en essai dans la partie de test (diablofus.com/#test, classe à choisir avec F1) : ses 15 premiers sorts officiels, le Tofu dès le niveau 1 puis Bouftou, Crapipou et Dragoune sur A Z R T. Les bêtes ont leurs vrais sorts, te soignent quand tu faiblis et s'éveillent quand la jauge d'Éveil est pleine (rappuie sur leur touche)."
         ],
         "Le monde": [
           "Le prochain donjon de la quête suivie est marqué sur la carte (M).",
@@ -226,7 +227,8 @@
         "Combat": [
           "Coûts officiels des points : Sagesse 3 points, Force, Intelligence, Chance et Agilité 1 point jusqu'à 100 puis 2, 3 et 4 par tranche de 100 (tes points déjà placés te sont rendus). La Chance donne +1 Prospection par 10, l'Intelligence et les Soins renforcent tes soins, et l'Agilité fait courir un peu plus vite (+1 % par 20, 10 % au plus).",
           "Croiser un élite ne coupe plus ta musique : seuls les boss lancent la musique de combat.",
-          "Musique des boss plus fluide : fondu croisé à l'arrivée du boss, boucle sans blanc, et ton morceau d'exploration reprend là où il en était après le combat."
+          "Musique des boss plus fluide : fondu croisé à l'arrivée du boss, boucle sans blanc, et ton morceau d'exploration reprend là où il en était après le combat.",
+          "Avec l'Osamodas : Alt + clic lance toute la meute sur un monstre, Maj montre le fil de laisse et les PV de chaque bête, la Laisse Spirituelle dompte un monstre presque vaincu pendant 20 s, et ton familier mord."
         ],
         "Corrections": [
           "Les Chafers Éclaireurs font enfin mal : leur Flèche de Feu était prise pour un sort de soutien et ne blessait jamais. Ils restent à distance pour tirer (même correction pour le Tofu Chimérique, le Petit Gloot et Percy Klop).",

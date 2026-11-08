@@ -1,6 +1,9 @@
 import { Entity } from './entity';
 import type { MonsterDef, MonsterSpell } from './defs';
 import type { Player } from './player';
+import type { Bete } from './bete';
+/** Ce qu'un monstre poursuit et frappe : le joueur, ou une bête de l'Osamodas (maquette Osamodas 8A). */
+export type Cible = Player | Bete;
 import type { World } from './world';
 import { tackleSlow, tacleOf } from './caracs';
 import { DANGER } from './danger';
@@ -75,6 +78,8 @@ export class Monster extends Entity {
   summoner: Monster | null = null;
   /** Déjà touché par le joueur (l'Initiative ne renforce que le premier coup). */
   struck = false;
+  /** Dernière bête de l'Osamodas qui l'a frappé (il la vise en retour, maquette Osamodas 8A). */
+  agresseur: number | null = null;
   /** Dommages subis × subis pendant subisT s (Cuirasse Laineuse : 0,7). */
   subis = 1; subisT = 0;
   /** Boss (maquette « Danger ») : attaque signature en cours (4A) et sa relance, Furieux sous 50 % des PV (5A), entrée annoncée (7A). */
@@ -102,7 +107,7 @@ export class Monster extends Entity {
     this.setAnim('spawn');
   }
 
-  update(dt: number, player: Player, world: World) {
+  update(dt: number, player: Cible, world: World) {
     this.age += dt; this.flash = Math.max(0, this.flash - dt);
     const D = this.def;
     if (this.dead) { this.t -= dt; this.setAnim('die', 1 - this.t / 0.6); this.applyKnock(dt); return; }
@@ -259,7 +264,7 @@ export class Monster extends Entity {
 
   /** Abandon de la poursuite en monde ouvert. 8A : un boss garde sa laisse courte autour de son arène.
    *  1B : les autres ne lâchent que s'ils t'ont perdu (loin de toi assez longtemps), ou au garde-fou loin de chez eux. */
-  private abandonne(dist: number, leash: number, player: Player, dt: number): boolean {
+  private abandonne(dist: number, leash: number, player: Cible, dt: number): boolean {
     if (player.dead) return true;
     if (this.arene) return false;
     const home = Math.hypot(this.x - this.homeX, this.y - this.homeY);
@@ -281,7 +286,7 @@ export class Monster extends Entity {
   }
 
   /** Portée d'un sort en pixels (bord à bord). Les sorts au contact gardent la portée de charge du monstre. */
-  private reach(S: MonsterSpell, player: Player): [number, number] {
+  private reach(S: MonsterSpell, player: Cible): [number, number] {
     const k = castKind(S), pad = this.radius + player.radius;
     if (k === 'invoque') return [0, CASE * 6];
     if (k === 'self') return [0, soutienSeul(S) ? Infinity : zoneRadius(S) + player.radius];
@@ -290,7 +295,7 @@ export class Monster extends Entity {
     return [S.po[0] >= 2 ? S.po[0] * CASE : 0, this.po(S) * CASE + pad];
   }
   /** Plus grande portée d'un sort offensif à distance, si le monstre n'a aucun sort au contact (sinon 0 : il vient au contact). */
-  private spellReach(player: Player): number {
+  private spellReach(player: Cible): number {
     const S = (this.def.spells ?? []).filter(s => !soutienSeul(s) && castKind(s) !== 'self');
     if (!S.length || S.some(s => s.po[1] <= 1)) return 0;
     return Math.max(...S.map(s => this.reach(s, player)[1]));
@@ -305,7 +310,7 @@ export class Monster extends Entity {
   po(S: MonsterSpell): number { return Math.max(S.po[0], 1, S.po[1] - this.poMalus); }
 
   /** Choisit un sort utilisable (relance finie, à portée, ligne de vue) et commence à le lancer. */
-  private castSpell(dist: number, player: Player, world: World): boolean {
+  private castSpell(dist: number, player: Cible, world: World): boolean {
     const S = this.def.spells!, ok: number[] = [];
     if (this.def.signature != null && this.sigCd <= 0) {
       const s = S.find(x => x.id === this.def.signature);
@@ -338,7 +343,7 @@ export class Monster extends Entity {
     return true;
   }
   /** Fin de l'incantation : coup au contact (lunge), projectile, ou effet sur la zone visée. */
-  private release(player: Player, world: World) {
+  private release(player: Cible, world: World) {
     const S = this.spell!;
     if (this.kind === 'melee' || this.kind === 'charge') { this.state = 'lunge'; this.t = this.def.lungeTime; this.hitDone = false; return; }
     if (this.kind === 'invoque') {
@@ -366,7 +371,7 @@ export class Monster extends Entity {
     this.endCast(world);
   }
   /** 4A : forme de l'attaque signature, prise dans la zone officielle du sort puis agrandie. null : le joueur est hors de portée. */
-  private formeSignature(S: MonsterSpell, dist: number, player: Player): FormeSig | null {
+  private formeSignature(S: MonsterSpell, dist: number, player: Cible): FormeSig | null {
     const Z = DANGER.signature.zone, k = castKind(S), n = Number(S.zone.slice(1)) || 0;
     if (k === 'invoque' || !S.effects.some(e => e.k === 'dmg')) return null;   // il faut des dommages (Kankroulahoup soigne ses alliés ET brûle autour)
     if (S.zone[0] === 'L') {   // ligne officielle, allongée
@@ -383,7 +388,7 @@ export class Monster extends Entity {
     return dist >= a && dist <= b ? { k: 'cercle', x: player.x, y: player.y, r: Math.max(zoneRadius(S), CASE) * Z } : null;
   }
   private sigWindup(): number { return DANGER.signature.telegraphe * (this.furieux ? 0.85 : 1); }
-  private trySignature(S: MonsterSpell, dist: number, player: Player, world: World): boolean {
+  private trySignature(S: MonsterSpell, dist: number, player: Cible, world: World): boolean {
     const dx = player.x - this.x, dy = player.y - this.y, d = Math.hypot(dx, dy) || 1;
     this.dirX = dx / d; this.dirY = dy / d;
     const F = this.formeSignature(S, dist, player);
@@ -395,7 +400,7 @@ export class Monster extends Entity {
     return true;
   }
   /** Impact de la signature : tout ce qui est dans la zone annoncée prend les dégâts ×2,5. Puis une fenêtre pour riposter. */
-  private releaseSignature(player: Player, world: World) {
+  private releaseSignature(player: Cible, world: World) {
     const S = this.spell!, F = this.sigF!, el = (S.effects.find(e => e.k === 'dmg') as { element: string } | undefined)?.element ?? 'neutre';
     const touche = F.k === 'rect' ? dansRect(player.x, player.y, player.radius, this.x, this.y, this.facing, F.len, F.w)
       : Math.hypot(player.x - F.x, player.y - F.y) <= F.r + player.radius;
@@ -409,7 +414,7 @@ export class Monster extends Entity {
     this.state = 'recover'; this.t = this.def.recover + DANGER.signature.repos; this.atkCd = world.rng.range(0.6, 1.1);
   }
   /** 2A : près du joueur, un monstre bloqué derrière un autre déjà plus proche fait un pas de côté pour l'encercler. */
-  private contourne(ux: number, uy: number, dist: number, player: Player, world: World): [number, number] {
+  private contourne(ux: number, uy: number, dist: number, player: Cible, world: World): [number, number] {
     if (dist > DANGER.rythme.encerclement) return [ux, uy];
     const o = world.monsters.find(o => o !== this && !o.dead && Math.hypot(o.x - this.x, o.y - this.y) < this.radius + o.radius + 18
       && Math.hypot(player.x - o.x, player.y - o.y) < dist);

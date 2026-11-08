@@ -120,6 +120,27 @@ export class FX {
       case 'kill':
         this.particles(e.x, e.y, e.radius, 22, this.colorOf(e.monster), 300, 0.6, 4, 300);
         break;
+      // Osamodas : bêtes (soins, apparition, Éveil, mort)
+      case 'heal':
+        this.number(e.x, e.y, e.z, `+${e.amount}`, false, '#7be07b');
+        this.particles(e.x, e.y, 30, 8, 0x7be07b, 100, 0.5, 3, 200);
+        break;
+      case 'invocation':
+        this.ring(e.x, e.y, 8, 46, 0x9ad15a, 0.4, 6);
+        this.particles(e.x, e.y, 20, 16, 0xd8f0b0, 180, 0.5, 3, 240);
+        break;
+      case 'eveil':
+        this.ring(e.x, e.y, 10, 70, 0xffc04d, 0.5, 10);
+        this.particles(e.x, e.y, 30, 26, 0xffd87a, 260, 0.6, 4, 320);
+        this.number(e.x, e.y, 90, `${e.name} !`, false, '#ffd87a');
+        break;
+      case 'dompte':
+        this.ring(e.x, e.y, 10, 60, 0x7fd0ff, 0.5, 8);
+        this.number(e.x, e.y, 90, `${e.name} dompté !`, false, '#9fd0ff');
+        break;
+      case 'beteMorte':
+        this.particles(e.x, e.y, e.radius, 18, 0xbfbfbf, 240, 0.5, 4, 260);
+        break;
     }
   }
 
