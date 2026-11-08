@@ -2731,15 +2731,15 @@
    "checkpoints": [],
    "subareas": {},
    "bastion": {
-    "arrivee": 4899,
-    "zaap": 4227,
+    "arrivee": 10709,
+    "zaap": 9701,
     "pnj": {
-     "kerubim": 3718,
-     "otomai": 3898,
-     "tissebelle": 5001,
-     "goultard": 4910,
-     "forgemage": 5689,
-     "bouillotte": 5396
+     "kerubim": 8940,
+     "otomai": 9204,
+     "tissebelle": 10867,
+     "goultard": 10720,
+     "forgemage": 11891,
+     "bouillotte": 11458
     }
    }
   }

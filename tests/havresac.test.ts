@@ -129,9 +129,9 @@ describe('Havre-Sac (maquette Hub : 1A 2A+2C 3A 4A 7A 8A 9A)', () => {
 });
 
 describe('Bastion des Douze (maquette Ville : 1A 2A 3C 7A+7B 10B)', () => {
-  it('une grande carte en archipel (4×4), arrivée marchable, PNJ sur la place', () => {
+  it('une grande carte en archipel (6×6), arrivée marchable, PNJ sur la place', () => {
     expect(BA.maps).toHaveLength(1);
-    expect(BA.maps[0].n).toEqual([4, 4]);
+    expect(BA.maps[0].n).toEqual([6, 6]);
     const w = monde('bastion');
     expect(w.dansBastion && w.dansRefuge && !w.dansHavreSac).toBe(true);
     expect(w.walkable(w.player.x, w.player.y)).toBe(true);

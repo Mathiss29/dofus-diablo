@@ -29,6 +29,8 @@ export type ObjectifDef = { texte: string } & (
   /** Atteindre un niveau. */
   | { t: 'niveau'; n: number }
   | { t: 'fabriquer'; objet: string; n?: number }
+  /** Le tour du monde : vaincre le boss de ce donjon (une victoire d'avant la quête compte, 5A). boss, niveau et région : carnet de route. */
+  | { t: 'donjon'; donjon: string; boss: string; niveau: number; region: string }
 );
 export interface EtapeDef {
   nom: string;
@@ -89,6 +91,8 @@ export interface QueteDef {
   zone?: number;
   /** Remerciement du PNJ quand on rend la quête (Dialogues 6B) ; sans : une ligne commune. */
   merci?: string;
+  /** Chapitre du tour du monde dont les donjons ne sont pas encore dans le jeu : visible au carnet de route, pas encore proposé. */
+  bientot?: boolean;
 }
 export interface PnjDef {
   nom: string; dofusId: number;
@@ -146,7 +150,7 @@ export interface SuccesDef {
   nom: string; dofusId: number; description: string; categorie: string; sousCategorie: string; points: number; icone: number;
   objectifs: SuccesObjectif[];
   /** XP officielle (ratio des données × XP du niveau), objet officiel. */
-  recompense?: { xp?: number; objet?: string };
+  recompense?: { xp?: number; objet?: string; /** Titre affiché sous le nom du perso (Tour 7A). */ titre?: string };
 }
 export interface QuetesData { pnj: Record<string, PnjDef>; quetes: Record<string, QueteDef>; succes: Record<string, SuccesDef> }
 
@@ -163,7 +167,11 @@ export interface EtatQuetes {
 }
 export interface BilanDonjon { v: number; m: number; dernier?: 'v' | 'm';
   /** Meilleur temps dans l'arène (s, 12A) ; nouveau record à commenter par le gardien. */
-  t?: number; record?: boolean }
+  t?: number; record?: boolean;
+  /** Premier passage (carnet de route, Tour 8B) : date (AAAA-MM-JJ) et temps passé dans le donjon jusqu'au boss (s). */
+  premier?: { d?: string; t?: number } }
+/** Page du carnet de route : un donjon du tour du monde, son chapitre, et ton premier passage. */
+export interface PageCarnet { donjon: string; boss: string; niveau: number; region: string; chapitre: number; nomChapitre: string; bientot: boolean; premier: BilanDonjon['premier'] | null; victoires: number }
 
 export class Quetes {
   enCours: QueteEnCours[] = [];
@@ -182,6 +190,8 @@ export class Quetes {
   donjons: Record<string, BilanDonjon> = {};
   /** Vendeur de clés montré par un gardien (6A) : la carte M le met en avant. */
   marqueVendeur: string | null = null;
+  /** Donjon où se trouve le perso et moment où il y est entré (temps du premier passage, Tour 8B). */
+  private dansDonjon: { nom: string; t: number } | null = null;
   /** Gardiens qui ont déjà dit leur bulle d'approche pendant cette visite (9A). */
   private salues = new Set<string>();
   /** PNJ placés dans le monde (coordonnées monde). */
@@ -310,7 +320,7 @@ export class Quetes {
   aDonnerTous(pnj: string): string[] {
     const lvl = this.world.player.level, out: string[] = [];
     for (const [id, q] of Object.entries(this.data.quetes)) {
-      if (q.pnj !== pnj || this.finies.has(id) || this.enCours.some(c => c.id === id) || q.auDepart) continue;
+      if (q.pnj !== pnj || q.bientot || this.finies.has(id) || this.enCours.some(c => c.id === id) || q.auDepart) continue;
       if (q.niveau > lvl + 2 || !(q.requiert ?? []).every(r => this.finies.has(r))) continue;
       // une quête qui suit une autre (fil principal) démarre seule à la fin de la précédente : son PNJ ne la propose pas
       if (Object.values(this.data.quetes).some(o => o.suivante === id)) continue;
@@ -453,7 +463,11 @@ export class Quetes {
     if (e.k === 'kill') {
       this.vaincus.add(e.monster);
       const ici = w.donjonIci();   // victoire sur le boss du donjon (8A)
-      if (ici && w.bossDuDonjon(ici) === e.monster) { const b = this.donjons[ici] ??= { v: 0, m: 0 }; b.v++; b.dernier = 'v'; }
+      if (ici && w.bossDuDonjon(ici) === e.monster) {
+        const b = this.donjons[ici] ??= { v: 0, m: 0 }; b.v++; b.dernier = 'v';
+        if (!b.premier) b.premier = { ...(w.opts.aujourdhui ? { d: w.opts.aujourdhui } : {}),
+          ...(this.dansDonjon?.nom === ici ? { t: Math.round(w.time - this.dansDonjon.t) } : {}) };
+      }
       const sub = w.worldGrid?.mapAt(e.x, e.y)?.sub;
       for (const c of this.enCours) this.etapeDe(c)?.objectifs.forEach((o, i) => {
         const okSub = !('sousZone' in o) || o.sousZone == null || o.sousZone === sub;
@@ -507,6 +521,8 @@ export class Quetes {
       if (!n || p.dead || Math.hypot(n.x - p.x, n.y - p.y) > Quetes.DIALOGUE_MAX) this.dialogue = null;
     }
     if (map) this.decouvertes.add(map.sub);
+    const ici = map?.inside ? w.donjonIci() : null;   // entrée dans un donjon : départ du chrono du premier passage
+    if (ici !== (this.dansDonjon?.nom ?? null)) this.dansDonjon = ici ? { nom: ici, t: w.time } : null;
     // bulle du gardien quand on passe devant (9A), une fois par visite
     for (const n of this.pnjs) {
       if (!n.def.gardien) continue;
@@ -528,6 +544,8 @@ export class Quetes {
       if (o.t === 'aller') {
         const n = o.pnj ? this.pnj(o.pnj) : null;
         if ((o.sousZone != null && map?.sub === o.sousZone) || (o.carte && map?.tag === o.carte) || (n && Math.hypot(n.x - p.x, n.y - p.y) < Quetes.PORTEE * 1.6)) c.compte[i] = 1;
+      } else if (o.t === 'donjon') {
+        if ((this.donjons[o.donjon]?.v ?? 0) > 0) c.compte[i] = 1;
       } else if (o.t === 'niveau') {
         if (p.level >= o.n) c.compte[i] = 1;
       } else if (o.t === 'equiper') {
@@ -637,6 +655,26 @@ export class Quetes {
       }
     }
   }
+  /** Titre du perso (Tour 7A) : celui du dernier succès obtenu qui en donne un. */
+  get titre(): string | null {
+    let t: string | null = null;
+    for (const id of this.succes) t = this.data.succes[id]?.recompense?.titre ?? t;
+    return t;
+  }
+  /** Carnet de route (Tour 8B) : une page par donjon du tour du monde, dans l'ordre des chapitres. */
+  carnet(): PageCarnet[] {
+    const out: PageCarnet[] = []; let n = 0;
+    for (const [, q] of Object.entries(this.data.quetes)) {
+      if (q.serie !== 'Le tour du monde') continue;
+      n++;
+      for (const e of Array.isArray(q.etapes) ? q.etapes : []) for (const o of e.objectifs) if (o.t === 'donjon') {
+        const b = this.donjons[o.donjon];
+        out.push({ donjon: o.donjon, boss: o.boss, niveau: o.niveau, region: o.region, chapitre: n, nomChapitre: q.nom, bientot: !!q.bientot,
+          premier: b?.v ? b.premier ?? {} : null, victoires: b?.v ?? 0 });
+      }
+    }
+    return out;
+  }
   /** Points de succès du compte. */
   get points() { return [...this.succes].reduce((n, id) => n + (this.data.succes[id]?.points ?? 0), 0); }
 
@@ -682,6 +720,7 @@ export class Quetes {
         if (m) return { x: m.x, y: m.y };
         return proche((_, t) => t === o.carte);
       }
+      if (o.t === 'donjon') { const po = w.entreeDonjon(o.donjon); if (po) return { x: po.ends[0].x, y: po.ends[0].y }; continue; }
       if (o.t === 'activer') { const cp = w.zone.open?.checkpoints.find(k => k.name === o.zaap); if (cp) return proche((_, t) => t === `${cp.map[0]}_${cp.map[1]}`); }
       if ('sousZone' in o && o.sousZone != null) {
         if (wg.mapAt(p.x, p.y)?.sub === o.sousZone) return null;   // on y est : pas de flèche

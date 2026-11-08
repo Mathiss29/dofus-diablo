@@ -19,6 +19,7 @@ import { dmgMoyen, gradeAuNiveau, type SortOfficiel } from '../sim/sorts';
 import { n1, spellDetail } from './spellTip';
 import { World } from '../sim/world';
 import { prochainPalier, recettesAvec, recettesDe, sourcesDe } from '../sim/metiers';
+import { chrono } from '../sim/quests';
 import type { MarqueCarte } from './carteMonde';
 
 const SLOT_NAMES: Record<EquipSlot, string> = {
@@ -321,6 +322,14 @@ const CSS = `
 .dw .tip .xpf{height:5px;background:#2a2620;border-radius:3px;margin:3px 0 5px;overflow:hidden}.dw .tip .xpf i{display:block;height:100%;background:#6fb2e8}
 
 .dw .win.quetes,.dw .win.succes{width:min(900px,96vw);height:min(660px,92vh)}
+.dw .carnet{display:grid;grid-template-columns:repeat(auto-fill,minmax(122px,1fr));gap:8px;margin-bottom:10px}
+.dw .carnet .pg{background:#e9dcbc;color:#3b2b14;border-radius:4px;padding:9px 7px 7px;display:grid;gap:3px;justify-items:center;text-align:center;min-height:132px;box-shadow:inset 0 0 0 1px #c9b386}
+.dw .carnet .pg b{font-size:12.5px;line-height:1.2}
+.dw .carnet .pg small{font-size:10.5px;color:#6b5530;line-height:1.25}
+.dw .carnet .tp{width:58px;height:58px;border-radius:50%;border:3px solid #9b2d24;color:#9b2d24;display:grid;place-items:center;font-weight:800;font-size:10px;letter-spacing:.04em;text-transform:uppercase;transform:rotate(-14deg);margin:2px 0}
+.dw .carnet .pg.vide .tp{border:2px dashed #b9a57c;color:#b9a57c;transform:none}
+.dw .carnet .pg.bientot{opacity:.55}
+.dw .carnet .pg.bientot .tp{border:2px dashed #a0937a;color:#8a7d62;transform:none;font-size:9px}
 .dw .win.bestiaire{width:min(980px,96vw);height:min(700px,92vh)}
 .dw .bes{display:grid;grid-template-columns:minmax(0,250px) minmax(0,1fr);min-height:0}
 .dw .bes .bl{overflow:auto;padding:10px;border-right:1px solid #0d0c0a;background:#292824;display:grid;gap:3px;align-content:start}
@@ -456,6 +465,8 @@ export class Windows {
   private tab = 'tout';
   /** Journal des quêtes (5C) : quête affichée ; Succès : catégorie affichée. */
   private queteVue: string | null = null;
+  /** Carnet de route du tour du monde ouvert à la place du détail de la quête (Tour 8B). */
+  private carnetVu = false;
   private succesCat = '';
   /** Fenêtre des services d'un PNJ du Havre-Sac (maquette Hub 4A) : le PNJ, et l'onglet Recycler, Boutique ou Apparats (Apparence 5A). */
   empPnj = 'kerubim';
@@ -910,7 +921,8 @@ export class Windows {
     };
     let det = '<div class="hint">Aucune quête. Les PNJ avec une icône verte au-dessus de la tête en ont une à te confier.</div>';
     const id = this.queteVue;
-    if (id) {
+    if (id && this.carnetVu) det = this.htmlCarnet();
+    else if (id) {
       const q = Q.def(id), c = Q.enCours.find(x => x.id === id), done = Q.finies.has(id), et = Q.etapes(id);
       const pnj = q.pnj ? Q.data.pnj[q.pnj]?.nom : null;
       const steps = et.map((e, i) => {
@@ -925,14 +937,31 @@ export class Windows {
         r.potions ? '<span>Potions remplies</span>' : ''].filter(Boolean).join('');
       det = `<div><h3>${q.nom}</h3><div class="sub">${q.serie ? `${q.serie} · ` : ''}Niveau ${q.niveau}${pnj ? ` · ${pnj}` : ''}${done ? ' · Terminée' : ''}</div></div>
         <p>${q.texte}</p>${steps}<div class="qh">Récompenses</div><div class="rw">${rw || '<span class="hint">Aucune</span>'}</div>
-        ${c ? `<span class="btn ${Q.suivie === id ? 'off' : ''}" data-suivre>${Q.suivie === id ? 'Quête suivie' : 'Suivre cette quête'}</span>` : ''}`;
+        ${c ? `<span class="btn ${Q.suivie === id ? 'off' : ''}" data-suivre>${Q.suivie === id ? 'Quête suivie' : 'Suivre cette quête'}</span>` : ''}
+        ${q.serie === 'Le tour du monde' ? '<span class="btn" data-carnet>Carnet de route</span>' : ''}`;
     }
     w.innerHTML = `${this.title('Quêtes', 'quest')}<div class="qb"><div class="ql">
       <div class="qh">En cours (${ids.length})</div>${ids.map(i => item(i, false)).join('') || '<div class="hint">Aucune</div>'}
       <div class="qh">Terminées (${fin.length})</div>${fin.map(i => item(i, true)).join('') || '<div class="hint">Aucune</div>'}
       </div><div class="qd">${det}</div></div>`;
-    w.querySelectorAll<HTMLElement>('[data-q]').forEach(e => e.addEventListener('click', () => { this.queteVue = e.dataset.q!; this.render(); }));
+    w.querySelectorAll<HTMLElement>('[data-q]').forEach(e => e.addEventListener('click', () => { this.queteVue = e.dataset.q!; this.carnetVu = false; this.render(); }));
+    w.querySelector('[data-carnet]')?.addEventListener('click', () => { this.carnetVu = !this.carnetVu; this.render(); });
     w.querySelector('[data-suivre]')?.addEventListener('click', () => { if (id) { Q.suivie = id; this.render(); } });
+  }
+
+  /** Carnet de route (Tour 8B) : une page par donjon du tour du monde, tamponnée au premier passage (date, temps jusqu'au boss). */
+  private htmlCarnet(): string {
+    const Q = this.world.quetes!, pages = Q.carnet(), faits = pages.filter(p => p.premier).length;
+    const date = (d?: string) => d ? new Date(`${d}T12:00`).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+    let html = '', ch = 0;
+    for (const p of pages) {
+      if (p.chapitre !== ch) { ch = p.chapitre; html += `${ch > 1 ? '</div>' : ''}<div class="qh">Chapitre ${ch} · ${p.nomChapitre}${p.bientot ? ' · bientôt' : ''}</div><div class="carnet">`; }
+      const f = p.premier, cl = f ? '' : p.bientot ? 'bientot' : 'vide';
+      const bas = f ? [date(f.d), f.t != null ? chrono(f.t) : '', p.victoires > 1 ? `${p.victoires} victoires` : ''].filter(Boolean).join(' · ') || 'vaincu' : p.bientot ? `${p.region}` : 'pas encore';
+      html += `<div class="pg ${cl}" title="${p.donjon} · niv. ${p.niveau}"><b>${p.boss}</b><span class="tp">${f ? 'Vaincu' : p.bientot ? 'Bientôt' : '?'}</span><small>${p.donjon}</small><small>${bas}</small></div>`;
+    }
+    return `<div><h3>Carnet de route</h3><div class="sub">${faits} / ${pages.length} donjons · une page tamponnée par boss vaincu</div></div>${html}${pages.length ? '</div>' : ''}
+      <span class="btn" data-carnet>Revenir à la quête</span>`;
   }
 
   /** Succès (fenêtre Succès de Dofus 3, 12A) : catégories officielles à gauche, points du compte (15A), objectifs et récompenses. */

@@ -371,7 +371,8 @@ export class Hud {
     const fx = 12, fy = 10, fw = 320, hd = 30, fh = hd + 80;
     cadre(fx, fy, fw, fh, hd);
     this.embleme.setPosition(fx + 19, fy + hd / 2).setDisplaySize(17, 17 * (this.embleme.height / this.embleme.width || 1));
-    this.name.setPosition(fx + 34, fy + hd / 2).setText(this.perso?.nom ?? cls.name);
+    const titre = this.world.quetes?.titre;   // titre d'un succès (Tour 7A)
+    this.name.setPosition(fx + 34, fy + hd / 2).setText(`${this.perso?.nom ?? cls.name}${titre ? `  « ${titre} »` : ''}`);
     // Portrait : case carrée, la tête du perso dessiné en direct qui respire (repos AnimStatiqueExplo0, face)
     const ps = 60, px = fx + 10, py = fy + hd + 10, pcx = px + ps / 2;
     g.fillStyle(0x1c2620, 1); g.fillRoundedRect(px, py, ps, ps, 6);

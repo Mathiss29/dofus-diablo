@@ -362,3 +362,7 @@ nations libérées plus tard. Les pièces viennent des vraies cartes (aides d'`a
 `cartes_dir` = les `map_<id>.json` des cartes sources : Astrub 191105026 (Zaap) et 191104002 (`cache-dofus/astrub/cartes.tar`),
 Bonta 212600837, Brâkmar 212861954, Pandala 206307844, Frigost 54170409 (bundles copiés dans `cache-dofus/villes/`, voir son LISEZMOI).
 Le ciel (`ciel.webp`) est celui d'Incarnam.
+
+L'île de Brâkmar est rendue en grand (`ile_brakmar`, posée aux 3/4) avec les particules et les lumières officielles de ses pièces :
+lancer d'abord `particules.py` sur les 4 cartes de Brâkmar (liste `{"-26,36": [212861954], "-25,36": [212862466], "-26,37": [212861955],
+"-25,37": [212862467]}`, images de `cache-dofus/particules.tar.gz`) puis `PARTICULES_BRAKMAR=<sortie> TEXDIR=… python3 -I bastion.py …`.

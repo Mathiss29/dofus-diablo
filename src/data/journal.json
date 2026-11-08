@@ -192,6 +192,26 @@
           "Partie de test : F1 › Objets › Forgemagie ouvre la fenêtre du forgemage et donne des runes, pour régler les chances en jouant."
         ]
       }
+    },
+    {
+      "date": "2026-11-08",
+      "titre": "Le tour du monde",
+      "resume": "Metag Robill attend devant la Grange : la grande quête des donjons commence, avec un carnet de route à tamponner.",
+      "capture": "assets/journal/2026-11-08.webp",
+      "legende": "Metag Robill, devant la Grange du Tournesol Affamé, 8 novembre 2026.",
+      "lignes": {
+        "Nouveautés": [
+          "Le tour du monde : Metag Robill, devant la Grange du Tournesol Affamé, t'envoie vaincre le boss de chaque donjon, chapitre après chapitre. Les chapitres 1 et 2 (Kardorim, Tournesol Affamé, Mob l'Éponge, Bouftou Royal, Kankreblath) sont jouables ; les donjons déjà vaincus comptent.",
+          "Carnet de route : une page par donjon du tour du monde, tamponnée au premier passage avec la date et le temps mis jusqu'au boss (fenêtre Quêtes)."
+        ],
+        "Le monde": [
+          "Le prochain donjon de la quête suivie est marqué sur la carte (M).",
+          "L'île de Brâkmar du Bastion, en grand : Grand Temple, hangar, fonderie, machine et chaînes géantes, avec les étincelles, les bulles de lave et les lueurs des enseignes du vrai Brâkmar. Elle attend la libération de la nation."
+        ],
+        "Combat": [],
+        "Corrections": [],
+        "En coulisses": []
+      }
     }
   ]
 }
