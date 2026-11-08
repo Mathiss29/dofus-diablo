@@ -287,6 +287,7 @@
         ],
         "Corrections": [
           "La Cape de l'Intrépide montre enfin son vrai dessin.",
+          "Les plantes à récolter ne provoquent plus d'erreur juste après un changement de zone.",
           "Plus de mini-gel ni de tremblement en changeant de carte ou quand la caméra défile.",
           "Astrub prend dix fois moins de mémoire : le jeu ne plante plus en la traversant.",
           "Perso plus net en jeu et sur le socle, même avec l'affichage Windows à 125 %.",
@@ -998,7 +999,8 @@
           "Les carnets du Journal se lisent d'un coup d'œil : un titre, une phrase, les détails à déplier.",
           "Premier pas vers le jeu à plusieurs : le moteur sait déjà faire combattre plusieurs héros ensemble.",
           "Partie de test : F1 ajoute jusqu'à 3 alliés conduits par le jeu, premier aperçu du jeu à plusieurs.",
-          "Le serveur du jeu à plusieurs est en ligne sur api.diablofus.com et se met à jour tout seul."
+          "Le serveur du jeu à plusieurs est en ligne sur api.diablofus.com et se met à jour tout seul.",
+          "Un robot joue chaque classe, seule et en coop, à chaque mise à jour pour attraper plantages et gels."
         ]
       }
     }
