@@ -362,6 +362,8 @@ export class ZoneScene extends Phaser.Scene {
     if (this.perso) this.windows.onAccueil = () => this.versAccueil();   // rendu en grand (perso_planche : render.cjs échelle 2,2)
     this.windows.reglages = this.reglages;
     this.hud.flecheQuete = this.reglages.flecheQuete;
+    // idée 1 (2026-11-08) : losange au-dessus des monstres qui comptent pour une quête en cours
+    EntityView.deQuete = m => { const Q = this.world.quetes; return !!Q && this.hud.flecheQuete && (Q.estEliteDeQuete(m.id) || Q.pourQuete(m.type, m.x, m.y)); };
     this.windows.onReglages = r => { this.hud.flecheQuete = r.flecheQuete; this.zoom = Phaser.Math.Clamp(r.zoom, ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]); this.updateAmbiance(true); this.appliquerSon(); };
     this.windows.juice = { get: () => this.fx.juice, set: on => { this.fx.juice = on; } };
     this.windows.nomPerso = () => this.perso?.nom ?? 'Aventurier';
@@ -392,6 +394,7 @@ export class ZoneScene extends Phaser.Scene {
       else this.hud.toast(`${name} : arrive dans une prochaine version`);
     };
     this.hud.onPasser = id => this.world.quetes?.passer(id);
+    this.hud.onCarteQuete = () => { if (this.carte?.dispo) this.carte.montrerQuete(); };
     if (this.vitrine) this.initVitrine();
     else {
       this.cameras.main.startFollow(this.viewOf(this.world.player).sprite, true, 0.12, 0.12, 0, 30);
@@ -1389,6 +1392,7 @@ export class ZoneScene extends Phaser.Scene {
     this.areneView?.update(this.game.loop.delta / 1000);
     this.questView?.update();
     this.dialogueView?.update();
+    EntityView.temps = this.world.time;
     this.hud.draw(this.fx.juice, this.game.loop.delta / 1000);
   }
 }

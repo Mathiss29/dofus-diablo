@@ -57,6 +57,8 @@ export class CarteMonde {
   basculer() { if (this.root) this.fermer(); else this.ouvrir(); }
   /** Ouvre la carte avec les endroits où trouver une ressource (Métiers UI). */
   montrer(m: MarqueCarte) { this.fermer(); this.ouvrir(m); }
+  /** Idée 3 (2026-11-08) : clic sur l'objectif du suivi, la carte s'ouvre centrée sur le but de la quête. */
+  montrerQuete() { this.fermer(); this.ouvrir(undefined, true); }
   fermer() { this.root?.remove(); this.root = null; }
   destroy() { this.fermer(); }
 
@@ -74,7 +76,7 @@ export class CarteMonde {
     return this.px(m.x, m.y);
   }
 
-  ouvrir(ou?: MarqueCarte) {
+  ouvrir(ou?: MarqueCarte, surQuete = false) {
     const wg = this.world.worldGrid, open = this.world.zone.open;
     if (!wg || !open || !this.dispo) return;
     const root = document.createElement('div'); root.className = 'dw cm'; this.root = root;
@@ -130,6 +132,7 @@ export class CarteMonde {
     // quête suivie (Tour 8A) : là où aller (prochain donjon du tour du monde, PNJ à qui rendre…)
     // + trajet en pointillés (maquette Flèche 5A) : jusqu'au but, ou jusqu'à la porte, au portail ou au Zaap qui y mène
     const it = Q?.itineraire(), qs = Q?.suivie && Q.def(Q.suivie);
+    let surBut: { x: number; y: number } | null = null;
     if (it && qs && it.pts.length) {
       const der = it.pts[it.pts.length - 1];
       let prev = this.duJeu(this.world.player.x, this.world.player.y);
@@ -138,14 +141,14 @@ export class CarteMonde {
         for (let i = 1; i < n; i++) this.marque('mk tr', prev.x + (c.x - prev.x) * i / n, prev.y + (c.y - prev.y) * i / n);
         prev = c;
       }
-      const c = this.duJeu(der.x, der.y), d = this.marque('mk qt', c.x, c.y);
+      const c = this.duJeu(der.x, der.y), d = this.marque('mk qt', c.x, c.y); surBut = c;
       d.innerHTML = `<img src="${v(`assets/ui/quetes/${QUEST_ICON[qs.type][1]}.png`)}" alt="">`;
       d.title = `${qs.nom} · ${it.nom}${der.genre === 'porte' ? ` (${it.cartes} cartes, par cette porte)` : der.genre === 'portail' ? ' (par le portail)' : der.genre === 'zaap' ? ` (par le Zaap ${it.zaap ?? ''})` : ''}`;
     }
     const ve = Q?.marqueVendeur && Q.pnj(Q.marqueVendeur);
     if (ve) { const c = this.duJeu(ve.x, ve.y), d = this.marque('mk vd', c.x, c.y); d.innerHTML = iconHtml(ITEMS.resources['8143']?.icon ?? 0); d.title = `${ve.def.nom} · clés de donjon`; }
     // Métiers UI : où trouver la ressource demandée (cartes de récolte ou des monstres qui la lâchent, entrées des donjons)
-    let centre: { x: number; y: number } | null = null;
+    let centre: { x: number; y: number } | null = surQuete ? surBut : null;
     if (ou) {
       const pts = [...new Set(ou.tags)].filter(t => wg.mapByTag(t)).map(t => this.milieuCarte(t)).concat(ou.points.map(q => this.duJeu(q.x, q.y)));
       for (const q of pts) { const d = this.marque('mk ou', q.x, q.y); d.innerHTML = iconHtml(ou.icone); d.title = ou.titre; }

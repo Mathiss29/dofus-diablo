@@ -218,7 +218,8 @@
           "L'Osamodas arrive en essai dans la partie de test (diablofus.com/#test, classe à choisir avec F1) : ses 15 premiers sorts officiels, le Tofu dès le niveau 1 puis Bouftou, Crapipou et Dragoune sur A Z R T. Les bêtes ont leurs vrais sorts, te soignent quand tu faiblis et s'éveillent quand la jauge d'Éveil est pleine (rappuie sur leur touche).",
           "La flèche des quêtes suit le vrai trajet : la porte du bâtiment, le passage vers la carte voisine, le portail d'Astrub ou un Zaap. Plus grande, aux couleurs officielles de la quête, elle affiche le nom du but et le nombre de cartes ; l'icône de la quête est sur la mini-carte et le trajet en pointillés sur la carte (M).",
           "Clic sur le titre de la quête suivie (en bas à gauche) : passe à la quête suivante. La flèche se coupe dans Réglages > Interface.",
-          "Osamodas : chaque bête a son petit cadre sous le tien (portrait, PV, PA, temps d'Éveil ou de domptage), et les sorts de l'Osamodas et de ses 14 bêtes jouent leurs effets officiels de Dofus 3."
+          "Osamodas : chaque bête a son petit cadre sous le tien (portrait, PV, PA, temps d'Éveil ou de domptage), et les sorts de l'Osamodas et de ses 14 bêtes jouent leurs effets officiels de Dofus 3.",
+          "Aides de quête : un losange vert flotte au-dessus des monstres qui comptent pour tes quêtes, le Zaap le plus proche du but porte une étoile dans la fenêtre du Zaap, un clic sur les objectifs du suivi ouvre la carte (M) sur le but, et la flèche grossit puis s'efface avec un petit son quand le but entre à l'écran."
         ],
         "Le monde": [
           "Le prochain donjon de la quête suivie est marqué sur la carte (M).",

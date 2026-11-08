@@ -52,4 +52,32 @@ describe('flèche des quêtes (maquette Flèche 1A 3A 3B, 2026-11-08)', () => {
     const wg = w.worldGrid!, it = q.itineraire()!;
     for (const o of it.pts) expect(wg.walkable(o.x, o.y)).toBe(true);
   });
+  it('idée 1 : les monstres qui comptent pour un objectif en cours sont repérés (losange)', () => {
+    const w = monde('incarnam'), q = w.quetes!;
+    q.finies.add('reponses'); q.enCours = []; q.prendre('gloots');
+    const gloot = w.monsters.find(m => m.type === 'petit_gloot')!, autre = w.monsters.find(m => m.type === 'tigrimas')!;
+    expect(q.pourQuete(gloot.type, gloot.x, gloot.y)).toBe(true);
+    expect(q.pourQuete(autre.type, autre.x, autre.y)).toBe(false);
+    // objectif fini : plus de losange
+    q.enCours[0].compte[0] = 5;
+    expect(q.pourQuete(gloot.type, gloot.x, gloot.y)).toBe(false);
+    // « n'importe quel monstre » d'une sous-zone : seulement dans la sous-zone
+    q.enCours = []; q.prendre('transport');
+    const ici = w.monsters.find(m => w.worldGrid!.mapAt(m.x, m.y)?.sub === 445)!, ailleurs = w.monsters.find(m => w.worldGrid!.mapAt(m.x, m.y)?.sub === 444)!;
+    expect(q.pourQuete(ici.type, ici.x, ici.y)).toBe(true);
+    expect(q.pourQuete(ailleurs.type, ailleurs.x, ailleurs.y)).toBe(false);
+  });
+  it('idée 2 : le Zaap conseillé est le Zaap découvert le plus proche du but', () => {
+    const w = monde('incarnam'), q = w.quetes!, p = w.player;
+    p.level = 25; q.finies.add('reponses'); q.enCours = []; q.prendre('avis_sam'); q.suivie = 'avis_sam';
+    expect(q.zaapConseille()).toBeNull();   // aucun Zaap d'Astrub découvert
+    const cps = GAME_DATA.zones.astrub.open!.checkpoints;
+    p.zaaps = cps.map(c => ({ zone: 'astrub', name: c.name }));
+    const best = q.zaapConseille()!;
+    expect(best.zone).toBe('astrub');
+    // Sam Sagaz est en [7,-12] : aucun autre Zaap d'Astrub n'est plus près
+    const d = (c: { map: [number, number] }) => Math.abs(c.map[0] - 7) + Math.abs(c.map[1] + 12);
+    const choisi = cps.find(c => c.name === best.name)!;
+    for (const c of cps) expect(d(choisi)).toBeLessThanOrEqual(d(c));
+  });
 });

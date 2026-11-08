@@ -182,6 +182,7 @@ const CSS = `
 .dw .zaap .zl.ici{cursor:default;border-color:#b9e54b44}.dw .zaap .zl.ici .t b{color:#b9e54b}.dw .zaap .zl.ici:hover{background:#3b342b}
 .dw .zaap .zl.nd{opacity:.42;cursor:default}.dw .zaap .zl.nd:hover{background:#3b342b;border-color:transparent}
 .dw .zaap .zl .ici-m{font-size:11px;color:#b9e54b;font-weight:600;margin-left:6px;white-space:nowrap}
+.dw .zaap .zl.cons{border-color:#e6b85c88;background:#463b28}.dw .zaap .zl.cons .ici-m{color:#f2c94c}
 .dw .zaap .n1{color:#7fd34e}.dw .zaap .n2{color:#e8c33a}.dw .zaap .n3{color:#ef8a3a}.dw .zaap .n4{color:#e0503e}
 .dw .zaap .zp{font-size:12px;color:#9a8f7c;margin-top:6px}
 .dw .in.emp{display:grid;gap:10px;align-content:start;overflow:auto;padding:14px 16px}
@@ -1133,7 +1134,7 @@ export class Windows {
     const PAGES: { id: string; titre: string; html: string }[] = [
       { id: 'bienvenue', titre: 'Bienvenue', html: `<p class="chapo">Explore le Monde des Douze, rencontre ses habitants et combats en temps réel : tes déplacements et tes sorts se jouent sans attendre.</p>
         <h3>Un monde à parcourir</h3><p>Passe d'une carte à l'autre sans chargement, entre dans les maisons par leurs portes et parle aux PNJ en cliquant dessus. La mini-carte en haut à droite montre les monstres (points rouges), les PNJ qui ont une quête (points verts) et ta destination (point doré).</p>
-        <h3>Ton but</h3><p>Suis la quête affichée en bas à gauche. Une flèche au bord de l'écran (verte, bleue pour les quêtes répétables) montre le chemin : la porte, le portail ou le Zaap à prendre, avec le nom du but et la distance en cartes. Clic sur le titre de la quête pour en suivre une autre.</p>` },
+        <h3>Ton but</h3><p>Suis la quête affichée en bas à gauche. Une flèche au bord de l'écran (verte, bleue pour les quêtes répétables) montre le chemin : la porte, le portail ou le Zaap à prendre, avec le nom du but et la distance en cartes. Clic sur le titre de la quête pour en suivre une autre, sur ses objectifs pour voir le but sur la carte. Un losange vert flotte au-dessus des monstres qui comptent pour tes quêtes, et le Zaap le plus proche du but porte une étoile.</p>` },
       { id: 'combat', titre: 'Se déplacer et combattre', html: `<h3>À la souris</h3><p>${k('Clic gauche')} sur le sol : y aller (maintenu : suivre le curseur). Sur un monstre : s'approcher et l'attaquer.</p>
         <p>${k('Maj + clic')} : attaquer sur place, sans bouger.</p><p>${k('Clic droit')} : lancer le sort de la case libre de la barre. Sur un PNJ : ses actions.</p>
         <h3>Esquiver</h3><p>${k('Espace')} : ${mob}. Il a des charges qui se rechargent toutes seules.</p>
@@ -1185,7 +1186,7 @@ export class Windows {
           { k: 'lancer', nom: 'Lancer un sort', t: 'select', choix: [['relache', 'Maintenir pour voir, relâcher pour lancer'], ['immediat', 'Tout de suite (aperçu avec Alt)'], ['dofus', 'Comme Dofus : touche puis clic']] },
           { k: 'approche', nom: 'Monstre hors de portée : s\'approcher avant de lancer', t: 'check' },
           { k: 'juice', nom: 'Effets d\'impact (tremblement, gel d\'image)', aide: 'Touche F', t: 'check' },
-          { k: 'flecheQuete', nom: 'Flèche de quête', aide: 'Au bord de l\'écran et sur la mini-carte. Clic sur le titre du suivi : changer de quête.', t: 'check' },
+          { k: 'flecheQuete', nom: 'Aides de quête', aide: 'Flèche au bord de l\'écran et sur la mini-carte, losange sur les monstres de quête, Zaap conseillé. Clic sur le titre du suivi : changer de quête ; sur ses objectifs : la carte.', t: 'check' },
         ] },
         { id: 'touches', titre: 'Touches', opts: [], html: `<div class="keys">${[['Clic gauche', 'aller / attaquer (maintenu : continuer)'], ['Maj + clic', 'attaquer sur place'], ['Clic droit', 'sort de la barre (case libre)'],
           ['& é " \' ( -', 'barre de sorts'], ['Espace', 'déplacement'], ['E', 'potion'], ['S', 'sorts'], ['I', 'inventaire'], ['C', 'caractéristiques'], ['J', 'métiers'], ['B', 'bestiaire'],
@@ -1597,6 +1598,8 @@ export class Windows {
     const zone = (z: string) => GAME_DATA.zones[z]?.name ?? z;
     const couleur = (niv: number) => { const d = niv - p.level; return d <= 0 ? 'n1' : d <= 5 ? 'n2' : d <= 15 ? 'n3' : 'n4'; };
     const ICO = `<img src="${v('assets/ui/reperes/410.webp')}" alt="">`;
+    // idée 2 (2026-11-08) : étoile sur le Zaap découvert le plus proche du but de la quête suivie
+    const Q = wo.quetes, conseil = this.reglages.flecheQuete ? Q?.zaapConseille() ?? null : null, quete = Q?.suivie ? Q.def(Q.suivie).nom : '';
     const ligne = (o: { i?: number; nom: string; region: string; co: string; niv: string; nc: string; cls?: string; titre?: string; marque?: string }) =>
       `<div class="zl ${o.cls ?? ''}" ${o.i != null ? `data-zaap="${o.i}"` : ''} data-q="${escB(`${o.nom} ${o.region}`.toLowerCase())}" title="${escB(o.titre ?? '')}">`
       + `<span class="t">${ICO}<b>${escB(o.nom)}</b>${o.marque ? `<span class="ici-m">${o.marque}</span>` : ''}</span><span>${escB(o.region)}</span><span>${o.co}</span><span class="${o.nc}">${o.niv}</span></div>`;
@@ -1610,9 +1613,10 @@ export class Windows {
       const lignes = cps.map(c => {
         const sub = c.sub != null ? z.open!.subareas[String(c.sub)] : undefined, niv = sub?.level ?? z.level ?? 1;
         const i = p.zaaps.findIndex(o => o.zone === id && o.name === c.name), lui = !!ici && wo.opts.zone === id && ici.name === c.name;
-        const terr = sub?.name ?? c.name, co = c.map.join(',');
-        const l = lui ? ligne({ nom: terr, region: z.name, co, niv: String(niv), nc: couleur(niv), cls: 'ici', marque: 'Tu es ici' })
-          : i >= 0 ? ligne({ i, nom: terr, region: z.name, co, niv: String(niv), nc: couleur(niv), titre: 'Voyager (gratuit)' })
+        const terr = sub?.name ?? c.name, co = c.map.join(','), bon = !!conseil && conseil.zone === id && conseil.name === c.name;
+        const l = lui ? ligne({ nom: terr, region: z.name, co, niv: String(niv), nc: couleur(niv), cls: 'ici', marque: bon ? 'Tu es ici · ★ le plus près de ta quête' : 'Tu es ici' })
+          : i >= 0 ? ligne({ i, nom: terr, region: z.name, co, niv: String(niv), nc: couleur(niv), cls: bon ? 'cons' : '', marque: bon ? '★ le plus près de ta quête' : undefined,
+            titre: bon ? `Voyager (gratuit) · le Zaap le plus proche de « ${quete} »` : 'Voyager (gratuit)' })
           : ligne({ nom: '???', region: z.name, co, niv: String(niv), nc: couleur(niv), cls: 'nd', titre: `À découvrir : passe sur la carte [${co}] (${terr})` });
         return { niv, l };
       }).sort((a, b) => a.niv - b.niv);
