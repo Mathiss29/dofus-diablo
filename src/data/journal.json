@@ -226,6 +226,7 @@
         ],
         "Combat": [
           "Coûts officiels des points : Sagesse 3 points, Force, Intelligence, Chance et Agilité 1 point jusqu'à 100 puis 2, 3 et 4 par tranche de 100 (tes points déjà placés te sont rendus). La Chance donne +1 Prospection par 10, l'Intelligence et les Soins renforcent tes soins, et l'Agilité fait courir un peu plus vite (+1 % par 20, 10 % au plus).",
+          "Croiser un élite ne coupe plus ta musique : seuls les boss lancent la musique de combat.",
           "Avec l'Osamodas : Alt + clic lance toute la meute sur un monstre, Maj montre le fil de laisse et les PV de chaque bête, la Laisse Spirituelle dompte un monstre presque vaincu pendant 20 s, et ton familier mord."
         ],
         "Corrections": [

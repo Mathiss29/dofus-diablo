@@ -22,7 +22,7 @@ export class SonView {
   private prevT = 0;
   private coupRecolte = 0;
   private etats = new Map<number, string>();
-  /** Élite ou boss contre qui la musique de combat joue (3B). */
+  /** Boss contre qui la musique de combat joue (3B). Les élites ne changent plus la musique (Mathis, 2026-11-08). */
   private adversaire: Monster | null = null;
   private emetteurs: { k: string; x: number; y: number }[] = [];
   private fondT = 0;
@@ -152,12 +152,13 @@ export class SonView {
       const engage = m.state === 'chase' || m.state === 'windup' || m.state === 'lunge' || m.state === 'recover';
       if (engage && Math.hypot(m.x - p.x, m.y - p.y) < PORTEE_COMBAT) {
         attaquants++;
-        if ((m.def.elite || m.def.boss) && !m.summoner) adv = adv ?? m;
+        // Musique élites (Mathis, 2026-11-08 : « Rien du tout ») : un élite compte comme un monstre normal ; seuls les boss lancent la musique de combat
+        if (m.def.boss && !m.summoner) adv = adv ?? m;
       }
     }
     for (const id of this.etats.keys()) if (!vus.has(id)) this.etats.delete(id);
     Son.setIntensite(Math.min(1, attaquants / 2));
-    // 3B : élite ou boss engagé -> musique de combat ; tué -> victoire ; perdu de vue -> l'exploration reprend
+    // 3B : boss engagé -> musique de combat ; tué -> victoire ; perdu de vue -> l'exploration reprend
     if (adv && !this.adversaire) { this.adversaire = adv; Son.setCombat(true); }
     else if (this.adversaire && !adv) {
       if (this.adversaire.dead) Son.finCombat(true); else if (!p.dead) Son.setCombat(false);
