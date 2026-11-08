@@ -685,6 +685,16 @@
               "Partie de test",
               "Touche D"
             ]
+          },
+          {
+            "titre": "Outils de test à jour",
+            "phrase": "Le panneau F1 saute droit aux Dofus, aux quêtes, à l'Almanax et aux nouveaux lieux.",
+            "details": "Onglet Progression, recherche partout, archimonstres ×100, mannequin qui frappe et compteur de dégâts reçus.",
+            "icone": "guide",
+            "etiquettes": [
+              "Partie de test",
+              "Touche F1"
+            ]
           }
         ],
         "Le monde": [

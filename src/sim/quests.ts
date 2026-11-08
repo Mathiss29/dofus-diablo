@@ -854,6 +854,40 @@ export class Quetes {
     const don = typeof e.donner === 'string' || Array.isArray(e.donner) ? e.donner : e.donner?.[this.classe];
     return don == null ? [] : Array.isArray(don) ? don : [don];
   }
+  // --- Partie de test (maquette « Outil test » 3A-3E) : sauter, finir, remettre à zéro une quête -------------------
+  /** Retire les élites encore en vie de cette quête. */
+  private retirerElites(id: string) {
+    const w = this.world;
+    for (const [m, qid] of [...this.elites]) if (qid === id) { this.elites.delete(m); w.monsters = w.monsters.filter(x => x.id !== m); }
+  }
+  /** Va droit à l'étape n (0 = la première) : la quête est prise si besoin, les élites de l'étape apparaissent. */
+  sauterEtape(id: string, n: number) {
+    if (!this.existe(id)) return;
+    this.finies.delete(id);
+    if (!this.enCours.some(c => c.id === id)) this.prendre(id);
+    const c = this.enCours.find(x => x.id === id), nb = this.etapes(id).length;
+    if (!c || n < 0 || n >= nb) return;
+    this.retirerElites(id);
+    for (let i = 0; i < n; i++) this.etapesFinies.add(`${id}:${i}`);
+    c.etape = n; c.aRendre = false; this.suivie = id;
+    this.entrerEtape(c);
+  }
+  /** La quête redevient « à prendre » : plus en cours, ni finie, ses élites disparaissent. */
+  remettre(id: string) {
+    this.retirerElites(id);
+    this.enCours = this.enCours.filter(c => c.id !== id);
+    this.finies.delete(id); delete this.refaites[id];
+    for (const k of [...this.etapesFinies]) if (k.startsWith(`${id}:`)) this.etapesFinies.delete(k);
+    for (const o of this.etapes(id).flatMap(e => e.objectifs)) if (o.t === 'ramasser') delete this.objets[o.objet];
+    if (this.suivie === id) this.suivie = this.enCours[0]?.id ?? null;
+  }
+  /** But de l'étape en cours de cette quête dans la zone (PNJ, élite, carte), ou null. */
+  butDe(id: string): { x: number; y: number; nom: string } | null {
+    const avant = this.suivie; this.suivie = id;
+    const t = this.enCours.some(c => c.id === id) ? this.cibleBrute() : null;
+    if (!t) this.suivie = avant;
+    return t;
+  }
   /** Bouton « Passer » (7A) : la quête est donnée comme finie. */
   passer(id: string) { if (this.enCours.some(c => c.id === id) && this.def(id).options?.passable) this.terminer(id, true); }
 
