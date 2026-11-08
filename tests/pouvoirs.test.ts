@@ -54,10 +54,12 @@ describe('pouvoirs légendaires officiels (version 0.3 : 3B 4A+4C ; Légendaires
     }
   });
 
-  it('hors partie de test (0.3 pas encore sortie) : seulement les 5 pouvoirs maison', () => {
+  it('hors partie de test aussi (0.3 sortie) : les pouvoirs officiels sortent', () => {
     const w = arena('iop', false), rng = new Rng(9);
-    expect(w.player.ctxPouvoirs.v03).toBe(false);
-    for (let i = 0; i < 300; i++) expect(POUVOIR_PAR_ID[rollItem(chapeau[0], chapeau[1], 'legendaire', rng, i, w.player.ctxPouvoirs).legendary!.id]).toBeUndefined();
+    expect(w.player.ctxPouvoirs.v03).toBe(true);
+    let officiels = 0;
+    for (let i = 0; i < 300; i++) if (POUVOIR_PAR_ID[rollItem(chapeau[0], chapeau[1], 'legendaire', rng, i, w.player.ctxPouvoirs).legendary!.id]) officiels++;
+    expect(officiels).toBeGreaterThan(0);
   });
 
   it('6A : coût en PA, portée de case, charges, dégâts de base et critique changent le sort visé', () => {
@@ -109,9 +111,8 @@ describe('pouvoirs légendaires officiels (version 0.3 : 3B 4A+4C ; Légendaires
     expect(p.porteeStat('pression')).toBe(0);
     const c = arena('cra').player;
     expect(c.porteeModifiable('cinglante')).toBe(true);
-    // hors 0.3, rien ne change
-    const v = arena('iop', false).player;
-    expect(v.porteeModifiable('pression')).toBe(true);
+    // hors partie de test aussi (0.3 sortie)
+    expect(arena('iop', false).player.porteeModifiable('pression')).toBe(false);
   });
   it('6A : ligne de vue officielle (Pression), « ligne de vue désactivée » la retire ; « lancer en ligne désactivé » = +1 case de zone', () => {
     const w = arena('iop'), p = w.player;

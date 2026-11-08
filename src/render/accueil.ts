@@ -24,13 +24,13 @@ const CLASSES = CLASSES_DOFUS as ClasseDofus[];
 /** Classes jouables (planches en jeu) et date prévue des suivantes. */
 /** Classes codées mais encore à l'essai (maquette Osamodas 13A) : jouables seulement dans la partie de test (diablofus.com/#test, F1),
  *  elles arrivent à la création quand Mathis les a validées. */
-const EN_ESSAI = new Set(['osamodas', 'sacrieur', 'forgelance']);   // Sacrieur : maquette Sacrieur 12A (0.4) ; Forgelance : maquette 14A (palier 1 sur #test)
+const EN_ESSAI = new Set(['sacrieur', 'forgelance']);   // Osamodas ouvert à tous avec la 0.3 (Public : 2A) ; Sacrieur : maquette Sacrieur 12A (0.4) ; Forgelance : maquette 14A (palier 1 sur #test)
 const JOUABLES = new Set(Object.keys(GAME_DATA.classes).filter(k => !EN_ESSAI.has(k)));
 /** Classes pas encore jouables (Accueil 9A) : leur fiche s'affiche quand même, avec la version prévue (feuille de route). */
-const PLUS_TARD: Record<string, string> = { osamodas: 'En essai : partie de test', sacrieur: 'En essai : partie de test', forgelance: 'En essai : partie de test' };
+const PLUS_TARD: Record<string, string> = { sacrieur: 'En essai : partie de test', forgelance: 'En essai : partie de test' };
 const plusTard = (cle: string) => PLUS_TARD[cle] ?? 'Prévue après la 1.0';
 /** Version affichée et textes de l'accueil (Accueil 12A) : ils racontent la zone de la version, pas le moteur. */
-const VERSION = '0.2';
+const VERSION = '0.3';
 const TEXTES: Record<string, { zone: string; slogan: string; ruban: string; lignes: string[] }> = {
   '0.1': {
     zone: 'INCARNAM, LE VILLAGE DANS LES NUAGES', slogan: 'Les nuages d\'Incarnam grouillent de monstres.', ruban: 'En chasse !',
@@ -39,6 +39,10 @@ const TEXTES: Record<string, { zone: string; slogan: string; ruban: string; lign
   '0.2': {
     zone: 'ASTRUB, LA CITÉ DES AVENTURIERS', slogan: 'Astrub et ses environs grouillent de monstres.', ruban: 'En chasse !',
     lignes: ['Kankreblath et ses Vilinsekts pillent les maisons de la Cité.', 'Sous les pavés, les égouts grouillent de Rats Strubiens.', 'L\'Osamodas et le butin complet arrivent dans la prochaine version.'],
+  },
+  '0.3': {
+    zone: 'ASTRUB, LA CITÉ DES AVENTURIERS', slogan: 'Le butin complet est arrivé à Astrub.', ruban: 'En chasse !',
+    lignes: ['Brise tes légendaires chez Malek : leur pouvoir reste dans ton Codex.', 'L\'Osamodas et sa meute rejoignent l\'Iop et le Crâ.', 'Amakna et le Sacrieur arrivent dans la prochaine version.'],
   },
 };
 const TEXTE = TEXTES[VERSION];
@@ -56,6 +60,8 @@ const DIEUX = new Set(['iop', 'cra', 'osamodas']);
 const POSES: [string, string, number][] = [['repos', 'Repos', 24], ['garde', 'Garde', 24], ['attaque', 'Attaque', 23]];
 /** Animation officielle de chaque pose, pour le perso dessiné en direct. */
 const ANIM_POSE: Record<string, string> = { repos: 'AnimStatiqueExplo0_1', garde: 'AnimStatiqueCombat0_1', attaque: 'AnimArme0_1' };
+/** Classes qui ont encore leurs anciennes planches d'accueil (repli hors ligne) ; les autres sont toujours dessinées en direct. */
+const ANCIENNES_PLANCHES = new Set(['iop', 'cra']);
 const hexa = (c: number) => '#' + c.toString(16).padStart(6, '0');
 const FILTRES = ['Toutes', 'Dégâts', 'Tank', 'Soins', 'Invocation'];
 
@@ -390,7 +396,7 @@ export class Accueil {
   private precharger() {
     const urls = new Set<string>();
     for (const p of lirePersos()) if (p) urls.add(img(`${p.classe}_${p.sexe}_repos.webp`));
-    for (const c of JOUABLES) for (const sx of ['m', 'f']) for (const [k] of POSES) urls.add(img(`${c}_${sx}_${k}.webp`));
+    for (const c of JOUABLES) if (ANCIENNES_PLANCHES.has(c)) for (const sx of ['m', 'f']) for (const [k] of POSES) urls.add(img(`${c}_${sx}_${k}.webp`));
     for (const u of urls) { const im = new Image(); im.src = u; }
   }
   private jouer(slot: number) { prendreSecours(); this.onJouer(slot); }

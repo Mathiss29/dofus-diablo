@@ -27,7 +27,7 @@ describe("carte Discord du Journal", () => {
   it("laisse les lignes de la partie de test hors de Discord", () => {
     const e = carte({ date: "2026-11-08", titre: "T", resume: "R", lignes: {
       "Nouveautés": ["Version 0.2 terminée. Prochaine étape : l'Osamodas.", "0.3 en partie de test : le Codex.", "Essai sur diablofus.com/#test.", "Les Zaaps marchent."],
-      "Corrections": ["Osamodas : le Dragonnet ne glisse plus."] } });
+      "Corrections": ["Partie de test : le Dragonnet ne glisse plus."] } });
     expect(e.fields).toHaveLength(1);
     expect(e.fields[0].value).toBe("• Version 0.2 terminée. Prochaine étape : l'Osamodas.\n• Les Zaaps marchent.");
   });

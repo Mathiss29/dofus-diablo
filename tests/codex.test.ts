@@ -29,12 +29,12 @@ describe('Codex des pouvoirs (version 0.3 : 5A+5B+5D 6A+6B 7A+7B)', () => {
     expect(p.codex).toHaveLength(2);
   });
 
-  it('un pouvoir d\'une autre classe n\'entre pas dans le Codex ; rien hors 0.3', () => {
+  it('un pouvoir d\'une autre classe n\'entre pas dans le Codex ; aussi hors partie de test', () => {
     const w = arena(), p = w.player, cra = POUVOIRS.cra[0];
     const it = objet(w, 'chapeau', { rarity: 'legendaire', legendary: { id: cra.id, value: 0 } });
     p.bag.push(it); w.briserObjet(it.uid);
     expect(p.codex).toHaveLength(0);
-    const v = arena(false), q = v.player, l = objet(v, 'chapeau', { rarity: 'legendaire', legendary: { id: 'rage', value: 20 } });
+    const v = arena(false), q = v.player, l = objet(v, 'chapeau', { rarity: 'legendaire', legendary: { id: cra.id, value: 0 } });
     q.bag.push(l); v.briserObjet(l.uid);
     expect(q.codex).toHaveLength(0);
   });
@@ -71,9 +71,9 @@ describe('Codex des pouvoirs (version 0.3 : 5A+5B+5D 6A+6B 7A+7B)', () => {
     expect(v.player.codex).toEqual([{ id: bond.id }, { id: 'relance', sort: 'bond' }]);
   });
 
-  it('8C : « Le premier pouvoir » chez Malek (partie de test seulement) ouvre le Codex et donne un Légendaire au pouvoir de la classe', () => {
+  it('8C : « Le premier pouvoir » chez Malek (pour tous depuis la sortie de la 0.3) ouvre le Codex et donne un Légendaire au pouvoir de la classe', () => {
     const v = monde(false); v.player.fixerNiveau(25, null);
-    expect(v.quetes!.aDonnerTous('forgemage')).not.toContain('premier_pouvoir');
+    expect(v.quetes!.aDonnerTous('forgemage')).toContain('premier_pouvoir');
     const w = monde(), p = w.player; p.fixerNiveau(25, null);
     expect(w.quetes!.aDonnerTous('forgemage')).toContain('premier_pouvoir');
     expect(w.worldGrid!.mapByTag('1_-33')).toBeTruthy();   // l'élite de Tainéla

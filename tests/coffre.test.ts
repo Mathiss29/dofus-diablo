@@ -45,12 +45,12 @@ describe('coffre partagé (version 0.3 : 12A+12B+12D)', () => {
     expect(b.player.bag.at(-1)!.id).toBe(it.id);
   });
 
-  it('un onglet plein refuse ; hors partie de test (0.3 pas sortie) pas de coffre', () => {
+  it('un onglet plein refuse ; hors partie de test aussi (0.3 sortie)', () => {
     const c = coffreVide(), w = monde('havresac', c);
     devant(w);
     for (let i = 0; i < COFFRE.places; i++) expect(w.deposer(objet(w).uid, 1)).toBe(true);
     expect(w.deposer(objet(w).uid, 1)).toBe(false);
-    expect(monde('havresac', coffreVide(), false).postes.some(p => p.coffre)).toBe(false);
+    expect(monde('havresac', coffreVide(), false).postes.some(p => p.coffre)).toBe(true);
   });
 
   it('relire un coffre abîmé ne plante pas et garde les objets valables', () => {
@@ -58,11 +58,11 @@ describe('coffre partagé (version 0.3 : 12A+12B+12D)', () => {
     expect(relireCoffre({ onglets: [[{ id: '1', rarity: 'rare', stats: {}, extra: [], uid: 1 }, null, { x: 1 }], 'abc'] }).onglets[0]).toHaveLength(1);
   });
 
-  it('11A : les ateliers des 6 métiers de fabrication sont dans la Cité d\'Astrub (partie de test seulement)', () => {
+  it('11A : les ateliers des 6 métiers de fabrication sont dans la Cité d\'Astrub (pour tous depuis la sortie de la 0.3)', () => {
     const w = monde('astrub', coffreVide()), v = monde('astrub', coffreVide(), false);
     for (const m of ['bijoutier', 'cordonnier', 'tailleur', 'forgeron', 'sculpteur', 'faconneur']) {
       expect(w.postes.some(p => p.metiers.includes(m)), m).toBe(true);
-      expect(v.postes.some(p => p.metiers.includes(m)), m).toBe(false);
+      expect(v.postes.some(p => p.metiers.includes(m)), m).toBe(true);
     }
   });
 });

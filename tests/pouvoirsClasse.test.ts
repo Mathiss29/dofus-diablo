@@ -66,9 +66,11 @@ describe('Légendaires de classe inventés (Légendaires classe : 1A 2A+2D 3C 4A
     for (let i = 0; i < 500; i++) expect(rollItem(id, d, 'legendaire', rng, i, ctx).legendary!.id).not.toMatch(/^pc-(cra|osamodas)/);
   });
 
-  it('hors partie de test (0.3 cachée) : aucun pouvoir de classe', () => {
+  it('hors partie de test aussi (0.3 sortie) : pouvoirs de classe', () => {
     const w = arena('iop', false), [id, d] = de('bottes'), rng = new Rng(2);
-    for (let i = 0; i < 500; i++) expect(rollItem(id, d, 'legendaire', rng, i, w.player.ctxPouvoirs).legendary!.id.startsWith('pc-')).toBe(false);
+    let pc = 0;
+    for (let i = 0; i < 500; i++) if (rollItem(id, d, 'legendaire', rng, i, w.player.ctxPouvoirs).legendary!.id.startsWith('pc-')) pc++;
+    expect(pc).toBeGreaterThan(0);
   });
 
   it('4A : le Codex garde le jet de l\'objet brisé, un meilleur jet le remplace, un moins bon non', () => {
@@ -82,11 +84,11 @@ describe('Légendaires de classe inventés (Légendaires classe : 1A 2A+2D 3C 4A
     expect(p.codex.some(c => c.id === 'pc-cra-A')).toBe(false);
   });
 
-  it('pas actif pour une autre classe ni hors 0.3', () => {
+  it('pas actif pour une autre classe ; actif hors partie de test', () => {
     const w = arena('cra'); porter(w, 'pc-iop-A', 60);
     expect(w.player.pcv('pc-iop-A')).toBe(0);
     const v = arena('iop', false); porter(v, 'pc-iop-A', 60);
-    expect(v.player.pcv('pc-iop-A')).toBe(0);
+    expect(v.player.pcv('pc-iop-A')).toBe(60);
     const u = arena(); porter(u, 'pc-iop-A', 60);
     expect(u.player.pcv('pc-iop-A')).toBe(60);
   });

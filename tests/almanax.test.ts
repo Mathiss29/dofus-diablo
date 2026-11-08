@@ -23,7 +23,7 @@ describe('Almanax (version 0.3 : 15C)', () => {
     expect(QUETES.pnj.temples.services?.some(s => s.service === 'almanax')).toBe(true);
   });
 
-  it("l'offrande prend l'objet, donne des Pépites et le bonus du jour ; une seule par jour ; caché hors 0.3", () => {
+  it("l'offrande prend l'objet, donne des Pépites et le bonus du jour ; une seule par jour ; aussi hors partie de test", () => {
     const d = jourAvec('xp'), w = monde(d), p = w.player, j = w.almanaxDuJour!;
     expect(w.offrirAlmanax()).toBe(false);   // pas l'offrande
     p.resources[j.offrande] = j.n;
@@ -40,7 +40,7 @@ describe('Almanax (version 0.3 : 15C)', () => {
     // le même jour : gardé
     const u = monde(d); restaurerJoueur(u, exporterJoueur(w));
     expect(u.almanax?.effet).toBe('xp');
-    expect(monde(d, false).almanaxDuJour).toBeNull();
+    expect(monde(d, false).almanaxDuJour).not.toBeNull();   // 0.3 ouverte à tous (Public : 1A)
   });
 
   it('bonus : XP des monstres, XP de métier, jour « Pépites »', () => {
