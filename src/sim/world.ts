@@ -44,7 +44,9 @@ export interface HitDef { dmg: number; knock: number; element?: Element; lifeste
   /** Légendaires de classe (0.3) : exécution sous cette part de PV (Couperet du bourreau), +n % par case de distance (Œil d'aigle),
    *  gel de n s au 3e coup (Givre mordant), +n % de dommages de poussée et étourdi (Clouage), marque +n % (Marque du chasseur),
    *  rebonds en plus (Flèche rebelle), 3 petites explosions à n % (Gerbe de feu). */
-  execute?: number; loin?: number; givre?: number; clouage?: number; marque?: number; rebonds?: number; gerbe?: number }
+  execute?: number; loin?: number; givre?: number; clouage?: number; marque?: number; rebonds?: number; gerbe?: number;
+  /** Stase de sang (Sacrieur P) : immobilise n s, une fois par monstre toutes les 5 s. */
+  stase?: number }
 /** Zone laissée au sol par un légendaire de classe (Épée jumelle) : frappe une fois chaque monstre qui la traverse. */
 export interface ZoneSol { x: number; y: number; r: number; t: number; hit: HitDef; touches: Set<number>; id: string }
 /** Butin au sol (choix 1C 2D 6A) : équipements et kamas seulement. Les Communs et les kamas filent vers le joueur
@@ -1284,7 +1286,7 @@ export class World {
   hitCircle(x: number, y: number, r: number, def: HitDef, stun = 0, pushDir?: number) {
     return this.applyHits(m => Math.hypot(m.x - x, m.y - y) <= r + m.radius, def, x, y, stun, pushDir);
   }
-  private applyHits(test: (m: Monster) => boolean, def: HitDef, ox: number, oy: number, stun: number, pushDir?: number): number {
+  applyHits(test: (m: Monster) => boolean, def: HitDef, ox: number, oy: number, stun: number, pushDir?: number): number {
     const p = this.player, cls = p.cls;
     let n = 0;
     for (const m of this.monsters) {
@@ -1341,6 +1343,10 @@ export class World {
           m.stun = Math.max(m.stun, def.givre * (m.def.elite ? 0.5 : 1));
           this.emit({ k: 'status', x: m.x, y: m.y - 34, text: 'Gelé !', color: '#8fd8ff' });
         }
+      }
+      if (def.stase && !m.def.boss && this.time - m.staseA >= 5) {   // Stase de sang
+        m.staseA = this.time; m.stun = Math.max(m.stun, def.stase * (m.def.elite ? 0.5 : 1));
+        this.emit({ k: 'status', x: m.x, y: m.y - 34, text: 'Stase', color: '#d0102a' });
       }
       if (def.execute && m.hp > 0 && !m.def.boss && !m.mannequin && m.hp <= m.maxHp * def.execute * (m.def.elite ? 0.5 : 1) && p.age - p.couperetA >= 4) {
         p.couperetA = p.age; m.hp = 0;   // Couperet du bourreau

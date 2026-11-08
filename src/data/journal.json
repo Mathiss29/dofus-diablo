@@ -858,6 +858,15 @@
             "etiquettes": [
               "Partie de test"
             ]
+          },
+          {
+            "titre": "8 légendaires qui changent un sort",
+            "phrase": "Hémorragie en arc, Absorption qui rebondit, Ravage qui laisse une traînée de sang : le Sacrieur en a 17.",
+            "details": "Épées jumelles, Stase qui immobilise, Mutilation qui explose… Jet aléatoire comme les autres.",
+            "icone": "degats",
+            "etiquettes": [
+              "Partie de test"
+            ]
           }
         ],
         "Corrections": [

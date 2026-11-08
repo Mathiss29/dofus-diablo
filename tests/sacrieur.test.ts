@@ -126,8 +126,10 @@ describe('Légendaires du Sacrieur (14A 14B 15A 15B 15E, avec les jets des lége
   it('les 40 pouvoirs officiels de la Panoplie Exsangue et 9 pouvoirs inventés, actifs pour le Sacrieur', () => {
     expect(POUVOIRS.sacrieur).toHaveLength(40);
     const l = POUVOIRS_CLASSE.filter(p => p.classe === 'sacrieur');
-    expect(l.map(p => p.nom)).toEqual(['Soif de sang', 'Frénésie', 'Coups qui saignent', 'Dernier souffle', 'Châtiment Forcé', 'Châtiment Agile', 'Châtiment Osé', 'Châtiment Spirituel', 'Châtiment Vitalesque']);
+    expect(l.map(p => p.nom)).toEqual(['Soif de sang', 'Frénésie', 'Coups qui saignent', 'Dernier souffle', 'Châtiment Forcé', 'Châtiment Agile', 'Châtiment Osé', 'Châtiment Spirituel', 'Châtiment Vitalesque',
+      'Rivière de sang', 'Absorption vorace', 'Sillage écarlate', 'Chaîne de chair', 'Épées jumelles', 'Épines acérées', 'Stase de sang', 'Offrande explosive']);
     const w = sacriTest();
+    niveau(w.player, 60);
     for (const p of l) expect(w.player.etatPouvoir(p.id).actif, p.id).toBe(true);
   });
 
@@ -181,5 +183,46 @@ describe('Légendaires du Sacrieur (14A 14B 15A 15B 15E, avec les jets des lége
     p.hp = Math.round(p.maxHp * 0.15);
     for (let i = 0; i < 40; i++) w.step(STEP, { ...NO_INPUT, aim: { x: m.x, y: m.y }, holdAttack: true });
     expect(p.stat('vitesse')).toBeGreaterThanOrEqual(5);
+  });
+
+  it('Légendaires sacri : Rivière de sang frappe tout l\'arc, Absorption vorace rebondit', () => {
+    const w = sacriTest(), p = w.player; porter(w, 'pc-sacrieur-J', 80); porter(w, 'pc-sacrieur-K', 2);
+    const ms = [[50, -40], [50, 40], [60, 0]].map(([dx, dy]) => { const m = w.spawnMonster('bouftou', p.x + dx, p.y + dy); m.state = 'idle'; m.hp = m.maxHp = 1e5; return m; });
+    press(w, 'hemorragie', { x: p.x + 60, y: p.y }); idle(w, 0.4);
+    for (const m of ms) expect(m.hp).toBeLessThan(1e5);
+    const loin = [[300, 0], [300, 90], [300, -90]].map(([dx, dy]) => { const m = w.spawnMonster('bouftou', p.x + dx, p.y + dy); m.state = 'idle'; m.hp = m.maxHp = 1e5; return m; });
+    p.pa = p.paMax; press(w, 'absorption', { x: loin[0].x, y: loin[0].y }); idle(w, 0.5);
+    for (const m of loin) expect(m.hp).toBeLessThan(1e5);
+  });
+
+  it('Légendaires sacri : Stase de sang immobilise, Épées jumelles, Offrande explosive, Épines acérées à distance', () => {
+    const w = sacriTest(), p = w.player; niveau(p, 45);
+    porter(w, 'pc-sacrieur-P', 1); porter(w, 'pc-sacrieur-N', 60); porter(w, 'pc-sacrieur-Q', 80);
+    const m = w.spawnMonster('bouftou', p.x + 150, p.y); m.state = 'idle'; m.hp = m.maxHp = 1e5;
+    press(w, 'stase', { x: m.x, y: m.y }); idle(w, 0.4);
+    expect(m.stun).toBeGreaterThan(0.3);
+    p.pa = p.paMax; press(w, 'epee_vorace'); idle(w, 0.8);
+    expect(w.betes.filter(b => !b.dead && b.base === 'epee_vorace')).toHaveLength(2);
+    expect(w.betes[0].force).toBeCloseTo(0.6);
+    const voisin = w.spawnMonster('bouftou', p.x + 40, p.y); voisin.state = 'idle'; voisin.hp = voisin.maxHp = 1e5;
+    p.pa = p.paMax; press(w, 'mutilation'); idle(w, 0.6);
+    expect(voisin.hp).toBeLessThan(1e5);
+    const w2 = sacriTest(), p2 = w2.player; niveau(p2, 45); porter(w2, 'pc-sacrieur-O', 40);
+    press(w2, 'couronne'); idle(w2, 0.6);
+    const tireur = w2.spawnMonster('bouftou', p2.x + 300, p2.y); tireur.state = 'idle'; const h = tireur.hp;
+    p2.invuln = 0; p2.hurt(40, tireur.x, tireur.y, w2, 'neutre', true);
+    expect(tireur.hp).toBeLessThan(h);
+  });
+
+  it('Légendaires sacri : Sillage écarlate laisse une traînée, Chaîne de chair attire les voisins', () => {
+    const w = sacriTest(), p = w.player; niveau(p, 30); porter(w, 'pc-sacrieur-L', 30);
+    press(w, 'ravage', { x: p.x + 250, y: p.y }); idle(w, 0.6);
+    expect(w.zonesSol.filter(z => z.id === 'pc-sacrieur-L').length).toBeGreaterThan(2);
+    const w2 = sacriTest(), p2 = w2.player; niveau(p2, 30); porter(w2, 'pc-sacrieur-M', 2);
+    const c = w2.spawnMonster('bouftou', p2.x + 300, p2.y), v = w2.spawnMonster('bouftou', p2.x + 300, p2.y + 70);
+    for (const m of [c, v]) m.state = 'idle';
+    const d0 = Math.hypot(v.x - p2.x, v.y - p2.y);
+    press(w2, 'attirance', { x: c.x, y: c.y }); idle(w2, 0.5);
+    expect(Math.hypot(v.x - p2.x, v.y - p2.y)).toBeLessThan(d0 - 100);
   });
 });
