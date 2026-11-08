@@ -14,15 +14,15 @@ def main(bone, name, bones, out='public/assets/sprites', atks='0,1'):
     run(sys.executable, os.path.join(HERE, 'b_dump.py'), os.path.join(bones, f'bones_assets_bone_{bone}.bundle'), b)
     # SKINS=chemin1.bundle,... et COUleurs=1=15788464,... : look « {squelette|skin|1=couleur} » des PNJ (Emp : bulle 1979 + skin 1981).
     # La scène est alors faite par build_char.py (squelette + skins + couleurs), comme les classes.
-    if os.environ.get('SKINS'):
+    if os.environ.get('SKINS') or os.environ.get('COULEURS'):   # COULEURS seules : squelette teint (familier aux couleurs du porteur)
         import re
         sk = []
-        for i, f in enumerate(os.environ['SKINS'].split(',')):
+        for i, f in enumerate(x for x in os.environ.get('SKINS', '').split(',') if x):
             d = os.path.join(tmp, f's{i}'); run(sys.executable, os.path.join(HERE, 'b_dump.py'), f, d); sk.append(d)
         cols = {int(k): int(v) for k, v in (c.split('=') for c in os.environ.get('COULEURS', '').split(',') if c)}
         colors = ','.join(str(cols.get(i, 0)) for i in range(1, max(cols, default=0) + 1)) or '-'
         names = sorted({re.match(r'ta_.+?_(Anim\w+?_\d)\.bin$', f).group(1) for f in os.listdir(b) if re.match(r'ta_.+?_(Anim\w+?_\d)\.bin$', f)})
-        run(sys.executable, os.path.join(HERE, 'build_char.py'), b + '/scene.json', b, ','.join(sk), colors, ','.join(names))
+        run(sys.executable, os.path.join(HERE, 'build_char.py'), b + '/scene.json', b, ','.join(sk) or '-', colors, ','.join(names))
         tex = '-'
     else:
         run(sys.executable, os.path.join(HERE, 'build_scene.py'), b, cwd=HERE)
