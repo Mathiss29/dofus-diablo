@@ -942,6 +942,13 @@
             "details": "La Puissance plafonne à 3 crans (+100). La relancer donne toujours la Coagulation.",
             "icone": "sorts",
             "etiquettes": ["Sacrieur", "Partie de test"]
+          },
+          {
+            "titre": "Cortège Sauvage n'est plus infini",
+            "phrase": "Après les 6 s de Cortège Sauvage, les bêtes en trop repartent, les plus anciennes d'abord.",
+            "details": "Avant, la meute gonflée restait pour toujours.",
+            "icone": "degats",
+            "etiquettes": ["Osamodas"]
           }
         ],
         "Corrections": [
