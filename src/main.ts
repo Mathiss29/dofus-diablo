@@ -3,6 +3,10 @@ import { ZoneScene } from './render/zoneScene';
 import { Accueil } from './render/accueil';
 import './render/phaserRapide';
 import { preparerInstallation } from './render/installation';
+import { Compte } from './render/compte';
+
+// Compte Discord (maquette « Vrai multi : ») : lit le jeton renvoyé par le serveur (#connexion=…) avant de regarder l'adresse
+Compte.demarrer();
 
 // Site installable comme application (bouton « Installer le jeu » de l'accueil)
 preparerInstallation();
@@ -28,7 +32,7 @@ const accueil = new Accueil(slot => { accueil.hide(); zone().scene.restart({ slo
   // Accueil 8B : essayer une classe 60 s dans les Champs d'Astrub, puis retour à la création
   (classe, sexe, apparence) => { accueil.hide(); zone().scene.restart({ classe, zone: 'champs-astrub', essai: sexe, apparence }); });
 accueil.onOptions = () => zone().ouvrirOptions();
-game.events.on('accueil', (page?: 'creation' | 'persos') => { zone().scene.restart({ vitrine: true }); accueil.show(page ?? 'accueil'); });
+game.events.on('accueil', (page?: 'creation' | 'persos') => { void Compte.toutEnvoyer(); zone().scene.restart({ vitrine: true }); accueil.show(page ?? 'accueil'); });
 if (!dev) accueil.show();
 
 // Accès console / tests automatisés

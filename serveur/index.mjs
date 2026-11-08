@@ -1,10 +1,11 @@
 // Serveur multijoueur de Diablofus (maquette « Multi : », 2026-11-08).
 // Écoute seulement sur 127.0.0.1 : le monde y arrive par le tunnel Cloudflare (api.diablofus.com), voir LISEZMOI.md.
 // Étape actuelle : santé, ping et salons de coop (code à 5 lettres, l'hôte fait tourner la partie, le serveur relaie).
-// Viendront : Bastion partagé, comptes Discord, sauvegardes.
+// + comptes Discord et persos en ligne (comptes.mjs, maquette « Vrai multi : » 11B). Viendront : partie sur le serveur, Bastion partagé.
 import { createServer } from 'node:http';
 import { readFileSync } from 'node:fs';
 import { WebSocketServer } from 'ws';
+import { creerComptes } from './comptes.mjs';
 
 const PORT = Number(process.env.PORT ?? 3100);
 const HOTE = process.env.HOTE ?? '127.0.0.1';
@@ -66,15 +67,26 @@ function recu(s, m, brut) {
   }
 }
 
-export function creerServeur() {
-  const http = createServer((req, res) => {
+/** @param {{ comptes?: ReturnType<typeof creerComptes> }} [o] */
+export function creerServeur({ comptes = creerComptes({ dossier: process.env.DONNEES ?? new URL('./donnees', import.meta.url).pathname, origines: ORIGINES }) } = {}) {
+  const http = createServer(async (req, res) => {
     const o = req.headers.origin;
-    if (o && ORIGINES.has(o)) res.setHeader('access-control-allow-origin', o);
-    if (req.method === 'GET' && (req.url === '/sante' || req.url === '/')) {
+    if (o && ORIGINES.has(o)) {
+      res.setHeader('access-control-allow-origin', o);
+      res.setHeader('vary', 'origin');
+      res.setHeader('access-control-allow-headers', 'authorization, content-type');
+      res.setHeader('access-control-allow-methods', 'GET, POST, PUT, DELETE, OPTIONS');
+      res.setHeader('access-control-max-age', '86400');
+    }
+    if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
+    const url = new URL(req.url ?? '/', 'http://diablofus');
+    if (req.method === 'GET' && (url.pathname === '/sante' || url.pathname === '/')) {
       res.writeHead(200, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' });
-      res.end(JSON.stringify({ ok: true, jeu: 'diablofus', version: VERSION, depuis: Math.round((Date.now() - depart) / 1000), connectes: ws.clients.size, salons: salons.size }));
+      res.end(JSON.stringify({ ok: true, jeu: 'diablofus', version: VERSION, depuis: Math.round((Date.now() - depart) / 1000), connectes: ws.clients.size, salons: salons.size, connexion: comptes.pret, ...comptes.stats() }));
       return;
     }
+    try { if (await comptes.route(req, res, url)) return; }
+    catch (err) { console.warn('requête :', err.message); if (!res.headersSent) { res.writeHead(500); res.end(); } return; }
     res.writeHead(404, { 'content-type': 'text/plain; charset=utf-8' }); res.end('introuvable');
   });
   const ws = new WebSocketServer({
@@ -98,7 +110,7 @@ export function creerServeur() {
   // battement : coupe les connexions mortes toutes les 30 s
   const battement = setInterval(() => { for (const s of ws.clients) { if (s.vivant === false) { s.terminate(); continue; } s.vivant = false; s.ping(); } }, 30_000);
   ws.on('connection', s => { s.vivant = true; s.on('pong', () => { s.vivant = true; }); });
-  http.on('close', () => clearInterval(battement));
+  http.on('close', () => { clearInterval(battement); comptes.fermer(); });
   return http;
 }
 

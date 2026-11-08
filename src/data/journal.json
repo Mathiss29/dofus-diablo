@@ -1012,7 +1012,8 @@
           "Le serveur du jeu à plusieurs est en ligne sur api.diablofus.com et se met à jour tout seul.",
           "Un robot joue chaque classe, seule et en coop, à chaque mise à jour pour attraper plantages et gels.",
           "Ce robot joue maintenant 8 parties en même temps : la vérification passe de 18 à 5 minutes.",
-          "Le serveur du multi a deux fois plus de mémoire, pour préparer les parties en ligne."
+          "Le serveur du multi a deux fois plus de mémoire, pour préparer les parties en ligne.",
+          "Comptes Discord prêts : bouton de connexion et persos sauvés en ligne, ouverts dès que le serveur a sa clé."
         ]
       }
     }

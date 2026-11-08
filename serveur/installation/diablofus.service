@@ -11,6 +11,8 @@ Group=diablofus
 WorkingDirectory=/home/diablofus/app
 ExecStart=/home/diablofus/node/bin/node --max-old-space-size=1536 index.mjs
 Environment=NODE_ENV=production PORT=3100 HOTE=127.0.0.1 DONNEES=/home/diablofus/donnees
+# Secrets de la connexion Discord (lus par systemd avant de lancer le service ; « - » = facultatif), voir LISEZMOI.md
+EnvironmentFile=-/etc/diablofus/discord.env
 Restart=always
 RestartSec=3
 # Limites (projet Idlus) : pas de swap sur la machine, donc OOMScoreAdjust=500 pour que ce soit nous qui partions
