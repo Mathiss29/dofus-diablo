@@ -30,7 +30,7 @@ export const SOCIAL_CSS = `.dw .win.social{width:440px}
 .dw .soc .mbr .pv i{display:block;height:100%;background:#e0443a}
 .dw .soc .moi{outline:1px solid #b9e54b66}
 .dw .soc .bas{display:flex;justify-content:flex-end;gap:6px}
-.dw .soc .gris{background:linear-gradient(#5a5850,#3d3c36);border-color:#8a8676}
+.dw .soc .gris,.dw .soc .btn.gris{background:linear-gradient(#5a5850,#3d3c36);border-color:#8a8676;color:#f1ecd8}
 .dw .soc .liste{display:flex;flex-direction:column;gap:6px;max-height:300px;overflow:auto}
 .dw .soc .mbr .act{display:flex;gap:4px;align-items:center}
 .dw .soc .mbr .btn.mini{padding:3px 7px;font-size:11px;min-width:0}
@@ -54,13 +54,14 @@ function membres(w: World) {
   return w.players.map(p => ({ p, moi: p === w.player, cls: classeDe(w, p) }));
 }
 
-/** Onglet ouvert (gardé d'une ouverture à l'autre), et joueur à inviter dès que son groupe existe. */
+/** Onglet ouvert (gardé d'une ouverture à l'autre), et donjon à annoncer au groupe dès que sa partie existe. */
 type Onglet = 'amis' | 'groupe' | 'discord' | 'ignores';
 let onglet: Onglet = 'groupe';
-let aInviter: number | null = null;
+let aAnnoncer = false;
+const DONJON = 'Crypte de Kardorim';
 Coop.ecouter(() => {
-  if (aInviter != null && Coop.etat === 'salon' && Coop.serveur) { EnLigne.inviter(aInviter); aInviter = null; }
-  else if (Coop.etat === 'hors') aInviter = null;
+  if (aAnnoncer && Coop.etat === 'salon' && Coop.serveur && Coop.code) { EnLigne.annoncerDonjon(Coop.code, DONJON); aAnnoncer = false; }
+  else if (Coop.etat === 'hors') aAnnoncer = false;
 });
 
 /** Peut-on inviter avec le perso joué ? (pas en Hardcore, testeurs seulement pendant l'essai fermé) */
@@ -68,12 +69,10 @@ function peutInviter() {
   const n = EnLigne.emplacement;
   return n >= 0 && !lirePersos()[n]?.hardcore && (!Compte.infos || Compte.infos.testeur);
 }
-/** Inviter un joueur (7A) : dans son groupe s'il existe, sinon on en crée un (on part dans la Crypte) et l'invitation part ensuite. */
+/** Inviter un joueur (7A) : dans mon groupe, créé au besoin par le serveur ; personne ne bouge (choix de Mathis, 2026-11-08). */
 export function inviterJoueur(id: number) {
   if (!peutInviter()) { EnLigne.onInfo('Tu ne peux pas encore jouer en groupe avec ce perso'); return; }
-  const j = Compte.jeton, n = EnLigne.emplacement;
-  if (Coop.etat === 'salon' && Coop.serveur) EnLigne.inviter(id);
-  else if (Coop.etat === 'hors' && j) { aInviter = id; Coop.creer(true, { jeton: j, emplacement: n }); }
+  EnLigne.inviter(id);
 }
 /** Menu d'un joueur (« Social : » 6A) : clic droit sur son nom ou sur son perso. */
 export function menuJoueur(x: number, y: number, j: { id: number; nom: string }) {
@@ -130,6 +129,8 @@ export function rendreSocial(win: HTMLDivElement, titre: string, c: ContexteSoci
   champ?.addEventListener('keyup', e => e.stopPropagation());
   $('[data-soc-ajouter]')?.addEventListener('click', ajouter);
   const chaque = (sel: string, f: (e: HTMLElement) => void) => win.querySelectorAll<HTMLElement>(sel).forEach(e => e.addEventListener('click', () => f(e)));
+  chaque('[data-soc-exclure]', e => EnLigne.exclure(Number(e.dataset.socExclure)));
+  chaque('[data-soc-chef]', e => EnLigne.passerChef(Number(e.dataset.socChef)));
   chaque('[data-soc-accepter]', e => EnLigne.ajouterAmi(Number(e.dataset.socAccepter)));
   chaque('[data-soc-retirer]', e => EnLigne.retirer(Number(e.dataset.socRetirer)));
   chaque('[data-soc-chu]', e => { c.fermer(); EnLigne.chuchoter(e.dataset.socChu!); });
@@ -142,7 +143,11 @@ export function rendreSocial(win: HTMLDivElement, titre: string, c: ContexteSoci
     ev.preventDefault(); menuJoueur(ev.clientX, ev.clientY, { id: Number(e.dataset.joueur), nom: e.dataset.nom ?? '' });
   }));
   const compte = () => (c.slot >= 0 && Compte.jeton ? { jeton: Compte.jeton, emplacement: c.slot } : null);
-  $('[data-soc-creer]')?.addEventListener('click', () => Coop.creer(true, compte()));
+  $('[data-soc-creer]')?.addEventListener('click', () => EnLigne.creerGroupe());
+  // le chef lance le donjon (partie tenue par le serveur) ; les autres reçoivent « Rejoindre »
+  $('[data-soc-donjon]')?.addEventListener('click', () => { aAnnoncer = true; Coop.creer(true, compte()); });
+  $('[data-soc-rejoindre-donjon]')?.addEventListener('click', () => { const d = EnLigne.groupe?.donjon; if (d) Coop.rejoindre(d, compte()); });
+  $('[data-soc-quitter-grp]')?.addEventListener('click', () => EnLigne.quitterGroupe());
   const rej = () => { const v = $<HTMLInputElement>('[data-soc-code]')?.value ?? ''; if (v.trim()) Coop.rejoindre(v, compte()); };
   $('[data-soc-rejoindre]')?.addEventListener('click', rej);
   $<HTMLInputElement>('[data-soc-code]')?.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') rej(); });
@@ -215,23 +220,24 @@ function discord(c: ContexteSocial): string {
     }).join('')}</div>`;
 }
 
-/** Invitation reçue (7A) : une petite carte en haut de l'écran, Rejoindre ou Non (elle s'en va seule au bout de 30 s). */
-export function montrerInvitation(de: string, rejoindre: () => void) {
+/** Invitation reçue (7A) ou donjon lancé par le chef : une petite carte en haut de l'écran, Rejoindre ou Non (elle s'en va
+ *  seule au bout de 30 s). */
+export function montrerInvitation(de: string, texte: string, rejoindre: () => void, refuser: () => void = () => {}) {
   document.querySelector('.invitation-groupe')?.remove();
   const d = document.createElement('div');
   d.className = 'invitation-groupe';
   d.style.cssText = 'position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:40;background:#1b1a16f2;border:1px solid #b9e54b;border-radius:6px;padding:10px 14px;display:flex;gap:10px;align-items:center;font:14px Lexend,sans-serif;color:#f4efe0;box-shadow:0 8px 30px #000a';
-  d.innerHTML = `<span><b>${esc(de)}</b> t'invite dans son groupe</span>`;
+  d.innerHTML = `<span><b>${esc(de)}</b> ${esc(texte)}</span>`;
   const bouton = (t: string, vert: boolean, f: () => void) => {
     const b = document.createElement('button'); b.textContent = t;
     b.style.cssText = `cursor:pointer;border-radius:3px;padding:5px 12px;font-weight:bold;color:#fff;border:1px solid ${vert ? '#b9e54b' : '#8a8676'};background:${vert ? 'linear-gradient(#6f9a2a,#4c6e17)' : 'linear-gradient(#5a5850,#3d3c36)'}`;
     b.addEventListener('click', () => { d.remove(); f(); }); b.addEventListener('pointerdown', e => e.stopPropagation());
     d.appendChild(b);
   };
-  bouton('Rejoindre', true, () => { if (Coop.etat === 'salon') Coop.quitter(); rejoindre(); });
-  bouton('Non', false, () => {});
+  bouton('Rejoindre', true, rejoindre);
+  bouton('Non', false, refuser);
   document.body.appendChild(d);
-  setTimeout(() => d.remove(), 30_000);
+  setTimeout(() => { if (d.isConnected) { d.remove(); refuser(); } }, 30_000);
 }
 
 function groupe(c: ContexteSocial): string {
@@ -239,16 +245,32 @@ function groupe(c: ContexteSocial): string {
   if (!Compte.enLigne || c.slot < 0) return `<p>Pour jouer à plusieurs, <b>connecte-toi avec Discord</b> et choisis tes persos <b>« En ligne »</b> sur l'écran d'accueil : ton perso vient avec toi et garde son butin et son XP.</p>`;
   if (lirePersos()[c.slot]?.hardcore) return `<p>Les persos <b>Hardcore</b> ne jouent pas encore à plusieurs : dans le groupe, un joueur à terre se relève, ce qui n'irait pas avec leur règle.</p>`;
   if (Compte.infos && !Compte.infos.testeur) return `<p>L'essai à plusieurs est réservé aux <b>testeurs</b> du Discord pour l'instant.</p>`;
-  const co = Coop;
+  const co = Coop, G = EnLigne.groupe;
   if (co.etat === 'connexion') return '<p class="note">Connexion au serveur…</p>';
-  if (co.etat === 'salon') return `<div class="code"><span>Code du groupe</span><b>${esc(co.code ?? '')}</b><span class="btn gris" data-soc-copier title="Copier le code">Copier</span></div>
-      <p class="note">Tes amis ouvrent Social › Groupe et tapent ce code (4 joueurs au plus). La partie tourne sur le serveur : chacun peut partir sans couper les autres.</p>
+  // dans le donjon de groupe (partie tenue par le serveur) : la vie de chacun, et la sortie
+  if (co.etat === 'salon') return `<p><b>Donjon de groupe</b> · ${DONJON}. La partie tourne sur le serveur : chacun peut partir sans couper les autres.</p>
       <div class="mbrs" style="display:flex;flex-direction:column;gap:6px">${listeMembres(c)}</div>
-      <div class="bas"><span class="btn gris" data-soc-quitter>Quitter le groupe</span></div>`;
-  return `${co.erreur ? `<p class="err">${esc(co.erreur)}</p>` : ''}
-    <p>Premier essai : un <b>donjon de groupe</b> dans l'arène de la Crypte de Kardorim, de 2 à 4 joueurs. Ton perso y garde son butin et son XP, et tu reviens là où tu étais en quittant.</p>
+      <div class="code"><span>Code du donjon</span><b>${esc(co.code ?? '')}</b><span class="btn gris" data-soc-copier title="Copier le code">Copier</span></div>
+      <div class="bas"><span class="btn gris" data-soc-quitter>Quitter le donjon</span></div>`;
+  if (!EnLigne.connecte) return '<p class="note">Connexion au serveur…</p>';
+  const err = co.erreur ? `<p class="err">${esc(co.erreur)}</p>` : '';
+  if (!G) return `${err}<p>Crée un groupe puis invite tes amis (onglets <b>Discord</b> ou <b>Amis</b>, ou clic droit sur un joueur) : <b>chacun reste où il est</b>. Le chef lance ensuite le donjon, les autres le rejoignent.</p>
     <div class="bas" style="justify-content:flex-start"><span class="btn" data-soc-creer>Créer un groupe</span></div>
-    <div class="rej"><input type="text" maxlength="5" placeholder="Code d'un ami" autocomplete="off" data-soc-code><span class="btn gris" data-soc-rejoindre>Rejoindre</span></div>`;
+    <div class="titre">Rejoindre un donjon avec son code</div>
+    <div class="rej"><input type="text" maxlength="5" placeholder="Code" autocomplete="off" data-soc-code><span class="btn gris" data-soc-rejoindre>Rejoindre</span></div>`;
+  const chef = EnLigne.chef;
+  const L = G.membres.map(m => {
+    const cl = classe(m.classe ?? 'iop'), moi = m.id === EnLigne.moi;
+    return `<div class="mbr ${moi ? 'moi' : ''} ${m.enLigne ? '' : 'hors'}" ${moi ? '' : `data-joueur="${m.id}" data-nom="${esc(m.nom)}"`}><img src="assets/accueil/c_${cl}.png" alt="">
+      <div><b>${m.id === G.chef ? '♛ ' : ''}${esc(m.nom)}</b>${moi ? ' (toi)' : ''}<small>${m.enLigne ? `${GAME_DATA.classes[cl].name} · niveau ${m.niveau} · ${esc(lieu(m.zone ?? ''))}` : 'déconnecté'}</small></div>
+      <div class="act">${chef && !moi ? `<span class="btn mini gris" data-soc-chef="${m.id}" title="Lui passer la couronne de chef">♛</span><span class="btn mini gris" data-soc-exclure="${m.id}" title="L'exclure du groupe">✕</span>` : ''}</div></div>`;
+  }).join('');
+  const donjon = chef
+    ? `<span class="btn" data-soc-donjon title="${DONJON} : tout le groupe reçoit « Rejoindre »">Lancer la Crypte</span>`
+    : G.donjon ? `<span class="btn" data-soc-rejoindre-donjon>Rejoindre le donjon du chef</span>` : '';
+  return `${err}<div class="liste">${L}</div>
+    <p class="note">${G.membres.length} / 4 · invite avec les onglets Discord ou Amis, ou clic droit sur un joueur. ${chef ? 'Tu es le chef : tu lances le donjon.' : 'Le chef lance le donjon, tu reçois « Rejoindre ».'}</p>
+    <div class="bas">${donjon}<span class="btn gris" data-soc-quitter-grp>Quitter le groupe</span></div>`;
 }
 
 /** Membres du groupe et leur vie : redessinés seuls toutes les secondes (le reste de la fenêtre ne bouge pas, les clics tiennent). */

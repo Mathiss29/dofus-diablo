@@ -412,7 +412,13 @@ export class ZoneScene extends Phaser.Scene {
     if (this.perso && persosEnLigne() && !this.test && !this.vitrine && !this.essai && this.slot >= 0) {
       const p = this.world.player;
       EnLigne.annoncer(this.slot, Coop.miroir ? '__groupe' : this.zoneId, p.x, p.y, objetsPortes(p.equipment, p.apparat));
-      EnLigne.onInvitation = (de, code) => montrerInvitation(de, () => { const j = CompteEnLigne.jeton; if (j) Coop.rejoindre(code, { jeton: j, emplacement: this.slot }); });
+      // invitation dans un groupe : on le rejoint sans bouger ; donjon lancé par le chef : on le rejoint (on y part)
+      EnLigne.onInvitation = (de, g) => montrerInvitation(de, 't\'invite dans son groupe', () => EnLigne.repondreGroupe(g, true), () => EnLigne.repondreGroupe(g, false));
+      EnLigne.onDonjon = (de, code, lieu) => montrerInvitation(de, `part en donjon${lieu ? ` (${lieu})` : ''}`, () => {
+        const j = CompteEnLigne.jeton; if (!j) return;
+        if (Coop.etat !== 'hors') { this.hud.toast('Quitte d\'abord ton donjon (Social › Groupe)'); return; }
+        Coop.rejoindre(code, { jeton: j, emplacement: this.slot });
+      });
       EnLigne.onInfo = t => this.hud.toast(t);
       this.hud.pastilleSocial = demandesEnAttente;
       // chat à canaux (Social 4A) et bulles au-dessus des têtes (4B)
