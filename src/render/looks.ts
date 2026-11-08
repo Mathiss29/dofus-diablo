@@ -164,7 +164,8 @@ export const LOOKS: Record<string, Look> = {
   osa_crapipaud: { atlas: 'osa_crapipaud', scale: 0.66, map: MONSTER_MAP(1 / 17, 'AnimAttaque0', { 0: 1 / 17, 2: 6 / 19 }), height: 104, multi: true },
   osa_crocoleureux: { atlas: 'osa_crocoleureux', scale: 0.55, map: MONSTER_MAP(5 / 38, 'AnimAttaque0', { 0: 5 / 38, 1: 11 / 48, 2: 9 / 56 }), height: 223, multi: true },
   osa_dragoune: { atlas: 'osa_dragoune', scale: 0.55, map: MONSTER_MAP(4 / 37, 'AnimAttaque0', { 0: 4 / 37, 1: 10 / 27 }), height: 176, multi: true },
-  osa_dragonnet: { atlas: 'osa_dragonnet', scale: 1.1, map: MONSTER_MAP(11 / 57, 'AnimAttaque0', { 0: 11 / 57, 1: 11 / 39 }), height: 112, multi: true },
+  // Dragonnet : le squelette de l'invocation de Dofus 3 (9469) n'a ni repos ni course ; on prend celui du Dragonnet Rouge officiel (403, look {403|||105})
+  osa_dragonnet: { atlas: 'osa_dragonnet', scale: 0.58, map: MONSTER_MAP(19 / 23, 'AnimAttaque0', { 0: 19 / 23, 1: 28 / 33, 2: 29 / 37 }), height: 135, multi: true },
   osa_sulfenix: { atlas: 'osa_sulfenix', scale: 0.86, map: MONSTER_MAP(5 / 40, 'AnimAttaque0', { 0: 5 / 40, 1: 20 / 48, 2: 14 / 33 }), height: 164, multi: true },
   osa_gobgob_glouton: { atlas: 'osa_gobgob_glouton', scale: 1.1, map: MONSTER_MAP(4 / 38, 'AnimAttaque0', { 0: 4 / 38, 1: 5 / 29, 2: 5 / 21 }), height: 66, multi: true },
   osa_gobgob_facetieux: { atlas: 'osa_gobgob_facetieux', scale: 1.1, map: MONSTER_MAP(8 / 43, 'AnimAttaque0', { 0: 8 / 43, 1: 13 / 26, 2: 11 / 34 }), height: 71, multi: true },
