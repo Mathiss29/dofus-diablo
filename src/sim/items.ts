@@ -214,7 +214,7 @@ export function rollItem(id: string, def: ItemDef, rarity: Rarity, rng: Rng, uid
       });
       // Légendaires de classe inventés (2A + 2D) : le pouvoir de la classe sur cet emplacement remplace parfois le tirage ;
       // jet aléatoire dans sa fourchette, parfait sur un Mythique (3C). Jamais sur le Légendaire garanti de la quête (8C).
-      const pcd = !ctx.garanti && def.slot !== 'familier' ? pouvoirClasseDuSlot(ctx.classe, def.slot) : null;
+      const pcd = !ctx.garanti && def.slot !== 'familier' ? pouvoirClasseDuSlot(ctx.classe, def.slot, undefined, rng) : null;
       if (pcd) for (let i = 0; i < res.length; i++) if (rng.next() < chancePouvoirClasse(pcd, ctx.boss)) {
         res[i] = { id: pcd.id, value: jetPouvoirClasse(pcd, rng, rarity === 'mythique') }; break;
       }

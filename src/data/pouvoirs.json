@@ -1204,5 +1204,407 @@
    "n": 2,
    "officiel": "Tourbillon : +2 Portée maximale"
   }
+ ],
+ "sacrieur": [
+  {
+   "id": "sacrieur-01",
+   "slot": "chapeau",
+   "piece": "Bonnet Spairance",
+   "sort": "Stase",
+   "dofusId": 12728,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Stase : +2 Portée maximale"
+  },
+  {
+   "id": "sacrieur-02",
+   "slot": "chapeau",
+   "piece": "Bonnet Spairance",
+   "sort": "Projection",
+   "dofusId": 12726,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Projection : ligne de vue désactivée"
+  },
+  {
+   "id": "sacrieur-03",
+   "slot": "chapeau",
+   "piece": "Bonnet Spairance",
+   "sort": "Hostilité",
+   "dofusId": 12756,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Hostilité : ligne de vue désactivée"
+  },
+  {
+   "id": "sacrieur-04",
+   "slot": "chapeau",
+   "piece": "Bonnet Spairance",
+   "sort": "Mutilation",
+   "dofusId": 12737,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Mutilation : -1 PA"
+  },
+  {
+   "id": "sacrieur-05",
+   "slot": "chapeau",
+   "piece": "Bonnet Spairance",
+   "sort": "Pacte de Sang",
+   "dofusId": 12762,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Pacte de Sang : -1 de relance"
+  },
+  {
+   "id": "sacrieur-06",
+   "slot": "amulette",
+   "piece": "Bonnet Spairance",
+   "sort": "Douleur Cuisante",
+   "dofusId": 12730,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Douleur Cuisante : +2 Portée maximale"
+  },
+  {
+   "id": "sacrieur-07",
+   "slot": "arme",
+   "piece": "Bonnet Spairance",
+   "sort": "Transposition",
+   "dofusId": 12736,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Transposition : -1 PA"
+  },
+  {
+   "id": "sacrieur-08",
+   "slot": "bouclier",
+   "piece": "Bonnet Spairance",
+   "sort": "Fluctuation",
+   "dofusId": 12763,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Fluctuation : -1 de relance"
+  },
+  {
+   "id": "sacrieur-09",
+   "slot": "cape",
+   "piece": "Cape Ytale",
+   "sort": "Hémorragie",
+   "dofusId": 12748,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Hémorragie : +2 Portée maximale"
+  },
+  {
+   "id": "sacrieur-10",
+   "slot": "cape",
+   "piece": "Cape Ytale",
+   "sort": "Décimation",
+   "dofusId": 12731,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Décimation : +2 Portée maximale"
+  },
+  {
+   "id": "sacrieur-11",
+   "slot": "cape",
+   "piece": "Cape Ytale",
+   "sort": "Attirance",
+   "dofusId": 12735,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Attirance : ligne de vue désactivée"
+  },
+  {
+   "id": "sacrieur-12",
+   "slot": "cape",
+   "piece": "Cape Ytale",
+   "sort": "Perfusion",
+   "dofusId": 12758,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Perfusion : -1 de relance"
+  },
+  {
+   "id": "sacrieur-13",
+   "slot": "cape",
+   "piece": "Cape Ytale",
+   "sort": "Ravage",
+   "dofusId": 12746,
+   "effet": "ligne",
+   "n": 1,
+   "officiel": "Ravage : lancer en ligne désactivé"
+  },
+  {
+   "id": "sacrieur-14",
+   "slot": "amulette",
+   "piece": "Cape Ytale",
+   "sort": "Fulgurance",
+   "dofusId": 12724,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Fulgurance : case occupée nécessaire désactivée"
+  },
+  {
+   "id": "sacrieur-15",
+   "slot": "arme",
+   "piece": "Cape Ytale",
+   "sort": "Transfusion",
+   "dofusId": 12738,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Transfusion : +2 Portée maximale"
+  },
+  {
+   "id": "sacrieur-16",
+   "slot": "bouclier",
+   "piece": "Cape Ytale",
+   "sort": "Liens du Sang",
+   "dofusId": 12754,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Liens du Sang : -1 de relance"
+  },
+  {
+   "id": "sacrieur-17",
+   "slot": "ceinture",
+   "piece": "Sangle Hans",
+   "sort": "Hécatombe",
+   "dofusId": 12750,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Hécatombe : +2 Portée maximale"
+  },
+  {
+   "id": "sacrieur-18",
+   "slot": "ceinture",
+   "piece": "Sangle Hans",
+   "sort": "Entaille",
+   "dofusId": 12751,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Entaille : +2 Portée maximale"
+  },
+  {
+   "id": "sacrieur-19",
+   "slot": "ceinture",
+   "piece": "Sangle Hans",
+   "sort": "Dissolution",
+   "dofusId": 12757,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Dissolution : +2 Portée maximale"
+  },
+  {
+   "id": "sacrieur-20",
+   "slot": "ceinture",
+   "piece": "Sangle Hans",
+   "sort": "Carnage",
+   "dofusId": 12752,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Carnage : +2 Portée maximale"
+  },
+  {
+   "id": "sacrieur-21",
+   "slot": "ceinture",
+   "piece": "Sangle Hans",
+   "sort": "Punition",
+   "dofusId": 12741,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Punition : +2 Portée maximale"
+  },
+  {
+   "id": "sacrieur-22",
+   "slot": "amulette",
+   "piece": "Sangle Hans",
+   "sort": "Folie Sanguinaire",
+   "dofusId": 12740,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Folie Sanguinaire : -1 de relance"
+  },
+  {
+   "id": "sacrieur-23",
+   "slot": "arme",
+   "piece": "Sangle Hans",
+   "sort": "Épée Vorace",
+   "dofusId": 12744,
+   "effet": "relance",
+   "n": 2,
+   "officiel": "Épée Vorace : -2 de relance"
+  },
+  {
+   "id": "sacrieur-24",
+   "slot": "bouclier",
+   "piece": "Sangle Hans",
+   "sort": "Épée Dansante",
+   "dofusId": 12765,
+   "effet": "relance",
+   "n": 2,
+   "officiel": "Épée Dansante : -2 de relance"
+  },
+  {
+   "id": "sacrieur-25",
+   "slot": "bottes",
+   "piece": "Tong Aclou",
+   "sort": "Assaut",
+   "dofusId": 12733,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Assaut : ligne de vue désactivée"
+  },
+  {
+   "id": "sacrieur-26",
+   "slot": "bottes",
+   "piece": "Tong Aclou",
+   "sort": "Aversion",
+   "dofusId": 12749,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Aversion : +1 lancer(s) par tour"
+  },
+  {
+   "id": "sacrieur-27",
+   "slot": "bottes",
+   "piece": "Tong Aclou",
+   "sort": "Immolation",
+   "dofusId": 12747,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Immolation : +2 Portée maximale"
+  },
+  {
+   "id": "sacrieur-28",
+   "slot": "bottes",
+   "piece": "Tong Aclou",
+   "sort": "Sacrifice",
+   "dofusId": 12739,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Sacrifice : -1 de relance"
+  },
+  {
+   "id": "sacrieur-29",
+   "slot": "bottes",
+   "piece": "Tong Aclou",
+   "sort": "Pénitence",
+   "dofusId": 12764,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Pénitence : -1 de relance"
+  },
+  {
+   "id": "sacrieur-30",
+   "slot": "amulette",
+   "piece": "Tong Aclou",
+   "sort": "Absorption",
+   "dofusId": 12734,
+   "effet": "po",
+   "n": 1,
+   "officiel": "Absorption : +1 Portée maximale"
+  },
+  {
+   "id": "sacrieur-31",
+   "slot": "arme",
+   "piece": "Tong Aclou",
+   "sort": "Furie",
+   "dofusId": 12723,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Furie : +2 Portée maximale"
+  },
+  {
+   "id": "sacrieur-32",
+   "slot": "bouclier",
+   "piece": "Tong Aclou",
+   "sort": "Bain de Sang",
+   "dofusId": 12732,
+   "effet": "crit",
+   "n": 25,
+   "officiel": "Bain de Sang : +25% Critique"
+  },
+  {
+   "id": "sacrieur-33",
+   "slot": "anneau",
+   "piece": "Anneau Pitale",
+   "sort": "Déchaînement",
+   "dofusId": 12755,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Déchaînement : +2 Portée maximale"
+  },
+  {
+   "id": "sacrieur-34",
+   "slot": "anneau",
+   "piece": "Anneau Pitale",
+   "sort": "Condensation",
+   "dofusId": 12745,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Condensation : +2 Portée maximale"
+  },
+  {
+   "id": "sacrieur-35",
+   "slot": "anneau",
+   "piece": "Anneau Pitale",
+   "sort": "Afflux",
+   "dofusId": 12729,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Afflux : +1 lancer(s) par tour"
+  },
+  {
+   "id": "sacrieur-36",
+   "slot": "anneau",
+   "piece": "Anneau Pitale",
+   "sort": "Libation",
+   "dofusId": 12759,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Libation : -1 de relance"
+  },
+  {
+   "id": "sacrieur-37",
+   "slot": "anneau",
+   "piece": "Anneau Pitale",
+   "sort": "Châtiment",
+   "dofusId": 12760,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Châtiment : -1 de relance"
+  },
+  {
+   "id": "sacrieur-38",
+   "slot": "amulette",
+   "piece": "Anneau Pitale",
+   "sort": "Supplice",
+   "dofusId": 12725,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Supplice : +2 Portée maximale"
+  },
+  {
+   "id": "sacrieur-39",
+   "slot": "arme",
+   "piece": "Anneau Pitale",
+   "sort": "Nervosité",
+   "dofusId": 12727,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Nervosité : +2 Portée maximale"
+  },
+  {
+   "id": "sacrieur-40",
+   "slot": "bouclier",
+   "piece": "Anneau Pitale",
+   "sort": "Désolation",
+   "dofusId": 12753,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Désolation : +2 Portée maximale"
+  }
  ]
 }

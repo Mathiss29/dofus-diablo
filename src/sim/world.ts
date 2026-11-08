@@ -1027,6 +1027,7 @@ export class World {
     if (this.test?.recharges) this.rechargerTout();
     // Monde ouvert : un monstre qui attend loin du joueur dort (pas d'errance ni d'IA) : bien moins de calcul
     for (const m of this.monsters) {
+      if (m.saigneT > 0 && !m.dead) this.saigner(m, dt);
       if (this.zone.open && m.state === 'idle' && !m.dead && Math.abs(m.x - p.x) + Math.abs(m.y - p.y) > World.SOMMEIL) { m.regenCalme(dt); continue; }
       m.update(dt, this.cibleDe(m), this);
     }
@@ -1347,7 +1348,11 @@ export class World {
       }
       if (dmg) this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: dmg, crit, element: el, eclat: def.eclat });
       if (n <= 3) p.rageOnHit(Math.hypot(m.x - p.x, m.y - p.y), this);
-      if (def.lifesteal) p.hp = Math.min(p.maxHp, p.hp + Math.round(dmg * def.lifesteal));   // la Rage monte avec les coups portés (3 cibles max par coup)
+      if (def.lifesteal) p.hp = Math.min(p.maxHp, p.hp + Math.round(dmg * def.lifesteal));
+      if (def.lifesteal && dmg > 0 && m.hp > 0 && p.souffrance >= 6 && p.pcv('pc-sacrieur-C')) {   // Coups qui saignent : 2 s de saignement
+        if (m.saigneT <= 0) this.emit({ k: 'status', x: m.x, y: m.y - 34, text: 'Saigne', color: '#d0102a' });
+        m.saigne = dmg * p.pcv('pc-sacrieur-C') / 100 / 2; m.saigneT = 2;
+      }   // la Rage monte avec les coups portés (3 cibles max par coup)
       if (m.hp <= 0) this.killMonster(m);
     }
     return n;
@@ -1415,9 +1420,25 @@ export class World {
     for (let i = 0; i < n; i++) if (this.rng.next() < removalChance(retrait, esquive)) k++;
     return k;
   }
+  /** Coups qui saignent : le saignement ronge le monstre en continu, affiché par paquets d'au moins 1. */
+  private saigner(m: Monster, dt: number) {
+    const t = Math.min(dt, m.saigneT); m.saigneT -= dt; m.saigneAcc += m.saigne * t;
+    if (m.saigneAcc < 1 && m.saigneT > 0) return;
+    const n = Math.max(1, Math.round(m.saigneAcc)); m.saigneAcc = 0;
+    if (m.saigneT <= 0) m.saigne = 0;
+    m.hp -= n;
+    this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: n, crit: false, element: 'feu' });
+    if (m.hp <= 0) this.killMonster(m);
+  }
   killMonster(m: Monster) {
     if (m.mannequin) { m.hp = m.maxHp; return; }   // partie de test (7D) : le mannequin ne meurt pas
     m.dead = true; m.t = 0.6; this.kills++;
+    const pj = this.player, sv = pj.dead ? 0 : pj.pcv('pc-sacrieur-A');
+    if (sv) {   // Soif de sang : un monstre tué rend des PV, sans faire redescendre sous Souffrance 6
+      let h = pj.hp + pj.maxHp * sv / 100;
+      if (pj.souffrance >= 6) h = Math.min(h, Math.max(pj.hp, Math.floor(pj.maxHp * 0.45)));
+      pj.hp = Math.min(pj.maxHp, Math.round(h));
+    }
     this.quetes?.eliteVaincu(m.id);
     for (const s of this.monsters) if (s.summoner === m && !s.dead) this.killMonster(s);   // ses invocations disparaissent avec lui
     if (m.summoner) { this.emit({ k: 'kill', x: m.x, y: m.y, radius: m.radius, monster: m.type }); return; }

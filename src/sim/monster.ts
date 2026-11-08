@@ -72,6 +72,8 @@ export class Monster extends Entity {
   vuln = 0; vulnT = 0;
   /** Supplice (Sacrieur) : pendant suppliceT s, chaque coup du joueur sur ce monstre le soigne de supplice × les dommages. */
   supplice = 0; suppliceT = 0;
+  /** Coups qui saignent (légendaire Sacrieur C) : dégâts par seconde, durée restante, dégâts pas encore affichés. */
+  saigne = 0; saigneT = 0; saigneAcc = 0;
   /** Portée retirée (cases) à ses sorts à distance pendant poMalusT s (Flèche Détonante). */
   poMalus = 0; poMalusT = 0;
   /** Bonus de Dommages (Frénésie : %, Euphorie malsaine : fixes) et durée restante. */
