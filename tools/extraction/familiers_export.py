@@ -2,11 +2,12 @@
 
 python familiers_export.py <tables> <fr.bin> <dossier Bones des familiers> [sortie sprites]
   tables : items, itemtypes, evolutiveeffects, evolutiveitemtypes, effects, characteristics (data_dump.py)
-  Bones  : bones_assets_bone_<appearanceId>.bundle copiés depuis Characters/Bones du PC (cache-dofus/familiers/bones.tgz)
+  Bones  : bones_assets_bone_<b>.bundle (b de familiers_squelettes.json) copiés depuis Characters/Bones du PC
+           (cache-dofus/familiers/vrais-squelettes.tar)
 
-Un familier (type 18) ou un familier d'apparat (type 249) se dessine avec le squelette dont l'id est son appearanceId.
-Seuls ceux dont le squelette a une animation de repos sont gardés (le jeu télécharge les autres à la demande :
-ils manquent au PC). Planche = repos + course (ou marche) en diagonales 1 et 5, faite par monster_planche.py (ANIMS).
+Un familier (type 18) ou un familier d'apparat (type 249) se dessine avec le squelette de familiers_squelettes.json.
+ATTENTION : son appearanceId n'est PAS un squelette (le serveur envoie le dessin) ; s'en servir dessinait un PNJ au hasard.
+Seuls ceux dont le squelette a une animation de repos sont gardés. Planche = repos + course (ou marche) en diagonales 1 et 5, faite par monster_planche.py (ANIMS).
 Bonus : evolutiveeffects (valeur au niveau 0 + gain par niveau jusqu'au niveau 100) ; courbe d'XP : evolutiveitemtypes.
 Sources (1A) : SOURCES ci-dessous, familier -> monstres de sa famille qui vivent dans nos zones."""
 import json, os, re, subprocess, sys, warnings
@@ -27,6 +28,7 @@ def table(n):
     return {int(k): Rf.get(v['rid']) for k, v in zip(o['m_keys'], o['m_values'])}
 
 
+SQ = json.load(open(os.path.join(HERE, 'familiers_squelettes.json'), encoding='utf-8'))['familiers']
 I, EV, EVT, EFF, CH = (table(n) for n in ('items', 'evolutiveeffects', 'evolutiveitemtypes', 'effects', 'characteristics'))
 # même correspondance que items_export.py (characteristics.keyword -> caractéristique du jeu)
 sys.argv = sys.argv[:1]
@@ -74,7 +76,8 @@ for i, v in sorted(I.items()):
     if not v or int(v['typeId']) not in (18, 249): continue
     nom = T(int(v['nameId']))
     if not nom or '(MJ)' in nom: continue
-    b = int(v['appearanceId'])
+    if str(i) not in SQ: continue   # dessin inconnu (pas de capture ni de PNJ du même nom)
+    b = SQ[str(i)]['b']
     if b not in faits: faits[b] = anims(b)
     A = faits[b]
     if not A: continue
@@ -97,8 +100,16 @@ json.dump({'_': 'Fait par tools/extraction/familiers_export.py. stats = [carac, 
            'xp': courbe[:101], 'familiers': fam}, open(os.path.join(R, 'src/data/familiers.json'), 'w'), ensure_ascii=False, separators=(',', ':'))
 print(len(fam), 'familiers', sum(1 for x in fam.values() if x.get('apparat')), 'apparats,', sum(1 for x in faits.values() if x), 'planches')
 if os.environ.get('SANS_PLANCHES'): sys.exit()   # relancer ensuite avec SANS_PLANCHES=1 pour écarter les planches ratées
-for b, A in sorted(faits.items()):
-    if not A or (os.path.exists(os.path.join(out, f'fam_{b}.json')) and not os.environ.get('FORCE')): continue
+from concurrent.futures import ThreadPoolExecutor
+
+
+def planche(b, A):
     r = subprocess.run([sys.executable, os.path.join(HERE, 'monster_planche.py'), str(b), f'fam_{b}', bones, out, 'x'],
                        env={**os.environ, 'ANIMS': ','.join(A), 'SCALE': os.environ.get('SCALE', '2.5')}, capture_output=True, text=True)
-    print(b, (r.stdout.strip() or r.stderr[-300:]).splitlines()[-1:])
+    print(b, (r.stdout.strip() or r.stderr[-300:]).splitlines()[-1:], flush=True)
+
+
+with ThreadPoolExecutor(int(os.environ.get('JOBS', os.cpu_count() or 4))) as ex:   # une planche par cœur
+    for b, A in sorted(faits.items()):
+        if not A or (os.path.exists(os.path.join(out, f'fam_{b}.json')) and not os.environ.get('FORCE')): continue
+        ex.submit(planche, b, A)

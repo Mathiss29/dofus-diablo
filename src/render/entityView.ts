@@ -18,6 +18,10 @@ function mulTint(a: number, b: number) {
 }
 
 export class EntityView {
+  /** Le monstre compte-t-il pour la quête (losange) ; branché par la scène sur world.quetes.pourQuete. */
+  static deQuete: ((m: Monster) => boolean) | null = null;
+  /** Horloge du jeu pour faire flotter le losange. */
+  static temps = 0;
   /** Teinte d'ambiance des personnages et des monstres (render/ambiance.ts : plus légère que celle des cartes, ils ressortent la nuit). */
   static ambiance = 0xffffff;
   /** Maj enfoncée (maquette Osamodas 14B) : barre de vie au-dessus de chaque bête, même pleine. */
@@ -99,7 +103,21 @@ export class EntityView {
       g.setDepth(p.y + 1);
       g.fillStyle(0x000000, 0.6); g.fillRect(p.x - w / 2 - 1, y - 1, w + 2, 6);
       g.fillStyle(elite ? 0xe0a030 : 0xc93c3c); g.fillRect(p.x - w / 2, y, w * (e.hp / e.maxHp), 4);
-    } else if (e.faction === 'allie' && !e.dead && (e.hp < e.maxHp || EntityView.barresAllies)) {
+    }
+    // monstre qui compte pour la quête : petit losange vert (couleur des icônes de quête de Dofus 3) qui flotte au-dessus
+    if (e.faction === 'monster' && !e.dead && EntityView.deQuete?.(e as Monster)) {
+      // au-dessus du corps dessiné (haut du rectangle rogné de l'image), pas de la hauteur nominale du look
+      const sp = this.sprite, f = sp.frame, ss = ((f as unknown as { data: object }).data as { spriteSourceSize?: { y: number } }).spriteSourceSize;
+      const haut = sp.y + (-sp.originY * f.realHeight + (f.trimmed && ss ? ss.y : 0)) * Math.abs(sp.scaleY);
+      const y = Math.min(haut, p.y - L.height * L.scale) - (e.hp < e.maxHp ? 16 : 10) - 3 * Math.sin(EntityView.temps * 4 + e.id), r = 6;
+      g.setDepth(p.y + 1);
+      g.fillStyle(0x000000, 0.35); g.fillPoints([{ x: p.x + 1, y: y - r + 2 }, { x: p.x + r + 1, y: y + 2 }, { x: p.x + 1, y: y + r + 2 }, { x: p.x - r + 1, y: y + 2 }], true);
+      g.fillStyle(0x86cc1c, 1); g.lineStyle(2, 0x14230a, 1);
+      const d = [{ x: p.x, y: y - r }, { x: p.x + r, y }, { x: p.x, y: y + r }, { x: p.x - r, y }];
+      g.fillPoints(d, true); g.strokePoints(d, true, true);
+      g.fillStyle(0xffffff, 0.5); g.fillTriangle(p.x, y - r + 2, p.x + r - 3, y, p.x - r + 3, y);
+    }
+    if (e.faction === 'monster') { /* barre déjà dessinée */ } else if (e.faction === 'allie' && !e.dead && (e.hp < e.maxHp || EntityView.barresAllies)) {
       // bête de l'Osamodas : barre verte
       const w = Math.max(30, e.radius * 2.2), y = p.y - L.height * L.scale - 6;
       g.setDepth(p.y + 1);

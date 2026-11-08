@@ -642,6 +642,24 @@ export class Quetes {
     this.etapeDe(c!)?.objectifs.forEach((o, i) => { if (o.t === 'elite') c!.compte[i] = 1; });
   }
   estEliteDeQuete(id: number) { return this.elites.has(id); }
+  /** Ce monstre compte pour un objectif pas fini (vaincre, ramasser) : losange au-dessus de sa tête (idée 1, 2026-11-08).
+   *  Les objectifs « n'importe quel monstre » d'une sous-zone ne comptent que là-bas. */
+  pourQuete(type: string, x: number, y: number): boolean {
+    let sub: number | undefined | null = null;
+    for (const c of this.enCours) {
+      if (c.aRendre) continue;
+      const e = this.etapeDe(c); if (!e) continue;
+      for (let i = 0; i < e.objectifs.length; i++) {
+        const o = e.objectifs[i];
+        if ((o.t !== 'vaincre' && o.t !== 'ramasser') || c.compte[i] >= o.n) continue;
+        if (o.monstres && !o.monstres.includes(type)) continue;
+        if (o.sousZone != null) { if (sub === null) sub = this.world.worldGrid?.mapAt(x, y)?.sub; if (sub !== o.sousZone) continue; }
+        else if (!o.monstres) continue;
+        return true;
+      }
+    }
+    return false;
+  }
 
   /** Chaque pas : objectifs d'état (sous-zone, PNJ proche, objet équipé), clic sur un PNJ, bulle. */
   update(dt: number) {
@@ -912,6 +930,40 @@ export class Quetes {
     return !!this.etapeDe(c)?.objectifs.some((o, i) => c.compte[i] < this.total(o)
       && (o.t === 'parler' || o.t === 'elite' || o.t === 'defense' || o.t === 'chrono' || o.t === 'defi' || o.t === 'donjon' || o.t === 'activer'
         || (o.t === 'aller' && !!(o.pnj || o.carte || o.sousZone != null)) || ('sousZone' in o && o.sousZone != null)));
+  }
+  /** Zaap conseillé (idée 2, 2026-11-08) : parmi les Zaaps découverts, celui dont la carte est la plus proche du but de la
+   *  quête suivie (coordonnées des cartes, dans sa zone). Null si le but n'a pas de carte connue (intérieur, sous-zone entière). */
+  zaapConseille(): { zone: string; name: string } | null {
+    const w = this.world, c = this.enCours.find(x => x.id === this.suivie) ?? this.enCours[0];
+    if (!c || !this.aUnLieu(c)) return null;
+    const coords = (tag?: string | null) => { const m = tag && /^(-?\d+)_(-?\d+)$/.exec(tag); return m ? [+m[1], +m[2]] as const : null; };
+    let zone = this.zoneDe(c.id), but: readonly [number, number] | null = null;
+    const it = this.itineraire(), wg = w.worldGrid;
+    if (it?.but && wg) {
+      zone = w.opts.zone;
+      const m = wg.mapAt(it.but.x, it.but.y), der = it.pts[it.pts.length - 1];
+      const t = m?.inside ? (der?.genre === 'porte' ? wg.mapAt(der.x, der.y)?.tag : null) : m?.tag;
+      but = coords(t);
+    } else {
+      const q = this.def(c.id), e = this.etapeDe(c);
+      let tag: string | undefined = c.aRendre ? this.data.pnj[q.rendre!]?.carte : undefined;
+      if (!c.aRendre && e) for (let i = 0; i < e.objectifs.length && !tag; i++) {
+        const o = e.objectifs[i]; if (c.compte[i] >= this.total(o)) continue;
+        if ((o.t === 'parler' || o.t === 'aller') && o.pnj) tag = this.data.pnj[o.pnj]?.carte;
+        else if ('carte' in o && typeof o.carte === 'string') tag = o.carte;
+      }
+      but = coords(tag);
+    }
+    if (!but) return null;
+    const cps = w.opts.data.zones[zone]?.open?.checkpoints ?? [];
+    let best: { zone: string; name: string } | null = null, bd = Infinity;
+    for (const k of w.player.zaaps) {
+      if (k.zone !== zone) continue;
+      const cp = cps.find(o => o.name === k.name); if (!cp) continue;
+      const d = Math.abs(cp.map[0] - but[0]) + Math.abs(cp.map[1] - but[1]);
+      if (d < bd) { bd = d; best = { zone, name: k.name }; }
+    }
+    return best;
   }
   /** Zone de la quête suivie (celle de son PNJ), pour la mener d'Incarnam à Astrub et inversement. */
   private zoneDe(id: string): string {

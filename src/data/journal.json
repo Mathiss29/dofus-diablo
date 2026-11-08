@@ -1,5 +1,5 @@
 {
-  "zone": "Incarnam",
+  "zone": "Astrub",
   "rubriques": [
     "Nouveautés",
     "Le monde",
@@ -195,12 +195,13 @@
     },
     {
       "date": "2026-11-08",
-      "titre": "Le tour du monde",
-      "resume": "Metag Robill attend devant la Grange : la grande quête des donjons commence, avec un carnet de route à tamponner.",
+      "titre": "Astrub au complet : la 0.2 est terminée",
+      "resume": "Les Égouts et les Souterrains ouvrent, le tour du monde commence chez Metag Robill, les Zaaps et les contrats du jour sont là : Astrub est entière, la 0.2 est finie.",
       "capture": "assets/journal/2026-11-08.webp",
       "legende": "Metag Robill, devant la Grange du Tournesol Affamé, 8 novembre 2026.",
       "lignes": {
         "Nouveautés": [
+          "Version 0.2 terminée : Astrub est jouable en entier, de la Cité aux Égouts, avec ses 4 donjons, la Planque des Vilinsekts et la Cache de Kankreblath. Prochaine étape : la 0.3, le butin complet et l'Osamodas.",
           "Le tour du monde : Metag Robill, devant la Grange du Tournesol Affamé, t'envoie vaincre le boss de chaque donjon, chapitre après chapitre. Les chapitres 1 et 2 (Kardorim, Tournesol Affamé, Mob l'Éponge, Bouftou Royal, Kankreblath) sont jouables ; les donjons déjà vaincus comptent.",
           "Carnet de route : une page par donjon du tour du monde, tamponnée au premier passage avec la date et le temps mis jusqu'au boss (fenêtre Quêtes).",
           "Nouvelle fenêtre Caractéristiques (C) façon Dofus 3 : coût, + et ++ (choisis combien de points placer), détail base / objets / bonus, stats en bas et bouton Détails. Survole une caractéristique pour voir ce qu'elle te donne et ce que rapporte le point suivant. Le bouton ↺ rend tous tes points, gratuitement, hors donjon.",
@@ -217,7 +218,9 @@
           "L'Osamodas arrive en essai dans la partie de test (diablofus.com/#test, classe à choisir avec F1) : ses 15 premiers sorts officiels, le Tofu dès le niveau 1 puis Bouftou, Crapipou et Dragoune sur A Z R T. Les bêtes ont leurs vrais sorts, te soignent quand tu faiblis et s'éveillent quand la jauge d'Éveil est pleine (rappuie sur leur touche).",
           "La flèche des quêtes suit le vrai trajet : la porte du bâtiment, le passage vers la carte voisine, le portail d'Astrub ou un Zaap. Plus grande, aux couleurs officielles de la quête, elle affiche le nom du but et le nombre de cartes ; l'icône de la quête est sur la mini-carte et le trajet en pointillés sur la carte (M).",
           "Clic sur le titre de la quête suivie (en bas à gauche) : passe à la quête suivante. La flèche se coupe dans Réglages > Interface.",
-          "Osamodas : chaque bête a son petit cadre sous le tien (portrait, PV, PA, temps d'Éveil ou de domptage), et les sorts de l'Osamodas et de ses 14 bêtes jouent leurs effets officiels de Dofus 3."
+          "Osamodas : chaque bête a son petit cadre sous le tien (portrait, PV, PA, temps d'Éveil ou de domptage), et les sorts de l'Osamodas et de ses 14 bêtes jouent leurs effets officiels de Dofus 3.",
+          "Aides de quête : un losange vert flotte au-dessus des monstres qui comptent pour tes quêtes, le Zaap le plus proche du but porte une étoile dans la fenêtre du Zaap, un clic sur les objectifs du suivi ouvre la carte (M) sur le but, et la flèche grossit puis s'efface avec un petit son quand le but entre à l'écran.",
+          "356 familiers et familiers d'apparat dessinés au lieu de 148 : bien plus de choix chez Emp et dans la garde-robe."
         ],
         "Le monde": [
           "Le prochain donjon de la quête suivie est marqué sur la carte (M).",
@@ -240,7 +243,8 @@
           "Les Chafers Éclaireurs font enfin mal : leur Flèche de Feu était prise pour un sort de soutien et ne blessait jamais. Ils restent à distance pour tirer (même correction pour le Tofu Chimérique, le Petit Gloot et Percy Klop).",
           "Le Zaap du Bastion tourbillonne et scintille comme les autres, et affiche son nom au survol (l'arche du Havre-Sac aussi).",
           "La flèche ne part plus dans le mauvais sens quand le but est dans un bâtiment (Capitaine des Kerubims dans la Tour de la Milice, Cité d'Astrub, donjons).",
-          "Les bêtes de l'Osamodas ne marchent plus sur leur maître : elles le suivent en éventail à deux cases derrière lui et s'écartent quand il recule sur elles."
+          "Les bêtes de l'Osamodas ne marchent plus sur leur maître : elles le suivent en éventail à deux cases derrière lui et s'écartent quand il recule sur elles.",
+          "Les familiers ont enfin leur vrai visage : le Chienchien n'est plus un vieux sage ni le Tanuk un cube de glace. Presque tous montraient un autre dessin que le leur."
         ],
         "En coulisses": []
       }
