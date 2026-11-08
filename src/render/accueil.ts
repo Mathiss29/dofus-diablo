@@ -11,6 +11,7 @@ import { niveauHorsPartie } from '../sim/butin';
 import { SORTS, niveauRequis, type SortOfficiel } from '../sim/sorts';
 import CLASSES_DOFUS from '../data/classes_dofus.json';
 import JOURNAL from '../data/journal.json';
+import { installable, installer, surChangement } from './installation';
 import { EMPLACEMENTS, NB_SECOURS, dernier, dureeTexte, exporter, importer, lireCimetiere, lirePersos, lireSecours, nomValide, prendreSecours, restaurerSecours, sauverPerso, supprimerPerso, type Perso } from './persos';
 
 /** Écrans hors du jeu (maquette unique, choix 17A à 23A, 19B, 22D, 30E) : accueil avec Incarnam en direct derrière,
@@ -317,6 +318,8 @@ export class Accueil {
       Son.jouer(f, 'interface', { cle: 'clic', ecart: 0.05 });
     }, true);
     document.body.appendChild(this.root);
+    // le bouton « Installer le jeu » apparaît dès que le navigateur le permet
+    surChangement(() => { if (!this.root.hidden && this.page === 'accueil') this.render(); });
     let last = 0, f = 0;
     const tick = (t: number) => {
       this.anim = requestAnimationFrame(tick);
@@ -433,7 +436,8 @@ export class Accueil {
     </div>
     <div class="abs" style="left:calc(11.5*var(--u));top:calc(39.6*var(--u));display:flex;gap:calc(1*var(--u));align-items:center">
       <button type="button" class="dbtn" style="font-size:calc(.85*var(--u));padding:calc(.5*var(--u)) calc(1*var(--u))" data-go="persos">Mes personnages${n ? ` (${n})` : ''}</button>
-      <span class="tiny">${EMPLACEMENTS} emplacements · sauvegarde automatique</span></div>
+      <span class="tiny">${EMPLACEMENTS} emplacements · sauvegarde automatique</span>
+      ${installable() ? `<button type="button" class="dbtn" style="font-size:calc(.8*var(--u));padding:calc(.45*var(--u)) calc(.9*var(--u));color:#cfe9a0;border-color:#4d5a2c" data-installer title="Ouvre Diablofus dans sa propre fenêtre, avec une icône sur le bureau. Toujours à jour.">⤓ Installer le jeu</button>` : ''}</div>
     ${p ? this.derniereFois(p) : ''}
     ${carnetNonLu() ? `<div class="abs card" style="right:calc(2*var(--u));top:calc(1.6*var(--u));padding:calc(.7*var(--u)) calc(1*var(--u));display:flex;gap:calc(1*var(--u));align-items:center;font-weight:800;font-size:calc(.85*var(--u))">
       <span class="pastille" style="position:static">nouveau</span><span>Carnet du ${dateLongue(CARNETS[0].date)}<br><span class="tiny">${esc(CARNETS[0].titre)}</span></span>
@@ -719,6 +723,7 @@ export class Accueil {
       else this.toast(`${e.textContent!.trim()} : arrive dans une prochaine version`);
     });
     on('[data-go]', e => this.go(e.dataset.go as Page));
+    on('[data-installer]', () => installer().then(ok => { this.render(); if (ok) this.toast('Diablofus est installé : il se lance depuis le bureau ou le menu Démarrer'); }));
     // fenêtres par-dessus (fiche de zone, cimetière, copies de secours)
     on('[data-zone]', e => this.ouvrir(e.dataset.zone!));
     // journal : ouvrir un carnet (le dernier ouvert = lu, la pastille s'éteint), sommaire
