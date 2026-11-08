@@ -98,6 +98,29 @@ describe('quêtes et succès', () => {
     }
   });
 
+  it('chaque classe a sa trame du tutoriel, avec des sorts qu\'elle connaît au niveau 1 (sinon elle recevait celle du Iop)', () => {
+    const tutos = Q.quetes.reponses.etapes as Record<string, { nom: string; objectifs: { t: string; sort?: string }[] }[]>;
+    for (const classe of Object.keys(GAME_DATA.classes)) {
+      const w = new World({ data: GAME_DATA, zone: 'incarnam', map: new WorldGrid(monde), seed: 7, items: ITEMS as unknown as ItemsData, quetes: Q, compte: { succes: [], persos: 0 }, classId: classe });
+      const etapes = tutos[classe];
+      expect(etapes, classe).toBeDefined();
+      expect(etapes.length, classe).toBe(tutos.iop.length);   // « Premiers pas » (0) et « Premières armes » (8) servent au succès
+      expect(etapes[8].nom, classe).toBe('Premières armes');
+      for (const e of etapes) for (const o of e.objectifs) if (o.sort) expect(w.player.knows(o.sort), `${classe} : ${o.sort}`).toBe(true);
+    }
+  });
+
+  it('tutoriel de l\'Osamodas : la touche & valide « Ton premier sort », A invoque le Tofu puis l\'éveille', () => {
+    const w = new World({ data: GAME_DATA, zone: 'incarnam', map: new WorldGrid(monde), seed: 7, items: ITEMS as unknown as ItemsData, quetes: Q, compte: { succes: [], persos: 0 }, classId: 'osamodas' });
+    const q = w.quetes!, p = w.player, etape = () => q.enCours.find(c => c.id === 'reponses')?.etape;
+    const c = q.enCours.find(x => x.id === 'reponses')!;
+    c.etape = 3; c.compte = [0];
+    const appuyer = (id: string) => { w.step(STEP, { ...NO_INPUT, pressed: id, aim: { x: p.x + 60, y: p.y } }); for (let i = 0; i < 90; i++) w.step(STEP, NO_INPUT); };
+    appuyer(p.bar[0]!); expect(etape()).toBe(4);
+    appuyer('tofu'); expect(etape()).toBe(5);
+    p.rage = p.cls.rage.max; p.lastHitAt = p.age; appuyer('tofu'); expect(etape()).toBe(6);   // Éveil plein (en combat) : A éveille le Tofu
+  });
+
   it('le Temple Céleste : 3 salles reliées, sans porte dans le vide vers la Route des âmes', () => {
     const w = newWorld(), wg = w.worldGrid!;
     const tags = (n: number) => w.portes[n].ends.map(e => e.tag);
