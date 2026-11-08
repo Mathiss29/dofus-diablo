@@ -742,5 +742,489 @@
   },
   "mobility": "pas_chasse",
   "sorts": "cra"
+ },
+ "osamodas": {
+  "name": "Osamodas",
+  "hp": 200,
+  "speed": 228,
+  "radius": 16,
+  "iframesOnHit": 0.45,
+  "healOnKill": 3,
+  "critChance": 0.15,
+  "critMult": 1.6,
+  "pa": {
+   "max": 6,
+   "regen": 1.25
+  },
+  "pm": {
+   "max": 2,
+   "recharge": 3.5
+  },
+  "potion": {
+   "charges": 3,
+   "heal": 0.35,
+   "cooldown": 1
+  },
+  "xpBase": 100,
+  "maxLevel": 200,
+  "rage": {
+   "name": "Éveil",
+   "max": 100,
+   "perHit": 8,
+   "perHurt": 0,
+   "bonus": 0,
+   "signature": 1,
+   "mode": "eveil"
+  },
+  "attaque": {
+   "name": "Coup de poing",
+   "element": "terre",
+   "comboWindow": 0.45,
+   "combo": [
+    {
+     "duration": 0.28,
+     "impactAt": 0.07,
+     "cancelAt": 0.13,
+     "dmg": 14,
+     "range": 78,
+     "arc": 110,
+     "knock": 210,
+     "step": 120,
+     "hitstop": 0.05,
+     "shake": 0.0035
+    },
+    {
+     "duration": 0.28,
+     "impactAt": 0.07,
+     "cancelAt": 0.13,
+     "dmg": 14,
+     "range": 78,
+     "arc": 110,
+     "knock": 210,
+     "step": 120,
+     "hitstop": 0.05,
+     "shake": 0.0035
+    },
+    {
+     "duration": 0.4,
+     "impactAt": 0.11,
+     "cancelAt": 0.22,
+     "dmg": 30,
+     "range": 92,
+     "arc": 160,
+     "knock": 480,
+     "step": 220,
+     "hitstop": 0.085,
+     "shake": 0.008
+    }
+   ]
+  },
+  "spells": {
+   "cri_corbac": {
+    "name": "Cri du Corbac",
+    "dofusId": 31110,
+    "icon": 14427,
+    "element": "air",
+    "cooldown": 0,
+    "desc": "Vole de la vie aux ennemis ou soigne les alliés dans l'élément Air.\nAugmente également les PM du lanceur et de l'allié ciblé.\n\nLes soins n'affectent pas le lanceur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 14,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "burst",
+    "pa": 2,
+    "hit": {
+     "shape": "point",
+     "range": 240,
+     "radius": 30
+    },
+    "lifesteal": 0.5,
+    "soinAllies": true,
+    "buff": {
+     "stat": "pm",
+     "n": 1,
+     "t": 6
+    },
+    "rage": "lifesteal"
+   },
+   "pics_prespic": {
+    "name": "Pics du Prespic",
+    "dofusId": 31111,
+    "icon": 14442,
+    "element": "feu",
+    "cooldown": 0,
+    "desc": "Vole de la vie aux ennemis ou soigne les alliés dans l'élément Feu.\nAugmente également les Critiques du lanceur et de l'allié ciblé.\n\nLes soins n'affectent pas le lanceur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 14,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "burst",
+    "pa": 2,
+    "hit": {
+     "shape": "point",
+     "range": 144,
+     "radius": 30
+    },
+    "lifesteal": 0.5,
+    "soinAllies": true,
+    "buff": {
+     "stat": "critique",
+     "n": 10,
+     "t": 6
+    },
+    "rage": "lifesteal"
+   },
+   "dents_piranya": {
+    "name": "Dents du Piranya",
+    "dofusId": 31135,
+    "icon": 14439,
+    "element": "eau",
+    "cooldown": 0,
+    "desc": "Soigne les alliés et vole de la vie dans l'élément Eau aux ennemis en zone.\nAugmente également les Dommages du lanceur et des alliés ciblés.\n\nLes soins n'affectent pas le lanceur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 18,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.007,
+    "fx": "burst",
+    "pa": 3,
+    "hit": {
+     "shape": "point",
+     "range": 144,
+     "radius": 60
+    },
+    "lifesteal": 0.5,
+    "soinAllies": true,
+    "buff": {
+     "stat": "dommages",
+     "n": 20,
+     "t": 6
+    },
+    "rage": "lifesteal"
+   },
+   "cri_ours": {
+    "name": "Cri de l'Ours",
+    "dofusId": 31132,
+    "icon": 14443,
+    "element": "terre",
+    "cooldown": 0,
+    "desc": "Soigne les alliés et vole de la vie dans l'élément Terre aux ennemis en zone.\nAugmente également la Puissance du lanceur et des alliés ciblés.\n\nLes soins n'affectent pas le lanceur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 22,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.008,
+    "fx": "burst",
+    "pa": 3,
+    "hit": {
+     "shape": "circle",
+     "radius": 72
+    },
+    "lifesteal": 0.5,
+    "soinAllies": true,
+    "buff": {
+     "stat": "puissance",
+     "n": 50,
+     "t": 6
+    },
+    "rage": "lifesteal"
+   },
+   "fouet": {
+    "name": "Fouet",
+    "dofusId": 31114,
+    "icon": 14267,
+    "element": "meilleur",
+    "cooldown": 0,
+    "desc": "Occasionne des dommages dans le meilleur élément du lanceur aux ennemis et repousse la cible.\nAugmente également les PM de la cible si c'est une invocation alliée.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 14,
+    "knock": 684,
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "line",
+    "pa": 2,
+    "hit": {
+     "shape": "point",
+     "range": 144,
+     "radius": 30
+    },
+    "pushDmg": true,
+    "rage": "knock"
+   },
+   "tofu": {
+    "name": "Tofu",
+    "dofusId": 31115,
+    "icon": 12987,
+    "element": "neutre",
+    "cooldown": 0,
+    "desc": "Invoque un Tofu maîtrisable qui peut occasionner des dommages Air, soigner, retirer du Tacle et repousser.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "land",
+    "pa": 3,
+    "hit": {
+     "shape": "point",
+     "range": 96,
+     "radius": 0
+    },
+    "invoque": "tofu",
+    "rage": "summon"
+   },
+   "bouftou": {
+    "name": "Bouftou",
+    "dofusId": 31116,
+    "icon": 14561,
+    "element": "neutre",
+    "cooldown": 0,
+    "desc": "Invoque un Bouftou maîtrisable qui peut occasionner des dommages Terre, soigner, retirer de la Fuite et se téléporter.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "land",
+    "pa": 3,
+    "hit": {
+     "shape": "point",
+     "range": 96,
+     "radius": 0
+    },
+    "invoque": "bouftou",
+    "rage": "summon"
+   },
+   "crapipou": {
+    "name": "Crapipou",
+    "dofusId": 31117,
+    "icon": 14429,
+    "element": "neutre",
+    "cooldown": 0,
+    "desc": "Invoque un Crapipou maîtrisable qui peut occasionner des dommages et appliquer un poison Eau, soigner, augmenter ou retirer de la Portée et s'éloigner.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "land",
+    "pa": 3,
+    "hit": {
+     "shape": "point",
+     "range": 96,
+     "radius": 0
+    },
+    "invoque": "crapipou",
+    "rage": "summon"
+   },
+   "dragoune": {
+    "name": "Dragoune",
+    "dofusId": 31118,
+    "icon": 14430,
+    "element": "neutre",
+    "cooldown": 0,
+    "desc": "Invoque une Dragoune maîtrisable qui peut occasionner des dommages Feu, soigner, retirer de la Puissance et échanger de positions.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "land",
+    "pa": 3,
+    "hit": {
+     "shape": "point",
+     "range": 96,
+     "radius": 0
+    },
+    "invoque": "dragoune",
+    "rage": "summon"
+   },
+   "cortege": {
+    "name": "Cortège Sauvage",
+    "dofusId": 31119,
+    "icon": 12776,
+    "element": "neutre",
+    "cooldown": 0,
+    "desc": "Augmente les Invocations du lanceur et réduit le coût en PA des sorts d'invocation Osamodas.\n\nToutes les invocations Osamodas meurent au début du tour du lanceur tant qu'il est sous les effets du sort.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "burst",
+    "pa": 3,
+    "self": true,
+    "hit": {
+     "shape": "circle",
+     "radius": 60
+    },
+    "buff": {
+     "stat": "invocations",
+     "n": 3,
+     "t": 6
+    },
+    "rage": "buff"
+   },
+   "piqure": {
+    "name": "Piqûre Motivante",
+    "dofusId": 31120,
+    "icon": 12777,
+    "element": "neutre",
+    "cooldown": 0,
+    "desc": "Augmente les PA et les PM de la cible.\nLes effets sont plus importants sur les invocations.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "burst",
+    "pa": 2,
+    "self": true,
+    "hit": {
+     "shape": "circle",
+     "radius": 60
+    },
+    "buff": {
+     "stat": "pa",
+     "n": 1,
+     "t": 9
+    },
+    "rage": "buff"
+   },
+   "saute_granouille": {
+    "name": "Saute-granouille",
+    "dofusId": 31121,
+    "icon": 13883,
+    "element": "eau",
+    "cooldown": 0.4,
+    "desc": "Téléporte le lanceur symétriquement par rapport à la cible et occasionne des dommages Eau aux ennemis.\nTéléporte également la cible symétriquement par rapport au lanceur si c'est une invocation.",
+    "duration": 0.3,
+    "impactAt": 0.3,
+    "cancelAt": 0.26,
+    "dmg": 26,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.008,
+    "fx": "land",
+    "pm": 1,
+    "hit": {
+     "shape": "circle",
+     "radius": 60
+    },
+    "move": {
+     "kind": "leap",
+     "maxRange": 200,
+     "height": 60
+    }
+   },
+   "souffle_draconique": {
+    "name": "Souffle Draconique",
+    "dofusId": 31122,
+    "icon": 12835,
+    "element": "feu",
+    "cooldown": 0,
+    "desc": "Éloigne le lanceur des cibles, occasionne des dommages Feu aux ennemis et repousse les cibles en zone.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 22,
+    "knock": 684,
+    "hitstop": 0.05,
+    "shake": 0.008,
+    "fx": "burst",
+    "pa": 3,
+    "hit": {
+     "shape": "point",
+     "range": 240,
+     "radius": 60
+    },
+    "selfKnock": 48,
+    "rage": "knock"
+   },
+   "charge_bestiale": {
+    "name": "Charge Bestiale",
+    "dofusId": 31123,
+    "icon": 14272,
+    "element": "terre",
+    "cooldown": 0,
+    "desc": "Rapproche le lanceur vers la cible et occasionne des dommages Terre aux ennemis.\nAttire également les invocations jusqu'au centre en zone autour de la cible.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 26,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.008,
+    "fx": "land",
+    "pa": 3,
+    "hit": {
+     "shape": "circle",
+     "radius": 60
+    },
+    "move": {
+     "kind": "dash",
+     "maxRange": 240
+    },
+    "rappel": true,
+    "rage": "dash"
+   },
+   "laisse_spirituelle": {
+    "name": "Laisse Spirituelle",
+    "dofusId": 31152,
+    "icon": 14440,
+    "element": "neutre",
+    "cooldown": 0,
+    "desc": "Applique l'état En laisse sur la cible pour le tour en cours :\n• Suit le lanceur immédiatement et lorsqu'il utilise ses PM.\n\nSur le lanceur : applique l'état sur toutes ses invocations.\n\nL'état est retiré si le lanceur ou la cible sont déplacés.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "burst",
+    "pa": 2,
+    "hit": {
+     "shape": "point",
+     "range": 144,
+     "radius": 30
+    },
+    "dompte": {
+     "seuil": 0.15,
+     "duree": 20
+    },
+    "rage": "summon"
+   }
+  },
+  "mobility": "saute_granouille",
+  "sorts": "osamodas",
+  "niveau1": [
+   31115
+  ],
+  "clicDroit": "cri_corbac"
  }
 }

@@ -1,0 +1,909 @@
+{
+ "_regles": {
+  "_doc": "Réglages des bêtes de l'Osamodas (maquette Osamodas v2, 2026-11-08). Temps en secondes, distances en cases.",
+  "degats": 0.6,
+  "regenPA": 1.25,
+  "paMax": 4,
+  "laisse": 8,
+  "cibleAutour": 6,
+  "suivi": 1.6,
+  "eveil": {
+   "max": 100,
+   "parCoupBete": 4,
+   "parCoupOsa": 8,
+   "baisseApres": 6,
+   "baisse": 8,
+   "duree": 12
+  },
+  "meuteBigarree": 0.05,
+  "invocationsBase": 1
+ },
+ "tofu": {
+  "dofusId": 8070,
+  "name": "Tofu",
+  "look": 9473,
+  "atlas": "osa_tofu",
+  "rang": 1,
+  "element": "air",
+  "suivant": "ventritofu",
+  "pv": 0.5,
+  "sorts": [
+   {
+    "id": 31154,
+    "name": "Béco-béco",
+    "pa": 2,
+    "po": [
+     1,
+     2
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 12,
+      "max": 14
+     }
+    ],
+    "desc": "Occasionne des dommages Air et retire du Tacle."
+   },
+   {
+    "id": 31156,
+    "name": "Bisou Béco",
+    "pa": 2,
+    "po": [
+     1,
+     4
+    ],
+    "anim": 1,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 13,
+      "max": 15,
+      "vol": true
+     },
+     {
+      "k": "soin",
+      "min": 13,
+      "max": 15
+     },
+     {
+      "k": "repousse",
+      "n": 2
+     }
+    ],
+    "desc": "Éloigne le Tofu de la cible, vole de la vie aux ennemis ou soigne l'allié ciblé dans l'élément Air et repousse la cible."
+   }
+  ]
+ },
+ "ventritofu": {
+  "dofusId": 8071,
+  "name": "Ventritofu",
+  "look": 9474,
+  "atlas": "osa_ventritofu",
+  "rang": 2,
+  "element": "air",
+  "suivant": "scarafoudre",
+  "pv": 0.75,
+  "sorts": [
+   {
+    "id": 31155,
+    "name": "Bécompresseur",
+    "pa": 2,
+    "po": [
+     1,
+     2
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 17,
+      "max": 20,
+      "vol": true
+     }
+    ],
+    "desc": "Téléporte le Ventritofu sur la case ciblée, téléporte les cibles symétriquement par rapport au centre et vole de la vie dans l'élément Air aux ennemis en zone.\nAugmente également la Fuite du Ventritofu et de ses alliés en zone."
+   },
+   {
+    "id": 31157,
+    "name": "Ventripoussée",
+    "pa": 2,
+    "po": [
+     1,
+     4
+    ],
+    "anim": 1,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "avance",
+      "n": 3
+     },
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 16,
+      "max": 18
+     },
+     {
+      "k": "repousse",
+      "n": 2
+     }
+    ],
+    "desc": "Rapproche le Ventritofu vers la cible, occasionne des dommages Air aux ennemis et repousse la cible."
+   }
+  ]
+ },
+ "scarafoudre": {
+  "dofusId": 8079,
+  "name": "Scarafoudre",
+  "look": 9680,
+  "atlas": "osa_scarafoudre",
+  "rang": 3,
+  "element": "air",
+  "suivant": null,
+  "pv": 1.0,
+  "sorts": [
+   {
+    "id": 31178,
+    "name": "Scarapace",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "anim": 0,
+    "zone": "G1",
+    "effets": [
+     {
+      "k": "bouclier",
+      "n": 100
+     },
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 25,
+      "max": 28
+     }
+    ],
+    "desc": "Applique un bouclier sur le Scarafoudre et ses alliés et occasionne des dommages Air aux ennemis en zone."
+   },
+   {
+    "id": 31179,
+    "name": "Scarafusée",
+    "pa": 2,
+    "po": [
+     1,
+     6
+    ],
+    "anim": 1,
+    "zone": "l1",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 21,
+      "max": 23
+     }
+    ],
+    "desc": "Téléporte le Scarafoudre vers la cible, occasionne des dommages Air et retire des Critiques aux ennemis en zone."
+   },
+   {
+    "id": 32222,
+    "name": "Scaratonnerre",
+    "pa": 2,
+    "po": [
+     0,
+     5
+    ],
+    "anim": 2,
+    "zone": "X1",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 24,
+      "max": 27
+     }
+    ],
+    "desc": "Augmente la Fuite du Scarafoudre pour chaque ennemi dans la zone d'effet et leur occasionne des dommages Air en zone."
+   }
+  ]
+ },
+ "bouftou": {
+  "dofusId": 8072,
+  "name": "Bouftou",
+  "look": 9468,
+  "atlas": "osa_bouftou",
+  "rang": 1,
+  "element": "terre",
+  "suivant": "bouflourd",
+  "pv": 0.5,
+  "sorts": [
+   {
+    "id": 31158,
+    "name": "Bouffe-tout",
+    "pa": 2,
+    "po": [
+     1,
+     2
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "avance",
+      "n": 1
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 12,
+      "max": 14
+     }
+    ],
+    "desc": "Rapproche le Bouftou vers la cible, occasionne des dommages Terre et retire de la Fuite aux ennemis."
+   },
+   {
+    "id": 31159,
+    "name": "Saute-bouftou",
+    "pa": 2,
+    "po": [
+     1,
+     2
+    ],
+    "anim": 1,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 15,
+      "max": 17,
+      "vol": true
+     },
+     {
+      "k": "soin",
+      "min": 15,
+      "max": 17
+     }
+    ],
+    "desc": "Téléporte le Bouftou symétriquement par rapport à la cible et vole de la vie aux ennemis ou soigne l'allié ciblé dans l'élément Terre."
+   }
+  ]
+ },
+ "bouflourd": {
+  "dofusId": 8073,
+  "name": "Bouflourd",
+  "look": 9596,
+  "atlas": "osa_bouflourd",
+  "rang": 2,
+  "element": "terre",
+  "suivant": "craquolosse",
+  "pv": 0.75,
+  "sorts": [
+   {
+    "id": 31160,
+    "name": "Pacage",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "anim": 0,
+    "zone": "C3",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 19,
+      "max": 22,
+      "vol": true
+     },
+     {
+      "k": "attire",
+      "n": 2
+     }
+    ],
+    "desc": "Réduit les dommages subis par le Bouflourd et ses alliés, vole de la vie dans l'élément Terre aux ennemis et attire les cibles en zone autour du Bouflourd."
+   },
+   {
+    "id": 31161,
+    "name": "Charge du Bouflourd",
+    "pa": 2,
+    "po": [
+     1,
+     5
+    ],
+    "anim": 1,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "avance",
+      "n": 4
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 16,
+      "max": 18
+     }
+    ],
+    "desc": "Rapproche le Bouflourd vers la cible et occasionne des dommages Terre aux ennemis."
+   }
+  ]
+ },
+ "craquolosse": {
+  "dofusId": 8078,
+  "name": "Craquolosse",
+  "look": 9651,
+  "atlas": "osa_craquolosse",
+  "rang": 3,
+  "element": "terre",
+  "suivant": null,
+  "pv": 1.0,
+  "sorts": [
+   {
+    "id": 31174,
+    "name": "Fronde Rocheuse",
+    "pa": 2,
+    "po": [
+     1,
+     5
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 18,
+      "max": 20
+     }
+    ],
+    "desc": "Occasionne des dommages Terre et retire des PM."
+   },
+   {
+    "id": 31175,
+    "name": "Cœur de Pierre",
+    "pa": 2,
+    "po": [
+     1,
+     1
+    ],
+    "anim": 1,
+    "zone": "X1",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 26,
+      "max": 29
+     }
+    ],
+    "desc": "Occasionne des dommages Terre aux ennemis et augmente les Résistances du Craquolosse et de ses alliés en zone."
+   },
+   {
+    "id": 32198,
+    "name": "Écrasement Colossal",
+    "pa": 2,
+    "po": [
+     1,
+     1
+    ],
+    "anim": 2,
+    "zone": "C2",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 29,
+      "max": 32
+     },
+     {
+      "k": "attire",
+      "n": 2
+     },
+     {
+      "k": "attire",
+      "n": 1
+     }
+    ],
+    "desc": "Occasionne des dommages Terre aux ennemis et attire les cibles jusqu'au centre en zone.\nN'affecte pas le lanceur."
+   }
+  ]
+ },
+ "crapipou": {
+  "dofusId": 8074,
+  "name": "Crapipou",
+  "look": 9471,
+  "atlas": "osa_crapipou",
+  "rang": 1,
+  "element": "eau",
+  "suivant": "crapipaud",
+  "pv": 0.5,
+  "sorts": [
+   {
+    "id": 31162,
+    "name": "Crapoison",
+    "pa": 2,
+    "po": [
+     1,
+     4
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 11,
+      "max": 13
+     }
+    ],
+    "desc": "Retire de la Portée et applique un poison Eau de début de tour sur la cible."
+   },
+   {
+    "id": 31164,
+    "name": "Croassement",
+    "pa": 2,
+    "po": [
+     0,
+     5
+    ],
+    "anim": 1,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 14,
+      "max": 16,
+      "vol": true
+     },
+     {
+      "k": "soin",
+      "min": 14,
+      "max": 16
+     }
+    ],
+    "desc": "Éloigne le Crapipou de l'ennemi ciblé et lui vole de la vie dans l'élément Eau.\n\nSur un allié : soigne la cible et augmente sa Portée.\nLes soins n'affectent pas le Crapipou."
+   }
+  ]
+ },
+ "crapipaud": {
+  "dofusId": 8075,
+  "name": "Crapipaud",
+  "look": 9681,
+  "atlas": "osa_crapipaud",
+  "rang": 2,
+  "element": "eau",
+  "suivant": "crocoleureux",
+  "pv": 0.75,
+  "sorts": [
+   {
+    "id": 31163,
+    "name": "Crapogive",
+    "pa": 2,
+    "po": [
+     0,
+     4
+    ],
+    "anim": 0,
+    "zone": "C2",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 19,
+      "max": 21
+     },
+     {
+      "k": "repousse",
+      "n": 2
+     }
+    ],
+    "desc": "Occasionne des dommages Eau aux ennemis, leur applique un poison Eau de fin de tour et repousse les cibles depuis le centre en zone."
+   },
+   {
+    "id": 31165,
+    "name": "Crapobatie",
+    "pa": 2,
+    "po": [
+     1,
+     2
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 17,
+      "max": 19,
+      "vol": true
+     }
+    ],
+    "desc": "Téléporte le Crapipaud sur la case ciblée ou symétriquement par rapport à la cible, vole de la vie dans l'élément Eau aux ennemis et augmente les PM du Crapipaud et de ses alliés en zone."
+   }
+  ]
+ },
+ "crocoleureux": {
+  "dofusId": 8080,
+  "name": "Crocoléreux",
+  "look": 9597,
+  "atlas": "osa_crocoleureux",
+  "rang": 3,
+  "element": "eau",
+  "suivant": null,
+  "pv": 1.0,
+  "sorts": [
+   {
+    "id": 31180,
+    "name": "Crocs Coléreux",
+    "pa": 2,
+    "po": [
+     1,
+     2
+    ],
+    "anim": 0,
+    "zone": "X1",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 20,
+      "max": 22
+     }
+    ],
+    "desc": "Occasionne des dommages Eau et retire des Critiques aux ennemis en zone."
+   },
+   {
+    "id": 32225,
+    "name": "Crocolère",
+    "pa": 2,
+    "po": [
+     1,
+     3
+    ],
+    "anim": 1,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 26,
+      "max": 29
+     }
+    ],
+    "desc": "Occasionne des dommages Eau et réduit les soins reçus par la cible."
+   },
+   {
+    "id": 31182,
+    "name": "Trombe Bourbeuse",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "anim": 2,
+    "zone": "C2",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 23,
+      "max": 26
+     }
+    ],
+    "desc": "Réduit les dommages reçus par le Crocoléreux et ses alliés et occasionne des dommages Eau aux ennemis en zone."
+   }
+  ]
+ },
+ "dragoune": {
+  "dofusId": 8076,
+  "name": "Dragoune",
+  "look": 9682,
+  "atlas": "osa_dragoune",
+  "rang": 1,
+  "element": "feu",
+  "suivant": "dragonnet",
+  "pv": 0.5,
+  "sorts": [
+   {
+    "id": 31166,
+    "name": "Dracoflammes",
+    "pa": 2,
+    "po": [
+     1,
+     5
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 12,
+      "max": 14
+     }
+    ],
+    "desc": "Occasionne des dommages Feu et retire de la Puissance."
+   },
+   {
+    "id": 31168,
+    "name": "Dracorage",
+    "pa": 2,
+    "po": [
+     1,
+     2
+    ],
+    "anim": 1,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 16,
+      "max": 18,
+      "vol": true
+     },
+     {
+      "k": "soin",
+      "min": 16,
+      "max": 18
+     }
+    ],
+    "desc": "Échange de position avec la cible et vole de la vie dans l'élément Feu aux ennemis ou soigne l'allié ciblé."
+   }
+  ]
+ },
+ "dragonnet": {
+  "dofusId": 8077,
+  "name": "Dragonnet",
+  "look": 9469,
+  "atlas": "osa_dragonnet",
+  "rang": 2,
+  "element": "feu",
+  "suivant": "sulfenix",
+  "pv": 0.75,
+  "sorts": [
+   {
+    "id": 31167,
+    "name": "Embrasement",
+    "pa": 2,
+    "po": [
+     0,
+     4
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 17,
+      "max": 19
+     }
+    ],
+    "desc": "Occasionne des dommages Feu et augmente la Puissance du Dragonnet."
+   },
+   {
+    "id": 31169,
+    "name": "Souffle du Dragon",
+    "pa": 2,
+    "po": [
+     1,
+     6
+    ],
+    "anim": 1,
+    "zone": "V1",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 20,
+      "max": 23,
+      "vol": true
+     },
+     {
+      "k": "repousse",
+      "n": 1
+     }
+    ],
+    "desc": "Vole de la vie dans l'élément Feu aux ennemis, augmente la Puissance des alliés et repousse les cibles en zone."
+   }
+  ]
+ },
+ "sulfenix": {
+  "dofusId": 8081,
+  "name": "Sulfénix",
+  "look": 9698,
+  "atlas": "osa_sulfenix",
+  "rang": 3,
+  "element": "feu",
+  "suivant": null,
+  "pv": 1.0,
+  "sorts": [
+   {
+    "id": 31183,
+    "name": "Sulfuria",
+    "pa": 2,
+    "po": [
+     0,
+     5
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 19,
+      "max": 21
+     }
+    ],
+    "desc": "Occasionne des dommages Feu et augmente les Soins du Sulfénix.\nLes dommages n'affectent pas le Sulfénix."
+   },
+   {
+    "id": 31184,
+    "name": "Renaissance",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "anim": 1,
+    "zone": "C2",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 24,
+      "max": 27
+     },
+     {
+      "k": "soin",
+      "min": 24,
+      "max": 27
+     }
+    ],
+    "desc": "Occasionne des dommages Feu aux ennemis en zone.\nSoigne et téléporte le Sulfénix ou échange sa position avec l'entité sur la case ciblée au tour suivant."
+   },
+   {
+    "id": 32211,
+    "name": "Danse Flammes",
+    "pa": 2,
+    "po": [
+     2,
+     5
+    ],
+    "anim": 2,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "soin",
+      "min": 22,
+      "max": 24
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 22,
+      "max": 24
+     }
+    ],
+    "desc": "Téléporte le Sulfénix sur la case ciblée, soigne les alliés et occasionne des dommages Feu aux ennemis en zone."
+   }
+  ]
+ },
+ "gobgob_glouton": {
+  "dofusId": 8082,
+  "name": "Gobgob Glouton",
+  "look": 9679,
+  "atlas": "osa_gobgob_glouton",
+  "rang": 2,
+  "element": "neutre",
+  "suivant": null,
+  "pv": 0.75,
+  "sorts": [
+   {
+    "id": 31172,
+    "name": "Gobgobage",
+    "pa": 2,
+    "po": [
+     0,
+     5
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [],
+    "desc": "Occasionne des dommages Neutre selon la vie du Gobgob.\n• 50% et plus de sa vie : selon sa vie restante.\n• Moins de 50% de sa vie : selon sa vie manquante.\n\nSur une invocation Osamodas de l'invocateur : sacrifie l'invocation pour augmenter la Vitalité et les PM du Gobgob.\nRetire également des PM non esquivables pour chaque invocation sacrifiée."
+   },
+   {
+    "id": 31173,
+    "name": "Gobédience",
+    "pa": 2,
+    "po": [
+     1,
+     3
+    ],
+    "anim": 1,
+    "zone": "P1",
+    "effets": [],
+    "desc": "Intercepte les dommages subis par l'allié ciblé.\nLa durée est plus importante sur une invocation."
+   },
+   {
+    "id": 31442,
+    "name": "Goberration",
+    "pa": 2,
+    "po": [
+     1,
+     3
+    ],
+    "anim": 2,
+    "zone": "P1",
+    "effets": [],
+    "desc": "Crée des illusions du Gobgob et le téléporte sur la case ciblée.\n\nTermine le tour en cours du Gobgob."
+   }
+  ]
+ },
+ "gobgob_facetieux": {
+  "dofusId": 8083,
+  "name": "Gobgob Facétieux",
+  "look": 9472,
+  "atlas": "osa_gobgob_facetieux",
+  "rang": 3,
+  "element": "neutre",
+  "suivant": null,
+  "pv": 1.0,
+  "sorts": [
+   {
+    "id": 31170,
+    "name": "Gobstitution",
+    "pa": 2,
+    "po": [
+     1,
+     4
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [],
+    "desc": "Échange de position avec la cible."
+   },
+   {
+    "id": 31171,
+    "name": "Gobjection",
+    "pa": 2,
+    "po": [
+     0,
+     4
+    ],
+    "anim": 1,
+    "zone": "P1",
+    "effets": [],
+    "desc": "Réduit la durée des effets sur la cible."
+   },
+   {
+    "id": 31441,
+    "name": "Gobmutation",
+    "pa": 3,
+    "po": [
+     1,
+     4
+    ],
+    "anim": 2,
+    "zone": "P1",
+    "effets": [],
+    "desc": "Tue le Gobgob pour le remplacer par l'invocation Osamodas de l'invocateur ciblée.\n\nNe fonctionne pas sur les Gobgobs."
+   }
+  ]
+ }
+}

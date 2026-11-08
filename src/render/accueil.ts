@@ -20,9 +20,12 @@ import { EMPLACEMENTS, NB_SECOURS, dernier, dureeTexte, exporter, importer, lire
 interface ClasseDofus { id: number; cle: string; nom: string; titre: string; desc: string; complexite: number; roles: Record<string, number> }
 const CLASSES = CLASSES_DOFUS as ClasseDofus[];
 /** Classes jouables (planches en jeu) et date prévue des suivantes. */
-const JOUABLES = new Set(Object.keys(GAME_DATA.classes));
+/** Classes codées mais encore à l'essai (maquette Osamodas 13A) : jouables seulement dans la partie de test (diablofus.com/#test, F1),
+ *  elles arrivent à la création quand Mathis les a validées. */
+const EN_ESSAI = new Set(['osamodas']);
+const JOUABLES = new Set(Object.keys(GAME_DATA.classes).filter(k => !EN_ESSAI.has(k)));
 /** Classes pas encore jouables (Accueil 9A) : leur fiche s'affiche quand même, avec la version prévue (feuille de route). */
-const PLUS_TARD: Record<string, string> = { osamodas: 'Prévue en 0.4' };
+const PLUS_TARD: Record<string, string> = { osamodas: 'En essai : partie de test' };
 const plusTard = (cle: string) => PLUS_TARD[cle] ?? 'Prévue après la 1.0';
 /** Version affichée et textes de l'accueil (Accueil 12A) : ils racontent la zone de la version, pas le moteur. */
 const VERSION = '0.1';
@@ -491,7 +494,7 @@ export class Accueil {
   /** Les 4 premiers sorts officiels de la classe (Dofus 3), avec le niveau où on les obtient. */
   private premiersSorts(cle: string): [SortOfficiel, number][] {
     const cls = GAME_DATA.classes[cle], mob = cls.spells[cls.mobility]?.dofusId;
-    return (SORTS[cls.sorts] ?? []).map(p => [p[0], niveauRequis(p[0], mob)] as [SortOfficiel, number]).sort((a, b) => a[1] - b[1]).slice(0, 4);
+    return (SORTS[cls.sorts] ?? []).map(p => [p[0], niveauRequis(p[0], mob, cls.niveau1)] as [SortOfficiel, number]).sort((a, b) => a[1] - b[1]).slice(0, 4);
   }
 
   // --- Mes personnages (22D) : la liste à gauche, le perso choisi sur le socle devant son dieu -------------------

@@ -28,12 +28,19 @@ export type SimEvent =
   /** Maquette « Aggro » 6A : série en cours (n monstres, +bonus % d'XP) et fin de série. */
   | { k: 'massacre'; n: number; bonus: number }
   | { k: 'massacreFin'; n: number }
-  | { k: 'hit'; target: 'monster' | 'player'; id?: number; x: number; y: number; z: number; amount: number; crit: boolean; element?: Element;
+  | { k: 'hit'; target: 'monster' | 'player' | 'allie'; id?: number; x: number; y: number; z: number; amount: number; crit: boolean; element?: Element;
       /** Coup d'arme : éclat de la couleur de l'élément (maquette Armes 3B). */
       eclat?: boolean }
   /** XP gagnée en tuant un monstre (choix 1A : chiffre au-dessus de lui). */
   | { k: 'xp'; x: number; y: number; z: number; n: number }
   | { k: 'kill'; x: number; y: number; radius: number; monster: string }
+  /** Bête de l'Osamodas tombée (pas un monstre vaincu : ni XP, ni bestiaire, ni quêtes). */
+  | { k: 'beteMorte'; id: number; x: number; y: number; radius: number; name: string }
+  /** Osamodas : soin (chiffre vert), bête invoquée, bête éveillée (8C), monstre dompté (15A). */
+  | { k: 'heal'; x: number; y: number; z: number; amount: number }
+  | { k: 'invocation'; id: number; x: number; y: number }
+  | { k: 'eveil'; id: number; name: string; x: number; y: number }
+  | { k: 'dompte'; id: number; name: string; x: number; y: number }
   | { k: 'impact'; hitstop: number; shake: number; big: boolean }
   | { k: 'playerHurt' }
   /** Gros coup reçu (maquette « Danger » 3A) : bords de l'écran rouges. */
