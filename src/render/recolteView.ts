@@ -13,6 +13,8 @@ import { ICON_SHEET, iconFrame } from './icons';
 interface Vue { img: Phaser.GameObjects.Image; sol: Phaser.GameObjects.Ellipse | null; dessin: boolean; coupe: number; etat: 'pret' | 'recolte' | null }
 const ASSETS = 'assets';
 const CLE = (g: number) => `recolte_${g}`;
+/** Planches demandées (gardé d'une scène à l'autre : une planche encore en route après un changement de zone ne doit pas être redemandée, sinon « Texture key already in use »). */
+const DEMANDES = new Map<number, number>();
 /** Pixels Dofus -> écran du jeu (GridMap.S). */
 const S = 1.1;
 /** Curseur officiel de l'outil du métier (icons_assets de Dofus 3), comme dans le jeu : faux, hache, pioche, filet. */
@@ -48,7 +50,6 @@ export class RecolteView {
   private vues = new Map<number, Vue>();
   private barre: Phaser.GameObjects.Graphics;
   private bulle: HTMLDivElement;
-  private demandes = new Set<number>();
   survolee: number | null = null;
   static readonly VUE = 1500;
 
@@ -64,8 +65,9 @@ export class RecolteView {
   private planche(g: number) {
     const k = CLE(g), T = this.scene.textures;
     if (T.exists(k)) return true;
-    if (!this.demandes.has(g)) {
-      this.demandes.add(g);
+    const now = performance.now();
+    if (!(now - (DEMANDES.get(g) ?? -Infinity) < 15000)) {
+      DEMANDES.set(g, now);
       const d = `${ASSETS}/sprites/recoltes/${g}`;
       this.scene.load.once(`filecomplete-atlas-${k}`, () => reduire(this.scene.textures, k));
       this.scene.load.atlas(k, url(`${d}.avif`), url(`${d}.json`));
