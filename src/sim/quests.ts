@@ -137,7 +137,7 @@ export interface PnjDef {
   /** Métier affiché dans la fenêtre de ses services (Antiquaire, Couturière…). */
   titre?: string;
   /** Services du PNJ (recycler, boutique, apparat, garde-robe) : la réponse ferme le dialogue et l'affichage ouvre la fenêtre du service. */
-  services?: { texte: string; service: string }[];
+  services?: { texte: string; service: string; v03?: boolean }[];
   /** Discussion officielle (dialogMessages / dialogReplies) : la réponse n mène au texte n, la dernière laisse adieu pour partir. */
   discussion?: { reponse: string; texte: string }[];
   /** Texte officiel de la réponse qui ferme le dialogue (sinon « Au revoir. »). */
@@ -512,6 +512,10 @@ export class Quetes {
     if (this.bulle && this.bulle !== avant && this.bulle.pnj === pnj) { intro = intro ? `${intro} ${this.bulle.texte}` : this.bulle.texte; this.bulle = null; }
     this.ouvrir(pnj, intro);
   }
+  /** Réponses « service » du PNJ (celles de la 0.3 seulement en 0.3). */
+  private services(def: PnjDef | undefined): Reponse[] {
+    return (def?.services ?? []).filter(s => !s.v03 || this.world.player.v03).map(s => ({ a: 'service' as const, service: s.service, texte: s.texte }));
+  }
   /** Ouvre le dialogue : une seule quête à donner = son offre (5A), plusieurs = la liste (5C), aucune = sa phrase (10A). */
   private ouvrir(pnj: string, intro: string | null, liste = false) {
     const ds = this.aDonnerTous(pnj), def = this.data.pnj[pnj], dis = def?.discussion?.[0];
@@ -520,7 +524,7 @@ export class Quetes {
     this.dialogue = { pnj, texte: intro ?? def?.phrase ?? 'Bonne route, aventurier.',
       reponses: [...ds.map(id => ({ a: 'voir' as const, quete: id, texte: this.def(id).nom })),
         ...(def?.contrats ? [{ a: 'contrats' as const, texte: 'Le tableau des contrats.', detail: `${this.contratsLibres().length} à prendre` }] : []),
-        ...(def?.services ?? []).map(s => ({ a: 'service' as const, service: s.service, texte: s.texte })),
+        ...this.services(def),
         ...(dis && !ds.length ? [{ a: 'suite' as const, i: 0, texte: dis.reponse }] : []),
         { a: 'fermer', texte: def?.adieu ?? 'Au revoir.' }] };
   }
@@ -549,7 +553,7 @@ export class Quetes {
     if (!l[i]) { this.ouvrir(pnj, null); return; }
     if (def.gardien && !n) { this.ouvrir(pnj, l[i].texte); return; }   // le gardien répond, puis « Entrer » revient
     this.dialogue = { pnj, texte: l[i].texte, reponses: [...(n ? [{ a: 'suite' as const, i: i + 1, texte: n.reponse }] : []),
-      ...(def?.services ?? []).map(s => ({ a: 'service' as const, service: s.service, texte: s.texte })).slice(0, n ? 2 : 3),
+      ...this.services(def).slice(0, n ? 2 : 3),
       { a: 'fermer', texte: def?.adieu ?? 'Au revoir.' }] };
   }
   /** Le tableau des contrats (3C) : ceux du jour et celui de la semaine, ou « reviens demain ». */

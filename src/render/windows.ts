@@ -7,6 +7,14 @@ import { BUTIN_CSS, butinMonstre, dessinerPortraits, esc as escB, groupesBestiai
 import { PALIERS } from './carnet';
 import { CODEX_CSS, codexPageHtml } from './codexVue';
 import { nouveauPourCodex } from '../sim/codex';
+import { ALMANAX, effetTexte } from '../sim/almanax';
+/** Fenêtre de l'Almanax (15C). */
+const ALM_CSS = `.dw .win.almanax{width:420px}.dw .alm{padding:10px 14px 14px;display:flex;flex-direction:column;gap:6px}
+.dw .alm-d{font-family:Rowdies,serif;font-size:18px;color:#ffd27a;text-transform:capitalize;text-align:center}
+.dw .alm-b{background:rgba(255,210,122,.07);border:1px solid rgba(255,210,122,.25);border-radius:6px;padding:8px 10px}
+.dw .alm-b b{color:#ffe7b0}.dw .alm-b p{margin:4px 0 0;font-size:12px;opacity:.75;font-style:italic}
+.dw .alm-e{color:#b9e54b;font-weight:bold}.dw .alm-o{display:flex;gap:10px;align-items:center}.dw .alm-o small{display:block}
+.dw .alm-r{font-size:13px}.dw .alm-f{color:#b9e54b;text-align:center;padding:6px}.dw .alm .btn{align-self:center}`;
 import { FORGE_CSS, etatForge, forgeHtml, lotConcasseur, mmss, texteForge, type LigneLog } from './forgeVue';
 import { RUNES } from '../sim/forgemagie';
 import { LOOKS } from './looks';
@@ -511,7 +519,7 @@ const CSS = `
 .dw .ttl b{font-weight:700}
 `;
 
-type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap' | 'bestiaire' | 'forge' | 'coffre';
+type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap' | 'bestiaire' | 'forge' | 'coffre' | 'almanax';
 
 /** Fenêtres façon Dofus 3 : « Inventaire » (le perso sur son socle, ses emplacements autour, le sac à onglets)
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
@@ -568,7 +576,7 @@ export class Windows {
   private forge = etatForge();
 
   constructor(private world: World) {
-    const style = document.createElement('style'); style.textContent = CSS + ICON_CSS + BUTIN_CSS + FORGE_CSS + CODEX_CSS; document.head.appendChild(style);
+    const style = document.createElement('style'); style.textContent = ALM_CSS + CSS + ICON_CSS + BUTIN_CSS + FORGE_CSS + CODEX_CSS; document.head.appendChild(style);
     this.root = document.createElement('div'); this.root.className = 'dw'; document.body.appendChild(this.root);
     this.tip = document.createElement('div'); this.tip.className = 'tip'; this.tip.style.display = 'none'; this.root.appendChild(this.tip);
   }
@@ -611,7 +619,7 @@ export class Windows {
     else if (this.mode === 'car') this.renderCarac(); else if (this.mode === 'job') this.renderJob(); else if (this.mode === 'art') this.renderArt(); else if (this.mode === 'opt') this.renderOpt();
     else if (this.mode === 'sorts') this.renderSorts(); else if (this.mode === 'quetes') this.renderQuetes();
     else if (this.mode === 'succes') this.renderSucces(); else if (this.mode === 'emp') this.renderEmp(); else if (this.mode === 'zaap') this.renderZaap();
-    else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else if (this.mode === 'forge') this.renderForge(); else if (this.mode === 'coffre') this.renderCoffre(); else this.renderInv();
+    else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else if (this.mode === 'forge') this.renderForge(); else if (this.mode === 'coffre') this.renderCoffre(); else if (this.mode === 'almanax') this.renderAlmanax(); else this.renderInv();
     this.win!.querySelector('[data-close]')!.addEventListener('click', () => this.close());
   }
   private title(name: string, icon: string) {
@@ -1494,6 +1502,27 @@ export class Windows {
       tip(e, p.bag.find(b => b.uid === +e.dataset.cd!)!);
       e.addEventListener('click', () => { this.hideTip(); if (this.world.deposer(+e.dataset.cd!, o)) this.changed(); });
     });
+  }
+
+  /** Almanax (0.3, 15C) : le jour du calendrier officiel, son offrande et son bonus. */
+  private renderAlmanax() {
+    const w = this.win!, p = this.world.player, j = this.world.almanaxDuJour, fait = !!this.world.almanax;
+    const date = new Date(`${this.world.opts.aujourdhui ?? ''}T12:00`);
+    const titre = isNaN(+date) ? '' : date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+    if (!j) { w.innerHTML = `${this.title('Almanax', 'calendar')}<div class="in alm"><div class="hint">Pas d'Almanax aujourd'hui.</div></div>`; return; }
+    const r = ITEMS.resources[j.offrande], a = p.resources[j.offrande] ?? 0, ok = a >= j.n;
+    const pep = ALMANAX.pepites * (j.effet === 'pepites' ? 2 : 1);
+    w.innerHTML = `${this.title('Almanax', 'calendar')}<div class="in alm">
+      <div class="alm-d">${titre}</div>
+      <div class="alm-b"><b>${j.bonus}</b><p>${j.texte}</p></div>
+      <div class="sub2">Dans le jeu</div><div class="alm-e">${effetTexte(j.effet)}${j.effet === 'pepites' ? '' : ` · jusqu'à minuit`}</div>
+      <div class="sub2">Offrande</div>
+      <div class="alm-o"><div class="cell" title="${r?.name ?? ''}">${iconHtml(r?.icon ?? 0)}</div><div><b>${j.n} × ${r?.name ?? 'objet inconnu'}</b>
+        <small style="color:${ok ? '#b9e54b' : '#ff8a7a'}">tu en as ${a}</small>${j.officielle === false ? '<small class="hint">(remplace une offrande pas encore dans le jeu)</small>' : ''}</div></div>
+      <div class="alm-r">Récompense : ${pep} ${iconHtml(ITEMS.resources[PEPITE].icon)} + le bonus du jour</div>
+      ${fait ? '<div class="alm-f">Offrande faite. Le bonus est actif jusqu\'à minuit, reviens demain.</div>'
+        : `<span class="btn ${ok ? '' : 'off'}" data-offrir>Faire l'offrande</span>`}</div>`;
+    w.querySelector('[data-offrir]')?.addEventListener('click', () => { if (this.world.offrirAlmanax()) this.changed(); });
   }
 
   private renderEmp() {

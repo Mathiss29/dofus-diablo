@@ -119,6 +119,7 @@ export type SimEvent =
   | { k: 'recolteStop' }
   | { k: 'recolteNiveau'; metier: string; niveau: number }
   | { k: 'service'; service: string; pnj: string }
+  | { k: 'almanax'; bonus: string; pepites: number }
   | { k: 'lootKamas'; n: number }
   /** Sac plein : l'objet reste au sol. */
   | { k: 'bagFull' }

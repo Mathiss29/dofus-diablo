@@ -1,3 +1,4 @@
+import { ALMANAX } from './almanax';
 import type { CleDonjon } from './arene';
 import type { CommandeFM } from './forgemagie';
 import { Entity } from './entity';
@@ -79,6 +80,8 @@ export class Player extends Entity {
   ames: string[] = [];
   /** 8C : Codex ouvert (quête « Le premier pouvoir » finie, ou premier Légendaire trouvé). */
   codexOuvert = false;
+  /** 15C : jour (AAAA-MM-JJ) de la dernière offrande à l'Almanax ; son bonus dure jusqu'à minuit. */
+  almanaxJour: string | null = null;
   apparat: Partial<Record<'chapeau' | 'cape' | 'bouclier' | 'familier', string>> = {};
   /** Caractéristiques totales (points + équipement + panoplies), recalculées à chaque changement. */
   stats: Stats = {};
@@ -525,6 +528,7 @@ export class Player extends Entity {
   gainMetierXp(key: string, n: number, world: World) {
     const m = this.metiers[key] ??= { level: 1, xp: 0 };
     if (m.level >= METIER_MAX) return;
+    if (world.almanax?.effet === 'metier') n *= 1 + ALMANAX.metier;   // 15C
     m.xp += n;
     while (m.level < METIER_MAX && m.xp >= metierXpNeeded(m.level)) {
       m.xp -= metierXpNeeded(m.level); m.level++;

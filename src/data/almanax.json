@@ -1,0 +1,2807 @@
+{
+ "_": "Almanax du jour (0.3, 15C, tools/contenu/almanax.py) : calendrier officiel, bonus traduit en effet du jeu, offrande (officielle si elle est dans le jeu).",
+ "jours": {
+  "01-01": {
+   "bonus": "Jour de l'an",
+   "texte": "Onome attend les aventuriers qui veulent célébrer la nouvelle année près du temple de Xélor. Sa bénédiction accorde un sortilège temporaire, le bond du Début-Temps, que vous serez capable de lancer durant 12 heures.",
+   "effet": "pepites",
+   "offrande": "6913",
+   "n": 1,
+   "officielle": false
+  },
+  "01-02": {
+   "bonus": "Économie d'ingrédients",
+   "texte": "Les Paysans économisent 15 % de leurs ingrédients lorsqu'ils fabriquent des objets.",
+   "effet": "metier",
+   "offrande": "521",
+   "n": 4
+  },
+  "01-03": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 150 % dans le donjon de la Tempête de l'Eliocalypse.",
+   "effet": "pepites",
+   "offrande": "8131",
+   "n": 1,
+   "officielle": false
+  },
+  "01-04": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 75 % dans la zone des Larmes d'Ouronigride.",
+   "effet": "butin",
+   "offrande": "6914",
+   "n": 3,
+   "officielle": false
+  },
+  "01-05": {
+   "bonus": "Récolte abondante",
+   "texte": "Les quantités de Frostiz récupérées par les Paysans sont augmentées de 200 %.",
+   "effet": "recolte",
+   "offrande": "882",
+   "n": 10,
+   "officielle": false
+  },
+  "01-06": {
+   "bonus": "Quête répétable",
+   "texte": "Une quête répétable spéciale est disponible aujourd'hui près de l'atelier des paysans du village d'Amakna. Réalisable à partir du niveau 20, elle est indépendante de la quête d'offrande.",
+   "effet": "pepites",
+   "offrande": "8254",
+   "n": 6,
+   "officielle": false
+  },
+  "01-07": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 50 % sur les créatures de type Gadouilleux.",
+   "effet": "xp",
+   "offrande": "2663",
+   "n": 6,
+   "officielle": false
+  },
+  "01-08": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 150 % dans le donjon du Château Ensablé.",
+   "effet": "pepites",
+   "offrande": "13487",
+   "n": 6
+  },
+  "01-09": {
+   "bonus": "Objets de qualité",
+   "texte": "La qualité des objets fabriqués dans la ville de Bonta est augmentée.",
+   "effet": "fabrication",
+   "offrande": "8244",
+   "n": 1,
+   "officielle": false
+  },
+  "01-10": {
+   "bonus": "Efficacité des enclos",
+   "texte": "Dans les enclos, l'effet des abreuvoirs est doublé.",
+   "effet": "pepites",
+   "offrande": "362",
+   "n": 1,
+   "officielle": false
+  },
+  "01-11": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 50 % sur les créatures de type Dopeuls.",
+   "effet": "butin",
+   "offrande": "8214",
+   "n": 6,
+   "officielle": false
+  },
+  "01-12": {
+   "bonus": "Minerai abondant",
+   "texte": "Les quantités d'Argent récupérées par les Mineurs sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "2665",
+   "n": 10,
+   "officielle": false
+  },
+  "01-13": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 150 % dans les 4 zones des remparts du  Château Harebourg et dans la Tour de la Clepsydre.",
+   "effet": "pepites",
+   "offrande": "306",
+   "n": 2,
+   "officielle": false
+  },
+  "01-14": {
+   "bonus": "Bois abondant",
+   "texte": "Les quantités de Bois de Tremble récupérées par les Bûcherons sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "6794",
+   "n": 10,
+   "officielle": false
+  },
+  "01-15": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 50 % sur les créatures de type Bworks de Cania.",
+   "effet": "butin",
+   "offrande": "2576",
+   "n": 6,
+   "officielle": false
+  },
+  "01-16": {
+   "bonus": "Challenge supplémentaire",
+   "texte": "Un challenge supplémentaire est généré contre les monstres présents dans la zone de la Bordure de Brâkmar.",
+   "effet": "pepites",
+   "offrande": "6844",
+   "n": 6,
+   "officielle": false
+  },
+  "01-17": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 125 % sur les créatures de type Arak-haï.",
+   "effet": "pepites",
+   "offrande": "374",
+   "n": 2,
+   "officielle": false
+  },
+  "01-18": {
+   "bonus": "Pêche abondante",
+   "texte": "Les quantités de poissons récupérées par les Pêcheurs de tous niveaux sont augmentées de 100 %.",
+   "effet": "recolte",
+   "offrande": "603",
+   "n": 10
+  },
+  "01-19": {
+   "bonus": "Anomalies temporelles",
+   "texte": "Les gains d'expérience sont augmentés de 50 % dans toutes les zones influencées par une anomalie temporelle. De plus, les gains d'expérience et les chances d'obtenir du butin sont augmentés de 25 % dans la zone de Crocuzko.",
+   "effet": "pepites",
+   "offrande": "6910",
+   "n": 2,
+   "officielle": false
+  },
+  "01-20": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 50 % sur les créatures de type Rats Brâkmariens.",
+   "effet": "butin",
+   "offrande": "2322",
+   "n": 2,
+   "officielle": false
+  },
+  "01-21": {
+   "bonus": "Fabrication intensive",
+   "texte": "Pour chaque objet fabriqué, les Alchimistes ont 25 % de chances de créer un second objet.",
+   "effet": "metier",
+   "offrande": "428",
+   "n": 1,
+   "officielle": false
+  },
+  "01-22": {
+   "bonus": "Cueillette abondante",
+   "texte": "Les quantités d'Ortie récupérées par les Alchimistes sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "421",
+   "n": 10
+  },
+  "01-23": {
+   "bonus": "Forgemagie améliorée",
+   "texte": "Les Sculptemages ont 15 % de chances de ne pas consumer de rune lorsqu'ils améliorent une arme.",
+   "effet": "fabrication",
+   "offrande": "30681",
+   "n": 2,
+   "officielle": false
+  },
+  "01-24": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 150 % dans le donjon de la Clairière du Chêne Mou.",
+   "effet": "pepites",
+   "offrande": "400",
+   "n": 2,
+   "officielle": false
+  },
+  "01-25": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 75 % dans la zone du Cimetière Primitif.",
+   "effet": "xp",
+   "offrande": "6908",
+   "n": 5,
+   "officielle": false
+  },
+  "01-26": {
+   "bonus": "Bois abondant",
+   "texte": "Les quantités de Bois de Chêne récupérées par les Bûcherons sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "460",
+   "n": 10
+  },
+  "01-27": {
+   "bonus": "Fabrication intensive",
+   "texte": "Pour chaque objet fabriqué, les Paysans ont 25 % de chances de créer un second objet.",
+   "effet": "metier",
+   "offrande": "528",
+   "n": 4
+  },
+  "01-28": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 150 % dans le donjon du Repaire de Sphincter Cell.",
+   "effet": "pepites",
+   "offrande": "6898",
+   "n": 2,
+   "officielle": false
+  },
+  "01-29": {
+   "bonus": "Challenge supplémentaire",
+   "texte": "Un challenge supplémentaire est généré contre les monstres présents dans la zone du Coin des Bouftous.",
+   "effet": "pepites",
+   "offrande": "384",
+   "n": 6
+  },
+  "01-30": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 50 % sur les créatures de type Bandits d'Amakna, dont les Artisans sombres.",
+   "effet": "butin",
+   "offrande": "2425",
+   "n": 6,
+   "officielle": false
+  },
+  "01-31": {
+   "bonus": "Cueillette abondante",
+   "texte": "Les quantités de Menthe Sauvage récupérées par les Alchimistes sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "380",
+   "n": 10
+  },
+  "02-01": {
+   "bonus": "Points d'expérience et butin en larmes",
+   "texte": "Les gains d'expérience lors des combats contre les monstres et les chances d'obtenir du butin sont augmentés de 50 % pour tous les aventuriers qui sont sous l'influence d'une Idole de Tolgnas.",
+   "effet": "xp",
+   "offrande": "373",
+   "n": 1,
+   "officielle": false
+  },
+  "02-02": {
+   "bonus": "La Grande Bouffe",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 125 % sur toutes les créatures considérées comme des Bouftous, y compris les boufmouths et les boufcouls. De plus, les gains d'expérience sont augmentés de 50 % pour les Chasseurs, les Paysans et les Pêcheurs.",
+   "effet": "pepites",
+   "offrande": "16501",
+   "n": 2,
+   "officielle": false
+  },
+  "02-03": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 50 % sur les créatures de type Magik Riktus.",
+   "effet": "xp",
+   "offrande": "441",
+   "n": 6,
+   "officielle": false
+  },
+  "02-04": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 75 % dans la zone des Crocs de verre.",
+   "effet": "butin",
+   "offrande": "6913",
+   "n": 2,
+   "officielle": false
+  },
+  "02-05": {
+   "bonus": "Percepteurs avides",
+   "texte": "Le butin généré par les Percepteurs est augmenté de 200 % dans les donjons de niveau 80 à 110.",
+   "effet": "pepites",
+   "offrande": "373",
+   "n": 6,
+   "officielle": false
+  },
+  "02-06": {
+   "bonus": "Économie d'ingrédients",
+   "texte": "Les Forgerons économisent 15 % de leurs ingrédients lorsqu'ils fabriquent des objets.",
+   "effet": "metier",
+   "offrande": "364",
+   "n": 2,
+   "officielle": false
+  },
+  "02-07": {
+   "bonus": "Anomalies temporelles",
+   "texte": "Les gains d'expérience sont augmentés de 50 % dans toutes les zones influencées par une anomalie temporelle. De plus, les gains d'expérience et les chances d'obtenir du butin sont augmentés de 25 % dans la zone du Bord de la Forêt Maléfique.",
+   "effet": "pepites",
+   "offrande": "885",
+   "n": 6,
+   "officielle": false
+  },
+  "02-08": {
+   "bonus": "Bois abondant",
+   "texte": "Les quantités de Bois de Frêne récupérées par les Bûcherons sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "303",
+   "n": 10
+  },
+  "02-09": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 100 % dans le donjon de la Grotte de Kanigroula.",
+   "effet": "butin",
+   "offrande": "1672",
+   "n": 2,
+   "officielle": false
+  },
+  "02-10": {
+   "bonus": "Montures endurantes",
+   "texte": "Toutes les montures qui naissent ce jour auront la capacité Endurante.",
+   "effet": "pepites",
+   "offrande": "13487",
+   "n": 6,
+   "officielle": false
+  },
+  "02-11": {
+   "bonus": "Pêche abondante",
+   "texte": "Les quantités de Bar Rikain et de Tanche récupérées par les Pêcheurs sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "6899",
+   "n": 10,
+   "officielle": false
+  },
+  "02-12": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 125 % sur les créatures de type Mulous.",
+   "effet": "pepites",
+   "offrande": "441",
+   "n": 5,
+   "officielle": false
+  },
+  "02-13": {
+   "bonus": "Minerai abondant",
+   "texte": "Les quantités de Cuivre récupérées par les Mineurs sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "441",
+   "n": 10
+  },
+  "02-14": {
+   "bonus": "Expérience amoureuse",
+   "texte": "Tous les personnages atteints par la Malédiction du Ballotin voient leurs gains d'expérience augmentés de 100 % lors des combats contre les monstres.",
+   "effet": "xp",
+   "offrande": "9472",
+   "n": 9
+  },
+  "02-15": {
+   "bonus": "Coffre au trésor",
+   "texte": "Une quête de chasse au trésor de Güss est disponible aujourd'hui auprès de Dhain, à la Malle aux trésors.",
+   "effet": "butin",
+   "offrande": "6843",
+   "n": 1,
+   "officielle": false
+  },
+  "02-16": {
+   "bonus": "Économie d'ingrédients",
+   "texte": "Les Chasseurs économisent 15 % de leurs ingrédients lorsqu'ils fabriquent des objets.",
+   "effet": "metier",
+   "offrande": "17169",
+   "n": 6
+  },
+  "02-17": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 50 % sur les créatures de type Fungus.",
+   "effet": "butin",
+   "offrande": "6910",
+   "n": 1,
+   "officielle": false
+  },
+  "02-18": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 50 % sur les créatures de type Abraknydiens Sombres.",
+   "effet": "xp",
+   "offrande": "8233",
+   "n": 6,
+   "officielle": false
+  },
+  "02-19": {
+   "bonus": "Pêche abondante",
+   "texte": "Les quantités de Poisson-Chaton et de Carpe d'Iem récupérées par les Pêcheurs sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "6900",
+   "n": 10,
+   "officielle": false
+  },
+  "02-20": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 150 % dans les zones du Feuillage et du Tronc de l'arbre Hakam.",
+   "effet": "pepites",
+   "offrande": "6845",
+   "n": 3,
+   "officielle": false
+  },
+  "02-21": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 75 % dans les zones du Village des Bworks et du Campement des Bworks.",
+   "effet": "butin",
+   "offrande": "8682",
+   "n": 9,
+   "officielle": false
+  },
+  "02-22": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 75 % dans la zone du Sanctuaire des Dragoeufs.",
+   "effet": "xp",
+   "offrande": "17126",
+   "n": 5,
+   "officielle": false
+  },
+  "02-23": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 150 % dans le donjon du Tertre du long sommeil.",
+   "effet": "pepites",
+   "offrande": "8253",
+   "n": 2,
+   "officielle": false
+  },
+  "02-24": {
+   "bonus": "Challenge supplémentaire",
+   "texte": "Un challenge supplémentaire est généré contre les monstres présents dans les salles de la Base Abyssale.",
+   "effet": "pepites",
+   "offrande": "2659",
+   "n": 2,
+   "officielle": false
+  },
+  "02-25": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 100 % dans le donjon du Manoir de Katrepat.",
+   "effet": "butin",
+   "offrande": "2419",
+   "n": 1,
+   "officielle": false
+  },
+  "02-26": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 125 % sur les créatures de type Marteaux-Aigris.",
+   "effet": "pepites",
+   "offrande": "2428",
+   "n": 2,
+   "officielle": false
+  },
+  "02-27": {
+   "bonus": "Gibier abondant",
+   "texte": "Les quantités de Viande Saignante et de Viande Persillée récupérées par les Chasseurs sont augmentées de 125 %.",
+   "effet": "gibier",
+   "offrande": "16525",
+   "n": 4,
+   "officielle": false
+  },
+  "02-28": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 100 % dans le donjon de l'Arbre de Moon.",
+   "effet": "xp",
+   "offrande": "8230",
+   "n": 3,
+   "officielle": false
+  },
+  "02-29": {
+   "bonus": "Points d'expérience et butin pour tous",
+   "texte": "Les gains d'expérience et les chances d'obtenir du butin sont augmentés de 75 % lors des combats contre les monstres. De plus, les gains d'expérience sont augmentés de 50 % pour tous les métiers.",
+   "effet": "xp",
+   "offrande": "13494",
+   "n": 6
+  },
+  "03-01": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-02": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-03": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-04": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-05": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-06": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-07": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-08": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-09": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-10": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-11": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-12": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-13": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-14": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-15": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-16": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-17": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-18": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-19": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-20": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-21": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-22": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-23": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-24": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-25": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-26": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-27": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-28": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-29": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-30": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "03-31": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "04-01": {
+   "bonus": "Quête répétable et chocomania",
+   "texte": "Une quête répétable spéciale est disponible aujourd'hui près du sanctuaire des Zobals. Réalisable à partir du niveau 20, elle est indépendante de la quête d'offrande. De plus, les gains d'expérience et les chances d'obtenir du butin sont augmentés de 30 % dans toutes les zones de l'Île de Pwâk.",
+   "effet": "pepites",
+   "offrande": "885",
+   "n": 1,
+   "officielle": false
+  },
+  "04-02": {
+   "bonus": "Challenge supplémentaire",
+   "texte": "Un challenge supplémentaire est généré contre les monstres présents dans la zone du Territoire Cacterre.",
+   "effet": "pepites",
+   "offrande": "8213",
+   "n": 5,
+   "officielle": false
+  },
+  "04-03": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 75 % dans la zone du Mont des Tombeaux.",
+   "effet": "xp",
+   "offrande": "1844",
+   "n": 3,
+   "officielle": false
+  },
+  "04-04": {
+   "bonus": "Quête répétable et chocomania",
+   "texte": "Une quête répétable spéciale est disponible aujourd'hui près du sanctuaire des Zobals. Réalisable à partir du niveau 20, elle est indépendante de la quête d'offrande. De plus, les gains d'expérience et les chances d'obtenir du butin sont augmentés de 30 % dans toutes les zones de l'Île de Pwâk.",
+   "effet": "pepites",
+   "offrande": "16525",
+   "n": 1,
+   "officielle": false
+  },
+  "04-05": {
+   "bonus": "Quête répétable et chocomania",
+   "texte": "Une quête répétable spéciale est disponible aujourd'hui près du sanctuaire des Zobals. Réalisable à partir du niveau 20, elle est indépendante de la quête d'offrande. De plus, les gains d'expérience et les chances d'obtenir du butin sont augmentés de 30 % dans toutes les zones de l'Île de Pwâk.",
+   "effet": "pepites",
+   "offrande": "363",
+   "n": 1,
+   "officielle": false
+  },
+  "04-06": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 75 % dans la zone des Hauts des Hurlements.",
+   "effet": "butin",
+   "offrande": "2270",
+   "n": 5,
+   "officielle": false
+  },
+  "04-07": {
+   "bonus": "Récolte abondante",
+   "texte": "Les quantités d'Orge récupérées par les Paysans sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "400",
+   "n": 10
+  },
+  "04-08": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 75 % dans la zone de la Plage de la Tortue.",
+   "effet": "xp",
+   "offrande": "2574",
+   "n": 6,
+   "officielle": false
+  },
+  "04-09": {
+   "bonus": "Quête répétable et chocomania",
+   "texte": "Une quête répétable spéciale est disponible aujourd'hui près du sanctuaire des Zobals. Réalisable à partir du niveau 20, elle est indépendante de la quête d'offrande. De plus, les gains d'expérience et les chances d'obtenir du butin sont augmentés de 30 % dans toutes les zones de l'Île de Pwâk.",
+   "effet": "pepites",
+   "offrande": "8214",
+   "n": 1,
+   "officielle": false
+  },
+  "04-10": {
+   "bonus": "Efficacité des enclos",
+   "texte": "Dans les enclos, l'effet des baffeurs est doublé.",
+   "effet": "pepites",
+   "offrande": "288",
+   "n": 2,
+   "officielle": false
+  },
+  "04-11": {
+   "bonus": "Anomalies temporelles",
+   "texte": "Les gains d'expérience sont augmentés de 50 % dans toutes les zones influencées par une anomalie temporelle. De plus, les gains d'expérience et les chances d'obtenir du butin sont augmentés de 25 % dans la zone du Lac de Cania.",
+   "effet": "pepites",
+   "offrande": "8243",
+   "n": 6,
+   "officielle": false
+  },
+  "04-12": {
+   "bonus": "Quête répétable et chocomania",
+   "texte": "Une quête répétable spéciale est disponible aujourd'hui près du sanctuaire des Zobals. Réalisable à partir du niveau 20, elle est indépendante de la quête d'offrande. De plus, les gains d'expérience et les chances d'obtenir du butin sont augmentés de 30 % dans toutes les zones de l'Île de Pwâk.",
+   "effet": "pepites",
+   "offrande": "2491",
+   "n": 1,
+   "officielle": false
+  },
+  "04-13": {
+   "bonus": "Quête répétable et chocomania",
+   "texte": "Une quête répétable spéciale est disponible aujourd'hui près du sanctuaire des Zobals. Réalisable à partir du niveau 20, elle est indépendante de la quête d'offrande. De plus, les gains d'expérience et les chances d'obtenir du butin sont augmentés de 30 % dans toutes les zones de l'Île de Pwâk.",
+   "effet": "pepites",
+   "offrande": "2661",
+   "n": 1,
+   "officielle": false
+  },
+  "04-14": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 100 % dans le Nid du Kwakwa.",
+   "effet": "butin",
+   "offrande": "652",
+   "n": 4,
+   "officielle": false
+  },
+  "04-15": {
+   "bonus": "Fabrication intensive",
+   "texte": "Pour chaque objet fabriqué, les Bricoleurs ont 25 % de chances de créer un second objet.",
+   "effet": "metier",
+   "offrande": "8437",
+   "n": 1
+  },
+  "04-16": {
+   "bonus": "Quête répétable et chocomania",
+   "texte": "Une quête répétable spéciale est disponible aujourd'hui près du sanctuaire des Zobals. Réalisable à partir du niveau 20, elle est indépendante de la quête d'offrande. De plus, les gains d'expérience et les chances d'obtenir du butin sont augmentés de 30 % dans toutes les zones de l'Île de Pwâk.",
+   "effet": "pepites",
+   "offrande": "8157",
+   "n": 1,
+   "officielle": false
+  },
+  "04-17": {
+   "bonus": "Quête répétable et chocomania",
+   "texte": "Une quête répétable spéciale est disponible aujourd'hui près du sanctuaire des Zobals. Réalisable à partir du niveau 20, elle est indépendante de la quête d'offrande. De plus, les gains d'expérience et les chances d'obtenir du butin sont augmentés de 30 % dans toutes les zones de l'Île de Pwâk.",
+   "effet": "pepites",
+   "offrande": "8157",
+   "n": 1,
+   "officielle": false
+  },
+  "04-18": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 100 % dans le donjon des Salons privés de Klime.",
+   "effet": "xp",
+   "offrande": "6909",
+   "n": 2,
+   "officielle": false
+  },
+  "04-19": {
+   "bonus": "Minerai abondant",
+   "texte": "Les quantités d'Or récupérées par les Mineurs sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "6913",
+   "n": 10,
+   "officielle": false
+  },
+  "04-20": {
+   "bonus": "Quête répétable et chocomania",
+   "texte": "Une quête répétable spéciale est disponible aujourd'hui près du sanctuaire des Zobals. Réalisable à partir du niveau 20, elle est indépendante de la quête d'offrande. De plus, les gains d'expérience et les chances d'obtenir du butin sont augmentés de 30 % dans toutes les zones de l'Île de Pwâk.",
+   "effet": "pepites",
+   "offrande": "652",
+   "n": 1,
+   "officielle": false
+  },
+  "04-21": {
+   "bonus": "Quête répétable et chocomania",
+   "texte": "Une quête répétable spéciale est disponible aujourd'hui près du sanctuaire des Zobals. Réalisable à partir du niveau 20, elle est indépendante de la quête d'offrande. De plus, les gains d'expérience et les chances d'obtenir du butin sont augmentés de 30 % dans toutes les zones de l'Île de Pwâk.",
+   "effet": "pepites",
+   "offrande": "16525",
+   "n": 1,
+   "officielle": false
+  },
+  "04-22": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 50 % sur les créatures de type Monstres des ruines sous-marines.",
+   "effet": "butin",
+   "offrande": "383",
+   "n": 2,
+   "officielle": false
+  },
+  "04-23": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 50 % sur les créatures de type Monstres des Tourbières.",
+   "effet": "xp",
+   "offrande": "2467",
+   "n": 5,
+   "officielle": false
+  },
+  "04-24": {
+   "bonus": "Challenge supplémentaire",
+   "texte": "Un challenge supplémentaire est généré contre les monstres présents dans la zone de la Montagne des Craqueleurs.",
+   "effet": "pepites",
+   "offrande": "388",
+   "n": 1,
+   "officielle": false
+  },
+  "04-25": {
+   "bonus": "Gibier abondant",
+   "texte": "Les quantités de Viande Rassie et de Viande Exsudative récupérées par les Chasseurs sont augmentées de 125 %.",
+   "effet": "gibier",
+   "offrande": "2322",
+   "n": 6,
+   "officielle": false
+  },
+  "04-26": {
+   "bonus": "Quêtes et kamas",
+   "texte": "Les gains de kamas sont augmentés de 100 % pour toutes les quêtes.",
+   "effet": "pepites",
+   "offrande": "2662",
+   "n": 1,
+   "officielle": false
+  },
+  "04-27": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 125 % sur les créatures de type Ruffians de Cania.",
+   "effet": "pepites",
+   "offrande": "6900",
+   "n": 6,
+   "officielle": false
+  },
+  "04-28": {
+   "bonus": "Minerai abondant",
+   "texte": "Les quantités de minerai récupérées par les Mineurs de tous niveaux sont augmentées de 100 %.",
+   "effet": "recolte",
+   "offrande": "8126",
+   "n": 1,
+   "officielle": false
+  },
+  "04-29": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 50 % sur les créatures de type Tofus et Gros Tofus.",
+   "effet": "butin",
+   "offrande": "2419",
+   "n": 6,
+   "officielle": false
+  },
+  "04-30": {
+   "bonus": "Cueillette abondante",
+   "texte": "Les quantités de Plantes récupérées par les Alchimistes de tous niveaux sont augmentées de 100 %.",
+   "effet": "recolte",
+   "offrande": "473",
+   "n": 10,
+   "officielle": false
+  },
+  "05-01": {
+   "bonus": "Fabrique Féérique",
+   "texte": "Les gains d'expérience sont augmentés de 50 % pour tous les métiers. De plus, pour chaque Fée d'Artifice fabriquée, les personnages ont 25 % de chances de créer une seconde Fée et 15 % de chances d'économiser des ingrédients. Ils peuvent aussi récupérer 2 fois plus de Capsules Explosives en combattant des Bworks Mages.",
+   "effet": "pepites",
+   "offrande": "2414",
+   "n": 2,
+   "officielle": false
+  },
+  "05-02": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 100 % dans le donjon du Temple du Grand Ougah.",
+   "effet": "xp",
+   "offrande": "652",
+   "n": 1,
+   "officielle": false
+  },
+  "05-03": {
+   "bonus": "Anomalies temporelles",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 % dans toutes les zones influencées par une anomalie temporelle. De plus, les gains d'expérience et les chances d'obtenir du butin sont augmentés de 25 % dans la zone du Cirque de Cania.",
+   "effet": "pepites",
+   "offrande": "2665",
+   "n": 4,
+   "officielle": false
+  },
+  "05-04": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 50 % sur les créatures de type Gobelins d'Amakna.",
+   "effet": "butin",
+   "offrande": "1690",
+   "n": 6,
+   "officielle": false
+  },
+  "05-05": {
+   "bonus": "Challenge supplémentaire",
+   "texte": "Un challenge supplémentaire est généré contre les monstres présents dans la zone des Plaines Rocheuses.",
+   "effet": "pepites",
+   "offrande": "2422",
+   "n": 6,
+   "officielle": false
+  },
+  "05-06": {
+   "bonus": "Bois abondant",
+   "texte": "Les quantités de Bombu et d'Érable récupérées par les Bûcherons sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "471",
+   "n": 10
+  },
+  "05-07": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 150 % dans les donjons de la Tour de Solar et de la Tour de Bethel.",
+   "effet": "pepites",
+   "offrande": "17125",
+   "n": 1,
+   "officielle": false
+  },
+  "05-08": {
+   "bonus": "Quête répétable",
+   "texte": "Une quête répétable spéciale est disponible aujourd'hui près du château d'Amakna. Réalisable à partir du niveau 20, elle est indépendante de la quête d'offrande.",
+   "effet": "pepites",
+   "offrande": "2455",
+   "n": 10,
+   "officielle": false
+  },
+  "05-09": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 75 % dans la zone du Canyon Sauvage.",
+   "effet": "butin",
+   "offrande": "6900",
+   "n": 6,
+   "officielle": false
+  },
+  "05-10": {
+   "bonus": "Économie d'ingrédients",
+   "texte": "Les Éleveurs économisent 15 % de leurs ingrédients lorsqu'ils fabriquent des objets.",
+   "effet": "metier",
+   "offrande": "363",
+   "n": 5,
+   "officielle": false
+  },
+  "05-11": {
+   "bonus": "Expérience des métiers",
+   "texte": "Les gains d'expérience sont augmentés de 50 % pour les métiers de forgemagie d'armes (Forgemage et Sculptemage).",
+   "effet": "metier",
+   "offrande": "13502",
+   "n": 1,
+   "officielle": false
+  },
+  "05-12": {
+   "bonus": "Récolte abondante",
+   "texte": "Les quantités de Malt récupérées par les Paysans sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "8229",
+   "n": 10,
+   "officielle": false
+  },
+  "05-13": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 150 % dans le donjon du Repaire de Skeunk.",
+   "effet": "pepites",
+   "offrande": "8257",
+   "n": 1,
+   "officielle": false
+  },
+  "05-14": {
+   "bonus": "Objets de qualité",
+   "texte": "La qualité des objets fabriqués dans le village et la forêt d'Amakna est augmentée.",
+   "effet": "fabrication",
+   "offrande": "8157",
+   "n": 1,
+   "officielle": false
+  },
+  "05-15": {
+   "bonus": "Cadeaux Surprises",
+   "texte": "Des Boufballes Surprises ont été ajoutées aux butins des monstres. Lorsqu'elles sont utilisées, elles permettent d'obtenir des Bouf'gommes de différents parfums.",
+   "effet": "butin",
+   "offrande": "641",
+   "n": 2,
+   "officielle": false
+  },
+  "05-16": {
+   "bonus": "Apparition des ressources",
+   "texte": "La vitesse d'apparition des fleurs et des plantes cueillies par les Alchimistes est augmentée de 100 %.",
+   "effet": "recolte",
+   "offrande": "8214",
+   "n": 10,
+   "officielle": false
+  },
+  "05-17": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 50 % sur les créatures de type Monstres des Tourbières.",
+   "effet": "butin",
+   "offrande": "2411",
+   "n": 1,
+   "officielle": false
+  },
+  "05-18": {
+   "bonus": "Anomalies temporelles",
+   "texte": "Le butin généré par les Percepteurs est augmenté de 100 % dans toutes les zones influencées par une anomalie temporelle. De plus, les gains d'expérience et les chances d'obtenir du butin sont augmentés de 25 % dans la zone de Plantala.",
+   "effet": "pepites",
+   "offrande": "450",
+   "n": 3,
+   "officielle": false
+  },
+  "05-19": {
+   "bonus": "Minerai abondant",
+   "texte": "Les quantités d'Étain et de Silicate récupérées par les Mineurs sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "444",
+   "n": 10
+  },
+  "05-20": {
+   "bonus": "Économie d'ingrédients",
+   "texte": "Les Façonneurs économisent 15 % de leurs ingrédients lorsqu'ils fabriquent des objets.",
+   "effet": "metier",
+   "offrande": "8234",
+   "n": 1,
+   "officielle": false
+  },
+  "05-21": {
+   "bonus": "Expérience des métiers",
+   "texte": "Les gains d'expérience sont augmentés de 50 % pour les métiers de fabrication de vêtements et de parures (Bijoutier, Cordonnier et Tailleur).",
+   "effet": "metier",
+   "offrande": "6795",
+   "n": 1
+  },
+  "05-22": {
+   "bonus": "Expérience des quêtes",
+   "texte": "Les gains d'expérience sont augmentés de 100 % pour toutes les quêtes.",
+   "effet": "xp",
+   "offrande": "8255",
+   "n": 1,
+   "officielle": false
+  },
+  "05-23": {
+   "bonus": "Pêche abondante",
+   "texte": "Les quantités de Brochet, de Perche et de Lotte récupérées par les Pêcheurs sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "6797",
+   "n": 10,
+   "officielle": false
+  },
+  "05-24": {
+   "bonus": "Apparition des ressources",
+   "texte": "La vitesse d'apparition des ressources est augmentée de 150 % dans la zone des Champs de Cania.",
+   "effet": "recolte",
+   "offrande": "532",
+   "n": 10
+  },
+  "05-25": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 75 % dans la zone des Plaines Herbeuses.",
+   "effet": "xp",
+   "offrande": "8244",
+   "n": 5,
+   "officielle": false
+  },
+  "05-26": {
+   "bonus": "Challenge supplémentaire",
+   "texte": "Un challenge supplémentaire est généré contre les monstres présents dans la zone du Labyrinthe du Minotoror.",
+   "effet": "pepites",
+   "offrande": "309",
+   "n": 4,
+   "officielle": false
+  },
+  "05-27": {
+   "bonus": "Fabrication intensive",
+   "texte": "Pour chaque objet fabriqué, les Pêcheurs ont 25 % de chances de créer un second objet.",
+   "effet": "metier",
+   "offrande": "8127",
+   "n": 2,
+   "officielle": false
+  },
+  "05-28": {
+   "bonus": "Gibier abondant",
+   "texte": "Les quantités de Viande Sanguinolente récupérées par les Chasseurs sont augmentées de 125%.",
+   "effet": "gibier",
+   "offrande": "8124",
+   "n": 6,
+   "officielle": false
+  },
+  "05-29": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 75 % dans les zones du Cimetière des Torturés et du Cimetière des Héros.",
+   "effet": "xp",
+   "offrande": "8257",
+   "n": 6,
+   "officielle": false
+  },
+  "05-30": {
+   "bonus": "Forgemagie améliorée",
+   "texte": "Les Forgemages ont 15 % de chances de ne pas consumer de rune lorsqu'ils améliorent une arme.",
+   "effet": "fabrication",
+   "offrande": "2662",
+   "n": 3,
+   "officielle": false
+  },
+  "05-31": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 100 % dans le donjon de l'Antre du Korriandre.",
+   "effet": "butin",
+   "offrande": "8230",
+   "n": 3,
+   "officielle": false
+  },
+  "06-01": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-02": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-03": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-04": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-05": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-06": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-07": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-08": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-09": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-10": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-11": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-12": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-13": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-14": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-15": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-16": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-17": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-18": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-19": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-20": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-21": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-22": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-23": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-24": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-25": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-26": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-27": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-28": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-29": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "06-30": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "07-01": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 50 % sur les créatures de type Dragoss.",
+   "effet": "butin",
+   "offrande": "8223",
+   "n": 5,
+   "officielle": false
+  },
+  "07-02": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 150 % dans le donjon du Tofulailler Royal.",
+   "effet": "pepites",
+   "offrande": "2270",
+   "n": 1,
+   "officielle": false
+  },
+  "07-03": {
+   "bonus": "Économie d'ingrédients",
+   "texte": "Les Alchimistes ont 15 % de chances d'économiser des ingrédients lorsqu'ils fabriquent des objets.",
+   "effet": "metier",
+   "offrande": "16404",
+   "n": 3
+  },
+  "07-04": {
+   "bonus": "Rêve amaknéen",
+   "texte": "Les gains d'expérience et les chances d'obtenir du butin sont augmentés de 50 % sur tous les monstres présents dans les zones du royaume d'Amakna. De plus, un bonus de 75 % est ajouté aux chances d'obtenir du butin dans les Songes.",
+   "effet": "pepites",
+   "offrande": "8259",
+   "n": 4,
+   "officielle": false
+  },
+  "07-05": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 100 % dans le donjon de l'Atelier du Tanukouï San.",
+   "effet": "butin",
+   "offrande": "17126",
+   "n": 2,
+   "officielle": false
+  },
+  "07-06": {
+   "bonus": "Pêche abondante",
+   "texte": "Les quantités de Goujon et de Truite récupérées par les Pêcheurs sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "1844",
+   "n": 10
+  },
+  "07-07": {
+   "bonus": "Récolte abondante",
+   "texte": "Les quantités de Maïs et de Millet récupérées par les Paysans sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "450",
+   "n": 10,
+   "officielle": false
+  },
+  "07-08": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 50 % sur les créatures de type Pirates de Moon.",
+   "effet": "xp",
+   "offrande": "641",
+   "n": 2,
+   "officielle": false
+  },
+  "07-09": {
+   "bonus": "Forgemagie améliorée",
+   "texte": "Les Cordomages ont 15 % de chances de ne pas consumer de rune lorsqu'ils améliorent un objet.",
+   "effet": "fabrication",
+   "offrande": "6911",
+   "n": 2,
+   "officielle": false
+  },
+  "07-10": {
+   "bonus": "Montures amoureuses",
+   "texte": "Toutes les montures qui naissent ce jour auront la capacité Amoureuse.",
+   "effet": "pepites",
+   "offrande": "641",
+   "n": 1,
+   "officielle": false
+  },
+  "07-11": {
+   "bonus": "Minerai abondant",
+   "texte": "Les quantités de Bauxite récupérées par les Mineurs sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "8254",
+   "n": 10,
+   "officielle": false
+  },
+  "07-12": {
+   "bonus": "Challenge supplémentaire",
+   "texte": "Un challenge supplémentaire est généré contre les créatures de type Clan Martegel.",
+   "effet": "pepites",
+   "offrande": "407",
+   "n": 2,
+   "officielle": false
+  },
+  "07-13": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 100 % dans le donjon de la Vallée de la Dame des eaux.",
+   "effet": "butin",
+   "offrande": "6844",
+   "n": 2,
+   "officielle": false
+  },
+  "07-14": {
+   "bonus": "Expérience du Kolizéum",
+   "texte": "Les gains d'expérience sont augmentés de 75 % lors des combats du Kolizéum.",
+   "effet": "xp",
+   "offrande": "2574",
+   "n": 6,
+   "officielle": false
+  },
+  "07-15": {
+   "bonus": "Gibier abondant",
+   "texte": "Les quantités de Viande Goûtue récupérées par les Chasseurs sont augmentées de 125 %.",
+   "effet": "gibier",
+   "offrande": "6797",
+   "n": 2,
+   "officielle": false
+  },
+  "07-16": {
+   "bonus": "Anomalies temporelles",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 50 % dans toutes les zones influencées par une anomalie temporelle. De plus, les gains d'expérience et les chances d'obtenir du butin sont augmentés de 25 % dans les zones des forêts de Vulkania.",
+   "effet": "pepites",
+   "offrande": "6845",
+   "n": 2,
+   "officielle": false
+  },
+  "07-17": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 75 % dans la zone des Prairies d'Astrub.",
+   "effet": "xp",
+   "offrande": "364",
+   "n": 6
+  },
+  "07-18": {
+   "bonus": "Concassage",
+   "texte": "Pour chaque rune obtenue en brisant des objets, les concasseurs ont 10 % de chances de créer une seconde rune.",
+   "effet": "pepites",
+   "offrande": "6912",
+   "n": 1,
+   "officielle": false
+  },
+  "07-19": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 100 % dans le donjon du Palais de Dantinea.",
+   "effet": "xp",
+   "offrande": "6898",
+   "n": 1,
+   "officielle": false
+  },
+  "07-20": {
+   "bonus": "Apparition des ressources",
+   "texte": "La vitesse d'apparition des céréales récoltées par les Paysans est augmentée de 100 %.",
+   "effet": "recolte",
+   "offrande": "389",
+   "n": 1
+  },
+  "07-21": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 50 % sur les créatures de type Gobelins de Sakaï.",
+   "effet": "butin",
+   "offrande": "8254",
+   "n": 1,
+   "officielle": false
+  },
+  "07-22": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 75 % dans les zones du Port de givre et de La Bourgade.",
+   "effet": "xp",
+   "offrande": "2419",
+   "n": 3,
+   "officielle": false
+  },
+  "07-23": {
+   "bonus": "Expérience des familiers",
+   "texte": "Les gains d'expérience des familiers sont augmentés de 50 %.",
+   "effet": "xp",
+   "offrande": "885",
+   "n": 1,
+   "officielle": false
+  },
+  "07-24": {
+   "bonus": "Bois abondant",
+   "texte": "Les quantités de Bambou Sacré et d'Orme récupérées par les Bûcherons sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "470",
+   "n": 10
+  },
+  "07-25": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 150 % dans la zone de Gisgoul.",
+   "effet": "pepites",
+   "offrande": "288",
+   "n": 3,
+   "officielle": false
+  },
+  "07-26": {
+   "bonus": "Challenge supplémentaire",
+   "texte": "Un challenge supplémentaire est généré contre les monstres présents dans les zones de l'Orée enchantée et du Dédale du Dark Vlad.",
+   "effet": "pepites",
+   "offrande": "8242",
+   "n": 3,
+   "officielle": false
+  },
+  "07-27": {
+   "bonus": "Gibier abondant",
+   "texte": "Les quantités de Viande Hachée et de Viande Faisandée récupérées par les Chasseurs sont augmentées de 125 %.",
+   "effet": "gibier",
+   "offrande": "17168",
+   "n": 6
+  },
+  "07-28": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 100 % dans le donjon du Dojo du Vent.",
+   "effet": "xp",
+   "offrande": "8219",
+   "n": 4,
+   "officielle": false
+  },
+  "07-29": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 100 % dans le donjon de laCaverne d'El Piko.",
+   "effet": "butin",
+   "offrande": "6796",
+   "n": 2,
+   "officielle": false
+  },
+  "07-30": {
+   "bonus": "Troollez manège",
+   "texte": "Les gains d'expérience et les chances d'obtenir du butin sont augmentés de 100 % dans le donjon de la Maison Fantôme. De plus, Leonzi Trool attend les aventuriers à la Foire du Trool. Sa bénédiction permet de trooller à tout va (bonus d'initiative et coups critiques durant 15 combats).",
+   "effet": "pepites",
+   "offrande": "364",
+   "n": 3,
+   "officielle": false
+  },
+  "07-31": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 50 % sur les créatures de type Chassouilleurs.",
+   "effet": "xp",
+   "offrande": "6789",
+   "n": 2,
+   "officielle": false
+  },
+  "08-01": {
+   "bonus": "Cueillette abondante",
+   "texte": "Les quantités de Sauge récupérées par les Alchimistes sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "428",
+   "n": 10
+  },
+  "08-02": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 125 % sur les créatures de type Truches.",
+   "effet": "pepites",
+   "offrande": "2662",
+   "n": 4,
+   "officielle": false
+  },
+  "08-03": {
+   "bonus": "Quête répétable",
+   "texte": "Une quête répétable spéciale est disponible aujourd'hui au sud des portes de Bonta. Réalisable à partir du niveau 20, elle est indépendante de la quête d'offrande.",
+   "effet": "pepites",
+   "offrande": "384",
+   "n": 3,
+   "officielle": false
+  },
+  "08-04": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 100 % dans le Cratère Minus.",
+   "effet": "butin",
+   "offrande": "6903",
+   "n": 4,
+   "officielle": false
+  },
+  "08-05": {
+   "bonus": "Pêche abondante",
+   "texte": "Les quantités de Poisskaille récupérées par les Pêcheurs sont augmentées de 200 %.",
+   "effet": "recolte",
+   "offrande": "6844",
+   "n": 10,
+   "officielle": false
+  },
+  "08-06": {
+   "bonus": "Challenge supplémentaire",
+   "texte": "Un challenge supplémentaire est généré contre les monstres présents dans la zone des Calanques d'Astrub.",
+   "effet": "pepites",
+   "offrande": "13727",
+   "n": 6
+  },
+  "08-07": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 150 % dans le donjon de l'Antre du Blop Multicolore Royal.",
+   "effet": "pepites",
+   "offrande": "1757",
+   "n": 3,
+   "officielle": false
+  },
+  "08-08": {
+   "bonus": "Économie d'ingrédients",
+   "texte": "Les Mineurs ont 15 % de chances d'économiser des ingrédients lorsqu'ils fabriquent des objets.",
+   "effet": "metier",
+   "offrande": "747",
+   "n": 1
+  },
+  "08-09": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 50 % sur les créatures de type Plantes des champs.",
+   "effet": "butin",
+   "offrande": "2659",
+   "n": 6
+  },
+  "08-10": {
+   "bonus": "Fabrication intensive",
+   "texte": "Pour chaque objet fabriqué, les Éleveurs ont 25 % de chances de créer un second objet.",
+   "effet": "metier",
+   "offrande": "8124",
+   "n": 5,
+   "officielle": false
+  },
+  "08-11": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 75 % dans la zone du Mont des Tombeaux.",
+   "effet": "butin",
+   "offrande": "653",
+   "n": 3,
+   "officielle": false
+  },
+  "08-12": {
+   "bonus": "Gibier abondant",
+   "texte": "Les quantités de Viande Macérée et de Viande de Brousse récupérées par les Chasseurs sont augmentées de 125 %.",
+   "effet": "gibier",
+   "offrande": "2574",
+   "n": 4,
+   "officielle": false
+  },
+  "08-13": {
+   "bonus": "Challenge supplémentaire",
+   "texte": "Un challenge supplémentaire est généré contre les créatures présentes sur l'archipel de Vulkania.",
+   "effet": "pepites",
+   "offrande": "18666",
+   "n": 2,
+   "officielle": false
+  },
+  "08-14": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 125 % sur les créatures de type Crocodailles de Crocuzko.",
+   "effet": "pepites",
+   "offrande": "8239",
+   "n": 1,
+   "officielle": false
+  },
+  "08-15": {
+   "bonus": "Anomalies en folie",
+   "texte": "Les gains d'expérience, les chances d'obtenir du butin et le butin généré par les Percepteurs sont augmentés de 100 % dans toutes les zones influencées par une anomalie temporelle.",
+   "effet": "pepites",
+   "offrande": "450",
+   "n": 6,
+   "officielle": false
+  },
+  "08-16": {
+   "bonus": "Cueillette abondante",
+   "texte": "Les quantités de Ginseng et de Graines de Pandouille récupérées par les Alchimistes sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "8255",
+   "n": 10,
+   "officielle": false
+  },
+  "08-17": {
+   "bonus": "Minerai abondant",
+   "texte": "Les quantités de Bronze récupérées par les Mineurs sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "442",
+   "n": 10
+  },
+  "08-18": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 50 % sur les créatures de type Ravageurs.",
+   "effet": "butin",
+   "offrande": "17126",
+   "n": 2,
+   "officielle": false
+  },
+  "08-19": {
+   "bonus": "Objets de qualité",
+   "texte": "La qualité des objets fabriqués dans la ville d'Astrub est augmentée.",
+   "effet": "fabrication",
+   "offrande": "2270",
+   "n": 1,
+   "officielle": false
+  },
+  "08-20": {
+   "bonus": "Gibier abondant",
+   "texte": "Les quantités de Viande Ladre et de Viande Avariée récupérées par les Chasseurs sont augmentées de 125 %.",
+   "effet": "gibier",
+   "offrande": "364",
+   "n": 6,
+   "officielle": false
+  },
+  "08-21": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 150 % dans les 4 donjons de l'Eliocalypse (Sentence de la Balance, Arbre de mort, Fers de la Tyrannie, Trône de sang).",
+   "effet": "pepites",
+   "offrande": "2661",
+   "n": 1,
+   "officielle": false
+  },
+  "08-22": {
+   "bonus": "Pêche abondante",
+   "texte": "Les quantités de Morue et d'Espadon récupérées par les Pêcheurs sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "1672",
+   "n": 10,
+   "officielle": false
+  },
+  "08-23": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 75 % dans les zones du Mont Torrideau et de la Ruche des Gloursons.",
+   "effet": "butin",
+   "offrande": "6791",
+   "n": 2,
+   "officielle": false
+  },
+  "08-24": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 100 % dans le donjon de la Sousouricière du Rat Noir.",
+   "effet": "xp",
+   "offrande": "8126",
+   "n": 3,
+   "officielle": false
+  },
+  "08-25": {
+   "bonus": "Récolte abondante",
+   "texte": "Les quantités de céréales récupérées par les Paysans de tous niveaux sont augmentées de 100 %.",
+   "effet": "recolte",
+   "offrande": "16501",
+   "n": 10,
+   "officielle": false
+  },
+  "08-26": {
+   "bonus": "Percepteurs avides",
+   "texte": "Le butin généré par les Percepteurs est augmenté de 200 % dans les donjons de niveau 200.",
+   "effet": "pepites",
+   "offrande": "643",
+   "n": 1,
+   "officielle": false
+  },
+  "08-27": {
+   "bonus": "Pêche abondante",
+   "texte": "Les quantités de Raie Bleue et de Requin Marteau-Faucille récupérées par les Pêcheurs sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "1690",
+   "n": 10,
+   "officielle": false
+  },
+  "08-28": {
+   "bonus": "Bois abondant",
+   "texte": "Les quantités de Noyer récupérées par les Bûcherons sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "476",
+   "n": 10
+  },
+  "08-29": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 100 % dans le donjon du Clos des Blops.",
+   "effet": "butin",
+   "offrande": "2416",
+   "n": 6,
+   "officielle": false
+  },
+  "08-30": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 125 % sur les créatures de type Porcos.",
+   "effet": "pepites",
+   "offrande": "6900",
+   "n": 1,
+   "officielle": false
+  },
+  "08-31": {
+   "bonus": "Forgemagie améliorée",
+   "texte": "Les Costumages ont 15 % de chances de ne pas consumer de rune lorsqu'ils améliorent un objet.",
+   "effet": "fabrication",
+   "offrande": "17126",
+   "n": 4,
+   "officielle": false
+  },
+  "09-01": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 100 % dans le donjon de la Chambre des maléfices.",
+   "effet": "xp",
+   "offrande": "881",
+   "n": 2,
+   "officielle": false
+  },
+  "09-02": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "09-03": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "09-04": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "09-05": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "09-06": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "09-07": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "09-08": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "09-09": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "09-10": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "09-11": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "09-12": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "09-13": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "09-14": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "09-15": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "09-16": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "09-17": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "09-18": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "09-19": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "09-20": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "09-21": {
+   "bonus": "Challenges augmentés et expérience des métiers",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 %. De plus, Les gains d'expérience sont augmentés de 25 % pour tous les métiers.",
+   "effet": "metier",
+   "offrande": "2565",
+   "n": 2
+  },
+  "09-22": {
+   "bonus": "Challenge supplémentaire",
+   "texte": "Un challenge supplémentaire est généré contre les monstres présents dans la zone des Dunes des ossements.",
+   "effet": "pepites",
+   "offrande": "2411",
+   "n": 2,
+   "officielle": false
+  },
+  "09-23": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 50 % sur les créatures de type Herboricoles.",
+   "effet": "butin",
+   "offrande": "2661",
+   "n": 1,
+   "officielle": false
+  },
+  "09-24": {
+   "bonus": "Percepteurs avides",
+   "texte": "Le butin généré par les Percepteurs est augmenté de 200 % dans tous les donjons.",
+   "effet": "pepites",
+   "offrande": "2476",
+   "n": 3,
+   "officielle": false
+  },
+  "09-25": {
+   "bonus": "Cadeaux surprises",
+   "texte": "Des Présents surprenants ont été ajoutés aux butins des monstres des donjons. Lorsqu'ils sont utilisés, ils permettent d'obtenir une bonne ou mauvaise surprise.",
+   "effet": "butin",
+   "offrande": "8258",
+   "n": 3,
+   "officielle": false
+  },
+  "09-26": {
+   "bonus": "Minerai abondant",
+   "texte": "Les quantités de Dolomite et d'Obsidienne récupérées par les Mineurs sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "2661",
+   "n": 10,
+   "officielle": false
+  },
+  "09-27": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 100 % dans le donjon de la Canopée du Kimbo.",
+   "effet": "xp",
+   "offrande": "8123",
+   "n": 1,
+   "officielle": false
+  },
+  "09-28": {
+   "bonus": "Coffre au trésor",
+   "texte": "Une quête de chasse au trésor de Sad est disponible aujourd'hui auprès de Dhain, à la Malle aux trésors.",
+   "effet": "butin",
+   "offrande": "306",
+   "n": 1,
+   "officielle": false
+  },
+  "09-29": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 125 % sur les fantômes de l'Équipage du Grolandais.",
+   "effet": "pepites",
+   "offrande": "6844",
+   "n": 3,
+   "officielle": false
+  },
+  "09-30": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 100 % dans le donjon des Pitons rocheux des Craqueleurs.",
+   "effet": "butin",
+   "offrande": "18666",
+   "n": 1,
+   "officielle": false
+  },
+  "10-01": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 50 % sur les Trépamorts de la Fratrie des Oubliés : les Calcinés et les Submergés.",
+   "effet": "xp",
+   "offrande": "13494",
+   "n": 2,
+   "officielle": false
+  },
+  "10-02": {
+   "bonus": "Bois abondant",
+   "texte": "Les quantités de Bois de Pin et de Bois d'Oliviolet récupérées par les Bûcherons sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "393",
+   "n": 10,
+   "officielle": false
+  },
+  "10-03": {
+   "bonus": "Quête répétable",
+   "texte": "Une quête répétable spéciale est disponible aujourd'hui près de la fontaine du village d'Amakna. Réalisable à partir du niveau 20, elle est indépendante de la quête d'offrande.",
+   "effet": "pepites",
+   "offrande": "309",
+   "n": 1,
+   "officielle": false
+  },
+  "10-04": {
+   "bonus": "Challenge supplémentaire",
+   "texte": "Un challenge supplémentaire est généré contre les monstres présents dans la zone de la Futaie enneigée.",
+   "effet": "pepites",
+   "offrande": "1757",
+   "n": 2,
+   "officielle": false
+  },
+  "10-05": {
+   "bonus": "Pêche abondante",
+   "texte": "Les quantités de Poisson Pané, de Sardine Brillante et de Kralamoure récupérées par les Pêcheurs sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "13487",
+   "n": 10,
+   "officielle": false
+  },
+  "10-06": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 100 % dans le donjon du Laboratoire du Tynril.",
+   "effet": "butin",
+   "offrande": "8259",
+   "n": 4,
+   "officielle": false
+  },
+  "10-07": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 75 % dans la zone du Cauchemar des Ravageurs.",
+   "effet": "xp",
+   "offrande": "383",
+   "n": 1,
+   "officielle": false
+  },
+  "10-08": {
+   "bonus": "Gibier abondant",
+   "texte": "Les quantités de viande récupérées par les Chasseurs de tous niveaux sont augmentées de 100 %.",
+   "effet": "gibier",
+   "offrande": "2451",
+   "n": 5,
+   "officielle": false
+  },
+  "10-09": {
+   "bonus": "Challenge supplémentaire",
+   "texte": "Un challenge supplémentaire est généré contre les créatures de type Firefoux.",
+   "effet": "pepites",
+   "offrande": "13727",
+   "n": 4,
+   "officielle": false
+  },
+  "10-10": {
+   "bonus": "Montures sages",
+   "texte": "Toutes les montures qui naissent ce jour auront la capacité Sage.",
+   "effet": "pepites",
+   "offrande": "643",
+   "n": 6,
+   "officielle": false
+  },
+  "10-11": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 75 % dans la zone de la Désolation de Sidimote.",
+   "effet": "butin",
+   "offrande": "2659",
+   "n": 1,
+   "officielle": false
+  },
+  "10-12": {
+   "bonus": "Voyages dimensionnels",
+   "texte": "Les gains d'expérience et les chances d'obtenir du butin sont augmentés de 50 % dans toutes les zones des dimensions divines.",
+   "effet": "pepites",
+   "offrande": "309",
+   "n": 5,
+   "officielle": false
+  },
+  "10-13": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 50 % sur les créatures de type Kwapa.",
+   "effet": "xp",
+   "offrande": "388",
+   "n": 4,
+   "officielle": false
+  },
+  "10-14": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 150 % dans le donjon de la Pyramide d'Ombre.",
+   "effet": "pepites",
+   "offrande": "882",
+   "n": 2,
+   "officielle": false
+  },
+  "10-15": {
+   "bonus": "Récolte abondante",
+   "texte": "Les quantités de Chanvre récupérées par les Paysans sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "425",
+   "n": 10
+  },
+  "10-16": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 100 % dans le donjon de la Caverne du Koulosse.",
+   "effet": "xp",
+   "offrande": "13494",
+   "n": 5,
+   "officielle": false
+  },
+  "10-17": {
+   "bonus": "Bois abondant",
+   "texte": "Les quantités de Bois de Noisetier et de Bois de Merisier récupérées par les Bûcherons sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "16488",
+   "n": 10
+  },
+  "10-18": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 125 % sur les créatures de l'Armée de brume.",
+   "effet": "pepites",
+   "offrande": "13727",
+   "n": 3,
+   "officielle": false
+  },
+  "10-19": {
+   "bonus": "Apparition des ressources",
+   "texte": "La vitesse d'apparition des poissons de tous types est augmentée de 100 %.",
+   "effet": "recolte",
+   "offrande": "1672",
+   "n": 10,
+   "officielle": false
+  },
+  "10-20": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 100 % dans les donjons de la Mémoire d'Orukam et du Souvenir d'Imagiro.",
+   "effet": "xp",
+   "offrande": "2414",
+   "n": 1,
+   "officielle": false
+  },
+  "10-21": {
+   "bonus": "Fabrication intensive",
+   "texte": "Les quantités d'objets fabriqués par les Chasseurs sont augmentées de 25 %.",
+   "effet": "metier",
+   "offrande": "2414",
+   "n": 4,
+   "officielle": false
+  },
+  "10-22": {
+   "bonus": "Expérience des métiers",
+   "texte": "Les gains d'expérience sont augmentés de 50 % pour les Bûcherons, les Mineurs, les Alchimistes et les Éleveurs.",
+   "effet": "metier",
+   "offrande": "8223",
+   "n": 10,
+   "officielle": false
+  },
+  "10-23": {
+   "bonus": "Anomalies temporelles",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 50 % dans toutes les zones influencées par une anomalie temporelle. De plus, les gains d'expérience et les chances d'obtenir du butin sont augmentés de 25 % dans la zone de la Dimension Obscure.",
+   "effet": "pepites",
+   "offrande": "450",
+   "n": 1,
+   "officielle": false
+  },
+  "10-24": {
+   "bonus": "Minerai abondant",
+   "texte": "Les quantités de Fer récupérées par les Mineurs sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "312",
+   "n": 10
+  },
+  "10-25": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 50 % sur les créatures de type Faune des Pins Perdus.",
+   "effet": "butin",
+   "offrande": "306",
+   "n": 4,
+   "officielle": false
+  },
+  "10-26": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 50 % sur les créatures de type Wabbits, Wabbits mutants et Gawde du Wa.",
+   "effet": "xp",
+   "offrande": "16525",
+   "n": 9,
+   "officielle": false
+  },
+  "10-27": {
+   "bonus": "Économie d'ingrédients",
+   "texte": "Les Sculpteurs économisent 15 % de leurs ingrédients lorsqu'ils fabriquent des objets.",
+   "effet": "metier",
+   "offrande": "387",
+   "n": 1,
+   "officielle": false
+  },
+  "10-28": {
+   "bonus": "Cueillette abondante",
+   "texte": "Les quantités de Mandragore et de Belladone récupérées par les Alchimistes sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "2563",
+   "n": 10,
+   "officielle": false
+  },
+  "10-29": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 75 % dans la zone de la Crevasse Perge.",
+   "effet": "butin",
+   "offrande": "6903",
+   "n": 3,
+   "officielle": false
+  },
+  "10-30": {
+   "bonus": "Percepteurs avides",
+   "texte": "Le butin généré par les Percepteurs est augmenté de 200 % dans les donjons de niveau 120 à 150.",
+   "effet": "pepites",
+   "offrande": "6845",
+   "n": 4,
+   "officielle": false
+  },
+  "10-31": {
+   "bonus": "Cadeaux surprises",
+   "texte": "Des Surprises de Trikortritt ont été ajoutées aux butins des monstres. Lorsqu'elles sont utilisées, elles permettent d'obtenir des Bonbons d'Halouine ou bien de se retrouver transformé en Petite Chauffe-Soutrille.",
+   "effet": "butin",
+   "offrande": "16500",
+   "n": 6,
+   "officielle": false
+  },
+  "11-01": {
+   "bonus": "Points d'expérience et butin en slip",
+   "texte": "Les gains d'expérience lors des combats contre les monstres et les chances d'obtenir du butin sont augmentés de 50 % pour tous les aventuriers qui sont équipés d'un slip.",
+   "effet": "xp",
+   "offrande": "8242",
+   "n": 1,
+   "officielle": false
+  },
+  "11-02": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 75 % dans les zones du Port des Ravageurs et de Pandamonium.",
+   "effet": "butin",
+   "offrande": "2576",
+   "n": 2,
+   "officielle": false
+  },
+  "11-03": {
+   "bonus": "Économie d'ingrédients",
+   "texte": "Les Tailleurs ont 15 % de chances d'économiser des ingrédients lorsqu'ils fabriquent des objets.",
+   "effet": "metier",
+   "offrande": "881",
+   "n": 1,
+   "officielle": false
+  },
+  "11-04": {
+   "bonus": "Avis de recherche",
+   "texte": "La vitesse d'apparition des monstres d'Avis de recherche est augmentée de 200 %. .",
+   "effet": "pepites",
+   "offrande": "8123",
+   "n": 1,
+   "officielle": false
+  },
+  "11-05": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 150 % dans le donjon de la Brasserie du roi Dazak.",
+   "effet": "pepites",
+   "offrande": "6789",
+   "n": 2,
+   "officielle": false
+  },
+  "11-06": {
+   "bonus": "Bois abondant",
+   "texte": "Les quantités de Bois de Châtaignier récupérées par les Bûcherons sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "473",
+   "n": 10
+  },
+  "11-07": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 50 % sur les créatures de type Animaux de la forêt.",
+   "effet": "butin",
+   "offrande": "407",
+   "n": 6
+  },
+  "11-08": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 50 % sur les créatures de type Serviteurs de l'Indicible.",
+   "effet": "xp",
+   "offrande": "1681",
+   "n": 2,
+   "officielle": false
+  },
+  "11-09": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 125 % sur les Pirates naufragés et les Pirates de l'Arche d'Otomaï.",
+   "effet": "pepites",
+   "offrande": "880",
+   "n": 6,
+   "officielle": false
+  },
+  "11-10": {
+   "bonus": "Génération montante",
+   "texte": "Lors des accouplements de montures, un bonus de 20 % est ajouté aux chances d'obtenir la génération cible.",
+   "effet": "pepites",
+   "offrande": "1782",
+   "n": 10
+  },
+  "11-11": {
+   "bonus": "Bénédiction de Miss Triste",
+   "texte": "Miss Triste attend les aventuriers qui veulent se refaire une laideur près de la fontaine du village d'Amakna. Sa bénédiction transforme temporairement en Crocodaille (effet qui disparaît quand un combat est lancé) et en Souffre-Douleur (bonus de 50 Puissance et 10 dommages fixes durant 15 combats).",
+   "effet": "pepites",
+   "offrande": "384",
+   "n": 2,
+   "officielle": false
+  },
+  "11-12": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 50 % sur les créatures de type Trithons.",
+   "effet": "butin",
+   "offrande": "407",
+   "n": 2,
+   "officielle": false
+  },
+  "11-13": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 150 % dans le donjon du Laboratoire de Brumen Tinctorias.",
+   "effet": "pepites",
+   "offrande": "2322",
+   "n": 6,
+   "officielle": false
+  },
+  "11-14": {
+   "bonus": "Forgemagie améliorée",
+   "texte": "Les Joaillomages ont 15 % de chances de ne pas consumer de rune lorsqu'ils améliorent un objet.",
+   "effet": "fabrication",
+   "offrande": "2478",
+   "n": 4,
+   "officielle": false
+  },
+  "11-15": {
+   "bonus": "Quête répétable",
+   "texte": "Une quête répétable spéciale est disponible aujourd'hui près de la vieille chapelle d'Astrub. Réalisable à partir du niveau 20, elle est indépendante de la quête d'offrande.",
+   "effet": "pepites",
+   "offrande": "8254",
+   "n": 1,
+   "officielle": false
+  },
+  "11-16": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 50 % sur les créatures de type Rats Strubiens et Rats Maknéens.",
+   "effet": "xp",
+   "offrande": "2322",
+   "n": 6,
+   "officielle": false
+  },
+  "11-17": {
+   "bonus": "Gibier abondant",
+   "texte": "Les quantités de Viande séchée récupérées par les Chasseurs sont augmentées de 125 %.",
+   "effet": "gibier",
+   "offrande": "8256",
+   "n": 5,
+   "officielle": false
+  },
+  "11-18": {
+   "bonus": "Challenge supplémentaire",
+   "texte": "Un challenge supplémentaire est généré contre les monstres présents dans les zones des Canaux Méphitiques et des Entrailles de Brâkmar.",
+   "effet": "pepites",
+   "offrande": "6899",
+   "n": 1,
+   "officielle": false
+  },
+  "11-19": {
+   "bonus": "Économie d'ingrédients",
+   "texte": "Les Bûcherons économisent 15 % de leurs ingrédients lorsqu'ils fabriquent des objets.",
+   "effet": "metier",
+   "offrande": "12745",
+   "n": 1
+  },
+  "11-20": {
+   "bonus": "Anomalies temporelles",
+   "texte": "Le butin généré par les Percepteurs est augmenté de 100 % dans toutes les zones influencées par une anomalie temporelle. De plus, les gains d'expérience et les chances d'obtenir du butin sont augmentés de 25 % dans les zones (hors donjons) des Cavaliers de l'Eliocalypse.",
+   "effet": "pepites",
+   "offrande": "362",
+   "n": 2,
+   "officielle": false
+  },
+  "11-21": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 50 % sur les créatures de type Vermines des champs.",
+   "effet": "xp",
+   "offrande": "363",
+   "n": 6,
+   "officielle": false
+  },
+  "11-22": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 50 % sur les créatures de type Kanigs des Dents de Pierre.",
+   "effet": "butin",
+   "offrande": "8244",
+   "n": 3,
+   "officielle": false
+  },
+  "11-23": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 125 % sur les créatures de type Brûlâmes.",
+   "effet": "pepites",
+   "offrande": "393",
+   "n": 2,
+   "officielle": false
+  },
+  "11-24": {
+   "bonus": "Récolte abondante",
+   "texte": "Les quantités d'Avoine récupérées par les Paysans sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "533",
+   "n": 10
+  },
+  "11-25": {
+   "bonus": "Challenge supplémentaire",
+   "texte": "Un challenge supplémentaire est généré contre les monstres présents dans la zone des Champs de glace.",
+   "effet": "pepites",
+   "offrande": "2467",
+   "n": 5,
+   "officielle": false
+  },
+  "11-26": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 50 % sur les créatures de type Vilinsekts.",
+   "effet": "butin",
+   "offrande": "16001",
+   "n": 9
+  },
+  "11-27": {
+   "bonus": "Bois abondant",
+   "texte": "Les quantités de Bois d'If récupérées par les Bûcherons sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "461",
+   "n": 10
+  },
+  "11-28": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 50 % sur les créatures de type Sulfurieux.",
+   "effet": "xp",
+   "offrande": "16525",
+   "n": 3,
+   "officielle": false
+  },
+  "11-29": {
+   "bonus": "Minerai abondant",
+   "texte": "Les quantités de Kobalte récupérées par les mineurs sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "443",
+   "n": 10
+  },
+  "11-30": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 125 % sur les créatures de type Givrefoux.",
+   "effet": "pepites",
+   "offrande": "13494",
+   "n": 3,
+   "officielle": false
+  },
+  "12-01": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 50 % sur les créatures de type Goules.",
+   "effet": "xp",
+   "offrande": "2422",
+   "n": 2,
+   "officielle": false
+  },
+  "12-02": {
+   "bonus": "Expérience des métiers",
+   "texte": "Les gains d'expérience sont augmentés de 50 % pour les Bricoleurs, les Forgerons, les Sculpteurs  et les Façonneurs.",
+   "effet": "metier",
+   "offrande": "8230",
+   "n": 1,
+   "officielle": false
+  },
+  "12-03": {
+   "bonus": "Challenge supplémentaire",
+   "texte": "Un challenge supplémentaire est généré contre les monstres présents dans la zone du Lac Gelé.",
+   "effet": "pepites",
+   "offrande": "6898",
+   "n": 4,
+   "officielle": false
+  },
+  "12-04": {
+   "bonus": "Bois abondant",
+   "texte": "Les quantités de Bois récupérées par les Bûcherons de tous niveaux sont augmentées de 100 %.",
+   "effet": "recolte",
+   "offrande": "388",
+   "n": 10,
+   "officielle": false
+  },
+  "12-05": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 75 % dans la zone de la Carrière d'Astrub.",
+   "effet": "xp",
+   "offrande": "6845",
+   "n": 6
+  },
+  "12-06": {
+   "bonus": "Kolizétons",
+   "texte": "La quantité de jetons gagnée en Kolizéum est augmentée de 100 %.",
+   "effet": "pepites",
+   "offrande": "374",
+   "n": 6,
+   "officielle": false
+  },
+  "12-07": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 50 % sur les créatures de type Koalaks et Koalaks sauvages.",
+   "effet": "butin",
+   "offrande": "2451",
+   "n": 6,
+   "officielle": false
+  },
+  "12-08": {
+   "bonus": "Cueillette abondante",
+   "texte": "Les quantités de Perce-Neige récupérées par les Alchimistes sont augmentées de 200 %.",
+   "effet": "recolte",
+   "offrande": "2665",
+   "n": 10,
+   "officielle": false
+  },
+  "12-09": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 100 % dans le donjon du Garde-manger du Rat Blanc.",
+   "effet": "xp",
+   "offrande": "8239",
+   "n": 2,
+   "officielle": false
+  },
+  "12-10": {
+   "bonus": "Efficacité des enclos",
+   "texte": "Dans les enclos, l'effet des dragofesses est doublé.",
+   "effet": "pepites",
+   "offrande": "6845",
+   "n": 6,
+   "officielle": false
+  },
+  "12-11": {
+   "bonus": "Économie d'ingrédients",
+   "texte": "Les Cordonniers économisent 15 % de leurs ingrédients lorsqu'ils fabriquent des objets.",
+   "effet": "metier",
+   "offrande": "2574",
+   "n": 2,
+   "officielle": false
+  },
+  "12-12": {
+   "bonus": "Quête répétable",
+   "texte": "Une quête répétable spéciale est disponible aujourd'hui près des portes de Brâkmar. Réalisable à partir du niveau 20, elle est indépendante de la quête d'offrande.",
+   "effet": "pepites",
+   "offrande": "8256",
+   "n": 3,
+   "officielle": false
+  },
+  "12-13": {
+   "bonus": "Apparition des ressources",
+   "texte": "La vitesse d'apparition des minerais de tous types est augmentée de 100 %.",
+   "effet": "recolte",
+   "offrande": "6903",
+   "n": 10,
+   "officielle": false
+  },
+  "12-14": {
+   "bonus": "Challenges augmentés",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 150 % dans le donjon de la Chambre de Tal Kasha.",
+   "effet": "pepites",
+   "offrande": "8253",
+   "n": 1,
+   "officielle": false
+  },
+  "12-15": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 75 % dans la zone de la plaine des Porkass.",
+   "effet": "butin",
+   "offrande": "428",
+   "n": 6,
+   "officielle": false
+  },
+  "12-16": {
+   "bonus": "Challenge supplémentaire",
+   "texte": "Un challenge supplémentaire est généré contre les monstres de l'île de Nowel.",
+   "effet": "pepites",
+   "offrande": "2563",
+   "n": 2,
+   "officielle": false
+  },
+  "12-17": {
+   "bonus": "Pêche abondante",
+   "texte": "Les quantités  d'Anguille et de Dorade Grise récupérées par les Pêcheurs sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "2563",
+   "n": 10,
+   "officielle": false
+  },
+  "12-18": {
+   "bonus": "Challenges des donjons",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 150 % dans tous les donjons.",
+   "effet": "pepites",
+   "offrande": "2663",
+   "n": 1,
+   "officielle": false
+  },
+  "12-19": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 50 % sur les créatures présentes sur l'île de Nowel.",
+   "effet": "xp",
+   "offrande": "8217",
+   "n": 2,
+   "officielle": false
+  },
+  "12-20": {
+   "bonus": "Fabrication intensive",
+   "texte": "Pour chaque objet fabriqué, les Mineurs ont 10 % de chances de créer un second objet.",
+   "effet": "metier",
+   "offrande": "746",
+   "n": 1
+  },
+  "12-21": {
+   "bonus": "Challenge supplémentaire",
+   "texte": "Un challenge supplémentaire est généré contre les monstres présents dans les zones du Cimetière d'Amakna et des Cryptes du Cimetière.",
+   "effet": "pepites",
+   "offrande": "8214",
+   "n": 6,
+   "officielle": false
+  },
+  "12-22": {
+   "bonus": "Apparition des ressources",
+   "texte": "La vitesse d'apparition des ressources est augmentée de 150 % dans la zone du Port de Madrestam.",
+   "effet": "recolte",
+   "offrande": "1750",
+   "n": 10
+  },
+  "12-23": {
+   "bonus": "Gibier abondant",
+   "texte": "Les quantités de Viande Tendre récupérées par les Chasseurs sont augmentées de 125 %.",
+   "effet": "gibier",
+   "offrande": "13726",
+   "n": 6,
+   "officielle": false
+  },
+  "12-24": {
+   "bonus": "Coffre au trésor",
+   "texte": "Une quête de chasse au trésor de Milivar est disponible aujourd'hui auprès de Dhain, à la Malle aux trésors.",
+   "effet": "butin",
+   "offrande": "653",
+   "n": 1,
+   "officielle": false
+  },
+  "12-25": {
+   "bonus": "Cadeaux surprises",
+   "texte": "Des Petits plaisirs de Nowel ont été ajoutés aux butins des monstres. Lorsqu'ils sont utilisés, ils permettent d'obtenir des ressources ou d'autres objets aléatoires.",
+   "effet": "butin",
+   "offrande": "8157",
+   "n": 4,
+   "officielle": false
+  },
+  "12-26": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 100 % dans le donjon de l'Excavation du Mansot Royal.",
+   "effet": "butin",
+   "offrande": "1672",
+   "n": 4,
+   "officielle": false
+  },
+  "12-27": {
+   "bonus": "Points d'expérience",
+   "texte": "Les gains d'expérience sont augmentés de 50 % sur les créatures de type Marteaux-Aigris.",
+   "effet": "xp",
+   "offrande": "366",
+   "n": 2,
+   "officielle": false
+  },
+  "12-28": {
+   "bonus": "Percepteurs avides",
+   "texte": "Le butin généré par les Percepteurs est augmenté de 200 % dans les donjons de niveau 160 à 190.",
+   "effet": "pepites",
+   "offrande": "2491",
+   "n": 3,
+   "officielle": false
+  },
+  "12-29": {
+   "bonus": "Récolte abondante",
+   "texte": "Les quantités de Seigle et de Riz récupérées par les Paysans sont augmentées de 125 %.",
+   "effet": "recolte",
+   "offrande": "6792",
+   "n": 10,
+   "officielle": false
+  },
+  "12-30": {
+   "bonus": "Butin",
+   "texte": "Les chances d'obtenir du butin sont augmentées de 50 % sur les créatures de type Automates des Brigandins.",
+   "effet": "butin",
+   "offrande": "8223",
+   "n": 1,
+   "officielle": false
+  },
+  "12-31": {
+   "bonus": "Anomalies temporelles",
+   "texte": "Les bonus apportés par les challenges réussis sont augmentés de 75 % dans toutes les zones influencées par une anomalie temporelle. De plus, les gains d'expérience et les chances d'obtenir du butin sont augmentés de 25 % dans la zone de la Forêt des Masques.",
+   "effet": "pepites",
+   "offrande": "13494",
+   "n": 6,
+   "officielle": false
+  }
+ }
+}
