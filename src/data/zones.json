@@ -1182,6 +1182,38 @@
       4
      ],
      "interieur": true
+    },
+    "100": {
+     "name": "Égouts d'Astrub",
+     "level": 20,
+     "monsters": [
+      "arakne_des_egouts",
+      "scelerat_strubien",
+      "milirat_strubien",
+      "ramane_strubien"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      2,
+      4
+     ],
+     "interieur": true
+    },
+    "99": {
+     "name": "Souterrains d'Astrub",
+     "level": 10,
+     "monsters": [
+      "tofu_malade",
+      "arakne_malade",
+      "araknose",
+      "arakmute"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      2,
+      4
+     ],
+     "interieur": true
     }
    },
    "checkpoints": [
@@ -1754,6 +1786,259 @@
      "nom": "Cache de Kankreblath",
      "verrou": 1,
      "sens": 1
+    },
+    {
+     "a": [
+      "5_-17",
+      198
+     ],
+     "b": [
+      "egout_1",
+      413
+     ],
+     "nom": "Égouts d'Astrub"
+    },
+    {
+     "a": [
+      "egout_1",
+      198
+     ],
+     "b": [
+      "egout_2",
+      550
+     ],
+     "nom": "Égouts d'Astrub"
+    },
+    {
+     "a": [
+      "egout_2",
+      188
+     ],
+     "b": [
+      "egout_3",
+      492
+     ],
+     "nom": "Égouts d'Astrub"
+    },
+    {
+     "a": [
+      "egout_3",
+      272
+     ],
+     "b": [
+      "egout_4",
+      469
+     ],
+     "nom": "Égouts d'Astrub"
+    },
+    {
+     "a": [
+      "egout_4",
+      146
+     ],
+     "b": [
+      "egout_5",
+      553
+     ],
+     "nom": "Égouts d'Astrub"
+    },
+    {
+     "a": [
+      "egout_5",
+      120
+     ],
+     "b": [
+      "egout_6",
+      551
+     ],
+     "nom": "Égouts d'Astrub"
+    },
+    {
+     "a": [
+      "egout_6",
+      213
+     ],
+     "b": [
+      "egout_7",
+      535
+     ],
+     "nom": "Égouts d'Astrub"
+    },
+    {
+     "a": [
+      "egout_7",
+      249
+     ],
+     "b": [
+      "egout_8",
+      550
+     ],
+     "nom": "Égouts d'Astrub"
+    },
+    {
+     "a": [
+      "egout_8",
+      187
+     ],
+     "b": [
+      "egout_9",
+      469
+     ],
+     "nom": "Égouts d'Astrub"
+    },
+    {
+     "a": [
+      "egout_9",
+      216
+     ],
+     "b": [
+      "egout_10",
+      542
+     ],
+     "nom": "Égouts d'Astrub"
+    },
+    {
+     "a": [
+      "egout_10",
+      117
+     ],
+     "b": [
+      "egout_11",
+      497
+     ],
+     "nom": "Égouts d'Astrub"
+    },
+    {
+     "a": [
+      "egout_11",
+      188
+     ],
+     "b": [
+      "egout_12",
+      484
+     ],
+     "nom": "Égouts d'Astrub"
+    },
+    {
+     "a": [
+      "egout_12",
+      202
+     ],
+     "b": [
+      "egout_13",
+      514
+     ],
+     "nom": "Égouts d'Astrub"
+    },
+    {
+     "a": [
+      "egout_13",
+      174
+     ],
+     "b": [
+      "7_-9",
+      262
+     ],
+     "nom": "Égouts d'Astrub"
+    },
+    {
+     "a": [
+      "1_-17",
+      269
+     ],
+     "b": [
+      "souterrain_1",
+      521
+     ],
+     "nom": "Souterrains d'Astrub"
+    },
+    {
+     "a": [
+      "souterrain_1",
+      166
+     ],
+     "b": [
+      "souterrain_2",
+      506
+     ],
+     "nom": "Souterrains d'Astrub"
+    },
+    {
+     "a": [
+      "souterrain_2",
+      146
+     ],
+     "b": [
+      "souterrain_3",
+      427
+     ],
+     "nom": "Souterrains d'Astrub"
+    },
+    {
+     "a": [
+      "souterrain_3",
+      159
+     ],
+     "b": [
+      "souterrain_4",
+      508
+     ],
+     "nom": "Souterrains d'Astrub"
+    },
+    {
+     "a": [
+      "souterrain_4",
+      147
+     ],
+     "b": [
+      "souterrain_5",
+      371
+     ],
+     "nom": "Souterrains d'Astrub"
+    },
+    {
+     "a": [
+      "souterrain_5",
+      272
+     ],
+     "b": [
+      "souterrain_6",
+      549
+     ],
+     "nom": "Souterrains d'Astrub"
+    },
+    {
+     "a": [
+      "souterrain_6",
+      117
+     ],
+     "b": [
+      "souterrain_7",
+      553
+     ],
+     "nom": "Souterrains d'Astrub"
+    },
+    {
+     "a": [
+      "souterrain_7",
+      138
+     ],
+     "b": [
+      "souterrain_8",
+      487
+     ],
+     "nom": "Souterrains d'Astrub"
+    },
+    {
+     "a": [
+      "souterrain_8",
+      145
+     ],
+     "b": [
+      "souterrain_9",
+      510
+     ],
+     "nom": "Souterrains d'Astrub"
     }
    ],
    "donjons": [

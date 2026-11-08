@@ -384,3 +384,13 @@ officiel du Zaap d'Astrub sur l'arche du Bastion (bastion.py réécrit les parti
   automatique dépasse la taille d'un canevas). Le Dragonnet n'a ni repos ni course : `ANIMS=AnimAttaque0_1:1:AnimStatique_1,...`.
 - Perso : `squelette_export.py` (classe 2) ; portraits `ui/perso_osamodas(_f).png` rendus depuis la scène de `perso_planche.py`
   (`ANIMS=AnimStatiqueExplo0`, `render.cjs` BOX=-150,-280,150,40 à l'échelle 3,2, rognés à 437 px de haut).
+
+## Égouts et Souterrains d'Astrub (clôture de la 0.2, 8 nov. 2026)
+
+- Sous-zones 100 (Égouts, 13 cartes, worldMap 3) et 99 (Souterrains, 9 cartes de mine) : bundles `world_388` et `world_719` de `cache-dofus/astrub/cartes.tar`.
+  Le lien entre les salles n'est pas dans le client : elles sont reliées en chaîne (porte du bas = case marchable la plus basse, porte du haut = la plus haute),
+  dans l'ordre des coordonnées souterraines. Égouts : plaque d'égout officielle (gfx 63587, case 198 de [5,-17], repère « Entrée des égouts ») → `egout_1` … `egout_13` →
+  entrée de mine de [7,-9] (gfx 34686, second repère « Entrée des égouts »). Souterrains : porte case 269 de [1,-17] → `souterrain_1` … `souterrain_9` (cul-de-sac).
+- Salles rangées sous les intérieurs (rangées y = 8 et 10, plus (8..12, 2) et (12, 4)) : la grille d'Astrub passe de 1640 à 1840 lignes.
+  Export à part : `world_export.py` sur une liste des 22 salles + deux cartes factices en (-4,-34) et (13,11) (même origine, même largeur), `ONLY=<les 22 tags>`,
+  puis `COURANTE=1 batiments.py` sur ce dossier (sans les factices), puis fusion dans `monde.json` (entrées des salles + cases marchables de leurs régions, lignes ajoutées).
