@@ -9,6 +9,7 @@
 # l'icône de l'atelier sur la case la plus dégagée de sa première carte.
 #
 # Forgerons et sculpteurs partagent la salle des mineurs et celle des bûcherons (mêmes machines : le jeu réunit les postes d'une case).
+# Ensuite : tools/contenu/ateliers_sorties.py (écarte des sorties les machines collées au paillasson, règle de Mathis).
 # Cartes : tools/extraction/map_dump.py <mapdata_assets_world_N.bundle> <dossier> <ids> (N = mapId >> 18 ; ids dans monde.json).
 import json, sys, os
 monde, cartes = sys.argv[1:3]
