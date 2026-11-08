@@ -345,8 +345,8 @@ export class Hud {
     });
     // Barre du joueur (Player.bar) : 6 touches, le clic droit (case libre, choix 6A) et Espace ; les icônes suivent la barre
     for (let i = 0; i < 8; i++) this.slots.push(mkSlot(null, i < 6 ? KEYS[i] : i === 6 ? 'Clic D' : 'Esp.'));
-    // Osamodas (maquette 2A) : 4 cases d'invocation sur A Z R T (Player.INVOC à INVOC + 3), au-dessus de la barre
-    if (Object.values(cls.spells).some(s => s.invoque)) for (const k of ['A', 'Z', 'R', 'T']) this.slots.push(mkSlot(null, k));
+    // Osamodas (maquette 2A) : 4 cases d'invocation sur A Z R T (Player.INVOC à INVOC + 3), au-dessus de la barre ; seulement pour les classes à Éveil (l'Épée Vorace du Sacrieur va dans la barre normale)
+    if (cls.rage.mode === 'eveil' && Object.values(cls.spells).some(s => s.invoque)) for (const k of ['A', 'Z', 'R', 'T']) this.slots.push(mkSlot(null, k));
     // Auto-attaque (clic gauche) : l'icône suit l'arme portée
     this.auto = mkSlot(cls.spells[cls.basic ?? cls.mobility].icon, 'Clic');
     this.auto.icon!.setTexture(cls.basic ? `sort_${cls.spells[cls.basic].icon}` : 'arme_0');
