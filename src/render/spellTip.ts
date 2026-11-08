@@ -2,6 +2,7 @@ import type { Player } from '../sim/player';
 import type { SkillId, SpellDef } from '../sim/defs';
 import type { SortGrade } from '../sim/sorts';
 import { ELEMENT_COLORS } from './fx';
+import { STAT_NAMES } from '../sim/items';
 
 const ELEMENT_NAMES: Record<string, string> = { neutre: 'Neutre', terre: 'Terre', feu: 'Feu', eau: 'Eau', air: 'Air', meilleur: 'meilleur élément' };
 export const n1 = (v: number) => (Math.round(v * 10) / 10).toString().replace('.', ',');
@@ -48,7 +49,8 @@ export function spellDetail(p: Player, id: SkillId, gOver?: SortGrade) {
     d.charge ? 'Se charge avant de frapper' : '',
     nCh >= 2 ? `${nCh} charges, chacune revient ${n1(p.retourCharge)} s après usage` : '',
     d.grosCoup ? `Gros coup : dommages ×${d.grosCoup.mult}` : '',
-    d.buff ? `${d.buff.stat === 'portee' ? 'Portée' : d.buff.stat === 'pm' ? 'PM' : 'Dommages'} +${d.buff.n} pendant ${d.buff.t} s` : '',
+    d.buff ? `${STAT_NAMES[d.buff.stat] ?? 'Dommages'} +${d.buff.n} pendant ${d.buff.t} s` : '',
+    d.buff?.instinct ? 'Instinct : remplace le bonus des autres instincts (un seul à la fois)' : '',
     d.poLoss ? `-${d.poLoss[0]} Portée à la cible pendant 3 s${d.poLoss.length > 1 && d.poLoss.at(-1) !== d.poLoss[0] ? ` (-${d.poLoss.at(-1)} au dernier grade)` : ''}` : '',
     d.shield ? `Bouclier : ${Math.round(p.maxHp * d.shield.part)} PV pendant ${d.shield.t} s` : '',
     d.selfKnock ? `Recule de ${Math.round(d.selfKnock / 48)} cases` : '',

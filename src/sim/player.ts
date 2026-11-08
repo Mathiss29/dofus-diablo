@@ -981,7 +981,9 @@ export class Player extends Entity {
         const n = Math.round(d.buff.n * sig('buff'));
         // Un même bonus ne se cumule pas : il est rafraîchi (sinon Pas Chassé s'enchaînait sans fin).
         // Le PM gagné relève le plafond mais n'est pas rendu : il se remplit avec la recharge normale.
-        this.mods = this.mods.filter(m => m.src !== s.id);
+        // Instinct (Osa nerf 1A) : un seul bonus d'instinct à la fois, le dernier lancé remplace les autres
+        const inst = d.buff.instinct ? (m: { src?: string }) => !!m.src && !!(this.cls.spells[m.src]?.buff as { instinct?: boolean } | undefined)?.instinct : null;
+        this.mods = this.mods.filter(m => m.src !== s.id && !inst?.(m));
         this.addMod(d.buff.stat, n, d.buff.t, s.id);
       }
       if (d.invoque) {

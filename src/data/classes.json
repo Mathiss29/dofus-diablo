@@ -841,7 +841,7 @@
      "range": 240,
      "radius": 30
     },
-    "lifesteal": 0.5,
+    "lifesteal": 0.25,
     "soinAllies": true,
     "buff": {
      "stat": "pm",
@@ -871,12 +871,13 @@
      "range": 144,
      "radius": 30
     },
-    "lifesteal": 0.5,
+    "lifesteal": 0.25,
     "soinAllies": true,
     "buff": {
      "stat": "critique",
-     "n": 10,
-     "t": 6
+     "n": 5,
+     "t": 6,
+     "instinct": true
     },
     "rage": "lifesteal"
    },
@@ -901,12 +902,13 @@
      "range": 144,
      "radius": 60
     },
-    "lifesteal": 0.5,
+    "lifesteal": 0.25,
     "soinAllies": true,
     "buff": {
      "stat": "dommages",
-     "n": 20,
-     "t": 6
+     "n": 8,
+     "t": 6,
+     "instinct": true
     },
     "rage": "lifesteal"
    },
@@ -930,12 +932,13 @@
      "shape": "circle",
      "radius": 72
     },
-    "lifesteal": 0.5,
+    "lifesteal": 0.25,
     "soinAllies": true,
     "buff": {
      "stat": "puissance",
-     "n": 50,
-     "t": 6
+     "n": 20,
+     "t": 6,
+     "instinct": true
     },
     "rage": "lifesteal"
    },
