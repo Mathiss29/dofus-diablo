@@ -1,4 +1,4 @@
-# /etc/systemd/system/diablofus-maj.service : lance /home/diablofus/maj.sh (voir diablofus-maj.timer).
+# /etc/systemd/system/diablofus-maj.service : lance /usr/local/lib/diablofus/maj.sh (voir diablofus-maj.timer).
 [Unit]
 Description=Diablofus : mise à jour depuis GitHub
 After=network-online.target
@@ -8,7 +8,7 @@ Wants=network-online.target
 Type=oneshot
 User=diablofus
 Group=diablofus
-ExecStart=/bin/bash /home/diablofus/maj.sh
+ExecStart=/bin/bash /usr/local/lib/diablofus/maj.sh
 MemoryMax=512M
 CPUQuota=50%
 OOMScoreAdjust=500

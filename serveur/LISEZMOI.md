@@ -50,14 +50,14 @@ cd /tmp && for f in diablofus.service sudoers-diablofus diablofus-maj.service di
 cat diablofus.service sudoers-diablofus diablofus-maj.service diablofus-maj.timer maj.sh   # relire
 sudo install -m 644 diablofus.service diablofus-maj.service diablofus-maj.timer /etc/systemd/system/
 sudo visudo -cf sudoers-diablofus && sudo install -m 440 sudoers-diablofus /etc/sudoers.d/diablofus
-sudo install -o root -g root -m 755 maj.sh /home/diablofus/maj.sh
+sudo install -D -o root -g root -m 755 maj.sh /usr/local/lib/diablofus/maj.sh
 sudo systemctl daemon-reload && sudo systemctl enable diablofus && sudo systemctl enable --now diablofus-maj.timer
 sudo systemctl start diablofus-maj.service && sleep 3 && sudo systemctl is-active diablofus && curl -fsS http://127.0.0.1:3100/sante
 ```
 
 La dernière ligne fait la première mise à jour tout de suite : elle doit finir par `active` puis `{"ok":true,…}`.
-`enable` = tout repart seul après un redémarrage de la machine. `maj.sh` appartient à root : `diablofus` le lance mais ne
-peut pas le modifier.
+`enable` = tout repart seul après un redémarrage de la machine. `maj.sh` appartient à root et vit hors du dossier de `diablofus` (`/usr/local/lib/diablofus/`) :
+`diablofus` le lance mais ne peut ni le modifier ni le remplacer.
 
 ### 4. Tunnel Cloudflare (api.diablofus.com)
 
@@ -91,5 +91,17 @@ sudo systemctl daemon-reload && sudo systemctl restart cloudflared
 ## Plus tard
 
 - Sauvegarde de la base SQLite à **4 h 30** (celle d'Idlus est à 4 h), avec les comptes.
-- Désinstaller : `sudo systemctl disable --now diablofus diablofus-maj.timer cloudflared`, supprimer les fichiers posés ci-dessus et
+- Désinstaller : `sudo systemctl disable --now diablofus diablofus-maj.timer cloudflared`, supprimer les fichiers posés ci-dessus (dont `/usr/local/lib/diablofus/`) et
   `sudo deluser --remove-home diablofus`.
+
+## Changements déjà installés
+
+- 2026-11-08 : `maj.sh` passe de `/home/diablofus/` à `/usr/local/lib/diablofus/` (remarque du projet Idlus) :
+
+```bash
+cd /tmp && for f in diablofus-maj.service maj.sh; do
+  curl -fsSLO https://raw.githubusercontent.com/Mathiss29/dofus-diablo/main/serveur/installation/$f; done
+sudo install -D -o root -g root -m 755 maj.sh /usr/local/lib/diablofus/maj.sh
+sudo install -m 644 diablofus-maj.service /etc/systemd/system/ && sudo systemctl daemon-reload
+sudo rm /home/diablofus/maj.sh && sudo systemctl start diablofus-maj.service && systemctl status diablofus-maj.service --no-pager | head -5
+```
