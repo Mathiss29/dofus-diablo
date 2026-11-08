@@ -68,3 +68,28 @@ test('salon « serveur » par le WebSocket : créer, rejoindre, instantanés, fe
   assert.equal((await (await fetch(`http://127.0.0.1:${s.address().port}/sante`)).json()).parties, 0);
   await new Promise(r => { s.close(r); s.closeAllConnections(); });
 });
+
+test('monde ouvert d’Incarnam sur le serveur : chacun sa place, ses quêtes, et une porte vers Astrub le fait partir seul', async () => {
+  const S = await chargerSim();
+  const recus = new Map([[1, []], [2, []]]);
+  const p = new Partie(S, (num, d) => recus.get(num).push(d), 7, null, { monde: true });
+  p.arrivee(1); p.arrivee(2);
+  p.recu(1, { k: 'bonjour', classe: 'iop', etat: null });
+  const w = p.w, po = w.portes.find(x => x.vers);
+  assert.equal(w.arene, null, 'pas d’arène : le monde ouvert');
+  const q1 = w.players[0];
+  const fini = { enCours: [], finies: ['tuto'], etapesFinies: [], suivie: null, decouvertes: [], vaincus: ['bouftou'], objets: {} };
+  const pres = w.map.nearestFree(po.ends[0].x + 40, po.ends[0].y);
+  p.recu(2, { k: 'bonjour', classe: 'cra', etat: { level: 12, zone: 'incarnam', x: pres.x, y: pres.y, quetes: fini } });
+  const q2 = w.players[1];
+  assert.ok(q1.quetes && q2.quetes && q1.quetes !== q2.quetes, 'chacun ses quêtes');
+  assert.ok(q2.quetes.vaincus.has('bouftou') && !q1.quetes.vaincus.has('bouftou'));
+  assert.ok(Math.hypot(q2.x - po.ends[0].x, q2.y - po.ends[0].y) < 120, 'le second reprend sa place');
+  p.recu(1, { k: 'pret' }); p.recu(2, { k: 'pret' });
+  p.recu(2, { k: 'entree', i: { aim: po.ends[0], dest: { x: po.ends[0].x, y: po.ends[0].y }, versPortail: po.nom } });
+  for (let i = 0; i < 120 && !recus.get(2).some(d => d.k === 'sortie'); i++) p.avancer(1 / 60);
+  const s = recus.get(2).find(d => d.k === 'sortie');
+  assert.ok(s?.vers?.zone, 'le second part seul vers l’autre zone');
+  assert.ok(!recus.get(1).some(d => d.k === 'sortie'), 'le premier reste');
+  assert.equal(w.passage, null);
+});

@@ -80,9 +80,10 @@ describe('coop : instantanés de l’hôte et monde miroir de l’invité', () =
     expect(tout).toBeLessThan(60_000);
   });
 
-  it('les entrées d’un invité ne gardent que le combat', () => {
+  it('les entrées d’un invité gardent le combat et, en monde partagé, parler aux PNJ ; jamais Zaap, Havre-Sac ni outils de test', () => {
     const e = entreeInvite({ move: { x: 0, y: 0 }, aim: { x: 1, y: 2 }, pressed: 'attaque', talk: 'emp', zaap: 1, havreSac: true, test: [] } as never);
-    expect(e).not.toHaveProperty('talk');
+    expect(e.talk).toBe('emp');
+    expect(e).not.toHaveProperty('test');
     expect(e).not.toHaveProperty('zaap');
     expect(e).not.toHaveProperty('havreSac');
     expect(e.pressed).toBe('attaque');
