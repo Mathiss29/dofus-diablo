@@ -2,7 +2,7 @@ import { DOFUS } from '../sim/dofus';
 import { apercuSort } from '../sim/apercu';
 import { dossier, v } from './assetUrl';
 import Phaser from 'phaser';
-import { calerCamera } from './pixel';
+import { calerCamera, densite } from './pixel';
 import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES } from '../sim/data';
 import type { Compte } from '../sim/quests';
 import { QuestView } from './questView';
@@ -287,7 +287,7 @@ export class ZoneScene extends Phaser.Scene {
     this.sys.events.on(Phaser.Scenes.Events.ADDED_TO_SCENE, onAdd);
     this.events.once('shutdown', () => this.sys.events.off(Phaser.Scenes.Events.ADDED_TO_SCENE, onAdd));
     this.reglages = chargerReglages(); this.ambT = 0; this.sat = undefined;
-    this.zoom = Phaser.Math.Clamp(this.reglages.zoom, ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]); this.cameras.main.setZoom(this.zoom);
+    this.zoom = Phaser.Math.Clamp(this.reglages.zoom, ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]); this.cameras.main.setZoom(this.zoom * densite());
     // Phaser arrondit chaque coin d'image séparément : avec un défilement entre deux pixels, une image agrandie gagnait ou
     // perdait un pixel et « tremblait » (2026-11-06), puis tout « bavait » en course (2026-11-08). Le défilement dessiné est
     // donc calé sur un pixel entier de l'écran (pixel.ts) ; l'arrondi des coins (remis par startFollow) devient alors sans effet de bord.
@@ -769,7 +769,7 @@ export class ZoneScene extends Phaser.Scene {
     this.worldView?.contour(c.x, po.sortie ? c.y + 50 : c.y);
     this.porteLabel.setText(po.sortie ? `Sortie · ${po.nom}` : po.nom).setColor(po.sortie ? '#ffe08a' : '#f3e3bf')
       // une sortie est un repère au sol, souvent sous le perso : son nom va dessous ; une porte dans un mur, au-dessus
-      .setOrigin(0.5, po.sortie ? 0 : 1).setPosition(c.x, po.sortie ? c.y + 34 : c.y - 96).setScale(1 / this.cameras.main.zoom).setVisible(true);
+      .setOrigin(0.5, po.sortie ? 0 : 1).setPosition(c.x, po.sortie ? c.y + 34 : c.y - 96).setScale(densite() / this.cameras.main.zoom).setVisible(true);
     return true;
   }
 
@@ -798,7 +798,7 @@ export class ZoneScene extends Phaser.Scene {
       this.events.once('shutdown', () => { lab.destroy(); if (this.zaapLabel === lab) this.zaapLabel = null; });
     }
     const c = ISO.toScreen(z.x, z.y);
-    this.zaapLabel.setText(`Zaap · ${this.nomZaap(z.name)}\nClic : voyager`).setPosition(c.x, c.y - 110).setScale(1 / this.cameras.main.zoom).setVisible(true);
+    this.zaapLabel.setText(`Zaap · ${this.nomZaap(z.name)}\nClic : voyager`).setPosition(c.x, c.y - 110).setScale(densite() / this.cameras.main.zoom).setVisible(true);
     return true;
   }
   /** Portail dessiné sous le curseur (bassin d'Incarnam, arche de la tour d'Astrub) : l'ovale de son dessin à l'écran. */
@@ -825,7 +825,7 @@ export class ZoneScene extends Phaser.Scene {
     }
     const d = po.dessin!, c = ISO.toScreen(d.x, d.y);
     this.worldView?.contour(c.x, c.y + 50);   // le contour officiel du portail (survols de la carte), comme les portes
-    this.portailLabel.setText(`Portail · ${po.nom}\nClic : y aller`).setPosition(c.x, c.y - d.ry - 6).setScale(1 / this.cameras.main.zoom).setVisible(true);
+    this.portailLabel.setText(`Portail · ${po.nom}\nClic : y aller`).setPosition(c.x, c.y - d.ry - 6).setScale(densite() / this.cameras.main.zoom).setVisible(true);
     return true;
   }
   /** Tourbillon du Zaap (9A) : des éclats bleus happés vers le perso (départ) ou qui s'en échappent (arrivée). */
@@ -889,7 +889,7 @@ export class ZoneScene extends Phaser.Scene {
     EntityView.barresVie = r.barresVie;
     // 7A : échelle de l'interface (caméra de l'interface zoomée depuis le coin haut gauche ; les fenêtres en CSS)
     const k = Phaser.Math.Clamp(r.echelle || 1, 0.8, 1.5), ui = this.cameras.getCamera('ui');
-    ui?.setOrigin(0, 0).setZoom(k);
+    ui?.setOrigin(0, 0).setZoom(k * densite());   // × vrais pixels de l'écran (pixel.ts)
     document.documentElement.style.setProperty('--echelle', String(k));
     // 7C : images par seconde (0 = sans limite)
     const loop = this.game.loop, fps = r.fps > 0 ? r.fps : 0;
@@ -1584,7 +1584,7 @@ export class ZoneScene extends Phaser.Scene {
     const cam = this.cameras.main;
     // 7A : pendant un combat de boss, la caméra recule un peu pour voir ses zones
     const bossEnCombat = w.monsters.some(m => m.def.boss && !m.dead && m.state !== 'idle' && m.state !== 'return' && Math.hypot(m.x - w.player.x, m.y - w.player.y) < 900);
-    const zoomVise = this.zoom * (bossEnCombat ? DANGER.camera.recul : 1);
+    const zoomVise = this.zoom * densite() * (bossEnCombat ? DANGER.camera.recul : 1);
     if (Math.abs(cam.zoom - zoomVise) > 0.001) cam.setZoom(cam.zoom + (zoomVise - cam.zoom) * (bossEnCombat ? 0.04 : 0.2));
     this.updateAmbiance();
     this.son.update(!!wg?.mapAt(w.player.x, w.player.y)?.inside);
