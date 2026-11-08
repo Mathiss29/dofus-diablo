@@ -46,6 +46,8 @@ for sid in L(B['breedSpellsId']):
     for u in L(s['boundScriptUsageData']):
         r = str((SC.get(int(u['scriptId'])) or {}).get('rawParams', ''))
         anims += re.findall(r'casterAnimation[^0-9A-Za-z]*([A-Za-z0-9_]+)', r)
+        # Sacrieur (et d'autres) : « animId:1102 » = AnimAttaque1102
+        anims += ['AnimAttaque' + a for a in re.findall(r'animId:(\d+)', r)]
     spells[int(sid)] = {'icon': int(s['iconId']), 'anims': list(dict.fromkeys(anims))}
 
 # AnimArme<typeId> = auto-attaque avec une arme de ce type (2 Arc, 3 Baguette, 4 Bâton, 5 Dague, 6 Épée, 7 Marteau, 8 Pelle, 19 Hache, 22 Faux, 271 Lance)
