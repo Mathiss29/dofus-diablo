@@ -14,7 +14,7 @@ export const nomPost = (c) => `${dateFr(c.date)} · ${c.titre}`.slice(0, 100);
 
 /** Lignes réservées à la partie de test (0.3, Osamodas en essai) : gardées dans le Journal du jeu, pas sur Discord
     tant que ce contenu n'est pas public. À retirer de la liste quand il sort pour tout le monde. */
-export const CACHE_DISCORD = [/partie de test/i, /#test\b/i, /\bOsamodas\b/i];
+export const CACHE_DISCORD = [/partie de test/i, /#test\b/i];
 export const publique = (l) => !CACHE_DISCORD.some((r) => r.test(texteComplet(l)));
 
 /** Carnets lisibles (10A) : une entrée { titre, phrase, details, etiquettes } s'affiche « **titre** · phrase » ;
