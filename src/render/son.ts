@@ -7,7 +7,7 @@ import { v } from './assetUrl';
  *
  *  - Musique : celle du menu sur l'accueil et le premier chargement, puis les musiques d'Incarnam en alternance avec un
  *    silence de 20 à 40 s entre deux morceaux. Chaque musique a une piste calme et une piste « renfort » (les autres pistes
- *    officielles mélangées) qui monte quand des monstres nous attaquent (3A). Contre un élite ou un boss : musique de combat
+ *    officielles mélangées) qui monte quand des monstres nous attaquent (3A). Contre un boss (plus les élites depuis le 2026-11-08) : musique de combat
  *    officielle (intro puis boucle), jingle de victoire ou de défaite (3B).
  *  - Effets : son de l'animation du lanceur (même numéro que l'animation : AnimAttaque801), son de l'effet du sort (gfx),
  *    impacts, cris des monstres sur leur bus (maquette Sons : 2 par sorte, volume qui baisse avec le nombre, hauteur variée,
@@ -166,9 +166,9 @@ class Moteur {
   zone(liste: string[]) { this.voulu = liste.length ? 'zone' : 'rien'; this.liste = liste; }
   /** 0 = on explore, 1 = des monstres nous attaquent (3A). */
   setIntensite(i: number) { this.intensite = i; }
-  /** Un élite ou un boss se bat contre nous (3B). */
+  /** Un boss se bat contre nous (3B). */
   setCombat(on: boolean) { this.combatVoulu = on; }
-  /** Fin du combat contre l'élite : jingle de victoire ou de défaite, puis l'exploration reprend. */
+  /** Fin du combat contre le boss : jingle de victoire ou de défaite, puis l'exploration reprend. */
   finCombat(victoire: boolean) {
     this.combatVoulu = false;
     if (!this.ctx) return;
