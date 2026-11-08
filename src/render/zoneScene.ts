@@ -232,7 +232,7 @@ export class ZoneScene extends Phaser.Scene {
       this.load.json(WorldView.key(open.world, 'monde'), v(`${dir}/monde.json`));
       this.load.once(`filecomplete-json-${WorldView.key(open.world, 'monde')}`, (_: string, __: string, data: WorldData) =>
         WorldView.preload(this, data, dir, open.world, open.start));
-      if (!open.havreSac && !open.bastion) Particules.preload(this, dir, open.world, v);   // le Havre-Sac n'a pas de particules
+      if (!open.havreSac) Particules.preload(this, dir, open.world, v);   // le Havre-Sac n'a pas de particules
       return;
     }
     const dir = mapDir(zone.map!.coords), key = dir.replace(/\W/g, '_');
