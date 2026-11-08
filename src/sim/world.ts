@@ -41,6 +41,8 @@ export interface HitDef { dmg: number; knock: number; element?: Element; lifeste
   crit?: number;
   /** Sacrieur : attire de px vers le lanceur ou vers le centre de la zone (Attirance, Condensation) ; Supplice posé sur la cible. */
   attire?: { px: number; vers: 'lanceur' | 'centre' }; supplice?: { part: number; t: number };
+  /** Forgelance (Kyrja) : dommages du monstre réduits de n % pendant t s. */
+  affaiblit?: { n: number; t: number };
   /** Légendaires de classe (0.3) : exécution sous cette part de PV (Couperet du bourreau), +n % par case de distance (Œil d'aigle),
    *  gel de n s au 3e coup (Givre mordant), +n % de dommages de poussée et étourdi (Clouage), marque +n % (Marque du chasseur),
    *  rebonds en plus (Flèche rebelle), 3 petites explosions à n % (Gerbe de feu). */
@@ -1378,6 +1380,7 @@ export class World {
       if (def.festin) this.festin += dmg;
       if (dmg && m.suppliceT > 0) p.hp = Math.min(p.maxHp, p.hp + Math.round(dmg * m.supplice));   // Supplice : frapper la cible soigne
       if (def.supplice) { m.supplice = def.supplice.part; m.suppliceT = def.supplice.t; }
+      if (def.affaiblit && m.furyPct <= 0) { m.furyPct = -def.affaiblit.n; m.furyT = Math.max(m.furyT, def.affaiblit.t); }   // Kyrja
       if (def.attire) {   // attire vers le lanceur (jusqu'au contact) ou vers le centre de la zone, sans tenir compte du poids (officiel)
         const vx = def.attire.vers === 'lanceur' ? p.x : ox, vy = def.attire.vers === 'lanceur' ? p.y : oy;
         const d0 = Math.hypot(vx - m.x, vy - m.y), marge = def.attire.vers === 'lanceur' ? m.radius + p.radius + 4 : 0;

@@ -101,6 +101,21 @@ export interface SpellDef {
   mutilation?: { sacrifice: number; puissance: number; cran: number; crans: number; periode: number; coagulation: number[] };
   /** Changements à Souffrance 6 ou plus (officiels) : portée en cases, attirance en cases, bouclier en plus par ennemi dans la zone. */
   souffrance6?: { po?: number; attire?: number; bouclierParEnnemi?: number };
+  /** Forgelance (maquette Forgelance, 8 nov. 2026) : ce que le sort fait de la Lance.
+   *  plante : la Lance se plante au point d'impact (Lance du Lac, Lance-pierre…) ; rappel : la Lance revient d'abord (Charge Héroïque…) ;
+   *  rappelApres : Désarmé, la Lance revient après l'impact (Muspel) ; surLance : Désarmé, la zone part de la Lance (5A) ;
+   *  epilogue : plante au point visé ou rappelle (clic droit, 7A) ; saut : Saut à la Lance (Espace, 8B). */
+  lance?: { plante?: boolean; rappel?: boolean; rappelApres?: boolean; surLance?: boolean; epilogue?: boolean; saut?: boolean };
+  /** Forgelance (11A) : bouclier (part des PV max) et Puissance donnés aussi aux alliés dans la zone (autres joueurs, bêtes, Épées). */
+  allies?: { shield?: number; puissance?: number; t: number };
+  /** Muspel : dommages en plus (part) pour chaque ennemi dans la zone. */
+  parEnnemi?: number;
+  /** Prélude au Fer : retire les bonus des ennemis touchés (Frénésie, Dommages en plus). */
+  dissipe?: boolean;
+  /** Kyrja : dommages des ennemis touchés réduits de n % pendant t s. */
+  affaiblit?: { n: number; t: number };
+  /** Balestra : après le coup, le lanceur passe de l'autre côté de la cible (cases). */
+  traverse?: number;
 }
 /** Auto-attaque d'un type d'arme : un sort sans coût dont les dommages viennent de l'arme portée. */
 export interface WeaponProfile extends Omit<SpellDef, 'name' | 'icon' | 'element' | 'dmg' | 'cooldown' | 'anim'> {
@@ -122,7 +137,12 @@ export interface ClassDef {
   /** bonus : dommages en plus ; signature : multiplicateur de l'effet propre au sort (SpellDef.rage), 1,5 = +50 %. */
   rage: { name: string; max: number; perHit: number; perHurt: number; bonus: number; signature: number;
     /** Ligne Rage 24B : la Rage du Iop monte plus en mêlée, la Précision du Crâ plus de loin (et pas en prenant des coups). */
-    mode?: 'melee' | 'distance' | 'eveil' | 'souffrance' };
+    mode?: 'melee' | 'distance' | 'eveil' | 'souffrance' | 'lance' };
+  /** Forgelance : la Lance Immortelle (états officiels Armé 24629 et Désarmé 24630).
+   *  garde = part des dommages subis quand Armé (×0,85) ; reprise = Puissance gagnée en reprenant la Lance (rappel), aPied = à pied (3B),
+   *  pendant duree s ; glyphe = rayon (px) où marcher reprend la Lance ; portee = distance (px) au-delà de laquelle elle revient seule (4A) ;
+   *  tranchant = dommages du Rappel tranchant (1B), meilleur élément. */
+  lance?: { garde: number; reprise: number; aPied: number; duree: number; glyphe: number; portee: number; tranchant: number };
   /** Sacrieur : Souffrance officielle (palier 1 à 10 = tranche de 10 % de PV perdus) : % des dommages reçus et % de dommages
    *  en plus par palier ; memoire = secondes où le palier le plus haut tient après un soin (maquette Sacrieur 3B). */
   souffrance?: { subis: number[]; finaux: number[]; memoire: number };

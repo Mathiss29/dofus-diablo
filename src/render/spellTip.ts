@@ -64,11 +64,24 @@ export function spellDetail(p: Player, id: SkillId, gOver?: SortGrade) {
     d.dmgPV ? `Dommages : ${Math.round(d.dmgPV * 100)} % de tes PV restants (${Math.round(p.damage(p.hp * d.dmgPV, d.element))})` : '',
     d.renvoi ? `Renvoie ${Math.round(d.renvoi.part * 100)} % des dommages de mêlée pendant ${d.renvoi.t} s` : '',
     d.mutilation ? `Sacrifie ${Math.round(d.mutilation.sacrifice * 100)} % de tes PV (jamais sous 1) : +${d.mutilation.puissance} Puissance, puis toutes les ${d.mutilation.periode} s un nouveau sacrifice (+${d.mutilation.cran}, ${d.mutilation.crans} crans max, le sacrifice continue ensuite). Reste active sans limite de durée. Relancer : Coagulation, bouclier de ${Math.round(d.mutilation.coagulation[0] * 100)} à ${Math.round(d.mutilation.coagulation.at(-1)! * 100)} % des PV max` : '',
+    // Forgelance
+    d.lance?.epilogue ? 'Armé : plante la Lance au point visé. Désarmé : la rappelle (elle frappe ce qu\'elle traverse)' : '',
+    d.lance?.saut ? 'Désarmé : bondit jusqu\'à la Lance et la reprend à pied. Armé : petit bond' : '',
+    d.lance?.plante ? 'Plante la Lance au point d\'impact' : '',
+    d.lance?.rappel ? 'Rappelle d\'abord la Lance' : '',
+    d.lance?.surLance ? 'Désarmé : part de la Lance, où que tu vises' : '',
+    d.lance?.rappelApres ? 'Désarmé : rappelle la Lance après le coup' : '',
+    d.allies?.shield ? `Bouclier de ${Math.round(d.allies.shield * 100)} % des PV max aux alliés de la zone (${d.allies.t} s)` : '',
+    d.allies?.puissance ? `+${d.allies.puissance} Puissance aux alliés de la zone (${d.allies.t} s)` : '',
+    d.parEnnemi ? `+${Math.round(d.parEnnemi * 100)} % de dommages par ennemi dans la zone` : '',
+    d.dissipe ? 'Retire les bonus des ennemis touchés' : '',
+    d.affaiblit ? `Dommages des ennemis touchés −${d.affaiblit.n} % pendant ${d.affaiblit.t} s` : '',
+    d.traverse ? 'Passe de l\'autre côté de la cible' : '',
     d.souffrance6 ? `Souffrance 6 ou plus : ${[d.souffrance6.po ? `portée +${d.souffrance6.po}` : '', d.souffrance6.attire ? `attire de ${d.souffrance6.attire} cases` : '', d.souffrance6.bouclierParEnnemi ? `bouclier +${Math.round(d.souffrance6.bouclierParEnnemi * 100)} % par ennemi proche` : ''].filter(Boolean).join(', ')}` : '',
   ].filter(Boolean);
   const gm = o && g && o.grades[0].dmg && g.dmg ? (g.dmg[0] + g.dmg[1]) / (o.grades[0].dmg[0] + o.grades[0].dmg[1]) : 1;
   const dmg = d.dmg ? `Dommages : <b style="color:${col}">${Math.round(p.damage(d.dmg * gm * (d.grosCoup?.mult ?? 1), d.element))}</b> ${ELEMENT_NAMES[d.element] ?? ''}` : '';
-  const rage = d.move?.kind === 'leap' || p.cls.souffrance ? '' : `${p.cls.rage.name} pleine : +${Math.round(p.cls.rage.bonus * 100)} % de dommages${d.rage ? `, ${RAGE_TEXT[d.rage](d)}` : ''}`;
+  const rage = d.move?.kind === 'leap' || p.cls.souffrance || p.cls.lance ? '' : `${p.cls.rage.name} pleine : +${Math.round(p.cls.rage.bonus * 100)} % de dommages${d.rage ? `, ${RAGE_TEXT[d.rage](d)}` : ''}`;
   return { d, col, cost, cdS, nCh, dmg, zone: zone(d), extra, rage, grade: o && g ? `Grade ${o.grades.indexOf(g) + 1}/${o.grades.length}` : '' };
 }
 

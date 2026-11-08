@@ -17,5 +17,9 @@ for o in env.objects:
         try:
             t=o.read_typetree(); json.dump(t, open(f'{out}/mb_{o.path_id}.json','w'), default=str)
             print('  keys', list(t.keys())[:30])
+            # Squelettes récents (Lance Immortelle 7139) : animations rangées dans le squelette (dataBytes), pas en TextAsset
+            for a in t.get('animations') or []:
+                if a.get('dataBytes') and not os.path.exists(f"{out}/ta_x_{a['name']}.bin"):
+                    open(f"{out}/ta_x_{a['name']}.bin",'wb').write(bytes(a['dataBytes']))
         except Exception as e:
             print('  tt err', str(e)[:200]); open(f'{out}/mb_{o.path_id}.raw','wb').write(o.get_raw_data())

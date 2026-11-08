@@ -127,6 +127,10 @@ export class Player extends Entity {
   subis = 1; subisT = 0; pacifiste = 0;
   /** Sacrieur : palier de Souffrance gardé après un soin (maquette 3B) et secondes restantes ; Mutilation en cours ; Couronne d'Épines (renvoi). */
   souffPic = 0; souffT = 0;
+  /** Forgelance : la Lance Immortelle plantée au sol (Désarmé) ou null (Armé, Lance en main) ; t = secondes depuis qu'elle est plantée. */
+  lance: { x: number; y: number; t: number } | null = null;
+  /** Forgelance : Lance en main (état officiel Armé). */
+  get arme(): boolean { return !!this.cls.lance && !this.lance; }
   mutil: { n: number; next: number } | null = null;
   renvoiT = 0; renvoiPart = 0;
   /** Dernier souffle (légendaire Sacrieur D) : dernière fois qu'il a sauvé le perso. */
@@ -230,14 +234,14 @@ export class Player extends Entity {
   etatPouvoir(id: string): { actif: true } | { actif: false; raison: string } {
     const c = PC_PAR_ID[id];
     if (c) {   // légendaire de classe inventé : sa classe, et son sort connu
-      if (c.classe !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur' } as Record<string, string>)[c.classe] ?? 'une autre classe'}` };
+      if (c.classe !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur', forgelance: 'Forgelance' } as Record<string, string>)[c.classe] ?? 'une autre classe'}` };
       if (this.knows(c.sort)) return { actif: true };
       const o = this.official(c.sort), n = o ? this.requiredLevel(o) : 0;
       return { actif: false, raison: n > this.level ? `s'éveille au niveau ${n}` : 'variante non choisie' };
     }
     const p = POUVOIR_PAR_ID[id];
     if (!p) return { actif: true };
-    if (classeDuPouvoir(id) !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur' } as Record<string, string>)[classeDuPouvoir(id)] ?? 'une autre classe'}` };
+    if (classeDuPouvoir(id) !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur', forgelance: 'Forgelance' } as Record<string, string>)[classeDuPouvoir(id)] ?? 'une autre classe'}` };
     const k = Object.keys(this.cls.spells).find(x => this.cls.spells[x].dofusId === p.dofusId);
     if (!k) return { actif: false, raison: 'sort pas encore en jeu' };
     if (this.knows(k)) return { actif: true };
@@ -268,6 +272,12 @@ export class Player extends Entity {
       if (slot >= 0) this.bar[slot] = k;
       world?.emit({ k: 'newSpell', id: k, slot });
     });
+    // Déplacement sans fiche officielle (Saut à la Lance du Forgelance, maquette 8B) : sur Espace dès le niveau 1
+    const mob = this.cls.mobility;
+    if (mob && this.cls.spells[mob] && !this.cls.spells[mob].dofusId && !this.learned.has(mob)) {
+      this.learned.add(mob);
+      if (!this.bar.includes(mob) && !this.bar[Player.ESPACE]) this.bar[Player.ESPACE] = mob;
+    }
   }
   /** Met un sort (ou rien) dans un emplacement de la barre ; s'il était déjà ailleurs, les deux s'échangent. */
   assign(slot: number, id: SkillId | null): boolean {
@@ -491,7 +501,10 @@ export class Player extends Entity {
 
   spell(id: SkillId): SpellDef | undefined { return id === 'arme' ? this.weaponDef ?? undefined : this.cls.spells[id]; }
   /** Auto-attaque (clic gauche) : celle de l'arme portée, sinon le coup de la classe (Coup de poing, Flèche Cinglante). */
-  get autoAttack(): SkillId { return this.weaponDef ? 'arme' : this.cls.basic ?? 'attaque'; }
+  get autoAttack(): SkillId {
+    if (this.cls.lance && this.lance) return 'attaque';   // Forgelance Désarmé : coups de poing (9A)
+    return this.weaponDef ? 'arme' : this.cls.basic ?? 'attaque';
+  }
   /** Auto-attaque de l'arme portée (src/data/armes.json), recalculée à chaque changement d'équipement. */
   weaponDef: SpellDef | null = null;
   private buildWeapon() {
@@ -714,6 +727,9 @@ export class Player extends Entity {
   landing(id: SkillId, aim: { x: number; y: number }, world: World): { x: number; y: number } {
     const def = this.spell(id);
     let tx = this.x, ty = this.y;
+    // Forgelance : Désarmé, un sort « sur la Lance » part d'elle (5A) ; le Saut à la Lance y bondit (8B)
+    if (this.lance && (def?.lance?.surLance || def?.lance?.saut)) return { x: this.lance.x, y: this.lance.y };
+    if (this.lance && def?.lance?.epilogue) return { x: this.lance.x, y: this.lance.y };
     if (def?.hit.shape === 'point' && !def.move) {   // case visée, ramenée à la portée du sort
       const R = (this.shot(id).range ?? def.hit.range) + this.porteeStat(id) + (def.souffrance6?.po && this.souffrance >= 6 ? def.souffrance6.po * CASE : 0), dx = aim.x - this.x, dy = aim.y - this.y, d = Math.hypot(dx, dy);
       let L = Math.min(d, R) / (d || 1);
@@ -752,6 +768,7 @@ export class Player extends Entity {
       return;
     }
     const def = this.spell(id)!;
+    if (def.lance?.rappel && this.lance) this.rappelerLance(world);   // Charge Héroïque, Talon d'Argile, Kyrja : la Lance revient d'abord
     const { x: tx, y: ty } = this.landing(id, aim, world);
     // Rage pleine : ce sort est renforcé (pas les déplacements)
     const boosted = this.rageFull && def.move?.kind !== 'leap' && this.cls.rage.mode !== 'eveil';   // l'Éveil ne renforce pas les sorts
@@ -786,6 +803,7 @@ export class Player extends Entity {
     this.invuln = Math.max(0, this.invuln - dt);
     if (this.shieldT > 0 && (this.shieldT -= dt) <= 0) this.shield = 0;
     if (this.cls.souffrance) this.majSouffrance(dt, world);
+    if (this.lance) this.majLance(dt, world);
     if (this.renvoiT > 0) this.renvoiT -= dt;
     if (this.mutil) {   // Mutilation : re-sacrifie toutes les `periode` s et gagne un cran de Puissance
       const M = this.cls.spells.mutilation?.mutilation;
@@ -1031,11 +1049,17 @@ export class Player extends Entity {
         this.kx -= Math.cos(this.facing) * v; this.ky -= Math.sin(this.facing) * v;
       }
       if (d.grosCoup) mult *= d.grosCoup.mult;   // 5A : gros coup
+      // Forgelance : centre des zones « sur la Lance » (Phalange, Prélude au Fer, Muspel…), effets sur les alliés, Muspel par ennemi
+      const L = this.lance, surL = !!(d.lance?.surLance && L), cx = surL && hz.shape === 'circle' ? L!.x : this.x, cy = surL && hz.shape === 'circle' ? L!.y : this.y;
+      const rz = hz.shape === 'circle' || hz.shape === 'point' ? hz.radius : 0;
+      if (d.allies || d.dissipe) this.effetsAllies(d, hz.shape === 'point' ? s.tx : cx, hz.shape === 'point' ? s.ty : cy, rz, world);
+      if (d.parEnnemi) mult *= 1 + d.parEnnemi * world.monsters.filter(m => !m.dead && Math.hypot(m.x - s.tx, m.y - s.ty) <= rz + m.radius).length;
       // Transfusion : dommages en part des PV restants ; Attirance (plus forte à Souffrance 6+), Condensation, Supplice
       const base = d.dmgPV ? this.hp * d.dmgPV : d.dmg * s.gm;
       const attire = d.attire && { px: ((this.souffrance >= 6 && d.souffrance6?.attire) || d.attire.cases) * CASE, vers: d.attire.vers };
       const hit = { dmg: (base + (s.id === this.cls.basic ? this.weaponDamage() : 0)) * mult, attire, supplice: d.supplice, knock: d.knock * sig('knock'), element: d.element, vsSummon: d.vsSummon && 1 + (d.vsSummon - 1) * sig('summon'), vsElite: sig('summon') > 1,
-        pushDmg: d.pushDmg && s.boosted,
+        pushDmg: (d.pushDmg && s.boosted) || (!!this.cls.lance && d.knock > 0),   // Forgelance : dommages de poussée officiels (10A)
+        affaiblit: d.affaiblit,
         lifesteal: d.lifesteal && d.lifesteal * sig('lifesteal'), erosion: d.erosion && d.erosion * sig('erosion'),
         pmLoss: d.pmLoss && Math.round(d.pmLoss * sig('pm')), paLoss: d.paLoss && Math.round(d.paLoss * sig('pa')),
         poLoss: d.poLoss && this.parGrade(s.id, d.poLoss),
@@ -1058,7 +1082,7 @@ export class Player extends Entity {
       }
       else if (hz.shape === 'point') { size = hz.radius * area + zb; hits = world.hitCircle(s.tx, s.ty, size, hit, d.stun, this.facing); }   // poussée dans l'axe du lanceur, comme Dofus
       else if (hz.shape === 'circle' && d.vuln && !d.dmg) { size = hz.radius * area + zb; world.markVuln(this.x, this.y, size, d.vuln.n, d.vuln.t); }
-      else if (hz.shape === 'circle') { size = hz.radius * area + zb; hits = world.hitCircle(this.x, this.y, size, hit, d.stun); }
+      else if (hz.shape === 'circle') { size = hz.radius * area + zb; hits = world.hitCircle(cx, cy, size, hit, d.stun); }
       else {
         // Flèche : la zone (et les dommages) partent avec le projectile ; l'effet d'impact se joue à l'arrivée
         const shot = { ...hz, range: s.range ?? hz.range, explode: s.explode ?? hz.explode };
@@ -1068,6 +1092,11 @@ export class Player extends Entity {
         size = hz.range;
       }
       if (d.echange) world.echanger(this, s.tx, s.ty, CASE * 0.75);   // Assaut, Transposition : après le coup
+      if (d.lance && this.cls.lance) this.apresImpactLance(d, s.tx, s.ty, world);
+      if (d.traverse) {   // Balestra : de l'autre côté de la cible, puis petit recul
+        const fx2 = Math.cos(this.facing), fy2 = Math.sin(this.facing), nx = this.x + fx2 * d.traverse * CASE, ny = this.y + fy2 * d.traverse * CASE;
+        if (world.walkable(nx, ny)) { this.x = nx; this.y = ny; }
+      }
       if (s.id === 'arme') this.frenesie(hits, world);
       this.apresImpactClasse(s.id, s.sx, s.sy, s.tx, s.ty, hit, s.gm, size, world);
       const pt = hz.shape === 'point';
@@ -1079,6 +1108,67 @@ export class Player extends Entity {
     if (s.t >= d.duration) this.endSkill();
   }
 
+  // --- Forgelance : la Lance Immortelle (maquette Forgelance, 8 nov. 2026) -----------------------------------
+  /** Plante la Lance (Désarmé). Si elle était déjà plantée, elle change de place sans bonus de reprise. */
+  planterLance(x: number, y: number, world: World) {
+    if (!world.walkable(x, y)) { const a = Math.atan2(y - this.y, x - this.x); for (let i = 0; i < 12 && !world.walkable(x, y); i++) { x -= Math.cos(a) * CASE / 3; y -= Math.sin(a) * CASE / 3; } }
+    const o = this.lance;
+    this.lance = { x, y, t: 0 };
+    world.emit({ k: 'lance', quoi: 'plante', id: this.id, x, y, ox: o?.x ?? this.x, oy: o?.y ?? this.y });
+  }
+  /** Reprend la Lance : rappel (1B : elle revient en frappant ce qu'elle traverse) ou à pied (Reprise de Volée, bonus doublé, 3B).
+   *  seule : retour automatique (trop loin, 4A), sans bonus ni coup. */
+  reprendreLance(world: World, comment: 'rappel' | 'pied' | 'seule') {
+    const L = this.lance, C = this.cls.lance;
+    if (!L || !C) return;
+    this.lance = null;
+    if (comment === 'rappel') {   // Rappel tranchant : la Lance revient en ligne droite et frappe tout ce qu'elle traverse
+      const d = Math.hypot(this.x - L.x, this.y - L.y);
+      if (d > CASE) world.hitLine(L.x, L.y, Math.atan2(this.y - L.y, this.x - L.x), d, 26, { dmg: C.tranchant, knock: 0, element: 'meilleur' });
+    }
+    if (comment !== 'seule') {
+      const n = comment === 'pied' ? C.aPied : C.reprise;
+      this.mods = this.mods.filter(m => m.src !== 'reprise');
+      this.addMod('puissance', n, C.duree, 'reprise');
+      world.emit({ k: 'status', x: this.x, y: this.y - 60, text: `${comment === 'pied' ? 'Reprise de Volée' : 'Reprise'} +${n} Puissance`, color: '#e8b860' });
+    }
+    world.emit({ k: 'lance', quoi: comment === 'pied' ? 'reprise' : 'rappel', id: this.id, x: this.x, y: this.y, ox: L.x, oy: L.y });
+  }
+  rappelerLance(world: World) { this.reprendreLance(world, 'rappel'); }
+  /** Reprise de Volée (marcher dans le glyphe de la Lance) et retour automatique au-delà de 15 cases (4A). */
+  private majLance(dt: number, world: World) {
+    const L = this.lance!, C = this.cls.lance;
+    if (!C || this.dead) { this.lance = null; return; }
+    L.t += dt;
+    const d = Math.hypot(this.x - L.x, this.y - L.y);
+    if (d > C.portee) this.reprendreLance(world, 'seule');
+    else if (L.t > 0.5 && d <= C.glyphe + this.radius && this.state === 'free') this.reprendreLance(world, 'pied');
+  }
+  /** Ce que fait un sort à la Lance après son impact (planter, rappeler, Épilogue, Saut à la Lance). */
+  private apresImpactLance(d: SpellDef, tx: number, ty: number, world: World) {
+    const l = d.lance!;
+    if (l.epilogue) { if (this.lance) this.rappelerLance(world); else this.planterLance(tx, ty, world); return; }
+    if (l.saut) { if (this.lance && Math.hypot(this.x - this.lance.x, this.y - this.lance.y) <= CASE * 1.5) this.reprendreLance(world, 'pied'); return; }
+    if (l.plante) this.planterLance(tx, ty, world);
+    if (l.rappelApres && this.lance) this.rappelerLance(world);
+  }
+  /** Sorts de soutien du Forgelance (11A) : bouclier et Puissance aux alliés de la zone (joueurs, bêtes, Épées) ; Prélude au Fer retire
+   *  les bonus des ennemis. */
+  private effetsAllies(d: SpellDef, x: number, y: number, r: number, world: World) {
+    const a = d.allies;
+    if (a) {
+      for (const q of world.players) {
+        if (q.dead || Math.hypot(q.x - x, q.y - y) > r + q.radius) continue;
+        if (a.shield) { q.shield = Math.max(q.shield, Math.round(q.maxHp * a.shield)); q.shieldT = q.shieldT0 = a.t; q.shieldSrc = 'phalange'; }
+        if (a.puissance) { q.mods = q.mods.filter(m => m.src !== 'prelude'); q.addMod('puissance', a.puissance, a.t, 'prelude'); }
+      }
+      if (a.shield) for (const b of world.betes) if (!b.dead && Math.hypot(b.x - x, b.y - y) <= r + b.radius) { b.shield = Math.max(b.shield, Math.round(b.maxHp * a.shield)); b.shieldT = a.t; }
+    }
+    if (d.dissipe) for (const m of world.monsters) if (!m.dead && Math.hypot(m.x - x, m.y - y) <= r + m.radius && m.furyT > 0) {
+      m.furyT = 0; m.furyPct = m.furyFlat = 0;
+      world.emit({ k: 'status', x: m.x, y: m.y - 34, text: 'Bonus retirés', color: '#c8c8c8' });
+    }
+  }
   /** Frénésie (légendaire Sacrieur B) : à Souffrance 8+, un coup de poing ou d'arme qui touche accélère les attaques (5 cumuls, 3 s). */
   private frenesie(hits: number, world: World) {
     const v = hits > 0 && this.souffrance >= 8 ? this.pcv('pc-sacrieur-B') : 0;
@@ -1278,7 +1368,8 @@ export class Player extends Entity {
     if (this.invuln > 0 || this.dead) return false;
     const E = element === 'meilleur' ? 'Neutre' : `${element[0].toUpperCase()}${element.slice(1)}`;
     const S = this.cls.souffrance, sf = S ? this.souffrance : 0;   // Souffrance : dommages subis réduits
-    let dmg = Math.max(1, Math.round((raw - this.stat(`red${E}` as Stat)) * (1 - Math.min(50, this.stat(`res${E}` as Stat)) / 100) * this.subis * (sf ? S!.subis[sf - 1] / 100 : 1)));
+    const garde = this.arme ? this.cls.lance!.garde : 1;   // Forgelance Armé : la Garde (×0,85, officiel)
+    let dmg = Math.max(1, Math.round((raw - this.stat(`red${E}` as Stat)) * (1 - Math.min(50, this.stat(`res${E}` as Stat)) / 100) * this.subis * (sf ? S!.subis[sf - 1] / 100 : 1) * garde));
     // Couronne d'Épines : les coups de mêlée sont renvoyés à celui qui frappe
     if (this.renvoiT > 0) {
       const auContact = !(loin ?? Math.hypot(fromX - this.x, fromY - this.y) > CASE * 1.6), ea = auContact ? 100 : this.pcv('pc-sacrieur-O');   // Épines acérées : aussi à distance

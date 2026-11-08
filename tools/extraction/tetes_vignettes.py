@@ -10,7 +10,7 @@ from PIL import Image
 HERE = os.path.dirname(os.path.abspath(__file__))
 persos, donnees, out = sys.argv[1], sys.argv[2], sys.argv[3]
 classes = [int(c) for c in (sys.argv[4] if len(sys.argv) > 4 else '8,9').split(',')]
-CLE = {8: 'iop', 9: 'cra', 2: 'osamodas', 11: 'sacrieur'}
+CLE = {8: 'iop', 9: 'cra', 2: 'osamodas', 11: 'sacrieur', 20: 'forgelance'}
 L = lambda v: v if isinstance(v, (list, dict)) else ast.literal_eval(v)
 work = os.path.join(out, '..', '.vignettes-travail') if 'TRAVAIL' not in os.environ else os.environ['TRAVAIL']
 work = os.path.abspath(work); os.makedirs(work, exist_ok=True)

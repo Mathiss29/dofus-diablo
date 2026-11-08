@@ -192,7 +192,7 @@ export class ZoneScene extends Phaser.Scene {
     else this.zoneId = 'incarnam';
     // dessins gardés d'une partie à l'autre : ils appartenaient à la scène d'avant (détruits avec elle), on les refait
     // (avant : Sacrieur qui change de zone ou rejoint une coop -> goutte de souffrance d'une scène détruite, jeu figé)
-    this.rageAura = undefined; this.goutteSouffrance = undefined; this.sangG = undefined; this.laisseG = undefined; this.gouttesSol = [];
+    this.rageAura = undefined; this.goutteSouffrance = undefined; this.sangG = undefined; this.laisseG = undefined; this.lanceG = undefined; this.lancesVues = new Map(); this.gouttesSol = [];
     this.views = new Map(); this.dropViews = new Map(); this.worldView = null; this.questView = null; this.passantsView = null; this.dialogueView = null; this.talkClick = null; this.zaapClick = null; this.zaapAnnonce = null; this.pressed = null; this.aimId = null; this.aimKey = null; this.hoverId = null; this.potion = false; this.hitstop = 0; this.acc = 0;
   }
 
@@ -1433,6 +1433,40 @@ export class ZoneScene extends Phaser.Scene {
       g.fillStyle(0x7a0c0c, 0.7 * a); g.fillEllipse(q.x, q.y, d.r * 2.4, d.r * 1.2);
     }
   }
+  /** Forgelance (maquette 4A, 13A, 13C) : la Lance Immortelle plantée de chaque joueur (squelette officiel 7139 : chute du ciel
+   *  à la pose, puis immobile), son glyphe au sol, et un fil de lumière qui la relie à son Forgelance. */
+  private lancesVues = new Map<number, Phaser.GameObjects.Sprite>();
+  private lanceG?: Phaser.GameObjects.Graphics;
+  private dessinerLances() {
+    const w = this.world, L = LOOKS.forgelance_lance, g = this.lanceG ??= this.add.graphics();
+    g.clear();
+    const vus = new Set<number>();
+    for (const p of w.players) {
+      if (!p.lance || p.dead || this.vitrine) continue;
+      vus.add(p.id);
+      const s = ISO.toScreen(p.lance.x, p.lance.y), q = ISO.toScreen(p.x, p.y), t = w.time;
+      // glyphe (Reprise de Volée) et fil de lumière, sous les persos
+      g.setDepth(s.y + 0.4);   // juste sous la Lance (plus bas, les pavés du sol le cachent)
+      const rg = p.cls.lance?.glyphe ?? 40, k = 0.5 + 0.5 * Math.sin(t * 4);
+      g.fillStyle(0x3a2408, 0.22); g.fillEllipse(s.x, s.y, 2.4 * rg, 1.2 * rg);
+      g.lineStyle(3, 0xffc24a, 0.7 + 0.25 * k); g.strokeEllipse(s.x, s.y, 2.4 * rg, 1.2 * rg);
+      g.lineStyle(7, 0xffc24a, 0.2); g.lineBetween(q.x, q.y - 34 - p.z, s.x, s.y - 60);
+      g.lineStyle(2, 0xfff0b8, 0.75); g.lineBetween(q.x, q.y - 34 - p.z, s.x, s.y - 60);
+      if (!this.planche(L)) continue;
+      let sp = this.lancesVues.get(p.id);
+      if (!sp) {
+        const tex = this.textures.get(L.atlas), meta = (tex.customData as { meta?: { cell: number[]; origin: number[] } }).meta ?? { cell: [1, 1], origin: [0.5, 0.97] };
+        sp = this.add.sprite(0, 0, L.atlas, 'AnimStatique_1_0').setOrigin(meta.origin[0] / meta.cell[0], meta.origin[1] / meta.cell[1]).setScale(L.scale);
+        this.lancesVues.set(p.id, sp);
+      }
+      // arrivée : les 0,5 premières secondes, l'animation officielle de chute (AnimAttaque0, 60 images)
+      const n = this.textures.get(L.atlas).getFrameNames().filter(f => f.startsWith('AnimAttaque0_1_')).length;
+      const f = p.lance.t < 0.5 && n ? `AnimAttaque0_1_${Math.min(n - 1, Math.floor(p.lance.t / 0.5 * n))}` : 'AnimStatique_1_0';
+      if (sp.frame.name !== f && this.textures.get(L.atlas).has(f)) sp.setFrame(f);
+      sp.setPosition(s.x, s.y).setDepth(s.y + 0.5).setVisible(true);
+    }
+    for (const [id, sp] of this.lancesVues) if (!vus.has(id)) { sp.destroy(); this.lancesVues.delete(id); }
+  }
   /** Maj enfoncée (maquette Osamodas 14B) : un fil de laisse relie l'Osamodas à chacune de ses bêtes (bleu pour une bête domptée). */
   private laisseG?: Phaser.GameObjects.Graphics;
   private dessinerLaisse() {
@@ -1553,6 +1587,7 @@ export class ZoneScene extends Phaser.Scene {
     for (const [id, vv] of this.vivantsAllies) if (!w.players.some(q => q.id === id)) { vv?.destroy(); this.vivantsAllies.delete(id); }
     this.dessinerLaisse();
     this.dessinerSouffrance();
+    this.dessinerLances();
     this.oublierPlanches();
     if (!this.vitrine) this.familierView?.maj(w, this.game.loop.delta / 1000);
     if (this.transparence) {

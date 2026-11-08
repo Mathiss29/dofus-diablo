@@ -623,8 +623,10 @@ export class Hud {
     // 6C : la Rage (ou la Précision) remplit le bord du portrait, qui s'embrase une fois pleine
     // Sacrieur : la jauge montre la Souffrance (palier / 10), en rouge sang, qui palpite à partir de 6
     const sf = cls.souffrance ? p.souffrance : -1;
-    const rr = sf >= 0 ? sf / 10 : p.rage / cls.rage.max;
-    const rageCol = sf >= 0 ? (sf >= 6 && Math.floor(world.time * 4) % 2 ? 0xff4a3a : 0xc0262a) : p.rageFull ? (Math.floor(world.time * 6) % 2 ? 0xffc04d : C.rage) : C.rage;
+    // Forgelance (6A) : pas de jauge ; le bord montre le temps restant du bonus de reprise de la Lance, en or
+    const rep = cls.lance ? p.mods.find(m => m.src === 'reprise') : undefined, fl = cls.lance ? (rep ? rep.t / (rep.t0 || 1) : 0) : -1;
+    const rr = fl >= 0 ? fl : sf >= 0 ? sf / 10 : p.rage / cls.rage.max;
+    const rageCol = fl >= 0 ? 0xe8b860 : sf >= 0 ? (sf >= 6 && Math.floor(world.time * 4) % 2 ? 0xff4a3a : 0xc0262a) : p.rageFull ? (Math.floor(world.time * 6) % 2 ? 0xffc04d : C.rage) : C.rage;
     if (p.rageFull) {
       const k = 0.5 + 0.5 * Math.sin(world.time * 10);
       gs.lineStyle(7, 0xffcf4d, 0.25 + 0.3 * k); gs.strokeRoundedRect(px - 3, py - 3, ps + 6, ps + 6, 8);
@@ -910,6 +912,7 @@ export class Hud {
     if (this.rageFlash > 0 && juice) { g.lineStyle(3, 0xffc04d, this.rageFlash); g.strokeRoundedRect(rx - 12, ry - 3, 24, rh + 6, 6); }
     this.rageLabel.setPosition(rx, ry + rh + 1);
     if (sf >= 0) this.rageLabel.setText(sf ? `${cls.rage.name} ${sf}` : cls.rage.name).setColor(sf ? '#ff6a5a' : '#c9a49c');
+    if (fl >= 0) this.rageLabel.setText(p.lance ? 'Désarmé' : 'Armé').setColor(p.lance ? '#e8b860' : '#c9c2b0');
     // Tutoriel (3A) : halo doré qui pulse sur l'emplacement de l'étape suivie, et sa touche au-dessus
     const qs = world.quetes, qc = qs?.enCours.find(c => c.id === qs.suivie), halo = qc && !qc.aRendre ? qs!.etapeDe(qc)?.halo : undefined;
     if (halo != null) {
