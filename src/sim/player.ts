@@ -20,6 +20,9 @@ type ActiveSkill =
       /** Dommages du grade atteint / dommages du grade 1 ; zone d'explosion de la flèche (Abolition) ; portée de la flèche. */
       gm: number; explode?: number; range?: number };
 
+/** Préréglage d'équipement (0.3, 13A). */
+export interface Prereglage { nom: string; equipement: Partial<Record<EquipSlot, number>>; bar: (string | null)[]; variants: number[] }
+
 export class Player extends Entity {
   readonly faction = 'player' as const;
   state: 'free' | 'skill' = 'free';
@@ -529,6 +532,44 @@ export class Player extends Entity {
 
   /** Dernier coup porté (la jauge baisse après 6 s sans frapper, ligne Rage 26B). */
   lastHitAt = -99;
+  /** Dernier coup reçu (préréglages, 0.3 13D : pas de changement moins de 5 s après). */
+  blesseA = -99;
+  // --- Préréglages d'équipement (version 0.3, 13A+13D) ---------------------------------------------
+  static readonly PREREGLAGES = 3;
+  static readonly PREREGLAGE_DELAI = 5;
+  /** 13A : 3 préréglages : équipement (numéros d'objets par emplacement), barre de sorts, variantes. */
+  prereglages: (Prereglage | null)[] = Array(Player.PREREGLAGES).fill(null);
+  /** Enregistre l'équipement porté, la barre et les variantes dans le préréglage i. */
+  enregistrerPrereglage(i: number, nom?: string): boolean {
+    if (i < 0 || i >= Player.PREREGLAGES) return false;
+    const equipement: Partial<Record<EquipSlot, number>> = {};
+    for (const s of EQUIP_SLOTS) { const it = this.equipment[s]; if (it) equipement[s] = it.uid; }
+    this.prereglages[i] = { nom: (nom ?? this.prereglages[i]?.nom ?? `Préréglage ${i + 1}`).slice(0, 20), equipement, bar: [...this.bar], variants: [...this.variants] };
+    return true;
+  }
+  /** 13D : temps avant de pouvoir changer (un monstre t'a touché il y a moins de 5 s). */
+  get attentePrereglage(): number { return Math.max(0, Player.PREREGLAGE_DELAI - (this.age - this.blesseA)); }
+  /** Met le préréglage i : les objets encore au perso (sac ou portés) reprennent leur place, puis la barre et les variantes. */
+  mettrePrereglage(i: number): boolean {
+    const r = this.prereglages[i];
+    if (!r || this.dead || this.attentePrereglage > 0) return false;
+    const ou = (uid: number) => this.bag.find(b => b.uid === uid) ?? Object.values(this.equipment).find(e => e?.uid === uid);
+    // d'abord on retire ce qui n'est pas dans le préréglage (place faite dans le sac), puis on équipe
+    for (const s of EQUIP_SLOTS) {
+      const voulu = r.equipement[s], it = this.equipment[s];
+      if (it && it.uid !== voulu && this.bag.length < Player.BAG_SIZE) { delete this.equipment[s]; this.bag.push(it); }
+    }
+    for (const s of EQUIP_SLOTS) {
+      const uid = r.equipement[s];
+      if (uid == null || this.equipment[s]?.uid === uid || !ou(uid)) continue;
+      this.equip(uid, s);
+    }
+    r.variants.forEach((v, k) => { if ((v === 0 || v === 1) && v !== (this.variants[k] ?? 0)) this.setVariant(k, v); });
+    this.bar = r.bar.map(k => (k && (k === 'arme' || this.knows(k as string)) ? k : null)) as (SkillId | null)[];
+    while (this.bar.length < 12) this.bar.push(null);
+    this.recompute();
+    return true;
+  }
   /** Coup porté à cette distance : la Rage du Iop monte plus en mêlée, la Précision du Crâ plus de loin (24B). */
   rageOnHit(dist: number, world: World) {
     const R = this.cls.rage;
@@ -902,7 +943,7 @@ export class Player extends Entity {
     const E = element === 'meilleur' ? 'Neutre' : `${element[0].toUpperCase()}${element.slice(1)}`;
     let dmg = Math.max(1, Math.round((raw - this.stat(`red${E}` as Stat)) * (1 - Math.min(50, this.stat(`res${E}` as Stat)) / 100) * this.subis));
     if (this.shield > 0) { const a = Math.min(this.shield, dmg); this.shield -= a; dmg -= a; }   // le bouclier prend les coups d'abord
-    this.hp -= dmg; this.flash = 0.1; this.invuln = this.cls.iframesOnHit;
+    this.hp -= dmg; this.flash = 0.1; this.invuln = this.cls.iframesOnHit; this.blesseA = this.age;
     const a = Math.atan2(this.y - fromY, this.x - fromX);
     this.kx += Math.cos(a) * 260; this.ky += Math.sin(a) * 260;
     world.emit({ k: 'hit', target: 'player', x: this.x, y: this.y, z: 50, amount: dmg, crit: false });
