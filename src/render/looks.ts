@@ -332,4 +332,12 @@ export const PNJ_LOOKS: Record<string, PnjLook> = {
   gawdien: { scale: 0.82, anim: 'AnimStatique_1' },
   rathrosk: { scale: 0.82, anim: 'AnimStatique_1', fun: [['AnimAttaque3_1', 9], ['AnimAttaque2_1', 7], ['AnimAttaque1_1', 4]] },
   energie_cacao: { scale: 0.82, anim: 'AnimStatique_1' },
+  // Gardes et crieur du Bastion (maquette Ville 5F) : looks officiels, animFunList officielles des miliciens (MILICIEN BONTA PIQUE 6554,
+  // MILICIEN BRÂKMAR PIQUE 6560) et du Héraut d'Ecaflip (3098) ; Garde Pandalien ({5795|…}), Gardes d'Amakna et Marin frigostien sans anim fun
+  garde_bonta: { scale: 0.82, anim: 'AnimStatique_1', fun: [['AnimAttaque0_1', 10]] },
+  garde_brakmar: { scale: 0.82, anim: 'AnimStatique_1', fun: [['AnimAttaque0_1', 10], ['AnimAttaque2_1', 5]] },
+  garde_pandala: { scale: 0.82, anim: 'AnimStatique_1' },
+  garde_frigost: { scale: 0.82, anim: 'AnimStatique_1' },
+  garde_amakna: { scale: 0.82, anim: 'AnimStatique_1' },
+  heraut_ecaflip: { scale: 0.82, anim: 'AnimStatique_1', fun: [['AnimAttaque0_1', 9], ['AnimAttaque1_1', 7], ['AnimAttaque2_1', 6]] },
 };

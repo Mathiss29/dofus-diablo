@@ -151,6 +151,9 @@ export interface PnjDef {
   gardien?: GardienDef;
   /** Tient le tableau des contrats du jour (Quêtes roadmap 3C). */
   contrats?: boolean;
+  /** Crieur (maquette Ville 5F) : il crie ces nouvelles à tour de rôle quand on passe sur la place. {almanax} = bonus du jour
+   *  de l'Almanax (la ligne est sautée sans Almanax). */
+  cris?: string[];
 }
 export interface GardienDef {
   /** Nom du donjon (zones.json, open.donjons[].nom). */
@@ -251,6 +254,8 @@ export class Quetes {
   private dyn = new Map<string, QueteDef | null>();
   /** Donjon où se trouve le perso et moment où il y est entré (temps du premier passage, Tour 8B). */
   private dansDonjon: { nom: string; t: number } | null = null;
+  /** Crieur : secondes avant le prochain cri, et le cri suivant. */
+  private cri = { t: 3, i: 0 };
   /** Gardiens qui ont déjà dit leur bulle d'approche pendant cette visite (9A). */
   private salues = new Set<string>();
   /** PNJ placés dans le monde (coordonnées monde). */
@@ -678,6 +683,19 @@ export class Quetes {
     return false;
   }
 
+  /** Crieur (Ville 5F) : un cri toutes les 14 s quand le joueur est sur la place, sans couper une autre bulle ni un dialogue. */
+  private majCrieur(dt: number) {
+    const p = this.world.player, n = this.pnjs.find(o => o.def.cris?.length);
+    if (!n || Math.hypot(n.x - p.x, n.y - p.y) > 1300 || this.dialogue || p.dead) return;
+    if ((this.cri.t -= dt) > 0 || this.bulle) return;
+    const cris = n.def.cris!, alm = this.world.almanaxDuJour;
+    for (let k = 0; k < cris.length; k++) {
+      const c = cris[this.cri.i++ % cris.length];
+      if (c.includes('{almanax}') && !alm) continue;
+      this.dire(n.id, c.replace('{almanax}', alm?.bonus ?? '')); break;
+    }
+    this.cri.t = 14;
+  }
   /** Chaque pas : objectifs d'état (sous-zone, PNJ proche, objet équipé), clic sur un PNJ, bulle. */
   update(dt: number) {
     const w = this.world, p = w.player, map = w.worldGrid?.mapAt(p.x, p.y);
@@ -698,6 +716,7 @@ export class Quetes {
       if (d > 900) this.salues.delete(n.id);
       else if (d < 380 && !this.salues.has(n.id) && !this.dialogue && !this.bulle && !p.dead) { this.salues.add(n.id); this.dire(n.id, n.def.gardien.approche); }
     }
+    this.majCrieur(dt);
     // quêtes sans PNJ : elles démarrent seules en entrant dans leur sous-zone
     if (map) for (const [id, q] of Object.entries(this.data.quetes))
       if (q.zone === map.sub && !q.pnj && !this.finies.has(id) && !this.enCours.some(c => c.id === id) && p.level + 2 >= q.niveau
