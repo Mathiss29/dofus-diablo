@@ -172,6 +172,26 @@ const SAC_MAP: Record<string, AnimSlice> = {
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };
 
+// Forgelance : squelette joueur n° 1 + skin 3221 (corps), animations officielles (spellscripts casterAnimation, maquette Forgelance 13A) :
+// planter la Lance 2000 (Épilogue, Lance du Lac, Lance-pierre, Lance à Incendie, Javeline de Myr), Estoc Brûlant 2001,
+// Volée d'Airain et Kyrja 2003, Prélude au Fer 2005, Trident, Charge Héroïque, Balestra et Talon d'Argile 2008,
+// Effondrement, Phalange et Muspel 2012. L'estoc de base reprend le geste officiel de la Lance (AnimArme271).
+const FL_MAP: Record<string, AnimSlice> = {
+  ...WEAPON_MAP,
+  idle: { anim: 'AnimStatiqueExplo0', loop: true, fps: 20 },
+  run: { anim: 'AnimCourse', loop: true, fps: 32 },
+  attack1: { anim: 'AnimArme0', from: 3 / 28, to: 17 / 28 },
+  attack2: { anim: 'AnimArme0', from: 3 / 28, to: 17 / 28 },
+  attack3: { anim: 'AnimArme0', from: 3 / 28, to: 24 / 28 },
+  ...Object.fromEntries(Object.entries({
+    trident: 2008, effondrement: 2012, estoc_brulant: 2001, volee_airain: 2003, epilogue: 2000, charge_heroique: 2008, lance_lac: 2000,
+    lance_pierre: 2000, phalange: 2012, lance_incendie: 2000, javeline_myr: 2000, balestra: 2008, talon_argile: 2008, kyrja: 2003,
+    muspel: 2012, prelude_fer: 2005, saut: 2008,
+  }).map(([k, n]) => [k, { anim: `AnimAttaque${n}`, from: 0, to: 0.65 }])),
+  hit: { anim: 'AnimHit', from: 0, to: 1 },
+  die: { anim: 'AnimMort', from: 0, to: 0.75 },
+};
+
 const GOLD = 0xffd87a;
 
 export const LOOKS: Record<string, Look> = {
@@ -184,6 +204,10 @@ export const LOOKS: Record<string, Look> = {
   osamodas: { atlas: 'osamodas', scale: 0.82, map: OSA_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
   // Sacrieur : dessiné en direct depuis son squelette, comme l'Osamodas
   sacrieur: { atlas: 'sacrieur', scale: 0.82, map: SAC_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
+  // Forgelance : dessiné en direct depuis son squelette, comme l'Osamodas et le Sacrieur
+  forgelance: { atlas: 'forgelance', scale: 0.82, map: FL_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
+  // Lance Immortelle plantée (monster_planche.py, os 7139, animations rangées dans le squelette) : décor du Forgelance Désarmé
+  forgelance_lance: { atlas: 'forgelance_lance', scale: 0.4, map: MONSTER_MAP(13 / 60), height: 90, multi: true },
   // Épées du Sacrieur (monster_planche.py, os 8378 et 8376, SCALE 2,5) : invocations alliées (maquette Sacrieur 7A)
   sacri_epee_vorace: { atlas: 'sacri_epee_vorace', scale: 0.55, map: MONSTER_MAP(7 / 55, 'AnimAttaque0', { 0: 7 / 55, 1: 12 / 47 }), height: 110, multi: true },
   sacri_epee_dansante: { atlas: 'sacri_epee_dansante', scale: 0.55, map: MONSTER_MAP(9 / 36, 'AnimAttaque0', { 0: 9 / 36, 1: 12 / 47 }), height: 110, multi: true },

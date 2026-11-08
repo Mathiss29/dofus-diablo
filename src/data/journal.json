@@ -706,6 +706,16 @@
             ]
           },
           {
+            "titre": "Le Forgelance arrive en essai",
+            "phrase": "Le Forgelance se joue dans la partie de test, avec sa Lance et ses 16 sorts officiels jusqu'au niveau 60.",
+            "details": "Clic droit plante la Lance, tes sorts éclatent autour d'elle ; reprends-la (Espace ou à pied) pour un gros bonus de Puissance.",
+            "icone": "sorts",
+            "etiquettes": [
+              "Partie de test",
+              "Forgelance"
+            ]
+          },
+          {
             "titre": "Les légendaires de classe",
             "phrase": "23 pouvoirs inventés qui changent la façon dont marche un sort de ta classe.",
             "details": "Leur jet est tiré au hasard, un Mythique a le jet parfait. Chez Malek, le Codex garde le meilleur jet brisé.",

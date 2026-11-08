@@ -44,6 +44,8 @@ export type SimEvent =
   | { k: 'echange'; x: number; y: number; ox: number; oy: number }
   | { k: 'souffrance'; n: number; avant: number; x: number; y: number }
   | { k: 'sacrifice'; x: number; y: number; amount: number }
+  /** Forgelance : la Lance est plantée, rappelée ou reprise à pied (id du joueur ; o = d'où elle part). */
+  | { k: 'lance'; quoi: 'plante' | 'rappel' | 'reprise'; id: number; x: number; y: number; ox: number; oy: number }
   | { k: 'dompte'; id: number; name: string; x: number; y: number }
   | { k: 'impact'; hitstop: number; shake: number; big: boolean }
   | { k: 'playerHurt' }

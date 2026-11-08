@@ -1075,6 +1075,150 @@
        }
       ]
      }
+    ],
+    "forgelance": [
+     {
+      "nom": "Premiers pas",
+      "bulle": "Bienvenue sur Incarnam, jeune Forgelance ! Contemple les Dofus, salue ta Lance, puis clique sur le sol et suis le chemin. Je t'attends dans la salle suivante.",
+      "objectifs": [
+       {
+        "t": "aller",
+        "texte": "Passer dans la salle suivante (clic gauche)",
+        "carte": "temple_2"
+       }
+      ]
+     },
+     {
+      "nom": "La salle d'entraînement",
+      "pnj": "ganymede_temple",
+      "objectifs": [
+       {
+        "t": "aller",
+        "texte": "Rejoindre Ganymède",
+        "pnj": "ganymede_temple"
+       }
+      ]
+     },
+     {
+      "nom": "Frapper",
+      "pnj": "ganymede_temple",
+      "bulle": "Des esprits de feu se sont glissés dans le Temple. Clique sur l'un d'eux : tu le poursuis et tu frappes d'estoc avec ta Lance.",
+      "objectifs": [
+       {
+        "t": "vaincre",
+        "texte": "Vaincre un monstre (clic dessus)",
+        "n": 1,
+        "sousZone": 446
+       }
+      ]
+     },
+     {
+      "nom": "Ton premier sort",
+      "pnj": "ganymede_temple",
+      "bulle": "Tes sorts sont sur & é \" '. Touche & : Trident de la Mer, l'eau frappe et attire les monstres vers toi.",
+      "halo": 0,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "sort": "trident",
+        "texte": "Lancer ton premier sort (&)"
+       }
+      ]
+     },
+     {
+      "nom": "Planter la Lance",
+      "pnj": "ganymede_temple",
+      "bulle": "Clic droit : Épilogue. Ta Lance se plante là où pointe ta souris. Te voilà Désarmé : tu frappes du poing, mais tes sorts partent d'elle.",
+      "halo": 6,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "sort": "epilogue",
+        "texte": "Planter la Lance (clic droit)"
+       }
+      ]
+     },
+     {
+      "nom": "Frapper depuis la Lance",
+      "pnj": "ganymede_temple",
+      "bulle": "Touche é : Effondrement. Désarmé, il éclate autour de ta Lance et y ramène les monstres. Plante-la au milieu d'un groupe et vide-le !",
+      "halo": 1,
+      "objectifs": [
+       {
+        "t": "vaincre",
+        "texte": "Vaincre des monstres autour de ta Lance",
+        "n": 3,
+        "sousZone": 446
+       }
+      ]
+     },
+     {
+      "nom": "Reprendre la Lance",
+      "pnj": "ganymede_temple",
+      "bulle": "Espace : Saut à la Lance. Tu bondis sur ta Lance plantée et tu la reprends à pied : +60 Puissance pendant 9 s. Marcher dessus marche aussi.",
+      "halo": 7,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "quoi": "mobilite",
+        "texte": "Bondir sur ta Lance (Espace)"
+       }
+      ]
+     },
+     {
+      "nom": "La potion",
+      "pnj": "ganymede_temple",
+      "bulle": "Blessé ? E : une potion. Tu en regagnes une à chaque groupe vaincu.",
+      "halo": "potion",
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "quoi": "potion",
+        "texte": "Boire une potion (E) une fois blessé"
+       }
+      ]
+     },
+     {
+      "nom": "Premières armes",
+      "pnj": "ganymede_temple",
+      "bulle": "Voici la panoplie de l'Intrépide. I ouvre ton sac : équipe tout. Garde ta Lance en main : Armé, tu subis 15 % de dégâts en moins.",
+      "donner": {
+       "forgelance": [
+        "10801",
+        "10800",
+        "10784",
+        "10785",
+        "10799",
+        "10794"
+       ]
+      },
+      "objectifs": [
+       {
+        "t": "equiper",
+        "objets": [
+         "10801",
+         "10800",
+         "10784",
+         "10785",
+         "10799",
+         "10794"
+        ],
+        "texte": "Équiper la panoplie de l'Intrépide"
+       }
+      ]
+     },
+     {
+      "nom": "Descendre sur Incarnam",
+      "pnj": "ganymede_temple",
+      "bulle": "Tu es prêt. Parle-moi et je t'envoie au village, près de Lykhen. Le Zaap de la Route des âmes sera ton point de retour si tu tombes.",
+      "objectifs": [
+       {
+        "t": "parler",
+        "texte": "Parler à Ganymède pour descendre au village",
+        "pnj": "ganymede_temple"
+       }
+      ]
+     }
     ]
    },
    "recompense": {

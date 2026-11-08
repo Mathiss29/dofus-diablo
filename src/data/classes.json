@@ -1749,5 +1749,590 @@
    "memoire": 3,
    "_doc": "Souffrance officielle (Dofus 3.7, sort 24150) : palier = tranche de 10 % de PV perdus. subis = % des dommages reçus, finaux = % de dommages en plus. memoire = secondes où le palier le plus haut tient après un soin (maquette Sacrieur 3B)."
   }
+ },
+ "forgelance": {
+  "name": "Forgelance",
+  "hp": 225,
+  "speed": 230,
+  "radius": 16,
+  "iframesOnHit": 0.45,
+  "healOnKill": 3,
+  "critChance": 0.15,
+  "critMult": 1.6,
+  "pa": {
+   "max": 6,
+   "regen": 1.25
+  },
+  "pm": {
+   "max": 2,
+   "recharge": 3.5
+  },
+  "potion": {
+   "charges": 3,
+   "heal": 0.35,
+   "cooldown": 1
+  },
+  "xpBase": 100,
+  "maxLevel": 200,
+  "rage": {
+   "name": "Lance",
+   "max": 1,
+   "perHit": 0,
+   "perHurt": 0,
+   "bonus": 0,
+   "signature": 1,
+   "mode": "lance"
+  },
+  "attaque": {
+   "name": "Coup de poing",
+   "element": "terre",
+   "comboWindow": 0.45,
+   "combo": [
+    {
+     "duration": 0.28,
+     "impactAt": 0.07,
+     "cancelAt": 0.13,
+     "dmg": 14,
+     "range": 78,
+     "arc": 110,
+     "knock": 210,
+     "step": 120,
+     "hitstop": 0.05,
+     "shake": 0.0035
+    },
+    {
+     "duration": 0.28,
+     "impactAt": 0.07,
+     "cancelAt": 0.13,
+     "dmg": 14,
+     "range": 78,
+     "arc": 110,
+     "knock": 210,
+     "step": 120,
+     "hitstop": 0.05,
+     "shake": 0.0035
+    },
+    {
+     "duration": 0.4,
+     "impactAt": 0.11,
+     "cancelAt": 0.22,
+     "dmg": 30,
+     "range": 92,
+     "arc": 160,
+     "knock": 480,
+     "step": 220,
+     "hitstop": 0.085,
+     "shake": 0.008
+    }
+   ]
+  },
+  "basic": "estoc",
+  "spells": {
+   "trident": {
+    "name": "Trident de la Mer",
+    "dofusId": 23393,
+    "icon": 12585,
+    "element": "eau",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Eau aux ennemis et attire les cibles vers la case ciblée en zone.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 21,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "line",
+    "hit": {
+     "shape": "point",
+     "range": 312,
+     "radius": 72
+    },
+    "attire": {
+     "cases": 2,
+     "vers": "centre"
+    }
+   },
+   "effondrement": {
+    "name": "Effondrement",
+    "dofusId": 23736,
+    "icon": 12584,
+    "element": "terre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Terre aux ennemis et attire les cibles jusqu'au centre en zone.\nLes dommages de zone ne sont pas dégressifs.\nN'affecte pas le lanceur.\n\nLe sort ne peut se lancer que sur la Lance si le lanceur est Désarmé.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 21,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.009,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 168,
+     "radius": 96
+    },
+    "attire": {
+     "cases": 2,
+     "vers": "centre"
+    },
+    "lance": {
+     "surLance": true
+    }
+   },
+   "estoc_brulant": {
+    "name": "Estoc Brûlant",
+    "dofusId": 23754,
+    "icon": 12587,
+    "element": "feu",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Feu aux ennemis et repousse les cibles depuis le lanceur en zone.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 27,
+    "knock": 342,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "line",
+    "hit": {
+     "shape": "line",
+     "length": 150,
+     "width": 34
+    }
+   },
+   "volee_airain": {
+    "name": "Volée d'Airain",
+    "dofusId": 23741,
+    "icon": 12588,
+    "element": "air",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Air aux ennemis et repousse les cibles en zone.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 22,
+    "knock": 342,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 264,
+     "radius": 72
+    }
+   },
+   "epilogue": {
+    "name": "Épilogue",
+    "dofusId": 23801,
+    "icon": 12580,
+    "element": "neutre",
+    "pa": 1,
+    "cooldown": 0,
+    "desc": "Invoque ou rappelle la Lance.\n\nLa ligne de vue du sort est désactivée si le lanceur est Désarmé.",
+    "duration": 0.3,
+    "impactAt": 0.14,
+    "cancelAt": 0.2,
+    "dmg": 0,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 312,
+     "radius": 0
+    },
+    "lance": {
+     "epilogue": true
+    },
+    "self": true
+   },
+   "charge_heroique": {
+    "name": "Charge Héroïque",
+    "dofusId": 23824,
+    "icon": 12583,
+    "element": "meilleur",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Rappelle la Lance, rapproche le lanceur vers la cible et occasionne des dommages dans son meilleur élément aux ennemis.\nRepousse également la cible si le lanceur termine à son contact.\n\nLa poussée est plus importante selon la distance entre le lanceur et la cible.",
+    "duration": 0.34,
+    "impactAt": 0.2,
+    "cancelAt": 0.3,
+    "dmg": 28,
+    "knock": 456,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "circle",
+     "radius": 56
+    },
+    "move": {
+     "kind": "dash",
+     "maxRange": 168
+    },
+    "lance": {
+     "rappel": true
+    }
+   },
+   "lance_lac": {
+    "name": "Lance du Lac",
+    "dofusId": 23432,
+    "icon": 12578,
+    "element": "eau",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Eau aux ennemis en zone et invoque la Lance.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 21,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 72
+    },
+    "lance": {
+     "plante": true
+    }
+   },
+   "lance_pierre": {
+    "name": "Lance-pierre",
+    "dofusId": 23719,
+    "icon": 12579,
+    "element": "terre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Terre aux ennemis en zone et invoque la Lance.\nLes dommages de zone ne sont pas dégressifs.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 24,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.009,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 168,
+     "radius": 96
+    },
+    "lance": {
+     "plante": true
+    }
+   },
+   "phalange": {
+    "name": "Phalange",
+    "dofusId": 23330,
+    "icon": 12586,
+    "element": "neutre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Applique un bouclier sur les alliés et augmente leurs Résistances Poussée en zone.\n\nLe sort ne peut se lancer que sur la Lance si le lanceur est Désarmé.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "circle",
+     "radius": 120
+    },
+    "self": true,
+    "lance": {
+     "surLance": true
+    },
+    "allies": {
+     "shield": 0.1,
+     "t": 6
+    },
+    "buff": {
+     "stat": "resPoussee",
+     "n": 20,
+     "t": 6
+    },
+    "rage": "shield"
+   },
+   "lance_incendie": {
+    "name": "Lance à Incendie",
+    "dofusId": 23263,
+    "icon": 12581,
+    "element": "feu",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Feu aux ennemis en zone.\nInvoque la Lance si la case est ou devient libre.\n\nLes dommages du sort sont augmentés après chaque lancer.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 18,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 312,
+     "radius": 72
+    },
+    "lance": {
+     "plante": true
+    },
+    "stack": {
+     "per": 0.15,
+     "max": 4,
+     "time": 6
+    }
+   },
+   "javeline_myr": {
+    "name": "Javeline de Myr",
+    "dofusId": 23734,
+    "icon": 12582,
+    "element": "air",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Air aux ennemis et repousse la cible.\nInvoque la Lance si la case est ou devient libre.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 26,
+    "knock": 456,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "line",
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 40
+    },
+    "lance": {
+     "plante": true
+    }
+   },
+   "balestra": {
+    "name": "Balestra",
+    "dofusId": 23434,
+    "icon": 12589,
+    "element": "eau",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Téléporte le lanceur jusqu'à la cible, le téléporte symétriquement et l'éloigne par rapport à cette dernière et occasionne des dommages Eau aux ennemis en zone.\n\nLa téléportation symétrique et le recul sont appliqués uniquement si le lanceur est téléporté au contact de la cible.",
+    "duration": 0.36,
+    "impactAt": 0.2,
+    "cancelAt": 0.3,
+    "dmg": 28,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "circle",
+     "radius": 60
+    },
+    "move": {
+     "kind": "dash",
+     "maxRange": 144
+    },
+    "traverse": 2
+   },
+   "talon_argile": {
+    "name": "Talon d'Argile",
+    "dofusId": 23726,
+    "icon": 12590,
+    "element": "terre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Rappelle la Lance, rapproche le lanceur vers la cible et occasionne des dommages Terre aux ennemis.",
+    "duration": 0.32,
+    "impactAt": 0.2,
+    "cancelAt": 0.3,
+    "dmg": 14,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "circle",
+     "radius": 48
+    },
+    "move": {
+     "kind": "dash",
+     "maxRange": 192
+    },
+    "lance": {
+     "rappel": true
+    }
+   },
+   "kyrja": {
+    "name": "Kyrja",
+    "dofusId": 23823,
+    "icon": 12591,
+    "element": "meilleur",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Rappelle la Lance, téléporte le lanceur sur la case ciblée, vole de la vie dans le meilleur élément du lanceur aux ennemis et réduit leurs dommages finaux en zone.",
+    "duration": 0.36,
+    "impactAt": 0.22,
+    "cancelAt": 0.3,
+    "dmg": 20,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "circle",
+     "radius": 72
+    },
+    "move": {
+     "kind": "leap",
+     "maxRange": 144,
+     "height": 40
+    },
+    "lance": {
+     "rappel": true
+    },
+    "lifesteal": 0.5,
+    "affaiblit": {
+     "n": 20,
+     "t": 6
+    }
+   },
+   "muspel": {
+    "name": "Muspel",
+    "dofusId": 23750,
+    "icon": 12620,
+    "element": "feu",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Augmente les dommages du sort pour chaque ennemi dans la zone d'effet et leur occasionne des dommages Feu en zone.\n\nLe sort ne peut se lancer que sur la Lance et la rappelle si le lanceur est Désarmé.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 29,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.012,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 408,
+     "radius": 120
+    },
+    "lance": {
+     "surLance": true,
+     "rappelApres": true
+    },
+    "parEnnemi": 0.1
+   },
+   "prelude_fer": {
+    "name": "Prélude au Fer",
+    "dofusId": 23841,
+    "icon": 12593,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Réduit la durée des effets sur les ennemis et augmente la Puissance des alliés en zone.\n\nLe sort ne peut se lancer que sur la Lance si le lanceur est Désarmé.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "circle",
+     "radius": 96
+    },
+    "self": true,
+    "lance": {
+     "surLance": true
+    },
+    "allies": {
+     "puissance": 40,
+     "t": 6
+    },
+    "dissipe": true
+   },
+   "saut": {
+    "name": "Saut à la Lance",
+    "icon": 12594,
+    "element": "air",
+    "cooldown": 0.4,
+    "desc": "Désarmé : bondit jusqu'à la Lance et la reprend (bonus de reprise à pied). Armé : petit bond de 3 cases. Tiré de Lance-cyclone (officiel au niveau 100).",
+    "duration": 0.36,
+    "impactAt": 0.26,
+    "cancelAt": 0.34,
+    "dmg": 0,
+    "knock": 0,
+    "hitstop": 0,
+    "shake": 0.004,
+    "fx": "land",
+    "hit": {
+     "shape": "circle",
+     "radius": 40
+    },
+    "pm": 1,
+    "move": {
+     "kind": "leap",
+     "maxRange": 144,
+     "height": 60
+    },
+    "lance": {
+     "saut": true
+    },
+    "self": true
+   },
+   "estoc": {
+    "name": "Estoc",
+    "icon": 12594,
+    "element": "neutre",
+    "cooldown": 0,
+    "aps": 0.95,
+    "desc": "Attaque de base quand la Lance est en main.",
+    "duration": 0.4,
+    "impactAt": 0.17,
+    "cancelAt": 0.26,
+    "dmg": 18,
+    "knock": 220,
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "line",
+    "hit": {
+     "shape": "line",
+     "length": 140,
+     "width": 40
+    },
+    "anim": "arme271"
+   }
+  },
+  "mobility": "saut",
+  "sorts": "forgelance",
+  "clicDroit": "epilogue",
+  "niveau1": [
+   23801
+  ],
+  "lance": {
+   "garde": 0.85,
+   "reprise": 30,
+   "aPied": 60,
+   "duree": 9,
+   "glyphe": 40,
+   "portee": 720,
+   "tranchant": 13,
+   "_doc": "États officiels du Forgelance (Dofus 3.7) : Armé 24629 = dommages subis ×85 % (Garde, 2A) ; Désarmé 24630 = +30 Puissance 3 tours (9 s) à la reprise, doublé à pied (3B). glyphe : rayon où marcher reprend la Lance (Reprise de Volée) ; portee : 15 cases, au-delà elle revient seule (4A) ; tranchant : dommages du Rappel tranchant (1B), moitié de Javeline de Myr."
+  }
  }
 }

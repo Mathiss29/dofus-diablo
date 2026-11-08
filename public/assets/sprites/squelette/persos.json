@@ -294,5 +294,77 @@
    "os_1-combat.webp",
    "os_1-metier.webp"
   ]
+ },
+ "forgelance_m": {
+  "classe": 20,
+  "anims": "anims_20.json",
+  "corps": 3221,
+  "tetes": [
+   3090,
+   3091,
+   3095,
+   3098,
+   3103,
+   3104,
+   3105,
+   3124,
+   5505,
+   5506,
+   5509,
+   5507,
+   5508,
+   5515,
+   5937
+  ],
+  "couleurs": [
+   15047528,
+   7814953,
+   4276545,
+   15325098,
+   8885653,
+   4209983
+  ],
+  "os": [
+   "os_1-20-combat.webp",
+   "os_1-combat-armes.webp",
+   "os_1-combat.webp",
+   "os_1-metier.webp"
+  ]
+ },
+ "forgelance_f": {
+  "classe": 20,
+  "anims": "anims_20.json",
+  "corps": 3633,
+  "tetes": [
+   3106,
+   3108,
+   3112,
+   3115,
+   3143,
+   3121,
+   3122,
+   3123,
+   5510,
+   5516,
+   5512,
+   5514,
+   5511,
+   5513,
+   5938
+  ],
+  "couleurs": [
+   15047528,
+   7814953,
+   4276545,
+   15325098,
+   8885653,
+   4209983
+  ],
+  "os": [
+   "os_1-20-combat.webp",
+   "os_1-combat-armes.webp",
+   "os_1-combat.webp",
+   "os_1-metier.webp"
+  ]
  }
 }

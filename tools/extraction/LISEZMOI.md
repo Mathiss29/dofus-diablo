@@ -496,3 +496,12 @@ Ville vivante (maquette Ville 5F, 8 nov. 2026) :
   les masques (grande goutte bleue, pentagone cyan) et le sang à masquer (dégradés blancs) sont dessinés : épée toute blanche en jeu.
 - Animations 1107 (Pacte de Sang), 1108 (Carnage), 1115 (Châtiment) absentes du squelette 1-11.
 - Sorts : `class_spells.py ... sacrieur:11` -> src/data/sorts.json ; icônes `sort_<id>.png`, gouttes de Souffrance `ui/souffrance/s1..10.png` (st_stateSacriNice*).
+
+## Forgelance (classe 20, maquette du 8 nov. 2026)
+
+- `python squelette_export.py <persos> <donnees> 20 public/assets/sprites/squelette`, puis `python tetes_vignettes.py <persos> <donnees> public/assets/sprites/squelette 20`
+  (supprimer ensuite `public/assets/sprites/.vignettes-travail/`, sinon `envoi.mjs` l'envoie).
+- Sorts : `class_spells.py ... forgelance:20` -> src/data/sorts.json ; icônes `sort_<id>.png` prises dans `Content/Picto/Spells/spell_assets_1x.bundle` du PC.
+- Lance plantée = monstre 7139 « Lance Immortelle », os 7139. Ses animations sont rangées dans le squelette (`animations[].dataBytes`), pas en TextAsset :
+  `b_dump.py` les écrit en `ta_x_<nom>.bin`. Planche : `ANIMS=AnimStatique_1:1,AnimAttaque0_1 FORMAT=AVIF python3 monster_planche.py 7139 forgelance_lance <Bones>`.
+- Lance en main : introuvable (le squelette 1-20 a les nœuds Lance_1/Lance_5, aucun skin du cache n'a de pièce Lance_ ; le 2061 n'est pas la lance).

@@ -135,6 +135,11 @@ export class FX {
         this.number(e.x, e.y, 90, `${e.name} !`, false, '#ffd87a');
         break;
       // Sacrieur : PV sacrifiés (chiffre rouge sombre), échange de place, palier de Souffrance 6 et 10 atteint
+      // Forgelance : la Lance qui se plante (anneau doré au sol), qui revient (Rappel tranchant) ou qu'on reprend à pied
+      case 'lance':
+        if (e.quoi === 'plante') { this.ring(e.x, e.y, 6, 46, 0xe8b860, 0.4, 5); this.particles(e.x, e.y, 10, 10, 0xffe2a0, 140, 0.4, 3, 200); }
+        else { this.ring(e.ox, e.oy, 4, 30, 0xffe2a0, 0.3, 4); this.ring(e.x, e.y, 8, 40, 0xe8b860, 0.35, 5); }
+        break;
       case 'sacrifice':
         this.number(e.x, e.y, 60, `-${e.amount}`, false, '#b02020');
         this.particles(e.x, e.y, 24, 12, 0x9a1010, 160, 0.5, 3, 260);
