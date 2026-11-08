@@ -722,6 +722,16 @@
             "etiquettes": [
               "Touche Échap"
             ]
+          },
+          {
+            "titre": "Le jeu s'installe sur PC",
+            "phrase": "Sur Chrome ou Edge, « Installer le jeu » à l'accueil met Diablofus dans sa propre fenêtre, avec son icône.",
+            "details": "Il se lance depuis le bureau ou le menu Démarrer et reste toujours à jour, comme le site.",
+            "icone": "guide",
+            "etiquettes": [
+              "Accueil",
+              "Chrome / Edge"
+            ]
           }
         ],
         "Le monde": [
