@@ -1102,7 +1102,8 @@
           "Chat : messages nettoyés par le serveur et limités à cinq toutes les cinq secondes.",
           "Les joueurs ignorés ne peuvent plus t'écrire ni t'inviter : le serveur ne leur transmet plus rien.",
           "Une chasse aux plantages sans navigateur : quatre joueurs jouent seuls des milliers d'images à chaque PR.",
-          "Préparation du monde partagé : en groupe, chaque joueur aura ses quêtes, et les monstres compteront pour tous."
+          "Préparation du monde partagé : en groupe, chaque joueur aura ses quêtes, et les monstres compteront pour tous.",
+          "Monde partagé : chacun ses portes, son point de retour, sa récolte et ses fenêtres dans la même partie."
         ]
       }
     }

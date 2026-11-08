@@ -16,6 +16,7 @@ import { Bete, BETES, REGLES_BETES, type EffetBete, type SortBete } from './bete
 import { initiativeBonus, removalChance } from './caracs';
 import { planWave } from './waves';
 import { Arene, ARENE } from './arene';
+import type { EtatMonde } from './etatMonde';
 import { Quetes, type Compte, type EtatQuetes, type QuetesData } from './quests';
 import { appliquerTest, type ReglagesTest } from './outilsTest';
 import { Passants } from './passants';
@@ -142,6 +143,14 @@ export interface FamilierEtat { x: number; y: number; vx: number; vy: number; ci
 /** La simulation d'une zone : joueur, monstres, vagues, collisions.
  *  Aucune dépendance à Phaser ni au navigateur : elle tourne telle quelle dans les tests
  *  (et plus tard sur un serveur pour la coop). L'affichage lit l'état et vide `events`. */
+/** Événements qui ne parlent qu'au joueur qui agit : fenêtres, butin, portes et zones, quêtes, métiers (multi, étape 4). */
+export const EVENEMENTS_PERSONNELS = new Set<SimEvent['k']>(['levelUp', 'newSpell', 'noResource', 'rageFull', 'enterArea', 'enterLieu', 'respawn',
+  'loot', 'lootResource', 'sacQuete', 'queteInfo', 'metierLevel', 'craft', 'atelier', 'fabricationDebut', 'fabricationStop', 'eat', 'recycle', 'forge',
+  'brisage', 'codex', 'codexOuvert', 'coffreOuvert', 'capture', 'impression', 'apparence', 'fusion', 'commande', 'signature', 'achat', 'familierNiveau',
+  'familierRepas', 'rappel', 'cleManquante', 'recolteDebut', 'recolteFin', 'recolteStop', 'recolteNiveau', 'service', 'almanax', 'dofusPassif',
+  'dofusGagne', 'lootKamas', 'bagFull', 'checkpoint', 'portalStart', 'portal', 'changeZone', 'incantation', 'incantationStop', 'arche', 'zaapDecouvert',
+  'zaapDepart', 'emmenage', 'queteDebut', 'queteEtape', 'queteFin', 'objetQuete', 'succes']);
+
 export class World {
   readonly rng: Rng;
   readonly zone: ZoneDef;
@@ -172,19 +181,25 @@ export class World {
   /** Ressources à récolter du monde (métiers de récolte, 0.2b). */
   recoltes: Recolte[] = [];
   /** Ressource cliquée (le perso y va) et geste en cours (t = temps écoulé, hp = PV au début : un coup reçu l'interrompt). */
-  versRecolte: number | null = null;
+  get versRecolte(): EtatMonde['versRecolte'] { return this.player.monde.versRecolte; }
+  set versRecolte(v: EtatMonde['versRecolte']) { this.player.monde.versRecolte = v; }
   /** Case libre où le perso va pour la ressource cliquée : arrivé là, il récolte même si la ressource est un peu plus loin que la portée. */
-  private approche: { x: number; y: number } | null = null;
-  enRecolte: { id: number; t: number; hp: number } | null = null;
+  private get approche(): EtatMonde['approche'] { return this.player.monde.approche; }
+  private set approche(v: EtatMonde['approche']) { this.player.monde.approche = v; }
+  get enRecolte(): EtatMonde['enRecolte'] { return this.player.monde.enRecolte; }
+  set enRecolte(v: EtatMonde['enRecolte']) { this.player.monde.enRecolte = v; }
   /** Postes des ateliers (Métiers UI 3A) : machines officielles qu'on clique pour ouvrir l'Artisanat. */
   postes: Poste[] = [];
   /** Coffre partagé du compte (0.3, 12A) : le même objet que celui de l'affichage, qui le sauve. */
   coffre: Coffre;
   /** Poste cliqué (le perso y va) et case libre où il s'arrête devant. */
-  versPoste: number | null = null;
-  private approcheP: { x: number; y: number } | null = null;
+  get versPoste(): EtatMonde['versPoste'] { return this.player.monde.versPoste; }
+  set versPoste(v: EtatMonde['versPoste']) { this.player.monde.versPoste = v; }
+  private get approcheP(): EtatMonde['approcheP'] { return this.player.monde.approcheP; }
+  private set approcheP(v: EtatMonde['approcheP']) { this.player.monde.approcheP = v; }
   /** Fabrication en cours (5B : une barre d'une seconde pour toute la série ; un coup reçu ou un geste l'interrompt). */
-  enFabrication: { recette: number; n: number; t: number; hp: number; rare?: string | null } | null = null;
+  get enFabrication(): EtatMonde['enFabrication'] { return this.player.monde.enFabrication; }
+  set enFabrication(v: EtatMonde['enFabrication']) { this.player.monde.enFabrication = v; }
   /** Télégraphes du dernier pas (recalculés à chaque pas). */
   telegraphs: Telegraph[] = [];
   zonesSol: ZoneSol[] = [];
@@ -201,15 +216,20 @@ export class World {
   private nextId = 1;
   private groups: MonsterGroup[] = [];
   /** Point de retour après une mort (le dernier Zaap atteint). */
-  private checkpoint = { x: 0, y: 0 };
-  checkpointName = '';
+  private get checkpoint(): EtatMonde['checkpoint'] { return this.player.monde.checkpoint; }
+  private set checkpoint(v: EtatMonde['checkpoint']) { this.player.monde.checkpoint = v; }
+  get checkpointName(): EtatMonde['checkpointName'] { return this.player.monde.checkpointName; }
+  set checkpointName(v: EtatMonde['checkpointName']) { this.player.monde.checkpointName = v; }
   /** Sous-zone où se trouve le joueur (monde ouvert). */
-  area: SubAreaDef | null = null;
+  get area(): EtatMonde['area'] { return this.player.monde.area; }
+  set area(v: EtatMonde['area']) { this.player.monde.area = v; }
   /** Intérieur où se trouve le joueur (maquette Entrées 5A) : nom de la porte qui y mène (« Taverne d'Astrub »), null dehors. */
-  lieu: string | null = null;
+  get lieu(): EtatMonde['lieu'] { return this.player.monde.lieu; }
+  set lieu(v: EtatMonde['lieu']) { this.player.monde.lieu = v; }
   /** Arrivée protégée (maquette Entrées 13A) : après une porte, un Zaap ou un portail, les monstres de l'endroit attendent
    *  ton premier geste (au plus ARENE.protection s) ; le perso est intouchable pendant ce temps. */
-  calme: { t: number; x: number; y: number } | null = null;
+  get calme(): EtatMonde['calme'] { return this.player.monde.calme; }
+  set calme(v: EtatMonde['calme']) { this.player.monde.calme = v; }
   /** Carte d'un intérieur -> son nom : la carte d'arrivée de chaque porte qui mène dedans (première porte trouvée). */
   readonly lieux = new Map<string, string>();
   /** Portes du monde ouvert : les deux bouts en coordonnées monde, et la carte de chacun. */
@@ -217,9 +237,11 @@ export class World {
     /** Portail cliquable (PorteDef.dessin) : milieu du dessin dans le monde et taille de la zone de clic à l'écran. */
     dessin?: { x: number; y: number; rx: number; ry: number } }[] = [];
   /** Bout de porte par lequel le joueur vient d'arriver : inactif tant qu'il ne s'en est pas éloigné. */
-  private portalLock: PorteEnd | null = null;
+  private get portalLock(): EtatMonde['portalLock'] { return this.player.monde.portalLock; }
+  private set portalLock(v: EtatMonde['portalLock']) { this.player.monde.portalLock = v; }
   /** Porte franchie : le joueur s'arrête devant pendant le fondu de sortie (PASSAGE s), puis arrive de l'autre côté. */
-  passage: { to: PorteEnd; nom: string; t: number; vers?: { zone: string; arrivee: [string, number] } } | null = null;
+  get passage(): EtatMonde['passage'] { return this.player.monde.passage; }
+  set passage(v: EtatMonde['passage']) { this.player.monde.passage = v; }
   /** Durée du fondu de sortie d'une porte (choix 5A : 0,2 s pour sortir, 0,3 s pour entrer). */
   static readonly PASSAGE = 0.2;
   /** Multi (7A) : bonus d'XP par allié proche quand un monstre tombe. */
@@ -237,10 +259,12 @@ export class World {
   /** Habitants qui flânent au Bastion des Douze (maquette Ville 5F), décor vivant. */
   passants: Passants | null = null;
   /** Havre-Sac (maquette Hub 2A) : incantation en cours (t écoulé, PV au début : un coup reçu la coupe). */
-  incantation: { t: number; hp: number } | null = null;
+  get incantation(): EtatMonde['incantation'] { return this.player.monde.incantation; }
+  set incantation(v: EtatMonde['incantation']) { this.player.monde.incantation = v; }
   static readonly INCANTATION = 1.5;
   /** Dans le Havre-Sac : d'où l'on vient. */
-  retour: RetourHavreSac | null = null;
+  get retour(): EtatMonde['retour'] { return this.player.monde.retour; }
+  set retour(v: EtatMonde['retour']) { this.player.monde.retour = v; }
   /** Poutch Ingball du Havre-Sac (7A) : id du monstre. */
   poutch: number | null = null;
   /** Arène du donjon où l'on se bat (maquette « Donjons en vagues »), null ailleurs. */
@@ -255,20 +279,21 @@ export class World {
     this.test = opts.test ? { ...opts.test } : null;
     let start = this.map.nearestFree(GridMap.OFFSET_Y, GridMap.OFFSET_Y);
     const open = this.zone.open;
+    let cpName = '';
     if (open) {
       if (!(this.map instanceof WorldGrid)) throw new Error('Une zone en monde ouvert demande un WorldGrid');
       const m = this.map.mapByCoords(...open.start);
       if (!m) throw new Error(`Carte de départ absente du monde : ${open.start}`);
       // départ : la case la plus dégagée de la carte (le plus de cases marchables autour)
       start = this.openestCell(m.tag);
-      this.checkpointName = open.checkpoints[0]?.name ?? '';
+      cpName = open.checkpoints[0]?.name ?? '';
       // Havre-Sac : arrivée devant l'arche, qui sert aussi de point de retour
       // Bastion des Douze (maquette Ville) : arrivée sur la place, devant le Zaap
       const hub = open.havreSac ?? open.bastion;
-      if (hub) { const wg = this.map; start = wg.nearestFree(...xy(wg.cellToWorld(wg.cellOf(m.tag, hub.arrivee))), wg.freeByMap.get(m.tag)!); this.checkpointName = open.havreSac ? 'Havre-Sac' : this.zone.name; }
+      if (hub) { const wg = this.map; start = wg.nearestFree(...xy(wg.cellToWorld(wg.cellOf(m.tag, hub.arrivee))), wg.freeByMap.get(m.tag)!); cpName = open.havreSac ? 'Havre-Sac' : this.zone.name; }
     }
-    this.checkpoint = start;
     this.players.push(new Player(this.nextId++, start.x, start.y, opts.data.classes[opts.classId ?? 'iop']));
+    this.checkpoint = start; this.checkpointName = cpName;
     this.player.v03 = V03_PUBLIC || !!opts.test;
     if (opts.items) {
       this.player.items = opts.items;
@@ -298,6 +323,7 @@ export class World {
     const h = this.players[0], n = this.players.length, f = this.map.nearestFree(h.x + h.radius * 3 * (n % 2 ? 1 : -1) * Math.ceil(n / 2), h.y + h.radius * 2 * (n - 1));
     const q = new Player(this.nextId++, f.x, f.y, cls);
     q.v03 = h.v03;
+    q.monde.checkpoint = { ...h.monde.checkpoint }; q.monde.checkpointName = h.monde.checkpointName; q.monde.avant = { x: q.x, y: q.y };
     if (this.opts.items) q.items = this.opts.items;
     this.players.push(q);
     if (quetes && this.zone.open && this.opts.quetes) this.commeJoueur(q, () => {
@@ -473,11 +499,14 @@ export class World {
     return this.zaapsIci().find(z => Math.hypot(z.x - p.x, z.y - p.y) <= World.ZAAP_PORTEE) ?? null;
   }
   /** Zaap vers lequel on marche après un clic dessus (1A). */
-  versZaap: string | null = null;
+  get versZaap(): EtatMonde['versZaap'] { return this.player.monde.versZaap; }
+  set versZaap(v: EtatMonde['versZaap']) { this.player.monde.versZaap = v; }
   /** Portail dessiné vers lequel on marche après un clic dessus (on ne le prend pas en passant à côté). */
-  versPortail: string | null = null;
+  get versPortail(): EtatMonde['versPortail'] { return this.player.monde.versPortail; }
+  set versPortail(v: EtatMonde['versPortail']) { this.player.monde.versPortail = v; }
   /** Départ en cours (9A) : le changement de zone part à la fin. */
-  zaapDepart: { t: number; e: SimEvent } | null = null;
+  get zaapDepart(): EtatMonde['zaapDepart'] { return this.player.monde.zaapDepart; }
+  set zaapDepart(v: EtatMonde['zaapDepart']) { this.player.monde.zaapDepart = v; }
   private partirParZaap(e: SimEvent) {
     const p = this.player;
     p.stopMove(); this.versZaap = null;
@@ -598,7 +627,8 @@ export class World {
     return best;
   }
   /** Position du joueur à l'image d'avant (sens de la marche, maquette Entrées 4B). */
-  private avant = { x: 0, y: 0 };
+  private get avant(): EtatMonde['avant'] { return this.player.monde.avant; }
+  private set avant(v: EtatMonde['avant']) { this.player.monde.avant = v; }
   /** Passe la porte si le joueur est dessus : il arrive de l'autre côté, un peu en avant de la porte d'arrivée. */
   private updatePortes(dt: number) {
     const p = this.player, R = World.PORTE_R;
@@ -639,7 +669,8 @@ export class World {
     }
   }
   /** Arche du Havre-Sac (2C) : cliquer dessus et s'en approcher ouvre la liste des Zaaps (une fois par clic). */
-  private archeVue = false;
+  private get archeVue(): EtatMonde['archeVue'] { return this.player.monde.archeVue; }
+  private set archeVue(v: EtatMonde['archeVue']) { this.player.monde.archeVue = v; }
   private updateArche() {
     const o = this.zone.open, p = this.player, c = o?.havreSac?.arche ?? o?.bastion?.zaap;
     if (c == null || p.dead) return;
@@ -748,9 +779,7 @@ export class World {
     this.emit({ k: 'areneDebut', nom: d.nom, boss, vagues: this.arene.total, cle, reprise: reprise > 1 ? reprise : 0 });
   }
   private updateArene(dt: number) {
-    const p = this.player, c = p.cleDonjon;
-    if (c && (c.reste -= dt) <= 0) p.cleDonjon = null;
-    const a = this.arene;
+    const p = this.player, a = this.arene;
     if (!a) return;
     // parti autrement que par le portail (Rappel…) : l'arène se vide
     if (!this.passage && !p.dead && this.worldGrid!.mapAt(p.x, p.y)?.tag !== a.d.arene!.tag) { a.abandonner(); this.arene = null; return; }
@@ -998,29 +1027,36 @@ export class World {
       if (actifs.some(a => a.group !== m.group && Math.hypot(a.x - m.x, a.y - m.y) < r)) this.aggroGroup(m);
     }
   }
+  /** Monde ouvert, ce qui est commun à tous : l'arène, la réapparition des groupes (hors de la vue de tous les joueurs). */
   private updateOpen(dt: number) {
-    const p = this.player, open = this.zone.open!;
-    this.updatePortes(dt);
-    // 13A : le calme d'arrivée cesse au premier geste (sort, bond, quelques pas) ou au bout du temps
-    if (this.calme) {
-      const c = this.calme, p = this.player;
-      if ((c.t -= dt) <= 0 || p.state !== 'free' || Math.hypot(p.x - c.x, p.y - c.y) > 60) this.calme = null;
-    }
+    const open = this.zone.open!;
     this.updateArene(dt);
-    this.updateCommande(dt);
     for (const g of this.groups) {
       if (g.retire || g.members.some(m => !m.dead)) continue;
       if (!g.cleared) {
         g.cleared = true; g.timer = open.respawn;
-        p.potions = Math.min(p.cls.potion.charges, p.potions + 1);   // un groupe vaincu rend une potion
+        for (const p of this.players) p.potions = Math.min(p.cls.potion.charges, p.potions + 1);   // un groupe vaincu rend une potion
         this.emit({ k: 'groupCleared' });
       }
       // tutoriel : les esprits du Temple reviennent vite, même pas loin (de quoi finir chaque étape sans attendre)
       const tuto = !g.fixe && !!this.quetes?.tailleGroupe(this.worldGrid!.mapByTag(g.map)?.sub ?? -1);
       g.timer -= tuto ? dt * 4 : dt;
       // Réapparition hors de la vue du joueur
-      if (g.timer <= 0 && Math.hypot(g.x - p.x, g.y - p.y) > (tuto ? 500 : 900) && !(g.donjon && this.dansDonjon(g.donjon)) && this.groupesPrets(g)) this.spawnGroup(g);
+      if (g.timer <= 0 && this.players.every(p => Math.hypot(g.x - p.x, g.y - p.y) > (tuto ? 500 : 900)) && !(g.donjon && this.dansDonjon(g.donjon)) && this.groupesPrets(g)) this.spawnGroup(g);
     }
+  }
+  /** Monde ouvert, pour world.player (chaque joueur à son tour) : portes, calme d'arrivée, sous-zone, Zaap atteint. */
+  private updateOpenJoueur(dt: number) {
+    const p = this.player, open = this.zone.open!;
+    this.updatePortes(dt);
+    // 13A : le calme d'arrivée cesse au premier geste (sort, bond, quelques pas) ou au bout du temps
+    if (this.calme) {
+      const c = this.calme;
+      if ((c.t -= dt) <= 0 || p.state !== 'free' || Math.hypot(p.x - c.x, p.y - c.y) > 60) this.calme = null;
+    }
+    const c = p.cleDonjon;
+    if (c && (c.reste -= dt) <= 0) p.cleDonjon = null;
+    this.updateCommande(dt);
     const m = this.worldGrid!.mapAt(p.x, p.y), sub = m ? open.subareas[String(m.sub)] ?? null : null;
     if (sub && sub !== this.area) { this.area = sub; this.emit({ k: 'enterArea', name: sub.name, level: sub.level }); }
     // intérieur (5A) : bandeau à son nom, sauf s'il porte le nom de la sous-zone (le bandeau de la sous-zone suffit)
@@ -1057,10 +1093,19 @@ export class World {
   }
 
   emit(e: SimEvent) {
-    this.events.push(e);
+    // un événement propre à un autre joueur que le premier (sa fenêtre, son butin, sa porte…) va dans sa boîte, pas à l'écran
+    const a = this.acteur;
+    if (a && a !== this.players[0] && EVENEMENTS_PERSONNELS.has(e.k)) a.evenements.push(e);
+    else this.events.push(e);
     // un monstre vaincu compte pour tous les joueurs proches (groupe), le reste pour celui qui agit
     if (e.k === 'kill' && this.players.length > 1) { const x = e.x, y = e.y, a = this.player; this.pourChaqueQuetes((q, p) => { if (p === a || Math.abs(p.x - x) + Math.abs(p.y - y) <= World.SOMMEIL) q.observer(e); }); }
     else this.quetes?.observer(e);
+  }
+  /** Événements propres à ce joueur depuis la dernière fois (multi : l'hôte ou le serveur les lui envoie). Le premier
+   *  joueur reçoit les siens par drainEvents(). */
+  evenementsDe(q: Player): SimEvent[] {
+    if (q === this.players[0]) return [];
+    const e = q.evenements; q.evenements = []; return e;
   }
   /** Coop, chez l'invité : événements venus de l'hôte, rejoués pour l'affichage seulement (pas de quête qui avance). */
   rejouer(evs: SimEvent[]) { this.events.push(...evs); }
@@ -1079,16 +1124,8 @@ export class World {
   clearShot(from: { x: number; y: number }, to: { x: number; y: number }) { return this.map.clearLine(from, to); }
 
   /** Avance la simulation de dt secondes. */
-  step(dt: number, input: PlayerInput, autres?: Record<number, PlayerInput>) {
-    this.time += dt;
-    this.telegraphs.length = 0;
-    const p = this.player;
-    if (this.test) {
-      for (const c of input.test ?? []) appliquerTest(this, c);
-      p.vitesseTest = this.test.course ? 3 : 1;
-      if (this.test.recharges) this.rechargerTout();
-    }
-    const ents = [...this.players, ...this.monsters, ...this.betes], prev = ents.map(e => [e.x, e.y] as const);
+  /** Entrées de world.player qui touchent au monde : récolte, atelier, Havre-Sac, Zaap, portail, PNJ. */
+  private entreesMonde(input: PlayerInput) {
     if (input.recolte != null) { this.versRecolte = input.recolte; this.approche = this.approcheRecolte(input.recolte); this.enRecolte = null; }
     else if (input.dest || input.target != null || input.pickup != null || input.talk || input.pressed || input.move.x || input.move.y) {
       if (this.enRecolte) this.emit({ k: 'recolteStop' });
@@ -1113,18 +1150,26 @@ export class World {
       if (input.talk) this.quetes.cliquer(input.talk);
       else if (input.dest || input.target != null || input.pickup != null) this.quetes.annulerClic();
     }
+  }
+  step(dt: number, input: PlayerInput, autres?: Record<number, PlayerInput>) {
+    this.time += dt;
+    this.telegraphs.length = 0;
+    const p = this.player;
+    if (this.test) {
+      for (const c of input.test ?? []) appliquerTest(this, c);
+      p.vitesseTest = this.test.course ? 3 : 1;
+      if (this.test.recharges) this.rechargerTout();
+    }
+    const ents = [...this.players, ...this.monsters, ...this.betes], prev = ents.map(e => [e.x, e.y] as const);
+    this.entreesMonde(input);
     p.update(dt, this.passage || this.zaapDepart ? { ...NO_INPUT, aim: input.aim } : input, this);   // devant une porte ou un Zaap : le perso attend le fondu
     // Multi (étape 0) : les autres joueurs agissent avec leurs propres entrées ; pendant leur pas, this.player = eux
     for (let i = 1; i < this.players.length; i++) {
       const q = this.players[i], e = autres?.[q.id];
       this.acteur = q;
       try {
-        if (e && q.quetes) {   // ses quêtes : répondre au PNJ, lui parler
-          if (e.reponse != null) q.quetes.repondre(e.reponse);
-          if (e.talk) q.quetes.cliquer(e.talk);
-          else if (e.dest || e.target != null || e.pickup != null) q.quetes.annulerClic();
-        }
-        q.update(dt, e ?? { ...NO_INPUT, aim: { x: q.x, y: q.y } }, this);
+        if (e) this.entreesMonde(e);
+        q.update(dt, !e || this.passage || this.zaapDepart ? { ...NO_INPUT, aim: e?.aim ?? { x: q.x, y: q.y } } : e, this);
       } finally { this.acteur = null; }
     }
     if (this.test?.recharges) this.rechargerTout();
@@ -1157,8 +1202,13 @@ export class World {
       e.kx = 0; e.ky = 0;
     });
     this.monsters = this.monsters.filter(m => !(m.dead && m.t <= 0));
-    this.updateAteliers(dt);
-    if (this.zone.open) { this.updateOpen(dt); this.updateRecoltes(dt); this.updateIncantation(dt); this.updateArche(); this.updateZaap(dt); this.pourChaqueQuetes(q => q.update(dt)); this.passants?.update(dt); return; }
+    // chaque joueur à son tour (this.player = lui) : son atelier, et en monde ouvert ses portes, sa récolte, son Havre-Sac, ses quêtes
+    for (const q of this.players) this.commeJoueur(q, () => {
+      this.updateAteliers(dt);
+      if (!this.zone.open) return;
+      this.updateOpenJoueur(dt); this.updateRecoltes(dt); this.updateIncantation(dt); this.updateArche(); this.updateZaap(dt); q.quetes?.update(dt);
+    });
+    if (this.zone.open) { this.updateOpen(dt); this.updateRepousse(dt); this.passants?.update(dt); return; }
     if (!this.over && this.monsters.length === 0) {
       this.waveDelay -= dt;
       if (this.waveDelay <= 0) { this.spawnWave(); this.waveDelay = 2; }
@@ -1795,10 +1845,14 @@ export class World {
     const r = this.recoltes.find(x => x.id === id);
     return r ? this.map.nearestFree(r.x, r.y) : null;
   }
-  private updateRecoltes(dt: number) {
+  /** Les ressources récoltées repoussent (commun à tous). */
+  private updateRepousse(dt: number) {
     for (const r of this.recoltes) if (r.repousse > 0 && (r.repousse -= dt) <= 0) {
       r.repousse = 0; r.dore = this.rng.next() < (this.eliteSur(r.tag) ? RECOLTE.doreElite : RECOLTE.dore);
     }
+  }
+  /** Récolte de world.player. */
+  private updateRecoltes(dt: number) {
     const p = this.player, R = this.opts.recoltes;
     if (!R || p.dead) { this.versRecolte = null; this.enRecolte = null; return; }
     if (this.enRecolte) {

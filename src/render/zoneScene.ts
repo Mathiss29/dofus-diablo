@@ -406,7 +406,7 @@ export class ZoneScene extends Phaser.Scene {
     this.miroir = Coop.miroir;
     const wc = this.world;
     Coop.attacher({ world: wc, annonce: t => this.hud.toast(t), nom: this.perso?.nom ?? '', sauver: () => this.sauver(),
-      allerA: (zone, position) => { if (this.world === wc) this.scene.restart(zone ? { slot: this.slot, zone, position } : { slot: this.slot }); } });
+      allerA: (zone, position, arrivee) => { if (this.world === wc) this.scene.restart(zone ? { slot: this.slot, zone, position, arrivee } : { slot: this.slot }); } });
     this.events.once('shutdown', () => Coop.detacher(wc));
     // Présence en ligne (Bastion partagé) : seulement avec un perso du compte, hors partie de test et hors vitrine
     if (this.perso && persosEnLigne() && !this.test && !this.vitrine && !this.essai && this.slot >= 0) {
