@@ -72,6 +72,8 @@ export class Player extends Entity {
   apparats: string[] = [];
   /** Codex des pouvoirs (0.3, src/sim/codex.ts) : pouvoirs enregistrés en brisant un Légendaire ou un Mythique chez Malek. */
   codex: EntreeCodex[] = [];
+  /** 8C : Codex ouvert (quête « Le premier pouvoir » finie, ou premier Légendaire trouvé). */
+  codexOuvert = false;
   apparat: Partial<Record<'chapeau' | 'cape' | 'bouclier' | 'familier', string>> = {};
   /** Caractéristiques totales (points + équipement + panoplies), recalculées à chaque changement. */
   stats: Stats = {};

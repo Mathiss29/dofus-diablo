@@ -422,6 +422,18 @@ sec('profanateurs', 'becky', "L'invasion des profanateurs de sépultures", 35,
      {'nom': 'Le cimetière', 'objectifs': [{'t': 'chrono', 'texte': 'Vider la carte [2,-12] en moins de 90 s', 'carte': '2_-12', 's': 90}]}],
     "Mes tombes vont enfin rester fermées. Enfin, celles qui doivent rester fermées.", 'epique')
 
+# --- « Le premier pouvoir » (version 0.3, 8C) : Malek ouvre le Codex des pouvoirs. Une élite d'Astrub, puis un boss de donjon ;
+# récompense : un Légendaire au pouvoir de ta classe, garanti. Le Codex s'ouvre aussi au premier Légendaire trouvé (world.ouvrirCodex).
+Q['premier_pouvoir'] = {'nom': 'Le premier pouvoir', 'type': 'secondaire', 'pnj': 'forgemage', 'rendre': 'forgemage', 'niveau': 25, 'serie': 'Codex des pouvoirs',
+  'v03': True, 'codex': True,
+  'texte': "Malek parle d'un livre où la forge garde les pouvoirs des objets brisés. Pour l'ouvrir, il lui faut un vrai pouvoir sous le marteau. Le Chef de Guerre Bouftou de Tainéla en porte un, mal accroché, et le Bouftou Royal un autre, bien accroché.",
+  'etapes': [{'nom': 'Le pouvoir mal accroché', 'bulle': "Le Chef de Guerre Bouftou garde Tainéla. Il porte une corne qui brille un peu trop pour une corne. Rapporte-la.",
+              'objectifs': [elite('Vaincre le Chef de Guerre Bouftou de Tainéla', 'chef_de_guerre_bouftou', '1_-33', pv=3, nom='Chef de Guerre Bouftou, porte-pouvoir')]},
+             {'nom': 'Le pouvoir bien accroché', 'bulle': "La corne a chanté sous mon marteau, puis elle s'est tue. Il en faut une plus grosse. Le Bouftou Royal en a une, sur la tête.",
+              'objectifs': [dj('Cour du Bouftou Royal', 'Bouftou Royal', 30, 'Astrub')]}],
+  'merci': "La couronne a parlé : le Codex est ouvert. Brise-moi un Légendaire et son pouvoir reste écrit dedans, pour toujours. Tiens, celui-là porte un pouvoir de ta classe. Ne le brise pas tout de suite, porte-le d'abord.",
+  'recompense': {**rec(4, 30), 'sac': 'legendaire', 'pouvoirClasse': True, 'pepites': 30}}
+
 # --- Chasse au Dopeul (officielle, répétable une fois par jour, Quêtes roadmap 7B) --------------------------------------------------
 Q['dopeul'] = {'nom': 'Chasse au Dopeul', 'type': 'prime', 'pnj': 'temples', 'rendre': 'temples', 'niveau': 12, 'repetable': 'jour', 'serie': 'Temples',
   'texte': "Ton Dopeul t'attend aux portes des Champs d'Astrub. Il connaît tous tes sorts. Bats-le, et reviens me voir : le maître des combats paie toujours sa dette.\n\nUne fois par jour.",
