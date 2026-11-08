@@ -17,6 +17,8 @@ export class PersoVivant {
   /** Suréchantillonnage : chaque image est dessinée SUR fois plus grande sur ce brouillon, puis réduite dans sa page. */
   private static readonly SUR = 1;
   private static readonly brouillon = document.createElement('canvas');
+  /** Image juste dessinée, à sa taille exacte : c'est elle qu'on envoie à la carte graphique (pas la page entière). */
+  private static readonly envoi = document.createElement('canvas');
   private pages: { tex: Phaser.Textures.CanvasTexture; x: number; y: number; h: number; sale: boolean }[] = [];
   private faites = new Map<string, [string, string]>();
   private file: [string, number][] = [];
@@ -72,7 +74,7 @@ export class PersoVivant {
       const ctx = p.tex.getContext();
       ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
       ctx.drawImage(t, 0, 0, w * S, h * S, px, py, w, h);
-      p.sale = true;
+      if (!this.envoyer(p.tex, t, w * S, h * S, px, py, w, h)) p.sale = true;
     }
     p.x += w + 2; p.h = Math.max(p.h, h + 2);
     const fr = p.tex.add(nom, 0, px, py, w, h)!;
@@ -80,6 +82,30 @@ export class PersoVivant {
     const r: [string, string] = [p.tex.key, nom];
     this.faites.set(nom, r);
     return r;
+  }
+
+  /** Envoie seulement le rectangle de l'image neuve dans la texture de sa page (texSubImage2D). Avant, toute la page
+   *  (2048 x 2048, 16 Mo) repartait vers la carte graphique, avec ses mipmaps, à chaque image dessinée : une saccade à
+   *  chaque nouvelle image d'un sort. Faux (canevas sans WebGL, contexte perdu) : la page sera rafraîchie en entier. */
+  private envoyer(tex: Phaser.Textures.CanvasTexture, src: HTMLCanvasElement, sw: number, sh: number, px: number, py: number, w: number, h: number): boolean {
+    const r = this.scene.renderer as Phaser.Renderer.WebGL.WebGLRenderer, gl = r.gl as WebGLRenderingContext | undefined;
+    const wrap = tex.source[0]?.glTexture as (Phaser.Renderer.WebGL.Wrappers.WebGLTextureWrapper & { pma?: boolean }) | null;
+    if (!gl || !wrap?.webGLTexture || gl.isContextLost()) return false;
+    const e = PersoVivant.envoi;
+    if (e.width !== w || e.height !== h) { e.width = w; e.height = h; }
+    const ec = e.getContext('2d');
+    if (!ec) return false;
+    ec.clearRect(0, 0, w, h); ec.imageSmoothingEnabled = true; ec.imageSmoothingQuality = 'high';
+    ec.drawImage(src, 0, 0, sw, sh, 0, 0, w, h);
+    // mêmes réglages que Phaser (WebGLTextureWrapper._processTexture), texture d'avant remise en place
+    gl.activeTexture(gl.TEXTURE0);
+    const avant = gl.getParameter(gl.TEXTURE_BINDING_2D) as WebGLTexture | null;
+    gl.bindTexture(gl.TEXTURE_2D, wrap.webGLTexture);
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, wrap.pma ?? true);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, !!wrap.flipY);
+    gl.texSubImage2D(gl.TEXTURE_2D, 0, px, py, gl.RGBA, gl.UNSIGNED_BYTE, e);
+    gl.bindTexture(gl.TEXTURE_2D, avant);
+    return true;
   }
 
   /** Cadre du visage pour le portrait du HUD, en pixels de la cellule : centre (x, y) et côté ; null si pas de tête. */

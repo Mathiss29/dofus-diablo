@@ -27,8 +27,13 @@ export class EntityView {
   /** Maj enfoncée (maquette Osamodas 14B) : barre de vie au-dessus de chaque bête, même pleine. */
   static barresAllies = false;
   readonly sprite: Phaser.GameObjects.Sprite;
+  /** Losange de quête seulement (vide sinon : un Graphics vide ne coûte rien à l'affichage). */
   private readonly bar: Phaser.GameObjects.Graphics;
-  private readonly shadow: Phaser.GameObjects.Graphics;
+  /** Ombre et barre de vie : des images (et non plus des Graphics redessinés à chaque image) pour que les monstres,
+   *  leurs ombres et leurs barres partent ensemble vers la carte graphique, sans changer de programme entre chaque. */
+  private readonly shadow: Phaser.GameObjects.Image;
+  private readonly fond: Phaser.GameObjects.Image;
+  private readonly vie: Phaser.GameObjects.Image;
   private readonly counts: Record<string, number> = {};
   /** Images du perso vivant plus fines que celles des planches : le sprite est réduit d'autant. */
   private k = 1;
@@ -50,16 +55,37 @@ export class EntityView {
         .setOrigin(meta.origin[0] / meta.cell[0], meta.origin[1] / meta.cell[1]).setScale(look.scale);
     }
     this.bar = scene.add.graphics();
-    this.shadow = scene.add.graphics();   // ombre dessinée par le jeu (celle de Dofus laissait une croix)
+    // ombre dessinée par le jeu (celle de Dofus laissait une croix)
+    this.shadow = scene.add.image(0, 0, EntityView.ombre(scene));
+    this.fond = scene.add.image(0, 0, '__WHITE').setOrigin(0).setTint(0x000000).setAlpha(0.6).setVisible(false);
+    this.vie = scene.add.image(0, 0, '__WHITE').setOrigin(0).setVisible(false);
+  }
+
+  /** Texture de l'ombre au sol : une ellipse noire pleine, faite une fois. */
+  static ombre(scene: Phaser.Scene): string {
+    const k = 'ombre_entite';
+    if (!scene.textures.exists(k)) {
+      const t = scene.textures.createCanvas(k, EntityView.OMBRE[0], EntityView.OMBRE[1]);
+      const c = t?.getContext();
+      if (t && c) { c.fillStyle = '#000'; c.beginPath(); c.ellipse(t.width / 2, t.height / 2, t.width / 2, t.height / 2, 0, 0, Math.PI * 2); c.fill(); t.refresh(); }
+    }
+    return k;
+  }
+  static readonly OMBRE: [number, number] = [128, 58];
+
+  /** Barre de vie (fond noir + jauge) au-dessus de l'entité. */
+  private barre(x: number, y: number, w: number, frac: number, couleur: number, depth: number) {
+    this.fond.setVisible(true).setPosition(x - w / 2 - 1, y - 1).setDisplaySize(w + 2, 6).setDepth(depth);
+    this.vie.setVisible(frac > 0).setPosition(x - w / 2, y).setDisplaySize(Math.max(0.01, w * frac), 4).setTint(couleur).setDepth(depth);
   }
 
   /** Perso réassemblé (nouvel objet porté, apparat, garde-robe) : les images suivantes viennent du nouveau. */
   changerVivant(v: PersoVivant) { this.vivant = v; Object.assign(this.counts, v.compte); }
 
   /** Hors de l'écran : rien à dessiner (on ne recalcule pas l'animation). */
-  hide() { this.sprite.setVisible(false); this.bar.setVisible(false); this.shadow.setVisible(false); }
+  hide() { this.sprite.setVisible(false); this.bar.setVisible(false); this.shadow.setVisible(false); this.fond.setVisible(false); this.vie.setVisible(false); }
   sync(e: Entity) {
-    if (!this.sprite.visible) { this.sprite.setVisible(true); this.bar.setVisible(true); this.shadow.setVisible(true); }
+    if (!this.sprite.visible) { this.sprite.setVisible(true); this.bar.setVisible(true); }
     const L = this.look, p = ISO.toScreen(e.x, e.y);
     const fd = ISO.toScreen(Math.cos(e.facing), Math.sin(e.facing));
     const st = L.map[e.anim] ?? L.map[e.anim.replace(/\d+$/, '')] ?? L.map.idle;   // windup1 -> windup si l'animation du sort manque
@@ -90,19 +116,19 @@ export class EntityView {
     else if (L.tint || EntityView.ambiance !== 0xffffff) this.sprite.setTint(mulTint(L.tint ?? 0xffffff, EntityView.ambiance));
     else this.sprite.clearTint();
     // Ombre au sol : reste au sol pendant les sauts
-    const sh = this.shadow; sh.clear();
-    if (!(e.dead && e.animT > 0.7)) {
+    const sh = this.shadow;
+    sh.setVisible(!(e.dead && e.animT > 0.7));
+    if (sh.visible) {
       const w = Math.max(30, e.radius * 2.6) * (1 / (1 + e.z / 120));
-      sh.setDepth(p.y - 1); sh.fillStyle(0x000000, 0.28 * alpha); sh.fillEllipse(p.x, p.y, w, w * 0.45);
+      sh.setPosition(p.x, p.y).setDisplaySize(w, w * 0.45).setDepth(p.y - 1).setAlpha(0.28 * alpha);
     }
     // Barre de vie des monstres touchés
     const g = this.bar; g.clear();
+    let barre = false;
     if (e.faction === 'monster' && e.hp < e.maxHp && !e.dead) {
       const elite = (e as Monster).def.boss || (e as Monster).def.elite;
-      const w = Math.max(30, e.radius * 2.2), y = p.y - L.height * L.scale - 6;
-      g.setDepth(p.y + 1);
-      g.fillStyle(0x000000, 0.6); g.fillRect(p.x - w / 2 - 1, y - 1, w + 2, 6);
-      g.fillStyle(elite ? 0xe0a030 : 0xc93c3c); g.fillRect(p.x - w / 2, y, w * (e.hp / e.maxHp), 4);
+      this.barre(p.x, p.y - L.height * L.scale - 6, Math.max(30, e.radius * 2.2), e.hp / e.maxHp, elite ? 0xe0a030 : 0xc93c3c, p.y + 1);
+      barre = true;
     }
     // monstre qui compte pour la quête : petit losange vert (couleur des icônes de quête de Dofus 3) qui flotte au-dessus
     if (e.faction === 'monster' && !e.dead && EntityView.deQuete?.(e as Monster)) {
@@ -119,11 +145,10 @@ export class EntityView {
     }
     if (e.faction === 'monster') { /* barre déjà dessinée */ } else if (e.faction === 'allie' && !e.dead && (e.hp < e.maxHp || EntityView.barresAllies)) {
       // bête de l'Osamodas : barre verte
-      const w = Math.max(30, e.radius * 2.2), y = p.y - L.height * L.scale - 6;
-      g.setDepth(p.y + 1);
-      g.fillStyle(0x000000, 0.6); g.fillRect(p.x - w / 2 - 1, y - 1, w + 2, 6);
-      g.fillStyle(0x58c048); g.fillRect(p.x - w / 2, y, w * (e.hp / e.maxHp), 4);
+      this.barre(p.x, p.y - L.height * L.scale - 6, Math.max(30, e.radius * 2.2), e.hp / e.maxHp, 0x58c048, p.y + 1);
+      barre = true;
     }
+    if (!barre) { this.fond.setVisible(false); this.vie.setVisible(false); }
   }
 
   /** Le point (x, y) du monde tombe-t-il sur le corps dessiné ? On teste le rectangle rogné de la frame
@@ -140,5 +165,5 @@ export class EntityView {
     return Math.hypot(px - (r.x + r.w / 2), py - (r.y + r.h / 2)) * k;
   }
 
-  destroy() { this.sprite.destroy(); this.bar.destroy(); this.shadow.destroy(); }
+  destroy() { this.sprite.destroy(); this.bar.destroy(); this.shadow.destroy(); this.fond.destroy(); this.vie.destroy(); }
 }
