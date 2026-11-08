@@ -672,7 +672,7 @@ export class Accueil {
     // fenêtres par-dessus (fiche de zone, cimetière, copies de secours)
     on('[data-zone]', e => this.ouvrir(e.dataset.zone!));
     // journal : ouvrir un carnet (le dernier ouvert = lu, la pastille s'éteint), sommaire
-    on('[data-carnet]', e => { this.carnet = e.dataset.carnet || null; if (this.carnet === CARNETS[0]?.date) marquerLu(); this.page = 'journal'; this.render(); this.root.querySelector('.jr')?.scrollTo(0, 0); });
+    on('[data-carnet]', e => { this.modal = null; this.carnet = e.dataset.carnet || null; if (this.carnet === CARNETS[0]?.date) marquerLu(); this.page = 'journal'; this.render(); this.root.querySelector('.jr')?.scrollTo(0, 0); });
     on('[data-rub]', e => this.root.querySelector(`#rub-${e.dataset.rub}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
     on('[data-modal]', e => this.ouvrir(e.dataset.modal!));
     on('[data-fermer-btn]', () => { this.modal = null; this.render(); });
