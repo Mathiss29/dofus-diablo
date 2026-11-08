@@ -77,6 +77,19 @@ PNJ = {
   'temples': {'nom': 'Représentant des Temples', 'dofusId': 2872, 'zone': 'astrub', 'carte': '4_-18',
     'phrase': "Les temples de Iop et de Crâ sont loin d'Astrub, alors c'est moi qui fais le lien. Et qui envoie les Dopeuls. Ils adorent ça.",
     'discussion': [{'reponse': "C'est quoi, un Dopeul ?", 'texte': "Ton double, en plus violet et en plus vexé. Il connaît tes sorts aussi bien que toi. Une fois par jour, il vient voir si tu as progressé."}]},
+  # Quêtes officielles d'Astrub écrites en ARPG (Quêtes roadmap 2C) : leurs PNJ officiels, à l'endroit où l'on rend la quête dans Dofus 3.
+  'hazel': {'nom': 'Hazel Ementaire', 'dofusId': 4313, 'zone': 'astrub', 'carte': '6_-17',
+    'phrase': "J'avais commandé des chaudrons. On m'a livré des enclumes. Essaie donc de faire une soupe dans une enclume."},
+  'nepra': {'nom': 'Nepra Lido', 'dofusId': 4334, 'zone': 'astrub', 'carte': '3_-21',
+    'phrase': "L'aventurite, c'est cette manie de foncer dans les monstres sans réfléchir. Très contagieux. Tu en as tous les symptômes."},
+  'jim': {'nom': 'Jim Fleps', 'dofusId': 4335, 'zone': 'astrub', 'carte': '3_-16',
+    'phrase': "Je ne vole pas, j'emprunte sans prévenir et sans rendre. Nuance."},
+  'seldawa': {'nom': 'Sel Dawa', 'dofusId': 4319, 'zone': 'astrub', 'carte': '6_-18',
+    'phrase': "De l'eau ! Ma nièce ne boit plus que de l'eau ! Où va la jeunesse d'Astrub ?"},
+  'sept': {'nom': 'Disciple de Sêpt', 'dofusId': 4311, 'zone': 'astrub', 'carte': '0_-25',
+    'phrase': "Les bûcherons n'osent plus couper un arbre. Quelque chose grogne entre les troncs, et ce n'est pas le vent."},
+  'becky': {'nom': 'Becky Gorr', 'dofusId': 4380, 'zone': 'astrub', 'carte': '1_-11',
+    'phrase': "Quelqu'un retourne mes tombes la nuit. Moi, je les creuse le jour. On ne va pas s'en sortir."},
   # Fil court « Les Vilinsekts » (Quêtes roadmap 1A) : Cindy Cah (PNJ officiel 4366, look {4960|||90}) donne « Les as de la cambriole » en [5,-17].
   'cindy': {'nom': 'Cindy Cah', 'dofusId': 4366, 'zone': 'astrub', 'carte': '5_-17',
     'phrase': "Ma cuillère en argent a disparu. Puis mon dé à coudre. Puis mon voisin a perdu son jeu de cartes. À Astrub, on ne perd rien : on se fait voler par des Vilinsekts."},
@@ -367,6 +380,47 @@ Q['vil_3'] = {'nom': 'Les as de la cambriole', 'type': 'principale', 'pnj': 'cin
               'objectifs': [{'t': 'donjon', 'texte': 'Vaincre Kankreblath (Cache de Kankreblath)', 'donjon': 'Cache de Kankreblath', 'boss': 'Kankreblath', 'niveau': 40, 'region': 'Astrub'}]}],
   'merci': "Ma cuillère ! Toute tordue, mais c'est la mienne. Astrub te doit une fière chandelle. Et moi, une cuillère.",
   'recompense': {**rec(5, 40), 'sac': 'epique', 'pepites': 60}}
+
+# --- Quêtes officielles d'Astrub écrites en ARPG (Quêtes roadmap 2C : 5-6 parmi les plus drôles, titres et PNJ officiels) ---------
+def ram(texte, objet, n, chance, **k): return {'t': 'ramasser', 'texte': texte, 'objet': objet, 'n': n, 'chance': chance, **k}
+SZA = {'cite': 95, 'champs': 98, 'prairies': 173, 'calanques': 335, 'carriere': 96, 'foret': 97, 'tainela': 30, 'cimetiere': 102}
+def sec(qid, pnj, nom, niv, texte, etapes, merci, sac='rare'):
+    Q[qid] = {'nom': nom, 'type': 'secondaire', 'pnj': pnj, 'rendre': pnj, 'niveau': niv, 'serie': 'Astrub', 'texte': texte,
+              'etapes': etapes, 'merci': merci, 'recompense': {**rec(3, niv), 'sac': sac, 'pepites': niv // 2}}
+sec('aigris', 'hazel', "Les paroles s'envolent, les aigris restent", 12,
+    "Hazel a commandé des chaudrons, on lui a livré des enclumes. Les Pious du quartier ont tout vu, et ils n'arrêtent pas d'en piailler. Fais-les parler, ou au moins taire.",
+    [{'nom': 'Les témoins', 'objectifs': [vaincre('Faire taire 8 Pious bavards', 8, sousZone=SZA['cite']),
+                                          ram('Retrouver le bon de livraison', 'Bon de livraison froissé', 1, 0.2, sousZone=SZA['cite'])]}],
+    "Signé « Pierrette » ? Je ne connais aucune Pierrette. Enfin, maintenant je sais à qui renvoyer les enclumes.")
+sec('piques', 'nepra', 'Piques de solution', 20,
+    "Nepra Lido a un remède contre l'aventurite. Il lui manque des piquants bien frais, et les Prespics de la Forêt d'Astrub ne les prêtent pas.",
+    [{'nom': 'Les piquants', 'objectifs': [ram('Rapporter 6 piquants de Prespic', 'Piquant de Prespic', 6, 0.35, monstres=['prespic'])]}],
+    "Parfait. Je pique, ils guérissent. Enfin, ils arrêtent de foncer partout. C'est déjà ça.")
+sec('crime', 'jim', 'Crime et châtiment', 20,
+    "Jim Fleps veut une bourse, un os et un diamant. Il appelle ça un examen d'entrée. La Milice appellerait ça autrement, mais elle n'est pas là.",
+    [{'nom': 'Le butin', 'objectifs': [ram('Une bourse (Cité d\'Astrub)', 'Bourse rebondie', 1, 0.2, sousZone=SZA['cite']),
+                                       ram('Un os (Tainéla)', 'Os de Bouftou', 1, 0.2, sousZone=SZA['tainela']),
+                                       ram('Un diamant (Carrière d\'Astrub)', 'Diamant brut', 1, 0.15, sousZone=SZA['carriere'])]}],
+    "Tout y est. Tu as l'étoffe d'un grand voleur. Ou d'un grand idiot, ça dépend qui t'attrape.")
+sec('trempette', 'seldawa', "Trempette dans un verre d'eau", 20,
+    "Regane, la nièce de Sel Dawa, ne boit plus que de l'eau. Elle est partie aux Calanques pour en boire à la source, et les Pichons l'ont encerclée.",
+    [{'nom': 'Les Calanques', 'objectifs': [aller("Aller aux Calanques d'Astrub", sousZone=SZA['calanques'])]},
+     {'nom': 'Regane', 'bulle': "Ils sont partout ! Je ne boirai plus jamais d'eau ! … Enfin, plus jamais d'eau de mer.",
+      'objectifs': [{'t': 'defense', 'texte': 'Protéger Regane pendant 45 s', 'carte': '10_-27', 's': 45},
+                    elite("Vaincre l'Eau Rageuse", 'pichon_bleu', '10_-27', pv=4, nom='Eau Rageuse')]}],
+    "Elle est rentrée trempée et elle a demandé une limonade. Une limonade ! Tu es un héros.")
+sec('bucherons', 'sept', 'Bûcherons en détresse', 30,
+    "Une bête sauvage sème la terreur parmi les bûcherons de la Forêt d'Astrub. Le disciple de Sêpt te demande de tenir le temps qu'ils rentrent, puis de la traquer.",
+    [{'nom': 'Les bûcherons', 'objectifs': [{'t': 'defense', 'texte': 'Couvrir la retraite des bûcherons pendant 60 s', 'carte': '0_-26', 's': 60}]},
+     {'nom': 'La bête', 'objectifs': [elite('Vaincre la Bête sauvage', 'sanglier', '-1_-27', pv=5, nom='Bête sauvage')]}],
+    "Plus de grognements. Les haches vont pouvoir reprendre. Les arbres sont un peu moins contents, mais on ne peut pas plaire à tout le monde.", 'epique')
+sec('profanateurs', 'becky', "L'invasion des profanateurs de sépultures", 35,
+    "Becky, la fossoyeuse du Cimetière d'Astrub, retrouve ses tombes retournées chaque matin. Trois créatures en colère rôdent entre les stèles, et quelqu'un les commande.",
+    [{'nom': 'Les créatures en colère', 'objectifs': [elite('Vaincre la Gargrouille en colère', 'gargrouille', '-2_-13', pv=3, nom='Gargrouille en colère'),
+                                                      elite('Vaincre le Garglyphe en colère', 'garglyphe', '0_-12', pv=3, nom='Garglyphe en colère'),
+                                                      elite('Vaincre La Ouassingue en colère', 'la_ouassingue', '-1_-11', pv=3, nom='La Ouassingue en colère')]},
+     {'nom': 'Le cimetière', 'objectifs': [{'t': 'chrono', 'texte': 'Vider la carte [2,-12] en moins de 90 s', 'carte': '2_-12', 's': 90}]}],
+    "Mes tombes vont enfin rester fermées. Enfin, celles qui doivent rester fermées.", 'epique')
 
 # --- Chasse au Dopeul (officielle, répétable une fois par jour, Quêtes roadmap 7B) --------------------------------------------------
 Q['dopeul'] = {'nom': 'Chasse au Dopeul', 'type': 'prime', 'pnj': 'temples', 'rendre': 'temples', 'niveau': 12, 'repetable': 'jour', 'serie': 'Temples',
