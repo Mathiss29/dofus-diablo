@@ -79,6 +79,8 @@ Puis effacer la clé privée du VPS (elle n'est plus utile qu'à GitHub) :
 sudo -u diablofus rm /home/diablofus/.ssh/deploiement /home/diablofus/.ssh/deploiement.pub
 ```
 
+`VPS_EMPREINTE` n'a pas l'adresse : le workflow écrit lui-même `159.173.129.109 ssh-ed25519 AAAA…` dans `known_hosts`.
+
 `restrict` : cette clé ne peut ni ouvrir de terminal ni faire de tunnel, seulement lancer des commandes en tant que
 `diablofus`.
 
@@ -90,13 +92,13 @@ Installer `cloudflared` depuis le dépôt officiel de Cloudflare :
 sudo mkdir -p --mode=0755 /usr/share/keyrings
 curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | sudo tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null
 echo 'deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared any main' | sudo tee /etc/apt/sources.list.d/cloudflared.list
-sudo apt-get update && sudo apt-get install -y cloudflared
+sudo apt-get update && sudo NEEDRESTART_MODE=l apt-get install -y cloudflared   # l : liste seulement, aucun service redémarré (Docker d'Idlus)
 ```
 
 Dans le tableau de bord Cloudflare : Zero Trust › Networks › Tunnels › Create a tunnel › Cloudflared, nom `diablofus`.
 Cloudflare affiche une commande `sudo cloudflared service install <jeton>` : la lancer sur le VPS (le jeton ne se partage
 pas). Puis, dans le tunnel, onglet Public Hostname : sous-domaine `api`, domaine `diablofus.com`, service `HTTP`,
-URL `localhost:3100`.
+URL `127.0.0.1:3100` (pas `localhost`, qui peut partir sur `::1` en IPv6 où le serveur n'écoute pas).
 
 Limites du tunnel (même logique que le service) :
 
@@ -109,6 +111,10 @@ sudo systemctl daemon-reload && sudo systemctl restart cloudflared
 ### 6. Premier déploiement
 
 GitHub › Actions › Serveur › Run workflow. À la fin, `https://api.diablofus.com/sante` répond `{"ok":true,…}`.
+
+## Bon à savoir
+
+- Cloudflare coupe un WebSocket muet depuis 100 s : le serveur envoie un ping toutes les 30 s (`index.mjs`).
 
 ## Plus tard
 
