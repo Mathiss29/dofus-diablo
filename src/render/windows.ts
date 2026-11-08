@@ -1327,9 +1327,9 @@ export class Windows {
       return `<div class="bs ${i === 6 || i === 7 ? 'gap' : ''}"><i data-slot="${i}" title="${d?.name ?? 'vide'}" style="${d ? `background-image:url(assets/ui/sorts/sort_${d.icon}.png)` : ''}"></i>${KEYS[i] ?? ""}</div>`;
     };
     // Codex (0.3, 7B) : consultable partout depuis la fenêtre des Sorts
-    const codexBtn = p.v03 ? `<span class="btn" data-vcodex>${this.sortsCodex ? 'Retour aux sorts' : `Codex · ${p.codex.length}`}</span>` : '';
+    const codexBtn = p.v03 && p.codexOuvert ? `<span class="btn" data-vcodex>${this.sortsCodex ? 'Retour aux sorts' : `Codex · ${p.codex.length}`}</span>` : '';
     w.innerHTML = `${this.title('Sorts', 'spells')}<div class="sb">
-      ${this.sortsCodex && p.v03 ? `<div class="fi" style="grid-column:1/-1;overflow:auto">${codexPageHtml(p)}</div>` : `<div class="ls">${pairs.map((pr, i) => `<div class="pr">${row(pr, i)}</div>`).join('')}</div>
+      ${this.sortsCodex && p.v03 && p.codexOuvert ? `<div class="fi" style="grid-column:1/-1;overflow:auto">${codexPageHtml(p)}</div>` : `<div class="ls">${pairs.map((pr, i) => `<div class="pr">${row(pr, i)}</div>`).join('')}</div>
       <div class="fi">${fiche}</div>`}
       <div class="bb">${p.bar.map((_, i) => slot(i)).join('')}<span class="hint">${p.cls.name} niveau ${p.level} · ${all.filter(s => p.level >= p.requiredLevel(s)).length} sorts débloqués sur ${all.length}</span>${codexBtn}</div>
     </div>`;

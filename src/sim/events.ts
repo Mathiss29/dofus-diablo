@@ -95,6 +95,7 @@ export type SimEvent =
   | { k: 'brisage'; n: number; runes: Record<string, number>; auto?: string }
   /** Codex (0.3) : un pouvoir enregistré en brisant un Légendaire ; une impression sur un objet Rare ou Épique. */
   | { k: 'codex'; id: string }
+  | { k: 'codexOuvert' }
   | { k: 'impression'; uid: number; id: string }
   /** Collection d'apparences (1C) : premier exemplaire d'une coiffe, cape ou bouclier brisé ou recyclé. */
   | { k: 'apparence'; id: string }

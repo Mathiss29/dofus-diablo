@@ -969,6 +969,7 @@ export class ZoneScene extends Phaser.Scene {
           this.windows?.noteForge({ t: `${e.n > 1 ? `${e.n} objets brisés` : 'Objet brisé'} : ${Object.entries(e.runes).map(([id, k]) => `${k} ${ITEMS.resources[id]?.name ?? id}`).join(', ') || 'aucune rune'}`, c: 'br' }); break; }
         case 'codex': { const o = POUVOIR_PAR_ID[e.id]; this.hud.loot(`Codex : ${o ? o.sort : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id} enregistré`, '#f08a2c');
           this.windows?.noteForge({ t: `Pouvoir enregistré dans le Codex : ${o ? o.officiel : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id}`, c: 'ok' }); break; }
+        case 'codexOuvert': this.hud.loot('Le Codex des pouvoirs s\'ouvre : brise un Légendaire chez Malek pour garder son pouvoir', '#f08a2c'); this.windows?.refresh(); break;
         case 'impression': { const o = POUVOIR_PAR_ID[e.id]; this.hud.loot('Impression réussie : l\'objet devient Légendaire', '#f08a2c');
           this.windows?.noteForge({ t: `Impression : ${o ? o.officiel : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id}`, c: 'ok' }); break; }
         case 'apparence': this.hud.loot(`Apparence débloquée : ${ITEMS.equipment[e.id]?.name ?? 'objet'}`, '#e6b85c'); break;

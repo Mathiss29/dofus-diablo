@@ -35,6 +35,7 @@ export interface EtatJoueur {
   commandeFM?: CommandeFM | null;
   /** Codex des pouvoirs (0.3). */
   codex?: EntreeCodex[];
+  codexOuvert?: boolean;
 }
 
 const copie = <T>(o: T): T => JSON.parse(JSON.stringify(o)) as T;
@@ -46,7 +47,7 @@ export function exporterJoueur(w: World): EtatJoueur {
     base: p.base, bag: p.bag, equipment: p.equipment, resources: p.resources, metiers: p.metiers, recetteSuivie: p.recetteSuivie,
     bar: p.bar, variants: p.variants, learned: [...p.learned],
     x: p.x, y: p.y, retour: w.pointDeRetour, quetes: w.quetes?.exporter(), zone: w.opts.zone,
-    apparats: p.apparats, apparat: p.apparat, codex: p.codex,
+    apparats: p.apparats, apparat: p.apparat, codex: p.codex, codexOuvert: p.codexOuvert,
     zaaps: p.zaaps, zonesVues: p.zonesVues, cleDonjon: p.cleDonjon, commandeFM: p.commandeFM, ...(w.retour ? { havreSac: w.retour } : {}),
   });
 }
@@ -66,6 +67,7 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
   p.apparats = Array.isArray(s.apparats) ? s.apparats.filter(a => typeof a === 'string') : [];
   p.apparat = {};
   for (const k of ['chapeau', 'cape', 'bouclier', 'familier'] as const) { const a = s.apparat?.[k]; if (a === '0' || (a && p.apparats.includes(a))) p.apparat[k] = a; }
+  p.codexOuvert = !!s.codexOuvert || (Array.isArray(s.codex) && s.codex.length > 0);
   p.codex = Array.isArray(s.codex) ? s.codex.filter(c => typeof c?.id === 'string').map(c => ({ id: c.id, ...(typeof c.sort === 'string' ? { sort: c.sort } : {}) })) : [];
   p.learned = new Set(s.learned ?? []);
   if (Array.isArray(s.zaaps)) p.zaaps = s.zaaps.filter(z => typeof z?.zone === 'string' && typeof z?.name === 'string');

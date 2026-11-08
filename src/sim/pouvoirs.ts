@@ -52,6 +52,8 @@ export interface CtxPouvoirs {
   sortsRecharge: string[];
   /** 0.3 visible (partie de test, ou sortie publique). */
   v03: boolean;
+  /** Pouvoir de la classe garanti (quête « Le premier pouvoir », 8C) : jamais d'une autre classe ni d'un sort à venir, ni maison. */
+  garanti?: boolean;
 }
 /** Ids Dofus des sorts présents en jeu pour chaque classe : un pouvoir sur un sort pas encore fait n'est jamais tiré. */
 export const EN_JEU: Record<string, number[]> = {};
@@ -71,15 +73,15 @@ export function tirerPouvoirs(rng: Rng, ctx: CtxPouvoirs, slot: Slot, n: 1 | 2):
     const libre = (l: PouvoirDef[]) => l.filter(p => !pris.has(p.id));
     let choix: PouvoirDef | null = null;
     const autres = Object.keys(POUVOIRS).filter(c => c !== ctx.classe);
-    if (rng.next() < 0.1 && autres.length) { const l = libre(off(rng.pick(autres), () => true)); if (l.length) choix = rng.pick(l); }
-    if (!choix && rng.next() < 0.1) {
+    if (!ctx.garanti && rng.next() < 0.1 && autres.length) { const l = libre(off(rng.pick(autres), () => true)); if (l.length) choix = rng.pick(l); }
+    if (!choix && !ctx.garanti && rng.next() < 0.1) {
       const l = libre(off(ctx.classe, p => ctx.aVenir.some(a => a.dofusId === p.dofusId)));
       if (l.length) choix = rng.pick(l);
     }
     if (!choix) {
       const l = libre(off(ctx.classe, p => ctx.connus.includes(p.dofusId)));
       // pool : chaque pouvoir officiel utile et chaque pouvoir maison ont la même chance (5 maison)
-      const k = rng.int(l.length + 5);
+      const k = rng.int(l.length + (ctx.garanti && l.length ? 0 : 5));
       if (k < l.length) choix = l[k];
     }
     if (choix) { pris.add(choix.id); out.push({ officiel: choix.id }); }
@@ -87,6 +89,10 @@ export function tirerPouvoirs(rng: Rng, ctx: CtxPouvoirs, slot: Slot, n: 1 | 2):
   }
   return out;
 }
+
+/** Cet emplacement a-t-il un pouvoir officiel de la classe sur un sort connu (Légendaire garanti, 8C) ? */
+export const slotAPouvoirConnu = (ctx: CtxPouvoirs, slot: string) =>
+  (POUVOIRS[ctx.classe] ?? []).some(p => p.slot === slot && ctx.connus.includes(p.dofusId) && (EN_JEU[ctx.classe] ?? []).includes(p.dofusId));
 
 /** Applique les pouvoirs officiels portés à un grade de sort (copie). 5A : un même pouvoir porté deux fois ne compte qu'une fois. */
 export function gradeAvecPouvoirs(g: SortGrade, liste: PouvoirDef[]): SortGrade {

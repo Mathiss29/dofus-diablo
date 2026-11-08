@@ -70,6 +70,8 @@ export interface RecompenseDef {
   niveau?: number;
   /** Sac à rareté garantie (Quêtes roadmap 5A) : un équipement tiré au niveau de la quête, de cette rareté. */
   sac?: Rarity;
+  /** Le sac porte un pouvoir officiel de la classe, sur un sort connu (« Le premier pouvoir », 0.3 8C). */
+  pouvoirClasse?: boolean;
   /** Pépites (la monnaie d'Emp, 5B). */
   pepites?: number;
 }
@@ -98,6 +100,10 @@ export interface QueteDef {
   options?: { immortel?: boolean; groupes?: { sousZones: number[]; taille: [number, number]; etape?: number }; sauterSiCompte?: boolean; passable?: boolean; jauge?: number };
   /** Démarre dès le début de la partie (le tutoriel). */
   auDepart?: boolean;
+  /** Version 0.3 : proposée seulement en partie de test tant que la 0.3 n'est pas sortie (V03_PUBLIC). */
+  v03?: boolean;
+  /** Ouvre le Codex des pouvoirs à la fin (« Le premier pouvoir », 8C). */
+  codex?: boolean;
   /** Carte (tag de monde.json) où le perso apparaît quand la quête démarre au départ (tutoriel : le Temple Céleste). */
   depart?: string;
   /** Carte où le PNJ envoie le perso à la fin (ou quand on passe la quête) s'il est encore dans la sous-zone du départ :
@@ -431,7 +437,7 @@ export class Quetes {
   aDonnerTous(pnj: string): string[] {
     const lvl = this.world.player.level, out: string[] = [];
     for (const [id, q] of Object.entries(this.data.quetes)) {
-      if (q.pnj !== pnj || q.bientot || (this.finies.has(id) && !this.reprenable(id)) || this.enCours.some(c => c.id === id) || q.auDepart) continue;
+      if (q.pnj !== pnj || q.bientot || (q.v03 && !this.world.player.v03) || (this.finies.has(id) && !this.reprenable(id)) || this.enCours.some(c => c.id === id) || q.auDepart) continue;
       if (q.niveau > lvl + 2 || !(q.requiert ?? []).every(r => this.finies.has(r))) continue;
       // une quête qui suit une autre (fil principal) démarre seule à la fin de la précédente : son PNJ ne la propose pas
       if (Object.values(this.data.quetes).some(o => o.suivante === id)) continue;
@@ -796,7 +802,8 @@ export class Quetes {
     const obj = r.objetParClasse?.[this.classe] ?? r.objet;
     if (obj) w.donnerObjet(obj);
     for (const [o, n] of r.objets ?? []) w.donnerObjet(o, n);
-    if (r.sac) w.donnerSac(r.sac, q.niveau);
+    if (r.sac) w.donnerSac(r.sac, q.niveau, !!r.pouvoirClasse);
+    if (q.codex) w.ouvrirCodex();
     if (r.pepites) w.donnerObjet(PEPITE, r.pepites);
     for (const o of this.etapes(id).flatMap(e => e.objectifs)) if (o.t === 'ramasser') delete this.objets[o.objet];
     if (this.suivie === id) this.suivie = null;
