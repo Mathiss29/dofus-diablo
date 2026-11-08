@@ -461,7 +461,7 @@ export class World {
     }
   }
   /** Nom d'un endroit (carte) : l'intérieur, sinon la sous-zone. */
-  private nomCarte(tag: string): string | null {
+  nomCarte(tag: string): string | null {
     const m = this.worldGrid?.mapByTag(tag);
     if (!m) return null;
     return (m.inside ? this.lieux.get(tag) : null) ?? this.zone.open?.subareas[String(m.sub)]?.name ?? null;

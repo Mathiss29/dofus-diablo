@@ -1131,7 +1131,7 @@ export class Windows {
     const PAGES: { id: string; titre: string; html: string }[] = [
       { id: 'bienvenue', titre: 'Bienvenue', html: `<p class="chapo">Explore le Monde des Douze, rencontre ses habitants et combats en temps réel : tes déplacements et tes sorts se jouent sans attendre.</p>
         <h3>Un monde à parcourir</h3><p>Passe d'une carte à l'autre sans chargement, entre dans les maisons par leurs portes et parle aux PNJ en cliquant dessus. La mini-carte en haut à droite montre les monstres (points rouges), les PNJ qui ont une quête (points verts) et ta destination (point doré).</p>
-        <h3>Ton but</h3><p>Suis la quête affichée en bas à gauche. Une flèche dorée au bord de l'écran indique où aller quand c'est loin.</p>` },
+        <h3>Ton but</h3><p>Suis la quête affichée en bas à gauche. Une flèche au bord de l'écran (verte, bleue pour les quêtes répétables) montre le chemin : la porte, le portail ou le Zaap à prendre, avec le nom du but et la distance en cartes. Clic sur le titre de la quête pour en suivre une autre.</p>` },
       { id: 'combat', titre: 'Se déplacer et combattre', html: `<h3>À la souris</h3><p>${k('Clic gauche')} sur le sol : y aller (maintenu : suivre le curseur). Sur un monstre : s'approcher et l'attaquer.</p>
         <p>${k('Maj + clic')} : attaquer sur place, sans bouger.</p><p>${k('Clic droit')} : lancer le sort de la case libre de la barre. Sur un PNJ : ses actions.</p>
         <h3>Esquiver</h3><p>${k('Espace')} : ${mob}. Il a des charges qui se rechargent toutes seules.</p>
@@ -1183,6 +1183,7 @@ export class Windows {
           { k: 'lancer', nom: 'Lancer un sort', t: 'select', choix: [['relache', 'Maintenir pour voir, relâcher pour lancer'], ['immediat', 'Tout de suite (aperçu avec Alt)'], ['dofus', 'Comme Dofus : touche puis clic']] },
           { k: 'approche', nom: 'Monstre hors de portée : s\'approcher avant de lancer', t: 'check' },
           { k: 'juice', nom: 'Effets d\'impact (tremblement, gel d\'image)', aide: 'Touche F', t: 'check' },
+          { k: 'flecheQuete', nom: 'Flèche de quête', aide: 'Au bord de l\'écran et sur la mini-carte. Clic sur le titre du suivi : changer de quête.', t: 'check' },
         ] },
         { id: 'touches', titre: 'Touches', opts: [], html: `<div class="keys">${[['Clic gauche', 'aller / attaquer (maintenu : continuer)'], ['Maj + clic', 'attaquer sur place'], ['Clic droit', 'sort de la barre (case libre)'],
           ['& é " \' ( -', 'barre de sorts'], ['Espace', 'déplacement'], ['E', 'potion'], ['S', 'sorts'], ['I', 'inventaire'], ['C', 'caractéristiques'], ['J', 'métiers'], ['B', 'bestiaire'],

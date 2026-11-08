@@ -2,6 +2,12 @@ import type { SimEvent } from './events';
 import type { World } from './world';
 import { PEPITE, type Rarity } from './items';
 import { contrat, hache, semaine, tirerContrats, type CtxContrats } from './contrats';
+import { liensAPied, plusCourt, type GenreLien, type Lien, type Pt } from './trajet';
+
+/** Trajet de la flèche des quêtes : `x, y` = le point à viser maintenant, `pts` = le trajet jusqu'à la première porte
+ *  (ou au but), `cartes` = nombre de cartes à traverser, `autreZone` = nom de la zone du but quand il n'est pas ici. */
+export interface Itineraire { x: number; y: number; pts: (Pt & { genre: GenreLien | 'but' })[]; cartes: number; nom: string;
+  via: GenreLien | null; autreZone: string | null; zaap: string | null; but: Pt | null }
 
 /** Quêtes et succès (maquette « Quêtes et succès », tranchée le 2026-11-06).
  *  Une quête est une suite d'étapes ; une étape a un ou plusieurs objectifs qui avancent en même temps (3A+3B).
@@ -854,13 +860,14 @@ export class Quetes {
   /** Points de succès du compte. */
   get points() { return [...this.succes].reduce((n, id) => n + (this.data.succes[id]?.points ?? 0), 0); }
 
-  /** Où aller pour la quête suivie (point sur la mini-carte, flèche au bord de l'écran) : le premier objectif pas fini. */
+  /** Où aller pour la quête suivie (point sur la mini-carte, flèche au bord de l'écran) : le premier objectif pas fini.
+   *  Depuis un intérieur, la porte qui rapproche du but ; sinon le but lui-même. Voir aussi itineraire() (vrai trajet). */
   cible(): { x: number; y: number } | null {
     const t = this.cibleBrute(), w = this.world, wg = w.worldGrid, p = w.player;
-    if (!t || !wg) return t;
+    if (!t || !wg) return t && { x: t.x, y: t.y };
     // dans un intérieur (Temple Céleste…), viser la porte qui rapproche du but plutôt que le but à travers le vide
     const ici = wg.mapAt(p.x, p.y), la = wg.mapAt(t.x, t.y);
-    if (!ici?.inside || la?.tag === ici.tag) return t;
+    if (!ici?.inside || la?.tag === ici.tag) return { x: t.x, y: t.y };
     let best: { x: number; y: number } | null = null, bd = Infinity;
     for (const po of w.portes) for (let i = 0; i < 2; i++) {
       if (i === 1 && po.sens) continue;
@@ -869,40 +876,123 @@ export class Quetes {
       const d = Math.hypot(b.x - t.x, b.y - t.y);
       if (d < bd) { bd = d; best = { x: a.x, y: a.y }; }
     }
-    return best ?? t;
+    return best ?? { x: t.x, y: t.y };
   }
-  private cibleBrute(): { x: number; y: number } | null {
+
+  // --- Flèche des quêtes (maquette « Flèche » 1A 3A 3B 5A, 2026-11-08) ---------------------------------------
+  private aPied: { wg: unknown; liens: Map<string, Lien[]> } | null = null;
+  private iti: { cle: string; t: number; r: Itineraire | null } | null = null;
+  /** Les liens qui partent d'une carte : à pied, portes, portails vers une autre zone, Zaaps connus. */
+  private liens(tag: string): Lien[] {
+    const w = this.world, wg = w.worldGrid!;
+    if (this.aPied?.wg !== wg) this.aPied = { wg, liens: liensAPied(wg) };
+    const out = [...this.aPied.liens.get(tag) ?? []];
+    for (const po of w.portes) {
+      if (po.vers) { if (po.ends[0].tag === tag) out.push({ vers: `zone:${po.vers.zone}`, genre: 'portail', de: po.ends[0], cout: 1, nom: po.nom }); continue; }
+      for (let i = 0; i < 2; i++) {
+        if (i === 1 && po.sens) continue;
+        if (po.ends[i].tag === tag && po.ends[1 - i].tag !== tag) out.push({ vers: po.ends[1 - i].tag, genre: 'porte', de: po.ends[i], a: po.ends[1 - i], cout: 1, nom: po.nom });
+      }
+    }
+    // un Zaap de cette carte mène à tous les Zaaps déjà découverts (un voyage compte pour 4 cartes)
+    const zaaps = w.zaapsIci(), z = zaaps.find(o => wg.mapAt(o.x, o.y)?.tag === tag);
+    if (z) for (const k of w.player.zaaps) {
+      if (k.zone !== w.opts.zone) { out.push({ vers: `zone:${k.zone}`, genre: 'zaap', de: z, cout: 4, nom: k.name }); continue; }
+      const la = zaaps.find(o => o.name === k.name), t2 = la && wg.mapAt(la.x, la.y)?.tag;
+      if (la && t2 && t2 !== tag) out.push({ vers: t2, genre: 'zaap', de: z, a: la, cout: 4, nom: k.name });
+    }
+    return out;
+  }
+  /** L'étape en cours demande d'aller quelque part (sinon pas de flèche : niveau, sort, objet à équiper…). */
+  private aUnLieu(c: QueteEnCours) {
+    if (c.aRendre) return true;
+    return !!this.etapeDe(c)?.objectifs.some((o, i) => c.compte[i] < this.total(o)
+      && (o.t === 'parler' || o.t === 'elite' || o.t === 'defense' || o.t === 'chrono' || o.t === 'defi' || o.t === 'donjon' || o.t === 'activer'
+        || (o.t === 'aller' && !!(o.pnj || o.carte || o.sousZone != null)) || ('sousZone' in o && o.sousZone != null)));
+  }
+  /** Zone de la quête suivie (celle de son PNJ), pour la mener d'Incarnam à Astrub et inversement. */
+  private zoneDe(id: string): string {
+    const q = this.def(id), n = q.pnj ?? q.rendre;
+    return (n && this.data.pnj[n]?.zone) || 'incarnam';
+  }
+  /** Le trajet vers le but de la quête suivie : le prochain point à viser (porte, Zaap, portail, passage), le nom du but
+   *  et le nombre de cartes. Recalculé quand on change de carte (ou toutes les secondes). */
+  itineraire(): Itineraire | null {
+    const w = this.world, wg = w.worldGrid, p = w.player, c = this.enCours.find(x => x.id === this.suivie) ?? this.enCours[0];
+    if (!wg || !c) return null;
+    const ici = wg.mapAt(p.x, p.y)?.tag; if (!ici) return null;
+    const but = this.cibleBrute(), zb = this.zoneDe(c.id);
+    const fin = but ? wg.mapAt(but.x, but.y)?.tag : zb !== w.opts.zone && this.aUnLieu(c) ? `zone:${zb}` : null;
+    if (!fin) return null;
+    const cle = `${ici}|${fin}|${c.id}|${c.etape}|${c.aRendre}|${w.player.zaaps.length}`;
+    if (this.iti && this.iti.cle === cle && w.time - this.iti.t < 1) {
+      const r = this.iti.r, der = r?.pts[r.pts.length - 1];   // un élite qui bouge : le but suit, sans tout recalculer
+      if (r && but) { r.but = { x: but.x, y: but.y }; if (der?.genre === 'but') { der.x = but.x; der.y = but.y; } }
+      return this.suivre(r);
+    }
+    const chemin = plusCourt(ici, fin, t => this.liens(t));
+    let r: Itineraire | null = null;
+    if (chemin) {
+      const nomZone = (z: string) => w.opts.data.zones[z]?.name ?? z;
+      const pts: (Pt & { genre: GenreLien | 'but' })[] = [];
+      let via: GenreLien | null = null;
+      for (const l of chemin) {
+        pts.push({ ...l.de, genre: l.genre });
+        if (l.genre !== 'chemin') { via = l.genre; break; }   // après une porte, un Zaap ou un portail, on verra sur place
+      }
+      const fini = !chemin.some(l => l.genre !== 'chemin');
+      if (fini && but) pts.push({ x: but.x, y: but.y, genre: 'but' });
+      if (!pts.length && but) pts.push({ x: but.x, y: but.y, genre: 'but' });
+      const zaap = chemin.find(l => l.genre === 'zaap');
+      r = { pts, cartes: chemin.length, nom: but?.nom ?? nomZone(zb), via, autreZone: but ? null : nomZone(zb), zaap: zaap?.nom ?? null,
+        but: but ? { x: but.x, y: but.y } : null, x: 0, y: 0 };
+    } else if (but) r = { pts: [{ x: but.x, y: but.y, genre: 'but' }], cartes: 0, nom: but.nom, via: null, autreZone: null, zaap: null, but: { x: but.x, y: but.y }, x: 0, y: 0 };
+    this.iti = { cle, t: w.time, r };
+    return this.suivre(r);
+  }
+  /** Le point à viser maintenant : le premier passage assez loin du perso, sinon la porte / le Zaap / le but. */
+  private suivre(r: Itineraire | null): Itineraire | null {
+    if (!r) return null;
+    const p = this.world.player;
+    const q = r.pts.find(o => o.genre !== 'chemin' || Math.hypot(o.x - p.x, o.y - p.y) > Quetes.LOIN) ?? r.pts[r.pts.length - 1];
+    r.x = q.x; r.y = q.y;
+    return r;
+  }
+  static readonly LOIN = 900;
+  private cibleBrute(): { x: number; y: number; nom: string } | null {
     const c = this.enCours.find(x => x.id === this.suivie) ?? this.enCours[0];
     if (!c) return null;
     const w = this.world, wg = w.worldGrid, p = w.player, q = this.def(c.id);
-    if (c.aRendre) { const n = this.pnj(q.rendre!); return n ? { x: n.x, y: n.y } : null; }
+    const nomPnj = (id: string) => this.pnj(id)?.def.nom ?? this.data.pnj[id]?.nom ?? id;
+    if (c.aRendre) { const n = this.pnj(q.rendre!); return n ? { x: n.x, y: n.y, nom: nomPnj(q.rendre!) } : null; }
     const e = this.etapeDe(c); if (!e || !wg) return null;
-    const proche = (pred: (sub: number, tag: string) => boolean) => {
-      let best: { x: number; y: number } | null = null, bd = Infinity;
+    const proche = (pred: (sub: number, tag: string) => boolean, nom?: string) => {
+      let best: { x: number; y: number; nom: string } | null = null, bd = Infinity;
       for (const m of wg.world.maps) {
         if (!pred(m.sub, m.tag) || !wg.freeByMap.get(m.tag)?.length) continue;
         const z = w.openestCellOf(m.tag), d = Math.hypot(z.x - p.x, z.y - p.y);
-        if (d < bd) { bd = d; best = z; }
+        if (d < bd) { bd = d; best = { ...z, nom: nom ?? w.nomCarte(m.tag) ?? m.tag.replace('_', ',') }; }
       }
       return best;
     };
     for (let i = 0; i < e.objectifs.length; i++) {
       const o = e.objectifs[i];
       if (c.compte[i] >= this.total(o)) continue;
-      if ((o.t === 'aller' || o.t === 'parler') && o.pnj) { const n = this.pnj(o.pnj); if (n) return { x: n.x, y: n.y }; }
+      if ((o.t === 'aller' || o.t === 'parler') && o.pnj) { const n = this.pnj(o.pnj); if (n) return { x: n.x, y: n.y, nom: nomPnj(o.pnj) }; }
       if (o.t === 'aller' && o.carte) return proche((_, t) => t === o.carte);
       if (o.t === 'elite') {
+        const nom = o.nom ?? w.opts.data.monsters[o.monstre]?.name ?? o.monstre;
         const m = w.monsters.find(x => !x.dead && this.elites.get(x.id) === c.id);
-        if (m) return { x: m.x, y: m.y };
-        return proche((_, t) => t === o.carte);
+        if (m) return { x: m.x, y: m.y, nom };
+        return proche((_, t) => t === o.carte, nom);
       }
       if (o.t === 'defense' || o.t === 'chrono') return proche((_, t) => t === o.carte);
-      if (o.t === 'defi') { const po = w.entreeDonjon(o.donjon); if (po) return { x: po.ends[0].x, y: po.ends[0].y }; continue; }
-      if (o.t === 'donjon') { const po = w.entreeDonjon(o.donjon); if (po) return { x: po.ends[0].x, y: po.ends[0].y }; continue; }
-      if (o.t === 'activer') { const cp = w.zone.open?.checkpoints.find(k => k.name === o.zaap); if (cp) return proche((_, t) => t === `${cp.map[0]}_${cp.map[1]}`); }
+      if (o.t === 'defi' || o.t === 'donjon') { const po = w.entreeDonjon(o.donjon); if (po) return { x: po.ends[0].x, y: po.ends[0].y, nom: o.donjon }; continue; }
+      if (o.t === 'activer') { const cp = w.zone.open?.checkpoints.find(k => k.name === o.zaap); if (cp) return proche((_, t) => t === `${cp.map[0]}_${cp.map[1]}`, `Zaap ${o.zaap}`); }
       if ('sousZone' in o && o.sousZone != null) {
         if (wg.mapAt(p.x, p.y)?.sub === o.sousZone) return null;   // on y est : pas de flèche
-        return proche(s => s === o.sousZone);
+        const sz = o.sousZone;
+        return proche(s => s === sz, w.zone.open?.subareas[String(sz)]?.name);
       }
     }
     return null;
