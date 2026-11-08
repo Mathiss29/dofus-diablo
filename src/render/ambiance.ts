@@ -41,8 +41,43 @@ export interface Reglages {
   approche: boolean;
   /** Flèche des quêtes au bord de l'écran et sur la mini-carte (maquette Flèche 8A). */
   flecheQuete: boolean;
+  // --- Maquette « Réglages » (2026-11-08) ---
+  /** 3A : touches choisies par action (render/touches.ts), seulement celles qui changent ; 3C : clavier forcé ou détecté. */
+  touches: Record<string, string>;
+  clavier: 'auto' | 'azerty' | 'qwerty';
+  /** 4A : chiffres de dégâts, et leur taille. */
+  chiffres: boolean;
+  tailleChiffres: 'petite' | 'normale' | 'grande';
+  /** 4B : compteur de dégâts par seconde. */
+  dps: boolean;
+  /** 4C : barres de vie au-dessus des monstres. */
+  barresVie: 'toujours' | 'blesses' | 'survol';
+  /** 5A : zoom à la molette ; 5B : bouton de déplacement (l'autre lance le sort du clic droit). */
+  zoomMolette: boolean;
+  deplacement: 'gauche' | 'droit';
+  /** 6A : modules de l'interface déplaçables (décalage en pixels de chacun) ; 6B : coordonnées de la carte sous la mini-carte. */
+  verrou: boolean;
+  modules: Record<string, [number, number]>;
+  coords: boolean;
+  /** 7A : échelle de l'interface (1 = 100 %). */
+  echelle: number;
+  /** 7B : qualité prédéfinie ; 7C : images par seconde (0 = sans limite) et compteur. */
+  qualite: 'basse' | 'moyenne' | 'haute' | 'perso';
+  fps: number;
+  compteurFps: boolean;
+  /** 9A : son d'alerte quand un Légendaire ou mieux tombe ; 9B : l'écran pulse en rouge sous 25 % de PV. */
+  alerteButin: boolean;
+  pulsePv: boolean;
 }
-export const REGLAGES_DEFAUT: Reglages = { heure: 'auto', lumieres: 1, saturation: 1, chaleur: 0, zoom: 0.8, volume: 1, volMusique: 0.5, volEffets: 0.7, volMonstres: 0.7, volAmbiance: 0.6, volInterface: 0.7, musiqueBoss: true, muet: false, vent: true, eau: true, particules: true, transparence: true, lancer: 'relache', approche: false, flecheQuete: true };
+/** 7B : ce que règle chaque qualité prédéfinie. */
+export const QUALITES: Record<'basse' | 'moyenne' | 'haute', Partial<Reglages>> = {
+  basse: { vent: false, eau: false, particules: false, lumieres: 0.6, fps: 30 },
+  moyenne: { vent: true, eau: true, particules: false, lumieres: 1, fps: 60 },
+  haute: { vent: true, eau: true, particules: true, lumieres: 1, fps: 0 },
+};
+export const REGLAGES_DEFAUT: Reglages = { heure: 'auto', lumieres: 1, saturation: 1, chaleur: 0, zoom: 0.8, volume: 1, volMusique: 0.5, volEffets: 0.7, volMonstres: 0.7, volAmbiance: 0.6, volInterface: 0.7, musiqueBoss: true, muet: false, vent: true, eau: true, particules: true, transparence: true, lancer: 'relache', approche: false, flecheQuete: true,
+  touches: {}, clavier: 'auto', chiffres: true, tailleChiffres: 'normale', dps: false, barresVie: 'blesses', zoomMolette: true, deplacement: 'gauche',
+  verrou: true, modules: {}, coords: true, echelle: 1, qualite: 'haute', fps: 0, compteurFps: false, alerteButin: true, pulsePv: true };
 const CLE = 'diablofus.reglages';
 
 export function chargerReglages(): Reglages {

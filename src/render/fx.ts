@@ -99,7 +99,7 @@ export class FX {
       case 'hit':
         if (e.target === 'monster') {
           // choix 2A : couleur de l'élément ; critique = plus gros, contour doré
-          this.number(e.x, e.y, e.z, e.amount, e.crit, DMG_COLORS[e.element ?? 'neutre'] ?? '#ffffff', e.crit ? '#8a5a00' : '#1a0f0a');
+          if (this.chiffres) this.number(e.x, e.y, e.z, e.amount, e.crit, DMG_COLORS[e.element ?? 'neutre'] ?? '#ffffff', e.crit ? '#8a5a00' : '#1a0f0a');
           this.particles(e.x, e.y, e.z / 2, e.crit ? 14 : 8, e.crit ? 0xffd23f : 0xffffff, 240, 0.35, 3, 160);
           if (e.eclat) {   // Armes 3B : éclat de l'élément de l'arme sur chaque monstre touché
             const col = ELEMENT_COLORS[e.element ?? 'neutre'];
@@ -107,7 +107,7 @@ export class FX {
             this.particles(e.x, e.y, e.z / 2, e.crit ? 12 : 7, col, 260, 0.3, 3, 180);
           }
         } else {
-          this.number(e.x, e.y, e.z, e.amount, false, '#ff6b5b');
+          if (this.chiffres) this.number(e.x, e.y, e.z, e.amount, false, '#ff6b5b');
           this.particles(e.x, e.y, 20, 10, 0xd2412f, 200, 0.4);
         }
         break;
@@ -171,14 +171,18 @@ export class FX {
   ring(x: number, y: number, r0: number, r1: number, color: number, life = 0.3, width = 6) {
     this.rings.push({ x, y, r0, r1, color, life, max: life, width });
   }
+  /** Réglages 4A : chiffres de dégâts affichés, et leur taille (1 = normale). */
+  chiffres = true;
+  tailleChiffres = 1;
   number(x: number, y: number, z: number, value: number | string, crit: boolean, color?: string, stroke = '#1a0f0a') {
     const p = ISO.toScreen(x, y, z);
     const t = this.scene.add.text(p.x + rand(-8, 8), p.y, String(value), {
       fontFamily: 'Lexend, Verdana, sans-serif', fontSize: crit ? '26px' : '17px', fontStyle: 'bold',
       color: color ?? (crit ? '#ffd23f' : '#ffffff'), stroke, strokeThickness: crit ? 5 : 4,
     }).setOrigin(0.5).setDepth(1e6 + 1);
-    t.setScale(crit ? 1.6 : 1.25);
-    this.scene.tweens.add({ targets: t, scale: crit ? 1.1 : 0.9, duration: 120, ease: 'Back.Out' });
+    const k = this.tailleChiffres;
+    t.setScale((crit ? 1.6 : 1.25) * k);
+    this.scene.tweens.add({ targets: t, scale: (crit ? 1.1 : 0.9) * k, duration: 120, ease: 'Back.Out' });
     this.scene.tweens.add({ targets: t, y: t.y - (crit ? 50 : 36), alpha: 0, delay: 250, duration: 450, ease: 'Cubic.In', onComplete: () => t.destroy() });
   }
 

@@ -22,6 +22,7 @@ import type { Entity } from '../sim/entity';
 import { World } from '../sim/world';
 import { DANGER } from '../sim/danger';
 import { EntityView } from './entityView';
+import * as Touches from './touches';
 import { Attente, PersoVivant } from './persoVivant';
 import { Assemblage, apparenceValide, fiches, objetsPortes, type Apparence } from './squelette';
 import { SpellFx } from './spellFx';
@@ -280,6 +281,7 @@ export class ZoneScene extends Phaser.Scene {
     // (tout le décor, à l'échelle du zoom) gagnait ou perdait un pixel selon le défilement et « tremblait » (Mathis, 2026-11-06).
     this.cameras.main.setRoundPixels(false);
     this.input.on('wheel', (_p: Phaser.Input.Pointer, _o: unknown, _dx: number, dy: number) => {
+      if (!this.reglages.zoomMolette) return;   // Réglages 5A
       this.zoom = Phaser.Math.Clamp(this.zoom * (dy > 0 ? 0.9 : 1.1), ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]);
     });
     if (zone.open) {
@@ -374,10 +376,11 @@ export class ZoneScene extends Phaser.Scene {
     if (this.perso) this.windows.onAccueil = () => this.versAccueil();
     this.windows.onMenu = c => this.versAccueil(c === 'persos' ? 'persos' : undefined);   // menu principal (Échap)   // rendu en grand (perso_planche : render.cjs échelle 2,2)
     this.windows.reglages = this.reglages;
-    this.hud.flecheQuete = this.reglages.flecheQuete;
+    this.appliquerReglages();
+    this.hud.onModules = () => { sauverReglages(this.reglages); this.windows?.refresh(); };
     // idée 1 (2026-11-08) : losange au-dessus des monstres qui comptent pour une quête en cours
     EntityView.deQuete = m => { const Q = this.world.quetes; return !!Q && this.hud.flecheQuete && (Q.estEliteDeQuete(m.id) || Q.pourQuete(m.type, m.x, m.y)); };
-    this.windows.onReglages = r => { this.hud.flecheQuete = r.flecheQuete; this.zoom = Phaser.Math.Clamp(r.zoom, ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]); this.updateAmbiance(true); this.appliquerSon(); };
+    this.windows.onReglages = r => { this.zoom = Phaser.Math.Clamp(r.zoom, ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]); this.appliquerReglages(); this.updateAmbiance(true); this.appliquerSon(); };
     this.windows.juice = { get: () => this.fx.juice, set: on => { this.fx.juice = on; } };
     this.windows.nomPerso = () => this.perso?.nom ?? 'Aventurier';
     this.windows.heureNom = () => ambiance(this.reglages, new Date(), !!this.world.worldGrid?.mapAt(this.world.player.x, this.world.player.y)?.inside).nom;
@@ -390,7 +393,8 @@ export class ZoneScene extends Phaser.Scene {
       this.hoverId = id;
       if (!id) { this.windows?.hideTip(); return; }
       const r = this.game.canvas.getBoundingClientRect();
-      this.windows?.showHtmlTip(spellTipHtml(this.world.player, id), r.left + x, r.top + y);
+      const k = Phaser.Math.Clamp(this.reglages.echelle || 1, 0.8, 1.5);   // l'interface est à l'échelle choisie (Réglages 7A)
+      this.windows?.showHtmlTip(spellTipHtml(this.world.player, id), r.left + x * k, r.top + y * k);
     };
     this.hud.onMenu = name => {
       if (name === 'Inventaire') this.windows!.toggle('inv');
@@ -520,9 +524,8 @@ export class ZoneScene extends Phaser.Scene {
   private bindInput() {
     const K = Phaser.Input.Keyboard.KeyCodes, kb = this.input.keyboard!;
     // Déplacement à la souris (clic gauche) ; le clavier sert aux sorts, à la potion et aux menus
-    this.keys = kb.addKeys({ SHIFT: K.SHIFT, ALT: K.ALT,
-      SPACE: K.SPACE, S: K.S, E: K.E, K: K.K, I: K.I, C: K.C, J: K.J, ESC: K.ESC, F: K.F, G: K.G, H: K.H, O: K.O, M: K.M, B: K.B, D: K.D, ENTER: K.ENTER,
-      ONE: K.ONE, TWO: K.TWO, THREE: K.THREE, FOUR: K.FOUR, FIVE: K.FIVE, SIX: K.SIX, A: K.A, Z: K.Z, R: K.R, T: K.T }) as Record<string, Phaser.Input.Keyboard.Key>;
+    // Touches fixes (Maj, Alt, Échap, Entrée, K) ; les autres se changent dans Options › Touches (maquette Réglages 3A, render/touches.ts)
+    this.keys = kb.addKeys({ SHIFT: K.SHIFT, ALT: K.ALT, ESC: K.ESC, ENTER: K.ENTER, K: K.K }) as Record<string, Phaser.Input.Keyboard.Key>;
     // Façon Diablo (demande de Mathis, 2026-11-05) : clic gauche sur le sol = y aller (maintenu : suivre le curseur),
     // sur un monstre = s'approcher et l'attaquer (maintenu : continuer), Maj + clic gauche = attaquer sur place ;
     // clic droit = sort favori, Espace = déplacement, 1 à 6 (& é " ' ( - en AZERTY) = barre de sorts.
@@ -544,10 +547,10 @@ export class ZoneScene extends Phaser.Scene {
         if (!p.rightButtonDown()) { const wp = p.positionToCamera(this.cameras.main) as Phaser.Math.Vector2, q = ISO.toWorld(wp.x, wp.y); this.cmdTest.push({ k: 'monstre', ...pose, x: q.x, y: q.y }); }
         this.panneau!.posee(); return;
       }
-      if (p.rightButtonDown()) {
-        // clic droit sur un PNJ : son petit menu d'actions (Dialogues 1C)
-        const n = this.questView?.pnjUnder(p, this.cameras.main);
-        if (n && this.dialogueView) { this.dialogueView.ouvrirMenu(n, p); return; }
+      // clic droit sur un PNJ : son petit menu d'actions (Dialogues 1C)
+      if (p.rightButtonDown()) { const n = this.questView?.pnjUnder(p, this.cameras.main); if (n && this.dialogueView) { this.dialogueView.ouvrirMenu(n, p); return; } }
+      // Réglages 5B : le bouton de déplacement peut être le clic droit ; l'autre bouton lance le sort de la case « clic »
+      if (this.boutonSort(p.button)) {
         if (this.aimId) { this.aimId = null; this.aimKey = null; return; }   // clic droit pendant la visée : annuler le sort (Mathis, 2026-11-06)
         this.down('CLICD', this.world.player.bar[6]); return;
       }
@@ -576,44 +579,28 @@ export class ZoneScene extends Phaser.Scene {
       this.clickTarget = m?.id ?? null;
       if (!m) this.moveMarker(p);
     });
-    const release = (e: PointerEvent) => { if (e.button === 2) this.up('CLICD'); else this.holding = false; };
+    const release = (e: PointerEvent) => { if (this.boutonSort(e.button)) this.up('CLICD'); else this.holding = false; };
     window.addEventListener('pointerup', release);
     this.events.once('shutdown', () => window.removeEventListener('pointerup', release));
-    this.keys.SPACE.on('down', () => this.down('SPACE', this.world.player.bar[7]));
-    this.keys.SPACE.on('up', () => this.up('SPACE'));
-    this.keys.E.on('down', () => { this.potion = true; });
-    ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX'].forEach((k, i) => {
-      // pendant un dialogue, 1 à 4 choisissent la réponse (Dialogues 3B)
-      this.keys[k].on('down', () => { if (this.dialogueView?.ouvert && i < 4) this.dialogueView.touche(i); else this.down(k, this.world.player.bar[i]); });
-      this.keys[k].on('up', () => this.up(k));
-    });
-    // Osamodas (maquette 2A) : A Z R T = les 4 invocations (cases 8 à 11 de la barre) ; touche de la bête déjà sortie et Éveil plein = l'éveiller (5A)
-    ['A', 'Z', 'R', 'T'].forEach((k, i) => {
-      this.keys[k].on('down', () => this.down(k, this.world.player.bar[Player.INVOC + i]));
-      this.keys[k].on('up', () => this.up(k));
-    });
     // Maj (14B) : fil de laisse et barre de vie de chaque bête
     this.keys.SHIFT.on('down', () => { EntityView.barresAllies = true; });
     this.keys.SHIFT.on('up', () => { EntityView.barresAllies = false; });
-    this.keys.F.on('down', () => {
-      this.fx.juice = !this.fx.juice;
-      this.hud.toast(this.fx.juice ? 'Effets d\'impact : ACTIVÉS' : 'Effets d\'impact : DÉSACTIVÉS (compare !)');
-    });
-    this.keys.G.on('down', () => this.windows?.toggle('guide'));   // Guide (fenêtre façon Dofus 3) ; H est la touche du Havre-Sac (maquette Hub 2A)
-    this.keys.H.on('down', () => { this.havreSacDemande = true; });
-    // Ctrl+M : couper ou remettre tout le son ; M seul est gardé pour la carte du monde, comme dans Dofus (maquette 0.2, 18A)
-    this.keys.M.on('down', (_k: Phaser.Input.Keyboard.Key, e: KeyboardEvent) => {
-      if (e?.ctrlKey || e?.metaKey) { e.preventDefault(); this.basculerMuet(); }
-      else this.basculerCarte();
-    });
-    // I ou C : fenêtre Personnage (inventaire + caractéristiques) ; le jeu continue derrière
-    this.keys.I.on('down', () => this.windows?.toggle('inv'));
-    this.keys.C.on('down', () => this.windows?.toggle('car'));
-    this.keys.J.on('down', () => this.windows?.toggle('job'));   // Métiers (choix 6A : Chasseur)
-    this.keys.O.on('down', () => this.windows?.toggle('opt'));
-    this.keys.B.on('down', () => this.windows?.toggle('bestiaire'));   // Bestiaire (maquette « Drops » 1A)
-    this.keys.D.on('down', () => { if (this.world.player.v03) this.windows?.toggle('dofus'); });   // Dofus (Onglet Dofus 1B, 0.3)
-    this.keys.S.on('down', () => this.windows?.toggle('sorts'));   // Sorts (choix 8A, touche S)   // Réglages (choix 10A + 10B)
+    // Touches qu'on peut changer : un seul écouteur, l'action vient de render/touches.ts (la touche tenue est retenue pour son relâchement)
+    const tenues = new Map<string, string>();
+    const bas = (e: KeyboardEvent) => {
+      Touches.observer(e);
+      if (!this.sys.isActive() || e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLSelectElement) return;
+      if (this.windows?.capteTouches) return;   // fenêtre des touches : la touche sert à la choisir
+      const a = Touches.actionDe(e); if (!a) return;
+      e.preventDefault();
+      if (e.repeat) return;
+      tenues.set(e.code, a);
+      this.action(a, true);
+    };
+    const haut = (e: KeyboardEvent) => { const a = tenues.get(e.code); if (a) { tenues.delete(e.code); this.action(a, false); } };
+    const perdu = () => { for (const a of tenues.values()) this.action(a, false); tenues.clear(); };
+    window.addEventListener('keydown', bas); window.addEventListener('keyup', haut); window.addEventListener('blur', perdu);
+    this.events.once('shutdown', () => { window.removeEventListener('keydown', bas); window.removeEventListener('keyup', haut); window.removeEventListener('blur', perdu); });
     this.keys.ESC.on('down', () => { if (this.panneau?.pose) { this.panneau.posee(); return; } if (this.essai) { this.essai = null; this.game.events.emit('accueil', 'creation'); return; } if (this.dialogueView?.ouvert) { this.dialogueView.touche(-1); return; } this.aimId = null; this.aimKey = null;
       // Échap ferme d'abord ce qui est ouvert (fenêtre, carte, menu d'un PNJ, outils F1) ; sinon, ouvre ou ferme le menu principal
       if (this.windows?.open || this.carte?.ouverte || this.dialogueView?.menuOuvert || this.panneau?.ouvert) { this.dialogueView?.fermerMenu(); this.windows?.close(); this.carte?.fermer(); if (this.panneau?.ouvert) this.panneau.basculer(); return; }
@@ -840,13 +827,70 @@ export class ZoneScene extends Phaser.Scene {
     this.tweens.add({ targets: c, scale: 0.3, alpha: 0, duration: 450, onComplete: () => c.destroy() });
   }
 
+  /** Options ouvertes depuis l'écran d'accueil (Réglages 11A). */
+  ouvrirOptions() { this.windows?.show('opt'); this.windows?.devant(); }
+  /** Réglages (maquette « Réglages ») qui ne passent pas par l'ambiance ni le son : touches, interface, chiffres, images par seconde. */
+  private appliquerReglages() {
+    const r = this.reglages;
+    Touches.appliquer(r.touches); Touches.regler(r.clavier);
+    this.hud.reglages = r; this.hud.flecheQuete = r.flecheQuete;
+    this.fx.chiffres = r.chiffres; this.fx.tailleChiffres = r.tailleChiffres === 'petite' ? 0.8 : r.tailleChiffres === 'grande' ? 1.3 : 1;
+    EntityView.barresVie = r.barresVie;
+    // 7A : échelle de l'interface (caméra de l'interface zoomée depuis le coin haut gauche ; les fenêtres en CSS)
+    const k = Phaser.Math.Clamp(r.echelle || 1, 0.8, 1.5), ui = this.cameras.getCamera('ui');
+    ui?.setOrigin(0, 0).setZoom(k);
+    document.documentElement.style.setProperty('--echelle', String(k));
+    // 7C : images par seconde (0 = sans limite)
+    const loop = this.game.loop, fps = r.fps > 0 ? r.fps : 0;
+    if (loop.fpsLimit !== fps) {
+      loop.fpsLimit = fps; loop.hasFpsLimit = fps > 0; (loop as unknown as { _limitRate: number })._limitRate = fps > 0 ? 1000 / fps : 0;
+      loop.sleep(); loop.wake();
+    }
+  }
+  /** Bouton de la souris qui lance le sort de la case « clic » : le droit, ou le gauche si l'on se déplace au clic droit (Réglages 5B). */
+  private boutonSort(b: number) { return this.reglages.deplacement === 'droit' ? b === 0 : b === 2; }
+  /** Action d'une touche (render/touches.ts) enfoncée ou relâchée. */
+  private action(a: string, enfonce: boolean) {
+    const p = this.world.player, w = this.windows;
+    const sort = /^sort(\d)$/.exec(a), invoc = /^invoc(\d)$/.exec(a);
+    if (!enfonce) { if (sort || invoc || a === 'deplacement') this.up(a); return; }
+    if (sort) {
+      const i = +sort[1] - 1;
+      // pendant un dialogue, les touches des sorts 1 à 4 choisissent la réponse (Dialogues 3B)
+      if (this.dialogueView?.ouvert && i < 4) this.dialogueView.touche(i); else this.down(a, p.bar[i]);
+      return;
+    }
+    // Osamodas (maquette 2A) : les 4 invocations (cases 8 à 11 de la barre) ; touche de la bête déjà sortie et Éveil plein = l'éveiller (5A)
+    if (invoc) { this.down(a, p.bar[Player.INVOC + +invoc[1] - 1]); return; }
+    switch (a) {
+      case 'deplacement': this.down(a, p.bar[7]); break;
+      case 'potion': this.potion = true; break;
+      case 'inventaire': w?.toggle('inv'); break;
+      case 'caracs': w?.toggle('car'); break;
+      case 'sorts': w?.toggle('sorts'); break;
+      case 'metiers': w?.toggle('job'); break;
+      case 'bestiaire': w?.toggle('bestiaire'); break;
+      case 'dofus': if (p.v03) w?.toggle('dofus'); break;
+      case 'guide': w?.toggle('guide'); break;
+      case 'options': w?.toggle('opt'); break;
+      case 'carte': this.basculerCarte(); break;   // M, comme dans Dofus (maquette 0.2, 18A)
+      case 'havresac': this.havreSacDemande = true; break;
+      case 'muet': this.basculerMuet(); break;
+      case 'impact':
+        this.fx.juice = !this.fx.juice;
+        this.hud.toast(this.fx.juice ? 'Effets d\'impact : ACTIVÉS' : 'Effets d\'impact : DÉSACTIVÉS (compare !)');
+        break;
+      case 'fps': this.reglages.compteurFps = !this.reglages.compteurFps; sauverReglages(this.reglages); break;
+    }
+  }
+
   /** Touche de sort enfoncée (maquette Aperçu, 1A/1B/1C selon les Réglages) : maintenir pour voir l'aperçu, relâcher pour lancer ;
    *  ou lancer tout de suite (Alt maintenu : aperçu) ; ou viser comme Dofus (la touche arme le sort, clic gauche pour lancer). */
   private down(key: string, id: SkillId | null) {
     if (!id) return;
     const mode = this.reglages.lancer;
     if (mode === 'immediat' && !this.keys.ALT.isDown) { this.pressed = id; return; }
-    if (mode === 'dofus' && key !== 'SPACE') { if (this.aimId === id) { this.pressed = id; this.aimId = null; } else { this.aimId = id; this.aimKey = null; } return; }
+    if (mode === 'dofus' && key !== 'deplacement') { if (this.aimId === id) { this.pressed = id; this.aimId = null; } else { this.aimId = id; this.aimKey = null; } return; }
     this.aimId = id; this.aimKey = key;
   }
   private up(key: string) {
@@ -856,7 +900,7 @@ export class ZoneScene extends Phaser.Scene {
 
   private readInput(): PlayerInput {
     const ptr = this.input.activePointer, wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
-    const aim = ISO.toWorld(wp.x, wp.y), held = this.holding && ptr.leftButtonDown() && !this.uiClick;
+    const aim = ISO.toWorld(wp.x, wp.y), held = this.holding && (this.reglages.deplacement === 'droit' ? ptr.rightButtonDown() : ptr.leftButtonDown()) && !this.uiClick;
     const input: PlayerInput = { move: { x: 0, y: 0 }, aim, pressed: this.pressed, potion: this.potion,
       holdAttack: held && this.clickMode === 'place', pickup: this.pickClick, approach: this.reglages.approche,
       castOn: null };
@@ -1014,7 +1058,7 @@ export class ZoneScene extends Phaser.Scene {
         case 'lootKamas': this.hud.loot(`+${e.n} kamas`, '#f2d36b'); this.windows?.refresh(); break;
         case 'bagFull': this.hud.toast('Sac plein : recycle des objets chez Kerubim Crépin (son guichet du Havre-Sac, touche H) ou Maj + clic dans l\'inventaire'); break;
         case 'monsterCast': this.castName(e.id, e.name); break;
-        case 'itemDrop': if (e.rarity === 'epique' || e.rarity === 'legendaire' || e.rarity === 'mythique') this.chime(e.rarity === 'mythique' && !this.world.player.v03 ? 'legendaire' : e.rarity); break;   // 14C : son du Mythique en 0.3
+        case 'itemDrop': if (this.reglages.alerteButin !== false && (e.rarity === 'epique' || e.rarity === 'legendaire' || e.rarity === 'mythique')) this.chime(e.rarity === 'mythique' && !this.world.player.v03 ? 'legendaire' : e.rarity); break;   // 14C : son du Mythique en 0.3
         // Métiers UI 10C : bannière aux paliers (10, 20, 30…) avec les recettes débloquées, une ligne dans le fil sinon
         case 'metierLevel': {
           const nom = ITEMS.metiers?.[e.metier]?.name ?? 'Métier', neuves = recettesAuNiveau(ITEMS, e.metier, e.level).map(r => ITEMS.resources[r.result]?.name).filter(Boolean);
@@ -1075,8 +1119,8 @@ export class ZoneScene extends Phaser.Scene {
         case 'lootResource': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Ressource'} x${e.n}`, '#c9c4ab'); this.windows?.refresh(); break;
         case 'levelUp': this.hud.banner(`Niveau ${e.level} !\n+5 points (C)${e.level === 100 ? '\n+1 PA' : ''}`, 1500); this.windows?.refresh(); break;
         case 'newSpell': {
-          const KEY = ['&', 'é', '"', "'", '(', '-', 'clic droit', 'Espace'];
-          this.hud.toast(`Nouveau sort : ${this.world.player.cls.spells[e.id]?.name ?? e.id}${e.slot >= 0 ? ` (${KEY[e.slot]})` : ' · S pour le placer'}`);
+          const KEY = [...[1, 2, 3, 4, 5, 6].map(i => Touches.nomAction(`sort${i}`)), this.reglages.deplacement === 'droit' ? 'clic gauche' : 'clic droit', Touches.nomAction('deplacement')];
+          this.hud.toast(`Nouveau sort : ${this.world.player.cls.spells[e.id]?.name ?? e.id}${e.slot >= 0 ? ` (${KEY[e.slot]})` : ` · ${Touches.nomAction('sorts')} pour le placer`}`);
           this.windows?.refresh(); break;
         }
         // 3A : un Zaap tout juste découvert a son bandeau (qui dit aussi « point de retour »)
@@ -1497,6 +1541,7 @@ export class ZoneScene extends Phaser.Scene {
     this.passantsView?.update();
     this.dialogueView?.update();
     EntityView.temps = this.world.time;
+    if (this.reglages.barresVie === 'survol' && !this.vitrine) EntityView.survol = this.monsterUnder(this.input.activePointer)?.id ?? null;
     this.hud.draw(this.fx.juice, this.game.loop.delta / 1000);
   }
 }

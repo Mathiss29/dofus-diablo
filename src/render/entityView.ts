@@ -26,6 +26,9 @@ export class EntityView {
   static ambiance = 0xffffff;
   /** Maj enfoncée (maquette Osamodas 14B) : barre de vie au-dessus de chaque bête, même pleine. */
   static barresAllies = false;
+  /** Réglages 4C : barres de vie des monstres toujours, blessés seulement, ou seulement le monstre survolé (EntityView.survol). */
+  static barresVie: 'toujours' | 'blesses' | 'survol' = 'blesses';
+  static survol: number | null = null;
   readonly sprite: Phaser.GameObjects.Sprite;
   private readonly bar: Phaser.GameObjects.Graphics;
   private readonly shadow: Phaser.GameObjects.Graphics;
@@ -97,7 +100,8 @@ export class EntityView {
     }
     // Barre de vie des monstres touchés
     const g = this.bar; g.clear();
-    if (e.faction === 'monster' && e.hp < e.maxHp && !e.dead) {
+    const bv = EntityView.barresVie;
+    if (e.faction === 'monster' && !e.dead && (bv === 'toujours' || (bv === 'survol' ? EntityView.survol === e.id : e.hp < e.maxHp))) {
       const elite = (e as Monster).def.boss || (e as Monster).def.elite;
       const w = Math.max(30, e.radius * 2.2), y = p.y - L.height * L.scale - 6;
       g.setDepth(p.y + 1);
