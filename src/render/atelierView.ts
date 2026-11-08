@@ -72,9 +72,9 @@ export class AtelierView {
   }
   curseur(): string | null { return this.survole != null ? 'pointer' : null; }
 
-  update(cam: Phaser.Cameras.Scene2D.Camera, ptr: Phaser.Input.Pointer) {
+  update(cam: Phaser.Cameras.Scene2D.Camera, ptr: Phaser.Input.Pointer, masque = false) {
     const w = this.world, cx = cam.midPoint.x, cy = cam.midPoint.y;
-    this.survole = this.sous(ptr, cam);
+    this.survole = masque ? null : this.sous(ptr, cam);
     const vus = new Set<number>();
     for (const po of w.postes) {
       const a = this.ancre(po.id);
