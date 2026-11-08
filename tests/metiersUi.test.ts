@@ -67,7 +67,7 @@ describe('Interface des métiers (maquette Métiers UI)', () => {
   });
   it('2B, 10C : prochain palier et bannière seulement aux paliers', () => {
     expect(prochainPalier(ITEMS, 'alchimiste', 23)?.niveau).toBe(30);
-    expect(prochainPalier(ITEMS, 'alchimiste', 23)!.recettes.length).toBe(3);
+    expect(prochainPalier(ITEMS, 'alchimiste', 23)!.recettes.length).toBe(4);   // + Potion de Souvenir (ingrédient d'équipement, 0.3)
     expect(estPalier(30)).toBe(true); expect(estPalier(31)).toBe(false);
   });
   it('9A : la recette suivie est gardée dans la sauvegarde', () => {

@@ -822,7 +822,7 @@ export class Hud {
     let iconW = 0;
     // Métiers UI 9A : la recette épinglée, sous la quête ; ses ingrédients se cochent au ramassage
     const rs = world.player.recetteSuivie, rec = rs ? ITEMS.recipes?.find(r => r.result === rs) : undefined, pr = world.player;
-    const recL = rec ? ['', `Recette : ${ITEMS.resources[rec.result]?.name ?? ''}`, ...rec.ingredients.map(([id, n]) => {
+    const recL = rec ? ['', `Recette : ${(ITEMS.resources[rec.result] ?? ITEMS.equipment[rec.result])?.name ?? ''}`, ...rec.ingredients.map(([id, n]) => {
       const a = pr.resources[id] ?? 0; return `${a >= n ? '✓' : '•'} ${ITEMS.resources[id]?.name ?? id}  ${Math.min(a, n)}/${n}`;
     }), ...(Math.max(1, pr.metierLevel(rec.metier)) < rec.level ? [`  ${ITEMS.metiers?.[rec.metier]?.name ?? ''} niveau ${rec.level} requis`] : [])] : [];
     if (Q && cq) {

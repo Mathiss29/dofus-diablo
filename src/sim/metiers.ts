@@ -1,5 +1,5 @@
 import type { ZoneDef } from './defs';
-import type { ItemsData, RecipeDef } from './items';
+import { METIER_MAX, type ItemsData, type RecipeDef } from './items';
 import type { RecoltesData } from './recolte';
 
 /** Poste d'un atelier (maquette Métiers UI 3A) : une machine officielle de la carte (four, scie, enclume, plan de travail…)
@@ -17,6 +17,23 @@ export const FABRICATION = {
   /** Distance (px monde) à laquelle on utilise une machine (elle est souvent sur une case bloquante). */
   portee: 130,
 };
+
+/** Version 0.3 (choix 9A) : les 6 métiers de fabrication d'équipement, recettes officielles jusqu'au niveau 40. */
+export const METIERS_FAB = ['bijoutier', 'cordonnier', 'tailleur', 'forgeron', 'sculpteur', 'faconneur'];
+/** 10A : un objet fabriqué sort Rare avec 10 % de chance au niveau 1 du métier, 50 % au niveau maximum ; Commun sinon (jamais plus, 11E). */
+export const CHANCE_RARE = { min: 0.1, max: 0.5 };
+export const chanceRare = (niveau: number) =>
+  CHANCE_RARE.min + (CHANCE_RARE.max - CHANCE_RARE.min) * Math.min(1, Math.max(0, (niveau - 1) / (METIER_MAX - 1)));
+/** 10B : ingrédients rares (Rare garanti, un par objet) : ressources que seuls des boss ou des élites lâchent (pas les objets
+ *  d'événement à 100 %). */
+export function ingredientsRares(items: ItemsData, monstres: Record<string, { boss?: boolean; elite?: boolean }>): Set<string> {
+  const grands = new Set<string>(), communs = new Set<string>();
+  for (const [m, l] of Object.entries(items.drops)) for (const d of l) {
+    if (!items.resources[d.item] || d.chance >= 100) continue;
+    (monstres[m]?.boss || monstres[m]?.elite ? grands : communs).add(d.item);
+  }
+  return new Set([...grands].filter(id => !communs.has(id)));
+}
 
 /** Recettes d'un métier (avec leur index dans items.recipes), par niveau. */
 export function recettesDe(items: ItemsData, metier: string): { r: RecipeDef; i: number }[] {

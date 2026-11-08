@@ -81,7 +81,7 @@ export type SimEvent =
   | { k: 'queteInfo'; texte: string }
   /** Métiers : niveau gagné, recette faite, plat mangé. */
   | { k: 'metierLevel'; metier: string; level: number }
-  | { k: 'craft'; id: string; n: number }
+  | { k: 'craft'; id: string; n: number; /** Équipement fabriqué (0.3) : combien sont sortis Rares. */ rares?: number }
   /** Métiers UI : arrivé au poste d'un atelier (ouvre l'Artisanat) ; fabrication lancée (barre de 1 s) ou interrompue. */
   | { k: 'atelier'; poste: number; metier: string }
   | { k: 'fabricationDebut'; recette: number; n: number; duree: number }
