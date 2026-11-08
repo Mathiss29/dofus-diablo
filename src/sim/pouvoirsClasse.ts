@@ -31,6 +31,15 @@ export const POUVOIRS_CLASSE: PouvoirClasseDef[] = [
   pc('iop', 'F', 'Couperet du bourreau', 'couperet', 'bouclier', [8, 14], 1, v => `Couperet achève un monstre sous ${v} % de PV (élite : moitié moins, jamais un boss). Au plus une fois toutes les 4 s.`),
   pc('iop', 'G', 'Cri du champion', 'intimidation', 'chapeau', [1.5, 3], 0.5, v => `Intimidation repousse aussi tous les monstres à ${n(v)} cases autour du Iop.`),
   pc('iop', 'H', 'Épée jumelle', 'epee_divine', 'cape', [60, 100], 5, v => `Épée Divine laisse une épée au sol 3 s : elle frappe une fois chaque monstre qui la traverse (${v} % des dégâts).`),
+  // Iop, suite (ligne « Légendaires classes suite : 1A-1H ») : un deuxième pouvoir par emplacement --------------------------
+  pc('iop', 'I', 'Brise-garde', 'pression', 'chapeau', [10, 20], 1, v => `Pression marque sa cible 4 s : tes autres coups lui font +${v} % de dégâts.`),
+  pc('iop', 'J', 'Coup du duelliste', 'concentration', 'arme', [40, 70], 5, v => `Concentration fait ${v} % de dégâts en plus aux élites et aux boss.`),
+  pc('iop', 'K', 'Ferveur bouillonnante', 'ferveur', 'bouclier', [80, 120], 5, v => `Quand le bouclier de Ferveur casse, il éclate en dégâts Eau sur 2 cases autour du Iop (${v} % du bouclier perdu).`),
+  pc('iop', 'L', 'Sillon brûlant', 'couperet', 'bottes', [40, 60], 5, v => `Couperet laisse une fissure de feu 2 s : elle frappe une fois chaque monstre qui la traverse (${v} % des dégâts).`),
+  pc('iop', 'M', 'Colère du ciel', 'colere', 'amulette', [50, 70], 5, v => `Colère de Iop frappe aussi les monstres à 1 case autour de sa cible, à ${v} % de ses dégâts.`),
+  pc('iop', 'N', 'Déferlement sans fin', 'deferlement', 'anneau', [3, 5], 0.5, v => `Si Déferlement tue un monstre, il est rechargé tout de suite (au plus une fois toutes les ${n(v)} s).`),
+  pc('iop', 'O', "Tempête d'acier", 'epee', 'ceinture', [15, 25], 1, v => `Épée Céleste gagne 1 charge de plus, et ses charges reviennent ${v} % plus vite.`),
+  pc('iop', 'P', 'Élan du héros', 'bond', 'cape', [20, 35], 1, v => `Après un Bond, ton prochain sort lancé dans les 3 s fait ${v} % de dégâts en plus.`),
   // --- Crâ (sans Pas piégé, 6D refusé) ---------------------------------------------------------------------------------
   pc('cra', 'A', 'Gerbe de feu', 'explosive', 'arme', [30, 45], 1, v => `Flèche Explosive se sépare en 3 petites explosions autour du point d'impact (${v} % des dégâts chacune).`),
   pc('cra', 'B', 'Rafale cinglante', 'cinglante', 'chapeau', [40, 55], 1, v => `Flèche Cinglante tire 3 flèches en éventail, chacune à ${v} % des dégâts.`),
@@ -39,6 +48,15 @@ export const POUVOIRS_CLASSE: PouvoirClasseDef[] = [
   pc('cra', 'F', 'Givre mordant', 'glacee', 'anneau', [0.8, 1.2], 0.1, v => `Un monstre touché 3 fois par Flèche Glacée en 5 s est gelé ${n(v)} s (élites moitié moins, boss jamais). Une fois par monstre toutes les 6 s.`),
   pc('cra', 'G', 'Clouage', 'recul', 'bouclier', [40, 60], 1, v => `Un monstre repoussé par Flèche de Recul contre un mur ou un autre monstre prend ${v} % de dégâts de poussée en plus et est étourdi 0,5 s.`),
   pc('cra', 'H', 'Marque du chasseur', 'abolition', 'ceinture', [10, 20], 1, v => `Flèche d'Abolition marque sa cible 4 s : tes autres coups lui font +${v} % de dégâts.`),
+  // Crâ, suite (ligne « Légendaires classes suite : 2A-2H ») ----------------------------------------------------------------
+  pc('cra', 'I', "Pas de l'ombre", 'pas_chasse', 'bottes', [50, 80], 5, v => `Pas Chassé lâche une gerbe de flèches à son point de départ : 2 cases, ${v} % des dégâts de Flèche Cinglante.`),
+  pc('cra', 'J', 'Fragmentation', 'detonante', 'arme', [25, 40], 1, v => `Flèche Détonante projette 3 éclats autour de l'explosion, chacun à ${v} % de ses dégâts.`),
+  pc('cra', 'K', 'Barrage incendiaire', 'barrage', 'chapeau', [30, 50], 5, v => `Les monstres repoussés par Flèche de Barrage brûlent : ${v} % des dégâts du coup en plus, répartis sur 2 s.`),
+  pc('cra', 'L', 'Œil du cyclone', 'dispersion', 'cape', [10, 20], 1, v => `Flèche de Dispersion attire les monstres vers son centre au lieu de les repousser, et fait ${v} % de dégâts en plus.`),
+  pc('cra', 'M', 'Flèche perçante', 'glacee', 'amulette', [2, 3], 1, v => `Flèche Glacée traverse les monstres et touche jusqu'à ${v} cibles en ligne (−15 % de dégâts par cible).`),
+  pc('cra', 'N', "Sève d'Abolition", 'abolition', 'anneau', [10, 20], 1, v => `La vie volée par Flèche d'Abolition au-delà de tes PV max devient un bouclier (jusqu'à ${v} % de tes PV) pendant 5 s.`),
+  pc('cra', 'O', 'Traque sans fin', 'tirs_eloignes', 'ceinture', [0.5, 1], 0.1, v => `Chaque monstre tué pendant Tirs Éloignés le prolonge de ${n(v)} s (jusqu'à doubler sa durée).`),
+  pc('cra', 'P', 'Repli prudent', 'vagabonde', 'bouclier', [6, 10], 1, v => `Quand Flèche Vagabonde t'éloigne, tu gagnes un bouclier de ${v} % de tes PV pendant 3 s.`),
   // --- Osamodas --------------------------------------------------------------------------------------------------------
   pc('osamodas', 'A', 'Horde sauvage', 'cortege', 'arme', [6, 10], 1, v => `Cortège Sauvage fait venir 2 bêtes de la meute en plus pendant ${v} s.`),
   pc('osamodas', 'B', 'Coup de fouet', 'fouet', 'chapeau', [20, 40], 5, v => `Les bêtes touchées par Fouet attaquent ${v} % plus vite pendant 4 s.`),
@@ -76,11 +94,11 @@ export const estPouvoirClasse = (id: string) => !!PC_PAR_ID[id];
 
 /** 2D : pouvoirs préférés de chaque boss (chance triplée sur son butin), un par classe. */
 export const BOSS_PREFERES: Record<string, string[]> = {
-  royal: ['pc-iop-A', 'pc-cra-G', 'pc-osamodas-E', 'pc-sacrieur-E', 'pc-sacrieur-L'],
-  kardorim: ['pc-iop-F', 'pc-cra-H', 'pc-osamodas-F', 'pc-sacrieur-D', 'pc-sacrieur-O'],
-  tournesol_affame: ['pc-iop-H', 'pc-cra-A', 'pc-osamodas-D', 'pc-sacrieur-A', 'pc-sacrieur-J'],
-  mob_l_eponge: ['pc-iop-E', 'pc-cra-F', 'pc-osamodas-B', 'pc-sacrieur-C', 'pc-sacrieur-P'],
-  kankreblath: ['pc-iop-B', 'pc-cra-C', 'pc-osamodas-C', 'pc-sacrieur-B', 'pc-sacrieur-K'],
+  royal: ['pc-iop-A', 'pc-cra-G', 'pc-osamodas-E', 'pc-sacrieur-E', 'pc-sacrieur-L', 'pc-iop-K', 'pc-cra-P'],
+  kardorim: ['pc-iop-F', 'pc-cra-H', 'pc-osamodas-F', 'pc-sacrieur-D', 'pc-sacrieur-O', 'pc-iop-J', 'pc-cra-O'],
+  tournesol_affame: ['pc-iop-H', 'pc-cra-A', 'pc-osamodas-D', 'pc-sacrieur-A', 'pc-sacrieur-J', 'pc-iop-L', 'pc-cra-K'],
+  mob_l_eponge: ['pc-iop-E', 'pc-cra-F', 'pc-osamodas-B', 'pc-sacrieur-C', 'pc-sacrieur-P', 'pc-iop-M', 'pc-cra-M'],
+  kankreblath: ['pc-iop-B', 'pc-cra-C', 'pc-osamodas-C', 'pc-sacrieur-B', 'pc-sacrieur-K', 'pc-iop-O', 'pc-cra-J'],
 };
 /** 2A : part des pouvoirs de Légendaire qui sont des pouvoirs de classe inventés. */
 export const CHANCE_POUVOIR_CLASSE = 0.2;
@@ -94,7 +112,7 @@ export function jetPouvoirClasse(d: PouvoirClasseDef, rng: Rng, parfait: boolean
 /** Texte de la fourchette pour la fiche (3C). */
 export const fourchette = (d: PouvoirClasseDef) => `${n(d.jet[0])} à ${n(d.jet[1])}`;
 
-/** Pouvoir de classe de cet emplacement (un par emplacement et par classe ; le Sacrieur en a 2 ou 3,
+/** Pouvoir de classe de cet emplacement (2 par emplacement et par classe, 3 pour le bouclier du Sacrieur,
  *  tirés au hasard avec rng), sauf s'il est déjà sur l'objet. */
 export function pouvoirClasseDuSlot(classe: string, slot: Slot, exclus: Set<string> = new Set(), rng?: Rng): PouvoirClasseDef | null {
   const l = POUVOIRS_CLASSE.filter(p => p.classe === classe && p.slot === slot && !exclus.has(p.id));

@@ -293,7 +293,7 @@ export class Player extends Entity {
   // --- Caractéristiques -------------------------------------------------------
   stat(k: Stat): number { let v = this.stats[k] ?? 0; for (const m of this.mods) if (m.k === k) v += m.n; return v; }
   /** Bonus / malus temporaires (sorts de monstres : -40 Puissance pendant un tour…). */
-  mods: { k: Stat; n: number; t: number; src?: string; t0?: number }[] = [];
+  mods: { k: Stat; n: number; t: number; src?: string; t0?: number; plus?: number }[] = [];
   addMod(k: Stat, n: number, t: number, src?: string) { this.mods.push({ k, n, t, src, t0: t }); }
   /** Ralentissement (retrait de PM) : fraction de vitesse perdue et durée restante. */
   slowK = 0; slowT = 0;
@@ -348,6 +348,17 @@ export class Player extends Entity {
   }
   /** Rage sans fond (Iop C) : dernière recharge offerte de Colère ; Couperet du bourreau (Iop F) : dernière exécution. */
   rageSansFondA = -99; couperetA = -99;
+  /** Élan du héros (Iop P) : secondes restantes et bonus du prochain sort ; Déferlement sans fin (Iop N) : dernière recharge offerte ;
+   *  Ferveur bouillonnante (Iop K) : bouclier de départ de Ferveur. */
+  elanT = 0; elanV = 0; deferlementA = -99; ferveurBouclier = 0;
+  /** Un sort qui le demande (HitDef.tue) vient de tuer un monstre. */
+  aTue(id: string, world: World) {
+    const v = this.pcv('pc-iop-N');
+    if (id === 'deferlement' && v && this.age - this.deferlementA >= v) {
+      this.deferlementA = this.age; this.cd.deferlement = 0; this.casts.deferlement = [];
+      world.emit({ k: 'status', x: this.x, y: this.y - 50, text: 'Déferlement rechargé', color: '#6bb8ff' });
+    }
+  }
   /** Recalcule les caractéristiques et les PV max (5 PV par niveau + 1 par point de Vitalité, comme Dofus). */
   recompute() {
     this._pouvoirs = null;
@@ -507,16 +518,18 @@ export class Player extends Entity {
     const d = this.spell(id);
     if (!d || d.pm || d.grosCoup) return 0;
     const n = this.grade(id)?.parTour ?? 0;
-    return n >= 2 ? n : 0;
+    return n >= 2 ? n + (id === 'epee' && this.pcv('pc-iop-O') ? 1 : 0) : 0;   // Tempête d'acier : une charge de plus
   }
   /** Lancers des 3 dernières secondes (raccourcies par la réduction des recharges). */
-  private recents(id: SkillId): number[] { return (this.casts[id] ?? []).filter(t => this.age - t < this.retourCharge); }
+  private recents(id: SkillId): number[] { const r = this.retourDe(id); return (this.casts[id] ?? []).filter(t => this.age - t < r); }
+  /** Retour d'une charge de ce sort (Tempête d'acier : Épée Céleste plus rapide). */
+  retourDe(id: SkillId): number { return this.retourCharge * (id === 'epee' ? 1 - this.pcv('pc-iop-O') / 100 : 1); }
   /** Charges disponibles et temps avant le retour de la prochaine. */
   charges(id: SkillId): { n: number; max: number; prochaine: number } {
     const max = this.chargesMax(id);
     if (!max) return { n: 0, max: 0, prochaine: 0 };
     const r = this.recents(id), n = Math.max(0, max - r.length);
-    return { n, max, prochaine: n < max ? Math.max(0, this.retourCharge - (this.age - Math.min(...r))) : 0 };
+    return { n, max, prochaine: n < max ? Math.max(0, this.retourDe(id) - (this.age - Math.min(...r))) : 0 };
   }
   private castsLeft(id: SkillId): boolean {
     const max = this.chargesMax(id);
@@ -766,6 +779,7 @@ export class Player extends Entity {
       if (this.cd[k] === 0 && (this.cdMax[k] ?? 0) >= 5) world.emit({ k: 'rechargePrete', id: k });
     }
     this.autoCd = Math.max(0, this.autoCd - dt);
+    if (this.elanT > 0) this.elanT = Math.max(0, this.elanT - dt);
     for (const [k, s] of Object.entries(this.stacks)) { s.t -= dt; if (s.t <= 0) delete this.stacks[k]; }
     this.invuln = Math.max(0, this.invuln - dt);
     if (this.shieldT > 0 && (this.shieldT -= dt) <= 0) this.shield = 0;
@@ -957,6 +971,7 @@ export class Player extends Entity {
       if (mv) { this.x = s.tx; this.y = s.ty; }
       // Cumul (Fureur) : chaque lancer augmente les dommages du suivant
       let mult = boost;
+      if (this.elanT > 0 && s.id !== 'bond') { mult *= 1 + this.elanV / 100; this.elanT = 0; }   // Élan du héros
       if (d.stack) {
         const st = this.stacks[s.id] ?? { n: 0, t: 0 }, fc = s.id === 'fureur' ? this.pcv('pc-iop-D') : 0;   // Fureur croissante
         mult *= 1 + (d.stack.per + fc / 100) * sig('stack') * st.n;
@@ -990,6 +1005,7 @@ export class Player extends Entity {
         const S6 = d.souffrance6?.bouclierParEnnemi && this.souffrance >= 6 && hz.shape === 'circle'
           ? d.souffrance6.bouclierParEnnemi * world.monsters.filter(m => !m.dead && Math.hypot(m.x - this.x, m.y - this.y) <= hz.radius + m.radius).length : 0;
         this.shield = Math.max(this.shield, Math.round(this.maxHp * (d.shield.part + S6) * sig('shield'))); this.shieldT = this.shieldT0 = d.shield.t; this.shieldSrc = s.id;
+        if (s.id === 'ferveur') this.ferveurBouclier = this.shield;
       }
       if (d.renvoi) { this.renvoiT = d.renvoi.t; this.renvoiPart = d.renvoi.part; }
       if (d.mutilation) {
@@ -1089,6 +1105,15 @@ export class Player extends Entity {
     if (id === 'vagabonde' && v('pc-cra-C')) o.rebonds = v('pc-cra-C');
     if (id === 'explosive' && v('pc-cra-A')) o.gerbe = v('pc-cra-A');
     if (id === 'stase' && v('pc-sacrieur-P')) o.stase = v('pc-sacrieur-P');
+    // Suite (« Légendaires classes suite ») : Iop I J N, Crâ J K L M N
+    if (id === 'pression' && v('pc-iop-I')) o.marque = v('pc-iop-I');
+    if (id === 'concentration' && v('pc-iop-J')) o.vsGros = v('pc-iop-J');
+    if (id === 'deferlement' && v('pc-iop-N')) o.tue = 'deferlement';
+    if (id === 'detonante' && v('pc-cra-J')) o.gerbe = v('pc-cra-J');
+    if (id === 'barrage' && v('pc-cra-K')) o.brule = v('pc-cra-K');
+    if (id === 'dispersion' && v('pc-cra-L')) { o.knock = 0; o.attire = { px: CASE * 2, vers: 'centre' }; o.plus = v('pc-cra-L'); }
+    if (id === 'glacee' && v('pc-cra-M')) o.perce = v('pc-cra-M') - 1;
+    if (id === 'abolition' && v('pc-cra-N')) o.surplus = v('pc-cra-N');
     return o;
   }
   /** Effets des légendaires de classe qui s'ajoutent à l'impact d'un sort (Iop A E G H, Osamodas A B C G H). */
@@ -1141,6 +1166,24 @@ export class Player extends Entity {
     if (id === 'saute_granouille' && v('pc-osamodas-G')) for (const b of world.betes) if (!b.dead) {   // Bond du crapaud
       const a = this.age * 3 + b.id; b.x = this.x + Math.cos(a) * CASE; b.y = this.y + Math.sin(a) * CASE;
       b.shield = Math.max(b.shield, Math.round(b.maxHp * v('pc-osamodas-G') / 100));
+    }
+    if (id === 'couperet' && v('pc-iop-L')) {   // Sillon brûlant : une fissure de feu reste 2 s sur la ligne
+      const r = size / 2, cx = this.x + Math.cos(this.facing) * r, cy = this.y + Math.sin(this.facing) * r;
+      world.zonesSol.push({ x: cx, y: cy, r, t: 2, hit: { ...hit, dmg: hit.dmg * v('pc-iop-L') / 100, execute: undefined, pmLoss: undefined }, touches: new Set(), id: 'pc-iop-L' });
+    }
+    if (id === 'colere' && v('pc-iop-M')) {   // Colère du ciel : les monstres à 1 case autour de la cible
+      world.applyHits(m => { const d = Math.hypot(m.x - tx, m.y - ty) - m.radius; return d > size && d <= size + CASE; }, { ...hit, dmg: hit.dmg * v('pc-iop-M') / 100 }, tx, ty, 0);
+      world.emit({ k: 'spell', fx: 'burst', id: 'pc-iop-M', x: tx, y: ty, cx: tx, cy: ty, facing: this.facing, size: size + CASE, arc: 0, element: 'terre', big: true, boosted: false });
+    }
+    if (id === 'bond' && v('pc-iop-P')) { this.elanT = 3; this.elanV = v('pc-iop-P'); }
+    if (id === 'pas_chasse' && v('pc-cra-I')) {   // Pas de l'ombre : gerbe de flèches au point de départ
+      const ci = this.cls.spells.cinglante;
+      world.hitCircle(sx, sy, CASE * 2, { dmg: (ci?.dmg ?? 15) * v('pc-cra-I') / 100, knock: 0, element: 'air' });
+      world.emit({ k: 'spell', fx: 'burst', id: 'pc-cra-I', x: sx, y: sy, cx: sx, cy: sy, facing: this.facing, size: CASE * 2, arc: 0, element: 'air', big: false, boosted: false });
+    }
+    if (id === 'vagabonde' && v('pc-cra-P')) {   // Repli prudent : bouclier en s'éloignant
+      this.shield = Math.max(this.shield, Math.round(this.maxHp * v('pc-cra-P') / 100)); this.shieldT = this.shieldT0 = 3; this.shieldSrc = 'pc-cra-P';
+      cri('Repli prudent');
     }
     if (id === 'charge_bestiale' && v('pc-osamodas-H')) for (const b of world.betes) if (!b.dead) b.soigner(b.maxHp * v('pc-osamodas-H') / 100, world);
   }
@@ -1205,7 +1248,15 @@ export class Player extends Entity {
       const auContact = !(loin ?? Math.hypot(fromX - this.x, fromY - this.y) > CASE * 1.6), ea = auContact ? 100 : this.pcv('pc-sacrieur-O');   // Épines acérées : aussi à distance
       if (ea) world.renvoyer(fromX, fromY, dmg * this.renvoiPart * ea / 100);
     }
-    if (this.shield > 0) { const a = Math.min(this.shield, dmg); this.shield -= a; dmg -= a; }   // le bouclier prend les coups d'abord
+    if (this.shield > 0) {   // le bouclier prend les coups d'abord
+      const a = Math.min(this.shield, dmg); this.shield -= a; dmg -= a;
+      const fb = this.shield <= 0 && this.shieldSrc === 'ferveur' ? this.pcv('pc-iop-K') : 0;
+      if (fb) {   // Ferveur bouillonnante : le bouclier qui casse éclate en dégâts Eau sur 2 cases
+        world.hitCircle(this.x, this.y, CASE * 2, { dmg: this.ferveurBouclier * fb / 100, knock: 0, element: 'eau' });
+        world.emit({ k: 'spell', fx: 'burst', id: 'pc-iop-K', x: this.x, y: this.y, cx: this.x, cy: this.y, facing: this.facing, size: CASE * 2, arc: 0, element: 'eau', big: true, boosted: false });
+        this.shieldSrc = '';
+      }
+    }
     this.hp -= dmg; this.flash = 0.1; this.invuln = this.cls.iframesOnHit; this.blesseA = this.age;
     const a = Math.atan2(this.y - fromY, this.x - fromX);
     this.kx += Math.cos(a) * 260; this.ky += Math.sin(a) * 260;
