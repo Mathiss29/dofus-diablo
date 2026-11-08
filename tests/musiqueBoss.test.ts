@@ -19,7 +19,7 @@ class FauxCtx {
 }
 
 type F = { el: FauxAudio; gain: { gain: { value: number } } };
-type Etat = { k: string; f?: F; calme?: F; boucle?: F | null };
+type Etat = { k: string; f?: F; calme?: F; boucle?: F | null; couches?: F[] };
 
 describe('Musique des boss (maquette « Musique élites », 2026-11-08)', () => {
   const g = globalThis as Record<string, unknown>;
@@ -75,5 +75,32 @@ describe('Musique des boss (maquette « Musique élites », 2026-11-08)', () => 
     Son.setCombat(false); Son.update(0.016);
     expect(etat().k).toBe('explo');
     expect(etat().calme).toBe(calme);
+  });
+
+  it('boss : sa musique en 4 pistes monte avec ses PV perdus, jingle d\'Amakna à Astrub, et le réglage Non', async () => {
+    const { Son } = await import('../src/render/son');
+    const etat = () => (Son as unknown as { etat: Etat }).etat;
+    Son.zone(['astrub'], 'amakna');
+    for (let i = 0; i < 4; i++) Son.update(2);
+    expect(etat().k).toBe('explo');
+    Son.prevoir('boss_bestial'); Son.update(0.016);
+    Son.setPalier(0); Son.setCombat(true, 'boss_bestial'); Son.update(0.016);
+    const e = etat();
+    expect(e.k).toBe('combat');
+    expect(e.f!.el.src).toContain('boss_bestial_0');
+    expect(e.couches!.map(c => c.gain.gain.value)).toEqual([0, 0, 0]);
+    Son.setPalier(2); Son.update(0.016);
+    expect(e.couches!.map(c => c.gain.gain.value)).toEqual([1, 1, 0]);
+    Son.finCombat(true);
+    expect(etat().f!.el.src).toContain('combat_amakna_victoire');
+    etat().f!.el.ended = true; Son.update(0.016);
+    expect(etat().k).toBe('explo');
+
+    // 8A : musique des boss coupée -> la musique de zone continue, pas de jingle
+    Son.volumes({ musiqueBoss: false });
+    Son.setCombat(true, 'boss_bestial'); Son.update(0.016);
+    expect(etat().k).toBe('explo');
+    Son.finCombat(true);
+    expect(etat().k).toBe('explo');
   });
 });

@@ -7,7 +7,7 @@ import type { WorldGrid } from '../sim/gridmap';
 import type { Look } from './looks';
 import type { SysData } from './particles';
 import spellfx from '../data/spellfx.json';
-import { MANIFESTE, Son, regrouper, sonDuDecor } from './son';
+import { MANIFESTE, Son, palierBoss, regrouper, sonDuDecor } from './son';
 
 const FX = (spellfx as unknown as { spells: Record<string, Record<string, { gfx: number }[] | unknown>> }).spells;
 /** Monstres qui nous attaquent : à cette distance (unités du monde) ils comptent pour la musique (3A). */
@@ -32,7 +32,9 @@ export class SonView {
     this.classe = classId;
     Son.demarrer();
     if (vitrine) Son.menu();
-    else Son.zone(!world.zone.open ? [] : world.opts.zone === 'astrub' ? ['astrub'] : ['incarnam1', 'incarnam2', 'incarnam_explo01']);
+    // Musique boss 7A : à Astrub, musique de combat officielle d'Amakna
+    else if (world.opts.zone === 'astrub') Son.zone(world.zone.open ? ['astrub'] : [], 'amakna');
+    else Son.zone(world.zone.open ? ['incarnam1', 'incarnam2', 'incarnam_explo01'] : []);
     // 7B : sources de sons du décor, d'après les particules officielles (feux, eau, Zaap), regroupées
     if (parts && wg) {
       const pts = new Map<string, { x: number; y: number }[]>();
@@ -159,14 +161,19 @@ export class SonView {
     for (const id of this.etats.keys()) if (!vus.has(id)) this.etats.delete(id);
     Son.setIntensite(Math.min(1, attaquants / 2));
     // 3B : boss engagé -> musique de combat ; tué -> victoire ; perdu de vue -> l'exploration reprend
-    if (adv && !this.adversaire) { this.adversaire = adv; Son.setCombat(true); }
+    if (adv && !this.adversaire) { this.adversaire = adv; Son.setCombat(true, MANIFESTE.boss?.[adv.type] ?? null); }
     else if (this.adversaire && !adv) {
       if (this.adversaire.dead) Son.finCombat(true); else if (!p.dead) Son.setCombat(false);
       this.adversaire = null;
     }
+    // Musique boss 7B : une piste de plus à chaque quart de PV perdu par le boss
+    if (this.adversaire) Son.setPalier(palierBoss(this.adversaire.hp, this.adversaire.maxHp));
     // 7A : fond d'ambiance de l'endroit (une fois par seconde suffit)
     if ((this.fondT -= dt) <= 0) {
       this.fondT = 1;
+      // 4A + 7B : musique du boss des parages (ou du boss de l'arène) chargée à l'avance
+      const boss = w.arene?.d.bossVague?.find(b => GAME_DATA.monsters[b]?.boss) ?? w.monsters.find(m => m.def.boss && !m.dead)?.type;
+      Son.prevoir(boss ? MANIFESTE.boss?.[boss] ?? null : null);
       const temple = w.area?.name === 'Temple Céleste';
       Son.fond(!w.zone.open ? ['incarnam_vent'] : temple ? ['temple_tuto', 'temple_ethere'] : inside ? ['interieur'] : w.opts.zone === 'astrub' ? ['astrub_vent', 'astrub_oiseaux'] : ['incarnam_vent', 'incarnam']);
     }
