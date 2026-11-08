@@ -10,12 +10,14 @@ Il tourne sur le VPS OVH d'Idlus (VPS-3, Ubuntu 24.04), **sans toucher à Idlus*
 - écoute sur `127.0.0.1:3100` seulement ; le monde y arrive par un **tunnel Cloudflare** (`api.diablofus.com`), donc ni le
   Caddy d'Idlus (conteneur Supabase) ni le pare-feu ne changent ;
 - service systemd limité à 1 cœur et 1 Go, `OOMScoreAdjust=500` (c'est lui qui part en premier si la mémoire manque) ;
-- mise à jour par le workflow GitHub `Serveur` (`.github/workflows/serveur.yml`) : rsync dans `~/app`, puis redémarrage de
-  ce seul service (sudoers limité à `systemctl restart diablofus` et `systemctl is-active diablofus`).
+- mise à jour **tirée par le VPS** : toutes les 5 minutes, `diablofus-maj.timer` lance `maj.sh` (utilisateur `diablofus`),
+  qui regarde `main` du dépôt public et, s'il a changé, copie `serveur/` dans `~/app` et redémarre ce seul service (sudoers
+  limité à `systemctl restart diablofus` et `systemctl is-active diablofus`). Aucune clé SSH ni secret côté GitHub.
 
-## Installation (une fois, par Mathis en SSH, après relecture par le projet Idlus)
+## Installation (une fois, relue par le projet Idlus)
 
-Chaque bloc se colle tel quel. Aucun ne touche à Docker, à Caddy, à ufw ni à `/opt/idlus`.
+Chaque bloc se colle tel quel (ou passe par un workflow SSH du projet Idlus). Aucun ne touche à Docker, à Caddy, à ufw
+ni à `/opt/idlus`. Seul le jeton du tunnel (bloc 4) vient de Mathis.
 
 ### 1. Utilisateur et dossiers
 
@@ -38,79 +40,49 @@ sudo -u diablofus -H bash -c '
   node/bin/node -v'
 ```
 
-### 3. Service, limites et droit de redémarrage
+### 3. Service, droit de redémarrage et mise à jour automatique
 
-Les trois fichiers sont dans `serveur/installation/` du dépôt (relus avant de les poser) :
+Fichiers de `serveur/installation/` (relus avant de les poser) :
 
 ```bash
-cd /tmp && curl -fsSLO https://raw.githubusercontent.com/Mathiss29/dofus-diablo/main/serveur/installation/diablofus.service \
-  && curl -fsSLO https://raw.githubusercontent.com/Mathiss29/dofus-diablo/main/serveur/installation/sudoers-diablofus
-cat diablofus.service sudoers-diablofus          # relire
-sudo install -m 644 diablofus.service /etc/systemd/system/diablofus.service
+cd /tmp && for f in diablofus.service sudoers-diablofus diablofus-maj.service diablofus-maj.timer maj.sh; do
+  curl -fsSLO https://raw.githubusercontent.com/Mathiss29/dofus-diablo/main/serveur/installation/$f; done
+cat diablofus.service sudoers-diablofus diablofus-maj.service diablofus-maj.timer maj.sh   # relire
+sudo install -m 644 diablofus.service diablofus-maj.service diablofus-maj.timer /etc/systemd/system/
 sudo visudo -cf sudoers-diablofus && sudo install -m 440 sudoers-diablofus /etc/sudoers.d/diablofus
-sudo systemctl daemon-reload && sudo systemctl enable diablofus
+sudo install -o root -g root -m 755 maj.sh /home/diablofus/maj.sh
+sudo systemctl daemon-reload && sudo systemctl enable diablofus && sudo systemctl enable --now diablofus-maj.timer
+sudo systemctl start diablofus-maj.service && sleep 3 && sudo systemctl is-active diablofus && curl -fsS http://127.0.0.1:3100/sante
 ```
 
-Le service ne démarre qu'au premier déploiement (il n'y a pas encore de code dans `~/app`). `enable` = il repart seul
-après un redémarrage de la machine.
+La dernière ligne fait la première mise à jour tout de suite : elle doit finir par `active` puis `{"ok":true,…}`.
+`enable` = tout repart seul après un redémarrage de la machine. `maj.sh` appartient à root : `diablofus` le lance mais ne
+peut pas le modifier.
 
-### 4. Clé de déploiement pour GitHub
+### 4. Tunnel Cloudflare (api.diablofus.com)
 
-```bash
-sudo -u diablofus -H bash -c '
-  set -e; mkdir -p ~/.ssh && chmod 700 ~/.ssh
-  ssh-keygen -t ed25519 -N "" -C deploiement-github -f ~/.ssh/deploiement -q
-  (printf "restrict "; cat ~/.ssh/deploiement.pub) >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys
-  cat ~/.ssh/deploiement'
-cat /etc/ssh/ssh_host_ed25519_key.pub | cut -d" " -f1,2
-```
+**Mathis, dans le tableau de bord Cloudflare** : Zero Trust › Networks › Tunnels › Create a tunnel › Cloudflared, nom
+`diablofus`. Onglet Public Hostname : sous-domaine `api`, domaine `diablofus.com`, service `HTTP`, URL `127.0.0.1:3100`
+(pas `localhost`, qui peut partir sur `::1` en IPv6 où le serveur n'écoute pas). Cloudflare affiche une commande
+`cloudflared service install <jeton>` : le **jeton** (la longue suite après `install`) ne se colle que sur le VPS (ou dans
+un secret GitHub du projet Idlus si c'est son workflow qui lance la commande), jamais dans une discussion.
 
-Dans GitHub, dépôt `dofus-diablo` › Settings › Secrets and variables › Actions › New repository secret :
-
-| Secret | Valeur |
-|---|---|
-| `VPS_HOTE` | `159.173.129.109` |
-| `VPS_CLE` | tout le bloc `-----BEGIN OPENSSH PRIVATE KEY----- … END …-----` affiché par la 1re commande |
-| `VPS_EMPREINTE` | la ligne `ssh-ed25519 AAAA…` affichée par la 2e commande |
-
-Puis effacer la clé privée du VPS (elle n'est plus utile qu'à GitHub) :
-
-```bash
-sudo -u diablofus rm /home/diablofus/.ssh/deploiement /home/diablofus/.ssh/deploiement.pub
-```
-
-`VPS_EMPREINTE` n'a pas l'adresse : le workflow écrit lui-même `159.173.129.109 ssh-ed25519 AAAA…` dans `known_hosts`.
-
-`restrict` : cette clé ne peut ni ouvrir de terminal ni faire de tunnel, seulement lancer des commandes en tant que
-`diablofus`.
-
-### 5. Tunnel Cloudflare (api.diablofus.com)
-
-Installer `cloudflared` depuis le dépôt officiel de Cloudflare :
+**Sur le VPS** :
 
 ```bash
 sudo mkdir -p --mode=0755 /usr/share/keyrings
 curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | sudo tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null
 echo 'deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared any main' | sudo tee /etc/apt/sources.list.d/cloudflared.list
-sudo apt-get update && sudo NEEDRESTART_MODE=l apt-get install -y cloudflared   # l : liste seulement, aucun service redémarré (Docker d'Idlus)
-```
-
-Dans le tableau de bord Cloudflare : Zero Trust › Networks › Tunnels › Create a tunnel › Cloudflared, nom `diablofus`.
-Cloudflare affiche une commande `sudo cloudflared service install <jeton>` : la lancer sur le VPS (le jeton ne se partage
-pas). Puis, dans le tunnel, onglet Public Hostname : sous-domaine `api`, domaine `diablofus.com`, service `HTTP`,
-URL `127.0.0.1:3100` (pas `localhost`, qui peut partir sur `::1` en IPv6 où le serveur n'écoute pas).
-
-Limites du tunnel (même logique que le service) :
-
-```bash
+sudo apt-get update && sudo NEEDRESTART_MODE=l apt-get install -y cloudflared   # l : liste seulement ; si une liste de services à redémarrer s'affiche quand même, répondre non
+sudo cloudflared service install "$JETON"                                       # JETON = le jeton du tunnel
 cd /tmp && curl -fsSLO https://raw.githubusercontent.com/Mathiss29/dofus-diablo/main/serveur/installation/cloudflared-limites.conf
 sudo install -D -m 644 cloudflared-limites.conf /etc/systemd/system/cloudflared.service.d/limites.conf
 sudo systemctl daemon-reload && sudo systemctl restart cloudflared
 ```
 
-### 6. Premier déploiement
+### 5. Vérification
 
-GitHub › Actions › Serveur › Run workflow. À la fin, `https://api.diablofus.com/sante` répond `{"ok":true,…}`.
+`https://api.diablofus.com/sante` répond `{"ok":true,…}`. Journal des mises à jour : `journalctl -u diablofus-maj -n 20`.
 
 ## Bon à savoir
 
@@ -119,5 +91,5 @@ GitHub › Actions › Serveur › Run workflow. À la fin, `https://api.diablof
 ## Plus tard
 
 - Sauvegarde de la base SQLite à **4 h 30** (celle d'Idlus est à 4 h), avec les comptes.
-- Désinstaller : `sudo systemctl disable --now diablofus cloudflared`, supprimer les fichiers posés ci-dessus et
+- Désinstaller : `sudo systemctl disable --now diablofus diablofus-maj.timer cloudflared`, supprimer les fichiers posés ci-dessus et
   `sudo deluser --remove-home diablofus`.
