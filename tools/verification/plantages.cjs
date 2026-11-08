@@ -63,9 +63,13 @@ const garder = id => !CAS || CAS === id;
   };
   // F1 › Monstres ; si la scène repart pendant ce temps (instantané du serveur, fin d'arène), le panneau est recréé : on recommence
   const ouvrirMonstres = async p => {
+    await p.keyboard.press('F1');
     for (let i = 0; ; i++) {
-      if (!(await p.isVisible('#ptest [data-o="monstres"]'))) await p.keyboard.press('F1');
-      try { await p.click('#ptest [data-o="monstres"]', { timeout: 8000 }); return; } catch (e) { if (i >= 2) throw e; await p.waitForTimeout(2000); }
+      try { await p.click('#ptest [data-o="monstres"]', { timeout: i < 2 ? 10000 : 30000 }); return; } catch (e) {
+        if (i >= 2) throw e;
+        await p.waitForTimeout(2000);
+        if (!(await p.isVisible('#ptest [data-o="monstres"]'))) await p.keyboard.press('F1');
+      }
     }
   };
 
