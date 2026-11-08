@@ -77,6 +77,8 @@ export class Player extends Entity {
   castChase: { id: SkillId; m: number } | null = null;
   private dest: { x: number; y: number } | null = null;
   /** Le joueur a cliqué près de ce point (portes : on n'entre que si on a cliqué dessus, pas en passant devant). */
+  /** Une destination est en cours (clic au sol). */
+  get enMarche(): boolean { return !!this.dest; }
   vise(x: number, y: number, r: number): boolean { return !!this.dest && Math.hypot(this.dest.x - x, this.dest.y - y) <= r; }
   /** Arrête le déplacement en cours (après une porte : on ne repart pas vers l'ancien clic). */
   stopMove() { this.dest = null; this.path = []; this.chaseId = null; this.castChase = null; }

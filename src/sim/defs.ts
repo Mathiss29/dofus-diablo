@@ -200,8 +200,9 @@ export interface OpenDef {
   start: [number, number];
   /** Distance de repérage, distance de laisse (retour au point de départ), délai de réapparition (s). */
   aggro: number; leash: number; respawn: number;
-  /** Points de retour après une mort (Zaaps) : le dernier atteint est gardé. Le premier est le départ. */
-  checkpoints: { name: string; map: [number, number] }[];
+  /** Points de retour après une mort (Zaaps) : le dernier atteint est gardé. Le premier est le départ.
+   *  zaap : milieu de l'arche officielle (particule « Vortex »), en pixels de la grande carte ; sub : sa sous-zone (tools/extraction/zaaps.py). */
+  checkpoints: { name: string; map: [number, number]; zaap?: [number, number]; sub?: number }[];
   subareas: Record<string, SubAreaDef>;
   /** Portes vers les intérieurs, reliées à la main (tools/extraction/interieurs.py). */
   portes?: PorteDef[];

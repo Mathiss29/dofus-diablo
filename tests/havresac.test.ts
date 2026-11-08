@@ -14,6 +14,8 @@ const VIDE = { enCours: [], finies: [], etapesFinies: [], suivie: null, decouver
 const monde = (zone: string, o: Partial<WorldOptions> = {}) => new World({ data: GAME_DATA, zone, map: new WorldGrid(zone === 'havresac' ? HS : zone === 'bastion' ? BA : AS), seed: 1,
   items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, reprise: VIDE, ...o });
 const pas = (w: World, n: number, input = NO_INPUT) => { const ev: SimEvent[] = []; for (let i = 0; i < n; i++) { w.step(1 / 60, input); ev.push(...w.drainEvents()); } return ev; };
+/** Choix dans la fenêtre du Zaap, puis le temps du tourbillon (Zaap 9A). */
+const voyage = (w: World, zaap: number) => [...pas(w, 1, { ...NO_INPUT, zaap }), ...pas(w, Math.ceil(World.ZAAP_DEPART * 60) + 2)];
 
 describe('Havre-Sac (maquette Hub : 1A 2A+2C 3A 4A 7A 8A 9A)', () => {
   it('une seule pièce, la carte officielle du thème Mercenaire, arrivée sur une case marchable', () => {
@@ -96,7 +98,7 @@ describe('Havre-Sac (maquette Hub : 1A 2A+2C 3A 4A 7A 8A 9A)', () => {
     const h = monde('havresac');
     h.player.zaaps = a.player.zaaps;
     const i = h.player.zaaps.findIndex(o => o.name === 'Zaap de Tainéla');
-    const cz = pas(h, 1, { ...NO_INPUT, zaap: i }).find(e => e.k === 'changeZone');
+    const cz = voyage(h, i).find(e => e.k === 'changeZone');
     expect(cz).toMatchObject({ zone: 'astrub', zaap: 'Zaap de Tainéla' });
     const b = monde('astrub', { zaap: 'Zaap de Tainéla' });
     expect(wg.mapAt(b.player.x, b.player.y)?.tag).toBe('1_-32');
@@ -146,12 +148,12 @@ describe('Bastion des Douze (maquette Ville : 1A 2A 3C 7A+7B 10B)', () => {
   it('le Zaap du Havre-Sac mène au Bastion (7B) en gardant d\'où l\'on vient ; son Zaap y ramène (7A)', () => {
     const retour = { zone: 'astrub', x: 1, y: 2, point: { name: "Zaap d'Astrub", x: 3, y: 4 } };
     const h = monde('havresac', { retour });
-    const cz = pas(h, 1, { ...NO_INPUT, zaap: World.ZAAP_BASTION }).find(e => e.k === 'changeZone');
+    const cz = voyage(h, World.ZAAP_BASTION).find(e => e.k === 'changeZone');
     expect(cz).toMatchObject({ zone: 'bastion', retour });
     const b = monde('bastion', { retour });
     expect(b.retour).toEqual(retour);
     expect(b.sortirHavreSac(World.ZAAP_BASTION)).toBe(false);   // déjà au Bastion
-    const cz2 = pas(b, 1, { ...NO_INPUT, zaap: -1 }).find(e => e.k === 'changeZone');
+    const cz2 = voyage(b, -1).find(e => e.k === 'changeZone');
     expect(cz2).toMatchObject({ zone: 'astrub', position: { x: 1, y: 2 }, point: retour.point });
     // sauvegarde : d'où l'on vient est gardé au Bastion aussi
     const b2 = monde('bastion');

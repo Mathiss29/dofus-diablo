@@ -2,6 +2,7 @@ import { angleDiff, Rng } from './math';
 import type { AtelierDef, DonjonDef, Element, GameData, HitZone, MonsterSpell, SubAreaDef, ZoneDef } from './defs';
 import type { PointDeRetour, RetourHavreSac, SimEvent, Telegraph } from './events';
 import { GridMap, WorldGrid } from './gridmap';
+import { ISO } from './iso';
 import { NO_INPUT, type PlayerInput } from './input';
 import { AGGRO, CASE, Monster, TOUR } from './monster';
 import { jetOfficiel } from './danger';
@@ -243,7 +244,7 @@ export class World {
     this.retour = opts.retour ?? null;
     const cp = opts.zaap ? open.checkpoints.find(c => c.name === opts.zaap) : null, m = cp && wg.mapByCoords(...cp.map);
     if (cp && m) {
-      const q = this.openestCell(m.tag);
+      const q = this.devantZaap(cp.name) ?? this.openestCell(m.tag);
       p.x = q.x; p.y = q.y; this.checkpoint = q; this.checkpointName = cp.name;
     } else if (opts.position && this.map.walkable(opts.position.x, opts.position.y)) {
       p.x = opts.position.x; p.y = opts.position.y;
@@ -269,7 +270,7 @@ export class World {
   havreSac(): boolean {
     const p = this.player;
     if (!this.zone.open || p.dead || this.passage) return false;
-    if (this.dansHavreSac) { this.sortirHavreSac(-1); return true; }
+    if (this.dansHavreSac) { this.sortirHavreSac(-1, false); return true; }
     if (this.incantation) return false;
     const non = (text: string) => { this.emit({ k: 'status', x: p.x, y: p.y - 60, text, color: '#ff9a5a' }); return false; };
     const tag = this.worldGrid!.mapAt(p.x, p.y)?.tag ?? '';
@@ -304,25 +305,99 @@ export class World {
   static readonly ZAAP_BASTION = -2;
   /** Zaap du Havre-Sac ou du Bastion (2C, Ville 7A+7B) : -1 = ressortir là où l'on était, -2 = le Bastion des Douze,
    *  sinon l'index d'un Zaap découvert. */
-  sortirHavreSac(i: number): boolean {
-    if (!this.dansRefuge) return false;
+  sortirHavreSac(i: number, tourbillon = true): boolean {
+    if (!this.dansRefuge || this.zaapDepart) return false;
+    // 9A : par le Zaap, le perso est happé par le tourbillon ; H fait sortir comme une porte (Entrées 14A)
+    const go = (e: SimEvent) => { if (tourbillon) this.partirParZaap(e); else this.emit(e); return true; };
     if (i === World.ZAAP_BASTION) {
       if (this.dansBastion || !this.bastionOuvert) return false;
-      this.emit({ k: 'changeZone', zone: 'bastion', nom: this.opts.data.zones.bastion.name, ...(this.retour ? { retour: this.retour } : {}) });
-      return true;
+      return go({ k: 'changeZone', zone: 'bastion', nom: this.opts.data.zones.bastion.name, ...(this.retour ? { retour: this.retour } : {}) });
     }
     const z = i >= 0 ? this.player.zaaps[i] : null;
     if (i >= 0 && !z) return false;
-    if (z) { this.emit({ k: 'changeZone', zone: z.zone, nom: z.name, zaap: z.name }); return true; }
+    if (z) return go({ k: 'changeZone', zone: z.zone, nom: z.name, zaap: z.name });
     const r = this.retour;
-    if (r) this.emit({ k: 'changeZone', zone: r.zone, nom: r.point.name, position: { x: r.x, y: r.y }, point: r.point });
-    else { const d = this.player.zaaps[0]; this.emit({ k: 'changeZone', zone: d?.zone ?? 'incarnam', nom: d?.name ?? 'Incarnam', ...(d ? { zaap: d.name } : {}) }); }
-    return true;
+    if (r) return go({ k: 'changeZone', zone: r.zone, nom: r.point.name, position: { x: r.x, y: r.y }, point: r.point });
+    const d = this.player.zaaps[0];
+    return go({ k: 'changeZone', zone: d?.zone ?? 'incarnam', nom: d?.name ?? 'Incarnam', ...(d ? { zaap: d.name } : {}) });
   }
   /** Zaap atteint : il rejoint la liste du Zaap du Havre-Sac. */
   private decouvrirZaap(name: string) {
     const z = this.player.zaaps;
-    if (!z.some(o => o.zone === this.opts.zone && o.name === name)) z.push({ zone: this.opts.zone, name });
+    if (z.some(o => o.zone === this.opts.zone && o.name === name)) return;
+    z.push({ zone: this.opts.zone, name });
+    this.emit({ k: 'zaapDecouvert', name });   // 3A : bandeau, son, icône allumée sur la carte
+  }
+
+  // --- Zaaps du monde (maquette « Zaap : » 1A 2A 3A 4A 5A+5D 6A 7A 8A 9A) ----------------------------------------
+  /** Durée du départ (9A) : le perso est happé par le tourbillon, puis le fondu. */
+  static readonly ZAAP_DEPART = 0.35;
+  /** Un Zaap répond à moins de cette distance (on est devant). */
+  static readonly ZAAP_PORTEE = 300;
+  private _zaaps: { name: string; x: number; y: number }[] | null = null;
+  /** Zaaps de la zone : milieu de l'arche officielle, dans le monde du jeu. */
+  zaapsIci(): { name: string; x: number; y: number }[] {
+    const o = this.zone.open, wg = this.worldGrid;
+    if (!o || !wg) return [];
+    return this._zaaps ??= o.checkpoints.filter(c => c.zaap).map(c => {
+      const s = wg.toScreen(c.zaap![0], c.zaap![1]), w = ISO.toWorld(s.x, s.y);
+      return { name: c.name, x: w.x, y: w.y };
+    });
+  }
+  /** Case marchable devant un Zaap (arrivée, point de retour, là où le perso va quand on clique dessus). */
+  devantZaap(name: string): { x: number; y: number } | null {
+    const z = this.zaapsIci().find(o => o.name === name), wg = this.worldGrid;
+    const tag = z && wg?.mapAt(z.x, z.y)?.tag, free = tag ? wg!.freeByMap.get(tag) : null;
+    // devant = vers le bas de l'écran (+x +y dans le monde) : le perso ne se retrouve pas derrière l'arche
+    return z && free?.length ? wg!.nearestFree(z.x + 90, z.y + 90, free) : null;
+  }
+  /** Le Zaap devant lequel on se tient (ou null). */
+  zaapProche(): { name: string; x: number; y: number } | null {
+    const p = this.player;
+    return this.zaapsIci().find(z => Math.hypot(z.x - p.x, z.y - p.y) <= World.ZAAP_PORTEE) ?? null;
+  }
+  /** Zaap vers lequel on marche après un clic dessus (1A). */
+  versZaap: string | null = null;
+  /** Départ en cours (9A) : le changement de zone part à la fin. */
+  zaapDepart: { t: number; e: SimEvent } | null = null;
+  private partirParZaap(e: SimEvent) {
+    const p = this.player;
+    p.stopMove(); this.versZaap = null;
+    this.zaapDepart = { t: World.ZAAP_DEPART, e };
+    this.emit({ k: 'zaapDepart', x: p.x, y: p.y });
+  }
+  private updateZaap(dt: number) {
+    const d = this.zaapDepart, p = this.player;
+    if (d) {
+      if (p.dead) { this.zaapDepart = null; return; }
+      if ((d.t -= dt) <= 0) { this.zaapDepart = null; this.emit(d.e); }
+      return;
+    }
+    if (!this.versZaap || p.dead) return;
+    const z = this.zaapsIci().find(o => o.name === this.versZaap), q = z && this.devantZaap(z.name);
+    if (!z || !q) { this.versZaap = null; return; }
+    // arrivé devant, tout près de l'arche, ou bloqué à côté : la fenêtre s'ouvre
+    const dz = Math.hypot(p.x - z.x, p.y - z.y);
+    if (Math.hypot(p.x - q.x, p.y - q.y) < 40 || dz <= 200 || (!p.enMarche && dz <= World.ZAAP_PORTEE)) {
+      this.versZaap = null; p.stopMove();
+      this.emit({ k: 'arche' });
+    }
+  }
+  /** Voyage depuis la fenêtre du Zaap : depuis le Havre-Sac ou le Bastion, ou devant un Zaap du monde (gratuit, 4A).
+   *  -1 = là où l'on était (refuges), -2 = le Bastion des Douze, sinon l'index d'un Zaap découvert. */
+  voyagerZaap(i: number): boolean {
+    if (this.dansRefuge) return this.sortirHavreSac(i);
+    const ici = this.zaapProche(), p = this.player;
+    if (!ici || p.dead || this.passage || this.zaapDepart) return false;
+    if (i === World.ZAAP_BASTION) {
+      if (!this.bastionOuvert) return false;
+      this.partirParZaap({ k: 'changeZone', zone: 'bastion', nom: this.opts.data.zones.bastion.name, retour: this.ici() });
+      return true;
+    }
+    const z = this.player.zaaps[i];
+    if (!z || (z.zone === this.opts.zone && z.name === ici.name)) return false;
+    this.partirParZaap({ k: 'changeZone', zone: z.zone, nom: z.name, zaap: z.name });
+    return true;
   }
 
   /** Arrivée par un portail d'une autre zone : un peu en avant de la porte d'arrivée (comme une porte normale). */
@@ -811,7 +886,7 @@ export class World {
     const cp = m && open.checkpoints.find(c => c.map[0] === m.x && c.map[1] === m.y);
     if (cp) this.decouvrirZaap(cp.name);
     if (cp && cp.name !== this.checkpointName) {
-      this.checkpointName = cp.name; this.checkpoint = this.openestCell(m.tag);
+      this.checkpointName = cp.name; this.checkpoint = this.devantZaap(cp.name) ?? this.openestCell(m.tag);
       this.emit({ k: 'checkpoint', name: cp.name });
     }
   }
@@ -873,13 +948,15 @@ export class World {
     // Havre-Sac : bouger ou agir coupe l'incantation ; H la lance (ou fait sortir) ; le Zaap du Havre-Sac fait sortir
     if (this.incantation && (input.dest || input.target != null || input.pickup != null || input.talk || input.pressed || input.recolte != null || input.move.x || input.move.y)) this.couperIncantation();
     if (input.havreSac) this.havreSac();
-    if (input.zaap != null) this.sortirHavreSac(input.zaap);
+    if (input.zaap != null) this.voyagerZaap(input.zaap);
+    if (input.versZaap) this.versZaap = input.versZaap;
+    else if (input.dest || input.target != null || input.pickup != null || input.talk || input.pressed || input.recolte != null || input.atelier != null || input.move.x || input.move.y) this.versZaap = null;
     if (this.quetes) {
       if (input.reponse != null) this.quetes.repondre(input.reponse);
       if (input.talk) this.quetes.cliquer(input.talk);
       else if (input.dest || input.target != null || input.pickup != null) this.quetes.annulerClic();
     }
-    p.update(dt, this.passage ? { ...NO_INPUT, aim: input.aim } : input, this);   // devant une porte : le perso attend le fondu
+    p.update(dt, this.passage || this.zaapDepart ? { ...NO_INPUT, aim: input.aim } : input, this);   // devant une porte ou un Zaap : le perso attend le fondu
     if (this.test?.recharges) this.rechargerTout();
     // Monde ouvert : un monstre qui attend loin du joueur dort (pas d'errance ni d'IA) : bien moins de calcul
     for (const m of this.monsters) {
@@ -906,7 +983,7 @@ export class World {
     });
     this.monsters = this.monsters.filter(m => !(m.dead && m.t <= 0));
     this.updateAteliers(dt);
-    if (this.zone.open) { this.updateOpen(dt); this.updateRecoltes(dt); this.updateIncantation(dt); this.updateArche(); this.quetes?.update(dt); return; }
+    if (this.zone.open) { this.updateOpen(dt); this.updateRecoltes(dt); this.updateIncantation(dt); this.updateArche(); this.updateZaap(dt); this.quetes?.update(dt); return; }
     if (!this.over && this.monsters.length === 0) {
       this.waveDelay -= dt;
       if (this.waveDelay <= 0) { this.spawnWave(); this.waveDelay = 2; }

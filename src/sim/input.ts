@@ -35,6 +35,8 @@ export interface PlayerInput {
   havreSac?: boolean;
   /** Zaap du Havre-Sac (2C) : -1 = ressortir là où l'on était, sinon l'index du Zaap découvert (player.zaaps). */
   zaap?: number | null;
+  /** Clic sur un Zaap du monde (maquette « Zaap : » 1A) : son nom ; le perso y va et la fenêtre s'ouvre en arrivant. */
+  versZaap?: string | null;
   /** Partie de test : ordres du panneau F1 (absent dans une vraie partie). */
   test?: CommandeTest[] | null;
 }

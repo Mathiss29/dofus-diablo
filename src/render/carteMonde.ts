@@ -23,6 +23,7 @@ const CSS = `
 .cm .leg{position:absolute;left:12px;bottom:10px;background:#000b;padding:4px 10px;border-radius:3px;display:flex;gap:14px;font:12px Lexend,sans-serif;color:#cfc8b6;text-shadow:0 1px 2px #000;pointer-events:none}
 .cm .leg i{display:inline-block;width:10px;height:10px;margin-right:5px;vertical-align:-1px;border:1px solid #fff}
 .cm .rp{width:26px;height:26px;pointer-events:auto;cursor:help;filter:drop-shadow(0 1px 2px #000)}
+.cm .rp.eteint{filter:grayscale(1) brightness(.6) drop-shadow(0 1px 2px #000);opacity:.6}
 .cm .rp:hover{filter:drop-shadow(0 0 4px #ffe9a8) brightness(1.15)}
 .cm .gd{width:26px;height:26px;pointer-events:auto;cursor:help;filter:drop-shadow(0 1px 2px #000) drop-shadow(0 0 4px #f2d36b)}
 .cm .gd .ic{width:26px;height:26px}
@@ -103,7 +104,11 @@ export class CarteMonde {
     for (const [tag, l] of parCarte) {
       const c = this.milieuCarte(tag);
       l.forEach((r, i) => {
-        const im = document.createElement('img'); im.className = 'mk rp'; im.src = v(`${this.icones}/${r.g}.webp`); im.title = r.n; im.alt = r.n;
+        // maquette « Zaap : » 3A : un Zaap pas encore découvert reste éteint sur la carte
+        const cp = r.n === 'Zaap' ? open.checkpoints.find(k => `${k.map[0]}_${k.map[1]}` === tag) : null;
+        const eteint = !!cp && !this.world.player.zaaps.some(z => z.zone === this.world.opts.zone && z.name === cp.name);
+        const im = document.createElement('img'); im.className = `mk rp${eteint ? ' eteint' : ''}`; im.src = v(`${this.icones}/${r.g}.webp`);
+        im.title = eteint ? 'Zaap à découvrir' : cp ? `Zaap · ${open.subareas[String(cp.sub)]?.name ?? cp.name}` : r.n; im.alt = r.n;
         im.style.left = `${c.x + (i - (l.length - 1) / 2) * 24}px`; im.style.top = `${c.y}px`; this.plan.appendChild(im);
       });
     }

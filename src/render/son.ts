@@ -23,6 +23,8 @@ type Manifest = {
   ambiances: Record<string, string>; ui: Record<string, string>;
   sorts: Record<string, Record<string, string>>; gfx: Record<string, string[]>;
   monstres: Record<string, { attaque: string[]; hit: string[]; mort: string[] }>; impacts: string[];
+  /** Départ par un Zaap (AMB_Interactive_Teleport_Start, maquette « Zaap : » 9A). */
+  teleport?: string[];
   /** Pièces qui tombent (AMB_Loc_CoinDrop) : kamas au sol et ramassés. */
   kamas?: string[];
   /** Coups des animations de récolte (maquette Armes 9A) : par geste officiel (AnimFaucher, AnimHache…). */

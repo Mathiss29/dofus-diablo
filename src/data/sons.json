@@ -2232,5 +2232,10 @@
    "recolte/AnimStatique_to_AnimPeche_03.mp3",
    "recolte/AnimStatique_to_AnimPeche_04.mp3"
   ]
- }
+ },
+ "teleport": [
+  "ambiance/AMB_Interactive_Teleport_Start_01.mp3",
+  "ambiance/AMB_Interactive_Teleport_Start_02.mp3",
+  "ambiance/AMB_Interactive_Teleport_Start_03.mp3"
+ ]
 }

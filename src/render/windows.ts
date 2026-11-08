@@ -167,8 +167,23 @@ const CSS = `
 .dw .cell.low{opacity:.5}
 .dw .cell .cad{position:absolute;right:3px;top:3px;width:16px;height:19px;filter:drop-shadow(0 1px 1px #000)}
 .dw .win.emp{width:min(760px,96vw);height:min(640px,92vh)}
-.dw .win.zaap{width:min(520px,96vw)}
-.dw .win.zaap .rec{grid-template-columns:1fr auto;align-items:center}
+/* Zaap (maquette « Zaap : » 5A+5D) : la vraie fenêtre de Dofus 3 (Territoire / Région / Coordonnées / Niveau), groupée par zone */
+.dw .win.zaap{width:min(860px,96vw);height:min(620px,92vh)}
+.dw .in.zaap{display:grid;grid-template-rows:auto auto 1fr;gap:6px;padding:12px 16px 14px;min-height:0}
+.dw .zaap .zt,.dw .zaap .zl{display:grid;grid-template-columns:2.2fr 1.6fr 1.1fr .6fr;gap:8px;align-items:center}
+.dw .zaap .zt{padding:6px 16px 2px 46px;color:#c9bfa8;font-size:14px}
+.dw .zaap .zt span:last-child,.dw .zaap .zl span:last-child{text-align:right}
+.dw .zaap .zls{overflow:auto;display:grid;gap:5px;align-content:start;padding-right:2px}
+.dw .zaap .zg{margin:8px 2px 0;font:bold 11px Lexend,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#e6b85c}
+.dw .zaap .zl{padding:9px 16px 9px 12px;background:#3b342b;border-radius:5px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid transparent}
+.dw .zaap .zl:hover{background:#4a4237;border-color:#b9e54b55}
+.dw .zaap .zl .t{display:flex;gap:10px;align-items:center;min-width:0}.dw .zaap .zl .t b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dw .zaap .zl .t img{width:22px;height:22px;flex:none}
+.dw .zaap .zl.ici{cursor:default;border-color:#b9e54b44}.dw .zaap .zl.ici .t b{color:#b9e54b}.dw .zaap .zl.ici:hover{background:#3b342b}
+.dw .zaap .zl.nd{opacity:.42;cursor:default}.dw .zaap .zl.nd:hover{background:#3b342b;border-color:transparent}
+.dw .zaap .zl .ici-m{font-size:11px;color:#b9e54b;font-weight:600;margin-left:6px;white-space:nowrap}
+.dw .zaap .n1{color:#7fd34e}.dw .zaap .n2{color:#e8c33a}.dw .zaap .n3{color:#ef8a3a}.dw .zaap .n4{color:#e0503e}
+.dw .zaap .zp{font-size:12px;color:#9a8f7c;margin-top:6px}
 .dw .in.emp{display:grid;gap:10px;align-content:start;overflow:auto;padding:14px 16px}
 .dw .emp .eh{display:flex;justify-content:space-between;align-items:center}
 .dw .emp .eos{display:flex;gap:6px}
@@ -518,6 +533,7 @@ export class Windows {
   private kind = '';
   private sort = '';
   private search = '';
+  private rechercheZaap = '';
   /** Image du perso (frame de repos de sa planche). */
   portrait = '';
   /** Réglages (render/ambiance.ts), modifiés en direct par la fenêtre Réglages. */
@@ -545,6 +561,8 @@ export class Windows {
     this.tip = document.createElement('div'); this.tip.className = 'tip'; this.tip.style.display = 'none'; this.root.appendChild(this.tip);
   }
   get open() { return !!this.win; }
+  /** Fenêtre ouverte (ou null). */
+  get ouverte(): Mode | null { return this.win ? this.mode : null; }
   /** Ouvre la fenêtre demandée, ou la ferme si c'est déjà elle. */
   toggle(mode: Mode = 'inv') { if (this.win && this.mode === mode) this.close(); else this.show(mode); }
   close(son = true) {
@@ -1127,6 +1145,8 @@ export class Windows {
         <p>${k('C')} ouvre les caractéristiques : chaque niveau donne 5 points à placer.</p>` },
       { id: 'havresac', titre: 'Le Havre-Sac', html: `<p>${k('H')} (ou l'icône du sac dans la colonne de menus) : 1,5 s d'incantation et tu entres dans ton Havre-Sac, ton monde de poche. Bouger ou être touché coupe l'incantation. Impossible dans un donjon ou poursuivi par des monstres.</p>
         <p>Le Poutch Ingball compte tes dégâts par seconde, et Kerubim Crépin y garde un guichet de recyclage. ${k('H')} à nouveau te ramène là où tu étais ; l'arche est un Zaap vers le Bastion des Douze et tous ceux que tu as découverts.</p>` },
+      { id: 'zaaps', titre: 'Les Zaaps', html: `<p>Clique sur l'arche d'un Zaap : ton perso s'en approche et la liste s'ouvre. Le voyage est gratuit, vers le Bastion des Douze et tous les Zaaps que tu as découverts, rangés par zone.</p>
+        <p>Il suffit de passer sur la carte d'un Zaap pour le découvrir : il devient aussi ton point de retour si tu tombes. Ceux que tu n'as pas encore vus sont grisés dans la liste et éteints sur la carte (${k('M')}).</p>` },
       { id: 'bastion', titre: 'Le Bastion des Douze', html: `<p>Notre ville, en archipel au-dessus du Monde des Douze. On y va par n'importe quel Zaap (il est en tête de liste), par l'arche du Havre-Sac, ou avec une Potion de Rappel. Son Zaap te ramène ensuite là où tu étais.</p>
         <p>Les PNJ de service y vivent : Kerubim Crépin recycle tes objets en Pépites, Tissebelle vend les apparats et tient le miroir, Otomaï ses potions, Mère Bouillotte ses plats, Goultard les clés de donjon. Certains emménagent au fil de ton aventure. Chaque nation libérée y ajoutera son île.</p>` },
       { id: 'metiers', titre: 'Métiers', html: `<p>${k('J')} ouvre les métiers. Le Chasseur récupère de la viande sur les monstres quand tu portes une arme de chasse, et cuisine des plats qui soignent.</p>` },
@@ -1515,15 +1535,48 @@ export class Windows {
 
   /** Zaap du Havre-Sac (maquette Hub 2C) ou du Bastion (Ville 7A+7B) : ressortir là où l'on était, le Bastion des Douze en tête,
    *  ou un Zaap déjà découvert. */
+  /** Zaap (maquette « Zaap : » 5A+5D, 6A, 8A) : la même fenêtre au Havre-Sac, au Bastion et devant un Zaap du monde. Colonnes de la
+   *  vraie fenêtre de Dofus 3, groupée par zone (le Bastion en tête), niveau coloré selon le tien, Zaaps pas encore découverts grisés. */
   private renderZaap() {
-    const w = this.win!, p = this.world.player, r = this.world.retour, bastion = this.world.dansBastion;
+    const w = this.win!, wo = this.world, p = wo.player, r = wo.retour, bastion = wo.dansBastion, refuge = wo.dansRefuge;
+    const ici = refuge ? null : wo.zaapProche();
     const zone = (z: string) => GAME_DATA.zones[z]?.name ?? z;
-    const ligne = (i: number, nom: string, sous: string) => `<div class="rec"><div><b>${nom}</b> <span class="hint">${sous}</span></div><span class="btn" data-zaap="${i}">Y aller</span></div>`;
-    const l = [r ? ligne(-1, 'Là où j\'étais', `${zone(r.zone)}, près de ${r.point.name}`) : ligne(-1, 'Ressortir', 'Dernier Zaap visité'),
-      ...(!bastion && GAME_DATA.zones.bastion ? [ligne(World.ZAAP_BASTION, zone('bastion'), 'Notre ville')] : []),
-      ...p.zaaps.map((z, i) => ligne(i, z.name, zone(z.zone)))];
-    w.innerHTML = `${this.title(bastion ? 'Zaap du Bastion' : 'Zaap du Havre-Sac', 'home')}<div class="in emp"><div class="shop">${l.join('')}</div>
-      ${p.zaaps.length ? '' : '<div class="hint">Chaque Zaap que tu touches dans le monde s\'ajoute à cette liste.</div>'}</div>`;
+    const couleur = (niv: number) => { const d = niv - p.level; return d <= 0 ? 'n1' : d <= 5 ? 'n2' : d <= 15 ? 'n3' : 'n4'; };
+    const ICO = `<img src="${v('assets/ui/reperes/410.webp')}" alt="">`;
+    const ligne = (o: { i?: number; nom: string; region: string; co: string; niv: string; nc: string; cls?: string; titre?: string; marque?: string }) =>
+      `<div class="zl ${o.cls ?? ''}" ${o.i != null ? `data-zaap="${o.i}"` : ''} data-q="${escB(`${o.nom} ${o.region}`.toLowerCase())}" title="${escB(o.titre ?? '')}">`
+      + `<span class="t">${ICO}<b>${escB(o.nom)}</b>${o.marque ? `<span class="ici-m">${o.marque}</span>` : ''}</span><span>${escB(o.region)}</span><span>${o.co}</span><span class="${o.nc}">${o.niv}</span></div>`;
+    const html: string[] = [];
+    if (refuge) html.push(ligne(r ? { i: -1, nom: 'Là où j\'étais', region: zone(r.zone), co: '', niv: '', nc: '', titre: `Près de ${r.point.name}` }
+      : { i: -1, nom: 'Ressortir', region: 'Dernier Zaap visité', co: '', niv: '', nc: '' }));
+    if (!bastion && GAME_DATA.zones.bastion) html.push('<div class="zg">Ville</div>', ligne({ i: World.ZAAP_BASTION, nom: zone('bastion'), region: 'Notre ville', co: '', niv: 'Ville', nc: 'n1' }));
+    for (const [id, z] of Object.entries(GAME_DATA.zones)) {
+      const cps = z.open?.checkpoints ?? [];
+      if (!cps.length) continue;
+      const lignes = cps.map(c => {
+        const sub = c.sub != null ? z.open!.subareas[String(c.sub)] : undefined, niv = sub?.level ?? z.level ?? 1;
+        const i = p.zaaps.findIndex(o => o.zone === id && o.name === c.name), lui = !!ici && wo.opts.zone === id && ici.name === c.name;
+        const terr = sub?.name ?? c.name, co = c.map.join(',');
+        const l = lui ? ligne({ nom: terr, region: z.name, co, niv: String(niv), nc: couleur(niv), cls: 'ici', marque: 'Tu es ici' })
+          : i >= 0 ? ligne({ i, nom: terr, region: z.name, co, niv: String(niv), nc: couleur(niv), titre: 'Voyager (gratuit)' })
+          : ligne({ nom: '???', region: z.name, co, niv: String(niv), nc: couleur(niv), cls: 'nd', titre: `À découvrir : passe sur la carte [${co}] (${terr})` });
+        return { niv, l };
+      }).sort((a, b) => a.niv - b.niv);
+      html.push(`<div class="zg">${escB(z.name)}</div>`, ...lignes.map(o => o.l));
+    }
+    const titre = bastion ? 'Zaap du Bastion' : refuge ? 'Zaap du Havre-Sac' : 'Zaap';
+    w.innerHTML = `${this.title(titre, 'home')}<div class="in zaap">
+      <input placeholder="Rechercher une destination" value="${escB(this.rechercheZaap)}" data-rz>
+      <div class="zt"><span>Territoire</span><span>Région</span><span>Coordonnées</span><span>Niveau</span></div>
+      <div class="zls">${html.join('')}
+        <div class="zp">Voyage gratuit · un Zaap grisé s'allume quand tu passes sur sa carte${refuge ? '' : ' · le Bastion te ramène ensuite ici'}</div></div></div>`;
+    const filtrer = () => {
+      const q = this.rechercheZaap.trim().toLowerCase();
+      w.querySelectorAll<HTMLElement>('.zl').forEach(e => { e.style.display = !q || e.dataset.q!.includes(q) ? '' : 'none'; });
+    };
+    const champ = w.querySelector<HTMLInputElement>('[data-rz]')!;
+    champ.addEventListener('input', () => { this.rechercheZaap = champ.value; filtrer(); });
+    filtrer();
     w.querySelectorAll<HTMLElement>('[data-zaap]').forEach(e => e.addEventListener('click', () => { this.onZaap(+e.dataset.zaap!); this.close(); }));
   }
 
