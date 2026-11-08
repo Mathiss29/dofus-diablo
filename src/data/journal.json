@@ -876,6 +876,12 @@
             "etiquettes": [
               "Partie de test"
             ]
+          },
+          {
+            "titre": "L'Osamodas rééquilibré",
+            "phrase": "Un seul instinct à la fois : le dernier sort de base lancé remplace le bonus du précédent.",
+            "details": "Bonus réduits (Piranya +8 Dommages, Ours +20 Puissance, Prespic +5 % Critique) et vol de vie à 25 %. Ses dégâts rejoignent ceux du Iop.",
+            "icone": "degats"
           }
         ],
         "Corrections": [

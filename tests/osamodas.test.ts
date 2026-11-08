@@ -119,3 +119,18 @@ describe('Osamodas : place des bêtes', () => {
     expect(Math.hypot(b.x - p.x, b.y - p.y)).toBeGreaterThan(p.radius + b.radius);
   });
 });
+
+describe('Osa nerf (2026-11-08) : un seul instinct à la fois', () => {
+  it('Cri de l\'Ours remplace le bonus des Dents du Piranya, le PM du Corbac reste', () => {
+    const w = osa(), p = w.player;
+    const m = w.spawnMonster('bouftou', p.x + 60, p.y); m.state = 'chase'; m.mannequin = true; m.poseTest = true;
+    const at = { x: m.x, y: m.y };
+    p.pa = p.paMax; press(w, 'cri_corbac', at); idle(w, 0.6);
+    p.pa = p.paMax; press(w, 'dents_piranya', at); idle(w, 0.6);
+    expect(p.mods.some(x => x.src === 'dents_piranya')).toBe(true);
+    p.pa = p.paMax; press(w, 'cri_ours', at); idle(w, 0.6);
+    expect(p.mods.map(x => x.src).filter(s => s !== undefined && s !== 'cri_corbac')).toEqual(['cri_ours']);
+    expect(p.mods.some(x => x.src === 'cri_corbac')).toBe(true);
+    expect(p.cls.spells.cri_ours.lifesteal).toBe(0.25);
+  });
+});

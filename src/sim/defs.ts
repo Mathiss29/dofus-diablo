@@ -71,7 +71,8 @@ export interface SpellDef {
   /** Sort sur soi : ne touche aucun ennemi (Tirs Éloignés). */
   self?: boolean;
   /** Bonus sur le lanceur (tours officiels × 3 s) : Dommages de l'Épée Divine, Portée des Tirs Éloignés. */
-  buff?: { stat: Stat; n: number; t: number };
+  /** instinct : un seul bonus « instinct » actif à la fois, le dernier lancé remplace les autres (nerf de l'Osamodas, 2026-11-08). */
+  buff?: { stat: Stat; n: number; t: number; instinct?: boolean };
   /** Bouclier : part des PV max (Dofus « % du niveau » : 100 % du niveau = 10 % des PV max, choix 4C), durée en s. */
   shield?: { part: number; t: number };
   /** Recul du lanceur à l'impact, en px (Flèche Vagabonde : « Recule de 3 cases »). */
