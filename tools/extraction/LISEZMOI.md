@@ -241,8 +241,9 @@ Les anciennes planches ont été converties par `tools/hebergement/planches_avif
 
 ## Emp et la boutique (0.2b, 6 nov. 2026)
 
-- Icônes d'objets ajoutées à la planche `public/assets/ui/objets.webp` : `python icones_ajout.py <item_assets_1x.bundle> <iconId>...`
-  (le bundle est copié dans `/mnt/project-files/cache-dofus/astrub/item_assets_1x.bundle`).
+- Icônes d'objets ajoutées aux planches `public/assets/ui/objets-hd.webp` (128 px, fenêtres) et `objets.webp` (64 px, Phaser) :
+  `python icones_ajout.py <item_assets_2x.bundle> <iconId>...` (le paquet 2x est copié dans `/mnt/project-files/cache-dofus/astrub/item_assets_2x.bundle` ;
+  le 1x, 64 px, donnait des icônes floues dans les fenêtres). Sans iconId, refait les deux planches.
 - PNJ dont le look a un skin et des couleurs (`{bone|skin|1=couleur}`) : `SKINS=<skins_assets_skin_N.bundle> COULEURS=1=<couleur>`
   devant `monster_planche.py`. Emp : `PNJ=1 SCALE=1.32 SKINS=.../skins_assets_skin_1981.bundle COULEURS=1=15788464 python monster_planche.py 1979 pnj_emp <bones> <sortie>`.
 - Cadenas : icône officielle `icons_assets_1x/lockShadowOutline` dans `public/assets/ui/emp/`.
@@ -468,7 +469,7 @@ Ville vivante (maquette Ville 5F, 8 nov. 2026) :
 - `python3 tools/contenu/dofus.py /mnt/project-files/dofus-passifs <tables dofusdb>` écrit `src/data/dofus.json` : les 31 Dofus officiels
   (stats au jet maximum, passif traduit de la maquette des passifs, source). `jeu: true` = passif codé (`src/sim/dofus.ts`, PASSIFS) :
   Argenté et Cacao en 0.3, les autres avec leur zone.
-- Icônes : `python3 tools/extraction/icones_ajout.py /mnt/project-files/cache-dofus/astrub/item_assets_1x.bundle <iconIds>`.
+- Icônes : `python3 tools/extraction/icones_ajout.py /mnt/project-files/cache-dofus/astrub/item_assets_2x.bundle <iconIds>`.
 - Quêtes « œuf à reconstituer » dans `tools/contenu/quetes.py` (Gawdien du Dofus au Bastion, place dans `bastion.py` PNJ_PLACE).
   Un nouveau Dofus = une quête avec `'recompense': {'dofus': '<id>'}` ; la fenêtre D lit cette clé pour montrer les fragments.
 - Planches des PNJ (bones pris sur le PC) : `PNJ=1 SCALE=1.32 ANIMS=AnimStatique_1 monster_planche.py 321 pnj_gawdien …`,
