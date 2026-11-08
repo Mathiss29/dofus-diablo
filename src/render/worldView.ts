@@ -25,6 +25,23 @@ const CALQUES = ['fond', 'bord'] as const;
 /** Affichage d'un monde ouvert qui ne garde en mémoire que les cartes proches du joueur.
  *  Chaque carte = un sol (+ un fond de nuages non coupé) + un atlas de décor (tools/extraction/world_export.py). Le ciel est une seule image
  *  fixée à la caméra, qui glisse un peu (parallaxe) quand on traverse le monde. */
+/** Flou d'une image en niveaux (tableau L x H) : 3 passes de moyenne glissante (≈ gaussien), rayon en pixels. */
+function flou(a: Float32Array, L: number, H: number, rad: number) {
+  const tmp = new Float32Array(Math.max(L, H));
+  const boite = (n: number, pas: number, debut: number) => {
+    const at = (k: number) => a[debut + Math.min(n - 1, Math.max(0, k)) * pas];
+    let s = 0;
+    for (let k = -rad; k <= rad; k++) s += at(k);
+    for (let k = 0; k < n; k++) { tmp[k] = s / (2 * rad + 1); s += at(k + rad + 1) - at(k - rad); }
+    for (let k = 0; k < n; k++) a[debut + k * pas] = tmp[k];
+  };
+  for (let p = 0; p < 3; p++) {
+    for (let j = 0; j < H; j++) boite(L, 1, j * L);
+    for (let i = 0; i < L; i++) boite(H, L, i);
+  }
+}
+const lisse = (t: number) => { const u = Math.min(1, Math.max(0, t)); return u * u * (3 - 2 * u); };
+
 export class WorldView {
   private readonly slots = new Map<string, Slot>();
   sky?: Phaser.GameObjects.Image;
@@ -58,11 +75,12 @@ export class WorldView {
   transparence?: Transparence;
   private lastT = 0;
 
-  /** Cartes du dehors (« x,y ») : un côté sans voisine est un bord du monde (voir brume()). */
-  private readonly dehors: Set<string>;
+  /** Fondu du bord du monde dans la mer ou la nuit (poserBrume), caché dans les intérieurs. */
+  private brume?: Phaser.GameObjects.Image;
+  /** Mer du rivage fondue depuis la vraie côte (poserRivage), cachée dans les intérieurs. */
+  private rivage?: Phaser.GameObjects.Image;
 
   constructor(private readonly scene: Phaser.Scene, private readonly wg: WorldGrid, private readonly dir: string, private readonly prefix: string) {
-    this.dehors = new Set(wg.world.maps.filter(m => !m.inside).map(m => `${m.x},${m.y}`));
     for (const m of wg.world.maps) this.slots.set(m.tag, { state: 'none', objs: [], next: 0 });
     scene.load.on(Phaser.Loader.Events.FILE_COMPLETE, (key: string) => this.onFile(key));
     scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
@@ -91,6 +109,8 @@ export class WorldView {
   create() {
     if (this.scene.textures.exists(this.k('ciel'))) this.sky = this.scene.add.image(0, 0, this.k('ciel')).setScrollFactor(0).setDepth(SOL - 1e7).setTint(this.tint);
     for (const m of this.wg.world.maps) if (this.texturesReady(m)) { this.slots.get(m.tag)!.state = 'loading'; this.build(m); }
+    this.poserBrume();
+    this.poserRivage();
     this.pump(Infinity);   // au lancement, tout de suite (l'écran de chargement couvre)
     // paillasson à chaque sortie d'intérieur, comme Sanstour (Mathis 2026-11-08) : dalle de pierre au soleil vert qui luit,
     // posée sur la case de sortie officielle (la boîte de survol de la carte Dofus 3 quand elle existe), visible dans sa salle
@@ -161,6 +181,8 @@ export class WorldView {
       // intérieur : pas de ciel, fond noir comme dans Dofus
       // (le Temple Céleste flotte dans le ciel : il le garde)
       this.sky?.setVisible(!here.inside || !!here.ciel);
+      this.brume?.setVisible(!here.inside);
+      this.rivage?.setVisible(!here.inside);
       for (const p of this.paillassons) {
         const v = p.tag === here.tag;
         p.im.setVisible(v); p.soleil?.setVisible(v); p.etincelles?.setVisible(v);
@@ -328,7 +350,6 @@ export class WorldView {
       const f = wg.toScreen(m.bord.x, m.bord.y), rang = (m.y - this.wg.world.origin[1]) * 1000 + (m.x - this.wg.world.origin[0]);
       s.objs.push(this.scene.add.image(f.x, f.y, this.k(`bord_${m.tag}`)).setOrigin(0).setScale(S).setDepth(SOL + 1.4 - rang * 1e-6).setTint(this.tint));
     }
-    this.brume(m, s);
     s.next = 0;
     // plus de repère doré au sol (maquette Entrées 18A, comme Sanstour) : la porte et le paillasson officiels se voient,
     // et le survol donne le nom et le curseur maison
@@ -338,32 +359,85 @@ export class WorldView {
   }
   /** Bord du monde (monde sans ciel, ex. Astrub) : là où une carte du dehors n'a pas de voisine, son sol s'arrêtait net en escalier
    *  sur le fond, avec des bouts de toits qui flottaient au-delà (Tainéla, retour de Mathis 2026-11-06 ; Dofus ne montre qu'une
-   *  carte, on n'y voit jamais ce bord). On fond le bord de la carte dans la couleur du fond, sur 2 cases, puis on couvre le reste. */
-  private brume(m: WorldMapEntry, s: Slot) {
+   *  carte, on n'y voit jamais ce bord). Une seule image pour tout le monde, petite (1 px = 32 px du monde) et floutée : le cadre
+   *  des cartes du dehors, flouté sur 3 cases, donne un fondu doux qui épouse la côte et arrondit les coins. Avant, chaque carte
+   *  posait ses bandes et ses aplats rectangulaires : des escaliers de mer à chaque coin (maquette Raccords, 2026-11-08).
+   *  Couleur : celle de la mer près des cartes du rivage (champ "mer", tools/extraction/mer.py), le bleu nuit ailleurs. */
+  private poserBrume() {
     const w = this.wg.world;
-    if (w.sky || m.inside) return;
-    const g = w.grid, [X0, Y0] = w.origin, S = GridMap.S;
-    const x0 = g.ox + Math.floor(g.w / 4) + (m.x - X0) * MAP_COLS * g.w, y0 = g.oy + Math.floor(g.h / 4) + (m.y - Y0) * MAP_ROWS * g.h / 2;
-    const a = this.wg.toScreen(x0, y0), W = MAP_COLS * g.w * S, H = MAP_ROWS * g.h / 2 * S;
-    // rivage (Calanques) : le bord se fond dans la mer au lieu du bleu nuit (retour de Mathis, 2026-11-07)
-    const voisineMer = w.maps.find(n => !n.inside && n.mer !== undefined && Math.abs(n.x - m.x) <= 2 && Math.abs(n.y - m.y) <= 2);
-    const dedans = 2 * g.w * S, dehors = 0.4 * g.w * S, loin = 1600, c = m.mer ?? voisineMer?.mer ?? 0x0d2b36;
-    const libre = (dx: number, dy: number) => !this.dehors.has(`${m.x + dx},${m.y + dy}`);
-    const gr = this.scene.add.graphics().setDepth(1e6);
-    const bande = (x: number, y: number, w2: number, h2: number, a1: number, a2: number, a3: number, a4: number) =>
-      gr.fillGradientStyle(c, c, c, c, a1, a2, a3, a4).fillRect(x, y, w2, h2);
-    const plein = (x: number, y: number, w2: number, h2: number) => gr.fillStyle(c, 1).fillRect(x, y, w2, h2);
-    const L = libre(-1, 0), R = libre(1, 0), T = libre(0, -1), B = libre(0, 1), e = dehors + loin;
-    if (L) { bande(a.x - dehors, a.y, dedans + dehors, H, 1, 0, 1, 0); plein(a.x - e, a.y, loin, H); }
-    if (R) { bande(a.x + W - dedans, a.y, dedans + dehors, H, 0, 1, 0, 1); plein(a.x + W + dehors, a.y, loin, H); }
-    if (T) { bande(a.x, a.y - dehors, W, dedans + dehors, 1, 1, 0, 0); plein(a.x, a.y - e, W, loin); }
-    if (B) { bande(a.x, a.y + H - dedans, W, dedans + dehors, 0, 0, 1, 1); plein(a.x, a.y + H + dehors, W, loin); }
-    // coins : seulement si les deux côtés et la diagonale sont vides
-    if (L && T && libre(-1, -1)) plein(a.x - e, a.y - e, e, e);
-    if (R && T && libre(1, -1)) plein(a.x + W, a.y - e, e, e);
-    if (L && B && libre(-1, 1)) plein(a.x - e, a.y + H, e, e);
-    if (R && B && libre(1, 1)) plein(a.x + W, a.y + H, e, e);
-    if (gr.commandBuffer.length) s.objs.push(gr); else gr.destroy();
+    if (w.sky) return;
+    const dehors = w.maps.filter(m => !m.inside);
+    if (!dehors.length) return;
+    const g = w.grid, [X0, Y0] = w.origin, Wm = MAP_COLS * g.w, Hm = MAP_ROWS * g.h / 2, K = 32, MARGE = 3200;
+    const cadre = (m: WorldMapEntry) => ({ x: g.ox + Math.floor(g.w / 4) + (m.x - X0) * Wm, y: g.oy + Math.floor(g.h / 4) + (m.y - Y0) * Hm });
+    const cs = dehors.map(cadre);
+    const bx = Math.min(...cs.map(c => c.x)) - MARGE, by = Math.min(...cs.map(c => c.y)) - MARGE;
+    const L = Math.ceil((Math.max(...cs.map(c => c.x)) + Wm + MARGE - bx) / K), Hh = Math.ceil((Math.max(...cs.map(c => c.y)) + Hm + MARGE - by) / K);
+    const terre = new Float32Array(L * Hh), r = new Float32Array(L * Hh), v = new Float32Array(L * Hh), b = new Float32Array(L * Hh);
+    const nuit = 0x0d2b36, fond = [nuit >> 16, nuit >> 8 & 255, nuit & 255];
+    for (let i = 0; i < L * Hh; i++) { r[i] = fond[0]; v[i] = fond[1]; b[i] = fond[2]; }
+    const remplir = (x: number, y: number, w2: number, h2: number, f: (i: number) => void) => {
+      const i0 = Math.max(0, Math.round((x - bx) / K)), i1 = Math.min(L, Math.round((x + w2 - bx) / K));
+      const j0 = Math.max(0, Math.round((y - by) / K)), j1 = Math.min(Hh, Math.round((y + h2 - by) / K));
+      for (let j = j0; j < j1; j++) for (let i = i0; i < i1; i++) f(j * L + i);
+    };
+    dehors.forEach((m, n) => {
+      if (m.mer === undefined) return;   // la mer s'étend sur 2 cartes autour du rivage, comme avant
+      const c = cs[n], col = [m.mer >> 16, m.mer >> 8 & 255, m.mer & 255];
+      remplir(c.x - 2 * Wm, c.y - 2 * Hm, 5 * Wm, 5 * Hm, i => { r[i] = col[0]; v[i] = col[1]; b[i] = col[2]; });
+    });
+    cs.forEach(c => remplir(c.x, c.y, Wm, Hm, i => { terre[i] = 1; }));
+    flou(terre, L, Hh, 3);
+    for (const c of [r, v, b]) flou(c, L, Hh, 12);
+    const cv = document.createElement('canvas'); cv.width = L; cv.height = Hh;
+    const ctx = cv.getContext('2d')!, img = ctx.createImageData(L, Hh), d = img.data;
+    for (let i = 0; i < L * Hh; i++) {
+      // terre floutée : 1 au cœur de la carte, 0,5 sur le cadre, 0 au large. Opaque à ~½ case dehors, transparent à ~2 cases dedans.
+      const a = lisse((0.92 - terre[i]) / (0.92 - 0.3));
+      d[4 * i] = r[i]; d[4 * i + 1] = v[i]; d[4 * i + 2] = b[i]; d[4 * i + 3] = Math.round(a * 255);
+    }
+    ctx.putImageData(img, 0, 0);
+    const cle = this.k('brume');
+    if (this.scene.textures.exists(cle)) this.scene.textures.remove(cle);
+    this.scene.textures.addCanvas(cle, cv);
+    const o = this.wg.toScreen(bx, by);
+    this.brume = this.scene.add.image(o.x, o.y, cle).setOrigin(0).setScale(K * GridMap.S).setDepth(1e6);
+  }
+  /** Mer du rivage (maquette Raccords, 2026-11-08) : l'eau officielle des cartes du rivage s'arrêtait net au cadre de la carte,
+   *  sur l'aplat de la mer. On la fond dans la couleur de la mer à partir de la vraie côte (champ "rivage", tools/extraction/mer.py) :
+   *  une bande d'eau officielle le long du sable, puis la mer unie, sans coin ni escalier. Posée juste au-dessus des sols, sous le
+   *  décor : bateaux, rochers et vaguelettes restent visibles. */
+  private poserRivage() {
+    const w = this.wg.world, cotes = w.maps.filter(m => !m.inside && m.rivage && m.mer !== undefined);
+    if (w.sky || !cotes.length) return;
+    const g = w.grid, [X0, Y0] = w.origin, Wm = MAP_COLS * g.w, Hm = MAP_ROWS * g.h / 2, K = cotes[0].rivage!.k, mer = cotes[0].mer!;
+    const cadre = (m: WorldMapEntry) => ({ x: g.ox + Math.floor(g.w / 4) + (m.x - X0) * Wm, y: g.oy + Math.floor(g.h / 4) + (m.y - Y0) * Hm });
+    const cs = cotes.map(cadre);
+    const bx = Math.min(...cs.map(c => c.x)) - 2 * Wm, by = Math.min(...cs.map(c => c.y)) - 2 * Hm;
+    const L = Math.ceil((Math.max(...cs.map(c => c.x)) + 3 * Wm - bx) / K), H = Math.ceil((Math.max(...cs.map(c => c.y)) + 3 * Hm - by) / K);
+    const terre = new Float32Array(L * H);
+    const poser = (x: number, y: number, nw: number, nh: number, f: (i: number, j: number) => number) => {
+      const i0 = Math.round((x - bx) / K), j0 = Math.round((y - by) / K);
+      for (let j = 0; j < nh; j++) for (let i = 0; i < nw; i++) {
+        const ii = i0 + i, jj = j0 + j;
+        if (ii >= 0 && jj >= 0 && ii < L && jj < H) terre[jj * L + ii] = f(i, j);
+      }
+    };
+    for (const m of w.maps) if (!m.inside && !m.rivage) { const c = cadre(m); poser(c.x, c.y, Math.ceil(Wm / K), Math.ceil(Hm / K), () => 1); }
+    cotes.forEach((m, n) => { const r = m.rivage!; poser(cs[n].x, cs[n].y, r.w, r.h, (i, j) => r.d.charCodeAt(j * r.w + i) === 49 ? 1 : 0); });
+    flou(terre, L, H, 8);
+    const cv = document.createElement('canvas'); cv.width = L; cv.height = H;
+    const ctx = cv.getContext('2d')!, img = ctx.createImageData(L, H), d = img.data;
+    for (let i = 0; i < L * H; i++) {
+      // 0,5 = la côte ; l'eau officielle se voit sur ~1 case, puis la mer unie à ~2 cases
+      d[4 * i] = mer >> 16; d[4 * i + 1] = mer >> 8 & 255; d[4 * i + 2] = mer & 255; d[4 * i + 3] = Math.round(lisse((0.45 - terre[i]) / 0.35) * 255);
+    }
+    ctx.putImageData(img, 0, 0);
+    const cle = this.k('rivage');
+    if (this.scene.textures.exists(cle)) this.scene.textures.remove(cle);
+    this.scene.textures.addCanvas(cle, cv);
+    const o = this.wg.toScreen(bx, by);
+    this.rivage = this.scene.add.image(o.x, o.y, cle).setOrigin(0).setScale(K * GridMap.S).setDepth(SOL + 1.5);
   }
   /** Pose le décor des cartes prêtes, dans la limite du budget de temps. */
   private pump(budget = BUDGET_MS) {

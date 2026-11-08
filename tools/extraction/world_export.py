@@ -10,7 +10,7 @@
 import sys, json, glob, os, warnings
 warnings.filterwarnings('ignore')
 import UnityPy
-from PIL import Image, ImageStat, ImageFilter
+from PIL import Image, ImageStat, ImageFilter, ImageChops
 import numpy as np
 from collections import Counter
 UnityPy.config.FALLBACK_UNITY_VERSION = "6000.3.16f1"
@@ -243,6 +243,25 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
         lisse.putalpha(al)
         garde = set(tuiles)
         els = [((lisse, tx0 - P, ty0 - P) if i == tuiles[0] else t) for i, t in enumerate(els) if i not in garde or i == tuiles[0]]
+    # Dehors, hors du cadre (jamais montré par Dofus, la caméra s'arrête au cadre) : les losanges de sable y finissent en escalier
+    # sur la mer. Chez nous ce bord se voit (débords sur les voisines, bord du monde) : on rogne chaque losange par le contour arrondi
+    # de l'ensemble, sans rien changer dans le cadre ni l'ordre de dessin (maquette Raccords, 2026-11-08 ; SABLE_ESCALIER=1 : ancien).
+    if tuiles and not extra[(x, y)].get('inside') and os.environ.get('SABLE_ESCALIER') != '1':
+        tx0 = min(els[i][1] for i in tuiles); ty0 = min(els[i][2] for i in tuiles)
+        tx1 = max(els[i][1] + els[i][0].width for i in tuiles); ty1 = max(els[i][2] + els[i][0].height for i in tuiles)
+        P = 24; ua = Image.new('L', (tx1 - tx0 + 2 * P, ty1 - ty0 + 2 * P))
+        for i in tuiles:
+            im, ex, ey = els[i]; ua.paste(255, (ex - tx0 + P, ey - ty0 + P), im.getchannel('A').point(lambda q: 255 if q > 128 else 0))
+        rond = ua.filter(ImageFilter.GaussianBlur(14)).point(lambda q: 0 if q < 150 else 255 if q > 225 else (q - 150) * 255 // 75)
+        # dans le cadre : tel quel, sauf la dernière case d'un côté sans voisine (bord de l'écran dans Dofus, bord du monde chez nous)
+        lib = {'l': (x - 1, y) not in sel, 't': (x, y - 1) not in sel, 'r': (x + 1, y) not in sel, 'b': (x, y + 1) not in sel}
+        cx0, cy0 = x0m + W * lib['l'], y0m + H * lib['t']; cx1, cy1 = x1m - W * lib['r'], y1m - H * lib['b']
+        rond.paste(255, (cx0 - tx0 + P, cy0 - ty0 + P, cx1 - tx0 + P, cy1 - ty0 + P))
+        for i in tuiles:
+            im, ex, ey = els[i]
+            if ex >= cx0 and ey >= cy0 and ex + im.width <= cx1 and ey + im.height <= cy1: continue
+            m = rond.crop((ex - tx0 + P, ey - ty0 + P, ex - tx0 + P + im.width, ey - ty0 + P + im.height))
+            im = im.copy(); im.putalpha(ImageChops.multiply(im.getchannel('A'), m)); els[i] = (im, ex, ey)
     nb = {'l': (x - 1, y) in sel, 't': (x, y - 1) in sel, 'r': (x + 1, y) in sel, 'b': (x, y + 1) in sel}
     def crosses(ex, ey, im):
         return (nb['l'] and ex < x0m) or (nb['t'] and ey < y0m) or (nb['r'] and ex + im.width > x1m) or (nb['b'] and ey + im.height > y1m)
@@ -377,7 +396,9 @@ if PARTAGE:
 #  - là où la voisine n'a rien (trou, ciel) : en entier (falaises et rochers qui débordent) ;
 #  - ailleurs : en fondu sur BORD px (ombres, fonds de ciel… plus de coupure nette au raccord).
 import numpy as np
-BORD = 160
+# Là où la voisine a son propre sol, son dessin fait foi : ce qu'une carte peint au-delà de son cadre (jamais vu dans Dofus) y faisait
+# des bandes rectangulaires d'eau ou de sable sur 160 px (maquette Raccords, 2026-11-08). BORD=160 dans l'environnement : ancien fondu.
+BORD = int(os.environ.get('BORD', '0'))
 for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
     tag = extra[(x, y)].get('tag', f'{x}_{y}')
     if tag not in entiers: continue
@@ -396,7 +417,7 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
         a2 = np.asarray(s2.crop((x0 - ox, y0 - oy, x1 - ox, y1 - oy))).astype(np.float32)
         sub = autre[y0 - uy:y1 - uy, x0 - ux:x1 - ux]; np.maximum(sub, a2, out=sub)
     d = np.maximum(np.maximum(rx0 - gx, gx - rx1), np.maximum(ry0 - gy, gy - ry1)).clip(0)
-    f = np.where(autre < 128, 1.0, np.clip(1 - d / BORD, 0, 1)) * hors
+    f = np.where(autre < 128, 1.0, np.clip(1 - d / BORD, 0, 1) if BORD else 0.0) * hors
     A[..., 3] *= f
     if not (A[..., 3] > 4).any(): continue
     im = Image.fromarray(A.astype(np.uint8), 'RGBA'); b = im.getbbox()
