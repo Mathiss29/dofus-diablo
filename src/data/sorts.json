@@ -3452,5 +3452,1676 @@
     ]
    }
   ]
+ ],
+ "osamodas": [
+  [
+   {
+    "id": 31110,
+    "name": "Cri du Corbac",
+    "icon": 14427,
+    "desc": "Vole de la vie aux ennemis ou soigne les alliés dans l'élément Air.\nAugmente également les PM du lanceur et de l'allié ciblé.\n\nLes soins n'affectent pas le lanceur.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       8,
+       10
+      ],
+      "element": "air",
+      "vol": true
+     },
+     {
+      "niv": 66,
+      "pa": 2,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       11,
+       13
+      ],
+      "element": "air",
+      "vol": true
+     },
+     {
+      "niv": 132,
+      "pa": 2,
+      "po": [
+       0,
+       7
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       13,
+       16
+      ],
+      "element": "air",
+      "vol": true
+     }
+    ]
+   },
+   {
+    "id": 31113,
+    "name": "Crocs du Mulou",
+    "icon": 14270,
+    "desc": "Occasionne des dommages Terre aux ennemis et augmente les dommages en mêlée du lanceur et des alliés en zone.",
+    "grades": [
+     {
+      "niv": 95,
+      "pa": 4,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       36,
+       38
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 162,
+      "pa": 4,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       39,
+       43
+      ],
+      "element": "terre"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 31111,
+    "name": "Pics du Prespic",
+    "icon": 14442,
+    "desc": "Vole de la vie aux ennemis ou soigne les alliés dans l'élément Feu.\nAugmente également les Critiques du lanceur et de l'allié ciblé.\n\nLes soins n'affectent pas le lanceur.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 2,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       8,
+       10
+      ],
+      "element": "feu",
+      "vol": true
+     },
+     {
+      "niv": 67,
+      "pa": 2,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       11,
+       13
+      ],
+      "element": "feu",
+      "vol": true
+     },
+     {
+      "niv": 133,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       14,
+       17
+      ],
+      "element": "feu",
+      "vol": true
+     }
+    ]
+   },
+   {
+    "id": 31137,
+    "name": "Déplumage",
+    "icon": 14718,
+    "desc": "Occasionne des dommages Air et réduit les Résistances Poussée des ennemis en zone.",
+    "grades": [
+     {
+      "niv": 100,
+      "pa": 4,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       33,
+       35
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 167,
+      "pa": 4,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       37,
+       40
+      ],
+      "element": "air"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 31135,
+    "name": "Dents du Piranya",
+    "icon": 14439,
+    "desc": "Soigne les alliés et vole de la vie dans l'élément Eau aux ennemis en zone.\nAugmente également les Dommages du lanceur et des alliés ciblés.\n\nLes soins n'affectent pas le lanceur.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 3,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       11,
+       13
+      ],
+      "element": "eau",
+      "vol": true
+     },
+     {
+      "niv": 68,
+      "pa": 3,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       15,
+       17
+      ],
+      "element": "eau",
+      "vol": true
+     },
+     {
+      "niv": 134,
+      "pa": 3,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       19,
+       22
+      ],
+      "element": "eau",
+      "vol": true
+     }
+    ]
+   },
+   {
+    "id": 31140,
+    "name": "Cœur Sauvage",
+    "icon": 14503,
+    "desc": "Occasionne des dommages Feu aux ennemis et augmente les soins reçus du lanceur et des alliés en zone.",
+    "grades": [
+     {
+      "niv": 105,
+      "pa": 4,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       33,
+       37
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 172,
+      "pa": 4,
+      "po": [
+       0,
+       7
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       39,
+       43
+      ],
+      "element": "feu"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 31132,
+    "name": "Cri de l'Ours",
+    "icon": 14443,
+    "desc": "Soigne les alliés et vole de la vie dans l'élément Terre aux ennemis en zone.\nAugmente également la Puissance du lanceur et des alliés ciblés.\n\nLes soins n'affectent pas le lanceur.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 3,
+      "po": [
+       0,
+       1
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       14,
+       16
+      ],
+      "element": "terre",
+      "vol": true
+     },
+     {
+      "niv": 69,
+      "pa": 3,
+      "po": [
+       0,
+       1
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       18,
+       20
+      ],
+      "element": "terre",
+      "vol": true
+     },
+     {
+      "niv": 136,
+      "pa": 3,
+      "po": [
+       0,
+       1
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       23,
+       26
+      ],
+      "element": "terre",
+      "vol": true
+     }
+    ]
+   },
+   {
+    "id": 31139,
+    "name": "Bave du Crapaud",
+    "icon": 12845,
+    "desc": "Occasionne des dommages Eau et retire des Dommages aux ennemis en zone.",
+    "grades": [
+     {
+      "niv": 110,
+      "pa": 4,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       32,
+       34
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 177,
+      "pa": 4,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       37,
+       40
+      ],
+      "element": "eau"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 31114,
+    "name": "Fouet",
+    "icon": 14267,
+    "desc": "Occasionne des dommages dans le meilleur élément du lanceur aux ennemis et repousse la cible.\nAugmente également les PM de la cible si c'est une invocation alliée.",
+    "grades": [
+     {
+      "niv": 5,
+      "pa": 2,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 1,
+      "dmg": [
+       8,
+       10
+      ],
+      "element": "meilleur"
+     },
+     {
+      "niv": 72,
+      "pa": 2,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 1,
+      "dmg": [
+       11,
+       13
+      ],
+      "element": "meilleur"
+     },
+     {
+      "niv": 139,
+      "pa": 2,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 1,
+      "dmg": [
+       15,
+       17
+      ],
+      "element": "meilleur"
+     }
+    ]
+   },
+   {
+    "id": 31136,
+    "name": "Cravache",
+    "icon": 14268,
+    "desc": "Attire les cibles vers le centre et occasionne des dommages dans le meilleur élément du lanceur aux ennemis en zone.\nTéléporte les cibles symétriquement par rapport au centre si la case centrale est occupée.\n\nN'affecte pas directement le lanceur.",
+    "grades": [
+     {
+      "niv": 115,
+      "pa": 2,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       9,
+       11
+      ],
+      "element": "meilleur"
+     },
+     {
+      "niv": 182,
+      "pa": 2,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       11,
+       13
+      ],
+      "element": "meilleur"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 31115,
+    "name": "Tofu",
+    "icon": 12987,
+    "desc": "Invoque un Tofu maîtrisable qui peut occasionner des dommages Air, soigner, retirer du Tacle et repousser.",
+    "grades": [
+     {
+      "niv": 10,
+      "pa": 3,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 1,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 77,
+      "pa": 3,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 1,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 144,
+      "pa": 3,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 1,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   },
+   {
+    "id": 31134,
+    "name": "Griffes du Chtigre",
+    "icon": 14437,
+    "desc": "Occasionne des dommages Feu et réduit les soins reçus par la cible.",
+    "grades": [
+     {
+      "niv": 120,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       21,
+       23
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 187,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       26,
+       29
+      ],
+      "element": "feu"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 31116,
+    "name": "Bouftou",
+    "icon": 14561,
+    "desc": "Invoque un Bouftou maîtrisable qui peut occasionner des dommages Terre, soigner, retirer de la Fuite et se téléporter.",
+    "grades": [
+     {
+      "niv": 15,
+      "pa": 3,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 1,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 82,
+      "pa": 3,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 1,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 149,
+      "pa": 3,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 1,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   },
+   {
+    "id": 31133,
+    "name": "Serres du Vautour",
+    "icon": 14467,
+    "desc": "Occasionne des dommages Air aux ennemis et soigne leurs attaquants en zone.",
+    "grades": [
+     {
+      "niv": 125,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       18,
+       20
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 192,
+      "pa": 3,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       22,
+       25
+      ],
+      "element": "air"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 31117,
+    "name": "Crapipou",
+    "icon": 14429,
+    "desc": "Invoque un Crapipou maîtrisable qui peut occasionner des dommages et appliquer un poison Eau, soigner, augmenter ou retirer de la Portée et s'éloigner.",
+    "grades": [
+     {
+      "niv": 20,
+      "pa": 3,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 1,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 87,
+      "pa": 3,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 1,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 154,
+      "pa": 3,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 1,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   },
+   {
+    "id": 31138,
+    "name": "Toison d'Or",
+    "icon": 14426,
+    "desc": "Applique un bouclier sur les alliés et occasionne des dommages Terre aux ennemis en zone.",
+    "grades": [
+     {
+      "niv": 130,
+      "pa": 3,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       22,
+       24
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 197,
+      "pa": 3,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       24,
+       27
+      ],
+      "element": "terre"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 31118,
+    "name": "Dragoune",
+    "icon": 14430,
+    "desc": "Invoque une Dragoune maîtrisable qui peut occasionner des dommages Feu, soigner, retirer de la Puissance et échanger de positions.",
+    "grades": [
+     {
+      "niv": 25,
+      "pa": 3,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 1,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 92,
+      "pa": 3,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 1,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 159,
+      "pa": 3,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 1,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   },
+   {
+    "id": 31112,
+    "name": "Morsure du Serpent",
+    "icon": 14468,
+    "desc": "Augmente les dommages subis par la cible et lui applique un poison Eau de début de tour.",
+    "grades": [
+     {
+      "niv": 135,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       19,
+       21
+      ],
+      "element": "eau"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 31119,
+    "name": "Cortège Sauvage",
+    "icon": 12776,
+    "desc": "Augmente les Invocations du lanceur et réduit le coût en PA des sorts d'invocation Osamodas.\n\nToutes les invocations Osamodas meurent au début du tour du lanceur tant qu'il est sous les effets du sort.",
+    "grades": [
+     {
+      "niv": 30,
+      "pa": 3,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 5,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 97,
+      "pa": 2,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 5,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 164,
+      "pa": 2,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 5,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   },
+   {
+    "id": 31141,
+    "name": "Pacte Bestial",
+    "icon": 12853,
+    "desc": "Applique l'état Bestial sur le lanceur :\n• Augmente ses PA.\n• Sacrifie toutes ses présentes et futures invocations Osamodas pour augmenter ses dommages et soins finaux.\n• Transfère une partie de la vie des invocations sacrifiées vers le lanceur.\n• Les effets sont plus importants selon le coût en PI de l'invocation.\n\nLes Gobgobs ne sont pas affectés par le sort.\nLa durée de l'état et du bonus PA est prolongée si le lanceur invoque une créature Osamodas.\nLe temps de relance des sorts d'invocation Osamodas est réinitialisé et les effets du sort sont retirés à la perte de l'état ou si le sort est relancé.",
+    "grades": [
+     {
+      "niv": 140,
+      "pa": 2,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 31120,
+    "name": "Piqûre Motivante",
+    "icon": 12777,
+    "desc": "Augmente les PA et les PM de la cible.\nLes effets sont plus importants sur les invocations.",
+    "grades": [
+     {
+      "niv": 35,
+      "pa": 2,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 102,
+      "pa": 2,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 169,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   },
+   {
+    "id": 31142,
+    "name": "Communion Animale",
+    "icon": 15252,
+    "desc": "Partage les dommages entre le lanceur et une invocation alliée.\n\nSur le lanceur : partage les dommages entre toutes ses invocations.",
+    "grades": [
+     {
+      "niv": 145,
+      "pa": 3,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 31121,
+    "name": "Saute-granouille",
+    "icon": 13883,
+    "desc": "Téléporte le lanceur symétriquement par rapport à la cible et occasionne des dommages Eau aux ennemis.\nTéléporte également la cible symétriquement par rapport au lanceur si c'est une invocation.",
+    "grades": [
+     {
+      "niv": 40,
+      "pa": 3,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       16,
+       18
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 107,
+      "pa": 3,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       21,
+       23
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 174,
+      "pa": 3,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       26,
+       30
+      ],
+      "element": "eau"
+     }
+    ]
+   },
+   {
+    "id": 31143,
+    "name": "Tornade de Plumes",
+    "icon": 14436,
+    "desc": "Téléporte le lanceur sur la case ciblée, occasionne des dommages Air aux ennemis et repousse les cibles depuis le centre en zone.",
+    "grades": [
+     {
+      "niv": 150,
+      "pa": 4,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       34,
+       38
+      ],
+      "element": "air"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 31122,
+    "name": "Souffle Draconique",
+    "icon": 12835,
+    "desc": "Éloigne le lanceur des cibles, occasionne des dommages Feu aux ennemis et repousse les cibles en zone.",
+    "grades": [
+     {
+      "niv": 45,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       14,
+       16
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 112,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       19,
+       22
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 179,
+      "pa": 3,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       23,
+       26
+      ],
+      "element": "feu"
+     }
+    ]
+   },
+   {
+    "id": 31144,
+    "name": "Frappe du Craqueleur",
+    "icon": 12775,
+    "desc": "Occasionne des dommages Terre et attire les cibles jusqu'au centre en zone.\nN'affecte pas le lanceur.",
+    "grades": [
+     {
+      "niv": 155,
+      "pa": 4,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       31,
+       35
+      ],
+      "element": "terre"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 31123,
+    "name": "Charge Bestiale",
+    "icon": 14272,
+    "desc": "Rapproche le lanceur vers la cible et occasionne des dommages Terre aux ennemis.\nAttire également les invocations jusqu'au centre en zone autour de la cible.",
+    "grades": [
+     {
+      "niv": 50,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       16,
+       18
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 117,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       22,
+       25
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 184,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       26,
+       29
+      ],
+      "element": "terre"
+     }
+    ]
+   },
+   {
+    "id": 31145,
+    "name": "Chant du Phénix",
+    "icon": 14553,
+    "desc": "Soigne les alliés, occasionne des dommages Feu aux ennemis et repousse les cibles depuis le centre en zone.",
+    "grades": [
+     {
+      "niv": 160,
+      "pa": 4,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       30,
+       34
+      ],
+      "element": "feu"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 31124,
+    "name": "Aéropique",
+    "icon": 12834,
+    "desc": "Rapproche le lanceur vers la cible, occasionne des dommages Air aux ennemis et repousse la cible.\nRepousse également les entités au contact de la cible si cette dernière est une invocation.",
+    "grades": [
+     {
+      "niv": 55,
+      "pa": 3,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       16,
+       18
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 122,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       21,
+       24
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 189,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       24,
+       27
+      ],
+      "element": "air"
+     }
+    ]
+   },
+   {
+    "id": 31146,
+    "name": "Tourbillon",
+    "icon": 12781,
+    "desc": "Téléporte les alliés symétriquement par rapport au centre et occasionne des dommages Eau aux ennemis en zone.",
+    "grades": [
+     {
+      "niv": 165,
+      "pa": 4,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       31,
+       35
+      ],
+      "element": "eau"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 31125,
+    "name": "Discipline",
+    "icon": 14291,
+    "desc": "Occasionne des dommages dans le meilleur élément du lanceur et retire des PM aux ennemis, et attire la cible.",
+    "grades": [
+     {
+      "niv": 60,
+      "pa": 2,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       14,
+       16
+      ],
+      "element": "meilleur"
+     },
+     {
+      "niv": 127,
+      "pa": 2,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       17,
+       20
+      ],
+      "element": "meilleur"
+     },
+     {
+      "niv": 194,
+      "pa": 2,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       19,
+       22
+      ],
+      "element": "meilleur"
+     }
+    ]
+   },
+   {
+    "id": 31147,
+    "name": "Martinet",
+    "icon": 14347,
+    "desc": "Attire toutes les invocations du lanceur vers la cible et occasionne des dommages dans le meilleur élément du lanceur aux ennemis.\n\nLes invocations Osamodas attaquent également si elles sont à portée et en ligne de vue de la cible.\nLes dommages et soins des invocations sont réduits de 50% pendant l'utilisation du sort.\n• Tofu : Bisou Béco\n• Bouftou : Saute-bouftou\n• Crapipou : Croassement\n• Dragoune : Dracorage\n• Ventritofu : Ventripoussée\n• Bouflourd : Charge du Bouflourd\n• Crapipaud : Crapobatie\n• Dragonnet : Souffle du Dragon\n• Scarafoudre : Scarafusée\n• Craquolosse : Fronde Rocheuse\n• Crocoléreux : Crocs Coléreux\n• Sulfénix : Sulfuria",
+    "grades": [
+     {
+      "niv": 170,
+      "pa": 3,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0,
+      "dmg": [
+       21,
+       24
+      ],
+      "element": "meilleur"
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 31152,
+    "name": "Laisse Spirituelle",
+    "icon": 14440,
+    "desc": "Applique l'état En laisse sur la cible pour le tour en cours :\n• Suit le lanceur immédiatement et lorsqu'il utilise ses PM.\n\nSur le lanceur : applique l'état sur toutes ses invocations.\n\nL'état est retiré si le lanceur ou la cible sont déplacés.",
+    "grades": [
+     {
+      "niv": 65,
+      "pa": 2,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 131,
+      "pa": 2,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 198,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   },
+   {
+    "id": 31130,
+    "name": "Relais Spirituel",
+    "icon": 14441,
+    "desc": "Échange de position avec une invocation du lanceur et lui applique l'état Relais :\n• Les prochains échanges se feront entre l'invocation dans l'état et la prochaine invocation ciblée.\n\nLes échanges ne s'appliquent que si les invocations sont à 5 cases ou moins du lanceur.",
+    "grades": [
+     {
+      "niv": 175,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 31126,
+    "name": "Ventritofu",
+    "icon": 14435,
+    "desc": "Invoque un Ventritofu maîtrisable qui peut occasionner des dommages Air, augmenter la Fuite, se téléporter, téléporter symétriquement des entités, repousser et se rapprocher.",
+    "grades": [
+     {
+      "niv": 70,
+      "pa": 4,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 137,
+      "pa": 4,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   },
+   {
+    "id": 31149,
+    "name": "Craquolosse",
+    "icon": 14555,
+    "desc": "Invoque un Craquolosse maîtrisable qui peut occasionner des dommages Terre, attirer, retirer des PM et augmenter les résistances.",
+    "grades": [
+     {
+      "niv": 180,
+      "pa": 5,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 31127,
+    "name": "Bouflourd",
+    "icon": 14445,
+    "desc": "Invoque un Bouflourd maîtrisable qui peut occasionner des dommages Terre, réduire les dommages subis, se rapprocher et attirer.",
+    "grades": [
+     {
+      "niv": 75,
+      "pa": 4,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 142,
+      "pa": 4,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   },
+   {
+    "id": 31150,
+    "name": "Crocoléreux",
+    "icon": 14556,
+    "desc": "Invoque un Crocoléreux maîtrisable qui peut occasionner des dommages Eau, retirer des Critiques et réduire les soins et les dommages reçus.",
+    "grades": [
+     {
+      "niv": 185,
+      "pa": 5,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 31128,
+    "name": "Crapipaud",
+    "icon": 12986,
+    "desc": "Invoque un Crapipaud maîtrisable qui peut occasionner des dommages et appliquer un poison Eau, augmenter les PM, repousser et se téléporter symétriquement.",
+    "grades": [
+     {
+      "niv": 80,
+      "pa": 4,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 147,
+      "pa": 4,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   },
+   {
+    "id": 31151,
+    "name": "Sulfénix",
+    "icon": 14554,
+    "desc": "Invoque un Sulfénix maîtrisable qui peut occasionner des dommages Feu, soigner et se téléporter.",
+    "grades": [
+     {
+      "niv": 190,
+      "pa": 5,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 31129,
+    "name": "Dragonnet",
+    "icon": 12990,
+    "desc": "Invoque un Dragonnet maîtrisable qui peut occasionner des dommages Feu, augmenter la Puissance et repousser.",
+    "grades": [
+     {
+      "niv": 85,
+      "pa": 4,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 152,
+      "pa": 4,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   },
+   {
+    "id": 31148,
+    "name": "Scarafoudre",
+    "icon": 14560,
+    "desc": "Invoque un Scarafoudre maîtrisable qui peut occasionner des dommages Air, se téléporter, retirer des chances de Critique et appliquer du bouclier.",
+    "grades": [
+     {
+      "niv": 195,
+      "pa": 5,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   }
+  ],
+  [
+   {
+    "id": 31131,
+    "name": "Esprit Glouton",
+    "icon": 14432,
+    "desc": "Invoque un Gobgob Glouton contrôlable qui peut occasionner des dommages Neutre selon sa vie, tuer des invocations alliés pour augmenter sa Vitalité et ses PM, intercepter les dommages d'un allié et se téléporter en créant des illusions.\n\nLe temps de relance est fixé à la mort du Gobgob.",
+    "grades": [
+     {
+      "niv": 90,
+      "pa": 3,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 0,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 157,
+      "pa": 3,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 0,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   },
+   {
+    "id": 31153,
+    "name": "Esprit Facétieux",
+    "icon": 14433,
+    "desc": "Invoque un Gobgob Facétieux contrôlable qui peut échanger de positions, réduire la durée des effets et se sacrifier pour copier une invocation Osamodas.\n\nLe temps de relance est fixé à la mort du Gobgob.",
+    "grades": [
+     {
+      "niv": 200,
+      "pa": 3,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 0,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ]
+   }
+  ]
  ]
 }

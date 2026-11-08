@@ -37,6 +37,8 @@ export interface PlayerInput {
   zaap?: number | null;
   /** Clic sur un Zaap du monde (maquette « Zaap : » 1A) : son nom ; le perso y va et la fenêtre s'ouvre en arrivant. */
   versZaap?: string | null;
+  /** Alt + clic sur un monstre (maquette Osamodas 7C) : toute la meute de l'Osamodas l'attaque. */
+  meute?: number | null;
   /** Partie de test : ordres du panneau F1 (absent dans une vraie partie). */
   test?: CommandeTest[] | null;
 }

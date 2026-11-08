@@ -20,6 +20,8 @@ function mulTint(a: number, b: number) {
 export class EntityView {
   /** Teinte d'ambiance des personnages et des monstres (render/ambiance.ts : plus légère que celle des cartes, ils ressortent la nuit). */
   static ambiance = 0xffffff;
+  /** Maj enfoncée (maquette Osamodas 14B) : barre de vie au-dessus de chaque bête, même pleine. */
+  static barresAllies = false;
   readonly sprite: Phaser.GameObjects.Sprite;
   private readonly bar: Phaser.GameObjects.Graphics;
   private readonly shadow: Phaser.GameObjects.Graphics;
@@ -97,6 +99,12 @@ export class EntityView {
       g.setDepth(p.y + 1);
       g.fillStyle(0x000000, 0.6); g.fillRect(p.x - w / 2 - 1, y - 1, w + 2, 6);
       g.fillStyle(elite ? 0xe0a030 : 0xc93c3c); g.fillRect(p.x - w / 2, y, w * (e.hp / e.maxHp), 4);
+    } else if (e.faction === 'allie' && !e.dead && (e.hp < e.maxHp || EntityView.barresAllies)) {
+      // bête de l'Osamodas : barre verte
+      const w = Math.max(30, e.radius * 2.2), y = p.y - L.height * L.scale - 6;
+      g.setDepth(p.y + 1);
+      g.fillStyle(0x000000, 0.6); g.fillRect(p.x - w / 2 - 1, y - 1, w + 2, 6);
+      g.fillStyle(0x58c048); g.fillRect(p.x - w / 2, y, w * (e.hp / e.maxHp), 4);
     }
   }
 

@@ -18,7 +18,7 @@ export abstract class Entity {
   constructor(readonly id: number, public x: number, public y: number, public radius: number, public maxHp: number) {
     this.hp = maxHp;
   }
-  abstract readonly faction: 'player' | 'monster';
+  abstract readonly faction: 'player' | 'monster' | 'allie';
   setAnim(name: string, t = 0) { this.anim = name; this.animT = t; }
   applyKnock(dt: number) {
     this.x += this.kx * dt; this.y += this.ky * dt;

@@ -82,6 +82,9 @@ export interface SpellDef {
   vuln?: { n: number; t: number };
   /** Zone d'explosion de la flèche selon le nombre de lancers sur 3 s (Flèche d'Abolition : la zone grandit à chaque lancer). */
   grow?: number[];
+  /** Osamodas : invoque cette bête (src/data/betes.json) au point visé ; soigne les bêtes touchées (Cri du Corbac…) ;
+   *  ramène toutes les bêtes autour du lanceur (Charge Bestiale) ; 15A : dompte un monstre affaibli (Laisse Spirituelle). */
+  invoque?: string; soinAllies?: boolean; rappel?: boolean; dompte?: { seuil: number; duree: number };
 }
 /** Auto-attaque d'un type d'arme : un sort sans coût dont les dommages viennent de l'arme portée. */
 export interface WeaponProfile extends Omit<SpellDef, 'name' | 'icon' | 'element' | 'dmg' | 'cooldown' | 'anim'> {
@@ -103,13 +106,17 @@ export interface ClassDef {
   /** bonus : dommages en plus ; signature : multiplicateur de l'effet propre au sort (SpellDef.rage), 1,5 = +50 %. */
   rage: { name: string; max: number; perHit: number; perHurt: number; bonus: number; signature: number;
     /** Ligne Rage 24B : la Rage du Iop monte plus en mêlée, la Précision du Crâ plus de loin (et pas en prenant des coups). */
-    mode?: 'melee' | 'distance' };
+    mode?: 'melee' | 'distance' | 'eveil' };
   /** Attaque de base (clic gauche maintenu) : combo de 3 coups au corps à corps, ou un sort sans coût (basic) pour les classes à distance. */
   basic?: string;
   attaque: { name: string; element: Element; comboWindow: number; combo: ComboHit[] };
   spells: Record<string, SpellDef>;
   /** Clé de la classe dans src/data/sorts.json (paires officielles de sorts). */
   sorts: string;
+  /** Sorts officiels donnés dès le niveau 1 en plus du déplacement (Osamodas : le Tofu, maquette Osamodas 1A). */
+  niveau1?: number[];
+  /** Sort placé d'office au clic droit (Osamodas : Cri du Corbac, 6A) ; le clic droit ne prend alors pas d'autre sort. */
+  clicDroit?: string;
   /** Sort de déplacement (Espace), donné dès le niveau 1. La barre elle-même est celle du joueur (Player.bar). */
   mobility: string;
 }

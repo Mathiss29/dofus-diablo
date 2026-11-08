@@ -16,8 +16,8 @@ export const SORTS = sorts as unknown as Record<string, PaireSorts[]>;
 
 /** Décisions de Mathis (maquette Sorts, 2026-11-06) : niveaux officiels exacts (1A), sauf le sort de déplacement
  *  (Bond, Pas Chassé) donné dès le niveau 1 pour le tutoriel (3A). */
-export function niveauRequis(s: SortOfficiel, mobilite?: number): number {
-  return s.id === mobilite ? 1 : s.grades[0].niv;
+export function niveauRequis(s: SortOfficiel, mobilite?: number, niveau1: number[] = []): number {
+  return s.id === mobilite || niveau1.includes(s.id) ? 1 : s.grades[0].niv;
 }
 /** Grade atteint au niveau du personnage (les grades montent seuls aux niveaux officiels). */
 export function gradeAuNiveau(s: SortOfficiel, level: number): SortGrade {
