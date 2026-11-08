@@ -28,13 +28,13 @@ describe('archimonstres d\'Astrub (version 0.3 : 15B)', () => {
     expect(M.archi_tofu_malade.name).toBe('Tofurapin le Pétri');
   });
 
-  it('parfois un archimonstre prend la place d\'un monstre de groupe (partie de test seulement)', () => {
+  it('parfois un archimonstre prend la place d\'un monstre de groupe (aussi hors partie de test depuis la sortie de la 0.3)', () => {
     const avant = ARCHI.chance;
     try {
       ARCHI.chance = 1;
       const w = monde(), v = monde(false);
       expect(w.monsters.some(m => m.def.archiDe)).toBe(true);
-      expect(v.monsters.some(m => m.def.archiDe)).toBe(false);
+      expect(v.monsters.some(m => m.def.archiDe)).toBe(true);
       // un seul de chaque sorte en vie à la fois
       const n: Record<string, number> = {};
       for (const m of w.monsters) if (m.def.archiDe && !m.dead) n[m.type] = (n[m.type] ?? 0) + 1;

@@ -33,11 +33,11 @@ describe('métiers de fabrication (version 0.3 : 9A 10A+10B)', () => {
     for (const r of R) for (const [id] of r.ingredients) expect(ICON_FRAMES[String(ITEMS.resources[id].icon) as keyof typeof ICON_FRAMES], id).toBeDefined();
   });
 
-  it('hors partie de test (0.3 pas sortie) : pas de fabrication d\'équipement', () => {
+  it('hors partie de test aussi (0.3 sortie) : fabrication d\'équipement', () => {
     const w = arena(false), { i } = recette('cordonnier');
     remplir(w, i, 1);
-    expect(w.craftMax(i)).toBe(0);
-    expect(w.craft(i)).toBe(0);
+    expect(w.craftMax(i)).toBe(1);
+    expect(w.craft(i)).toBe(1);
   });
 
   it('10A : un objet par recette dans le sac, Commun ou Rare (jamais plus, sans pouvoir), plus souvent Rare au haut niveau du métier', () => {

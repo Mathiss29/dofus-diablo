@@ -5,8 +5,8 @@ import type { Slot } from './items';
 import type { SortGrade } from './sorts';
 
 /** Version 0.3 (ligne « 0.3 : » du 2026-11-08) : les 40 pouvoirs officiels de chaque classe remplacent le tirage des seuls
- *  5 pouvoirs maison. Visibles dans la partie de test (#test) jusqu'à la sortie de la 0.3 : passer à true ce jour-là. */
-export const V03_PUBLIC = false;
+ *  5 pouvoirs maison. D'abord visible seulement dans la partie de test (#test) ; ouverte à tous le 2026-11-08 (ligne « Public : 1A »). */
+export const V03_PUBLIC = true;
 /** Équipements officiels en jeu avant la 0.3 (jusqu'au niveau 25) ; ceux du niveau 26 au 40 arrivent avec la 0.3 (choix 2A). */
 export const NIVEAU_OBJETS_02 = 25;
 

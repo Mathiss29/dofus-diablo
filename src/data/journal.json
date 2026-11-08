@@ -497,12 +497,24 @@
     },
     {
       "date": "2026-11-08",
-      "titre": "Astrub au complet : la 0.2 est terminée",
-      "resume": "La 0.2 est finie : Égouts, Souterrains, tour du monde, Zaaps et contrats du jour.",
+      "titre": "La 0.2 terminée, la 0.3 sort",
+      "resume": "Astrub au complet, puis la 0.3 pour tous : pouvoirs officiels, Codex, fabrication, Dofus et l'Osamodas.",
       "capture": "assets/journal/2026-11-08.webp",
       "legende": "Metag Robill, devant la Grange du Tournesol Affamé, 8 novembre 2026.",
       "lignes": {
         "Nouveautés": [
+          {
+            "titre": "La 0.3 est sortie",
+            "phrase": "Le butin complet est ouvert à tous, plus seulement en partie de test.",
+            "details": "Les 40 pouvoirs officiels de ta classe, le Codex de Malek, les objets 26 à 40, 6 métiers de fabrication, le coffre partagé, les Dofus Argenté et Cacao, les archimonstres et l'Almanax.",
+            "icone": "principale"
+          },
+          {
+            "titre": "L'Osamodas arrive",
+            "phrase": "Crée un Osamodas à l'accueil et mène ta meute de bêtes au combat.",
+            "details": "Ses sorts officiels, ses bêtes sur A Z R T et la Laisse Spirituelle. Le Sacrieur suivra avec la 0.4.",
+            "icone": "perso"
+          },
           {
             "titre": "La 0.2 est terminée",
             "phrase": "Astrub est jouable en entier, de la Cité aux Égouts.",
@@ -962,14 +974,19 @@
             "phrase": "Mutilation reste active jusqu'à ce que tu la relances, et sacrifie tes PV toutes les 3 s.",
             "details": "La Puissance plafonne à 3 crans (+100). La relancer donne toujours la Coagulation.",
             "icone": "sorts",
-            "etiquettes": ["Sacrieur", "Partie de test"]
+            "etiquettes": [
+              "Sacrieur",
+              "Partie de test"
+            ]
           },
           {
             "titre": "Cortège Sauvage n'est plus infini",
             "phrase": "Après les 6 s de Cortège Sauvage, les bêtes en trop repartent, les plus anciennes d'abord.",
             "details": "Avant, la meute gonflée restait pour toujours.",
             "icone": "degats",
-            "etiquettes": ["Osamodas"]
+            "etiquettes": [
+              "Osamodas"
+            ]
           },
           {
             "titre": "Monstres plus menaçants",
