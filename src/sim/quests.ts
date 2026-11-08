@@ -72,6 +72,8 @@ export interface RecompenseDef {
   sac?: Rarity;
   /** Le sac porte un pouvoir officiel de la classe, sur un sort connu (« Le premier pouvoir », 0.3 8C). */
   pouvoirClasse?: boolean;
+  /** Un Dofus (id officiel, version 0.3). */
+  dofus?: string;
   /** Pépites (la monnaie d'Emp, 5B). */
   pepites?: number;
 }
@@ -132,6 +134,8 @@ export interface PnjDef {
   sprite?: string;
   /** Ce qu'il dit quand on lui parle sans quête (maquette Dialogues 10A). */
   phrase?: string;
+  /** PNJ de la version 0.3 (caché hors partie de test). */
+  v03?: boolean;
   /** Havre-Sac (maquette Hub 3A) : il n'emménage qu'après la première visite de cette zone. */
   apres?: string;
   /** Métier affiché dans la fenêtre de ses services (Antiquaire, Couturière…). */
@@ -179,6 +183,8 @@ export type SuccesObjectif = { nom: string } & (
   | { quete: string } | { etape: [string, number] } | { succes: string } | { sousZone: number } | { niveau: number } | { monstre: string }
   /** Collection d'apparences (« Équipement en trop » 1C) : apparence débloquée. */
   | { apparence: string }
+  /** Nombre de Dofus possédés (0.3). */
+  | { dofus: number }
 );
 export interface SuccesDef {
   nom: string; dofusId: number; description: string; categorie: string; sousCategorie: string; points: number; icone: number;
@@ -267,6 +273,7 @@ export class Quetes {
     const wg = world.worldGrid;
     if (wg) for (const [id, def] of Object.entries(data.pnj)) {
       if ((def.zone ?? 'incarnam') !== world.opts.zone) continue;
+      if (def.v03 && !world.player?.v03) continue;   // PNJ de la 0.3 : partie de test seulement jusqu'à la sortie
       if (def.apres && !(world.opts.zonesVues ?? []).includes(def.apres) && world.opts.zone !== def.apres) continue;   // pas encore emménagé (3A)
       const m = wg.mapByTag(def.carte);
       if (!m || !wg.freeByMap.get(def.carte)?.length) continue;   // carte pas (encore) exportée
@@ -809,6 +816,7 @@ export class Quetes {
     if (r.sac) w.donnerSac(r.sac, q.niveau, !!r.pouvoirClasse);
     if (q.codex) w.ouvrirCodex();
     if (r.pepites) w.donnerObjet(PEPITE, r.pepites);
+    if (r.dofus && w.player.gagnerDofus(r.dofus)) w.emit({ k: 'dofusGagne', id: r.dofus });
     for (const o of this.etapes(id).flatMap(e => e.objectifs)) if (o.t === 'ramasser') delete this.objets[o.objet];
     if (this.suivie === id) this.suivie = null;
     w.emit({ k: 'queteFin', id, sautee });
@@ -853,6 +861,7 @@ export class Quetes {
     if ('sousZone' in o) return this.decouvertes.has(o.sousZone);
     if ('niveau' in o) return this.world.player.level >= o.niveau;
     if ('apparence' in o) return this.world.player.apparats.includes(o.apparence);
+    if ('dofus' in o) return this.world.player.dofus.length >= o.dofus;
     return this.vaincus.has(o.monstre);
   }
   private verifierSucces() {

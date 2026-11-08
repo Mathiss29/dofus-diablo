@@ -1,4 +1,5 @@
 import { ALMANAX } from './almanax';
+import { DOFUS, EMPLACEMENTS_DOFUS, PASSIFS } from './dofus';
 import type { CleDonjon } from './arene';
 import type { CommandeFM } from './forgemagie';
 import { Entity } from './entity';
@@ -82,6 +83,11 @@ export class Player extends Entity {
   codexOuvert = false;
   /** 15C : jour (AAAA-MM-JJ) de la dernière offrande à l'Almanax ; son bonus dure jusqu'à minuit. */
   almanaxJour: string | null = null;
+  /** Dofus possédés (ids officiels) et les 6 emplacements (version 0.3, src/sim/dofus.ts). */
+  dofus: string[] = [];
+  dofusPortes: (string | null)[] = Array(EMPLACEMENTS_DOFUS).fill(null);
+  /** Moment (âge du perso) du dernier Souvenir d'Argent et du dernier bouclier du Cacao. */
+  private argenteA = -1e9; private cacaoA = -1e9;
   apparat: Partial<Record<'chapeau' | 'cape' | 'bouclier' | 'familier', string>> = {};
   /** Caractéristiques totales (points + équipement + panoplies), recalculées à chaque changement. */
   stats: Stats = {};
@@ -331,6 +337,7 @@ export class Player extends Entity {
       const set = this.items?.equipment[it.id]?.set;
       if (set) sets[set] = (sets[set] ?? 0) + 1;
     }
+    for (const id of this.dofusPortes) if (id) for (const [k, v] of Object.entries(DOFUS[id]?.stats ?? {}) as [Stat, number][]) add(k, v);
     for (const [id, n] of Object.entries(sets)) {
       const b = this.items?.sets[id]?.bonus[String(n - 1)];
       if (b) for (const [k, v] of Object.entries(b) as [Stat, number][]) add(k, v);
@@ -944,7 +951,47 @@ export class Player extends Entity {
   }
 
   /** Coup reçu : Résistance fixe puis % Résistance de l'élément (plafonnée à 50 %), comme Dofus. */
-  hurt(raw: number, fromX: number, fromY: number, world: World, element: Element = 'neutre'): boolean {
+  /** Porte-t-il ce Dofus (clé du passif : argente, cacao…) ? */
+  porteDofus(cle: string): boolean { return this.dofusPortes.some(id => id && DOFUS[id]?.cle === cle); }
+  /** Reçoit un Dofus (récompense de quête) ; il va dans le premier emplacement libre. */
+  gagnerDofus(id: string): boolean {
+    if (!DOFUS[id] || this.dofus.includes(id)) return false;
+    this.dofus.push(id);
+    this.porterDofus(id);
+    return true;
+  }
+  /** Met un Dofus possédé dans un emplacement (le premier libre si i est absent) ; chaque Dofus une seule fois. */
+  porterDofus(id: string, i?: number): boolean {
+    if (!this.dofus.includes(id) || this.dofusPortes.includes(id)) return false;
+    const k = i ?? this.dofusPortes.indexOf(null);
+    if (k < 0 || k >= EMPLACEMENTS_DOFUS) return false;
+    this.dofusPortes[k] = id; this.recompute();
+    return true;
+  }
+  retirerDofus(i: number): boolean {
+    if (!this.dofusPortes[i]) return false;
+    this.dofusPortes[i] = null; this.recompute();
+    return true;
+  }
+  /** Passifs des Dofus au moment d'un coup reçu (les PV viennent de baisser). */
+  private passifsDofus(fromX: number, fromY: number, loin: boolean | undefined, world: World) {
+    const A = PASSIFS.argente, C = PASSIFS.cacao;
+    if (this.porteDofus('cacao') && this.age - this.cacaoA >= C.recharge
+        && (loin ?? Math.hypot(fromX - this.x, fromY - this.y) > C.distance)
+        && world.monsters.some(m => !m.dead && Math.hypot(m.x - this.x, m.y - this.y) - m.radius - this.radius < C.contact)) {
+      this.cacaoA = this.age;
+      this.shield = Math.max(this.shield, Math.round(this.maxHp * C.bouclier)); this.shieldT = this.shieldT0 = C.duree; this.shieldSrc = 'dofus_cacao';
+      world.emit({ k: 'dofusPassif', dofus: 'cacao', x: this.x, y: this.y });
+    }
+    if (this.hp > 0 && this.hp < this.maxHp * A.seuil && this.porteDofus('argente') && this.age - this.argenteA >= A.recharge) {
+      this.argenteA = this.age;
+      const n = this.soigner(this.maxHp * A.soin);
+      world.emit({ k: 'dofusPassif', dofus: 'argente', x: this.x, y: this.y, n });
+    }
+  }
+  /** Recharge restante du Souvenir d'Argent (bulle d'effet). */
+  get rechargeArgente(): number { return this.porteDofus('argente') ? Math.max(0, PASSIFS.argente.recharge - (this.age - this.argenteA)) : 0; }
+  hurt(raw: number, fromX: number, fromY: number, world: World, element: Element = 'neutre', loin?: boolean): boolean {
     if (this.invuln > 0 || this.dead) return false;
     const E = element === 'meilleur' ? 'Neutre' : `${element[0].toUpperCase()}${element.slice(1)}`;
     let dmg = Math.max(1, Math.round((raw - this.stat(`red${E}` as Stat)) * (1 - Math.min(50, this.stat(`res${E}` as Stat)) / 100) * this.subis));
@@ -959,6 +1006,7 @@ export class Player extends Entity {
     world.emit(gros ? { k: 'impact', hitstop: G.fige, shake: G.secousse, big: true } : { k: 'impact', hitstop: 0.04, shake: 0.006, big: false });
     if (gros) world.emit({ k: 'grosCoup' });
     this.addRage(this.cls.rage.perHurt, world);
+    this.passifsDofus(fromX, fromY, loin, world);
     if (this.hp <= 0 && world.quetes?.immortel) this.hp = 1;   // tutoriel : PV bloqués à 1
     if (world.test?.invincible) this.hp = this.maxHp;   // partie de test (8A) : le coup s'affiche, les PV ne bougent pas
     if (this.hp <= 0) { this.hp = 0; this.dead = true; this.setAnim('die'); world.onPlayerDeath(); }

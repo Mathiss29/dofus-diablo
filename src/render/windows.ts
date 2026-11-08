@@ -8,6 +8,24 @@ import { PALIERS } from './carnet';
 import { CODEX_CSS, codexPageHtml } from './codexVue';
 import { nouveauPourCodex } from '../sim/codex';
 import { ALMANAX, effetTexte } from '../sim/almanax';
+import { DOFUS } from '../sim/dofus';
+/** Fiche d'un Dofus (0.3) : stats, passif traduit, source. */
+function dofusTip(id: string, porte = false): string {
+  const d = DOFUS[id]; if (!d) return '';
+  const st = Object.entries(d.stats).map(([k, v]) => `<div>+${v} ${STAT_NAMES[k as Stat] ?? k}</div>`).join('');
+  return `<h4 style="color:#e8c76b">${d.nom}</h4><div class="sub">Dofus · niveau ${d.niveau}</div>${st}${d.passif ? `<div style="margin-top:6px"><b style="color:#e8c76b">${d.passif.nom}</b> : ${d.passif.texte}</div>` : ''}<div class="hint">${porte ? 'Glisse-le vers le sac pour le retirer' : d.source}</div>`;
+}
+/** Fenêtre des Dofus (touche D, ligne « Onglet Dofus : 1B 2A 3A 4A 5A 6B 7A+7C »). */
+const DOF_CSS = `.dw .win.dofw{width:640px}.dw .dof-c .ic{width:70%;height:70%}.dw .dof{padding:8px 14px 14px;display:flex;flex-direction:column;gap:8px}
+.dw .dof-t{display:flex;gap:6px;align-items:center}.dw .dof-t .eo{padding:3px 12px;border-radius:12px;background:rgba(255,255,255,.06);cursor:pointer}.dw .dof-t .eo.on{background:rgba(255,210,122,.2);color:#ffd27a}.dw .dof-t .eo.off{opacity:.4;cursor:default}.dw .dof-t .k{margin-left:auto;font-family:Rowdies,serif;color:#ffd27a}
+.dw .dof-row{display:flex;justify-content:center;gap:8px}.dw .dof-row .slot{width:50px;height:50px;opacity:1;background-size:100%}
+.dw .dof-g{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;max-height:330px;overflow:auto}
+.dw .dof-c{position:relative;aspect-ratio:1;border:1px solid rgba(255,210,122,.25);border-radius:8px;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.25);cursor:pointer}
+.dw .dof-c.non{filter:grayscale(1) brightness(.45)}.dw .dof-c.porte{border-color:#ffd27a;box-shadow:0 0 8px rgba(255,210,122,.5)}.dw .dof-c.on{outline:2px solid #fff}
+.dw .dof-c small{position:absolute;bottom:1px;right:4px;font-size:10px;opacity:.8}.dw .dof-c .fr{position:absolute;top:2px;left:4px;font-size:10px;color:#b9e54b;filter:none}
+.dw .dof-d{background:rgba(255,210,122,.06);border:1px solid rgba(255,210,122,.2);border-radius:6px;padding:8px 10px;font-size:13px;min-height:92px}
+.dw .dof-d h4{margin:0 0 2px;color:#e8c76b}.dw .dof-s{display:flex;gap:6px;flex-wrap:wrap}.dw .dof-s span{background:rgba(255,255,255,.06);border-radius:10px;padding:2px 8px;font-size:12px}
+.dw .dof-s span.ok{background:rgba(185,229,75,.18);color:#d7f59a}`;
 /** Fenêtre de l'Almanax (15C). */
 const ALM_CSS = `.dw .win.almanax{width:420px}.dw .alm{padding:10px 14px 14px;display:flex;flex-direction:column;gap:6px}
 .dw .alm-d{font-family:Rowdies,serif;font-size:18px;color:#ffd27a;text-transform:capitalize;text-align:center}
@@ -519,7 +537,7 @@ const CSS = `
 .dw .ttl b{font-weight:700}
 `;
 
-type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap' | 'bestiaire' | 'forge' | 'coffre' | 'almanax';
+type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap' | 'bestiaire' | 'forge' | 'coffre' | 'almanax' | 'dofus';
 
 /** Fenêtres façon Dofus 3 : « Inventaire » (le perso sur son socle, ses emplacements autour, le sac à onglets)
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
@@ -568,6 +586,8 @@ export class Windows {
   /** Bestiaire (maquette « Drops » 1A) : monstres vaincus par le compte (lus par la scène) ; partie de test : tout est visible. */
   vaincus: () => Record<string, number> = () => ({});
   toutVoir = false;
+  private dofusOnglet: 'dofus' | 'trophees' | 'prysma' = 'dofus';
+  private dofusSel = '';
   private bestType = '';
   private bestObjet: string | null = null;
   private bestOnglet: 'butin' | 'sorts' | 'res' = 'butin';
@@ -576,7 +596,7 @@ export class Windows {
   private forge = etatForge();
 
   constructor(private world: World) {
-    const style = document.createElement('style'); style.textContent = ALM_CSS + CSS + ICON_CSS + BUTIN_CSS + FORGE_CSS + CODEX_CSS; document.head.appendChild(style);
+    const style = document.createElement('style'); style.textContent = DOF_CSS + ALM_CSS + CSS + ICON_CSS + BUTIN_CSS + FORGE_CSS + CODEX_CSS; document.head.appendChild(style);
     this.root = document.createElement('div'); this.root.className = 'dw'; document.body.appendChild(this.root);
     this.tip = document.createElement('div'); this.tip.className = 'tip'; this.tip.style.display = 'none'; this.root.appendChild(this.tip);
   }
@@ -600,7 +620,7 @@ export class Windows {
       this.garde = this.perso ? { tete: this.perso.app.tete, couleurs: [...this.perso.app.couleurs] } : null;
       if (this.perso && !this.fiche) fiches().then(f => { this.fiche = f[this.perso!.cle] ?? null; this.refresh(); }, () => {});
     }
-    const w = document.createElement('div'); w.className = mode === 'guide' ? 'win opt guide' : `win ${mode}`;   // le Guide reprend la mise en page des Options
+    const w = document.createElement('div'); w.className = mode === 'guide' ? 'win opt guide' : `win ${mode === 'dofus' ? 'dofw' : mode}`;   // le Guide reprend la mise en page des Options
     w.addEventListener('contextmenu', e => e.preventDefault());
     w.addEventListener('pointerdown', e => e.stopPropagation());
     w.addEventListener('click', e => {
@@ -619,7 +639,7 @@ export class Windows {
     else if (this.mode === 'car') this.renderCarac(); else if (this.mode === 'job') this.renderJob(); else if (this.mode === 'art') this.renderArt(); else if (this.mode === 'opt') this.renderOpt();
     else if (this.mode === 'sorts') this.renderSorts(); else if (this.mode === 'quetes') this.renderQuetes();
     else if (this.mode === 'succes') this.renderSucces(); else if (this.mode === 'emp') this.renderEmp(); else if (this.mode === 'zaap') this.renderZaap();
-    else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else if (this.mode === 'forge') this.renderForge(); else if (this.mode === 'coffre') this.renderCoffre(); else if (this.mode === 'almanax') this.renderAlmanax(); else this.renderInv();
+    else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else if (this.mode === 'forge') this.renderForge(); else if (this.mode === 'coffre') this.renderCoffre(); else if (this.mode === 'almanax') this.renderAlmanax(); else if (this.mode === 'dofus') this.renderDofus(); else this.renderInv();
     this.win!.querySelector('[data-close]')!.addEventListener('click', () => this.close());
   }
   private title(name: string, icon: string) {
@@ -647,7 +667,8 @@ export class Windows {
             const a = p.apparat[k], ic = a && a !== '0' ? apparatHtml(a) : '';
             return `<div class="slot ${a === '0' ? 'cache' : ''}" data-appa="${k}" title="${n} : ${a === '0' ? 'cachée' : a ? APPARATS.objets[a]?.name ?? '' : 'objet porté'}" style="${ic ? '' : `background-image:url(${D3}/tx_slot_${SLOT_D3[k]}.png)`}">${ic}</div>`; }).join('')}</div>
           <div class="sets">${this.setsHtml()}</div>
-          <div class="dofus">${Array.from({ length: 6 }, () => `<div class="slot" title="Dofus (plus tard)" style="background-image:url(${D3}/tx_slot_dofus.png)"></div>`).join('')}</div>
+          <div class="dofus">${p.dofusPortes.map((id, i) => { const d = id && p.v03 ? DOFUS[id] : null;
+            return `<div class="slot ${d ? 'plein' : ''}" data-dofus="${i}" ${d ? '' : `title="${p.v03 ? (p.dofus.some(x => !p.dofusPortes.includes(x)) ? 'Clic : porter un de tes Dofus' : 'Dofus : gagnés par les quêtes du Gawdien du Dofus (Bastion)') : 'Dofus (plus tard)'}"`} style="${d ? '' : `background-image:url(${D3}/tx_slot_dofus.png)`}">${d ? iconHtml(d.icon) : ''}</div>`; }).join('')}</div>
         </div>
         <div class="right">
           <div class="tabs">${TABS.map(([k, ic, name]) => `<div class="tab ${this.tab === k ? 'on' : ''}" data-tab="${k}" title="${name}"><img src="${D3}/inventory_${TAB_D3[ic]}.png" alt=""></div>`).join('')}</div>
@@ -691,6 +712,7 @@ export class Windows {
       e.addEventListener('contextmenu', () => { p.unequip(s); this.changed(); });
       e.addEventListener('dblclick', () => { p.unequip(s); this.changed(); });
     });
+    this.lierDofus(w);
     // Case Apparence (5A) : clic = les apparats de cet emplacement ; clic droit = retirer l'apparat, sinon cacher / montrer l'objet porté
     w.querySelectorAll<HTMLElement>('[data-appa]').forEach(e => {
       const k = e.dataset.appa as Visible;
@@ -1195,7 +1217,7 @@ export class Windows {
       { id: 'quetes', titre: 'Quêtes et succès', html: `<p>Un PNJ qui a une quête porte une icône au-dessus de la tête. Le suivi en bas à gauche montre l'étape en cours.</p>
         <p>Le journal des quêtes et les succès s'ouvrent depuis la colonne de menus, à droite de l'écran.</p>` },
       { id: 'touches', titre: 'Toutes les touches', html: `<div class="keys">${[['Clic gauche', 'aller / attaquer (maintenu : continuer)'], ['Maj + clic', 'attaquer sur place'], ['Clic droit', 'sort de la barre (case libre)'],
-          ['& é " \' ( -', 'barre de sorts'], ['Espace', mob], ['E', 'potion'], ['S', 'sorts'], ['I', 'inventaire'], ['C', 'caractéristiques'], ['J', 'métiers'], ['B', 'bestiaire'],
+          ['& é " \' ( -', 'barre de sorts'], ['Espace', mob], ['E', 'potion'], ['S', 'sorts'], ['I', 'inventaire'], ['C', 'caractéristiques'], ['J', 'métiers'], ['B', 'bestiaire'], ...(this.world.player.v03 ? [['D', 'Dofus']] : []),
           ['O', 'options'], ['G', 'ce guide'], ['H', 'Havre-Sac'], ['M', 'carte du monde (bientôt)'], ['Ctrl+M', 'couper ou remettre le son'], ['Molette', 'zoom'], ['F', 'effets d\'impact'], ['Échap', 'fermer']]
           .map(([a, b]) => `<b>${a}</b><span>${b}</span>`).join('')}</div>` },
     ];
@@ -1226,7 +1248,7 @@ export class Windows {
           { k: 'flecheQuete', nom: 'Aides de quête', aide: 'Flèche au bord de l\'écran et sur la mini-carte, losange sur les monstres de quête, Zaap conseillé. Clic sur le titre du suivi : changer de quête ; sur ses objectifs : la carte.', t: 'check' },
         ] },
         { id: 'touches', titre: 'Touches', opts: [], html: `<div class="keys">${[['Clic gauche', 'aller / attaquer (maintenu : continuer)'], ['Maj + clic', 'attaquer sur place'], ['Clic droit', 'sort de la barre (case libre)'],
-          ['& é " \' ( -', 'barre de sorts'], ['Espace', 'déplacement'], ['E', 'potion'], ['S', 'sorts'], ['I', 'inventaire'], ['C', 'caractéristiques'], ['J', 'métiers'], ['B', 'bestiaire'],
+          ['& é " \' ( -', 'barre de sorts'], ['Espace', 'déplacement'], ['E', 'potion'], ['S', 'sorts'], ['I', 'inventaire'], ['C', 'caractéristiques'], ['J', 'métiers'], ['B', 'bestiaire'], ...(this.world.player.v03 ? [['D', 'Dofus']] : []),
           ['O', 'options'], ['M', 'carte du monde (0.2a)'], ['Ctrl+M', 'couper ou remettre le son'], ['Molette', 'zoom'], ['F', 'effets d\'impact'], ['G', 'guide'], ['H', 'Havre-Sac'], ['Échap', 'fermer']]
           .map(([k, d]) => `<b>${k}</b><span>${d}</span>`).join('')}</div>` },
       ] },
@@ -1505,6 +1527,78 @@ export class Windows {
   }
 
   /** Almanax (0.3, 15C) : le jour du calendrier officiel, son offrande et son bonus. */
+  /** Rangée de 6 Dofus et Dofus du sac : survol, glisser-déposer (inventaire et fenêtre Dofus). */
+  private lierDofus(w: HTMLElement) {
+    const p = this.world.player;
+    // Dofus (0.3, 5A) : survol = fiche ; clic sur une case vide = porter un Dofus du perso ; clic droit = retirer
+    w.querySelectorAll<HTMLElement>('[data-dofus]').forEach(e => {
+      const i = +e.dataset.dofus!, id = p.dofusPortes[i];
+      if (id && p.v03) {
+        e.addEventListener('mouseenter', ev => { this.tip.innerHTML = dofusTip(id, true); this.tip.style.display = 'block'; this.moveTip(ev); });
+        e.addEventListener('mousemove', ev => this.moveTip(ev));
+        e.addEventListener('mouseleave', () => this.hideTip());
+        e.draggable = true;   // 6B : glisser la case vers le sac = retirer
+        e.addEventListener('dragstart', ev => { this.hideTip(); ev.dataTransfer?.setData('text/dofus-case', String(i)); });
+      }
+      if (!p.v03) return;
+      e.addEventListener('dragover', ev => ev.preventDefault());
+      e.addEventListener('drop', ev => {
+        ev.preventDefault();
+        const id = ev.dataTransfer?.getData('text/dofus'), de = ev.dataTransfer?.getData('text/dofus-case');
+        if (id) { if (p.dofusPortes[i]) p.retirerDofus(i); if (p.porterDofus(id, i)) this.changed(); }
+        else if (de && +de !== i) { const a = p.dofusPortes[+de]; p.retirerDofus(+de); if (p.dofusPortes[i]) { const b = p.dofusPortes[i]!; p.retirerDofus(i); p.porterDofus(b, +de); } if (a) p.porterDofus(a, i); this.changed(); }
+      });
+    });
+    // Dofus du sac (possédés, pas portés) : à glisser sur une case (Onglet Dofus 6B) ; la grille du sac reçoit une case qu'on retire
+    w.querySelectorAll<HTMLElement>('[data-dsac]').forEach(e => {
+      const id = e.dataset.dsac!;
+      e.addEventListener('dragstart', ev => { this.hideTip(); ev.dataTransfer?.setData('text/dofus', id); });
+      e.addEventListener('mouseenter', ev => { this.tip.innerHTML = dofusTip(id) .replace(DOFUS[id]?.source ?? '§', 'Glisse-le sur une case de Dofus'); this.tip.style.display = 'block'; this.moveTip(ev); });
+      e.addEventListener('mousemove', ev => this.moveTip(ev));
+      e.addEventListener('mouseleave', () => this.hideTip());
+    });
+    const grille = w.querySelector<HTMLElement>('[data-dof-g]') ?? w.querySelector<HTMLElement>('.right .grid, .grid');
+    if (p.v03 && grille) {
+      grille.addEventListener('dragover', ev => { if (ev.dataTransfer?.types.includes('text/dofus-case')) ev.preventDefault(); });
+      grille.addEventListener('drop', ev => { const de = ev.dataTransfer?.getData('text/dofus-case'); if (de) { ev.preventDefault(); if (p.retirerDofus(+de)) this.changed(); } });
+    }
+  }
+
+  /** Quête « œuf à reconstituer » du Dofus : fragments repris (4A), ou null si elle n'est pas en cours. */
+  private oeufEnCours(id: string): { quete: string; fragments: number; coquille: boolean } | null {
+    const Q = this.world.quetes; if (!Q) return null;
+    const qid = Object.keys(Q.data.quetes).find(k => Q.data.quetes[k].recompense?.dofus === id); if (!qid) return null;
+    const c = Q.enCours.find(x => x.id === qid); if (!c) return null;
+    const fragments = c.etape >= 2 || c.aRendre ? 3 : c.etape === 1 ? c.compte.filter(n => n >= 1).length : 0;
+    return { quete: Q.data.quetes[qid].nom, fragments, coquille: c.etape >= 2 || c.aRendre };
+  }
+
+  private renderDofus() {
+    const w = this.win!, p = this.world.player, eu = new Set(p.dofus);
+    const ids = Object.keys(DOFUS).sort((a, b) => DOFUS[a].niveau - DOFUS[b].niveau || DOFUS[a].nom.localeCompare(DOFUS[b].nom, 'fr'));
+    if (!DOFUS[this.dofusSel]) this.dofusSel = ids.find(i => eu.has(i)) ?? ids[0];
+    const onglet = (k: string, n: string, ok: boolean) => `<span class="eo ${this.dofusOnglet === k ? 'on' : ''} ${ok ? '' : 'off'}" ${ok ? `data-dof-o="${k}"` : `title="Avec Amakna : rien n'est portable avant le niveau 50"`}>${n}</span>`;
+    const rangee = `<div class="dof-row">${p.dofusPortes.map((id, i) => { const d = id ? DOFUS[id] : null;
+      return `<div class="slot ${d ? 'plein' : ''}" data-dofus="${i}" style="${d ? '' : `background-image:url(${D3}/tx_slot_dofus.png)`}">${d ? iconHtml(d.icon) : ''}</div>`; }).join('')}</div>`;
+    const grille = ids.map(id => { const d = DOFUS[id], a = eu.has(id), oe = a ? null : this.oeufEnCours(id);
+      return `<div class="dof-c ${a ? '' : 'non'} ${p.dofusPortes.includes(id) ? 'porte' : ''} ${id === this.dofusSel ? 'on' : ''}" data-dof="${id}" ${a ? 'data-dsac="' + id + '" draggable="true"' : ''}>${iconHtml(d.icon)}<small>${d.niveau}</small>${oe ? `<span class="fr">${oe.fragments}/3</span>` : ''}</div>`; }).join('');
+    const d = DOFUS[this.dofusSel], a = eu.has(this.dofusSel), oe = a ? null : this.oeufEnCours(this.dofusSel);
+    const st = Object.entries(d.stats).map(([k, v]) => `+${v} ${STAT_NAMES[k as Stat] ?? k}`).join(' · ');
+    const suivi = oe ? `<div class="dof-s" style="margin-top:6px"><b>${oe.quete}</b>${[1, 2, 3].map(i => `<span class="${oe.fragments >= i ? 'ok' : ''}">Fragment ${i}</span>`).join('')}<span class="${oe.coquille ? 'ok' : ''}">Coquille</span></div>` : '';
+    const detail = `<div class="dof-d"><h4>${d.nom}</h4><div class="sub">Dofus · niveau ${d.niveau} · ${a ? (p.dofusPortes.includes(this.dofusSel) ? 'porté' : 'dans ton sac') : 'pas encore trouvé'}</div>
+      <div>${st}</div>${d.passif ? `<div style="margin-top:4px"><b style="color:#e8c76b">${d.passif.nom}</b> : ${d.passif.texte}${d.jeu ? '' : ' <i class="hint">(passif à venir)</i>'}</div>` : ''}
+      ${a ? '' : `<div class="hint" style="margin-top:4px">${d.source}</div>`}${suivi}</div>`;
+    const paliers = [2, 6, 12, 31], prochain = paliers.find(n => n > p.dofus.length);
+    const corps = this.dofusOnglet === 'dofus' ? `${rangee}<div class="hint" style="text-align:center">Glisse un Dofus de la grille ou du sac sur une case pour le porter, et d'une case vers la grille pour le retirer.</div>
+      <div class="dof-g" data-dof-g>${grille}</div>${detail}` : '<div class="hint">Avec Amakna.</div>';
+    w.innerHTML = `${this.title('Dofus', 'success')}<div class="in dof">
+      <div class="dof-t">${onglet('dofus', 'Dofus', true)}${onglet('trophees', 'Trophées', false)}${onglet('prysma', 'Prysmaradites', false)}
+        <span class="k" title="${prochain ? `Prochain succès à ${prochain} Dofus` : 'Tous les Dofus !'}">${p.dofus.length} / ${ids.length}</span></div>${corps}</div>`;
+    w.querySelectorAll<HTMLElement>('[data-dof-o]').forEach(e => e.addEventListener('click', () => { this.dofusOnglet = e.dataset.dofO as 'dofus'; this.render(); }));
+    w.querySelectorAll<HTMLElement>('[data-dof]').forEach(e => e.addEventListener('click', () => { this.dofusSel = e.dataset.dof!; this.render(); }));
+    this.lierDofus(w);
+  }
+
   private renderAlmanax() {
     const w = this.win!, p = this.world.player, j = this.world.almanaxDuJour, fait = !!this.world.almanax;
     const date = new Date(`${this.world.opts.aujourdhui ?? ''}T12:00`);
@@ -1832,6 +1926,12 @@ export class Windows {
       if (!r || (q && !r.name.toLowerCase().includes(q))) continue;
       if (this.tab === 'conso' && !r.soin && !r.rappel) continue;
       cells.push(`<div class="cell" data-res="${id}">${iconHtml(r.icon)}<span class="n">${n}</span></div>`);
+    }
+    // Dofus possédés mais pas portés (6B : on les glisse du sac vers la rangée de 6 cases)
+    if (this.tab === 'tout' && !this.kind && p.v03) for (const id of p.dofus) {
+      if (p.dofusPortes.includes(id)) continue;
+      const d = DOFUS[id]; if (!d || (q && !d.nom.toLowerCase().includes(q))) continue;
+      cells.push(`<div class="cell" data-dsac="${id}" draggable="true">${iconHtml(d.icon)}<i class="r" style="background:#e9c46a"></i></div>`);
     }
     // Objets de quête (pages, Sac de Bijoux...) : onglet « Objets de quête » ; ils partent à la fin de la quête
     if ((this.tab === 'tout' || this.tab === 'quete') && !this.kind) for (const [nom, k] of Object.entries(this.world.quetes?.objets ?? {})) {

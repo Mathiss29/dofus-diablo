@@ -283,6 +283,38 @@
    ],
    "adieu": "Recycler l'un de vos saluts quotidiens pour dire au revoir au Méryde."
   },
+  "gawdien": {
+   "nom": "Gawdien du Dofus",
+   "dofusId": 148,
+   "zone": "bastion",
+   "carte": "bastion",
+   "case": 10623,
+   "titre": "Gardien des Dofus",
+   "v03": true,
+   "phrase": "Trente et un œufs de dragon, et presque tous perdus. Les Douze m'ont confié la liste. Moi, je n'ai que deux jambes et beaucoup trop d'œufs.",
+   "discussion": [
+    {
+     "reponse": "C'est quoi, un Dofus ?",
+     "texte": "Un œuf de dragon. Il n'éclot jamais, mais il garde un peu de la force de sa mère. Porte-le, et elle veille sur toi. Six à la fois, pas un de plus : les dragons sont jaloux."
+    }
+   ]
+  },
+  "rathrosk": {
+   "nom": "Rathrosk",
+   "dofusId": 4357,
+   "zone": "astrub",
+   "carte": "4_-19",
+   "v03": true,
+   "phrase": "Cet œuf d'argent, je l'ai couvé dix ans. Dix ans ! Et il a suffi d'un éternuement de Craqueleur pour qu'il vole en éclats."
+  },
+  "energie_cacao": {
+   "nom": "Énergie du Dofus Cacao",
+   "dofusId": 4842,
+   "zone": "astrub",
+   "carte": "1_-20",
+   "v03": true,
+   "phrase": "Je suis ce qui reste d'un œuf en chocolat. Une odeur, surtout. Et beaucoup de colère."
+  },
   "kerubim": {
    "nom": "Kerubim Crépin",
    "dofusId": 3043,
@@ -2441,6 +2473,157 @@
     "pepites": 30
    }
   },
+  "oeuf_argent": {
+   "nom": "L'œuf d'argent",
+   "type": "secondaire",
+   "pnj": "gawdien",
+   "rendre": "gawdien",
+   "niveau": 20,
+   "serie": "Les Dofus",
+   "v03": true,
+   "texte": "Un œuf d'argent s'est brisé au-dessus d'Astrub. Trois morceaux, trois voleurs, et une coquille que personne n'ose approcher. Rathrosk, qui le couvait, en sait plus que moi.",
+   "etapes": [
+    {
+     "nom": "Le couveur d'œufs",
+     "bulle": "Rathrosk attend près de la Cité d'Astrub. Il a couvé l'œuf. Il va pleurer, sois patient.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler à Rathrosk",
+       "pnj": "rathrosk"
+      }
+     ]
+    },
+    {
+     "nom": "Les trois fragments",
+     "bulle": "Trois fragments, trois chapardeurs : un Épouvanteur des Champs, une larve des Prairies, un Pichon des Calanques. Ils brillent, tu ne peux pas les rater.",
+     "objectifs": [
+      {
+       "t": "elite",
+       "texte": "Reprendre le fragment de l'Épouvanteur (Champs d'Astrub)",
+       "monstre": "epouvanteur",
+       "carte": "5_-28",
+       "pv": 3,
+       "nom": "Épouvanteur à l'éclat d'argent"
+      },
+      {
+       "t": "elite",
+       "texte": "Reprendre le fragment de la Larve (Prairies d'Astrub)",
+       "monstre": "larve_orange",
+       "carte": "7_-13",
+       "pv": 3,
+       "nom": "Larve à l'éclat d'argent"
+      },
+      {
+       "t": "elite",
+       "texte": "Reprendre le fragment du Pichon (Calanques d'Astrub)",
+       "monstre": "pichon_orange",
+       "carte": "11_-26",
+       "pv": 3,
+       "nom": "Pichon à l'éclat d'argent"
+      }
+     ]
+    },
+    {
+     "nom": "La coquille",
+     "bulle": "Les fragments chantent quand on les approche de la coquille. Le Tournesol Affamé l'a enroulée dans ses racines, au fond des Champs.",
+     "objectifs": [
+      {
+       "t": "elite",
+       "texte": "Vaincre le Tournesol Affamé, gardien de la coquille",
+       "monstre": "tournesol_affame",
+       "carte": "6_-26",
+       "pv": 2,
+       "nom": "Tournesol Affamé, gardien de la coquille"
+      }
+     ]
+    }
+   ],
+   "merci": "La coquille et ses trois morceaux. L'œuf ne vivra jamais, mais il se souviendra de toi : quand tout va mal, il te rendra un peu de force. Le Dofus Argenté est à toi.",
+   "recompense": {
+    "xp": 4000,
+    "kamas": 800,
+    "dofus": "19629",
+    "pepites": 20
+   }
+  },
+  "oeuf_cacao": {
+   "nom": "L'œuf en chocolat",
+   "type": "secondaire",
+   "pnj": "gawdien",
+   "rendre": "gawdien",
+   "niveau": 35,
+   "serie": "Les Dofus",
+   "v03": true,
+   "requiert": [
+    "oeuf_argent"
+   ],
+   "texte": "Un œuf en chocolat a fondu près d'Astrub. Ce qu'il en reste, une drôle d'énergie, refuse de partir sans lui. Trois gourmands ont emporté les morceaux.",
+   "etapes": [
+    {
+     "nom": "L'énergie du Dofus",
+     "bulle": "L'Énergie du Dofus Cacao flotte dans la Cité d'Astrub. Elle sent bon et elle est furieuse.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler à l'Énergie du Dofus Cacao",
+       "pnj": "energie_cacao"
+      }
+     ]
+    },
+    {
+     "nom": "Les trois gourmands",
+     "bulle": "Un Milimulou de la Forêt, un Douzdoa de la Carrière et un Garglyphe du Cimetière. Ils ont du chocolat plein les dents.",
+     "objectifs": [
+      {
+       "t": "elite",
+       "texte": "Reprendre le morceau du Milimulou (Forêt d'Astrub)",
+       "monstre": "milimulou",
+       "carte": "-2_-26",
+       "pv": 3,
+       "nom": "Milimulou chocolaté"
+      },
+      {
+       "t": "elite",
+       "texte": "Reprendre le morceau du Douzdoa (Carrière d'Astrub)",
+       "monstre": "douzdoa",
+       "carte": "10_-19",
+       "pv": 3,
+       "nom": "Douzdoa chocolaté"
+      },
+      {
+       "t": "elite",
+       "texte": "Reprendre le morceau du Garglyphe (Cimetière d'Astrub)",
+       "monstre": "garglyphe",
+       "carte": "1_-13",
+       "pv": 3,
+       "nom": "Garglyphe chocolaté"
+      }
+     ]
+    },
+    {
+     "nom": "La coquille",
+     "bulle": "La coquille a roulé dans les Égouts. Kankreblath l'a trouvée avant toi, et il n'aime pas partager.",
+     "objectifs": [
+      {
+       "t": "elite",
+       "texte": "Vaincre Kankreblath, gardien de la coquille",
+       "monstre": "kankreblath",
+       "carte": "egout_7",
+       "pv": 2,
+       "nom": "Kankreblath, gardien de la coquille"
+      }
+     ]
+    }
+   ],
+   "merci": "L'énergie est rentrée dans sa coquille. Le Dofus Cacao te protégera quand on te tire dessus au milieu de la mêlée. Et il sent toujours le chocolat.",
+   "recompense": {
+    "xp": 7000,
+    "kamas": 1400,
+    "dofus": "20987",
+    "pepites": 30
+   }
+  },
   "dopeul": {
    "nom": "Chasse au Dopeul",
    "type": "prime",
@@ -2692,6 +2875,80 @@
    "recompense": {
     "xp": 500,
     "objet": "16525"
+   }
+  },
+  "dofus_2": {
+   "nom": "Deux œufs au nid",
+   "dofusId": 0,
+   "description": "Posséder 2 Dofus.",
+   "categorie": "Dofus",
+   "sousCategorie": "Collection",
+   "points": 10,
+   "icone": 458,
+   "objectifs": [
+    {
+     "nom": "2 Dofus",
+     "dofus": 2
+    }
+   ],
+   "recompense": {
+    "xp": 500
+   }
+  },
+  "dofus_6": {
+   "nom": "Six emplacements",
+   "dofusId": 0,
+   "description": "Posséder 6 Dofus.",
+   "categorie": "Dofus",
+   "sousCategorie": "Collection",
+   "points": 20,
+   "icone": 458,
+   "objectifs": [
+    {
+     "nom": "6 Dofus",
+     "dofus": 6
+    }
+   ],
+   "recompense": {
+    "xp": 1000,
+    "titre": "Couveur de Dofus"
+   }
+  },
+  "dofus_12": {
+   "nom": "Un œuf par dieu",
+   "dofusId": 0,
+   "description": "Posséder 12 Dofus.",
+   "categorie": "Dofus",
+   "sousCategorie": "Collection",
+   "points": 30,
+   "icone": 458,
+   "objectifs": [
+    {
+     "nom": "12 Dofus",
+     "dofus": 12
+    }
+   ],
+   "recompense": {
+    "xp": 2000
+   }
+  },
+  "dofus_31": {
+   "nom": "L'héritage des Dofus",
+   "dofusId": 8989,
+   "description": "Posséder les 31 Dofus.",
+   "categorie": "Dofus",
+   "sousCategorie": "Collection",
+   "points": 50,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "31 Dofus",
+     "dofus": 31
+    }
+   ],
+   "recompense": {
+    "xp": 4000,
+    "titre": "Héritier des Dofus"
    }
   },
   "zone_lac": {

@@ -27,8 +27,8 @@ interface PnjSprite {
 /** PNJ des quêtes dans le monde : sprite officiel, nom, icône de quête au-dessus, bulle de dialogue (5A).
  *  Lit world.quetes ; ne modifie rien (le clic passe par l'entrée du joueur : input.talk). */
 export class QuestView {
-  static preload(scene: Phaser.Scene, quetes: { pnj: Record<string, { sprite?: string }> }) {
-    for (const id of new Set(Object.entries(quetes.pnj).map(([k, d]) => d.sprite ?? k))) if (!scene.textures.exists(`pnj_${id}`)) scene.load.multiatlas(`pnj_${id}`, v(`${SP}/pnj_${id}.json`), dossier(`${SP}/`));
+  static preload(scene: Phaser.Scene, quetes: { pnj: Record<string, { sprite?: string; v03?: boolean }> }, v03 = true) {
+    for (const id of new Set(Object.entries(quetes.pnj).filter(([, d]) => v03 || !d.v03).map(([k, d]) => d.sprite ?? k))) if (!scene.textures.exists(`pnj_${id}`)) scene.load.multiatlas(`pnj_${id}`, v(`${SP}/pnj_${id}.json`), dossier(`${SP}/`));
     for (const [a, b] of Object.values(QUEST_ICON)) for (const k of [a, b]) if (!scene.textures.exists(`qi_${k}`)) scene.load.image(`qi_${k}`, v(`${QI}/${k}.png`));
   }
 

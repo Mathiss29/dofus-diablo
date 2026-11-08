@@ -438,3 +438,15 @@ officiel du Zaap d'Astrub sur l'arche du Bastion (bastion.py réécrit les parti
 - Offrande : l'objet officiel s'il s'obtient dans le jeu (butin, récolte, fabrication), sinon une ressource du jeu de niveau proche,
   toujours la même pour la date (`officielle: false`). On la fait auprès du Représentant des Temples (Astrub [4,-18]) ; le bonus dure
   jusqu'à minuit (heure du PC). Réglages dans `src/sim/almanax.ts`.
+
+## Dofus (version 0.3, ligne « Dofus 0.3 : 1A 2B 3A 4C 5A+5B », « Onglet Dofus : 1B 2A 3A 4A 5A 6B 7A+7C »)
+
+- `python3 tools/contenu/dofus.py /mnt/project-files/dofus-passifs <tables dofusdb>` écrit `src/data/dofus.json` : les 31 Dofus officiels
+  (stats au jet maximum, passif traduit de la maquette des passifs, source). `jeu: true` = passif codé (`src/sim/dofus.ts`, PASSIFS) :
+  Argenté et Cacao en 0.3, les autres avec leur zone.
+- Icônes : `python3 tools/extraction/icones_ajout.py /mnt/project-files/cache-dofus/astrub/item_assets_1x.bundle <iconIds>`.
+- Quêtes « œuf à reconstituer » dans `tools/contenu/quetes.py` (Gawdien du Dofus au Bastion, place dans `bastion.py` PNJ_PLACE).
+  Un nouveau Dofus = une quête avec `'recompense': {'dofus': '<id>'}` ; la fenêtre D lit cette clé pour montrer les fragments.
+- Planches à exporter du PC (bones absents du cache) : Gawdien du Dofus (PNJ 148, look 321), Rathrosk (4357, look 4930),
+  Énergie du Dofus Cacao (4842, look 3401). Sans planche, le PNJ n'apparaît pas.
+- Trophées (266, type 151, Façonneur) et prysmaradites (25, type 217) : mêmes 6 cases, sous-onglets grisés jusqu'à Amakna.

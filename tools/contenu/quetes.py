@@ -106,6 +106,16 @@ PNJ = {
       {'reponse': "Écouter la suite.", 'texte': "Ensemble, Waro et moi avons inventé les poubelles, puis le tri sélectif et pour son millième anniversaire, je lui ai présenté le concept des aventuriers recyclés. C'est quelque chose d'assez simple à mettre en place : on récupère un aventurier qui n'a plus grande utilité et on l'envoie dans un lieu où il servira à autre chose qu'à pomper les allocations des anciens mercenaires d'Astrub. Par exemple, il peut finir en ragoût pour Kannibouls, cible d'entraînement pour jeunes Bworks ou compagnon de nuit pour Trooll esseulé."},
       {'reponse': "Émettre des doutes sur le concept et demander à quoi va servir l'offrande.", 'texte': "À rien de plus que ce pour quoi elle a été conçue. C'est un très bon exemple de ce que l'on peut faire avec des ressources de base ou des vieux équipements qui traînent dans les sacs à dos. Je déteste le gaspillage. J'estime que les artisans ne doivent utiliser que le strict nécessaire pour leurs œuvres. Quant au surplus, il faut s'en servir pour de nouvelles créations plutôt que le laisser à l'abandon dans un coin, un coffre ou sur le dos d'un aventurier."}],
     'adieu': "Recycler l'un de vos saluts quotidiens pour dire au revoir au Méryde."},
+  # --- Dofus (version 0.3, ligne « Dofus 0.3 : 1A 2B 3A 4C ») : le Gawdien du Dofus (PNJ officiel 148, look {321}) lance les quêtes
+  # des Dofus au Bastion ; un PNJ officiel lié au Dofus raconte (4C) : Rathrosk (PNJ 4357, {4930}), qui donne l'œuf d'argent dans
+  # Dofus 3 à [4,-19], et l'Énergie du Dofus Cacao (PNJ 4842, {3401|||120}). Répliques inédites.
+  'gawdien': {'nom': 'Gawdien du Dofus', 'dofusId': 148, 'zone': 'bastion', 'carte': 'bastion', 'case': BASTION['gawdien'], 'titre': 'Gardien des Dofus', 'v03': True,
+    'phrase': "Trente et un œufs de dragon, et presque tous perdus. Les Douze m'ont confié la liste. Moi, je n'ai que deux jambes et beaucoup trop d'œufs.",
+    'discussion': [{'reponse': "C'est quoi, un Dofus ?", 'texte': "Un œuf de dragon. Il n'éclot jamais, mais il garde un peu de la force de sa mère. Porte-le, et elle veille sur toi. Six à la fois, pas un de plus : les dragons sont jaloux."}]},
+  'rathrosk': {'nom': 'Rathrosk', 'dofusId': 4357, 'zone': 'astrub', 'carte': '4_-19', 'v03': True,
+    'phrase': "Cet œuf d'argent, je l'ai couvé dix ans. Dix ans ! Et il a suffi d'un éternuement de Craqueleur pour qu'il vole en éclats."},
+  'energie_cacao': {'nom': 'Énergie du Dofus Cacao', 'dofusId': 4842, 'zone': 'astrub', 'carte': '1_-20', 'v03': True,
+    'phrase': "Je suis ce qui reste d'un œuf en chocolat. Une odeur, surtout. Et beaucoup de colère."},
   # --- Bastion des Douze (maquette Ville, tranchée le 2026-11-07 : 5A 6B) : les PNJ de service quittent le Havre-Sac pour notre ville.
   # Noms et apparences officiels, dialogues inédits. apres = ils n'emménagent qu'après la première visite de cette zone.
   # Cases : devant leur maison (tools/extraction/bastion.py, recopiées dans zones.json > bastion > pnj).
@@ -436,6 +446,34 @@ Q['premier_pouvoir'] = {'nom': 'Le premier pouvoir', 'type': 'secondaire', 'pnj'
   'merci': "La couronne a parlé : le Codex est ouvert. Brise-moi un Légendaire et son pouvoir reste écrit dedans, pour toujours. Tiens, celui-là porte un pouvoir de ta classe. Ne le brise pas tout de suite, porte-le d'abord.",
   'recompense': {**rec(4, 30), 'sac': 'legendaire', 'pouvoirClasse': True, 'pepites': 30}}
 
+# --- Quêtes des petits Dofus (version 0.3, ligne « Dofus 0.3 : 1A 2B 3A 4C ») : « œuf à reconstituer » = 3 fragments gardés par
+# 3 élites de zones différentes, puis la coquille gardée par un boss officiel de la zone en version gardien. Le Gawdien du Dofus lance
+# et reçoit ; le PNJ officiel du Dofus raconte. Récompense : le Dofus (src/sim/dofus.ts).
+Q['oeuf_argent'] = {'nom': "L'œuf d'argent", 'type': 'secondaire', 'pnj': 'gawdien', 'rendre': 'gawdien', 'niveau': 20, 'serie': 'Les Dofus', 'v03': True,
+  'texte': "Un œuf d'argent s'est brisé au-dessus d'Astrub. Trois morceaux, trois voleurs, et une coquille que personne n'ose approcher. Rathrosk, qui le couvait, en sait plus que moi.",
+  'etapes': [{'nom': "Le couveur d'œufs", 'bulle': "Rathrosk attend près de la Cité d'Astrub. Il a couvé l'œuf. Il va pleurer, sois patient.",
+              'objectifs': [parler('Parler à Rathrosk', 'rathrosk')]},
+             {'nom': 'Les trois fragments', 'bulle': "Trois fragments, trois chapardeurs : un Épouvanteur des Champs, une larve des Prairies, un Pichon des Calanques. Ils brillent, tu ne peux pas les rater.",
+              'objectifs': [elite("Reprendre le fragment de l'Épouvanteur (Champs d'Astrub)", 'epouvanteur', '5_-28', pv=3, nom="Épouvanteur à l'éclat d'argent"),
+                            elite("Reprendre le fragment de la Larve (Prairies d'Astrub)", 'larve_orange', '7_-13', pv=3, nom="Larve à l'éclat d'argent"),
+                            elite("Reprendre le fragment du Pichon (Calanques d'Astrub)", 'pichon_orange', '11_-26', pv=3, nom="Pichon à l'éclat d'argent")]},
+             {'nom': 'La coquille', 'bulle': "Les fragments chantent quand on les approche de la coquille. Le Tournesol Affamé l'a enroulée dans ses racines, au fond des Champs.",
+              'objectifs': [elite('Vaincre le Tournesol Affamé, gardien de la coquille', 'tournesol_affame', '6_-26', pv=2, nom='Tournesol Affamé, gardien de la coquille')]}],
+  'merci': "La coquille et ses trois morceaux. L'œuf ne vivra jamais, mais il se souviendra de toi : quand tout va mal, il te rendra un peu de force. Le Dofus Argenté est à toi.",
+  'recompense': {**rec(4, 20), 'dofus': '19629', 'pepites': 20}}
+Q['oeuf_cacao'] = {'nom': "L'œuf en chocolat", 'type': 'secondaire', 'pnj': 'gawdien', 'rendre': 'gawdien', 'niveau': 35, 'serie': 'Les Dofus', 'v03': True, 'requiert': ['oeuf_argent'],
+  'texte': "Un œuf en chocolat a fondu près d'Astrub. Ce qu'il en reste, une drôle d'énergie, refuse de partir sans lui. Trois gourmands ont emporté les morceaux.",
+  'etapes': [{'nom': "L'énergie du Dofus", 'bulle': "L'Énergie du Dofus Cacao flotte dans la Cité d'Astrub. Elle sent bon et elle est furieuse.",
+              'objectifs': [parler("Parler à l'Énergie du Dofus Cacao", 'energie_cacao')]},
+             {'nom': 'Les trois gourmands', 'bulle': "Un Milimulou de la Forêt, un Douzdoa de la Carrière et un Garglyphe du Cimetière. Ils ont du chocolat plein les dents.",
+              'objectifs': [elite('Reprendre le morceau du Milimulou (Forêt d\'Astrub)', 'milimulou', '-2_-26', pv=3, nom='Milimulou chocolaté'),
+                            elite('Reprendre le morceau du Douzdoa (Carrière d\'Astrub)', 'douzdoa', '10_-19', pv=3, nom='Douzdoa chocolaté'),
+                            elite('Reprendre le morceau du Garglyphe (Cimetière d\'Astrub)', 'garglyphe', '1_-13', pv=3, nom='Garglyphe chocolaté')]},
+             {'nom': 'La coquille', 'bulle': "La coquille a roulé dans les Égouts. Kankreblath l'a trouvée avant toi, et il n'aime pas partager.",
+              'objectifs': [elite('Vaincre Kankreblath, gardien de la coquille', 'kankreblath', 'egout_7', pv=2, nom='Kankreblath, gardien de la coquille')]}],
+  'merci': "L'énergie est rentrée dans sa coquille. Le Dofus Cacao te protégera quand on te tire dessus au milieu de la mêlée. Et il sent toujours le chocolat.",
+  'recompense': {**rec(4, 35), 'dofus': '20987', 'pepites': 30}}
+
 # --- Chasse au Dopeul (officielle, répétable une fois par jour, Quêtes roadmap 7B) --------------------------------------------------
 Q['dopeul'] = {'nom': 'Chasse au Dopeul', 'type': 'prime', 'pnj': 'temples', 'rendre': 'temples', 'niveau': 12, 'repetable': 'jour', 'serie': 'Temples',
   'texte': "Ton Dopeul t'attend aux portes des Champs d'Astrub. Il connaît tous tes sorts. Bats-le, et reviens me voir : le maître des combats paie toujours sa dette.\n\nUne fois par jour.",
@@ -501,7 +539,14 @@ S = {
   'debutant': suc('Débutant', 3, 'Atteindre le niveau 10.', 'Général', 'Général', 1, 58, [{'nom': 'Niveau 10', 'niveau': 10}]),
   'crypte': suc('Crypte de Kardorim', 33, 'Vaincre Kardorim dans son donjon.', 'Donjons', 'Niveaux 1 à 50', 10, 299,
      [{'nom': 'Kardorim', 'monstre': 'kardorim'}, {'nom': 'Niveau 10', 'niveau': 10}], 1, '16525'),
+  # Dofus (0.3, ligne « Onglet Dofus : … 5A ») : compteur de la fenêtre Dofus ; le dernier reprend le succès officiel « L'héritage des Dofus »
+  'dofus_2': suc('Deux œufs au nid', 0, 'Posséder 2 Dofus.', 'Dofus', 'Collection', 10, 458, [{'nom': '2 Dofus', 'dofus': 2}], 1),
+  'dofus_6': suc('Six emplacements', 0, 'Posséder 6 Dofus.', 'Dofus', 'Collection', 20, 458, [{'nom': '6 Dofus', 'dofus': 6}], 2),
+  'dofus_12': suc('Un œuf par dieu', 0, 'Posséder 12 Dofus.', 'Dofus', 'Collection', 30, 458, [{'nom': '12 Dofus', 'dofus': 12}], 4),
+  'dofus_31': {**suc("L'héritage des Dofus", 8989, 'Posséder les 31 Dofus.', 'Dofus', 'Collection', 50, 82, [{'nom': '31 Dofus', 'dofus': 31}], 8), },
 }
+S['dofus_6'].setdefault('recompense', {})['titre'] = 'Couveur de Dofus'
+S['dofus_31'].setdefault('recompense', {})['titre'] = 'Héritier des Dofus'
 EXPLO = [('lac', 414, 'Lac', 'lac', 0.1), ('champs', 415, 'Champs', 'champs', 0.1), ('cimetiere', 416, 'Cimetière', 'cimetiere', 0.1), ('foret', 417, 'Forêt', 'foret', 0.1),
          ('mine', 419, 'Mine', 'mine', 0.1), ('paturages', 420, 'Pâturages', 'paturages', 0.1), ('route', 422, 'Route des âmes', 'route', 0.05),
          ('taverne', 423, 'Taverne', 'taverne', 0.1), ('temple', 424, 'Temple Céleste', 'temple', 0.05)]
