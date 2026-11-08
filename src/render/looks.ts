@@ -1,3 +1,4 @@
+import MONSTRES from '../data/monsters.json';
 /** Apparence de chaque entité : quelle planche, quelle échelle, et quelle animation Dofus
  *  jouer pour chaque état de gameplay. from/to = fractions de l'animation d'origine,
  *  choisies pour que la frame d'impact tombe au moment du dégât. */
@@ -274,6 +275,13 @@ export const LOOKS: Record<string, Look> = {
   // Kankreblath (0.2b) : planche à SCALE 1,6 ; AnimAttaque1 (projectile qui part très loin) rendue à part, 30 frames, recalée sur le même pied
   kankreblath: { atlas: 'kankreblath', scale: 0.77, map: MONSTER_MAP(28 / 64, 'AnimAttaque0', { 0: 28 / 64, 1: 36 / 61, 2: 45 / 57 }), height: 244, multi: true },
 };
+
+/** Archimonstres d'Astrub (0.3, 15B ; tools/contenu/archimonstres.py) : dans Dofus, un archimonstre a le dessin de son monstre
+ *  (même gfxId) à sa propre échelle officielle. Même planche, à cette échelle, un peu plus grand et doré comme ceux des Champs. */
+for (const [k, d] of Object.entries(MONSTRES as Record<string, { archiDe?: string; archiEchelle?: number }>)) {
+  const base = d.archiDe && LOOKS[d.archiDe];
+  if (base && !LOOKS[k]) LOOKS[k] = { ...base, scale: base.scale * (d.archiEchelle ?? 1) * 1.15, tint: GOLD };
+}
 
 /** PNJ dans le monde (planches tools/extraction/monster_planche.py, PNJ=1, SCALE = 1,32 x échelle officielle du look).
  *  Dofus montre un PNJ immobile (AnimStatique, une seule image) qui joue de temps en temps une de ses animations « fun »

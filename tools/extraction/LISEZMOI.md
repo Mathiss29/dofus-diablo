@@ -422,3 +422,11 @@ officiel du Zaap d'Astrub sur l'arche du Bastion (bastion.py réécrit les parti
 - En jeu (`src/sim/metiers.ts`) : un objet fabriqué sort Commun ou Rare (10 % au niveau 1 du métier, 50 % au niveau 200) ; un ingrédient
   rare (ressource que seuls des boss ou des élites lâchent, hors objets d'événement à 100 %) garantit Rare. Caché hors partie de test
   tant que `V03_PUBLIC` est faux. Les ateliers de la Cité pour ces métiers restent à exporter.
+
+## Archimonstres d'Astrub (version 0.3, choix 15B)
+- `python tools/contenu/archimonstres.py <tables> <fr.bin>` : un `archi_<monstre>` par monstre qui a un archimonstre officiel
+  (monsters.correspondingMiniBossId) : stats du grade 1 (PV × 2,5), sorts du monstre (les mêmes dans les données), XP au rapport des
+  gradeXp, sons du monstre. Puis `drops_ajout.py` pour leur butin officiel.
+- Dessin : dans Dofus, l'archimonstre a le gfxId de son monstre (vérifié pour les 32 d'Astrub et des Champs) ; `render/looks.ts` reprend
+  la planche du monstre à l'échelle officielle de l'archimonstre (`archiEchelle`), ×1,15 et dorée. Pas de planche à exporter.
+- Pierres d'âme officielles : Petite pierre d'âme (9686, vendue par Otomaï en 0.3) et Pierre d'âme d'Archimonstre (10418, la pierre pleine).
