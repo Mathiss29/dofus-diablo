@@ -122,3 +122,19 @@ describe('contour officiel des portes et paillasson (Mathis 2026-11-08)', () => 
     }
   });
 });
+
+describe('entrer et sortir simplement (Mathis 2026-11-08)', () => {
+  it('juste arrivé dans un intérieur, un clic sur le paillasson fait ressortir tout de suite', () => {
+    const w = monde(), po = porte(w, "Taverne d'Astrub"), dedans = po.ends[1];
+    w.player.x = dedans.x; w.player.y = dedans.y;
+    (w as unknown as { portalLock: unknown }).portalLock = dedans;   // comme à l'arrivée par cette porte
+    for (let i = 0; i < 30; i++) w.step(1 / 60, { ...NO_INPUT, aim: { x: dedans.x, y: dedans.y } });
+    expect(ici(w)).toBe('taverne');   // sans clic, on ne repart pas
+    for (let i = 0; i < 60; i++) w.step(1 / 60, { ...NO_INPUT, aim: { x: dedans.x, y: dedans.y }, dest: { x: dedans.x, y: dedans.y } });
+    expect(ici(w)).toBe(po.ends[0].tag);
+  });
+  it('passage entre deux salles (boutique et grenier de Kerubim) : tout le paillasson compte au survol', () => {
+    const w = monde(), po = w.portes.find(p => p.nom === 'Grenier de Kerubim')!, e = po.ends[0];
+    expect(w.porteSous(e.x + 60, e.y + 40)?.nom).toBe('Grenier de Kerubim');
+  });
+});

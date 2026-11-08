@@ -5,6 +5,7 @@
 #  au survol (shaderOutlineParameters). Les portes dessinées à part (éléments interactifs, gfx 62977-62999) aussi.
 #  Ce script dessine le trait de chaque silhouette (lilas, comme Sanstour) dans un atlas <sortie>.png/.json et pose
 #  "survols": [{f, x, y}] sur chaque carte de monde.json (x, y : centre, mêmes coordonnées que le décor).
+#  L'intérieur de chaque forme est gardé presque transparent (1/255) : survoler n'importe où dans la porte la désigne.
 #  À relancer après chaque world_export.py (il réécrit monde.json).
 import sys, json, os, glob, collections, warnings
 warnings.filterwarnings('ignore')
@@ -51,7 +52,9 @@ def trait(e):
     halo = ImageChops.subtract(a.filter(ImageFilter.MaxFilter(9)), a).filter(ImageFilter.GaussianBlur(1.2))
     o = Image.new('RGBA', a.size, HALO + (0,)); o.putalpha(halo.point(lambda q: q * 90 // 255))
     l = Image.new('RGBA', a.size, TRAIT + (0,)); l.putalpha(ligne.filter(ImageFilter.GaussianBlur(0.5)))
-    return Image.alpha_composite(o, l)
+    # l'intérieur de la forme reste dans le dessin avec une opacité de 1/255 (invisible) : le jeu y lit le survol au pixel
+    f = Image.new('RGBA', a.size, TRAIT + (0,)); f.putalpha(a.point(lambda q: 1 if q else 0))
+    return Image.alpha_composite(Image.alpha_composite(f, o), l)
 frames, cles = {}, {}
 for tag, (m, formes, (dx, dy)) in par_carte.items():
     m['survols'] = []
