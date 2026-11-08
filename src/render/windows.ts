@@ -27,6 +27,18 @@ const DOF_CSS = `.dw .win.dofw{width:640px}.dw .dof-c .ic{width:70%;height:70%}.
 .dw .dof-d h4{margin:0 0 2px;color:#e8c76b}.dw .dof-s{display:flex;gap:6px;flex-wrap:wrap}.dw .dof-s span{background:rgba(255,255,255,.06);border-radius:10px;padding:2px 8px;font-size:12px}
 .dw .dof-s span.ok{background:rgba(185,229,75,.18);color:#d7f59a}`;
 /** Fenêtre de l'Almanax (15C). */
+const MENU_CSS = `.dw .win.menu{width:330px;grid-template-rows:46px auto}
+.dw .mp{display:flex;flex-direction:column;padding:4px 0 14px}
+.dw .mp .grp{display:flex;flex-direction:column;align-items:center;gap:10px;padding:14px 26px;border-bottom:1px solid #0d0c0a;box-shadow:0 1px 0 #ffffff12}
+.dw .mp .grp:last-child{border:0;box-shadow:none;padding-bottom:4px}
+.dw .mp .mb{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;box-sizing:border-box;height:34px;border:6px solid transparent;border-image:url(assets/ui/d3/btn_grey_small_normal.png) 8 fill/6px;font:14px Rowdies,Lexend,sans-serif;color:#f4efe0;text-shadow:0 1px 2px #000;text-transform:uppercase;cursor:pointer;user-select:none}
+.dw .mp .mb:hover{border-image-source:url(assets/ui/d3/btn_grey_small_over.png)}
+.dw .mp .mb:active{filter:brightness(.85)}
+.dw .mp .mb.off{opacity:.4;cursor:default;pointer-events:none}
+.dw .mp .mb.jeu{width:70%}
+.dw .mp .mb img{width:20px;height:20px;object-fit:contain;filter:brightness(0) invert(1)}
+.dw .mp .mb svg{width:18px;height:18px}
+`;
 const ALM_CSS = `.dw .win.almanax{width:420px}.dw .alm{padding:10px 14px 14px;display:flex;flex-direction:column;gap:6px}
 .dw .alm-d{font-family:Rowdies,serif;font-size:18px;color:#ffd27a;text-transform:capitalize;text-align:center}
 .dw .alm-b{background:rgba(255,210,122,.07);border:1px solid rgba(255,210,122,.25);border-radius:6px;padding:8px 10px}
@@ -538,7 +550,7 @@ const CSS = `
 .dw .ttl b{font-weight:700}
 `;
 
-type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap' | 'bestiaire' | 'forge' | 'coffre' | 'almanax' | 'dofus';
+type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap' | 'bestiaire' | 'forge' | 'coffre' | 'almanax' | 'dofus' | 'menu';
 
 /** Fenêtres façon Dofus 3 : « Inventaire » (le perso sur son socle, ses emplacements autour, le sac à onglets)
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
@@ -583,6 +595,8 @@ export class Windows {
   heureNom = () => '';
   /** Bouton « Retour à l'accueil » de la fenêtre Réglages (sauvegarde puis écran d'accueil). */
   onAccueil: (() => void) | null = null;
+  /** Menu principal (Échap) : changer de personnage ou se déconnecter (retour à l'accueil, partie sauvegardée). */
+  onMenu: ((choix: 'persos' | 'accueil') => void) | null = null;
   onChange: () => void = () => {};
   /** Bestiaire (maquette « Drops » 1A) : monstres vaincus par le compte (lus par la scène) ; partie de test : tout est visible. */
   vaincus: () => Record<string, number> = () => ({});
@@ -597,7 +611,7 @@ export class Windows {
   private forge = etatForge();
 
   constructor(private world: World) {
-    const style = document.createElement('style'); style.textContent = DOF_CSS + ALM_CSS + CSS + ICON_CSS + BUTIN_CSS + FORGE_CSS + CODEX_CSS; document.head.appendChild(style);
+    const style = document.createElement('style'); style.textContent = DOF_CSS + MENU_CSS + ALM_CSS + CSS + ICON_CSS + BUTIN_CSS + FORGE_CSS + CODEX_CSS; document.head.appendChild(style);
     this.root = document.createElement('div'); this.root.className = 'dw'; document.body.appendChild(this.root);
     this.tip = document.createElement('div'); this.tip.className = 'tip'; this.tip.style.display = 'none'; this.root.appendChild(this.tip);
   }
@@ -640,7 +654,7 @@ export class Windows {
     else if (this.mode === 'car') this.renderCarac(); else if (this.mode === 'job') this.renderJob(); else if (this.mode === 'art') this.renderArt(); else if (this.mode === 'opt') this.renderOpt();
     else if (this.mode === 'sorts') this.renderSorts(); else if (this.mode === 'quetes') this.renderQuetes();
     else if (this.mode === 'succes') this.renderSucces(); else if (this.mode === 'emp') this.renderEmp(); else if (this.mode === 'zaap') this.renderZaap();
-    else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else if (this.mode === 'forge') this.renderForge(); else if (this.mode === 'coffre') this.renderCoffre(); else if (this.mode === 'almanax') this.renderAlmanax(); else if (this.mode === 'dofus') this.renderDofus(); else this.renderInv();
+    else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else if (this.mode === 'forge') this.renderForge(); else if (this.mode === 'coffre') this.renderCoffre(); else if (this.mode === 'almanax') this.renderAlmanax(); else if (this.mode === 'dofus') this.renderDofus(); else if (this.mode === 'menu') this.renderMenu(); else this.renderInv();
     this.win!.querySelector('[data-close]')!.addEventListener('click', () => this.close());
   }
   private title(name: string, icon: string) {
@@ -1235,6 +1249,24 @@ export class Windows {
     ch.addEventListener('input', () => { this.guideRecherche = ch.value; this.render(); const n = this.win?.querySelector<HTMLInputElement>('[data-cherche]'); n?.focus(); n?.setSelectionRange(n.value.length, n.value.length); });
     ch.addEventListener('keydown', e => e.stopPropagation());
   }
+  /** Menu principal façon Dofus 3 (Échap quand aucune fenêtre n'est ouverte) : le jeu continue derrière, comme les autres fenêtres. */
+  private renderMenu() {
+    const w = this.win!, perso = !!this.onAccueil;
+    w.innerHTML = `<div class="ttl"><b>Menu principal</b><span class="x" data-close title="Fermer (Échap)"></span></div>
+      <div class="mp">
+        <div class="grp">${perso ? '<span class="mb" data-m="persos">Changer de personnage</span>' : '<span class="mb off" title="Partie sans personnage">Changer de personnage</span>'}</div>
+        <div class="grp"><span class="mb" data-m="opt"><img src="assets/ui/menu/options.png" alt="">Options</span>
+          <span class="mb" data-m="accueil" title="La partie est sauvegardée"><svg viewBox="0 0 20 20"><path d="M11 3H4v14h7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 10h10m-4-4 4 4-4 4" fill="none" stroke="currentColor" stroke-width="2"/></svg>Déconnecter</span></div>
+        <div class="grp"><span class="mb jeu" data-m="jeu">Revenir au jeu</span></div>
+      </div>`;
+    w.querySelectorAll<HTMLElement>('[data-m]').forEach(e => e.addEventListener('click', () => {
+      const m = e.dataset.m;
+      if (m === 'opt') this.show('opt');
+      else if (m === 'jeu') this.close();
+      else { this.close(); this.onMenu?.(m as 'persos' | 'accueil'); }
+    }));
+  }
+
   private renderOpt() {
     const w = this.win!, r = this.reglages;
     const heures: [string, string][] = [['auto', 'Heure du PC'], ['jour', 'Jour'], ['soir', 'Soir'], ['nuit', 'Nuit']];

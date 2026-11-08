@@ -371,7 +371,8 @@ export class ZoneScene extends Phaser.Scene {
     this.windows.onApparence = a => {
       if (this.perso) { this.perso.apparence = a; this.sauver(); } else this.apparenceEssai = a;   // majApparence() réassemble le perso
     };
-    if (this.perso) this.windows.onAccueil = () => this.versAccueil();   // rendu en grand (perso_planche : render.cjs échelle 2,2)
+    if (this.perso) this.windows.onAccueil = () => this.versAccueil();
+    this.windows.onMenu = c => this.versAccueil(c === 'persos' ? 'persos' : undefined);   // menu principal (Échap)   // rendu en grand (perso_planche : render.cjs échelle 2,2)
     this.windows.reglages = this.reglages;
     this.hud.flecheQuete = this.reglages.flecheQuete;
     // idée 1 (2026-11-08) : losange au-dessus des monstres qui comptent pour une quête en cours
@@ -480,7 +481,7 @@ export class ZoneScene extends Phaser.Scene {
     sauverPerso(this.slot, p); sauverBestiaire(this.bestiaire);
   };
   /** Retour à l'écran d'accueil (main.ts relance la partie en vitrine). */
-  private versAccueil() { this.sauver(); this.game.events.emit('accueil'); }
+  private versAccueil(page?: 'persos') { this.sauver(); this.game.events.emit('accueil', page); }
 
   /** Partie de test : relance la partie depuis un perso de test écrit d'avance (classe, zone ou état tout prêt). */
   private relancerTest(t: EtatTest) {
@@ -613,7 +614,11 @@ export class ZoneScene extends Phaser.Scene {
     this.keys.B.on('down', () => this.windows?.toggle('bestiaire'));   // Bestiaire (maquette « Drops » 1A)
     this.keys.D.on('down', () => { if (this.world.player.v03) this.windows?.toggle('dofus'); });   // Dofus (Onglet Dofus 1B, 0.3)
     this.keys.S.on('down', () => this.windows?.toggle('sorts'));   // Sorts (choix 8A, touche S)   // Réglages (choix 10A + 10B)
-    this.keys.ESC.on('down', () => { if (this.panneau?.pose) { this.panneau.posee(); return; } if (this.essai) { this.essai = null; this.game.events.emit('accueil', 'creation'); return; } if (this.dialogueView?.ouvert) { this.dialogueView.touche(-1); return; } this.dialogueView?.fermerMenu(); this.aimId = null; this.aimKey = null; this.windows?.close(); this.carte?.fermer(); });
+    this.keys.ESC.on('down', () => { if (this.panneau?.pose) { this.panneau.posee(); return; } if (this.essai) { this.essai = null; this.game.events.emit('accueil', 'creation'); return; } if (this.dialogueView?.ouvert) { this.dialogueView.touche(-1); return; } this.aimId = null; this.aimKey = null;
+      // Échap ferme d'abord ce qui est ouvert (fenêtre, carte, menu d'un PNJ, outils F1) ; sinon, ouvre ou ferme le menu principal
+      if (this.windows?.open || this.carte?.ouverte || this.dialogueView?.menuOuvert || this.panneau?.ouvert) { this.dialogueView?.fermerMenu(); this.windows?.close(); this.carte?.fermer(); if (this.panneau?.ouvert) this.panneau.basculer(); return; }
+      if (!this.vitrine) this.windows?.toggle('menu');
+    });
     // K : changer de classe, seulement sans perso (mode dév #cra / #jeu, partie de test) ; sinon la classe se choisit à la création
     if (!this.perso) this.keys.K.on('down', () => { const cl = Object.keys(GAME_DATA.classes), c = cl[(cl.indexOf(this.classId) + 1) % cl.length]; if (this.test) this.actionsTest().classe(c); else this.scene.restart({ zone: this.zoneId, classe: c }); });
     // F1 : outils de la partie de test (3A) ; la touche n'ouvre plus l'aide du navigateur

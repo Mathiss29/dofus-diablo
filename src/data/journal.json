@@ -713,6 +713,15 @@
             "etiquettes": [
               "Partie de test"
             ]
+          },
+          {
+            "titre": "Le menu principal",
+            "phrase": "Échap ouvre le menu façon Dofus 3 : changer de personnage, Options, se déconnecter.",
+            "details": "Échap ferme d'abord la fenêtre ouverte. Se déconnecter sauvegarde et ramène à l'accueil.",
+            "icone": "options",
+            "etiquettes": [
+              "Touche Échap"
+            ]
           }
         ],
         "Le monde": [
