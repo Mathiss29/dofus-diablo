@@ -3,19 +3,22 @@ import { apercuBrisage, chanceRune, coutKamas, exoPossible, FUSION_N, fusionVers
 import { RARITIES, RARITY_COLORS, RARITY_NAMES, STAT_NAMES, type Item, type Rarity, type Stat } from '../sim/items';
 import type { World } from '../sim/world';
 import { iconHtml } from './icons';
+import { codexOngletHtml, type EtatCodex } from './codexVue';
 
 /** Fenêtre de forgemagie façon Dofus 3 (maquette « Forgemagie UI : 1B 2A 4A+4B+4C 5A 6A 7A 8A 9A+9B+9C+9D+9E », Mathis 2026-11-08).
  *  Onglet Forgemagie : cases Objet, Rune et Signature, bouton Fusionner et mode avancé (2A) ; lignes Effet, Valeur, Jet avec l'œil,
  *  les barres et les runes de la ligne au bout (4A+4B+4C) ; historique avec l'icône de la rune (5A). Onglet Malek : la commande
  *  (objectifs, planchers, budget, estimation, objet confié). Onglet Concasseur : le brisage (8A). Onglet Fusion (6D). */
-export type OngletForge = 'forge' | 'malek' | 'brisage' | 'fusion';
+export type OngletForge = 'forge' | 'malek' | 'brisage' | 'fusion' | 'codex';
 export interface LigneLog { t: string; c: string; ic?: string }
 export interface EtatForge {
   onglet: OngletForge; uid: number | null; rune: string | null; avance: boolean; caches: Stat[]; log: LigneLog[];
   cmd: Commande; cmdUid: number | null; estim: Estimation | null; brise: number[];
+  /** Onglet Codex (0.3) : objet et pouvoir choisis. */
+  codex: EtatCodex;
 }
 export const etatForge = (): EtatForge => ({ onglet: 'forge', uid: null, rune: null, avance: false, caches: [], log: [],
-  cmd: { objectifs: {}, planchers: {}, budget: 1000 }, cmdUid: null, estim: null, brise: [] });
+  cmd: { objectifs: {}, planchers: {}, budget: 1000 }, cmdUid: null, estim: null, brise: [], codex: { uid: null, entree: null } });
 
 const D3 = 'assets/ui/d3';
 export const FORGE_CSS = `
@@ -111,10 +114,11 @@ export function forgeHtml(world: World, e: EtatForge): string {
   const p = world.player;
   const onglet = (k: OngletForge, n: string) => `<span class="eo ${e.onglet === k ? 'on' : ''}" data-fo="${k}">${n}</span>`;
   const c = p.commandeFM, malek = c ? (c.prete ? 'Malek ✓' : `Malek · ${mmss(c.reste)}`) : 'Commande à Malek';
-  const tete = `<div class="eh"><div class="eos">${onglet('forge', 'Forgemagie')}${onglet('malek', malek)}${onglet('brisage', 'Concasseur')}${onglet('fusion', 'Fusion')}</div>
+  const tete = `<div class="eh"><div class="eos">${onglet('forge', 'Forgemagie')}${onglet('malek', malek)}${onglet('brisage', 'Concasseur')}${onglet('fusion', 'Fusion')}${p.v03 ? onglet('codex', `Codex · ${p.codex.length}`) : ''}</div>
     <span class="k" title="Kamas">${p.kamas.toLocaleString('fr-FR')} kamas</span></div>`;
   if (e.onglet === 'brisage') return tete + brisageHtml(world, e);
   if (e.onglet === 'fusion') return tete + fusionHtml(world);
+  if (e.onglet === 'codex' && p.v03) return tete + codexOngletHtml(world, e.codex);
   if (e.onglet === 'malek') return tete + malekHtml(world, e);
   return tete + forgeOngletHtml(world, e);
 }

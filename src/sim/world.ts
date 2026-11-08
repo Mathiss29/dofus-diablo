@@ -9,7 +9,8 @@ import { jetOfficiel } from './danger';
 import { poolNiveau, rangDe, tirerButin, type CtxButin, type Rang } from './butin';
 import { briser, chanceRune, coutKamas, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
 import { NIVEAU_OBJETS_02, V03_PUBLIC } from './pouvoirs';
-import { FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, recycleResource, recycleValue, rollItem, type EquipSlot, type Item, type ItemsData, type Rarity } from './items';
+import { fxImpression, imprimable, nouveauPourCodex, prixImpression } from './codex';
+import { legendaryPower, FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, recycleResource, recycleValue, rollItem, type EquipSlot, type Item, type ItemsData, type Rarity } from './items';
 import { Player } from './player';
 import { Bete, BETES, REGLES_BETES, type EffetBete, type SortBete } from './bete';
 import { initiativeBonus, removalChance } from './caracs';
@@ -1526,6 +1527,36 @@ export class World {
     p.apparats.push(id);
     this.emit({ k: 'apparence', id });
   }
+  // --- Codex des pouvoirs (version 0.3, src/sim/codex.ts) -----------------------------------------------
+  /** 5A : briser un Légendaire ou un Mythique chez Malek garde ses pouvoirs (ceux de sa classe et les pouvoirs maison). */
+  private enregistrerCodex(it: Item) {
+    const p = this.player;
+    if (!p.v03) return;
+    for (const l of [it.legendary, it.legendary2]) {
+      if (!l || !nouveauPourCodex(p.codex, p.cls.sorts, l)) continue;
+      p.codex.push(l.sort ? { id: l.id, sort: l.sort } : { id: l.id });
+      this.emit({ k: 'codex', id: l.id });
+    }
+  }
+  /** 5B + 6A/6B : imprime un pouvoir du Codex sur un objet Rare ou Épique (sac ou porté) du bon emplacement ; il devient Légendaire.
+   *  Paiement en kamas + runes de l'objet, ou en Pépites. */
+  imprimerCodex(uid: number, id: string, paiement: 'kamas' | 'pepites'): boolean {
+    const p = this.player, it = this.objetForgeable(uid), def = it && this.opts.items?.equipment[it.id], e = p.codex.find(c => c.id === id);
+    if (!p.v03 || !it || !def || !e || !imprimable(def, it, e)) return false;
+    const prix = prixImpression(def, it);
+    if (paiement === 'kamas') {
+      if (p.kamas < prix.kamas || (prix.rune && (p.resources[prix.rune] ?? 0) < prix.runes)) return false;
+      p.kamas -= prix.kamas;
+      if (prix.rune) p.resources[prix.rune] -= prix.runes;
+    } else {
+      if ((p.resources[PEPITE] ?? 0) < prix.pepites) return false;
+      p.resources[PEPITE] -= prix.pepites;
+    }
+    it.rarity = 'legendaire'; it.legendary = fxImpression(def, e, legendaryPower);
+    p.recompute();
+    this.emit({ k: 'impression', uid, id });
+    return true;
+  }
   private pepites(n: number) { const p = this.player; p.resources[PEPITE] = (p.resources[PEPITE] ?? 0) + n; }
   /** Recycle un objet du sac contre des Pépites (un objet sous cadenas n'est jamais recyclé). */
   recycle(uid: number): boolean {
@@ -1642,7 +1673,7 @@ export class World {
       const def = I?.equipment[it.id];
       if (!uids.includes(it.uid) || !def || def.familier || it.cadenas) return true;
       for (const [id, k] of Object.entries(briser(this.rng, def, it))) tout[id] = (tout[id] ?? 0) + k;
-      this.collectionner(it.id); n++; return false;
+      this.collectionner(it.id); this.enregistrerCodex(it); n++; return false;
     });
     for (const [id, k] of Object.entries(tout)) p.resources[id] = (p.resources[id] ?? 0) + k;
     if (n) this.emit({ k: 'brisage', n, runes: tout });
@@ -1653,7 +1684,7 @@ export class World {
     const p = this.player, i = p.bag.findIndex(b => b.uid === uid), it = i >= 0 ? p.bag[i] : null, def = it && this.opts.items?.equipment[it.id];
     if (!it || !def || it.cadenas || def.familier) return false;
     const g = briser(this.rng, def, it);
-    p.bag.splice(i, 1); this.collectionner(it.id);
+    p.bag.splice(i, 1); this.collectionner(it.id); this.enregistrerCodex(it);
     for (const [id, n] of Object.entries(g)) p.resources[id] = (p.resources[id] ?? 0) + n;
     this.emit({ k: 'brisage', n: 1, runes: g });
     return true;
@@ -1666,7 +1697,7 @@ export class World {
       const def = I?.equipment[it.id];
       if (!def || def.familier || it.cadenas || RARITIES.indexOf(it.rarity) > max) return true;
       for (const [id, k] of Object.entries(briser(this.rng, def, it))) tout[id] = (tout[id] ?? 0) + k;
-      this.collectionner(it.id); n++; return false;
+      this.collectionner(it.id); this.enregistrerCodex(it); n++; return false;
     });
     for (const [id, k] of Object.entries(tout)) p.resources[id] = (p.resources[id] ?? 0) + k;
     if (n) this.emit({ k: 'brisage', n, runes: tout });

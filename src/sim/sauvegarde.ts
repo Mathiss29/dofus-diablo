@@ -4,6 +4,7 @@ import type { RetourHavreSac } from './events';
 import type { World } from './world';
 import type { CleDonjon } from './arene';
 import type { CommandeFM } from './forgemagie';
+import type { EntreeCodex } from './codex';
 
 /** État du joueur gardé entre deux parties (écran « Mes personnages », 3 emplacements, choix 16B).
  *  Pur JSON : l'affichage le range où il veut (navigateur pour l'instant). */
@@ -32,6 +33,8 @@ export interface EtatJoueur {
   cleDonjon?: CleDonjon | null;
   /** Commande chez Malek le Forgemage (Forgemagie UI 9E). */
   commandeFM?: CommandeFM | null;
+  /** Codex des pouvoirs (0.3). */
+  codex?: EntreeCodex[];
 }
 
 const copie = <T>(o: T): T => JSON.parse(JSON.stringify(o)) as T;
@@ -43,7 +46,7 @@ export function exporterJoueur(w: World): EtatJoueur {
     base: p.base, bag: p.bag, equipment: p.equipment, resources: p.resources, metiers: p.metiers, recetteSuivie: p.recetteSuivie,
     bar: p.bar, variants: p.variants, learned: [...p.learned],
     x: p.x, y: p.y, retour: w.pointDeRetour, quetes: w.quetes?.exporter(), zone: w.opts.zone,
-    apparats: p.apparats, apparat: p.apparat,
+    apparats: p.apparats, apparat: p.apparat, codex: p.codex,
     zaaps: p.zaaps, zonesVues: p.zonesVues, cleDonjon: p.cleDonjon, commandeFM: p.commandeFM, ...(w.retour ? { havreSac: w.retour } : {}),
   });
 }
@@ -63,6 +66,7 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
   p.apparats = Array.isArray(s.apparats) ? s.apparats.filter(a => typeof a === 'string') : [];
   p.apparat = {};
   for (const k of ['chapeau', 'cape', 'bouclier', 'familier'] as const) { const a = s.apparat?.[k]; if (a === '0' || (a && p.apparats.includes(a))) p.apparat[k] = a; }
+  p.codex = Array.isArray(s.codex) ? s.codex.filter(c => typeof c?.id === 'string').map(c => ({ id: c.id, ...(typeof c.sort === 'string' ? { sort: c.sort } : {}) })) : [];
   p.learned = new Set(s.learned ?? []);
   if (Array.isArray(s.zaaps)) p.zaaps = s.zaaps.filter(z => typeof z?.zone === 'string' && typeof z?.name === 'string');
   p.zonesVues = [...new Set([...(s.zonesVues ?? []), ...p.zonesVues])];
