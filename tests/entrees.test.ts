@@ -104,18 +104,16 @@ describe('entrées et sorties (maquette Entrées)', () => {
   });
 });
 
-describe('portes peintes et paillasson (Mathis 2026-11-08)', () => {
-  it('chaque liseré mesuré correspond à une vraie porte d’Astrub, sur la carte de son bout', async () => {
-    const L = (await import('../src/data/liseres_portes.json')).default as unknown as Record<string, Record<string, { forme: string; g: number; d: number; h: number }>>;
+describe('contour officiel des portes et paillasson (Mathis 2026-11-08)', () => {
+  it('contour officiel : les portes peintes dans leur bâtiment ont leur boîte de survol Dofus 3 tout près (survols.py)', () => {
     const w = monde(), wg = w.worldGrid!;
-    const cles = new Set(w.portes.flatMap(p => p.ends.map(e => `${p.nom}@${wg.mapAt(e.x, e.y)?.tag}`)));
-    expect(Object.keys(L.astrub).length).toBeGreaterThanOrEqual(8);
-    for (const [k, l] of Object.entries(L.astrub)) {
-      expect(cles.has(k), k).toBe(true);
-      expect(['arche', 'panneau']).toContain(l.forme);
-      expect(l.d, k).toBeGreaterThan(l.g);
-      expect(l.h, k).toBeLessThan(-80);   // l'embrasure monte au-dessus de la case de la porte
-    }
+    const at = JSON.parse(readFileSync(new URL('../public/assets/ui/survols_astrub.json', import.meta.url), 'utf8')).frames as Record<string, unknown>;
+    const sv = astrub.maps.flatMap(m => m.survols ?? []);
+    for (const q of sv) expect(at[q.f], q.f).toBeDefined();
+    const pres = (nom: string) => { const e = ISO.toScreen(porte(w, nom).ends[0].x, porte(w, nom).ends[0].y);
+      return Math.min(...sv.map(q => { const c = wg.toScreen(q.x, q.y); return Math.hypot(c.x - e.x, c.y - (e.y - 50)); })); };
+    for (const nom of ["Taverne d'Astrub", "Banque d'Astrub", "Milice d'Astrub", 'Atelier des chasseurs', 'Atelier des pêcheurs', 'Atelier des mineurs et des forgerons'])
+      expect(pres(nom), nom).toBeLessThan(200);
   });
   it('le paillasson (tapis officiel du Havre-Sac) est dans les images de l’interface', () => {
     const png = readFileSync(new URL('../public/assets/ui/paillasson.png', import.meta.url));

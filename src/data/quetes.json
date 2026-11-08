@@ -2893,6 +2893,444 @@
     "xp": 2500,
     "titre": "Globe-trotteur"
    }
+  },
+  "garde_robe_1": {
+   "nom": "Panoplie du Bouftou",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Bouftou.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 15,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Coiffe du Bouftou",
+     "apparence": "2411"
+    },
+    {
+     "nom": "Cape Bouffante",
+     "apparence": "2414"
+    },
+    {
+     "nom": "Bouclier du Bouftou",
+     "apparence": "18666"
+    }
+   ]
+  },
+  "garde_robe_5": {
+   "nom": "Panoplie du Jeune Aventurier",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Jeune Aventurier.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Cape de l'Aventurier",
+     "apparence": "2473"
+    },
+    {
+     "nom": "Chapeau de l'Aventurier",
+     "apparence": "2474"
+    }
+   ]
+  },
+  "garde_robe_12": {
+   "nom": "Panoplie de l'Homme Ours",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie de l'Homme Ours.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Coiffe de l'Homme Ours",
+     "apparence": "6719"
+    },
+    {
+     "nom": "Cape de l'Homme Ours",
+     "apparence": "6720"
+    }
+   ]
+  },
+  "garde_robe_18": {
+   "nom": "Panoplie Champêtre",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie Champêtre.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Capouze des Champs",
+     "apparence": "6795"
+    },
+    {
+     "nom": "Coiffe Champêtre",
+     "apparence": "6797"
+    }
+   ]
+  },
+  "garde_robe_23": {
+   "nom": "Panoplie Moskito",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie Moskito.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Sac du Petit Moskito",
+     "apparence": "6916"
+    },
+    {
+     "nom": "Moskitogalurette",
+     "apparence": "6917"
+    }
+   ]
+  },
+  "garde_robe_24": {
+   "nom": "Panoplie Champ Champ",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie Champ Champ.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Champcoiffe",
+     "apparence": "6921"
+    },
+    {
+     "nom": "Cape du Champ Champ",
+     "apparence": "6922"
+    }
+   ]
+  },
+  "garde_robe_150": {
+   "nom": "Panoplie de l'intrépide",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie de l'intrépide.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 15,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Bouclier de l'intrépide",
+     "apparence": "10798"
+    },
+    {
+     "nom": "Cape de l'intrépide",
+     "apparence": "10800"
+    },
+    {
+     "nom": "Chapeau de l'intrépide",
+     "apparence": "10801"
+    }
+   ]
+  },
+  "garde_robe_47": {
+   "nom": "Panoplie du Paysan",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Paysan.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Bob du Paysan",
+     "apparence": "8125"
+    },
+    {
+     "nom": "Sac du Paysan",
+     "apparence": "8131"
+    }
+   ]
+  },
+  "garde_robe_60": {
+   "nom": "Panoplie du Piou Rouge",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Piou Rouge.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Cape du Piou Rouge",
+     "apparence": "8231"
+    },
+    {
+     "nom": "Chapeau du Piou Rouge",
+     "apparence": "8243"
+    }
+   ]
+  },
+  "garde_robe_61": {
+   "nom": "Panoplie du Piou Bleu",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Piou Bleu.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Cape du Piou Bleu",
+     "apparence": "8232"
+    },
+    {
+     "nom": "Chapeau du Piou Bleu",
+     "apparence": "8244"
+    }
+   ]
+  },
+  "garde_robe_62": {
+   "nom": "Panoplie du Piou Violet",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Piou Violet.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Cape du Piou Violet",
+     "apparence": "8234"
+    },
+    {
+     "nom": "Chapeau du Piou Violet",
+     "apparence": "8245"
+    }
+   ]
+  },
+  "garde_robe_63": {
+   "nom": "Panoplie en Mousse",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie en Mousse.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 15,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Cape en Mousse",
+     "apparence": "8258"
+    },
+    {
+     "nom": "Coiffe en Mousse",
+     "apparence": "8259"
+    },
+    {
+     "nom": "Bouclier en Mousse",
+     "apparence": "18659"
+    }
+   ]
+  },
+  "garde_robe_69": {
+   "nom": "Panoplie du Boune",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Boune.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 15,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Le Floude",
+     "apparence": "8533"
+    },
+    {
+     "nom": "La Cape S'loque",
+     "apparence": "8534"
+    },
+    {
+     "nom": "La Halte Efkat",
+     "apparence": "30701"
+    }
+   ]
+  },
+  "garde_robe_70": {
+   "nom": "Panoplie du Piou Rose",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Piou Rose.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Cape du Piou Rose",
+     "apparence": "8235"
+    },
+    {
+     "nom": "Chapeau du Piou Rose",
+     "apparence": "8248"
+    }
+   ]
+  },
+  "garde_robe_71": {
+   "nom": "Panoplie du Piou Jaune",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Piou Jaune.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Cape du Piou Jaune",
+     "apparence": "8233"
+    },
+    {
+     "nom": "Chapeau du Piou Jaune",
+     "apparence": "8246"
+    }
+   ]
+  },
+  "garde_robe_72": {
+   "nom": "Panoplie du Piou Vert",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Piou Vert.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Cape du Piou Vert",
+     "apparence": "8236"
+    },
+    {
+     "nom": "Chapeau du Piou Vert",
+     "apparence": "8247"
+    }
+   ]
+  },
+  "garde_robe_214": {
+   "nom": "Panoplie de Nowel",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie de Nowel.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Cape du Papa Nowel",
+     "apparence": "8333"
+    },
+    {
+     "nom": "Chapeau du Papa Nowel",
+     "apparence": "8334"
+    }
+   ]
+  },
+  "garde_robe_870": {
+   "nom": "Panoplie prototype du pilote",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie prototype du pilote.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Casque",
+     "apparence": "1019"
+    },
+    {
+     "nom": "Ailes en bois",
+     "apparence": "1021"
+    }
+   ]
+  },
+  "garde_robe_232": {
+   "nom": "Panoplie du Glutin",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Glutin.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Manteau du Glutin",
+     "apparence": "12848"
+    },
+    {
+     "nom": "Bonnet du Glutin",
+     "apparence": "12849"
+    }
+   ]
+  },
+  "garde_robe_373": {
+   "nom": "Panoplie Invisible",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie Invisible.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 15,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Cape Invisible",
+     "apparence": "16171"
+    },
+    {
+     "nom": "Coiffe Invisible",
+     "apparence": "16172"
+    },
+    {
+     "nom": "Bouclier Invisible",
+     "apparence": "19116"
+    }
+   ]
+  },
+  "garde_robe_375": {
+   "nom": "Panoplie de Kardorim",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie de Kardorim.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Casque de Kardorim",
+     "apparence": "16500"
+    },
+    {
+     "nom": "Cape de Kardorim",
+     "apparence": "16501"
+    }
+   ]
+  },
+  "garde_robe_376": {
+   "nom": "Panoplie des Âmes",
+   "dofusId": 0,
+   "description": "Collectionner l'apparence de chaque pièce visible : Panoplie des Âmes.",
+   "categorie": "Collection",
+   "sousCategorie": "Garde-robe",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Coiffe Antôme",
+     "apparence": "16503"
+    },
+    {
+     "nom": "Cape Syché",
+     "apparence": "16504"
+    }
+   ]
   }
  },
  "contrats": {

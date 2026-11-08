@@ -171,6 +171,8 @@ export interface Dialogue { pnj: string; texte: string; reponses: Reponse[]; que
  *  un niveau atteint ou un monstre vaincu. */
 export type SuccesObjectif = { nom: string } & (
   | { quete: string } | { etape: [string, number] } | { succes: string } | { sousZone: number } | { niveau: number } | { monstre: string }
+  /** Collection d'apparences (« Équipement en trop » 1C) : apparence débloquée. */
+  | { apparence: string }
 );
 export interface SuccesDef {
   nom: string; dofusId: number; description: string; categorie: string; sousCategorie: string; points: number; icone: number;
@@ -821,6 +823,7 @@ export class Quetes {
     if ('succes' in o) return this.succes.has(o.succes);
     if ('sousZone' in o) return this.decouvertes.has(o.sousZone);
     if ('niveau' in o) return this.world.player.level >= o.niveau;
+    if ('apparence' in o) return this.world.player.apparats.includes(o.apparence);
     return this.vaincus.has(o.monstre);
   }
   private verifierSucces() {

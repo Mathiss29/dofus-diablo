@@ -27,6 +27,8 @@ import { FX } from './fx';
 import { FamilierView } from './familierView';
 import { Hud } from './hud';
 import { LOOKS, type Look } from './looks';
+import { Bete } from '../sim/bete';
+import { Player } from '../sim/player';
 import { drawMap } from './mapView';
 import { Transparence, type Cache } from './transparence';
 import { WorldView } from './worldView';
@@ -496,7 +498,7 @@ export class ZoneScene extends Phaser.Scene {
     // Déplacement à la souris (clic gauche) ; le clavier sert aux sorts, à la potion et aux menus
     this.keys = kb.addKeys({ SHIFT: K.SHIFT, ALT: K.ALT,
       SPACE: K.SPACE, S: K.S, E: K.E, K: K.K, I: K.I, C: K.C, J: K.J, ESC: K.ESC, F: K.F, G: K.G, H: K.H, O: K.O, M: K.M, B: K.B, ENTER: K.ENTER,
-      ONE: K.ONE, TWO: K.TWO, THREE: K.THREE, FOUR: K.FOUR, FIVE: K.FIVE, SIX: K.SIX }) as Record<string, Phaser.Input.Keyboard.Key>;
+      ONE: K.ONE, TWO: K.TWO, THREE: K.THREE, FOUR: K.FOUR, FIVE: K.FIVE, SIX: K.SIX, A: K.A, Z: K.Z, R: K.R, T: K.T }) as Record<string, Phaser.Input.Keyboard.Key>;
     // Façon Diablo (demande de Mathis, 2026-11-05) : clic gauche sur le sol = y aller (maintenu : suivre le curseur),
     // sur un monstre = s'approcher et l'attaquer (maintenu : continuer), Maj + clic gauche = attaquer sur place ;
     // clic droit = sort favori, Espace = déplacement, 1 à 6 (& é " ' ( - en AZERTY) = barre de sorts.
@@ -526,6 +528,8 @@ export class ZoneScene extends Phaser.Scene {
         this.down('CLICD', this.world.player.bar[6]); return;
       }
       if (this.reglages.lancer === 'dofus' && this.aimId) { this.pressed = this.aimId; this.aimId = null; this.aimKey = null; this.uiClick = true; return; }
+      // Alt + clic sur un monstre (Osamodas 7C) : la meute l'attaque
+      if (this.keys.ALT.isDown && this.world.betes.length) { const m = this.monsterUnder(p); if (m && !m.dead) { this.ordreMeute = m.id; this.uiClick = true; return; } }
       this.holding = true;
       if (this.keys.SHIFT.isDown) { this.pressed = 'attaque'; this.clickMode = 'place'; return; }
       const n = this.questView?.pnjUnder(p, this.cameras.main);
@@ -554,6 +558,14 @@ export class ZoneScene extends Phaser.Scene {
       this.keys[k].on('down', () => { if (this.dialogueView?.ouvert && i < 4) this.dialogueView.touche(i); else this.down(k, this.world.player.bar[i]); });
       this.keys[k].on('up', () => this.up(k));
     });
+    // Osamodas (maquette 2A) : A Z R T = les 4 invocations (cases 8 à 11 de la barre) ; touche de la bête déjà sortie et Éveil plein = l'éveiller (5A)
+    ['A', 'Z', 'R', 'T'].forEach((k, i) => {
+      this.keys[k].on('down', () => this.down(k, this.world.player.bar[Player.INVOC + i]));
+      this.keys[k].on('up', () => this.up(k));
+    });
+    // Maj (14B) : fil de laisse et barre de vie de chaque bête
+    this.keys.SHIFT.on('down', () => { EntityView.barresAllies = true; });
+    this.keys.SHIFT.on('up', () => { EntityView.barresAllies = false; });
     this.keys.F.on('down', () => {
       this.fx.juice = !this.fx.juice;
       this.hud.toast(this.fx.juice ? 'Effets d\'impact : ACTIVÉS' : 'Effets d\'impact : DÉSACTIVÉS (compare !)');
@@ -574,7 +586,7 @@ export class ZoneScene extends Phaser.Scene {
     this.keys.S.on('down', () => this.windows?.toggle('sorts'));   // Sorts (choix 8A, touche S)   // Réglages (choix 10A + 10B)
     this.keys.ESC.on('down', () => { if (this.panneau?.pose) { this.panneau.posee(); return; } if (this.essai) { this.essai = null; this.game.events.emit('accueil', 'creation'); return; } if (this.dialogueView?.ouvert) { this.dialogueView.touche(-1); return; } this.dialogueView?.fermerMenu(); this.aimId = null; this.aimKey = null; this.windows?.close(); this.carte?.fermer(); });
     // K : changer de classe, seulement sans perso (mode dév #cra / #jeu, partie de test) ; sinon la classe se choisit à la création
-    if (!this.perso) this.keys.K.on('down', () => { const c = this.classId === 'iop' ? 'cra' : 'iop'; if (this.test) this.actionsTest().classe(c); else this.scene.restart({ zone: this.zoneId, classe: c }); });
+    if (!this.perso) this.keys.K.on('down', () => { const cl = Object.keys(GAME_DATA.classes), c = cl[(cl.indexOf(this.classId) + 1) % cl.length]; if (this.test) this.actionsTest().classe(c); else this.scene.restart({ zone: this.zoneId, classe: c }); });
     // F1 : outils de la partie de test (3A) ; la touche n'ouvre plus l'aide du navigateur
     if (this.test) kb.addKey(K.F1).on('down', () => this.panneau?.basculer());
     this.keys.ENTER.on('down', () => {
@@ -672,7 +684,7 @@ export class ZoneScene extends Phaser.Scene {
     const c = ISO.toScreen(po.x, po.y);
     // contour du dessin de la porte (façon Sanstour)
     // une sortie d'intérieur : c'est le paillasson posé sur la case qui s'entoure
-    this.worldView?.contour(c.x, po.sortie ? c.y + 50 : c.y, `${po.nom}@${this.world.worldGrid?.mapAt(po.x, po.y)?.tag ?? ''}`);
+    this.worldView?.contour(c.x, po.sortie ? c.y + 50 : c.y);
     this.porteLabel.setText(po.sortie ? `Sortie · ${po.nom}` : po.nom).setColor(po.sortie ? '#ffe08a' : '#f3e3bf')
       // une sortie est un repère au sol, souvent sous le perso : son nom va dessous ; une porte dans un mur, au-dessus
       .setOrigin(0.5, po.sortie ? 0 : 1).setPosition(c.x, po.sortie ? c.y + 34 : c.y - 96).setScale(1 / this.cameras.main.zoom).setVisible(true);
@@ -781,6 +793,7 @@ export class ZoneScene extends Phaser.Scene {
     const vise = this.pressed ? this.monsterUnder(ptr) : null;
     if (vise && !vise.dead) { input.castOn = vise.id; input.aim = { x: vise.x, y: vise.y }; }
     this.pickClick = null;
+    if (this.ordreMeute != null) { input.meute = this.ordreMeute; this.ordreMeute = null; }
     if (this.havreSacDemande) { input.havreSac = true; this.havreSacDemande = false; }
     if (this.zaapChoix != null) { input.zaap = this.zaapChoix; this.zaapChoix = null; }
     if (this.cmdTest.length) { input.test = this.cmdTest; this.cmdTest = []; }
@@ -944,8 +957,10 @@ export class ZoneScene extends Phaser.Scene {
         case 'emmenage': this.hud.toast(`${e.noms.join(', ')} ${e.noms.length > 1 ? 'ont emménagé' : 'a emménagé'} au Bastion des Douze (Zaap ou Potion de Rappel)`); break;
         case 'forge': this.windows?.noteForgeEvt(e); break;
         case 'brisage': { const n = Object.values(e.runes).reduce((a, b) => a + b, 0);
+          if (e.auto) { this.hud.loot(`${ITEMS.equipment[e.auto]?.name ?? 'Objet'} brisé : ${n} rune${n > 1 ? 's' : ''}`, '#b77cf0'); this.windows?.refresh(); break; }
           this.hud.loot(`${n} rune${n > 1 ? 's' : ''} (${e.n} objet${e.n > 1 ? 's' : ''} brisé${e.n > 1 ? 's' : ''})`, '#b77cf0');
           this.windows?.noteForge({ t: `${e.n > 1 ? `${e.n} objets brisés` : 'Objet brisé'} : ${Object.entries(e.runes).map(([id, k]) => `${k} ${ITEMS.resources[id]?.name ?? id}`).join(', ') || 'aucune rune'}`, c: 'br' }); break; }
+        case 'apparence': this.hud.loot(`Apparence débloquée : ${ITEMS.equipment[e.id]?.name ?? 'objet'}`, '#e6b85c'); break;
         case 'fusion': this.windows?.noteForge({ t: `Fusion : ${e.n} ${ITEMS.resources[e.vers]?.name ?? e.vers}`, c: 'br' }); break;
         case 'commande':
           if (e.etat === 'confiee') this.windows?.noteForge({ t: `Objet confié à Malek : ${e.essais} rune${e.essais > 1 ? 's' : ''} à poser, prêt dans ${mmss(e.reste)}`, c: 'ne' });
@@ -1166,6 +1181,8 @@ export class ZoneScene extends Phaser.Scene {
     return false;
   }
   private demandees = new Set<string>();
+  /** Alt + clic sur un monstre : ordre donné à la meute de l'Osamodas (7C). */
+  private ordreMeute: number | null = null;
   /** Dernier usage de chaque planche de monstre chargée à la demande (ms). */
   private readonly vuPlanche = new Map<string, number>();
   private oubliT = 0;
@@ -1181,10 +1198,14 @@ export class ZoneScene extends Phaser.Scene {
       if (this.textures.exists(a)) this.textures.remove(a);
     }
   }
+  /** Apparence d'un monstre ou d'une bête de l'Osamodas (sa planche osa_<bête>, ou celle du monstre dompté). */
+  private lookDe(e: Entity): Look {
+    return e instanceof Bete ? LOOKS[e.look] ?? LOOKS.osa_tofu : LOOKS[GAME_DATA.monsters[(e as { type?: string }).type!].look];
+  }
   private viewOf(e: Entity): EntityView {
     let v = this.views.get(e.id);
     if (!v) {
-      const look = e.faction === 'player' ? this.look : LOOKS[GAME_DATA.monsters[(e as { type?: string }).type!].look];
+      const look = e.faction === 'player' ? this.look : this.lookDe(e);
       if (e.faction === 'player' && this.assemblage && !this.vivant) {
         this.vivant = this.nouveauVivant(this.assemblage);
       }
@@ -1192,6 +1213,22 @@ export class ZoneScene extends Phaser.Scene {
       this.views.set(e.id, v);
     }
     return v;
+  }
+
+  /** Maj enfoncée (maquette Osamodas 14B) : un fil de laisse relie l'Osamodas à chacune de ses bêtes (bleu pour une bête domptée). */
+  private laisseG?: Phaser.GameObjects.Graphics;
+  private dessinerLaisse() {
+    const w = this.world, g = this.laisseG ??= this.add.graphics().setDepth(1e5);
+    g.clear();
+    if (!this.keys?.SHIFT?.isDown || w.player.dead || this.vitrine) return;
+    const a = ISO.toScreen(w.player.x, w.player.y), t = this.time.now / 1000;
+    for (const b of w.betes) {
+      if (b.dead) continue;
+      const c = ISO.toScreen(b.x, b.y), mx = (a.x + c.x) / 2, my = (a.y + c.y) / 2 + 14 + Math.sin(t * 3 + b.id) * 3;
+      g.lineStyle(2, b.dompteT > 0 ? 0x7fd0ff : 0x9ad15a, 0.75);
+      const crb = new Phaser.Curves.QuadraticBezier(new Phaser.Math.Vector2(a.x, a.y - 30), new Phaser.Math.Vector2(mx, my), new Phaser.Math.Vector2(c.x, c.y - 20));
+      crb.draw(g, 16);
+    }
   }
 
   /** Ambiance (render/ambiance.ts) : jour / soir / nuit selon l'heure du PC, lumière fixe dans les intérieurs. Quatre fois par seconde. */
@@ -1275,7 +1312,7 @@ export class ZoneScene extends Phaser.Scene {
     wv?.update(w.player.x, w.player.y);
     this.leverRideau(this.game.loop.delta / 1000);
     this.drawRageAura();
-    for (const e of [w.player, ...w.monsters]) {
+    for (const e of [w.player, ...w.betes, ...w.monsters]) {
       // monde ouvert : on n'affiche que les monstres des cartes chargées (les autres vivent quand même dans la simulation)
       if (wv && wg && e !== w.player && !wv.isReady(wg.mapAt(e.x, e.y)?.tag)) continue;
       if (this.vitrine && e === w.player) continue;
@@ -1285,19 +1322,20 @@ export class ZoneScene extends Phaser.Scene {
         const s = ISO.toScreen(e.x, e.y), r = cam.worldView;
         if (s.x < r.x - 250 || s.x > r.right + 250 || s.y < r.y - 150 || s.y > r.bottom + 350) {
           const vu = this.views.get(e.id);
-          if (vu) { vu.hide(); this.vuPlanche.set(LOOKS[GAME_DATA.monsters[(e as { type?: string }).type!].look].atlas, this.time.now); }   // vue gardée : sa planche aussi
+          if (vu) { vu.hide(); this.vuPlanche.set(this.lookDe(e).atlas, this.time.now); }   // vue gardée : sa planche aussi
           continue;
         }
       }
-      if (e !== w.player && !this.planche(LOOKS[GAME_DATA.monsters[(e as { type?: string }).type!].look])) { alive.delete(e.id); continue; }
+      if (e !== w.player && !this.planche(this.lookDe(e))) { alive.delete(e.id); continue; }
       this.viewOf(e).sync(e);
     }
     for (const [id, v] of this.views) if (!alive.has(id)) { v.destroy(); this.views.delete(id); }
+    this.dessinerLaisse();
     this.oublierPlanches();
     if (!this.vitrine) this.familierView?.maj(w, this.game.loop.delta / 1000);
     if (this.transparence) {
       const caches: Cache[] = [];
-      for (const e of [w.player, ...w.monsters]) {
+      for (const e of [w.player, ...w.betes, ...w.monsters]) {
         const v = this.views.get(e.id);
         if (v && alive.has(e.id) && !e.dead) caches.push({ id: e.id, sprite: v.sprite, joueur: e === w.player, w: Math.max(34, e.radius * 2.2), h: v.look.height * Math.abs(v.look.scale) });
       }

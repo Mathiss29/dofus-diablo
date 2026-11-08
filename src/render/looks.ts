@@ -112,6 +112,35 @@ const CRA_MAP: Record<string, AnimSlice> = {
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };
 
+// Osamodas : squelette joueur n° 1 + skin 20 (corps), animations officielles (spellscripts -> casterAnimation) :
+// Cri du Corbac / Dents de Piranya / Cri de l'Ours 202, Piquants du Prespic 216, Fouet 213, Invocations 204, Cortège 214,
+// Piqûre Motivante 208, Saute-granouille 201, Souffle Draconique 200, Charge Bestiale 218, Laisse Spirituelle 19.
+const OSA_MAP: Record<string, AnimSlice> = {
+  ...WEAPON_MAP,
+  idle: { anim: 'AnimStatiqueExplo0', loop: true, fps: 20 },
+  run: { anim: 'AnimCourse', loop: true, fps: 32 },
+  attack1: { anim: 'AnimArme0', from: 3 / 28, to: 17 / 28 },
+  attack2: { anim: 'AnimArme0', from: 3 / 28, to: 17 / 28 },
+  attack3: { anim: 'AnimArme0', from: 3 / 28, to: 24 / 28 },
+  cri_corbac: { anim: 'AnimAttaque202', from: 0, to: 0.6 },
+  pics_prespic: { anim: 'AnimAttaque216', from: 0, to: 0.6 },
+  dents_piranya: { anim: 'AnimAttaque202', from: 0, to: 0.6 },
+  cri_ours: { anim: 'AnimAttaque202', from: 0, to: 0.6 },
+  fouet: { anim: 'AnimAttaque213', from: 0, to: 0.6 },
+  tofu: { anim: 'AnimAttaque204', from: 0, to: 0.7 },
+  bouftou: { anim: 'AnimAttaque204', from: 0, to: 0.7 },
+  crapipou: { anim: 'AnimAttaque204', from: 0, to: 0.7 },
+  dragoune: { anim: 'AnimAttaque204', from: 0, to: 0.7 },
+  cortege: { anim: 'AnimAttaque214', from: 0, to: 0.7 },
+  piqure: { anim: 'AnimAttaque208', from: 0, to: 0.7 },
+  saute_granouille: { anim: 'AnimAttaque201', from: 0, to: 0.6 },
+  souffle_draconique: { anim: 'AnimAttaque200', from: 0, to: 0.6 },
+  charge_bestiale: { anim: 'AnimAttaque218', from: 0, to: 0.6 },
+  laisse_spirituelle: { anim: 'AnimAttaque19', from: 0, to: 0.7 },
+  hit: { anim: 'AnimHit', from: 0, to: 1 },
+  die: { anim: 'AnimMort', from: 0, to: 0.75 },
+};
+
 const GOLD = 0xffd87a;
 
 export const LOOKS: Record<string, Look> = {
@@ -120,6 +149,25 @@ export const LOOKS: Record<string, Look> = {
   // Versions femme (création de perso) : même squelette et mêmes animations, skin et tête officielles de création
   iop_f: { atlas: 'iop_f', scale: 0.82, map: IOP_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
   cra_f: { atlas: 'cra_f', scale: 0.82, map: CRA_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
+  // Osamodas : dessiné en direct depuis son squelette (pas de planche de secours)
+  osamodas: { atlas: 'osamodas', scale: 0.82, map: OSA_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
+  // Bêtes de l'Osamodas (src/data/betes.json, monster_planche.py) : échelle = 0,55 x échelle officielle du look,
+  // x 2,5 / SCALE de rendu (1,6 pour Craquolosse et Sulfénix, 1,25 pour Dragonnet, Scarafoudre et Gobgobs) ;
+  // le Dragonnet n'a ni repos ni course officiels : la première image de son attaque en tient lieu
+  osa_tofu: { atlas: 'osa_tofu', scale: 0.55, map: MONSTER_MAP(6 / 28, 'AnimAttaque0', { 0: 6 / 28, 1: 5 / 27 }), height: 60, multi: true },
+  osa_ventritofu: { atlas: 'osa_ventritofu', scale: 0.66, map: MONSTER_MAP(9 / 22, 'AnimAttaque0', { 0: 9 / 22, 1: 8 / 15, 2: 10 / 20 }), height: 105, multi: true },
+  osa_scarafoudre: { atlas: 'osa_scarafoudre', scale: 1.21, map: MONSTER_MAP(3 / 32, 'AnimAttaque0', { 0: 3 / 32, 1: 3 / 30, 2: 13 / 21 }), height: 63, multi: true },
+  osa_bouftou: { atlas: 'osa_bouftou', scale: 0.55, map: MONSTER_MAP(7 / 23, 'AnimAttaque0', { 0: 7 / 23, 1: 5 / 30 }), height: 104, multi: true },
+  osa_bouflourd: { atlas: 'osa_bouflourd', scale: 0.66, map: MONSTER_MAP(5 / 38, 'AnimAttaque0', { 0: 5 / 38, 1: 5 / 14, 2: 12 / 24 }), height: 130, multi: true },
+  osa_craquolosse: { atlas: 'osa_craquolosse', scale: 0.86, map: MONSTER_MAP(8 / 34, 'AnimAttaque0', { 0: 8 / 34, 1: 10 / 49, 2: 11 / 34 }), height: 190, multi: true },
+  osa_crapipou: { atlas: 'osa_crapipou', scale: 0.49, map: MONSTER_MAP(4 / 17, 'AnimAttaque0', { 0: 4 / 17, 1: 3 / 18 }), height: 81, multi: true },
+  osa_crapipaud: { atlas: 'osa_crapipaud', scale: 0.66, map: MONSTER_MAP(1 / 17, 'AnimAttaque0', { 0: 1 / 17, 2: 6 / 19 }), height: 104, multi: true },
+  osa_crocoleureux: { atlas: 'osa_crocoleureux', scale: 0.55, map: MONSTER_MAP(5 / 38, 'AnimAttaque0', { 0: 5 / 38, 1: 11 / 48, 2: 9 / 56 }), height: 223, multi: true },
+  osa_dragoune: { atlas: 'osa_dragoune', scale: 0.55, map: MONSTER_MAP(4 / 37, 'AnimAttaque0', { 0: 4 / 37, 1: 10 / 27 }), height: 176, multi: true },
+  osa_dragonnet: { atlas: 'osa_dragonnet', scale: 1.1, map: MONSTER_MAP(11 / 57, 'AnimAttaque0', { 0: 11 / 57, 1: 11 / 39 }), height: 112, multi: true },
+  osa_sulfenix: { atlas: 'osa_sulfenix', scale: 0.86, map: MONSTER_MAP(5 / 40, 'AnimAttaque0', { 0: 5 / 40, 1: 20 / 48, 2: 14 / 33 }), height: 164, multi: true },
+  osa_gobgob_glouton: { atlas: 'osa_gobgob_glouton', scale: 1.1, map: MONSTER_MAP(4 / 38, 'AnimAttaque0', { 0: 4 / 38, 1: 5 / 29, 2: 5 / 21 }), height: 66, multi: true },
+  osa_gobgob_facetieux: { atlas: 'osa_gobgob_facetieux', scale: 1.1, map: MONSTER_MAP(8 / 43, 'AnimAttaque0', { 0: 8 / 43, 1: 13 / 26, 2: 11 / 34 }), height: 71, multi: true },
   bouftou: { atlas: 'bouftou', scale: 0.85, map: MONSTER_MAP(9 / 32), height: 70 },
   boufton: { atlas: 'boufton', scale: 0.8, map: MONSTER_MAP(9 / 32), height: 55 },
   royal: { atlas: 'royal', scale: 1.05, map: MONSTER_MAP(10 / 20), height: 140 },

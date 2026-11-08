@@ -14,7 +14,7 @@ const EQ = JSON.parse(readFileSync(new URL('../public/assets/sprites/squelette/e
 
 describe('apparat et objets visibles (Apparence 4A 4B 5A)', () => {
   it('coiffes et capes d\'apparat officielles, chacune avec son dessin porté', () => {
-    const l = Object.entries(APPARATS.objets).filter(([, d]) => d.slot !== 'familier');   // familiers d'apparat : tests/familiers.test.ts
+    const l = Object.entries(APPARATS.objets).filter(([, d]) => d.slot !== 'familier' && !d.collection);   // familiers d'apparat : tests/familiers.test.ts
     expect(l.length).toBeGreaterThan(600);
     for (const [id, d] of l) { expect(['chapeau', 'cape']).toContain(d.slot); expect(EQ.objets[id], d.name).toBeTruthy(); }
     expect(APPARATS.prix.chapeau).toBeGreaterThan(0);
@@ -27,7 +27,7 @@ describe('apparat et objets visibles (Apparence 4A 4B 5A)', () => {
   });
 
   it('achat chez Emp en Pépites, une seule fois ; porté par-dessus l\'objet, ou objet caché ; gardé dans la sauvegarde', () => {
-    const w = monde(), p = w.player, id = Object.keys(APPARATS.objets).find(k => APPARATS.objets[k].slot === 'chapeau')!;
+    const w = monde(), p = w.player, id = Object.keys(APPARATS.objets).find(k => APPARATS.objets[k].slot === 'chapeau' && !APPARATS.objets[k].collection)!;
     expect(w.acheterApparat(id)).toBe(false);   // pas de Pépites
     p.resources[PEPITE] = 500;
     expect(w.acheterApparat(id)).toBe(true);

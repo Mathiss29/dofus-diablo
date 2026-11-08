@@ -53,6 +53,8 @@ export class Player extends Entity {
   kamas = 0;
   /** Butin au sol affiché et aspiré (choix 4C, réglé dans l'inventaire) : 0 tout, 1 Rare et plus, 2 Épique et plus. */
   lootFilter = 0;
+  /** « Équipement en trop » 5B : les objets Communs ramassés sont brisés tout seuls, leurs runes vont au sac (réglage à cocher). */
+  autoBrisage = false;
   /** Objet au sol que l'on va ramasser (clic). */
   pickupId: number | null = null;
   equipment: Partial<Record<EquipSlot, Item>> = {};
@@ -86,9 +88,11 @@ export class Player extends Entity {
   /** Arrête le déplacement en cours (après une porte : on ne repart pas vers l'ancien clic). */
   stopMove() { this.dest = null; this.path = []; this.chaseId = null; this.castChase = null; }
   /** Barre (choix 5A) : 6 touches (& é " ' ( -), le clic droit (6A, case libre) et Espace. Identifiants des sorts, null = vide. */
-  bar: (SkillId | null)[] = Array(8).fill(null);
+  bar: (SkillId | null)[] = Array(12).fill(null);
   static readonly CLIC_DROIT = 6;
   static readonly ESPACE = 7;
+  /** Barre d'invocations de l'Osamodas (maquette Osamodas 4D, 2A) : touches A Z R T, emplacements 8 à 11. */
+  static readonly INVOC = 8;
   /** Choix de chaque paire officielle (4A, comme Dofus 3) : 0 le sort, 1 sa variante ; l'un ou l'autre. */
   variants: number[] = [];
   /** Sorts déjà appris (placés une fois seuls dans la barre, choix 7A ; retirés à la main, ils n'y reviennent pas). */
@@ -128,7 +132,7 @@ export class Player extends Entity {
     return null;
   }
   /** Niveau requis (officiel, sauf le déplacement donné au niveau 1). */
-  requiredLevel(s: SortOfficiel): number { return niveauRequis(s, this.cls.spells[this.cls.mobility]?.dofusId); }
+  requiredLevel(s: SortOfficiel): number { return niveauRequis(s, this.cls.spells[this.cls.mobility]?.dofusId, this.cls.niveau1); }
   /** Grade officiel atteint pour ce sort (null pour un sort sans fiche : arme, attaque). */
   /** Valeur officielle propre au grade atteint (une valeur par grade, la dernière vaut pour les suivants). */
   parGrade(id: SkillId, v: number[]): number {
@@ -152,7 +156,11 @@ export class Player extends Entity {
       if (!k || this.learned.has(k) || !this.knows(k)) return;
       this.learned.add(k);
       if (this.bar.includes(k)) return;
-      const slot = k === this.cls.mobility ? (this.bar[Player.ESPACE] ? -1 : Player.ESPACE) : this.bar.findIndex((b, j) => !b && j < Player.ESPACE);
+      const inv = !!this.cls.spells[k]?.invoque;
+      const slot = k === this.cls.mobility ? (this.bar[Player.ESPACE] ? -1 : Player.ESPACE)
+        : k === this.cls.clicDroit && !this.bar[Player.CLIC_DROIT] ? Player.CLIC_DROIT
+        : inv ? this.bar.findIndex((b, j) => !b && j >= Player.INVOC)
+        : this.bar.findIndex((b, j) => !b && j < Player.ESPACE && (j !== Player.CLIC_DROIT || !this.cls.clicDroit));
       if (slot >= 0) this.bar[slot] = k;
       world?.emit({ k: 'newSpell', id: k, slot });
     });
@@ -545,7 +553,7 @@ export class Player extends Entity {
     const def = this.spell(id)!;
     const { x: tx, y: ty } = this.landing(id, aim, world);
     // Rage pleine : ce sort est renforcé (pas les déplacements)
-    const boosted = this.rageFull && def.move?.kind !== 'leap';
+    const boosted = this.rageFull && def.move?.kind !== 'leap' && this.cls.rage.mode !== 'eveil';   // l'Éveil ne renforce pas les sorts
     if (boosted) { this.rage = 0; world.emit({ k: 'rageSpent', spell: id }); }
     // Grade officiel : coût, relance (tours × 3 s), dommages (grade atteint / grade 1), portée des flèches (cases × 48 px)
     const g = def.pm ? null : this.grade(id), g0 = this.official(id)?.grades[0];
@@ -631,6 +639,7 @@ export class Player extends Entity {
         else if (this.repathT <= 0 || !this.path.length) { this.path = world.findPath(this, m); this.repathT = 0.2; }
       }
     }
+    if (pr && this.spell(pr)?.invoque && this.knows(pr)) pr = this.toucheInvocation(pr, world);
     if (pr && (pr === 'attaque' || (this.spell(pr) && (pr === 'arme' || this.knows(pr))))) {
       // sort sans ressource : on le signale (le HUD fait clignoter le compteur), sans le garder en tampon
       if (!this.hasResource(pr) && (pr === 'attaque' || this.cd[pr] <= 0)) world.emit({ k: 'noResource', res: this.missing(pr) });
@@ -663,6 +672,18 @@ export class Player extends Entity {
       } else this.setAnim('idle');
     } else this.updateSkill(dt, world);
     this.applyKnock(dt);
+  }
+
+  /** Touche d'une bête (A Z R T) : bête déjà là -> 5A, jauge pleine, elle s'éveille ; sinon on l'invoque
+   *  (s'il ne reste pas assez d'Invocations, la plus ancienne bête s'en va pour lui laisser la place). */
+  private toucheInvocation(id: SkillId, world: World): SkillId | null {
+    const b = world.beteDe(id);
+    if (b) {
+      if (this.rageFull && b.eveilT <= 0 && b.def.suivant) { if (b.eveiller(world)) { this.rage = 0; world.emit({ k: 'rageSpent', spell: id }); } }
+      else world.emit({ k: 'status', x: b.x, y: b.y - 40, text: b.eveilT > 0 ? 'Déjà éveillé' : this.rageFull ? 'Rang maximal' : 'Éveil pas prêt', color: '#a89fb6' });
+      return null;
+    }
+    return id;
   }
 
   /** Portée de l'auto-attaque : distance à laquelle on s'arrête pour frapper un monstre poursuivi. */
@@ -745,6 +766,18 @@ export class Player extends Entity {
         this.mods = this.mods.filter(m => m.src !== s.id);
         this.addMod(d.buff.stat, n, d.buff.t, s.id);
       }
+      if (d.invoque) {
+        const key = d.invoque, cout = 1, max = world.invocationsMax(this);
+        while (world.betes.length && world.invocationsPrises() + cout > max) {   // place pour la nouvelle : la plus ancienne s'en va
+          const old = world.betes.find(b => !b.dead); if (!old) break; old.mourir(world);
+        }
+        world.invoquer(this, key, s.id, s.tx, s.ty);
+      }
+      if (d.soinAllies) for (const b of world.betes) if (!b.dead && Math.hypot(b.x - s.tx, b.y - s.ty) <= Math.max(60, hz.shape === 'point' || hz.shape === 'circle' ? hz.radius : 60) + b.radius) {
+        b.soigner(Math.max(1, d.dmg * s.gm), world);
+      }
+      if (d.rappel) for (const b of world.betes) if (!b.dead) { const a = this.age * 3 + b.id; b.x = this.x + Math.cos(a) * CASE; b.y = this.y + Math.sin(a) * CASE; }
+      if (d.dompte) world.dompter(this, s.tx, s.ty, d.dompte);
       if (d.shield) { this.shield = Math.max(this.shield, Math.round(this.maxHp * d.shield.part * sig('shield'))); this.shieldT = d.shield.t; }
       if (d.selfKnock) {   // « Recule de n cases » : à l'opposé du tir (freinage de applyKnock : distance = vitesse / 7,13)
         const v = d.selfKnock * sig('selfKnock') * 7.13;

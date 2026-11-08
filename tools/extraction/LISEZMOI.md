@@ -55,6 +55,7 @@ Iop : Pression 802, Épée Céleste 801, Bond 811, Colère de Iop (13124) 800, C
   - Puis `python batiments.py public/assets/mondes/<nom> <dossier des cartes map_<id>.json>` (choix de Mathis « Cartes : 1B 2A 3A », 2026-11-07) : retire les bâtiments recopiés par la carte voisine sous une autre image (la Banque d'Astrub était posée deux fois, à 41 px), range chaque image dans son bâtiment (`bt`, le fondu efface tout le bâtiment d'un bloc) et range chaque porte sur la case de son bâtiment. Cartes traitées notées `"batiments": 1`.
   - MÉTHODE « FAÇON SANSTOUR » (Mathis, 2026-11-07, Astrub) : ne PAS lancer `decor_doublons.py`, et lancer `COURANTE=1 python batiments.py …`.
   - Puis `python portes_contour.py public/assets/mondes/<nom>/monde.json <dossier des cartes map_<id>.json>` : marque `po` (gfx officiel de porte, 62977 à 62999) sur les portes dessinées à part ; le jeu les entoure au survol, façon Sanstour. Les portes peintes dans l'image du bâtiment (Taverne, Banque…) n'ont pas d'image à elles.
+  - Puis `python survols.py public/assets/mondes/<nom>/monde.json <dossier des cartes> <dossier des bundles mapgfx_1x> public/assets/ui/survols_<nom>` : le contour officiel de chaque porte (boîtes de survol `mapData.boundingBoxes` de Dofus 3, même pour les portes peintes dans le bâtiment, et portes dessinées à part), en trait lilas comme Sanstour. Le jeu montre le plus proche de la porte survolée (WorldView.montrerSurvol). Incarnam n'en a pas près de ses portes.
     Chaque carte Dofus contient tout ce qui l'entoure (±1000 px), mais Dofus n'affiche que la carte courante. Le jeu affiche la carte du joueur
     en entier et les voisines en objets entiers : une image dont le centre sort du cadre de sa carte est notée `h` (montrée seulement sur sa
     carte), et l'original d'une voisine que ce débord recopie note la carte dans `cc` (caché quand on y est). Plus aucune image coupée au raccord.
@@ -374,3 +375,12 @@ officiel du Zaap d'Astrub sur l'arche du Bastion (bastion.py réécrit les parti
 
 `python3 -I tools/extraction/zaaps.py <zone>` écrit les Zaaps officiels d'une zone (repères « Zaap » de monde.json, arche = particule
 « Vortex » de particules.json) dans `zones.json`. À lancer pour chaque nouvelle zone exportée (Amakna…).
+
+## Osamodas (maquette Osamodas, 8 nov. 2026)
+
+- Données des bêtes : `python osa_betes.py <tables> <fr.bin> src/data/betes.json` (monstres 8070-8083, sorts au grade 1 ; `_regles` gardé).
+- Squelettes des 14 bêtes : `/mnt/project-files/cache-dofus/osamodas-bones/`. Planches : `monster_planche.py <os> osa_<bête> <dossier> public/assets/sprites 0,1,2`
+  (SCALE=1.6 pour Craquolosse et Sulfénix ; `SCALE=1.25 BOX=-220,-420,220,120` pour Dragonnet, Scarafoudre et Gobgobs, sinon la boîte
+  automatique dépasse la taille d'un canevas). Le Dragonnet n'a ni repos ni course : `ANIMS=AnimAttaque0_1:1:AnimStatique_1,...`.
+- Perso : `squelette_export.py` (classe 2) ; portraits `ui/perso_osamodas(_f).png` rendus depuis la scène de `perso_planche.py`
+  (`ANIMS=AnimStatiqueExplo0`, `render.cjs` BOX=-150,-280,150,40 à l'échelle 3,2, rognés à 437 px de haut).

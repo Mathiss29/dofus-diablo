@@ -4,12 +4,13 @@ import type { PointDeRetour, RetourHavreSac, SimEvent, Telegraph } from './event
 import { GridMap, WorldGrid } from './gridmap';
 import { ISO } from './iso';
 import { NO_INPUT, type PlayerInput } from './input';
-import { AGGRO, CASE, Monster, TOUR } from './monster';
+import { AGGRO, CASE, Monster, TOUR, type Cible } from './monster';
 import { jetOfficiel } from './danger';
 import { poolNiveau, rangDe, tirerButin, type CtxButin, type Rang } from './butin';
 import { briser, chanceRune, coutKamas, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
 import { FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, recycleResource, recycleValue, rollItem, type EquipSlot, type Item, type ItemsData, type Rarity } from './items';
 import { Player } from './player';
+import { Bete, BETES, REGLES_BETES, type EffetBete, type SortBete } from './bete';
 import { initiativeBonus, removalChance } from './caracs';
 import { planWave } from './waves';
 import { Arene, ARENE } from './arene';
@@ -79,7 +80,7 @@ export interface WorldOptions {
   /** Boutiques des PNJ (src/data/boutique.json) : articles et prix en Pépites. */
   boutiques?: Record<string, { id: string; prix: number }[]>;
   /** Objets d'apparat officiels (src/data/apparat.json) et leur prix en Pépites chez Emp (boutique.json, apparat_prix). */
-  apparats?: { objets: Record<string, { slot: string }>; prix: Record<string, number> };
+  apparats?: { objets: Record<string, { slot: string; collection?: boolean }>; prix: Record<string, number> };
   /** Partie de test (#test) : réglages du panneau F1 ; absent dans une vraie partie. */
   test?: ReglagesTest;
   /** Éditeur de placement (F1 › Placement) : placements de cartes pas encore envoyés, qui remplacent ceux de src/data/placements.json. */
@@ -99,7 +100,7 @@ export interface WorldOptions {
 }
 
 /** Le familier porté (maquette Familiers 4A) : il suit le perso et va chercher le butin autour de lui. */
-export interface FamilierEtat { x: number; y: number; vx: number; vy: number; cible: number | null }
+export interface FamilierEtat { x: number; y: number; vx: number; vy: number; cible: number | null; proie?: number | null; mordT?: number }
 
 /** La simulation d'une zone : joueur, monstres, vagues, collisions.
  *  Aucune dépendance à Phaser ni au navigateur : elle tourne telle quelle dans les tests
@@ -110,6 +111,10 @@ export class World {
   readonly map: GridMap;
   readonly player: Player;
   monsters: Monster[] = [];
+  /** Bêtes de l'Osamodas (maquette Osamodas) : alliées du joueur, hors de monsters. */
+  betes: Bete[] = [];
+  /** 7A + 7C : cible de la meute (dernier monstre frappé par le joueur, ou ordre Alt + clic). */
+  cibleMeute: number | null = null;
   projectiles: Projectile[] = [];
   drops: Drop[] = [];
   /** Familier porté (null sans familier). */
@@ -942,7 +947,7 @@ export class World {
       p.vitesseTest = this.test.course ? 3 : 1;
       if (this.test.recharges) this.rechargerTout();
     }
-    const ents = [p, ...this.monsters], prev = ents.map(e => [e.x, e.y] as const);
+    const ents = [p, ...this.monsters, ...this.betes], prev = ents.map(e => [e.x, e.y] as const);
     if (input.recolte != null) { this.versRecolte = input.recolte; this.approche = this.approcheRecolte(input.recolte); this.enRecolte = null; }
     else if (input.dest || input.target != null || input.pickup != null || input.talk || input.pressed || input.move.x || input.move.y) {
       if (this.enRecolte) this.emit({ k: 'recolteStop' });
@@ -956,6 +961,7 @@ export class World {
     // Havre-Sac : bouger ou agir coupe l'incantation ; H la lance (ou fait sortir) ; le Zaap du Havre-Sac fait sortir
     if (this.incantation && (input.dest || input.target != null || input.pickup != null || input.talk || input.pressed || input.recolte != null || input.move.x || input.move.y)) this.couperIncantation();
     if (input.havreSac) this.havreSac();
+    if (input.meute != null && this.monsters.some(m => m.id === input.meute && !m.dead)) this.cibleMeute = input.meute;
     if (input.zaap != null) this.voyagerZaap(input.zaap);
     if (input.versZaap) this.versZaap = input.versZaap;
     else if (input.dest || input.target != null || input.pickup != null || input.talk || input.pressed || input.recolte != null || input.atelier != null || input.move.x || input.move.y) this.versZaap = null;
@@ -969,8 +975,10 @@ export class World {
     // Monde ouvert : un monstre qui attend loin du joueur dort (pas d'errance ni d'IA) : bien moins de calcul
     for (const m of this.monsters) {
       if (this.zone.open && m.state === 'idle' && !m.dead && Math.abs(m.x - p.x) + Math.abs(m.y - p.y) > World.SOMMEIL) { m.regenCalme(dt); continue; }
-      m.update(dt, p, this);
+      m.update(dt, this.cibleDe(m), this);
     }
+    for (const b of this.betes) b.update(dt, this);
+    this.betes = this.betes.filter(b => !(b.dead && b.t <= 0));
     if (this.zone.open && !p.dead && (this.appelT -= dt) <= 0) { this.appelT = AGGRO.appelAide.periode; this.appelAide(); }
     const M = AGGRO.massacre;
     if (this.massacre.n >= M.min && this.time - this.massacre.t > M.fenetre) { this.emit({ k: 'massacreFin', n: this.massacre.n }); this.massacre.n = 0; }
@@ -1036,9 +1044,22 @@ export class World {
   /** Applique au joueur les effets d'un sort de monstre, dans l'ordre des données de Dofus 3.
    *  Dommages : jet officiel ramené à l'échelle du monstre (son meilleur sort, tous ses coups additionnés = def.dmg) ;
    *  mult : attaque signature d'un boss (4A, ×2,5). */
-  monsterSpellHits(m: Monster, spell: MonsterSpell, p: Player, mult = 1) {
-    if (p.dead) return;
+  monsterSpellHits(m: Monster, spell: MonsterSpell, c: Cible, mult = 1) {
+    if (c.dead) return;
     const k = m.def.dmg / Math.max(1, jetOfficiel(m.def)) * mult;
+    if (c instanceof Bete) {   // une bête de l'Osamodas : dommages, vol de vie et poussées seulement
+      for (const e of spell.effects) {
+        if (e.k === 'dmg') {
+          const n = Math.round((e.perPa ? e.min : this.rng.range(e.min, e.max + 1)) * k * (1 + m.furyPct / 100) + m.furyFlat * k);
+          if (n > 0 && c.hurt(n, m.x, m.y, this, e.element) && e.steal) m.hp = Math.min(m.maxHp, m.hp + Math.round(n / 2));
+        } else if (e.k === 'attire' || e.k === 'repousse') {
+          const dx = m.x - c.x, dy = m.y - c.y, d = Math.hypot(dx, dy) || 1, sign = e.k === 'attire' ? 1 : -1;
+          c.kx += sign * dx / d * e.n * CASE * 4; c.ky += sign * dy / d * e.n * CASE * 4;
+        }
+      }
+      return;
+    }
+    const p = c;
     let landed = true;
     for (const e of spell.effects) {
       if (e.k === 'dmg') {
@@ -1114,10 +1135,13 @@ export class World {
       if (pr.hostile) {
         const p = this.player;
         if (!this.walkable(pr.x, pr.y)) pr.left = 0;   // arrêté par le décor
-        else if (!p.dead && Math.hypot(p.x - pr.x, p.y - pr.y) <= p.radius + pr.width) {
-          if (pr.from) this.monsterSpellHits(pr.from.monster, pr.from.spell, p);
-          else p.hurt(pr.hit.dmg, pr.x - pr.dx * 20, pr.y - pr.dy * 20, this, pr.hit.element);
-          pr.left = 0;
+        else {
+          const c: Cible | undefined = [p, ...this.betes].find(q => !q.dead && Math.hypot(q.x - pr.x, q.y - pr.y) <= q.radius + pr.width);
+          if (c) {
+            if (pr.from) this.monsterSpellHits(pr.from.monster, pr.from.spell, c);
+            else c.hurt(pr.hit.dmg, pr.x - pr.dx * 20, pr.y - pr.dy * 20, this, pr.hit.element);
+            pr.left = 0;
+          }
         }
         if (pr.left <= 0) this.emit({ k: 'spell', fx: 'burst', id: pr.spell, x: pr.x, y: pr.y, facing: Math.atan2(pr.dy, pr.dx), size: 18, arc: 0,
           element: pr.hit.element ?? 'neutre', big: false, boosted: false });
@@ -1168,7 +1192,7 @@ export class World {
       if (m.dead || m.state === 'spawn' || !test(m)) continue;
       if (p.pacifiste > 0) { this.emit({ k: 'status', x: m.x, y: m.y - 20, text: 'Pacifiste', color: '#c8c8c8' }); return 0; }   // Hyperleukocytine : aucun dommage
       if (m.intouchable) { if (this.time - this.intouchableT > 0.6) { this.intouchableT = this.time; this.emit({ k: 'status', x: m.x, y: m.y - 30, text: 'Intouchable', color: '#c8c8c8' }); } continue; }
-      n++;
+      n++; this.cibleMeute = m.id;
       const crit = this.rng.next() < p.critChance;
       // Choix 19A : résistances officielles du monstre dans l'élément du coup (plafonnées à 50 %, comme Dofus)
       const el = p.resolveElement(def.element ?? 'neutre'), res = Math.min(50, m.def.res?.[el] ?? 0);
@@ -1317,6 +1341,14 @@ export class World {
       } else if (p.pickupId !== d.uid || dist > 44) continue;
       if (d.item) {
         if (p.pickupId === d.uid) p.pickupId = null;
+        const def = this.opts.items?.equipment[d.item.id];
+        if (p.autoBrisage && d.item.rarity === 'commun' && def && !def.familier) {   // 5B : brisé dès le ramassage, ses runes vont au sac
+          const g = briser(this.rng, def, d.item);
+          for (const [id, n] of Object.entries(g)) p.resources[id] = (p.resources[id] ?? 0) + n;
+          this.collectionner(d.item.id);
+          this.emit({ k: 'brisage', n: 1, runes: g, auto: d.item.id });
+          d.t = -1; continue;
+        }
         if (p.bag.length >= Player.BAG_SIZE) { if (!d.warned) this.emit({ k: 'bagFull' }); d.warned = true; d.familier = false; continue; }   // sac plein : l'objet reste au sol
         p.bag.push(d.item);
         this.emit({ k: 'loot', item: d.item });
@@ -1349,15 +1381,45 @@ export class World {
       }
     }
     f.cible = cible?.uid ?? null;
-    const tx = cible ? cible.x : p.x - 34, ty = cible ? cible.y : p.y + 12, dx = tx - f.x, dy = ty - f.y, r = Math.hypot(dx, dy);
-    const v = cible ? 420 : r > 60 ? p.speed * 1.15 : r > 20 ? p.speed * 0.8 : 0;
-    const s = Math.min(r, v * dt);
-    f.vx = r > 1 && s > 0 ? dx / r * s / dt : 0; f.vy = r > 1 && s > 0 ? dy / r * s / dt : 0;
-    if (r > 1) { f.x += dx / r * s; f.y += dy / r * s; }
+    // maquette Osamodas 15F : le familier de l'Osamodas entre dans la meute et mord (le butin passe avant)
+    const proie = !cible && !p.dead && p.cls.rage.mode === 'eveil' ? this.proieFamilier(f) : null;
+    f.proie = proie?.id ?? null; f.mordT = Math.max(0, (f.mordT ?? 0) - dt);
+    if (proie && Math.hypot(proie.x - f.x, proie.y - f.y) < proie.radius + 26 && f.mordT <= 0) { this.morsure(proie); f.mordT = World.MORSURE.cadence; }
+    const tx = cible ? cible.x : proie ? proie.x : p.x - 34, ty = cible ? cible.y : proie ? proie.y : p.y + 12, dx = tx - f.x, dy = ty - f.y;
+    const r = Math.hypot(dx, dy) - (proie ? proie.radius + 16 : 0);
+    const v = cible ? 420 : proie ? 360 : r > 60 ? p.speed * 1.15 : r > 20 ? p.speed * 0.8 : 0;
+    const s = Math.max(0, Math.min(r, v * dt)), n = Math.hypot(dx, dy) || 1;
+    f.vx = r > 1 && s > 0 ? dx / n * s / dt : 0; f.vy = r > 1 && s > 0 ? dy / n * s / dt : 0;
+    if (r > 1) { f.x += dx / n * s; f.y += dy / n * s; }
     if (cible && Math.hypot(cible.x - f.x, cible.y - f.y) < 22) {   // il ramasse : comme si le perso passait dessus
       cible.x = f.x; cible.y = f.y; cible.familier = true;
     }
     return f;
+  }
+  /** 15F : morsure du familier de l'Osamodas (inventé) : petit jet, cadence en secondes, portée autour du perso. */
+  static readonly MORSURE = { jet: 6, cadence: 1.4, portee: 4 * CASE };
+  /** Monstre que le familier mord : la cible de la meute, sinon le plus proche qui se bat, près de l'Osamodas. */
+  private proieFamilier(f: FamilierEtat): Monster | null {
+    const p = this.player, R = World.MORSURE.portee, ok = (m: Monster) => !m.dead && !m.intouchable && m.state !== 'idle' && m.state !== 'return' && Math.hypot(m.x - p.x, m.y - p.y) <= R;
+    const c = this.monsters.find(m => m.id === (f.proie ?? this.cibleMeute));
+    if (c && ok(c)) return c;
+    let best: Monster | null = null, bd = Infinity;
+    for (const m of this.monsters) if (ok(m)) { const d = Math.hypot(m.x - p.x, m.y - p.y); if (d < bd) { bd = d; best = m; } }
+    return best;
+  }
+  /** Élément de la morsure : celui du plus gros bonus élémentaire du familier (Force = Terre, Intelligence = Feu, Chance = Eau, Agilité = Air). */
+  private elementFamilier(): Element {
+    const st = this.player.equipment.familier?.stats ?? {}, E: [keyof typeof st, Element][] = [['force', 'terre'], ['intelligence', 'feu'], ['chance', 'eau'], ['agilite', 'air']];
+    let best: Element = 'neutre', v = 0;
+    for (const [k, e] of E) if ((st[k] ?? 0) > v) { v = st[k] ?? 0; best = e; }
+    return best;
+  }
+  private morsure(m: Monster) {
+    const p = this.player, el = this.elementFamilier(), res = Math.min(50, m.def.res?.[el] ?? 0);
+    const dmg = Math.max(1, Math.round(p.damage(World.MORSURE.jet, el) * this.rng.range(0.9, 1.1) * (1 - res / 100) * m.subis));
+    m.hp -= dmg; m.flash = 0.09; m.calmeT = 0; m.struck = true;
+    this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: dmg, crit: false, element: el });
+    if (m.hp <= 0) this.killMonster(m);
   }
   /** XP pour le familier porté (2C) ; ses bonus suivent son niveau. */
   xpFamilier(n: number) {
@@ -1453,12 +1515,20 @@ export class World {
   }
 
   // --- Emp, le Méryde du Recyclage (maquette 0.2, 8A+8B+8C, 9A+9B) ---------------------------------------------
+  /** Collection d'apparences (1C) : le premier exemplaire brisé ou recyclé d'une coiffe, cape ou bouclier débloque son apparence. */
+  private collectionner(id: string) {
+    const p = this.player;
+    if (!this.opts.apparats?.objets[id]?.collection || p.apparats.includes(id)) return;
+    p.apparats.push(id);
+    this.emit({ k: 'apparence', id });
+  }
   private pepites(n: number) { const p = this.player; p.resources[PEPITE] = (p.resources[PEPITE] ?? 0) + n; }
   /** Recycle un objet du sac contre des Pépites (un objet sous cadenas n'est jamais recyclé). */
   recycle(uid: number): boolean {
     const p = this.player, i = p.bag.findIndex(b => b.uid === uid), d = i >= 0 && this.opts.items?.equipment[p.bag[i].id];
     if (i < 0 || p.bag[i].cadenas) return false;
     const n = d ? recycleValue(d, p.bag[i]) : 1;
+    this.collectionner(p.bag[i].id);
     p.bag.splice(i, 1); this.pepites(n);
     this.emit({ k: 'recycle', n: 1, pepites: n });
     return true;
@@ -1469,7 +1539,7 @@ export class World {
     let n = 0, pep = 0;
     p.bag = p.bag.filter(it => {
       if (it.cadenas || RARITIES.indexOf(it.rarity) > max) return true;
-      const d = I?.equipment[it.id]; n++; pep += d ? recycleValue(d, it) : 1; return false;
+      const d = I?.equipment[it.id]; n++; pep += d ? recycleValue(d, it) : 1; this.collectionner(it.id); return false;
     });
     if (n) { this.pepites(pep); this.emit({ k: 'recycle', n, pepites: pep }); }
     return n;
@@ -1568,7 +1638,7 @@ export class World {
       const def = I?.equipment[it.id];
       if (!uids.includes(it.uid) || !def || def.familier || it.cadenas) return true;
       for (const [id, k] of Object.entries(briser(this.rng, def, it))) tout[id] = (tout[id] ?? 0) + k;
-      n++; return false;
+      this.collectionner(it.id); n++; return false;
     });
     for (const [id, k] of Object.entries(tout)) p.resources[id] = (p.resources[id] ?? 0) + k;
     if (n) this.emit({ k: 'brisage', n, runes: tout });
@@ -1579,7 +1649,7 @@ export class World {
     const p = this.player, i = p.bag.findIndex(b => b.uid === uid), it = i >= 0 ? p.bag[i] : null, def = it && this.opts.items?.equipment[it.id];
     if (!it || !def || it.cadenas || def.familier) return false;
     const g = briser(this.rng, def, it);
-    p.bag.splice(i, 1);
+    p.bag.splice(i, 1); this.collectionner(it.id);
     for (const [id, n] of Object.entries(g)) p.resources[id] = (p.resources[id] ?? 0) + n;
     this.emit({ k: 'brisage', n: 1, runes: g });
     return true;
@@ -1592,7 +1662,7 @@ export class World {
       const def = I?.equipment[it.id];
       if (!def || def.familier || it.cadenas || RARITIES.indexOf(it.rarity) > max) return true;
       for (const [id, k] of Object.entries(briser(this.rng, def, it))) tout[id] = (tout[id] ?? 0) + k;
-      n++; return false;
+      this.collectionner(it.id); n++; return false;
     });
     for (const [id, k] of Object.entries(tout)) p.resources[id] = (p.resources[id] ?? 0) + k;
     if (n) this.emit({ k: 'brisage', n, runes: tout });
@@ -1628,7 +1698,7 @@ export class World {
   /** Achat d'un objet d'apparat chez Emp (Apparence 5A) : il rejoint la collection du perso, une fois pour toutes. */
   acheterApparat(id: string): boolean {
     const d = this.opts.apparats?.objets[id], prix = d && this.opts.apparats!.prix[d.slot], p = this.player;
-    if (!d || prix == null || p.apparats.includes(id) || (p.resources[PEPITE] ?? 0) < prix) return false;
+    if (!d || d.collection || prix == null || p.apparats.includes(id) || (p.resources[PEPITE] ?? 0) < prix) return false;
     p.resources[PEPITE] -= prix; if (!p.resources[PEPITE]) delete p.resources[PEPITE];
     p.apparats.push(id);
     this.emit({ k: 'achat', id, prix });
@@ -1772,7 +1842,76 @@ export class World {
     p.bag.push(it);
     this.emit({ k: 'sacQuete', id, rarity: rarete });
   }
-  onPlayerDeath() { this.over = true; this.emit({ k: 'playerDeath', wave: this.wave }); }
+  // --- Bêtes de l'Osamodas (maquette Osamodas, 2026-11-08) ---------------------------
+  /** 8A : un monstre en chasse frappe la bête qui l'a frappé (si elle est à moins de 4 cases), ou la bête bien plus proche que le joueur. */
+  cibleDe(m: Monster): Cible {
+    const p = this.player;
+    if (!this.betes.length || m.state === 'idle' || m.state === 'return') return p;
+    const vivantes = this.betes.filter(b => !b.dead && b.state !== 'spawn');
+    const ag = vivantes.find(b => b.id === m.agresseur);
+    if (ag && Math.hypot(ag.x - m.x, ag.y - m.y) < CASE * 4) return ag;
+    const dp = Math.hypot(p.x - m.x, p.y - m.y);
+    let best: Cible = p, bd = p.dead ? Infinity : dp * 0.6;
+    for (const b of vivantes) { const d = Math.hypot(b.x - m.x, b.y - m.y); if (d < bd) { bd = d; best = b; } }
+    return best;
+  }
+  /** Bête vivante invoquée par ce sort (une par sort, la touche la rappelle ou l'éveille). */
+  beteDe(sort: string): Bete | undefined { return this.betes.find(b => b.sort === sort && !b.dead); }
+  /** Coût en Invocations (2A) : 1 / 2 / 3 selon le rang ; le joueur en a 1 de base + objets + Cortège Sauvage. */
+  invocationsPrises(): number { return this.betes.filter(b => !b.dead && !b.dompteT).reduce((a, b) => a + BETES[b.base].rang, 0); }
+  invocationsMax(p: Player): number { return REGLES_BETES.invocationsBase + Math.max(0, p.stat('invocations')); }
+  /** Fait apparaître la bête d'un sort au point visé (case libre la plus proche). */
+  invoquer(p: Player, key: string, sort: string, x: number, y: number): Bete | null {
+    if (!BETES[key]) return null;
+    const q = this.walkable(x, y) ? { x, y } : this.map.nearestFree(x, y);
+    const b = new Bete(this.nextId++, p, key, sort, q.x, q.y);
+    this.betes.push(b);
+    this.emit({ k: 'status', x: b.x, y: b.y - 40, text: b.def.name, color: '#9fe07a' });
+    this.emit({ k: 'invocation', id: b.id, x: b.x, y: b.y });
+    return b;
+  }
+  /** 14A Meute bigarrée : +5 % de dommages à la meute par élément différent présent parmi les bêtes. */
+  bonusMeute(p: Player): number {
+    const els = new Set(this.betes.filter(b => !b.dead && b.owner === p).map(b => b.def.element).filter(e => e !== 'neutre'));
+    return 1 + REGLES_BETES.meuteBigarree * (els.size >= 2 ? els.size : 0);
+  }
+  /** Coup d'une bête sur un monstre : caractéristiques de l'Osamodas, résistance officielle du monstre ; remplit l'Éveil (4A). */
+  coupDeBete(b: Bete, m: Monster, jet: number, element: Element): number {
+    const p = b.owner;
+    if (m.intouchable) return 0;
+    const el = p.resolveElement(element), res = Math.min(50, m.def.res?.[el] ?? 0);
+    const vu = (m.vulnT > 0 ? 1 + m.vuln / 100 : 1) * m.subis;
+    const dmg = Math.max(1, Math.round(p.damage(jet, element) * this.rng.range(0.9, 1.1) * (1 - res / 100) * vu));
+    m.hp -= dmg; m.flash = 0.09; m.calmeT = 0; m.struck = true; m.agresseur = b.id;
+    if (m.state === 'idle' || m.state === 'return') this.aggroGroup(m);
+    this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: dmg, crit: false, element: el });
+    if (p.cls.rage.mode === 'eveil') { p.lastHitAt = p.age; p.addRage(REGLES_BETES.eveil.parCoupBete, this); }
+    if (m.hp <= 0) this.killMonster(m);
+    return dmg;
+  }
+
+  /** 15A : Laisse Spirituelle sur un monstre sous le seuil de PV (pas un boss) : il se bat pour l'Osamodas pendant duree s,
+   *  avec ses propres sorts officiels, puis s'enfuit (ni XP ni butin). */
+  dompter(p: Player, x: number, y: number, D: { seuil: number; duree: number }): boolean {
+    const m = this.monsters.filter(q => !q.dead && !q.def.boss && q.hp <= q.maxHp * D.seuil && Math.hypot(q.x - x, q.y - y) <= q.radius + CASE)
+      .sort((a, b) => Math.hypot(a.x - x, a.y - y) - Math.hypot(b.x - x, b.y - y))[0];
+    if (!m) return false;
+    const sorts: SortBete[] = (m.def.spells ?? []).map(sp => ({ id: sp.id, name: sp.name, pa: sp.pa, po: sp.po, anim: sp.anim, zone: sp.zone,
+      effets: sp.effects.flatMap((e): EffetBete[] => e.k === 'dmg' ? [{ k: 'dmg' as const, element: e.element, min: e.min, max: e.max, vol: e.steal }]
+        : e.k === 'soin' ? [{ k: 'soin' as const, min: e.min, max: e.max }]
+        : e.k === 'repousse' || e.k === 'attire' || e.k === 'avance' ? [{ k: e.k, n: e.n }] : []) }));
+    if (!sorts.some(sp => sp.effets.some(e => e.k === 'dmg'))) sorts.push({ id: 0, name: 'Coup', pa: 2, po: [1, 1], anim: 0, zone: 'P1', effets: [{ k: 'dmg', element: 'neutre', min: m.def.dmg, max: m.def.dmg, vol: false }] });
+    const def = { dofusId: m.def.dofusId ?? 0, name: m.def.name, look: 0, atlas: m.def.look, rang: 0, element: 'neutre' as const, suivant: null, pv: 0, sorts };
+    m.dead = true; m.t = 0;   // le monstre quitte son groupe sans mourir (ni XP ni butin)
+    const b = new Bete(this.nextId++, p, m.type, 'dompte', m.x, m.y, def, Math.max(1, Math.round(m.maxHp * 0.6)));
+    b.dompteT = D.duree; b.state = 'suit';
+    this.betes.push(b);
+    this.emit({ k: 'dompte', id: b.id, name: m.def.name, x: b.x, y: b.y });
+    this.emit({ k: 'status', x: b.x, y: b.y - 40, text: `${m.def.name} dompté !`, color: '#9fe07a' });
+    return true;
+  }
+
+  onPlayerDeath() { for (const b of this.betes) b.mourir(this); this.over = true; this.emit({ k: 'playerDeath', wave: this.wave }); }
 
   /** Évite que les monstres se superposent (O(n²), suffisant sous 100 monstres). */
   private separate() {

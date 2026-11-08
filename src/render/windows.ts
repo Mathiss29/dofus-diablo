@@ -637,10 +637,11 @@ export class Windows {
               <select data-kind>${KINDS.map(([k, v]) => `<option value="${k}" ${this.kind === k ? 'selected' : ''}>${v}</option>`).join('')}</select>
             </div>
             <div class="grid">${html}</div>
-            <div class="foot"><span>Visible(s) : <b>${n}</b> · sac <b>${p.bag.length} / ${Player.BAG_SIZE}</b><br><span class="hint">Clic droit : équiper / retirer · Maj + clic : recycler · Ctrl + clic : cadenas${p.equipment.familier ? ' · Alt + clic : nourrir le familier' : ''}</span></span>
+            <div class="foot"><span>Visible(s) : <b>${n}</b> · sac <b>${p.bag.length} / ${Player.BAG_SIZE}</b><br><span class="hint">Clic droit : équiper / retirer · Ctrl + clic : cadenas${p.equipment.familier ? ' · Alt + clic : nourrir le familier' : ''}</span></span>
               <span class="k">${p.kamas.toLocaleString('fr-FR')} <img src="${INV}/kamas.png" alt="" title="Kamas"></span></div>
             <div class="foot"><span>Butin affiché au sol</span>
               <select data-filter style="width:auto">${['Tout', 'Rare et plus', 'Épique et plus'].map((n, i) => `<option value="${i}" ${p.lootFilter === i ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
+            <label class="foot" title="Les objets Communs ramassés sont brisés tout de suite : leurs runes vont dans le sac, et une coiffe, cape ou bouclier inconnu rejoint ta collection d'apparences"><span>Briser les Communs au ramassage</span><input type="checkbox" style="width:auto;flex:none;margin:0" data-autobris ${p.autoBrisage ? 'checked' : ''}></label>
           </div>
         </div>
       </div>`;
@@ -648,6 +649,7 @@ export class Windows {
     w.querySelector<HTMLSelectElement>('[data-sort]')!.addEventListener('change', e => { this.sort = (e.target as HTMLSelectElement).value; this.render(); });
     w.querySelector<HTMLSelectElement>('[data-kind]')!.addEventListener('change', e => { this.kind = (e.target as HTMLSelectElement).value; this.render(); });
     w.querySelector<HTMLSelectElement>('[data-filter]')!.addEventListener('change', e => { p.lootFilter = +(e.target as HTMLSelectElement).value; this.render(); });
+    w.querySelector<HTMLInputElement>('[data-autobris]')!.addEventListener('change', e => { p.autoBrisage = (e.target as HTMLInputElement).checked; this.changed(); });
     w.querySelectorAll('select').forEach(s => s.addEventListener('keydown', e => e.stopPropagation()));
     const inp = w.querySelector<HTMLInputElement>('[data-search]')!;
     inp.addEventListener('input', () => { this.search = inp.value; this.render(); const m = this.win!.querySelector<HTMLInputElement>('[data-search]')!; m.focus(); m.setSelectionRange(m.value.length, m.value.length); });
@@ -663,13 +665,13 @@ export class Windows {
     // Case Apparence (5A) : clic = les apparats de cet emplacement ; clic droit = retirer l'apparat, sinon cacher / montrer l'objet porté
     w.querySelectorAll<HTMLElement>('[data-appa]').forEach(e => {
       const k = e.dataset.appa as Visible;
-      e.addEventListener('click', () => { this.tab = 'apparat'; this.kind = k === 'bouclier' ? '' : k; this.render(); });
+      e.addEventListener('click', () => { this.tab = 'apparat'; this.kind = k; this.render(); });
       e.addEventListener('contextmenu', () => { this.world.porterApparat(k, p.apparat[k] ? null : '0'); this.changed(); });
     });
     w.querySelectorAll<HTMLElement>('[data-app]').forEach(e => {
       const id = e.dataset.app!, d = APPARATS.objets[id];
       const porter = () => { this.world.porterApparat(d.slot, p.apparat[d.slot] === id ? null : id); this.changed(); };
-      e.addEventListener('mouseenter', ev => { this.tip.innerHTML = `<h4>${d.name}</h4><div class="sub">${d.slot === 'chapeau' ? 'Coiffe' : d.slot === 'cape' ? 'Cape' : 'Familier'} d'apparat</div><div class="hint">Change seulement l'apparence. Clic droit : porter / retirer</div>`; this.tip.style.display = 'block'; this.moveTip(ev); });
+      e.addEventListener('mouseenter', ev => { this.tip.innerHTML = `<h4>${d.name}</h4><div class="sub">${d.collection ? `${SLOT_NAMES[d.slot]} · apparence de ta collection` : `${d.slot === 'chapeau' ? 'Coiffe' : d.slot === 'cape' ? 'Cape' : 'Familier'} d'apparat`}</div><div class="hint">Change seulement l'apparence. Clic droit : porter / retirer</div>`; this.tip.style.display = 'block'; this.moveTip(ev); });
       e.addEventListener('mousemove', ev => this.moveTip(ev));
       e.addEventListener('mouseleave', () => this.hideTip());
       e.addEventListener('contextmenu', porter); e.addEventListener('dblclick', porter);
@@ -694,7 +696,7 @@ export class Windows {
       e.addEventListener('dblclick', equip);
       e.addEventListener('click', ev => {
         if (ev.altKey) { ev.preventDefault(); if (this.world.nourrirFamilier({ uid })) this.changed(); else this.flash(e); }
-        else if (ev.ctrlKey || ev.metaKey) { this.world.cadenas(uid); this.changed(); } else if (ev.shiftKey) { this.world.recycle(uid); this.changed(); } });
+        else if (ev.ctrlKey || ev.metaKey) { this.world.cadenas(uid); this.changed(); } });
     });
   }
 
@@ -1143,7 +1145,7 @@ export class Windows {
         <p>Dans ${k('O')} Options, tu peux choisir comment lancer un sort : relâcher la touche, tout de suite, ou comme dans Dofus (touche puis clic).</p>` },
       { id: 'butin', titre: 'Inventaire et butin', html: `<h3>Ramasser</h3><p>Clique sur un objet au sol pour le ramasser. Les objets Épiques et mieux apparaissent aussi sur la mini-carte.</p>
         <h3>Raretés</h3><p>${(['commun', 'rare', 'epique', 'legendaire', 'mythique'] as const).map(r => `<span style="color:${RARITY_COLORS[r]}">${RARITY_NAMES[r]}</span>`).join(' · ')}</p>
-        <h3>S'équiper</h3><p>${k('I')} ouvre l'inventaire. Clic droit sur un objet : l'équiper ou le retirer. ${k('Maj + clic')} : le recycler.</p>
+        <h3>S'équiper</h3><p>${k('I')} ouvre l'inventaire. Clic droit sur un objet : l'équiper ou le retirer. Les objets en trop se recyclent chez Kerubim Crépin, ou se brisent en runes chez Malek.</p>
         <p>${k('C')} ouvre les caractéristiques : chaque niveau donne 5 points à placer.</p>` },
       { id: 'havresac', titre: 'Le Havre-Sac', html: `<p>${k('H')} (ou l'icône du sac dans la colonne de menus) : 1,5 s d'incantation et tu entres dans ton Havre-Sac, ton monde de poche. Bouger ou être touché coupe l'incantation. Impossible dans un donjon ou poursuivi par des monstres.</p>
         <p>Le Poutch Ingball compte tes dégâts par seconde, et Kerubim Crépin y garde un guichet de recyclage. ${k('H')} à nouveau te ramène là où tu étais ; l'arche est un Zaap vers le Bastion des Douze et tous ceux que tu as découverts.</p>` },
@@ -1442,7 +1444,7 @@ export class Windows {
     } else if (this.empOnglet === 'apparat') {
       // Apparats officiels (5A) : tout le catalogue, payé en Pépites ; le survol habille le perso de l'aperçu
       const q = this.apparatRecherche.toLowerCase();
-      const l = Object.entries(APPARATS.objets).filter(([, d]) => (!this.apparatSlot || d.slot === this.apparatSlot) && (!q || d.name.toLowerCase().includes(q)))
+      const l = Object.entries(APPARATS.objets).filter(([, d]) => !d.collection && (!this.apparatSlot || d.slot === this.apparatSlot) && (!q || d.name.toLowerCase().includes(q)))
         .sort((a, b) => a[1].name.localeCompare(b[1].name, 'fr'));
       const essai = this.essaiApparat && APPARATS.objets[this.essaiApparat];
       const objets = objetsPortes(p.equipment, { ...p.apparat, ...(essai ? { [essai.slot]: this.essaiApparat! } : {}) });
@@ -1722,7 +1724,10 @@ export class Windows {
       if (!d || (this.kind && d.slot !== this.kind) || (q && !d.name.toLowerCase().includes(q))) continue;
       cells.push(`<div class="cell ${p.apparat[d.slot] === id ? 'porte' : ''}" data-app="${id}">${apparatHtml(id)}</div>`);
     }
-    if (this.tab === 'apparat' && !p.apparats.length) cells.push('<div class="hint" style="grid-column:1/-1">Les apparats s\'achètent chez Tissebelle, au Bastion des Douze. Ils changent seulement l\'apparence.</div>');
+    if (this.tab === 'apparat') {   // collection d'apparences (1C) : coiffes, capes et boucliers brisés ou recyclés
+      const tous = Object.values(APPARATS.objets).filter(d => d.collection), eu = p.apparats.filter(id => APPARATS.objets[id]?.collection).length;
+      cells.push(`<div class="hint" style="grid-column:1/-1">${p.apparats.length ? '' : 'Les apparats s\'achètent chez Tissebelle, au Bastion des Douze. '}Collection : <b>${eu} / ${tous.length}</b> apparences. Brise ou recycle une coiffe, une cape ou un bouclier pour garder son apparence.</div>`);
+    }
     const n = cells.length;
     for (let i = n; i < Math.max(35, Math.ceil(n / 5) * 5); i++) cells.push('<div class="cell empty"></div>');
     return { html: cells.join(''), n };
@@ -1775,7 +1780,7 @@ export class Windows {
     this.tip.innerHTML = `<h4 style="color:${RARITY_COLORS[it.rarity]}">${d.name}</h4>
       <div class="sub">${d.familier ? 'Familier' : `${RARITY_NAMES[it.rarity]} · ${d.weapon?.type ?? SLOT_NAMES[(slot ?? 'amulette') as EquipSlot]}`} · niveau ${d.level}</div>
       ${weapon}${stats}${fam}${leg}${set}${it.signe ? `<div class="sig">Signé par ${it.signe.replace(/[&<>"]/g, '')}</div>` : ''}${lvl}${cmp}${sourcesHtml(it.id, 3)}
-      <div class="hint">${worn ? 'Clic droit : retirer' : it.cadenas ? 'Sous cadenas : jamais recyclé · Ctrl + clic : l\'ôter' : `Clic droit : équiper · Maj + clic : recycler (${recycleValue(d, it)} Pépites) · Ctrl + clic : cadenas`}</div>`;
+      <div class="hint">${worn ? 'Clic droit : retirer' : it.cadenas ? 'Sous cadenas : jamais recyclé · Ctrl + clic : l\'ôter' : `Clic droit : équiper · Ctrl + clic : cadenas (recyclage chez Kerubim : ${recycleValue(d, it)} Pépites)`}</div>`;
     this.tip.style.display = 'block'; this.moveTip(ev);
   }
   private moveTip(ev: MouseEvent) {

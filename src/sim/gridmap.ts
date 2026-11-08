@@ -32,6 +32,8 @@ export interface WorldMapEntry {
   x: number; y: number; id: number; sub: number; tag: string; sol: Rect; fond?: Rect & { k?: number }; decor: DecorPlace[];
   /** Ce que la carte dessine au-delà de son cadre, posé en fondu sur les voisines (plus de coupure au raccord). */
   bord?: Rect;
+  /** Contours officiels des portes au survol (boîtes de survol Dofus 3, tools/extraction/survols.py) : dessin de l'atlas, centre. */
+  survols?: { f: string; x: number; y: number }[];
   /** Carte du rivage : couleur de la mer (0xRRGGBB) dans laquelle son bord du monde se fond, au lieu du fond bleu nuit. */
   mer?: number;
   /** Intérieur (maison, mine…) : rangé à part dans la grille, on y entre par une porte. */
