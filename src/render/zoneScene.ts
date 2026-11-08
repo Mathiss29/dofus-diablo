@@ -17,6 +17,7 @@ import { DialogueView } from './dialogueView';
 import { GridMap, WorldGrid, type MapData, type WorldData } from '../sim/gridmap';
 import { ISO } from '../sim/iso';
 import type { PlayerInput } from '../sim/input';
+import { entreesAllies } from '../sim/allie';
 import type { SkillId } from '../sim/defs';
 import type { Entity } from '../sim/entity';
 import { World } from '../sim/world';
@@ -443,6 +444,19 @@ export class ZoneScene extends Phaser.Scene {
   /** Classe, sexe et apparence complète (tête et couleurs validées) donnés aux fenêtres. */
   private fichePerso() {
     fiches().then(f => { const fi = f[this.clePerso]; if (fi && this.windows) this.windows.perso = { cle: this.clePerso, app: apparenceValide(fi, this.perso?.apparence ?? this.apparenceEssai) }; }, () => {});
+  }
+  /** Alliés (multi, étape 0) : chaque autre joueur est assemblé comme le perso (classe, tête par défaut, objets portés). */
+  private vivantsAllies = new Map<number, PersoVivant | null>();
+  private vivantAllie(q: Player): boolean {
+    const vv = this.vivantsAllies.get(q.id);
+    if (vv !== undefined) return vv !== null;
+    this.vivantsAllies.set(q.id, null);
+    const cle = Object.keys(GAME_DATA.classes).find(c => GAME_DATA.classes[c] === q.cls) ?? 'iop';
+    Assemblage.creer(`${cle}_m`, null, objetsPortes(q.equipment, q.apparat)).then(a => {
+      if (!this.sys.isActive() || !this.world.players.includes(q)) return;
+      this.vivantsAllies.set(q.id, this.nouveauVivant(a));
+    }, () => { /* hors ligne : l'allié reste invisible */ });
+    return false;
   }
   private nouveauVivant(a: Assemblage) {
     const vv = new PersoVivant(this, a);
@@ -941,7 +955,7 @@ export class ZoneScene extends Phaser.Scene {
     let input = this.vitrine ? { move: { x: 0, y: 0 }, aim: { x: 0, y: 0 }, pressed: null } as PlayerInput : this.readInput();
     while (this.acc >= ZoneScene.STEP && this.hitstop <= 0) {
       this.acc -= ZoneScene.STEP;
-      this.world.step(ZoneScene.STEP, input);
+      this.world.step(ZoneScene.STEP, input, this.world.players.length > 1 ? entreesAllies(this.world) : undefined);   // alliés de test (F1)
       input = { ...input, pressed: null, potion: false, reponse: null, test: null, havreSac: false, zaap: null };
       this.consumeEvents();
     }
@@ -1297,6 +1311,7 @@ export class ZoneScene extends Phaser.Scene {
   }
   /** Apparence d'un monstre ou d'une bête de l'Osamodas (sa planche osa_<bête>, ou celle du monstre dompté). */
   private lookDe(e: Entity): Look {
+    if (e instanceof Player) return LOOKS.iop;   // allié (multi) : dessiné par son assemblage, la planche ne sert qu'aux mesures
     return e instanceof Bete ? LOOKS[e.look] ?? LOOKS.osa_tofu : LOOKS[GAME_DATA.monsters[(e as { type?: string }).type!].look];
   }
   private viewOf(e: Entity): EntityView {
@@ -1304,11 +1319,11 @@ export class ZoneScene extends Phaser.Scene {
     // bête éveillée (ou revenue à son rang) : nouvelle planche, nouvelle vue
     if (v && e instanceof Bete && v.look !== this.lookDe(e)) { v.destroy(); this.views.delete(e.id); v = undefined; }
     if (!v) {
-      const look = e.faction === 'player' ? this.look : this.lookDe(e);
-      if (e.faction === 'player' && this.assemblage && !this.vivant) {
+      const moi = e === this.world.player, look = moi ? this.look : this.lookDe(e);
+      if (moi && this.assemblage && !this.vivant) {
         this.vivant = this.nouveauVivant(this.assemblage);
       }
-      v = new EntityView(this, look, e.faction === 'player' ? this.vivant ?? undefined : undefined);
+      v = new EntityView(this, look, moi ? this.vivant ?? undefined : e instanceof Player ? this.vivantsAllies.get(e.id) ?? undefined : undefined);
       this.views.set(e.id, v);
     }
     return v;
@@ -1438,7 +1453,7 @@ export class ZoneScene extends Phaser.Scene {
     wv?.update(w.player.x, w.player.y);
     this.leverRideau(this.game.loop.delta / 1000);
     this.drawRageAura();
-    for (const e of [w.player, ...w.betes, ...w.monsters]) {
+    for (const e of [...w.players, ...w.betes, ...w.monsters]) {
       // monde ouvert : on n'affiche que les monstres des cartes chargées (les autres vivent quand même dans la simulation)
       if (wv && wg && e !== w.player && !wv.isReady(wg.mapAt(e.x, e.y)?.tag)) continue;
       if (this.vitrine && e === w.player) continue;
@@ -1454,17 +1469,18 @@ export class ZoneScene extends Phaser.Scene {
       }
       // bête de l'Osamodas : la planche de son rang suivant arrive d'avance, l'Éveil la change sans trou
       if (e instanceof Bete && e.def.suivant && LOOKS[`osa_${e.def.suivant}`]) this.planche(LOOKS[`osa_${e.def.suivant}`]);
-      if (e !== w.player && !this.planche(this.lookDe(e))) { alive.delete(e.id); continue; }
+      if (e instanceof Player ? e !== w.player && !this.vivantAllie(e) : !this.planche(this.lookDe(e))) { alive.delete(e.id); continue; }
       this.viewOf(e).sync(e);
     }
     for (const [id, v] of this.views) if (!alive.has(id)) { v.destroy(); this.views.delete(id); }
+    for (const [id, vv] of this.vivantsAllies) if (!w.players.some(q => q.id === id)) { vv?.destroy(); this.vivantsAllies.delete(id); }
     this.dessinerLaisse();
     this.dessinerSouffrance();
     this.oublierPlanches();
     if (!this.vitrine) this.familierView?.maj(w, this.game.loop.delta / 1000);
     if (this.transparence) {
       const caches: Cache[] = [];
-      for (const e of [w.player, ...w.betes, ...w.monsters]) {
+      for (const e of [...w.players, ...w.betes, ...w.monsters]) {
         const v = this.views.get(e.id);
         if (v && alive.has(e.id) && !e.dead) caches.push({ id: e.id, sprite: v.sprite, joueur: e === w.player, w: Math.max(34, e.radius * 2.2), h: v.look.height * Math.abs(v.look.scale) });
       }

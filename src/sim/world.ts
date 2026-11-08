@@ -283,12 +283,20 @@ export class World {
   ajouterJoueur(classId: string): Player {
     const cls = this.opts.data.classes[classId];
     if (!cls) throw new Error(`Classe inconnue : ${classId}`);
-    const h = this.players[0], f = this.map.nearestFree(h.x + h.radius * 3, h.y);
+    const h = this.players[0], n = this.players.length, f = this.map.nearestFree(h.x + h.radius * 3 * (n % 2 ? 1 : -1) * Math.ceil(n / 2), h.y + h.radius * 2 * (n - 1));
     const q = new Player(this.nextId++, f.x, f.y, cls);
     q.v03 = h.v03;
     if (this.opts.items) q.items = this.opts.items;
     this.players.push(q);
     return q;
+  }
+  /** Retire un joueur (pas celui de cet écran) ; ses bêtes partent avec lui. */
+  retirerJoueur(q: Player): boolean {
+    const i = this.players.indexOf(q);
+    if (i <= 0) return false;
+    this.players.splice(i, 1);
+    this.betes = this.betes.filter(b => b.owner !== q);
+    return true;
   }
   /** Joueurs vivants. */
   vivants(): Player[] { return this.players.filter(q => !q.dead); }

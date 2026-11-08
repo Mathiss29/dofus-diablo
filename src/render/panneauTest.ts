@@ -324,6 +324,8 @@ export class PanneauTest {
     tous('[data-poser]', b => { const m = b.dataset.poser === 'm'; this.pose = { type: this.monstre, n: m ? 1 : this.nombre, rang: m ? 'normal' : this.rang, mannequin: m, ...(m && this.frappe ? { frappe: this.frappe } : {}) }; this.actions.poser(this.pose); this.dessiner(); });
     tous('[data-annuler]', () => this.posee());
     tous('[data-retirer]', () => this.actions.envoyer({ k: 'retirer' }));
+    tous('[data-allies-retirer]', () => this.actions.envoyer({ k: 'alliesRetirer' }));
+    tous('[data-allie]', b => this.actions.envoyer({ k: 'allie', classe: b.dataset.allie! }));
     // Butin (1C, 8A+8B+8C)
     const rb = q<HTMLInputElement>('#pt-but');
     if (rb) rb.oninput = () => { this.rechercheButin = rb.value; const t = q('#pt-butt'); if (t) t.innerHTML = this.tableDev(); this.lierTri(); };
@@ -473,7 +475,11 @@ export class PanneauTest {
       <div class="dps"></div>
       <div class="dps recu"></div>
       <p class="note">Les compteurs prennent les 10 dernières secondes : coups donnés aux monstres, coups reçus et soins du perso. Le mannequin qui frappe tape avec ses dégâts normaux quand tu es à moins de 5 cases (utile pour les classes qui se renforcent en prenant des coups).</p>
-      <button type="button" class="b g" data-retirer>Retirer les monstres posés</button>`;
+      <button type="button" class="b g" data-retirer>Retirer les monstres posés</button>
+      <h4>Alliés (essai du multi)</h4>
+      <div class="l" style="justify-content:flex-start;flex-wrap:wrap;gap:4px">${Object.entries(GAME_DATA.classes).map(([k, d]) => `<button type="button" class="b g" data-allie="${k}">+ ${esc(d.name)}</button>`).join('')}</div>
+      <p class="note">Un 2e joueur à ton niveau, conduit par le jeu : il te suit et frappe les monstres réveillés. 3 alliés au plus.</p>
+      <button type="button" class="b g" data-allies-retirer>Retirer les alliés</button>`;
   }
   /** Toutes les lignes de butin du jeu, avec la chance réelle pour le perso de test (sa Prospection, son Chasseur). */
   private lignes(): LigneDev[] {
