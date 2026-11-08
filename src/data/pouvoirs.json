@@ -401,6 +401,408 @@
    "officiel": "Vendetta : +1 lancer(s) par tour"
   }
  ],
+ "forgelance": [
+  {
+   "id": "forgelance-01",
+   "slot": "chapeau",
+   "piece": "Heaume Erik",
+   "sort": "Lance du Lac",
+   "dofusId": 23432,
+   "effet": "po",
+   "n": 3,
+   "officiel": "Lance du Lac : +3 Portée maximale"
+  },
+  {
+   "id": "forgelance-02",
+   "slot": "chapeau",
+   "piece": "Heaume Erik",
+   "sort": "Épieu Sismique",
+   "dofusId": 23720,
+   "effet": "po",
+   "n": 3,
+   "officiel": "Épieu Sismique : +3 Portée maximale"
+  },
+  {
+   "id": "forgelance-03",
+   "slot": "chapeau",
+   "piece": "Heaume Erik",
+   "sort": "Lance-pierre",
+   "dofusId": 23719,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Lance-pierre : +2 Portée maximale"
+  },
+  {
+   "id": "forgelance-04",
+   "slot": "chapeau",
+   "piece": "Heaume Erik",
+   "sort": "Javelot-foudre",
+   "dofusId": 23392,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Javelot-foudre : +2 Portée maximale"
+  },
+  {
+   "id": "forgelance-05",
+   "slot": "chapeau",
+   "piece": "Heaume Erik",
+   "sort": "Lance à Incendie",
+   "dofusId": 23263,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Lance à Incendie : Portée modifiable"
+  },
+  {
+   "id": "forgelance-06",
+   "slot": "amulette",
+   "piece": "Heaume Erik",
+   "sort": "Pluie d'Airain",
+   "dofusId": 24219,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Pluie d'Airain : +2 Portée maximale"
+  },
+  {
+   "id": "forgelance-07",
+   "slot": "arme",
+   "piece": "Heaume Erik",
+   "sort": "Javeline de Myr",
+   "dofusId": 23734,
+   "effet": "po",
+   "n": 3,
+   "officiel": "Javeline de Myr : +3 Portée maximale"
+  },
+  {
+   "id": "forgelance-08",
+   "slot": "bouclier",
+   "piece": "Heaume Erik",
+   "sort": "Moulin Rouge",
+   "dofusId": 23755,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Moulin Rouge : +1 lancer(s) par tour"
+  },
+  {
+   "id": "forgelance-09",
+   "slot": "cape",
+   "piece": "Cape Anthéon",
+   "sort": "Balestra",
+   "dofusId": 23434,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Balestra : -1 PA"
+  },
+  {
+   "id": "forgelance-10",
+   "slot": "cape",
+   "piece": "Cape Anthéon",
+   "sort": "Moulin à Vent",
+   "dofusId": 23742,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Moulin à Vent : -1 PA"
+  },
+  {
+   "id": "forgelance-11",
+   "slot": "cape",
+   "piece": "Cape Anthéon",
+   "sort": "Talon d'Argile",
+   "dofusId": 23726,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Talon d'Argile : +2 Portée maximale"
+  },
+  {
+   "id": "forgelance-12",
+   "slot": "cape",
+   "piece": "Cape Anthéon",
+   "sort": "Fente",
+   "dofusId": 23753,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Fente : +1 lancer(s) par tour"
+  },
+  {
+   "id": "forgelance-13",
+   "slot": "cape",
+   "piece": "Cape Anthéon",
+   "sort": "Muspel",
+   "dofusId": 23750,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Muspel : -1 PA"
+  },
+  {
+   "id": "forgelance-14",
+   "slot": "amulette",
+   "piece": "Cape Anthéon",
+   "sort": "Ydra",
+   "dofusId": 23723,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Ydra : -1 PA"
+  },
+  {
+   "id": "forgelance-15",
+   "slot": "arme",
+   "piece": "Cape Anthéon",
+   "sort": "Noa",
+   "dofusId": 23735,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Noa : Portée modifiable"
+  },
+  {
+   "id": "forgelance-16",
+   "slot": "bouclier",
+   "piece": "Cape Anthéon",
+   "sort": "Elding",
+   "dofusId": 23396,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Elding : -1 PA"
+  },
+  {
+   "id": "forgelance-17",
+   "slot": "ceinture",
+   "piece": "Baudrier Popée",
+   "sort": "Trident de la Mer",
+   "dofusId": 23393,
+   "effet": "po",
+   "n": 3,
+   "officiel": "Trident de la Mer : +3 Portée maximale"
+  },
+  {
+   "id": "forgelance-18",
+   "slot": "ceinture",
+   "piece": "Baudrier Popée",
+   "sort": "Maelstrom",
+   "dofusId": 23747,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Maelstrom : +2 Portée maximale"
+  },
+  {
+   "id": "forgelance-19",
+   "slot": "ceinture",
+   "piece": "Baudrier Popée",
+   "sort": "Estoc Brûlant",
+   "dofusId": 23754,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Estoc Brûlant : +2 Portée maximale"
+  },
+  {
+   "id": "forgelance-20",
+   "slot": "ceinture",
+   "piece": "Baudrier Popée",
+   "sort": "Octave",
+   "dofusId": 23391,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Octave : Portée modifiable"
+  },
+  {
+   "id": "forgelance-21",
+   "slot": "ceinture",
+   "piece": "Baudrier Popée",
+   "sort": "Jormun",
+   "dofusId": 23268,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Jormun : +1 lancer(s) par tour"
+  },
+  {
+   "id": "forgelance-22",
+   "slot": "amulette",
+   "piece": "Baudrier Popée",
+   "sort": "Fer Rouge",
+   "dofusId": 23756,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Fer Rouge : +2 Portée maximale"
+  },
+  {
+   "id": "forgelance-23",
+   "slot": "arme",
+   "piece": "Baudrier Popée",
+   "sort": "Chevalerie",
+   "dofusId": 23826,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Chevalerie : -1 de relance"
+  },
+  {
+   "id": "forgelance-24",
+   "slot": "bouclier",
+   "piece": "Baudrier Popée",
+   "sort": "Renommée",
+   "dofusId": 23319,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Renommée : -1 de relance"
+  },
+  {
+   "id": "forgelance-25",
+   "slot": "bottes",
+   "piece": "Jambières Hitaj",
+   "sort": "Effondrement",
+   "dofusId": 23736,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Effondrement : +2 Portée maximale"
+  },
+  {
+   "id": "forgelance-26",
+   "slot": "bottes",
+   "piece": "Jambières Hitaj",
+   "sort": "Lance-cyclone",
+   "dofusId": 23729,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Lance-cyclone : Portée modifiable"
+  },
+  {
+   "id": "forgelance-27",
+   "slot": "bottes",
+   "piece": "Jambières Hitaj",
+   "sort": "Volée d'Airain",
+   "dofusId": 23741,
+   "effet": "po",
+   "n": 3,
+   "officiel": "Volée d'Airain : +3 Portée maximale"
+  },
+  {
+   "id": "forgelance-28",
+   "slot": "bottes",
+   "piece": "Jambières Hitaj",
+   "sort": "Soulèvement",
+   "dofusId": 23731,
+   "effet": "po",
+   "n": 1,
+   "officiel": "Soulèvement : +1 Portée maximale"
+  },
+  {
+   "id": "forgelance-29",
+   "slot": "bottes",
+   "piece": "Jambières Hitaj",
+   "sort": "Terre du Milieu",
+   "dofusId": 23738,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Terre du Milieu : +1 lancer(s) par tour"
+  },
+  {
+   "id": "forgelance-30",
+   "slot": "amulette",
+   "piece": "Jambières Hitaj",
+   "sort": "Dégagement",
+   "dofusId": 23743,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Dégagement : -1 PA"
+  },
+  {
+   "id": "forgelance-31",
+   "slot": "arme",
+   "piece": "Jambières Hitaj",
+   "sort": "Phalange",
+   "dofusId": 23330,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Phalange : -1 PA"
+  },
+  {
+   "id": "forgelance-32",
+   "slot": "bouclier",
+   "piece": "Jambières Hitaj",
+   "sort": "Oriflamme",
+   "dofusId": 23828,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Oriflamme : -1 PA"
+  },
+  {
+   "id": "forgelance-33",
+   "slot": "anneau",
+   "piece": "Gants Tologie",
+   "sort": "Charge Héroïque",
+   "dofusId": 23824,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Charge Héroïque : -1 PA"
+  },
+  {
+   "id": "forgelance-34",
+   "slot": "anneau",
+   "piece": "Gants Tologie",
+   "sort": "Galanterie",
+   "dofusId": 23314,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Galanterie : +2 Portée maximale"
+  },
+  {
+   "id": "forgelance-35",
+   "slot": "anneau",
+   "piece": "Gants Tologie",
+   "sort": "Kyrja",
+   "dofusId": 23823,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Kyrja : -1 de relance"
+  },
+  {
+   "id": "forgelance-36",
+   "slot": "anneau",
+   "piece": "Gants Tologie",
+   "sort": "Vajra",
+   "dofusId": 23829,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Vajra : -1 de relance"
+  },
+  {
+   "id": "forgelance-37",
+   "slot": "anneau",
+   "piece": "Gants Tologie",
+   "sort": "Prélude au Fer",
+   "dofusId": 23841,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Prélude au Fer : -1 PA"
+  },
+  {
+   "id": "forgelance-38",
+   "slot": "amulette",
+   "piece": "Gants Tologie",
+   "sort": "Crépuscule",
+   "dofusId": 23842,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Crépuscule : -1 PA"
+  },
+  {
+   "id": "forgelance-39",
+   "slot": "arme",
+   "piece": "Gants Tologie",
+   "sort": "Éclipse",
+   "dofusId": 23834,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Éclipse : -1 de relance"
+  },
+  {
+   "id": "forgelance-40",
+   "slot": "bouclier",
+   "piece": "Gants Tologie",
+   "sort": "Holmgang",
+   "dofusId": 23846,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Holmgang : -1 PA"
+  }
+ ],
  "iop": [
   {
    "id": "iop-01",

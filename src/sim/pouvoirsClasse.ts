@@ -94,20 +94,51 @@ export const POUVOIRS_CLASSE: PouvoirClasseDef[] = [
   pc('sacrieur', 'O', 'Épines acérées', 'couronne', 'bouclier', [30, 50], 5, v => `Couronne d'Épines renvoie aussi les coups à distance, à ${v} % des dégâts renvoyés au contact.`),
   pc('sacrieur', 'P', 'Stase de sang', 'stase', 'cape', [0.8, 1.2], 0.1, v => `Stase immobilise sa cible ${n(v)} s (élites moitié moins, boss jamais). Une fois par monstre toutes les 5 s.`),
   pc('sacrieur', 'Q', 'Offrande explosive', 'mutilation', 'anneau', [50, 80], 5, v => `Les PV sacrifiés par Mutilation explosent autour du Sacrieur : dégâts Feu sur 2 cases égaux à ${v} % des PV perdus.`),
+  // --- Forgelance (« Légendaires forgelance : 1A 2A 3B 4A-4P 5A 6A », 2026-11-08) ------------------------------------------
+  // 2A : les 7 pouvoirs officiels des lances (sort 24898, sans chiffres officiels), un par emplacement, à la reprise de la Lance
+  // (2 fois puis 12 s d'attente, comme « 2 fois par tour, puis 4 tours »).
+  pc('forgelance', 'noa', 'Lance de Noa', 'epilogue', 'amulette', [5, 8], 1, v => `À la reprise de la Lance : soigne ${v} % de tes PV et +20 % de soins reçus pendant 6 s. 2 fois, puis 12 s d'attente.`),
+  pc('forgelance', 'sigel', 'Lance de Sigel', 'epilogue', 'chapeau', [30, 50], 5, v => `À la reprise de la Lance : +${v} Puissance et +${n(v / 4)} % de critique pendant 6 s. 2 fois, puis 12 s d'attente.`),
+  pc('forgelance', 'jormun', 'Lance de Jormun', 'epilogue', 'ceinture', [2, 3], 0.5, v => `À la reprise de la Lance : les monstres à ${n(v)} cases d'elle sont attirés vers toi si tu la reprends à pied, repoussés si tu la rappelles. 2 fois, puis 12 s d'attente.`),
+  pc('forgelance', 'ydra', "Lance d'Ydra", 'epilogue', 'bouclier', [8, 12], 1, v => `À la reprise de la Lance : bouclier de ${v} % de tes PV pendant 6 s ; les monstres au contact sont ralentis 1 s. 2 fois, puis 12 s d'attente.`),
+  pc('forgelance', 'mani', 'Lance de Mani', 'epilogue', 'cape', [3, 4], 0.5, v => `À la reprise de la Lance : insensible aux ralentissements pendant ${n(v)} s. 2 fois, puis 12 s d'attente.`),
+  pc('forgelance', 'elding', "Lance d'Elding", 'epilogue', 'bottes', [20, 30], 5, v => `À la reprise de la Lance : +${v} % de vitesse de déplacement 4 s ; les monstres à 2 cases sont ralentis 2 s. 2 fois, puis 12 s d'attente.`),
+  pc('forgelance', 'muspel', 'Lance de Muspel', 'epilogue', 'anneau', [1, 1.5], 0.5, v => `À la reprise de la Lance : toutes tes recharges avancent de ${n(v)} s ; les monstres à 2 cases attaquent plus lentement 3 s. 2 fois, puis 12 s d'attente.`),
+  // 3B : Lance enracinée (ton 17C) en légendaire de ceinture
+  pc('forgelance', 'enracinee', 'Lance enracinée', 'epilogue', 'ceinture', [3, 6], 1, v => `Plus la Lance reste plantée, plus les sorts lancés depuis elle frappent fort : +${v} % par seconde, jusqu'à +${v * 7} %.`),
+  // 4A-4P : 16 pouvoirs inventés, deux par emplacement
+  pc('forgelance', 'A', 'Tourbillon abyssal', 'trident', 'chapeau', [10, 20], 1, v => `Trident de la Mer laisse un tourbillon 2 s au point visé : il attire les monstres vers son centre et leur fait ${v} % des dégâts du sort par seconde.`),
+  pc('forgelance', 'B', 'Lance jumelle', 'epilogue', 'cape', [40, 60], 5, v => `Quand tu plantes la Lance, une Lance fantôme reste dans ta main 4 s : les sorts « sur la Lance » partent aussi de toi, à ${v} % de leurs dégâts.`),
+  pc('forgelance', 'C', 'Rappel foudroyant', 'epilogue', 'amulette', [2, 3], 0.5, v => `Le Rappel tranchant frappe ${n(v)} fois plus fort et étourdit 0,5 s les monstres traversés (les boss à peine).`),
+  pc('forgelance', 'D', 'Charge du champion', 'charge_heroique', 'anneau', [40, 60], 5, v => `Charge Héroïque frappe aussi chaque monstre traversé, à ${v} % de ses dégâts, et sa poussée fait les dommages de poussée en double.`),
+  pc('forgelance', 'E', 'Garde de fer', 'epilogue', 'ceinture', [22, 28], 1, v => `Armé, ta Garde passe à −${v} % de dégâts subis et renvoie ${v - 3} % des coups de mêlée (inspiré de Parade).`),
+  pc('forgelance', 'F', 'Saut écrasant', 'saut', 'bottes', [60, 90], 5, v => `Le Saut à la Lance fait une onde Terre à l'arrivée (2 cases) qui repousse : ${v} % des dégâts de Lance-pierre.`),
+  pc('forgelance', 'G', 'Fer de la forge', 'estoc', 'arme', [80, 120], 5, v => `Armé, chaque 3e estoc de ton attaque de base projette une lame de feu en ligne sur 4 cases, à ${v} % des dégâts de l'estoc.`),
+  pc('forgelance', 'H', 'Phalange vivante', 'phalange', 'bouclier', [40, 60], 5, v => `Chaque reprise de la Lance renouvelle ${v} % du bouclier de Phalange sur toi et les alliés proches, s'il est encore actif.`),
+  pc('forgelance', 'I', 'Lance ardente', 'lance_incendie', 'chapeau', [10, 15], 1, v => `Après 3 Lances à Incendie d'affilée, le sol brûle autour de la Lance tant qu'elle reste plantée (2 cases, ${v} % des dégâts du sort par seconde).`),
+  pc('forgelance', 'J', 'Balestra tranchante', 'balestra', 'cape', [50, 70], 5, v => `Le saut de Balestra de l'autre côté de la cible frappe tout ce qu'il traverse, à ${v} % des dégâts du sort.`),
+  pc('forgelance', 'K', 'Kyrja du champion', 'kyrja', 'amulette', [50, 80], 5, v => `La vie volée par Kyrja soigne aussi les alliés à 3 cases (joueurs et bêtes), à ${v} % de ce que tu voles.`),
+  pc('forgelance', 'L', "Talon d'acier", 'talon_argile', 'anneau', [2, 3], 0.5, v => `Si Talon d'Argile tue sa cible, sa recharge et celle de Charge Héroïque repartent à zéro (au plus une fois toutes les ${n(v)} s).`),
+  pc('forgelance', 'M', 'Enclume', 'volee_airain', 'ceinture', [2, 3], 0.5, v => `Les monstres repoussés contre ta Lance la heurtent comme un mur et prennent ${n(v)} fois les dommages de poussée.`),
+  pc('forgelance', 'N', 'Estoc en avant', 'estoc_brulant', 'bottes', [15, 25], 5, v => `Estoc Brûlant te porte de 2 cases en avant avec le coup, et fait ${v} % de dégâts en plus à un monstre repoussé contre un obstacle.`),
+  pc('forgelance', 'O', 'Muspel insatiable', 'muspel', 'arme', [8, 12], 1, v => `Muspel gagne ${v} % de dégâts de plus par monstre touché, et sa recharge baisse de 0,5 s par monstre touché.`),
+  pc('forgelance', 'P', 'Prélude glorieux', 'prelude_fer', 'bouclier', [15, 25], 5, v => `Prélude au Fer donne aussi +${v} % de vitesse de déplacement aux alliés dans la zone pendant 4 s.`),
 ];
 /** Châtiments du Sacrieur (Dofus Rétro, 14B) : caractéristique gagnée à chaque coup reçu. */
 export const CHATIMENTS: Record<string, 'force' | 'agilite' | 'chance' | 'intelligence' | 'vitalite'> =
   { 'pc-sacrieur-E': 'force', 'pc-sacrieur-F': 'agilite', 'pc-sacrieur-G': 'chance', 'pc-sacrieur-H': 'intelligence', 'pc-sacrieur-I': 'vitalite' };
+/** Les 7 lances du Forgelance (2A) : se déclenchent à la reprise de la Lance. */
+export const LANCES_FL = ['noa', 'sigel', 'jormun', 'ydra', 'mani', 'elding', 'muspel'].map(k => `pc-forgelance-${k}`);
 export const PC_PAR_ID: Record<string, PouvoirClasseDef> = Object.fromEntries(POUVOIRS_CLASSE.map(p => [p.id, p]));
 export const estPouvoirClasse = (id: string) => !!PC_PAR_ID[id];
 
 /** 2D : pouvoirs préférés de chaque boss (chance triplée sur son butin), un par classe. */
 export const BOSS_PREFERES: Record<string, string[]> = {
-  royal: ['pc-iop-A', 'pc-cra-G', 'pc-osamodas-E', 'pc-sacrieur-E', 'pc-sacrieur-L', 'pc-iop-K', 'pc-cra-P', 'pc-osamodas-L'],
-  kardorim: ['pc-iop-F', 'pc-cra-H', 'pc-osamodas-F', 'pc-sacrieur-D', 'pc-sacrieur-O', 'pc-iop-J', 'pc-cra-O', 'pc-osamodas-O'],
-  tournesol_affame: ['pc-iop-H', 'pc-cra-A', 'pc-osamodas-D', 'pc-sacrieur-A', 'pc-sacrieur-J', 'pc-iop-L', 'pc-cra-K', 'pc-osamodas-J'],
-  mob_l_eponge: ['pc-iop-E', 'pc-cra-F', 'pc-osamodas-B', 'pc-sacrieur-C', 'pc-sacrieur-P', 'pc-iop-M', 'pc-cra-M', 'pc-osamodas-K'],
-  kankreblath: ['pc-iop-B', 'pc-cra-C', 'pc-osamodas-C', 'pc-sacrieur-B', 'pc-sacrieur-K', 'pc-iop-O', 'pc-cra-J', 'pc-osamodas-P'],
+  royal: ['pc-iop-A', 'pc-cra-G', 'pc-osamodas-E', 'pc-sacrieur-E', 'pc-sacrieur-L', 'pc-iop-K', 'pc-cra-P', 'pc-osamodas-L', 'pc-forgelance-E', 'pc-forgelance-M'],
+  kardorim: ['pc-iop-F', 'pc-cra-H', 'pc-osamodas-F', 'pc-sacrieur-D', 'pc-sacrieur-O', 'pc-iop-J', 'pc-cra-O', 'pc-osamodas-O', 'pc-forgelance-C', 'pc-forgelance-L'],
+  tournesol_affame: ['pc-iop-H', 'pc-cra-A', 'pc-osamodas-D', 'pc-sacrieur-A', 'pc-sacrieur-J', 'pc-iop-L', 'pc-cra-K', 'pc-osamodas-J', 'pc-forgelance-I', 'pc-forgelance-A'],
+  mob_l_eponge: ['pc-iop-E', 'pc-cra-F', 'pc-osamodas-B', 'pc-sacrieur-C', 'pc-sacrieur-P', 'pc-iop-M', 'pc-cra-M', 'pc-osamodas-K', 'pc-forgelance-K', 'pc-forgelance-H'],
+  kankreblath: ['pc-iop-B', 'pc-cra-C', 'pc-osamodas-C', 'pc-sacrieur-B', 'pc-sacrieur-K', 'pc-iop-O', 'pc-cra-J', 'pc-osamodas-P', 'pc-forgelance-D', 'pc-forgelance-O'],
 };
 /** 2A : part des pouvoirs de Légendaire qui sont des pouvoirs de classe inventés. */
 export const CHANCE_POUVOIR_CLASSE = 0.2;

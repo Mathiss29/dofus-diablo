@@ -717,6 +717,16 @@
             ]
           },
           {
+            "titre": "Les légendaires du Forgelance",
+            "phrase": "Les 7 lances officielles s'éveillent quand tu reprends ta Lance, avec 17 pouvoirs à nous en plus.",
+            "details": "Tourbillon abyssal, Enclume, Lance ardente, Garde de fer… et les 40 pouvoirs de la Panoplie de l'Héritage.",
+            "icone": "sorts",
+            "etiquettes": [
+              "Partie de test",
+              "Forgelance"
+            ]
+          },
+          {
             "titre": "Les légendaires de classe",
             "phrase": "23 pouvoirs inventés qui changent la façon dont marche un sort de ta classe.",
             "details": "Leur jet est tiré au hasard, un Mythique a le jet parfait. Chez Malek, le Codex garde le meilleur jet brisé.",
