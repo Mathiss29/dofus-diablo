@@ -6,7 +6,7 @@
   "paMax": 4,
   "laisse": 8,
   "cibleAutour": 6,
-  "suivi": 1.6,
+  "suivi": 2,
   "eveil": {
    "max": 100,
    "parCoupBete": 4,
