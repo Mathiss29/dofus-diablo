@@ -314,7 +314,7 @@ export class ZoneScene extends Phaser.Scene {
       drawMap(this, map, `${key}_sol`, `${key}_decor`);
     }
     this.fx = new FX(this, t => hex(GAME_DATA.monsters[t].color));
-    const fv = this.familierView = new FamilierView(this, a => this.planche({ atlas: a, multi: true } as Look));
+    const fv = this.familierView = new FamilierView(this, a => this.planche({ atlas: a, multi: true } as Look), () => this.assemblage?.couleursPerso);
     this.events.once('shutdown', () => { fv.destroy(); if (this.familierView === fv) this.familierView = null; });
     if (this.perso?.etat) restaurerJoueur(this.world, this.perso.etat);
     else if (this.test?.etat) restaurerJoueur(this.world, this.test.etat);

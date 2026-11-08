@@ -115,6 +115,9 @@ export class Assemblage {
     return new Assemblage(data, Object.fromEntries(noms.map((n, i) => [n, ims[i]])), corps, tete, a, os, caches);
   }
 
+  /** Les 6 couleurs du perso (peau, cheveux, tenue) : les familiers « aux couleurs du porteur » les reprennent. */
+  get couleursPerso(): readonly number[] { return this.app.couleurs; }
+
   /** Change les couleurs (même tête) : les textures teintées sont refaites à la prochaine image. */
   recolorer(couleurs: number[]) {
     if (couleurs.length === this.app.couleurs.length && couleurs.every((c, i) => c === this.app.couleurs[i])) return;

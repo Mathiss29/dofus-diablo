@@ -52,7 +52,7 @@ def main(bone, name, bones, out='public/assets/sprites', atks='0,1'):
     # CONTOUR=n : trait sombre de n pixels autour du perso, comme Dofus 3 (fait pour les PNJ)
     if os.environ.get('CONTOUR'): run(sys.executable, os.path.join(HERE, 'contour.py'), raw + '.png', os.environ['CONTOUR'])
     os.makedirs(out, exist_ok=True)
-    run(sys.executable, os.path.join(HERE, 'trim_pack.py'), raw, os.path.join(out, name), '2048', '4096', env={**os.environ, 'FORMAT': 'AVIF'})   # pages de 4096 au plus (taille max des textures)
+    run(sys.executable, os.path.join(HERE, 'trim_pack.py'), raw, os.path.join(out, name), '2048', '4096', env={**os.environ, 'FORMAT': os.environ.get('FORMAT_PLANCHE', 'AVIF')})   # pages de 4096 au plus (taille max des textures)
     png = os.path.join(out, name + '.png')
     if os.path.exists(png): os.remove(png)   # trim_pack écrit aussi la planche (AVIF)
     meta = json.load(open(raw + '.json'))['meta']

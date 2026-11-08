@@ -8,6 +8,7 @@ const { chromium } = require('playwright'); const fs = require('fs');
   const paths = new Set(scene.meshes.map(m => m.tex).filter(Boolean)); if (!paths.size) paths.add(texP);
   for (const p of paths) texs[p] = 'data:image/png;base64,' + fs.readFileSync(p).toString('base64');
   for (const m of scene.meshes) if (!m.tex) m.tex = texP;
+  if (process.env.ZONES) await pg.evaluate(() => { window.ZONES = 1; window.NO_COLOR = 1; });
   await pg.evaluate(async ([s, t]) => setup(s, t), [scene, texs]);
   if (process.env.CONTACT) { const u = await pg.evaluate(([a, f, s, c]) => contact(a, s, f, c), [animsCsv.split(','), flip === '1', +scale, +process.env.CONTACT]);
     fs.writeFileSync(outP + '.png', Buffer.from(u.split(',')[1], 'base64')); await b.close(); return; }
