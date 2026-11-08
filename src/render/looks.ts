@@ -254,6 +254,12 @@ export const PNJ_LOOKS: Record<string, PnjLook> = {
   geolier: { scale: 0.74, anim: 'AnimStatique_1' },
   cindy: { scale: 0.74, anim: 'AnimStatique_1' },
   temples: { scale: 0.66, anim: 'AnimStatique_1' },
+  hazel: { scale: 0.82, anim: 'AnimStatique_1' },
+  nepra: { scale: 0.74, anim: 'AnimStatique_1' },
+  jim: { scale: 0.74, anim: 'AnimStatique_1' },
+  seldawa: { scale: 0.82, anim: 'AnimStatique_1' },
+  sept: { scale: 0.82, anim: 'AnimStatique_1' },
+  becky: { scale: 0.82, anim: 'AnimStatique_1' },
   cloportier: { scale: 0.82, anim: 'AnimStatique_1' },
   // PNJ du Havre-Sac (maquette Hub 3A) : Kerubim Crépin (PNJ 3043, {2841|||130}), Otomaï (PNJ 914, {891|||84}, animFunList officielle),
   // Goultard (PNJ 1216, {7551|||155}, repos animé en boucle), Tissebelle et Mère Bouillotte (looks des Prêtresses de Sadida et de Pandawa)

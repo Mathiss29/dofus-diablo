@@ -172,3 +172,29 @@ describe('Nouveaux objectifs, défis de donjon et Chasse au Dopeul (Quêtes road
     expect(w2.quetes!.aDonnerTous('temples')).toEqual(['dopeul']);
   });
 });
+
+describe('Quêtes officielles d\'Astrub écrites en ARPG (Quêtes roadmap 2C)', () => {
+  it('6 quêtes, chacune avec son PNJ officiel posé dans Astrub et rendue à lui', () => {
+    const w = monde(), Q = w.quetes!; w.player.level = 40;
+    const ids = ['aigris', 'piques', 'crime', 'trempette', 'bucherons', 'profanateurs'];
+    for (const id of ids) {
+      const q = Q.def(id);
+      expect(Q.pnj(q.pnj!), id).toBeTruthy();
+      expect(q.rendre).toBe(q.pnj);
+      expect(Q.aDonnerTous(q.pnj!)).toContain(id);
+    }
+  });
+  it('Crime et châtiment : trois objets de quête, trois sous-zones', () => {
+    const w = monde(), Q = w.quetes!, p = w.player; p.level = 20;
+    Q.prendre('crime');
+    for (const [sub, m] of [[95, 'piou_bleu'], [30, 'bouftou'], [96, 'martoa']] as const) {
+      const z = dans(w, sub);
+      for (let i = 0; i < 80 && (Q.enCours.find(c => c.id === 'crime')?.aRendre === false); i++) w.emit({ k: 'kill', x: z.x, y: z.y, radius: 1, monster: m });
+    }
+    w.step(1 / 60, NO_INPUT);
+    expect(Q.aRendre('jim')).toBe('crime');
+    rendre(w, 'jim');
+    expect(Q.finies.has('crime')).toBe(true);
+    expect(Q.objets['Bourse rebondie']).toBeUndefined();
+  });
+});
