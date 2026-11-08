@@ -126,7 +126,7 @@ export class Monster extends Entity {
     if (this.mannequin) {
       this.stun = 0; this.kx = this.ky = 0; this.setAnim('idle');
       // 8B : mannequin qui frappe (classes qui se renforcent en prenant des coups) : à portée, des coups de ses dommages normaux
-      if (this.frappe > 0 && (this.frappeT -= dt) <= 0 && player === world.player && Math.hypot(player.x - this.x, player.y - this.y) < 260) {
+      if (this.frappe > 0 && (this.frappeT -= dt) <= 0 && world.players.includes(player as Player) && Math.hypot(player.x - this.x, player.y - this.y) < 260) {
         this.frappeT = 1 / this.frappe; player.hurt(D.dmg, this.x, this.y, world);
       }
       return;
