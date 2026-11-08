@@ -41,3 +41,41 @@ export function auPixel(cam: Phaser.Cameras.Scene2D.Camera, x: number, y: number
   const ox = cam.width * cam.originX, oy = cam.height * cam.originY;
   return { x: Math.round((x - ox) * z) / z + ox, y: Math.round((y - oy) * z) / z + oy };
 }
+
+/**
+ * Densité de l'écran (maquette « Décors : » 1A, 2026-11-08) : nombre de vrais pixels par pixel CSS.
+ * Sur un Windows réglé à 125 % ou 150 %, le jeu est dessiné en vrais pixels (canevas 1,25 ou 1,5 fois plus grand)
+ * au lieu d'être agrandi (donc flouté) par le navigateur. Plafonnée à 2 pour la carte graphique.
+ * Les caméras du jeu et de l'interface sont zoomées d'autant : tout garde la même taille à l'écran.
+ */
+export function densite(): number {
+  const d = typeof window === 'undefined' ? 1 : window.devicePixelRatio || 1;
+  return Math.min(2, Math.max(1, d));
+}
+
+/** Branche la densité sur le jeu : le canevas suit la taille de son parent multipliée par `densite()`
+ *  (le CSS l'étire à 100 % du parent), et les textes sont dessinés aussi finement. */
+export function brancherDensite(game: Phaser.Game): void {
+  const sm = game.scale as unknown as {
+    parent: HTMLElement | null; parentSize: Phaser.Structs.Size; canvas?: HTMLCanvasElement; canvasBounds: Phaser.Geom.Rectangle;
+    getParentBounds(): boolean;
+  };
+  sm.getParentBounds = function () {
+    if (!sm.parent) return false;
+    const r = sm.parent.getBoundingClientRect(), d = densite();
+    const w = Math.round(r.width * d), h = Math.round(r.height * d);
+    if (sm.parentSize.width !== w || sm.parentSize.height !== h) { sm.parentSize.setSize(w, h); return true; }
+    if (sm.canvas) { const c = sm.canvas.getBoundingClientRect(); return c.x !== sm.canvasBounds.x || c.y !== sm.canvasBounds.y; }
+    return false;
+  };
+  // Phaser a déjà mesuré le parent en pixels CSS à sa création : on redimensionne une fois prêt
+  game.events.once(Phaser.Core.Events.READY, () => game.scale.refresh());
+  // Textes de Phaser (dégâts, noms, interface) : dessinés à la densité de l'écran, sinon ils seraient agrandis donc flous
+  const F = Phaser.GameObjects.GameObjectFactory.prototype as unknown as { text: (...a: unknown[]) => Phaser.GameObjects.Text };
+  const text = F.text;
+  F.text = function (this: unknown, ...a: unknown[]) {
+    const t = text.apply(this, a), d = densite();
+    if (d > 1 && t.style.resolution === 1 && !(a[3] as { resolution?: number } | undefined)?.resolution) t.setResolution(d);
+    return t;
+  };
+}

@@ -26,7 +26,7 @@
     @font-face { font-family: Rowdies; font-weight: 400 900; font-display: swap; src: url(assets/fonts/Rowdies-Regular.woff2) format('woff2'); }
     html, body { height: 100%; margin: 0; background: #12141b; color: #e8e2d4; overflow: hidden; }
     #game { width: 100%; height: 100%; }
-    #game canvas { display: block; }
+    #game canvas { display: block; width: 100% !important; height: 100% !important; }   /* canevas en vrais pixels (src/render/pixel.ts) */
     /* Écran de chargement (src/render/chargement.ts) : logo, braise qui pulse, barre de progression */
     #chargement { position: fixed; inset: 0; z-index: 40; display: grid; place-content: center; justify-items: center; gap: 3vh;
       background: radial-gradient(ellipse at 50% 45%, #232619, #12141b 70%); transition: opacity .25s; }

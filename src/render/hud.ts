@@ -1,6 +1,7 @@
 import { RARITY_COLORS } from '../sim/items';
 import { v } from './assetUrl';
 import Phaser from 'phaser';
+import { densite } from './pixel';
 import { REGLES_BETES } from '../sim/bete';
 import { effetsActifs, type EffetActif } from '../sim/effets';
 import { DANGER } from '../sim/danger';
@@ -197,7 +198,7 @@ export class Hud {
   /** Modules déplacés (6A) : la scène sauvegarde les réglages. */
   onModules: () => void = () => {};
   /** Échelle de l'interface (7A) : la caméra de l'interface est zoomée depuis le coin haut gauche. */
-  private get k() { return Phaser.Math.Clamp(this.reglages?.echelle || 1, 0.8, 1.5); }
+  private get k() { return Phaser.Math.Clamp(this.reglages?.echelle || 1, 0.8, 1.5) * densite(); }   // × vrais pixels de l'écran
   /** Rectangle de chaque module déplaçable cette image, et son décalage. */
   private modRects = new Map<string, [number, number, number, number]>();
   private modTxt = new Map<string, Txt>();

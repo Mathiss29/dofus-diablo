@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { densite } from './pixel';
 import { dossier, v } from './assetUrl';
 import { ISO } from '../sim/iso';
 import type { QueteType, Quetes } from '../sim/quests';
@@ -164,7 +165,7 @@ export class QuestView {
     }
     const s = ISO.toScreen(n.x, n.y), T = this.bulle.text, N = this.bulle.nom, w = Math.max(T.width, N.width) + 20, h = T.height + N.height + 16;
     // Pas de place au-dessus du PNJ (bord haut de l'écran, sous le nom de la zone) : la bulle passe sous ses pieds, pointe vers le haut
-    const cam = this.scene.cameras.main, haut = cam.worldView.y + 44 / cam.zoom, dessous = s.y - n.h - 50 - h + 7 < haut;
+    const cam = this.scene.cameras.main, haut = cam.worldView.y + 44 * densite() / cam.zoom, dessous = s.y - n.h - 50 - h + 7 < haut;
     const by = dessous ? s.y + 26 + h - 7 : s.y - n.h - 50;
     T.setPosition(s.x, by).setDepth(1e6).setAlpha(Math.min(1, b.t * 2));
     N.setPosition(s.x, by - T.height - 2).setDepth(1e6).setAlpha(Math.min(1, b.t * 2));
