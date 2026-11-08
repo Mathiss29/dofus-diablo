@@ -128,3 +128,37 @@ describe('coop : une bête qui s’éveille (change de type)', () => {
     expect(typeof apres.anim).toBe('string');
   });
 });
+
+describe('coop avec chaque classe (hôte et invité), sorts compris', () => {
+  const CLASSES = Object.keys(GAME_DATA.classes);
+  /** Tout ce que l'affichage lit doit être là dans le miroir, à chaque instantané. */
+  const sain = (w: World) => {
+    for (const e of [...w.players, ...w.monsters, ...w.betes]) {
+      expect(typeof e.anim, `${e.constructor.name} ${e.id}`).toBe('string');
+      expect(Number.isFinite(e.x) && Number.isFinite(e.y) && Number.isFinite(e.facing)).toBe(true);
+    }
+    for (const m of w.monsters) expect(m.def, m.type).toBeTruthy();
+    for (const b of w.betes) expect(b.def, b.type).toBeTruthy();
+  };
+  for (const ch of CLASSES) for (const ci of CLASSES) {
+    it(`${ch} hôte, ${ci} invité`, () => {
+      const hote = monde(3, ch), invite = monde(9, ci);
+      for (const w of [hote, invite]) { w.player.level = 60; w.player.recompute(); w.player.learnSpells(null); }
+      hote.allerArene('arene_crypte');
+      const q = hote.ajouterJoueur(ci);
+      hote.commeJoueur(q, () => restaurerJoueur(hote, { ...exporterJoueur(invite), zone: '__coop' }));
+      const em = new Emetteur(q.id);
+      for (let i = 0; i < 60 * 25; i++) {
+        const cible = hote.monsters.find(m => m.arene && !m.dead);
+        const viser = (p: { x: number; y: number }) => (cible ? { x: cible.x, y: cible.y } : { x: p.x + 50, y: p.y });
+        const sort = (p: typeof q) => (i % 20 === 0 ? p.bar[(i / 20) % p.bar.length] ?? 'attaque' : null);
+        hote.player.hp = hote.player.maxHp; q.hp = Math.max(q.hp, q.maxHp / 2);
+        hote.step(STEP, { ...NO_INPUT, aim: viser(hote.player), pressed: sort(hote.player), holdAttack: true, target: cible?.id ?? null },
+          { [q.id]: entreeInvite({ aim: viser(q), pressed: sort(q), holdAttack: true, target: cible?.id ?? null }) });
+        for (const e of hote.drainEvents()) em.noter(e);
+        if (i % COOP.tous === 0) { appliquerInstantane(invite, reseau(em.instantane(hote))); sain(invite); }
+      }
+      expect(invite.player.id).toBe(q.id);
+    });
+  }
+});
