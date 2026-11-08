@@ -69,7 +69,9 @@ export interface Projectile { id: number; spell: string; x: number; y: number; d
   /** Tiré par un monstre : touche le joueur, pas les monstres. */
   hostile?: boolean;
   /** Sort officiel du monstre qui l'a lancé (ses effets s'appliquent à l'impact). */
-  from?: { monster: Monster; spell: MonsterSpell } }
+  from?: { monster: Monster; spell: MonsterSpell };
+  /** Multi : joueur qui l'a tiré (ses caracs, son XP quand la flèche tue). */
+  tireur?: Player }
 
 /** Monde ouvert : un groupe de monstres posé sur une carte Dofus, qui réapparaît quand il a été vaincu. */
 interface MonsterGroup {
@@ -137,7 +139,14 @@ export class World {
   readonly rng: Rng;
   readonly zone: ZoneDef;
   readonly map: GridMap;
-  readonly player: Player;
+  /** Joueurs présents dans cette simulation (Multi, étape 0) : le premier est le joueur de cet écran.
+   *  Pour l'instant une partie normale n'en a qu'un ; ajouterJoueur() en pose d'autres (tests, coop à venir). */
+  readonly players: Player[] = [];
+  /** Joueur qui agit pendant son pas (sorts, coups, monstres tués) ; null hors de ce moment. */
+  private acteur: Player | null = null;
+  /** Le joueur dont on parle : celui qui agit pendant son pas, sinon le joueur de cet écran. Tout le code « un joueur »
+   *  passe par là, ce qui donne à chaque joueur ses propres coups, son XP et ses soins quand il agit. */
+  get player(): Player { return this.acteur ?? this.players[0]; }
   monsters: Monster[] = [];
   /** Bêtes de l'Osamodas (maquette Osamodas) : alliées du joueur, hors de monsters. */
   betes: Bete[] = [];
@@ -206,6 +215,8 @@ export class World {
   passage: { to: PorteEnd; nom: string; t: number; vers?: { zone: string; arrivee: [string, number] } } | null = null;
   /** Durée du fondu de sortie d'une porte (choix 5A : 0,2 s pour sortir, 0,3 s pour entrer). */
   static readonly PASSAGE = 0.2;
+  /** Multi (7A) : bonus d'XP par allié proche quand un monstre tombe. */
+  static readonly XP_PAR_ALLIE = 0.1;
   /** Distance (|dx| + |dy|) au-delà de laquelle un monstre qui attend ne bouge plus. */
   static readonly SOMMEIL = 2400;
   /** Quêtes et succès (monde ouvert avec quetes.json). */
@@ -246,7 +257,7 @@ export class World {
       if (hub) { const wg = this.map; start = wg.nearestFree(...xy(wg.cellToWorld(wg.cellOf(m.tag, hub.arrivee))), wg.freeByMap.get(m.tag)!); this.checkpointName = open.havreSac ? 'Havre-Sac' : this.zone.name; }
     }
     this.checkpoint = start;
-    this.player = new Player(this.nextId++, start.x, start.y, opts.data.classes[opts.classId ?? 'iop']);
+    this.players.push(new Player(this.nextId++, start.x, start.y, opts.data.classes[opts.classId ?? 'iop']));
     this.player.v03 = V03_PUBLIC || !!opts.test;
     if (opts.items) {
       this.player.items = opts.items;
@@ -266,6 +277,26 @@ export class World {
     if (open?.havreSac?.poutch != null) this.poserPoutch(open.havreSac.poutch);
     if (open) this.visiter(opts.zonesVues ?? []);
     if (open && (opts.arrivee || opts.position || opts.zaap)) this.proteger();
+  }
+  /** Multi (étape 0) : pose un autre joueur à côté du premier et le renvoie. Il se bat, prend des coups et gagne de l'XP ;
+   *  les quêtes, la récolte, les ateliers, les portes et le Havre-Sac restent ceux du joueur de cet écran pour l'instant. */
+  ajouterJoueur(classId: string): Player {
+    const cls = this.opts.data.classes[classId];
+    if (!cls) throw new Error(`Classe inconnue : ${classId}`);
+    const h = this.players[0], f = this.map.nearestFree(h.x + h.radius * 3, h.y);
+    const q = new Player(this.nextId++, f.x, f.y, cls);
+    q.v03 = h.v03;
+    if (this.opts.items) q.items = this.opts.items;
+    this.players.push(q);
+    return q;
+  }
+  /** Joueurs vivants. */
+  vivants(): Player[] { return this.players.filter(q => !q.dead); }
+  /** Distance au joueur vivant le plus proche (Infinity si tous sont à terre). */
+  distJoueur(x: number, y: number): number {
+    let d = Infinity;
+    for (const q of this.players) if (!q.dead) d = Math.min(d, Math.hypot(q.x - x, q.y - y));
+    return d;
   }
   /** 13A : arrivée protégée (porte, Zaap, portail, Rappel), comme à l'entrée des arènes. */
   proteger() {
@@ -999,7 +1030,7 @@ export class World {
   clearShot(from: { x: number; y: number }, to: { x: number; y: number }) { return this.map.clearLine(from, to); }
 
   /** Avance la simulation de dt secondes. */
-  step(dt: number, input: PlayerInput) {
+  step(dt: number, input: PlayerInput, autres?: Record<number, PlayerInput>) {
     this.time += dt;
     this.telegraphs.length = 0;
     const p = this.player;
@@ -1008,7 +1039,7 @@ export class World {
       p.vitesseTest = this.test.course ? 3 : 1;
       if (this.test.recharges) this.rechargerTout();
     }
-    const ents = [p, ...this.monsters, ...this.betes], prev = ents.map(e => [e.x, e.y] as const);
+    const ents = [...this.players, ...this.monsters, ...this.betes], prev = ents.map(e => [e.x, e.y] as const);
     if (input.recolte != null) { this.versRecolte = input.recolte; this.approche = this.approcheRecolte(input.recolte); this.enRecolte = null; }
     else if (input.dest || input.target != null || input.pickup != null || input.talk || input.pressed || input.move.x || input.move.y) {
       if (this.enRecolte) this.emit({ k: 'recolteStop' });
@@ -1034,11 +1065,17 @@ export class World {
       else if (input.dest || input.target != null || input.pickup != null) this.quetes.annulerClic();
     }
     p.update(dt, this.passage || this.zaapDepart ? { ...NO_INPUT, aim: input.aim } : input, this);   // devant une porte ou un Zaap : le perso attend le fondu
+    // Multi (étape 0) : les autres joueurs agissent avec leurs propres entrées ; pendant leur pas, this.player = eux
+    for (let i = 1; i < this.players.length; i++) {
+      const q = this.players[i];
+      this.acteur = q;
+      try { q.update(dt, autres?.[q.id] ?? { ...NO_INPUT, aim: { x: q.x, y: q.y } }, this); } finally { this.acteur = null; }
+    }
     if (this.test?.recharges) this.rechargerTout();
     // Monde ouvert : un monstre qui attend loin du joueur dort (pas d'errance ni d'IA) : bien moins de calcul
     for (const m of this.monsters) {
       if (m.saigneT > 0 && !m.dead) this.saigner(m, dt);
-      if (this.zone.open && m.state === 'idle' && !m.dead && Math.abs(m.x - p.x) + Math.abs(m.y - p.y) > World.SOMMEIL) { m.regenCalme(dt); continue; }
+      if (this.zone.open && m.state === 'idle' && !m.dead && this.players.every(q => Math.abs(m.x - q.x) + Math.abs(m.y - q.y) > World.SOMMEIL)) { m.regenCalme(dt); continue; }
       m.update(dt, this.cibleDe(m), this);
     }
     for (const b of this.betes) b.update(dt, this);
@@ -1052,7 +1089,7 @@ export class World {
     this.separate();
     // Cases bloquantes : on glisse le long des obstacles (axe par axe), sauf en plein Bond
     ents.forEach((e, i) => {
-      if (e === p && (p.airborne || this.test?.murs)) return;
+      if (e instanceof Player && (e.airborne || this.test?.murs)) return;
       if (this.walkable(e.x, e.y)) return;
       const [ox, oy] = prev[i];
       if (this.walkable(e.x, oy)) e.y = oy;
@@ -1096,7 +1133,7 @@ export class World {
   // --- Flèches ---------------------------------------------------------------
   shoot(x: number, y: number, facing: number, hz: Extract<HitZone, { shape: 'projectile' }>, hit: HitDef, stun: number, area: number, spell: string) {
     this.projectiles.push({ id: this.nextId++, spell, x, y, dx: Math.cos(facing), dy: Math.sin(facing), left: hz.range + this.player.porteeStat(spell), speed: hz.speed,
-      width: hz.width, explode: (hz.explode ?? 0) * area, pierce: !!hz.pierce, hit, stun, touched: new Set(), fleche: hz.fleche || undefined });
+      width: hz.width, explode: (hz.explode ?? 0) * area, pierce: !!hz.pierce, hit, stun, touched: new Set(), fleche: hz.fleche || undefined, tireur: this.player });
   }
   /** Projectile d'un monstre vers le joueur. */
   /** Projectile d'un sort de monstre (missileGfxId dans ses données), lancé vers le joueur. */
@@ -1198,13 +1235,12 @@ export class World {
       const st = Math.min(pr.left, pr.speed * dt);
       pr.x += pr.dx * st; pr.y += pr.dy * st; pr.left -= st;
       if (pr.hostile) {
-        const p = this.player;
         if (!this.walkable(pr.x, pr.y)) pr.left = 0;   // arrêté par le décor
         else {
-          const c: Cible | undefined = [p, ...this.betes].find(q => !q.dead && Math.hypot(q.x - pr.x, q.y - pr.y) <= q.radius + pr.width);
+          const c: Cible | undefined = [...this.players, ...this.betes].find(q => !q.dead && Math.hypot(q.x - pr.x, q.y - pr.y) <= q.radius + pr.width);
           if (c) {
             if (pr.from) this.monsterSpellHits(pr.from.monster, pr.from.spell, c);
-            else if (c === p) p.hurt(pr.hit.dmg, pr.x - pr.dx * 20, pr.y - pr.dy * 20, this, pr.hit.element, true);   // un projectile : coup à distance (Dofus Cacao)
+            else if (c instanceof Player) c.hurt(pr.hit.dmg, pr.x - pr.dx * 20, pr.y - pr.dy * 20, this, pr.hit.element, true);   // un projectile : coup à distance (Dofus Cacao)
             else c.hurt(pr.hit.dmg, pr.x - pr.dx * 20, pr.y - pr.dy * 20, this, pr.hit.element);
             pr.left = 0;
           }
@@ -1215,16 +1251,20 @@ export class World {
       }
       const target = this.monsters.find(m => !m.dead && m.state !== 'spawn' && !pr.touched.has(m.id) && Math.hypot(m.x - pr.x, m.y - pr.y) <= m.radius + pr.width);
       let end = pr.left <= 0;
-      if (target) {
-        if (pr.explode) { this.hitCircle(pr.x, pr.y, pr.explode, pr.hit, pr.stun); this.gerbe(pr); end = true; }
-        else {
-          pr.touched.add(target.id);
-          this.applyHits(m => m === target, pr.hit, pr.x - pr.dx * 10, pr.y - pr.dy * 10, pr.stun, Math.atan2(pr.dy, pr.dx));
-          if (pr.hit.perce) pr.hit = { ...pr.hit, dmg: pr.hit.dmg * 0.85, perce: pr.hit.perce - 1 };   // Flèche perçante
-          else if (!pr.pierce) end = !this.rebondir(pr, target);
-        }
-        this.emit({ k: 'impact', hitstop: 0.03, shake: pr.explode ? 0.008 : 0.003, big: false });
-      } else if (end && pr.explode) { this.hitCircle(pr.x, pr.y, pr.explode, pr.hit, pr.stun); this.gerbe(pr); }
+      const avant = this.acteur;
+      if (pr.tireur && this.players.includes(pr.tireur)) this.acteur = pr.tireur;   // Multi : la flèche frappe avec les caracs de son tireur
+      try {
+        if (target) {
+          if (pr.explode) { this.hitCircle(pr.x, pr.y, pr.explode, pr.hit, pr.stun); this.gerbe(pr); end = true; }
+          else {
+            pr.touched.add(target.id);
+            this.applyHits(m => m === target, pr.hit, pr.x - pr.dx * 10, pr.y - pr.dy * 10, pr.stun, Math.atan2(pr.dy, pr.dx));
+            if (pr.hit.perce) pr.hit = { ...pr.hit, dmg: pr.hit.dmg * 0.85, perce: pr.hit.perce - 1 };   // Flèche perçante
+            else if (!pr.pierce) end = !this.rebondir(pr, target);
+          }
+          this.emit({ k: 'impact', hitstop: 0.03, shake: pr.explode ? 0.008 : 0.003, big: false });
+        } else if (end && pr.explode) { this.hitCircle(pr.x, pr.y, pr.explode, pr.hit, pr.stun); this.gerbe(pr); }
+      } finally { this.acteur = avant; }
       if (end) {
         pr.left = 0;
         if (pr.fleche) continue;   // la flèche se plante ou disparaît dans le monstre : pas d'explosion
@@ -1481,8 +1521,12 @@ export class World {
     this.dropLoot(m);
     if (m.def.archiDe) this.capturer(m);
     const alm = this.almanax?.effet === 'xp' ? 1 + ALMANAX.xp : 1;   // 15C
-    const xp = p.gainXp(Math.round((m.def.xp ?? Math.round(m.def.hp / 5)) * this.bonusMassacre() * alm), this);
+    // Multi (maquette « Multi : » 7A) : chaque joueur proche gagne l'XP comme en solo, +10 % par allié proche
+    const proches = this.players.filter(q => q !== p && !q.dead && Math.abs(q.x - m.x) + Math.abs(q.y - m.y) <= World.SOMMEIL);
+    const base = (m.def.xp ?? Math.round(m.def.hp / 5)) * this.bonusMassacre() * alm * (1 + World.XP_PAR_ALLIE * proches.length);
+    const xp = p.gainXp(Math.round(base), this);
     if (xp > 0) this.emit({ k: 'xp', x: m.x, y: m.y, z: m.radius * 2 + 30, n: xp });
+    for (const q of proches) { const a = this.acteur; this.acteur = q; try { q.gainXp(Math.round(base), this); } finally { this.acteur = a; } }
     this.xpFamilier(FAMILIER_XP.chasse(this.monsterLevel(m), !!m.def.elite, !!m.def.boss));
     if (m.def.boss) { this.emit({ k: 'impact', hitstop: 0.15, shake: 0.02, big: true }); this.emit({ k: 'bossDown', monster: m.type }); }
   }
@@ -2193,7 +2237,12 @@ export class World {
   // --- Bêtes de l'Osamodas (maquette Osamodas, 2026-11-08) ---------------------------
   /** 8A : un monstre en chasse frappe la bête qui l'a frappé (si elle est à moins de 4 cases), ou la bête bien plus proche que le joueur. */
   cibleDe(m: Monster): Cible {
-    const p = this.player;
+    // Multi : le joueur vivant le plus proche (le joueur de cet écran s'ils sont tous à terre)
+    let p = this.players[0];
+    if (this.players.length > 1) {
+      let dm = p.dead ? Infinity : Math.hypot(p.x - m.x, p.y - m.y);
+      for (const q of this.players) { if (q.dead) continue; const d = Math.hypot(q.x - m.x, q.y - m.y); if (d < dm) { dm = d; p = q; } }
+    }
     if (!this.betes.length || m.state === 'idle' || m.state === 'return') return p;
     const vivantes = this.betes.filter(b => !b.dead && b.state !== 'spawn');
     const ag = vivantes.find(b => b.id === m.agresseur);

@@ -3,6 +3,7 @@
 - Répondre en français.
 - `npm test` (vitest) et `npm run build` (tsc + vite) doivent passer avant chaque push.
 - `src/sim/` ne doit jamais importer Phaser, `window` ni `Math.random()` : tout le hasard passe par `world.rng`.
+- Multijoueur (maquette « Multi : », 2026-11-08) : la sim a une liste `world.players` ; `world.player` = le joueur qui agit pendant son pas, sinon le joueur de cet écran. Tout nouveau code de la sim doit marcher avec plusieurs joueurs (boucler sur `world.players`, ne pas supposer un seul perso ; un état propre à un joueur va dans `Player`, pas dans `World`).
 - L'affichage (`src/render/`) lit l'état et consomme `world.drainEvents()`, il ne modifie pas la partie.
 - Le contenu (stats, sorts, vagues) est dans `src/data/*.json` ; l'apparence (planche, animations) dans `src/render/looks.ts`.
 - Les monstres d'une zone sont ceux de sa sous-zone dans les données de Dofus 3 (choix de Mathis).
