@@ -327,4 +327,9 @@ export const PNJ_LOOKS: Record<string, PnjLook> = {
   bouillotte: { scale: 0.82, anim: 'AnimStatique_1' },
   // Forgemage du Bastion (maquette « Forgemagie ») : look officiel du « Vendeur de runes de Forgemagie » (PNJ 7379, {6201}), sans anim fun
   forgemage: { scale: 0.82, anim: 'AnimStatique_1' },
+  // PNJ des Dofus (0.3) : Gawdien du Dofus (PNJ 148, {321}), Rathrosk (PNJ 4357, {4930}, animFunList officielle),
+  // Énergie du Dofus Cacao (PNJ 4842, {3401|||120})
+  gawdien: { scale: 0.82, anim: 'AnimStatique_1' },
+  rathrosk: { scale: 0.82, anim: 'AnimStatique_1', fun: [['AnimAttaque3_1', 9], ['AnimAttaque2_1', 7], ['AnimAttaque1_1', 4]] },
+  energie_cacao: { scale: 0.82, anim: 'AnimStatique_1' },
 };
