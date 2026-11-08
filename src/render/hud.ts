@@ -2,6 +2,7 @@ import { RARITY_COLORS } from '../sim/items';
 import { v } from './assetUrl';
 import Phaser from 'phaser';
 import { REGLES_BETES } from '../sim/bete';
+import { effetsActifs, type EffetActif } from '../sim/effets';
 import { DANGER } from '../sim/danger';
 import { GAME_DATA, ITEMS } from '../sim/data';
 import { ISO } from '../sim/iso';
@@ -22,6 +23,10 @@ const UI_IMAGES = [
   'background_levelup_banner', 'background_defeat_banner', 'success_ornament', 'scoreTitle',
   'tx_lifePoints', 'tx_actionPoints', 'tx_movementPoints',
 ];
+/** Bulles d'effets actifs : icône tx_ de Dofus 3 pour un effet sans sort (malus de monstre). */
+const CARAC_BULLE: Record<NonNullable<EffetActif['carac']>, string> = { pm: 'tx_movementPoints', dommages: 'tx_damage', puissance: 'tx_multiElement', vie: 'tx_lifePoints' };
+/** Bord des bulles (4A) : vert = bonus de sort, rouge = malus, doré = pouvoir d'objet (2C). */
+const BORD_BULLE = { sort: 0x6fd36f, monstre: 0xe05a4a, objet: 0xe6b85c };
 /** Tête de chaque classe pour la fiche du perso (icônes de classe de Dofus 3). */
 const HEADS: Record<string, string> = { iop: 'tete_iop', cra: 'tete_cra', iop_f: 'tete_iop_f', cra_f: 'tete_cra_f' };
 /** Touches de la barre de sorts : 1 à 6, soit & é " ' ( - sur un clavier AZERTY. */
@@ -63,6 +68,8 @@ export class Hud {
     const icons = new Set<number>();
     for (const c of Object.values(GAME_DATA.classes)) for (const s of Object.values(c.spells)) icons.add(s.icon);
     for (const i of icons) if (!scene.textures.exists(`sort_${i}`)) scene.load.image(`sort_${i}`, v(`${UI}/sorts/sort_${i}.png`));
+    // Bulles d'effets actifs : icônes officielles des caractéristiques pour les malus des monstres
+    for (const k of Object.values(CARAC_BULLE)) if (!scene.textures.exists(`carac_${k}`)) scene.load.image(`carac_${k}`, v(`${UI}/d3/caracs/${k}.png`));
     // Auto-attaque à l'arme : icônes officielles weapon_<typeId> (arme_0 = sans arme)
     for (const t of [0, 2, 3, 4, 5, 6, 7, 8, 19, 22, 271]) if (!scene.textures.exists(`arme_${t}`)) scene.load.image(`arme_${t}`, v(`${UI}/sorts/arme_${t}.png`));
   }
@@ -77,6 +84,60 @@ export class Hud {
   muet = false;
   /** Cadres des bêtes de l'Osamodas (demande de Mathis, 2026-11-08) : sous le cadre du perso, même style en plus petit :
    *  portrait (repos de sa planche), nom, temps d'Éveil ou de domptage, PV et PA (encoches). */
+  /** Bulles d'effets actifs (maquette « Bulles : 1A 2A+2B+2C 3A 4A 5A 6A 7A 8A ») : une rangée au-dessus de la barre de sorts. */
+  private bulles: { img: Img; t: Txt; ch: Txt }[] = [];
+  /** Moment où chaque bulle est apparue (8A : petit rebond d'apparition). */
+  private bulleVue = new Map<string, number>();
+  private bulleTip!: Txt;
+  private dessinerBulles(g: Phaser.GameObjects.Graphics, xa: number, xb: number, y: number, juice: boolean) {
+    const w = this.world, effets = effetsActifs(w.player), gs = this.gSlots, R = 19, pas = 48;
+    const vus = new Set(effets.map(e => e.id));
+    for (const k of [...this.bulleVue.keys()]) if (!vus.has(k)) this.bulleVue.delete(k);
+    const nb = Math.min(effets.length, Math.max(0, Math.floor((xb - xa) / pas)));
+    while (this.bulles.length < nb) {
+      const f = this.fixed!;
+      this.bulles.push({
+        img: f(this.scene.add.image(0, 0, 'tx_lifePoints'), 3),
+        t: f(this.scene.add.text(0, 0, '', { ...STYLE, fontSize: '11px', fontStyle: 'bold', strokeThickness: 3 }), 6).setOrigin(0.5, 0),
+        ch: f(this.scene.add.text(0, 0, '', { ...STYLE, fontSize: '10px', fontStyle: 'bold', color: '#9fd0ff', strokeThickness: 3 }), 6).setOrigin(0.5),
+      });
+    }
+    const ptr = this.scene.input.activePointer;
+    let survol: EffetActif | null = null, sx = 0;
+    this.bulles.forEach((b, i) => {
+      const e = effets[i];
+      if (!e || i >= nb) { b.img.setVisible(false); b.t.setVisible(false); b.ch.setVisible(false); return; }
+      if (!this.bulleVue.has(e.id)) this.bulleVue.set(e.id, w.time);
+      const x = xa + R + 4 + i * pas, age = w.time - this.bulleVue.get(e.id)!;
+      // 8A : la bulle apparaît avec un petit rebond
+      const k = juice && age < 0.3 ? Math.max(0.2, 1 + 2.7 * Math.pow(age / 0.3 - 1, 3) + 1.7 * Math.pow(age / 0.3 - 1, 2)) : 1, r = R * k;
+      // 3A : clignote dans les 2 dernières secondes
+      const a = juice && e.t < 2 ? 0.45 + 0.55 * Math.abs(Math.cos(w.time * 6)) : 1;
+      const bord = BORD_BULLE[e.sorte];
+      g.fillStyle(0x14130f, 0.92 * a); g.fillCircle(x, y, r + 3);
+      gs.lineStyle(3, 0x000000, 0.55 * a); gs.strokeCircle(x, y, r + 1.5);
+      const frac = e.tMax > 0 ? Math.max(0, Math.min(1, e.t / e.tMax)) : 1;
+      gs.lineStyle(3, bord, a); gs.beginPath(); gs.arc(x, y, r + 1.5, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * frac, false); gs.strokePath();
+      const key = e.sort != null ? `sort_${e.sort}` : `carac_${CARAC_BULLE[e.carac ?? 'vie']}`;
+      if (b.img.texture.key !== key && this.scene.textures.exists(key)) b.img.setTexture(key);
+      const s = e.sort != null ? r * 1.4 : r * 1.2, fr = b.img.frame, kk = Math.min(s / fr.width, s / fr.height);
+      b.img.setVisible(true).setPosition(x, y).setDisplaySize(fr.width * kk, fr.height * kk).setAlpha(a);
+      b.t.setVisible(true).setPosition(x, y + R + 3).setText(e.t >= 1 ? `${Math.ceil(e.t)}s` : `${e.t.toFixed(1)}s`.replace('.', ','))
+        .setColor(e.t < 2 ? '#ff8a7a' : '#ffffff').setAlpha(a);
+      if (e.charges) {
+        const cx = x + R - 2, cy = y - R + 2;
+        gs.fillStyle(0x14202e, 0.95); gs.fillCircle(cx, cy, 8); gs.lineStyle(1.5, 0x5aa8ff, 1); gs.strokeCircle(cx, cy, 8);
+        b.ch.setVisible(true).setPosition(cx, cy).setText(String(e.charges));
+      } else b.ch.setVisible(false);
+      this.rects.push([x - R - 3, y - R - 3, 2 * R + 6, 2 * R + 20]);
+      if (Math.hypot(ptr.x - x, ptr.y - y) <= R + 4) { survol = e; sx = x; }
+    });
+    // 5A : infobulle au survol
+    const sv = survol as EffetActif | null;
+    if (sv) this.bulleTip.setVisible(true).setText([sv.nom, ...sv.lignes].join('\n')).setPosition(sx, y - R - 8)
+      .setColor(sv.sorte === 'monstre' ? '#ffb4a8' : '#e8e2d4');
+    else this.bulleTip.setVisible(false);
+  }
   private betesUi: { img: Phaser.GameObjects.Image; nom: Phaser.GameObjects.Text; pv: Phaser.GameObjects.Text; info: Phaser.GameObjects.Text }[] = [];
   private cadresBetes(g: Phaser.GameObjects.Graphics, x0: number, y0: number, juice: boolean) {
     const L = this.world.betes.filter(b => !b.dead).slice(0, 6), W = 236, H = 50, gap = 5;
@@ -262,6 +323,7 @@ export class Hud {
 
     this.miniLabel = txt(11, { color: '#d8d0b8' }).setOrigin(0.5, 0);
     this.areneTxt = txt(14, { ...bold, color: '#ffe3b0', stroke: '#14130f', strokeThickness: 4 }).setOrigin(0.5, 0);
+    this.bulleTip = txt(12, { backgroundColor: '#14130f', padding: { x: 8, y: 5 }, lineSpacing: 2 }, 9).setOrigin(0.5, 1).setVisible(false);
     this.menuTip = txt(12, { backgroundColor: '#14130f', padding: { x: 6, y: 3 } }, 9).setOrigin(1, 0.5).setVisible(false);
     for (const [icon, label, key] of MENUS) {
       const ic = img(`menu_${icon}`, 4);
@@ -727,6 +789,9 @@ export class Hud {
       panel(ix, iy - slot / 2 - 8, iw, slot + 16);
       for (let i = 0; i < 4; i++) drawSlot(this.slots[8 + i], ix + 8 + slot / 2 + i * (slot + gap), p.bar[8 + i], iy);
     }
+    // Bulles d'effets actifs : au-dessus de la barre, à gauche de la rangée A Z R T de l'Osamodas
+    const bx1 = this.slots.length > 8 ? x0 + totalW - (4 * slot + 3 * gap + 16) - 12 : x0 + totalW;
+    this.dessinerBulles(g, x0 + 4, bx1, y0 - 34, juice);
     // Potion (E) : charges, +1 par groupe vaincu
     const po = this.potion, pox = mvx + slot + gap, pcd = p.potionCd / cls.potion.cooldown;
     po.bg.setPosition(pox, sy).setDisplaySize(slot, slot);
