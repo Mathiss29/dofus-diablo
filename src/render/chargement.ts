@@ -16,6 +16,14 @@ type ZoneVoyage = { sous: string; niveau: string };
 /** Comment on arrive : 'voyage' = changement de zone (15A), 'porte' = Havre-Sac (14A), sinon l'écran au logo. */
 export type Arrivee = { mode: 'voyage'; zone: string; nom: string } | { mode: 'porte' } | null;
 
+/** Premier chargement (maquette « Accueil : » 8A) : une astuce sous la barre, qui change toutes les 3 s. */
+let tourne = 0;
+function astucesDebut() {
+  const p = document.querySelector<HTMLElement>('#chargement .astuce0'); if (!p) return;
+  const suivante = () => { p.textContent = Chargement.astuce(); };
+  suivante(); tourne = window.setInterval(suivante, 3000);
+}
+
 export const Chargement = {
   /** Astuce suivante (au hasard, jamais deux fois la même de suite). */
   astuce(): string {
@@ -50,6 +58,9 @@ export const Chargement = {
   },
   cacher() {
     const e = el(); if (!e) return;
+    if (tourne) { clearInterval(tourne); tourne = 0; }
     premier = false; e.hidden = true; e.classList.remove('discret', 'vu', 'voyage-on', 'lent');
   },
 };
+
+if (typeof document !== 'undefined') astucesDebut();

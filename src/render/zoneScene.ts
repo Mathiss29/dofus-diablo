@@ -44,6 +44,8 @@ import { CarteMonde } from './carteMonde';
 import { Windows } from './windows';
 import { mmss } from './forgeVue';
 import { Chargement, type Arrivee } from './chargement';
+import { inviterDiscord } from './inviteDiscord';
+import { Parcours } from './parcours';
 import { spellTipHtml } from './spellTip';
 import { LEGENDARY, RARITY_COLORS, RARITY_NAMES, rollItem } from '../sim/items';
 import { POUVOIR_PAR_ID, V03_PUBLIC } from '../sim/pouvoirs';
@@ -1230,6 +1232,11 @@ export class ZoneScene extends Phaser.Scene {
           const q = this.world.quetes!.def(e.id);
           if (!e.sautee) this.hud.banner(`Quête terminée\n${q.nom}`, 1600);
           if (q.type === 'tutoriel' && !this.test) sauverCompte(this.world, 1);   // partie de test : rien ne compte (10A)
+          // fin du tutoriel (idée B) : plus aucune quête de tutoriel en cours un instant après, on invite au Discord
+          if (q.type === 'tutoriel' && !e.sautee && !this.test) this.time.delayedCall(2500, () => {
+            const qs = this.world.quetes; if (!qs || qs.enCours.some(c => qs.def(c.id).type === 'tutoriel')) return;
+            Parcours.noter('tuto'); inviterDiscord();
+          });
           this.windows?.refresh(); break;
         }
         case 'queteInfo': this.hud.toast(e.texte); break;

@@ -825,6 +825,15 @@
               "Touche P",
               "Perso en ligne"
             ]
+          },
+          {
+            "titre": "Un accueil pour les nouveaux",
+            "phrase": "La première visite présente le jeu, avec un gros bouton « Jouer gratuitement » et le Discord.",
+            "details": "Le « Quoi de neuf » attend ta deuxième visite. Un lien « C'est quoi Diablofus ? » répond aux questions courantes.",
+            "icone": "journal",
+            "etiquettes": [
+              "Accueil"
+            ]
           }
         ],
         "Le monde": [
@@ -1089,7 +1098,8 @@
           "Partie de test : la coop peut tourner sur le serveur (Crypte), un joueur qui part ne coupe plus les autres.",
           "Le serveur sait qui est en ligne et relaie les positions des joueurs du Bastion dix fois par seconde.",
           "Chat : messages nettoyés par le serveur et limités à cinq toutes les cinq secondes.",
-          "Les joueurs ignorés ne peuvent plus t'écrire ni t'inviter : le serveur ne leur transmet plus rien."
+          "Les joueurs ignorés ne peuvent plus t'écrire ni t'inviter : le serveur ne leur transmet plus rien.",
+          "Sur téléphone, un écran léger explique que le jeu se joue sur PC, sans tout charger."
         ]
       }
     }
