@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { textureUneFois } from './uneFois';
 import { ISO } from '../sim/iso';
 import { FABRICATION } from '../sim/metiers';
 import type { World } from '../sim/world';
@@ -23,7 +24,6 @@ export class AtelierView {
   survole: number | null = null;
   /** Icône officielle (repère « Atelier des … ») de chaque atelier, par nom. */
   private pictos = new Map<string, number>();
-  private demandes = new Set<number>();
 
   constructor(private scene: Phaser.Scene, private world: World, private dossier: string) {
     this.barre = scene.add.graphics().setDepth(1e6 - 1);
@@ -39,14 +39,8 @@ export class AtelierView {
   destroy() { for (const v of this.vues.values()) v.img?.destroy(); this.vues.clear(); this.barre.destroy(); this.bulle.remove(); }
 
   private texture(g: number) {
-    const T = this.scene.textures, k = CLE(g);
-    if (T.exists(k)) return true;
-    if (!this.demandes.has(g)) {
-      this.demandes.add(g);
-      this.scene.load.image(k, url(`${this.dossier}/${g}.webp`));
-      if (!this.scene.load.isLoading()) this.scene.load.start();
-    }
-    return false;
+    const k = CLE(g);
+    return textureUneFois(this.scene, k, l => l.image(k, url(`${this.dossier}/${g}.webp`)));
   }
 
   /** Point d'accroche à l'écran d'un poste : le haut de la machine (son dessin), sinon un peu au-dessus de la case. */

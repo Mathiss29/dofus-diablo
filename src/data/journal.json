@@ -882,6 +882,15 @@
               "Astrub",
               "Incarnam"
             ]
+          },
+          {
+            "titre": "De vrais coffres de donjon",
+            "phrase": "À la mort du boss, une Malle Animée t'attend : elle ouvre la gueule puis éclate en pièces d'or.",
+            "details": "Elle luit de la couleur du meilleur objet qu'elle cache. Les donjons de fin de jeu auront le Coffret précieux.",
+            "icone": "boss",
+            "etiquettes": [
+              "Donjons"
+            ]
           }
         ],
         "Combat": [

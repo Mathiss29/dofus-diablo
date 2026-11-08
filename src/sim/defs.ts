@@ -244,7 +244,9 @@ export interface DonjonDef { nom: string; salles: Record<string, string[][]>;
   /** Vagues (5A + 5B + 5C) : groupes officiels des anciennes salles, '?' = tiré parmi les monstres du donjon ; nom = vague à thème. */
   vagues?: { nom?: string; m: string[] }[];
   /** Dernière vague (8A) : le boss et ses compagnons officiels. */
-  bossVague?: string[] }
+  bossVague?: string[];
+  /** Maquette Coffres 4B : « precieux » = Coffret précieux (Enfers, donjons à clés) ; sinon la Malle Animée. */
+  coffre?: 'precieux' }
 export interface AreneDef { tag: string; arrivee: number; entrees: number[]; boss: number; sortie: number; coffre: number }
 /** Monde ouvert : cartes Dofus collées, groupes de monstres posés sur chaque carte, qui réapparaissent. */
 export interface OpenDef {

@@ -1,4 +1,6 @@
+import type { Butin } from './butin';
 import type { DonjonDef } from './defs';
+import { RARITIES, type Rarity } from './items';
 import type { Monster } from './monster';
 import type { World } from './world';
 
@@ -16,6 +18,8 @@ export const ARENE = {
   paliers: [0.66, 0.33], palierN: 4,
   /** 13A : rayon du portail de sortie et du coffre. */
   rayon: 60,
+  /** Maquette Coffres 2A : le coffre ouvre la gueule puis éclate en pièces d'or ; le butin jaillit à l'éclat (s). */
+  eclat: 0.75,
 };
 
 /** Clé d'un donjon encore valable (14A), gardée dans la sauvegarde : vague atteinte et temps restant (s). */
@@ -47,6 +51,12 @@ export class Arene {
   /** 13A : le boss est tombé ; coffre ouvert ou non. */
   fini = false;
   coffreOuvert = false;
+  /** Butin du coffre, tiré à la mort du boss et posé à l'ouverture (reste chez l'hôte : jamais envoyé). */
+  butin: Butin | null = null;
+  /** Coffres 4C : rareté du meilleur objet du coffre (lueur de cette couleur avant l'ouverture), null sans équipement. */
+  rareteCoffre: Rarity | null = null;
+  /** Temps avant que le butin jaillisse, une fois le coffre touché. */
+  private eclat = -1;
   readonly pts: { arrivee: Pt; entrees: Pt[]; boss: Pt; sortie: Pt; coffre: Pt };
   private readonly pool: string[];
   private depart: Pt;
@@ -74,7 +84,7 @@ export class Arene {
       if (a.t <= 0) this.apparaitre(a);
     }
     this.arrivees = this.arrivees.filter(a => a.t > 0);
-    if (this.fini) { this.updateFin(); return; }
+    if (this.fini) { this.updateFin(dt); return; }
     if (p.dead) return;
     // 15A : la vague 1 attend le premier geste (ou 3 s)
     if (!this.demarre) {
@@ -148,16 +158,19 @@ export class Arene {
     this.fini = true; this.arrivees = [];
     for (const m of this.tous) if (!m.dead) { m.dead = true; m.t = 0.6; }
     if (p.cleDonjon?.nom === this.d.nom) p.cleDonjon = null;
+    this.butin = w.tirerCoffreDonjon(this.d);
+    this.rareteCoffre = this.butin?.objets.reduce<Rarity | null>((m, it) => !m || RARITIES.indexOf(it.rarity) > RARITIES.indexOf(m) ? it.rarity : m, null) ?? null;
     const record = w.quetes?.tempsDonjon(this.d.nom, this.chrono) ?? false;
     w.emit({ k: 'areneFin', nom: this.d.nom, temps: this.chrono, record });
   }
-  private updateFin() {
+  private updateFin(dt: number) {
     const w = this.w, p = w.player;
-    if (p.dead || w.passage) return;
     const c = this.pts.coffre, s = this.pts.sortie;
+    if (this.eclat > 0 && (this.eclat -= dt) <= 0) { w.ouvrirCoffreDonjon(this.butin, c.x, c.y); this.butin = null; }
+    if (p.dead || w.passage) return;
     if (!this.coffreOuvert && (Math.hypot(p.x - c.x, p.y - c.y) < ARENE.rayon || p.vise(c.x, c.y, ARENE.rayon + 30) && Math.hypot(p.x - c.x, p.y - c.y) < 140)) {
       this.coffreOuvert = true;
-      w.coffreDonjon(this.d, c.x, c.y);
+      this.eclat = ARENE.eclat;
     }
     if (Math.hypot(p.x - s.x, p.y - s.y) < ARENE.rayon * 0.8) w.quitterArene(this.d);
   }
