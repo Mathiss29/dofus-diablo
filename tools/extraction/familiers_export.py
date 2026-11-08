@@ -10,7 +10,7 @@ ATTENTION : son appearanceId n'est PAS un squelette (le serveur envoie le dessin
 Seuls ceux dont le squelette a une animation de repos sont gardés. Planche = repos + course (ou marche) en diagonales 1 et 5, faite par monster_planche.py (ANIMS).
 Bonus : evolutiveeffects (valeur au niveau 0 + gain par niveau jusqu'au niveau 100) ; courbe d'XP : evolutiveitemtypes.
 Sources (1A) : SOURCES ci-dessous, familier -> monstres de sa famille qui vivent dans nos zones."""
-import json, os, re, subprocess, sys, warnings
+import glob, json, os, re, subprocess, sys, warnings
 import UnityPy
 from i18n import load as load_i18n
 warnings.filterwarnings('ignore'); UnityPy.config.FALLBACK_UNITY_VERSION = '6000.3.16f1'
@@ -71,7 +71,7 @@ def anims(b):
     return rep + [a for a in mv if a in n]
 
 
-fam, faits = {}, {}
+fam, faits, porteurs = {}, {}, set()
 for i, v in sorted(I.items()):
     if not v or int(v['typeId']) not in (18, 249): continue
     nom = T(int(v['nameId']))
@@ -83,6 +83,10 @@ for i, v in sorted(I.items()):
     if not A: continue
     e = {'nom': nom, 'niveau': int(v['level']), 'icon': int(v['iconId']), 'planche': f'fam_{b}', 'anims': A}
     if int(v['typeId']) == 249: e['apparat'] = True
+    if SQ[str(i)].get('porteur'):   # aux couleurs du porteur : carte des zones de couleur, même disposition que la planche
+        e['porteur'] = True; porteurs.add(b)
+        z = sorted(glob.glob(os.path.join(out, f'fam_{b}_zones.*.webp')))
+        if z: e['zones'] = os.path.basename(z[-1])
     else:
         st = []
         for x in v['evolutiveEffectIds']:
@@ -105,11 +109,55 @@ from concurrent.futures import ThreadPoolExecutor
 
 def planche(b, A):
     r = subprocess.run([sys.executable, os.path.join(HERE, 'monster_planche.py'), str(b), f'fam_{b}', bones, out, 'x'],
-                       env={**os.environ, 'ANIMS': ','.join(A), 'SCALE': os.environ.get('SCALE', '2.5')}, capture_output=True, text=True)
+                       env={**os.environ, 'ANIMS': ','.join(A), 'SCALE': os.environ.get('SCALE', '2.5')},
+                       capture_output=True, text=True)
     print(b, (r.stdout.strip() or r.stderr[-300:]).splitlines()[-1:], flush=True)
+
+
+# Carte des zones : chaque zone de couleur N en aplat de ZONES_RVB[N-1], le reste en noir (WebP sans perte).
+# Le jeu (familierView.ts) y retrouve la zone de chaque pixel et teint la planche avec les couleurs du perso.
+FORCE_Z = os.environ.get('FORCE')
+ZONES_RVB = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff]
+
+
+def zones(b, A):
+    r = subprocess.run([sys.executable, os.path.join(HERE, 'monster_planche.py'), str(b), f'fam_{b}_zones', bones, out, 'x'],
+                       env={**os.environ, 'ANIMS': ','.join(A), 'SCALE': os.environ.get('SCALE', '2.5'), 'ZONES': '1', 'FORMAT_PLANCHE': 'WEBP', 'SANS_PERTE': '1',
+                            'COULEURS': ','.join(f'{i + 1}={c}' for i, c in enumerate(ZONES_RVB))}, capture_output=True, text=True)
+    j = os.path.join(out, f'fam_{b}_zones.json')
+    if os.path.exists(j):
+        # remise à la disposition de la planche (l'ombre peut décaler la découpe d'un pixel) : chaque image de la carte est
+        # recopiée à l'endroit de la même image dans la planche, en coordonnées de cellule
+        from PIL import Image
+        base, zj = json.load(open(os.path.join(out, f'fam_{b}.json'))), json.load(open(j))
+        zim = {t['image']: Image.open(os.path.join(out, t['image'])).convert('RGBA') for t in zj['textures']}
+        zf = {x['filename']: (zim[t['image']], x) for t in zj['textures'] for x in t['frames']}
+        for t in base['textures']:
+            img = Image.new('RGBA', (t['size']['w'], t['size']['h']))
+            for x in t['frames']:
+                if x['filename'] not in zf: continue
+                zi, y = zf[x['filename']]
+                F, S, ZF, ZS = x['frame'], x['spriteSourceSize'], y['frame'], y['spriteSourceSize']
+                # rectangle commun, en coordonnées de cellule
+                x0, y0 = max(S['x'], ZS['x']), max(S['y'], ZS['y'])
+                x1, y1 = min(S['x'] + S['w'], ZS['x'] + ZS['w']), min(S['y'] + S['h'], ZS['y'] + ZS['h'])
+                if x1 <= x0 or y1 <= y0: continue
+                c = zi.crop((ZF['x'] + x0 - ZS['x'], ZF['y'] + y0 - ZS['y'], ZF['x'] + x1 - ZS['x'], ZF['y'] + y1 - ZS['y']))
+                img.paste(c, (F['x'] + x0 - S['x'], F['y'] + y0 - S['y']))
+            nom = t['image'].rsplit('.', 2)[0].replace(f'fam_{b}', f'fam_{b}_zones')
+            import hashlib, io
+            buf = io.BytesIO(); img.save(buf, 'WEBP', lossless=True, method=6)
+            open(os.path.join(out, f'{nom}.{hashlib.md5(buf.getvalue()).hexdigest()[:8]}.webp'), 'wb').write(buf.getvalue())
+        for t in zj['textures']: os.remove(os.path.join(out, t['image']))
+        os.remove(j)
+    print(b, 'zones', (r.stdout.strip() or r.stderr[-300:]).splitlines()[-1:], flush=True)
 
 
 with ThreadPoolExecutor(int(os.environ.get('JOBS', os.cpu_count() or 4))) as ex:   # une planche par cœur
     for b, A in sorted(faits.items()):
         if not A or (os.path.exists(os.path.join(out, f'fam_{b}.json')) and not os.environ.get('FORCE')): continue
         ex.submit(planche, b, A)
+with ThreadPoolExecutor(int(os.environ.get('JOBS', os.cpu_count() or 4))) as ex:
+    for b in sorted(porteurs):
+        if faits.get(b) and os.path.exists(os.path.join(out, f'fam_{b}.json')) and (FORCE_Z or not glob.glob(os.path.join(out, f'fam_{b}_zones.*.webp'))):
+            ex.submit(zones, b, faits[b])

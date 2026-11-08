@@ -7,8 +7,16 @@ window.setup = async (scene, texUrls) => {
 const tintCache = {};
 function texFor(mesh) {
   const base = TEXS[mesh.tex] || TEX;
-  if (mesh.tint == null) return base;
+  if (mesh.tint == null && !window.ZONES) return base;
   const key = mesh.tex + '|' + mesh.tint;
+  // ZONES : carte des zones de couleur (familiers aux couleurs du porteur) : chaque morceau teint en aplat de sa couleur,
+  // les autres en noir, même transparence que le dessin
+  if (window.ZONES && !tintCache[key]) {
+    const c = document.createElement('canvas'); c.width = base.width; c.height = base.height; const x = c.getContext('2d');
+    x.drawImage(base, 0, 0); x.globalCompositeOperation = 'source-in';
+    x.fillStyle = '#' + (mesh.tint ?? 0).toString(16).padStart(6, '0'); x.fillRect(0, 0, c.width, c.height);
+    tintCache[key] = c;
+  }
   if (!tintCache[key]) {
     const c = document.createElement('canvas'); c.width = base.width; c.height = base.height; const x = c.getContext('2d');
     x.drawImage(base, 0, 0); x.globalCompositeOperation = window.TINT_MODE || 'overlay';

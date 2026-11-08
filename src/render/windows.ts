@@ -61,6 +61,8 @@ function apparatHtml(id: string) {
   return `<i class="ic" style="background-image:url(assets/ui/apparat.webp);background-size:${APPARATS.cols * 100}% ${APPARATS.rows * 100}%;background-position:${x.toFixed(3)}% ${y.toFixed(3)}%"></i>`;
 }
 const hexa = (c: number) => '#' + c.toString(16).padStart(6, '0');
+/** Familier « aux couleurs du porteur » (comme dans Dofus 3) : mention dans sa fiche. */
+const porteur = (id: string) => FAMILIERS.familiers[id]?.porteur ? '<div class="hint" style="color:#e8c46a">Prend les couleurs de son porteur</div>' : '';
 type Visible = 'chapeau' | 'cape' | 'bouclier' | 'familier';
 const VISIBLES: [Visible, string][] = [['chapeau', 'Coiffe'], ['cape', 'Cape'], ['bouclier', 'Bouclier'], ['familier', 'Familier']];
 
@@ -678,7 +680,7 @@ export class Windows {
     w.querySelectorAll<HTMLElement>('[data-app]').forEach(e => {
       const id = e.dataset.app!, d = APPARATS.objets[id];
       const porter = () => { this.world.porterApparat(d.slot, p.apparat[d.slot] === id ? null : id); this.changed(); };
-      e.addEventListener('mouseenter', ev => { this.tip.innerHTML = `<h4>${d.name}</h4><div class="sub">${d.collection ? `${SLOT_NAMES[d.slot]} · apparence de ta collection` : `${d.slot === 'chapeau' ? 'Coiffe' : d.slot === 'cape' ? 'Cape' : 'Familier'} d'apparat`}</div><div class="hint">Change seulement l'apparence. Clic droit : porter / retirer</div>`; this.tip.style.display = 'block'; this.moveTip(ev); });
+      e.addEventListener('mouseenter', ev => { this.tip.innerHTML = `<h4>${d.name}</h4><div class="sub">${d.collection ? `${SLOT_NAMES[d.slot]} · apparence de ta collection` : `${d.slot === 'chapeau' ? 'Coiffe' : d.slot === 'cape' ? 'Cape' : 'Familier'} d'apparat`}</div>${porteur(id)}<div class="hint">Change seulement l'apparence. Clic droit : porter / retirer</div>`; this.tip.style.display = 'block'; this.moveTip(ev); });
       e.addEventListener('mousemove', ev => this.moveTip(ev));
       e.addEventListener('mouseleave', () => this.hideTip());
       e.addEventListener('contextmenu', porter); e.addEventListener('dblclick', porter);
@@ -1480,7 +1482,7 @@ export class Windows {
           <span class="hint">${l.length} apparat${l.length > 1 ? 's' : ''}</span></div>
         <div class="cata"><div class="apercu">${this.perso ? this.canevas('', objets) : ''}<div class="hint" style="text-align:center">${essai ? essai.name : 'Survole un apparat pour l\'essayer'}</div></div>
         <div class="shop">${l.slice(0, 120).map(([id, d]) => { const a = p.apparats.includes(id), prix = APPARATS.prix[d.slot] ?? 0;
-          return `<div class="rec" data-essai="${id}">${apparatHtml(id)}<div><b>${d.name}</b> <span class="hint">${d.slot === 'chapeau' ? 'Coiffe' : d.slot === 'cape' ? 'Cape' : 'Familier'} d'apparat</span></div>
+          return `<div class="rec" data-essai="${id}">${apparatHtml(id)}<div><b>${d.name}</b> <span class="hint">${d.slot === 'chapeau' ? 'Coiffe' : d.slot === 'cape' ? 'Cape' : 'Familier'} d'apparat</span>${porteur(id)}</div>
             ${a ? '<span class="hint">Déjà à toi</span>' : `<span class="btn ${pep >= prix ? '' : 'off'}" data-aachat="${id}">${prix} ${iconHtml(ITEMS.resources[PEPITE].icon)}</span>`}</div>`; }).join('')}
           ${l.length > 120 ? `<div class="hint">… et ${l.length - 120} autres : affine la recherche.</div>` : ''}</div></div>`;
     } else {
@@ -1825,7 +1827,7 @@ export class Windows {
     if (d.familier) {   // familier : son niveau, son XP, et ses bonus au niveau 100
       const n = it.niv ?? 1, c = FAMILIERS.xp, a = c[n - 1] ?? 0, b = c[n] ?? a, x = it.xpF ?? 0;
       const max = STATS.filter(k => d.stats[k]).map(k => `${d.stats[k]![1]} ${STAT_NAMES[k]}`).join(' · ');
-      fam = `<div class="ex">Familier niveau ${n} / ${FAMILIER_MAX}</div>${n < FAMILIER_MAX ? `<div class="xpf"><i style="width:${Math.round(100 * Math.min(1, (x - a) / Math.max(1, b - a)))}%"></i></div>` : ''}
+      fam = `<div class="ex">Familier niveau ${n} / ${FAMILIER_MAX}</div>${porteur(it.id)}${n < FAMILIER_MAX ? `<div class="xpf"><i style="width:${Math.round(100 * Math.min(1, (x - a) / Math.max(1, b - a)))}%"></i></div>` : ''}
         ${max ? `<div class="hint">Au niveau 100 : ${max}</div>` : ''}
         <div class="hint">Il gagne de l'XP quand tu chasses, et quand tu le nourris (Alt + clic sur un objet ou une ressource du sac).</div>`;
     } else if (p.equipment.familier && !worn) fam = `<div class="hint">Alt + clic : le donner à manger au familier (+${FAMILIER_XP.objet(d.level, it.rarity)} XP)</div>`;
