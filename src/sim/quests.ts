@@ -271,7 +271,9 @@ export class Quetes {
   /** Élites de quête vivants : id du monstre -> quête. */
   private elites = new Map<number, string>();
   static readonly PORTEE = 130;
-  get classe() { return this.world.opts.classId ?? 'iop'; }
+  /** Classe du perso à qui sont ces quêtes (multi : chaque joueur a les siennes) ; vide = celle de la partie. */
+  classeId: string | null = null;
+  get classe() { return this.classeId ?? this.world.opts.classId ?? 'iop'; }
 
   constructor(readonly data: QuetesData, private world: World, readonly compte: Compte = { succes: [], persos: 0 }) {
     for (const s of compte.succes) this.succes.add(s);

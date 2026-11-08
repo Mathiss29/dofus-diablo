@@ -229,7 +229,11 @@ export class World {
   /** Quêtes et succès (monde ouvert avec quetes.json). */
   /** Partie de test : invincible, recharges, course, murs (null dans une vraie partie). */
   test: ReglagesTest | null = null;
-  quetes: Quetes | null = null;
+  /** Quêtes de world.player (chaque joueur a les siennes, dans Player). */
+  get quetes(): Quetes | null { return this.player?.quetes ?? null; }
+  set quetes(q: Quetes | null) { this.player.quetes = q; }
+  /** Tous les joueurs qui ont des quêtes, chacun avec les siennes (this.player = lui pendant fn). */
+  pourChaqueQuetes(fn: (q: Quetes, p: Player) => void) { for (const p of this.players) if (p.quetes) this.commeJoueur(p, () => fn(p.quetes!, p)); }
   /** Habitants qui flânent au Bastion des Douze (maquette Ville 5F), décor vivant. */
   passants: Passants | null = null;
   /** Havre-Sac (maquette Hub 2A) : incantation en cours (t écoulé, PV au début : un coup reçu la coupe). */
@@ -286,8 +290,9 @@ export class World {
     if (open && (opts.arrivee || opts.position || opts.zaap)) this.proteger();
   }
   /** Multi (étape 0) : pose un autre joueur à côté du premier et le renvoie. Il se bat, prend des coups et gagne de l'XP ;
-   *  les quêtes, la récolte, les ateliers, les portes et le Havre-Sac restent ceux du joueur de cet écran pour l'instant. */
-  ajouterJoueur(classId: string): Player {
+   *  avec `quetes` (monde ouvert), il a aussi ses propres quêtes, reprises de sa sauvegarde ; la récolte, les ateliers,
+   *  les portes et le Havre-Sac restent ceux du joueur de cet écran pour l'instant. */
+  ajouterJoueur(classId: string, quetes?: { reprise: EtatQuetes; compte?: Compte }): Player {
     const cls = this.opts.data.classes[classId];
     if (!cls) throw new Error(`Classe inconnue : ${classId}`);
     const h = this.players[0], n = this.players.length, f = this.map.nearestFree(h.x + h.radius * 3 * (n % 2 ? 1 : -1) * Math.ceil(n / 2), h.y + h.radius * 2 * (n - 1));
@@ -295,6 +300,11 @@ export class World {
     q.v03 = h.v03;
     if (this.opts.items) q.items = this.opts.items;
     this.players.push(q);
+    if (quetes && this.zone.open && this.opts.quetes) this.commeJoueur(q, () => {
+      q.quetes = new Quetes(this.opts.quetes!, this, quetes.compte);
+      q.quetes.classeId = classId;
+      q.quetes.reprendre(quetes.reprise);
+    });
     return q;
   }
   /** Fait agir q (this.player = q) le temps de fn : en coop, l'hôte y restaure ou exporte le perso d'un invité. */
@@ -1046,7 +1056,12 @@ export class World {
     this.emit({ k: 'respawn' });
   }
 
-  emit(e: SimEvent) { this.events.push(e); this.quetes?.observer(e); }
+  emit(e: SimEvent) {
+    this.events.push(e);
+    // un monstre vaincu compte pour tous les joueurs proches (groupe), le reste pour celui qui agit
+    if (e.k === 'kill' && this.players.length > 1) { const x = e.x, y = e.y, a = this.player; this.pourChaqueQuetes((q, p) => { if (p === a || Math.abs(p.x - x) + Math.abs(p.y - y) <= World.SOMMEIL) q.observer(e); }); }
+    else this.quetes?.observer(e);
+  }
   /** Coop, chez l'invité : événements venus de l'hôte, rejoués pour l'affichage seulement (pas de quête qui avance). */
   rejouer(evs: SimEvent[]) { this.events.push(...evs); }
   drainEvents(): SimEvent[] { const e = this.events; this.events = []; return e; }
@@ -1101,9 +1116,16 @@ export class World {
     p.update(dt, this.passage || this.zaapDepart ? { ...NO_INPUT, aim: input.aim } : input, this);   // devant une porte ou un Zaap : le perso attend le fondu
     // Multi (étape 0) : les autres joueurs agissent avec leurs propres entrées ; pendant leur pas, this.player = eux
     for (let i = 1; i < this.players.length; i++) {
-      const q = this.players[i];
+      const q = this.players[i], e = autres?.[q.id];
       this.acteur = q;
-      try { q.update(dt, autres?.[q.id] ?? { ...NO_INPUT, aim: { x: q.x, y: q.y } }, this); } finally { this.acteur = null; }
+      try {
+        if (e && q.quetes) {   // ses quêtes : répondre au PNJ, lui parler
+          if (e.reponse != null) q.quetes.repondre(e.reponse);
+          if (e.talk) q.quetes.cliquer(e.talk);
+          else if (e.dest || e.target != null || e.pickup != null) q.quetes.annulerClic();
+        }
+        q.update(dt, e ?? { ...NO_INPUT, aim: { x: q.x, y: q.y } }, this);
+      } finally { this.acteur = null; }
     }
     if (this.test?.recharges) this.rechargerTout();
     // Monde ouvert : un monstre qui attend loin du joueur dort (pas d'errance ni d'IA) : bien moins de calcul
@@ -1136,7 +1158,7 @@ export class World {
     });
     this.monsters = this.monsters.filter(m => !(m.dead && m.t <= 0));
     this.updateAteliers(dt);
-    if (this.zone.open) { this.updateOpen(dt); this.updateRecoltes(dt); this.updateIncantation(dt); this.updateArche(); this.updateZaap(dt); this.quetes?.update(dt); this.passants?.update(dt); return; }
+    if (this.zone.open) { this.updateOpen(dt); this.updateRecoltes(dt); this.updateIncantation(dt); this.updateArche(); this.updateZaap(dt); this.pourChaqueQuetes(q => q.update(dt)); this.passants?.update(dt); return; }
     if (!this.over && this.monsters.length === 0) {
       this.waveDelay -= dt;
       if (this.waveDelay <= 0) { this.spawnWave(); this.waveDelay = 2; }
@@ -1559,7 +1581,7 @@ export class World {
       if (pj.souffrance >= 6) h = Math.min(h, Math.max(pj.hp, Math.floor(pj.maxHp * 0.45)));
       pj.hp = Math.min(pj.maxHp, Math.round(h));
     }
-    this.quetes?.eliteVaincu(m.id);
+    for (const p of this.players) p.quetes?.eliteVaincu(m.id);
     for (const s of this.monsters) if (s.summoner === m && !s.dead) this.killMonster(s);   // ses invocations disparaissent avec lui
     if (m.summoner) { this.emit({ k: 'kill', x: m.x, y: m.y, radius: m.radius, monster: m.type }); return; }
     this.emit({ k: 'kill', x: m.x, y: m.y, radius: m.radius, monster: m.type });

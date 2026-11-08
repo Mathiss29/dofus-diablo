@@ -1099,7 +1099,9 @@
           "Partie de test : la coop peut tourner sur le serveur (Crypte), un joueur qui part ne coupe plus les autres.",
           "Le serveur sait qui est en ligne et relaie les positions des joueurs du Bastion dix fois par seconde.",
           "Chat : messages nettoyés par le serveur et limités à cinq toutes les cinq secondes.",
-          "Les joueurs ignorés ne peuvent plus t'écrire ni t'inviter : le serveur ne leur transmet plus rien."
+          "Les joueurs ignorés ne peuvent plus t'écrire ni t'inviter : le serveur ne leur transmet plus rien.",
+          "Une chasse aux plantages sans navigateur : quatre joueurs jouent seuls des milliers d'images à chaque PR.",
+          "Préparation du monde partagé : en groupe, chaque joueur aura ses quêtes, et les monstres compteront pour tous."
         ]
       }
     }
