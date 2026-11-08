@@ -1,0 +1,11 @@
+# /etc/systemd/system/diablofus-maj.timer : regarde toutes les 5 minutes si main a changé.
+[Unit]
+Description=Diablofus : mise à jour toutes les 5 minutes
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=5min
+RandomizedDelaySec=30
+
+[Install]
+WantedBy=timers.target
