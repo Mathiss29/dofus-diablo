@@ -202,13 +202,16 @@
       "lignes": {
         "Nouveautés": [
           "Le tour du monde : Metag Robill, devant la Grange du Tournesol Affamé, t'envoie vaincre le boss de chaque donjon, chapitre après chapitre. Les chapitres 1 et 2 (Kardorim, Tournesol Affamé, Mob l'Éponge, Bouftou Royal, Kankreblath) sont jouables ; les donjons déjà vaincus comptent.",
-          "Carnet de route : une page par donjon du tour du monde, tamponnée au premier passage avec la date et le temps mis jusqu'au boss (fenêtre Quêtes)."
+          "Carnet de route : une page par donjon du tour du monde, tamponnée au premier passage avec la date et le temps mis jusqu'au boss (fenêtre Quêtes).",
+          "Nouvelle fenêtre Caractéristiques (C) façon Dofus 3 : coût, + et ++ (choisis combien de points placer), détail base / objets / bonus, stats en bas et bouton Détails. Survole une caractéristique pour voir ce qu'elle te donne et ce que rapporte le point suivant. Le bouton ↺ rend tous tes points, gratuitement, hors donjon."
         ],
         "Le monde": [
           "Le prochain donjon de la quête suivie est marqué sur la carte (M).",
           "L'île de Brâkmar du Bastion, en grand : Grand Temple, hangar, fonderie, machine et chaînes géantes, avec les étincelles, les bulles de lave et les lueurs des enseignes du vrai Brâkmar. Elle attend la libération de la nation."
         ],
-        "Combat": [],
+        "Combat": [
+          "Coûts officiels des points : Sagesse 3 points, Force, Intelligence, Chance et Agilité 1 point jusqu'à 100 puis 2, 3 et 4 par tranche de 100 (tes points déjà placés te sont rendus). La Chance donne +1 Prospection par 10, l'Intelligence et les Soins renforcent tes soins, et l'Agilité fait courir un peu plus vite (+1 % par 20, 10 % au plus)."
+        ],
         "Corrections": [
           "Les Chafers Éclaireurs font enfin mal : leur Flèche de Feu était prise pour un sort de soutien et ne blessait jamais. Ils restent à distance pour tirer (même correction pour le Tofu Chimérique, le Petit Gloot et Percy Klop)."
         ],

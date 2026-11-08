@@ -17,7 +17,7 @@ describe('Partie de test (panneau F1)', () => {
     const w = monde(), p = w.player;
     ordre(w, { k: 'niveau', n: 50, auto: true });
     expect(p.level).toBe(50);
-    expect(p.base[caracPrincipale(p.cls.spells)]).toBe(245);
+    expect(p.base[caracPrincipale(p.cls.spells)]).toBe(172);   // 245 points au coût officiel : 100 à 1 point + 72 à 2 points
     expect(p.points).toBe(0);
     expect(p.hp).toBe(p.maxHp);
     const appris = p.learned.size;

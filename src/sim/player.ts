@@ -5,7 +5,7 @@ import { WEAPONS } from './data';
 import { BASE_STATS, EQUIP_SLOTS, REDUCTION_RECHARGES_MAX, METIER_MAX, metierXpNeeded, type EquipSlot, type Item, type ItemsData, type Stat, type Stats } from './items';
 import type { PlayerInput } from './input';
 import type { World } from './world';
-import { fuiteFactor, tackleSlow, tacleOf } from './caracs';
+import { coutPoint, coutTotal, fuiteFactor, pointsAchetables, prospectionDeChance, soinRecu, tackleSlow, tacleOf, vitesseAgilite } from './caracs';
 import { CASE, TOUR } from './monster';
 import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type SortGrade, type SortOfficiel } from './sorts';
 import { porteeSort } from './apercu';
@@ -181,7 +181,7 @@ export class Player extends Entity {
   /** Ralentissement (retrait de PM) : fraction de vitesse perdue et durée restante. */
   slowK = 0; slowT = 0;
   slow(t: number, k: number) { k *= fuiteFactor(this.fuite); this.slowK = this.slowT > 0 ? Math.max(this.slowK, k) : k; this.slowT = Math.max(this.slowT, t); }
-  get speed(): number { return this.cls.speed * this.vitesseTest * (this.slowT > 0 ? 1 - this.slowK : 1); }
+  get speed(): number { return this.cls.speed * (1 + vitesseAgilite(this.stat('agilite'))) * this.vitesseTest * (this.slowT > 0 ? 1 - this.slowK : 1); }
   /** Partie de test (5D) : course ×3. */
   vitesseTest = 1;
   /** Tacle et Fuite (base Agilité / 10), Retrait et Esquive PA / PM (base Sagesse / 10), comme dans Dofus. */
@@ -189,6 +189,15 @@ export class Player extends Entity {
   get fuite(): number { return tacleOf(this.stat('fuite'), this.stat('agilite')); }
   retrait(k: 'PA' | 'PM'): number { return this.stat(`retrait${k}`) + this.stat('sagesse') / 10; }
   esquive(k: 'PA' | 'PM'): number { return this.stat(`esquive${k}`) + this.stat('sagesse') / 10; }
+  /** Prospection : objets + Chance / 10 (Caracs 3A). */
+  get prospection(): number { return this.stat('prospection') + prospectionDeChance(this.stat('chance')); }
+  /** Soigne le perso (potion, nourriture, soin à chaque monstre tué) : Intelligence et Soins s'y ajoutent (Caracs 3B + 3C). Renvoie les PV rendus. */
+  soigner(base: number): number {
+    if (this.dead || base <= 0) return 0;
+    const n = Math.min(this.maxHp - this.hp, Math.round(soinRecu(base, this.stat('intelligence'), this.stat('soins'))));
+    this.hp += Math.max(0, n);
+    return Math.max(0, n);
+  }
   get initiative(): number { return this.stat('initiative') + this.stat('force') + this.stat('intelligence') + this.stat('chance') + this.stat('agilite'); }
   /** Tacle des monstres au contact : on avance moins vite en s'éloignant d'eux (la Fuite y résiste). */
   private tackled(dx: number, dy: number, world: World): number {
@@ -247,12 +256,13 @@ export class Player extends Entity {
     const flat = this.stat('dommages') + this.stat((`dommages${el[0].toUpperCase()}${el.slice(1)}`) as Stat);
     return Math.max(1, base * (1 + Math.max(-50, c + this.stat('puissance')) / 100) + flat);
   }
-  /** Partie de test (4A) : passe directement au niveau n. Tous les points sont rendus (5 par niveau) ; carac donnée = ils y vont tous.
+  /** Partie de test (4A) : passe directement au niveau n. Tous les points sont rendus (5 par niveau) ; carac donnée = ils y vont tous (au coût officiel), le reste en Vitalité.
    *  Les objets d'un niveau trop haut retournent dans le sac, les sorts pas encore connus quittent la barre. */
   fixerNiveau(n: number, carac: Stat | null) {
     this.level = Math.max(1, Math.min(this.cls.maxLevel, Math.round(n))); this.xp = 0;
-    this.base = {}; this.points = 5 * (this.level - 1);
-    if (carac && this.points) { this.base[carac] = this.points; this.points = 0; }
+    this.base = {}; this.points = this.pointsTotaux;
+    if (carac && this.points) { const n = pointsAchetables(carac, 0, this.points); this.base[carac] = n; this.points -= coutTotal(carac, n); }
+    if (carac && this.points) { this.base.vitalite = (this.base.vitalite ?? 0) + this.points; this.points = 0; }   // le reste (moins qu'un point) en Vitalité
     for (const [slot, it] of Object.entries(this.equipment) as [EquipSlot, Item][]) {
       if ((this.items?.equipment[it.id]?.level ?? 0) > this.level) { delete this.equipment[slot]; this.bag.push(it); }
     }
@@ -263,10 +273,29 @@ export class Player extends Entity {
     this.recompute(); this.hp = this.maxHp; this.pa = this.paMax; this.pm = this.pmMax;
   }
   /** Place n points dans une caractéristique de base. */
+  /** Place n points de caractéristique (coût officiel par point, voir coutPoint) ; s'arrête quand il ne reste plus de quoi payer.
+   *  Vrai si au moins un point a été placé. */
   spendPoint(k: Stat, n = 1): boolean {
-    if (!BASE_STATS.includes(k) || n < 1 || this.points < n) return false;
-    this.points -= n; this.base[k] = (this.base[k] ?? 0) + n; this.recompute();
+    if (!BASE_STATS.includes(k) || n < 1) return false;
+    const m = Math.min(n, pointsAchetables(k, this.base[k] ?? 0, this.points));
+    if (m < 1) return false;
+    this.points -= coutTotal(k, (this.base[k] ?? 0) + m) - coutTotal(k, this.base[k] ?? 0);
+    this.base[k] = (this.base[k] ?? 0) + m; this.recompute();
     return true;
+  }
+  /** Coût du prochain point dans cette caractéristique. */
+  coutPoint(k: Stat): number { return coutPoint(k, this.base[k] ?? 0); }
+  /** Points de caractéristique gagnés depuis le niveau 1 (5 par niveau). */
+  get pointsTotaux(): number { return 5 * (this.level - 1); }
+  /** Rend tous les points placés (Caracs 11A : gratuit, hors donjon, vérifié par World.reinitialiserCaracs). */
+  reinitialiserPoints() {
+    this.base = {}; this.points = this.pointsTotaux; this.recompute();
+  }
+  /** Sauvegarde d'avant les coûts officiels (tout coûtait 1) : si le compte ne tombe pas juste, on rend tous les points. */
+  verifierPoints(): boolean {
+    const depense = BASE_STATS.reduce((n, k) => n + coutTotal(k, this.base[k] ?? 0), 0);
+    if (depense + this.points === this.pointsTotaux && depense >= 0) return false;
+    this.reinitialiserPoints(); return true;
   }
 
   // --- Sac et équipement --------------------------------------------------------
@@ -424,8 +453,8 @@ export class Player extends Entity {
 
   drinkPotion(world: World): boolean {
     if (this.dead || this.potions <= 0 || this.potionCd > 0 || this.hp >= this.maxHp) return false;
-    const amount = Math.min(this.maxHp - this.hp, Math.round(this.maxHp * this.cls.potion.heal * (1 + this.legendary('potion') / 100)));
-    this.hp += amount; this.potions--; this.potionCd = this.cls.potion.cooldown;
+    const amount = this.soigner(this.maxHp * this.cls.potion.heal * (1 + this.legendary('potion') / 100));
+    this.potions--; this.potionCd = this.cls.potion.cooldown;
     world.emit({ k: 'potion', x: this.x, y: this.y, amount });
     return true;
   }

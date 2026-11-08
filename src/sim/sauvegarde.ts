@@ -67,7 +67,9 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
   if (c && typeof c.nom === 'string' && c.reste > 0) p.cleDonjon = { nom: c.nom, vague: Math.max(1, Math.floor(c.vague) || 1), reste: c.reste };
   if (s.havreSac && w.dansRefuge && !w.retour) w.retour = s.havreSac;
   if (s.bar?.length === p.bar.length) p.bar = s.bar.map(k => (k && p.cls.spells[k] ? k : null));
-  p.recompute(); p.hp = p.maxHp;
+  p.recompute();
+  if (p.verifierPoints()) w.emit({ k: 'status', x: p.x, y: p.y - 60, text: 'Points de caractéristiques rendus (nouveaux coûts)', color: '#b9e54b' });
+  p.hp = p.maxHp;
   p.learnSpells(null);
   // position et point de retour : seulement dans la même zone, et pas à l'arrivée par un portail (le World y a posé le perso)
   if ((s.zone ?? 'incarnam') !== w.opts.zone || w.opts.arrivee || w.opts.position || w.opts.zaap) return;

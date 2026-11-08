@@ -497,6 +497,13 @@ export class World {
     return null;
   }
   /** Donjon où se trouve le joueur (nom), ou null. */
+  /** Caracs 11A : rend tous les points de caractéristiques, gratuitement, hors donjon et hors arène. */
+  reinitialiserCaracs(): boolean {
+    const p = this.player;
+    if (p.dead || this.arene || this.donjonIci()) { this.emit({ k: 'status', x: p.x, y: p.y - 60, text: 'Impossible dans un donjon', color: '#ff9a5a' }); return false; }
+    p.reinitialiserPoints();
+    return true;
+  }
   donjonIci(): string | null { return this.zone.open?.donjons?.find(d => this.dansDonjon(d.nom))?.nom ?? null; }
   /** Arrivée de l'autre côté : une case libre juste hors du rayon de la porte d'arrivée, du côté du milieu de la carte (pas collé au bord). */
   private traverser(to: PorteEnd, nom: string) {
@@ -1154,7 +1161,7 @@ export class World {
     if (m.summoner) { this.emit({ k: 'kill', x: m.x, y: m.y, radius: m.radius, monster: m.type }); return; }
     this.emit({ k: 'kill', x: m.x, y: m.y, radius: m.radius, monster: m.type });
     const p = this.player;
-    p.hp = Math.min(p.maxHp, p.hp + p.cls.healOnKill + p.legendary('vampire'));
+    p.soigner(p.cls.healOnKill + p.legendary('vampire'));
     this.dropLoot(m);
     const xp = p.gainXp(Math.round((m.def.xp ?? Math.round(m.def.hp / 5)) * this.bonusMassacre()), this);
     if (xp > 0) this.emit({ k: 'xp', x: m.x, y: m.y, z: m.radius * 2 + 30, n: xp });
@@ -1181,7 +1188,7 @@ export class World {
   /** Ce que le calcul du butin doit savoir (src/sim/butin.ts) : sert au jeu, au Bestiaire et au simulateur de l'outil de test. */
   contexteButin(type: string, rang: Rang, niveau: number): CtxButin {
     const p = this.player;
-    return { type, rang, niveau, prospection: p.stat('prospection'), items: this.opts.items!, familiers: this.familiersDe[type] ?? [], pool: this.equipByLevel,
+    return { type, rang, niveau, prospection: p.prospection, items: this.opts.items!, familiers: this.familiersDe[type] ?? [], pool: this.equipByLevel,
       metierNiveau: j => p.metierLevel(j), armeChasse: !!p.huntingWeapon, sortsRecharge: p.sortsRecharge };
   }
   /** Un monstre vaincu lâche son butin officiel (ressources, parfois un équipement) et, plus rarement, un équipement
@@ -1609,7 +1616,7 @@ export class World {
     const r = this.opts.items?.resources[id], p = this.player;
     if (!r?.soin || !(p.resources[id] > 0) || p.dead) return false;
     p.resources[id]--; if (!p.resources[id]) delete p.resources[id];
-    const heal = Math.min(r.soin, p.maxHp - p.hp); p.hp += heal;
+    const heal = p.soigner(r.soin);
     this.emit({ k: 'eat', id, heal });
     this.emit({ k: 'potion', x: p.x, y: p.y, amount: r.soin });
     return true;
