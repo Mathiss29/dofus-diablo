@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { BOUTIQUES, GAME_DATA, ITEMS, RECOLTES } from '../src/sim/data';
 import { WorldGrid, type WorldData } from '../src/sim/gridmap';
 import { NO_INPUT } from '../src/sim/input';
-import { FABRICATION, estPalier, prochainPalier, recettesAvec, sourcesDe } from '../src/sim/metiers';
+import { FABRICATION, METIERS_FAB, estPalier, prochainPalier, recettesAvec, sourcesDe } from '../src/sim/metiers';
 import { exporterJoueur, restaurerJoueur } from '../src/sim/sauvegarde';
 import { World } from '../src/sim/world';
 import type { SimEvent } from '../src/sim/events';
@@ -22,7 +22,7 @@ describe('Interface des métiers (maquette Métiers UI)', () => {
   it('3A : chaque atelier a ses machines officielles cliquables (ou un poste au milieu de sa carte)', () => {
     for (const m of ['incarnam', 'astrub']) {
       const w = monde(m), A = w.zone.open!.ateliers!;
-      for (const a of A) expect(w.postes.some(p => p.atelier === a.nom), a.nom).toBe(true);
+      for (const a of A) if (w.player.v03 || !a.metiers.every(x => METIERS_FAB.includes(x))) expect(w.postes.some(p => p.atelier === a.nom), a.nom).toBe(true);   // fabrication (0.3) : tests/coffre.test.ts
       expect(w.postes.filter(p => p.gfx != null).length).toBeGreaterThan(m === 'astrub' ? 20 : 15);
     }
   });

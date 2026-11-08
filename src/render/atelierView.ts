@@ -81,7 +81,7 @@ export class AtelierView {
       if (Math.abs(a.x - cx) > 1500 || Math.abs(a.y - cy) > 1100) continue;
       vus.add(po.id);
       let v = this.vues.get(po.id);
-      const g = this.pictos.get(po.atelier) ?? 305;
+      const g = po.coffre ? 401 : this.pictos.get(po.atelier) ?? 305;   // coffre : repère officiel de la Banque
       if (!v) { v = { img: null, g }; this.vues.set(po.id, v); }
       if (!v.img && this.texture(g)) v.img = this.scene.add.image(0, 0, CLE(g)).setOrigin(0.5, 1);
       if (!v.img) continue;
@@ -108,7 +108,8 @@ export class AtelierView {
     const M = this.world.opts.items?.metiers ?? {};
     if (this.bulle.dataset.cle !== String(po.id)) {
       this.bulle.dataset.cle = String(po.id);
-      this.bulle.innerHTML = `<b>${po.atelier}</b><i>Clic : fabriquer (${po.metiers.map(m => M[m]?.name ?? m).join(', ')})</i>`;
+      this.bulle.innerHTML = po.coffre ? `<b>${po.atelier}</b><i>Clic : ouvrir (partagé par tes persos)</i>`
+        : `<b>${po.atelier}</b><i>Clic : fabriquer (${po.metiers.map(m => M[m]?.name ?? m).join(', ')})</i>`;
     }
     const a = this.ancre(po.id), rect = this.scene.game.canvas.getBoundingClientRect(), k = rect.width / this.scene.scale.width;
     const x = (a.x - cam.worldView.x) * cam.zoom, y = (a.y - (a.machine ? 130 : 76) - cam.worldView.y) * cam.zoom;

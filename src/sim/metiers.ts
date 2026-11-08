@@ -9,6 +9,8 @@ export interface Poste {
   id: number; atelier: string; metiers: string[]; tag: string; x: number; y: number;
   /** Dessin officiel de la machine (déjà posé avec le décor) et son décalage en pixels Dofus : affichage seulement. */
   gfx?: number; dessin?: { x: number; y: number };
+  /** Coffre partagé (0.3, 12A+12B) au lieu d'une machine : le clic ouvre le coffre. */
+  coffre?: boolean;
 }
 
 export const FABRICATION = {

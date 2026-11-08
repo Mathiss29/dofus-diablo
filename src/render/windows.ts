@@ -21,6 +21,7 @@ import { POUVOIR_PAR_ID } from '../sim/pouvoirs';
 import { dmgMoyen, gradeAuNiveau, type SortOfficiel } from '../sim/sorts';
 import { n1, spellDetail } from './spellTip';
 import { World } from '../sim/world';
+import { COFFRE } from '../sim/coffre';
 import { METIERS_FAB, chanceRare, prochainPalier, recettesAvec, recettesDe, sourcesDe } from '../sim/metiers';
 /** Produit d'une recette : ressource, ou équipement (métiers de fabrication, 0.3). */
 const produit = (id: string): { name: string; icon: number; soin?: number } | undefined => ITEMS.resources[id] ?? ITEMS.equipment[id];
@@ -174,6 +175,7 @@ const CSS = `
 .dw .cell.low{opacity:.5}
 .dw .cell .cad{position:absolute;right:3px;top:3px;width:16px;height:19px;filter:drop-shadow(0 1px 1px #000)}
 .dw .win.emp{width:min(760px,96vw);height:min(640px,92vh)}
+.dw .win.coffre{width:min(760px,96vw);height:min(680px,92vh)}
 /* Zaap (maquette « Zaap : » 5A+5D) : la vraie fenêtre de Dofus 3 (Territoire / Région / Coordonnées / Niveau), groupée par zone */
 .dw .win.zaap{width:min(860px,96vw);height:min(620px,92vh)}
 .dw .in.zaap{display:grid;grid-template-rows:auto auto 1fr;gap:6px;padding:12px 16px 14px;min-height:0}
@@ -508,7 +510,7 @@ const CSS = `
 .dw .ttl b{font-weight:700}
 `;
 
-type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap' | 'bestiaire' | 'forge';
+type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap' | 'bestiaire' | 'forge' | 'coffre';
 
 /** Fenêtres façon Dofus 3 : « Inventaire » (le perso sur son socle, ses emplacements autour, le sac à onglets)
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
@@ -608,7 +610,7 @@ export class Windows {
     else if (this.mode === 'car') this.renderCarac(); else if (this.mode === 'job') this.renderJob(); else if (this.mode === 'art') this.renderArt(); else if (this.mode === 'opt') this.renderOpt();
     else if (this.mode === 'sorts') this.renderSorts(); else if (this.mode === 'quetes') this.renderQuetes();
     else if (this.mode === 'succes') this.renderSucces(); else if (this.mode === 'emp') this.renderEmp(); else if (this.mode === 'zaap') this.renderZaap();
-    else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else if (this.mode === 'forge') this.renderForge(); else this.renderInv();
+    else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else if (this.mode === 'forge') this.renderForge(); else if (this.mode === 'coffre') this.renderCoffre(); else this.renderInv();
     this.win!.querySelector('[data-close]')!.addEventListener('click', () => this.close());
   }
   private title(name: string, icon: string) {
@@ -1449,6 +1451,39 @@ export class Windows {
 
   /** Emp, le Méryde du Recyclage (maquette 0.2, 7A 8A+8B+8C 9A+9B) : recyclage contre des Pépites, en lot ou objet par objet,
    *  cadenas, et sa boutique payée en Pépites. S'ouvre par la réponse « service » de son dialogue. */
+  /** Onglet du coffre affiché, et sorte de coffre (Hardcore : le sien, 12D). */
+  coffreOnglet = 0;
+  coffreHardcore = false;
+  /** Coffre partagé (0.3, 12A+12B+12D) : 5 onglets d'objets, partagés par les persos du compte. Clic : ranger ou reprendre. */
+  private renderCoffre() {
+    const w = this.win!, p = this.world.player, c = this.world.coffre, o = Math.min(this.coffreOnglet, c.onglets.length - 1), l = c.onglets[o] ?? [];
+    const cell = (it: Item, attr: string) => { const d = ITEMS.equipment[it.id];
+      return `<div class="cell" ${attr}>${iconHtml(d?.icon ?? 0)}<i class="r" style="background:${RARITY_COLORS[it.rarity]}"></i></div>`; };
+    const onglets = c.onglets.map((x, i) => `<span class="eo ${i === o ? 'on' : ''}" data-co="${i}">${c.noms?.[i] || `Onglet ${i + 1}`} · ${x.length}</span>`).join('');
+    const coffre = Array.from({ length: COFFRE.places }, (_, i) => l[i] ? cell(l[i], `data-cr="${i}"`) : '<div class="cell empty"></div>').join('');
+    const sac = p.bag.filter(it => ITEMS.equipment[it.id]).map(it => cell(it, `data-cd="${it.uid}"`)).join('');
+    const loin = !this.world.presCoffre ? '<div class="lack">Tu t\'es éloigné du coffre : reviens devant pour ranger ou reprendre.</div>' : '';
+    w.innerHTML = `${this.title(this.coffreHardcore ? 'Coffre Hardcore' : 'Coffre partagé', 'inventory')}<div class="in emp">
+      <div class="eh"><div class="eos">${onglets}</div><span class="hint">${l.length} / ${COFFRE.places}</span></div>
+      <div class="hint">${this.coffreHardcore ? 'Partagé par tes persos Hardcore seulement.' : 'Partagé par tous tes persos (sauf Hardcore), au Havre-Sac et à la Banque d\'Astrub.'} Clic : reprendre l'objet.</div>${loin}
+      <div class="grid eg">${coffre}</div>
+      <div class="sub2">Sac (clic : ranger dans l'onglet ${o + 1})</div><div class="grid eg">${sac || '<div class="hint">Aucun équipement dans ton sac.</div>'}</div></div>`;
+    const tip = (e: HTMLElement, it: Item) => {
+      e.addEventListener('mouseenter', ev => this.showTip(it, ev, false));
+      e.addEventListener('mousemove', ev => this.moveTip(ev));
+      e.addEventListener('mouseleave', () => this.hideTip());
+    };
+    w.querySelectorAll<HTMLElement>('[data-co]').forEach(e => e.addEventListener('click', () => { this.coffreOnglet = +e.dataset.co!; this.render(); }));
+    w.querySelectorAll<HTMLElement>('[data-cr]').forEach(e => {
+      tip(e, l[+e.dataset.cr!]);
+      e.addEventListener('click', () => { this.hideTip(); if (this.world.retirer(o, +e.dataset.cr!)) this.changed(); });
+    });
+    w.querySelectorAll<HTMLElement>('[data-cd]').forEach(e => {
+      tip(e, p.bag.find(b => b.uid === +e.dataset.cd!)!);
+      e.addEventListener('click', () => { this.hideTip(); if (this.world.deposer(+e.dataset.cd!, o)) this.changed(); });
+    });
+  }
+
   private renderEmp() {
     const w = this.win!, p = this.world.player, pep = p.resources[PEPITE] ?? 0;
     // les onglets du PNJ ouvert : ses services (Kerubim recycle, Tissebelle a les apparats et le miroir, les autres une boutique)
