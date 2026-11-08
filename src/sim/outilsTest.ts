@@ -56,7 +56,10 @@ export type CommandeTest =
   | { k: 'jour'; date: string }
   | { k: 'offrande' }
   /** Outil test 7C : renvoie toutes les invocations. */
-  | { k: 'renvoyer' };
+  | { k: 'renvoyer' }
+  /** Multi (étape 0) : un allié de test de cette classe, au niveau du perso, conduit par la simulation (allie.ts). */
+  | { k: 'allie'; classe: string }
+  | { k: 'alliesRetirer' };
 
 const xy = (q: { x: number; y: number }): [number, number] => [q.x, q.y];
 
@@ -182,6 +185,20 @@ export function appliquerTest(w: World, c: CommandeTest) {
       if (!j) { dire('Pas d\'Almanax ce jour-là'); break; }
       p.resources[j.offrande] = (p.resources[j.offrande] ?? 0) + j.n;
       w.emit({ k: 'lootResource', id: j.offrande, n: j.n });
+      break;
+    }
+    case 'allie': {
+      if (!w.opts.data.classes[c.classe]) break;
+      if (w.players.length >= 4) { dire('4 joueurs au plus dans un groupe'); break; }
+      const q = w.ajouterJoueur(c.classe);
+      q.level = p.level; q.recompute(); q.hp = q.maxHp; q.learnSpells(null);
+      dire(`Allié ${w.opts.data.classes[c.classe].name} niv. ${q.level} ajouté`);
+      break;
+    }
+    case 'alliesRetirer': {
+      const n = w.players.length - 1;
+      for (const q of w.players.slice(1)) w.retirerJoueur(q);
+      dire(n ? `${n} allié${n > 1 ? 's' : ''} retiré${n > 1 ? 's' : ''}` : 'Aucun allié');
       break;
     }
     case 'renvoyer': {

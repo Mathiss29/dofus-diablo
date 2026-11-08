@@ -4,6 +4,7 @@ import { GAME_DATA } from '../src/sim/data';
 import { GridMap, type MapData } from '../src/sim/gridmap';
 import { NO_INPUT } from '../src/sim/input';
 import { World } from '../src/sim/world';
+import { entreesAllies } from '../src/sim/allie';
 
 /** Multi, étape 0 (maquette « Multi : » 1A) : la simulation accepte plusieurs joueurs, sans rien changer en solo. */
 const carte = JSON.parse(readFileSync(new URL('../public/assets/cartes/5_-27/carte.json', import.meta.url), 'utf8')) as MapData;
@@ -76,5 +77,31 @@ describe('plusieurs joueurs dans la même simulation', () => {
     for (let i = 0; i < 300; i++) w.step(STEP, NO_INPUT);
     expect(q.hp).toBeLessThan(qp0);
     expect(h.hp).toBe(hp0);
+  });
+});
+
+describe('alliés de test (panneau F1)', () => {
+  const essai = () => new World({ data: GAME_DATA, zone: 'champs-astrub', map: new GridMap(carte), seed: 3, test: { invincible: false, recharges: false, course: false, murs: false } as never });
+  it('F1 ajoute un allié au niveau du perso (3 au plus), puis les retire', () => {
+    const w = essai();
+    w.player.level = 12; w.player.recompute();
+    for (let i = 0; i < 4; i++) w.step(STEP, { ...NO_INPUT, test: [{ k: 'allie', classe: 'cra' }] });
+    expect(w.players).toHaveLength(4);
+    expect(w.players[1].level).toBe(12);
+    w.step(STEP, { ...NO_INPUT, test: [{ k: 'alliesRetirer' }] });
+    expect(w.players).toHaveLength(1);
+  });
+  it('l’allié suit le joueur puis frappe les monstres réveillés', () => {
+    const w = essai(), h = w.player;
+    w.step(STEP, { ...NO_INPUT, test: [{ k: 'allie', classe: 'iop' }] });
+    const q = w.players[1];
+    poser(w, q, h.x + 500, h.y);
+    const d0 = Math.hypot(q.x - h.x, q.y - h.y);
+    for (let i = 0; i < 60; i++) w.step(STEP, NO_INPUT, entreesAllies(w));
+    expect(Math.hypot(q.x - h.x, q.y - h.y)).toBeLessThan(d0);
+    vague(w);
+    const m = w.monsters[0];
+    m.state = 'chase';
+    expect(entreesAllies(w)[q.id]).toMatchObject({ holdAttack: true });
   });
 });
