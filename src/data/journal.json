@@ -205,6 +205,8 @@
           "Carnet de route : une page par donjon du tour du monde, tamponnée au premier passage avec la date et le temps mis jusqu'au boss (fenêtre Quêtes).",
           "Nouvelle fenêtre Caractéristiques (C) façon Dofus 3 : coût, + et ++ (choisis combien de points placer), détail base / objets / bonus, stats en bas et bouton Détails. Survole une caractéristique pour voir ce qu'elle te donne et ce que rapporte le point suivant. Le bouton ↺ rend tous tes points, gratuitement, hors donjon.",
           "Les Zaaps marchent : clique sur l'arche, choisis ta destination dans la vraie fenêtre de Dofus 3 (par zone, niveau en couleur) et pars dans un tourbillon, gratuitement. Les Zaaps pas encore vus sont grisés.",
+          "Contrats du jour : le Gardien des Geôles d'Astrub, devant la Prison près du Zaap, propose 3 contrats par jour (nouveaux à minuit) et un gros contrat chaque semaine, habillés des quêtes officielles d'Astrub. Récompense : XP, kamas, un sac Rare (Épique pour la semaine) et des Pépites.",
+          "Avis de recherche : Fouduglen l'écureuil, Sam Sagaz et Frakacia Leukocytine sont à traquer une fois par semaine, prime à rendre aux Geôles. Et Cindy Cah lance le fil « Les Vilinsekts » au niveau 30 : les planques, trois lieutenants, puis Kankreblath.",
           "Nouvelle fenêtre de forgemagie façon Dofus 3 chez Malek : cases Objet, Rune et Signature, bouton Fusionner (ou mode avancé : un clic sur la rune), les runes de chaque ligne au bout de la ligne avec leur chance, l'œil pour masquer une ligne et l'historique avec l'icône de chaque rune. La Rune de Signature grave ton nom sur l'objet, et le Concasseur montre les runes qui vont sortir avant de briser.",
           "Commande à Malek : fixe une valeur à atteindre et un plancher à ne pas casser sur chaque ligne, un budget, demande-lui son estimation (chances, kamas, runes), puis laisse-lui l'objet et reviens le chercher quelques minutes plus tard."
         ],
@@ -212,7 +214,9 @@
           "Le prochain donjon de la quête suivie est marqué sur la carte (M).",
           "L'île de Brâkmar du Bastion, en grand : Grand Temple, hangar, fonderie, machine et chaînes géantes, avec les étincelles, les bulles de lave et les lueurs des enseignes du vrai Brâkmar. Elle attend la libération de la nation.",
           "Survole une porte d'Astrub : quand elle a son propre dessin (ateliers des paysans, des alchimistes et des bûcherons, Tour du Conseil…), un fin liseré blanc l'entoure, comme sur Sanstour.",
-          "Incarnam a ses 3 vrais Zaaps (Route des âmes, Pâturages, Cimetière) ; un Zaap découvert s'annonce et s'allume sur la carte (M)."
+          "Incarnam a ses 3 vrais Zaaps (Route des âmes, Pâturages, Cimetière) ; un Zaap découvert s'annonce et s'allume sur la carte (M).",
+          "Les portes peintes dans leur bâtiment (Taverne, Banque, Milice, ateliers des chasseurs, des pêcheurs, des mineurs et des bricoleurs, Planque des Vilinsekts) s'entourent aussi au survol, d'un liseré qui suit leur embrasure.",
+          "Un paillasson attend à la sortie de chaque intérieur : survole-le, il s'éclaire ; clique dessus pour sortir."
         ],
         "Combat": [
           "Coûts officiels des points : Sagesse 3 points, Force, Intelligence, Chance et Agilité 1 point jusqu'à 100 puis 2, 3 et 4 par tranche de 100 (tes points déjà placés te sont rendus). La Chance donne +1 Prospection par 10, l'Intelligence et les Soins renforcent tes soins, et l'Agilité fait courir un peu plus vite (+1 % par 20, 10 % au plus)."

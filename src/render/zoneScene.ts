@@ -189,6 +189,8 @@ export class ZoneScene extends Phaser.Scene {
     if (!this.textures.exists('kamas_tas')) this.load.image('kamas_tas', v(`${ASSETS}/ui/kamas_tas.png`));
     if (!this.textures.exists('fleche_arme')) this.load.image('fleche_arme', v(`${ASSETS}/fx/fleche_arme.webp`));   // Armes 4B
     if (!this.textures.exists('kamas_piece')) this.load.image('kamas_piece', v(`${ASSETS}/ui/kamas_piece.png`));
+    // paillasson posé à chaque sortie d'intérieur (Mathis, 2026-11-08) : un tapis officiel du Havre-Sac (gfx 71133)
+    if (!this.textures.exists('paillasson')) this.load.image('paillasson', v(`${ASSETS}/ui/paillasson.png`));
     if (!this.textures.exists(ICON_SHEET.key)) this.load.spritesheet(ICON_SHEET.key, v(`${ASSETS}/${ICON_SHEET.url}`), { frameWidth: ICON_SHEET.cell, frameHeight: ICON_SHEET.cell });
     const zone = GAME_DATA.zones[this.zoneId];
     // On ne charge que les planches utiles à cette zone
@@ -667,8 +669,9 @@ export class ZoneScene extends Phaser.Scene {
       this.events.once('shutdown', () => { lab.destroy(); if (this.porteLabel === lab) this.porteLabel = null; });
     }
     const c = ISO.toScreen(po.x, po.y);
-    // contour du dessin de la porte (façon Sanstour) ; une sortie d'intérieur n'a pas de porte dessinée
-    if (po.sortie) this.worldView?.contour(null); else this.worldView?.contour(c.x, c.y);
+    // contour du dessin de la porte (façon Sanstour)
+    // une sortie d'intérieur : c'est le paillasson posé sur la case qui s'entoure
+    this.worldView?.contour(c.x, po.sortie ? c.y + 50 : c.y, `${po.nom}@${this.world.worldGrid?.mapAt(po.x, po.y)?.tag ?? ''}`);
     this.porteLabel.setText(po.sortie ? `Sortie · ${po.nom}` : po.nom).setColor(po.sortie ? '#ffe08a' : '#f3e3bf')
       // une sortie est un repère au sol, souvent sous le perso : son nom va dessous ; une porte dans un mur, au-dessus
       .setOrigin(0.5, po.sortie ? 0 : 1).setPosition(c.x, po.sortie ? c.y + 34 : c.y - 96).setScale(1 / this.cameras.main.zoom).setVisible(true);
@@ -977,17 +980,18 @@ export class ZoneScene extends Phaser.Scene {
         case 'enterArea': if (!this.vitrine && e.name !== this.world.lieu) this.hud.zoneBanner(e.name, this.world.zone.name, e.level, this.decouvrir(e.name)); break;
         case 'enterLieu': if (!this.vitrine) this.hud.zoneBanner(e.name, e.region, e.level, this.decouvrir(e.name)); break;
         case 'queteDebut': {
-          const q = QUETES.quetes[e.id];
+          const q = this.world.quetes!.def(e.id);
           if (q.type !== 'tutoriel') this.hud.toast(`Nouvelle quête : ${q.nom}`);
           this.windows?.refresh(); break;
         }
         case 'queteEtape': this.windows?.refresh(); break;
         case 'queteFin': {
-          const q = QUETES.quetes[e.id];
+          const q = this.world.quetes!.def(e.id);
           if (!e.sautee) this.hud.banner(`Quête terminée\n${q.nom}`, 1600);
           if (q.type === 'tutoriel' && !this.test) sauverCompte(this.world, 1);   // partie de test : rien ne compte (10A)
           this.windows?.refresh(); break;
         }
+        case 'sacQuete': { const it = ITEMS.equipment[e.id]; if (it) this.hud.loot(`Sac de quête : ${it.name}`, RARITY_COLORS[e.rarity]); break; }
         case 'objetQuete': this.hud.loot(`${e.nom}  ${e.n}/${e.sur}`, '#9ad15a'); break;
         case 'succes': {
           const s = QUETES.succes[e.id];
