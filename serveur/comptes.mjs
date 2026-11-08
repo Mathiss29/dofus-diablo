@@ -24,6 +24,9 @@ const DISCORD = 'https://discord.com';
 const empreinte = j => createHash('sha256').update(j).digest('hex');
 const liste = s => new Set(String(s ?? '').split(',').map(x => x.trim()).filter(Boolean));
 
+/** Étapes comptées du parcours d'un nouveau venu, dans l'ordre. */
+export const PARCOURS = ['accueil', 'creation', 'perso', 'tuto'];
+
 /**
  * @param {{ dossier: string, env?: Record<string,string|undefined>, origines: Set<string>, fetch?: typeof fetch, maintenant?: () => number }} o
  */
@@ -42,7 +45,8 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
     CREATE TABLE IF NOT EXISTS liens (de INTEGER NOT NULL REFERENCES comptes(id) ON DELETE CASCADE, vers INTEGER NOT NULL REFERENCES comptes(id) ON DELETE CASCADE,
       sorte TEXT NOT NULL, nom TEXT NOT NULL DEFAULT '', nom_de TEXT NOT NULL DEFAULT '', depuis INTEGER NOT NULL, PRIMARY KEY (de, vers));
     CREATE TABLE IF NOT EXISTS social (compte INTEGER PRIMARY KEY REFERENCES comptes(id) ON DELETE CASCADE, hors_ligne INTEGER NOT NULL DEFAULT 0,
-      inconnus INTEGER NOT NULL DEFAULT 0);`);
+      inconnus INTEGER NOT NULL DEFAULT 0);
+    CREATE TABLE IF NOT EXISTS parcours (jour TEXT NOT NULL, etape TEXT NOT NULL, n INTEGER NOT NULL, PRIMARY KEY (jour, etape));`);
   const q = {
     compteDiscord: db.prepare('SELECT * FROM comptes WHERE discord = ?'),
     nouveau: db.prepare('INSERT INTO comptes (discord, nom, avatar, roles, cree, vu) VALUES (?, ?, ?, ?, ?, ?)'),
@@ -67,6 +71,8 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
     parPerso: db.prepare("SELECT compte AS id, json_extract(donnees, '$.nom') AS nom FROM persos WHERE lower(json_extract(donnees, '$.nom')) = lower(?)"),
     reglagesSociaux: db.prepare('SELECT hors_ligne, inconnus FROM social WHERE compte = ?'),
     regler: db.prepare('INSERT INTO social (compte, hors_ligne, inconnus) VALUES (?, ?, ?) ON CONFLICT (compte) DO UPDATE SET hors_ligne = excluded.hors_ligne, inconnus = excluded.inconnus'),
+    parcours: db.prepare('INSERT INTO parcours (jour, etape, n) VALUES (?, ?, 1) ON CONFLICT (jour, etape) DO UPDATE SET n = n + 1'),
+    lireParcours: db.prepare('SELECT jour, etape, n FROM parcours WHERE jour >= ? ORDER BY jour'),
     nb: db.prepare('SELECT (SELECT COUNT(*) FROM comptes) AS inscrits, (SELECT COUNT(*) FROM persos) AS persos'),
   };
   const testeurs = liste(env.ROLES_TESTEUR), admins = liste(env.ROLES_ADMIN);
@@ -132,9 +138,32 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
     return jeton;
   }
 
+  /** Parcours des nouveaux venus (maquette « Accueil : », idée C) : compteurs anonymes par jour, sans compte ni adresse
+   *  gardée. Une même adresse IP ne compte qu'une fois par étape et par jour (vérifié en mémoire, jamais écrit). */
+  const vusParcours = new Set();
+  let jourParcours = '';
+  function noterParcours(req, etape) {
+    if (!PARCOURS.includes(etape)) return false;
+    const jour = new Date(maintenant()).toISOString().slice(0, 10);
+    if (jour !== jourParcours) { jourParcours = jour; vusParcours.clear(); }
+    const ip = String(req.headers['cf-connecting-ip'] ?? req.socket?.remoteAddress ?? '');
+    const k = `${ip}|${etape}`;
+    if (vusParcours.has(k) || vusParcours.size > 200_000) return true;
+    vusParcours.add(k); q.parcours.run(jour, etape);
+    return true;
+  }
+
   /** Répond aux adresses des comptes ; renvoie false si l'adresse n'est pas la sienne. */
   async function route(req, res, url) {
     const p = url.pathname, m = req.method;
+    if (p === '/parcours') {
+      if (m === 'POST') return json(res, noterParcours(req, url.searchParams.get('etape') ?? '') ? 200 : 400, {}), true;
+      if (m === 'GET') {
+        const depuis = new Date(maintenant() - 30 * 86400e3).toISOString().slice(0, 10), jours = {};
+        for (const r of q.lireParcours.all(depuis)) (jours[r.jour] ??= {})[r.etape] = r.n;
+        return json(res, 200, { etapes: PARCOURS, jours }), true;
+      }
+    }
     if (m === 'GET' && p === '/connexion') {
       const retour = retourValide(url.searchParams.get('retour'));
       if (!retour) return json(res, 400, { erreur: 'retour' }), true;

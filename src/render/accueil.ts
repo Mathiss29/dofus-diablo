@@ -12,7 +12,9 @@ import { SORTS, niveauRequis, type SortOfficiel } from '../sim/sorts';
 import CLASSES_DOFUS from '../data/classes_dofus.json';
 import JOURNAL from '../data/journal.json';
 import { installable, installer, surChangement } from './installation';
-import { Compte } from './compte';
+import { API, Compte } from './compte';
+import { DISCORD_INVITATION } from './liens';
+import { Parcours } from './parcours';
 import { EMPLACEMENTS, NB_SECOURS, dernier, dureeTexte, exporter, importer, lireCimetiere, lirePersos, lireSecours, nomValide, persosEnLigne, prendreSecours, restaurerSecours, sauverPerso, supprimerPerso, type Perso } from './persos';
 
 /** Écrans hors du jeu (maquette unique, choix 17A à 23A, 19B, 22D, 30E) : accueil avec Incarnam en direct derrière,
@@ -46,6 +48,30 @@ const TEXTES: Record<string, { zone: string; slogan: string; ruban: string; lign
   },
 };
 const TEXTE = TEXTES[VERSION];
+/** Accueil des nouveaux venus (maquette « Accueil : » 2A, 4C, 9A) : ce qu'est le jeu, en quelques mots. */
+const PRESENTATION = {
+  pitch: 'Un action-RPG <em>en temps réel</em> dans le Monde des Douze.',
+  pastilles: ['Gratuit', 'Dans le navigateur', 'Sans téléchargement', `Accès anticipé ${VERSION}`],
+  lignes: ['Choisis ton <b>Iop</b>, ton <b>Crâ</b> ou ton <b>Osamodas</b>.', 'Nettoie Incarnam et Astrub, vague après vague.',
+    'Ramasse du butin <b>légendaire</b> qui change tes sorts.', 'Monte de niveau, forge, collectionne les apparences.'],
+  cartes: [['3 classes', 'Iop, Crâ et Osamodas'], ['Butin', '6 raretés, pouvoirs légendaires'],
+    ['Donjons', 'Vagues de monstres et boss officiels'], ['Monde ouvert', 'Incarnam et Astrub, près de 500 cartes']],
+};
+/** Vidéo de 12 s en boucle (Accueil 4A), dans public/assets/accueil ; vide : le cadre ne s'affiche pas. */
+const VIDEO = '';
+/** Questions de la fenêtre « C'est quoi Diablofus ? » (Accueil 10A, 5A). */
+const FAQ: [string, string][] = [
+  ['C\'est gratuit ?', 'Oui, entièrement : rien à acheter, aucune publicité.'],
+  ['Quel lien avec Dofus ?', 'C\'est un jeu de fan, fait avec les décors, monstres et sorts de Dofus. Mais ici tout se joue en temps réel, comme un Diablo : pas de tour, on esquive, on enchaîne.'],
+  ['Comment on joue ?', 'Au clavier et à la souris, sur PC. Clic gauche pour bouger et frapper, touches 1 à 6 pour les sorts, Espace pour bondir, I pour l\'inventaire, M pour la carte. Toutes les touches se changent dans les Options.'],
+  ['Où est ma sauvegarde ?', 'Dans ton navigateur, automatiquement. Connecte-toi avec Discord pour retrouver tes persos sur n\'importe quel PC.'],
+  ['On peut jouer à plusieurs ?', 'Le Bastion des Douze est partagé avec les autres joueurs connectés, et la coop à 4 arrive bientôt pour tous.'],
+  ['Il faut un gros PC ?', 'Non : un navigateur récent (Chrome, Edge, Firefox) suffit. Tu peux aussi l\'installer comme une application.'],
+];
+/** Nouveau venu : aucun perso sur ce navigateur ni dans le compte, aucun héros au cimetière. */
+/** Classe conseillée pour débuter (idée A) : badge à la création. */
+const DEBUTANT = 'iop';
+const nouveauVenu = () => lirePersos().every(p => !p) && lireCimetiere().length === 0;
 /** Pastilles de zones (Accueil 7A) : un clic ouvre la fiche de la zone. */
 const ZONES_ACC: { cle: string; nom: string; zone: string; sous: string[]; dispo: boolean; plus?: string }[] = [
   { cle: 'incarnam', nom: 'Incarnam', zone: 'incarnam', sous: ['450', '444', '445', '442', '443', '778', '449', '446'], dispo: true },
@@ -142,6 +168,8 @@ const CSS = `
 #acc .cls.on img{filter:none}
 #acc .cls.dim{opacity:.3}
 #acc .cls .soon{position:absolute;top:0;right:calc(.1*var(--u));font-size:calc(.5*var(--u));background:#0f100bdd;padding:0 calc(.25*var(--u));border-radius:calc(.3*var(--u));color:#e0925a}
+#acc .cls .soon.conseil{color:var(--ink);background:var(--lime)}
+#acc .conseilT{margin-left:calc(.4*var(--u));font-size:calc(.7*var(--u));font-weight:800;color:var(--ink);background:var(--lime);border-radius:calc(1*var(--u));padding:calc(.15*var(--u)) calc(.7*var(--u))}
 #acc .bar{height:calc(.55*var(--u));border-radius:9px;background:#33342a;overflow:hidden}
 #acc .bar i{display:block;height:100%;background:linear-gradient(90deg,#9ccd2c,#d3f46f)}
 #acc .dots{letter-spacing:calc(.15*var(--u));color:var(--lime)}
@@ -244,6 +272,24 @@ const CSS = `
 #acc .jcourt{margin:0 0 calc(.6*var(--u));padding-left:calc(1.2*var(--u));color:#c9c4ab;font-size:calc(.9*var(--u));line-height:1.55}
 #acc .jcourt li{margin:calc(.25*var(--u)) 0}
 #acc .cn h3{margin-top:calc(1.6*var(--u))}
+#acc .pitch{margin:0;font-family:var(--disp);font-weight:400;font-size:calc(2.3*var(--u));line-height:1.15;max-width:calc(40*var(--u));text-shadow:0 calc(.2*var(--u)) calc(.6*var(--u)) #000a;text-wrap:balance}
+#acc .pitch em{font-style:normal;color:var(--lime)}
+#acc .pastilles{display:flex;gap:calc(.5*var(--u));flex-wrap:wrap;max-width:calc(46*var(--u))}
+#acc .pastilles span{font-size:calc(.8*var(--u));font-weight:800;color:#d7ecb0;border:1px solid #4d5a2c;border-radius:calc(2*var(--u));padding:calc(.2*var(--u)) calc(.8*var(--u));background:#1a1d10cc}
+#acc .point b{color:#ffc14d}
+#acc .enligne{font-weight:800;font-size:calc(.85*var(--u));display:flex;align-items:center;gap:calc(.4*var(--u));text-shadow:0 1px 2px #000}
+#acc .enligne i{width:calc(.7*var(--u));height:calc(.7*var(--u));border-radius:50%;background:#6fdc5a;box-shadow:0 0 calc(.6*var(--u)) #6fdc5a}
+#acc .dbtn.discord{background:#5865f2;border-color:#7983f5;color:#fff;box-shadow:0 calc(.25*var(--u)) 0 #2f3699;font-size:calc(.85*var(--u));padding:calc(.5*var(--u)) calc(1*var(--u))}
+#acc .apercu{width:calc(36*var(--u));aspect-ratio:16/9;object-fit:cover;border:calc(.2*var(--u)) solid #e0b45a;border-radius:calc(.7*var(--u));box-shadow:0 calc(1*var(--u)) calc(3*var(--u)) #000a;background:#0d0e09}
+#acc .cartesB{width:calc(36*var(--u));display:grid;grid-template-columns:repeat(4,1fr);gap:calc(.6*var(--u))}
+#acc .cartesB div{background:#191a12e6;border:1px solid #3d3b2a;border-radius:calc(.5*var(--u));padding:calc(.7*var(--u));font-size:calc(.75*var(--u));font-weight:700;line-height:1.35;color:#c9c4ab}
+#acc .cartesB b{display:block;font-family:var(--disp);font-weight:400;color:#ffc14d;font-size:calc(1*var(--u));margin-bottom:calc(.2*var(--u))}
+#acc .lienfaq{all:unset;position:absolute;cursor:pointer;font-weight:800;font-size:calc(.9*var(--u));color:#e8e2c8;border-bottom:1px dashed #8a8566;text-shadow:0 1px 2px #000}
+#acc .lienfaq:hover,#acc .lienfaq:focus-visible{color:var(--lime);border-color:var(--lime)}
+#acc .faq{display:grid;gap:calc(.7*var(--u));margin-top:calc(.6*var(--u))}
+#acc .faq div{display:grid;gap:calc(.15*var(--u))}
+#acc .faq b{font-size:calc(.95*var(--u));color:#fbf3d4}
+#acc .faq span{font-size:calc(.82*var(--u));line-height:1.5;color:#c9c4ab;font-weight:600}
 #acc .qdn{display:grid;grid-template-columns:1fr 1fr;gap:calc(.6*var(--u));margin-top:calc(.8*var(--u))}
 #acc .qdn>div{display:grid;grid-template-columns:calc(2.2*var(--u)) 1fr;column-gap:calc(.7*var(--u));align-content:start;background:#25261bcc;border:1px solid #3c3c2a;border-radius:calc(.4*var(--u));padding:calc(.7*var(--u)) calc(.8*var(--u))}
 #acc .qdn img{width:calc(2.2*var(--u));height:calc(2.2*var(--u));object-fit:contain;grid-row:span 2}
@@ -381,14 +427,14 @@ export class Accueil {
 
   get visible() { return !this.root.hidden; }
   show(page: Page = 'accueil') {
-    this.root.hidden = false; this.precharger(); this.go(page);
+    this.root.hidden = false; this.precharger(); this.lireEnLigne(); this.go(page);
     if (!this.ecouteCompte) this.ecouteCompte = Compte.ecouter(() => {
       if (this.root.hidden) return;
       if (this.page === 'persos') this.choix = dernier() ?? Math.max(0, lirePersos().findIndex(p => p));
       this.render();
     });
     // « Quoi de neuf » (feuille de route 21A, Accueil 3E) : au lancement, une fois par carnet non lu, les nouveautés en 5 lignes
-    if (page === 'accueil' && carnetNonLu() && !this.quoiDeNeufVu) { this.quoiDeNeufVu = true; this.ouvrir('quoi-de-neuf'); }
+    if (page === 'accueil' && carnetNonLu() && !this.quoiDeNeufVu && !nouveauVenu()) { this.quoiDeNeufVu = true; this.ouvrir('quoi-de-neuf'); }
     if (!this.fiches) fiches().then(f => { this.fiches = f; if (!this.root.hidden && (this.page === 'creation' || this.page === 'persos')) this.render(); }, () => { /* hors ligne : anciennes planches */ });
   }
   /** Accueil 5A : les planches des persos (3 emplacements) et des classes jouables sont chargées dès l'accueil,
@@ -405,6 +451,8 @@ export class Accueil {
 
   private go(page: Page) {
     this.page = page; this.confirmer = -1; this.crea.err = ''; this.modal = null;
+    // parcours des nouveaux venus (idée C) : seulement tant qu'on n'a aucun perso
+    if (nouveauVenu() && (page === 'accueil' || page === 'creation')) Parcours.noter(page);
     if (page === 'persos') { const d = dernier(); this.choix = d ?? Math.max(0, lirePersos().findIndex(p => p)); }
     this.render();
   }
@@ -455,6 +503,7 @@ export class Accueil {
 
   // --- Accueil (17A) : Incarnam en direct derrière, titre, Continuer / Nouvelle partie --------------------------
   private pageAccueil(): string {
+    if (nouveauVenu()) return this.pageBienvenue();
     const l = lirePersos(), d = dernier(), p = d != null ? l[d] : null, n = l.filter(Boolean).length;
     const c = p && classe(p.classe);
     return `<div class="cover" style="background:linear-gradient(90deg,#0d0e09f0 6%,#0d0e09b0 30%,#0d0e0918 55%,transparent 70%)"></div>
@@ -474,11 +523,55 @@ export class Accueil {
       <span class="tiny">${EMPLACEMENTS} emplacements · sauvegarde automatique</span>
       ${installable() ? `<button type="button" class="dbtn" style="font-size:calc(.8*var(--u));padding:calc(.45*var(--u)) calc(.9*var(--u));color:#cfe9a0;border-color:#4d5a2c" data-installer title="Ouvre Diablofus dans sa propre fenêtre, avec une icône sur le bureau. Toujours à jour.">⤓ Installer le jeu</button>` : ''}</div>
     ${p ? this.derniereFois(p) : ''}
-    ${carnetNonLu() ? `<div class="abs card" style="right:calc(2*var(--u));top:calc(1.6*var(--u));padding:calc(.7*var(--u)) calc(1*var(--u));display:flex;gap:calc(1*var(--u));align-items:center;font-weight:800;font-size:calc(.85*var(--u))">
+    <div class="abs" style="right:calc(2*var(--u));top:calc(1.6*var(--u));display:flex;gap:calc(.8*var(--u));align-items:center">
+    ${this.communaute()}
+    ${carnetNonLu() ? `<div class="card" style="padding:calc(.7*var(--u)) calc(1*var(--u));display:flex;gap:calc(1*var(--u));align-items:center;font-weight:800;font-size:calc(.85*var(--u))">
       <span class="pastille" style="position:static">nouveau</span><span>Carnet du ${dateLongue(CARNETS[0].date)}<br><span class="tiny">${esc(CARNETS[0].titre)}</span></span>
-      <button type="button" class="mini" data-carnet="${CARNETS[0].date}">Lire</button></div>` : ''}
+      <button type="button" class="mini" data-carnet="${CARNETS[0].date}">Lire</button></div>` : ''}</div>
     <div class="abs" style="right:calc(2*var(--u));bottom:calc(1.6*var(--u));display:flex;gap:calc(.6*var(--u))">
       ${ZONES_ACC.map(z => `<button type="button" class="chip${z.cle === 'astrub' ? ' on' : z.dispo ? '' : ' off'}" style="cursor:pointer" data-zone="${z.cle}">${z.nom}${z.dispo ? '' : ' · bientôt'}</button>`).join('')}</div>`;
+  }
+
+  /** Joueurs en ligne (Accueil 9B, caché à 0) et invitation au Discord (6A). */
+  private communaute(): string {
+    return `${this.enLigne > 0 ? `<span class="enligne"><i></i>${this.enLigne} aventurier${this.enLigne > 1 ? 's' : ''} en ligne</span>` : ''}
+      <a class="dbtn discord" href="${DISCORD_INVITATION}" target="_blank" rel="noopener" data-discord-rejoindre>Rejoindre le Discord</a>`;
+  }
+  /** Joueurs en ligne lus sur le serveur (/sante), au plus une fois par minute. */
+  private enLigne = 0;
+  private enLigneT = 0;
+  private lireEnLigne() {
+    if (Date.now() - this.enLigneT < 60_000) return;
+    this.enLigneT = Date.now();
+    fetch(`${API}/sante`).then(r => r.json()).then((j: { enLigne?: number }) => {
+      const n = Math.max(0, Math.floor(Number(j.enLigne) || 0));
+      if (n !== this.enLigne) { this.enLigne = n; if (!this.root.hidden && this.page === 'accueil') this.render(); }
+    }, () => { /* serveur injoignable : rien d'affiché */ });
+  }
+
+  /** Accueil d'un nouveau venu (maquette « Accueil : » 2A 3A 4A 4C 5A 6B 9A 10A) : ce qu'est le jeu, comment y jouer,
+   *  un seul gros bouton. Les anciens joueurs gardent l'accueil de version. */
+  private pageBienvenue(): string {
+    const P = PRESENTATION;
+    return `<div class="cover" style="background:linear-gradient(90deg,#0d0e09f5 6%,#0d0e09c8 36%,#0d0e0930 60%,transparent 78%)"></div>
+    <div class="abs tiny" style="left:calc(11*var(--u));top:calc(2.2*var(--u));letter-spacing:.15em;font-weight:800">${TEXTE.zone}</div>
+    <img class="abs logoI" style="left:calc(10.4*var(--u));top:calc(3.6*var(--u))" src="${v('assets/logo/logo.webp')}" alt="Diablofus : Les Douze Enfers">
+    <h1 class="abs pitch" style="left:calc(11.5*var(--u));top:calc(15*var(--u))">${P.pitch}</h1>
+    <div class="abs pastilles" style="left:calc(11.5*var(--u));top:calc(21.4*var(--u))">${P.pastilles.map(x => `<span>${esc(x)}</span>`).join('')}</div>
+    <div class="abs" style="left:calc(11.5*var(--u));top:calc(24.9*var(--u));font-weight:700;font-size:calc(1.05*var(--u));line-height:1.75;max-width:calc(36*var(--u))">
+      ${P.lignes.map(x => `<div class="point">${x}</div>`).join('')}</div>
+    <div class="abs" style="left:calc(11.5*var(--u));top:calc(33.6*var(--u));display:flex;gap:calc(1*var(--u));align-items:center">
+      <button type="button" class="lbtn" style="font-size:calc(1.6*var(--u));padding:calc(.9*var(--u)) calc(2.6*var(--u))" data-go="creation">Jouer gratuitement</button>
+      <button type="button" class="dbtn" style="font-size:calc(.85*var(--u));padding:calc(.5*var(--u)) calc(1*var(--u))" data-go="persos">Mes personnages</button></div>
+    <div class="abs" style="left:calc(11.5*var(--u));top:calc(39.4*var(--u));display:flex;gap:calc(1*var(--u));align-items:center">
+      ${Compte.etat === 'connecte' ? '' : `<button type="button" class="mini" data-discord style="background:#5865f2;border-color:#7983f5;padding:calc(.45*var(--u)) calc(1*var(--u))">Se connecter avec Discord</button>`}
+      <span class="tiny">${Compte.etat === 'connecte' ? 'Connecté : tes persos sont sauvés en ligne' : 'Facultatif · sauvegarde automatique dans ton navigateur'}</span>
+      ${installable() ? `<button type="button" class="dbtn" style="font-size:calc(.8*var(--u));padding:calc(.45*var(--u)) calc(.9*var(--u));color:#cfe9a0;border-color:#4d5a2c" data-installer title="Ouvre Diablofus dans sa propre fenêtre, avec une icône sur le bureau. Toujours à jour.">⤓ Installer le jeu</button>` : ''}</div>
+    <div class="abs" style="left:calc(11.5*var(--u));top:calc(42.6*var(--u))" ><span class="tiny">⌨ Clavier + souris · PC conseillé</span></div>
+    <div class="abs" style="right:calc(2*var(--u));top:calc(1.6*var(--u));display:flex;gap:calc(.8*var(--u));align-items:center">${this.communaute()}</div>
+    ${VIDEO ? `<video class="abs apercu" style="right:calc(2.4*var(--u));top:calc(7*var(--u))" src="${img(VIDEO)}" autoplay muted loop playsinline aria-label="Douze secondes de jeu"></video>` : ''}
+    <div class="abs cartesB" style="right:calc(2.4*var(--u));${VIDEO ? 'top:calc(29.4*var(--u))' : 'bottom:calc(5.4*var(--u))'}">${P.cartes.map(([t, x]) => `<div><b>${esc(t)}</b>${esc(x)}</div>`).join('')}</div>
+    <button type="button" class="abs lienfaq" style="right:calc(2.4*var(--u));bottom:calc(2*var(--u))" data-faq>C'est quoi Diablofus ?</button>`;
   }
 
   /** « La dernière fois… » (Accueil 4C) : la dernière partie du perso, sur une note de parchemin. */
@@ -526,7 +619,7 @@ export class Accueil {
     <div class="abs tiny" style="left:calc(8.4*var(--u));top:calc(1.4*var(--u));font-weight:800">Créer un personnage</div>
     <button type="button" class="abs dbtn" style="right:calc(2*var(--u));top:calc(1*var(--u));font-size:calc(.8*var(--u));padding:calc(.35*var(--u)) calc(.9*var(--u))" data-go="accueil">Retour</button>
     <div class="abs" style="left:calc(8.4*var(--u));top:calc(4.2*var(--u));width:calc(23*var(--u))">
-      <div style="display:flex;align-items:center;gap:calc(.6*var(--u));font-weight:800;font-size:calc(1.15*var(--u))"><img src="${img(`c_${c.cle}.png`)}" alt="" style="height:calc(1.9*var(--u))">${esc(c.titre)}</div>
+      <div style="display:flex;align-items:center;gap:calc(.6*var(--u));font-weight:800;font-size:calc(1.15*var(--u))"><img src="${img(`c_${c.cle}.png`)}" alt="" style="height:calc(1.9*var(--u))">${esc(c.titre)}${c.cle === DEBUTANT ? '<span class="conseilT">Conseillé pour débuter</span>' : ''}</div>
       <div class="ttl" style="font-size:calc(5.2*var(--u));margin:calc(.3*var(--u)) 0 calc(.7*var(--u))">${esc(c.nom)}</div>
       <div class="card" style="padding:0 0 calc(.9*var(--u))">
         <div class="panelT">${roles.map(r => r[0]).join(' · ')}</div>
@@ -577,7 +670,7 @@ export class Accueil {
       `<button type="button" class="chip${s.filtre === f ? ' on' : ''}" data-filtre="${f}" style="font-size:calc(.7*var(--u));padding:calc(.3*var(--u)) calc(.9*var(--u))">${f}</button>`).join('')}</div>
     <div class="strip">${CLASSES.map(k => {
       const dim = s.filtre !== 'Toutes' && (k.roles[s.filtre] ?? 0) < 7;
-      return `<button type="button" class="cls${k.cle === s.cle ? ' on' : ''}${JOUABLES.has(k.cle) ? ' play' : ''}${dim ? ' dim' : ''}" data-cls="${k.cle}"><img src="${tete(k, s.sexe)}" alt="">${esc(k.nom)}${JOUABLES.has(k.cle) ? '' : '<span class="soon">bientôt</span>'}</button>`;
+      return `<button type="button" class="cls${k.cle === s.cle ? ' on' : ''}${JOUABLES.has(k.cle) ? ' play' : ''}${dim ? ' dim' : ''}" data-cls="${k.cle}"><img src="${tete(k, s.sexe)}" alt="">${esc(k.nom)}${JOUABLES.has(k.cle) ? (k.cle === DEBUTANT ? '<span class="soon conseil">débutant</span>' : '') : '<span class="soon">bientôt</span>'}</button>`;
     }).join('')}</div>`;
   }
   /** Les 4 premiers sorts officiels de la classe (Dofus 3), avec le niveau où on les obtient. */
@@ -728,6 +821,10 @@ export class Accueil {
         <div class="qdn">${l.map(e => `<div>${icone(e.icone) ? `<img src="${icone(e.icone)}" alt="">` : '<span></span>'}<b>${esc(e.titre)}</b><span>${esc(e.phrase)}</span></div>`).join('')}</div>
         <div style="display:flex;gap:calc(.8*var(--u));margin-top:calc(1*var(--u))"><button type="button" class="lbtn" data-carnet="${c.date}">Lire tout le carnet</button>
         <button type="button" class="dbtn" data-fermer-btn>Plus tard</button></div>`;
+    } else if (k === 'faq') {
+      this.modal = `<h2>C'est quoi Diablofus ?</h2><div class="faq">${FAQ.map(([q, r]) => `<div><b>${esc(q)}</b><span>${esc(r)}</span></div>`).join('')}</div>
+        <div style="display:flex;gap:calc(.8*var(--u));margin-top:calc(1*var(--u))"><button type="button" class="lbtn" data-go="creation">Jouer gratuitement</button>
+        <a class="dbtn discord" href="${DISCORD_INVITATION}" target="_blank" rel="noopener">Poser une question sur Discord</a></div>`;
     } else if (k === 'cimetiere') {
       const l = lireCimetiere();
       this.modal = `<h2>Cimetière des héros</h2><div class="tiny">Les héros Hardcore tombés au combat. Leur emplacement est libre, leur nom reste ici.</div>
@@ -762,6 +859,7 @@ export class Accueil {
     on('[data-installer]', () => installer().then(ok => { this.render(); if (ok) this.toast('Diablofus est installé : il se lance depuis le bureau ou le menu Démarrer'); }));
     // fenêtres par-dessus (fiche de zone, cimetière, copies de secours)
     on('[data-zone]', e => this.ouvrir(e.dataset.zone!));
+    on('[data-faq]', () => this.ouvrir('faq'));
     // journal : ouvrir un carnet (le dernier ouvert = lu, la pastille s'éteint), sommaire
     on('[data-carnet]', e => { this.modal = null; this.carnet = e.dataset.carnet || null; if (this.carnet === CARNETS[0]?.date) marquerLu(); this.page = 'journal'; this.render(); this.root.querySelector('.jr')?.scrollTo(0, 0); });
     on('[data-rub]', e => this.root.querySelector(`#rub-${e.dataset.rub}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
@@ -866,6 +964,7 @@ export class Accueil {
     const now = Date.now();
     const p: Perso = { nom, classe: c.cle, sexe: s.sexe, hardcore: s.hardcore, tuto: s.tuto, cree: now, maj: now, temps: 0, lieu: 'Incarnam', zones: [] };
     const app = this.appCrea(); if (app) p.apparence = app;
+    if (nouveauVenu()) Parcours.noter('perso');
     sauverPerso(libre, p);
     s.nom = ''; s.hardcore = false; s.tuto = true; s.tete = 0; s.couleurs = null;
     this.jouer(libre);

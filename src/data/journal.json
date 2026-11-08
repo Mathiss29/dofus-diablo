@@ -835,6 +835,15 @@
               "Touche P",
               "Perso en ligne"
             ]
+          },
+          {
+            "titre": "Un accueil pour les nouveaux",
+            "phrase": "La première visite présente le jeu, avec un gros bouton « Jouer gratuitement » et le Discord.",
+            "details": "Le « Quoi de neuf » attend ta deuxième visite. Un lien « C'est quoi Diablofus ? » répond aux questions courantes.",
+            "icone": "journal",
+            "etiquettes": [
+              "Accueil"
+            ]
           }
         ],
         "Le monde": [
@@ -1103,6 +1112,7 @@
           "Les joueurs ignorés ne peuvent plus t'écrire ni t'inviter : le serveur ne leur transmet plus rien.",
           "Une chasse aux plantages sans navigateur : quatre joueurs jouent seuls des milliers d'images à chaque PR.",
           "Préparation du monde partagé : en groupe, chaque joueur aura ses quêtes, et les monstres compteront pour tous.",
+          "Sur téléphone, un écran léger explique que le jeu se joue sur PC, sans tout charger.",
           "Monde partagé : chacun ses portes, son point de retour, sa récolte et ses fenêtres dans la même partie."
         ]
       }
