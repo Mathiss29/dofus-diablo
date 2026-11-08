@@ -1,0 +1,49 @@
+name: Serveur
+# Met à jour le serveur multijoueur sur le VPS (dossier /home/diablofus seulement), voir serveur/LISEZMOI.md.
+# Ne fait rien tant que les secrets VPS_HOTE, VPS_CLE et VPS_EMPREINTE ne sont pas posés.
+on:
+  push:
+    branches: [main]
+    paths: ['serveur/**', '.github/workflows/serveur.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: serveur
+  cancel-in-progress: false
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: serveur } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm ci
+      - run: npm test
+  deployer:
+    needs: tests
+    runs-on: ubuntu-latest
+    env:
+      HOTE: ${{ secrets.VPS_HOTE }}
+    steps:
+      - name: Secrets posés ?
+        id: pret
+        run: if [ -n "$HOTE" ]; then echo "ok=1" >> "$GITHUB_OUTPUT"; else echo "Secrets VPS absents : rien à déployer."; fi
+      - uses: actions/checkout@v4
+        if: steps.pret.outputs.ok
+      - name: Clé SSH
+        if: steps.pret.outputs.ok
+        env:
+          CLE: ${{ secrets.VPS_CLE }}
+          EMPREINTE: ${{ secrets.VPS_EMPREINTE }}
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "$CLE" > ~/.ssh/vps && chmod 600 ~/.ssh/vps
+          printf '%s %s\n' "$HOTE" "$EMPREINTE" > ~/.ssh/known_hosts
+      - name: Envoi et redémarrage
+        if: steps.pret.outputs.ok
+        run: |
+          SSH="ssh -i ~/.ssh/vps -o StrictHostKeyChecking=yes -o BatchMode=yes"
+          rsync -az --delete --exclude node_modules --exclude '*.test.mjs' -e "$SSH" serveur/ "diablofus@$HOTE:app/"
+          $SSH "diablofus@$HOTE" 'cd ~/app && PATH=$HOME/node/bin:$PATH npm ci --omit=dev --no-audit --no-fund && echo "${{ github.sha }}" > VERSION && sudo /usr/bin/systemctl restart diablofus && sleep 3 && sudo /usr/bin/systemctl is-active diablofus && curl -fsS http://127.0.0.1:3100/sante'
