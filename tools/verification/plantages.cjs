@@ -3,7 +3,7 @@
 // (salon, invité, changement de zone de l'hôte, départ de l'invité), avec chaque classe. Toute erreur de la page, toute
 // erreur en console ou une image qui ne bouge plus fait échouer la chasse (code de sortie 1).
 // Jeu servi par `npx vite preview --port 4173`, construit avec VITE_ASSETS_URL=https://assets.diablofus.com et
-// VITE_COOP_URL=ws://localhost:3100/ws, serveur lancé à côté (`cd serveur && node index.mjs`). Lancé à chaque PR (ci.yml).
+// VITE_COOP_URL=ws://localhost:3100/ws, serveur lancé à côté (`cd serveur && node index.mjs`). Lancé à la main (Actions › Robot, robot.yml).
 // SORTIE=dossier : captures des écrans au moment d'un problème. RAPIDE=1 : moins de temps de jeu par étape.
 // CAS=seul:iop, CAS=coop:0 (0 à 3) ou CAS=serveur (partie tenue par le serveur) : une seule étape (la CI lance les 9 en même temps).
 const { chromium } = require('playwright');

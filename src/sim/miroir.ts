@@ -46,7 +46,7 @@ export const COOP = {
 /** Champs jamais envoyés : données du jeu (recréées de l'autre côté), sac et progression propres à chaque joueur, caches. */
 const REFUS: Record<Sorte | 'a', Set<string>> = {
   j: new Set(['cls', 'items', 'bag', 'resources', 'codex', 'learned', 'zonesVues', 'metiers', 'prereglages', 'ames', 'apparats', 'dofus',
-    'commandeFM', 'cleDonjon', 'recetteSuivie', 'zaaps', '_pouvoirs', 'almanaxJour', 'codexOuvert', 'lootFilter', 'autoBrisage', 'kamas', 'v03', 'repathT', 'bufferT', 'buffer']),
+    'commandeFM', 'quetes', 'cleDonjon', 'recetteSuivie', 'zaaps', '_pouvoirs', 'almanaxJour', 'codexOuvert', 'lootFilter', 'autoBrisage', 'kamas', 'v03', 'repathT', 'bufferT', 'buffer']),
   // minuteries de l'IA des monstres : l'hôte seul s'en sert
   m: new Set(['def', 'atkCd', 'spellCd', 'sigCd', 'cheminT', 'wanderT', 'wanderX', 'wanderY', 'repathT']),
   b: new Set(['def']),
