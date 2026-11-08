@@ -1,3 +1,4 @@
+import { Coop } from './coop';
 import { RUNES } from '../sim/forgemagie';
 import { GAME_DATA, ITEMS, QUETES } from '../sim/data';
 import { DOFUS } from '../sim/dofus';
@@ -222,14 +223,16 @@ export class PanneauTest {
     document.body.append(this.badge, this.el);
     this.niveau = world.player.level;
     this.editeur = new EditeurPlacement(world, c => actions.envoyer(c), () => { if (this.ouvert && this.onglet === 'placement') this.dessiner(); });
+    this.finCoop = Coop.ecouter(() => { const b = this.el.querySelector('.coop'); if (b && this.ouvert) { b.innerHTML = this.coop(); this.lier(); } });
   }
+  private finCoop: () => void;
   get ongletPlacement() { return this.onglet === 'placement'; }
   /** Édition du placement en cours : un clic en jeu pose ou retire un point au lieu de faire marcher. */
   get editionPlacement() { return this.ouvert && this.onglet === 'placement' && this.editeur.pose && !!this.world.zone.open; }
   get ouvert() { return !this.el.hidden; }
   basculer() { this.el.hidden = !this.el.hidden; if (!this.el.hidden) { this.niveau = this.world.player.level; this.dessiner(); } }
   private lignesDev: LigneDev[] | null = null;
-  destroy() { this.el.remove(); this.badge.remove(); this.editeur.destroy(); }
+  destroy() { this.el.remove(); this.badge.remove(); this.editeur.destroy(); this.finCoop(); }
 
   /** Un coup donné à un monstre (événement « hit » de la simulation). */
   noterCoup(n: number) { this.coups.push({ t: this.world.time, n }); this.dernierCoup = n; }
@@ -326,6 +329,13 @@ export class PanneauTest {
     tous('[data-retirer]', () => this.actions.envoyer({ k: 'retirer' }));
     tous('[data-allies-retirer]', () => this.actions.envoyer({ k: 'alliesRetirer' }));
     tous('[data-allie]', b => this.actions.envoyer({ k: 'allie', classe: b.dataset.allie! }));
+    // Coop (maquette « Multi : » 11A) : salon à code sur le serveur
+    tous('[data-coop-creer]', () => Coop.creer());
+    tous('[data-coop-quitter]', () => Coop.quitter());
+    const cc = q<HTMLInputElement>('#pt-coop');
+    const rejoindre = () => { if (cc) Coop.rejoindre(cc.value); };
+    if (cc) cc.onkeydown = e => { if (e.key === 'Enter') rejoindre(); };
+    tous('[data-coop-rejoindre]', rejoindre);
     // Butin (1C, 8A+8B+8C)
     const rb = q<HTMLInputElement>('#pt-but');
     if (rb) rb.oninput = () => { this.rechercheButin = rb.value; const t = q('#pt-butt'); if (t) t.innerHTML = this.tableDev(); this.lierTri(); };
@@ -479,7 +489,23 @@ export class PanneauTest {
       <h4>Alliés (essai du multi)</h4>
       <div class="l" style="justify-content:flex-start;flex-wrap:wrap;gap:4px">${Object.entries(GAME_DATA.classes).map(([k, d]) => `<button type="button" class="b g" data-allie="${k}">+ ${esc(d.name)}</button>`).join('')}</div>
       <p class="note">Un 2e joueur à ton niveau, conduit par le jeu : il te suit et frappe les monstres réveillés. 3 alliés au plus.</p>
-      <button type="button" class="b g" data-allies-retirer>Retirer les alliés</button>`;
+      <button type="button" class="b g" data-allies-retirer>Retirer les alliés</button>
+      <h4>Jouer à plusieurs (essai)</h4>
+      <div class="coop">${this.coop()}</div>`;
+  }
+  /** Coop (maquette « Multi : » 3A, 11A) : créer un salon, ou rejoindre celui d'un ami avec son code. */
+  private coop() {
+    const c = Coop;
+    if (c.etat === 'connexion') return '<p class="note">Connexion au serveur…</p>';
+    if (c.etat === 'salon' && c.hote) return `<div class="l"><span>Code du salon</span><b style="font-size:20px;letter-spacing:3px;user-select:all">${esc(c.code ?? '')}</b></div>
+      <p class="note">${c.nbJoueurs} joueur${c.nbJoueurs > 1 ? 's' : ''} sur 4. Ton ami ouvre sa partie de test (diablofus.com/#test), F1 › Monstres, et tape ce code : son perso arrive à côté de toi. La partie tourne chez toi.</p>
+      <button type="button" class="b g" data-coop-quitter>Fermer le salon</button>`;
+    if (c.etat === 'salon') return `<p class="note">Salon <b>${esc(c.code ?? '')}</b> : tu joues dans la partie de l'hôte, avec ton perso. Rien n'est gardé ici, tu retrouves ta partie en quittant.</p>
+      <button type="button" class="b g" data-coop-quitter>Quitter le salon</button>`;
+    return `${c.erreur ? `<p class="note" style="color:#ff9a5a">${esc(c.erreur)}</p>` : ''}
+      <button type="button" class="b" data-coop-creer>Créer un salon</button>
+      <div class="l"><input type="text" id="pt-coop" maxlength="5" placeholder="Code d'un ami" autocomplete="off" style="text-transform:uppercase;width:140px"><button type="button" class="b g" data-coop-rejoindre>Rejoindre</button></div>
+      <p class="note">Premier essai de la coop : 2 à 4 joueurs, les monstres et le butin sont chez l'hôte. Bon terrain : une arène de donjon (Crypte de Kardorim).</p>`;
   }
   /** Toutes les lignes de butin du jeu, avec la chance réelle pour le perso de test (sa Prospection, son Chasseur). */
   private lignes(): LigneDev[] {

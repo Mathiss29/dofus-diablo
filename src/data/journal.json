@@ -741,6 +741,16 @@
             "etiquettes": [
               "Touche O"
             ]
+          },
+          {
+            "titre": "Premier essai de la coop",
+            "phrase": "Crée un salon et donne son code : un ami rejoint ta partie avec son propre perso et combat à tes côtés.",
+            "details": "Partie de test, F1 › Monstres › Jouer à plusieurs. La partie tourne chez l'hôte ; bon terrain : l'arène de la Crypte de Kardorim.",
+            "icone": "perso",
+            "etiquettes": [
+              "Partie de test",
+              "Touche F1"
+            ]
           }
         ],
         "Le monde": [

@@ -290,6 +290,12 @@ export class World {
     this.players.push(q);
     return q;
   }
+  /** Fait agir q (this.player = q) le temps de fn : en coop, l'hôte y restaure ou exporte le perso d'un invité. */
+  commeJoueur<T>(q: Player, fn: () => T): T {
+    const a = this.acteur;
+    this.acteur = q;
+    try { return fn(); } finally { this.acteur = a; }
+  }
   /** Retire un joueur (pas celui de cet écran) ; ses bêtes partent avec lui. */
   retirerJoueur(q: Player): boolean {
     const i = this.players.indexOf(q);
@@ -1023,6 +1029,8 @@ export class World {
   }
 
   emit(e: SimEvent) { this.events.push(e); this.quetes?.observer(e); }
+  /** Coop, chez l'invité : événements venus de l'hôte, rejoués pour l'affichage seulement (pas de quête qui avance). */
+  rejouer(evs: SimEvent[]) { this.events.push(...evs); }
   drainEvents(): SimEvent[] { const e = this.events; this.events = []; return e; }
   walkable(x: number, y: number) { return this.map.walkable(x, y); }
   /** Chemin à pied (A* sur les cases de Dofus) vers un point. */

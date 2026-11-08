@@ -17,3 +17,34 @@ test('santé et ping', async () => {
   await new Promise(ok => refus.on('error', ok));
   await new Promise(r => s.close(r));
 });
+
+test('salon de coop : code, relais hôte ↔ invité, fin quand l’hôte part', async () => {
+  const s = creerServeur();
+  await new Promise(r => s.listen(0, '127.0.0.1', r));
+  const url = `ws://127.0.0.1:${s.address().port}/ws`;
+  const client = async () => {
+    const ws = new WebSocket(url, { origin: 'https://diablofus.com' }), file = [], attente = [];
+    ws.on('message', d => { const m = JSON.parse(String(d)); const a = attente.shift(); if (a) a(m); else file.push(m); });
+    await new Promise(ok => ws.on('open', ok));
+    return { ws, envoi: m => ws.send(JSON.stringify(m)), lire: () => file.length ? Promise.resolve(file.shift()) : new Promise(ok => attente.push(ok)) };
+  };
+  const h = await client(), i = await client();
+  h.envoi({ k: 'creer' });
+  const salon = await h.lire();
+  assert.equal(salon.hote, true);
+  assert.match(salon.code, /^[A-Z2-9]{5}$/);
+  i.envoi({ k: 'rejoindre', code: 'ZZZZZ' });
+  assert.equal((await i.lire()).k, 'refus');
+  i.envoi({ k: 'rejoindre', code: salon.code.toLowerCase() });
+  const moi = await i.lire();
+  assert.deepEqual([moi.hote, moi.id], [false, 2]);
+  assert.deepEqual(await h.lire(), { k: 'arrivee', id: 2 });
+  i.envoi({ k: 'envoi', d: { k: 'entree', x: 1 } });
+  assert.deepEqual(await h.lire(), { k: 'recu', de: 2, d: { k: 'entree', x: 1 } });
+  h.envoi({ k: 'envoi', a: 2, d: { k: 'instantane', n: 1 } });
+  assert.deepEqual(await i.lire(), { k: 'recu', de: 1, d: { k: 'instantane', n: 1 } });
+  h.ws.close();
+  assert.deepEqual(await i.lire(), { k: 'fin', raison: 'hote' });
+  i.ws.close();
+  await new Promise(r => s.close(r));
+});
