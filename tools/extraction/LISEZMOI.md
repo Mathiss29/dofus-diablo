@@ -367,3 +367,10 @@ Le ciel (`ciel.webp`) est celui d'Incarnam.
 L'île de Brâkmar est rendue en grand (`ile_brakmar`, posée aux 3/4) avec les particules et les lumières officielles de ses pièces :
 lancer d'abord `particules.py` sur les 4 cartes de Brâkmar (liste `{"-26,36": [212861954], "-25,36": [212862466], "-26,37": [212861955],
 "-25,37": [212862467]}`, images de `cache-dofus/particules.tar.gz`) puis `PARTICULES_BRAKMAR=<sortie> TEXDIR=… python3 -I bastion.py …`.
+Ensuite, `python3 -I tools/extraction/zaap_bastion.py <particules.webp d'Astrub> <particules.webp du Bastion>` remet le tourbillon
+officiel du Zaap d'Astrub sur l'arche du Bastion (bastion.py réécrit les particules), puis `node tools/hebergement/envoi.mjs`.
+
+## Zaaps (`zaaps.py`, maquette « Zaap : », 8 nov. 2026)
+
+`python3 -I tools/extraction/zaaps.py <zone>` écrit les Zaaps officiels d'une zone (repères « Zaap » de monde.json, arche = particule
+« Vortex » de particules.json) dans `zones.json`. À lancer pour chaque nouvelle zone exportée (Amakna…).

@@ -164,6 +164,8 @@ describe('Bastion des Douze (maquette Ville : 1A 2A 3C 7A+7B 10B)', () => {
     const b = monde('bastion'), wg = b.worldGrid!, a = wg.cellToWorld(wg.cellOf('bastion', GAME_DATA.zones.bastion.open!.bastion!.zaap));
     const ev = pas(b, 300, { ...NO_INPUT, dest: a });
     expect(ev.filter(e => e.k === 'arche')).toHaveLength(1);
+    // survol et clic (maquette « Zaap : » 1A) : le dessin du Zaap du Bastion est le point visé
+    expect(b.zaapRefuge()).toMatchObject({ name: 'Zaap du Bastion', x: a.x, y: a.y });
     b.player.resources['548'] = 1;
     expect(b.rappel('548')).toBe(false);
     expect(b.player.resources['548']).toBe(1);
