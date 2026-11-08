@@ -1,0 +1,2 @@
+# /etc/sudoers.d/diablofus : le déploiement GitHub peut seulement redémarrer le service Diablofus et demander s'il tourne.
+diablofus ALL=(root) NOPASSWD: /usr/bin/systemctl restart diablofus, /usr/bin/systemctl is-active diablofus

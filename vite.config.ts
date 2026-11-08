@@ -6,4 +6,6 @@ export default defineConfig({
   // version du build pour casser le cache des images (src/render/assetUrl.ts)
   define: { __BUILD__: JSON.stringify(Date.now().toString(36)) },
   build: { target: 'es2022', chunkSizeWarningLimit: 2000 },
+  // le serveur multijoueur (serveur/) a ses propres tests (node --test)
+  test: { exclude: ['**/node_modules/**', 'serveur/**'] },
 });

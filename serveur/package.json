@@ -1,0 +1,14 @@
+{
+  "name": "diablofus-serveur",
+  "private": true,
+  "type": "module",
+  "description": "Serveur multijoueur de Diablofus (coop, Bastion partagé, comptes) : voir LISEZMOI.md",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "start": "node index.mjs",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "ws": "8.18.0"
+  }
+}
