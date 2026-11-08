@@ -221,7 +221,8 @@
           "Osamodas : chaque bête a son petit cadre sous le tien (portrait, PV, PA, temps d'Éveil ou de domptage), et les sorts de l'Osamodas et de ses 14 bêtes jouent leurs effets officiels de Dofus 3.",
           "Aides de quête : un losange vert flotte au-dessus des monstres qui comptent pour tes quêtes, le Zaap le plus proche du but porte une étoile dans la fenêtre du Zaap, un clic sur les objectifs du suivi ouvre la carte (M) sur le but, et la flèche grossit puis s'efface avec un petit son quand le but entre à l'écran.",
           "356 familiers et familiers d'apparat dessinés au lieu de 148 : bien plus de choix chez Emp et dans la garde-robe.",
-          "Version 0.3 en essai dans la partie de test (diablofus.com/#test) : un Légendaire porte maintenant un des 40 pouvoirs officiels de ta classe, propres à son emplacement (Bond +1 case de portée, Colère de Iop 1 PA de moins, Flèche Cinglante +1 charge…), ou un des 5 pouvoirs maison. Il vise d'abord un sort que tu connais ; un pouvoir d'un sort à venir ou d'une autre classe s'affiche en gris."
+          "Version 0.3 en essai dans la partie de test (diablofus.com/#test) : un Légendaire porte maintenant un des 40 pouvoirs officiels de ta classe, propres à son emplacement (Bond +1 case de portée, Colère de Iop 1 PA de moins, Flèche Cinglante +1 charge…), ou un des 5 pouvoirs maison. Il vise d'abord un sort que tu connais ; un pouvoir d'un sort à venir ou d'une autre classe s'affiche en gris.",
+          "0.3 en partie de test : 256 équipements officiels du niveau 26 au 40 et 46 nouvelles panoplies. Ils tombent des monstres d'Astrub selon le vrai butin de Dofus : le Bouftou Royal lâche enfin sa panoplie royale comme équipement (avant, elle arrivait dans le sac comme une ressource)."
         ],
         "Le monde": [
           "Le prochain donjon de la quête suivie est marqué sur la carte (M).",

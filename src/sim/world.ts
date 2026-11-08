@@ -8,7 +8,7 @@ import { AGGRO, CASE, Monster, TOUR, type Cible } from './monster';
 import { jetOfficiel } from './danger';
 import { poolNiveau, rangDe, tirerButin, type CtxButin, type Rang } from './butin';
 import { briser, chanceRune, coutKamas, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
-import { V03_PUBLIC } from './pouvoirs';
+import { NIVEAU_OBJETS_02, V03_PUBLIC } from './pouvoirs';
 import { FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, recycleResource, recycleValue, rollItem, type EquipSlot, type Item, type ItemsData, type Rarity } from './items';
 import { Player } from './player';
 import { Bete, BETES, REGLES_BETES, type EffetBete, type SortBete } from './bete';
@@ -215,7 +215,7 @@ export class World {
     this.player.v03 = V03_PUBLIC || !!opts.test;
     if (opts.items) {
       this.player.items = opts.items;
-      this.equipByLevel = Object.entries(opts.items.equipment).filter(([, d]) => !d.familier).map(([id, d]) => ({ id, level: d.level }));
+      this.equipByLevel = Object.entries(opts.items.equipment).filter(([, d]) => !d.familier && (this.player.v03 || d.level <= NIVEAU_OBJETS_02)).map(([id, d]) => ({ id, level: d.level }));
       for (const [id, d] of Object.entries(opts.items.equipment)) for (const m of d.familier?.monstres ?? []) (this.familiersDe[m] ??= []).push(id);
       // sac vide au départ (Mathis, 2026-11-06) : l'équipement vient du tutoriel (panoplie de l'Intrépide, Arc de Chasse du Crâ)
     }
