@@ -13,7 +13,7 @@ describe('sauvegarde du personnage', () => {
   it('un aller-retour garde niveau, points, sac, équipement, barre et position', () => {
     const a = nouveau('cra');
     const p = a.player;
-    p.level = 7; p.xp = 123; p.points = 12; p.kamas = 456; p.base = { agilite: 10 };
+    p.level = 7; p.xp = 123; p.points = 20; p.kamas = 456; p.base = { agilite: 10 };
     a.donnerObjet('1942');
     const hunt = p.bag[0];
     expect(p.equip(hunt.uid)).toBe(true);
@@ -24,7 +24,7 @@ describe('sauvegarde du personnage', () => {
     const b = nouveau('cra', 99);
     restaurerJoueur(b, json);
     const r = b.player;
-    expect([r.level, r.xp, r.points, r.kamas, r.base.agilite]).toEqual([7, 123, 12, 456, 10]);
+    expect([r.level, r.xp, r.points, r.kamas, r.base.agilite]).toEqual([7, 123, 20, 456, 10]);
     expect(Object.values(r.equipment).map(i => i!.id)).toEqual([hunt.id]);
     expect(r.bag).toHaveLength(0);
     expect(r.bar).toEqual(p.bar);

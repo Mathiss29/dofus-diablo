@@ -91,7 +91,39 @@ const CSS = `
 .dw .win{pointer-events:auto;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#24231f;border:1px solid #0d0c0a;
  box-shadow:inset 0 0 0 1px #4a4840,0 12px 40px #000c;border-radius:4px;display:grid;grid-template-rows:38px 1fr;overflow:hidden}
 .dw .win.inv{width:min(910px,96vw);height:min(720px,92vh)}
-.dw .win.car{width:min(440px,96vw);height:min(640px,92vh)}
+.dw .win.car{width:min(470px,96vw);height:auto;max-height:min(700px,94vh);grid-template-rows:46px minmax(0,1fr) auto}
+.dw .carac2{padding:8px 12px 10px;overflow:auto;display:grid;gap:6px;align-content:start}
+.dw .clv{display:flex;gap:10px;align-items:center;font-weight:600;font-size:14px;color:#f4efe0;padding:2px 4px}
+.dw .clv .cxp{flex:1;height:8px;background:#111;border:1px solid #000;border-radius:4px;overflow:hidden}.dw .clv .cxp i{display:block;height:100%;background:linear-gradient(#c9f04c,#7fb81e)}
+.dw .clv small{font-weight:400;color:#c9c4ab;font-size:12px}
+.dw .chead,.dw .crow{display:grid;grid-template-columns:1.25fr .6fr 1fr .8fr;align-items:center}
+.dw .chead{font-size:12px;color:#c9c4ab;padding:2px 8px}.dw .chead span:nth-child(2),.dw .chead span:nth-child(3){text-align:center}.dw .chead span:last-child{text-align:right}
+.dw .crows{display:grid;gap:4px}
+.dw .crow{background:#4a4334b8;border:1px solid #0006;border-radius:5px;padding:2px 8px;position:relative}
+.dw .crow:hover{background:#5a503dc8}
+.dw .cnom{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:8px;align-items:center;font-weight:600;font-size:12.5px;color:#f4efe0}
+.dw .cnom .blason{grid-row:1/3;width:30px;height:34px;display:grid;place-items:center;background:#2a201b;clip-path:polygon(0 0,100% 0,100% 72%,50% 100%,0 72%);border-top:2px solid #6b4b3a}
+.dw .cnom .blason img{width:20px;height:20px}
+.dw .cnom b{font-size:15px;line-height:1.1}
+.dw .ccout{display:flex;gap:4px;justify-content:center;align-items:center;color:#b9e54b;font-weight:bold;font-size:14px}.dw .ccout img{width:15px}
+.dw .cdist{display:flex;gap:4px;justify-content:center}
+.dw .cdist button{width:24px;height:24px;padding:0;border:1px solid #000;border-radius:3px;background:#e8e2d2;cursor:pointer;display:grid;place-items:center}
+.dw .cdist button:hover{background:#fff}.dw .cdist button:disabled{opacity:.3;cursor:default}
+.dw .cdist img{width:18px;filter:brightness(0)}
+.dw .cmod{display:grid;justify-items:end;font-size:11.5px;line-height:1.25;color:#f4efe0}.dw .cmod span{display:flex;gap:5px;align-items:center}.dw .cmod .z{color:#8f8a73}
+.dw .cmod img{width:13px;filter:brightness(0) invert(1);opacity:.85}
+.dw .crow .pp{grid-column:1/-1;display:flex;gap:6px;justify-content:center;padding:6px 0 2px}
+.dw .crow .pp input{width:70px;background:#14130f;border:1px solid #57554c;color:#f4efe0;border-radius:3px;padding:3px 6px;font:inherit}
+.dw .crow .pp button{background:#3a3428;border:1px solid #000;color:#f4efe0;border-radius:3px;padding:3px 10px;cursor:pointer;font:inherit;font-size:12px}
+.dw .crow .pp button.ok{background:#5d7a1e}
+.dw .cder{display:grid;grid-template-columns:1fr 1fr;gap:5px 12px;padding:8px 6px 2px;font-size:13px}
+.dw .cder span{display:flex;gap:6px;align-items:center}.dw .cder img{width:18px;height:18px;object-fit:contain}.dw .cder b{color:#f4efe0}
+.dw .cdet{display:grid;gap:6px;padding:0 4px}
+.dw .cpied{display:flex;align-items:center;gap:8px;padding:8px 14px 12px;border-top:1px solid #0006;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#c9c4ab}
+.dw .cpied b{color:#b9e54b;font-size:16px;letter-spacing:0}.dw .cpied img{width:18px}
+.dw .cpied .rst{width:26px;height:26px;padding:0;border:1px solid #000;border-radius:3px;background:#3a3428;display:grid;place-items:center;cursor:pointer}.dw .cpied .rst img{filter:brightness(0) invert(1)}
+.dw .cpied .det{margin-left:auto;font:13px Rowdies,sans-serif;color:#fff;background:#57513f;border:1px solid #000;border-radius:4px;padding:6px 12px;cursor:pointer;text-transform:uppercase}
+.dw .cpied .det.on,.dw .cpied .det:hover{background:#6d6650}
 .dw .ttl{position:relative;display:grid;place-items:center;background:linear-gradient(#34322b,#26241f);border-bottom:1px solid #0d0c0a;box-shadow:inset 0 -1px 0 #4a4840}
 .dw .ttl b{font:bold 17px Lexend,sans-serif;color:#f4efe0;text-shadow:0 1px 2px #000;letter-spacing:.3px}
 .dw .ttl img{position:absolute;left:8px;top:5px;width:28px;height:28px}
@@ -648,30 +680,50 @@ export class Windows {
     });
   }
 
+  /** Fenêtre Caractéristiques façon Dofus 3 (maquette Caracs 7A, 2026-11-08) : Coût / Distribution (+ et ++) / Modificateur
+   *  (base, objets, bonus), stats qui en découlent en bas, Détails pour le combat et les résistances, infobulle au survol (1A 2A+2C 5A). */
+  private caracDetail = false;
+  private caracPP: Stat | null = null;
   private renderCarac() {
-    const w = this.win!, p = this.world.player, st = (k: Stat) => p.stat(k), r1 = (v: number) => Math.round(v * 10) / 10;
-    const row = (label: string, v: number | string, tip: string) => `<div title="${tip}"><span>${label}</span><b>${v}</b></div>`;
-    w.innerHTML = `${this.title('Caractéristiques', 'characteristic')}
-      <div class="carac">
-        <div class="who2"><img src="${this.portrait}" alt=""><div><b>${p.cls.name}</b><br>Niveau ${p.level}</div></div>
-        <div class="pts">${p.points} point${p.points > 1 ? 's' : ''} à placer</div>
-        <div class="stats">
-          <div><span>Points de vie</span><b>${Math.ceil(p.hp)} / ${p.maxHp}</b></div>
-          <div><span>PA · PM</span><b>${p.paMax} · ${p.pmMax}</b></div>
-          ${BASE_STATS.map(k => `<div><span>${STAT_NAMES[k]}</span><span><b>${st(k)}</b><span class="plus ${p.points ? '' : 'off'}" data-plus="${k}" title="Maj : +10">+</span></span></div>`).join('')}
-          <div><span>Auto-attaque</span><b>${(1 / p.attackInterval()).toFixed(2)} / s</b></div>
-          ${(['puissance', 'dommages', 'critique', 'vitesse', 'prospection', 'soins'] as Stat[]).map(k => `<div><span>${STAT_NAMES[k]}</span><b>${k === 'critique' ? Math.round(p.critChance * 100) : st(k)}</b></div>`).join('')}
-        </div>
+    const w = this.win!, p = this.world.player, st = (k: Stat) => p.stat(k), r1 = (v: number) => Math.round(v * 10) / 10, C = `${D3}/caracs`;
+    const ICONE: Record<string, string> = { vitalite: 'vitality', sagesse: 'wisdom', force: 'strength', intelligence: 'intelligence', chance: 'chance', agilite: 'agility' };
+    const tips: Record<string, string> = {};
+    const tipOf = (id: string, html: string) => { tips[id] = html; return `data-ctip="${id}"`; };
+    const lignes = BASE_STATS.map(k => {
+      const base = p.base[k] ?? 0, total = st(k), objets = (p.stats[k] ?? 0) - base, bonus = total - base - objets, cout = p.coutPoint(k), ok = p.points >= cout;
+      const mod = (v: number, ic: string, t: string) => `<span class="${v ? '' : 'z'}">${v < 0 ? '-' : '+'} ${Math.abs(v)} <img src="${C}/btnIcon_${ic}.png" alt="" title="${t}"></span>`;
+      const pp = this.caracPP === k ? `<div class="pp"><input type="number" min="1" max="${p.points}" value="${Math.max(1, Math.floor(p.points / cout))}" data-ppn="${k}" aria-label="Points à placer">
+        <button type="button" data-ppmax="${k}">Max</button><button type="button" class="ok" data-ppok="${k}">OK</button></div>` : '';
+      return `<div class="crow" ${tipOf(k, this.caracTip(k))}><div class="cnom"><span class="blason"><img src="${C}/tx_${ICONE[k]}.png" alt=""></span>${STAT_NAMES[k]}<b>${total}</b></div>
+        <div class="ccout">${cout} <img src="${C}/characteristic.png" alt=""></div>
+        <div class="cdist"><button type="button" data-plus="${k}" ${ok ? '' : 'disabled'} title="+1 (Maj : +10)"><img src="${C}/btnIcon_plus.png" alt=""></button><button type="button" data-pp="${k}" ${ok ? '' : 'disabled'} title="Placer plusieurs points"><img src="${C}/arrowTopDoubleLine.png" alt=""></button></div>
+        <div class="cmod">${mod(base, 'character', 'Base (tes points)')}${mod(objets, 'sword', 'Objets (équipement, panoplie, familier)')}${mod(bonus, 'parchment', 'Bonus (effets passagers, Parangon plus tard)')}</div>${pp}</div>`;
+    }).join('');
+    const der = (ic: string, nom: string, v: string | number, tip: string) => `<span ${tipOf(`d_${nom}`, `<h4>${nom}</h4><div>${tip}</div>`)}><img src="${C}/tx_${ic}.png" alt="">${nom} <b>${v}</b></span>`;
+    const chanceP = Math.floor(Math.max(0, st('chance')) / 10);
+    const derivees = [
+      der('lifePoints', 'Points de vie', `${Math.ceil(p.hp)} / ${p.maxHp}`, `${p.cls.hp} de base (${p.cls.name}) + 5 par niveau + Vitalité`),
+      der('prospecting', 'Prospection', p.prospection, `Objets ${st('prospection')} + Chance / 10 (${chanceP}). +1 % de chances de butin par point, et un peu plus de raretés`),
+      der('multiElement', 'Puissance', st('puissance'), '+1 % de dommages dans tous les éléments par point'),
+      der('damage', 'Dommages', st('dommages'), 'Ajoutés à chaque coup, après les pourcentages'),
+      der('heal', 'Soins', st('soins'), 'PV ajoutés à chaque soin reçu (potion, nourriture, monstre tué), après le bonus d\'Intelligence'),
+      der('crit', 'Critique', `${Math.round(p.critChance * 100)} %`, `Chance de coup critique (${p.cls.name} : ${Math.round(p.cls.critChance * 100)} % de base), dommages ×${String(p.cls.critMult).replace('.', ',')}`),
+      der('criticalDamage', 'Dommages critiques', st('dommagesCritiques'), 'Ajoutés à chaque coup critique'),
+      der('initiative', 'Vitesse d\'attaque', `${(1 / p.attackInterval()).toFixed(2).replace('.', ',')} / s`, `Auto-attaques par seconde. % Vitesse d'attaque : ${st('vitesse')}`),
+      der('actionPoints', 'PA', p.paMax, `Réserve qui paie les sorts, +${String(p.cls.pa.regen).replace('.', ',')} PA par seconde. +1 PA au niveau 100`),
+      der('movementPoints', 'PM', p.pmMax, `Charges de déplacement rapide, une revient toutes les ${String(p.cls.pm.recharge).replace('.', ',')} s`),
+    ].join('');
+    const row = (label: string, v: number | string, tip: string) => `<div ${tipOf(`r_${label}`, `<h4>${label}</h4><div>${tip}</div>`)}><span>${label}</span><b>${v}</b></div>`;
+    const detail = !this.caracDetail ? '' : `<div class="cdet">
         <div class="sub">Combat</div>
         <div class="stats">
-          ${row('Portée', st('portee'), '+1 case de portée par point pour les sorts à distance')}
-          ${row('Réduction des recharges', `${Math.round(p.reductionRecharges * 100)} %`, `Raccourcit les recharges et le retour des charges des sorts (plafond ${REDUCTION_RECHARGES_MAX} %)`)}
           ${row('Initiative', p.initiative, 'Initiative + Force + Intelligence + Chance + Agilité. Le premier coup porté à un monstre fait +1 % par 10 points (jusqu\'à +50 %)')}
           ${row('Tacle', r1(p.tacle), 'Agilité / 10 + Tacle. Ralentit les monstres à ton contact (leur Fuite y résiste)')}
           ${row('Fuite', r1(p.fuite), 'Agilité / 10 + Fuite. Résiste au Tacle des monstres et réduit les ralentissements subis')}
           ${row('Retrait PA · PM', `${r1(p.retrait('PA'))} · ${r1(p.retrait('PM'))}`, 'Sagesse / 10 + Retrait. Chance que tes retraits de PA / PM passent l\'Esquive du monstre')}
           ${row('Esquive PA · PM', `${r1(p.esquive('PA'))} · ${r1(p.esquive('PM'))}`, 'Sagesse / 10 + Esquive. Chance d\'éviter les retraits de PA / PM des monstres')}
-          ${row('Dommages Critiques', st('dommagesCritiques'), 'S\'ajoutent à chaque coup critique')}
+          ${row('Portée', st('portee'), '+1 case de portée par point pour les sorts à distance')}
+          ${row('Réduction des recharges', `${Math.round(p.reductionRecharges * 100)} %`, `Raccourcit les recharges et le retour des charges des sorts (plafond ${REDUCTION_RECHARGES_MAX} %)`)}
           ${row('Dommages Poussée', st('dommagesPoussee'), 'S\'ajoutent aux coups qui repoussent')}
           ${row('Résistance Poussée · Critiques', `${st('resPoussee')} · ${st('resCritiques')}`, 'Sans effet pour l\'instant : les monstres ne font ni dommages de poussée ni coups critiques')}
           ${row('Invocations · Pods', `${st('invocations')} · ${st('pods')}`, 'Invocations : pour l\'Osamodas, plus tard. Pods : pas encore de limite de poids')}
@@ -679,12 +731,64 @@ export class Windows {
         <div class="sub">Résistances (fixe · %)</div>
         <div class="stats">
           ${(['Terre', 'Feu', 'Eau', 'Air', 'Neutre'] as const).map(e => row(e, `${st(`red${e}` as Stat)} · ${st(`res${e}` as Stat)} %`, `Les dommages ${e} reçus perdent d'abord la résistance fixe, puis le pourcentage (50 % au plus)`)).join('')}
-        </div>
-        <div class="hint">Force : sorts Terre · Intelligence : Feu · Chance : Eau · Agilité : Air (+1 % de dommages par point). Vitalité : +1 PV. Sagesse : +1 % d'XP.</div>
-      </div>`;
+        </div></div>`;
+    const xpF = Math.min(100, Math.round(p.xp / Math.max(1, p.xpNeeded) * 100));
+    w.innerHTML = `${this.title('Caractéristiques', 'characteristic')}
+      <div class="carac2">
+        <div class="clv">Niveau ${p.level} <div class="cxp"><i style="width:${xpF}%"></i></div><small>${Math.floor(p.xp).toLocaleString('fr-FR')} / ${p.xpNeeded.toLocaleString('fr-FR')}</small></div>
+        <div class="chead"><span>Caractéristique</span><span>Coût</span><span>Distribution</span><span>Modificateur</span></div>
+        <div class="crows">${lignes}</div>
+        <div class="cder">${derivees}</div>
+        ${detail}
+      </div>
+      <div class="cpied">Points de caractéristiques <b>${p.points}</b><img src="${C}/characteristic.png" alt="">
+        <button type="button" class="rst" data-reset title="Rendre tous les points (gratuit, hors donjon)"><img src="${C}/btnIcon_reset.png" alt=""></button>
+        <button type="button" class="det ${this.caracDetail ? 'on' : ''}" data-det>Détails</button></div>`;
+    w.querySelectorAll<HTMLElement>('[data-ctip]').forEach(e => {
+      e.addEventListener('mouseenter', ev => { if ((ev.target as HTMLElement).closest('.pp')) return; this.tip.innerHTML = tips[e.dataset.ctip!]; this.tip.style.display = 'block'; this.moveTip(ev); });
+      e.addEventListener('mousemove', ev => { if ((ev.target as HTMLElement).closest('.pp')) { this.hideTip(); return; } this.tip.innerHTML = tips[e.dataset.ctip!]; this.tip.style.display = 'block'; this.moveTip(ev); });
+      e.addEventListener('mouseleave', () => this.hideTip());
+    });
     w.querySelectorAll<HTMLElement>('[data-plus]').forEach(e => e.addEventListener('click', ev => {
-      p.spendPoint(e.dataset.plus as Stat, ev.shiftKey ? Math.min(10, p.points) : 1); this.changed();
+      p.spendPoint(e.dataset.plus as Stat, ev.shiftKey ? 10 : 1); this.caracPP = null; this.changed();
     }));
+    w.querySelectorAll<HTMLElement>('[data-pp]').forEach(e => e.addEventListener('click', () => {
+      const k = e.dataset.pp as Stat; this.caracPP = this.caracPP === k ? null : k; this.hideTip(); this.render();
+      w.querySelector<HTMLInputElement>('[data-ppn]')?.select();
+    }));
+    const placer = (k: Stat) => { const n = Math.floor(Number(w.querySelector<HTMLInputElement>('[data-ppn]')?.value) || 0); if (n > 0) p.spendPoint(k, n); this.caracPP = null; this.changed(); };
+    w.querySelectorAll<HTMLElement>('[data-ppok]').forEach(e => e.addEventListener('click', () => placer(e.dataset.ppok as Stat)));
+    w.querySelectorAll<HTMLElement>('[data-ppmax]').forEach(e => e.addEventListener('click', () => { p.spendPoint(e.dataset.ppmax as Stat, p.points); this.caracPP = null; this.changed(); }));
+    w.querySelector<HTMLInputElement>('[data-ppn]')?.addEventListener('keydown', ev => {
+      ev.stopPropagation();
+      if (ev.key === 'Enter') placer(this.caracPP!); else if (ev.key === 'Escape') { this.caracPP = null; this.render(); }
+    });
+    w.querySelector('[data-reset]')?.addEventListener('click', () => { if (this.world.reinitialiserCaracs()) { this.caracPP = null; this.changed(); } });
+    w.querySelector('[data-det]')?.addEventListener('click', () => { this.caracDetail = !this.caracDetail; this.render(); });
+  }
+  /** Infobulle d'une caractéristique de base : ce qu'elle donne maintenant, d'où elle vient, et ce que rapporte le prochain point (2A + 2C). */
+  private caracTip(k: Stat): string {
+    const p = this.world.player, v = p.stat(k), cout = p.coutPoint(k), base = p.base[k] ?? 0, objets = (p.stats[k] ?? 0) - base;
+    const pct = (n: number) => `${n >= 0 ? '+' : ''}${n} %`, d10 = (n: number) => Math.floor(Math.max(0, n) / 10);
+    const effets: Record<string, string[]> = {
+      vitalite: [`+${v} points de vie`],
+      sagesse: [`${pct(v)} d'XP gagnée`, `+${d10(v)} Retrait et +${d10(v)} Esquive PA · PM`],
+      force: [`${pct(v)} de dommages Terre et Neutre (auto-attaques comprises)`, `+${v} Initiative`],
+      intelligence: [`${pct(v)} de dommages Feu`, `${pct(v)} aux soins reçus`, `+${v} Initiative`],
+      chance: [`${pct(v)} de dommages Eau`, `+${d10(v)} Prospection`, `+${v} Initiative`],
+      agilite: [`${pct(v)} de dommages Air`, `+${d10(v)} Tacle et +${d10(v)} Fuite`, `+${Math.round(Math.min(10, Math.max(0, v) / 20))} % de vitesse de course (+1 % par 20, 10 % au plus)`, `+${v} Initiative`],
+    };
+    const suivant: Record<string, string> = {
+      vitalite: '+1 point de vie', sagesse: '+1 % d\'XP', force: '+1 % de dommages Terre et Neutre', intelligence: '+1 % de dommages Feu et de soins',
+      chance: '+1 % de dommages Eau', agilite: '+1 % de dommages Air',
+    };
+    const sorts = Object.values(p.cls.spells).filter(s => (k === 'force' && s.element === 'terre') || (k === 'intelligence' && s.element === 'feu')
+      || (k === 'chance' && s.element === 'eau') || (k === 'agilite' && s.element === 'air')).map(s => s.name);
+    return `<h4>${STAT_NAMES[k]} · ${v}</h4><div class="sub">Base ${base} · objets ${objets} · coût ${cout} point${cout > 1 ? 's' : ''} pour +1</div>
+      ${(effets[k] ?? []).map(t => `<div>${t}</div>`).join('')}
+      ${sorts.length ? `<div class="hint">Sorts concernés : ${[...new Set(sorts)].join(', ')}</div>` : ''}
+      <div class="up" style="margin-top:6px">Prochain point : ${suivant[k]}${cout > 1 ? ` (coûte ${cout})` : ''}</div>
+      ${k !== 'vitalite' && k !== 'sagesse' ? '<div class="hint">Coût officiel : 1 point jusqu\'à 100, puis 2, 3 et 4 par tranche de 100.</div>' : k === 'sagesse' ? '<div class="hint">Coût officiel : 3 points pour +1 Sagesse.</div>' : ''}`;
   }
 
   // --- Métiers (maquette Métiers UI, 2026-11-07) -------------------------------------------------------------------
