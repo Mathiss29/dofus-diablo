@@ -849,6 +849,15 @@
             "etiquettes": [
               "Partie de test"
             ]
+          },
+          {
+            "titre": "Les légendaires du Sacrieur",
+            "phrase": "Ses 40 pouvoirs officiels et 9 pouvoirs à nous : Soif de sang, Frénésie, Dernier souffle, Châtiments…",
+            "details": "Jet aléatoire comme pour les autres classes, et le Codex garde le meilleur.",
+            "icone": "degats",
+            "etiquettes": [
+              "Partie de test"
+            ]
           }
         ],
         "Corrections": [

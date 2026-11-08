@@ -1,5 +1,5 @@
 import { ALMANAX } from './almanax';
-import { PC_PAR_ID } from './pouvoirsClasse';
+import { CHATIMENTS, PC_PAR_ID } from './pouvoirsClasse';
 import { DOFUS, EMPLACEMENTS_DOFUS, PASSIFS } from './dofus';
 import type { CleDonjon } from './arene';
 import type { CommandeFM } from './forgemagie';
@@ -129,6 +129,8 @@ export class Player extends Entity {
   souffPic = 0; souffT = 0;
   mutil: { n: number; t: number; next: number } | null = null;
   renvoiT = 0; renvoiPart = 0;
+  /** Dernier souffle (légendaire Sacrieur D) : dernière fois qu'il a sauvé le perso. */
+  dernierSouffleA = -999;
   private repathT = 0;
   private buffer: SkillId | null = null;
   private bufferT = 0;
@@ -228,7 +230,7 @@ export class Player extends Entity {
   etatPouvoir(id: string): { actif: true } | { actif: false; raison: string } {
     const c = PC_PAR_ID[id];
     if (c) {   // légendaire de classe inventé : sa classe, et son sort connu
-      if (c.classe !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas' } as Record<string, string>)[c.classe] ?? 'une autre classe'}` };
+      if (c.classe !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur' } as Record<string, string>)[c.classe] ?? 'une autre classe'}` };
       if (this.knows(c.sort)) return { actif: true };
       const o = this.official(c.sort), n = o ? this.requiredLevel(o) : 0;
       return { actif: false, raison: n > this.level ? `s'éveille au niveau ${n}` : 'variante non choisie' };
@@ -781,7 +783,12 @@ export class Player extends Entity {
     this.pm = Math.min(this.pmMax, this.pm + dt * (1 + this.legendary('mobilite') / 100) / this.cls.pm.recharge);
     this.flash = Math.max(0, this.flash - dt);
     if (this.slowT > 0) this.slowT -= dt;
-    if (this.mods.length) { for (const m of this.mods) m.t -= dt; this.mods = this.mods.filter(m => m.t > 0); }
+    if (this.mods.length) {
+      for (const m of this.mods) m.t -= dt;
+      const vita = this.mods.some(m => m.t <= 0 && m.k === 'vitalite');
+      this.mods = this.mods.filter(m => m.t > 0);
+      if (vita) this.recompute();   // Châtiment Vitalesque : les PV max redescendent
+    }
     if (this.dead) { this.setAnim('die', Math.min(1, this.animT + dt * 1.5)); return; }
     if (this.comboTimer > 0) this.comboTimer -= dt;
     if (input.potion) this.drinkPotion(world);
@@ -911,6 +918,7 @@ export class Player extends Entity {
         s.impacted = true;
         const arc = (d.arc * Math.PI) / 180;
         const hits = world.hitCone(this.x, this.y, this.facing, d.range, arc, { dmg: d.dmg + this.weaponDamage(), knock: d.knock, element: this.cls.attaque.element });
+        this.frenesie(hits, world);
         world.emit({ k: 'spell', fx: 'arc', id: 'attaque', x: this.x, y: this.y, facing: this.facing, size: d.range * 0.85, arc, element: this.cls.attaque.element, big: s.idx === 2, boosted: false });
         world.emit({ k: 'impact', hitstop: hits ? d.hitstop : 0, shake: hits ? d.shake : d.shake * 0.25, big: false });
       }
@@ -1025,6 +1033,7 @@ export class Player extends Entity {
         size = hz.range;
       }
       if (d.echange) world.echanger(this, s.tx, s.ty, CASE * 0.75);   // Assaut, Transposition : après le coup
+      if (s.id === 'arme') this.frenesie(hits, world);
       this.apresImpactClasse(s.id, s.sx, s.sy, s.tx, s.ty, hit, s.gm, size, world);
       const pt = hz.shape === 'point';
       if (hz.shape !== 'projectile') world.emit({ k: 'spell', fx: pt ? 'burst' : d.fx, id: s.id, x: pt ? s.tx : this.x, y: pt ? s.ty : this.y, cx: this.x, cy: this.y, facing: this.facing, size,
@@ -1035,6 +1044,26 @@ export class Player extends Entity {
     if (s.t >= d.duration) this.endSkill();
   }
 
+  /** Frénésie (légendaire Sacrieur B) : à Souffrance 8+, un coup de poing ou d'arme qui touche accélère les attaques (5 cumuls, 3 s). */
+  private frenesie(hits: number, world: World) {
+    const v = hits > 0 && this.souffrance >= 8 ? this.pcv('pc-sacrieur-B') : 0;
+    if (!v) return;
+    const l = this.mods.filter(m => m.src === 'frenesie');
+    if (l.length < 5) { this.addMod('vitesse', v, 3, 'frenesie'); if (l.length === 4) world.emit({ k: 'status', x: this.x, y: this.y - 60, text: 'Frénésie !', color: '#ff3b3b' }); }
+    for (const m of l) m.t = 3;
+  }
+  /** Châtiments (légendaires Sacrieur E à I, Dofus Rétro) : chaque coup reçu donne la caractéristique 6 s, 5 cumuls. */
+  private chatiments() {
+    let vita = false;
+    for (const [id, k] of Object.entries(CHATIMENTS)) {
+      const v = this.pcv(id);
+      if (!v) continue;
+      const l = this.mods.filter(m => m.src === id);
+      if (l.length < 5) { this.addMod(k, v, 6, id); vita ||= k === 'vitalite'; }
+      for (const m of l) m.t = 6;
+    }
+    if (vita) this.recompute();
+  }
   /** Champs de coup des légendaires de classe (0.3) : exécution, bonus à distance, gel, clouage, marque, rebonds, gerbe. */
   private effetsPouvoirsClasse(id: string): Partial<HitDef> {
     if (!this.v03) return {};
@@ -1152,6 +1181,14 @@ export class Player extends Entity {
     if (gros) world.emit({ k: 'grosCoup' });
     this.addRage(this.cls.rage.perHurt, world);
     this.passifsDofus(fromX, fromY, loin, world);
+    if (this.cls.souffrance) {
+      if (dmg > 0) this.chatiments();
+      const dv = this.hp <= 0 && sf >= 10 && this.age - this.dernierSouffleA >= 60 ? this.pcv('pc-sacrieur-D') : 0;
+      if (dv) {   // Dernier souffle : le coup mortel laisse à 1 PV, invulnérable un instant
+        this.dernierSouffleA = this.age; this.hp = 1; this.invuln = Math.max(this.invuln, dv);
+        world.emit({ k: 'status', x: this.x, y: this.y - 60, text: 'Dernier souffle !', color: '#ff3b3b' });
+      }
+    }
     if (this.hp <= 0 && world.quetes?.immortel) this.hp = 1;   // tutoriel : PV bloqués à 1
     if (world.test?.invincible) this.hp = this.maxHp;   // partie de test (8A) : le coup s'affiche, les PV ne bougent pas
     if (this.hp <= 0) { this.hp = 0; this.dead = true; this.setAnim('die'); world.onPlayerDeath(); }

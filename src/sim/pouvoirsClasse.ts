@@ -6,7 +6,8 @@ import type { Slot } from './items';
  *  2A : un Légendaire de classe a 1 chance sur 5 de tirer un de ces pouvoirs au lieu d'un pouvoir officiel ou maison ;
  *  2D : chaque boss a ses pouvoirs préférés (chance triplée sur son butin).
  *  3C : jet aléatoire dans une fourchette (comme les caractéristiques) ; un Mythique tire toujours le jet parfait.
- *  4A : le Codex garde le jet de l'objet brisé, un meilleur jet le remplace. Le Sacrieur a ses 3 légendaires dans son fil. */
+ *  4A : le Codex garde le jet de l'objet brisé, un meilleur jet le remplace.
+ *  Sacrieur (maquette Sacrieur 14A+14B, 15A+15B+15E « les trois en légendaires ») : 9 pouvoirs, le bouclier en a deux (Forcé, Vitalesque). */
 export interface PouvoirClasseDef {
   id: string; classe: string; nom: string;
   /** Sort visé (clé de classes.json). */
@@ -46,17 +47,30 @@ export const POUVOIRS_CLASSE: PouvoirClasseDef[] = [
   pc('osamodas', 'F', 'Lien des âmes', 'laisse_spirituelle', 'anneau', [1.6, 2.2], 0.1, v => `Le monstre dompté par Laisse Spirituelle reste ${n(v)} fois plus longtemps et garde ses PV.`),
   pc('osamodas', 'G', 'Bond du crapaud', 'saute_granouille', 'bottes', [10, 20], 5, v => `Saute-granouille emmène la meute : les bêtes atterrissent autour de l'Osamodas avec un bouclier de ${v} % de leurs PV.`),
   pc('osamodas', 'H', 'Rage de la meute', 'charge_bestiale', 'bouclier', [8, 14], 1, v => `Charge Bestiale soigne chaque bête de la meute de ${v} % de ses PV.`),
+  // --- Sacrieur (maquette Sacrieur) ---------------------------------------------------------------------------------------
+  pc('sacrieur', 'A', 'Soif de sang', 'absorption', 'anneau', [2, 4], 0.5, v => `Chaque monstre tué te rend ${n(v)} % de tes PV, sans te faire redescendre sous Souffrance 6 si tu y es.`),
+  pc('sacrieur', 'B', 'Frénésie', 'absorption', 'arme', [4, 6], 0.5, v => `À Souffrance 8+, chaque coup de poing ou d'arme qui touche donne +${n(v)} % de Vitesse d'attaque (5 fois au plus, 3 s sans frapper pour retomber).`),
+  pc('sacrieur', 'C', 'Coups qui saignent', 'hemorragie', 'ceinture', [30, 50], 5, v => `À Souffrance 6+, tes vols de vie font saigner la cible : ${v} % des dégâts du coup en plus, répartis sur 2 s.`),
+  pc('sacrieur', 'D', 'Dernier souffle', 'absorption', 'amulette', [1, 2], 0.25, v => `À Souffrance 10, le premier coup mortel te laisse à 1 PV, invulnérable ${n(v)} s. Une fois toutes les 60 s.`),
+  pc('sacrieur', 'E', 'Châtiment Forcé', 'absorption', 'bouclier', [10, 20], 1, v => `Chaque coup reçu donne +${v} Force pendant 6 s (5 fois au plus).`),
+  pc('sacrieur', 'F', 'Châtiment Agile', 'absorption', 'bottes', [10, 20], 1, v => `Chaque coup reçu donne +${v} Agilité pendant 6 s (5 fois au plus).`),
+  pc('sacrieur', 'G', 'Châtiment Osé', 'absorption', 'cape', [10, 20], 1, v => `Chaque coup reçu donne +${v} Chance pendant 6 s (5 fois au plus).`),
+  pc('sacrieur', 'H', 'Châtiment Spirituel', 'absorption', 'chapeau', [10, 20], 1, v => `Chaque coup reçu donne +${v} Intelligence pendant 6 s (5 fois au plus).`),
+  pc('sacrieur', 'I', 'Châtiment Vitalesque', 'absorption', 'bouclier', [20, 40], 5, v => `Chaque coup reçu donne +${v} Vitalité pendant 6 s (5 fois au plus).`),
 ];
+/** Châtiments du Sacrieur (Dofus Rétro, 14B) : caractéristique gagnée à chaque coup reçu. */
+export const CHATIMENTS: Record<string, 'force' | 'agilite' | 'chance' | 'intelligence' | 'vitalite'> =
+  { 'pc-sacrieur-E': 'force', 'pc-sacrieur-F': 'agilite', 'pc-sacrieur-G': 'chance', 'pc-sacrieur-H': 'intelligence', 'pc-sacrieur-I': 'vitalite' };
 export const PC_PAR_ID: Record<string, PouvoirClasseDef> = Object.fromEntries(POUVOIRS_CLASSE.map(p => [p.id, p]));
 export const estPouvoirClasse = (id: string) => !!PC_PAR_ID[id];
 
 /** 2D : pouvoirs préférés de chaque boss (chance triplée sur son butin), un par classe. */
 export const BOSS_PREFERES: Record<string, string[]> = {
-  royal: ['pc-iop-A', 'pc-cra-G', 'pc-osamodas-E'],
-  kardorim: ['pc-iop-F', 'pc-cra-H', 'pc-osamodas-F'],
-  tournesol_affame: ['pc-iop-H', 'pc-cra-A', 'pc-osamodas-D'],
-  mob_l_eponge: ['pc-iop-E', 'pc-cra-F', 'pc-osamodas-B'],
-  kankreblath: ['pc-iop-B', 'pc-cra-C', 'pc-osamodas-C'],
+  royal: ['pc-iop-A', 'pc-cra-G', 'pc-osamodas-E', 'pc-sacrieur-E'],
+  kardorim: ['pc-iop-F', 'pc-cra-H', 'pc-osamodas-F', 'pc-sacrieur-D'],
+  tournesol_affame: ['pc-iop-H', 'pc-cra-A', 'pc-osamodas-D', 'pc-sacrieur-A'],
+  mob_l_eponge: ['pc-iop-E', 'pc-cra-F', 'pc-osamodas-B', 'pc-sacrieur-C'],
+  kankreblath: ['pc-iop-B', 'pc-cra-C', 'pc-osamodas-C', 'pc-sacrieur-B'],
 };
 /** 2A : part des pouvoirs de Légendaire qui sont des pouvoirs de classe inventés. */
 export const CHANCE_POUVOIR_CLASSE = 0.2;
@@ -70,9 +84,11 @@ export function jetPouvoirClasse(d: PouvoirClasseDef, rng: Rng, parfait: boolean
 /** Texte de la fourchette pour la fiche (3C). */
 export const fourchette = (d: PouvoirClasseDef) => `${n(d.jet[0])} à ${n(d.jet[1])}`;
 
-/** Pouvoir de classe de cet emplacement (un par emplacement et par classe), sauf s'il est déjà sur l'objet. */
-export function pouvoirClasseDuSlot(classe: string, slot: Slot, exclus: Set<string> = new Set()): PouvoirClasseDef | null {
-  return POUVOIRS_CLASSE.find(p => p.classe === classe && p.slot === slot && !exclus.has(p.id)) ?? null;
+/** Pouvoir de classe de cet emplacement (un par emplacement et par classe ; le Sacrieur en a deux sur le bouclier,
+ *  tirés au hasard avec rng), sauf s'il est déjà sur l'objet. */
+export function pouvoirClasseDuSlot(classe: string, slot: Slot, exclus: Set<string> = new Set(), rng?: Rng): PouvoirClasseDef | null {
+  const l = POUVOIRS_CLASSE.filter(p => p.classe === classe && p.slot === slot && !exclus.has(p.id));
+  return (l.length > 1 && rng ? rng.pick(l) : l[0]) ?? null;
 }
 /** Chance qu'un pouvoir de Légendaire soit ce pouvoir de classe (2A), triplée sur le butin d'un boss qui le préfère (2D). */
 export const chancePouvoirClasse = (p: PouvoirClasseDef, boss?: string) => Math.min(1, CHANCE_POUVOIR_CLASSE * (boss && BOSS_PREFERES[boss]?.includes(p.id) ? 3 : 1));

@@ -8,7 +8,7 @@ python pouvoirs.py tools/extraction/panos_classe.json src/data/sorts.json src/da
 import json, re, sys
 
 panos, sorts, out = sys.argv[1:4]
-CLASSES = {'Iop': 'iop', 'Crâ': 'cra', 'Osamodas': 'osamodas'}
+CLASSES = {'Iop': 'iop', 'Crâ': 'cra', 'Osamodas': 'osamodas', 'Sacrieur': 'sacrieur'}
 SLOT = {'Chapeau': 'chapeau', 'Cape': 'cape', 'Ceinture': 'ceinture', 'Bottes': 'bottes', 'Anneau': 'anneau'}
 EXTRA = ['amulette', 'arme', 'bouclier']
 S = json.load(open(sorts, encoding='utf-8'))
@@ -21,7 +21,7 @@ def effet(e):
                    (r'^\+(\d+) lancer\(s\) par cible', 'parCible'), (r'^\+(\d+) dégâts de base', 'dmg'), (r'^\+(\d+)% Critique', 'crit')]:
         m = re.match(pat, e)
         if m: return k, abs(int(m.group(1)))
-    if 'ligne de vue désactivée' in e: return 'ldv', 1
+    if 'ligne de vue désactivée' in e or 'case occupée nécessaire désactivée' in e: return 'ldv', 1   # Fulgurance : se lance sans cible, comme sans ligne de vue
     if 'lancer en ligne désactivé' in e: return 'ligne', 1
     if 'Portée modifiable' in e: return 'pom', 1
     raise SystemExit('effet inconnu : ' + e)
