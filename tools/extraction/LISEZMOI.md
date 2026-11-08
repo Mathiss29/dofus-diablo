@@ -403,3 +403,7 @@ officiel du Zaap d'Astrub sur l'arche du Bastion (bastion.py réécrit les parti
 - `class_spells.py` écrit aussi les drapeaux officiels de chaque sort (spelllevels `m_flags` du premier grade) : `ligne` (bit 0, lancer en ligne),
   `ldv` (bit 2, ligne de vue), `pom` (bit 6, portée modifiable). Bits retrouvés en croisant les pouvoirs « Portée modifiable », « ligne de vue
   désactivée » et « lancer en ligne désactivé » des panoplies (tous les sorts visés ont le bit attendu).
+- Équipements du niveau 26 au 40 (0.3, choix 2A) : `items_export.py … 40` dans un dossier à part, puis `python tools/contenu/equipement_ajout.py <ce items.json>`
+  (n'ajoute que les équipements et panoplies, sans toucher aux recettes, au butin et aux runes) et `icones_ajout.py` avec les icônes affichées.
+  Le jeu ne les tire et ne les affiche qu'en 0.3 (`NIVEAU_OBJETS_02` dans `src/sim/pouvoirs.ts`). Leurs dessins portés (coiffes, capes,
+  boucliers) restent à exporter (`equipement_export.py`, correspondances à compléter).

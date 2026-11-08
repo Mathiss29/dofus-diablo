@@ -57,3 +57,20 @@ describe('butin (maquette « Drops »)', () => {
     expect(lieuxDe('royal', GAME_DATA).some(l => l.donjon && l.nom === 'Cour du Bouftou Royal')).toBe(true);
   });
 });
+
+describe('équipements du niveau 26 au 40 (version 0.3, 2A)', () => {
+  it('le set du Bouftou Royal tombe comme équipement dans la 0.3, et ni tombe ni ne s\'affiche avant', () => {
+    const v03 = { classe: 'iop', connus: [], aVenir: [], sortsRecharge: [], v03: true };
+    expect(ITEMS.equipment['2438'].name).toBe('Boufcoiffe Royale');
+    expect(ITEMS.resources['2438']).toBeUndefined();
+    const avec = tableButin(ctx('royal', 'boss', { pouvoirs: v03 })), sans = tableButin(ctx('royal', 'boss'));
+    expect(JSON.stringify(avec)).toContain('2438');
+    expect(JSON.stringify(sans)).not.toContain('2438');
+    const rng = new Rng(4); let uid = 0, vu = false;
+    for (let i = 0; i < 400; i++) {
+      if (tirerButin(rng, ctx('royal', 'boss', { pouvoirs: v03 }), () => uid++).objets.some(o => o.id === '2438')) vu = true;
+      for (const o of tirerButin(rng, ctx('royal', 'boss', { pool: [] }), () => uid++).objets) expect(ITEMS.equipment[o.id].level).toBeLessThanOrEqual(25);
+    }
+    expect(vu).toBe(true);
+  });
+});

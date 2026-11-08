@@ -1,6 +1,6 @@
 import BUTIN from '../data/butin.json';
 import type { GameData, MonsterDef } from './defs';
-import type { CtxPouvoirs } from './pouvoirs';
+import { NIVEAU_OBJETS_02, type CtxPouvoirs } from './pouvoirs';
 import { rollItem, type DropDef, type Item, type ItemsData, type Rarity } from './items';
 import type { Rng } from './math';
 
@@ -66,6 +66,8 @@ export interface CtxButin {
 /** État d'une ligne : tombe, ne tombe que pendant un événement ou une quête (6B), ou demande un métier qu'on n'a pas. */
 export type EtatLigne = 'ok' | 'evenement' | 'quete' | 'metier';
 export const metierDe = (d: DropDef, items: ItemsData) => d.metier ? Object.entries(items.metiers ?? {}).find(([, j]) => j.id === d.metier!.id)?.[0] : undefined;
+/** Équipement du niveau 26 au 40 : il arrive avec la 0.3 (partie de test d'ici là), ni tiré ni affiché avant. */
+const avant03 = (d: DropDef, ctx: CtxButin) => (ctx.items.equipment[d.item]?.level ?? 0) > NIVEAU_OBJETS_02 && !ctx.pouvoirs?.v03;
 export function etatLigne(d: DropDef, ctx: CtxButin): EtatLigne {
   if (d.cond === 'quete') return 'quete';   // nos quêtes sont les nôtres (règle Quêtes) : ces objets de quête de Dofus ne tombent pas
   if (d.cond === 'evenement' && !ctx.evenement) return 'evenement';
@@ -94,6 +96,7 @@ export function tirerButin(rng: Rng, ctx: CtxButin, uid: () => number): Butin {
   for (const d of I.drops[ctx.type] ?? []) {
     if (etatLigne(d, ctx) !== 'ok') continue;
     if (rng.next() >= chanceLigne(d, I, pros, ctx.rang)) continue;
+    if (avant03(d, ctx)) continue;
     if (I.equipment[d.item]) out.objets.push(rollItem(d.item, I.equipment[d.item], rollRarity(rng, ctx.rang, pros), rng, uid(), ctx.pouvoirs));
     else out.ressources.push({ id: d.item, job: metierDe(d, I) });
   }
@@ -127,7 +130,7 @@ export interface TableButin {
 /** Le butin d'un monstre tel que le joueur le verra tomber (Bestiaire 2B+2C, 4A ; outil de test). */
 export function tableButin(ctx: CtxButin): TableButin {
   const I = ctx.items, pros = ctx.prospection, more = coefProspection(pros);
-  const officiel = (I.drops[ctx.type] ?? []).map(d => ({ d, etat: etatLigne(d, ctx), chance: chanceLigne(d, I, pros, ctx.rang), equipement: !!I.equipment[d.item] }))
+  const officiel = (I.drops[ctx.type] ?? []).filter(d => !avant03(d, ctx)).map(d => ({ d, etat: etatLigne(d, ctx), chance: chanceLigne(d, I, pros, ctx.rang), equipement: !!I.equipment[d.item] }))
     .sort((a, b) => b.d.chance - a.d.chance);
   const R = raretes(ctx.rang, pros), leg = R.legendaire + R.mythique, e = BUTIN.equipement[ctx.rang], pool = poolNiveau(ctx);
   const c = pool.length ? Math.min(1, e.chance * more) : 0;
