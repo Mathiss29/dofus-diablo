@@ -6,6 +6,7 @@ import { NO_INPUT } from '../src/sim/input';
 import { World } from '../src/sim/world';
 import { appliquerInstantane, COOP, Emetteur, entreeInvite, type Instantane } from '../src/sim/miroir';
 import { exporterJoueur, restaurerJoueur } from '../src/sim/sauvegarde';
+import { Bete, BETES } from '../src/sim/bete';
 
 /** Coop (maquette « Multi : » 3A, 11A) : l'hôte fait tourner l'arène, l'invité recopie des instantanés dans un monde miroir. */
 const incarnam = JSON.parse(readFileSync(new URL('../public/assets/mondes/incarnam/monde.json', import.meta.url), 'utf8')) as WorldData;
@@ -87,4 +88,77 @@ describe('coop : instantanés de l’hôte et monde miroir de l’invité', () =
     expect(e.pressed).toBe('attaque');
     expect(entreeInvite(null).move).toEqual({ x: 0, y: 0 });
   });
+});
+
+describe('coop : un monstre qui sort de la vue puis revient', () => {
+  it('repart avec tous ses champs (sinon l’affichage de l’invité plante)', () => {
+    const { hote, invite, q, em, tic } = partie();
+    tic(60 * 6);
+    const m = hote.monsters.find(x => x.arene && !x.dead)!;
+    const x0 = m.x, y0 = m.y;
+    m.x += COOP.vue * 2;
+    appliquerInstantane(invite, reseau(em.instantane(hote)));
+    expect(invite.monsters.some(x => x.id === m.id)).toBe(false);
+    m.x = x0; m.y = y0;
+    appliquerInstantane(invite, reseau(em.instantane(hote)));
+    const r = invite.monsters.find(x => x.id === m.id)!;
+    expect(r).toBeTruthy();
+    expect(typeof r.anim).toBe('string');
+    expect(r.maxHp).toBe(m.maxHp);
+    void q;
+  });
+});
+
+describe('coop : une bête qui s’éveille (change de type)', () => {
+  it('reste la même bête dans le miroir, avec son animation et sa nouvelle fiche', () => {
+    const hote = monde(3, 'osamodas'), invite = monde(9);
+    hote.allerArene('arene_crypte');
+    const q = hote.ajouterJoueur('iop'), em = new Emetteur(q.id);
+    const p = hote.player;
+    const b = new Bete(9999, p, 'tofu', 'tofu', p.x + 20, p.y, BETES.tofu);
+    hote.betes.push(b);
+    appliquerInstantane(invite, reseau(em.instantane(hote)));
+    const avant = invite.betes.find(x => x.id === 9999)!;
+    expect(avant.anim).toBe(b.anim);
+    expect(b.eveiller(hote)).toBe(true);
+    appliquerInstantane(invite, reseau(em.instantane(hote)));
+    const apres = invite.betes.find(x => x.id === 9999)!;
+    expect(apres).toBe(avant);
+    expect(apres.def).toBe(BETES[b.type]);
+    expect(typeof apres.anim).toBe('string');
+  });
+});
+
+describe('coop avec chaque classe (hôte et invité), sorts compris', () => {
+  const CLASSES = Object.keys(GAME_DATA.classes);
+  /** Tout ce que l'affichage lit doit être là dans le miroir, à chaque instantané. */
+  const sain = (w: World) => {
+    for (const e of [...w.players, ...w.monsters, ...w.betes]) {
+      expect(typeof e.anim, `${e.constructor.name} ${e.id}`).toBe('string');
+      expect(Number.isFinite(e.x) && Number.isFinite(e.y) && Number.isFinite(e.facing)).toBe(true);
+    }
+    for (const m of w.monsters) expect(m.def, m.type).toBeTruthy();
+    for (const b of w.betes) expect(b.def, b.type).toBeTruthy();
+  };
+  for (const ch of CLASSES) for (const ci of CLASSES) {
+    it(`${ch} hôte, ${ci} invité`, () => {
+      const hote = monde(3, ch), invite = monde(9, ci);
+      for (const w of [hote, invite]) { w.player.level = 60; w.player.recompute(); w.player.learnSpells(null); }
+      hote.allerArene('arene_crypte');
+      const q = hote.ajouterJoueur(ci);
+      hote.commeJoueur(q, () => restaurerJoueur(hote, { ...exporterJoueur(invite), zone: '__coop' }));
+      const em = new Emetteur(q.id);
+      for (let i = 0; i < 60 * 25; i++) {
+        const cible = hote.monsters.find(m => m.arene && !m.dead);
+        const viser = (p: { x: number; y: number }) => (cible ? { x: cible.x, y: cible.y } : { x: p.x + 50, y: p.y });
+        const sort = (p: typeof q) => (i % 20 === 0 ? p.bar[(i / 20) % p.bar.length] ?? 'attaque' : null);
+        hote.player.hp = hote.player.maxHp; q.hp = Math.max(q.hp, q.maxHp / 2);
+        hote.step(STEP, { ...NO_INPUT, aim: viser(hote.player), pressed: sort(hote.player), holdAttack: true, target: cible?.id ?? null },
+          { [q.id]: entreeInvite({ aim: viser(q), pressed: sort(q), holdAttack: true, target: cible?.id ?? null }) });
+        for (const e of hote.drainEvents()) em.noter(e);
+        if (i % COOP.tous === 0) { appliquerInstantane(invite, reseau(em.instantane(hote))); sain(invite); }
+      }
+      expect(invite.player.id).toBe(q.id);
+    });
+  }
 });

@@ -982,10 +982,16 @@ export class ZoneScene extends Phaser.Scene {
   private updateMiroir(dt: number) {
     this.acc += dt;
     if (this.acc >= ZoneScene.STEP) { this.acc %= ZoneScene.STEP; Coop.entree(this.readInput(), performance.now()); }
-    for (const s of Coop.prendre()) this.world.rejouer(appliquerInstantane(this.world, s));
-    this.consumeEvents();
-    this.hitstop = 0;
-    this.render();
+    // une erreur ne doit pas figer l'invité : on la note et on redemande tout à l'hôte (le miroir repart de zéro)
+    try {
+      for (const s of Coop.prendre()) this.world.rejouer(appliquerInstantane(this.world, s));
+      this.consumeEvents();
+      this.hitstop = 0;
+      this.render();
+    } catch (e) {
+      console.error('coop (invité)', e);
+      Coop.toutRedemander();
+    }
   }
   update(_: number, deltaMs: number) {
     const dt = Math.min(deltaMs / 1000, 0.1);

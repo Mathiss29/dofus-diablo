@@ -155,6 +155,9 @@ class Salon {
     if (this.hote) for (const i of this.invites.values()) { i.joueur = null; i.em = null; i.pret = false; if (i.etat) this.poser(i); }
     if (this.miroir) { if (this.monId) (s.world.players[0] as { id: number }).id = this.monId; this.redemander(); }
   }
+  /** Invité : quelque chose s'est mal passé dans le miroir, l'hôte renvoie tout (au plus une fois par seconde). */
+  toutRedemander() { const t = performance.now(); if (t - this.dernierePanne > 1000) { this.dernierePanne = t; this.redemander(); } }
+  private dernierePanne = -1e9;
   private redemander() { this.recus = []; this.attendPlein = true; this.envoyer({ k: 'pret' }); }
   /** La scène s'en va (changement de zone) : l'hôte garde l'état de ses invités pour les reposer dans la suivante. */
   detacher(w: World) {
