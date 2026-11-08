@@ -49,6 +49,8 @@ export interface HitDef { dmg: number; knock: number; element?: Element; lifeste
    *  (Barrage incendiaire), cibles traversées en plus (Flèche perçante), vie volée en trop → bouclier jusqu'à n % des PV
    *  (Sève d'Abolition), sort à prévenir quand il tue (Déferlement sans fin). */
   vsGros?: number; plus?: number; brule?: number; perce?: number; surplus?: number; tue?: string;
+  /** Festin du piranya (Osamodas K) : les dégâts du coup sont comptés dans World.festin. */
+  festin?: boolean;
   /** Stase de sang (Sacrieur P) : immobilise n s, une fois par monstre toutes les 5 s. */
   stase?: number }
 /** Zone laissée au sol par un légendaire de classe (Épée jumelle) : frappe une fois chaque monstre qui la traverse. */
@@ -170,6 +172,8 @@ export class World {
   /** Télégraphes du dernier pas (recalculés à chaque pas). */
   telegraphs: Telegraph[] = [];
   zonesSol: ZoneSol[] = [];
+  /** Festin du piranya : dégâts comptés pendant le coup en cours. */
+  festin = 0;
   wave = 0;
   kills = 0;
   waveDelay = 1.2;
@@ -1314,6 +1318,7 @@ export class World {
       // Sort sans dommages (Attirance, Transposition) : seulement ses effets
       const dmg = def.dmg <= 0 ? 0 : Math.max(1, Math.round((p.damage(def.dmg * vs, def.element ?? 'neutre') * this.rng.range(0.9, 1.1) * (crit ? cls.critMult : 1) * first + flat) * (1 - res / 100) * vu * pc));
       m.hp -= dmg; m.flash = 0.09; m.calmeT = 0;
+      if (def.festin) this.festin += dmg;
       if (dmg && m.suppliceT > 0) p.hp = Math.min(p.maxHp, p.hp + Math.round(dmg * m.supplice));   // Supplice : frapper la cible soigne
       if (def.supplice) { m.supplice = def.supplice.part; m.suppliceT = def.supplice.t; }
       if (def.attire) {   // attire vers le lanceur (jusqu'au contact) ou vers le centre de la zone, sans tenir compte du poids (officiel)

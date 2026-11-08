@@ -59,6 +59,8 @@ export class Bete extends Entity {
   t = 0.4;
   tacle = 0;
   shield = 0;
+  /** Peau de l'ours (Osamodas L) : secondes avant que le bouclier tombe (0 = sans limite). */
+  shieldT = 0;
   /** 15A : monstre dompté, secondes avant qu'il s'enfuie (0 = vraie invocation). */
   dompteT = 0;
   /** Horde sauvage : secondes avant de repartir (0 = reste). Coup de fouet : vitesse d'attaque +hate % pendant hateT s. */
@@ -130,6 +132,7 @@ export class Bete extends Entity {
     if (this.dead) { this.t -= dt; this.setAnim('die', 1 - this.t / 0.6); this.applyKnock(dt); return; }
     if (this.state === 'spawn') { this.t -= dt; this.setAnim('spawn', 1 - this.t / 0.4); if (this.t <= 0) this.state = 'suit'; return; }
     if (this.eveilT > 0 && (this.eveilT -= dt) <= 0) this.finEveil();
+    if (this.shieldT > 0 && (this.shieldT -= dt) <= 0) this.shield = 0;
     if (this.dompteT > 0 && (this.dompteT -= dt) <= 0) {   // 15A : le monstre dompté s'enfuit
       world.emit({ k: 'status', x: this.x, y: this.y - 40, text: 'S\'enfuit', color: '#a89fb6' });
       this.dead = true; this.t = 0; return;
@@ -270,7 +273,15 @@ export class Bete extends Entity {
         el = e.element;
         for (const m of world.monsters) {
           if (m.dead || m.state === 'spawn' || Math.hypot(m.x - cx, m.y - cy) > r + m.radius) continue;
-          const jet = world.rng.range(e.min, e.max + 1) * 1.5 * R.degats * world.bonusMeute(p) * this.force;
+          const fl = ['dragoune', 'dragonnet', 'sulfenix'].includes(this.type) && !this.dompteT && m.hp < m.maxHp / 2 ? p.pcv('pc-osamodas-N') : 0;   // Flamme de lignée
+          const jet = world.rng.range(e.min, e.max + 1) * 1.5 * R.degats * world.bonusMeute(p) * this.force * (1 + fl / 100);
+          const vc = this.base === 'crapipou' && !this.dompteT ? p.pcv('pc-osamodas-M') : 0;
+          if (vc) for (const o of world.monsters) {   // Venin qui court : le poison gagne les monstres à 1 case de la cible
+            const d = Math.hypot(o.x - cx, o.y - cy);
+            if (o === m || o.dead || o.state === 'spawn' || d <= r + o.radius || d > r + CASE + o.radius) continue;
+            if (o.saigneT <= 0) world.emit({ k: 'status', x: o.x, y: o.y - 34, text: 'Empoisonné', color: '#7fd35a' });
+            o.saigne = jet * vc / 100 / 2; o.saigneT = 2;
+          }
           const n = world.coupDeBete(this, m, jet, e.element);
           if (e.vol && n > 0) this.soigner(n / 2, world);
         }

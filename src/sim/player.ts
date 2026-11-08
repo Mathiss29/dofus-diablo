@@ -351,6 +351,8 @@ export class Player extends Entity {
   /** Élan du héros (Iop P) : secondes restantes et bonus du prochain sort ; Déferlement sans fin (Iop N) : dernière recharge offerte ;
    *  Ferveur bouillonnante (Iop K) : bouclier de départ de Ferveur. */
   elanT = 0; elanV = 0; deferlementA = -99; ferveurBouclier = 0;
+  /** Piqûre d'éveil (Osamodas O) : dernier éveil offert. */
+  piqureA = -99;
   /** Un sort qui le demande (HitDef.tue) vient de tuer un monstre. */
   aTue(id: string, world: World) {
     const v = this.pcv('pc-iop-N');
@@ -1116,6 +1118,7 @@ export class Player extends Entity {
     if (id === 'dispersion' && v('pc-cra-L')) { o.knock = 0; o.attire = { px: CASE * 2, vers: 'centre' }; o.plus = v('pc-cra-L'); }
     if (id === 'glacee' && v('pc-cra-M')) o.perce = v('pc-cra-M') - 1;
     if (id === 'abolition' && v('pc-cra-N')) o.surplus = v('pc-cra-N');
+    if (id === 'dents_piranya' && v('pc-osamodas-K')) o.festin = true;
     return o;
   }
   /** Effets des légendaires de classe qui s'ajoutent à l'impact d'un sort (Iop A E G H, Osamodas A B C G H). */
@@ -1186,6 +1189,35 @@ export class Player extends Entity {
     if (id === 'vagabonde' && v('pc-cra-P')) {   // Repli prudent : bouclier en s'éloignant
       this.shield = Math.max(this.shield, Math.round(this.maxHp * v('pc-cra-P') / 100)); this.shieldT = this.shieldT0 = 3; this.shieldSrc = 'pc-cra-P';
       cri('Repli prudent');
+    }
+    if (id === 'cri_corbac' && v('pc-osamodas-I')) {   // Nuée de corbacs : d'autres monstres près de la cible
+      const pris = world.monsters.filter(m => !m.dead && m.state !== 'spawn' && Math.hypot(m.x - tx, m.y - ty) > size + m.radius && Math.hypot(m.x - tx, m.y - ty) <= CASE * 3)
+        .sort((a, b) => Math.hypot(a.x - tx, a.y - ty) - Math.hypot(b.x - tx, b.y - ty)).slice(0, v('pc-osamodas-I'));
+      if (pris.length) world.applyHits(m => pris.includes(m), hit, tx, ty, 0);
+      for (const m of pris) world.emit({ k: 'spell', fx: 'burst', id: 'cri_corbac', x: m.x, y: m.y, cx: tx, cy: ty, facing: this.facing, size: 30, arc: 0, element: 'air', big: false, boosted: false });
+    }
+    if (id === 'pics_prespic' && v('pc-osamodas-J'))   // Tapis de piquants : épines au sol 3 s
+      world.zonesSol.push({ x: tx, y: ty, r: Math.max(size, CASE), t: 3, hit: { ...hit, dmg: hit.dmg * v('pc-osamodas-J') / 100, lifesteal: undefined }, touches: new Set(), id: 'pc-osamodas-J' });
+    if (id === 'dents_piranya' && v('pc-osamodas-K')) {   // Festin du piranya : la meute se soigne des dégâts faits
+      const n = world.festin * v('pc-osamodas-K') / 100; world.festin = 0;
+      if (n > 0) for (const b of world.betes) if (!b.dead) b.soigner(n, world);
+    }
+    if (id === 'cri_ours' && v('pc-osamodas-L')) {   // Peau de l'ours : bouclier pour l'Osamodas et les bêtes proches
+      const k = v('pc-osamodas-L') / 100;
+      this.shield = Math.max(this.shield, Math.round(this.maxHp * k)); this.shieldT = this.shieldT0 = 5; this.shieldSrc = 'pc-osamodas-L';
+      for (const b of world.betes) if (!b.dead && Math.hypot(b.x - this.x, b.y - this.y) <= CASE * 3) { b.shield = Math.max(b.shield, Math.round(b.maxHp * k)); b.shieldT = 5; }
+    }
+    if (id === 'piqure' && v('pc-osamodas-O') && this.age - this.piqureA >= 20) {   // Piqûre d'éveil
+      const b = world.betes.filter(q => !q.dead && !q.dompteT && q.eveilT <= 0).sort((a, c) => Math.hypot(a.x - this.x, a.y - this.y) - Math.hypot(c.x - this.x, c.y - this.y))[0];
+      if (b && b.eveiller(world)) { b.eveilT = v('pc-osamodas-O'); this.piqureA = this.age; cri("Piqûre d'éveil"); }
+    }
+    if (id === 'charge_bestiale' && v('pc-osamodas-P')) {   // Charge de la meute : chaque bête bondit sur la cible
+      const m = world.monsters.filter(q => !q.dead && q.state !== 'spawn' && Math.hypot(q.x - this.x, q.y - this.y) <= size + CASE + q.radius)
+        .sort((a, c) => Math.hypot(a.x - this.x, a.y - this.y) - Math.hypot(c.x - this.x, c.y - this.y))[0];
+      if (m) for (const b of world.betes) if (!b.dead && !b.dompteT) {
+        const a = Math.atan2(b.y - m.y, b.x - m.x); b.x = m.x + Math.cos(a) * (m.radius + b.radius + 4); b.y = m.y + Math.sin(a) * (m.radius + b.radius + 4);
+        if (!m.dead) world.applyHits(q => q === m, { ...hit, dmg: hit.dmg * v('pc-osamodas-P') / 100 }, b.x, b.y, 0);
+      }
     }
     if (id === 'charge_bestiale' && v('pc-osamodas-H')) for (const b of world.betes) if (!b.dead) b.soigner(b.maxHp * v('pc-osamodas-H') / 100, world);
   }

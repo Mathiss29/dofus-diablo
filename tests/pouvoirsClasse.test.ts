@@ -24,12 +24,12 @@ const porter = (w: World, id: string, value: number) => {
 const monstre = (w: World, dx: number, dy = 0, type = 'bouftou') => { const m = w.spawnMonster(type, w.player.x + dx, w.player.y + dy); m.state = 'chase'; return m; };
 
 describe('Légendaires de classe inventés (Légendaires classe : 1A 2A+2D 3C 4A …)', () => {
-  it('39 pouvoirs (+ 17 du Sacrieur), deux par emplacement pour le Iop et le Crâ, chacun sur un vrai sort de sa classe', () => {
-    expect(POUVOIRS_CLASSE).toHaveLength(56);
+  it('47 pouvoirs (+ 17 du Sacrieur), deux par emplacement, chacun sur un vrai sort de sa classe', () => {
+    expect(POUVOIRS_CLASSE).toHaveLength(64);
     expect(PC_PAR_ID['pc-cra-D']).toBeUndefined();   // 6D Pas piégé refusé
     for (const p of POUVOIRS_CLASSE) {
       expect(GAME_DATA.classes[p.classe].spells[p.sort], p.id).toBeDefined();
-      expect(POUVOIRS_CLASSE.filter(q => q.classe === p.classe && q.slot === p.slot)).toHaveLength(p.classe === 'osamodas' || (p.classe === 'cra' && p.slot === 'bottes') ? 1 : p.classe === 'sacrieur' && p.slot === 'bouclier' ? 3 : 2);
+      expect(POUVOIRS_CLASSE.filter(q => q.classe === p.classe && q.slot === p.slot)).toHaveLength(p.classe === 'cra' && p.slot === 'bottes' ? 1 : p.classe === 'sacrieur' && p.slot === 'bouclier' ? 3 : 2);
       expect(p.texte(p.jet[1])).not.toMatch(/\btours?\b/i);
     }
   });
@@ -178,12 +178,35 @@ describe('Légendaires de classe : effets', () => {
 });
 
 describe('Légendaires de classe, suite (Légendaires classes suite : 1A-1H 2A-2H 4A 5A 6A)', () => {
-  it('chaque boss préfère aussi un des nouveaux pouvoirs du Iop et du Crâ ; aucun nouveau pour l\'Osamodas (attend son rééquilibrage)', () => {
-    for (const l of Object.values(BOSS_PREFERES)) {
-      expect(l.some(id => /^pc-iop-[I-P]$/.test(id))).toBe(true);
-      expect(l.some(id => /^pc-cra-[I-P]$/.test(id))).toBe(true);
-    }
-    expect(PC_PAR_ID['pc-osamodas-I']).toBeUndefined();
+  it('chaque boss préfère aussi un des nouveaux pouvoirs du Iop, du Crâ et de l\'Osamodas', () => {
+    for (const l of Object.values(BOSS_PREFERES)) for (const c of ['iop', 'cra', 'osamodas'])
+      expect(l.some(id => new RegExp(`^pc-${c}-[I-P]$`).test(id))).toBe(true);
+  });
+
+  it('Osamodas L Peau de l\'ours : bouclier pour l\'Osamodas et ses bêtes ; O Piqûre d\'éveil : la bête monte d\'un rang, une fois toutes les 20 s', () => {
+    const w = arena('osamodas'), p = w.player;
+    p.level = 200; p.recompute();
+    porter(w, 'pc-osamodas-L', 10);
+    const b = w.invoquer(p, 'tofu', 'tofu', p.x + 40, p.y)!;
+    p.shield = 0; p.bar[0] = 'cri_ours'; p.pa = p.paMax; p.cd.cri_ours = 0;
+    const m = monstre(w, 60); m.maxHp = m.hp = 1e6;
+    w.step(1 / 60, { ...NO_INPUT, aim: { x: m.x, y: m.y }, pressed: 'cri_ours' as never });
+    for (let k = 0; k < 40; k++) w.step(1 / 60, { ...NO_INPUT, aim: { x: m.x, y: m.y } });
+    expect(p.shield).toBeGreaterThan(0); expect(b.shield).toBeGreaterThan(0);
+    porter(w, 'pc-osamodas-O', 5);
+    const avant = b.type;
+    p.bar[0] = 'piqure'; p.pa = p.paMax; p.cd.piqure = 0; p.casts = {};
+    w.step(1 / 60, { ...NO_INPUT, aim: { x: m.x, y: m.y }, pressed: 'piqure' as never });
+    for (let k = 0; k < 40; k++) w.step(1 / 60, { ...NO_INPUT, aim: { x: m.x, y: m.y } });
+    expect(b.type).not.toBe(avant);
+    expect(b.eveilT).toBeLessThanOrEqual(5);
+  });
+
+  it('Osamodas K Festin du piranya : les dégâts du coup sont comptés pour soigner la meute', () => {
+    const w = arena('osamodas'), m = monstre(w, 60); m.maxHp = m.hp = 1e6;
+    w.festin = 0;
+    w.hitCircle(m.x, m.y, 4, { dmg: 100, knock: 0, festin: true });
+    expect(w.festin).toBe(1e6 - m.hp);
   });
 
   it('4A : les deux pouvoirs d\'un emplacement tombent à peu près autant', () => {
