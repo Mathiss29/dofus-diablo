@@ -12,11 +12,13 @@ import sys, os, json, math, random
 from PIL import Image, ImageDraw, ImageFilter
 cdir, mondes = sys.argv[1:3]
 apercu = sys.argv[3] if len(sys.argv) > 3 else None
+# particules officielles des cartes de Brâkmar (sortie de particules.py, voir LISEZMOI) : dossier, ou rien = pas de particules
+PARTS = os.environ.get('PARTICULES_BRAKMAR')
 sys.argv = ['arenes.py', cdir, '', mondes]
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import arenes as A
 from arenes import W, H, OX, OY, COLS, ROWS, MW, MH, gfx, styled, piece, ell
-NS = 4
+NS = 6   # 6 x 6 places : l'île de Brâkmar, en grand, tient à droite
 CX, CY = OX + NS * MW / 2, OY + NS * MH / 2
 BOX = (-1400, -1000, 1400, 1000)            # sol : l'île centrale et son dessous
 A.BOX = BOX
@@ -52,7 +54,21 @@ PIECES = {
     'as_charrette': (191105028, R(555, 520, 670, 630)),
     'as_arbre': (191104000, R(540, 800, 715, 1030)),
     'as_petit_arbre': (191106050, R(383, 675, 440, 820)),
+    # Brâkmar (île en grand, Mathis 2026-11-07 23:55 : « j'aime bien », avec les petits effets du jeu)
+    'bk_temple': (212862466, R(700, 70, 1560, 780)),
+    'bk_hangar': (BRAK, R(400, 100, 930, 640)),
+    'bk_maison_noire': (BRAK, R(225, 810, 520, 1085)),
+    'bk_maison_haute': (BRAK, R(1180, 280, 1440, 700)),
+    'bk_ascenseur': (BRAK, R(930, 190, 1140, 500)),
+    'bk_fonderie': (BRAK, R(850, 530, 1100, 760)),
+    'bk_maison_toit': (212861955, R(1000, 120, 1400, 660)),
+    'bk_roche': (212861955, R(40, 580, 340, 950)),
+    'bk_machine': (212862467, R(880, 180, 1360, 740)),
+    'bk_banniere': (212862467, R(670, 160, 720, 330)),
+    'bk_chaine': (212862467, R(180, 20, 260, 690)),
 }
+# coordonnées (carte) des cartes de Brâkmar, pour retrouver leurs particules
+BK_CARTES = {212861954: (-26, 36), 212862466: (-25, 36), 212861955: (-26, 37), 212862467: (-25, 37)}
 
 # Lumières officielles (halos, rayons) : Dofus les ajoute à l'image (mélange additif) ; posées telles quelles, elles font de grandes
 # taches claires. Elles sont retirées des cartes sources avant d'en tirer les pièces (comme dans world_export.py).
@@ -72,8 +88,13 @@ def nettoyer(mid):
         if im is None or im.width * im.height < 60000: return False
         a = im.resize((48, 48)).getchannel('A'); px = [v for v in a.getdata() if v > 10]
         return bool(px) and sum(px) / len(px) < 120
-    md['sortableElements'] = [e for e in md['sortableElements'] if e['gfxId'] not in LUMIERES and not melange(e) and not voile(e['gfxId'])]
-    A._md[mid] = md
+    garde, lum = [], []
+    for e in md['sortableElements']:
+        if voile(e['gfxId']): continue
+        (lum if e['gfxId'] in LUMIERES or melange(e) else garde).append(e)
+    md['sortableElements'] = garde; A._md[mid] = md
+    LUMS[mid] = lum   # les lumières retirées : rajoutées en calque additif sur l'île de Brâkmar
+LUMS = {}
 for _m in {m for m, _ in PIECES.values()}: nettoyer(_m)
 
 # --- Composition --------------------------------------------------------------------------------------------------
@@ -96,7 +117,7 @@ OBJETS = [('zaap', (0, 10), False, 120), ('as_etal_orange', (-330, 470), False, 
           ('as_petit_arbre', (-300, -40), False, 50), ('as_petit_arbre', (300, -40), True, 50), ('as_arbre', (480, 180), False, 50)]
 # Îles des nations (4C) : au loin, fermées (pont coupé) tant que la nation n'est pas libérée
 ILES = [('Bonta', (0, -1520), [('bonta_maison', (-60, 40), False), ('bonta_etal', (190, 110), False)], PAVES),
-        ('Brâkmar', (2000, -150), [('brak_forge', (0, 160), False)], DIRT),
+        ('Brâkmar', (2420, -150), 'grand', None),     # île en grand : ile_brakmar()
         ('Pandala', (-2000, -150), [('panda_orange', (0, 60), False)], HERBE),
         ('Frigost', (0, 1250), [('frig_maison', (40, 420), False)], DIRT)]
 # zaap : le milieu du dessin de l'arche (on clique dessus), pas son pied
@@ -159,6 +180,79 @@ def ile(nom, cx, cy, pieces, sol_tiles, P):
     cv.thumbnail((800, 800))   # au loin : réduite (elle reste nette à l'écran, le jeu la remet à sa taille)
     return cv, box
 
+BK_ECHELLE = 0.75   # l'île de Brâkmar est rendue en grand puis posée aux 3/4 (elle tient dans le Bastion)
+BK_POSE = [('bk_temple', (0, -330), False), ('bk_hangar', (-820, -60), False), ('bk_maison_toit', (780, -40), True),
+           ('bk_machine', (950, 360), True), ('bk_maison_noire', (-760, 420), False), ('bk_maison_haute', (-1080, 200), False),
+           ('bk_fonderie', (-260, 560), False), ('bk_ascenseur', (330, 600), False), ('bk_chaine', (-420, 120), False),
+           ('bk_chaine', (430, 140), False), ('bk_banniere', (-150, 230), False), ('bk_banniere', (150, 250), True),
+           ('bk_roche', (-1180, -180), False), ('bk_roche', (1180, -120), True)]
+def _ancre(mid, rect):
+    """Ancre (bas-milieu) d'une pièce dans le repère de sa carte : comme piece() d'arenes.py."""
+    x0, y0, x1, y1 = rect; bx = []
+    for b, e in A._boites(mid):
+        if x0 <= (b[0] + b[2]) / 2 <= x1 and y0 <= (b[1] + b[3]) / 2 <= y1: bx.append(b)
+    return (min(b[0] for b in bx) + max(b[2] for b in bx)) / 2, max(b[3] for b in bx)
+def ile_brakmar(P):
+    """L'île de Brâkmar en grand : plaques de métal, fissures de lave, Grand Temple, hangar, machine, fonderie…
+    Rend (image, cadre, particules, lumières) ; particules et lumières dans le repère de l'île (échelle 1)."""
+    random.seed(7)
+    SOL = [67895, 67890, 67893]; GRAND = [303959, 304159, 304151]; LAVE = 68712; FEU = [68715, 68714]
+    rx, ry = 1350, 780; f = ell(rx, ry); els = []; laves = []; feux = []
+    for r in range(-int(ry / 21.5) - 1, int(ry / 21.5) + 2):
+        for c in range(-int(rx / 86) - 2, int(rx / 86) + 3):
+            x = c * 86 + (r % 2) * 43; y = r * 21.5
+            if f(x, y) <= 0.95 or (f(x, y) <= 1 and random.random() < 0.5):
+                els.append(dict(g=random.choice(SOL), x=x, y=y, sx=random.choice([1, -1]), sy=1, c=0xFF808080, k=(0, 0, y)))
+    for _ in range(150):
+        x, y = random.uniform(-rx, rx), random.uniform(-ry, ry)
+        if f(x, y) < 0.8: els.append(dict(g=random.choice(GRAND), x=x, y=y, sx=random.choice([1, -1]), sy=1, c=0xFF808080, k=(0, 1, y)))
+    for _ in range(22):
+        x, y = random.uniform(-rx, rx), random.uniform(-ry, ry)
+        if 0.3 < f(x, y) < 0.85: els.append(dict(g=LAVE, x=x, y=y, sx=1, sy=1, c=0xFF808080, k=(0, 2, y))); laves.append((x, y))
+    n = 0; parts = []; lums = []
+    data = json.load(open(f'{PARTS}/particules.json')) if PARTS else {}
+    for pn, (px, py), fl in BK_POSE:
+        for q in P[pn]:
+            n += 1; els.append(dict(g=q['g'], x=px + (-q['x'] if fl else q['x']), y=py + q['y'], sx=-q['sx'] if fl else q['sx'], sy=q['sy'], c=q['c'], k=(1, py + q['fy'], q['o'], n)))
+        mid, rect = PIECES[pn]; ax, ay = _ancre(mid, rect); x0, y0, x1, y1 = rect
+        def ici(x, y): return (px + (ax - x if fl else x - ax), py + y - ay)
+        # particules officielles de la pièce (étincelles, bulles, fumées) : elles suivent le bâtiment
+        cx, cy = BK_CARTES[mid]
+        for sy_ in data.get(f'{cx}_{cy}', []):
+            lx, ly = sy_['x'] - (cx + 26) * MW, sy_['y'] - (cy - 36) * MH
+            if x0 <= lx <= x1 and y0 <= ly <= y1:
+                X, Y = ici(lx, ly); parts.append({**sy_, 'x': X, 'y': Y})
+        # lumières officielles de la pièce (lueurs des enseignes, de la lave)
+        for e in LUMS.get(mid, []):
+            t = e['transform']; lx, ly = t['m31'], -t['m32']
+            if x0 <= lx <= x1 and y0 <= ly <= y1:
+                X, Y = ici(lx, ly); lums.append(dict(g=e['gfxId'], x=X, y=Y, sx=-t['m11'] if fl else t['m11'], sy=t['m22'], c=e['color']['value']))
+    # bulles de lave sur nos fissures, braises au bord (systèmes officiels de Brâkmar, copiés)
+    tous = [x for v in data.values() for x in v]
+    bulle = next((x for x in tous if x['n'] == 'Bulles'), None); etin = next((x for x in tous if x['n'] == 'ETINCELLES_BasDroite'), None)
+    for x, y in laves:
+        if bulle: parts.append({**bulle, 'x': round(x, 1), 'y': round(y, 1)})
+    for _ in range(14):
+        x, y = random.uniform(-rx, rx) * 0.95, random.uniform(-ry, ry) * 0.95
+        if 0.85 < f(x, y) < 1:
+            els.append(dict(g=random.choice(FEU), x=x, y=y, sx=1, sy=1, c=0xFF808080, k=(1, y, 0, 9999)))
+            if etin: parts.append({**etin, 'x': round(x, 1), 'y': round(y - 20, 1)})
+    xs, ys = [], []
+    for e in els:
+        im = gfx(e['g'])
+        if im is None: continue
+        w, h = im.width * abs(e['sx']), im.height * abs(e['sy']); xs += [e['x'] - w / 2, e['x'] + w / 2]; ys += [e['y'] - h / 2, e['y'] + h / 2]
+    box = (min(xs) - 40, min(ys) - 40, max(xs) + 40, max(ys) + 320)
+    cv = Image.new('RGBA', (int(box[2] - box[0]), int(box[3] - box[1])))
+    d = Image.new('RGBA', cv.size); dd = ImageDraw.Draw(d); ox, oy = box[0], box[1] - 30; haut = 340
+    for i in range(haut, 0, -4):   # dessous : basalte sombre
+        k = i / haut; w = rx * (1 - 0.55 * k ** 1.6)
+        dd.ellipse((-w - ox, -ry * (1 - 0.3 * k) + i - oy, w - ox, ry * (1 - 0.3 * k) + i - oy), fill=(int(40 - 25 * k), int(32 - 22 * k), int(36 - 22 * k), 255))
+    cv.alpha_composite(d.filter(ImageFilter.GaussianBlur(2)))
+    cv.alpha_composite(A.rendre(els, box, None))
+    cv.thumbnail((1400, 1400))
+    return cv, box, parts, lums
+
 def exporter():
     a, P, pnj = composer()
     out = f'{mondes}/bastion'; os.makedirs(out, exist_ok=True)
@@ -194,11 +288,27 @@ def exporter():
         bt = {'bt': 1 + e['grp']} if 'grp' in e and grand[e['grp']] > 30000 else {}
         places.append({'f': variants[key][0], 'x': round(e['x'] + CX, 1), 'y': round(e['y'] + CY, 1), 'c': case(e['fx'], e['fy']), 'o': e['o'], **bt})
     # îles des nations : une image chacune, posée en entier (z = agrandissement, elles sont rendues réduites)
+    parts = []
     for nom, (ix, iy), pcs, tiles in ILES:
-        im, box = ile(nom, ix, iy, pcs, tiles, P); z = (box[2] - box[0]) / im.width
+        k = 1
+        if pcs == 'grand':
+            im, box, bp, bl = ile_brakmar(P); k = BK_ECHELLE
+        else: im, box = ile(nom, ix, iy, pcs, tiles, P)
+        z = (box[2] - box[0]) * k / im.width
         key = ('ile', nom); variants[key] = ('ile_' + nom.lower().replace('â', 'a'), im)
-        cx, cy = ix + (box[0] + box[2]) / 2, iy + (box[1] + box[3]) / 2
-        places.append({'f': variants[key][0], 'x': round(cx + CX, 1), 'y': round(cy + CY, 1), 'c': case(ix, iy + 200 if iy > 0 else iy - 300), 'o': 0, 'z': round(z, 3)})
+        cx, cy = ix + k * (box[0] + box[2]) / 2, iy + k * (box[1] + box[3]) / 2
+        ci = case(ix, iy + 200 if iy > 0 else iy - 300)
+        places.append({'f': variants[key][0], 'x': round(cx + CX, 1), 'y': round(cy + CY, 1), 'c': ci, 'o': 0, 'z': round(z, 3)})
+        if pcs == 'grand':
+            for q in bp:   # particules : repère de l'île -> repère du monde
+                parts.append({**q, 'x': round(CX + ix + k * q['x'], 1), 'y': round(CY + iy + k * q['y'], 1)})
+            for q in bl:   # lumières : calque additif au-dessus de l'île
+                lk = ('lum', q['g'], q['c'], round(q['sx'], 3), round(q['sy'], 3))
+                if lk not in variants:
+                    li = styled(dict(q, k=0))
+                    if li is None: continue
+                    variants[lk] = ('l%d' % len(variants), li)
+                places.append({'f': variants[lk][0], 'x': round(CX + ix + k * q['x'], 1), 'y': round(CY + iy + k * q['y'], 1), 'c': ci, 'o': 1, 'z': k, 'b': 'a'})
     items = sorted(variants.values(), key=lambda v: -v[1].height); maxW = 4096; px = py = rowH = 0; pos = {}
     for name, im in items:
         b = im.getbbox() or (0, 0, 1, 1); w, h = b[2] - b[0] + 2, b[3] - b[1] + 2
@@ -223,6 +333,11 @@ def exporter():
                    'sol': {'x': BOX[0] + CX, 'y': BOX[1] + CY, 'w': sol.width, 'h': sol.height}, 'decor': places}],
          'mov': ''.join(mov)}
     json.dump(M, open(f'{out}/monde.json', 'w'))
+    if PARTS and parts:   # particules : un seul « monde-carte » (tag bastion), images de Brâkmar recopiées
+        json.dump({'bastion': parts}, open(f'{out}/particules.json', 'w'))
+        import shutil
+        for fn in ('particules.webp', 'particules_atlas.json'): shutil.copy(f'{PARTS}/{fn}', f'{out}/{fn}')
+        print('particules :', len(parts))
     pts = {k: case(*v) for k, v in POINTS.items()}
     pts['pnj'] = {k: case(*v) for k, v in pnj.items()}
     if apercu:
