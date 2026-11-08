@@ -2,6 +2,7 @@ import { DOFUS } from '../sim/dofus';
 import { apercuSort } from '../sim/apercu';
 import { dossier, v } from './assetUrl';
 import Phaser from 'phaser';
+import { calerCamera } from './pixel';
 import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES } from '../sim/data';
 import type { Compte } from '../sim/quests';
 import { QuestView } from './questView';
@@ -283,9 +284,11 @@ export class ZoneScene extends Phaser.Scene {
     this.events.once('shutdown', () => this.sys.events.off(Phaser.Scenes.Events.ADDED_TO_SCENE, onAdd));
     this.reglages = chargerReglages(); this.ambT = 0; this.sat = undefined;
     this.zoom = Phaser.Math.Clamp(this.reglages.zoom, ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]); this.cameras.main.setZoom(this.zoom);
-    // Pas d'arrondi au pixel pour la caméra du jeu : Phaser arrondit chaque coin d'image séparément, donc une image agrandie
-    // (tout le décor, à l'échelle du zoom) gagnait ou perdait un pixel selon le défilement et « tremblait » (Mathis, 2026-11-06).
+    // Phaser arrondit chaque coin d'image séparément : avec un défilement entre deux pixels, une image agrandie gagnait ou
+    // perdait un pixel et « tremblait » (2026-11-06), puis tout « bavait » en course (2026-11-08). Le défilement dessiné est
+    // donc calé sur un pixel entier de l'écran (pixel.ts) ; l'arrondi des coins (remis par startFollow) devient alors sans effet de bord.
     this.cameras.main.setRoundPixels(false);
+    calerCamera(this.cameras.main);
     this.input.on('wheel', (_p: Phaser.Input.Pointer, _o: unknown, _dx: number, dy: number) => {
       if (!this.reglages.zoomMolette) return;   // Réglages 5A
       this.zoom = Phaser.Math.Clamp(this.zoom * (dy > 0 ? 0.9 : 1.1), ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]);
