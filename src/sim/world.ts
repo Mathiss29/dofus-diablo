@@ -429,7 +429,10 @@ export class World {
     const wg = this.worldGrid;
     return !!wg && !po.vers && !!wg.mapByTag(po.ends[i].tag)?.inside && !wg.mapByTag(po.ends[1 - i].tag)?.inside;
   }
-  private rayonPorte(po: World['portes'][number], i: number) { return this.estSortie(po, i) ? World.SORTIE_R : World.PORTE_R; }
+  /** Rayon d'un bout de porte : plus large dans un intérieur (sortie ou passage vers une autre salle), où tout le paillasson compte. */
+  private rayonPorte(po: World['portes'][number], i: number) {
+    return this.estSortie(po, i) || (!po.vers && !!this.worldGrid?.mapByTag(po.ends[i].tag)?.inside) ? World.SORTIE_R : World.PORTE_R;
+  }
   static readonly PORTE_ARRIVEE = 80;
   private buildPortes() {
     const wg = this.worldGrid!;
@@ -472,14 +475,15 @@ export class World {
     return (m.inside ? this.lieux.get(tag) : null) ?? this.zone.open?.subareas[String(m.sub)]?.name ?? null;
   }
   /** Bout de porte sous un point (survol de la souris, maquette Entrées 3A et 8A) : où elle mène, et si c'est la sortie
-   *  d'un intérieur. Les bouts qu'on ne peut pas prendre dans ce sens (sens unique) sont ignorés. */
-  porteSous(x: number, y: number): { x: number; y: number; nom: string; sortie: boolean } | null {
+   *  d'un intérieur. Les bouts qu'on ne peut pas prendre dans ce sens (sens unique) sont ignorés.
+   *  r : rayon plus large (la souris est sur le dessin de la porte, au-dessus de sa case). */
+  porteSous(x: number, y: number, r = 0): { x: number; y: number; nom: string; sortie: boolean } | null {
     if (!this.worldGrid) return null;
     let best: { x: number; y: number; nom: string; sortie: boolean } | null = null, bd = Infinity;
     for (const po of this.portes) for (let i = 0; i < 2; i++) {
       if (i === 1 && po.sens) continue;
       const from = po.ends[i], to = po.ends[1 - i], d = Math.hypot(x - from.x, y - from.y);
-      if (d > bd || d > this.rayonPorte(po, i)) continue;
+      if (d > bd || d > Math.max(r, this.rayonPorte(po, i))) continue;
       bd = d;
       const dedans = !!this.worldGrid.mapByTag(from.tag)?.inside;
       if (po.vers) { best = { x: from.x, y: from.y, nom: po.nom, sortie: false }; continue; }
@@ -510,21 +514,23 @@ export class World {
     if (this.portalLock && Math.hypot(p.x - this.portalLock.x, p.y - this.portalLock.y) > R + 30) this.portalLock = null;
     for (const po of this.portes) for (let i = 0; i < 2; i++) {
       const from = po.ends[i], to = po.ends[1 - i], Rp = this.rayonPorte(po, i);
-      if ((i === 1 && po.sens) || from === this.portalLock || Math.hypot(p.x - from.x, p.y - from.y) > Rp) continue;
+      if ((i === 1 && po.sens) || Math.hypot(p.x - from.x, p.y - from.y) > Rp) continue;
       // on passe la porte en cliquant dessus, ou en marchant droit dedans (4B) ; la frôler de côté ne fait rien
       const dp = Math.hypot(from.x - p.x, from.y - p.y);
       const marche = pas > 0.5 && pas < 60 && dp < R * 0.75 && (dp < 8 || (mx * (from.x - p.x) + my * (from.y - p.y)) / (pas * dp) > 0.6);
       const clic = p.vise(from.x, from.y, Rp + 40);
+      // la porte par laquelle on vient d'arriver : on ne repart pas en marchant, mais un clic dessus fait ressortir tout de suite
+      if (from === this.portalLock && !clic) continue;
       if (!clic && !marche) continue;
       if (po.verrou && !this.salleVide(from.tag)) {
-        this.portalLock = from;   // un seul message tant qu'il reste sur la porte
+        this.portalLock = from; p.stopMove();   // un seul message tant qu'il reste sur la porte (et le clic est consommé)
         this.emit({ k: 'status', x: p.x, y: p.y - 60, text: 'Vaincs les monstres de la salle', color: '#ff9a5a' });
         return;
       }
       // entrée d'un donjon gardé (maquette Gardiens 5A) : la porte ouvre le dialogue du gardien, qui fait entrer (« Entrer »)
       const gardien = i === 0 && this.quetes?.gardienDe(po.nom);
       if (gardien && po === this.entreeDonjon(po.nom)) { p.stopMove(); if (!clic) this.portalLock = from; this.quetes!.parlerA(gardien); return; }
-      if (i === 0 && !this.prendreCle(po)) { this.portalLock = from; return; }
+      if (i === 0 && !this.prendreCle(po)) { this.portalLock = from; p.stopMove(); return; }
       this.passer(po, to);
       return;
     }

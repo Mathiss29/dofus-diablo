@@ -60,6 +60,8 @@ const CURSEUR_PORTE = `url("${v(`${ASSETS}/ui/curseur_porte.png`)}") 1 1, pointe
 /** Scène d'une zone : charge la carte et les planches de la zone, fait tourner la simulation
  *  à pas fixe, et dessine son état. Toute la logique de jeu est dans World (src/sim). */
 export class ZoneScene extends Phaser.Scene {
+  /** Distance (monde) entre le centre de la forme d'une porte et sa case au sol. */
+  static readonly FORME_PORTE = 220;
   private zoneId = 'incarnam';
   /** Classe jouée (#cra dans l'adresse, ou touche K pour changer). */
   private classId = 'iop';
@@ -288,7 +290,7 @@ export class ZoneScene extends Phaser.Scene {
       this.worldView.portes = this.world.portes.flatMap(p => p.ends.flatMap((e, i) => {
         const to = p.ends[1 - i], marche = !p.vers && !(i === 1 && p.sens);
         if (i === 1 && p.sens && open.donjons?.some(d => d.arene?.tag === e.tag)) return [];
-        return [{ ...e, vers: marche ? to.tag : undefined, sortie: marche && dedans(e.tag) && !dedans(to.tag) }];
+        return [{ ...e, vers: marche ? to.tag : undefined, sortie: marche && dedans(e.tag) && !dedans(to.tag), dedans: marche && dedans(e.tag) }];
       }));
       const parts = this.cache.json.get(`${open.world}_particules`) as Record<string, SysData[]> | undefined;
       if (parts) this.worldView.parts = new Particules(this, wg, parts, `${open.world}_particules_img`);
@@ -674,8 +676,21 @@ export class ZoneScene extends Phaser.Scene {
   /** Survol d'une porte (maquette Entrées 3A, 8A) : son nom au-dessus, « Sortie · … » pour la sortie d'un intérieur.
    *  Le bout survolé fait aussi précharger ce qu'il y a derrière (2A, voir WorldView.prefetch). */
   private porteLabel: Phaser.GameObjects.Text | null = null;
-  private porteSurvol(aim: { x: number; y: number }): boolean {
-    const po = this.vitrine || this.world.passage ? null : this.world.porteSous(aim.x, aim.y);
+  /** Bout de la porte survolée (case au sol), où un clic envoie le perso : toute la forme de la porte compte (Mathis 2026-11-08). */
+  private porteVisee: { x: number; y: number } | null = null;
+  private porteSurvol(aim: { x: number; y: number }, ecran: { x: number; y: number }): boolean {
+    let po = this.vitrine || this.world.passage ? null : this.world.porteSous(aim.x, aim.y);
+    // souris sur le dessin de la porte (sa forme officielle), au-dessus de sa case : c'est la porte la plus proche de la forme
+    const forme = !po && !this.vitrine && !this.world.passage ? this.worldView?.survolSous(ecran.x, ecran.y) : null;
+    if (forme) { const w = ISO.toWorld(forme.x, forme.y); po = this.world.porteSous(w.x, w.y, ZoneScene.FORME_PORTE); }
+    // porte du dehors sans forme officielle (boutique de Kerubim, Incarnam) : la souris un peu au-dessus de sa case compte aussi
+    const wg = this.world.worldGrid;
+    for (const h of [50, 100]) {
+      if (po || this.vitrine || this.world.passage || !wg) break;
+      const w = ISO.toWorld(ecran.x, ecran.y + h), q = this.world.porteSous(w.x, w.y);
+      if (q && !wg.mapByTag(wg.mapAt(q.x, q.y)?.tag ?? '')?.inside) po = q;
+    }
+    this.porteVisee = po ? { x: po.x, y: po.y } : null;
     if (!po) { this.porteLabel?.setVisible(false); this.worldView?.contour(null); return false; }
     if (!this.porteLabel) {
       this.porteLabel = this.add.text(0, 0, '', { fontFamily: 'Lexend, sans-serif', fontSize: '15px', fontStyle: 'bold', color: '#f3e3bf', backgroundColor: '#0b0910e0',
@@ -685,12 +700,12 @@ export class ZoneScene extends Phaser.Scene {
       this.events.once('shutdown', () => { lab.destroy(); if (this.porteLabel === lab) this.porteLabel = null; });
     }
     const c = ISO.toScreen(po.x, po.y);
-    // contour du dessin de la porte (façon Sanstour)
-    // une sortie d'intérieur : c'est le paillasson posé sur la case qui s'entoure
-    this.worldView?.contour(c.x, po.sortie ? c.y + 50 : c.y);
+    // dans un intérieur (sortie, ou passage vers une autre salle) : c'est le paillasson posé sur la case qui s'entoure
+    const auSol = po.sortie || !!wg?.mapByTag(wg.mapAt(po.x, po.y)?.tag ?? '')?.inside;
+    this.worldView?.contour(c.x, auSol ? c.y + 50 : c.y);
     this.porteLabel.setText(po.sortie ? `Sortie · ${po.nom}` : po.nom).setColor(po.sortie ? '#ffe08a' : '#f3e3bf')
-      // une sortie est un repère au sol, souvent sous le perso : son nom va dessous ; une porte dans un mur, au-dessus
-      .setOrigin(0.5, po.sortie ? 0 : 1).setPosition(c.x, po.sortie ? c.y + 34 : c.y - 96).setScale(1 / this.cameras.main.zoom).setVisible(true);
+      // un repère au sol, souvent sous le perso : son nom va dessous ; une porte dans un mur, au-dessus
+      .setOrigin(0.5, auSol ? 0 : 1).setPosition(c.x, auSol ? c.y + 34 : c.y - 96).setScale(1 / this.cameras.main.zoom).setVisible(true);
     return true;
   }
 
@@ -816,19 +831,22 @@ export class ZoneScene extends Phaser.Scene {
     const ap = this.posteClick != null ? this.world.approchePoste(this.posteClick) : null;
     if (ap) { input.atelier = this.posteClick; input.dest = ap; this.clickMode = null; }
     this.posteClick = null;
-    if (held && this.clickMode === 'ground') input.dest = aim;
+    // sur une porte (sa case ou toute sa forme) : le perso va à sa case et la passe
+    const sol = this.porteVisee ?? aim;
+    if (held && this.clickMode === 'ground') input.dest = sol;
     if (held && this.clickMode === 'target' && this.clickTarget != null) input.target = this.clickTarget;
     // clic bref sur un monstre : on garde la cible jusqu'au premier coup (le perso continue de s'approcher)
     if (!held && this.clickMode === 'target' && this.clickTarget != null) { input.target = this.clickTarget; this.clickTarget = null; }
     // clic bref sur le sol : une seule destination
-    if (!held && this.clickMode === 'ground' && this.clickDest) { input.dest = aim; }
+    if (!held && this.clickMode === 'ground' && this.clickDest) { input.dest = sol; }
     this.clickDest = held && this.clickMode === 'ground';
     this.pressed = null; this.potion = false;
     // curseur : une épée sur un monstre
     const surPnj = this.questView?.pnjUnder(ptr, this.cameras.main) ?? null;
     if (this.questView) this.questView.survole = surPnj;
     this.dialogueView?.survol(surPnj, ptr);
-    const monstre = this.monsterUnder(ptr), porte = !monstre && !surPnj ? this.porteSurvol(aim) : false;
+    const monstre = this.monsterUnder(ptr), porte = !monstre && !surPnj ? this.porteSurvol(aim, wp) : false;
+    if (!porte) this.porteVisee = null;
     if (!porte) { this.porteLabel?.setVisible(false); this.worldView?.contour(null); }
     const zaap = !monstre && !surPnj && !porte && this.zaapSurvol(ptr);
     this.game.canvas.style.cursor = monstre ? 'crosshair' : surPnj || zaap ? 'pointer' : porte ? CURSEUR_PORTE : this.atelierView?.curseur() ?? this.recolteView?.curseur() ?? 'default';
