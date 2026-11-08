@@ -72,6 +72,7 @@ describe('Métiers de récolte (0.2b)', () => {
     }
     // Un banc de poissons, un arbre loin de sa case libre, un puits : le perso y va et récolte
     const w = monde(), p = w.player;
+    w.monsters.length = 0;   // la récolte seule : aucun groupe de monstres ne vient l'interrompre
     const loin = (pred: (h: string) => boolean) => w.recoltes.filter(r => pred(r.item))
       .map(r => ({ r, d: Math.hypot(w.approcheRecolte(r.id)!.x - r.x, w.approcheRecolte(r.id)!.y - r.y) })).sort((a, b) => b.d - a.d)[0];
     p.metiers.pecheur = { level: 200, xp: 0 }; p.metiers.bucheron = { level: 200, xp: 0 };
