@@ -947,6 +947,15 @@
             ]
           },
           {
+            "titre": "Cortège Sauvage n'est plus infini",
+            "phrase": "Après les 6 s de Cortège Sauvage, les bêtes en trop repartent, les plus anciennes d'abord.",
+            "details": "Avant, la meute gonflée restait pour toujours.",
+            "icone": "degats",
+            "etiquettes": [
+              "Osamodas"
+            ]
+          },
+          {
             "titre": "Monstres plus menaçants",
             "phrase": "Les monstres et les élites frappent plus fort : au moins +35 %, davantage aux niveaux élevés.",
             "details": "Leurs coups tiennent compte de l'équipement moyen de ton niveau. Les boss ne changent pas.",

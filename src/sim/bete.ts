@@ -67,6 +67,8 @@ export class Bete extends Entity {
   finT = 0; hate = 0; hateT = 0;
   /** Épées jumelles (légendaire Sacrieur N) : part des dégâts de la bête. */
   force = 1;
+  /** Seconde épée des Épées jumelles : ne prend pas de place d'Invocation (elle part avec sa jumelle). */
+  horsCompte = false;
   /** Laine épaisse : prochaine provocation du Bouftou. */
   provoqueT = 0;
   constructor(id: number, readonly owner: Player, key: string, sort: string, x: number, y: number, def: BeteDef = BETES[key], pv?: number) {
