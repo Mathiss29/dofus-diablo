@@ -9,13 +9,13 @@ Wants=network-online.target
 User=diablofus
 Group=diablofus
 WorkingDirectory=/home/diablofus/app
-ExecStart=/home/diablofus/node/bin/node --max-old-space-size=768 index.mjs
+ExecStart=/home/diablofus/node/bin/node --max-old-space-size=1536 index.mjs
 Environment=NODE_ENV=production PORT=3100 HOTE=127.0.0.1 DONNEES=/home/diablofus/donnees
 Restart=always
 RestartSec=3
 # Limites (projet Idlus) : pas de swap sur la machine, donc OOMScoreAdjust=500 pour que ce soit nous qui partions
-MemoryHigh=900M
-MemoryMax=1G
+MemoryHigh=1800M
+MemoryMax=2G
 CPUQuota=100%
 TasksMax=256
 OOMScoreAdjust=500

@@ -9,7 +9,7 @@ Il tourne sur le VPS OVH d'Idlus (VPS-3, Ubuntu 24.04), **sans toucher à Idlus*
 - tout dans `/home/diablofus` : `node/` (Node 22 officiel), `app/` (ce dossier), `donnees/` (base, sauvegardes) ;
 - écoute sur `127.0.0.1:3100` seulement ; le monde y arrive par un **tunnel Cloudflare** (`api.diablofus.com`), donc ni le
   Caddy d'Idlus (conteneur Supabase) ni le pare-feu ne changent ;
-- service systemd limité à 1 cœur et 1 Go, `OOMScoreAdjust=500` (c'est lui qui part en premier si la mémoire manque) ;
+- service systemd limité à 1 cœur et 2 Go (1 Go jusqu'au 2026-11-08), `OOMScoreAdjust=500` (c'est lui qui part en premier si la mémoire manque) ;
 - mise à jour **tirée par le VPS** : toutes les 5 minutes, `diablofus-maj.timer` lance `maj.sh` (utilisateur `diablofus`),
   qui regarde `main` du dépôt public et, s'il a changé, copie `serveur/` dans `~/app` et redémarre ce seul service (sudoers
   limité à `systemctl restart diablofus` et `systemctl is-active diablofus`). Aucune clé SSH ni secret côté GitHub.
@@ -104,4 +104,12 @@ cd /tmp && for f in diablofus-maj.service maj.sh; do
 sudo install -D -o root -g root -m 755 maj.sh /usr/local/lib/diablofus/maj.sh
 sudo install -m 644 diablofus-maj.service /etc/systemd/system/ && sudo systemctl daemon-reload
 sudo rm /home/diablofus/maj.sh && sudo systemctl start diablofus-maj.service && systemctl status diablofus-maj.service --no-pager | head -5
+```
+
+- 2026-11-08 : mémoire du service portée de 1 Go à 2 Go (marge pour faire tourner les parties sur le serveur ; `OOMScoreAdjust=500` inchangé, c'est toujours nous qui partons en premier) :
+
+```bash
+cd /tmp && curl -fsSLO https://raw.githubusercontent.com/Mathiss29/dofus-diablo/main/serveur/installation/diablofus.service
+sudo install -m 644 diablofus.service /etc/systemd/system/ && sudo systemctl daemon-reload
+sudo systemctl restart diablofus && systemctl show diablofus -p MemoryMax && curl -fsS http://127.0.0.1:3100/sante
 ```
