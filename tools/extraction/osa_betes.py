@@ -3,7 +3,7 @@
 python osa_betes.py <tables> <fr.bin> src/data/betes.json
   tables : dossier des tables sorties par data_dump.py (monsters, spells, spelllevels, spellscripts .json)
 
-Pour chaque bête (monstres officiels 8070-8083, les invocations des sorts Tofu, Bouftou, Crapipou, Dragoune…) :
+Pour chaque bête (monstres officiels 8070-8083 et les Épées du Sacrieur 434 et 5192, les invocations des sorts Tofu, Bouftou, Crapipou, Dragoune…) :
 nom, squelette (look), PV en part des PV du lanceur (50 % base, 75 % évoluée, 100 % ultime), lignée de l'Éveil (8C)
 et ses vrais sorts au grade 1 : PA, portée en cases, animation (AnimAttaque<animId>), zone, effets que le jeu sait jouer :
 dmg (vol = vol de vie), soin (soigne l'Osamodas et ses bêtes), repousse, attire, avance, bouclier (% du niveau).
@@ -26,6 +26,8 @@ BETES = [
     ('crapipou', 8074, 1, 'eau', 'crapipaud'), ('crapipaud', 8075, 2, 'eau', 'crocoleureux'), ('crocoleureux', 8080, 3, 'eau', None),
     ('dragoune', 8076, 1, 'feu', 'dragonnet'), ('dragonnet', 8077, 2, 'feu', 'sulfenix'), ('sulfenix', 8081, 3, 'feu', None),
     ('gobgob_glouton', 8082, 2, 'neutre', None), ('gobgob_facetieux', 8083, 3, 'neutre', None),
+    # Épées du Sacrieur (maquette Sacrieur 7A) : mêmes règles d'alliés que les bêtes, planches sacri_<clé>
+    ('epee_vorace', 434, 1, 'neutre', None), ('epee_dansante', 5192, 1, 'neutre', None),
 ]
 PV = {1: 0.5, 2: 0.75, 3: 1.0}
 
@@ -78,7 +80,7 @@ def main(tables, frbin, out):
             if params.get('missileGfxId'): sp['missile'] = int(params['missileGfxId'])
             if params.get('targetGfxId'): sp['gfx'] = int(params['targetGfxId'])
             sorts.append(sp)
-        res[key] = {'dofusId': mid, 'name': T(int(m['nameId'])), 'look': int(look), 'atlas': f'osa_{key}', 'rang': rang,
+        res[key] = {'dofusId': mid, 'name': T(int(m['nameId'])), 'look': int(look), 'atlas': (f'sacri_{key}' if key.startswith('epee') else f'osa_{key}'), 'rang': rang,
                     'element': el, 'suivant': suivant, 'pv': PV[rang], 'sorts': sorts}
         print(key, res[key]['name'], [(x['name'], x['po'], [e['k'] for e in x['effets']]) for x in sorts])
     json.dump(res, open(out, 'w'), ensure_ascii=False, indent=1)

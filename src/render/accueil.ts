@@ -22,10 +22,10 @@ const CLASSES = CLASSES_DOFUS as ClasseDofus[];
 /** Classes jouables (planches en jeu) et date prévue des suivantes. */
 /** Classes codées mais encore à l'essai (maquette Osamodas 13A) : jouables seulement dans la partie de test (diablofus.com/#test, F1),
  *  elles arrivent à la création quand Mathis les a validées. */
-const EN_ESSAI = new Set(['osamodas']);
+const EN_ESSAI = new Set(['osamodas', 'sacrieur']);   // Sacrieur : maquette Sacrieur 12A (sortie prévue avec la 0.4, 10C)
 const JOUABLES = new Set(Object.keys(GAME_DATA.classes).filter(k => !EN_ESSAI.has(k)));
 /** Classes pas encore jouables (Accueil 9A) : leur fiche s'affiche quand même, avec la version prévue (feuille de route). */
-const PLUS_TARD: Record<string, string> = { osamodas: 'En essai : partie de test' };
+const PLUS_TARD: Record<string, string> = { osamodas: 'En essai : partie de test', sacrieur: 'En essai : partie de test' };
 const plusTard = (cle: string) => PLUS_TARD[cle] ?? 'Prévue après la 1.0';
 /** Version affichée et textes de l'accueil (Accueil 12A) : ils racontent la zone de la version, pas le moteur. */
 const VERSION = '0.2';

@@ -124,6 +124,10 @@ export class Player extends Entity {
   shield = 0; shieldT = 0; shieldT0 = 0; shieldSrc = '';
   /** Sorts officiels de monstres : dommages subis × subis pendant subisT s (Grognement : 1,2), Pacifiste pendant pacifiste s (Hyperleukocytine : ne peut plus infliger de dommages). */
   subis = 1; subisT = 0; pacifiste = 0;
+  /** Sacrieur : palier de Souffrance gardé après un soin (maquette 3B) et secondes restantes ; Mutilation en cours ; Couronne d'Épines (renvoi). */
+  souffPic = 0; souffT = 0;
+  mutil: { n: number; t: number; next: number } | null = null;
+  renvoiT = 0; renvoiPart = 0;
   private repathT = 0;
   private buffer: SkillId | null = null;
   private bufferT = 0;
@@ -223,7 +227,7 @@ export class Player extends Entity {
   etatPouvoir(id: string): { actif: true } | { actif: false; raison: string } {
     const p = POUVOIR_PAR_ID[id];
     if (!p) return { actif: true };
-    if (classeDuPouvoir(id) !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas' } as Record<string, string>)[classeDuPouvoir(id)] ?? 'une autre classe'}` };
+    if (classeDuPouvoir(id) !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur' } as Record<string, string>)[classeDuPouvoir(id)] ?? 'une autre classe'}` };
     const k = Object.keys(this.cls.spells).find(x => this.cls.spells[x].dofusId === p.dofusId);
     if (!k) return { actif: false, raison: 'sort pas encore en jeu' };
     if (this.knows(k)) return { actif: true };
@@ -246,7 +250,7 @@ export class Player extends Entity {
       if (!k || this.learned.has(k) || !this.knows(k)) return;
       this.learned.add(k);
       if (this.bar.includes(k)) return;
-      const inv = !!this.cls.spells[k]?.invoque;
+      const inv = !!this.cls.spells[k]?.invoque && this.cls.rage.mode === 'eveil';   // Épées du Sacrieur : barre normale
       const slot = k === this.cls.mobility ? (this.bar[Player.ESPACE] ? -1 : Player.ESPACE)
         : k === this.cls.clicDroit && !this.bar[Player.CLIC_DROIT] ? Player.CLIC_DROIT
         : inv ? this.bar.findIndex((b, j) => !b && j >= Player.INVOC)
@@ -356,12 +360,28 @@ export class Player extends Entity {
     return (['terre', 'feu', 'eau', 'air'] as Element[]).reduce((a, b) => this.stat(E[b]) > this.stat(E[a]) ? b : a, 'terre');
   }
   /** Dommages d'un coup : base × (1 + (caractéristique de l'élément + Puissance) / 100) + Dommages fixes, comme Dofus. */
+  /** Souffrance du Sacrieur d'après les PV seuls : 0 à pleine vie, puis un palier par tranche de 10 % perdus (officiel). */
+  get souffranceBrute(): number {
+    if (!this.cls.souffrance || this.hp >= this.maxHp || this.maxHp <= 0) return 0;
+    return Math.max(1, Math.min(10, Math.ceil((1 - this.hp / this.maxHp) * 10 - 1e-9)));
+  }
+  /** Souffrance en jeu : le palier le plus haut tient encore quelques secondes après un soin (mémoire de la douleur, 3B). */
+  get souffrance(): number { return Math.max(this.souffranceBrute, this.souffT > 0 ? this.souffPic : 0); }
+  /** Sacrifie une part des PV actuels (Mutilation…) : jamais sous 1 PV (maquette Sacrieur 2A). Renvoie les PV perdus. */
+  sacrifier(part: number, world: World): number {
+    const n = Math.min(this.hp - 1, Math.round(this.hp * part));
+    if (n <= 0) return 0;
+    this.hp -= n;
+    world.emit({ k: 'sacrifice', x: this.x, y: this.y, amount: n });
+    return n;
+  }
   damage(base: number, element: Element): number {
     const E: Record<string, Stat> = { terre: 'force', feu: 'intelligence', eau: 'chance', air: 'agilite' };
     const el = this.resolveElement(element);
     const c = E[el] ? this.stat(E[el]) : this.stat('force');
     const flat = this.stat('dommages') + this.stat((`dommages${el[0].toUpperCase()}${el.slice(1)}`) as Stat);
-    return Math.max(1, base * (1 + Math.max(-50, c + this.stat('puissance')) / 100) + flat);
+    const S = this.cls.souffrance, n = S ? this.souffrance : 0;   // Souffrance : dommages finaux en plus
+    return Math.max(1, (base * (1 + Math.max(-50, c + this.stat('puissance')) / 100) + flat) * (n ? 1 + S!.finaux[n - 1] / 100 : 1));
   }
   /** Partie de test (4A) : passe directement au niveau n. Tous les points sont rendus (5 par niveau) ; carac donnée = ils y vont tous (au coût officiel), le reste en Vitalité.
    *  Les objets d'un niveau trop haut retournent dans le sac, les sorts pas encore connus quittent la barre. */
@@ -649,7 +669,7 @@ export class Player extends Entity {
     const def = this.spell(id);
     let tx = this.x, ty = this.y;
     if (def?.hit.shape === 'point' && !def.move) {   // case visée, ramenée à la portée du sort
-      const R = (this.shot(id).range ?? def.hit.range) + this.porteeStat(id), dx = aim.x - this.x, dy = aim.y - this.y, d = Math.hypot(dx, dy);
+      const R = (this.shot(id).range ?? def.hit.range) + this.porteeStat(id) + (def.souffrance6?.po && this.souffrance >= 6 ? def.souffrance6.po * CASE : 0), dx = aim.x - this.x, dy = aim.y - this.y, d = Math.hypot(dx, dy);
       let L = Math.min(d, R) / (d || 1);
       // Ligne de vue officielle (0.3) : la case visée derrière un obstacle est ramenée devant lui
       if (this.v03 && this.demandeVue(id)) for (let i = 0; i < 20 && L > 0 && !world.clearShot(this, { x: this.x + dx * L, y: this.y + dy * L }); i++) L -= Math.min(d, R) / (d || 1) / 20;
@@ -718,6 +738,17 @@ export class Player extends Entity {
     for (const [k, s] of Object.entries(this.stacks)) { s.t -= dt; if (s.t <= 0) delete this.stacks[k]; }
     this.invuln = Math.max(0, this.invuln - dt);
     if (this.shieldT > 0 && (this.shieldT -= dt) <= 0) this.shield = 0;
+    if (this.cls.souffrance) this.majSouffrance(dt, world);
+    if (this.renvoiT > 0) this.renvoiT -= dt;
+    if (this.mutil) {   // Mutilation : re-sacrifie toutes les `periode` s et gagne un cran de Puissance
+      const M = this.cls.spells.mutilation?.mutilation;
+      this.mutil.t -= dt; this.mutil.next -= dt;
+      if (!M || this.mutil.t <= 0 || this.dead) { this.mutil = null; this.mods = this.mods.filter(m => m.src !== 'mutilation'); }
+      else if (this.mutil.next <= 0 && this.mutil.n < M.crans) {
+        this.sacrifier(M.sacrifice, world); this.addMod('puissance', M.cran, this.mutil.t, 'mutilation');
+        this.mutil.n++; this.mutil.next = M.periode;
+      }
+    }
     if (this.subisT > 0 && (this.subisT -= dt) <= 0) this.subis = 1;
     if (this.pacifiste > 0) this.pacifiste -= dt;
     if (this.rage > 0 && this.age - this.lastHitAt > 6) this.rage = Math.max(0, this.rage - 8 * dt);   // 26B : la jauge retombe hors combat
@@ -774,7 +805,7 @@ export class Player extends Entity {
         else if (this.repathT <= 0 || !this.path.length) { this.path = world.findPath(this, m); this.repathT = 0.2; }
       }
     }
-    if (pr && this.spell(pr)?.invoque && this.knows(pr)) pr = this.toucheInvocation(pr, world);
+    if (pr && this.spell(pr)?.invoque && this.knows(pr) && this.cls.rage.mode === 'eveil') pr = this.toucheInvocation(pr, world);
     if (pr && (pr === 'attaque' || (this.spell(pr) && (pr === 'arme' || this.knows(pr))))) {
       // sort sans ressource : on le signale (le HUD fait clignoter le compteur), sans le garder en tampon
       if (!this.hasResource(pr) && (pr === 'attaque' || this.cd[pr] <= 0)) world.emit({ k: 'noResource', res: this.missing(pr) });
@@ -909,17 +940,38 @@ export class Player extends Entity {
         world.invoquer(this, key, s.id, s.tx, s.ty);
       }
       if (d.soinAllies) for (const b of world.betes) if (!b.dead && Math.hypot(b.x - s.tx, b.y - s.ty) <= Math.max(60, hz.shape === 'point' || hz.shape === 'circle' ? hz.radius : 60) + b.radius) {
-        b.soigner(Math.max(1, d.dmg * s.gm), world);
+        b.soigner(Math.max(1, (d.dmgPV ? this.hp * d.dmgPV : d.dmg) * s.gm), world);
       }
       if (d.rappel) for (const b of world.betes) if (!b.dead) { const a = this.age * 3 + b.id; b.x = this.x + Math.cos(a) * CASE; b.y = this.y + Math.sin(a) * CASE; }
       if (d.dompte) world.dompter(this, s.tx, s.ty, d.dompte);
-      if (d.shield) { this.shield = Math.max(this.shield, Math.round(this.maxHp * d.shield.part * sig('shield'))); this.shieldT = this.shieldT0 = d.shield.t; this.shieldSrc = s.id; }
+      if (d.shield) {
+        // Couronne d'Épines à Souffrance 6+ : bouclier en plus par ennemi dans la zone
+        const S6 = d.souffrance6?.bouclierParEnnemi && this.souffrance >= 6 && hz.shape === 'circle'
+          ? d.souffrance6.bouclierParEnnemi * world.monsters.filter(m => !m.dead && Math.hypot(m.x - this.x, m.y - this.y) <= hz.radius + m.radius).length : 0;
+        this.shield = Math.max(this.shield, Math.round(this.maxHp * (d.shield.part + S6) * sig('shield'))); this.shieldT = this.shieldT0 = d.shield.t; this.shieldSrc = s.id;
+      }
+      if (d.renvoi) { this.renvoiT = d.renvoi.t; this.renvoiPart = d.renvoi.part; }
+      if (d.mutilation) {
+        const M = d.mutilation;
+        if (this.mutil) {   // relancé : Coagulation, bouclier selon les crans de Mutilation
+          const part = M.coagulation[Math.min(this.mutil.n, M.coagulation.length) - 1] ?? M.coagulation[0];
+          this.shield = Math.max(this.shield, Math.round(this.maxHp * part)); this.shieldT = this.shieldT0 = 6; this.shieldSrc = 'coagulation';
+          this.mutil = null; this.mods = this.mods.filter(m => m.src !== 'mutilation');
+          world.emit({ k: 'status', x: this.x, y: this.y - 60, text: 'Coagulation', color: '#e06060' });
+        } else {
+          this.sacrifier(M.sacrifice, world); this.addMod('puissance', M.puissance, M.duree, 'mutilation');
+          this.mutil = { n: 1, t: M.duree, next: M.periode };
+        }
+      }
       if (d.selfKnock) {   // « Recule de n cases » : à l'opposé du tir (freinage de applyKnock : distance = vitesse / 7,13)
         const v = d.selfKnock * sig('selfKnock') * 7.13;
         this.kx -= Math.cos(this.facing) * v; this.ky -= Math.sin(this.facing) * v;
       }
       if (d.grosCoup) mult *= d.grosCoup.mult;   // 5A : gros coup
-      const hit = { dmg: (d.dmg * s.gm + (s.id === this.cls.basic ? this.weaponDamage() : 0)) * mult, knock: d.knock * sig('knock'), element: d.element, vsSummon: d.vsSummon && 1 + (d.vsSummon - 1) * sig('summon'), vsElite: sig('summon') > 1,
+      // Transfusion : dommages en part des PV restants ; Attirance (plus forte à Souffrance 6+), Condensation, Supplice
+      const base = d.dmgPV ? this.hp * d.dmgPV : d.dmg * s.gm;
+      const attire = d.attire && { px: ((this.souffrance >= 6 && d.souffrance6?.attire) || d.attire.cases) * CASE, vers: d.attire.vers };
+      const hit = { dmg: (base + (s.id === this.cls.basic ? this.weaponDamage() : 0)) * mult, attire, supplice: d.supplice, knock: d.knock * sig('knock'), element: d.element, vsSummon: d.vsSummon && 1 + (d.vsSummon - 1) * sig('summon'), vsElite: sig('summon') > 1,
         pushDmg: d.pushDmg && s.boosted,
         lifesteal: d.lifesteal && d.lifesteal * sig('lifesteal'), erosion: d.erosion && d.erosion * sig('erosion'),
         pmLoss: d.pmLoss && Math.round(d.pmLoss * sig('pm')), paLoss: d.paLoss && Math.round(d.paLoss * sig('pa')),
@@ -941,6 +993,7 @@ export class Player extends Entity {
         world.shoot(this.x, this.y, this.facing, shot, hit, d.stun ?? 0, sig('explode'), s.id);
         size = hz.range;
       }
+      if (d.echange) world.echanger(this, s.tx, s.ty, CASE * 0.75);   // Assaut, Transposition : après le coup
       const pt = hz.shape === 'point';
       if (hz.shape !== 'projectile') world.emit({ k: 'spell', fx: pt ? 'burst' : d.fx, id: s.id, x: pt ? s.tx : this.x, y: pt ? s.ty : this.y, cx: this.x, cy: this.y, facing: this.facing, size,
         arc: hz.shape === 'cone' ? (hz.arc * Math.PI) / 180 : 0, element: d.element, big: d.shake >= 0.012 || s.boosted, boosted: s.boosted });
@@ -991,10 +1044,22 @@ export class Player extends Entity {
   }
   /** Recharge restante du Souvenir d'Argent (bulle d'effet). */
   get rechargeArgente(): number { return this.porteDofus('argente') ? Math.max(0, PASSIFS.argente.recharge - (this.age - this.argenteA)) : 0; }
+  /** Palier de Souffrance : monte tout de suite, redescend après la mémoire de la douleur (3B). */
+  private majSouffrance(dt: number, world: World) {
+    const avant = this.souffrance, b = this.souffranceBrute;
+    if (b >= this.souffPic) { this.souffPic = b; this.souffT = this.cls.souffrance!.memoire; }
+    else if (this.souffT > 0) this.souffT -= dt;
+    else this.souffPic = b;
+    const n = this.souffrance;
+    if (n !== avant) world.emit({ k: 'souffrance', n, avant, x: this.x, y: this.y });
+  }
   hurt(raw: number, fromX: number, fromY: number, world: World, element: Element = 'neutre', loin?: boolean): boolean {
     if (this.invuln > 0 || this.dead) return false;
     const E = element === 'meilleur' ? 'Neutre' : `${element[0].toUpperCase()}${element.slice(1)}`;
-    let dmg = Math.max(1, Math.round((raw - this.stat(`red${E}` as Stat)) * (1 - Math.min(50, this.stat(`res${E}` as Stat)) / 100) * this.subis));
+    const S = this.cls.souffrance, sf = S ? this.souffrance : 0;   // Souffrance : dommages subis réduits
+    let dmg = Math.max(1, Math.round((raw - this.stat(`red${E}` as Stat)) * (1 - Math.min(50, this.stat(`res${E}` as Stat)) / 100) * this.subis * (sf ? S!.subis[sf - 1] / 100 : 1)));
+    // Couronne d'Épines : les coups de mêlée sont renvoyés à celui qui frappe
+    if (this.renvoiT > 0 && !(loin ?? Math.hypot(fromX - this.x, fromY - this.y) > CASE * 1.6)) world.renvoyer(fromX, fromY, dmg * this.renvoiPart);
     if (this.shield > 0) { const a = Math.min(this.shield, dmg); this.shield -= a; dmg -= a; }   // le bouclier prend les coups d'abord
     this.hp -= dmg; this.flash = 0.1; this.invuln = this.cls.iframesOnHit; this.blesseA = this.age;
     const a = Math.atan2(this.y - fromY, this.x - fromX);

@@ -545,7 +545,10 @@ export class Hud {
     const gs = this.gSlots;   // bord, Rage et pastille par-dessus le portrait
     gs.lineStyle(2, 0x8c8c86, 1); gs.strokeRoundedRect(px + 1, py + 1, ps - 2, ps - 2, 6);
     // 6C : la Rage (ou la Précision) remplit le bord du portrait, qui s'embrase une fois pleine
-    const rr = p.rage / cls.rage.max, rageCol = p.rageFull ? (Math.floor(world.time * 6) % 2 ? 0xffc04d : C.rage) : C.rage;
+    // Sacrieur : la jauge montre la Souffrance (palier / 10), en rouge sang, qui palpite à partir de 6
+    const sf = cls.souffrance ? p.souffrance : -1;
+    const rr = sf >= 0 ? sf / 10 : p.rage / cls.rage.max;
+    const rageCol = sf >= 0 ? (sf >= 6 && Math.floor(world.time * 4) % 2 ? 0xff4a3a : 0xc0262a) : p.rageFull ? (Math.floor(world.time * 6) % 2 ? 0xffc04d : C.rage) : C.rage;
     if (p.rageFull) {
       const k = 0.5 + 0.5 * Math.sin(world.time * 10);
       gs.lineStyle(7, 0xffcf4d, 0.25 + 0.3 * k); gs.strokeRoundedRect(px - 3, py - 3, ps + 6, ps + 6, 8);
@@ -555,7 +558,7 @@ export class Hud {
       const x0 = px - 1, y0 = py - 1, s2 = ps + 2, per = s2 * 4;
       let reste = per * Phaser.Math.Clamp(rr, 0, 1);
       const pts: [number, number][] = [[x0 + s2 / 2, y0], [x0 + s2, y0], [x0 + s2, y0 + s2], [x0, y0 + s2], [x0, y0], [x0 + s2 / 2, y0]];
-      gs.lineStyle(3, C.rage, 1); gs.beginPath(); gs.moveTo(pts[0][0], pts[0][1]);
+      gs.lineStyle(3, rageCol, 1); gs.beginPath(); gs.moveTo(pts[0][0], pts[0][1]);
       for (let i = 1; i < pts.length && reste > 0; i++) {
         const [ax, ay] = pts[i - 1], [bx, by] = pts[i], l = Math.hypot(bx - ax, by - ay), t = Math.min(1, reste / l);
         gs.lineTo(ax + (bx - ax) * t, ay + (by - ay) * t); reste -= l;
@@ -805,6 +808,7 @@ export class Hud {
     g.fillStyle(rageCol, 1); g.fillRoundedRect(rx - 9, ry + rh * (1 - rr), 18, Math.max(4, rh * rr), 5);
     if (this.rageFlash > 0 && juice) { g.lineStyle(3, 0xffc04d, this.rageFlash); g.strokeRoundedRect(rx - 12, ry - 3, 24, rh + 6, 6); }
     this.rageLabel.setPosition(rx, ry + rh + 1);
+    if (sf >= 0) this.rageLabel.setText(sf ? `${cls.rage.name} ${sf}` : cls.rage.name).setColor(sf ? '#ff6a5a' : '#c9a49c');
     // Tutoriel (3A) : halo doré qui pulse sur l'emplacement de l'étape suivie, et sa touche au-dessus
     const qs = world.quetes, qc = qs?.enCours.find(c => c.id === qs.suivie), halo = qc && !qc.aRendre ? qs!.etapeDe(qc)?.halo : undefined;
     if (halo != null) {

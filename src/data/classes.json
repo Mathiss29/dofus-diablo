@@ -1226,5 +1226,526 @@
    31115
   ],
   "clicDroit": "cri_corbac"
+ },
+ "sacrieur": {
+  "name": "Sacrieur",
+  "hp": 230,
+  "speed": 230,
+  "radius": 16,
+  "iframesOnHit": 0.45,
+  "healOnKill": 3,
+  "critChance": 0.15,
+  "critMult": 1.6,
+  "pa": {
+   "max": 6,
+   "regen": 1.25
+  },
+  "pm": {
+   "max": 2,
+   "recharge": 3.5
+  },
+  "potion": {
+   "charges": 3,
+   "heal": 0.35,
+   "cooldown": 1
+  },
+  "xpBase": 100,
+  "maxLevel": 200,
+  "rage": {
+   "name": "Souffrance",
+   "max": 10,
+   "perHit": 0,
+   "perHurt": 0,
+   "bonus": 0,
+   "signature": 1,
+   "mode": "souffrance"
+  },
+  "attaque": {
+   "name": "Coup de poing",
+   "element": "terre",
+   "comboWindow": 0.45,
+   "combo": [
+    {
+     "duration": 0.28,
+     "impactAt": 0.07,
+     "cancelAt": 0.13,
+     "dmg": 14,
+     "range": 78,
+     "arc": 110,
+     "knock": 210,
+     "step": 120,
+     "hitstop": 0.05,
+     "shake": 0.0035
+    },
+    {
+     "duration": 0.28,
+     "impactAt": 0.07,
+     "cancelAt": 0.13,
+     "dmg": 14,
+     "range": 78,
+     "arc": 110,
+     "knock": 210,
+     "step": 120,
+     "hitstop": 0.05,
+     "shake": 0.0035
+    },
+    {
+     "duration": 0.4,
+     "impactAt": 0.11,
+     "cancelAt": 0.22,
+     "dmg": 30,
+     "range": 92,
+     "arc": 160,
+     "knock": 480,
+     "step": 220,
+     "hitstop": 0.085,
+     "shake": 0.008
+    }
+   ]
+  },
+  "spells": {
+   "absorption": {
+    "name": "Absorption",
+    "dofusId": 12734,
+    "icon": 11946,
+    "element": "feu",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Vole de la vie dans l'élément Feu et retire de la Puissance aux ennemis ou transfère une partie de la vie du lanceur à l'allié ciblé.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 20,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 312,
+     "radius": 30
+    },
+    "lifesteal": 0.5,
+    "rage": "lifesteal"
+   },
+   "hemorragie": {
+    "name": "Hémorragie",
+    "dofusId": 12748,
+    "icon": 11930,
+    "element": "air",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Réduit les soins reçus par la cible et vole de la vie dans l'élément Air.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 22,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 72,
+     "radius": 30
+    },
+    "lifesteal": 0.5
+   },
+   "supplice": {
+    "name": "Supplice",
+    "dofusId": 12725,
+    "icon": 11959,
+    "element": "terre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Vole de la vie dans l'élément Terre.\nLes entités qui attaquent la cible sont soignées d'une partie des dommages occasionnés.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 22,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 72,
+     "radius": 30
+    },
+    "lifesteal": 0.5,
+    "supplice": {
+     "part": 0.2,
+     "t": 4
+    }
+   },
+   "stase": {
+    "name": "Stase",
+    "dofusId": 12728,
+    "icon": 11950,
+    "element": "eau",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Vole de la vie dans l'élément Eau et réduit les chances de Critique.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 20,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 264,
+     "radius": 30
+    },
+    "lifesteal": 0.5
+   },
+   "attirance": {
+    "name": "Attirance",
+    "dofusId": 12735,
+    "icon": 11929,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Attire la cible.\n\nL'attirance est plus importante et la portée maximale du sort est augmentée de 4 si le lanceur est en Souffrance 6 ou plus.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "line",
+    "hit": {
+     "shape": "point",
+     "range": 408,
+     "radius": 30
+    },
+    "attire": {
+     "cases": 7,
+     "vers": "lanceur"
+    },
+    "souffrance6": {
+     "po": 4,
+     "attire": 11
+    }
+   },
+   "mutilation": {
+    "name": "Mutilation",
+    "dofusId": 12737,
+    "icon": 11934,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Sacrifie une partie de la vie du lanceur pour augmenter sa Puissance.\nÀ chaque début de tour, sacrifie de nouveau une partie de sa vie pour incrémenter son état de Mutilation tant que le sort est actif.\n\nRelancer le sort retire les effets appliqués et lance le sort Coagulation :\n• Applique un bouclier sur le lanceur.\n• Le bouclier est plus important selon l'état de Mutilation.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "circle",
+     "radius": 60
+    },
+    "self": true,
+    "mutilation": {
+     "sacrifice": 0.1,
+     "puissance": 50,
+     "cran": 25,
+     "crans": 3,
+     "periode": 3,
+     "duree": 15,
+     "coagulation": [
+      0.15,
+      0.25
+     ]
+    }
+   },
+   "epee_vorace": {
+    "name": "Épée Vorace",
+    "dofusId": 12744,
+    "icon": 11935,
+    "element": "neutre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Invoque une Épée Vorace maîtrisable qui peut voler de la vie dans l'élément Neutre.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 168,
+     "radius": 0
+    },
+    "invoque": "epee_vorace",
+    "rage": "summon"
+   },
+   "ravage": {
+    "name": "Ravage",
+    "dofusId": 12746,
+    "icon": 11938,
+    "element": "terre",
+    "cooldown": 0.4,
+    "desc": "Rapproche le lanceur vers la cible et occasionne des dommages Terre aux ennemis.",
+    "duration": 0.32,
+    "impactAt": 0.2,
+    "cancelAt": 0.3,
+    "dmg": 28,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "circle",
+     "radius": 48
+    },
+    "pm": 1,
+    "move": {
+     "kind": "dash",
+     "maxRange": 288
+    }
+   },
+   "assaut": {
+    "name": "Assaut",
+    "dofusId": 12733,
+    "icon": 11939,
+    "element": "air",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Échange de position avec la cible et occasionne des dommages Air aux ennemis.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 15,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 120,
+     "radius": 30
+    },
+    "echange": true
+   },
+   "transposition": {
+    "name": "Transposition",
+    "dofusId": 12736,
+    "icon": 11940,
+    "element": "neutre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Échange de position avec la cible.\n\nLa portée maximale du sort est augmentée de 4 si le lanceur est en Souffrance 6 ou plus.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 360,
+     "radius": 30
+    },
+    "echange": true,
+    "souffrance6": {
+     "po": 4
+    }
+   },
+   "condensation": {
+    "name": "Condensation",
+    "dofusId": 12745,
+    "icon": 11941,
+    "element": "eau",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Eau aux ennemis et attire les cibles en zone.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 22,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 264,
+     "radius": 120
+    },
+    "attire": {
+     "cases": 2,
+     "vers": "centre"
+    }
+   },
+   "hostilite": {
+    "name": "Hostilité",
+    "dofusId": 12756,
+    "icon": 11942,
+    "element": "feu",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Feu aux ennemis et repousse la cible.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 15,
+    "knock": 456,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "line",
+    "hit": {
+     "shape": "point",
+     "range": 312,
+     "radius": 30
+    }
+   },
+   "couronne": {
+    "name": "Couronne d'Épines",
+    "dofusId": 12761,
+    "icon": 12979,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Applique l'état Pesanteur sur les cibles en zone, un bouclier et l'état Couronne d'Épines sur le lanceur :\n• Renvoie 100% des dommages subis en mêlée aux ennemis à son contact.\n\nApplique un bouclier supplémentaire sur le lanceur pour chaque ennemi dans la zone d'effet s'il est en Souffrance 6 ou plus.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "circle",
+     "radius": 72
+    },
+    "self": true,
+    "shield": {
+     "part": 0.08,
+     "t": 6
+    },
+    "renvoi": {
+     "part": 1,
+     "t": 6
+    },
+    "souffrance6": {
+     "bouclierParEnnemi": 0.03
+    },
+    "rage": "shield"
+   },
+   "transfusion": {
+    "name": "Transfusion",
+    "dofusId": 12738,
+    "icon": 12980,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Neutre selon la vie restante du lanceur aux ennemis et transfère une partie de sa vie aux alliés en zone.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "circle",
+     "radius": 168
+    },
+    "dmgPV": 0.12,
+    "soinAllies": true
+   },
+   "dissolution": {
+    "name": "Dissolution",
+    "dofusId": 12757,
+    "icon": 11976,
+    "element": "eau",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Vole de la vie dans l'élément Eau et retire de la Fuite en zone.\nN'affecte pas le lanceur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 26,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 264,
+     "radius": 72
+    },
+    "lifesteal": 0.5
+   },
+   "desolation": {
+    "name": "Désolation",
+    "dofusId": 12753,
+    "icon": 11958,
+    "element": "air",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Vole de la vie dans l'élément Air et retire des PM en zone.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 31,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 72
+    },
+    "lifesteal": 0.5,
+    "pmLoss": 3
+   }
+  },
+  "mobility": "ravage",
+  "sorts": "sacrieur",
+  "clicDroit": "absorption",
+  "souffrance": {
+   "subis": [
+    99,
+    97,
+    95,
+    91,
+    86,
+    81,
+    77,
+    74,
+    72,
+    70
+   ],
+   "finaux": [
+    1,
+    3,
+    5,
+    9,
+    14,
+    19,
+    23,
+    26,
+    28,
+    30
+   ],
+   "memoire": 3,
+   "_doc": "Souffrance officielle (Dofus 3.7, sort 24150) : palier = tranche de 10 % de PV perdus. subis = % des dommages reçus, finaux = % de dommages en plus. memoire = secondes où le palier le plus haut tient après un soin (maquette Sacrieur 3B)."
+  }
  }
 }

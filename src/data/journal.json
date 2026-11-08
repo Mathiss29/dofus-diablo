@@ -685,6 +685,15 @@
               "Partie de test",
               "Touche D"
             ]
+          },
+          {
+            "titre": "Le Sacrieur arrive en essai",
+            "phrase": "La classe Sacrieur se joue dans la partie de test, avec ses 16 sorts officiels jusqu'au niveau 60.",
+            "details": "Plus tu perds de PV, plus ta Souffrance monte : tu frappes plus fort et tu encaisses mieux. Sortie avec la 0.4.",
+            "icone": "sorts",
+            "etiquettes": [
+              "Partie de test"
+            ]
           }
         ],
         "Le monde": [
@@ -780,6 +789,15 @@
             "phrase": "Alt + clic lance toute la meute sur un monstre.",
             "details": "Maj montre la laisse et les PV des bêtes. La Laisse Spirituelle dompte un monstre presque vaincu pendant 20 s.",
             "icone": "sorts",
+            "etiquettes": [
+              "Partie de test"
+            ]
+          },
+          {
+            "titre": "Souffrance et Épée Vorace",
+            "phrase": "Un palier de Souffrance par tranche de 10 % de PV perdus, gardé 3 secondes après un soin.",
+            "details": "L'Épée Vorace se bat à tes côtés. Mutilation sacrifie des PV sans jamais te tuer.",
+            "icone": "degats",
             "etiquettes": [
               "Partie de test"
             ]

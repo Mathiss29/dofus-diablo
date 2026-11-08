@@ -85,6 +85,21 @@ export interface SpellDef {
   /** Osamodas : invoque cette bête (src/data/betes.json) au point visé ; soigne les bêtes touchées (Cri du Corbac…) ;
    *  ramène toutes les bêtes autour du lanceur (Charge Bestiale) ; 15A : dompte un monstre affaibli (Laisse Spirituelle). */
   invoque?: string; soinAllies?: boolean; rappel?: boolean; dompte?: { seuil: number; duree: number };
+  /** Sacrieur (maquette Sacrieur, 8 nov. 2026) : attire de n cases vers le lanceur (Attirance) ou vers le centre de la zone (Condensation). */
+  attire?: { cases: number; vers: 'lanceur' | 'centre' };
+  /** Échange de place avec la cible (Assaut, Transposition). */
+  echange?: boolean;
+  /** Supplice : pendant t s, chaque coup porté à la cible soigne celui qui frappe de part × les dommages (effet officiel 786, 20 %). */
+  supplice?: { part: number; t: number };
+  /** Dommages en part des PV restants du lanceur (Transfusion : effet officiel 89, « 8 % des PV », × 1,5 comme les autres). */
+  dmgPV?: number;
+  /** Couronne d'Épines : renvoie part des dommages de mêlée reçus pendant t s. */
+  renvoi?: { part: number; t: number };
+  /** Mutilation : sacrifie une part des PV (jamais sous 1, 2A) pour de la Puissance, re-sacrifie toutes les `periode` s
+   *  (+cran de Puissance, jusqu'à `crans`) ; relancé, il s'arrête et donne la Coagulation (bouclier en part des PV max selon les crans). */
+  mutilation?: { sacrifice: number; puissance: number; cran: number; crans: number; periode: number; duree: number; coagulation: number[] };
+  /** Changements à Souffrance 6 ou plus (officiels) : portée en cases, attirance en cases, bouclier en plus par ennemi dans la zone. */
+  souffrance6?: { po?: number; attire?: number; bouclierParEnnemi?: number };
 }
 /** Auto-attaque d'un type d'arme : un sort sans coût dont les dommages viennent de l'arme portée. */
 export interface WeaponProfile extends Omit<SpellDef, 'name' | 'icon' | 'element' | 'dmg' | 'cooldown' | 'anim'> {
@@ -106,7 +121,10 @@ export interface ClassDef {
   /** bonus : dommages en plus ; signature : multiplicateur de l'effet propre au sort (SpellDef.rage), 1,5 = +50 %. */
   rage: { name: string; max: number; perHit: number; perHurt: number; bonus: number; signature: number;
     /** Ligne Rage 24B : la Rage du Iop monte plus en mêlée, la Précision du Crâ plus de loin (et pas en prenant des coups). */
-    mode?: 'melee' | 'distance' | 'eveil' };
+    mode?: 'melee' | 'distance' | 'eveil' | 'souffrance' };
+  /** Sacrieur : Souffrance officielle (palier 1 à 10 = tranche de 10 % de PV perdus) : % des dommages reçus et % de dommages
+   *  en plus par palier ; memoire = secondes où le palier le plus haut tient après un soin (maquette Sacrieur 3B). */
+  souffrance?: { subis: number[]; finaux: number[]; memoire: number };
   /** Attaque de base (clic gauche maintenu) : combo de 3 coups au corps à corps, ou un sort sans coût (basic) pour les classes à distance. */
   basic?: string;
   attaque: { name: string; element: Element; comboWindow: number; combo: ComboHit[] };

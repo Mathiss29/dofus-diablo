@@ -96,6 +96,7 @@ for sid in L(B['breedSpellsId']):
     for u in L(s['boundScriptUsageData']):
         r = str((SC.get(int(u['scriptId'])) or {}).get('rawParams', ''))
         wanted_spells += re.findall(r'casterAnimation[^0-9A-Za-z]*([A-Za-z0-9_]+)', r)
+        wanted_spells += ['AnimAttaque' + a for a in re.findall(r'animId:(\d+)', r)]  # Sacrieur : « animId:1102 »
 # Récolte (maquette Armes 9A) : animations officielles des métiers (bone_1-metier), l'outil est dessiné dans l'animation
 METIERS = ['AnimCueillir0', 'AnimFaucher', 'AnimHache', 'AnimPioche', 'AnimPeche']
 base = ['AnimStatiqueCombat0', 'AnimStatiqueExplo0', 'AnimCourse', 'AnimArme0', 'AnimHit', 'AnimMort'] + [f'AnimArme{t}' for t in (2, 3, 4, 5, 6, 7, 8, 19, 22, 271)] + METIERS
@@ -190,7 +191,7 @@ def export_skin(sid):
     json.dump({'tex': f'skin_{sid}.webp', 'parts': parts}, open(os.path.join(out, f'skin_{sid}.json'), 'w'), separators=(',', ':'))
 
 
-cle = {8: 'iop', 9: 'cra', 2: 'osamodas'}.get(classe, str(classe))
+cle = {8: 'iop', 9: 'cra', 2: 'osamodas', 11: 'sacrieur'}.get(classe, str(classe))
 pj = os.path.join(out, 'persos.json')
 P = json.load(open(pj)) if os.path.exists(pj) else {}
 for g, sx in ((0, 'm'), (1, 'f')):

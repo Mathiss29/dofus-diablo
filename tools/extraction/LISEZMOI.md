@@ -475,3 +475,11 @@ Ville vivante (maquette Ville 5F, 8 nov. 2026) :
 - Porte du dehors = `boundingBoxes` (`m_interactionId`) ; arrivée = case marchable la plus basse de la salle. Portes notées `v03` (fermées hors
   partie de test). Forgerons et sculpteurs : salles des mineurs et des bûcherons (mêmes machines, un poste réunit les métiers).
 - Postes : `ateliers_postes.py` (machines 49498/49500/49501, 402707, 49499, 49503 ajoutées).
+
+## Sacrieur (classe 11, maquette du 8 nov. 2026)
+
+- Les spellscripts du Sacrieur donnent l'animation en `animId:11xx` (pas `casterAnimation`) : `perso_planche.py` et `squelette_export.py` lisent les deux.
+- `python squelette_export.py <persos> <donnees> 11 public/assets/sprites/squelette`, puis `python tetes_vignettes.py <persos> <donnees> public/assets/sprites/squelette 11`.
+- Épées alliées : `osa_betes.py` (monstres 434 Épée Vorace, os 8378 ; 5192 Épée Dansante, os 8376) -> atlas `sacri_epee_*`.
+- Animations 1107 (Pacte de Sang), 1108 (Carnage), 1115 (Châtiment) absentes du squelette 1-11.
+- Sorts : `class_spells.py ... sacrieur:11` -> src/data/sorts.json ; icônes `sort_<id>.png`, gouttes de Souffrance `ui/souffrance/s1..10.png` (st_stateSacriNice*).

@@ -198,6 +198,9 @@ export class ZoneScene extends Phaser.Scene {
     // paillasson posé à chaque sortie d'intérieur, comme Sanstour (Mathis, 2026-11-08) : dalle, soleil vert, étincelles
     for (const n of ['paillasson', 'paillasson_soleil', 'paillasson_etincelle'])
       if (!this.textures.exists(n)) this.load.image(n, v(`${ASSETS}/ui/${n}.png`));
+    // Sacrieur : goutte de Souffrance officielle (états SacriNice 1 à 10), au-dessus du perso
+    if (GAME_DATA.classes[this.classId].souffrance) for (let i = 1; i <= 10; i++)
+      if (!this.textures.exists(`souffrance_${i}`)) this.load.image(`souffrance_${i}`, v(`${ASSETS}/ui/souffrance/s${i}.png`));
     if (!this.textures.exists(ICON_SHEET.key)) this.load.spritesheet(ICON_SHEET.key, v(`${ASSETS}/${ICON_SHEET.url}`), { frameWidth: ICON_SHEET.cell, frameHeight: ICON_SHEET.cell });
     const zone = GAME_DATA.zones[this.zoneId];
     // On ne charge que les planches utiles à cette zone
@@ -1258,6 +1261,33 @@ export class ZoneScene extends Phaser.Scene {
     return v;
   }
 
+  /** Sacrieur : la goutte de Souffrance numérotée au-dessus du perso (officiel) ; à partir de Souffrance 6, une aura de sang
+   *  et quelques gouttes laissées au sol en courant (maquette Sacrieur 9B). */
+  private goutteSouffrance?: Phaser.GameObjects.Image;
+  private sangG?: Phaser.GameObjects.Graphics;
+  private gouttesSol: { x: number; y: number; t: number; r: number }[] = [];
+  private gouttesT = 0;
+  private dessinerSouffrance() {
+    const w = this.world, p = w.player;
+    if (!p.cls.souffrance) return;
+    const n = p.dead || this.vitrine ? 0 : p.souffrance, s = ISO.toScreen(p.x, p.y), v = this.viewOf(p);
+    const im = this.goutteSouffrance ??= this.add.image(0, 0, 'souffrance_1').setOrigin(0.5, 1);
+    im.setVisible(n > 0 && this.textures.exists(`souffrance_${n}`));
+    if (n > 0 && im.visible) im.setTexture(`souffrance_${n}`).setPosition(s.x, s.y - 128 - p.z).setDisplaySize(30, 30).setDepth(v.sprite.depth + 2);
+    const g = this.sangG ??= this.add.graphics();
+    g.clear(); g.setDepth(v.sprite.depth - 0.6);
+    const t = w.time;
+    if (n >= 6) {
+      const k = 0.5 + 0.5 * Math.sin(t * 5), f = (n - 5) / 5;
+      g.fillStyle(0xb01818, (0.12 + 0.1 * k) * (0.6 + 0.4 * f)); g.fillEllipse(s.x, s.y, 86 + 12 * k, 36 + 5 * k);
+      if (p.anim === 'run' && t - this.gouttesT > 0.22) { this.gouttesT = t; this.gouttesSol.push({ x: p.x + (Math.random() - 0.5) * 14, y: p.y + (Math.random() - 0.5) * 10, t, r: 2 + Math.random() * 2.5 }); }
+    }
+    this.gouttesSol = this.gouttesSol.filter(d => t - d.t < 2.5).slice(-40);
+    for (const d of this.gouttesSol) {
+      const q = ISO.toScreen(d.x, d.y), a = 1 - (t - d.t) / 2.5;
+      g.fillStyle(0x7a0c0c, 0.7 * a); g.fillEllipse(q.x, q.y, d.r * 2.4, d.r * 1.2);
+    }
+  }
   /** Maj enfoncée (maquette Osamodas 14B) : un fil de laisse relie l'Osamodas à chacune de ses bêtes (bleu pour une bête domptée). */
   private laisseG?: Phaser.GameObjects.Graphics;
   private dessinerLaisse() {
@@ -1376,6 +1406,7 @@ export class ZoneScene extends Phaser.Scene {
     }
     for (const [id, v] of this.views) if (!alive.has(id)) { v.destroy(); this.views.delete(id); }
     this.dessinerLaisse();
+    this.dessinerSouffrance();
     this.oublierPlanches();
     if (!this.vitrine) this.familierView?.maj(w, this.game.loop.delta / 1000);
     if (this.transparence) {
