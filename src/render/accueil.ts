@@ -12,7 +12,8 @@ import { SORTS, niveauRequis, type SortOfficiel } from '../sim/sorts';
 import CLASSES_DOFUS from '../data/classes_dofus.json';
 import JOURNAL from '../data/journal.json';
 import { installable, installer, surChangement } from './installation';
-import { EMPLACEMENTS, NB_SECOURS, dernier, dureeTexte, exporter, importer, lireCimetiere, lirePersos, lireSecours, nomValide, prendreSecours, restaurerSecours, sauverPerso, supprimerPerso, type Perso } from './persos';
+import { Compte } from './compte';
+import { EMPLACEMENTS, NB_SECOURS, dernier, dureeTexte, exporter, importer, lireCimetiere, lirePersos, lireSecours, nomValide, persosEnLigne, prendreSecours, restaurerSecours, sauverPerso, supprimerPerso, type Perso } from './persos';
 
 /** Écrans hors du jeu (maquette unique, choix 17A à 23A, 19B, 22D, 30E) : accueil avec Incarnam en direct derrière,
  *  création du perso devant le dieu de sa classe, et « Mes personnages ». Du HTML posé sur le jeu : la partie (ZoneScene)
@@ -375,6 +376,11 @@ export class Accueil {
   get visible() { return !this.root.hidden; }
   show(page: Page = 'accueil') {
     this.root.hidden = false; this.precharger(); this.go(page);
+    if (!this.ecouteCompte) this.ecouteCompte = Compte.ecouter(() => {
+      if (this.root.hidden) return;
+      if (this.page === 'persos') this.choix = dernier() ?? Math.max(0, lirePersos().findIndex(p => p));
+      this.render();
+    });
     // « Quoi de neuf » (feuille de route 21A, Accueil 3E) : au lancement, une fois par carnet non lu, les nouveautés en 5 lignes
     if (page === 'accueil' && carnetNonLu() && !this.quoiDeNeufVu) { this.quoiDeNeufVu = true; this.ouvrir('quoi-de-neuf'); }
     if (!this.fiches) fiches().then(f => { this.fiches = f; if (!this.root.hidden && (this.page === 'creation' || this.page === 'persos')) this.render(); }, () => { /* hors ligne : anciennes planches */ });
@@ -395,6 +401,27 @@ export class Accueil {
     this.page = page; this.confirmer = -1; this.crea.err = ''; this.modal = null;
     if (page === 'persos') { const d = dernier(); this.choix = d ?? Math.max(0, lirePersos().findIndex(p => p)); }
     this.render();
+  }
+
+  private ecouteCompte: (() => void) | null = null;
+  /** Compte Discord (maquette « Vrai multi : » 3A, 4A) : connexion, persos du navigateur ou en ligne, import unique. */
+  private blocCompte(): string {
+    const c = Compte.infos, en = persosEnLigne();
+    if (Compte.etat !== 'connecte' || !c) return `<div class="card" style="padding:calc(.7*var(--u)) calc(.9*var(--u));display:grid;gap:calc(.5*var(--u))">
+        <div class="tiny" style="text-align:center">${Compte.etat === 'chargement' ? 'Connexion au serveur…' : 'Sauvegarde automatique dans ton navigateur · aucun compte'}</div>
+        ${Compte.etat === 'chargement' ? '' : `<button type="button" class="mini" data-discord style="justify-self:center;background:#5865f2;border-color:#7983f5;padding:calc(.45*var(--u)) calc(1*var(--u))">Se connecter avec Discord</button>
+        <div class="tiny" style="font-size:calc(.65*var(--u));text-align:center">Persos sauvés en ligne, sur n'importe quel PC.</div>`}</div>`;
+    const loc = lirePersos(), p = !en ? loc[this.choix] : null;
+    return `<div class="card" style="padding:calc(.7*var(--u)) calc(.9*var(--u));display:grid;gap:calc(.55*var(--u))">
+        <div style="display:flex;align-items:center;gap:calc(.6*var(--u))">${c.avatar ? `<img src="${esc(c.avatar)}" alt="" style="width:calc(2*var(--u));height:calc(2*var(--u));border-radius:50%">` : ''}
+          <b style="font-size:calc(.9*var(--u));flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis">${esc(c.nom)}</b>
+          <button type="button" class="mini" data-deconnexion style="font-size:calc(.65*var(--u))">Déconnexion</button></div>
+        <div style="display:flex;gap:calc(.4*var(--u))">
+          <button type="button" class="chip${en ? '' : ' on'}" data-mode="local" style="flex:1;text-align:center">Navigateur</button>
+          <button type="button" class="chip${en ? ' on' : ''}" data-mode="enligne" style="flex:1;text-align:center">En ligne</button></div>
+        <div class="tiny" style="font-size:calc(.65*var(--u))">${en ? 'Persos de ton compte, sauvés sur le serveur.' : 'Persos de ce navigateur, séparés de ceux du compte.'}</div>
+        ${!en && p && !c.importe ? `<button type="button" class="mini" data-mettre-en-ligne="${this.choix}">Mettre ${esc(p.nom)} en ligne (une seule fois)</button>` : ''}
+      </div>`;
   }
 
   private render() {
@@ -570,8 +597,8 @@ export class Accueil {
           <span><b>${esc(q.nom)}</b><span style="font-weight:800;font-size:calc(.85*var(--u))">${k.nom} · niveau ${q.etat?.level ?? 1}${q.hardcore ? ' · <span class="hc">Hardcore</span>' : ''}</span>
           <span class="tiny" style="display:block">${esc(q.lieu)} · ${dureeTexte(q.temps)} de jeu</span></span></button>`;
       }).join('')}
-      <div class="tiny" style="text-align:center">Sauvegarde automatique dans ton navigateur · aucun compte</div>
-      <div class="card" style="padding:calc(.7*var(--u)) calc(.9*var(--u));display:grid;gap:calc(.5*var(--u))">
+      ${this.blocCompte()}
+      <div class="card" style="padding:calc(.7*var(--u)) calc(.9*var(--u));display:${persosEnLigne() ? 'none' : 'grid'};gap:calc(.5*var(--u))">
         <div style="font-weight:800;font-size:calc(.85*var(--u))">Ta sauvegarde</div>
         <div style="display:flex;gap:calc(.5*var(--u));flex-wrap:wrap">
           <button type="button" class="mini" data-exporter>Exporter</button>
@@ -810,6 +837,16 @@ export class Accueil {
       supprimerPerso(i); this.confirmer = -1; this.choix = Math.max(0, lirePersos().findIndex(p => p)); this.render();
     });
     on('[data-jouer-slot]', e => this.jouer(+e.dataset.jouerSlot!));
+    // compte Discord
+    on('[data-discord]', () => Compte.connecter());
+    on('[data-deconnexion]', () => void Compte.deconnecter());
+    on('[data-mode]', e => Compte.choisir(e.dataset.mode === 'enligne'));
+    on('[data-mettre-en-ligne]', e => {
+      const i = +e.dataset.mettreEnLigne!;
+      Compte.choisir(true);
+      void Compte.importer(i).then(err => { if (err) { Compte.choisir(false); this.toast(err); } else this.toast('Ton perso est en ligne'); });
+    });
+    if (Compte.message) { const m = Compte.message; Compte.message = ''; setTimeout(() => this.toast(m), 50); }
   }
 
   private creer() {

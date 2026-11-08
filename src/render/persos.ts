@@ -31,26 +31,43 @@ export const EMPLACEMENTS = 3;
 const CLE = 'diablofus.persos';
 const CLE_DERNIER = 'diablofus.dernier';
 
-export function lirePersos(): (Perso | null)[] {
+// --- Persos en ligne (maquette « Vrai multi : » 4A) : quand le joueur est connecté et a choisi « En ligne », les mêmes
+// fonctions lisent et écrivent une copie locale des persos du compte, que compte.ts envoie au serveur.
+let enLigne = false;
+let surEcriture: ((quoi: 'persos' | SorteCoffre) => void) | null = null;
+/** Choisit les persos du navigateur ou ceux du compte (compte.ts). */
+export function sourceEnLigne(oui: boolean, ecoute?: (quoi: 'persos' | SorteCoffre) => void) { enLigne = oui; if (ecoute) surEcriture = ecoute; }
+export const persosEnLigne = () => enLigne;
+const cle = () => (enLigne ? `${CLE}.enligne` : CLE);
+const cleDernier = () => (enLigne ? `${CLE_DERNIER}.enligne` : CLE_DERNIER);
+const lireListe = (k: string): (Perso | null)[] => {
   let l: (Perso | null)[] = [];
-  try { l = JSON.parse(localStorage.getItem(CLE) ?? '[]'); } catch { /* stockage indisponible ou abîmé */ }
+  try { l = JSON.parse(localStorage.getItem(k) ?? '[]'); } catch { /* stockage indisponible ou abîmé */ }
   return Array.from({ length: EMPLACEMENTS }, (_, i) => (l[i] && typeof l[i] === 'object' ? l[i] : null));
+};
+export function lirePersos(): (Perso | null)[] { return lireListe(cle()); }
+/** Les persos du navigateur, même en mode « En ligne » (import unique). */
+export const lirePersosLocaux = () => lireListe(CLE);
+/** Copie locale des persos du compte, remplacée par ce que renvoie le serveur. */
+export function remplacerPersosEnLigne(l: (Perso | null)[]) {
+  try { localStorage.setItem(`${CLE}.enligne`, JSON.stringify(l)); } catch { /* rien */ }
 }
 function ecrire(l: (Perso | null)[]) {
-  try { localStorage.setItem(CLE, JSON.stringify(l)); } catch { /* navigateur sans stockage : la partie ne sera pas gardée */ }
+  try { localStorage.setItem(cle(), JSON.stringify(l)); } catch { /* navigateur sans stockage : la partie ne sera pas gardée */ }
+  if (enLigne) surEcriture?.('persos');
 }
 export function sauverPerso(i: number, p: Perso) { const l = lirePersos(); l[i] = p; ecrire(l); dernier(i); }
 export function supprimerPerso(i: number) {
-  prendreSecours(true);
+  if (!enLigne) prendreSecours(true);
   const l = lirePersos(); l[i] = null; ecrire(l);
-  if (dernier() === i) try { localStorage.removeItem(CLE_DERNIER); } catch { /* rien */ }
+  if (dernier() === i) try { localStorage.removeItem(cleDernier()); } catch { /* rien */ }
 }
 /** Emplacement de la dernière partie (bouton « Continuer »), ou le modifie. */
 export function dernier(i?: number): number | null {
   try {
-    if (i != null) localStorage.setItem(CLE_DERNIER, String(i));
-    const n = Number(localStorage.getItem(CLE_DERNIER));
-    return localStorage.getItem(CLE_DERNIER) != null && lirePersos()[n] ? n : null;
+    if (i != null) localStorage.setItem(cleDernier(), String(i));
+    const n = Number(localStorage.getItem(cleDernier()));
+    return localStorage.getItem(cleDernier()) != null && lirePersos()[n] ? n : null;
   } catch { return null; }
 }
 /** Nom valide : 3 à 16 lettres (accents, tiret et espace permis au milieu). */
@@ -127,9 +144,18 @@ export function restaurerSecours(i: number): string | null {
 /** Coffre partagé (0.3, 12A+12D) : un pour les persos normaux, un pour les Hardcore, un pour la partie de test. */
 export type SorteCoffre = 'normal' | 'hardcore' | 'test';
 const CLE_COFFRE: Record<SorteCoffre, string> = { normal: 'diablofus.coffre', hardcore: 'diablofus.coffre.hardcore', test: 'diablofus.coffre.test' };
+/** En ligne, le coffre est celui du compte (copie locale envoyée au serveur), jamais celui du navigateur. */
+const cleCoffre = (sorte: SorteCoffre) => (enLigne && sorte !== 'test' ? `${CLE_COFFRE[sorte]}.enligne` : CLE_COFFRE[sorte]);
 export function lireCoffre(sorte: SorteCoffre): Coffre {
-  try { return relireCoffre(JSON.parse(localStorage.getItem(CLE_COFFRE[sorte]) ?? 'null')); } catch { return relireCoffre(null); }
+  try { return relireCoffre(JSON.parse(localStorage.getItem(cleCoffre(sorte)) ?? 'null')); } catch { return relireCoffre(null); }
+}
+export function lireCoffreBrut(sorte: 'normal' | 'hardcore'): unknown {
+  try { return JSON.parse(localStorage.getItem(`${CLE_COFFRE[sorte]}.enligne`) ?? 'null'); } catch { return null; }
+}
+export function remplacerCoffreEnLigne(sorte: 'normal' | 'hardcore', c: unknown) {
+  try { if (c == null) localStorage.removeItem(`${CLE_COFFRE[sorte]}.enligne`); else localStorage.setItem(`${CLE_COFFRE[sorte]}.enligne`, JSON.stringify(c)); } catch { /* rien */ }
 }
 export function sauverCoffre(sorte: SorteCoffre, c: Coffre) {
-  try { localStorage.setItem(CLE_COFFRE[sorte], JSON.stringify(c)); } catch { /* pas de stockage : le coffre vit le temps de la partie */ }
+  try { localStorage.setItem(cleCoffre(sorte), JSON.stringify(c)); } catch { /* pas de stockage : le coffre vit le temps de la partie */ }
+  if (enLigne && sorte !== 'test') surEcriture?.(sorte);
 }

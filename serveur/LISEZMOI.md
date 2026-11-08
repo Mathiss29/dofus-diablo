@@ -1,7 +1,8 @@
 # Serveur multijoueur de Diablofus
 
 Serveur Node 22 (maquette « Multi : », 2026-11-08) : coop à 2-4 joueurs, Bastion des Douze partagé, comptes Discord et
-sauvegardes en ligne. Pour l'instant : `/sante` et un WebSocket d'essai sur `/ws` (ping).
+sauvegardes en ligne. Pour l'instant : `/sante`, les salons de coop sur `/ws`, et les comptes Discord avec persos en ligne
+(`comptes.mjs`, base SQLite `donnees/diablofus.db`, copie chaque nuit à 4 h 30 dans `donnees/sauvegardes/`, 14 gardées).
 
 Il tourne sur le VPS OVH d'Idlus (VPS-3, Ubuntu 24.04), **sans toucher à Idlus** :
 
@@ -88,9 +89,33 @@ sudo systemctl daemon-reload && sudo systemctl restart cloudflared
 
 - Cloudflare coupe un WebSocket muet depuis 100 s : le serveur envoie un ping toutes les 30 s (`index.mjs`).
 
+## Comptes Discord (maquette « Vrai multi : » 11B)
+
+**Mathis, dans le portail Discord** (https://discord.com/developers/applications, appli du robot) : OAuth2 › Redirects ›
+ajouter `https://api.diablofus.com/connexion/retour`, enregistrer. Noter le **Client ID** (public) et faire « Reset Secret »
+pour le **Client Secret** : le secret ne passe jamais dans une discussion, il va directement au projet Idlus (secret GitHub
+`DIABLOFUS_DISCORD_SECRET`, comme le jeton du tunnel). Facultatif : l'id du serveur Discord (clic droit › Copier l'identifiant
+du serveur, mode développeur) et les ids des rôles testeur / admin (essai fermé 10A, outils de test en ligne 4D).
+
+**Sur le VPS** (`DISCORD_SECRET` = le secret ; les autres valeurs ne sont pas secrètes) :
+
+```bash
+sudo install -d -m 700 /etc/diablofus
+printf 'DISCORD_ID=%s\nDISCORD_SECRET=%s\nDISCORD_SERVEUR=%s\nROLES_TESTEUR=%s\nROLES_ADMIN=%s\n' \
+  "$DISCORD_ID" "$DISCORD_SECRET" "${DISCORD_SERVEUR:-}" "${ROLES_TESTEUR:-}" "${ROLES_ADMIN:-}" | sudo tee /etc/diablofus/discord.env >/dev/null
+sudo chmod 600 /etc/diablofus/discord.env
+cd /tmp && curl -fsSLO https://raw.githubusercontent.com/Mathiss29/dofus-diablo/main/serveur/installation/diablofus.service
+sudo install -m 644 diablofus.service /etc/systemd/system/ && sudo systemctl daemon-reload
+sudo systemctl restart diablofus && sleep 2 && curl -fsS http://127.0.0.1:3100/sante
+```
+
+`/sante` doit répondre `"connexion":true`. Le fichier appartient à root (600) : systemd le lit avant de lancer le service,
+l'utilisateur `diablofus` ne peut pas le lire directement. Sans ce fichier, tout le reste marche et le bouton de connexion
+du jeu dit simplement « connexion indisponible ».
+
 ## Plus tard
 
-- Sauvegarde de la base SQLite à **4 h 30** (celle d'Idlus est à 4 h), avec les comptes.
+- Copie de la base aussi sur R2 (5B), avec une clé R2 limitée à un seul dossier.
 - Désinstaller : `sudo systemctl disable --now diablofus diablofus-maj.timer cloudflared`, supprimer les fichiers posés ci-dessus (dont `/usr/local/lib/diablofus/`) et
   `sudo deluser --remove-home diablofus`.
 

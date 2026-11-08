@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
     paths: ['serveur/**', '.github/workflows/serveur.yml']
+  pull_request:
+    paths: ['serveur/**', '.github/workflows/serveur.yml']
   workflow_dispatch:
 permissions:
   contents: read
