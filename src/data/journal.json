@@ -763,6 +763,16 @@
             "etiquettes": [
               "Astrub"
             ]
+          },
+          {
+            "titre": "Des monstres mieux placés",
+            "phrase": "Plus de groupe qui t'attend à l'entrée d'une carte, et autant de monstres que la carte peut en tenir.",
+            "details": "Une petite carte a un groupe, une grande jusqu'à trois. Les monstres d'un groupe restent serrés autour de leur chef.",
+            "icone": "bestiaire",
+            "etiquettes": [
+              "Incarnam",
+              "Astrub"
+            ]
           }
         ],
         "Combat": [

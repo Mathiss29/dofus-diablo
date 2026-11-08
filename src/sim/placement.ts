@@ -13,10 +13,18 @@ export interface PlacementCarte { g: number; p: PointGroupe[] }
 
 export const PLACEMENT = PLACEMENTS as unknown as {
   elite: { repaire: number; hasard: number };
-  auto: { pointsEnPlus: number; ecartPassage: number; ecartLieu: number; ecartBord: number; ecartPoints: number };
+  auto: { pointsEnPlus: number; ecartPassage: number; ecartLieu: number; ecartBord: number; ecartPoints: number; casesParGroupe: number; loinSortie: number; rayonGroupe: [number, number] };
   cartes: Record<string, Record<string, PlacementCarte>>;
 };
 export const MAX_GROUPES = 4;
+
+/** Nombre de groupes du placement automatique : il suit la taille de la carte (une petite carte n'est plus bondée,
+ *  une grande n'est plus vide) ; groupsPerMap de la sous-zone pour casesParGroupe cases libres, 1 au moins, groupsPerMap + 1 au plus. */
+export function groupesAuto(groupsPerMap: number, casesLibres: number): number {
+  if (groupsPerMap <= 0) return 0;
+  const n = Math.round(groupsPerMap * casesLibres / (2 * PLACEMENT.auto.casesParGroupe));
+  return Math.max(1, Math.min(groupsPerMap + 1, MAX_GROUPES, n));
+}
 
 /** Placement posé à la main pour cette carte (absent : automatique). */
 export function placementPose(monde: string, tag: string): PlacementCarte | undefined {
@@ -100,21 +108,24 @@ export function analyserCarte(wg: WorldGrid, tag: string, lieuxMonde: Vec[]): An
 
 /** 1C + 3A : proposition automatique pour une carte, toujours la même (aucun hasard) : les coins les plus dégagés,
  *  loin des passages, des lieux et des entrées de carte, bien écartés les uns des autres. */
-export function proposerPlacement(wg: WorldGrid, tag: string, groupes: number, a: AnalyseCarte): PlacementCarte {
+export function proposerPlacement(wg: WorldGrid, tag: string, groupes: number, a: AnalyseCarte, /** PNJ du monde (ceux des cartes voisines comptent aussi) */ pnjs: Vec[] = []): PlacementCarte {
   const A = PLACEMENT.auto, libresL = wg.freeByMap.get(tag) ?? [], C = wg.cols;
   const voulu = groupes > 0 ? groupes + A.pointsEnPlus : 0;
   if (!voulu || !libresL.length) return { g: groupes, p: [] };
   const mov = wg.data.mov, ouvert = (c: number) => { let n = 0; for (let dr = -6; dr <= 6; dr++) for (let dk = -3; dk <= 3; dk++) if (mov.charCodeAt(c + dr * C + dk) === 49) n++; return n; };
   const loin = (d: Map<number, number>, c: number) => d.size ? d.get(c) ?? 99 : 99;
   // un groupe s'étale sur 150 px autour de son point : rien à moins de 420 px d'un PNJ, d'une porte ou du Zaap
-  const pos = new Map(libresL.map(c => [c, wg.cellToWorld(c)])), lieuxW = a.lieux.map(c => wg.cellToWorld(c)), dLieu = (c: number) => { const q = pos.get(c)!; return Math.min(9999, ...lieuxW.map(l => Math.hypot(l.x - q.x, l.y - q.y))); };
+  const pos = new Map(libresL.map(c => [c, wg.cellToWorld(c)])), lieuxW = [...a.lieux.map(c => wg.cellToWorld(c)), ...pnjs], dLieu = (c: number) => { const q = pos.get(c)!; return Math.min(9999, ...lieuxW.map(l => Math.hypot(l.x - q.x, l.y - q.y))); };
   // sur une toute petite carte (salle du Temple), on garde les cases les plus éloignées des PNJ et des portes (400 px, ou 80 % du plus loin possible)
+  // entrées de carte : un groupe posé là réveillerait le joueur dès son arrivée (rayon d'éveil 250 px)
+  const sortiesW = a.sorties.map(c => wg.cellToWorld(c)), dSortie = (c: number) => { const q = pos.get(c)!; return Math.min(9999, ...sortiesW.map(l => Math.hypot(l.x - q.x, l.y - q.y))); };
   const dl0 = new Map(libresL.map(c => [c, dLieu(c)])), seuil = Math.min(400, 0.8 * Math.max(...dl0.values()));
   const notes = libresL.filter(c => dl0.get(c)! >= seuil).map(c => {
     const dw = dl0.get(c)!;
     const dp = loin(a.distPassage, c), dl = loin(a.distLieu, c), db = loin(a.distBord, c);
-    const genant = (dw < 420 ? 3 : 0) + (dp < A.ecartPassage ? 1 : 0) + (dl < A.ecartLieu ? 1 : 0) + (db < A.ecartBord ? 1 : 0);
-    return { c, genant, note: ouvert(c) + 4 * Math.min(dp, 8) + 2 * Math.min(dl, 10) };
+    const ds = dSortie(c);
+    const genant = (dw < 420 ? 10 : 0) + (ds < A.loinSortie ? 2 : 0) + (ds < A.loinSortie * 0.7 ? 2 : 0) + (dp < A.ecartPassage ? 1 : 0) + (dl < A.ecartLieu ? 1 : 0) + (db < A.ecartBord ? 1 : 0);
+    return { c, genant, note: ouvert(c) + 4 * Math.min(dp, 8) + 2 * Math.min(dl, 10) + Math.min(ds, 700) / 50 };
   }).sort((x, y) => x.genant - y.genant || y.note - x.note || x.c - y.c);
   const pris: number[] = [];
   // on assouplit l'écart entre les points tant qu'il en manque (petite carte, clairière étroite)

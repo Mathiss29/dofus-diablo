@@ -24,7 +24,7 @@ import { COFFRE, coffreVide, type Coffre } from './coffre';
 /** Archimonstres (0.3, 15B) : chance qu'un monstre d'un groupe soit son archimonstre ; pierres d'âme officielles (vide, pleine). */
 export const ARCHI = { chance: 1 / 150, pierre: '9686', pleine: '10418' };
 import { FABRICATION, METIERS_FAB, chanceRare, ingredientsRares, type Poste } from './metiers';
-import { PLACEMENT, analyserCarte, placementPose, placementValide, proposerPlacement, type AnalyseCarte, type PlacementCarte } from './placement';
+import { PLACEMENT, analyserCarte, groupesAuto, placementPose, placementValide, proposerPlacement, type AnalyseCarte, type PlacementCarte } from './placement';
 import { RECOLTE, porteeRecolte, quantite, xpRecolte, type Recolte, type RecoltesData } from './recolte';
 
 interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: number;
@@ -774,7 +774,7 @@ export class World {
   /** Proposition automatique pour une carte (1C, 3A) : ce que l'éditeur montre avant qu'on la retouche. */
   propositionAuto(tag: string, groupes?: number): PlacementCarte {
     const sub = this.sousZoneGroupes(tag);
-    return proposerPlacement(this.worldGrid!, tag, groupes ?? sub?.groupsPerMap ?? 0, this.analyseCarte(tag));
+    return proposerPlacement(this.worldGrid!, tag, groupes ?? groupesAuto(sub?.groupsPerMap ?? 0, this.worldGrid!.freeByMap.get(tag)?.length ?? 0), this.analyseCarte(tag), this.quetes?.pnjs ?? []);
   }
   /** Placement en vigueur sur une carte (null : pas de groupes ici). */
   placementDe(tag: string): PlacementCarte | null { return this.placements.get(tag) ?? null; }
@@ -784,7 +784,7 @@ export class World {
   cartesAGroupes(): string[] { return (this.worldGrid?.world.maps ?? []).filter(m => this.sousZoneGroupes(m.tag)).map(m => m.tag); }
   private poserGroupes(tag: string, sub: SubAreaDef) {
     const pose = this.opts.placements?.[tag] ?? placementPose(this.zone.open!.world, tag);
-    const pl = pose ? placementValide(pose) : this.propositionAuto(tag, sub.groupsPerMap);
+    const pl = pose ? placementValide(pose) : this.propositionAuto(tag);
     this.placements.set(tag, pl);
     for (let i = 0; i < pl.g; i++) {
       const g: MonsterGroup = { id: this.groups.length, map: tag, sub, members: [], timer: 0, cleared: false, x: 0, y: 0, point: -1 };
@@ -837,14 +837,25 @@ export class World {
     if (pt) { const c = wg.cellOf(g.map, pt.c); pos = ok.has(c) ? wg.cellToWorld(c) : wg.nearestFree(...xy(wg.cellToWorld(c)), free); }
     g.x = pos.x; g.y = pos.y; g.members = []; g.cleared = false;
     const [a, b] = (!g.fixe && this.quetes?.tailleGroupe(this.worldGrid!.mapByTag(g.map)?.sub ?? -1)) || pt?.n || g.sub.groupSize, n = g.fixe ? g.fixe.length : a + this.rng.int(b - a + 1);
-    const a0 = this.rng.range(0, Math.PI * 2);
+    const a0 = this.rng.range(0, Math.PI * 2), [r0, r1] = PLACEMENT.auto.rayonGroupe;
+    // les membres restent du même côté des obstacles que le chef : cases atteignables à pied en quelques pas (plus de monstre derrière un mur ou une rivière)
+    const c0 = wg.cellAtWorld(pos.x, pos.y), proches = new Map<number, number>(ok.has(c0) ? [[c0, 0]] : []), file = [...proches.keys()];
+    for (let k = 0; k < file.length; k++) { const d = proches.get(file[k])!; if (d < 7) for (const v of wg.neighbors(file[k])) if (ok.has(v) && !proches.has(v)) { proches.set(v, d + 1); file.push(v); } }
+    // jamais collé à un PNJ : les cases à moins de 260 px d'un PNJ ne comptent pas
+    const prochePnj = (z: { x: number; y: number }) => this.quetes?.pnjs.some(o => Math.hypot(o.x - z.x, o.y - z.y) < 260);
+    const autour = [...proches.keys()].filter(c => proches.get(c)! > 0 && !prochePnj(wg.cellToWorld(c)));
+    const placeA = (x: number, y: number) => {
+      if (autour.length < 4) return wg.nearestFree(x, y, free);
+      let mc = autour[0], md = Infinity;
+      for (const c of autour) { const q = wg.cellToWorld(c), d = (q.x - x) ** 2 + (q.y - y) ** 2; if (d < md) { md = d; mc = c; } }
+      return wg.cellToWorld(mc);
+    };
     for (let i = 0; i < n; i++) {
-      // en cercle autour du chef, chacun sa place (plus de tas de monstres les uns sur les autres)
-      const ang = a0 + (i / Math.max(1, n - 1)) * Math.PI * 2 + this.rng.range(-0.3, 0.3), r = i === 0 ? 0 : this.rng.range(90, 150);
-      let q = wg.nearestFree(pos.x + Math.cos(ang) * r, pos.y + Math.sin(ang) * r, free);
-      // jamais collé à un PNJ : on tourne autour du point jusqu'à trouver une place à plus de 260 px de lui
-      const prochePnj = (z: { x: number; y: number }) => this.quetes?.pnjs.some(o => Math.hypot(o.x - z.x, o.y - z.y) < 260);
-      for (let t = 1; t < 8 && i > 0 && prochePnj(q); t++) q = wg.nearestFree(pos.x + Math.cos(ang + t * 0.8) * r, pos.y + Math.sin(ang + t * 0.8) * r, free);
+      // serrés autour du chef, chacun sa place (plus de tas de monstres les uns sur les autres)
+      const ang = a0 + (i / Math.max(1, n - 1)) * Math.PI * 2 + this.rng.range(-0.3, 0.3), r = i === 0 ? 0 : this.rng.range(r0, r1);
+      let q = i === 0 ? wg.nearestFree(pos.x, pos.y, free) : placeA(pos.x + Math.cos(ang) * r, pos.y + Math.sin(ang) * r);
+      // sinon (pas assez de place autour du chef) on tourne autour du point jusqu'à trouver une place à plus de 260 px d'un PNJ
+      for (let t = 1; t < 8 && i > 0 && prochePnj(q); t++) q = placeA(pos.x + Math.cos(ang + t * 0.8) * r, pos.y + Math.sin(ang + t * 0.8) * r);
       // l'élite unique de la sous-zone mène parfois un groupe (souvent sur son repaire, 4D), s'il n'est pas déjà en vie ailleurs
       const elite = !g.fixe && i === 0 && g.sub.elite && this.rng.next() < (pt?.r ? PLACEMENT.elite.repaire : PLACEMENT.elite.hasard) && !this.monsters.some(o => !o.dead && o.type === g.sub.elite);
       let type = g.fixe ? g.fixe[i] : elite ? g.sub.elite! : this.rng.pick(g.sub.monsters);
