@@ -458,3 +458,13 @@ Exemples d'îles hors jeu (planches de pièces, essais de plan) : `/mnt/project-
   `ANIMS=AnimStatique_1,AnimAttaque1_1,AnimAttaque2_1,AnimAttaque3_1 … 4930 pnj_rathrosk` (animFunList officielle),
   `PNJ=1 SCALE=1.58 … 3401 pnj_energie_cacao` (look {3401|||120}). Puis `node tools/hebergement/envoi.mjs`.
 - Trophées (266, type 151, Façonneur) et prysmaradites (25, type 217) : mêmes 6 cases, sous-onglets grisés jusqu'à Amakna.
+
+## Ateliers de fabrication de la Cité (version 0.3)
+
+- Intérieurs officiels (bundle `world_736` de `cache-dofus/astrub/cartes.tar`) : bijoutiers 192937990 ([6,-15]), cordonniers 192939016 ([4,-16]),
+  tailleurs 192940032 ([7,-15]), façonneurs 192940040 ([4,-15]), rangés en (-4..2, 12) : la grille d'Astrub passe de 1840 à 1920 lignes.
+  Export comme les Égouts : `world_export.py` sur les 4 salles + deux cartes factices en (-4,-34) et (13,13), `ONLY=<les 4 tags>`, puis
+  `COURANTE=1 batiments.py`, puis fusion dans `monde.json` (entrées des salles + lignes de `mov` ajoutées).
+- Porte du dehors = `boundingBoxes` (`m_interactionId`) ; arrivée = case marchable la plus basse de la salle. Portes notées `v03` (fermées hors
+  partie de test). Forgerons et sculpteurs : salles des mineurs et des bûcherons (mêmes machines, un poste réunit les métiers).
+- Postes : `ateliers_postes.py` (machines 49498/49500/49501, 402707, 49499, 49503 ajoutées).

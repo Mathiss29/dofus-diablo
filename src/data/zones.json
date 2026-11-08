@@ -2039,6 +2039,54 @@
       510
      ],
      "nom": "Souterrains d'Astrub"
+    },
+    {
+     "a": [
+      "6_-15",
+      344
+     ],
+     "b": [
+      "atelier_bijoutiers",
+      495
+     ],
+     "nom": "Atelier des bijoutiers",
+     "v03": 1
+    },
+    {
+     "a": [
+      "4_-16",
+      342
+     ],
+     "b": [
+      "atelier_cordonniers",
+      496
+     ],
+     "nom": "Atelier des cordonniers",
+     "v03": 1
+    },
+    {
+     "a": [
+      "7_-15",
+      316
+     ],
+     "b": [
+      "atelier_tailleurs",
+      512
+     ],
+     "nom": "Atelier des tailleurs",
+     "v03": 1
+    },
+    {
+     "a": [
+      "4_-15",
+      356
+     ],
+     "b": [
+      "atelier_faconneurs",
+      455
+     ],
+     "nom": "Atelier des façonneurs",
+     "v03": 1
     }
    ],
    "donjons": [
@@ -3021,7 +3069,38 @@
       "bijoutier"
      ],
      "cartes": [
+      "atelier_bijoutiers",
       "6_-15"
+     ],
+     "postes": [
+      [
+       "atelier_bijoutiers",
+       245,
+       49498,
+       21.0,
+       -8.0
+      ],
+      [
+       "atelier_bijoutiers",
+       303,
+       49500,
+       20.0,
+       -11.0
+      ],
+      [
+       "atelier_bijoutiers",
+       453,
+       49500,
+       25.0,
+       -35.0
+      ],
+      [
+       "atelier_bijoutiers",
+       467,
+       49501,
+       21.0,
+       -32.0
+      ]
      ]
     },
     {
@@ -3030,7 +3109,31 @@
       "cordonnier"
      ],
      "cartes": [
+      "atelier_cordonniers",
       "4_-16"
+     ],
+     "postes": [
+      [
+       "atelier_cordonniers",
+       247,
+       402707,
+       22.0,
+       -22.0
+      ],
+      [
+       "atelier_cordonniers",
+       259,
+       402707,
+       -26.0,
+       -24.0
+      ],
+      [
+       "atelier_cordonniers",
+       425,
+       402707,
+       18.0,
+       -46.0
+      ]
      ]
     },
     {
@@ -3039,7 +3142,17 @@
       "tailleur"
      ],
      "cartes": [
+      "atelier_tailleurs",
       "7_-15"
+     ],
+     "postes": [
+      [
+       "atelier_tailleurs",
+       257,
+       49499,
+       -4.0,
+       -46.0
+      ]
      ]
     },
     {
@@ -3048,7 +3161,45 @@
       "forgeron"
      ],
      "cartes": [
+      "atelier_mineurs",
       "7_-16"
+     ],
+     "postes": [
+      [
+       "atelier_mineurs",
+       296,
+       49510,
+       18.0,
+       -26.0
+      ],
+      [
+       "atelier_mineurs",
+       302,
+       49510,
+       25.0,
+       -7.0
+      ],
+      [
+       "atelier_mineurs",
+       323,
+       49494,
+       0,
+       0
+      ],
+      [
+       "atelier_mineurs",
+       360,
+       49494,
+       0,
+       0
+      ],
+      [
+       "atelier_mineurs",
+       483,
+       49495,
+       3.0,
+       -22.0
+      ]
      ]
     },
     {
@@ -3057,7 +3208,38 @@
       "sculpteur"
      ],
      "cartes": [
+      "atelier_bucherons",
       "2_-16"
+     ],
+     "postes": [
+      [
+       "atelier_bucherons",
+       257,
+       49496,
+       0,
+       0
+      ],
+      [
+       "atelier_bucherons",
+       284,
+       49496,
+       0,
+       0
+      ],
+      [
+       "atelier_bucherons",
+       316,
+       49514,
+       21.0,
+       -15.0
+      ],
+      [
+       "atelier_bucherons",
+       373,
+       49514,
+       30.0,
+       -26.0
+      ]
      ]
     },
     {
@@ -3066,7 +3248,17 @@
       "faconneur"
      ],
      "cartes": [
+      "atelier_faconneurs",
       "4_-15"
+     ],
+     "postes": [
+      [
+       "atelier_faconneurs",
+       329,
+       49503,
+       18.0,
+       -32.0
+      ]
      ]
     }
    ],
