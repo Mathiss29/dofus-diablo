@@ -1,6 +1,7 @@
 // Fenêtre Social façon Dofus 3 (maquette « Social : 1A+1B 2A… 7A+7B+7C … 9A ») : onglets Amis, Discord, Groupe, Ignorés.
 // Onglet Groupe (jouer à plusieurs avec son perso en ligne ; la partie tourne sur le serveur, qui lit et sauve le perso du
-// compte) et onglet Discord (joueurs connectés, invitation). Amis et Ignorés viennent ensuite. Touche Social (P).
+// compte), onglet Discord (joueurs connectés, invitation), Amis (demandes, en ligne, vie privée) et Ignorés. Touche Social (P).
+// Clic droit sur un joueur (listes, chat, passant du Bastion) : son menu (6A).
 import { GAME_DATA } from '../sim/data';
 import type { World } from '../sim/world';
 import { classeDe } from '../sim/miroir';
@@ -29,7 +30,19 @@ export const SOCIAL_CSS = `.dw .win.social{width:440px}
 .dw .soc .mbr .pv i{display:block;height:100%;background:#e0443a}
 .dw .soc .moi{outline:1px solid #b9e54b66}
 .dw .soc .bas{display:flex;justify-content:flex-end;gap:6px}
-.dw .soc .gris{background:linear-gradient(#5a5850,#3d3c36);border-color:#8a8676}`;
+.dw .soc .gris{background:linear-gradient(#5a5850,#3d3c36);border-color:#8a8676}
+.dw .soc .liste{display:flex;flex-direction:column;gap:6px;max-height:300px;overflow:auto}
+.dw .soc .mbr .act{display:flex;gap:4px;align-items:center}
+.dw .soc .mbr .btn.mini{padding:3px 7px;font-size:11px;min-width:0}
+.dw .soc .hors{opacity:.55}
+.dw .soc .titre{font-size:12px;color:#a99d86;text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.dw .soc label.case{display:flex;gap:8px;align-items:center;font-size:12px;color:#d8d2bf;cursor:pointer}
+.dw .soc label.case input{all:revert;width:15px;height:15px;margin:0;flex:none;accent-color:#6f9a2a;cursor:pointer}
+.dw .soc .rej input.nom{text-transform:none;letter-spacing:0}
+.menu-joueur{position:fixed;z-index:60;background:#1b1a16f4;border:1px solid #6f6a5a;border-radius:5px;padding:4px;font:13px Lexend,sans-serif;color:#f4efe0;box-shadow:0 8px 24px #000b;min-width:170px}
+.menu-joueur b{display:block;padding:4px 8px 6px;color:#ffd27a;border-bottom:1px solid #45433b;margin-bottom:3px}
+.menu-joueur div{padding:5px 8px;border-radius:3px;cursor:pointer}
+.menu-joueur div:hover{background:#4c6e17}`;
 
 /** Ce que la scène prête à la fenêtre : l'emplacement du perso joué (-1 : pas un perso du navigateur ni du compte). */
 export interface ContexteSocial { world: World; slot: number; test: boolean; fermer(): void; refaire(): void }
@@ -42,29 +55,91 @@ function membres(w: World) {
 }
 
 /** Onglet ouvert (gardé d'une ouverture à l'autre), et joueur à inviter dès que son groupe existe. */
-let onglet: 'groupe' | 'discord' = 'groupe';
+type Onglet = 'amis' | 'groupe' | 'discord' | 'ignores';
+let onglet: Onglet = 'groupe';
 let aInviter: number | null = null;
 Coop.ecouter(() => {
   if (aInviter != null && Coop.etat === 'salon' && Coop.serveur) { EnLigne.inviter(aInviter); aInviter = null; }
   else if (Coop.etat === 'hors') aInviter = null;
 });
 
-/** Chaque seconde, fenêtre ouverte : la liste des membres du groupe, et celle des joueurs en ligne toutes les 3 s. */
+/** Peut-on inviter avec le perso joué ? (pas en Hardcore, testeurs seulement pendant l'essai fermé) */
+function peutInviter() {
+  const n = EnLigne.emplacement;
+  return n >= 0 && !lirePersos()[n]?.hardcore && (!Compte.infos || Compte.infos.testeur);
+}
+/** Inviter un joueur (7A) : dans son groupe s'il existe, sinon on en crée un (on part dans la Crypte) et l'invitation part ensuite. */
+export function inviterJoueur(id: number) {
+  if (!peutInviter()) { EnLigne.onInfo('Tu ne peux pas encore jouer en groupe avec ce perso'); return; }
+  const j = Compte.jeton, n = EnLigne.emplacement;
+  if (Coop.etat === 'salon' && Coop.serveur) EnLigne.inviter(id);
+  else if (Coop.etat === 'hors' && j) { aInviter = id; Coop.creer(true, { jeton: j, emplacement: n }); }
+}
+/** Menu d'un joueur (« Social : » 6A) : clic droit sur son nom ou sur son perso. */
+export function menuJoueur(x: number, y: number, j: { id: number; nom: string }) {
+  document.querySelector('.menu-joueur')?.remove();
+  if (!document.getElementById('menu-joueur-css')) {
+    const st = document.createElement('style'); st.id = 'menu-joueur-css'; st.textContent = SOCIAL_CSS.slice(SOCIAL_CSS.indexOf('.menu-joueur')); document.head.appendChild(st);
+  }
+  const ami = EnLigne.amis?.amis.some(a => a.id === j.id), ignore = EnLigne.amis?.ignores.some(a => a.id === j.id);
+  const d = document.createElement('div'); d.className = 'menu-joueur';
+  const actions: [string, () => void][] = [
+    ...(peutInviter() ? [['Inviter dans le groupe', () => inviterJoueur(j.id)] as [string, () => void]] : []),
+    ['Chuchoter', () => EnLigne.chuchoter(j.nom)],
+    ...(ami ? [] : [['Ajouter en ami', () => EnLigne.ajouterAmi(j.id)] as [string, () => void]]),
+    ignore ? ['Ne plus ignorer', () => EnLigne.retirer(j.id)] : ['Ignorer', () => EnLigne.ignorer(j.id, j.nom)],
+  ];
+  d.innerHTML = `<b>${esc(j.nom)}</b>` + actions.map((a, i) => `<div data-i="${i}">${a[0]}</div>`).join('');
+  const fermer = () => { d.remove(); window.removeEventListener('pointerdown', dehors, true); };
+  const dehors = (e: PointerEvent) => { if (!d.contains(e.target as Node)) fermer(); };
+  d.querySelectorAll<HTMLElement>('[data-i]').forEach(e => e.addEventListener('click', () => { fermer(); actions[+e.dataset.i!][1](); }));
+  d.addEventListener('pointerdown', e => e.stopPropagation());
+  d.addEventListener('contextmenu', e => e.preventDefault());
+  document.body.appendChild(d);
+  d.style.left = Math.min(x, window.innerWidth - d.offsetWidth - 8) + 'px';
+  d.style.top = Math.min(y, window.innerHeight - d.offsetHeight - 8) + 'px';
+  setTimeout(() => window.addEventListener('pointerdown', dehors, true));
+}
+
+/** Chaque seconde, fenêtre ouverte : la liste des membres du groupe ; celle des joueurs en ligne ou des amis toutes les 3 s. */
 let tic = 0;
 export function tickSocial(win: HTMLDivElement, c: ContexteSocial) {
   if (onglet === 'discord') { if (tic++ % 3 === 0) EnLigne.demanderEnLigne(); }
-  else if (Coop.etat === 'salon') majMembres(win, c);
+  else if (onglet === 'amis') { if (tic++ % 3 === 0) EnLigne.demanderAmis(); }
+  else if (onglet === 'groupe' && Coop.etat === 'salon') majMembres(win, c);
 }
+/** Nombre de demandes d'ami en attente (pastille sur le bouton Social, 5B). */
+export function demandesEnAttente() { return EnLigne.amis?.recues.length ?? 0; }
 
 export function rendreSocial(win: HTMLDivElement, titre: string, c: ContexteSocial) {
-  const tab = (k: string, n: string) => k ? `<span class="${onglet === k ? 'on' : ''}" data-soc-o="${k}" style="cursor:pointer">${n}</span>` : `<span class="off" title="Bientôt">${n}</span>`;
-  win.innerHTML = `${titre}<div class="soc"><div class="soc-t">${tab('', 'Amis')}${tab('discord', 'Discord')}${tab('groupe', 'Groupe')}${tab('', 'Ignorés')}</div>
-    ${onglet === 'discord' ? discord(c) : groupe(c)}</div>`;
+  const n = demandesEnAttente();
+  const tab = (k: Onglet, t: string) => `<span class="${onglet === k ? 'on' : ''}" data-soc-o="${k}" style="cursor:pointer">${t}</span>`;
+  win.innerHTML = `${titre}<div class="soc"><div class="soc-t">${tab('amis', n ? `Amis (${n})` : 'Amis')}${tab('discord', 'Discord')}${tab('groupe', 'Groupe')}${tab('ignores', 'Ignorés')}</div>
+    ${onglet === 'discord' ? discord(c) : onglet === 'amis' ? amis(c) : onglet === 'ignores' ? ignores(c) : groupe(c)}</div>`;
   const $ = <T extends HTMLElement>(s: string) => win.querySelector<T>(s);
   win.querySelectorAll<HTMLElement>('[data-soc-o]').forEach(e => e.addEventListener('click', () => {
-    onglet = e.dataset.socO as 'groupe' | 'discord';
+    onglet = e.dataset.socO as Onglet;
     if (onglet === 'discord') EnLigne.demanderEnLigne();
+    if (onglet === 'amis' || onglet === 'ignores') EnLigne.demanderAmis();
     c.refaire();
+  }));
+  // amis et ignorés
+  const champ = $<HTMLInputElement>('[data-soc-nom]');
+  const ajouter = () => { const v = champ?.value.trim(); if (!v) return; if (onglet === 'ignores') EnLigne.ignorer(v); else EnLigne.ajouterAmi(v); champ!.value = ''; };
+  champ?.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') ajouter(); });
+  champ?.addEventListener('keyup', e => e.stopPropagation());
+  $('[data-soc-ajouter]')?.addEventListener('click', ajouter);
+  const chaque = (sel: string, f: (e: HTMLElement) => void) => win.querySelectorAll<HTMLElement>(sel).forEach(e => e.addEventListener('click', () => f(e)));
+  chaque('[data-soc-accepter]', e => EnLigne.ajouterAmi(Number(e.dataset.socAccepter)));
+  chaque('[data-soc-retirer]', e => EnLigne.retirer(Number(e.dataset.socRetirer)));
+  chaque('[data-soc-chu]', e => { c.fermer(); EnLigne.chuchoter(e.dataset.socChu!); });
+  win.querySelectorAll<HTMLInputElement>('[data-soc-prive]').forEach(e => e.addEventListener('change', () => {
+    const v = (k: string) => !!win.querySelector<HTMLInputElement>(`[data-soc-prive="${k}"]`)?.checked;
+    EnLigne.reglerSocial(v('horsLigne'), v('inconnus'));
+  }));
+  // clic droit sur un joueur des listes : son menu (6A)
+  win.querySelectorAll<HTMLElement>('[data-joueur]').forEach(e => e.addEventListener('contextmenu', ev => {
+    ev.preventDefault(); menuJoueur(ev.clientX, ev.clientY, { id: Number(e.dataset.joueur), nom: e.dataset.nom ?? '' });
   }));
   const compte = () => (c.slot >= 0 && Compte.jeton ? { jeton: Compte.jeton, emplacement: c.slot } : null);
   $('[data-soc-creer]')?.addEventListener('click', () => Coop.creer(true, compte()));
@@ -74,26 +149,69 @@ export function rendreSocial(win: HTMLDivElement, titre: string, c: ContexteSoci
   $('[data-soc-quitter]')?.addEventListener('click', () => Coop.quitter());
   $('[data-soc-copier]')?.addEventListener('click', () => { void navigator.clipboard?.writeText(Coop.code ?? '').catch(() => {}); });
   // 7A : inviter un joueur ; sans groupe, on en crée un (on part dans la Crypte) et l'invitation part dès qu'il existe
-  win.querySelectorAll<HTMLElement>('[data-soc-inviter]').forEach(e => e.addEventListener('click', () => {
-    const id = Number(e.dataset.socInviter);
-    if (Coop.etat === 'salon' && Coop.serveur) EnLigne.inviter(id);
-    else if (Coop.etat === 'hors') { aInviter = id; Coop.creer(true, compte()); }
-  }));
+  chaque('[data-soc-inviter]', e => inviterJoueur(Number(e.dataset.socInviter)));
+}
+const lieu = (z: string) => z === '__groupe' ? 'en donjon de groupe' : GAME_DATA.zones[z]?.name ?? z;
+const classe = (k: string) => (GAME_DATA.classes[k] ? k : 'iop');
+const pasEnLigne = (c: ContexteSocial) => c.test || !Compte.enLigne || c.slot < 0;
+/** Il y a combien de temps (« vu il y a 3 h »). */
+function ilYa(t: number) {
+  const m = Math.max(0, (Date.now() - t) / 60000);
+  return m < 60 ? `${Math.max(1, Math.round(m))} min` : m < 48 * 60 ? `${Math.round(m / 60)} h` : `${Math.round(m / 1440)} jours`;
+}
+/** Onglet Amis (« Social : » 2A 2B 2C, 8A) : demandes reçues, amis en ligne puis hors ligne, demandes envoyées, vie privée. */
+function amis(c: ContexteSocial): string {
+  if (pasEnLigne(c)) return `<p>Connecte-toi avec Discord et joue un perso <b>« En ligne »</b> pour avoir des amis.</p>`;
+  const A = EnLigne.amis;
+  if (!EnLigne.connecte || !A) return '<p class="note">Connexion au serveur…</p>';
+  const inv = peutInviter();
+  const enLigne = A.amis.filter(a => a.perso).sort((a, b) => a.perso!.nom.localeCompare(b.perso!.nom));
+  const hors = A.amis.filter(a => !a.perso).sort((a, b) => b.vu - a.vu);
+  const ligne = (a: typeof A.amis[number]) => {
+    const p = a.perso;
+    if (!p) return `<div class="mbr hors"><img src="assets/accueil/c_iop.png" alt="" style="filter:grayscale(1)">
+      <div><b>${esc(a.discord)}</b><small>Hors ligne · vu il y a ${ilYa(a.vu)}</small></div>
+      <div class="act"><span class="btn mini gris" data-soc-retirer="${a.id}" title="Retirer de mes amis">✕</span></div></div>`;
+    const cl = classe(p.classe);
+    return `<div class="mbr" data-joueur="${a.id}" data-nom="${esc(p.nom)}"><img src="assets/accueil/c_${cl}.png" alt="">
+      <div><b>${esc(p.nom)}</b> <small style="display:inline">(${esc(a.discord)})</small><small>${GAME_DATA.classes[cl].name} · niveau ${p.niveau} · ${esc(lieu(p.zone))}${p.avecMoi ? ' · dans ton groupe' : ''}</small></div>
+      <div class="act">${inv && !p.groupe ? `<span class="btn mini" data-soc-inviter="${a.id}">Inviter</span>` : ''}<span class="btn mini gris" data-soc-chu="${esc(p.nom)}" title="Chuchoter">✉</span><span class="btn mini gris" data-soc-retirer="${a.id}" title="Retirer de mes amis">✕</span></div></div>`;
+  };
+  return `<div class="rej"><input type="text" class="nom" maxlength="40" placeholder="Nom d'un perso ou pseudo Discord" autocomplete="off" data-soc-nom><span class="btn" data-soc-ajouter>Ajouter</span></div>
+    ${A.recues.length ? `<div class="titre">Demandes reçues</div><div class="liste">${A.recues.map(d => `<div class="mbr" data-joueur="${d.id}" data-nom="${esc(d.nom)}"><img src="assets/accueil/c_iop.png" alt="" style="opacity:.6">
+      <div><b>${esc(d.nom)}</b><small>veut être ton ami</small></div>
+      <div class="act"><span class="btn mini" data-soc-accepter="${d.id}">Accepter</span><span class="btn mini gris" data-soc-retirer="${d.id}">Refuser</span></div></div>`).join('')}</div>` : ''}
+    <div class="titre">Amis (${enLigne.length} en ligne sur ${A.amis.length})</div>
+    ${A.amis.length ? `<div class="liste">${enLigne.map(ligne).join('')}${hors.map(ligne).join('')}</div>` : '<p class="note">Ajoute un ami par le nom de son perso, ou clic droit sur un joueur › Ajouter en ami. Il doit accepter.</p>'}
+    ${A.envoyees.length ? `<div class="titre">Demandes envoyées</div><div class="liste">${A.envoyees.map(d => `<div class="mbr"><span></span><div><b>${esc(d.nom)}</b><small>en attente</small></div>
+      <div class="act"><span class="btn mini gris" data-soc-retirer="${d.id}">Annuler</span></div></div>`).join('')}</div>` : ''}
+    <label class="case"><input type="checkbox" data-soc-prive="horsLigne" ${A.horsLigne ? 'checked' : ''}> Apparaître hors ligne (ni dans l'onglet Discord, ni chez mes amis)</label>
+    <label class="case"><input type="checkbox" data-soc-prive="inconnus" ${A.inconnus ? 'checked' : ''}> Refuser les invitations de ceux qui ne sont pas mes amis</label>
+    <p class="note">Ceux qui ne sont pas tes amis ne voient que le nom de ton perso, jamais ton pseudo Discord.</p>`;
+}
+/** Onglet Ignorés (2D) : leurs messages et invitations n'arrivent plus. */
+function ignores(c: ContexteSocial): string {
+  if (pasEnLigne(c)) return `<p>Connecte-toi avec Discord et joue un perso <b>« En ligne »</b> pour gérer ta liste.</p>`;
+  const A = EnLigne.amis;
+  if (!EnLigne.connecte || !A) return '<p class="note">Connexion au serveur…</p>';
+  return `<div class="rej"><input type="text" class="nom" maxlength="40" placeholder="Nom d'un perso à ignorer" autocomplete="off" data-soc-nom><span class="btn" data-soc-ajouter>Ignorer</span></div>
+    <p class="note">Les joueurs ignorés ne peuvent plus t'écrire, t'inviter ni te demander en ami.</p>
+    ${A.ignores.length ? `<div class="liste">${A.ignores.map(d => `<div class="mbr"><span></span><div><b>${esc(d.nom)}</b></div>
+      <div class="act"><span class="btn mini gris" data-soc-retirer="${d.id}">Ne plus ignorer</span></div></div>`).join('')}</div>` : '<p>Personne pour l\'instant.</p>'}`;
 }
 /** Onglet Discord (« Social : » 1B) : les joueurs connectés avec leur perso en ligne, sans avoir à les ajouter. */
 function discord(c: ContexteSocial): string {
-  if (c.test || !Compte.enLigne || c.slot < 0) return `<p>Connecte-toi avec Discord et joue un perso <b>« En ligne »</b> pour voir les autres joueurs.</p>`;
+  if (pasEnLigne(c)) return `<p>Connecte-toi avec Discord et joue un perso <b>« En ligne »</b> pour voir les autres joueurs.</p>`;
   if (!EnLigne.connecte) return '<p class="note">Connexion au serveur…</p>';
   const L = EnLigne.enLigne;
   if (!L.length) return '<p>Personne d\'autre n\'est en ligne pour l\'instant.</p>';
-  const lieu = (z: string) => z === '__groupe' ? 'en donjon de groupe' : GAME_DATA.zones[z]?.name ?? z;
-  const peutInviter = !lirePersos()[c.slot]?.hardcore && (!Compte.infos || Compte.infos.testeur);
+  const inv = peutInviter();
   return `<p class="note">${L.length} joueur${L.length > 1 ? 's' : ''} en ligne. Au Bastion des Douze, vous vous croisez.</p>
     <div style="display:flex;flex-direction:column;gap:6px;max-height:340px;overflow:auto">${L.map(j => {
       const cls = GAME_DATA.classes[j.classe] ? j.classe : 'iop';
-      return `<div class="mbr"><img src="assets/accueil/c_${cls}.png" alt="">
-        <div><b>${esc(j.nom)}</b><small>${GAME_DATA.classes[cls].name} · niveau ${j.niveau} · ${esc(lieu(j.zone))}</small></div>
-        ${peutInviter && !j.groupe ? `<span class="btn" data-soc-inviter="${j.id}" title="L'inviter dans ton groupe">Inviter</span>` : j.groupe ? '<small>en groupe</small>' : '<span></span>'}</div>`;
+      return `<div class="mbr" data-joueur="${j.id}" data-nom="${esc(j.nom)}"><img src="assets/accueil/c_${cls}.png" alt="">
+        <div><b>${esc(j.nom)}</b>${j.ami ? ' <small style="display:inline;color:#b9e54b">ami</small>' : ''}<small>${GAME_DATA.classes[cls].name} · niveau ${j.niveau} · ${esc(lieu(j.zone))}</small></div>
+        ${inv && !j.groupe ? `<span class="btn" data-soc-inviter="${j.id}" title="L'inviter dans ton groupe">Inviter</span>` : j.groupe ? '<small>en groupe</small>' : '<span></span>'}</div>`;
     }).join('')}</div>`;
 }
 

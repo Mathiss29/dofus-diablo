@@ -11,13 +11,20 @@ export interface Passant { id: number; profil: Profil | null; x: number; y: numb
 export type Canal = 'tout' | 'groupe' | 'bastion' | 'prive' | 'infos';
 /** Un message du chat (« Social : » 4A) : reçu du serveur, ou une info du jeu (canal Infos). */
 export interface MessageChat { canal: Canal; de: string; id: number | null; texte: string; vers?: string; t: number }
-export interface JoueurEnLigne { id: number; nom: string; classe: string; niveau: number; zone: string; groupe: boolean }
+export interface JoueurEnLigne { id: number; nom: string; classe: string; niveau: number; zone: string; groupe: boolean; ami?: boolean }
+/** Amis et ignorés (« Social : » 2A-2D, 8A), tenus par le serveur. */
+export interface Amis {
+  amis: { id: number; discord: string; vu: number; perso?: { nom: string; classe: string; niveau: number; zone: string; groupe: boolean; avecMoi: boolean } }[];
+  recues: { id: number; nom: string }[]; envoyees: { id: number; nom: string }[]; ignores: { id: number; nom: string }[];
+  horsLigne: boolean; inconnus: boolean;
+}
 
 class Presence {
   /** Joueurs du Bastion autour de soi. */
   readonly passants = new Map<number, Passant>();
   private profils = new Map<number, Profil>();
   enLigne: JoueurEnLigne[] = [];
+  amis: Amis | null = null;
   /** Mon numéro de compte côté serveur (null : pas annoncé). */
   moi: number | null = null;
   private ws: WebSocket | null = null;
@@ -47,6 +54,10 @@ class Presence {
   /** Envoie un message (canal Privé : a = nom du perso). */
   dire(canal: Exclude<Canal, 'infos'>, texte: string, a?: string) { this.envoyer({ k: 'dire', canal, texte, ...(a ? { a } : {}) }); }
   private changer() { for (const f of this.ecouteurs) f(); }
+  /** Emplacement du perso en ligne joué (-1 : aucun). */
+  get emplacement() { return this.voulu?.emplacement ?? -1; }
+  /** Ouvre le chat prêt à chuchoter à ce joueur (branché par la fenêtre de chat). */
+  chuchoter: (nom: string) => void = () => {};
   get connecte() { return this.moi != null && this.ws?.readyState === WebSocket.OPEN; }
 
   /** La scène a un perso en ligne : on l'annonce (ou on met à jour son profil : niveau, objets portés). */
@@ -59,7 +70,7 @@ class Presence {
   arreter() {
     this.voulu = null; clearTimeout(this.relance);
     const ws = this.ws; this.ws = null; ws?.close();
-    this.moi = null; this.passants.clear(); this.enLigne = []; this.changer();
+    this.moi = null; this.passants.clear(); this.enLigne = []; this.amis = null; this.changer();
   }
   private connecter() {
     let ws: WebSocket;
@@ -92,11 +103,19 @@ class Presence {
     this.envoyer({ k: 'pos', zone, x: Math.round(x), y: Math.round(y), f: +f.toFixed(2), a });
   }
   demanderEnLigne() { this.envoyer({ k: 'enligne' }); }
+  demanderAmis() { this.envoyer({ k: 'amis' }); }
+  /** Demande d'ami par nom (perso ou pseudo Discord), ou accepter celle d'un joueur (id). */
+  ajouterAmi(qui: string | number) { this.envoyer(typeof qui === 'number' ? { k: 'ami+', id: qui } : { k: 'ami+', nom: qui }); }
+  /** Retire un ami, refuse ou annule une demande, ne plus ignorer. */
+  retirer(id: number) { this.envoyer({ k: 'ami-', id }); }
+  ignorer(qui: string | number, nom?: string) { this.envoyer(typeof qui === 'number' ? { k: 'ignorer', id: qui, ...(nom ? { nom } : {}) } : { k: 'ignorer', nom: qui }); }
+  reglerSocial(horsLigne: boolean, inconnus: boolean) { this.envoyer({ k: 'reglagesSociaux', horsLigne, inconnus }); }
   inviter(id: number) { this.envoyer({ k: 'inviter', id }); }
 
   private message(m: { k: string; [k: string]: unknown }) {
     if (m.k === 'presence') {
       this.moi = m.ok ? Number(m.id) : null;
+      if (m.ok) this.demanderAmis();   // demandes d'ami en attente : pastille sur le bouton Social (5B)
       if (!m.ok && m.raison === 'ailleurs') { this.voulu = null; this.onInfo('Ton compte joue maintenant sur un autre onglet'); }
       this.changer();
     } else if (m.k === 'autres') {
@@ -110,6 +129,7 @@ class Presence {
       }
       for (const id of [...this.passants.keys()]) if (!vus.has(id)) this.passants.delete(id);
     } else if (m.k === 'enligne') { this.enLigne = m.l as JoueurEnLigne[]; this.changer(); }
+    else if (m.k === 'amis') { this.amis = m as unknown as Amis; this.changer(); }
     else if (m.k === 'invitation') { this.onInvitation(String(m.de), String(m.code)); this.noter({ canal: 'infos', de: '', id: null, texte: `${String(m.de)} t'invite dans son groupe` }); }
     else if (m.k === 'info') { this.onInfo(String(m.texte)); this.noter({ canal: 'infos', de: '', id: null, texte: String(m.texte) }); }
     else if (m.k === 'chat') {

@@ -63,7 +63,7 @@ import { Compte as CompteEnLigne } from './compte';
 import { PassantsEnLigne } from './passantsEnLigne';
 import { ChatVue } from './chat';
 import { BullesChat } from './bullesChat';
-import { montrerInvitation } from './social';
+import { demandesEnAttente, menuJoueur, montrerInvitation } from './social';
 
 const ASSETS = 'assets';
 const mapDir = ([x, y]: [number, number]) => `${ASSETS}/cartes/${x}_${y}`;
@@ -414,6 +414,7 @@ export class ZoneScene extends Phaser.Scene {
       EnLigne.annoncer(this.slot, Coop.miroir ? '__groupe' : this.zoneId, p.x, p.y, objetsPortes(p.equipment, p.apparat));
       EnLigne.onInvitation = (de, code) => montrerInvitation(de, () => { const j = CompteEnLigne.jeton; if (j) Coop.rejoindre(code, { jeton: j, emplacement: this.slot }); });
       EnLigne.onInfo = t => this.hud.toast(t);
+      this.hud.pastilleSocial = demandesEnAttente;
       // chat à canaux (Social 4A) et bulles au-dessus des têtes (4B)
       const ch = this.chat = new ChatVue(), bu = this.bullesChat = new BullesChat(this);
       this.events.once('shutdown', () => { ch.destroy(); bu.destroy(); if (this.chat === ch) this.chat = null; if (this.bullesChat === bu) this.bullesChat = null; });
@@ -602,6 +603,11 @@ export class ZoneScene extends Phaser.Scene {
         this.uiClick = true;
         if (!p.rightButtonDown()) { const wp = p.positionToCamera(this.cameras.main) as Phaser.Math.Vector2, q = ISO.toWorld(wp.x, wp.y); this.cmdTest.push({ k: 'monstre', ...pose, x: q.x, y: q.y }); }
         this.panneau!.posee(); return;
+      }
+      // clic droit sur un joueur du Bastion : son menu (Social 6A)
+      if (p.rightButtonDown() && this.passantsEnLigne) {
+        const wp = p.positionToCamera(this.cameras.main) as Phaser.Math.Vector2, j = this.passantsEnLigne.sous(wp.x, wp.y);
+        if (j) { const e = p.event as MouseEvent; menuJoueur(e.clientX, e.clientY, j); this.uiClick = true; return; }
       }
       // clic droit sur un PNJ : son petit menu d'actions (Dialogues 1C)
       if (p.rightButtonDown()) { const n = this.questView?.pnjUnder(p, this.cameras.main); if (n && this.dialogueView) { this.dialogueView.ouvrirMenu(n, p); return; } }

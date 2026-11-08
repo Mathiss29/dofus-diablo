@@ -38,7 +38,11 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
     CREATE TABLE IF NOT EXISTS persos (compte INTEGER NOT NULL REFERENCES comptes(id) ON DELETE CASCADE, emplacement INTEGER NOT NULL,
       donnees TEXT NOT NULL, maj INTEGER NOT NULL, PRIMARY KEY (compte, emplacement));
     CREATE TABLE IF NOT EXISTS coffres (compte INTEGER NOT NULL REFERENCES comptes(id) ON DELETE CASCADE, sorte TEXT NOT NULL,
-      donnees TEXT NOT NULL, maj INTEGER NOT NULL, PRIMARY KEY (compte, sorte));`);
+      donnees TEXT NOT NULL, maj INTEGER NOT NULL, PRIMARY KEY (compte, sorte));
+    CREATE TABLE IF NOT EXISTS liens (de INTEGER NOT NULL REFERENCES comptes(id) ON DELETE CASCADE, vers INTEGER NOT NULL REFERENCES comptes(id) ON DELETE CASCADE,
+      sorte TEXT NOT NULL, nom TEXT NOT NULL DEFAULT '', nom_de TEXT NOT NULL DEFAULT '', depuis INTEGER NOT NULL, PRIMARY KEY (de, vers));
+    CREATE TABLE IF NOT EXISTS social (compte INTEGER PRIMARY KEY REFERENCES comptes(id) ON DELETE CASCADE, hors_ligne INTEGER NOT NULL DEFAULT 0,
+      inconnus INTEGER NOT NULL DEFAULT 0);`);
   const q = {
     compteDiscord: db.prepare('SELECT * FROM comptes WHERE discord = ?'),
     nouveau: db.prepare('INSERT INTO comptes (discord, nom, avatar, roles, cree, vu) VALUES (?, ?, ?, ?, ?, ?)'),
@@ -54,6 +58,15 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
     coffres: db.prepare('SELECT sorte, donnees FROM coffres WHERE compte = ?'),
     coffre: db.prepare('INSERT INTO coffres (compte, sorte, donnees, maj) VALUES (?, ?, ?, ?) ON CONFLICT (compte, sorte) DO UPDATE SET donnees = excluded.donnees, maj = excluded.maj'),
     importe: db.prepare('UPDATE comptes SET importe = 1 WHERE id = ? AND importe = 0'),
+    liens: db.prepare('SELECT l.vers, l.sorte, l.nom, l.depuis, c.nom AS discord, c.vu FROM liens l JOIN comptes c ON c.id = l.vers WHERE l.de = ?'),
+    versMoi: db.prepare("SELECT l.de, l.nom_de AS nom, l.depuis FROM liens l WHERE l.vers = ? AND l.sorte = 'demande'"),
+    lien: db.prepare('SELECT sorte FROM liens WHERE de = ? AND vers = ?'),
+    lier: db.prepare('INSERT INTO liens (de, vers, sorte, nom, nom_de, depuis) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT (de, vers) DO UPDATE SET sorte = excluded.sorte, nom = excluded.nom, nom_de = excluded.nom_de, depuis = excluded.depuis'),
+    delier: db.prepare('DELETE FROM liens WHERE de = ? AND vers = ?'),
+    parDiscord: db.prepare('SELECT id, nom FROM comptes WHERE lower(nom) = lower(?)'),
+    parPerso: db.prepare("SELECT compte AS id, json_extract(donnees, '$.nom') AS nom FROM persos WHERE lower(json_extract(donnees, '$.nom')) = lower(?)"),
+    reglagesSociaux: db.prepare('SELECT hors_ligne, inconnus FROM social WHERE compte = ?'),
+    regler: db.prepare('INSERT INTO social (compte, hors_ligne, inconnus) VALUES (?, ?, ?) ON CONFLICT (compte) DO UPDATE SET hors_ligne = excluded.hors_ligne, inconnus = excluded.inconnus'),
     nb: db.prepare('SELECT (SELECT COUNT(*) FROM comptes) AS inscrits, (SELECT COUNT(*) FROM persos) AS persos'),
   };
   const testeurs = liste(env.ROLES_TESTEUR), admins = liste(env.ROLES_ADMIN);
@@ -232,5 +245,56 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
     return c ? { id: c.id, nom: c.nom, testeur: vue(c).testeur, admin: vue(c).admin } : null;
   }
 
-  return { route, copieNocturne, pret, persoPartie, sauverPartie, compteDuJeton, stats: () => q.nb.get(), fermer: () => { clearInterval(minuterie); db.close(); } };
+  // ——— amis et ignorés (« Social : » 2A-2D, 8A) : liens d'un compte vers un autre ———
+  const AMIS_MAX = 200;
+  const social = {
+    /** Ce que le compte a lié : amis (avec le pseudo Discord : un ami peut le voir), demandes envoyées et reçues, ignorés, réglages. */
+    liens(moi) {
+      const L = q.liens.all(moi), r = q.reglagesSociaux.get(moi);
+      return {
+        amis: L.filter(l => l.sorte === 'ami').map(l => ({ id: l.vers, discord: l.discord, vu: l.vu, depuis: l.depuis })),
+        envoyees: L.filter(l => l.sorte === 'demande').map(l => ({ id: l.vers, nom: l.nom })),
+        recues: q.versMoi.all(moi).filter(d => q.lien.get(moi, d.de)?.sorte !== 'ignore').map(d => ({ id: d.de, nom: d.nom })),
+        ignores: L.filter(l => l.sorte === 'ignore').map(l => ({ id: l.vers, nom: l.nom })),
+        horsLigne: !!r?.hors_ligne, inconnus: !!r?.inconnus,
+      };
+    },
+    sorte: (de, vers) => q.lien.get(de, vers)?.sorte ?? null,
+    amis: (a, b) => q.lien.get(a, b)?.sorte === 'ami',
+    ignore: (de, vers) => q.lien.get(de, vers)?.sorte === 'ignore',
+    /** Un compte par son pseudo Discord ou le nom d'un de ses persos (le premier trouvé). */
+    chercher(nom) {
+      const n = String(nom ?? '').trim().slice(0, 40);
+      if (!n) return null;
+      const d = q.parDiscord.get(n); if (d) return { id: d.id, nom: n };
+      const p = q.parPerso.get(n); return p ? { id: p.id, nom: String(p.nom) } : null;
+    },
+    /** Demande d'ami (2A) : s'il m'avait déjà demandé, nous voilà amis. Rend 'ami', 'demande', ou une raison de refus. */
+    demander(moi, vers, monNom, sonNom) {
+      if (moi === vers) return 'soi';
+      if (q.liens.all(moi).filter(l => l.sorte === 'ami').length >= AMIS_MAX) return 'plein';
+      const t = maintenant(), lui = q.lien.get(vers, moi)?.sorte;
+      if (lui === 'ignore') return 'demande';   // il m'ignore : rien ne lui arrive, je ne le sais pas
+      if (lui === 'demande' || lui === 'ami') { q.lier.run(moi, vers, 'ami', sonNom, monNom, t); q.lier.run(vers, moi, 'ami', monNom, sonNom, t); return 'ami'; }
+      if (q.lien.get(moi, vers)?.sorte === 'ami') return 'ami';
+      q.lier.run(moi, vers, 'demande', sonNom, monNom, t);
+      return 'demande';
+    },
+    /** Retire un ami, une demande (envoyée ou reçue) ou un ignoré. */
+    retirer(moi, vers) {
+      const a = q.lien.get(moi, vers)?.sorte, b = q.lien.get(vers, moi)?.sorte;
+      if (a === 'ami' || a === 'demande' || a === 'ignore') q.delier.run(moi, vers);
+      if (b === 'ami' || b === 'demande') q.delier.run(vers, moi);
+    },
+    /** Ignorer (2D) : plus d'amitié ni de demande entre nous, ses messages et invitations ne m'arrivent plus. */
+    ignorer(moi, vers, nom) {
+      if (moi === vers) return false;
+      if (q.lien.get(vers, moi)?.sorte !== 'ignore') q.delier.run(vers, moi);
+      q.lier.run(moi, vers, 'ignore', String(nom).slice(0, 40), '', maintenant());
+      return true;
+    },
+    regler(moi, horsLigne, inconnus) { q.regler.run(moi, horsLigne ? 1 : 0, inconnus ? 1 : 0); },
+  };
+
+  return { route, copieNocturne, pret, persoPartie, sauverPartie, compteDuJeton, social, stats: () => q.nb.get(), fermer: () => { clearInterval(minuterie); db.close(); } };
 }

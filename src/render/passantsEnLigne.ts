@@ -1,6 +1,6 @@
 // Joueurs en ligne qui se promènent dans le Bastion des Douze (presence.ts) : chacun dessiné en direct avec sa classe, sa tête,
-// ses couleurs et ses objets visibles, son nom au-dessus. Ce sont des passants : ni combat, ni collision, ni clic (pour
-// l'instant : le clic droit viendra avec « Social : » 6A).
+// ses couleurs et ses objets visibles, son nom au-dessus. Ce sont des passants : ni combat, ni collision ; un clic droit
+// sur l'un d'eux ouvre son menu (« Social : » 6A : inviter, chuchoter, ajouter en ami, ignorer).
 import Phaser from 'phaser';
 import { EntityView } from './entityView';
 import { LOOKS } from './looks';
@@ -49,6 +49,17 @@ export class PassantsEnLigne {
       nu.v = new EntityView(this.scene, look, nu.vv);
     }, () => { /* classe inconnue ou hors ligne : il reste invisible */ });
     return nu;
+  }
+  /** Le passant dessiné sous ce point de l'écran du monde (clic droit : son menu), ou null. */
+  sous(sx: number, sy: number): { id: number; nom: string } | null {
+    let best: { id: number; nom: string } | null = null, d = Infinity;
+    for (const [id, u] of this.vues) {
+      const p = EnLigne.passants.get(id);
+      if (!u.v || !p?.profil) continue;
+      const s = ISO.toScreen(p.x, p.y), dx = Math.abs(sx - s.x), dy = s.y - sy;
+      if (dx < 26 && dy > -10 && dy < 105 && dx + Math.abs(dy - 50) < d) { d = dx + Math.abs(dy - 50); best = { id, nom: p.profil.nom }; }
+    }
+    return best;
   }
   /** Ce que la vue d'une entité lit, pour un passant. */
   private entite(p: Passant): Entity {

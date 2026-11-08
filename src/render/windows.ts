@@ -648,7 +648,8 @@ export class Windows {
     window.addEventListener('keydown', this.captureTouche, true);
     // fenêtre Social : suit le groupe (arrivées, départs, vie des membres)
     this.finCoop = Coop.ecouter(() => { if (this.ouverte === 'social') this.refresh(); });
-    this.finEnLigne = EnLigne.ecouter(() => { if (this.ouverte === 'social') this.refresh(); });
+    // (pas pendant qu'on tape un nom dans la fenêtre : le champ garderait sinon ni le texte ni le curseur)
+    this.finEnLigne = EnLigne.ecouter(() => { const a = document.activeElement; if (this.ouverte === 'social' && !(a instanceof HTMLInputElement && a.type === 'text' && this.win?.contains(a))) this.refresh(); });
     this.minuteSocial = window.setInterval(() => { if (this.ouverte === 'social') tickSocial(this.win!, this.ctxSocial()); }, 1000);
   }
   private finCoop: () => void;
