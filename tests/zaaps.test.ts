@@ -74,4 +74,14 @@ describe('Zaaps du monde (maquette « Zaap : » 1A 2A 3A 4A 5A+5D 6A 7A 8A 9A)',
     const cz = pas(w, 30).find(e => e.k === 'changeZone');
     expect(cz).toMatchObject({ zone: 'bastion', retour: { zone: 'astrub', point: { name: "Zaap d'Astrub" } } });
   });
+  it('le Zaap du Bastion a le tourbillon officiel du Zaap (particule Vortex dans son atlas), sur son arche', () => {
+    const lireJ = (f: string) => JSON.parse(readFileSync(new URL(`../public/assets/mondes/bastion/${f}`, import.meta.url), 'utf8'));
+    const P = lireJ('particules.json').bastion as { n: string; tx: number; x: number; y: number }[], A = lireJ('particules_atlas.json');
+    const v = P.find(d => d.n === 'Vortex');
+    expect(v).toBeDefined();
+    expect(A.frames[String(v!.tx)]).toBeDefined();
+    const BA = lire('bastion'), wg = new WorldGrid(BA), c = wg.cellOf('bastion', GAME_DATA.zones.bastion.open!.bastion!.zaap);
+    const m = (wg as unknown as { cellCenter(c: number): { x: number; y: number } }).cellCenter(c);
+    expect(Math.hypot(v!.x - m.x, v!.y - m.y)).toBeLessThan(60);
+  });
 });

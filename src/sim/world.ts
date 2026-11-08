@@ -344,6 +344,13 @@ export class World {
       return { name: c.name, x: w.x, y: w.y };
     });
   }
+  /** Zaap du Bastion ou arche du Havre-Sac : le milieu de son dessin (survol et clic, comme les Zaaps du monde). */
+  zaapRefuge(): { name: string; x: number; y: number } | null {
+    const o = this.zone.open, c = o?.havreSac?.arche ?? o?.bastion?.zaap, wg = this.worldGrid;
+    if (c == null || !wg) return null;
+    const a = wg.cellToWorld(wg.cellOf(wg.world.maps[0].tag, c));
+    return { name: o!.havreSac ? 'Zaap du Havre-Sac' : 'Zaap du Bastion', x: a.x, y: a.y };
+  }
   /** Case marchable devant un Zaap (arrivée, point de retour, là où le perso va quand on clique dessus). */
   devantZaap(name: string): { x: number; y: number } | null {
     const z = this.zaapsIci().find(o => o.name === name), wg = this.worldGrid;

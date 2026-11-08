@@ -677,11 +677,13 @@ export class ZoneScene extends Phaser.Scene {
   private zaapSous(ptr: Phaser.Input.Pointer) {
     if (this.vitrine || !this.world.zone.open) return null;
     const wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
-    return this.world.zaapsIci().find(z => { const c = ISO.toScreen(z.x, z.y); return ((wp.x - c.x) / 90) ** 2 + ((wp.y - c.y) / 100) ** 2 <= 1; }) ?? null;
+    const r = this.world.zaapRefuge(), l = r ? [...this.world.zaapsIci(), r] : this.world.zaapsIci();
+    return l.find(z => { const c = ISO.toScreen(z.x, z.y); return ((wp.x - c.x) / 90) ** 2 + ((wp.y - c.y) / 100) ** 2 <= 1; }) ?? null;
   }
   /** Nom d'un Zaap comme dans la fenêtre (Territoire : sa sous-zone). */
   private nomZaap(name: string) {
     const o = this.world.zone.open, c = o?.checkpoints.find(k => k.name === name);
+    if (name === this.world.zaapRefuge()?.name) return o?.havreSac ? 'Havre-Sac' : this.world.zone.name;
     return (c?.sub != null ? o!.subareas[String(c.sub)]?.name : null) ?? name;
   }
   /** Survol d'un Zaap (1A) : son nom au-dessus de l'arche. */
@@ -781,8 +783,10 @@ export class ZoneScene extends Phaser.Scene {
     const np = this.talkClick && this.world.quetes?.pnj(this.talkClick);
     if (np) { input.talk = this.talkClick; input.dest = { x: np.x, y: np.y }; this.clickMode = null; }
     this.talkClick = null;
-    const zq = this.zaapClick ? this.world.devantZaap(this.zaapClick) : null;
-    if (zq) { input.versZaap = this.zaapClick; input.dest = zq; this.clickMode = null; }
+    // Zaap du Bastion ou arche du Havre-Sac : on marche vers son dessin, la fenêtre s'ouvre devant (World.updateArche)
+    const zr = this.world.zaapRefuge(), refuge = !!zr && this.zaapClick === zr.name;
+    const zq = this.zaapClick ? refuge ? { x: zr!.x, y: zr!.y } : this.world.devantZaap(this.zaapClick) : null;
+    if (zq) { if (!refuge) input.versZaap = this.zaapClick; input.dest = zq; this.clickMode = null; }
     this.zaapClick = null;
     const ar = this.recolteClick != null ? this.world.approcheRecolte(this.recolteClick) : null;
     if (ar) { input.recolte = this.recolteClick; input.dest = ar; this.clickMode = null; }
