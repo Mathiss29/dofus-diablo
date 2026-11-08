@@ -390,6 +390,11 @@ export class Player extends Entity {
   sacrifier(part: number, world: World): number {
     const n = Math.min(this.hp - 1, Math.round(this.hp * part));
     if (n <= 0) return 0;
+    const ox = this.pcv('pc-sacrieur-Q');
+    if (ox) {   // Offrande explosive : les PV sacrifiés explosent autour du Sacrieur
+      world.hitCircle(this.x, this.y, CASE * 2, { dmg: n * ox / 100, knock: 0, element: 'feu' });
+      world.emit({ k: 'spell', fx: 'burst', id: 'pc-sacrieur-Q', x: this.x, y: this.y, cx: this.x, cy: this.y, facing: this.facing, size: CASE * 2, arc: 0, element: 'feu', big: true, boosted: false });
+    }
     this.hp -= n;
     world.emit({ k: 'sacrifice', x: this.x, y: this.y, amount: n });
     return n;
@@ -969,7 +974,11 @@ export class Player extends Entity {
         while (world.betes.length && world.invocationsPrises() + cout > max) {   // place pour la nouvelle : la plus ancienne s'en va
           const old = world.betes.find(b => !b.dead); if (!old) break; old.mourir(world);
         }
-        world.invoquer(this, key, s.id, s.tx, s.ty);
+        const b = world.invoquer(this, key, s.id, s.tx, s.ty), ej = key === 'epee_vorace' ? this.pcv('pc-sacrieur-N') : 0;
+        if (b && ej) {   // Épées jumelles : deux épées plus faibles
+          const b2 = world.invoquer(this, key, s.id, s.tx + CASE, s.ty);
+          for (const e of [b, b2]) if (e) { e.force = ej / 100; e.maxHp = Math.max(1, Math.round(e.maxHp * ej / 100)); e.hp = e.maxHp; }
+        }
       }
       if (d.soinAllies) for (const b of world.betes) if (!b.dead && Math.hypot(b.x - s.tx, b.y - s.ty) <= Math.max(60, hz.shape === 'point' || hz.shape === 'circle' ? hz.radius : 60) + b.radius) {
         b.soigner(Math.max(1, (d.dmgPV ? this.hp * d.dmgPV : d.dmg) * s.gm), world);
@@ -1020,6 +1029,10 @@ export class Player extends Entity {
       else if (hz.shape === 'point' && s.id === 'epee' && this.pcv('pc-iop-B')) {   // Lame tournoyante : tout autour du Iop
         size = hz.radius * area + zb; s.tx = this.x; s.ty = this.y;
         hits = world.hitCircle(this.x, this.y, size, { ...hit, dmg: hit.dmg * this.pcv('pc-iop-B') / 100 }, d.stun);
+      }
+      else if (hz.shape === 'point' && s.id === 'hemorragie' && this.pcv('pc-sacrieur-J')) {   // Rivière de sang : tout l'arc devant
+        size = CASE * 2 + zb; s.tx = this.x + Math.cos(this.facing) * size * 0.6; s.ty = this.y + Math.sin(this.facing) * size * 0.6;
+        hits = world.hitCone(this.x, this.y, this.facing, size, (120 * Math.PI) / 180, { ...hit, dmg: hit.dmg * this.pcv('pc-sacrieur-J') / 100 }, d.stun);
       }
       else if (hz.shape === 'point') { size = hz.radius * area + zb; hits = world.hitCircle(s.tx, s.ty, size, hit, d.stun, this.facing); }   // poussée dans l'axe du lanceur, comme Dofus
       else if (hz.shape === 'circle' && d.vuln && !d.dmg) { size = hz.radius * area + zb; world.markVuln(this.x, this.y, size, d.vuln.n, d.vuln.t); }
@@ -1075,6 +1088,7 @@ export class Player extends Entity {
     if (id === 'abolition' && v('pc-cra-H')) o.marque = v('pc-cra-H');
     if (id === 'vagabonde' && v('pc-cra-C')) o.rebonds = v('pc-cra-C');
     if (id === 'explosive' && v('pc-cra-A')) o.gerbe = v('pc-cra-A');
+    if (id === 'stase' && v('pc-sacrieur-P')) o.stase = v('pc-sacrieur-P');
     return o;
   }
   /** Effets des légendaires de classe qui s'ajoutent à l'impact d'un sort (Iop A E G H, Osamodas A B C G H). */
@@ -1090,6 +1104,25 @@ export class Player extends Entity {
       world.hitCircle(sx, sy, size, { ...hit, dmg: hit.dmg * v('pc-iop-E') / 100 });
       world.emit({ k: 'spell', fx: 'burst', id: 'pc-iop-E', x: sx, y: sy, cx: sx, cy: sy, facing: this.facing, size, arc: 0, element: hit.element ?? 'eau', big: false, boosted: false });
     }
+    if (id === 'absorption' && v('pc-sacrieur-K')) {   // Absorption vorace : rebonds sur les monstres proches de la cible
+      let fx = tx, fy = ty, dm = hit.dmg; const pris = new Set<number>();
+      for (const m of world.monsters) if (!m.dead && Math.hypot(m.x - tx, m.y - ty) <= size + m.radius) pris.add(m.id);
+      for (let i = 0; i < v('pc-sacrieur-K'); i++) {
+        const nx = world.monsters.filter(m => !m.dead && m.state !== 'spawn' && !pris.has(m.id) && Math.hypot(m.x - fx, m.y - fy) <= CASE * 4)
+          .sort((a, b) => Math.hypot(a.x - fx, a.y - fy) - Math.hypot(b.x - fx, b.y - fy))[0];
+        if (!nx) break;
+        pris.add(nx.id); dm *= 0.8;
+        world.applyHits(m => m === nx, { ...hit, dmg: dm }, fx, fy, 0);
+        world.emit({ k: 'spell', fx: 'burst', id: 'absorption', x: nx.x, y: nx.y, cx: fx, cy: fy, facing: Math.atan2(nx.y - fy, nx.x - fx), size: CASE * 0.6, arc: 0, element: 'feu', big: false, boosted: false });
+        fx = nx.x; fy = nx.y;
+      }
+    }
+    if (id === 'ravage' && v('pc-sacrieur-L')) {   // Sillage écarlate : une traînée de sang du départ à l'arrivée
+      const L = Math.hypot(this.x - sx, this.y - sy), k = Math.max(1, Math.ceil(L / CASE)), touches = new Set<number>();
+      for (let i = 0; i <= k; i++) world.zonesSol.push({ x: sx + (this.x - sx) * i / k, y: sy + (this.y - sy) * i / k, r: CASE * 0.6, t: 2, hit: { ...hit, dmg: hit.dmg * v('pc-sacrieur-L') / 100 }, touches, id: 'pc-sacrieur-L' });
+    }
+    if (id === 'attirance' && v('pc-sacrieur-M') && hit.attire)   // Chaîne de chair : les voisins de la cible viennent aussi
+      world.hitCircle(tx, ty, size + v('pc-sacrieur-M') * CASE, { dmg: 0, knock: 0, attire: hit.attire });
     if (id === 'intimidation' && v('pc-iop-G')) { world.repousser(this.x, this.y, v('pc-iop-G') * CASE, 684); cri('Cri du champion'); }
     if (id === 'epee_divine' && v('pc-iop-H'))   // Épée jumelle : une épée reste au sol 3 s
       world.zonesSol.push({ x: this.x, y: this.y, r: size, t: 3, hit: { ...hit, dmg: hit.dmg * v('pc-iop-H') / 100 }, touches: new Set(), id: 'pc-iop-H' });
@@ -1168,7 +1201,10 @@ export class Player extends Entity {
     const S = this.cls.souffrance, sf = S ? this.souffrance : 0;   // Souffrance : dommages subis réduits
     let dmg = Math.max(1, Math.round((raw - this.stat(`red${E}` as Stat)) * (1 - Math.min(50, this.stat(`res${E}` as Stat)) / 100) * this.subis * (sf ? S!.subis[sf - 1] / 100 : 1)));
     // Couronne d'Épines : les coups de mêlée sont renvoyés à celui qui frappe
-    if (this.renvoiT > 0 && !(loin ?? Math.hypot(fromX - this.x, fromY - this.y) > CASE * 1.6)) world.renvoyer(fromX, fromY, dmg * this.renvoiPart);
+    if (this.renvoiT > 0) {
+      const auContact = !(loin ?? Math.hypot(fromX - this.x, fromY - this.y) > CASE * 1.6), ea = auContact ? 100 : this.pcv('pc-sacrieur-O');   // Épines acérées : aussi à distance
+      if (ea) world.renvoyer(fromX, fromY, dmg * this.renvoiPart * ea / 100);
+    }
     if (this.shield > 0) { const a = Math.min(this.shield, dmg); this.shield -= a; dmg -= a; }   // le bouclier prend les coups d'abord
     this.hp -= dmg; this.flash = 0.1; this.invuln = this.cls.iframesOnHit; this.blesseA = this.age;
     const a = Math.atan2(this.y - fromY, this.x - fromX);

@@ -63,6 +63,8 @@ export class Bete extends Entity {
   dompteT = 0;
   /** Horde sauvage : secondes avant de repartir (0 = reste). Coup de fouet : vitesse d'attaque +hate % pendant hateT s. */
   finT = 0; hate = 0; hateT = 0;
+  /** Épées jumelles (légendaire Sacrieur N) : part des dégâts de la bête. */
+  force = 1;
   /** Laine épaisse : prochaine provocation du Bouftou. */
   provoqueT = 0;
   constructor(id: number, readonly owner: Player, key: string, sort: string, x: number, y: number, def: BeteDef = BETES[key], pv?: number) {
@@ -268,7 +270,7 @@ export class Bete extends Entity {
         el = e.element;
         for (const m of world.monsters) {
           if (m.dead || m.state === 'spawn' || Math.hypot(m.x - cx, m.y - cy) > r + m.radius) continue;
-          const jet = world.rng.range(e.min, e.max + 1) * 1.5 * R.degats * world.bonusMeute(p);
+          const jet = world.rng.range(e.min, e.max + 1) * 1.5 * R.degats * world.bonusMeute(p) * this.force;
           const n = world.coupDeBete(this, m, jet, e.element);
           if (e.vol && n > 0) this.soigner(n / 2, world);
         }

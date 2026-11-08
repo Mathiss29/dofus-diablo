@@ -24,12 +24,12 @@ const porter = (w: World, id: string, value: number) => {
 const monstre = (w: World, dx: number, dy = 0, type = 'bouftou') => { const m = w.spawnMonster(type, w.player.x + dx, w.player.y + dy); m.state = 'chase'; return m; };
 
 describe('Légendaires de classe inventés (Légendaires classe : 1A 2A+2D 3C 4A …)', () => {
-  it('23 pouvoirs (+ 9 du Sacrieur), un par emplacement et par classe, chacun sur un vrai sort de sa classe', () => {
-    expect(POUVOIRS_CLASSE).toHaveLength(32);
+  it('23 pouvoirs (+ 17 du Sacrieur), un par emplacement et par classe, chacun sur un vrai sort de sa classe', () => {
+    expect(POUVOIRS_CLASSE).toHaveLength(40);
     expect(PC_PAR_ID['pc-cra-D']).toBeUndefined();   // 6D Pas piégé refusé
     for (const p of POUVOIRS_CLASSE) {
       expect(GAME_DATA.classes[p.classe].spells[p.sort], p.id).toBeDefined();
-      expect(POUVOIRS_CLASSE.filter(q => q.classe === p.classe && q.slot === p.slot)).toHaveLength(p.classe === 'sacrieur' && p.slot === 'bouclier' ? 2 : 1);
+      expect(POUVOIRS_CLASSE.filter(q => q.classe === p.classe && q.slot === p.slot)).toHaveLength(p.classe !== 'sacrieur' ? 1 : p.slot === 'bouclier' ? 3 : 2);
       expect(p.texte(p.jet[1])).not.toMatch(/\btours?\b/i);
     }
   });
