@@ -1,0 +1,21 @@
+{
+  "name": "Diablofus : Les Douze Enfers",
+  "short_name": "Diablofus",
+  "description": "Action-RPG en temps réel dans le Monde des Douze.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "lang": "fr",
+  "display": "standalone",
+  "display_override": ["fullscreen", "standalone"],
+  "orientation": "landscape",
+  "background_color": "#12141b",
+  "theme_color": "#12141b",
+  "categories": ["games"],
+  "icons": [
+    { "src": "assets/logo/icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/logo/icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/logo/icone-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "assets/logo/icone-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

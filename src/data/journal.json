@@ -724,6 +724,16 @@
             ]
           },
           {
+            "titre": "Le jeu s'installe sur PC",
+            "phrase": "Sur Chrome ou Edge, « Installer le jeu » à l'accueil met Diablofus dans sa propre fenêtre, avec son icône.",
+            "details": "Il se lance depuis le bureau ou le menu Démarrer et reste toujours à jour, comme le site.",
+            "icone": "guide",
+            "etiquettes": [
+              "Accueil",
+              "Chrome / Edge"
+            ]
+          },
+          {
             "titre": "Des Options complètes",
             "phrase": "Touches à ta main, taille de l'interface, modules déplaçables, qualité, FPS et alertes.",
             "details": "Toutes les touches se changent (AZERTY ou QWERTY reconnu), un doublon s'affiche en rouge. Chiffres de dégâts, compteur de DPS, barres de vie et coordonnées sous la mini-carte se règlent aussi.",
@@ -909,6 +919,12 @@
             "phrase": "Un seul instinct à la fois : le dernier sort de base lancé remplace le bonus du précédent.",
             "details": "Bonus réduits (Piranya +8 Dommages, Ours +20 Puissance, Prespic +5 % Critique) et vol de vie à 25 %. Ses dégâts rejoignent ceux du Iop.",
             "icone": "degats"
+          },
+          {
+            "titre": "Combats plus fluides",
+            "phrase": "Moins de saccades au premier lancer d'un sort et quand tu frappes un gros groupe.",
+            "details": "Ton perso, les ombres, les barres de vie et l'interface coûtent bien moins cher à afficher à chaque image.",
+            "icone": "options"
           }
         ],
         "Corrections": [
@@ -930,7 +946,9 @@
         ],
         "En coulisses": [
           "Sur Discord, le carnet du jour ne montre que ce qui est jouable par tous.",
-          "Les carnets du Journal se lisent d'un coup d'œil : un titre, une phrase, les détails à déplier."
+          "Les carnets du Journal se lisent d'un coup d'œil : un titre, une phrase, les détails à déplier.",
+          "Premier pas vers le jeu à plusieurs : le moteur sait déjà faire combattre plusieurs héros ensemble.",
+          "Partie de test : F1 ajoute jusqu'à 3 alliés conduits par le jeu, premier aperçu du jeu à plusieurs."
         ]
       }
     }

@@ -174,16 +174,31 @@ export class FX {
   /** Réglages 4A : chiffres de dégâts affichés, et leur taille (1 = normale). */
   chiffres = true;
   tailleChiffres = 1;
+  /** Chiffres de dégâts recyclés (un pour les coups normaux, un pour les critiques) : créer puis détruire un texte à chaque coup
+   *  faisait une texture neuve par chiffre (dix d'un coup sur un groupe), et autant de déchets pour le ramasse-miettes. */
+  private reserve: Record<'n' | 'c', Phaser.GameObjects.Text[]> = { n: [], c: [] };
   number(x: number, y: number, z: number, value: number | string, crit: boolean, color?: string, stroke = '#1a0f0a') {
-    const p = ISO.toScreen(x, y, z);
-    const t = this.scene.add.text(p.x + rand(-8, 8), p.y, String(value), {
-      fontFamily: 'Lexend, Verdana, sans-serif', fontSize: crit ? '26px' : '17px', fontStyle: 'bold',
-      color: color ?? (crit ? '#ffd23f' : '#ffffff'), stroke, strokeThickness: crit ? 5 : 4,
-    }).setOrigin(0.5).setDepth(1e6 + 1);
+    const p = ISO.toScreen(x, y, z), pool = this.reserve[crit ? 'c' : 'n'], txt = String(value), col = color ?? (crit ? '#ffd23f' : '#ffffff');
+    let t = pool.pop();
+    if (t) {
+      // couleur et contour posés sans redessiner, puis un seul dessin avec le nouveau chiffre
+      t.style.color = col; t.style.stroke = stroke;
+      if (t.text === txt) t.updateText(); else t.setText(txt);
+      t.setPosition(p.x + rand(-8, 8), p.y).setAlpha(1).setVisible(true).setActive(true);
+    } else {
+      t = this.scene.add.text(p.x + rand(-8, 8), p.y, txt, {
+        fontFamily: 'Lexend, Verdana, sans-serif', fontSize: crit ? '26px' : '17px', fontStyle: 'bold',
+        color: col, stroke, strokeThickness: crit ? 5 : 4,
+      }).setOrigin(0.5).setDepth(1e6 + 1);
+    }
+    const n = t;
     const k = this.tailleChiffres;
-    t.setScale((crit ? 1.6 : 1.25) * k);
-    this.scene.tweens.add({ targets: t, scale: (crit ? 1.1 : 0.9) * k, duration: 120, ease: 'Back.Out' });
-    this.scene.tweens.add({ targets: t, y: t.y - (crit ? 50 : 36), alpha: 0, delay: 250, duration: 450, ease: 'Cubic.In', onComplete: () => t.destroy() });
+    n.setScale((crit ? 1.6 : 1.25) * k);
+    this.scene.tweens.add({ targets: n, scale: (crit ? 1.1 : 0.9) * k, duration: 120, ease: 'Back.Out' });
+    this.scene.tweens.add({ targets: n, y: n.y - (crit ? 50 : 36), alpha: 0, delay: 250, duration: 450, ease: 'Cubic.In', onComplete: () => {
+      if (!n.scene) return;
+      if (pool.length < 40) { n.setVisible(false).setActive(false); pool.push(n); } else n.destroy();
+    } });
   }
 
   update(dt: number) {

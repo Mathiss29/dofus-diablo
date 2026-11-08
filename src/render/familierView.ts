@@ -14,7 +14,7 @@ const HAUTEUR = 52;
  *  Un familier d'apparat (5A) remplace seulement le dessin. Les familiers sans animation de course glissent en sautillant. */
 export class FamilierView {
   private sprite?: Phaser.GameObjects.Sprite;
-  private ombre: Phaser.GameObjects.Graphics;
+  private ombre: Phaser.GameObjects.Image;
   private planche = '';
   private counts: Record<string, number> = {};
   private echelle = 1;
@@ -23,7 +23,7 @@ export class FamilierView {
 
   /** `couleurs` : les 6 couleurs du perso, pour les familiers qui prennent celles de leur porteur. */
   constructor(private scene: Phaser.Scene, private charger: (atlas: string) => boolean, private couleurs: () => readonly number[] | undefined = () => undefined) {
-    this.ombre = scene.add.graphics();
+    this.ombre = scene.add.image(0, 0, EntityView.ombre(scene)).setAlpha(0.25).setVisible(false);
   }
 
   /** La fiche du familier à dessiner : celle de l'apparat posé, sinon celle du familier porté. */
@@ -36,7 +36,7 @@ export class FamilierView {
 
   maj(w: World, dt: number) {
     const f = w.familier, d = f && w.player.apparat.familier !== '0' ? this.fiche(w) : undefined;
-    if (!f || !d || !this.charger(d.planche)) { this.sprite?.setVisible(false); this.ombre.clear(); return; }
+    if (!f || !d || !this.charger(d.planche)) { this.sprite?.setVisible(false); this.ombre.setVisible(false); return; }
     const cle = this.texture(d);
     if (this.planche !== cle) this.nouvelle(cle);
     const s = this.sprite!;
@@ -54,7 +54,7 @@ export class FamilierView {
     const p = ISO.toScreen(f.x, f.y);
     s.setVisible(true).setPosition(p.x, p.y - hop).setDepth(p.y).setScale(this.dir.flip ? -this.echelle : this.echelle, this.echelle);
     if (EntityView.ambiance !== 0xffffff) s.setTint(EntityView.ambiance); else s.clearTint();
-    this.ombre.clear().setDepth(p.y - 1).fillStyle(0x000000, 0.25).fillEllipse(p.x, p.y, 30, 13);
+    this.ombre.setVisible(true).setPosition(p.x, p.y).setDisplaySize(30, 13).setDepth(p.y - 1);
   }
 
   /** Texture à montrer : la planche, ou sa copie aux couleurs du perso (faite une fois par jeu de couleurs). En attendant
