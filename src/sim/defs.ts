@@ -98,7 +98,7 @@ export interface SpellDef {
   renvoi?: { part: number; t: number };
   /** Mutilation : sacrifie une part des PV (jamais sous 1, 2A) pour de la Puissance, re-sacrifie toutes les `periode` s
    *  (+cran de Puissance, jusqu'à `crans`) ; relancé, il s'arrête et donne la Coagulation (bouclier en part des PV max selon les crans). */
-  mutilation?: { sacrifice: number; puissance: number; cran: number; crans: number; periode: number; duree: number; coagulation: number[] };
+  mutilation?: { sacrifice: number; puissance: number; cran: number; crans: number; periode: number; coagulation: number[] };
   /** Changements à Souffrance 6 ou plus (officiels) : portée en cases, attirance en cases, bouclier en plus par ennemi dans la zone. */
   souffrance6?: { po?: number; attire?: number; bouclierParEnnemi?: number };
 }
