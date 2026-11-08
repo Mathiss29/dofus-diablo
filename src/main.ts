@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { ZoneScene } from './render/zoneScene';
 import { Accueil } from './render/accueil';
+import './render/phaserRapide';
 
 // Polices de Dofus 3 : chargées tout de suite, les textes de Phaser (dégâts, noms, HUD) les dessinent sur le canevas
 for (const f of ['400 13px Lexend', '600 13px Lexend', '700 13px Lexend', '13px Rowdies']) document.fonts?.load(f).catch(() => {});

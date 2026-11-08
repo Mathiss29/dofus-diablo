@@ -900,6 +900,12 @@
             "phrase": "Un seul instinct à la fois : le dernier sort de base lancé remplace le bonus du précédent.",
             "details": "Bonus réduits (Piranya +8 Dommages, Ours +20 Puissance, Prespic +5 % Critique) et vol de vie à 25 %. Ses dégâts rejoignent ceux du Iop.",
             "icone": "degats"
+          },
+          {
+            "titre": "Combats plus fluides",
+            "phrase": "Moins de saccades au premier lancer d'un sort et quand tu frappes un gros groupe.",
+            "details": "Ton perso, les ombres, les barres de vie et l'interface coûtent bien moins cher à afficher à chaque image.",
+            "icone": "options"
           }
         ],
         "Corrections": [

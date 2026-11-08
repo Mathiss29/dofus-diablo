@@ -234,6 +234,22 @@ export class Hud {
   private trackIcon: Img; private skipBtn: Txt; private succesLine: Txt; private succesT = 0; private arrow: Phaser.GameObjects.Graphics;
   /** Flèche des quêtes (maquette Flèche 2A 3A+3B 6A) : icône officielle de la quête et nom du but + distance. */
   private arrowIcon: Img; private arrowLabel: Txt; private miniIcon: Img;
+  /** Points des monstres sur la mini-carte : des images rondes réutilisées (un fillCircle par monstre et par image
+   *  donnait des milliers de commandes de dessin à trianguler à chaque image). */
+  private readonly ptsMini: Img[] = [];
+  /** Boutons de la colonne de menus : dessinés seulement quand la fenêtre change de taille (36 rectangles arrondis par image avant). */
+  private imMenus!: Phaser.GameObjects.Image;
+  private cleMenus = '';
+  private nMenus = 0;
+  private pointMini(i: number, x: number, y: number, r: number, couleur: number) {
+    const k = 'point_mini';
+    if (!this.scene.textures.exists(k)) {
+      const t = this.scene.textures.createCanvas(k, 16, 16), c = t?.getContext();
+      if (t && c) { c.fillStyle = '#fff'; c.beginPath(); c.arc(8, 8, 8, 0, Math.PI * 2); c.fill(); t.refresh(); }
+    }
+    const im = this.ptsMini[i] ??= this.fixed(this.scene.add.image(0, 0, k), 0.5);
+    im.setVisible(true).setPosition(x, y).setDisplaySize(2 * r, 2 * r).setTint(couleur);
+  }
   /** Réglages 8A : la flèche peut être coupée. */
   flecheQuete = true;
   /** Idée 5 : arrivée en vue du but, la flèche grossit et s'efface (0,6 s) avec un petit son. */
@@ -295,6 +311,7 @@ export class Hud {
     }
     this.vignette = fixed(scene.add.image(0, 0, 'vignetteRouge').setOrigin(0).setAlpha(0), -1);
     this.g = fixed(scene.add.graphics(), 1);
+    this.imMenus = fixed(scene.add.image(0, 0, '__DEFAULT').setOrigin(0).setVisible(false), 1);
     this.gSlots = fixed(scene.add.graphics(), 4);
 
     const clsId = Object.keys(GAME_DATA.classes).find(k => GAME_DATA.classes[k] === cls) ?? 'iop';
@@ -660,6 +677,7 @@ export class Hud {
     }
     const mc = this.miniCam;
     this.miniIcon.setVisible(false);
+    let nPts = 0;
     if (mc) {
       const ps = ISO.toScreen(p.x, p.y);
       mc.setViewport(mx, my, mw, mh).centerOn(ps.x, ps.y - 20);
@@ -669,7 +687,7 @@ export class Hud {
         if (m.dead) continue;
         const q = toMini(m.x, m.y);
         if (q.x < mx || q.y < my || q.x > mx + mw || q.y > my + mh) continue;
-        g.fillStyle(m.def.boss || m.def.elite ? C.gold : 0xd04030, 1); g.fillCircle(q.x, q.y, m.def.boss ? 3.5 : 2.2);
+        this.pointMini(nPts++, q.x, q.y, m.def.boss ? 3.5 : 2.2, m.def.boss || m.def.elite ? C.gold : 0xd04030);
       }
       // objets Épique, Légendaire et Mythique au sol : un losange de leur couleur (choix 3D)
       for (const d of world.drops) {
@@ -709,6 +727,7 @@ export class Hud {
         g.beginPath(); g.moveTo(cx, cy + sy * L); g.lineTo(cx, cy); g.lineTo(cx + sx * L, cy); g.strokePath();
       }
     }
+    for (let i = nPts; i < this.ptsMini.length; i++) this.ptsMini[i].setVisible(false);
     this.miniLabel.setPosition(mx + mw / 2, my + mh + 6).setText(world.lieu ?? world.area?.name ?? world.zone.name);
     const ar = world.arene;
     this.areneTxt.setVisible(!!ar).setPosition(mx + mw / 2, my + mh + 22);
@@ -716,16 +735,29 @@ export class Hud {
     // Colonne de menus : boutons carrés sombres en relief, comme le bandeau de Dofus 3
     // Boutons carrés sombres serrés les uns contre les autres ; ils rapetissent si l'écran est bas
     const step = Math.min(38, Math.floor((H - 150 - my) / this.menus.length)), bs = step - 2;
+    // dessinés une fois dans une image (un Graphics, même inchangé, est retriangulé à chaque image)
+    const cleMenus = `${colX}|${my}|${step}|${this.menus.length}`;
+    const gm = cleMenus !== this.cleMenus ? this.scene.make.graphics({}, false) : null;
     this.menus.forEach((m, i) => {
       const y = my + bs / 2 + i * step, x = colX + (36 - bs) / 2;
       this.rects.push([x, y - bs / 2, bs, bs]);
-      g.fillStyle(0x1b1a16, 1); g.fillRoundedRect(x, y - bs / 2, bs, bs, 5);
-      g.fillStyle(0x3a3933, 1); g.fillRoundedRect(x + 1.5, y - bs / 2 + 1.5, bs - 3, bs - 3, 4);
-      g.fillStyle(0x47463f, 1); g.fillRoundedRect(x + 2, y - bs / 2 + 2, bs - 4, (bs - 4) / 2, { tl: 3, tr: 3, bl: 0, br: 0 });
+      if (gm) {
+        const lx = x - colX, ly = y - my;
+        gm.fillStyle(0x1b1a16, 1); gm.fillRoundedRect(lx, ly - bs / 2, bs, bs, 5);
+        gm.fillStyle(0x3a3933, 1); gm.fillRoundedRect(lx + 1.5, ly - bs / 2 + 1.5, bs - 3, bs - 3, 4);
+        gm.fillStyle(0x47463f, 1); gm.fillRoundedRect(lx + 2, ly - bs / 2 + 2, bs - 4, (bs - 4) / 2, { tl: 3, tr: 3, bl: 0, br: 0 });
+      }
       const s = bs - 8, f = m.icon.frame, k = Math.min(s / f.width, s / f.height);
       m.icon.setPosition(x + bs / 2, y).setDisplaySize(f.width * k, f.height * k);
       m.zone.setPosition(x + bs / 2, y).setSize(bs, bs);
     });
+    if (gm) {
+      this.cleMenus = cleMenus;
+      const k = `hud_menus_${this.nMenus++ % 2}`;   // deux clés en alternance : l'image n'affiche jamais une texture détruite
+      if (this.scene.textures.exists(k)) this.scene.textures.remove(k);
+      gm.generateTexture(k, 36, Math.max(1, this.menus.length * step)); gm.destroy();
+      this.imMenus.setTexture(k).setPosition(colX, my).setVisible(true);
+    }
 
     // --- Barre du bas : XP, 6 sorts, clic droit, déplacement, potion, Rage ---
     const slot = 54, gap = 5, n = 6;

@@ -20,7 +20,7 @@ export const QUEST_ICON: Record<QueteType, [string, string]> = {
 const STYLE = { fontFamily: 'Lexend, Verdana, sans-serif' };
 
 interface PnjSprite {
-  id: string; img: Phaser.GameObjects.Sprite; name: Phaser.GameObjects.Text; icon: Phaser.GameObjects.Image; shadow: Phaser.GameObjects.Graphics;
+  id: string; img: Phaser.GameObjects.Sprite; name: Phaser.GameObjects.Text; icon: Phaser.GameObjects.Image; shadow: Phaser.GameObjects.Image;
   x: number; y: number; tag: string; h: number; L: PnjLook; key: string; prochainFun: number; iconY: number;
 }
 
@@ -67,7 +67,7 @@ export class QuestView {
       const icon = scene.add.image(s.x, s.y, 'qi_quest').setVisible(false);
       // même ombre au sol que le perso et les monstres (EntityView), largeur prise sur la pose de repos (fixe pendant les animations)
       const w = Math.min(70, Math.max(34, img.frame.realWidth * L.scale * 0.7));
-      const shadow = scene.add.graphics().fillStyle(0x000000, 0.28).fillEllipse(0, 0, w, w * 0.45);
+      const shadow = scene.add.image(0, 0, EntityView.ombre(scene)).setDisplaySize(w, w * 0.45).setAlpha(0.28);
       this.pnjs.push({ id: p.id, img, name, icon, shadow, x: p.x, y: p.y, tag: p.tag, h: Math.min(h, 230), L, key,
         prochainFun: world.time + Phaser.Math.FloatBetween(1, FUN_PAUSE[1]), iconY: 0 });
     }
