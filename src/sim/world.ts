@@ -19,6 +19,8 @@ import { Arene, ARENE } from './arene';
 import { Quetes, type Compte, type EtatQuetes, type QuetesData } from './quests';
 import { appliquerTest, type ReglagesTest } from './outilsTest';
 import { COFFRE, coffreVide, type Coffre } from './coffre';
+/** Archimonstres (0.3, 15B) : chance qu'un monstre d'un groupe soit son archimonstre ; pierres d'âme officielles (vide, pleine). */
+export const ARCHI = { chance: 1 / 150, pierre: '9686', pleine: '10418' };
 import { FABRICATION, METIERS_FAB, chanceRare, ingredientsRares, type Poste } from './metiers';
 import { PLACEMENT, analyserCarte, placementPose, placementValide, proposerPlacement, type AnalyseCarte, type PlacementCarte } from './placement';
 import { RECOLTE, porteeRecolte, quantite, xpRecolte, type Recolte, type RecoltesData } from './recolte';
@@ -85,7 +87,7 @@ export interface WorldOptions {
   /** Métiers de récolte (src/data/recoltes.json) : ressources et leurs emplacements par monde. */
   recoltes?: RecoltesData;
   /** Boutiques des PNJ (src/data/boutique.json) : articles et prix en Pépites. */
-  boutiques?: Record<string, { id: string; prix: number }[]>;
+  boutiques?: Record<string, { id: string; prix: number; /** vendu seulement en 0.3 */ v03?: boolean }[]>;
   /** Objets d'apparat officiels (src/data/apparat.json) et leur prix en Pépites chez Emp (boutique.json, apparat_prix). */
   apparats?: { objets: Record<string, { slot: string; collection?: boolean }>; prix: Record<string, number> };
   /** Partie de test (#test) : réglages du panneau F1 ; absent dans une vraie partie. */
@@ -839,7 +841,12 @@ export class World {
       for (let t = 1; t < 8 && i > 0 && prochePnj(q); t++) q = wg.nearestFree(pos.x + Math.cos(ang + t * 0.8) * r, pos.y + Math.sin(ang + t * 0.8) * r, free);
       // l'élite unique de la sous-zone mène parfois un groupe (souvent sur son repaire, 4D), s'il n'est pas déjà en vie ailleurs
       const elite = !g.fixe && i === 0 && g.sub.elite && this.rng.next() < (pt?.r ? PLACEMENT.elite.repaire : PLACEMENT.elite.hasard) && !this.monsters.some(o => !o.dead && o.type === g.sub.elite);
-      const mo = this.spawnMonster(g.fixe ? g.fixe[i] : elite ? g.sub.elite! : this.rng.pick(g.sub.monsters), q.x, q.y);
+      let type = g.fixe ? g.fixe[i] : elite ? g.sub.elite! : this.rng.pick(g.sub.monsters);
+      // 0.3 (15B) : parfois l'archimonstre officiel prend la place du monstre (un seul en vie à la fois par sorte)
+      const archi = `archi_${type}`;
+      if (!g.fixe && !elite && this.player.v03 && this.opts.data.monsters[archi]?.archiDe === type && this.rng.next() < ARCHI.chance
+        && !this.monsters.some(o => !o.dead && o.type === archi)) type = archi;
+      const mo = this.spawnMonster(type, q.x, q.y);
       mo.group = g.id; g.members.push(mo);
       if (elite) this.doreesPresElite(g.map, q.x, q.y);
     }
@@ -1283,6 +1290,7 @@ export class World {
     const p = this.player;
     p.soigner(p.cls.healOnKill + p.legendary('vampire'));
     this.dropLoot(m);
+    if (m.def.archiDe) this.capturer(m);
     const xp = p.gainXp(Math.round((m.def.xp ?? Math.round(m.def.hp / 5)) * this.bonusMassacre()), this);
     if (xp > 0) this.emit({ k: 'xp', x: m.x, y: m.y, z: m.radius * 2 + 30, n: xp });
     this.xpFamilier(FAMILIER_XP.chasse(this.monsterLevel(m), !!m.def.elite, !!m.def.boss));
@@ -1736,9 +1744,19 @@ export class World {
     if (it.cadenas) delete it.cadenas; else it.cadenas = true;
     return true;
   }
+  /** 15B : un archimonstre vaincu avec une Petite pierre d'âme dans le sac est capturé (pierre pleine, et sa page du Bestiaire). */
+  private capturer(m: Monster) {
+    const p = this.player;
+    if (!p.v03 || !(p.resources[ARCHI.pierre] > 0)) return;
+    p.resources[ARCHI.pierre]--; if (!p.resources[ARCHI.pierre]) delete p.resources[ARCHI.pierre];
+    p.resources[ARCHI.pleine] = (p.resources[ARCHI.pleine] ?? 0) + 1;
+    const neuf = !p.ames.includes(m.type);
+    if (neuf) p.ames.push(m.type);
+    this.emit({ k: 'capture', monster: m.type, neuf });
+  }
   /** Achat dans une boutique (src/data/boutique.json), payé en Pépites. */
   acheter(boutique: string, id: string): boolean {
-    const a = this.opts.boutiques?.[boutique]?.find(x => x.id === id), p = this.player;
+    const a = this.opts.boutiques?.[boutique]?.find(x => x.id === id && (!x.v03 || this.player.v03)), p = this.player;
     if (!a || (p.resources[PEPITE] ?? 0) < a.prix) return false;
     p.resources[PEPITE] -= a.prix; if (!p.resources[PEPITE]) delete p.resources[PEPITE];
     p.resources[id] = (p.resources[id] ?? 0) + 1;

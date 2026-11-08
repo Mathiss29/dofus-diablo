@@ -1499,7 +1499,7 @@ export class Windows {
   private renderEmp() {
     const w = this.win!, p = this.world.player, pep = p.resources[PEPITE] ?? 0;
     // les onglets du PNJ ouvert : ses services (Kerubim recycle, Tissebelle a les apparats et le miroir, les autres une boutique)
-    const def = QUETES.pnj[this.empPnj], sv = new Set((def?.services ?? []).map(x => x.service)), boutique = BOUTIQUES[this.empPnj] ?? [];
+    const def = QUETES.pnj[this.empPnj], sv = new Set((def?.services ?? []).map(x => x.service)), boutique = (BOUTIQUES[this.empPnj] ?? []).filter(a => !a.v03 || p.v03);
     if (!sv.has(this.empOnglet)) this.empOnglet = sv.has('boutique') ? 'boutique' : sv.has('apparat') ? 'apparat' : 'recycler';
     const onglet = (k: string, n: string) => sv.has(k) ? `<span class="eo ${this.empOnglet === k ? 'on' : ''}" data-eo="${k}">${n}</span>` : '';
     const tete = `<div class="eh"><div class="eos">${onglet('recycler', 'Recycler')}${onglet('boutique', 'Boutique')}${onglet('apparat', 'Apparats')}${sv.has('garde-robe') ? '<span class="eo" data-garde>Garde-robe</span>' : ''}</div>
@@ -1534,7 +1534,7 @@ export class Windows {
           ${l.length > 120 ? `<div class="hint">… et ${l.length - 120} autres : affine la recherche.</div>` : ''}</div></div>`;
     } else {
       corps = `<div class="shop">${boutique.map(a => { const r = ITEMS.resources[a.id]; if (!r) return '';
-        const effet = r.soin ? `+${r.soin} PV` : r.rappel ? 'Retour au dernier Zaap' : r.cle ? `Entrée : ${r.cle}` : '';
+        const effet = r.soin ? `+${r.soin} PV` : r.rappel ? 'Retour au dernier Zaap' : r.cle ? `Entrée : ${r.cle}` : r.pierreAme ? 'Capture un archimonstre vaincu (une pierre par capture)' : '';
         return `<div class="rec" data-rid="${a.id}">${iconHtml(r.icon)}<div><b>${r.name}</b> <span class="hint">niveau ${r.level}${(p.resources[a.id] ?? 0) ? ` · tu en as ${p.resources[a.id]}` : ''}</span><div style="font-size:12px;color:#c9c4ab">${effet}</div></div>
           <span class="btn ${pep >= a.prix ? '' : 'off'}" data-achat="${a.id}">${a.prix} ${iconHtml(ITEMS.resources[PEPITE].icon)}</span></div>`; }).join('')}</div>
         <div class="hint">Les Pépites se gagnent en recyclant tes objets chez Kerubim Crépin.</div>`;

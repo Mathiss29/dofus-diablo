@@ -1,9 +1,14 @@
 {
- "_": "Boutiques des PNJ du Havre-Sac (maquette Hub 4A, 2026-11-06) : Otomaï (Potion de Rappel), Mère Bouillotte (nourriture), Goultard (clés de donjon) ; apparat_prix = prix par emplacement des apparats officiels chez Tissebelle (src/data/apparat.json). Prix en Pépites (objet officiel 14635), que Kerubim Crépin donne contre les objets recyclés.",
+ "_": "Boutiques des PNJ du Havre-Sac (maquette Hub 4A, 2026-11-06) : Otomaï (Potion de Rappel ; Petite pierre d'âme en 0.3, pour capturer les archimonstres), Mère Bouillotte (nourriture), Goultard (clés de donjon) ; apparat_prix = prix par emplacement des apparats officiels chez Tissebelle (src/data/apparat.json). Prix en Pépites (objet officiel 14635), que Kerubim Crépin donne contre les objets recyclés.",
  "otomai": [
   {
    "id": "548",
    "prix": 30
+  },
+  {
+   "id": "9686",
+   "prix": 15,
+   "v03": true
   }
  ],
  "bouillotte": [

@@ -31,7 +31,7 @@ export const WEAPONS = Object.fromEntries(Object.entries(armes).filter(([k]) => 
 /** Quêtes, PNJ et succès (src/data/quetes.json, écrit par tools/contenu/quetes.py). */
 export const QUETES = quetes as unknown as QuetesData;
 /** Boutiques des PNJ (src/data/boutique.json) : articles et prix en Pépites. */
-export const BOUTIQUES = Object.fromEntries(Object.entries(boutique).filter(([k]) => !k.startsWith('_') && k !== 'apparat_prix')) as unknown as Record<string, { id: string; prix: number }[]>;
+export const BOUTIQUES = Object.fromEntries(Object.entries(boutique).filter(([k]) => !k.startsWith('_') && k !== 'apparat_prix')) as unknown as Record<string, { id: string; prix: number; v03?: boolean }[]>;
 /** Métiers de récolte (src/data/recoltes.json, écrit par tools/contenu/recoltes.py). */
 export const RECOLTES = recoltes as unknown as RecoltesData;
 /** Objets d'apparat officiels (src/data/apparat.json, apparat_export.py) : nom, emplacement, case de l'icône sur ui/apparat.webp ;
