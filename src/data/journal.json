@@ -825,6 +825,16 @@
               "Touche P",
               "Perso en ligne"
             ]
+          },
+          {
+            "titre": "Se grouper sans bouger",
+            "phrase": "Invite tes amis dans ton groupe où que vous soyez : personne n'est téléporté.",
+            "details": "Le chef lance ensuite la Crypte et les autres reçoivent « Rejoindre ». Chef, exclure et passer la couronne dans Social › Groupe.",
+            "icone": "perso",
+            "etiquettes": [
+              "Touche P",
+              "Perso en ligne"
+            ]
           }
         ],
         "Le monde": [
