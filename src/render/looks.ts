@@ -142,6 +142,36 @@ const OSA_MAP: Record<string, AnimSlice> = {
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };
 
+// Sacrieur : squelette joueur n° 1 + skin 110 (corps), animations officielles (spellscripts « animId:11xx », maquette Sacrieur 9A) :
+// Absorption 1110, Hémorragie et Supplice 1102, Stase et Hostilité 1103, Attirance 1112, Mutilation et Couronne d'Épines 1100,
+// Épée Vorace, Transposition, Condensation et Dissolution 1101, Ravage 1114, Assaut 1104, Transfusion 1105, Désolation 1111.
+const SAC_MAP: Record<string, AnimSlice> = {
+  ...WEAPON_MAP,
+  idle: { anim: 'AnimStatiqueExplo0', loop: true, fps: 20 },
+  run: { anim: 'AnimCourse', loop: true, fps: 32 },
+  attack1: { anim: 'AnimArme0', from: 3 / 28, to: 17 / 28 },
+  attack2: { anim: 'AnimArme0', from: 3 / 28, to: 17 / 28 },
+  attack3: { anim: 'AnimArme0', from: 3 / 28, to: 24 / 28 },
+  absorption: { anim: 'AnimAttaque1110', from: 0, to: 0.65 },
+  hemorragie: { anim: 'AnimAttaque1102', from: 0, to: 0.65 },
+  supplice: { anim: 'AnimAttaque1102', from: 0, to: 0.65 },
+  stase: { anim: 'AnimAttaque1103', from: 0, to: 0.65 },
+  attirance: { anim: 'AnimAttaque1112', from: 0, to: 0.65 },
+  mutilation: { anim: 'AnimAttaque1100', from: 0, to: 0.65 },
+  epee_vorace: { anim: 'AnimAttaque1101', from: 0, to: 0.65 },
+  ravage: { anim: 'AnimAttaque1114', from: 0, to: 0.65 },
+  assaut: { anim: 'AnimAttaque1104', from: 0, to: 0.65 },
+  transposition: { anim: 'AnimAttaque1101', from: 0, to: 0.65 },
+  condensation: { anim: 'AnimAttaque1101', from: 0, to: 0.65 },
+  hostilite: { anim: 'AnimAttaque1103', from: 0, to: 0.65 },
+  couronne: { anim: 'AnimAttaque1100', from: 0, to: 0.65 },
+  transfusion: { anim: 'AnimAttaque1105', from: 0, to: 0.65 },
+  dissolution: { anim: 'AnimAttaque1101', from: 0, to: 0.65 },
+  desolation: { anim: 'AnimAttaque1111', from: 0, to: 0.65 },
+  hit: { anim: 'AnimHit', from: 0, to: 1 },
+  die: { anim: 'AnimMort', from: 0, to: 0.75 },
+};
+
 const GOLD = 0xffd87a;
 
 export const LOOKS: Record<string, Look> = {
@@ -152,6 +182,11 @@ export const LOOKS: Record<string, Look> = {
   cra_f: { atlas: 'cra_f', scale: 0.82, map: CRA_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
   // Osamodas : dessiné en direct depuis son squelette (pas de planche de secours)
   osamodas: { atlas: 'osamodas', scale: 0.82, map: OSA_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
+  // Sacrieur : dessiné en direct depuis son squelette, comme l'Osamodas
+  sacrieur: { atlas: 'sacrieur', scale: 0.82, map: SAC_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
+  // Épées du Sacrieur (monster_planche.py, os 8378 et 8376, SCALE 2,5) : invocations alliées (maquette Sacrieur 7A)
+  sacri_epee_vorace: { atlas: 'sacri_epee_vorace', scale: 0.55, map: MONSTER_MAP(7 / 55, 'AnimAttaque0', { 0: 7 / 55, 1: 12 / 47 }), height: 110, multi: true },
+  sacri_epee_dansante: { atlas: 'sacri_epee_dansante', scale: 0.55, map: MONSTER_MAP(9 / 36, 'AnimAttaque0', { 0: 9 / 36, 1: 12 / 47 }), height: 110, multi: true },
   // Bêtes de l'Osamodas (src/data/betes.json, monster_planche.py) : échelle = 0,55 x échelle officielle du look,
   // x 2,5 / SCALE de rendu (1,6 pour Craquolosse et Sulfénix, 1,25 pour Dragonnet, Scarafoudre et Gobgobs) ;
   // le Dragonnet n'a ni repos ni course officiels : la première image de son attaque en tient lieu

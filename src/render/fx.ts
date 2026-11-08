@@ -134,6 +134,18 @@ export class FX {
         this.particles(e.x, e.y, 30, 26, 0xffd87a, 260, 0.6, 4, 320);
         this.number(e.x, e.y, 90, `${e.name} !`, false, '#ffd87a');
         break;
+      // Sacrieur : PV sacrifiés (chiffre rouge sombre), échange de place, palier de Souffrance 6 et 10 atteint
+      case 'sacrifice':
+        this.number(e.x, e.y, 60, `-${e.amount}`, false, '#b02020');
+        this.particles(e.x, e.y, 24, 12, 0x9a1010, 160, 0.5, 3, 260);
+        break;
+      case 'echange':
+        this.ring(e.x, e.y, 6, 40, 0xc03030, 0.35, 5);
+        this.ring(e.ox, e.oy, 6, 40, 0xc03030, 0.35, 5);
+        break;
+      case 'souffrance':
+        if (e.n > e.avant && (e.n === 6 || e.n === 10)) this.number(e.x, e.y, 110, `Souffrance ${e.n}`, false, '#ff5a4a');
+        break;
       case 'dompte':
         this.ring(e.x, e.y, 10, 60, 0x7fd0ff, 0.5, 8);
         this.number(e.x, e.y, 90, `${e.name} dompté !`, false, '#9fd0ff');

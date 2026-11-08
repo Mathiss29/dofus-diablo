@@ -905,5 +905,118 @@
     "desc": "Tue le Gobgob pour le remplacer par l'invocation Osamodas de l'invocateur ciblée.\n\nNe fonctionne pas sur les Gobgobs."
    }
   ]
+ },
+ "epee_vorace": {
+  "dofusId": 434,
+  "name": "Épée Vorace",
+  "look": 8378,
+  "atlas": "sacri_epee_vorace",
+  "rang": 1,
+  "element": "neutre",
+  "suivant": null,
+  "pv": 0.5,
+  "sorts": [
+   {
+    "id": 29795,
+    "name": "Tourbillon Sanglant",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "anim": 1,
+    "zone": "C2",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 8,
+      "max": 10,
+      "vol": true
+     }
+    ],
+    "desc": "Vole de la vie dans l'élément Neutre aux ennemis et soigne les alliés (hors lanceur) selon les dommages occasionnés en zone autour de l'Épée Vorace.",
+    "gfx": 8412
+   },
+   {
+    "id": 12705,
+    "name": "Soif de Sang",
+    "pa": 2,
+    "po": [
+     1,
+     2
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 8,
+      "max": 10,
+      "vol": true
+     }
+    ],
+    "desc": "Vole de la vie dans l'élément Neutre et soigne l'invocateur selon les dommages occasionnés.\n\nSoigne tous les alliés si l'invocateur est en Souffrance 6 ou plus.",
+    "gfx": 8379
+   }
+  ]
+ },
+ "epee_dansante": {
+  "dofusId": 5192,
+  "name": "Épée Dansante",
+  "look": 8376,
+  "atlas": "sacri_epee_dansante",
+  "rang": 1,
+  "element": "neutre",
+  "suivant": null,
+  "pv": 0.5,
+  "sorts": [
+   {
+    "id": 8153,
+    "name": "Danse-lames",
+    "pa": 2,
+    "po": [
+     1,
+     3
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 11,
+      "max": 13
+     },
+     {
+      "k": "attire",
+      "n": 2
+     }
+    ],
+    "desc": "Occasionne des dommages Neutre aux ennemis, attire la cible et augmente la Fuite de l'Épée Dansante et de son invocateur.\n\nAugmente la Fuite de tous les alliés si l'invocateur est en Souffrance 6 ou plus.",
+    "gfx": 8377
+   },
+   {
+    "id": 29794,
+    "name": "Danse Mortelle",
+    "pa": 2,
+    "po": [
+     1,
+     2
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 6,
+      "max": 8
+     }
+    ],
+    "desc": "Échange de position avec la cible et occasionne des dommages Neutre aux ennemis."
+   }
+  ]
  }
 }

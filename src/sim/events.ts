@@ -40,6 +40,10 @@ export type SimEvent =
   | { k: 'heal'; x: number; y: number; z: number; amount: number }
   | { k: 'invocation'; id: number; x: number; y: number }
   | { k: 'eveil'; id: number; name: string; x: number; y: number }
+  /** Sacrieur : échange de place (Assaut, Transposition), palier de Souffrance qui change, PV sacrifiés. */
+  | { k: 'echange'; x: number; y: number; ox: number; oy: number }
+  | { k: 'souffrance'; n: number; avant: number; x: number; y: number }
+  | { k: 'sacrifice'; x: number; y: number; amount: number }
   | { k: 'dompte'; id: number; name: string; x: number; y: number }
   | { k: 'impact'; hitstop: number; shake: number; big: boolean }
   | { k: 'playerHurt' }

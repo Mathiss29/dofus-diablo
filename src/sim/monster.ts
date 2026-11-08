@@ -70,6 +70,8 @@ export class Monster extends Entity {
   haste = 1; hasteT = 0;
   /** Dommages subis augmentés de vuln % pendant vulnT s (Bond). */
   vuln = 0; vulnT = 0;
+  /** Supplice (Sacrieur) : pendant suppliceT s, chaque coup du joueur sur ce monstre le soigne de supplice × les dommages. */
+  supplice = 0; suppliceT = 0;
   /** Portée retirée (cases) à ses sorts à distance pendant poMalusT s (Flèche Détonante). */
   poMalus = 0; poMalusT = 0;
   /** Bonus de Dommages (Frénésie : %, Euphorie malsaine : fixes) et durée restante. */
@@ -138,6 +140,7 @@ export class Monster extends Entity {
     }
     if (this.hasteT > 0 && (this.hasteT -= dt) <= 0) this.haste = 1;
     if (this.vulnT > 0 && (this.vulnT -= dt) <= 0) this.vuln = 0;
+    if (this.suppliceT > 0 && (this.suppliceT -= dt) <= 0) this.supplice = 0;
     if (this.poMalusT > 0 && (this.poMalusT -= dt) <= 0) this.poMalus = 0;
     if (this.furyT > 0 && (this.furyT -= dt) <= 0) this.furyPct = this.furyFlat = 0;
     // Tacle du joueur : un monstre à son contact avance moins vite (sa Fuite officielle y résiste)

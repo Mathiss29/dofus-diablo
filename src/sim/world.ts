@@ -37,7 +37,9 @@ interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: nu
   /** Coup d'arme (maquette Armes 3B) : l'affichage fait jaillir un éclat de la couleur de l'élément. */
   eclat?: boolean;
   /** Pouvoir légendaire officiel « +N % Critique » sur ce sort (0.3), en part (0,35). */
-  crit?: number }
+  crit?: number;
+  /** Sacrieur : attire de px vers le lanceur ou vers le centre de la zone (Attirance, Condensation) ; Supplice posé sur la cible. */
+  attire?: { px: number; vers: 'lanceur' | 'centre' }; supplice?: { part: number; t: number } }
 /** Butin au sol (choix 1C 2D 6A) : équipements et kamas seulement. Les Communs et les kamas filent vers le joueur
  *  qui passe près ; Rare et plus se ramassent d'un clic. Les ressources vont directement dans le sac. */
 export interface Drop { uid: number; x: number; y: number; item?: Item; kamas?: number; t: number; warned?: boolean;
@@ -1245,8 +1247,17 @@ export class World {
       const flat = (crit ? p.stat('dommagesCritiques') : 0) + (def.knock > 0 ? p.stat('dommagesPoussee') : 0);
       const vs = def.vsSummon && (m.summoner || (def.vsElite && (m.def.elite || m.def.boss))) ? def.vsSummon : 1;
       const vu = (m.vulnT > 0 ? 1 + m.vuln / 100 : 1) * m.subis;   // dommages subis augmentés (Bond) ou réduits (Cuirasse Laineuse)
-      const dmg = Math.max(1, Math.round((p.damage(def.dmg * vs, def.element ?? 'neutre') * this.rng.range(0.9, 1.1) * (crit ? cls.critMult : 1) * first + flat) * (1 - res / 100) * vu));
+      // Sort sans dommages (Attirance, Transposition) : seulement ses effets
+      const dmg = def.dmg <= 0 ? 0 : Math.max(1, Math.round((p.damage(def.dmg * vs, def.element ?? 'neutre') * this.rng.range(0.9, 1.1) * (crit ? cls.critMult : 1) * first + flat) * (1 - res / 100) * vu));
       m.hp -= dmg; m.flash = 0.09; m.calmeT = 0;
+      if (dmg && m.suppliceT > 0) p.hp = Math.min(p.maxHp, p.hp + Math.round(dmg * m.supplice));   // Supplice : frapper la cible soigne
+      if (def.supplice) { m.supplice = def.supplice.part; m.suppliceT = def.supplice.t; }
+      if (def.attire) {   // attire vers le lanceur (jusqu'au contact) ou vers le centre de la zone, sans tenir compte du poids (officiel)
+        const vx = def.attire.vers === 'lanceur' ? p.x : ox, vy = def.attire.vers === 'lanceur' ? p.y : oy;
+        const d0 = Math.hypot(vx - m.x, vy - m.y), marge = def.attire.vers === 'lanceur' ? m.radius + p.radius + 4 : 0;
+        const L = Math.min(def.attire.px, Math.max(0, d0 - marge));
+        if (L > 0 && d0 > 0) { m.kx += (vx - m.x) / d0 * L * 7.13; m.ky += (vy - m.y) / d0 * L * 7.13; }
+      }
       if (m.state === 'idle' || m.state === 'return') this.aggroGroup(m);   // 3A + 4A : un coup, même de loin, réveille tout son groupe
       if (def.erosion) { m.maxHp = Math.max(1, m.maxHp - Math.round(dmg * def.erosion)); m.hp = Math.min(m.hp, m.maxHp); }
       // Retrait PA / PM du joueur contre l'Esquive officielle du monstre : chaque point a sa chance de passer
@@ -1265,12 +1276,40 @@ export class World {
       if (def.pushDmg && kb > 0) this.pushDamage(m, a, kb / 7.13);
       if (!m.def.boss) m.stun = Math.max(m.stun, stun || 0.12);   // petit vacillement : interrompt les télégraphes
       else if (stun) m.stun = Math.max(m.stun, stun * 0.3);
-      this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: dmg, crit, element: el, eclat: def.eclat });
+      if (dmg) this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: dmg, crit, element: el, eclat: def.eclat });
       if (n <= 3) p.rageOnHit(Math.hypot(m.x - p.x, m.y - p.y), this);
       if (def.lifesteal) p.hp = Math.min(p.maxHp, p.hp + Math.round(dmg * def.lifesteal));   // la Rage monte avec les coups portés (3 cibles max par coup)
       if (m.hp <= 0) this.killMonster(m);
     }
     return n;
+  }
+  /** Sacrieur (Assaut, Transposition) : échange de place avec le monstre le plus proche du point visé. */
+  echanger(p: Player, x: number, y: number, r: number): boolean {
+    let best: Monster | null = null, bd = Infinity;
+    for (const m of this.monsters) {
+      if (m.dead || m.state === 'spawn' || m.def.boss) continue;
+      const d = Math.hypot(m.x - x, m.y - y) - m.radius;
+      if (d <= r && d < bd) { bd = d; best = m; }
+    }
+    if (!best) return false;
+    const ox = p.x, oy = p.y;
+    p.x = best.x; p.y = best.y; best.x = ox; best.y = oy;
+    this.emit({ k: 'echange', x: p.x, y: p.y, ox, oy });
+    return true;
+  }
+  /** Couronne d'Épines : renvoie des dommages de mêlée au monstre qui vient de frapper (le plus proche du point d'où vient le coup). */
+  renvoyer(fromX: number, fromY: number, dmg: number) {
+    let best: Monster | null = null, bd = CASE * 1.6;
+    for (const m of this.monsters) {
+      if (m.dead || m.intouchable) continue;
+      const d = Math.hypot(m.x - fromX, m.y - fromY) - m.radius;
+      if (d < bd) { bd = d; best = m; }
+    }
+    if (!best || dmg < 1) return;
+    const n = Math.round(dmg);
+    best.hp -= n; best.flash = 0.09;
+    this.emit({ k: 'hit', target: 'monster', id: best.id, x: best.x, y: best.y, z: best.radius * 2 + 10, amount: n, crit: false, element: 'neutre' });
+    if (best.hp <= 0) this.killMonster(best);
   }
   /** Augmente les dommages subis par les monstres dans ce cercle, sans les frapper (Bond). */
   markVuln(x: number, y: number, r: number, n: number, t: number): number {
