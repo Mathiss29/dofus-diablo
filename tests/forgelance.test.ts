@@ -122,6 +122,17 @@ describe('Forgelance (maquette Forgelance, 2026-11-08)', () => {
     expect(fx?.x).toBeCloseTo(L.x);
   });
 
+  it('Armé, les sorts « que sur la Lance » se visent où tu veux, dans leur portée officielle (Prélude au Fer : 2 cases)', () => {
+    const w = fl(), p = w.player;
+    niveau(p, 60);
+    const q = w.ajouterJoueur('iop'); q.x = p.x + 100; q.y = p.y;
+    const ap = apercuSort(w, 'prelude_fer', { x: p.x + 100, y: p.y });
+    expect(ap?.zone).toMatchObject({ kind: 'circle', x: p.x + 100, y: p.y });
+    expect(apercuSort(w, 'effondrement', { x: p.x + 100, y: p.y })?.zone).toMatchObject({ kind: 'circle', x: p.x + 100 });
+    press(w, 'prelude_fer', { x: p.x + 100, y: p.y }); idle(w, 0.3);
+    expect(q.mods.some(m => m.src === 'prelude')).toBe(true);
+  });
+
   it('chaque Forgelance a sa propre Lance en coop', () => {
     const w = fl(), p = w.player, q = w.ajouterJoueur('forgelance');
     p.lance = { x: p.x + 200, y: p.y, t: 1 };

@@ -1003,7 +1003,7 @@
           "Coop : l'invité ne se fige plus quand une bête s'éveille ; en cas de souci, il recharge la partie de l'hôte.",
           "Le Sacrieur ne fige plus le jeu en changeant de zone ou en rejoignant un salon de coop.",
           "Les icônes des objets sont deux fois plus fines : nettes dans le sac, la forge et toutes les fenêtres.",
-          "Forgelance Désarmé : Phalange et Prélude au Fer s'affichent bien autour de la Lance, aperçu compris."
+          "Forgelance : Prélude au Fer et Phalange se visent quand tu es Armé et partent de la Lance si Désarmé."
         ],
         "En coulisses": [
           "Sur Discord, le carnet du jour ne montre que ce qui est jouable par tous.",

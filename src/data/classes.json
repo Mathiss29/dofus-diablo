@@ -2048,10 +2048,10 @@
     "shake": 0.006,
     "fx": "burst",
     "hit": {
-     "shape": "circle",
+     "shape": "point",
+     "range": 96,
      "radius": 120
     },
-    "self": true,
     "lance": {
      "surLance": true
     },
@@ -2253,10 +2253,10 @@
     "shake": 0.006,
     "fx": "burst",
     "hit": {
-     "shape": "circle",
+     "shape": "point",
+     "range": 96,
      "radius": 96
     },
-    "self": true,
     "lance": {
      "surLance": true
     },
