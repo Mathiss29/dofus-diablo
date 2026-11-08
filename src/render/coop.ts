@@ -5,6 +5,7 @@ import type { SkillId } from '../sim/defs';
 import type { World } from '../sim/world';
 import { classeDe, COOP, Emetteur, entreeInvite, type Instantane } from '../sim/miroir';
 import { exporterJoueur, restaurerJoueur, type EtatJoueur } from '../sim/sauvegarde';
+import { Compte } from './compte';
 
 /** Coop à plusieurs (maquette « Multi : » 3A, 11A), premier essai dans la partie de test : un salon à code sur le serveur
  *  (api.diablofus.com), l'hôte fait tourner la partie, ses invités lui envoient leurs entrées et reçoivent des instantanés.
@@ -19,9 +20,15 @@ export interface SceneCoop {
   /** Invité : aller dans la zone de l'hôte (la scène repart), ou revenir à sa propre partie (zone = null). */
   allerA(zone: string | null, position?: { x: number; y: number }): void;
   annonce(texte: string): void;
+  /** Nom du perso joué (portraits du groupe). */
+  nom: string;
+  /** Sauve tout de suite le perso (avant d'aller dans une partie du serveur avec le perso du compte). */
+  sauver(): void;
 }
+/** Perso du compte emmené dans une partie du serveur (« Vrai multi : » 4A) : le serveur le lit et le sauve lui-même. */
+export interface PersoCompte { jeton: string; emplacement: number }
 interface Invite {
-  joueur: number | null; classe: string; etat: EtatJoueur | null; em: Emetteur | null; pret: boolean;
+  joueur: number | null; classe: string; nom: string; etat: EtatJoueur | null; em: Emetteur | null; pret: boolean;
   entree: PlayerInput; pressed: SkillId | null; potion: boolean; mortDepuis: number;
 }
 type Etat = 'hors' | 'connexion' | 'salon';
@@ -31,6 +38,8 @@ class Salon {
   hote = false;
   /** Partie tenue par le serveur (maquette « Vrai multi : » 1A) : tout le monde est invité, personne ne la fait tourner chez soi. */
   serveur = false;
+  /** Perso du compte emmené dans la partie (sinon, rien n'est gardé). */
+  compte: PersoCompte | null = null;
   code: string | null = null;
   erreur: string | null = null;
   private ws: WebSocket | null = null;
@@ -56,17 +65,23 @@ class Salon {
   private changer() { for (const f of this.ecouteurs) f(); }
 
   // ——— connexion ———
-  creer(serveur = false) { this.connecter(serveur ? { k: 'creer', serveur: true } : { k: 'creer' }); }
-  rejoindre(code: string) { if (code.trim()) this.connecter({ k: 'rejoindre', code: code.trim() }); }
+  creer(serveur = false, compte: PersoCompte | null = null) { this.compte = compte; this.connecter(serveur ? { k: 'creer', serveur: true } : { k: 'creer' }); }
+  rejoindre(code: string, compte: PersoCompte | null = null) { if (code.trim()) { this.compte = compte; this.connecter({ k: 'rejoindre', code: code.trim().toUpperCase() }); } }
   quitter() {
-    const etaitInvite = this.miroir;
+    const etaitInvite = this.miroir, compte = !!this.compte;
     this.ws?.close(); this.ws = null;
     this.fermer();
-    if (etaitInvite) this.scene?.allerA(null);
+    if (etaitInvite) this.revenir(compte);
+  }
+  /** Retour à sa propre partie ; avec le perso du compte, on relit d'abord ce que le serveur en a sauvé (butin, XP). */
+  private revenir(compte: boolean) {
+    const s = this.scene;
+    if (!compte) { s?.allerA(null); return; }
+    void Compte.charger().finally(() => (this.scene ?? s)?.allerA(null));
   }
   private fermer() {
     if (this.hote && this.scene) for (const i of this.invites.values()) this.retirer(i);
-    this.etat = 'hors'; this.hote = false; this.serveur = false; this.code = null; this.invites.clear(); this.recus = []; this.dansZoneHote = false;
+    this.etat = 'hors'; this.hote = false; this.serveur = false; this.compte = null; this.code = null; this.invites.clear(); this.recus = []; this.dansZoneHote = false;
     this.changer();
   }
   private connecter(premier: object) {
@@ -79,11 +94,11 @@ class Salon {
     ws.onmessage = ev => { if (this.ws === ws) { try { this.message(JSON.parse(String(ev.data))); } catch (e) { console.warn('coop', e); } } };
     ws.onclose = () => {
       if (this.ws !== ws) return;
-      const miroir = this.miroir;
+      const miroir = this.miroir, compte = !!this.compte;
       this.ws = null;
       if (this.etat !== 'hors') { this.erreur ??= 'Connexion perdue'; this.scene?.annonce('Coop : connexion perdue'); }
       this.fermer();
-      if (miroir) this.scene?.allerA(null);
+      if (miroir) this.revenir(compte);
     };
   }
   private envoyer(d: unknown, a?: number) { if (this.ws?.readyState === WebSocket.OPEN) this.ws.send(JSON.stringify({ k: 'envoi', ...(a != null ? { a } : {}), d })); }
@@ -92,16 +107,20 @@ class Salon {
     switch (m.k) {
       case 'salon':
         this.etat = 'salon'; this.hote = !!m.hote; this.serveur = !!m.serveur; this.code = String(m.code);
-        if (!this.hote && this.scene) { const w = this.scene.world; this.envoyer({ k: 'bonjour', classe: classeDe(w, w.player), etat: exporterJoueur(w) }); }
+        if (!this.hote && this.scene) void this.bonjour(this.scene);
         this.changer();
         break;
       case 'refus':
         this.erreur = m.raison === 'code' ? 'Aucun salon avec ce code' : m.raison === 'complet' ? 'Salon complet (4 joueurs)'
-          : m.raison === 'indisponible' ? 'La partie sur le serveur n’est pas encore installée' : 'Serveur plein, réessaie';
+          : m.raison === 'indisponible' ? 'La partie sur le serveur n’est pas encore installée'
+          : m.raison === 'perso' ? 'Ton perso en ligne est introuvable : reconnecte-toi avec Discord'
+          : m.raison === 'testeur' ? 'L’essai à plusieurs est réservé aux testeurs'
+          : m.raison === 'deja' ? 'Ce perso joue déjà dans un groupe'
+          : m.raison === 'hardcore' ? 'Les persos Hardcore ne jouent pas encore à plusieurs' : 'Serveur plein, réessaie';
         this.ws?.close(); this.ws = null; this.fermer();
         break;
       case 'arrivee':
-        this.invites.set(Number(m.id), { joueur: null, classe: 'iop', etat: null, em: null, pret: false, entree: entreeInvite(null), pressed: null, potion: false, mortDepuis: 0 });
+        this.invites.set(Number(m.id), { joueur: null, classe: 'iop', nom: '', etat: null, em: null, pret: false, entree: entreeInvite(null), pressed: null, potion: false, mortDepuis: 0 });
         this.changer();
         break;
       case 'depart': {
@@ -110,15 +129,27 @@ class Salon {
         break;
       }
       case 'fin': {
-        const miroir = this.miroir;
+        const miroir = this.miroir, compte = !!this.compte;
         this.erreur = m.raison === 'erreur' ? 'La partie s’est arrêtée sur le serveur' : 'L’hôte a fermé le salon';
         this.ws?.close(); this.ws = null; this.fermer();
         this.scene?.annonce(`Coop : ${this.erreur?.toLowerCase()}`);
-        if (miroir) this.scene?.allerA(null);
+        if (miroir) this.revenir(compte);
         break;
       }
       case 'recu': this.recu(Number(m.de), m.d as { k: string; [k: string]: unknown }); break;
     }
+  }
+  /** Invité : se présente à l'hôte (ou au serveur). Avec le perso du compte, on le sauve et l'envoie d'abord : le serveur le relit. */
+  private async bonjour(s: SceneCoop) {
+    const w = s.world, nom = s.nom;
+    if (this.compte) {
+      const c = this.compte;
+      s.sauver();
+      await Compte.toutEnvoyer();
+      this.envoyer({ k: 'bonjour', jeton: c.jeton, emplacement: c.emplacement, nom });
+      return;
+    }
+    this.envoyer({ k: 'bonjour', classe: classeDe(w, w.player), etat: exporterJoueur(w), nom });
   }
   private recu(de: number, d: { k: string; [k: string]: unknown }) {
     if (!d || typeof d !== 'object') return;
@@ -127,6 +158,7 @@ class Salon {
       if (!i) return;
       if (d.k === 'bonjour') {
         i.classe = typeof d.classe === 'string' && GAME_DATA.classes[d.classe] ? d.classe : 'iop';
+        i.nom = typeof d.nom === 'string' ? d.nom.slice(0, 20) : '';
         i.etat = d.etat && typeof d.etat === 'object' ? d.etat as EtatJoueur : null;
         this.poser(i);
         this.scene?.annonce('Un joueur a rejoint le salon');
@@ -139,6 +171,7 @@ class Salon {
       } else if (d.k === 'pret') { i.pret = true; i.em?.toutRenvoyer(); }
       return;
     }
+    if (d.k === 'sortie') { this.scene?.annonce('Tu quittes le groupe par le portail'); this.quitter(); return; }
     if (d.k === 'zone' && typeof d.zone === 'string' && GAME_DATA.zones[d.zone]) {
       this.dansZoneHote = true; this.recus = []; this.monId = Number(d.id) || 0;
       this.scene?.allerA(d.zone, { x: Number(d.x), y: Number(d.y) });
@@ -181,7 +214,7 @@ class Salon {
     if (id == null || w.players.length >= 4) return;
     const q = w.ajouterJoueur(i.classe);
     if (i.etat) { const e = { ...i.etat, zone: '__coop', havreSac: undefined }; try { w.commeJoueur(q, () => restaurerJoueur(w, e)); } catch (err) { console.warn('coop', err); } }
-    q.hp = q.maxHp;
+    q.hp = q.maxHp; q.nom = i.nom;
     i.joueur = q.id; i.em = new Emetteur(q.id); i.pret = false;
     this.envoyer({ k: 'zone', zone: w.opts.zone, x: q.x, y: q.y, id: q.id }, id);
   }

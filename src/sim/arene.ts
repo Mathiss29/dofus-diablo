@@ -164,9 +164,17 @@ export class Arene {
     w.emit({ k: 'areneFin', nom: this.d.nom, temps: this.chrono, record });
   }
   private updateFin(dt: number) {
+    const w = this.w, c = this.pts.coffre;
+    // le coffre éclate une seule fois (quel que soit le joueur qui l'a ouvert)
+    if (this.eclat > 0 && (this.eclat -= dt) <= 0) { w.ouvrirCoffreDonjon(this.butin, c.x, c.y); this.butin = null; }
+    // chaque joueur peut ouvrir le coffre et prendre le portail (coop à hôte : seulement l'hôte, sa sortie emmène la partie ;
+    // partie du serveur : chacun pour soi)
+    if (!w.opts.partieServeur) { this.finJoueur(); return; }
+    for (const q of [...w.players]) if (w.players.includes(q)) w.commeJoueur(q, () => this.finJoueur());
+  }
+  private finJoueur() {
     const w = this.w, p = w.player;
     const c = this.pts.coffre, s = this.pts.sortie;
-    if (this.eclat > 0 && (this.eclat -= dt) <= 0) { w.ouvrirCoffreDonjon(this.butin, c.x, c.y); this.butin = null; }
     if (p.dead || w.passage) return;
     if (!this.coffreOuvert && (Math.hypot(p.x - c.x, p.y - c.y) < ARENE.rayon || p.vise(c.x, c.y, ARENE.rayon + 30) && Math.hypot(p.x - c.x, p.y - c.y) < 140)) {
       this.coffreOuvert = true;

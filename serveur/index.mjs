@@ -36,7 +36,9 @@ function quitter(s) {
   sa.membres.delete(s.num);
   // partie tenue par le serveur : le joueur sort, les autres continuent ; le salon ferme quand il est vide
   if (sa.partie) {
+    const m = sa.partie.membres.get(s.num);
     sa.partie.depart(s.num);
+    if (m?.compte) enJeu.delete(`${m.compte.compte}:${m.compte.emplacement}`);
     if (!sa.membres.size) fermerPartie(sa);
     return;
   }
@@ -46,9 +48,17 @@ function quitter(s) {
 }
 /** Parties tenues par le serveur (maquette « Vrai multi : » 1A) : une boucle commune avance toutes les parties. */
 let boucle = null, avant = 0;
+/** Comptes du serveur lancé (creerServeur) : les parties y lisent et sauvent les persos. */
+let lesComptes = null;
+/** Persos du compte en cours de partie (« compte:emplacement ») : un même perso ne joue pas deux fois en même temps. */
+const enJeu = new Set();
+/** Sauve les persos de toutes les parties (arrêt du serveur). */
+export function sauverParties() { for (const sa of parties()) sa.partie.sauverTout(); }
 const parties = () => [...salons.values()].filter(sa => sa.partie);
 function fermerPartie(sa) {
   salons.delete(sa.code);
+  try { sa.partie.sauverTout(); } catch (e) { console.warn('partie : sauvegarde ratée', e.message); }
+  for (const m of sa.partie.membres.values()) if (m.compte) enJeu.delete(`${m.compte.compte}:${m.compte.emplacement}`);
   for (const m of sa.membres.values()) { m.salon = null; envoyer(m, { k: 'fin', raison: 'erreur' }); }
   if (!parties().length && boucle) { clearInterval(boucle); boucle = null; }
 }
@@ -69,11 +79,25 @@ async function creerPartie(s) {
   if (!S) return envoyer(s, { k: 'refus', raison: 'indisponible' });
   if (salons.size >= SALON.salons || parties().length >= SALON.parties) return envoyer(s, { k: 'refus', raison: 'plein' });
   const sa = { code: nouveauCode(), membres: new Map([[1, s]]), suivant: 2 };
-  sa.partie = new Partie(S, (num, d) => { const c = sa.membres.get(num); if (c) envoyer(c, `{"k":"recu","de":0,"d":${JSON.stringify(d)}}`); });
+  sa.partie = new Partie(S, (num, d) => { const c = sa.membres.get(num); if (c) envoyer(c, `{"k":"recu","de":0,"d":${JSON.stringify(d)}}`); },
+    undefined, (c, perso) => lesComptes?.sauverPartie(c.compte, c.emplacement, perso));
   sa.partie.arrivee(1);
   salons.set(sa.code, sa); s.salon = sa; s.num = 1;
   tourner();
   return envoyer(s, { k: 'salon', code: sa.code, id: 1, hote: false, serveur: true });
+}
+/** Un joueur arrive dans une partie du serveur avec son jeton : on lit SON perso sur son compte (4A), le jeu n'envoie que
+ *  l'emplacement. Jeton faux, emplacement vide ou perso déjà en jeu : refus, le jeu le dit au joueur. */
+function bonjourCompte(s, sa, d) {
+  if (!d || typeof d !== 'object' || d.k !== 'bonjour') return d;
+  const { jeton, emplacement, compte: _faux, ...reste } = d;
+  if (jeton == null) return reste;
+  const c = lesComptes?.persoPartie(jeton, emplacement);
+  const cle = c && `${c.compte}:${c.emplacement}`;
+  const raison = !c ? 'perso' : !c.testeur ? 'testeur' : c.perso.hardcore ? 'hardcore' : enJeu.has(cle) || sa.partie.membres.get(s.num)?.compte ? 'deja' : null;
+  if (raison) { envoyer(s, { k: 'refus', raison }); quitter(s); return null; }
+  enJeu.add(cle);
+  return { ...reste, compte: c };
 }
 function recu(s, m, brut) {
   if (m.k === 'ping') return envoyer(s, { k: 'pong', t: m.t ?? null, serveur: Date.now() });
@@ -99,7 +123,7 @@ function recu(s, m, brut) {
   // relais : l'hôte parle à un invité (a) ou à tous ; un invité parle à l'hôte. d = données de la partie, non lues ici.
   if (m.k === 'envoi' && s.salon) {
     const sa = s.salon, de = s.num;
-    if (sa.partie) return sa.partie.recu(de, m.d);
+    if (sa.partie) return sa.partie.recu(de, bonjourCompte(s, sa, m.d));
     const paquet = brut.length < 200_000 ? `{"k":"recu","de":${de},"d":${JSON.stringify(m.d ?? null)}}` : null;
     if (!paquet) return;
     if (de !== 1) return envoyer(sa.membres.get(1), paquet);
@@ -110,6 +134,7 @@ function recu(s, m, brut) {
 
 /** @param {{ comptes?: ReturnType<typeof creerComptes> }} [o] */
 export function creerServeur({ comptes = creerComptes({ dossier: process.env.DONNEES ?? new URL('./donnees', import.meta.url).pathname, origines: ORIGINES }) } = {}) {
+  lesComptes = comptes;
   const http = createServer(async (req, res) => {
     const o = req.headers.origin;
     if (o && ORIGINES.has(o)) {
@@ -151,13 +176,13 @@ export function creerServeur({ comptes = creerComptes({ dossier: process.env.DON
   // battement : coupe les connexions mortes toutes les 30 s
   const battement = setInterval(() => { for (const s of ws.clients) { if (s.vivant === false) { s.terminate(); continue; } s.vivant = false; s.ping(); } }, 30_000);
   ws.on('connection', s => { s.vivant = true; s.on('pong', () => { s.vivant = true; }); });
-  http.on('close', () => { clearInterval(battement); comptes.fermer(); for (const sa of parties()) fermerPartie(sa); });
+  http.on('close', () => { clearInterval(battement); for (const sa of parties()) fermerPartie(sa); comptes.fermer(); });
   return http;
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const s = creerServeur();
   s.listen(PORT, HOTE, () => console.log(`Diablofus ${VERSION} : http://${HOTE}:${PORT}`));
-  const fin = () => { console.log('arrêt'); s.close(() => process.exit(0)); setTimeout(() => process.exit(0), 3000).unref(); };
+  const fin = () => { console.log('arrêt'); sauverParties(); s.close(() => process.exit(0)); setTimeout(() => process.exit(0), 3000).unref(); };
   process.on('SIGTERM', fin); process.on('SIGINT', fin);
 }

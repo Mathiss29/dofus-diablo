@@ -50,7 +50,7 @@ import { POUVOIR_PAR_ID, V03_PUBLIC } from '../sim/pouvoirs';
 import { PC_PAR_ID } from '../sim/pouvoirsClasse';
 import { exporterJoueur, restaurerJoueur } from '../sim/sauvegarde';
 import { lireBestiaire, noter, nouvelleSession, sauverBestiaire, statsVides } from './carnet';
-import { dernier, enterrer, lireCoffre, lirePersos, sauverCoffre, sauverPerso, supprimerPerso, type Perso, type SorteCoffre } from './persos';
+import { dernier, enterrer, persosEnLigne, lireCoffre, lirePersos, sauverCoffre, sauverPerso, supprimerPerso, type Perso, type SorteCoffre } from './persos';
 import { SonView, synthe } from './sonView';
 import { MANIFESTE, Son } from './son';
 import { retouchesPlacement } from './placementVue';
@@ -368,6 +368,7 @@ export class ZoneScene extends Phaser.Scene {
     if (mini && this.transparence) mini.ignore(this.transparence.calque);
     this.windows?.destroy();
     this.windows = new Windows(this.world);
+    this.windows.socialSlot = this.perso && persosEnLigne() ? this.slot : -1; this.windows.socialTest = !!this.test;
     // Bestiaire (maquette « Drops » 1A) : les monstres vaincus du compte ; la partie de test voit tout
     this.windows.vaincus = () => this.bestiaire; this.windows.toutVoir = !!this.test;
     this.windows.onZaap = i => { this.zaapChoix = i; };
@@ -398,7 +399,7 @@ export class ZoneScene extends Phaser.Scene {
     // Coop (maquette « Multi : » 3A) : l'hôte repose ses invités ici ; chez l'invité, ce monde n'est qu'un miroir de celui de l'hôte
     this.miroir = Coop.miroir;
     const wc = this.world;
-    Coop.attacher({ world: wc, annonce: t => this.hud.toast(t),
+    Coop.attacher({ world: wc, annonce: t => this.hud.toast(t), nom: this.perso?.nom ?? '', sauver: () => this.sauver(),
       allerA: (zone, position) => { if (this.world === wc) this.scene.restart(zone ? { slot: this.slot, zone, position } : { slot: this.slot }); } });
     this.events.once('shutdown', () => Coop.detacher(wc));
     this.carte?.destroy();
@@ -417,6 +418,7 @@ export class ZoneScene extends Phaser.Scene {
       else if (name === 'Métiers') this.windows!.toggle('job');
       else if (name === 'Réglages') this.windows!.toggle('opt');
       else if (name === 'Guide') this.windows!.toggle('guide');
+      else if (name === 'Social') this.windows!.toggle('social');
       else if (name === 'Havre-Sac') this.havreSacDemande = true;
       else if (name === 'Sorts') this.windows!.toggle('sorts');
       else if (name === 'Quêtes' && this.world.quetes) this.windows!.toggle('quetes');
@@ -517,7 +519,14 @@ export class ZoneScene extends Phaser.Scene {
   private versAccueil(page?: 'persos') { this.sauver(); this.game.events.emit('accueil', page); }
 
   /** Partie de test : relance la partie depuis un perso de test écrit d'avance (classe, zone ou état tout prêt). */
+  /** Coop, chez l'invité : la partie est celle de l'hôte (ou du serveur), les outils de test n'y ont pas prise. */
+  private bloqueEnGroupe() {
+    if (!this.miroir) return false;
+    this.hud.toast('Pas pendant une partie à plusieurs : quitte d’abord le groupe (F1 › Monstres)');
+    return true;
+  }
   private relancerTest(t: EtatTest) {
+    if (this.bloqueEnGroupe()) return;
     sauverTest(t);
     this.test = null;   // la sauvegarde de fin de scène ne doit pas écraser ce qu'on vient d'écrire
     this.scene.restart({});
@@ -525,7 +534,7 @@ export class ZoneScene extends Phaser.Scene {
   private actionsTest() {
     const reglages = () => ({ ...REGLAGES_TEST, ...this.world.test });
     return {
-      envoyer: (c: CommandeTest) => { this.cmdTest.push(c); },
+      envoyer: (c: CommandeTest) => { if (!this.bloqueEnGroupe()) this.cmdTest.push(c); },
       forge: () => this.windows?.ouvrirForge(),
       // 4B : même perso, autre classe (les sorts, la barre et les variantes sont ceux de la nouvelle classe)
       classe: (id: string) => {
@@ -901,6 +910,7 @@ export class ZoneScene extends Phaser.Scene {
       case 'bestiaire': w?.toggle('bestiaire'); break;
       case 'dofus': if (p.v03) w?.toggle('dofus'); break;
       case 'guide': w?.toggle('guide'); break;
+      case 'social': w?.toggle('social'); break;
       case 'options': w?.toggle('opt'); break;
       case 'carte': this.basculerCarte(); break;   // M, comme dans Dofus (maquette 0.2, 18A)
       case 'havresac': this.havreSacDemande = true; break;

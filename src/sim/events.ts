@@ -135,6 +135,8 @@ export type SimEvent =
   | { k: 'checkpoint'; name: string }
   /** Le joueur clique une porte : il s'arrête devant pendant World.PASSAGE s (le rendu fond au noir). */
   | { k: 'portalStart'; nom: string }
+  /** Partie tenue par le serveur : un joueur prend le portail de sortie de l'arène, il quitte le groupe. */
+  | { k: 'sortieArene'; joueur: number }
   /** Le joueur arrive ailleurs d'un coup (porte, fin de quête) : le rendu garde le noir jusqu'à ce que les cartes soient posées. */
   | { k: 'portal'; nom: string }
   /** Partie de test : un ordre du panneau F1 a été fait (message court pour l'interface). */

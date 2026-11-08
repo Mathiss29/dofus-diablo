@@ -46,6 +46,8 @@ const ALM_CSS = `.dw .win.almanax{width:420px}.dw .alm{padding:10px 14px 14px;di
 .dw .alm-b b{color:#ffe7b0}.dw .alm-b p{margin:4px 0 0;font-size:12px;opacity:.75;font-style:italic}
 .dw .alm-e{color:#b9e54b;font-weight:bold}.dw .alm-o{display:flex;gap:10px;align-items:center}.dw .alm-o small{display:block}
 .dw .alm-r{font-size:13px}.dw .alm-f{color:#b9e54b;text-align:center;padding:6px}.dw .alm .btn{align-self:center}`;
+import { SOCIAL_CSS, majMembres, rendreSocial } from './social';
+import { Coop } from './coop';
 import { FORGE_CSS, etatForge, forgeHtml, lotConcasseur, mmss, texteForge, type LigneLog } from './forgeVue';
 import { RUNES } from '../sim/forgemagie';
 import { LOOKS } from './looks';
@@ -578,7 +580,7 @@ const CSS = `
 .dw .ttl b{font-weight:700}
 `;
 
-type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap' | 'bestiaire' | 'forge' | 'coffre' | 'almanax' | 'dofus' | 'menu';
+type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap' | 'bestiaire' | 'forge' | 'coffre' | 'almanax' | 'dofus' | 'menu' | 'social';
 
 /** Fenêtres façon Dofus 3 : « Inventaire » (le perso sur son socle, ses emplacements autour, le sac à onglets)
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
@@ -639,11 +641,21 @@ export class Windows {
   private forge = etatForge();
 
   constructor(private world: World) {
-    const style = document.createElement('style'); style.textContent = DOF_CSS + MENU_CSS + ALM_CSS + CSS + ICON_CSS + BUTIN_CSS + FORGE_CSS + CODEX_CSS; document.head.appendChild(style);
+    const style = document.createElement('style'); style.textContent = DOF_CSS + MENU_CSS + ALM_CSS + SOCIAL_CSS + CSS + ICON_CSS + BUTIN_CSS + FORGE_CSS + CODEX_CSS; document.head.appendChild(style);
     this.root = document.createElement('div'); this.root.className = 'dw'; document.body.appendChild(this.root);
     this.tip = document.createElement('div'); this.tip.className = 'tip'; this.tip.style.display = 'none'; this.root.appendChild(this.tip);
     window.addEventListener('keydown', this.captureTouche, true);
+    // fenêtre Social : suit le groupe (arrivées, départs, vie des membres)
+    this.finCoop = Coop.ecouter(() => { if (this.ouverte === 'social') this.refresh(); });
+    this.minuteSocial = window.setInterval(() => { if (this.ouverte === 'social' && Coop.etat === 'salon') majMembres(this.win!, this.ctxSocial()); }, 1000);
   }
+  private finCoop: () => void;
+  private minuteSocial: number;
+  /** Fenêtre Social : emplacement du perso joué (-1 : aucun) et partie de test, posés par la scène. */
+  socialSlot = -1;
+  socialTest = false;
+  private ctxSocial() { return { world: this.world, slot: this.socialSlot, test: this.socialTest, fermer: () => this.close(), refaire: () => this.refresh() }; }
+  private renderSocial() { rendreSocial(this.win!, this.title('Social', 'social'), this.ctxSocial()); }
   get open() { return !!this.win; }
   /** Fenêtre ouverte (ou null). */
   get ouverte(): Mode | null { return this.win ? this.mode : null; }
@@ -654,7 +666,7 @@ export class Windows {
     this.win?.remove(); this.win = null; this.tip.style.display = 'none'; this.touchesVue = false; this.touchesEcoute = null;
     this.root.style.zIndex = '';
   }
-  destroy() { this.root.remove(); window.removeEventListener('keydown', this.captureTouche, true); }
+  destroy() { this.root.remove(); window.removeEventListener('keydown', this.captureTouche, true); this.finCoop(); clearInterval(this.minuteSocial); }
 
   show(mode: Mode = 'inv') {
     this.close(false);
@@ -684,7 +696,7 @@ export class Windows {
     else if (this.mode === 'car') this.renderCarac(); else if (this.mode === 'job') this.renderJob(); else if (this.mode === 'art') this.renderArt(); else if (this.mode === 'opt') this.renderOpt();
     else if (this.mode === 'sorts') this.renderSorts(); else if (this.mode === 'quetes') this.renderQuetes();
     else if (this.mode === 'succes') this.renderSucces(); else if (this.mode === 'emp') this.renderEmp(); else if (this.mode === 'zaap') this.renderZaap();
-    else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else if (this.mode === 'forge') this.renderForge(); else if (this.mode === 'coffre') this.renderCoffre(); else if (this.mode === 'almanax') this.renderAlmanax(); else if (this.mode === 'dofus') this.renderDofus(); else if (this.mode === 'menu') this.renderMenu(); else this.renderInv();
+    else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else if (this.mode === 'forge') this.renderForge(); else if (this.mode === 'coffre') this.renderCoffre(); else if (this.mode === 'almanax') this.renderAlmanax(); else if (this.mode === 'dofus') this.renderDofus(); else if (this.mode === 'menu') this.renderMenu(); else if (this.mode === 'social') this.renderSocial(); else this.renderInv();
     this.win!.querySelector('[data-close]')!.addEventListener('click', () => this.close());
   }
   private title(name: string, icon: string) {

@@ -92,3 +92,52 @@ test('persos en ligne : sauvegarde, plus récent gagne, import unique, suppressi
   assert.equal(pre.headers.get('access-control-allow-headers'), 'authorization, content-type');
   await fin();
 });
+
+test('partie sur le serveur avec le perso du compte : lu sur le compte, sauvé au départ, un seul à la fois', async () => {
+  const { base, fin } = await serveur();
+  const j = await connecter(base), auth = { authorization: `Bearer ${j}`, 'content-type': 'application/json' };
+  const perso = { nom: 'Lyra', classe: 'cra', sexe: 'f', hardcore: false, cree: 1, maj: 1000, temps: 60, lieu: 'Incarnam', zones: [],
+    etat: { level: 30, xp: 0, points: 0, kamas: 77, potions: 3, lootFilter: 0, base: {}, bag: [], equipment: {}, resources: {}, metiers: {},
+      bar: [], variants: [], learned: [], x: 123, y: 456, retour: { name: 'incarnam', x: 1, y: 2 }, zone: 'astrub' } };
+  assert.equal((await fetch(`${base}/persos/1`, { method: 'PUT', headers: auth, body: JSON.stringify({ perso, maj: 1000 }) })).status, 200);
+  const { default: WebSocket } = await import('ws');
+  const client = async () => {
+    const ws = new WebSocket(base.replace('http', 'ws') + '/ws'), file = [], attente = [];
+    ws.on('message', d => { const m = JSON.parse(String(d)); const a = attente.shift(); if (a) a(m); else file.push(m); });
+    await new Promise(ok => ws.on('open', ok));
+    const lire = () => file.length ? Promise.resolve(file.shift()) : new Promise(ok => attente.push(ok));
+    return { ws, envoi: m => ws.send(JSON.stringify(m)), attendre: async f => { for (;;) { const m = await lire(); if (f(m)) return m; } } };
+  };
+  const a = await client();
+  a.envoi({ k: 'creer', serveur: true });
+  const sa = await a.attendre(m => m.k === 'salon' || m.k === 'refus');
+  if (sa.k === 'refus') { a.ws.close(); await fin(); return; }   // simulation pas construite : le test des parties le signale
+  // le jeu ment sur la classe et le niveau : le serveur prend le perso du compte
+  a.envoi({ k: 'envoi', d: { k: 'bonjour', classe: 'iop', etat: { level: 200 }, jeton: j, emplacement: 1 } });
+  await a.attendre(m => m.k === 'recu' && m.d.k === 'zone');
+  // le même perso ne peut pas entrer deux fois
+  const b = await client();
+  b.envoi({ k: 'rejoindre', code: sa.code });
+  await b.attendre(m => m.k === 'salon');
+  b.envoi({ k: 'envoi', d: { k: 'bonjour', jeton: j, emplacement: 1 } });
+  assert.equal((await b.attendre(m => m.k === 'refus')).raison, 'deja');
+  // jeton faux : refus
+  const c = await client();
+  c.envoi({ k: 'rejoindre', code: sa.code });
+  await c.attendre(m => m.k === 'salon');
+  c.envoi({ k: 'envoi', d: { k: 'bonjour', jeton: 'f'.repeat(64), emplacement: 1 } });
+  assert.equal((await c.attendre(m => m.k === 'refus')).raison, 'perso');
+  a.ws.close();
+  await new Promise(r => setTimeout(r, 300));
+  const moi = await (await fetch(`${base}/moi`, { headers: auth })).json();
+  const p = moi.persos[1].perso;
+  assert.equal(p.classe, 'cra');
+  assert.equal(p.etat.level, 30, 'le niveau envoyé par le jeu est ignoré');
+  assert.equal(p.etat.kamas, 77);
+  assert.deepEqual([p.etat.zone, p.etat.x, p.etat.y], ['astrub', 123, 456], 'il garde sa place dans son monde');
+  assert.ok(moi.persos[1].maj > 1000, 'sauvé par le serveur, daté de maintenant');
+  // une copie plus ancienne envoyée ensuite par le jeu est refusée
+  assert.equal((await fetch(`${base}/persos/1`, { method: 'PUT', headers: auth, body: JSON.stringify({ perso, maj: 2000 }) })).status, 409);
+  b.ws.close(); c.ws.close();
+  await fin();
+});
