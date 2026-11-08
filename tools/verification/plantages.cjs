@@ -5,6 +5,7 @@
 // Jeu servi par `npx vite preview --port 4173`, construit avec VITE_ASSETS_URL=https://assets.diablofus.com et
 // VITE_COOP_URL=ws://localhost:3100/ws, serveur lancé à côté (`cd serveur && node index.mjs`). Lancé à chaque PR (ci.yml).
 // SORTIE=dossier : captures des écrans au moment d'un problème. RAPIDE=1 : moins de temps de jeu par étape.
+// CAS=seul:iop ou CAS=coop:0 (0 à 3) : une seule étape (la CI lance les 8 étapes en même temps, ~5 min au lieu de 18).
 const { chromium } = require('playwright');
 const fs = require('fs');
 const SORTIE = process.env.SORTIE ?? 'plantages';
@@ -12,6 +13,8 @@ const JEU = Number(process.env.RAPIDE ? 5 : 12);   // secondes de jeu par étape
 const CLASSES = ['iop', 'cra', 'osamodas', 'sacrieur'];
 const TOUCHES = ['&', 'é', '"', "'", '(', '-'];
 const problemes = [];
+const CAS = process.env.CAS;   // vide = tout
+const garder = id => !CAS || CAS === id;
 
 (async () => {
   fs.mkdirSync(SORTIE, { recursive: true });
@@ -63,7 +66,7 @@ const problemes = [];
   // 1. Seul, chaque classe : combat dans l'arène, puis la scène repart (changement de zone)
   const h = await ouvrir('hote');
   await commande(h, { k: 'niveau', n: 40, auto: true });
-  for (const c of CLASSES) {
+  for (const c of CLASSES.filter(c => garder(`seul:${c}`))) {
     etape = `seul ${c}`; console.log(etape);
     await relancer(h, 'classe', c);
     await crypte(h);
@@ -77,9 +80,11 @@ const problemes = [];
   }
 
   // 2. Coop à deux, chaque classe en invité (et une autre en hôte)
-  const inv = await ouvrir('invite');
-  await commande(inv, { k: 'niveau', n: 40, auto: true });
-  for (const [k, c] of CLASSES.entries()) {
+  const paires = CLASSES.map((c, k) => k).filter(k => garder(`coop:${k}`));
+  const inv = paires.length ? await ouvrir('invite') : null;
+  if (inv) await commande(inv, { k: 'niveau', n: 40, auto: true });
+  for (const k of paires) {
+    const c = CLASSES[k];
     const ch = CLASSES[(k + 1) % CLASSES.length];
     etape = `coop ${ch} hôte, ${c} invité`; console.log(etape);
     await relancer(h, 'classe', ch);

@@ -19,7 +19,12 @@ jobs:
   # navigateurs avec le serveur lancé à côté. Les images viennent de R2 (assets.diablofus.com).
   robot:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        cas: ['seul:iop', 'seul:cra', 'seul:osamodas', 'seul:sacrieur', 'coop:0', 'coop:1', 'coop:2', 'coop:3']
+    name: robot (${{ matrix.cas }})
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -38,9 +43,9 @@ jobs:
           (cd serveur && node index.mjs &)
           (npx vite preview --port 4173 &)
           for i in $(seq 60); do curl -sf http://localhost:4173 >/dev/null && curl -sf http://127.0.0.1:3100/sante >/dev/null && break; sleep 1; done
-          SORTIE=plantages node tools/verification/plantages.cjs
+          SORTIE=plantages CAS='${{ matrix.cas }}' node tools/verification/plantages.cjs
       - if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: plantages
+          name: plantages-${{ strategy.job-index }}
           path: plantages/
