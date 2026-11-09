@@ -1145,6 +1145,15 @@
             "etiquettes": [
               "Partie de test"
             ]
+          },
+          {
+            "titre": "Un diaporama sur l'accueil",
+            "phrase": "Six captures du jeu défilent sur l'accueil, avec une légende : clique pour les voir en grand.",
+            "details": "Les nouveaux le voient à côté de la présentation, les anciens en plus petit sous le carnet du jour.",
+            "icone": "journal",
+            "etiquettes": [
+              "Accueil"
+            ]
           }
         ],
         "Le monde": [],
@@ -1177,7 +1186,8 @@
           "Butin chacun le sien : en groupe, chacun a son tirage sur les monstres et dans le coffre de fin.",
           "Les autres joueurs et les monstres glissent entre deux envois du serveur au lieu de sauter.",
           "Le serveur calcule le classement chaque minute ; les records de donjon ne comptent que sur ses parties.",
-          "Le curseur Monstres passe à 50 % par défaut, et le mixage baisse les monstres quand tu lances un sort."
+          "Le curseur Monstres passe à 50 % par défaut, et le mixage baisse les monstres quand tu lances un sort.",
+          "Un robot rejoue six scènes dans la partie de test pour refaire les captures du diaporama."
         ]
       }
     }
