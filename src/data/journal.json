@@ -1162,7 +1162,18 @@
             "icone": "zaap"
           }
         ],
-        "Le monde": [],
+        "Le monde": [
+          {
+            "titre": "Donjons en couloirs",
+            "phrase": "La Grange du Tournesol se traverse à pied : ses vraies salles reliées par des couloirs, puis la cour du boss.",
+            "details": "Des monstres seuls rôdent dans les couloirs. Les vagues partent quand tu entres dans la cour, sans écran noir.",
+            "icone": "boss",
+            "etiquettes": [
+              "Partie de test",
+              "Astrub"
+            ]
+          }
+        ],
         "Combat": [
           {
             "titre": "Tous les donjons en groupe",
@@ -1195,7 +1206,8 @@
           "Le serveur calcule le classement chaque minute ; les records de donjon ne comptent que sur ses parties.",
           "Le curseur Monstres passe à 50 % par défaut, et le mixage baisse les monstres quand tu lances un sort.",
           "Un robot rejoue six scènes dans la partie de test pour refaire les captures du diaporama.",
-          "La barre de chargement finit par « Le monde se met en place » au lieu de rester figée à 100 %."
+          "La barre de chargement finit par « Le monde se met en place » au lieu de rester figée à 100 %.",
+          "Outil couloirs.py : colle les salles d'un donjon et sa cour en une seule bande (prêt pour Amakna)."
         ]
       }
     }

@@ -307,6 +307,7 @@ export class World {
       for (const [id, d] of Object.entries(opts.items.equipment)) for (const m of d.familier?.monstres ?? []) (this.familiersDe[m] ??= []).push(id);
       // sac vide au départ (Mathis, 2026-11-06) : l'équipement vient du tutoriel (panoplie de l'Intrépide, Arc de Chasse du Crâ)
     }
+    if (open) this.ouvrirCouloirs();
     if (open) { this.buildPortes(); this.buildRecoltes(); this.buildPostes(); }
     if (open && opts.arrivee) this.arriver(opts.arrivee);
     if (open) this.sortieHavreSac(opts);
@@ -576,7 +577,15 @@ export class World {
     const wg = this.worldGrid!;
     // Donjons en arène (1B) : les portes des anciennes salles ne servent plus ; l'entrée mène droit à l'arène, sans retour (sortie = portail, 13A)
     const ancienne = new Map<string, DonjonDef>();
+    const chaine = new Set<string>();   // salles d'un donjon en couloirs : reliées par leurs couloirs, plus par des portes
     for (const dj of this.zone.open!.donjons ?? []) if (dj.arene && wg.mapByTag(dj.arene.tag)) {
+      const cl = this.couloirs(dj);
+      if (cl) {   // en couloirs (partie de test) : l'antichambre reste, seule la salle du boss officielle ne sert plus
+        for (const t of cl.salles) chaine.add(t);
+        for (const t of Object.keys(dj.salles)) if (!cl.salles.includes(t) && wg.mapByTag(t)) ancienne.set(t, dj);
+        for (const t of [...cl.salles, ...cl.tags, dj.arene.tag]) if (!this.lieux.has(t)) this.lieux.set(t, dj.nom);
+        continue;
+      }
       // ses salles, et l'antichambre de même nom (grange_0, cache_0)
       const pref = new Set(Object.keys(dj.salles).map(t => t.replace(/\d+$/, '')));
       for (const m of wg.world.maps) if (m.inside && pref.has(m.tag.replace(/\d+$/, '')) && /\d$/.test(m.tag)) ancienne.set(m.tag, dj);
@@ -584,7 +593,7 @@ export class World {
     for (const d of this.zone.open!.portes ?? []) {
       if (d.v03 && !this.player.v03) continue;
       const dj = ancienne.get(d.b[0]);
-      if (ancienne.has(d.a[0])) continue;
+      if (ancienne.has(d.a[0]) || chaine.has(d.a[0])) continue;
       if (dj && !d.zone && wg.mapByTag(d.a[0])) {
         const q = wg.cellToWorld(wg.cellOf(d.a[0], d.a[1])), A = dj.arene!, B = wg.cellToWorld(A.arrivee);
         this.portes.push({ nom: d.nom, ends: [{ tag: d.a[0], ...wg.nearestFree(q.x, q.y, wg.freeByMap.get(d.a[0])!) }, { tag: A.tag, ...B }], verrou: false, sens: true, cle: d.cle });
@@ -771,7 +780,24 @@ export class World {
   /** Le joueur est dans une salle de ce donjon. */
   dansDonjon(nom: string): boolean {
     const d = this.zone.open?.donjons?.find(x => x.nom === nom), tag = this.worldGrid?.mapAt(this.player.x, this.player.y)?.tag;
-    return !!d && !!tag && (tag in d.salles || tag === d.arene?.tag);
+    return !!d && !!tag && (tag in d.salles || tag === d.arene?.tag || !!this.couloirs(d)?.tags.includes(tag));
+  }
+  /** Partie de test : les couloirs des donjons en couloirs s'ouvrent à la marche, et salles, couloirs et arène se voient
+   *  ensemble depuis l'intérieur (WorldView). En partie publique, rien : l'arène reste fermée, comme avant. */
+  private ouvrirCouloirs() {
+    const wg = this.worldGrid;
+    if (!wg || !this.test) return;
+    for (const d of this.zone.open!.donjons ?? []) {
+      const c = d.couloirs;
+      if (!c || !d.arene || ![...c.tags, ...c.salles, d.arene.tag].every(t => wg.mapByTag(t))) continue;
+      wg.ouvrir(c.cases);
+      for (const t of [...c.salles, ...c.tags, d.arene.tag]) wg.mapByTag(t)!.groupe = d.nom;
+    }
+  }
+  /** Donjon en couloirs (maquette « Couloirs : 1C 2B 3A 4A ») : seulement en partie de test (0.4 cachée), et s'il est exporté. */
+  couloirs(d: DonjonDef): DonjonDef['couloirs'] | null {
+    const c = d.couloirs, wg = this.worldGrid;
+    return c && this.test && wg && c.tags.every(t => wg.mapByTag(t)) && c.salles.every(t => wg.mapByTag(t)) ? c : null;
   }
 
   // --- Arènes des donjons (maquette « Donjons en vagues ») ---------------------------------------------------
@@ -785,8 +811,18 @@ export class World {
     this.emit({ k: 'areneDebut', nom: d.nom, boss, vagues: this.arene.total, cle, reprise: reprise > 1 ? reprise : 0 });
   }
   private updateArene(dt: number) {
-    const p = this.player, a = this.arene;
+    const p = this.player, tag = this.worldGrid?.mapAt(p.x, p.y)?.tag;
+    if (!this.arene && !this.passage && !p.dead && tag) {
+      const d = this.zone.open?.donjons?.find(x => x.arene?.tag === tag && this.couloirs(x));
+      if (d) this.lancerArene(d);
+    }
+    const a = this.arene;
     if (!a) return;
+    if (this.couloirs(a.d)) {   // donjon en couloirs : l'arène tient tant qu'on est dans le donjon
+      if (!this.passage && !p.dead && !this.dansDonjon(a.d.nom)) { a.abandonner(); this.arene = null; return; }
+      a.update(dt);
+      return;
+    }
     // parti autrement que par le portail (Rappel…) : l'arène se vide
     if (!this.passage && !p.dead && this.worldGrid!.mapAt(p.x, p.y)?.tag !== a.d.arene!.tag) { a.abandonner(); this.arene = null; return; }
     a.update(dt);
@@ -871,7 +907,9 @@ export class World {
     }
     // Donjons : groupes officiels fixes, salle par salle
     for (const d of open.donjons ?? []) for (const [tag, groupes] of Object.entries(d.salles)) {
-      if (d.arene && wg.mapByTag(d.arene.tag)) break;   // donjon en arène : les monstres arrivent par vagues
+      const cl = this.couloirs(d);
+      if (cl && !cl.salles.includes(tag)) continue;   // en couloirs : groupes officiels dans les salles du trajet, le boss attend dans l'arène
+      if (!cl && d.arene && wg.mapByTag(d.arene.tag)) break;   // donjon en arène : les monstres arrivent par vagues
       const m = wg.mapByTag(tag);
       if (!m || !wg.freeByMap.get(tag)?.length) continue;
       const sub = open.subareas[String(m.sub)] ?? { name: d.nom, level: this.zone.level, monsters: [], groupsPerMap: 0, groupSize: [0, 0] };
@@ -879,6 +917,26 @@ export class World {
         const g: MonsterGroup = { id: this.groups.length, map: tag, sub, members: [], timer: 0, cleared: false, x: 0, y: 0, fixe, donjon: d.nom, point: -1 };
         this.groups.push(g);
         this.spawnGroup(g);
+      }
+    }
+    this.poserErrants();
+  }
+  /** 2B : monstres seuls qui rôdent dans les couloirs (tirés parmi ceux du donjon, sans le boss). */
+  private poserErrants() {
+    const wg = this.worldGrid!, M = this.opts.data.monsters;
+    for (const d of this.zone.open!.donjons ?? []) {
+      const cl = this.couloirs(d);
+      if (!cl) continue;
+      const pool = [...new Set(Object.values(d.salles).flat(2))].filter(m => M[m] && !M[m].boss);
+      if (!pool.length) continue;
+      for (const tag of cl.tags) {
+        if (!wg.freeByMap.get(tag)?.length) continue;
+        const m = wg.mapByTag(tag)!, sub = this.zone.open!.subareas[String(m.sub)] ?? { name: d.nom, level: this.zone.level, monsters: [], groupsPerMap: 0, groupSize: [0, 0] };
+        for (let i = 0; i < cl.nErrants; i++) {
+          const g: MonsterGroup = { id: this.groups.length, map: tag, sub, members: [], timer: 0, cleared: false, x: 0, y: 0, fixe: [pool[this.rng.int(pool.length)]], donjon: d.nom, point: -1 };
+          this.groups.push(g);
+          this.spawnGroup(g);
+        }
       }
     }
   }
