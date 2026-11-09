@@ -36,9 +36,11 @@ export async function chargerSim(dossier = new URL('./partie/', import.meta.url)
 export class Partie {
   /** @param {any} S la simulation chargée ; envoyer(num, données) parle à un joueur du salon. */
   /** sauver(compte, perso) : écrit le perso d'un compte (comptes.mjs) ; absent = rien n'est gardé. */
+  /** o.donjonFini(nom, temps, membres) : fin d'un donjon (Ladder 2D), avec les persos de comptes encore là. */
   /** o.monde : Incarnam en monde ouvert, chacun avec ses quêtes, sa place et son point de retour (sinon l'arène de la Crypte). */
   constructor(S, envoyer, seed = Math.floor(Math.random() * 2 ** 31), sauver = null, o = {}) {
     this.S = S; this.envoyer = envoyer; this.seed = seed; this.sauver = sauver; this.depuisSauvegarde = 0;
+    this.donjonFini = o.donjonFini ?? null;
     this.monde = !!o.monde;
     this.w = null;
     this.membres = new Map();
@@ -136,6 +138,12 @@ export class Partie {
           if (e.k !== 'changeZone') m.em.noterPerso(e);
           else if (!m.sorti) { m.sorti = true; this.envoyer(num, { k: 'sortie', vers: { zone: e.zone, arrivee: e.arrivee } }); }
         }
+      }
+      // Ladder 2D + 4B : chrono du donjon, compté seulement ici (partie tenue par le serveur)
+      for (const e of evs) if (e.k === 'areneFin' && this.donjonFini) {
+        const L = [...this.membres.values()].filter(m => m.compte && m.joueur != null)
+          .map(m => ({ compte: m.compte.compte, emplacement: m.compte.emplacement, nom: m.compte.perso.nom, classe: m.compte.perso.classe }));
+        try { this.donjonFini(e.nom, e.temps, L); } catch (err) { console.warn('partie : record raté', err.message); }
       }
       this.relever(PARTIE.pas);
       if ((this.depuisSauvegarde += PARTIE.pas) >= PARTIE.sauvegarde) { this.depuisSauvegarde = 0; for (const m of this.membres.values()) this.sauverMembre(m); }

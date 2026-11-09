@@ -446,6 +446,7 @@ export class ZoneScene extends Phaser.Scene {
       else if (name === 'Réglages') this.windows!.toggle('opt');
       else if (name === 'Guide') this.windows!.toggle('guide');
       else if (name === 'Social') this.windows!.toggle('social');
+      else if (name === 'Classement') this.windows!.toggle('ladder');
       else if (name === 'Havre-Sac') this.havreSacDemande = true;
       else if (name === 'Sorts') this.windows!.toggle('sorts');
       else if (name === 'Quêtes' && this.world.quetes) this.windows!.toggle('quetes');
@@ -945,6 +946,7 @@ export class ZoneScene extends Phaser.Scene {
       case 'dofus': if (p.v03) w?.toggle('dofus'); break;
       case 'guide': w?.toggle('guide'); break;
       case 'social': w?.toggle('social'); break;
+      case 'ladder': w?.toggle('ladder'); break;
       case 'chat': this.chat?.ouvrir(); break;
       case 'options': w?.toggle('opt'); break;
       case 'carte': this.basculerCarte(); break;   // M, comme dans Dofus (maquette 0.2, 18A)
@@ -1141,7 +1143,10 @@ export class ZoneScene extends Phaser.Scene {
             // Cimetière des héros (Accueil 11A) : une stèle avec le monstre le plus proche au moment de la mort
             const p = this.world.player, pr = this.perso;
             const tueur = this.world.monsters.filter(m => !m.dead).sort((a, b) => Math.hypot(a.x - p.x, a.y - p.y) - Math.hypot(b.x - p.x, b.y - p.y))[0];
-            enterrer({ cree: pr.cree, nom: pr.nom, classe: pr.classe, sexe: pr.sexe, niveau: p.level, temps: Math.round(pr.temps), lieu: this.world.area?.name ?? pr.lieu, tueur: tueur?.def.name ?? 'Inconnu', date: Date.now() });
+            const stele = { cree: pr.cree, nom: pr.nom, classe: pr.classe, sexe: pr.sexe, niveau: p.level, temps: Math.round(pr.temps), lieu: this.world.area?.name ?? pr.lieu, tueur: tueur?.def.name ?? 'Inconnu', date: Date.now() };
+            enterrer(stele);
+            // Ladder 3B : en ligne, le classement garde sa ligne dans « Tombés en Hardcore »
+            CompteEnLigne.tomber(this.slot, { niveau: stele.niveau, lieu: stele.lieu, tueur: stele.tueur });
             supprimerPerso(this.slot);
             this.hud.banner(`${this.perso.nom} est mort\nMode Hardcore : Entrée pour revenir à l'accueil`, 0, true);
           } else if (this.world.zone.open) this.hud.banner(`Vaincu\nEntrée : retour à ${this.world.checkpointName}`, 0, true);

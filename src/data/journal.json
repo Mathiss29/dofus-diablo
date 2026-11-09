@@ -1125,12 +1125,25 @@
       "capture": "assets/journal/2026-11-09.webp",
       "legende": "Un invité parle à Berb Nhin dans l'Incarnam partagé, 8 novembre 2026.",
       "lignes": {
-        "Nouveautés": [],
+        "Nouveautés": [
+          {
+            "titre": "Le Ladder des aventuriers",
+            "phrase": "Un classement en ligne : niveau, Hardcore, métiers, exploration et records de donjon.",
+            "details": "Clique un nom pour voir sa fiche et son équipement. « Les premiers » grave pour toujours le premier niveau 50, le premier Dofus…",
+            "icone": "succes",
+            "etiquettes": [
+              "Touche L",
+              "Accueil › Ladder",
+              "Perso en ligne"
+            ]
+          }
+        ],
         "Le monde": [],
         "Combat": [],
         "Corrections": [],
         "En coulisses": [
-          "À plusieurs, chaque joueur voit son sac, ses ressources et ses kamas en direct."
+          "À plusieurs, chaque joueur voit son sac, ses ressources et ses kamas en direct.",
+          "Le serveur calcule le classement chaque minute ; les records de donjon ne comptent que sur ses parties."
         ]
       }
     }
