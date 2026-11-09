@@ -205,9 +205,11 @@ export class Hud {
       const tex = this.scene.textures.exists(b.look) ? this.scene.textures.get(b.look) : null;
       const fr = tex && (tex.has('AnimStatique_1_0') ? 'AnimStatique_1_0' : tex.getFrameNames()[0]);
       if (tex && fr) {
-        if (u.img.texture.key !== b.look || u.img.frame.name !== fr) u.img.setTexture(b.look, fr);
+        // la planche a pu être déchargée puis rechargée sous la même clé (changement de salle) :
+        // on compare le cadre lui-même, sinon l'image garde un cadre détruit (data = null)
+        if (u.img.frame !== tex.get(fr)) u.img.setTexture(b.look, fr);
         // planche rognée : on centre le dessin lui-même (pas la cellule de rendu, presque vide)
-        const f = u.img.frame, ss = (f as unknown as { data: { spriteSourceSize?: { x: number; y: number; w: number; h: number } } }).data.spriteSourceSize;
+        const f = u.img.frame, ss = (f as unknown as { data: { spriteSourceSize?: { x: number; y: number; w: number; h: number } } | null }).data?.spriteSourceSize;
         const r = f.trimmed && ss ? ss : { x: 0, y: 0, w: f.realWidth, h: f.realHeight }, k = (ps - 6) / Math.max(r.w, r.h);
         u.img.setDisplayOrigin(r.x + r.w / 2, r.y + r.h / 2).setPosition(px + ps / 2, py + ps / 2).setScale(k).setVisible(true);
       } else u.img.setVisible(false);
