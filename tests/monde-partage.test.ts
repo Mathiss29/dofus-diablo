@@ -63,4 +63,18 @@ describe('monde partagé : un état par joueur', () => {
     expect(vue.quetes!.vaincus.has('bouftou')).toBe(true);
     expect(vue.quetes!.dialogue?.pnj).toBe(pnj.id);
   });
+
+  it('chaque invité reçoit son sac en direct, et seulement le sien', () => {
+    const hote = monde(), vue = monde(), q = hote.ajouterJoueur('cra'), r = hote.ajouterJoueur('iop'), em = new Emetteur(q.id);
+    appliquerInstantane(vue, JSON.parse(JSON.stringify(em.instantane(hote))) as Instantane);
+    q.resources.ble = 7; q.kamas = 1234; r.kamas = 99;
+    q.bag.push({ ...structuredClone(hote.player.bag[0] ?? { id: 'x', uid: 1 }), uid: 4242 } as never);
+    const s = JSON.parse(JSON.stringify(em.instantane(hote))) as Instantane;
+    expect(Object.keys(s.sac ?? {}).sort()).toEqual(['bag', 'kamas', 'resources']);
+    appliquerInstantane(vue, s);
+    expect([vue.player.resources.ble, vue.player.kamas, vue.player.bag.some(i => i.uid === 4242)]).toEqual([7, 1234, true]);
+    const autre = vue.players.find(p => p.id === r.id)!;
+    expect(autre.kamas).not.toBe(99);
+    expect(em.instantane(hote).sac).toBeUndefined();   // rien n'a changé : rien ne repart
+  });
 });

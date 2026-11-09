@@ -35,6 +35,8 @@ export interface Instantane {
   ev?: Val[];
   /** Ses quêtes à lui (monde partagé) et le dialogue ouvert, quand ils changent. */
   q?: Val;
+  /** Son sac à lui (objets, ressources, kamas, métiers…), quand il change : les autres joueurs ne le reçoivent jamais. */
+  sac?: Champs;
 }
 
 export const COOP = {
@@ -47,6 +49,9 @@ export const COOP = {
 };
 
 /** Champs jamais envoyés : données du jeu (recréées de l'autre côté), sac et progression propres à chaque joueur, caches. */
+/** Champs du sac et de la progression : refusés pour les autres, envoyés à leur propriétaire seul (instantané.sac). */
+const SAC = ['bag', 'resources', 'kamas', 'metiers', 'apparats', 'dofus', 'zaaps', 'codex', 'codexOuvert', 'ames', 'cleDonjon', 'recetteSuivie',
+  'commandeFM', 'lootFilter', 'autoBrisage', 'almanaxJour', 'zonesVues'] as const;
 const REFUS: Record<Sorte | 'a', Set<string>> = {
   j: new Set(['cls', 'items', 'bag', 'resources', 'codex', 'learned', 'zonesVues', 'metiers', 'prereglages', 'ames', 'apparats', 'dofus',
     'commandeFM', 'quetes', 'monde', 'evenements', 'cleDonjon', 'recetteSuivie', 'zaaps', '_pouvoirs', 'almanaxJour', 'codexOuvert', 'lootFilter', 'autoBrisage', 'kamas', 'v03', 'repathT', 'bufferT', 'buffer']),
@@ -146,6 +151,9 @@ export class Emetteur {
     // (l'invité l'a effacée de son miroir, il la recrée de zéro)
     for (const cle of this.vu.keys()) if (/^[jmb]\d/.test(cle) && !presents.has(cle)) this.vu.delete(cle);
     // monde partagé : ses quêtes (suivi, PNJ, carnet) et son dialogue, quand ils changent
+    const sac: Champs = {};
+    for (const k of SAC) { const v = versReseau((moi as unknown as Record<string, unknown>)[k]); if (v !== undefined && diff('sac', k, v)) sac[k] = v; }
+    if (Object.keys(sac).length) s.sac = sac;
     if (moi.quetes) { const q = versReseau({ ...moi.quetes.exporter(), dialogue: moi.quetes.dialogue }); if (q !== undefined && diff('q', '', q)) s.q = q; }
     if (this.evs.length) { s.ev = this.evs; this.evs = []; }
     return s;
@@ -227,6 +235,7 @@ export function appliquerInstantane(w: World, s: Instantane): SimEvent[] {
   }
   for (const [k, v] of Object.entries(s.w ?? {})) poser(w, k, depuisReseau(v, w));
   poser(w, 'time', s.t);
+  for (const [k, v] of Object.entries(s.sac ?? {})) if ((SAC as readonly string[]).includes(k)) poser(moi, k, depuisReseau(v, w));
   if (s.q && typeof s.q === 'object' && w.quetes) w.quetes.recopier(s.q as unknown as EtatQuetes & { dialogue?: Dialogue | null });
   const evs = (s.ev ?? []).map(e => depuisReseau(e, w) as SimEvent);
   if (moi.hp < hpAvant && !moi.dead) evs.push({ k: 'playerHurt' });
