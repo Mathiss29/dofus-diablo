@@ -9,6 +9,10 @@ import { Coop } from './coop';
 import { Compte } from './compte';
 import { lirePersos } from './persos';
 import { EnLigne } from './presence';
+import { cacheDuClassement, cacherDuClassement, chargerLadder } from './ladder';
+import { nomAction } from './touches';
+/** Ladder 5A : état « caché » demandé une fois au serveur. */
+let ladderDemande = false;
 
 export const SOCIAL_CSS = `.dw .win.social{width:440px}
 .dw .soc{padding:8px 14px 14px;display:flex;flex-direction:column;gap:10px}
@@ -138,6 +142,10 @@ export function rendreSocial(win: HTMLDivElement, titre: string, c: ContexteSoci
     const v = (k: string) => !!win.querySelector<HTMLInputElement>(`[data-soc-prive="${k}"]`)?.checked;
     EnLigne.reglerSocial(v('horsLigne'), v('inconnus'));
   }));
+  // Ladder 5A : se cacher du classement (lu une fois au premier affichage, pour savoir si la case est cochée)
+  const caseLadder = win.querySelector<HTMLInputElement>('[data-soc-ladder]');
+  caseLadder?.addEventListener('change', () => void cacherDuClassement(caseLadder.checked));
+  if (caseLadder && !ladderDemande) { ladderDemande = true; void chargerLadder().then(() => c.refaire()); }
   // clic droit sur un joueur des listes : son menu (6A)
   win.querySelectorAll<HTMLElement>('[data-joueur]').forEach(e => e.addEventListener('contextmenu', ev => {
     ev.preventDefault(); menuJoueur(ev.clientX, ev.clientY, { id: Number(e.dataset.joueur), nom: e.dataset.nom ?? '' });
@@ -194,6 +202,7 @@ function amis(c: ContexteSocial): string {
       <div class="act"><span class="btn mini gris" data-soc-retirer="${d.id}">Annuler</span></div></div>`).join('')}</div>` : ''}
     <label class="case"><input type="checkbox" data-soc-prive="horsLigne" ${A.horsLigne ? 'checked' : ''}> Apparaître hors ligne (ni dans l'onglet Discord, ni chez mes amis)</label>
     <label class="case"><input type="checkbox" data-soc-prive="inconnus" ${A.inconnus ? 'checked' : ''}> Refuser les invitations de ceux qui ne sont pas mes amis</label>
+    <label class="case"><input type="checkbox" data-soc-ladder ${cacheDuClassement() ? 'checked' : ''}> Me cacher du classement (Ladder, touche ${nomAction('ladder')})</label>
     <p class="note">Ceux qui ne sont pas tes amis ne voient que le nom de ton perso, jamais ton pseudo Discord.</p>`;
 }
 /** Onglet Ignorés (2D) : leurs messages et invitations n'arrivent plus. */

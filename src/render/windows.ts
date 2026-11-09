@@ -69,6 +69,7 @@ import { METIERS_FAB, chanceRare, prochainPalier, recettesAvec, recettesDe, sour
 /** Produit d'une recette : ressource, ou équipement (métiers de fabrication, 0.3). */
 const produit = (id: string): { name: string; icon: number; soin?: number } | undefined => ITEMS.resources[id] ?? ITEMS.equipment[id];
 import { chrono } from '../sim/quests';
+import { LADDER_CSS, VueLadder, chargerLadder, idDuPerso, ladderCharge } from './ladder';
 import type { MarqueCarte } from './carteMonde';
 
 const SLOT_NAMES: Record<EquipSlot, string> = {
@@ -581,7 +582,7 @@ const CSS = `
 .dw .ttl b{font-weight:700}
 `;
 
-type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap' | 'bestiaire' | 'forge' | 'coffre' | 'almanax' | 'dofus' | 'menu' | 'social';
+type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap' | 'bestiaire' | 'forge' | 'coffre' | 'almanax' | 'dofus' | 'menu' | 'social' | 'ladder';
 
 /** Fenêtres façon Dofus 3 : « Inventaire » (le perso sur son socle, ses emplacements autour, le sac à onglets)
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
@@ -642,7 +643,7 @@ export class Windows {
   private forge = etatForge();
 
   constructor(private world: World) {
-    const style = document.createElement('style'); style.textContent = DOF_CSS + MENU_CSS + ALM_CSS + SOCIAL_CSS + CSS + ICON_CSS + BUTIN_CSS + FORGE_CSS + CODEX_CSS; document.head.appendChild(style);
+    const style = document.createElement('style'); style.textContent = DOF_CSS + MENU_CSS + ALM_CSS + SOCIAL_CSS + CSS + ICON_CSS + BUTIN_CSS + FORGE_CSS + CODEX_CSS + LADDER_CSS; document.head.appendChild(style);
     this.root = document.createElement('div'); this.root.className = 'dw'; document.body.appendChild(this.root);
     this.tip = document.createElement('div'); this.tip.className = 'tip'; this.tip.style.display = 'none'; this.root.appendChild(this.tip);
     window.addEventListener('keydown', this.captureTouche, true);
@@ -660,6 +661,20 @@ export class Windows {
   socialTest = false;
   private ctxSocial() { return { world: this.world, slot: this.socialSlot, test: this.socialTest, fermer: () => this.close(), refaire: () => this.refresh() }; }
   private renderSocial() { rendreSocial(this.win!, this.title('Social', 'social'), this.ctxSocial()); }
+  /** Classement (maquette « Ladder : » 1B) : centré sur le perso joué, ouvert sur « Autour de moi ». */
+  private ladder = new VueLadder(true);
+  private renderLadder() {
+    const w = this.win!;
+    w.innerHTML = `${this.title('Classement', 'ladder')}<div class="lad" data-ladder></div>`;
+    const el = w.querySelector<HTMLElement>('[data-ladder]')!;
+    this.ladder.monId = this.socialSlot >= 0 ? idDuPerso(this.socialSlot) : '';
+    el.innerHTML = this.ladder.html();
+    this.ladder.brancher(el, () => { if (this.ouverte === 'ladder') this.refresh(); });
+    if (!ladderCharge() || this.ladderVieux()) void chargerLadder(true).then(() => { if (this.ouverte === 'ladder') this.refresh(); });
+  }
+  private ladderLu = 0;
+  /** Relu au plus une fois par minute pendant que la fenêtre est ouverte. */
+  private ladderVieux() { const t = Date.now(); if (t - this.ladderLu < 60_000) return false; this.ladderLu = t; return true; }
   get open() { return !!this.win; }
   /** Fenêtre ouverte (ou null). */
   get ouverte(): Mode | null { return this.win ? this.mode : null; }
@@ -700,7 +715,7 @@ export class Windows {
     else if (this.mode === 'car') this.renderCarac(); else if (this.mode === 'job') this.renderJob(); else if (this.mode === 'art') this.renderArt(); else if (this.mode === 'opt') this.renderOpt();
     else if (this.mode === 'sorts') this.renderSorts(); else if (this.mode === 'quetes') this.renderQuetes();
     else if (this.mode === 'succes') this.renderSucces(); else if (this.mode === 'emp') this.renderEmp(); else if (this.mode === 'zaap') this.renderZaap();
-    else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else if (this.mode === 'forge') this.renderForge(); else if (this.mode === 'coffre') this.renderCoffre(); else if (this.mode === 'almanax') this.renderAlmanax(); else if (this.mode === 'dofus') this.renderDofus(); else if (this.mode === 'menu') this.renderMenu(); else if (this.mode === 'social') this.renderSocial(); else this.renderInv();
+    else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else if (this.mode === 'forge') this.renderForge(); else if (this.mode === 'coffre') this.renderCoffre(); else if (this.mode === 'almanax') this.renderAlmanax(); else if (this.mode === 'dofus') this.renderDofus(); else if (this.mode === 'menu') this.renderMenu(); else if (this.mode === 'social') this.renderSocial(); else if (this.mode === 'ladder') this.renderLadder(); else this.renderInv();
     this.win!.querySelector('[data-close]')!.addEventListener('click', () => this.close());
   }
   private title(name: string, icon: string) {

@@ -35,7 +35,7 @@ const HEADS: Record<string, string> = { iop: 'tete_iop', cra: 'tete_cra', iop_f:
 /** Nom court d'une touche pour le coin d'un emplacement (« Espace » ne tient pas). */
 const court = (t: string) => t === 'Espace' ? 'Esp.' : t;
 /** Action (render/touches.ts) de chaque menu de la colonne, pour son raccourci dans l'infobulle. */
-const ACTION_MENU: Record<string, string> = { Inventaire: 'inventaire', 'Caractéristiques': 'caracs', 'Métiers': 'metiers', Sorts: 'sorts', 'Carte du monde': 'carte', Bestiaire: 'bestiaire', 'Havre-Sac': 'havresac', Social: 'social', Guide: 'guide', 'Réglages': 'options' };
+const ACTION_MENU: Record<string, string> = { Inventaire: 'inventaire', 'Caractéristiques': 'caracs', 'Métiers': 'metiers', Sorts: 'sorts', 'Carte du monde': 'carte', Bestiaire: 'bestiaire', 'Havre-Sac': 'havresac', Social: 'social', Classement: 'ladder', Guide: 'guide', 'Réglages': 'options' };
 /** Modules de l'interface qu'on peut déplacer (Réglages 6A), avec leur nom affiché pendant le déplacement. */
 const MODULES: Record<string, string> = { perso: 'Cadre du perso', mini: 'Mini-carte', suivi: 'Suivi de quête', dps: 'Dégâts par seconde' };
 /** Colonne de menus avec les icônes officielles en couleur de Dofus 3 (uiassets_2x) : icône, nom, raccourci (vide si aucun).
@@ -43,7 +43,7 @@ const MODULES: Record<string, string> = { perso: 'Cadre du perso', mini: 'Mini-c
 const MENUS: [string, string, string][] = [
   ['inventory', 'Inventaire', 'I'], ['characteristic', 'Caractéristiques', 'C'], ['job', 'Métiers', 'J'], ['spells', 'Sorts', 'S'], ['quest', 'Quêtes', ''],
   ['map', 'Carte du monde', ''], ['bestiary', 'Bestiaire', 'B'], ['success', 'Succès', ''], ['breach', 'Failles', ''],
-  ['home', 'Havre-Sac', 'H'], ['social', 'Social', 'P'], ['guide', 'Guide', 'G'], ['options', 'Réglages', 'O'],
+  ['home', 'Havre-Sac', 'H'], ['social', 'Social', 'P'], ['ladder', 'Classement', 'L'], ['guide', 'Guide', 'G'], ['options', 'Réglages', 'O'],
 ];
 
 const C = {

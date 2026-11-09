@@ -48,6 +48,12 @@ class CompteEnLigne {
   ecouter(f: () => void) { this.ecouteurs.add(f); return () => this.ecouteurs.delete(f); }
   private changer() { sourceEnLigne(this.enLigne); for (const f of this.ecouteurs) f(); }
 
+  /** Persos Hardcore morts (« p0 »…) : leur suppression part comme une tombe, gardée par le classement (Ladder 3B). */
+  private morts = new Map<string, { niveau: number; lieu: string; tueur: string }>();
+  /** Un perso Hardcore vient de mourir : à appeler juste avant supprimerPerso. */
+  tomber(slot: number, stele: { niveau: number; lieu: string; tueur: string }) { if (this.enLigne) this.morts.set(`p${slot}`, stele); }
+  /** Requête au serveur avec le jeton du compte (classement, réglages). */
+  appeler(chemin: string, o: RequestInit = {}) { return this.api(chemin, o); }
   private async api(chemin: string, o: RequestInit = {}) {
     const r = await fetch(API + chemin, { ...o, headers: { authorization: `Bearer ${this.jeton}`, ...(o.body ? { 'content-type': 'application/json' } : {}), ...o.headers } });
     if (r.status === 401) { ecrireCle(CLE_JETON, null); this.etat = 'hors'; this.infos = null; this.message = 'Ta connexion a expiré, reconnecte-toi.'; this.changer(); throw new Error('connexion'); }
@@ -116,10 +122,12 @@ class CompteEnLigne {
     if (c === this.envoye.get(k) || !this.jeton) return;
     this.dernierEnvoi.set(k, Date.now());
     const coffre = !k.startsWith('p'), p = coffre ? null : JSON.parse(c) as Perso | null;
-    const chemin = coffre ? `/coffres/${k}` : `/persos/${k.slice(1)}`;
-    const corps = coffre ? JSON.stringify({ coffre: JSON.parse(c) }) : p ? JSON.stringify({ perso: p, maj: p.maj }) : undefined;
+    const mort = !coffre && !p ? this.morts.get(k) : undefined;
+    const chemin = mort ? `/tombes/${k.slice(1)}` : coffre ? `/coffres/${k}` : `/persos/${k.slice(1)}`;
+    const corps = mort ? JSON.stringify(mort) : coffre ? JSON.stringify({ coffre: JSON.parse(c) }) : p ? JSON.stringify({ perso: p, maj: p.maj }) : undefined;
     try {
-      const r = await this.api(chemin, { method: corps ? 'PUT' : 'DELETE', body: corps, keepalive: garder && (corps?.length ?? 0) < 60_000 });
+      const r = await this.api(chemin, { method: mort ? 'POST' : corps ? 'PUT' : 'DELETE', body: corps, keepalive: garder && (corps?.length ?? 0) < 60_000 });
+      if (r.ok && mort) this.morts.delete(k);
       if (r.ok) { this.envoye.set(k, c); return; }
       if (r.status === 409) { this.message = 'Ce perso a été joué plus récemment sur un autre PC : sa dernière version est revenue.'; await this.charger(); return; }
       if (r.status === 413) this.message = 'Ce perso est trop lourd pour être sauvé en ligne.';

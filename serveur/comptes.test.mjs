@@ -142,6 +142,34 @@ test('partie sur le serveur avec le perso du compte : lu sur le compte, sauvé a
   await fin();
 });
 
+test('Ladder : classement public, se cacher, Hardcore tombé (3B, 5A)', async () => {
+  const { base, fin } = await serveur();
+  const j = await connecter(base), auth = { authorization: `Bearer ${j}` };
+  const perso = { nom: 'Brave', classe: 'iop', sexe: 'm', hardcore: true, temps: 60, lieu: 'Astrub', zones: ['a'], etat: { level: 12, xp: 5 } };
+  assert.equal((await fetch(`${base}/persos/0`, { method: 'PUT', headers: auth, body: JSON.stringify({ perso, maj: 1 }) })).status, 200);
+  // le classement se lit sans être connecté (1A) ; il est recalculé chaque minute, la vie privée le recalcule tout de suite
+  const moi = await (await fetch(`${base}/classement/moi`, { headers: auth })).json();
+  assert.equal(moi.cache, false);
+  assert.equal((await fetch(`${base}/classement/moi`)).status, 401);
+  await fetch(`${base}/classement/moi`, { method: 'PUT', headers: auth, body: JSON.stringify({ cache: false }) });
+  let c = await (await fetch(`${base}/classement`)).json();
+  assert.deepEqual(c.listes.hardcore, [moi.miens[0]]);
+  const f = await (await fetch(`${base}/classement/fiche/${moi.miens[0]}`)).json();
+  assert.equal(f.nom, 'Brave'); assert.equal(f.rangs.niveau, 1);
+  await fetch(`${base}/classement/moi`, { method: 'PUT', headers: auth, body: JSON.stringify({ cache: true }) });
+  assert.equal((await (await fetch(`${base}/classement`)).json()).total, 0);
+  assert.equal((await fetch(`${base}/classement/fiche/${moi.miens[0]}`)).status, 404);
+  await fetch(`${base}/classement/moi`, { method: 'PUT', headers: auth, body: JSON.stringify({ cache: false }) });
+  // mort en Hardcore : effacé, gardé dans les Tombés
+  assert.equal((await fetch(`${base}/tombes/0`, { method: 'POST', headers: auth, body: JSON.stringify({ lieu: 'Champs', tueur: 'Bouftou', niveau: 13 }) })).status, 200);
+  assert.equal((await (await fetch(`${base}/moi`, { headers: auth })).json()).persos[0], null);
+  await fetch(`${base}/classement/moi`, { method: 'PUT', headers: auth, body: JSON.stringify({ cache: false }) });
+  c = await (await fetch(`${base}/classement`)).json();
+  assert.equal(c.total, 0);
+  assert.deepEqual([c.tombes[0].nom, c.tombes[0].tueur, c.tombes[0].niveau], ['Brave', 'Bouftou', 13]);
+  await fin();
+});
+
 test('parcours des nouveaux venus : compteurs anonymes, une fois par adresse et par étape', async () => {
   const { base, fin } = await serveur();
   const noter = e => fetch(`${base}/parcours?etape=${e}`, { method: 'POST' });

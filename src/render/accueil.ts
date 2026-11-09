@@ -7,6 +7,7 @@ import { DOSSIER, PALETTES, ZONES, apparenceValide, assemblagePour, fiches, obje
 import { ICON_CSS, iconHtml } from './icons';
 import { PALIERS, lireBestiaire } from './carnet';
 import { dessinerPortraits, groupesBestiaire } from './butinVue';
+import { LADDER_CSS, VueLadder, chargerLadder, ladderCharge } from './ladder';
 import { niveauHorsPartie } from '../sim/butin';
 import { SORTS, niveauRequis, type SortOfficiel } from '../sim/sorts';
 import CLASSES_DOFUS from '../data/classes_dofus.json';
@@ -302,7 +303,7 @@ const CSS = `
 #acc .check input{accent-color:#e0925a;width:calc(1.1*var(--u));height:calc(1.1*var(--u));margin:0}
 `;
 
-type Page = 'accueil' | 'creation' | 'persos' | 'succes' | 'bestiaire' | 'journal';
+type Page = 'accueil' | 'creation' | 'persos' | 'succes' | 'bestiaire' | 'journal' | 'ladder';
 /** Journal (Accueil 3A+3B+3C+3E) : un carnet par journée de travail, écrit à chaque mise à jour (src/data/journal.json). */
 /** Carnets lisibles (Carnets : 1A…10A) : une entrée = titre court + une phrase, détails repliables, icône officielle, étiquettes.
  *  Corrections et En coulisses restent une ligne courte. `image` met l'entrée « À la une » (3 tuiles en haut du carnet). */
@@ -358,7 +359,7 @@ export class Accueil {
   onOptions: (() => void) | null = null;
   constructor(private onJouer: (slot: number) => void, private onEssayer?: (classe: string, sexe: 'm' | 'f', apparence?: Apparence) => void) {
     if (!document.getElementById('acc-css')) {
-      const st = document.createElement('style'); st.id = 'acc-css'; st.textContent = CSS + ICON_CSS.replace('.ic{', '#acc .ic{'); document.head.appendChild(st);
+      const st = document.createElement('style'); st.id = 'acc-css'; st.textContent = CSS + ICON_CSS.replace('.ic{', '#acc .ic{') + LADDER_CSS; document.head.appendChild(st);
     }
     this.root = document.createElement('div'); this.root.id = 'acc'; this.root.hidden = true;
     // les clics sur ces écrans ne vont pas au jeu derrière
@@ -479,11 +480,28 @@ export class Accueil {
   }
 
   private render() {
-    const html = this.page === 'accueil' ? this.pageAccueil() : this.page === 'creation' ? this.pageCreation() : this.page === 'succes' ? this.pageSucces() : this.page === 'bestiaire' ? this.pageBestiaire() : this.page === 'journal' ? this.pageJournal() : this.pagePersos();
+    const html = this.page === 'accueil' ? this.pageAccueil() : this.page === 'creation' ? this.pageCreation() : this.page === 'succes' ? this.pageSucces() : this.page === 'bestiaire' ? this.pageBestiaire() : this.page === 'journal' ? this.pageJournal() : this.page === 'ladder' ? '<div class="ladp"><div class="lad" data-ladder></div></div>' : this.pagePersos();
     const m = this.modal ? `<div class="modal" data-fermer><div class="card">${this.modal}<button type="button" class="x" data-fermer aria-label="Fermer">✕</button></div></div>` : '';
     this.root.innerHTML = `<div class="page">${html}${this.side()}${m}<div class="toast" style="opacity:0"></div></div>`;
     this.bind();
     this.portraits();
+    this.dessinerLadder();
+  }
+
+  /** Page Ladder (maquette « Ladder : » 1A) : le classement du serveur, redessiné seul (sans toucher au reste de l'accueil). */
+  private ladder = new VueLadder();
+  private ladderDemande = false;
+  /** #ladder/Nom (1C) : fiche à ouvrir à l'arrivée sur la page. */
+  ouvrirLadder(nom = '') {
+    this.show('ladder');
+    if (nom) void this.ladder.ouvrirParNom(nom, () => this.dessinerLadder());
+  }
+  private dessinerLadder() {
+    const el = this.root.querySelector<HTMLElement>('[data-ladder]');
+    if (!el) return;
+    if (!ladderCharge() && !this.ladderDemande) { this.ladderDemande = true; void chargerLadder().then(() => { this.ladderDemande = false; if (this.page === 'ladder' && ladderCharge()) this.dessinerLadder(); }); }
+    el.innerHTML = this.ladder.html();
+    this.ladder.brancher(el, () => this.dessinerLadder());
   }
 
   private toast(msg: string) {
@@ -495,7 +513,7 @@ export class Accueil {
   /** Colonne fine (30E) : icônes en couleur du menu principal de Dofus 3 (uiassets_2x) + texte. Bestiaire, Succès et Journal arrivent plus tard. */
   private side(): string {
     const NAV: [string, string, string][] = [['accueil', 'assets/ui/menu/home.png', 'Accueil'], ['persos', 'assets/ui/menu/character.png', 'Personnages'],
-      ['creation', img('h_80.png'), 'Classes'], ['bestiaire', 'assets/ui/menu/bestiary.png', 'Bestiaire'], ['succes', 'assets/ui/menu/success.png', 'Succès'], ['journal', 'assets/ui/menu/calendar.png', 'Journal'], ['options', 'assets/ui/menu/options.png', 'Options']];
+      ['creation', img('h_80.png'), 'Classes'], ['bestiaire', 'assets/ui/menu/bestiary.png', 'Bestiaire'], ['succes', 'assets/ui/menu/success.png', 'Succès'], ['journal', 'assets/ui/menu/calendar.png', 'Journal'], ['ladder', 'assets/ui/menu/ladder.png', 'Ladder'], ['options', 'assets/ui/menu/options.png', 'Options']];
     return `<nav class="side"><img class="logo" src="${v('assets/logo/embleme.webp')}" alt="" aria-hidden="true">${NAV.map(([k, ic, l]) =>
       `<button type="button" class="nav${k === this.page ? ' on' : ''}" data-nav="${k}" style="position:relative"><img src="${ic}" alt="">${l}${k === 'journal' && carnetNonLu() ? '<span class="pastille">nouveau</span>' : ''}</button>`).join('')}
       <button type="button" class="play" data-jouer>Jouer</button><div class="ver">VERSION ${VERSION}</div></nav>`;
@@ -852,7 +870,8 @@ export class Accueil {
     on('[data-nav]', e => {
       const k = e.dataset.nav!;
       if (k === 'options') { this.onOptions?.(); return; }   // Réglages 11A : la fenêtre Options du jeu, par-dessus l'accueil
-      if (k === 'accueil' || k === 'persos' || k === 'creation' || k === 'succes' || k === 'bestiaire' || k === 'journal') { this.carnet = null; this.go(k); }
+      if (k === 'ladder') { void chargerLadder(); }
+      if (k === 'accueil' || k === 'persos' || k === 'creation' || k === 'succes' || k === 'bestiaire' || k === 'journal' || k === 'ladder') { this.carnet = null; this.go(k); }
       else this.toast(`${e.textContent!.trim()} : arrive dans une prochaine version`);
     });
     on('[data-go]', e => this.go(e.dataset.go as Page));
