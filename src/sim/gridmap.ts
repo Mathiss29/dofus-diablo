@@ -48,6 +48,10 @@ export interface WorldMapEntry {
   batiments?: number;
   /** Carte plus grande qu'une carte Dofus (arène d'un donjon, tools/extraction/arenes.py) : nombre de places [largeur, hauteur]. */
   n?: [number, number];
+  /** Couloir d'un donjon (tools/extraction/couloirs.py) : son sol déborde sur les salles qu'il relie et passe par-dessus. */
+  dessus?: number;
+  /** Cartes vues ensemble depuis l'intérieur (salles et couloirs d'un donjon en couloirs) : posé par le jeu, pas par l'export. */
+  groupe?: string;
 }
 /** Plusieurs cartes Dofus voisines collées bord à bord en une seule grande grille. */
 export interface WorldData extends MapData { origin: [number, number]; maps: WorldMapEntry[]; /** Ciel commun posé derrière tout le monde. */ sky?: string;
@@ -227,6 +231,16 @@ export class WorldGrid extends GridMap {
       this.freeByMap.set(m.tag, []);
     }
     for (const c of this.free) { const m = this.mapOfCell(c); if (m) this.freeByMap.get(m.tag)!.push(c); }
+  }
+  /** Ouvre des cases à la marche (couloirs d'un donjon, partie de test). */
+  ouvrir(cases: number[]) {
+    const mov = this.data.mov.split('');
+    for (const c of cases) {
+      if (mov[c] === '1') continue;
+      mov[c] = '1'; this.free.push(c);
+      const m = this.mapOfCell(c); if (m) this.freeByMap.get(m.tag)!.push(c);
+    }
+    (this as { data: MapData }).data = { ...this.data, mov: mov.join('') };   // copie : le monde.json chargé reste tel quel
   }
   mapOfCell(c: number): WorldMapEntry | undefined {
     if (c < 0) return undefined;

@@ -27,7 +27,8 @@ describe('Astrub (0.2a)', () => {
   it('359 cartes du dehors, chacune avec des cases marchables', () => {
     const wg = new WorldGrid(astrub);
     expect(astrub.maps.filter(m => !m.inside).length).toBe(359);
-    for (const m of astrub.maps) expect(wg.freeByMap.get(m.tag)!.length, m.tag).toBeGreaterThan(20);
+    // (les couloirs des donjons en couloirs ne s'ouvrent qu'en partie de test : tests/couloirs.test.ts)
+    for (const m of astrub.maps) if (!m.dessus) expect(wg.freeByMap.get(m.tag)!.length, m.tag).toBeGreaterThan(20);
   });
   it('chaque monstre des sous-zones a ses données officielles et sa planche', () => {
     for (const [id, s] of Object.entries(zone.subareas)) {

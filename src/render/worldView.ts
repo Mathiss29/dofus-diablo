@@ -194,8 +194,10 @@ export class WorldView {
     for (const m of this.wg.world.maps) {
       const d = ring(m, here.x, here.y), s = this.slots.get(m.tag)!;
       // dans un intérieur, seule sa salle est dessinée : les salles voisines dans la grille ne doivent pas se voir
-      const veut = here.inside ? m.tag === here.tag : d <= LOAD_RING || seen(m, 400);
-      const jette = here.inside ? m.tag !== here.tag : d > UNLOAD_RING && !seen(m, 1200);
+      // donjon en couloirs (partie de test) : ses salles, couloirs et arène se voient ensemble, comme des cartes du dehors
+      const lie = !!here.inside && !!here.groupe && m.groupe === here.groupe;
+      const veut = lie ? d <= UNLOAD_RING || seen(m, 400) : here.inside ? m.tag === here.tag : d <= LOAD_RING || seen(m, 400);
+      const jette = lie ? d > UNLOAD_RING + 1 && !seen(m, 1200) : here.inside ? m.tag !== here.tag : d > UNLOAD_RING && !seen(m, 1200);
       if (veut && s.state === 'none') {
         s.state = 'loading';
         if (this.texturesReady(m)) this.build(m);
@@ -288,7 +290,9 @@ export class WorldView {
     if (!here) return { ok: true, p: 1 };
     let n = 0, ok = 0;
     for (const m of this.wg.world.maps) {
-      const voulue = here.inside ? m.tag === here.tag : !m.inside && (ring(m, here.x, here.y) <= LOAD_RING || this.seen(m, here, 0));
+      const lie = !!here.inside && !!here.groupe && m.groupe === here.groupe;
+      const voulue = lie ? ring(m, here.x, here.y) <= LOAD_RING || this.seen(m, here, 0)
+        : here.inside ? m.tag === here.tag : !m.inside && (ring(m, here.x, here.y) <= LOAD_RING || this.seen(m, here, 0));
       if (!voulue) continue;
       const s = this.slots.get(m.tag)!;
       n++;
@@ -339,7 +343,7 @@ export class WorldView {
     const s = this.slots.get(m.tag)!, S = GridMap.S, wg = this.wg;
     if (s.state !== 'loading') { this.unload(m); return; }   // annulée entre-temps (le joueur est reparti)
     const o = wg.toScreen(m.sol.x, m.sol.y);
-    s.objs.push(this.scene.add.image(o.x, o.y, this.k(`sol_${m.tag}`)).setOrigin(0).setScale(S).setDepth(SOL).setTint(this.tint));
+    s.objs.push(this.scene.add.image(o.x, o.y, this.k(`sol_${m.tag}`)).setOrigin(0).setScale(S).setDepth(SOL + (m.dessus ? 1 : 0)).setTint(this.tint));
     if (m.fond) {   // nuages et rayons qui débordent sur les voisins : sous tous les sols
       const f = wg.toScreen(m.fond.x, m.fond.y);
       s.objs.push(this.scene.add.image(f.x, f.y, this.k(`fond_${m.tag}`)).setOrigin(0).setScale(S * (m.fond.k ?? 1)).setDepth(SOL - 5e6).setTint(this.tint));
@@ -633,7 +637,8 @@ export class WorldView {
 
 /** Distance en cartes (anneau) entre une carte et (x, y). */
 /** Atlas de décor d'une carte : le sien, ou les pages communes du décor partagé (world_export.py PARTAGE=1). */
-function decors(m: WorldMapEntry) { return m.pages ? m.pages.map(p => `decor_p${p}`) : [`decor_${m.tag}`]; }
+/** Atlas de décor d'une carte (aucun pour une carte sans décor : couloir d'un donjon). */
+function decors(m: WorldMapEntry) { return m.pages ? m.pages.map(p => `decor_p${p}`) : m.decor.length ? [`decor_${m.tag}`] : []; }
 function ring(m: { x: number; y: number }, x: number, y: number) { return Math.max(Math.abs(m.x - x), Math.abs(m.y - y)); }
 
 /** Produit de deux teintes 0xRRGGBB, et mélange de a vers b (f de 0 à 1). */

@@ -365,6 +365,22 @@ cases marchables (l'ellipse et les couloirs des trois entrées), et écrit les p
 refaire qu'une ; `apercus` donne une image de chaque arène avec les cases marchables en vert. Les vagues (`vagues`,
 `bossVague` dans `zones.json`) se règlent à la main : groupes officiels des anciennes salles, `?` = tiré parmi les monstres du donjon.
 
+## Donjons en couloirs (`couloirs.py`, maquette « Couloirs : 1C 2B 3A 4A », 9 nov. 2026)
+
+Les vraies salles d'un donjon, reliées par des couloirs façon Diablo, puis la cour en vagues du boss (l'arène d'`arenes.py`)
+au bout du dernier couloir, sans porte ni écran noir. L'outil range salles et arène dans une bande neuve sous le monde
+(salle | couloir | salle | … | arène), en les déplaçant (sol, décor, cases, points de l'arène : leurs images ne changent pas).
+Chaque couloir est une carte `couloir_<salle>` (`dessus: 1`) : un sol en V aligné sur les cases, peint avec le vrai sol de la
+salle d'avant. Ses cases ne sont PAS dans `mov` : elles vont dans `zones.json` (`open.donjons[].couloirs.cases`) et le jeu ne
+les ouvre qu'en partie de test (la partie publique garde l'arène seule, comme avant).
+
+    node tools/hebergement/envoi.mjs --recuperer     # les sols des salles
+    python3 -I tools/extraction/couloirs.py astrub "Grange du Tournesol Affamé"
+    node tools/hebergement/envoi.mjs
+
+Un nouveau donjon = une ligne dans `DONJONS` (salles dans l'ordre du trajet, sans la salle du boss ; monstres errants par
+couloir). Pour refaire un donjon : repartir de `monde.json` et `zones.json` d'avant (git checkout), puis relancer.
+
 ## Bastion des Douze (`bastion.py`, maquette « Ville », 7 nov. 2026)
 
 Notre ville (« Ville : 1A 2A 3C 4B+4C … 10B 11B ») : un monde à part (`public/assets/mondes/bastion`), une seule grande carte

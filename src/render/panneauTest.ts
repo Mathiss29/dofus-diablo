@@ -388,7 +388,10 @@ export class PanneauTest {
     if (wg && open) {
       const bouton = (tag: string, nom: string, d: string) => `<button type="button" data-carte="${tag}" data-nom="${esc(nom)}"><span class="n">${esc(nom)}</span><span class="d">${d}</span></button>`;
       const zaaps = open.checkpoints.map(c => { const m = wg.mapByCoords(c.map[0], c.map[1]); return m ? bouton(m.tag, c.name, `Zaap [${c.map.join(',')}]`) : ''; }).join('');
-      const donjons = (open.donjons ?? []).map(d => { const t = d.arene?.tag ?? Object.keys(d.salles)[0]; return t && wg.mapByTag(t) ? bouton(t, d.nom, 'donjon') : ''; }).join('');
+      const donjons = (open.donjons ?? []).map(d => {
+        const cl = w.couloirs(d), t = cl ? cl.salles[0] : d.arene?.tag ?? Object.keys(d.salles)[0];   // en couloirs : la salle 1
+        return t && wg.mapByTag(t) ? bouton(t, d.nom, cl ? 'donjon en couloirs' : 'donjon') : '';
+      }).join('');
       const noms = new Set((open.donjons ?? []).map(d => d.nom));
       const sous = Object.entries(open.subareas).filter(([, s]) => !noms.has(s.name)).sort((a, b) => a[1].level - b[1].level).map(([id, s]) => {
         const maps = wg.world.maps.filter(m => String(m.sub) === id && (wg.freeByMap.get(m.tag)?.length ?? 0) > 20);

@@ -273,7 +273,13 @@ export interface DonjonDef { nom: string; salles: Record<string, string[][]>;
   /** Dernière vague (8A) : le boss et ses compagnons officiels. */
   bossVague?: string[];
   /** Maquette Coffres 4B : « precieux » = Coffret précieux (Enfers, donjons à clés) ; sinon la Malle Animée. */
-  coffre?: 'precieux' }
+  coffre?: 'precieux';
+  /** Donjon en couloirs (maquette « Couloirs : 1C 2B 3A 4A », tools/extraction/couloirs.py), partie de test seulement :
+   *  ses vraies salles dans l'ordre, reliées par des couloirs (cartes `tags`), puis l'arène au bout, sans porte.
+   *  Groupes officiels dans les salles, `nErrants` monstres seuls dans chaque couloir (2B) ; les vagues partent à l'entrée de l'arène. */
+  couloirs?: { salles: string[]; tags: string[]; errants: number[]; nErrants: number;
+    /** Cases des couloirs (grande grille), ouvertes à la marche seulement en partie de test. */
+    cases: number[]; origine?: Record<string, number[]> } }
 export interface AreneDef { tag: string; arrivee: number; entrees: number[]; boss: number; sortie: number; coffre: number }
 /** Monde ouvert : cartes Dofus collées, groupes de monstres posés sur chaque carte, qui réapparaissent. */
 export interface OpenDef {
