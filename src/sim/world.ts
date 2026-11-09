@@ -6,7 +6,7 @@ import { ISO } from './iso';
 import { NO_INPUT, type PlayerInput } from './input';
 import { AGGRO, CASE, Monster, TOUR, type Cible } from './monster';
 import { jetOfficiel } from './danger';
-import { poolNiveau, rangDe, tirerButin, type Butin, type CtxButin, type Rang } from './butin';
+import { monstresDeZone, poolNiveau, poolOfficiel, rangDe, tirerButin, type Butin, type CtxButin, type Rang } from './butin';
 import { briser, chanceRune, coutKamas, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
 import { NIVEAU_OBJETS_02, V03_PUBLIC, slotAPouvoirConnu } from './pouvoirs';
 import { fxImpression, imprimable, nouveauPourCodex, prixImpression } from './codex';
@@ -180,6 +180,7 @@ export class World {
   private familiersDe: Record<string, string[]> = {};
   /** Objets d'équipement par niveau, pour le butin de zone. */
   private equipByLevel: { id: string; level: number }[] = [];
+  private equipSecours: { id: string; level: number }[] = [];
   /** Événements produits depuis le dernier drainEvents(). */
   private events: SimEvent[] = [];
   /** Ressources à récolter du monde (métiers de récolte, 0.2b). */
@@ -303,7 +304,10 @@ export class World {
     this.player.v03 = V03_PUBLIC || !!opts.test;
     if (opts.items) {
       this.player.items = opts.items;
-      this.equipByLevel = Object.entries(opts.items.equipment).filter(([, d]) => !d.familier && !d.horsJeu && (this.player.v03 || d.level <= NIVEAU_OBJETS_02)).map(([id, d]) => ({ id, level: d.level }));
+      // équipement aléatoire : objets officiels des monstres de la zone (butin + fabrication), sinon de tout le jeu (Mathis 2026-11-09)
+      const ok = (e: { level: number }) => this.player.v03 || e.level <= NIVEAU_OBJETS_02;
+      this.equipByLevel = poolOfficiel(opts.items, monstresDeZone(this.zone)).filter(ok);
+      this.equipSecours = poolOfficiel(opts.items, Object.values(opts.data.zones).flatMap(monstresDeZone)).filter(ok);
       for (const [id, d] of Object.entries(opts.items.equipment)) for (const m of d.familier?.monstres ?? []) (this.familiersDe[m] ??= []).push(id);
       // sac vide au départ (Mathis, 2026-11-06) : l'équipement vient du tutoriel (panoplie de l'Intrépide, Arc de Chasse du Crâ)
     }
@@ -1761,11 +1765,11 @@ export class World {
   /** Ce que le calcul du butin doit savoir (src/sim/butin.ts) : sert au jeu, au Bestiaire et au simulateur de l'outil de test. */
   contexteButin(type: string, rang: Rang, niveau: number): CtxButin {
     const p = this.player;
-    return { type, rang, niveau, prospection: p.prospection + (this.almanax?.effet === 'butin' ? ALMANAX.butin : 0), items: this.opts.items!, familiers: this.familiersDe[type] ?? [], pool: this.equipByLevel,
+    return { type, rang, niveau, prospection: p.prospection + (this.almanax?.effet === 'butin' ? ALMANAX.butin : 0), items: this.opts.items!, familiers: this.familiersDe[type] ?? [], pool: this.equipByLevel, poolSecours: this.equipSecours,
       metierNiveau: j => p.metierLevel(j), armeChasse: !!p.huntingWeapon, pouvoirs: rang === 'boss' ? { ...p.ctxPouvoirs, boss: type } : p.ctxPouvoirs };
   }
   /** Un monstre vaincu lâche son butin officiel (ressources, parfois un équipement) et, plus rarement, un équipement
-   *  de son niveau pris dans tous les objets de Dofus. Élites et boss lâchent plus et mieux. Calcul : src/sim/butin.ts. */
+   *  de son niveau pris parmi les objets officiels des monstres de la zone. Élites et boss lâchent plus et mieux. Calcul : src/sim/butin.ts. */
   private dropLoot(m: Monster) {
     if (this.players.length < 2) { this.lacherButin(m.type, rangDe(m.def), this.monsterLevel(m), m.x, m.y); return; }
     // Multi (« Multi : » 7C) : chaque joueur proche a son propre tirage, que lui seul voit et ramasse
@@ -2455,8 +2459,8 @@ export class World {
     const I = this.opts.items, p = this.player, ctx = { ...p.ctxPouvoirs, garanti: garanti && p.v03 };
     if (!I) return;
     const okSlot = (e: { id: string }) => !ctx.garanti || (!I.equipment[e.id].familier && slotAPouvoirConnu(ctx, I.equipment[e.id].slot));
-    let pool = poolNiveau({ pool: this.equipByLevel, niveau }).filter(okSlot);
-    if (!pool.length) pool = this.equipByLevel.filter(okSlot).sort((x, y) => Math.abs(x.level - niveau) - Math.abs(y.level - niveau)).slice(0, 20);
+    let pool = poolNiveau({ pool: this.equipByLevel, poolSecours: this.equipSecours, niveau }).filter(okSlot);
+    if (!pool.length) pool = this.equipSecours.filter(okSlot).sort((x, y) => Math.abs(x.level - niveau) - Math.abs(y.level - niveau)).slice(0, 20);
     if (!pool.length) return;
     const id = this.rng.pick(pool).id, it = rollItem(id, I.equipment[id], rarete, this.rng, this.nextId++, ctx);
     p.bag.push(it);

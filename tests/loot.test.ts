@@ -170,7 +170,7 @@ describe('métier Chasseur (choix 6A)', () => {
       const w = world(); const p = w.player;
       if (hunt) { w.donnerObjet('1934'); expect(p.equip(p.bag[0].uid)).toBe(true); }
       let meat = 0;
-      for (let i = 0; i < 60; i++) {
+      for (let i = 0; i < 150; i++) {
         const m = w.spawnMonster('feu_vif', p.x + 300, p.y);
         (w as unknown as { killMonster(m: unknown): void }).killMonster(m);
         meat = p.resources[d.item] ?? 0;

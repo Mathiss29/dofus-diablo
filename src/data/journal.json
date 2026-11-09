@@ -1172,6 +1172,15 @@
               "Partie de test",
               "Astrub"
             ]
+          },
+          {
+            "titre": "Un butin qui sent la zone",
+            "phrase": "L'équipement qui tombe vient des monstres de la zone : leur butin officiel et ce qu'on fabrique avec.",
+            "details": "Dans les Champs d'Astrub, attends-toi aux panoplies des Champs et du Paysan. Les objets de maître du jeu ne tombent plus.",
+            "icone": "sac",
+            "etiquettes": [
+              "Bestiaire (B)"
+            ]
           }
         ],
         "Combat": [

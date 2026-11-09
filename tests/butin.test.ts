@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { GAME_DATA, ITEMS } from '../src/sim/data';
-import { anomaliesButin, chanceLigne, lieuxDe, niveauHorsPartie, raretes, tableButin, tirerButin, type CtxButin, type Rang } from '../src/sim/butin';
+import { anomaliesButin, monstresDeZone, poolNiveau, poolOfficiel, chanceLigne, lieuxDe, niveauHorsPartie, raretes, tableButin, tirerButin, type CtxButin, type Rang } from '../src/sim/butin';
 import { Rng } from '../src/sim/math';
 
-const pool = Object.entries(ITEMS.equipment).filter(([, d]) => !d.familier).map(([id, d]) => ({ id, level: d.level }));
+const pool = poolOfficiel(ITEMS, Object.values(GAME_DATA.zones).flatMap(monstresDeZone));
 const ctx = (type: string, rang: Rang, o: Partial<CtxButin> = {}): CtxButin => ({ type, rang, niveau: 20, prospection: 0, items: ITEMS, familiers: [], pool,
   metierNiveau: () => 1, armeChasse: false, ...o });
 
@@ -72,5 +72,16 @@ describe('équipements du niveau 26 au 40 (version 0.3, 2A)', () => {
       for (const o of tirerButin(rng, ctx('royal', 'boss', { pool: [] }), () => uid++).objets) expect(ITEMS.equipment[o.id].level).toBeLessThanOrEqual(25);
     }
     expect(vu).toBe(true);
+  });
+  it('équipement aléatoire : objets officiels des monstres de la zone (butin + fabrication), secours sur tout le jeu', () => {
+    const inc = poolOfficiel(ITEMS, monstresDeZone(GAME_DATA.zones.incarnam)), ids = new Set(inc.map(e => e.id));
+    expect(ids.has('9031')).toBe(false); expect(ids.has('2155')).toBe(false);
+    expect(inc.length).toBeGreaterThan(50);
+    expect(inc.every(e => !ITEMS.equipment[e.id].familier)).toBe(true);
+    const rng = new Rng(5); let uid = 0;
+    const c = ctx('bouftou', 'boss', { niveau: 5, pool: inc, poolSecours: pool });
+    for (let i = 0; i < 500; i++) for (const o of tirerButin(rng, c, () => uid++).objets) expect(ids.has(o.id) || (ITEMS.drops.bouftou ?? []).some(d => d.item === o.id)).toBe(true);
+    // zone sans monstre (Havre-Sac) : on prend les objets de tout le jeu
+    expect(poolNiveau({ pool: [], poolSecours: pool, niveau: 10 }).length).toBeGreaterThan(8);
   });
 });

@@ -1,5 +1,5 @@
 import BUTIN from '../data/butin.json';
-import type { GameData, MonsterDef } from './defs';
+import type { GameData, MonsterDef, ZoneDef } from './defs';
 import { NIVEAU_OBJETS_02, type CtxPouvoirs } from './pouvoirs';
 import { rollItem, type DropDef, type Item, type ItemsData, type Rarity } from './items';
 import type { Rng } from './math';
@@ -53,8 +53,10 @@ export interface CtxButin {
   type: string; rang: Rang; niveau: number; prospection: number; items: ItemsData;
   /** Familiers de la famille du monstre (id d'équipement). */
   familiers: string[];
-  /** Équipements officiels (hors familiers) et leur niveau, pour l'équipement aléatoire. */
+  /** Équipements de la zone (poolOfficiel) et leur niveau, pour l'équipement aléatoire. */
   pool: { id: string; level: number }[];
+  /** Ceux de tout le jeu : pris quand la zone en a trop peu à ce niveau (Enfers, Havre-Sac, bas de niveau…). */
+  poolSecours?: { id: string; level: number }[];
   /** Niveau du joueur dans ce métier (clé de ITEMS.metiers). */
   metierNiveau: (job: string) => number;
   armeChasse: boolean;
@@ -77,10 +79,33 @@ export function etatLigne(d: DropDef, ctx: CtxButin): EtatLigne {
   }
   return 'ok';
 }
-/** Équipements possibles pour l'équipement aléatoire (niveau du monstre −4 à +6). */
-export function poolNiveau(ctx: Pick<CtxButin, 'pool' | 'niveau'>) {
+/** Équipements possibles pour l'équipement aléatoire (niveau du monstre −4 à +6) : ceux de la zone, ou ceux de tout le jeu
+ *  si la zone en a moins de « minZone » à ce niveau. */
+export function poolNiveau(ctx: Pick<CtxButin, 'pool' | 'niveau' | 'poolSecours'>) {
   const [a, b] = BUTIN.equipement.niveaux;
-  return ctx.pool.filter(e => e.level >= ctx.niveau + a && e.level <= ctx.niveau + b);
+  const dans = (p: { id: string; level: number }[]) => p.filter(e => e.level >= ctx.niveau + a && e.level <= ctx.niveau + b);
+  const zone = dans(ctx.pool);
+  return zone.length >= BUTIN.equipement.minZone || !ctx.poolSecours ? zone : dans(ctx.poolSecours);
+}
+
+/** Monstres d'une zone : sous-zones, élites et donjons d'un monde ouvert, ou vagues d'une arène. */
+export function monstresDeZone(z: ZoneDef): string[] {
+  const out = new Set<string>(), o = z.open, w = z.waves;
+  for (const s of Object.values(o?.subareas ?? {})) { for (const m of s.monsters) out.add(m); if (s.elite) out.add(s.elite); }
+  for (const d of o?.donjons ?? []) for (const g of Object.values(d.salles)) for (const x of g.flat()) out.add(x);
+  if (w) for (const m of [...w.pack.map(p => p.monster), w.boss, ...w.escort.monsters, ...w.archimonstres.monsters]) out.add(m);
+  return [...out];
+}
+/** Équipement aléatoire (choix de Mathis 2026-11-09) : seulement des objets officiels liés aux monstres donnés,
+ *  ceux de leur butin dans Dofus et ceux qu'on fabrique avec leurs ressources. Jamais d'objet de maître du jeu. */
+export function poolOfficiel(items: ItemsData, monstres: Iterable<string>): { id: string; level: number }[] {
+  const ids = new Set<string>(), res = new Set<string>();
+  for (const m of monstres) for (const d of items.drops[m] ?? []) {
+    if (d.cond === 'quete' || d.cond === 'evenement') continue;
+    (items.equipment[d.item] ? ids : res).add(d.item);
+  }
+  for (const r of items.recipes ?? []) if (items.equipment[r.result] && r.ingredients.some(([i]) => res.has(String(i)))) ids.add(r.result);
+  return [...ids].filter(id => { const d = items.equipment[id]; return d && !d.familier && !d.horsJeu; }).sort().map(id => ({ id, level: items.equipment[id].level }));
 }
 export const kamasDe = (rang: Rang) => ({ chance: rang === 'normal' ? BUTIN.kamas.chance : 1, mult: BUTIN.kamas.mult[rang] });
 
