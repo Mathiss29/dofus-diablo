@@ -6,8 +6,8 @@ cd /home/diablofus
 if [ ! -d depot/.git ]; then
   git clone -q --depth 1 --filter=blob:none --sparse https://github.com/Mathiss29/dofus-diablo.git depot
 fi
-# le serveur, et la simulation du jeu qu'il fait tourner (src/sim, src/data, le monde d'Incarnam ; pas les images)
-git -C depot sparse-checkout set serveur src/sim src/data public/assets/mondes/incarnam
+# le serveur, et la simulation du jeu qu'il fait tourner (src/sim, src/data, les mondes d'Incarnam et d'Astrub ; pas les images)
+git -C depot sparse-checkout set serveur src/sim src/data public/assets/mondes/incarnam public/assets/mondes/astrub
 git -C depot fetch -q --depth 1 origin main
 NOUVEAU=$(git -C depot rev-parse FETCH_HEAD)
 [ "$NOUVEAU" = "$(cat app/VERSION 2>/dev/null || true)" ] && [ -f app/partie/sim.mjs ] && exit 0

@@ -1139,10 +1139,23 @@
           }
         ],
         "Le monde": [],
-        "Combat": [],
+        "Combat": [
+          {
+            "titre": "Tous les donjons en groupe",
+            "phrase": "Le chef choisit le donjon : la Crypte ou l'un des quatre donjons d'Astrub, tenus par le serveur.",
+            "details": "À plusieurs, les monstres ont +70 % de PV par joueur et arrivent plus nombreux. Reste 3 s près d'un allié à terre pour le relever.",
+            "icone": "boss",
+            "etiquettes": [
+              "Touche P › Groupe",
+              "Perso en ligne"
+            ]
+          }
+        ],
         "Corrections": [],
         "En coulisses": [
           "À plusieurs, chaque joueur voit son sac, ses ressources et ses kamas en direct.",
+          "Butin chacun le sien : en groupe, chacun a son tirage sur les monstres et dans le coffre de fin.",
+          "Les autres joueurs et les monstres glissent entre deux envois du serveur au lieu de sauter.",
           "Le serveur calcule le classement chaque minute ; les records de donjon ne comptent que sur ses parties."
         ]
       }

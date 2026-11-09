@@ -8,9 +8,9 @@ import { readFileSync } from 'node:fs';
 export const PARTIE = {
   /** Pas de simulation : comme dans le navigateur (60 par seconde). */
   pas: 1 / 60,
-  /** Un joueur à terre se relève près d'un allié au bout de ce temps (en attendant « relever un allié », 15C). */
+  /** Seul dans la partie, un joueur à terre se relève au bout de ce temps (à plusieurs : un allié le relève, World.RELEVE). */
   releve: 5,
-  /** Arène du premier essai (maquette « Multi : » 11A). */
+  /** Arène par défaut (maquette « Multi : » 11A) ; le chef peut en choisir une autre parmi arenesDisponibles(S). */
   arene: 'arene_crypte',
   /** Au-delà de ce retard (serveur surchargé un instant), on rattrape au plus ce nombre de pas d'un coup. */
   rattrapage: 8,
@@ -23,25 +23,39 @@ const GARDES = ['zone', 'x', 'y', 'retour', 'havreSac', 'quetes', 'zaaps', 'zone
 const GARDES_MONDE = ['havreSac'];
 
 let sim = null;
+/** Mondes que le serveur sait tenir (construire-sim.mjs les copie) ; Astrub peut manquer (VPS pas encore à jour) : ses donjons sont alors absents. */
+const MONDES = ['incarnam', 'astrub'];
 /** Charge la simulation construite (une seule fois) ; null si elle n'a pas été construite. */
 export async function chargerSim(dossier = new URL('./partie/', import.meta.url)) {
   if (sim) return sim;
   try {
     const m = await import(new URL('sim.mjs', dossier).href);
-    sim = { ...m, monde: JSON.parse(readFileSync(new URL('incarnam.json', dossier), 'utf8')) };
+    const mondes = {};
+    for (const z of MONDES) { try { mondes[z] = JSON.parse(readFileSync(new URL(`${z}.json`, dossier), 'utf8')); } catch { /* monde absent */ } }
+    if (!mondes.incarnam) throw new Error('incarnam.json absent');
+    sim = { ...m, mondes, monde: mondes.incarnam };
   } catch (e) { console.warn('simulation absente (node construire-sim.mjs) :', e.message); sim = null; }
   return sim;
+}
+/** Donjons en vagues que le serveur peut tenir : [{ tag, nom, zone }], dans l'ordre des zones. */
+export function arenesDisponibles(S) {
+  const L = [];
+  for (const z of MONDES) if (S.mondes[z]) for (const d of S.GAME_DATA.zones[z]?.open?.donjons ?? []) if (d.arene?.tag) L.push({ tag: d.arene.tag, nom: d.nom, zone: z });
+  return L;
 }
 
 export class Partie {
   /** @param {any} S la simulation chargée ; envoyer(num, données) parle à un joueur du salon. */
   /** sauver(compte, perso) : écrit le perso d'un compte (comptes.mjs) ; absent = rien n'est gardé. */
   /** o.donjonFini(nom, temps, membres) : fin d'un donjon (Ladder 2D), avec les persos de comptes encore là. */
-  /** o.monde : Incarnam en monde ouvert, chacun avec ses quêtes, sa place et son point de retour (sinon l'arène de la Crypte). */
+  /** o.monde : Incarnam en monde ouvert, chacun avec ses quêtes, sa place et son point de retour (sinon une arène de donjon).
+   *  o.arene : tag de l'arène (arenesDisponibles), la Crypte par défaut. */
   constructor(S, envoyer, seed = Math.floor(Math.random() * 2 ** 31), sauver = null, o = {}) {
     this.S = S; this.envoyer = envoyer; this.seed = seed; this.sauver = sauver; this.depuisSauvegarde = 0;
     this.donjonFini = o.donjonFini ?? null;
     this.monde = !!o.monde;
+    const a = arenesDisponibles(S).find(x => x.tag === o.arene) ?? arenesDisponibles(S).find(x => x.tag === PARTIE.arene);
+    this.arene = this.monde ? null : a;
     this.w = null;
     this.membres = new Map();
     this.n = 0; this.reste = 0; this.erreurs = 0;
@@ -87,10 +101,12 @@ export class Partie {
     const quetes = this.monde ? { reprise: brut?.quetes && typeof brut.quetes === 'object' ? brut.quetes : { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} } } : undefined;
     let q;
     if (!this.w) {
-      this.w = new S.World({ data: S.GAME_DATA, zone: 'incarnam', map: new S.WorldGrid(S.monde), seed: this.seed, classId: classe, items: S.ITEMS, partieServeur: true,
-        ...(this.monde ? { quetes: S.QUETES, reprise: quetes.reprise, zonesVues: Array.isArray(brut?.zonesVues) ? brut.zonesVues : [] } : {}) });
+      const zone = this.arene?.zone ?? 'incarnam';
+      // donjon : seule l'arène compte, pas de monstres dans le reste du monde (Astrub en a plus de 4 000)
+      this.w = new S.World({ data: S.GAME_DATA, zone, map: new S.WorldGrid(S.mondes[zone]), seed: this.seed, classId: classe, items: S.ITEMS, partieServeur: true,
+        ...(this.monde ? { quetes: S.QUETES, reprise: quetes.reprise, zonesVues: Array.isArray(brut?.zonesVues) ? brut.zonesVues : [] } : { sansGroupes: true }) });
       if (!this.monde) {
-        this.w.allerArene(PARTIE.arene);
+        this.w.allerArene(this.arene.tag);
         // le fondu d'entrée de l'arène : on le passe tout de suite, le joueur arrive directement dedans
         for (let i = 0; i < 300 && this.w.passage; i++) this.w.step(PARTIE.pas, S.NO_INPUT);
       }
@@ -151,8 +167,10 @@ export class Partie {
       for (const [num, m] of this.membres) if (m.pret && m.em) this.envoyer(num, { k: 'instantane', ...m.em.instantane(w) });
     }
   }
+  /** Seul dans la partie : il se relève tout seul (à plusieurs, c'est la sim qui s'en charge : un allié le relève, 7B). */
   relever(dt) {
     const w = this.w;
+    if (w.players.length > 1) return;
     for (const m of this.membres.values()) {
       const q = w.players.find(p => p.id === m.joueur);
       if (!q) continue;

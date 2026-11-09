@@ -59,7 +59,7 @@ import { retouchesPlacement } from './placementVue';
 import { etatsPrets, jourDuPC, PanneauTest, lireTest, modeTest, sauverTest, type EtatTest } from './panneauTest';
 import { REGLAGES_TEST, type CommandeTest } from '../sim/outilsTest';
 import { Coop } from './coop';
-import { appliquerInstantane } from '../sim/miroir';
+import { appliquerInstantane, lisserMiroir } from '../sim/miroir';
 import { EnLigne } from './presence';
 import { Compte as CompteEnLigne } from './compte';
 import { PassantsEnLigne } from './passantsEnLigne';
@@ -1040,7 +1040,8 @@ export class ZoneScene extends Phaser.Scene {
     if (this.acc >= ZoneScene.STEP) { this.acc %= ZoneScene.STEP; Coop.entree(this.readInput(), performance.now()); }
     // une erreur ne doit pas figer l'invité : on la note et on redemande tout à l'hôte (le miroir repart de zéro)
     try {
-      for (const s of Coop.prendre()) this.world.rejouer(appliquerInstantane(this.world, s));
+      for (const s of Coop.prendre()) this.world.rejouer(appliquerInstantane(this.world, s, true));
+      lisserMiroir(this.world, dt);   // les autres joueurs et les monstres glissent entre deux instantanés
       this.consumeEvents();
       this.hitstop = 0;
       this.render();

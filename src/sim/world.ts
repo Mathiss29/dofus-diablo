@@ -65,7 +65,9 @@ export interface ZoneSol { x: number; y: number; r: number; t: number; hit: HitD
  *  qui passe près ; Rare et plus se ramassent d'un clic. Les ressources vont directement dans le sac. */
 export interface Drop { uid: number; x: number; y: number; item?: Item; kamas?: number; t: number; warned?: boolean;
   /** Rapporté par le familier : ramassé tout de suite. */
-  familier?: boolean }
+  familier?: boolean;
+  /** Multi (« Multi : » 7C, butin chacun le sien) : seul ce joueur le voit et le ramasse. */
+  pour?: number }
 
 /** Flèche en vol (Crâ). */
 export interface Projectile { id: number; spell: string; x: number; y: number; dx: number; dy: number; left: number; speed: number; width: number;
@@ -135,6 +137,8 @@ export interface WorldOptions {
   aujourdhui?: string;
   /** Partie tenue par le serveur multijoueur (maquette « Vrai multi : » 1A) : aucun joueur n'est « l'écran ». */
   partieServeur?: boolean;
+  /** Pas de groupes de monstres dans le monde ouvert (donjon tenu par le serveur : seule l'arène compte, bien moins de calcul). */
+  sansGroupes?: boolean;
 }
 
 /** Le familier porté (maquette Familiers 4A) : il suit le perso et va chercher le butin autour de lui. */
@@ -149,7 +153,7 @@ export const EVENEMENTS_PERSONNELS = new Set<SimEvent['k']>(['levelUp', 'newSpel
   'brisage', 'codex', 'codexOuvert', 'coffreOuvert', 'capture', 'impression', 'apparence', 'fusion', 'commande', 'signature', 'achat', 'familierNiveau',
   'familierRepas', 'rappel', 'cleManquante', 'recolteDebut', 'recolteFin', 'recolteStop', 'recolteNiveau', 'service', 'almanax', 'dofusPassif',
   'dofusGagne', 'lootKamas', 'bagFull', 'checkpoint', 'portalStart', 'portal', 'changeZone', 'incantation', 'incantationStop', 'arche', 'zaapDecouvert',
-  'zaapDepart', 'emmenage', 'queteDebut', 'queteEtape', 'queteFin', 'objetQuete', 'succes']);
+  'zaapDepart', 'emmenage', 'queteDebut', 'queteEtape', 'queteFin', 'objetQuete', 'succes', 'itemDrop']);
 
 export class World {
   readonly rng: Rng;
@@ -309,7 +313,7 @@ export class World {
     // les quêtes d'abord : le tutoriel retient les groupes du Temple jusqu'à son étape « Frapper »
     if (this.quetes) { if (opts.reprise) this.quetes.reprendre(opts.reprise); else this.quetes.demarrer(); }
     if (open?.bastion && this.map instanceof WorldGrid) this.passants = new Passants(this.map, this.map.mapByCoords(...open.start)!.tag, opts.seed ?? 1, -100);
-    if (open) this.spawnGroups();
+    if (open && !opts.sansGroupes) this.spawnGroups();
     if (open?.havreSac?.poutch != null) this.poserPoutch(open.havreSac.poutch);
     if (open) this.visiter(opts.zonesVues ?? []);
     if (open && (opts.arrivee || opts.position || opts.zaap)) this.proteger();
@@ -826,6 +830,8 @@ export class World {
     b.kamas += 20 * niveau;
     return b;
   }
+  /** Multi : le butin du coffre d'un joueur (commeJoueur), que lui seul voit et ramasse. */
+  poserButinDe(b: Butin, x: number, y: number) { this.poserButin(b, x, y, this.player.id); }
   /** Le coffre s'ouvre : son butin jaillit là où il était. */
   ouvrirCoffreDonjon(b: Butin | null, x: number, y: number) {
     if (b) this.poserButin(b, x, y);
@@ -1082,6 +1088,29 @@ export class World {
     if (!this.map.walkable(x, y)) return;
     this.checkpointName = name; this.checkpoint = { x, y };
   }
+  /** Multi 7B : un allié debout à côté d'un joueur à terre le relève (temps, portée) ; sinon il revient seul au bout de
+   *  « seul » secondes (arène : à l'arrivée ; monde ouvert : à son point de retour). Parties du serveur seulement. */
+  static readonly RELEVE = { temps: 3, portee: 90, seul: 20, pv: 0.5 };
+  private releverAllies(dt: number) {
+    const R = World.RELEVE;
+    for (const q of this.players) {
+      if (!q.dead) { q.aTerre = q.releve = 0; continue; }
+      q.aTerre += dt;
+      const aide = this.players.some(a => a !== q && !a.dead && Math.hypot(a.x - q.x, a.y - q.y) <= R.portee);
+      q.releve = aide ? q.releve + dt : Math.max(0, q.releve - dt);
+      // le cercle autour du joueur à terre : où se tenir, et où en est la relève
+      this.telegraphs.push({ kind: 'circle', x: q.x, y: q.y, r: R.portee, progress: Math.min(1, q.releve / R.temps), danger: false });
+      if (q.releve >= R.temps) { this.relever(q, q.x, q.y, R.pv); this.emit({ k: 'status', x: q.x, y: q.y - 60, text: 'Relevé !', color: '#7fc47a' }); }
+      else if (q.aTerre >= R.seul) {
+        if (this.arene || !this.zone.open) { const a = this.arene?.pts.arrivee ?? this.players.find(o => !o.dead) ?? q, f = this.map.nearestFree(a.x, a.y); this.relever(q, f.x, f.y, 1); }
+        else this.commeJoueur(q, () => this.respawnPlayer());
+      }
+    }
+  }
+  private relever(q: Player, x: number, y: number, pv: number) {
+    q.dead = false; q.hp = Math.max(1, Math.round(q.maxHp * pv)); q.x = x; q.y = y; q.kx = q.ky = 0; q.z = 0;
+    q.state = 'free'; q.skill = null; q.invuln = 2; q.setAnim('idle'); q.aTerre = q.releve = 0;
+  }
   respawnPlayer() {
     const p = this.player;
     if (!this.zone.open || !p.dead) return;
@@ -1188,6 +1217,7 @@ export class World {
     this.updateProjectiles(dt);
     this.updateZonesSol(dt);
     this.updateDrops(dt);
+    if (this.opts.partieServeur && this.players.length > 1) this.releverAllies(dt);
     this.separate();
     // Cases bloquantes : on glisse le long des obstacles (axe par axe), sauf en plein Bond
     ents.forEach((e, i) => {
@@ -1674,15 +1704,21 @@ export class World {
   }
   /** Un monstre vaincu lâche son butin officiel (ressources, parfois un équipement) et, plus rarement, un équipement
    *  de son niveau pris dans tous les objets de Dofus. Élites et boss lâchent plus et mieux. Calcul : src/sim/butin.ts. */
-  private dropLoot(m: Monster) { this.lacherButin(m.type, rangDe(m.def), this.monsterLevel(m), m.x, m.y); }
-  private lacherButin(type: string, rang: Rang, niveau: number, mx: number, my: number, kamas = 0) {
+  private dropLoot(m: Monster) {
+    if (this.players.length < 2) { this.lacherButin(m.type, rangDe(m.def), this.monsterLevel(m), m.x, m.y); return; }
+    // Multi (« Multi : » 7C) : chaque joueur proche a son propre tirage, que lui seul voit et ramasse
+    for (const q of this.joueursProches(m.x, m.y)) this.commeJoueur(q, () => this.lacherButin(m.type, rangDe(m.def), this.monsterLevel(m), m.x, m.y, 0, q.id));
+  }
+  /** Joueurs qui ont part à ce qui se passe en (x, y) : à moins de SOMMEIL (morts compris : ils se relèvent). */
+  joueursProches(x: number, y: number): Player[] { return this.players.filter(q => Math.abs(q.x - x) + Math.abs(q.y - y) <= World.SOMMEIL); }
+  private lacherButin(type: string, rang: Rang, niveau: number, mx: number, my: number, kamas = 0, pour?: number) {
     if (!this.opts.items) return;
     const b = tirerButin(this.rng, this.contexteButin(type, rang, niveau), () => this.nextId++);
     b.kamas += kamas;
-    this.poserButin(b, mx, my);
+    this.poserButin(b, mx, my, pour);
   }
   /** Butin tiré : ressources dans le sac du joueur qui agit, objets et kamas au sol autour de (mx, my). */
-  private poserButin(b: Butin, mx: number, my: number) {
+  private poserButin(b: Butin, mx: number, my: number, pour?: number) {
     const m = { x: mx, y: my }, p = this.player;
     for (const r of b.ressources) {   // ressource : directement dans le sac ; une viande fait monter le Chasseur (choix 6A)
       if (r.job) p.gainMetierXp(r.job, METIER_XP.viande, this);
@@ -1696,18 +1732,25 @@ export class World {
       const a = (i / Math.max(1, out.length)) * Math.PI * 2 + this.rng.range(0, 1), r = out.length > 1 ? 34 : 0;
       let x = m.x + Math.cos(a) * r, y = m.y + Math.sin(a) * r;
       if (!this.walkable(x, y)) { x = m.x; y = m.y; }
-      this.drops.push({ ...o, uid: this.nextId++, x, y, t: 0 });
+      this.drops.push({ ...o, uid: this.nextId++, x, y, t: 0, ...(pour != null ? { pour } : {}) });
       if (o.item) this.emit({ k: 'itemDrop', x, y, rarity: o.item.rarity });
     });
   }
   /** Rareté minimale affichée et ramassable selon le filtre du joueur (0 Commun, 1 Rare, 2 Épique). */
-  shown(d: Drop): boolean { return !d.item || RARITIES.indexOf(d.item.rarity) >= this.player.lootFilter; }
+  shown(d: Drop): boolean { return (d.pour == null || d.pour === this.player.id) && (!d.item || RARITIES.indexOf(d.item.rarity) >= this.player.lootFilter); }
   /** Aspiré quand on passe près (kamas et Communs) ou ramassé d'un clic (le reste). */
   static magnetic(d: Drop): boolean { return !d.item || d.item.rarity === 'commun'; }
   private updateDrops(dt: number) {
-    const p = this.player, f = this.updateFamilier(dt);
+    const f = this.updateFamilier(dt);
+    for (const d of this.drops) d.t += dt;
+    // chaque joueur ramasse ce qui est à lui (le familier n'aide que le joueur de l'écran)
+    for (const q of this.players) this.commeJoueur(q, () => this.ramasser(dt, q === this.players[0] ? f : null));
+    // ramassé, ou oublié au sol depuis 3 minutes
+    this.drops = this.drops.filter(d => d.t >= 0 && d.t < 180);
+  }
+  private ramasser(dt: number, f: FamilierEtat | null) {
+    const p = this.player;
     for (const d of this.drops) {
-      d.t += dt;
       if (p.dead || d.t < 0.5 || !this.shown(d)) continue;
       const dist = Math.hypot(d.x - p.x, d.y - p.y);
       if (d.familier) { if (f) f.cible = null; }   // rapporté par le familier
@@ -1736,8 +1779,6 @@ export class World {
       d.t = -1;
     }
     if (p.pickupId != null && !this.drops.some(d => d.uid === p.pickupId && d.t >= 0)) p.pickupId = null;
-    // ramassé, ou oublié au sol depuis 3 minutes
-    this.drops = this.drops.filter(d => d.t >= 0 && d.t < 180);
   }
   // --- Familier (maquette Familiers) -------------------------------------------------------------------------------
   /** Rayon autour du perso où le familier va chercher le butin (4A). */

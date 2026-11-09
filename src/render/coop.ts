@@ -70,7 +70,13 @@ class Salon {
 
   // ——— connexion ———
   /** monde : partie du serveur en monde ouvert (Incarnam, étape 4) au lieu de l'arène de la Crypte. */
-  creer(serveur = false, compte: PersoCompte | null = null, monde = false) { this.compte = compte; this.connecter(serveur ? { k: 'creer', serveur: true, ...(monde ? { monde: true } : {}) } : { k: 'creer' }); }
+  /** arene : tag du donjon en vagues tenu par le serveur (la Crypte par défaut). */
+  creer(serveur = false, compte: PersoCompte | null = null, monde = false, arene: string | null = null) {
+    this.compte = compte; this.arene = serveur && !monde ? arene : null;
+    this.connecter(serveur ? { k: 'creer', serveur: true, ...(monde ? { monde: true } : {}), ...(this.arene ? { arene: this.arene } : {}) } : { k: 'creer' });
+  }
+  /** Donjon lancé par ce joueur (affichage), null sinon. */
+  arene: string | null = null;
   rejoindre(code: string, compte: PersoCompte | null = null) { if (code.trim()) { this.compte = compte; this.connecter({ k: 'rejoindre', code: code.trim().toUpperCase() }); } }
   /** vers : l'invité a pris une porte vers une autre zone, il y part seul (sinon, retour à sa propre partie). */
   quitter(vers?: { zone: string; arrivee?: [string, number] }) {
@@ -122,6 +128,7 @@ class Salon {
           : m.raison === 'perso' ? 'Ton perso en ligne est introuvable : reconnecte-toi avec Discord'
           : m.raison === 'testeur' ? 'L’essai à plusieurs est réservé aux testeurs'
           : m.raison === 'deja' ? 'Ce perso joue déjà dans un groupe'
+          : m.raison === 'donjon' ? 'Ce donjon n’est pas encore sur le serveur'
           : m.raison === 'hardcore' ? 'Les persos Hardcore ne jouent pas encore à plusieurs' : 'Serveur plein, réessaie';
         this.ws?.close(); this.ws = null; this.fermer();
         break;

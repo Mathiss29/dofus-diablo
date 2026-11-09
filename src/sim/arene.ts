@@ -20,7 +20,11 @@ export const ARENE = {
   rayon: 60,
   /** Maquette Coffres 2A : le coffre ouvre la gueule puis éclate en pièces d'or ; le butin jaillit à l'éclat (s). */
   eclat: 0.75,
+  /** Multi (« Multi : » 7A) : par joueur en plus, +70 % de PV aux monstres et +25 % de monstres par vague (le boss reste seul). */
+  pvParJoueur: 0.7, monstresParJoueur: 0.25,
 };
+/** Multiplicateur de PV des monstres de l'arène pour n joueurs. */
+export const pvGroupe = (n: number) => 1 + ARENE.pvParJoueur * Math.max(0, n - 1);
 
 /** Clé d'un donjon encore valable (14A), gardée dans la sauvegarde : vague atteinte et temps restant (s). */
 export interface CleDonjon { nom: string; vague: number; reste: number }
@@ -51,8 +55,10 @@ export class Arene {
   /** 13A : le boss est tombé ; coffre ouvert ou non. */
   fini = false;
   coffreOuvert = false;
-  /** Butin du coffre, tiré à la mort du boss et posé à l'ouverture (reste chez l'hôte : jamais envoyé). */
+  /** Butin du coffre, tiré à la mort du boss et posé à l'ouverture (reste chez l'hôte : jamais envoyé).
+   *  À plusieurs : un tirage par joueur (numéro du joueur → son butin), que lui seul voit et ramasse. */
   butin: Butin | null = null;
+  butins: [number, Butin | null][] = [];
   /** Coffres 4C : rareté du meilleur objet du coffre (lueur de cette couleur avant l'ouverture), null sans équipement. */
   rareteCoffre: Rarity | null = null;
   /** Temps avant que le butin jaillisse, une fois le coffre touché. */
@@ -76,7 +82,7 @@ export class Arene {
   vivants() { return this.tous.filter(m => !m.dead).length; }
 
   update(dt: number) {
-    const w = this.w, p = w.player;
+    const w = this.w;
     // 7A : cercle rouge au sol, puis le monstre arrive par l'entrée
     for (const a of this.arrivees) {
       a.t -= dt;
@@ -85,10 +91,10 @@ export class Arene {
     }
     this.arrivees = this.arrivees.filter(a => a.t > 0);
     if (this.fini) { this.updateFin(dt); return; }
-    if (p.dead) return;
-    // 15A : la vague 1 attend le premier geste (ou 3 s)
+    if (w.players.every(q => q.dead)) return;   // tout le groupe à terre : l'arène attend
+    // 15A : la vague 1 attend le premier geste (ou 3 s), de n'importe quel joueur
     if (!this.demarre) {
-      const geste = p.state !== 'free' || Math.hypot(p.x - this.depart.x, p.y - this.depart.y) > 60;
+      const geste = w.players.some(q => q.state !== 'free' || Math.hypot(q.x - this.depart.x, q.y - this.depart.y) > 60);
       if ((this.attente -= dt) > 0 && !geste) return;
       this.demarre = true;
       this.lancerVague();
@@ -107,6 +113,9 @@ export class Arene {
     this.vague++; this.tVague = 0;
     const boss = this.vague > this.total;
     const liste = boss ? d.bossVague ?? [] : (d.vagues![this.vague - 1].m).map(m => (m === '?' ? w.rng.pick(this.pool) : m));
+    // à plusieurs : des monstres en plus, pris parmi ceux de la vague
+    const plus = boss ? 0 : Math.round(liste.length * ARENE.monstresParJoueur * Math.max(0, w.players.length - 1));
+    for (let i = 0; i < plus && liste.length; i++) liste.push(liste[i % liste.length]);
     this.membres = [];   // les restes de la vague d'avant ne retiennent plus la suivante
     const cle = w.player.cleDonjon;
     if (cle && cle.nom === d.nom) cle.vague = this.vague;
@@ -123,7 +132,9 @@ export class Arene {
     this.arrivees.push({ type, x: q.x, y: q.y, t, vague: this.vague });
   }
   private apparaitre(a: Attente) {
-    const w = this.w, m = w.spawnMonster(a.type, a.x, a.y);
+    const w = this.w, k = pvGroupe(w.players.length), D = w.opts.data.monsters[a.type];
+    // à plusieurs : la fiche du monstre a plus de PV (il les garde même s'il rentre se calmer)
+    const m = w.spawnMonster(a.type, a.x, a.y, k > 1 && D ? { ...D, hp: Math.round(D.hp * k), xp: D.xp ?? Math.round(D.hp / 5) } : D);
     m.arene = true; this.tous.push(m);
     if (a.vague < 0) this.renforts.push(m); else this.membres.push(m);
     if (m.def.boss && !this.boss) { this.boss = m; w.emit({ k: 'impact', hitstop: 0.05, shake: 0.012, big: true }); }
@@ -158,15 +169,22 @@ export class Arene {
     this.fini = true; this.arrivees = [];
     for (const m of this.tous) if (!m.dead) { m.dead = true; m.t = 0.6; }
     if (p.cleDonjon?.nom === this.d.nom) p.cleDonjon = null;
-    this.butin = w.tirerCoffreDonjon(this.d);
-    this.rareteCoffre = this.butin?.objets.reduce<Rarity | null>((m, it) => !m || RARITIES.indexOf(it.rarity) > RARITIES.indexOf(m) ? it.rarity : m, null) ?? null;
+    if (w.players.length > 1) this.butins = w.players.map(q => [q.id, w.commeJoueur(q, () => w.tirerCoffreDonjon(this.d))]);
+    else this.butin = w.tirerCoffreDonjon(this.d);
+    const objets = [this.butin, ...this.butins.map(b => b[1])].flatMap(b => b?.objets ?? []);
+    this.rareteCoffre = objets.reduce<Rarity | null>((m, it) => !m || RARITIES.indexOf(it.rarity) > RARITIES.indexOf(m) ? it.rarity : m, null);
     const record = w.quetes?.tempsDonjon(this.d.nom, this.chrono) ?? false;
     w.emit({ k: 'areneFin', nom: this.d.nom, temps: this.chrono, record });
   }
   private updateFin(dt: number) {
     const w = this.w, c = this.pts.coffre;
     // le coffre éclate une seule fois (quel que soit le joueur qui l'a ouvert)
-    if (this.eclat > 0 && (this.eclat -= dt) <= 0) { w.ouvrirCoffreDonjon(this.butin, c.x, c.y); this.butin = null; }
+    if (this.eclat > 0 && (this.eclat -= dt) <= 0) {
+      w.ouvrirCoffreDonjon(this.butin, c.x, c.y); this.butin = null;
+      // à plusieurs : chacun son butin (un joueur parti entre-temps n'a plus rien)
+      for (const [id, b] of this.butins) { const q = w.players.find(p => p.id === id); if (q && b) w.commeJoueur(q, () => w.poserButinDe(b, c.x, c.y)); }
+      this.butins = [];
+    }
     // chaque joueur peut ouvrir le coffre et prendre le portail (coop à hôte : seulement l'hôte, sa sortie emmène la partie ;
     // partie du serveur : chacun pour soi)
     if (!w.opts.partieServeur) { this.finJoueur(); return; }

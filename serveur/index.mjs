@@ -6,7 +6,7 @@ import { createServer } from 'node:http';
 import { readFileSync } from 'node:fs';
 import { WebSocketServer } from 'ws';
 import { creerComptes } from './comptes.mjs';
-import { chargerSim, Partie } from './partie.mjs';
+import { arenesDisponibles, chargerSim, Partie } from './partie.mjs';
 import { creerPresence } from './presence.mjs';
 import { annonceurDiscord, creerClassement } from './classement.mjs';
 
@@ -75,15 +75,16 @@ function tourner() {
     }
   }, 1000 / 60);
 }
-/** monde : la partie est Incarnam en monde ouvert (étape 4, monde partagé), sinon l'arène de la Crypte. */
-async function creerPartie(s, monde = false) {
+/** monde : la partie est Incarnam en monde ouvert (étape 4, monde partagé), sinon l'arène d'un donjon (arene : son tag, la Crypte par défaut). */
+async function creerPartie(s, monde = false, arene = null) {
   const S = await chargerSim();
   if (s.readyState !== 1) return;
   if (!S) return envoyer(s, { k: 'refus', raison: 'indisponible' });
+  if (arene && !monde && !arenesDisponibles(S).some(a => a.tag === arene)) return envoyer(s, { k: 'refus', raison: 'donjon' });
   if (salons.size >= SALON.salons || parties().length >= SALON.parties) return envoyer(s, { k: 'refus', raison: 'plein' });
   const sa = { code: nouveauCode(), membres: new Map([[1, s]]), suivant: 2 };
   sa.partie = new Partie(S, (num, d) => { const c = sa.membres.get(num); if (c) envoyer(c, `{"k":"recu","de":0,"d":${JSON.stringify(d)}}`); },
-    undefined, (c, perso) => lesComptes?.sauverPartie(c.compte, c.emplacement, perso), { monde, donjonFini: (nom, temps, L) => leClassement?.noterDonjon(nom, temps, L) });
+    undefined, (c, perso) => lesComptes?.sauverPartie(c.compte, c.emplacement, perso), { monde, arene, donjonFini: (nom, temps, L) => leClassement?.noterDonjon(nom, temps, L) });
   sa.partie.arrivee(1);
   salons.set(sa.code, sa); s.salon = sa; s.num = 1;
   tourner();
@@ -111,7 +112,7 @@ function recu(s, m, brut) {
   if (m.k === 'ping') return envoyer(s, { k: 'pong', t: m.t ?? null, serveur: Date.now() });
   if (m.k === 'creer') {
     quitter(s);
-    if (m.serveur) return void creerPartie(s, m.monde === true);
+    if (m.serveur) return void creerPartie(s, m.monde === true, typeof m.arene === 'string' ? m.arene.slice(0, 40) : null);
     if (salons.size >= SALON.salons) return envoyer(s, { k: 'refus', raison: 'plein' });
     const sa = { code: nouveauCode(), membres: new Map([[1, s]]), suivant: 2 };
     salons.set(sa.code, sa); s.salon = sa; s.num = 1;

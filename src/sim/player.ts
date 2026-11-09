@@ -47,6 +47,9 @@ export class Player extends Entity {
   combo = 0;
   comboTimer = 0;
   invuln = 0;
+  /** Multi (« Multi complet » 7B) : temps à terre, et temps passé par un allié à le relever (s). */
+  aTerre = 0;
+  releve = 0;
   /** PA disponibles (fractionnaires : ils remontent en continu). */
   pa: number;
   /** Charges de déplacement disponibles (fractionnaires : elles se rechargent une à une). */
