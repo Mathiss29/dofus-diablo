@@ -37,9 +37,10 @@ function demarrer() {
   // (#ladder/Nom n'en est pas un, même si le nom contient « cra »)
   const lad = adresseLadder();
   const dev = !lad && /cra|astrub|jeu|test/.test(location.hash);
+  if (dev) ZoneScene.clicJouer = 0;   // Arrivée 7A : en mode dév, chrono depuis l'ouverture de la page (console seulement)
   game.scene.add('zone', ZoneScene, true, dev ? {} : { vitrine: true });
   const zone = () => game.scene.getScene('zone') as ZoneScene;
-  const accueil = new Accueil(slot => { accueil.hide(); zone().scene.restart({ slot }); },
+  const accueil = new Accueil(slot => { accueil.hide(); ZoneScene.clicJouer = performance.now(); zone().scene.restart({ slot }); },
     // Accueil 8B : essayer une classe 60 s dans les Champs d'Astrub, puis retour à la création
     (classe, sexe, apparence) => { accueil.hide(); zone().scene.restart({ classe, zone: 'champs-astrub', essai: sexe, apparence }); });
   accueil.onOptions = () => zone().ouvrirOptions();

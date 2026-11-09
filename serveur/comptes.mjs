@@ -26,6 +26,8 @@ const liste = s => new Set(String(s ?? '').split(',').map(x => x.trim()).filter(
 
 /** Étapes comptées du parcours d'un nouveau venu, dans l'ordre. */
 export const PARCOURS = ['accueil', 'creation', 'perso', 'tuto'];
+/** Arrivée en jeu (maquette « Arrivée : » 7A) : temps entre « Jouer » et le monde affiché, rangé par tranche (secondes). */
+export const TRANCHES_ARRIVEE = [[2, '<2 s'], [4, '2-4 s'], [6, '4-6 s'], [10, '6-10 s'], [Infinity, '10 s et +']];
 
 /**
  * @param {{ dossier: string, env?: Record<string,string|undefined>, origines: Set<string>, fetch?: typeof fetch, maintenant?: () => number }} o
@@ -46,7 +48,8 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
       sorte TEXT NOT NULL, nom TEXT NOT NULL DEFAULT '', nom_de TEXT NOT NULL DEFAULT '', depuis INTEGER NOT NULL, PRIMARY KEY (de, vers));
     CREATE TABLE IF NOT EXISTS social (compte INTEGER PRIMARY KEY REFERENCES comptes(id) ON DELETE CASCADE, hors_ligne INTEGER NOT NULL DEFAULT 0,
       inconnus INTEGER NOT NULL DEFAULT 0);
-    CREATE TABLE IF NOT EXISTS parcours (jour TEXT NOT NULL, etape TEXT NOT NULL, n INTEGER NOT NULL, PRIMARY KEY (jour, etape));`);
+    CREATE TABLE IF NOT EXISTS parcours (jour TEXT NOT NULL, etape TEXT NOT NULL, n INTEGER NOT NULL, PRIMARY KEY (jour, etape));
+    CREATE TABLE IF NOT EXISTS arrivees (jour TEXT NOT NULL, tranche TEXT NOT NULL, n INTEGER NOT NULL, ms INTEGER NOT NULL, PRIMARY KEY (jour, tranche));`);
   const q = {
     compteDiscord: db.prepare('SELECT * FROM comptes WHERE discord = ?'),
     nouveau: db.prepare('INSERT INTO comptes (discord, nom, avatar, roles, cree, vu) VALUES (?, ?, ?, ?, ?, ?)'),
@@ -73,6 +76,8 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
     regler: db.prepare('INSERT INTO social (compte, hors_ligne, inconnus) VALUES (?, ?, ?) ON CONFLICT (compte) DO UPDATE SET hors_ligne = excluded.hors_ligne, inconnus = excluded.inconnus'),
     parcours: db.prepare('INSERT INTO parcours (jour, etape, n) VALUES (?, ?, 1) ON CONFLICT (jour, etape) DO UPDATE SET n = n + 1'),
     lireParcours: db.prepare('SELECT jour, etape, n FROM parcours WHERE jour >= ? ORDER BY jour'),
+    arrivee: db.prepare('INSERT INTO arrivees (jour, tranche, n, ms) VALUES (?, ?, 1, ?) ON CONFLICT (jour, tranche) DO UPDATE SET n = n + 1, ms = ms + excluded.ms'),
+    lireArrivees: db.prepare('SELECT jour, tranche, n, ms FROM arrivees WHERE jour >= ? ORDER BY jour'),
     nb: db.prepare('SELECT (SELECT COUNT(*) FROM comptes) AS inscrits, (SELECT COUNT(*) FROM persos) AS persos'),
   };
   const testeurs = liste(env.ROLES_TESTEUR), admins = liste(env.ROLES_ADMIN);
@@ -153,15 +158,40 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
     return true;
   }
 
+  /** Arrivées en jeu : au plus 30 par adresse IP et par jour (vérifié en mémoire, jamais écrit). */
+  const arriveesIp = new Map();
+  function noterArrivee(req, brut) {
+    const ms = Number(brut);
+    if (!Number.isFinite(ms) || ms <= 0 || ms >= 600_000) return false;
+    const jour = new Date(maintenant()).toISOString().slice(0, 10);
+    if (jour !== jourParcours) { jourParcours = jour; vusParcours.clear(); arriveesIp.clear(); }
+    const ip = String(req.headers['cf-connecting-ip'] ?? req.socket?.remoteAddress ?? '');
+    const n = arriveesIp.get(ip) ?? 0;
+    if (n >= 30 || arriveesIp.size > 200_000) return true;
+    arriveesIp.set(ip, n + 1);
+    const tranche = TRANCHES_ARRIVEE.find(([s]) => ms < s * 1000)[1];
+    q.arrivee.run(jour, tranche, Math.round(ms));
+    return true;
+  }
+
   /** Répond aux adresses des comptes ; renvoie false si l'adresse n'est pas la sienne. */
   async function route(req, res, url) {
     const p = url.pathname, m = req.method;
     if (p === '/parcours') {
-      if (m === 'POST') return json(res, noterParcours(req, url.searchParams.get('etape') ?? '') ? 200 : 400, {}), true;
+      if (m === 'POST') {
+        const a = url.searchParams.get('arrivee');
+        return json(res, (a !== null ? noterArrivee(req, a) : noterParcours(req, url.searchParams.get('etape') ?? '')) ? 200 : 400, {}), true;
+      }
       if (m === 'GET') {
-        const depuis = new Date(maintenant() - 30 * 86400e3).toISOString().slice(0, 10), jours = {};
+        const depuis = new Date(maintenant() - 30 * 86400e3).toISOString().slice(0, 10), jours = {}, arrivees = {};
         for (const r of q.lireParcours.all(depuis)) (jours[r.jour] ??= {})[r.etape] = r.n;
-        return json(res, 200, { etapes: PARCOURS, jours }), true;
+        // arrivée en jeu par jour : nombre, moyenne en secondes, et nombre par tranche
+        for (const r of q.lireArrivees.all(depuis)) {
+          const j = arrivees[r.jour] ??= { n: 0, ms: 0, tranches: {} };
+          j.n += r.n; j.ms += r.ms; j.tranches[r.tranche] = r.n;
+        }
+        for (const j of Object.values(arrivees)) { j.moyenne = Math.round(j.ms / j.n / 100) / 10; delete j.ms; }
+        return json(res, 200, { etapes: PARCOURS, jours, arrivees }), true;
       }
     }
     if (m === 'GET' && p === '/connexion') {

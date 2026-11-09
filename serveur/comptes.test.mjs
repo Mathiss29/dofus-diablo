@@ -182,3 +182,18 @@ test('parcours des nouveaux venus : compteurs anonymes, une fois par adresse et 
   assert.deepEqual(jour, { accueil: 1, creation: 1 });
   await fin();
 });
+
+test('arrivée en jeu : temps rangés par tranche, moyenne par jour, valeurs absurdes refusées', async () => {
+  const { base, fin } = await serveur();
+  const noter = ms => fetch(`${base}/parcours?arrivee=${ms}`, { method: 'POST' });
+  assert.equal((await noter(3000)).status, 200);
+  await noter(5000); await noter(1500);
+  assert.equal((await noter(-4)).status, 400);
+  assert.equal((await noter('abc')).status, 400);
+  const r = await (await fetch(`${base}/parcours`)).json();
+  const jour = Object.values(r.arrivees)[0];
+  assert.equal(jour.n, 3);
+  assert.equal(jour.moyenne, 3.2);
+  assert.deepEqual(jour.tranches, { '<2 s': 1, '2-4 s': 1, '4-6 s': 1 });
+  await fin();
+});

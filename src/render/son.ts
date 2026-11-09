@@ -192,13 +192,25 @@ class Moteur {
   }
 
   volumes(v: Partial<Volumes>) { Object.assign(this.vol, v); this.appliquerVolumes(); }
+  /** Rideau d'arrivée (maquette « Arrivée : » 6A) : musique et ambiance coupées tant que le monde n'est pas affiché… */
+  private voile = 1;
+  voiler() { this.voile = 0; this.appliquerVolumes(); }
+  /** … puis elles montent en fondu (environ `duree` secondes) quand il apparaît. */
+  lever(duree = 1.5) {
+    if (this.voile === 1) return;
+    this.voile = 1;
+    const c = this.ctx; if (!c) return;
+    const t = c.currentTime, bas = this.cache_visible ? 0.2 : 1;
+    this.bus.musique.gain.setTargetAtTime(this.vol.musique * bas, t, duree / 3);
+    this.bus.ambiance.gain.setTargetAtTime(this.vol.ambiance * bas, t, duree / 3);
+  }
   get muet() { return this.vol.muet; }
   private appliquerVolumes() {
     const c = this.ctx; if (!c) return;
     const t = c.currentTime, V = this.vol, bas = this.cache_visible ? 0.2 : 1;
     this.master.gain.setTargetAtTime(V.muet ? 0 : V.general, t, 0.05);
-    this.bus.musique.gain.setTargetAtTime(V.musique * bas, t, 0.1);
-    this.bus.ambiance.gain.setTargetAtTime(V.ambiance * bas, t, 0.1);
+    this.bus.musique.gain.setTargetAtTime(V.musique * bas * this.voile, t, this.voile ? 0.1 : 0.02);
+    this.bus.ambiance.gain.setTargetAtTime(V.ambiance * bas * this.voile, t, this.voile ? 0.1 : 0.02);
     this.bus.effets.gain.setTargetAtTime(V.effets, t, 0.05);
     this.bus.monstres.gain.setTargetAtTime(V.monstres, t, 0.05);
     this.bus.interface.gain.setTargetAtTime(V.interface, t, 0.05);

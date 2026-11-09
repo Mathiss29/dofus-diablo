@@ -8,6 +8,9 @@ import { v } from './assetUrl';
  *  ses niveaux et une astuce ; le logo reste pour le tout premier lancement. Vers le Havre-Sac (14A), c'est le noir
  *  d'une porte : l'écran ne vient que si le chargement traîne (classe « lent »). */
 let premier = true;
+/** Part déjà montrée : la barre ne recule jamais (le chargeur repart de 0 quand la scène demande d'autres fichiers). */
+let montre = 0;
+const FICHIERS = 0.7, MONDE = 'Le monde se met en place…';
 let astuce = -1;
 const el = () => document.getElementById('chargement');
 const esc = (s: string) => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
@@ -35,7 +38,7 @@ export const Chargement = {
   },
   montrer(arrivee: Arrivee = null) {
     const e = el(); if (!e) return;
-    Chargement.progres(0);
+    montre = 0; Chargement.progres(0);
     const voy = e.querySelector('.voyage') as HTMLElement | null;
     e.classList.remove('voyage-on', 'lent');
     if (arrivee?.mode === 'voyage' && voy && !premier) {
@@ -50,16 +53,21 @@ export const Chargement = {
     e.classList.add('discret'); e.classList.remove('vu'); e.hidden = false;
     requestAnimationFrame(() => e.classList.add('vu'));
   },
-  progres(p: number) {
+  progres(p: number, texte = 'Chargement…') {
     const e = el(); if (!e) return;
-    const pc = Math.round(Math.max(0, Math.min(1, p)) * 100);
+    montre = Math.max(montre, Math.min(1, p));
+    const pc = Math.round(montre * 100);
     (e.querySelector('.barre i') as HTMLElement | null)?.style.setProperty('width', `${pc}%`);
-    const t = e.querySelector('small:not(.vers)'); if (t) t.textContent = `Chargement… ${pc} %`;
+    const t = e.querySelector('small:not(.vers)'); if (t) t.textContent = `${texte} ${pc} %`;
   },
+  /** Barre en deux étapes (maquette « Arrivée : » 3A) : les fichiers de 0 à 70 %… */
+  fichiers(p: number) { Chargement.progres(p * FICHIERS, p >= 1 ? MONDE : 'Chargement…'); },
+  /** … puis les cartes du perso et de ses voisines posées, de 70 à 100 % : la barre ne reste plus figée à 100 %. */
+  monde(p: number) { Chargement.progres(FICHIERS + (1 - FICHIERS) * Math.max(0, Math.min(1, p)), MONDE); },
   cacher() {
     const e = el(); if (!e) return;
     if (tourne) { clearInterval(tourne); tourne = 0; }
-    premier = false; e.hidden = true; e.classList.remove('discret', 'vu', 'voyage-on', 'lent');
+    montre = 0; premier = false; e.hidden = true; e.classList.remove('discret', 'vu', 'voyage-on', 'lent');
   },
 };
 
