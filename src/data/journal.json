@@ -837,14 +837,12 @@
             ]
           },
           {
-            "titre": "Le Ladder des aventuriers",
-            "phrase": "Un classement en ligne : niveau, Hardcore, métiers, exploration et records de donjon.",
-            "details": "Clique un nom pour voir sa fiche et son équipement. « Les premiers » grave pour toujours le premier niveau 50, le premier Dofus…",
-            "icone": "succes",
+            "titre": "Un accueil pour les nouveaux",
+            "phrase": "La première visite présente le jeu, avec un gros bouton « Jouer gratuitement » et le Discord.",
+            "details": "Le « Quoi de neuf » attend ta deuxième visite. Un lien « C'est quoi Diablofus ? » répond aux questions courantes.",
+            "icone": "journal",
             "etiquettes": [
-              "Touche L",
-              "Accueil › Ladder",
-              "Perso en ligne"
+              "Accueil"
             ]
           }
         ],
@@ -1112,6 +1110,39 @@
           "Le serveur sait qui est en ligne et relaie les positions des joueurs du Bastion dix fois par seconde.",
           "Chat : messages nettoyés par le serveur et limités à cinq toutes les cinq secondes.",
           "Les joueurs ignorés ne peuvent plus t'écrire ni t'inviter : le serveur ne leur transmet plus rien.",
+          "Une chasse aux plantages sans navigateur : quatre joueurs jouent seuls des milliers d'images à chaque PR.",
+          "Préparation du monde partagé : en groupe, chaque joueur aura ses quêtes, et les monstres compteront pour tous.",
+          "Sur téléphone, un écran léger explique que le jeu se joue sur PC, sans tout charger.",
+          "Monde partagé : chacun ses portes, son point de retour, sa récolte et ses fenêtres dans la même partie.",
+          "Partie de test : « Jouer ensemble à Incarnam » dans Social › Groupe, chacun avec sa place et ses quêtes."
+        ]
+      }
+    },
+    {
+      "date": "2026-11-09",
+      "titre": "Incarnam à plusieurs",
+      "resume": "Premier essai du monde partagé : un groupe joue ensemble à Incarnam, chacun avec son perso et ses quêtes.",
+      "capture": "assets/journal/2026-11-09.webp",
+      "legende": "Un invité parle à Berb Nhin dans l'Incarnam partagé, 8 novembre 2026.",
+      "lignes": {
+        "Nouveautés": [
+          {
+            "titre": "Le Ladder des aventuriers",
+            "phrase": "Un classement en ligne : niveau, Hardcore, métiers, exploration et records de donjon.",
+            "details": "Clique un nom pour voir sa fiche et son équipement. « Les premiers » grave pour toujours le premier niveau 50, le premier Dofus…",
+            "icone": "succes",
+            "etiquettes": [
+              "Touche L",
+              "Accueil › Ladder",
+              "Perso en ligne"
+            ]
+          }
+        ],
+        "Le monde": [],
+        "Combat": [],
+        "Corrections": [],
+        "En coulisses": [
+          "À plusieurs, chaque joueur voit son sac, ses ressources et ses kamas en direct.",
           "Le serveur calcule le classement chaque minute ; les records de donjon ne comptent que sur ses parties."
         ]
       }

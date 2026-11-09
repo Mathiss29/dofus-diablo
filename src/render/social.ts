@@ -61,11 +61,11 @@ function membres(w: World) {
 /** Onglet ouvert (gardé d'une ouverture à l'autre), et donjon à annoncer au groupe dès que sa partie existe. */
 type Onglet = 'amis' | 'groupe' | 'discord' | 'ignores';
 let onglet: Onglet = 'groupe';
-let aAnnoncer = false;
-const DONJON = 'Crypte de Kardorim';
+let aAnnoncer: string | null = null;
+const DONJON = 'Crypte de Kardorim', MONDE = 'Incarnam';
 Coop.ecouter(() => {
-  if (aAnnoncer && Coop.etat === 'salon' && Coop.serveur && Coop.code) { EnLigne.annoncerDonjon(Coop.code, DONJON); aAnnoncer = false; }
-  else if (Coop.etat === 'hors') aAnnoncer = false;
+  if (aAnnoncer && Coop.etat === 'salon' && Coop.serveur && Coop.code) { EnLigne.annoncerDonjon(Coop.code, aAnnoncer); aAnnoncer = null; }
+  else if (Coop.etat === 'hors') aAnnoncer = null;
 });
 
 /** Peut-on inviter avec le perso joué ? (pas en Hardcore, testeurs seulement pendant l'essai fermé) */
@@ -153,7 +153,9 @@ export function rendreSocial(win: HTMLDivElement, titre: string, c: ContexteSoci
   const compte = () => (c.slot >= 0 && Compte.jeton ? { jeton: Compte.jeton, emplacement: c.slot } : null);
   $('[data-soc-creer]')?.addEventListener('click', () => EnLigne.creerGroupe());
   // le chef lance le donjon (partie tenue par le serveur) ; les autres reçoivent « Rejoindre »
-  $('[data-soc-donjon]')?.addEventListener('click', () => { aAnnoncer = true; Coop.creer(true, compte()); });
+  $('[data-soc-donjon]')?.addEventListener('click', () => { aAnnoncer = DONJON; Coop.creer(true, compte()); });
+  // monde partagé (étape 4) : Incarnam tenu par le serveur, chacun y garde sa place et ses quêtes
+  $('[data-soc-monde]')?.addEventListener('click', () => { aAnnoncer = MONDE; Coop.creer(true, compte(), true); });
   $('[data-soc-rejoindre-donjon]')?.addEventListener('click', () => { const d = EnLigne.groupe?.donjon; if (d) Coop.rejoindre(d, compte()); });
   $('[data-soc-quitter-grp]')?.addEventListener('click', () => EnLigne.quitterGroupe());
   const rej = () => { const v = $<HTMLInputElement>('[data-soc-code]')?.value ?? ''; if (v.trim()) Coop.rejoindre(v, compte()); };
@@ -276,7 +278,8 @@ function groupe(c: ContexteSocial): string {
   }).join('');
   const donjon = chef
     ? `<span class="btn" data-soc-donjon title="${DONJON} : tout le groupe reçoit « Rejoindre »">Lancer la Crypte</span>`
-    : G.donjon ? `<span class="btn" data-soc-rejoindre-donjon>Rejoindre le donjon du chef</span>` : '';
+      + `<span class="btn" data-soc-monde title="${MONDE} à plusieurs (essai) : chacun garde sa place et ses quêtes, tout le groupe reçoit « Rejoindre »">Jouer ensemble à ${MONDE}</span>`
+    : G.donjon ? `<span class="btn" data-soc-rejoindre-donjon>Rejoindre le chef</span>` : '';
   return `${err}<div class="liste">${L}</div>
     <p class="note">${G.membres.length} / 4 · invite avec les onglets Discord ou Amis, ou clic droit sur un joueur. ${chef ? 'Tu es le chef : tu lances le donjon.' : 'Le chef lance le donjon, tu reçois « Rejoindre ».'}</p>
     <div class="bas">${donjon}<span class="btn gris" data-soc-quitter-grp>Quitter le groupe</span></div>`;

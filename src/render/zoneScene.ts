@@ -44,6 +44,8 @@ import { CarteMonde } from './carteMonde';
 import { Windows } from './windows';
 import { mmss } from './forgeVue';
 import { Chargement, type Arrivee } from './chargement';
+import { inviterDiscord } from './inviteDiscord';
+import { Parcours } from './parcours';
 import { spellTipHtml } from './spellTip';
 import { LEGENDARY, RARITY_COLORS, RARITY_NAMES, rollItem } from '../sim/items';
 import { POUVOIR_PAR_ID, V03_PUBLIC } from '../sim/pouvoirs';
@@ -406,7 +408,7 @@ export class ZoneScene extends Phaser.Scene {
     this.miroir = Coop.miroir;
     const wc = this.world;
     Coop.attacher({ world: wc, annonce: t => this.hud.toast(t), nom: this.perso?.nom ?? '', sauver: () => this.sauver(),
-      allerA: (zone, position) => { if (this.world === wc) this.scene.restart(zone ? { slot: this.slot, zone, position } : { slot: this.slot }); } });
+      allerA: (zone, position, arrivee) => { if (this.world === wc) this.scene.restart(zone ? { slot: this.slot, zone, position, arrivee } : { slot: this.slot }); } });
     this.events.once('shutdown', () => Coop.detacher(wc));
     // Présence en ligne (Bastion partagé) : seulement avec un perso du compte, hors partie de test et hors vitrine
     if (this.perso && persosEnLigne() && !this.test && !this.vitrine && !this.essai && this.slot >= 0) {
@@ -414,7 +416,7 @@ export class ZoneScene extends Phaser.Scene {
       EnLigne.annoncer(this.slot, Coop.miroir ? '__groupe' : this.zoneId, p.x, p.y, objetsPortes(p.equipment, p.apparat));
       // invitation dans un groupe : on le rejoint sans bouger ; donjon lancé par le chef : on le rejoint (on y part)
       EnLigne.onInvitation = (de, g) => montrerInvitation(de, 't\'invite dans son groupe', () => EnLigne.repondreGroupe(g, true), () => EnLigne.repondreGroupe(g, false));
-      EnLigne.onDonjon = (de, code, lieu) => montrerInvitation(de, `part en donjon${lieu ? ` (${lieu})` : ''}`, () => {
+      EnLigne.onDonjon = (de, code, lieu) => montrerInvitation(de, lieu === 'Incarnam' ? 'te propose de jouer ensemble à Incarnam' : `part en donjon${lieu ? ` (${lieu})` : ''}`, () => {
         const j = CompteEnLigne.jeton; if (!j) return;
         if (Coop.etat !== 'hors') { this.hud.toast('Quitte d\'abord ton donjon (Social › Groupe)'); return; }
         Coop.rejoindre(code, { jeton: j, emplacement: this.slot });
@@ -1243,6 +1245,11 @@ export class ZoneScene extends Phaser.Scene {
           const q = this.world.quetes!.def(e.id);
           if (!e.sautee) this.hud.banner(`Quête terminée\n${q.nom}`, 1600);
           if (q.type === 'tutoriel' && !this.test) sauverCompte(this.world, 1);   // partie de test : rien ne compte (10A)
+          // fin du tutoriel (idée B) : plus aucune quête de tutoriel en cours un instant après, on invite au Discord
+          if (q.type === 'tutoriel' && !e.sautee && !this.test) this.time.delayedCall(2500, () => {
+            const qs = this.world.quetes; if (!qs || qs.enCours.some(c => qs.def(c.id).type === 'tutoriel')) return;
+            Parcours.noter('tuto'); inviterDiscord();
+          });
           this.windows?.refresh(); break;
         }
         case 'queteInfo': this.hud.toast(e.texte); break;

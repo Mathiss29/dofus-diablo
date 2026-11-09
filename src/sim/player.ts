@@ -9,6 +9,9 @@ import { WEAPONS } from './data';
 import { BASE_STATS, EQUIP_SLOTS, REDUCTION_RECHARGES_MAX, METIER_MAX, metierXpNeeded, type EquipSlot, type Item, type ItemsData, type Stat, type Stats } from './items';
 import type { PlayerInput } from './input';
 import type { HitDef, World } from './world';
+import type { Quetes } from './quests';
+import type { SimEvent } from './events';
+import { etatMondeNeuf, type EtatMonde } from './etatMonde';
 import { coutPoint, coutTotal, fuiteFactor, pointsAchetables, prospectionDeChance, soinRecu, tackleSlow, tacleOf, vitesseAgilite } from './caracs';
 import { CASE, TOUR } from './monster';
 import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type SortGrade, type SortOfficiel } from './sorts';
@@ -30,6 +33,12 @@ export class Player extends Entity {
   readonly faction = 'player' as const;
   /** Nom du perso (coop : portraits du groupe, fenêtre Social) ; vide = celui de l'écran ne s'en sert pas. */
   nom = '';
+  /** Quêtes et succès de ce perso (monde ouvert) : en multi, chaque joueur a les siens ; world.quetes = ceux de world.player. */
+  quetes: Quetes | null = null;
+  /** Son état dans le monde ouvert (porte, récolte, point de retour, Havre-Sac…), voir etatMonde.ts. */
+  monde: EtatMonde = etatMondeNeuf();
+  /** Multi : ses événements propres (fenêtres, butin, porte…) en attendant que l'hôte ou le serveur les lui envoie. */
+  evenements: SimEvent[] = [];
   state: 'free' | 'skill' = 'free';
   skill: ActiveSkill | null = null;
   /** Recharge restante de chaque sort, et durée totale de la dernière recharge lancée (pour le voile de la barre). */

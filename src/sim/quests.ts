@@ -271,7 +271,9 @@ export class Quetes {
   /** Élites de quête vivants : id du monstre -> quête. */
   private elites = new Map<number, string>();
   static readonly PORTEE = 130;
-  get classe() { return this.world.opts.classId ?? 'iop'; }
+  /** Classe du perso à qui sont ces quêtes (multi : chaque joueur a les siennes) ; vide = celle de la partie. */
+  classeId: string | null = null;
+  get classe() { return this.classeId ?? this.world.opts.classId ?? 'iop'; }
 
   constructor(readonly data: QuetesData, private world: World, readonly compte: Compte = { succes: [], persos: 0 }) {
     for (const s of compte.succes) this.succes.add(s);
@@ -375,6 +377,15 @@ export class Quetes {
     });
   }
 
+  /** Chez l'invité (monde partagé) : recopie ses quêtes tenues par l'hôte ou le serveur, sans rien faire apparaître ni avancer. */
+  recopier(e: EtatQuetes & { dialogue?: Dialogue | null }) {
+    this.enCours = (e.enCours ?? []).filter(c => this.existe(c.id));
+    this.finies = new Set(e.finies ?? []); this.etapesFinies = new Set(e.etapesFinies ?? []);
+    this.suivie = e.suivie ?? null; this.refaites = { ...e.refaites }; this.tableau = e.tableau ?? null;
+    this.decouvertes = new Set(e.decouvertes ?? []); this.vaincus = new Set(e.vaincus ?? []); this.objets = { ...e.objets };
+    this.donjons = JSON.parse(JSON.stringify(e.donjons ?? {}));
+    if ('dialogue' in e) this.dialogue = e.dialogue ?? null;
+  }
   def(id: string): QueteDef { return this.data.quetes[id] ?? this.ecrireContrat(id) ?? this.ecrireDefi(id)!; }
   /** La quête existe (écrite dans quetes.json, ou contrat dont la sous-zone existe). */
   existe(id: string) { return !!(this.data.quetes[id] ?? this.ecrireContrat(id) ?? this.ecrireDefi(id)); }

@@ -19,6 +19,8 @@ export const PARTIE = {
 };
 /** Ce que la partie garde du perso d'avant : où il était dans SON monde (la partie se passe ailleurs) et ses quêtes. */
 const GARDES = ['zone', 'x', 'y', 'retour', 'havreSac', 'quetes', 'zaaps', 'zonesVues', 'cleDonjon'];
+/** Monde ouvert d'Incarnam (étape 4) : la partie est son vrai monde, on garde tout sauf le Havre-Sac (la partie n'y va pas). */
+const GARDES_MONDE = ['havreSac'];
 
 let sim = null;
 /** Charge la simulation construite (une seule fois) ; null si elle n'a pas été construite. */
@@ -34,16 +36,19 @@ export async function chargerSim(dossier = new URL('./partie/', import.meta.url)
 export class Partie {
   /** @param {any} S la simulation chargée ; envoyer(num, données) parle à un joueur du salon. */
   /** sauver(compte, perso) : écrit le perso d'un compte (comptes.mjs) ; absent = rien n'est gardé. */
-  /** donjonFini(nom, temps, membres) : fin d'un donjon (Ladder 2D), avec les persos de comptes encore là. */
-  constructor(S, envoyer, seed = Math.floor(Math.random() * 2 ** 31), sauver = null, donjonFini = null) {
-    this.S = S; this.envoyer = envoyer; this.seed = seed; this.sauver = sauver; this.donjonFini = donjonFini; this.depuisSauvegarde = 0;
+  /** o.donjonFini(nom, temps, membres) : fin d'un donjon (Ladder 2D), avec les persos de comptes encore là. */
+  /** o.monde : Incarnam en monde ouvert, chacun avec ses quêtes, sa place et son point de retour (sinon l'arène de la Crypte). */
+  constructor(S, envoyer, seed = Math.floor(Math.random() * 2 ** 31), sauver = null, o = {}) {
+    this.S = S; this.envoyer = envoyer; this.seed = seed; this.sauver = sauver; this.depuisSauvegarde = 0;
+    this.donjonFini = o.donjonFini ?? null;
+    this.monde = !!o.monde;
     this.w = null;
     this.membres = new Map();
     this.n = 0; this.reste = 0; this.erreurs = 0;
   }
   arrivee(num) {
     const S = this.S;
-    this.membres.set(num, { joueur: null, em: null, pret: false, entree: S.entreeInvite(null), pressed: null, potion: false, mortDepuis: 0 });
+    this.membres.set(num, { joueur: null, em: null, pret: false, entree: S.entreeInvite(null), pressed: null, potion: false, une: {}, mortDepuis: 0 });
   }
   depart(num) {
     const m = this.membres.get(num);
@@ -63,6 +68,7 @@ export class Partie {
       m.entree = e;
       if (e.pressed) m.pressed = e.pressed;
       if (e.potion) m.potion = true;
+      this.S.garderUneFois(m.une, e);
     } else if (d.k === 'pret') { m.pret = true; m.em?.toutRenvoyer(); }
   }
 
@@ -74,21 +80,28 @@ export class Partie {
     if (d.compte) { m.compte = d.compte; m.arrivee = Date.now(); }
     const source = d.compte ? d.compte.perso : d;
     const classe = typeof source.classe === 'string' && S.GAME_DATA.classes[source.classe] ? source.classe : 'iop';
-    const etat = source.etat && typeof source.etat === 'object' ? { ...source.etat, zone: '__coop', havreSac: undefined } : null;
+    const brut = source.etat && typeof source.etat === 'object' ? source.etat : null;
+    // monde ouvert : sa vraie place s'il était à Incarnam ; sinon (et dans l'arène) il arrive à côté des autres
+    const chezLui = this.monde && brut?.zone === 'incarnam';
+    const etat = brut ? { ...brut, zone: chezLui ? 'incarnam' : '__coop', havreSac: undefined } : null;
+    const quetes = this.monde ? { reprise: brut?.quetes && typeof brut.quetes === 'object' ? brut.quetes : { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} } } : undefined;
     let q;
     if (!this.w) {
-      this.w = new S.World({ data: S.GAME_DATA, zone: 'incarnam', map: new S.WorldGrid(S.monde), seed: this.seed, classId: classe, items: S.ITEMS, partieServeur: true });
-      this.w.allerArene(PARTIE.arene);
-      // le fondu d'entrée de l'arène : on le passe tout de suite, le joueur arrive directement dedans
-      for (let i = 0; i < 300 && this.w.passage; i++) this.w.step(PARTIE.pas, S.NO_INPUT);
+      this.w = new S.World({ data: S.GAME_DATA, zone: 'incarnam', map: new S.WorldGrid(S.monde), seed: this.seed, classId: classe, items: S.ITEMS, partieServeur: true,
+        ...(this.monde ? { quetes: S.QUETES, reprise: quetes.reprise, zonesVues: Array.isArray(brut?.zonesVues) ? brut.zonesVues : [] } : {}) });
+      if (!this.monde) {
+        this.w.allerArene(PARTIE.arene);
+        // le fondu d'entrée de l'arène : on le passe tout de suite, le joueur arrive directement dedans
+        for (let i = 0; i < 300 && this.w.passage; i++) this.w.step(PARTIE.pas, S.NO_INPUT);
+      }
       this.w.drainEvents();
       q = this.w.players[0];
     } else {
       if (this.w.players.length >= 4) return;
-      q = this.w.ajouterJoueur(classe);
+      q = this.w.ajouterJoueur(classe, quetes);
     }
     if (etat) { try { this.w.commeJoueur(q, () => S.restaurerJoueur(this.w, etat)); } catch (e) { console.warn('partie : perso illisible', e.message); } }
-    if (this.w.players[0] !== q) { const f = this.w.map.nearestFree(this.w.players[0].x + 40, this.w.players[0].y); q.x = f.x; q.y = f.y; }
+    if (this.w.players[0] !== q && !chezLui) { const f = this.w.map.nearestFree(this.w.players[0].x + 40, this.w.players[0].y); q.x = f.x; q.y = f.y; }
     q.hp = q.maxHp;
     q.nom = typeof source.nom === 'string' ? source.nom.slice(0, 20) : '';
     m.joueur = q.id; m.em = new S.Emetteur(q.id); m.pret = false;
@@ -104,8 +117,8 @@ export class Partie {
       this.reste -= PARTIE.pas;
       const entrees = {};
       for (const m of this.membres.values()) if (m.joueur != null) {
-        entrees[m.joueur] = { ...m.entree, pressed: m.pressed, potion: m.potion };
-        m.pressed = null; m.potion = false;
+        entrees[m.joueur] = { ...m.entree, pressed: m.pressed, potion: m.potion, talk: null, reponse: null, versPortail: null, ...m.une };
+        m.pressed = null; m.potion = false; m.une = {};
       }
       const premier = w.players[0];
       const autres = { ...entrees }; delete autres[premier.id];
@@ -114,7 +127,18 @@ export class Partie {
       const evs = w.drainEvents();
       // portail de sortie : ce joueur quitte la partie (son jeu ferme la connexion, il est alors sauvé et retiré)
       for (const e of evs) if (e.k === 'sortieArene') for (const [num, m] of this.membres) if (m.joueur === e.joueur && !m.sorti) { m.sorti = true; this.envoyer(num, { k: 'sortie' }); }
-      for (const m of this.membres.values()) if (m.em) for (const e of evs) m.em.noter(e);
+      for (const [num, m] of this.membres) {
+        if (!m.em) continue;
+        for (const e of evs) m.em.noter(e);
+        // ses événements à lui (butin, bandeaux, quêtes) ; une porte vers une autre zone : il y part seul, la partie continue
+        const q = w.players.find(p => p.id === m.joueur);
+        if (!q) continue;
+        const siens = q === w.players[0] ? evs.filter(e => S.EVENEMENTS_PERSONNELS.has(e.k)) : w.evenementsDe(q);
+        for (const e of siens) {
+          if (e.k !== 'changeZone') m.em.noterPerso(e);
+          else if (!m.sorti) { m.sorti = true; this.envoyer(num, { k: 'sortie', vers: { zone: e.zone, arrivee: e.arrivee } }); }
+        }
+      }
       // Ladder 2D + 4B : chrono du donjon, compté seulement ici (partie tenue par le serveur)
       for (const e of evs) if (e.k === 'areneFin' && this.donjonFini) {
         const L = [...this.membres.values()].filter(m => m.compte && m.joueur != null)
@@ -134,6 +158,7 @@ export class Partie {
       if (!q) continue;
       if (!q.dead) { m.mortDepuis = 0; continue; }
       if ((m.mortDepuis += dt) < PARTIE.releve) continue;
+      if (this.monde && !w.arene) { w.commeJoueur(q, () => w.respawnPlayer()); m.mortDepuis = 0; continue; }
       const a = w.players.find(p => !p.dead) ?? q, f = w.map.nearestFree(a.x + 40, a.y);
       q.dead = false; q.hp = q.maxHp; q.x = f.x; q.y = f.y; q.invuln = 2; q.setAnim('idle');
       m.mortDepuis = 0;
@@ -146,7 +171,7 @@ export class Partie {
     if (!q) return;
     try {
       const avant = m.compte.perso, etat = this.w.commeJoueur(q, () => this.S.exporterJoueur(this.w));
-      for (const k of GARDES) { if (avant.etat && k in avant.etat) etat[k] = avant.etat[k]; else delete etat[k]; }
+      for (const k of this.monde ? GARDES_MONDE : GARDES) { if (avant.etat && k in avant.etat) etat[k] = avant.etat[k]; else delete etat[k]; }
       const t = Date.now(), temps = (avant.temps ?? 0) + Math.round((t - m.arrivee) / 1000);
       m.arrivee = t;
       m.compte.perso = { ...avant, etat, temps };

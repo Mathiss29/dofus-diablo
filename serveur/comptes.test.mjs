@@ -169,3 +169,16 @@ test('Ladder : classement public, se cacher, Hardcore tombé (3B, 5A)', async ()
   assert.deepEqual([c.tombes[0].nom, c.tombes[0].tueur, c.tombes[0].niveau], ['Brave', 'Bouftou', 13]);
   await fin();
 });
+
+test('parcours des nouveaux venus : compteurs anonymes, une fois par adresse et par étape', async () => {
+  const { base, fin } = await serveur();
+  const noter = e => fetch(`${base}/parcours?etape=${e}`, { method: 'POST' });
+  assert.equal((await noter('accueil')).status, 200);
+  await noter('accueil'); await noter('creation');
+  assert.equal((await noter('nimporte')).status, 400);
+  const r = await (await fetch(`${base}/parcours`)).json();
+  assert.deepEqual(r.etapes, ['accueil', 'creation', 'perso', 'tuto']);
+  const jour = Object.values(r.jours)[0];
+  assert.deepEqual(jour, { accueil: 1, creation: 1 });
+  await fin();
+});
