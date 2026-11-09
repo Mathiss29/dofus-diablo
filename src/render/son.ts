@@ -59,6 +59,15 @@ export function regrouper(pts: { x: number; y: number }[], rayon: number) {
   return out;
 }
 /** Musique de boss en couches (7B) : une piste de plus à chaque quart de PV perdu (4 pistes -> paliers 0 à 3). */
+/** Groupes 4A (2026-11-09) : les monstres baissent de 1 dB par attaquant au-delà de 3, jusqu'à −6 dB. */
+export function gainPack(attaquants: number) { return Math.pow(10, -Math.min(6, Math.max(0, attaquants - 3)) / 20); }
+/** Groupes 1A : au plus 3 sons de monstres pour tout l'écran (cris et sorts), et un nouveau cri toutes les 0,3 s au plus. */
+export const VOIX_MONSTRES = 3, ECART_CRIS = 0.3;
+/** Groupes 3C : la traîne d'un sort de monstre part en fondu après 0,6 s. */
+export const TRAINE_SORT_MONSTRE = 0.6;
+/** Groupes 4B : quand on lance un sort, les monstres baissent de 40 % pendant 0,3 s. */
+export const ESQUIVE = { gain: 0.6, duree: 0.3 };
+
 export function palierBoss(hp: number, maxHp: number, pistes = 4) {
   if (maxHp <= 0) return 0;
   const perdu = Math.max(0, Math.min(1, 1 - hp / maxHp));
@@ -112,7 +121,7 @@ class Moteur {
   ctx: AudioContext | null = null;
   private master!: GainNode;
   private bus = {} as Record<Bus, GainNode>;
-  private vol: Volumes = { general: 1, musique: 0.5, effets: 0.7, monstres: 0.7, ambiance: 0.6, interface: 0.7, muet: false, musiqueBoss: true };
+  private vol: Volumes = { general: 1, musique: 0.5, effets: 0.7, monstres: 0.5, ambiance: 0.6, interface: 0.7, muet: false, musiqueBoss: true };
   private cache = new Map<string, AudioBuffer | null | Promise<AudioBuffer | null>>();
   /** Ce que la musique doit jouer : le menu, la liste d'une zone, ou rien. */
   private voulu: 'menu' | 'zone' | 'rien' = 'rien';
@@ -137,6 +146,13 @@ class Moteur {
   private decor = new Map<string, { f: Flux | null; muet: number }>();
   /** Cris de monstres en cours (maquette Sons 1A : au plus 2 par type ; le plus faible, donc le plus loin, cède sa place). */
   private voix: { src: AudioBufferSourceNode; type: string; vol: number }[] = [];
+  /** Groupes 4A + 4B : gain du mixage automatique des monstres (taille du pack, nos sorts devant). */
+  private mixMonstres!: GainNode;
+  private pack = 1;
+  private mixVise = 1;
+  private esquiveFin = 0;
+  /** Groupes 7B : dernier son de chaque sort du joueur, coupé en fondu quand le même sort repart. */
+  private seuls = new Map<string, { src: AudioBufferSourceNode; g: GainNode }>();
   /** Dernier fichier tiré dans chaque liste (Sons 4B : jamais deux fois de suite le même). */
   private tires = new WeakMap<string[], string>();
   private derniers = new Map<string, number>();
@@ -148,10 +164,16 @@ class Moteur {
     const ctx = this.ctx = new AudioContext();
     this.master = ctx.createGain(); this.master.connect(ctx.destination);
     for (const b of ['musique', 'effets', 'monstres', 'ambiance', 'interface'] as Bus[]) { this.bus[b] = ctx.createGain(); this.bus[b].connect(this.master); }
-    // Sons 5A : compresseur doux sur les monstres, il ne touche pas un cri seul et retient les pics d'un gros groupe
-    const comp = ctx.createDynamicsCompressor();
-    comp.threshold.value = -18; comp.knee.value = 12; comp.ratio.value = 4; comp.attack.value = 0.005; comp.release.value = 0.15;
-    this.bus.monstres.disconnect(); this.bus.monstres.connect(comp); comp.connect(this.master);
+    // Sons 5A : compresseur doux sur les monstres, il ne touche pas un cri seul et retient les pics d'un gros groupe ;
+    // Groupes 4A/4B : mixage automatique juste avant ; Groupes 7A : le même compresseur doux sur nos sorts (bus des effets)
+    const doux = () => {
+      const c = ctx.createDynamicsCompressor();
+      c.threshold.value = -18; c.knee.value = 12; c.ratio.value = 4; c.attack.value = 0.005; c.release.value = 0.15;
+      c.connect(this.master); return c;
+    };
+    this.mixMonstres = ctx.createGain();
+    this.bus.monstres.disconnect(); this.bus.monstres.connect(this.mixMonstres); this.mixMonstres.connect(doux());
+    this.bus.effets.disconnect(); this.bus.effets.connect(doux());
     this.appliquerVolumes();
     const reveil = () => {
       if (ctx.state !== 'running') ctx.resume().catch(() => {});
@@ -398,9 +420,20 @@ class Moteur {
     this.cache.set(f, p);
     return null;
   }
+  /** Groupes 4A : nombre de monstres qui nous attaquent (à chaque image). */
+  setPack(n: number) { this.pack = gainPack(n); this.mixer(); }
+  /** Groupes 4B : on lance un sort, les monstres s'effacent un instant. */
+  esquive() { const c = this.ctx; if (!c) return; this.esquiveFin = c.currentTime + ESQUIVE.duree; this.mixer(); }
+  private mixer() {
+    const c = this.ctx; if (!c || !this.mixMonstres) return;
+    const v = this.pack * (c.currentTime < this.esquiveFin ? ESQUIVE.gain : 1);
+    if (Math.abs(this.mixVise - v) > 0.005) { this.mixVise = v; this.mixMonstres.gain.setTargetAtTime(v, c.currentTime, 0.04); }
+  }
   /** Joue un son court. pan -1..1, offset = départ dans le fichier (s), cle = anti-répétition (au plus un toutes les `ecart` s).
-   *  monstre = cri de monstre (type = sa sorte) : bus « monstres » et règles de la maquette Sons (2026-11-07). */
-  jouer(f: string | undefined, bus: Bus, o: { vol?: number; pan?: number; offset?: number; vitesse?: number; cle?: string; ecart?: number; monstre?: boolean; type?: string } = {}) {
+   *  monstre = cri de monstre (type = sa sorte) : bus « monstres » et règles de la maquette Sons (2026-11-07).
+   *  sansEcart = son de sort ou de mort d'un monstre (Groupes 3A : mêmes règles, sans l'écart entre deux cris) ; traine = fondu après tant de secondes (3C) ;
+   *  seul = un seul son à la fois pour cette clé, le précédent part en fondu (7B). */
+  jouer(f: string | undefined, bus: Bus, o: { vol?: number; pan?: number; offset?: number; vitesse?: number; cle?: string; ecart?: number; monstre?: boolean; type?: string; sansEcart?: boolean; traine?: number; seul?: string } = {}) {
     const c = this.ctx; if (!c || !f || c.state !== 'running' || this.vol.muet) return;
     if (o.cle) {
       const t = c.currentTime, d = this.derniers.get(o.cle) ?? -9;
@@ -411,17 +444,17 @@ class Moteur {
     let vol = o.vol ?? 1, vitesse = o.vitesse ?? 1, depart = 0;
     if (o.monstre) {
       const type = o.type ?? '?', t = c.currentTime;
-      // 3A : une même sorte de monstre ne crie pas plus d'une fois toutes les 0,25 s
-      if (t - (this.derniers.get(`type:${type}`) ?? -9) < 0.25) return;
-      // 1A : 2 cris au plus par sorte ; s'il y en a déjà 2, le plus faible (le plus loin) cède sa place au nouveau s'il est plus fort
-      const memes = this.voix.filter(x => x.type === type);
-      if (memes.length >= 2) {
-        const faible = memes.reduce((x, y) => x.vol < y.vol ? x : y);
+      if (!o.sansEcart) {
+        // Sons 3A : une même sorte de monstre ne crie pas plus d'une fois toutes les 0,25 s ; Groupes 1A : un nouveau cri toutes les 0,3 s au plus
+        if (t - (this.derniers.get(`type:${type}`) ?? -9) < 0.25 || t - (this.derniers.get('cri') ?? -9) < ECART_CRIS) return;
+      }
+      // Groupes 1A : 3 sons de monstres au plus pour tout l'écran ; le plus faible (le plus loin) cède sa place au nouveau s'il est plus fort
+      if (this.voix.length >= VOIX_MONSTRES) {
+        const faible = this.voix.reduce((x, y) => x.vol < y.vol ? x : y);
         if (faible.vol >= vol) return;
         this.couper(faible);
       }
-      if (this.voix.length >= 6) return;   // et jamais plus de 6 cris de monstres en tout
-      this.derniers.set(`type:${type}`, t);
+      if (!o.sansEcart) { this.derniers.set(`type:${type}`, t); this.derniers.set('cri', t); }
       vol /= Math.sqrt(1 + this.voix.length);   // 2A : plus il y a de cris en cours, plus le nouveau est bas
       vitesse *= 0.92 + Math.random() * 0.16;   // 4A : hauteur un peu variée (± 8 %)
       depart = Math.random() * 0.12;            // 3B : petit décalage, le groupe ne claque plus d'un coup
@@ -429,11 +462,22 @@ class Moteur {
     }
     const src = c.createBufferSource(); src.buffer = b; src.playbackRate.value = vitesse;
     const g = c.createGain(); g.gain.value = vol;
+    const debut = c.currentTime + depart;
+    if (o.traine && b.duration / vitesse > o.traine + 0.3) {   // Groupes 3C : on garde l'attaque, la queue part en fondu
+      g.gain.setValueAtTime(vol, debut + o.traine); g.gain.linearRampToValueAtTime(0.0001, debut + o.traine + 0.25);
+    }
+    if (o.seul) {   // Groupes 7B : le même sort ne se superpose pas à lui-même
+      const avant = this.seuls.get(o.seul);
+      if (avant) { try { avant.g.gain.setTargetAtTime(0.0001, c.currentTime, 0.05); avant.src.stop(c.currentTime + 0.15); } catch { /* déjà fini */ } }
+      const x = { src, g }; this.seuls.set(o.seul, x);
+      src.addEventListener('ended', () => { if (this.seuls.get(o.seul!) === x) this.seuls.delete(o.seul!); });
+    }
     let n: AudioNode = src.connect(g);
     if (o.pan && c.createStereoPanner) { const p = c.createStereoPanner(); p.pan.value = Math.max(-1, Math.min(1, o.pan)); n = n.connect(p); }
     n.connect(this.bus[bus]);
-    if (o.monstre) { const x = { src, type: o.type ?? '?', vol }; this.voix.push(x); src.onended = () => { this.voix = this.voix.filter(y => y !== x); }; }
-    src.start(c.currentTime + depart, Math.min(Math.max(0, o.offset ?? 0), Math.max(0, b.duration - 0.15)));
+    if (o.monstre) { const x = { src, type: o.type ?? '?', vol }; this.voix.push(x); src.addEventListener('ended', () => { this.voix = this.voix.filter(y => y !== x); }); }
+    src.start(debut, Math.min(Math.max(0, o.offset ?? 0), Math.max(0, b.duration - 0.15)));
+    if (o.traine && b.duration / vitesse > o.traine + 0.3) src.stop(debut + o.traine + 0.3);
   }
   private couper(x: { src: AudioBufferSourceNode }) { this.voix = this.voix.filter(y => y !== x); try { x.src.stop(); } catch { /* déjà fini */ } }
   /** Un son pris au hasard dans une liste, jamais deux fois de suite le même (Sons 4B). */

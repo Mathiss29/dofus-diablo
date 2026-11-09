@@ -1149,6 +1149,15 @@
               "Touche P › Groupe",
               "Perso en ligne"
             ]
+          },
+          {
+            "titre": "Des gros packs plus calmes",
+            "phrase": "Un grand groupe de monstres ne couvre plus tes sorts : 3 sons de monstres au plus à la fois.",
+            "details": "Seuls les 3 monstres les plus proches crient, leurs sorts suivent les mêmes règles et ceux qui sont loin se taisent. Tes propres sorts ne s'empilent plus sur eux-mêmes.",
+            "icone": "options",
+            "etiquettes": [
+              "Options › Son"
+            ]
           }
         ],
         "Corrections": [],
@@ -1156,7 +1165,8 @@
           "À plusieurs, chaque joueur voit son sac, ses ressources et ses kamas en direct.",
           "Butin chacun le sien : en groupe, chacun a son tirage sur les monstres et dans le coffre de fin.",
           "Les autres joueurs et les monstres glissent entre deux envois du serveur au lieu de sauter.",
-          "Le serveur calcule le classement chaque minute ; les records de donjon ne comptent que sur ses parties."
+          "Le serveur calcule le classement chaque minute ; les records de donjon ne comptent que sur ses parties.",
+          "Le curseur Monstres passe à 50 % par défaut, et le mixage baisse les monstres quand tu lances un sort."
         ]
       }
     }

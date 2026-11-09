@@ -7,11 +7,15 @@ import type { WorldGrid } from '../sim/gridmap';
 import type { Look } from './looks';
 import type { SysData } from './particles';
 import spellfx from '../data/spellfx.json';
-import { MANIFESTE, Son, palierBoss, regrouper, sonDuDecor } from './son';
+import { MANIFESTE, Son, TRAINE_SORT_MONSTRE, palierBoss, regrouper, sonDuDecor } from './son';
 
 const FX = (spellfx as unknown as { spells: Record<string, Record<string, { gfx: number }[] | unknown>> }).spells;
 /** Monstres qui nous attaquent : à cette distance (unités du monde) ils comptent pour la musique (3A). */
 const PORTEE_COMBAT = 700;
+/** Groupes 5A (2026-11-09) : au-delà de cette distance à l'écran, un monstre ne crie plus et son sort ne s'entend plus (sa mort, si). */
+const MUET_AU_DELA = 700;
+/** Groupes 2A : seuls les monstres les plus proches crient en attaquant (plus les élites et les boss). */
+const CRIEURS = 3;
 /** Une seconde d'animation officielle ≈ 32 images à 30 images par seconde : sert à caler le son d'un sort qu'on joue à partir du milieu. */
 const DUREE_ANIM = 32 / 30;
 
@@ -80,7 +84,7 @@ export class SonView {
   private place(x: number, y: number) {
     const p = this.world.player, a = ISO.toScreen(p.x, p.y), b = ISO.toScreen(x, y);
     const d = Math.hypot(b.x - a.x, b.y - a.y);
-    return { vol: d < 300 ? 1 : Math.max(0, 1 - (d - 300) / 1100), pan: (b.x - a.x) / 1000 };
+    return { vol: d < 300 ? 1 : Math.max(0, 1 - (d - 300) / 1100), pan: (b.x - a.x) / 1000, d };
   }
   private monstre(id?: number) { return id == null ? undefined : this.world.monsters.find(m => m.id === id); }
 
@@ -91,22 +95,26 @@ export class SonView {
       case 'spell': case 'spellFx': {
         // 4A : son officiel de l'effet du sort, là où il frappe
         const l = this.gfxDe(e.id); if (!l.length) break;
-        const p = this.place(e.x, e.y);
-        if (p.vol > 0.03) Son.jouer(Son.auHasard(l), 'effets', { ...p, vol: p.vol * (e.k === 'spell' && e.discret ? 0.6 : 0.9), cle: `fx${e.id}`, ecart: 0.12 });
+        const { d, ...p } = this.place(e.x, e.y), vol = p.vol * (e.k === 'spell' && e.discret ? 0.6 : 0.9);
+        if (p.vol <= 0.03) break;
+        // Groupes 3A + 3C + 5A : le sort d'un monstre suit les règles des monstres (budget, curseur, compresseur), traîne courte, muet de loin
+        if (/^m\d/.test(e.id)) { if (d <= MUET_AU_DELA) Son.jouer(Son.auHasard(l), 'monstres', { ...p, vol, cle: `fx${e.id}`, ecart: 0.3, monstre: true, sansEcart: true, type: e.id, traine: TRAINE_SORT_MONSTRE }); }
+        // Groupes 7B : un de nos sorts ne se superpose pas à lui-même
+        else Son.jouer(Son.auHasard(l), 'effets', { ...p, vol, cle: `fx${e.id}`, ecart: 0.12, seul: `fx${e.id}` });
         break;
       }
       case 'hit':
         if (e.target === 'monster') {
           // 4B : impact officiel, un peu varié ; 5A : le monstre crie parfois
-          const p = this.place(e.x, e.y);
+          const { d, ...p } = this.place(e.x, e.y);
           Son.jouer(Son.auHasard(M.impacts), 'effets', { ...p, vol: p.vol * 0.55, vitesse: 0.92 + Math.random() * 0.16, cle: 'impact', ecart: 0.06 });
           const m = this.monstre(e.id), s = m && M.monstres[m.type];
-          if (s && Math.random() < 0.35) Son.jouer(Son.auHasard(s.hit), 'effets', { ...p, vol: p.vol * 0.7, cle: `hit${m!.id}`, ecart: 0.7, monstre: true, type: m!.type });
+          if (s && d <= MUET_AU_DELA && Math.random() < 0.35) Son.jouer(Son.auHasard(s.hit), 'effets', { ...p, vol: p.vol * 0.7, cle: `hit${m!.id}`, ecart: 0.7, monstre: true, type: m!.type });
         }
         break;
       case 'kill': {
         const s = M.monstres[e.monster], p = this.place(e.x, e.y);
-        Son.jouer(Son.auHasard(s?.mort), 'effets', { ...p, vol: p.vol * 0.85, cle: `mort${e.monster}`, ecart: 0.15, monstre: true, type: e.monster });
+        Son.jouer(Son.auHasard(s?.mort), 'effets', { ...p, vol: p.vol * 0.85, cle: `mort${e.monster}`, ecart: 0.15, monstre: true, sansEcart: true, type: e.monster });
         break;
       }
       case 'levelUp': Son.jouer(M.ui.niveau, 'interface'); break;
@@ -132,7 +140,9 @@ export class SonView {
       const suite = avant && st && avant.anim === st.anim && (st.from ?? 0) > 0;   // Colère : charge puis coup, un seul son
       if (st && /^Anim(Attaque|Arme)\d+$/.test(st.anim) && !suite) {
         const f = M.sorts[this.classe]?.[st.anim] ?? M.sorts.commun[st.anim];
-        Son.jouer(f, 'effets', { offset: (st.from ?? 0) * DUREE_ANIM, vol: 0.9, cle: 'lanceur', ecart: 0.05 });
+        // Groupes 7B : une seule voix par geste ; 4B : nos sorts passent devant les monstres (pas les coups d'arme, trop fréquents)
+        Son.jouer(f, 'effets', { offset: (st.from ?? 0) * DUREE_ANIM, vol: 0.9, cle: 'lanceur', ecart: 0.05, seul: `lanceur${st.anim}` });
+        if (st.anim.startsWith('AnimAttaque')) Son.esquive();
       }
     }
     this.prevAnim = p.anim; this.prevT = p.animT;
@@ -148,15 +158,18 @@ export class SonView {
     // 5A : cri d'attaque des monstres ; 3A/3B : qui nous attaque
     let attaquants = 0, adv: Monster | null = null;
     const vus = new Set<number>();
+    // Groupes 2A : les CRIEURS monstres vivants les plus proches de ce joueur
+    const crieurs = new Set(w.monsters.filter(m => !m.dead).map(m => ({ m, d: Math.hypot(m.x - p.x, m.y - p.y) }))
+      .sort((x, y) => x.d - y.d).slice(0, CRIEURS).map(x => x.m.id));
     for (const m of w.monsters) {
       vus.add(m.id);
       const avant = this.etats.get(m.id);
       if (m.state !== avant) {
         this.etats.set(m.id, m.state);
         if (m.state === 'windup' && !m.dead) {
-          const s = M.monstres[m.type], pl = this.place(m.x, m.y);
-          // Sons 7B : un monstre normal sur deux crie en attaquant ; les élites et les boss crient toujours
-          const crie = m.def.elite || m.def.boss || Math.random() < 0.5;
+          const s = M.monstres[m.type], { d, ...pl } = this.place(m.x, m.y);
+          // Groupes 2A + 5A : seuls les 3 plus proches crient en attaquant, plus les élites et les boss ; personne au-delà de 700 px
+          const crie = (m.def.elite || m.def.boss || crieurs.has(m.id)) && d <= MUET_AU_DELA;
           if (s && crie && pl.vol > 0.05) Son.jouer(Son.auHasard(s.attaque), 'effets', { ...pl, vol: pl.vol * 0.75, cle: `atk${m.id}`, ecart: 0.8, monstre: true, type: m.type });
         }
       }
@@ -170,6 +183,7 @@ export class SonView {
     }
     for (const id of this.etats.keys()) if (!vus.has(id)) this.etats.delete(id);
     Son.setIntensite(Math.min(1, attaquants / 2));
+    Son.setPack(attaquants);   // Groupes 4A
     if (this.iles.length) Son.setCouches(poidsCouches(this.iles, ISO.toScreen(p.x, p.y)));
     // 3B : boss engagé -> musique de combat ; tué -> victoire ; perdu de vue -> l'exploration reprend
     if (adv && !this.adversaire) { this.adversaire = adv; Son.setCombat(true, MANIFESTE.boss?.[adv.type] ?? null); }
