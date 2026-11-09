@@ -1117,6 +1117,22 @@
           "Partie de test : « Jouer ensemble à Incarnam » dans Social › Groupe, chacun avec sa place et ses quêtes."
         ]
       }
+    },
+    {
+      "date": "2026-11-09",
+      "titre": "Incarnam à plusieurs",
+      "resume": "Premier essai du monde partagé : un groupe joue ensemble à Incarnam, chacun avec son perso et ses quêtes.",
+      "capture": "assets/journal/2026-11-09.webp",
+      "legende": "Un invité parle à Berb Nhin dans l'Incarnam partagé, 8 novembre 2026.",
+      "lignes": {
+        "Nouveautés": [],
+        "Le monde": [],
+        "Combat": [],
+        "Corrections": [],
+        "En coulisses": [
+          "À plusieurs, chaque joueur voit son sac, ses ressources et ses kamas en direct."
+        ]
+      }
     }
   ]
 }
