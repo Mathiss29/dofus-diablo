@@ -1219,6 +1219,158 @@
        }
       ]
      }
+    ],
+    "eniripsa": [
+     {
+      "nom": "Premiers pas",
+      "bulle": "Bienvenue sur Incarnam, jeune Eniripsa ! Contemple les Dofus, puis clique sur le sol et suis le chemin. Je t'attends dans la salle suivante.",
+      "objectifs": [
+       {
+        "t": "aller",
+        "texte": "Passer dans la salle suivante (clic gauche)",
+        "carte": "temple_2"
+       }
+      ]
+     },
+     {
+      "nom": "La salle d'entraînement",
+      "pnj": "ganymede_temple",
+      "objectifs": [
+       {
+        "t": "aller",
+        "texte": "Rejoindre Ganymède",
+        "pnj": "ganymede_temple"
+       }
+      ]
+     },
+     {
+      "nom": "Frapper",
+      "pnj": "ganymede_temple",
+      "bulle": "Des esprits de feu se sont glissés dans le Temple. Clique sur l'un d'eux : tu le poursuis et tu le frappes de ta baguette.",
+      "objectifs": [
+       {
+        "t": "vaincre",
+        "texte": "Vaincre un monstre (clic dessus)",
+        "n": 1,
+        "sousZone": 446
+       }
+      ]
+     },
+     {
+      "nom": "Ton premier sort",
+      "pnj": "ganymede_temple",
+      "bulle": "Tes Mots sont sur & é \" '. Touche & : Mot Espiègle, il blesse et ralentit le monstre visé.",
+      "halo": 0,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "sort": "espiegle",
+        "texte": "Lancer ton premier sort (&)"
+       }
+      ]
+     },
+     {
+      "nom": "Soigner en frappant",
+      "pnj": "ganymede_temple",
+      "bulle": "Clic droit : Mot Tapageur. Il blesse les ennemis et soigne les alliés de la même zone. Alt + touche : le Mot part sur toi (soins à 60 %).",
+      "halo": 6,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "sort": "tapageur",
+        "texte": "Lancer Mot Tapageur (clic droit)"
+       }
+      ]
+     },
+     {
+      "nom": "L'Éloquence",
+      "pnj": "ganymede_temple",
+      "bulle": "Chaque coup et chaque soin remplit ton Éloquence. Pleine, ton Mot suivant fait +50 % et sa zone grandit de 2 cases. Vide ce groupe !",
+      "halo": "jauge",
+      "objectifs": [
+       {
+        "t": "vaincre",
+        "texte": "Vaincre des monstres avec tes Mots",
+        "n": 3,
+        "sousZone": 446
+       }
+      ]
+     },
+     {
+      "nom": "Se déplacer vite",
+      "pnj": "ganymede_temple",
+      "bulle": "Espace : Mot d'Envol. Un petit bond vers ta souris ; sur un allié, vous échangez vos places.",
+      "halo": 7,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "quoi": "mobilite",
+        "texte": "Se déplacer avec Espace"
+       }
+      ]
+     },
+     {
+      "nom": "La potion",
+      "pnj": "ganymede_temple",
+      "bulle": "Blessé ? E : une potion. Tu en regagnes une à chaque groupe vaincu.",
+      "halo": "potion",
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "quoi": "potion",
+        "texte": "Boire une potion (E) une fois blessé"
+       }
+      ]
+     },
+     {
+      "nom": "Premières armes",
+      "pnj": "ganymede_temple",
+      "bulle": "Voici ton équipement : une Demi-Baguette et la panoplie de l'Intrépide. I ouvre ton sac : équipe tout.",
+      "donner": {
+       "eniripsa": [
+        "1356",
+        "10801",
+        "10800",
+        "10784",
+        "10785",
+        "10799",
+        "10794",
+        "10798"
+       ]
+      },
+      "objectifs": [
+       {
+        "t": "equiper",
+        "objet": "1356",
+        "texte": "Équiper ta baguette (I)"
+       },
+       {
+        "t": "equiper",
+        "objets": [
+         "10801",
+         "10800",
+         "10784",
+         "10785",
+         "10799",
+         "10794",
+         "10798"
+        ],
+        "texte": "Équiper la panoplie de l'Intrépide"
+       }
+      ]
+     },
+     {
+      "nom": "Descendre sur Incarnam",
+      "pnj": "ganymede_temple",
+      "bulle": "Tu es prêt. Parle-moi et je t'envoie au village, près de Lykhen. Le Zaap de la Route des âmes sera ton point de retour si tu tombes.",
+      "objectifs": [
+       {
+        "t": "parler",
+        "texte": "Parler à Ganymède pour descendre au village",
+        "pnj": "ganymede_temple"
+       }
+      ]
+     }
     ]
    },
    "recompense": {

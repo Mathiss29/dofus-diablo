@@ -4,11 +4,14 @@ import type { Monster } from './monster';
 import type { Player } from './player';
 import type { World } from './world';
 import BETES_JSON from '../data/betes.json';
+import { allieLePlusBlesse, lucioleMaj, soignerAllie } from './eniripsa';
 
 /** Un effet officiel d'un sort de bête que le jeu sait jouer (tools/extraction/osa_betes.py). */
 export type EffetBete =
   | { k: 'dmg'; element: Element; min: number; max: number; vol?: boolean }
   | { k: 'soin'; min: number; max: number }
+  /** Soin en part des PV max de l'allié (Bisou Magique du Lapino, effet officiel 1109). */
+  | { k: 'soinPct'; n: number }
   | { k: 'repousse' | 'attire' | 'avance' | 'bouclier'; n: number };
 export interface SortBete { id: number; name: string; pa: number; po: [number, number]; anim: number; zone: string; effets: EffetBete[]; desc?: string }
 /** Une invocation de l'Osamodas (monstres officiels 8070-8083) : PV en part de ceux du lanceur, lignée de l'Éveil (8C). */
@@ -71,6 +74,11 @@ export class Bete extends Entity {
   horsCompte = false;
   /** Laine épaisse : prochaine provocation du Bouftou. */
   provoqueT = 0;
+  /** Eniripsa (maquette 5B 6B) : Luciole (Fée ou Feu Follet) qui file vers un allié ou un ennemi, y applique son Mot puis meurt.
+   *  mot = clé du sort de l'Eniripsa qui l'a lancée (Encouragement ou Moquerie à appliquer). */
+  luciole: { kind: 'fee' | 'feu'; mot: string } | null = null;
+  /** Lapino : élément de l'Alchi-Rhétorique (dernier Mot élémentaire lancé sur lui), pour Lapinopoing. */
+  alchi: Element | null = null;
   constructor(id: number, readonly owner: Player, key: string, sort: string, x: number, y: number, def: BeteDef = BETES[key], pv?: number) {
     const d = def;
     super(id, x, y, 16, pv ?? Math.max(1, Math.round(owner.maxHp * d.pv)));
@@ -133,6 +141,7 @@ export class Bete extends Entity {
     this.age += dt; this.flash = Math.max(0, this.flash - dt);
     if (this.dead) { this.t -= dt; this.setAnim('die', 1 - this.t / 0.6); this.applyKnock(dt); return; }
     if (this.state === 'spawn') { this.t -= dt; this.setAnim('spawn', 1 - this.t / 0.4); if (this.t <= 0) this.state = 'suit'; return; }
+    if (this.luciole) { lucioleMaj(this, dt, world); return; }
     if (this.eveilT > 0 && (this.eveilT -= dt) <= 0) this.finEveil();
     if (this.shieldT > 0 && (this.shieldT -= dt) <= 0) this.shield = 0;
     if (this.dompteT > 0 && (this.dompteT -= dt) <= 0) {   // 15A : le monstre dompté s'enfuit
@@ -161,8 +170,10 @@ export class Bete extends Entity {
     const cible = dP > R.laisse * CASE ? null : this.choisirCible(world);
     this.cibleId = cible?.id ?? null;
     // 6A : soigne l'Osamodas blessé avec un sort de soin officiel (Bisou Béco, Saute-bouftou…)
-    const soin = p.hp < p.maxHp * 0.6 && !p.dead ? this.sortUtilisable(p, true) : -1;
-    if (soin >= 0) { this.lancer(soin, p); return; }
+    // Lapino de l'Eniripsa (7A) : l'allié le plus blessé du groupe, pas seulement son maître
+    const blesse = this.base === 'lapino' ? allieLePlusBlesse(world, this, 0.6) : p.hp < p.maxHp * 0.6 && !p.dead ? p : null;
+    const soin = blesse ? this.sortUtilisable(blesse, true) : -1;
+    if (soin >= 0 && blesse) { this.lancer(soin, blesse); return; }
     if (cible) {
       const i = this.sortUtilisable(cible, false);
       if (i >= 0) { this.lancer(i, cible); return; }
@@ -233,11 +244,11 @@ export class Bete extends Entity {
     let best = -1, score = -1;
     this.def.sorts.forEach((s, i) => {
       const fx = s.effets;
-      if (soin ? !fx.some(e => e.k === 'soin') : !fx.some(e => e.k === 'dmg')) return;
+      if (soin ? !fx.some(e => e.k === 'soin' || e.k === 'soinPct') : !fx.some(e => e.k === 'dmg')) return;
       if (this.pa < s.pa) return;
       const max = s.po[1] === 0 ? rayonZone(s.zone) : Math.max(1, s.po[1]) * CASE;
       if (d > max) return;
-      const v = fx.reduce((a, e) => a + (e.k === 'dmg' || e.k === 'soin' ? e.min + e.max : 0), 0) + (soin ? 0 : (i * 7 + this.age * 13) % 5);
+      const v = fx.reduce((a, e) => a + (e.k === 'dmg' || e.k === 'soin' ? e.min + e.max : e.k === 'soinPct' ? e.n * 4 : 0), 0) + (soin ? 0 : (i * 7 + this.age * 13) % 5);
       if (v > score) { score = v; best = i; }
     });
     return best;
@@ -263,7 +274,7 @@ export class Bete extends Entity {
   }
   /** Effets officiels du sort, dans l'ordre des données : sur un monstre (dommages, vol, poussée) ou sur l'Osamodas (soin). */
   private impact(S: SortBete, cible: Monster | Player, world: World) {
-    const p = this.owner, R = REGLES_BETES, allie = cible === p;
+    const p = this.owner, R = REGLES_BETES, allie = cible.faction === 'player';
     const r = rayonZone(S.zone);
     const cx = S.po[1] === 0 ? this.x : cible.x, cy = S.po[1] === 0 ? this.y : cible.y;
     let el: Element = 'neutre';
@@ -272,7 +283,7 @@ export class Bete extends Entity {
         const d = Math.hypot(cible.x - this.x, cible.y - this.y), pas = Math.min(e.n * CASE, Math.max(0, d - cible.radius - this.radius - 4));
         if (d > 0) { this.x += (cible.x - this.x) / d * pas; this.y += (cible.y - this.y) / d * pas; }
       } else if (e.k === 'dmg' && !allie) {
-        el = e.element;
+        el = this.alchi ?? e.element;   // Lapinopoing : l'élément de l'Alchi-Rhétorique
         for (const m of world.monsters) {
           if (m.dead || m.state === 'spawn' || Math.hypot(m.x - cx, m.y - cy) > r + m.radius) continue;
           const fl = ['dragoune', 'dragonnet', 'sulfenix'].includes(this.type) && !this.dompteT && m.hp < m.maxHp / 2 ? p.pcv('pc-osamodas-N') : 0;   // Flamme de lignée
@@ -284,9 +295,11 @@ export class Bete extends Entity {
             if (o.saigneT <= 0) world.emit({ k: 'status', x: o.x, y: o.y - 34, text: 'Empoisonné', color: '#7fd35a' });
             o.saigne = jet * vc / 100 / 2; o.saigneT = 2;
           }
-          const n = world.coupDeBete(this, m, jet, e.element);
+          const n = world.coupDeBete(this, m, jet, el);
           if (e.vol && n > 0) this.soigner(n / 2, world);
         }
+      } else if (e.k === 'soinPct' && allie) {   // Bisou Magique du Lapino : % des PV max de l'allié ciblé
+        soignerAllie(p, cible as Player, (cible as Player).maxHp * e.n / 100, world, { brut: true, de: this });
       } else if (e.k === 'soin' && allie) {
         const n = world.rng.range(e.min, e.max + 1) * 1.5 * R.degats;
         p.soigner(n);
@@ -297,7 +310,8 @@ export class Bete extends Entity {
         const len = s > 0 ? e.n * CASE : Math.min(e.n * CASE, Math.max(0, d - m.radius - this.radius - 4));
         if (!m.def.boss) { m.kx += s * dx / d * len * 7.13; m.ky += s * dy / d * len * 7.13; }
       } else if (e.k === 'bouclier') {
-        p.shield = Math.max(p.shield, Math.round(p.maxHp * e.n / 1000)); p.shieldT = TOUR * 2;
+        const q = allie ? cible as Player : p;   // Prévention du Lapino : sur l'allié ciblé
+        q.shield = Math.max(q.shield, Math.round(q.maxHp * e.n / 1000)); q.shieldT = TOUR * 2;
       }
     }
     world.emit({ k: 'spell', fx: 'burst', id: `b${S.id}`, x: cx, y: cy, facing: this.facing, size: Math.max(r, 24), arc: 0, element: allie ? 'eau' : el, big: false, boosted: this.eveilT > 0, discret: true, cx: this.x, cy: this.y });

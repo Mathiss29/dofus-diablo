@@ -600,6 +600,8 @@ export class ZoneScene extends Phaser.Scene {
     // Un clic sur l'interface (barre, mini-carte, menus, fiches) ne fait rien en jeu.
     this.input.on('pointerdown', (p: Phaser.Input.Pointer, over: unknown[]) => {
       this.dialogueView?.fermerMenu();
+      // Eniripsa 3D : un sort armé (façon Dofus) se lance sur l'allié dont on clique le portrait
+      if (this.aimId && this.world.player.cls.eniripsa && this.hud.joueurPortrait(p.x, p.y) != null) { this.pressed = this.aimId; this.aimId = null; this.aimKey = null; this.uiClick = true; return; }
       if (over.length || this.hud.blocks(p.x, p.y)) { this.uiClick = true; return; }
       this.uiClick = false;
       // partie de test, onglet Placement (maquette « Monstres » 2A) : clic = poser un point, clic droit = le retirer
@@ -965,6 +967,7 @@ export class ZoneScene extends Phaser.Scene {
   private down(key: string, id: SkillId | null) {
     if (!id) return;
     const mode = this.reglages.lancer;
+    if (this.keys.ALT.isDown && this.world.player.cls.eniripsa) { this.pressed = id; this.aimId = null; this.aimKey = null; return; }   // Eniripsa 3C : Alt + touche = sur soi
     if (mode === 'immediat' && !this.keys.ALT.isDown) { this.pressed = id; return; }
     if (mode === 'dofus' && key !== 'deplacement') { if (this.aimId === id) { this.pressed = id; this.aimId = null; } else { this.aimId = id; this.aimKey = null; } return; }
     this.aimId = id; this.aimKey = key;
@@ -983,6 +986,12 @@ export class ZoneScene extends Phaser.Scene {
     // un sort lancé sur un monstre vise le monstre (comme l'aperçu), pas le sol derrière son sprite
     const vise = this.pressed ? this.monsterUnder(ptr) : null;
     if (vise && !vise.dead) { input.castOn = vise.id; input.aim = { x: vise.x, y: vise.y }; }
+    // Eniripsa : Alt maintenu = le Mot part sur soi (3C) ; curseur sur le portrait d'un allié = sur lui (3D)
+    const moi = this.world.player;
+    if (this.pressed && moi.cls.eniripsa) {
+      const id = this.keys.ALT.isDown ? moi.id : this.hud.joueurPortrait(ptr.x, ptr.y), q = id == null ? null : this.world.players.find(o => o.id === id);
+      if (q) { input.castOn = null; input.aim = { x: q.x, y: q.y }; }
+    }
     this.pickClick = null;
     if (this.ordreMeute != null) { input.meute = this.ordreMeute; this.ordreMeute = null; }
     if (this.havreSacDemande) { input.havreSac = true; this.havreSacDemande = false; }

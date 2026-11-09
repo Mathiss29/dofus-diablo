@@ -2334,5 +2334,551 @@
    "tranchant": 13,
    "_doc": "États officiels du Forgelance (Dofus 3.7) : Armé 24629 = dommages subis ×85 % (Garde, 2A) ; Désarmé 24630 = +30 Puissance 3 tours (9 s) à la reprise, doublé à pied (3B). glyphe : rayon où marcher reprend la Lance (Reprise de Volée) ; portee : 15 cases, au-delà elle revient seule (4A) ; tranchant : dommages du Rappel tranchant (1B), moitié de Javeline de Myr."
   }
+ },
+ "eniripsa": {
+  "name": "Eniripsa",
+  "hp": 210,
+  "speed": 230,
+  "radius": 16,
+  "iframesOnHit": 0.45,
+  "healOnKill": 3,
+  "critChance": 0.15,
+  "critMult": 1.6,
+  "pa": {
+   "max": 6,
+   "regen": 1.25
+  },
+  "pm": {
+   "max": 2,
+   "recharge": 3.5
+  },
+  "potion": {
+   "charges": 3,
+   "heal": 0.35,
+   "cooldown": 1
+  },
+  "xpBase": 100,
+  "maxLevel": 200,
+  "attaque": {
+   "name": "Coup de poing",
+   "element": "terre",
+   "comboWindow": 0.45,
+   "combo": [
+    {
+     "duration": 0.28,
+     "impactAt": 0.07,
+     "cancelAt": 0.13,
+     "dmg": 14,
+     "range": 78,
+     "arc": 110,
+     "knock": 210,
+     "step": 120,
+     "hitstop": 0.05,
+     "shake": 0.0035
+    },
+    {
+     "duration": 0.28,
+     "impactAt": 0.07,
+     "cancelAt": 0.13,
+     "dmg": 14,
+     "range": 78,
+     "arc": 110,
+     "knock": 210,
+     "step": 120,
+     "hitstop": 0.05,
+     "shake": 0.0035
+    },
+    {
+     "duration": 0.4,
+     "impactAt": 0.11,
+     "cancelAt": 0.22,
+     "dmg": 30,
+     "range": 92,
+     "arc": 160,
+     "knock": 480,
+     "step": 220,
+     "hitstop": 0.085,
+     "shake": 0.008
+    }
+   ]
+  },
+  "rage": {
+   "name": "Éloquence",
+   "max": 100,
+   "perHit": 5,
+   "perHurt": 0,
+   "bonus": 0.5,
+   "signature": 1,
+   "mode": "eloquence"
+  },
+  "spells": {
+   "espiegle": {
+    "name": "Mot Espiègle",
+    "dofusId": 25877,
+    "icon": 12859,
+    "element": "air",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Air et retire des PM.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 20,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 264,
+     "radius": 30
+    },
+    "pmLoss": 2
+   },
+   "tapageur": {
+    "name": "Mot Tapageur",
+    "dofusId": 25858,
+    "icon": 12858,
+    "element": "feu",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Soigne les alliés et occasionne des dommages Feu aux ennemis en zone.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 20,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 168,
+     "radius": 120
+    },
+    "soin": 20
+   },
+   "vampirique": {
+    "name": "Mot Vampirique",
+    "dofusId": 25870,
+    "icon": 12860,
+    "element": "eau",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Vole de la vie dans l'élément Eau aux ennemis ou transfère une partie de la vie du lanceur à l'allié ciblé.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 26,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 30
+    },
+    "lifesteal": 0.5,
+    "transfert": 0.08
+   },
+   "juron": {
+    "name": "Juron",
+    "dofusId": 25867,
+    "icon": 12862,
+    "element": "terre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Terre aux ennemis et repousse la cible.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 23,
+    "knock": 456,
+    "fx": "line",
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 30
+    }
+   },
+   "amitie": {
+    "name": "Mot d'Amitié",
+    "dofusId": 25795,
+    "icon": 12856,
+    "element": "neutre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Invoque un Lapino maîtrisable qui peut soigner ou appliquer un bouclier.\nIl peut également se transformer s'il est dans l'état Contrôlé pour occasionner des dommages dans l'élément de l'{{spell,25930,1::Alchi-Rhétorique}}.\n\nLe Lapino est téléporté et immobilisé sur la case ciblée si le sort est relancé quand il est en vie.\n\nÀ sa mort, le lanceur pose un glyphe sous le Lapino qui occasionne des dommages aux ennemis ou soigne les alliés dans le meilleur élément du lanceur et le temps de relance du sort est fixé à 2 tours.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 168,
+     "radius": 0
+    },
+    "invoque": "lapino",
+    "lapino": true
+   },
+   "stimulant": {
+    "name": "Mot Stimulant",
+    "dofusId": 25742,
+    "icon": 12863,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Augmente les PA de l'allié ciblé et lui applique l'état Encouragé.\nLe cumul est partagé entre les Encouragements.\n\nSur une case libre : invoque une Fée Stimulante.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 168,
+     "radius": 30
+    },
+    "encourage": {
+     "k": "stimulant",
+     "t": 6,
+     "fee": "fee_stimulante",
+     "regen": 0.4
+    }
+   },
+   "frayeur": {
+    "name": "Mot de Frayeur",
+    "dofusId": 13175,
+    "icon": 12864,
+    "element": "neutre",
+    "pa": 1,
+    "cooldown": 0,
+    "desc": "Repousse la cible.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 228,
+    "fx": "line",
+    "hit": {
+     "shape": "point",
+     "range": 264,
+     "radius": 30
+    }
+   },
+   "lamentations": {
+    "name": "Lamentations",
+    "dofusId": 25871,
+    "icon": 12866,
+    "element": "eau",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Vole de la vie dans l'élément Eau aux ennemis et soigne les alliés selon les dommages occasionnés en zone.\nN'affecte pas le lanceur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 29,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 120
+    },
+    "soinVol": 0.5,
+    "soinLanceur": false
+   },
+   "turbulent": {
+    "name": "Mot Turbulent",
+    "dofusId": 25860,
+    "icon": 12867,
+    "element": "feu",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Soigne les alliés, occasionne des dommages Feu aux ennemis et leur applique l'état Turbulent en zone :\n• Repousse les entités au contact de la cible à la fin de son tour.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 37,
+    "knock": 228,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 72
+    },
+    "soin": 37
+   },
+   "vivifiant": {
+    "name": "Mot Vivifiant",
+    "dofusId": 25744,
+    "icon": 12868,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Augmente les PM et la Fuite de l'allié ciblé et lui applique l'état Encouragé.\nLe cumul est partagé entre les Encouragements.\n\nSur une case libre : invoque une Fée Vivifiante.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 168,
+     "radius": 30
+    },
+    "encourage": {
+     "k": "vivifiant",
+     "t": 6,
+     "fee": "fee_vivifiante",
+     "pm": 1,
+     "vitesse": 0.15
+    }
+   },
+   "farceur": {
+    "name": "Mot Farceur",
+    "dofusId": 25879,
+    "icon": 12869,
+    "element": "air",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Air aux ennemis ou soigne les alliés et applique l'état Farce sur la cible :\n• Téléporte la cible à sa position précédente à la fin de son tour.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 24,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 30
+    },
+    "soin": 24,
+    "farce": 3
+   },
+   "peinture": {
+    "name": "Peinture de Guerre",
+    "dofusId": 25868,
+    "icon": 12871,
+    "element": "terre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Peint la cible et occasionne des dommages Terre aux ennemis ou soigne les alliés.\n\n<b>État Peinture :</b>\n• Sur un ennemi : réduit ses Résistances Poussée.\n• Sur un allié : soigne au début de son tour.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 10,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 264,
+     "radius": 30
+    },
+    "soin": 10,
+    "peinture": {
+     "t": 6,
+     "soin": 10,
+     "poussee": 0.2
+    }
+   },
+   "jouvence": {
+    "name": "Mot de Jouvence",
+    "dofusId": 25743,
+    "icon": 12873,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Réduit la durée des effets sur l'allié ciblé, le soigne immédiatement et en début de tour et lui applique l'état Encouragé.\nLe cumul est partagé entre les Encouragements.\n\nSur une case libre : invoque une Fée de Jouvence.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 168,
+     "radius": 30
+    },
+    "purge": true,
+    "encourage": {
+     "k": "jouvence",
+     "t": 6,
+     "fee": "fee_jouvence",
+     "soinPct": 0.06
+    }
+   },
+   "cri_guerre": {
+    "name": "Cri de Guerre",
+    "dofusId": 25863,
+    "icon": 12874,
+    "element": "terre",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Terre aux ennemis et repousse les cibles en zone.\nLes dommages de zone ne sont pas dégressifs.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 37,
+    "knock": 912,
+    "fx": "burst",
+    "hit": {
+     "shape": "circle",
+     "radius": 168
+    }
+   },
+   "interdit": {
+    "name": "Mot Interdit",
+    "dofusId": 25873,
+    "icon": 13300,
+    "element": "eau",
+    "pa": 5,
+    "cooldown": 0,
+    "desc": "Réduit la durée des effets sur la cible, occasionne des dommages Eau aux ennemis ou soigne les alliés.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 47,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 264,
+     "radius": 30
+    },
+    "soin": 47,
+    "purge": true
+   },
+   "accablant": {
+    "name": "Mot Accablant",
+    "dofusId": 25749,
+    "icon": 12876,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Retire des PM et de l'Esquive PM à l'ennemi ciblé et lui applique l'état Moqué.\nLe cumul est partagé entre les Moqueries.\n\nSur une case libre : invoque un Feu Accablant.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 168,
+     "radius": 30
+    },
+    "moque": {
+     "k": "accablant",
+     "t": 6,
+     "feu": "feu_accablant",
+     "ralenti": 0.4
+    }
+   },
+   "envol": {
+    "name": "Mot d'Envol",
+    "dofusId": 13184,
+    "icon": 12880,
+    "element": "neutre",
+    "cooldown": 0.4,
+    "desc": "Échange de position avec l'allié ciblé.",
+    "duration": 0.3,
+    "impactAt": 0.3,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "land",
+    "hit": {
+     "shape": "circle",
+     "radius": 1
+    },
+    "pm": 1,
+    "move": {
+     "kind": "leap",
+     "maxRange": 192,
+     "height": 50
+    },
+    "envol": true
+   },
+   "reconstitution": {
+    "name": "Mot de Reconstitution",
+    "dofusId": 13187,
+    "icon": 12885,
+    "element": "neutre",
+    "pa": 5,
+    "cooldown": 0,
+    "desc": "Soigne totalement l'allié ciblé mais le rend Insoignable.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 360,
+     "radius": 30
+    },
+    "reconstitution": {
+     "insoignable": 12,
+     "releve": 1,
+     "relanceReleve": 60
+    }
+   }
+  },
+  "mobility": "envol",
+  "sorts": "eniripsa",
+  "niveau1": [
+   13187
+  ],
+  "clicDroit": "tapageur",
+  "eniripsa": {
+   "soinSoi": 0.6,
+   "zoneEloquence": 96,
+   "parSoin": 6,
+   "aimant": 60,
+   "aggro": {
+    "portee": 240,
+    "chance": 0.5,
+    "t": 3
+   },
+   "_doc": "Maquette Eniripsa (ligne du 9 nov. 2026) : soinSoi = part des soins que l'Eniripsa se donne à lui-même (4B) ; zoneEloquence = rayon (px) ajouté à la zone d'un Mot lancé Éloquence pleine (2A, 2 cases) ; parSoin = Éloquence gagnée par Mot qui soigne un allié ; aimant = distance (px) où un Mot à cible unique s'aimante sur le perso le plus proche du curseur (3A) ; aggro (11A) : un monstre à moins de portee px d'un allié soigné vise le soigneur pendant t s, une fois sur deux."
+  }
  }
 }

@@ -38,6 +38,8 @@ export type SimEvent =
   | { k: 'beteMorte'; id: number; x: number; y: number; radius: number; name: string }
   /** Osamodas : soin (chiffre vert), bête invoquée, bête éveillée (8C), monstre dompté (15A). */
   | { k: 'heal'; x: number; y: number; z: number; amount: number }
+  /** Eniripsa 12C : fil de soin vert du soigneur (ou de sa bête) vers l'allié soigné, vu de tous les joueurs. */
+  | { k: 'filSoin'; x: number; y: number; tx: number; ty: number; amount: number }
   | { k: 'invocation'; id: number; x: number; y: number }
   | { k: 'eveil'; id: number; name: string; x: number; y: number }
   /** Sacrieur : échange de place (Assaut, Transposition), palier de Souffrance qui change, PV sacrifiés. */

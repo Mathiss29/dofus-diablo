@@ -28,7 +28,12 @@ BETES = [
     ('gobgob_glouton', 8082, 2, 'neutre', None), ('gobgob_facetieux', 8083, 3, 'neutre', None),
     # Épées du Sacrieur (maquette Sacrieur 7A) : mêmes règles d'alliés que les bêtes, planches sacri_<clé>
     ('epee_vorace', 434, 1, 'neutre', None), ('epee_dansante', 5192, 1, 'neutre', None),
+    # Eniripsa (maquette Eniripsa 5B 6B 7A) : Lapino (Mot d'Amitié, os 7599), Fées (os 7600) et Feu Follet (os 7601) des Encouragements
+    # et des Moqueries lancés sur une case libre ; planches eni_lapino, eni_fee, eni_feu_follet
+    ('lapino', 7370, 1, 'neutre', None), ('fee_stimulante', 7372, 1, 'neutre', None), ('fee_vivifiante', 7374, 1, 'neutre', None),
+    ('fee_jouvence', 7373, 1, 'neutre', None), ('feu_accablant', 7378, 1, 'neutre', None),
 ]
+ATLAS = {'lapino': 'eni_lapino', 'fee': 'eni_fee', 'feu': 'eni_feu_follet'}
 PV = {1: 0.5, 2: 0.75, 3: 1.0}
 
 
@@ -80,7 +85,7 @@ def main(tables, frbin, out):
             if params.get('missileGfxId'): sp['missile'] = int(params['missileGfxId'])
             if params.get('targetGfxId'): sp['gfx'] = int(params['targetGfxId'])
             sorts.append(sp)
-        res[key] = {'dofusId': mid, 'name': T(int(m['nameId'])), 'look': int(look), 'atlas': (f'sacri_{key}' if key.startswith('epee') else f'osa_{key}'), 'rang': rang,
+        res[key] = {'dofusId': mid, 'name': T(int(m['nameId'])), 'look': int(look), 'atlas': (f'sacri_{key}' if key.startswith('epee') else ATLAS.get(key.split('_')[0], f'osa_{key}')), 'rang': rang,
                     'element': el, 'suivant': suivant, 'pv': PV[rang], 'sorts': sorts}
         print(key, res[key]['name'], [(x['name'], x['po'], [e['k'] for e in x['effets']]) for x in sorts])
     json.dump(res, open(out, 'w'), ensure_ascii=False, indent=1)

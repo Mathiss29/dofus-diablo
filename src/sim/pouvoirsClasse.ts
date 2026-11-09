@@ -123,6 +123,9 @@ export const POUVOIRS_CLASSE: PouvoirClasseDef[] = [
   pc('forgelance', 'N', 'Estoc en avant', 'estoc_brulant', 'bottes', [15, 25], 5, v => `Estoc Brûlant te porte de 2 cases en avant avec le coup, et fait ${v} % de dégâts en plus à un monstre repoussé contre un obstacle.`),
   pc('forgelance', 'O', 'Muspel insatiable', 'muspel', 'arme', [8, 12], 1, v => `Muspel gagne ${v} % de dégâts de plus par monstre touché, et sa recharge baisse de 0,5 s par monstre touché.`),
   pc('forgelance', 'P', 'Prélude glorieux', 'prelude_fer', 'bouclier', [15, 25], 5, v => `Prélude au Fer donne aussi +${v} % de vitesse de déplacement aux alliés dans la zone pendant 4 s.`),
+  // --- Eniripsa (maquette Eniripsa, « pour 16A+16C ce serait des bons effets de légendaire », 2026-11-09) -------------------
+  pc('eniripsa', 'A', 'Bouclier de trop-plein', 'tapageur', 'amulette', [12, 20], 1, v => `Un soin sur un allié déjà plein devient un bouclier (jusqu'à ${v} % de ses PV) pendant 4 s. Le soin n'est jamais perdu.`),
+  pc('eniripsa', 'B', 'Dernier Mot', 'tapageur', 'chapeau', [40, 70], 5, v => `Quand un allié passe sous 20 % de ses PV, son cadre clignote et ton prochain soin sur lui est critique (+${v} %).`),
 ];
 /** Châtiments du Sacrieur (Dofus Rétro, 14B) : caractéristique gagnée à chaque coup reçu. */
 export const CHATIMENTS: Record<string, 'force' | 'agilite' | 'chance' | 'intelligence' | 'vitalite'> =

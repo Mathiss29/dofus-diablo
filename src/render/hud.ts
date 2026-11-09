@@ -149,6 +149,12 @@ export class Hud {
   /** Portraits du groupe (maquette « Social : » 3A) : les autres joueurs de la partie sous le cadre du perso (et de ses bêtes) :
    *  emblème de la classe, nom, niveau, PV, « à terre ». */
   private groupeUi: { img: Phaser.GameObjects.Image; nom: Txt; info: Txt }[] = [];
+  /** Cases des portraits du groupe (x, y, l, h, id du joueur) : l'Eniripsa vise un allié en survolant ou cliquant son portrait (3D). */
+  private portraits: [number, number, number, number, number][] = [];
+  joueurPortrait(x: number, y: number): number | null {
+    x /= this.k; y /= this.k;
+    return this.portraits.find(([rx, ry, rw, rh]) => x >= rx && y >= ry && x <= rx + rw && y <= ry + rh)?.[4] ?? null;
+  }
   private cadresGroupe(g: Phaser.GameObjects.Graphics, x0: number, y0: number, juice: boolean) {
     const w = this.world, L = w.players.filter(p => p !== w.player).slice(0, 3), W = 236, H = 40, gap = 5;
     while (this.groupeUi.length < L.length) {
@@ -162,7 +168,7 @@ export class Hud {
     this.groupeUi.forEach((u, i) => { const on = i < L.length; u.img.setVisible(on); u.nom.setVisible(on); u.info.setVisible(on); });
     L.forEach((p, i) => {
       const u = this.groupeUi[i], y = y0 + i * (H + gap), cls = Object.keys(GAME_DATA.classes).find(k => GAME_DATA.classes[k] === p.cls) ?? 'iop';
-      this.rects.push([x0, y, W, H]);
+      this.rects.push([x0, y, W, H]); this.portraits.push([x0, y, W, H, p.id]);
       g.fillStyle(0x08080a, 0.78); g.fillRoundedRect(x0, y, W, H, 8);
       const key = `embleme_${cls}`;
       if (this.scene.textures.exists(key)) { if (u.img.texture.key !== key) u.img.setTexture(key); u.img.setPosition(x0 + 20, y + H / 2).setDisplaySize(26, 26 * (u.img.height / u.img.width || 1)).setAlpha(p.dead ? 0.4 : 1); }
@@ -593,7 +599,7 @@ export class Hud {
     this.rageFlash = Math.max(0, this.rageFlash - dt);
     for (const k of Object.keys(this.eclats)) if ((this.eclats[k] -= dt) <= 0) delete this.eclats[k];
     const blink = (v: number) => v > 0 && Math.floor(v * 12) % 2 === 0;
-    this.rects = [];
+    this.rects = []; this.portraits = [];
     const panel = (x: number, y: number, w: number, h: number, a = C.panelA) => {
       this.rects.push([x, y, w, h]);
       g.fillStyle(C.panel, a); g.fillRoundedRect(x, y, w, h, 5);
@@ -663,7 +669,10 @@ export class Hud {
     // Forgelance (6A) : pas de jauge ; le bord montre le temps restant du bonus de reprise de la Lance, en or
     const rep = cls.lance ? p.mods.find(m => m.src === 'reprise') : undefined, fl = cls.lance ? (rep ? rep.t / (rep.t0 || 1) : 0) : -1;
     const rr = fl >= 0 ? fl : sf >= 0 ? sf / 10 : p.rage / cls.rage.max;
-    const rageCol = fl >= 0 ? 0xe8b860 : sf >= 0 ? (sf >= 6 && Math.floor(world.time * 4) % 2 ? 0xff4a3a : 0xc0262a) : p.rageFull ? (Math.floor(world.time * 6) % 2 ? 0xffc04d : C.rage) : C.rage;
+    // Eniripsa : l'Éloquence en vert d'eau, qui scintille une fois pleine
+    const eloq = cls.rage.mode === 'eloquence';
+    const rageCol = fl >= 0 ? 0xe8b860 : sf >= 0 ? (sf >= 6 && Math.floor(world.time * 4) % 2 ? 0xff4a3a : 0xc0262a)
+      : eloq ? (p.rageFull && Math.floor(world.time * 6) % 2 ? 0xc8ffd8 : 0x4fd88a) : p.rageFull ? (Math.floor(world.time * 6) % 2 ? 0xffc04d : C.rage) : C.rage;
     if (p.rageFull) {
       const k = 0.5 + 0.5 * Math.sin(world.time * 10);
       gs.lineStyle(7, 0xffcf4d, 0.25 + 0.3 * k); gs.strokeRoundedRect(px - 3, py - 3, ps + 6, ps + 6, 8);

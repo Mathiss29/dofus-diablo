@@ -116,6 +116,31 @@ export interface SpellDef {
   affaiblit?: { n: number; t: number };
   /** Balestra : après le coup, le lanceur passe de l'autre côté de la cible (cases). */
   traverse?: number;
+  /** Eniripsa (maquette Eniripsa, ligne du 9 nov. 2026) : soin de base (moyenne officielle × 1,5, comme dmg) donné aux alliés
+   *  de la zone (joueurs, bêtes) en plus des dommages aux ennemis (1A) ; soinLanceur = false : le lanceur n'est pas soigné (Lamentations). */
+  soin?: number; soinLanceur?: boolean;
+  /** Lamentations : soigne les alliés de la zone de cette part des dommages faits (effet officiel 2973, 50 %). */
+  soinVol?: number;
+  /** Mot Vampirique sur un allié : lui transfère cette part des PV du lanceur (effet officiel 90, 8 %). */
+  transfert?: number;
+  /** Encouragement (5A) sur l'allié visé, ou Fée (5B, bête `fee`) sur une case libre : un seul Encouragement à la fois par allié.
+   *  regen : PA regagnés plus vite (Stimulant) ; pm, vitesse : charge de PM et vitesse en plus (Vivifiant) ; soinPct : soin immédiat
+   *  et continu en part des PV max (Jouvence). */
+  encourage?: { k: 'stimulant' | 'vivifiant' | 'jouvence'; t: number; fee: string; regen?: number; pm?: number; vitesse?: number; soinPct?: number };
+  /** Moquerie (6A) sur l'ennemi visé, ou Feu Follet (6B, bête `feu`) sur une case libre : ralenti (part de vitesse), moitié sur élites et boss. */
+  moque?: { k: 'accablant'; t: number; feu: string; ralenti: number };
+  /** Retire les malus de l'allié ou les bonus de l'ennemi (Mot Interdit, Mot de Jouvence : « réduit la durée des effets »). */
+  purge?: boolean;
+  /** Mot Farceur : l'ennemi touché revient au bout de n s là où il était (état Farce). */
+  farce?: number;
+  /** Peinture de Guerre : t s ; allié = soin toutes les 3 s, ennemi = repoussé plus loin (part). */
+  peinture?: { t: number; soin: number; poussee: number };
+  /** Mot d'Amitié : invoque le Lapino, ou le téléporte au point visé s'il est déjà là. */
+  lapino?: boolean;
+  /** Mot d'Envol : sur un allié, échange de place ; sinon petit envol vers le point visé. */
+  envol?: boolean;
+  /** Mot de Reconstitution : soin total de l'allié (pas le lanceur), Insoignable n s ; relève à distance un allié à terre (10B). */
+  reconstitution?: { insoignable: number; releve: number; relanceReleve: number };
 }
 /** Auto-attaque d'un type d'arme : un sort sans coût dont les dommages viennent de l'arme portée. */
 export interface WeaponProfile extends Omit<SpellDef, 'name' | 'icon' | 'element' | 'dmg' | 'cooldown' | 'anim'> {
@@ -137,7 +162,9 @@ export interface ClassDef {
   /** bonus : dommages en plus ; signature : multiplicateur de l'effet propre au sort (SpellDef.rage), 1,5 = +50 %. */
   rage: { name: string; max: number; perHit: number; perHurt: number; bonus: number; signature: number;
     /** Ligne Rage 24B : la Rage du Iop monte plus en mêlée, la Précision du Crâ plus de loin (et pas en prenant des coups). */
-    mode?: 'melee' | 'distance' | 'eveil' | 'souffrance' | 'lance' };
+    mode?: 'melee' | 'distance' | 'eveil' | 'souffrance' | 'lance' | 'eloquence' };
+  /** Eniripsa (maquette Eniripsa) : réglages des soins, voir classes.json > eniripsa._doc. */
+  eniripsa?: { soinSoi: number; zoneEloquence: number; parSoin: number; aimant: number; aggro: { portee: number; chance: number; t: number } };
   /** Forgelance : la Lance Immortelle (états officiels Armé 24629 et Désarmé 24630).
    *  garde = part des dommages subis quand Armé (×0,85) ; reprise = Puissance gagnée en reprenant la Lance (rappel), aPied = à pied (3B),
    *  pendant duree s ; glyphe = rayon (px) où marcher reprend la Lance ; portee = distance (px) au-delà de laquelle elle revient seule (4A) ;

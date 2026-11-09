@@ -9193,5 +9193,1856 @@
     "pom": 0
    }
   ]
+ ],
+ "eniripsa": [
+  [
+   {
+    "id": 25877,
+    "name": "Mot Espiègle",
+    "icon": 12859,
+    "desc": "Occasionne des dommages Air et retire des PM.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       12,
+       14
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 66,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       16,
+       19
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 132,
+      "pa": 3,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       21,
+       24
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 25878,
+    "name": "Mot Malicieux",
+    "icon": 12893,
+    "desc": "Occasionne des dommages Air et applique l'état Malice sur la cible :\n• Retire de la Puissance à la cible pour chaque PM qu'elle utilise (cumulable 10 fois).",
+    "grades": [
+     {
+      "niv": 95,
+      "pa": 4,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       24,
+       27
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 162,
+      "pa": 4,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       30,
+       34
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 25858,
+    "name": "Mot Tapageur",
+    "icon": 12858,
+    "desc": "Soigne les alliés et occasionne des dommages Feu aux ennemis en zone.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 3,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       12,
+       14
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 67,
+      "pa": 3,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       17,
+       19
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 133,
+      "pa": 3,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       22,
+       25
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 25857,
+    "name": "Cri Assourdissant",
+    "icon": 12892,
+    "desc": "Occasionne des dommages Feu et retire des PA.",
+    "grades": [
+     {
+      "niv": 100,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       19,
+       22
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 167,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       24,
+       28
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 25870,
+    "name": "Mot Vampirique",
+    "icon": 12860,
+    "desc": "Vole de la vie dans l'élément Eau aux ennemis ou transfère une partie de la vie du lanceur à l'allié ciblé.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       16,
+       18
+      ],
+      "element": "eau",
+      "vol": true
+     },
+     {
+      "niv": 68,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       21,
+       23
+      ],
+      "element": "eau",
+      "vol": true
+     },
+     {
+      "niv": 134,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       27,
+       30
+      ],
+      "element": "eau",
+      "vol": true
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 25872,
+    "name": "Sanglots",
+    "icon": 12883,
+    "desc": "Occasionne des dommages Eau à la cible et soigne les alliés selon les dommages occasionnés en zone autour d'elle.",
+    "grades": [
+     {
+      "niv": 105,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       19,
+       21
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 172,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       23,
+       26
+      ],
+      "element": "eau"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 25867,
+    "name": "Juron",
+    "icon": 12862,
+    "desc": "Occasionne des dommages Terre aux ennemis et repousse la cible.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       14,
+       16
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 69,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       18,
+       20
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 136,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       22,
+       25
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 25869,
+    "name": "Onguent Ancestral",
+    "icon": 12881,
+    "desc": "Occasionne des dommages Terre aux ennemis ou soigne les alliés.\nRéduit également les soins reçus par l'ennemi ciblé ou augmente ceux par l'allié ciblé.",
+    "grades": [
+     {
+      "niv": 110,
+      "pa": 4,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       31,
+       33
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 177,
+      "pa": 4,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       35,
+       38
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 25795,
+    "name": "Mot d'Amitié",
+    "icon": 12856,
+    "desc": "Invoque un Lapino maîtrisable qui peut soigner ou appliquer un bouclier.\nIl peut également se transformer s'il est dans l'état Contrôlé pour occasionner des dommages dans l'élément de l'{{spell,25930,1::Alchi-Rhétorique}}.\n\nLe Lapino est téléporté et immobilisé sur la case ciblée si le sort est relancé quand il est en vie.\n\nÀ sa mort, le lanceur pose un glyphe sous le Lapino qui occasionne des dommages aux ennemis ou soigne les alliés dans le meilleur élément du lanceur et le temps de relance du sort est fixé à 2 tours.",
+    "grades": [
+     {
+      "niv": 5,
+      "pa": 3,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 1,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 72,
+      "pa": 3,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 1,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 139,
+      "pa": 3,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 1,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 25802,
+    "name": "Mot Alchimique",
+    "icon": 12886,
+    "desc": "Invoque une Fiole vide statique qui peut être remplie d'un élément avec l'{{spell,25931,1::Alchi-Rhétorique}}.\nLorsqu'elle est attaquée par un allié, il consomme son contenu pour que le lanceur le soigne et augmente les caractéristiques selon le contenu.\nLorsqu'elle est détruite, elle occasionne des dommages selon son contenu aux ennemis et aux autres Fioles du lanceur en zone.\n\nSur une Fiole pleine du lanceur : consomme le contenu de la Fiole.\nSur une Fiole vide du lanceur : détruit la Fiole et rembourse le coût en PA.\n\nUtiliser le sort sur une Fiole rembourse l'utilisation du sort dans le tour.",
+    "grades": [
+     {
+      "niv": 115,
+      "pa": 2,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       10,
+       10
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 182,
+      "pa": 2,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       20,
+       20
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 25742,
+    "name": "Mot Stimulant",
+    "icon": 12863,
+    "desc": "Augmente les PA de l'allié ciblé et lui applique l'état Encouragé.\nLe cumul est partagé entre les Encouragements.\n\nSur une case libre : invoque une Fée Stimulante.",
+    "grades": [
+     {
+      "niv": 10,
+      "pa": 2,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 77,
+      "pa": 2,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 144,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 25746,
+    "name": "Mot de Déclin",
+    "icon": 12898,
+    "desc": "Réduit la durée des effets sur l'ennemi ciblé, lui réduit ses soins reçus et lui applique l'état Moqué.\nLe cumul est partagé entre les Moqueries.\n\nSur une case libre : invoque un Feu de Déclin.",
+    "grades": [
+     {
+      "niv": 120,
+      "pa": 2,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 187,
+      "pa": 2,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13175,
+    "name": "Mot de Frayeur",
+    "icon": 12864,
+    "desc": "Repousse la cible.",
+    "grades": [
+     {
+      "niv": 15,
+      "pa": 1,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2
+     },
+     {
+      "niv": 82,
+      "pa": 1,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2
+     },
+     {
+      "niv": 149,
+      "pa": 1,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2
+     }
+    ],
+    "ligne": 1,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 25832,
+    "name": "Scalpel",
+    "icon": 12899,
+    "desc": "Réduit la durée des effets sur la cible et occasionne des dommages aux ennemis ou soigne les alliés dans le meilleur élément.",
+    "grades": [
+     {
+      "niv": 125,
+      "pa": 4,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0,
+      "dmg": [
+       35,
+       38
+      ],
+      "element": "meilleur"
+     },
+     {
+      "niv": 192,
+      "pa": 4,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0,
+      "dmg": [
+       40,
+       44
+      ],
+      "element": "meilleur"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 25871,
+    "name": "Lamentations",
+    "icon": 12866,
+    "desc": "Vole de la vie dans l'élément Eau aux ennemis et soigne les alliés selon les dommages occasionnés en zone.\nN'affecte pas le lanceur.",
+    "grades": [
+     {
+      "niv": 20,
+      "pa": 4,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       18,
+       20
+      ],
+      "element": "eau",
+      "vol": true
+     },
+     {
+      "niv": 87,
+      "pa": 4,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       23,
+       26
+      ],
+      "element": "eau",
+      "vol": true
+     },
+     {
+      "niv": 154,
+      "pa": 4,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       29,
+       32
+      ],
+      "element": "eau",
+      "vol": true
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 25856,
+    "name": "Vacarme",
+    "icon": 12901,
+    "desc": "Soigne les alliés ou occasionne des dommages Feu aux ennemis.\n\nSur un Feu Follet du lanceur : applique les effets en zone et augmente les dommages finaux de tous les Feux Follets du lanceur.",
+    "grades": [
+     {
+      "niv": 130,
+      "pa": 3,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       23,
+       25
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 197,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       25,
+       28
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 25860,
+    "name": "Mot Turbulent",
+    "icon": 12867,
+    "desc": "Soigne les alliés, occasionne des dommages Feu aux ennemis et leur applique l'état Turbulent en zone :\n• Repousse les entités au contact de la cible à la fin de son tour.",
+    "grades": [
+     {
+      "niv": 25,
+      "pa": 4,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       23,
+       26
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 92,
+      "pa": 4,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       29,
+       33
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 159,
+      "pa": 4,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       36,
+       41
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 25865,
+    "name": "Mot Furieux",
+    "icon": 12902,
+    "desc": "Occasionne des dommages Terre aux ennemis et repousse les cibles en zone.",
+    "grades": [
+     {
+      "niv": 135,
+      "pa": 4,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       30,
+       34
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 1,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 25744,
+    "name": "Mot Vivifiant",
+    "icon": 12868,
+    "desc": "Augmente les PM et la Fuite de l'allié ciblé et lui applique l'état Encouragé.\nLe cumul est partagé entre les Encouragements.\n\nSur une case libre : invoque une Fée Vivifiante.",
+    "grades": [
+     {
+      "niv": 30,
+      "pa": 2,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 97,
+      "pa": 2,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 164,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 25745,
+    "name": "Mot Galvanisant",
+    "icon": 12903,
+    "desc": "Augmente la Puissance de l'allié ciblé et lui applique un bouclier et l'état Encouragé.\nLe cumul est partagé entre les Encouragements.\n\nSur une case libre : invoque une Fée Galvanisante.",
+    "grades": [
+     {
+      "niv": 140,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 25879,
+    "name": "Mot Farceur",
+    "icon": 12869,
+    "desc": "Occasionne des dommages Air aux ennemis ou soigne les alliés et applique l'état Farce sur la cible :\n• Téléporte la cible à sa position précédente à la fin de son tour.",
+    "grades": [
+     {
+      "niv": 35,
+      "pa": 3,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       15,
+       17
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 102,
+      "pa": 3,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       18,
+       20
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 169,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       22,
+       24
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 25876,
+    "name": "Mot Défendu",
+    "icon": 12973,
+    "desc": "Vole de la vie dans l'élément Eau aux ennemis et attire les cibles vers la case ciblée en zone.",
+    "grades": [
+     {
+      "niv": 145,
+      "pa": 4,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       28,
+       31
+      ],
+      "element": "eau",
+      "vol": true
+     }
+    ],
+    "ligne": 1,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 25868,
+    "name": "Peinture de Guerre",
+    "icon": 12871,
+    "desc": "Peint la cible et occasionne des dommages Terre aux ennemis ou soigne les alliés.\n\n<b>État Peinture :</b>\n• Sur un ennemi : réduit ses Résistances Poussée.\n• Sur un allié : soigne au début de son tour.",
+    "grades": [
+     {
+      "niv": 40,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       6,
+       7
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 107,
+      "pa": 2,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       7,
+       9
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 174,
+      "pa": 2,
+      "po": [
+       0,
+       7
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       9,
+       11
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 25882,
+    "name": "Mot Secret",
+    "icon": 12905,
+    "desc": "Soigne les alliés et occasionne des dommages Air aux ennemis en zone.\nLes soins et les dommages sont augmentés dans 2 tours si le sort n'est pas relancé au tour suivant.\n\nAugmente les soins finaux de toutes les Fées du lanceur si une entité est touchée.",
+    "grades": [
+     {
+      "niv": 150,
+      "pa": 4,
+      "po": [
+       1,
+       10
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       28,
+       32
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 1,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 25743,
+    "name": "Mot de Jouvence",
+    "icon": 12873,
+    "desc": "Réduit la durée des effets sur l'allié ciblé, le soigne immédiatement et en début de tour et lui applique l'état Encouragé.\nLe cumul est partagé entre les Encouragements.\n\nSur une case libre : invoque une Fée de Jouvence.",
+    "grades": [
+     {
+      "niv": 45,
+      "pa": 2,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 112,
+      "pa": 2,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 179,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 25748,
+    "name": "Mot Déprimant",
+    "icon": 12913,
+    "desc": "Retire de la Puissance et des Dommages à l'ennemi ciblé et lui applique l'état Moqué.\nLe cumul est partagé entre les Moqueries.\n\nSur une case libre : invoque un Feu Déprimant.",
+    "grades": [
+     {
+      "niv": 155,
+      "pa": 2,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 25863,
+    "name": "Cri de Guerre",
+    "icon": 12874,
+    "desc": "Occasionne des dommages Terre aux ennemis et repousse les cibles en zone.\nLes dommages de zone ne sont pas dégressifs.",
+    "grades": [
+     {
+      "niv": 50,
+      "pa": 4,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       23,
+       26
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 117,
+      "pa": 4,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       31,
+       35
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 184,
+      "pa": 4,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       37,
+       41
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 25864,
+    "name": "Mot Rituel",
+    "icon": 12908,
+    "desc": "Pose un glyphe-aura qui peint les entités en zone.\nOccasionne également des dommages Terre aux ennemis dans la zone d'effet et soigne les alliés à l'intérieur de la zone.",
+    "grades": [
+     {
+      "niv": 160,
+      "pa": 3,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0,
+      "dmg": [
+       28,
+       32
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 25873,
+    "name": "Mot Interdit",
+    "icon": 13300,
+    "desc": "Réduit la durée des effets sur la cible, occasionne des dommages Eau aux ennemis ou soigne les alliés.",
+    "grades": [
+     {
+      "niv": 55,
+      "pa": 5,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       30,
+       33
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 122,
+      "pa": 5,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       40,
+       44
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 189,
+      "pa": 5,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       46,
+       50
+      ],
+      "element": "eau"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 13217,
+    "name": "Mot Exsangue",
+    "icon": 12974,
+    "desc": "Occasionne des dommages Eau et soigne les attaquants de la cible.\n\nSur un allié : soigne la cible.",
+    "grades": [
+     {
+      "niv": 165,
+      "pa": 4,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       37,
+       40
+      ],
+      "element": "eau"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 25749,
+    "name": "Mot Accablant",
+    "icon": 12876,
+    "desc": "Retire des PM et de l'Esquive PM à l'ennemi ciblé et lui applique l'état Moqué.\nLe cumul est partagé entre les Moqueries.\n\nSur une case libre : invoque un Feu Accablant.",
+    "grades": [
+     {
+      "niv": 60,
+      "pa": 2,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 127,
+      "pa": 2,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 194,
+      "pa": 2,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 25747,
+    "name": "Mot Décourageant",
+    "icon": 12907,
+    "desc": "Retire des PA et de l'Esquive PA à l'ennemi ciblé et lui applique l'état Moqué.\nLe cumul est partagé entre les Moqueries.\n\nSur une case libre : invoque un Feu Décourageant.",
+    "grades": [
+     {
+      "niv": 170,
+      "pa": 2,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 25859,
+    "name": "Chapardage",
+    "icon": 12877,
+    "desc": "Vole de la Portée à la cible et de la vie dans l'élément Feu aux ennemis.",
+    "grades": [
+     {
+      "niv": 65,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       15,
+       17
+      ],
+      "element": "feu",
+      "vol": true
+     },
+     {
+      "niv": 131,
+      "pa": 3,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       18,
+       20
+      ],
+      "element": "feu",
+      "vol": true
+     },
+     {
+      "niv": 198,
+      "pa": 3,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       20,
+       22
+      ],
+      "element": "feu",
+      "vol": true
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 25862,
+    "name": "Mot Distrayant",
+    "icon": 12914,
+    "desc": "Attire les cibles vers le centre, soigne les alliés et occasionne des dommages Feu aux ennemis en zone.\nL'attirance n'affecte pas le lanceur.",
+    "grades": [
+     {
+      "niv": 175,
+      "pa": 4,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       30,
+       34
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 25880,
+    "name": "Mot Fleuri",
+    "icon": 12878,
+    "desc": "Occasionne des dommages Air aux ennemis et applique l'état Floraison sur les cibles en zone :\n• Soigne les alliés en zone autour de la cible à la fin de son tour.",
+    "grades": [
+     {
+      "niv": 70,
+      "pa": 4,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       26,
+       29
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 137,
+      "pa": 4,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       33,
+       37
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 25881,
+    "name": "Bosquet Enchanté",
+    "icon": 12915,
+    "desc": "Soigne les alliés et occasionne des dommages Air aux ennemis en zone.\nLa zone s'étend autour des Fées du lanceur et des alliés Encouragés.\n\nLes effets ne sont appliqués qu'une seule fois par lancer.",
+    "grades": [
+     {
+      "niv": 180,
+      "pa": 4,
+      "po": [
+       0,
+       7
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       34,
+       38
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 1,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 13184,
+    "name": "Mot d'Envol",
+    "icon": 12880,
+    "desc": "Échange de position avec l'allié ciblé.",
+    "grades": [
+     {
+      "niv": 75,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 142,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 25874,
+    "name": "Fontaine de Jouvence",
+    "icon": 12918,
+    "desc": "Soigne les alliés et pose un glyphe de fin de tour qui soigne les alliés en zone.\nRend le lanceur Intaclable tant qu'il est dans le glyphe.",
+    "grades": [
+     {
+      "niv": 185,
+      "pa": 3,
+      "po": [
+       0,
+       2
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 25866,
+    "name": "Pinceau Tribal",
+    "icon": 12896,
+    "desc": "Peint la cible et soigne les alliés ou occasionne des dommages Terre aux ennemis.\n\nSur une cible Peinte : propage la Peinture, soigne les alliés et occasionne des dommages Terre aux ennemis en zone.\n\nSur le lanceur : consomme toutes les Peintures pour occasionner des dommages Terre à tous les ennemis Peints.\n• Les dommages sont augmentés pour chaque ennemi touché avant d'appliquer les effets.\n• Augmente les Dommages Poussée du lanceur pour chaque allié touché.",
+    "grades": [
+     {
+      "niv": 80,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       15,
+       18
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 147,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       19,
+       22
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 25861,
+    "name": "Chœur Strident",
+    "icon": 12919,
+    "desc": "Occasionne des dommages Feu aux ennemis ou soigne les alliés.\nLes dommages et les soins sont augmentés à l'application d'une Moquerie par le lanceur ou à la mort d'un de ses Feux Follets.\n\nLes effets ne peuvent être augmentés qu'une seule fois par tour, et se décrémentent après utilisation du sort.",
+    "grades": [
+     {
+      "niv": 190,
+      "pa": 5,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       40,
+       44
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 25875,
+    "name": "Cryothérapie",
+    "icon": 12894,
+    "desc": "Occasionne des dommages Eau aux ennemis et applique l'état Cryothérapie sur la cible :\n• Applique un bouclier sur l'allié ciblé ou retire de la Fuite aux ennemis.\n• Retire les effets du sort pour soigner les alliés et occasionner des dommages Eau aux ennemis en zone si la cible perd l'état.",
+    "grades": [
+     {
+      "niv": 85,
+      "pa": 3,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       11,
+       13
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 152,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       14,
+       16
+      ],
+      "element": "eau"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 25883,
+    "name": "Murmure",
+    "icon": 12920,
+    "desc": "Occasionne des dommages Air et vole des PM aux ennemis.\n\nSur un allié : soigne la cible et augmente ses PM.",
+    "grades": [
+     {
+      "niv": 195,
+      "pa": 2,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       16,
+       18
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 13187,
+    "name": "Mot de Reconstitution",
+    "icon": 12885,
+    "desc": "Soigne totalement l'allié ciblé mais le rend Insoignable.",
+    "grades": [
+     {
+      "niv": 90,
+      "pa": 5,
+      "po": [
+       0,
+       7
+      ],
+      "relance": 6,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 157,
+      "pa": 5,
+      "po": [
+       0,
+       8
+      ],
+      "relance": 6,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 1,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 13219,
+    "name": "Mot de Solidarité",
+    "icon": 12922,
+    "desc": "Transfère une partie de la vie de l'allié ciblé à tous les alliés Encouragés.\nLe transfert venant d'une Fée du lanceur est plus important.\n\nSur un allié Encouragé : transfère une partie de la vie de tous les alliés Encouragés à la cible.",
+    "grades": [
+     {
+      "niv": 200,
+      "pa": 1,
+      "po": [
+       0,
+       7
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ]
  ]
 }

@@ -64,6 +64,18 @@ export function spellDetail(p: Player, id: SkillId, gOver?: SortGrade) {
     d.dmgPV ? `Dommages : ${Math.round(d.dmgPV * 100)} % de tes PV restants (${Math.round(p.damage(p.hp * d.dmgPV, d.element))})` : '',
     d.renvoi ? `Renvoie ${Math.round(d.renvoi.part * 100)} % des dommages de mêlée pendant ${d.renvoi.t} s` : '',
     d.mutilation ? `Sacrifie ${Math.round(d.mutilation.sacrifice * 100)} % de tes PV (jamais sous 1) : +${d.mutilation.puissance} Puissance, puis toutes les ${d.mutilation.periode} s un nouveau sacrifice (+${d.mutilation.cran}, ${d.mutilation.crans} crans max, le sacrifice continue ensuite). Reste active sans limite de durée. Relancer : Coagulation, bouclier de ${Math.round(d.mutilation.coagulation[0] * 100)} à ${Math.round(d.mutilation.coagulation.at(-1)! * 100)} % des PV max` : '',
+    // Eniripsa
+    d.soin ? `Soigne les alliés touchés de ${Math.round(d.soin)} PV (+ Intelligence et Soins)${d.soinLanceur === false ? ', pas toi' : ''}` : '',
+    d.soinVol ? `Soigne les alliés de la zone de ${Math.round(d.soinVol * 100)} % des dommages faits${d.soinLanceur === false ? ' (pas toi)' : ''}` : '',
+    d.transfert ? `Sur un allié : lui donne ${Math.round(d.transfert * 100)} % de tes PV` : '',
+    d.encourage ? `Encouragement de ${d.encourage.t} s sur l'allié visé (un seul à la fois)${d.encourage.regen ? ` : PA ${Math.round(d.encourage.regen * 100)} % plus vite` : ''}${d.encourage.pm ? ` : +${d.encourage.pm} PM et course +${Math.round((d.encourage.vitesse ?? 0) * 100)} %` : ''}${d.encourage.soinPct ? ` : retire les malus, soigne ${Math.round(d.encourage.soinPct * 100)} % des PV puis toutes les 3 s` : ''}. Sur une case libre : une Fée qui file vers le plus blessé` : '',
+    d.moque ? `Moquerie de ${d.moque.t} s sur l'ennemi visé : ralenti de ${Math.round(d.moque.ralenti * 100)} % (moitié sur élites et boss). Sur une case libre : un Feu Follet qui file vers l'ennemi le plus proche` : '',
+    d.purge ? 'Retire les malus d\'un allié ou les bonus d\'un ennemi' : '',
+    d.farce ? `L'ennemi touché revient à sa place au bout de ${d.farce} s` : '',
+    d.peinture ? `Ennemi : repoussé ${Math.round(d.peinture.poussee * 100)} % plus loin pendant ${d.peinture.t} s. Allié : ${d.peinture.soin} PV toutes les 3 s` : '',
+    d.lapino ? 'Invoque le Lapino (soigne le plus blessé, Alchi-Rhétorique) ; relancé, le téléporte' : '',
+    d.envol ? 'Sur un allié : échange de place avec lui' : '',
+    d.reconstitution ? `Relève à distance un allié à terre (recharge ${d.reconstitution.relanceReleve} s), sinon soigne tous ses PV. Insoignable ${d.reconstitution.insoignable} s` : '',
     // Forgelance
     d.lance?.epilogue ? 'Armé : plante la Lance au point visé. Désarmé : la rappelle (elle frappe ce qu\'elle traverse)' : '',
     d.lance?.saut ? 'Désarmé : bondit jusqu\'à la Lance et la reprend à pied. Armé : petit bond' : '',

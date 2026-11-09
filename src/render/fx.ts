@@ -40,6 +40,8 @@ export class FX {
   private parts: Particle[] = [];
   private trails: Trail[] = [];
   private rings: Ring[] = [];
+  /** Eniripsa 12C : fils de soin verts (du soigneur vers l'allié soigné), qui s'effacent en 0,45 s. */
+  private fils: { x: number; y: number; tx: number; ty: number; life: number }[] = [];
   /** Effets officiels des sorts (planches Dofus 3). */
   readonly official: SpellFx;
   /** Armes 4B : flèches de l'arc (dessin officiel de l'animation) en vol, et celles plantées au sol quand elles ratent. */
@@ -144,6 +146,10 @@ export class FX {
         this.number(e.x, e.y, 60, `-${e.amount}`, false, '#b02020');
         this.particles(e.x, e.y, 24, 12, 0x9a1010, 160, 0.5, 3, 260);
         break;
+      case 'filSoin':
+        this.fils.push({ x: e.x, y: e.y, tx: e.tx, ty: e.ty, life: 0.45 });
+        this.particles(e.tx, e.ty, 40, 5, 0x9ff0c0, 80, 0.45, 3, 160);
+        break;
       case 'echange':
         this.ring(e.x, e.y, 6, 40, 0xc03030, 0.35, 5);
         this.ring(e.ox, e.oy, 6, 40, 0xc03030, 0.35, 5);
@@ -217,6 +223,8 @@ export class FX {
     for (const t of this.trails) t.life -= dt;
     this.trails = this.trails.filter(t => t.life > 0);
     for (const r of this.rings) r.life -= dt;
+    for (const f of this.fils) f.life -= dt;
+    this.fils = this.fils.filter(f => f.life > 0);
     this.rings = this.rings.filter(r => r.life > 0);
     for (const f of this.plantees) { f.life -= dt; f.img.setAlpha(Math.min(1, f.life / 0.3)); if (f.life <= 0) f.img.destroy(); }
     this.plantees = this.plantees.filter(f => f.life > 0);
@@ -316,6 +324,13 @@ export class FX {
         g.fillStyle(col, 0.12); g.fillPoints(quad(tg.len), true);
         g.fillStyle(col, 0.3); g.fillPoints(quad(tg.len * k), true);
       }
+    }
+    for (const f of this.fils) {   // fil de soin : un trait vert doux, plus clair au cœur, légèrement courbé vers le haut
+      const k = f.life / 0.45, a = ISO.toScreen(f.x, f.y, 50), b = ISO.toScreen(f.tx, f.ty, 50), mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2 - 24;
+      const pts: Phaser.Math.Vector2[] = [];
+      for (let i = 0; i <= 12; i++) { const t = i / 12, u = 1 - t; pts.push(new Phaser.Math.Vector2(u * u * a.x + 2 * u * t * mx + t * t * b.x, u * u * a.y + 2 * u * t * my + t * t * b.y)); }
+      top.lineStyle(7, 0x4fd88a, 0.28 * k); top.strokePoints(pts, false, false);
+      top.lineStyle(2.5, 0xc8ffd8, 0.9 * k); top.strokePoints(pts, false, false);
     }
     for (const r of this.rings) {
       const k = 1 - r.life / r.max, rad = r.r0 + (r.r1 - r.r0) * Phaser.Math.Easing.Cubic.Out(k);

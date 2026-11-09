@@ -1018,5 +1018,282 @@
     "desc": "Échange de position avec la cible et occasionne des dommages Neutre aux ennemis."
    }
   ]
+ },
+ "lapino": {
+  "dofusId": 7370,
+  "name": "Lapino",
+  "look": 7599,
+  "atlas": "eni_lapino",
+  "rang": 1,
+  "element": "neutre",
+  "suivant": null,
+  "pv": 0.5,
+  "sorts": [
+   {
+    "id": 25790,
+    "name": "Lapinopoing",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 13,
+      "max": 15
+     }
+    ],
+    "desc": "Occasionne des dommages Neutre ou dans l'élément de l'Alchi-Rhétorique."
+   },
+   {
+    "id": 25785,
+    "name": "Bisou Magique",
+    "pa": 3,
+    "po": [
+     0,
+     6
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "soinPct",
+      "n": 6
+     }
+    ],
+    "desc": "Soigne l'allié ciblé."
+   },
+   {
+    "id": 25786,
+    "name": "Prévention",
+    "pa": 3,
+    "po": [
+     0,
+     6
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "bouclier",
+      "n": 100
+     }
+    ],
+    "desc": "Applique un bouclier sur l'allié ciblé."
+   }
+  ],
+  "_doc": "Lapino (Mot d'Amitié, maquette Eniripsa 7A) : Lapinopoing frappe dans l'élément de l'Alchi-Rhétorique (le dernier Mot élémentaire lancé sur lui) ; Bisou Magique soigne 6 % des PV max de l'allié (effet officiel 1109) ; Prévention pose un bouclier. Mutation et Souffle Alchimique pas encore joués."
+ },
+ "fee_stimulante": {
+  "dofusId": 7372,
+  "name": "Fée Stimulante",
+  "look": 7600,
+  "atlas": "eni_fee",
+  "rang": 1,
+  "element": "neutre",
+  "suivant": null,
+  "pv": 0.1,
+  "sorts": [
+   {
+    "id": 25770,
+    "name": "Compliment",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [],
+    "desc": "Soigne l'allié ciblé dans le meilleur élément de la Fée et la tue."
+   },
+   {
+    "id": 25771,
+    "name": "Espièglerie",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [],
+    "desc": "Échange de position avec la cible et tue la Fée."
+   },
+   {
+    "id": 25765,
+    "name": "Encouragement Stimulant",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [],
+    "desc": "Applique les effets du sort Mot Stimulant sur l'allié ciblé et tue la Fée."
+   }
+  ],
+  "_doc": "Luciole (maquette Eniripsa 5B 6B) : file vers l'allié (Fée) ou l'ennemi (Feu Follet) le plus proche, applique l'Encouragement ou la Moquerie de son Mot, soigne 6 % des PV max (Compliment) ou frappe (Insulte), puis meurt (6 s au plus, 2 au plus)."
+ },
+ "fee_vivifiante": {
+  "dofusId": 7374,
+  "name": "Fée Vivifiante",
+  "look": 7600,
+  "atlas": "eni_fee",
+  "rang": 1,
+  "element": "neutre",
+  "suivant": null,
+  "pv": 0.1,
+  "sorts": [
+   {
+    "id": 25771,
+    "name": "Espièglerie",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [],
+    "desc": "Échange de position avec la cible et tue la Fée."
+   },
+   {
+    "id": 25770,
+    "name": "Compliment",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [],
+    "desc": "Soigne l'allié ciblé dans le meilleur élément de la Fée et la tue."
+   },
+   {
+    "id": 25767,
+    "name": "Encouragement Vivifiant",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [],
+    "desc": "Applique les effets du sort Mot Vivifiant sur l'allié ciblé et tue la Fée."
+   }
+  ],
+  "_doc": "Luciole (maquette Eniripsa 5B 6B) : file vers l'allié (Fée) ou l'ennemi (Feu Follet) le plus proche, applique l'Encouragement ou la Moquerie de son Mot, soigne 6 % des PV max (Compliment) ou frappe (Insulte), puis meurt (6 s au plus, 2 au plus)."
+ },
+ "fee_jouvence": {
+  "dofusId": 7373,
+  "name": "Fée de Jouvence",
+  "look": 7600,
+  "atlas": "eni_fee",
+  "rang": 1,
+  "element": "neutre",
+  "suivant": null,
+  "pv": 0.1,
+  "sorts": [
+   {
+    "id": 25771,
+    "name": "Espièglerie",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [],
+    "desc": "Échange de position avec la cible et tue la Fée."
+   },
+   {
+    "id": 25770,
+    "name": "Compliment",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [],
+    "desc": "Soigne l'allié ciblé dans le meilleur élément de la Fée et la tue."
+   },
+   {
+    "id": 25766,
+    "name": "Encouragement de Jouvence",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [],
+    "desc": "Applique les effets du sort Mot de Jouvence sur l'allié ciblé et tue la Fée."
+   }
+  ],
+  "_doc": "Luciole (maquette Eniripsa 5B 6B) : file vers l'allié (Fée) ou l'ennemi (Feu Follet) le plus proche, applique l'Encouragement ou la Moquerie de son Mot, soigne 6 % des PV max (Compliment) ou frappe (Insulte), puis meurt (6 s au plus, 2 au plus)."
+ },
+ "feu_accablant": {
+  "dofusId": 7378,
+  "name": "Feu Accablant",
+  "look": 7601,
+  "atlas": "eni_feu_follet",
+  "rang": 1,
+  "element": "neutre",
+  "suivant": null,
+  "pv": 0.1,
+  "sorts": [
+   {
+    "id": 25818,
+    "name": "Cachoterie",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [],
+    "desc": "Échange de position avec la cible et tue le Feu Follet."
+   },
+   {
+    "id": 25777,
+    "name": "Insulte",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [],
+    "desc": "Occasionne des dommages dans le meilleur élément du Feu Follet aux ennemis et le tue."
+   },
+   {
+    "id": 25780,
+    "name": "Moquerie Accablante",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [],
+    "desc": "Applique les effets du sort Mot Accablant sur l'ennemi ciblé et tue le Feu Follet."
+   }
+  ],
+  "_doc": "Luciole (maquette Eniripsa 5B 6B) : file vers l'allié (Fée) ou l'ennemi (Feu Follet) le plus proche, applique l'Encouragement ou la Moquerie de son Mot, soigne 6 % des PV max (Compliment) ou frappe (Insulte), puis meurt (6 s au plus, 2 au plus)."
  }
 }
