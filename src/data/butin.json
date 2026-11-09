@@ -11,6 +11,8 @@
   "equipement": {
     "_doc": "équipement officiel aléatoire du niveau du monstre (écart de niveau), tiré à chaque monstre vaincu",
     "niveaux": [-4, 6],
+    "_pool": "objets tirés : butin officiel des monstres de la zone + objets fabriqués avec leurs ressources (Mathis 2026-11-09) ; moins de minZone à ce niveau -> ceux de tout le jeu",
+    "minZone": 8,
     "normal": { "chance": 0.06, "tirages": 1 },
     "elite": { "chance": 0.3, "tirages": 1 },
     "boss": { "chance": 1, "tirages": 2 }

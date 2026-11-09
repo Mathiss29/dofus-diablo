@@ -2,7 +2,7 @@ import { v } from './assetUrl';
 import { iconHtml } from './icons';
 import { BOUTIQUES, GAME_DATA, ITEMS, QUETES, RECOLTES } from '../sim/data';
 import { RARITY_COLORS, RARITY_NAMES, RARITIES } from '../sim/items';
-import { lieuxDe, niveauHorsPartie, rangDe, tableButin, type CtxButin, type LigneButin, type Source, type TableButin } from '../sim/butin';
+import { lieuxDe, monstresDeZone, niveauHorsPartie, poolOfficiel, rangDe, tableButin, type CtxButin, type LigneButin, type Source, type TableButin } from '../sim/butin';
 
 /** Affichage du butin (maquette « Drops », Mathis 2026-11-07) : partagé par le Bestiaire en jeu (B), l'accueil,
  *  les infobulles d'objets (« Où le trouver ») et l'outil de test (F1). Ne fait que lire : tout le calcul est dans src/sim/butin.ts. */
@@ -20,13 +20,19 @@ export function unSur(p: number) {
 export const nomObjet = (id: string) => (ITEMS.resources[id] ?? ITEMS.equipment[id])?.name ?? id;
 export const iconeObjet = (id: string) => iconHtml((ITEMS.resources[id] ?? ITEMS.equipment[id])?.icon ?? 0);
 
-const POOL = Object.entries(ITEMS.equipment).filter(([, d]) => !d.familier && !d.horsJeu).map(([id, d]) => ({ id, level: d.level }));
+const POOL = poolOfficiel(ITEMS, Object.values(GAME_DATA.zones).flatMap(monstresDeZone));
+const POOL_ZONE: Record<string, CtxButin['pool']> = {};
+/** Équipements de la zone où vit le monstre (celle de son niveau le plus bas), comme en jeu. */
+const poolDe = (type: string) => {
+  const l = lieuxDe(type, GAME_DATA).sort((a, b) => a.niveau - b.niveau)[0], z = l && GAME_DATA.zones[l.zone];
+  return z ? POOL_ZONE[l.zone] ??= poolOfficiel(ITEMS, monstresDeZone(z)) : POOL;
+};
 const FAMILIERS_DE: Record<string, string[]> = {};
 for (const [id, d] of Object.entries(ITEMS.equipment)) for (const m of d.familier?.monstres ?? []) (FAMILIERS_DE[m] ??= []).push(id);
 /** Contexte sans partie (accueil, outil de test hors combat) : Prospection 0, pas de métier. */
 export function ctxHorsPartie(type: string, prospection = 0): CtxButin {
   const d = GAME_DATA.monsters[type];
-  return { type, rang: d ? rangDe(d) : 'normal', niveau: niveauHorsPartie(type, GAME_DATA), prospection, items: ITEMS, familiers: FAMILIERS_DE[type] ?? [], pool: POOL,
+  return { type, rang: d ? rangDe(d) : 'normal', niveau: niveauHorsPartie(type, GAME_DATA), prospection, items: ITEMS, familiers: FAMILIERS_DE[type] ?? [], pool: poolDe(type), poolSecours: POOL,
     metierNiveau: () => 1, armeChasse: false };
 }
 
