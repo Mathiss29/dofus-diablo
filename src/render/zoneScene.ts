@@ -101,12 +101,16 @@ export class ZoneScene extends Phaser.Scene {
   private snapCam = false;
   /** Rideau des arrivées (choix 1A + 5A) : 'sortie' = fondu au noir devant une porte ; 'attente' = noir tant que la carte
    *  d'arrivée et ses voisines ne sont pas posées (la partie est en pause). Au-delà de RIDEAU_ECRAN s, l'écran de chargement s'affiche. */
-  private rideau: { etat: 'sortie' | 'attente'; t: number; ecran: boolean } | null = null;
+  private rideau: { etat: 'sortie' | 'attente'; t: number; ecran: boolean; arrivee?: boolean } | null = null;
   /** Changement de zone en cours (Entrées 14A) : fondu au noir de 0,2 s, la partie s'arrête, puis la scène repart. */
   private depart = false;
   /** Comment on arrive dans cette zone : écran de voyage (15A), noir de porte (Havre-Sac, 14A) ou logo. */
   private arriveePar: Arrivee = null;
   static readonly RIDEAU_ECRAN = 0.6;
+  /** Première arrivée en jeu depuis l'ouverture de la page (Arrivée 4A : tourbillon du Zaap à la connexion). */
+  static connexion = true;
+  /** Moment du clic sur « Jouer » (Arrivée 7A) : le temps jusqu'au monde affiché part dans les stats de parcours. */
+  static clicJouer: number | null = null;
   static readonly RIDEAU_MAX = 10;
   private views = new Map<number, EntityView>();
   private transparence: Transparence | null = null;
@@ -207,7 +211,7 @@ export class ZoneScene extends Phaser.Scene {
 
   preload() {
     Chargement.montrer(this.arriveePar);
-    this.load.off('progress', Chargement.progres).on('progress', Chargement.progres);   // le chargeur survit aux relances de la scène
+    this.load.off('progress', Chargement.progres).off('progress', Chargement.fichiers).on('progress', Chargement.fichiers);   // le chargeur survit aux relances de la scène
     Hud.preload(this);
     // Icônes des objets officiels : une seule planche
     // kamas au sol (Kamas A) : le tas de pièces officiel (figs_/kamastack) et une pièce seule, prise sur le dessus du tas
@@ -380,10 +384,6 @@ export class ZoneScene extends Phaser.Scene {
     // Bestiaire (maquette « Drops » 1A) : les monstres vaincus du compte ; la partie de test voit tout
     this.windows.vaincus = () => this.bestiaire; this.windows.toutVoir = !!this.test;
     this.windows.onZaap = i => { this.zaapChoix = i; };
-    // maquette « Zaap : » 9A : arrivée par un Zaap, les éclats du tourbillon s'échappent du perso
-    if (this.transit.zaap && this.world.zone.open && !this.vitrine) this.time.delayedCall(300, () => this.tourbillon(this.world.player.x, this.world.player.y, true));
-    // arrivée par un portail d'une autre zone : un anneau turquoise s'ouvre autour du perso, posé à côté du portail
-    if (this.arrivee && this.world.zone.open && !this.vitrine) this.time.delayedCall(300, () => this.fx.ring(this.world.player.x, this.world.player.y, 10, 110, 0x5ff2dc, 0.6, 5));
     this.windows.onCarte = m => { if (this.carte?.dispo) this.carte.montrer(m); };   // Métiers UI 8B, 11B : où trouver une ressource
     this.windows.portrait = v(`${ASSETS}/ui/perso_${this.classId}${this.perso?.sexe === 'f' ? '_f' : ''}.png`);
     // perso dessiné en direct dans l'inventaire, l'aperçu des apparats et la garde-robe (Apparence 5A, 6B)
@@ -460,6 +460,9 @@ export class ZoneScene extends Phaser.Scene {
     if (this.vitrine) this.initVitrine();
     else {
       this.cameras.main.startFollow(this.viewOf(this.world.player).sprite, true, 0.12, 0.12, 0, 30);
+      // Arrivée 2A : la caméra est posée sur le perso dès la première image (avant : elle glissait depuis le coin de la carte)
+      const s = ISO.toScreen(this.world.player.x, this.world.player.y);
+      this.cameras.main.centerOn(s.x, s.y - 30); this.snapCam = true;
       this.bindInput();
     }
     if (this.perso || this.test) {
@@ -467,13 +470,16 @@ export class ZoneScene extends Phaser.Scene {
       window.addEventListener('beforeunload', quitter); document.addEventListener('visibilitychange', cache);
       this.events.once('shutdown', () => { this.sauver(); window.removeEventListener('beforeunload', quitter); document.removeEventListener('visibilitychange', cache); });
     }
-    // Arrivée loin du départ de la zone (Zaap, Havre-Sac, porte d'une autre zone) : l'écran de voyage reste jusqu'à ce
-    // que la carte du joueur et ses voisines soient posées, au lieu de montrer une carte vide qui se remplit.
+    // Toute arrivée (premier lancement compris, maquette « Arrivée : » 1A ; avant : seulement Zaap, Havre-Sac, porte d'une
+    // autre zone) : l'écran de chargement reste jusqu'à ce que la carte du joueur et ses voisines soient posées, au lieu de
+    // montrer un fond vide qui se remplit. Interface (5A) et musique (6A) attendent aussi le lever du rideau.
     const wv = this.worldView;
-    if (wv && !this.vitrine && this.arriveePar && !wv.pret(this.world.player.x, this.world.player.y).ok) {
+    if (wv && !this.vitrine && !wv.pret(this.world.player.x, this.world.player.y).ok) {
       this.cameras.main.fadeEffect.start(true, 0, 0, 0, 0, true);
-      this.rideau = { etat: 'attente', t: 0, ecran: true }; wv.presse = true; this.snapCam = true;
-    } else Chargement.cacher();
+      this.cameras.getCamera('ui')?.fadeEffect.start(true, 0, 0, 0, 0, true);
+      this.rideau = { etat: 'attente', t: 0, ecran: true, arrivee: true }; wv.presse = true; this.snapCam = true;
+      Son.voiler();
+    } else { Chargement.cacher(); if (!this.vitrine) this.arriver(); }
     // Accès console / tests automatisés (captures) : la partie et le tirage d'objets
     (window as unknown as { diablofus: unknown }).diablofus = { scene: this, world: this.world, rollItem, ITEMS };
   }
@@ -1323,11 +1329,29 @@ export class ZoneScene extends Phaser.Scene {
     }
     const p = this.world.player, etat = wv.pret(p.x, p.y);
     if (!r.ecran && r.t > ZoneScene.RIDEAU_ECRAN && !etat.ok) { r.ecran = true; Chargement.montrer(); }
-    if (r.ecran) Chargement.progres(etat.p);
+    if (r.ecran) Chargement.monde(etat.p);
     if (!etat.ok && r.t < ZoneScene.RIDEAU_MAX) return;
     if (r.ecran) Chargement.cacher();
-    this.cameras.main.fadeIn(300, 0, 0, 0);
+    this.cameras.main.fadeIn(r.ecran ? 400 : 300, 0, 0, 0);
+    // 5A : l'interface (HUD, bandeau, mini-carte) apparaît sous le même fondu que le monde, jamais sur un écran vide
+    if (r.arrivee) this.cameras.getCamera('ui')?.fadeIn(400, 0, 0, 0);
     wv.presse = false; this.rideau = null;
+    if (r.arrivee) this.arriver();
+  }
+  /** Le monde est affiché après un chargement : musique en fondu (6A), tourbillon à la connexion (4A), chrono (7A). */
+  private arriver() {
+    Son.lever(1.5);
+    const open = this.world.zone.open, connexion = ZoneScene.connexion && !this.essai, p = () => this.world.player;
+    if (!this.essai) ZoneScene.connexion = false;
+    // maquette « Zaap : » 9A : arrivée par un Zaap, les éclats du tourbillon s'échappent du perso ; Arrivée 4A : pareil à la
+    // connexion, avec le son du Zaap. Joués au lever du rideau (avant : 0,3 s après la création, donc souvent sous l'écran noir).
+    if (open && (this.transit.zaap || connexion)) this.time.delayedCall(300, () => {
+      this.tourbillon(p().x, p().y, true);
+      const l = MANIFESTE.teleport; if (connexion && l?.length) Son.jouer(l[Math.floor(Math.random() * l.length)], 'ambiance', { vol: 0.6 });
+    });
+    // arrivée par un portail d'une autre zone : un anneau turquoise s'ouvre autour du perso, posé à côté du portail
+    else if (open && this.arrivee) this.time.delayedCall(300, () => this.fx.ring(p().x, p().y, 10, 110, 0x5ff2dc, 0.6, 5));
+    if (ZoneScene.clicJouer !== null) { Parcours.arrivee(performance.now() - ZoneScene.clicJouer); ZoneScene.clicJouer = null; }
   }
 
   /** Butin au sol (choix 3A) : icône officielle qui flotte, colonne de lumière de la couleur de la rareté dès Rare

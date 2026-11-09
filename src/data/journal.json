@@ -1154,6 +1154,12 @@
             "etiquettes": [
               "Accueil"
             ]
+          },
+          {
+            "titre": "Une arrivée en jeu propre",
+            "phrase": "Le monde n'apparaît que complet, perso au centre, puis la musique monte en fondu.",
+            "details": "Fini le fond bleu vide et la caméra qui cherche ton perso. Le tourbillon du Zaap t'accueille à la connexion.",
+            "icone": "zaap"
           }
         ],
         "Le monde": [],
@@ -1187,7 +1193,8 @@
           "Les autres joueurs et les monstres glissent entre deux envois du serveur au lieu de sauter.",
           "Le serveur calcule le classement chaque minute ; les records de donjon ne comptent que sur ses parties.",
           "Le curseur Monstres passe à 50 % par défaut, et le mixage baisse les monstres quand tu lances un sort.",
-          "Un robot rejoue six scènes dans la partie de test pour refaire les captures du diaporama."
+          "Un robot rejoue six scènes dans la partie de test pour refaire les captures du diaporama.",
+          "La barre de chargement finit par « Le monde se met en place » au lieu de rester figée à 100 %."
         ]
       }
     }
