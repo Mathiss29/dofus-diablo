@@ -8,6 +8,7 @@ import boutique from '../data/boutique.json';
 import recoltes from '../data/recoltes.json';
 import apparat from '../data/apparat.json';
 import familiers from '../data/familiers.json';
+import butin from '../data/butin.json';
 import type { RecoltesData } from './recolte';
 import type { FamilierDef, ItemsData, Stat } from './items';
 import type { QuetesData } from './quests';
@@ -18,6 +19,8 @@ export const GAME_DATA = { classes, monsters, zones } as unknown as GameData;
 // 1A (maquette « Danger ») : les dégâts des monstres suivent leur rang et leur niveau (src/data/danger.json) ; le champ dmg du json n'est plus lu
 for (const d of Object.values(GAME_DATA.monsters)) d.dmg = degatsMonstre(d);
 export const ITEMS = items as unknown as ItemsData;
+// objets de maître du jeu (Annobusé de Maître Jarbo…) : officiels mais jamais obtenables, hors du butin (butin.json, horsJeu)
+for (const id of Object.keys(butin.horsJeu)) if (ITEMS.equipment[id]) ITEMS.equipment[id].horsJeu = true;
 /** Familiers officiels (src/data/familiers.json, familiers_export.py) : courbe d'XP et familiers, dont ceux d'apparat. */
 export const FAMILIERS = familiers as unknown as { xp: number[]; familiers: Record<string, FamilierDef> };
 // Les familiers sont des équipements (emplacement « familier ») : bonus [niveau 0, niveau 100] pour la fiche, niveau requis officiel.

@@ -47,6 +47,8 @@ export interface ItemDef {
   chasse?: boolean;
   /** Familier (maquette Familiers) : ses bonus grandissent avec son niveau, de 1 à 100. */
   familier?: FamilierDef;
+  /** Objet de maître du jeu (butin.json, horsJeu) : jamais tiré, retiré des sauvegardes hors partie de test. */
+  horsJeu?: boolean;
 }
 /** Familier officiel (src/data/familiers.json, tools/extraction/familiers_export.py). */
 export interface FamilierDef {

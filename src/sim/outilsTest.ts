@@ -110,7 +110,7 @@ export function appliquerTest(w: World, c: CommandeTest) {
       const pris = new Set<string>();
       for (const slot of EQUIP_SLOTS) {
         const genre: Slot = slot.startsWith('anneau') ? 'anneau' : slot as Exclude<EquipSlot, 'anneau1' | 'anneau2'>;
-        let pool = Object.entries(I.equipment).filter(([id, d]) => d.slot === genre && d.level <= p.level && !pris.has(id));
+        let pool = Object.entries(I.equipment).filter(([id, d]) => d.slot === genre && !d.horsJeu && d.level <= p.level && !pris.has(id));
         if (genre === 'arme') { const a = pool.filter(([, d]) => d.weapon?.type === ARME_CLASSE[w.opts.classId ?? 'iop']); if (a.length) pool = a; }
         if (!pool.length) continue;
         const max = Math.max(...pool.map(([, d]) => d.level)), [id, d] = w.rng.pick(pool.filter(([, d]) => d.level === max));
