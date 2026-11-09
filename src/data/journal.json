@@ -1217,7 +1217,8 @@
           "Le curseur Monstres passe à 50 % par défaut, et le mixage baisse les monstres quand tu lances un sort.",
           "Un robot rejoue six scènes dans la partie de test pour refaire les captures du diaporama.",
           "La barre de chargement finit par « Le monde se met en place » au lieu de rester figée à 100 %.",
-          "Outil couloirs.py : colle les salles d'un donjon et sa cour en une seule bande (prêt pour Amakna)."
+          "Outil couloirs.py : colle les salles d'un donjon et sa cour en une seule bande (prêt pour Amakna).",
+        "Le robot de test lance enfin ses sorts : il appuyait sur des touches que le navigateur ne connaissait pas."
         ]
       }
     }
