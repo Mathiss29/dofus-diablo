@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { gainDistance, MANIFESTE, palierBoss, regrouper, sonDuDecor, suivante } from '../src/render/son';
+import { ESQUIVE, gainDistance, gainPack, MANIFESTE, palierBoss, TRAINE_SORT_MONSTRE, VOIX_MONSTRES, regrouper, sonDuDecor, suivante } from '../src/render/son';
 import { GAME_DATA } from '../src/sim/data';
 import { existsSync } from 'node:fs';
 import LOURDS from '../src/data/fichiers-lourds.json';
@@ -45,5 +45,14 @@ describe('Son (maquette Son, 2026-11-06)', () => {
     for (const s of Object.values(inc.subareas)) for (const m of s.monsters) expect(MANIFESTE.monstres[m]?.mort.length, m).toBeGreaterThan(0);
     for (const n of [800, 801, 802, 803, 808, 809, 811, 814]) expect(MANIFESTE.sorts.iop[`AnimAttaque${n}`]).toBeTruthy();
     expect(MANIFESTE.sorts.commun.AnimArme0).toBeTruthy();
+  });
+  it('Groupes (2026-11-09) : mixage des gros packs', () => {
+    expect(gainPack(1)).toBe(1);
+    expect(gainPack(3)).toBe(1);
+    expect(gainPack(5)).toBeCloseTo(Math.pow(10, -2 / 20));
+    expect(gainPack(30)).toBeCloseTo(Math.pow(10, -6 / 20));
+    expect(VOIX_MONSTRES).toBe(3);
+    expect(TRAINE_SORT_MONSTRE).toBe(0.6);
+    expect(ESQUIVE).toEqual({ gain: 0.6, duree: 0.3 });
   });
 });
