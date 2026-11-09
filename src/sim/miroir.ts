@@ -65,7 +65,7 @@ const LISTES = ['projectiles', 'drops', 'telegraphs', 'zonesSol'] as const;
 /** Événements joués chez l'invité : ce qui se voit et s'entend. Le reste (quêtes, fenêtres, changement de zone, XP, mort…)
  *  parle du joueur de l'écran de l'hôte. */
 const EVENEMENTS = new Set<SimEvent['k']>(['spell', 'shoot', 'slam', 'monsterCast', 'spellFx', 'status', 'massacre', 'massacreFin', 'hit', 'kill',
-  'beteMorte', 'heal', 'invocation', 'eveil', 'echange', 'souffrance', 'sacrifice', 'dompte', 'impact', 'grosCoup', 'bossIntro', 'furieux', 'wave',
+  'beteMorte', 'heal', 'filSoin', 'invocation', 'eveil', 'echange', 'souffrance', 'sacrifice', 'dompte', 'impact', 'grosCoup', 'bossIntro', 'furieux', 'wave',
   'areneDebut', 'areneVague', 'arenePalier', 'areneFin', 'bossDown', 'cast', 'bulle', 'rageSpent']);
 export const evenementPartage = (e: SimEvent) => EVENEMENTS.has(e.k);
 /** Événements propres à l'invité (World.evenementsDe) qu'il peut jouer chez lui : bandeaux, butin, quêtes, métiers. */

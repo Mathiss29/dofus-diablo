@@ -366,5 +366,81 @@
    "os_1-combat.webp",
    "os_1-metier.webp"
   ]
+ },
+ "eniripsa_m": {
+  "classe": 7,
+  "anims": "anims_7.json",
+  "corps": 70,
+  "tetes": [
+   2108,
+   2109,
+   2110,
+   2111,
+   2112,
+   2113,
+   2114,
+   2115,
+   5343,
+   5340,
+   5341,
+   5342,
+   5339,
+   5344,
+   5345,
+   5346,
+   5913
+  ],
+  "couleurs": [
+   14325094,
+   7814953,
+   13997612,
+   4739655,
+   6833937,
+   10907934
+  ],
+  "os": [
+   "os_1-7-combat.webp",
+   "os_1-combat-armes.webp",
+   "os_1-combat.webp",
+   "os_1-metier.webp"
+  ]
+ },
+ "eniripsa_f": {
+  "classe": 7,
+  "anims": "anims_7.json",
+  "corps": 71,
+  "tetes": [
+   2116,
+   2117,
+   2118,
+   2119,
+   2120,
+   2121,
+   2122,
+   2123,
+   5351,
+   5352,
+   5349,
+   5350,
+   5347,
+   5348,
+   5353,
+   5354,
+   5914
+  ],
+  "couleurs": [
+   15047528,
+   14996664,
+   14368563,
+   14471352,
+   9799968,
+   9791002
+  ],
+  "os": [
+   "os_1-7-combat.webp",
+   "os_1-combat-armes.webp",
+   "os_1-combat.webp",
+   "os_1-metier.webp"
+  ]
  }
 }

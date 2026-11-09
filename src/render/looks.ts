@@ -197,6 +197,25 @@ const FL_MAP: Record<string, AnimSlice> = {
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };
 
+// Eniripsa : squelette joueur n° 1 + skin 70/71 (corps), animations officielles (spellscripts casterAnimation, maquette Eniripsa 12A) :
+// Mot d'Amitié 700 ; Mots Stimulant, de Lamentations, Vivifiant, de Jouvence, de Reconstitution 702 ; Farceur et d'Envol 703 ;
+// Espiègle, Interdit, Accablant 704 ; Juron, de Frayeur, de Peinture 705 ; Vampirique 707 ; Tapageur et Turbulent 708 ; Cri de Guerre 709.
+const ENI_MAP: Record<string, AnimSlice> = {
+  ...WEAPON_MAP,
+  idle: { anim: 'AnimStatiqueExplo0', loop: true, fps: 20 },
+  run: { anim: 'AnimCourse', loop: true, fps: 32 },
+  attack1: { anim: 'AnimArme0', from: 3 / 28, to: 17 / 28 },
+  attack2: { anim: 'AnimArme0', from: 3 / 28, to: 17 / 28 },
+  attack3: { anim: 'AnimArme0', from: 3 / 28, to: 24 / 28 },
+  ...Object.fromEntries(Object.entries({
+    amitie: 700, stimulant: 702, lamentations: 702, vivifiant: 702, jouvence: 702, reconstitution: 702, farceur: 703, envol: 703,
+    espiegle: 704, interdit: 704, accablant: 704, juron: 705, frayeur: 705, peinture: 705, vampirique: 707, tapageur: 708, turbulent: 708,
+    cri_guerre: 709,
+  }).map(([k, n]) => [k, { anim: `AnimAttaque${n}`, from: 0, to: 0.65 }])),
+  hit: { anim: 'AnimHit', from: 0, to: 1 },
+  die: { anim: 'AnimMort', from: 0, to: 0.75 },
+};
+
 const GOLD = 0xffd87a;
 
 export const LOOKS: Record<string, Look> = {
@@ -211,6 +230,12 @@ export const LOOKS: Record<string, Look> = {
   sacrieur: { atlas: 'sacrieur', scale: 0.82, map: SAC_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
   // Forgelance : dessiné en direct depuis son squelette, comme l'Osamodas et le Sacrieur
   forgelance: { atlas: 'forgelance', scale: 0.82, map: FL_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
+  // Eniripsa : dessiné en direct depuis son squelette, comme les autres classes
+  eniripsa: { atlas: 'eniripsa', scale: 0.82, map: ENI_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
+  // Bêtes de l'Eniripsa (monster_planche.py, os 7599 SCALE 2,5, os 7600 et 7601) : Lapino, Fées, Feux Follets
+  eni_lapino: { atlas: 'eni_lapino', scale: 0.55, map: MONSTER_MAP(13 / 37, 'AnimAttaque0', { 0: 13 / 37, 1: 10 / 29, 2: 28 / 31 }), height: 80, multi: true },
+  eni_fee: { atlas: 'eni_fee', scale: 0.45, map: MONSTER_MAP(23 / 37), height: 60, multi: true },
+  eni_feu_follet: { atlas: 'eni_feu_follet', scale: 0.45, map: MONSTER_MAP(23 / 37), height: 60, multi: true },
   // Lance Immortelle plantée (monster_planche.py, os 7139, animations rangées dans le squelette) : décor du Forgelance Désarmé
   forgelance_lance: { atlas: 'forgelance_lance', scale: 0.4, map: MONSTER_MAP(13 / 60), height: 90, multi: true },
   // Épées du Sacrieur (monster_planche.py, os 8378 et 8376, SCALE 2,5) : invocations alliées (maquette Sacrieur 7A)

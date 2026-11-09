@@ -505,3 +505,12 @@ Ville vivante (maquette Ville 5F, 8 nov. 2026) :
 - Lance plantée = monstre 7139 « Lance Immortelle », os 7139. Ses animations sont rangées dans le squelette (`animations[].dataBytes`), pas en TextAsset :
   `b_dump.py` les écrit en `ta_x_<nom>.bin`. Planche : `ANIMS=AnimStatique_1:1,AnimAttaque0_1 FORMAT=AVIF python3 monster_planche.py 7139 forgelance_lance <Bones>`.
 - Lance en main : introuvable (le squelette 1-20 a les nœuds Lance_1/Lance_5, aucun skin du cache n'a de pièce Lance_ ; le 2061 n'est pas la lance).
+
+## Eniripsa (classe 7, maquette du 9 nov. 2026)
+
+- `python squelette_export.py <persos> <donnees> 7 public/assets/sprites/squelette`, puis, UNE FOIS LE PREMIER FINI, `python tetes_vignettes.py <persos> <donnees> public/assets/sprites/squelette 7`
+  (supprimer ensuite `public/assets/sprites/.vignettes-travail/` et `.squelette-travail/`, jamais pendant que le script tourne).
+- Sorts : `class_spells.py ... eniripsa:7` -> src/data/sorts.json ; icônes `sort_<id>.png` (spell_assets_1x.bundle). Animations : AnimAttaque700 à 709 (voir ENI_MAP de looks.ts).
+- Bêtes (os dans le cache : `cache-dofus/eniripsa-bones/`) : Lapino 7370 (os 7599), Fées 7372-7374 (os 7600), Feu Follet Accablant 7378 (os 7601).
+  `SCALE=2.5 BOX=-80,-130,80,30 FORMAT=AVIF python3 monster_planche.py 7599 eni_lapino <Bones>` (sans BOX, l'effet d'attaque élargit trop la boîte) ;
+  `FORMAT=AVIF python3 monster_planche.py 7600 eni_fee` et `7601 eni_feu_follet`. Entrées de betes.json ajoutées à la main (osa_betes.py réécrirait les bêtes de l'Osamodas).

@@ -86,6 +86,8 @@ export class Monster extends Entity {
   agresseur: number | null = null;
   /** Laine épaisse (Osamodas E) : provoqué par sa bête jusqu'à ce moment (temps du monde). */
   provoqueJusqua = -1;
+  /** Eniripsa : Moquerie (durées), Mot de Peinture (poussée en plus), soigneur qui attire l'aggro (11A) jusqu'à viseJusqua. */
+  moqueT = 0; moqueT0 = 0; peintT = 0; peintK = 0; viseId = -1; viseJusqua = -1;
   /** Légendaires de classe Crâ : Marque du chasseur (+marque % jusqu'à marqueJusqua), Givre mordant (coups récents, dernier gel). */
   marque = 0; marqueJusqua = -1; glaceCoups: number[] = []; gelA = -99; staseA = -99;
   /** Dommages subis × subis pendant subisT s (Cuirasse Laineuse : 0,7). */
@@ -149,6 +151,8 @@ export class Monster extends Entity {
     if (this.suppliceT > 0 && (this.suppliceT -= dt) <= 0) this.supplice = 0;
     if (this.poMalusT > 0 && (this.poMalusT -= dt) <= 0) this.poMalus = 0;
     if (this.furyT > 0 && (this.furyT -= dt) <= 0) this.furyPct = this.furyFlat = 0;
+    if (this.moqueT > 0) this.moqueT -= dt;
+    if (this.peintT > 0) this.peintT -= dt;
     // Tacle du joueur : un monstre à son contact avance moins vite (sa Fuite officielle y résiste)
     const near = Math.hypot(player.x - this.x, player.y - this.y) <= this.radius + player.radius + 12;
     const speed = D.speed * this.haste * (this.furieux ? DANGER.furieux.vitesse : 1) * (near ? 1 - tackleSlow(player.tacle, tacleOf(D.caracs?.fuite ?? 0, D.caracs?.agilite ?? 0)) : 1);

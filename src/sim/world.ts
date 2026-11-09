@@ -209,6 +209,8 @@ export class World {
   zonesSol: ZoneSol[] = [];
   /** Festin du piranya : dégâts comptés pendant le coup en cours. */
   festin = 0;
+  /** Dommages faits par le dernier coup du joueur (Mot de Lamentations : soigne selon les dommages). */
+  degatsCoup = 0;
   wave = 0;
   kills = 0;
   waveDelay = 1.2;
@@ -1107,6 +1109,8 @@ export class World {
       }
     }
   }
+  /** Mot de Reconstitution (Eniripsa 10B) : relève sur place un joueur à terre, à distance. */
+  releverAvecSort(q: Player, pv: number) { if (q.dead) this.relever(q, q.x, q.y, pv); }
   private relever(q: Player, x: number, y: number, pv: number) {
     q.dead = false; q.hp = Math.max(1, Math.round(q.maxHp * pv)); q.x = x; q.y = y; q.kx = q.ky = 0; q.z = 0;
     q.state = 'free'; q.skill = null; q.invuln = 2; q.setAnim('idle'); q.aTerre = q.releve = 0;
@@ -1494,7 +1498,7 @@ export class World {
         * (def.loin ? 1 + Math.min(def.loin * 10, def.loin * Math.hypot(m.x - p.x, m.y - p.y) / CASE) / 100 : 1);
       // Sort sans dommages (Attirance, Transposition) : seulement ses effets
       const dmg = def.dmg <= 0 ? 0 : Math.max(1, Math.round((p.damage(def.dmg * vs, def.element ?? 'neutre') * this.rng.range(0.9, 1.1) * (crit ? cls.critMult : 1) * first + flat) * (1 - res / 100) * vu * pc));
-      m.hp -= dmg; m.flash = 0.09; m.calmeT = 0;
+      m.hp -= dmg; m.flash = 0.09; m.calmeT = 0; this.degatsCoup += dmg;
       if (def.festin) this.festin += dmg;
       if (dmg && m.suppliceT > 0) p.hp = Math.min(p.maxHp, p.hp + Math.round(dmg * m.supplice));   // Supplice : frapper la cible soigne
       if (def.supplice) { m.supplice = def.supplice.part; m.suppliceT = def.supplice.t; }
@@ -1518,7 +1522,7 @@ export class World {
         this.emit({ k: 'status', x: m.x, y: m.y, text: `-${def.poLoss} PO`, color: '#c8a0ff' }); }
       if ((def.pmLoss && !pm) || (def.paLoss && !pa)) this.emit({ k: 'status', x: m.x, y: m.y, text: 'Esquive', color: '#c8c8c8' });
       const a = pushDir ?? Math.atan2(m.y - oy, m.x - ox);
-      const kb = def.knock / m.def.mass;
+      const kb = def.knock / m.def.mass * (m.peintT > 0 ? 1 + m.peintK : 1);   // Mot de Peinture : poussé plus loin
       m.kx += Math.cos(a) * kb; m.ky += Math.sin(a) * kb;
       const choc = def.pushDmg && kb > 0 && this.pushDamage(m, a, kb / 7.13, (def.clouage ?? 0) + (def.choc ?? 0), def.enclume);
       if (choc && def.plusChoc && dmg > 0 && m.hp > 0) {   // Estoc en avant : la cible heurte un obstacle
@@ -2409,6 +2413,8 @@ export class World {
     if (this.players.length > 1) {
       let dm = p.dead ? Infinity : Math.hypot(p.x - m.x, p.y - m.y);
       for (const q of this.players) { if (q.dead) continue; const d = Math.hypot(q.x - m.x, q.y - m.y); if (d < dm) { dm = d; p = q; } }
+      // Eniripsa 11A : le soigneur qui vient de soigner un allié proche attire ce monstre quelques secondes
+      if (m.viseJusqua > this.time) { const v = this.players.find(q => q.id === m.viseId && !q.dead); if (v && Math.hypot(v.x - m.x, v.y - m.y) < CASE * 12) p = v; }
     }
     if (!this.betes.length || m.state === 'idle' || m.state === 'return') return p;
     const vivantes = this.betes.filter(b => !b.dead && b.state !== 'spawn');

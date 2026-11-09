@@ -16,6 +16,7 @@ import { coutPoint, coutTotal, fuiteFactor, pointsAchetables, prospectionDeChanc
 import { CASE, TOUR } from './monster';
 import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type SortGrade, type SortOfficiel } from './sorts';
 import { porteeSort } from './apercu';
+import { aimanter, alchiRhetorique, apresCoupEniripsa, envol, impactEniripsa, majEniripsa } from './eniripsa';
 import { DANGER } from './danger';
 import type { EntreeCodex } from './codex';
 import { POUVOIR_PAR_ID, classeDuPouvoir, gradeAvecPouvoirs, type CtxPouvoirs, type PouvoirDef } from './pouvoirs';
@@ -248,14 +249,14 @@ export class Player extends Entity {
   etatPouvoir(id: string): { actif: true } | { actif: false; raison: string } {
     const c = PC_PAR_ID[id];
     if (c) {   // légendaire de classe inventé : sa classe, et son sort connu
-      if (c.classe !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur', forgelance: 'Forgelance' } as Record<string, string>)[c.classe] ?? 'une autre classe'}` };
+      if (c.classe !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur', forgelance: 'Forgelance', eniripsa: 'Eniripsa' } as Record<string, string>)[c.classe] ?? 'une autre classe'}` };
       if (this.knows(c.sort)) return { actif: true };
       const o = this.official(c.sort), n = o ? this.requiredLevel(o) : 0;
       return { actif: false, raison: n > this.level ? `s'éveille au niveau ${n}` : 'variante non choisie' };
     }
     const p = POUVOIR_PAR_ID[id];
     if (!p) return { actif: true };
-    if (classeDuPouvoir(id) !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur', forgelance: 'Forgelance' } as Record<string, string>)[classeDuPouvoir(id)] ?? 'une autre classe'}` };
+    if (classeDuPouvoir(id) !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur', forgelance: 'Forgelance', eniripsa: 'Eniripsa' } as Record<string, string>)[classeDuPouvoir(id)] ?? 'une autre classe'}` };
     const k = Object.keys(this.cls.spells).find(x => this.cls.spells[x].dofusId === p.dofusId);
     if (!k) return { actif: false, raison: 'sort pas encore en jeu' };
     if (this.knows(k)) return { actif: true };
@@ -326,6 +327,11 @@ export class Player extends Entity {
   /** Forgelance : Lance de Mani (insensible aux ralentissements), Lance d'Elding et Prélude glorieux (vitesse de course en plus),
    *  Lance de Noa (soins reçus en plus) : durées restantes. */
   insensibleT = 0; courseK = 0; courseT = 0; soinsRecusT = 0;
+  /** Eniripsa (reçus de n'importe quel Eniripsa du groupe) : Encouragement, soins continus (Jouvence, Peinture), Insoignable ;
+   *  lancés : Farces qui ramènent les ennemis, dernier PA rendu par Alchi-Rhétorique. */
+  encourage: { k: string; t: number; t0: number; regen: number } | null = null;
+  soinContinu: { n: number; t: number; next: number; de: number; src: string }[] = [];
+  insoignableT = 0; farces: { m: number; x: number; y: number; t: number }[] = []; alchiA = -99;
   courir(k: number, t: number) { this.courseK = this.courseT > 0 ? Math.max(this.courseK, k) : k; this.courseT = Math.max(this.courseT, t); }
   slow(t: number, k: number) { if (this.insensibleT > 0) return; k *= fuiteFactor(this.fuite); this.slowK = this.slowT > 0 ? Math.max(this.slowK, k) : k; if (t >= this.slowT) this.slowT0 = t; this.slowT = Math.max(this.slowT, t); }
   get speed(): number { return this.cls.speed * (1 + vitesseAgilite(this.stat('agilite'))) * this.vitesseTest * (this.slowT > 0 ? 1 - this.slowK : 1) * (this.courseT > 0 ? 1 + this.courseK : 1); }
@@ -755,6 +761,7 @@ export class Player extends Entity {
     if (this.lance && (def?.lance?.surLance || def?.lance?.saut)) return { x: this.lance.x, y: this.lance.y };
     if (this.lance && def?.lance?.epilogue) return { x: this.lance.x, y: this.lance.y };
     if (def?.hit.shape === 'point' && !def.move) {   // case visée, ramenée à la portée du sort
+      if (this.cls.eniripsa) aim = aimanter(this, def, aim, world);   // Eniripsa 3A : un Mot à cible unique s'aimante sur le perso le plus proche
       const R = (this.shot(id).range ?? def.hit.range) + this.porteeStat(id) + (def.souffrance6?.po && this.souffrance >= 6 ? def.souffrance6.po * CASE : 0), dx = aim.x - this.x, dy = aim.y - this.y, d = Math.hypot(dx, dy);
       let L = Math.min(d, R) / (d || 1);
       // Ligne de vue officielle (0.3) : la case visée derrière un obstacle est ramenée devant lui
@@ -829,6 +836,7 @@ export class Player extends Entity {
     if (this.shieldT > 0 && (this.shieldT -= dt) <= 0) this.shield = 0;
     if (this.cls.souffrance) this.majSouffrance(dt, world);
     if (this.lance) this.majLance(dt, world);
+    if (this.encourage || this.soinContinu.length || this.insoignableT > 0 || this.farces.length) majEniripsa(this, dt, world);
     if (this.renvoiT > 0) this.renvoiT -= dt;
     if (this.mutil) {   // Mutilation : re-sacrifie toutes les `periode` s et gagne un cran de Puissance
       const M = this.cls.spells.mutilation?.mutilation;
@@ -844,7 +852,7 @@ export class Player extends Entity {
     if (this.pacifiste > 0) this.pacifiste -= dt;
     if (this.rage > 0 && this.age - this.lastHitAt > 6) this.rage = Math.max(0, this.rage - 8 * dt);   // 26B : la jauge retombe hors combat
     this.potionCd = Math.max(0, this.potionCd - dt);
-    this.pa = Math.min(this.paMax, this.pa + this.cls.pa.regen * dt);
+    this.pa = Math.min(this.paMax, this.pa + this.cls.pa.regen * (1 + (this.encourage?.regen ?? 0)) * dt);   // Mot Stimulant
     this.pm = Math.min(this.pmMax, this.pm + dt * (1 + this.legendary('mobilite') / 100) / this.cls.pm.recharge);
     this.flash = Math.max(0, this.flash - dt);
     if (this.slowT > 0) this.slowT -= dt;
@@ -1036,7 +1044,7 @@ export class Player extends Entity {
         this.mods = this.mods.filter(m => m.src !== s.id && !inst?.(m));
         this.addMod(d.buff.stat, n, d.buff.t, s.id);
       }
-      if (d.invoque) {
+      if (d.invoque && !d.lapino) {   // le Lapino de l'Eniripsa : voir impactEniripsa
         const key = d.invoque, cout = 1, max = world.invocationsMax(this);
         while (world.invocationsPrises(this) + cout > max) {   // place pour la nouvelle : la plus ancienne s'en va
           const old = world.betes.find(b => !b.dead && b.owner === this && !b.dompteT && !b.finT && !b.horsCompte); if (!old) break; old.mourir(world);
@@ -1101,8 +1109,13 @@ export class Player extends Entity {
         ...this.effetsPouvoirsClasse(s.id) };
       let hits = 0, size = 0;
       // Pouvoirs officiels (0.3) : zone plus grande, ligne ou cône plus long
-      const zb = this.zoneBonus(s.id), pp = this.porteePlus(s.id);
+      const zb = this.zoneBonus(s.id) + (s.boosted && R.mode === 'eloquence' ? this.cls.eniripsa?.zoneEloquence ?? 0 : 0), pp = this.porteePlus(s.id);   // Éloquence : +2 cases de zone
+      // Eniripsa : effets des Mots sur les alliés d'abord ; vrai = aucun coup aux monstres (soutien, ou Mot posé sur un allié)
+      const rEni = hz.shape === 'point' || hz.shape === 'circle' ? hz.radius * area + zb : 0;
+      const eni = !!this.cls.eniripsa && !mv, pasDeCoup = eni && impactEniripsa(this, s.id, d, s.tx, s.ty, rEni, mult, world);
+      world.degatsCoup = 0;
       if (d.self) { size = 60; }
+      else if (pasDeCoup) { size = rEni; }
       else if (hz.shape === 'cone') { size = hz.range * area + pp + zb; hits = world.hitCone(this.x, this.y, this.facing, size, (hz.arc * Math.PI) / 180, hit, d.stun); }
       else if (hz.shape === 'line') { size = hz.length * area + pp; hits = world.hitLine(this.x, this.y, this.facing, size, hz.width * area + zb, hit, d.stun); }
       else if (hz.shape === 'point' && s.id === 'epee' && this.pcv('pc-iop-B')) {   // Lame tournoyante : tout autour du Iop
@@ -1129,6 +1142,8 @@ export class Player extends Entity {
         size = hz.range;
       }
       if (d.echange) world.echanger(this, s.tx, s.ty, CASE * 0.75);   // Assaut, Transposition : après le coup
+      if (eni && !pasDeCoup) { apresCoupEniripsa(this, d, s.tx, s.ty, rEni, world.degatsCoup, world); alchiRhetorique(this, d, s.tx, s.ty, rEni, world); }
+      if (d.envol) envol(this, s.sx, s.sy, s.tx, s.ty, world);   // Mot d'Envol : échange de place avec l'allié visé
       if (d.lance && this.cls.lance) this.apresImpactLance(d, s.tx, s.ty, world);
       if (d.traverse) {   // Balestra : de l'autre côté de la cible, puis petit recul
         const fx2 = Math.cos(this.facing), fy2 = Math.sin(this.facing), nx = this.x + fx2 * d.traverse * CASE, ny = this.y + fy2 * d.traverse * CASE;

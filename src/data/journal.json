@@ -1136,6 +1136,15 @@
               "Accueil › Ladder",
               "Perso en ligne"
             ]
+          },
+          {
+            "titre": "L'Eniripsa en essai",
+            "phrase": "La soigneuse arrive : ses Mots blessent les ennemis et soignent les alliés dans la même zone.",
+            "details": "16 sorts officiels, le Lapino, les Fées et l'Éloquence. Alt + touche pour te soigner, Mot de Reconstitution pour relever un allié à distance.",
+            "icone": "vie",
+            "etiquettes": [
+              "Partie de test"
+            ]
           }
         ],
         "Le monde": [],
