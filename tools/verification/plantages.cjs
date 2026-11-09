@@ -11,7 +11,7 @@ const fs = require('fs');
 const SORTIE = process.env.SORTIE ?? 'plantages';
 const JEU = Number(process.env.RAPIDE ? 5 : 12);   // secondes de jeu par étape
 const CLASSES = ['iop', 'cra', 'osamodas', 'sacrieur'];
-const TOUCHES = ['&', 'é', '"', "'", '(', '-'];
+const TOUCHES = ['Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6'];   // codes des touches 1 à 6 (« é » n'existe pas pour Playwright : les sorts ne partaient pas)
 const problemes = [];
 const CAS = process.env.CAS;   // vide = tout
 const garder = id => !CAS || CAS === id;
