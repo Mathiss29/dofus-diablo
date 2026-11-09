@@ -43,6 +43,8 @@ export const SOCIAL_CSS = `.dw .win.social{width:440px}
 .dw .soc label.case{display:flex;gap:8px;align-items:center;font-size:12px;color:#d8d2bf;cursor:pointer}
 .dw .soc label.case input{all:revert;width:15px;height:15px;margin:0;flex:none;accent-color:#6f9a2a;cursor:pointer}
 .dw .soc .rej input.nom{text-transform:none;letter-spacing:0}
+.dw .soc select.donjon{background:#0008;border:1px solid #5b5844;border-radius:3px;color:#f1ecd8;font:inherit;font-size:13px;padding:5px 6px;max-width:100%}
+.dw .soc select.donjon option{background:#1c1913}
 .menu-joueur{position:fixed;z-index:60;background:#1b1a16f4;border:1px solid #6f6a5a;border-radius:5px;padding:4px;font:13px Lexend,sans-serif;color:#f4efe0;box-shadow:0 8px 24px #000b;min-width:170px}
 .menu-joueur b{display:block;padding:4px 8px 6px;color:#ffd27a;border-bottom:1px solid #45433b;margin-bottom:3px}
 .menu-joueur div{padding:5px 8px;border-radius:3px;cursor:pointer}
@@ -62,7 +64,12 @@ function membres(w: World) {
 type Onglet = 'amis' | 'groupe' | 'discord' | 'ignores';
 let onglet: Onglet = 'groupe';
 let aAnnoncer: string | null = null;
-const DONJON = 'Crypte de Kardorim', MONDE = 'Incarnam';
+const MONDE = 'Incarnam';
+/** Donjons en vagues que le groupe peut lancer sur le serveur (« Multi complet » : petit bout, donjons de groupe). */
+const DONJONS = (['incarnam', 'astrub'] as const).flatMap(z => (GAME_DATA.zones[z]?.open?.donjons ?? []).filter(d => d.arene?.tag).map(d => ({ tag: d.arene!.tag, nom: d.nom, zone: z })));
+/** Donjon choisi par le chef (gardé d'une ouverture de la fenêtre à l'autre). */
+let donjonChoisi = DONJONS[0]?.tag ?? 'arene_crypte';
+const nomDonjon = (tag: string) => DONJONS.find(d => d.tag === tag)?.nom ?? 'Crypte de Kardorim';
 Coop.ecouter(() => {
   if (aAnnoncer && Coop.etat === 'salon' && Coop.serveur && Coop.code) { EnLigne.annoncerDonjon(Coop.code, aAnnoncer); aAnnoncer = null; }
   else if (Coop.etat === 'hors') aAnnoncer = null;
@@ -153,7 +160,8 @@ export function rendreSocial(win: HTMLDivElement, titre: string, c: ContexteSoci
   const compte = () => (c.slot >= 0 && Compte.jeton ? { jeton: Compte.jeton, emplacement: c.slot } : null);
   $('[data-soc-creer]')?.addEventListener('click', () => EnLigne.creerGroupe());
   // le chef lance le donjon (partie tenue par le serveur) ; les autres reçoivent « Rejoindre »
-  $('[data-soc-donjon]')?.addEventListener('click', () => { aAnnoncer = DONJON; Coop.creer(true, compte()); });
+  $<HTMLSelectElement>('[data-soc-choix]')?.addEventListener('change', e => { donjonChoisi = (e.target as HTMLSelectElement).value; });
+  $('[data-soc-donjon]')?.addEventListener('click', () => { aAnnoncer = nomDonjon(donjonChoisi); Coop.creer(true, compte(), false, donjonChoisi); });
   // monde partagé (étape 4) : Incarnam tenu par le serveur, chacun y garde sa place et ses quêtes
   $('[data-soc-monde]')?.addEventListener('click', () => { aAnnoncer = MONDE; Coop.creer(true, compte(), true); });
   $('[data-soc-rejoindre-donjon]')?.addEventListener('click', () => { const d = EnLigne.groupe?.donjon; if (d) Coop.rejoindre(d, compte()); });
@@ -259,7 +267,7 @@ function groupe(c: ContexteSocial): string {
   const co = Coop, G = EnLigne.groupe;
   if (co.etat === 'connexion') return '<p class="note">Connexion au serveur…</p>';
   // dans le donjon de groupe (partie tenue par le serveur) : la vie de chacun, et la sortie
-  if (co.etat === 'salon') return `<p><b>Donjon de groupe</b> · ${DONJON}. La partie tourne sur le serveur : chacun peut partir sans couper les autres.</p>
+  if (co.etat === 'salon') return `<p><b>Donjon de groupe</b> · ${esc(nomDonjon(Coop.arene ?? donjonChoisi))}. La partie tourne sur le serveur : chacun peut partir sans couper les autres.</p>
       <div class="mbrs" style="display:flex;flex-direction:column;gap:6px">${listeMembres(c)}</div>
       <div class="code"><span>Code du donjon</span><b>${esc(co.code ?? '')}</b><span class="btn gris" data-soc-copier title="Copier le code">Copier</span></div>
       <div class="bas"><span class="btn gris" data-soc-quitter>Quitter le donjon</span></div>`;
@@ -277,7 +285,8 @@ function groupe(c: ContexteSocial): string {
       <div class="act">${chef && !moi ? `<span class="btn mini gris" data-soc-chef="${m.id}" title="Lui passer la couronne de chef">♛</span><span class="btn mini gris" data-soc-exclure="${m.id}" title="L'exclure du groupe">✕</span>` : ''}</div></div>`;
   }).join('');
   const donjon = chef
-    ? `<span class="btn" data-soc-donjon title="${DONJON} : tout le groupe reçoit « Rejoindre »">Lancer la Crypte</span>`
+    ? `<select class="donjon" data-soc-choix title="Donjon à lancer">${DONJONS.map(d => `<option value="${d.tag}" ${d.tag === donjonChoisi ? 'selected' : ''}>${esc(d.nom)} (${d.zone === 'astrub' ? 'Astrub' : 'Incarnam'})</option>`).join('')}</select>`
+      + `<span class="btn" data-soc-donjon title="Tout le groupe reçoit « Rejoindre » ; monstres plus costauds et plus nombreux à plusieurs">Lancer le donjon</span>`
       + `<span class="btn" data-soc-monde title="${MONDE} à plusieurs (essai) : chacun garde sa place et ses quêtes, tout le groupe reçoit « Rejoindre »">Jouer ensemble à ${MONDE}</span>`
     : G.donjon ? `<span class="btn" data-soc-rejoindre-donjon>Rejoindre le chef</span>` : '';
   return `${err}<div class="liste">${L}</div>

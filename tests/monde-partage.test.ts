@@ -4,7 +4,7 @@ import { GAME_DATA, ITEMS } from '../src/sim/data';
 import { WorldGrid, type WorldData } from '../src/sim/gridmap';
 import { NO_INPUT } from '../src/sim/input';
 import { World } from '../src/sim/world';
-import { appliquerInstantane, Emetteur, type Instantane } from '../src/sim/miroir';
+import { appliquerInstantane, Emetteur, lisserMiroir, LISSAGE, type Instantane } from '../src/sim/miroir';
 import type { QuetesData } from '../src/sim/quests';
 import QUETES from '../src/data/quetes.json';
 
@@ -76,5 +76,23 @@ describe('monde partagé : un état par joueur', () => {
     const autre = vue.players.find(p => p.id === r.id)!;
     expect(autre.kamas).not.toBe(99);
     expect(em.instantane(hote).sac).toBeUndefined();   // rien n'a changé : rien ne repart
+  });
+
+  it('lissage : l’invité voit un allié glisser vers sa nouvelle place, et sauter s’il est loin', () => {
+    const hote = monde(), vue = monde(), q = hote.ajouterJoueur('cra'), em = new Emetteur(q.id);
+    const reseau = () => JSON.parse(JSON.stringify(em.instantane(hote))) as Instantane;
+    appliquerInstantane(vue, reseau(), true);
+    const h = hote.player, x0 = h.x, autre = () => vue.players.find(p => p.id === h.id)!;
+    expect(autre().x).toBe(x0);   // arrivé avec le premier instantané : posé d'un coup
+    h.x += 40;
+    appliquerInstantane(vue, reseau(), true);
+    expect(autre().x).toBe(x0);   // pas encore bougé
+    lisserMiroir(vue, 1 / 60);
+    expect(autre().x).toBeGreaterThan(x0); expect(autre().x).toBeLessThan(x0 + 40);
+    for (let i = 0; i < 60; i++) lisserMiroir(vue, 1 / 60);
+    expect(autre().x).toBe(x0 + 40);
+    h.x += LISSAGE.saut + 50;
+    appliquerInstantane(vue, reseau(), true);
+    expect(autre().x).toBe(h.x);   // grand saut (porte, téléport) : tout de suite à sa place
   });
 });

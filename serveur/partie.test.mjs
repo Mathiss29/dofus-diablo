@@ -6,7 +6,7 @@ import { join } from 'node:path';
 import WebSocket from 'ws';
 import { creerServeur } from './index.mjs';
 import { creerComptes } from './comptes.mjs';
-import { chargerSim, Partie } from './partie.mjs';
+import { arenesDisponibles, chargerSim, Partie } from './partie.mjs';
 
 test('partie sur le serveur : deux joueurs, la vague démarre, chacun reçoit son miroir', async () => {
   const S = await chargerSim();
@@ -92,4 +92,44 @@ test('monde ouvert d’Incarnam sur le serveur : chacun sa place, ses quêtes, e
   assert.ok(s?.vers?.zone, 'le second part seul vers l’autre zone');
   assert.ok(!recus.get(1).some(d => d.k === 'sortie'), 'le premier reste');
   assert.equal(w.passage, null);
+});
+
+test('donjons de groupe : un donjon d’Astrub au choix, plus de PV et de monstres à plusieurs, un allié relève l’autre, butin chacun le sien', async () => {
+  const S = await chargerSim();
+  const tags = arenesDisponibles(S).map(a => a.tag);
+  assert.deepEqual(tags, ['arene_crypte', 'arene_grange', 'arene_chateau', 'arene_cour', 'arene_cache'], 'la Crypte et les quatre donjons d’Astrub');
+  const p = new Partie(S, () => {}, 3, null, { arene: 'arene_grange' });
+  p.arrivee(1); p.arrivee(2);
+  p.recu(1, { k: 'bonjour', classe: 'iop', etat: { level: 40 } });
+  p.recu(2, { k: 'bonjour', classe: 'cra', etat: { level: 40 } });
+  const w = p.w;
+  assert.equal(w.opts.zone, 'astrub');
+  assert.equal(w.arene?.d.nom, 'Grange du Tournesol Affamé');
+  assert.equal(w.monsters.length, 0, 'aucun monstre d’Astrub hors de l’arène');
+  const [a, b] = w.players;
+  p.recu(1, { k: 'entree', i: { move: { x: 1, y: 0 } } });
+  for (let i = 0; i < 60 * 5 && !w.monsters.length; i++) p.avancer(1 / 60);
+  const m = w.monsters[0];
+  assert.ok(m, 'la première vague arrive');
+  assert.equal(m.maxHp, Math.round(S.GAME_DATA.monsters[m.type].hp * 1.7), '+70 % de PV pour un joueur de plus');
+  // un joueur à terre : l'autre reste à côté, il se relève en 3 s avec la moitié de ses PV
+  for (const x of w.monsters) { x.dead = true; x.t = 0; }
+  w.arene.demarre = false;
+  b.dead = true; b.hp = 0; a.x = b.x + 30; a.y = b.y;
+  p.recu(1, { k: 'entree', i: {} });
+  for (let i = 0; i < 60 * 2; i++) { p.avancer(1 / 60); a.x = b.x + 30; a.y = b.y; }
+  assert.equal(b.dead, true, 'pas encore');
+  assert.ok(w.telegraphs.some(t => t.kind === 'circle' && t.progress > 0.5), 'le cercle de relève se remplit');
+  for (let i = 0; i < 60 * 1.5; i++) { p.avancer(1 / 60); a.x = b.x + 30; a.y = b.y; }
+  assert.equal(b.dead, false, 'relevé par son allié');
+  assert.equal(b.hp, Math.round(b.maxHp / 2));
+  // butin : un monstre vaincu donne un tirage à chacun des deux, que lui seul voit
+  w.drops.length = 0;
+  const cible = w.spawnMonster('bouftou', a.x + 20, a.y);
+  w.commeJoueur(a, () => { cible.hp = 1; cible.dead = true; w['dropLoot'](cible); });
+  const pour = new Set(w.drops.map(d => d.pour));
+  assert.ok(w.drops.every(d => d.pour === a.id || d.pour === b.id), 'chaque objet au sol a son propriétaire');
+  assert.ok(pour.size >= 1);
+  for (const d of w.drops) assert.equal(w.commeJoueur(a, () => w.shown(d)), d.pour === a.id);
+  p.depart(1); p.depart(2);
 });

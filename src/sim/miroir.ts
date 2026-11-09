@@ -58,7 +58,7 @@ const REFUS: Record<Sorte | 'a', Set<string>> = {
   // minuteries de l'IA des monstres : l'hôte seul s'en sert
   m: new Set(['def', 'atkCd', 'spellCd', 'sigCd', 'cheminT', 'wanderT', 'wanderX', 'wanderY', 'repathT']),
   b: new Set(['def']),
-  a: new Set(['w', 'd', 'butin']),
+  a: new Set(['w', 'd', 'butin', 'butins']),
 };
 /** Listes du monde recopiées telles quelles. */
 const LISTES = ['projectiles', 'drops', 'telegraphs', 'zonesSol'] as const;
@@ -66,11 +66,11 @@ const LISTES = ['projectiles', 'drops', 'telegraphs', 'zonesSol'] as const;
  *  parle du joueur de l'écran de l'hôte. */
 const EVENEMENTS = new Set<SimEvent['k']>(['spell', 'shoot', 'slam', 'monsterCast', 'spellFx', 'status', 'massacre', 'massacreFin', 'hit', 'kill',
   'beteMorte', 'heal', 'invocation', 'eveil', 'echange', 'souffrance', 'sacrifice', 'dompte', 'impact', 'grosCoup', 'bossIntro', 'furieux', 'wave',
-  'areneDebut', 'areneVague', 'arenePalier', 'areneFin', 'bossDown', 'itemDrop', 'cast', 'bulle', 'rageSpent']);
+  'areneDebut', 'areneVague', 'arenePalier', 'areneFin', 'bossDown', 'cast', 'bulle', 'rageSpent']);
 export const evenementPartage = (e: SimEvent) => EVENEMENTS.has(e.k);
 /** Événements propres à l'invité (World.evenementsDe) qu'il peut jouer chez lui : bandeaux, butin, quêtes, métiers. */
 const PERSONNELS_AFFICHES = new Set<SimEvent['k']>(['levelUp', 'newSpell', 'enterArea', 'enterLieu', 'loot', 'lootResource', 'lootKamas', 'bagFull',
-  'queteInfo', 'objetQuete', 'succes', 'checkpoint', 'zaapDecouvert', 'recolteFin', 'recolteStop', 'metierLevel', 'dofusGagne', 'portal']);
+  'queteInfo', 'objetQuete', 'succes', 'checkpoint', 'zaapDecouvert', 'recolteFin', 'recolteStop', 'metierLevel', 'dofusGagne', 'portal', 'itemDrop']);
 
 const arrondir = (v: number) => (Number.isInteger(v) || !Number.isFinite(v) ? v : Math.round(v * COOP.arrondi) / COOP.arrondi);
 const estEntite = (v: object): v is Entity => v instanceof Entity;
@@ -179,17 +179,36 @@ const poser = (o: object, k: string, v: unknown) => { (o as Record<string, unkno
 
 /** Côté invité : recopie un instantané dans le monde miroir. Renvoie les événements à jouer (sons, chiffres, effets),
  *  plus ceux que l'invité déduit pour son propre perso (coup reçu, niveau gagné). */
-export function appliquerInstantane(w: World, s: Instantane): SimEvent[] {
+/** Lissage (« Vrai multi » 6B) : position reçue que l'entité rejoint en douceur entre deux instantanés. */
+const CIBLES = new WeakMap<object, { x: number; y: number }>();
+/** Au-delà de cet écart (px), l'entité saute à sa place (porte, Bond, téléport) ; vitesse du lissage (par seconde). */
+export const LISSAGE = { saut: 220, vitesse: 22 };
+/** Côté invité, à chaque image : chaque entité glisse vers sa dernière position reçue. */
+export function lisserMiroir(w: World, dt: number) {
+  const k = 1 - Math.exp(-LISSAGE.vitesse * dt);
+  for (const l of [w.players, w.monsters, w.betes] as Entity[][]) for (const e of l) {
+    const c = CIBLES.get(e);
+    if (!c) continue;
+    const dx = c.x - e.x, dy = c.y - e.y;
+    if (Math.abs(dx) + Math.abs(dy) < 0.5) { e.x = c.x; e.y = c.y; CIBLES.delete(e); continue; }
+    e.x += dx * k; e.y += dy * k;
+  }
+}
+
+/** lisser : les positions reçues sont rejointes en douceur par lisserMiroir (affichage de l'invité) au lieu d'être posées d'un coup. */
+export function appliquerInstantane(w: World, s: Instantane, lisser = false): SimEvent[] {
   const D = w.opts.data, moi = w.players[0], hpAvant = moi.hp, niveauAvant = moi.level;
   if (s.plein) { w.monsters.length = 0; w.betes.length = 0; w.players.splice(1); }
   // 1. entités : création (sans constructeur : rien ne doit se passer dans le miroir), puis disparition
   poser(moi, 'id', s.moi);
+  const nouveaux = new Set<object>();
+  if (s.plein) nouveaux.add(moi);
   const champsDe = new Map(s.e.map(([so, id, c]) => [`${so}${id}`, c]));
   for (const id of s.ids.j) {
     if (id === s.moi || w.players.some(p => p.id === id)) continue;
     const c = champsDe.get(`j${id}`), cls = D.classes[String(c?.classe ?? 'iop')] ?? D.classes.iop;
     const q = new Player(id, 0, 0, cls);
-    q.items = moi.items;
+    q.items = moi.items; nouveaux.add(q);
     w.players.push(q);
   }
   // un monstre ou une bête qui change de type (Éveil des bêtes de l'Osamodas…) reste le même objet : seul def suit
@@ -199,7 +218,7 @@ export function appliquerInstantane(w: World, s: Instantane): SimEvent[] {
     if (!def) continue;
     const m = Object.assign(Object.create(Monster.prototype) as Monster, NEUF);
     poser(m, 'def', def); poser(m, 'id', id);
-    w.monsters.push(m);
+    w.monsters.push(m); nouveaux.add(m);
   }
   for (const id of s.ids.b) {
     const c = champsDe.get(`b${id}`), ancien = w.betes.find(b => b.id === id), def = BETES[String(c?.type)];
@@ -207,7 +226,7 @@ export function appliquerInstantane(w: World, s: Instantane): SimEvent[] {
     if (!def) continue;
     const b = Object.assign(Object.create(Bete.prototype) as Bete, NEUF);
     poser(b, 'def', def); poser(b, 'id', id);
-    w.betes.push(b);
+    w.betes.push(b); nouveaux.add(b);
   }
   const garder = <T extends Entity>(l: T[], ids: number[]) => { const k = new Set(ids); return l.filter(o => k.has(o.id)); };
   w.monsters = garder(w.monsters, s.ids.m);
@@ -217,8 +236,15 @@ export function appliquerInstantane(w: World, s: Instantane): SimEvent[] {
   for (const [so, id, c] of s.e) {
     const o = so === 'j' ? w.players.find(p => p.id === id) : so === 'm' ? w.monsters.find(m => m.id === id) : w.betes.find(b => b.id === id);
     if (!o) continue;
+    const neuf = nouveaux.has(o);
     for (const [k, v] of Object.entries(c)) {
       if (k === 'classe' || (so === 'j' && REFUS.j.has(k))) continue;
+      if (lisser && !neuf && (k === 'x' || k === 'y') && typeof v === 'number') {
+        const e = o as Entity, cible = CIBLES.get(e) ?? { x: e.x, y: e.y };
+        cible[k] = v; CIBLES.set(e, cible);
+        if (Math.abs(cible.x - e.x) + Math.abs(cible.y - e.y) > LISSAGE.saut) { e.x = cible.x; e.y = cible.y; }
+        continue;
+      }
       poser(o, k, depuisReseau(v, w, (o as unknown as Record<string, unknown>)[k]));
     }
     if (so === 'j' && 'equipment' in c) poser(o, '_pouvoirs', null);

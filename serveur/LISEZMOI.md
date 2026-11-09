@@ -103,6 +103,11 @@ sudo systemctl start diablofus-maj.service && journalctl -u diablofus-maj -n 5 -
 
   La dernière ligne doit montrer `"parties":0` ; la première construction prend quelques secondes (esbuild).
 
+- 2026-11-09 : `maj.sh` récupère aussi le monde d'Astrub (`public/assets/mondes/astrub`, un JSON de 6,5 Mo, aucune image) :
+  le serveur tient alors les quatre donjons d'Astrub en plus de la Crypte. Même bloc que ci-dessus, avec le commit indiqué
+  par Mathis. Tant qu'il n'est pas lancé, seule la Crypte est proposée (les autres donjons sont refusés proprement).
+  Une partie de donjon à 4 joueurs : environ 3 Mo et 2,6 ms par pas (16 % d'un cœur), Astrub compris.
+
 ## Comptes Discord (maquette « Vrai multi : » 11B)
 
 **Mathis, dans le portail Discord** (https://discord.com/developers/applications, appli du robot) : OAuth2 › Redirects ›
