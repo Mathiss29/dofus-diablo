@@ -75,7 +75,7 @@ export const QUALITES: Record<'basse' | 'moyenne' | 'haute', Partial<Reglages>> 
   moyenne: { vent: true, eau: true, particules: false, lumieres: 1, fps: 60 },
   haute: { vent: true, eau: true, particules: true, lumieres: 1, fps: 0 },
 };
-export const REGLAGES_DEFAUT: Reglages = { heure: 'auto', lumieres: 1, saturation: 1, chaleur: 0, zoom: 0.8, volume: 1, volMusique: 0.5, volEffets: 0.7, volMonstres: 0.7, volAmbiance: 0.6, volInterface: 0.7, musiqueBoss: true, muet: false, vent: true, eau: true, particules: true, transparence: true, lancer: 'relache', approche: false, flecheQuete: true,
+export const REGLAGES_DEFAUT: Reglages = { heure: 'auto', lumieres: 1, saturation: 1, chaleur: 0, zoom: 0.8, volume: 1, volMusique: 0.5, volEffets: 0.7, volMonstres: 0.5, volAmbiance: 0.6, volInterface: 0.7, musiqueBoss: true, muet: false, vent: true, eau: true, particules: true, transparence: true, lancer: 'relache', approche: false, flecheQuete: true,
   touches: {}, clavier: 'auto', chiffres: true, tailleChiffres: 'normale', dps: false, barresVie: 'blesses', zoomMolette: true, deplacement: 'gauche',
   verrou: true, modules: {}, coords: true, echelle: 1, qualite: 'haute', fps: 0, compteurFps: false, alerteButin: true, pulsePv: true };
 const CLE = 'diablofus.reglages';
@@ -84,6 +84,7 @@ export function chargerReglages(): Reglages {
   try {
     const r: Reglages = { ...REGLAGES_DEFAUT, ...JSON.parse(localStorage.getItem(CLE) ?? '{}') };
     if (r.zoom === 0.62) r.zoom = REGLAGES_DEFAUT.zoom;   // ancien zoom de départ gardé dans le navigateur : passe au nouveau (PNJ 5B)
+    if (r.volMonstres === 0.7) r.volMonstres = REGLAGES_DEFAUT.volMonstres;   // ancien curseur Monstres par défaut : passe à 50 % (Groupes 6A)
     return r;
   } catch { return { ...REGLAGES_DEFAUT }; }
 }
