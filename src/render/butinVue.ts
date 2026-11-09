@@ -20,7 +20,7 @@ export function unSur(p: number) {
 export const nomObjet = (id: string) => (ITEMS.resources[id] ?? ITEMS.equipment[id])?.name ?? id;
 export const iconeObjet = (id: string) => iconHtml((ITEMS.resources[id] ?? ITEMS.equipment[id])?.icon ?? 0);
 
-const POOL = Object.entries(ITEMS.equipment).filter(([, d]) => !d.familier).map(([id, d]) => ({ id, level: d.level }));
+const POOL = Object.entries(ITEMS.equipment).filter(([, d]) => !d.familier && !d.horsJeu).map(([id, d]) => ({ id, level: d.level }));
 const FAMILIERS_DE: Record<string, string[]> = {};
 for (const [id, d] of Object.entries(ITEMS.equipment)) for (const m of d.familier?.monstres ?? []) (FAMILIERS_DE[m] ??= []).push(id);
 /** Contexte sans partie (accueil, outil de test hors combat) : Prospection 0, pas de métier. */

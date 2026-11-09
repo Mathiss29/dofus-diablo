@@ -69,8 +69,10 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
   p.potions = Math.min(s.potions ?? p.potions, p.cls.potion.charges);
   p.base = s.base ?? {}; p.resources = s.resources ?? {}; p.metiers = { ...p.metiers, ...s.metiers };
   p.recetteSuivie = typeof s.recetteSuivie === 'string' ? s.recetteSuivie : null;
-  p.bag = (s.bag ?? []).map(uid);
-  p.equipment = Object.fromEntries(Object.entries(s.equipment ?? {}).map(([k, it]) => [k, uid(it as Item)]));
+  // objets de maître du jeu tombés par erreur (Annobusé de Maître Jarbo…) : retirés, sauf en partie de test
+  const garde = (it: Item) => !!w.opts.test || !w.opts.items?.equipment[it.id]?.horsJeu;
+  p.bag = (s.bag ?? []).filter(garde).map(uid);
+  p.equipment = Object.fromEntries(Object.entries(s.equipment ?? {}).filter(([, it]) => garde(it as Item)).map(([k, it]) => [k, uid(it as Item)]));
   p.variants = s.variants ?? [];
   p.apparats = Array.isArray(s.apparats) ? s.apparats.filter(a => typeof a === 'string') : [];
   p.apparat = {};
