@@ -1,0 +1,42 @@
+name: Diaporama
+# Diaporama de l'accueil (maquette « Diapo : » 9A) : le robot rejoue ses 6 scènes et refait les captures
+# (tools/accueil/diaporama.cjs), puis ouvre une PR avec les nouvelles images. Les légendes restent dans
+# src/data/diaporama.json, à relire si une scène change. Lancement : Actions › Diaporama › Run workflow.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  captures:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm i --no-save playwright@1.63.0 && npx playwright install --with-deps chromium
+      - run: npx vite build --logLevel error
+        env:
+          VITE_ASSETS_URL: https://assets.diablofus.com
+      - name: Captures
+        run: |
+          (npx vite preview --port 4173 &)
+          for i in $(seq 60); do curl -sf http://localhost:4173 >/dev/null && break; sleep 1; done
+          node tools/accueil/diaporama.cjs
+      - name: PR avec les nouvelles captures
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          B="diaporama-${{ github.run_id }}"
+          git checkout -b "$B"
+          git add public/assets/accueil/diapo
+          git diff --cached --quiet && { echo "Rien de nouveau"; exit 0; }
+          git commit -m "Diaporama de l'accueil : nouvelles captures du robot"
+          git push origin "$B"
+          gh pr create --title "Diaporama de l'accueil : nouvelles captures" --body "Captures refaites par le robot (Actions › Diaporama). Relire les légendes dans src/data/diaporama.json si une scène a changé." --base main --head "$B"
