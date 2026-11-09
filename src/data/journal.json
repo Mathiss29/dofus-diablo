@@ -1160,7 +1160,9 @@
             ]
           }
         ],
-        "Corrections": [],
+        "Corrections": [
+          "La musique du Bastion s'efface quand tu en sors, au lieu de te suivre jusqu'au bout du morceau."
+        ],
         "En coulisses": [
           "À plusieurs, chaque joueur voit son sac, ses ressources et ses kamas en direct.",
           "Butin chacun le sien : en groupe, chacun a son tirage sur les monstres et dans le coffre de fin.",

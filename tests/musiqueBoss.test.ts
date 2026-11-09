@@ -103,4 +103,20 @@ describe('Musique des boss (maquette « Musique élites », 2026-11-08)', () => 
     Son.finCombat(true);
     expect(etat().k).toBe('explo');
   });
+  it('changer de zone (sortie du Bastion) efface le morceau de l\'ancienne zone au lieu de le laisser finir', async () => {
+    const { Son } = await import('../src/render/son');
+    const etat = () => (Son as unknown as { etat: Etat }).etat;
+    Son.setCombat(false); Son.finCombat(false);
+    Son.zone(['bastion']);
+    for (let i = 0; i < 400 && etat().k !== 'explo'; i++) Son.update(0.1);
+    const bastion = etat().calme!;
+    expect((etat() as { nom?: string }).nom).toBe('bastion');
+    Son.zone(['incarnam1']);
+    expect(etat().k).toBe('silence');
+    expect(bastion.gain.gain.value).toBe(0);
+    vi.advanceTimersByTime(2200);
+    expect(bastion.el.src).toBe('');
+    for (let i = 0; i < 40 && etat().k !== 'explo'; i++) Son.update(0.1);
+    expect((etat() as { nom?: string }).nom).toBe('incarnam1');
+  });
 });
