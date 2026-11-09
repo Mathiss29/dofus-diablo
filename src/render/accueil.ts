@@ -12,6 +12,7 @@ import { niveauHorsPartie } from '../sim/butin';
 import { SORTS, niveauRequis, type SortOfficiel } from '../sim/sorts';
 import CLASSES_DOFUS from '../data/classes_dofus.json';
 import JOURNAL from '../data/journal.json';
+import DIAPORAMA from '../data/diaporama.json';
 import { installable, installer, surChangement } from './installation';
 import { API, Compte } from './compte';
 import { DISCORD_INVITATION } from './liens';
@@ -58,8 +59,9 @@ const PRESENTATION = {
   cartes: [['3 classes', 'Iop, Crâ et Osamodas'], ['Butin', '6 raretés, pouvoirs légendaires'],
     ['Donjons', 'Vagues de monstres et boss officiels'], ['Monde ouvert', 'Incarnam et Astrub, près de 500 cartes']],
 };
-/** Vidéo de 12 s en boucle (Accueil 4A), dans public/assets/accueil ; vide : le cadre ne s'affiche pas. */
-const VIDEO = '';
+/** Diaporama (maquette « Diapo : ») : captures prises par le robot (tools/accueil/diaporama.cjs), légendes écrites à la main. */
+const DIAPO = (DIAPORAMA as { captures: { id: string; legende: string }[] }).captures;
+const diapoImg = (id: string) => img(`diapo/${id}.webp`);
 /** Questions de la fenêtre « C'est quoi Diablofus ? » (Accueil 10A, 5A). */
 const FAQ: [string, string][] = [
   ['C\'est gratuit ?', 'Oui, entièrement : rien à acheter, aucune publicité.'],
@@ -281,7 +283,20 @@ const CSS = `
 #acc .enligne{font-weight:800;font-size:calc(.85*var(--u));display:flex;align-items:center;gap:calc(.4*var(--u));text-shadow:0 1px 2px #000}
 #acc .enligne i{width:calc(.7*var(--u));height:calc(.7*var(--u));border-radius:50%;background:#6fdc5a;box-shadow:0 0 calc(.6*var(--u)) #6fdc5a}
 #acc .dbtn.discord{background:#5865f2;border-color:#7983f5;color:#fff;box-shadow:0 calc(.25*var(--u)) 0 #2f3699;font-size:calc(.85*var(--u));padding:calc(.5*var(--u)) calc(1*var(--u))}
-#acc .apercu{width:calc(36*var(--u));aspect-ratio:16/9;object-fit:cover;border:calc(.2*var(--u)) solid #e0b45a;border-radius:calc(.7*var(--u));box-shadow:0 calc(1*var(--u)) calc(3*var(--u)) #000a;background:#0d0e09}
+#acc .diapo{aspect-ratio:16/9;border:calc(.2*var(--u)) solid #e0b45a;border-radius:calc(.7*var(--u));box-shadow:0 calc(1*var(--u)) calc(3*var(--u)) #000a;background:#0d0e09;overflow:hidden;cursor:zoom-in}
+#acc .diapo figure{position:absolute;inset:0;margin:0;opacity:0;transition:opacity .8s}
+#acc .diapo figure.on{opacity:1}
+#acc .diapo img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1);transition:transform 4.6s linear;transform-origin:55% 55%}
+#acc .diapo figure.on img{transform:scale(1.1)}
+#acc .diapo figcaption{position:absolute;left:0;right:0;bottom:0;padding:calc(2.2*var(--u)) calc(1*var(--u)) calc(.7*var(--u));font-weight:800;font-size:calc(.9*var(--u));color:#f6e7c1;background:linear-gradient(transparent,#000c);text-shadow:0 1px 2px #000}
+#acc .diapo.petit figcaption{font-size:calc(.7*var(--u));padding:calc(1.4*var(--u)) calc(.7*var(--u)) calc(.5*var(--u))}
+#acc .points{position:absolute;right:calc(.8*var(--u));top:calc(.7*var(--u));display:flex;gap:calc(.35*var(--u));z-index:1}
+#acc .points button{all:unset;cursor:pointer;width:calc(.6*var(--u));height:calc(.6*var(--u));border-radius:50%;background:#ffffff66;box-shadow:0 0 2px #000}
+#acc .points button.on{background:#e0b45a}
+#acc .grand{display:grid;gap:calc(.6*var(--u))}
+#acc .grand img{width:100%;border-radius:calc(.5*var(--u));display:block}
+#acc .modal>.card.large{width:calc(64*var(--u));max-height:none}
+@media (prefers-reduced-motion:reduce){#acc .diapo img{transition:none}#acc .diapo figure.on img{transform:none}}
 #acc .cartesB{width:calc(36*var(--u));display:grid;grid-template-columns:repeat(4,1fr);gap:calc(.6*var(--u))}
 #acc .cartesB div{background:#191a12e6;border:1px solid #3d3b2a;border-radius:calc(.5*var(--u));padding:calc(.7*var(--u));font-size:calc(.75*var(--u));font-weight:700;line-height:1.35;color:#c9c4ab}
 #acc .cartesB b{display:block;font-family:var(--disp);font-weight:400;color:#ffc14d;font-size:calc(1*var(--u));margin-bottom:calc(.2*var(--u))}
@@ -381,6 +396,8 @@ export class Accueil {
       this.anim = requestAnimationFrame(tick);
       if (t - last < 40) return;   // 25 images par seconde, comme les animations de Dofus
       last = t; f++;
+      // diaporama : capture suivante toutes les 4 s, sauf sous la souris ou fenêtre ouverte (« Diapo : » 7B)
+      if (t - this.diapoT > 4000) { this.diapoT = t; if (!this.root.hidden && !this.modal && !this.root.querySelector('.diapo:hover') && this.root.querySelector('.diapo')) this.montrerDiapo(this.diapoI + 1); }
       this.root.querySelectorAll<HTMLCanvasElement>('canvas.vivant').forEach(cv => this.socle(cv, f));
       this.root.querySelectorAll<HTMLElement>('.hero:not(canvas)').forEach(h => {
         const n = +h.dataset.n!, g = grille(h, n);
@@ -481,7 +498,8 @@ export class Accueil {
 
   private render() {
     const html = this.page === 'accueil' ? this.pageAccueil() : this.page === 'creation' ? this.pageCreation() : this.page === 'succes' ? this.pageSucces() : this.page === 'bestiaire' ? this.pageBestiaire() : this.page === 'journal' ? this.pageJournal() : this.page === 'ladder' ? '<div class="ladp"><div class="lad" data-ladder></div></div>' : this.pagePersos();
-    const m = this.modal ? `<div class="modal" data-fermer><div class="card">${this.modal}<button type="button" class="x" data-fermer aria-label="Fermer">✕</button></div></div>` : '';
+    if (!this.modal) this.modalLarge = false;
+    const m = this.modal ? `<div class="modal" data-fermer><div class="card${this.modalLarge ? ' large' : ''}">${this.modal}<button type="button" class="x" data-fermer aria-label="Fermer">✕</button></div></div>` : '';
     this.root.innerHTML = `<div class="page">${html}${this.side()}${m}<div class="toast" style="opacity:0"></div></div>`;
     this.bind();
     this.portraits();
@@ -541,6 +559,7 @@ export class Accueil {
       <span class="tiny">${EMPLACEMENTS} emplacements · sauvegarde automatique</span>
       ${installable() ? `<button type="button" class="dbtn" style="font-size:calc(.8*var(--u));padding:calc(.45*var(--u)) calc(.9*var(--u));color:#cfe9a0;border-color:#4d5a2c" data-installer title="Ouvre Diablofus dans sa propre fenêtre, avec une icône sur le bureau. Toujours à jour.">⤓ Installer le jeu</button>` : ''}</div>
     ${p ? this.derniereFois(p) : ''}
+    ${this.diapo('right:calc(2*var(--u));top:calc(7.6*var(--u));width:calc(24*var(--u))', true)}
     <div class="abs" style="right:calc(2*var(--u));top:calc(1.6*var(--u));display:flex;gap:calc(.8*var(--u));align-items:center">
     ${this.communaute()}
     ${carnetNonLu() ? `<div class="card" style="padding:calc(.7*var(--u)) calc(1*var(--u));display:flex;gap:calc(1*var(--u));align-items:center;font-weight:800;font-size:calc(.85*var(--u))">
@@ -549,6 +568,32 @@ export class Accueil {
     <div class="abs" style="right:calc(2*var(--u));bottom:calc(1.6*var(--u));display:flex;gap:calc(.6*var(--u))">
       ${ZONES_ACC.map(z => `<button type="button" class="chip${z.cle === 'astrub' ? ' on' : z.dispo ? '' : ' off'}" style="cursor:pointer" data-zone="${z.cle}">${z.nom}${z.dispo ? '' : ' · bientôt'}</button>`).join('')}</div>`;
   }
+
+  /** Diaporama (« Diapo : » 7A 7B 8A) : fondu + zoom lent toutes les 4 s, pause au survol, points cliquables, clic = en grand. */
+  private diapoI = 0;
+  private diapoT = 0;
+  private diapo(style: string, petit = false): string {
+    if (!DIAPO.length) return '';
+    this.diapoI %= DIAPO.length;
+    return `<div class="abs diapo${petit ? ' petit' : ''}" style="${style}" data-diapo role="region" aria-label="Captures du jeu">
+      ${DIAPO.map((c, i) => `<figure class="${i === this.diapoI ? 'on' : ''}"><img src="${diapoImg(c.id)}" alt="${esc(c.legende)}" loading="${i ? 'lazy' : 'eager'}"><figcaption>${esc(c.legende)}</figcaption></figure>`).join('')}
+      <div class="points">${DIAPO.map((_, i) => `<button type="button" class="${i === this.diapoI ? 'on' : ''}" data-diapo-i="${i}" aria-label="Capture ${i + 1}"></button>`).join('')}</div></div>`;
+  }
+  /** Montre la capture i dans le cadre, sans tout redessiner. */
+  private montrerDiapo(i: number) {
+    this.diapoI = (i + DIAPO.length) % DIAPO.length;
+    this.root.querySelectorAll('.diapo figure').forEach((f, k) => f.classList.toggle('on', k === this.diapoI));
+    this.root.querySelectorAll('.diapo .points button').forEach((f, k) => f.classList.toggle('on', k === this.diapoI));
+  }
+  private ouvrirDiapo(i: number) {
+    this.diapoI = (i + DIAPO.length) % DIAPO.length;
+    const c = DIAPO[this.diapoI];
+    this.modal = `<div class="grand"><img src="${diapoImg(c.id)}" alt=""><div style="display:flex;gap:calc(.8*var(--u));align-items:center">
+      <button type="button" class="mini" data-diapo-prec aria-label="Précédente">◀</button><b style="flex:1;font-size:calc(1*var(--u))">${esc(c.legende)}</b>
+      <span class="tiny">${this.diapoI + 1} / ${DIAPO.length}</span><button type="button" class="mini" data-diapo-suiv aria-label="Suivante">▶</button></div></div>`;
+    this.modalLarge = true; this.render();
+  }
+  private modalLarge = false;
 
   /** Joueurs en ligne (Accueil 9B, caché à 0) et invitation au Discord (6A). */
   private communaute(): string {
@@ -587,8 +632,8 @@ export class Accueil {
       ${installable() ? `<button type="button" class="dbtn" style="font-size:calc(.8*var(--u));padding:calc(.45*var(--u)) calc(.9*var(--u));color:#cfe9a0;border-color:#4d5a2c" data-installer title="Ouvre Diablofus dans sa propre fenêtre, avec une icône sur le bureau. Toujours à jour.">⤓ Installer le jeu</button>` : ''}</div>
     <div class="abs" style="left:calc(11.5*var(--u));top:calc(42.6*var(--u))" ><span class="tiny">⌨ Clavier + souris · PC conseillé</span></div>
     <div class="abs" style="right:calc(2*var(--u));top:calc(1.6*var(--u));display:flex;gap:calc(.8*var(--u));align-items:center">${this.communaute()}</div>
-    ${VIDEO ? `<video class="abs apercu" style="right:calc(2.4*var(--u));top:calc(7*var(--u))" src="${img(VIDEO)}" autoplay muted loop playsinline aria-label="Douze secondes de jeu"></video>` : ''}
-    <div class="abs cartesB" style="right:calc(2.4*var(--u));${VIDEO ? 'top:calc(29.4*var(--u))' : 'bottom:calc(5.4*var(--u))'}">${P.cartes.map(([t, x]) => `<div><b>${esc(t)}</b>${esc(x)}</div>`).join('')}</div>
+    ${this.diapo('right:calc(2.4*var(--u));top:calc(7*var(--u));width:calc(36*var(--u))')}
+    <div class="abs cartesB" style="right:calc(2.4*var(--u));${DIAPO.length ? 'top:calc(29.4*var(--u))' : 'bottom:calc(5.4*var(--u))'}">${P.cartes.map(([t, x]) => `<div><b>${esc(t)}</b>${esc(x)}</div>`).join('')}</div>
     <button type="button" class="abs lienfaq" style="right:calc(2.4*var(--u));bottom:calc(2*var(--u))" data-faq>C'est quoi Diablofus ?</button>`;
   }
 
@@ -879,6 +924,12 @@ export class Accueil {
     // fenêtres par-dessus (fiche de zone, cimetière, copies de secours)
     on('[data-zone]', e => this.ouvrir(e.dataset.zone!));
     on('[data-faq]', () => this.ouvrir('faq'));
+    r.querySelector<HTMLElement>('[data-diapo]')?.addEventListener('click', e => {
+      const b = (e.target as HTMLElement).closest<HTMLElement>('[data-diapo-i]');
+      if (b) this.montrerDiapo(+b.dataset.diapoI!); else this.ouvrirDiapo(this.diapoI);
+    });
+    on('[data-diapo-prec]', () => this.ouvrirDiapo(this.diapoI - 1));
+    on('[data-diapo-suiv]', () => this.ouvrirDiapo(this.diapoI + 1));
     // journal : ouvrir un carnet (le dernier ouvert = lu, la pastille s'éteint), sommaire
     on('[data-carnet]', e => { this.modal = null; this.carnet = e.dataset.carnet || null; if (this.carnet === CARNETS[0]?.date) marquerLu(); this.page = 'journal'; this.render(); this.root.querySelector('.jr')?.scrollTo(0, 0); });
     on('[data-rub]', e => this.root.querySelector(`#rub-${e.dataset.rub}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
