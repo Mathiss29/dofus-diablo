@@ -189,6 +189,10 @@ class Moteur {
   zone(liste: string[], combat: 'incarnam' | 'amakna' = 'incarnam') {
     this.voulu = liste.length ? 'zone' : 'rien'; this.liste = liste; this.combatZone = combat;
     if (this.misDeCote && !liste.includes(this.misDeCote.nom)) this.oublierExplo();
+    // on change de zone : le morceau d'une autre zone (ex. Bastion) s'efface en 2 s au lieu de jouer jusqu'à sa fin
+    const e = this.etat;
+    if (this.ctx && e.k === 'explo' && !liste.includes(e.nom)) { this.lacher(2); this.etat = { k: 'silence', reste: 1.5 }; }
+    this.poidsCouches = {};
   }
   /** 0 = on explore, 1 = des monstres nous attaquent (3A). */
   setIntensite(i: number) { this.intensite = i; }
