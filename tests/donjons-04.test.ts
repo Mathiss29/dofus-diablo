@@ -57,3 +57,16 @@ describe('donjons d’Amakna aux vraies entrées (« 0.4 suite : 5A+5D »)', () 
     expect(monde(false).zone.open!.donjons!.some(d => d.couloirs?.salles[0]?.startsWith('scarafeuilles'))).toBe(false);
   });
 });
+
+describe('donjons en couloirs : jamais hors carte', () => {
+  it('chaque case de couloir (Grange d’Astrub, donjons d’Amakna) est dans une carte du donjon : sinon écran noir en marchant', () => {
+    const wg = new WorldGrid(AS), o = GAME_DATA.zones.astrub.open!;
+    for (const d of [...(o.donjons ?? []), ...(o.donjonsTest ?? [])]) {
+      const c = d.couloirs;
+      if (!c) continue;
+      const du = new Set([...c.tags, ...c.salles, d.arene!.tag]);
+      const hors = c.cases.filter(x => !du.has(wg.mapOfCell(x)?.tag ?? ''));
+      expect(hors.length, `${d.nom} : ${hors.length} cases hors du donjon`).toBe(0);
+    }
+  });
+});
