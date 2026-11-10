@@ -401,6 +401,408 @@
    "officiel": "Vendetta : +1 lancer(s) par tour"
   }
  ],
+ "eniripsa": [
+  {
+   "id": "eniripsa-01",
+   "slot": "chapeau",
+   "piece": "Coiffe Fère",
+   "sort": "Mot Stimulant",
+   "dofusId": 25742,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Mot Stimulant : ligne de vue désactivée"
+  },
+  {
+   "id": "eniripsa-02",
+   "slot": "chapeau",
+   "piece": "Coiffe Fère",
+   "sort": "Mot de Déclin",
+   "dofusId": 25746,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Mot de Déclin : ligne de vue désactivée"
+  },
+  {
+   "id": "eniripsa-03",
+   "slot": "chapeau",
+   "piece": "Coiffe Fère",
+   "sort": "Mot Tapageur",
+   "dofusId": 25858,
+   "effet": "crit",
+   "n": 40,
+   "officiel": "Mot Tapageur : +40% Critique"
+  },
+  {
+   "id": "eniripsa-04",
+   "slot": "chapeau",
+   "piece": "Coiffe Fère",
+   "sort": "Cri Assourdissant",
+   "dofusId": 25857,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Cri Assourdissant : +2 Portée maximale"
+  },
+  {
+   "id": "eniripsa-05",
+   "slot": "chapeau",
+   "piece": "Coiffe Fère",
+   "sort": "Mot Vampirique",
+   "dofusId": 25870,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Mot Vampirique : ligne de vue désactivée"
+  },
+  {
+   "id": "eniripsa-06",
+   "slot": "amulette",
+   "piece": "Coiffe Fère",
+   "sort": "Sanglots",
+   "dofusId": 25872,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Sanglots : +2 Portée maximale"
+  },
+  {
+   "id": "eniripsa-07",
+   "slot": "arme",
+   "piece": "Coiffe Fère",
+   "sort": "Lamentations",
+   "dofusId": 25871,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Lamentations : -1 PA"
+  },
+  {
+   "id": "eniripsa-08",
+   "slot": "bouclier",
+   "piece": "Coiffe Fère",
+   "sort": "Vacarme",
+   "dofusId": 25856,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Vacarme : +2 Portée maximale"
+  },
+  {
+   "id": "eniripsa-09",
+   "slot": "cape",
+   "piece": "Cape Sulhit",
+   "sort": "Mot Vivifiant",
+   "dofusId": 25744,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Mot Vivifiant : ligne de vue désactivée"
+  },
+  {
+   "id": "eniripsa-10",
+   "slot": "cape",
+   "piece": "Cape Sulhit",
+   "sort": "Mot Galvanisant",
+   "dofusId": 25745,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Mot Galvanisant : ligne de vue désactivée"
+  },
+  {
+   "id": "eniripsa-11",
+   "slot": "cape",
+   "piece": "Cape Sulhit",
+   "sort": "Juron",
+   "dofusId": 25867,
+   "effet": "crit",
+   "n": 40,
+   "officiel": "Juron : +40% Critique"
+  },
+  {
+   "id": "eniripsa-12",
+   "slot": "cape",
+   "piece": "Cape Sulhit",
+   "sort": "Pinceau Tribal",
+   "dofusId": 25866,
+   "effet": "parCible",
+   "n": 1,
+   "officiel": "Pinceau Tribal : +1 lancer(s) par cible"
+  },
+  {
+   "id": "eniripsa-13",
+   "slot": "cape",
+   "piece": "Cape Sulhit",
+   "sort": "Chapardage",
+   "dofusId": 25859,
+   "effet": "crit",
+   "n": 40,
+   "officiel": "Chapardage : +40% Critique"
+  },
+  {
+   "id": "eniripsa-14",
+   "slot": "amulette",
+   "piece": "Cape Sulhit",
+   "sort": "Mot Distrayant",
+   "dofusId": 25862,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Mot Distrayant : +1 lancer(s) par tour"
+  },
+  {
+   "id": "eniripsa-15",
+   "slot": "arme",
+   "piece": "Cape Sulhit",
+   "sort": "Onguent Ancestral",
+   "dofusId": 25869,
+   "effet": "crit",
+   "n": 35,
+   "officiel": "Onguent Ancestral : +35% Critique"
+  },
+  {
+   "id": "eniripsa-16",
+   "slot": "bouclier",
+   "piece": "Cape Sulhit",
+   "sort": "Chœur Strident",
+   "dofusId": 25861,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Chœur Strident : +1 lancer(s) par tour"
+  },
+  {
+   "id": "eniripsa-17",
+   "slot": "ceinture",
+   "piece": "Sangle Holon",
+   "sort": "Mot Accablant",
+   "dofusId": 25749,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Mot Accablant : ligne de vue désactivée"
+  },
+  {
+   "id": "eniripsa-18",
+   "slot": "ceinture",
+   "piece": "Sangle Holon",
+   "sort": "Mot Décourageant",
+   "dofusId": 25747,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Mot Décourageant : ligne de vue désactivée"
+  },
+  {
+   "id": "eniripsa-19",
+   "slot": "ceinture",
+   "piece": "Sangle Holon",
+   "sort": "Mot Espiègle",
+   "dofusId": 25877,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Mot Espiègle : +1 lancer(s) par tour"
+  },
+  {
+   "id": "eniripsa-20",
+   "slot": "ceinture",
+   "piece": "Sangle Holon",
+   "sort": "Mot Malicieux",
+   "dofusId": 25878,
+   "effet": "crit",
+   "n": 35,
+   "officiel": "Mot Malicieux : +35% Critique"
+  },
+  {
+   "id": "eniripsa-21",
+   "slot": "ceinture",
+   "piece": "Sangle Holon",
+   "sort": "Cri de Guerre",
+   "dofusId": 25863,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Cri de Guerre : -1 PA"
+  },
+  {
+   "id": "eniripsa-22",
+   "slot": "amulette",
+   "piece": "Sangle Holon",
+   "sort": "Mot Rituel",
+   "dofusId": 25864,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Mot Rituel : -1 de relance"
+  },
+  {
+   "id": "eniripsa-23",
+   "slot": "arme",
+   "piece": "Sangle Holon",
+   "sort": "Peinture de Guerre",
+   "dofusId": 25868,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Peinture de Guerre : ligne de vue désactivée"
+  },
+  {
+   "id": "eniripsa-24",
+   "slot": "bouclier",
+   "piece": "Sangle Holon",
+   "sort": "Mot Secret",
+   "dofusId": 25882,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Mot Secret : -1 PA"
+  },
+  {
+   "id": "eniripsa-25",
+   "slot": "bottes",
+   "piece": "Bottes Ulisme",
+   "sort": "Mot de Jouvence",
+   "dofusId": 25743,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Mot de Jouvence : ligne de vue désactivée"
+  },
+  {
+   "id": "eniripsa-26",
+   "slot": "bottes",
+   "piece": "Bottes Ulisme",
+   "sort": "Mot Déprimant",
+   "dofusId": 25748,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Mot Déprimant : ligne de vue désactivée"
+  },
+  {
+   "id": "eniripsa-27",
+   "slot": "bottes",
+   "piece": "Bottes Ulisme",
+   "sort": "Mot Interdit",
+   "dofusId": 25873,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Mot Interdit : Portée modifiable"
+  },
+  {
+   "id": "eniripsa-28",
+   "slot": "bottes",
+   "piece": "Bottes Ulisme",
+   "sort": "Mot Exsangue",
+   "dofusId": 13217,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Mot Exsangue : ligne de vue désactivée"
+  },
+  {
+   "id": "eniripsa-29",
+   "slot": "bottes",
+   "piece": "Bottes Ulisme",
+   "sort": "Mot Fleuri",
+   "dofusId": 25880,
+   "effet": "crit",
+   "n": 35,
+   "officiel": "Mot Fleuri : +35% Critique"
+  },
+  {
+   "id": "eniripsa-30",
+   "slot": "amulette",
+   "piece": "Bottes Ulisme",
+   "sort": "Bosquet Enchanté",
+   "dofusId": 25881,
+   "effet": "ligne",
+   "n": 1,
+   "officiel": "Bosquet Enchanté : lancer en ligne désactivé"
+  },
+  {
+   "id": "eniripsa-31",
+   "slot": "arme",
+   "piece": "Bottes Ulisme",
+   "sort": "Cryothérapie",
+   "dofusId": 25875,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Cryothérapie : -1 PA"
+  },
+  {
+   "id": "eniripsa-32",
+   "slot": "bouclier",
+   "piece": "Bottes Ulisme",
+   "sort": "Murmure",
+   "dofusId": 25883,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Murmure : +2 Portée maximale"
+  },
+  {
+   "id": "eniripsa-33",
+   "slot": "anneau",
+   "piece": "Anneau Zamour",
+   "sort": "Mot de Frayeur",
+   "dofusId": 13175,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Mot de Frayeur : ligne de vue désactivée"
+  },
+  {
+   "id": "eniripsa-34",
+   "slot": "anneau",
+   "piece": "Anneau Zamour",
+   "sort": "Scalpel",
+   "dofusId": 25832,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Scalpel : -1 de relance"
+  },
+  {
+   "id": "eniripsa-35",
+   "slot": "anneau",
+   "piece": "Anneau Zamour",
+   "sort": "Mot de Reconstitution",
+   "dofusId": 13187,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Mot de Reconstitution : ligne de vue désactivée"
+  },
+  {
+   "id": "eniripsa-36",
+   "slot": "anneau",
+   "piece": "Anneau Zamour",
+   "sort": "Mot de Solidarité",
+   "dofusId": 13219,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Mot de Solidarité : ligne de vue désactivée"
+  },
+  {
+   "id": "eniripsa-37",
+   "slot": "anneau",
+   "piece": "Anneau Zamour",
+   "sort": "Mot Farceur",
+   "dofusId": 25879,
+   "effet": "parCible",
+   "n": 1,
+   "officiel": "Mot Farceur : +1 lancer(s) par cible"
+  },
+  {
+   "id": "eniripsa-38",
+   "slot": "amulette",
+   "piece": "Anneau Zamour",
+   "sort": "Mot Défendu",
+   "dofusId": 25876,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Mot Défendu : -1 PA"
+  },
+  {
+   "id": "eniripsa-39",
+   "slot": "arme",
+   "piece": "Anneau Zamour",
+   "sort": "Mot Turbulent",
+   "dofusId": 25860,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Mot Turbulent : -1 PA"
+  },
+  {
+   "id": "eniripsa-40",
+   "slot": "bouclier",
+   "piece": "Anneau Zamour",
+   "sort": "Mot Furieux",
+   "dofusId": 25865,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Mot Furieux : -1 PA"
+  }
+ ],
  "forgelance": [
   {
    "id": "forgelance-01",

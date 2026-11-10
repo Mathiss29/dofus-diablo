@@ -1,9 +1,13 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { GAME_DATA } from '../src/sim/data';
+import { GAME_DATA, ITEMS } from '../src/sim/data';
+import type { EquipSlot, Item } from '../src/sim/items';
+import { POUVOIRS } from '../src/sim/pouvoirs';
+import { BOSS_PREFERES, PC_PAR_ID, POUVOIRS_CLASSE } from '../src/sim/pouvoirsClasse';
 import { GridMap, type MapData } from '../src/sim/gridmap';
 import { NO_INPUT, type PlayerInput } from '../src/sim/input';
 import { World } from '../src/sim/world';
+import { soignerAllie } from '../src/sim/eniripsa';
 
 const carte = JSON.parse(readFileSync(new URL('../public/assets/cartes/5_-27/carte.json', import.meta.url), 'utf8')) as MapData;
 const STEP = 1 / 60;
@@ -127,5 +131,65 @@ describe('Eniripsa (maquette Eniripsa, « 1A 2A 3A+3C+3D 4B … »)', () => {
     const b = w.betes.find(o => o.base === 'lapino');
     expect(b).toBeDefined();
     expect(b!.horsCompte).toBe(true);
+  });
+});
+
+/** Porte un Légendaire de cet emplacement avec ce pouvoir de classe. */
+const porter = (w: World, id: string, value: number) => {
+  const c = PC_PAR_ID[id], [iid] = Object.entries(ITEMS.equipment).find(([, d]) => d.slot === c.slot && !d.familier && d.level <= 20)!;
+  const it: Item = { uid: w.newUid(), id: iid, rarity: 'legendaire', stats: {}, extra: [], legendary: { id, value } };
+  w.player.equipment[(c.slot === 'anneau' ? 'anneau1' : c.slot) as EquipSlot] = it;
+  w.player.recompute();
+};
+const eniItems = (seed = 7) => { const w = new World({ data: GAME_DATA, zone: 'champs-astrub', map: new GridMap(carte), seed, classId: 'eniripsa', items: ITEMS }); w.waveDelay = 1e9; return w; };
+
+describe('Légendaires de l\'Eniripsa (« Légendaires eni : 1A 2C-2P 3A 4A 5A »)', () => {
+  it('1A : les 40 officiels de la Panoplie Altruiste ; 2 : 16 pouvoirs à nous, deux par emplacement ; 4A : boss préférés', () => {
+    expect(POUVOIRS.eniripsa).toHaveLength(40);
+    expect(POUVOIRS.eniripsa.filter(p => p.effet === 'crit').length).toBeGreaterThan(0);
+    const l = POUVOIRS_CLASSE.filter(p => p.classe === 'eniripsa');
+    expect(l).toHaveLength(16);
+    for (const sl of ['chapeau', 'cape', 'amulette', 'anneau', 'ceinture', 'bottes', 'arme', 'bouclier']) expect(l.filter(p => p.slot === sl), sl).toHaveLength(2);
+    expect(Object.values(BOSS_PREFERES).flat().filter(id => id.startsWith('pc-eniripsa-'))).toHaveLength(10);
+  });
+
+  it('3A : Dernier Mot ne renforce que le premier soin après le passage sous 20 %', () => {
+    const w = eniItems(), p = w.player, q = allie(w);
+    porter(w, 'pc-eniripsa-B', 70);
+    q.hp = Math.round(q.maxHp * 0.1);
+    w.drainEvents();
+    soignerAllie(p, q, 1, w, { brut: true }); soignerAllie(p, q, 1, w, { brut: true });
+    expect(w.drainEvents().filter(e => e.k === 'status' && e.text === 'Dernier Mot !')).toHaveLength(1);
+    q.hp = q.maxHp; idle(w, 0.1); q.hp = Math.round(q.maxHp * 0.1);   // remonté puis retombé : de nouveau prêt
+    soignerAllie(p, q, 1, w, { brut: true });
+    expect(w.drainEvents().filter(e => e.k === 'status' && e.text === 'Dernier Mot !')).toHaveLength(1);
+  });
+
+  it('P : Seconde vie relève sans Insoignable, avec un bouclier', () => {
+    const w = eniItems(), p = w.player, q = allie(w, 200);
+    porter(w, 'pc-eniripsa-P', 20);
+    q.dead = true; q.hp = 0;
+    press(w, 'reconstitution', { x: q.x, y: q.y }); idle(w, 0.5);
+    expect(q.dead).toBe(false);
+    expect(q.insoignableT).toBe(0);
+    expect(q.shield).toBe(Math.round(q.maxHp * 0.2));
+  });
+
+  it('E + K : Envol protecteur et Envol en série à l\'échange avec un allié', () => {
+    const w = eniItems(), p = w.player, q = allie(w, 120);
+    porter(w, 'pc-eniripsa-E', 12); porter(w, 'pc-eniripsa-K', 4);
+    expect(p.pmMax).toBe(p.cls.pm.max + 1);
+    p.pa = 1;
+    press(w, 'envol', { x: q.x, y: q.y }); idle(w, 0.5);
+    expect(q.shield).toBe(Math.round(q.maxHp * 0.12));
+    expect(p.pa).toBeGreaterThanOrEqual(2);
+  });
+
+  it('C : Mot tourbillonnant attire au lieu de repousser', () => {
+    const w = eniItems(), p = w.player, c = { x: p.x + 150, y: p.y };
+    porter(w, 'pc-eniripsa-C', 15); niveau(p, 60);
+    const m = w.spawnMonster('bouftou', c.x + 70, c.y); m.state = 'idle'; const d0 = Math.hypot(m.x - c.x, m.y - c.y);
+    press(w, 'turbulent', c); idle(w, 0.8);
+    expect(Math.hypot(m.x - c.x, m.y - c.y)).toBeLessThan(d0);
   });
 });

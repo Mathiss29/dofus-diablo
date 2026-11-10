@@ -1244,6 +1244,17 @@
               "Donjons"
             ]
           }
+        ],
+        "Nouveautés": [
+          {
+            "titre": "Les légendaires de l'Eniripsa",
+            "phrase": "40 pouvoirs officiels de la Panoplie Altruiste et 14 pouvoirs à nous pour l'Eniripsa.",
+            "details": "Envol protecteur, Seconde vie, Nuée de Fées, Lapino gardien… Les Mots peuvent aussi soigner en critique.",
+            "icone": "principale",
+            "etiquettes": [
+              "Partie de test"
+            ]
+          }
         ]
       }
     }
