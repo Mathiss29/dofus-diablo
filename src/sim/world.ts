@@ -58,7 +58,9 @@ export interface HitDef { dmg: number; knock: number; element?: Element; lifeste
   stase?: number;
   /** Forgelance : +n % de dommages de poussée (Charge du champion), vie volée partagée à n % avec les alliés à 3 cases (Kyrja du champion),
    *  la Lance plantée compte comme un mur et multiplie la poussée par k (Enclume), +n % de dégâts si la cible heurte un obstacle (Estoc en avant). */
-  choc?: number; partage?: number; enclume?: { x: number; y: number; k: number }; plusChoc?: number }
+  choc?: number; partage?: number; enclume?: { x: number; y: number; k: number }; plusChoc?: number;
+  /** Juron fracassant (Eniripsa I) : l'Éloquence gagnée quand la cible heurte un obstacle. */
+  chocRage?: number }
 /** Zone laissée au sol par un légendaire de classe (Épée jumelle) : frappe une fois chaque monstre qui la traverse. */
 export interface ZoneSol { x: number; y: number; r: number; t: number; hit: HitDef; touches: Set<number>; id: string }
 /** Butin au sol (choix 1C 2D 6A) : équipements et kamas seulement. Les Communs et les kamas filent vers le joueur
@@ -1588,6 +1590,7 @@ export class World {
       const kb = def.knock / m.def.mass * (m.peintT > 0 ? 1 + m.peintK : 1);   // Mot de Peinture : poussé plus loin
       m.kx += Math.cos(a) * kb; m.ky += Math.sin(a) * kb;
       const choc = def.pushDmg && kb > 0 && this.pushDamage(m, a, kb / 7.13, (def.clouage ?? 0) + (def.choc ?? 0), def.enclume);
+      if (choc && def.chocRage) p.addRage(def.chocRage, this);
       if (choc && def.plusChoc && dmg > 0 && m.hp > 0) {   // Estoc en avant : la cible heurte un obstacle
         const sup = Math.max(1, Math.round(dmg * def.plusChoc / 100)); m.hp -= sup;
         this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 20, amount: sup, crit: false, element: el });

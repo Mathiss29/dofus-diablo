@@ -300,6 +300,8 @@ export class Bete extends Entity {
         }
       } else if (e.k === 'soinPct' && allie) {   // Bisou Magique du Lapino : % des PV max de l'allié ciblé
         soignerAllie(p, cible as Player, (cible as Player).maxHp * e.n / 100, world, { brut: true, de: this });
+        if (p.pcv('pc-eniripsa-G')) for (const q of world.players)   // Lapino gardien : les alliés à 2 cases de la cible aussi
+          if (q !== cible && !q.dead && Math.hypot(q.x - cible.x, q.y - cible.y) <= CASE * 2) soignerAllie(p, q, q.maxHp * e.n / 100, world, { brut: true, de: this });
       } else if (e.k === 'soin' && allie) {
         const n = world.rng.range(e.min, e.max + 1) * 1.5 * R.degats;
         p.soigner(n);
