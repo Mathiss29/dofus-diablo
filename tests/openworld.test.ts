@@ -8,7 +8,7 @@ import { exporterJoueur, restaurerJoueur } from '../src/sim/sauvegarde';
 
 const monde = JSON.parse(readFileSync(new URL('../public/assets/mondes/incarnam/monde.json', import.meta.url), 'utf8')) as WorldData;
 const STEP = 1 / 60;
-const newWorld = (seed = 42) => new World({ data: GAME_DATA, zone: 'incarnam', map: new WorldGrid(monde), seed });
+const newWorld = (seed = 42) => new World({ data: GAME_DATA, zone: 'incarnam', map: new WorldGrid(monde), seed, groupesPartout: true });
 const zone = GAME_DATA.zones.incarnam.open!;
 
 describe('monde d\'Incarnam (cartes Dofus collées)', () => {
