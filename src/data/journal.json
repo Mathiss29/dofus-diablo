@@ -1404,6 +1404,16 @@
               "Amakna",
               "Partie de test"
             ]
+          },
+          {
+            "titre": "Le Château d'Amakna s'anime",
+            "phrase": "Nobles, dames de la Cour et cuisiniers flânent autour du Château, gardé à ses deux portes.",
+            "details": "Le Bailli du Roi Allister crie les nouvelles d'Amakna sur la place.",
+            "icone": "carte",
+            "etiquettes": [
+              "Amakna",
+              "Partie de test"
+            ]
           }
         ]
       }

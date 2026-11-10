@@ -414,6 +414,10 @@ Ville vivante (maquette Ville 5F, 8 nov. 2026) :
   planche repos + marche : `BREEDS=breeds.json python3 habitant_planche.py <persos> '<look>' public/assets/sprites/hab_<id>` (skins d'objets
   et `bone_1-movement` pris sur le PC dans `Characters/`). Gardes et crieur = PNJ de `quetes.py` : `PNJ=1 SCALE=1,32 x échelle du look monster_planche.py`
   (6407 Bonta, 6384 Brâkmar, 5795 + `COULEURS` Pandala, 1282 Frigost, 1845 Amakna, 3460 Héraut d'Ecaflip), places dans `bastion.py` (`PNJ_PLACE`, `GARDES`).
+- Château d'Amakna vivant (« 0.4 suite : 6C », 10 nov. 2026) : `passants.json > lieux > chateau` (9 PNJ officiels de la Cour, cuisiniers,
+  serviteur, flânant sur 9 cartes), planches faites avec le cache seul : `persos.tar.gz` + skins tirés de `cache-dofus/skins` + `BREEDS` =
+  breeds.json (data_dump.py). Donner un dossier de sortie ABSOLU à habitant_planche.py (render.cjs tourne dans tools/extraction).
+  Crieur = Bailli du Roi Allister (PNJ 2330, look de personnage) : `SCALE=0.7 habitant_planche.py … public/assets/sprites/pnj_bailli`, `PNJ_LOOKS.bailli`.
 - Musique : `python3 sons_bastion.py <Musiques.bank> <fsb5> .` (havres de guilde officiels : base + une couche par nation ; `zones.json > bastion > iles`).
 
 ## Zaaps (`zaaps.py`, maquette « Zaap : », 8 nov. 2026)
