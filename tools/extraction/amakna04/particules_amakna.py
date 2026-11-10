@@ -3,7 +3,7 @@
 particules.py n'avait pas été lancé pour l'export d'Amakna. On le lance à part, puis ce script range ses systèmes dans le monde
 d'Astrub (repère du continent) et fusionne les deux atlas d'images (une image par gfxId, la plus grande gardée).
   python3 tools/extraction/particules.py tools/extraction/amakna04/liste.json <map_*.json> <png des particules> <sortie>
-  python3 tools/extraction/amakna04/particules_amakna.py <sortie>
+  python3 tools/extraction/amakna04/particules_amakna.py <sortie> [liste.json, par défaut celle d'Amakna]
 Repère : particules.py et world_export.py posent la carte (x, y) à (x - X0) * 1204 du bord de leur export, grille ox = -620, oy = -490.
 """
 import json, os, sys
@@ -12,7 +12,7 @@ ICI = os.path.dirname(os.path.abspath(__file__)); D = os.path.join(ICI, '..', '.
 src = sys.argv[1]
 MW, MH, MC, MR = 1204, 860, 14, 40
 M = json.load(open(f'{D}/monde.json')); g = M['grid']; X0c, Y0c = M['origin']; cols = g['cols']
-L = json.load(open(f'{ICI}/liste.json')); xs = [tuple(map(int, k.split(','))) for k in L]
+L = json.load(open(sys.argv[2] if len(sys.argv) > 2 else f'{ICI}/liste.json')); xs = [tuple(map(int, k.split(','))) for k in L]
 X0p, Y0p = min(x for x, _ in xs), min(y for _, y in xs); NX = max(x for x, _ in xs) - X0p + 1
 DX, DY = g['ox'] + 620 + (X0p - X0c) * MW, g['oy'] + 490 + (Y0p - Y0c) * MH
 amk = {m['tag'] for m in M['maps'] if m.get('essai')}

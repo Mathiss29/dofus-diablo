@@ -1383,6 +1383,15 @@
             "etiquettes": [
               "Partout"
             ]
+          },
+          {
+            "titre": "Les Wabbits Squelettes",
+            "phrase": "L'îlot des Tombeaux a ses Wabbits Squelettes, avec leurs vrais sorts et Watdogue en archimonstre.",
+            "icone": "bestiaire",
+            "etiquettes": [
+              "Île des Wabbits",
+              "Partie de test"
+            ]
           }
         ],
         "Le monde": [
@@ -1473,6 +1482,16 @@
             "icone": "metier",
             "etiquettes": [
               "Amakna",
+              "Partie de test"
+            ]
+          },
+          {
+            "titre": "L'île des Wabbits",
+            "phrase": "Le bateau du Port de Madrestam t'emmène sur l'île de la Cawotte et ses trois îlots.",
+            "details": "Des passerelles en bois relient la Cawotte aux îlots de la Couronne, des Tombeaux et de Waldo. Le Zaap de l'île et l'entrée du Château du Wa Wabbit t'y attendent.",
+            "icone": "carte",
+            "etiquettes": [
+              "Île des Wabbits",
               "Partie de test"
             ]
           }

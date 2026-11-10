@@ -1744,6 +1744,83 @@
      ],
      "essai": true,
      "region": "Amakna"
+    },
+    "161": {
+     "name": "Île de la Cawotte",
+     "level": 40,
+     "monsters": [
+      "wabbit",
+      "black_wabbit",
+      "black_tiwabbit",
+      "tiwabbit_kiafin",
+      "tiwabbit"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Île des Wabbits"
+    },
+    "162": {
+     "name": "Îlot de Waldo",
+     "level": 50,
+     "monsters": [
+      "wo_wabbit",
+      "grand_pa_wabbit"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Île des Wabbits"
+    },
+    "163": {
+     "name": "Îlot des Tombeaux",
+     "level": 50,
+     "monsters": [
+      "wabbit_squelette",
+      "black_wabbit_squelette"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Île des Wabbits"
+    },
+    "164": {
+     "name": "Îlot de la Couronne",
+     "level": 50,
+     "monsters": [
+      "wabbit",
+      "black_wabbit",
+      "wo_wabbit",
+      "grand_pa_wabbit"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Île des Wabbits"
+    },
+    "1600": {
+     "name": "Passerelles de l'île",
+     "level": 45,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Île des Wabbits"
     }
    },
    "checkpoints": [
@@ -1854,6 +1931,18 @@
       25611.0
      ],
      "sub": 1
+    },
+    {
+     "name": "Zaap Île de la Cawotte",
+     "map": [
+      25,
+      -4
+     ],
+     "zaap": [
+      35156,
+      25826.0
+     ],
+     "sub": 161
     }
    ],
    "portes": [
@@ -2902,6 +2991,29 @@
       498
      ],
      "nom": "Corps de garde de la Milice"
+    },
+    {
+     "a": [
+      "9_-2",
+      314
+     ],
+     "b": [
+      "24_-2",
+      318
+     ],
+     "nom": "Bateau du Capitaine Lily"
+    },
+    {
+     "a": [
+      "24_-13",
+      209
+     ],
+     "b": [
+      "chateau_ww_1",
+      463
+     ],
+     "nom": "Château du Wa Wabbit",
+     "cle": "14464"
     }
    ],
    "donjons": [

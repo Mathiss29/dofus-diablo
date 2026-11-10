@@ -72,10 +72,14 @@ LIEUX = {
     'amakna_2': ([2, 480, 103, 8, 277, 276], ['montagne_vent'], []),
     'amakna_3': ([1, 27, 12, 23, 31], ['mer'], ['grillons_nuit']),
     'cimetieres': ([6, 179], ['cimetiere'], ['cimetiere_nuit', 'grillons_nuit']),
+    # île des Wabbits (0.4 suite : 10A) : Cawotte, Waldo, Couronne ; Tombeaux à part (nuit lugubre, Wabbits 12A)
+    'wabbits': ([161, 162, 164], ['mer', 'amakna_campagne'], ['grillons_nuit']),
 }
 man['lieux'] = {}
 for mus, (subs, fond, nuit) in LIEUX.items():
     for s in subs: man['lieux'][str(s)] = {'musique': mus, 'fond': fond, **({'fondNuit': nuit} if nuit else {})}
 for s in (8, 277): man['lieux'][str(s)]['fond'] = ['montagne_vent', 'lave']   # Bworks : la lave du campement
+man['lieux']['163'] = {'musique': 'wabbits', 'fond': ['mer', 'cimetiere'], 'fondNuit': ['cimetiere_nuit']}   # îlot des Tombeaux
+man['lieux']['1600'] = {'musique': 'wabbits', 'fond': ['mer'], 'fondNuit': ['grillons_nuit']}   # passerelles de l'île
 json.dump(man, open(os.path.join(ROOT, 'src/data/sons.json'), 'w'), ensure_ascii=False, indent=1)
 print('musiques', len(man['musiques']), 'ambiances', len(man['ambiances']), 'lieux', len(man['lieux']))

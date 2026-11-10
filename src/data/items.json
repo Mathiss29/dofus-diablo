@@ -38210,6 +38210,37 @@
    "name": "Anguille",
    "icon": 41407,
    "level": 100
+  },
+  "14464": {
+   "name": "Clef du Château du Wa Wabbit",
+   "icon": 84726,
+   "level": 60,
+   "cle": "Château du Wa Wabbit"
+  },
+  "14462": {
+   "name": "Os de Wabbit Squelette",
+   "icon": 47827,
+   "level": 52
+  },
+  "14463": {
+   "name": "Crâne de Wabbit Squelette",
+   "icon": 47828,
+   "level": 52
+  },
+  "963": {
+   "name": "Morceau de clef du Soiw Woulant",
+   "icon": 24005,
+   "level": 60
+  },
+  "14466": {
+   "name": "Bandeau de Black Wabbit Squelette",
+   "icon": 164015,
+   "level": 54
+  },
+  "14467": {
+   "name": "Osselet de Black Wabbit Squelette",
+   "icon": 47757,
+   "level": 54
   }
  },
  "drops": {
@@ -49398,6 +49429,210 @@
    },
    {
     "item": "16836",
+    "chance": 2.0
+   }
+  ],
+  "wabbit_squelette": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "17132",
+    "chance": 47.0,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "14462",
+    "chance": 47.0
+   },
+   {
+    "item": "305",
+    "chance": 7.8
+   },
+   {
+    "item": "14463",
+    "chance": 7.8
+   },
+   {
+    "item": "14453",
+    "chance": 5.76,
+    "cond": "quete"
+   },
+   {
+    "item": "14455",
+    "chance": 5.76,
+    "cond": "quete"
+   },
+   {
+    "item": "14454",
+    "chance": 5.76,
+    "cond": "quete"
+   },
+   {
+    "item": "963",
+    "chance": 5.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "14454",
+    "chance": 2.88,
+    "cond": "quete"
+   },
+   {
+    "item": "14455",
+    "chance": 2.88,
+    "cond": "quete"
+   },
+   {
+    "item": "14453",
+    "chance": 2.88,
+    "cond": "quete"
+   },
+   {
+    "item": "16829",
+    "chance": 1.0
+   },
+   {
+    "item": "20796",
+    "chance": 0.5
+   }
+  ],
+  "black_wabbit_squelette": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "17132",
+    "chance": 46.0,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "14466",
+    "chance": 46.0
+   },
+   {
+    "item": "14467",
+    "chance": 7.72
+   },
+   {
+    "item": "305",
+    "chance": 7.7
+   },
+   {
+    "item": "14453",
+    "chance": 6.0,
+    "cond": "quete"
+   },
+   {
+    "item": "14454",
+    "chance": 6.0,
+    "cond": "quete"
+   },
+   {
+    "item": "14455",
+    "chance": 6.0,
+    "cond": "quete"
+   },
+   {
+    "item": "963",
+    "chance": 5.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "14453",
+    "chance": 3.0,
+    "cond": "quete"
+   },
+   {
+    "item": "14454",
+    "chance": 3.0,
+    "cond": "quete"
+   },
+   {
+    "item": "14455",
+    "chance": 3.0,
+    "cond": "quete"
+   },
+   {
+    "item": "16829",
+    "chance": 1.0
+   },
+   {
+    "item": "20796",
+    "chance": 0.6
+   }
+  ],
+  "archi_wabbit_squelette": [
+   {
+    "item": "14462",
+    "chance": 94.0
+   },
+   {
+    "item": "305",
+    "chance": 94.0
+   },
+   {
+    "item": "17132",
+    "chance": 94.0,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "14455",
+    "chance": 11.52,
+    "cond": "quete"
+   },
+   {
+    "item": "14454",
+    "chance": 11.52,
+    "cond": "quete"
+   },
+   {
+    "item": "14453",
+    "chance": 11.52,
+    "cond": "quete"
+   },
+   {
+    "item": "963",
+    "chance": 10.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "14463",
+    "chance": 7.8
+   },
+   {
+    "item": "14455",
+    "chance": 5.76,
+    "cond": "quete"
+   },
+   {
+    "item": "14453",
+    "chance": 5.76,
+    "cond": "quete"
+   },
+   {
+    "item": "14454",
+    "chance": 5.76,
+    "cond": "quete"
+   },
+   {
+    "item": "16829",
     "chance": 2.0
    }
   ]

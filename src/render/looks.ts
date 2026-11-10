@@ -448,6 +448,8 @@ export const LOOKS: Record<string, Look> = {
   cochon_de_lait: { atlas: 'cochon_de_lait', scale: 0.7, map: MONSTER_MAP(14/23, 'AnimAttaque0', { 0: 14/23, 1: 4/46, 2: 14/23 }), height: 197, multi: true },
   araknelle: { atlas: 'araknelle', scale: 0.9, map: MONSTER_MAP(10/18, 'AnimAttaque0', { 0: 10/18, 1: 10/18 }), height: 46, multi: true },
   ambi_guman: { atlas: 'ambi_guman', scale: 1.0, map: MONSTER_MAP(20/40, 'AnimAttaque0', { 0: 20/40, 1: 18/49, 2: 24/44 }), height: 352, multi: true },
+  wabbit_squelette: { atlas: 'wabbit_squelette', scale: 0.64, map: MONSTER_MAP(19/35, 'AnimAttaque1', { 1: 19/35 }), height: 129, multi: true },
+  black_wabbit_squelette: { atlas: 'black_wabbit_squelette', scale: 0.77, map: MONSTER_MAP(19/35, 'AnimAttaque1', { 1: 19/35 }), height: 152, multi: true },
   champ_champ: { atlas: 'champ_champ', scale: 0.64, map: MONSTER_MAP(14/28, 'AnimAttaque0', { 0: 14/28, 1: 16/33 }), height: 119, multi: true },
   abraknyde_chetif: { atlas: 'abraknyde_chetif', scale: 0.64, map: MONSTER_MAP(18/33, 'AnimAttaque0', { 0: 18/33, 1: 20/34, 2: 9/34 }), height: 261, multi: true },
   tofu_malefique: { atlas: 'tofu_malefique', scale: 0.7, map: MONSTER_MAP(10/30, 'AnimAttaque0', { 0: 10/30, 1: 10/30 }), height: 83, multi: true },
