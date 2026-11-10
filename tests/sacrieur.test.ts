@@ -113,9 +113,9 @@ describe('Sacrieur (maquette Sacrieur, 2026-11-08)', () => {
     expect(m.hp).toBeLessThan(hp);
   });
 
-  it('jouable seulement dans la partie de test (12A) et dans le tutoriel du Temple (13A)', () => {
+  it('jouable par tous depuis « 0.4 suite : 14B » et dans le tutoriel du Temple (13A)', () => {
     const src = readFileSync(new URL('../src/render/accueil.ts', import.meta.url), 'utf8');
-    expect(src).toMatch(/EN_ESSAI = new Set\(\[[^\]]*'sacrieur'/);
+    expect(src).not.toMatch(/EN_ESSAI = new Set\(\[[^\]]*'sacrieur'/);
     const q = JSON.parse(readFileSync(new URL('../src/data/quetes.json', import.meta.url), 'utf8'));
     expect(JSON.stringify(q)).toContain('jeune Sacrieur');
   });

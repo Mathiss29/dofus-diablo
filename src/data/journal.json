@@ -1231,6 +1231,15 @@
       "lignes": {
         "Nouveautés": [
           {
+            "titre": "Le Sacrieur pour tous",
+            "phrase": "Le Sacrieur arrive à l'écran de création : plus besoin de la partie de test pour le jouer.",
+            "details": "Ses sorts jusqu'au niveau 60 et ses pouvoirs légendaires sont là. Son tutoriel du Temple Céleste aussi.",
+            "icone": "principale",
+            "etiquettes": [
+              "Création du perso"
+            ]
+          },
+          {
             "titre": "Un vrai menu des sorts",
             "phrase": "Les sorts rangés par rôle, avec des textes écrits pour le temps réel et un schéma de leur zone.",
             "details": "Filtres, comparaison avec la variante, grade suivant et légendaires qui changent le sort. Clic sur la barre : la fiche du sort.",
