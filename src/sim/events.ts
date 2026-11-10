@@ -167,7 +167,9 @@ export type SimEvent =
   | { k: 'queteFin'; id: string; sautee: boolean }
   | { k: 'bulle'; pnj: string; texte: string }
   | { k: 'objetQuete'; nom: string; n: number; sur: number }
-  | { k: 'succes'; id: string };
+  | { k: 'succes'; id: string }
+  /** Récompense d'un succès récupérée dans la fenêtre Succès (menu des succès 5B). */
+  | { k: 'succesRecupere'; id: string; xp: number };
 
 /** Zones au sol affichées avant un coup (rouge = danger, or = sort du joueur). */
 export type Telegraph =
