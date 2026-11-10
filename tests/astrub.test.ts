@@ -28,7 +28,9 @@ describe('Astrub (0.2a)', () => {
     const wg = new WorldGrid(astrub);
     expect(astrub.maps.filter(m => !m.inside).length).toBe(359 + 642);
     // Amakna (0.4 cachée) : dessiné, mais fermé hors partie de test
-    expect(astrub.maps.filter(m => m.essai).length).toBe(642);
+    // + les 8 salles du Château d'Amakna (0.4 suite : 6A, intérieurs aussi en essai)
+    expect(astrub.maps.filter(m => m.essai && !m.inside).length).toBe(642);
+    expect(astrub.maps.filter(m => m.essai && m.inside).length).toBe(8);
     expect(astrub.maps.filter(m => m.essai).every(m => wg.freeByMap.get(m.tag)!.length === 0)).toBe(true);
     wg.ouvrirEssai();
     expect(astrub.origin).toEqual([-88, -93]);

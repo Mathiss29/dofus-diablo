@@ -1394,6 +1394,16 @@
               "Partie de test",
               "Amakna"
             ]
+          },
+          {
+            "titre": "Le Château d'Amakna s'ouvre",
+            "phrase": "Huit salles officielles du Château : trône, banquets, cuisines, bibliothèque, conseil, chapelle, Milice.",
+            "details": "On entre par la tour du Château, ou par la Milice. Pas de PNJ de service : ils restent au Bastion.",
+            "icone": "carte",
+            "etiquettes": [
+              "Amakna",
+              "Partie de test"
+            ]
           }
         ]
       }
