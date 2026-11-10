@@ -693,11 +693,7 @@
         "chafer_piquier",
         "chafer_furtif",
         "chafer_debutant",
-        "chafer_piquier"
-       ]
-      },
-      {
-       "m": [
+        "chafer_piquier",
         "chafer_eclaireur",
         "chafer_eclaireur",
         "chafer_eclaireur",
@@ -718,11 +714,7 @@
         "sergent_chafer",
         "chafer_piquier",
         "?",
-        "?"
-       ]
-      },
-      {
-       "m": [
+        "?",
         "chafer_eclaireur",
         "chafer_furtif",
         "chafer_debutant",
@@ -730,22 +722,6 @@
         "sergent_chafer",
         "chafer_furtif",
         "chafer_eclaireur",
-        "?",
-        "?",
-        "?"
-       ]
-      },
-      {
-       "m": [
-        "chafer_piquier",
-        "chafer_furtif",
-        "chafer_furtif",
-        "chafer_debutant",
-        "sergent_chafer",
-        "chafer_eclaireur",
-        "chafer_furtif",
-        "chafer_debutant",
-        "?",
         "?",
         "?",
         "?"
@@ -762,6 +738,18 @@
         "?",
         "?",
         "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "chafer_piquier",
+        "chafer_furtif",
+        "chafer_furtif",
+        "chafer_debutant",
+        "sergent_chafer",
+        "chafer_eclaireur",
+        "chafer_furtif",
+        "chafer_debutant",
         "?",
         "?",
         "?",
@@ -2188,11 +2176,7 @@
         "pissenlit",
         "epouvanteur",
         "rose",
-        "pissenlit"
-       ]
-      },
-      {
-       "m": [
+        "pissenlit",
         "tournesol",
         "rose",
         "epouvanteur",
@@ -2212,32 +2196,13 @@
         "epouvanteur",
         "tournesol",
         "?",
-        "?"
-       ]
-      },
-      {
-       "m": [
+        "?",
         "rose",
         "tournesol",
         "tournesol",
         "pissenlit",
         "epouvanteur",
         "gardienne_champetre",
-        "?",
-        "?",
-        "?"
-       ]
-      },
-      {
-       "m": [
-        "gardienne_champetre",
-        "epouvanteur",
-        "rose",
-        "epouvanteur",
-        "pissenlit",
-        "tournesol",
-        "gardienne_champetre",
-        "?",
         "?",
         "?",
         "?"
@@ -2253,6 +2218,17 @@
         "epouvanteur",
         "?",
         "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "gardienne_champetre",
+        "epouvanteur",
+        "rose",
+        "epouvanteur",
+        "pissenlit",
+        "tournesol",
+        "gardienne_champetre",
         "?",
         "?",
         "?",
@@ -3118,11 +3094,7 @@
         "pichon_vert",
         "pichon_bleu",
         "pichon_orange",
-        "pichon_vert"
-       ]
-      },
-      {
-       "m": [
+        "pichon_vert",
         "pichon_blanc",
         "pichon_vert",
         "pichon_orange",
@@ -3143,11 +3115,7 @@
         "pichon_orange",
         "pichon_vert",
         "?",
-        "?"
-       ]
-      },
-      {
-       "m": [
+        "?",
         "pichon_vert",
         "pichon_kloune",
         "pichon_blanc",
@@ -3155,22 +3123,6 @@
         "pichon_blanc",
         "pichon_orange",
         "pichon_kloune",
-        "?",
-        "?",
-        "?"
-       ]
-      },
-      {
-       "m": [
-        "pichon_kloune",
-        "pichon_kloune",
-        "pichon_orange",
-        "pichon_bleu",
-        "pichon_vert",
-        "pichon_blanc",
-        "pichon_kloune",
-        "pichon_orange",
-        "?",
         "?",
         "?",
         "?"
@@ -3187,6 +3139,18 @@
         "?",
         "?",
         "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "pichon_kloune",
+        "pichon_kloune",
+        "pichon_orange",
+        "pichon_bleu",
+        "pichon_vert",
+        "pichon_blanc",
+        "pichon_kloune",
+        "pichon_orange",
         "?",
         "?",
         "?",
@@ -3289,11 +3253,7 @@
         "boufton_noir",
         "bouftou",
         "boufton",
-        "boufton"
-       ]
-      },
-      {
-       "m": [
+        "boufton",
         "bouftou",
         "boufton_noir",
         "bouftou_noir",
@@ -3313,32 +3273,13 @@
         "bouftou",
         "bouftou_noir",
         "?",
-        "?"
-       ]
-      },
-      {
-       "m": [
+        "?",
         "boufton",
         "bouftou_noir",
         "boufton_noir",
         "bouftou",
         "boufton",
         "chef_de_guerre_bouftou",
-        "?",
-        "?",
-        "?"
-       ]
-      },
-      {
-       "m": [
-        "bouftou_noir",
-        "bouftou_noir",
-        "bouftou",
-        "bouftou",
-        "bouftou_noir",
-        "boufton_noir",
-        "boufton_noir",
-        "?",
         "?",
         "?",
         "?"
@@ -3354,6 +3295,17 @@
         "bouftou_noir",
         "?",
         "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "bouftou_noir",
+        "bouftou_noir",
+        "bouftou",
+        "bouftou",
+        "bouftou_noir",
+        "boufton_noir",
+        "boufton_noir",
         "?",
         "?",
         "?",
@@ -3485,11 +3437,7 @@
         "cafarcher",
         "mirgrillon",
         "sakarien",
-        "mirgrillon"
-       ]
-      },
-      {
-       "m": [
+        "mirgrillon",
         "cafarcher",
         "pyrasite",
         "mirgrillon",
@@ -3514,11 +3462,7 @@
         "pyrasite",
         "cafarcher",
         "?",
-        "?"
-       ]
-      },
-      {
-       "m": [
+        "?",
         "cafarcher",
         "sakarien",
         "pyrasite",
@@ -3528,24 +3472,6 @@
         "cafarcher",
         "mirgrillon",
         "pyrasite",
-        "?",
-        "?",
-        "?"
-       ]
-      },
-      {
-       "m": [
-        "sakarien",
-        "ceglumen",
-        "ceglumen",
-        "sakarien",
-        "pyrasite",
-        "mirgrillon",
-        "ceglumen",
-        "cafarcher",
-        "mirgrillon",
-        "sakarien",
-        "?",
         "?",
         "?",
         "?"
@@ -3564,6 +3490,20 @@
         "?",
         "?",
         "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "sakarien",
+        "ceglumen",
+        "ceglumen",
+        "sakarien",
+        "pyrasite",
+        "mirgrillon",
+        "ceglumen",
+        "cafarcher",
+        "mirgrillon",
+        "sakarien",
         "?",
         "?",
         "?",

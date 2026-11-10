@@ -6,8 +6,9 @@ import type { World } from './world';
 
 /** Réglages des arènes (maquette « Donjons en vagues », ligne Donjons : 1B 2D 3A 4A 5A+5B+5C 6A 7A 8A+8C 9C 10B 11A 12A 13A 14A 15A 16A). */
 export const ARENE = {
-  /** 6A : la vague suivante arrive quand il reste ce nombre de monstres, ou après ce délai (s). */
-  reste: 2, delai: 30,
+  /** 6A : la vague suivante arrive quand il reste ce nombre de monstres, ou après ce délai (s).
+   *  3 vagues plus grosses au lieu de 6 (même total, Mathis 2026-11-10) : la suivante part quand il en reste 4. */
+  reste: 4, delai: 30,
   /** 7A : cercle rouge à l'entrée pendant ce temps avant l'apparition (s) ; écart entre deux monstres d'une même entrée. */
   annonce: 1, cadence: 0.25,
   /** 15A : invulnérable à l'arrivée (s) ; la vague 1 attend le premier geste, au plus ce temps (s). */
