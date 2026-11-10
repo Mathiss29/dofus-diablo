@@ -67,7 +67,7 @@ const LISTES = ['projectiles', 'drops', 'telegraphs', 'zonesSol'] as const;
  *  parle du joueur de l'écran de l'hôte. */
 const EVENEMENTS = new Set<SimEvent['k']>(['spell', 'shoot', 'slam', 'monsterCast', 'spellFx', 'status', 'massacre', 'massacreFin', 'hit', 'kill',
   'beteMorte', 'heal', 'filSoin', 'pieces', 'invocation', 'eveil', 'echange', 'souffrance', 'sacrifice', 'dompte', 'impact', 'grosCoup', 'bossIntro', 'furieux', 'wave',
-  'areneDebut', 'areneVague', 'arenePalier', 'areneAlarme', 'bossFuite', 'areneFin', 'bossDown', 'cast', 'bulle', 'rageSpent', 'signal', 'guerreVague', 'guerreVol', 'guerreFuite', 'guerreReplantee']);
+  'areneDebut', 'areneVague', 'arenePalier', 'areneAlarme', 'bossFuite', 'wobot', 'bossEpilogue', 'areneFin', 'bossDown', 'cast', 'bulle', 'rageSpent', 'signal', 'guerreVague', 'guerreVol', 'guerreFuite', 'guerreReplantee']);
 export const evenementPartage = (e: SimEvent) => EVENEMENTS.has(e.k);
 /** Événements propres à l'invité (World.evenementsDe) qu'il peut jouer chez lui : bandeaux, butin, quêtes, métiers. */
 const PERSONNELS_AFFICHES = new Set<SimEvent['k']>(['levelUp', 'newSpell', 'enterArea', 'enterLieu', 'loot', 'lootResource', 'lootKamas', 'bagFull',

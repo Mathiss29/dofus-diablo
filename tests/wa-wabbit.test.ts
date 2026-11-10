@@ -60,11 +60,12 @@ describe('Wa Wabbit et Terrier (« Wabbits : 7C 8A 8B 9A 9B 9C 14A 14D »)', () 
     avancer(w, 0.1, ev);
     expect(b.subis).toBeCloseTo(0.3);
     // à 0 PV : il s'enfuit (victoire, coffre), le trou reste ouvert
-    b.hp = 0; b.dead = true; b.t = 0.6;
+    b.hp = 0; w.killMonster(b);
     avancer(w, 0.1, ev);
     expect(ev.some(e => e.k === 'bossFuite')).toBe(true);
     expect(ev.some(e => e.k === 'areneFin')).toBe(true);
     expect(a.trou).not.toBeNull();
+    expect(w.quetes!.donjons[CHATEAU]?.v, 'la victoire compte (clé du Terrier en vente)').toBe(1);
     // il saute dans le trou : arrivée dans la première salle du Terrier, sans clé
     p.x = a.trou!.x; p.y = a.trou!.y;
     avancer(w, 2, ev);

@@ -13691,6 +13691,11 @@
        "couloir_terrier_2_3",
        "couloir_terrier_3_5"
       ]
+     },
+     "wobot": {
+      "tampon": "wobot_tamponneur",
+      "twansmute": "black_wo_wabbit",
+      "epilogue": "wa_wabbit"
      }
     }
    ],

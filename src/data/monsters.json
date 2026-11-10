@@ -29697,7 +29697,7 @@
  "wobot_tamponneur": {
   "dofusId": 3459,
   "name": "Wobot Tamponneur",
-  "hp": 2500,
+  "hp": 900,
   "speed": 0,
   "radius": 24,
   "mass": 99,
@@ -29712,11 +29712,11 @@
   "xp": 0,
   "level": 80,
   "res": {
-   "terre": 50,
-   "feu": 50,
-   "eau": 50,
-   "air": 50,
-   "neutre": 50
+   "terre": 20,
+   "feu": 20,
+   "eau": 20,
+   "air": 20,
+   "neutre": 20
   }
  }
 }

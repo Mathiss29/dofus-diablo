@@ -297,6 +297,9 @@ export interface DonjonDef { nom: string; salles: Record<string, string[][]>;
   fuite?: { suite: string };
   /** « Wabbits : 7C » : un `monstre` laissé en vie `delai` s court donner l'alarme : `renforts` monstres en plus arrivent. */
   alarme?: { monstre: string; delai: number; renforts: number };
+  /** « Wabbits : 10A-D » (Wa Wobot) : Tamponneurs posés par Mékattwaction (changés en `twansmute` s'ils tiennent),
+   *  carapace Mékawapace à briser, Substitution avec un Tamponneur, et à la fin `epilogue` sort du Wobot cassé et s'enfuit. */
+  wobot?: { tampon: string; twansmute: string; epilogue: string };
   /** Donjon en couloirs (maquette « Couloirs : 1C 2B 3A 4A », tools/extraction/couloirs.py), partie de test seulement :
    *  ses vraies salles dans l'ordre, reliées par des couloirs (cartes `tags`), puis l'arène au bout, sans porte.
    *  Groupes officiels dans les salles, `nErrants` monstres seuls dans chaque couloir (2B) ; les vagues partent à l'entrée de l'arène. */

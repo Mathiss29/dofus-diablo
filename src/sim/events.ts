@@ -69,6 +69,8 @@ export type SimEvent =
   /** « Wabbits : 7C » : un Kiafin court donner l'alarme (n = 0), ou l'a donnée (n renforts arrivent). */
   | { k: 'areneAlarme'; id: number; x: number; y: number; n: number }
   /** « Wabbits : 8B » : le boss s'enfuit dans un trou ; premiers = joueurs que le trou mène au donjon suite (9A). */
+  | { k: 'wobot'; id: number; x: number; y: number; quoi: 'tampon' | 'twansmute' | 'carapace' | 'brisee' | 'durcie' | 'substitution' }
+  | { k: 'bossEpilogue'; id: number; name: string; x: number; y: number }
   | { k: 'bossFuite'; id: number; name: string; x: number; y: number; suite: string; premiers: number[] }
   | { k: 'areneFin'; nom: string; temps: number; record: boolean }
   /** Guerre des Cawottes (0.4) : attaque d'un champ (annoncée aux joueurs de l'île), vague, cawotte volée ou emportée par un

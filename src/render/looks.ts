@@ -503,7 +503,7 @@ export const LOOKS: Record<string, Look> = {
   blanc_pa_wabbit: { atlas: 'blanc_pa_wabbit', scale: 0.64, map: MONSTER_MAP(15/40, 'AnimAttaque0', { 0: 15/40, 2: 7/28 }), height: 269, multi: true },
   // invocations immobiles du Wa Wabbit et du Wa Wobot (« Wabbits : 8A, 10A ») : repos, coup reçu, mort
   cawotte_woyale: { atlas: 'cawotte_woyale', scale: 0.4, map: FIXE_MAP, height: 120, multi: true },
-  wobot_tamponneur: { atlas: 'wobot_tamponneur', scale: 0.6, map: FIXE_MAP, height: 100, multi: true },
+  wobot_tamponneur: { atlas: 'wobot_tamponneur', scale: 0.8, map: FIXE_MAP, height: 100, multi: true },
   tiwobot: { atlas: 'tiwobot', scale: 0.52, map: MONSTER_MAP(22/54, 'AnimAttaque1', { 1: 22/54, 2: 45/60, 3: 19/50 }), height: 230, multi: true },
   wabbit: { atlas: 'wabbit', scale: 0.64, map: MONSTER_MAP(11/27, 'AnimAttaque0', { 0: 11/27, 1: 22/35 }), height: 151, multi: true },
   black_wabbit: { atlas: 'black_wabbit', scale: 0.64, map: MONSTER_MAP(13/27, 'AnimAttaque0', { 0: 13/27, 1: 18/39 }), height: 146, multi: true },

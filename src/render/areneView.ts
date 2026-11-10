@@ -30,6 +30,9 @@ export class AreneView {
   /** « Wabbits : 8B + 9A » : trou où le boss s'est enfui (mène au donjon suivant la première fois). */
   private trou: Phaser.GameObjects.Graphics;
   private trouNom: Phaser.GameObjects.Text;
+  /** « Wabbits : 10A + 10B » : carapace Mékawapace sur le Wa Wobot, compte à rebours des Tamponneurs avant Twansmutation. */
+  private wobot: Phaser.GameObjects.Graphics;
+  private tw = 0;
   private t = 0;
   /** Temps depuis l'ouverture (-1 : fermé) ; temps depuis le dernier sursaut. */
   private ouvert = -1;
@@ -41,16 +44,50 @@ export class AreneView {
     this.nom = scene.add.text(0, 0, 'Sortie', { fontFamily: 'Rowdies, Lexend, sans-serif', fontSize: '15px', color: '#cfe8ff', stroke: '#000', strokeThickness: 4 })
       .setOrigin(0.5, 1).setVisible(false);
     this.trou = scene.add.graphics().setVisible(false);
+    this.wobot = scene.add.graphics();
     this.trouNom = scene.add.text(0, 0, '', { fontFamily: 'Rowdies, Lexend, sans-serif', fontSize: '15px', color: '#ffd9a0', stroke: '#000', strokeThickness: 4, align: 'center' })
       .setOrigin(0.5, 1).setVisible(false);
     // planches chargées d'avance : le coffre doit être prêt à la mort du boss
     for (const c of Object.values(COFFRES)) this.planche(c.atlas);
   }
+  /** Carapace = demi-dôme d'acier autour du Wa Wobot, qui se fissure à mesure qu'on la frappe ; Tamponneur = anneau qui se vide. */
+  private dessinerWobot(dt: number) {
+    const g = this.wobot.clear();
+    this.tw += dt;
+    if (!this.world.arene) return;
+    let prof = 0;
+    for (const m of this.world.monsters) {
+      if (m.dead || (!m.carapace && !(m.twansT > 0))) continue;
+      const s = ISO.toScreen(m.x, m.y);
+      prof = Math.max(prof, s.y + 1);
+      if (m.carapace > 0) {
+        const r = 84, k = m.carapace;
+        g.fillStyle(0x9fb0c8, 0.18 + 0.12 * k).fillEllipse(s.x, s.y - 70, r * 2, r * 2.2);
+        g.lineStyle(7, 0xb8c4d8, 0.45 + 0.45 * k).strokeEllipse(s.x, s.y - 70, r * 2, r * 2.2);
+        g.lineStyle(2, 0xffffff, 0.5 * k + 0.2 * Math.sin(this.tw * 6)).strokeEllipse(s.x, s.y - 70, r * 2 + 8, r * 2.2 + 8);
+        // fissures : plus la carapace est entamée, plus il y en a
+        g.lineStyle(2, 0x2a2f3a, 0.9);
+        const n = Math.round((1 - k) * 8);
+        for (let i = 0; i < n; i++) {
+          const a0 = i * 2.4 + 0.3, x0 = s.x + Math.cos(a0) * r, y0 = s.y - 70 + Math.sin(a0) * r * 1.1;
+          g.lineBetween(x0, y0, x0 - Math.cos(a0) * 18 + Math.sin(a0) * 6, y0 - Math.sin(a0) * 18);
+        }
+      }
+      if (m.twansT > 0) {   // Tamponneur : l'anneau se vide jusqu'à la Twansmutation, rouge et clignotant à la fin
+        const f = Math.min(1, m.twansT / 6), urgent = m.twansT < 2, c = urgent ? 0xff5a3a : 0xffd36b;
+        g.lineStyle(4, 0x000000, 0.5).strokeCircle(s.x, s.y - 70, 16);
+        g.lineStyle(4, c, urgent ? 0.6 + 0.4 * Math.sin(this.tw * 14) : 0.9).beginPath()
+          .arc(s.x, s.y - 70, 16, -Math.PI / 2, -Math.PI / 2 + f * Math.PI * 2).strokePath();
+      }
+    }
+    g.setDepth(prof + 300);
+  }
   private planche(a: string) { return textureUneFois(this.scene, a, l => l.multiatlas(a, v(`${SP}/${a}.json`), dossier(`${SP}/`))); }
-  destroy() { this.trou.destroy(); this.trouNom.destroy(); this.portail.destroy(); this.lueur.destroy(); this.coffre?.destroy(); this.nom.destroy(); }
+  destroy() { this.wobot.destroy(); this.trou.destroy(); this.trouNom.destroy(); this.portail.destroy(); this.lueur.destroy(); this.coffre?.destroy(); this.nom.destroy(); }
 
   update(dt: number) {
     const a = this.world.arene, vu = !!a?.fini;
+    this.dessinerWobot(dt);
     this.portail.setVisible(vu); this.nom.setVisible(vu); this.lueur.setVisible(vu);
     // trou du boss enfui : visible seulement pour qui il mène encore quelque part
     const t = vu && a!.trou && a!.premiers.has(this.world.player.id) ? a!.trou : null;
