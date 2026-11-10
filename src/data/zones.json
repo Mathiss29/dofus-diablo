@@ -2814,6 +2814,94 @@
      ],
      "nom": "Pitons Rocheux des Craqueleurs",
      "cle": "7927"
+    },
+    {
+     "a": [
+      "4_-6",
+      330
+     ],
+     "b": [
+      "chateau_trone",
+      528
+     ],
+     "nom": "Salle du trône du Château d'Amakna"
+    },
+    {
+     "a": [
+      "chateau_trone",
+      515
+     ],
+     "b": [
+      "chateau_banquet",
+      516
+     ],
+     "nom": "Salle des banquets"
+    },
+    {
+     "a": [
+      "chateau_trone",
+      349
+     ],
+     "b": [
+      "chateau_chapelle",
+      464
+     ],
+     "nom": "Chapelle royale de Féca"
+    },
+    {
+     "a": [
+      "chateau_banquet",
+      479
+     ],
+     "b": [
+      "chateau_cuisine",
+      424
+     ],
+     "nom": "Cuisines du Château"
+    },
+    {
+     "a": [
+      "chateau_banquet",
+      502
+     ],
+     "b": [
+      "chateau_bibliotheque",
+      524
+     ],
+     "nom": "Bibliothèque du Château"
+    },
+    {
+     "a": [
+      "chateau_bibliotheque",
+      428
+     ],
+     "b": [
+      "chateau_conseil",
+      554
+     ],
+     "nom": "Salle du Conseil"
+    },
+    {
+     "a": [
+      "5_-6",
+      356
+     ],
+     "b": [
+      "chateau_milice",
+      465
+     ],
+     "nom": "Milice du Château d'Amakna"
+    },
+    {
+     "a": [
+      "chateau_milice",
+      436
+     ],
+     "b": [
+      "chateau_milice_garde",
+      498
+     ],
+     "nom": "Corps de garde de la Milice"
     }
    ],
    "donjons": [

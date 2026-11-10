@@ -559,3 +559,12 @@ Ville vivante (maquette Ville 5F, 8 nov. 2026) :
   Les cartes sans voisine à pied (Passage vers Brâkmar, îlots de Madrestam, colonne x = −9) sont retirées.
 - 0.4 cachée : cartes `essai: 1` dans monde.json (dessinées partout, marchables seulement en partie de test : `WorldGrid.ouvrirEssai`),
   sous-zones `essai: true` + `region: "Amakna"` dans zones.json (monstres, butin et contrats seulement en partie de test).
+
+## Intérieurs du Château d'Amakna (0.4 suite : 6A, 10 nov. 2026)
+
+- Sous-zone 180 : 65 cartes hors du dehors (salles du Château, chambres de l'auberge, maisons, caves). Cartes sorties des bundles
+  `mapdata_assets_world_N` (N = mapId >> 18) de `cache-dofus/chemin200/cartes.0*.tar` par `map_dump.py`.
+- 8 salles gardées (trône 95683075, conseil 222562316, banquets 95686145, bibliothèque 95685121, chapelle 95687171, Milice 95685125
+  et 95686149, cuisines 95684099), rangées en (20..34, 56) : `PARTAGE=1 world_export.py`, `COURANTE=1 batiments.py`,
+  `decor_par_carte.py`, puis `monde_continent.py fusion` (ajouter ensuite `pages` et `essai: 1` aux nouvelles salles).
+- Portes dans `zones.json` (`open.portes`) : tour du Château [4,-6] case 330 → trône ; [5,-6] case 356 → Milice ; portes 3507/3520 des salles.

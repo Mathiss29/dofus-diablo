@@ -1406,6 +1406,16 @@
             ]
           },
           {
+            "titre": "Le Château d'Amakna s'ouvre",
+            "phrase": "Huit salles officielles du Château : trône, banquets, cuisines, bibliothèque, conseil, chapelle, Milice.",
+            "details": "On entre par la tour du Château, ou par la Milice. Pas de PNJ de service : ils restent au Bastion.",
+            "icone": "carte",
+            "etiquettes": [
+              "Amakna",
+              "Partie de test"
+            ]
+          },
+          {
             "titre": "Lieux à découvrir",
             "phrase": "Temples, coins secrets et donjons se découvrent en passant, avec un peu d'XP.",
             "details": "Trois succès Cartographe récompensent 90 % d'une région explorée.",

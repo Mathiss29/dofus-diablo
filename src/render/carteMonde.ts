@@ -39,12 +39,6 @@ const FILTRES: [Filtre, string][] = [['zaap', 'Zaaps'], ['transport', 'Transport
 const PAR_DEFAUT: Record<Filtre, boolean> = { zaap: true, transport: true, atelier: true, service: true, donjon: true, lieu: true, quetes: true, recoltes: false, groupe: true, drapeaux: true, danger: false };
 /** Couleurs des joueurs du groupe (10A, 14A). */
 export const COULEURS_GROUPE = ['#ff5a4a', '#4fc3f7', '#9ad15a', '#ffb74d', '#f06292'];
-/** Intérieurs à plusieurs salles (13A), comme tools/extraction/plan_carte.py. */
-const MULTI = ['egout', 'souterrain', 'cache', 'grange', 'chateau', 'cour', 'planque', 'crypte', 'temple', 'mine'];
-export function groupeInterieur(tag: string): string | null {
-  const t = tag.replace(/^(arene|couloir)_/, ''), p = /^[a-z]+/.exec(t)?.[0] ?? '';
-  return t === 'chateau_ww' || !MULTI.includes(p) ? null : p;
-}
 const DEHORS = /^-?\d+_-?\d+$/;
 const esc = (s: string) => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
 const sansAccent = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
@@ -277,11 +271,11 @@ export class CarteMonde {
     this.ecouterVue();
     if (!sur) Son.jouer(MANIFESTE.ui.ouvrir, 'interface', { vol: 0.8 });
     // 13A : dans un intérieur à plusieurs salles, le plan des salles d'abord
-    const ici = this.world.worldGrid?.mapAt(this.world.player.x, this.world.player.y);
-    const g = ici && !DEHORS.test(ici.tag) ? groupeInterieur(ici.tag) : null;
+    const ici = this.world.worldGrid?.mapAt(this.world.player.x, this.world.player.y)?.tag;
     this.charger(this.monde).then(P => {
       if (this.root !== root) return;
-      if (g && P?.plans?.[g] && !ou && !sur) this.montrerSalles(g, P.plans[g]);
+      const g = ici ? Object.entries(P?.plans ?? {}).find(([, l]) => l.some(s => s.tag === ici)) : undefined;
+      if (g && !ou && !sur) this.montrerSalles(g[0], g[1]);
       else this.montrerMonde(this.monde, false, ou, surQuete);
     });
   }

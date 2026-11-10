@@ -5,7 +5,7 @@ Usage : python plan_carte.py <public/assets/mondes/<monde>> [--plans]
   carte  : repère de carte.webp en unités de carte (case [x, y] = coin haut-gauche ox + x·cw, oy + y·ch, en pixels de l'image)
   maps   : [x, y, sous-zone, essai] des cartes du dehors (brouillard, survol, teinte de danger, onglets des autres mondes)
   reperes: repères officiels (monde.json reperes)
-  plans  : avec --plans, plan des intérieurs à plusieurs salles (13A) : image plan_<groupe>.webp, son coin et sa taille en unités,
+  plans  : avec --plans, plan des intérieurs à plusieurs salles reliées par des portes (13A) : image plan_<groupe>.webp, son coin et sa taille en unités,
            et les salles [tag, x, y]. Les images sont dessinées comme carte.webp (sol puis décor) ; les fichiers lourds manquants
            (sol_*.webp, decor_*.webp) sont d'abord repris sur assets.diablofus.com.
 """
@@ -38,19 +38,25 @@ plan = {'monde': NOM, 'carte': carte,
         'maps': [[m['x'], m['y'], m['sub'], 1 if m.get('essai') else 0] for m in sorted(dehors, key=lambda m: (m['y'], m['x']))],
         'reperes': M.get('reperes', [])}
 
-# --- intérieurs à plusieurs salles (13A) ---
-MULTI = ('egout', 'souterrain', 'cache', 'grange', 'chateau', 'cour', 'planque', 'crypte', 'temple', 'mine')
-def groupe(tag):
-    t = re.sub(r'^(arene|couloir)_', '', tag)
-    p = re.match(r'([a-z]+)', t).group(1)
-    if t == 'chateau_ww': return None   # arène du Château du Wa Wabbit (salle unique)
-    return p if p in MULTI else None
-groupes = {}
-for m in M['maps']:
-    if DEHORS.fullmatch(m['tag']) and not m.get('inside'): continue
-    g = groupe(m['tag'])
-    if g: groupes.setdefault(g, []).append(m)
-groupes = {g: l for g, l in groupes.items() if len(l) > 1}
+# --- intérieurs à plusieurs salles (13A) : salles reliées par des portes (zones.json), une composante = un plan ---
+ZONES = json.load(open(os.path.join(D, '..', '..', '..', '..', 'src', 'data', 'zones.json')))
+PORTES = [po for z in ZONES.values() if (z.get('open') or {}).get('world') == NOM for po in z['open'].get('portes', [])]
+PAR_TAG = {m['tag']: m for m in M['maps']}
+dedans = lambda t: t in PAR_TAG and not (DEHORS.fullmatch(t) and not PAR_TAG[t].get('inside'))
+lien = {}
+for po in PORTES:
+    a, b = po['a'][0], po['b'][0]
+    if po.get('zone') or not (dedans(a) and dedans(b)): continue
+    lien.setdefault(a, set()).add(b); lien.setdefault(b, set()).add(a)
+groupes, vus = {}, set()
+for t in sorted(lien):
+    if t in vus: continue
+    comp, pile = [], [t]
+    while pile:
+        x = pile.pop()
+        if x in vus: continue
+        vus.add(x); comp.append(x); pile.extend(lien.get(x, ()))
+    if len(comp) > 1: groupes[sorted(comp)[0]] = [PAR_TAG[x] for x in sorted(comp)]
 
 ASSETS = 'https://assets.diablofus.com'
 EMPREINTES = json.load(open(os.path.join(D, '..', '..', '..', '..', 'src', 'data', 'fichiers-lourds.json')))

@@ -95,6 +95,6 @@ describe('Carte du monde (« Carte : » et « Carte suite : »)', () => {
     expect(carte.regions.some((r: { ver: string }) => r.ver === '0.10')).toBe(true);
     const plan = lire('astrub/plan.json');
     expect(plan.carte.cw).toBeGreaterThan(100);
-    expect(plan.plans.egout.length).toBeGreaterThan(10);
+    expect(plan.plans.egout_1.length).toBeGreaterThan(10);
   });
 });
