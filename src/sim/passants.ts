@@ -8,6 +8,11 @@ import type { WorldGrid } from './gridmap';
  *  bloquent personne et n'entrent pas en combat. Leur hasard a sa propre graine (la partie tire toujours la même suite). */
 export interface HabitantDef { id: string; nom: string; dofusId: number }
 export const HABITANTS = DATA.habitants as HabitantDef[];
+/** Autres lieux qui vivent (0.4 suite 6C : le Château d'Amakna) : leurs habitants flânent sur plusieurs cartes d'une zone. */
+export interface LieuPassants { zone: string; v04?: boolean; cartes: string[]; habitants: HabitantDef[] }
+export const LIEUX_PASSANTS = (DATA as unknown as { lieux: Record<string, LieuPassants> }).lieux;
+/** Les lieux de cette zone (la 0.4 seulement si elle est visible). */
+export const lieuxDeZone = (zone: string, v04: boolean) => Object.values(LIEUX_PASSANTS).filter(l => l.zone === zone && (v04 || !l.v04));
 
 export class Passant {
   /** Champs lus par l'affichage (comme une entité) : position, orientation, animation. */
@@ -26,11 +31,12 @@ export class Passants {
   private rng: Rng;
   private libres: number[];
 
-  constructor(private wg: WorldGrid, tag: string, seed: number, premierId: number) {
+  /** `tags` : les cartes où ils flânent (cases marchables de ces cartes) ; `defs` : qui (par défaut, les habitants du Bastion). */
+  constructor(private wg: WorldGrid, tags: string[], seed: number, premierId: number, defs: HabitantDef[] = HABITANTS) {
     this.rng = new Rng(seed ^ 0x5a55a5);
-    this.libres = wg.freeByMap.get(tag) ?? [];
+    this.libres = tags.flatMap(t => wg.freeByMap.get(t) ?? []);
     if (!this.libres.length) return;
-    HABITANTS.forEach((def, i) => {
+    defs.forEach((def, i) => {
       const q = wg.cellToWorld(this.rng.pick(this.libres));
       this.liste.push(new Passant(premierId + i, def, q.x, q.y, this.rng.range(0, 6)));
     });
@@ -54,7 +60,7 @@ export class Passants {
   }
   /** Arrivé : il reste là de 4 à 12 secondes (il regarde une vitrine, il discute). */
   private arreter(p: Passant) { p.anim = 'idle'; p.chemin = []; p.attente = this.rng.range(4, 12); }
-  /** Un nouveau but à quelques dizaines de pas, sur l'île (case marchable atteignable). */
+  /** Un nouveau but à quelques dizaines de pas, sur l'île ou dans le lieu (case marchable atteignable). */
   private repartir(p: Passant) {
     for (let essai = 0; essai < 6; essai++) {
       const q = this.wg.cellToWorld(this.rng.pick(this.libres)), d = Math.hypot(q.x - p.x, q.y - p.y);

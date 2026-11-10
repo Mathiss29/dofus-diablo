@@ -22,7 +22,7 @@ import { Arene, ARENE } from './arene';
 import type { EtatMonde } from './etatMonde';
 import { Quetes, type Compte, type EtatQuetes, type QuetesData } from './quests';
 import { appliquerTest, type ReglagesTest } from './outilsTest';
-import { Passants } from './passants';
+import { Passants, lieuxDeZone } from './passants';
 import { ALMANAX, jourAlmanax, type JourAlmanax } from './almanax';
 import { COFFRE, coffreVide, type Coffre } from './coffre';
 /** Archimonstres (0.3, 15B) : chance qu'un monstre d'un groupe soit son archimonstre ; pierres d'âme officielles (vide, pleine). */
@@ -351,7 +351,13 @@ export class World {
     if (open && opts.quetes) this.quetes = new Quetes(opts.quetes, this, opts.compte);
     // les quêtes d'abord : le tutoriel retient les groupes du Temple jusqu'à son étape « Frapper »
     if (this.quetes) { if (opts.reprise) this.quetes.reprendre(opts.reprise); else this.quetes.demarrer(); }
-    if (open?.bastion && this.map instanceof WorldGrid) this.passants = new Passants(this.map, this.map.mapByCoords(...open.start)!.tag, opts.seed ?? 1, -100);
+    if (open?.bastion && this.map instanceof WorldGrid) this.passants = new Passants(this.map, [this.map.mapByCoords(...open.start)!.tag], opts.seed ?? 1, -100);
+    // autres lieux qui vivent (0.4 suite 6C : Château d'Amakna), un seul par zone pour l'instant
+    else if (open && this.map instanceof WorldGrid) {
+      const lieu = lieuxDeZone(opts.zone, this.player.v04)[0];
+      if (lieu) this.passants = new Passants(this.map, lieu.cartes, opts.seed ?? 1, -100, lieu.habitants);
+      if (!this.passants?.liste.length) this.passants = null;
+    }
     if (open && !opts.sansGroupes) this.spawnGroups();
     if (open?.havreSac?.poutch != null) this.poserPoutch(open.havreSac.poutch);
     if (open) this.visiter(opts.zonesVues ?? []);

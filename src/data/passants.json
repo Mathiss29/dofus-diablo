@@ -8,5 +8,23 @@
   { "id": "artisan_pandawa", "nom": "Artisan Pandawa", "dofusId": 5813 },
   { "id": "bucheronne_astrub", "nom": "Bûcheronne astrubienne", "dofusId": 5246 },
   { "id": "ingenieur_frigost", "nom": "Ingénieur frigostien", "dofusId": 2062 }
- ]
+ ],
+ "lieux": {
+  "chateau": {
+   "_note": "Château d'Amakna (0.4 suite 6C) : gens de la Cour, cuisiniers et serviteurs officiels (table npcs) qui flânent dans la cour et autour des murs. Partie de test tant que la 0.4 n'est pas publique.",
+   "zone": "astrub", "v04": true,
+   "cartes": ["4_-7", "5_-7", "4_-6", "5_-6", "6_-6", "3_-6", "4_-5", "5_-5", "6_-5"],
+   "habitants": [
+    { "id": "noble_cour", "nom": "Noble de la Cour", "dofusId": 902 },
+    { "id": "noble_cour2", "nom": "Noble de la Cour", "dofusId": 1557 },
+    { "id": "noble_cour3", "nom": "Noble de la Cour", "dofusId": 1558 },
+    { "id": "dame_cour", "nom": "Dame de la cour", "dofusId": 1553 },
+    { "id": "dame_cour2", "nom": "Dame de la cour", "dofusId": 1554 },
+    { "id": "dame_cour3", "nom": "Dame de la cour", "dofusId": 1555 },
+    { "id": "cuisinier_chateau", "nom": "Apprenti Cuisinier", "dofusId": 1986 },
+    { "id": "cuisiniere_chateau", "nom": "Apprentie Cuisinière", "dofusId": 1989 },
+    { "id": "serviteur_marquis", "nom": "Serviteur du Marquis", "dofusId": 2035 }
+   ]
+  }
+ }
 }

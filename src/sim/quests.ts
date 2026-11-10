@@ -136,6 +136,8 @@ export interface PnjDef {
   phrase?: string;
   /** PNJ de la version 0.3 (caché hors partie de test). */
   v03?: boolean;
+  /** PNJ de la version 0.4 (Château d'Amakna : caché hors partie de test). */
+  v04?: boolean;
   /** Havre-Sac (maquette Hub 3A) : il n'emménage qu'après la première visite de cette zone. */
   apres?: string;
   /** Métier affiché dans la fenêtre de ses services (Antiquaire, Couturière…). */
@@ -309,6 +311,7 @@ export class Quetes {
     if (wg) for (const [id, def] of Object.entries(data.pnj)) {
       if ((def.zone ?? 'incarnam') !== world.opts.zone) continue;
       if (def.v03 && !world.player?.v03) continue;   // PNJ de la 0.3 : partie de test seulement jusqu'à la sortie
+      if (def.v04 && !world.player?.v04) continue;
       if (def.apres && !(world.opts.zonesVues ?? []).includes(def.apres) && world.opts.zone !== def.apres) continue;   // pas encore emménagé (3A)
       const m = wg.mapByTag(def.carte);
       if (!m || !wg.freeByMap.get(def.carte)?.length) continue;   // carte pas (encore) exportée

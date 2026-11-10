@@ -567,6 +567,56 @@
     "Oyez ! N'importe quel Zaap mène au Bastion des Douze. Les Douze vous saluent, aventuriers !"
    ]
   },
+  "garde_chateau1": {
+   "nom": "Garde du château",
+   "sprite": "garde_amakna",
+   "dofusId": 2848,
+   "zone": "astrub",
+   "carte": "4_-6",
+   "case": 302,
+   "v04": true,
+   "titre": "Garde du Château d'Amakna",
+   "phrase": "Le Roi Allister reçoit qui veut bien s'essuyer les pieds. La salle du trône est tout droit, les bagarres sont dehors.",
+   "discussion": [
+    {
+     "reponse": "Je peux visiter ?",
+     "texte": "Trône, banquets, chapelle, bibliothèque, cuisines : tout est ouvert. Ne touche pas aux tartes, le cuisinier les compte."
+    }
+   ]
+  },
+  "garde_chateau2": {
+   "nom": "Garde du château",
+   "sprite": "garde_amakna",
+   "dofusId": 2849,
+   "zone": "astrub",
+   "carte": "5_-6",
+   "case": 328,
+   "v04": true,
+   "titre": "Garde de la Milice",
+   "phrase": "La Milice d'Amakna a sa caserne ici. Si tu cherches la bagarre, va plutôt la chercher chez les Bworks."
+  },
+  "bailli": {
+   "nom": "Bailli du Roi Allister",
+   "dofusId": 2330,
+   "zone": "astrub",
+   "carte": "4_-5",
+   "v04": true,
+   "titre": "Crieur du Château",
+   "phrase": "Le Roi aime qu'on crie ses nouvelles. Moi, j'aime qu'on les écoute. On ne peut pas tout avoir.",
+   "discussion": [
+    {
+     "reponse": "Que se passe-t-il à Amakna ?",
+     "texte": "Des Bworks dans les bois, des Kwaks sur la montagne, des Scarafeuilles au sud. Le Roi dit que c'est de la vitalité. Moi, je dis que c'est du travail."
+    }
+   ],
+   "cris": [
+    "Oyez, oyez ! Le Roi Allister ouvre son château : trône, banquets, chapelle et bibliothèque, entrée libre !",
+    "Oyez ! La Milice d'Amakna recrute. Il faut une lame, du courage, et ne pas avoir peur des Bworks !",
+    "Oyez ! Les Scarafeuilles grouillent au sud, les Kwaks à la montagne : aventuriers, à vos armes !",
+    "Oyez, oyez ! Les Zaaps d'Amakna relient le village, le château et les champs. Plus d'excuse pour arriver en retard !",
+    "Oyez ! Le cuisinier du château a encore perdu une tarte. Quiconque la retrouve la rend. Entière !"
+   ]
+  },
   "forgemage": {
    "nom": "Malek le Forgemage",
    "dofusId": 7379,
