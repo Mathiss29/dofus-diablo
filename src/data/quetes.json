@@ -1371,6 +1371,158 @@
        }
       ]
      }
+    ],
+    "enutrof": [
+     {
+      "nom": "Premiers pas",
+      "bulle": "Bienvenue sur Incarnam, jeune Enutrof ! Contemple les Dofus, puis clique sur le sol et suis le chemin. Je t'attends dans la salle suivante.",
+      "objectifs": [
+       {
+        "t": "aller",
+        "texte": "Passer dans la salle suivante (clic gauche)",
+        "carte": "temple_2"
+       }
+      ]
+     },
+     {
+      "nom": "La salle d'entraînement",
+      "pnj": "ganymede_temple",
+      "objectifs": [
+       {
+        "t": "aller",
+        "texte": "Rejoindre Ganymède",
+        "pnj": "ganymede_temple"
+       }
+      ]
+     },
+     {
+      "nom": "Frapper",
+      "pnj": "ganymede_temple",
+      "bulle": "Des esprits de feu se sont glissés dans le Temple. Clique sur l'un d'eux : tu le poursuis et tu le frappes.",
+      "objectifs": [
+       {
+        "t": "vaincre",
+        "texte": "Vaincre un monstre (clic dessus)",
+        "n": 1,
+        "sousZone": 446
+       }
+      ]
+     },
+     {
+      "nom": "Ton premier sort",
+      "pnj": "ganymede_temple",
+      "bulle": "Tes sorts sont sur & é \" '. Touche & : Force de l'Âge, un coup de pelle Terre qui te fait courir plus vite.",
+      "halo": 0,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "sort": "force_age",
+        "texte": "Lancer ton premier sort (&)"
+       }
+      ]
+     },
+     {
+      "nom": "Lancer de Pièces",
+      "pnj": "ganymede_temple",
+      "bulle": "Clic droit : Lancer de Pièces. Une pièce lancée de loin, sans recharge : de quoi harceler un monstre avant de l'assommer.",
+      "halo": 6,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "sort": "lancer_pieces",
+        "texte": "Lancer une pièce (clic droit)"
+       }
+      ]
+     },
+     {
+      "nom": "Le coffre au trésor",
+      "pnj": "ganymede_temple",
+      "bulle": "Ton Coffre Animé te suit partout. Chaque monstre vaincu près de lui y met une pièce, deux s'il était ralenti. À 50 pièces, X l'ouvre : du butin d'élite ! Vide ce groupe.",
+      "halo": "jauge",
+      "objectifs": [
+       {
+        "t": "vaincre",
+        "texte": "Vaincre des monstres près de ton coffre",
+        "n": 3,
+        "sousZone": 446
+       }
+      ]
+     },
+     {
+      "nom": "Se déplacer vite",
+      "pnj": "ganymede_temple",
+      "bulle": "Espace : Souterrain. Tu t'enfouis et ressors un peu plus loin, en frappant ce qui t'attend à la sortie.",
+      "halo": 7,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "quoi": "mobilite",
+        "texte": "Se déplacer avec Espace"
+       }
+      ]
+     },
+     {
+      "nom": "La potion",
+      "pnj": "ganymede_temple",
+      "bulle": "Blessé ? E : une potion. Tu en regagnes une à chaque groupe vaincu.",
+      "halo": "potion",
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "quoi": "potion",
+        "texte": "Boire une potion (E) une fois blessé"
+       }
+      ]
+     },
+     {
+      "nom": "Premières armes",
+      "pnj": "ganymede_temple",
+      "bulle": "Voici ton équipement : un Marteau Martel et la panoplie de l'Intrépide. I ouvre ton sac : équipe tout.",
+      "donner": {
+       "enutrof": [
+        "9961",
+        "10801",
+        "10800",
+        "10784",
+        "10785",
+        "10799",
+        "10794",
+        "10798"
+       ]
+      },
+      "objectifs": [
+       {
+        "t": "equiper",
+        "objet": "9961",
+        "texte": "Équiper ton marteau (I)"
+       },
+       {
+        "t": "equiper",
+        "objets": [
+         "10801",
+         "10800",
+         "10784",
+         "10785",
+         "10799",
+         "10794",
+         "10798"
+        ],
+        "texte": "Équiper la panoplie de l'Intrépide"
+       }
+      ]
+     },
+     {
+      "nom": "Descendre sur Incarnam",
+      "pnj": "ganymede_temple",
+      "bulle": "Tu es prêt. Parle-moi et je t'envoie au village, près de Lykhen. Le Zaap de la Route des âmes sera ton point de retour si tu tombes.",
+      "objectifs": [
+       {
+        "t": "parler",
+        "texte": "Parler à Ganymède pour descendre au village",
+        "pnj": "ganymede_temple"
+       }
+      ]
+     }
     ]
    },
    "recompense": {

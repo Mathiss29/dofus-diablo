@@ -192,7 +192,7 @@ def export_skin(sid):
     json.dump({'tex': f'skin_{sid}.webp', 'parts': parts}, open(os.path.join(out, f'skin_{sid}.json'), 'w'), separators=(',', ':'))
 
 
-cle = {8: 'iop', 9: 'cra', 2: 'osamodas', 11: 'sacrieur', 20: 'forgelance', 7: 'eniripsa'}.get(classe, str(classe))
+cle = {8: 'iop', 9: 'cra', 2: 'osamodas', 11: 'sacrieur', 20: 'forgelance', 7: 'eniripsa', 3: 'enutrof'}.get(classe, str(classe))
 pj = os.path.join(out, 'persos.json')
 P = json.load(open(pj)) if os.path.exists(pj) else {}
 for g, sx in ((0, 'm'), (1, 'f')):

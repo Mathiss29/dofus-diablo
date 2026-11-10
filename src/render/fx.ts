@@ -42,6 +42,8 @@ export class FX {
   private rings: Ring[] = [];
   /** Eniripsa 12C : fils de soin verts (du soigneur vers l'allié soigné), qui s'effacent en 0,45 s. */
   private fils: { x: number; y: number; tx: number; ty: number; life: number }[] = [];
+  /** Enutrof 15A : pièces en vol (t de 0 à d, en cloche de hauteur h). */
+  private pieces: { x: number; y: number; tx: number; ty: number; t: number; d: number; h: number }[] = [];
   /** Effets officiels des sorts (planches Dofus 3). */
   readonly official: SpellFx;
   /** Armes 4B : flèches de l'arc (dessin officiel de l'animation) en vol, et celles plantées au sol quand elles ratent. */
@@ -146,6 +148,9 @@ export class FX {
         this.number(e.x, e.y, 60, `-${e.amount}`, false, '#b02020');
         this.particles(e.x, e.y, 24, 12, 0x9a1010, 160, 0.5, 3, 260);
         break;
+      case 'pieces':   // Enutrof 15A : pièces d'or qui volent du monstre vers le coffre
+        for (let i = 0; i < Math.min(6, 1 + e.n); i++) this.pieces.push({ x: e.x, y: e.y, tx: e.tx, ty: e.ty, t: -i * 0.05, d: 0.45 + i * 0.03, h: 40 + i * 6 });
+        break;
       case 'filSoin':
         this.fils.push({ x: e.x, y: e.y, tx: e.tx, ty: e.ty, life: 0.45 });
         this.particles(e.tx, e.ty, 40, 5, 0x9ff0c0, 80, 0.45, 3, 160);
@@ -224,6 +229,8 @@ export class FX {
     this.trails = this.trails.filter(t => t.life > 0);
     for (const r of this.rings) r.life -= dt;
     for (const f of this.fils) f.life -= dt;
+    for (const c of this.pieces) c.t += dt;
+    this.pieces = this.pieces.filter(c => c.t < c.d);
     this.fils = this.fils.filter(f => f.life > 0);
     this.rings = this.rings.filter(r => r.life > 0);
     for (const f of this.plantees) { f.life -= dt; f.img.setAlpha(Math.min(1, f.life / 0.3)); if (f.life <= 0) f.img.destroy(); }
@@ -324,6 +331,13 @@ export class FX {
         g.fillStyle(col, 0.12); g.fillPoints(quad(tg.len), true);
         g.fillStyle(col, 0.3); g.fillPoints(quad(tg.len * k), true);
       }
+    }
+    for (const c of this.pieces) {   // pièce d'or : un petit disque doré qui saute vers le coffre
+      if (c.t < 0) continue;
+      const k = c.t / c.d, x = c.x + (c.tx - c.x) * k, y = c.y + (c.ty - c.y) * k, a = ISO.toScreen(x, y, 30 + Math.sin(k * Math.PI) * c.h);
+      top.fillStyle(0x8a5a10, 1); top.fillEllipse(a.x, a.y + 1, 9, 7);
+      top.fillStyle(0xffd34a, 1); top.fillEllipse(a.x, a.y, 8, 6);
+      top.fillStyle(0xfff3b0, 1); top.fillCircle(a.x - 1.5, a.y - 1, 1.4);
     }
     for (const f of this.fils) {   // fil de soin : un trait vert doux, plus clair au cœur, légèrement courbé vers le haut
       const k = f.life / 0.45, a = ISO.toScreen(f.x, f.y, 50), b = ISO.toScreen(f.tx, f.ty, 50), mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2 - 24;

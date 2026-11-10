@@ -11,7 +11,7 @@ const E = EMPREINTES as Record<string, string>;
 
 describe('apparence des persos (têtes, couleurs, dessin en direct)', () => {
   it('Iop et Crâ, homme et femme : têtes officielles de création et 6 couleurs', () => {
-    expect(Object.keys(FICHES).sort()).toEqual(['cra_f', 'cra_m', 'eniripsa_f', 'eniripsa_m', 'forgelance_f', 'forgelance_m', 'iop_f', 'iop_m', 'osamodas_f', 'osamodas_m', 'sacrieur_f', 'sacrieur_m']);
+    expect(Object.keys(FICHES).sort()).toEqual(['cra_f', 'cra_m', 'eniripsa_f', 'eniripsa_m', 'enutrof_f', 'enutrof_m', 'forgelance_f', 'forgelance_m', 'iop_f', 'iop_m', 'osamodas_f', 'osamodas_m', 'sacrieur_f', 'sacrieur_m']);
     expect(FICHES.iop_m.tetes.length).toBe(15);
     expect(FICHES.cra_f.tetes.length).toBe(17);
     for (const f of Object.values(FICHES)) expect(f.couleurs.length).toBe(ZONES.length);

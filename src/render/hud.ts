@@ -1,3 +1,4 @@
+import { palierCoffre } from '../sim/enutrof';
 import { RARITY_COLORS } from '../sim/items';
 import { v } from './assetUrl';
 import Phaser from 'phaser';
@@ -684,11 +685,14 @@ export class Hud {
     const sf = cls.souffrance ? p.souffrance : -1;
     // Forgelance (6A) : pas de jauge ; le bord montre le temps restant du bonus de reprise de la Lance, en or
     const rep = cls.lance ? p.mods.find(m => m.src === 'reprise') : undefined, fl = cls.lance ? (rep ? rep.t / (rep.t0 || 1) : 0) : -1;
-    const rr = fl >= 0 ? fl : sf >= 0 ? sf / 10 : p.rage / cls.rage.max;
+    // Enutrof : les pièces du coffre au trésor (palier en cours : bronze, argent, or, puis orange au palier Trésor)
+    const cof = cls.coffre, pal = cof ? palierCoffre(p) : -1;
+    const rr = fl >= 0 ? fl : sf >= 0 ? sf / 10 : cof ? p.coffrePieces / cls.rage.max : p.rage / cls.rage.max;
     // Eniripsa : l'Éloquence en vert d'eau, qui scintille une fois pleine
     const eloq = cls.rage.mode === 'eloquence';
     const rageCol = fl >= 0 ? 0xe8b860 : sf >= 0 ? (sf >= 6 && Math.floor(world.time * 4) % 2 ? 0xff4a3a : 0xc0262a)
-      : eloq ? (p.rageFull && Math.floor(world.time * 6) % 2 ? 0xc8ffd8 : 0x4fd88a) : p.rageFull ? (Math.floor(world.time * 6) % 2 ? 0xffc04d : C.rage) : C.rage;
+      : eloq ? (p.rageFull && Math.floor(world.time * 6) % 2 ? 0xc8ffd8 : 0x4fd88a)
+      : cof ? ([0x8a6a4a, 0xc98b4e, 0xdfe6ee, 0xffcf4a, 0xff9d3a][pal + 1] ?? 0xffcf4a) : p.rageFull ? (Math.floor(world.time * 6) % 2 ? 0xffc04d : C.rage) : C.rage;
     if (p.rageFull) {
       const k = 0.5 + 0.5 * Math.sin(world.time * 10);
       gs.lineStyle(7, 0xffcf4d, 0.25 + 0.3 * k); gs.strokeRoundedRect(px - 3, py - 3, ps + 6, ps + 6, 8);
@@ -979,6 +983,8 @@ export class Hud {
     this.rageLabel.setPosition(rx, ry + rh + 1);
     if (sf >= 0) this.rageLabel.setText(sf ? `${cls.rage.name} ${sf}` : cls.rage.name).setColor(sf ? '#ff6a5a' : '#c9a49c');
     if (fl >= 0) this.rageLabel.setText(p.lance ? 'Désarmé' : 'Armé').setColor(p.lance ? '#e8b860' : '#c9c2b0');
+    if (cof) this.rageLabel.setText(p.coffreKoT > 0 ? 'Assommé' : pal >= 0 ? `${cof.noms[pal]} (${Touches.nomAction('coffre')})` : `${p.coffrePieces}/${cof.paliers[0]}`)
+      .setColor(p.coffreKoT > 0 ? '#c8c8c8' : ['#b89a7a', '#e0a46a', '#eef3f8', '#ffd86a', '#ffb060'][pal + 1] ?? '#ffd86a');
     // Tutoriel (3A) : halo doré qui pulse sur l'emplacement de l'étape suivie, et sa touche au-dessus
     const qs = world.quetes, qc = qs?.enCours.find(c => c.id === qs.suivie), halo = qc && !qc.aRendre ? qs!.etapeDe(qc)?.halo : undefined;
     if (halo != null) {

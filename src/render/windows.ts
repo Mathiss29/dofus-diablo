@@ -755,7 +755,7 @@ export class Windows {
               <select data-kind>${KINDS.map(([k, v]) => `<option value="${k}" ${this.kind === k ? 'selected' : ''}>${v}</option>`).join('')}</select>
             </div>
             <div class="grid">${html}</div>
-            <div class="foot"><span>Visible(s) : <b>${n}</b> · sac <b>${p.bag.length} / ${Player.BAG_SIZE}</b><br><span class="hint">Clic droit : équiper / retirer · Ctrl + clic : cadenas${p.equipment.familier ? ' · Alt + clic : nourrir le familier' : ''}</span></span>
+            <div class="foot"><span>Visible(s) : <b>${n}</b> · sac <b>${p.bag.length} / ${Player.BAG_SIZE}</b><br><span class="hint">Clic droit : équiper / retirer · Ctrl + clic : cadenas${p.equipment.familier ? ' · Alt + clic : nourrir le familier' : ''}${p.cls.coffre ? ' · Maj + clic : donner un Rare ou un Épique au coffre' : ''}</span></span>
               <span class="k">${p.kamas.toLocaleString('fr-FR')} <img src="${INV}/kamas.png" alt="" title="Kamas"></span></div>
             <div class="foot"><span>Butin affiché au sol</span>
               <select data-filter style="width:auto">${['Tout', 'Rare et plus', 'Épique et plus'].map((n, i) => `<option value="${i}" ${p.lootFilter === i ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
@@ -823,6 +823,7 @@ export class Windows {
       e.addEventListener('dblclick', equip);
       e.addEventListener('click', ev => {
         if (ev.altKey) { ev.preventDefault(); if (this.world.nourrirFamilier({ uid })) this.changed(); else this.flash(e); }
+        else if (ev.shiftKey && p.cls.coffre) { ev.preventDefault(); if (this.world.donnerAuCoffre(uid)) this.changed(); else this.flash(e); }   // Enutrof 15C
         else if (ev.ctrlKey || ev.metaKey) { this.world.cadenas(uid); this.changed(); } });
     });
   }

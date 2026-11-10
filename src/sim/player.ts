@@ -17,6 +17,7 @@ import { CASE, TOUR } from './monster';
 import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type SortGrade, type SortOfficiel } from './sorts';
 import { porteeSort } from './apercu';
 import { aimanter, alchiRhetorique, apresCoupEniripsa, envol, impactEniripsa, majEniripsa } from './eniripsa';
+import { impactEnutrof, majEnutrof, perteCoffre } from './enutrof';
 import { DANGER } from './danger';
 import type { EntreeCodex } from './codex';
 import { POUVOIR_PAR_ID, classeDuPouvoir, gradeAvecPouvoirs, type CtxPouvoirs, type PouvoirDef } from './pouvoirs';
@@ -251,14 +252,14 @@ export class Player extends Entity {
   etatPouvoir(id: string): { actif: true } | { actif: false; raison: string } {
     const c = PC_PAR_ID[id];
     if (c) {   // légendaire de classe inventé : sa classe, et son sort connu
-      if (c.classe !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur', forgelance: 'Forgelance', eniripsa: 'Eniripsa' } as Record<string, string>)[c.classe] ?? 'une autre classe'}` };
+      if (c.classe !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur', forgelance: 'Forgelance', eniripsa: 'Eniripsa', enutrof: 'Enutrof' } as Record<string, string>)[c.classe] ?? 'une autre classe'}` };
       if (this.knows(c.sort)) return { actif: true };
       const o = this.official(c.sort), n = o ? this.requiredLevel(o) : 0;
       return { actif: false, raison: n > this.level ? `s'éveille au niveau ${n}` : 'variante non choisie' };
     }
     const p = POUVOIR_PAR_ID[id];
     if (!p) return { actif: true };
-    if (classeDuPouvoir(id) !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur', forgelance: 'Forgelance', eniripsa: 'Eniripsa' } as Record<string, string>)[classeDuPouvoir(id)] ?? 'une autre classe'}` };
+    if (classeDuPouvoir(id) !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur', forgelance: 'Forgelance', eniripsa: 'Eniripsa', enutrof: 'Enutrof' } as Record<string, string>)[classeDuPouvoir(id)] ?? 'une autre classe'}` };
     const k = Object.keys(this.cls.spells).find(x => this.cls.spells[x].dofusId === p.dofusId);
     if (!k) return { actif: false, raison: 'sort pas encore en jeu' };
     if (this.knows(k)) return { actif: true };
@@ -334,6 +335,8 @@ export class Player extends Entity {
   encourage: { k: string; t: number; t0: number; regen: number } | null = null;
   soinContinu: { n: number; t: number; next: number; de: number; src: string; purge?: boolean }[] = [];
   insoignableT = 0; farces: { m: number; x: number; y: number; t: number }[] = []; alchiA = -99;
+  /** Enutrof (maquette Enutrof) : pièces du coffre au trésor, secondes où le coffre reste assommé, dernière perte (3D). */
+  coffrePieces = 0; coffreKoT = 0; coffrePerteA = -99;
   courir(k: number, t: number) { this.courseK = this.courseT > 0 ? Math.max(this.courseK, k) : k; this.courseT = Math.max(this.courseT, t); }
   slow(t: number, k: number) { if (this.insensibleT > 0) return; k *= fuiteFactor(this.fuite); this.slowK = this.slowT > 0 ? Math.max(this.slowK, k) : k; if (t >= this.slowT) this.slowT0 = t; this.slowT = Math.max(this.slowT, t); }
   get speed(): number { return this.cls.speed * (1 + vitesseAgilite(this.stat('agilite'))) * this.vitesseTest * (this.slowT > 0 ? 1 - this.slowK : 1) * (this.courseT > 0 ? 1 + this.courseK : 1); }
@@ -839,6 +842,7 @@ export class Player extends Entity {
     if (this.cls.souffrance) this.majSouffrance(dt, world);
     if (this.lance) this.majLance(dt, world);
     if (this.encourage || this.soinContinu.length || this.insoignableT > 0 || this.farces.length) majEniripsa(this, dt, world);
+    if (this.cls.coffre) majEnutrof(this, dt, world);
     if (this.renvoiT > 0) this.renvoiT -= dt;
     if (this.mutil) {   // Mutilation : re-sacrifie toutes les `periode` s et gagne un cran de Puissance
       const M = this.cls.spells.mutilation?.mutilation;
@@ -1054,6 +1058,7 @@ export class Player extends Entity {
           for (const j of world.betes) if (j.horsCompte && !j.dead && j.owner === this && j.sort === old.sort) j.mourir(world);   // sa jumelle part avec elle
         }
         const b = world.invoquer(this, key, s.id, s.tx, s.ty), ej = key === 'epee_vorace' ? this.pcv('pc-sacrieur-N') : 0;
+        if (b && d.invocDuree) b.finT = d.invocDuree;   // Sac Animé de l'Enutrof : 3 tours officiels
         if (b && ej) {   // Épées jumelles : deux épées plus faibles
           const b2 = world.invoquer(this, key, s.id, s.tx + CASE, s.ty); if (b2) b2.horsCompte = true;
           for (const e of [b, b2]) if (e) { e.force = ej / 100; e.maxHp = Math.max(1, Math.round(e.maxHp * ej / 100)); e.hp = e.maxHp; }
@@ -1146,6 +1151,7 @@ export class Player extends Entity {
       }
       if (d.echange) world.echanger(this, s.tx, s.ty, CASE * 0.75);   // Assaut, Transposition : après le coup
       if (eni && !pasDeCoup) { apresCoupEniripsa(this, d, s.tx, s.ty, rEni, world.degatsCoup, world); alchiRhetorique(this, d, s.tx, s.ty, rEni, world); }
+      if (d.enutrof) impactEnutrof(this, d, s.tx, s.ty, hits, world);
       if (d.envol) envol(this, s.sx, s.sy, s.tx, s.ty, world);   // Mot d'Envol : échange de place avec l'allié visé
       if (d.lance && this.cls.lance) this.apresImpactLance(d, s.tx, s.ty, world);
       if (d.traverse) {   // Balestra : de l'autre côté de la cible, puis petit recul
@@ -1564,7 +1570,7 @@ export class Player extends Entity {
     }
     if (this.hp <= 0 && world.quetes?.immortel) this.hp = 1;   // tutoriel : PV bloqués à 1
     if (world.test?.invincible) this.hp = this.maxHp;   // partie de test (8A) : le coup s'affiche, les PV ne bougent pas
-    if (this.hp <= 0) { this.hp = 0; this.dead = true; this.setAnim('die'); world.onPlayerDeath(); }
+    if (this.hp <= 0) { this.hp = 0; this.dead = true; this.setAnim('die'); if (this.cls.coffre) perteCoffre(this, world); world.onPlayerDeath(); }
     return true;
   }
 }

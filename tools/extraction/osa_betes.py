@@ -32,8 +32,11 @@ BETES = [
     # et des Moqueries lancés sur une case libre ; planches eni_lapino, eni_fee, eni_feu_follet
     ('lapino', 7370, 1, 'neutre', None), ('fee_stimulante', 7372, 1, 'neutre', None), ('fee_vivifiante', 7374, 1, 'neutre', None),
     ('fee_jouvence', 7373, 1, 'neutre', None), ('feu_accablant', 7378, 1, 'neutre', None),
+    # Enutrof (maquette Enutrof, 10 nov. 2026) : Sac Animé (os 4147), Pelle Animée (os 4156) et le coffre au trésor permanent
+    # (Coffre Animé, os 4166, 2D) ; planches enu_sac, enu_pelle, enu_coffre
+    ('sac_anime', 5830, 1, 'neutre', None), ('pelle_animee', 5834, 1, 'terre', None), ('coffre_tresor', 5840, 1, 'eau', None),
 ]
-ATLAS = {'lapino': 'eni_lapino', 'fee': 'eni_fee', 'feu': 'eni_feu_follet'}
+ATLAS = {'lapino': 'eni_lapino', 'fee': 'eni_fee', 'feu': 'eni_feu_follet', 'sac': 'enu_sac', 'pelle': 'enu_pelle', 'coffre': 'enu_coffre'}
 PV = {1: 0.5, 2: 0.75, 3: 1.0}
 
 
@@ -48,7 +51,7 @@ def effet(e):
     i, n, s = e['effectId'], e['diceNum'], e['diceSide']
     if i in EL: return {'k': 'dmg', 'element': EL[i], 'min': n, 'max': max(n, s), **({'vol': True} if i <= 95 else {})}
     if i in SOIN: return {'k': 'soin', 'min': n, 'max': max(n, s)}
-    if i == 5: return {'k': 'repousse', 'n': n}
+    if i in (5, 1103): return {'k': 'repousse', 'n': n}
     if i == 6: return {'k': 'attire', 'n': n}
     if i == 1042: return {'k': 'avance', 'n': n}
     if i == 1020: return {'k': 'bouclier', 'n': n}
