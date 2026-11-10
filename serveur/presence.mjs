@@ -29,13 +29,14 @@ const ent = (x, a, b) => (Number.isInteger(x) && x >= a && x <= b ? x : null);
 const fini = x => (typeof x === 'number' && Number.isFinite(x) ? x : 0);
 
 /** Ce qu'on montre d'un perso (8B : le pseudo du perso, jamais le pseudo Discord). Lu sur le compte, pas envoyé par le jeu. */
-function profilDe(perso, objets) {
+function profilDe(perso, objets, deco = {}) {
   const e = perso.etat ?? {};
   const app = perso.apparence && typeof perso.apparence === 'object' ? perso.apparence : null;
   return {
     nom: String(perso.nom ?? '').slice(0, 20), classe: String(perso.classe ?? 'iop').slice(0, 20), sexe: perso.sexe === 'f' ? 'f' : 'm',
     niveau: ent(e.level, 1, 200) ?? 1, apparence: app,
     objets: Array.isArray(objets) ? objets.filter(o => typeof o === 'string' && o.length <= 16).slice(0, 6) : [],
+    titre: propre(deco.titre).slice(0, 30), ornement: ent(deco.ornement, 0, 999) ?? 0,
   };
 }
 
@@ -110,7 +111,7 @@ export function creerPresence({ comptes, envoyer }) {
       for (const [t, j] of joueurs) if (j.compte === c.compte && t !== s) { joueurs.delete(t); envoyer(t, { k: 'presence', ok: false, raison: 'ailleurs' }); }
       const avant = joueurs.get(s);
       joueurs.set(s, {
-        compte: c.compte, emplacement: c.emplacement, profil: profilDe(c.perso, m.objets), zone: typeof m.zone === 'string' ? m.zone.slice(0, 40) : '',
+        compte: c.compte, emplacement: c.emplacement, profil: profilDe(c.perso, m.objets, { titre: m.titre, ornement: m.ornement }), zone: typeof m.zone === 'string' ? m.zone.slice(0, 40) : '',
         x: fini(m.x), y: fini(m.y), f: fini(m.f), a: 'idle', vus: avant?.vus ?? new Set(), invite: avant?.invite ?? 0, salon: avant?.salon ?? null,
         dits: avant?.dits ?? [], horsLigne: false, inconnus: false,
       });

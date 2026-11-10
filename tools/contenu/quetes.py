@@ -559,19 +559,19 @@ def suc(nom, did, desc, cat, sous, pts, icone, obj, ratio=0, objet=None):
     if r: s['recompense'] = r
     return s
 S = {
-  'premier_temps': suc('Premier temps', 8518, 'Terminer la première partie du tutoriel.', 'Quêtes', 'Général', 1, 203,
+  'premier_temps': suc('Premier temps', 8518, 'Terminer la première partie du tutoriel.', 'Quêtes', 'Incarnam', 1, 203,
      [{'nom': 'Premiers pas', 'etape': ['reponses', 0]}, {'nom': 'Premières armes', 'etape': ['reponses', 8]}, {'nom': 'Première partie du tutoriel', 'quete': 'reponses'}], 0.213),
-  'second_temps': suc('Second temps', 8519, 'Terminer la seconde partie du tutoriel.', 'Quêtes', 'Général', 1, 203, [{'nom': 'Seconde partie du tutoriel', 'quete': 'village'}], 0.213),
-  'bonnes_bases': suc('Sur de bonnes bases', 8520, 'Terminer les succès du tutoriel.', 'Quêtes', 'Général', 3, 273,
+  'second_temps': suc('Second temps', 8519, 'Terminer la seconde partie du tutoriel.', 'Quêtes', 'Incarnam', 1, 203, [{'nom': 'Seconde partie du tutoriel', 'quete': 'village'}], 0.213),
+  'bonnes_bases': suc('Sur de bonnes bases', 8520, 'Terminer les succès du tutoriel.', 'Quêtes', 'Incarnam', 3, 273,
      [{'nom': 'Premier temps', 'succes': 'premier_temps'}, {'nom': 'Second temps', 'succes': 'second_temps'}], 0.287, '10207'),
-  'debutant': suc('Débutant', 3, 'Atteindre le niveau 10.', 'Général', 'Général', 1, 58, [{'nom': 'Niveau 10', 'niveau': 10}]),
+  'debutant': suc('Débutant', 3, 'Atteindre le niveau 10.', 'Général', 'Niveaux', 1, 58, [{'nom': 'Niveau 10', 'niveau': 10}]),
   'crypte': suc('Crypte de Kardorim', 33, 'Vaincre Kardorim dans son donjon.', 'Donjons', 'Niveaux 1 à 50', 10, 299,
      [{'nom': 'Kardorim', 'monstre': 'kardorim'}, {'nom': 'Niveau 10', 'niveau': 10}], 1, '16525'),
   # Dofus (0.3, ligne « Onglet Dofus : … 5A ») : compteur de la fenêtre Dofus ; le dernier reprend le succès officiel « L'héritage des Dofus »
-  'dofus_2': suc('Deux œufs au nid', 0, 'Posséder 2 Dofus.', 'Dofus', 'Collection', 10, 458, [{'nom': '2 Dofus', 'dofus': 2}], 1),
-  'dofus_6': suc('Six emplacements', 0, 'Posséder 6 Dofus.', 'Dofus', 'Collection', 20, 458, [{'nom': '6 Dofus', 'dofus': 6}], 2),
-  'dofus_12': suc('Un œuf par dieu', 0, 'Posséder 12 Dofus.', 'Dofus', 'Collection', 30, 458, [{'nom': '12 Dofus', 'dofus': 12}], 4),
-  'dofus_31': {**suc("L'héritage des Dofus", 8989, 'Posséder les 31 Dofus.', 'Dofus', 'Collection', 50, 82, [{'nom': '31 Dofus', 'dofus': 31}], 8), },
+  'dofus_2': suc('Deux œufs au nid', 0, 'Posséder 2 Dofus.', 'Général', 'Dofus', 10, 458, [{'nom': '2 Dofus', 'dofus': 2}], 1),
+  'dofus_6': suc('Six emplacements', 0, 'Posséder 6 Dofus.', 'Général', 'Dofus', 20, 458, [{'nom': '6 Dofus', 'dofus': 6}], 2),
+  'dofus_12': suc('Un œuf par dieu', 0, 'Posséder 12 Dofus.', 'Général', 'Dofus', 30, 458, [{'nom': '12 Dofus', 'dofus': 12}], 4),
+  'dofus_31': {**suc("L'héritage des Dofus", 8989, 'Posséder les 31 Dofus.', 'Général', 'Dofus', 50, 82, [{'nom': '31 Dofus', 'dofus': 31}], 8), },
 }
 S['dofus_6'].setdefault('recompense', {})['titre'] = 'Couveur de Dofus'
 S['dofus_31'].setdefault('recompense', {})['titre'] = 'Héritier des Dofus'
@@ -593,7 +593,13 @@ ITEMS = json.load(open(os.path.join(os.path.dirname(__file__), '..', '..', 'src'
 for sid, pano in ITEMS['sets'].items():
     vis = [str(i) for i in pano['items'] if ITEMS['equipment'].get(str(i), {}).get('slot') in ('chapeau', 'cape', 'bouclier')]
     if len(vis) < 2: continue
-    S['garde_robe_' + sid] = suc(pano['name'], 0, f"Collectionner l'apparence de chaque pièce visible : {pano['name']}.", 'Collection', 'Garde-robe',
+    S['garde_robe_' + sid] = suc(pano['name'], 0, f"Collectionner l'apparence de chaque pièce visible : {pano['name']}.", 'Général', 'Garde-robe',
         5 * len(vis), 82, [{'nom': ITEMS['equipment'][i]['name'], 'apparence': i} for i in vis])
-json.dump({'pnj': PNJ, 'quetes': Q, 'succes': S, 'contrats': CONTRATS}, open(OUT, 'w'), ensure_ascii=False, indent=1)
+exec(open(os.path.join(os.path.dirname(__file__), 'succes_officiels.py'), encoding='utf-8').read())
+if os.environ.get('SUCCES_SEULS'):
+    # SUCCES_SEULS=1 : ne réécrit que les succès (les quêtes du JSON ont été retouchées à la main depuis, ex. trames de classes)
+    _J = json.load(open(OUT, encoding='utf-8')); _J['succes'] = S
+    json.dump(_J, open(OUT, 'w'), ensure_ascii=False, indent=1)
+else:
+    json.dump({'pnj': PNJ, 'quetes': Q, 'succes': S, 'contrats': CONTRATS}, open(OUT, 'w'), ensure_ascii=False, indent=1)
 print(len(Q), 'quêtes', len(S), 'succès')

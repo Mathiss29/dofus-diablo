@@ -5,7 +5,7 @@ import { URL_COOP, Coop } from './coop';
 import { Compte } from './compte';
 import type { Apparence } from './squelette';
 
-export interface Profil { id: number; nom: string; classe: string; sexe: 'm' | 'f'; niveau: number; apparence: Apparence | null; objets: string[] }
+export interface Profil { id: number; nom: string; classe: string; sexe: 'm' | 'f'; niveau: number; apparence: Apparence | null; objets: string[]; titre?: string; ornement?: number }
 /** Un joueur du Bastion vu ici : sa position reçue (tx, ty) et celle affichée (x, y), qui la rejoint en douceur. */
 export interface Passant { id: number; profil: Profil | null; x: number; y: number; tx: number; ty: number; f: number; a: string; vu: number; age: number }
 export type Canal = 'tout' | 'groupe' | 'bastion' | 'prive' | 'infos';
@@ -36,7 +36,7 @@ class Presence {
   /** Mon numéro de compte côté serveur (null : pas annoncé). */
   moi: number | null = null;
   private ws: WebSocket | null = null;
-  private voulu: { emplacement: number; zone: string; x: number; y: number; objets: string[] } | null = null;
+  private voulu: { emplacement: number; zone: string; x: number; y: number; objets: string[]; titre: string; ornement: number } | null = null;
   private relance = 0;
   private dernier = { t: 0, zone: '', x: 0, y: 0, a: '' };
   private ecouteurs = new Set<() => void>();
@@ -69,8 +69,8 @@ class Presence {
   get connecte() { return this.moi != null && this.ws?.readyState === WebSocket.OPEN; }
 
   /** La scène a un perso en ligne : on l'annonce (ou on met à jour son profil : niveau, objets portés). */
-  annoncer(emplacement: number, zone: string, x: number, y: number, objets: string[]) {
-    this.voulu = { emplacement, zone, x, y, objets };
+  annoncer(emplacement: number, zone: string, x: number, y: number, objets: string[], deco: { titre?: string; ornement?: number } = {}) {
+    this.voulu = { emplacement, zone, x, y, objets, titre: deco.titre ?? '', ornement: deco.ornement ?? 0 };
     if (this.ws && this.ws.readyState <= WebSocket.OPEN) { this.presenter(); return; }
     this.connecter();
   }
@@ -96,7 +96,7 @@ class Presence {
   private presenter() {
     const v = this.voulu, j = Compte.jeton;
     if (!v || !j) return;
-    this.envoyer({ k: 'presence', jeton: j, emplacement: v.emplacement, zone: v.zone, x: v.x, y: v.y, objets: v.objets });
+    this.envoyer({ k: 'presence', jeton: j, emplacement: v.emplacement, zone: v.zone, x: v.x, y: v.y, objets: v.objets, titre: v.titre, ornement: v.ornement });
     if (Coop.etat === 'salon' && Coop.serveur) this.envoyer({ k: 'groupe', code: Coop.code });
   }
   private envoyer(m: object) { if (this.ws?.readyState === WebSocket.OPEN) this.ws.send(JSON.stringify(m)); }

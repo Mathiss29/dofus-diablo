@@ -856,7 +856,7 @@ export class Accueil {
 
   // --- Succès (Accueil 2A) : ceux du compte, comme la fenêtre Succès du jeu ------------------------------------
   private pageSucces(): string {
-    const fait = compte(), all = Object.entries(QUETES.succes);
+    const fait = compte(), all = Object.entries(QUETES.succes).filter(([, x]) => !(x as { test?: boolean }).test);
     const total = all.reduce((n, [, x]) => n + x.points, 0), pts = all.filter(([id]) => fait.has(id)).reduce((n, [, x]) => n + x.points, 0);
     const cats = [...new Set(all.map(([, x]) => `${x.categorie} · ${x.sousCategorie}`))];
     return `<div class="cover" style="background-image:url(${img('login.jpg')});filter:brightness(.45) saturate(.8)"></div>

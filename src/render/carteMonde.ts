@@ -40,7 +40,7 @@ const CSS = `
 `;
 
 /** « Montrer sur la carte » (Métiers UI 8B, 11B) : où trouver une ressource (cartes entières et points précis). */
-export interface MarqueCarte { titre: string; icone: number; tags: string[]; points: { x: number; y: number }[] }
+export interface MarqueCarte { titre: string; icone: number; tags: string[]; points: { x: number; y: number }[]; /** Image à la place de l'icône d'objet (succès). */ img?: string }
 
 export class CarteMonde {
   private root: HTMLDivElement | null = null;
@@ -151,9 +151,10 @@ export class CarteMonde {
     let centre: { x: number; y: number } | null = surQuete ? surBut : null;
     if (ou) {
       const pts = [...new Set(ou.tags)].filter(t => wg.mapByTag(t)).map(t => this.milieuCarte(t)).concat(ou.points.map(q => this.duJeu(q.x, q.y)));
-      for (const q of pts) { const d = this.marque('mk ou', q.x, q.y); d.innerHTML = iconHtml(ou.icone); d.title = ou.titre; }
+      const ic = ou.img ? `<img class="ic" src="${ou.img}" alt="">` : iconHtml(ou.icone);
+      for (const q of pts) { const d = this.marque('mk ou', q.x, q.y); d.innerHTML = ic; d.title = ou.titre; }
       if (pts.length) centre = { x: pts.reduce((s, q) => s + q.x, 0) / pts.length, y: pts.reduce((s, q) => s + q.y, 0) / pts.length };
-      const t = document.createElement('div'); t.className = 'ttlou'; t.innerHTML = `${iconHtml(ou.icone)}Où trouver : ${ou.titre} (${pts.length} endroit${pts.length > 1 ? 's' : ''})`;
+      const t = document.createElement('div'); t.className = 'ttlou'; t.innerHTML = `${ic}Où trouver : ${ou.titre} (${pts.length} endroit${pts.length > 1 ? 's' : ''})`;
       vue.appendChild(t);
     }
     this.moi = this.marque('mk moi', 0, 0);
