@@ -24,6 +24,6 @@ export abstract class Entity {
     this.x += this.kx * dt; this.y += this.ky * dt;
     const f = Math.pow(0.0008, dt);   // freinage fort : recul court et sec
     this.kx *= f; this.ky *= f;
-    this.x = clamp(this.x, -50000, 50000); this.y = clamp(this.y, -50000, 50000);
+    this.x = clamp(this.x, -1e6, 1e6); this.y = clamp(this.y, -1e6, 1e6);   // garde-fou (la grille du continent fait ~200 000 px)
   }
 }

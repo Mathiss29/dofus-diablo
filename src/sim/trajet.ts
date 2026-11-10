@@ -11,14 +11,15 @@ export interface Lien { vers: string; genre: GenreLien; de: Pt; a?: Pt; cout: nu
 
 /** Liens à pied entre cartes du dehors, calculés une fois par monde. */
 export function liensAPied(wg: WorldGrid): Map<string, Lien[]> {
-  const maps = wg.world.maps, idx = new Int32Array(wg.cols * wg.rows).fill(-1);
-  maps.forEach((m, i) => { for (const c of wg.freeByMap.get(m.tag) ?? []) idx[c] = i; });
+  // carte de chaque case libre (table creuse : la grille du continent est presque vide)
+  const maps = wg.world.maps, carte = new Map<number, number>(), idx = (c: number) => carte.get(c) ?? -1;
+  maps.forEach((m, i) => { for (const c of wg.freeByMap.get(m.tag) ?? []) carte.set(c, i); });
   // pour chaque paire de cartes voisines du dehors : les cases de passage (côté départ)
   const passages = new Map<string, number[]>();
   for (const c of wg.free) {
-    const a = idx[c]; if (a < 0 || maps[a].inside) continue;
+    const a = idx(c); if (a < 0 || maps[a].inside) continue;
     for (const n of wg.neighbors(c)) {
-      const b = idx[n]; if (b < 0 || b === a || maps[b].inside) continue;
+      const b = idx(n); if (b < 0 || b === a || maps[b].inside) continue;
       const k = `${a}>${b}`, l = passages.get(k);
       if (l) { if (l[l.length - 1] !== c) l.push(c); } else passages.set(k, [c]);
     }
@@ -28,7 +29,7 @@ export function liensAPied(wg: WorldGrid): Map<string, Lien[]> {
     const [a, b] = k.split('>').map(Number);
     // le milieu du passage, et la case d'en face la plus proche
     const c = cases[Math.floor(cases.length / 2)], de = wg.cellToWorld(c);
-    const en = wg.neighbors(c).find(n => idx[n] === b);
+    const en = wg.neighbors(c).find(n => idx(n) === b);
     const a2 = en != null ? wg.cellToWorld(en) : de;
     const l = out.get(maps[a].tag) ?? []; l.push({ vers: maps[b].tag, genre: 'chemin', de, a: a2, cout: 1 }); out.set(maps[a].tag, l);
   }

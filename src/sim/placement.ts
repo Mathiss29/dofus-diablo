@@ -71,8 +71,8 @@ export function analyserCarte(wg: WorldGrid, tag: string, lieuxMonde: Vec[]): An
   const vois = new Map(libresL.map(c => [c, wg.neighbors(c).filter(v => libres.has(v))]));
   // Sorties : cases du bord qui touchent une case libre d'une autre carte, regroupées en morceaux d'un seul tenant (un par passage)
   const m = wg.mapByTag(tag)!, loc = locale(wg, m.x, m.y);
-  const mov = wg.data.mov, auBord = (c: number) => { const l = loc(c), r = Math.floor(l / MAP_COLS), k = l % MAP_COLS; return r < 2 || r >= MAP_ROWS - 2 || k === 0 || k === MAP_COLS - 1; };
-  const bord = libresL.filter(c => auBord(c) && wg.neighbors(c).some(v => !libres.has(v) && mov[v] === '1' && loc(v) < 0));
+  const mov = wg.mov, auBord = (c: number) => { const l = loc(c), r = Math.floor(l / MAP_COLS), k = l % MAP_COLS; return r < 2 || r >= MAP_ROWS - 2 || k === 0 || k === MAP_COLS - 1; };
+  const bord = libresL.filter(c => auBord(c) && wg.neighbors(c).some(v => !libres.has(v) && mov[v] === 1 && loc(v) < 0));
   const vus = new Set<number>(), sorties: number[] = [];
   const surBord = new Set(bord);
   for (const c of bord) {
@@ -112,7 +112,7 @@ export function proposerPlacement(wg: WorldGrid, tag: string, groupes: number, a
   const A = PLACEMENT.auto, libresL = wg.freeByMap.get(tag) ?? [], C = wg.cols;
   const voulu = groupes > 0 ? groupes + A.pointsEnPlus : 0;
   if (!voulu || !libresL.length) return { g: groupes, p: [] };
-  const mov = wg.data.mov, ouvert = (c: number) => { let n = 0; for (let dr = -6; dr <= 6; dr++) for (let dk = -3; dk <= 3; dk++) if (mov.charCodeAt(c + dr * C + dk) === 49) n++; return n; };
+  const mov = wg.mov, ouvert = (c: number) => { let n = 0; for (let dr = -6; dr <= 6; dr++) for (let dk = -3; dk <= 3; dk++) if (mov[c + dr * C + dk] === 1) n++; return n; };
   const loin = (d: Map<number, number>, c: number) => d.size ? d.get(c) ?? 99 : 99;
   // un groupe s'étale sur 150 px autour de son point : rien à moins de 420 px d'un PNJ, d'une porte ou du Zaap
   const pos = new Map(libresL.map(c => [c, wg.cellToWorld(c)])), lieuxW = [...a.lieux.map(c => wg.cellToWorld(c)), ...pnjs], dLieu = (c: number) => { const q = pos.get(c)!; return Math.min(9999, ...lieuxW.map(l => Math.hypot(l.x - q.x, l.y - q.y))); };

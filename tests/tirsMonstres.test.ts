@@ -11,7 +11,7 @@ import { World } from '../src/sim/world';
 const carte = JSON.parse(readFileSync(new URL('../public/assets/cartes/5_-27/carte.json', import.meta.url), 'utf8')) as MapData;
 
 function duel(id: string, secondes: number) {
-  const map = new GridMap({ ...carte, mov: '1'.repeat(carte.mov.length), decor: [] });
+  const map = new GridMap({ ...carte, mov: '1'.repeat(carte.mov!.length), decor: [] });
   const w = new World({ data: GAME_DATA, zone: 'champs-astrub', map, seed: 5 });
   w.monsters.length = 0;
   const p = w.player, c = map.cellToWorld(300);

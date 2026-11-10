@@ -80,7 +80,7 @@ describe('Astrub (0.2a)', () => {
       expect(m.n).toEqual([3, 3]);
       expect(m.inside).toBe(1);
       for (const c of [a.arrivee, a.boss, a.sortie, a.coffre, ...a.entrees]) expect(wg.mapOfCell(c)?.tag, `${a.tag} ${c}`).toBe(a.tag);
-      for (const c of [a.arrivee, a.boss, a.sortie, ...a.entrees]) expect(astrub.mov[c], `${a.tag} case ${c}`).toBe('1');
+      for (const c of [a.arrivee, a.boss, a.sortie, ...a.entrees]) expect(wg.mov[c], `${a.tag} case ${c}`).toBe(1);
       expect(d.vagues).toHaveLength(3);
       for (const t of [...d.vagues!.flatMap(v => v.m), ...d.bossVague!]) if (t !== '?') expect(LOOKS[GAME_DATA.monsters[t]?.look], t).toBeDefined();
       expect(GAME_DATA.monsters[d.bossVague![0]].boss).toBe(true);

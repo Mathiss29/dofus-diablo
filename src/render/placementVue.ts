@@ -63,7 +63,7 @@ export class EditeurPlacement {
     } else {
       if (proche && proche[0] < 60) { this.choisi = proche[1]; this.redessiner(); return; }   // clic sur un point : on le choisit
       const m = wg.mapAt(x, y), c = wg.cellAtWorld(x, y);
-      if (m?.tag !== tag || c < 0 || wg.data.mov[c] !== '1') return;
+      if (m?.tag !== tag || c < 0 || wg.mov[c] !== 1) return;
       const [X0, Y0] = wg.world.origin, loc = (Math.floor(c / wg.cols) - (m.y - Y0) * 40) * 14 + c % wg.cols - (m.x - X0) * 14;
       pl.p.push({ c: loc }); this.choisi = pl.p.length - 1;
       if (!pl.g) pl.g = 1;
