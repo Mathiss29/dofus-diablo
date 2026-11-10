@@ -12,5 +12,5 @@ de chaque donjon (`grp_<id>.json` = cadres choisis dans les cartes officielles, 
 - Les donjons (vagues, boss, points) sont dans `src/data/zones.json` → `astrub.open.donjonsTest`,
   ajoutés aux donjons seulement en partie de test (`World`, `opts.test`).
 - Monstres : `lot_monstres.json` (squelette → clé), planches par `../monster_planche.py`
-  (SCALE=1.6 pour bwork_archer, bworkette, forgeron_sombre, craqueleur_des_plaines, wa_wobot),
+  (SCALE=1.6 pour bwork_archer, bworkette, forgeron_sombre, craqueleur_des_plaines, wa_wobot ; SKIP_MASKS=1 pour gobaliste, sinon ses masques sortent en vert fluo),
   sorts et stats par `../monster_spells.py` et `../monster_stats.py`. Le Wobot (squelette 323) n'a pas de texture.
