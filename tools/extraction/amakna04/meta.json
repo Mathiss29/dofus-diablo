@@ -1,0 +1,207 @@
+{
+ "mulou": [
+  102,
+  "Mulou",
+  "{334|||120}"
+ ],
+ "cochon_de_lait": [
+  123,
+  "Cochon de Lait",
+  "{325|||110}"
+ ],
+ "araknelle": [
+  157,
+  "Araknelle",
+  "{280|||140}"
+ ],
+ "ambi_guman": [
+  3525,
+  "Ambi Guman",
+  "{2467}"
+ ],
+ "champ_champ": [
+  59,
+  "Champ Champ",
+  "{562|||100}"
+ ],
+ "abraknyde_chetif": [
+  4000,
+  "Abraknyde Chétif",
+  "{279|}"
+ ],
+ "tofu_malefique": [
+  111,
+  "Tofu Maléfique",
+  "{336|||110}"
+ ],
+ "kwoan": [
+  154,
+  "Kwoan",
+  "{340|||120}"
+ ],
+ "roub_ignolles": [
+  4270,
+  "Roub' Ignolles",
+  "{2763}"
+ ],
+ "gelee_bleuet": [
+  55,
+  "Gelée Bleuet",
+  "{327}"
+ ],
+ "gelee_menthe": [
+  56,
+  "Gelée Menthe",
+  "{329}"
+ ],
+ "gelee_fraise": [
+  57,
+  "Gelée Fraise",
+  "{331}"
+ ],
+ "champa_vert": [
+  652,
+  "Champa Vert",
+  "{478|||100}"
+ ],
+ "champa_rouge": [
+  653,
+  "Champa Rouge",
+  "{640|||100}"
+ ],
+ "champa_bleu": [
+  654,
+  "Champa Bleu",
+  "{641|||100}"
+ ],
+ "champa_marron": [
+  655,
+  "Champa Marron",
+  "{642|||100}"
+ ],
+ "maitre_boulet": [
+  4268,
+  "Maître Boulet",
+  "{429|||110}"
+ ],
+ "dragoeuf_calcaire": [
+  76,
+  "Dragoeuf Calcaire",
+  "{300}"
+ ],
+ "dragoeuf_argile": [
+  87,
+  "Dragoeuf Argile",
+  "{297}"
+ ],
+ "dragoeuf_ardoise": [
+  88,
+  "Dragoeuf Ardoise",
+  "{299}"
+ ],
+ "dragoeuf_charbon": [
+  89,
+  "Dragoeuf Charbon",
+  "{298}"
+ ],
+ "coffre_malveillant": [
+  177,
+  "Coffre Malveillant",
+  "{91|||120}"
+ ],
+ "boo": [
+  112,
+  "Boo",
+  "{332|||110}"
+ ],
+ "crocodaille": [
+  261,
+  "Crocodaille",
+  "{397|||125}"
+ ],
+ "chef_crocodaille": [
+  263,
+  "Chef Crocodaille",
+  "{400|||130}"
+ ],
+ "arakne_olithique": [
+  4833,
+  "Arakne Olithique",
+  "{399|||130}"
+ ],
+ "boulanger_souille": [
+  4181,
+  "Boulanger Souillé",
+  "{337}"
+ ],
+ "mineur_souille": [
+  4182,
+  "Mineur Souillé",
+  "{69|||100}"
+ ],
+ "dragodinde_amande_sauvage": [
+  171,
+  "Dragodinde amande sauvage",
+  "{706||1=#FFEBCD,2=#FFEBCD,3=#F8BF01,4=7758915|115}"
+ ],
+ "dragodinde_rousse_sauvage": [
+  200,
+  "Dragodinde rousse sauvage",
+  "{706||1=#FF8C00,2=#FF8C00,3=#F8BF01,4=7758915|115}"
+ ],
+ "arakne": [
+  52,
+  "Arakne",
+  "{561|||95}"
+ ],
+ "moskito": [
+  61,
+  "Moskito",
+  "{569|||130}"
+ ],
+ "campagnoll": [
+  4819,
+  "Campagnoll",
+  "{342}"
+ ],
+ "meulou": [
+  232,
+  "Meulou",
+  "{380|||130}"
+ ],
+ "craquelourd": [
+  4571,
+  "Craquelourd",
+  "{3658|||100}"
+ ],
+ "poutch_vil_smisse": [
+  3588,
+  "Poutch Vil Smisse",
+  "{2525}"
+ ],
+ "poutch_ombre": [
+  3589,
+  "Poutch Ombre",
+  "{2524}"
+ ],
+ "poutch_hyperscampe": [
+  3590,
+  "Poutch Hyperscampe",
+  "{2526}"
+ ],
+ "poutch_sylargh": [
+  3591,
+  "Poutch Sylargh",
+  "{2522}"
+ ],
+ "poutch_crane_rose": [
+  3592,
+  "Poutch Crâne Rose",
+  "{2523}"
+ ],
+ "bandit_manchot": [
+  466,
+  "Bandit Manchot",
+  "{78||2=2513526,3=8339230,4=15915210}"
+ ]
+}

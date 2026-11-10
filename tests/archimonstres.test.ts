@@ -20,7 +20,7 @@ describe('archimonstres d\'Astrub (version 0.3 : 15B)', () => {
     for (const [k, d] of l) {
       const b = M[d.archiDe!];
       expect(b, k).toBeDefined();
-      expect(LOOKS[k]?.atlas, k).toBe(LOOKS[d.archiDe!].atlas);
+      expect(LOOKS[k]?.atlas, k).toBe(LOOKS[b.look].atlas);
       expect(d.hp).toBeGreaterThan(b.hp);
       expect(d.xp!).toBeGreaterThan(b.xp ?? 0);
       expect(ITEMS.drops[k]?.length, k).toBeGreaterThan(0);

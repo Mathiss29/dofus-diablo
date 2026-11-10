@@ -253,6 +253,10 @@ export interface WavesDef {
 /** Une sous-zone Dofus dans un monde ouvert : ses monstres officiels et la taille des groupes. */
 export interface SubAreaDef {
   name: string; level: number; monsters: string[]; groupsPerMap: number; groupSize: [number, number];
+  /** Version en essai (0.4 : Amakna) : la sous-zone n'existe qu'en partie de test (World), comme ses cartes (WorldGrid.ouvrirEssai). */
+  essai?: boolean;
+  /** Région affichée (bandeau, haut de l'écran) quand ce n'est pas le nom de la zone : « Amakna » dans le monde d'Astrub. */
+  region?: string;
   /** Élite unique de la sous-zone (maquette 0.2, 4A : Frakacia Leukocytine, Sam Sagaz…) : mène parfois un groupe, un seul à la fois. */
   elite?: string;
   /** Sous-zone faite d'intérieurs (Mine…) : ses monstres apparaissent aussi dedans. Sinon les intérieurs (maisons) restent vides. */

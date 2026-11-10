@@ -289,6 +289,9 @@ export class World {
     if (!this.zone) throw new Error(`Zone inconnue : ${opts.zone}`);
     const dt = this.zone.open?.donjonsTest;   // 0.4 cachée : ses donjons seulement en partie de test (copie : les données restent intactes)
     if (opts.test && dt?.length) this.zone = { ...this.zone, open: { ...this.zone.open!, donjons: [...(this.zone.open!.donjons ?? []), ...dt] } };
+    const sz = this.zone.open?.subareas;   // 0.4 cachée : les sous-zones d'Amakna (monstres, butin, contrats) seulement en partie de test
+    if (!opts.test && sz && Object.values(sz).some(s => s.essai))
+      this.zone = { ...this.zone, open: { ...this.zone.open!, subareas: Object.fromEntries(Object.entries(sz).filter(([, s]) => !s.essai)) } };
     this.map = opts.map;
     this.test = opts.test ? { ...opts.test } : null;
     let start = this.map.nearestFree(GridMap.OFFSET_Y, GridMap.OFFSET_Y);
@@ -798,6 +801,7 @@ export class World {
   private ouvrirCouloirs() {
     const wg = this.worldGrid;
     if (!wg || !this.test) return;
+    wg.ouvrirEssai();   // 0.4 cachée : Amakna seulement en partie de test
     for (const d of this.zone.open!.donjons ?? []) {
       const c = d.couloirs;
       if (!c || !d.arene || ![...c.tags, ...c.salles, d.arene.tag].every(t => wg.mapByTag(t))) continue;

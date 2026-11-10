@@ -774,7 +774,7 @@ export class Hud {
 
     // --- Coordonnées et sous-zone (haut centre) ---
     const map = world.worldGrid?.mapAt(p.x, p.y);
-    this.coords.setPosition(W / 2, 10).setText(map ? `${world.zone.name}${world.lieu ?? world.area ? ` (${world.lieu ?? world.area!.name})` : ''}` : world.zone.name);   // dedans : le nom de l'intérieur (maquette Entrées 5A)   // sans coordonnées (choix 4A : rien ne rappelle les cartes ; elles iront sur la carte du monde, touche M)
+    this.coords.setPosition(W / 2, 10).setText(map ? `${world.area?.region ?? world.zone.name}${world.lieu ?? world.area ? ` (${world.lieu ?? world.area!.name})` : ''}` : world.zone.name);   // dedans : le nom de l'intérieur (maquette Entrées 5A)   // sans coordonnées (choix 4A : rien ne rappelle les cartes ; elles iront sur la carte du monde, touche M)
 
     // --- Jauge de boss ---
     const wgr = world.worldGrid, ici = wgr?.mapAt(world.player.x, world.player.y)?.tag;   // seulement le boss de la carte du joueur

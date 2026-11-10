@@ -538,3 +538,24 @@ Ville vivante (maquette Ville 5F, 8 nov. 2026) :
 - Bêtes (os dans le cache : `cache-dofus/enutrof-bones/`) : Sac Animé 5830 (os 4147), Pelle Animée 5834 (os 4156), coffre au trésor 5840 (Coffre Animé, os 4166).
   `SCALE=2.5 FORMAT=AVIF python3 monster_planche.py 4147 enu_sac <Bones>`, puis `4156 enu_pelle` et `4166 enu_coffre`.
   Entrées de betes.json ajoutées à la main (comme l'Eniripsa) ; le coffre est passif, sans sort, réglages dans classes.json > enutrof.coffre.
+
+## Amakna sans coupure (0.4, 10 nov. 2026)
+
+- Grille du continent : `python3 monde_continent.py regrille public/assets/mondes/astrub src/data/zones.json` (fait UNE fois) passe le monde d'Astrub
+  à la taille de tout le continent officiel (cartes x −88 à 43, y −93 à 54) ; intérieurs rangés dans une bande sous le continent (y ≥ 56).
+  Cases marchables par carte dans `monde.json > movCartes` (au lieu d'un `mov` géant) ; `grid.cx/cy` gardent le centre : les points du dehors ne bougent pas.
+  Références de cases à recalculer en cas de nouveau regrillage : décor `c`/`bt`, particules `c`, zones.json arènes et couloirs. Les portes, récoltes,
+  placements, quêtes et ateliers sont en `[tag, case de la carte]` : rien à faire.
+- Amakna (654 cartes, sous-zones de l'aire 0 hors Astrub) : liste `{"x,y": [mapId, sous-zone]}`, puis
+  `PARTAGE=1 FILS=4 TEXDIR=<png> CACHE_SOLS=<dossier> python3 world_export.py liste.json cartes /dev/null ex`, `bords_fondu.py`, `COURANTE=1 batiments.py`,
+  `decor_par_carte.py`, et enfin `python3 monde_continent.py fusion public/assets/mondes/astrub ex` (coordonnées, cases et pages de décor renumérotées).
+- Monstres d'Amakna : 41 planches (`monster_planche.py`, `SKIP_MASKS=1` ; `SCALE=1.6` pour Mulou et Ambi Guman, sinon la planche est trop grande),
+  puis `monster_spells.py`, `monster_stats.py`, `tools/contenu/archimonstres.py`, `drops_ajout.py`, `icones_ajout.py`. Échelle du look en jeu =
+  1,6 / SCALE × échelle officielle. Retirés des groupes du monde (planches gardées) : Poutchs (mannequins), Trooll apprivoisé, et les monstres de plus de
+  25 niveaux au-dessus de leur sous-zone (Mulou 92, Meulou 100, Souillés 120, Dragodindes sauvages 62).
+- Scripts et listes dans `amakna04/` : `liste.json` (coordonnée -> [mapId, sous-zone]), `sous_zones.py` (sous-zones officielles -> zones.json),
+  `ajout.py` (monstres rendus -> monsters.json + entrées looks.ts), `raccord_doubles.py` (retire côté Astrub les images que la voisine d'Amakna pose aussi).
+- Coordonnées à plusieurs cartes (salles du Château, souterrains) : prendre la carte du dehors = bits 23 et 24 de `m_flags` (mapsinformation) à 1.
+  Les cartes sans voisine à pied (Passage vers Brâkmar, îlots de Madrestam, colonne x = −9) sont retirées.
+- 0.4 cachée : cartes `essai: 1` dans monde.json (dessinées partout, marchables seulement en partie de test : `WorldGrid.ouvrirEssai`),
+  sous-zones `essai: true` + `region: "Amakna"` dans zones.json (monstres, butin et contrats seulement en partie de test).

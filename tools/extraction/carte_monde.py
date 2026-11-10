@@ -16,11 +16,14 @@ x1 = max(m['sol']['x'] + m['sol']['w'] for m in maps); y1 = max(m['sol']['y'] + 
 W, H = int((x1 - x0) * K) + 1, int((y1 - y0) * K) + 1
 carte = Image.new('RGBA', (W, H), (0, 0, 0, 0))
 
-_atlas = {}
+from collections import OrderedDict
+_atlas = OrderedDict()   # pages de décor gardées en mémoire : les 12 dernières (Astrub + Amakna = ~2 000 pages de 16 Mo)
 def atlas(name):
     if name not in _atlas:
         p = f'{D}/{name}.json'
         _atlas[name] = (Image.open(f'{D}/{name}.webp').convert('RGBA'), json.load(open(p))['frames']) if os.path.exists(p) else None
+        while len(_atlas) > 12: _atlas.popitem(last=False)
+    _atlas.move_to_end(name)
     return _atlas[name]
 
 def pose(im, x, y):

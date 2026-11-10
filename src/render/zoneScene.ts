@@ -1308,7 +1308,7 @@ export class ZoneScene extends Phaser.Scene {
           Son.jouer(MANIFESTE.teleport?.[Math.floor(Math.random() * (MANIFESTE.teleport?.length ?? 1))], 'ambiance', { vol: 0.9 }); break;
         case 'respawn': this.hud.banner('De retour !', 900); this.attendreCartes(); this.snapCam = true; break;
         // même nom que l'intérieur où l'on est déjà annoncé (salles d'un donjon) : pas de second bandeau
-        case 'enterArea': if (!this.vitrine && e.name !== this.world.lieu) this.hud.zoneBanner(e.name, this.world.zone.name, e.level, this.decouvrir(e.name)); break;
+        case 'enterArea': if (!this.vitrine && e.name !== this.world.lieu) this.hud.zoneBanner(e.name, this.world.area?.region ?? this.world.zone.name, e.level, this.decouvrir(e.name)); break;
         case 'enterLieu': if (!this.vitrine) this.hud.zoneBanner(e.name, e.region, e.level, this.decouvrir(e.name)); break;
         case 'queteDebut': {
           const q = this.world.quetes!.def(e.id);

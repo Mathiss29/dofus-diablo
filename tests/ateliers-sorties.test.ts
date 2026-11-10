@@ -38,7 +38,7 @@ describe('ateliers écartés des sorties (Mathis, 2026-11-08 : « ne pas mettre 
     for (const [tag, sortie] of [['atelier_mineurs', 497], ['atelier_bijoutiers', 495]] as const)
       expect(Math.min(...postes(tag).map(p => dist(tag, p[1], sortie))), tag).toBeGreaterThanOrEqual(3);
     // la case laissée par le concasseur redevient du plancher, celle où il est posé est bloquée
-    const mov = (c: number) => wg.data.mov[wg.cellOf('atelier_mineurs', c)];
+    const mov = (c: number) => wg.mov[wg.cellOf('atelier_mineurs', c)] === 1 ? '1' : '0';
     expect([mov(483), mov(454)]).toEqual(['1', '0']);
   });
 });

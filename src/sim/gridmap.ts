@@ -20,9 +20,11 @@ export interface DecorPlace { f: string; x: number; y: number; c: number; o: num
 export interface MapData {
   id?: number;
   /** cols/rows : 14 x 40 pour une carte, plus pour un monde fait de plusieurs cartes. */
-  grid: { w: number; h: number; ox: number; oy: number; cols?: number; rows?: number };
-  /** Une lettre par case, '1' = case marchable. */
-  mov: string;
+  grid: { w: number; h: number; ox: number; oy: number; cols?: number; rows?: number;
+    /** Centre de la grille (repère carte) ; sans lui, le milieu de la grille. Un monde agrandi le garde : ses points ne bougent pas. */
+    cx?: number; cy?: number };
+  /** Une lettre par case, '1' = case marchable (une carte, ou un petit monde). */
+  mov?: string;
   sol?: Rect;
   decor?: DecorPlace[];
 }
@@ -40,6 +42,8 @@ export interface WorldMapEntry {
   rivage?: { k: number; w: number; h: number; d: string };
   /** Intérieur (maison, mine…) : rangé à part dans la grille, on y entre par une porte. */
   inside?: number;
+  /** Carte de la version en essai (0.4 : Amakna) : dessinée, mais on n'y marche qu'en partie de test (WorldGrid.ouvrirEssai). */
+  essai?: number;
   /** Intérieur à ciel ouvert (Temple Céleste) : le ciel reste derrière. */
   ciel?: number;
   /** Décor partagé entre cartes (world_export.py PARTAGE=1) : pages d'atlas communes utilisées par cette carte. */
@@ -54,7 +58,10 @@ export interface WorldMapEntry {
   groupe?: string;
 }
 /** Plusieurs cartes Dofus voisines collées bord à bord en une seule grande grille. */
-export interface WorldData extends MapData { origin: [number, number]; maps: WorldMapEntry[]; /** Ciel commun posé derrière tout le monde. */ sky?: string;
+export interface WorldData extends MapData { origin: [number, number]; maps: WorldMapEntry[];
+  /** Grand monde (Astrub + Amakna, grille du continent) : les cases marchables carte par carte, au lieu d'une chaîne
+   *  pour toute la grille (presque toute vide). Clé = tag, valeur = 40·ny lignes de 14·nx lettres. */
+  movCartes?: Record<string, string>; /** Ciel commun posé derrière tout le monde. */ sky?: string;
   /** Carte du monde (touche M) : carte.webp, coin haut-gauche (repère des sols) et échelle (tools/extraction/carte_monde.py). */
   carte?: { x: number; y: number; k: number };
   /** Points d'intérêt officiels (table hints) : carte, nom, icône, catégorie (tools/extraction/reperes.py). */
@@ -72,14 +79,32 @@ export class GridMap {
   static readonly OFFSET_Y = 550;
   readonly C: Vec;
   readonly free: number[] = [];
+  /** Cases marchables : 1 = marchable (lu dans data.mov ou, pour un grand monde, dans movCartes). */
+  readonly mov: Uint8Array;
   readonly cols: number;
   readonly rows: number;
 
   constructor(readonly data: MapData) {
     const g = data.grid;
     this.cols = g.cols ?? MAP_COLS; this.rows = g.rows ?? MAP_ROWS;
-    this.C = { x: g.ox + (this.cols + 0.5) * g.w / 2, y: g.oy + (this.rows * g.h / 2 + g.h / 2) / 2 };
-    for (let c = 0; c < this.cols * this.rows; c++) if (data.mov[c] === '1') this.free.push(c);
+    this.C = { x: g.cx ?? g.ox + (this.cols + 0.5) * g.w / 2, y: g.cy ?? g.oy + (this.rows * g.h / 2 + g.h / 2) / 2 };
+    this.mov = new Uint8Array(this.cols * this.rows);
+    const w = data as Partial<WorldData>;
+    if (w.movCartes && w.maps && w.origin) {   // grand monde : carte par carte (les cases libres restent dans l'ordre de la grille)
+      for (const m of w.maps) if (!m.essai) for (const c of this.casesCarte(m)) this.mov[c] = 1;
+      for (let c = 0; c < this.mov.length; c++) if (this.mov[c]) this.free.push(c);
+    } else {
+      const mov = data.mov ?? '';
+      for (let c = 0; c < this.mov.length; c++) if (mov.charCodeAt(c) === 49) { this.mov[c] = 1; this.free.push(c); }
+    }
+  }
+  /** Cases marchables d'une carte d'un grand monde (movCartes), en cases de la grille. */
+  protected casesCarte(m: WorldMapEntry): number[] {
+    const w = this.data as Partial<WorldData>, s = w.movCartes?.[m.tag], out: number[] = [];
+    if (!s || !w.origin) return out;
+    const W = (m.n?.[0] ?? 1) * MAP_COLS, c0 = (m.y - w.origin[1]) * MAP_ROWS * this.cols + (m.x - w.origin[0]) * MAP_COLS;
+    for (let i = s.indexOf('1'); i >= 0; i = s.indexOf('1', i + 1)) out.push(c0 + Math.floor(i / W) * this.cols + i % W);
+    return out;
   }
   /** Carte -> écran du jeu. */
   toScreen(mx: number, my: number): Vec {
@@ -110,7 +135,7 @@ export class GridMap {
   /** Point du monde du jeu -> marchable ? */
   walkable(wx: number, wy: number): boolean {
     const c = this.cellAtWorld(wx, wy);
-    return c >= 0 && this.data.mov[c] === '1';
+    return c >= 0 && this.mov[c] === 1;
   }
   cellToWorld(c: number): Vec {
     const m = this.cellCenter(c), s = this.toScreen(m.x, m.y);
@@ -126,7 +151,7 @@ export class GridMap {
     const r = Math.floor(c / this.cols), k = c % this.cols, o = r % 2, out: number[] = [];
     const add = (rr: number, kk: number) => {
       if (rr < 0 || rr >= this.rows || kk < 0 || kk >= this.cols) return;
-      const n = rr * this.cols + kk; if (this.data.mov[n] === '1') out.push(n);
+      const n = rr * this.cols + kk; if (this.mov[n] === 1) out.push(n);
     };
     add(r - 1, k - 1 + o); add(r - 1, k + o); add(r + 1, k - 1 + o); add(r + 1, k + o);   // côtés
     add(r - 2, k); add(r + 2, k); add(r, k - 1); add(r, k + 1);                             // coins
@@ -154,7 +179,7 @@ export class GridMap {
     const start = this.cellAtWorld(from.x, from.y);
     let goal = this.cellAtWorld(to.x, to.y);
     if (start < 0) return [];
-    if (goal < 0 || this.data.mov[goal] !== '1') {
+    if (goal < 0 || this.mov[goal] !== 1) {
       const f = this.nearestFreeNear(to, 6); if (!f) return []; goal = this.cellAtWorld(f.x, f.y); to = f;
     }
     const W = (c: number) => this.cellToWorld(c), gp = W(goal);
@@ -199,7 +224,7 @@ export class GridMap {
     let best: Vec | null = null, bd = Infinity;
     for (let rr = R - 2 * r; rr <= R + 2 * r; rr++) for (let kk = K - r; kk <= K + r; kk++) {
       if (rr < 0 || rr >= this.rows || kk < 0 || kk >= this.cols) continue;
-      const c = rr * this.cols + kk; if (this.data.mov[c] !== '1') continue;
+      const c = rr * this.cols + kk; if (this.mov[c] !== 1) continue;
       const q = this.cellToWorld(c), d = (q.x - p.x) ** 2 + (q.y - p.y) ** 2;
       if (d < bd) { bd = d; best = q; }
     }
@@ -233,14 +258,14 @@ export class WorldGrid extends GridMap {
     for (const c of this.free) { const m = this.mapOfCell(c); if (m) this.freeByMap.get(m.tag)!.push(c); }
   }
   /** Ouvre des cases à la marche (couloirs d'un donjon, partie de test). */
+  /** Partie de test : les cartes en essai (0.4 : Amakna) deviennent marchables. */
+  ouvrirEssai() { for (const m of this.world.maps) if (m.essai) this.ouvrir(this.casesCarte(m)); }
   ouvrir(cases: number[]) {
-    const mov = this.data.mov.split('');
     for (const c of cases) {
-      if (mov[c] === '1') continue;
-      mov[c] = '1'; this.free.push(c);
+      if (c < 0 || c >= this.mov.length || this.mov[c] === 1) continue;
+      this.mov[c] = 1; this.free.push(c);   // le tableau est propre à cette grille : le monde.json chargé reste tel quel
       const m = this.mapOfCell(c); if (m) this.freeByMap.get(m.tag)!.push(c);
     }
-    (this as { data: MapData }).data = { ...this.data, mov: mov.join('') };   // copie : le monde.json chargé reste tel quel
   }
   mapOfCell(c: number): WorldMapEntry | undefined {
     if (c < 0) return undefined;

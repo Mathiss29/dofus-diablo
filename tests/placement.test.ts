@@ -23,7 +23,7 @@ describe('placement des groupes de monstres', () => {
     for (const t of cartes) {
       const pl = w.placementDe(t)!;
       expect(pl.p.length, t).toBeGreaterThanOrEqual(pl.g);
-      for (const p of pl.p) expect(wg.data.mov[wg.cellOf(t, p.c)], t).toBe('1');
+      for (const p of pl.p) expect(wg.mov[wg.cellOf(t, p.c)], t).toBe(1);
     }
     const autre = nouveau('incarnam', undefined, 99);
     for (const t of cartes) expect(autre.placementDe(t)).toEqual(w.placementDe(t));
@@ -105,7 +105,7 @@ describe('src/data/placements.json', () => {
         expect(pl.p.filter(p => p.r).length).toBeLessThanOrEqual(1);
         for (const p of pl.p) {
           expect(p.c >= 0 && p.c < MAP_COLS * MAP_ROWS, `${tag} ${p.c}`).toBe(true);
-          expect(g.data.mov[g.cellOf(tag, p.c)], `${tag} case ${p.c} dans un mur`).toBe('1');
+          expect(g.mov[g.cellOf(tag, p.c)], `${tag} case ${p.c} dans un mur`).toBe(1);
         }
       }
     }
