@@ -2857,7 +2857,7 @@
       "chateau_cuisine",
       424
      ],
-     "nom": "Cuisines du Château"
+     "nom": "Chambre du Roi"
     },
     {
      "a": [
@@ -4788,6 +4788,51 @@
        18.0,
        -32.0
       ]
+     ]
+    },
+    {
+     "nom": "Office de la salle des banquets",
+     "metiers": [
+      "paysan",
+      "pecheur",
+      "chasseur"
+     ],
+     "cartes": [
+      "chateau_banquet"
+     ]
+    },
+    {
+     "nom": "Forge de la Milice d'Amakna",
+     "metiers": [
+      "forgeron",
+      "mineur",
+      "sculpteur",
+      "bucheron"
+     ],
+     "cartes": [
+      "chateau_milice_garde"
+     ]
+    },
+    {
+     "nom": "Atelier des artisans du Château",
+     "metiers": [
+      "bijoutier",
+      "cordonnier",
+      "tailleur",
+      "faconneur"
+     ],
+     "cartes": [
+      "chateau_conseil"
+     ]
+    },
+    {
+     "nom": "Laboratoire du Château d'Amakna",
+     "metiers": [
+      "alchimiste",
+      "bricoleur"
+     ],
+     "cartes": [
+      "chateau_bibliotheque"
      ]
     }
    ],

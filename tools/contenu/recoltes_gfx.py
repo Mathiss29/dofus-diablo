@@ -47,9 +47,15 @@ GFX = {
     2204: 312,   # Fer (cailloux gris, 2/2)
     # Puits : Eau Potable, « Puiser » (compétence de base, sans métier)
     224: 311, 4938: 311,
+    # Amakna (relevés de ses cartes ajoutés le 2026-11-10)
+    667: 405,    # Malt (6/15, les autres cartes : blé autour)
+    3226: 16389, # Mandragore (11/12)
 }
 # Pas des ressources : 5249 (un effet bleu, pas de dessin « prête ») ; 1953 (coquillage sans relevé officiel).
 POISSON = 1018   # remous de pêche : le poisson vient du relevé de la carte (sinon de la liste de la sous-zone)
+# autres remous d'Amakna (rivières : Brochet, Anguille ; côtes : Bar Rikain), même tirage. 9255 (rivières) n'a pas de dessin
+# dans le cache des éléments animés : laissé de côté.
+POISSONS = {POISSON, 1021, 1839}
 
 _REL = json.load(open(os.path.join(os.path.dirname(__file__), 'recoltables_dofusdb.json')))['cartes']
 
@@ -67,4 +73,4 @@ def poisson(map_id, tag, cell, peche_sous_zone):
         x -= w
 
 def ressource(gfx, map_id, tag, cell, peche_sous_zone):
-    return poisson(map_id, tag, cell, peche_sous_zone) if gfx == POISSON else GFX.get(gfx)
+    return poisson(map_id, tag, cell, peche_sous_zone) if gfx in POISSONS else GFX.get(gfx)

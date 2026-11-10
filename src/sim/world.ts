@@ -2071,6 +2071,7 @@ export class World {
     if (!R || !wg || !l) return;
     for (const [tag, cell, item, gfx, dx, dy, miroir] of l) {
       if (!wg.mapByTag(tag) || !R.ressources[item]) continue;
+      if (wg.mapByTag(tag)!.essai && !this.test) continue;   // 0.4 cachée : récoltes d'Amakna en partie de test
       const q = wg.cellToWorld(wg.cellOf(tag, cell));
       this.recoltes.push({ id: this.nextId++, tag, x: q.x, y: q.y, item, dore: this.rng.next() < RECOLTE.dore, repousse: 0,
         gfx, dessin: dx || dy ? { x: dx!, y: dy! } : undefined, miroir: miroir === 1 });
