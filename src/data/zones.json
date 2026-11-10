@@ -1317,6 +1317,433 @@
       0,
       0
      ]
+    },
+    "1": {
+     "name": "Port de Madrestam",
+     "level": 15,
+     "monsters": [
+      "larve_bleue",
+      "larve_verte",
+      "larve_orange",
+      "larve_jaune"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Amakna"
+    },
+    "2": {
+     "name": "Montagne des Craqueleurs",
+     "level": 40,
+     "monsters": [
+      "kwak_de_vent",
+      "kwak_de_flamme",
+      "kwak_de_glace",
+      "cochon_de_lait",
+      "kwak_de_terre",
+      "kwakere_de_flamme",
+      "kwakere_de_terre",
+      "kwakere_de_glace",
+      "kwakere_de_vent"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Amakna"
+    },
+    "3": {
+     "name": "Champ des Ingalsse",
+     "level": 30,
+     "monsters": [
+      "tofu_amakna",
+      "araknelle",
+      "tofu_noir",
+      "tofoune",
+      "tofukaz",
+      "ambi_guman",
+      "tofu_mutant"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Amakna"
+    },
+    "4": {
+     "name": "Forêt d'Amakna",
+     "level": 20,
+     "monsters": [
+      "champ_champ",
+      "prespic",
+      "sanglier",
+      "abraknyde_chetif"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Amakna"
+    },
+    "5": {
+     "name": "Coin des Bouftous",
+     "level": 20,
+     "monsters": [
+      "bouftou",
+      "boufton",
+      "chef_de_guerre_bouftou",
+      "boufton_noir"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Amakna"
+    },
+    "6": {
+     "name": "Cimetière",
+     "level": 30,
+     "monsters": [
+      "chafer",
+      "rib",
+      "chafer_invisible",
+      "tofu_malefique",
+      "kwoan",
+      "chafer_fantassin",
+      "roub_ignolles"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Amakna"
+    },
+    "8": {
+     "name": "Campement des Bworks",
+     "level": 40,
+     "monsters": [
+      "bwork_mage",
+      "gob_trotteur",
+      "bwork_archer",
+      "gobet",
+      "bwork"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Amakna"
+    },
+    "10": {
+     "name": "Village d'Amakna",
+     "level": 10,
+     "monsters": [
+      "piou_violet",
+      "piou_vert",
+      "piou_bleu",
+      "piou_rose",
+      "piou_jaune"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Amakna"
+    },
+    "12": {
+     "name": "Péninsule des gelées",
+     "level": 50,
+     "monsters": [
+      "gelee_bleuet",
+      "gelee_menthe",
+      "gelee_fraise"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Amakna"
+    },
+    "22": {
+     "name": "Bord de la forêt maléfique",
+     "level": 30,
+     "monsters": [
+      "champa_vert",
+      "champa_rouge",
+      "champa_bleu",
+      "champa_marron",
+      "maitre_boulet"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Amakna"
+    },
+    "23": {
+     "name": "Presqu'île des Dragoeufs",
+     "level": 60,
+     "monsters": [
+      "dragoeuf_calcaire",
+      "dragoeuf_argile",
+      "dragoeuf_ardoise",
+      "dragoeuf_charbon",
+      "coffre_malveillant"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Amakna"
+    },
+    "27": {
+     "name": "Côte d'Asse",
+     "level": 15,
+     "monsters": [
+      "larve_bleue",
+      "larve_verte",
+      "larve_orange",
+      "larve_jaune"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Amakna"
+    },
+    "31": {
+     "name": "Marécages d'Amakna",
+     "level": 60,
+     "monsters": [
+      "boo",
+      "crocodaille",
+      "chef_crocodaille",
+      "arakne_olithique"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Amakna"
+    },
+    "103": {
+     "name": "Territoire des Bandits",
+     "level": 40,
+     "monsters": [
+      "mineur_sombre",
+      "forgeron_sombre",
+      "boulanger_sombre",
+      "bandit_du_clan_des_roublards"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Amakna"
+    },
+    "170": {
+     "name": "Plaine des Scarafeuilles",
+     "level": 30,
+     "monsters": [
+      "scarafeuille_rouge",
+      "scarafeuille_bleu",
+      "scarafeuille_vert",
+      "scarafeuille_blanc"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Amakna"
+    },
+    "179": {
+     "name": "Coin des Boos",
+     "level": 20,
+     "monsters": [
+      "bouftou",
+      "boo",
+      "boufton",
+      "boufton_noir"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Amakna"
+    },
+    "180": {
+     "name": "Château d'Amakna",
+     "level": 1,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Amakna"
+    },
+    "276": {
+     "name": "Campement des Gobelins",
+     "level": 30,
+     "monsters": [
+      "gob_trotteur",
+      "gobet",
+      "gobaliste",
+      "gobaladee"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Amakna"
+    },
+    "277": {
+     "name": "Village des Bworks",
+     "level": 40,
+     "monsters": [
+      "bwork_mage",
+      "bwork_archer",
+      "piou_violet",
+      "piou_rose",
+      "bwork"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Amakna"
+    },
+    "479": {
+     "name": "Rivière Kawaii",
+     "level": 15,
+     "monsters": [
+      "arakne",
+      "champ_champ",
+      "moskito",
+      "campagnoll"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Amakna"
+    },
+    "480": {
+     "name": "Montagne basse des Craqueleurs",
+     "level": 50,
+     "monsters": [
+      "arakne",
+      "bwork_mage",
+      "gob_trotteur",
+      "bwork_archer",
+      "craqueleur",
+      "gobet",
+      "craqueboule",
+      "bwork",
+      "elementerre",
+      "craquelourd"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Amakna"
+    },
+    "481": {
+     "name": "Clairière de Brouce Boulgoure",
+     "level": 20,
+     "monsters": [
+      "moskito",
+      "sanglier",
+      "abraknyde_chetif",
+      "campagnoll"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Amakna"
+    },
+    "482": {
+     "name": "Milifutaie",
+     "level": 20,
+     "monsters": [
+      "arakne",
+      "prespic",
+      "milimulou",
+      "piou_bleu",
+      "piou_rose",
+      "piou_jaune",
+      "ecurouille"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Amakna"
+    },
+    "485": {
+     "name": "Campagne d'Amakna",
+     "level": 15,
+     "monsters": [
+      "arakne",
+      "champ_champ",
+      "moskito",
+      "campagnoll"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Amakna"
     }
    },
    "checkpoints": [

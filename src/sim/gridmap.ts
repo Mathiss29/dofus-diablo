@@ -42,6 +42,8 @@ export interface WorldMapEntry {
   rivage?: { k: number; w: number; h: number; d: string };
   /** Intérieur (maison, mine…) : rangé à part dans la grille, on y entre par une porte. */
   inside?: number;
+  /** Carte de la version en essai (0.4 : Amakna) : dessinée, mais on n'y marche qu'en partie de test (WorldGrid.ouvrirEssai). */
+  essai?: number;
   /** Intérieur à ciel ouvert (Temple Céleste) : le ciel reste derrière. */
   ciel?: number;
   /** Décor partagé entre cartes (world_export.py PARTAGE=1) : pages d'atlas communes utilisées par cette carte. */
@@ -89,17 +91,20 @@ export class GridMap {
     this.mov = new Uint8Array(this.cols * this.rows);
     const w = data as Partial<WorldData>;
     if (w.movCartes && w.maps && w.origin) {   // grand monde : carte par carte (les cases libres restent dans l'ordre de la grille)
-      const [X0, Y0] = w.origin;
-      for (const m of w.maps) {
-        const s = w.movCartes[m.tag]; if (!s) continue;
-        const W = (m.n?.[0] ?? 1) * MAP_COLS, c0 = (m.y - Y0) * MAP_ROWS * this.cols + (m.x - X0) * MAP_COLS;
-        for (let i = s.indexOf('1'); i >= 0; i = s.indexOf('1', i + 1)) this.mov[c0 + Math.floor(i / W) * this.cols + i % W] = 1;
-      }
+      for (const m of w.maps) if (!m.essai) for (const c of this.casesCarte(m)) this.mov[c] = 1;
       for (let c = 0; c < this.mov.length; c++) if (this.mov[c]) this.free.push(c);
     } else {
       const mov = data.mov ?? '';
       for (let c = 0; c < this.mov.length; c++) if (mov.charCodeAt(c) === 49) { this.mov[c] = 1; this.free.push(c); }
     }
+  }
+  /** Cases marchables d'une carte d'un grand monde (movCartes), en cases de la grille. */
+  protected casesCarte(m: WorldMapEntry): number[] {
+    const w = this.data as Partial<WorldData>, s = w.movCartes?.[m.tag], out: number[] = [];
+    if (!s || !w.origin) return out;
+    const W = (m.n?.[0] ?? 1) * MAP_COLS, c0 = (m.y - w.origin[1]) * MAP_ROWS * this.cols + (m.x - w.origin[0]) * MAP_COLS;
+    for (let i = s.indexOf('1'); i >= 0; i = s.indexOf('1', i + 1)) out.push(c0 + Math.floor(i / W) * this.cols + i % W);
+    return out;
   }
   /** Carte -> écran du jeu. */
   toScreen(mx: number, my: number): Vec {
@@ -253,6 +258,8 @@ export class WorldGrid extends GridMap {
     for (const c of this.free) { const m = this.mapOfCell(c); if (m) this.freeByMap.get(m.tag)!.push(c); }
   }
   /** Ouvre des cases à la marche (couloirs d'un donjon, partie de test). */
+  /** Partie de test : les cartes en essai (0.4 : Amakna) deviennent marchables. */
+  ouvrirEssai() { for (const m of this.world.maps) if (m.essai) this.ouvrir(this.casesCarte(m)); }
   ouvrir(cases: number[]) {
     for (const c of cases) {
       if (c < 0 || c >= this.mov.length || this.mov[c] === 1) continue;

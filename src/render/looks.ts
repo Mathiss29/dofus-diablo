@@ -443,6 +443,48 @@ export const LOOKS: Record<string, Look> = {
   shin_larve: { atlas: 'shin_larve', scale: 0.97, map: MONSTER_MAP(12/19, 'AnimAttaque1', { 1: 12/19 }), height: 207, multi: true },
   larve_verte_solitaire: { atlas: 'larve_verte_solitaire', scale: 0.9, map: MONSTER_MAP(12/24, 'AnimAttaque0', { 0: 12/24, 1: 9/18 }), height: 55, multi: true },
   larve_bleue_solitaire: { atlas: 'larve_bleue_solitaire', scale: 0.9, map: MONSTER_MAP(12/24, 'AnimAttaque0', { 0: 12/24, 1: 9/18 }), height: 55, multi: true },
+  // Amakna (0.4, monde sans coupure) : monstres des sous-zones officielles (am/ajout.py, tools/extraction/LISEZMOI.md)
+  mulou: { atlas: 'mulou', scale: 1.2, map: MONSTER_MAP(10/29, 'AnimAttaque0', { 0: 10/29, 1: 28/47, 2: 12/35 }), height: 182, multi: true },
+  cochon_de_lait: { atlas: 'cochon_de_lait', scale: 0.7, map: MONSTER_MAP(14/23, 'AnimAttaque0', { 0: 14/23, 1: 4/46, 2: 14/23 }), height: 197, multi: true },
+  araknelle: { atlas: 'araknelle', scale: 0.9, map: MONSTER_MAP(10/18, 'AnimAttaque0', { 0: 10/18, 1: 10/18 }), height: 46, multi: true },
+  ambi_guman: { atlas: 'ambi_guman', scale: 1.0, map: MONSTER_MAP(20/40, 'AnimAttaque0', { 0: 20/40, 1: 18/49, 2: 24/44 }), height: 352, multi: true },
+  champ_champ: { atlas: 'champ_champ', scale: 0.64, map: MONSTER_MAP(14/28, 'AnimAttaque0', { 0: 14/28, 1: 16/33 }), height: 119, multi: true },
+  abraknyde_chetif: { atlas: 'abraknyde_chetif', scale: 0.64, map: MONSTER_MAP(18/33, 'AnimAttaque0', { 0: 18/33, 1: 20/34, 2: 9/34 }), height: 261, multi: true },
+  tofu_malefique: { atlas: 'tofu_malefique', scale: 0.7, map: MONSTER_MAP(10/30, 'AnimAttaque0', { 0: 10/30, 1: 10/30 }), height: 83, multi: true },
+  kwoan: { atlas: 'kwoan', scale: 0.77, map: MONSTER_MAP(15/24, 'AnimAttaque0', { 0: 15/24, 1: 20/40 }), height: 126, multi: true },
+  roub_ignolles: { atlas: 'roub_ignolles', scale: 0.64, map: MONSTER_MAP(27/41, 'AnimAttaque0', { 0: 27/41, 1: 24/37 }), height: 312, multi: true },
+  gelee_bleuet: { atlas: 'gelee_bleuet', scale: 0.64, map: MONSTER_MAP(12/41, 'AnimAttaque0', { 0: 12/41, 1: 8/37 }), height: 178, multi: true },
+  gelee_menthe: { atlas: 'gelee_menthe', scale: 0.64, map: MONSTER_MAP(12/41, 'AnimAttaque0', { 0: 12/41, 1: 8/37 }), height: 179, multi: true },
+  gelee_fraise: { atlas: 'gelee_fraise', scale: 0.64, map: MONSTER_MAP(12/41, 'AnimAttaque0', { 0: 12/41, 1: 8/37 }), height: 178, multi: true },
+  champa_vert: { atlas: 'champa_vert', scale: 0.64, map: MONSTER_MAP(8/28, 'AnimAttaque0', { 0: 8/28, 1: 8/28 }), height: 105, multi: true },
+  champa_rouge: { atlas: 'champa_rouge', scale: 0.64, map: MONSTER_MAP(8/28, 'AnimAttaque0', { 0: 8/28, 1: 8/28 }), height: 104, multi: true },
+  champa_bleu: { atlas: 'champa_bleu', scale: 0.64, map: MONSTER_MAP(8/28, 'AnimAttaque0', { 0: 8/28, 1: 8/28 }), height: 104, multi: true },
+  champa_marron: { atlas: 'champa_marron', scale: 0.64, map: MONSTER_MAP(8/28, 'AnimAttaque0', { 0: 8/28, 1: 8/28 }), height: 104, multi: true },
+  maitre_boulet: { atlas: 'maitre_boulet', scale: 0.7, map: MONSTER_MAP(19/50, 'AnimAttaque0', { 0: 19/50, 1: 19/47, 2: 13/50 }), height: 199, multi: true },
+  dragoeuf_calcaire: { atlas: 'dragoeuf_calcaire', scale: 0.64, map: MONSTER_MAP(3/23, 'AnimAttaque1', { 1: 3/23, 2: 13/26 }), height: 154, multi: true },
+  dragoeuf_argile: { atlas: 'dragoeuf_argile', scale: 0.64, map: MONSTER_MAP(13/27, 'AnimAttaque0', { 0: 13/27, 1: 13/26 }), height: 153, multi: true },
+  dragoeuf_ardoise: { atlas: 'dragoeuf_ardoise', scale: 0.64, map: MONSTER_MAP(13/27, 'AnimAttaque0', { 0: 13/27, 1: 13/26 }), height: 154, multi: true },
+  dragoeuf_charbon: { atlas: 'dragoeuf_charbon', scale: 0.64, map: MONSTER_MAP(13/27, 'AnimAttaque0', { 0: 13/27, 1: 13/26 }), height: 153, multi: true },
+  coffre_malveillant: { atlas: 'coffre_malveillant', scale: 0.77, map: MONSTER_MAP(12/37, 'AnimAttaque0', { 0: 12/37, 1: 11/47 }), height: 107, multi: true },
+  boo: { atlas: 'boo', scale: 0.7, map: MONSTER_MAP(10/37, 'AnimAttaque0', { 0: 10/37, 1: 13/27 }), height: 83, multi: true },
+  crocodaille: { atlas: 'crocodaille', scale: 0.8, map: MONSTER_MAP(10/28, 'AnimAttaque0', { 0: 10/28, 1: 19/50, 2: 10/28 }), height: 147, multi: true },
+  chef_crocodaille: { atlas: 'chef_crocodaille', scale: 0.83, map: MONSTER_MAP(9/23, 'AnimAttaque0', { 0: 9/23, 1: 21/34 }), height: 162, multi: true },
+  arakne_olithique: { atlas: 'arakne_olithique', scale: 0.83, map: MONSTER_MAP(10/18, 'AnimAttaque1', { 1: 10/18, 2: 32/42 }), height: 86, multi: true },
+  boulanger_souille: { atlas: 'boulanger_souille', scale: 0.64, map: MONSTER_MAP(11/27, 'AnimAttaque0', { 0: 11/27, 1: 9/25 }), height: 309, multi: true },
+  mineur_souille: { atlas: 'mineur_souille', scale: 0.64, map: MONSTER_MAP(12/23, 'AnimAttaque0', { 0: 12/23, 2: 4/20, 9: 10/22 }), height: 241, multi: true },
+  dragodinde_amande_sauvage: { atlas: 'dragodinde_amande_sauvage', scale: 0.74, map: MONSTER_MAP(11/31, 'AnimAttaque0', { 0: 11/31, 1: 10/32 }), height: 234, multi: true },
+  dragodinde_rousse_sauvage: { atlas: 'dragodinde_rousse_sauvage', scale: 0.74, map: MONSTER_MAP(11/31, 'AnimAttaque0', { 0: 11/31, 1: 10/32 }), height: 234, multi: true },
+  arakne: { atlas: 'arakne', scale: 0.61, map: MONSTER_MAP(13/26, 'AnimAttaque0', { 0: 13/26, 1: 51/103 }), height: 73, multi: true },
+  moskito: { atlas: 'moskito', scale: 0.83, map: MONSTER_MAP(11/25, 'AnimAttaque0', { 0: 11/25, 1: 11/25 }), height: 70, multi: true },
+  campagnoll: { atlas: 'campagnoll', scale: 0.64, map: MONSTER_MAP(11/27, 'AnimAttaque0', { 0: 11/27, 1: 9/36 }), height: 155, multi: true },
+  meulou: { atlas: 'meulou', scale: 0.83, map: MONSTER_MAP(12/35, 'AnimAttaque0', { 0: 12/35, 1: 10/29, 3: 14/42 }), height: 283, multi: true },
+  craquelourd: { atlas: 'craquelourd', scale: 0.64, map: MONSTER_MAP(11/27, 'AnimAttaque0', { 0: 11/27, 1: 34/51 }), height: 348, multi: true },
+  poutch_vil_smisse: { atlas: 'poutch_vil_smisse', scale: 0.64, map: MONSTER_MAP(9/31, 'AnimAttaque1', { 1: 9/31 }), height: 207, multi: true },
+  poutch_ombre: { atlas: 'poutch_ombre', scale: 0.64, map: MONSTER_MAP(9/31, 'AnimAttaque1', { 1: 9/31 }), height: 205, multi: true },
+  poutch_hyperscampe: { atlas: 'poutch_hyperscampe', scale: 0.64, map: MONSTER_MAP(9/31, 'AnimAttaque1', { 1: 9/31 }), height: 215, multi: true },
+  poutch_sylargh: { atlas: 'poutch_sylargh', scale: 0.64, map: MONSTER_MAP(9/31, 'AnimAttaque1', { 1: 9/31 }), height: 205, multi: true },
+  poutch_crane_rose: { atlas: 'poutch_crane_rose', scale: 0.64, map: MONSTER_MAP(9/31, 'AnimAttaque1', { 1: 9/31 }), height: 201, multi: true },
+  bandit_manchot: { atlas: 'bandit_manchot', scale: 0.64, map: MONSTER_MAP(15/28, 'AnimAttaque0', { 0: 15/28, 1: 9/27 }), height: 259, multi: true },
   craqueleur: { atlas: 'craqueleur', scale: 0.74, map: MONSTER_MAP(11/27, 'AnimAttaque0', { 0: 11/27, 1: 34/51 }), height: 298, multi: true },
   craqueleur_des_plaines: { atlas: 'craqueleur_des_plaines', scale: 1.1, map: MONSTER_MAP(15/38, 'AnimAttaque0', { 0: 15/38, 1: 27/52 }), height: 220, multi: true },
   craqueboule: { atlas: 'craqueboule', scale: 0.64, map: MONSTER_MAP(10/25, 'AnimAttaque0', { 0: 10/25, 1: 5/25 }), height: 188, multi: true },
@@ -466,8 +508,9 @@ export const LOOKS: Record<string, Look> = {
 
 /** Archimonstres d'Astrub (0.3, 15B ; tools/contenu/archimonstres.py) : dans Dofus, un archimonstre a le dessin de son monstre
  *  (même gfxId) à sa propre échelle officielle. Même planche, à cette échelle, un peu plus grand et doré comme ceux des Champs. */
-for (const [k, d] of Object.entries(MONSTRES as Record<string, { archiDe?: string; archiEchelle?: number }>)) {
-  const base = d.archiDe && LOOKS[d.archiDe];
+const MONS = MONSTRES as Record<string, { look?: string; archiDe?: string; archiEchelle?: number }>;
+for (const [k, d] of Object.entries(MONS)) {
+  const base = d.archiDe && (LOOKS[d.archiDe] ?? LOOKS[MONS[d.archiDe]?.look ?? '']);   // monstre au dessin d'un autre (Chafer -> chafer_debutant)
   if (base && !LOOKS[k]) LOOKS[k] = { ...base, scale: base.scale * (d.archiEchelle ?? 1) * 1.15, tint: GOLD };
 }
 

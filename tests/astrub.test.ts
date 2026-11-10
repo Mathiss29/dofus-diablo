@@ -24,9 +24,14 @@ function passerPortail(w: World, clic = true) {
 }
 
 describe('Astrub (0.2a)', () => {
-  it('359 cartes du dehors, chacune avec des cases marchables', () => {
+  it('359 cartes du dehors + les 642 d\'Amakna (0.4, sur la grille du continent), chacune avec des cases marchables', () => {
     const wg = new WorldGrid(astrub);
-    expect(astrub.maps.filter(m => !m.inside).length).toBe(359);
+    expect(astrub.maps.filter(m => !m.inside).length).toBe(359 + 642);
+    // Amakna (0.4 cachée) : dessiné, mais fermé hors partie de test
+    expect(astrub.maps.filter(m => m.essai).length).toBe(642);
+    expect(astrub.maps.filter(m => m.essai).every(m => wg.freeByMap.get(m.tag)!.length === 0)).toBe(true);
+    wg.ouvrirEssai();
+    expect(astrub.origin).toEqual([-88, -93]);
     // (les couloirs des donjons en couloirs ne s'ouvrent qu'en partie de test : tests/couloirs.test.ts)
     for (const m of astrub.maps) if (!m.dessus) expect(wg.freeByMap.get(m.tag)!.length, m.tag).toBeGreaterThan(20);
   });
@@ -72,6 +77,13 @@ describe('Astrub (0.2a)', () => {
     expect(w2.drainEvents().some(e => e.k === 'changeZone')).toBe(false);
     const retour = passerPortail(w2);
     expect(retour).toMatchObject({ zone: 'incarnam', arrivee: ['4_-3', 300] });
+  });
+  it('Amakna (0.4) : sous-zones et monstres seulement en partie de test', () => {
+    const pub = new World({ data: GAME_DATA, zone: 'astrub', map: new WorldGrid(astrub), seed: 1 });
+    expect(Object.values(pub.zone.open!.subareas).some(s => s.essai)).toBe(false);
+    const test = new World({ data: GAME_DATA, zone: 'astrub', map: new WorldGrid(astrub), seed: 1, test: {} as never });
+    expect(Object.values(test.zone.open!.subareas).filter(s => s.essai).length).toBeGreaterThan(20);
+    expect(test.worldGrid!.freeByMap.get('2_0')!.length).toBeGreaterThan(20);
   });
   it('quatre donjons en arène : une grande salle de 3 x 3 cartes, monstres officiels, 3 vagues + le boss, entrée à clé', () => {
     const w = new World({ data: GAME_DATA, zone: 'astrub', map: new WorldGrid(astrub), seed: 1 }), wg = w.worldGrid!;

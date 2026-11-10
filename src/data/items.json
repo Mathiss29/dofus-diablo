@@ -20391,6 +20391,496 @@
    "name": "Cocon de Ver à Soie",
    "icon": 15489,
    "level": 36
+  },
+  "438": {
+   "name": "Queue du Mulou",
+   "icon": 65105,
+   "level": 96
+  },
+  "17140": {
+   "name": "Viande Exsudative",
+   "icon": 63471,
+   "level": 100
+  },
+  "18861": {
+   "name": "Croc infecté",
+   "icon": 47106,
+   "level": 100
+  },
+  "651": {
+   "name": "Étoffe du Mulou",
+   "icon": 55199,
+   "level": 96
+  },
+  "2581": {
+   "name": "Dents de Mulou",
+   "icon": 47587,
+   "level": 100
+  },
+  "32706": {
+   "name": "Fragment de carte de Carlita 4/5",
+   "icon": 77042,
+   "level": 100
+  },
+  "32707": {
+   "name": "Fragment de carte de Carlita 5/5",
+   "icon": 77042,
+   "level": 100
+  },
+  "901": {
+   "name": "Cuir du Cochon de Lait",
+   "icon": 56141,
+   "level": 33
+  },
+  "479": {
+   "name": "Ivoire",
+   "icon": 47088,
+   "level": 80
+  },
+  "2266": {
+   "name": "Lait de Cochon de Lait",
+   "icon": 15423,
+   "level": 43
+  },
+  "2646": {
+   "name": "Slip en cuir de Cochon de Lait",
+   "icon": 56621,
+   "level": 49
+  },
+  "973": {
+   "name": "Patte d'Araknelle",
+   "icon": 24011,
+   "level": 1
+  },
+  "14824": {
+   "name": "Les Guman",
+   "icon": 32066,
+   "level": 1
+  },
+  "377": {
+   "name": "Épine du Champ Champ",
+   "icon": 15049,
+   "level": 18
+  },
+  "378": {
+   "name": "Sporme du Champ Champ",
+   "icon": 15050,
+   "level": 18
+  },
+  "6920": {
+   "name": "Alliance Du Champ Champ",
+   "icon": 9075,
+   "level": 11
+  },
+  "6919": {
+   "name": "Anneau du Champ Champ",
+   "icon": 9074,
+   "level": 13
+  },
+  "6921": {
+   "name": "Champcoiffe",
+   "icon": 16084,
+   "level": 12
+  },
+  "6922": {
+   "name": "Cape du Champ Champ",
+   "icon": 17076,
+   "level": 11
+  },
+  "435": {
+   "name": "Racine d'Abraknyde",
+   "icon": 98102,
+   "level": 44
+  },
+  "464": {
+   "name": "Ambre d'Abraknyde",
+   "icon": 50097,
+   "level": 44
+  },
+  "463": {
+   "name": "Ambre",
+   "icon": 50096,
+   "level": 44
+  },
+  "16835": {
+   "name": "Sachet de Résine",
+   "icon": 180014,
+   "level": 1
+  },
+  "8162": {
+   "name": "Tête de Citwouille",
+   "icon": 16134,
+   "level": 1
+  },
+  "20055": {
+   "name": "Échantillon de Créature Contaminée",
+   "icon": 63408,
+   "level": 1
+  },
+  "376": {
+   "name": "Aile du Tofu Maléfique",
+   "icon": 104048,
+   "level": 26
+  },
+  "2675": {
+   "name": "Plume de Tofu Maléfique",
+   "icon": 53644,
+   "level": 26
+  },
+  "2283": {
+   "name": "Œil de Kwoan",
+   "icon": 109436,
+   "level": 35
+  },
+  "2463": {
+   "name": "Dent de Kwoan",
+   "icon": 47502,
+   "level": 36
+  },
+  "17477": {
+   "name": "Roub' Ignolles",
+   "icon": 32125,
+   "level": 1
+  },
+  "13294": {
+   "name": "Jus Concentré de Gelée",
+   "icon": 15773,
+   "level": 54
+  },
+  "18477": {
+   "name": "Confiture Bleue",
+   "icon": 110042,
+   "level": 1
+  },
+  "757": {
+   "name": "Gelée Bleuet",
+   "icon": 110042,
+   "level": 54
+  },
+  "16827": {
+   "name": "Sachet de Graisse Gélatineuse",
+   "icon": 180007,
+   "level": 1
+  },
+  "2471": {
+   "name": "Geloture",
+   "icon": 10032,
+   "level": 60
+  },
+  "18474": {
+   "name": "Confiture Menthe",
+   "icon": 110041,
+   "level": 1
+  },
+  "369": {
+   "name": "Gelée à la Menthe",
+   "icon": 110041,
+   "level": 56
+  },
+  "2470": {
+   "name": "Gelobottes",
+   "icon": 11031,
+   "level": 60
+  },
+  "18475": {
+   "name": "Confiture Fraise",
+   "icon": 110040,
+   "level": 1
+  },
+  "381": {
+   "name": "Fraise",
+   "icon": 46053,
+   "level": 58
+  },
+  "368": {
+   "name": "Gelée à la Fraise",
+   "icon": 110040,
+   "level": 58
+  },
+  "2446": {
+   "name": "Gelocape",
+   "icon": 17047,
+   "level": 60
+  },
+  "2447": {
+   "name": "Gelocoiffe",
+   "icon": 16043,
+   "level": 60
+  },
+  "16168": {
+   "name": "Lamelle de Champa Vert",
+   "icon": 119013,
+   "level": 39
+  },
+  "1674": {
+   "name": "Champignon Luidegît",
+   "icon": 15390,
+   "level": 35
+  },
+  "16167": {
+   "name": "Lamelle de Champa Rouge",
+   "icon": 119012,
+   "level": 39
+  },
+  "16165": {
+   "name": "Lamelle de Champa Bleu",
+   "icon": 119010,
+   "level": 39
+  },
+  "16166": {
+   "name": "Lamelle de Champa Marron",
+   "icon": 119011,
+   "level": 39
+  },
+  "17476": {
+   "name": "Maître Boulet",
+   "icon": 32124,
+   "level": 1
+  },
+  "308": {
+   "name": "Coquille de Dragoeuf Calcaire",
+   "icon": 111021,
+   "level": 70
+  },
+  "847": {
+   "name": "Œuf de Dragoeuf Calcaire",
+   "icon": 105648,
+   "level": 74
+  },
+  "842": {
+   "name": "Coquille de Dragoeuf Argile",
+   "icon": 111202,
+   "level": 70
+  },
+  "845": {
+   "name": "Œuf de Dragoeuf Argile",
+   "icon": 105205,
+   "level": 74
+  },
+  "1129": {
+   "name": "Coquille de Dragoeuf Ardoise",
+   "icon": 111211,
+   "level": 70
+  },
+  "844": {
+   "name": "Œuf de Dragoeuf Ardoise",
+   "icon": 105204,
+   "level": 74
+  },
+  "843": {
+   "name": "Coquille de Dragoeuf Charbon",
+   "icon": 111203,
+   "level": 70
+  },
+  "846": {
+   "name": "Œuf de Dragoeuf Charbon",
+   "icon": 105206,
+   "level": 74
+  },
+  "26778": {
+   "name": "Clé d'un coffre",
+   "icon": 15404,
+   "level": 1
+  },
+  "743": {
+   "name": "Brioche Dorée",
+   "icon": 33008,
+   "level": 190
+  },
+  "539": {
+   "name": "Pain de Seigle",
+   "icon": 33009,
+   "level": 100
+  },
+  "417": {
+   "name": "Boue du Boo",
+   "icon": 15116,
+   "level": 27
+  },
+  "2585": {
+   "name": "Cœur de Boue du Boo",
+   "icon": 15591,
+   "level": 27
+  },
+  "1664": {
+   "name": "Dent de Crocodaille",
+   "icon": 47234,
+   "level": 46
+  },
+  "2664": {
+   "name": "Os de Crocodaille",
+   "icon": 47636,
+   "level": 46
+  },
+  "1663": {
+   "name": "Écaille de Crocodaille",
+   "icon": 59233,
+   "level": 46
+  },
+  "1635": {
+   "name": "Lâcher les gaz",
+   "icon": 25009,
+   "level": 1
+  },
+  "1613": {
+   "name": "Écaille de Chef Crocodaille",
+   "icon": 59547,
+   "level": 69
+  },
+  "6738": {
+   "name": "Crâne de Chef Crocodaille",
+   "icon": 47637,
+   "level": 69
+  },
+  "2584": {
+   "name": "Main de Boo",
+   "icon": 15590,
+   "level": 66
+  },
+  "2295": {
+   "name": "Fragment d'Épée Reptilienne",
+   "icon": 15446,
+   "level": 66
+  },
+  "2599": {
+   "name": "Pic de dragodinde",
+   "icon": 47597,
+   "level": 61
+  },
+  "10788": {
+   "name": "Aile parfaite de dragodinde",
+   "icon": 104593,
+   "level": 61
+  },
+  "2588": {
+   "name": "Aile de dragodinde",
+   "icon": 104593,
+   "level": 61
+  },
+  "2179": {
+   "name": "Dent de dragodinde",
+   "icon": 47419,
+   "level": 66
+  },
+  "8065": {
+   "name": "Poils de barbe de dragodinde",
+   "icon": 54657,
+   "level": 66
+  },
+  "10970": {
+   "name": "Sueur de dragodinde",
+   "icon": 15773,
+   "level": 60
+  },
+  "2598": {
+   "name": "Queue de dragodinde sauvage",
+   "icon": 65594,
+   "level": 66
+  },
+  "10787": {
+   "name": "Aile parfaite de dragodinde rousse sauvage",
+   "icon": 104592,
+   "level": 66
+  },
+  "2586": {
+   "name": "Aile de dragodinde rousse sauvage",
+   "icon": 104592,
+   "level": 66
+  },
+  "365": {
+   "name": "Patte d'Arakne",
+   "icon": 103035,
+   "level": 18
+  },
+  "1673": {
+   "name": "Patte d'Arakne Magique",
+   "icon": 103392,
+   "level": 18
+  },
+  "307": {
+   "name": "Ailes de Moskito",
+   "icon": 104019,
+   "level": 18
+  },
+  "371": {
+   "name": "Sourcil de Moskito",
+   "icon": 15044,
+   "level": 13
+  },
+  "6918": {
+   "name": "Amulette du Moskito",
+   "icon": 1075,
+   "level": 15
+  },
+  "6915": {
+   "name": "Mos Kitano",
+   "icon": 9071,
+   "level": 21
+  },
+  "6916": {
+   "name": "Sac du Petit Moskito",
+   "icon": 81059,
+   "level": 16
+  },
+  "6917": {
+   "name": "Moskitogalurette",
+   "icon": 16080,
+   "level": 15
+  },
+  "300": {
+   "name": "Graine de Pavot",
+   "icon": 58011,
+   "level": 18
+  },
+  "16487": {
+   "name": "Bois Vermoulu",
+   "icon": 38683,
+   "level": 18
+  },
+  "18868": {
+   "name": "Os de fer",
+   "icon": 47655,
+   "level": 100
+  },
+  "16945": {
+   "name": "Échantillon frais de Mojo du Meulou",
+   "icon": 15730,
+   "level": 100
+  },
+  "15001": {
+   "name": "Bague Enchantée du Meulou",
+   "icon": 9182,
+   "level": 1
+  },
+  "2577": {
+   "name": "Scalp du Meulou",
+   "icon": 15583,
+   "level": 100
+  },
+  "2806": {
+   "name": "Testicules Magiques du Meulou",
+   "icon": 15651,
+   "level": 100
+  },
+  "17141": {
+   "name": "Bidoche Exsudative",
+   "icon": 63472,
+   "level": 100
+  },
+  "2304": {
+   "name": "Fragment de Pierre Polie",
+   "icon": 51454,
+   "level": 65
+  },
+  "2251": {
+   "name": "Méga Pierre du Craqueleur",
+   "icon": 51417,
+   "level": 65
+  },
+  "13342": {
+   "name": "Tatouage de Mauvais Garçon",
+   "icon": 15132,
+   "level": 46
   }
  },
  "drops": {
@@ -28311,6 +28801,3275 @@
    {
     "item": "8111",
     "chance": 0.5
+   }
+  ],
+  "mulou": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "438",
+    "chance": 36.0
+   },
+   {
+    "item": "17140",
+    "chance": 36.0,
+    "metier": {
+     "id": 41,
+     "min": 100
+    },
+    "chasse": true
+   },
+   {
+    "item": "18861",
+    "chance": 12.0,
+    "cond": "quete"
+   },
+   {
+    "item": "651",
+    "chance": 6.04
+   },
+   {
+    "item": "2581",
+    "chance": 6.0
+   },
+   {
+    "item": "16823",
+    "chance": 1.0
+   },
+   {
+    "item": "32706",
+    "chance": 1.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "32707",
+    "chance": 0.5,
+    "cond": "evenement"
+   }
+  ],
+  "cochon_de_lait": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "901",
+    "chance": 48.0
+   },
+   {
+    "item": "17130",
+    "chance": 48.0,
+    "metier": {
+     "id": 41,
+     "min": 50
+    },
+    "chasse": true
+   },
+   {
+    "item": "479",
+    "chance": 8.04
+   },
+   {
+    "item": "2266",
+    "chance": 8.04
+   },
+   {
+    "item": "2646",
+    "chance": 8.04
+   },
+   {
+    "item": "16830",
+    "chance": 1.0
+   }
+  ],
+  "araknelle": [
+   {
+    "item": "973",
+    "chance": 100.0
+   }
+  ],
+  "ambi_guman": [
+   {
+    "item": "14824",
+    "chance": 100.0,
+    "cond": "evenement"
+   }
+  ],
+  "champ_champ": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "17124",
+    "chance": 55.0,
+    "metier": {
+     "id": 41,
+     "min": 20
+    },
+    "chasse": true
+   },
+   {
+    "item": "377",
+    "chance": 55.0
+   },
+   {
+    "item": "378",
+    "chance": 9.2
+   },
+   {
+    "item": "16823",
+    "chance": 1.0
+   },
+   {
+    "item": "6920",
+    "chance": 0.9
+   },
+   {
+    "item": "6919",
+    "chance": 0.9
+   },
+   {
+    "item": "6921",
+    "chance": 0.4
+   },
+   {
+    "item": "6922",
+    "chance": 0.4
+   }
+  ],
+  "abraknyde_chetif": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "17126",
+    "chance": 51.0,
+    "metier": {
+     "id": 41,
+     "min": 30
+    },
+    "chasse": true
+   },
+   {
+    "item": "435",
+    "chance": 25.0
+   },
+   {
+    "item": "464",
+    "chance": 4.2
+   },
+   {
+    "item": "463",
+    "chance": 4.2
+   },
+   {
+    "item": "16835",
+    "chance": 1.0
+   }
+  ],
+  "tofu_malefique": [
+   {
+    "item": "8162",
+    "chance": 100.0
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "20055",
+    "chance": 100.0,
+    "cond": "quete"
+   },
+   {
+    "item": "376",
+    "chance": 51.0
+   },
+   {
+    "item": "17128",
+    "chance": 51.0,
+    "metier": {
+     "id": 41,
+     "min": 40
+    },
+    "chasse": true
+   },
+   {
+    "item": "2675",
+    "chance": 8.44
+   },
+   {
+    "item": "16833",
+    "chance": 1.0
+   }
+  ],
+  "kwoan": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "2283",
+    "chance": 51.0
+   },
+   {
+    "item": "17128",
+    "chance": 51.0,
+    "metier": {
+     "id": 41,
+     "min": 40
+    },
+    "chasse": true
+   },
+   {
+    "item": "2463",
+    "chance": 8.44
+   },
+   {
+    "item": "16833",
+    "chance": 1.0
+   }
+  ],
+  "roub_ignolles": [
+   {
+    "item": "17477",
+    "chance": 100.0,
+    "cond": "evenement"
+   }
+  ],
+  "gelee_bleuet": [
+   {
+    "item": "13294",
+    "chance": 100.0,
+    "cond": "quete"
+   },
+   {
+    "item": "18477",
+    "chance": 100.0,
+    "cond": "quete"
+   },
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "311",
+    "chance": 46.0
+   },
+   {
+    "item": "17132",
+    "chance": 46.0,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "757",
+    "chance": 46.0
+   },
+   {
+    "item": "16827",
+    "chance": 1.0
+   },
+   {
+    "item": "2471",
+    "chance": 0.5
+   }
+  ],
+  "gelee_menthe": [
+   {
+    "item": "13294",
+    "chance": 100.0,
+    "cond": "quete"
+   },
+   {
+    "item": "18474",
+    "chance": 100.0,
+    "cond": "quete"
+   },
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "380",
+    "chance": 46.0
+   },
+   {
+    "item": "369",
+    "chance": 46.0
+   },
+   {
+    "item": "17132",
+    "chance": 46.0,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "16827",
+    "chance": 1.0
+   },
+   {
+    "item": "2470",
+    "chance": 0.5
+   }
+  ],
+  "gelee_fraise": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "13294",
+    "chance": 100.0,
+    "cond": "quete"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "18475",
+    "chance": 100.0,
+    "cond": "quete"
+   },
+   {
+    "item": "381",
+    "chance": 45.0
+   },
+   {
+    "item": "17132",
+    "chance": 45.0,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "368",
+    "chance": 45.0
+   },
+   {
+    "item": "16827",
+    "chance": 1.0
+   },
+   {
+    "item": "2446",
+    "chance": 0.5
+   },
+   {
+    "item": "2447",
+    "chance": 0.5
+   }
+  ],
+  "champa_vert": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "17128",
+    "chance": 50.0,
+    "metier": {
+     "id": 41,
+     "min": 40
+    },
+    "chasse": true
+   },
+   {
+    "item": "16168",
+    "chance": 50.0
+   },
+   {
+    "item": "1674",
+    "chance": 8.32
+   },
+   {
+    "item": "16823",
+    "chance": 1.0
+   }
+  ],
+  "champa_rouge": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "17128",
+    "chance": 50.0,
+    "metier": {
+     "id": 41,
+     "min": 40
+    },
+    "chasse": true
+   },
+   {
+    "item": "16167",
+    "chance": 50.0
+   },
+   {
+    "item": "1674",
+    "chance": 8.32
+   },
+   {
+    "item": "16823",
+    "chance": 1.0
+   }
+  ],
+  "champa_bleu": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "16165",
+    "chance": 50.0
+   },
+   {
+    "item": "17128",
+    "chance": 50.0,
+    "metier": {
+     "id": 41,
+     "min": 40
+    },
+    "chasse": true
+   },
+   {
+    "item": "1674",
+    "chance": 8.32
+   },
+   {
+    "item": "16823",
+    "chance": 1.0
+   }
+  ],
+  "champa_marron": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "16166",
+    "chance": 50.0
+   },
+   {
+    "item": "17128",
+    "chance": 50.0,
+    "metier": {
+     "id": 41,
+     "min": 40
+    },
+    "chasse": true
+   },
+   {
+    "item": "1674",
+    "chance": 8.32
+   },
+   {
+    "item": "16823",
+    "chance": 1.0
+   }
+  ],
+  "maitre_boulet": [
+   {
+    "item": "17476",
+    "chance": 100.0,
+    "cond": "evenement"
+   }
+  ],
+  "dragoeuf_calcaire": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "17134",
+    "chance": 43.0,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "308",
+    "chance": 43.0
+   },
+   {
+    "item": "545",
+    "chance": 7.24
+   },
+   {
+    "item": "847",
+    "chance": 7.24
+   },
+   {
+    "item": "16833",
+    "chance": 1.0
+   },
+   {
+    "item": "20796",
+    "chance": 0.7
+   }
+  ],
+  "dragoeuf_argile": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "842",
+    "chance": 43.0
+   },
+   {
+    "item": "17134",
+    "chance": 43.0,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "544",
+    "chance": 7.24
+   },
+   {
+    "item": "845",
+    "chance": 7.24
+   },
+   {
+    "item": "16833",
+    "chance": 1.0
+   },
+   {
+    "item": "20796",
+    "chance": 0.7
+   }
+  ],
+  "dragoeuf_ardoise": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "1129",
+    "chance": 43.0
+   },
+   {
+    "item": "17134",
+    "chance": 43.0,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "844",
+    "chance": 7.24
+   },
+   {
+    "item": "546",
+    "chance": 7.24
+   },
+   {
+    "item": "16833",
+    "chance": 1.0
+   },
+   {
+    "item": "20796",
+    "chance": 0.7
+   }
+  ],
+  "dragoeuf_charbon": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "843",
+    "chance": 43.0
+   },
+   {
+    "item": "17134",
+    "chance": 43.0,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "846",
+    "chance": 7.24
+   },
+   {
+    "item": "547",
+    "chance": 7.24
+   },
+   {
+    "item": "16833",
+    "chance": 1.0
+   },
+   {
+    "item": "20796",
+    "chance": 0.7
+   }
+  ],
+  "coffre_malveillant": [
+   {
+    "item": "544",
+    "chance": 100.0
+   },
+   {
+    "item": "26778",
+    "chance": 100.0
+   },
+   {
+    "item": "743",
+    "chance": 100.0
+   },
+   {
+    "item": "539",
+    "chance": 100.0
+   },
+   {
+    "item": "543",
+    "chance": 100.0
+   }
+  ],
+  "boo": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "17126",
+    "chance": 53.0,
+    "metier": {
+     "id": 41,
+     "min": 30
+    },
+    "chasse": true
+   },
+   {
+    "item": "417",
+    "chance": 53.0
+   },
+   {
+    "item": "2585",
+    "chance": 8.88
+   },
+   {
+    "item": "16823",
+    "chance": 1.0
+   }
+  ],
+  "crocodaille": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "1664",
+    "chance": 48.0
+   },
+   {
+    "item": "17130",
+    "chance": 48.0,
+    "metier": {
+     "id": 41,
+     "min": 50
+    },
+    "chasse": true
+   },
+   {
+    "item": "2664",
+    "chance": 8.04
+   },
+   {
+    "item": "1663",
+    "chance": 8.0
+   },
+   {
+    "item": "1635",
+    "chance": 2.41
+   },
+   {
+    "item": "16823",
+    "chance": 1.0
+   },
+   {
+    "item": "544",
+    "chance": 0.96
+   }
+  ],
+  "chef_crocodaille": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "17134",
+    "chance": 42.0,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "1613",
+    "chance": 42.0
+   },
+   {
+    "item": "6738",
+    "chance": 6.96
+   },
+   {
+    "item": "2664",
+    "chance": 6.96
+   },
+   {
+    "item": "1635",
+    "chance": 2.09
+   },
+   {
+    "item": "16823",
+    "chance": 1.0
+   }
+  ],
+  "arakne_olithique": [
+   {
+    "item": "17134",
+    "chance": 43.0,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "2584",
+    "chance": 43.0
+   },
+   {
+    "item": "2295",
+    "chance": 7.24
+   },
+   {
+    "item": "16823",
+    "chance": 1.0
+   }
+  ],
+  "boulanger_souille": [],
+  "mineur_souille": [],
+  "dragodinde_amande_sauvage": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "17134",
+    "chance": 44.0,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "2599",
+    "chance": 44.0
+   },
+   {
+    "item": "10788",
+    "chance": 15.0,
+    "cond": "quete"
+   },
+   {
+    "item": "2588",
+    "chance": 7.36
+   },
+   {
+    "item": "2179",
+    "chance": 7.2
+   },
+   {
+    "item": "8065",
+    "chance": 3.6
+   },
+   {
+    "item": "10970",
+    "chance": 2.0
+   },
+   {
+    "item": "16833",
+    "chance": 1.0
+   }
+  ],
+  "dragodinde_rousse_sauvage": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "2598",
+    "chance": 43.0
+   },
+   {
+    "item": "17134",
+    "chance": 43.0,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "10787",
+    "chance": 15.0,
+    "cond": "quete"
+   },
+   {
+    "item": "2179",
+    "chance": 7.2
+   },
+   {
+    "item": "2586",
+    "chance": 7.16
+   },
+   {
+    "item": "8065",
+    "chance": 3.6
+   },
+   {
+    "item": "10970",
+    "chance": 2.0
+   },
+   {
+    "item": "16833",
+    "chance": 1.0
+   }
+  ],
+  "arakne": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "17124",
+    "chance": 55.0,
+    "metier": {
+     "id": 41,
+     "min": 20
+    },
+    "chasse": true
+   },
+   {
+    "item": "365",
+    "chance": 55.0
+   },
+   {
+    "item": "1673",
+    "chance": 9.2
+   },
+   {
+    "item": "16834",
+    "chance": 1.0
+   },
+   {
+    "item": "6912",
+    "chance": 0.9
+   },
+   {
+    "item": "6911",
+    "chance": 0.9
+   },
+   {
+    "item": "6914",
+    "chance": 0.4
+   },
+   {
+    "item": "6913",
+    "chance": 0.4
+   }
+  ],
+  "moskito": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "307",
+    "chance": 55.0
+   },
+   {
+    "item": "17124",
+    "chance": 55.0,
+    "metier": {
+     "id": 41,
+     "min": 20
+    },
+    "chasse": true
+   },
+   {
+    "item": "371",
+    "chance": 9.2
+   },
+   {
+    "item": "16835",
+    "chance": 1.0
+   },
+   {
+    "item": "6918",
+    "chance": 0.9
+   },
+   {
+    "item": "6915",
+    "chance": 0.9
+   },
+   {
+    "item": "6916",
+    "chance": 0.4
+   },
+   {
+    "item": "6917",
+    "chance": 0.4
+   }
+  ],
+  "campagnoll": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "300",
+    "chance": 55.0
+   },
+   {
+    "item": "17124",
+    "chance": 55.0,
+    "metier": {
+     "id": 41,
+     "min": 20
+    },
+    "chasse": true
+   },
+   {
+    "item": "16487",
+    "chance": 9.2
+   },
+   {
+    "item": "16835",
+    "chance": 1.0
+   }
+  ],
+  "meulou": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "10917",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "18868",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "12232",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "10918",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "16945",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "15001",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "10919",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "2577",
+    "chance": 36.0
+   },
+   {
+    "item": "2581",
+    "chance": 6.04
+   },
+   {
+    "item": "2806",
+    "chance": 6.04
+   },
+   {
+    "item": "13526",
+    "chance": 6.0,
+    "cond": "quete"
+   },
+   {
+    "item": "16823",
+    "chance": 3.0
+   },
+   {
+    "item": "17141",
+    "chance": 1.81,
+    "metier": {
+     "id": 41,
+     "min": 100
+    },
+    "chasse": true
+   },
+   {
+    "item": "20136",
+    "chance": 0.35,
+    "cond": "evenement"
+   }
+  ],
+  "craquelourd": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "2304",
+    "chance": 43.0
+   },
+   {
+    "item": "17134",
+    "chance": 43.0,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "18184",
+    "chance": 25.0,
+    "cond": "quete"
+   },
+   {
+    "item": "2251",
+    "chance": 7.24
+   },
+   {
+    "item": "16819",
+    "chance": 1.0
+   }
+  ],
+  "poutch_vil_smisse": [],
+  "poutch_ombre": [
+   {
+    "item": "6898",
+    "chance": 36.0
+   }
+  ],
+  "poutch_hyperscampe": [],
+  "poutch_sylargh": [
+   {
+    "item": "6902",
+    "chance": 36.0
+   }
+  ],
+  "poutch_crane_rose": [],
+  "bandit_manchot": [
+   {
+    "item": "13342",
+    "chance": 48.0
+   },
+   {
+    "item": "17126",
+    "chance": 48.0,
+    "metier": {
+     "id": 41,
+     "min": 30
+    },
+    "chasse": true
+   },
+   {
+    "item": "16836",
+    "chance": 1.0
+   }
+  ],
+  "archi_scarafeuille_rouge": [
+   {
+    "item": "1457",
+    "chance": 100.0
+   },
+   {
+    "item": "17128",
+    "chance": 100.0,
+    "metier": {
+     "id": 41,
+     "min": 40
+    },
+    "chasse": true
+   },
+   {
+    "item": "13287",
+    "chance": 100.0,
+    "cond": "quete"
+   },
+   {
+    "item": "2294",
+    "chance": 8.36
+   },
+   {
+    "item": "6937",
+    "chance": 2.0
+   },
+   {
+    "item": "16826",
+    "chance": 2.0
+   },
+   {
+    "item": "6950",
+    "chance": 2.0
+   },
+   {
+    "item": "6942",
+    "chance": 2.0
+   },
+   {
+    "item": "6945",
+    "chance": 2.0
+   }
+  ],
+  "archi_scarafeuille_bleu": [
+   {
+    "item": "13287",
+    "chance": 100.0,
+    "cond": "quete"
+   },
+   {
+    "item": "17128",
+    "chance": 100.0,
+    "metier": {
+     "id": 41,
+     "min": 40
+    },
+    "chasse": true
+   },
+   {
+    "item": "2294",
+    "chance": 8.36
+   },
+   {
+    "item": "1455",
+    "chance": 8.36
+   },
+   {
+    "item": "6941",
+    "chance": 2.0
+   },
+   {
+    "item": "6947",
+    "chance": 2.0
+   },
+   {
+    "item": "6951",
+    "chance": 2.0
+   },
+   {
+    "item": "6939",
+    "chance": 2.0
+   },
+   {
+    "item": "16826",
+    "chance": 2.0
+   }
+  ],
+  "archi_scarafeuille_vert": [
+   {
+    "item": "13287",
+    "chance": 100.0,
+    "cond": "quete"
+   },
+   {
+    "item": "17128",
+    "chance": 100.0,
+    "metier": {
+     "id": 41,
+     "min": 40
+    },
+    "chasse": true
+   },
+   {
+    "item": "1458",
+    "chance": 100.0
+   },
+   {
+    "item": "2294",
+    "chance": 8.36
+   },
+   {
+    "item": "6944",
+    "chance": 2.0
+   },
+   {
+    "item": "6940",
+    "chance": 2.0
+   },
+   {
+    "item": "6948",
+    "chance": 2.0
+   },
+   {
+    "item": "6936",
+    "chance": 2.0
+   },
+   {
+    "item": "16826",
+    "chance": 2.0
+   }
+  ],
+  "archi_scarafeuille_blanc": [
+   {
+    "item": "17128",
+    "chance": 100.0,
+    "metier": {
+     "id": 41,
+     "min": 40
+    },
+    "chasse": true
+   },
+   {
+    "item": "13287",
+    "chance": 100.0,
+    "cond": "quete"
+   },
+   {
+    "item": "1456",
+    "chance": 100.0
+   },
+   {
+    "item": "2294",
+    "chance": 8.36
+   },
+   {
+    "item": "6949",
+    "chance": 2.0
+   },
+   {
+    "item": "6946",
+    "chance": 2.0
+   },
+   {
+    "item": "16826",
+    "chance": 2.0
+   },
+   {
+    "item": "6938",
+    "chance": 2.0
+   },
+   {
+    "item": "6943",
+    "chance": 2.0
+   }
+  ],
+  "archi_chafer": [
+   {
+    "item": "310",
+    "chance": 100.0
+   },
+   {
+    "item": "17128",
+    "chance": 100.0,
+    "metier": {
+     "id": 41,
+     "min": 40
+    },
+    "chasse": true
+   },
+   {
+    "item": "1870",
+    "chance": 100.0
+   },
+   {
+    "item": "2323",
+    "chance": 16.0
+   },
+   {
+    "item": "2336",
+    "chance": 16.0
+   },
+   {
+    "item": "16833",
+    "chance": 2.0
+   }
+  ],
+  "archi_rib": [
+   {
+    "item": "17128",
+    "chance": 100.0,
+    "metier": {
+     "id": 41,
+     "min": 40
+    },
+    "chasse": true
+   },
+   {
+    "item": "432",
+    "chance": 100.0
+   },
+   {
+    "item": "2642",
+    "chance": 16.0
+   },
+   {
+    "item": "2323",
+    "chance": 16.0
+   },
+   {
+    "item": "16833",
+    "chance": 2.0
+   }
+  ],
+  "archi_chafer_invisible": [
+   {
+    "item": "1870",
+    "chance": 100.0
+   },
+   {
+    "item": "430",
+    "chance": 100.0
+   },
+   {
+    "item": "17128",
+    "chance": 100.0,
+    "metier": {
+     "id": 41,
+     "min": 40
+    },
+    "chasse": true
+   },
+   {
+    "item": "2278",
+    "chance": 17.0
+   },
+   {
+    "item": "2323",
+    "chance": 17.0
+   },
+   {
+    "item": "16833",
+    "chance": 2.0
+   }
+  ],
+  "archi_chafer_fantassin": [
+   {
+    "item": "17128",
+    "chance": 100.0,
+    "metier": {
+     "id": 41,
+     "min": 40
+    },
+    "chasse": true
+   },
+   {
+    "item": "1870",
+    "chance": 100.0
+   },
+   {
+    "item": "1675",
+    "chance": 100.0
+   },
+   {
+    "item": "6475",
+    "chance": 16.0
+   },
+   {
+    "item": "2323",
+    "chance": 16.0
+   },
+   {
+    "item": "16833",
+    "chance": 2.0
+   }
+  ],
+  "archi_gob_trotteur": [
+   {
+    "item": "382",
+    "chance": 100.0
+   },
+   {
+    "item": "17128",
+    "chance": 100.0,
+    "metier": {
+     "id": 41,
+     "min": 30
+    },
+    "chasse": true
+   },
+   {
+    "item": "2264",
+    "chance": 8.44
+   },
+   {
+    "item": "16825",
+    "chance": 2.0
+   }
+  ],
+  "archi_gobet": [
+   {
+    "item": "17128",
+    "chance": 100.0,
+    "metier": {
+     "id": 41,
+     "min": 20
+    },
+    "chasse": true
+   },
+   {
+    "item": "2259",
+    "chance": 78.0
+   },
+   {
+    "item": "2264",
+    "chance": 8.44
+   },
+   {
+    "item": "16825",
+    "chance": 2.0
+   }
+  ],
+  "archi_bwork_mage": [
+   {
+    "item": "8145",
+    "chance": 100.0
+   },
+   {
+    "item": "17130",
+    "chance": 96.0,
+    "metier": {
+     "id": 41,
+     "min": 50
+    },
+    "chasse": true
+   },
+   {
+    "item": "392",
+    "chance": 96.0
+   },
+   {
+    "item": "409",
+    "chance": 96.0
+   },
+   {
+    "item": "2330",
+    "chance": 96.0
+   },
+   {
+    "item": "2330",
+    "chance": 24.0
+   },
+   {
+    "item": "410",
+    "chance": 8.04
+   },
+   {
+    "item": "16828",
+    "chance": 2.0
+   }
+  ],
+  "archi_bwork_archer": [
+   {
+    "item": "8145",
+    "chance": 100.0
+   },
+   {
+    "item": "17130",
+    "chance": 97.0,
+    "metier": {
+     "id": 41,
+     "min": 50
+    },
+    "chasse": true
+   },
+   {
+    "item": "391",
+    "chance": 97.0
+   },
+   {
+    "item": "3208",
+    "chance": 97.0
+   },
+   {
+    "item": "420",
+    "chance": 48.0
+   },
+   {
+    "item": "2268",
+    "chance": 8.08
+   },
+   {
+    "item": "16828",
+    "chance": 2.0
+   }
+  ],
+  "archi_bwork": [
+   {
+    "item": "8145",
+    "chance": 100.0
+   },
+   {
+    "item": "392",
+    "chance": 94.0
+   },
+   {
+    "item": "17130",
+    "chance": 94.0,
+    "metier": {
+     "id": 41,
+     "min": 50
+    },
+    "chasse": true
+   },
+   {
+    "item": "3001",
+    "chance": 94.0
+   },
+   {
+    "item": "3000",
+    "chance": 7.8
+   },
+   {
+    "item": "16828",
+    "chance": 2.0
+   }
+  ],
+  "archi_mineur_sombre": [
+   {
+    "item": "2309",
+    "chance": 100.0,
+    "cond": "quete"
+   },
+   {
+    "item": "17130",
+    "chance": 96.0,
+    "metier": {
+     "id": 41,
+     "min": 50
+    },
+    "chasse": true
+   },
+   {
+    "item": "13505",
+    "chance": 96.0
+   },
+   {
+    "item": "2274",
+    "chance": 8.04
+   },
+   {
+    "item": "16836",
+    "chance": 2.0
+   },
+   {
+    "item": "547",
+    "chance": 0.96
+   },
+   {
+    "item": "543",
+    "chance": 0.96
+   },
+   {
+    "item": "546",
+    "chance": 0.96
+   },
+   {
+    "item": "544",
+    "chance": 0.96
+   },
+   {
+    "item": "930",
+    "chance": 0.96
+   },
+   {
+    "item": "545",
+    "chance": 0.96
+   }
+  ],
+  "archi_forgeron_sombre": [
+   {
+    "item": "14278",
+    "chance": 96.0
+   },
+   {
+    "item": "17130",
+    "chance": 96.0,
+    "metier": {
+     "id": 41,
+     "min": 50
+    },
+    "chasse": true
+   },
+   {
+    "item": "16836",
+    "chance": 2.0
+   }
+  ],
+  "archi_boulanger_sombre": [
+   {
+    "item": "17130",
+    "chance": 98.0,
+    "metier": {
+     "id": 41,
+     "min": 50
+    },
+    "chasse": true
+   },
+   {
+    "item": "13730",
+    "chance": 98.0
+   },
+   {
+    "item": "16836",
+    "chance": 2.0
+   },
+   {
+    "item": "931",
+    "chance": 0.8
+   }
+  ],
+  "archi_bandit_du_clan_des_roublards": [
+   {
+    "item": "8590",
+    "chance": 100.0,
+    "cond": "quete"
+   },
+   {
+    "item": "17130",
+    "chance": 97.0,
+    "metier": {
+     "id": 41,
+     "min": 50
+    },
+    "chasse": true
+   },
+   {
+    "item": "13339",
+    "chance": 97.0
+   },
+   {
+    "item": "276",
+    "chance": 8.08
+   },
+   {
+    "item": "274",
+    "chance": 8.08
+   },
+   {
+    "item": "1684",
+    "chance": 8.08
+   },
+   {
+    "item": "1683",
+    "chance": 8.08
+   },
+   {
+    "item": "16836",
+    "chance": 2.0
+   }
+  ],
+  "archi_kwak_de_vent": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "17130",
+    "chance": 96.0,
+    "metier": {
+     "id": 41,
+     "min": 50
+    },
+    "chasse": true
+   },
+   {
+    "item": "416",
+    "chance": 96.0
+   },
+   {
+    "item": "2652",
+    "chance": 8.04
+   },
+   {
+    "item": "6759",
+    "chance": 2.0
+   },
+   {
+    "item": "6747",
+    "chance": 2.0
+   },
+   {
+    "item": "16829",
+    "chance": 2.0
+   },
+   {
+    "item": "6755",
+    "chance": 2.0
+   }
+  ],
+  "archi_kwak_de_flamme": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "415",
+    "chance": 96.0
+   },
+   {
+    "item": "17130",
+    "chance": 96.0,
+    "metier": {
+     "id": 41,
+     "min": 50
+    },
+    "chasse": true
+   },
+   {
+    "item": "2651",
+    "chance": 8.04
+   },
+   {
+    "item": "2424",
+    "chance": 2.0
+   },
+   {
+    "item": "2427",
+    "chance": 2.0
+   },
+   {
+    "item": "16829",
+    "chance": 2.0
+   },
+   {
+    "item": "2421",
+    "chance": 2.0
+   }
+  ],
+  "archi_kwak_de_glace": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "17130",
+    "chance": 96.0,
+    "metier": {
+     "id": 41,
+     "min": 50
+    },
+    "chasse": true
+   },
+   {
+    "item": "414",
+    "chance": 96.0
+   },
+   {
+    "item": "2650",
+    "chance": 8.04
+   },
+   {
+    "item": "2537",
+    "chance": 2.0
+   },
+   {
+    "item": "6753",
+    "chance": 2.0
+   },
+   {
+    "item": "16829",
+    "chance": 2.0
+   },
+   {
+    "item": "6731",
+    "chance": 2.0
+   }
+  ],
+  "archi_kwak_de_terre": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "17130",
+    "chance": 96.0,
+    "metier": {
+     "id": 41,
+     "min": 50
+    },
+    "chasse": true
+   },
+   {
+    "item": "1141",
+    "chance": 96.0
+   },
+   {
+    "item": "2649",
+    "chance": 8.04
+   },
+   {
+    "item": "16829",
+    "chance": 2.0
+   },
+   {
+    "item": "6758",
+    "chance": 2.0
+   },
+   {
+    "item": "6754",
+    "chance": 2.0
+   },
+   {
+    "item": "6746",
+    "chance": 2.0
+   }
+  ],
+  "archi_craqueleur": [
+   {
+    "item": "431",
+    "chance": 87.0
+   },
+   {
+    "item": "17134",
+    "chance": 87.0,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "2252",
+    "chance": 7.24
+   },
+   {
+    "item": "16819",
+    "chance": 2.0
+   }
+  ],
+  "archi_craqueleur_des_plaines": [
+   {
+    "item": "17134",
+    "chance": 87.0,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "2305",
+    "chance": 87.0
+   },
+   {
+    "item": "18184",
+    "chance": 50.0,
+    "cond": "quete"
+   },
+   {
+    "item": "2306",
+    "chance": 7.24
+   },
+   {
+    "item": "16819",
+    "chance": 2.0
+   }
+  ],
+  "archi_craqueboule": [
+   {
+    "item": "448",
+    "chance": 87.0
+   },
+   {
+    "item": "17134",
+    "chance": 87.0,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "1679",
+    "chance": 7.24
+   },
+   {
+    "item": "10832",
+    "chance": 2.4
+   },
+   {
+    "item": "16819",
+    "chance": 2.0
+   }
+  ],
+  "archi_wabbit": [
+   {
+    "item": "2288",
+    "chance": 96.0
+   },
+   {
+    "item": "305",
+    "chance": 96.0
+   },
+   {
+    "item": "17132",
+    "chance": 96.0,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "14454",
+    "chance": 10.56,
+    "cond": "quete"
+   },
+   {
+    "item": "14455",
+    "chance": 10.56,
+    "cond": "quete"
+   },
+   {
+    "item": "14453",
+    "chance": 10.56,
+    "cond": "quete"
+   },
+   {
+    "item": "962",
+    "chance": 10.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "654",
+    "chance": 7.96
+   },
+   {
+    "item": "361",
+    "chance": 7.96
+   },
+   {
+    "item": "14454",
+    "chance": 5.28,
+    "cond": "quete"
+   },
+   {
+    "item": "14455",
+    "chance": 5.28,
+    "cond": "quete"
+   },
+   {
+    "item": "14453",
+    "chance": 5.28,
+    "cond": "quete"
+   },
+   {
+    "item": "16829",
+    "chance": 2.0
+   }
+  ],
+  "archi_black_wabbit": [
+   {
+    "item": "12878",
+    "chance": 100.0,
+    "cond": "quete"
+   },
+   {
+    "item": "305",
+    "chance": 95.0
+   },
+   {
+    "item": "17132",
+    "chance": 95.0,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "14457",
+    "chance": 95.0
+   },
+   {
+    "item": "14455",
+    "chance": 11.04,
+    "cond": "quete"
+   },
+   {
+    "item": "14454",
+    "chance": 11.04,
+    "cond": "quete"
+   },
+   {
+    "item": "14453",
+    "chance": 11.04,
+    "cond": "quete"
+   },
+   {
+    "item": "962",
+    "chance": 10.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "14458",
+    "chance": 7.88
+   },
+   {
+    "item": "14454",
+    "chance": 5.52,
+    "cond": "quete"
+   },
+   {
+    "item": "14455",
+    "chance": 5.52,
+    "cond": "quete"
+   },
+   {
+    "item": "14453",
+    "chance": 5.52,
+    "cond": "quete"
+   },
+   {
+    "item": "16829",
+    "chance": 2.0
+   }
+  ],
+  "archi_black_tiwabbit": [
+   {
+    "item": "17130",
+    "chance": 96.0,
+    "metier": {
+     "id": 41,
+     "min": 50
+    },
+    "chasse": true
+   },
+   {
+    "item": "372",
+    "chance": 96.0
+   },
+   {
+    "item": "305",
+    "chance": 48.0
+   },
+   {
+    "item": "646",
+    "chance": 48.0
+   },
+   {
+    "item": "14455",
+    "chance": 10.08,
+    "cond": "quete"
+   },
+   {
+    "item": "14453",
+    "chance": 10.08,
+    "cond": "quete"
+   },
+   {
+    "item": "14454",
+    "chance": 10.08,
+    "cond": "quete"
+   },
+   {
+    "item": "962",
+    "chance": 10.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "14455",
+    "chance": 5.04,
+    "cond": "quete"
+   },
+   {
+    "item": "14453",
+    "chance": 5.04,
+    "cond": "quete"
+   },
+   {
+    "item": "14454",
+    "chance": 5.04,
+    "cond": "quete"
+   },
+   {
+    "item": "16829",
+    "chance": 2.0
+   }
+  ],
+  "archi_tiwabbit_kiafin": [
+   {
+    "item": "14460",
+    "chance": 97.0
+   },
+   {
+    "item": "17130",
+    "chance": 97.0,
+    "metier": {
+     "id": 41,
+     "min": 50
+    },
+    "chasse": true
+   },
+   {
+    "item": "962",
+    "chance": 10.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "14454",
+    "chance": 9.6,
+    "cond": "quete"
+   },
+   {
+    "item": "14455",
+    "chance": 9.6,
+    "cond": "quete"
+   },
+   {
+    "item": "14453",
+    "chance": 9.6,
+    "cond": "quete"
+   },
+   {
+    "item": "14461",
+    "chance": 8.12
+   },
+   {
+    "item": "361",
+    "chance": 8.12
+   },
+   {
+    "item": "14453",
+    "chance": 4.8,
+    "cond": "quete"
+   },
+   {
+    "item": "14455",
+    "chance": 4.8,
+    "cond": "quete"
+   },
+   {
+    "item": "14454",
+    "chance": 4.8,
+    "cond": "quete"
+   },
+   {
+    "item": "16829",
+    "chance": 2.0
+   }
+  ],
+  "archi_tiwabbit": [
+   {
+    "item": "17130",
+    "chance": 97.0,
+    "metier": {
+     "id": 41,
+     "min": 50
+    },
+    "chasse": true
+   },
+   {
+    "item": "14459",
+    "chance": 97.0
+   },
+   {
+    "item": "305",
+    "chance": 48.0
+   },
+   {
+    "item": "962",
+    "chance": 10.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "14454",
+    "chance": 9.84,
+    "cond": "quete"
+   },
+   {
+    "item": "14453",
+    "chance": 9.84,
+    "cond": "quete"
+   },
+   {
+    "item": "14455",
+    "chance": 9.84,
+    "cond": "quete"
+   },
+   {
+    "item": "360",
+    "chance": 8.08
+   },
+   {
+    "item": "361",
+    "chance": 8.08
+   },
+   {
+    "item": "14455",
+    "chance": 4.92,
+    "cond": "quete"
+   },
+   {
+    "item": "14454",
+    "chance": 4.92,
+    "cond": "quete"
+   },
+   {
+    "item": "14453",
+    "chance": 4.92,
+    "cond": "quete"
+   },
+   {
+    "item": "16829",
+    "chance": 2.0
+   }
+  ],
+  "archi_wo_wabbit": [
+   {
+    "item": "305",
+    "chance": 92.0
+   },
+   {
+    "item": "17132",
+    "chance": 92.0,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "649",
+    "chance": 46.0
+   },
+   {
+    "item": "14454",
+    "chance": 12.48,
+    "cond": "quete"
+   },
+   {
+    "item": "14453",
+    "chance": 12.48,
+    "cond": "quete"
+   },
+   {
+    "item": "14455",
+    "chance": 12.48,
+    "cond": "quete"
+   },
+   {
+    "item": "961",
+    "chance": 10.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "361",
+    "chance": 7.64
+   },
+   {
+    "item": "406",
+    "chance": 7.64
+   },
+   {
+    "item": "14453",
+    "chance": 6.24,
+    "cond": "quete"
+   },
+   {
+    "item": "14455",
+    "chance": 6.24,
+    "cond": "quete"
+   },
+   {
+    "item": "14454",
+    "chance": 6.24,
+    "cond": "quete"
+   },
+   {
+    "item": "16829",
+    "chance": 2.0
+   }
+  ],
+  "archi_grand_pa_wabbit": [
+   {
+    "item": "17132",
+    "chance": 92.0,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "419",
+    "chance": 92.0
+   },
+   {
+    "item": "418",
+    "chance": 92.0
+   },
+   {
+    "item": "14453",
+    "chance": 12.48,
+    "cond": "quete"
+   },
+   {
+    "item": "14455",
+    "chance": 12.48,
+    "cond": "quete"
+   },
+   {
+    "item": "14454",
+    "chance": 12.48,
+    "cond": "quete"
+   },
+   {
+    "item": "961",
+    "chance": 10.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "14455",
+    "chance": 6.24,
+    "cond": "quete"
+   },
+   {
+    "item": "14453",
+    "chance": 6.24,
+    "cond": "quete"
+   },
+   {
+    "item": "14454",
+    "chance": 6.24,
+    "cond": "quete"
+   },
+   {
+    "item": "16829",
+    "chance": 2.0
+   }
+  ],
+  "archi_tofu_amakna": [
+   {
+    "item": "301",
+    "chance": 100.0
+   },
+   {
+    "item": "17124",
+    "chance": 100.0,
+    "metier": {
+     "id": 41,
+     "min": 20
+    },
+    "chasse": true
+   },
+   {
+    "item": "642",
+    "chance": 8.44
+   },
+   {
+    "item": "16828",
+    "chance": 2.0
+   },
+   {
+    "item": "8109",
+    "chance": 1.0
+   },
+   {
+    "item": "8114",
+    "chance": 1.0
+   },
+   {
+    "item": "8108",
+    "chance": 1.0
+   },
+   {
+    "item": "8111",
+    "chance": 1.0
+   },
+   {
+    "item": "8112",
+    "chance": 1.0
+   },
+   {
+    "item": "8110",
+    "chance": 1.0
+   },
+   {
+    "item": "8113",
+    "chance": 1.0
+   }
+  ],
+  "archi_mulou": [
+   {
+    "item": "438",
+    "chance": 72.0
+   },
+   {
+    "item": "17140",
+    "chance": 72.0,
+    "metier": {
+     "id": 41,
+     "min": 100
+    },
+    "chasse": true
+   },
+   {
+    "item": "651",
+    "chance": 6.04
+   },
+   {
+    "item": "16823",
+    "chance": 2.0
+   }
+  ],
+  "archi_cochon_de_lait": [
+   {
+    "item": "17130",
+    "chance": 96.0,
+    "metier": {
+     "id": 41,
+     "min": 50
+    },
+    "chasse": true
+   },
+   {
+    "item": "901",
+    "chance": 48.0
+   },
+   {
+    "item": "2266",
+    "chance": 8.04
+   },
+   {
+    "item": "479",
+    "chance": 8.04
+   },
+   {
+    "item": "2646",
+    "chance": 8.04
+   },
+   {
+    "item": "16830",
+    "chance": 2.0
+   }
+  ],
+  "archi_champ_champ": [
+   {
+    "item": "17124",
+    "chance": 100.0,
+    "metier": {
+     "id": 41,
+     "min": 20
+    },
+    "chasse": true
+   },
+   {
+    "item": "377",
+    "chance": 100.0
+   },
+   {
+    "item": "378",
+    "chance": 9.24
+   },
+   {
+    "item": "16823",
+    "chance": 2.0
+   }
+  ],
+  "archi_tofu_malefique": [
+   {
+    "item": "17128",
+    "chance": 100.0,
+    "metier": {
+     "id": 41,
+     "min": 40
+    },
+    "chasse": true
+   },
+   {
+    "item": "376",
+    "chance": 100.0
+   },
+   {
+    "item": "2675",
+    "chance": 8.44
+   },
+   {
+    "item": "16833",
+    "chance": 2.0
+   }
+  ],
+  "archi_kwoan": [
+   {
+    "item": "2283",
+    "chance": 100.0
+   },
+   {
+    "item": "17128",
+    "chance": 100.0,
+    "metier": {
+     "id": 41,
+     "min": 40
+    },
+    "chasse": true
+   },
+   {
+    "item": "2463",
+    "chance": 8.44
+   },
+   {
+    "item": "16833",
+    "chance": 2.0
+   }
+  ],
+  "archi_gelee_bleuet": [
+   {
+    "item": "13294",
+    "chance": 100.0,
+    "cond": "quete"
+   },
+   {
+    "item": "17132",
+    "chance": 92.0,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "757",
+    "chance": 92.0
+   },
+   {
+    "item": "311",
+    "chance": 92.0
+   },
+   {
+    "item": "16827",
+    "chance": 2.0
+   },
+   {
+    "item": "2471",
+    "chance": 1.0
+   }
+  ],
+  "archi_gelee_menthe": [
+   {
+    "item": "13294",
+    "chance": 100.0,
+    "cond": "quete"
+   },
+   {
+    "item": "380",
+    "chance": 92.0
+   },
+   {
+    "item": "369",
+    "chance": 92.0
+   },
+   {
+    "item": "17132",
+    "chance": 92.0,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "16827",
+    "chance": 2.0
+   },
+   {
+    "item": "2470",
+    "chance": 1.0
+   }
+  ],
+  "archi_gelee_fraise": [
+   {
+    "item": "13294",
+    "chance": 100.0,
+    "cond": "quete"
+   },
+   {
+    "item": "368",
+    "chance": 91.0
+   },
+   {
+    "item": "17132",
+    "chance": 91.0,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "381",
+    "chance": 91.0
+   },
+   {
+    "item": "16827",
+    "chance": 2.0
+   },
+   {
+    "item": "2446",
+    "chance": 1.0
+   },
+   {
+    "item": "2447",
+    "chance": 1.0
+   }
+  ],
+  "archi_champa_vert": [
+   {
+    "item": "16168",
+    "chance": 100.0
+   },
+   {
+    "item": "17128",
+    "chance": 100.0,
+    "metier": {
+     "id": 41,
+     "min": 40
+    },
+    "chasse": true
+   },
+   {
+    "item": "1674",
+    "chance": 8.32
+   },
+   {
+    "item": "16823",
+    "chance": 2.0
+   }
+  ],
+  "archi_champa_rouge": [
+   {
+    "item": "16167",
+    "chance": 100.0
+   },
+   {
+    "item": "17128",
+    "chance": 100.0,
+    "metier": {
+     "id": 41,
+     "min": 40
+    },
+    "chasse": true
+   },
+   {
+    "item": "1674",
+    "chance": 8.32
+   },
+   {
+    "item": "16823",
+    "chance": 2.0
+   }
+  ],
+  "archi_champa_bleu": [
+   {
+    "item": "16165",
+    "chance": 100.0
+   },
+   {
+    "item": "17128",
+    "chance": 100.0,
+    "metier": {
+     "id": 41,
+     "min": 40
+    },
+    "chasse": true
+   },
+   {
+    "item": "1674",
+    "chance": 8.32
+   },
+   {
+    "item": "16823",
+    "chance": 2.0
+   }
+  ],
+  "archi_champa_marron": [
+   {
+    "item": "16166",
+    "chance": 100.0
+   },
+   {
+    "item": "17128",
+    "chance": 100.0,
+    "metier": {
+     "id": 41,
+     "min": 40
+    },
+    "chasse": true
+   },
+   {
+    "item": "1674",
+    "chance": 8.32
+   },
+   {
+    "item": "16823",
+    "chance": 2.0
+   }
+  ],
+  "archi_dragoeuf_calcaire": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "308",
+    "chance": 87.0
+   },
+   {
+    "item": "17134",
+    "chance": 87.0,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "847",
+    "chance": 43.0
+   },
+   {
+    "item": "545",
+    "chance": 7.24
+   },
+   {
+    "item": "16833",
+    "chance": 2.0
+   }
+  ],
+  "archi_dragoeuf_argile": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "842",
+    "chance": 87.0
+   },
+   {
+    "item": "17134",
+    "chance": 87.0,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "845",
+    "chance": 43.0
+   },
+   {
+    "item": "544",
+    "chance": 7.24
+   },
+   {
+    "item": "16833",
+    "chance": 2.0
+   }
+  ],
+  "archi_dragoeuf_ardoise": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "1129",
+    "chance": 87.0
+   },
+   {
+    "item": "17134",
+    "chance": 87.0,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "844",
+    "chance": 43.0
+   },
+   {
+    "item": "546",
+    "chance": 7.24
+   },
+   {
+    "item": "16833",
+    "chance": 2.0
+   }
+  ],
+  "archi_dragoeuf_charbon": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "17134",
+    "chance": 87.0,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "843",
+    "chance": 87.0
+   },
+   {
+    "item": "846",
+    "chance": 43.0
+   },
+   {
+    "item": "547",
+    "chance": 7.24
+   },
+   {
+    "item": "16833",
+    "chance": 2.0
+   }
+  ],
+  "archi_boo": [
+   {
+    "item": "417",
+    "chance": 100.0
+   },
+   {
+    "item": "17126",
+    "chance": 100.0,
+    "metier": {
+     "id": 41,
+     "min": 30
+    },
+    "chasse": true
+   },
+   {
+    "item": "2585",
+    "chance": 8.88
+   },
+   {
+    "item": "16823",
+    "chance": 2.0
+   }
+  ],
+  "archi_crocodaille": [
+   {
+    "item": "1664",
+    "chance": 96.0
+   },
+   {
+    "item": "17130",
+    "chance": 96.0,
+    "metier": {
+     "id": 41,
+     "min": 50
+    },
+    "chasse": true
+   },
+   {
+    "item": "1663",
+    "chance": 16.0
+   },
+   {
+    "item": "2664",
+    "chance": 8.04
+   },
+   {
+    "item": "1635",
+    "chance": 8.04
+   },
+   {
+    "item": "16823",
+    "chance": 2.0
+   },
+   {
+    "item": "544",
+    "chance": 1.93
+   }
+  ],
+  "archi_chef_crocodaille": [
+   {
+    "item": "1613",
+    "chance": 84.0
+   },
+   {
+    "item": "17134",
+    "chance": 84.0,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "6738",
+    "chance": 6.96
+   },
+   {
+    "item": "2664",
+    "chance": 6.96
+   },
+   {
+    "item": "1635",
+    "chance": 6.96
+   },
+   {
+    "item": "16823",
+    "chance": 2.0
+   }
+  ],
+  "archi_dragodinde_amande_sauvage": [
+   {
+    "item": "10788",
+    "chance": 100.0,
+    "cond": "quete"
+   },
+   {
+    "item": "2599",
+    "chance": 88.0
+   },
+   {
+    "item": "17134",
+    "chance": 88.0,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "2588",
+    "chance": 14.0
+   },
+   {
+    "item": "10970",
+    "chance": 4.0
+   },
+   {
+    "item": "16833",
+    "chance": 2.0
+   }
+  ],
+  "archi_dragodinde_rousse_sauvage": [
+   {
+    "item": "10787",
+    "chance": 100.0,
+    "cond": "quete"
+   },
+   {
+    "item": "17134",
+    "chance": 86.0,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "2598",
+    "chance": 86.0
+   },
+   {
+    "item": "2586",
+    "chance": 14.0
+   },
+   {
+    "item": "10970",
+    "chance": 4.0
+   },
+   {
+    "item": "16833",
+    "chance": 2.0
+   }
+  ],
+  "archi_arakne": [
+   {
+    "item": "365",
+    "chance": 100.0
+   },
+   {
+    "item": "17124",
+    "chance": 100.0,
+    "metier": {
+     "id": 41,
+     "min": 20
+    },
+    "chasse": true
+   },
+   {
+    "item": "1673",
+    "chance": 9.24
+   },
+   {
+    "item": "16834",
+    "chance": 2.0
+   }
+  ],
+  "archi_moskito": [
+   {
+    "item": "17124",
+    "chance": 100.0,
+    "metier": {
+     "id": 41,
+     "min": 20
+    },
+    "chasse": true
+   },
+   {
+    "item": "307",
+    "chance": 100.0
+   },
+   {
+    "item": "371",
+    "chance": 9.24
+   },
+   {
+    "item": "16835",
+    "chance": 2.0
+   }
+  ],
+  "archi_craquelourd": [
+   {
+    "item": "17134",
+    "chance": 87.0,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "2304",
+    "chance": 87.0
+   },
+   {
+    "item": "18184",
+    "chance": 50.0,
+    "cond": "quete"
+   },
+   {
+    "item": "2251",
+    "chance": 7.24
+   },
+   {
+    "item": "16819",
+    "chance": 2.0
+   }
+  ],
+  "archi_bandit_manchot": [
+   {
+    "item": "13342",
+    "chance": 96.0
+   },
+   {
+    "item": "17126",
+    "chance": 96.0,
+    "metier": {
+     "id": 41,
+     "min": 30
+    },
+    "chasse": true
+   },
+   {
+    "item": "16836",
+    "chance": 2.0
    }
   ]
  },

@@ -19546,5 +19546,9865 @@
    "fuite": 0,
    "retraitPA": 0
   }
+ },
+ "mulou": {
+  "dofusId": 102,
+  "name": "Mulou",
+  "hp": 4000,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "mulou",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 254,
+    "name": "Cri du Mulou",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 2,
+    "zone": "C5",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 41,
+      "max": 50,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 8663,
+    "name": "Césarienne",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 41,
+      "max": 50,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 8664,
+    "name": "Soin Accéléré",
+    "pa": 5,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 6,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 17,
+      "max": 24
+     }
+    ]
+   }
+  ],
+  "level": 92,
+  "res": {
+   "terre": -14,
+   "feu": 21,
+   "eau": 6,
+   "air": -9,
+   "neutre": 26
+  },
+  "caracs": {
+   "force": 368,
+   "intelligence": 368,
+   "chance": 368,
+   "agilite": 368,
+   "sagesse": 276,
+   "esquivePA": 10,
+   "esquivePM": 10,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "cochon_de_lait": {
+  "dofusId": 123,
+  "name": "Cochon de Lait",
+  "hp": 1075,
+  "speed": 95,
+  "radius": 28,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "cochon_de_lait",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 312,
+    "name": "Flèche Trouveuse",
+    "pa": 4,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 16,
+      "max": 20,
+      "steal": false
+     }
+    ],
+    "gfx": 114
+   },
+   {
+    "id": 7126,
+    "name": "Lard Bat Laite",
+    "pa": 3,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pa",
+      "n": -1,
+      "dur": 1
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 7127,
+    "name": "Reniflement",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "C3",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 42,
+  "res": {
+   "terre": 0,
+   "feu": -19,
+   "eau": -24,
+   "air": 56,
+   "neutre": 11
+  },
+  "caracs": {
+   "force": 168,
+   "intelligence": 168,
+   "chance": 168,
+   "agilite": 168,
+   "sagesse": 126,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "araknelle": {
+  "dofusId": 157,
+  "name": "Araknelle",
+  "hp": 123,
+  "speed": 95,
+  "radius": 16,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "araknelle",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 213,
+    "name": "Frappe",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 12,
+      "max": 14,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 214,
+    "name": "Invocation d'Arakne",
+    "pa": 2,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "invoque",
+      "monster": "arakne"
+     }
+    ]
+   },
+   {
+    "id": 260,
+    "name": "Invocation d'Araknelle",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "invoque",
+      "monster": "araknelle"
+     }
+    ]
+   }
+  ],
+  "level": 2,
+  "res": {
+   "terre": 0,
+   "feu": 0,
+   "eau": 0,
+   "air": 0,
+   "neutre": 0
+  },
+  "caracs": {
+   "force": 0,
+   "intelligence": 0,
+   "chance": 0,
+   "agilite": 50,
+   "sagesse": 0,
+   "esquivePA": 18,
+   "esquivePM": 18,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "ambi_guman": {
+  "dofusId": 3525,
+  "name": "Ambi Guman",
+  "hp": 3500,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "ambi_guman",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 3974,
+    "name": "Patate",
+    "pa": 2,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 26,
+      "max": 35,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 4
+     }
+    ]
+   },
+   {
+    "id": 3975,
+    "name": "Roquette",
+    "pa": 3,
+    "po": [
+     1,
+     9
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 21,
+      "max": 25,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -3,
+      "dur": 2
+     }
+    ]
+   },
+   {
+    "id": 3976,
+    "name": "Enfant de la terre",
+    "pa": 2,
+    "po": [
+     1,
+     9
+    ],
+    "relance": 3,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 30,
+  "res": {
+   "terre": 10,
+   "feu": 20,
+   "eau": 10,
+   "air": 20,
+   "neutre": 20
+  },
+  "caracs": {
+   "force": 200,
+   "intelligence": 200,
+   "chance": 200,
+   "agilite": 200,
+   "sagesse": 100,
+   "esquivePA": 0,
+   "esquivePM": 5,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "champ_champ": {
+  "dofusId": 59,
+  "name": "Champ Champ",
+  "hp": 225,
+  "speed": 95,
+  "radius": 16,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "champ_champ",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 8700,
+    "name": "Champatate",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 13,
+      "max": 16,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 8701,
+    "name": "Champoisonnement",
+    "pa": 4,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 8,
+      "max": 8,
+      "steal": false
+     }
+    ],
+    "gfx": 21004
+   }
+  ],
+  "level": 16,
+  "res": {
+   "terre": 0,
+   "feu": -9,
+   "eau": 21,
+   "air": 6,
+   "neutre": -14
+  },
+  "caracs": {
+   "force": 64,
+   "intelligence": 64,
+   "chance": 64,
+   "agilite": 64,
+   "sagesse": 48,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "abraknyde_chetif": {
+  "dofusId": 4000,
+  "name": "Abraknyde Chétif",
+  "hp": 625,
+  "speed": 95,
+  "radius": 33,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "abraknyde_chetif",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 214,
+    "name": "Invocation d'Arakne",
+    "pa": 2,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 5,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "invoque",
+      "monster": "arakne"
+     }
+    ]
+   },
+   {
+    "id": 482,
+    "name": "Abraknassion",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 9,
+      "max": 13,
+      "steal": false
+     }
+    ],
+    "gfx": 3148
+   },
+   {
+    "id": 585,
+    "name": "Sève Paralysante",
+    "pa": 1,
+    "po": [
+     1,
+     7
+    ],
+    "relance": 4,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 5525,
+    "name": "Écrasement Abraknydien",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pa",
+      "n": -1,
+      "dur": 1
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 13,
+      "max": 18,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 5526,
+    "name": "Reconstitution Abraknydienne",
+    "pa": 5,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 5,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 101,
+      "max": 150
+     }
+    ],
+    "gfx": 20106
+   }
+  ],
+  "level": 27,
+  "res": {
+   "terre": 5,
+   "feu": -20,
+   "eau": 5,
+   "air": -20,
+   "neutre": 4
+  },
+  "caracs": {
+   "force": 95,
+   "intelligence": 95,
+   "chance": 95,
+   "agilite": 95,
+   "sagesse": 300,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "tofu_malefique": {
+  "dofusId": 111,
+  "name": "Tofu Maléfique",
+  "hp": 775,
+  "speed": 95,
+  "radius": 16,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "tofu_malefique",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 7083,
+    "name": "Maléfice",
+    "pa": 3,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 2,
+    "anim": 0,
+    "zone": "X1",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 7081,
+    "name": "Béco Maléfique",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 15,
+      "max": 18,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 15,
+      "max": 18,
+      "steal": true
+     }
+    ]
+   },
+   {
+    "id": 7082,
+    "name": "Punksnotdède",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 2,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 32,
+  "res": {
+   "terre": 16,
+   "feu": -24,
+   "eau": 26,
+   "air": -19,
+   "neutre": -14
+  },
+  "caracs": {
+   "force": 128,
+   "intelligence": 128,
+   "chance": 128,
+   "agilite": 128,
+   "sagesse": 96,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "kwoan": {
+  "dofusId": 154,
+  "name": "Kwoan",
+  "hp": 700,
+  "speed": 95,
+  "radius": 19,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "kwoan",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 258,
+    "name": "Frappe Gerbante",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 7079,
+    "name": "Déplacement Libre",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 7179,
+    "name": "Confusion Optique",
+    "pa": 3,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 5,
+    "anim": 1,
+    "zone": "X1",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 32,
+  "res": {
+   "terre": 6,
+   "feu": 0,
+   "eau": 11,
+   "air": -14,
+   "neutre": 16
+  },
+  "caracs": {
+   "force": 128,
+   "intelligence": 128,
+   "chance": 128,
+   "agilite": 128,
+   "sagesse": 96,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "roub_ignolles": {
+  "dofusId": 4270,
+  "name": "Roub' Ignolles",
+  "hp": 3000,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "roub_ignolles",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 6279,
+    "name": "Vulnérabilité bombesque",
+    "pa": 2,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 6280,
+    "name": "Pousse bombe",
+    "pa": 3,
+    "po": [
+     0,
+     6
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "+1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "repousse",
+      "n": 4
+     }
+    ]
+   },
+   {
+    "id": 6284,
+    "name": "Téléportabombe",
+    "pa": 3,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 100,
+      "pct": true,
+      "dur": 1
+     }
+    ]
+   }
+  ],
+  "level": 40,
+  "res": {
+   "terre": 0,
+   "feu": 10,
+   "eau": 10,
+   "air": 10,
+   "neutre": 20
+  },
+  "caracs": {
+   "force": 300,
+   "intelligence": 300,
+   "chance": 300,
+   "agilite": 300,
+   "sagesse": 100,
+   "esquivePA": 0,
+   "esquivePM": 10,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "gelee_bleuet": {
+  "dofusId": 55,
+  "name": "Gelée Bleuet",
+  "hp": 1625,
+  "speed": 95,
+  "radius": 23,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "gelee_bleuet",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 29851,
+    "name": "Isométrie",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 0,
+    "zone": "G1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 29839,
+    "name": "Tartinade",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 321,
+    "name": "Gelpikes",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "G1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 14,
+      "max": 22,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 664,
+    "name": "Bleuet Os",
+    "pa": 4,
+    "po": [
+     2,
+     7
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 18,
+      "max": 22,
+      "steal": false
+     }
+    ],
+    "gfx": 873
+   }
+  ],
+  "level": 54,
+  "res": {
+   "terre": 0,
+   "feu": 0,
+   "eau": 0,
+   "air": 0,
+   "neutre": 0
+  },
+  "caracs": {
+   "force": 150,
+   "intelligence": 150,
+   "chance": 150,
+   "agilite": 150,
+   "sagesse": 0,
+   "esquivePA": 2,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "gelee_menthe": {
+  "dofusId": 56,
+  "name": "Gelée Menthe",
+  "hp": 1625,
+  "speed": 95,
+  "radius": 23,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "gelee_menthe",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 29850,
+    "name": "Pik-assaut",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 0,
+    "zone": "G1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "pm",
+      "n": 2,
+      "dur": 2
+     }
+    ]
+   },
+   {
+    "id": 321,
+    "name": "Gelpikes",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "G1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 14,
+      "max": 22,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 322,
+    "name": "Menthe Os",
+    "pa": 4,
+    "po": [
+     2,
+     7
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 18,
+      "max": 22,
+      "steal": false
+     }
+    ],
+    "gfx": 760
+   },
+   {
+    "id": 29839,
+    "name": "Tartinade",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   }
+  ],
+  "level": 54,
+  "res": {
+   "terre": 0,
+   "feu": 0,
+   "eau": 0,
+   "air": 0,
+   "neutre": 0
+  },
+  "caracs": {
+   "force": 150,
+   "intelligence": 150,
+   "chance": 150,
+   "agilite": 150,
+   "sagesse": 0,
+   "esquivePA": 2,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "gelee_fraise": {
+  "dofusId": 57,
+  "name": "Gelée Fraise",
+  "hp": 1625,
+  "speed": 95,
+  "radius": 23,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "gelee_fraise",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 321,
+    "name": "Gelpikes",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "G1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 14,
+      "max": 22,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 29839,
+    "name": "Tartinade",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 29844,
+    "name": "Gélifiant",
+    "pa": 3,
+    "po": [
+     0,
+     4
+    ],
+    "relance": 2,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [],
+    "gfx": 20108
+   },
+   {
+    "id": 267,
+    "name": "Fraise Os",
+    "pa": 4,
+    "po": [
+     2,
+     7
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 18,
+      "max": 22,
+      "steal": false
+     }
+    ],
+    "gfx": 822
+   }
+  ],
+  "level": 54,
+  "res": {
+   "terre": 0,
+   "feu": 0,
+   "eau": 0,
+   "air": 0,
+   "neutre": 0
+  },
+  "caracs": {
+   "force": 150,
+   "intelligence": 150,
+   "chance": 150,
+   "agilite": 150,
+   "sagesse": 0,
+   "esquivePA": 2,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "champa_vert": {
+  "dofusId": 652,
+  "name": "Champa Vert",
+  "hp": 800,
+  "speed": 95,
+  "radius": 16,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "champa_vert",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 1123,
+    "name": "Téléportation du Champa",
+    "pa": 5,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 5528,
+    "name": "Champ Oisoné",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 2,
+    "anim": 0,
+    "zone": "X1",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 35,
+  "res": {
+   "terre": -9,
+   "feu": -9,
+   "eau": -9,
+   "air": 60,
+   "neutre": 50
+  },
+  "caracs": {
+   "force": 100,
+   "intelligence": 100,
+   "chance": 100,
+   "agilite": 100,
+   "sagesse": 50,
+   "esquivePA": 4,
+   "esquivePM": 2,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "champa_rouge": {
+  "dofusId": 653,
+  "name": "Champa Rouge",
+  "hp": 800,
+  "speed": 95,
+  "radius": 16,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "champa_rouge",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 645,
+    "name": "Champsoin",
+    "pa": 2,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "C2",
+    "allies": true,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 21,
+      "max": 25
+     }
+    ],
+    "gfx": 20714
+   },
+   {
+    "id": 1126,
+    "name": "Champ Hagne",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 21,
+      "max": 25,
+      "steal": true
+     }
+    ]
+   }
+  ],
+  "level": 35,
+  "res": {
+   "terre": -9,
+   "feu": 60,
+   "eau": -9,
+   "air": -9,
+   "neutre": 50
+  },
+  "caracs": {
+   "force": 100,
+   "intelligence": 100,
+   "chance": 100,
+   "agilite": 100,
+   "sagesse": 50,
+   "esquivePA": 4,
+   "esquivePM": 2,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "champa_bleu": {
+  "dofusId": 654,
+  "name": "Champa Bleu",
+  "hp": 800,
+  "speed": 95,
+  "radius": 16,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "champa_bleu",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 233,
+    "name": "Sacrifice Douloureux",
+    "pa": 2,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 31,
+      "max": 35,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 1124,
+    "name": "Attraction champêtre",
+    "pa": 2,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 1,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 11,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "attire",
+      "n": 2
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 11,
+      "max": 20,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 35,
+  "res": {
+   "terre": -9,
+   "feu": -9,
+   "eau": 60,
+   "air": -9,
+   "neutre": 50
+  },
+  "caracs": {
+   "force": 100,
+   "intelligence": 100,
+   "chance": 100,
+   "agilite": 100,
+   "sagesse": 50,
+   "esquivePA": 4,
+   "esquivePM": 2,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "champa_marron": {
+  "dofusId": 655,
+  "name": "Champa Marron",
+  "hp": 800,
+  "speed": 95,
+  "radius": 16,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "champa_marron",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 1125,
+    "name": "Champ Homi",
+    "pa": 3,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 1
+     },
+     {
+      "k": "pm",
+      "n": -2,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 5527,
+    "name": "Champ Hêtre",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 100,
+      "pct": true,
+      "dur": 1
+     }
+    ]
+   }
+  ],
+  "level": 35,
+  "res": {
+   "terre": 60,
+   "feu": -9,
+   "eau": -9,
+   "air": -9,
+   "neutre": 50
+  },
+  "caracs": {
+   "force": 100,
+   "intelligence": 100,
+   "chance": 100,
+   "agilite": 100,
+   "sagesse": 50,
+   "esquivePA": 13,
+   "esquivePM": 11,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "maitre_boulet": {
+  "dofusId": 4268,
+  "name": "Maître Boulet",
+  "hp": 3000,
+  "speed": 95,
+  "radius": 28,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "maitre_boulet",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 6273,
+    "name": "Acculement",
+    "pa": 2,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 11,
+      "max": 15,
+      "steal": false
+     },
+     {
+      "k": "avance",
+      "n": 5
+     },
+     {
+      "k": "repousse",
+      "n": 5
+     },
+     {
+      "k": "pm",
+      "n": -2,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 6274,
+    "name": "Débitage",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 6,
+      "max": 10,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 6275,
+    "name": "Invocation de Tournesol",
+    "pa": 2,
+    "po": [
+     3,
+     6
+    ],
+    "relance": 4,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   }
+  ],
+  "level": 30,
+  "res": {
+   "terre": 10,
+   "feu": 10,
+   "eau": 10,
+   "air": 10,
+   "neutre": -10
+  },
+  "caracs": {
+   "force": 300,
+   "intelligence": 300,
+   "chance": 300,
+   "agilite": 300,
+   "sagesse": 100,
+   "esquivePA": 0,
+   "esquivePM": 20,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "dragoeuf_calcaire": {
+  "dofusId": 76,
+  "name": "Dragoeuf Calcaire",
+  "hp": 2050,
+  "speed": 95,
+  "radius": 20,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "dragoeuf_calcaire",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 14250,
+    "name": "Entartrage",
+    "pa": 3,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 16,
+      "max": 25,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 14251,
+    "name": "Entartrage",
+    "pa": 3,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 16,
+      "max": 25,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 14252,
+    "name": "Entartrage",
+    "pa": 3,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 16,
+      "max": 25,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 14253,
+    "name": "Calcination",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 2,
+    "anim": 2,
+    "zone": "C2",
+    "allies": true,
+    "effects": [
+     {
+      "k": "pm",
+      "n": 2,
+      "dur": 1
+     }
+    ]
+   }
+  ],
+  "level": 62,
+  "res": {
+   "terre": 22,
+   "feu": 12,
+   "eau": 9,
+   "air": -10,
+   "neutre": 17
+  },
+  "caracs": {
+   "force": 190,
+   "intelligence": 190,
+   "chance": 190,
+   "agilite": 190,
+   "sagesse": 150,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "dragoeuf_argile": {
+  "dofusId": 87,
+  "name": "Dragoeuf Argile",
+  "hp": 2050,
+  "speed": 95,
+  "radius": 20,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "dragoeuf_argile",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 14258,
+    "name": "Cataplasme",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "Q1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 28,
+      "max": 37,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 14260,
+    "name": "Cataplasme",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "Q1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 28,
+      "max": 37,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 14261,
+    "name": "Cataplasme",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "Q1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 28,
+      "max": 37,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 14262,
+    "name": "Engobage",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 41,
+      "max": 50,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 62,
+  "res": {
+   "terre": -10,
+   "feu": 9,
+   "eau": 12,
+   "air": 22,
+   "neutre": 17
+  },
+  "caracs": {
+   "force": 190,
+   "intelligence": 190,
+   "chance": 190,
+   "agilite": 190,
+   "sagesse": 150,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "dragoeuf_ardoise": {
+  "dofusId": 88,
+  "name": "Dragoeuf Ardoise",
+  "hp": 2050,
+  "speed": 95,
+  "radius": 20,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "dragoeuf_ardoise",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 14254,
+    "name": "Feuilletage",
+    "pa": 3,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 14255,
+    "name": "Feuilletage",
+    "pa": 3,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 14256,
+    "name": "Feuilletage",
+    "pa": 3,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 14257,
+    "name": "Fendage",
+    "pa": 2,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 26,
+      "max": 35,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 62,
+  "res": {
+   "terre": 12,
+   "feu": -10,
+   "eau": 22,
+   "air": 9,
+   "neutre": 17
+  },
+  "caracs": {
+   "force": 190,
+   "intelligence": 190,
+   "chance": 190,
+   "agilite": 190,
+   "sagesse": 150,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "dragoeuf_charbon": {
+  "dofusId": 89,
+  "name": "Dragoeuf Charbon",
+  "hp": 2050,
+  "speed": 95,
+  "radius": 20,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "dragoeuf_charbon",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 14263,
+    "name": "Silicose",
+    "pa": 3,
+    "po": [
+     3,
+     7
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 11,
+      "max": 20,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 14264,
+    "name": "Silicose",
+    "pa": 3,
+    "po": [
+     3,
+     10
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 11,
+      "max": 20,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 14265,
+    "name": "Silicose",
+    "pa": 3,
+    "po": [
+     3,
+     13
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 11,
+      "max": 20,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 14266,
+    "name": "Crassier",
+    "pa": 2,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 11,
+      "max": 15,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 62,
+  "res": {
+   "terre": 9,
+   "feu": 22,
+   "eau": -10,
+   "air": 12,
+   "neutre": 17
+  },
+  "caracs": {
+   "force": 190,
+   "intelligence": 190,
+   "chance": 190,
+   "agilite": 190,
+   "sagesse": 150,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "coffre_malveillant": {
+  "dofusId": 177,
+  "name": "Coffre Malveillant",
+  "hp": 1450,
+  "speed": 95,
+  "radius": 16,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "coffre_malveillant",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 271,
+    "name": "Vol de Pièces",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 4,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [],
+    "missile": 20309,
+    "gfx": 20310
+   },
+   {
+    "id": 8163,
+    "name": "Lancer de Kamas",
+    "pa": 2,
+    "po": [
+     0,
+     12
+    ],
+    "relance": 0,
+    "anim": 300,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 11,
+      "max": 12,
+      "steal": false
+     }
+    ],
+    "gfx": 7968
+   }
+  ],
+  "level": 50,
+  "res": {
+   "terre": 5,
+   "feu": 5,
+   "eau": 5,
+   "air": 5,
+   "neutre": 5
+  },
+  "caracs": {
+   "force": 100,
+   "intelligence": 100,
+   "chance": 100,
+   "agilite": 100,
+   "sagesse": 0,
+   "esquivePA": 6,
+   "esquivePM": 6,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "boo": {
+  "dofusId": 112,
+  "name": "Boo",
+  "hp": 475,
+  "speed": 95,
+  "radius": 16,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "boo",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 615,
+    "name": "Souillure Booeuse",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 4,
+      "max": 6,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 730,
+    "name": "Embourbement",
+    "pa": 4,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 4,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 1,
+      "max": 2,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     }
+    ]
+   }
+  ],
+  "level": 25,
+  "res": {
+   "terre": 6,
+   "feu": -12,
+   "eau": 6,
+   "air": -12,
+   "neutre": 10
+  },
+  "caracs": {
+   "force": 200,
+   "intelligence": 0,
+   "chance": 250,
+   "agilite": 10,
+   "sagesse": 50,
+   "esquivePA": 11,
+   "esquivePM": 1,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "crocodaille": {
+  "dofusId": 261,
+  "name": "Crocodaille",
+  "hp": 1075,
+  "speed": 95,
+  "radius": 24,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "crocodaille",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 229,
+    "name": "Croutage",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 11,
+      "max": 25,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 6
+     }
+    ]
+   },
+   {
+    "id": 288,
+    "name": "Crasse Piration",
+    "pa": 4,
+    "po": [
+     0,
+     4
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "attire",
+      "n": 2
+     }
+    ]
+   },
+   {
+    "id": 327,
+    "name": "Vent de panique",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 5,
+    "anim": 1,
+    "zone": "C63",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 11,
+      "max": 15,
+      "steal": false
+     }
+    ],
+    "gfx": 21010
+   }
+  ],
+  "level": 42,
+  "res": {
+   "terre": 16,
+   "feu": 0,
+   "eau": 85,
+   "air": 25,
+   "neutre": 31
+  },
+  "caracs": {
+   "force": 100,
+   "intelligence": 20,
+   "chance": 0,
+   "agilite": 20,
+   "sagesse": 20,
+   "esquivePA": 10,
+   "esquivePM": 7,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "chef_crocodaille": {
+  "dofusId": 263,
+  "name": "Chef Crocodaille",
+  "hp": 2000,
+  "speed": 95,
+  "radius": 27,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "chef_crocodaille",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 216,
+    "name": "Carapace",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 222,
+    "name": "Éventration",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 71,
+      "max": 90,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 309,
+    "name": "Camouflage",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 3316,
+    "name": "Épée de Panique",
+    "pa": 4,
+    "po": [
+     0,
+     3
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "C2",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 31,
+      "max": 35,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 61,
+  "res": {
+   "terre": 40,
+   "feu": 35,
+   "eau": 50,
+   "air": 15,
+   "neutre": 15
+  },
+  "caracs": {
+   "force": 100,
+   "intelligence": 20,
+   "chance": 0,
+   "agilite": 100,
+   "sagesse": 20,
+   "esquivePA": 18,
+   "esquivePM": 10,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "arakne_olithique": {
+  "dofusId": 4833,
+  "name": "Arakne Olithique",
+  "hp": 2050,
+  "speed": 95,
+  "radius": 16,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "arakne_olithique",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 8583,
+    "name": "Remous Marécageux",
+    "pa": 2,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 11,
+      "max": 16,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 11,
+      "max": 16,
+      "steal": false
+     },
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 8584,
+    "name": "Venin Dopant",
+    "pa": 4,
+    "po": [
+     1,
+     4
+    ],
+    "relance": 2,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "pm",
+      "n": 2,
+      "dur": 2
+     }
+    ]
+   }
+  ],
+  "level": 62,
+  "res": {
+   "terre": -17,
+   "feu": 50,
+   "eau": -46,
+   "air": 37,
+   "neutre": 6
+  },
+  "caracs": {
+   "force": 248,
+   "intelligence": 248,
+   "chance": 248,
+   "agilite": 248,
+   "sagesse": 186,
+   "esquivePA": 10,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "boulanger_souille": {
+  "dofusId": 4181,
+  "name": "Boulanger Souillé",
+  "hp": 6000,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "boulanger_souille",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 222,
+    "name": "Éventration",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 71,
+      "max": 90,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 256,
+    "name": "Lancer de Pain",
+    "pa": 3,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 17,
+      "max": 21,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     }
+    ],
+    "gfx": 833
+   }
+  ],
+  "level": 120,
+  "res": {
+   "terre": 0,
+   "feu": 0,
+   "eau": 0,
+   "air": 0,
+   "neutre": 0
+  },
+  "caracs": {
+   "force": 250,
+   "intelligence": 250,
+   "chance": 250,
+   "agilite": 250,
+   "sagesse": 250,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "mineur_souille": {
+  "dofusId": 4182,
+  "name": "Mineur Souillé",
+  "hp": 6500,
+  "speed": 95,
+  "radius": 31,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "mineur_souille",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 234,
+    "name": "Coup de Pioche",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 36,
+      "max": 55,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 242,
+    "name": "Rage",
+    "pa": 6,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 16,
+      "dur": 3
+     }
+    ]
+   },
+   {
+    "id": 8161,
+    "name": "Gaucherie de Masse",
+    "pa": 5,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 7,
+    "anim": 9,
+    "zone": "C8",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 3
+     }
+    ],
+    "gfx": 20315
+   },
+   {
+    "id": 8162,
+    "name": "Escroquerie",
+    "pa": 3,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 403,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 31,
+      "max": 36,
+      "steal": false
+     }
+    ],
+    "gfx": 8420
+   }
+  ],
+  "level": 120,
+  "res": {
+   "terre": 0,
+   "feu": 0,
+   "eau": 0,
+   "air": 0,
+   "neutre": 0
+  },
+  "caracs": {
+   "force": 250,
+   "intelligence": 250,
+   "chance": 250,
+   "agilite": 250,
+   "sagesse": 300,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "dragodinde_amande_sauvage": {
+  "dofusId": 171,
+  "name": "Dragodinde amande sauvage",
+  "hp": 1850,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "dragodinde_amande_sauvage",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 3402,
+    "name": "Dindoboule",
+    "pa": 2,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 3403,
+    "name": "Stimulation Dragodinde",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [],
+    "gfx": 119
+   }
+  ],
+  "level": 62,
+  "res": {
+   "terre": 15,
+   "feu": -9,
+   "eau": 50,
+   "air": -9,
+   "neutre": 25
+  },
+  "caracs": {
+   "force": 192,
+   "intelligence": 192,
+   "chance": 192,
+   "agilite": 192,
+   "sagesse": 150,
+   "esquivePA": 50,
+   "esquivePM": 20,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "dragodinde_rousse_sauvage": {
+  "dofusId": 200,
+  "name": "Dragodinde rousse sauvage",
+  "hp": 1850,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "dragodinde_rousse_sauvage",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 269,
+    "name": "Dindosoin",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 1,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [],
+    "gfx": 825
+   },
+   {
+    "id": 273,
+    "name": "Dindofeu",
+    "pa": 2,
+    "po": [
+     1,
+     4
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 62,
+  "res": {
+   "terre": -9,
+   "feu": 50,
+   "eau": -9,
+   "air": 15,
+   "neutre": 25
+  },
+  "caracs": {
+   "force": 192,
+   "intelligence": 192,
+   "chance": 192,
+   "agilite": 192,
+   "sagesse": 150,
+   "esquivePA": 50,
+   "esquivePM": 20,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "arakne": {
+  "dofusId": 52,
+  "name": "Arakne",
+  "hp": 225,
+  "speed": 95,
+  "radius": 16,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "arakne",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 8697,
+    "name": "Frappe Ridicule",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 15,
+      "max": 20,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 8698,
+    "name": "Petite Toile",
+    "pa": 3,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 1
+     }
+    ]
+   }
+  ],
+  "level": 16,
+  "res": {
+   "terre": 1,
+   "feu": 11,
+   "eau": -14,
+   "air": 11,
+   "neutre": -9
+  },
+  "caracs": {
+   "force": 64,
+   "intelligence": 64,
+   "chance": 64,
+   "agilite": 64,
+   "sagesse": 48,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "moskito": {
+  "dofusId": 61,
+  "name": "Moskito",
+  "hp": 225,
+  "speed": 95,
+  "radius": 16,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "moskito",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 325,
+    "name": "Piqûre",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 13,
+      "max": 18,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 4,
+      "max": 4,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 8699,
+    "name": "Esquive Volante",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 16,
+  "res": {
+   "terre": 16,
+   "feu": 0,
+   "eau": 6,
+   "air": -14,
+   "neutre": 0
+  },
+  "caracs": {
+   "force": 64,
+   "intelligence": 64,
+   "chance": 64,
+   "agilite": 64,
+   "sagesse": 48,
+   "esquivePA": 0,
+   "esquivePM": 2,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "campagnoll": {
+  "dofusId": 4819,
+  "name": "Campagnoll",
+  "hp": 225,
+  "speed": 95,
+  "radius": 20,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "campagnoll",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 8561,
+    "name": "Gnoll Haut",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 2,
+    "anim": 1,
+    "zone": "C3",
+    "allies": true,
+    "effects": [
+     {
+      "k": "pm",
+      "n": 1,
+      "dur": 2
+     }
+    ]
+   },
+   {
+    "id": 8562,
+    "name": "Rongement",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 13,
+      "max": 18,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 2
+     }
+    ]
+   }
+  ],
+  "level": 16,
+  "res": {
+   "terre": -9,
+   "feu": 6,
+   "eau": -9,
+   "air": 1,
+   "neutre": 11
+  },
+  "caracs": {
+   "force": 64,
+   "intelligence": 64,
+   "chance": 64,
+   "agilite": 64,
+   "sagesse": 48,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "meulou": {
+  "dofusId": 232,
+  "name": "Meulou",
+  "hp": 13750,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "meulou",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 306,
+    "name": "Invocation de Milimeulou",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 8,
+    "anim": 3,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 8653,
+    "name": "Étripage",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 51,
+      "max": 60,
+      "steal": true
+     }
+    ]
+   },
+   {
+    "id": 8654,
+    "name": "Rage Reconstituante",
+    "pa": 5,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 6,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pm",
+      "n": 2,
+      "dur": 2
+     },
+     {
+      "k": "soin",
+      "min": 400,
+      "max": 400
+     }
+    ]
+   }
+  ],
+  "level": 100,
+  "res": {
+   "terre": 30,
+   "feu": -5,
+   "eau": 40,
+   "air": 40,
+   "neutre": 20
+  },
+  "caracs": {
+   "force": 400,
+   "intelligence": 400,
+   "chance": 400,
+   "agilite": 400,
+   "sagesse": 300,
+   "esquivePA": 16,
+   "esquivePM": 20,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "craquelourd": {
+  "dofusId": 4571,
+  "name": "Craquelourd",
+  "hp": 2050,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "craquelourd",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 7108,
+    "name": "Snaille Pierre",
+    "pa": 3,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 15,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 1
+     }
+    ],
+    "gfx": 3667
+   },
+   {
+    "id": 7109,
+    "name": "Gravure dans la Roche",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 0,
+    "zone": "C5",
+    "allies": true,
+    "effects": [
+     {
+      "k": "pm",
+      "n": 1,
+      "dur": 2
+     }
+    ]
+   },
+   {
+    "id": 7110,
+    "name": "Choc Dessus",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     }
+    ]
+   }
+  ],
+  "level": 62,
+  "res": {
+   "terre": 15,
+   "feu": -28,
+   "eau": 5,
+   "air": 28,
+   "neutre": 20
+  },
+  "caracs": {
+   "force": 248,
+   "intelligence": 248,
+   "chance": 248,
+   "agilite": 248,
+   "sagesse": 186,
+   "esquivePA": 20,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "poutch_vil_smisse": {
+  "dofusId": 3588,
+  "name": "Poutch Vil Smisse",
+  "hp": 250,
+  "speed": 95,
+  "radius": 26,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "poutch_vil_smisse",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 411,
+    "name": "Tuerie",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "C63",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 9999,
+      "max": 9999,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 9999,
+      "max": 9999,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 9999,
+      "max": 9999,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 9999,
+      "max": 9999,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 9999,
+      "max": 9999,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 1,
+  "res": {
+   "terre": 0,
+   "feu": 0,
+   "eau": 0,
+   "air": 0,
+   "neutre": 0
+  },
+  "caracs": {
+   "force": 0,
+   "intelligence": 0,
+   "chance": 0,
+   "agilite": 0,
+   "sagesse": 0,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "poutch_ombre": {
+  "dofusId": 3589,
+  "name": "Poutch Ombre",
+  "hp": 250,
+  "speed": 95,
+  "radius": 26,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "poutch_ombre",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 411,
+    "name": "Tuerie",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "C63",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 9999,
+      "max": 9999,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 9999,
+      "max": 9999,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 9999,
+      "max": 9999,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 9999,
+      "max": 9999,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 9999,
+      "max": 9999,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 1,
+  "res": {
+   "terre": 0,
+   "feu": 0,
+   "eau": 0,
+   "air": 0,
+   "neutre": 0
+  },
+  "caracs": {
+   "force": 0,
+   "intelligence": 0,
+   "chance": 0,
+   "agilite": 0,
+   "sagesse": 0,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "poutch_hyperscampe": {
+  "dofusId": 3590,
+  "name": "Poutch Hyperscampe",
+  "hp": 250,
+  "speed": 95,
+  "radius": 28,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "poutch_hyperscampe",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 411,
+    "name": "Tuerie",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "C63",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 9999,
+      "max": 9999,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 9999,
+      "max": 9999,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 9999,
+      "max": 9999,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 9999,
+      "max": 9999,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 9999,
+      "max": 9999,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 1,
+  "res": {
+   "terre": 0,
+   "feu": 0,
+   "eau": 0,
+   "air": 0,
+   "neutre": 0
+  },
+  "caracs": {
+   "force": 0,
+   "intelligence": 0,
+   "chance": 0,
+   "agilite": 0,
+   "sagesse": 0,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "poutch_sylargh": {
+  "dofusId": 3591,
+  "name": "Poutch Sylargh",
+  "hp": 250,
+  "speed": 95,
+  "radius": 26,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "poutch_sylargh",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 411,
+    "name": "Tuerie",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "C63",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 9999,
+      "max": 9999,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 9999,
+      "max": 9999,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 9999,
+      "max": 9999,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 9999,
+      "max": 9999,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 9999,
+      "max": 9999,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 1,
+  "res": {
+   "terre": 0,
+   "feu": 0,
+   "eau": 0,
+   "air": 0,
+   "neutre": 0
+  },
+  "caracs": {
+   "force": 0,
+   "intelligence": 0,
+   "chance": 0,
+   "agilite": 0,
+   "sagesse": 0,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "poutch_crane_rose": {
+  "dofusId": 3592,
+  "name": "Poutch Crâne Rose",
+  "hp": 250,
+  "speed": 95,
+  "radius": 26,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "poutch_crane_rose",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 411,
+    "name": "Tuerie",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "C63",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 9999,
+      "max": 9999,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 9999,
+      "max": 9999,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 9999,
+      "max": 9999,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 9999,
+      "max": 9999,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 9999,
+      "max": 9999,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 1,
+  "res": {
+   "terre": 0,
+   "feu": 0,
+   "eau": 0,
+   "air": 0,
+   "neutre": 0
+  },
+  "caracs": {
+   "force": 0,
+   "intelligence": 0,
+   "chance": 0,
+   "agilite": 0,
+   "sagesse": 0,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "bandit_manchot": {
+  "dofusId": 466,
+  "name": "Bandit Manchot",
+  "hp": 1200,
+  "speed": 95,
+  "radius": 33,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "bandit_manchot",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 238,
+    "name": "Persécution",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 25,
+      "max": 30,
+      "steal": false
+     }
+    ],
+    "gfx": 20408
+   },
+   {
+    "id": 239,
+    "name": "Lancer de Hachette",
+    "pa": 2,
+    "po": [
+     1,
+     9
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 13,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     }
+    ],
+    "missile": 831
+   }
+  ],
+  "level": 42,
+  "res": {
+   "terre": -16,
+   "feu": 0,
+   "eau": 0,
+   "air": 0,
+   "neutre": 0
+  },
+  "caracs": {
+   "force": 168,
+   "intelligence": 168,
+   "chance": 168,
+   "agilite": 168,
+   "sagesse": 126,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "archi_scarafeuille_rouge": {
+  "dofusId": 2282,
+  "name": "Scarouarze l'Epopée",
+  "hp": 1550,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_scarafeuille_rouge",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 343,
+    "name": "Scaraforce",
+    "pa": 4,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 2,
+    "anim": 0,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 17,
+      "max": 19,
+      "steal": false
+     }
+    ],
+    "gfx": 3161
+   },
+   {
+    "id": 311,
+    "name": "Scarinvoc",
+    "pa": 5,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [],
+    "gfx": 3682
+   },
+   {
+    "id": 345,
+    "name": "Elemental Dispersion",
+    "pa": 2,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 4,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [],
+    "gfx": 3682
+   },
+   {
+    "id": 349,
+    "name": "Spirit Element",
+    "pa": 4,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 11,
+      "max": 15,
+      "steal": false
+     }
+    ],
+    "gfx": 3682
+   }
+  ],
+  "xp": 80,
+  "level": 34,
+  "res": {
+   "terre": 10,
+   "feu": 100,
+   "eau": -40,
+   "air": 10,
+   "neutre": 35
+  },
+  "caracs": {
+   "force": 260,
+   "intelligence": 260,
+   "chance": 260,
+   "agilite": 260,
+   "sagesse": 140,
+   "esquivePA": 7,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "scarafeuille_rouge",
+  "archiEchelle": 1.0
+ },
+ "archi_scarafeuille_bleu": {
+  "dofusId": 2281,
+  "name": "Scarfayss le Balafré",
+  "hp": 1550,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_scarafeuille_bleu",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 343,
+    "name": "Scaraforce",
+    "pa": 4,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 2,
+    "anim": 0,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 17,
+      "max": 19,
+      "steal": false
+     }
+    ],
+    "gfx": 3161
+   },
+   {
+    "id": 311,
+    "name": "Scarinvoc",
+    "pa": 5,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [],
+    "gfx": 3682
+   },
+   {
+    "id": 345,
+    "name": "Elemental Dispersion",
+    "pa": 2,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 4,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [],
+    "gfx": 3682
+   },
+   {
+    "id": 349,
+    "name": "Spirit Element",
+    "pa": 4,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 11,
+      "max": 15,
+      "steal": false
+     }
+    ],
+    "gfx": 3682
+   }
+  ],
+  "xp": 80,
+  "level": 34,
+  "res": {
+   "terre": 10,
+   "feu": -40,
+   "eau": 100,
+   "air": 10,
+   "neutre": 35
+  },
+  "caracs": {
+   "force": 260,
+   "intelligence": 260,
+   "chance": 260,
+   "agilite": 260,
+   "sagesse": 140,
+   "esquivePA": 7,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "scarafeuille_bleu",
+  "archiEchelle": 1.0
+ },
+ "archi_scarafeuille_vert": {
+  "dofusId": 2283,
+  "name": "Scaramel le Fondant",
+  "hp": 1550,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_scarafeuille_vert",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 343,
+    "name": "Scaraforce",
+    "pa": 4,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 2,
+    "anim": 0,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 17,
+      "max": 19,
+      "steal": false
+     }
+    ],
+    "gfx": 3161
+   },
+   {
+    "id": 311,
+    "name": "Scarinvoc",
+    "pa": 5,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [],
+    "gfx": 3682
+   },
+   {
+    "id": 345,
+    "name": "Elemental Dispersion",
+    "pa": 2,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 4,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "pm",
+      "n": 1,
+      "dur": 3
+     }
+    ],
+    "gfx": 3682
+   },
+   {
+    "id": 349,
+    "name": "Spirit Element",
+    "pa": 4,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 11,
+      "max": 15,
+      "steal": false
+     }
+    ],
+    "gfx": 3682
+   }
+  ],
+  "xp": 80,
+  "level": 34,
+  "res": {
+   "terre": 100,
+   "feu": 10,
+   "eau": 10,
+   "air": -40,
+   "neutre": 35
+  },
+  "caracs": {
+   "force": 260,
+   "intelligence": 260,
+   "chance": 260,
+   "agilite": 260,
+   "sagesse": 140,
+   "esquivePA": 13,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "scarafeuille_vert",
+  "archiEchelle": 1.0
+ },
+ "archi_scarafeuille_blanc": {
+  "dofusId": 2280,
+  "name": "Scapé l'Epée",
+  "hp": 1550,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_scarafeuille_blanc",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 311,
+    "name": "Scarinvoc",
+    "pa": 5,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [],
+    "gfx": 3682
+   },
+   {
+    "id": 345,
+    "name": "Elemental Dispersion",
+    "pa": 2,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 4,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [],
+    "gfx": 3682
+   },
+   {
+    "id": 349,
+    "name": "Spirit Element",
+    "pa": 4,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 11,
+      "max": 15,
+      "steal": false
+     }
+    ],
+    "gfx": 3682
+   },
+   {
+    "id": 343,
+    "name": "Scaraforce",
+    "pa": 4,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 2,
+    "anim": 0,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 17,
+      "max": 19,
+      "steal": false
+     }
+    ],
+    "gfx": 3161
+   }
+  ],
+  "xp": 80,
+  "level": 34,
+  "res": {
+   "terre": -40,
+   "feu": 10,
+   "eau": 10,
+   "air": 100,
+   "neutre": 35
+  },
+  "caracs": {
+   "force": 260,
+   "intelligence": 260,
+   "chance": 260,
+   "agilite": 260,
+   "sagesse": 140,
+   "esquivePA": 7,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "scarafeuille_blanc",
+  "archiEchelle": 1.0
+ },
+ "archi_chafer": {
+  "dofusId": 2319,
+  "name": "Chafemal le Bagarreur",
+  "hp": 1525,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_chafer",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 5854,
+    "name": "Coup du Chafer",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "xp": 80,
+  "level": 32,
+  "res": {
+   "terre": 0,
+   "feu": 20,
+   "eau": 10,
+   "air": 15,
+   "neutre": 10
+  },
+  "caracs": {
+   "force": 320,
+   "intelligence": 100,
+   "chance": 100,
+   "agilite": 160,
+   "sagesse": 100,
+   "esquivePA": 6,
+   "esquivePM": 6,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "chafer",
+  "archiEchelle": 1.0
+ },
+ "archi_rib": {
+  "dofusId": 2276,
+  "name": "Ribibi le Cher",
+  "hp": 1700,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_rib",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 204,
+    "name": "Embrochement",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 3,
+      "max": 6,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 2
+     }
+    ]
+   },
+   {
+    "id": 243,
+    "name": "Disruption",
+    "pa": 3,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   }
+  ],
+  "xp": 80,
+  "level": 34,
+  "res": {
+   "terre": 20,
+   "feu": 0,
+   "eau": -10,
+   "air": 20,
+   "neutre": 20
+  },
+  "caracs": {
+   "force": 600,
+   "intelligence": 100,
+   "chance": 100,
+   "agilite": 150,
+   "sagesse": 100,
+   "esquivePA": 6,
+   "esquivePM": 7,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "rib",
+  "archiEchelle": 1.0
+ },
+ "archi_chafer_invisible": {
+  "dofusId": 2321,
+  "name": "Chafalfer l'Optimiste",
+  "hp": 1125,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_chafer_invisible",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 309,
+    "name": "Camouflage",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 5854,
+    "name": "Coup du Chafer",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 8275,
+    "name": "Pantalonnade",
+    "pa": 3,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 0,
+    "anim": 404,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 17,
+      "max": 20,
+      "steal": false
+     }
+    ],
+    "missile": 8474,
+    "gfx": 8473
+   }
+  ],
+  "xp": 80,
+  "level": 25,
+  "res": {
+   "terre": 10,
+   "feu": 10,
+   "eau": -8,
+   "air": 28,
+   "neutre": 16
+  },
+  "caracs": {
+   "force": 220,
+   "intelligence": 150,
+   "chance": 100,
+   "agilite": 100,
+   "sagesse": 100,
+   "esquivePA": 10,
+   "esquivePM": 6,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "chafer_invisible",
+  "archiEchelle": 1.0
+ },
+ "archi_chafer_fantassin": {
+  "dofusId": 2421,
+  "name": "Chaffoin le Sournois",
+  "hp": 1750,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_chafer_fantassin",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 5854,
+    "name": "Coup du Chafer",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "xp": 80,
+  "level": 33,
+  "res": {
+   "terre": 5,
+   "feu": 25,
+   "eau": 10,
+   "air": 20,
+   "neutre": 5
+  },
+  "caracs": {
+   "force": 460,
+   "intelligence": 100,
+   "chance": 100,
+   "agilite": 100,
+   "sagesse": 125,
+   "esquivePA": 10,
+   "esquivePM": 10,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "chafer_fantassin",
+  "archiEchelle": 1.2
+ },
+ "archi_gob_trotteur": {
+  "dofusId": 2430,
+  "name": "Chevaustine le Reconstruit",
+  "hp": 1825,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_gob_trotteur",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 21695,
+    "name": "Gobond",
+    "pa": 3,
+    "po": [
+     3,
+     4
+    ],
+    "relance": 2,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 21696,
+    "name": "Gobrochette",
+    "pa": 3,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 18,
+      "max": 20,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "xp": 80,
+  "level": 32,
+  "res": {
+   "terre": 14,
+   "feu": -4,
+   "eau": -1,
+   "air": 12,
+   "neutre": -1
+  },
+  "caracs": {
+   "force": 236,
+   "intelligence": 236,
+   "chance": 236,
+   "agilite": 236,
+   "sagesse": 192,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "gob_trotteur",
+  "archiEchelle": 1.0
+ },
+ "archi_gobet": {
+  "dofusId": 2494,
+  "name": "Gobstiniais le Têtu",
+  "hp": 1500,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_gobet",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 21691,
+    "name": "Frappe Téméraire",
+    "pa": 3,
+    "po": [
+     1,
+     4
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 17,
+      "max": 19,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 21692,
+    "name": "Impact Maladroit",
+    "pa": 3,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 14,
+      "max": 16,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 2
+     }
+    ]
+   }
+  ],
+  "xp": 80,
+  "level": 32,
+  "res": {
+   "terre": 18,
+   "feu": 6,
+   "eau": -3,
+   "air": -4,
+   "neutre": 4
+  },
+  "caracs": {
+   "force": 236,
+   "intelligence": 236,
+   "chance": 236,
+   "agilite": 236,
+   "sagesse": 192,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "gobet",
+  "archiEchelle": 1.0
+ },
+ "archi_bwork_mage": {
+  "dofusId": 2418,
+  "name": "Bwormage le Respectueux",
+  "hp": 2400,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_bwork_mage",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 205,
+    "name": "Éclair en Série",
+    "pa": 4,
+    "po": [
+     3,
+     6
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "C2",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 5,
+      "max": 9,
+      "steal": false
+     }
+    ],
+    "gfx": 20811
+   },
+   {
+    "id": 208,
+    "name": "Tornade",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 3,
+      "max": 14,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 3
+     }
+    ],
+    "gfx": 710
+   },
+   {
+    "id": 224,
+    "name": "Invocation de Tofu Maléfique",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 6,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   }
+  ],
+  "xp": 80,
+  "level": 42,
+  "res": {
+   "terre": 10,
+   "feu": 15,
+   "eau": 12,
+   "air": 10,
+   "neutre": 12
+  },
+  "caracs": {
+   "force": 288,
+   "intelligence": 288,
+   "chance": 100,
+   "agilite": 288,
+   "sagesse": 224,
+   "esquivePA": 14,
+   "esquivePM": 14,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "bwork_mage",
+  "archiEchelle": 1.0
+ },
+ "archi_bwork_archer": {
+  "dofusId": 2417,
+  "name": "Barchwork le Multicolore",
+  "hp": 1950,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_bwork_archer",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 312,
+    "name": "Flèche Trouveuse",
+    "pa": 4,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 16,
+      "max": 20,
+      "steal": false
+     }
+    ],
+    "gfx": 114
+   },
+   {
+    "id": 8221,
+    "name": "Maîtrise des Armes de Jet",
+    "pa": 2,
+    "po": [
+     0,
+     6
+    ],
+    "relance": 5,
+    "anim": 901,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 40,
+      "dur": 3
+     }
+    ],
+    "gfx": 20920
+   },
+   {
+    "id": 8278,
+    "name": "Projectile Puissant",
+    "pa": 3,
+    "po": [
+     0,
+     6
+    ],
+    "relance": 6,
+    "anim": 902,
+    "zone": "P1",
+    "allies": true,
+    "effects": [],
+    "gfx": 8190
+   }
+  ],
+  "xp": 80,
+  "level": 37,
+  "res": {
+   "terre": -5,
+   "feu": 15,
+   "eau": 10,
+   "air": 10,
+   "neutre": 10
+  },
+  "caracs": {
+   "force": 100,
+   "intelligence": 100,
+   "chance": 100,
+   "agilite": 300,
+   "sagesse": 100,
+   "esquivePA": 10,
+   "esquivePM": 5,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "bwork_archer",
+  "archiEchelle": 1.111
+ },
+ "archi_bwork": {
+  "dofusId": 2416,
+  "name": "Bworkasse le Dégoutant",
+  "hp": 2400,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_bwork",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 222,
+    "name": "Éventration",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 31,
+      "max": 50,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 242,
+    "name": "Rage",
+    "pa": 6,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 6,
+      "dur": 3
+     }
+    ]
+   },
+   {
+    "id": 8273,
+    "name": "Soufflette",
+    "pa": 2,
+    "po": [
+     2,
+     8
+    ],
+    "relance": 2,
+    "anim": 8012,
+    "zone": "Q1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "repousse",
+      "n": 1
+     }
+    ],
+    "gfx": 1082
+   }
+  ],
+  "xp": 80,
+  "level": 42,
+  "res": {
+   "terre": 12,
+   "feu": 15,
+   "eau": -10,
+   "air": 10,
+   "neutre": 11
+  },
+  "caracs": {
+   "force": 300,
+   "intelligence": 100,
+   "chance": 100,
+   "agilite": 200,
+   "sagesse": 100,
+   "esquivePA": 16,
+   "esquivePM": 5,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "bwork",
+  "archiEchelle": 1.0
+ },
+ "archi_mineur_sombre": {
+  "dofusId": 2335,
+  "name": "Minsinistre l'Elu",
+  "hp": 2400,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_mineur_sombre",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 234,
+    "name": "Coup de Pioche",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 16,
+      "max": 35,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 242,
+    "name": "Rage",
+    "pa": 6,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 6,
+      "dur": 3
+     }
+    ]
+   },
+   {
+    "id": 8161,
+    "name": "Gaucherie de Masse",
+    "pa": 5,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 7,
+    "anim": 9,
+    "zone": "C8",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 3
+     }
+    ],
+    "gfx": 20315
+   },
+   {
+    "id": 8162,
+    "name": "Escroquerie",
+    "pa": 3,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 403,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 31,
+      "max": 36,
+      "steal": false
+     }
+    ],
+    "gfx": 8420
+   }
+  ],
+  "xp": 80,
+  "level": 42,
+  "res": {
+   "terre": 10,
+   "feu": 10,
+   "eau": 10,
+   "air": 10,
+   "neutre": 10
+  },
+  "caracs": {
+   "force": 288,
+   "intelligence": 100,
+   "chance": 100,
+   "agilite": 288,
+   "sagesse": 230,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "mineur_sombre",
+  "archiEchelle": 1.0
+ },
+ "archi_forgeron_sombre": {
+  "dofusId": 2328,
+  "name": "Forboyar l'Enigmatique",
+  "hp": 2400,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_forgeron_sombre",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 204,
+    "name": "Embrochement",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 3,
+      "max": 6,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 2
+     }
+    ]
+   },
+   {
+    "id": 227,
+    "name": "Protection Magique",
+    "pa": 1,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [],
+    "gfx": 709
+   },
+   {
+    "id": 3283,
+    "name": "Coud'marto",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "xp": 80,
+  "level": 42,
+  "res": {
+   "terre": 15,
+   "feu": 15,
+   "eau": 0,
+   "air": 0,
+   "neutre": 14
+  },
+  "caracs": {
+   "force": 288,
+   "intelligence": 100,
+   "chance": 100,
+   "agilite": 288,
+   "sagesse": 230,
+   "esquivePA": 7,
+   "esquivePM": 10,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "forgeron_sombre",
+  "archiEchelle": 1.0
+ },
+ "archi_boulanger_sombre": {
+  "dofusId": 2318,
+  "name": "Boudur le Raide",
+  "hp": 1625,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_boulanger_sombre",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 222,
+    "name": "Éventration",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 31,
+      "max": 50,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 256,
+    "name": "Lancer de Pain",
+    "pa": 3,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 7,
+      "max": 11,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     }
+    ],
+    "gfx": 833
+   }
+  ],
+  "xp": 80,
+  "level": 35,
+  "res": {
+   "terre": 10,
+   "feu": 10,
+   "eau": 10,
+   "air": 10,
+   "neutre": 10
+  },
+  "caracs": {
+   "force": 300,
+   "intelligence": 420,
+   "chance": 100,
+   "agilite": 100,
+   "sagesse": 130,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "boulanger_sombre",
+  "archiEchelle": 1.0
+ },
+ "archi_bandit_du_clan_des_roublards": {
+  "dofusId": 2314,
+  "name": "Bandson le Tonitruant",
+  "hp": 1950,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_bandit_du_clan_des_roublards",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 238,
+    "name": "Persécution",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 25,
+      "max": 30,
+      "steal": false
+     }
+    ],
+    "gfx": 20408
+   },
+   {
+    "id": 239,
+    "name": "Lancer de Hachette",
+    "pa": 2,
+    "po": [
+     1,
+     9
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 13,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     }
+    ],
+    "missile": 831
+   }
+  ],
+  "xp": 80,
+  "level": 37,
+  "res": {
+   "terre": 10,
+   "feu": 10,
+   "eau": 10,
+   "air": 10,
+   "neutre": 10
+  },
+  "caracs": {
+   "force": 620,
+   "intelligence": 100,
+   "chance": 100,
+   "agilite": 320,
+   "sagesse": 130,
+   "esquivePA": 9,
+   "esquivePM": 8,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "bandit_du_clan_des_roublards",
+  "archiEchelle": 1.0
+ },
+ "archi_kwak_de_vent": {
+  "dofusId": 2369,
+  "name": "Kwaké le Piraté",
+  "hp": 2400,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_kwak_de_vent",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 346,
+    "name": "Kwakoukas",
+    "pa": 5,
+    "po": [
+     1,
+     7
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 11,
+      "max": 15,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 3
+     }
+    ],
+    "gfx": 3684
+   },
+   {
+    "id": 347,
+    "name": "Wakpot",
+    "pa": 3,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 2,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 6,
+      "max": 7,
+      "steal": true
+     }
+    ],
+    "gfx": 3684
+   },
+   {
+    "id": 8688,
+    "name": "Éventrement",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "xp": 80,
+  "level": 42,
+  "res": {
+   "terre": -39,
+   "feu": 16,
+   "eau": 16,
+   "air": 90,
+   "neutre": 90
+  },
+  "caracs": {
+   "force": 436,
+   "intelligence": 436,
+   "chance": 436,
+   "agilite": 436,
+   "sagesse": 226,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "kwak_de_vent",
+  "archiEchelle": 1.0
+ },
+ "archi_kwak_de_flamme": {
+  "dofusId": 2451,
+  "name": "Kwakolak le Chocolaté",
+  "hp": 2400,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_kwak_de_flamme",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 346,
+    "name": "Kwakoukas",
+    "pa": 5,
+    "po": [
+     1,
+     7
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 11,
+      "max": 15,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 3
+     }
+    ],
+    "gfx": 3684
+   },
+   {
+    "id": 347,
+    "name": "Wakpot",
+    "pa": 3,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 2,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 6,
+      "max": 7,
+      "steal": true
+     }
+    ],
+    "gfx": 3684
+   },
+   {
+    "id": 8688,
+    "name": "Éventrement",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "xp": 80,
+  "level": 42,
+  "res": {
+   "terre": 16,
+   "feu": 90,
+   "eau": -39,
+   "air": 16,
+   "neutre": 90
+  },
+  "caracs": {
+   "force": 436,
+   "intelligence": 436,
+   "chance": 436,
+   "agilite": 436,
+   "sagesse": 226,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "kwak_de_flamme",
+  "archiEchelle": 1.0
+ },
+ "archi_kwak_de_glace": {
+  "dofusId": 2368,
+  "name": "Kwakwatique le Trempé",
+  "hp": 1800,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_kwak_de_glace",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 346,
+    "name": "Kwakoukas",
+    "pa": 5,
+    "po": [
+     1,
+     7
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 11,
+      "max": 15,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 3
+     }
+    ],
+    "gfx": 3684
+   },
+   {
+    "id": 347,
+    "name": "Wakpot",
+    "pa": 3,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 2,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 6,
+      "max": 7,
+      "steal": true
+     }
+    ],
+    "gfx": 3684
+   },
+   {
+    "id": 8688,
+    "name": "Éventrement",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "xp": 80,
+  "level": 42,
+  "res": {
+   "terre": 16,
+   "feu": -39,
+   "eau": 90,
+   "air": 16,
+   "neutre": 90
+  },
+  "caracs": {
+   "force": 436,
+   "intelligence": 436,
+   "chance": 436,
+   "agilite": 436,
+   "sagesse": 226,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "kwak_de_glace",
+  "archiEchelle": 1.0
+ },
+ "archi_kwak_de_terre": {
+  "dofusId": 2367,
+  "name": "Kwakamole l'Appétissant",
+  "hp": 2400,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_kwak_de_terre",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 346,
+    "name": "Kwakoukas",
+    "pa": 5,
+    "po": [
+     1,
+     7
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 11,
+      "max": 15,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 3
+     }
+    ],
+    "gfx": 3684
+   },
+   {
+    "id": 347,
+    "name": "Wakpot",
+    "pa": 3,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 2,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 6,
+      "max": 7,
+      "steal": true
+     }
+    ],
+    "gfx": 3684
+   },
+   {
+    "id": 8688,
+    "name": "Éventrement",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "xp": 80,
+  "level": 42,
+  "res": {
+   "terre": 90,
+   "feu": 16,
+   "eau": 16,
+   "air": -39,
+   "neutre": 90
+  },
+  "caracs": {
+   "force": 436,
+   "intelligence": 436,
+   "chance": 436,
+   "agilite": 436,
+   "sagesse": 226,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "kwak_de_terre",
+  "archiEchelle": 1.0
+ },
+ "archi_craqueleur": {
+  "dofusId": 2436,
+  "name": "Crakmitaine le Faucheur",
+  "hp": 4500,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_craqueleur",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 206,
+    "name": "Écrasement Handicapant",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 1
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 13,
+      "max": 18,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 216,
+    "name": "Carapace",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 235,
+    "name": "Jet de pierre",
+    "pa": 4,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "pm",
+      "n": -4,
+      "dur": 1
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 9,
+      "max": 10,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "xp": 80,
+  "level": 62,
+  "res": {
+   "terre": 24,
+   "feu": 16,
+   "eau": 4,
+   "air": -6,
+   "neutre": 16
+  },
+  "caracs": {
+   "force": 596,
+   "intelligence": 596,
+   "chance": 596,
+   "agilite": 596,
+   "sagesse": 286,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "craqueleur",
+  "archiEchelle": 1.0
+ },
+ "archi_craqueleur_des_plaines": {
+  "dofusId": 2438,
+  "name": "Cramikaz le Suicidaire",
+  "hp": 4500,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_craqueleur_des_plaines",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 206,
+    "name": "Écrasement Handicapant",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 1
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 13,
+      "max": 18,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 235,
+    "name": "Jet de pierre",
+    "pa": 4,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "pm",
+      "n": -4,
+      "dur": 1
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 9,
+      "max": 10,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 470,
+    "name": "Frappe Sismique",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 6,
+    "anim": 0,
+    "zone": "C5",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pa",
+      "n": -1,
+      "dur": 4
+     }
+    ]
+   }
+  ],
+  "xp": 80,
+  "level": 62,
+  "res": {
+   "terre": 2,
+   "feu": 16,
+   "eau": 46,
+   "air": 26,
+   "neutre": 2
+  },
+  "caracs": {
+   "force": 596,
+   "intelligence": 596,
+   "chance": 596,
+   "agilite": 596,
+   "sagesse": 286,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "craqueleur_des_plaines",
+  "archiEchelle": 1.0
+ },
+ "archi_craqueboule": {
+  "dofusId": 2326,
+  "name": "Craquetuss le Piquant",
+  "hp": 4000,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_craqueboule",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 522,
+    "name": "Martèlement",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "dommages",
+      "n": 6,
+      "dur": 5
+     },
+     {
+      "k": "pa",
+      "n": -1,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 7120,
+    "name": "Manteau Tellurique",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 7121,
+    "name": "Motivation Tellurique",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pm",
+      "n": 2,
+      "dur": 1
+     }
+    ]
+   }
+  ],
+  "xp": 80,
+  "level": 62,
+  "res": {
+   "terre": 30,
+   "feu": 30,
+   "eau": 30,
+   "air": 30,
+   "neutre": 30
+  },
+  "caracs": {
+   "force": 596,
+   "intelligence": 596,
+   "chance": 596,
+   "agilite": 596,
+   "sagesse": 286,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "craqueboule",
+  "archiEchelle": 1.0
+ },
+ "archi_wabbit": {
+  "dofusId": 2304,
+  "name": "Wabbitud le Constant",
+  "hp": 2350,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_wabbit",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 3784,
+    "name": "Frappe des Wabbits",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 21,
+      "max": 25,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 3786,
+    "name": "Farandole de cawottes",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 2,
+    "anim": 1,
+    "zone": "C2",
+    "allies": true,
+    "effects": [
+     {
+      "k": "pm",
+      "n": 1,
+      "dur": 1
+     }
+    ],
+    "gfx": 2323
+   }
+  ],
+  "xp": 80,
+  "level": 44,
+  "res": {
+   "terre": 15,
+   "feu": 10,
+   "eau": 5,
+   "air": 10,
+   "neutre": 20
+  },
+  "caracs": {
+   "force": 340,
+   "intelligence": 100,
+   "chance": 100,
+   "agilite": 200,
+   "sagesse": 200,
+   "esquivePA": 4,
+   "esquivePM": 11,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "wabbit",
+  "archiEchelle": 1.0
+ },
+ "archi_black_wabbit": {
+  "dofusId": 2403,
+  "name": "Wagnagnah le Sanglant",
+  "hp": 2500,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_black_wabbit",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 3784,
+    "name": "Frappe des Wabbits",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 21,
+      "max": 25,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 3825,
+    "name": "Wabeha",
+    "pa": 4,
+    "po": [
+     1,
+     11
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "L2",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 26,
+      "max": 28,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 1
+     }
+    ],
+    "gfx": 2328
+   }
+  ],
+  "xp": 141,
+  "level": 46,
+  "res": {
+   "terre": 5,
+   "feu": 15,
+   "eau": 21,
+   "air": 22,
+   "neutre": 20
+  },
+  "caracs": {
+   "force": 280,
+   "intelligence": 380,
+   "chance": 100,
+   "agilite": 220,
+   "sagesse": 220,
+   "esquivePA": 4,
+   "esquivePM": 8,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "black_wabbit",
+  "archiEchelle": 1.0
+ },
+ "archi_black_tiwabbit": {
+  "dofusId": 2402,
+  "name": "Tiwa'Missou le Gateux",
+  "hp": 2175,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_black_tiwabbit",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 324,
+    "name": "Petit Wabehameha",
+    "pa": 4,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 21,
+      "max": 25,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 1
+     }
+    ],
+    "gfx": 2334
+   },
+   {
+    "id": 3784,
+    "name": "Frappe des Wabbits",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 21,
+      "max": 25,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "xp": 80,
+  "level": 42,
+  "res": {
+   "terre": 0,
+   "feu": 10,
+   "eau": 21,
+   "air": 22,
+   "neutre": 15
+  },
+  "caracs": {
+   "force": 200,
+   "intelligence": 300,
+   "chance": 100,
+   "agilite": 200,
+   "sagesse": 200,
+   "esquivePA": 8,
+   "esquivePM": 12,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "black_tiwabbit",
+  "archiEchelle": 1.0
+ },
+ "archi_tiwabbit_kiafin": {
+  "dofusId": 2294,
+  "name": "Tiwoflan le Lâche",
+  "hp": 2000,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_tiwabbit_kiafin",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 327,
+    "name": "Vent de panique",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 5,
+    "anim": 1,
+    "zone": "C63",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 11,
+      "max": 15,
+      "steal": false
+     }
+    ],
+    "gfx": 21010
+   },
+   {
+    "id": 3783,
+    "name": "Panique",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 1,
+    "anim": 0,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "repousse",
+      "n": 1
+     }
+    ],
+    "gfx": 2322
+   }
+  ],
+  "xp": 80,
+  "level": 40,
+  "res": {
+   "terre": 10,
+   "feu": 10,
+   "eau": 10,
+   "air": 10,
+   "neutre": 22
+  },
+  "caracs": {
+   "force": 500,
+   "intelligence": 100,
+   "chance": 100,
+   "agilite": 500,
+   "sagesse": 100,
+   "esquivePA": 24,
+   "esquivePM": 24,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "tiwabbit_kiafin",
+  "archiEchelle": 1.0
+ },
+ "archi_tiwabbit": {
+  "dofusId": 2293,
+  "name": "Tiwalpé le Dévêtu",
+  "hp": 2100,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_tiwabbit",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 3784,
+    "name": "Frappe des Wabbits",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 21,
+      "max": 25,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 3785,
+    "name": "Envoie la patate",
+    "pa": 2,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 2,
+    "anim": 1,
+    "zone": "X1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 100,
+      "pct": true,
+      "dur": 1
+     },
+     {
+      "k": "dommages",
+      "n": 10,
+      "dur": 1
+     }
+    ],
+    "gfx": 2332
+   }
+  ],
+  "xp": 228,
+  "level": 41,
+  "res": {
+   "terre": 11,
+   "feu": 10,
+   "eau": 5,
+   "air": 10,
+   "neutre": 12
+  },
+  "caracs": {
+   "force": 300,
+   "intelligence": 100,
+   "chance": 100,
+   "agilite": 100,
+   "sagesse": 200,
+   "esquivePA": 4,
+   "esquivePM": 9,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "tiwabbit",
+  "archiEchelle": 1.0
+ },
+ "archi_wo_wabbit": {
+  "dofusId": 2308,
+  "name": "Wokènrôl le Danseur",
+  "hp": 3000,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_wo_wabbit",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 328,
+    "name": "Invocation de Tiwabbit",
+    "pa": 2,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 4,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "invoque",
+      "monster": "tiwabbit"
+     }
+    ]
+   },
+   {
+    "id": 329,
+    "name": "Invocation de Black Tiwabbit",
+    "pa": 2,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 4,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "invoque",
+      "monster": "black_tiwabbit"
+     }
+    ]
+   },
+   {
+    "id": 330,
+    "name": "Ventroboom",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 26,
+      "max": 35,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 6
+     }
+    ],
+    "gfx": 474
+   },
+   {
+    "id": 331,
+    "name": "Invocation de Tiwabbit Kiafin",
+    "pa": 2,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 4,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "invoque",
+      "monster": "tiwabbit_kiafin"
+     }
+    ],
+    "gfx": 9
+   }
+  ],
+  "xp": 80,
+  "level": 52,
+  "res": {
+   "terre": 28,
+   "feu": 20,
+   "eau": -5,
+   "air": 10,
+   "neutre": 28
+  },
+  "caracs": {
+   "force": 300,
+   "intelligence": 100,
+   "chance": 100,
+   "agilite": 100,
+   "sagesse": 200,
+   "esquivePA": 4,
+   "esquivePM": 6,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "wo_wabbit",
+  "archiEchelle": 1.176
+ },
+ "archi_grand_pa_wabbit": {
+  "dofusId": 2498,
+  "name": "Grandilok le Clameur",
+  "hp": 4500,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_grand_pa_wabbit",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 332,
+    "name": "Cawotte Explosive",
+    "pa": 3,
+    "po": [
+     0,
+     7
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "C2",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 36,
+      "max": 45,
+      "steal": false
+     }
+    ],
+    "gfx": 801
+   },
+   {
+    "id": 333,
+    "name": "Cawotte Vitaminée",
+    "pa": 3,
+    "po": [
+     0,
+     4
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "C2",
+    "allies": true,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 21,
+      "max": 30
+     }
+    ],
+    "gfx": 488
+   },
+   {
+    "id": 334,
+    "name": "Cawotte Paralysante",
+    "pa": 3,
+    "po": [
+     1,
+     12
+    ],
+    "relance": 1,
+    "anim": 1,
+    "zone": "C2",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 1
+     },
+     {
+      "k": "pm",
+      "n": -2,
+      "dur": 1
+     }
+    ],
+    "gfx": 475
+   },
+   {
+    "id": 3784,
+    "name": "Frappe des Wabbits",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 21,
+      "max": 25,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "xp": 80,
+  "level": 52,
+  "res": {
+   "terre": 10,
+   "feu": -5,
+   "eau": 21,
+   "air": 10,
+   "neutre": 28
+  },
+  "caracs": {
+   "force": 600,
+   "intelligence": 400,
+   "chance": 100,
+   "agilite": 200,
+   "sagesse": 350,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "grand_pa_wabbit",
+  "archiEchelle": 1.0
+ },
+ "archi_tofu_amakna": {
+  "dofusId": 2355,
+  "name": "Tofuldebeu l'Explosif",
+  "hp": 1250,
+  "speed": 112,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_tofu_amakna",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 10270,
+    "name": "Béco",
+    "pa": 4,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 13,
+      "max": 18,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 10271,
+    "name": "Tofulekan",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "X1",
+    "allies": true,
+    "effects": []
+   }
+  ],
+  "xp": 80,
+  "level": 32,
+  "res": {
+   "terre": 1,
+   "feu": 19,
+   "eau": 19,
+   "air": 1,
+   "neutre": 15
+  },
+  "caracs": {
+   "force": 356,
+   "intelligence": 356,
+   "chance": 356,
+   "agilite": 356,
+   "sagesse": 196,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "tofu_amakna",
+  "archiEchelle": 1.0
+ },
+ "archi_mulou": {
+  "dofusId": 2337,
+  "name": "Muloufok l'Hilarant",
+  "hp": 7750,
+  "speed": 106,
+  "radius": 36,
+  "mass": 5.1,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_mulou",
+  "color": "#ffd27a",
+  "xp": 80,
+  "spells": [
+   {
+    "id": 254,
+    "name": "Cri du Mulou",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 2,
+    "zone": "C5",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 41,
+      "max": 50,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 8663,
+    "name": "Césarienne",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 41,
+      "max": 50,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 8664,
+    "name": "Soin Accéléré",
+    "pa": 5,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 6,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 17,
+      "max": 24
+     }
+    ]
+   }
+  ],
+  "level": 92,
+  "res": {
+   "terre": -4,
+   "feu": 31,
+   "eau": 16,
+   "air": 1,
+   "neutre": 36
+  },
+  "caracs": {
+   "force": 836,
+   "intelligence": 836,
+   "chance": 836,
+   "agilite": 836,
+   "sagesse": 376,
+   "esquivePA": 14,
+   "esquivePM": 14,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "mulou",
+  "archiEchelle": 1.0
+ },
+ "archi_cochon_de_lait": {
+  "dofusId": 2325,
+  "name": "Chonstip la Passagère",
+  "hp": 2175,
+  "speed": 106,
+  "radius": 30,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_cochon_de_lait",
+  "color": "#ffd27a",
+  "xp": 80,
+  "spells": [
+   {
+    "id": 312,
+    "name": "Flèche Trouveuse",
+    "pa": 4,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 16,
+      "max": 20,
+      "steal": false
+     }
+    ],
+    "gfx": 114
+   },
+   {
+    "id": 7126,
+    "name": "Lard Bat Laite",
+    "pa": 3,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pa",
+      "n": -1,
+      "dur": 1
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 7127,
+    "name": "Reniflement",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "C3",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 42,
+  "res": {
+   "terre": 10,
+   "feu": -9,
+   "eau": -14,
+   "air": 66,
+   "neutre": 21
+  },
+  "caracs": {
+   "force": 436,
+   "intelligence": 436,
+   "chance": 436,
+   "agilite": 436,
+   "sagesse": 226,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "cochon_de_lait",
+  "archiEchelle": 1.0
+ },
+ "archi_champ_champ": {
+  "dofusId": 2323,
+  "name": "Chamchie le Difficile",
+  "hp": 450,
+  "speed": 106,
+  "radius": 18,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_champ_champ",
+  "color": "#ffd27a",
+  "xp": 80,
+  "spells": [
+   {
+    "id": 8700,
+    "name": "Champatate",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 13,
+      "max": 16,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 8701,
+    "name": "Champoisonnement",
+    "pa": 4,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 8,
+      "max": 8,
+      "steal": false
+     }
+    ],
+    "gfx": 21004
+   }
+  ],
+  "level": 16,
+  "res": {
+   "terre": 10,
+   "feu": 1,
+   "eau": 31,
+   "air": 16,
+   "neutre": -4
+  },
+  "caracs": {
+   "force": 228,
+   "intelligence": 228,
+   "chance": 228,
+   "agilite": 228,
+   "sagesse": 148,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "champ_champ",
+  "archiEchelle": 1.0
+ },
+ "archi_tofu_malefique": {
+  "dofusId": 2357,
+  "name": "Tofumanchou l'Empereur",
+  "hp": 1525,
+  "speed": 106,
+  "radius": 18,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_tofu_malefique",
+  "color": "#ffd27a",
+  "xp": 80,
+  "spells": [
+   {
+    "id": 7083,
+    "name": "Maléfice",
+    "pa": 3,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 2,
+    "anim": 0,
+    "zone": "X1",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 7081,
+    "name": "Béco Maléfique",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 15,
+      "max": 18,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 15,
+      "max": 18,
+      "steal": true
+     }
+    ]
+   },
+   {
+    "id": 7082,
+    "name": "Punksnotdède",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 2,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 32,
+  "res": {
+   "terre": 26,
+   "feu": -14,
+   "eau": 36,
+   "air": -9,
+   "neutre": -4
+  },
+  "caracs": {
+   "force": 356,
+   "intelligence": 356,
+   "chance": 356,
+   "agilite": 356,
+   "sagesse": 196,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "tofu_malefique",
+  "archiEchelle": 1.0
+ },
+ "archi_kwoan": {
+  "dofusId": 2522,
+  "name": "Kwoanneur le Frimeur",
+  "hp": 1400,
+  "speed": 106,
+  "radius": 21,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_kwoan",
+  "color": "#ffd27a",
+  "xp": 80,
+  "spells": [
+   {
+    "id": 258,
+    "name": "Frappe Gerbante",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 7079,
+    "name": "Déplacement Libre",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 7179,
+    "name": "Confusion Optique",
+    "pa": 3,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 5,
+    "anim": 1,
+    "zone": "X1",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 32,
+  "res": {
+   "terre": 16,
+   "feu": 10,
+   "eau": 21,
+   "air": -4,
+   "neutre": 26
+  },
+  "caracs": {
+   "force": 356,
+   "intelligence": 356,
+   "chance": 356,
+   "agilite": 356,
+   "sagesse": 196,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "kwoan",
+  "archiEchelle": 1.0
+ },
+ "archi_gelee_bleuet": {
+  "dofusId": 2487,
+  "name": "Gelanal le Huileux",
+  "hp": 3250,
+  "speed": 106,
+  "radius": 25,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_gelee_bleuet",
+  "color": "#ffd27a",
+  "xp": 80,
+  "spells": [
+   {
+    "id": 29851,
+    "name": "Isométrie",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 0,
+    "zone": "G1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 29839,
+    "name": "Tartinade",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 321,
+    "name": "Gelpikes",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "G1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 14,
+      "max": 22,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 664,
+    "name": "Bleuet Os",
+    "pa": 4,
+    "po": [
+     2,
+     7
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 18,
+      "max": 22,
+      "steal": false
+     }
+    ],
+    "gfx": 873
+   }
+  ],
+  "level": 54,
+  "res": {
+   "terre": 10,
+   "feu": 10,
+   "eau": 10,
+   "air": 10,
+   "neutre": 10
+  },
+  "caracs": {
+   "force": 300,
+   "intelligence": 300,
+   "chance": 300,
+   "agilite": 300,
+   "sagesse": 100,
+   "esquivePA": 6,
+   "esquivePM": 8,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "gelee_bleuet",
+  "archiEchelle": 1.0
+ },
+ "archi_gelee_menthe": {
+  "dofusId": 2371,
+  "name": "Geloliaine l'Aérien",
+  "hp": 3250,
+  "speed": 106,
+  "radius": 25,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_gelee_menthe",
+  "color": "#ffd27a",
+  "xp": 80,
+  "spells": [
+   {
+    "id": 29850,
+    "name": "Pik-assaut",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 0,
+    "zone": "G1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "pm",
+      "n": 2,
+      "dur": 2
+     }
+    ]
+   },
+   {
+    "id": 321,
+    "name": "Gelpikes",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "G1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 14,
+      "max": 22,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 322,
+    "name": "Menthe Os",
+    "pa": 4,
+    "po": [
+     2,
+     7
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 18,
+      "max": 22,
+      "steal": false
+     }
+    ],
+    "gfx": 760
+   },
+   {
+    "id": 29839,
+    "name": "Tartinade",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   }
+  ],
+  "level": 54,
+  "res": {
+   "terre": 10,
+   "feu": 10,
+   "eau": 10,
+   "air": 10,
+   "neutre": 10
+  },
+  "caracs": {
+   "force": 300,
+   "intelligence": 300,
+   "chance": 300,
+   "agilite": 300,
+   "sagesse": 100,
+   "esquivePA": 6,
+   "esquivePM": 8,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "gelee_menthe",
+  "archiEchelle": 1.0
+ },
+ "archi_gelee_fraise": {
+  "dofusId": 2376,
+  "name": "Gelaviv le Glaçon",
+  "hp": 3250,
+  "speed": 106,
+  "radius": 25,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_gelee_fraise",
+  "color": "#ffd27a",
+  "xp": 80,
+  "spells": [
+   {
+    "id": 321,
+    "name": "Gelpikes",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "G1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 14,
+      "max": 22,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 29839,
+    "name": "Tartinade",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 29844,
+    "name": "Gélifiant",
+    "pa": 3,
+    "po": [
+     0,
+     4
+    ],
+    "relance": 2,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [],
+    "gfx": 20108
+   },
+   {
+    "id": 267,
+    "name": "Fraise Os",
+    "pa": 4,
+    "po": [
+     2,
+     7
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 18,
+      "max": 22,
+      "steal": false
+     }
+    ],
+    "gfx": 822
+   }
+  ],
+  "level": 54,
+  "res": {
+   "terre": 10,
+   "feu": 10,
+   "eau": 10,
+   "air": 10,
+   "neutre": 10
+  },
+  "caracs": {
+   "force": 300,
+   "intelligence": 300,
+   "chance": 300,
+   "agilite": 300,
+   "sagesse": 100,
+   "esquivePA": 6,
+   "esquivePM": 8,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "gelee_fraise",
+  "archiEchelle": 1.0
+ },
+ "archi_champa_vert": {
+  "dofusId": 2427,
+  "name": "Champayr le Disjoncté",
+  "hp": 1625,
+  "speed": 106,
+  "radius": 18,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_champa_vert",
+  "color": "#ffd27a",
+  "xp": 80,
+  "spells": [
+   {
+    "id": 1123,
+    "name": "Téléportation du Champa",
+    "pa": 5,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 5528,
+    "name": "Champ Oisoné",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 2,
+    "anim": 0,
+    "zone": "X1",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 35,
+  "res": {
+   "terre": 1,
+   "feu": 1,
+   "eau": 1,
+   "air": 70,
+   "neutre": 60
+  },
+  "caracs": {
+   "force": 300,
+   "intelligence": 300,
+   "chance": 300,
+   "agilite": 300,
+   "sagesse": 150,
+   "esquivePA": 8,
+   "esquivePM": 6,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "champa_vert",
+  "archiEchelle": 1.0
+ },
+ "archi_champa_rouge": {
+  "dofusId": 2426,
+  "name": "Chamdblé le Cultivé",
+  "hp": 1625,
+  "speed": 106,
+  "radius": 18,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_champa_rouge",
+  "color": "#ffd27a",
+  "xp": 38,
+  "spells": [
+   {
+    "id": 645,
+    "name": "Champsoin",
+    "pa": 2,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "C2",
+    "allies": true,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 21,
+      "max": 25
+     }
+    ],
+    "gfx": 20714
+   },
+   {
+    "id": 1126,
+    "name": "Champ Hagne",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 21,
+      "max": 25,
+      "steal": true
+     }
+    ]
+   }
+  ],
+  "level": 35,
+  "res": {
+   "terre": 1,
+   "feu": 70,
+   "eau": 1,
+   "air": 1,
+   "neutre": 60
+  },
+  "caracs": {
+   "force": 300,
+   "intelligence": 300,
+   "chance": 300,
+   "agilite": 300,
+   "sagesse": 150,
+   "esquivePA": 8,
+   "esquivePM": 6,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "champa_rouge",
+  "archiEchelle": 1.0
+ },
+ "archi_champa_bleu": {
+  "dofusId": 2424,
+  "name": "Champayt l'Odorant",
+  "hp": 1625,
+  "speed": 106,
+  "radius": 18,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_champa_bleu",
+  "color": "#ffd27a",
+  "xp": 80,
+  "spells": [
+   {
+    "id": 233,
+    "name": "Sacrifice Douloureux",
+    "pa": 2,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 31,
+      "max": 35,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 1124,
+    "name": "Attraction champêtre",
+    "pa": 2,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 1,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 11,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "attire",
+      "n": 2
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 11,
+      "max": 20,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 35,
+  "res": {
+   "terre": 1,
+   "feu": 1,
+   "eau": 70,
+   "air": 1,
+   "neutre": 60
+  },
+  "caracs": {
+   "force": 300,
+   "intelligence": 300,
+   "chance": 300,
+   "agilite": 300,
+   "sagesse": 150,
+   "esquivePA": 8,
+   "esquivePM": 6,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "champa_bleu",
+  "archiEchelle": 1.0
+ },
+ "archi_champa_marron": {
+  "dofusId": 2425,
+  "name": "Chamflay le Ballonné",
+  "hp": 1625,
+  "speed": 106,
+  "radius": 18,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_champa_marron",
+  "color": "#ffd27a",
+  "xp": 80,
+  "spells": [
+   {
+    "id": 1125,
+    "name": "Champ Homi",
+    "pa": 3,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 1
+     },
+     {
+      "k": "pm",
+      "n": -2,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 5527,
+    "name": "Champ Hêtre",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 100,
+      "pct": true,
+      "dur": 1
+     }
+    ]
+   }
+  ],
+  "level": 35,
+  "res": {
+   "terre": 70,
+   "feu": 1,
+   "eau": 1,
+   "air": 1,
+   "neutre": 60
+  },
+  "caracs": {
+   "force": 300,
+   "intelligence": 300,
+   "chance": 300,
+   "agilite": 300,
+   "sagesse": 150,
+   "esquivePA": 17,
+   "esquivePM": 15,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "champa_marron",
+  "archiEchelle": 1.0
+ },
+ "archi_dragoeuf_calcaire": {
+  "dofusId": 2377,
+  "name": "Dragstayr le Fonceur",
+  "hp": 4000,
+  "speed": 106,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_dragoeuf_calcaire",
+  "color": "#ffd27a",
+  "xp": 80,
+  "spells": [
+   {
+    "id": 14250,
+    "name": "Entartrage",
+    "pa": 3,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 16,
+      "max": 25,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 14251,
+    "name": "Entartrage",
+    "pa": 3,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 16,
+      "max": 25,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 14252,
+    "name": "Entartrage",
+    "pa": 3,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 16,
+      "max": 25,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 14253,
+    "name": "Calcination",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 2,
+    "anim": 2,
+    "zone": "C2",
+    "allies": true,
+    "effects": [
+     {
+      "k": "pm",
+      "n": 2,
+      "dur": 1
+     }
+    ]
+   }
+  ],
+  "level": 62,
+  "res": {
+   "terre": 32,
+   "feu": 22,
+   "eau": 19,
+   "air": 0,
+   "neutre": 27
+  },
+  "caracs": {
+   "force": 480,
+   "intelligence": 480,
+   "chance": 480,
+   "agilite": 480,
+   "sagesse": 250,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "dragoeuf_calcaire",
+  "archiEchelle": 1.0
+ },
+ "archi_dragoeuf_argile": {
+  "dofusId": 2450,
+  "name": "Dragkouine la Déguisée",
+  "hp": 4000,
+  "speed": 106,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_dragoeuf_argile",
+  "color": "#ffd27a",
+  "xp": 80,
+  "spells": [
+   {
+    "id": 14258,
+    "name": "Cataplasme",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "Q1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 28,
+      "max": 37,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 14260,
+    "name": "Cataplasme",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "Q1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 28,
+      "max": 37,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 14261,
+    "name": "Cataplasme",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "Q1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 28,
+      "max": 37,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 14262,
+    "name": "Engobage",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 41,
+      "max": 50,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 62,
+  "res": {
+   "terre": 0,
+   "feu": 19,
+   "eau": 22,
+   "air": 32,
+   "neutre": 27
+  },
+  "caracs": {
+   "force": 480,
+   "intelligence": 480,
+   "chance": 480,
+   "agilite": 480,
+   "sagesse": 250,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "dragoeuf_argile",
+  "archiEchelle": 1.0
+ },
+ "archi_dragoeuf_ardoise": {
+  "dofusId": 2372,
+  "name": "Dragmoclaiss le Fataliste",
+  "hp": 4000,
+  "speed": 106,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_dragoeuf_ardoise",
+  "color": "#ffd27a",
+  "xp": 80,
+  "spells": [
+   {
+    "id": 14254,
+    "name": "Feuilletage",
+    "pa": 3,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 14255,
+    "name": "Feuilletage",
+    "pa": 3,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 14256,
+    "name": "Feuilletage",
+    "pa": 3,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 14257,
+    "name": "Fendage",
+    "pa": 2,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 26,
+      "max": 35,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 62,
+  "res": {
+   "terre": 22,
+   "feu": 0,
+   "eau": 32,
+   "air": 19,
+   "neutre": 27
+  },
+  "caracs": {
+   "force": 480,
+   "intelligence": 480,
+   "chance": 480,
+   "agilite": 480,
+   "sagesse": 250,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "dragoeuf_ardoise",
+  "archiEchelle": 1.0
+ },
+ "archi_dragoeuf_charbon": {
+  "dofusId": 2449,
+  "name": "Dragnostik le Sceptique",
+  "hp": 4000,
+  "speed": 106,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_dragoeuf_charbon",
+  "color": "#ffd27a",
+  "xp": 80,
+  "spells": [
+   {
+    "id": 14263,
+    "name": "Silicose",
+    "pa": 3,
+    "po": [
+     3,
+     7
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 11,
+      "max": 20,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 14264,
+    "name": "Silicose",
+    "pa": 3,
+    "po": [
+     3,
+     10
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 11,
+      "max": 20,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 14265,
+    "name": "Silicose",
+    "pa": 3,
+    "po": [
+     3,
+     13
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 11,
+      "max": 20,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 14266,
+    "name": "Crassier",
+    "pa": 2,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 11,
+      "max": 15,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 62,
+  "res": {
+   "terre": 19,
+   "feu": 32,
+   "eau": 0,
+   "air": 22,
+   "neutre": 27
+  },
+  "caracs": {
+   "force": 480,
+   "intelligence": 480,
+   "chance": 480,
+   "agilite": 480,
+   "sagesse": 250,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "dragoeuf_charbon",
+  "archiEchelle": 1.0
+ },
+ "archi_boo": {
+  "dofusId": 2549,
+  "name": "Boostif l'Affamé",
+  "hp": 925,
+  "speed": 106,
+  "radius": 18,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_boo",
+  "color": "#ffd27a",
+  "xp": 38,
+  "spells": [
+   {
+    "id": 615,
+    "name": "Souillure Booeuse",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 4,
+      "max": 6,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 730,
+    "name": "Embourbement",
+    "pa": 4,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 4,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 1,
+      "max": 2,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     }
+    ]
+   }
+  ],
+  "level": 25,
+  "res": {
+   "terre": 16,
+   "feu": -2,
+   "eau": 16,
+   "air": -2,
+   "neutre": 20
+  },
+  "caracs": {
+   "force": 500,
+   "intelligence": 100,
+   "chance": 600,
+   "agilite": 120,
+   "sagesse": 150,
+   "esquivePA": 15,
+   "esquivePM": 5,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "boo",
+  "archiEchelle": 1.0
+ },
+ "archi_crocodaille": {
+  "dofusId": 2439,
+  "name": "Crolnareff l'Exilé",
+  "hp": 2175,
+  "speed": 106,
+  "radius": 26,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_crocodaille",
+  "color": "#ffd27a",
+  "xp": 80,
+  "spells": [
+   {
+    "id": 229,
+    "name": "Croutage",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 11,
+      "max": 25,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 6
+     }
+    ]
+   },
+   {
+    "id": 288,
+    "name": "Crasse Piration",
+    "pa": 4,
+    "po": [
+     0,
+     4
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "attire",
+      "n": 2
+     }
+    ]
+   },
+   {
+    "id": 327,
+    "name": "Vent de panique",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 5,
+    "anim": 1,
+    "zone": "C63",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 11,
+      "max": 15,
+      "steal": false
+     }
+    ],
+    "gfx": 21010
+   }
+  ],
+  "level": 42,
+  "res": {
+   "terre": 26,
+   "feu": 10,
+   "eau": 95,
+   "air": 35,
+   "neutre": 41
+  },
+  "caracs": {
+   "force": 300,
+   "intelligence": 140,
+   "chance": 100,
+   "agilite": 140,
+   "sagesse": 120,
+   "esquivePA": 14,
+   "esquivePM": 11,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "crocodaille",
+  "archiEchelle": 1.0
+ },
+ "archi_chef_crocodaille": {
+  "dofusId": 2428,
+  "name": "Crok le Beau",
+  "hp": 4000,
+  "speed": 106,
+  "radius": 29,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_chef_crocodaille",
+  "color": "#ffd27a",
+  "xp": 80,
+  "spells": [
+   {
+    "id": 216,
+    "name": "Carapace",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 222,
+    "name": "Éventration",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 71,
+      "max": 90,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 309,
+    "name": "Camouflage",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 3316,
+    "name": "Épée de Panique",
+    "pa": 4,
+    "po": [
+     0,
+     3
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "C2",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 31,
+      "max": 35,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 61,
+  "res": {
+   "terre": 80,
+   "feu": 75,
+   "eau": 90,
+   "air": 55,
+   "neutre": 25
+  },
+  "caracs": {
+   "force": 300,
+   "intelligence": 140,
+   "chance": 100,
+   "agilite": 300,
+   "sagesse": 120,
+   "esquivePA": 22,
+   "esquivePM": 14,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "chef_crocodaille",
+  "archiEchelle": 1.0
+ },
+ "archi_dragodinde_amande_sauvage": {
+  "dofusId": 2379,
+  "name": "Draglida la Disparue",
+  "hp": 3000,
+  "speed": 106,
+  "radius": 36,
+  "mass": 5.1,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_dragodinde_amande_sauvage",
+  "color": "#ffd27a",
+  "xp": 67,
+  "spells": [
+   {
+    "id": 3402,
+    "name": "Dindoboule",
+    "pa": 2,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 3403,
+    "name": "Stimulation Dragodinde",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [],
+    "gfx": 119
+   }
+  ],
+  "level": 55,
+  "res": {
+   "terre": 25,
+   "feu": 1,
+   "eau": 60,
+   "air": 1,
+   "neutre": 35
+  },
+  "caracs": {
+   "force": 520,
+   "intelligence": 100,
+   "chance": 100,
+   "agilite": 600,
+   "sagesse": 100,
+   "esquivePA": 19,
+   "esquivePM": 21,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "dragodinde_amande_sauvage",
+  "archiEchelle": 1.043
+ },
+ "archi_dragodinde_rousse_sauvage": {
+  "dofusId": 2465,
+  "name": "Dragnoute l'Irascible",
+  "hp": 3500,
+  "speed": 106,
+  "radius": 36,
+  "mass": 5.1,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_dragodinde_rousse_sauvage",
+  "color": "#ffd27a",
+  "xp": 77,
+  "spells": [
+   {
+    "id": 269,
+    "name": "Dindosoin",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 1,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [],
+    "gfx": 825
+   },
+   {
+    "id": 273,
+    "name": "Dindofeu",
+    "pa": 2,
+    "po": [
+     1,
+     4
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 60,
+  "res": {
+   "terre": 1,
+   "feu": 60,
+   "eau": 1,
+   "air": 25,
+   "neutre": 35
+  },
+  "caracs": {
+   "force": 100,
+   "intelligence": 520,
+   "chance": 100,
+   "agilite": 640,
+   "sagesse": 100,
+   "esquivePA": 21,
+   "esquivePM": 23,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "dragodinde_rousse_sauvage",
+  "archiEchelle": 1.043
+ },
+ "archi_arakne": {
+  "dofusId": 2310,
+  "name": "Arakule la Revancharde",
+  "hp": 450,
+  "speed": 106,
+  "radius": 18,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_arakne",
+  "color": "#ffd27a",
+  "xp": 80,
+  "spells": [
+   {
+    "id": 8697,
+    "name": "Frappe Ridicule",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 15,
+      "max": 20,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 8698,
+    "name": "Petite Toile",
+    "pa": 3,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 1
+     }
+    ]
+   }
+  ],
+  "level": 16,
+  "res": {
+   "terre": 11,
+   "feu": 21,
+   "eau": -4,
+   "air": 21,
+   "neutre": 1
+  },
+  "caracs": {
+   "force": 228,
+   "intelligence": 228,
+   "chance": 228,
+   "agilite": 228,
+   "sagesse": 148,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "arakne",
+  "archiEchelle": 1.0
+ },
+ "archi_moskito": {
+  "dofusId": 2336,
+  "name": "Mosketère le Dévoué",
+  "hp": 450,
+  "speed": 106,
+  "radius": 18,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_moskito",
+  "color": "#ffd27a",
+  "xp": 80,
+  "spells": [
+   {
+    "id": 325,
+    "name": "Piqûre",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 13,
+      "max": 18,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 4,
+      "max": 4,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 8699,
+    "name": "Esquive Volante",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 16,
+  "res": {
+   "terre": 26,
+   "feu": 10,
+   "eau": 16,
+   "air": -4,
+   "neutre": 10
+  },
+  "caracs": {
+   "force": 228,
+   "intelligence": 228,
+   "chance": 228,
+   "agilite": 228,
+   "sagesse": 148,
+   "esquivePA": 4,
+   "esquivePM": 6,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "moskito",
+  "archiEchelle": 1.0
+ },
+ "archi_craquelourd": {
+  "dofusId": 2543,
+  "name": "Craquecrac l'Endurant",
+  "hp": 4000,
+  "speed": 106,
+  "radius": 36,
+  "mass": 5.1,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_craquelourd",
+  "color": "#ffd27a",
+  "xp": 80,
+  "spells": [
+   {
+    "id": 7108,
+    "name": "Snaille Pierre",
+    "pa": 3,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 15,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 1
+     }
+    ],
+    "gfx": 3667
+   },
+   {
+    "id": 7109,
+    "name": "Gravure dans la Roche",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 0,
+    "zone": "C5",
+    "allies": true,
+    "effects": [
+     {
+      "k": "pm",
+      "n": 1,
+      "dur": 2
+     }
+    ]
+   },
+   {
+    "id": 7110,
+    "name": "Choc Dessus",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     }
+    ]
+   }
+  ],
+  "level": 62,
+  "res": {
+   "terre": 15,
+   "feu": -28,
+   "eau": 5,
+   "air": 28,
+   "neutre": 20
+  },
+  "caracs": {
+   "force": 496,
+   "intelligence": 496,
+   "chance": 496,
+   "agilite": 496,
+   "sagesse": 372,
+   "esquivePA": 20,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "craquelourd",
+  "archiEchelle": 1.1
+ },
+ "archi_bandit_manchot": {
+  "dofusId": 2313,
+  "name": "Bandapar l'Exclu",
+  "hp": 2400,
+  "speed": 106,
+  "radius": 35,
+  "mass": 5.1,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_bandit_manchot",
+  "color": "#ffd27a",
+  "xp": 80,
+  "spells": [
+   {
+    "id": 238,
+    "name": "Persécution",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 25,
+      "max": 30,
+      "steal": false
+     }
+    ],
+    "gfx": 20408
+   },
+   {
+    "id": 239,
+    "name": "Lancer de Hachette",
+    "pa": 2,
+    "po": [
+     1,
+     9
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 13,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     }
+    ],
+    "missile": 831
+   }
+  ],
+  "level": 42,
+  "res": {
+   "terre": -6,
+   "feu": 10,
+   "eau": 10,
+   "air": 10,
+   "neutre": 10
+  },
+  "caracs": {
+   "force": 436,
+   "intelligence": 436,
+   "chance": 436,
+   "agilite": 436,
+   "sagesse": 226,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "bandit_manchot",
+  "archiEchelle": 1.0
  }
 }

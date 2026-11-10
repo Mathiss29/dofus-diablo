@@ -47,8 +47,11 @@ describe('Contrats du jour et Avis de recherche (Quêtes roadmap 1C, 3A+3C, 4A, 
     expect(Q.dialogue!.reponses.filter(r => r.a === 'voir')).toHaveLength(4);
   });
   it('un contrat fini et rendu : XP, kamas, sac Rare garanti, Pépites ; plus proposé aujourd\'hui, mais gardé à la sauvegarde', () => {
-    const w = monde(), Q = w.quetes!, p = w.player; p.level = 22;
-    const id = Q.contrats().find(x => Q.def(x).etapes[0 as never] && (Q.def(x).etapes as { objectifs: { t: string }[] }[])[0].objectifs.every(o => o.t === 'vaincre'))!;
+    // le premier jour de la semaine qui propose un contrat « vaincre » seulement (le tirage dépend des sous-zones de la zone)
+    const vaincre = (w: World) => w.quetes!.contrats().find(x => w.quetes!.def(x).etapes[0 as never] && (w.quetes!.def(x).etapes as { objectifs: { t: string }[] }[])[0].objectifs.every(o => o.t === 'vaincre'));
+    let jour = '', w!: World;
+    for (let d = 8; d <= 14 && !jour; d++) { w = monde(`2026-11-${d}`); w.player.level = 22; if (vaincre(w)) jour = `2026-11-${d}`; }
+    const Q = w.quetes!, p = w.player, id = vaincre(w)!;
     expect(id).toBeTruthy();
     Q.prendre(id);
     const o = (Q.def(id).etapes as { objectifs: { n: number; sousZone: number; monstres?: string[] }[] }[])[0].objectifs[0];
@@ -66,8 +69,8 @@ describe('Contrats du jour et Avis de recherche (Quêtes roadmap 1C, 3A+3C, 4A, 
     expect(Q.contratsLibres()).not.toContain(id);
     const e = Q.exporter();
     expect(e.finies).toContain(id);
-    expect(monde('2026-11-08', e).quetes!.contratsLibres()).toHaveLength(3);
-    expect(monde('2026-11-10', e).quetes!.finies.has(id)).toBe(false);   // les contrats des jours passés s'effacent
+    expect(monde(jour, e).quetes!.contratsLibres()).toHaveLength(3);
+    expect(monde(`2026-11-${+jour.slice(-2) + 2}`, e).quetes!.finies.has(id)).toBe(false);   // les contrats des jours passés s'effacent
   });
   it('Avis de recherche : l\'élite officiel apparaît, la prime se rend aux Geôles, l\'avis revient la semaine suivante', () => {
     const w = monde(), Q = w.quetes!, p = w.player; p.level = 20;
