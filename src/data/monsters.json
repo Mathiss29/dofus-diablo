@@ -18718,7 +18718,7 @@
     "gfx": 2323
    }
   ],
-  "xp": 20,
+  "xp": 90,
   "level": 44,
   "res": {
    "terre": 5,
@@ -18806,7 +18806,7 @@
     "gfx": 2328
    }
   ],
-  "xp": 20,
+  "xp": 92,
   "level": 46,
   "res": {
    "terre": -5,
@@ -18894,7 +18894,7 @@
     ]
    }
   ],
-  "xp": 20,
+  "xp": 89,
   "level": 42,
   "res": {
    "terre": -10,
@@ -18976,7 +18976,7 @@
     "gfx": 2322
    }
   ],
-  "xp": 20,
+  "xp": 87,
   "level": 40,
   "res": {
    "terre": 0,
@@ -19064,7 +19064,7 @@
     "gfx": 2332
    }
   ],
-  "xp": 20,
+  "xp": 88,
   "level": 41,
   "res": {
    "terre": 1,
@@ -19188,7 +19188,7 @@
     "gfx": 9
    }
   ],
-  "xp": 20,
+  "xp": 96,
   "level": 52,
   "res": {
    "terre": 18,
@@ -19319,7 +19319,7 @@
     ]
    }
   ],
-  "xp": 20,
+  "xp": 96,
   "level": 52,
   "res": {
    "terre": 0,
@@ -26136,7 +26136,7 @@
     "gfx": 2323
    }
   ],
-  "xp": 80,
+  "xp": 360,
   "level": 44,
   "res": {
    "terre": 15,
@@ -26227,7 +26227,7 @@
     "gfx": 2328
    }
   ],
-  "xp": 141,
+  "xp": 649,
   "level": 46,
   "res": {
    "terre": 5,
@@ -26318,7 +26318,7 @@
     ]
    }
   ],
-  "xp": 80,
+  "xp": 356,
   "level": 42,
   "res": {
    "terre": 0,
@@ -26403,7 +26403,7 @@
     "gfx": 2322
    }
   ],
-  "xp": 80,
+  "xp": 348,
   "level": 40,
   "res": {
    "terre": 10,
@@ -26494,7 +26494,7 @@
     "gfx": 2332
    }
   ],
-  "xp": 228,
+  "xp": 1003,
   "level": 41,
   "res": {
    "terre": 11,
@@ -26621,7 +26621,7 @@
     "gfx": 9
    }
   ],
-  "xp": 80,
+  "xp": 384,
   "level": 52,
   "res": {
    "terre": 28,
@@ -26755,7 +26755,7 @@
     ]
    }
   ],
-  "xp": 80,
+  "xp": 384,
   "level": 52,
   "res": {
    "terre": 10,
@@ -29405,6 +29405,267 @@
   },
   "elite": true,
   "archiDe": "bandit_manchot",
+  "archiEchelle": 1.0
+ },
+ "wabbit_squelette": {
+  "dofusId": 179,
+  "name": "Wabbit Squelette",
+  "hp": 1350,
+  "speed": 95,
+  "radius": 17,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "wabbit_squelette",
+  "color": "#d8d0b8",
+  "spells": [
+   {
+    "id": 339,
+    "name": "Malédiction",
+    "pa": 3,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 2,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 12,
+      "max": 12,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     }
+    ],
+    "gfx": 836
+   },
+   {
+    "id": 340,
+    "name": "Entêtement",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 31,
+      "max": 35,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 48,
+  "res": {
+   "terre": 40,
+   "feu": 10,
+   "eau": -14,
+   "air": 15,
+   "neutre": 50
+  },
+  "caracs": {
+   "force": 150,
+   "intelligence": 0,
+   "chance": 0,
+   "agilite": 50,
+   "sagesse": 150,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "xp": 93
+ },
+ "black_wabbit_squelette": {
+  "dofusId": 3469,
+  "name": "Black Wabbit Squelette",
+  "hp": 1450,
+  "speed": 95,
+  "radius": 23,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "black_wabbit_squelette",
+  "color": "#d8d0b8",
+  "spells": [
+   {
+    "id": 326,
+    "name": "Wabehameha",
+    "pa": 4,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "L2",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 21,
+      "max": 25,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 1
+     }
+    ],
+    "gfx": 2334
+   },
+   {
+    "id": 3838,
+    "name": "Coup à la Wizou",
+    "pa": 2,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 50,
+  "res": {
+   "terre": 0,
+   "feu": 5,
+   "eau": 50,
+   "air": 5,
+   "neutre": -20
+  },
+  "caracs": {
+   "force": 200,
+   "intelligence": 0,
+   "chance": 0,
+   "agilite": 200,
+   "sagesse": 160,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "xp": 94
+ },
+ "archi_wabbit_squelette": {
+  "dofusId": 2305,
+  "name": "Watdogue le Bien Nommé",
+  "hp": 2750,
+  "speed": 106,
+  "radius": 19,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_wabbit_squelette",
+  "color": "#ffd27a",
+  "spells": [
+   {
+    "id": 339,
+    "name": "Malédiction",
+    "pa": 3,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 2,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 12,
+      "max": 12,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     }
+    ],
+    "gfx": 836
+   },
+   {
+    "id": 340,
+    "name": "Entêtement",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 31,
+      "max": 35,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 48,
+  "res": {
+   "terre": 50,
+   "feu": 20,
+   "eau": -4,
+   "air": 25,
+   "neutre": 60
+  },
+  "caracs": {
+   "force": 400,
+   "intelligence": 100,
+   "chance": 100,
+   "agilite": 200,
+   "sagesse": 250,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "xp": 372,
+  "elite": true,
+  "archiDe": "wabbit_squelette",
   "archiEchelle": 1.0
  }
 }

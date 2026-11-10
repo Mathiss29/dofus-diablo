@@ -3284,6 +3284,55 @@
     "cimetiere_nuit",
     "grillons_nuit"
    ]
+  },
+  "161": {
+   "musique": "wabbits",
+   "fond": [
+    "mer",
+    "amakna_campagne"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
+  },
+  "162": {
+   "musique": "wabbits",
+   "fond": [
+    "mer",
+    "amakna_campagne"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
+  },
+  "164": {
+   "musique": "wabbits",
+   "fond": [
+    "mer",
+    "amakna_campagne"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
+  },
+  "163": {
+   "musique": "wabbits",
+   "fond": [
+    "mer",
+    "cimetiere"
+   ],
+   "fondNuit": [
+    "cimetiere_nuit"
+   ]
+  },
+  "1600": {
+   "musique": "wabbits",
+   "fond": [
+    "mer"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
   }
  }
 }

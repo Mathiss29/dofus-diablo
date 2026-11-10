@@ -597,3 +597,16 @@ Ville vivante (maquette Ville 5F, 8 nov. 2026) :
   fonds d'ambiance, sons des donjons (`sons.json > donjon`) et `sons.json > lieux` (sous-zone -> musique, fond, fondNuit).
 - La musique officielle de chaque carte (`playlistSet`) est par GUID FMOD non décodé : le tableau `LIEUX` du script range les sous-zones à la main.
 - Salles et couloirs d'un donjon : musique `donjon_<thème>` du thème de la musique du boss (`boss_<thème>`). Tout cela seulement si `player.v04`.
+
+## Île des Wabbits (0.4 suite : 10A, 10 nov. 2026)
+- Liste `wabbits04/liste.json` : les 58 cartes du dehors des sous-zones 161-164 (worldMap 1, ids 996xxxxx de `mapdata_assets_world_380`),
+  sans les copies en (0, 0). Export comme Amakna (`map_dump.py`, `PARTAGE=1 world_export.py`, `bords_fondu.py`, `COURANTE=1 batiments.py`,
+  `decor_par_carte.py`, `monde_continent.py fusion`), puis `essai: 1`, `particules.py` + `amakna04/particules_amakna.py <sortie> wabbits04/liste.json`,
+  `reperes.py` (table hints), `amakna04/zaaps_amakna.py <cartes> wabbits04/liste.json` (Zaap [25,-4], arche = particules Warp).
+- `wabbits04/sous_zones.py <tables> <fr.bin>` : sous-zones 161-164 (`region: "Île des Wabbits"`). Wabbits Squelettes (squelettes 322 et 2292
+  rapportés du PC dans `cache-dofus/bones-04/`) : `monster_planche.py`, `amakna04/ajout.py`, `monster_spells.py`, `monster_stats.py` (ne garder
+  que les nouveaux : ces deux outils réécrivent aussi les archimonstres), `archimonstres.py`, `drops_ajout.py`, `xp_monstres.py`.
+  Nono le Wobot (squelette 323) : texture « crunchée » illisible par UnityPy (Unpacking failed), pas encore de planche.
+- `wabbits04/passerelles.py` : passerelles en bois (choix 1B) entre la Cawotte et la Couronne, la Couronne et les Tombeaux, la Couronne et
+  Waldo ; sous-zone 1600 « Passerelles de l'île » sans monstres.
+- Portes (`zones.json > open > portes`) : bateau [9,-2] case 314 ↔ [24,-2] case 318, Château du Wa Wabbit [24,-13] case 209 (clef 14464).
