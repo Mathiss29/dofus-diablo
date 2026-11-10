@@ -1309,7 +1309,7 @@
             "titre": "Les trophées",
             "phrase": "85 trophées officiels du niveau 50, à porter dans les cases de Dofus.",
             "details": "Chaque boss d'Amakna en lâche deux, rarement. Le Façonneur en fabrique aussi, sans Galets.",
-            "icone": "succes",
+            "icone": "dofus",
             "etiquettes": [
               "Partie de test",
               "Touche D"
@@ -1371,6 +1371,16 @@
             "etiquettes": [
               "Amakna",
               "Partie de test"
+            ]
+          },
+          {
+            "titre": "Les 7 Zaaps d'Amakna",
+            "phrase": "Village, Château, Madrestam, Craqueleurs, Bouftous, forêt maléfique, Scarafeuilles : à découvrir.",
+            "details": "La carte (M) montre aussi les temples, épiceries et ateliers d'Amakna. Poussière, brume et pluie officielles sur ses cartes.",
+            "icone": "zaap",
+            "etiquettes": [
+              "Partie de test",
+              "Touche M"
             ]
           }
         ]
