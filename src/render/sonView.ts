@@ -121,6 +121,7 @@ export class SonView {
       case 'queteEtape': case 'objetQuete': Son.jouer(M.ui.objectif, 'interface', { cle: 'objectif', ecart: 0.5 }); break;
       case 'queteFin': if (!e.sautee) Son.jouer(M.ui.objectif, 'interface', { cle: 'objectif', ecart: 0.5 }); break;
       case 'succes': Son.jouer(M.ui.succes, 'interface'); break;
+      case 'succesRecupere': Son.jouer(M.ui.objectif, 'interface'); break;
       case 'checkpoint': Son.jouer(M.ui.checkpoint, 'interface'); break;
       // Kamas D : tintement des pièces ramassées (son officiel, plus aigu que la chute au sol)
       case 'lootKamas': Son.jouer(Son.auHasard(M.kamas), 'effets', { vol: 0.7, vitesse: 1.12 + Math.random() * 0.1, cle: 'kamas', ecart: 0.08 }); break;

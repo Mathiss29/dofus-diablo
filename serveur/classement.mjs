@@ -44,7 +44,7 @@ export function creerClassement({ comptes, enLigne = () => [], annoncer = () => 
         json_extract(p.donnees, '$.test') AS test, json_extract(p.donnees, '$.temps') AS temps, json_extract(p.donnees, '$.lieu') AS lieu,
         json_array_length(json_extract(p.donnees, '$.zones')) AS zones, json_array_length(json_extract(p.donnees, '$.etat.zaaps')) AS zaaps,
         json_array_length(json_extract(p.donnees, '$.etat.dofus')) AS dofus,
-        json_extract(p.donnees, '$.etat.level') AS niveau, json_extract(p.donnees, '$.etat.xp') AS xp, json_extract(p.donnees, '$.etat.metiers') AS metiers
+        json_extract(p.donnees, '$.etat.level') AS niveau, json_extract(p.donnees, '$.etat.quetes.points') AS succes, json_extract(p.donnees, '$.etat.xp') AS xp, json_extract(p.donnees, '$.etat.metiers') AS metiers
       FROM persos p LEFT JOIN social s ON s.compte = p.compte WHERE coalesce(s.cache, 0) = 0`),
     donnees: db.prepare(`SELECT p.donnees FROM persos p LEFT JOIN social s ON s.compte = p.compte WHERE p.compte = ? AND p.emplacement = ? AND coalesce(s.cache, 0) = 0`),
     records: db.prepare(`SELECT r.* FROM records r LEFT JOIN social s ON s.compte = r.compte WHERE coalesce(s.cache, 0) = 0 ORDER BY r.donjon, r.mode, r.temps`),
@@ -76,6 +76,7 @@ export function creerClassement({ comptes, enLigne = () => [], annoncer = () => 
       app: app && typeof app === 'object' ? { tete: ent(app.tete, 0, 99) ?? 0, couleurs: Array.isArray(app.couleurs) ? app.couleurs.slice(0, 6).map(x => ent(x, 0, 0xffffff) ?? 0) : [] } : null,
       hc: !!r.hc, niveau: ent(r.niveau, 1, 200) ?? 1, xp: ent(r.xp, 0, 1e13) ?? 0, temps: ent(r.temps, 0, 1e9) ?? 0, lieu: texte(r.lieu, 40),
       zones: ent(r.zones, 0, 10000) ?? 0, zaaps: ent(r.zaaps, 0, 1000) ?? 0, dofus: ent(r.dofus, 0, 100) ?? 0, metiers,
+      succes: ent(r.succes, 0, 1e6) ?? 0,
     };
   }
 
@@ -98,6 +99,9 @@ export function creerClassement({ comptes, enLigne = () => [], annoncer = () => 
       hardcore: ids(niveau.filter(p => p.hc)),
       exploration: ids([...persos].filter(p => p.zones > 0).sort((a, b) => b.zones - a.zones || b.zaaps - a.zaaps || parNiveau(a, b))),
       metiers: {},
+      // menu des succès 10B : points de succès du compte, une ligne par compte (son perso le plus haut)
+      succes: ids((() => { const m = new Map(); for (const p of [...persos].sort(parNiveau)) if (p.succes > 0 && !m.has(p.c)) m.set(p.c, p); return [...m.values()]; })()
+        .sort((a, b) => b.succes - a.succes || parNiveau(a, b))),
     };
     const metiers = new Set(persos.flatMap(p => Object.keys(p.metiers)));
     for (const m of [...metiers].sort()) listes.metiers[m] = ids(persos.filter(p => p.metiers[m]).sort((a, b) => b.metiers[m][0] - a.metiers[m][0] || b.metiers[m][1] - a.metiers[m][1] || parNiveau(a, b)));
@@ -138,7 +142,7 @@ export function creerClassement({ comptes, enLigne = () => [], annoncer = () => 
   function rangs(id) {
     const c = cache ?? calculer(), r = {};
     const pos = l => { const i = l.indexOf(id); return i < 0 ? null : i + 1; };
-    r.niveau = pos(c.listes.niveau); r.hardcore = pos(c.listes.hardcore); r.exploration = pos(c.listes.exploration);
+    r.niveau = pos(c.listes.niveau); r.hardcore = pos(c.listes.hardcore); r.exploration = pos(c.listes.exploration); r.succes = pos(c.listes.succes ?? []);
     r.metiers = {};
     for (const [m, l] of Object.entries(c.listes.metiers)) { const n = pos(l); if (n) r.metiers[m] = n; }
     r.donjons = {};
@@ -155,7 +159,7 @@ export function creerClassement({ comptes, enLigne = () => [], annoncer = () => 
     const e = p.etat ?? {};
     const L = ligne({ ...k, nom: p.nom, classe: p.classe, sexe: p.sexe, apparence: JSON.stringify(p.apparence ?? null), hc: p.hardcore, temps: p.temps, lieu: p.lieu,
       zones: Array.isArray(p.zones) ? p.zones.length : 0, zaaps: Array.isArray(e.zaaps) ? e.zaaps.length : 0, dofus: Array.isArray(e.dofus) ? e.dofus.length : 0,
-      niveau: e.level, xp: e.xp, metiers: JSON.stringify(e.metiers ?? {}) });
+      niveau: e.level, xp: e.xp, metiers: JSON.stringify(e.metiers ?? {}), succes: e.quetes?.points });
     const equipement = {};
     for (const [s, it] of Object.entries(e.equipment ?? {})) if (it && typeof it === 'object' && typeof it.id === 'string') equipement[s] = it;
     return { ...L, equipement, dofusPortes: Array.isArray(e.dofusPortes) ? e.dofusPortes.filter(x => typeof x === 'string') : [], apparat: e.apparat ?? null, rangs: rangs(L.id) };

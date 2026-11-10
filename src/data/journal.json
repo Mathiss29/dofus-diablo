@@ -1277,6 +1277,15 @@
             "etiquettes": [
               "Partie de test"
             ]
+          },
+          {
+            "titre": "Le vrai menu des succès",
+            "phrase": "Touche U : les catégories officielles de Dofus 3, une fiche par succès et ses récompenses à récupérer.",
+            "details": "Choisis ton titre et ton ornement, épingle jusqu'à 3 succès dans le suivi. Défis de donjon, familles de monstres, métiers et exploration en plus.",
+            "icone": "succes",
+            "etiquettes": [
+              "Touche U"
+            ]
           }
         ],
         "Corrections": [
@@ -1291,7 +1300,8 @@
           "Mini-carte, portrait et transparence du décor allégés : l'image coûte deux fois moins (≈ 10 → 5 ms).",
           "Le monde passe à la grille de tout le continent : cases marchables rangées carte par carte.",
           "Les 308 sorts des 7 classes ont leur propre texte, sans tours ni PA par tour.",
-          "Les groupes de monstres n'existent qu'autour des joueurs : 11 000 → 400 monstres en partie de test."
+          "Les groupes de monstres n'existent qu'autour des joueurs : 11 000 → 400 monstres en partie de test.",
+          "Ladder : nouvel onglet Succès, classé par points du compte."
         ],
         "Combat": [
           {

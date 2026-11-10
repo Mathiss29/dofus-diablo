@@ -418,7 +418,7 @@ export class ZoneScene extends Phaser.Scene {
     // Présence en ligne (Bastion partagé) : seulement avec un perso du compte, hors partie de test et hors vitrine
     if (this.perso && persosEnLigne() && !this.test && !this.vitrine && !this.essai && this.slot >= 0) {
       const p = this.world.player;
-      EnLigne.annoncer(this.slot, Coop.miroir ? '__groupe' : this.zoneId, p.x, p.y, objetsPortes(p.equipment, p.apparat));
+      { const Qd = this.world.quetes; EnLigne.annoncer(this.slot, Coop.miroir ? '__groupe' : this.zoneId, p.x, p.y, objetsPortes(p.equipment, p.apparat), { titre: Qd?.titre ?? '', ornement: Qd?.ornement ? Qd.ornement.icone + 1 : 0 }); }
       // invitation dans un groupe : on le rejoint sans bouger ; donjon lancé par le chef : on le rejoint (on y part)
       EnLigne.onInvitation = (de, g) => montrerInvitation(de, 't\'invite dans son groupe', () => EnLigne.repondreGroupe(g, true), () => EnLigne.repondreGroupe(g, false));
       EnLigne.onDonjon = (de, code, lieu) => montrerInvitation(de, lieu === 'Incarnam' ? 'te propose de jouer ensemble à Incarnam' : `part en donjon${lieu ? ` (${lieu})` : ''}`, () => {
@@ -462,6 +462,7 @@ export class ZoneScene extends Phaser.Scene {
       else this.hud.toast(`${name} : arrive dans une prochaine version`);
     };
     this.hud.onPasser = id => this.world.quetes?.passer(id);
+    this.hud.onSucces = id => this.windows?.ouvrirSucces(id);
     this.hud.onCarteQuete = () => { if (this.carte?.dispo) this.carte.montrerQuete(); };
     if (this.vitrine) this.initVitrine();
     else {
@@ -972,6 +973,7 @@ export class ZoneScene extends Phaser.Scene {
       case 'sorts': w?.toggle('sorts'); break;
       case 'metiers': w?.toggle('job'); break;
       case 'bestiaire': w?.toggle('bestiaire'); break;
+      case 'succes': if (this.world.quetes) w?.toggle('succes'); break;
       case 'dofus': if (p.v03) w?.toggle('dofus'); break;
       case 'guide': w?.toggle('guide'); break;
       case 'social': w?.toggle('social'); break;
@@ -1333,7 +1335,7 @@ export class ZoneScene extends Phaser.Scene {
         case 'objetQuete': this.hud.loot(`${e.nom}  ${e.n}/${e.sur}`, '#9ad15a'); break;
         case 'succes': {
           const s = QUETES.succes[e.id];
-          this.hud.succes(s.nom, s.points); if (!this.test) sauverCompte(this.world); this.windows?.refresh(); break;
+          this.hud.succes(s.nom, s.points, e.id); if (!this.test) sauverCompte(this.world); this.windows?.refresh(); break;
         }
         case 'test': this.hud.toast(e.texte); this.windows?.refresh(); break;
         case 'portalStart': {

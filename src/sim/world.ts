@@ -162,7 +162,7 @@ export const EVENEMENTS_PERSONNELS = new Set<SimEvent['k']>(['levelUp', 'newSpel
   'brisage', 'codex', 'codexOuvert', 'coffreOuvert', 'capture', 'impression', 'apparence', 'fusion', 'commande', 'signature', 'achat', 'familierNiveau',
   'familierRepas', 'rappel', 'cleManquante', 'recolteDebut', 'recolteFin', 'recolteStop', 'recolteNiveau', 'service', 'almanax', 'dofusPassif',
   'dofusGagne', 'lootKamas', 'bagFull', 'checkpoint', 'portalStart', 'portal', 'changeZone', 'incantation', 'incantationStop', 'arche', 'zaapDecouvert',
-  'zaapDepart', 'emmenage', 'queteDebut', 'queteEtape', 'queteFin', 'objetQuete', 'succes', 'itemDrop']);
+  'zaapDepart', 'emmenage', 'queteDebut', 'queteEtape', 'queteFin', 'objetQuete', 'succes', 'succesRecupere', 'itemDrop']);
 
 export class World {
   readonly rng: Rng;
@@ -1252,7 +1252,8 @@ export class World {
     if (a && a !== this.players[0] && EVENEMENTS_PERSONNELS.has(e.k)) a.evenements.push(e);
     else this.events.push(e);
     // un monstre vaincu compte pour tous les joueurs proches (groupe), le reste pour celui qui agit
-    if (e.k === 'kill' && this.players.length > 1) { const x = e.x, y = e.y, a = this.player; this.pourChaqueQuetes((q, p) => { if (p === a || Math.abs(p.x - x) + Math.abs(p.y - y) <= World.SOMMEIL) q.observer(e); }); }
+    if (e.k === 'bossIntro' && this.players.length > 1) this.pourChaqueQuetes(q => q.observer(e));   // défis de donjon (succès 9C) : pour tout le groupe
+    else if (e.k === 'kill' && this.players.length > 1) { const x = e.x, y = e.y, a = this.player; this.pourChaqueQuetes((q, p) => { if (p === a || Math.abs(p.x - x) + Math.abs(p.y - y) <= World.SOMMEIL) q.observer(e); }); }
     else this.quetes?.observer(e);
   }
   /** Événements propres à ce joueur depuis la dernière fois (multi : l'hôte ou le serveur les lui envoie). Le premier

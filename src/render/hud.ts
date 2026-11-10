@@ -36,14 +36,14 @@ const HEADS: Record<string, string> = { iop: 'tete_iop', cra: 'tete_cra', iop_f:
 /** Nom court d'une touche pour le coin d'un emplacement (« Espace » ne tient pas). */
 const court = (t: string) => t === 'Espace' ? 'Esp.' : t;
 /** Action (render/touches.ts) de chaque menu de la colonne, pour son raccourci dans l'infobulle. */
-const ACTION_MENU: Record<string, string> = { Inventaire: 'inventaire', 'Caractéristiques': 'caracs', 'Métiers': 'metiers', Sorts: 'sorts', 'Carte du monde': 'carte', Bestiaire: 'bestiaire', 'Havre-Sac': 'havresac', Social: 'social', Classement: 'ladder', Guide: 'guide', 'Réglages': 'options' };
+const ACTION_MENU: Record<string, string> = { Inventaire: 'inventaire', 'Caractéristiques': 'caracs', 'Métiers': 'metiers', Sorts: 'sorts', 'Carte du monde': 'carte', Bestiaire: 'bestiaire', 'Succès': 'succes', 'Havre-Sac': 'havresac', Social: 'social', Classement: 'ladder', Guide: 'guide', 'Réglages': 'options' };
 /** Modules de l'interface qu'on peut déplacer (Réglages 6A), avec leur nom affiché pendant le déplacement. */
 const MODULES: Record<string, string> = { perso: 'Cadre du perso', mini: 'Mini-carte', suivi: 'Suivi de quête', dps: 'Dégâts par seconde' };
 /** Colonne de menus avec les icônes officielles en couleur de Dofus 3 (uiassets_2x) : icône, nom, raccourci (vide si aucun).
  *  Seulement les menus utiles au jeu ; les autres (guilde, montures...) viendront avec leur fonctionnalité. */
 const MENUS: [string, string, string][] = [
   ['inventory', 'Inventaire', 'I'], ['characteristic', 'Caractéristiques', 'C'], ['job', 'Métiers', 'J'], ['spells', 'Sorts', 'S'], ['quest', 'Quêtes', ''],
-  ['map', 'Carte du monde', ''], ['bestiary', 'Bestiaire', 'B'], ['success', 'Succès', ''], ['breach', 'Failles', ''],
+  ['map', 'Carte du monde', ''], ['bestiary', 'Bestiaire', 'B'], ['success', 'Succès', 'U'], ['breach', 'Failles', ''],
   ['home', 'Havre-Sac', 'H'], ['social', 'Social', 'P'], ['ladder', 'Classement', 'L'], ['guide', 'Guide', 'G'], ['options', 'Réglages', 'O'],
 ];
 
@@ -70,6 +70,8 @@ export class Hud {
   static preload(scene: Phaser.Scene) {
     for (const k of UI_IMAGES) if (!scene.textures.exists(k)) scene.load.image(k, v(`${UI}/${k}.png`));
     for (const [k] of MENUS) if (!scene.textures.exists(`menu_${k}`)) scene.load.image(`menu_${k}`, v(`${UI}/menu/${k}.png`));
+    // ornements officiels (menu des succès 6B) : à côté du nom du perso
+    for (const i of [0, 1, 2]) if (!scene.textures.exists(`orn_${i}`)) scene.load.image(`orn_${i}`, `${UI}/succes/o_${i}.webp`);
     for (const k of Object.values(HEADS)) if (!scene.textures.exists(k)) scene.load.image(k, v(`${UI}/${k}.png`));
     // Emblème de la classe dans le bandeau du cadre (icônes officielles de l'écran de création)
     for (const c of Object.keys(GAME_DATA.classes)) if (!scene.textures.exists(`embleme_${c}`)) scene.load.image(`embleme_${c}`, v(`assets/accueil/c_${c}.png`));
@@ -276,7 +278,7 @@ export class Hud {
   /** Perso du joueur dessiné en direct, fourni par la scène (null : perso en planche, on garde la tête de classe). */
   vivant: (() => { image(anim: string, idx: number): [string, string]; cadreTete(anim: string, idx: number): [number, number, number] | null; compte: Record<string, number> } | null) | null = null;
   private portraitImg = ''; private portraitCases = new Map<string, number>(); private portraitVue: [number, number, number, string] | null = null;
-  private embleme: Img; private lvText: Txt;
+  private embleme: Img; private lvText: Txt; private ornImg!: Img;
   private icoPv: Img; private icoPa: Img; private icoPm: Img;
   private name: Txt; private hpText: Txt; private paText: Txt; private pmText: Txt; private shieldText: Txt;
   private hpLab: Txt; private paLab: Txt; private pmLab: Txt;
@@ -301,6 +303,11 @@ export class Hud {
   /** Social 5B : pastille sur le bouton Social (demandes d'ami en attente), branchée par la scène. */
   pastilleSocial: () => number = () => 0;
   private pastille!: Txt;
+  /** Menu des succès 8C : pastille sur le bouton Succès (récompenses à récupérer). */
+  private pastilleSucces!: Txt;
+  /** 8B : clic sur la ligne « Succès : … » du suivi, branché par la scène (ouvre la fiche). */
+  onSucces: (id: string) => void = () => {};
+  private succesId = '';
   private menuTip: Txt;
   // barre du bas
   private slots: SlotView[] = [];
@@ -416,6 +423,7 @@ export class Hud {
     // Cadre façon Sanstour (maquette Interface) : textes sans contour sur fond noir, chiffres alignés à droite
     const net = { ...bold, strokeThickness: 0 };
     this.embleme = img(`embleme_${clsId}`, 3);
+    this.ornImg = img('orn_0', 3).setVisible(false);
     this.name = txt(15, { ...net, color: '#ffffff' }).setOrigin(0, 0.5);
     this.lvText = txt(13, { ...net, color: '#1d1a14' }, 6).setOrigin(0.5);
     this.icoPv = img('tx_lifePoints', 3); this.icoPa = img('tx_actionPoints', 3); this.icoPm = img('tx_movementPoints', 3);
@@ -442,6 +450,7 @@ export class Hud {
     this.bulleTip = txt(12, { backgroundColor: '#14130f', padding: { x: 8, y: 5 }, lineSpacing: 2 }, 9).setOrigin(0.5, 1).setVisible(false);
     this.menuTip = txt(12, { backgroundColor: '#14130f', padding: { x: 6, y: 3 } }, 9).setOrigin(1, 0.5).setVisible(false);
     this.pastille = txt(10, { ...bold, color: '#ffffff', backgroundColor: '#d8402f', padding: { x: 4, y: 1 }, strokeThickness: 0 }, 6).setOrigin(0.5).setVisible(false);
+    this.pastilleSucces = txt(10, { ...bold, color: '#ffffff', backgroundColor: '#d8402f', padding: { x: 4, y: 1 }, strokeThickness: 0 }, 6).setOrigin(0.5).setVisible(false);
     for (const [icon, label, key] of MENUS) {
       const ic = img(`menu_${icon}`, 4);
       const zone = fixed(scene.add.zone(0, 0, 30, 30).setInteractive({ useHandCursor: true }), 4);
@@ -489,7 +498,10 @@ export class Hud {
     this.trackTitle = txt(13, { ...bold, color: css(C.xp) });
     this.trackBody = txt(12, { lineSpacing: 3 });
     this.trackIcon = img('qi_quest', 5).setVisible(false);
-    this.succesLine = txt(12, { ...bold, color: '#f2d36b' }).setAlpha(0);
+    this.succesLine = txt(12, { ...bold, color: '#f2d36b' }).setAlpha(0).setInteractive({ useHandCursor: true });
+    this.succesLine.on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, ev: Phaser.Types.Input.EventData) => {
+      if (this.succesT <= 0 || !this.succesId) return; ev.stopPropagation(); this.onSucces(this.succesId);
+    });
     this.skipBtn = txt(12, { ...bold, color: '#c9c4ab', backgroundColor: '#2e2d28', padding: { x: 6, y: 2 } }, 6).setText('Passer ›').setVisible(false)
       .setInteractive({ useHandCursor: true });
     this.skipBtn.on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, ev: Phaser.Types.Input.EventData) => {
@@ -571,7 +583,7 @@ export class Hud {
   }
 
   /** Succès obtenu : une ligne discrète dans le suivi (19B), pas de bannière. */
-  succes(nom: string, points: number) { this.succesLine.setText(`Succès : ${nom}  (+${points} pt${points > 1 ? 's' : ''})`).setAlpha(1); this.succesT = 6; }
+  succes(nom: string, points: number, id = '') { this.succesId = id; this.succesLine.setText(`Succès : ${nom}  (+${points} pt${points > 1 ? 's' : ''})`).setAlpha(1); this.succesT = 6; }
 
   /** Événements de la simulation utiles à l'interface. */
   handle(e: SimEvent) {
@@ -644,6 +656,9 @@ export class Hud {
     this.embleme.setPosition(fx + 19, fy + hd / 2).setDisplaySize(17, 17 * (this.embleme.height / this.embleme.width || 1));
     const titre = this.world.quetes?.titre;   // titre d'un succès (Tour 7A)
     this.name.setPosition(fx + 34, fy + hd / 2).setText(`${this.perso?.nom ?? cls.name}${titre ? `  « ${titre} »` : ''}`);
+    const orn = this.world.quetes?.ornement;   // ornement porté (menu des succès 6B)
+    if (orn && this.scene.textures.exists(`orn_${orn.icone}`)) this.ornImg.setTexture(`orn_${orn.icone}`).setVisible(true).setDisplaySize(20, 20).setPosition(this.name.x + this.name.width + 14, fy + hd / 2);
+    else this.ornImg.setVisible(false);
     // Portrait : case carrée, la tête du perso dessiné en direct qui respire (repos AnimStatiqueExplo0, face)
     const ps = 60, px = fx + 10, py = fy + hd + 10, pcx = px + ps / 2;
     g.fillStyle(0x1c2620, 1); g.fillRoundedRect(px, py, ps, ps, 6);
@@ -893,6 +908,7 @@ export class Hud {
       m.icon.setPosition(x + bs / 2, y).setDisplaySize(f.width * k, f.height * k);
       m.zone.setPosition(x + bs / 2, y).setSize(bs, bs);
       if (m.label === 'Social') { const n = this.pastilleSocial(); this.pastille.setVisible(n > 0).setText(String(n)).setPosition(x + bs - 3, y - bs / 2 + 4); }
+      if (m.label === 'Succès') { const n = world.quetes?.nbARecuperer ?? 0; this.pastilleSucces.setVisible(n > 0).setText(String(n)).setPosition(x + bs - 3, y - bs / 2 + 4); }
     });
     if (gm) {
       this.cleMenus = cleMenus;
@@ -1011,6 +1027,12 @@ export class Hud {
     const recL = rec ? ['', `Recette : ${(ITEMS.resources[rec.result] ?? ITEMS.equipment[rec.result])?.name ?? ''}`, ...rec.ingredients.map(([id, n]) => {
       const a = pr.resources[id] ?? 0; return `${a >= n ? '✓' : '•'} ${ITEMS.resources[id]?.name ?? id}  ${Math.min(a, n)}/${n}`;
     }), ...(Math.max(1, pr.metierLevel(rec.metier)) < rec.level ? [`  ${ITEMS.metiers?.[rec.metier]?.name ?? ''} niveau ${rec.level} requis`] : [])] : [];
+    // Menu des succès 7C : les succès épinglés, sous la quête, avec leur compteur
+    if (Q) for (const id of Q.epingles) {
+      const sd = Q.data.succes[id]; if (!sd) continue;
+      const pr2 = sd.objectifs.length === 1 ? Q.progres(sd.objectifs[0]) : [sd.objectifs.filter(o => Q.objectifSuccesFait(o)).length, sd.objectifs.length];
+      recL.push(...(recL.length && recL[recL.length - 1].startsWith('★') ? [] : ['']), `★ ${sd.nom}  ${pr2[0]}/${pr2[1]}`);
+    }
     if (Q && cq) {
       const def = Q.def(cq.id), e = Q.etapeDe(cq);
       const [give, back] = QUEST_ICON[def.type];

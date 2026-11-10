@@ -1,0 +1,13857 @@
+[
+{
+"id": 3,
+"nom": "Débutant",
+"description": "Atteindre le niveau 10.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 1,
+"niveau": 10,
+"icone": 58,
+"ordre": 0,
+"objectifs": [],
+"recompense": {
+"xp": 0.0,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 4,
+"nom": "Novice",
+"description": "Atteindre le niveau 20.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 1,
+"niveau": 20,
+"icone": 59,
+"ordre": 1,
+"objectifs": [],
+"recompense": {
+"xp": 0.0,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 5,
+"nom": "Initié",
+"description": "Atteindre le niveau 40.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 1,
+"niveau": 40,
+"icone": 61,
+"ordre": 2,
+"objectifs": [],
+"recompense": {
+"xp": 0.0,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6,
+"nom": "Poussin",
+"description": "Atteindre le niveau 60.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 1,
+"niveau": 60,
+"icone": 63,
+"ordre": 3,
+"objectifs": [],
+"recompense": {
+"xp": 0.0,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 7,
+"nom": "Benjamin",
+"description": "Atteindre le niveau 80.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 1,
+"niveau": 80,
+"icone": 65,
+"ordre": 4,
+"objectifs": [],
+"recompense": {
+"xp": 0.0,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 8,
+"nom": "Minime",
+"description": "Atteindre le niveau 100.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 1,
+"niveau": 100,
+"icone": 67,
+"ordre": 5,
+"objectifs": [],
+"recompense": {
+"xp": 0.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 13,
+"nom": "Niveau 100",
+"icone": 0
+}
+]
+}
+},
+{
+"id": 9,
+"nom": "Cadet",
+"description": "Atteindre le niveau 120.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 1,
+"niveau": 120,
+"icone": 69,
+"ordre": 6,
+"objectifs": [],
+"recompense": {
+"xp": 0.0,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 10,
+"nom": "Junior",
+"description": "Atteindre le niveau 140.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 1,
+"niveau": 140,
+"icone": 71,
+"ordre": 7,
+"objectifs": [],
+"recompense": {
+"xp": 0.0,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 11,
+"nom": "Espoir",
+"description": "Atteindre le niveau 160.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 1,
+"niveau": 160,
+"icone": 73,
+"ordre": 8,
+"objectifs": [],
+"recompense": {
+"xp": 0.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 14,
+"nom": "Niveau 160",
+"icone": 1
+}
+]
+}
+},
+{
+"id": 12,
+"nom": "Senior",
+"description": "Atteindre le niveau 180.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 1,
+"niveau": 180,
+"icone": 75,
+"ordre": 9,
+"objectifs": [],
+"recompense": {
+"xp": 0.0,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 13,
+"nom": "Vétéran",
+"description": "Atteindre le niveau 200.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 1,
+"niveau": 200,
+"icone": 77,
+"ordre": 10,
+"objectifs": [],
+"recompense": {
+"xp": 0.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 15,
+"nom": "Niveau 200",
+"icone": 2
+}
+]
+}
+},
+{
+"id": 14,
+"nom": "Apprenti",
+"description": "Atteindre le niveau 10 dans un métier.",
+"categorie": "Métiers",
+"sousCategorie": "Général",
+"points": 1,
+"niveau": 200,
+"icone": 167,
+"ordre": 9,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 15,
+"nom": "Travailleur",
+"description": "Atteindre le niveau 100 dans un métier.",
+"categorie": "Métiers",
+"sousCategorie": "Général",
+"points": 1,
+"niveau": 200,
+"icone": 168,
+"ordre": 10,
+"objectifs": [],
+"recompense": {
+"xp": 0.5,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 16,
+"nom": "Compagnon",
+"description": "Atteindre le niveau 200 dans un métier.",
+"categorie": "Métiers",
+"sousCategorie": "Général",
+"points": 10,
+"niveau": 200,
+"icone": 77,
+"ordre": 11,
+"objectifs": [],
+"recompense": {
+"xp": 1.0,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 22,
+"nom": "Antre du Dragon Cochon",
+"description": "Vaincre le Dragon Cochon dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 15,
+"ordre": 89,
+"objectifs": [
+[
+"Dragon Cochon",
+"(EM>113,0,d)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"2645",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 26,
+"nom": "Cale de l'Arche d'Otomaï",
+"description": "Vaincre Gourlo le Terrible dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 70,
+"icone": 16,
+"ordre": 30,
+"objectifs": [
+[
+"Gourlo le Terrible",
+"(EM>1051,0,d)"
+],
+[
+"Niveau 70",
+"PL>69"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8758",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 29,
+"nom": "Caverne du Koulosse",
+"description": "Vaincre le Koulosse dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 17,
+"ordre": 95,
+"objectifs": [
+[
+"Koulosse",
+"(EM>670,0,d)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8403",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 33,
+"nom": "Crypte de Kardorim",
+"description": "Vaincre Kardorim dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 10,
+"icone": 299,
+"ordre": 1,
+"objectifs": [
+[
+"Kardorim",
+"(EM>4051,0,d)"
+],
+[
+"Niveau 10",
+"PL>9"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"16525",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 34,
+"nom": "Donjon des Larves",
+"description": "Vaincre la Shin Larve dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 6,
+"ordre": 73,
+"objectifs": [
+[
+"Shin Larve",
+"(EM>457,0,d)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8385",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 35,
+"nom": "Domaine Ancestral",
+"description": "Vaincre l'Abraknyde Ancestral dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 90,
+"icone": 18,
+"ordre": 71,
+"objectifs": [
+[
+"Abraknyde Ancestral",
+"(EM>173,0,d)"
+],
+[
+"Niveau 90",
+"PL>89"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8496",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 36,
+"nom": "Clos des Blops",
+"description": "Vaincre les 4 Blops Royaux dans leur donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 60,
+"icone": 19,
+"ordre": 12,
+"objectifs": [
+[
+"Blop Reinette Royal",
+"(EM>1187,0,d)"
+],
+[
+"Blop Indigo Royal",
+"(EM>1186,0,d)"
+],
+[
+"Blop Griotte Royal",
+"(EM>1185,0,d)"
+],
+[
+"Blop Coco Royal",
+"(EM>1184,0,d)"
+],
+[
+"Niveau 60",
+"PL>59"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"9388",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 37,
+"nom": "Cour du Bouftou Royal",
+"description": "Vaincre le Bouftou Royal dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 30,
+"icone": 3,
+"ordre": 19,
+"objectifs": [
+[
+"Bouftou Royal",
+"(EM>147,0,d)"
+],
+[
+"Niveau 30",
+"PL>29"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"886",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 38,
+"nom": "Donjon des Bworks",
+"description": "Vaincre la Bworkette dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 4,
+"ordre": 61,
+"objectifs": [
+[
+"Bworkette",
+"(EM>792,0,d)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8388",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 39,
+"nom": "Tanière du Meulou",
+"description": "Vaincre le Meulou dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 20,
+"ordre": 101,
+"objectifs": [
+[
+"Meulou",
+"(EM>232,0,d)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"2577",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 40,
+"nom": "Grange du Tournesol Affamé",
+"description": "Vaincre le Tournesol Affamé dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 20,
+"icone": 11,
+"ordre": 7,
+"objectifs": [
+[
+"Tournesol Affamé",
+"(EM>799,0,d)"
+],
+[
+"Niveau 20",
+"PL>19"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8157",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 41,
+"nom": "Pitons Rocheux des Craqueleurs",
+"description": "Vaincre le Craqueleur Légendaire dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 70,
+"icone": 21,
+"ordre": 36,
+"objectifs": [
+[
+"Craqueleur Légendaire",
+"(EM>669,0,d)"
+],
+[
+"Niveau 70",
+"PL>69"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8102",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 43,
+"nom": "Donjon des Forgerons",
+"description": "Vaincre le Coffre des Forgerons dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 5,
+"ordre": 67,
+"objectifs": [
+[
+"Coffre des Forgerons",
+"(EM>252,0,d)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"13140",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 48,
+"nom": "Donjon des Scarafeuilles",
+"description": "Vaincre le Scarabosse Doré dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 7,
+"ordre": 25,
+"objectifs": [
+[
+"Scarabosse Doré",
+"(EM>797,0,d)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8161",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 49,
+"nom": "Donjon des Squelettes",
+"description": "Vaincre le Chafer Rōnin dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 8,
+"ordre": 43,
+"objectifs": [
+[
+"Chafer Rōnin",
+"(EM>3238,0,d)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"13096",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 50,
+"nom": "Donjon des Tofus",
+"description": "Vaincre Batofu dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 9,
+"ordre": 31,
+"objectifs": [
+[
+"Batofu",
+"(EM>800,0,d)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8557",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 54,
+"nom": "Château Ensablé",
+"description": "Vaincre Mob l'Eponge dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 20,
+"icone": 10,
+"ordre": 13,
+"objectifs": [
+[
+"Mob l'Eponge",
+"(EM>928,0,d)"
+],
+[
+"Niveau 20",
+"PL>19"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8682",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 56,
+"nom": "Village Kanniboul",
+"description": "Vaincre le Kanniboul Ebil dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 60,
+"icone": 22,
+"ordre": 6,
+"objectifs": [
+[
+"Kanniboul Ebil",
+"(EM>2960,0,d)"
+],
+[
+"Niveau 60",
+"PL>59"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"11695",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 57,
+"nom": "Château du Wa Wabbit",
+"description": "Vaincre le Wa Wabbit dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 60,
+"icone": 23,
+"ordre": 0,
+"objectifs": [
+[
+"Wa Wabbit",
+"(EM>180,0,d)"
+],
+[
+"Niveau 60",
+"PL>59"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8397",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 60,
+"nom": "Gelaxième Dimension",
+"description": "Vaincre les Gelées Royales dans leur donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 60,
+"icone": 24,
+"ordre": 18,
+"objectifs": [
+[
+"Gelée Royale Menthe",
+"(EM>85,0,d)"
+],
+[
+"Gelée Royale Fraise",
+"(EM>86,0,d)"
+],
+[
+"Gelée Royale Citron",
+"(EM>430,0,d)"
+],
+[
+"Gelée Royale Bleuet",
+"(EM>58,0,d)"
+],
+[
+"Niveau 60",
+"PL>59"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"370",
+2
+],
+[
+"2437",
+2
+],
+[
+"2242",
+2
+],
+[
+"2241",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 62,
+"nom": "Grotte Hesque",
+"description": "Vaincre le Corailleur Magistral dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 12,
+"ordre": 79,
+"objectifs": [
+[
+"Corailleur Magistral",
+"(EM>1027,0,d)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8738",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 64,
+"nom": "Laboratoire de Brumen Tinctorias",
+"description": "Vaincre Nelween dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 70,
+"icone": 26,
+"ordre": 24,
+"objectifs": [
+[
+"Nelween",
+"(EM>3100,0,d)"
+],
+[
+"Niveau 70",
+"PL>69"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"12076",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 66,
+"nom": "Maison Fantôme",
+"description": "Vaincre Boostache dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 13,
+"ordre": 37,
+"objectifs": [
+[
+"Boostache",
+"(EM>2975,0,d)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"11815",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 67,
+"nom": "Nid du Kwakwa",
+"description": "Vaincre le Kwakwa dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 14,
+"ordre": 85,
+"objectifs": [
+[
+"Kwakwa",
+"(EM>2995,0,d)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"12016",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 113,
+"nom": "J'apporte la farine et toi le sel",
+"description": "Confectionner un objet en mode coopératif.",
+"categorie": "Métiers",
+"sousCategorie": "Général",
+"points": 1,
+"niveau": 200,
+"icone": 171,
+"ordre": 4,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 119,
+"nom": "Et si je cassais ces trucs ?",
+"description": "Obtenir 1000 runes en concassant des objets.",
+"categorie": "Métiers",
+"sousCategorie": "Général",
+"points": 1,
+"niveau": 200,
+"icone": 169,
+"ordre": 2,
+"objectifs": [
+[
+"",
+"(Eu>0,999)"
+]
+],
+"recompense": {
+"xp": 0.2,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 120,
+"nom": "Je l'ai fait moi-même",
+"description": "Confectionner 1 objet.",
+"categorie": "Métiers",
+"sousCategorie": "Général",
+"points": 1,
+"niveau": 200,
+"icone": 175,
+"ordre": 5,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 121,
+"nom": "Travail à la chaîne",
+"description": "Confectionner 100 objets.",
+"categorie": "Métiers",
+"sousCategorie": "Général",
+"points": 1,
+"niveau": 200,
+"icone": 172,
+"ordre": 6,
+"objectifs": [
+[
+"",
+"(EC>0,99)"
+]
+],
+"recompense": {
+"xp": 0.2,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 122,
+"nom": "L'atelier",
+"description": "Confectionner 1000 objets.",
+"categorie": "Métiers",
+"sousCategorie": "Général",
+"points": 1,
+"niveau": 200,
+"icone": 173,
+"ordre": 7,
+"objectifs": [
+[
+"",
+"(EC>0,999)"
+]
+],
+"recompense": {
+"xp": 0.3,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 123,
+"nom": "La manufacture",
+"description": "Confectionner 10000 objets.",
+"categorie": "Métiers",
+"sousCategorie": "Général",
+"points": 20,
+"niveau": 200,
+"icone": 174,
+"ordre": 8,
+"objectifs": [
+[
+"",
+"(EC>0,9999)"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 124,
+"nom": "Désolé mais je t'avais en double",
+"description": "Briser 1 familier Chacha dans un concasseur.",
+"categorie": "Métiers",
+"sousCategorie": "Général",
+"points": 1,
+"niveau": 200,
+"icone": 169,
+"ordre": 0,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 172,
+"nom": "Wabbits",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Île de la cawotte",
+"points": 10,
+"niveau": 60,
+"icone": 124,
+"ordre": 0,
+"objectifs": [
+[
+"Black Tiwabbit",
+"(Ef>68,0)"
+],
+[
+"Black Wabbit",
+"(Ef>65,0)"
+],
+[
+"Grand Pa Wabbit",
+"(Ef>99,0)"
+],
+[
+"Tiwabbit Kiafin",
+"(Ef>72,0)"
+],
+[
+"Tiwabbit",
+"(Ef>96,0)"
+],
+[
+"Wabbit",
+"(Ef>64,0)"
+],
+[
+"Wabbit Squelette",
+"(Ef>179,0)"
+],
+[
+"Wo Wabbit",
+"(Ef>97,0)"
+],
+[
+"Black Wabbit Squelette",
+"(Ef>3469,0)"
+],
+[
+"Niveau 60",
+"PL>59"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"14462",
+10
+],
+[
+"14466",
+10
+],
+[
+"2288",
+10
+],
+[
+"14457",
+10
+],
+[
+"14460",
+10
+],
+[
+"14459",
+10
+],
+[
+"406",
+10
+],
+[
+"418",
+10
+],
+[
+"361",
+1
+],
+[
+"305",
+1
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 175,
+"nom": "Araknes",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 10,
+"niveau": 40,
+"icone": 127,
+"ordre": 4,
+"objectifs": [
+[
+"Arakne des Égouts",
+"(Ef>255,0)"
+],
+[
+"Arakne",
+"(Ef>52,0)"
+],
+[
+"Arakne Majeure",
+"(Ef>259,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"365",
+10
+],
+[
+"393",
+10
+],
+[
+"1652",
+10
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 176,
+"nom": "Dragoeufs Immatures",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 10,
+"niveau": 70,
+"icone": 128,
+"ordre": 17,
+"objectifs": [
+[
+"Dragoeuf Calcaire",
+"(Ef>76,0)"
+],
+[
+"Dragoeuf Ardoise",
+"(Ef>88,0)"
+],
+[
+"Dragoeuf Argile",
+"(Ef>87,0)"
+],
+[
+"Dragoeuf Charbon",
+"(Ef>89,0)"
+],
+[
+"Dragoeuf Albâtre",
+"(Ef>5822,0)"
+],
+[
+"Niveau 70",
+"PL>69"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"308",
+10
+],
+[
+"842",
+10
+],
+[
+"843",
+10
+],
+[
+"1129",
+10
+],
+[
+"21263",
+10
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 177,
+"nom": "Dragoss",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 10,
+"niveau": 100,
+"icone": 380,
+"ordre": 18,
+"objectifs": [
+[
+"Dragoss Calcaire",
+"(Ef>878,0)"
+],
+[
+"Dragoss Ardoise",
+"(Ef>905,0)"
+],
+[
+"Dragoss Argile",
+"(Ef>879,0)"
+],
+[
+"Dragoss Charbon",
+"(Ef>858,0)"
+],
+[
+"Dragoss Protéiforme",
+"(Ef>5820,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8353",
+10
+],
+[
+"8355",
+10
+],
+[
+"8352",
+10
+],
+[
+"8354",
+10
+],
+[
+"8350",
+10
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 178,
+"nom": "Dragoeufs Protecteurs",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 10,
+"niveau": 120,
+"icone": 130,
+"ordre": 19,
+"objectifs": [
+[
+"Dragnarok",
+"(Ef>853,0)"
+],
+[
+"Draguaindrop",
+"(Ef>862,0)"
+],
+[
+"Dragueuse",
+"(Ef>855,0)"
+],
+[
+"Dragacé",
+"(Ef>5804,0)"
+],
+[
+"Dragmatique",
+"(Ef>5805,0)"
+],
+[
+"Niveau 120",
+"PL>119"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8358",
+1
+],
+[
+"8363",
+10
+],
+[
+"8361",
+10
+],
+[
+"8360",
+10
+],
+[
+"8362",
+10
+],
+[
+"8356",
+10
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 181,
+"nom": "Scarafeuilles",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 10,
+"niveau": 40,
+"icone": 133,
+"ordre": 14,
+"objectifs": [
+[
+"Scarafeuille Bleu",
+"(Ef>198,0)"
+],
+[
+"Scarafeuille Blanc",
+"(Ef>241,0)"
+],
+[
+"Scarafeuille Immature",
+"(Ef>798,0)"
+],
+[
+"Scarafeuille Noir",
+"(Ef>795,0)"
+],
+[
+"Scarafeuille Rouge",
+"(Ef>194,0)"
+],
+[
+"Scarafeuille Vert",
+"(Ef>240,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"1456",
+10
+],
+[
+"1455",
+10
+],
+[
+"1458",
+10
+],
+[
+"1457",
+10
+],
+[
+"8141",
+10
+],
+[
+"2294",
+1
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 182,
+"nom": "Bworks d'Amakna",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 10,
+"niveau": 50,
+"icone": 134,
+"ordre": 22,
+"objectifs": [
+[
+"Bwork",
+"(Ef>876,0)"
+],
+[
+"Bwork Archer",
+"(Ef>74,0)"
+],
+[
+"Bwork Mage",
+"(Ef>53,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"409",
+10
+],
+[
+"3208",
+10
+],
+[
+"3001",
+10
+],
+[
+"8145",
+1
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 185,
+"nom": "Porcos",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 10,
+"niveau": 100,
+"icone": 136,
+"ordre": 25,
+"objectifs": [
+[
+"Cochon de Farle",
+"(Ef>603,0)"
+],
+[
+"Don Dorgan",
+"(Ef>601,0)"
+],
+[
+"Don Duss Ang",
+"(Ef>600,0)"
+],
+[
+"Porsalu",
+"(Ef>3304,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8390",
+10
+],
+[
+"8391",
+10
+],
+[
+"8392",
+10
+],
+[
+"14946",
+10
+],
+[
+"479",
+1
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 186,
+"nom": "Craqueleurs",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 10,
+"niveau": 70,
+"icone": 137,
+"ordre": 15,
+"objectifs": [
+[
+"Craqueboule",
+"(Ef>483,0)"
+],
+[
+"Craqueleur",
+"(Ef>106,0)"
+],
+[
+"Craqueleur des plaines",
+"(Ef>293,0)"
+],
+[
+"Élémenterre",
+"(Ef>4570,0)"
+],
+[
+"Craquelourd",
+"(Ef>4571,0)"
+],
+[
+"Craquelope",
+"(Ef>4573,0)"
+],
+[
+"Niveau 70",
+"PL>69"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"431",
+10
+],
+[
+"2305",
+10
+],
+[
+"447",
+10
+],
+[
+"2304",
+10
+],
+[
+"2495",
+10
+],
+[
+"448",
+10
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 187,
+"nom": "Gobelins d'Amakna",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 10,
+"niveau": 40,
+"icone": 418,
+"ordre": 21,
+"objectifs": [
+[
+"Gobet",
+"(Ef>178,0)"
+],
+[
+"Gob-trotteur",
+"(Ef>62,0)"
+],
+[
+"Gobaladée",
+"(Ef>6902,0)"
+],
+[
+"Gobaliste",
+"(Ef>6901,0)"
+],
+[
+"Gobichon",
+"(Ef>6900,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"302",
+10
+],
+[
+"2264",
+1
+],
+[
+"382",
+10
+],
+[
+"2259",
+10
+],
+[
+"2674",
+10
+],
+[
+"2656",
+10
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 188,
+"nom": "Bwaks",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 10,
+"niveau": 50,
+"icone": 139,
+"ordre": 0,
+"objectifs": [
+[
+"Bwak de Flamme",
+"(Ef>3283,0)"
+],
+[
+"Bwak de Glace",
+"(Ef>3282,0)"
+],
+[
+"Bwak de Terre",
+"(Ef>3284,0)"
+],
+[
+"Bwak de Vent",
+"(Ef>3281,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"413",
+10
+],
+[
+"1142",
+10
+],
+[
+"412",
+10
+],
+[
+"411",
+10
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 189,
+"nom": "Kwaks",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 10,
+"niveau": 50,
+"icone": 140,
+"ordre": 1,
+"objectifs": [
+[
+"Kwak de Flamme",
+"(Ef>83,0)"
+],
+[
+"Kwak de Glace",
+"(Ef>84,0)"
+],
+[
+"Kwak de Terre",
+"(Ef>235,0)"
+],
+[
+"Kwak de Vent",
+"(Ef>81,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"415",
+10
+],
+[
+"414",
+10
+],
+[
+"1141",
+10
+],
+[
+"416",
+10
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 190,
+"nom": "Kwakeres",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 10,
+"niveau": 50,
+"icone": 140,
+"ordre": 2,
+"objectifs": [
+[
+"Kwakere de Flamme",
+"(Ef>269,0)"
+],
+[
+"Kwakere de Glace",
+"(Ef>271,0)"
+],
+[
+"Kwakere de Terre",
+"(Ef>270,0)"
+],
+[
+"Kwakere de Vent",
+"(Ef>272,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"2648",
+10
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 191,
+"nom": "Chafers d'Amakna",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 10,
+"niveau": 50,
+"icone": 141,
+"ordre": 6,
+"objectifs": [
+[
+"Chafer",
+"(Ef>54,0)"
+],
+[
+"Chafer Invisible",
+"(Ef>110,0)"
+],
+[
+"Chafer Fantassin",
+"(Ef>396,0)"
+],
+[
+"Chafer Primitif",
+"(Ef>3240,0)"
+],
+[
+"Rib",
+"(Ef>108,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"432",
+10
+],
+[
+"430",
+10
+],
+[
+"1675",
+10
+],
+[
+"310",
+10
+],
+[
+"2323",
+1
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 193,
+"nom": "Bêtes de la nuit",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 10,
+"niveau": 40,
+"icone": 143,
+"ordre": 5,
+"objectifs": [
+[
+"Kwoan",
+"(Ef>154,0)"
+],
+[
+"Maître Vampire",
+"(Ef>124,0)"
+],
+[
+"Noeul",
+"(Ef>150,0)"
+],
+[
+"Souris Grise",
+"(Ef>126,0)"
+],
+[
+"Vampire",
+"(Ef>127,0)"
+],
+[
+"Tofu Maléfique",
+"(Ef>111,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"376",
+10
+],
+[
+"2676",
+1
+],
+[
+"752",
+10
+],
+[
+"2283",
+10
+],
+[
+"2279",
+10
+],
+[
+"761",
+1
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 200,
+"nom": "Bouftous",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Astrub",
+"points": 10,
+"niveau": 30,
+"icone": 231,
+"ordre": 5,
+"objectifs": [
+[
+"Boufton Blanc",
+"(Ef>134,0)"
+],
+[
+"Boufton Noir",
+"(Ef>149,0)"
+],
+[
+"Chef de Guerre Bouftou",
+"(Ef>148,0)"
+],
+[
+"Bouftou",
+"(Ef>101,0)"
+],
+[
+"Bouftou Noir",
+"(Ef>4822,0)"
+],
+[
+"Niveau 30",
+"PL>29"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"2455",
+1
+],
+[
+"882",
+10
+],
+[
+"884",
+10
+],
+[
+"885",
+10
+],
+[
+"383",
+10
+],
+[
+"384",
+10
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 201,
+"nom": "Champas",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 10,
+"niveau": 40,
+"icone": 145,
+"ordre": 13,
+"objectifs": [
+[
+"Champa Bleu",
+"(Ef>654,0)"
+],
+[
+"Champa Marron",
+"(Ef>655,0)"
+],
+[
+"Champa Rouge",
+"(Ef>653,0)"
+],
+[
+"Champa Vert",
+"(Ef>652,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"16165",
+10
+],
+[
+"16166",
+10
+],
+[
+"16167",
+10
+],
+[
+"16168",
+10
+],
+[
+"1674",
+1
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 203,
+"nom": "Larves",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Astrub",
+"points": 10,
+"niveau": 20,
+"icone": 147,
+"ordre": 2,
+"objectifs": [
+[
+"Larve Bleue",
+"(Ef>31,0)"
+],
+[
+"Larve Orange",
+"(Ef>46,0)"
+],
+[
+"Larve Verte",
+"(Ef>34,0)"
+],
+[
+"Larve Jaune",
+"(Ef>5225,0)"
+],
+[
+"Niveau 20",
+"PL>19"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"643",
+1
+],
+[
+"362",
+10
+],
+[
+"2563",
+10
+],
+[
+"363",
+10
+],
+[
+"364",
+10
+],
+[
+"7423",
+1
+],
+[
+"10967",
+1
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 204,
+"nom": "Plantes des champs",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Astrub",
+"points": 10,
+"niveau": 20,
+"icone": 148,
+"ordre": 4,
+"objectifs": [
+[
+"Pissenlit Diabolique",
+"(Ef>79,0)"
+],
+[
+"Rose Démoniaque",
+"(Ef>78,0)"
+],
+[
+"Tournesol Sauvage",
+"(Ef>48,0)"
+],
+[
+"Épouvanteur",
+"(Ef>4820,0)"
+],
+[
+"Gardienne Champêtre",
+"(Ef>4821,0)"
+],
+[
+"Niveau 20",
+"PL>19"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"374",
+10
+],
+[
+"306",
+10
+],
+[
+"309",
+10
+],
+[
+"2659",
+10
+],
+[
+"288",
+10
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 205,
+"nom": "Tofus",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 10,
+"niveau": 40,
+"icone": 149,
+"ordre": 12,
+"objectifs": [
+[
+"Tofoune",
+"(Ef>804,0)"
+],
+[
+"Tofu Noir",
+"(Ef>796,0)"
+],
+[
+"Tofu Ventripotent",
+"(Ef>808,0)"
+],
+[
+"Tofukaz",
+"(Ef>806,0)"
+],
+[
+"Tofu",
+"(Ef>98,0)"
+],
+[
+"Tofu Mutant",
+"(Ef>4824,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"375",
+10
+],
+[
+"301",
+10
+],
+[
+"2579",
+10
+],
+[
+"367",
+10
+],
+[
+"2571",
+10
+],
+[
+"8158",
+10
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 206,
+"nom": "Gros Tofus",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 10,
+"niveau": 120,
+"icone": 150,
+"ordre": 26,
+"objectifs": [
+[
+"Tofu Dodu",
+"(Ef>3302,0)"
+],
+[
+"Tofubine",
+"(Ef>3301,0)"
+],
+[
+"Tofutoflamme",
+"(Ef>3300,0)"
+],
+[
+"Tofuzmo",
+"(Ef>807,0)"
+],
+[
+"Vilain Petit Tofu",
+"(Ef>3299,0)"
+],
+[
+"Niveau 120",
+"PL>119"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"13716",
+10
+],
+[
+"13718",
+10
+],
+[
+"13722",
+10
+],
+[
+"13724",
+10
+],
+[
+"13719",
+10
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 209,
+"nom": "Pichons",
+"description": "Vaincre les monstres suivants en réussissant un challenge",
+"categorie": "Monstres",
+"sousCategorie": "Astrub",
+"points": 10,
+"niveau": 20,
+"icone": 153,
+"ordre": 3,
+"objectifs": [
+[
+"Pichon Blanc",
+"(Ef>922,0)"
+],
+[
+"Pichon Bleu",
+"(Ef>921,0)"
+],
+[
+"Pichon Kloune",
+"(Ef>924,0)"
+],
+[
+"Pichon Orange",
+"(Ef>920,0)"
+],
+[
+"Pichon Vert",
+"(Ef>923,0)"
+],
+[
+"Niveau 20",
+"PL>19"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8680",
+1
+],
+[
+"13502",
+10
+],
+[
+"13494",
+10
+],
+[
+"13487",
+10
+],
+[
+"13727",
+10
+],
+[
+"13726",
+10
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 215,
+"nom": "Rats Strubiens",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Astrub",
+"points": 10,
+"niveau": 30,
+"icone": 160,
+"ordre": 8,
+"objectifs": [
+[
+"Ramane Strubien",
+"(Ef>3205,0)"
+],
+[
+"Milirat Strubien",
+"(Ef>475,0)"
+],
+[
+"Scélérat Strubien",
+"(Ef>465,0)"
+],
+[
+"Niveau 30",
+"PL>29"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"881",
+10
+],
+[
+"304",
+10
+],
+[
+"2322",
+10
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 216,
+"nom": "Rats Maknéens",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 10,
+"niveau": 60,
+"icone": 159,
+"ordre": 7,
+"objectifs": [
+[
+"Ramane d'Égoutant",
+"(Ef>447,0)"
+],
+[
+"Rat d'Hyoactif",
+"(Ef>449,0)"
+],
+[
+"Rat d'Égoutant",
+"(Ef>442,0)"
+],
+[
+"Guerrier Mental",
+"(Ef>4825,0)"
+],
+[
+"Niveau 60",
+"PL>59"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8483",
+10
+],
+[
+"8481",
+10
+],
+[
+"2497",
+10
+],
+[
+"2496",
+10
+],
+[
+"8482",
+1
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 217,
+"nom": "Pious",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Astrub",
+"points": 10,
+"niveau": 15,
+"icone": 161,
+"ordre": 0,
+"objectifs": [
+[
+"Piou Bleu",
+"(Ef>491,0)"
+],
+[
+"Piou Jaune",
+"(Ef>493,0)"
+],
+[
+"Piou Rose",
+"(Ef>492,0)"
+],
+[
+"Piou Rouge",
+"(Ef>489,0)"
+],
+[
+"Piou Vert",
+"(Ef>490,0)"
+],
+[
+"Piou Violet",
+"(Ef>236,0)"
+],
+[
+"Niveau 15",
+"PL>14"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"287",
+1
+],
+[
+"6897",
+10
+],
+[
+"6899",
+10
+],
+[
+"6903",
+10
+],
+[
+"6900",
+10
+],
+[
+"6902",
+10
+],
+[
+"6898",
+10
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 222,
+"nom": "Bandits d'Amakna",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 10,
+"niveau": 50,
+"icone": 166,
+"ordre": 23,
+"objectifs": [
+[
+"Bandit du clan des Roublards",
+"(Ef>155,0)"
+],
+[
+"Bandit Manchot",
+"(Ef>466,0)"
+],
+[
+"Boulanger Sombre",
+"(Ef>153,0)"
+],
+[
+"Forgeron Sombre",
+"(Ef>119,0)"
+],
+[
+"Mineur Sombre",
+"(Ef>118,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"13339",
+10
+],
+[
+"13730",
+10
+],
+[
+"14278",
+10
+],
+[
+"13342",
+10
+],
+[
+"13505",
+10
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 227,
+"nom": "Sans casser d'œufs",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 20,
+"niveau": 120,
+"icone": 82,
+"ordre": 20,
+"objectifs": [
+[
+"Dragoeufs Immatures",
+"(OA=176)"
+],
+[
+"Dragoss",
+"(OA=177)"
+],
+[
+"Dragoeufs Protecteurs",
+"(OA=178)"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 231,
+"nom": "Ils l'ont bien mérité",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 20,
+"niveau": 140,
+"icone": 82,
+"ordre": 16,
+"objectifs": [
+[
+"Vermines des champs",
+"(OA=1602)"
+],
+[
+"Tofus",
+"(OA=205)"
+],
+[
+"Champas",
+"(OA=201)"
+],
+[
+"Scarafeuilles",
+"(OA=181)"
+],
+[
+"Craqueleurs",
+"(OA=186)"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 232,
+"nom": "Ma culotte n'est pas mouillée",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 20,
+"niveau": 60,
+"icone": 82,
+"ordre": 10,
+"objectifs": [
+[
+"Araknes",
+"(OA=175)"
+],
+[
+"Bêtes de la nuit",
+"(OA=193)"
+],
+[
+"Chafers d'Amakna",
+"(OA=191)"
+],
+[
+"Rats Maknéens",
+"(OA=216)"
+],
+[
+"Arak-haï",
+"(OA=1196)"
+],
+[
+"Malters",
+"(OA=5212)"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 233,
+"nom": "Ils étaient si mignons",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Monstres",
+"sousCategorie": "Astrub",
+"points": 20,
+"niveau": 40,
+"icone": 82,
+"ordre": 11,
+"objectifs": [
+[
+"Pious",
+"(OA=217)"
+],
+[
+"Animalades",
+"(OA=1601)"
+],
+[
+"Larves",
+"(OA=203)"
+],
+[
+"Pichons",
+"(OA=209)"
+],
+[
+"Plantes des champs",
+"(OA=204)"
+],
+[
+"Bouftous",
+"(OA=200)"
+],
+[
+"Animaux de la forêt",
+"(OA=1600)"
+],
+[
+"Sidoas",
+"(OA=1670)"
+],
+[
+"Rats Strubiens",
+"(OA=215)"
+],
+[
+"Vilinsekts",
+"(OA=1185)"
+],
+[
+"Monstres du repos",
+"(OA=1669)"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 234,
+"nom": "En plein vol",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 20,
+"niveau": 50,
+"icone": 82,
+"ordre": 3,
+"objectifs": [
+[
+"Bwaks",
+"(OA=188)"
+],
+[
+"Kwaks",
+"(OA=189)"
+],
+[
+"Kwakeres",
+"(OA=190)"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 235,
+"nom": "C'est eux qui ont commencé",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 20,
+"niveau": 180,
+"icone": 82,
+"ordre": 27,
+"objectifs": [
+[
+"Gobelins d'Amakna",
+"(OA=187)"
+],
+[
+"Bworks d'Amakna",
+"(OA=182)"
+],
+[
+"Bandits d'Amakna",
+"(OA=222)"
+],
+[
+"Grosses Larves",
+"(OA=1667)"
+],
+[
+"Porcos",
+"(OA=185)"
+],
+[
+"Gros Tofus",
+"(OA=206)"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 236,
+"nom": "Bord de la forêt maléfique",
+"description": "Découvrir la zone \"Bord de la forêt maléfique\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 40,
+"icone": 176,
+"ordre": 0,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 237,
+"nom": "Campement des Bworks",
+"description": "Découvrir la zone \"Campement des Bworks\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 50,
+"icone": 176,
+"ordre": 1,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 238,
+"nom": "Campement des Gobelins",
+"description": "Découvrir la zone \"Campement des Gobelins\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 40,
+"icone": 176,
+"ordre": 2,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 239,
+"nom": "Clairière de Brouce Boulgoure",
+"description": "Découvrir la zone \"Clairière de Brouce Boulgoure\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 35,
+"icone": 176,
+"ordre": 3,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 240,
+"nom": "Côte d'Asse",
+"description": "Découvrir la zone \"Côte d'Asse\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 20,
+"icone": 176,
+"ordre": 4,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 241,
+"nom": "Campagne d'Amakna",
+"description": "Découvrir la zone \"Campagne d'Amakna\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 20,
+"icone": 176,
+"ordre": 5,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 242,
+"nom": "Forêt d'Amakna",
+"description": "Découvrir la zone \"Forêt d'Amakna\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 40,
+"icone": 176,
+"ordre": 6,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 243,
+"nom": "Dédale du Dark Vlad",
+"description": "Découvrir la zone \"Dédale du Dark Vlad\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 40,
+"icone": 176,
+"ordre": 7,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 244,
+"nom": "Milifutaie",
+"description": "Découvrir la zone \"Milifutaie\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 30,
+"icone": 176,
+"ordre": 8,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 245,
+"nom": "Montagne des Craqueleurs",
+"description": "Découvrir la zone \"Montagne des Craqueleurs\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 40,
+"icone": 176,
+"ordre": 9,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 246,
+"nom": "Presqu'île des Dragoeufs",
+"description": "Découvrir la zone \"Presqu'île des Dragoeufs\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 70,
+"icone": 176,
+"ordre": 10,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 247,
+"nom": "Péninsule des gelées",
+"description": "Découvrir la zone \"Péninsule des gelées\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 60,
+"icone": 176,
+"ordre": 11,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 248,
+"nom": "Champ des Ingalsse",
+"description": "Découvrir la zone \"Champ des Ingalsse\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 30,
+"icone": 176,
+"ordre": 12,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 249,
+"nom": "Cimetière d'Astrub",
+"description": "Découvrir la zone \"Cimetière d'Astrub\".",
+"categorie": "Exploration",
+"sousCategorie": "Astrub",
+"points": 1,
+"niveau": 50,
+"icone": 176,
+"ordre": 3,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 250,
+"nom": "Château d'Amakna",
+"description": "Découvrir la zone \"Château d'Amakna\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 20,
+"icone": 176,
+"ordre": 13,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 251,
+"nom": "Cimetière",
+"description": "Découvrir la zone \"Cimetière\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 50,
+"icone": 176,
+"ordre": 14,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 252,
+"nom": "Coin des Boos",
+"description": "Découvrir la zone \"Coin des Boos\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 30,
+"icone": 176,
+"ordre": 15,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 253,
+"nom": "Coin des Bouftous",
+"description": "Découvrir la zone \"Coin des Bouftous\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 20,
+"icone": 176,
+"ordre": 16,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 254,
+"nom": "Marécages d'Amakna",
+"description": "Découvrir la zone \"Marécages d'Amakna\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 60,
+"icone": 176,
+"ordre": 17,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 255,
+"nom": "Village d'Amakna",
+"description": "Découvrir la zone \"Village d'Amakna\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 20,
+"icone": 176,
+"ordre": 18,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 256,
+"nom": "Cryptes",
+"description": "Découvrir la zone \"Cryptes\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 50,
+"icone": 176,
+"ordre": 19,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 257,
+"nom": "Montagne basse des Craqueleurs",
+"description": "Découvrir la zone \"Montagne basse des Craqueleurs\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 40,
+"icone": 176,
+"ordre": 20,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 258,
+"nom": "Passage vers Brâkmar",
+"description": "Découvrir la zone \"Passage vers Brâkmar\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 50,
+"icone": 176,
+"ordre": 21,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 259,
+"nom": "Plaine des Scarafeuilles",
+"description": "Découvrir la zone \"Plaine des Scarafeuilles\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 30,
+"icone": 176,
+"ordre": 22,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 260,
+"nom": "Port de Madrestam",
+"description": "Découvrir la zone \"Port de Madrestam\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 20,
+"icone": 176,
+"ordre": 23,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 261,
+"nom": "Rivage sufokien",
+"description": "Découvrir la zone \"Rivage sufokien\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 40,
+"icone": 176,
+"ordre": 24,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 262,
+"nom": "Rivière Kawaii",
+"description": "Découvrir la zone \"Rivière Kawaii\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 20,
+"icone": 176,
+"ordre": 25,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 263,
+"nom": "Sanctuaire des Dragoeufs",
+"description": "Découvrir la zone \"Sanctuaire des Dragoeufs\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 120,
+"icone": 176,
+"ordre": 26,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 264,
+"nom": "Souterrains",
+"description": "Découvrir la zone \"Souterrains\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 20,
+"icone": 176,
+"ordre": 27,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 265,
+"nom": "Souterrains des Dragoeufs",
+"description": "Découvrir la zone \"Souterrains des Dragoeufs\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 100,
+"icone": 176,
+"ordre": 28,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 266,
+"nom": "Cloaque d'Amakna",
+"description": "Découvrir la zone \"Cloaque d'Amakna\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 50,
+"icone": 176,
+"ordre": 29,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 267,
+"nom": "Territoire des Bandits",
+"description": "Découvrir la zone \"Territoire des Bandits\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 40,
+"icone": 176,
+"ordre": 30,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 268,
+"nom": "Territoire des Porcos",
+"description": "Découvrir la zone \"Territoire des Porcos\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 80,
+"icone": 176,
+"ordre": 31,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 269,
+"nom": "Village des Bworks",
+"description": "Découvrir la zone \"Village des Bworks\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 50,
+"icone": 176,
+"ordre": 32,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 270,
+"nom": "Village des Dragoeufs",
+"description": "Découvrir la zone \"Village des Dragoeufs\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 100,
+"icone": 176,
+"ordre": 33,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 280,
+"nom": "Prison de Madrestam",
+"description": "Découvrir la zone \"Prison de Madrestam\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 20,
+"icone": 176,
+"ordre": 34,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 281,
+"nom": "Tainéla",
+"description": "Découvrir la zone \"Tainéla\".",
+"categorie": "Exploration",
+"sousCategorie": "Astrub",
+"points": 1,
+"niveau": 20,
+"icone": 176,
+"ordre": 12,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 282,
+"nom": "Sufokia",
+"description": "Découvrir la zone \"Sufokia\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 20,
+"icone": 176,
+"ordre": 35,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 283,
+"nom": "Orée de la forêt des Abraknydes",
+"description": "Découvrir la zone \"Orée de la forêt des Abraknydes\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 45,
+"icone": 176,
+"ordre": 36,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 284,
+"nom": "Bois des Arak-haï",
+"description": "Découvrir la zone \"Bois des Arak-haï\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 80,
+"icone": 176,
+"ordre": 37,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 285,
+"nom": "Forêt Sombre",
+"description": "Découvrir la zone \"Forêt Sombre\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 80,
+"icone": 176,
+"ordre": 38,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 339,
+"nom": "Calanques d'Astrub",
+"description": "Découvrir la zone \"Calanques d'Astrub\".",
+"categorie": "Exploration",
+"sousCategorie": "Astrub",
+"points": 1,
+"niveau": 15,
+"icone": 176,
+"ordre": 0,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 340,
+"nom": "Champs d'Astrub",
+"description": "Découvrir la zone \"Champs d'Astrub\".",
+"categorie": "Exploration",
+"sousCategorie": "Astrub",
+"points": 1,
+"niveau": 15,
+"icone": 176,
+"ordre": 2,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 341,
+"nom": "Cité d'Astrub",
+"description": "Découvrir la zone \"Cité d'Astrub\".",
+"categorie": "Exploration",
+"sousCategorie": "Astrub",
+"points": 1,
+"niveau": 15,
+"icone": 176,
+"ordre": 4,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 344,
+"nom": "Carrière d'Astrub",
+"description": "Découvrir la zone \"Carrière d'Astrub\".",
+"categorie": "Exploration",
+"sousCategorie": "Astrub",
+"points": 1,
+"niveau": 15,
+"icone": 176,
+"ordre": 1,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 345,
+"nom": "Forêt d'Astrub",
+"description": "Découvrir la zone \"Forêt d'Astrub\".",
+"categorie": "Exploration",
+"sousCategorie": "Astrub",
+"points": 1,
+"niveau": 15,
+"icone": 176,
+"ordre": 8,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 358,
+"nom": "Prairies d'Astrub",
+"description": "Découvrir la zone \"Prairies d'Astrub\".",
+"categorie": "Exploration",
+"sousCategorie": "Astrub",
+"points": 1,
+"niveau": 15,
+"icone": 176,
+"ordre": 10,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 359,
+"nom": "Souterrains d'Astrub",
+"description": "Découvrir la zone \"Souterrains d'Astrub\".",
+"categorie": "Exploration",
+"sousCategorie": "Astrub",
+"points": 1,
+"niveau": 15,
+"icone": 176,
+"ordre": 11,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 360,
+"nom": "Égouts d'Astrub",
+"description": "Découvrir la zone \"Égouts d'Astrub\".",
+"categorie": "Exploration",
+"sousCategorie": "Astrub",
+"points": 1,
+"niveau": 15,
+"icone": 176,
+"ordre": 7,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 414,
+"nom": "Lac",
+"description": "Découvrir la zone \"Lac\".",
+"categorie": "Exploration",
+"sousCategorie": "Incarnam",
+"points": 1,
+"niveau": 1,
+"icone": 176,
+"ordre": 0,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 415,
+"nom": "Champs",
+"description": "Découvrir la zone \"Champs\".",
+"categorie": "Exploration",
+"sousCategorie": "Incarnam",
+"points": 1,
+"niveau": 1,
+"icone": 176,
+"ordre": 1,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 416,
+"nom": "Cimetière",
+"description": "Découvrir la zone \"Cimetière\".",
+"categorie": "Exploration",
+"sousCategorie": "Incarnam",
+"points": 1,
+"niveau": 1,
+"icone": 176,
+"ordre": 2,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 417,
+"nom": "Forêt",
+"description": "Découvrir la zone \"Forêt\".",
+"categorie": "Exploration",
+"sousCategorie": "Incarnam",
+"points": 1,
+"niveau": 1,
+"icone": 176,
+"ordre": 3,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 419,
+"nom": "Mine",
+"description": "Découvrir la zone \"Mine\".",
+"categorie": "Exploration",
+"sousCategorie": "Incarnam",
+"points": 1,
+"niveau": 1,
+"icone": 176,
+"ordre": 5,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 420,
+"nom": "Pâturages",
+"description": "Découvrir la zone \"Pâturages\".",
+"categorie": "Exploration",
+"sousCategorie": "Incarnam",
+"points": 1,
+"niveau": 1,
+"icone": 176,
+"ordre": 6,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 422,
+"nom": "Route des âmes",
+"description": "Découvrir la zone \"Route des âmes\".",
+"categorie": "Exploration",
+"sousCategorie": "Incarnam",
+"points": 1,
+"niveau": 1,
+"icone": 176,
+"ordre": 8,
+"objectifs": [],
+"recompense": {
+"xp": 0.05,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 423,
+"nom": "Taverne",
+"description": "Découvrir la zone \"Taverne\".",
+"categorie": "Exploration",
+"sousCategorie": "Incarnam",
+"points": 1,
+"niveau": 1,
+"icone": 176,
+"ordre": 9,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 424,
+"nom": "Temple Céleste",
+"description": "Découvrir la zone \"Temple Céleste\".",
+"categorie": "Exploration",
+"sousCategorie": "Incarnam",
+"points": 1,
+"niveau": 1,
+"icone": 176,
+"ordre": 10,
+"objectifs": [],
+"recompense": {
+"xp": 0.05,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 485,
+"nom": "Arbre de Moon",
+"description": "Vaincre le Moon dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 201,
+"ordre": 107,
+"objectifs": [
+[
+"Moon",
+"(EM>226,0,d)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8383",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 487,
+"nom": "Kardorim (Duo)",
+"description": "Vaincre Kardorim dans son donjon en validant le challenge [challenge,102].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 20,
+"niveau": 10,
+"icone": 299,
+"ordre": 4,
+"objectifs": [
+[
+"Kardorim",
+"(EH>102,0)"
+],
+[
+"Niveau 10",
+"PL>9"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"16525",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 488,
+"nom": "Tournesol Affamé (Duo)",
+"description": "Vaincre le Tournesol Affamé dans son donjon en validant le challenge [challenge,103].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 20,
+"niveau": 20,
+"icone": 11,
+"ordre": 10,
+"objectifs": [
+[
+"Tournesol Affamé",
+"(EH>103,0)"
+],
+[
+"Niveau 20",
+"PL>19"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"8157",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 489,
+"nom": "Mob l'Éponge (Duo)",
+"description": "Vaincre Mob l'Éponge dans son donjon en validant le challenge [challenge,104].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 20,
+"niveau": 20,
+"icone": 10,
+"ordre": 16,
+"objectifs": [
+[
+"Mob l'Éponge",
+"(EH>104,0)"
+],
+[
+"Niveau 20",
+"PL>19"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"8682",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 490,
+"nom": "Bouftou Royal (Duo)",
+"description": "Vaincre le Bouftou Royal dans son donjon en validant le challenge [challenge,52].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 20,
+"niveau": 30,
+"icone": 3,
+"ordre": 22,
+"objectifs": [
+[
+"Bouftou Royal",
+"(EH>52,0)"
+],
+[
+"Niveau 30",
+"PL>29"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"886",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 491,
+"nom": "Scarabosse Doré (Duo)",
+"description": "Vaincre le Scarabosse Doré dans son donjon en validant le challenge [challenge,105].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 20,
+"niveau": 40,
+"icone": 7,
+"ordre": 28,
+"objectifs": [
+[
+"Scarabosse Doré",
+"(EH>105,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"8161",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 492,
+"nom": "Batofu (Duo)",
+"description": "Vaincre Batofu dans son donjon en validant le challenge [challenge,106].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 20,
+"niveau": 40,
+"icone": 9,
+"ordre": 34,
+"objectifs": [
+[
+"Batofu",
+"(EH>106,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"8557",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 493,
+"nom": "Boostache (Duo)",
+"description": "Vaincre Boostache dans son donjon en validant le challenge [challenge,107].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 20,
+"niveau": 40,
+"icone": 13,
+"ordre": 40,
+"objectifs": [
+[
+"Boostache",
+"(EH>107,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"11815",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 494,
+"nom": "Chafer Rōnin (Duo)",
+"description": "Vaincre le Chafer Rōnin dans son donjon en validant le challenge [challenge,108].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 20,
+"niveau": 40,
+"icone": 8,
+"ordre": 46,
+"objectifs": [
+[
+"Chafer Rōnin",
+"(EH>108,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"13096",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 495,
+"nom": "Bworkette (Duo)",
+"description": "Vaincre la Bworkette dans son donjon en validant le challenge [challenge,91].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 20,
+"niveau": 50,
+"icone": 4,
+"ordre": 64,
+"objectifs": [
+[
+"Bworkette",
+"(EH>91,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"8388",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 496,
+"nom": "Coffre des Forgerons (Duo)",
+"description": "Vaincre le Coffre des Forgerons dans son donjon en validant le challenge [challenge,90].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 20,
+"niveau": 50,
+"icone": 5,
+"ordre": 70,
+"objectifs": [
+[
+"Coffre des Forgerons",
+"(EH>90,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"13140",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 497,
+"nom": "Shin Larve (Duo)",
+"description": "Vaincre la Shin Larve dans son donjon en validant le challenge [challenge,109].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 20,
+"niveau": 50,
+"icone": 6,
+"ordre": 76,
+"objectifs": [
+[
+"Shin Larve",
+"(EH>109,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"8385",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 498,
+"nom": "Corailleur Magistral (Duo)",
+"description": "Vaincre le Corailleur Magistral dans son donjon en validant le challenge [challenge,63].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 20,
+"niveau": 50,
+"icone": 12,
+"ordre": 82,
+"objectifs": [
+[
+"Corailleur Magistral",
+"(EH>63,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"8738",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 499,
+"nom": "Kwakwa (Duo)",
+"description": "Vaincre le Kwakwa dans son donjon en validant le challenge [challenge,92].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 20,
+"niveau": 50,
+"icone": 14,
+"ordre": 88,
+"objectifs": [
+[
+"Kwakwa",
+"(EH>92,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"12016",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 501,
+"nom": "Wa Wabbit (Duo)",
+"description": "Vaincre le Wa Wabbit dans son donjon en validant le challenge [challenge,110].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 20,
+"niveau": 60,
+"icone": 23,
+"ordre": 3,
+"objectifs": [
+[
+"Wa Wabbit",
+"(EH>110,0)"
+],
+[
+"Niveau 60",
+"PL>59"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"8397",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 502,
+"nom": "Kanniboul Ebil (Duo)",
+"description": "Vaincre le Kanniboul Ebil dans son donjon en validant le challenge [challenge,97].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 20,
+"niveau": 60,
+"icone": 22,
+"ordre": 9,
+"objectifs": [
+[
+"Kanniboul Ebil",
+"(EH>97,0)"
+],
+[
+"Niveau 60",
+"PL>59"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"11695",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 503,
+"nom": "Blops Royaux (Duo)",
+"description": "Vaincre les 4 Blops Royaux dans leur donjon en validant le challenge [challenge,96].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 20,
+"niveau": 60,
+"icone": 19,
+"ordre": 15,
+"objectifs": [
+[
+"Blop Reinette Royal",
+"(EH>96,0)"
+],
+[
+"Blop Indigo Royal",
+"(EH>95,0)"
+],
+[
+"Blop Griotte Royal",
+"(EH>94,0)"
+],
+[
+"Blop Coco Royal",
+"(EH>93,0)"
+],
+[
+"Niveau 60",
+"PL>59"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"9388",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 504,
+"nom": "Nelween (Duo)",
+"description": "Vaincre Nelween dans son donjon en validant le challenge [challenge,99].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 20,
+"niveau": 70,
+"icone": 26,
+"ordre": 27,
+"objectifs": [
+[
+"Nelween",
+"(EH>99,0)"
+],
+[
+"Niveau 70",
+"PL>69"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"12076",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 505,
+"nom": "Gourlo le Terrible (Duo)",
+"description": "Vaincre Gourlo le Terrible dans son donjon en validant le challenge [challenge,64].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 20,
+"niveau": 70,
+"icone": 16,
+"ordre": 33,
+"objectifs": [
+[
+"Gourlo le Terrible",
+"(EH>64,0)"
+],
+[
+"Niveau 70",
+"PL>69"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"8758",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 506,
+"nom": "Craqueleur Légendaire (Duo)",
+"description": "Vaincre le Craqueleur Légendaire dans son donjon en validant le challenge [challenge,98].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 20,
+"niveau": 70,
+"icone": 21,
+"ordre": 39,
+"objectifs": [
+[
+"Craqueleur Légendaire",
+"(EH>98,0)"
+],
+[
+"Niveau 70",
+"PL>69"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"8102",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 507,
+"nom": "Gelées Royales (Duo)",
+"description": "Vaincre les Gelées Royales dans leur donjon en validant le challenge [challenge,111].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 20,
+"niveau": 60,
+"icone": 24,
+"ordre": 21,
+"objectifs": [
+[
+"Gelée Royale Menthe",
+"(EH>111,0)"
+],
+[
+"Gelée Royale Fraise",
+"(EH>112,0)"
+],
+[
+"Gelée Royale Citron",
+"(EH>113,0)"
+],
+[
+"Gelée Royale Bleuet",
+"(EH>114,0)"
+],
+[
+"Niveau 60",
+"PL>59"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"370",
+2
+],
+[
+"2437",
+2
+],
+[
+"2242",
+2
+],
+[
+"2241",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 509,
+"nom": "Abraknyde Ancestral (Duo)",
+"description": "Vaincre l'Abraknyde Ancestral dans son donjon en validant le challenge [challenge,101].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 20,
+"niveau": 90,
+"icone": 18,
+"ordre": 74,
+"objectifs": [
+[
+"Abraknyde Ancestral",
+"(EH>101,0)"
+],
+[
+"Niveau 90",
+"PL>89"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"8496",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 510,
+"nom": "Dragon Cochon (Duo)",
+"description": "Vaincre le Dragon Cochon dans son donjon en validant le challenge [challenge,84].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 20,
+"niveau": 100,
+"icone": 15,
+"ordre": 92,
+"objectifs": [
+[
+"Dragon Cochon",
+"(EH>84,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"2645",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 511,
+"nom": "Koulosse (Duo)",
+"description": "Vaincre le Koulosse dans son donjon en validant le challenge [challenge,85].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 20,
+"niveau": 100,
+"icone": 17,
+"ordre": 98,
+"objectifs": [
+[
+"Koulosse",
+"(EH>85,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"8403",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 512,
+"nom": "Meulou (Duo)",
+"description": "Vaincre le Meulou dans son donjon en validant le challenge [challenge,86].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 20,
+"niveau": 100,
+"icone": 20,
+"ordre": 104,
+"objectifs": [
+[
+"Meulou",
+"(EH>86,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"2577",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 513,
+"nom": "Moon (Duo)",
+"description": "Vaincre le Moon dans son donjon en validant le challenge [challenge,83].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 20,
+"niveau": 100,
+"icone": 201,
+"ordre": 110,
+"objectifs": [
+[
+"Moon",
+"(EH>83,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"8383",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 571,
+"nom": "Kardorim (Zombie)",
+"description": "Vaincre Kardorim dans son donjon en validant le challenge [challenge,115].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 10,
+"icone": 299,
+"ordre": 2,
+"objectifs": [
+[
+"Kardorim",
+"(EH>115,0)"
+],
+[
+"Niveau 10",
+"PL>9"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"16525",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 574,
+"nom": "Kardorim (Premier)",
+"description": "Vaincre Kardorim dans son donjon en validant le challenge [challenge,117].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 10,
+"icone": 299,
+"ordre": 3,
+"objectifs": [
+[
+"Kardorim",
+"(EH>117,0)"
+],
+[
+"Niveau 10",
+"PL>9"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"16525",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 575,
+"nom": "Tournesol Affamé (Collant)",
+"description": "Vaincre le Tournesol Affamé en équipe dans son donjon en validant le challenge [challenge,116].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 20,
+"icone": 11,
+"ordre": 8,
+"objectifs": [
+[
+"Tournesol Affamé",
+"(EH>116,0)"
+],
+[
+"Niveau 20",
+"PL>19"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8157",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 576,
+"nom": "Tournesol Affamé (Premier)",
+"description": "Vaincre le Tournesol Affamé dans son donjon en validant le challenge [challenge,118].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 20,
+"icone": 11,
+"ordre": 9,
+"objectifs": [
+[
+"Tournesol Affamé",
+"(EH>118,0)"
+],
+[
+"Niveau 20",
+"PL>19"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8157",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 578,
+"nom": "Mob l'Éponge (Misanthrope)",
+"description": "Vaincre Mob l'Éponge en équipe dans son donjon en validant le challenge [challenge,119].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 20,
+"icone": 10,
+"ordre": 14,
+"objectifs": [
+[
+"Mob l'Éponge",
+"(EH>119,0)"
+],
+[
+"Niveau 20",
+"PL>19"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8682",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 657,
+"nom": "Mob l'Éponge (Versatile)",
+"description": "Vaincre Mob l'Éponge dans son donjon en validant le challenge [challenge,120].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 20,
+"icone": 10,
+"ordre": 15,
+"objectifs": [
+[
+"Mob l'Éponge",
+"(EH>120,0)"
+],
+[
+"Niveau 20",
+"PL>19"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8682",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 658,
+"nom": "Bouftou Royal (Prudent)",
+"description": "Vaincre le Bouftou Royal dans son donjon en validant le challenge [challenge,121].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 30,
+"icone": 3,
+"ordre": 20,
+"objectifs": [
+[
+"Bouftou Royal",
+"(EH>121,0)"
+],
+[
+"Niveau 30",
+"PL>29"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"886",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 659,
+"nom": "Bouftou Royal (Blitzkrieg)",
+"description": "Vaincre le Bouftou Royal dans son donjon en validant le challenge [challenge,122].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 30,
+"icone": 3,
+"ordre": 21,
+"objectifs": [
+[
+"Bouftou Royal",
+"(EH>122,0)"
+],
+[
+"Niveau 30",
+"PL>29"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"886",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 660,
+"nom": "Scarabosse Doré (Zombie)",
+"description": "Vaincre le Scarabosse Doré dans son donjon en validant le challenge [challenge,123].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 7,
+"ordre": 26,
+"objectifs": [
+[
+"Scarabosse Doré",
+"(EH>123,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8161",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 661,
+"nom": "Scarabosse Doré (Mains propres)",
+"description": "Vaincre le Scarabosse Doré dans son donjon en validant le challenge [challenge,124].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 7,
+"ordre": 27,
+"objectifs": [
+[
+"Scarabosse Doré",
+"(EH>124,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8161",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 662,
+"nom": "Batofu (Statue)",
+"description": "Vaincre Batofu dans son donjon en validant le challenge [challenge,125].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 9,
+"ordre": 32,
+"objectifs": [
+[
+"Batofu",
+"(EH>125,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8557",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 663,
+"nom": "Batofu (Versatile)",
+"description": "Vaincre Batofu dans son donjon en validant le challenge [challenge,126].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 9,
+"ordre": 33,
+"objectifs": [
+[
+"Batofu",
+"(EH>126,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8557",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 664,
+"nom": "Boostache (Misanthrope)",
+"description": "Vaincre Boostache en équipe dans son donjon en validant le challenge [challenge,127].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 13,
+"ordre": 38,
+"objectifs": [
+[
+"Boostache",
+"(EH>127,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"11815",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 665,
+"nom": "Boostache (Dernier)",
+"description": "Vaincre Boostache dans son donjon en validant le challenge [challenge,128].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 13,
+"ordre": 39,
+"objectifs": [
+[
+"Boostache",
+"(EH>128,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"11815",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 666,
+"nom": "Chafer Rōnin (Nomade)",
+"description": "Vaincre le Chafer Rōnin dans son donjon en validant le challenge [challenge,129].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 8,
+"ordre": 44,
+"objectifs": [
+[
+"Chafer Rōnin",
+"(EH>129,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"13096",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 667,
+"nom": "Chafer Rōnin (Premier)",
+"description": "Vaincre le Chafer Rōnin dans son donjon en validant le challenge [challenge,130].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 8,
+"ordre": 45,
+"objectifs": [
+[
+"Chafer Rōnin",
+"(EH>130,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"13096",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 668,
+"nom": "Bworkette (Misanthrope)",
+"description": "Vaincre la Bworkette en équipe dans son donjon en validant le challenge [challenge,131].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 4,
+"ordre": 62,
+"objectifs": [
+[
+"Bworkette",
+"(EH>131,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8388",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 669,
+"nom": "Bworkette (Premier)",
+"description": "Vaincre la Bworkette dans son donjon en validant le challenge [challenge,132].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 4,
+"ordre": 63,
+"objectifs": [
+[
+"Bworkette",
+"(EH>132,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8388",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 670,
+"nom": "Coffre des Forgerons (Nomade)",
+"description": "Vaincre le Coffre des Forgerons dans son donjon en validant le challenge [challenge,133].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 5,
+"ordre": 68,
+"objectifs": [
+[
+"Coffre des Forgerons",
+"(EH>133,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"13140",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 671,
+"nom": "Coffre des Forgerons (Premier)",
+"description": "Vaincre le Coffre des Forgerons dans son donjon en validant le challenge [challenge,134].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 5,
+"ordre": 69,
+"objectifs": [
+[
+"Coffre des Forgerons",
+"(EH>134,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"13140",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 672,
+"nom": "Shin Larve (Prudent)",
+"description": "Vaincre la Shin Larve dans son donjon en validant le challenge [challenge,135].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 6,
+"ordre": 74,
+"objectifs": [
+[
+"Shin Larve",
+"(EH>135,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8385",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 673,
+"nom": "Shin Larve (Versatile)",
+"description": "Vaincre la Shin Larve dans son donjon en validant le challenge [challenge,136].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 6,
+"ordre": 75,
+"objectifs": [
+[
+"Shin Larve",
+"(EH>136,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8385",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 674,
+"nom": "Corailleur Magistral (Hardi)",
+"description": "Vaincre le Corailleur Magistral dans son donjon en validant le challenge [challenge,137].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 12,
+"ordre": 80,
+"objectifs": [
+[
+"Corailleur Magistral",
+"(EH>137,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8738",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 675,
+"nom": "Corailleur Magistral (Blitzkrieg)",
+"description": "Vaincre le Corailleur Magistral dans son donjon en validant le challenge [challenge,138].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 12,
+"ordre": 81,
+"objectifs": [
+[
+"Corailleur Magistral",
+"(EH>138,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8738",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 676,
+"nom": "Kwakwa (Zombie)",
+"description": "Vaincre le Kwakwa dans son donjon en validant le challenge [challenge,139].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 14,
+"ordre": 86,
+"objectifs": [
+[
+"Kwakwa",
+"(EH>139,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"12016",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 677,
+"nom": "Kwakwa (Mains propres)",
+"description": "Vaincre le Kwakwa dans son donjon en validant le challenge [challenge,140].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 14,
+"ordre": 87,
+"objectifs": [
+[
+"Kwakwa",
+"(EH>140,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"12016",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 680,
+"nom": "Wa Wabbit (Hardi)",
+"description": "Vaincre le Wa Wabbit dans son donjon en validant le challenge [challenge,143].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 60,
+"icone": 23,
+"ordre": 1,
+"objectifs": [
+[
+"Wa Wabbit",
+"(EH>143,0)"
+],
+[
+"Niveau 60",
+"PL>59"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8397",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 681,
+"nom": "Wa Wabbit (Blitzkrieg)",
+"description": "Vaincre le Wa Wabbit dans son donjon en validant le challenge [challenge,144].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 60,
+"icone": 23,
+"ordre": 2,
+"objectifs": [
+[
+"Wa Wabbit",
+"(EH>144,0)"
+],
+[
+"Niveau 60",
+"PL>59"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8397",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 682,
+"nom": "Kanniboul Ebil (Zombie)",
+"description": "Vaincre le Kanniboul Ebil dans son donjon en validant le challenge [challenge,145].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 60,
+"icone": 22,
+"ordre": 7,
+"objectifs": [
+[
+"Kanniboul Ebil",
+"(EH>145,0)"
+],
+[
+"Niveau 60",
+"PL>59"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"11695",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 683,
+"nom": "Kanniboul Ebil (Premier)",
+"description": "Vaincre le Kanniboul Ebil dans son donjon en validant le challenge [challenge,146].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 60,
+"icone": 22,
+"ordre": 8,
+"objectifs": [
+[
+"Kanniboul Ebil",
+"(EH>146,0)"
+],
+[
+"Niveau 60",
+"PL>59"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"11695",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 684,
+"nom": "Blops Royaux (Duel)",
+"description": "Vaincre les 4 Blops Royaux en équipe dans leur donjon en validant le challenge [challenge,153].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 60,
+"icone": 19,
+"ordre": 13,
+"objectifs": [
+[
+"Blop Reinette Royal",
+"(EH>153,0)"
+],
+[
+"Blop Indigo Royal",
+"(EH>151,0)"
+],
+[
+"Blop Griotte Royal",
+"(EH>149,0)"
+],
+[
+"Blop Coco Royal",
+"(EH>147,0)"
+],
+[
+"Niveau 60",
+"PL>59"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"9388",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 685,
+"nom": "Blops Royaux (Prudent)",
+"description": "Vaincre les 4 Blops Royaux dans leur donjon en validant le challenge [challenge,154].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 60,
+"icone": 19,
+"ordre": 14,
+"objectifs": [
+[
+"Blop Reinette Royal",
+"(EH>154,0)"
+],
+[
+"Blop Indigo Royal",
+"(EH>152,0)"
+],
+[
+"Blop Griotte Royal",
+"(EH>150,0)"
+],
+[
+"Blop Coco Royal",
+"(EH>148,0)"
+],
+[
+"Niveau 60",
+"PL>59"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"9388",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 686,
+"nom": "Nelween (Dernier)",
+"description": "Vaincre Nelween dans son donjon en validant le challenge [challenge,155].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 70,
+"icone": 26,
+"ordre": 25,
+"objectifs": [
+[
+"Nelween",
+"(EH>155,0)"
+],
+[
+"Niveau 70",
+"PL>69"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"12076",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 687,
+"nom": "Nelween (Misanthrope)",
+"description": "Vaincre Nelween en équipe dans son donjon en validant le challenge [challenge,156].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 70,
+"icone": 26,
+"ordre": 26,
+"objectifs": [
+[
+"Nelween",
+"(EH>156,0)"
+],
+[
+"Niveau 70",
+"PL>69"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"12076",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 688,
+"nom": "Gourlo le Terrible (Premier)",
+"description": "Vaincre Gourlo le Terrible dans son donjon en validant le challenge [challenge,157].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 70,
+"icone": 16,
+"ordre": 31,
+"objectifs": [
+[
+"Gourlo le Terrible",
+"(EH>157,0)"
+],
+[
+"Niveau 70",
+"PL>69"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8758",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 689,
+"nom": "Gourlo le Terrible (Économe)",
+"description": "Vaincre Gourlo le Terrible dans son donjon en validant le challenge [challenge,158].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 70,
+"icone": 16,
+"ordre": 32,
+"objectifs": [
+[
+"Gourlo le Terrible",
+"(EH>158,0)"
+],
+[
+"Niveau 70",
+"PL>69"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8758",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 690,
+"nom": "Craqueleur Légendaire (Prudent)",
+"description": "Vaincre le Craqueleur Légendaire dans son donjon en validant le challenge [challenge,159].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 70,
+"icone": 21,
+"ordre": 37,
+"objectifs": [
+[
+"Craqueleur Légendaire",
+"(EH>159,0)"
+],
+[
+"Niveau 70",
+"PL>69"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8102",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 691,
+"nom": "Craqueleur Légendaire (Premier)",
+"description": "Vaincre le Craqueleur Légendaire dans son donjon en validant le challenge [challenge,160].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 70,
+"icone": 21,
+"ordre": 38,
+"objectifs": [
+[
+"Craqueleur Légendaire",
+"(EH>160,0)"
+],
+[
+"Niveau 70",
+"PL>69"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8102",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 692,
+"nom": "Gelées Royales (Duel)",
+"description": "Vaincre les Gelées Royales en équipe dans leur donjon en validant le challenge [challenge,161].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 60,
+"icone": 24,
+"ordre": 19,
+"objectifs": [
+[
+"Gelée Royale Menthe",
+"(EH>161,0)"
+],
+[
+"Gelée Royale Fraise",
+"(EH>163,0)"
+],
+[
+"Gelée Royale Citron",
+"(EH>165,0)"
+],
+[
+"Gelée Royale Bleuet",
+"(EH>167,0)"
+],
+[
+"Niveau 60",
+"PL>59"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"370",
+2
+],
+[
+"2437",
+2
+],
+[
+"2242",
+2
+],
+[
+"2241",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 693,
+"nom": "Gelées Royales (Collant)",
+"description": "Vaincre les Gelées Royales en équipe dans leur donjon en validant le challenge [challenge,162].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 60,
+"icone": 24,
+"ordre": 20,
+"objectifs": [
+[
+"Gelée Royale Menthe",
+"(EH>162,0)"
+],
+[
+"Gelée Royale Fraise",
+"(EH>164,0)"
+],
+[
+"Gelée Royale Citron",
+"(EH>166,0)"
+],
+[
+"Gelée Royale Bleuet",
+"(EH>168,0)"
+],
+[
+"Niveau 60",
+"PL>59"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"370",
+2
+],
+[
+"2437",
+2
+],
+[
+"2242",
+2
+],
+[
+"2241",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 696,
+"nom": "Abraknyde Ancestral (Nomade)",
+"description": "Vaincre l'Abraknyde Ancestral dans son donjon en validant le challenge [challenge,171].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 90,
+"icone": 18,
+"ordre": 72,
+"objectifs": [
+[
+"Abraknyde Ancestral",
+"(EH>171,0)"
+],
+[
+"Niveau 90",
+"PL>89"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8496",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 697,
+"nom": "Abraknyde Ancestral (Premier)",
+"description": "Vaincre l'Abraknyde Ancestral dans son donjon en validant le challenge [challenge,172].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 90,
+"icone": 18,
+"ordre": 73,
+"objectifs": [
+[
+"Abraknyde Ancestral",
+"(EH>172,0)"
+],
+[
+"Niveau 90",
+"PL>89"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8496",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 698,
+"nom": "Dragon Cochon (Hardi)",
+"description": "Vaincre le Dragon Cochon dans son donjon en validant le challenge [challenge,173].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 15,
+"ordre": 90,
+"objectifs": [
+[
+"Dragon Cochon",
+"(EH>173,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"2645",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 699,
+"nom": "Dragon Cochon (Versatile)",
+"description": "Vaincre le Dragon Cochon dans son donjon en validant le challenge [challenge,174].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 15,
+"ordre": 91,
+"objectifs": [
+[
+"Dragon Cochon",
+"(EH>174,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"2645",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 700,
+"nom": "Koulosse (Zombie)",
+"description": "Vaincre le Koulosse dans son donjon en validant le challenge [challenge,175].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 17,
+"ordre": 96,
+"objectifs": [
+[
+"Koulosse",
+"(EH>175,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8403",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 701,
+"nom": "Koulosse (Mains propres)",
+"description": "Vaincre le Koulosse dans son donjon en validant le challenge [challenge,176].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 17,
+"ordre": 97,
+"objectifs": [
+[
+"Koulosse",
+"(EH>176,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8403",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 702,
+"nom": "Meulou (Premier)",
+"description": "Vaincre le Meulou dans son donjon en validant le challenge [challenge,177].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 20,
+"ordre": 102,
+"objectifs": [
+[
+"Meulou",
+"(EH>177,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"2577",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 703,
+"nom": "Meulou (Hardi)",
+"description": "Vaincre le Meulou dans son donjon en validant le challenge [challenge,178].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 20,
+"ordre": 103,
+"objectifs": [
+[
+"Meulou",
+"(EH>178,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"2577",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 704,
+"nom": "Moon (Versatile)",
+"description": "Vaincre le Moon dans son donjon en validant le challenge [challenge,179].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 201,
+"ordre": 108,
+"objectifs": [
+[
+"Moon",
+"(EH>179,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8383",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 705,
+"nom": "Moon (Statue)",
+"description": "Vaincre le Moon dans son donjon en validant le challenge [challenge,180].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 201,
+"ordre": 109,
+"objectifs": [
+[
+"Moon",
+"(EH>180,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8383",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 766,
+"nom": "Main d'œuvre qualifiée",
+"description": "Atteindre le niveau 200 dans 2 métiers.",
+"categorie": "Métiers",
+"sousCategorie": "Général",
+"points": 10,
+"niveau": 200,
+"icone": 77,
+"ordre": 12,
+"objectifs": [],
+"recompense": {
+"xp": 1.0,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 767,
+"nom": "Huile de coude",
+"description": "Atteindre le niveau 200 dans 3 métiers.",
+"categorie": "Métiers",
+"sousCategorie": "Général",
+"points": 20,
+"niveau": 200,
+"icone": 77,
+"ordre": 13,
+"objectifs": [],
+"recompense": {
+"xp": 2.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 45,
+"nom": "Artisan honorable",
+"icone": 0
+}
+]
+}
+},
+{
+"id": 768,
+"nom": "\"Je m'appelle casse partout\"",
+"description": "Obtenir 10000 runes en concassant des objets.",
+"categorie": "Métiers",
+"sousCategorie": "Général",
+"points": 10,
+"niveau": 200,
+"icone": 169,
+"ordre": 3,
+"objectifs": [
+[
+"",
+"(Eu>0,9999)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 769,
+"nom": "Concastagne",
+"description": "Obtenir 100 runes en concassant des objets.",
+"categorie": "Métiers",
+"sousCategorie": "Général",
+"points": 1,
+"niveau": 200,
+"icone": 169,
+"ordre": 1,
+"objectifs": [
+[
+"",
+"(Eu>0,99)"
+]
+],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 770,
+"nom": "Ma petite entreprise",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Métiers",
+"sousCategorie": "Général",
+"points": 30,
+"niveau": 200,
+"icone": 175,
+"ordre": 14,
+"objectifs": [
+[
+"Désolé mais je t'avais en double",
+"(OA=124)"
+],
+[
+"\"Je m'appelle casse partout\"",
+"(OA=768)"
+],
+[
+"J'apporte la farine et toi le sel",
+"(OA=113)"
+],
+[
+"La manufacture",
+"(OA=123)"
+],
+[
+"Huile de coude",
+"(OA=767)"
+]
+],
+"recompense": {
+"xp": 3.0,
+"objets": [],
+"titres": [
+"La Machine"
+],
+"ornements": []
+}
+},
+{
+"id": 771,
+"nom": "Quelques poils au menton",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 10,
+"icone": 82,
+"ordre": 6,
+"objectifs": [
+[
+"Kardorim (Zombie)",
+"(OA=571)"
+],
+[
+"Kardorim (Premier)",
+"(OA=574)"
+],
+[
+"Kardorim (Duo)",
+"(OA=487)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"16525",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 772,
+"nom": "Un petit coup de faux en passant",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 20,
+"icone": 82,
+"ordre": 12,
+"objectifs": [
+[
+"Tournesol Affamé (Collant)",
+"(OA=575)"
+],
+[
+"Tournesol Affamé (Premier)",
+"(OA=576)"
+],
+[
+"Tournesol Affamé (Duo)",
+"(OA=488)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8157",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 773,
+"nom": "J'écrase ton château de sable",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 20,
+"icone": 82,
+"ordre": 18,
+"objectifs": [
+[
+"Mob l'Éponge (Misanthrope)",
+"(OA=578)"
+],
+[
+"Mob l'Éponge (Versatile)",
+"(OA=657)"
+],
+[
+"Mob l'Éponge (Duo)",
+"(OA=489)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8682",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 774,
+"nom": "Ceux qui bavent méritent de trépasser",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 30,
+"icone": 82,
+"ordre": 24,
+"objectifs": [
+[
+"Bouftou Royal (Prudent)",
+"(OA=658)"
+],
+[
+"Bouftou Royal (Blitzkrieg)",
+"(OA=659)"
+],
+[
+"Bouftou Royal (Duo)",
+"(OA=490)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"886",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 775,
+"nom": "Effeuillage doré",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 82,
+"ordre": 30,
+"objectifs": [
+[
+"Scarabosse Doré (Zombie)",
+"(OA=660)"
+],
+[
+"Scarabosse Doré (Mains propres)",
+"(OA=661)"
+],
+[
+"Scarabosse Doré (Duo)",
+"(OA=491)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8161",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 776,
+"nom": "Poids plume",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 82,
+"ordre": 36,
+"objectifs": [
+[
+"Batofu (Statue)",
+"(OA=662)"
+],
+[
+"Batofu (Versatile)",
+"(OA=663)"
+],
+[
+"Batofu (Duo)",
+"(OA=492)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8557",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 777,
+"nom": "SOS Fantômes",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 82,
+"ordre": 42,
+"objectifs": [
+[
+"Boostache (Misanthrope)",
+"(OA=664)"
+],
+[
+"Boostache (Dernier)",
+"(OA=665)"
+],
+[
+"Boostache (Duo)",
+"(OA=493)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"11815",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 778,
+"nom": "Ils n'ont pas fait de vieux os",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 82,
+"ordre": 48,
+"objectifs": [
+[
+"Chafer Rōnin (Nomade)",
+"(OA=666)"
+],
+[
+"Chafer Rōnin (Premier)",
+"(OA=667)"
+],
+[
+"Chafer Rōnin (Duo)",
+"(OA=494)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"13096",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 779,
+"nom": "Moâ écrabouiller toâ",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 82,
+"ordre": 66,
+"objectifs": [
+[
+"Bworkette (Misanthrope)",
+"(OA=668)"
+],
+[
+"Bworkette (Premier)",
+"(OA=669)"
+],
+[
+"Bworkette (Duo)",
+"(OA=495)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8388",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 780,
+"nom": "À bout de forges",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 82,
+"ordre": 72,
+"objectifs": [
+[
+"Coffre des Forgerons (Nomade)",
+"(OA=670)"
+],
+[
+"Coffre des Forgerons (Premier)",
+"(OA=671)"
+],
+[
+"Coffre des Forgerons (Duo)",
+"(OA=496)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"13140",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 781,
+"nom": "S'en larver les mains",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 82,
+"ordre": 78,
+"objectifs": [
+[
+"Shin Larve (Prudent)",
+"(OA=672)"
+],
+[
+"Shin Larve (Versatile)",
+"(OA=673)"
+],
+[
+"Shin Larve (Duo)",
+"(OA=497)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8385",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 782,
+"nom": "La grande barrière du Corailleur",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 82,
+"ordre": 84,
+"objectifs": [
+[
+"Corailleur Magistral (Hardi)",
+"(OA=674)"
+],
+[
+"Corailleur Magistral (Blitzkrieg)",
+"(OA=675)"
+],
+[
+"Corailleur Magistral (Duo)",
+"(OA=498)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8738",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 783,
+"nom": "Nidification annulée",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 82,
+"ordre": 90,
+"objectifs": [
+[
+"Kwakwa (Zombie)",
+"(OA=676)"
+],
+[
+"Kwakwa (Mains propres)",
+"(OA=677)"
+],
+[
+"Kwakwa (Duo)",
+"(OA=499)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"12016",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 785,
+"nom": "Les petits d'abord",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 82,
+"ordre": 98,
+"objectifs": [
+[
+"Quelques poils au menton",
+"(OA=771)"
+],
+[
+"Un petit coup de faux en passant",
+"(OA=772)"
+],
+[
+"J'écrase ton château de sable",
+"(OA=773)"
+],
+[
+"Ceux qui bavent méritent de trépasser",
+"(OA=774)"
+],
+[
+"Effeuillage doré",
+"(OA=775)"
+],
+[
+"Poids plume",
+"(OA=776)"
+],
+[
+"SOS Fantômes",
+"(OA=777)"
+],
+[
+"Ils n'ont pas fait de vieux os",
+"(OA=778)"
+],
+[
+"Vous n'êtes que des insectes",
+"(OA=1183)"
+],
+[
+"Moâ écrabouiller toâ",
+"(OA=779)"
+],
+[
+"À bout de forges",
+"(OA=780)"
+],
+[
+"S'en larver les mains",
+"(OA=781)"
+],
+[
+"La grande barrière du Corailleur",
+"(OA=782)"
+],
+[
+"Nidification annulée",
+"(OA=783)"
+],
+[
+"À deux griffes de dégobiller",
+"(OA=5219)"
+],
+[
+"Nos voisins les Douziens",
+"(OA=5917)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 27,
+"nom": "Batailleur honorable",
+"icone": 0
+}
+]
+}
+},
+{
+"id": 786,
+"nom": "Wab wab",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 60,
+"icone": 82,
+"ordre": 5,
+"objectifs": [
+[
+"Wa Wabbit (Hardi)",
+"(OA=680)"
+],
+[
+"Wa Wabbit (Blitzkrieg)",
+"(OA=681)"
+],
+[
+"Wa Wabbit (Duo)",
+"(OA=501)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8397",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 787,
+"nom": "J'ai dégusté son foie avec des fèves au beurre",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 60,
+"icone": 82,
+"ordre": 11,
+"objectifs": [
+[
+"Kanniboul Ebil (Zombie)",
+"(OA=682)"
+],
+[
+"Kanniboul Ebil (Premier)",
+"(OA=683)"
+],
+[
+"Kanniboul Ebil (Duo)",
+"(OA=502)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"11695",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 788,
+"nom": "Tout a une fin",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 60,
+"icone": 82,
+"ordre": 17,
+"objectifs": [
+[
+"Blops Royaux (Duel)",
+"(OA=684)"
+],
+[
+"Blops Royaux (Prudent)",
+"(OA=685)"
+],
+[
+"Blops Royaux (Duo)",
+"(OA=503)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"9388",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 789,
+"nom": "Entre chienchien et mulou",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 70,
+"icone": 82,
+"ordre": 29,
+"objectifs": [
+[
+"Nelween (Dernier)",
+"(OA=686)"
+],
+[
+"Nelween (Misanthrope)",
+"(OA=687)"
+],
+[
+"Nelween (Duo)",
+"(OA=504)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"12076",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 790,
+"nom": "Les aventuriers de l'arche d'Otomaï",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 70,
+"icone": 82,
+"ordre": 35,
+"objectifs": [
+[
+"Gourlo le Terrible (Premier)",
+"(OA=688)"
+],
+[
+"Gourlo le Terrible (Econome)",
+"(OA=689)"
+],
+[
+"Gourlo le Terrible (Duo)",
+"(OA=505)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8758",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 791,
+"nom": "Géologie expéditive",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 70,
+"icone": 82,
+"ordre": 41,
+"objectifs": [
+[
+"Craqueleur Légendaire (Prudent)",
+"(OA=690)"
+],
+[
+"Craqueleur Légendaire (Premier)",
+"(OA=691)"
+],
+[
+"Craqueleur Légendaire (Duo)",
+"(OA=506)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8102",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 792,
+"nom": "Antigelées",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 60,
+"icone": 82,
+"ordre": 23,
+"objectifs": [
+[
+"Gelées Royales (Duel)",
+"(OA=692)"
+],
+[
+"Gelées Royales (Collant)",
+"(OA=693)"
+],
+[
+"Gelées Royales (Duo)",
+"(OA=507)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"370",
+2
+],
+[
+"2437",
+2
+],
+[
+"2242",
+2
+],
+[
+"2241",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 794,
+"nom": "Abrakadabra",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 90,
+"icone": 82,
+"ordre": 76,
+"objectifs": [
+[
+"Abraknyde Ancestral (Nomade)",
+"(OA=696)"
+],
+[
+"Abraknyde Ancestral (Premier)",
+"(OA=697)"
+],
+[
+"Abraknyde Ancestral (Duo)",
+"(OA=509)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8496",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 795,
+"nom": "Tout est bon dans le cochon",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 82,
+"ordre": 94,
+"objectifs": [
+[
+"Dragon Cochon (Hardi)",
+"(OA=698)"
+],
+[
+"Dragon Cochon (Versatile)",
+"(OA=699)"
+],
+[
+"Dragon Cochon (Duo)",
+"(OA=510)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"2645",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 796,
+"nom": "Dans la brume éclectique",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 82,
+"ordre": 100,
+"objectifs": [
+[
+"Koulosse (Zombie)",
+"(OA=700)"
+],
+[
+"Koulosse (Mains propres)",
+"(OA=701)"
+],
+[
+"Koulosse (Duo)",
+"(OA=511)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8403",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 797,
+"nom": "Bovidé enragé",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 82,
+"ordre": 106,
+"objectifs": [
+[
+"Meulou (Premier)",
+"(OA=702)"
+],
+[
+"Meulou (Hardi)",
+"(OA=703)"
+],
+[
+"Meulou (Duo)",
+"(OA=512)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"2577",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 798,
+"nom": "Moon dans la brume",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 82,
+"ordre": 112,
+"objectifs": [
+[
+"Moon (Versatile)",
+"(OA=704)"
+],
+[
+"Moon (Statue)",
+"(OA=705)"
+],
+[
+"Moon (Duo)",
+"(OA=513)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8383",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 799,
+"nom": "Acharnement tactique",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 82,
+"ordre": 132,
+"objectifs": [
+[
+"Wab wab",
+"(OA=786)"
+],
+[
+"J'ai dégusté son foie avec des fèves au beurre",
+"(OA=787)"
+],
+[
+"Tout a une fin",
+"(OA=788)"
+],
+[
+"Entre chienchien et mulou",
+"(OA=789)"
+],
+[
+"Les aventuriers de l'arche d'Otomaï",
+"(OA=790)"
+],
+[
+"Géologie expéditive",
+"(OA=791)"
+],
+[
+"Antigelées",
+"(OA=792)"
+],
+[
+"Marcher à la cawotte",
+"(OA=1007)"
+],
+[
+"Fromage ou désert",
+"(OA=1535)"
+],
+[
+"Les pieds dans la toile",
+"(OA=1194)"
+],
+[
+"Abrakadabra",
+"(OA=794)"
+],
+[
+"Un trésor bien enfoui",
+"(OA=1406)"
+],
+[
+"Sous le plus grand chapiteau du monde",
+"(OA=1599)"
+],
+[
+"Tout est bon dans le cochon",
+"(OA=795)"
+],
+[
+"Dans la brume éclectique",
+"(OA=796)"
+],
+[
+"Bovidé enragé",
+"(OA=797)"
+],
+[
+"Moon dans la brume",
+"(OA=798)"
+],
+[
+"Théâtre des marionettes",
+"(OA=1017)"
+],
+[
+"Rompre Malléfisk",
+"(OA=1092)"
+],
+[
+"Baptême du feu",
+"(OA=2122)"
+],
+[
+"Un tavernier peu commode",
+"(OA=2121)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 28,
+"nom": "Batailleur respectable",
+"icone": 0
+}
+]
+}
+},
+{
+"id": 840,
+"nom": "Dans les nuages",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Exploration",
+"sousCategorie": "Incarnam",
+"points": 10,
+"niveau": 1,
+"icone": 82,
+"ordre": 11,
+"objectifs": [
+[
+"Lac",
+"(OA=414)"
+],
+[
+"Champs",
+"(OA=415)"
+],
+[
+"Cimetière",
+"(OA=416)"
+],
+[
+"Forêt",
+"(OA=417)"
+],
+[
+"Mine",
+"(OA=419)"
+],
+[
+"Pâturages",
+"(OA=420)"
+],
+[
+"Route des âmes",
+"(OA=422)"
+],
+[
+"Taverne",
+"(OA=423)"
+],
+[
+"Temple Céleste",
+"(OA=424)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 841,
+"nom": "Terre des novices, terre de nos vices",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Exploration",
+"sousCategorie": "Astrub",
+"points": 10,
+"niveau": 40,
+"icone": 82,
+"ordre": 13,
+"objectifs": [
+[
+"Calanques d'Astrub",
+"(OA=339)"
+],
+[
+"Carrière d'Astrub",
+"(OA=344)"
+],
+[
+"Champs d'Astrub",
+"(OA=340)"
+],
+[
+"Cimetière d'Astrub",
+"(OA=249)"
+],
+[
+"Cité d'Astrub",
+"(OA=341)"
+],
+[
+"Égouts d'Astrub",
+"(OA=360)"
+],
+[
+"Forêt d'Astrub",
+"(OA=345)"
+],
+[
+"Prairies d'Astrub",
+"(OA=358)"
+],
+[
+"Souterrains d'Astrub",
+"(OA=359)"
+],
+[
+"Tainéla",
+"(OA=281)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 842,
+"nom": "Promenons-nous dans les bois",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 40,
+"icone": 82,
+"ordre": 41,
+"objectifs": [
+[
+"Bord de la forêt maléfique",
+"(OA=236)"
+],
+[
+"Clairière de Brouce Boulgour",
+"(OA=239)"
+],
+[
+"Forêt d'Amakna",
+"(OA=242)"
+],
+[
+"Forêt Maléfique",
+"(OA=243)"
+],
+[
+"Millifutaie",
+"(OA=244)"
+],
+[
+"Orée de la forêt des Abraknydes",
+"(OA=283)"
+],
+[
+"Bois des Arak-haï",
+"(OA=284)"
+],
+[
+"Forêt Sombre",
+"(OA=285)"
+]
+],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 843,
+"nom": "Je prends quelques oeufs et je repars",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 80,
+"icone": 82,
+"ordre": 42,
+"objectifs": [
+[
+"La presqu'île des Dragoeufs",
+"(OA=246)"
+],
+[
+"Sanctuaire des Dragoeufs",
+"(OA=263)"
+],
+[
+"Souterrains des Dragoeufs",
+"(OA=265)"
+],
+[
+"Village des Dragoeufs",
+"(OA=270)"
+]
+],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 844,
+"nom": "Visite des autochtones",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 50,
+"icone": 82,
+"ordre": 43,
+"objectifs": [
+[
+"Campement des Bworks",
+"(OA=237)"
+],
+[
+"Campement des Gobelins",
+"(OA=238)"
+],
+[
+"Montagne des Craqueleurs",
+"(OA=245)"
+],
+[
+"Péninsule des gelées",
+"(OA=247)"
+],
+[
+"Coin des Boos",
+"(OA=252)"
+],
+[
+"Coin des Bouftous",
+"(OA=253)"
+],
+[
+"Montagne basse des Craqueleurs",
+"(OA=257)"
+],
+[
+"Plaine des Scarafeuilles",
+"(OA=259)"
+],
+[
+"Territoire des Bandits",
+"(OA=267)"
+],
+[
+"Territoire des Porcos",
+"(OA=268)"
+],
+[
+"Village des Bworks",
+"(OA=269)"
+]
+],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 845,
+"nom": "Architecture locale",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 40,
+"icone": 82,
+"ordre": 44,
+"objectifs": [
+[
+"Château d'Amakna",
+"(OA=250)"
+],
+[
+"Cimetière",
+"(OA=251)"
+],
+[
+"Village d'Amakna",
+"(OA=255)"
+],
+[
+"Cryptes",
+"(OA=256)"
+],
+[
+"Souterrains",
+"(OA=264)"
+],
+[
+"Cloaque d'Amakna",
+"(OA=266)"
+],
+[
+"Prison de Madrestam",
+"(OA=280)"
+],
+[
+"Passage vers Brâkmar",
+"(OA=258)"
+]
+],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 846,
+"nom": "Les pieds dans l'eau",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 40,
+"icone": 82,
+"ordre": 45,
+"objectifs": [
+[
+"Côte d'Asse",
+"(OA=240)"
+],
+[
+"Marécages d'Amakna",
+"(OA=254)"
+],
+[
+"Port de Madrestam",
+"(OA=260)"
+],
+[
+"Rivage sufokien",
+"(OA=261)"
+],
+[
+"Rivière Kawaii",
+"(OA=262)"
+],
+[
+"Sufokia",
+"(OA=282)"
+],
+[
+"Bassin des Muldos",
+"OA=9024"
+]
+],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 847,
+"nom": "Douce campagne",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 30,
+"icone": 82,
+"ordre": 46,
+"objectifs": [
+[
+"Campagne d'Amakna",
+"(OA=241)"
+],
+[
+"Champ des Ingalsse",
+"(OA=248)"
+]
+],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 848,
+"nom": "Voyage, voyage",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 10,
+"niveau": 80,
+"icone": 82,
+"ordre": 47,
+"objectifs": [
+[
+"Promenons-nous dans les bois",
+"(OA=842)"
+],
+[
+"Je prends quelques oeufs et je repars",
+"(OA=843)"
+],
+[
+"Visite des autochtones",
+"(OA=844)"
+],
+[
+"Architecture locale",
+"(OA=845)"
+],
+[
+"Les pieds dans l'eau",
+"(OA=846)"
+],
+[
+"Douce campagne",
+"(OA=847)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 862,
+"nom": "Élite des bacs à sable",
+"description": "Obtenir 1337 points de Succès.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 0,
+"niveau": 200,
+"icone": 82,
+"ordre": 13,
+"objectifs": [
+[
+"",
+"(Oa>1336)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 863,
+"nom": "On commence à vous respecter",
+"description": "Obtenir 4000 points de Succès.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 0,
+"niveau": 200,
+"icone": 82,
+"ordre": 16,
+"objectifs": [
+[
+"",
+"(Oa>3999)"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 16,
+"nom": "Score honorable",
+"icone": 0
+}
+]
+}
+},
+{
+"id": 864,
+"nom": "Un ami d'un ami a parlé de vous",
+"description": "Obtenir 6000 points de Succès.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 0,
+"niveau": 200,
+"icone": 82,
+"ordre": 17,
+"objectifs": [
+[
+"",
+"(Oa>5999)"
+]
+],
+"recompense": {
+"xp": 3.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 17,
+"nom": "Score respectable",
+"icone": 1
+}
+]
+}
+},
+{
+"id": 865,
+"nom": "Vous montrez la lune, ils regardent le doigt",
+"description": "Obtenir 8000 points de Succès.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 0,
+"niveau": 200,
+"icone": 82,
+"ordre": 18,
+"objectifs": [
+[
+"",
+"(Oa>7999)"
+]
+],
+"recompense": {
+"xp": 4.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 18,
+"nom": "Score imposant",
+"icone": 2
+}
+]
+}
+},
+{
+"id": 866,
+"nom": "Les grandes choses ont de petits commencements",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 20,
+"niveau": 50,
+"icone": 82,
+"ordre": 97,
+"objectifs": [
+[
+"Crypte de Kardorim",
+"(OA=33)"
+],
+[
+"Donjons des Champs",
+"(OA=40)"
+],
+[
+"Donjon Ensablé",
+"(OA=54)"
+],
+[
+"Donjon des Bouftous",
+"(OA=37)"
+],
+[
+"Donjon des Scarafeuilles",
+"(OA=48)"
+],
+[
+"Donjon des Tofus",
+"(OA=50)"
+],
+[
+"Maison Fantôme",
+"(OA=66)"
+],
+[
+"Donjon des Squelettes",
+"(OA=49)"
+],
+[
+"Cache de Kankreblath",
+"(OA=1184)"
+],
+[
+"Donjon des Bworks",
+"(OA=38)"
+],
+[
+"Donjon des Forgerons",
+"(OA=43)"
+],
+[
+"Donjon des Larves",
+"(OA=34)"
+],
+[
+"Grotte Hesque",
+"(OA=62)"
+],
+[
+"Nid du Kwakwa",
+"(OA=67)"
+],
+[
+"Akadémie des Gobs",
+"(OA=5213)"
+],
+[
+"Refuge Sylvestre",
+"(OA=5911)"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 22,
+"nom": "Baroudeur honorable",
+"icone": 0
+}
+]
+}
+},
+{
+"id": 867,
+"nom": "Un pas devant l'autre",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 20,
+"niveau": 100,
+"icone": 82,
+"ordre": 131,
+"objectifs": [
+[
+"Château du Wa Wabbit",
+"(OA=57)"
+],
+[
+"Village Kanniboul",
+"(OA=56)"
+],
+[
+"Donjon des Blops",
+"(OA=36)"
+],
+[
+"Laboratoire de Brumen Tinctorias",
+"(OA=64)"
+],
+[
+"Cale de l'Arche d'Otomaï",
+"(OA=26)"
+],
+[
+"Pitons Rocheux des Craqueleurs",
+"(OA=41)"
+],
+[
+"Gelaxième Dimension",
+"(OA=60)"
+],
+[
+"Terrier du Wa Wabbit",
+"(OA=1003)"
+],
+[
+"Cimetière des Mastodontes",
+"(OA=1529)"
+],
+[
+"Antre de la Reine Nyée",
+"(OA=1195)"
+],
+[
+"Domaine Ancestral",
+"(OA=35)"
+],
+[
+"Bateau du Chouque",
+"(OA=1398)"
+],
+[
+"Chapiteau des Magik Riktus",
+"(OA=1593)"
+],
+[
+"Antre du Dragon Cochon",
+"(OA=22)"
+],
+[
+"Caverne du Koulosse",
+"(OA=29)"
+],
+[
+"Tanière du Meulou",
+"(OA=39)"
+],
+[
+"Arbre de Moon",
+"(OA=485)"
+],
+[
+"Théâtre de Dramak",
+"(OA=1013)"
+],
+[
+"Fabrique de Malléfisk",
+"(OA=1088)"
+],
+[
+"Épreuve de Draegnerys",
+"(OA=2128)"
+],
+[
+"Repaire du Kharnozor",
+"(OA=2115)"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 23,
+"nom": "Baroudeur respectable",
+"icone": 0
+}
+]
+}
+},
+{
+"id": 1003,
+"nom": "Terrier du Wa Wabbit",
+"description": "Vaincre le Wa Wobot dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 80,
+"icone": 254,
+"ordre": 53,
+"objectifs": [
+[
+"Wa Wobot",
+"(EM>3460,0,d)"
+],
+[
+"Niveau 80",
+"PL>79"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"14468",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1004,
+"nom": "Wa Wobot (Mains Propres)",
+"description": "Vaincre le Wa Wobot dans son donjon en validant le challenge [challenge,288].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 80,
+"icone": 254,
+"ordre": 54,
+"objectifs": [
+[
+"Wa Wobot",
+"(EH>288,0)"
+],
+[
+"Niveau 80",
+"PL>79"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"14468",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1005,
+"nom": "Wa Wobot (Blitzkrieg)",
+"description": "Vaincre le Wa Wobot dans son donjon en validant le challenge [challenge,289].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 80,
+"icone": 254,
+"ordre": 55,
+"objectifs": [
+[
+"Wa Wobot",
+"(EH>289,0)"
+],
+[
+"Niveau 80",
+"PL>79"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"14468",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1006,
+"nom": "Wa Wobot (Duo)",
+"description": "Vaincre le Wa Wobot dans son donjon en validant le challenge [challenge,290].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 20,
+"niveau": 80,
+"icone": 254,
+"ordre": 56,
+"objectifs": [
+[
+"Wa Wobot",
+"(EH>290,0)"
+],
+[
+"Niveau 80",
+"PL>79"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"14468",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1007,
+"nom": "Marcher à la cawotte",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 80,
+"icone": 82,
+"ordre": 58,
+"objectifs": [
+[
+"Wa Wobot (Mains Propres)",
+"(OA=1004)"
+],
+[
+"Wa Wobot (Blitzkrieg)",
+"(OA=1005)"
+],
+[
+"Wa Wobot (Duo)",
+"(OA=1006)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"14468",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1008,
+"nom": "Gawde du Wa",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Île de la cawotte",
+"points": 10,
+"niveau": 80,
+"icone": 253,
+"ordre": 1,
+"objectifs": [
+[
+"Black Wo Wabbit",
+"(Ef>3461,0)"
+],
+[
+"Wobot Kiafin",
+"(Ef>3462,0)"
+],
+[
+"Blanc Pa Wabbit",
+"(Ef>3463,0)"
+],
+[
+"Tiwobot",
+"(Ef>3474,0)"
+],
+[
+"Wobot",
+"(Ef>181,0)"
+],
+[
+"Niveau 80",
+"PL>79"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"14469",
+10
+],
+[
+"14471",
+10
+],
+[
+"14472",
+10
+],
+[
+"14490",
+10
+],
+[
+"14470",
+10
+],
+[
+"14473",
+1
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1013,
+"nom": "Théâtre de Dramak",
+"description": "Vaincre le Maître des Pantins dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 255,
+"ordre": 113,
+"objectifs": [
+[
+"Maître des Pantins",
+"(EM>3476,0,d)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"14518",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1014,
+"nom": "Maître des Pantins (Statue)",
+"description": "Vaincre le Maître des Pantins dans son donjon en validant le challenge [challenge,291].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 255,
+"ordre": 114,
+"objectifs": [
+[
+"Maître des Pantins",
+"(EH>291,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"14518",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1015,
+"nom": "Maître des Pantins (Mains propres)",
+"description": "Vaincre le Maître des Pantins dans son donjon en validant le challenge [challenge,292].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 255,
+"ordre": 115,
+"objectifs": [
+[
+"Maître des Pantins",
+"(EH>292,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"14518",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1016,
+"nom": "Maître des Pantins (Duo)",
+"description": "Vaincre le Maître des Pantins dans son donjon en validant le challenge [challenge,293].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 20,
+"niveau": 100,
+"icone": 255,
+"ordre": 116,
+"objectifs": [
+[
+"Maître des Pantins",
+"(EH>293,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"14518",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1017,
+"nom": "Théâtre de marionnettes",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 82,
+"ordre": 118,
+"objectifs": [
+[
+"Maître des Pantins (Statue)",
+"(OA=1014)"
+],
+[
+"Maître des Pantins (Mains propres)",
+"(OA=1015)"
+],
+[
+"Maître des Pantins (Duo)",
+"(OA=1016)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"14518",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1039,
+"nom": "Base des Justiciers",
+"description": "Découvrir la zone \"Base des Justiciers\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 30,
+"icone": 176,
+"ordre": 39,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1052,
+"nom": "Une petite renommée",
+"description": "Obtenir 500 points de Succès.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 0,
+"niveau": 200,
+"icone": 82,
+"ordre": 11,
+"objectifs": [
+[
+"",
+"(Oa>499)"
+]
+],
+"recompense": {
+"xp": 0.5,
+"objets": [
+[
+"28282",
+1
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1053,
+"nom": "Un peu de compagnie",
+"description": "Obtenir 1000 points de Succès.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 0,
+"niveau": 200,
+"icone": 82,
+"ordre": 12,
+"objectifs": [
+[
+"",
+"(Oa>999)"
+]
+],
+"recompense": {
+"xp": 0.5,
+"objets": [
+[
+"28289",
+1
+],
+[
+"28288",
+1
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1069,
+"nom": "Wabbits mutants",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Île de la cawotte",
+"points": 10,
+"niveau": 120,
+"icone": 269,
+"ordre": 2,
+"objectifs": [
+[
+"Wabbit Vampire",
+"(Ef>3464,0)"
+],
+[
+"Cawotman",
+"(Ef>3465,0)"
+],
+[
+"Wabbit Fluo",
+"(Ef>3466,0)"
+],
+[
+"Wabbit Céphale",
+"(Ef>3467,0)"
+],
+[
+"Wabbit Garou",
+"(Ef>3468,0)"
+],
+[
+"Niveau 120",
+"PL>119"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"14479",
+1
+],
+[
+"14477",
+10
+],
+[
+"14475",
+10
+],
+[
+"14476",
+10
+],
+[
+"14478",
+10
+],
+[
+"14474",
+10
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1088,
+"nom": "Fabrique de Malléfisk",
+"description": "Vaincre Malléfisk dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 264,
+"ordre": 119,
+"objectifs": [
+[
+"Malléfisk",
+"(EM>3652,0,d)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"15164",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1089,
+"nom": "Malléfisk (Circulez)",
+"description": "Vaincre Malléfisk dans son donjon en validant le challenge [challenge,312].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 264,
+"ordre": 120,
+"objectifs": [
+[
+"Malléfisk",
+"(EH>312,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"15164",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1090,
+"nom": "Malléfisk (Blitzkrieg)",
+"description": "Vaincre Malléfisk dans son donjon en validant le challenge [challenge,313].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 264,
+"ordre": 121,
+"objectifs": [
+[
+"Malléfisk",
+"(EH>313,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"15164",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1091,
+"nom": "Malléfisk (Duo)",
+"description": "Vaincre Malléfisk dans son donjon en validant le challenge [challenge,314].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 20,
+"niveau": 100,
+"icone": 264,
+"ordre": 122,
+"objectifs": [
+[
+"Malléfisk",
+"(EH>314,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"15164",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1092,
+"nom": "Rompre Malléfisk",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 82,
+"ordre": 124,
+"objectifs": [
+[
+"Malléfisk (Circulez)",
+"(OA=1089)"
+],
+[
+"Malléfisk (Blitzkrieg)",
+"(OA=1090)"
+],
+[
+"Malléfisk (Duo)",
+"(OA=1091)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"15164",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1109,
+"nom": "Enutrosor",
+"description": "Obtenir les succès suivants.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 30,
+"niveau": 200,
+"icone": 273,
+"ordre": 26,
+"objectifs": [
+[
+"La cité d'or",
+"(OA=1100)"
+],
+[
+"Ruée vers l'or",
+"(OA=1096)"
+],
+[
+"Rompre Malléfisk",
+"(OA=1092)"
+],
+[
+"Le Musée des Phorreurs",
+"(OA=1087)"
+],
+[
+"Votre Seniorie",
+"(OA=1082)"
+],
+[
+"Le pays des Vermeils",
+"(OA=1077)"
+]
+],
+"recompense": {
+"xp": 3.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 58,
+"nom": "Visiteur d'Enutrosor",
+"icone": 2
+}
+]
+}
+},
+{
+"id": 1132,
+"nom": "Srambad",
+"description": "Obtenir les succès suivants.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 30,
+"niveau": 200,
+"icone": 273,
+"ordre": 27,
+"objectifs": [
+[
+"La cité des voleurs",
+"(OA=1113)"
+],
+[
+"Malfracturés",
+"(OA=1131)"
+],
+[
+"Grand Ekarlatte",
+"(OA=1127)"
+],
+[
+"Désintoxoliathisation",
+"(OA=1122)"
+],
+[
+"Voligarchie",
+"(OA=1117)"
+],
+[
+"Le royaume des ombres",
+"(OA=1107)"
+]
+],
+"recompense": {
+"xp": 3.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 59,
+"nom": "Visiteur de Srambad",
+"icone": 16
+}
+]
+}
+},
+{
+"id": 1133,
+"nom": "Vous. Et les autres",
+"description": "Obtenir 10000 points de Succès.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 0,
+"niveau": 200,
+"icone": 82,
+"ordre": 19,
+"objectifs": [
+[
+"",
+"(Oa>9999)"
+]
+],
+"recompense": {
+"xp": 5.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 60,
+"nom": "Score remarquable",
+"icone": 3
+}
+]
+}
+},
+{
+"id": 1175,
+"nom": "Xélorium",
+"description": "Obtenir les succès suivants.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 30,
+"niveau": 200,
+"icone": 273,
+"ordre": 28,
+"objectifs": [
+[
+"Sa place est dans un musée",
+"(OA=1179)"
+],
+[
+"Passer le temps",
+"(OA=1174)"
+],
+[
+"Un passé trouble",
+"(OA=1170)"
+],
+[
+"Six fois neuf",
+"(OA=1165)"
+],
+[
+"Vortexicomane",
+"(OA=1160)"
+],
+[
+"Le domaine des possibles",
+"(OA=1147)"
+]
+],
+"recompense": {
+"xp": 3.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 61,
+"nom": "Visiteur du Xélorium",
+"icone": 17
+}
+]
+}
+},
+{
+"id": 1180,
+"nom": "Kankreblath (Duo)",
+"description": "Vaincre Kankreblath dans son donjon en validant le challenge [challenge,341].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 20,
+"niveau": 40,
+"icone": 291,
+"ordre": 52,
+"objectifs": [
+[
+"Kankreblath",
+"(EH>341,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"16002",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1181,
+"nom": "Kankreblath (Collant)",
+"description": "Vaincre Kankreblath en équipe dans son donjon en validant le challenge [challenge,342].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 291,
+"ordre": 51,
+"objectifs": [
+[
+"Kankreblath",
+"(EH>342,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"16002",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1182,
+"nom": "Kankreblath (Dernier)",
+"description": "Vaincre Kankreblath dans son donjon en validant le challenge [challenge,343].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 291,
+"ordre": 50,
+"objectifs": [
+[
+"Kankreblath",
+"(EH>343,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"16002",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1183,
+"nom": "Vous n'êtes que des insectes",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 82,
+"ordre": 54,
+"objectifs": [
+[
+"Kankreblath (Dernier)",
+"(OA=1182)"
+],
+[
+"Kankreblath (Collant)",
+"(OA=1181)"
+],
+[
+"Kankreblath (Duo)",
+"(OA=1180)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"16002",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1184,
+"nom": "Cache de Kankreblath",
+"description": "Vaincre Kankreblath dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 291,
+"ordre": 49,
+"objectifs": [
+[
+"Kankreblath",
+"(EM>3945,0,d)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"16002",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1185,
+"nom": "Vilinsekts",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Astrub",
+"points": 10,
+"niveau": 40,
+"icone": 292,
+"ordre": 9,
+"objectifs": [
+[
+"Cafarcher",
+"(Ef>3940,0)"
+],
+[
+"Pyrasite",
+"(Ef>3941,0)"
+],
+[
+"Mirgrillon",
+"(Ef>3942,0)"
+],
+[
+"Sakarien",
+"(Ef>3943,0)"
+],
+[
+"Céglumen",
+"(Ef>3944,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"16001",
+50
+],
+[
+"2565",
+1
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1191,
+"nom": "Reine Nyée (Duo)",
+"description": "Vaincre la Reine Nyée dans son donjon en validant le challenge [challenge,344].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 20,
+"niveau": 90,
+"icone": 294,
+"ordre": 68,
+"objectifs": [
+[
+"Reine Nyée",
+"(EH>344,0)"
+],
+[
+"Niveau 90",
+"PL>89"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"16180",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1192,
+"nom": "Reine Nyée (Premier)",
+"description": "Vaincre la Reine Nyée dans son donjon en validant le challenge [challenge,345].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 90,
+"icone": 294,
+"ordre": 66,
+"objectifs": [
+[
+"Reine Nyée",
+"(EH>345,0)"
+],
+[
+"Niveau 90",
+"PL>89"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"16180",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1193,
+"nom": "Reine Nyée (Hardi)",
+"description": "Vaincre la Reine Nyée dans son donjon en validant le challenge [challenge,346].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 90,
+"icone": 294,
+"ordre": 67,
+"objectifs": [
+[
+"Reine Nyée",
+"(EH>346,0)"
+],
+[
+"Niveau 90",
+"PL>89"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"16180",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1194,
+"nom": "Les pieds dans la toile",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 90,
+"icone": 82,
+"ordre": 70,
+"objectifs": [
+[
+"Reine Nyée (Duo)",
+"(OA=1191)"
+],
+[
+"Reine Nyée (Premier)",
+"(OA=1192)"
+],
+[
+"Reine Nyée (Hardi)",
+"(OA=1193)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"16180",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1195,
+"nom": "Antre de la Reine Nyée",
+"description": "Vaincre la Reine Nyée dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 90,
+"icone": 294,
+"ordre": 65,
+"objectifs": [
+[
+"Reine Nyée",
+"(EM>3996,0,d)"
+],
+[
+"Niveau 90",
+"PL>89"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"16180",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1196,
+"nom": "Arak-haï",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 10,
+"niveau": 90,
+"icone": 295,
+"ordre": 8,
+"objectifs": [
+[
+"Arapex",
+"(Ef>3991,0)"
+],
+[
+"Dardalaine",
+"(Ef>3992,0)"
+],
+[
+"Néfileuse",
+"(Ef>3993,0)"
+],
+[
+"Saltik",
+"(Ef>3994,0)"
+],
+[
+"Gargantûl",
+"(Ef>3995,0)"
+],
+[
+"Niveau 90",
+"PL>89"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"16216",
+10
+],
+[
+"16217",
+10
+],
+[
+"16220",
+10
+],
+[
+"16218",
+10
+],
+[
+"16219",
+10
+],
+[
+"16215",
+1
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1382,
+"nom": "Sang, labeur, larmes, sueur",
+"description": "Obtenir 12000 points de Succès.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 0,
+"niveau": 200,
+"icone": 82,
+"ordre": 20,
+"objectifs": [
+[
+"",
+"(Oa>11999)"
+]
+],
+"recompense": {
+"xp": 5.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 92,
+"nom": "Score vénérable",
+"icone": 3
+}
+]
+}
+},
+{
+"id": 1383,
+"nom": "Un nouvel espoir",
+"description": "Obtenir 14000 points de Succès.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 0,
+"niveau": 200,
+"icone": 82,
+"ordre": 21,
+"objectifs": [
+[
+"",
+"(Oa>13999)"
+]
+],
+"recompense": {
+"xp": 5.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 93,
+"nom": "Score glorieux",
+"icone": 3
+}
+]
+}
+},
+{
+"id": 1398,
+"nom": "Bateau du Chouque",
+"description": "Vaincre le Chouque dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 90,
+"icone": 115,
+"ordre": 77,
+"objectifs": [
+[
+"Le Chouque",
+"(EM>230,0,d)"
+],
+[
+"Niveau 90",
+"PL>89"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"2621",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1399,
+"nom": "Le Chouque (Duo)",
+"description": "Vaincre le Chouque dans son donjon en validant le challenge [challenge,347].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 20,
+"niveau": 90,
+"icone": 115,
+"ordre": 80,
+"objectifs": [
+[
+"Le Chouque",
+"(EH>347,0)"
+],
+[
+"Niveau 90",
+"PL>89"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"2621",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1402,
+"nom": "Le Chouque (Dernier)",
+"description": "Vaincre Le Chouque dans son donjon  en validant le challenge [challenge,348].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 90,
+"icone": 115,
+"ordre": 78,
+"objectifs": [
+[
+"Le Chouque",
+"(EH>348,0)"
+],
+[
+"Niveau 90",
+"PL>89"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"2621",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1403,
+"nom": "Le Chouque (Nomade)",
+"description": "Vaincre Le Chouque dans son donjon en validant le challenge [challenge,349].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 90,
+"icone": 115,
+"ordre": 79,
+"objectifs": [
+[
+"Le Chouque",
+"(EH>349,0)"
+],
+[
+"Niveau 90",
+"PL>89"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"2621",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1406,
+"nom": "Un trésor bien enfoui",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 90,
+"icone": 82,
+"ordre": 82,
+"objectifs": [
+[
+"Le Chouque (Nomade)",
+"(OA=1403)"
+],
+[
+"Le Chouque (Dernier)",
+"(OA=1402)"
+],
+[
+"Le Chouque (Duo)",
+"(OA=1399)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"2621",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1435,
+"nom": "Ecaflipus",
+"description": "Obtenir les succès suivants.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 30,
+"niveau": 200,
+"icone": 273,
+"ordre": 29,
+"objectifs": [
+[
+"Un sacré terrain de jeu",
+"(OA=1431)"
+],
+[
+"De simples pions",
+"(OA=1436)"
+],
+[
+"Tâter le pou",
+"(OA=1415)"
+],
+[
+"Faire l'autre Ush",
+"(OA=1422)"
+],
+[
+"Le Défibrillateur",
+"(OA=1443)"
+],
+[
+"Les contrées du hasard",
+"(OA=1427)"
+]
+],
+"recompense": {
+"xp": 3.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 100,
+"nom": "Visiteur d'Ecaflipus",
+"icone": 12
+}
+]
+}
+},
+{
+"id": 1499,
+"nom": "Nouvelle vague",
+"description": "Obtenir les succès suivants.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 30,
+"niveau": 200,
+"icone": 273,
+"ordre": 31,
+"objectifs": [
+[
+"Aquariuuuum",
+"(OA=1510)"
+],
+[
+"J'tape dans l'fond",
+"(OA=1500)"
+],
+[
+"Mobilis in Mobili",
+"(OA=1470)"
+],
+[
+"Koutoulou R'lyugluglu fhtagn",
+"(OA=1477)"
+],
+[
+"Sous l'océan",
+"(OA=1484)"
+],
+[
+"Abysses",
+"(OA=1498)"
+]
+],
+"recompense": {
+"xp": 3.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 101,
+"nom": "Abyssal",
+"icone": 13
+}
+]
+}
+},
+{
+"id": 1529,
+"nom": "Cimetière des Mastodontes",
+"description": "Vaincre le Mantiscore dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 80,
+"icone": 334,
+"ordre": 59,
+"objectifs": [
+[
+"Mantiscore",
+"(EM>4621,0,d)"
+],
+[
+"Niveau 80",
+"PL>79"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"18371",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1530,
+"nom": "Mantiscore (Mains Propres)",
+"description": "Vaincre le Mantiscore dans son donjon en validant le challenge [challenge,368].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 80,
+"icone": 334,
+"ordre": 60,
+"objectifs": [
+[
+"Mantiscore",
+"(EH>368,0)"
+],
+[
+"Niveau 80",
+"PL>79"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"18371",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1531,
+"nom": "Mantiscore (Zombie)",
+"description": "Vaincre le Mantiscore dans son donjon en validant le challenge [challenge,369].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 80,
+"icone": 334,
+"ordre": 61,
+"objectifs": [
+[
+"Mantiscore",
+"(EH>369,0)"
+],
+[
+"Niveau 80",
+"PL>79"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"18371",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1532,
+"nom": "Mantiscore (Duo)",
+"description": "Vaincre le Mantiscore dans son donjon en validant le challenge [challenge,370].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 20,
+"niveau": 80,
+"icone": 334,
+"ordre": 62,
+"objectifs": [
+[
+"Mantiscore",
+"(EH>370,0)"
+],
+[
+"Niveau 80",
+"PL>79"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"18371",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1535,
+"nom": "Fromage ou désert",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 80,
+"icone": 82,
+"ordre": 64,
+"objectifs": [
+[
+"Mantiscore (Mains Propres)",
+"(OA=1530)"
+],
+[
+"Mantiscore (Zombie)",
+"(OA=1531)"
+],
+[
+"Mantiscore (Duo)",
+"(OA=1532)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"18371",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1573,
+"nom": "Ça arrache",
+"description": "Obtenir les succès suivants.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 30,
+"niveau": 200,
+"icone": 273,
+"ordre": 32,
+"objectifs": [
+[
+"La traversée du désert",
+"(OA=1552)"
+],
+[
+"Tempête de sable",
+"(OA=1569)"
+],
+[
+"Fromage ou désert",
+"(OA=1535)"
+],
+[
+"Caramba",
+"(OA=1542)"
+],
+[
+"Le chant des dunes",
+"(OA=1561)"
+],
+[
+"La reine des damnés",
+"(OA=1568)"
+],
+[
+"Le marchand de sable est passé",
+"(OA=1572)"
+]
+],
+"recompense": {
+"xp": 3.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 107,
+"nom": "Désertique",
+"icone": 15
+}
+]
+}
+},
+{
+"id": 1580,
+"nom": "C'est à moi que tu parles ?",
+"description": "Obtenir 16000 points de Succès.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 0,
+"niveau": 200,
+"icone": 82,
+"ordre": 22,
+"objectifs": [
+[
+"",
+"(Oa>15999)"
+]
+],
+"recompense": {
+"xp": 5.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 108,
+"nom": "Score prestigieux",
+"icone": 3
+}
+]
+}
+},
+{
+"id": 1593,
+"nom": "Chapiteau des Magik Riktus",
+"description": "Vaincre Choudini dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 90,
+"icone": 348,
+"ordre": 83,
+"objectifs": [
+[
+"Choudini",
+"(EM>4860,0,d)"
+],
+[
+"Niveau 90",
+"PL>89"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"1691",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1594,
+"nom": "Choudini (Collant)",
+"description": "Vaincre Choudini en équipe dans son donjon en validant le challenge [challenge,383].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 90,
+"icone": 348,
+"ordre": 84,
+"objectifs": [
+[
+"Choudini",
+"(EH>383,0)"
+],
+[
+"Niveau 90",
+"PL>89"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"1691",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1595,
+"nom": "Choudini (Hardi)",
+"description": "Vaincre Choudini dans son donjon en validant le challenge [challenge,384].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 90,
+"icone": 348,
+"ordre": 85,
+"objectifs": [
+[
+"Choudini",
+"(EH>384,0)"
+],
+[
+"Niveau 90",
+"PL>89"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"1691",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1596,
+"nom": "Choudini (Duo)",
+"description": "Vaincre Choudini dans son donjon en validant le challenge [challenge,385].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 20,
+"niveau": 90,
+"icone": 348,
+"ordre": 86,
+"objectifs": [
+[
+"Choudini",
+"(EH>385,0)"
+],
+[
+"Niveau 90",
+"PL>89"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"1691",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1599,
+"nom": "Sous le plus grand chapiteau du monde",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 90,
+"icone": 82,
+"ordre": 88,
+"objectifs": [
+[
+"Choudini (Collant)",
+"(OA=1594)"
+],
+[
+"Choudini (Hardi)",
+"(OA=1595)"
+],
+[
+"Choudini (Duo)",
+"(OA=1596)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"1691",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1600,
+"nom": "Animaux de la forêt",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Astrub",
+"points": 10,
+"niveau": 30,
+"icone": 352,
+"ordre": 6,
+"objectifs": [
+[
+"Écurouille",
+"(Ef>4823,0)"
+],
+[
+"Milimulou",
+"(Ef>159,0)"
+],
+[
+"Prespic",
+"(Ef>103,0)"
+],
+[
+"Sanglier",
+"(Ef>104,0)"
+],
+[
+"Niveau 30",
+"PL>29"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"407",
+10
+],
+[
+"387",
+10
+],
+[
+"1690",
+10
+],
+[
+"394",
+10
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1601,
+"nom": "Animalades",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Astrub",
+"points": 10,
+"niveau": 15,
+"icone": 350,
+"ordre": 1,
+"objectifs": [
+[
+"Arakmuté",
+"(Ef>4818,0)"
+],
+[
+"Arakne Malade",
+"(Ef>474,0)"
+],
+[
+"Araknosé",
+"(Ef>4817,0)"
+],
+[
+"Tofu Malade",
+"(Ef>473,0)"
+],
+[
+"Niveau 15",
+"PL>14"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"1681",
+1
+],
+[
+"2491",
+10
+],
+[
+"388",
+10
+],
+[
+"373",
+10
+],
+[
+"366",
+10
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1602,
+"nom": "Vermines des champs",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 10,
+"niveau": 20,
+"icone": 351,
+"ordre": 11,
+"objectifs": [
+[
+"Campagnoll",
+"(Ef>4819,0)"
+],
+[
+"Champ Champ",
+"(Ef>59,0)"
+],
+[
+"Moskito",
+"(Ef>61,0)"
+],
+[
+"Niveau 20",
+"PL>19"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"300",
+10
+],
+[
+"365",
+10
+],
+[
+"377",
+10
+],
+[
+"307",
+10
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1619,
+"nom": "Sur le bout de la lande",
+"description": "Obtenir les succès suivants.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 30,
+"niveau": 200,
+"icone": 273,
+"ordre": 33,
+"objectifs": [
+[
+"Promenade lugubre",
+"(OA=856)"
+],
+[
+"Entre chien et loup",
+"(OA=789)"
+],
+[
+"Sous le plus grand chapiteau du monde",
+"(OA=1599)"
+],
+[
+"Bovidé enragé",
+"(OA=797)"
+],
+[
+"Bworker Texas Ranger",
+"(OA=832)"
+],
+[
+"Fongicide",
+"(OA=833)"
+],
+[
+"Rase les goules",
+"(OA=1611)"
+],
+[
+"Sidimotivé",
+"(OA=1618)"
+]
+],
+"recompense": {
+"xp": 3.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 109,
+"nom": "Sidimotien",
+"icone": 8
+}
+]
+}
+},
+{
+"id": 1655,
+"nom": "Les tours sombres",
+"description": "Obtenir les succès suivants.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 30,
+"niveau": 200,
+"icone": 273,
+"ordre": 34,
+"objectifs": [
+[
+"Calcinés",
+"(OA=1648)"
+],
+[
+"Submergés",
+"(OA=1649)"
+],
+[
+"De terre et de feu",
+"(OA=1640)"
+],
+[
+"De sel et d'os",
+"(OA=1647)"
+],
+[
+"Tour par tour",
+"(OA=1654)"
+]
+],
+"recompense": {
+"xp": 3.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 110,
+"nom": "Tours de la Fratrie",
+"icone": 11
+}
+]
+}
+},
+{
+"id": 1667,
+"nom": "Grosses Larves",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 10,
+"niveau": 50,
+"icone": 147,
+"ordre": 24,
+"objectifs": [
+[
+"Larve Dorée",
+"(Ef>456,0)"
+],
+[
+"Larve Rubis",
+"(Ef>413,0)"
+],
+[
+"Larve Saphir",
+"(Ef>412,0)"
+],
+[
+"Larve Émeraude",
+"(Ef>414,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"13713",
+10
+],
+[
+"13714",
+10
+],
+[
+"13500",
+10
+],
+[
+"13715",
+10
+],
+[
+"10967",
+1
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1669,
+"nom": "Monstres du repos",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Astrub",
+"points": 10,
+"niveau": 40,
+"icone": 408,
+"ordre": 10,
+"objectifs": [
+[
+"La Ouassingue",
+"(Ef>495,0)"
+],
+[
+"Le Ouassingue",
+"(Ef>496,0)"
+],
+[
+"Gargrouille",
+"(Ef>498,0)"
+],
+[
+"Garglyphe",
+"(Ef>5227,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"2468",
+10
+],
+[
+"887",
+10
+],
+[
+"486",
+10
+],
+[
+"2249",
+10
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 1670,
+"nom": "Sidoas",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Astrub",
+"points": 10,
+"niveau": 30,
+"icone": 363,
+"ordre": 7,
+"objectifs": [
+[
+"Martoa",
+"(Ef>5228,0)"
+],
+[
+"Sherpoa",
+"(Ef>5229,0)"
+],
+[
+"Douzdoa",
+"(Ef>5230,0)"
+],
+[
+"Pikdoa",
+"(Ef>5231,0)"
+],
+[
+"Niveau 30",
+"PL>29"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"450",
+1
+],
+[
+"6845",
+10
+],
+[
+"6843",
+10
+],
+[
+"6844",
+10
+],
+[
+"6841",
+10
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 2105,
+"nom": "Un lion parmi les agneaux",
+"description": "Obtenir 18000 points de Succès.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 0,
+"niveau": 200,
+"icone": 82,
+"ordre": 23,
+"objectifs": [
+[
+"",
+"(Oa>17999)"
+]
+],
+"recompense": {
+"xp": 5.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 137,
+"nom": "Score triomphal",
+"icone": 3
+}
+]
+}
+},
+{
+"id": 2115,
+"nom": "Repaire du Kharnozor",
+"description": "Vaincre le Kharnozor dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 378,
+"ordre": 125,
+"objectifs": [
+[
+"Kharnozor",
+"(EM>5819,0,d)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"21268",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 2116,
+"nom": "Kharnozor (Dernier)",
+"description": "Vaincre le Kharnozor dans son donjon en validant le challenge [challenge,416].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 378,
+"ordre": 126,
+"objectifs": [
+[
+"Kharnozor",
+"(EH>416,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"21268",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 2117,
+"nom": "Kharnozor (Circulez)",
+"description": "Vaincre le Kharnozor dans son donjon en validant le challenge [challenge,417].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 378,
+"ordre": 127,
+"objectifs": [
+[
+"Kharnozor",
+"(EH>417,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"21268",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 2118,
+"nom": "Kharnozor (Duo)",
+"description": "Vaincre le Kharnozor dans son donjon en validant le challenge [challenge,418].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 20,
+"niveau": 100,
+"icone": 378,
+"ordre": 128,
+"objectifs": [
+[
+"Kharnozor",
+"(EH>418,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"21268",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 2121,
+"nom": "Un tavernier peu commode",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 82,
+"ordre": 130,
+"objectifs": [
+[
+"Kharnozor (Dernier)",
+"(OA=2116)"
+],
+[
+"Kharnozor (Circulez)",
+"(OA=2117)"
+],
+[
+"Kharnozor (Duo)",
+"(OA=2118)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"21268",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 2122,
+"nom": "Baptême du feu",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 70,
+"icone": 82,
+"ordre": 47,
+"objectifs": [
+[
+"Draegnerys (Focus)",
+"(OA=2127)"
+],
+[
+"Draegnerys (Hardi)",
+"(OA=2126)"
+],
+[
+"Draegnerys (Duo)",
+"(OA=2125)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"21264",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 2125,
+"nom": "Draegnerys (Duo)",
+"description": "Vaincre Draegnerys dans son donjon en validant le challenge [challenge,421].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 20,
+"niveau": 70,
+"icone": 379,
+"ordre": 45,
+"objectifs": [
+[
+"Draegnerys",
+"(EH>421,0)"
+],
+[
+"Niveau 70",
+"PL>69"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"21264",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 2126,
+"nom": "Draegnerys (Hardi)",
+"description": "Vaincre Draegnerys dans son donjon en validant le challenge [challenge,420].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 70,
+"icone": 379,
+"ordre": 44,
+"objectifs": [
+[
+"Draegnerys",
+"(EH>420,0)"
+],
+[
+"Niveau 70",
+"PL>69"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"21264",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 2127,
+"nom": "Draegnerys (Focus)",
+"description": "Vaincre Draegnerys dans son donjon en validant le challenge [challenge,419].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 70,
+"icone": 379,
+"ordre": 43,
+"objectifs": [
+[
+"Draegnerys",
+"(EH>419,0)"
+],
+[
+"Niveau 70",
+"PL>69"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"21264",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 2128,
+"nom": "Épreuve de Draegnerys",
+"description": "Vaincre Draegnerys dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 70,
+"icone": 379,
+"ordre": 42,
+"objectifs": [
+[
+"Draegnerys",
+"(EM>5823,0,d)"
+],
+[
+"Niveau 70",
+"PL>69"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"21264",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 2298,
+"nom": "La chevauchée fantastique",
+"description": "Obtenir les succès suivants et terminer une quête.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 30,
+"niveau": 200,
+"icone": 273,
+"ordre": 35,
+"objectifs": [
+[
+"Eliocalypto",
+"(OA=2256)"
+],
+[
+"Des cavaliers qui surgissent hors de la nuit",
+"(OA=2303)"
+],
+[
+"Oui, ça avait un goût violet",
+"(OA=2263)"
+],
+[
+"L'art de la Guerre",
+"(OA=2270)"
+],
+[
+"Le Maillon Fort",
+"(OA=2277)"
+],
+[
+"Misère de Misère",
+"(OA=2284)"
+],
+[
+"Les quatre volontés",
+"(Qf=2122)"
+]
+],
+"recompense": {
+"xp": 3.0,
+"objets": [
+[
+"22240",
+1
+],
+[
+"22238",
+1
+],
+[
+"22239",
+1
+],
+[
+"22237",
+1
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 3061,
+"nom": "Pandala : une île vraiment pas comme les autres",
+"description": "Obtenir les succès suivants.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 30,
+"niveau": 150,
+"icone": 273,
+"ordre": 36,
+"objectifs": [
+[
+"Massacre élémentaire",
+"(OA=3046)"
+],
+[
+"Plier sans rompre",
+"(OA=3043)"
+],
+[
+"Déso m'dame",
+"(OA=3026)"
+],
+[
+"Une sacrée paire",
+"(OA=3010)"
+],
+[
+"Plus on est de foux, plus on rit",
+"(OA=3033)"
+],
+[
+"Sous le vent",
+"(OA=3017)"
+],
+[
+"Quand les éléments s'emmêlent",
+"(OA=3060)"
+]
+],
+"recompense": {
+"xp": 3.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 156,
+"nom": "Pandalien",
+"icone": 15
+}
+]
+}
+},
+{
+"id": 3106,
+"nom": "Pandala : une île décidément pas comme les autres",
+"description": "Obtenir les succès suivants.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 30,
+"niveau": 200,
+"icone": 273,
+"ordre": 37,
+"objectifs": [
+[
+"Massacre spirituel",
+"(OA=3107)"
+],
+[
+"Le Chevaucheur de brume",
+"(OA=3077)"
+],
+[
+"Esprit es-tu toujours là ?",
+"(OA=3068)"
+],
+[
+"Écrit noir sur blanc",
+"(OA=3096)"
+],
+[
+"Si l'encre coule, c'est qu'elle n'a pas pied",
+"(OA=3089)"
+],
+[
+"Histoires de fantômes pandawas",
+"(OA=3080)"
+],
+[
+"Mots d'esprits sans jeux de mots",
+"(OA=3099)"
+]
+],
+"recompense": {
+"xp": 3.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 157,
+"nom": "D'encre et de papier",
+"icone": 21
+}
+]
+}
+},
+{
+"id": 3108,
+"nom": "C'est qui le plus fort ?",
+"description": "Obtenir 20000 points de Succès.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 0,
+"niveau": 200,
+"icone": 82,
+"ordre": 24,
+"objectifs": [
+[
+"",
+"(Oa>19999)"
+]
+],
+"recompense": {
+"xp": 5.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 158,
+"nom": "Score vertigineux",
+"icone": 8
+}
+]
+}
+},
+{
+"id": 3109,
+"nom": "Les aimables",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Monstres",
+"sousCategorie": "Île de la cawotte",
+"points": 20,
+"niveau": 120,
+"icone": 82,
+"ordre": 3,
+"objectifs": [
+[
+"Wabbits",
+"(OA=172)"
+],
+[
+"Gawdes du Wa",
+"(OA=1008)"
+],
+[
+"Wabbits mutants",
+"(OA=1069)"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 5203,
+"nom": "Rien qu'un mauvais rêve",
+"description": "Obtenir les succès suivants.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 30,
+"niveau": 200,
+"icone": 273,
+"ordre": 39,
+"objectifs": [
+[
+"La confliture : honni soit qui mal l'étale",
+"(OA=5172)"
+],
+[
+"Ravageurs",
+"(OA=5173)"
+],
+[
+"Démons et merveilles",
+"(OA=5165)"
+],
+[
+"Cauchemar des Ravageurs",
+"(OA=5202)"
+],
+[
+"Possédé par un autre",
+"(OA=5075)"
+],
+[
+"Possédés",
+"(OA=5068)"
+],
+[
+"D'autres mœurs",
+"(OA=5078)"
+],
+[
+"Pandamonium",
+"(OA=5079)"
+],
+[
+"Port des Ravageurs",
+"(OA=5080)"
+]
+],
+"recompense": {
+"xp": 3.0,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 5212,
+"nom": "Malters",
+"description": "Vaincre les monstres suivants en réussissant un challenge.",
+"categorie": "Monstres",
+"sousCategorie": "Amakna",
+"points": 10,
+"niveau": 150,
+"icone": 416,
+"ordre": 9,
+"objectifs": [
+[
+"Malzerb",
+"(Ef>6864,0)"
+],
+[
+"Maltrio",
+"(Ef>6871,0)"
+],
+[
+"Malépik",
+"(Ef>6872,0)"
+],
+[
+"Malalfa",
+"(Ef>6873,0)"
+],
+[
+"Malbois",
+"(Ef>6874,0)"
+],
+[
+"Niveau 150",
+"PL>149"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"26317",
+10
+],
+[
+"26318",
+10
+],
+[
+"26320",
+10
+],
+[
+"26321",
+10
+],
+[
+"26319",
+10
+],
+[
+"26316",
+1
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 5213,
+"nom": "Akadémie des Gobs",
+"description": "Vaincre le Directeur Grunob dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 419,
+"ordre": 55,
+"objectifs": [
+[
+"Directeur Grunob",
+"(EM>6903,0,d)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"838",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 5214,
+"nom": "Directeur Grunob (Nomade)",
+"description": "Vaincre le Directeur Grunob dans son donjon en validant le challenge [challenge,593].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 419,
+"ordre": 56,
+"objectifs": [
+[
+"Directeur Grunob",
+"(EH>593,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"838",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 5215,
+"nom": "Directeur Grunob (Premier)",
+"description": "Vaincre le Directeur Grunob dans son donjon en validant le challenge [challenge,592].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 419,
+"ordre": 57,
+"objectifs": [
+[
+"Directeur Grunob",
+"(EH>592,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"838",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 5216,
+"nom": "Directeur Grunob (Duo)",
+"description": "Vaincre le Directeur Grunob dans son donjon en validant le challenge [challenge,591].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 20,
+"niveau": 40,
+"icone": 419,
+"ordre": 58,
+"objectifs": [
+[
+"Directeur Grunob",
+"(EH>591,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"838",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 5219,
+"nom": "À deux griffes de dégobiller",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 82,
+"ordre": 60,
+"objectifs": [
+[
+"Directeur Grunob (Nomade)",
+"(OA=5214)"
+],
+[
+"Directeur Grunob (Premier)",
+"(OA=5215)"
+],
+[
+"Directeur Grunob (Duo)",
+"(OA=5216)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"838",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 5911,
+"nom": "Refuge Sylvestre",
+"description": "Vaincre le Rakoopeur dans son donjon.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 433,
+"ordre": 91,
+"objectifs": [
+[
+"Rakoopeur",
+"(EM>7197,0,d)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"27368",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 5912,
+"nom": "Rakoopeur (Dernier)",
+"description": "Vaincre le Rakoopeur dans son donjon en validant le challenge [challenge,868].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 433,
+"ordre": 92,
+"objectifs": [
+[
+"Rakoopeur",
+"(EH>868,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"27368",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 5913,
+"nom": "Rakoopeur (Prudent)",
+"description": "Vaincre le Rakoopeur dans son donjon en validant le challenge [challenge,869].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 433,
+"ordre": 93,
+"objectifs": [
+[
+"Rakoopeur",
+"(EH>869,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"27368",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 5914,
+"nom": "Rakoopeur (Duo)",
+"description": "Vaincre le Rakoopeur dans son donjon en validant le challenge [challenge,870].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 20,
+"niveau": 50,
+"icone": 433,
+"ordre": 94,
+"objectifs": [
+[
+"Rakoopeur",
+"(EH>870,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 2.0,
+"objets": [
+[
+"27368",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 5917,
+"nom": "Nos voisins les Douziens",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 82,
+"ordre": 96,
+"objectifs": [
+[
+"Rakoopeur (Dernier)",
+"(OA=5912)"
+],
+[
+"Rakoopeur (Prudent)",
+"(OA=5913)"
+],
+[
+"Rakoopeur (Duo)",
+"(OA=5914)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"27368",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 5934,
+"nom": "Archipel de Valonia",
+"description": "Obtenir les succès suivants.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 30,
+"niveau": 200,
+"icone": 273,
+"ordre": 40,
+"objectifs": [
+[
+"Les nouveaux Valoniens",
+"(OA=5930)"
+],
+[
+"Nos voisins les Douziens",
+"(OA=5917)"
+],
+[
+"Nimpôts sur la fortune",
+"(OA=5827)"
+],
+[
+"Les fleurs ont mal",
+"(OA=5815)"
+],
+[
+"L'héritage de l'île brisée",
+"(OA=5933)"
+],
+[
+"Morceaux d'histoire",
+"(OA=5929)"
+]
+],
+"recompense": {
+"xp": 3.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 163,
+"nom": "Valonia",
+"icone": 3
+}
+]
+}
+},
+{
+"id": 5935,
+"nom": "L'esprit de compétition",
+"description": "Obtenir 2000 points de Succès.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 0,
+"niveau": 200,
+"icone": 82,
+"ordre": 14,
+"objectifs": [
+[
+"",
+"(Oa>1999)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"28291",
+1
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 5936,
+"nom": "La folie des grandeurs",
+"description": "Obtenir 3000 points de Succès.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 0,
+"niveau": 200,
+"icone": 82,
+"ordre": 15,
+"objectifs": [
+[
+"",
+"(Oa>2999)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"28290",
+1
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6148,
+"nom": "Kardorim (Spécial)",
+"description": "Vaincre Kardorim dans son donjon en validant le challenge [challenge,977].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 10,
+"icone": 299,
+"ordre": 5,
+"objectifs": [
+[
+"Kardorim (Spécial)",
+"(EH>977,0)"
+],
+[
+"Niveau 10",
+"PL>9"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"16525",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6149,
+"nom": "Tournesol Affamé (Spécial)",
+"description": "Vaincre Tournesol Affamé dans son donjon en validant le challenge [challenge,978].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 20,
+"icone": 11,
+"ordre": 11,
+"objectifs": [
+[
+"Tournesol Affamé (Spécial)",
+"(EH>978,0)"
+],
+[
+"Niveau 20",
+"PL>19"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8157",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6150,
+"nom": "Mob l'Éponge (Spécial)",
+"description": "Vaincre Mob l'Éponge dans son donjon en validant le challenge [challenge,979].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 20,
+"icone": 10,
+"ordre": 17,
+"objectifs": [
+[
+"Mob l'Éponge (Spécial)",
+"(EH>979,0)"
+],
+[
+"Niveau 20",
+"PL>19"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8682",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6151,
+"nom": "Bouftou Royal (Spécial)",
+"description": "Vaincre Bouftou Royal dans son donjon en validant le challenge [challenge,980].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 30,
+"icone": 3,
+"ordre": 23,
+"objectifs": [
+[
+"Bouftou Royal (Spécial)",
+"(EH>980,0)"
+],
+[
+"Niveau 30",
+"PL>29"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"886",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6152,
+"nom": "Boostache (Spécial)",
+"description": "Vaincre Boostache dans son donjon en validant le challenge [challenge,981].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 13,
+"ordre": 41,
+"objectifs": [
+[
+"Boostache (Spécial)",
+"(EH>981,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"11815",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6153,
+"nom": "Scarabosse Doré (Spécial)",
+"description": "Vaincre Scarabosse Doré dans son donjon en validant le challenge [challenge,982].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 7,
+"ordre": 29,
+"objectifs": [
+[
+"Scarabosse Doré (Spécial)",
+"(EH>982,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8161",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6154,
+"nom": "Chafer Rōnin (Spécial)",
+"description": "Vaincre le Chafer Rōnin dans son donjon en validant le challenge [challenge,983].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 8,
+"ordre": 47,
+"objectifs": [
+[
+"Chafer Rōnin (Spécial)",
+"(EH>983,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"13096",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6155,
+"nom": "Batofu (Spécial)",
+"description": "Vaincre Batofu dans son donjon en validant le challenge [challenge,984].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 9,
+"ordre": 35,
+"objectifs": [
+[
+"Batofu (Spécial)",
+"(EH>984,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8557",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6156,
+"nom": "Kankreblath (Spécial)",
+"description": "Vaincre Kankreblath dans son donjon en validant le challenge [challenge,985].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 291,
+"ordre": 53,
+"objectifs": [
+[
+"Kankreblath (Spécial)",
+"(EH>985,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"16002",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6157,
+"nom": "Directeur Grunob (Spécial)",
+"description": "Vaincre Directeur Grunob dans son donjon en validant le challenge [challenge,986].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 40,
+"icone": 419,
+"ordre": 59,
+"objectifs": [
+[
+"Directeur Grunob (Spécial)",
+"(EH>986,0)"
+],
+[
+"Niveau 40",
+"PL>39"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"838",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6158,
+"nom": "Bworkette (Spécial)",
+"description": "Vaincre Bworkette dans son donjon en validant le challenge [challenge,987].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 4,
+"ordre": 65,
+"objectifs": [
+[
+"Bworkette (Spécial)",
+"(EH>987,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8388",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6159,
+"nom": "Coffre des Forgerons (Spécial)",
+"description": "Vaincre Coffre des Forgerons dans son donjon en validant le challenge [challenge,988].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 5,
+"ordre": 71,
+"objectifs": [
+[
+"Coffre des Forgerons (Spécial)",
+"(EH>988,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"13140",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6160,
+"nom": "Corailleur Magistral (Spécial)",
+"description": "Vaincre Corailleur Magistral dans son donjon en validant le challenge [challenge,989].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 12,
+"ordre": 83,
+"objectifs": [
+[
+"Corailleur Magistral (Spécial)",
+"(EH>989,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8738",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6161,
+"nom": "Kwakwa (Spécial)",
+"description": "Vaincre Kwakwa dans son donjon en validant le challenge [challenge,990].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 14,
+"ordre": 89,
+"objectifs": [
+[
+"Kwakwa (Spécial)",
+"(EH>990,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"12016",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6162,
+"nom": "Shin Larve (Spécial)",
+"description": "Vaincre Shin Larve dans son donjon en validant le challenge [challenge,991].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 6,
+"ordre": 77,
+"objectifs": [
+[
+"Shin Larve (Spécial)",
+"(EH>991,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8385",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6163,
+"nom": "Rakoopeur (Spécial)",
+"description": "Vaincre Rakoopeur dans son donjon en validant le challenge [challenge,992].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 433,
+"ordre": 95,
+"objectifs": [
+[
+"Rakoopeur (Spécial)",
+"(EH>992,0)"
+],
+[
+"Niveau 50",
+"PL>49"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"27368",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6164,
+"nom": "Blops Royaux (Spécial)",
+"description": "Vaincre Blops Royaux dans son donjon en validant le challenge [challenge,996].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 60,
+"icone": 19,
+"ordre": 16,
+"objectifs": [
+[
+"Blop Griotte Royale (Spécial)",
+"(EH>996,0)"
+],
+[
+"Blop Coco Royale (Spécial)",
+"(EH>993,0)"
+],
+[
+"Blop Indigo Royale (Spécial)",
+"(EH>995,0)"
+],
+[
+"Blop Reinette Royale (Spécial)",
+"(EH>994,0)"
+],
+[
+"Niveau 60",
+"PL>59"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"9388",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6165,
+"nom": "Kanniboul Ebil (Spécial)",
+"description": "Vaincre Kanniboul Ebil dans son donjon en validant le challenge [challenge,997].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 60,
+"icone": 22,
+"ordre": 10,
+"objectifs": [
+[
+"Kanniboul Ebil (Spécial)",
+"(EH>997,0)"
+],
+[
+"Niveau 60",
+"PL>59"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"11695",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6166,
+"nom": "Gelées Royales (Spécial)",
+"description": "Vaincre Gelées Royales dans son donjon en validant le challenge [challenge,1001].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 60,
+"icone": 24,
+"ordre": 22,
+"objectifs": [
+[
+"Gelées Menthe (Spécial)",
+"(EH>1000,0)"
+],
+[
+"Gelée Royale Fraise (Spécial)",
+"(EH>1001,0)"
+],
+[
+"Gelée Royale Citron (Spécial)",
+"(EH>998,0)"
+],
+[
+"Gelée Royale Bleuet (Spécial)",
+"(EH>999,0)"
+],
+[
+"Niveau 60",
+"PL>59"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"370",
+2
+],
+[
+"2437",
+2
+],
+[
+"2242",
+2
+],
+[
+"2241",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6167,
+"nom": "Wa Wabbit (Spécial)",
+"description": "Vaincre Wa Wabbit dans son donjon en validant le challenge [challenge,1002].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 60,
+"icone": 23,
+"ordre": 4,
+"objectifs": [
+[
+"Wa Wabbit (Spécial)",
+"(EH>1002,0)"
+],
+[
+"Niveau 60",
+"PL>59"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8397",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6168,
+"nom": "Craqueleur Légendaire (Spécial)",
+"description": "Vaincre Craqueleur Légendaire dans son donjon en validant le challenge [challenge,1003].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 70,
+"icone": 21,
+"ordre": 40,
+"objectifs": [
+[
+"Craqueleur Légendaire (Spécial)",
+"(EH>1003,0)"
+],
+[
+"Niveau 70",
+"PL>69"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8102",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6169,
+"nom": "Gourlo le Terrible (Spécial)",
+"description": "Vaincre Gourlo le Terrible dans son donjon en validant le challenge [challenge,1004].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 70,
+"icone": 16,
+"ordre": 34,
+"objectifs": [
+[
+"Gourlo le Terrible (Spécial)",
+"(EH>1004,0)"
+],
+[
+"Niveau 70",
+"PL>69"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8758",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6170,
+"nom": "Nelween (Spécial)",
+"description": "Vaincre Nelween dans son donjon en validant le challenge [challenge,1005].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 70,
+"icone": 26,
+"ordre": 28,
+"objectifs": [
+[
+"Nelween (Spécial)",
+"(EH>1005,0)"
+],
+[
+"Niveau 70",
+"PL>69"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"12076",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6171,
+"nom": "Draegnerys (Spécial)",
+"description": "Vaincre Draegnerys dans son donjon en validant le challenge [challenge,1006].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 70,
+"icone": 379,
+"ordre": 46,
+"objectifs": [
+[
+"Draegnerys (Spécial)",
+"(EH>1006,0)"
+],
+[
+"Niveau 70",
+"PL>69"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"21264",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6172,
+"nom": "Mantiscore (Spécial)",
+"description": "Vaincre le Mantiscore dans son donjon en validant le challenge [challenge,1007].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 80,
+"icone": 334,
+"ordre": 63,
+"objectifs": [
+[
+"Mantiscore (Spécial)",
+"(EH>1007,0)"
+],
+[
+"Niveau 80",
+"PL>79"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"18371",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6173,
+"nom": "Wa Wobot (Spécial)",
+"description": "Vaincre Wa Wobot dans son donjon en validant le challenge [challenge,1008].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 80,
+"icone": 254,
+"ordre": 57,
+"objectifs": [
+[
+"Wa Wobot (Spécial)",
+"(EH>1008,0)"
+],
+[
+"Niveau 80",
+"PL>79"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"14468",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6174,
+"nom": "Le Chouque (Spécial)",
+"description": "Vaincre Le Chouque dans son donjon en validant le challenge [challenge,1009].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 90,
+"icone": 115,
+"ordre": 81,
+"objectifs": [
+[
+"Le Chouque (Spécial)",
+"(EH>1009,0)"
+],
+[
+"Niveau 90",
+"PL>89"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"2621",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6175,
+"nom": "Abraknyde Ancestral (Spécial)",
+"description": "Vaincre Abraknyde Ancestral dans son donjon en validant le challenge [challenge,1010].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 90,
+"icone": 18,
+"ordre": 75,
+"objectifs": [
+[
+"Abraknyde Ancestral (Spécial)",
+"(EH>1010,0)"
+],
+[
+"Niveau 90",
+"PL>89"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8496",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6176,
+"nom": "Choudini (Spécial)",
+"description": "Vaincre Choudini dans son donjon en validant le challenge [challenge,1011].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 90,
+"icone": 348,
+"ordre": 87,
+"objectifs": [
+[
+"Choudini (Spécial)",
+"(EH>1011,0)"
+],
+[
+"Niveau 90",
+"PL>89"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"1691",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6177,
+"nom": "Reine Nyée (Spécial)",
+"description": "Vaincre Reine Nyée dans son donjon en validant le challenge [challenge,1012].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 90,
+"icone": 294,
+"ordre": 69,
+"objectifs": [
+[
+"Reine Nyée (Spécial)",
+"(EH>1012,0)"
+],
+[
+"Niveau 90",
+"PL>89"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"16180",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6178,
+"nom": "Dragon Cochon (Spécial)",
+"description": "Vaincre Dragon Cochon dans son donjon en validant le challenge [challenge,1013].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 15,
+"ordre": 93,
+"objectifs": [
+[
+"Dragon Cochon (Spécial)",
+"(EH>1013,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"2645",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6179,
+"nom": "Koulosse (Spécial)",
+"description": "Vaincre Koulosse dans son donjon en validant le challenge [challenge,1014].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 17,
+"ordre": 99,
+"objectifs": [
+[
+"Koulosse (Spécial)",
+"(EH>1014,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8403",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6180,
+"nom": "Meulou (Spécial)",
+"description": "Vaincre Meulou dans son donjon en validant le challenge [challenge,1015].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 20,
+"ordre": 105,
+"objectifs": [
+[
+"Meulou (Spécial)",
+"(EH>1015,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"2577",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6181,
+"nom": "Kharnozor (Spécial)",
+"description": "Vaincre Kharnozor dans son donjon en validant le challenge [challenge,1016].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 378,
+"ordre": 129,
+"objectifs": [
+[
+"Kharnozor (Spécial)",
+"(EH>1016,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"21268",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6182,
+"nom": "Malléfisk (Spécial)",
+"description": "Vaincre Malléfisk dans son donjon en validant le challenge [challenge,1017].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 264,
+"ordre": 123,
+"objectifs": [
+[
+"Malléfisk (Spécial)",
+"(EH>1017,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"15164",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6183,
+"nom": "Moon (Spécial)",
+"description": "Vaincre Moon dans son donjon en validant le challenge [challenge,1018].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 201,
+"ordre": 111,
+"objectifs": [
+[
+"Moon (Spécial)",
+"(EH>1018,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"8383",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6184,
+"nom": "Maître des Pantins (Spécial)",
+"description": "Vaincre Maître des Pantins dans son donjon en validant le challenge [challenge,1019].",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 255,
+"ordre": 117,
+"objectifs": [
+[
+"Maître des Pantins (Spécial)",
+"(EH>1019,0)"
+],
+[
+"Niveau 100",
+"PL>99"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [
+[
+"14518",
+2
+]
+],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6264,
+"nom": "Spécialiste local",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 1 à 50",
+"points": 10,
+"niveau": 50,
+"icone": 82,
+"ordre": 99,
+"objectifs": [
+[
+"Kardorim (Spécial)",
+"(OA=6148)"
+],
+[
+"Tournesol Affamé (Spécial)",
+"(OA=6149)"
+],
+[
+"Mob l'Éponge (Spécial)",
+"(OA=6150)"
+],
+[
+"Bouftou Royal (Spécial)",
+"(OA=6151)"
+],
+[
+"Boostache (Spécial)",
+"(OA=6152)"
+],
+[
+"Scarabosse Doré (Spécial)",
+"(OA=6153)"
+],
+[
+"Chafer Rōnin (Spécial)",
+"(OA=6154)"
+],
+[
+"Batofu (Spécial)",
+"(OA=6155)"
+],
+[
+"Kankreblath (Spécial)",
+"(OA=6156)"
+],
+[
+"Directeur Grunob (Spécial)",
+"(OA=6157)"
+],
+[
+"Bworkette (Spécial)",
+"(OA=6158)"
+],
+[
+"Coffre des Forgerons (Spécial)",
+"(OA=6159)"
+],
+[
+"Corailleur Magistral (Spécial)",
+"(OA=6160)"
+],
+[
+"Kwakwa (Spécial)",
+"(OA=6161)"
+],
+[
+"Shin Larve (Spécial)",
+"(OA=6162)"
+],
+[
+"Rakoopeur (Spécial)",
+"(OA=6163)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 6265,
+"nom": "Spécialiste régional",
+"description": "Obtenir les Succès suivants.",
+"categorie": "Donjons",
+"sousCategorie": "Niveaux 51 à 100",
+"points": 10,
+"niveau": 100,
+"icone": 82,
+"ordre": 133,
+"objectifs": [
+[
+"Blops Royaux (Spécial)",
+"(OA=6164)"
+],
+[
+"Kanniboul Ebil (Spécial)",
+"(OA=6165)"
+],
+[
+"Gelées Royales (Spécial)",
+"(OA=6166)"
+],
+[
+"Wa Wabbit (Spécial)",
+"(OA=6167)"
+],
+[
+"Craqueleur Légendaire (Spécial)",
+"(OA=6168)"
+],
+[
+"Gourlo le Terrible (Spécial)",
+"(OA=6169)"
+],
+[
+"Nelween (Spécial)",
+"(OA=6170)"
+],
+[
+"Draegnerys (Spécial)",
+"(OA=6171)"
+],
+[
+"Mantiscore (Spécial)",
+"(OA=6172)"
+],
+[
+"Wa Wobot (Spécial)",
+"(OA=6173)"
+],
+[
+"Le Chouque (Spécial)",
+"(OA=6174)"
+],
+[
+"Abraknyde Ancestral (Spécial)",
+"(OA=6175)"
+],
+[
+"Choudini (Spécial)",
+"(OA=6176)"
+],
+[
+"Reine Nyée (Spécial)",
+"(OA=6177)"
+],
+[
+"Dragon Cochon (Spécial)",
+"(OA=6178)"
+],
+[
+"Koulosse (Spécial)",
+"(OA=6179)"
+],
+[
+"Meulou (Spécial)",
+"(OA=6180)"
+],
+[
+"Kharnozor (Spécial)",
+"(OA=6181)"
+],
+[
+"Malléfisk (Spécial)",
+"(OA=6182)"
+],
+[
+"Moon (Spécial)",
+"(OA=6183)"
+],
+[
+"Maître des Pantins (Spécial)",
+"(OA=6184)"
+]
+],
+"recompense": {
+"xp": 1.0,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+},
+{
+"id": 8861,
+"nom": "Osavora",
+"description": "Obtenir les succès suivants.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 30,
+"niveau": 200,
+"icone": 273,
+"ordre": 30,
+"objectifs": [
+[
+"Il en a plein le dos",
+"(OA=8868)"
+],
+[
+"Saisonniers",
+"(OA=8848)"
+],
+[
+"C'est de la Bombz",
+"(OA=8844)"
+],
+[
+"La Chasse Fantastique",
+"(OA=8854)"
+],
+[
+"Maître d'Autel",
+"(OA=8838)"
+],
+[
+"Les terrains de chasse",
+"(OA=8860)"
+]
+],
+"recompense": {
+"xp": 3.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 167,
+"nom": "Visiteur d'Osavora",
+"icone": 24
+}
+]
+}
+},
+{
+"id": 8906,
+"nom": "Après vous, il y a le ciel",
+"description": "Obtenir 22 000 points de Succès.",
+"categorie": "Général",
+"sousCategorie": "Général",
+"points": 0,
+"niveau": 200,
+"icone": 82,
+"ordre": 25,
+"objectifs": [
+[
+"",
+"(Oa>21999)"
+]
+],
+"recompense": {
+"xp": 5.0,
+"objets": [],
+"titres": [],
+"ornements": [
+{
+"id": 176,
+"nom": "Score extraordinaire",
+"icone": 27
+}
+]
+}
+},
+{
+"id": 9024,
+"nom": "Bassin des Muldos",
+"description": "Découvrir la zone \"Bassin des Muldos\".",
+"categorie": "Exploration",
+"sousCategorie": "Amakna",
+"points": 1,
+"niveau": 50,
+"icone": 176,
+"ordre": 40,
+"objectifs": [],
+"recompense": {
+"xp": 0.1,
+"objets": [],
+"titres": [],
+"ornements": []
+}
+}
+]

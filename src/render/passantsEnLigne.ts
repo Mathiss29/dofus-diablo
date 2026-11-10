@@ -10,7 +10,7 @@ import { Assemblage } from './squelette';
 import { ISO } from '../sim/iso';
 import type { Entity } from '../sim/entity';
 
-interface Vue { v: EntityView | null; vv: PersoVivant | null; nom: Phaser.GameObjects.Text; cle: string }
+interface Vue { v: EntityView | null; vv: PersoVivant | null; nom: Phaser.GameObjects.Text; orn: Phaser.GameObjects.Image | null; cle: string }
 /** Au plus ce nombre de passants dessinés (chacun a ses propres images en mémoire) : les plus proches. */
 const MAX = 12;
 
@@ -31,16 +31,20 @@ export class PassantsEnLigne {
       u.vv?.maj(1);
       const s = ISO.toScreen(p.x, p.y);
       u.nom.setPosition(s.x, s.y - 112).setDepth(s.y + 2).setVisible(true);
+      u.orn?.setPosition(s.x - u.nom.width / 2 - 10, s.y - 112 - 9).setDepth(s.y + 2).setVisible(true);
     }
   }
   private vue(p: Passant): Vue {
-    const pr = p.profil!, cle = `${pr.classe}_${pr.sexe}|${JSON.stringify(pr.apparence)}|${pr.objets.join(',')}`;
+    const pr = p.profil!, cle = `${pr.classe}_${pr.sexe}|${JSON.stringify(pr.apparence)}|${pr.objets.join(',')}|${pr.titre ?? ''}|${pr.ornement ?? 0}`;
     let u = this.vues.get(p.id);
     if (u && u.cle !== cle) { this.oublier(u); u = undefined; }
     if (u) return u;
-    const nom = this.scene.add.text(0, 0, `${pr.nom} · niv. ${pr.niveau}`, { fontFamily: 'Lexend, sans-serif', fontSize: '12px', color: '#f4efe0', stroke: '#000', strokeThickness: 3 })
+    // « Succès : » 6A+6B : le titre choisi au-dessus du nom, l'ornement officiel à côté
+    const nom = this.scene.add.text(0, 0, `${pr.titre ? `« ${pr.titre} »\n` : ''}${pr.nom} · niv. ${pr.niveau}`, { fontFamily: 'Lexend, sans-serif', fontSize: '12px', color: '#f4efe0', stroke: '#000', strokeThickness: 3, align: 'center' })
       .setOrigin(0.5, 1).setVisible(false);
-    const nu: Vue = { v: null, vv: null, nom, cle };
+    const ok = pr.ornement ? `orn_${pr.ornement - 1}` : '';
+    const orn = ok && this.scene.textures.exists(ok) ? this.scene.add.image(0, 0, ok).setDisplaySize(18, 18).setVisible(false) : null;
+    const nu: Vue = { v: null, vv: null, nom, orn, cle };
     this.vues.set(p.id, nu);
     const look = (pr.sexe === 'f' && LOOKS[`${pr.classe}_f`]) || LOOKS[pr.classe] || LOOKS.iop;
     Assemblage.creer(`${pr.classe}_${pr.sexe}`, pr.apparence, pr.objets).then(a => {
@@ -66,6 +70,6 @@ export class PassantsEnLigne {
     return { id: -1000 - p.id, x: p.x, y: p.y, z: 0, facing: p.f, anim: p.a === 'idle' ? 'idle' : 'run', animT: 0, age: p.age,
       dead: false, flash: 0, radius: 14, faction: 'player', hp: 1, maxHp: 1 } as unknown as Entity;
   }
-  private oublier(u: Vue) { u.v?.destroy(); u.vv?.destroy(); u.nom.destroy(); }
+  private oublier(u: Vue) { u.v?.destroy(); u.vv?.destroy(); u.nom.destroy(); u.orn?.destroy(); }
   destroy() { for (const u of this.vues.values()) this.oublier(u); this.vues.clear(); }
 }
