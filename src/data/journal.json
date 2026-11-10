@@ -1291,7 +1291,8 @@
           "Mini-carte, portrait et transparence du décor allégés : l'image coûte deux fois moins (≈ 10 → 5 ms).",
           "Le monde passe à la grille de tout le continent : cases marchables rangées carte par carte.",
           "Les groupes de monstres n'existent qu'autour des joueurs : 11 000 → 400 monstres en partie de test.",
-          "Ladder : nouvel onglet Succès, classé par points du compte."
+          "Ladder : nouvel onglet Succès, classé par points du compte.",
+          "Test du serveur sur le butin des donjons de groupe rendu fiable (il dépendait d'un seul tirage)."
         ],
         "Combat": [
           {
