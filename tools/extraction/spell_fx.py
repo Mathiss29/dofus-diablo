@@ -48,6 +48,8 @@ def render(gfx, bones, outdir, tmp):
     subprocess.run([sys.executable, os.path.join(HERE, 'b_dump.py'), os.path.join(bones, f'bones_assets_bone_{gfx}.bundle'), b], check=True, capture_output=True)
     subprocess.run([sys.executable, os.path.join(HERE, 'build_scene.py'), b], check=True, capture_output=True, cwd=HERE, env={**os.environ, 'SKIP_MASKS': '1'})
     sc = json.load(open(b + '/scene.json'))
+    if not any(f for v in sc['anims'].values() for f in v):   # tout passe par des masques (Attirance 8355/8356) : pas rendable ici
+        print('  que des masques', gfx); return None
     anims = {k: len(v) for k, v in sc['anims'].items() if k.startswith('FX_') and len(v)}
     if not anims: print('  pas d\'animation FX lisible', gfx); return None
     fps = 30
@@ -89,7 +91,8 @@ def main(d, bones, outdir='public/assets/fx'):
         if str(g) in old and (os.path.exists(os.path.join(outdir, f'fx_{g}.webp')) or f'fx/fx_{g}.webp' in LOURDS) and not os.environ.get('FORCE'):
             gfx[g] = old[str(g)]; continue   # déjà rendu (FORCE=1 pour tout refaire)
         if not os.path.exists(os.path.join(bones, f'bones_assets_bone_{g}.bundle')): print('  manquant', g); continue
-        r = render(g, bones, outdir, tmp)
+        try: r = render(g, bones, outdir, tmp)
+        except subprocess.CalledProcessError as e: print('  rendu impossible', g, (e.stderr or b'')[-200:]); r = None
         if r: gfx[g] = r; print(g, r)
     shutil.rmtree(tmp)
     for v in spells.values():   # retire les gfx qu'on n'a pas pu rendre
