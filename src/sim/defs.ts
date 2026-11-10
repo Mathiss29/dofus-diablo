@@ -290,6 +290,13 @@ export interface DonjonDef { nom: string; salles: Record<string, string[][]>;
   bossVague?: string[];
   /** Maquette Coffres 4B : « precieux » = Coffret précieux (Enfers, donjons à clés) ; sinon la Malle Animée. */
   coffre?: 'precieux';
+  /** Paliers propres au boss (île des Wabbits, « Wabbits : 8A ») : à chaque palier, ces renforts (posés autour du boss au lieu des
+   *  entrées) et/ou Awmuwe Woyale (dommages subis × 0,3 pendant `awmuwe` s, puis son grand sort tout de suite). */
+  paliersBoss?: { renforts?: string[]; awmuwe?: number }[];
+  /** « Wabbits : 8B + 9A » : à 0 PV le boss s'enfuit dans un trou (victoire, coffre). La première fois, le trou mène au donjon `suite`. */
+  fuite?: { suite: string };
+  /** « Wabbits : 7C » : un `monstre` laissé en vie `delai` s court donner l'alarme : `renforts` monstres en plus arrivent. */
+  alarme?: { monstre: string; delai: number; renforts: number };
   /** Donjon en couloirs (maquette « Couloirs : 1C 2B 3A 4A », tools/extraction/couloirs.py), partie de test seulement :
    *  ses vraies salles dans l'ordre, reliées par des couloirs (cartes `tags`), puis l'arène au bout, sans porte.
    *  Groupes officiels dans les salles, `nErrants` monstres seuls dans chaque couloir (2B) ; les vagues partent à l'entrée de l'arène. */

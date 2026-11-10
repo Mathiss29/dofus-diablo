@@ -3014,6 +3014,18 @@
      ],
      "nom": "Château du Wa Wabbit",
      "cle": "14464"
+    },
+    {
+     "a": [
+      "28_-12",
+      233
+     ],
+     "b": [
+      "terrier_1",
+      463
+     ],
+     "nom": "Terrier du Wa Wabbit",
+     "cle": "14465"
     }
    ],
    "donjons": [
@@ -12947,6 +12959,26 @@
        "couloir_chateau_ww_2_3",
        "couloir_chateau_ww_3_5"
       ]
+     },
+     "paliersBoss": [
+      {
+       "renforts": [
+        "cawotte_woyale",
+        "cawotte_woyale",
+        "cawotte_woyale"
+       ]
+      },
+      {
+       "awmuwe": 5
+      }
+     ],
+     "fuite": {
+      "suite": "Terrier du Wa Wabbit"
+     },
+     "alarme": {
+      "monstre": "tiwabbit_kiafin",
+      "delai": 20,
+      "renforts": 4
      }
     },
     {
