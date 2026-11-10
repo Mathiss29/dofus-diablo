@@ -307,6 +307,9 @@ export interface OpenDef {
   /** Portes vers les intérieurs, reliées à la main (tools/extraction/interieurs.py). */
   portes?: PorteDef[];
   donjons?: DonjonDef[];
+  /** Donjons de la 0.4 (11 arènes, ligne « Arènes finales : 1A 2A ») : seulement en partie de test, ajoutés à `donjons`
+   *  par World. Arènes rangées sous le monde d'Astrub en attendant Amakna (tools/extraction/arenes04/). */
+  donjonsTest?: DonjonDef[];
   /** Ateliers officiels (table hints de Dofus 3, maquette Métiers 10A) : cartes (tags) où l'on fabrique pour ces métiers. */
   ateliers?: AtelierDef[];
   /** Coffre partagé (0.3, 12A+12B) : où on l'ouvre (Havre-Sac, Banque d'Astrub). Sans case : la case la plus dégagée de la carte. */

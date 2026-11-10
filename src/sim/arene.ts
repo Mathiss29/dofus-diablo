@@ -73,7 +73,9 @@ export class Arene {
     this.pts = { arrivee: at(a.arrivee), entrees: a.entrees.map(at), boss: at(a.boss), sortie: at(a.sortie), coffre: at(a.coffre) };
     this.total = d.vagues?.length ?? 0;
     const M = w.opts.data.monsters;
-    this.pool = [...new Set(Object.values(d.salles).flat(2))].filter(m => M[m] && !M[m].boss);
+    // sans salles officielles en jeu (arènes de la 0.4, Amakna pas encore exporté) : les monstres des vagues
+    const tous = Object.values(d.salles).flat(2);
+    this.pool = [...new Set(tous.length ? tous : (d.vagues ?? []).flatMap(v => v.m))].filter(m => M[m] && !M[m].boss);
     this.vague = Math.max(0, Math.min(this.total + 1, reprise) - 1);   // la vague atteinte recommence (monstres remis à neuf)
     this.depart = { ...this.pts.arrivee };
   }

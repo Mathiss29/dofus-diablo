@@ -1207,6 +1207,116 @@
       4
      ],
      "interieur": true
+    },
+    "297": {
+     "name": "Donjon des Scarafeuilles",
+     "level": 40,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ]
+    },
+    "516": {
+     "name": "Donjon des Squelettes",
+     "level": 40,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ]
+    },
+    "201": {
+     "name": "Donjon des Tofus",
+     "level": 40,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ]
+    },
+    "1018": {
+     "name": "Akadémie des Gobs",
+     "level": 50,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ]
+    },
+    "284": {
+     "name": "Donjon des Bworks",
+     "level": 50,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ]
+    },
+    "528": {
+     "name": "Donjon des Forgerons",
+     "level": 50,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ]
+    },
+    "755": {
+     "name": "Nid du Kwakwa",
+     "level": 50,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ]
+    },
+    "491": {
+     "name": "Donjon des Larves",
+     "level": 50,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ]
+    },
+    "243": {
+     "name": "Pitons Rocheux des Craqueleurs",
+     "level": 70,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ]
+    },
+    "537": {
+     "name": "Château du Wa Wabbit",
+     "level": 60,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ]
+    },
+    "538": {
+     "name": "Terrier du Wa Wabbit",
+     "level": 80,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ]
     }
    },
    "checkpoints": [
@@ -3968,6 +4078,1009 @@
     {
      "nom": "Coffre de la Banque d'Astrub",
      "carte": "banque"
+    }
+   ],
+   "donjonsTest": [
+    {
+     "nom": "Donjon des Scarafeuilles",
+     "salles": {},
+     "arene": {
+      "tag": "arene_scarafeuilles",
+      "arrivee": 542576,
+      "entrees": [
+       539795,
+       538806,
+       542571
+      ],
+      "boss": 535016,
+      "sortie": 536527,
+      "coffre": 536026
+     },
+     "vagues": [
+      {
+       "m": [
+        "scarafeuille_bleu",
+        "scarafeuille_vert",
+        "scarafeuille_bleu",
+        "scarafeuille_noir",
+        "scarafeuille_vert",
+        "scarafeuille_immature",
+        "scarafeuille_immature",
+        "scarafeuille_noir",
+        "scarafeuille_blanc",
+        "scarafeuille_rouge",
+        "scarafeuille_rouge",
+        "scarafeuille_rouge",
+        "scarafeuille_immature",
+        "scarafeuille_blanc"
+       ]
+      },
+      {
+       "m": [
+        "scarafeuille_noir",
+        "scarafeuille_rouge",
+        "scarafeuille_rouge",
+        "scarafeuille_immature",
+        "scarafeuille_bleu",
+        "scarafeuille_blanc",
+        "scarafeuille_immature",
+        "scarafeuille_immature",
+        "scarafeuille_noir",
+        "scarafeuille_noir",
+        "scarafeuille_blanc",
+        "scarafeuille_bleu",
+        "scarafeuille_vert",
+        "scarafeuille_blanc",
+        "scarafeuille_bleu",
+        "scarafeuille_rouge",
+        "scarafeuille_vert",
+        "scarafeuille_vert"
+       ]
+      },
+      {
+       "nom": "Scarafeuille Noir",
+       "m": [
+        "scarafeuille_noir",
+        "scarafeuille_bleu",
+        "scarafeuille_noir",
+        "scarafeuille_immature",
+        "scarafeuille_immature",
+        "scarafeuille_noir",
+        "scarafeuille_immature",
+        "scarafeuille_bleu",
+        "scarafeuille_vert",
+        "scarafeuille_noir",
+        "scarafeuille_noir",
+        "scarafeuille_bleu",
+        "scarafeuille_noir",
+        "scarafeuille_noir",
+        "scarafeuille_noir",
+        "scarafeuille_noir",
+        "scarafeuille_noir",
+        "scarafeuille_bleu",
+        "scarafeuille_noir",
+        "scarafeuille_rouge",
+        "scarafeuille_immature",
+        "scarafeuille_noir"
+       ]
+      }
+     ],
+     "bossVague": [
+      "scarabosse_dore",
+      "scarafeuille_noir",
+      "scarafeuille_rouge",
+      "scarafeuille_bleu"
+     ]
+    },
+    {
+     "nom": "Donjon des Squelettes",
+     "salles": {},
+     "arene": {
+      "tag": "arene_squelettes",
+      "arrivee": 543136,
+      "entrees": [
+       542368,
+       542393,
+       547168
+      ],
+      "boss": 533560,
+      "sortie": 535072,
+      "coffre": 535074
+     },
+     "vagues": [
+      {
+       "m": [
+        "chafer_fantassin",
+        "chafer",
+        "chafer_fantassin",
+        "chafer_invisible",
+        "chafer_invisible",
+        "rib",
+        "chafer_primitif",
+        "chafer_primitif",
+        "rib",
+        "chafer_fantassin",
+        "rib",
+        "chafer",
+        "chafer",
+        "chafer_invisible"
+       ]
+      },
+      {
+       "m": [
+        "rib",
+        "chafer_invisible",
+        "chafer_primitif",
+        "chafer_fantassin",
+        "chafer_primitif",
+        "chafer_primitif",
+        "chafer",
+        "chafer_fantassin",
+        "chafer",
+        "chafer_invisible",
+        "chafer",
+        "chafer_invisible",
+        "chafer",
+        "chafer_fantassin",
+        "chafer_fantassin",
+        "rib",
+        "chafer_invisible",
+        "rib"
+       ]
+      },
+      {
+       "nom": "Chafer Primitif",
+       "m": [
+        "chafer_primitif",
+        "chafer_primitif",
+        "chafer_fantassin",
+        "chafer_primitif",
+        "chafer_invisible",
+        "chafer_primitif",
+        "chafer_primitif",
+        "chafer_fantassin",
+        "chafer_primitif",
+        "chafer_primitif",
+        "chafer_primitif",
+        "chafer_primitif",
+        "chafer",
+        "chafer",
+        "chafer_primitif",
+        "chafer_primitif",
+        "chafer_fantassin",
+        "chafer_primitif",
+        "chafer_invisible",
+        "chafer_primitif",
+        "chafer_primitif",
+        "chafer_primitif"
+       ]
+      }
+     ],
+     "bossVague": [
+      "chafer_ronin",
+      "rib",
+      "chafer_primitif",
+      "chafer_fantassin"
+     ]
+    },
+    {
+     "nom": "Donjon des Tofus",
+     "salles": {},
+     "arene": {
+      "tag": "arene_tofus",
+      "arrivee": 543192,
+      "entrees": [
+       542424,
+       542449,
+       547224
+      ],
+      "boss": 533616,
+      "sortie": 535128,
+      "coffre": 535130
+     },
+     "vagues": [
+      {
+       "m": [
+        "tofu_mutant",
+        "tofu_agressif",
+        "tofu_noir",
+        "tofu_agressif",
+        "tofu_amakna",
+        "tofu_noir_agressif",
+        "tofoune",
+        "tofoune",
+        "tofukaz",
+        "tofu_amakna",
+        "tofukaz",
+        "tofu_noir",
+        "tofu_ventripotent",
+        "tofoune_agressive"
+       ]
+      },
+      {
+       "m": [
+        "tofu_amakna",
+        "tofukaz",
+        "tofu_ventripotent",
+        "tofu_amakna",
+        "tofoune_agressive",
+        "tofu_noir",
+        "tofu_agressif",
+        "tofu_agressif",
+        "tofoune",
+        "tofu_noir_agressif",
+        "tofu_noir",
+        "tofu_ventripotent",
+        "tofukaz",
+        "tofoune_agressive",
+        "tofoune",
+        "tofu_mutant",
+        "tofu_noir_agressif",
+        "tofu_mutant"
+       ]
+      },
+      {
+       "nom": "Tofoune Agressive",
+       "m": [
+        "tofoune_agressive",
+        "tofu_agressif",
+        "tofoune_agressive",
+        "tofoune_agressive",
+        "tofukaz",
+        "tofoune_agressive",
+        "tofoune_agressive",
+        "tofoune_agressive",
+        "tofu_ventripotent",
+        "tofoune_agressive",
+        "tofukaz",
+        "tofukaz",
+        "tofu_amakna",
+        "tofu_agressif",
+        "tofu_ventripotent",
+        "tofoune_agressive",
+        "tofoune_agressive",
+        "tofoune_agressive",
+        "tofu_noir",
+        "tofoune_agressive",
+        "tofoune_agressive",
+        "tofoune"
+       ]
+      }
+     ],
+     "bossVague": [
+      "batofu",
+      "tofu_amakna",
+      "tofu_noir",
+      "tofoune"
+     ]
+    },
+    {
+     "nom": "Akadémie des Gobs",
+     "salles": {},
+     "arene": {
+      "tag": "arene_gobs",
+      "arrivee": 543248,
+      "entrees": [
+       542480,
+       542505,
+       547280
+      ],
+      "boss": 533672,
+      "sortie": 535184,
+      "coffre": 535186
+     },
+     "vagues": [
+      {
+       "m": [
+        "gobichon",
+        "gobet",
+        "gob_trotteur",
+        "gobaladee",
+        "gob_trotteur",
+        "gobichon",
+        "gobet",
+        "gob_trotteur",
+        "gobaliste",
+        "gobaliste",
+        "gobaladee",
+        "gobichon",
+        "gobet",
+        "gobaliste"
+       ]
+      },
+      {
+       "m": [
+        "gobaladee",
+        "gobaladee",
+        "gobichon",
+        "gobet",
+        "gobichon",
+        "gobichon",
+        "gob_trotteur",
+        "gob_trotteur",
+        "gob_trotteur",
+        "gobaliste",
+        "gobet",
+        "gobet",
+        "gobaliste",
+        "gobaladee",
+        "gobaliste",
+        "gob_trotteur",
+        "gobichon",
+        "gobet"
+       ]
+      },
+      {
+       "nom": "Gobaladée",
+       "m": [
+        "gobichon",
+        "gobet",
+        "gobaladee",
+        "gobaladee",
+        "gobaladee",
+        "gobaladee",
+        "gobaladee",
+        "gobaladee",
+        "gobaliste",
+        "gobaladee",
+        "gobaladee",
+        "gobaladee",
+        "gobaliste",
+        "gob_trotteur",
+        "gobaladee",
+        "gobichon",
+        "gobaladee",
+        "gobaladee",
+        "gobaliste",
+        "gobaladee",
+        "gobaladee",
+        "gob_trotteur"
+       ]
+      }
+     ],
+     "bossVague": [
+      "directeur_grunob",
+      "gob_trotteur",
+      "gobet",
+      "gobichon"
+     ]
+    },
+    {
+     "nom": "Donjon des Bworks",
+     "salles": {},
+     "arene": {
+      "tag": "arene_bworks",
+      "arrivee": 583400,
+      "entrees": [
+       582632,
+       582657,
+       587432
+      ],
+      "boss": 573824,
+      "sortie": 575336,
+      "coffre": 575338
+     },
+     "vagues": [
+      {
+       "m": [
+        "bwork_archer",
+        "trooll_apprivoise",
+        "bwork_archer",
+        "bwork_archer",
+        "bwork_mage",
+        "bwork_mage",
+        "bwork",
+        "bwork_mage",
+        "trooll_apprivoise",
+        "bwork",
+        "trooll_apprivoise",
+        "bwork",
+        "bwork_mage",
+        "bwork_archer"
+       ]
+      },
+      {
+       "m": [
+        "bwork_mage",
+        "trooll_apprivoise",
+        "bwork_archer",
+        "trooll_apprivoise",
+        "trooll_apprivoise",
+        "bwork_archer",
+        "bwork",
+        "bwork_mage",
+        "bwork",
+        "bwork_archer",
+        "bwork_archer",
+        "bwork_mage",
+        "bwork",
+        "trooll_apprivoise",
+        "bwork",
+        "bwork_mage",
+        "bwork_archer",
+        "bwork_mage"
+       ]
+      },
+      {
+       "nom": "Trooll Apprivoisé",
+       "m": [
+        "trooll_apprivoise",
+        "trooll_apprivoise",
+        "bwork",
+        "trooll_apprivoise",
+        "trooll_apprivoise",
+        "trooll_apprivoise",
+        "bwork_mage",
+        "trooll_apprivoise",
+        "trooll_apprivoise",
+        "bwork",
+        "bwork",
+        "trooll_apprivoise",
+        "trooll_apprivoise",
+        "trooll_apprivoise",
+        "trooll_apprivoise",
+        "trooll_apprivoise",
+        "trooll_apprivoise",
+        "bwork_archer",
+        "trooll_apprivoise",
+        "trooll_apprivoise",
+        "bwork",
+        "bwork"
+       ]
+      }
+     ],
+     "bossVague": [
+      "bworkette",
+      "trooll_apprivoise",
+      "bwork_mage",
+      "bwork"
+     ]
+    },
+    {
+     "nom": "Donjon des Forgerons",
+     "salles": {},
+     "arene": {
+      "tag": "arene_forgerons",
+      "arrivee": 583456,
+      "entrees": [
+       582688,
+       582713,
+       587488
+      ],
+      "boss": 573880,
+      "sortie": 575392,
+      "coffre": 575394
+     },
+     "vagues": [
+      {
+       "m": [
+        "bandit_du_clan_des_roublards",
+        "boulanger_sombre",
+        "bandit_du_clan_des_roublards",
+        "bandit_du_clan_des_roublards",
+        "bandit_du_clan_des_roublards",
+        "boulanger_sombre",
+        "mineur_sombre",
+        "forgeron_sombre",
+        "forgeron_sombre",
+        "boulanger_sombre",
+        "boulanger_sombre",
+        "forgeron_sombre",
+        "mineur_sombre",
+        "mineur_sombre"
+       ]
+      },
+      {
+       "m": [
+        "mineur_sombre",
+        "forgeron_sombre",
+        "forgeron_sombre",
+        "boulanger_sombre",
+        "boulanger_sombre",
+        "bandit_du_clan_des_roublards",
+        "boulanger_sombre",
+        "boulanger_sombre",
+        "bandit_du_clan_des_roublards",
+        "forgeron_sombre",
+        "mineur_sombre",
+        "bandit_du_clan_des_roublards",
+        "mineur_sombre",
+        "bandit_du_clan_des_roublards",
+        "mineur_sombre",
+        "forgeron_sombre",
+        "bandit_du_clan_des_roublards",
+        "boulanger_sombre"
+       ]
+      },
+      {
+       "nom": "Forgeron Sombre",
+       "m": [
+        "forgeron_sombre",
+        "boulanger_sombre",
+        "forgeron_sombre",
+        "boulanger_sombre",
+        "forgeron_sombre",
+        "forgeron_sombre",
+        "forgeron_sombre",
+        "forgeron_sombre",
+        "boulanger_sombre",
+        "forgeron_sombre",
+        "forgeron_sombre",
+        "mineur_sombre",
+        "forgeron_sombre",
+        "mineur_sombre",
+        "boulanger_sombre",
+        "forgeron_sombre",
+        "bandit_du_clan_des_roublards",
+        "forgeron_sombre",
+        "forgeron_sombre",
+        "forgeron_sombre",
+        "bandit_du_clan_des_roublards",
+        "boulanger_sombre"
+       ]
+      }
+     ],
+     "bossVague": [
+      "coffre_des_forgerons",
+      "mineur_sombre",
+      "forgeron_sombre",
+      "bandit_du_clan_des_roublards"
+     ]
+    },
+    {
+     "nom": "Nid du Kwakwa",
+     "salles": {},
+     "arene": {
+      "tag": "arene_kwakwa",
+      "arrivee": 583512,
+      "entrees": [
+       580479,
+       580497,
+       585024
+      ],
+      "boss": 574440,
+      "sortie": 575448,
+      "coffre": 575954
+     },
+     "vagues": [
+      {
+       "m": [
+        "bwak_de_flamme",
+        "kwak_de_flamme",
+        "bwak_de_glace",
+        "bwak_de_terre",
+        "kwakere_de_glace",
+        "bwak_de_vent",
+        "kwakere_de_terre",
+        "kwak_de_vent",
+        "kwakere_de_vent",
+        "kwak_de_vent",
+        "kwakere_de_flamme",
+        "kwak_de_glace",
+        "kwak_de_terre",
+        "kwak_de_flamme"
+       ]
+      },
+      {
+       "m": [
+        "kwakere_de_flamme",
+        "kwak_de_flamme",
+        "kwak_de_terre",
+        "kwakere_de_glace",
+        "bwak_de_flamme",
+        "kwakere_de_terre",
+        "kwak_de_glace",
+        "kwakere_de_vent",
+        "kwak_de_vent",
+        "bwak_de_terre",
+        "kwak_de_glace",
+        "bwak_de_vent",
+        "kwak_de_vent",
+        "bwak_de_glace",
+        "kwakere_de_terre",
+        "kwak_de_terre",
+        "kwakere_de_flamme",
+        "kwak_de_flamme"
+       ]
+      },
+      {
+       "nom": "Bwak de Terre",
+       "m": [
+        "bwak_de_terre",
+        "kwak_de_vent",
+        "bwak_de_terre",
+        "kwakere_de_glace",
+        "bwak_de_terre",
+        "kwak_de_flamme",
+        "bwak_de_terre",
+        "bwak_de_terre",
+        "kwak_de_vent",
+        "kwak_de_flamme",
+        "bwak_de_terre",
+        "bwak_de_terre",
+        "bwak_de_terre",
+        "kwakere_de_vent",
+        "kwak_de_vent",
+        "bwak_de_terre",
+        "bwak_de_vent",
+        "bwak_de_terre",
+        "bwak_de_terre",
+        "kwakere_de_terre",
+        "kwak_de_glace",
+        "bwak_de_terre"
+       ]
+      }
+     ],
+     "bossVague": [
+      "kwakwa",
+      "kwak_de_vent",
+      "kwak_de_flamme",
+      "kwak_de_glace"
+     ]
+    },
+    {
+     "nom": "Donjon des Larves",
+     "salles": {},
+     "arene": {
+      "tag": "arene_larves",
+      "arrivee": 583568,
+      "entrees": [
+       582800,
+       582825,
+       587600
+      ],
+      "boss": 573992,
+      "sortie": 575504,
+      "coffre": 575506
+     },
+     "vagues": [
+      {
+       "m": [
+        "larve_bleue_solitaire",
+        "larve_verte_solitaire",
+        "larve_doree",
+        "larve_saphir",
+        "larve_bleue_solitaire",
+        "larve_verte_solitaire",
+        "larve_doree",
+        "larve_bleue_solitaire",
+        "larve_verte_solitaire",
+        "larve_emeraude",
+        "larve_rubis",
+        "larve_emeraude",
+        "larve_saphir",
+        "larve_rubis"
+       ]
+      },
+      {
+       "m": [
+        "larve_doree",
+        "larve_doree",
+        "larve_rubis",
+        "larve_emeraude",
+        "larve_verte_solitaire",
+        "larve_emeraude",
+        "larve_rubis",
+        "larve_bleue_solitaire",
+        "larve_verte_solitaire",
+        "larve_bleue_solitaire",
+        "larve_verte_solitaire",
+        "larve_saphir",
+        "larve_doree",
+        "larve_bleue_solitaire",
+        "larve_emeraude",
+        "larve_saphir",
+        "larve_rubis",
+        "larve_saphir"
+       ]
+      },
+      {
+       "nom": "Larve Dorée",
+       "m": [
+        "larve_doree",
+        "larve_doree",
+        "larve_doree",
+        "larve_doree",
+        "larve_bleue_solitaire",
+        "larve_verte_solitaire",
+        "larve_doree",
+        "larve_doree",
+        "larve_saphir",
+        "larve_doree",
+        "larve_doree",
+        "larve_emeraude",
+        "larve_doree",
+        "larve_saphir",
+        "larve_doree",
+        "larve_saphir",
+        "larve_verte_solitaire",
+        "larve_doree",
+        "larve_bleue_solitaire",
+        "larve_saphir",
+        "larve_doree",
+        "larve_doree"
+       ]
+      }
+     ],
+     "bossVague": [
+      "shin_larve",
+      "larve_saphir",
+      "larve_rubis",
+      "larve_emeraude"
+     ]
+    },
+    {
+     "nom": "Pitons Rocheux des Craqueleurs",
+     "salles": {},
+     "arene": {
+      "tag": "arene_craqueleurs",
+      "arrivee": 623720,
+      "entrees": [
+       620687,
+       620705,
+       625232
+      ],
+      "boss": 614648,
+      "sortie": 615656,
+      "coffre": 616162
+     },
+     "vagues": [
+      {
+       "m": [
+        "elementerre",
+        "craqueboule",
+        "craquelope",
+        "craqueleur_des_plaines",
+        "craqueleur",
+        "craquelope",
+        "craqueleur",
+        "craqueboule",
+        "craqueboule",
+        "elementerre",
+        "craqueleur_des_plaines",
+        "elementerre",
+        "craqueleur",
+        "craqueleur_des_plaines"
+       ]
+      },
+      {
+       "m": [
+        "elementerre",
+        "elementerre",
+        "craqueleur_des_plaines",
+        "craqueboule",
+        "craqueleur_des_plaines",
+        "elementerre",
+        "craqueleur_des_plaines",
+        "craquelope",
+        "craqueboule",
+        "craqueleur_des_plaines",
+        "craqueleur",
+        "elementerre",
+        "craqueleur",
+        "craqueleur",
+        "craquelope",
+        "craqueleur",
+        "craqueboule",
+        "craquelope"
+       ]
+      },
+      {
+       "nom": "Craquelope",
+       "m": [
+        "craquelope",
+        "craqueleur_des_plaines",
+        "craquelope",
+        "craquelope",
+        "craquelope",
+        "craquelope",
+        "craquelope",
+        "craqueleur_des_plaines",
+        "craqueleur_des_plaines",
+        "craqueleur",
+        "elementerre",
+        "craquelope",
+        "craquelope",
+        "craqueleur_des_plaines",
+        "craquelope",
+        "craqueleur",
+        "craquelope",
+        "craquelope",
+        "craquelope",
+        "craquelope",
+        "craqueboule",
+        "craqueboule"
+       ]
+      }
+     ],
+     "bossVague": [
+      "craqueleur_legendaire",
+      "craqueleur",
+      "craqueleur_des_plaines",
+      "craqueboule"
+     ]
+    },
+    {
+     "nom": "Château du Wa Wabbit",
+     "salles": {},
+     "arene": {
+      "tag": "arene_chateau_ww",
+      "arrivee": 623776,
+      "entrees": [
+       623008,
+       623033,
+       627808
+      ],
+      "boss": 614200,
+      "sortie": 615712,
+      "coffre": 615714
+     },
+     "vagues": [
+      {
+       "m": [
+        "black_tiwabbit",
+        "grand_pa_wabbit",
+        "black_tiwabbit",
+        "wabbit",
+        "wabbit",
+        "tiwabbit",
+        "wo_wabbit",
+        "grand_pa_wabbit",
+        "wo_wabbit",
+        "tiwabbit_kiafin",
+        "tiwabbit",
+        "black_wabbit",
+        "tiwabbit_kiafin",
+        "black_wabbit"
+       ]
+      },
+      {
+       "m": [
+        "black_wabbit",
+        "black_wabbit",
+        "wo_wabbit",
+        "grand_pa_wabbit",
+        "wo_wabbit",
+        "black_tiwabbit",
+        "wabbit",
+        "wabbit",
+        "black_tiwabbit",
+        "tiwabbit",
+        "wabbit",
+        "black_tiwabbit",
+        "tiwabbit_kiafin",
+        "grand_pa_wabbit",
+        "tiwabbit",
+        "tiwabbit",
+        "tiwabbit_kiafin",
+        "tiwabbit_kiafin"
+       ]
+      },
+      {
+       "nom": "Grand Pa Wabbit",
+       "m": [
+        "wo_wabbit",
+        "tiwabbit_kiafin",
+        "black_tiwabbit",
+        "grand_pa_wabbit",
+        "wabbit",
+        "grand_pa_wabbit",
+        "black_wabbit",
+        "grand_pa_wabbit",
+        "grand_pa_wabbit",
+        "grand_pa_wabbit",
+        "grand_pa_wabbit",
+        "tiwabbit_kiafin",
+        "grand_pa_wabbit",
+        "black_wabbit",
+        "grand_pa_wabbit",
+        "grand_pa_wabbit",
+        "grand_pa_wabbit",
+        "wabbit",
+        "tiwabbit_kiafin",
+        "grand_pa_wabbit",
+        "black_wabbit",
+        "grand_pa_wabbit"
+       ]
+      }
+     ],
+     "bossVague": [
+      "wa_wabbit",
+      "wo_wabbit",
+      "grand_pa_wabbit",
+      "black_wabbit"
+     ]
+    },
+    {
+     "nom": "Terrier du Wa Wabbit",
+     "salles": {},
+     "arene": {
+      "tag": "arene_terrier",
+      "arrivee": 623832,
+      "entrees": [
+       623064,
+       623089,
+       627864
+      ],
+      "boss": 614256,
+      "sortie": 615768,
+      "coffre": 615770
+     },
+     "vagues": [
+      {
+       "m": [
+        "blanc_pa_wabbit",
+        "tiwobot",
+        "wobot_kiafin",
+        "tiwobot",
+        "wobot_kiafin",
+        "black_wo_wabbit",
+        "black_wo_wabbit",
+        "wobot_kiafin",
+        "blanc_pa_wabbit",
+        "tiwobot",
+        "wobot_kiafin",
+        "black_wo_wabbit",
+        "blanc_pa_wabbit",
+        "black_wo_wabbit"
+       ]
+      },
+      {
+       "m": [
+        "wobot_kiafin",
+        "tiwobot",
+        "tiwobot",
+        "black_wo_wabbit",
+        "wobot_kiafin",
+        "black_wo_wabbit",
+        "wobot_kiafin",
+        "black_wo_wabbit",
+        "wobot_kiafin",
+        "blanc_pa_wabbit",
+        "blanc_pa_wabbit",
+        "tiwobot",
+        "blanc_pa_wabbit",
+        "wobot_kiafin",
+        "tiwobot",
+        "blanc_pa_wabbit",
+        "black_wo_wabbit",
+        "black_wo_wabbit"
+       ]
+      },
+      {
+       "nom": "Tiwobot",
+       "m": [
+        "wobot_kiafin",
+        "tiwobot",
+        "tiwobot",
+        "tiwobot",
+        "black_wo_wabbit",
+        "tiwobot",
+        "tiwobot",
+        "tiwobot",
+        "tiwobot",
+        "blanc_pa_wabbit",
+        "tiwobot",
+        "blanc_pa_wabbit",
+        "tiwobot",
+        "tiwobot",
+        "tiwobot",
+        "tiwobot",
+        "black_wo_wabbit",
+        "tiwobot",
+        "tiwobot",
+        "black_wo_wabbit",
+        "tiwobot",
+        "blanc_pa_wabbit"
+       ]
+      }
+     ],
+     "bossVague": [
+      "wa_wobot",
+      "black_wo_wabbit",
+      "wobot_kiafin",
+      "blanc_pa_wabbit"
+     ]
     }
    ]
   }

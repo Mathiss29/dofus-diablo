@@ -21,7 +21,7 @@ for key, gm in mons.items():
     for x in dm.get('drops', []):
         o = I.get(int(x['objectId']))
         if not o: continue
-        if float(x['percentDropForGrade1']) <= 0: continue   # 6B : jamais lâché
+        if round(float(x['percentDropForGrade1']), 2) <= 0: continue   # 6B : jamais lâché (ou moins de 0,01 %)
         e = {'item': str(x['objectId']), 'chance': round(float(x['percentDropForGrade1']), 2)}
         c = condition(x.get('criterions') or '')   # 6B : quête ou événement, ne tombe pas en temps normal
         if c: e['cond'] = c

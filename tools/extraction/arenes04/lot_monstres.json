@@ -1,0 +1,731 @@
+{
+ "194": {
+  "key": "scarafeuille_rouge",
+  "nom": "Scarafeuille Rouge",
+  "bone": 382,
+  "look": "{382|||100}",
+  "donjon": "45",
+  "boss": false,
+  "existe": false
+ },
+ "198": {
+  "key": "scarafeuille_bleu",
+  "nom": "Scarafeuille Bleu",
+  "bone": 381,
+  "look": "{381|||100}",
+  "donjon": "45",
+  "boss": false,
+  "existe": false
+ },
+ "240": {
+  "key": "scarafeuille_vert",
+  "nom": "Scarafeuille Vert",
+  "bone": 383,
+  "look": "{383|||100}",
+  "donjon": "45",
+  "boss": false,
+  "existe": false
+ },
+ "241": {
+  "key": "scarafeuille_blanc",
+  "nom": "Scarafeuille Blanc",
+  "bone": 384,
+  "look": "{384|||100}",
+  "donjon": "45",
+  "boss": false,
+  "existe": false
+ },
+ "795": {
+  "key": "scarafeuille_noir",
+  "nom": "Scarafeuille Noir",
+  "bone": 531,
+  "look": "{531|||100}",
+  "donjon": "45",
+  "boss": false,
+  "existe": false
+ },
+ "797": {
+  "key": "scarabosse_dore",
+  "nom": "Scarabosse Doré",
+  "bone": 533,
+  "look": "{533|||100}",
+  "donjon": "45",
+  "boss": true,
+  "existe": false
+ },
+ "798": {
+  "key": "scarafeuille_immature",
+  "nom": "Scarafeuille Immature",
+  "bone": 532,
+  "look": "{532|||80}",
+  "donjon": "45",
+  "boss": false,
+  "existe": false
+ },
+ "54": {
+  "key": "chafer",
+  "nom": "Chafer",
+  "bone": 288,
+  "look": "{288|||120}",
+  "donjon": "47",
+  "boss": false,
+  "existe": false
+ },
+ "108": {
+  "key": "rib",
+  "nom": "Rib",
+  "bone": 333,
+  "look": "{333|||120}",
+  "donjon": "47",
+  "boss": false,
+  "existe": false
+ },
+ "110": {
+  "key": "chafer_invisible",
+  "nom": "Chafer Invisible",
+  "bone": 312,
+  "look": "{312|||125}",
+  "donjon": "47",
+  "boss": false,
+  "existe": false
+ },
+ "396": {
+  "key": "chafer_fantassin",
+  "nom": "Chafer Fantassin",
+  "bone": 420,
+  "look": "{420|||100}",
+  "donjon": "47",
+  "boss": false,
+  "existe": false
+ },
+ "3238": {
+  "key": "chafer_ronin",
+  "nom": "Chafer Rōnin",
+  "bone": 1846,
+  "look": "{1846}",
+  "donjon": "47",
+  "boss": true,
+  "existe": false
+ },
+ "3240": {
+  "key": "chafer_primitif",
+  "nom": "Chafer Primitif",
+  "bone": 1848,
+  "look": "{1848}",
+  "donjon": "47",
+  "boss": false,
+  "existe": false
+ },
+ "98": {
+  "key": "tofu_amakna",
+  "nom": "Tofu",
+  "bone": 556,
+  "look": "{556|||110}",
+  "donjon": "48",
+  "boss": false,
+  "existe": false
+ },
+ "796": {
+  "key": "tofu_noir",
+  "nom": "Tofu Noir",
+  "bone": 499,
+  "look": "{499|||120}",
+  "donjon": "48",
+  "boss": false,
+  "existe": false
+ },
+ "800": {
+  "key": "batofu",
+  "nom": "Batofu",
+  "bone": 503,
+  "look": "{503|||120}",
+  "donjon": "48",
+  "boss": true,
+  "existe": false
+ },
+ "804": {
+  "key": "tofoune",
+  "nom": "Tofoune",
+  "bone": 834,
+  "look": "{834}",
+  "donjon": "48",
+  "boss": false,
+  "existe": false
+ },
+ "806": {
+  "key": "tofukaz",
+  "nom": "Tofukaz",
+  "bone": 186,
+  "look": "{186}",
+  "donjon": "48",
+  "boss": false,
+  "existe": false
+ },
+ "808": {
+  "key": "tofu_ventripotent",
+  "nom": "Tofu Ventripotent",
+  "bone": 500,
+  "look": "{500|||120}",
+  "donjon": "48",
+  "boss": false,
+  "existe": false
+ },
+ "4824": {
+  "key": "tofu_mutant",
+  "nom": "Tofu Mutant",
+  "bone": 501,
+  "look": "{501|||80}",
+  "donjon": "48",
+  "boss": false,
+  "existe": false
+ },
+ "5222": {
+  "key": "tofu_agressif",
+  "nom": "Tofu Agressif",
+  "bone": 556,
+  "look": "{556|||110}",
+  "donjon": "48",
+  "boss": false,
+  "existe": false
+ },
+ "5223": {
+  "key": "tofu_noir_agressif",
+  "nom": "Tofu Noir Agressif",
+  "bone": 499,
+  "look": "{499|||120}",
+  "donjon": "48",
+  "boss": false,
+  "existe": false
+ },
+ "5224": {
+  "key": "tofoune_agressive",
+  "nom": "Tofoune Agressive",
+  "bone": 834,
+  "look": "{834}",
+  "donjon": "48",
+  "boss": false,
+  "existe": false
+ },
+ "62": {
+  "key": "gob_trotteur",
+  "nom": "Gob-trotteur",
+  "bone": 6887,
+  "look": "{6887|||100}",
+  "donjon": "138",
+  "boss": false,
+  "existe": false
+ },
+ "178": {
+  "key": "gobet",
+  "nom": "Gobet",
+  "bone": 6864,
+  "look": "{6864|||100}",
+  "donjon": "138",
+  "boss": false,
+  "existe": false
+ },
+ "6900": {
+  "key": "gobichon",
+  "nom": "Gobichon",
+  "bone": 6866,
+  "look": "{6866}",
+  "donjon": "138",
+  "boss": false,
+  "existe": false
+ },
+ "6901": {
+  "key": "gobaliste",
+  "nom": "Gobaliste",
+  "bone": 6865,
+  "look": "{6865}",
+  "donjon": "138",
+  "boss": false,
+  "existe": false
+ },
+ "6902": {
+  "key": "gobaladee",
+  "nom": "Gobaladée",
+  "bone": 6875,
+  "look": "{6875}",
+  "donjon": "138",
+  "boss": false,
+  "existe": false
+ },
+ "6903": {
+  "key": "directeur_grunob",
+  "nom": "Directeur Grunob",
+  "bone": 6872,
+  "look": "{6872}",
+  "donjon": "138",
+  "boss": true,
+  "existe": false
+ },
+ "53": {
+  "key": "bwork_mage",
+  "nom": "Bwork Mage",
+  "bone": 286,
+  "look": "{286|||115}",
+  "donjon": "13",
+  "boss": false,
+  "existe": false
+ },
+ "74": {
+  "key": "bwork_archer",
+  "nom": "Bwork Archer",
+  "bone": 282,
+  "look": "{282|||90}",
+  "donjon": "13",
+  "boss": false,
+  "existe": false
+ },
+ "791": {
+  "key": "trooll_apprivoise",
+  "nom": "Trooll Apprivoisé",
+  "bone": 377,
+  "look": "{377|||100}",
+  "donjon": "13",
+  "boss": false,
+  "existe": false
+ },
+ "792": {
+  "key": "bworkette",
+  "nom": "Bworkette",
+  "bone": 79,
+  "look": "{79|||100}",
+  "donjon": "13",
+  "boss": true,
+  "existe": false
+ },
+ "876": {
+  "key": "bwork",
+  "nom": "Bwork",
+  "bone": 281,
+  "look": "{281|||115}",
+  "donjon": "13",
+  "boss": false,
+  "existe": false
+ },
+ "2680": {
+  "key": "kreuvete_la_bwork_ingenue",
+  "nom": "Kreuvète la Bwork Ingénue",
+  "bone": 157,
+  "look": "{157|||110}",
+  "donjon": "13",
+  "boss": false,
+  "existe": false
+ },
+ "118": {
+  "key": "mineur_sombre",
+  "nom": "Mineur Sombre",
+  "bone": 69,
+  "look": "{69|||100}",
+  "donjon": "21",
+  "boss": false,
+  "existe": false
+ },
+ "119": {
+  "key": "forgeron_sombre",
+  "nom": "Forgeron Sombre",
+  "bone": 81,
+  "look": "{81|||120}",
+  "donjon": "21",
+  "boss": false,
+  "existe": false
+ },
+ "153": {
+  "key": "boulanger_sombre",
+  "nom": "Boulanger Sombre",
+  "bone": 337,
+  "look": "{337}",
+  "donjon": "21",
+  "boss": false,
+  "existe": false
+ },
+ "155": {
+  "key": "bandit_du_clan_des_roublards",
+  "nom": "Bandit du clan des Roublards",
+  "bone": 78,
+  "look": "{78||2=5131854,3=7677792,4=7183750}",
+  "donjon": "21",
+  "boss": false,
+  "existe": false
+ },
+ "252": {
+  "key": "coffre_des_forgerons",
+  "nom": "Coffre des Forgerons",
+  "bone": 91,
+  "look": "{91|||120}",
+  "donjon": "21",
+  "boss": true,
+  "existe": false
+ },
+ "81": {
+  "key": "kwak_de_vent",
+  "nom": "Kwak de Vent",
+  "bone": 308,
+  "look": "{308|||100}",
+  "donjon": "32",
+  "boss": false,
+  "existe": false
+ },
+ "83": {
+  "key": "kwak_de_flamme",
+  "nom": "Kwak de Flamme",
+  "bone": 309,
+  "look": "{309|||100}",
+  "donjon": "32",
+  "boss": false,
+  "existe": false
+ },
+ "84": {
+  "key": "kwak_de_glace",
+  "nom": "Kwak de Glace",
+  "bone": 310,
+  "look": "{310|||100}",
+  "donjon": "32",
+  "boss": false,
+  "existe": false
+ },
+ "235": {
+  "key": "kwak_de_terre",
+  "nom": "Kwak de Terre",
+  "bone": 389,
+  "look": "{389|||100}",
+  "donjon": "32",
+  "boss": false,
+  "existe": false
+ },
+ "269": {
+  "key": "kwakere_de_flamme",
+  "nom": "Kwakere de Flamme",
+  "bone": 6245,
+  "look": "{6245|||170}",
+  "donjon": "32",
+  "boss": false,
+  "existe": false
+ },
+ "270": {
+  "key": "kwakere_de_terre",
+  "nom": "Kwakere de Terre",
+  "bone": 6247,
+  "look": "{6247|||170}",
+  "donjon": "32",
+  "boss": false,
+  "existe": false
+ },
+ "271": {
+  "key": "kwakere_de_glace",
+  "nom": "Kwakere de Glace",
+  "bone": 6229,
+  "look": "{6229|||170}",
+  "donjon": "32",
+  "boss": false,
+  "existe": false
+ },
+ "272": {
+  "key": "kwakere_de_vent",
+  "nom": "Kwakere de Vent",
+  "bone": 6246,
+  "look": "{6246|||170}",
+  "donjon": "32",
+  "boss": false,
+  "existe": false
+ },
+ "2995": {
+  "key": "kwakwa",
+  "nom": "Kwakwa",
+  "bone": 1493,
+  "look": "{1493|||150}",
+  "donjon": "32",
+  "boss": true,
+  "existe": false
+ },
+ "3281": {
+  "key": "bwak_de_vent",
+  "nom": "Bwak de Vent",
+  "bone": 240,
+  "look": "{240}",
+  "donjon": "32",
+  "boss": false,
+  "existe": false
+ },
+ "3282": {
+  "key": "bwak_de_glace",
+  "nom": "Bwak de Glace",
+  "bone": 238,
+  "look": "{238}",
+  "donjon": "32",
+  "boss": false,
+  "existe": false
+ },
+ "3283": {
+  "key": "bwak_de_flamme",
+  "nom": "Bwak de Flamme",
+  "bone": 239,
+  "look": "{239}",
+  "donjon": "32",
+  "boss": false,
+  "existe": false
+ },
+ "3284": {
+  "key": "bwak_de_terre",
+  "nom": "Bwak de Terre",
+  "bone": 241,
+  "look": "{241}",
+  "donjon": "32",
+  "boss": false,
+  "existe": false
+ },
+ "412": {
+  "key": "larve_saphir",
+  "nom": "Larve Saphir",
+  "bone": 574,
+  "look": "{574|||160}",
+  "donjon": "33",
+  "boss": false,
+  "existe": false
+ },
+ "413": {
+  "key": "larve_rubis",
+  "nom": "Larve Rubis",
+  "bone": 573,
+  "look": "{573|||160}",
+  "donjon": "33",
+  "boss": false,
+  "existe": false
+ },
+ "414": {
+  "key": "larve_emeraude",
+  "nom": "Larve Émeraude",
+  "bone": 572,
+  "look": "{572|||160}",
+  "donjon": "33",
+  "boss": false,
+  "existe": false
+ },
+ "456": {
+  "key": "larve_doree",
+  "nom": "Larve Dorée",
+  "bone": 177,
+  "look": "{177|||140}",
+  "donjon": "33",
+  "boss": false,
+  "existe": false
+ },
+ "457": {
+  "key": "shin_larve",
+  "nom": "Shin Larve",
+  "bone": 439,
+  "look": "{439|||110}",
+  "donjon": "33",
+  "boss": true,
+  "existe": false
+ },
+ "3358": {
+  "key": "larve_verte_solitaire",
+  "nom": "Larve Verte Solitaire",
+  "bone": 565,
+  "look": "{565|||140}",
+  "donjon": "33",
+  "boss": false,
+  "existe": false
+ },
+ "3359": {
+  "key": "larve_bleue_solitaire",
+  "nom": "Larve Bleue Solitaire",
+  "bone": 560,
+  "look": "{560|||140}",
+  "donjon": "33",
+  "boss": false,
+  "existe": false
+ },
+ "106": {
+  "key": "craqueleur",
+  "nom": "Craqueleur",
+  "bone": 284,
+  "look": "{284|||115}",
+  "donjon": "18",
+  "boss": false,
+  "existe": false
+ },
+ "293": {
+  "key": "craqueleur_des_plaines",
+  "nom": "Craqueleur des Plaines",
+  "bone": 314,
+  "look": "{314|||110}",
+  "donjon": "18",
+  "boss": false,
+  "existe": false
+ },
+ "483": {
+  "key": "craqueboule",
+  "nom": "Craqueboule",
+  "bone": 442,
+  "look": "{442}",
+  "donjon": "18",
+  "boss": false,
+  "existe": false
+ },
+ "669": {
+  "key": "craqueleur_legendaire",
+  "nom": "Craqueleur Légendaire",
+  "bone": 392,
+  "look": "{392|||100}",
+  "donjon": "18",
+  "boss": true,
+  "existe": false
+ },
+ "826": {
+  "key": "kirboule_l_erode",
+  "nom": "Kirboule l'Érodé",
+  "bone": 314,
+  "look": "{314|||110}",
+  "donjon": "18",
+  "boss": false,
+  "existe": false
+ },
+ "4570": {
+  "key": "elementerre",
+  "nom": "Élémenterre",
+  "bone": 387,
+  "look": "{387|||150}",
+  "donjon": "18",
+  "boss": false,
+  "existe": false
+ },
+ "4573": {
+  "key": "craquelope",
+  "nom": "Craquelope",
+  "bone": 3659,
+  "look": "{3659|||300}",
+  "donjon": "18",
+  "boss": false,
+  "existe": false
+ },
+ "181": {
+  "key": "wobot",
+  "nom": "Wobot",
+  "bone": 323,
+  "look": "{323}",
+  "donjon": "17",
+  "boss": false,
+  "existe": false
+ },
+ "3460": {
+  "key": "wa_wobot",
+  "nom": "Wa Wobot",
+  "bone": 2286,
+  "look": "{2286}",
+  "donjon": "17",
+  "boss": true,
+  "existe": false
+ },
+ "3461": {
+  "key": "black_wo_wabbit",
+  "nom": "Black Wo Wabbit",
+  "bone": 2291,
+  "look": "{2291|||85}",
+  "donjon": "17",
+  "boss": false,
+  "existe": false
+ },
+ "3462": {
+  "key": "wobot_kiafin",
+  "nom": "Wobot Kiafin",
+  "bone": 2287,
+  "look": "{2287|||90}",
+  "donjon": "17",
+  "boss": false,
+  "existe": false
+ },
+ "3463": {
+  "key": "blanc_pa_wabbit",
+  "nom": "Blanc Pa Wabbit",
+  "bone": 2290,
+  "look": "{2290}",
+  "donjon": "17",
+  "boss": false,
+  "existe": false
+ },
+ "3474": {
+  "key": "tiwobot",
+  "nom": "Tiwobot",
+  "bone": 2288,
+  "look": "{2288|||82}",
+  "donjon": "17",
+  "boss": false,
+  "existe": false
+ },
+ "64": {
+  "key": "wabbit",
+  "nom": "Wabbit",
+  "bone": 315,
+  "look": "{315}",
+  "donjon": "52",
+  "boss": false,
+  "existe": false
+ },
+ "65": {
+  "key": "black_wabbit",
+  "nom": "Black Wabbit",
+  "bone": 316,
+  "look": "{316}",
+  "donjon": "52",
+  "boss": false,
+  "existe": false
+ },
+ "68": {
+  "key": "black_tiwabbit",
+  "nom": "Black Tiwabbit",
+  "bone": 319,
+  "look": "{319|||100}",
+  "donjon": "52",
+  "boss": false,
+  "existe": false
+ },
+ "72": {
+  "key": "tiwabbit_kiafin",
+  "nom": "Tiwabbit Kiafin",
+  "bone": 320,
+  "look": "{320|||100}",
+  "donjon": "52",
+  "boss": false,
+  "existe": false
+ },
+ "96": {
+  "key": "tiwabbit",
+  "nom": "Tiwabbit",
+  "bone": 318,
+  "look": "{318|||100}",
+  "donjon": "52",
+  "boss": false,
+  "existe": false
+ },
+ "97": {
+  "key": "wo_wabbit",
+  "nom": "Wo Wabbit",
+  "bone": 317,
+  "look": "{317|||85}",
+  "donjon": "52",
+  "boss": false,
+  "existe": false
+ },
+ "99": {
+  "key": "grand_pa_wabbit",
+  "nom": "Grand Pa Wabbit",
+  "bone": 321,
+  "look": "{321}",
+  "donjon": "52",
+  "boss": false,
+  "existe": false
+ },
+ "180": {
+  "key": "wa_wabbit",
+  "nom": "Wa Wabbit",
+  "bone": 357,
+  "look": "{357}",
+  "donjon": "52",
+  "boss": true,
+  "existe": false
+ }
+}

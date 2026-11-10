@@ -3004,6 +3004,17 @@
   "kardorim": "boss_lugubre",
   "tournesol_affame": "boss_feerique",
   "mob_l_eponge": "boss_magique",
-  "kankreblath": "boss_souterrain"
+  "kankreblath": "boss_souterrain",
+  "scarabosse_dore": "boss_bestial",
+  "chafer_ronin": "boss_lugubre",
+  "batofu": "boss_feerique",
+  "directeur_grunob": "boss_magique",
+  "bworkette": "boss_bestial",
+  "coffre_des_forgerons": "boss_souterrain",
+  "kwakwa": "boss_magique",
+  "shin_larve": "boss_souterrain",
+  "craqueleur_legendaire": "boss_souterrain",
+  "wa_wobot": "boss_magique",
+  "wa_wabbit": "boss_feerique"
  }
 }

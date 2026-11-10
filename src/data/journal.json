@@ -1244,6 +1244,7 @@
         "Corrections": [
           "Moins de saccades : les monstres endormis loin de toi ne coûtent plus rien à chaque image.",
           "Les sorts de l'Osamodas, du Sacrieur, du Forgelance et de l'Eniripsa ont enfin leurs sons officiels.",
+          "Les monstres à distance se placent à portée d'un sort qui blesse, pas d'un sort qui gêne.",
           "Partie de test : toutes les classes visibles, monstre choisi en vue, onglet Butin qui ne fige plus le jeu."
         ],
         "En coulisses": [
@@ -1260,6 +1261,16 @@
           }
         ],
         "Nouveautés": [
+          {
+            "titre": "Les 11 donjons de la 0.4",
+            "phrase": "11 arènes en vagues (Tofus, Bworks, Larves, Kwakwa, Wa Wabbit…) avec leurs vrais monstres et boss.",
+            "details": "80 monstres officiels d'Amakna et de l'île des Wabbits, avec leurs sorts et leur butin. Ouvre-les par F1.",
+            "icone": "boss",
+            "etiquettes": [
+              "Partie de test",
+              "Touche F1"
+            ]
+          },
           {
             "titre": "L'Enutrof en essai",
             "phrase": "L'Enutrof et son coffre au trésor permanent, à essayer dans la Partie de test.",

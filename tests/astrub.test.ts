@@ -39,6 +39,14 @@ describe('Astrub (0.2a)', () => {
       }
     }
   });
+  it('arènes de la 0.4 (partie de test) : chaque monstre des vagues a sa planche, chaque arène sa carte et son nom', () => {
+    for (const d of zone.donjonsTest ?? []) {
+      const m = astrub.maps.find(x => x.tag === d.arene!.tag);
+      expect(m, d.nom).toBeDefined();
+      expect(zone.subareas[String(m!.sub)]?.name, d.nom).toBe(d.nom);
+      for (const t of [...(d.vagues ?? []).flatMap(v => v.m), ...(d.bossVague ?? [])]) expect(LOOKS[GAME_DATA.monsters[t]?.look ?? ''], `${d.nom} : ${t}`).toBeDefined();
+    }
+  });
   it('carte du monde et points d\'intérêt officiels (Zaap, banque, donjons…)', () => {
     expect(astrub.carte).toBeDefined();
     const noms = astrub.reperes!.map(r => r.n);
