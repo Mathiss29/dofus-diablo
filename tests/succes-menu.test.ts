@@ -7,7 +7,7 @@ import { World } from '../src/sim/world';
 
 const astrub = JSON.parse(readFileSync(new URL('../public/assets/mondes/astrub/monde.json', import.meta.url), 'utf8')) as WorldData;
 const monde = (test = false) => new World({ data: GAME_DATA, zone: 'astrub', map: new WorldGrid(astrub), seed: 3, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES,
-  apparats: APPARATS, test, reprise: { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} } });
+  apparats: APPARATS, ...(test ? { test: {} as never } : {}), reprise: { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} } });
 
 describe('Menu des succès (« Succès : »)', () => {
   it('les succès sont rangés dans les catégories officielles, avec une icône officielle', () => {
