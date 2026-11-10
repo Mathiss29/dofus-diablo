@@ -1,3 +1,4 @@
+import type { ChampDef } from './guerre';
 /** Types des données de jeu (src/data/*.json). La simulation ne lit que ça. */
 import type { Stat } from './items';
 
@@ -316,6 +317,8 @@ export interface OpenDef {
   /** Donjons de la 0.4 (11 arènes, ligne « Arènes finales : 1A 2A ») : seulement en partie de test, ajoutés à `donjons`
    *  par World. Arènes rangées sous le monde d'Astrub en attendant Amakna (tools/extraction/arenes04/). */
   donjonsTest?: DonjonDef[];
+  /** Guerre des Cawottes (île des Wabbits, 0.4) : les quatre champs (tools/extraction/wabbits04/champs.py). */
+  guerre?: { champs: ChampDef[] };
   /** Ateliers officiels (table hints de Dofus 3, maquette Métiers 10A) : cartes (tags) où l'on fabrique pour ces métiers. */
   ateliers?: AtelierDef[];
   /** Coffre partagé (0.3, 12A+12B) : où on l'ouvre (Havre-Sac, Banque d'Astrub). Sans case : la case la plus dégagée de la carte. */

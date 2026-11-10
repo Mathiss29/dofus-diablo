@@ -51,11 +51,11 @@ export const COOP = {
 
 /** Champs jamais envoyés : données du jeu (recréées de l'autre côté), sac et progression propres à chaque joueur, caches. */
 /** Champs du sac et de la progression : refusés pour les autres, envoyés à leur propriétaire seul (instantané.sac). */
-const SAC = ['bag', 'resources', 'kamas', 'metiers', 'apparats', 'dofus', 'trophees', 'zaaps', 'codex', 'codexOuvert', 'ames', 'cleDonjon', 'recetteSuivie',
+const SAC = ['bag', 'resources', 'kamas', 'metiers', 'apparats', 'dofus', 'trophees', 'zaaps', 'codex', 'codexOuvert', 'ames', 'cleDonjon', 'guerre', 'recetteSuivie',
   'commandeFM', 'lootFilter', 'autoBrisage', 'almanaxJour', 'zonesVues', 'explore', 'lieuxVus', 'tombe'] as const;
 const REFUS: Record<Sorte | 'a', Set<string>> = {
   j: new Set(['cls', 'items', 'bag', 'resources', 'codex', 'learned', 'zonesVues', 'metiers', 'prereglages', 'ames', 'apparats', 'dofus', 'trophees',
-    'commandeFM', 'quetes', 'monde', 'evenements', 'cleDonjon', 'recetteSuivie', 'zaaps', '_pouvoirs', 'almanaxJour', 'codexOuvert', 'lootFilter', 'autoBrisage', 'kamas', 'v03', 'v04', 'repathT', 'bufferT', 'buffer', 'explore', '_explore', 'lieuxVus', 'tombe', 'carteIci']),
+    'commandeFM', 'quetes', 'monde', 'evenements', 'cleDonjon', 'guerre', 'recetteSuivie', 'zaaps', '_pouvoirs', 'almanaxJour', 'codexOuvert', 'lootFilter', 'autoBrisage', 'kamas', 'v03', 'v04', 'repathT', 'bufferT', 'buffer', 'explore', '_explore', 'lieuxVus', 'tombe', 'carteIci']),
   // minuteries de l'IA des monstres : l'hôte seul s'en sert
   m: new Set(['def', 'atkCd', 'spellCd', 'sigCd', 'cheminT', 'wanderT', 'wanderX', 'wanderY', 'repathT']),
   b: new Set(['def']),
@@ -67,11 +67,11 @@ const LISTES = ['projectiles', 'drops', 'telegraphs', 'zonesSol'] as const;
  *  parle du joueur de l'écran de l'hôte. */
 const EVENEMENTS = new Set<SimEvent['k']>(['spell', 'shoot', 'slam', 'monsterCast', 'spellFx', 'status', 'massacre', 'massacreFin', 'hit', 'kill',
   'beteMorte', 'heal', 'filSoin', 'pieces', 'invocation', 'eveil', 'echange', 'souffrance', 'sacrifice', 'dompte', 'impact', 'grosCoup', 'bossIntro', 'furieux', 'wave',
-  'areneDebut', 'areneVague', 'arenePalier', 'areneFin', 'bossDown', 'cast', 'bulle', 'rageSpent', 'signal']);
+  'areneDebut', 'areneVague', 'arenePalier', 'areneFin', 'bossDown', 'cast', 'bulle', 'rageSpent', 'signal', 'guerreVague', 'guerreVol', 'guerreFuite', 'guerreReplantee']);
 export const evenementPartage = (e: SimEvent) => EVENEMENTS.has(e.k);
 /** Événements propres à l'invité (World.evenementsDe) qu'il peut jouer chez lui : bandeaux, butin, quêtes, métiers. */
 const PERSONNELS_AFFICHES = new Set<SimEvent['k']>(['levelUp', 'newSpell', 'enterArea', 'enterLieu', 'loot', 'lootResource', 'lootKamas', 'bagFull',
-  'queteInfo', 'objetQuete', 'succes', 'checkpoint', 'zaapDecouvert', 'lieuDecouvert', 'recolteFin', 'recolteStop', 'metierLevel', 'dofusGagne', 'portal', 'itemDrop']);
+  'queteInfo', 'objetQuete', 'succes', 'checkpoint', 'zaapDecouvert', 'lieuDecouvert', 'recolteFin', 'recolteStop', 'metierLevel', 'dofusGagne', 'portal', 'itemDrop', 'guerreDebut', 'guerreFin']);
 
 const arrondir = (v: number) => (Number.isInteger(v) || !Number.isFinite(v) ? v : Math.round(v * COOP.arrondi) / COOP.arrondi);
 const estEntite = (v: object): v is Entity => v instanceof Entity;

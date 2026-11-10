@@ -67,6 +67,14 @@ export type SimEvent =
   | { k: 'areneVague'; n: number; total: number; nom: string | null; boss: string | null }
   | { k: 'arenePalier'; id: number; name: string; n: number }
   | { k: 'areneFin'; nom: string; temps: number; record: boolean }
+  /** Guerre des Cawottes (0.4) : attaque d'un champ (annoncée aux joueurs de l'île), vague, cawotte volée ou emportée par un
+   *  Kiafin (fuite = il est sorti du champ avec), Kiafin qui s'enfuit, cawotte replantée, bilan (coffre, Cawottes gagnées, record). */
+  | { k: 'guerreDebut'; champ: string; spontanee: boolean; vagues: number; cawottes: number }
+  | { k: 'guerreVague'; n: number; total: number }
+  | { k: 'guerreVol'; x: number; y: number; reste: number; fuite: boolean }
+  | { k: 'guerreFuite'; id: number; x: number; y: number }
+  | { k: 'guerreReplantee'; x: number; y: number }
+  | { k: 'guerreFin'; champ: string; sauvees: number; total: number; coffre: 'or' | 'argent' | 'bronze' | null; gain: number; temps: number; record: boolean }
   | { k: 'bossDown'; monster: string }
   | { k: 'playerDeath'; wave: number }
   | { k: 'potion'; x: number; y: number; amount: number }

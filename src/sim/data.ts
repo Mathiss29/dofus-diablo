@@ -37,7 +37,7 @@ export const QUETES = quetes as unknown as QuetesData;
 // succès Cartographe (carte du monde 6D, src/data/carte.json écrit par tools/extraction/carte_peinte.py)
 Object.assign(QUETES.succes, (carte as unknown as Pick<QuetesData, 'succes'>).succes);
 /** Boutiques des PNJ (src/data/boutique.json) : articles et prix en Pépites. */
-export const BOUTIQUES = Object.fromEntries(Object.entries(boutique).filter(([k]) => !k.startsWith('_') && k !== 'apparat_prix')) as unknown as Record<string, { id: string; prix: number; v03?: boolean; v04?: boolean }[]>;
+export const BOUTIQUES = Object.fromEntries(Object.entries(boutique).filter(([k]) => !k.startsWith('_') && k !== 'apparat_prix')) as unknown as Record<string, { id: string; prix: number; v03?: boolean; v04?: boolean; monnaie?: string; apparat?: boolean }[]>;
 /** Métiers de récolte (src/data/recoltes.json, écrit par tools/contenu/recoltes.py). */
 export const RECOLTES = recoltes as unknown as RecoltesData;
 /** Objets d'apparat officiels (src/data/apparat.json, apparat_export.py) : nom, emplacement, case de l'icône sur ui/apparat.webp ;

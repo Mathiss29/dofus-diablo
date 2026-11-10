@@ -106,6 +106,8 @@ export class Monster extends Entity {
   frappe = 0; frappeT = 0;
   /** Arène d'un donjon : arrive en courant vers le joueur et ne lâche jamais ; intouchable = palier du boss (8C). */
   arene = false;
+  /** Guerre des Cawottes : Wabbit d'une attaque (src/sim/guerre.ts le mène vers les cawottes). */
+  guerre = false;
   intouchable = false;
 
   /** Zone d'une attaque annoncée au sol avant l'impact : seulement pour les élites et les boss (maquette Aperçu 8A, Mathis 2026-11-06). */
@@ -482,6 +484,12 @@ export class Monster extends Entity {
   }
   private endCast(world: World) { this.state = 'recover'; this.t = this.def.recover; this.atkCd = world.rng.range(...DANGER.rythme.pause as [number, number]); }
 
+  /** Guerre des Cawottes : court vers (x, y) en contournant le décor, à sa vitesse × k ; false si déjà arrivé. */
+  allerVers(x: number, y: number, dt: number, world: World, k: number): boolean {
+    const ok = this.moveTo(x, y, this.def.speed * this.haste * k, dt, world);
+    this.setAnim(ok ? 'run' : 'idle');
+    return ok;
+  }
   /** Avance vers (x, y) ; false si déjà arrivé. Avec world, contourne le décor (chemin A*). */
   private moveTo(x: number, y: number, speed: number, dt: number, world?: World): boolean {
     const dx = x - this.x, dy = y - this.y, d = Math.hypot(dx, dy);

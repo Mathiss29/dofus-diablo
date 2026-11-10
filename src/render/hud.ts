@@ -933,8 +933,9 @@ export class Hud {
     // 7C : compteur d'images, dans le coin de la mini-carte
     this.fpsTxt.setVisible(!!R?.compteurFps).setPosition(mx + 6, my + 4);
     if (R?.compteurFps) this.fpsTxt.setText(`${Math.round(this.scene.game.loop.actualFps)} FPS`);
-    const ar = world.arene;
-    this.areneTxt.setVisible(!!ar).setPosition(mx + mw / 2, my + mh + 22);
+    const ar = world.arene, ga = !ar && world.guerre?.attaque && !world.guerre.attaque.fini && world.guerre.surIle().includes(p) ? world.guerre.attaque : null;
+    if (ga) this.areneTxt.setVisible(true).setPosition(mx + mw / 2, my + mh + 22).setText(`${ga.c.nom}\nVague ${ga.vague} / 5 · ${ga.restantes} / ${ga.cawottes.length} cawottes · ${chrono(ga.chrono)}`);
+    else this.areneTxt.setVisible(!!ar).setPosition(mx + mw / 2, my + mh + 22);
     if (ar) this.areneTxt.setText(ar.fini ? `Terminé en ${chrono(ar.chrono)}` : !ar.demarre ? `${ar.total} vagues + le boss` : ar.vague > ar.total ? `Boss · ${chrono(ar.chrono)}` : `Vague ${ar.vague} / ${ar.total} · ${chrono(ar.chrono)}`);
     // Colonne de menus : boutons carrés sombres en relief, comme le bandeau de Dofus 3
     // Boutons carrés sombres serrés les uns contre les autres ; ils rapetissent si l'écran est bas

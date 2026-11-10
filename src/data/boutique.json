@@ -1,5 +1,5 @@
 {
- "_": "Boutiques des PNJ du Havre-Sac (maquette Hub 4A, 2026-11-06) : Otomaï (Potion de Rappel ; Petite pierre d'âme en 0.3, pour capturer les archimonstres), Mère Bouillotte (nourriture), Goultard (clés de donjon) ; apparat_prix = prix par emplacement des apparats officiels chez Tissebelle (src/data/apparat.json). Prix en Pépites (objet officiel 14635), que Kerubim Crépin donne contre les objets recyclés.",
+ "_": "Boutiques des PNJ du Havre-Sac (maquette Hub 4A, 2026-11-06) : Otomaï (Potion de Rappel ; Petite pierre d'âme en 0.3, pour capturer les archimonstres), Mère Bouillotte (nourriture), Goultard (clés de donjon) ; apparat_prix = prix par emplacement des apparats officiels chez Tissebelle (src/data/apparat.json). Prix en Pépites (objet officiel 14635), que Kerubim Crépin donne contre les objets recyclés. Tiwa Cawoteuw (île des Wabbits, 0.4) : payé en Cawottes (objet officiel 20446), gagnées à la guerre des Cawottes ; ressources de l'île, clés, Potion de Rappel et apparences Wabbit, jamais d'équipement ni de Dofus.",
  "otomai": [
   {
    "id": "548",
@@ -93,5 +93,95 @@
   "chapeau": 60,
   "cape": 80,
   "familier": 100
- }
+ },
+ "tiwa_cawoteuw": [
+  {
+   "id": "361",
+   "prix": 2,
+   "monnaie": "20446",
+   "v04": true
+  },
+  {
+   "id": "2288",
+   "prix": 3,
+   "monnaie": "20446",
+   "v04": true
+  },
+  {
+   "id": "654",
+   "prix": 4,
+   "monnaie": "20446",
+   "v04": true
+  },
+  {
+   "id": "305",
+   "prix": 3,
+   "monnaie": "20446",
+   "v04": true
+  },
+  {
+   "id": "14460",
+   "prix": 6,
+   "monnaie": "20446",
+   "v04": true
+  },
+  {
+   "id": "418",
+   "prix": 8,
+   "monnaie": "20446",
+   "v04": true
+  },
+  {
+   "id": "649",
+   "prix": 5,
+   "monnaie": "20446",
+   "v04": true
+  },
+  {
+   "id": "548",
+   "prix": 10,
+   "monnaie": "20446",
+   "v04": true
+  },
+  {
+   "id": "14464",
+   "prix": 150,
+   "monnaie": "20446",
+   "v04": true
+  },
+  {
+   "id": "14465",
+   "prix": 250,
+   "monnaie": "20446",
+   "v04": true
+  },
+  {
+   "id": "6500",
+   "prix": 2000,
+   "monnaie": "20446",
+   "v04": true,
+   "apparat": true
+  },
+  {
+   "id": "6501",
+   "prix": 2000,
+   "monnaie": "20446",
+   "v04": true,
+   "apparat": true
+  },
+  {
+   "id": "969",
+   "prix": 2500,
+   "monnaie": "20446",
+   "v04": true,
+   "apparat": true
+  },
+  {
+   "id": "971",
+   "prix": 2500,
+   "monnaie": "20446",
+   "v04": true,
+   "apparat": true
+  }
+ ]
 }

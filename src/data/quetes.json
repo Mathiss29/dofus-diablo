@@ -672,6 +672,37 @@
      "texte": "Les runes, c'est la matière. Les kamas, c'est le charbon de la forge. Et si tu me laisses viser à ta place, c'est mes bras que tu paies."
     }
    ]
+  },
+  "tiwa_cawoteuw": {
+   "nom": "Tiwa Cawoteuw",
+   "sprite": "gawdien",
+   "dofusId": 0,
+   "zone": "astrub",
+   "carte": "24_-2",
+   "case": 359,
+   "v04": true,
+   "titre": "Marchand de l'île des Wabbits",
+   "phrase": "Des Cawottes, t'en as ? Alors on peut causer. Moi, je vends tout ce que les Wabbits laissent twaîner, sauf leurs dents.",
+   "services": [
+    {
+     "texte": "Montwe ta mawchandise.",
+     "service": "boutique"
+    }
+   ],
+   "discussion": [
+    {
+     "reponse": "Comment on gagne des Cawottes ?",
+     "texte": "Chaque champ a son épouvantail. Tu tapes dessus, les Wabbits accouwent, tu défends les cawottes. Plus t'en sauves, plus le coffwe est gwos."
+    },
+    {
+     "reponse": "Pourquoi tu aides les aventuriers ?",
+     "texte": "Le Wa Wabbit prend tout et ne paie jamais. Toi, tu paies. Le choix était vite fait."
+    },
+    {
+     "reponse": "Et si les Wabbits attaquent sans prévenir ?",
+     "texte": "Ça awive, à peu près tous les quarts d'heure. Défends quand même : ces attaques-là wapportent la moitié en plus."
+    }
+   ]
   }
  },
  "quetes": {
@@ -10111,6 +10142,142 @@
    ],
    "recompense": {
     "xp": 1000
+   }
+  },
+  "guerre_defenseur_10": {
+   "dofusId": 0,
+   "categorie": "Événements",
+   "sousCategorie": "Guerre des Cawottes",
+   "icone": 140,
+   "test": true,
+   "nom": "Défenseur des cawottes (10)",
+   "description": "Gagner 10 attaques de Wabbits (coffre de bronze ou mieux).",
+   "points": 5,
+   "objectifs": [
+    {
+     "nom": "Attaques gagnées",
+     "guerre": "gagnees",
+     "n": 10
+    }
+   ],
+   "recompense": {
+    "xp": 500
+   }
+  },
+  "guerre_defenseur_50": {
+   "dofusId": 0,
+   "categorie": "Événements",
+   "sousCategorie": "Guerre des Cawottes",
+   "icone": 140,
+   "test": true,
+   "nom": "Défenseur des cawottes (50)",
+   "description": "Gagner 50 attaques de Wabbits (coffre de bronze ou mieux).",
+   "points": 10,
+   "objectifs": [
+    {
+     "nom": "Attaques gagnées",
+     "guerre": "gagnees",
+     "n": 50
+    }
+   ],
+   "recompense": {
+    "xp": 1500
+   }
+  },
+  "guerre_defenseur_100": {
+   "dofusId": 0,
+   "categorie": "Événements",
+   "sousCategorie": "Guerre des Cawottes",
+   "icone": 140,
+   "test": true,
+   "nom": "Défenseur des cawottes (100)",
+   "description": "Gagner 100 attaques de Wabbits (coffre de bronze ou mieux).",
+   "points": 20,
+   "objectifs": [
+    {
+     "nom": "Attaques gagnées",
+     "guerre": "gagnees",
+     "n": 100
+    }
+   ],
+   "recompense": {
+    "xp": 3000
+   }
+  },
+  "guerre_pas_une_de_moins": {
+   "dofusId": 0,
+   "categorie": "Événements",
+   "sousCategorie": "Guerre des Cawottes",
+   "icone": 140,
+   "test": true,
+   "nom": "Pas une de moins",
+   "description": "Sauver les 12 cawottes d'un champ, dans chacun des quatre champs de l'île.",
+   "points": 20,
+   "objectifs": [
+    {
+     "nom": "Champ de la Cawotte",
+     "guerre": "parfait",
+     "champ": "Champ de la Cawotte"
+    },
+    {
+     "nom": "Champ de Waldo",
+     "guerre": "parfait",
+     "champ": "Champ de Waldo"
+    },
+    {
+     "nom": "Champ des Tombeaux",
+     "guerre": "parfait",
+     "champ": "Champ des Tombeaux"
+    },
+    {
+     "nom": "Champ de la Couronne",
+     "guerre": "parfait",
+     "champ": "Champ de la Couronne"
+    }
+   ],
+   "recompense": {
+    "xp": 2000
+   }
+  },
+  "guerre_kiafin_100": {
+   "dofusId": 0,
+   "categorie": "Événements",
+   "sousCategorie": "Guerre des Cawottes",
+   "icone": 140,
+   "test": true,
+   "nom": "Kiafin rattrapé",
+   "description": "Rattraper 100 Tiwabbits Kiafin avant qu'ils n'emportent leur cawotte.",
+   "points": 15,
+   "objectifs": [
+    {
+     "nom": "Kiafin rattrapés",
+     "guerre": "kiafins",
+     "n": 100
+    }
+   ],
+   "recompense": {
+    "xp": 2000
+   }
+  },
+  "guerre_gardien": {
+   "dofusId": 0,
+   "categorie": "Événements",
+   "sousCategorie": "Guerre des Cawottes",
+   "icone": 140,
+   "test": true,
+   "nom": "Gardien des Cawottes",
+   "description": "Gagner 25 attaques avec le coffre en or.",
+   "points": 30,
+   "objectifs": [
+    {
+     "nom": "Coffres en or",
+     "guerre": "or",
+     "n": 25
+    }
+   ],
+   "recompense": {
+    "xp": 4000,
+    "titre": "Gardien des Cawottes"
    }
   }
  },

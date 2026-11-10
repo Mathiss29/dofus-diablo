@@ -3,6 +3,7 @@ import type { EtatQuetes } from './quests';
 import type { RetourHavreSac } from './events';
 import type { World } from './world';
 import type { CleDonjon } from './arene';
+import type { EtatGuerre } from './guerre';
 import type { CommandeFM } from './forgemagie';
 import type { EntreeCodex } from './codex';
 import type { Prereglage } from './player';
@@ -39,6 +40,8 @@ export interface EtatJoueur {
   havreSac?: RetourHavreSac;
   /** Clé d'un donjon encore valable (14A). */
   cleDonjon?: CleDonjon | null;
+  /** Guerre des Cawottes (0.4) : attaques gagnées, en or, champs parfaits, Kiafin rattrapés, records. */
+  guerre?: EtatGuerre;
   /** Commande chez Malek le Forgemage (Forgemagie UI 9E). */
   commandeFM?: CommandeFM | null;
   /** Codex des pouvoirs (0.3). */
@@ -62,7 +65,7 @@ export function exporterJoueur(w: World): EtatJoueur {
     bar: p.bar, variants: p.variants, learned: [...p.learned],
     x: p.x, y: p.y, retour: w.pointDeRetour, quetes: w.quetes?.exporter(), zone: w.opts.zone,
     apparats: p.apparats, apparat: p.apparat, codex: p.codex, codexOuvert: p.codexOuvert, ames: p.ames, prereglages: p.prereglages, almanaxJour: p.almanaxJour, dofus: p.dofus, trophees: p.trophees, dofusPortes: p.dofusPortes,
-    zaaps: p.zaaps, zonesVues: p.zonesVues, explore: p.explore, drapeaux: p.drapeaux, tombe: p.tombe, lieuxVus: p.lieuxVus, cleDonjon: p.cleDonjon, commandeFM: p.commandeFM, ...(w.retour ? { havreSac: w.retour } : {}),
+    zaaps: p.zaaps, zonesVues: p.zonesVues, explore: p.explore, drapeaux: p.drapeaux, tombe: p.tombe, lieuxVus: p.lieuxVus, cleDonjon: p.cleDonjon, guerre: p.guerre, commandeFM: p.commandeFM, ...(w.retour ? { havreSac: w.retour } : {}),
   });
 }
 
@@ -105,6 +108,12 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
   if (Array.isArray(s.lieuxVus)) p.lieuxVus = [...new Set([...s.lieuxVus.filter(k => typeof k === 'string'), ...p.lieuxVus])];
   const c = s.cleDonjon;
   if (c && typeof c.nom === 'string' && c.reste > 0) p.cleDonjon = { nom: c.nom, vague: Math.max(1, Math.floor(c.vague) || 1), reste: c.reste };
+  const g = s.guerre;
+  if (g && typeof g === 'object') {
+    const n = (v: unknown) => Math.max(0, Math.floor(Number(v)) || 0);
+    p.guerre = { gagnees: n(g.gagnees), or: n(g.or), kiafins: n(g.kiafins), parfaits: Array.isArray(g.parfaits) ? g.parfaits.filter(t => typeof t === 'string') : [],
+      records: Object.fromEntries(Object.entries(g.records ?? {}).filter(([, r]) => r && Number.isFinite(r.sauvees) && Number.isFinite(r.temps)).map(([k, r]) => [k, { sauvees: n(r.sauvees), temps: n(r.temps) }])) };
+  }
   const f = s.commandeFM;
   if (f?.item && f.rapport && typeof f.reste === 'number') p.commandeFM = { ...f, item: uid(f.item), reste: Math.max(0, f.reste) };
   if (s.havreSac && w.dansRefuge && !w.retour) w.retour = s.havreSac;

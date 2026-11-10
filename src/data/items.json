@@ -38241,6 +38241,18 @@
    "name": "Osselet de Black Wabbit Squelette",
    "icon": 47757,
    "level": 54
+  },
+  "20446": {
+   "name": "Cawottes",
+   "icon": 68031,
+   "level": 1,
+   "monnaie": "Guerre des Cawottes"
+  },
+  "14465": {
+   "name": "Clef du Terrier du Wa Wabbit",
+   "icon": 84726,
+   "level": 80,
+   "cle": "Terrier du Wa Wabbit"
   }
  },
  "drops": {

@@ -12,6 +12,8 @@ import { AtelierView } from './atelierView';
 import { estPalier, recettesAuNiveau } from '../sim/metiers';
 import { HavreSacView } from './havreSacView';
 import { AreneView } from './areneView';
+import { GuerreView } from './guerreView';
+import { GUERRE } from '../sim/guerre';
 import { chrono } from '../sim/quests';
 import type { PointDeRetour, RetourHavreSac, SimEvent } from '../sim/events';
 import { DialogueView } from './dialogueView';
@@ -138,6 +140,7 @@ export class ZoneScene extends Phaser.Scene {
   private recolteView: RecolteView | null = null;
   private havreSacView: HavreSacView | null = null;
   private areneView: AreneView | null = null;
+  private guerreView: GuerreView | null = null;
   /** Havre-Sac : touche H ou bouton du HUD (2A), choix dans la fenêtre du Zaap du Havre-Sac (2C), pour le prochain pas. */
   private havreSacDemande = false;
   /** Enutrof : touche du coffre au trésor. */
@@ -338,6 +341,7 @@ export class ZoneScene extends Phaser.Scene {
       this.worldView.create();
       if (this.world.zone.open) { const hv = this.havreSacView = new HavreSacView(this, this.world); this.events.once('shutdown', () => { hv.destroy(); if (this.havreSacView === hv) this.havreSacView = null; }); }
       if (this.world.zone.open?.donjons?.some(d => d.arene)) { const av = this.areneView = new AreneView(this, this.world); this.events.once('shutdown', () => { av.destroy(); if (this.areneView === av) this.areneView = null; }); }
+      if (this.world.guerre) { const gv = this.guerreView = new GuerreView(this, this.world); this.events.once('shutdown', () => { gv.destroy(); if (this.guerreView === gv) this.guerreView = null; }); }
       if (this.world.postes.length) { const av = this.atelierView = new AtelierView(this, this.world, `${ASSETS}/ui/reperes`); this.events.once('shutdown', () => { av.destroy(); if (this.atelierView === av) this.atelierView = null; }); }
       if (this.world.recoltes.length) { const rv = this.recolteView = new RecolteView(this, this.world); this.events.once('shutdown', () => { rv.destroy(); if (this.recolteView === rv) this.recolteView = null; }); }
       if (this.world.quetes) {
@@ -1227,6 +1231,19 @@ export class ZoneScene extends Phaser.Scene {
           break;
         case 'arenePalier': this.hud.banner(`${e.name}\nIntouchable : abats ses renforts !`, 1500, true); break;
         case 'areneFin': this.hud.banner(`${e.nom} terminé !\n${chrono(e.temps)}${e.record ? ' · nouveau record !' : ''} · portail et coffre à l'estrade`, 2600); break;
+        // Guerre des Cawottes (maquette « Guerre : » 6C, 10A, 10D) : annonce aux joueurs de l'île, vagues, vols, bilan
+        case 'guerreDebut': this.hud.banner(`${e.spontanee ? 'Les Wabbits attaquent !' : 'L\'attaque commence !'}\n${e.champ} · ${e.vagues} vagues · ${e.cawottes} cawottes à défendre${e.spontanee ? ' · +50 % de Cawottes' : ''}`, 2200, e.spontanee); break;
+        case 'guerreVague': this.hud.banner(`Vague ${e.n} / ${e.total}`, 800); break;
+        case 'guerreVol': this.hud.toast(e.fuite ? `Le Kiafin s'est enfui avec une cawotte (${e.reste} restantes)` : `Une cawotte arrachée ! (${e.reste} restantes)`); break;
+        case 'guerreFuite': this.hud.toast('Un Tiwabbit Kiafin s\'enfuit avec une cawotte : rattrape-le !'); break;
+        case 'guerreReplantee': this.hud.toast('Kiafin rattrapé : la cawotte est replantée'); break;
+        case 'guerreFin': {
+          const C = { or: 'Coffre en or', argent: 'Coffre en argent', bronze: 'Coffre en bronze' };
+          this.hud.banner(e.coffre ? `${e.champ} défendu !\n${e.sauvees} / ${e.total} cawottes · ${C[e.coffre]} : +${e.gain} Cawottes · ${chrono(e.temps)}${e.record ? ' · record !' : ''}`
+            : `${e.champ} ravagé\nToutes les cawottes ont été volées`, 3200, !e.coffre);
+          this.windows?.refresh();
+          break;
+        }
         case 'playerDeath':
           if (this.essai) { this.hud.banner('Essai terminé', 1500); this.time.delayedCall(1500, () => { if (this.essai) { this.essai = null; this.game.events.emit('accueil', 'creation'); } }); }
           else if (this.perso?.hardcore) {
@@ -1241,6 +1258,9 @@ export class ZoneScene extends Phaser.Scene {
             CompteEnLigne.tomber(this.slot, { niveau: stele.niveau, lieu: stele.lieu, tueur: stele.tueur });
             supprimerPerso(this.slot);
             this.hud.banner(`${this.perso.nom} est mort\nMode Hardcore : Entrée pour revenir à l'accueil`, 0, true);
+          } else if (this.world.guerre?.attaque && !this.world.guerre.attaque.fini && this.world.guerre.surIle().includes(this.world.player)) {
+            this.hud.banner(`Vaincu\nRetour au bord du champ dans ${GUERRE.retour} s`, GUERRE.retour * 1000, true);
+            this.time.delayedCall(GUERRE.retour * 1000, () => { if (this.world.player.dead && this.world.over) this.world.respawnPlayer(); });
           } else if (this.world.zone.open) this.hud.banner(`Vaincu\nEntrée : retour à ${this.world.checkpointName}`, 0, true);
           else this.hud.banner(`Vaincu à la vague ${e.wave}\nEntrée pour recommencer`, 0, true);
           break;
@@ -1840,6 +1860,7 @@ export class ZoneScene extends Phaser.Scene {
     this.atelierView?.update(this.cameras.main, this.input.activePointer, mobSurvol);
     this.havreSacView?.update(this.game.loop.delta / 1000);
     this.areneView?.update(this.game.loop.delta / 1000);
+    this.guerreView?.update(this.game.loop.delta / 1000);
     this.questView?.update();
     this.passantsView?.update();
     this.dialogueView?.update();
