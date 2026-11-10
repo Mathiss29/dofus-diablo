@@ -92,8 +92,28 @@ export class Transparence {
       lx = (dx * c - dy * s) / sx + im.displayOriginX; ly = (dx * s + dy * c) / sy + im.displayOriginY;
     }
     if (lx < 0 || ly < 0 || lx >= im.width || ly >= im.height) return false;
-    const a = this.scene.textures.getPixelAlpha(Math.floor(lx), Math.floor(ly), im.texture.key, im.frame.name);
-    return (a ?? 0) > 110;
+    const m = this.masque(im.frame), X = Math.floor(lx / Transparence.PAS), Y = Math.floor(ly / Transparence.PAS);
+    return X < m.w && Y < m.h && m.a[Y * m.w + X] > 110;
+  }
+
+  /** Alpha d'une image de décor, lu UNE fois puis gardé (réduit au quart) : getPixelAlpha de Phaser redessinait et relisait
+   *  un pixel à chaque appel, jusqu'à 12 fois par pièce et par image (≈ 2 ms par passe, mesure du 10 nov. 2026). */
+  private static readonly PAS = 4;
+  private static readonly toile = document.createElement('canvas');
+  private masques = new Map<Phaser.Textures.Frame, { w: number; h: number; a: Uint8Array }>();
+  private masque(fr: Phaser.Textures.Frame) {
+    let m = this.masques.get(fr);
+    if (m) return m;
+    if (this.masques.size > 3000) this.masques.clear();
+    const P = Transparence.PAS, w = Math.max(1, Math.ceil(fr.cutWidth / P)), h = Math.max(1, Math.ceil(fr.cutHeight / P)), t = Transparence.toile;
+    if (t.width < w || t.height < h) { t.width = Math.max(t.width, w); t.height = Math.max(t.height, h); }
+    const ctx = t.getContext('2d', { willReadFrequently: true })!;
+    ctx.clearRect(0, 0, w, h); ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(fr.source.image as CanvasImageSource, fr.cutX, fr.cutY, fr.cutWidth, fr.cutHeight, 0, 0, fr.cutWidth / P, fr.cutHeight / P);
+    const d = ctx.getImageData(0, 0, w, h).data, a = new Uint8Array(w * h);
+    for (let i = 0; i < a.length; i++) a[i] = d[i * 4 + 3];
+    m = { w, h, a }; this.masques.set(fr, m);
+    return m;
   }
 
   /** Les images de décor devant ce perso qui couvrent son corps. */
