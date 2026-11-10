@@ -1295,6 +1295,15 @@
             "etiquettes": [
               "Touche U"
             ]
+          },
+          {
+            "titre": "Le butin jusqu'au niveau 60",
+            "phrase": "502 équipements officiels de plus, jusqu'au niveau 60, et 171 nouvelles recettes.",
+            "details": "Chaque boss lâche souvent les pièces de ses panoplies : Kwakwa, Scarabosse Doré, Grüt chez la Bworkette…",
+            "icone": "boss",
+            "etiquettes": [
+              "Partie de test"
+            ]
           }
         ],
         "Corrections": [

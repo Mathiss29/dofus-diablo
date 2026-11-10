@@ -25,8 +25,8 @@ describe('métiers de fabrication (version 0.3 : 9A 10A+10B)', () => {
       const l = R.filter(r => r.metier === m);
       expect(l.length, m).toBeGreaterThan(5);
       for (const r of l) {
-        expect(ITEMS.equipment[r.result], r.result).toBeDefined();
-        expect(r.level).toBeLessThanOrEqual(40);
+        expect(ITEMS.equipment[r.result] ?? (ITEMS.resources[r.result] as { trophee?: boolean } | undefined)?.trophee, r.result).toBeTruthy();
+        expect(r.level).toBeLessThanOrEqual(60);   // 0.4 suite 2A : recettes jusqu'au 60
         for (const [id] of r.ingredients) expect(ITEMS.resources[id], `${r.result} ${id}`).toBeDefined();
       }
     }
