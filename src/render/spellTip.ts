@@ -64,6 +64,14 @@ export function spellDetail(p: Player, id: SkillId, gOver?: SortGrade) {
     d.dmgPV ? `Dommages : ${Math.round(d.dmgPV * 100)} % de tes PV restants (${Math.round(p.damage(p.hp * d.dmgPV, d.element))})` : '',
     d.renvoi ? `Renvoie ${Math.round(d.renvoi.part * 100)} % des dommages de mêlée pendant ${d.renvoi.t} s` : '',
     d.mutilation ? `Sacrifie ${Math.round(d.mutilation.sacrifice * 100)} % de tes PV (jamais sous 1) : +${d.mutilation.puissance} Puissance, puis toutes les ${d.mutilation.periode} s un nouveau sacrifice (+${d.mutilation.cran}, ${d.mutilation.crans} crans max, le sacrifice continue ensuite). Reste active sans limite de durée. Relancer : Coagulation, bouclier de ${Math.round(d.mutilation.coagulation[0] * 100)} à ${Math.round(d.mutilation.coagulation.at(-1)! * 100)} % des PV max` : '',
+    // Enutrof
+    d.enutrof?.course ? `Course +${Math.round(d.enutrof.course.k * 100)} % pendant ${d.enutrof.course.t} s` : '',
+    d.enutrof?.ruee ? `Sur l'allié visé (ou toi) : course +${Math.round(d.enutrof.ruee.vitesse * 100)} % et +${d.enutrof.ruee.puissance} Puissance pendant ${d.enutrof.ruee.t} s, soin de ${Math.round(d.enutrof.ruee.soin * 100)} % des PV` : '',
+    d.enutrof?.pandore ? `Soigne les alliés autour de ${Math.round(d.enutrof.pandore.soin * 100)} % de leurs PV ; les ennemis proches courent ${Math.round(d.enutrof.pandore.hate * 100)} % plus vite ${d.enutrof.pandore.t} s` : '',
+    d.enutrof?.clef ? `Sans ennemi touché : +${d.enutrof.clef.portee} cases de portée à l'allié visé (ou à toi) pendant ${d.enutrof.clef.t} s` : '',
+    d.enutrof?.coffreBouclier ? `Bouclier de ${Math.round(d.enutrof.coffreBouclier.part * 100)} % de ses PV sur ton coffre au trésor, ${d.enutrof.coffreBouclier.t} s` : '',
+    d.enutrof?.coffreSoin ? `Soigne ton coffre au trésor de ${Math.round(d.enutrof.coffreSoin * 100)} % de ses PV` : '',
+    d.invocDuree ? `Repart au bout de ${d.invocDuree} s` : '',
     // Eniripsa
     d.soin ? `Soigne les alliés touchés de ${Math.round(d.soin)} PV (+ Intelligence et Soins)${d.soinLanceur === false ? ', pas toi' : ''}` : '',
     d.soinVol ? `Soigne les alliés de la zone de ${Math.round(d.soinVol * 100)} % des dommages faits${d.soinLanceur === false ? ' (pas toi)' : ''}` : '',

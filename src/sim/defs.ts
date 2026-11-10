@@ -141,6 +141,15 @@ export interface SpellDef {
   envol?: boolean;
   /** Mot de Reconstitution : soin total de l'allié (pas le lanceur), Insoignable n s ; relève à distance un allié à terre (10B). */
   reconstitution?: { insoignable: number; releve: number; relanceReleve: number };
+  /** Invocation qui repart seule au bout de n s (Sac Animé de l'Enutrof : 3 tours officiels). */
+  invocDuree?: number;
+  /** Enutrof (maquette Enutrof, 10 nov. 2026), effets joués par src/sim/enutrof.ts après l'impact :
+   *  course : vitesse de course en plus sur soi (Force de l'Âge, « +1 PM ») ; ruee : sur l'allié visé ou soi (Ruée vers l'Or : +2 PM,
+   *  +50 Puissance, soin de 10 % des PV) ; pandore : soin (part des PV max) des alliés autour, les ennemis proches courent plus vite ;
+   *  clef : sans ennemi touché, +Portée à l'allié visé ou à soi ; coffreBouclier / coffreSoin : sur le coffre au trésor (16D). */
+  enutrof?: { course?: { k: number; t: number }; ruee?: { vitesse: number; t: number; puissance: number; soin: number };
+    pandore?: { rayon: number; soin: number; hate: number; t: number }; clef?: { portee: number; t: number };
+    coffreBouclier?: { part: number; t: number }; coffreSoin?: number };
 }
 /** Auto-attaque d'un type d'arme : un sort sans coût dont les dommages viennent de l'arme portée. */
 export interface WeaponProfile extends Omit<SpellDef, 'name' | 'icon' | 'element' | 'dmg' | 'cooldown' | 'anim'> {
@@ -162,7 +171,9 @@ export interface ClassDef {
   /** bonus : dommages en plus ; signature : multiplicateur de l'effet propre au sort (SpellDef.rage), 1,5 = +50 %. */
   rage: { name: string; max: number; perHit: number; perHurt: number; bonus: number; signature: number;
     /** Ligne Rage 24B : la Rage du Iop monte plus en mêlée, la Précision du Crâ plus de loin (et pas en prenant des coups). */
-    mode?: 'melee' | 'distance' | 'eveil' | 'souffrance' | 'lance' | 'eloquence' };
+    mode?: 'melee' | 'distance' | 'eveil' | 'souffrance' | 'lance' | 'eloquence' | 'coffre' };
+  /** Enutrof : le coffre au trésor (maquette Enutrof), voir src/sim/enutrof.ts et classes.json > enutrof.coffre._doc. */
+  coffre?: import('./enutrof').ReglesCoffre;
   /** Eniripsa (maquette Eniripsa) : réglages des soins, voir classes.json > eniripsa._doc. */
   eniripsa?: { soinSoi: number; zoneEloquence: number; parSoin: number; aimant: number; aggro: { portee: number; chance: number; t: number } };
   /** Forgelance : la Lance Immortelle (états officiels Armé 24629 et Désarmé 24630).

@@ -138,6 +138,8 @@ export class ZoneScene extends Phaser.Scene {
   private areneView: AreneView | null = null;
   /** Havre-Sac : touche H ou bouton du HUD (2A), choix dans la fenêtre du Zaap du Havre-Sac (2C), pour le prochain pas. */
   private havreSacDemande = false;
+  /** Enutrof : touche du coffre au trésor. */
+  private coffreDemande = false;
   private zaapChoix: number | null = null;
   /** Clic sur un Zaap du monde (maquette « Zaap : » 1A) et Zaap tout juste découvert (3A : un seul bandeau). */
   private zaapClick: string | null = null;
@@ -977,6 +979,7 @@ export class ZoneScene extends Phaser.Scene {
       case 'options': w?.toggle('opt'); break;
       case 'carte': this.basculerCarte(); break;   // M, comme dans Dofus (maquette 0.2, 18A)
       case 'havresac': this.havreSacDemande = true; break;
+      case 'coffre': this.coffreDemande = true; break;
       case 'muet': this.basculerMuet(); break;
       case 'impact':
         this.fx.juice = !this.fx.juice;
@@ -1019,6 +1022,7 @@ export class ZoneScene extends Phaser.Scene {
     this.pickClick = null;
     if (this.ordreMeute != null) { input.meute = this.ordreMeute; this.ordreMeute = null; }
     if (this.havreSacDemande) { input.havreSac = true; this.havreSacDemande = false; }
+    if (this.coffreDemande) { input.coffre = true; this.coffreDemande = false; }
     if (this.zaapChoix != null) { input.zaap = this.zaapChoix; this.zaapChoix = null; }
     if (this.cmdTest.length) { input.test = this.cmdTest; this.cmdTest = []; }
     const dv = this.dialogueView;

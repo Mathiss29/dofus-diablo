@@ -126,6 +126,21 @@ export const POUVOIRS_CLASSE: PouvoirClasseDef[] = [
   // --- Eniripsa (maquette Eniripsa, « pour 16A+16C ce serait des bons effets de légendaire », 2026-11-09) -------------------
   pc('eniripsa', 'A', 'Bouclier de trop-plein', 'tapageur', 'amulette', [12, 20], 1, v => `Un soin sur un allié déjà plein devient un bouclier (jusqu'à ${v} % de ses PV) pendant 4 s. Le soin n'est jamais perdu.`),
   pc('eniripsa', 'B', 'Dernier Mot', 'tapageur', 'chapeau', [40, 70], 5, v => `Quand un allié passe sous 20 % de ses PV, son cadre clignote et ton prochain soin sur lui est critique (+${v} %).`),
+  // Eniripsa, suite (« Légendaires eni : 1A 2C-2P 3A 4A 5A », 2026-11-10) : 14 pouvoirs de plus, deux par emplacement en tout
+  pc('eniripsa', 'C', 'Mot tourbillonnant', 'turbulent', 'chapeau', [10, 20], 1, v => `Mot Turbulent attire les ennemis vers son centre au lieu de les repousser, et fait ${v} % de dégâts en plus.`),
+  pc('eniripsa', 'D', 'Nuée de Fées', 'stimulant', 'cape', [40, 60], 5, v => `Chaque Encouragement lancé sur un allié fait aussi naître une Fée à côté de toi (${v} % de son soin habituel).`),
+  pc('eniripsa', 'E', 'Envol protecteur', 'envol', 'cape', [10, 16], 1, v => `Après un échange de place par Mot d'Envol, l'allié reçoit un bouclier de ${v} % de ses PV pendant 3 s.`),
+  pc('eniripsa', 'F', 'Lien vital', 'vampirique', 'amulette', [30, 50], 5, v => `Mot Vampirique sur un ennemi soigne aussi l'allié le plus blessé à 4 cases, de ${v} % des dégâts faits.`),
+  pc('eniripsa', 'G', 'Lapino gardien', 'amitie', 'anneau', [30, 50], 5, v => `Le Lapino a ${v} % de PV en plus, et son Bisou Magique soigne aussi les alliés à 2 cases de sa cible.`),
+  pc('eniripsa', 'H', 'Farce cruelle', 'farceur', 'anneau', [0.8, 1.2], 0.1, v => `Quand la Farce ramène l'ennemi à sa place, il est étourdi ${n(v)} s (élites moitié moins, boss jamais).`),
+  pc('eniripsa', 'I', 'Juron fracassant', 'juron', 'ceinture', [40, 60], 5, v => `Un ennemi repoussé par Juron contre un obstacle prend ${v} % de dommages de poussée en plus, et ton Éloquence gagne 10.`),
+  pc('eniripsa', 'J', 'Verbe intarissable', 'tapageur', 'ceinture', [15, 30], 5, v => `Un Mot renforcé par l'Éloquence pleine te rend tout de suite ${v} % de la jauge.`),
+  pc('eniripsa', 'K', 'Envol en série', 'envol', 'bottes', [3, 5], 0.5, v => `Le Mot d'Envol gagne 1 charge, et chaque échange avec un allié te rend 1 PA (au plus une fois toutes les ${n(v)} s).`),
+  pc('eniripsa', 'L', 'Élan partagé', 'vivifiant', 'bottes', [15, 25], 5, v => `Mot Vivifiant te donne aussi +${v} % de vitesse de déplacement pendant sa durée, même lancé sur un autre.`),
+  pc('eniripsa', 'M', 'Mot ricochet', 'espiegle', 'arme', [1, 3], 1, v => `Mot Espiègle rebondit sur ${v} ennemi${v > 1 ? 's' : ''} de plus (−20 % de dégâts par rebond), et retire aussi ses PM à chacun.`),
+  pc('eniripsa', 'N', 'Sentence', 'interdit', 'arme', [10, 20], 1, v => `Mot Interdit marque sa cible 4 s : tes coups et ceux de tes alliés lui font +${v} % de dégâts.`),
+  pc('eniripsa', 'O', 'Jouvence éternelle', 'jouvence', 'bouclier', [3, 6], 1, v => `Le soin continu de Jouvence dure ${v} s de plus et retire les malus de l'allié à chaque soin.`),
+  pc('eniripsa', 'P', 'Seconde vie', 'reconstitution', 'bouclier', [15, 25], 5, v => `Un allié relevé par le Mot de Reconstitution n'est pas Insoignable, et reçoit un bouclier de ${v} % de ses PV pendant 4 s.`),
 ];
 /** Châtiments du Sacrieur (Dofus Rétro, 14B) : caractéristique gagnée à chaque coup reçu. */
 export const CHATIMENTS: Record<string, 'force' | 'agilite' | 'chance' | 'intelligence' | 'vitalite'> =
@@ -137,11 +152,11 @@ export const estPouvoirClasse = (id: string) => !!PC_PAR_ID[id];
 
 /** 2D : pouvoirs préférés de chaque boss (chance triplée sur son butin), un par classe. */
 export const BOSS_PREFERES: Record<string, string[]> = {
-  royal: ['pc-iop-A', 'pc-cra-G', 'pc-osamodas-E', 'pc-sacrieur-E', 'pc-sacrieur-L', 'pc-iop-K', 'pc-cra-P', 'pc-osamodas-L', 'pc-forgelance-E', 'pc-forgelance-M'],
-  kardorim: ['pc-iop-F', 'pc-cra-H', 'pc-osamodas-F', 'pc-sacrieur-D', 'pc-sacrieur-O', 'pc-iop-J', 'pc-cra-O', 'pc-osamodas-O', 'pc-forgelance-C', 'pc-forgelance-L'],
-  tournesol_affame: ['pc-iop-H', 'pc-cra-A', 'pc-osamodas-D', 'pc-sacrieur-A', 'pc-sacrieur-J', 'pc-iop-L', 'pc-cra-K', 'pc-osamodas-J', 'pc-forgelance-I', 'pc-forgelance-A'],
-  mob_l_eponge: ['pc-iop-E', 'pc-cra-F', 'pc-osamodas-B', 'pc-sacrieur-C', 'pc-sacrieur-P', 'pc-iop-M', 'pc-cra-M', 'pc-osamodas-K', 'pc-forgelance-K', 'pc-forgelance-H'],
-  kankreblath: ['pc-iop-B', 'pc-cra-C', 'pc-osamodas-C', 'pc-sacrieur-B', 'pc-sacrieur-K', 'pc-iop-O', 'pc-cra-J', 'pc-osamodas-P', 'pc-forgelance-D', 'pc-forgelance-O'],
+  royal: ['pc-iop-A', 'pc-cra-G', 'pc-osamodas-E', 'pc-sacrieur-E', 'pc-sacrieur-L', 'pc-iop-K', 'pc-cra-P', 'pc-osamodas-L', 'pc-forgelance-E', 'pc-forgelance-M', 'pc-eniripsa-E', 'pc-eniripsa-I'],
+  kardorim: ['pc-iop-F', 'pc-cra-H', 'pc-osamodas-F', 'pc-sacrieur-D', 'pc-sacrieur-O', 'pc-iop-J', 'pc-cra-O', 'pc-osamodas-O', 'pc-forgelance-C', 'pc-forgelance-L', 'pc-eniripsa-P', 'pc-eniripsa-H'],
+  tournesol_affame: ['pc-iop-H', 'pc-cra-A', 'pc-osamodas-D', 'pc-sacrieur-A', 'pc-sacrieur-J', 'pc-iop-L', 'pc-cra-K', 'pc-osamodas-J', 'pc-forgelance-I', 'pc-forgelance-A', 'pc-eniripsa-C', 'pc-eniripsa-G'],
+  mob_l_eponge: ['pc-iop-E', 'pc-cra-F', 'pc-osamodas-B', 'pc-sacrieur-C', 'pc-sacrieur-P', 'pc-iop-M', 'pc-cra-M', 'pc-osamodas-K', 'pc-forgelance-K', 'pc-forgelance-H', 'pc-eniripsa-A', 'pc-eniripsa-O'],
+  kankreblath: ['pc-iop-B', 'pc-cra-C', 'pc-osamodas-C', 'pc-sacrieur-B', 'pc-sacrieur-K', 'pc-iop-O', 'pc-cra-J', 'pc-osamodas-P', 'pc-forgelance-D', 'pc-forgelance-O', 'pc-eniripsa-M', 'pc-eniripsa-N'],
 };
 /** 2A : part des pouvoirs de Légendaire qui sont des pouvoirs de classe inventés. */
 export const CHANCE_POUVOIR_CLASSE = 0.2;

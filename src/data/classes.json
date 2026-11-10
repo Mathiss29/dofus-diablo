@@ -2880,5 +2880,633 @@
    },
    "_doc": "Maquette Eniripsa (ligne du 9 nov. 2026) : soinSoi = part des soins que l'Eniripsa se donne à lui-même (4B) ; zoneEloquence = rayon (px) ajouté à la zone d'un Mot lancé Éloquence pleine (2A, 2 cases) ; parSoin = Éloquence gagnée par Mot qui soigne un allié ; aimant = distance (px) où un Mot à cible unique s'aimante sur le perso le plus proche du curseur (3A) ; aggro (11A) : un monstre à moins de portee px d'un allié soigné vise le soigneur pendant t s, une fois sur deux."
   }
+ },
+ "enutrof": {
+  "name": "Enutrof",
+  "hp": 230,
+  "speed": 230,
+  "radius": 16,
+  "iframesOnHit": 0.45,
+  "healOnKill": 3,
+  "critChance": 0.15,
+  "critMult": 1.6,
+  "pa": {
+   "max": 6,
+   "regen": 1.25
+  },
+  "pm": {
+   "max": 2,
+   "recharge": 3.5
+  },
+  "potion": {
+   "charges": 3,
+   "heal": 0.35,
+   "cooldown": 1
+  },
+  "xpBase": 100,
+  "maxLevel": 200,
+  "attaque": {
+   "name": "Coup de poing",
+   "element": "terre",
+   "comboWindow": 0.45,
+   "combo": [
+    {
+     "duration": 0.28,
+     "impactAt": 0.07,
+     "cancelAt": 0.13,
+     "dmg": 14,
+     "range": 78,
+     "arc": 110,
+     "knock": 210,
+     "step": 120,
+     "hitstop": 0.05,
+     "shake": 0.0035
+    },
+    {
+     "duration": 0.28,
+     "impactAt": 0.07,
+     "cancelAt": 0.13,
+     "dmg": 14,
+     "range": 78,
+     "arc": 110,
+     "knock": 210,
+     "step": 120,
+     "hitstop": 0.05,
+     "shake": 0.0035
+    },
+    {
+     "duration": 0.4,
+     "impactAt": 0.11,
+     "cancelAt": 0.22,
+     "dmg": 30,
+     "range": 92,
+     "arc": 160,
+     "knock": 480,
+     "step": 220,
+     "hitstop": 0.085,
+     "shake": 0.008
+    }
+   ]
+  },
+  "rage": {
+   "name": "Coffre",
+   "max": 250,
+   "perHit": 0,
+   "perHurt": 0,
+   "bonus": 0,
+   "signature": 1,
+   "mode": "coffre"
+  },
+  "mobility": "souterrain",
+  "sorts": "enutrof",
+  "clicDroit": "lancer_pieces",
+  "spells": {
+   "lancer_pieces": {
+    "name": "Lancer de Pièces",
+    "dofusId": 13338,
+    "icon": 12185,
+    "element": "eau",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Eau.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 12,
+    "knock": 0,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 384,
+     "radius": 30
+    }
+   },
+   "force_age": {
+    "name": "Force de l'Âge",
+    "dofusId": 13340,
+    "icon": 12186,
+    "element": "terre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Terre et augmente les PM au lanceur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 27,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 192,
+     "radius": 30
+    },
+    "enutrof": {
+     "course": {
+      "k": 0.3,
+      "t": 3
+     }
+    }
+   },
+   "roulage_pelle": {
+    "name": "Roulage de Pelle",
+    "dofusId": 13331,
+    "icon": 12187,
+    "element": "feu",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Feu.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 18,
+    "knock": 120,
+    "fx": "line",
+    "hit": {
+     "shape": "line",
+     "length": 192,
+     "width": 48
+    }
+   },
+   "opportunite": {
+    "name": "Opportunité",
+    "dofusId": 13366,
+    "icon": 12188,
+    "element": "air",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Air et augmente la Puissance du lanceur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 14,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 288,
+     "radius": 30
+    },
+    "buff": {
+     "stat": "puissance",
+     "n": 30,
+     "t": 6
+    }
+   },
+   "sac_anime": {
+    "name": "Sac Animé",
+    "dofusId": 13328,
+    "icon": 12183,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Invoque un Sac Animé maîtrisable qui intercepte les dommages des alliés situés dans sa zone d'invocation.\nLe Sac Animé est détruit 3 tours après son invocation.\n\nLorsqu'il est attaqué par un allié, ce dernier est soigné.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 144,
+     "radius": 0
+    },
+    "invoque": "sac_anime",
+    "invocDuree": 9,
+    "rage": "summon"
+   },
+   "ruee_or": {
+    "name": "Ruée vers l'Or",
+    "dofusId": 13342,
+    "icon": 13351,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Augmente les PM de l'allié ciblé et lui applique l'état Ruée vers l'Or :\n• À la fin du tour de la cible, augmente sa Puissance au tour suivant si elle est au contact d'un ennemi et la soigne si elle est au contact d'une invocation Enutrof.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 384,
+     "radius": 30
+    },
+    "enutrof": {
+     "ruee": {
+      "vitesse": 0.4,
+      "t": 4,
+      "puissance": 50,
+      "soin": 0.1
+     }
+    }
+   },
+   "boite_pandore": {
+    "name": "Boîte de Pandore",
+    "dofusId": 13334,
+    "icon": 12965,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Soigne tous les alliés mais augmente les PM de tous les ennemis.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "land",
+    "self": true,
+    "hit": {
+     "shape": "circle",
+     "radius": 144
+    },
+    "enutrof": {
+     "pandore": {
+      "rayon": 144,
+      "soin": 0.06,
+      "hate": 0.3,
+      "t": 3
+     }
+    }
+   },
+   "remblai": {
+    "name": "Remblai",
+    "dofusId": 13335,
+    "icon": 12191,
+    "element": "terre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Terre et retire de la Portée en zone.\nLes dommages sont plus importants sur les invocations.\n\nN'affecte pas le lanceur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 20,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 288,
+     "radius": 72
+    },
+    "poLoss": [
+     2,
+     2,
+     2
+    ],
+    "vsSummon": 1.3
+   },
+   "clef_tresor": {
+    "name": "Clef du Trésor",
+    "dofusId": 13332,
+    "icon": 12193,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Retire de la Portée aux ennemis ou augmente celle de l'allié ciblé.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 240,
+     "radius": 30
+    },
+    "poLoss": [
+     2,
+     2,
+     2
+    ],
+    "enutrof": {
+     "clef": {
+      "portee": 2,
+      "t": 6
+     }
+    }
+   },
+   "abattement": {
+    "name": "Abattement",
+    "dofusId": 13365,
+    "icon": 12199,
+    "element": "air",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Air et retire des PA.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 22,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 240,
+     "radius": 30
+    },
+    "paLoss": 2
+   },
+   "pelle_animee": {
+    "name": "Pelle Animée",
+    "dofusId": 13344,
+    "icon": 12195,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Invoque une Pelle Animée maîtrisable qui peut pousser.\n\nLorsqu'elle est attaquée par un allié, ce dernier est soigné.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 192,
+     "radius": 0
+    },
+    "invoque": "pelle_animee",
+    "rage": "summon"
+   },
+   "avarice": {
+    "name": "Avarice",
+    "dofusId": 13362,
+    "icon": 12228,
+    "element": "neutre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Retire des PM non esquivables pour augmenter les PA des cibles en zone autour du lanceur.\nRetire également de la Puissance à toutes les entités hors de la zone d'effet pour augmenter la Puissance du lanceur pour chaque entité touchée (cumulable 10 fois).",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "circle",
+     "radius": 120
+    },
+    "pmLoss": 3,
+    "buff": {
+     "stat": "puissance",
+     "n": 20,
+     "t": 6
+    }
+   },
+   "pelle_aurifere": {
+    "name": "Pelle Aurifère",
+    "dofusId": 13343,
+    "icon": 12194,
+    "element": "eau",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Eau et retire des PM.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 33,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 240,
+     "radius": 30
+    },
+    "pmLoss": 3
+   },
+   "maladresse": {
+    "name": "Maladresse",
+    "dofusId": 13337,
+    "icon": 12201,
+    "element": "neutre",
+    "pa": 1,
+    "cooldown": 0,
+    "desc": "Retire des PM.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 384,
+     "radius": 30
+    },
+    "pmLoss": 2
+   },
+   "pelle_fantomatique": {
+    "name": "Pelle Fantomatique",
+    "dofusId": 13336,
+    "icon": 12202,
+    "element": "feu",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Réduit la durée des effets sur la cible et occasionne des dommages Feu aux ennemis.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 27,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 288,
+     "radius": 72
+    },
+    "dissipe": true
+   },
+   "banqueroute": {
+    "name": "Banqueroute",
+    "dofusId": 14278,
+    "icon": 12203,
+    "element": "air",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Air et retire de l'Esquive PA.\nLes dommages sont plus importants sur les invocations.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 41,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 288,
+     "radius": 30
+    },
+    "vsSummon": 1.4
+   },
+   "coffre_anime": {
+    "name": "Coffre Animé",
+    "dofusId": 13347,
+    "icon": 12212,
+    "element": "eau",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Invoque un Coffre Animé maîtrisable qui peut tacler, occasionner des dommages Eau et dévoiler les invisibles.\n\nLorsqu'il est attaqué par un allié, ce dernier est soigné.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "land",
+    "self": true,
+    "hit": {
+     "shape": "circle",
+     "radius": 1
+    },
+    "enutrof": {
+     "coffreBouclier": {
+      "part": 0.2,
+      "t": 6
+     }
+    }
+   },
+   "malle_animee": {
+    "name": "Malle Animée",
+    "dofusId": 13371,
+    "icon": 12240,
+    "element": "eau",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Invoque une Malle Animée maîtrisable qui peut soigner.\n\nLorsqu'elle est attaquée par un allié, ce dernier est soigné.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "land",
+    "self": true,
+    "hit": {
+     "shape": "circle",
+     "radius": 1
+    },
+    "enutrof": {
+     "coffreSoin": 0.25
+    }
+   },
+   "souterrain": {
+    "name": "Souterrain",
+    "dofusId": 13364,
+    "icon": 13121,
+    "element": "terre",
+    "cooldown": 0.4,
+    "desc": "Échange de position avec la cible et occasionne des dommages Terre aux ennemis.",
+    "duration": 0.34,
+    "impactAt": 0.3,
+    "cancelAt": 0.32,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 31,
+    "knock": 0,
+    "fx": "land",
+    "hit": {
+     "shape": "circle",
+     "radius": 48
+    },
+    "move": {
+     "kind": "leap",
+     "maxRange": 192,
+     "height": 12
+    },
+    "pm": 1
+   }
+  },
+  "coffre": {
+   "_doc": "Coffre au trésor (maquette Enutrof, ligne du 10 nov. 2026, src/sim/enutrof.ts) : paliers = pièces de Bronze, Argent, Or, Trésor ; gains = pièces par monstre vaincu à moins de portee px d'un Enutrof (1A), entrave = pièce en plus si le monstre a perdu des PM, PA ou de la Portée moins de fenetre s avant (1B) ; ko = secondes où le coffre tombé reste assommé (3D, il perd la moitié de ses pièces, comme à la mort de l'Enutrof) ; butin = tirages de chaque palier avec les tables des monstres (4A) ; tresor = apparat de chasseur de trésor (4C) ; avale = pièces pour un objet Rare ou Épique donné au coffre (15C, Maj + clic dans le sac).",
+   "paliers": [
+    50,
+    100,
+    175,
+    250
+   ],
+   "noms": [
+    "Bronze",
+    "Argent",
+    "Or",
+    "Trésor"
+   ],
+   "gains": {
+    "normal": 1,
+    "elite": 5,
+    "archi": 10,
+    "boss": 25
+   },
+   "entrave": 1,
+   "fenetre": 4,
+   "portee": 720,
+   "ko": 10,
+   "butin": [
+    {
+     "rang": "elite",
+     "n": 1
+    },
+    {
+     "rang": "elite",
+     "n": 2
+    },
+    {
+     "rang": "boss",
+     "n": 1
+    },
+    {
+     "rang": "boss",
+     "n": 1,
+     "epique": true
+    }
+   ],
+   "tresor": {
+    "chance": 0.05,
+    "dePalier": 2,
+    "apparats": [
+     "25360",
+     "25361"
+    ]
+   },
+   "avale": {
+    "rare": 2,
+    "epique": 5
+   }
+  }
  }
 }

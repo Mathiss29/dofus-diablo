@@ -23,16 +23,18 @@ const vivant = (e: { dead: boolean }) => !e.dead;
 /** Soin d'un allié (joueur ou bête) par un joueur : l'Intelligence et les Soins du lanceur s'ajoutent (comme Dofus) ;
  *  sur lui-même, l'Eniripsa ne reçoit que soinSoi (4B) ; Insoignable (Mot de Reconstitution) bloque tout.
  *  brut : montant déjà calculé (Bisou Magique, Fées : % des PV max). Renvoie les PV rendus. */
-export function soignerAllie(p: Player, q: Allie, base: number, world: World, o: { brut?: boolean; de?: Bete; x?: number; y?: number } = {}): number {
+export function soignerAllie(p: Player, q: Allie, base: number, world: World, o: { brut?: boolean; de?: Bete; x?: number; y?: number; crit?: number } = {}): number {
   if (q.dead || base <= 0) return 0;
   let n = o.brut ? base : base * (1 + Math.max(0, p.stat('intelligence')) / 100) + Math.max(0, p.stat('soins'));
+  // Un Mot peut soigner en critique, comme dans Dofus (le « +N % Critique » officiel de la Panoplie Altruiste s'y ajoute)
+  if (!o.brut && world.rng.next() < p.critChance + (o.crit ?? 0)) { n *= p.cls.critMult; world.emit({ k: 'status', x: q.x, y: q.y - 62, text: 'Critique', color: '#c8ffd8' }); }
   if (q === p && p.cls.eniripsa) n *= p.cls.eniripsa.soinSoi;
   if (q.faction === 'player') {
     const j = q as Player;
     if (j.insoignableT > 0) { world.emit({ k: 'status', x: j.x, y: j.y - 50, text: 'Insoignable', color: '#c8c8c8' }); return 0; }
     if (j.soinsRecusT > 0) n *= 1.2;
-    const dm = p.pcv('pc-eniripsa-B');   // Dernier Mot (16C) : soin critique sur un allié sous 20 % de ses PV
-    if (dm && j.hp < j.maxHp * 0.2) { n *= 1 + dm / 100; world.emit({ k: 'status', x: j.x, y: j.y - 70, text: 'Dernier Mot !', color: '#c8ffd8' }); }
+    const dm = p.pcv('pc-eniripsa-B');   // Dernier Mot (16C, 3A) : le premier soin après le passage sous 20 % des PV est critique
+    if (dm && j.hp < j.maxHp * 0.2 && !j.dernierMotPris) { j.dernierMotPris = true; n *= 1 + dm / 100; world.emit({ k: 'status', x: j.x, y: j.y - 70, text: 'Dernier Mot !', color: '#c8ffd8' }); }
   }
   const v = Math.max(0, Math.min(q.maxHp - q.hp, Math.round(n)));
   if (v > 0) {
@@ -119,7 +121,9 @@ export function impactEniripsa(p: Player, id: string, d: SpellDef, tx: number, t
     const R = d.reconstitution, q = joueurAuPoint(world, tx, ty, CASE, p);
     if (q?.dead) {
       world.releverAvecSort(q, R.releve);
-      q.insoignableT = R.insoignable;
+      const sv = p.pcv('pc-eniripsa-P');   // Seconde vie : pas Insoignable, et un bouclier
+      if (sv) { q.shield = Math.max(q.shield, Math.round(q.maxHp * sv / 100)); q.shieldT = q.shieldT0 = 4; q.shieldSrc = 'pc-eniripsa-P'; }
+      else q.insoignableT = R.insoignable;
       p.cd[id] = p.cdMax[id] = R.relanceReleve;
       world.emit({ k: 'status', x: q.x, y: q.y - 60, text: 'Relevé !', color: '#7fc47a' });
       world.emit({ k: 'filSoin', x: p.x, y: p.y, tx: q.x, ty: q.y, amount: q.hp });
@@ -143,15 +147,20 @@ export function impactEniripsa(p: Player, id: string, d: SpellDef, tx: number, t
       world.emit({ k: 'echange', x: b.x, y: b.y, ox, oy });
     } else {
       const n = world.invoquer(p, 'lapino', id, tx, ty);
-      if (n) n.horsCompte = true;   // ne prend pas la place d'une invocation de l'Osamodas (règle des bêtes)
+      if (n) n.horsCompte = true;
+      const lg = p.pcv('pc-eniripsa-G');   // Lapino gardien : PV en plus
+      if (n && lg) { n.maxHp = Math.round(n.maxHp * (1 + lg / 100)); n.hp = n.maxHp; }   // ne prend pas la place d'une invocation de l'Osamodas (règle des bêtes)
     }
     return true;
   }
   // Encouragement (5A) sur l'allié visé ; sur une case libre, une Fée (5B)
   if (d.encourage) {
     const q = joueurAuPoint(world, tx, ty, pres);
-    if (q && !q.dead) encourager(p, q, d, world);
-    else lancerLuciole(p, 'fee', d.encourage.fee, id, tx, ty, world);
+    if (q && !q.dead) {
+      encourager(p, q, d, world);
+      const nf = p.pcv('pc-eniripsa-D');   // Nuée de Fées : une Fée naît à côté de l'Eniripsa
+      if (nf) { const f = lancerLuciole(p, 'fee', d.encourage.fee, id, p.x + CASE * 0.8, p.y, world); if (f) f.force = nf / 100; }
+    } else lancerLuciole(p, 'fee', d.encourage.fee, id, tx, ty, world);
     return true;
   }
   // Moquerie (6A) sur l'ennemi visé ; sur une case libre, un Feu Follet (6B)
@@ -170,7 +179,7 @@ export function impactEniripsa(p: Player, id: string, d: SpellDef, tx: number, t
       const n = Math.min(Math.round(p.hp * d.transfert), p.hp - 1);
       if (n > 0) { p.hp -= n; soigne += soignerAllie(p, allie, n, world, { brut: true }); }
     }
-    if (d.soin) soigne += soignerAllie(p, allie, d.soin * mult, world);
+    if (d.soin) soigne += soignerAllie(p, allie, d.soin * mult, world, { crit: p.critSort(id) });
     if (d.purge) purgerAllie(allie, world);
     if (d.peinture) peindreAllie(p, allie, d, world);
     if (soigne > 0) eloquence(p, world);
@@ -178,8 +187,8 @@ export function impactEniripsa(p: Player, id: string, d: SpellDef, tx: number, t
   }
   // Mot de zone : tous les alliés de la zone (le lanceur aussi, sauf Lamentations), bêtes comprises
   if (d.soin) {
-    for (const q of world.players) if (!q.dead && (q !== p || d.soinLanceur !== false) && Math.hypot(q.x - cx, q.y - cy) <= r + q.radius) soigne += soignerAllie(p, q, d.soin * mult, world);
-    for (const b of world.betes) if (!b.dead && !b.luciole && Math.hypot(b.x - cx, b.y - cy) <= r + b.radius) soigne += soignerAllie(p, b, d.soin * mult, world);
+    for (const q of world.players) if (!q.dead && (q !== p || d.soinLanceur !== false) && Math.hypot(q.x - cx, q.y - cy) <= r + q.radius) soigne += soignerAllie(p, q, d.soin * mult, world, { crit: p.critSort(id) });
+    for (const b of world.betes) if (!b.dead && !b.luciole && Math.hypot(b.x - cx, b.y - cy) <= r + b.radius) soigne += soignerAllie(p, b, d.soin * mult, world, { crit: p.critSort(id) });
   }
   if (soigne > 0) eloquence(p, world);
   // Ennemi visé : effets propres au Mot (après les dommages, voir apresCoupEniripsa)
@@ -195,6 +204,12 @@ export function apresCoupEniripsa(p: Player, d: SpellDef, tx: number, ty: number
     for (const q of world.players) if (!q.dead && (q !== p || d.soinLanceur !== false) && Math.hypot(q.x - cx, q.y - cy) <= r + q.radius) soigne += soignerAllie(p, q, n, world, { brut: true });
     for (const b of world.betes) if (!b.dead && !b.luciole && Math.hypot(b.x - cx, b.y - cy) <= r + b.radius) soigne += soignerAllie(p, b, n, world, { brut: true });
     if (soigne > 0) eloquence(p, world);
+  }
+  const lv = d.transfert && degats > 0 ? p.pcv('pc-eniripsa-F') : 0;
+  if (lv) {   // Lien vital : l'allié le plus blessé à 4 cases (pas le lanceur, qui vole déjà de la vie)
+    let q: Player | null = null, k = 1;
+    for (const o of world.players) if (o !== p && !o.dead && o.hp < o.maxHp && Math.hypot(o.x - p.x, o.y - p.y) <= CASE * 4 && o.hp / o.maxHp < k) { k = o.hp / o.maxHp; q = o; }
+    if (q) soignerAllie(p, q, degats * lv / 100, world, { brut: true });
   }
   if (!d.farce && !d.peinture && !d.purge) return;
   for (const m of world.monsters) {
@@ -213,10 +228,12 @@ export function encourager(p: Player, q: Player, d: SpellDef, world: World) {
   q.encourage = { k: E.k, t: E.t, t0: E.t, regen: E.regen ?? 0 };
   if (E.pm) q.addMod('pm', E.pm, E.t, 'encourage');
   if (E.vitesse) q.courir(E.vitesse, E.t);
+  if (E.k === 'vivifiant' && p.pcv('pc-eniripsa-L')) p.courir(p.pcv('pc-eniripsa-L') / 100, E.t);   // Élan partagé
   if (E.soinPct) {   // Jouvence : purge, soin immédiat puis soin continu (début de tour officiel = toutes les 3 s)
     purgerAllie(q, world);
     soignerAllie(p, q, q.maxHp * E.soinPct, world, { brut: true });
-    q.soinContinu.push({ n: q.maxHp * E.soinPct / 2, t: E.t, next: TOUR, de: p.id, src: 'encourage' });
+    const je = p.pcv('pc-eniripsa-O');   // Jouvence éternelle : plus longue, et purge à chaque soin
+    q.soinContinu.push({ n: q.maxHp * E.soinPct / 2, t: E.t + je, next: TOUR, de: p.id, src: 'encourage', purge: !!je });
   }
   world.emit({ k: 'status', x: q.x, y: q.y - 60, text: 'Encouragé', color: '#9ff0c0' });
   if (q !== p) world.emit({ k: 'filSoin', x: p.x, y: p.y, tx: q.x, ty: q.y, amount: 0 });
@@ -246,12 +263,13 @@ function peindreAllie(p: Player, q: Player, d: SpellDef, world: World) {
 }
 
 /** Fée ou Feu Follet (5B 6B) : 2 au plus par Eniripsa, la plus ancienne s'éteint pour laisser la place. */
-function lancerLuciole(p: Player, kind: 'fee' | 'feu', cle: string, mot: string, x: number, y: number, world: World) {
+function lancerLuciole(p: Player, kind: 'fee' | 'feu', cle: string, mot: string, x: number, y: number, world: World): Bete | null {
   const miennes = world.betes.filter(b => b.owner === p && b.luciole && vivant(b));
   if (miennes.length >= LUCIOLE.max) miennes[0].mourir(world);
   const b = world.invoquer(p, cle, mot, x, y);
-  if (!b) return;
+  if (!b) return null;
   b.luciole = { kind, mot }; b.horsCompte = true; b.finT = LUCIOLE.vie;
+  return b;
 }
 
 /** Une Luciole file vers sa cible et y applique son Mot, puis s'éteint (à la moindre attaque, ou au bout de 6 s). */
@@ -284,7 +302,7 @@ export function lucioleMaj(b: Bete, dt: number, world: World) {
   if (cible.faction === 'player') {   // Compliment + l'Encouragement de son Mot
     const q = cible as Player;
     if (d?.encourage) encourager(p, q, d, world);
-    soignerAllie(p, q, q.maxHp * LUCIOLE.soinPct, world, { brut: true, de: b });
+    soignerAllie(p, q, q.maxHp * LUCIOLE.soinPct * b.force, world, { brut: true, de: b });
   } else {   // Insulte + la Moquerie de son Mot
     const m = cible as Monster, el: Element = 'meilleur';
     world.coupDeBete(b, m, LUCIOLE.insulte, el);
@@ -315,6 +333,7 @@ export function majEniripsa(p: Player, dt: number, world: World) {
       if (s.next <= 0 && s.t > -0.01) {
         s.next += TOUR;
         const de = world.players.find(q => q.id === s.de) ?? p;
+        if (s.purge) purgerAllie(p, world);
         soignerAllie(de, p, s.n, world, { brut: true });
       }
     }
@@ -329,6 +348,8 @@ export function majEniripsa(p: Player, dt: number, world: World) {
         const ox = m.x, oy = m.y; m.x = f.x; m.y = f.y; m.kx = m.ky = 0;
         world.emit({ k: 'echange', x: m.x, y: m.y, ox, oy });
         world.emit({ k: 'status', x: m.x, y: m.y - 34, text: 'Farce !', color: '#9fd3ff' });
+        const fc = p.pcv('pc-eniripsa-H');   // Farce cruelle : étourdi au retour
+        if (fc && !m.def.boss) m.stun = Math.max(m.stun, fc * (m.def.elite ? 0.5 : 1));
       }
     }
     p.farces = p.farces.filter(f => f.t > 0);
@@ -347,5 +368,10 @@ export function envol(p: Player, sx: number, sy: number, tx: number, ty: number,
   const bx = best.x, by = best.y;
   best.x = sx; best.y = sy; p.x = bx; p.y = by;
   world.emit({ k: 'echange', x: p.x, y: p.y, ox: sx, oy: sy });
+  if (best.faction === 'player') {
+    const q = best as Player, ep = p.pcv('pc-eniripsa-E'), es = p.pcv('pc-eniripsa-K');
+    if (ep) { q.shield = Math.max(q.shield, Math.round(q.maxHp * ep / 100)); q.shieldT = q.shieldT0 = 3; q.shieldSrc = 'pc-eniripsa-E'; }   // Envol protecteur
+    if (es && p.age - p.envolA >= es) { p.envolA = p.age; p.pa = Math.min(p.paMax, p.pa + 1); world.emit({ k: 'status', x: p.x, y: p.y - 50, text: '+1 PA', color: '#5aa8ff' }); }   // Envol en série
+  }
   return true;
 }

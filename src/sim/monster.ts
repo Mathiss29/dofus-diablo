@@ -88,6 +88,8 @@ export class Monster extends Entity {
   provoqueJusqua = -1;
   /** Eniripsa : Moquerie (durées), Mot de Peinture (poussée en plus), soigneur qui attire l'aggro (11A) jusqu'à viseJusqua. */
   moqueT = 0; moqueT0 = 0; peintT = 0; peintK = 0; viseId = -1; viseJusqua = -1;
+  /** Enutrof 1B : dernier retrait de PM, PA ou Portée subi (temps du monde) : vaincu peu après, il donne une pièce de plus. */
+  entraveA = -99;
   /** Légendaires de classe Crâ : Marque du chasseur (+marque % jusqu'à marqueJusqua), Givre mordant (coups récents, dernier gel). */
   marque = 0; marqueJusqua = -1; glaceCoups: number[] = []; gelA = -99; staseA = -99;
   /** Dommages subis × subis pendant subisT s (Cuirasse Laineuse : 0,7). */

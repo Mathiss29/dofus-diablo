@@ -17,6 +17,7 @@ import { CASE, TOUR } from './monster';
 import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type SortGrade, type SortOfficiel } from './sorts';
 import { porteeSort } from './apercu';
 import { aimanter, alchiRhetorique, apresCoupEniripsa, envol, impactEniripsa, majEniripsa } from './eniripsa';
+import { impactEnutrof, majEnutrof, perteCoffre } from './enutrof';
 import { DANGER } from './danger';
 import type { EntreeCodex } from './codex';
 import { POUVOIR_PAR_ID, classeDuPouvoir, gradeAvecPouvoirs, type CtxPouvoirs, type PouvoirDef } from './pouvoirs';
@@ -150,6 +151,8 @@ export class Player extends Entity {
   renvoiT = 0; renvoiPart = 0;
   /** Dernier souffle (légendaire Sacrieur D) : dernière fois qu'il a sauvé le perso. */
   dernierSouffleA = -999;
+  /** Eniripsa : Dernier Mot déjà servi depuis le passage sous 20 % (3A) ; dernier PA d'Envol en série (K). */
+  dernierMotPris = false; envolA = -99;
   private repathT = 0;
   private buffer: SkillId | null = null;
   private bufferT = 0;
@@ -249,14 +252,14 @@ export class Player extends Entity {
   etatPouvoir(id: string): { actif: true } | { actif: false; raison: string } {
     const c = PC_PAR_ID[id];
     if (c) {   // légendaire de classe inventé : sa classe, et son sort connu
-      if (c.classe !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur', forgelance: 'Forgelance', eniripsa: 'Eniripsa' } as Record<string, string>)[c.classe] ?? 'une autre classe'}` };
+      if (c.classe !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur', forgelance: 'Forgelance', eniripsa: 'Eniripsa', enutrof: 'Enutrof' } as Record<string, string>)[c.classe] ?? 'une autre classe'}` };
       if (this.knows(c.sort)) return { actif: true };
       const o = this.official(c.sort), n = o ? this.requiredLevel(o) : 0;
       return { actif: false, raison: n > this.level ? `s'éveille au niveau ${n}` : 'variante non choisie' };
     }
     const p = POUVOIR_PAR_ID[id];
     if (!p) return { actif: true };
-    if (classeDuPouvoir(id) !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur', forgelance: 'Forgelance', eniripsa: 'Eniripsa' } as Record<string, string>)[classeDuPouvoir(id)] ?? 'une autre classe'}` };
+    if (classeDuPouvoir(id) !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur', forgelance: 'Forgelance', eniripsa: 'Eniripsa', enutrof: 'Enutrof' } as Record<string, string>)[classeDuPouvoir(id)] ?? 'une autre classe'}` };
     const k = Object.keys(this.cls.spells).find(x => this.cls.spells[x].dofusId === p.dofusId);
     if (!k) return { actif: false, raison: 'sort pas encore en jeu' };
     if (this.knows(k)) return { actif: true };
@@ -330,8 +333,10 @@ export class Player extends Entity {
   /** Eniripsa (reçus de n'importe quel Eniripsa du groupe) : Encouragement, soins continus (Jouvence, Peinture), Insoignable ;
    *  lancés : Farces qui ramènent les ennemis, dernier PA rendu par Alchi-Rhétorique. */
   encourage: { k: string; t: number; t0: number; regen: number } | null = null;
-  soinContinu: { n: number; t: number; next: number; de: number; src: string }[] = [];
+  soinContinu: { n: number; t: number; next: number; de: number; src: string; purge?: boolean }[] = [];
   insoignableT = 0; farces: { m: number; x: number; y: number; t: number }[] = []; alchiA = -99;
+  /** Enutrof (maquette Enutrof) : pièces du coffre au trésor, secondes où le coffre reste assommé, dernière perte (3D). */
+  coffrePieces = 0; coffreKoT = 0; coffrePerteA = -99;
   courir(k: number, t: number) { this.courseK = this.courseT > 0 ? Math.max(this.courseK, k) : k; this.courseT = Math.max(this.courseT, t); }
   slow(t: number, k: number) { if (this.insensibleT > 0) return; k *= fuiteFactor(this.fuite); this.slowK = this.slowT > 0 ? Math.max(this.slowK, k) : k; if (t >= this.slowT) this.slowT0 = t; this.slowT = Math.max(this.slowT, t); }
   get speed(): number { return this.cls.speed * (1 + vitesseAgilite(this.stat('agilite'))) * this.vitesseTest * (this.slowT > 0 ? 1 - this.slowK : 1) * (this.courseT > 0 ? 1 + this.courseK : 1); }
@@ -365,7 +370,7 @@ export class Player extends Entity {
   }
   /** +1 PA au niveau 100, comme dans Dofus (6 PA au départ, 7 ensuite). */
   get paMax(): number { return this.cls.pa.max + (this.level >= 100 ? 1 : 0) + this.stat('pa'); }
-  get pmMax(): number { return this.cls.pm.max + this.stat('pm'); }
+  get pmMax(): number { return this.cls.pm.max + this.stat('pm') + (this.pcv('pc-eniripsa-K') ? 1 : 0); }   // Envol en série : une charge de Mot d'Envol en plus
   get critChance(): number { return this.cls.critChance + this.stat('critique') / 100; }
   /** Effet légendaire porté (somme si plusieurs). */
   legendary(id: string): number {
@@ -804,7 +809,7 @@ export class Player extends Entity {
     const { x: tx, y: ty } = this.landing(id, aim, world);
     // Rage pleine : ce sort est renforcé (pas les déplacements)
     const boosted = this.rageFull && def.move?.kind !== 'leap' && this.cls.rage.mode !== 'eveil';   // l'Éveil ne renforce pas les sorts
-    if (boosted) { this.rage = 0; world.emit({ k: 'rageSpent', spell: id }); }
+    if (boosted) { this.rage = 0; world.emit({ k: 'rageSpent', spell: id }); if (this.pcv('pc-eniripsa-J')) this.rage = this.cls.rage.max * this.pcv('pc-eniripsa-J') / 100; }   // Verbe intarissable
     // Grade officiel : coût, relance (tours × 3 s), dommages (grade atteint / grade 1), portée des flèches (cases × 48 px)
     const g = def.pm ? null : this.grade(id), g0 = this.official(id)?.grades[0];
     const gm = g && g0 && dmgMoyen(g0) ? dmgMoyen(g) / dmgMoyen(g0) : 1;
@@ -837,6 +842,7 @@ export class Player extends Entity {
     if (this.cls.souffrance) this.majSouffrance(dt, world);
     if (this.lance) this.majLance(dt, world);
     if (this.encourage || this.soinContinu.length || this.insoignableT > 0 || this.farces.length) majEniripsa(this, dt, world);
+    if (this.cls.coffre) majEnutrof(this, dt, world);
     if (this.renvoiT > 0) this.renvoiT -= dt;
     if (this.mutil) {   // Mutilation : re-sacrifie toutes les `periode` s et gagne un cran de Puissance
       const M = this.cls.spells.mutilation?.mutilation;
@@ -849,6 +855,7 @@ export class Player extends Entity {
       }
     }
     if (this.subisT > 0 && (this.subisT -= dt) <= 0) this.subis = 1;
+    if (this.dernierMotPris && this.hp >= this.maxHp * 0.2) this.dernierMotPris = false;
     if (this.pacifiste > 0) this.pacifiste -= dt;
     if (this.rage > 0 && this.age - this.lastHitAt > 6) this.rage = Math.max(0, this.rage - 8 * dt);   // 26B : la jauge retombe hors combat
     this.potionCd = Math.max(0, this.potionCd - dt);
@@ -1051,6 +1058,7 @@ export class Player extends Entity {
           for (const j of world.betes) if (j.horsCompte && !j.dead && j.owner === this && j.sort === old.sort) j.mourir(world);   // sa jumelle part avec elle
         }
         const b = world.invoquer(this, key, s.id, s.tx, s.ty), ej = key === 'epee_vorace' ? this.pcv('pc-sacrieur-N') : 0;
+        if (b && d.invocDuree) b.finT = d.invocDuree;   // Sac Animé de l'Enutrof : 3 tours officiels
         if (b && ej) {   // Épées jumelles : deux épées plus faibles
           const b2 = world.invoquer(this, key, s.id, s.tx + CASE, s.ty); if (b2) b2.horsCompte = true;
           for (const e of [b, b2]) if (e) { e.force = ej / 100; e.maxHp = Math.max(1, Math.round(e.maxHp * ej / 100)); e.hp = e.maxHp; }
@@ -1143,6 +1151,7 @@ export class Player extends Entity {
       }
       if (d.echange) world.echanger(this, s.tx, s.ty, CASE * 0.75);   // Assaut, Transposition : après le coup
       if (eni && !pasDeCoup) { apresCoupEniripsa(this, d, s.tx, s.ty, rEni, world.degatsCoup, world); alchiRhetorique(this, d, s.tx, s.ty, rEni, world); }
+      if (d.enutrof) impactEnutrof(this, d, s.tx, s.ty, hits, world);
       if (d.envol) envol(this, s.sx, s.sy, s.tx, s.ty, world);   // Mot d'Envol : échange de place avec l'allié visé
       if (d.lance && this.cls.lance) this.apresImpactLance(d, s.tx, s.ty, world);
       if (d.traverse) {   // Balestra : de l'autre côté de la cible, puis petit recul
@@ -1278,6 +1287,10 @@ export class Player extends Entity {
     if (id === 'talon_argile' && v('pc-forgelance-L')) o.tue = 'talon_argile';
     if (id === 'volee_airain' && v('pc-forgelance-M') && this.lance) o.enclume = { x: this.lance.x, y: this.lance.y, k: v('pc-forgelance-M') };
     if (id === 'estoc_brulant' && v('pc-forgelance-N')) o.plusChoc = v('pc-forgelance-N');
+    // Eniripsa (« Légendaires eni : 2C-2P »)
+    if (id === 'turbulent' && v('pc-eniripsa-C')) { o.knock = 0; o.attire = { px: CASE * 2, vers: 'centre' }; o.plus = v('pc-eniripsa-C'); }
+    if (id === 'juron' && v('pc-eniripsa-I')) { o.pushDmg = true; o.choc = v('pc-eniripsa-I'); o.chocRage = 10; }
+    if (id === 'interdit' && v('pc-eniripsa-N')) o.marque = v('pc-eniripsa-N');
     return o;
   }
   /** Effets des légendaires de classe qui s'ajoutent à l'impact d'un sort (Iop A E G H, Osamodas A B C G H). */
@@ -1293,16 +1306,17 @@ export class Player extends Entity {
       world.hitCircle(sx, sy, size, { ...hit, dmg: hit.dmg * v('pc-iop-E') / 100 });
       world.emit({ k: 'spell', fx: 'burst', id: 'pc-iop-E', x: sx, y: sy, cx: sx, cy: sy, facing: this.facing, size, arc: 0, element: hit.element ?? 'eau', big: false, boosted: false });
     }
-    if (id === 'absorption' && v('pc-sacrieur-K')) {   // Absorption vorace : rebonds sur les monstres proches de la cible
+    const ricoche = id === 'espiegle' && v('pc-eniripsa-M') && world.monsters.some(m => !m.dead && Math.hypot(m.x - tx, m.y - ty) <= size + m.radius);
+    if ((id === 'absorption' && v('pc-sacrieur-K')) || ricoche) {   // Absorption vorace, Mot ricochet : rebonds sur les monstres proches de la cible
       let fx = tx, fy = ty, dm = hit.dmg; const pris = new Set<number>();
       for (const m of world.monsters) if (!m.dead && Math.hypot(m.x - tx, m.y - ty) <= size + m.radius) pris.add(m.id);
-      for (let i = 0; i < v('pc-sacrieur-K'); i++) {
+      for (let i = 0; i < v(ricoche ? 'pc-eniripsa-M' : 'pc-sacrieur-K'); i++) {
         const nx = world.monsters.filter(m => !m.dead && m.state !== 'spawn' && !pris.has(m.id) && Math.hypot(m.x - fx, m.y - fy) <= CASE * 4)
           .sort((a, b) => Math.hypot(a.x - fx, a.y - fy) - Math.hypot(b.x - fx, b.y - fy))[0];
         if (!nx) break;
         pris.add(nx.id); dm *= 0.8;
         world.applyHits(m => m === nx, { ...hit, dmg: dm }, fx, fy, 0);
-        world.emit({ k: 'spell', fx: 'burst', id: 'absorption', x: nx.x, y: nx.y, cx: fx, cy: fy, facing: Math.atan2(nx.y - fy, nx.x - fx), size: CASE * 0.6, arc: 0, element: 'feu', big: false, boosted: false });
+        world.emit({ k: 'spell', fx: 'burst', id, x: nx.x, y: nx.y, cx: fx, cy: fy, facing: Math.atan2(nx.y - fy, nx.x - fx), size: CASE * 0.6, arc: 0, element: hit.element ?? 'feu', big: false, boosted: false });
         fx = nx.x; fy = nx.y;
       }
     }
@@ -1556,7 +1570,7 @@ export class Player extends Entity {
     }
     if (this.hp <= 0 && world.quetes?.immortel) this.hp = 1;   // tutoriel : PV bloqués à 1
     if (world.test?.invincible) this.hp = this.maxHp;   // partie de test (8A) : le coup s'affiche, les PV ne bougent pas
-    if (this.hp <= 0) { this.hp = 0; this.dead = true; this.setAnim('die'); world.onPlayerDeath(); }
+    if (this.hp <= 0) { this.hp = 0; this.dead = true; this.setAnim('die'); if (this.cls.coffre) perteCoffre(this, world); world.onPlayerDeath(); }
     return true;
   }
 }

@@ -1243,10 +1243,42 @@
         ],
         "Corrections": [
           "Moins de saccades : les monstres endormis loin de toi ne coûtent plus rien à chaque image.",
+          "Les sorts de l'Osamodas, du Sacrieur, du Forgelance et de l'Eniripsa ont enfin leurs sons officiels.",
           "Partie de test : toutes les classes visibles, monstre choisi en vue, onglet Butin qui ne fige plus le jeu."
         ],
         "En coulisses": [
           "Mini-carte, portrait et transparence du décor allégés : l'image coûte deux fois moins (≈ 10 → 5 ms)."
+        ],
+        "Combat": [
+          {
+            "titre": "Des vagues plus grosses",
+            "phrase": "Donjons : 3 grosses vagues au lieu de 6, même nombre de monstres, la suivante arrive à 4 restants.",
+            "icone": "boss",
+            "etiquettes": [
+              "Donjons"
+            ]
+          }
+        ],
+        "Nouveautés": [
+          {
+            "titre": "L'Enutrof en essai",
+            "phrase": "L'Enutrof et son coffre au trésor permanent, à essayer dans la Partie de test.",
+            "details": "Gêne les monstres puis achève-les pour remplir le coffre de pièces. Ouvre-le au bon palier pour un butin de plus.",
+            "icone": "kamas",
+            "etiquettes": [
+              "Partie de test",
+              "Touche X"
+            ]
+          },
+          {
+            "titre": "Les légendaires de l'Eniripsa",
+            "phrase": "40 pouvoirs officiels de la Panoplie Altruiste et 14 pouvoirs à nous pour l'Eniripsa.",
+            "details": "Envol protecteur, Seconde vie, Nuée de Fées, Lapino gardien… Les Mots peuvent aussi soigner en critique.",
+            "icone": "principale",
+            "etiquettes": [
+              "Partie de test"
+            ]
+          }
         ]
       }
     }

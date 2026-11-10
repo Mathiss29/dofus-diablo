@@ -42,6 +42,8 @@ export type SimEvent =
   | { k: 'heal'; x: number; y: number; z: number; amount: number }
   /** Eniripsa 12C : fil de soin vert du soigneur (ou de sa bête) vers l'allié soigné, vu de tous les joueurs. */
   | { k: 'filSoin'; x: number; y: number; tx: number; ty: number; amount: number }
+  /** Enutrof 15A : pièces qui volent du monstre vaincu vers le coffre au trésor. */
+  | { k: 'pieces'; x: number; y: number; tx: number; ty: number; n: number }
   | { k: 'invocation'; id: number; x: number; y: number }
   | { k: 'eveil'; id: number; name: string; x: number; y: number }
   /** Sacrieur : échange de place (Assaut, Transposition), palier de Souffrance qui change, PV sacrifiés. */

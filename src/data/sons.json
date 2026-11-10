@@ -183,6 +183,78 @@
    "AnimArme19": "sorts/commun/Avatar_Fight_Commun_AnimArme19.mp3",
    "AnimArme22": "sorts/commun/Avatar_Fight_Commun_AnimArme22.mp3",
    "AnimAttaque13": "sorts/commun/Avatar_Fight_Commun_AnimAttaque13.mp3"
+  },
+  "osamodas": {
+   "AnimAttaque200": "sorts/osamodas/Avatar_Fight_Osamodas_AnimAttaque200.mp3",
+   "AnimAttaque201": "sorts/osamodas/Avatar_Fight_Osamodas_AnimAttaque201.mp3",
+   "AnimAttaque202": "sorts/osamodas/Avatar_Fight_Osamodas_AnimAttaque202.mp3",
+   "AnimAttaque203": "sorts/osamodas/Avatar_Fight_Osamodas_AnimAttaque203.mp3",
+   "AnimAttaque204": "sorts/osamodas/Avatar_Fight_Osamodas_AnimAttaque204.mp3",
+   "AnimAttaque205": "sorts/osamodas/Avatar_Fight_Osamodas_AnimAttaque205.mp3",
+   "AnimAttaque206": "sorts/osamodas/Avatar_Fight_Osamodas_AnimAttaque206.mp3",
+   "AnimAttaque207": "sorts/osamodas/Avatar_Fight_Osamodas_AnimAttaque207.mp3",
+   "AnimAttaque208": "sorts/osamodas/Avatar_Fight_Osamodas_AnimAttaque208.mp3",
+   "AnimAttaque209": "sorts/osamodas/Avatar_Fight_Osamodas_AnimAttaque209.mp3",
+   "AnimAttaque210": "sorts/osamodas/Avatar_Fight_Osamodas_AnimAttaque210.mp3",
+   "AnimAttaque211": "sorts/osamodas/Avatar_Fight_Osamodas_AnimAttaque211.mp3",
+   "AnimAttaque212": "sorts/osamodas/Avatar_Fight_Osamodas_AnimAttaque212.mp3",
+   "AnimAttaque213": "sorts/osamodas/Avatar_Fight_Osamodas_AnimAttaque213.mp3",
+   "AnimAttaque214": "sorts/osamodas/Avatar_Fight_Osamodas_AnimAttaque214.mp3",
+   "AnimAttaque215": "sorts/osamodas/Avatar_Fight_Osamodas_AnimAttaque215.mp3",
+   "AnimAttaque216": "sorts/osamodas/Avatar_Fight_Osamodas_AnimAttaque216.mp3",
+   "AnimAttaque217": "sorts/osamodas/Avatar_Fight_Osamodas_AnimAttaque217.mp3",
+   "AnimAttaque218": "sorts/osamodas/Avatar_Fight_Osamodas_AnimAttaque218.mp3",
+   "AnimAttaque219": "sorts/osamodas/Avatar_Fight_Osamodas_AnimAttaque219.mp3",
+   "AnimAttaque220": "sorts/osamodas/Avatar_Fight_Osamodas_AnimAttaque220.mp3",
+   "AnimAttaque221": "sorts/osamodas/Avatar_Fight_Osamodas_AnimAttaque221.mp3"
+  },
+  "sacrieur": {
+   "AnimAttaque1100": "sorts/sacrieur/Avatar_Fight_Sacrieur_AnimAttaque1100.mp3",
+   "AnimAttaque1101": "sorts/sacrieur/Avatar_Fight_Sacrieur_AnimAttaque1101.mp3",
+   "AnimAttaque1102": "sorts/sacrieur/Avatar_Fight_Sacrieur_AnimAttaque1102.mp3",
+   "AnimAttaque1103": "sorts/sacrieur/Avatar_Fight_Sacrieur_AnimAttaque1103.mp3",
+   "AnimAttaque1104": "sorts/sacrieur/Avatar_Fight_Sacrieur_AnimAttaque1104.mp3",
+   "AnimAttaque1105": "sorts/sacrieur/Avatar_Fight_Sacrieur_AnimAttaque1105.mp3",
+   "AnimAttaque1106": "sorts/sacrieur/Avatar_Fight_Sacrieur_AnimAttaque1106.mp3",
+   "AnimAttaque1107": "sorts/sacrieur/Avatar_Fight_Sacrieur_AnimAttaque1107.mp3",
+   "AnimAttaque1108": "sorts/sacrieur/Avatar_Fight_Sacrieur_AnimAttaque1108.mp3",
+   "AnimAttaque1109": "sorts/sacrieur/Avatar_Fight_Sacrieur_AnimAttaque1109.mp3",
+   "AnimAttaque1110": "sorts/sacrieur/Avatar_Fight_Sacrieur_AnimAttaque1110.mp3",
+   "AnimAttaque1111": "sorts/sacrieur/Avatar_Fight_Sacrieur_AnimAttaque1111.mp3",
+   "AnimAttaque1112": "sorts/sacrieur/Avatar_Fight_Sacrieur_AnimAttaque1112.mp3",
+   "AnimAttaque1113": "sorts/sacrieur/Avatar_Fight_Sacrieur_AnimAttaque1113.mp3",
+   "AnimAttaque1114": "sorts/sacrieur/Avatar_Fight_Sacrieur_AnimAttaque1114.mp3",
+   "AnimAttaque1115": "sorts/sacrieur/Avatar_Fight_Sacrieur_AnimAttaque1115.mp3",
+   "AnimAttaque1116": "sorts/sacrieur/Avatar_Fight_Sacrieur_AnimAttaque1116.mp3"
+  },
+  "forgelance": {
+   "AnimAttaque2000": "sorts/forgelance/Avatar_Fight_Forgelance_AnimAttaque2000.mp3",
+   "AnimAttaque2001": "sorts/forgelance/Avatar_Fight_Forgelance_AnimAttaque2001.mp3",
+   "AnimAttaque2002": "sorts/forgelance/Avatar_Fight_Forgelance_AnimAttaque2002.mp3",
+   "AnimAttaque2003": "sorts/forgelance/Avatar_Fight_Forgelance_AnimAttaque2003.mp3",
+   "AnimAttaque2004": "sorts/forgelance/Avatar_Fight_Forgelance_AnimAttaque2004.mp3",
+   "AnimAttaque2005": "sorts/forgelance/Avatar_Fight_Forgelance_AnimAttaque2005.mp3",
+   "AnimAttaque2006": "sorts/forgelance/Avatar_Fight_Forgelance_AnimAttaque2006.mp3",
+   "AnimAttaque2007": "sorts/forgelance/Avatar_Fight_Forgelance_AnimAttaque2007.mp3",
+   "AnimAttaque2008": "sorts/forgelance/Avatar_Fight_Forgelance_AnimAttaque2008.mp3",
+   "AnimAttaque2009": "sorts/forgelance/Avatar_Fight_Forgelance_AnimAttaque2009.mp3",
+   "AnimAttaque2010": "sorts/forgelance/Avatar_Fight_Forgelance_AnimAttaque2010.mp3",
+   "AnimAttaque2011": "sorts/forgelance/Avatar_Fight_Forgelance_AnimAttaque2011.mp3",
+   "AnimAttaque2012": "sorts/forgelance/Avatar_Fight_Forgelance_AnimAttaque2012.mp3",
+   "AnimAttaque2013": "sorts/forgelance/Avatar_Fight_Forgelance_AnimAttaque2013.mp3"
+  },
+  "eniripsa": {
+   "AnimAttaque700": "sorts/eniripsa/Avatar_Fight_Eniripsa_AnimAttaque700.mp3",
+   "AnimAttaque701": "sorts/eniripsa/Avatar_Fight_Eniripsa_AnimAttaque701.mp3",
+   "AnimAttaque702": "sorts/eniripsa/Avatar_Fight_Eniripsa_AnimAttaque702.mp3",
+   "AnimAttaque703": "sorts/eniripsa/Avatar_Fight_Eniripsa_AnimAttaque703.mp3",
+   "AnimAttaque704": "sorts/eniripsa/Avatar_Fight_Eniripsa_AnimAttaque704.mp3",
+   "AnimAttaque705": "sorts/eniripsa/Avatar_Fight_Eniripsa_AnimAttaque705.mp3",
+   "AnimAttaque706": "sorts/eniripsa/Avatar_Fight_Eniripsa_AnimAttaque706.mp3",
+   "AnimAttaque707": "sorts/eniripsa/Avatar_Fight_Eniripsa_AnimAttaque707.mp3",
+   "AnimAttaque708": "sorts/eniripsa/Avatar_Fight_Eniripsa_AnimAttaque708.mp3",
+   "AnimAttaque709": "sorts/eniripsa/Avatar_Fight_Eniripsa_AnimAttaque709.mp3",
+   "AnimAttaque710": "sorts/eniripsa/Avatar_Fight_Eniripsa_AnimAttaque710.mp3"
   }
  },
  "gfx": {
@@ -306,6 +378,72 @@
   ],
   "21004": [
    "gfx/40021004001_GFX_21004_FX_0_01.mp3"
+  ],
+  "8640": [
+   "gfx/8640_FX.mp3"
+  ],
+  "8641": [
+   "gfx/8641_FX.mp3"
+  ],
+  "8642": [
+   "gfx/8642_FX.mp3"
+  ],
+  "8643": [
+   "gfx/8643_FX.mp3"
+  ],
+  "8644": [
+   "gfx/8644_FX.mp3"
+  ],
+  "8645": [
+   "gfx/8645_FX.mp3"
+  ],
+  "8646": [
+   "gfx/8646_FX.mp3"
+  ],
+  "8647": [
+   "gfx/8647_FX.mp3"
+  ],
+  "8658": [
+   "gfx/8658_FX.mp3"
+  ],
+  "8679": [
+   "gfx/8679_FX.mp3"
+  ],
+  "8680": [
+   "gfx/8680_FX.mp3"
+  ],
+  "8690": [
+   "gfx/8690_FX.mp3"
+  ],
+  "9661": [
+   "gfx/9661_FX.mp3"
+  ],
+  "9662": [
+   "gfx/9662_FX.mp3"
+  ],
+  "9664": [
+   "gfx/9664_FX.mp3"
+  ],
+  "9670": [
+   "gfx/9670_FX.mp3"
+  ],
+  "9671": [
+   "gfx/9671_FX.mp3"
+  ],
+  "9672": [
+   "gfx/9672_FX.mp3"
+  ],
+  "9675": [
+   "gfx/9675_FX.mp3"
+  ],
+  "9684": [
+   "gfx/9684_FX.mp3"
+  ],
+  "9690": [
+   "gfx/9690_FX.mp3"
+  ],
+  "9691": [
+   "gfx/9691_FX.mp3"
   ]
  },
  "monstres": {

@@ -33,6 +33,8 @@ export interface PlayerInput {
   reponse?: number | null;
   /** Touche H (maquette Hub 2A) : entrer dans le Havre-Sac (1,5 s d'incantation) ou en ressortir. */
   havreSac?: boolean;
+  /** Enutrof : touche du coffre (X par défaut) : ouvre le coffre au trésor. */
+  coffre?: boolean;
   /** Zaap du Havre-Sac (2C) : -1 = ressortir là où l'on était, sinon l'index du Zaap découvert (player.zaaps). */
   zaap?: number | null;
   /** Clic sur un Zaap du monde (maquette « Zaap : » 1A) : son nom ; le perso y va et la fenêtre s'ouvre en arrivant. */

@@ -5,6 +5,7 @@ import type { Player } from './player';
 import type { World } from './world';
 import BETES_JSON from '../data/betes.json';
 import { allieLePlusBlesse, lucioleMaj, soignerAllie } from './eniripsa';
+import { coffreAssomme } from './enutrof';
 
 /** Un effet officiel d'un sort de bête que le jeu sait jouer (tools/extraction/osa_betes.py). */
 export type EffetBete =
@@ -18,6 +19,8 @@ export interface SortBete { id: number; name: string; pa: number; po: [number, n
 export interface BeteDef {
   dofusId: number; name: string; look: number; atlas: string; rang: number; element: Element | 'neutre';
   suivant: string | null; pv: number; sorts: SortBete[];
+  /** Ne frappe jamais (coffre au trésor et Sac Animé de l'Enutrof) : suit son maître, les monstres peuvent le viser. */
+  passif?: boolean;
 }
 export interface ReglesBetes {
   /** Part des dommages officiels (× 1,5 comme les sorts du joueur, puis × degats) ; PA par seconde et réserve (6A). */
@@ -126,6 +129,7 @@ export class Bete extends Entity {
       world.hitCircle(this.x, this.y, CASE * 2, { dmg: te, knock: 0, element: 'air' });
       world.emit({ k: 'spell', fx: 'burst', id: 'pc-osamodas-D', x: this.x, y: this.y, facing: 0, size: CASE * 2, arc: 0, element: 'air', big: true, boosted: false });
     }
+    if (this.base === 'coffre_tresor') coffreAssomme(this, world);   // Enutrof 3D
     world.emit({ k: 'beteMorte', id: this.id, x: this.x, y: this.y, radius: this.radius, name: this.def.name });
   }
   soigner(n: number, world: World) {
@@ -167,7 +171,11 @@ export class Bete extends Entity {
     // laisse (7A) : trop loin de l'Osamodas, elle revient ; vraiment trop loin (porte, Zaap…), elle apparaît à côté de lui
     if (dP > R.laisse * CASE * 2.5) { this.x = p.x - Math.cos(p.facing) * CASE; this.y = p.y - Math.sin(p.facing) * CASE; this.cast = null; this.state = 'suit'; }
     if (this.state === 'cast' && this.cast) { this.majCast(dt, world); this.applyKnock(dt); return; }
-    const cible = dP > R.laisse * CASE ? null : this.choisirCible(world);
+    if (this.base === 'sac_anime' && (this.provoqueT -= dt) <= 0) {   // Sac Animé : « intercepte les dommages des alliés » = attire les monstres proches
+      this.provoqueT = 2;
+      for (const m of world.monsters) if (!m.dead && !m.def.boss && m.state !== 'idle' && m.state !== 'return' && Math.hypot(m.x - this.x, m.y - this.y) <= CASE * 3) { m.agresseur = this.id; m.provoqueJusqua = world.time + 2.5; }
+    }
+    const cible = dP > R.laisse * CASE || this.def.passif ? null : this.choisirCible(world);
     this.cibleId = cible?.id ?? null;
     // 6A : soigne l'Osamodas blessé avec un sort de soin officiel (Bisou Béco, Saute-bouftou…)
     // Lapino de l'Eniripsa (7A) : l'allié le plus blessé du groupe, pas seulement son maître
@@ -178,7 +186,7 @@ export class Bete extends Entity {
       const i = this.sortUtilisable(cible, false);
       if (i >= 0) { this.lancer(i, cible); return; }
       // hors de portée : s'approche à 80 % de sa plus grande portée
-      const max = Math.max(...this.def.sorts.filter(s => s.effets.some(e => e.k === 'dmg')).map(s => s.po[1]), 1);
+      const max = Math.max(...this.def.sorts.filter(s => s.effets.some(e => e.k === 'dmg' || e.k === 'repousse')).map(s => s.po[1]), 1);
       const d = Math.hypot(cible.x - this.x, cible.y - this.y) - cible.radius - this.radius;
       if (d > Math.max(CASE * 0.6, max * CASE * 0.8)) { this.marcher(cible.x, cible.y, dt, world); return; }
       this.facing = Math.atan2(cible.y - this.y, cible.x - this.x);
@@ -244,7 +252,7 @@ export class Bete extends Entity {
     let best = -1, score = -1;
     this.def.sorts.forEach((s, i) => {
       const fx = s.effets;
-      if (soin ? !fx.some(e => e.k === 'soin' || e.k === 'soinPct') : !fx.some(e => e.k === 'dmg')) return;
+      if (soin ? !fx.some(e => e.k === 'soin' || e.k === 'soinPct') : !fx.some(e => e.k === 'dmg' || e.k === 'repousse')) return;   // Pelle Animée : pousse sans frapper
       if (this.pa < s.pa) return;
       const max = s.po[1] === 0 ? rayonZone(s.zone) : Math.max(1, s.po[1]) * CASE;
       if (d > max) return;
@@ -300,6 +308,8 @@ export class Bete extends Entity {
         }
       } else if (e.k === 'soinPct' && allie) {   // Bisou Magique du Lapino : % des PV max de l'allié ciblé
         soignerAllie(p, cible as Player, (cible as Player).maxHp * e.n / 100, world, { brut: true, de: this });
+        if (p.pcv('pc-eniripsa-G')) for (const q of world.players)   // Lapino gardien : les alliés à 2 cases de la cible aussi
+          if (q !== cible && !q.dead && Math.hypot(q.x - cible.x, q.y - cible.y) <= CASE * 2) soignerAllie(p, q, q.maxHp * e.n / 100, world, { brut: true, de: this });
       } else if (e.k === 'soin' && allie) {
         const n = world.rng.range(e.min, e.max + 1) * 1.5 * R.degats;
         p.soigner(n);

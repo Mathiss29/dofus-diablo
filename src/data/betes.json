@@ -1295,5 +1295,63 @@
    }
   ],
   "_doc": "Luciole (maquette Eniripsa 5B 6B) : file vers l'allié (Fée) ou l'ennemi (Feu Follet) le plus proche, applique l'Encouragement ou la Moquerie de son Mot, soigne 6 % des PV max (Compliment) ou frappe (Insulte), puis meurt (6 s au plus, 2 au plus)."
+ },
+ "sac_anime": {
+  "dofusId": 5830,
+  "name": "Sac Animé",
+  "look": 4147,
+  "atlas": "enu_sac",
+  "rang": 1,
+  "element": "neutre",
+  "suivant": null,
+  "pv": 0.5,
+  "sorts": [],
+  "passif": true,
+  "_doc": "Sac Animé (maquette Enutrof 10A) : ne frappe pas ; les monstres proches le visent (« intercepte les dommages des alliés »), 9 s (3 tours)."
+ },
+ "pelle_animee": {
+  "dofusId": 5834,
+  "name": "Pelle Animée",
+  "look": 4156,
+  "atlas": "enu_pelle",
+  "rang": 1,
+  "element": "terre",
+  "suivant": null,
+  "pv": 0.5,
+  "sorts": [
+   {
+    "id": 13348,
+    "name": "Déblayage",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "anim": 1,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "repousse",
+      "n": 3
+     }
+    ],
+    "desc": "Pousse la cible.",
+    "gfx": 4744
+   }
+  ],
+  "_doc": "Pelle Animée (maquette Enutrof 10A) : Déblayage pousse la cible de 3 cases (effet officiel 1103), sans dommages."
+ },
+ "coffre_tresor": {
+  "dofusId": 5840,
+  "name": "Coffre Animé",
+  "look": 4166,
+  "atlas": "enu_coffre",
+  "rang": 1,
+  "element": "eau",
+  "suivant": null,
+  "pv": 0.5,
+  "sorts": [],
+  "passif": true,
+  "_doc": "Coffre au trésor de l'Enutrof (maquette Enutrof 2D 3D 16A, Mathis 2026-11-10) : compagnon permanent qui se remplit de pièces, ne frappe jamais les monstres (son sort officiel Prospection n'est pas joué), peut être frappé : à 0 PV il perd la moitié de ses pièces et reste assommé 10 s."
  }
 }
