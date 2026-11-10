@@ -21,7 +21,7 @@
    "heal": 0.35,
    "cooldown": 1
   },
-  "xpBase": 100,
+  "xpBase": 200,
   "maxLevel": 200,
   "rage": {
    "name": "Rage",
@@ -385,7 +385,7 @@
    "heal": 0.35,
    "cooldown": 1
   },
-  "xpBase": 100,
+  "xpBase": 200,
   "maxLevel": 200,
   "rage": {
    "name": "Précision",
@@ -765,7 +765,7 @@
    "heal": 0.35,
    "cooldown": 1
   },
-  "xpBase": 100,
+  "xpBase": 200,
   "maxLevel": 200,
   "rage": {
    "name": "Éveil",
@@ -1252,7 +1252,7 @@
    "heal": 0.35,
    "cooldown": 1
   },
-  "xpBase": 100,
+  "xpBase": 200,
   "maxLevel": 200,
   "rage": {
    "name": "Souffrance",
@@ -1772,7 +1772,7 @@
    "heal": 0.35,
    "cooldown": 1
   },
-  "xpBase": 100,
+  "xpBase": 200,
   "maxLevel": 200,
   "rage": {
    "name": "Lance",
@@ -2357,7 +2357,7 @@
    "heal": 0.35,
    "cooldown": 1
   },
-  "xpBase": 100,
+  "xpBase": 200,
   "maxLevel": 200,
   "attaque": {
    "name": "Coup de poing",
@@ -2903,7 +2903,7 @@
    "heal": 0.35,
    "cooldown": 1
   },
-  "xpBase": 100,
+  "xpBase": 200,
   "maxLevel": 200,
   "attaque": {
    "name": "Coup de poing",
