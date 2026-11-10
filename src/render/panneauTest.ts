@@ -1,7 +1,7 @@
 import { Coop } from './coop';
 import { RUNES } from '../sim/forgemagie';
 import { GAME_DATA, ITEMS, QUETES } from '../sim/data';
-import { DOFUS } from '../sim/dofus';
+import { DOFUS, PORTABLE } from '../sim/dofus';
 import { ALMANAX, jourAlmanax } from '../sim/almanax';
 import { ARCHI } from '../sim/world';
 import type { EtatJoueur } from '../sim/sauvegarde';
@@ -945,7 +945,7 @@ export class PanneauTest {
   // --- Progression (maquette « Outil test » 2, 3, 4, 5) ------------------------------------------------------------
   private progression() {
     const p = this.world.player, Q = this.world.quetes;
-    const cases = p.dofusPortes.map(id => { const d = id ? DOFUS[id] : null; return `<i class="c ${d ? 'p' : ''}" title="${d ? esc(d.nom) : 'case libre'}">${d ? iconHtml(d.icon) : '+'}</i>`; }).join('');
+    const cases = p.dofusPortes.map(id => { const d = id ? PORTABLE(id) : null; return `<i class="c ${d ? 'p' : ''}" title="${d ? esc(d.nom) : 'case libre'}">${d ? iconHtml(d.icon) : '+'}</i>`; }).join('');
     const dofus = Object.entries(DOFUS).sort((a, b) => a[1].niveau - b[1].niveau).map(([id, d]) => this.boutonDofus(id, d)).join('');
     // quêtes : celles des Dofus d'abord, puis par niveau
     const quetes = Object.entries(QUETES.quetes).sort((a, b) => Number(b[1].serie === 'Les Dofus') - Number(a[1].serie === 'Les Dofus') || a[1].niveau - b[1].niveau)

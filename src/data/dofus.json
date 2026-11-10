@@ -377,5 +377,744 @@
    },
    "source": "Les Enfers (n'importe quel seigneur)"
   }
+ },
+ "trophees": {
+  "12622": {
+   "nom": "Tacleur mineur",
+   "niveau": 50,
+   "icon": 151079,
+   "stats": {
+    "tacle": 4
+   }
+  },
+  "12625": {
+   "nom": "Fuyard mineur",
+   "niveau": 50,
+   "icon": 151034,
+   "stats": {
+    "fuite": 4
+   },
+   "boss": "chafer_ronin"
+  },
+  "12628": {
+   "nom": "Ralentisseur mineur",
+   "niveau": 50,
+   "icon": 151067,
+   "stats": {
+    "retraitPM": 3
+   },
+   "boss": "craqueleur_legendaire"
+  },
+  "12631": {
+   "nom": "Engourdisseur mineur",
+   "niveau": 50,
+   "icon": 151022,
+   "stats": {
+    "retraitPA": 3
+   },
+   "boss": "scarabosse_dore"
+  },
+  "12634": {
+   "nom": "Fugitif mineur",
+   "niveau": 50,
+   "icon": 151028,
+   "stats": {
+    "esquivePM": 4
+   }
+  },
+  "12637": {
+   "nom": "Insaisissable mineur",
+   "niveau": 50,
+   "icon": 151040,
+   "stats": {
+    "esquivePA": 4
+   }
+  },
+  "12640": {
+   "nom": "Pousseur mineur",
+   "niveau": 50,
+   "icon": 151025,
+   "stats": {
+    "dommagesPoussee": 8
+   }
+  },
+  "12643": {
+   "nom": "Adamantin mineur",
+   "niveau": 50,
+   "icon": 151004,
+   "stats": {
+    "resPoussee": 12
+   }
+  },
+  "12646": {
+   "nom": "Rempart mineur",
+   "niveau": 50,
+   "icon": 151064,
+   "stats": {
+    "resCritiques": 3
+   }
+  },
+  "12649": {
+   "nom": "Cuirassé Air mineur",
+   "niveau": 50,
+   "icon": 151007,
+   "stats": {
+    "redAir": 6
+   },
+   "boss": "craqueleur_legendaire"
+  },
+  "12652": {
+   "nom": "Cuirassé Eau mineur",
+   "niveau": 50,
+   "icon": 151010,
+   "stats": {
+    "redEau": 6
+   }
+  },
+  "12659": {
+   "nom": "Cuirassé Feu mineur",
+   "niveau": 50,
+   "icon": 151013,
+   "stats": {
+    "redFeu": 6
+   },
+   "boss": "shin_larve"
+  },
+  "12680": {
+   "nom": "Cuirassé Terre mineur",
+   "niveau": 50,
+   "icon": 151019,
+   "stats": {
+    "redTerre": 6
+   }
+  },
+  "12683": {
+   "nom": "Cuirassé Neutre mineur",
+   "niveau": 50,
+   "icon": 151016,
+   "stats": {
+    "redNeutre": 6
+   }
+  },
+  "12688": {
+   "nom": "Ravageur Air mineur",
+   "niveau": 50,
+   "icon": 151049,
+   "stats": {
+    "dommagesAir": 3
+   }
+  },
+  "12691": {
+   "nom": "Ravageur Eau mineur",
+   "niveau": 50,
+   "icon": 151052,
+   "stats": {
+    "dommagesEau": 3
+   }
+  },
+  "12694": {
+   "nom": "Ravageur Feu mineur",
+   "niveau": 50,
+   "icon": 151055,
+   "stats": {
+    "dommagesFeu": 3
+   }
+  },
+  "12696": {
+   "nom": "Ravageur Neutre mineur",
+   "niveau": 50,
+   "icon": 151058,
+   "stats": {
+    "dommagesNeutre": 3
+   }
+  },
+  "12702": {
+   "nom": "Initiateur mineur",
+   "niveau": 50,
+   "icon": 151037,
+   "stats": {
+    "initiative": 100
+   },
+   "boss": "wa_wobot"
+  },
+  "12704": {
+   "nom": "Porteur mineur",
+   "niveau": 50,
+   "icon": 151046,
+   "stats": {
+    "pods": 250
+   }
+  },
+  "12707": {
+   "nom": "Soigneur mineur",
+   "niveau": 50,
+   "icon": 151073,
+   "stats": {
+    "soins": 4
+   }
+  },
+  "12712": {
+   "nom": "Acrobate mineur",
+   "niveau": 50,
+   "icon": 151001,
+   "stats": {
+    "agilite": 15
+   }
+  },
+  "12717": {
+   "nom": "Joueur mineur",
+   "niveau": 50,
+   "icon": 151043,
+   "stats": {
+    "chance": 15
+   },
+   "boss": "batofu"
+  },
+  "12718": {
+   "nom": "Savant mineur",
+   "niveau": 50,
+   "icon": 151070,
+   "stats": {
+    "intelligence": 15
+   },
+   "boss": "chafer_ronin"
+  },
+  "12722": {
+   "nom": "Furibond mineur",
+   "niveau": 50,
+   "icon": 151031,
+   "stats": {
+    "force": 15
+   }
+  },
+  "12727": {
+   "nom": "Survivant mineur",
+   "niveau": 50,
+   "icon": 151076,
+   "stats": {
+    "vitalite": 40
+   }
+  },
+  "12748": {
+   "nom": "Ravageur Terre mineur",
+   "niveau": 50,
+   "icon": 151061,
+   "stats": {
+    "dommagesTerre": 3
+   }
+  },
+  "13748": {
+   "nom": "Bloqueur mineur",
+   "niveau": 50,
+   "icon": 151082,
+   "stats": {
+    "tacle": 8,
+    "fuite": -8
+   }
+  },
+  "13751": {
+   "nom": "Vagabond mineur",
+   "niveau": 50,
+   "icon": 151085,
+   "stats": {
+    "fuite": 8,
+    "tacle": -8
+   }
+  },
+  "13754": {
+   "nom": "Docteur mineur",
+   "niveau": 50,
+   "icon": 151088,
+   "stats": {
+    "soins": 8,
+    "vitalite": -50
+   }
+  },
+  "13757": {
+   "nom": "Forcené mineur",
+   "niveau": 50,
+   "icon": 151091,
+   "stats": {
+    "force": 25,
+    "vitalite": -50
+   }
+  },
+  "13760": {
+   "nom": "Astucieux mineur",
+   "niveau": 50,
+   "icon": 151094,
+   "stats": {
+    "intelligence": 25,
+    "vitalite": -50
+   }
+  },
+  "13763": {
+   "nom": "Equilibriste mineur",
+   "niveau": 50,
+   "icon": 151097,
+   "stats": {
+    "agilite": 25,
+    "vitalite": -50
+   },
+   "boss": "wa_wabbit"
+  },
+  "13766": {
+   "nom": "Taquin mineur",
+   "niveau": 50,
+   "icon": 151100,
+   "stats": {
+    "chance": 25,
+    "vitalite": -50
+   }
+  },
+  "13769": {
+   "nom": "Bastion mineur",
+   "niveau": 50,
+   "icon": 151103,
+   "stats": {
+    "resCritiques": 8,
+    "dommagesCritiques": -8
+   }
+  },
+  "13772": {
+   "nom": "Saccageur Terre mineur",
+   "niveau": 50,
+   "icon": 151106,
+   "stats": {
+    "dommagesTerre": 5,
+    "resAir": -2
+   }
+  },
+  "13775": {
+   "nom": "Saccageur Neutre mineur",
+   "niveau": 50,
+   "icon": 151109,
+   "stats": {
+    "dommagesNeutre": 5,
+    "resEau": -2
+   },
+   "boss": "kwakwa"
+  },
+  "13778": {
+   "nom": "Saccageur Feu mineur",
+   "niveau": 50,
+   "icon": 151112,
+   "stats": {
+    "dommagesFeu": 5,
+    "resTerre": -2
+   }
+  },
+  "13781": {
+   "nom": "Saccageur Eau mineur",
+   "niveau": 50,
+   "icon": 151115,
+   "stats": {
+    "dommagesEau": 5,
+    "resNeutre": -2
+   }
+  },
+  "13784": {
+   "nom": "Saccageur Air mineur",
+   "niveau": 50,
+   "icon": 151118,
+   "stats": {
+    "dommagesAir": 5,
+    "resFeu": -2
+   }
+  },
+  "13787": {
+   "nom": "Entraveur mineur",
+   "niveau": 50,
+   "icon": 151121,
+   "stats": {
+    "retraitPM": 6,
+    "esquivePA": -6
+   }
+  },
+  "13790": {
+   "nom": "Paralyseur mineur",
+   "niveau": 50,
+   "icon": 151124,
+   "stats": {
+    "retraitPA": 6,
+    "esquivePM": -6
+   }
+  },
+  "13793": {
+   "nom": "Imprenable mineur",
+   "niveau": 50,
+   "icon": 151127,
+   "stats": {
+    "esquivePA": 8,
+    "esquivePM": -8
+   }
+  },
+  "13796": {
+   "nom": "Evanescent mineur",
+   "niveau": 50,
+   "icon": 151130,
+   "stats": {
+    "esquivePM": 8,
+    "esquivePA": -8
+   }
+  },
+  "13799": {
+   "nom": "Bousculeur mineur",
+   "niveau": 50,
+   "icon": 151133,
+   "stats": {
+    "dommagesPoussee": 16,
+    "tacle": -8
+   }
+  },
+  "13802": {
+   "nom": "Inflexible mineur",
+   "niveau": 50,
+   "icon": 151136,
+   "stats": {
+    "resPoussee": 24,
+    "fuite": -8
+   }
+  },
+  "13805": {
+   "nom": "Précurseur mineur",
+   "niveau": 50,
+   "icon": 151139,
+   "stats": {
+    "initiative": 200,
+    "vitalite": -25
+   }
+  },
+  "13808": {
+   "nom": "Muraille Terre mineure",
+   "niveau": 50,
+   "icon": 151142,
+   "stats": {
+    "redTerre": 10,
+    "resAir": -2
+   },
+   "boss": "coffre_des_forgerons"
+  },
+  "13811": {
+   "nom": "Muraille Neutre mineure",
+   "niveau": 50,
+   "icon": 151145,
+   "stats": {
+    "redNeutre": 10,
+    "resEau": -2
+   }
+  },
+  "13814": {
+   "nom": "Muraille Feu mineure",
+   "niveau": 50,
+   "icon": 151148,
+   "stats": {
+    "redFeu": 10,
+    "resTerre": -2
+   },
+   "boss": "shin_larve"
+  },
+  "13817": {
+   "nom": "Muraille Eau mineure",
+   "niveau": 50,
+   "icon": 151151,
+   "stats": {
+    "redEau": 10,
+    "resNeutre": -2
+   }
+  },
+  "13820": {
+   "nom": "Muraille Air mineure",
+   "niveau": 50,
+   "icon": 151154,
+   "stats": {
+    "redAir": 10,
+    "resFeu": -2
+   }
+  },
+  "13823": {
+   "nom": "Puissant mineur",
+   "niveau": 50,
+   "icon": 151157,
+   "stats": {
+    "puissance": 10
+   }
+  },
+  "13826": {
+   "nom": "Robuste mineur",
+   "niveau": 50,
+   "icon": 151160,
+   "stats": {
+    "puissance": 20,
+    "critique": -3
+   }
+  },
+  "13831": {
+   "nom": "Examinateur",
+   "niveau": 50,
+   "icon": 151165,
+   "stats": {
+    "portee": 1
+   },
+   "boss": "bworkette"
+  },
+  "13832": {
+   "nom": "Féroce mineur",
+   "niveau": 50,
+   "icon": 151166,
+   "stats": {
+    "dommagesEau": 3,
+    "dommagesNeutre": 3,
+    "dommagesAir": 3,
+    "dommagesTerre": 3,
+    "dommagesFeu": 3,
+    "dommagesCritiques": -6
+   }
+  },
+  "16182": {
+   "nom": "Obstructeur mineur",
+   "niveau": 50,
+   "icon": 151190,
+   "stats": {
+    "tacle": 8
+   },
+   "boss": "wa_wabbit"
+  },
+  "16185": {
+   "nom": "Déserteur mineur",
+   "niveau": 50,
+   "icon": 151193,
+   "stats": {
+    "fuite": 8
+   }
+  },
+  "16188": {
+   "nom": "Guérisseur mineur",
+   "niveau": 50,
+   "icon": 151187,
+   "stats": {
+    "soins": 8
+   },
+   "boss": "directeur_grunob"
+  },
+  "16191": {
+   "nom": "Miraculé mineur",
+   "niveau": 50,
+   "icon": 151181,
+   "stats": {
+    "vitalite": 80
+   }
+  },
+  "16194": {
+   "nom": "Enragé mineur",
+   "niveau": 50,
+   "icon": 151172,
+   "stats": {
+    "force": 25
+   }
+  },
+  "16202": {
+   "nom": "Érudit mineur",
+   "niveau": 50,
+   "icon": 151169,
+   "stats": {
+    "intelligence": 25
+   },
+   "boss": "coffre_des_forgerons"
+  },
+  "16243": {
+   "nom": "Cascadeur mineur",
+   "niveau": 50,
+   "icon": 151178,
+   "stats": {
+    "agilite": 25
+   }
+  },
+  "16246": {
+   "nom": "Chanceux mineur",
+   "niveau": 50,
+   "icon": 151175,
+   "stats": {
+    "chance": 25
+   }
+  },
+  "16249": {
+   "nom": "Fortification mineure",
+   "niveau": 50,
+   "icon": 151247,
+   "stats": {
+    "resCritiques": 8
+   }
+  },
+  "16252": {
+   "nom": "Dévastateur Terre mineur",
+   "niveau": 50,
+   "icon": 151217,
+   "stats": {
+    "dommagesTerre": 5
+   },
+   "boss": "wa_wobot"
+  },
+  "16255": {
+   "nom": "Dévastateur Neutre mineur",
+   "niveau": 50,
+   "icon": 151223,
+   "stats": {
+    "dommagesNeutre": 5
+   }
+  },
+  "16258": {
+   "nom": "Dévastateur Feu mineur",
+   "niveau": 50,
+   "icon": 151214,
+   "stats": {
+    "dommagesFeu": 5
+   }
+  },
+  "16262": {
+   "nom": "Dévastateur Eau mineur",
+   "niveau": 50,
+   "icon": 151211,
+   "stats": {
+    "dommagesEau": 5
+   }
+  },
+  "16265": {
+   "nom": "Dévastateur Air mineur",
+   "niveau": 50,
+   "icon": 151220,
+   "stats": {
+    "dommagesAir": 5
+   }
+  },
+  "16274": {
+   "nom": "Temporiseur mineur",
+   "niveau": 50,
+   "icon": 151196,
+   "stats": {
+    "retraitPM": 6
+   }
+  },
+  "16282": {
+   "nom": "Étourdisseur mineur",
+   "niveau": 50,
+   "icon": 151199,
+   "stats": {
+    "retraitPA": 6
+   }
+  },
+  "16292": {
+   "nom": "Évasif mineur",
+   "niveau": 50,
+   "icon": 151229,
+   "stats": {
+    "esquivePA": 8
+   },
+   "boss": "batofu"
+  },
+  "16300": {
+   "nom": "Cavaleur mineur",
+   "niveau": 50,
+   "icon": 151208,
+   "stats": {
+    "esquivePM": 8
+   },
+   "boss": "kwakwa"
+  },
+  "16303": {
+   "nom": "Culbuteur mineur",
+   "niveau": 50,
+   "icon": 151205,
+   "stats": {
+    "dommagesPoussee": 16
+   }
+  },
+  "16308": {
+   "nom": "Solide mineur",
+   "niveau": 50,
+   "icon": 151250,
+   "stats": {
+    "resPoussee": 24
+   }
+  },
+  "16311": {
+   "nom": "Fonceur mineur",
+   "niveau": 50,
+   "icon": 151226,
+   "stats": {
+    "initiative": 200
+   }
+  },
+  "16314": {
+   "nom": "Carapace Terre mineur",
+   "niveau": 50,
+   "icon": 151238,
+   "stats": {
+    "resTerre": 3
+   }
+  },
+  "16318": {
+   "nom": "Carapace Neutre mineur",
+   "niveau": 50,
+   "icon": 151244,
+   "stats": {
+    "resNeutre": 3
+   }
+  },
+  "16321": {
+   "nom": "Carapace Feu mineur",
+   "niveau": 50,
+   "icon": 151235,
+   "stats": {
+    "resFeu": 3
+   }
+  },
+  "16324": {
+   "nom": "Carapace Eau mineur",
+   "niveau": 50,
+   "icon": 151232,
+   "stats": {
+    "resEau": 3
+   },
+   "boss": "directeur_grunob"
+  },
+  "16327": {
+   "nom": "Carapace Air mineur",
+   "niveau": 50,
+   "icon": 151241,
+   "stats": {
+    "resAir": 3
+   }
+  },
+  "16330": {
+   "nom": "Vigoureux mineur",
+   "niveau": 50,
+   "icon": 151202,
+   "stats": {
+    "puissance": 20
+   },
+   "boss": "scarabosse_dore"
+  },
+  "16336": {
+   "nom": "Observateur",
+   "niveau": 50,
+   "icon": 151264,
+   "stats": {
+    "portee": 2
+   }
+  },
+  "16337": {
+   "nom": "Sanguinaire mineur",
+   "niveau": 50,
+   "icon": 151261,
+   "stats": {
+    "dommagesNeutre": 3,
+    "dommagesTerre": 3,
+    "dommagesFeu": 3,
+    "dommagesEau": 3,
+    "dommagesAir": 3
+   },
+   "boss": "bworkette"
+  }
  }
 }

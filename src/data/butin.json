@@ -19,6 +19,8 @@
     "_panoBoss": "0.4 suite 1C : part des tirages d'un boss pris dans ses panoplies (pièces qu'il lâche ou fabriquées avec ses ressources)",
     "panoBoss": 0.5
   },
+  "_trophee": "0.4 suite 3A : chance qu'un boss de la 0.4 lâche chacun de ses 2 trophées (si le joueur ne l'a pas déjà)",
+  "trophee": 0.05,
   "raretes": {
     "_doc": "% Rare et % Épique de chaque objet tiré ; le % Légendaire est calculé pour tomber à « legendaireParMonstre »",
     "normal": { "rare": 24, "epique": 6 },

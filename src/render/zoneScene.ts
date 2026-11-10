@@ -1,4 +1,4 @@
-import { DOFUS } from '../sim/dofus';
+import { PORTABLE, TROPHEES } from '../sim/dofus';
 import { apercuSort } from '../sim/apercu';
 import { dossier, v } from './assetUrl';
 import Phaser from 'phaser';
@@ -1269,7 +1269,7 @@ export class ZoneScene extends Phaser.Scene {
         case 'codex': { const o = POUVOIR_PAR_ID[e.id], c = PC_PAR_ID[e.id]; this.hud.loot(`Codex : ${o ? o.sort : c ? c.nom : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id} enregistré`, '#f08a2c');
           this.windows?.noteForge({ t: `Pouvoir enregistré dans le Codex : ${o ? o.officiel : c ? c.nom : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id}`, c: 'ok' }); break; }
         case 'capture': this.hud.loot(`${GAME_DATA.monsters[e.monster]?.name ?? 'Archimonstre'} capturé dans une pierre d'âme${e.neuf ? ' (nouveau)' : ''}`, '#ffd27a'); this.windows?.refresh(); break;
-        case 'dofusGagne': this.hud.loot(`${DOFUS[e.id]?.nom ?? 'Dofus'} obtenu ! Il est dans tes emplacements de Dofus (Inventaire)`, '#e8c76b'); this.sauver(); this.windows?.refresh(); break;
+        case 'dofusGagne': this.hud.loot(`${PORTABLE(e.id)?.nom ?? 'Dofus'} obtenu ! ${TROPHEES[e.id] && !this.world.player.dofusPortes.includes(e.id) ? 'Il est dans ton sac (fenêtre des Dofus, onglet Trophées)' : 'Il est dans tes emplacements de Dofus (Inventaire)'}`, '#e8c76b'); this.sauver(); this.windows?.refresh(); break;
         case 'dofusPassif': if (e.dofus === 'argente') this.hud.loot(`Souvenir d'Argent : +${e.n ?? 0} PV`, '#e8c76b'); break;   // le bouclier du Cacao se voit déjà (bouclier violet)
         case 'almanax': this.hud.loot(`Almanax : offrande faite, +${e.pepites} Pépites et « ${e.bonus} » jusqu'à minuit`, '#ffd27a'); this.sauver(); this.windows?.refresh(); break;
         case 'coffreOuvert': if (this.windows) { this.windows.coffreHardcore = this.sorteCoffre === 'hardcore'; this.windows.show('coffre'); } break;

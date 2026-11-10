@@ -6,7 +6,7 @@ import type { CleDonjon } from './arene';
 import type { CommandeFM } from './forgemagie';
 import type { EntreeCodex } from './codex';
 import type { Prereglage } from './player';
-import { DOFUS, EMPLACEMENTS_DOFUS } from './dofus';
+import { DOFUS, EMPLACEMENTS_DOFUS, TROPHEES } from './dofus';
 
 /** État du joueur gardé entre deux parties (écran « Mes personnages », 3 emplacements, choix 16B).
  *  Pur JSON : l'affichage le range où il veut (navigateur pour l'instant). */
@@ -43,7 +43,7 @@ export interface EtatJoueur {
   /** Jour de la dernière offrande à l'Almanax (15C). */
   almanaxJour?: string | null;
   /** Dofus possédés et portés (0.3). */
-  dofus?: string[]; dofusPortes?: (string | null)[];
+  dofus?: string[]; trophees?: string[]; dofusPortes?: (string | null)[];
 }
 
 const copie = <T>(o: T): T => JSON.parse(JSON.stringify(o)) as T;
@@ -55,7 +55,7 @@ export function exporterJoueur(w: World): EtatJoueur {
     base: p.base, bag: p.bag, equipment: p.equipment, resources: p.resources, metiers: p.metiers, recetteSuivie: p.recetteSuivie,
     bar: p.bar, variants: p.variants, learned: [...p.learned],
     x: p.x, y: p.y, retour: w.pointDeRetour, quetes: w.quetes?.exporter(), zone: w.opts.zone,
-    apparats: p.apparats, apparat: p.apparat, codex: p.codex, codexOuvert: p.codexOuvert, ames: p.ames, prereglages: p.prereglages, almanaxJour: p.almanaxJour, dofus: p.dofus, dofusPortes: p.dofusPortes,
+    apparats: p.apparats, apparat: p.apparat, codex: p.codex, codexOuvert: p.codexOuvert, ames: p.ames, prereglages: p.prereglages, almanaxJour: p.almanaxJour, dofus: p.dofus, trophees: p.trophees, dofusPortes: p.dofusPortes,
     zaaps: p.zaaps, zonesVues: p.zonesVues, cleDonjon: p.cleDonjon, commandeFM: p.commandeFM, ...(w.retour ? { havreSac: w.retour } : {}),
   });
 }
@@ -82,7 +82,8 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
     return r && typeof r === 'object' && r.equipement && Array.isArray(r.bar) ? { nom: String(r.nom ?? `Préréglage ${i + 1}`), equipement: r.equipement, bar: r.bar, variants: Array.isArray(r.variants) ? r.variants : [] } : null;
   });
   p.dofus = Array.isArray(s.dofus) ? s.dofus.filter(id => typeof id === 'string' && DOFUS[id]) : [];
-  p.dofusPortes = Array.from({ length: EMPLACEMENTS_DOFUS }, (_, i) => { const id = s.dofusPortes?.[i]; return typeof id === 'string' && p.dofus.includes(id) && s.dofusPortes!.indexOf(id) === i ? id : null; });
+  p.trophees = Array.isArray(s.trophees) ? s.trophees.filter(id => typeof id === 'string' && TROPHEES[id]) : [];
+  p.dofusPortes = Array.from({ length: EMPLACEMENTS_DOFUS }, (_, i) => { const id = s.dofusPortes?.[i]; return typeof id === 'string' && (p.dofus.includes(id) || p.trophees.includes(id)) && s.dofusPortes!.indexOf(id) === i ? id : null; });
   p.almanaxJour = typeof s.almanaxJour === 'string' ? s.almanaxJour : null;
   p.ames = Array.isArray(s.ames) ? s.ames.filter(a => typeof a === 'string') : [];
   p.codexOuvert = !!s.codexOuvert || (Array.isArray(s.codex) && s.codex.length > 0);
