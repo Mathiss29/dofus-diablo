@@ -2706,6 +2706,114 @@
      ],
      "nom": "Atelier des façonneurs",
      "v03": 1
+    },
+    {
+     "a": [
+      "1_26",
+      125
+     ],
+     "b": [
+      "arene_scarafeuilles",
+      0
+     ],
+     "nom": "Donjon des Scarafeuilles",
+     "cle": "8139"
+    },
+    {
+     "a": [
+      "10_15",
+      178
+     ],
+     "b": [
+      "arene_squelettes",
+      0
+     ],
+     "nom": "Donjon des Squelettes",
+     "cle": "1570"
+    },
+    {
+     "a": [
+      "5_6",
+      329
+     ],
+     "b": [
+      "arene_tofus",
+      0
+     ],
+     "nom": "Donjon des Tofus",
+     "cle": "7918"
+    },
+    {
+     "a": [
+      "-5_3",
+      344
+     ],
+     "b": [
+      "arene_gobs",
+      0
+     ],
+     "nom": "Akadémie des Gobs",
+     "cle": "26680"
+    },
+    {
+     "a": [
+      "-5_10",
+      213
+     ],
+     "b": [
+      "arene_bworks",
+      0
+     ],
+     "nom": "Donjon des Bworks",
+     "cle": "8135"
+    },
+    {
+     "a": [
+      "12_21",
+      463
+     ],
+     "b": [
+      "arene_forgerons",
+      0
+     ],
+     "nom": "Donjon des Forgerons",
+     "cle": "1569"
+    },
+    {
+     "a": [
+      "-4_-7",
+      196
+     ],
+     "b": [
+      "arene_kwakwa",
+      0
+     ],
+     "nom": "Nid du Kwakwa",
+     "cle": "12017"
+    },
+    {
+     "a": [
+      "-2_-5",
+      367
+     ],
+     "b": [
+      "arene_larves",
+      0
+     ],
+     "nom": "Donjon des Larves",
+     "cle": "7425"
+    },
+    {
+     "a": [
+      "-3_-7",
+      359
+     ],
+     "b": [
+      "arene_craqueleurs",
+      0
+     ],
+     "nom": "Pitons Rocheux des Craqueleurs",
+     "cle": "7927"
     }
    ],
    "donjons": [

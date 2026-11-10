@@ -2163,7 +2163,7 @@ export class Windows {
   private renderEmp() {
     const w = this.win!, p = this.world.player, pep = p.resources[PEPITE] ?? 0;
     // les onglets du PNJ ouvert : ses services (Kerubim recycle, Tissebelle a les apparats et le miroir, les autres une boutique)
-    const def = QUETES.pnj[this.empPnj], sv = new Set((def?.services ?? []).map(x => x.service)), boutique = (BOUTIQUES[this.empPnj] ?? []).filter(a => !a.v03 || p.v03);
+    const def = QUETES.pnj[this.empPnj], sv = new Set((def?.services ?? []).map(x => x.service)), boutique = (BOUTIQUES[this.empPnj] ?? []).filter(a => (!a.v03 || p.v03) && (!a.v04 || p.v04));
     if (!sv.has(this.empOnglet)) this.empOnglet = sv.has('boutique') ? 'boutique' : sv.has('apparat') ? 'apparat' : 'recycler';
     const onglet = (k: string, n: string) => sv.has(k) ? `<span class="eo ${this.empOnglet === k ? 'on' : ''}" data-eo="${k}">${n}</span>` : '';
     const tete = `<div class="eh"><div class="eos">${onglet('recycler', 'Recycler')}${onglet('boutique', 'Boutique')}${onglet('apparat', 'Apparats')}${sv.has('garde-robe') ? '<span class="eo" data-garde>Garde-robe</span>' : ''}</div>

@@ -38121,6 +38121,60 @@
    "icon": 151261,
    "level": 50,
    "trophee": true
+  },
+  "8139": {
+   "name": "Clef du Donjon des Scarafeuilles",
+   "icon": 84233,
+   "level": 40,
+   "cle": "Donjon des Scarafeuilles"
+  },
+  "1570": {
+   "name": "Clef du Donjon des Squelettes",
+   "icon": 84228,
+   "level": 40,
+   "cle": "Donjon des Squelettes"
+  },
+  "7918": {
+   "name": "Clef du Donjon des Tofus",
+   "icon": 84006,
+   "level": 40,
+   "cle": "Donjon des Tofus"
+  },
+  "26680": {
+   "name": "Clef de l'Akadémie des Gobs",
+   "icon": 84790,
+   "level": 40,
+   "cle": "Akadémie des Gobs"
+  },
+  "8135": {
+   "name": "Clef du Donjon des Bworks",
+   "icon": 84234,
+   "level": 50,
+   "cle": "Donjon des Bworks"
+  },
+  "1569": {
+   "name": "Clef du Donjon des Forgerons",
+   "icon": 84227,
+   "level": 50,
+   "cle": "Donjon des Forgerons"
+  },
+  "12017": {
+   "name": "Clef du Nid du Kwakwa",
+   "icon": 84265,
+   "level": 50,
+   "cle": "Nid du Kwakwa"
+  },
+  "7927": {
+   "name": "Clef des Pitons Rocheux des Craqueleurs",
+   "icon": 84009,
+   "level": 70,
+   "cle": "Pitons Rocheux des Craqueleurs"
+  },
+  "7425": {
+   "name": "Petite Larve Dorée",
+   "icon": 32005,
+   "level": 1,
+   "cle": "Donjon des Larves"
   }
  },
  "drops": {
