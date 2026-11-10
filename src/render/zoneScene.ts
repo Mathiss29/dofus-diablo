@@ -444,6 +444,7 @@ export class ZoneScene extends Phaser.Scene {
       const k = Phaser.Math.Clamp(this.reglages.echelle || 1, 0.8, 1.5);   // l'interface est à l'échelle choisie (Réglages 7A)
       this.windows?.showHtmlTip(spellTipHtml(this.world.player, id), r.left + x * k, r.top + y * k);
     };
+    this.hud.onSlotClick = id => { this.windows?.hideTip(); if (this.world.player.cls.spells[id]) this.windows?.ouvrirSort(id); };
     this.hud.onMenu = name => {
       if (name === 'Inventaire') this.windows!.toggle('inv');
       else if (name === 'Caractéristiques') this.windows!.toggle('car');

@@ -1,0 +1,2985 @@
+{
+ "iop": {
+  "13106": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Érosion"
+   ],
+   "accroche": "Le coup qui use.",
+   "texte": "Frappe une cible jusqu'à 4 cases et ronge 10 % de ses PV max par Érosion. Plus tu insistes, moins elle pourra se soigner.",
+   "ambiance": "« Chez les Iops, “pression” est un mot poli pour “coup de poing”. »"
+  },
+  "13139": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Érosion"
+   ],
+   "accroche": "L'Érosion en zone.",
+   "texte": "Fend le sol à 4 cases : tous les ennemis de la zone prennent des dommages Air et perdent une part de leurs PV max par Érosion."
+  },
+  "14676": {
+   "role": "soutien",
+   "etiquettes": [
+    "Autour de toi",
+    "Bouclier"
+   ],
+   "accroche": "Frappe et protège.",
+   "texte": "Éclabousse les ennemis collés à toi et te pose un bouclier de 5 % de tes PV max pendant 6 s."
+  },
+  "13130": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Attire"
+   ],
+   "accroche": "Viens par ici.",
+   "texte": "Attrape un ennemi jusqu'à 3 cases, le tire contre toi et lui inflige des dommages Eau.",
+   "ambiance": "« Ce n'est pas une menace. C'est une promesse. »"
+  },
+  "13115": {
+   "role": "zone",
+   "etiquettes": [
+    "Ligne",
+    "Ralentit"
+   ],
+   "accroche": "Une ligne de feu.",
+   "texte": "Tranche en ligne droite sur 3 cases devant toi et retire 2 PM : les ennemis touchés se déplacent moins vite."
+  },
+  "13138": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Cumul"
+   ],
+   "accroche": "Charge ta lame.",
+   "texte": "Frappe une cible à 4 cases. Lancé sur toi-même, il ne frappe pas mais renforce ses prochains coups pendant quelques secondes."
+  },
+  "13110": {
+   "role": "gros",
+   "etiquettes": [
+    "Autour de toi",
+    "Renforce"
+   ],
+   "accroche": "Le gros coup du Iop.",
+   "texte": "Frappe tout autour de toi sur 3 cases avec des dommages ×2, puis donne +10 Dommages à toi et aux alliés proches pendant 12 s.",
+   "ambiance": "« Bénie par Iop lui-même. Enfin, c'est ce qu'il raconte. »"
+  },
+  "13117": {
+   "role": "gros",
+   "etiquettes": [
+    "Distance",
+    "Bouclier"
+   ],
+   "accroche": "Condamné, puis jugé.",
+   "texte": "Frappe une cible en dommages Eau et la Condamne 6 s : ton prochain Jugement sur elle frappe bien plus fort. Tu gagnes un bouclier, plus gros sur une cible Condamnée."
+  },
+  "13108": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Repousse",
+    "Meilleur élément"
+   ],
+   "accroche": "Fais-leur de la place.",
+   "texte": "Projette la cible plusieurs cases plus loin. Si elle percute un mur ou un monstre, elle prend des dommages de poussée.",
+   "ambiance": "« Le Iop n'intimide pas. Il prévient. »"
+  },
+  "13148": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Allié"
+   ],
+   "accroche": "Un stratège à tes côtés.",
+   "texte": "Invoque un Stratège Iop qui renvoie la moitié des dommages qu'il subit autour de lui et réduit de moitié les dommages reçus par les alliés proches. Un seul à la fois."
+  },
+  "13107": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Affaiblit"
+   ],
+   "accroche": "Un saut, et tu es dedans.",
+   "texte": "Saute jusqu'à 6 cases. À l'atterrissage, les ennemis autour de toi subissent +10 % de dommages pendant 3 s, et ça ne coûte qu'1 PM.",
+   "ambiance": "« Regarder avant de sauter ? Quelle drôle d'idée. »"
+  },
+  "13143": {
+   "role": "soutien",
+   "etiquettes": [
+    "Allié",
+    "Renforce"
+   ],
+   "accroche": "Bouge, frappe.",
+   "texte": "L'allié visé court plus vite et ne peut plus être bloqué pendant 6 s ; chaque déplacement lui donne un peu de Puissance."
+  },
+  "13123": {
+   "role": "base",
+   "etiquettes": [
+    "Mêlée",
+    "Anti-invocations"
+   ],
+   "accroche": "Spécial invocations.",
+   "texte": "Coup sec au contact, +43 % de dommages sur les invocations. Le bon réflexe face aux Bouftous qui se multiplient.",
+   "ambiance": "« Un Iop concentré, c'est rare. Profites-en. »"
+  },
+  "13147": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone"
+   ],
+   "accroche": "Une marque qui explose.",
+   "texte": "Brûle une cible à 5 cases et la marque 6 s : chaque coup qu'elle reçoit fait jaillir des flammes sur les ennemis autour d'elle."
+  },
+  "13126": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Zone"
+   ],
+   "accroche": "Fonce dans le tas.",
+   "texte": "Tu te jettes jusqu'à 3 cases vers la cible et éclabousses tout ce qui t'entoure à l'arrivée. Parfait pour rattraper un fuyard."
+  },
+  "13135": {
+   "role": "zone",
+   "etiquettes": [
+    "Autour de toi",
+    "Attire"
+   ],
+   "accroche": "Tout le monde au centre.",
+   "texte": "Un anneau de vent à 3 cases frappe les ennemis et les aspire vers son centre. Idéal pour regrouper un pack avant le gros coup."
+  },
+  "13120": {
+   "role": "soutien",
+   "etiquettes": [
+    "Allié",
+    "Renforce"
+   ],
+   "accroche": "Plus de vie, tout de suite.",
+   "texte": "Augmente fortement la Vitalité de l'allié visé pendant 12 s, et encore plus si tu la lances sur toi."
+  },
+  "13137": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Autour de toi",
+    "Repousse"
+   ],
+   "accroche": "De l'air !",
+   "texte": "Repousse d'un coup tous les ennemis collés à toi. Ne fait pas de dommages : c'est ta porte de sortie."
+  },
+  "13116": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Repousse"
+   ],
+   "accroche": "Une bourrasque.",
+   "texte": "Une rafale à 2 à 6 cases repousse les ennemis loin du centre de la zone et leur fait de petits dommages Air."
+  },
+  "13136": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Attire"
+   ],
+   "accroche": "On se regroupe.",
+   "texte": "Frappe une zone jusqu'à 6 cases en dommages Feu et attire tous les ennemis touchés vers son centre."
+  },
+  "13119": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Érosion"
+   ],
+   "accroche": "La lame qui ronge.",
+   "texte": "Une épée de feu s'abat à 4 cases et ronge les PV max des ennemis touchés par Érosion."
+  },
+  "14818": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Érosion"
+   ],
+   "accroche": "Fouette et ronge.",
+   "texte": "Frappe une petite zone à 2 cases en dommages Eau et ronge les PV max des ennemis par Érosion."
+  },
+  "13118": {
+   "role": "soutien",
+   "etiquettes": [
+    "Allié",
+    "Renforce"
+   ],
+   "accroche": "Gonfle les muscles.",
+   "texte": "L'allié visé, ou toi, gagne beaucoup de Puissance et des dommages de poussée pendant 12 s."
+  },
+  "14677": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Érosion"
+   ],
+   "accroche": "Ronge sans frapper.",
+   "texte": "Ne fait pas de dommages mais marque une cible à 5 cases : tous les coups qu'elle reçoit rongent davantage ses PV max pendant 6 s."
+  },
+  "13121": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Cumul"
+   ],
+   "accroche": "La tempête revient.",
+   "texte": "Frappe une cible à 6 cases en dommages Feu. Si tu changes de cible, la précédente reprend un coup ; deux lancers de suite sur le même ennemi font plus mal."
+  },
+  "13131": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Ralentit"
+   ],
+   "accroche": "Une raclée qui ralentit.",
+   "texte": "Frappe une zone à 6 cases en dommages Air et retire des PM : les ennemis touchés se traînent."
+  },
+  "13133": {
+   "role": "soutien",
+   "etiquettes": [
+    "Distance",
+    "Bouclier"
+   ],
+   "accroche": "Encaisse et rends.",
+   "texte": "Frappe une cible jusqu'à 2 cases en dommages Eau et te pose un bouclier."
+  },
+  "13146": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Cumul"
+   ],
+   "accroche": "Enchaîne les coups.",
+   "texte": "Petite frappe Terre en zone à 6 cases. Chaque lancer dans les 3 s qui suivent fait plus mal que le précédent."
+  },
+  "13142": {
+   "role": "soutien",
+   "etiquettes": [
+    "Autour de toi",
+    "Bouclier",
+    "Allié"
+   ],
+   "accroche": "Le bouclier du groupe.",
+   "texte": "Pose un bouclier sur tous les alliés autour de toi. Ta Puissance baisse un peu pour chaque allié collé à toi."
+  },
+  "13112": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Affaiblit"
+   ],
+   "accroche": "Sa douleur se propage.",
+   "texte": "Marque un ennemi jusqu'à 7 cases : pendant 6 s, il subit plus de dommages et en renvoie une partie aux ennemis autour de lui."
+  },
+  "13125": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone"
+   ],
+   "accroche": "La grande épée.",
+   "texte": "Une épée géante s'abat jusqu'à 6 cases et frappe en dommages Terre tout ce qui se trouve dans la zone."
+  },
+  "13134": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Bouclier"
+   ],
+   "accroche": "Plus ils sont, plus tu tiens.",
+   "texte": "Frappe une zone à 4 cases en lourds dommages Eau, et te donne un bouclier pour chaque ennemi touché."
+  },
+  "13113": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Attire"
+   ],
+   "accroche": "Rapproche les ennuis.",
+   "texte": "Pendant 6 s, un ennemi visé est tiré vers son agresseur. Sur un allié, ce sont ses agresseurs qui sont attirés vers lui."
+  },
+  "13140": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Repousse"
+   ],
+   "accroche": "Œil pour œil.",
+   "texte": "Repousse la cible. Pendant 6 s, un ennemi marqué est repoussé s'il te frappe ; un allié marqué repousse ceux qui le frappent."
+  },
+  "13122": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone"
+   ],
+   "accroche": "La lame tombe du ciel.",
+   "texte": "Une épée s'abat sur un point jusqu'à 5 cases : tout ce qui se trouve dans un rayon de 2 cases encaisse de lourds dommages Air."
+  },
+  "13145": {
+   "role": "gros",
+   "etiquettes": [
+    "Zone",
+    "Cumul"
+   ],
+   "accroche": "Garde tes PM pour lui.",
+   "texte": "Frappe une zone à 3 cases en dommages Air, puis frappe encore plus fort selon les PM qu'il te reste."
+  },
+  "13114": {
+   "role": "soutien",
+   "etiquettes": [
+    "Allié",
+    "Renforce"
+   ],
+   "accroche": "Tout donner maintenant.",
+   "texte": "L'allié visé recharge ses PA bien plus vite pendant 3 s, puis plus lentement pendant 3 s. Ne s'utilise pas sur toi."
+  },
+  "13132": {
+   "role": "soutien",
+   "etiquettes": [
+    "Allié",
+    "Bouclier"
+   ],
+   "accroche": "Inébranlable.",
+   "texte": "L'allié visé ne peut plus être déplacé et reçoit un bouclier pendant 6 s."
+  },
+  "13111": {
+   "role": "gros",
+   "etiquettes": [
+    "Distance",
+    "Cumul"
+   ],
+   "accroche": "Le destin attend son heure.",
+   "texte": "Frappe une cible à 5 cases en dommages Feu. Plus tu attends avant de le relancer, plus le coup suivant est fort."
+  },
+  "13144": {
+   "role": "gros",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Cumul"
+   ],
+   "accroche": "Plus on est de fous…",
+   "texte": "Frappe une zone jusqu'à 6 cases en dommages Feu, avec des dommages en plus pour chaque ennemi pris dedans."
+  },
+  "13141": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Mêlée",
+    "Contrôle"
+   ],
+   "accroche": "Mets-le de côté.",
+   "texte": "Fige un ennemi au contact pendant 3 s : il ne bouge plus et ne peut rien faire, mais il ne prend plus de dommages non plus.",
+   "ambiance": "« Toi, tu attends dans ton coin. »"
+  },
+  "13109": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Mêlée",
+    "Contrôle"
+   ],
+   "accroche": "Un contre un.",
+   "texte": "Enferme toi et l'ennemi visé dans un duel : vous ne pouvez plus bouger et les coups de loin ne vous touchent plus pendant 3 s."
+  },
+  "13156": {
+   "role": "base",
+   "etiquettes": [
+    "Mêlée",
+    "Cumul"
+   ],
+   "accroche": "Plus tu tapes, plus ça fait mal.",
+   "texte": "Frappe au contact. Chaque lancer ajoute +30 % de dommages au suivant, 4 fois au plus, si tu relances dans les 6 s.",
+   "ambiance": "« La patience, c'est pour les Crâs. »"
+  },
+  "13124": {
+   "role": "gros",
+   "etiquettes": [
+    "Mêlée",
+    "Se charge"
+   ],
+   "accroche": "Le coup qui conclut.",
+   "texte": "Tu prends ton élan une fraction de seconde, puis tu assènes un coup énorme au contact. Garde-le pour l'élite ou le boss.",
+   "ambiance": "« Quand le Iop se met en colère, même le boss recule d'un pas. »"
+  }
+ },
+ "cra": {
+  "32426": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Repousse"
+   ],
+   "accroche": "Garde tes distances.",
+   "texte": "Flèche qui repousse sa cible. Si elle percute un mur ou un monstre, elle prend des dommages de poussée."
+  },
+  "32449": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Vol de vie",
+    "Repousse"
+   ],
+   "accroche": "L'éclat qui disperse.",
+   "texte": "Explose à 3 à 5 cases : vole de la vie en Feu à chaque ennemi touché et les repousse loin du centre."
+  },
+  "32435": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Affaiblit",
+    "Cumul"
+   ],
+   "accroche": "Gèle la cadence.",
+   "texte": "Flèche qui retire 2 PA : la cible attaque plus lentement. Chaque flèche qui touche ajoute +30 % de dommages à la suivante (3 fois, 9 s)."
+  },
+  "32708": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Affaiblit"
+   ],
+   "accroche": "Elle ne lâche rien.",
+   "texte": "Flèche Air jusqu'à 8 cases : la cible perd des PV en continu et reçoit moins de soins pendant 6 s."
+  },
+  "32455": {
+   "role": "dep",
+   "etiquettes": [
+    "Distance",
+    "Déplacement"
+   ],
+   "accroche": "Tire et recule.",
+   "texte": "Flèche Terre qui te fait reculer de 3 cases au moment du tir. Tu gardes ta distance sans perdre de temps.",
+   "ambiance": "« Un bon Crâ ne court jamais. Il recule avec élégance. »"
+  },
+  "32531": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Ralentit",
+    "Affaiblit"
+   ],
+   "accroche": "Ça dépend d'où tu tires.",
+   "texte": "Collé à la cible : tu bondis en arrière et elle perd des PM. De loin : elle est repoussée et perd des PA."
+  },
+  "32443": {
+   "role": "gros",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Repousse"
+   ],
+   "accroche": "Le gros coup du Crâ.",
+   "texte": "Une volée explose sur un point jusqu'à 5 cases et repousse tout le groupe, avec des dommages ×2. Recharge 8 s."
+  },
+  "32459": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Affaiblit",
+    "Repousse"
+   ],
+   "accroche": "Brise la charge.",
+   "texte": "Une salve Terre à 3 cases frappe toute la zone à pleine force, réduit les dommages des ennemis touchés et les repousse."
+  },
+  "32464": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Renforce"
+   ],
+   "accroche": "Un pas de côté, une flèche de plus.",
+   "texte": "Petit bond de 5 cases pour 1 PM, puis +1 PM pendant 3 s pour enchaîner un second déplacement."
+  },
+  "32467": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Distance"
+   ],
+   "accroche": "Une balise qui réagit.",
+   "texte": "Pose une Balise pendant 9 s : tire-lui dessus de loin et elle attire les ennemis autour, frappe-la au contact et elle les repousse."
+  },
+  "32465": {
+   "role": "soutien",
+   "etiquettes": [
+    "Renforce"
+   ],
+   "accroche": "Toujours plus loin.",
+   "texte": "Tes flèches portent 2 cases plus loin pendant 3 s, et les alliés autour de toi gagnent aussi de la Portée."
+  },
+  "32471": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Érosion",
+    "Affaiblit"
+   ],
+   "accroche": "Trouve la faille.",
+   "texte": "Ne fait pas de dommages : ronge les PV max de la cible et augmente les dommages de la prochaine attaque qu'elle reçoit."
+  },
+  "32444": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Affaiblit"
+   ],
+   "accroche": "Elle explose au contact.",
+   "texte": "Flèche Feu qui explose autour de sa cible et retire 2 Portée aux ennemis touchés pendant 3 s."
+  },
+  "32439": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Ralentit",
+    "Affaiblit"
+   ],
+   "accroche": "Tout ralentit.",
+   "texte": "Flèche Eau qui frappe une petite zone à 4 cases et retire PA et PM : les ennemis touchés bougent et frappent moins vite."
+  },
+  "32453": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Vol de vie",
+    "Cumul"
+   ],
+   "accroche": "Perce les boucliers.",
+   "texte": "Flèche qui vole la moitié de ses dommages en PV, plus forte sur les cibles protégées. Lancée plusieurs fois de suite, sa zone grandit."
+  },
+  "32433": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Vol de vie"
+   ],
+   "accroche": "Elle te trouve partout.",
+   "texte": "Grosse flèche Air de 3 à 7 cases qui vole de la vie. Elle frappe encore plus fort une cible cachée derrière un obstacle."
+  },
+  "32427": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Ralentit"
+   ],
+   "accroche": "La flèche qui freine.",
+   "texte": "Flèche Air rapide qui retire 2 PM : la cible court moins vite. Parfaite pour tenir un monstre à distance."
+  },
+  "32458": {
+   "role": "dep",
+   "etiquettes": [
+    "Distance",
+    "Déplacement",
+    "Renforce"
+   ],
+   "accroche": "Au contact ou de loin.",
+   "texte": "Collé à la cible, tu la repousses ; de loin, tu bondis vers elle. Dans les deux cas, tu gagnes de la Puissance."
+  },
+  "32436": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Ralentit",
+    "Cumul"
+   ],
+   "accroche": "Cloue sur place.",
+   "texte": "Flèche Eau qui te vole des PM à la cible. Chaque lancer dans les 3 s fait un peu plus mal que le précédent."
+  },
+  "32448": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Affaiblit"
+   ],
+   "accroche": "Une brûlure qui dure.",
+   "texte": "Flèche Feu qui brûle la cible en continu pendant 6 s. La brûlure repart à zéro si la cible est déplacée, et éclate d'un coup si elle heurte un obstacle."
+  },
+  "32466": {
+   "role": "soutien",
+   "etiquettes": [
+    "Renforce"
+   ],
+   "accroche": "Moins loin, plus fort.",
+   "texte": "Pendant 9 s, tu perds de la Portée mais gagnes Puissance, dommages de poussée et Critique."
+  },
+  "32618": {
+   "role": "soutien",
+   "etiquettes": [
+    "Allié",
+    "Soin"
+   ],
+   "accroche": "Des flèches qui soignent.",
+   "texte": "Soigne l'allié visé jusqu'à 8 cases. Relancé sur un second allié, les deux partagent les dommages reçus et gagnent de la Puissance."
+  },
+  "32428": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Repousse"
+   ],
+   "accroche": "Écarte la meute.",
+   "texte": "Frappe une zone à 2 à 4 cases et repousse les ennemis loin du centre, plus fort sur les bords."
+  },
+  "32447": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Repousse",
+    "Déplacement"
+   ],
+   "accroche": "Recule dans les flammes.",
+   "texte": "Flèche Feu en zone jusqu'à 7 cases qui repousse les ennemis touchés, et te fait reculer d'un bond."
+  },
+  "32445": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone"
+   ],
+   "accroche": "Boum.",
+   "texte": "Flèche qui explose à l'impact sur 3 cases de rayon. La meilleure réponse à un pack serré.",
+   "ambiance": "« Les Bouftous détestent cette flèche. Ils ont raison. »"
+  },
+  "32457": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Cumul"
+   ],
+   "accroche": "Plus ils sont, plus ça fait mal.",
+   "texte": "Flèche Terre en zone jusqu'à 7 cases, avec des dommages en plus pour chaque créature prise dedans."
+  },
+  "32437": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Vol de vie",
+    "Affaiblit"
+   ],
+   "accroche": "Rien ne t'échappe.",
+   "texte": "Frappe une zone à 3 ou 4 cases : vole de la vie en Eau, retire de la Portée et dévoile les ennemis invisibles."
+  },
+  "32431": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Ralentit"
+   ],
+   "accroche": "Une averse de flèches.",
+   "texte": "Une pluie de flèches Air tombe sur une zone jusqu'à 6 cases et reste 3 s au sol : les ennemis dedans prennent des coups et ont du mal à s'enfuir."
+  },
+  "32454": {
+   "role": "zone",
+   "etiquettes": [
+    "Autour de toi",
+    "Vol de vie",
+    "Cumul"
+   ],
+   "accroche": "Rends coup pour coup.",
+   "texte": "Vole de la vie en Terre aux ennemis autour de toi, avec des dommages en plus pour chaque coup reçu dans les 3 dernières secondes."
+  },
+  "32441": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Ralentit",
+    "Affaiblit"
+   ],
+   "accroche": "Paralyse le pack.",
+   "texte": "Flèche Eau en zone de 3 à 6 cases qui retire beaucoup de PA et de PM aux ennemis touchés."
+  },
+  "32474": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Soin"
+   ],
+   "accroche": "Un phare qui soigne.",
+   "texte": "Pose une Balise pendant 6 s qui soigne les alliés qui la voient. Frappe-la pour échanger de place avec elle."
+  },
+  "32472": {
+   "role": "gros",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Affaiblit"
+   ],
+   "accroche": "La facture arrive.",
+   "texte": "Frappe une zone de 3 à 6 cases en dommages Neutre selon les PV déjà rongés des ennemis, puis les cloue au sol et augmente leurs dommages subis."
+  },
+  "32470": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Renforce"
+   ],
+   "accroche": "Repli stratégique.",
+   "texte": "Bondis loin d'un ennemi ou vers un allié. Tu gagnes de la Portée pendant 3 s."
+  },
+  "32473": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Attire",
+    "Meilleur élément"
+   ],
+   "accroche": "Un piège sous ses pieds.",
+   "texte": "Pose un piège jusqu'à 6 cases : le premier ennemi qui marche dessus prend des dommages et les ennemis autour sont aspirés vers lui."
+  },
+  "32456": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Érosion",
+    "Cumul"
+   ],
+   "accroche": "Elle punit longtemps.",
+   "texte": "Flèche Terre de 4 à 8 cases qui ronge les PV max. Chaque lancer rend le suivant plus fort."
+  },
+  "32460": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Affaiblit"
+   ],
+   "accroche": "Garde tes PM.",
+   "texte": "Flèche Terre de 3 à 9 cases qui retire de la Puissance. Le premier tir est plus fort s'il te reste beaucoup de PM."
+  },
+  "32438": {
+   "role": "gros",
+   "etiquettes": [
+    "Distance",
+    "Affaiblit",
+    "Cumul"
+   ],
+   "accroche": "Le tir de très loin.",
+   "texte": "Flèche Eau de 6 à 10 cases qui réduit les soins reçus par la cible. Chaque lancer rend le suivant plus fort."
+  },
+  "32442": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Vol de vie",
+    "Cumul"
+   ],
+   "accroche": "Elle se nourrit de tes malus.",
+   "texte": "Vole de la vie en Eau de 4 à 9 cases. Chaque PA ou PM que tu as retiré depuis le dernier tir la renforce."
+  },
+  "32429": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Repousse"
+   ],
+   "accroche": "Elle traverse tout.",
+   "texte": "Flèche Air de 3 à 7 cases qui frappe toute sa zone à pleine force, plus fort sur les ennemis protégés, et les repousse."
+  },
+  "32432": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Ralentit",
+    "Vol de vie"
+   ],
+   "accroche": "Elle revient toujours.",
+   "texte": "Flèche Air qui retire des PM. Lancée sur une seconde cible alignée avec la première, elle frappe et vole de la vie à tout ce qui se trouve entre les deux."
+  },
+  "32446": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Vol de vie",
+    "Cumul"
+   ],
+   "accroche": "Elle a faim.",
+   "texte": "Vole de la vie en Feu jusqu'à 4 cases, un peu plus à chaque lancer sur le même ennemi. Change de cible et l'ancienne prend un dernier coup."
+  },
+  "32450": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Cumul"
+   ],
+   "accroche": "D'une cible à l'autre.",
+   "texte": "Flèche Feu qui rebondit sur l'ennemi le plus proche, encore et encore, en frappant plus fort à chaque cible."
+  },
+  "32469": {
+   "role": "soutien",
+   "etiquettes": [
+    "Renforce"
+   ],
+   "accroche": "Le décor ne gêne plus.",
+   "texte": "Pendant 12 s, tes flèches passent par-dessus le décor et tu gagnes du Critique, mais tu ne peux plus tirer de tout près."
+  },
+  "32475": {
+   "role": "gros",
+   "etiquettes": [
+    "Renforce"
+   ],
+   "accroche": "Planté, tu domines.",
+   "texte": "Pendant 15 s, gros bonus de dommages à distance et de Portée, et les ennemis en vue sont dévoilés. Le bonus fond à chaque déplacement.",
+   "ambiance": "« Le Crâ immobile est le plus dangereux. »"
+  }
+ },
+ "osamodas": {
+  "31110": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Vol de vie",
+    "Soin"
+   ],
+   "accroche": "Vole et partage.",
+   "texte": "Picore un ennemi jusqu'à 5 cases et vole 25 % des dommages, ou soigne un allié. Dans les deux cas, +1 PM pendant 6 s."
+  },
+  "31113": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Renforce"
+   ],
+   "accroche": "Les crocs de la meute.",
+   "texte": "Mord une zone jusqu'à 4 cases en dommages Terre et renforce les coups au contact des alliés pris dedans pendant 6 s."
+  },
+  "31111": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Vol de vie",
+    "Soin"
+   ],
+   "accroche": "L'instinct du Prespic.",
+   "texte": "Vole de la vie en Feu à un ennemi ou soigne un allié jusqu'à 3 cases. Instinct : +5 % de Critique pendant 6 s."
+  },
+  "31137": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Affaiblit"
+   ],
+   "accroche": "Plumé, il vole mieux.",
+   "texte": "Frappe une zone jusqu'à 5 cases en dommages Air : les ennemis touchés résistent moins aux poussées pendant 6 s."
+  },
+  "31135": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Vol de vie",
+    "Soin"
+   ],
+   "accroche": "L'instinct du Piranya.",
+   "texte": "Petite zone à 3 cases : vole de la vie en Eau aux ennemis, soigne les alliés. Instinct : +8 Dommages pendant 6 s."
+  },
+  "31140": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Soin"
+   ],
+   "accroche": "Un cœur qui bat pour tous.",
+   "texte": "Frappe une zone jusqu'à 6 cases en dommages Feu et augmente les soins reçus par toi et les alliés pris dedans."
+  },
+  "31132": {
+   "role": "base",
+   "etiquettes": [
+    "Autour de toi",
+    "Vol de vie",
+    "Soin"
+   ],
+   "accroche": "L'instinct de l'Ours.",
+   "texte": "Rugit autour de toi : vole de la vie en Terre aux ennemis, soigne les alliés. Instinct : +20 Puissance pendant 6 s.",
+   "ambiance": "« L'Ours ne crie pas. Il prévient tout le monde en même temps. »"
+  },
+  "31139": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Affaiblit"
+   ],
+   "accroche": "Une bave qui affaiblit.",
+   "texte": "Crache une zone Eau jusqu'à 4 cases : les ennemis touchés font moins de dommages pendant 6 s."
+  },
+  "31114": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Repousse",
+    "Meilleur élément"
+   ],
+   "accroche": "Claque du fouet.",
+   "texte": "Projette la cible dans ton meilleur élément ; elle prend des dommages de poussée si elle heurte un obstacle. Sur une de tes bêtes : elle court plus vite."
+  },
+  "31136": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Attire",
+    "Meilleur élément"
+   ],
+   "accroche": "Tout le monde au milieu.",
+   "texte": "Claque une zone jusqu'à 4 cases et attire les ennemis vers son centre. Si le centre est pris, ils passent de l'autre côté."
+  },
+  "31115": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation"
+   ],
+   "accroche": "Ton premier compagnon.",
+   "texte": "Invoque un Tofu à 2 cases : rapide et teigneux, il pique en Air et harcèle les ennemis pendant que tu restes à l'abri.",
+   "ambiance": "« Petit, mais il a du bec. »"
+  },
+  "31134": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Affaiblit"
+   ],
+   "accroche": "Des griffes qui empêchent de guérir.",
+   "texte": "Lacère une cible jusqu'à 4 cases en dommages Feu : elle reçoit moins de soins pendant 6 s."
+  },
+  "31116": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation"
+   ],
+   "accroche": "Un tank en laine.",
+   "texte": "Invoque un Bouftou à 2 cases : solide, il fonce au contact et encaisse les coups à ta place."
+  },
+  "31133": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Soin"
+   ],
+   "accroche": "Les vautours se servent.",
+   "texte": "Frappe une zone jusqu'à 6 cases en dommages Air ; ceux qui attaqueront les ennemis touchés seront soignés pendant 6 s."
+  },
+  "31117": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Distance"
+   ],
+   "accroche": "Il crache de loin.",
+   "texte": "Invoque un Crapipou à 2 cases : il reste à distance et crache de l'Eau sur les ennemis."
+  },
+  "31138": {
+   "role": "zone",
+   "etiquettes": [
+    "Autour de toi",
+    "Bouclier"
+   ],
+   "accroche": "Une laine qui protège.",
+   "texte": "Frappe autour de toi en dommages Terre et pose un bouclier sur les alliés proches."
+  },
+  "31118": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Zone"
+   ],
+   "accroche": "Le feu de la lignée.",
+   "texte": "Invoque une Dragoune à 2 cases : elle souffle du Feu sur les ennemis devant elle."
+  },
+  "31112": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Affaiblit"
+   ],
+   "accroche": "Le venin qui ouvre.",
+   "texte": "Mord une cible jusqu'à 5 cases : elle perd des PV en continu et subit plus de dommages pendant 6 s."
+  },
+  "31119": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Renforce"
+   ],
+   "accroche": "La grande ménagerie.",
+   "texte": "Pendant 6 s, tu peux garder 3 bêtes de plus. Quand l'effet s'arrête, les plus anciennes en trop repartent."
+  },
+  "31141": {
+   "role": "gros",
+   "etiquettes": [
+    "Renforce",
+    "Invocation"
+   ],
+   "accroche": "Le pacte du dresseur.",
+   "texte": "Sacrifie toutes tes bêtes : tu récupères une part de leur vie et tes dommages et soins grimpent tant que dure le pacte. Le relancer met fin au pacte."
+  },
+  "31120": {
+   "role": "soutien",
+   "etiquettes": [
+    "Allié",
+    "Renforce",
+    "Invocation"
+   ],
+   "accroche": "Un coup de fouet.",
+   "texte": "Toi et tes bêtes proches gagnez +1 PA pendant 9 s. L'effet est plus fort sur les invocations."
+  },
+  "31142": {
+   "role": "soutien",
+   "etiquettes": [
+    "Invocation",
+    "Bouclier"
+   ],
+   "accroche": "Partage la douleur.",
+   "texte": "Partage les dommages que tu reçois avec une de tes bêtes. Lancé sur toi, tu les partages avec toutes tes bêtes."
+  },
+  "31121": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Zone",
+    "Invocation"
+   ],
+   "accroche": "Saute par-dessus.",
+   "texte": "Bondis de l'autre côté de la cible pour 1 PM et éclabousse en Eau les ennemis autour de l'arrivée. Sur une de tes bêtes, elle saute aussi."
+  },
+  "31143": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Zone",
+    "Repousse"
+   ],
+   "accroche": "Atterrissage en tornade.",
+   "texte": "Bondis jusqu'à 3 cases : à l'arrivée, une tornade Air frappe les ennemis autour et les repousse."
+  },
+  "31122": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Repousse",
+    "Déplacement"
+   ],
+   "accroche": "Le souffle du dragon.",
+   "texte": "Souffle du Feu sur une petite zone jusqu'à 5 cases et repousse les ennemis touchés. Le recul te fait reculer d'une case."
+  },
+  "31144": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Attire"
+   ],
+   "accroche": "Le sol se referme.",
+   "texte": "Frappe une zone jusqu'à 3 cases en dommages Terre et attire les ennemis touchés vers son centre."
+  },
+  "31123": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Zone",
+    "Invocation"
+   ],
+   "accroche": "Rejoins la meute.",
+   "texte": "Fonce jusqu'à 5 cases sur la cible, frappe autour de l'arrivée et rappelle tes bêtes près de toi."
+  },
+  "31145": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Soin",
+    "Repousse"
+   ],
+   "accroche": "Le phénix renaît.",
+   "texte": "Une gerbe de Feu jusqu'à 5 cases : soigne les alliés, brûle les ennemis et les repousse du centre."
+  },
+  "31124": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Repousse"
+   ],
+   "accroche": "Pique et éjecte.",
+   "texte": "Fonce vers la cible jusqu'à 3 cases, la frappe en Air et la repousse. Sur une de tes bêtes : elle repousse tout ce qui la touche."
+  },
+  "31146": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Déplacement"
+   ],
+   "accroche": "Le tourbillon remet en place.",
+   "texte": "Frappe une zone jusqu'à 3 cases en dommages Eau et fait passer les alliés pris dedans de l'autre côté du centre."
+  },
+  "31125": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Attire",
+    "Ralentit",
+    "Meilleur élément"
+   ],
+   "accroche": "Au pied !",
+   "texte": "Frappe une cible jusqu'à 5 cases dans ton meilleur élément, lui retire des PM et la tire vers toi."
+  },
+  "31147": {
+   "role": "gros",
+   "etiquettes": [
+    "Distance",
+    "Invocation",
+    "Meilleur élément"
+   ],
+   "accroche": "Toutes les bêtes, à l'attaque.",
+   "texte": "Frappe une cible jusqu'à 5 cases et attire toutes tes bêtes vers elle : celles qui la voient l'attaquent aussitôt, à moitié de leur force."
+  },
+  "31152": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Invocation",
+    "Contrôle"
+   ],
+   "accroche": "Dompte un monstre.",
+   "texte": "Sur un ennemi à moins de 15 % de ses PV : il passe dans ton camp et se bat pour toi pendant 20 s.",
+   "ambiance": "« Gentil… gentil… »"
+  },
+  "31130": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Invocation"
+   ],
+   "accroche": "D'une bête à l'autre.",
+   "texte": "Échange ta place avec une de tes bêtes à 5 cases ou moins. Les échanges suivants se font entre bêtes."
+  },
+  "31126": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Déplacement"
+   ],
+   "accroche": "Un Tofu qui téléporte.",
+   "texte": "Invoque un Ventritofu : il frappe en Air, saute partout et projette les ennemis qui s'approchent."
+  },
+  "31149": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Ralentit"
+   ],
+   "accroche": "Une montagne qui marche.",
+   "texte": "Invoque un Craquolosse : très solide, il frappe en Terre, attire les ennemis et les ralentit."
+  },
+  "31127": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Attire"
+   ],
+   "accroche": "Un Bouftou poids lourd.",
+   "texte": "Invoque un Bouflourd : il réduit les dommages qu'il subit, fonce sur les ennemis et les attire à lui."
+  },
+  "31150": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Affaiblit"
+   ],
+   "accroche": "Un crocodile rancunier.",
+   "texte": "Invoque un Crocoléreux : il mord en Eau, réduit les Critiques et les soins des ennemis."
+  },
+  "31128": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Distance"
+   ],
+   "accroche": "Le grand frère du Crapipou.",
+   "texte": "Invoque un Crapipaud : il crache de l'Eau de loin, accélère les alliés et repousse les ennemis."
+  },
+  "31151": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Soin"
+   ],
+   "accroche": "Le phénix de soufre.",
+   "texte": "Invoque un Sulfénix : il brûle les ennemis en Feu, soigne les alliés et se téléporte."
+  },
+  "31129": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Renforce"
+   ],
+   "accroche": "Un dragon de poche.",
+   "texte": "Invoque un Dragonnet : il souffle du Feu, renforce la Puissance des alliés et repousse les ennemis."
+  },
+  "31148": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Bouclier"
+   ],
+   "accroche": "L'éclair en carapace.",
+   "texte": "Invoque un Scarafoudre : il frappe en Air, se téléporte, réduit les Critiques ennemis et protège les alliés."
+  },
+  "31131": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Meilleur élément"
+   ],
+   "accroche": "Il a toujours faim.",
+   "texte": "Invoque un Gobgob Glouton que tu diriges : il frappe selon sa vie, peut avaler tes bêtes pour grossir et protège un allié."
+  },
+  "31153": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation"
+   ],
+   "accroche": "Le farceur de la meute.",
+   "texte": "Invoque un Gobgob Facétieux que tu diriges : il échange les places, raccourcit les effets ennemis et peut copier une de tes bêtes."
+  }
+ },
+ "sacrieur": {
+  "12734": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Vol de vie"
+   ],
+   "accroche": "Bois à distance.",
+   "texte": "Vole la moitié de ses dommages en Feu à un ennemi jusqu'à 6 cases. Ton tir de base pour remonter tes PV de loin."
+  },
+  "12723": {
+   "role": "zone",
+   "etiquettes": [
+    "Autour de toi",
+    "Renforce"
+   ],
+   "accroche": "La furie monte.",
+   "texte": "Frappe autour de toi en dommages Air et augmente tes dommages pendant 6 s."
+  },
+  "12748": {
+   "role": "base",
+   "etiquettes": [
+    "Mêlée",
+    "Vol de vie",
+    "Affaiblit"
+   ],
+   "accroche": "Saigne-le.",
+   "texte": "Coup au contact qui vole la moitié de ses dommages en Air, et la cible reçoit moins de soins."
+  },
+  "12731": {
+   "role": "zone",
+   "etiquettes": [
+    "Autour de toi",
+    "Affaiblit"
+   ],
+   "accroche": "Ouvre la voie.",
+   "texte": "Frappe une petite zone collée à toi en dommages Terre : les ennemis touchés subissent plus de dommages pendant 6 s."
+  },
+  "12725": {
+   "role": "base",
+   "etiquettes": [
+    "Mêlée",
+    "Vol de vie"
+   ],
+   "accroche": "Frappe-le, soigne-toi.",
+   "texte": "Coup au contact qui vole 50 % des dommages. Pendant 4 s, chaque coup sur cette cible te rend 20 % de plus.",
+   "ambiance": "« Chaque goutte compte. Surtout les siennes. »"
+  },
+  "12727": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Renforce"
+   ],
+   "accroche": "Les nerfs à vif.",
+   "texte": "Frappe une zone jusqu'à 4 cases en dommages Eau et augmente tes chances de Critique pendant 6 s."
+  },
+  "12728": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Vol de vie",
+    "Affaiblit"
+   ],
+   "accroche": "Fige ses coups critiques.",
+   "texte": "Vole la moitié de ses dommages en Eau jusqu'à 5 cases et réduit les chances de Critique de la cible."
+  },
+  "12730": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Renforce"
+   ],
+   "accroche": "La douleur rend fort.",
+   "texte": "Frappe une zone jusqu'à 5 cases en dommages Feu et te donne de la Puissance pendant 6 s."
+  },
+  "12735": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Attire"
+   ],
+   "accroche": "Viens ici.",
+   "texte": "Tire un ennemi jusqu'à toi depuis 8 cases. En Souffrance 6 ou plus : portée +4 cases et attire jusqu'à 11 cases."
+  },
+  "12758": {
+   "role": "soutien",
+   "etiquettes": [
+    "Allié",
+    "Soin",
+    "Autour de toi"
+   ],
+   "accroche": "Ton sang pour eux.",
+   "texte": "Donne une part de tes PV aux alliés proches (pas en Souffrance 6 ou plus). Pendant 6 s, chaque coup que tu reçois les soigne aussi."
+  },
+  "12737": {
+   "role": "gros",
+   "etiquettes": [
+    "Renforce",
+    "Bouclier"
+   ],
+   "accroche": "Le sang pour la puissance.",
+   "texte": "Sacrifie 10 % de tes PV pour +50 Puissance, puis toutes les 3 s un nouveau sacrifice ajoute +25 (3 fois). Relance-le : ta douleur devient un bouclier."
+  },
+  "12762": {
+   "role": "soutien",
+   "etiquettes": [
+    "Renforce"
+   ],
+   "accroche": "Un pacte avec toi-même.",
+   "texte": "Augmente ta Vitalité et ta Puissance pendant 9 s."
+  },
+  "12744": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Vol de vie"
+   ],
+   "accroche": "Une lame qui a soif.",
+   "texte": "Invoque une Épée Vorace jusqu'à 3 cases : elle se jette sur les ennemis et leur vole de la vie."
+  },
+  "12765": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Attire"
+   ],
+   "accroche": "Une lame qui danse.",
+   "texte": "Invoque une Épée Dansante : elle attire les ennemis, échange de place avec eux et frappe en Neutre."
+  },
+  "12746": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Zone"
+   ],
+   "accroche": "Fonce au contact.",
+   "texte": "Fonce jusqu'à 6 cases sur la cible pour 1 PM et frappe en Terre autour de l'arrivée."
+  },
+  "12724": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Zone"
+   ],
+   "accroche": "Un éclair rouge.",
+   "texte": "Bondis jusqu'à la cible, juste devant elle, et frappe en Air les ennemis autour."
+  },
+  "12733": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Distance"
+   ],
+   "accroche": "Prends sa place.",
+   "texte": "Échange de place avec la cible jusqu'à 2 cases et la frappe en Air au passage."
+  },
+  "12749": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Zone",
+    "Repousse"
+   ],
+   "accroche": "Recule, tous.",
+   "texte": "Frappe une zone jusqu'à 5 cases en dommages Feu et repousse les ennemis loin du centre."
+  },
+  "12736": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Distance"
+   ],
+   "accroche": "Toi ici, moi là.",
+   "texte": "Échange de place avec n'importe quelle créature jusqu'à 7 cases. En Souffrance 6 ou plus : portée +4 cases."
+  },
+  "12763": {
+   "role": "soutien",
+   "etiquettes": [
+    "Renforce",
+    "Invocation"
+   ],
+   "accroche": "Rien ne te retient.",
+   "texte": "Toi et tes Épées ne pouvez plus être bloqués et courez plus vite pendant 6 s, encore plus en Souffrance 6 ou plus."
+  },
+  "12745": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Attire"
+   ],
+   "accroche": "Resserre les rangs.",
+   "texte": "Frappe une zone jusqu'à 5 cases en dommages Eau et attire les ennemis touchés de 2 cases vers son centre."
+  },
+  "12729": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Autour de toi",
+    "Attire"
+   ],
+   "accroche": "Tout vient à toi.",
+   "texte": "Attire les ennemis autour de toi vers toi et les frappe en Terre."
+  },
+  "12756": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Repousse"
+   ],
+   "accroche": "Va-t'en.",
+   "texte": "Frappe un ennemi jusqu'à 6 cases en dommages Feu et le repousse."
+  },
+  "12726": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Zone"
+   ],
+   "accroche": "Passe de l'autre côté.",
+   "texte": "Bondis de l'autre côté de la cible et éclabousse en Eau les ennemis autour de toi."
+  },
+  "12761": {
+   "role": "soutien",
+   "etiquettes": [
+    "Autour de toi",
+    "Bouclier",
+    "Ralentit"
+   ],
+   "accroche": "Touche-moi, si tu oses.",
+   "texte": "Bouclier de 8 % de tes PV pendant 6 s ; tout coup reçu au contact est renvoyé à 100 % à son auteur. En Souffrance 6 ou plus, bouclier plus gros par ennemi proche.",
+   "ambiance": "« Les épines, ça se mérite. »"
+  },
+  "14011": {
+   "role": "soutien",
+   "etiquettes": [
+    "Allié",
+    "Bouclier"
+   ],
+   "accroche": "Au pilori.",
+   "texte": "Protège un allié par un bouclier et le rend impossible à déplacer pendant 6 s. Un coup au contact sur lui brise l'effet et te soigne."
+  },
+  "12738": {
+   "role": "gros",
+   "etiquettes": [
+    "Autour de toi",
+    "Soin"
+   ],
+   "accroche": "Ta vie est une arme.",
+   "texte": "Frappe tout autour de toi pour 12 % de tes PV restants, et donne une part de ta vie aux alliés proches. Plus tu es en forme, plus ça fait mal."
+  },
+  "12754": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Distance"
+   ],
+   "accroche": "Lié par le sang.",
+   "texte": "Bondis vers un ennemi jusqu'à 5 cases et lie-toi à lui 6 s : chaque coup qu'il te porte te rapproche encore de lui."
+  },
+  "12757": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Vol de vie"
+   ],
+   "accroche": "Dissous leurs défenses.",
+   "texte": "Vole de la vie en Eau sur une zone jusqu'à 5 cases ; les ennemis touchés ont plus de mal à t'échapper."
+  },
+  "12752": {
+   "role": "gros",
+   "etiquettes": [
+    "Mêlée",
+    "Zone"
+   ],
+   "accroche": "Paie et frappe.",
+   "texte": "Sacrifie une part de tes PV pour un coup Air énorme qui frappe en zone au contact."
+  },
+  "12753": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Vol de vie",
+    "Ralentit"
+   ],
+   "accroche": "Désole le terrain.",
+   "texte": "Vole de la vie en Air sur une zone jusqu'à 4 cases et retire 3 PM aux ennemis touchés."
+  },
+  "12755": {
+   "role": "gros",
+   "etiquettes": [
+    "Distance",
+    "Zone"
+   ],
+   "accroche": "Le sang se déchaîne.",
+   "texte": "Sacrifie une part de tes PV pour une vague Eau énorme sur une zone jusqu'à 6 cases."
+  },
+  "12739": {
+   "role": "soutien",
+   "etiquettes": [
+    "Autour de toi",
+    "Allié",
+    "Invocation"
+   ],
+   "accroche": "Prends les coups pour eux.",
+   "texte": "Pendant 12 s, tu encaisses à la place des alliés autour de toi. Tes Épées dans la zone sont sacrifiées et te rendent leur vie."
+  },
+  "12764": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Distance"
+   ],
+   "accroche": "Échange forcé.",
+   "texte": "Échange de place avec la cible jusqu'à 6 cases. Pendant 6 s, chaque coup sur elle ou sur toi vous fait échanger de nouveau."
+  },
+  "12732": {
+   "role": "zone",
+   "etiquettes": [
+    "Autour de toi",
+    "Vol de vie"
+   ],
+   "accroche": "Un bain de sang.",
+   "texte": "Vole de la vie en Terre à tous les ennemis autour de toi ; plus ils sont nombreux, plus ils ont du mal à t'échapper."
+  },
+  "12747": {
+   "role": "gros",
+   "etiquettes": [
+    "Distance",
+    "Zone"
+   ],
+   "accroche": "Brûle avec eux.",
+   "texte": "Sacrifie une part de tes PV pour embraser une zone jusqu'à 4 cases en dommages Feu énormes."
+  },
+  "12750": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Vol de vie",
+    "Affaiblit"
+   ],
+   "accroche": "Plus de soins pour personne.",
+   "texte": "Vole de la vie en Feu sur une zone jusqu'à 5 cases ; les ennemis touchés reçoivent moins de soins."
+  },
+  "12751": {
+   "role": "gros",
+   "etiquettes": [
+    "Mêlée"
+   ],
+   "accroche": "L'entaille qui coûte.",
+   "texte": "Sacrifie une part de tes PV pour un coup Terre énorme au contact."
+  },
+  "12759": {
+   "role": "soutien",
+   "etiquettes": [
+    "Soin"
+   ],
+   "accroche": "Le sang qui guérit.",
+   "texte": "Sacrifie une part de tes PV, retire tes malus, puis te soigne nettement pendant 6 s ; plus ta Souffrance est haute, plus le soin est fort."
+  },
+  "12760": {
+   "role": "gros",
+   "etiquettes": [
+    "Autour de toi",
+    "Zone"
+   ],
+   "accroche": "Le châtiment.",
+   "texte": "Sacrifie une part de tes PV et frappe tout autour de toi en Neutre, selon la vie qu'il te reste."
+  },
+  "12743": {
+   "role": "gros",
+   "etiquettes": [
+    "Renforce"
+   ],
+   "accroche": "Berserk.",
+   "texte": "Sacrifie une part de tes PV : tes sorts frappent bien plus fort et rien ne te bloque, mais tu reçois moins de soins. Prend fin sous Souffrance 6.",
+   "ambiance": "« Il ne reste plus que la rage. »"
+  },
+  "14000": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Contrôle"
+   ],
+   "accroche": "Le rituel de Jashin.",
+   "texte": "Lie un ennemi jusqu'à 10 cases à toi pendant 9 s : chaque dommage que l'un de vous subit est renvoyé à l'autre. Rien ne te bloque tant que tu restes sur l'aura."
+  },
+  "12741": {
+   "role": "gros",
+   "etiquettes": [
+    "Mêlée",
+    "Meilleur élément"
+   ],
+   "accroche": "La punition.",
+   "texte": "Coup au contact dans ton meilleur élément, avec des dommages Neutre en plus selon les PV que tu as déjà perdus."
+  },
+  "12740": {
+   "role": "gros",
+   "etiquettes": [
+    "Autour de toi",
+    "Vol de vie",
+    "Meilleur élément"
+   ],
+   "accroche": "La folie du sang.",
+   "texte": "Vole de la vie dans ton meilleur élément à tous les ennemis autour de toi, à pleine force sur toute la zone."
+  }
+ },
+ "forgelance": {
+  "23393": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Attire"
+   ],
+   "accroche": "Le trident ramène tout.",
+   "texte": "Frappe une zone jusqu'à 6 cases en dommages Eau et attire les ennemis de 2 cases vers son centre."
+  },
+  "23747": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Zone"
+   ],
+   "accroche": "Change de place, brûle tout.",
+   "texte": "Échange de place avec la cible jusqu'à 4 cases et frappe en Feu les ennemis autour."
+  },
+  "23736": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Attire",
+    "Lance"
+   ],
+   "accroche": "Le sol s'effondre.",
+   "texte": "Frappe une zone jusqu'à 3 cases à pleine force en Terre et aspire les ennemis vers son centre. Désarmé : part de la Lance, où que tu vises."
+  },
+  "23729": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Zone",
+    "Repousse",
+    "Lance"
+   ],
+   "accroche": "Tourbillon de lance.",
+   "texte": "Plante la Lance entre 2 et 5 cases, bondis jusqu'à elle et repousse en Air les ennemis autour."
+  },
+  "23754": {
+   "role": "base",
+   "etiquettes": [
+    "Ligne",
+    "Repousse"
+   ],
+   "accroche": "Estoc de feu.",
+   "texte": "Frappe en ligne droite sur 3 cases devant toi en dommages Feu et repousse les ennemis touchés."
+  },
+  "23391": {
+   "role": "dep",
+   "etiquettes": [
+    "Distance",
+    "Déplacement"
+   ],
+   "accroche": "Une note, un pas.",
+   "texte": "Frappe une cible jusqu'à 3 cases en dommages Eau et te fait reculer loin d'elle."
+  },
+  "23741": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Repousse"
+   ],
+   "accroche": "Une volée qui écarte.",
+   "texte": "Frappe une zone jusqu'à 5 cases en dommages Air et repousse les ennemis touchés."
+  },
+  "23731": {
+   "role": "zone",
+   "etiquettes": [
+    "Mêlée",
+    "Zone"
+   ],
+   "accroche": "Le sol se soulève.",
+   "texte": "Frappe au contact une zone à pleine force en Terre et fait passer les ennemis touchés de l'autre côté de toi."
+  },
+  "23801": {
+   "role": "soutien",
+   "etiquettes": [
+    "Lance"
+   ],
+   "accroche": "Plante, rappelle.",
+   "texte": "Armé : plante ta Lance au point visé, jusqu'à 6 cases. Désarmé : rappelle-la, et elle frappe tout ce qu'elle traverse en revenant.",
+   "ambiance": "« Une lance, ça se prête. Jamais longtemps. »"
+  },
+  "23386": {
+   "role": "soutien",
+   "etiquettes": [
+    "Bouclier",
+    "Lance",
+    "Meilleur élément"
+   ],
+   "accroche": "La parade parfaite.",
+   "texte": "Rappelle la Lance : pendant 6 s, rien ne te déplace et tu encaisses moins au contact. Le premier ennemi qui te frappe de près est contré et repoussé."
+  },
+  "23824": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Repousse",
+    "Lance",
+    "Meilleur élément"
+   ],
+   "accroche": "Lance en avant.",
+   "texte": "Rappelle la Lance, fonce jusqu'à 3 cases et projette ce que tu percutes, dans ton meilleur élément. Plus l'élan est long, plus il vole loin."
+  },
+  "23314": {
+   "role": "soutien",
+   "etiquettes": [
+    "Allié",
+    "Soin",
+    "Attire"
+   ],
+   "accroche": "La galanterie avant tout.",
+   "texte": "Tu recules d'un pas, tu attires la cible et vous soignes tous les deux si c'est un allié. Sur la Lance : la rappelle."
+  },
+  "23432": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Lance"
+   ],
+   "accroche": "La Lance jaillit du lac.",
+   "texte": "Frappe une zone jusqu'à 4 cases en dommages Eau et y plante ta Lance."
+  },
+  "23720": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Mêlée",
+    "Zone",
+    "Repousse"
+   ],
+   "accroche": "Un épieu dans le sol.",
+   "texte": "Frappe une zone au contact à pleine force en Terre et repousse les ennemis loin du point d'impact."
+  },
+  "23719": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Lance"
+   ],
+   "accroche": "La Lance s'écrase.",
+   "texte": "Frappe une zone jusqu'à 3 cases à pleine force en Terre et y plante ta Lance."
+  },
+  "23392": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Lance"
+   ],
+   "accroche": "L'éclair rebondit.",
+   "texte": "Plante la Lance dans une zone Eau jusqu'à 5 cases ; l'éclair rebondit sur l'ennemi le plus proche hors de la zone."
+  },
+  "23330": {
+   "role": "soutien",
+   "etiquettes": [
+    "Zone",
+    "Bouclier",
+    "Allié",
+    "Lance"
+   ],
+   "accroche": "Le mur de boucliers.",
+   "texte": "Bouclier de 10 % des PV max aux alliés de la zone pendant 6 s, et +20 de résistance aux poussées. Désarmé : autour de la Lance."
+  },
+  "23828": {
+   "role": "soutien",
+   "etiquettes": [
+    "Zone",
+    "Bouclier",
+    "Allié",
+    "Lance"
+   ],
+   "accroche": "Hisse l'étendard.",
+   "texte": "Rappelle puis replante la Lance tout près : les alliés autour reçoivent un bouclier et résistent mieux aux coups critiques."
+  },
+  "23263": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Cumul",
+    "Lance"
+   ],
+   "accroche": "Le feu prend.",
+   "texte": "Frappe une zone jusqu'à 6 cases en dommages Feu et y plante la Lance si la place est libre. +15 % de dommages par lancer (4 fois, 6 s)."
+  },
+  "24219": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Affaiblit",
+    "Lance"
+   ],
+   "accroche": "Une averse de bronze.",
+   "texte": "Frappe une zone tout près à pleine force en Air ; les ennemis touchés résistent moins aux poussées. Désarmé : autour de la Lance."
+  },
+  "23734": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Repousse",
+    "Lance"
+   ],
+   "accroche": "Javeline et recul.",
+   "texte": "Frappe une cible jusqu'à 4 cases en dommages Air, la repousse et plante la Lance à sa place si elle est libre."
+  },
+  "23755": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Zone",
+    "Attire",
+    "Lance"
+   ],
+   "accroche": "Le moulin aspire.",
+   "texte": "Frappe une zone tout près à pleine force en Feu et aspire les ennemis vers son centre. Désarmé : autour de la Lance."
+  },
+  "23434": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Zone"
+   ],
+   "accroche": "Traverse et frappe.",
+   "texte": "Fonce sur la cible, passe de l'autre côté et frappe en Eau les ennemis autour de toi."
+  },
+  "23742": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Zone",
+    "Déplacement",
+    "Lance"
+   ],
+   "accroche": "Les ailes du moulin.",
+   "texte": "Frappe une zone tout près en Air et fait passer les ennemis touchés de l'autre côté du centre. Désarmé : autour de la Lance."
+  },
+  "23726": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Lance"
+   ],
+   "accroche": "Bond d'argile.",
+   "texte": "Rappelle la Lance et fonce jusqu'à 4 cases sur la cible pour la frapper en Terre."
+  },
+  "23753": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Zone",
+    "Lance"
+   ],
+   "accroche": "Fends et passe.",
+   "texte": "Rappelle la Lance, bondis sur la case visée ou de l'autre côté de la cible, et frappe en Feu tout autour à pleine force."
+  },
+  "23823": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Zone",
+    "Vol de vie",
+    "Affaiblit",
+    "Lance"
+   ],
+   "accroche": "La Valkyrie descend.",
+   "texte": "Rappelle la Lance, bondis jusqu'à 3 cases, vole de la vie dans ton meilleur élément autour de l'arrivée et réduit de 20 % les dommages des ennemis pendant 6 s."
+  },
+  "23829": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Zone",
+    "Vol de vie",
+    "Lance"
+   ],
+   "accroche": "La foudre de Vajra.",
+   "texte": "Rappelle la Lance, bondis jusqu'à 4 cases et vole de la vie dans ton meilleur élément autour de l'arrivée ; les ennemis ont plus de mal à t'échapper."
+  },
+  "23750": {
+   "role": "gros",
+   "etiquettes": [
+    "Zone",
+    "Cumul",
+    "Lance"
+   ],
+   "accroche": "Le brasier de Muspel.",
+   "texte": "Désarmé : une explosion Feu autour de la Lance, +10 % de dommages par ennemi pris dedans, puis la Lance revient à toi."
+  },
+  "23723": {
+   "role": "gros",
+   "etiquettes": [
+    "Zone",
+    "Bouclier",
+    "Lance"
+   ],
+   "accroche": "L'hydre de terre.",
+   "texte": "Frappe à pleine force en Terre autour de toi, ou de la Lance si tu es désarmé, et réduit tes dommages subis pour chaque ennemi touché."
+  },
+  "23841": {
+   "role": "soutien",
+   "etiquettes": [
+    "Zone",
+    "Allié",
+    "Renforce",
+    "Lance"
+   ],
+   "accroche": "Prélude au combat.",
+   "texte": "Retire les bonus des ennemis de la zone et donne +40 Puissance aux alliés pendant 6 s. Désarmé : autour de la Lance."
+  },
+  "23842": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Érosion",
+    "Affaiblit",
+    "Lance"
+   ],
+   "accroche": "Le crépuscule tombe.",
+   "texte": "Ronge les PV max et retire de la Portée aux ennemis autour de toi, ou de la Lance si tu es désarmé."
+  },
+  "23738": {
+   "role": "zone",
+   "etiquettes": [
+    "Autour de toi",
+    "Renforce",
+    "Lance"
+   ],
+   "accroche": "Le centre du monde.",
+   "texte": "Frappe en Terre autour de toi, ou de la Lance si tu es désarmé, et gagne de la Puissance pour chaque ennemi touché."
+  },
+  "23743": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Autour de toi",
+    "Repousse",
+    "Lance"
+   ],
+   "accroche": "Fais place nette.",
+   "texte": "Frappe en Air autour de toi, ou de la Lance qui revient ensuite, et repousse tous les ennemis loin du centre."
+  },
+  "23826": {
+   "role": "soutien",
+   "etiquettes": [
+    "Autour de toi",
+    "Soin",
+    "Allié",
+    "Lance"
+   ],
+   "accroche": "L'honneur du chevalier.",
+   "texte": "Soigne les alliés autour de toi et les fait courir plus vite. Désarmé : rappelle aussi la Lance."
+  },
+  "23319": {
+   "role": "soutien",
+   "etiquettes": [
+    "Distance",
+    "Attire",
+    "Soin",
+    "Lance"
+   ],
+   "accroche": "La renommée attire.",
+   "texte": "Attire la cible jusqu'à 6 cases, ou vers la Lance si tu es désarmé, et vous soigne tous les deux si c'est un allié."
+  },
+  "23268": {
+   "role": "zone",
+   "etiquettes": [
+    "Ligne",
+    "Lance"
+   ],
+   "accroche": "Le serpent des mers.",
+   "texte": "Frappe en Eau tout ce qui se trouve entre toi et la Lance, puis la rappelle. Sur toi : petite vague autour de toi et de la Lance."
+  },
+  "23756": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Affaiblit",
+    "Lance"
+   ],
+   "accroche": "Marqués au fer.",
+   "texte": "Frappe une zone jusqu'à 5 cases en dommages Feu ; les ennemis touchés subissent plus de dommages pendant 6 s."
+  },
+  "23401": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Contrôle",
+    "Lance"
+   ],
+   "accroche": "La Lance tient la ligne.",
+   "texte": "Replante la Lance tout près : elle devient plus solide, bloque les ennemis qui la frôlent et les empêche d'être déplacés."
+  },
+  "23838": {
+   "role": "soutien",
+   "etiquettes": [
+    "Allié",
+    "Bouclier",
+    "Érosion"
+   ],
+   "accroche": "L'étreinte de la Valkyrie.",
+   "texte": "L'allié visé reçoit moins de dommages pendant 6 s, et ceux qui le frappent voient leurs PV max rongés."
+  },
+  "23735": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Lance"
+   ],
+   "accroche": "La marque de Noa.",
+   "texte": "Frappe en Air à pleine force et marque les ennemis touchés : une poussée contre un obstacle déclenche un second coup Air."
+  },
+  "23396": {
+   "role": "gros",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Attire",
+    "Lance"
+   ],
+   "accroche": "Elding, la foudre.",
+   "texte": "Plante la Lance jusqu'à 6 cases, aspire les ennemis autour vers elle et les foudroie en Eau."
+  },
+  "23834": {
+   "role": "gros",
+   "etiquettes": [
+    "Autour de toi",
+    "Bouclier",
+    "Lance"
+   ],
+   "accroche": "L'éclipse.",
+   "texte": "Rappelle la Lance et protège les alliés autour de toi par un bouclier, puis lance la Lance : sur toi, le Croissant de Mani ; ailleurs, le Disque de Sigel."
+  },
+  "23846": {
+   "role": "gros",
+   "etiquettes": [
+    "Autour de toi",
+    "Attire",
+    "Meilleur élément",
+    "Lance"
+   ],
+   "accroche": "Le duel sacré.",
+   "texte": "Rappelle la Lance et trace un cercle sous tes pieds : rien ne te déplace, tu encaisses moins de loin, et tout ennemi qui entre ou sort du cercle est attiré et frappé."
+  },
+  "saut": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Lance"
+   ],
+   "accroche": "Rejoins ta Lance.",
+   "texte": "Désarmé, bondis jusqu'à ta Lance et reprends-la au vol. Armé, petit bond de 3 cases, pour 1 PM."
+  },
+  "estoc": {
+   "role": "base",
+   "etiquettes": [
+    "Ligne",
+    "Mêlée"
+   ],
+   "accroche": "L'estoc de base.",
+   "texte": "Ton attaque de base quand la Lance est en main : un coup droit devant toi."
+  }
+ },
+ "eniripsa": {
+  "25877": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Ralentit"
+   ],
+   "accroche": "Un mot qui freine.",
+   "texte": "Frappe une cible jusqu'à 5 cases en dommages Air et lui retire 2 PM : elle court moins vite."
+  },
+  "25878": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Affaiblit"
+   ],
+   "accroche": "La malice s'installe.",
+   "texte": "Frappe une cible jusqu'à 7 cases en dommages Air : pendant 6 s, chaque pas qu'elle fait lui retire de la Puissance."
+  },
+  "25858": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Soin"
+   ],
+   "accroche": "Un mot qui soigne et qui brûle.",
+   "texte": "Explosion de 2,5 cases jusqu'à 3 cases de toi : les ennemis brûlent, les alliés pris dedans récupèrent 20 PV."
+  },
+  "25857": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Affaiblit"
+   ],
+   "accroche": "Assourdissant.",
+   "texte": "Frappe une cible jusqu'à 5 cases en dommages Feu et lui retire des PA : elle attaque moins souvent."
+  },
+  "25870": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Vol de vie",
+    "Soin"
+   ],
+   "accroche": "Prends et donne.",
+   "texte": "Sur un ennemi : vole la moitié de ses dommages en Eau. Sur un allié : lui donne 8 % de tes PV."
+  },
+  "25872": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Soin"
+   ],
+   "accroche": "Ses larmes vous soignent.",
+   "texte": "Frappe une cible jusqu'à 5 cases en dommages Eau ; les alliés autour d'elle sont soignés d'une part des dommages faits."
+  },
+  "25867": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Repousse"
+   ],
+   "accroche": "Un gros mot.",
+   "texte": "Frappe une cible jusqu'à 4 cases en dommages Terre et la repousse.",
+   "ambiance": "« Pardon pour le langage. »"
+  },
+  "25869": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Soin",
+    "Affaiblit"
+   ],
+   "accroche": "Le remède ou le poison.",
+   "texte": "Sur un ennemi : dommages Terre et moins de soins reçus. Sur un allié : le soigne et augmente ses soins reçus pendant 6 s."
+  },
+  "25795": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Soin",
+    "Bouclier"
+   ],
+   "accroche": "Le Lapino.",
+   "texte": "Invoque un Lapino qui soigne le plus blessé et protège les alliés. Relancé pendant qu'il vit : il se téléporte au point visé."
+  },
+  "25802": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Distance"
+   ],
+   "accroche": "Une fiole à remplir.",
+   "texte": "Pose une Fiole jusqu'à 5 cases. Remplis-la avec tes mots : un allié qui la frappe en boit l'effet, et si elle casse, elle explose sur les ennemis."
+  },
+  "25742": {
+   "role": "soutien",
+   "etiquettes": [
+    "Allié",
+    "Renforce"
+   ],
+   "accroche": "Encourage un allié.",
+   "texte": "L'allié visé recharge ses PA 40 % plus vite pendant 6 s. Sur une case vide, une Fée Stimulante file vers le plus blessé."
+  },
+  "25746": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Affaiblit"
+   ],
+   "accroche": "Le déclin.",
+   "texte": "Raccourcit les bonus de l'ennemi visé et réduit ses soins reçus. Sur une case vide : un Feu de Déclin file vers l'ennemi le plus proche."
+  },
+  "13175": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Repousse"
+   ],
+   "accroche": "Bouh !",
+   "texte": "Repousse une cible jusqu'à 5 cases pour seulement 1 PA. Ne fait pas de dommages."
+  },
+  "25832": {
+   "role": "soutien",
+   "etiquettes": [
+    "Distance",
+    "Soin",
+    "Meilleur élément"
+   ],
+   "accroche": "Le scalpel.",
+   "texte": "Raccourcit les effets sur la cible, puis frappe un ennemi ou soigne un allié jusqu'à 3 cases, dans ton meilleur élément."
+  },
+  "25871": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Vol de vie",
+    "Soin"
+   ],
+   "accroche": "Des lamentations qui guérissent.",
+   "texte": "Vole de la vie en Eau sur une zone jusqu'à 4 cases ; les alliés de la zone sont soignés de la moitié des dommages faits, pas toi."
+  },
+  "25856": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Soin"
+   ],
+   "accroche": "Un vacarme utile.",
+   "texte": "Soigne un allié ou brûle un ennemi jusqu'à 5 cases. Sur un de tes Feux Follets : l'effet part en zone et tous tes Feux Follets frappent plus fort."
+  },
+  "25860": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Soin",
+    "Repousse"
+   ],
+   "accroche": "Ça tourbillonne.",
+   "texte": "Frappe une zone jusqu'à 4 cases en dommages Feu et soigne les alliés pris dedans ; les ennemis touchés repoussent ceux qui leur collent."
+  },
+  "25865": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Repousse"
+   ],
+   "accroche": "Le mot qui gronde.",
+   "texte": "Frappe une zone jusqu'à 3 cases en dommages Terre et repousse les ennemis touchés."
+  },
+  "25744": {
+   "role": "soutien",
+   "etiquettes": [
+    "Allié",
+    "Renforce"
+   ],
+   "accroche": "File !",
+   "texte": "L'allié visé gagne +1 PM et court 15 % plus vite pendant 6 s. Sur une case vide : une Fée Vivifiante file vers le plus blessé."
+  },
+  "25745": {
+   "role": "soutien",
+   "etiquettes": [
+    "Allié",
+    "Bouclier",
+    "Renforce"
+   ],
+   "accroche": "Galvanise un allié.",
+   "texte": "L'allié visé gagne de la Puissance et un bouclier pendant 6 s. Sur une case vide : une Fée Galvanisante file vers le plus blessé."
+  },
+  "25879": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Soin"
+   ],
+   "accroche": "Une farce qui ramène.",
+   "texte": "Frappe un ennemi ou soigne un allié jusqu'à 4 cases ; l'ennemi touché revient à sa place 3 s plus tard.",
+   "ambiance": "« Tu croyais aller où, comme ça ? »"
+  },
+  "25876": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Vol de vie",
+    "Attire"
+   ],
+   "accroche": "Le mot défendu.",
+   "texte": "Vole de la vie en Eau sur une zone jusqu'à 4 cases et attire les ennemis vers le point visé."
+  },
+  "25868": {
+   "role": "soutien",
+   "etiquettes": [
+    "Distance",
+    "Soin",
+    "Affaiblit"
+   ],
+   "accroche": "La peinture de guerre.",
+   "texte": "Peint la cible 6 s : un ennemi est repoussé 20 % plus loin, un allié est soigné de 10 PV toutes les 3 s."
+  },
+  "25882": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Soin",
+    "Cumul"
+   ],
+   "accroche": "Un secret bien gardé.",
+   "texte": "Soigne les alliés et frappe les ennemis en Air sur une zone jusqu'à 10 cases. Si tu attends avant de le relancer, il frappe et soigne plus fort."
+  },
+  "25743": {
+   "role": "soutien",
+   "etiquettes": [
+    "Allié",
+    "Soin"
+   ],
+   "accroche": "Une seconde jeunesse.",
+   "texte": "Retire les malus de l'allié visé et le soigne de 6 % de ses PV, puis encore toutes les 3 s pendant 6 s. Sur une case vide : une Fée de Jouvence."
+  },
+  "25748": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Affaiblit"
+   ],
+   "accroche": "Ça déprime.",
+   "texte": "Retire Puissance et Dommages à l'ennemi visé. Sur une case vide : un Feu Déprimant file vers l'ennemi le plus proche."
+  },
+  "25863": {
+   "role": "zone",
+   "etiquettes": [
+    "Autour de toi",
+    "Repousse"
+   ],
+   "accroche": "Le cri de guerre.",
+   "texte": "Frappe tout autour de toi à pleine force sur 3,5 cases en dommages Terre et repousse les ennemis."
+  },
+  "25864": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Soin"
+   ],
+   "accroche": "Le rituel.",
+   "texte": "Trace un cercle jusqu'à 4 cases : il peint tout ce qui y entre, frappe les ennemis en Terre et soigne les alliés à l'intérieur."
+  },
+  "25873": {
+   "role": "gros",
+   "etiquettes": [
+    "Distance",
+    "Soin"
+   ],
+   "accroche": "Le mot interdit.",
+   "texte": "Gros coup Eau sur un ennemi ou gros soin sur un allié jusqu'à 5 cases, et retire leurs bonus aux ennemis ou leurs malus aux alliés."
+  },
+  "13217": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Soin"
+   ],
+   "accroche": "Exsangue.",
+   "texte": "Frappe un ennemi jusqu'à 5 cases en dommages Eau ; ceux qui l'attaquent sont soignés. Sur un allié : le soigne."
+  },
+  "25749": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Ralentit"
+   ],
+   "accroche": "Accable-le.",
+   "texte": "Moquerie de 6 s sur l'ennemi visé : il est ralenti de 40 % (moitié sur élites et boss). Sur une case vide : un Feu Follet file vers l'ennemi le plus proche."
+  },
+  "25747": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Affaiblit"
+   ],
+   "accroche": "Décourage-le.",
+   "texte": "Retire des PA à l'ennemi visé : il attaque moins souvent. Sur une case vide : un Feu Décourageant file vers l'ennemi le plus proche."
+  },
+  "25859": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Vol de vie",
+    "Affaiblit"
+   ],
+   "accroche": "Chapardage.",
+   "texte": "Vole de la vie en Feu jusqu'à 6 cases et vole aussi de la Portée à la cible."
+  },
+  "25862": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Attire",
+    "Soin"
+   ],
+   "accroche": "Regarde par ici.",
+   "texte": "Frappe une zone jusqu'à 6 cases en Feu, soigne les alliés et attire tout le monde vers le centre."
+  },
+  "25880": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Soin"
+   ],
+   "accroche": "Ça fleurit.",
+   "texte": "Frappe une zone jusqu'à 5 cases en Air : les ennemis touchés font éclore des fleurs qui soignent les alliés autour d'eux."
+  },
+  "25881": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Soin"
+   ],
+   "accroche": "Le bosquet enchanté.",
+   "texte": "Soigne les alliés et frappe les ennemis en Air jusqu'à 7 cases ; la zone s'étend autour de tes Fées et des alliés Encouragés."
+  },
+  "13184": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Allié"
+   ],
+   "accroche": "Envole-toi.",
+   "texte": "Saute jusqu'à 4 cases pour 1 PM. Sur un allié : échange de place avec lui."
+  },
+  "25874": {
+   "role": "soutien",
+   "etiquettes": [
+    "Autour de toi",
+    "Soin"
+   ],
+   "accroche": "La fontaine de jouvence.",
+   "texte": "Soigne les alliés et fait jaillir une fontaine qui soigne en continu ceux qui restent dedans. Rien ne te bloque tant que tu y es."
+  },
+  "25866": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Soin",
+    "Cumul"
+   ],
+   "accroche": "Le pinceau tribal.",
+   "texte": "Peint la cible, ou propage la peinture si elle est déjà peinte. Sur toi, toutes les peintures éclatent en dommages Terre sur les ennemis peints."
+  },
+  "25861": {
+   "role": "gros",
+   "etiquettes": [
+    "Distance",
+    "Soin",
+    "Cumul"
+   ],
+   "accroche": "Le chœur.",
+   "texte": "Gros coup Feu sur un ennemi ou gros soin sur un allié jusqu'à 5 cases ; plus fort après une Moquerie ou la mort d'un de tes Feux Follets."
+  },
+  "25875": {
+   "role": "soutien",
+   "etiquettes": [
+    "Distance",
+    "Bouclier",
+    "Ralentit"
+   ],
+   "accroche": "Le froid qui protège.",
+   "texte": "Bouclier sur un allié, ou dommages Eau sur un ennemi qui a alors du mal à fuir. Quand l'effet tombe, il soigne les alliés et frappe les ennemis autour."
+  },
+  "25883": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Ralentit",
+    "Soin"
+   ],
+   "accroche": "Un murmure.",
+   "texte": "Sur un ennemi : dommages Air et vol de PM. Sur un allié : le soigne et le fait courir plus vite."
+  },
+  "13187": {
+   "role": "gros",
+   "etiquettes": [
+    "Distance",
+    "Soin",
+    "Allié"
+   ],
+   "accroche": "Jamais à terre longtemps.",
+   "texte": "Relève à distance un allié tombé (une fois par minute), sinon le soigne entièrement. Il ne peut plus être soigné pendant 12 s.",
+   "ambiance": "« Debout. On n'a pas fini. »"
+  },
+  "13219": {
+   "role": "soutien",
+   "etiquettes": [
+    "Allié",
+    "Soin"
+   ],
+   "accroche": "La solidarité.",
+   "texte": "Partage la vie de l'allié visé entre tous les alliés Encouragés. Sur un allié Encouragé : c'est lui qui reçoit la vie des autres."
+  }
+ },
+ "enutrof": {
+  "13338": {
+   "role": "base",
+   "etiquettes": [
+    "Distance"
+   ],
+   "accroche": "Ça coûte, mais ça porte.",
+   "texte": "Une pièce lancée jusqu'à 8 cases. Petit coût, grande portée : ton tir de tous les instants.",
+   "ambiance": "« Chaque pièce lancée sera retrouvée. Promis. »"
+  },
+  "13353": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Cumul"
+   ],
+   "accroche": "Ça sonne à chaque fois.",
+   "texte": "Frappe une cible jusqu'à 3 cases en Air et la marque 9 s : chaque fois qu'on lui retire des PA, elle reprend un coup Air (4 fois)."
+  },
+  "13340": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Renforce"
+   ],
+   "accroche": "Le vieux a encore de la jambe.",
+   "texte": "Frappe une cible jusqu'à 4 cases en dommages Terre et te fait courir 30 % plus vite pendant 3 s."
+  },
+  "13363": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Cumul"
+   ],
+   "accroche": "De l'or dans la boue.",
+   "texte": "Frappe une cible jusqu'à 4 cases en Eau et la marque 9 s : chaque fois qu'on lui retire des PM, elle reprend un coup Eau (4 fois)."
+  },
+  "13331": {
+   "role": "zone",
+   "etiquettes": [
+    "Ligne"
+   ],
+   "accroche": "Roule, pelle.",
+   "texte": "Ta pelle roule en ligne droite sur 4 cases et brûle tout ce qu'elle touche."
+  },
+  "13352": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Cumul"
+   ],
+   "accroche": "Ça s'éboule.",
+   "texte": "Frappe une cible jusqu'à 5 cases en Terre et la marque 9 s : chaque retrait de Portée la frappe de nouveau en Terre (4 fois)."
+  },
+  "13366": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Renforce"
+   ],
+   "accroche": "Saisis l'occasion.",
+   "texte": "Frappe une cible jusqu'à 6 cases en dommages Air et te donne +30 Puissance pendant 6 s."
+  },
+  "13368": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Cumul"
+   ],
+   "accroche": "Gare au grisou.",
+   "texte": "Frappe une zone jusqu'à 7 cases en Feu et marque la cible 9 s : chaque soin qu'elle reçoit fait exploser du Feu autour d'elle (4 fois)."
+  },
+  "13328": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Bouclier"
+   ],
+   "accroche": "Un sac qui encaisse.",
+   "texte": "Invoque un Sac Animé pendant 9 s : il prend les coups à la place des alliés autour de lui. Frappe-le pour te soigner."
+  },
+  "13354": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Bouclier"
+   ],
+   "accroche": "On partage tout.",
+   "texte": "Invoque une Musette Animée pendant 6 s : les dommages reçus par les alliés autour d'elle sont répartis entre tous."
+  },
+  "13342": {
+   "role": "soutien",
+   "etiquettes": [
+    "Allié",
+    "Renforce",
+    "Soin"
+   ],
+   "accroche": "File, l'or attend.",
+   "texte": "L'allié visé (ou toi) court 40 % plus vite, gagne +50 Puissance pendant 4 s et récupère 10 % de ses PV."
+  },
+  "13356": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Invocation"
+   ],
+   "accroche": "Une petite promenade.",
+   "texte": "Raccourcit les effets sur la cible et l'échange de place avec ton Sac ou ta Musette."
+  },
+  "13334": {
+   "role": "soutien",
+   "etiquettes": [
+    "Autour de toi",
+    "Soin"
+   ],
+   "accroche": "Tout le monde en profite.",
+   "texte": "Soigne les alliés autour de toi de 6 % de leurs PV, mais les ennemis proches courent 30 % plus vite pendant 3 s.",
+   "ambiance": "« Ne jamais ouvrir. Sauf en cas d'urgence. »"
+  },
+  "13357": {
+   "role": "soutien",
+   "etiquettes": [
+    "Allié",
+    "Renforce"
+   ],
+   "accroche": "La boîte à outils.",
+   "texte": "L'allié visé recharge ses PA et court plus vite pendant 6 s, mais ni lui ni ses invocations ne peuvent attaquer."
+  },
+  "13335": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Affaiblit",
+    "Anti-invocations"
+   ],
+   "accroche": "Enterre-les.",
+   "texte": "Frappe une zone jusqu'à 6 cases en Terre et retire 2 Portée pendant 3 s. +30 % de dommages sur les invocations."
+  },
+  "13355": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Soin"
+   ],
+   "accroche": "Le feu de la mine.",
+   "texte": "Frappe une cible jusqu'à 5 cases en Feu ; pendant 6 s, ceux qui l'attaquent sont soignés d'une part de leurs dommages."
+  },
+  "13332": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Affaiblit",
+    "Renforce"
+   ],
+   "accroche": "La clef du trésor.",
+   "texte": "Sur un ennemi : −2 Portée pendant 3 s. Sur un allié, ou toi si personne n'est touché : +2 cases de portée pendant 6 s."
+  },
+  "13359": {
+   "role": "soutien",
+   "etiquettes": [
+    "Distance",
+    "Soin",
+    "Ralentit"
+   ],
+   "accroche": "La clef de bras.",
+   "texte": "Soigne l'allié visé jusqu'à 6 cases, ou retire des PM à un ennemi."
+  },
+  "13365": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Affaiblit"
+   ],
+   "accroche": "Abattu.",
+   "texte": "Frappe une cible jusqu'à 5 cases en dommages Air et lui retire 2 PA : elle attaque moins souvent."
+  },
+  "13360": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Anti-invocations"
+   ],
+   "accroche": "Plus bon à rien.",
+   "texte": "Frappe une cible jusqu'à 7 cases en Eau ; elle a plus de mal à fuir, et les invocations prennent plus cher."
+  },
+  "13344": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Repousse"
+   ],
+   "accroche": "Une pelle qui pousse.",
+   "texte": "Invoque une Pelle Animée jusqu'à 4 cases : elle repousse les ennemis. Frappe-la pour te soigner."
+  },
+  "13361": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Vol de vie"
+   ],
+   "accroche": "Une bêche qui se sert.",
+   "texte": "Invoque une Bêche Animée : elle vole de la vie en Terre et aide les alliés à fuir. Frappe-la pour te soigner."
+  },
+  "13362": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Autour de toi",
+    "Ralentit",
+    "Renforce"
+   ],
+   "accroche": "Tout est à moi.",
+   "texte": "Retire 3 PM aux ennemis autour de toi et te donne +20 Puissance par ennemi touché pendant 6 s."
+  },
+  "13369": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Affaiblit",
+    "Renforce"
+   ],
+   "accroche": "La décadence.",
+   "texte": "Retire des PA à un ennemi jusqu'à 10 cases. Sur un allié : il frappe bien plus fort tout de suite, puis moins fort 3 s."
+  },
+  "13343": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Ralentit"
+   ],
+   "accroche": "La pelle dorée.",
+   "texte": "Frappe une cible jusqu'à 5 cases en dommages Eau et lui retire 3 PM."
+  },
+  "13358": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Cumul"
+   ],
+   "accroche": "La tourbière.",
+   "texte": "Frappe une zone jusqu'à 8 cases en Terre, plus fort pour chaque PM que tu as dépensé dans les 3 dernières secondes."
+  },
+  "13337": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Ralentit"
+   ],
+   "accroche": "Oups.",
+   "texte": "Retire 2 PM à une cible jusqu'à 8 cases pour 1 PA seulement. Ne fait pas de dommages."
+  },
+  "13329": {
+   "role": "soutien",
+   "etiquettes": [
+    "Allié",
+    "Renforce"
+   ],
+   "accroche": "L'âge d'or.",
+   "texte": "L'allié visé ne peut plus être bloqué et gagne de la Puissance pendant 6 s."
+  },
+  "13336": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Affaiblit"
+   ],
+   "accroche": "La pelle fantôme.",
+   "texte": "Frappe une petite zone jusqu'à 6 cases en dommages Feu et retire leurs bonus aux ennemis touchés."
+  },
+  "13372": {
+   "role": "gros",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Contrôle"
+   ],
+   "accroche": "Le dernier recours.",
+   "texte": "Frappe une zone jusqu'à 7 cases en Air et cloue au sol tout ce qui est dedans : plus de sauts ni d'échanges de place."
+  },
+  "14278": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Anti-invocations"
+   ],
+   "accroche": "Banqueroute.",
+   "texte": "Frappe une cible jusqu'à 6 cases en dommages Air, +40 % sur les invocations."
+  },
+  "13330": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Affaiblit"
+   ],
+   "accroche": "Une pelle en pleine tête.",
+   "texte": "Lance ta pelle jusqu'à 8 cases : gros dommages Terre et la cible perd de la Portée."
+  },
+  "13364": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Zone"
+   ],
+   "accroche": "Par en dessous.",
+   "texte": "Creuse jusqu'à 4 cases pour 1 PM et ressors en frappant en Terre les ennemis autour."
+  },
+  "13367": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Affaiblit",
+    "Repousse"
+   ],
+   "accroche": "La bêche des anciens.",
+   "texte": "Frappe une zone jusqu'à 7 cases en Air, retire des PA et repousse les ennemis loin du centre."
+  },
+  "13345": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Ralentit",
+    "Repousse"
+   ],
+   "accroche": "La pelle des anciens.",
+   "texte": "Frappe une cible jusqu'à 6 cases en Eau, lui retire des PM et la repousse."
+  },
+  "14273": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Soin"
+   ],
+   "accroche": "Un gisement.",
+   "texte": "Frappe une zone jusqu'à 8 cases en Feu ; les alliés qui y restent sont soignés toutes les 3 s pendant 6 s."
+  },
+  "13333": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Anti-invocations"
+   ],
+   "accroche": "Périmé.",
+   "texte": "Frappe une cible jusqu'à 4 cases en Feu, avec des dommages en plus sur les invocations."
+  },
+  "13370": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Ralentit"
+   ],
+   "accroche": "Le tamis.",
+   "texte": "Frappe une zone jusqu'à 5 cases en Eau et retire des PM aux ennemis touchés."
+  },
+  "13346": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Contrôle"
+   ],
+   "accroche": "La corruption.",
+   "texte": "Un ennemi de 4 à 6 cases ne peut plus attaquer ni être blessé pendant 3 s. Sur un allié : il ne peut plus attaquer mais il est soigné."
+  },
+  "14274": {
+   "role": "soutien",
+   "etiquettes": [
+    "Renforce",
+    "Déplacement"
+   ],
+   "accroche": "Le tunnel de fortune.",
+   "texte": "Tu deviens invisible et gagnes de la Puissance pour chaque PM dépensé tant que tu le restes."
+  },
+  "13349": {
+   "role": "gros",
+   "etiquettes": [
+    "Autour de toi",
+    "Contrôle"
+   ],
+   "accroche": "La retraite anticipée.",
+   "texte": "Immobilise et cloue au sol toutes les créatures autour de toi pendant 3 s. Ensuite, c'est toi qui restes immobile un instant."
+  },
+  "29755": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Renforce"
+   ],
+   "accroche": "La pelle de fortune.",
+   "texte": "Plante une Pelle de Fortune pendant 6 s : elle augmente ta Puissance toutes les 3 s, puis te soigne en disparaissant."
+  },
+  "13347": {
+   "role": "soutien",
+   "etiquettes": [
+    "Bouclier",
+    "Invocation"
+   ],
+   "accroche": "Le coffre blindé.",
+   "texte": "Pose un bouclier de 20 % de ses PV sur ton coffre au trésor pendant 6 s."
+  },
+  "13371": {
+   "role": "soutien",
+   "etiquettes": [
+    "Soin",
+    "Invocation"
+   ],
+   "accroche": "La malle de secours.",
+   "texte": "Soigne ton coffre au trésor de 25 % de ses PV."
+  }
+ }
+}

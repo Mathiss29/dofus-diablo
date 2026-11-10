@@ -88,6 +88,8 @@ export class Hud {
   onMenu: (name: string) => void = () => {};
   /** Survol d'un emplacement de sort (id du sort, centre haut de l'emplacement à l'écran) ; null quand on le quitte. */
   onSlotHover: (id: string | null, x: number, y: number) => void = () => {};
+  /** Menu sorts 10D : clic sur une case de la barre = fiche du sort. */
+  onSlotClick: (id: string) => void = () => {};
   /** Rectangles de l'interface à l'écran (un clic dessus ne doit pas faire attaquer). */
   private rects: [number, number, number, number][] = [];
   /** Son coupé (Ctrl+M, maquette Son 8B ; M = carte du monde, 0.2 18A) : petit haut-parleur barré dans le coin de la mini-carte. */
@@ -479,6 +481,10 @@ export class Hud {
       const z = fixed(scene.add.zone(0, 0, 54, 54).setInteractive(), 4);
       z.on('pointerover', () => { const i = id(); if (i) this.onSlotHover(i, z.x, z.y - 27); });
       z.on('pointerout', () => this.onSlotHover(null, 0, 0));
+      z.on('pointerdown', (ptr: Phaser.Input.Pointer, _x: number, _y: number, ev: Phaser.Types.Input.EventData) => {
+        const i = id(); if (!i || !ptr.leftButtonDown()) return;
+        ev.stopPropagation(); this.onSlotClick(i);
+      });
       sv.zone = z;
     };
     this.slots.forEach((sv, i) => hover(sv, () => world.player.bar[i] ?? null));
