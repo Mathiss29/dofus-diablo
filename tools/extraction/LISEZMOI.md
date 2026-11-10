@@ -590,3 +590,10 @@ Ville vivante (maquette Ville 5F, 8 nov. 2026) :
 - `recoltes.py <liste d'Amakna> <cartes> <tables> <fr.bin> monde.json amakna`, puis `recoltes_cases.py` sur cette seule liste (mise sous la
   clé astrub le temps du script), puis ajout à la suite de la liste d'Astrub. Les récoltes des cartes en essai ne sortent qu'en partie de test.
 - Ateliers du Château (sans machine dessinée : un poste au milieu de la salle) dans `zones.json > astrub > open > ateliers`.
+
+## Musiques et ambiances d'Amakna (0.4 suite : 13A + 13B + 13C)
+- `python3 sons_amakna.py <banques .bank> <dossier contenant fsb5/> <racine du dépôt>` (banques : `cache-dofus/astrub`, `musiques.part0*` recollés en `Musiques.bank`,
+  `AMB_Loc.bank` dans `sons.tar`) : musiques Amakna 1-3, Village, Cimetières, salles de donjon par thème (+ Cania, Moon, Wabbits pour plus tard),
+  fonds d'ambiance, sons des donjons (`sons.json > donjon`) et `sons.json > lieux` (sous-zone -> musique, fond, fondNuit).
+- La musique officielle de chaque carte (`playlistSet`) est par GUID FMOD non décodé : le tableau `LIEUX` du script range les sous-zones à la main.
+- Salles et couloirs d'un donjon : musique `donjon_<thème>` du thème de la musique du boss (`boss_<thème>`). Tout cela seulement si `player.v04`.

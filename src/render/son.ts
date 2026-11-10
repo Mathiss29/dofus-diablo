@@ -22,7 +22,7 @@ export type Bus = 'musique' | 'effets' | 'monstres' | 'ambiance' | 'interface';
 export interface Volumes { general: number; musique: number; effets: number; monstres: number; ambiance: number; interface: number; muet: boolean;
   /** Maquette « Musique boss » 8A : réglage Oui/Non de la musique de combat des boss. */
   musiqueBoss: boolean }
-type Manifest = {
+export type Manifest = {
   musiques: Record<string, string | { calme: string; renfort?: string; couches?: Record<string, string> } | { pistes: string[] }>;
   /** Musique officielle de chaque boss (maquette « Musique boss » 7B) : clé de `musiques` dont les pistes s'ajoutent avec ses PV perdus. */
   boss?: Record<string, string>;
@@ -35,11 +35,25 @@ type Manifest = {
   kamas?: string[];
   /** Coups des animations de récolte (maquette Armes 9A) : par geste officiel (AnimFaucher, AnimHache…). */
   recolte?: Record<string, string[]>;
+  /** 0.4 suite 13A + 13B : musique officielle et fonds d'ambiance de chaque sous-zone d'Amakna (fondNuit : en plus du soir à l'aube). */
+  lieux?: Record<string, { musique: string; fond: string[]; fondNuit?: string[] }>;
+  /** 0.4 suite 13C : sons des donjons (grilles de l'arène, vague, arrivée du boss, porte, salle vidée…). */
+  donjon?: Record<string, string>;
 };
 export const MANIFESTE = SONS as Manifest;
 const DOSSIER = 'assets/son/';
 
 // ---------- calculs purs (testés dans tests/son.test.ts) ----------
+
+/** 0.4 suite 13A-13C : ce qui joue à cet endroit. Dans un donjon : la musique des salles du thème de son boss (boss_<thème> ->
+ *  donjon_<thème>) ; dans une sous-zone d'Amakna : sa musique et son ambiance (plus celle de la nuit) ; sinon null (musique de la zone). */
+export function sonDuLieu(m: Pick<Manifest, 'musiques' | 'lieux'>, sous: number | undefined, nuit: boolean, musiqueBoss: string | null): { musique: string; fond: string[] } | null {
+  const dj = musiqueBoss?.replace(/^boss_/, 'donjon_');
+  if (dj && m.musiques[dj]) return { musique: dj, fond: ['interieur'] };
+  const l = sous != null ? m.lieux?.[sous] : undefined;
+  if (!l || !m.musiques[l.musique]) return null;
+  return { musique: l.musique, fond: [...l.fond, ...(nuit ? l.fondNuit ?? [] : [])] };
+}
 
 /** Force d'un son selon la distance à l'écran (pixels) : plein jusqu'à `pres`, nul à `loin`. */
 export function gainDistance(d: number, pres = 260, loin = 1300) {

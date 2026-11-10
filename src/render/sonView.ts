@@ -7,7 +7,8 @@ import type { WorldGrid } from '../sim/gridmap';
 import type { Look } from './looks';
 import type { SysData } from './particles';
 import spellfx from '../data/spellfx.json';
-import { MANIFESTE, Son, TRAINE_SORT_MONSTRE, palierBoss, regrouper, sonDuDecor } from './son';
+import { MANIFESTE, Son, TRAINE_SORT_MONSTRE, palierBoss, regrouper, sonDuDecor, sonDuLieu } from './son';
+import { ambiance, chargerReglages } from './ambiance';
 
 const FX = (spellfx as unknown as { spells: Record<string, Record<string, { gfx: number }[] | unknown>> }).spells;
 /** Monstres qui nous attaquent : à cette distance (unités du monde) ils comptent pour la musique (3A). */
@@ -33,6 +34,10 @@ export class SonView {
   private horloge = 0;
   /** Bastion : bord de l'île centrale vers chaque île de nation (écran), pour la couche de musique de la nation. */
   private iles: { n: string; x: number; y: number }[] = [];
+  /** 0.4 suite 13A : musique de l'endroit en cours (sous-zone d'Amakna, salles d'un donjon), '' = celle de la zone. */
+  private musiqueLieu = '';
+  /** 13C : la salle du donjon où l'on est avait encore des monstres (la porte verrouillée s'ouvre quand elle se vide). */
+  private salleOccupee: string | null = null;
 
   constructor(private world: World, private look: Look, classId: string, private vitrine: boolean, parts?: Record<string, SysData[]>, wg?: WorldGrid) {
     this.classe = classId;
@@ -71,6 +76,7 @@ export class SonView {
     const zone = this.world.zone.open;
     if (zone) for (const s of Object.values(zone.subareas)) s.monsters.forEach(m => types.add(m));
     for (const t of types) { const m = M.monstres[t]; if (m) f.push(...m.attaque, ...m.hit, ...m.mort); }
+    if (this.world.player.v04) f.push(...Object.values(M.donjon ?? {}));
     for (const id of [...Object.keys(GAME_DATA.classes[this.classe]?.spells ?? {}), ...[...types].flatMap(t => (GAME_DATA.monsters[t]?.spells ?? []).map(s => `m${s.id}`))])
       f.push(...this.gfxDe(id));
     Son.precharger(f);
@@ -125,8 +131,37 @@ export class SonView {
       case 'checkpoint': Son.jouer(M.ui.checkpoint, 'interface'); break;
       // Kamas D : tintement des pièces ramassées (son officiel, plus aigu que la chute au sol)
       case 'lootKamas': Son.jouer(Son.auHasard(M.kamas), 'effets', { vol: 0.7, vitesse: 1.12 + Math.random() * 0.1, cle: 'kamas', ecart: 0.08 }); break;
+      // 0.4 suite 13C : sons des donjons (partie de test tant que la 0.4 est cachée)
+      case 'areneDebut': this.donjon('fermeture'); break;
+      case 'areneVague': if (e.boss) this.donjon('boss'); else if (e.n > 1) this.donjon('vague', 0.8); break;
+      case 'areneFin': this.donjon('ouverture'); this.donjon('portail', 0.6); break;
+      case 'portal': if (this.world.zone.open?.donjons?.some(d => d.nom === e.nom)) this.donjon('porte', 0.7); break;
       case 'playerDeath': if (this.adversaire) { this.adversaire = null; Son.finCombat(false); } break;
     }
+  }
+
+  private donjon(k: string, vol = 1) {
+    const f = MANIFESTE.donjon?.[k];
+    if (f && this.world.player.v04) Son.jouer(f, 'effets', { vol, cle: `donjon${k}`, ecart: 0.5 });
+  }
+
+  /** 0.4 suite 13A-13C : musique et ambiance de l'endroit (sous-zone d'Amakna, salles d'un donjon) ; null = celles de la zone. */
+  private lieu(inside: boolean): string[] | null {
+    const w = this.world, p = w.player;
+    if (w.opts.zone !== 'astrub' || !w.zone.open || !p.v04) return null;
+    const carte = w.worldGrid?.mapAt(p.x, p.y), dj = w.donjonIci();
+    const dd = dj ? w.zone.open.donjons?.find(d => d.nom === dj) : undefined;
+    const boss = dd?.bossVague?.find(b => GAME_DATA.monsters[b]?.boss) ?? (dj ? w.bossDuDonjon(dj) : null);
+    const r = chargerReglages(), nuit = !inside && ['nuit', 'soir'].includes(ambiance(r, new Date(), false).nom);
+    const l = sonDuLieu(MANIFESTE, carte?.sub, nuit, boss ? MANIFESTE.boss?.[boss] ?? null : null);
+    // salle vidée : sa porte verrouillée s'ouvre (13C)
+    const tag = carte?.tag ?? null, verrou = !!dj && !!tag && w.portes.some(po => po.verrou && po.ends[0].tag === tag);
+    const occupee = verrou && !w.salleVide(tag!) ? tag : null;
+    if (this.salleOccupee && this.salleOccupee === tag && !occupee) this.donjon('salleVide');
+    this.salleOccupee = occupee;
+    const musique = l?.musique ?? '';
+    if (musique !== this.musiqueLieu) { this.musiqueLieu = musique; Son.zone([musique || 'astrub'], 'amakna'); }
+    return l ? (inside && !dj ? ['interieur'] : l.fond) : null;
   }
 
   /** À chaque image : sorts du joueur, attaques des monstres, intensité de la musique, ambiance et décor. */
@@ -200,8 +235,8 @@ export class SonView {
       // 4A + 7B : musique du boss des parages (ou du boss de l'arène) chargée à l'avance
       const boss = w.arene?.d.bossVague?.find(b => GAME_DATA.monsters[b]?.boss) ?? w.monsters.find(m => m.def.boss && !m.dead)?.type;
       Son.prevoir(boss ? MANIFESTE.boss?.[boss] ?? null : null);
-      const temple = w.area?.name === 'Temple Céleste';
-      Son.fond(!w.zone.open ? ['incarnam_vent'] : temple ? ['temple_tuto', 'temple_ethere'] : inside ? ['interieur'] : w.opts.zone === 'astrub' ? ['astrub_vent', 'astrub_oiseaux'] : ['incarnam_vent', 'incarnam']);
+      const temple = w.area?.name === 'Temple Céleste', lieu = this.lieu(inside);
+      Son.fond(lieu ? lieu : !w.zone.open ? ['incarnam_vent'] : temple ? ['temple_tuto', 'temple_ethere'] : inside ? ['interieur'] : w.opts.zone === 'astrub' ? ['astrub_vent', 'astrub_oiseaux'] : ['incarnam_vent', 'incarnam']);
     }
     // 7B : sources du décor les plus proches
     const ps = ISO.toScreen(p.x, p.y), proches: Record<string, number> = {};
