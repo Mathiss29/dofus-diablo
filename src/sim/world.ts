@@ -975,6 +975,7 @@ export class World {
       const pool = [...new Set(Object.values(d.salles).flat(2))].filter(m => M[m] && !M[m].boss);
       if (!pool.length) continue;
       for (const tag of cl.tags) {
+        if (cl.annexes?.includes(tag)) continue;
         if (!wg.freeByMap.get(tag)?.length) continue;
         const m = wg.mapByTag(tag)!, sub = this.zone.open!.subareas[String(m.sub)] ?? { name: d.nom, level: this.zone.level, monsters: [], groupsPerMap: 0, groupSize: [0, 0] };
         for (let i = 0; i < cl.nErrants; i++) {

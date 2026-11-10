@@ -19,7 +19,8 @@ describe('donjons d’Amakna aux vraies entrées (« 0.4 suite : 5A+5D »)', () 
       const po = w.portes.find(p => p.nom === nom), dj = w.zone.open!.donjons!.find(d => d.nom === nom)!;
       expect(po, nom).toBeDefined();
       expect(wg.mapByTag(po!.ends[0].tag)?.essai, nom).toBeTruthy();
-      expect(po!.ends[1].tag).toBe(dj.arene!.tag);
+      // en couloirs (5B) : la porte mène à la première vraie salle ; sinon droit à l'arène
+      expect(po!.ends[1].tag).toBe(dj.couloirs?.salles[0] ?? dj.arene!.tag);
       expect(w.map.walkable(po!.ends[0].x, po!.ends[0].y), nom).toBe(true);
     }
     expect(monde(false).portes.filter(p => DONJONS.includes(p.nom))).toHaveLength(0);
@@ -35,5 +36,24 @@ describe('donjons d’Amakna aux vraies entrées (« 0.4 suite : 5A+5D »)', () 
     expect(t.acheter('goultard', id)).toBe(true);
     const pub = monde(false); pub.player.resources[PEPITE] = 99999;
     if (!pub.player.v04) expect(pub.acheter('goultard', id)).toBe(false);
+  });
+
+  it('5B : 10 donjons en couloirs, de la première salle à l’arène du boss en marchant, en partie de test seulement', () => {
+    const w = monde(true), wg = w.worldGrid!;
+    const enCouloirs = w.zone.open!.donjons!.filter(d => d.couloirs && !d.couloirs.salles[0].startsWith('grange') && w.couloirs(d));
+    expect(enCouloirs.length).toBeGreaterThanOrEqual(10);
+    let relies = 0;
+    for (const d of enCouloirs) {
+      const po = w.portes.find(p => p.nom === d.nom && p.ends[1].tag === d.couloirs!.salles[0]);
+      if (!po) continue;   // îles des Wabbits : leurs entrées viendront avec l'île (0.4 suite : 10A)
+      relies++;
+      const depart = wg.cellAtWorld(po!.ends[1].x, po!.ends[1].y), but = d.arene!.arrivee;
+      const vu = new Set([depart]); let front = [depart];
+      while (front.length && !vu.has(but)) { const n: number[] = []; for (const c of front) for (const v of wg.neighbors(c)) if (!vu.has(v)) { vu.add(v); n.push(v); } front = n; }
+      expect(vu.has(but), d.nom).toBe(true);
+      expect(Object.keys(d.salles), d.nom).toEqual(d.couloirs!.salles);
+    }
+    expect(relies).toBeGreaterThanOrEqual(8);
+    expect(monde(false).zone.open!.donjons!.some(d => d.couloirs?.salles[0]?.startsWith('scarafeuilles'))).toBe(false);
   });
 });

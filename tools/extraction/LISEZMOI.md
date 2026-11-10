@@ -572,3 +572,13 @@ Ville vivante (maquette Ville 5F, 8 nov. 2026) :
   et 95686149, cuisines 95684099), rangées en (20..34, 56) : `PARTAGE=1 world_export.py`, `COURANTE=1 batiments.py`,
   `decor_par_carte.py`, puis `monde_continent.py fusion` (ajouter ensuite `pages` et `essai: 1` aux nouvelles salles).
 - Portes dans `zones.json` (`open.portes`) : tour du Château [4,-6] case 330 → trône ; [5,-6] case 356 → Milice ; portes 3507/3520 des salles.
+
+## Donjons d'Amakna en couloirs (0.4 suite : 5B, 10 nov. 2026)
+
+- Salles = premières cartes de `dungeons.mapIds` (la dernière est la salle du boss, déjà l'arène `arene_<clé>`) : 4 salles si le donjon
+  en a 6 ou plus, sinon 3. Sous-zone = `mapsinformation.subAreaId`. Export comme les intérieurs du Château (`PARTAGE=1 world_export.py`,
+  `COURANTE=1 batiments.py`, `decor_par_carte.py`, `monde_continent.py fusion`), rangées en (x0 + 2j, yb + 1) : x0 = -80 + 14 c, yb = 56 + 4 r.
+- `python3 tools/extraction/couloirs_amakna.py plan.json` : retire les grands masques noirs des salles, pose l'arène au bout de la rangée,
+  trace les couloirs (sol peint de la salle d'avant), ajoute des petites cartes sans image (`annexes`) sous le creux des couloirs,
+  écrit `salles`, `couloirs` et la porte d'entrée (vers la 1re salle) dans `zones.json > astrub > open > donjonsTest`. Puis `envoi.mjs`.
+- Kwakwa : le ciel est peint dans le sol de chaque salle, ses bords droits se voient entre les salles.

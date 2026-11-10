@@ -294,7 +294,9 @@ export interface DonjonDef { nom: string; salles: Record<string, string[][]>;
    *  Groupes officiels dans les salles, `nErrants` monstres seuls dans chaque couloir (2B) ; les vagues partent à l'entrée de l'arène. */
   couloirs?: { salles: string[]; tags: string[]; errants: number[]; nErrants: number;
     /** Cases des couloirs (grande grille), ouvertes à la marche seulement en partie de test. */
-    cases: number[]; origine?: Record<string, number[]> } }
+    cases: number[]; origine?: Record<string, number[]>;
+    /** Petites cartes sans image sous le creux d'un couloir (dans tags, pour savoir où l'on est) : pas de monstres errants dessus. */
+    annexes?: string[] } }
 export interface AreneDef { tag: string; arrivee: number; entrees: number[]; boss: number; sortie: number; coffre: number }
 /** Monde ouvert : cartes Dofus collées, groupes de monstres posés sur chaque carte, qui réapparaissent. */
 export interface OpenDef {
