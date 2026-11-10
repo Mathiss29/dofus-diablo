@@ -37,6 +37,10 @@ const MONSTER_MAP = (shot: number, atk = 'AnimAttaque0', spells: Record<number, 
   die: { anim: 'AnimMort' },
 });
 
+/** Monstre immobile (invocation officielle : Cawotte Woyale, Wobot Tamponneur) : il ne court ni ne frappe. */
+const FIXE_MAP: Record<string, AnimSlice> = { idle: { anim: 'AnimStatique' }, spawn: { anim: 'AnimStatique' }, run: { anim: 'AnimStatique' },
+  windup: { anim: 'AnimStatique' }, slam_charge: { anim: 'AnimStatique' }, lunge: { anim: 'AnimStatique' }, stun: { anim: 'AnimHit', loop: true, fps: 20 }, die: { anim: 'AnimMort' } };
+
 // Auto-attaque à l'arme (src/data/armes.json) : AnimArme<typeId>, même squelette pour toutes les classes.
 // Bornes : le repère SHOT de l'animation tombe sur l'impact du coup (impactAt / duration).
 const WEAPON_MAP: Record<string, AnimSlice> = {
@@ -497,6 +501,9 @@ export const LOOKS: Record<string, Look> = {
   black_wo_wabbit: { atlas: 'black_wo_wabbit', scale: 0.54, map: MONSTER_MAP(11/25, 'AnimAttaque0', { 0: 11/25, 2: 18/31 }), height: 287, multi: true },
   wobot_kiafin: { atlas: 'wobot_kiafin', scale: 0.58, map: MONSTER_MAP(12/30, 'AnimAttaque0', { 0: 12/30, 1: 19/33 }), height: 396, multi: true },
   blanc_pa_wabbit: { atlas: 'blanc_pa_wabbit', scale: 0.64, map: MONSTER_MAP(15/40, 'AnimAttaque0', { 0: 15/40, 2: 7/28 }), height: 269, multi: true },
+  // invocations immobiles du Wa Wabbit et du Wa Wobot (« Wabbits : 8A, 10A ») : repos, coup reçu, mort
+  cawotte_woyale: { atlas: 'cawotte_woyale', scale: 0.4, map: FIXE_MAP, height: 120, multi: true },
+  wobot_tamponneur: { atlas: 'wobot_tamponneur', scale: 0.6, map: FIXE_MAP, height: 100, multi: true },
   tiwobot: { atlas: 'tiwobot', scale: 0.52, map: MONSTER_MAP(22/54, 'AnimAttaque1', { 1: 22/54, 2: 45/60, 3: 19/50 }), height: 230, multi: true },
   wabbit: { atlas: 'wabbit', scale: 0.64, map: MONSTER_MAP(11/27, 'AnimAttaque0', { 0: 11/27, 1: 22/35 }), height: 151, multi: true },
   black_wabbit: { atlas: 'black_wabbit', scale: 0.64, map: MONSTER_MAP(13/27, 'AnimAttaque0', { 0: 13/27, 1: 18/39 }), height: 146, multi: true },

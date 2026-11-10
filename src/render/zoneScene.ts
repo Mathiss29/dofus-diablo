@@ -141,6 +141,8 @@ export class ZoneScene extends Phaser.Scene {
   private havreSacView: HavreSacView | null = null;
   private areneView: AreneView | null = null;
   private guerreView: GuerreView | null = null;
+  /** Boss enfui dans son trou (« Wabbits : 8B »), pour la bannière de fin qui suit. */
+  private fuite: { suite: string; premier: boolean; name: string } | null = null;
   /** Havre-Sac : touche H ou bouton du HUD (2A), choix dans la fenêtre du Zaap du Havre-Sac (2C), pour le prochain pas. */
   private havreSacDemande = false;
   /** Enutrof : touche du coffre au trésor. */
@@ -1229,8 +1231,25 @@ export class ZoneScene extends Phaser.Scene {
           if (e.boss) this.hud.banner(`${M[e.boss].name}\narrive !`, 1600, true);
           else this.hud.banner(e.nom ? `Vague ${e.n} / ${e.total}\n${e.nom} en nombre !` : `Vague ${e.n} / ${e.total}`, 900);
           break;
-        case 'arenePalier': this.hud.banner(`${e.name}\nIntouchable : abats ses renforts !`, 1500, true); break;
-        case 'areneFin': this.hud.banner(`${e.nom} terminé !\n${chrono(e.temps)}${e.record ? ' · nouveau record !' : ''} · portail et coffre à l'estrade`, 2600); break;
+        case 'arenePalier':
+          // « Wabbits : 8A » : paliers propres au boss (Cawottes Woyales à casser, Awmuwe Woyale)
+          if (e.renforts) this.hud.banner(`${e.name}\nIl plante des ${M[e.renforts]?.name ?? 'renforts'}s : casse-les !`, 1600, true);
+          else if (e.awmuwe) this.hud.banner(`${e.name}\nAwmuwe Woyale : abats ses renforts, gare à son rayon !`, 1600, true);
+          else this.hud.banner(`${e.name}\nIntouchable : abats ses renforts !`, 1500, true);
+          break;
+        // « Wabbits : 7C » : le Kiafin court prévenir la garde (n = 0), ou l'a prévenue
+        case 'areneAlarme':
+          if (e.n) this.hud.banner(`Alarme !\n${e.n} gardes accourent`, 1200, true);
+          else this.hud.toast('Un Tiwabbit Kiafin court donner l\'alarme : rattrape-le !');
+          break;
+        case 'bossFuite': this.fuite = { suite: e.suite, premier: e.premiers.includes(this.world.player.id), name: e.name }; break;
+        case 'areneFin': {
+          // « Wabbits : 8B + 9A » : le boss s'est enfui ; la première fois, son trou mène au donjon suivant
+          const f = this.fuite; this.fuite = null;
+          if (f) this.hud.banner(`Le ${f.name} s'enfuit dans son trou !\n${f.premier ? `Saute dedans pour le suivre : ${f.suite}` : 'Le trou se referme derrière lui'} · ${chrono(e.temps)}${e.record ? ' · record !' : ''}`, 3200);
+          else this.hud.banner(`${e.nom} terminé !\n${chrono(e.temps)}${e.record ? ' · nouveau record !' : ''} · portail et coffre à l'estrade`, 2600);
+          break;
+        }
         // Guerre des Cawottes (maquette « Guerre : » 6C, 10A, 10D) : annonce aux joueurs de l'île, vagues, vols, bilan
         case 'guerreDebut': this.hud.banner(`${e.spontanee ? 'Les Wabbits attaquent !' : 'L\'attaque commence !'}\n${e.champ} · ${e.vagues} vagues · ${e.cawottes} cawottes à défendre${e.spontanee ? ' · +50 % de Cawottes' : ''}`, 2200, e.spontanee); break;
         case 'guerreVague': this.hud.banner(`Vague ${e.n} / ${e.total}`, 800); break;

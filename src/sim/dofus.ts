@@ -31,4 +31,6 @@ export const PASSIFS = {
   argente: { seuil: 0.2, soin: 0.2, recharge: 120 },
   /** Bénédiction chocolatée : touché à distance avec un ennemi au contact, bouclier de 2 % des PV max pendant 5 s, au plus 1 fois par seconde. */
   cacao: { bouclier: 0.02, duree: 5, recharge: 1, contact: 48, distance: 96 },
+  /** Sagesse Wabbit (Dofus Cawotte, 0.4) : un ennemi tente de retirer des PA ou PM : +25 Esquive PA ou PM pendant 3 s, cumulable 2 fois. */
+  cawotte: { esquive: 25, duree: 3, max: 2 },
 };

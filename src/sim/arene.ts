@@ -1,4 +1,5 @@
 import type { Butin } from './butin';
+import { tenterDofusCawotte } from './guerre';
 import type { DonjonDef } from './defs';
 import { RARITIES, type Rarity } from './items';
 import type { Monster } from './monster';
@@ -17,6 +18,12 @@ export const ARENE = {
   cle: 600,
   /** 8C : paliers du boss (part de ses PV) ; à chacun il appelle cette vague et devient intouchable tant qu'elle vit. */
   paliers: [0.66, 0.33], palierN: 4,
+  /** « Wabbits : 8A » : Awmuwe Woyale = dommages subis × awmuwe ; renforts d'un palier posés à cette distance du boss. */
+  awmuwe: 0.3, autourBoss: 110,
+  /** « Wabbits : 8B » : écart minimal entre le trou du boss et le portail ou le coffre. */
+  ecartTrou: 170,
+  /** « Wabbits : 7C » : le Kiafin qui donne l'alarme court ×1,3 vers l'entrée la plus proche. */
+  alarmeVitesse: 1.3,
   /** 13A : rayon du portail de sortie et du coffre. */
   rayon: 60,
   /** Maquette Coffres 2A : le coffre ouvre la gueule puis éclate en pièces d'or ; le butin jaillit à l'éclat (s). */
@@ -67,6 +74,13 @@ export class Arene {
   readonly pts: { arrivee: Pt; entrees: Pt[]; boss: Pt; sortie: Pt; coffre: Pt };
   private readonly pool: string[];
   private depart: Pt;
+  /** « Wabbits : 8B + 9A » : trou où le boss s'est enfui ; joueurs pour qui c'est la première victoire (le trou les mène à la suite). */
+  trou: Pt | null = null;
+  readonly premiers = new Set<number>();
+  /** « Wabbits : 7C » : âge des monstres qui peuvent donner l'alarme, ceux qui courent la donner, alarmes données. */
+  private ages = new Map<Monster, number>();
+  private fuyards = new Map<Monster, Pt>();
+  alarmes = 0;
 
   constructor(readonly w: World, readonly d: DonjonDef, reprise: number) {
     const wg = w.worldGrid!, a = d.arene!, at = (c: number) => wg.cellToWorld(c);
@@ -78,6 +92,7 @@ export class Arene {
     this.pool = [...new Set(tous.length ? tous : (d.vagues ?? []).flatMap(v => v.m))].filter(m => M[m] && !M[m].boss);
     this.vague = Math.max(0, Math.min(this.total + 1, reprise) - 1);   // la vague atteinte recommence (monstres remis à neuf)
     this.depart = { ...this.pts.arrivee };
+    if (d.fuite) for (const q of w.players) if (w.commeJoueur(q, () => (w.quetes?.donjons[d.nom]?.v ?? 0) === 0)) this.premiers.add(q.id);
   }
 
   get nom() { return this.d.nom; }
@@ -104,6 +119,7 @@ export class Arene {
       return;
     }
     this.chrono += dt; this.tVague += dt;
+    this.updateAlarme(dt);
     this.updateBoss();
     if (this.vague > this.total) return;   // la vague du boss finit quand il tombe
     const reste = this.membres.filter(m => !m.dead).length + this.arrivees.filter(a => a.vague === this.vague).length;
@@ -154,8 +170,18 @@ export class Arene {
     }
     const seuil = ARENE.paliers[this.palier];
     if (seuil == null || b.hp > b.maxHp * seuil) return;
+    const P = this.d.paliersBoss?.[this.palier];
     this.palier++; b.intouchable = true; this.renforts = this.renforts.filter(m => !m.dead);
-    w.emit({ k: 'arenePalier', id: b.id, name: b.def.name, n: this.palier });
+    w.emit({ k: 'arenePalier', id: b.id, name: b.def.name, n: this.palier, renforts: P?.renforts?.[0] ?? null, awmuwe: !!P?.awmuwe });
+    // Awmuwe Woyale (8A) : carapace, puis son grand sort tout de suite
+    if (P?.awmuwe) { b.subis = ARENE.awmuwe; b.subisT = P.awmuwe; b.sigCd = 0; w.emit({ k: 'status', x: b.x, y: b.y - 60, text: 'Awmuwe Woyale', color: '#f2d36b' }); }
+    if (P?.renforts) {   // ses renforts à lui (Cawottes Woyales…), plantés autour de lui
+      P.renforts.forEach((type, i) => {
+        const a = i / P.renforts!.length * Math.PI * 2 + 0.4, r = ARENE.autourBoss;
+        this.arrivees.push({ ...this.libre(b.x + Math.cos(a) * r, b.y + Math.sin(a) * r * 0.6), type, t: ARENE.annonce, vague: -1 });
+      });
+      return;
+    }
     for (let i = 0; i < ARENE.palierN; i++) {
       const e = this.pts.entrees[i % this.pts.entrees.length], a = w.rng.range(0, Math.PI * 2), r = i >= this.pts.entrees.length ? 50 : 0;
       this.arrivees.push({ ...this.libre(e.x + Math.cos(a) * r, e.y + Math.sin(a) * r * 0.6), type: w.rng.pick(this.pool), t: ARENE.annonce, vague: -1 });
@@ -166,16 +192,62 @@ export class Arene {
     return wg.walkable(x, y) ? { x, y } : wg.nearestFree(x, y, wg.freeByMap.get(this.d.arene!.tag)!);
   }
 
+  /** « Wabbits : 7C » : un monstre d'alarme resté en vie trop longtemps court vers une entrée ; s'il l'atteint, des renforts arrivent. */
+  private updateAlarme(dt: number) {
+    const A = this.d.alarme;
+    if (!A) return;
+    for (const m of this.tous) {
+      if (m.dead || m.type !== A.monstre || this.fuyards.has(m)) continue;
+      const t = (this.ages.get(m) ?? 0) + dt;
+      this.ages.set(m, t);
+      if (t < A.delai) continue;
+      const e = this.pts.entrees.reduce((a, b) => Math.hypot(b.x - m.x, b.y - m.y) < Math.hypot(a.x - m.x, a.y - m.y) ? b : a);
+      this.fuyards.set(m, e);
+      this.w.emit({ k: 'areneAlarme', id: m.id, x: m.x, y: m.y, n: 0 });
+    }
+  }
+  /** Avant l'IA ordinaire : true = l'arène mène ce monstre (le Kiafin qui court donner l'alarme). */
+  piloter(m: Monster, dt: number): boolean {
+    const e = this.fuyards.get(m), A = this.d.alarme;
+    if (!e || !A || m.dead || this.fini) return false;
+    if (m.allerVers(e.x, e.y, dt, this.w, ARENE.alarmeVitesse) && Math.hypot(e.x - m.x, e.y - m.y) > 30) return true;
+    // arrivé : il disparaît et la garde accourt
+    this.fuyards.delete(m); m.dead = true; m.t = 0; this.alarmes++;
+    this.w.emit({ k: 'areneAlarme', id: m.id, x: m.x, y: m.y, n: A.renforts });
+    const gardes = this.pool.filter(t => t !== A.monstre);   // la garde, pas d'autres Kiafins (pas d'alarme en chaîne)
+    for (let i = 0; i < A.renforts; i++) {
+      const q = this.pts.entrees[i % this.pts.entrees.length], a = this.w.rng.range(0, Math.PI * 2), r = i >= this.pts.entrees.length ? 50 : 0;
+      this.arrivees.push({ ...this.libre(q.x + Math.cos(a) * r, q.y + Math.sin(a) * r * 0.6), type: this.w.rng.pick(gardes.length ? gardes : this.pool), t: ARENE.annonce + Math.floor(i / 3) * ARENE.cadence, vague: this.vague });
+    }
+    return true;
+  }
+
   /** Le boss est tombé : chrono arrêté, record gardé, la clé est usée ; les derniers monstres s'enfuient. Portail et coffre (13A). */
   private finir() {
     const w = this.w, p = w.player;
     this.fini = true; this.arrivees = [];
+    // 8B : il ne meurt pas, il plonge dans un trou sous son estrade
+    if (this.d.fuite && this.boss) {
+      const b = this.boss;
+      b.t = 0;
+      // le trou s'ouvre là où il était, mais jamais sur le portail ni sur le coffre
+      const S = this.pts.sortie, C = this.pts.coffre, loin = (q: Pt) => Math.min(Math.hypot(q.x - S.x, q.y - S.y), Math.hypot(q.x - C.x, q.y - C.y));
+      let t: Pt = { x: b.x, y: b.y };
+      if (loin(t) < ARENE.ecartTrou) {   // trop près : plus bas, vers le milieu de la cour (côté joueurs)
+        const A = this.pts.arrivee, d = Math.hypot(A.x - S.x, A.y - S.y) || 1;
+        t = this.libre(S.x + (A.x - S.x) / d * ARENE.ecartTrou * 1.4, S.y + (A.y - S.y) / d * ARENE.ecartTrou * 1.4);
+      }
+      this.trou = t;
+      w.emit({ k: 'bossFuite', id: b.id, name: b.def.name, x: b.x, y: b.y, suite: this.d.fuite.suite, premiers: [...this.premiers] });
+    }
     for (const m of this.tous) if (!m.dead) { m.dead = true; m.t = 0.6; }
     if (p.cleDonjon?.nom === this.d.nom) p.cleDonjon = null;
     if (w.players.length > 1) this.butins = w.players.map(q => [q.id, w.commeJoueur(q, () => w.tirerCoffreDonjon(this.d))]);
     else this.butin = w.tirerCoffreDonjon(this.d);
     const objets = [this.butin, ...this.butins.map(b => b[1])].flatMap(b => b?.objets ?? []);
     this.rareteCoffre = objets.reduce<Rarity | null>((m, it) => !m || RARITIES.indexOf(it.rarity) > RARITIES.indexOf(m) ? it.rarity : m, null);
+    // Dofus Cawotte (« Wabbits : 14A + 14D ») : un tirage par joueur sur le Wa Wabbit et le Wa Wobot
+    if (this.boss) for (const q of w.players) w.commeJoueur(q, () => tenterDofusCawotte(w, this.boss!.type));
     const record = w.quetes?.tempsDonjon(this.d.nom, this.chrono) ?? false;
     w.emit({ k: 'areneFin', nom: this.d.nom, temps: this.chrono, record });
   }
@@ -202,6 +274,8 @@ export class Arene {
       this.eclat = ARENE.eclat;
     }
     if (Math.hypot(p.x - s.x, p.y - s.y) < ARENE.rayon * 0.8) w.quitterArene(this.d);
+    // 9A : la première fois, le trou du boss mène droit au donjon suivant
+    else if (this.trou && this.d.fuite && this.premiers.has(p.id) && Math.hypot(p.x - this.trou.x, p.y - this.trou.y) < ARENE.rayon * 0.8) w.suivreDansLeTrou(this.d, this.d.fuite.suite);
   }
   /** Le joueur est parti (mort, Rappel) : ses monstres disparaissent ; la clé garde la vague atteinte. */
   abandonner() {

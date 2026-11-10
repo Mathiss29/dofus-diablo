@@ -1,3 +1,4 @@
+import { coefProspection } from './butin';
 import type { Monster } from './monster';
 import type { World } from './world';
 
@@ -194,9 +195,23 @@ export class Attaque {
   }
 }
 
-/** Ce qu'un joueur garde de la guerre (sauvegarde) : attaques gagnées, en or, champs parfaits, Kiafin rattrapés, records. */
-export interface EtatGuerre { gagnees: number; or: number; parfaits: string[]; kiafins: number; records: Record<string, { sauvees: number; temps: number }> }
-export const guerreVide = (): EtatGuerre => ({ gagnees: 0, or: 0, parfaits: [], kiafins: 0, records: {} });
+/** Ce qu'un joueur garde de l'île (sauvegarde) : attaques gagnées, en or, champs parfaits, Kiafin rattrapés, records ;
+ *  malchance = chance en plus pour le Dofus Cawotte (« Wabbits : 14D »), remise à zéro quand il tombe. */
+export interface EtatGuerre { gagnees: number; or: number; parfaits: string[]; kiafins: number; records: Record<string, { sauvees: number; temps: number }>; malchance?: number }
+export const guerreVide = (): EtatGuerre => ({ gagnees: 0, or: 0, parfaits: [], kiafins: 0, records: {}, malchance: 0 });
+
+/** Dofus Cawotte (« Wabbits : 14A + 14D ») : 0,2 % sur le Wa Wabbit, 0,4 % sur le Wa Wobot, × Prospection ;
+ *  +0,01 % par boss vaincu sans l'avoir. Il ne tombe qu'une fois par perso (chaque Dofus est unique). */
+export const DOFUS_CAWOTTE = { id: '972', taux: { wa_wabbit: 0.002, wa_wobot: 0.004 } as Record<string, number>, hausse: 0.0001 };
+/** Le boss de l'île vient de tomber (ou de s'enfuir) : tirage du Dofus Cawotte pour le joueur en cours (commeJoueur). Vrai s'il tombe. */
+export function tenterDofusCawotte(w: World, boss: string): boolean {
+  const D = DOFUS_CAWOTTE, base = D.taux[boss], p = w.player;
+  if (base == null || p.dofus.includes(D.id)) return false;
+  const r = p.guerre, chance = (base + (r.malchance ?? 0)) * coefProspection(p.prospection);
+  if (w.rng.next() < chance && p.gagnerDofus(D.id)) { r.malchance = 0; w.emit({ k: 'dofusGagne', id: D.id }); return true; }
+  r.malchance = (r.malchance ?? 0) + D.hausse;
+  return false;
+}
 
 /** Toute la guerre de l'île : recharges des épouvantails, attaque spontanée, attaque en cours. */
 export class Guerre {

@@ -59,7 +59,8 @@
     "texte": "Quand un ennemi tente de vous retirer des PA ou des PM, vous gagnez tout de suite 25 Esquive PA ou PM pendant 3 s (cumulable 2 fois)."
    },
    "cle": "cawotte",
-   "source": "Quête, avec Amakna"
+   "source": "Wa Wabbit (Château) et Wa Wobot (Terrier), île des Wabbits : rare",
+   "jeu": true
   },
   "10907": {
    "nom": "Dokille",
