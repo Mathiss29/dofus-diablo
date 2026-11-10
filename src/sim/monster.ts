@@ -322,7 +322,9 @@ export class Monster extends Entity {
   private spellReach(player: Cible): number {
     const S = (this.def.spells ?? []).filter(s => !soutienSeul(s) && castKind(s) !== 'self');
     if (!S.length || S.some(s => s.po[1] <= 1)) return 0;
-    return Math.max(...S.map(s => this.reach(s, player)[1]));
+    // il se place à portée d'un sort qui blesse (Scarafeuille Noir : Scarimmo à 6 cases n'ôte que des PM, Scaraforce frappe à 2 cases)
+    const D = S.filter(s => s.effects.some(e => e.k === 'dmg'));
+    return Math.max(...(D.length ? D : S).map(s => this.reach(s, player)[1]));
   }
   private windupOf(S: MonsterSpell): number {
     const k = castKind(S);
