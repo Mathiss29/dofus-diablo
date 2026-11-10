@@ -8,7 +8,7 @@ import { NO_INPUT, type PlayerInput } from './input';
 import { AGGRO, CASE, Monster, TOUR, type Cible } from './monster';
 import { jetOfficiel } from './danger';
 import { REGLAGES_BUTIN, monstresDeZone, panoDuBoss, poolNiveau, poolOfficiel, rangDe, tirerButin, type Butin, type CtxButin, type Rang } from './butin';
-import { TROPHEES, tropheesDuBoss } from './dofus';
+import { PASSIFS, TROPHEES, tropheesDuBoss } from './dofus';
 import { ajouterPieces, CLE_COFFRE, ouvrirCoffre, piecesMonstre, piecesObjet } from './enutrof';
 import { briser, chanceRune, coutKamas, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
 import { V03_PUBLIC, V04_PUBLIC, niveauObjetsMax, slotAPouvoirConnu } from './pouvoirs';
@@ -127,7 +127,8 @@ export interface WorldOptions {
   recoltes?: RecoltesData;
   /** Boutiques des PNJ (src/data/boutique.json) : articles et prix en Pépites. */
   boutiques?: Record<string, { id: string; prix: number; /** vendu seulement en 0.3 */ v03?: boolean; /** en 0.4 (clés d'Amakna) */ v04?: boolean;
-    /** payé dans cette monnaie au lieu des Pépites (Tiwa Cawoteuw : Cawottes) */ monnaie?: string; /** apparence (collection) au lieu d'un objet */ apparat?: boolean }[]>;
+    /** payé dans cette monnaie au lieu des Pépites (Tiwa Cawoteuw : Cawottes) */ monnaie?: string; /** apparence (collection) au lieu d'un objet */ apparat?: boolean;
+    /** vendu seulement après une victoire dans ce donjon (« Wabbits : 9C ») */ apres?: string }[]>;
   /** Objets d'apparat officiels (src/data/apparat.json) et leur prix en Pépites chez Emp (boutique.json, apparat_prix). */
   apparats?: { objets: Record<string, { slot: string; collection?: boolean }>; prix: Record<string, number> };
   /** Partie de test (#test) : réglages du panneau F1 ; absent dans une vraie partie. */
@@ -909,6 +910,15 @@ export class World {
     this.passage = { to: po.ends[0], nom: d.nom, t: World.PASSAGE };
     this.emit({ k: 'portalStart', nom: d.nom });
   }
+  /** « Wabbits : 9A » : le joueur saute dans le trou du boss enfui : fondu, puis la première salle du donjon suivant (sans clé). */
+  suivreDansLeTrou(d: DonjonDef, suite: string) {
+    const po = this.entreeDonjon(suite);
+    if (!po || this.passage || this.opts.partieServeur) return;
+    this.arene = null;
+    this.player.stopMove();
+    this.passage = { to: po.ends[1], nom: suite, t: World.PASSAGE };
+    this.emit({ k: 'portalStart', nom: `Trou du ${this.bossDuDonjon(d.nom) ? this.opts.data.monsters[this.bossDuDonjon(d.nom)!].name : 'boss'}` });
+  }
   /** 13A : coffre du donjon à côté du portail : un second butin du boss, et une bourse de kamas. Tiré à la mort du boss
    *  (maquette Coffres 4C : le coffre luit de la couleur du meilleur objet avant qu'on l'ouvre), posé à l'ouverture. */
   tirerCoffreDonjon(d: DonjonDef): Butin | null {
@@ -1369,6 +1379,7 @@ export class World {
       if (m.saigneT > 0 && !m.dead) this.saigner(m, dt);
       if (this.zone.open && m.state === 'idle' && !m.dead && this.players.every(q => Math.abs(m.x - q.x) + Math.abs(m.y - q.y) > World.SOMMEIL)) { m.regenCalme(dt); continue; }
       if (m.guerre && this.guerre?.attaque?.piloter(m, dt)) continue;
+      if (m.arene && this.arene?.d.alarme && this.arene.piloter(m, dt)) continue;
       m.update(dt, this.cibleDe(m), this);
     }
     for (const b of this.betes) b.update(dt, this);
@@ -1476,6 +1487,11 @@ export class World {
       else if ((e.k === 'pa' || e.k === 'pm') && e.n < 0) {
         // Retrait officiel du monstre (Retrait PA ; pas de Retrait PM dans ses données) contre l'Esquive du joueur
         const n = this.removed(-e.n, e.k === 'pa' ? m.def.caracs?.retraitPA ?? 0 : 0, p.esquive(e.k === 'pa' ? 'PA' : 'PM'));
+        // Dofus Cawotte (Sagesse Wabbit) : la tentative suffit, l'Esquive monte tout de suite pour les suivantes
+        if (p.porteDofus('cawotte')) {
+          const C = PASSIFS.cawotte, st = e.k === 'pa' ? 'esquivePA' : 'esquivePM', src = `cawotte_${e.k}`;
+          if (p.mods.filter(x => x.src === src).length < C.max) { p.addMod(st, C.esquive, C.duree, src); this.emit({ k: 'status', x: p.x, y: p.y - 30, text: 'Sagesse Wabbit', color: '#e8902a' }); }
+        }
         if (!n) this.emit({ k: 'status', x: p.x, y: p.y, text: 'Esquive', color: '#c8c8c8' });
         else if (e.k === 'pa') { p.pa = Math.max(0, p.pa - n); this.emit({ k: 'status', x: p.x, y: p.y, text: `-${n} PA`, color: '#5aa8ff' }); }
         else {
@@ -2369,7 +2385,7 @@ export class World {
   acheter(boutique: string, id: string): boolean {
     const a = this.opts.boutiques?.[boutique]?.find(x => x.id === id && (!x.v03 || this.player.v03) && (!x.v04 || this.player.v04)), p = this.player;
     const m = a?.monnaie ?? PEPITE;
-    if (!a || (p.resources[m] ?? 0) < a.prix || (a.apparat && p.apparats.includes(id))) return false;
+    if (!a || (p.resources[m] ?? 0) < a.prix || (a.apparat && p.apparats.includes(id)) || (a.apres && !((this.quetes?.donjons[a.apres]?.v ?? 0) > 0))) return false;
     p.resources[m] -= a.prix; if (!p.resources[m]) delete p.resources[m];
     if (a.apparat) p.apparats.push(id);
     else p.resources[id] = (p.resources[id] ?? 0) + 1;

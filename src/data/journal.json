@@ -1402,6 +1402,16 @@
               "Île des Wabbits",
               "Partie de test"
             ]
+          },
+          {
+            "titre": "Le Wa Wabbit s'enfuit",
+            "phrase": "Le Wa Wabbit plante des Cawottes Woyales, s'enferme dans son Awmuwe, puis file dans son trou.",
+            "details": "La première fois, saute dans le trou pour le suivre jusqu'au Terrier. Un Kiafin qu'on laisse filer sonne l'alarme.",
+            "icone": "boss",
+            "etiquettes": [
+              "Île des Wabbits",
+              "Partie de test"
+            ]
           }
         ],
         "Le monde": [
@@ -1510,6 +1520,16 @@
             "phrase": "Sur la plage de la Cawotte, il échange tes Cawottes contre ressources, clés et apparences Wabbit.",
             "details": "Quatre succès et le titre « Gardien des Cawottes » récompensent les défenseurs.",
             "icone": "kamas",
+            "etiquettes": [
+              "Île des Wabbits",
+              "Partie de test"
+            ]
+          },
+          {
+            "titre": "Le Terrier et le Dofus Cawotte",
+            "phrase": "Le Terrier s'ouvre au resto de Waldo, et le Dofus Cawotte tombe rarement sur ses deux boss.",
+            "details": "Tiwa Cawoteuw vend la clé du Terrier une fois le Château vaincu. Chaque boss raté augmente un peu ta chance.",
+            "icone": "dofus",
             "etiquettes": [
               "Île des Wabbits",
               "Partie de test"

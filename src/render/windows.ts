@@ -2208,7 +2208,8 @@ export class Windows {
         const r = ITEMS.resources[a.id]; if (!r) return '';
         const effet = r.soin ? `+${r.soin} PV` : r.rappel ? 'Retour au dernier Zaap' : r.cle ? `Entrée : ${r.cle}` : r.pierreAme ? 'Capture un archimonstre vaincu (une pierre par capture)' : '';
         return `<div class="rec" data-rid="${a.id}">${iconHtml(r.icon)}<div><b>${r.name}</b> <span class="hint">niveau ${r.level}${(p.resources[a.id] ?? 0) ? ` · tu en as ${p.resources[a.id]}` : ''}</span><div style="font-size:12px;color:#c9c4ab">${effet}</div></div>
-          <span class="btn ${solde >= a.prix ? '' : 'off'}" data-achat="${a.id}">${a.prix} ${icMon}</span></div>`; }).join('')}</div>
+          ${a.apres && !((this.world.quetes?.donjons[a.apres]?.v ?? 0) > 0) ? `<span class="hint">Après le ${a.apres}</span>`
+            : `<span class="btn ${solde >= a.prix ? '' : 'off'}" data-achat="${a.id}">${a.prix} ${icMon}</span>`}</div>`; }).join('')}</div>
         <div class="hint">${mon === PEPITE ? 'Les Pépites se gagnent en recyclant tes objets chez Kerubim Crépin.' : 'Les Cawottes se gagnent en défendant les champs de l\'île contre les Wabbits (clic sur l\'épouvantail d\'un champ).'}</div>`;
     }
     w.innerHTML = `${this.title(`${def?.nom ?? 'Marchand'}${def?.titre ? ` · ${def.titre}` : ''}`, 'inventory')}<div class="in emp">${tete}${corps}</div>`;

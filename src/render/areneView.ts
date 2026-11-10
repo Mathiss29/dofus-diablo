@@ -27,6 +27,9 @@ export class AreneView {
   private coffre: Phaser.GameObjects.Sprite | null = null;
   private atlas = '';
   private nom: Phaser.GameObjects.Text;
+  /** « Wabbits : 8B + 9A » : trou où le boss s'est enfui (mène au donjon suivant la première fois). */
+  private trou: Phaser.GameObjects.Graphics;
+  private trouNom: Phaser.GameObjects.Text;
   private t = 0;
   /** Temps depuis l'ouverture (-1 : fermé) ; temps depuis le dernier sursaut. */
   private ouvert = -1;
@@ -37,15 +40,29 @@ export class AreneView {
     this.lueur = scene.add.graphics().setVisible(false);   // fondu normal : la couleur reste lisible sur un sol clair
     this.nom = scene.add.text(0, 0, 'Sortie', { fontFamily: 'Rowdies, Lexend, sans-serif', fontSize: '15px', color: '#cfe8ff', stroke: '#000', strokeThickness: 4 })
       .setOrigin(0.5, 1).setVisible(false);
+    this.trou = scene.add.graphics().setVisible(false);
+    this.trouNom = scene.add.text(0, 0, '', { fontFamily: 'Rowdies, Lexend, sans-serif', fontSize: '15px', color: '#ffd9a0', stroke: '#000', strokeThickness: 4, align: 'center' })
+      .setOrigin(0.5, 1).setVisible(false);
     // planches chargées d'avance : le coffre doit être prêt à la mort du boss
     for (const c of Object.values(COFFRES)) this.planche(c.atlas);
   }
   private planche(a: string) { return textureUneFois(this.scene, a, l => l.multiatlas(a, v(`${SP}/${a}.json`), dossier(`${SP}/`))); }
-  destroy() { this.portail.destroy(); this.lueur.destroy(); this.coffre?.destroy(); this.nom.destroy(); }
+  destroy() { this.trou.destroy(); this.trouNom.destroy(); this.portail.destroy(); this.lueur.destroy(); this.coffre?.destroy(); this.nom.destroy(); }
 
   update(dt: number) {
     const a = this.world.arene, vu = !!a?.fini;
     this.portail.setVisible(vu); this.nom.setVisible(vu); this.lueur.setVisible(vu);
+    // trou du boss enfui : visible seulement pour qui il mène encore quelque part
+    const t = vu && a!.trou && a!.premiers.has(this.world.player.id) ? a!.trou : null;
+    this.trou.setVisible(!!t); this.trouNom.setVisible(!!t);
+    if (t) {
+      const s = ISO.toScreen(t.x, t.y), k = Math.min(1, this.t / 0.5), g = this.trou.clear().setDepth(s.y - 2);
+      g.fillStyle(0x2a1a0c, 0.95).fillEllipse(s.x, s.y, 84 * k, 40 * k);
+      g.fillStyle(0x000000, 0.9).fillEllipse(s.x, s.y + 2, 64 * k, 28 * k);
+      g.lineStyle(3, 0x8a5a2a, 0.9).strokeEllipse(s.x, s.y, 86 * k, 42 * k);
+      g.lineStyle(2, 0xffd36b, 0.35 + 0.25 * Math.sin(this.t * 4)).strokeEllipse(s.x, s.y, 100 * k, 50 * k);
+      this.trouNom.setPosition(s.x, s.y - 34).setDepth(s.y + 2).setAlpha(k).setText(`Trou du ${a!.boss?.def.name ?? "boss"}\n${a!.d.fuite?.suite ?? ''}`);
+    }
     if (!a || !vu) { this.t = 0; this.ouvert = -1; this.coffre?.setVisible(false); return; }
     this.t += dt;
     const k = Math.min(1, this.t / 0.6);   // le portail s'ouvre en 0,6 s

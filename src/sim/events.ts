@@ -65,7 +65,11 @@ export type SimEvent =
    *  boss = arrivée du boss), palier du boss (8C), boss vaincu (temps, nouveau record ; portail et coffre, 13A). */
   | { k: 'areneDebut'; nom: string; boss: string | null; vagues: number; cle: string | null; reprise: number }
   | { k: 'areneVague'; n: number; total: number; nom: string | null; boss: string | null }
-  | { k: 'arenePalier'; id: number; name: string; n: number }
+  | { k: 'arenePalier'; id: number; name: string; n: number; renforts?: string | null; awmuwe?: boolean }
+  /** « Wabbits : 7C » : un Kiafin court donner l'alarme (n = 0), ou l'a donnée (n renforts arrivent). */
+  | { k: 'areneAlarme'; id: number; x: number; y: number; n: number }
+  /** « Wabbits : 8B » : le boss s'enfuit dans un trou ; premiers = joueurs que le trou mène au donjon suite (9A). */
+  | { k: 'bossFuite'; id: number; name: string; x: number; y: number; suite: string; premiers: number[] }
   | { k: 'areneFin'; nom: string; temps: number; record: boolean }
   /** Guerre des Cawottes (0.4) : attaque d'un champ (annoncée aux joueurs de l'île), vague, cawotte volée ou emportée par un
    *  Kiafin (fuite = il est sorti du champ avec), Kiafin qui s'enfuit, cawotte replantée, bilan (coffre, Cawottes gagnées, record). */
