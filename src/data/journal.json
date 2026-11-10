@@ -1447,6 +1447,16 @@
             ]
           },
           {
+            "titre": "Amakna en musique",
+            "phrase": "Chaque coin d'Amakna a sa musique officielle : Village, forêt, Montagne, côte et Cimetière.",
+            "details": "Le vent souffle sur la Montagne, la mer clapote sur la côte, le Cimetière devient inquiétant la nuit. Dans les donjons, les grilles claquent et le boss s'annonce.",
+            "icone": "carte",
+            "etiquettes": [
+              "Amakna",
+              "Partie de test"
+            ]
+          },
+          {
             "titre": "Récolter et fabriquer en Amakna",
             "phrase": "Arbres, champs, fleurs et rivières d'Amakna à leurs vraies places, ateliers au Château.",
             "details": "Plus de 3 000 ressources officielles, dont Brochet, Anguille, Malt et Mandragore. Quatre ateliers au Château couvrent tous les métiers.",

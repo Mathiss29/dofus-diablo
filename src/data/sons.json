@@ -73,6 +73,66 @@
     "pandala": "musique/bastion_pandala.mp3",
     "frigost": "musique/bastion_frigost.mp3"
    }
+  },
+  "amakna_village": {
+   "calme": "musique/amakna_village_calme.mp3",
+   "renfort": "musique/amakna_village_renfort.mp3"
+  },
+  "amakna_1": {
+   "calme": "musique/amakna_1_calme.mp3",
+   "renfort": "musique/amakna_1_renfort.mp3"
+  },
+  "amakna_2": {
+   "calme": "musique/amakna_2_calme.mp3",
+   "renfort": "musique/amakna_2_renfort.mp3"
+  },
+  "amakna_3": {
+   "calme": "musique/amakna_3_calme.mp3",
+   "renfort": "musique/amakna_3_renfort.mp3"
+  },
+  "cimetieres": {
+   "calme": "musique/cimetieres_calme.mp3",
+   "renfort": "musique/cimetieres_renfort.mp3"
+  },
+  "moon": {
+   "calme": "musique/moon_calme.mp3",
+   "renfort": "musique/moon_renfort.mp3"
+  },
+  "wabbits": {
+   "calme": "musique/wabbits_calme.mp3",
+   "renfort": "musique/wabbits_renfort.mp3"
+  },
+  "cania_1": {
+   "calme": "musique/cania_1_calme.mp3",
+   "renfort": "musique/cania_1_renfort.mp3"
+  },
+  "cania_2": {
+   "calme": "musique/cania_2_calme.mp3",
+   "renfort": "musique/cania_2_renfort.mp3"
+  },
+  "cania_3": {
+   "calme": "musique/cania_3_calme.mp3",
+   "renfort": "musique/cania_3_renfort.mp3"
+  },
+  "donjon_bestial": {
+   "calme": "musique/donjon_bestial_calme.mp3",
+   "renfort": "musique/donjon_bestial_renfort.mp3"
+  },
+  "donjon_feerique": {
+   "calme": "musique/donjon_feerique_calme.mp3",
+   "renfort": "musique/donjon_feerique_renfort.mp3"
+  },
+  "donjon_lugubre": {
+   "calme": "musique/donjon_lugubre_calme.mp3",
+   "renfort": "musique/donjon_lugubre_renfort.mp3"
+  },
+  "donjon_magique": {
+   "calme": "musique/donjon_magique_calme.mp3",
+   "renfort": "musique/donjon_magique_renfort.mp3"
+  },
+  "donjon_souterrain": {
+   "calme": "musique/donjon_souterrain_calme.mp3",
+   "renfort": "musique/donjon_souterrain_renfort.mp3"
   }
  },
  "ambiances": {
@@ -86,7 +146,15 @@
   "cascade": "ambiance/cascade.mp3",
   "courant": "ambiance/courant.mp3",
   "astrub_oiseaux": "ambiance/astrub_oiseaux.mp3",
-  "astrub_vent": "ambiance/astrub_vent.mp3"
+  "astrub_vent": "ambiance/astrub_vent.mp3",
+  "amakna_campagne": "ambiance/amakna_campagne.mp3",
+  "foret": "ambiance/foret.mp3",
+  "montagne_vent": "ambiance/montagne_vent.mp3",
+  "mer": "ambiance/mer.mp3",
+  "lave": "ambiance/lave.mp3",
+  "grillons_nuit": "ambiance/grillons_nuit.mp3",
+  "cimetiere_nuit": "ambiance/cimetiere_nuit.mp3",
+  "cimetiere": "ambiance/cimetiere.mp3"
  },
  "ui": {
   "niveau": "ui/16062_Int_Level_Up.mp3",
@@ -3016,5 +3084,206 @@
   "craqueleur_legendaire": "boss_souterrain",
   "wa_wobot": "boss_magique",
   "wa_wabbit": "boss_feerique"
+ },
+ "donjon": {
+  "fermeture": "ambiance/AMB_MeS_Grille_Fermeture.mp3",
+  "ouverture": "ambiance/AMB_MeS_Grille_Ouverture.mp3",
+  "boss": "ambiance/AMB_MeS_BossSpawn.mp3",
+  "vague": "ambiance/AMB_MeS_Torch_Start.mp3",
+  "portail": "ambiance/AMB_MeS_Portail_01.mp3",
+  "porte": "ambiance/AMB_GEN_Action_DoorsCreakClose_01.mp3",
+  "salleVide": "ambiance/AMB_MeS_Grille_Out.mp3"
+ },
+ "lieux": {
+  "10": {
+   "musique": "amakna_village",
+   "fond": [
+    "amakna_campagne"
+   ]
+  },
+  "180": {
+   "musique": "amakna_village",
+   "fond": [
+    "amakna_campagne"
+   ]
+  },
+  "485": {
+   "musique": "amakna_village",
+   "fond": [
+    "amakna_campagne"
+   ]
+  },
+  "3": {
+   "musique": "amakna_village",
+   "fond": [
+    "amakna_campagne"
+   ]
+  },
+  "4": {
+   "musique": "amakna_1",
+   "fond": [
+    "foret"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
+  },
+  "22": {
+   "musique": "amakna_1",
+   "fond": [
+    "foret"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
+  },
+  "482": {
+   "musique": "amakna_1",
+   "fond": [
+    "foret"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
+  },
+  "481": {
+   "musique": "amakna_1",
+   "fond": [
+    "foret"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
+  },
+  "479": {
+   "musique": "amakna_1",
+   "fond": [
+    "foret"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
+  },
+  "5": {
+   "musique": "amakna_1",
+   "fond": [
+    "foret"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
+  },
+  "170": {
+   "musique": "amakna_1",
+   "fond": [
+    "foret"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
+  },
+  "2": {
+   "musique": "amakna_2",
+   "fond": [
+    "montagne_vent"
+   ]
+  },
+  "480": {
+   "musique": "amakna_2",
+   "fond": [
+    "montagne_vent"
+   ]
+  },
+  "103": {
+   "musique": "amakna_2",
+   "fond": [
+    "montagne_vent"
+   ]
+  },
+  "8": {
+   "musique": "amakna_2",
+   "fond": [
+    "montagne_vent",
+    "lave"
+   ]
+  },
+  "277": {
+   "musique": "amakna_2",
+   "fond": [
+    "montagne_vent",
+    "lave"
+   ]
+  },
+  "276": {
+   "musique": "amakna_2",
+   "fond": [
+    "montagne_vent"
+   ]
+  },
+  "1": {
+   "musique": "amakna_3",
+   "fond": [
+    "mer"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
+  },
+  "27": {
+   "musique": "amakna_3",
+   "fond": [
+    "mer"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
+  },
+  "12": {
+   "musique": "amakna_3",
+   "fond": [
+    "mer"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
+  },
+  "23": {
+   "musique": "amakna_3",
+   "fond": [
+    "mer"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
+  },
+  "31": {
+   "musique": "amakna_3",
+   "fond": [
+    "mer"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
+  },
+  "6": {
+   "musique": "cimetieres",
+   "fond": [
+    "cimetiere"
+   ],
+   "fondNuit": [
+    "cimetiere_nuit",
+    "grillons_nuit"
+   ]
+  },
+  "179": {
+   "musique": "cimetieres",
+   "fond": [
+    "cimetiere"
+   ],
+   "fondNuit": [
+    "cimetiere_nuit",
+    "grillons_nuit"
+   ]
+  }
  }
 }
