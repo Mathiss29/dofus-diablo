@@ -195,6 +195,8 @@ export class Player extends Entity {
   // --- Pouvoirs légendaires officiels (version 0.3, src/sim/pouvoirs.ts) ---------------------------
   /** 0.3 visible pour ce perso (partie de test, ou sortie publique). */
   v03 = false;
+  /** 0.4 visible (partie de test tant que V04_PUBLIC est faux) : équipements du niveau 41 au 60. */
+  v04 = false;
   private _pouvoirs: PouvoirDef[] | null = null;
   /** Pouvoirs officiels de sa classe portés, chacun une seule fois (5A : deux anneaux au même pouvoir ne cumulent pas). */
   get pouvoirsPortes(): PouvoirDef[] {
@@ -246,7 +248,7 @@ export class Player extends Entity {
       const o = this.official(k), n = o ? this.requiredLevel(o) : 0;
       if (o && n > this.level) aVenir.push({ dofusId: d.dofusId, niveau: n });
     }
-    return { classe: this.cls.sorts, connus, aVenir, sortsRecharge: this.sortsRecharge, v03: this.v03 };
+    return { classe: this.cls.sorts, connus, aVenir, sortsRecharge: this.sortsRecharge, v03: this.v03, v04: this.v04 };
   }
   /** État d'un pouvoir porté (infobulle) : actif, sort pas encore appris (niveau), autre classe, ou sort absent du jeu. */
   etatPouvoir(id: string): { actif: true } | { actif: false; raison: string } {

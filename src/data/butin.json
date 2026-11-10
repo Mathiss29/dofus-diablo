@@ -15,7 +15,9 @@
     "minZone": 8,
     "normal": { "chance": 0.06, "tirages": 1 },
     "elite": { "chance": 0.3, "tirages": 1 },
-    "boss": { "chance": 1, "tirages": 2 }
+    "boss": { "chance": 1, "tirages": 2 },
+    "_panoBoss": "0.4 suite 1C : part des tirages d'un boss pris dans ses panoplies (pièces qu'il lâche ou fabriquées avec ses ressources)",
+    "panoBoss": 0.5
   },
   "raretes": {
     "_doc": "% Rare et % Épique de chaque objet tiré ; le % Légendaire est calculé pour tomber à « legendaireParMonstre »",

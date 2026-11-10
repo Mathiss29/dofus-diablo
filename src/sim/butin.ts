@@ -1,6 +1,6 @@
 import BUTIN from '../data/butin.json';
 import type { GameData, MonsterDef, ZoneDef } from './defs';
-import { NIVEAU_OBJETS_02, type CtxPouvoirs } from './pouvoirs';
+import { niveauObjetsMax, type CtxPouvoirs } from './pouvoirs';
 import { rollItem, type DropDef, type Item, type ItemsData, type Rarity } from './items';
 import type { Rng } from './math';
 
@@ -55,6 +55,8 @@ export interface CtxButin {
   familiers: string[];
   /** Équipements de la zone (poolOfficiel) et leur niveau, pour l'équipement aléatoire. */
   pool: { id: string; level: number }[];
+  /** Pièces des panoplies du boss (panoDuBoss, 0.4 suite 1C) : la moitié de ses tirages y est prise. */
+  panoBoss?: { id: string; level: number }[];
   /** Ceux de tout le jeu : pris quand la zone en a trop peu à ce niveau (Enfers, Havre-Sac, bas de niveau…). */
   poolSecours?: { id: string; level: number }[];
   /** Niveau du joueur dans ce métier (clé de ITEMS.metiers). */
@@ -68,8 +70,8 @@ export interface CtxButin {
 /** État d'une ligne : tombe, ne tombe que pendant un événement ou une quête (6B), ou demande un métier qu'on n'a pas. */
 export type EtatLigne = 'ok' | 'evenement' | 'quete' | 'metier';
 export const metierDe = (d: DropDef, items: ItemsData) => d.metier ? Object.entries(items.metiers ?? {}).find(([, j]) => j.id === d.metier!.id)?.[0] : undefined;
-/** Équipement du niveau 26 au 40 : il arrive avec la 0.3 (partie de test d'ici là), ni tiré ni affiché avant. */
-const avant03 = (d: DropDef, ctx: CtxButin) => (ctx.items.equipment[d.item]?.level ?? 0) > NIVEAU_OBJETS_02 && !ctx.pouvoirs?.v03;
+/** Équipement d'une version pas encore sortie (26-40 : 0.3 ; 41-60 : 0.4) : ni tiré ni affiché avant (partie de test d'ici là). */
+const avant03 = (d: DropDef, ctx: CtxButin) => (ctx.items.equipment[d.item]?.level ?? 0) > niveauObjetsMax(!!ctx.pouvoirs?.v03, ctx.pouvoirs?.v04);
 export function etatLigne(d: DropDef, ctx: CtxButin): EtatLigne {
   if (d.cond === 'quete') return 'quete';   // nos quêtes sont les nôtres (règle Quêtes) : ces objets de quête de Dofus ne tombent pas
   if (d.cond === 'evenement' && !ctx.evenement) return 'evenement';
@@ -107,6 +109,24 @@ export function poolOfficiel(items: ItemsData, monstres: Iterable<string>): { id
   for (const r of items.recipes ?? []) if (items.equipment[r.result] && r.ingredients.some(([i]) => res.has(String(i)))) ids.add(r.result);
   return [...ids].filter(id => { const d = items.equipment[id]; return d && !d.familier && !d.horsJeu; }).sort().map(id => ({ id, level: items.equipment[id].level }));
 }
+/** Panoplies d'un boss (0.4 suite 1C) : celles dont il lâche une pièce, ou dont une pièce se fabrique avec une ressource
+ *  que lui seul lâche (Bworkette, Craqueleur Légendaire… n'ont pas de pièce dans leur butin, leurs panoplies se fabriquent).
+ *  Seulement les panoplies dont au moins 2 pièces, et la moitié, lui sont liées (pas une ressource commune à 20 recettes).
+ *  Toutes les pièces de ces panoplies, jamais d'objet de maître du jeu. */
+export function panoDuBoss(items: ItemsData, boss: string): { id: string; level: number }[] {
+  const lache = (items.drops[boss] ?? []).filter(d => d.cond !== 'quete' && d.cond !== 'evenement').map(d => d.item);
+  const autres = new Set<string>();
+  for (const [m, l] of Object.entries(items.drops)) if (m !== boss) for (const d of l) autres.add(d.item);
+  const siennes = new Set(lache.filter(i => !items.equipment[i] && !autres.has(i)));
+  const pieces = new Set(lache.filter(i => items.equipment[i]));
+  for (const r of items.recipes ?? []) if (items.equipment[r.result] && r.ingredients.some(([i]) => siennes.has(String(i)))) pieces.add(r.result);
+  const n = new Map<number, number>();
+  for (const i of pieces) { const s = items.equipment[i].set; if (s) n.set(s, (n.get(s) ?? 0) + 1); }
+  const sets = [...n].filter(([s, k]) => k >= 2 && k * 2 >= (items.sets[String(s)]?.items.length ?? 99)).map(([s]) => s);
+  const ids = new Set<string>();
+  for (const s of sets) for (const i of items.sets[String(s)]?.items ?? []) if (items.equipment[String(i)]) ids.add(String(i));
+  return [...ids].filter(id => { const d = items.equipment[id]; return !d.familier && !d.horsJeu; }).sort().map(id => ({ id, level: items.equipment[id].level }));
+}
 export const kamasDe = (rang: Rang) => ({ chance: rang === 'normal' ? BUTIN.kamas.chance : 1, mult: BUTIN.kamas.mult[rang] });
 
 export interface Butin {
@@ -131,7 +151,8 @@ export function tirerButin(rng: Rng, ctx: CtxButin, uid: () => number): Butin {
   const e = BUTIN.equipement[ctx.rang], pool = poolNiveau(ctx);
   for (let k = 0; k < e.tirages; k++) {
     if (rng.next() >= Math.min(1, e.chance * more) || !pool.length) continue;
-    const id = rng.pick(pool).id;
+    const pano = ctx.rang === 'boss' && ctx.panoBoss?.length && rng.next() < BUTIN.equipement.panoBoss ? ctx.panoBoss : null;
+    const id = rng.pick(pano ?? pool).id;
     out.objets.push(rollItem(id, I.equipment[id], rollRarity(rng, ctx.rang, pros), rng, uid(), ctx.pouvoirs));
   }
   // kamas : un petit tas de pièces, plus gros pour les élites et les boss

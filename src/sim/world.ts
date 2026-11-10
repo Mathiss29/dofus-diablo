@@ -6,10 +6,10 @@ import { ISO } from './iso';
 import { NO_INPUT, type PlayerInput } from './input';
 import { AGGRO, CASE, Monster, TOUR, type Cible } from './monster';
 import { jetOfficiel } from './danger';
-import { monstresDeZone, poolNiveau, poolOfficiel, rangDe, tirerButin, type Butin, type CtxButin, type Rang } from './butin';
+import { monstresDeZone, panoDuBoss, poolNiveau, poolOfficiel, rangDe, tirerButin, type Butin, type CtxButin, type Rang } from './butin';
 import { ajouterPieces, CLE_COFFRE, ouvrirCoffre, piecesMonstre, piecesObjet } from './enutrof';
 import { briser, chanceRune, coutKamas, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
-import { NIVEAU_OBJETS_02, V03_PUBLIC, slotAPouvoirConnu } from './pouvoirs';
+import { V03_PUBLIC, V04_PUBLIC, niveauObjetsMax, slotAPouvoirConnu } from './pouvoirs';
 import { fxImpression, imprimable, nouveauPourCodex, prixImpression } from './codex';
 import { legendaryPower, FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, recycleResource, recycleValue, rollItem, type EquipSlot, type Item, type ItemsData, type Rarity, type RecipeDef } from './items';
 import { Player } from './player';
@@ -190,6 +190,8 @@ export class World {
   /** Objets d'équipement par niveau, pour le butin de zone. */
   private equipByLevel: { id: string; level: number }[] = [];
   private equipSecours: { id: string; level: number }[] = [];
+  /** Pièces des panoplies de chaque boss (0.4 suite 1C), calculées au premier besoin. */
+  private panosBoss = new Map<string, { id: string; level: number }[]>();
   /** Événements produits depuis le dernier drainEvents(). */
   private events: SimEvent[] = [];
   /** Ressources à récolter du monde (métiers de récolte, 0.2b). */
@@ -328,10 +330,11 @@ export class World {
     this.players.push(new Player(this.nextId++, start.x, start.y, opts.data.classes[opts.classId ?? 'iop']));
     this.checkpoint = start; this.checkpointName = cpName;
     this.player.v03 = V03_PUBLIC || !!opts.test;
+    this.player.v04 = V04_PUBLIC || !!opts.test;
     if (opts.items) {
       this.player.items = opts.items;
       // équipement aléatoire : objets officiels des monstres de la zone (butin + fabrication), sinon de tout le jeu (Mathis 2026-11-09)
-      const ok = (e: { level: number }) => this.player.v03 || e.level <= NIVEAU_OBJETS_02;
+      const max = niveauObjetsMax(this.player.v03, this.player.v04), ok = (e: { level: number }) => e.level <= max;
       this.equipByLevel = poolOfficiel(opts.items, monstresDeZone(this.zone)).filter(ok);
       this.equipSecours = poolOfficiel(opts.items, Object.values(opts.data.zones).flatMap(monstresDeZone)).filter(ok);
       for (const [id, d] of Object.entries(opts.items.equipment)) for (const m of d.familier?.monstres ?? []) (this.familiersDe[m] ??= []).push(id);
@@ -359,7 +362,7 @@ export class World {
     if (!cls) throw new Error(`Classe inconnue : ${classId}`);
     const h = this.players[0], n = this.players.length, f = this.map.nearestFree(h.x + h.radius * 3 * (n % 2 ? 1 : -1) * Math.ceil(n / 2), h.y + h.radius * 2 * (n - 1));
     const q = new Player(this.nextId++, f.x, f.y, cls);
-    q.v03 = h.v03;
+    q.v03 = h.v03; q.v04 = h.v04;
     q.monde.checkpoint = { ...h.monde.checkpoint }; q.monde.checkpointName = h.monde.checkpointName; q.monde.avant = { x: q.x, y: q.y };
     if (this.opts.items) q.items = this.opts.items;
     this.players.push(q);
@@ -1861,10 +1864,19 @@ export class World {
     ajouterPieces(p, n, this, p.x, p.y);
     return true;
   }
+  private panoBoss(type: string) {
+    let l = this.panosBoss.get(type);
+    if (!l) {
+      const max = niveauObjetsMax(this.player.v03, this.player.v04);
+      this.panosBoss.set(type, l = this.opts.items ? panoDuBoss(this.opts.items, type).filter(e => e.level <= max) : []);
+    }
+    return l;
+  }
   /** Ce que le calcul du butin doit savoir (src/sim/butin.ts) : sert au jeu, au Bestiaire et au simulateur de l'outil de test. */
   contexteButin(type: string, rang: Rang, niveau: number): CtxButin {
     const p = this.player;
     return { type, rang, niveau, prospection: p.prospection + (this.almanax?.effet === 'butin' ? ALMANAX.butin : 0), items: this.opts.items!, familiers: this.familiersDe[type] ?? [], pool: this.equipByLevel, poolSecours: this.equipSecours,
+      panoBoss: rang === 'boss' ? this.panoBoss(type) : undefined,
       metierNiveau: j => p.metierLevel(j), armeChasse: !!p.huntingWeapon, pouvoirs: rang === 'boss' ? { ...p.ctxPouvoirs, boss: type } : p.ctxPouvoirs };
   }
   /** Un monstre vaincu lâche son butin officiel (ressources, parfois un équipement) et, plus rarement, un équipement
