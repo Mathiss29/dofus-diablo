@@ -1291,6 +1291,16 @@
             "etiquettes": [
               "Donjons"
             ]
+          },
+          {
+            "titre": "XP des monstres selon leur niveau",
+            "phrase": "Les monstres d'Astrub et d'Amakna rapportent plus d'XP quand ils sont plus forts.",
+            "details": "Fini les 20 XP partout : de 43 XP au niveau 11 à 101 XP au niveau 62. Les élites et les boss d'Astrub suivent.",
+            "icone": "caracs",
+            "etiquettes": [
+              "Astrub",
+              "Amakna"
+            ]
           }
         ],
         "Le monde": [
