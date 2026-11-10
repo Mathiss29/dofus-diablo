@@ -196,7 +196,9 @@ export class Bete extends Entity {
       const meute = world.betes.filter(q => !q.dead), i = Math.max(0, meute.indexOf(this)), n = meute.length;
       const a = p.facing + Math.PI + (n > 1 ? (i / (n - 1) - 0.5) * 1.8 : 0);
       const sx = p.x + Math.cos(a) * R.suivi * CASE, sy = p.y + Math.sin(a) * R.suivi * CASE;
-      if (Math.hypot(sx - this.x, sy - this.y) > CASE * 0.5) this.marcher(sx, sy, dt, world, dP > R.laisse * CASE ? 1.6 : 1.15);
+      // une fois en route, elle va jusqu'à sa place (sinon elle s'arrête et repart sans cesse derrière un maître qui court)
+      const dS = Math.hypot(sx - this.x, sy - this.y);
+      if (dS > CASE * 0.5 || (this.anim === 'run' && dS > 1)) this.marcher(sx, sy, dt, world, dP > R.laisse * CASE ? 1.6 : 1.15);
       else { this.facing = Math.atan2(p.y - this.y, p.x - this.x); this.setAnim('idle'); }
     }
     this.ecarter(world);
@@ -217,7 +219,7 @@ export class Bete extends Entity {
 
   private marcher(x: number, y: number, dt: number, world: World, vit = 1.15) {
     const dx = x - this.x, dy = y - this.y, d = Math.hypot(dx, dy);
-    if (d < 4) { this.setAnim('idle'); return; }
+    if (d < 1) { this.setAnim('idle'); return; }   // (à 4 px, elle s'arrêtait une image sur deux en suivant son maître : saccades)
     const st = Math.min(d, this.owner.speed * vit * dt);
     let ux = dx / d, uy = dy / d;
     if (!world.walkable(this.x + ux * 20, this.y + uy * 20)) {   // obstacle juste devant : on tente de le longer

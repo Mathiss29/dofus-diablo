@@ -1275,7 +1275,8 @@
           "Les sorts de l'Osamodas, du Sacrieur, du Forgelance et de l'Eniripsa ont enfin leurs sons officiels.",
           "Les monstres à distance se placent à portée d'un sort qui blesse, pas d'un sort qui gêne.",
           "Partie de test : toutes les classes visibles, monstre choisi en vue, onglet Butin qui ne fige plus le jeu.",
-          "Journal : les nouveautés et corrections du 10 novembre cachées par erreur sont de retour."
+          "Journal : les nouveautés et corrections du 10 novembre cachées par erreur sont de retour.",
+          "Le coffre de l'Enutrof et les bêtes de l'Osamodas te suivent sans à-coups, sans s'arrêter à chaque pas."
         ],
         "En coulisses": [
           "Mini-carte, portrait et transparence du décor allégés : l'image coûte deux fois moins (≈ 10 → 5 ms).",
