@@ -19,9 +19,10 @@ describe('Zaaps du monde (maquette « Zaap : » 1A 2A 3A 4A 5A+5D 6A 7A 8A 9A)',
     const noms = (z: string) => GAME_DATA.zones[z].open!.checkpoints.map(c => `${c.name} [${c.map}]`);
     expect(noms('incarnam')).toEqual(['Route des âmes [-1,-3]', 'Pâturages [2,-5]', 'Cimetière [3,0]']);
     expect(noms('astrub').slice(0, 2)).toEqual(["Zaap d'Astrub [5,-18]", 'Zaap de Tainéla [1,-32]']);
-    // 0.4 suite 7A : les 7 Zaaps d'Amakna (+ celui de l'île des Wabbits, 10A), seulement en partie de test tant que la 0.4 est cachée
+    // 0.4 suite 7A : les 7 Zaaps d'Amakna (+ celui de l'île des Wabbits, 10A, et ceux de Cania sud et de Moon, 9A+9B), seulement en partie de test tant que la 0.4 est cachée
     expect(noms('astrub').slice(2).sort()).toEqual(['Zaap Bord de la forêt maléfique [-1,13]', 'Zaap Château d\'Amakna [3,-5]', 'Zaap Coin des Bouftous [5,7]',
-      'Zaap Montagne des Craqueleurs [-5,-8]', 'Zaap Plaine des Scarafeuilles [-1,24]', 'Zaap Port de Madrestam [7,-4]', 'Zaap Village d\'Amakna [-2,0]', 'Zaap Île de la Cawotte [25,-4]'].sort());
+      'Zaap Montagne des Craqueleurs [-5,-8]', 'Zaap Plaine des Scarafeuilles [-1,24]', 'Zaap Port de Madrestam [7,-4]', 'Zaap Village d\'Amakna [-2,0]', 'Zaap Île de la Cawotte [25,-4]',
+      'Zaap Plaine des Porkass [-5,-23]', 'Zaap Village des Dopeuls [-34,-8]', 'Zaap Plage de la Tortue [35,12]'].sort());
     expect(monde('astrub').zone.open!.checkpoints).toHaveLength(2);
     for (const z of ['incarnam', 'astrub']) {
       const w = monde(z, { test: {} as never }), wg = w.worldGrid!;

@@ -610,3 +610,14 @@ Ville vivante (maquette Ville 5F, 8 nov. 2026) :
 - `wabbits04/passerelles.py` : passerelles en bois (choix 1B) entre la Cawotte et la Couronne, la Couronne et les Tombeaux, la Couronne et
   Waldo ; sous-zone 1600 « Passerelles de l'île » sans monstres.
 - Portes (`zones.json > open > portes`) : bateau [9,-2] case 314 ↔ [24,-2] case 318, Château du Wa Wabbit [24,-13] case 209 (clef 14464).
+
+## Cania sud et Île de Moon (0.4 suite : 9A+9B, 10 nov. 2026)
+- Liste `cania04/liste.json` : 169 cartes du dehors (Plaine des Porkass 178, Baie de Cania 334, Village des Dopeuls 62, Plage de la Tortue 93,
+  Forêt des Masques 166 ; worldMap 1, sans les copies en (0, 0) ; coordonnée doublée = la carte aux bits 23-24 les plus hauts). 8 îlots sans
+  voisine à pied retirés après l'export (7 de Moon, et l'îlot du bateau de Frigost). Export comme les Wabbits (textures : `cache-dofus/astrub/textures-1x`),
+  puis `amakna04/raccord_doubles.py` (bord Astrub/Porkass) ; les bâtiments d'Astrub restés sans grande image perdent leur `bt`.
+- `cania04/sous_zones.py <tables> <fr.bin>` : sous-zones + musiques (Cania 1-3, Moon). 29 monstres (squelettes de Moon 363-366, 3339-3347 rapportés
+  du PC dans `cache-dofus/bones-04/`) : planches à SCALE 2.5, 1.6 pour Moon et Bouss Baybe, 1.2 pour Kanniboul Ark, Tortue Bleue, Grokoko
+  (plus grand, la planche brute sort vide), puis `amakna04/ajout.py`, `monster_spells.py`, `monster_stats.py`, `archimonstres.py`, `drops_ajout.py`, `xp_monstres.py`.
+- Portes `marque: true` (paillasson aux deux bouts) : bateau du Port de Madrestam [9,-2] case 165 → Moon [32,11] case 147 ; « Route de Cania »
+  [-6,-25] case 294 ↔ Baie de Cania [-30,-15] case 348 (les Champs de Cania entre les deux arrivent avec la 0.6). Zaaps : `amakna04/zaaps_amakna.py`.

@@ -3333,6 +3333,52 @@
    "fondNuit": [
     "grillons_nuit"
    ]
+  },
+  "178": {
+   "musique": "cania_1",
+   "fond": [
+    "amakna_campagne"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
+  },
+  "334": {
+   "musique": "cania_2",
+   "fond": [
+    "mer",
+    "amakna_campagne"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
+  },
+  "62": {
+   "musique": "cania_3",
+   "fond": [
+    "amakna_campagne"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
+  },
+  "93": {
+   "musique": "moon",
+   "fond": [
+    "mer"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
+  },
+  "166": {
+   "musique": "moon",
+   "fond": [
+    "mer"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
   }
  }
 }

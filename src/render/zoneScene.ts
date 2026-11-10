@@ -338,7 +338,7 @@ export class ZoneScene extends Phaser.Scene {
       this.worldView.portes = this.world.portes.flatMap(p => p.ends.flatMap((e, i) => {
         const to = p.ends[1 - i], marche = !p.vers && !(i === 1 && p.sens);
         if (i === 1 && p.sens && open.donjons?.some(d => d.arene?.tag === e.tag)) return [];
-        return [{ ...e, vers: marche ? to.tag : undefined, sortie: marche && dedans(e.tag) && !dedans(to.tag) }];
+        return [{ ...e, vers: marche ? to.tag : undefined, sortie: marche && (!!p.marque || dedans(e.tag) && !dedans(to.tag)) }];
       }));
       const parts = this.cache.json.get(`${open.world}_particules`) as Record<string, SysData[]> | undefined;
       if (parts) this.worldView.parts = new Particules(this, wg, parts, `${open.world}_particules_img`);
