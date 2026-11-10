@@ -1770,6 +1770,90 @@
       1661.0
      ],
      "sub": 30
+    },
+    {
+     "name": "Zaap Bord de la forêt maléfique",
+     "map": [
+      -1,
+      13
+     ],
+     "zaap": [
+      3551,
+      40424.5
+     ],
+     "sub": 22
+    },
+    {
+     "name": "Zaap Plaine des Scarafeuilles",
+     "map": [
+      -1,
+      24
+     ],
+     "zaap": [
+      3379,
+      49970.5
+     ],
+     "sub": 170
+    },
+    {
+     "name": "Zaap Village d'Amakna",
+     "map": [
+      -2,
+      0
+     ],
+     "zaap": [
+      2691,
+      29072.5
+     ],
+     "sub": 10
+    },
+    {
+     "name": "Zaap Montagne des Craqueleurs",
+     "map": [
+      -5,
+      -8
+     ],
+     "zaap": [
+      -878,
+      22128.0
+     ],
+     "sub": 2
+    },
+    {
+     "name": "Zaap Château d'Amakna",
+     "map": [
+      3,
+      -5
+     ],
+     "zaap": [
+      8539,
+      24858.5
+     ],
+     "sub": 180
+    },
+    {
+     "name": "Zaap Coin des Bouftous",
+     "map": [
+      5,
+      7
+     ],
+     "zaap": [
+      11119,
+      35178.5
+     ],
+     "sub": 5
+    },
+    {
+     "name": "Zaap Port de Madrestam",
+     "map": [
+      7,
+      -4
+     ],
+     "zaap": [
+      13484,
+      25611.0
+     ],
+     "sub": 1
     }
    ],
    "portes": [
