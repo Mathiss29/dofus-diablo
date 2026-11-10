@@ -53,6 +53,17 @@ window.bounds = (anim, flipY) => {
   }
   return b;
 };
+// Bornes sans les pièces aberrantes (sommets à 1e38, ou invisibles) : certains effets en ont à chaque image (Lance du Lac, Attirance)
+window.boundsSain = (anim, flipY) => {
+  let b = [1e9,1e9,-1e9,-1e9];
+  for (const fr of S.anims[anim]) for (const [sym, m, alpha, mul] of fr) {
+    if (!alpha || (mul && !mul[3])) continue;
+    const P = S.meshes[sym].v.map(v => xf(m, v[0], flipY ? v[1] : -v[1], flipY));
+    if (P.some(([X, Y]) => !(Math.abs(X) < 800 && Math.abs(Y) < 800))) continue;
+    for (const [X, Y] of P) b=[Math.min(b[0],X),Math.min(b[1],Y),Math.max(b[2],X),Math.max(b[3],Y)];
+  }
+  return b;
+};
 window.renderFrame = (ctx, anim, fi, ox, oy, sc, flipY) => {
   for (const [sym, m, alpha, mul, add] of S.anims[anim][fi]) {
     const mesh = S.meshes[sym]; const T0 = texFor(mesh); const W = T0.width, H = T0.height;
