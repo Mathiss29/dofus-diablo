@@ -104,7 +104,7 @@ export class CarteMonde {
     }
     // points d'intérêt officiels (table hints : ateliers, banque, Zaaps, donjons…), côte à côte au milieu de leur carte
     const parCarte = new Map<string, NonNullable<typeof wg.world.reperes>>();
-    for (const r of wg.world.reperes ?? []) { if (!wg.mapByTag(r.t)) continue; const l = parCarte.get(r.t) ?? []; l.push(r); parCarte.set(r.t, l); }
+    for (const r of wg.world.reperes ?? []) { const m = wg.mapByTag(r.t); if (!m || (m.essai && !this.world.test)) continue;   /* 0.4 cachée */ const l = parCarte.get(r.t) ?? []; l.push(r); parCarte.set(r.t, l); }
     for (const [tag, l] of parCarte) {
       const c = this.milieuCarte(tag);
       l.forEach((r, i) => {

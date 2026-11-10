@@ -37611,6 +37611,516 @@
    "name": "Substrat de Futaie",
    "icon": 26017,
    "level": 60
+  },
+  "12622": {
+   "name": "Tacleur mineur",
+   "icon": 151079,
+   "level": 50,
+   "trophee": true
+  },
+  "12625": {
+   "name": "Fuyard mineur",
+   "icon": 151034,
+   "level": 50,
+   "trophee": true
+  },
+  "12628": {
+   "name": "Ralentisseur mineur",
+   "icon": 151067,
+   "level": 50,
+   "trophee": true
+  },
+  "12631": {
+   "name": "Engourdisseur mineur",
+   "icon": 151022,
+   "level": 50,
+   "trophee": true
+  },
+  "12634": {
+   "name": "Fugitif mineur",
+   "icon": 151028,
+   "level": 50,
+   "trophee": true
+  },
+  "12637": {
+   "name": "Insaisissable mineur",
+   "icon": 151040,
+   "level": 50,
+   "trophee": true
+  },
+  "12640": {
+   "name": "Pousseur mineur",
+   "icon": 151025,
+   "level": 50,
+   "trophee": true
+  },
+  "12643": {
+   "name": "Adamantin mineur",
+   "icon": 151004,
+   "level": 50,
+   "trophee": true
+  },
+  "12646": {
+   "name": "Rempart mineur",
+   "icon": 151064,
+   "level": 50,
+   "trophee": true
+  },
+  "12649": {
+   "name": "Cuirassé Air mineur",
+   "icon": 151007,
+   "level": 50,
+   "trophee": true
+  },
+  "12652": {
+   "name": "Cuirassé Eau mineur",
+   "icon": 151010,
+   "level": 50,
+   "trophee": true
+  },
+  "12659": {
+   "name": "Cuirassé Feu mineur",
+   "icon": 151013,
+   "level": 50,
+   "trophee": true
+  },
+  "12680": {
+   "name": "Cuirassé Terre mineur",
+   "icon": 151019,
+   "level": 50,
+   "trophee": true
+  },
+  "12683": {
+   "name": "Cuirassé Neutre mineur",
+   "icon": 151016,
+   "level": 50,
+   "trophee": true
+  },
+  "12688": {
+   "name": "Ravageur Air mineur",
+   "icon": 151049,
+   "level": 50,
+   "trophee": true
+  },
+  "12691": {
+   "name": "Ravageur Eau mineur",
+   "icon": 151052,
+   "level": 50,
+   "trophee": true
+  },
+  "12694": {
+   "name": "Ravageur Feu mineur",
+   "icon": 151055,
+   "level": 50,
+   "trophee": true
+  },
+  "12696": {
+   "name": "Ravageur Neutre mineur",
+   "icon": 151058,
+   "level": 50,
+   "trophee": true
+  },
+  "12702": {
+   "name": "Initiateur mineur",
+   "icon": 151037,
+   "level": 50,
+   "trophee": true
+  },
+  "12704": {
+   "name": "Porteur mineur",
+   "icon": 151046,
+   "level": 50,
+   "trophee": true
+  },
+  "12707": {
+   "name": "Soigneur mineur",
+   "icon": 151073,
+   "level": 50,
+   "trophee": true
+  },
+  "12712": {
+   "name": "Acrobate mineur",
+   "icon": 151001,
+   "level": 50,
+   "trophee": true
+  },
+  "12717": {
+   "name": "Joueur mineur",
+   "icon": 151043,
+   "level": 50,
+   "trophee": true
+  },
+  "12718": {
+   "name": "Savant mineur",
+   "icon": 151070,
+   "level": 50,
+   "trophee": true
+  },
+  "12722": {
+   "name": "Furibond mineur",
+   "icon": 151031,
+   "level": 50,
+   "trophee": true
+  },
+  "12727": {
+   "name": "Survivant mineur",
+   "icon": 151076,
+   "level": 50,
+   "trophee": true
+  },
+  "12748": {
+   "name": "Ravageur Terre mineur",
+   "icon": 151061,
+   "level": 50,
+   "trophee": true
+  },
+  "13748": {
+   "name": "Bloqueur mineur",
+   "icon": 151082,
+   "level": 50,
+   "trophee": true
+  },
+  "13751": {
+   "name": "Vagabond mineur",
+   "icon": 151085,
+   "level": 50,
+   "trophee": true
+  },
+  "13754": {
+   "name": "Docteur mineur",
+   "icon": 151088,
+   "level": 50,
+   "trophee": true
+  },
+  "13757": {
+   "name": "Forcené mineur",
+   "icon": 151091,
+   "level": 50,
+   "trophee": true
+  },
+  "13760": {
+   "name": "Astucieux mineur",
+   "icon": 151094,
+   "level": 50,
+   "trophee": true
+  },
+  "13763": {
+   "name": "Equilibriste mineur",
+   "icon": 151097,
+   "level": 50,
+   "trophee": true
+  },
+  "13766": {
+   "name": "Taquin mineur",
+   "icon": 151100,
+   "level": 50,
+   "trophee": true
+  },
+  "13769": {
+   "name": "Bastion mineur",
+   "icon": 151103,
+   "level": 50,
+   "trophee": true
+  },
+  "13772": {
+   "name": "Saccageur Terre mineur",
+   "icon": 151106,
+   "level": 50,
+   "trophee": true
+  },
+  "13775": {
+   "name": "Saccageur Neutre mineur",
+   "icon": 151109,
+   "level": 50,
+   "trophee": true
+  },
+  "13778": {
+   "name": "Saccageur Feu mineur",
+   "icon": 151112,
+   "level": 50,
+   "trophee": true
+  },
+  "13781": {
+   "name": "Saccageur Eau mineur",
+   "icon": 151115,
+   "level": 50,
+   "trophee": true
+  },
+  "13784": {
+   "name": "Saccageur Air mineur",
+   "icon": 151118,
+   "level": 50,
+   "trophee": true
+  },
+  "13787": {
+   "name": "Entraveur mineur",
+   "icon": 151121,
+   "level": 50,
+   "trophee": true
+  },
+  "13790": {
+   "name": "Paralyseur mineur",
+   "icon": 151124,
+   "level": 50,
+   "trophee": true
+  },
+  "13793": {
+   "name": "Imprenable mineur",
+   "icon": 151127,
+   "level": 50,
+   "trophee": true
+  },
+  "13796": {
+   "name": "Evanescent mineur",
+   "icon": 151130,
+   "level": 50,
+   "trophee": true
+  },
+  "13799": {
+   "name": "Bousculeur mineur",
+   "icon": 151133,
+   "level": 50,
+   "trophee": true
+  },
+  "13802": {
+   "name": "Inflexible mineur",
+   "icon": 151136,
+   "level": 50,
+   "trophee": true
+  },
+  "13805": {
+   "name": "Précurseur mineur",
+   "icon": 151139,
+   "level": 50,
+   "trophee": true
+  },
+  "13808": {
+   "name": "Muraille Terre mineure",
+   "icon": 151142,
+   "level": 50,
+   "trophee": true
+  },
+  "13811": {
+   "name": "Muraille Neutre mineure",
+   "icon": 151145,
+   "level": 50,
+   "trophee": true
+  },
+  "13814": {
+   "name": "Muraille Feu mineure",
+   "icon": 151148,
+   "level": 50,
+   "trophee": true
+  },
+  "13817": {
+   "name": "Muraille Eau mineure",
+   "icon": 151151,
+   "level": 50,
+   "trophee": true
+  },
+  "13820": {
+   "name": "Muraille Air mineure",
+   "icon": 151154,
+   "level": 50,
+   "trophee": true
+  },
+  "13823": {
+   "name": "Puissant mineur",
+   "icon": 151157,
+   "level": 50,
+   "trophee": true
+  },
+  "13826": {
+   "name": "Robuste mineur",
+   "icon": 151160,
+   "level": 50,
+   "trophee": true
+  },
+  "13831": {
+   "name": "Examinateur",
+   "icon": 151165,
+   "level": 50,
+   "trophee": true
+  },
+  "13832": {
+   "name": "Féroce mineur",
+   "icon": 151166,
+   "level": 50,
+   "trophee": true
+  },
+  "16182": {
+   "name": "Obstructeur mineur",
+   "icon": 151190,
+   "level": 50,
+   "trophee": true
+  },
+  "16185": {
+   "name": "Déserteur mineur",
+   "icon": 151193,
+   "level": 50,
+   "trophee": true
+  },
+  "16188": {
+   "name": "Guérisseur mineur",
+   "icon": 151187,
+   "level": 50,
+   "trophee": true
+  },
+  "16191": {
+   "name": "Miraculé mineur",
+   "icon": 151181,
+   "level": 50,
+   "trophee": true
+  },
+  "16194": {
+   "name": "Enragé mineur",
+   "icon": 151172,
+   "level": 50,
+   "trophee": true
+  },
+  "16202": {
+   "name": "Érudit mineur",
+   "icon": 151169,
+   "level": 50,
+   "trophee": true
+  },
+  "16243": {
+   "name": "Cascadeur mineur",
+   "icon": 151178,
+   "level": 50,
+   "trophee": true
+  },
+  "16246": {
+   "name": "Chanceux mineur",
+   "icon": 151175,
+   "level": 50,
+   "trophee": true
+  },
+  "16249": {
+   "name": "Fortification mineure",
+   "icon": 151247,
+   "level": 50,
+   "trophee": true
+  },
+  "16252": {
+   "name": "Dévastateur Terre mineur",
+   "icon": 151217,
+   "level": 50,
+   "trophee": true
+  },
+  "16255": {
+   "name": "Dévastateur Neutre mineur",
+   "icon": 151223,
+   "level": 50,
+   "trophee": true
+  },
+  "16258": {
+   "name": "Dévastateur Feu mineur",
+   "icon": 151214,
+   "level": 50,
+   "trophee": true
+  },
+  "16262": {
+   "name": "Dévastateur Eau mineur",
+   "icon": 151211,
+   "level": 50,
+   "trophee": true
+  },
+  "16265": {
+   "name": "Dévastateur Air mineur",
+   "icon": 151220,
+   "level": 50,
+   "trophee": true
+  },
+  "16274": {
+   "name": "Temporiseur mineur",
+   "icon": 151196,
+   "level": 50,
+   "trophee": true
+  },
+  "16282": {
+   "name": "Étourdisseur mineur",
+   "icon": 151199,
+   "level": 50,
+   "trophee": true
+  },
+  "16292": {
+   "name": "Évasif mineur",
+   "icon": 151229,
+   "level": 50,
+   "trophee": true
+  },
+  "16300": {
+   "name": "Cavaleur mineur",
+   "icon": 151208,
+   "level": 50,
+   "trophee": true
+  },
+  "16303": {
+   "name": "Culbuteur mineur",
+   "icon": 151205,
+   "level": 50,
+   "trophee": true
+  },
+  "16308": {
+   "name": "Solide mineur",
+   "icon": 151250,
+   "level": 50,
+   "trophee": true
+  },
+  "16311": {
+   "name": "Fonceur mineur",
+   "icon": 151226,
+   "level": 50,
+   "trophee": true
+  },
+  "16314": {
+   "name": "Carapace Terre mineur",
+   "icon": 151238,
+   "level": 50,
+   "trophee": true
+  },
+  "16318": {
+   "name": "Carapace Neutre mineur",
+   "icon": 151244,
+   "level": 50,
+   "trophee": true
+  },
+  "16321": {
+   "name": "Carapace Feu mineur",
+   "icon": 151235,
+   "level": 50,
+   "trophee": true
+  },
+  "16324": {
+   "name": "Carapace Eau mineur",
+   "icon": 151232,
+   "level": 50,
+   "trophee": true
+  },
+  "16327": {
+   "name": "Carapace Air mineur",
+   "icon": 151241,
+   "level": 50,
+   "trophee": true
+  },
+  "16330": {
+   "name": "Vigoureux mineur",
+   "icon": 151202,
+   "level": 50,
+   "trophee": true
+  },
+  "16336": {
+   "name": "Observateur",
+   "icon": 151264,
+   "level": 50,
+   "trophee": true
+  },
+  "16337": {
+   "name": "Sanguinaire mineur",
+   "icon": 151261,
+   "level": 50,
+   "trophee": true
   }
  },
  "drops": {
@@ -61533,6 +62043,290 @@
     [
      "10970",
      3
+    ]
+   ]
+  },
+  {
+   "result": "12622",
+   "metier": "faconneur",
+   "level": 50,
+   "ingredients": [
+    [
+     "2540",
+     1
+    ],
+    [
+     "748",
+     1
+    ],
+    [
+     "2304",
+     10
+    ],
+    [
+     "2599",
+     10
+    ],
+    [
+     "13593",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "12640",
+   "metier": "faconneur",
+   "level": 50,
+   "ingredients": [
+    [
+     "2540",
+     1
+    ],
+    [
+     "748",
+     1
+    ],
+    [
+     "2304",
+     10
+    ],
+    [
+     "2179",
+     10
+    ],
+    [
+     "1683",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "12691",
+   "metier": "faconneur",
+   "level": 50,
+   "ingredients": [
+    [
+     "2540",
+     1
+    ],
+    [
+     "748",
+     1
+    ],
+    [
+     "2304",
+     10
+    ],
+    [
+     "2252",
+     5
+    ],
+    [
+     "2656",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "13754",
+   "metier": "faconneur",
+   "level": 50,
+   "ingredients": [
+    [
+     "2540",
+     1
+    ],
+    [
+     "748",
+     1
+    ],
+    [
+     "13339",
+     10
+    ],
+    [
+     "2673",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "13757",
+   "metier": "faconneur",
+   "level": 50,
+   "ingredients": [
+    [
+     "2540",
+     1
+    ],
+    [
+     "748",
+     1
+    ],
+    [
+     "13342",
+     10
+    ],
+    [
+     "2649",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "13763",
+   "metier": "faconneur",
+   "level": 50,
+   "ingredients": [
+    [
+     "2540",
+     1
+    ],
+    [
+     "748",
+     1
+    ],
+    [
+     "13505",
+     10
+    ],
+    [
+     "2652",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "13766",
+   "metier": "faconneur",
+   "level": 50,
+   "ingredients": [
+    [
+     "2540",
+     1
+    ],
+    [
+     "748",
+     1
+    ],
+    [
+     "13593",
+     5
+    ],
+    [
+     "2650",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "13781",
+   "metier": "faconneur",
+   "level": 50,
+   "ingredients": [
+    [
+     "2540",
+     1
+    ],
+    [
+     "748",
+     1
+    ],
+    [
+     "13505",
+     10
+    ],
+    [
+     "2336",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "13793",
+   "metier": "faconneur",
+   "level": 50,
+   "ingredients": [
+    [
+     "2540",
+     1
+    ],
+    [
+     "748",
+     1
+    ],
+    [
+     "13342",
+     10
+    ],
+    [
+     "2285",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "13799",
+   "metier": "faconneur",
+   "level": 50,
+   "ingredients": [
+    [
+     "2540",
+     1
+    ],
+    [
+     "748",
+     1
+    ],
+    [
+     "2584",
+     10
+    ],
+    [
+     "13593",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "13823",
+   "metier": "faconneur",
+   "level": 50,
+   "ingredients": [
+    [
+     "2540",
+     1
+    ],
+    [
+     "748",
+     1
+    ],
+    [
+     "13505",
+     10
+    ],
+    [
+     "410",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "13831",
+   "metier": "faconneur",
+   "level": 50,
+   "ingredients": [
+    [
+     "2540",
+     1
+    ],
+    [
+     "748",
+     1
+    ],
+    [
+     "2266",
+     5
     ]
    ]
   },

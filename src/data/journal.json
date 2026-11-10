@@ -1304,6 +1304,16 @@
             "etiquettes": [
               "Partie de test"
             ]
+          },
+          {
+            "titre": "Les trophées",
+            "phrase": "85 trophées officiels du niveau 50, à porter dans les cases de Dofus.",
+            "details": "Chaque boss d'Amakna en lâche deux, rarement. Le Façonneur en fabrique aussi, sans Galets.",
+            "icone": "succes",
+            "etiquettes": [
+              "Partie de test",
+              "Touche D"
+            ]
           }
         ],
         "Corrections": [

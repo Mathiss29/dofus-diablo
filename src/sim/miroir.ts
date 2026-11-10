@@ -50,11 +50,11 @@ export const COOP = {
 
 /** Champs jamais envoyés : données du jeu (recréées de l'autre côté), sac et progression propres à chaque joueur, caches. */
 /** Champs du sac et de la progression : refusés pour les autres, envoyés à leur propriétaire seul (instantané.sac). */
-const SAC = ['bag', 'resources', 'kamas', 'metiers', 'apparats', 'dofus', 'zaaps', 'codex', 'codexOuvert', 'ames', 'cleDonjon', 'recetteSuivie',
+const SAC = ['bag', 'resources', 'kamas', 'metiers', 'apparats', 'dofus', 'trophees', 'zaaps', 'codex', 'codexOuvert', 'ames', 'cleDonjon', 'recetteSuivie',
   'commandeFM', 'lootFilter', 'autoBrisage', 'almanaxJour', 'zonesVues'] as const;
 const REFUS: Record<Sorte | 'a', Set<string>> = {
-  j: new Set(['cls', 'items', 'bag', 'resources', 'codex', 'learned', 'zonesVues', 'metiers', 'prereglages', 'ames', 'apparats', 'dofus',
-    'commandeFM', 'quetes', 'monde', 'evenements', 'cleDonjon', 'recetteSuivie', 'zaaps', '_pouvoirs', 'almanaxJour', 'codexOuvert', 'lootFilter', 'autoBrisage', 'kamas', 'v03', 'repathT', 'bufferT', 'buffer']),
+  j: new Set(['cls', 'items', 'bag', 'resources', 'codex', 'learned', 'zonesVues', 'metiers', 'prereglages', 'ames', 'apparats', 'dofus', 'trophees',
+    'commandeFM', 'quetes', 'monde', 'evenements', 'cleDonjon', 'recetteSuivie', 'zaaps', '_pouvoirs', 'almanaxJour', 'codexOuvert', 'lootFilter', 'autoBrisage', 'kamas', 'v03', 'v04', 'repathT', 'bufferT', 'buffer']),
   // minuteries de l'IA des monstres : l'hôte seul s'en sert
   m: new Set(['def', 'atkCd', 'spellCd', 'sigCd', 'cheminT', 'wanderT', 'wanderX', 'wanderY', 'repathT']),
   b: new Set(['def']),
