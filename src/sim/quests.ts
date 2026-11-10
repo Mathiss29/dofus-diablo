@@ -40,7 +40,7 @@ export type ObjectifDef = { texte: string } & (
   /** Le tour du monde : vaincre le boss de ce donjon (une victoire d'avant la quête compte, 5A). boss, niveau et région : carnet de route. */
   | { t: 'donjon'; donjon: string; boss: string; niveau: number; region: string }
   /** Défense (Quêtes roadmap 6A) : tenir s secondes sur cette carte pendant que des vagues de monstres de la sous-zone arrivent. */
-  | { t: 'defense'; carte: string; s: number }
+  | { t: 'defense'; carte: string; s: number; monstres?: string[] }
   /** Contre la montre (6D) : vider cette carte de ses monstres en moins de s secondes après y être entré. */
   | { t: 'chrono'; carte: string; s: number }
   /** Défi de donjon du jour (3B) : vaincre le boss de ce donjon en respectant la règle (sans potion, ou en moins de s secondes). */
@@ -151,8 +151,9 @@ export interface PnjDef {
   /** Gardien de l'entrée d'un donjon (maquette Gardiens) : il fait entrer avec la clé. Répliques inédites. Sans case, il se poste
    *  à quelques pas de la porte d'entrée. */
   gardien?: GardienDef;
-  /** Tient le tableau des contrats du jour (Quêtes roadmap 3C). */
-  contrats?: boolean;
+  /** Tient le tableau des contrats du jour (Quêtes roadmap 3C). Liste = les sous-zones de son tableau (0.4 suite 11B : Milice
+   *  d'Amakna) ; true = toutes les autres sous-zones de la zone (Milice d'Astrub). */
+  contrats?: boolean | number[];
   /** Crieur (maquette Ville 5F) : il crie ces nouvelles à tour de rôle quand on passe sur la place. {almanax} = bonus du jour
    *  de l'Almanax (la ligne est sautée sans Almanax). */
   cris?: string[];
@@ -233,6 +234,8 @@ export interface EtatQuetes {
   refaites?: Record<string, string>;
   /** Tableau des contrats (4A) : ceux proposés aujourd'hui et cette semaine (gardés pour que monter de niveau ne les change pas). */
   tableau?: Tableau;
+  /** Tableaux des autres PNJ à contrats (0.4 suite 11B : Milice d'Amakna), par PNJ. */
+  tableaux?: Record<string, Tableau>;
   /** Menu des succès (2026-11-10) : récompenses déjà récupérées par ce perso (5B), défis de donjon réussis (« donjon|règle », 9C),
    *  compteurs (objets fabriqués, runes), titre et ornement portés (6A+6B ; '' / 0 = aucun), succès épinglés dans le suivi (7C). */
   recuperes?: string[]; defis?: string[]; compteurs?: Record<string, number>; titre?: string | null; ornement?: number | null; epingles?: string[];
@@ -269,6 +272,7 @@ export class Quetes {
   refaites: Record<string, string> = {};
   /** Contrats proposés aujourd'hui et cette semaine. */
   tableau: Tableau | null = null;
+  tableaux: Record<string, Tableau> = {};
   /** Menu des succès : voir EtatQuetes. recuperes = null tant que la sauvegarde n'en a pas (ancien perso : tout est déjà donné). */
   recuperes = new Set<string>(); defis = new Set<string>(); compteurs: Record<string, number> = {};
   titreChoisi: string | null = null; ornementChoisi: number | null = null; epingles: string[] = [];
@@ -391,13 +395,13 @@ export class Quetes {
   exporter(): EtatQuetes {
     return JSON.parse(JSON.stringify({ enCours: this.enCours, finies: [...this.finies], etapesFinies: [...this.etapesFinies], suivie: this.suivie,
       decouvertes: [...this.decouvertes], vaincus: [...this.vaincus], objets: this.objets, donjons: this.donjons, refaites: this.refaites,
-      ...(this.tableau ? { tableau: this.tableau } : {}),
+      ...(this.tableau ? { tableau: this.tableau } : {}), ...(Object.keys(this.tableaux).length ? { tableaux: this.tableaux } : {}),
       recuperes: [...this.recuperes], defis: [...this.defis], compteurs: this.compteurs, titre: this.titreChoisi, ornement: this.ornementChoisi,
       epingles: this.epingles, points: this.points }));
   }
   /** Reprend une partie sauvegardée au lieu de demarrer() : mêmes quêtes, mêmes étapes, et les élites de l'étape en cours reviennent. */
   reprendre(e: EtatQuetes) {
-    this.refaites = { ...e.refaites }; this.tableau = e.tableau ?? null;
+    this.refaites = { ...e.refaites }; this.tableau = e.tableau ?? null; this.tableaux = JSON.parse(JSON.stringify(e.tableaux ?? {}));
     this.enCours = (e.enCours ?? []).filter(c => this.existe(c.id) && this.etapeDe(c));
     // les contrats finis des jours passés ne servent plus à rien
     const vieux = (id: string) => (id.startsWith('ctr:') || id.startsWith('defi:')) && !this.enPeriode(id);
@@ -417,7 +421,7 @@ export class Quetes {
   recopier(e: EtatQuetes & { dialogue?: Dialogue | null }) {
     this.enCours = (e.enCours ?? []).filter(c => this.existe(c.id));
     this.finies = new Set(e.finies ?? []); this.etapesFinies = new Set(e.etapesFinies ?? []);
-    this.suivie = e.suivie ?? null; this.refaites = { ...e.refaites }; this.tableau = e.tableau ?? null;
+    this.suivie = e.suivie ?? null; this.refaites = { ...e.refaites }; this.tableau = e.tableau ?? null; this.tableaux = JSON.parse(JSON.stringify(e.tableaux ?? {}));
     this.decouvertes = new Set(e.decouvertes ?? []); this.vaincus = new Set(e.vaincus ?? []); this.objets = { ...e.objets };
     this.donjons = JSON.parse(JSON.stringify(e.donjons ?? {}));
     this.lireSucces(e);
@@ -461,14 +465,26 @@ export class Quetes {
   }
   private ecrireContrat(id: string): QueteDef | null {
     if (!id.startsWith('ctr:')) return null;
-    if (!this.dyn.has(id)) this.dyn.set(id, contrat(id, this.ctxContrats()));
+    if (!this.dyn.has(id)) this.dyn.set(id, contrat(id, this.ctxContrats(this.tableauDe(id.split(':')[3]))));
     return this.dyn.get(id)!;
   }
-  /** Ce que src/sim/contrats.ts doit savoir de la zone. */
-  private ctxContrats(): CtxContrats {
+  /** PNJ à contrats de la zone : d'abord celui de toutes les sous-zones (Milice d'Astrub), puis ceux à liste (Milice d'Amakna, 0.4). */
+  private tableaux_(): string[] {
+    const w = this.world;
+    return Object.entries(this.data.pnj).filter(([, d]) => d.contrats && (d.zone ?? 'incarnam') === w.opts.zone && (!d.v04 || w.player.v04))
+      .sort((a, b) => +Array.isArray(a[1].contrats) - +Array.isArray(b[1].contrats)).map(([k]) => k);
+  }
+  /** Le PNJ dont le tableau propose cette sous-zone. */
+  private tableauDe(sub: string | undefined): string {
+    const l = this.tableaux_();
+    return l.find(k => { const c = this.data.pnj[k].contrats; return Array.isArray(c) && c.includes(Number(sub)); }) ?? l[0] ?? '';
+  }
+  /** Ce que src/sim/contrats.ts doit savoir de la zone, pour le tableau de ce PNJ (par défaut, le premier). */
+  private ctxContrats(pnj = this.tableaux_()[0] ?? ''): CtxContrats {
     const w = this.world, I = w.opts.items, M = w.opts.data.monsters, wg = w.worldGrid;
-    const pnj = Object.entries(this.data.pnj).find(([, d]) => d.contrats && (d.zone ?? 'incarnam') === w.opts.zone)?.[0] ?? '';
-    return { sousZones: Object.fromEntries(Object.entries(w.zone.open?.subareas ?? {}).filter(([, s]) => s.monsters.length)),
+    const liste = this.data.pnj[pnj]?.contrats, autres = new Set(this.tableaux_().flatMap(k => { const c = this.data.pnj[k].contrats; return Array.isArray(c) ? c.map(String) : []; }));
+    const garde = (sub: string) => Array.isArray(liste) ? liste.includes(Number(sub)) : !autres.has(sub);
+    return { sousZones: Object.fromEntries(Object.entries(w.zone.open?.subareas ?? {}).filter(([k, s]) => s.monsters.length && garde(k))),
       nomMonstre: id => M[id]?.name ?? id,
       ressourcesDe: id => (I?.drops[id] ?? []).filter(d => I!.resources[d.item] && d.chance >= 5 && d.chance < 100).map(d => d.item),
       nomRessource: id => I?.resources[id]?.name ?? id,
@@ -476,16 +492,17 @@ export class Quetes {
       titres: this.data.contrats?.titres ?? {}, pnj };
   }
   /** Les contrats du tableau (3 du jour + 1 de la semaine), tirés au premier coup d'œil de la période. */
-  contrats(): string[] {
-    const j = this.jour, s = semaine(j), lvl = this.world.player.level, ctx = this.ctxContrats();
-    if (!j || !ctx.pnj) return [];
-    const t = this.tableau ??= { jour: '', ids: [], semaine: '', hebdo: [] };
+  contrats(pnj = this.tableaux_()[0] ?? ''): string[] {
+    const j = this.jour, s = semaine(j), lvl = this.world.player.level, ctx = this.ctxContrats(pnj);
+    if (!j || !ctx.pnj || !Object.keys(ctx.sousZones).length) return [];
+    const vide = () => ({ jour: '', ids: [], semaine: '', hebdo: [] });
+    const t = pnj === this.tableaux_()[0] ? this.tableau ??= vide() : this.tableaux[pnj] ??= vide();
     if (t.jour !== j) { t.jour = j; t.ids = tirerContrats(j, false, lvl, ctx); }
     if (t.semaine !== s) { t.semaine = s; t.hebdo = tirerContrats(s, true, lvl, ctx); }
     return [...t.ids, ...t.hebdo].filter(id => this.existe(id));
   }
   /** Contrats qu'on peut encore prendre (ni en cours, ni finis cette période). */
-  contratsLibres(): string[] { return this.contrats().filter(id => !this.finies.has(id) && !this.enCours.some(c => c.id === id)); }
+  contratsLibres(pnj?: string): string[] { return this.contrats(pnj).filter(id => !this.finies.has(id) && !this.enCours.some(c => c.id === id)); }
   /** Une répétable finie peut être reprise à la période suivante. */
   private reprenable(id: string) { const q = this.def(id); return !!q.repetable && this.refaites[id] !== this.periode(q.repetable); }
   etapes(id: string): EtapeDef[] {
@@ -517,7 +534,7 @@ export class Quetes {
   icone(pnj: string): { quete: string; rendre: boolean } | null {
     const r = this.aRendre(pnj); if (r) return { quete: r, rendre: true };
     const def = this.data.pnj[pnj];
-    const d = this.aDonner(pnj) ?? (def?.contrats ? this.contratsLibres()[0] : null) ?? (def?.gardien ? this.defiLibre(def.gardien.donjon) : null);
+    const d = this.aDonner(pnj) ?? (def?.contrats ? this.contratsLibres(pnj)[0] : null) ?? (def?.gardien ? this.defiLibre(def.gardien.donjon) : null);
     return d ? { quete: d, rendre: false } : null;
   }
   /** Le PNJ attend qu'on lui parle pour un objectif « parler ». */
@@ -587,7 +604,7 @@ export class Quetes {
     if (ds.length === 1 && !liste && !def?.contrats) { this.offre(pnj, ds[0], intro); return; }
     this.dialogue = { pnj, texte: intro ?? def?.phrase ?? 'Bonne route, aventurier.',
       reponses: [...ds.map(id => ({ a: 'voir' as const, quete: id, texte: this.def(id).nom })),
-        ...(def?.contrats ? [{ a: 'contrats' as const, texte: 'Le tableau des contrats.', detail: `${this.contratsLibres().length} à prendre` }] : []),
+        ...(def?.contrats ? [{ a: 'contrats' as const, texte: 'Le tableau des contrats.', detail: `${this.contratsLibres(pnj).length} à prendre` }] : []),
         ...this.services(def),
         ...(dis && !ds.length ? [{ a: 'suite' as const, i: 0, texte: dis.reponse }] : []),
         { a: 'fermer', texte: def?.adieu ?? 'Au revoir.' }] };
@@ -622,9 +639,9 @@ export class Quetes {
   }
   /** Le tableau des contrats (3C) : ceux du jour et celui de la semaine, ou « reviens demain ». */
   private tableauContrats(pnj: string) {
-    const l = this.contratsLibres(), fait = this.contrats().length - l.length;
+    const l = this.contratsLibres(pnj), fait = this.contrats(pnj).length - l.length;
     this.dialogue = { pnj, texte: l.length ? `Voilà les contrats du jour. Ils changent à minuit, celui de la semaine change le lundi.${fait ? ` Tu en as déjà pris ${fait}.` : ''}`
-      : "Plus rien pour aujourd'hui. Reviens demain, les fauteurs de troubles d'Astrub ne prennent jamais de vacances.",
+      : "Plus rien pour aujourd'hui. Reviens demain, les fauteurs de troubles ne prennent jamais de vacances.",
       reponses: [...l.map(id => ({ a: 'voir' as const, quete: id, texte: this.def(id).nom, detail: `niv ${this.def(id).niveau}` })),
         { a: 'retour', texte: 'Retour.' }, { a: 'fermer', texte: 'Au revoir.' }] };
   }
@@ -838,10 +855,12 @@ export class Quetes {
     d.hors = 0; d.t += dt; d.vague -= dt;
     if (d.vague <= 0) {
       d.vague = 12;
-      const sub = w.worldGrid?.mapByTag(a.o.carte)?.sub, sz = w.zone.open?.subareas[String(sub)], free = w.worldGrid?.freeByMap.get(a.o.carte) ?? [];
-      if (sz?.monsters.length && free.length) for (let k = 0; k < 3; k++) {
+      const sub = w.worldGrid?.mapByTag(a.o.carte)?.sub, free = w.worldGrid?.freeByMap.get(a.o.carte) ?? [];
+      // monstres de la sous-zone de la carte, ou ceux de l'objectif (0.4 suite 11A : Bworks aux portes du Château)
+      const pool = a.o.monstres ?? w.zone.open?.subareas[String(sub)]?.monsters ?? [];
+      if (pool.length && free.length) for (let k = 0; k < 3; k++) {
         const ang = w.rng.range(0, Math.PI * 2), z = w.worldGrid!.nearestFree(p.x + Math.cos(ang) * 320, p.y + Math.sin(ang) * 220, free);
-        w.spawnMonster(w.rng.pick(sz.monsters), z.x, z.y);
+        w.spawnMonster(w.rng.pick(pool), z.x, z.y);
       }
       if (d.t < 1) w.emit({ k: 'queteInfo', texte: `Tiens bon ${a.o.s} secondes !` });
     }

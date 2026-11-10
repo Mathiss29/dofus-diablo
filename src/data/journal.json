@@ -1324,6 +1324,16 @@
               "Touche M",
               "Touche Tab"
             ]
+          },
+          {
+            "titre": "La Couronne d'Amakna",
+            "phrase": "Le Bailli du Château lance un fil rouge : Village, Château, Bworks, puis le Craqueleur Légendaire.",
+            "details": "Quatre chapitres écrits pour Amakna, des Tofus des potagers jusqu'aux Pitons Rocheux. La Milice d'Amakna a aussi son tableau de contrats du jour.",
+            "icone": "quete",
+            "etiquettes": [
+              "Amakna",
+              "Partie de test"
+            ]
           }
         ],
         "Corrections": [
