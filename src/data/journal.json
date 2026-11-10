@@ -1279,7 +1279,8 @@
         ],
         "En coulisses": [
           "Mini-carte, portrait et transparence du décor allégés : l'image coûte deux fois moins (≈ 10 → 5 ms).",
-          "Le monde passe à la grille de tout le continent : cases marchables rangées carte par carte."
+          "Le monde passe à la grille de tout le continent : cases marchables rangées carte par carte.",
+          "Les groupes de monstres n'existent qu'autour des joueurs : 11 000 → 400 monstres en partie de test."
         ],
         "Combat": [
           {
