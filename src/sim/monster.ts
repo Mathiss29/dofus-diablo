@@ -109,6 +109,10 @@ export class Monster extends Entity {
   /** Guerre des Cawottes : Wabbit d'une attaque (src/sim/guerre.ts le mène vers les cawottes). */
   guerre = false;
   intouchable = false;
+  /** Wa Wobot (« Wabbits : 10B ») : carapace Mékawapace encore à briser (1 = intacte, 0 = aucune). */
+  carapace = 0;
+  /** Wobot Tamponneur (10A) : temps avant que Twansmutation le change en garde (0 = pas un Tamponneur). */
+  twansT = 0;
 
   /** Zone d'une attaque annoncée au sol avant l'impact : seulement pour les élites et les boss (maquette Aperçu 8A, Mathis 2026-11-06). */
   private annonce(world: World, tg: World['telegraphs'][number]) { if (this.def.elite || this.def.boss) world.telegraphs.push(tg); }

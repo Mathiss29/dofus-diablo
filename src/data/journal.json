@@ -1356,7 +1356,8 @@
           "Le coffre de l'Enutrof et les bêtes de l'Osamodas te suivent sans à-coups, sans s'arrêter à chaque pas.",
           "Sacrieur, Forgelance, Eniripsa, Enutrof et leurs invocations ont enfin les effets officiels de leurs sorts.",
           "Cité d'Astrub : la porte du rempart sous le Zaap mène de nouveau vers le bas, sans tour fantôme à côté.",
-          "Partie de test : la frontière Astrub-Amakna se fond sans bande nette sur ses 25 cartes."
+          "Partie de test : la frontière Astrub-Amakna se fond sans bande nette sur ses 25 cartes.",
+          "Une victoire dans les donjons de la 0.4 compte enfin : la Clef du Terrier se débloque après le Château."
         ],
         "En coulisses": [
           "Mini-carte, portrait et transparence du décor allégés : l'image coûte deux fois moins (≈ 10 → 5 ms).",
@@ -1407,6 +1408,16 @@
             "titre": "Le Wa Wabbit s'enfuit",
             "phrase": "Le Wa Wabbit plante des Cawottes Woyales, s'enferme dans son Awmuwe, puis file dans son trou.",
             "details": "La première fois, saute dans le trou pour le suivre jusqu'au Terrier. Un Kiafin qu'on laisse filer sonne l'alarme.",
+            "icone": "boss",
+            "etiquettes": [
+              "Île des Wabbits",
+              "Partie de test"
+            ]
+          },
+          {
+            "titre": "Le Wa Wobot et ses Tamponneurs",
+            "phrase": "Au fond du Terrier, le Wa Wobot t'attire et pose des Tamponneurs à casser avant leur Twansmutation.",
+            "details": "Brise sa carapace Mékawapace en tapant fort, sinon elle durcit. Garde tes distances et il prend la place d'un Tamponneur.",
             "icone": "boss",
             "etiquettes": [
               "Île des Wabbits",

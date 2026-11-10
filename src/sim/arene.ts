@@ -2,7 +2,7 @@ import type { Butin } from './butin';
 import { tenterDofusCawotte } from './guerre';
 import type { DonjonDef } from './defs';
 import { RARITIES, type Rarity } from './items';
-import type { Monster } from './monster';
+import { CASE, type Monster } from './monster';
 import type { World } from './world';
 
 /** Réglages des arènes (maquette « Donjons en vagues », ligne Donjons : 1B 2D 3A 4A 5A+5B+5C 6A 7A 8A+8C 9C 10B 11A 12A 13A 14A 15A 16A). */
@@ -31,6 +31,21 @@ export const ARENE = {
   /** Multi (« Multi : » 7A) : par joueur en plus, +70 % de PV aux monstres et +25 % de monstres par vague (le boss reste seul). */
   pvParJoueur: 0.7, monstresParJoueur: 0.25,
 };
+/** Wa Wobot (« Wabbits : 10A-D »), réglages maison sur ses sorts officiels.
+ *  Mékattwaction toutes les `cadence` s (annoncée `tir` s, portée officielle 12 cases) : attire et pose un Tamponneur là où était le joueur ;
+ *  un Tamponneur debout après `delai` s devient une garde (PV × twansmutePv). Mékawapace toutes les 16 s : dommages subis × subis ;
+ *  lui retirer `part` de ses PV en `duree` s la brise (× brise pendant briseT s, il chancelle), sinon elle durcit (× durci pendant durciT s).
+ *  Substitution : un joueur resté à plus de `loin` px pendant `attente` s, le Wobot prend la place du Tamponneur le plus proche de lui,
+ *  puis Wouste (repousse) s'il est à moins de `wouste` px. */
+export const WOBOT = {
+  premier: 4, cadence: 9, tir: 0.9, portee: 12 * CASE, delai: 6, twansmutePv: 1.3,
+  carapace: { premier: 10, cadence: 16, duree: 5, part: 0.05, subis: 0.7, brise: 1.25, briseT: 4, etourdi: 1.5, durci: 0.5, durciT: 6 },
+  loin: 6 * CASE, attente: 2.5, relance: 7, wouste: 2.5 * CASE, woustePause: 0.45,
+  /** 10D : vitesse du Wa Wabbit qui s'enfuit du Wobot cassé. */
+  fuite: 1.6,
+  sorts: { mekattwaction: 3789, wouste: 3792 },
+};
+
 /** Multiplicateur de PV des monstres de l'arène pour n joueurs. */
 export const pvGroupe = (n: number) => 1 + ARENE.pvParJoueur * Math.max(0, n - 1);
 
@@ -81,6 +96,14 @@ export class Arene {
   private ages = new Map<Monster, number>();
   private fuyards = new Map<Monster, Pt>();
   alarmes = 0;
+  /** « Wabbits : 10A-D » : Tamponneurs debout, Mékattwaction annoncée (joueur visé), carapace en cours, Wouste qui suit une Substitution,
+   *  Wa Wabbit qui sort du Wobot cassé (et l'entrée où il file). */
+  tampons: Monster[] = [];
+  tir: { id: number; t: number } | null = null;
+  private cara: { pv0: number; pv: number; t: number } | null = null;
+  private wouste: { id: number; t: number } | null = null;
+  private wt = { tir: WOBOT.premier, cara: WOBOT.carapace.premier, loin: 0, subst: 0 };
+  epilogue: { m: Monster; e: Pt } | null = null;
 
   constructor(readonly w: World, readonly d: DonjonDef, reprise: number) {
     const wg = w.worldGrid!, a = d.arene!, at = (c: number) => wg.cellToWorld(c);
@@ -121,6 +144,7 @@ export class Arene {
     this.chrono += dt; this.tVague += dt;
     this.updateAlarme(dt);
     this.updateBoss();
+    this.updateWobot(dt);
     if (this.vague > this.total) return;   // la vague du boss finit quand il tombe
     const reste = this.membres.filter(m => !m.dead).length + this.arrivees.filter(a => a.vague === this.vague).length;
     if (reste <= ARENE.reste || this.tVague >= ARENE.delai) this.lancerVague();
@@ -192,6 +216,90 @@ export class Arene {
     return wg.walkable(x, y) ? { x, y } : wg.nearestFree(x, y, wg.freeByMap.get(this.d.arene!.tag)!);
   }
 
+  /** « Wabbits : 10A-C » : le combat du Wa Wobot (Tamponneurs, Mékawapace, Substitution + Wouste). */
+  private updateWobot(dt: number) {
+    const W = this.d.wobot, b = this.boss, w = this.w, C = WOBOT;
+    if (!W || !b || b.dead || b.state === 'spawn') return;
+    const vivants = w.players.filter(q => !q.dead);
+    if (!vivants.length) return;
+    // 10A : un Tamponneur resté debout trop longtemps devient une garde (Twansmutation)
+    for (const T of this.tampons) if (!T.dead && (T.twansT -= dt) <= 0) {
+      T.dead = true; T.t = 0;
+      const D = w.opts.data.monsters[W.twansmute], k = pvGroupe(w.players.length) * C.twansmutePv;
+      const g = w.spawnMonster(W.twansmute, T.x, T.y, D && { ...D, hp: Math.round(D.hp * k), xp: D.xp ?? Math.round(D.hp / 5) });
+      g.arene = true; this.tous.push(g);
+      w.emit({ k: 'wobot', id: g.id, x: g.x, y: g.y, quoi: 'twansmute' });
+      w.emit({ k: 'status', x: g.x, y: g.y - 50, text: 'Twansmutation !', color: '#ff9a7a' });
+    }
+    this.tampons = this.tampons.filter(T => !T.dead);
+    if (b.intouchable) return;   // pendant un palier, il attend ses renforts
+    const S = (id: number) => b.def.spells?.find(x => x.id === id);
+    // Mékattwaction : annoncée par une ligne au sol, puis le joueur est attiré et un Tamponneur prend sa place
+    if (this.tir) {
+      const q = vivants.find(p => p.id === this.tir!.id);
+      if (!q) this.tir = null;
+      else if ((this.tir.t -= dt) > 0) {
+        const d = Math.hypot(q.x - b.x, q.y - b.y);
+        w.telegraphs.push({ kind: 'rect', x: b.x, y: b.y, facing: Math.atan2(q.y - b.y, q.x - b.x), len: d, w: 44, progress: 1 - this.tir.t / C.tir, danger: true });
+      } else {
+        this.tir = null;
+        const o = this.libre(q.x, q.y), sp = S(C.sorts.mekattwaction);
+        if (sp) w.commeJoueur(q, () => w.monsterSpellHits(b, sp, q));
+        const D = w.opts.data.monsters[W.tampon], k = pvGroupe(w.players.length);
+        const T = w.spawnMonster(W.tampon, o.x, o.y, D && k > 1 ? { ...D, hp: Math.round(D.hp * k) } : D);
+        T.arene = true; T.twansT = C.delai; this.tous.push(T); this.tampons.push(T);
+        w.emit({ k: 'wobot', id: T.id, x: T.x, y: T.y, quoi: 'tampon' });
+      }
+    } else if ((this.wt.tir -= dt) <= 0) {
+      const q = vivants.filter(p => Math.hypot(p.x - b.x, p.y - b.y) <= C.portee).sort((a, c) => Math.hypot(c.x - b.x, c.y - b.y) - Math.hypot(a.x - b.x, a.y - b.y))[0];
+      this.wt.tir = q ? C.cadence : 1;
+      if (q) { this.tir = { id: q.id, t: C.tir }; w.emit({ k: 'monsterCast', id: b.id, name: S(C.sorts.mekattwaction)?.name ?? 'Mékattwaction', x: b.x, y: b.y }); }
+    }
+    // 10B : Mékawapace, à briser en tapant fort
+    const K = C.carapace;
+    if (this.cara) {
+      const pris = this.cara.pv0 - b.hp;
+      b.carapace = Math.max(0, 1 - pris / this.cara.pv);
+      if (pris >= this.cara.pv) {
+        this.cara = null; b.carapace = 0; b.subis = K.brise; b.subisT = K.briseT; b.atkCd = Math.max(b.atkCd, K.etourdi);
+        w.emit({ k: 'wobot', id: b.id, x: b.x, y: b.y, quoi: 'brisee' });
+        w.emit({ k: 'status', x: b.x, y: b.y - 70, text: 'Carapace brisée !', color: '#f2d36b' });
+        w.emit({ k: 'impact', hitstop: 0.06, shake: 0.012, big: true });
+      } else if ((this.cara.t -= dt) <= 0) {
+        this.cara = null; b.carapace = 0; b.subis = K.durci; b.subisT = K.durciT;
+        w.emit({ k: 'wobot', id: b.id, x: b.x, y: b.y, quoi: 'durcie' });
+        w.emit({ k: 'status', x: b.x, y: b.y - 70, text: 'Mékawapace durcie : résistances +50 %', color: '#a8b4c8' });
+      }
+    } else if ((this.wt.cara -= dt) <= 0) {
+      this.wt.cara = K.cadence;
+      this.cara = { pv0: b.hp, pv: b.maxHp * K.part, t: K.duree };
+      b.carapace = 1; b.subis = K.subis; b.subisT = K.duree;
+      w.emit({ k: 'wobot', id: b.id, x: b.x, y: b.y, quoi: 'carapace' });
+      w.emit({ k: 'status', x: b.x, y: b.y - 70, text: 'Mékawapace : brise-la !', color: '#c8d4e8' });
+    }
+    // 10C : Substitution avec le Tamponneur le plus proche du joueur resté loin, puis Wouste
+    const q = vivants.reduce((a, c) => Math.hypot(c.x - b.x, c.y - b.y) < Math.hypot(a.x - b.x, a.y - b.y) ? c : a);
+    this.wt.loin = Math.hypot(q.x - b.x, q.y - b.y) > C.loin ? this.wt.loin + dt : 0;
+    this.wt.subst -= dt;
+    if (this.wt.loin >= C.attente && this.wt.subst <= 0 && this.tampons.length && !this.wouste) {
+      const T = this.tampons.reduce((a, c) => Math.hypot(c.x - q.x, c.y - q.y) < Math.hypot(a.x - q.x, a.y - q.y) ? c : a);
+      [b.x, T.x] = [T.x, b.x]; [b.y, T.y] = [T.y, b.y];
+      this.wt.subst = C.relance; this.wt.loin = 0;
+      this.wouste = { id: q.id, t: C.woustePause };
+      w.emit({ k: 'wobot', id: b.id, x: b.x, y: b.y, quoi: 'substitution' });
+      w.emit({ k: 'status', x: b.x, y: b.y - 70, text: 'Substitution', color: '#c8d4e8' });
+    }
+    if (this.wouste) {
+      w.telegraphs.push({ kind: 'circle', x: b.x, y: b.y, r: C.wouste, progress: 1 - this.wouste.t / C.woustePause, danger: true });
+      if ((this.wouste.t -= dt) <= 0) {
+        const c = vivants.find(p => p.id === this.wouste!.id), sp = S(C.sorts.wouste);
+        this.wouste = null;
+        if (c && sp && Math.hypot(c.x - b.x, c.y - b.y) <= C.wouste + c.radius) w.commeJoueur(c, () => w.monsterSpellHits(b, sp, c));
+        w.emit({ k: 'slam', x: b.x, y: b.y, radius: C.wouste });
+      }
+    }
+  }
+
   /** « Wabbits : 7C » : un monstre d'alarme resté en vie trop longtemps court vers une entrée ; s'il l'atteint, des renforts arrivent. */
   private updateAlarme(dt: number) {
     const A = this.d.alarme;
@@ -208,6 +316,13 @@ export class Arene {
   }
   /** Avant l'IA ordinaire : true = l'arène mène ce monstre (le Kiafin qui court donner l'alarme). */
   piloter(m: Monster, dt: number): boolean {
+    // 10D : le Wa Wabbit sorti du Wobot cassé file vers une entrée et disparaît, pour de bon
+    if (this.epilogue?.m === m) {
+      const E = this.epilogue.e;
+      if (m.allerVers(E.x, E.y, dt, this.w, WOBOT.fuite) && Math.hypot(E.x - m.x, E.y - m.y) > 30) return true;
+      m.dead = true; m.t = 0; this.epilogue = null;
+      return true;
+    }
     const e = this.fuyards.get(m), A = this.d.alarme;
     if (!e || !A || m.dead || this.fini) return false;
     if (m.allerVers(e.x, e.y, dt, this.w, ARENE.alarmeVitesse) && Math.hypot(e.x - m.x, e.y - m.y) > 30) return true;
@@ -241,6 +356,18 @@ export class Arene {
       w.emit({ k: 'bossFuite', id: b.id, name: b.def.name, x: b.x, y: b.y, suite: this.d.fuite.suite, premiers: [...this.premiers] });
     }
     for (const m of this.tous) if (!m.dead) { m.dead = true; m.t = 0.6; }
+    this.tampons = []; this.tir = null; this.wouste = null;
+    // 10D : la fin de l'histoire, le Wa Wabbit sort du Wobot cassé et s'enfuit (sans combat, sans butin)
+    const W = this.d.wobot, D = W && w.opts.data.monsters[W.epilogue];
+    if (W && D && this.boss) {
+      const b = this.boss, o = this.libre(b.x + 40, b.y + 20);
+      const m = w.spawnMonster(W.epilogue, o.x, o.y, { ...D, boss: false, spells: [], signature: undefined });
+      m.arene = true; m.intouchable = true; m.state = 'chase';
+      const e = this.pts.entrees.reduce((a, c) => Math.hypot(c.x - m.x, c.y - m.y) < Math.hypot(a.x - m.x, a.y - m.y) ? c : a);
+      this.epilogue = { m, e };
+      w.emit({ k: 'bossEpilogue', id: m.id, name: D.name, x: m.x, y: m.y });
+      w.emit({ k: 'status', x: m.x, y: m.y - 60, text: `${D.name} : « Vous ne m'aurez jamais ! »`, color: '#f2d36b' });
+    }
     if (p.cleDonjon?.nom === this.d.nom) p.cleDonjon = null;
     if (w.players.length > 1) this.butins = w.players.map(q => [q.id, w.commeJoueur(q, () => w.tirerCoffreDonjon(this.d))]);
     else this.butin = w.tirerCoffreDonjon(this.d);
@@ -280,6 +407,7 @@ export class Arene {
   /** Le joueur est parti (mort, Rappel) : ses monstres disparaissent ; la clé garde la vague atteinte. */
   abandonner() {
     for (const m of this.tous) if (!m.dead) { m.dead = true; m.t = 0; }
+    if (this.epilogue) { this.epilogue.m.dead = true; this.epilogue.m.t = 0; this.epilogue = null; }
     this.arrivees = [];
   }
 }

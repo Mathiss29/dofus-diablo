@@ -143,6 +143,9 @@ export class ZoneScene extends Phaser.Scene {
   private guerreView: GuerreView | null = null;
   /** Boss enfui dans son trou (« Wabbits : 8B »), pour la bannière de fin qui suit. */
   private fuite: { suite: string; premier: boolean; name: string } | null = null;
+  /** « Wabbits : 10D » : le Wa Wabbit est sorti du Wobot cassé (bandeau de fin) ; aides du Wa Wobot déjà montrées. */
+  private epilogue: string | null = null;
+  private aidesWobot = new Set<string>();
   /** Havre-Sac : touche H ou bouton du HUD (2A), choix dans la fenêtre du Zaap du Havre-Sac (2C), pour le prochain pas. */
   private havreSacDemande = false;
   /** Enutrof : touche du coffre au trésor. */
@@ -1242,11 +1245,21 @@ export class ZoneScene extends Phaser.Scene {
           if (e.n) this.hud.banner(`Alarme !\n${e.n} gardes accourent`, 1200, true);
           else this.hud.toast('Un Tiwabbit Kiafin court donner l\'alarme : rattrape-le !');
           break;
+        // « Wabbits : 10A-D » : le Wa Wobot (une aide par mécanique, la première fois)
+        case 'wobot': {
+          const aide = { tampon: 'Un Wobot Tamponneur ! Casse-le avant sa Twansmutation', carapace: 'Mékawapace : tape fort pour briser sa carapace !',
+            durcie: 'Carapace pas brisée à temps : ses résistances montent', substitution: 'Reste loin et il prend la place d\'un Tamponneur !', twansmute: '', brisee: '' }[e.quoi];
+          if (e.quoi === 'brisee') this.hud.banner('Carapace brisée !\nIl chancelle : frappe !', 1000);
+          else if (aide && !this.aidesWobot.has(e.quoi)) { this.aidesWobot.add(e.quoi); this.hud.toast(aide); }
+          break;
+        }
+        case 'bossEpilogue': this.epilogue = e.name; break;
         case 'bossFuite': this.fuite = { suite: e.suite, premier: e.premiers.includes(this.world.player.id), name: e.name }; break;
         case 'areneFin': {
           // « Wabbits : 8B + 9A » : le boss s'est enfui ; la première fois, son trou mène au donjon suivant
-          const f = this.fuite; this.fuite = null;
-          if (f) this.hud.banner(`Le ${f.name} s'enfuit dans son trou !\n${f.premier ? `Saute dedans pour le suivre : ${f.suite}` : 'Le trou se referme derrière lui'} · ${chrono(e.temps)}${e.record ? ' · record !' : ''}`, 3200);
+          const f = this.fuite, ep = this.epilogue; this.fuite = null; this.epilogue = null; this.aidesWobot.clear();
+          if (ep) this.hud.banner(`Le Wobot est cassé !\nLe ${ep} en sort et s'enfuit… on le reverra · ${chrono(e.temps)}${e.record ? ' · record !' : ''}`, 3400);
+          else if (f) this.hud.banner(`Le ${f.name} s'enfuit dans son trou !\n${f.premier ? `Saute dedans pour le suivre : ${f.suite}` : 'Le trou se referme derrière lui'} · ${chrono(e.temps)}${e.record ? ' · record !' : ''}`, 3200);
           else this.hud.banner(`${e.nom} terminé !\n${chrono(e.temps)}${e.record ? ' · nouveau record !' : ''} · portail et coffre à l'estrade`, 2600);
           break;
         }

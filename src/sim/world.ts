@@ -787,7 +787,8 @@ export class World {
   bossDuDonjon(nom: string): string | null {
     const d = this.zone.open?.donjons?.find(x => x.nom === nom), M = this.opts.data.monsters;
     for (const gs of Object.values(d?.salles ?? {})) for (const g of gs) for (const m of g) if (M[m]?.boss) return m;
-    return null;
+    // arènes de la 0.4 : le boss n'est pas dans les salles officielles, il arrive avec la dernière vague
+    return d?.bossVague?.find(m => M[m]?.boss) ?? null;
   }
   /** Donjon où se trouve le joueur (nom), ou null. */
   /** Caracs 11A : rend tous les points de caractéristiques, gratuitement, hors donjon et hors arène. */
@@ -1379,7 +1380,7 @@ export class World {
       if (m.saigneT > 0 && !m.dead) this.saigner(m, dt);
       if (this.zone.open && m.state === 'idle' && !m.dead && this.players.every(q => Math.abs(m.x - q.x) + Math.abs(m.y - q.y) > World.SOMMEIL)) { m.regenCalme(dt); continue; }
       if (m.guerre && this.guerre?.attaque?.piloter(m, dt)) continue;
-      if (m.arene && this.arene?.d.alarme && this.arene.piloter(m, dt)) continue;
+      if (m.arene && this.arene?.piloter(m, dt)) continue;
       m.update(dt, this.cibleDe(m), this);
     }
     for (const b of this.betes) b.update(dt, this);
