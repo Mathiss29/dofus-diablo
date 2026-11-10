@@ -5,6 +5,9 @@ un niveau en K tués, K = 25 jusqu'au niveau 10 (comme à Incarnam), puis jusqu'
 Élites ×3, boss encore à 20 ×15, archimonstres = même rapport à leur monstre qu'avant. Incarnam et les autres boss ne bougent pas.
 
     python3 tools/contenu/xp_monstres.py          # écrit src/data/monsters.json
+
+Ralenti le 2026-11-10 (Mathis : « on XP hyper rapidement ») : XP par niveau doublée dans classes.json (xpBase 200), donc
+en vrai 50 tués au début et 120 vers le 60 ; les XP des monstres ne changent pas.
 """
 import json
 

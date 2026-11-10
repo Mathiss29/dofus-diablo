@@ -9,11 +9,11 @@ describe('XP des monstres (0.4 : une courbe selon le niveau, tools/contenu/xp_mo
     expect(normaux.filter(m => m.xp === 20)).toEqual([]);
     for (const a of normaux) for (const b of normaux) if (a.level! < b.level!) expect(a.xp!, `${a.name} / ${b.name}`).toBeLessThanOrEqual(b.xp!);
   });
-  it('un monstre de son niveau fait passer un niveau en 25 à 65 tués (XP du niveau n = 100 × n)', () => {
+  it('un monstre de son niveau fait passer un niveau en 50 à 130 tués (XP du niveau n = 200 × n)', () => {
     for (const m of normaux) {
       const tues = (GAME_DATA.classes.iop.xpBase * m.level!) / m.xp!;
-      expect(tues, m.name).toBeGreaterThanOrEqual(25);
-      expect(tues, m.name).toBeLessThanOrEqual(65);
+      expect(tues, m.name).toBeGreaterThanOrEqual(50);
+      expect(tues, m.name).toBeLessThanOrEqual(130);
     }
   });
 });
