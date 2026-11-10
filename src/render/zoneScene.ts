@@ -48,7 +48,8 @@ import { inviterDiscord } from './inviteDiscord';
 import { Parcours } from './parcours';
 import { spellTipHtml } from './spellTip';
 import { LEGENDARY, RARITY_COLORS, RARITY_NAMES, rollItem } from '../sim/items';
-import { POUVOIR_PAR_ID, V03_PUBLIC } from '../sim/pouvoirs';
+import { POUVOIR_PAR_ID, V03_PUBLIC, V04_PUBLIC } from '../sim/pouvoirs';
+import { lieuxDeZone } from '../sim/passants';
 import { PC_PAR_ID } from '../sim/pouvoirsClasse';
 import { exporterJoueur, restaurerJoueur } from '../sim/sauvegarde';
 import { lireBestiaire, noter, nouvelleSession, sauverBestiaire, statsVides } from './carnet';
@@ -236,8 +237,9 @@ export class ZoneScene extends Phaser.Scene {
     if (zone.open) {
       for (const q of Object.values(QUETES.quetes)) for (const e of Array.isArray(q.etapes) ? q.etapes : Object.values(q.etapes).flat())
         for (const o of e.objectifs) if (o.t === 'elite' && GAME_DATA.monsters[o.monstre]) types.add(o.monstre);
-      QuestView.preload(this, QUETES, V03_PUBLIC || !!this.test, this.zoneId);
+      QuestView.preload(this, QUETES, V03_PUBLIC || !!this.test, this.zoneId, V04_PUBLIC || !!this.test);
       if (zone.open.bastion) PassantsView.preload(this);
+      else for (const l of lieuxDeZone(this.zoneId, V04_PUBLIC || !!this.test)) PassantsView.preload(this, l.habitants);
     }
     else {
       const w = zone.waves!;

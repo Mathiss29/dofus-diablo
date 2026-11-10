@@ -570,5 +570,7 @@ export const PNJ_LOOKS: Record<string, PnjLook> = {
   garde_pandala: { scale: 0.82, anim: 'AnimStatique_1' },
   garde_frigost: { scale: 0.82, anim: 'AnimStatique_1' },
   garde_amakna: { scale: 0.82, anim: 'AnimStatique_1' },
+  // Bailli du Roi Allister (PNJ 2330, look de personnage) : planche de habitant_planche.py à SCALE=0,7, repos explo en boucle
+  bailli: { scale: 0.82, anim: 'AnimStatiqueExplo0_1', boucle: 32 },
   heraut_ecaflip: { scale: 0.82, anim: 'AnimStatique_1', fun: [['AnimAttaque0_1', 9], ['AnimAttaque1_1', 7], ['AnimAttaque2_1', 6]] },
 };
