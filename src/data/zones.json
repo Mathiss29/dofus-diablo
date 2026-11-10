@@ -1761,7 +1761,11 @@
       6
      ],
      "essai": true,
-     "region": "Île des Wabbits"
+     "region": "Île des Wabbits",
+     "rare": {
+      "monstre": "wabbit_gm",
+      "chance": 0.003
+     }
     },
     "162": {
      "name": "Îlot de Waldo",
@@ -1776,7 +1780,11 @@
       6
      ],
      "essai": true,
-     "region": "Île des Wabbits"
+     "region": "Île des Wabbits",
+     "rare": {
+      "monstre": "wabbit_gm",
+      "chance": 0.003
+     }
     },
     "163": {
      "name": "Îlot des Tombeaux",
@@ -1791,7 +1799,17 @@
       6
      ],
      "essai": true,
-     "region": "Île des Wabbits"
+     "region": "Île des Wabbits",
+     "nuit": {
+      "groupSize": [
+       5,
+       8
+      ]
+     },
+     "rare": {
+      "monstre": "wabbit_gm",
+      "chance": 0.003
+     }
     },
     "164": {
      "name": "Îlot de la Couronne",
@@ -1808,7 +1826,12 @@
       6
      ],
      "essai": true,
-     "region": "Île des Wabbits"
+     "region": "Île des Wabbits",
+     "rare": {
+      "monstre": "wabbit_gm",
+      "chance": 0.003
+     },
+     "elite": "nono_le_wobot"
     },
     "1600": {
      "name": "Passerelles de l'île",
@@ -3001,7 +3024,8 @@
       "24_-2",
       318
      ],
-     "nom": "Bateau du Capitaine Lily"
+     "nom": "Bateau du Capitaine Lily",
+     "prix": 500
     },
     {
      "a": [

@@ -1545,6 +1545,16 @@
               "Île des Wabbits",
               "Partie de test"
             ]
+          },
+          {
+            "titre": "L'île des Wabbits prend vie",
+            "phrase": "Le Capitaine Lily t'accueille, sa Potion Wabbit te déguise, et les Tombeaux se réveillent la nuit.",
+            "details": "Traversée à 500 kamas, retour offert. Nono le Wobot est recherché chaque semaine, et le Wabbit Gm rôde, très rarement.",
+            "icone": "carte",
+            "etiquettes": [
+              "Île des Wabbits",
+              "Partie de test"
+            ]
           }
         ]
       }

@@ -703,6 +703,54 @@
      "texte": "Ça awive, à peu près tous les quarts d'heure. Défends quand même : ces attaques-là wapportent la moitié en plus."
     }
    ]
+  },
+  "lily": {
+   "nom": "Capitaine Lily",
+   "sprite": "lily",
+   "dofusId": 134,
+   "zone": "astrub",
+   "carte": "24_-2",
+   "case": 302,
+   "v04": true,
+   "titre": "Capitaine du bateau de Madrestam",
+   "phrase": "Bienvenue sur l'île des Wabbits, moussaillon ! Ici, tout le monde a deux grandes oreilles. Toi, tu en as deux petites : ça se voit.",
+   "services": [
+    {
+     "texte": "Je voudrais des Potions Wabbit.",
+     "service": "boutique"
+    }
+   ],
+   "discussion": [
+    {
+     "reponse": "À quoi sert la Potion Wabbit ?",
+     "texte": "Une gorgée et tu sens la cawotte pendant dix minutes. Les Wabbits te prennent pour un des leurs, tant que tu ne leur tapes pas dessus. Les squelettes, eux, ne se laissent pas avoir."
+    },
+    {
+     "reponse": "Et le retour ?",
+     "texte": "L'aller coûte 500 kamas, le retour est offert : personne ne veut rester coincé ici. Le Zaap de l'île marche aussi."
+    },
+    {
+     "reponse": "Qui est Nono le Wobot ?",
+     "texte": "Une machine du Wa Wabbit qui rôde sur l'îlot de la Couronne. Il y a une prime sur sa tête de boulons, chaque semaine."
+    }
+   ]
+  },
+  "wabbit_matin": {
+   "nom": "Wabbit du Matin Pewlant",
+   "sprite": "wabbit_matin",
+   "dofusId": 141,
+   "zone": "astrub",
+   "carte": "24_-2",
+   "case": 387,
+   "v04": true,
+   "titre": "Wabbit pacifique",
+   "phrase": "Bonjouw ! Moi, je n'aime pas la guewwe. Mais j'aime bien qu'on m'aide, et je paie en Cawottes.",
+   "discussion": [
+    {
+     "reponse": "Pourquoi tu ne te bats pas ?",
+     "texte": "Paw ce que le Wa Wabbit fait twavailler tout le monde, et moi je pwéfèwe le soleil du matin. Chut, ne lui dis pas."
+    }
+   ]
   }
  },
  "quetes": {
@@ -3765,6 +3813,160 @@
     "kamas": 2750,
     "sac": "epique",
     "pepites": 80
+   }
+  },
+  "wabbits_intrusion": {
+   "type": "secondaire",
+   "pnj": "lily",
+   "rendre": "lily",
+   "serie": "Île des Wabbits",
+   "nom": "Intrusion chez les Wabbits",
+   "niveau": 40,
+   "texte": "Pour te promener ici sans te faire mordre les mollets, il te faut la Potion Wabbit. J'en ai, mais pas pour rien : les Tiwabbits ont pillé ma cale. Va leur montrer qui est le capitaine.",
+   "etapes": [
+    {
+     "nom": "La cale pillée",
+     "bulle": "Les Tiwabbits traînent sur l'île de la Cawotte, juste derrière la plage.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre des Tiwabbits",
+       "n": 8,
+       "monstres": [
+        "tiwabbit",
+        "black_tiwabbit",
+        "tiwabbit_kiafin"
+       ]
+      }
+     ]
+    },
+    {
+     "nom": "Retour au bateau",
+     "bulle": "Reviens me voir au bateau.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler au Capitaine Lily",
+       "pnj": "lily"
+      }
+     ]
+    }
+   ],
+   "merci": "Voilà trois Potions Wabbit. Une gorgée, et tu es un Wabbit comme les autres pendant dix minutes. J'en vends d'autres, si tu en manques.",
+   "recompense": {
+    "xp": 6000,
+    "kamas": 600,
+    "objets": [
+     [
+      "960",
+      3
+     ]
+    ]
+   }
+  },
+  "avis_nono": {
+   "type": "prime",
+   "pnj": "lily",
+   "rendre": "lily",
+   "serie": "Avis de recherche",
+   "repetable": "semaine",
+   "nom": "On recherche Nono le Wobot",
+   "niveau": 50,
+   "texte": "Nono le Wobot a été aperçu sur l'îlot de la Couronne.\nIl est recherché pour vol de cawottes en bande organisée.\n\nUne traque par semaine : l'avis revient le lundi.",
+   "etapes": [
+    {
+     "nom": "On recherche Nono le Wobot",
+     "objectifs": [
+      {
+       "t": "elite",
+       "texte": "Vaincre Nono le Wobot",
+       "monstre": "nono_le_wobot",
+       "carte": "24_-14",
+       "pv": 1
+      }
+     ]
+    }
+   ],
+   "merci": "Tu l'as démonté ! Voilà la prime, en kamas et en Cawottes.",
+   "recompense": {
+    "xp": 12000,
+    "kamas": 1500,
+    "sac": "epique",
+    "objets": [
+     [
+      "20446",
+      60
+     ]
+    ]
+   }
+  },
+  "wabbits_tombeaux": {
+   "type": "prime",
+   "pnj": "wabbit_matin",
+   "rendre": "wabbit_matin",
+   "serie": "Wabbits pacifiques",
+   "repetable": "jour",
+   "nom": "Les squelettes ne dorment jamais",
+   "niveau": 48,
+   "texte": "Les Wabbits Squelettes sortent des tombeaux, suwtout la nuit. Ils me font peuw. Tu peux en wenvoyer quelques-uns dans leuw twou ?\n\nUne fois par jour.",
+   "etapes": [
+    {
+     "nom": "L'îlot des Tombeaux",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 12 monstres : Îlot des Tombeaux",
+       "n": 12,
+       "sousZone": 163
+      }
+     ]
+    }
+   ],
+   "merci": "Mewci ! Je dowmiwai mieux ce soiw.",
+   "recompense": {
+    "xp": 8000,
+    "objets": [
+     [
+      "20446",
+      20
+     ]
+    ]
+   }
+  },
+  "wabbits_garde": {
+   "type": "prime",
+   "pnj": "wabbit_matin",
+   "rendre": "wabbit_matin",
+   "serie": "Wabbits pacifiques",
+   "repetable": "jour",
+   "nom": "La garde du Wa Wabbit",
+   "niveau": 50,
+   "texte": "Les Wo Wabbits et les Gwand Pa Wabbits de l'îlot de Waldo sont les plus méchants. Calme-les un peu, et je te donne des Cawottes.\n\nUne fois par jour.",
+   "etapes": [
+    {
+     "nom": "L'îlot de Waldo",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre des Wo Wabbits et des Grand Pa Wabbits",
+       "n": 10,
+       "monstres": [
+        "wo_wabbit",
+        "grand_pa_wabbit"
+       ]
+      }
+     ]
+    }
+   ],
+   "merci": "Ils sont plus calmes, mewci. Voilà tes Cawottes.",
+   "recompense": {
+    "xp": 9000,
+    "objets": [
+     [
+      "20446",
+      20
+     ]
+    ]
    }
   }
  },

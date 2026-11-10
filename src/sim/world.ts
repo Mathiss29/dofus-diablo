@@ -151,6 +151,8 @@ export interface WorldOptions {
   partieServeur?: boolean;
   /** Pas de groupes de monstres dans le monde ouvert (donjon tenu par le serveur : seule l'arène compte, bien moins de calcul). */
   sansGroupes?: boolean;
+  /** Nuit à l'heure du PC (donnée par l'affichage, « Wabbits : 12A ») : l'îlot des Tombeaux se réveille. */
+  nuit?: () => boolean;
   /** Tous les groupes posés dès le départ, même loin des joueurs (tests qui regardent tout le monde ; le jeu pose à la demande, World.POSE). */
   groupesPartout?: boolean;
 }
@@ -256,7 +258,7 @@ export class World {
   /** Carte d'un intérieur -> son nom : la carte d'arrivée de chaque porte qui mène dedans (première porte trouvée). */
   readonly lieux = new Map<string, string>();
   /** Portes du monde ouvert : les deux bouts en coordonnées monde, et la carte de chacun. */
-  portes: { nom: string; ends: [PorteEnd, PorteEnd]; verrou: boolean; sens: boolean; cle?: string; vers?: { zone: string; arrivee: [string, number] };
+  portes: { nom: string; ends: [PorteEnd, PorteEnd]; verrou: boolean; sens: boolean; cle?: string; prix?: number; vers?: { zone: string; arrivee: [string, number] };
     /** Portail cliquable (PorteDef.dessin) : milieu du dessin dans le monde et taille de la zone de clic à l'écran. */
     dessin?: { x: number; y: number; rx: number; ry: number } }[] = [];
   /** Bout de porte par lequel le joueur vient d'arriver : inactif tant qu'il ne s'en est pas éloigné. */
@@ -665,7 +667,7 @@ export class World {
         const q = wg.cellToWorld(wg.cellOf(tag, c));
         return { tag, ...wg.nearestFree(q.x, q.y, wg.freeByMap.get(tag)!) };
       };
-      this.portes.push({ nom: d.nom, ends: [end(d.a), end(d.b)], verrou: !!d.verrou, sens: !!d.sens, cle: d.cle });
+      this.portes.push({ nom: d.nom, ends: [end(d.a), end(d.b)], verrou: !!d.verrou, sens: !!d.sens, cle: d.cle, ...(d.prix ? { prix: d.prix } : {}) });
       if (wg.mapByTag(d.b[0])?.inside && !this.lieux.has(d.b[0])) this.lieux.set(d.b[0], d.nom);
     }
   }
@@ -729,7 +731,7 @@ export class World {
       // entrée d'un donjon gardé (maquette Gardiens 5A) : la porte ouvre le dialogue du gardien, qui fait entrer (« Entrer »)
       const gardien = i === 0 && this.quetes?.gardienDe(po.nom);
       if (gardien && po === this.entreeDonjon(po.nom)) { p.stopMove(); if (!clic) this.portalLock = from; this.quetes!.parlerA(gardien); return; }
-      if (i === 0 && !this.prendreCle(po)) { this.portalLock = from; return; }
+      if (i === 0 && (!this.prendreCle(po) || !this.payerTraversee(po))) { this.portalLock = from; return; }
       this.passer(po, to);
       return;
     }
@@ -765,6 +767,25 @@ export class World {
       return false;
     }
     if (r === 1) delete p.resources[po.cle]; else p.resources[po.cle] = r - 1;
+    return true;
+  }
+  /** « Wabbits : 2C » : traversée payante à l'aller (bateau du Capitaine Lily), gratuite au retour. Vrai si on peut passer. */
+  private payerTraversee(po: World['portes'][number]): boolean {
+    if (!po.prix) return true;
+    const p = this.player;
+    if (p.kamas < po.prix) { this.emit({ k: 'status', x: p.x, y: p.y - 60, text: `La traversée coûte ${po.prix} kamas`, color: '#ff9a5a' }); return false; }
+    p.kamas -= po.prix;
+    this.emit({ k: 'status', x: p.x, y: p.y - 60, text: `-${po.prix} kamas`, color: '#f2d36b' });
+    return true;
+  }
+  /** « Wabbits : 2D » : boire la Potion Wabbit (déguisement). */
+  boire(id: string): boolean {
+    const r = this.opts.items?.resources[id], p = this.player;
+    if (!r?.deguisement || !(p.resources[id] > 0) || p.dead) return false;
+    p.resources[id]--; if (!p.resources[id]) delete p.resources[id];
+    p.deguise = r.deguisement;
+    this.emit({ k: 'status', x: p.x, y: p.y - 60, text: 'Déguisé en Wabbit !', color: '#e8902a' });
+    this.emit({ k: 'potion', x: p.x, y: p.y, amount: 0 });
     return true;
   }
   /** Clé de ce donjon encore valable (14A) : vague atteinte, sinon 0. */
@@ -1128,7 +1149,8 @@ export class World {
     }
     if (pt) { const c = wg.cellOf(g.map, pt.c); pos = ok.has(c) ? wg.cellToWorld(c) : wg.nearestFree(...xy(wg.cellToWorld(c)), free); }
     g.x = pos.x; g.y = pos.y; g.members = []; g.cleared = false;
-    const [a, b] = (!g.fixe && this.quetes?.tailleGroupe(this.worldGrid!.mapByTag(g.map)?.sub ?? -1)) || pt?.n || g.sub.groupSize, n = g.fixe ? g.fixe.length : a + this.rng.int(b - a + 1);
+    const taille = g.sub.nuit && this.estNuit() ? g.sub.nuit.groupSize : g.sub.groupSize;
+    const [a, b] = (!g.fixe && this.quetes?.tailleGroupe(this.worldGrid!.mapByTag(g.map)?.sub ?? -1)) || pt?.n || taille, n = g.fixe ? g.fixe.length : a + this.rng.int(b - a + 1);
     const a0 = this.rng.range(0, Math.PI * 2), [r0, r1] = PLACEMENT.auto.rayonGroupe;
     // les membres restent du même côté des obstacles que le chef : cases atteignables à pied en quelques pas (plus de monstre derrière un mur ou une rivière)
     const c0 = wg.cellAtWorld(pos.x, pos.y), proches = new Map<number, number>(ok.has(c0) ? [[c0, 0]] : []), file = [...proches.keys()];
@@ -1151,6 +1173,9 @@ export class World {
       // l'élite unique de la sous-zone mène parfois un groupe (souvent sur son repaire, 4D), s'il n'est pas déjà en vie ailleurs
       const elite = !g.fixe && i === 0 && g.sub.elite && this.rng.next() < (pt?.r ? PLACEMENT.elite.repaire : PLACEMENT.elite.hasard) && !this.monsters.some(o => !o.dead && o.type === g.sub.elite);
       let type = g.fixe ? g.fixe[i] : elite ? g.sub.elite! : this.rng.pick(g.sub.monsters);
+      // « Wabbits : 11C » : très rarement, un monstre caché mène le groupe (un seul en vie à la fois)
+      const R = g.sub.rare;
+      if (R && !g.fixe && i === 0 && !elite && this.rng.next() < R.chance * (this.test?.archis ? 100 : 1) && !this.monsters.some(o => !o.dead && o.type === R.monstre)) type = R.monstre;
       // 0.3 (15B) : parfois l'archimonstre officiel prend la place du monstre (un seul en vie à la fois par sorte)
       const archi = `archi_${type}`;
       if (!g.fixe && !elite && this.player.v03 && this.opts.data.monsters[archi]?.archiDe === type && this.rng.next() < ARCHI.chance * (this.test?.archis ? 100 : 1)   // partie de test (Outil test 4C) : ×100
@@ -1172,6 +1197,8 @@ export class World {
   }
   /** Un monstre repère le joueur : tout son groupe passe à l'attaque. */
   /** Tout le groupe de m se lance à la poursuite, y compris ceux qui rentraient (3A). 7A : un « ! » rouge au réveil. */
+  /** « Wabbits : 12A » : nuit à l'heure du PC (ou celle forcée dans les réglages), donnée par l'affichage. */
+  estNuit(): boolean { return !!this.opts.nuit?.(); }
   aggroGroup(m: Monster) {
     const g = this.groups[m.group];
     let reveil = false;

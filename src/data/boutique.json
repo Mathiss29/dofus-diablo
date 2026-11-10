@@ -184,5 +184,12 @@
    "v04": true,
    "apparat": true
   }
+ ],
+ "lily": [
+  {
+   "id": "960",
+   "prix": 300,
+   "v04": true
+  }
  ]
 }
