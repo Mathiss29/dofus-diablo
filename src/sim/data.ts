@@ -9,6 +9,7 @@ import recoltes from '../data/recoltes.json';
 import apparat from '../data/apparat.json';
 import familiers from '../data/familiers.json';
 import butin from '../data/butin.json';
+import carte from '../data/carte.json';
 import type { RecoltesData } from './recolte';
 import type { FamilierDef, ItemsData, Stat } from './items';
 import type { QuetesData } from './quests';
@@ -33,6 +34,8 @@ for (const [id, f] of Object.entries(FAMILIERS.familiers)) {
 export const WEAPONS = Object.fromEntries(Object.entries(armes).filter(([k]) => !k.startsWith('_'))) as unknown as Record<string, WeaponProfile>;
 /** Quêtes, PNJ et succès (src/data/quetes.json, écrit par tools/contenu/quetes.py). */
 export const QUETES = quetes as unknown as QuetesData;
+// succès Cartographe (carte du monde 6D, src/data/carte.json écrit par tools/extraction/carte_peinte.py)
+Object.assign(QUETES.succes, (carte as unknown as Pick<QuetesData, 'succes'>).succes);
 /** Boutiques des PNJ (src/data/boutique.json) : articles et prix en Pépites. */
 export const BOUTIQUES = Object.fromEntries(Object.entries(boutique).filter(([k]) => !k.startsWith('_') && k !== 'apparat_prix')) as unknown as Record<string, { id: string; prix: number; v03?: boolean; v04?: boolean }[]>;
 /** Métiers de récolte (src/data/recoltes.json, écrit par tools/contenu/recoltes.py). */

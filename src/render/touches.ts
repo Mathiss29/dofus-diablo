@@ -25,6 +25,7 @@ export const ACTIONS: Action[] = [
   { id: 'chat', nom: 'Écrire dans le chat', groupe: 'Fenêtres', def: 'Enter' },
   { id: 'options', nom: 'Options', groupe: 'Fenêtres', def: 'O' },
   { id: 'carte', nom: 'Carte du monde', groupe: 'Fenêtres', def: 'M' },
+  { id: 'carteTab', nom: 'Carte en surimpression', groupe: 'Fenêtres', def: 'Tab' },
   { id: 'havresac', nom: 'Havre-Sac', groupe: 'Fenêtres', def: 'H' },
   { id: 'muet', nom: 'Couper ou remettre le son', groupe: 'Divers', def: 'Ctrl+M' },
   { id: 'impact', nom: 'Effets d\'impact', groupe: 'Divers', def: 'F' },
