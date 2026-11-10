@@ -35,7 +35,7 @@ describe('contournement du décor', () => {
 
   it('dans l\'arène de la Crypte, les monstres en route s\'écartent les uns des autres au lieu de se rentrer dedans', () => {
     const data = JSON.parse(readFileSync(new URL('../public/assets/mondes/incarnam/monde.json', import.meta.url), 'utf8')) as WorldData;
-    const w = new World({ data: GAME_DATA, zone: 'incarnam', map: new WorldGrid(data), seed: 30 }), wg = w.worldGrid!;
+    const w = new World({ data: GAME_DATA, zone: 'incarnam', map: new WorldGrid(data), seed: 30, groupesPartout: true }), wg = w.worldGrid!;
     w.allerArene('arene_crypte');
     const p = w.player, free = wg.freeByMap.get('arene_crypte')!, pos = wg.cellToWorld(free[free.length >> 1]);
     let contacts = 0, n = 0;
