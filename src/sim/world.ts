@@ -19,6 +19,7 @@ import { Bete, BETES, REGLES_BETES, type EffetBete, type SortBete } from './bete
 import { initiativeBonus, removalChance } from './caracs';
 import { planWave } from './waves';
 import { Arene, ARENE } from './arene';
+import { Guerre } from './guerre';
 import type { EtatMonde } from './etatMonde';
 import { Quetes, type Compte, type EtatQuetes, type QuetesData } from './quests';
 import { appliquerTest, type ReglagesTest } from './outilsTest';
@@ -125,7 +126,8 @@ export interface WorldOptions {
   /** Métiers de récolte (src/data/recoltes.json) : ressources et leurs emplacements par monde. */
   recoltes?: RecoltesData;
   /** Boutiques des PNJ (src/data/boutique.json) : articles et prix en Pépites. */
-  boutiques?: Record<string, { id: string; prix: number; /** vendu seulement en 0.3 */ v03?: boolean; /** en 0.4 (clés d'Amakna) */ v04?: boolean }[]>;
+  boutiques?: Record<string, { id: string; prix: number; /** vendu seulement en 0.3 */ v03?: boolean; /** en 0.4 (clés d'Amakna) */ v04?: boolean;
+    /** payé dans cette monnaie au lieu des Pépites (Tiwa Cawoteuw : Cawottes) */ monnaie?: string; /** apparence (collection) au lieu d'un objet */ apparat?: boolean }[]>;
   /** Objets d'apparat officiels (src/data/apparat.json) et leur prix en Pépites chez Emp (boutique.json, apparat_prix). */
   apparats?: { objets: Record<string, { slot: string; collection?: boolean }>; prix: Record<string, number> };
   /** Partie de test (#test) : réglages du panneau F1 ; absent dans une vraie partie. */
@@ -164,7 +166,7 @@ export const EVENEMENTS_PERSONNELS = new Set<SimEvent['k']>(['levelUp', 'newSpel
   'brisage', 'codex', 'codexOuvert', 'coffreOuvert', 'capture', 'lieuDecouvert', 'impression', 'apparence', 'fusion', 'commande', 'signature', 'achat', 'familierNiveau',
   'familierRepas', 'rappel', 'cleManquante', 'recolteDebut', 'recolteFin', 'recolteStop', 'recolteNiveau', 'service', 'almanax', 'dofusPassif',
   'dofusGagne', 'lootKamas', 'bagFull', 'checkpoint', 'portalStart', 'portal', 'changeZone', 'incantation', 'incantationStop', 'arche', 'zaapDecouvert',
-  'zaapDepart', 'emmenage', 'queteDebut', 'queteEtape', 'queteFin', 'objetQuete', 'succes', 'succesRecupere', 'itemDrop']);
+  'zaapDepart', 'emmenage', 'queteDebut', 'queteEtape', 'queteFin', 'objetQuete', 'succes', 'succesRecupere', 'itemDrop', 'guerreDebut', 'guerreFin']);
 
 export class World {
   readonly rng: Rng;
@@ -300,6 +302,8 @@ export class World {
   /** Poutch Ingball du Havre-Sac (7A) : id du monstre. */
   poutch: number | null = null;
   /** Arène du donjon où l'on se bat (maquette « Donjons en vagues »), null ailleurs. */
+  /** Guerre des Cawottes (0.4, île des Wabbits) : partie de test seulement tant que la 0.4 est cachée. */
+  guerre: Guerre | null = null;
   arene: Arene | null = null;   // au-delà de ce qu'on voit même dézoomé à fond (avant : monstres figés au bord de l'écran)
 
   constructor(readonly opts: WorldOptions) {
@@ -345,6 +349,7 @@ export class World {
     }
     if (open) this.ouvrirCouloirs();
     if (open) { this.buildPortes(); this.buildRecoltes(); this.buildPostes(); }
+    if (open?.guerre && this.test && this.map instanceof WorldGrid && open.guerre.champs.every(c => this.map instanceof WorldGrid && this.map.mapByTag(c.tag))) this.guerre = new Guerre(this, open.guerre.champs);
     if (open && opts.arrivee) this.arriver(opts.arrivee);
     if (open) this.sortieHavreSac(opts);
     // les PNJ d'abord : les groupes de monstres ne se posent pas sur eux
@@ -1179,6 +1184,7 @@ export class World {
   private updateOpen(dt: number) {
     const open = this.zone.open!;
     this.updateArene(dt);
+    this.guerre?.update(dt);
     if (!this.opts.groupesPartout) this.poserAutourDesJoueurs();
     for (const g of this.groups) {
       if (g.retire || g.dort || g.members.some(m => !m.dead)) continue;
@@ -1266,6 +1272,9 @@ export class World {
     if (!this.zone.open || !p.dead) return;
     if (this.arene) { this.arene.abandonner(); this.arene = null; }
     p.dead = false; p.hp = p.maxHp; p.x = this.checkpoint.x; p.y = this.checkpoint.y; p.kx = p.ky = 0; p.z = 0;
+    // Guerre des Cawottes (10D) : mort sur l'île pendant une attaque = relevé au bord du champ, l'attaque continue
+    const bord = this.guerre?.attaque && !this.guerre.attaque.fini && this.guerre.surIle().includes(p) ? this.guerre.bordDuChamp() : null;
+    if (bord) { p.x = bord.x; p.y = bord.y; }
     p.state = 'free'; p.skill = null; p.invuln = 2; p.rage = 0; p.setAnim('idle');
     this.over = false;
     this.emit({ k: 'respawn' });
@@ -1359,6 +1368,7 @@ export class World {
     for (const m of this.monsters) {
       if (m.saigneT > 0 && !m.dead) this.saigner(m, dt);
       if (this.zone.open && m.state === 'idle' && !m.dead && this.players.every(q => Math.abs(m.x - q.x) + Math.abs(m.y - q.y) > World.SOMMEIL)) { m.regenCalme(dt); continue; }
+      if (m.guerre && this.guerre?.attaque?.piloter(m, dt)) continue;
       m.update(dt, this.cibleDe(m), this);
     }
     for (const b of this.betes) b.update(dt, this);
@@ -2055,7 +2065,7 @@ export class World {
       p.bag.splice(i, 1); xp = FAMILIER_XP.objet(d.level, o.rarity);
     } else {
       const r = I.resources[quoi.res], n = p.resources[quoi.res] ?? 0;
-      if (!r || !n || r.pepite || r.cle) return false;
+      if (!r || !n || r.pepite || r.monnaie || r.cle) return false;
       const k = quoi.tout ? n : 1;
       p.resources[quoi.res] -= k; if (!p.resources[quoi.res]) delete p.resources[quoi.res];
       xp = FAMILIER_XP.ressource(r.level) * k;
@@ -2211,7 +2221,7 @@ export class World {
   /** Recycle toute une pile de ressources (pas les Pépites, ni les clés, ni ce qui se mange). */
   recycleRessource(id: string): boolean {
     const p = this.player, r = this.opts.items?.resources[id], q = p.resources[id] ?? 0;
-    if (!r || q <= 0 || r.pepite || r.cle || r.soin || r.rappel) return false;
+    if (!r || q <= 0 || r.pepite || r.monnaie || r.cle || r.soin || r.rappel) return false;
     const n = recycleResource(r) * q;
     delete p.resources[id]; this.pepites(n);
     this.emit({ k: 'recycle', n: q, pepites: n });
@@ -2354,12 +2364,15 @@ export class World {
     if (neuf) p.ames.push(m.type);
     this.emit({ k: 'capture', monster: m.type, neuf });
   }
-  /** Achat dans une boutique (src/data/boutique.json), payé en Pépites. */
+  /** Achat dans une boutique (src/data/boutique.json), payé en Pépites (ou dans la monnaie de l'article : Cawottes chez Tiwa Cawoteuw).
+   *  Un article « apparat » rejoint la collection d'apparences, une fois pour toutes. */
   acheter(boutique: string, id: string): boolean {
     const a = this.opts.boutiques?.[boutique]?.find(x => x.id === id && (!x.v03 || this.player.v03) && (!x.v04 || this.player.v04)), p = this.player;
-    if (!a || (p.resources[PEPITE] ?? 0) < a.prix) return false;
-    p.resources[PEPITE] -= a.prix; if (!p.resources[PEPITE]) delete p.resources[PEPITE];
-    p.resources[id] = (p.resources[id] ?? 0) + 1;
+    const m = a?.monnaie ?? PEPITE;
+    if (!a || (p.resources[m] ?? 0) < a.prix || (a.apparat && p.apparats.includes(id))) return false;
+    p.resources[m] -= a.prix; if (!p.resources[m]) delete p.resources[m];
+    if (a.apparat) p.apparats.push(id);
+    else p.resources[id] = (p.resources[id] ?? 0) + 1;
     this.emit({ k: 'achat', id, prix: a.prix });
     return true;
   }

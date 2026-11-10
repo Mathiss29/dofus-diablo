@@ -1334,6 +1334,16 @@
               "Amakna",
               "Partie de test"
             ]
+          },
+          {
+            "titre": "La guerre des Cawottes",
+            "phrase": "Clique sur l'épouvantail d'un champ de l'île des Wabbits et défends ses 12 cawottes.",
+            "details": "Cinq vagues de Wabbits arrachent les cawottes et le Kiafin s'enfuit avec la sienne. Un coffre de bronze, d'argent ou d'or te paie en Cawottes.",
+            "icone": "boss",
+            "etiquettes": [
+              "Île des Wabbits",
+              "Partie de test"
+            ]
           }
         ],
         "Corrections": [
@@ -1490,6 +1500,16 @@
             "phrase": "Le bateau du Port de Madrestam t'emmène sur l'île de la Cawotte et ses trois îlots.",
             "details": "Des passerelles en bois relient la Cawotte aux îlots de la Couronne, des Tombeaux et de Waldo. Le Zaap de l'île et l'entrée du Château du Wa Wabbit t'y attendent.",
             "icone": "carte",
+            "etiquettes": [
+              "Île des Wabbits",
+              "Partie de test"
+            ]
+          },
+          {
+            "titre": "Tiwa Cawoteuw, le marchand",
+            "phrase": "Sur la plage de la Cawotte, il échange tes Cawottes contre ressources, clés et apparences Wabbit.",
+            "details": "Quatre succès et le titre « Gardien des Cawottes » récompensent les défenseurs.",
+            "icone": "kamas",
             "etiquettes": [
               "Île des Wabbits",
               "Partie de test"

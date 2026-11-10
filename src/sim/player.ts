@@ -2,6 +2,7 @@ import { ALMANAX } from './almanax';
 import { CHATIMENTS, PC_PAR_ID } from './pouvoirsClasse';
 import { DOFUS, EMPLACEMENTS_DOFUS, PASSIFS, PORTABLE, TROPHEES } from './dofus';
 import type { CleDonjon } from './arene';
+import { guerreVide, type EtatGuerre } from './guerre';
 import type { CommandeFM } from './forgemagie';
 import { Entity } from './entity';
 import type { ClassDef, ComboHit, Element, SkillId, SpellDef } from './defs';
@@ -106,6 +107,8 @@ export class Player extends Entity {
   carteIci: string | null = null;
   /** Clé d'un donjon encore valable (maquette « Donjons en vagues » 14A) : on y revient à la vague atteinte. */
   cleDonjon: CleDonjon | null = null;
+  /** Guerre des Cawottes (0.4) : attaques gagnées, en or, champs parfaits, Kiafin rattrapés, records par champ. */
+  guerre: EtatGuerre = guerreVide();
   /** Commande en cours chez Malek le Forgemage (maquette Forgemagie UI 9E) : l'objet lui est confié, il revient quand c'est fini. */
   commandeFM: CommandeFM | null = null;
   /** Apparat (maquette Apparence 5A) : objets d'apparat officiels possédés (id Dofus), et ceux posés par-dessus

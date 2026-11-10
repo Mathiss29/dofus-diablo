@@ -201,6 +201,9 @@ export type SuccesObjectif = { nom: string } & (
   | { compteur: 'fabriques' | 'runes'; n: number }
   /** Carte du monde 6D (succès Cartographe) : part des cartes du dehors de ce monde vues sous le brouillard. */
   | { exploration: string; part: number; cartes: string[] }
+  /** Guerre des Cawottes (12A-12D) : attaques gagnées, coffres en or, Kiafin rattrapés, ou un champ défendu sans perte. */
+  | { guerre: 'gagnees' | 'or' | 'kiafins'; n: number }
+  | { guerre: 'parfait'; champ: string }
 );
 /** Défis de donjon en temps réel (menu des succès 9C) : à deux au plus, boss en moins de 90 s, sans être touché après son apparition,
  *  sans potion. */
@@ -1001,6 +1004,7 @@ export class Quetes {
     if ('dofus' in o) return this.world.player.dofus.length >= o.dofus;
     if ('donjon' in o) return (this.donjons[o.donjon]?.v ?? 0) > 0;
     if ('defi' in o) return this.defis.has(`${o.defi[0]}|${o.defi[1]}`);
+    if ('guerre' in o) { if (o.guerre === 'parfait') return this.world.player.guerre.parfaits.includes(o.champ); const [n, max] = this.progres(o); return n >= max; }
     if ('metier' in o || 'compteur' in o || 'exploration' in o) { const [n, max] = this.progres(o); return n >= max; }
     return this.vaincus.has(o.monstre);
   }
@@ -1014,6 +1018,7 @@ export class Quetes {
       return [Math.min(n, o.palier), o.palier];
     }
     if ('compteur' in o) return [Math.min(this.compteurs[o.compteur] ?? 0, o.n), o.n];
+    if ('guerre' in o && o.guerre !== 'parfait') return [Math.min(p.guerre[o.guerre], o.n), o.n];
     if ('exploration' in o) {
       // compté seulement quand le brouillard a bougé (verifierSucces passe à chaque pas)
       const vus = p.exploreSet(o.exploration), c = this.cacheExplo.get(o);

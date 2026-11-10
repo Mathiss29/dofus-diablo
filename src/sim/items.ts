@@ -89,7 +89,7 @@ export interface SetDef { name: string; items: number[]; bonus: Record<string, S
 /** soin : la ressource se mange et rend ce nombre de PV (effet officiel 110, ex. Bouillon de Chair +11 PV).
  *  cle : clé officielle d'un donjon (son nom), demandée et prise à l'entrée (maquette 0.2, 5B).
  *  rappel : Potion de Rappel, renvoie au dernier Zaap. pepite : la monnaie d'Emp, le recycleur (objet officiel 14635). */
-export interface ResourceDef { name: string; icon: number; level: number; soin?: number; cle?: string; rappel?: boolean; /** Pierre d'âme vide (0.3, 15B) : capture un archimonstre vaincu. */ pierreAme?: boolean; pepite?: boolean;
+export interface ResourceDef { name: string; icon: number; level: number; soin?: number; cle?: string; rappel?: boolean; /** Pierre d'âme vide (0.3, 15B) : capture un archimonstre vaincu. */ pierreAme?: boolean; pepite?: boolean; /** Monnaie d'un marchand (Cawottes de la guerre des Cawottes) : ni recyclée ni donnée au familier. */ monnaie?: string;
   /** Rune de forgemagie officielle (src/data/forgemagie.json). */
   rune?: boolean;
   /** Rune de Signature officielle (7508) : grave le nom du perso sur un objet (maquette Forgemagie UI 6A). */

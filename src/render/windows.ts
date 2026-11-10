@@ -1107,7 +1107,7 @@ export class Windows {
     for (const m of s.monstres.slice(0, 4)) l.push(`<b>Butin</b> · ${m.nom} (${n1(m.chance)} %)${m.chasse ? ', arme de chasse' : ''} · ${m.lieux.slice(0, 2).join(', ')}`);
     if (s.monstres.length > 4) l.push(`<span class="hint">+${s.monstres.length - 4} autres monstres</span>`);
     if (s.recette) l.push(`<b>Fabrication</b> · ${M[s.recette.metier]?.name ?? s.recette.metier} niveau ${s.recette.level}`);
-    if (s.boutique) l.push(`<b>Boutique</b> · ${QUETES.pnj[s.boutique]?.nom ?? s.boutique}, au Bastion des Douze`);
+    if (s.boutique) l.push(`<b>Boutique</b> · ${QUETES.pnj[s.boutique]?.nom ?? s.boutique}${(QUETES.pnj[s.boutique]?.zone ?? 'bastion') === 'bastion' ? ', au Bastion des Douze' : ', sur l\'île des Wabbits'}`);
     const sert = recettesAvec(ITEMS, id).map(x => produit(x.result)?.name).filter(Boolean);
     const ici = this.marquesDe(id);
     return `<h4>${r?.name ?? id}</h4><div class="sub">${besoin != null ? `<span class="${have >= besoin ? 'ok' : 'ko'}">${have} / ${besoin}</span> dans ton sac` : `${have} dans ton sac`}</div>
@@ -2014,10 +2014,11 @@ export class Windows {
       <div class="hint">Fabriqué : Commun, ou Rare (${Math.round(chanceRare(lv) * 100)} % à ton niveau, garanti avec un ingrédient rare). Jamais de pouvoir légendaire.</div>`;
   }
   private resTip(r: ResourceDef, id: string) {
-    const sorte = r.soin || r.rappel ? 'Consommable' : r.cle ? 'Clé de donjon' : r.pepite ? 'Monnaie du Bastion' : r.rune || r.signature ? 'Rune de forgemagie' : 'Ressource';
+    const sorte = r.soin || r.rappel ? 'Consommable' : r.cle ? 'Clé de donjon' : r.pepite ? 'Monnaie du Bastion' : r.monnaie ? 'Monnaie de l\'île des Wabbits' : r.rune || r.signature ? 'Rune de forgemagie' : 'Ressource';
     const effet = r.soin ? `<div class="up">+${r.soin} PV</div><div class="hint">Clic droit : manger</div>`
       : r.rappel ? `<div class="up">Retour au dernier Zaap (${this.world.checkpointName})</div><div class="hint">Clic droit : boire</div>`
       : r.cle ? `<div class="up">Ouvre l'entrée : ${r.cle}</div><div class="hint">Prise en entrant dans le donjon</div>`
+      : r.monnaie ? '<div class="hint">Gagnée en défendant les champs de l\'île des Wabbits (guerre des Cawottes) ; se dépense chez Tiwa Cawoteuw, sur l\'île de la Cawotte.</div>'
       : r.pepite ? '<div class="hint">Recycle tes objets chez Kerubim Crépin (au Bastion des Douze, ou à son guichet du Havre-Sac) et dépense-les chez ses voisins du Bastion.</div>'
       : r.signature ? '<div class="up">Grave ton nom sur un objet</div><div class="hint">Case Signature de la fenêtre du forgemage, au Bastion des Douze ; Malek en vend aussi.</div>'
       : r.rune && RUNES[id] ? `<div class="up">+${RUNES[id].val} ${STAT_NAMES[RUNES[id].stat]} · poids ${String(RUNES[id].poids).replace('.', ',')}</div><div class="hint">Se pose chez le forgemage du Bastion des Douze ; s'obtient en brisant des objets chez lui.</div>` : '';
@@ -2166,8 +2167,10 @@ export class Windows {
     const def = QUETES.pnj[this.empPnj], sv = new Set((def?.services ?? []).map(x => x.service)), boutique = (BOUTIQUES[this.empPnj] ?? []).filter(a => (!a.v03 || p.v03) && (!a.v04 || p.v04));
     if (!sv.has(this.empOnglet)) this.empOnglet = sv.has('boutique') ? 'boutique' : sv.has('apparat') ? 'apparat' : 'recycler';
     const onglet = (k: string, n: string) => sv.has(k) ? `<span class="eo ${this.empOnglet === k ? 'on' : ''}" data-eo="${k}">${n}</span>` : '';
+    // monnaie de la boutique : Pépites, ou celle de ses articles (Tiwa Cawoteuw : Cawottes de la guerre)
+    const mon = boutique.find(a => a.monnaie)?.monnaie ?? PEPITE, solde = p.resources[mon] ?? 0, icMon = iconHtml(ITEMS.resources[mon]?.icon ?? 0);
     const tete = `<div class="eh"><div class="eos">${onglet('recycler', 'Recycler')}${onglet('boutique', 'Boutique')}${onglet('apparat', 'Apparats')}${sv.has('garde-robe') ? '<span class="eo" data-garde>Garde-robe</span>' : ''}</div>
-      <span class="k" title="Pépites">${pep.toLocaleString('fr-FR')} ${iconHtml(ITEMS.resources[PEPITE].icon)}</span></div>`;
+      <span class="k" title="${ITEMS.resources[mon]?.name ?? 'Pépites'}">${solde.toLocaleString('fr-FR')} ${icMon}</span></div>`;
     let corps = '';
     if (this.empOnglet === 'recycler') {
       const lots: [Rarity, string][] = [['commun', 'Tout le Commun'], ['rare', 'Commun et Rare'], ['epique', 'Tout sauf Légendaire']];
@@ -2175,7 +2178,7 @@ export class Windows {
         return `<span class="btn ${a.n ? '' : 'off'}" data-lot="${r}">${n}<small>${a.n} objet${a.n > 1 ? 's' : ''} · +${a.pepites} Pépites</small></span>`; }).join('');
       const objets = p.bag.filter(it => ITEMS.equipment[it.id]).map(it => { const d = ITEMS.equipment[it.id];
         return `<div class="cell ${it.cadenas ? 'verrou' : ''}" data-ruid="${it.uid}">${iconHtml(d.icon)}<i class="r" style="background:${RARITY_COLORS[it.rarity]}"></i>${it.cadenas ? CADENAS : `<span class="pv">+${recycleValue(d, it)}</span>`}</div>`; }).join('');
-      const res = Object.entries(p.resources).filter(([id]) => { const r = ITEMS.resources[id]; return r && !r.pepite && !r.cle && !r.soin && !r.rappel; })
+      const res = Object.entries(p.resources).filter(([id]) => { const r = ITEMS.resources[id]; return r && !r.pepite && !r.monnaie && !r.cle && !r.soin && !r.rappel; })
         .map(([id, n]) => `<div class="cell" data-rres="${id}" title="${ITEMS.resources[id].name} : ${n} × ${recycleResource(ITEMS.resources[id])} Pépites">${iconHtml(ITEMS.resources[id].icon)}<span class="n">${n}</span></div>`).join('');
       corps = `<div class="lots">${lotsHtml}</div>
         <div class="hint">Clic : recycler l'objet · Ctrl + clic (ou clic droit) : cadenas, l'objet n'est jamais recyclé. Les objets sous cadenas restent hors des lots.</div>
@@ -2197,11 +2200,16 @@ export class Windows {
             ${a ? '<span class="hint">Déjà à toi</span>' : `<span class="btn ${pep >= prix ? '' : 'off'}" data-aachat="${id}">${prix} ${iconHtml(ITEMS.resources[PEPITE].icon)}</span>`}</div>`; }).join('')}
           ${l.length > 120 ? `<div class="hint">… et ${l.length - 120} autres : affine la recherche.</div>` : ''}</div></div>`;
     } else {
-      corps = `<div class="shop">${boutique.map(a => { const r = ITEMS.resources[a.id]; if (!r) return '';
+      corps = `<div class="shop">${boutique.map(a => {
+        const ap = a.apparat ? APPARATS.objets[a.id] : null;
+        if (ap) { const eu = p.apparats.includes(a.id);
+          return `<div class="rec">${apparatHtml(a.id)}<div><b>${ap.name}</b> <span class="hint">${ap.slot === 'chapeau' ? 'Coiffe' : 'Cape'} : apparence pour ta collection</span></div>
+            ${eu ? '<span class="hint">Déjà à toi</span>' : `<span class="btn ${solde >= a.prix ? '' : 'off'}" data-achat="${a.id}">${a.prix.toLocaleString('fr-FR')} ${icMon}</span>`}</div>`; }
+        const r = ITEMS.resources[a.id]; if (!r) return '';
         const effet = r.soin ? `+${r.soin} PV` : r.rappel ? 'Retour au dernier Zaap' : r.cle ? `Entrée : ${r.cle}` : r.pierreAme ? 'Capture un archimonstre vaincu (une pierre par capture)' : '';
         return `<div class="rec" data-rid="${a.id}">${iconHtml(r.icon)}<div><b>${r.name}</b> <span class="hint">niveau ${r.level}${(p.resources[a.id] ?? 0) ? ` · tu en as ${p.resources[a.id]}` : ''}</span><div style="font-size:12px;color:#c9c4ab">${effet}</div></div>
-          <span class="btn ${pep >= a.prix ? '' : 'off'}" data-achat="${a.id}">${a.prix} ${iconHtml(ITEMS.resources[PEPITE].icon)}</span></div>`; }).join('')}</div>
-        <div class="hint">Les Pépites se gagnent en recyclant tes objets chez Kerubim Crépin.</div>`;
+          <span class="btn ${solde >= a.prix ? '' : 'off'}" data-achat="${a.id}">${a.prix} ${icMon}</span></div>`; }).join('')}</div>
+        <div class="hint">${mon === PEPITE ? 'Les Pépites se gagnent en recyclant tes objets chez Kerubim Crépin.' : 'Les Cawottes se gagnent en défendant les champs de l\'île contre les Wabbits (clic sur l\'épouvantail d\'un champ).'}</div>`;
     }
     w.innerHTML = `${this.title(`${def?.nom ?? 'Marchand'}${def?.titre ? ` · ${def.titre}` : ''}`, 'inventory')}<div class="in emp">${tete}${corps}</div>`;
     w.querySelectorAll<HTMLElement>('[data-eo]').forEach(e => e.addEventListener('click', () => { this.empOnglet = e.dataset.eo as 'recycler' | 'boutique' | 'apparat'; this.render(); }));
