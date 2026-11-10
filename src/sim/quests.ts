@@ -198,6 +198,8 @@ export type SuccesObjectif = { nom: string } & (
   | { metier: string; palier: number }
   /** 9E : objets fabriqués ou runes obtenues en brisant, au total. */
   | { compteur: 'fabriques' | 'runes'; n: number }
+  /** Carte du monde 6D (succès Cartographe) : part des cartes du dehors de ce monde vues sous le brouillard. */
+  | { exploration: string; part: number; cartes: string[] }
 );
 /** Défis de donjon en temps réel (menu des succès 9C) : à deux au plus, boss en moins de 90 s, sans être touché après son apparition,
  *  sans potion. */
@@ -980,7 +982,7 @@ export class Quetes {
     if ('dofus' in o) return this.world.player.dofus.length >= o.dofus;
     if ('donjon' in o) return (this.donjons[o.donjon]?.v ?? 0) > 0;
     if ('defi' in o) return this.defis.has(`${o.defi[0]}|${o.defi[1]}`);
-    if ('metier' in o || 'compteur' in o) { const [n, max] = this.progres(o); return n >= max; }
+    if ('metier' in o || 'compteur' in o || 'exploration' in o) { const [n, max] = this.progres(o); return n >= max; }
     return this.vaincus.has(o.monstre);
   }
   /** Avancement d'un objectif de succès (menu des succès 4B) : [fait, total] (« Niveau 14 / 20 », « Objets fabriqués 37 / 100 »). */
@@ -993,6 +995,14 @@ export class Quetes {
       return [Math.min(n, o.palier), o.palier];
     }
     if ('compteur' in o) return [Math.min(this.compteurs[o.compteur] ?? 0, o.n), o.n];
+    if ('exploration' in o) {
+      // compté seulement quand le brouillard a bougé (verifierSucces passe à chaque pas)
+      const vus = p.exploreSet(o.exploration), c = this.cacheExplo.get(o);
+      let n = c && c[0] === vus.size && c[2] === p ? c[1] : -1;
+      if (n < 0) { n = 0; for (const t of o.cartes) if (vus.has(t)) n++; this.cacheExplo.set(o, [vus.size, n, p]); }
+      const max = Math.ceil(o.cartes.length * o.part);
+      return [Math.min(n, max), max];
+    }
     return [this.objectifSuccesFait(o) ? 1 : 0, 1];
   }
   /** Succès montré dans ce jeu : le contenu de la partie de test (0.4) reste caché ailleurs. */
@@ -1005,6 +1015,7 @@ export class Quetes {
     for (const o of s.objectifs) { const [n, m] = this.progres(o); a += n / m; b++; }
     return b ? a / b : 0;
   }
+  private cacheExplo = new WeakMap<SuccesObjectif, [number, number, object]>();
   private verifierSucces() {
     let encore = true;
     while (encore) {

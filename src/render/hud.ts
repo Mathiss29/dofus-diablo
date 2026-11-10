@@ -16,6 +16,7 @@ import { QUEST_ICON } from './questView';
 import { MANIFESTE, Son } from './son';
 import type { Reglages } from './ambiance';
 import * as Touches from './touches';
+import { famille, secret } from '../sim/carte';
 
 const FONT = 'Lexend, Verdana, sans-serif';
 const STYLE = { fontFamily: FONT, fontSize: '14px', color: '#e8e2d4', stroke: '#000', strokeThickness: 3 };
@@ -346,6 +347,16 @@ export class Hud {
   onPasser: (id: string) => void = () => {};
   /** Idée 3 : clic sur les objectifs du suivi = carte M centrée sur le but. */
   onCarteQuete: () => void = () => {};
+  /** Clic sur la mini-carte (carte 11A) : la carte du monde s'ouvre. */
+  onMini: () => void = () => {};
+  /** Drapeau suivi (carte 9A), en point du jeu : flèche au bord de l'écran comme pour une quête. */
+  drapeauSuivi: { x: number; y: number; note?: string } | null = null;
+  /** Drapeaux du joueur et du groupe (14A) et tombe (15A) en points du jeu, pour la mini-carte. */
+  marquesMini: { x: number; y: number; genre: 'drapeau' | 'tombe' | 'allie'; coul: number }[] = [];
+  private rpMini: Phaser.GameObjects.Image[] = [];
+  private rpDemandes = new Set<string>();
+  private rpPos: { wg: unknown; l: { x: number; y: number; g: number }[] } | null = null;
+  private miniRect: [number, number, number, number] = [0, 0, 0, 0];
   private feed: FeedLine[] = [];
   // bannières
   private bannerBg: Img;
@@ -401,7 +412,11 @@ export class Hud {
     // Réglages 6A : modules déplaçables quand « Verrouiller la position des modules » est décoché
     const pt = (p: Phaser.Input.Pointer) => [p.x / this.k, p.y / this.k];
     scene.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
-      if (this.reglages?.verrou !== false) return;
+      if (this.reglages?.verrou !== false) {
+        const [x, y] = pt(p), [rx, ry, rw, rh] = this.miniRect;
+        if (p.leftButtonDown() && x >= rx && y >= ry && x <= rx + rw && y <= ry + rh) this.onMini();
+        return;
+      }
       const [x, y] = pt(p);
       for (const [id, [rx, ry, rw, rh]] of this.modRects) if (x >= rx && y >= ry && x <= rx + rw && y <= ry + rh) {
         const o = this.reglages.modules?.[id] ?? [0, 0]; this.drag = { id, x, y, ox: o[0], oy: o[1] }; break;
@@ -815,7 +830,7 @@ export class Hud {
     // --- Mini-carte et colonne de menus (haut droite) ---
     const colX = W - 12 - 36, mw = 210, mh = 150, [mx, my] = this.place('mini', colX - 10 - mw, 10, mw, mh + 20);
     // cadre seulement : l'intérieur est filmé par la caméra de la mini-carte, dessinée avant l'interface
-    this.rects.push([mx - 3, my - 3, mw + 6, mh + 6]);
+    this.rects.push([mx - 3, my - 3, mw + 6, mh + 6]); this.miniRect = [mx, my, mw, mh];
     g.lineStyle(3, 0x24231d, 1); g.strokeRoundedRect(mx - 2, my - 2, mw + 4, mh + 4, 5);
     g.lineStyle(1, 0x5a584c, 1); g.strokeRoundedRect(mx - 3.5, my - 3.5, mw + 7, mh + 7, 6);
     if (this.muet) {
@@ -868,6 +883,39 @@ export class Hud {
           this.miniIcon.setScale(16 / Math.max(this.miniIcon.width, this.miniIcon.height));
         } else this.miniIcon.setVisible(false);
       }
+      // 11A : repères officiels avec les icônes de la carte du monde ; drapeaux, tombe et groupe
+      const wg = world.worldGrid;
+      let nRp = 0;
+      if (wg?.world.reperes && this.rpPos?.wg !== wg) {
+        const l: { x: number; y: number; g: number }[] = [], parCarte = new Map<string, number>();
+        for (const r of wg.world.reperes) {
+          if (!famille(r) || secret(r)) continue;
+          const m = wg.mapByTag(r.t); if (!m || m.inside) continue;
+          const c = wg.cellCenter(wg.cellOf(r.t, 280)), s2 = wg.toScreen(c.x, c.y), q = ISO.toWorld(s2.x, s2.y), i = parCarte.get(r.t) ?? 0;
+          parCarte.set(r.t, i + 1); l.push({ x: q.x + i * 90, y: q.y - i * 90, g: r.g });
+        }
+        this.rpPos = { wg, l };
+      }
+      for (const r of this.rpPos?.wg === wg ? this.rpPos.l : []) {
+        if (Math.abs(r.x - p.x) + Math.abs(r.y - p.y) > lim) continue;
+        const q = toMini(r.x, r.y);
+        if (q.x < mx + 6 || q.y < my + 6 || q.x > mx + mw - 6 || q.y > my + mh - 6) continue;
+        const key = `rp_${r.g}`;
+        if (!this.scene.textures.exists(key)) {
+          if (!this.rpDemandes.has(key)) { this.rpDemandes.add(key); this.scene.load.image(key, v(`assets/ui/reperes/${r.g}.webp`)); this.scene.load.start(); }
+          continue;
+        }
+        const im = this.rpMini[nRp] ??= this.fixed(this.scene.add.image(0, 0, key), 0.4);
+        im.setTexture(key).setVisible(true).setPosition(q.x, q.y).setDisplaySize(16, 16); nRp++;
+      }
+      for (const o of this.marquesMini) {
+        const q = toMini(o.x, o.y), cx = Phaser.Math.Clamp(q.x, mx + 6, mx + mw - 6), cy = Phaser.Math.Clamp(q.y, my + 6, my + mh - 6);
+        g.lineStyle(1, 0x000000, 1);
+        if (o.genre === 'drapeau') { g.fillStyle(0x3a2a14, 1); g.fillRect(cx - 1, cy - 9, 2, 10); g.fillStyle(o.coul, 1); g.fillTriangle(cx + 1, cy - 9, cx + 8, cy - 6, cx + 1, cy - 3); }
+        else if (o.genre === 'tombe') { g.fillStyle(0xd8d2c0, 1); g.fillRect(cx - 1, cy - 7, 2, 10); g.fillRect(cx - 4, cy - 4, 8, 2); }
+        else { g.fillStyle(o.coul, 1); g.fillCircle(cx, cy, 3.5); g.strokeCircle(cx, cy, 3.5); }
+      }
+      for (let i = nRp; i < this.rpMini.length; i++) this.rpMini[i].setVisible(false);
       // le perso (losange bleu) et les coins du cadre, comme dans Dofus 3
       const q = toMini(p.x, p.y);
       g.fillStyle(0x3a8fe0, 1); g.lineStyle(1.5, 0xffffff, 1);
@@ -1103,6 +1151,23 @@ export class Hud {
         this.flecheAvant = { quete: cq.id, fin: { x: fin.x, y: fin.y }, x: ax2, y: ay2, ang, coul };
         this.arrowLabel.setText(it.autreZone ? `${it.nom === it.autreZone ? def.nom : it.nom}\n${detail}` : detail ? `${it.nom}\n${detail}` : it.nom).setVisible(true)
           .setOrigin(co > 0.35 ? 1 : co < -0.35 ? 0 : 0.5, si > 0.35 ? 1 : si < -0.35 ? 0 : 0.5).setPosition(lb.x, lb.y);
+      }
+    }
+    // drapeau suivi (carte 9A) : flèche dorée au bord de l'écran tant qu'il est hors de vue
+    const ds = this.drapeauSuivi;
+    if (ds) {
+      const s2 = ISO.toScreen(ds.x, ds.y), r = cam.worldView, ex = (s2.x - r.x) * cam.zoom, ey = (s2.y - r.y) * cam.zoom, m = 70;
+      if (ex < 0 || ey < 0 || ex > W || ey > H) {
+        const cx = W / 2, cy = H / 2, ang = Math.atan2(ey - cy, ex - cx), co = Math.cos(ang), si = Math.sin(ang);
+        const d = Math.min((W / 2 - m) / Math.max(1e-6, Math.abs(co)), (H / 2 - m) / Math.max(1e-6, Math.abs(si)));
+        const ax2 = Phaser.Math.Clamp(cx + co * d, m, W - 84), ay2 = Phaser.Math.Clamp(cy + si * d, 150, H - 150);
+        const pt = (l: number, w2: number) => ({ x: ax2 + co * l - si * w2, y: ay2 + si * l + co * w2 });
+        const pts = [pt(24, 0), pt(-10, 16), pt(-2, 0), pt(-10, -16)];
+        this.arrow.fillStyle(0xf2d36b, 0.9); this.arrow.lineStyle(2.5, 0x3a2208, 1);
+        this.arrow.fillPoints(pts, true); this.arrow.strokePoints(pts, true, true);
+        const fl = pt(-30, 0);
+        this.arrow.fillStyle(0x3a2a14, 1); this.arrow.fillRect(fl.x - 1, fl.y - 9, 2, 16);
+        this.arrow.fillStyle(0xf2d36b, 1); this.arrow.fillTriangle(fl.x + 1, fl.y - 9, fl.x + 10, fl.y - 5, fl.x + 1, fl.y - 1);
       }
     }
     if (!fleche) {

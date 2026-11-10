@@ -7,6 +7,7 @@ import { Player } from './player';
 import { Monster } from './monster';
 import { Bete, BETES } from './bete';
 import { Arene } from './arene';
+import { drapeauxPropres, signalPropre } from './carte';
 
 /** Coop (maquette « Multi : » 3A) : l'hôte fait tourner la partie et envoie à chaque invité un instantané de ce qui se voit ;
  *  l'invité garde un monde « miroir » qu'il ne fait jamais avancer lui-même : il y recopie les instantanés, et l'affichage le lit
@@ -51,10 +52,10 @@ export const COOP = {
 /** Champs jamais envoyés : données du jeu (recréées de l'autre côté), sac et progression propres à chaque joueur, caches. */
 /** Champs du sac et de la progression : refusés pour les autres, envoyés à leur propriétaire seul (instantané.sac). */
 const SAC = ['bag', 'resources', 'kamas', 'metiers', 'apparats', 'dofus', 'trophees', 'zaaps', 'codex', 'codexOuvert', 'ames', 'cleDonjon', 'recetteSuivie',
-  'commandeFM', 'lootFilter', 'autoBrisage', 'almanaxJour', 'zonesVues'] as const;
+  'commandeFM', 'lootFilter', 'autoBrisage', 'almanaxJour', 'zonesVues', 'explore', 'lieuxVus', 'tombe'] as const;
 const REFUS: Record<Sorte | 'a', Set<string>> = {
   j: new Set(['cls', 'items', 'bag', 'resources', 'codex', 'learned', 'zonesVues', 'metiers', 'prereglages', 'ames', 'apparats', 'dofus', 'trophees',
-    'commandeFM', 'quetes', 'monde', 'evenements', 'cleDonjon', 'recetteSuivie', 'zaaps', '_pouvoirs', 'almanaxJour', 'codexOuvert', 'lootFilter', 'autoBrisage', 'kamas', 'v03', 'v04', 'repathT', 'bufferT', 'buffer']),
+    'commandeFM', 'quetes', 'monde', 'evenements', 'cleDonjon', 'recetteSuivie', 'zaaps', '_pouvoirs', 'almanaxJour', 'codexOuvert', 'lootFilter', 'autoBrisage', 'kamas', 'v03', 'v04', 'repathT', 'bufferT', 'buffer', 'explore', '_explore', 'lieuxVus', 'tombe', 'carteIci']),
   // minuteries de l'IA des monstres : l'hôte seul s'en sert
   m: new Set(['def', 'atkCd', 'spellCd', 'sigCd', 'cheminT', 'wanderT', 'wanderX', 'wanderY', 'repathT']),
   b: new Set(['def']),
@@ -66,11 +67,11 @@ const LISTES = ['projectiles', 'drops', 'telegraphs', 'zonesSol'] as const;
  *  parle du joueur de l'écran de l'hôte. */
 const EVENEMENTS = new Set<SimEvent['k']>(['spell', 'shoot', 'slam', 'monsterCast', 'spellFx', 'status', 'massacre', 'massacreFin', 'hit', 'kill',
   'beteMorte', 'heal', 'filSoin', 'pieces', 'invocation', 'eveil', 'echange', 'souffrance', 'sacrifice', 'dompte', 'impact', 'grosCoup', 'bossIntro', 'furieux', 'wave',
-  'areneDebut', 'areneVague', 'arenePalier', 'areneFin', 'bossDown', 'cast', 'bulle', 'rageSpent']);
+  'areneDebut', 'areneVague', 'arenePalier', 'areneFin', 'bossDown', 'cast', 'bulle', 'rageSpent', 'signal']);
 export const evenementPartage = (e: SimEvent) => EVENEMENTS.has(e.k);
 /** Événements propres à l'invité (World.evenementsDe) qu'il peut jouer chez lui : bandeaux, butin, quêtes, métiers. */
 const PERSONNELS_AFFICHES = new Set<SimEvent['k']>(['levelUp', 'newSpell', 'enterArea', 'enterLieu', 'loot', 'lootResource', 'lootKamas', 'bagFull',
-  'queteInfo', 'objetQuete', 'succes', 'checkpoint', 'zaapDecouvert', 'recolteFin', 'recolteStop', 'metierLevel', 'dofusGagne', 'portal', 'itemDrop']);
+  'queteInfo', 'objetQuete', 'succes', 'checkpoint', 'zaapDecouvert', 'lieuDecouvert', 'recolteFin', 'recolteStop', 'metierLevel', 'dofusGagne', 'portal', 'itemDrop']);
 
 const arrondir = (v: number) => (Number.isInteger(v) || !Number.isFinite(v) ? v : Math.round(v * COOP.arrondi) / COOP.arrondi);
 const estEntite = (v: object): v is Entity => v instanceof Entity;
@@ -271,11 +272,12 @@ export function appliquerInstantane(w: World, s: Instantane, lisser = false): Si
 
 /** Entrées d'un invité gardées par l'hôte : seulement ce qui sert au combat (pas de quêtes, fenêtres, Zaaps ni outils de test). */
 /** Gestes d'un seul pas (monde partagé) : gardés entre deux envois ou deux pas, puis joués une seule fois. */
-export type UneFois = Pick<PlayerInput, 'talk' | 'reponse' | 'versPortail'>;
+export type UneFois = Pick<PlayerInput, 'talk' | 'reponse' | 'versPortail' | 'carte'>;
 export function garderUneFois(u: UneFois, i: Partial<PlayerInput>) {
   if (i.talk) u.talk = i.talk;
   if (i.reponse != null) u.reponse = i.reponse;
   if (i.versPortail) u.versPortail = i.versPortail;
+  if (i.carte) u.carte = { ...u.carte, ...i.carte };
 }
 export function entreeInvite(i: Partial<PlayerInput> | null | undefined): PlayerInput {
   const v = (p: unknown) => (p && typeof p === 'object' && Number.isFinite((p as { x: number }).x) && Number.isFinite((p as { y: number }).y)
@@ -289,5 +291,7 @@ export function entreeInvite(i: Partial<PlayerInput> | null | undefined): Player
     versPortail: typeof i?.versPortail === 'string' ? i.versPortail.slice(0, 80) : null,
     // monde partagé : parler à un PNJ, lui répondre
     talk: typeof i?.talk === 'string' ? i.talk.slice(0, 60) : null, reponse: Number.isInteger(i?.reponse) && i!.reponse! >= -1 && i!.reponse! < 20 ? i!.reponse : null,
+    // carte du monde : drapeaux du groupe (14A), signal Alt + clic (14B)
+    carte: i?.carte && typeof i.carte === 'object' ? { ...(Array.isArray(i.carte.drapeaux) ? { drapeaux: drapeauxPropres(i.carte.drapeaux) } : {}), signal: signalPropre(i.carte.signal) } : null,
   };
 }

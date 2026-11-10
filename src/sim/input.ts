@@ -1,6 +1,7 @@
 import type { Vec } from './iso';
 import type { SkillId } from './defs';
 import type { CommandeTest } from './outilsTest';
+import type { Drapeau } from './carte';
 
 /** Entrées d'un joueur pour un pas de simulation (clavier, manette ou réseau plus tard). */
 export interface PlayerInput {
@@ -43,6 +44,8 @@ export interface PlayerInput {
   versPortail?: string | null;
   /** Alt + clic sur un monstre (maquette Osamodas 7C) : toute la meute de l'Osamodas l'attaque. */
   meute?: number | null;
+  /** Carte du monde (« Carte : » 9A, « Carte suite : » 14A-C) : drapeaux du joueur (liste entière), signal Alt + clic. */
+  carte?: { drapeaux?: Drapeau[] | null; signal?: Vec | null } | null;
   /** Partie de test : ordres du panneau F1 (absent dans une vraie partie). */
   test?: CommandeTest[] | null;
 }

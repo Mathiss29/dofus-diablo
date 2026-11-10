@@ -1,3 +1,4 @@
+import { appliquerCarte, majCarteJoueur } from './carte';
 import { angleDiff, Rng } from './math';
 import type { AtelierDef, DonjonDef, Element, GameData, HitZone, MonsterSpell, SubAreaDef, ZoneDef } from './defs';
 import type { PointDeRetour, RetourHavreSac, SimEvent, Telegraph } from './events';
@@ -160,7 +161,7 @@ export interface FamilierEtat { x: number; y: number; vx: number; vy: number; ci
 /** Événements qui ne parlent qu'au joueur qui agit : fenêtres, butin, portes et zones, quêtes, métiers (multi, étape 4). */
 export const EVENEMENTS_PERSONNELS = new Set<SimEvent['k']>(['levelUp', 'newSpell', 'noResource', 'rageFull', 'enterArea', 'enterLieu', 'respawn',
   'loot', 'lootResource', 'sacQuete', 'queteInfo', 'metierLevel', 'craft', 'atelier', 'fabricationDebut', 'fabricationStop', 'eat', 'recycle', 'forge',
-  'brisage', 'codex', 'codexOuvert', 'coffreOuvert', 'capture', 'impression', 'apparence', 'fusion', 'commande', 'signature', 'achat', 'familierNiveau',
+  'brisage', 'codex', 'codexOuvert', 'coffreOuvert', 'capture', 'lieuDecouvert', 'impression', 'apparence', 'fusion', 'commande', 'signature', 'achat', 'familierNiveau',
   'familierRepas', 'rappel', 'cleManquante', 'recolteDebut', 'recolteFin', 'recolteStop', 'recolteNiveau', 'service', 'almanax', 'dofusPassif',
   'dofusGagne', 'lootKamas', 'bagFull', 'checkpoint', 'portalStart', 'portal', 'changeZone', 'incantation', 'incantationStop', 'arche', 'zaapDecouvert',
   'zaapDepart', 'emmenage', 'queteDebut', 'queteEtape', 'queteFin', 'objetQuete', 'succes', 'succesRecupere', 'itemDrop']);
@@ -1217,6 +1218,7 @@ export class World {
       if (lieu && lieu !== sub?.name) this.emit({ k: 'enterLieu', name: lieu, region: sub?.name ?? this.zone.name, level: sub?.level ?? 0 });
     }
     // Zaap atteint : il devient le point de retour
+    majCarteJoueur(this, m);   // brouillard, lieux à découvrir, tombe (« Carte : » 6A, 15A, 17A)
     const cp = m && open.checkpoints.find(c => c.map[0] === m.x && c.map[1] === m.y);
     if (cp) this.decouvrirZaap(cp.name);
     if (cp && cp.name !== this.checkpointName) {
@@ -1303,6 +1305,7 @@ export class World {
   /** Avance la simulation de dt secondes. */
   /** Entrées de world.player qui touchent au monde : récolte, atelier, Havre-Sac, Zaap, portail, PNJ. */
   private entreesMonde(input: PlayerInput) {
+    appliquerCarte(this, this.player, input.carte);   // carte du monde : drapeaux, signal (« Carte : » 9A, 14A-B)
     if (input.recolte != null) { this.versRecolte = input.recolte; this.approche = this.approcheRecolte(input.recolte); this.enRecolte = null; }
     else if (input.dest || input.target != null || input.pickup != null || input.talk || input.pressed || input.move.x || input.move.y) {
       if (this.enRecolte) this.emit({ k: 'recolteStop' });
