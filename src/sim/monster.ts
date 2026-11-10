@@ -8,6 +8,7 @@ import type { World } from './world';
 import { tackleSlow, tacleOf } from './caracs';
 import { DANGER } from './danger';
 import AGGRO from '../data/aggro.json';
+import { deguiseContre } from './wabbits';
 
 /** Réglages de poursuite et de retour (src/data/aggro.json, maquette « Aggro » de Mathis). */
 export { AGGRO };
@@ -171,7 +172,7 @@ export class Monster extends Entity {
     switch (this.state) {
       case 'idle': {
         // arrivée protégée (maquette Entrées 13A) : on ne remarque pas le joueur qui vient de passer une porte
-        if (!player.dead && !world.calme && dist < (D.aggro ?? open?.aggro ?? 250)) { world.aggroGroup(this); break; }
+        if (!player.dead && !world.calme && dist < (D.aggro ?? open?.aggro ?? 250) && !deguiseContre(this, player)) { world.aggroGroup(this); break; }
         this.regenCalme(dt);
         // Petite errance autour du point de départ
         this.wanderT -= dt;

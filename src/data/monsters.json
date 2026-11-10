@@ -29718,5 +29718,200 @@
    "air": 20,
    "neutre": 20
   }
+ },
+ "nono_le_wobot": {
+  "dofusId": 4273,
+  "name": "Nono le Wobot",
+  "hp": 5000,
+  "speed": 95,
+  "radius": 34,
+  "mass": 4,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "nono_le_wobot",
+  "color": "#d8d0b8",
+  "xp": 300,
+  "spells": [
+   {
+    "id": 6291,
+    "name": "Vewwouillage",
+    "pa": 1,
+    "po": [
+     2,
+     63
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 6292,
+    "name": "Wavelot explosif",
+    "pa": 4,
+    "po": [
+     4,
+     63
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "C3",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -2,
+      "dur": 1
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 41,
+      "max": 60,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -4,
+      "dur": 1
+     }
+    ],
+    "missile": 819
+   },
+   {
+    "id": 6293,
+    "name": "Massue matwaquante",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 11,
+      "max": 20,
+      "steal": false
+     }
+    ],
+    "gfx": 820
+   }
+  ],
+  "level": 60,
+  "res": {
+   "terre": 20,
+   "feu": -10,
+   "eau": -10,
+   "air": 20,
+   "neutre": 10
+  },
+  "caracs": {
+   "force": 300,
+   "intelligence": 300,
+   "chance": 300,
+   "agilite": 300,
+   "sagesse": 100,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true
+ },
+ "wabbit_gm": {
+  "dofusId": 182,
+  "name": "Wabbit Gm",
+  "hp": 3000,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "wabbit_gm",
+  "color": "#d8d0b8",
+  "xp": 330,
+  "spells": [
+   {
+    "id": 341,
+    "name": "Rafale de terre",
+    "pa": 3,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 11,
+      "max": 15,
+      "steal": false
+     }
+    ],
+    "gfx": 2329
+   },
+   {
+    "id": 3839,
+    "name": "Cawotte GM",
+    "pa": 4,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 6,
+    "anim": 1,
+    "zone": "C1",
+    "allies": true,
+    "effects": [],
+    "gfx": 20001
+   }
+  ],
+  "level": 80,
+  "res": {
+   "terre": 33,
+   "feu": 40,
+   "eau": -6,
+   "air": -15,
+   "neutre": 43
+  },
+  "caracs": {
+   "force": 190,
+   "intelligence": 190,
+   "chance": 0,
+   "agilite": 190,
+   "sagesse": 400,
+   "esquivePA": 6,
+   "esquivePM": 6,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true
  }
 }

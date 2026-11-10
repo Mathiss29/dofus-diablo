@@ -38253,6 +38253,22 @@
    "icon": 84726,
    "level": 80,
    "cle": "Terrier du Wa Wabbit"
+  },
+  "960": {
+   "name": "Potion Wabbit",
+   "icon": 24002,
+   "level": 40,
+   "deguisement": 600
+  },
+  "17479": {
+   "name": "Nono le Wobot",
+   "icon": 32127,
+   "level": 1
+  },
+  "1746": {
+   "name": "Sang de Wabbit GM",
+   "icon": 24032,
+   "level": 1
   }
  },
  "drops": {
@@ -49649,7 +49665,34 @@
    }
   ],
   "cawotte_woyale": [],
-  "wobot_tamponneur": []
+  "wobot_tamponneur": [],
+  "nono_le_wobot": [
+   {
+    "item": "17479",
+    "chance": 100.0,
+    "cond": "evenement"
+   }
+  ],
+  "wabbit_gm": [
+   {
+    "item": "1746",
+    "chance": 100.0,
+    "cond": "quete"
+   },
+   {
+    "item": "17136",
+    "chance": 41.0,
+    "metier": {
+     "id": 41,
+     "min": 80
+    },
+    "chasse": true
+   },
+   {
+    "item": "16829",
+    "chance": 1.0
+   }
+  ]
  },
  "recipes": [
   {

@@ -258,6 +258,10 @@ export interface SubAreaDef {
   essai?: boolean;
   /** Région affichée (bandeau, haut de l'écran) quand ce n'est pas le nom de la zone : « Amakna » dans le monde d'Astrub. */
   region?: string;
+  /** « Wabbits : 12A » : la nuit (heure du PC), groupes de cette taille (l'îlot des Tombeaux se réveille). */
+  nuit?: { groupSize: [number, number] };
+  /** « Wabbits : 11C » : monstre très rare qui mène parfois un groupe (Wabbit Gm), un seul en vie à la fois. */
+  rare?: { monstre: string; chance: number };
   /** Élite unique de la sous-zone (maquette 0.2, 4A : Frakacia Leukocytine, Sam Sagaz…) : mène parfois un groupe, un seul à la fois. */
   elite?: string;
   /** Sous-zone faite d'intérieurs (Mine…) : ses monstres apparaissent aussi dedans. Sinon les intérieurs (maisons) restent vides. */
@@ -272,6 +276,8 @@ export interface PorteDef { a: [string, number]; b: [string, number]; nom: strin
   v03?: number;
   /** Clé officielle demandée et prise en passant de a vers b (entrée d'un donjon, maquette 0.2 5B) : id de la ressource. */
   cle?: string;
+  /** Traversée payante (« Wabbits : 2C », bateau du Capitaine Lily) : kamas pris en passant de a vers b ; le retour est gratuit. */
+  prix?: number;
   /** Portail vers une autre zone (Incarnam <-> Astrub) : b est une case de cette zone-là. */
   zone?: string;
   /** Portail dessiné hors des cases marchables (le bassin d'Incarnam, l'arche de la tour d'Astrub) : [case du milieu du dessin,

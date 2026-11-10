@@ -12,6 +12,7 @@ import { AtelierView } from './atelierView';
 import { estPalier, recettesAuNiveau } from '../sim/metiers';
 import { HavreSacView } from './havreSacView';
 import { AreneView } from './areneView';
+import { BrumeNuit } from './brume';
 import { GuerreView } from './guerreView';
 import { GUERRE } from '../sim/guerre';
 import { chrono } from '../sim/quests';
@@ -140,6 +141,7 @@ export class ZoneScene extends Phaser.Scene {
   private recolteView: RecolteView | null = null;
   private havreSacView: HavreSacView | null = null;
   private areneView: AreneView | null = null;
+  private brume: BrumeNuit | null = null;
   private guerreView: GuerreView | null = null;
   /** Boss enfui dans son trou (« Wabbits : 8B »), pour la bannière de fin qui suit. */
   private fuite: { suite: string; premier: boolean; name: string } | null = null;
@@ -322,7 +324,7 @@ export class ZoneScene extends Phaser.Scene {
     if (zone.open) {
       const open = zone.open;
       const wg = new WorldGrid(this.cache.json.get(WorldView.key(open.world, 'monde')) as WorldData);
-      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, apparats: APPARATS, familierXp: FAMILIERS.xp, recoltes: RECOLTES, compte: chargerCompte(), coffre: lireCoffre(this.sorteCoffre), aujourdhui: this.test?.jour ?? jourDuPC(), tuto: this.test ? false : this.perso?.tuto, test: this.test?.reglages,
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, apparats: APPARATS, familierXp: FAMILIERS.xp, recoltes: RECOLTES, compte: chargerCompte(), coffre: lireCoffre(this.sorteCoffre), aujourdhui: this.test?.jour ?? jourDuPC(), nuit: () => this.nuitDehors(), tuto: this.test ? false : this.perso?.tuto, test: this.test?.reglages,
         placements: this.test ? retouchesPlacement(open.world) : undefined,   // éditeur F1 › Placement : retouches pas encore envoyées
         // vitrine : les PNJ sont là, mais aucune quête ne démarre
         arrivee: this.arrivee, position: this.transit.position, point: this.transit.point, zaap: this.transit.zaap, retour: this.transit.retour,
@@ -346,6 +348,7 @@ export class ZoneScene extends Phaser.Scene {
       this.worldView.create();
       if (this.world.zone.open) { const hv = this.havreSacView = new HavreSacView(this, this.world); this.events.once('shutdown', () => { hv.destroy(); if (this.havreSacView === hv) this.havreSacView = null; }); }
       if (this.world.zone.open?.donjons?.some(d => d.arene)) { const av = this.areneView = new AreneView(this, this.world); this.events.once('shutdown', () => { av.destroy(); if (this.areneView === av) this.areneView = null; }); }
+      if (this.world.zone.open?.subareas['163']) { const b = this.brume = new BrumeNuit(this, this.world); this.events.once('shutdown', () => { b.destroy(); if (this.brume === b) this.brume = null; }); }
       if (this.world.guerre) { const gv = this.guerreView = new GuerreView(this, this.world); this.events.once('shutdown', () => { gv.destroy(); if (this.guerreView === gv) this.guerreView = null; }); }
       if (this.world.postes.length) { const av = this.atelierView = new AtelierView(this, this.world, `${ASSETS}/ui/reperes`); this.events.once('shutdown', () => { av.destroy(); if (this.atelierView === av) this.atelierView = null; }); }
       if (this.world.recoltes.length) { const rv = this.recolteView = new RecolteView(this, this.world); this.events.once('shutdown', () => { rv.destroy(); if (this.recolteView === rv) this.recolteView = null; }); }
@@ -1745,6 +1748,10 @@ export class ZoneScene extends Phaser.Scene {
     }
   }
 
+  /** « Wabbits : 12A » : la nuit dehors (heure du PC, ou celle du panneau de test / des réglages), lue par la sim. */
+  private nuitDehors(): boolean {
+    return ambiance(this.panneau && this.panneau.heure !== 'auto' ? { ...this.reglages, heure: this.panneau.heure } : this.reglages, new Date(), false).nom === 'nuit';
+  }
   /** Ambiance (render/ambiance.ts) : jour / soir / nuit selon l'heure du PC, lumière fixe dans les intérieurs. Quatre fois par seconde. */
   private updateAmbiance(force = false) {
     const now = this.time.now;
@@ -1893,6 +1900,7 @@ export class ZoneScene extends Phaser.Scene {
     this.havreSacView?.update(this.game.loop.delta / 1000);
     this.areneView?.update(this.game.loop.delta / 1000);
     this.guerreView?.update(this.game.loop.delta / 1000);
+    this.brume?.update(this.game.loop.delta / 1000);
     this.questView?.update();
     this.passantsView?.update();
     this.dialogueView?.update();

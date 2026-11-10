@@ -68,6 +68,9 @@ export function effetsActifs(p: Player): EffetActif[] {
   }
   if (p.pacifiste > 0) out.push({ id: 'pacifiste', sorte: 'monstre', nom: 'Pacifiste', carac: 'dommages', t: p.pacifiste, tMax: p.pacifisteT0 || p.pacifiste,
     lignes: ['Ne peut plus infliger de dommages'] });
+  // Potion Wabbit (« Wabbits : 2D »)
+  if (p.deguise > 0) out.push({ id: 'deguise', sorte: 'objet', nom: 'Déguisé en Wabbit', carac: 'pm', t: p.deguise, tMax: 600,
+    lignes: ['Les Wabbits de l\'île ne t\'attaquent pas', 'Tant que tu ne les tapes pas'] });
   for (const e of out) e.lignes.push(`Encore ${fr(Math.max(0, e.t))} s`);
   return out;
 }

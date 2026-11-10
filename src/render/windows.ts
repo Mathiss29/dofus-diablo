@@ -929,11 +929,11 @@ export class Windows {
     });
     w.querySelectorAll<HTMLElement>('[data-res]').forEach(e => {
       const id = e.dataset.res!, r = ITEMS.resources[id];
-      const eat = () => { if (r.rappel ? this.world.rappel(id) : this.world.eat(id)) { if (r.rappel) this.close(); else this.changed(); } };
+      const eat = () => { if (r.rappel ? this.world.rappel(id) : r.deguisement ? this.world.boire(id) : this.world.eat(id)) { if (r.rappel) this.close(); else this.changed(); } };
       e.addEventListener('mouseenter', ev => { this.tip.innerHTML = this.resTip(r, id); this.tip.style.display = 'block'; this.moveTip(ev); });
       e.addEventListener('mousemove', ev => this.moveTip(ev));
       e.addEventListener('mouseleave', () => this.hideTip());
-      if (r.soin || r.rappel) { e.addEventListener('contextmenu', eat); e.addEventListener('dblclick', eat); }
+      if (r.soin || r.rappel || r.deguisement) { e.addEventListener('contextmenu', eat); e.addEventListener('dblclick', eat); }
       else e.addEventListener('contextmenu', () => { this.hideTip(); this.recettesAvec(id); });
       e.addEventListener('click', ev => { if (ev.altKey && this.world.nourrirFamilier({ res: id, tout: ev.shiftKey })) { ev.preventDefault(); this.changed(); } });
     });
@@ -2014,16 +2014,17 @@ export class Windows {
       <div class="hint">Fabriqué : Commun, ou Rare (${Math.round(chanceRare(lv) * 100)} % à ton niveau, garanti avec un ingrédient rare). Jamais de pouvoir légendaire.</div>`;
   }
   private resTip(r: ResourceDef, id: string) {
-    const sorte = r.soin || r.rappel ? 'Consommable' : r.cle ? 'Clé de donjon' : r.pepite ? 'Monnaie du Bastion' : r.monnaie ? 'Monnaie de l\'île des Wabbits' : r.rune || r.signature ? 'Rune de forgemagie' : 'Ressource';
+    const sorte = r.soin || r.rappel || r.deguisement ? 'Consommable' : r.cle ? 'Clé de donjon' : r.pepite ? 'Monnaie du Bastion' : r.monnaie ? 'Monnaie de l\'île des Wabbits' : r.rune || r.signature ? 'Rune de forgemagie' : 'Ressource';
     const effet = r.soin ? `<div class="up">+${r.soin} PV</div><div class="hint">Clic droit : manger</div>`
       : r.rappel ? `<div class="up">Retour au dernier Zaap (${this.world.checkpointName})</div><div class="hint">Clic droit : boire</div>`
+      : r.deguisement ? `<div class="up">Déguisé en Wabbit pendant ${Math.round(r.deguisement / 60)} min</div><div class="hint">Les Wabbits de l'île ne t'attaquent pas tant que tu ne les tapes pas. Clic droit : boire</div>`
       : r.cle ? `<div class="up">Ouvre l'entrée : ${r.cle}</div><div class="hint">Prise en entrant dans le donjon</div>`
       : r.monnaie ? '<div class="hint">Gagnée en défendant les champs de l\'île des Wabbits (guerre des Cawottes) ; se dépense chez Tiwa Cawoteuw, sur l\'île de la Cawotte.</div>'
       : r.pepite ? '<div class="hint">Recycle tes objets chez Kerubim Crépin (au Bastion des Douze, ou à son guichet du Havre-Sac) et dépense-les chez ses voisins du Bastion.</div>'
       : r.signature ? '<div class="up">Grave ton nom sur un objet</div><div class="hint">Case Signature de la fenêtre du forgemage, au Bastion des Douze ; Malek en vend aussi.</div>'
       : r.rune && RUNES[id] ? `<div class="up">+${RUNES[id].val} ${STAT_NAMES[RUNES[id].stat]} · poids ${String(RUNES[id].poids).replace('.', ',')}</div><div class="hint">Se pose chez le forgemage du Bastion des Douze ; s'obtient en brisant des objets chez lui.</div>` : '';
     const sert = recettesAvec(ITEMS, id).map(x => produit(x.result)?.name).filter(Boolean);
-    const sertA = sert.length ? `<div class="ou"><div class="hd">Sert à</div><div>${sert.slice(0, 5).join(', ')}${sert.length > 5 ? '…' : ''}</div></div>${!r.soin && !r.rappel ? '<div class="hint">Clic droit : recettes qui l\'utilisent</div>' : ''}` : '';
+    const sertA = sert.length ? `<div class="ou"><div class="hd">Sert à</div><div>${sert.slice(0, 5).join(', ')}${sert.length > 5 ? '…' : ''}</div></div>${!r.soin && !r.rappel && !r.deguisement ? '<div class="hint">Clic droit : recettes qui l\'utilisent</div>' : ''}` : '';
     return `<h4>${r.name}</h4><div class="sub">${sorte} · niveau ${r.level}</div>${effet}${sertA}${sourcesHtml(id, 3)}`;   // 1B : où le trouver
   }
 

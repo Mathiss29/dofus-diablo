@@ -503,6 +503,8 @@ export const LOOKS: Record<string, Look> = {
   blanc_pa_wabbit: { atlas: 'blanc_pa_wabbit', scale: 0.64, map: MONSTER_MAP(15/40, 'AnimAttaque0', { 0: 15/40, 2: 7/28 }), height: 269, multi: true },
   // invocations immobiles du Wa Wabbit et du Wa Wobot (« Wabbits : 8A, 10A ») : repos, coup reçu, mort
   cawotte_woyale: { atlas: 'cawotte_woyale', scale: 0.4, map: FIXE_MAP, height: 120, multi: true },
+  nono_le_wobot: { atlas: 'nono_le_wobot', scale: 1.0, map: MONSTER_MAP(21/32, 'AnimAttaque0', { 0: 21/32, 1: 27/38 }), height: 236, multi: true },
+  wabbit_gm: { atlas: 'wabbit_gm', scale: 1.0, map: MONSTER_MAP(15/35, 'AnimAttaque0', { 0: 15/35, 1: 49/58 }), height: 237, multi: true },
   wobot_tamponneur: { atlas: 'wobot_tamponneur', scale: 0.8, map: FIXE_MAP, height: 100, multi: true },
   tiwobot: { atlas: 'tiwobot', scale: 0.52, map: MONSTER_MAP(22/54, 'AnimAttaque1', { 1: 22/54, 2: 45/60, 3: 19/50 }), height: 230, multi: true },
   wabbit: { atlas: 'wabbit', scale: 0.64, map: MONSTER_MAP(11/27, 'AnimAttaque0', { 0: 11/27, 1: 22/35 }), height: 151, multi: true },
@@ -570,6 +572,9 @@ export const PNJ_LOOKS: Record<string, PnjLook> = {
   // PNJ des Dofus (0.3) : Gawdien du Dofus (PNJ 148, {321}), Rathrosk (PNJ 4357, {4930}, animFunList officielle),
   // Énergie du Dofus Cacao (PNJ 4842, {3401|||120})
   gawdien: { scale: 0.82, anim: 'AnimStatique_1' },
+  // Île des Wabbits (« Wabbits : 2A + 12B ») : Capitaine Lily (PNJ 134, {10|||85}), Wabbit du Matin Pewlant (PNJ 141, {959|||130})
+  lily: { scale: 0.82, anim: 'AnimStatique_1' },
+  wabbit_matin: { scale: 0.82, anim: 'AnimStatique_1' },
   rathrosk: { scale: 0.82, anim: 'AnimStatique_1', fun: [['AnimAttaque3_1', 9], ['AnimAttaque2_1', 7], ['AnimAttaque1_1', 4]] },
   energie_cacao: { scale: 0.82, anim: 'AnimStatique_1' },
   // Gardes et crieur du Bastion (maquette Ville 5F) : looks officiels, animFunList officielles des miliciens (MILICIEN BONTA PIQUE 6554,

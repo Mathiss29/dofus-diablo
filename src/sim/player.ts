@@ -51,6 +51,8 @@ export class Player extends Entity {
   combo = 0;
   comboTimer = 0;
   invuln = 0;
+  /** Potion Wabbit (« Wabbits : 2D ») : temps restant du déguisement (s). */
+  deguise = 0;
   /** Multi (« Multi complet » 7B) : temps à terre, et temps passé par un allié à le relever (s). */
   aTerre = 0;
   releve = 0;
@@ -854,6 +856,7 @@ export class Player extends Entity {
 
   update(dt: number, input: PlayerInput, world: World) {
     this.age += dt;
+    if (this.deguise > 0 && (this.deguise -= dt) <= 0) { this.deguise = 0; world.emit({ k: 'status', x: this.x, y: this.y - 60, text: 'Le déguisement de Wabbit tombe', color: '#e8902a' }); }
     for (const k of Object.keys(this.cd)) {
       if (this.cd[k] <= 0) continue;
       this.cd[k] = Math.max(0, this.cd[k] - dt);
