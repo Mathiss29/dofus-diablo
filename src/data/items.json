@@ -38499,6 +38499,12 @@
    "name": "Poupée Vaudou Tam",
    "icon": 164076,
    "level": 60
+  },
+  "11798": {
+   "name": "Clef du Village Kanniboul",
+   "icon": 84748,
+   "level": 60,
+   "cle": "Village Kanniboul"
   }
  },
  "drops": {

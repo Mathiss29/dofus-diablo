@@ -621,3 +621,6 @@ Ville vivante (maquette Ville 5F, 8 nov. 2026) :
   (plus grand, la planche brute sort vide), puis `amakna04/ajout.py`, `monster_spells.py`, `monster_stats.py`, `archimonstres.py`, `drops_ajout.py`, `xp_monstres.py`.
 - Portes `marque: true` (paillasson aux deux bouts) : bateau du Port de Madrestam [9,-2] case 165 → Moon [32,11] case 147 ; « Route de Cania »
   [-6,-25] case 294 ↔ Baie de Cania [-30,-15] case 348 (les Champs de Cania entre les deux arrivent avec la 0.6). Zaaps : `amakna04/zaaps_amakna.py`.
+- Village Kanniboul (« Kanniboul : » une seule salle, Mathis 2026-11-10) : la vraie salle au masque (carte 157552640) exportée seule comme
+  intérieur `arene_kanniboul` en (40, 60) (`PARTAGE=1 world_export.py`, `bords_fondu.py`, `COURANTE=1 batiments.py`, `decor_par_carte.py`,
+  `monde_continent.py fusion`, puis `essai: 1`) ; points de l'arène (cases de la salle) dans `zones.json > donjonsTest`, porte [29,9] case 452.

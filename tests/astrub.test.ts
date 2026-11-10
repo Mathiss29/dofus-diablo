@@ -31,7 +31,7 @@ describe('Astrub (0.2a)', () => {
     // + les 8 salles du Château d'Amakna (0.4 suite : 6A, intérieurs aussi en essai) et, pour les donjons en couloirs (5B),
     // 36 vraies salles et leurs couloirs (36 couloirs + 38 petites cartes sans image sous le creux des couloirs ; 4 de plus sous la Grange d'Astrub)
     expect(astrub.maps.filter(m => m.essai && !m.inside).length).toBe(642 + 58 + 5 + 169);
-    expect(astrub.maps.filter(m => m.essai && m.inside).length).toBe(8 + 36 + 36 + 38 + 4);
+    expect(astrub.maps.filter(m => m.essai && m.inside).length).toBe(8 + 36 + 36 + 38 + 4 + 1);   // + la salle au masque du Village Kanniboul (« Kanniboul : » une seule salle)
     expect(astrub.maps.filter(m => m.essai).every(m => wg.freeByMap.get(m.tag)!.length === 0)).toBe(true);
     wg.ouvrirEssai();
     expect(astrub.origin).toEqual([-88, -93]);

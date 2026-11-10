@@ -1423,6 +1423,16 @@
               "Île des Wabbits",
               "Partie de test"
             ]
+          },
+          {
+            "titre": "Le Village Kanniboul",
+            "phrase": "Kanniboul Ebil t'attend dans sa salle au masque, sur l'Île de Moon, après trois vagues de Kanniboul.",
+            "details": "Tant que ses deux joueurs de tambour jouent, il frappe plus fort : fais-les taire d'abord.",
+            "icone": "dofus",
+            "etiquettes": [
+              "Île de Moon",
+              "Partie de test"
+            ]
           }
         ],
         "Le monde": [

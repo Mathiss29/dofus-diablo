@@ -1943,6 +1943,18 @@
      ],
      "essai": true,
      "region": "Île de Moon"
+    },
+    "700": {
+     "name": "Village Kanniboul",
+     "level": 60,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Île de Moon"
     }
    },
    "checkpoints": [
@@ -3208,6 +3220,19 @@
       348
      ],
      "nom": "Route de Cania (Baie de Cania)",
+     "marque": true
+    },
+    {
+     "a": [
+      "29_9",
+      452
+     ],
+     "b": [
+      "arene_kanniboul",
+      0
+     ],
+     "nom": "Village Kanniboul",
+     "cle": "11798",
      "marque": true
     }
    ],
@@ -13879,6 +13904,77 @@
       "tampon": "wobot_tamponneur",
       "twansmute": "black_wo_wabbit",
       "epilogue": "wa_wabbit"
+     }
+    },
+    {
+     "nom": "Village Kanniboul",
+     "salles": {},
+     "arene": {
+      "tag": "arene_kanniboul",
+      "arrivee": 11378087,
+      "entrees": [
+       11342969,
+       11350372,
+       11330040
+      ],
+      "boss": 11354066,
+      "sortie": 11359607,
+      "coffre": 11355913
+     },
+     "vagues": [
+      {
+       "m": [
+        "kanniboul_ark",
+        "kanniboul_eth",
+        "kanniboul_jav",
+        "kanniboul_sarbak",
+        "kanniboul_ark",
+        "kanniboul_eth",
+        "kanniboul_jav",
+        "kanniboul_sarbak",
+        "kanniboul_ark",
+        "kanniboul_eth"
+       ]
+      },
+      {
+       "m": [
+        "kanniboul_ark",
+        "kanniboul_eth",
+        "kanniboul_jav",
+        "kanniboul_sarbak",
+        "kanniboul_ark",
+        "kanniboul_eth",
+        "kanniboul_jav",
+        "kanniboul_sarbak",
+        "kanniboul_jav",
+        "kanniboul_sarbak"
+       ]
+      },
+      {
+       "m": [
+        "kanniboul_ark",
+        "kanniboul_eth",
+        "kanniboul_jav",
+        "kanniboul_sarbak",
+        "kanniboul_ark",
+        "kanniboul_eth",
+        "kanniboul_jav",
+        "kanniboul_sarbak",
+        "kanniboul_ark",
+        "kanniboul_eth",
+        "kanniboul_jav",
+        "kanniboul_sarbak"
+       ]
+      }
+     ],
+     "bossVague": [
+      "kanniboul_ebil",
+      "kanniboul_tam",
+      "kanniboul_tam"
+     ],
+     "tambours": {
+      "monstre": "kanniboul_tam",
+      "bonus": 30
      }
     }
    ],

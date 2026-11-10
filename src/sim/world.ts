@@ -649,7 +649,7 @@ export class World {
       if (ancienne.has(d.a[0]) || chaine.has(d.a[0])) continue;
       if (dj && !d.zone && wg.mapByTag(d.a[0])) {
         const q = wg.cellToWorld(wg.cellOf(d.a[0], d.a[1])), A = dj.arene!, B = wg.cellToWorld(A.arrivee);
-        this.portes.push({ nom: d.nom, ends: [{ tag: d.a[0], ...wg.nearestFree(q.x, q.y, wg.freeByMap.get(d.a[0])!) }, { tag: A.tag, ...B }], verrou: false, sens: true, cle: d.cle });
+        this.portes.push({ nom: d.nom, ends: [{ tag: d.a[0], ...wg.nearestFree(q.x, q.y, wg.freeByMap.get(d.a[0])!) }, { tag: A.tag, ...B }], verrou: false, sens: true, cle: d.cle, ...(d.marque ? { marque: true } : {}) });
         if (!this.lieux.has(A.tag)) this.lieux.set(A.tag, dj.nom);
         continue;
       }

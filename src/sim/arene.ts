@@ -104,6 +104,8 @@ export class Arene {
   private wouste: { id: number; t: number } | null = null;
   private wt = { tir: WOBOT.premier, cara: WOBOT.carapace.premier, loin: 0, subst: 0 };
   epilogue: { m: Monster; e: Pt } | null = null;
+  /** « Kanniboul : 3B » : un joueur de tambour est encore debout (le boss frappe plus fort). */
+  tambours = false;
 
   constructor(readonly w: World, readonly d: DonjonDef, reprise: number) {
     const wg = w.worldGrid!, a = d.arene!, at = (c: number) => wg.cellToWorld(c);
@@ -145,6 +147,7 @@ export class Arene {
     this.updateAlarme(dt);
     this.updateBoss();
     this.updateWobot(dt);
+    this.updateTambours();
     if (this.vague > this.total) return;   // la vague du boss finit quand il tombe
     const reste = this.membres.filter(m => !m.dead).length + this.arrivees.filter(a => a.vague === this.vague).length;
     if (reste <= ARENE.reste || this.tVague >= ARENE.delai) this.lancerVague();
@@ -214,6 +217,17 @@ export class Arene {
   private libre(x: number, y: number) {
     const wg = this.w.worldGrid!;
     return wg.walkable(x, y) ? { x, y } : wg.nearestFree(x, y, wg.freeByMap.get(this.d.arene!.tag)!);
+  }
+
+  /** « Kanniboul : 3B » : aura continue, tant qu'un joueur de tambour est debout le boss a +bonus % de Dommages. */
+  private updateTambours() {
+    const T = this.d.tambours, b = this.boss, w = this.w;
+    if (!T || !b || b.dead) return;
+    const jouent = this.tous.some(m => !m.dead && m.type === T.monstre);
+    if (jouent) { b.furyPct = Math.max(b.furyPct, T.bonus); b.furyT = Math.max(b.furyT, 0.5); }
+    if (jouent === this.tambours) return;
+    this.tambours = jouent;
+    w.emit({ k: 'status', x: b.x, y: b.y - 60, text: jouent ? 'Les tambours battent !' : 'Les tambours se taisent', color: jouent ? '#ff9a5a' : '#f2d36b' });
   }
 
   /** « Wabbits : 10A-C » : le combat du Wa Wobot (Tamponneurs, Mékawapace, Substitution + Wouste). */

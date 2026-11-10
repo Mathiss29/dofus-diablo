@@ -3083,7 +3083,8 @@
   "shin_larve": "boss_souterrain",
   "craqueleur_legendaire": "boss_souterrain",
   "wa_wobot": "boss_magique",
-  "wa_wabbit": "boss_feerique"
+  "wa_wabbit": "boss_feerique",
+  "kanniboul_ebil": "boss_bestial"
  },
  "donjon": {
   "fermeture": "ambiance/AMB_MeS_Grille_Fermeture.mp3",
@@ -3372,6 +3373,15 @@
    ]
   },
   "166": {
+   "musique": "moon",
+   "fond": [
+    "mer"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
+  },
+  "700": {
    "musique": "moon",
    "fond": [
     "mer"
