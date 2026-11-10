@@ -258,6 +258,14 @@ export class WorldGrid extends GridMap {
     const W = (m.n?.[0] ?? 1) * MAP_COLS, [X0, Y0] = this.world.origin, r = Math.floor(c / W), k = c % W;
     return ((m.y - Y0) * MAP_ROWS + r) * this.cols + (m.x - X0) * MAP_COLS + k;
   }
+  /** L'inverse de cellOf : carte et case (0-559) d'une case de la grande grille. */
+  caseLocale(g: number): { tag: string; x: number; y: number; c: number } | null {
+    const m = this.mapOfCell(g);
+    if (!m) return null;
+    const W = (m.n?.[0] ?? 1) * MAP_COLS, [X0, Y0] = this.world.origin;
+    const r = Math.floor(g / this.cols) - (m.y - Y0) * MAP_ROWS, k = g % this.cols - (m.x - X0) * MAP_COLS;
+    return { tag: m.tag, x: m.x, y: m.y, c: r * W + k };
+  }
 }
 
 /** File de priorité (tas binaire) pour l'A*. */

@@ -30,7 +30,9 @@ export type SimEvent =
   | { k: 'massacreFin'; n: number }
   | { k: 'hit'; target: 'monster' | 'player' | 'allie'; id?: number; x: number; y: number; z: number; amount: number; crit: boolean; element?: Element;
       /** Coup d'arme : éclat de la couleur de l'élément (maquette Armes 3B). */
-      eclat?: boolean }
+      eclat?: boolean;
+      /** Sort qui a frappé (partie de test : DPS sort par sort, journal des coups ; « poussee », « saignement », « renvoi »). */
+      sort?: string }
   /** XP gagnée en tuant un monstre (choix 1A : chiffre au-dessus de lui). */
   | { k: 'xp'; x: number; y: number; z: number; n: number }
   | { k: 'kill'; x: number; y: number; radius: number; monster: string }

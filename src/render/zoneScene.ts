@@ -57,6 +57,7 @@ import { SonView, synthe } from './sonView';
 import { MANIFESTE, Son } from './son';
 import { retouchesPlacement } from './placementVue';
 import { etatsPrets, jourDuPC, PanneauTest, lireTest, modeTest, sauverTest, type EtatTest } from './panneauTest';
+import { CalquesTest } from './calquesTest';
 import { REGLAGES_TEST, type CommandeTest } from '../sim/outilsTest';
 import { Coop } from './coop';
 import { appliquerInstantane, lisserMiroir } from '../sim/miroir';
@@ -405,6 +406,8 @@ export class ZoneScene extends Phaser.Scene {
     this.windows.nomPerso = () => this.perso?.nom ?? 'Aventurier';
     this.windows.heureNom = () => ambiance(this.reglages, new Date(), !!this.world.worldGrid?.mapAt(this.world.player.x, this.world.player.y)?.inside).nom;
     this.panneau?.destroy(); this.panneau = null;
+    this.calques = null;   // ses dessins sont partis avec l'ancienne scène
+    this.anims.globalTimeScale = 1; this.tweens.timeScale = 1;   // Panneau test 5B : le ralenti ne survit pas à la partie
     if (this.test) { const pt = this.panneau = new PanneauTest(this.world, this.actionsTest(), this.zoneId); this.events.once('shutdown', () => { pt.destroy(); if (this.panneau === pt) this.panneau = null; }); }
     // Coop (maquette « Multi : » 3A) : l'hôte repose ses invités ici ; chez l'invité, ce monde n'est qu'un miroir de celui de l'hôte
     this.miroir = Coop.miroir;
@@ -560,7 +563,7 @@ export class ZoneScene extends Phaser.Scene {
   /** Coop, chez l'invité : la partie est celle de l'hôte (ou du serveur), les outils de test n'y ont pas prise. */
   private bloqueEnGroupe() {
     if (!this.miroir) return false;
-    this.hud.toast('Pas pendant une partie à plusieurs : quitte d’abord le groupe (F1 › Monstres)');
+    this.hud.toast('Pas pendant une partie à plusieurs : quitte d’abord le groupe (F1 › Multi)');
     return true;
   }
   private relancerTest(t: EtatTest) {
@@ -593,6 +596,13 @@ export class ZoneScene extends Phaser.Scene {
         this.relancerTest({ classe: e.classe, sexe: this.test.sexe, zone: e.zone, reglages: reglages(), apres, zones: [] });
       },
       poser: () => {},
+      // Panneau test 8A, 8B : le perso tel qu'il est (gardé dans « Mes états » ou en code), et le recharger
+      instantane: (): EtatTest | null => {
+        if (!this.test) return null;
+        const j = this.world.opts.aujourdhui;
+        return { classe: this.classId, sexe: this.test.sexe, zone: this.zoneId, reglages: reglages(), etat: exporterJoueur(this.world), jour: j && j !== jourDuPC() ? j : undefined, zones: this.test.zones };
+      },
+      charger: (t: EtatTest) => this.relancerTest({ ...t, reglages: { ...REGLAGES_TEST, ...t.reglages }, apres: undefined }),
       nouveau: () => { if (this.test) this.relancerTest({ classe: this.classId, sexe: this.test.sexe, reglages: reglages(), zones: [] }); },
     };
   }
@@ -612,6 +622,12 @@ export class ZoneScene extends Phaser.Scene {
       if (this.aimId && this.world.player.cls.eniripsa && this.hud.joueurPortrait(p.x, p.y) != null) { this.pressed = this.aimId; this.aimId = null; this.aimKey = null; this.uiClick = true; return; }
       if (over.length || this.hud.blocks(p.x, p.y)) { this.uiClick = true; return; }
       this.uiClick = false;
+      // Panneau test 4E : Ctrl + clic droit copie la carte et la case sous la souris
+      if (this.panneau?.calques.coords && p.rightButtonDown() && (p.event as MouseEvent).ctrlKey) {
+        const t = this.caseSouris(); this.uiClick = true;
+        if (t) navigator.clipboard?.writeText(t).then(() => this.hud.toast(`Copié : ${t}`), () => this.hud.toast(t));
+        return;
+      }
       // partie de test, onglet Placement (maquette « Monstres » 2A) : clic = poser un point, clic droit = le retirer
       if (this.panneau?.editionPlacement) {
         this.uiClick = true;
@@ -693,6 +709,8 @@ export class ZoneScene extends Phaser.Scene {
     if (!this.perso) this.keys.K.on('down', () => { const cl = Object.keys(GAME_DATA.classes), c = cl[(cl.indexOf(this.classId) + 1) % cl.length]; if (this.test) this.actionsTest().classe(c); else this.scene.restart({ zone: this.zoneId, classe: c }); });
     // F1 : outils de la partie de test (3A) ; la touche n'ouvre plus l'aide du navigateur
     if (this.test) kb.addKey(K.F1).on('down', () => this.panneau?.basculer());
+    // Panneau test 5A : F2 = pause, F3 = image suivante
+    if (this.test) { kb.addKey(K.F2).on('down', () => this.panneau?.basculerPause()); kb.addKey(K.F3).on('down', () => this.panneau?.avancerImage()); }
     this.keys.ENTER.on('down', () => {
       if (!this.world.over) return;
       if (this.mortDefinitive) this.game.events.emit('accueil');
@@ -1070,7 +1088,44 @@ export class ZoneScene extends Phaser.Scene {
     }
   }
   update(_: number, deltaMs: number) {
-    const dt = Math.min(deltaMs / 1000, 0.1);
+    const t0 = performance.now();
+    this.updateJeu(deltaMs);
+    // Panneau test 4D, 4E : compteur de fluidité et case sous la souris
+    const pt = this.panneau;
+    if (pt) {
+      this.msMoyen += (performance.now() - t0 - this.msMoyen) * 0.05;
+      this.calques ??= new CalquesTest(this);
+      this.calques.dessiner(this.world, pt.calques);
+      pt.majPerf(pt.calques.perf || pt.calques.coords ? this.texteDebug(pt) : null);
+    }
+  }
+  /** Temps de calcul moyen d'une image (ms), pour le compteur de fluidité de la partie de test. */
+  private msMoyen = 0;
+  private calques: CalquesTest | null = null;
+  private texteDebug(pt: PanneauTest): string {
+    const w = this.world, l: string[] = [];
+    if (pt.calques.perf) {
+      const vivants = w.monsters.filter(m => !m.dead), dort = vivants.filter(m => w.zone.open && m.state === 'idle' && w.players.every(q => Math.abs(m.x - q.x) + Math.abs(m.y - q.y) > World.SOMMEIL)).length;
+      l.push(`${Math.round(this.game.loop.actualFps)} FPS · ${this.msMoyen.toFixed(1).replace('.', ',')} ms de calcul par image`);
+      l.push(`${vivants.length} monstres (${vivants.length - dort} actifs, ${dort} endormis) · ${w.projectiles.length} projectiles · ${w.betes.filter(b => !b.dead).length} bêtes`);
+      if (pt.pause || pt.vitesse !== 1) l.push(pt.pause ? 'EN PAUSE (F2 : reprendre, F3 : image suivante)' : `Vitesse ×${String(pt.vitesse).replace('.', ',')}`);
+    }
+    if (pt.calques.coords) l.push(this.caseSouris() ?? 'Souris hors de la carte');
+    return l.join('\n');
+  }
+  /** Carte et case sous la souris (4E). */
+  private caseSouris(): string | null {
+    const wg = this.world.worldGrid, ptr = this.input.activePointer, wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2, q = ISO.toWorld(wp.x, wp.y);
+    const c = wg?.caseLocale(wg.cellAtWorld(q.x, q.y));
+    if (!c) return null;
+    return `Carte [${c.x},${c.y}] · ${c.tag} · case ${c.c}${wg!.walkable(q.x, q.y) ? '' : ' (bloquée)'}`;
+  }
+  private updateJeu(deltaMs: number) {
+    // Panneau test 5A-5C : pause (le jeu attend, sauf une image demandée), ralenti, accéléré
+    const pt = this.panneau, echelle = pt ? (pt.pause ? 0 : pt.vitesse) : 1;
+    if (pt && (this.anims.globalTimeScale !== echelle || this.tweens.timeScale !== echelle)) { this.anims.globalTimeScale = echelle; this.tweens.timeScale = echelle; }
+    if (pt?.pause && (pt.pasDemande || this.cmdTest.length)) { pt.pasDemande = false; this.acc += ZoneScene.STEP; }   // une image (ou un ordre du panneau)
+    const dt = Math.min(deltaMs / 1000, 0.1) * echelle;
     this.fx.update(dt);
     this.carte?.update();
     // fenêtre d'un Zaap du monde : elle se ferme si l'on s'en éloigne
@@ -1119,8 +1174,8 @@ export class ZoneScene extends Phaser.Scene {
       this.fx.handle(e);
       this.hud.handle(e);
       this.havreSacView?.handle(e);
-      if (this.panneau && e.k === 'hit' && e.target === 'monster') this.panneau.noterCoup(e.amount);
-      if (this.panneau && e.k === 'hit' && e.target === 'player') this.panneau.noterRecu(e.amount);   // Outil test 8C
+      if (this.panneau && e.k === 'hit' && e.target === 'monster') this.panneau.noterCoup(e);   // DPS sort par sort, journal (Panneau test 6A, 6B)
+      if (this.panneau && e.k === 'hit' && e.target === 'player' && Math.hypot(e.x - this.world.player.x, e.y - this.world.player.y) < 8) this.panneau.noterRecu(e);   // Outil test 8C
       if (this.panneau && (e.k === 'test' || e.k === 'queteDebut' || e.k === 'queteEtape' || e.k === 'queteFin' || e.k === 'lootResource')) this.panneau.rafraichir();
       if (this.panneau && e.k === 'heal' && Math.hypot(e.x - this.world.player.x, e.y - this.world.player.y) < 8) this.panneau.noterSoin(e.amount);
       this.son.handle(e);
@@ -1588,7 +1643,7 @@ export class ZoneScene extends Phaser.Scene {
     if (!force && now - this.ambT < 250) return;
     this.ambT = now;
     const w = this.world, inside = !!w.worldGrid?.mapAt(w.player.x, w.player.y)?.inside;
-    const a = ambiance(this.reglages, new Date(), inside || !w.zone.open);
+    const a = ambiance(this.panneau && this.panneau.heure !== 'auto' ? { ...this.reglages, heure: this.panneau.heure } : this.reglages, new Date(), inside || !w.zone.open);   // Panneau test 9B
     this.worldView?.setAmbiance(a.tint, a.lumieres, a.soleil);
     Transparence.reglages.actif = this.reglages.transparence !== false;
     if (this.worldView) { this.worldView.vent = this.reglages.vent; this.worldView.eau = this.reglages.eau; if (this.worldView.parts) this.worldView.parts.actif = this.reglages.particules; }
