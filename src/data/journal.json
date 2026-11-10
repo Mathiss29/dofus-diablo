@@ -1382,6 +1382,16 @@
               "Partie de test",
               "Touche M"
             ]
+          },
+          {
+            "titre": "Les donjons d'Amakna ouvrent leurs portes",
+            "phrase": "Neuf donjons s'ouvrent à leur vraie entrée : grotte des Bworks, porte des Squelettes, mine des Craqueleurs…",
+            "details": "Il faut leur clé officielle, vendue par Goultard au Bastion des Douze (une Petite Larve Dorée pour les Larves).",
+            "icone": "cle",
+            "etiquettes": [
+              "Partie de test",
+              "Amakna"
+            ]
           }
         ]
       }

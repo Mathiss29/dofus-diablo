@@ -124,7 +124,7 @@ export interface WorldOptions {
   /** Métiers de récolte (src/data/recoltes.json) : ressources et leurs emplacements par monde. */
   recoltes?: RecoltesData;
   /** Boutiques des PNJ (src/data/boutique.json) : articles et prix en Pépites. */
-  boutiques?: Record<string, { id: string; prix: number; /** vendu seulement en 0.3 */ v03?: boolean }[]>;
+  boutiques?: Record<string, { id: string; prix: number; /** vendu seulement en 0.3 */ v03?: boolean; /** en 0.4 (clés d'Amakna) */ v04?: boolean }[]>;
   /** Objets d'apparat officiels (src/data/apparat.json) et leur prix en Pépites chez Emp (boutique.json, apparat_prix). */
   apparats?: { objets: Record<string, { slot: string; collection?: boolean }>; prix: Record<string, number> };
   /** Partie de test (#test) : réglages du panneau F1 ; absent dans une vraie partie. */
@@ -625,8 +625,11 @@ export class World {
       const pref = new Set(Object.keys(dj.salles).map(t => t.replace(/\d+$/, '')));
       for (const m of wg.world.maps) if (m.inside && pref.has(m.tag.replace(/\d+$/, '')) && /\d$/.test(m.tag)) ancienne.set(m.tag, dj);
     }
+    // donjons de la 0.4 (« 0.4 suite : 5A ») : la porte mène droit à l'arrivée de l'arène (b = [tag de l'arène, 0])
+    for (const dj of this.zone.open!.donjons ?? []) if (dj.arene && !Object.keys(dj.salles).length) ancienne.set(dj.arene.tag, dj);
     for (const d of this.zone.open!.portes ?? []) {
       if (d.v03 && !this.player.v03) continue;
+      if (wg.mapByTag(d.a[0])?.essai && !this.test) continue;   // 0.4 cachée : portes d'Amakna en partie de test
       const dj = ancienne.get(d.b[0]);
       if (ancienne.has(d.a[0]) || chaine.has(d.a[0])) continue;
       if (dj && !d.zone && wg.mapByTag(d.a[0])) {
@@ -2342,7 +2345,7 @@ export class World {
   }
   /** Achat dans une boutique (src/data/boutique.json), payé en Pépites. */
   acheter(boutique: string, id: string): boolean {
-    const a = this.opts.boutiques?.[boutique]?.find(x => x.id === id && (!x.v03 || this.player.v03)), p = this.player;
+    const a = this.opts.boutiques?.[boutique]?.find(x => x.id === id && (!x.v03 || this.player.v03) && (!x.v04 || this.player.v04)), p = this.player;
     if (!a || (p.resources[PEPITE] ?? 0) < a.prix) return false;
     p.resources[PEPITE] -= a.prix; if (!p.resources[PEPITE]) delete p.resources[PEPITE];
     p.resources[id] = (p.resources[id] ?? 0) + 1;
