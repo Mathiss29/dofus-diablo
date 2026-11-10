@@ -65,7 +65,7 @@ describe('Astrub (0.2a)', () => {
     const retour = passerPortail(w2);
     expect(retour).toMatchObject({ zone: 'incarnam', arrivee: ['4_-3', 300] });
   });
-  it('quatre donjons en arène : une grande salle de 3 x 3 cartes, monstres officiels, 6 vagues + le boss, entrée à clé', () => {
+  it('quatre donjons en arène : une grande salle de 3 x 3 cartes, monstres officiels, 3 vagues + le boss, entrée à clé', () => {
     const w = new World({ data: GAME_DATA, zone: 'astrub', map: new WorldGrid(astrub), seed: 1 }), wg = w.worldGrid!;
     for (const d of zone.donjons!) {
       const a = d.arene!, m = wg.mapByTag(a.tag)!;
@@ -73,7 +73,7 @@ describe('Astrub (0.2a)', () => {
       expect(m.inside).toBe(1);
       for (const c of [a.arrivee, a.boss, a.sortie, a.coffre, ...a.entrees]) expect(wg.mapOfCell(c)?.tag, `${a.tag} ${c}`).toBe(a.tag);
       for (const c of [a.arrivee, a.boss, a.sortie, ...a.entrees]) expect(astrub.mov[c], `${a.tag} case ${c}`).toBe('1');
-      expect(d.vagues).toHaveLength(6);
+      expect(d.vagues).toHaveLength(3);
       for (const t of [...d.vagues!.flatMap(v => v.m), ...d.bossVague!]) if (t !== '?') expect(LOOKS[GAME_DATA.monsters[t]?.look], t).toBeDefined();
       expect(GAME_DATA.monsters[d.bossVague![0]].boss).toBe(true);
       expect(w.entreeDonjon(d.nom)?.cle).toBeTruthy();

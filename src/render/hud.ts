@@ -292,7 +292,7 @@ export class Hud {
   // mini-carte
   private miniCam: Phaser.Cameras.Scene2D.Camera | null = null;
   private miniLabel: Txt;
-  /** Arène d'un donjon (12A) : « Vague 3 / 6 » et le chrono, sous la mini-carte. */
+  /** Arène d'un donjon (12A) : « Vague 2 / 3 » et le chrono, sous la mini-carte. */
   private areneTxt: Txt;
   private menus: { icon: Img; zone: Phaser.GameObjects.Zone; label: string }[] = [];
   /** Social 5B : pastille sur le bouton Social (demandes d'ami en attente), branchée par la scène. */

@@ -1234,6 +1234,16 @@
         ],
         "En coulisses": [
           "Mini-carte, portrait et transparence du décor allégés : l'image coûte deux fois moins (≈ 10 → 5 ms)."
+        ],
+        "Combat": [
+          {
+            "titre": "Des vagues plus grosses",
+            "phrase": "Donjons : 3 grosses vagues au lieu de 6, même nombre de monstres, la suivante arrive à 4 restants.",
+            "icone": "boss",
+            "etiquettes": [
+              "Donjons"
+            ]
+          }
         ]
       }
     }

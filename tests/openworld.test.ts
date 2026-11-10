@@ -157,7 +157,7 @@ describe('Crypte de Kardorim (une seule arène, maquette « Donjons en vagues »
     expect(w.arene?.nom).toBe('Crypte de Kardorim');
     expect(w.drainEvents().some(e => e.k === 'areneDebut')).toBe(true);
   });
-  it('6 vagues par les entrées (cercle rouge avant), puis Kardorim intouchable à ses paliers, puis portail et coffre', () => {
+  it('3 vagues par les entrées (cercle rouge avant), puis Kardorim intouchable à ses paliers, puis portail et coffre', () => {
     const w = newWorld(), p = w.player;
     w.allerArene('arene_crypte');
     const a = w.arene!;
@@ -173,7 +173,7 @@ describe('Crypte de Kardorim (une seule arène, maquette « Donjons en vagues »
       w.step(STEP, NO_INPUT); tuerTout(w);
       for (const e of w.drainEvents()) if (e.k === 'areneVague') ev.push(e.boss ?? e.nom ?? String(e.n));
     }
-    expect(ev.length).toBe(7);
+    expect(ev.length).toBe(4);
     expect(ev.at(-1)).toBe('kardorim');
     const k = a.boss!;
     expect(k.type).toBe('kardorim');
