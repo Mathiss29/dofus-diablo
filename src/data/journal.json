@@ -1323,6 +1323,15 @@
               "Astrub",
               "Amakna"
             ]
+          },
+          {
+            "titre": "Monstres trop faibles, moins d'XP",
+            "phrase": "Un monstre bien plus faible que toi rapporte de moins en moins d'XP.",
+            "details": "Moitié à 10 niveaux d'écart, presque rien à 20. Pas de niveau maximum : la montée ralentit toute seule.",
+            "icone": "caracs",
+            "etiquettes": [
+              "Partout"
+            ]
           }
         ],
         "Le monde": [
