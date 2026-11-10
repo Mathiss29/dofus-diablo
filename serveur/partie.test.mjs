@@ -125,8 +125,11 @@ test('donjons de groupe : un donjon d’Astrub au choix, plus de PV et de monstr
   assert.equal(b.hp, Math.round(b.maxHp / 2));
   // butin : un monstre vaincu donne un tirage à chacun des deux, que lui seul voit
   w.drops.length = 0;
-  const cible = w.spawnMonster('bouftou', a.x + 20, a.y);
-  w.commeJoueur(a, () => { cible.hp = 1; cible.dead = true; w['dropLoot'](cible); });
+  // (un tirage peut ne donner que des ressources, rangées dans le sac : on recommence jusqu'à un objet ou des kamas au sol)
+  for (let n = 0; n < 50 && !w.drops.length; n++) {
+    const cible = w.spawnMonster('bouftou', a.x + 20, a.y);
+    w.commeJoueur(a, () => { cible.hp = 1; cible.dead = true; w['dropLoot'](cible); });
+  }
   const pour = new Set(w.drops.map(d => d.pour));
   assert.ok(w.drops.every(d => d.pour === a.id || d.pour === b.id), 'chaque objet au sol a son propriétaire');
   assert.ok(pour.size >= 1);
