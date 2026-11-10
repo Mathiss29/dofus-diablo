@@ -141,12 +141,13 @@ describe('Légendaires du Sacrieur (14A 14B 15A 15B 15E, avec les jets des lége
 
   it('Soif de sang rend des PV à chaque monstre tué, sans repasser sous Souffrance 6', () => {
     const w = sacriTest(), p = w.player; porter(w, 'pc-sacrieur-A', 4);
+    const sansXp = { ...GAME_DATA.monsters.bouftou, xp: 0 };   // pas de montée de niveau (elle rend tous les PV)
     const sans = sacriTest(), q = sans.player; q.hp = Math.round(q.maxHp * 0.2);
-    const m0 = sans.spawnMonster('bouftou', q.x + 200, q.y); m0.hp = 0; sans.killMonster(m0);
+    const m0 = sans.spawnMonster('bouftou', q.x + 200, q.y, sansXp); m0.hp = 0; sans.killMonster(m0);
     p.hp = Math.round(p.maxHp * 0.2);
-    const m = w.spawnMonster('bouftou', p.x + 200, p.y); m.hp = 0; w.killMonster(m);
+    const m = w.spawnMonster('bouftou', p.x + 200, p.y, sansXp); m.hp = 0; w.killMonster(m);
     expect(p.hp - q.hp).toBe(Math.round(p.maxHp * 0.04));
-    p.hp = Math.round(p.maxHp * 0.44); const m2 = w.spawnMonster('bouftou', p.x + 200, p.y); m2.hp = 0; w.killMonster(m2);
+    p.hp = Math.round(p.maxHp * 0.44); const m2 = w.spawnMonster('bouftou', p.x + 200, p.y, sansXp); m2.hp = 0; w.killMonster(m2);
     expect(p.souffranceBrute).toBeGreaterThanOrEqual(6);
   });
 

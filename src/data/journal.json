@@ -1290,7 +1290,8 @@
         "En coulisses": [
           "Mini-carte, portrait et transparence du décor allégés : l'image coûte deux fois moins (≈ 10 → 5 ms).",
           "Le monde passe à la grille de tout le continent : cases marchables rangées carte par carte.",
-          "Les 308 sorts des 7 classes ont leur propre texte, sans tours ni PA par tour."
+          "Les 308 sorts des 7 classes ont leur propre texte, sans tours ni PA par tour.",
+          "Les groupes de monstres n'existent qu'autour des joueurs : 11 000 → 400 monstres en partie de test."
         ],
         "Combat": [
           {
@@ -1299,6 +1300,16 @@
             "icone": "boss",
             "etiquettes": [
               "Donjons"
+            ]
+          },
+          {
+            "titre": "XP des monstres selon leur niveau",
+            "phrase": "Les monstres d'Astrub et d'Amakna rapportent plus d'XP quand ils sont plus forts.",
+            "details": "Fini les 20 XP partout : de 43 XP au niveau 11 à 101 XP au niveau 62. Les élites et les boss d'Astrub suivent.",
+            "icone": "caracs",
+            "etiquettes": [
+              "Astrub",
+              "Amakna"
             ]
           }
         ],

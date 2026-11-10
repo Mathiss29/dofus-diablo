@@ -8,7 +8,7 @@ import { ISO } from '../src/sim/iso';
 
 const astrub = JSON.parse(readFileSync(new URL('../public/assets/mondes/astrub/monde.json', import.meta.url), 'utf8')) as WorldData;
 const vide = { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} };
-const monde = () => new World({ data: GAME_DATA, zone: 'astrub', map: new WorldGrid(astrub), seed: 3, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, reprise: vide });
+const monde = () => new World({ data: GAME_DATA, zone: 'astrub', map: new WorldGrid(astrub), seed: 3, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, reprise: vide, groupesPartout: true });
 const porte = (w: World, nom: string) => w.portes.find(p => p.nom === nom)!;
 const ici = (w: World) => w.worldGrid!.mapAt(w.player.x, w.player.y)?.tag;
 /** Marche au clavier dans une direction pendant n images (sans clic). */

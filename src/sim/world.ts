@@ -95,6 +95,8 @@ interface MonsterGroup {
   point: number;
   /** Retiré par l'éditeur de placement (F1) : ne revient plus. */
   retire?: boolean;
+  /** Loin de tous les joueurs : pas de monstres créés (posés quand un joueur approche, World.POSE). x, y = où l'attendre. */
+  dort?: boolean;
 }
 export interface PorteEnd { tag: string; x: number; y: number }
 const xy = (q: { x: number; y: number }): [number, number] => [q.x, q.y];
@@ -144,6 +146,8 @@ export interface WorldOptions {
   partieServeur?: boolean;
   /** Pas de groupes de monstres dans le monde ouvert (donjon tenu par le serveur : seule l'arène compte, bien moins de calcul). */
   sansGroupes?: boolean;
+  /** Tous les groupes posés dès le départ, même loin des joueurs (tests qui regardent tout le monde ; le jeu pose à la demande, World.POSE). */
+  groupesPartout?: boolean;
 }
 
 /** Le familier porté (maquette Familiers 4A) : il suit le perso et va chercher le butin autour de lui. */
@@ -260,6 +264,10 @@ export class World {
   static readonly XP_PAR_ALLIE = 0.1;
   /** Distance (|dx| + |dy|) au-delà de laquelle un monstre qui attend ne bouge plus. */
   static readonly SOMMEIL = 2400;
+  /** Monde ouvert (0.4, Amakna : 11 000 monstres) : un groupe n'existe vraiment qu'à moins de POSE d'un joueur (distance en losange) ;
+   *  au-delà de RETRAIT, un groupe au calme est rangé (ses monstres retirés) jusqu'au retour d'un joueur. */
+  static readonly POSE = 4000;
+  static readonly RETRAIT = 5200;
   /** Quêtes et succès (monde ouvert avec quetes.json). */
   /** Partie de test : invincible, recharges, course, murs (null dans une vraie partie). */
   test: ReglagesTest | null = null;
@@ -998,8 +1006,10 @@ export class World {
     for (let i = 0; i < pl.g; i++) {
       const g: MonsterGroup = { id: this.groups.length, map: tag, sub, members: [], timer: 0, cleared: false, x: 0, y: 0, point: -1 };
       this.groups.push(g);
-      if (this.groupesPrets(g)) this.spawnGroup(g);
-      else g.cleared = true;   // tutoriel : apparaîtra à l'étape voulue (updateOpen)
+      if (!this.groupesPrets(g)) { g.cleared = true; continue; }   // tutoriel : apparaîtra à l'étape voulue (updateOpen)
+      this.attendreAuMilieu(g);
+      if (this.joueurPres(g, World.POSE)) this.spawnGroup(g);
+      else g.dort = true;   // loin de tout joueur : posé quand l'un d'eux approche
     }
   }
   /** Éditeur de placement (F1) : la carte reprend ce placement tout de suite (null : retour au placement d'origine). */
@@ -1017,13 +1027,40 @@ export class World {
   /** Partie de test (maquette « Panneau test » 9C) : les groupes vaincus reviennent tout de suite, même sous les yeux du joueur. */
   repeupler(): number {
     let n = 0;
-    for (const g of this.groups) if (!g.retire && g.cleared && this.groupesPrets(g)) { this.spawnGroup(g); n++; }
+    for (const g of this.groups) if (!g.retire && g.cleared && this.groupesPrets(g)) {
+      if (!g.fixe && !g.members.length && !g.x && !g.y) this.attendreAuMilieu(g);
+      if (g.fixe || this.joueurPres(g, World.POSE)) { this.spawnGroup(g); n++; } else { g.cleared = false; g.dort = true; }
+    }
     return n;
+  }
+  /** Groupe jamais posé : il attend au milieu de sa carte. */
+  private attendreAuMilieu(g: MonsterGroup) {
+    const free = this.worldGrid!.freeByMap.get(g.map)!, q = this.worldGrid!.cellToWorld(free[free.length >> 1]);
+    g.x = q.x; g.y = q.y;
+  }
+  /** Un joueur à moins de r du groupe (distance en losange, comme SOMMEIL). */
+  private joueurPres(g: MonsterGroup, r: number) { return !!this.opts.groupesPartout || this.players.some(p => Math.abs(g.x - p.x) + Math.abs(g.y - p.y) <= r); }
+  /** Groupes posés à la demande : poser ceux qu'un joueur approche, ranger ceux que tous ont quittés (au calme seulement). */
+  private poserAutourDesJoueurs() {
+    let retires = false;
+    const loinDeTous = (x: number, y: number, r: number) => { for (const p of this.players) if (Math.abs(x - p.x) + Math.abs(y - p.y) <= r) return false; return true; };
+    for (const g of this.groups) {
+      if (g.retire || g.fixe) continue;
+      if (g.dort) { if (!loinDeTous(g.x, g.y, World.POSE) && this.groupesPrets(g)) { g.dort = false; this.spawnGroup(g); } continue; }
+      if (g.cleared) continue;
+      const c = g.members.find(m => !m.dead);
+      if (!c || !loinDeTous(c.x, c.y, World.RETRAIT)) continue;
+      if (g.members.some(m => !m.dead && (m.state !== 'idle' || m.poseTest || m.saigneT > 0))) continue;
+      g.x = c.x; g.y = c.y; g.dort = true; retires = true;
+      for (const m of g.members) m.group = -2;   // retirés ci-dessous
+      g.members = [];
+    }
+    if (retires) this.monsters = this.monsters.filter(m => m.group > -2);
   }
   /** 5B : point libre où le groupe se pose (aucun autre groupe en vie dessus), loin du joueur si possible. */
   private choisirPoint(g: MonsterGroup, pl: PlacementCarte): number {
     const wg = this.worldGrid!, p = this.player;
-    const pris = new Set(this.groups.filter(o => o !== g && o.map === g.map && !o.retire && !o.cleared && o.point >= 0).map(o => o.point));
+    const pris = new Set(this.groups.filter(o => o !== g && o.map === g.map && !o.retire && !o.cleared && !o.dort && o.point >= 0).map(o => o.point));
     const libres = pl.p.map((_, i) => i).filter(i => !pris.has(i));
     if (!libres.length) return pl.p.length ? this.rng.int(pl.p.length) : -1;
     const loin = libres.filter(i => { const q = wg.cellToWorld(wg.cellOf(g.map, pl.p[i].c)); return Math.hypot(q.x - p.x, q.y - p.y) >= 450; });
@@ -1118,8 +1155,9 @@ export class World {
   private updateOpen(dt: number) {
     const open = this.zone.open!;
     this.updateArene(dt);
+    if (!this.opts.groupesPartout) this.poserAutourDesJoueurs();
     for (const g of this.groups) {
-      if (g.retire || g.members.some(m => !m.dead)) continue;
+      if (g.retire || g.dort || g.members.some(m => !m.dead)) continue;
       if (!g.cleared) {
         g.cleared = true; g.timer = open.respawn;
         for (const p of this.players) p.potions = Math.min(p.cls.potion.charges, p.potions + 1);   // un groupe vaincu rend une potion
@@ -1129,7 +1167,11 @@ export class World {
       const tuto = !g.fixe && !!this.quetes?.tailleGroupe(this.worldGrid!.mapByTag(g.map)?.sub ?? -1);
       g.timer -= tuto ? dt * 4 : dt;
       // Réapparition hors de la vue du joueur
-      if (g.timer <= 0 && this.players.every(p => Math.hypot(g.x - p.x, g.y - p.y) > (tuto ? 500 : 900)) && !(g.donjon && this.dansDonjon(g.donjon)) && this.groupesPrets(g)) this.spawnGroup(g);
+      if (g.timer <= 0 && this.players.every(p => Math.hypot(g.x - p.x, g.y - p.y) > (tuto ? 500 : 900)) && !(g.donjon && this.dansDonjon(g.donjon)) && this.groupesPrets(g)) {
+        if (!g.fixe && !g.members.length && !g.x && !g.y) this.attendreAuMilieu(g);   // tutoriel : jamais posé
+        if (g.fixe || this.joueurPres(g, World.POSE)) this.spawnGroup(g);
+        else { g.cleared = false; g.dort = true; }   // personne autour : il attend qu'un joueur approche
+      }
     }
   }
   /** Monde ouvert, pour world.player (chaque joueur à son tour) : portes, calme d'arrivée, sous-zone, Zaap atteint. */

@@ -9,7 +9,7 @@ import { World } from '../src/sim/world';
 /** Maquette « Aggro » (Mathis, 2026-11-07) : 1B 2B 3A 4A+4B 5A 6A 7A 8A. */
 const monde = JSON.parse(readFileSync(new URL('../public/assets/mondes/incarnam/monde.json', import.meta.url), 'utf8')) as WorldData;
 const STEP = 1 / 60;
-const newWorld = (seed = 3) => new World({ data: GAME_DATA, zone: 'incarnam', map: new WorldGrid(monde), seed });
+const newWorld = (seed = 3) => new World({ data: GAME_DATA, zone: 'incarnam', map: new WorldGrid(monde), seed, groupesPartout: true });
 const run = (w: World, s: number) => { for (let i = 0; i < Math.round(s * 60); i++) w.step(STEP, NO_INPUT); };
 const statuts = (w: World) => w.drainEvents().filter(e => e.k === 'status').map(e => (e as { text: string }).text);
 /** Le joueur se pose à d cases du monstre, sur une case praticable (on cherche autour). */
