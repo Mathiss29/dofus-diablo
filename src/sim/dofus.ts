@@ -15,6 +15,14 @@ export interface DofusDef {
   source: string;
 }
 export const DOFUS = (DATA as unknown as { dofus: Record<string, DofusDef> }).dofus;
+/** Trophées (« 0.4 suite : 3A+3B ») : les 85 trophées officiels du niveau 50 (tools/contenu/trophees.py). Ils se portent dans les
+ *  emplacements de Dofus, une fois chacun, à partir de leur niveau. Lâchés par un boss de la 0.4 (« boss ») ou fabriqués par le Façonneur. */
+export interface TropheeDef { nom: string; niveau: number; icon: number; stats: Partial<Record<Stat, number>>; boss?: string }
+export const TROPHEES = (DATA as unknown as { trophees: Record<string, TropheeDef> }).trophees ?? {};
+/** Ce qui se porte dans un emplacement de Dofus : un Dofus ou un trophée. */
+export const PORTABLE = (id: string): { nom: string; niveau: number; icon: number; stats: Partial<Record<Stat, number>> } | undefined => DOFUS[id] ?? TROPHEES[id];
+/** Trophées qu'un boss peut lâcher (3A). */
+export const tropheesDuBoss = (boss: string) => Object.keys(TROPHEES).filter(id => TROPHEES[id].boss === boss);
 export const DOFUS_ID: Record<string, string> = Object.fromEntries(Object.entries(DOFUS).filter(([, d]) => d.cle).map(([id, d]) => [d.cle!, id]));
 export const EMPLACEMENTS_DOFUS = 6;
 

@@ -6,7 +6,8 @@ import { ISO } from './iso';
 import { NO_INPUT, type PlayerInput } from './input';
 import { AGGRO, CASE, Monster, TOUR, type Cible } from './monster';
 import { jetOfficiel } from './danger';
-import { monstresDeZone, panoDuBoss, poolNiveau, poolOfficiel, rangDe, tirerButin, type Butin, type CtxButin, type Rang } from './butin';
+import { REGLAGES_BUTIN, monstresDeZone, panoDuBoss, poolNiveau, poolOfficiel, rangDe, tirerButin, type Butin, type CtxButin, type Rang } from './butin';
+import { TROPHEES, tropheesDuBoss } from './dofus';
 import { ajouterPieces, CLE_COFFRE, ouvrirCoffre, piecesMonstre, piecesObjet } from './enutrof';
 import { briser, chanceRune, coutKamas, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
 import { V03_PUBLIC, V04_PUBLIC, niveauObjetsMax, slotAPouvoirConnu } from './pouvoirs';
@@ -309,7 +310,8 @@ export class World {
     if (opts.test && dt?.length) this.zone = { ...this.zone, open: { ...this.zone.open!, donjons: [...(this.zone.open!.donjons ?? []), ...dt] } };
     const sz = this.zone.open?.subareas;   // 0.4 cachée : les sous-zones d'Amakna (monstres, butin, contrats) seulement en partie de test
     if (!opts.test && sz && Object.values(sz).some(s => s.essai))
-      this.zone = { ...this.zone, open: { ...this.zone.open!, subareas: Object.fromEntries(Object.entries(sz).filter(([, s]) => !s.essai)) } };
+      this.zone = { ...this.zone, open: { ...this.zone.open!, subareas: Object.fromEntries(Object.entries(sz).filter(([, s]) => !s.essai)),
+        checkpoints: this.zone.open!.checkpoints.filter(c => !sz[String(c.sub)]?.essai) } };   // Zaaps d'Amakna (0.4 suite 7A) : partie de test
     this.map = opts.map;
     this.test = opts.test ? { ...opts.test } : null;
     let start = this.map.nearestFree(GridMap.OFFSET_Y, GridMap.OFFSET_Y);
@@ -1892,6 +1894,9 @@ export class World {
     if (!this.opts.items) return;
     const b = tirerButin(this.rng, this.contexteButin(type, rang, niveau), () => this.nextId++);
     b.kamas += kamas;
+    // trophées (0.4 suite 3A) : chaque boss de la 0.4 en a deux, rares, une fois chacun
+    if (rang === 'boss' && this.player.v04) for (const id of tropheesDuBoss(type))
+      if (!this.player.trophees.includes(id) && this.rng.next() < REGLAGES_BUTIN.trophee && this.player.gagnerTrophee(id)) this.emit({ k: 'dofusGagne', id });
     this.poserButin(b, mx, my, pour);
   }
   /** Butin tiré : ressources dans le sac du joueur qui agit, objets et kamas au sol autour de (mx, my). */
@@ -2404,10 +2409,11 @@ export class World {
       n = Math.min(n, Player.BAG_SIZE - p.bag.length);   // un objet par place du sac
       if (rare) n = this.ingredientsRares.has(rare) ? Math.min(n, Math.floor((p.resources[rare] ?? 0) / (1 + (r.ingredients.find(([x]) => x === rare)?.[1] ?? 0)))) : 0;
     }
+    if (TROPHEES[r.result]) n = p.trophees.includes(r.result) ? 0 : Math.min(n, 1);   // un trophée se possède une fois (3B)
     return Math.max(0, n);
   }
   /** 0.3 (9A) : les métiers de fabrication d'équipement n'existent qu'en partie de test tant que la 0.3 n'est pas sortie. */
-  recetteVisible(r: RecipeDef): boolean { return this.player.v03 || !METIERS_FAB.includes(r.metier); }
+  recetteVisible(r: RecipeDef): boolean { return (this.player.v03 || !METIERS_FAB.includes(r.metier)) && (this.player.v04 || !TROPHEES[r.result]); }
   private _rares: Set<string> | null = null;
   /** 10B : ressources de boss ou d'élite qui garantissent un objet fabriqué Rare. */
   get ingredientsRares(): Set<string> {
@@ -2541,6 +2547,12 @@ export class World {
       p.gainMetierXp(r.metier, n * METIER_XP.parIngredient * r.ingredients.reduce((s, [, q]) => s + q, 0), this);
       this.emit({ k: 'craft', id: r.result, n, rares });
       return n;
+    }
+    if (TROPHEES[r.result]) {   // trophée (0.4 suite 3B) : dans les emplacements de Dofus, pas dans le sac
+      p.gainMetierXp(r.metier, METIER_XP.parIngredient * r.ingredients.reduce((s, [, q]) => s + q, 0), this);
+      if (p.gagnerTrophee(r.result)) this.emit({ k: 'dofusGagne', id: r.result });
+      this.emit({ k: 'craft', id: r.result, n: 1 });
+      return 1;
     }
     p.resources[r.result] = (p.resources[r.result] ?? 0) + n;
     p.gainMetierXp(r.metier, n * METIER_XP.parIngredient * r.ingredients.reduce((s, [, q]) => s + q, 0), this);

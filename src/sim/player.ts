@@ -1,6 +1,6 @@
 import { ALMANAX } from './almanax';
 import { CHATIMENTS, PC_PAR_ID } from './pouvoirsClasse';
-import { DOFUS, EMPLACEMENTS_DOFUS, PASSIFS } from './dofus';
+import { DOFUS, EMPLACEMENTS_DOFUS, PASSIFS, PORTABLE, TROPHEES } from './dofus';
 import type { CleDonjon } from './arene';
 import type { CommandeFM } from './forgemagie';
 import { Entity } from './entity';
@@ -102,6 +102,8 @@ export class Player extends Entity {
   almanaxJour: string | null = null;
   /** Dofus possédés (ids officiels) et les 6 emplacements (version 0.3, src/sim/dofus.ts). */
   dofus: string[] = [];
+  /** Trophées possédés (0.4 suite 3A+3B), portés dans les mêmes emplacements que les Dofus. */
+  trophees: string[] = [];
   dofusPortes: (string | null)[] = Array(EMPLACEMENTS_DOFUS).fill(null);
   /** Moment (âge du perso) du dernier Souvenir d'Argent et du dernier bouclier du Cacao. */
   private argenteA = -1e9; private cacaoA = -1e9;
@@ -420,7 +422,7 @@ export class Player extends Entity {
       const set = this.items?.equipment[it.id]?.set;
       if (set) sets[set] = (sets[set] ?? 0) + 1;
     }
-    for (const id of this.dofusPortes) if (id) for (const [k, v] of Object.entries(DOFUS[id]?.stats ?? {}) as [Stat, number][]) add(k, v);
+    for (const id of this.dofusPortes) if (id) for (const [k, v] of Object.entries(PORTABLE(id)?.stats ?? {}) as [Stat, number][]) add(k, v);
     for (const [id, n] of Object.entries(sets)) {
       const b = this.items?.sets[id]?.bonus[String(n - 1)];
       if (b) for (const [k, v] of Object.entries(b) as [Stat, number][]) add(k, v);
@@ -1489,9 +1491,18 @@ export class Player extends Entity {
     this.porterDofus(id);
     return true;
   }
-  /** Met un Dofus possédé dans un emplacement (le premier libre si i est absent) ; chaque Dofus une seule fois. */
+  /** Reçoit un trophée (boss, Façonneur) ; il va dans le premier emplacement libre si le perso a son niveau. */
+  gagnerTrophee(id: string): boolean {
+    if (!TROPHEES[id] || this.trophees.includes(id)) return false;
+    this.trophees.push(id);
+    this.porterDofus(id);
+    return true;
+  }
+  /** Met un Dofus ou un trophée possédé dans un emplacement (le premier libre si i est absent) ; chacun une seule fois.
+   *  Un trophée demande son niveau (50), comme dans Dofus. */
   porterDofus(id: string, i?: number): boolean {
-    if (!this.dofus.includes(id) || this.dofusPortes.includes(id)) return false;
+    if (!(this.dofus.includes(id) || this.trophees.includes(id)) || this.dofusPortes.includes(id)) return false;
+    if (TROPHEES[id] && this.level < TROPHEES[id].niveau) return false;
     const k = i ?? this.dofusPortes.indexOf(null);
     if (k < 0 || k >= EMPLACEMENTS_DOFUS) return false;
     this.dofusPortes[k] = id; this.recompute();

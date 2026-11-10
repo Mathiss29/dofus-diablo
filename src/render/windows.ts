@@ -9,9 +9,19 @@ import { PALIERS } from './carnet';
 import { CODEX_CSS, codexPageHtml } from './codexVue';
 import { nouveauPourCodex } from '../sim/codex';
 import { ALMANAX, effetTexte } from '../sim/almanax';
-import { DOFUS } from '../sim/dofus';
-/** Fiche d'un Dofus (0.3) : stats, passif traduit, source. */
+import { DOFUS, PORTABLE, TROPHEES } from '../sim/dofus';
+/** Source d'un trophée (0.4 suite 3A+3B) : son boss, ou le Façonneur. */
+function sourceTrophee(id: string): string {
+  const t = TROPHEES[id], b = t?.boss ? GAME_DATA.monsters[t.boss]?.name : null;
+  const r = ITEMS.recipes?.some(x => x.result === id);
+  return [b ? `Butin rare : ${b}` : '', r ? 'Façonneur (niveau 50 de métier)' : ''].filter(Boolean).join(' · ') || 'Façonneur, avec les ressources d\'Amakna (plus tard)';
+}
+/** Fiche d'un Dofus (0.3) ou d'un trophée (0.4) : stats, passif traduit, source. */
 function dofusTip(id: string, porte = false): string {
+  if (TROPHEES[id]) {
+    const t = TROPHEES[id], st = Object.entries(t.stats).map(([k, v]) => `<div>${v > 0 ? '+' : ''}${v} ${STAT_NAMES[k as Stat] ?? k}</div>`).join('');
+    return `<h4 style="color:#e8c76b">${t.nom}</h4><div class="sub">Trophée · niveau ${t.niveau}</div>${st}<div class="hint">${porte ? 'Glisse-le vers le sac pour le retirer' : sourceTrophee(id)}</div>`;
+  }
   const d = DOFUS[id]; if (!d) return '';
   const st = Object.entries(d.stats).map(([k, v]) => `<div>+${v} ${STAT_NAMES[k as Stat] ?? k}</div>`).join('');
   return `<h4 style="color:#e8c76b">${d.nom}</h4><div class="sub">Dofus · niveau ${d.niveau}</div>${st}${d.passif ? `<div style="margin-top:6px"><b style="color:#e8c76b">${d.passif.nom}</b> : ${d.passif.texte}</div>` : ''}<div class="hint">${porte ? 'Glisse-le vers le sac pour le retirer' : d.source}</div>`;
@@ -857,7 +867,7 @@ export class Windows {
             const a = p.apparat[k], ic = a && a !== '0' ? apparatHtml(a) : '';
             return `<div class="slot ${a === '0' ? 'cache' : ''}" data-appa="${k}" title="${n} : ${a === '0' ? 'cachée' : a ? APPARATS.objets[a]?.name ?? '' : 'objet porté'}" style="${ic ? '' : `background-image:url(${D3}/tx_slot_${SLOT_D3[k]}.png)`}">${ic}</div>`; }).join('')}</div>
           <div class="sets">${this.setsHtml()}</div>
-          <div class="dofus">${p.dofusPortes.map((id, i) => { const d = id && p.v03 ? DOFUS[id] : null;
+          <div class="dofus">${p.dofusPortes.map((id, i) => { const d = id && p.v03 ? PORTABLE(id) : null;
             return `<div class="slot ${d ? 'plein' : ''}" data-dofus="${i}" ${d ? '' : `title="${p.v03 ? (p.dofus.some(x => !p.dofusPortes.includes(x)) ? 'Clic : porter un de tes Dofus' : 'Dofus : gagnés par les quêtes du Gawdien du Dofus (Bastion)') : 'Dofus (plus tard)'}"`} style="${d ? '' : `background-image:url(${D3}/tx_slot_dofus.png)`}">${d ? iconHtml(d.icon) : ''}</div>`; }).join('')}</div>
         </div>
         <div class="right">
@@ -2080,7 +2090,7 @@ export class Windows {
     w.querySelectorAll<HTMLElement>('[data-dsac]').forEach(e => {
       const id = e.dataset.dsac!;
       e.addEventListener('dragstart', ev => { this.hideTip(); ev.dataTransfer?.setData('text/dofus', id); });
-      e.addEventListener('mouseenter', ev => { this.tip.innerHTML = dofusTip(id) .replace(DOFUS[id]?.source ?? '§', 'Glisse-le sur une case de Dofus'); this.tip.style.display = 'block'; this.moveTip(ev); });
+      e.addEventListener('mouseenter', ev => { this.tip.innerHTML = dofusTip(id) .replace(DOFUS[id]?.source ?? (TROPHEES[id] ? sourceTrophee(id) : '§'), 'Glisse-le sur une case de Dofus'); this.tip.style.display = 'block'; this.moveTip(ev); });
       e.addEventListener('mousemove', ev => this.moveTip(ev));
       e.addEventListener('mouseleave', () => this.hideTip());
     });
@@ -2101,27 +2111,31 @@ export class Windows {
   }
 
   private renderDofus() {
-    const w = this.win!, p = this.world.player, eu = new Set(p.dofus);
-    const ids = Object.keys(DOFUS).sort((a, b) => DOFUS[a].niveau - DOFUS[b].niveau || DOFUS[a].nom.localeCompare(DOFUS[b].nom, 'fr'));
-    if (!DOFUS[this.dofusSel]) this.dofusSel = ids.find(i => eu.has(i)) ?? ids[0];
+    const w = this.win!, p = this.world.player, tro = this.dofusOnglet === 'trophees' && p.v04, eu = new Set(tro ? p.trophees : p.dofus);
+    const L: Record<string, { nom: string; niveau: number; icon: number }> = tro ? TROPHEES : DOFUS;
+    const ids = Object.keys(L).sort((a, b) => L[a].niveau - L[b].niveau || L[a].nom.localeCompare(L[b].nom, 'fr'));
+    if (!L[this.dofusSel]) this.dofusSel = ids.find(i => eu.has(i)) ?? ids[0];
     const onglet = (k: string, n: string, ok: boolean) => `<span class="eo ${this.dofusOnglet === k ? 'on' : ''} ${ok ? '' : 'off'}" ${ok ? `data-dof-o="${k}"` : `title="Avec Amakna : rien n'est portable avant le niveau 50"`}>${n}</span>`;
-    const rangee = `<div class="dof-row">${p.dofusPortes.map((id, i) => { const d = id ? DOFUS[id] : null;
+    const rangee = `<div class="dof-row">${p.dofusPortes.map((id, i) => { const d = id ? PORTABLE(id) : null;
       return `<div class="slot ${d ? 'plein' : ''}" data-dofus="${i}" style="${d ? '' : `background-image:url(${D3}/tx_slot_dofus.png)`}">${d ? iconHtml(d.icon) : ''}</div>`; }).join('')}</div>`;
-    const grille = ids.map(id => { const d = DOFUS[id], a = eu.has(id), oe = a ? null : this.oeufEnCours(id);
+    const grille = ids.map(id => { const d = L[id], a = eu.has(id), oe = a || tro ? null : this.oeufEnCours(id);
       return `<div class="dof-c ${a ? '' : 'non'} ${p.dofusPortes.includes(id) ? 'porte' : ''} ${id === this.dofusSel ? 'on' : ''}" data-dof="${id}" ${a ? 'data-dsac="' + id + '" draggable="true"' : ''}>${iconHtml(d.icon)}<small>${d.niveau}</small>${oe ? `<span class="fr">${oe.fragments}/3</span>` : ''}</div>`; }).join('');
-    const d = DOFUS[this.dofusSel], a = eu.has(this.dofusSel), oe = a ? null : this.oeufEnCours(this.dofusSel);
+    const sel = this.dofusSel, a = eu.has(sel);
+    const detail = tro ? `<div class="dof-d">${dofusTip(sel).replace('<div class="sub">', `<div class="sub">${a ? (p.dofusPortes.includes(sel) ? 'porté · ' : 'dans ton sac · ') : 'pas encore trouvé · '}`)}</div>` : (() => {
+    const d = DOFUS[sel], oe = a ? null : this.oeufEnCours(sel);
     const st = Object.entries(d.stats).map(([k, v]) => `+${v} ${STAT_NAMES[k as Stat] ?? k}`).join(' · ');
     const suivi = oe ? `<div class="dof-s" style="margin-top:6px"><b>${oe.quete}</b>${[1, 2, 3].map(i => `<span class="${oe.fragments >= i ? 'ok' : ''}">Fragment ${i}</span>`).join('')}<span class="${oe.coquille ? 'ok' : ''}">Coquille</span></div>` : '';
-    const detail = `<div class="dof-d"><h4>${d.nom}</h4><div class="sub">Dofus · niveau ${d.niveau} · ${a ? (p.dofusPortes.includes(this.dofusSel) ? 'porté' : 'dans ton sac') : 'pas encore trouvé'}</div>
+    return `<div class="dof-d"><h4>${d.nom}</h4><div class="sub">Dofus · niveau ${d.niveau} · ${a ? (p.dofusPortes.includes(this.dofusSel) ? 'porté' : 'dans ton sac') : 'pas encore trouvé'}</div>
       <div>${st}</div>${d.passif ? `<div style="margin-top:4px"><b style="color:#e8c76b">${d.passif.nom}</b> : ${d.passif.texte}${d.jeu ? '' : ' <i class="hint">(passif à venir)</i>'}</div>` : ''}
       ${a ? '' : `<div class="hint" style="margin-top:4px">${d.source}</div>`}${suivi}</div>`;
+    })();
     const paliers = [2, 6, 12, 31], prochain = paliers.find(n => n > p.dofus.length);
-    const corps = this.dofusOnglet === 'dofus' ? `${rangee}<div class="hint" style="text-align:center">Glisse un Dofus de la grille ou du sac sur une case pour le porter, et d'une case vers la grille pour le retirer.</div>
+    const corps = this.dofusOnglet === 'dofus' || tro ? `${rangee}<div class="hint" style="text-align:center">${tro ? `Les trophées se portent dans les mêmes cases que les Dofus, à partir du niveau 50.${p.level < 50 ? ' <b>Tu es niveau ' + p.level + '.</b>' : ''}` : 'Glisse un Dofus de la grille ou du sac sur une case pour le porter, et d\'une case vers la grille pour le retirer.'}</div>
       <div class="dof-g" data-dof-g>${grille}</div>${detail}` : '<div class="hint">Avec Amakna.</div>';
     w.innerHTML = `${this.title('Dofus', 'success')}<div class="in dof">
-      <div class="dof-t">${onglet('dofus', 'Dofus', true)}${onglet('trophees', 'Trophées', false)}${onglet('prysma', 'Prysmaradites', false)}
-        <span class="k" title="${prochain ? `Prochain succès à ${prochain} Dofus` : 'Tous les Dofus !'}">${p.dofus.length} / ${ids.length}</span></div>${corps}</div>`;
-    w.querySelectorAll<HTMLElement>('[data-dof-o]').forEach(e => e.addEventListener('click', () => { this.dofusOnglet = e.dataset.dofO as 'dofus'; this.render(); }));
+      <div class="dof-t">${onglet('dofus', 'Dofus', true)}${onglet('trophees', 'Trophées', p.v04)}${onglet('prysma', 'Prysmaradites', false)}
+        <span class="k" title="${tro ? 'Trophées trouvés' : prochain ? `Prochain succès à ${prochain} Dofus` : 'Tous les Dofus !'}">${eu.size} / ${ids.length}</span></div>${corps}</div>`;
+    w.querySelectorAll<HTMLElement>('[data-dof-o]').forEach(e => e.addEventListener('click', () => { this.dofusOnglet = e.dataset.dofO as 'dofus'; this.dofusSel = ''; this.render(); }));
     w.querySelectorAll<HTMLElement>('[data-dof]').forEach(e => e.addEventListener('click', () => { this.dofusSel = e.dataset.dof!; this.render(); }));
     this.lierDofus(w);
   }
@@ -2455,9 +2469,9 @@ export class Windows {
       cells.push(`<div class="cell" data-res="${id}">${iconHtml(r.icon)}<span class="n">${n}</span></div>`);
     }
     // Dofus possédés mais pas portés (6B : on les glisse du sac vers la rangée de 6 cases)
-    if (this.tab === 'tout' && !this.kind && p.v03) for (const id of p.dofus) {
+    if (this.tab === 'tout' && !this.kind && p.v03) for (const id of [...p.dofus, ...p.trophees]) {
       if (p.dofusPortes.includes(id)) continue;
-      const d = DOFUS[id]; if (!d || (q && !d.nom.toLowerCase().includes(q))) continue;
+      const d = PORTABLE(id); if (!d || (q && !d.nom.toLowerCase().includes(q))) continue;
       cells.push(`<div class="cell" data-dsac="${id}" draggable="true">${iconHtml(d.icon)}<i class="r" style="background:#e9c46a"></i></div>`);
     }
     // Objets de quête (pages, Sac de Bijoux...) : onglet « Objets de quête » ; ils partent à la fin de la quête

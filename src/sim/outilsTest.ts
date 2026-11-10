@@ -3,7 +3,7 @@ import { degatsMonstre } from './danger';
 import { EQUIP_SLOTS, RARITIES, RARITY_NAMES, rollItem, type EquipSlot, type Rarity, type Slot } from './items';
 import type { Element } from './defs';
 import type { World } from './world';
-import { DOFUS, EMPLACEMENTS_DOFUS } from './dofus';
+import { DOFUS, EMPLACEMENTS_DOFUS, PORTABLE, TROPHEES } from './dofus';
 import { LEGENDARY, legendaryPower, type LegendaryFx, type LegendaryId } from './items';
 import { POUVOIR_PAR_ID } from './pouvoirs';
 import { PC_PAR_ID } from './pouvoirsClasse';
@@ -184,9 +184,12 @@ export function appliquerTest(w: World, c: CommandeTest) {
     case 'placement': w.reposerCarte(c.tag, c.pl); break;
     case 'dofus': {
       const ids = c.id === 'codes' ? Object.keys(DOFUS).filter(id => DOFUS[id].jeu) : [c.id];
-      for (const id of ids) { if (!DOFUS[id]) continue; if (!p.dofus.includes(id)) p.dofus.push(id); if (c.porter) p.porterDofus(id); }
+      for (const id of ids) {
+        if (TROPHEES[id]) { if (!p.trophees.includes(id)) p.trophees.push(id); if (c.porter) p.porterDofus(id); continue; }   // trophée (0.4)
+        if (!DOFUS[id]) continue; if (!p.dofus.includes(id)) p.dofus.push(id); if (c.porter) p.porterDofus(id);
+      }
       p.recompute();
-      dire(ids.length === 1 ? `${DOFUS[ids[0]]?.nom ?? 'Dofus'} ${c.porter ? 'porté' : 'obtenu'}` : `${ids.length} Dofus ${c.porter ? 'portés' : 'obtenus'}`);
+      dire(ids.length === 1 ? `${PORTABLE(ids[0])?.nom ?? 'Dofus'} ${c.porter ? 'porté' : 'obtenu'}` : `${ids.length} Dofus ${c.porter ? 'portés' : 'obtenus'}`);
       break;
     }
     case 'dofusRemplir': {
