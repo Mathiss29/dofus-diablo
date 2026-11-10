@@ -1288,6 +1288,7 @@ export class World {
     // Cases bloquantes : on glisse le long des obstacles (axe par axe), sauf en plein Bond
     ents.forEach((e, i) => {
       if (e instanceof Player && (e.airborne || this.test?.murs)) return;
+      if (e.x === prev[i][0] && e.y === prev[i][1]) return;   // pas bougé : déjà vérifié (les monstres endormis, presque tous)
       if (this.walkable(e.x, e.y)) return;
       const [ox, oy] = prev[i];
       if (this.walkable(e.x, oy)) e.y = oy;
@@ -2568,7 +2569,10 @@ export class World {
 
   /** Évite que les monstres se superposent (O(n²), suffisant sous 100 monstres). */
   private separate() {
-    const all = this.monsters.filter(m => !m.dead);
+    // Monde ouvert : seuls les monstres près d'un joueur (éveillés, et les dormeurs juste au bord) se poussent. Les milliers
+    // d'autres dorment immobiles : les comparer coûtait un quart du calcul de chaque image (mesure du 10 nov. 2026).
+    const loin = World.SOMMEIL + 400, proche = (m: Monster) => !this.zone.open || this.players.some(q => Math.abs(m.x - q.x) + Math.abs(m.y - q.y) <= loin);
+    const all = this.monsters.filter(m => !m.dead && proche(m));
     // Grille de 128 : seuls les monstres de cases voisines peuvent se toucher (rayons ≤ 36). Monde ouvert = des centaines
     // de monstres, tester toutes les paires coûtait l'essentiel du pas de simulation.
     const G = 128, cells = new Map<number, number[]>(), key = (cx: number, cy: number) => cx * 65536 + cy;

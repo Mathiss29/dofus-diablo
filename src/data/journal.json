@@ -1207,7 +1207,7 @@
         "Corrections": [
           "La musique du Bastion s'efface quand tu en sors, au lieu de te suivre jusqu'au bout du morceau.",
           "L'Annobusé de Maître Jarbo et l'Amulette de Jiva, objets de MJ, ne tombent plus et quittent les sacs.",
-        "Plus de plantage en combat en réinvoquant une épée du Sacrieur ou une bête de l'Osamodas après une pause."
+          "Plus de plantage en combat en réinvoquant une épée du Sacrieur ou une bête de l'Osamodas après une pause."
         ],
         "En coulisses": [
           "À plusieurs, chaque joueur voit son sac, ses ressources et ses kamas en direct.",
@@ -1218,7 +1218,22 @@
           "Un robot rejoue six scènes dans la partie de test pour refaire les captures du diaporama.",
           "La barre de chargement finit par « Le monde se met en place » au lieu de rester figée à 100 %.",
           "Outil couloirs.py : colle les salles d'un donjon et sa cour en une seule bande (prêt pour Amakna).",
-        "Le robot de test lance enfin ses sorts : il appuyait sur des touches que le navigateur ne connaissait pas."
+          "Le robot de test lance enfin ses sorts : il appuyait sur des touches que le navigateur ne connaissait pas."
+        ]
+      }
+    },
+    {
+      "date": "2026-11-10",
+      "titre": "Un jeu plus fluide",
+      "resume": "Le jeu calcule deux fois moins à chaque image : moins de saccades en combat, surtout dans Astrub.",
+      "capture": "assets/journal/2026-11-10.webp",
+      "legende": "La cour de la Grange du Tournesol Affamé, 10 novembre 2026.",
+      "lignes": {
+        "Corrections": [
+          "Moins de saccades : les monstres endormis loin de toi ne coûtent plus rien à chaque image."
+        ],
+        "En coulisses": [
+          "Mini-carte, portrait et transparence du décor allégés : l'image coûte deux fois moins (≈ 10 → 5 ms)."
         ]
       }
     }

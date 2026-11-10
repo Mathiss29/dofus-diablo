@@ -236,7 +236,10 @@ export class Hud {
   /** Modules déplacés (6A) : la scène sauvegarde les réglages. */
   onModules: () => void = () => {};
   /** Échelle de l'interface (7A) : la caméra de l'interface est zoomée depuis le coin haut gauche. */
-  private get k() { return Phaser.Math.Clamp(this.reglages?.echelle || 1, 0.8, 1.5) * densite(); }   // × vrais pixels de l'écran
+  // calculé une fois par image (draw) : lu des centaines de fois, et densite() relit window.devicePixelRatio
+  private kImage = 0;
+  private get k() { return this.kImage || this.calcK(); }
+  private calcK() { return Phaser.Math.Clamp(this.reglages?.echelle || 1, 0.8, 1.5) * densite(); }   // × vrais pixels de l'écran
   /** Rectangle de chaque module déplaçable cette image, et son décalage. */
   private modRects = new Map<string, [number, number, number, number]>();
   private modTxt = new Map<string, Txt>();
@@ -269,7 +272,7 @@ export class Hud {
   private portrait: Img;
   /** Perso du joueur dessiné en direct, fourni par la scène (null : perso en planche, on garde la tête de classe). */
   vivant: (() => { image(anim: string, idx: number): [string, string]; cadreTete(anim: string, idx: number): [number, number, number] | null; compte: Record<string, number> } | null) | null = null;
-  private portraitImg = ''; private portraitVue: [number, number, number, string] | null = null;
+  private portraitImg = ''; private portraitCases = new Map<string, number>(); private portraitVue: [number, number, number, string] | null = null;
   private embleme: Img; private lvText: Txt;
   private icoPv: Img; private icoPa: Img; private icoPm: Img;
   private name: Txt; private hpText: Txt; private paText: Txt; private pmText: Txt; private shieldText: Txt;
@@ -589,6 +592,7 @@ export class Hud {
   }
 
   draw(juice: boolean, dt = 1 / 60) {
+    this.kImage = this.calcK();
     const k = this.k, world = this.world, W = this.scene.scale.width / k, H = this.scene.scale.height / k, g = this.g, p = world.player, cls = p.cls;
     const R = this.reglages;
     this.modRects.clear();
@@ -639,24 +643,34 @@ export class Hud {
     const vv = this.vivant?.(), idle = 'AnimStatiqueExplo0_1', nIdle = vv?.compte[idle] ?? 0;
     if (vv && nIdle) {
       const [k, f] = vv.image(idle, Math.floor(world.time * 20) % nIdle), P = this.portrait;
-      if (this.portraitImg !== k + f) {   // nouvelle image de l'animation : on la recopie dans la case (128 px, affichée en 60)
+      if (this.portraitImg !== k + f) {   // nouvelle image de l'animation : on la montre dans la case (128 px, affichée en 60)
         this.portraitImg = k + f;
-        const fr = this.scene.textures.getFrame(k, f), src = fr.source.image as CanvasImageSource;
-        const ss = (fr as unknown as { data: { spriteSourceSize?: { x: number; y: number } } }).data.spriteSourceSize;
-        const sx = fr.trimmed && ss ? ss.x : 0, sy = fr.trimmed && ss ? ss.y : 0;
-        // fenêtre fixe sur le visage, prise sur la 1re image du repos : la tête respire dedans (coiffe comprise, sans la suivre)
-        if (this.portraitVue?.[3] !== k) {
-          const c = vv.cadreTete(idle, 0) ?? [fr.realWidth / 2, sy + 120, 300];
-          this.portraitVue = [c[0] - c[2] / 2, c[1] - c[2] / 2, c[2], k];
+        // Chaque image du repos est recopiée UNE fois dans une case de la planche 'portrait_vivant' (8 × 8 cases de 128 px) ;
+        // ensuite on ne fait que changer de case : plus d'envoi à la carte graphique 20 fois par seconde (mesure du 10 nov. 2026)
+        let cell = this.portraitCases.get(k + f);
+        if (cell === undefined) {
+          if (this.portraitCases.size >= 64) this.portraitCases.clear();   // autre perso, autre tenue : on repart de zéro
+          cell = this.portraitCases.size; this.portraitCases.set(k + f, cell);
+          const fr = this.scene.textures.getFrame(k, f), src = fr.source.image as CanvasImageSource;
+          const ss = (fr as unknown as { data: { spriteSourceSize?: { x: number; y: number } } }).data.spriteSourceSize;
+          const sx = fr.trimmed && ss ? ss.x : 0, sy = fr.trimmed && ss ? ss.y : 0;
+          // fenêtre fixe sur le visage, prise sur la 1re image du repos : la tête respire dedans (coiffe comprise, sans la suivre)
+          if (this.portraitVue?.[3] !== k) {
+            const c = vv.cadreTete(idle, 0) ?? [fr.realWidth / 2, sy + 120, 300];
+            this.portraitVue = [c[0] - c[2] / 2, c[1] - c[2] / 2, c[2], k];
+          }
+          const [wx, wy, vue] = this.portraitVue, S = 128 / vue;
+          const tex = this.scene.textures.exists('portrait_vivant') ? this.scene.textures.get('portrait_vivant') as Phaser.Textures.CanvasTexture
+            : this.scene.textures.createCanvas('portrait_vivant', 1024, 1024)!;
+          const ctx = tex.getContext(), cx = (cell % 8) * 128, cy = Math.floor(cell / 8) * 128;
+          ctx.save(); ctx.beginPath(); ctx.rect(cx, cy, 128, 128); ctx.clip();
+          ctx.clearRect(cx, cy, 128, 128); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+          ctx.drawImage(src, fr.cutX, fr.cutY, fr.cutWidth, fr.cutHeight, cx + (sx - wx) * S, cy + (sy - wy) * S, fr.cutWidth * S, fr.cutHeight * S);
+          ctx.restore();
+          if (!tex.has(`c${cell}`)) tex.add(`c${cell}`, 0, cx, cy, 128, 128);
+          tex.refresh();
         }
-        const [wx, wy, vue] = this.portraitVue, S = 128 / vue;
-        const tex = this.scene.textures.exists('portrait_vivant') ? this.scene.textures.get('portrait_vivant') as Phaser.Textures.CanvasTexture
-          : this.scene.textures.createCanvas('portrait_vivant', 128, 128)!;
-        const ctx = tex.getContext();
-        ctx.clearRect(0, 0, 128, 128); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
-        ctx.drawImage(src, fr.cutX, fr.cutY, fr.cutWidth, fr.cutHeight, (sx - wx) * S, (sy - wy) * S, fr.cutWidth * S, fr.cutHeight * S);
-        tex.refresh();
-        if (P.texture.key !== 'portrait_vivant') P.setTexture('portrait_vivant');
+        P.setTexture('portrait_vivant', `c${cell}`);
       }
       P.setVisible(true).setPosition(pcx, py + ps / 2).setDisplaySize(ps - 2, ps - 2); this.head.setVisible(false);
     } else {
@@ -793,8 +807,10 @@ export class Hud {
       mc.setViewport(Math.round(mx * this.k), Math.round(my * this.k), Math.round(mw * this.k), Math.round(mh * this.k)).setZoom(0.16 * this.k).centerOn(ps.x, ps.y - 20);
       // monstres (points rouges, dorés pour les élites) par-dessus le décor filmé
       const toMini = (wx: number, wy: number) => { const s2 = ISO.toScreen(wx, wy); return { x: mx + mw / 2 + (s2.x - ps.x) * mc.zoom / this.k, y: my + mh / 2 + (s2.y - ps.y + 20) * mc.zoom / this.k }; };
+      // tri grossier d'abord (distance monde) : la carte ne montre qu'environ 1000 unités autour du perso, le reste du monde ouvert est sauté
+      const zk = mc.zoom / this.k, lim = Math.max(mw, mh) / zk * 1.6;
       for (const m of world.monsters) {
-        if (m.dead) continue;
+        if (m.dead || Math.abs(m.x - p.x) + Math.abs(m.y - p.y) > lim) continue;
         const q = toMini(m.x, m.y);
         if (q.x < mx || q.y < my || q.x > mx + mw || q.y > my + mh) continue;
         this.pointMini(nPts++, q.x, q.y, m.def.boss ? 3.5 : 2.2, m.def.boss || m.def.elite ? C.gold : 0xd04030);
