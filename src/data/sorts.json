@@ -11044,5 +11044,1791 @@
     "pom": 1
    }
   ]
+ ],
+ "enutrof": [
+  [
+   {
+    "id": 13338,
+    "name": "Lancer de Pièces",
+    "icon": 12185,
+    "desc": "Occasionne des dommages Eau.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 2,
+      "po": [
+       0,
+       8
+      ],
+      "relance": 0,
+      "parTour": 6,
+      "parCible": 3,
+      "dmg": [
+       7,
+       9
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 66,
+      "pa": 2,
+      "po": [
+       0,
+       10
+      ],
+      "relance": 0,
+      "parTour": 6,
+      "parCible": 3,
+      "dmg": [
+       10,
+       12
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 132,
+      "pa": 2,
+      "po": [
+       0,
+       12
+      ],
+      "relance": 0,
+      "parTour": 6,
+      "parCible": 3,
+      "dmg": [
+       13,
+       15
+      ],
+      "element": "eau"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 13353,
+    "name": "Monnaie Sonnante",
+    "icon": 12219,
+    "desc": "Occasionne des dommages Air et applique l'état Monnaie Sonnante sur l'ennemi ciblé :\n• Occasionne des dommages Air si la cible subit une tentative de retrait de PA.\n\nLes dommages peuvent être déclenchés 4 fois tant que l'état est actif.\nL'état est retiré dès la limite atteinte.",
+    "grades": [
+     {
+      "niv": 95,
+      "pa": 4,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0,
+      "dmg": [
+       24,
+       27
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 162,
+      "pa": 4,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0,
+      "dmg": [
+       29,
+       33
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 13340,
+    "name": "Force de l'Âge",
+    "icon": 12186,
+    "desc": "Occasionne des dommages Terre et augmente les PM au lanceur.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       17,
+       19
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 67,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       22,
+       25
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 133,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       28,
+       32
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 13363,
+    "name": "Orpaillage",
+    "icon": 12216,
+    "desc": "Occasionne des dommages Eau et applique l'état Orpaillage sur l'ennemi ciblé :\n• Occasionne des dommages Eau si la cible subit une tentative de retrait de PM.\n\nLes dommages peuvent être déclenchés 4 fois tant que l'état est actif.\nL'état est retiré dès la limite atteinte.",
+    "grades": [
+     {
+      "niv": 100,
+      "pa": 4,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0,
+      "dmg": [
+       23,
+       26
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 167,
+      "pa": 4,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0,
+      "dmg": [
+       28,
+       32
+      ],
+      "element": "eau"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 13331,
+    "name": "Roulage de Pelle",
+    "icon": 12187,
+    "desc": "Occasionne des dommages Feu.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       11,
+       13
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 68,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       15,
+       18
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 134,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       19,
+       23
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 1
+   },
+   {
+    "id": 13352,
+    "name": "Éboulement",
+    "icon": 12217,
+    "desc": "Occasionne des dommages Terre et applique l'état Éboulement sur l'ennemi ciblé :\n• Occasionne des dommages Terre si la cible subit un retrait de Portée.\n\nLes dommages peuvent être déclenchés 4 fois tant que l'état est actif.\nL'état est retiré dès la limite atteinte.",
+    "grades": [
+     {
+      "niv": 105,
+      "pa": 4,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0,
+      "dmg": [
+       25,
+       28
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 172,
+      "pa": 4,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0,
+      "dmg": [
+       31,
+       35
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 13366,
+    "name": "Opportunité",
+    "icon": 12188,
+    "desc": "Occasionne des dommages Air et augmente la Puissance du lanceur.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 2,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       8,
+       10
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 69,
+      "pa": 2,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       11,
+       13
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 136,
+      "pa": 2,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       14,
+       16
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 13368,
+    "name": "Coup de Grisou",
+    "icon": 14385,
+    "desc": "Occasionne des dommages Feu aux ennemis en zone et applique l'état Coup de Grisou sur la cible :\n• Occasionne des dommages Feu aux ennemis en zone autour de la cible si elle est soignée.\n\nLes dommages peuvent être déclenchés 4 fois tant que l'état est actif.\nL'état est retiré dès la limite atteinte.",
+    "grades": [
+     {
+      "niv": 110,
+      "pa": 4,
+      "po": [
+       0,
+       7
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0,
+      "dmg": [
+       26,
+       29
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 177,
+      "pa": 4,
+      "po": [
+       0,
+       8
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0,
+      "dmg": [
+       30,
+       34
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13328,
+    "name": "Sac Animé",
+    "icon": 12183,
+    "desc": "Invoque un Sac Animé maîtrisable qui intercepte les dommages des alliés situés dans sa zone d'invocation.\nLe Sac Animé est détruit 3 tours après son invocation.\n\nLorsqu'il est attaqué par un allié, ce dernier est soigné.",
+    "grades": [
+     {
+      "niv": 5,
+      "pa": 2,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 72,
+      "pa": 2,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 139,
+      "pa": 2,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 13354,
+    "name": "Musette Animée",
+    "icon": 14239,
+    "desc": "Invoque une Musette Animée maîtrisable qui partage les dommages entre tous les alliés situés dans sa zone d'invocation.\nLa Musette Animée est détruite 2 tours après son invocation.\n\nLorsqu'elle est attaquée par un allié, ce dernier est soigné.",
+    "grades": [
+     {
+      "niv": 115,
+      "pa": 2,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 182,
+      "pa": 2,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13342,
+    "name": "Ruée vers l'Or",
+    "icon": 13351,
+    "desc": "Augmente les PM de l'allié ciblé et lui applique l'état Ruée vers l'Or :\n• À la fin du tour de la cible, augmente sa Puissance au tour suivant si elle est au contact d'un ennemi et la soigne si elle est au contact d'une invocation Enutrof.",
+    "grades": [
+     {
+      "niv": 10,
+      "pa": 2,
+      "po": [
+       0,
+       8
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 77,
+      "pa": 2,
+      "po": [
+       0,
+       10
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 144,
+      "pa": 2,
+      "po": [
+       0,
+       12
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 1
+   },
+   {
+    "id": 13356,
+    "name": "Déambulation",
+    "icon": 12220,
+    "desc": "Réduit la durée des effets sur la cible et échange sa position avec le Sac Animé ou la Musette Animée du lanceur.",
+    "grades": [
+     {
+      "niv": 120,
+      "pa": 3,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 187,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 1,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 13334,
+    "name": "Boîte de Pandore",
+    "icon": 12965,
+    "desc": "Soigne tous les alliés mais augmente les PM de tous les ennemis.",
+    "grades": [
+     {
+      "niv": 15,
+      "pa": 2,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 82,
+      "pa": 2,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 149,
+      "pa": 2,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 13357,
+    "name": "Boîte à Outils",
+    "icon": 12221,
+    "desc": "Augmente les PA et les PM de l'allié ciblé mais le rend Pacifiste.\nRend également toutes les invocations de l'allié ciblé Pacifistes.",
+    "grades": [
+     {
+      "niv": 125,
+      "pa": 2,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 192,
+      "pa": 2,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 13335,
+    "name": "Remblai",
+    "icon": 12191,
+    "desc": "Occasionne des dommages Terre et retire de la Portée en zone.\nLes dommages sont plus importants sur les invocations.\n\nN'affecte pas le lanceur.",
+    "grades": [
+     {
+      "niv": 20,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       12,
+       14
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 87,
+      "pa": 3,
+      "po": [
+       0,
+       7
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       16,
+       18
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 154,
+      "pa": 3,
+      "po": [
+       0,
+       8
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       20,
+       22
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 13355,
+    "name": "Feu de Mine",
+    "icon": 12222,
+    "desc": "Occasionne des dommages Feu.\nLes entités qui attaquent la cible sont soignées d'une partie des dommages occasionnés.",
+    "grades": [
+     {
+      "niv": 130,
+      "pa": 4,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       29,
+       32
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 197,
+      "pa": 4,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       32,
+       36
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 13332,
+    "name": "Clef du Trésor",
+    "icon": 12193,
+    "desc": "Retire de la Portée aux ennemis ou augmente celle de l'allié ciblé.",
+    "grades": [
+     {
+      "niv": 25,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 92,
+      "pa": 2,
+      "po": [
+       0,
+       7
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 159,
+      "pa": 2,
+      "po": [
+       0,
+       9
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 13359,
+    "name": "Clef de Bras",
+    "icon": 12224,
+    "desc": "Soigne l'allié ciblé et retire des PM non esquivables.",
+    "grades": [
+     {
+      "niv": 135,
+      "pa": 2,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 13365,
+    "name": "Abattement",
+    "icon": 12199,
+    "desc": "Occasionne des dommages Air et retire des PA.",
+    "grades": [
+     {
+      "niv": 30,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       14,
+       16
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 97,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       18,
+       20
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 164,
+      "pa": 3,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       23,
+       25
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 13360,
+    "name": "Obsolescence",
+    "icon": 12232,
+    "desc": "Occasionne des dommages Eau et retire de l'Esquive PM.\nLes dommages sont plus importants sur les invocations.",
+    "grades": [
+     {
+      "niv": 140,
+      "pa": 3,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       26,
+       30
+      ],
+      "element": "eau"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 13344,
+    "name": "Pelle Animée",
+    "icon": 12195,
+    "desc": "Invoque une Pelle Animée maîtrisable qui peut pousser.\n\nLorsqu'elle est attaquée par un allié, ce dernier est soigné.",
+    "grades": [
+     {
+      "niv": 35,
+      "pa": 2,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 102,
+      "pa": 2,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 169,
+      "pa": 2,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 13361,
+    "name": "Bêche Animée",
+    "icon": 13794,
+    "desc": "Invoque une Bêche Animée maîtrisable qui peut voler de la vie dans l'élément Terre et donner de la Fuite.\n\nLorsqu'elle est attaquée par un allié, ce dernier est soigné.",
+    "grades": [
+     {
+      "niv": 145,
+      "pa": 2,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13362,
+    "name": "Avarice",
+    "icon": 12228,
+    "desc": "Retire des PM non esquivables pour augmenter les PA des cibles en zone autour du lanceur.\nRetire également de la Puissance à toutes les entités hors de la zone d'effet pour augmenter la Puissance du lanceur pour chaque entité touchée (cumulable 10 fois).",
+    "grades": [
+     {
+      "niv": 40,
+      "pa": 3,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 107,
+      "pa": 3,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 174,
+      "pa": 3,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 13369,
+    "name": "Décadence",
+    "icon": 12238,
+    "desc": "Retire des PA aux ennemis.\n\nSur un allié : augmente ses dommages finaux occasionnés immédiatement mais les réduit au tour suivant.",
+    "grades": [
+     {
+      "niv": 150,
+      "pa": 2,
+      "po": [
+       0,
+       10
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 13343,
+    "name": "Pelle Aurifère",
+    "icon": 12194,
+    "desc": "Occasionne des dommages Eau et retire des PM.",
+    "grades": [
+     {
+      "niv": 45,
+      "pa": 4,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       21,
+       23
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 112,
+      "pa": 4,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       27,
+       31
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 179,
+      "pa": 4,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       33,
+       37
+      ],
+      "element": "eau"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 13358,
+    "name": "Tourbière",
+    "icon": 12229,
+    "desc": "Occasionne des dommages Terre en zone.\nLes dommages du sort sont augmentés pour chaque PM utilisé pour le tour en cours.",
+    "grades": [
+     {
+      "niv": 155,
+      "pa": 4,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       31,
+       35
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 1,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 13337,
+    "name": "Maladresse",
+    "icon": 12201,
+    "desc": "Retire des PM.",
+    "grades": [
+     {
+      "niv": 50,
+      "pa": 1,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1
+     },
+     {
+      "niv": 117,
+      "pa": 1,
+      "po": [
+       1,
+       10
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 1
+     },
+     {
+      "niv": 184,
+      "pa": 1,
+      "po": [
+       1,
+       12
+      ],
+      "relance": 0,
+      "parTour": 4,
+      "parCible": 1
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 13329,
+    "name": "Âge d'Or",
+    "icon": 12230,
+    "desc": "Rend l'allié ciblé Intaclable.\nAugmente sa Puissance au tour suivant.",
+    "grades": [
+     {
+      "niv": 160,
+      "pa": 2,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 13336,
+    "name": "Pelle Fantomatique",
+    "icon": 12202,
+    "desc": "Réduit la durée des effets sur la cible et occasionne des dommages Feu aux ennemis.",
+    "grades": [
+     {
+      "niv": 55,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       17,
+       19
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 122,
+      "pa": 3,
+      "po": [
+       0,
+       7
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       23,
+       25
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 189,
+      "pa": 3,
+      "po": [
+       0,
+       8
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       26,
+       28
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 13372,
+    "name": "Dernier Recours",
+    "icon": 13122,
+    "desc": "Applique l'état Pesanteur sur les cibles et occasionne des dommages Air aux ennemis en zone.",
+    "grades": [
+     {
+      "niv": 165,
+      "pa": 3,
+      "po": [
+       0,
+       7
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0,
+      "dmg": [
+       30,
+       34
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 14278,
+    "name": "Banqueroute",
+    "icon": 12203,
+    "desc": "Occasionne des dommages Air et retire de l'Esquive PA.\nLes dommages sont plus importants sur les invocations.",
+    "grades": [
+     {
+      "niv": 60,
+      "pa": 4,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       26,
+       29
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 127,
+      "pa": 4,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       32,
+       36
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 194,
+      "pa": 4,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       36,
+       40
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 13330,
+    "name": "Lancer de Pelle",
+    "icon": 12225,
+    "desc": "Occasionne des dommages Terre et retire de la Portée.",
+    "grades": [
+     {
+      "niv": 170,
+      "pa": 4,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       34,
+       37
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 13364,
+    "name": "Souterrain",
+    "icon": 13121,
+    "desc": "Échange de position avec la cible et occasionne des dommages Terre aux ennemis.",
+    "grades": [
+     {
+      "niv": 65,
+      "pa": 3,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       19,
+       22
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 131,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       23,
+       26
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 198,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       26,
+       29
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 1,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 13367,
+    "name": "Bêche des Anciens",
+    "icon": 12231,
+    "desc": "Occasionne des dommages Air et retire des PA aux ennemis et repousse les cibles depuis le centre en zone.",
+    "grades": [
+     {
+      "niv": 175,
+      "pa": 4,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       32,
+       36
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13345,
+    "name": "Pelle des Anciens",
+    "icon": 12205,
+    "desc": "Occasionne des dommages Eau et retire des PM aux ennemis et repousse la cible.",
+    "grades": [
+     {
+      "niv": 70,
+      "pa": 4,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 1,
+      "dmg": [
+       31,
+       34
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 137,
+      "pa": 4,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 1,
+      "dmg": [
+       40,
+       44
+      ],
+      "element": "eau"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 14273,
+    "name": "Gisement",
+    "icon": 12218,
+    "desc": "Occasionne des dommages Feu aux ennemis et soigne les alliés au début de leur tour en zone.",
+    "grades": [
+     {
+      "niv": 180,
+      "pa": 3,
+      "po": [
+       0,
+       8
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       29,
+       32
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13333,
+    "name": "Péremption",
+    "icon": 12211,
+    "desc": "Occasionne des dommages Feu.\nOccasionne des dommages Feu supplémentaires aux invocations.",
+    "grades": [
+     {
+      "niv": 75,
+      "pa": 4,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       33,
+       35
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 142,
+      "pa": 4,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       41,
+       44
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 13370,
+    "name": "Tamisage",
+    "icon": 12234,
+    "desc": "Occasionne des dommages Eau et retire des PM en zone.\nN'affecte pas le lanceur.",
+    "grades": [
+     {
+      "niv": 185,
+      "pa": 3,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       25,
+       29
+      ],
+      "element": "eau"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 13346,
+    "name": "Corruption",
+    "icon": 13228,
+    "desc": "Rend l'ennemi ciblé Pacifiste et Invulnérable.\n\nSur un allié : le rend Pacifiste et le soigne.",
+    "grades": [
+     {
+      "niv": 80,
+      "pa": 5,
+      "po": [
+       4,
+       6
+      ],
+      "relance": 6,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 147,
+      "pa": 5,
+      "po": [
+       4,
+       8
+      ],
+      "relance": 5,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 14274,
+    "name": "Tunnel de Fortune",
+    "icon": 13382,
+    "desc": "Rend le lanceur invisible et lui applique l'état Tunnel de Fortune :\n• Augmente sa Puissance au tour suivant pour chaque PM qu'il a utilisé.",
+    "grades": [
+     {
+      "niv": 190,
+      "pa": 3,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13349,
+    "name": "Retraite Anticipée",
+    "icon": 12207,
+    "desc": "Immobilise les cibles et applique l'état Pesanteur sur tout le monde sauf le lanceur.\nImmobilise le lanceur au tour suivant.",
+    "grades": [
+     {
+      "niv": 85,
+      "pa": 4,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 8,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 152,
+      "pa": 4,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 7,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 29755,
+    "name": "Pelle de Fortune",
+    "icon": 14387,
+    "desc": "Invoque une Pelle de Fortune statique.\nLorsqu'elle est invoquée, puis à chaque début de tour, elle augmente la Puissance, la Fuite, le Retrait PA et le Retrait PM du lanceur.\n\nLa Pelle de Fortune est détruite 2 tours après son invocation en soignant le lanceur.\n\nLorsqu'elle est attaquée par un allié, ce dernier est soigné.",
+    "grades": [
+     {
+      "niv": 195,
+      "pa": 2,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 13347,
+    "name": "Coffre Animé",
+    "icon": 12212,
+    "desc": "Invoque un Coffre Animé maîtrisable qui peut tacler, occasionner des dommages Eau et dévoiler les invisibles.\n\nLorsqu'il est attaqué par un allié, ce dernier est soigné.",
+    "grades": [
+     {
+      "niv": 90,
+      "pa": 3,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 157,
+      "pa": 3,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 13371,
+    "name": "Malle Animée",
+    "icon": 12240,
+    "desc": "Invoque une Malle Animée maîtrisable qui peut soigner.\n\nLorsqu'elle est attaquée par un allié, ce dernier est soigné.",
+    "grades": [
+     {
+      "niv": 200,
+      "pa": 3,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ]
  ]
 }

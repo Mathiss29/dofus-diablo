@@ -530,3 +530,11 @@ Ville vivante (maquette Ville 5F, 8 nov. 2026) :
 - Bêtes (os dans le cache : `cache-dofus/eniripsa-bones/`) : Lapino 7370 (os 7599), Fées 7372-7374 (os 7600), Feu Follet Accablant 7378 (os 7601).
   `SCALE=2.5 BOX=-80,-130,80,30 FORMAT=AVIF python3 monster_planche.py 7599 eni_lapino <Bones>` (sans BOX, l'effet d'attaque élargit trop la boîte) ;
   `FORMAT=AVIF python3 monster_planche.py 7600 eni_fee` et `7601 eni_feu_follet`. Entrées de betes.json ajoutées à la main (osa_betes.py réécrirait les bêtes de l'Osamodas).
+
+## Enutrof (classe 3, maquette du 10 nov. 2026)
+
+- `python squelette_export.py <persos> <donnees> 3 public/assets/sprites/squelette`, puis, une fois le premier fini, `python tetes_vignettes.py <persos> <donnees> public/assets/sprites/squelette 3`.
+- Sorts : `class_spells.py ... enutrof:3` -> src/data/sorts.json ; icônes `sort_<id>.png`. Animations : AnimAttaque300 à 312 (voir ENU_MAP de looks.ts).
+- Bêtes (os dans le cache : `cache-dofus/enutrof-bones/`) : Sac Animé 5830 (os 4147), Pelle Animée 5834 (os 4156), coffre au trésor 5840 (Coffre Animé, os 4166).
+  `SCALE=2.5 FORMAT=AVIF python3 monster_planche.py 4147 enu_sac <Bones>`, puis `4156 enu_pelle` et `4166 enu_coffre`.
+  Entrées de betes.json ajoutées à la main (comme l'Eniripsa) ; le coffre est passif, sans sort, réglages dans classes.json > enutrof.coffre.

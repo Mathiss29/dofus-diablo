@@ -4,6 +4,8 @@ import { ISO } from '../sim/iso';
 import { clamp } from '../sim/math';
 import type { Entity } from '../sim/entity';
 import type { Monster } from '../sim/monster';
+import type { Player } from '../sim/player';
+import { palierCoffre } from '../sim/enutrof';
 import type { Look } from './looks';
 import { PersoVivant } from './persoVivant';
 
@@ -110,16 +112,20 @@ export class EntityView {
       : a + Math.min(b - a - 1, Math.floor(clamp(e.animT, 0, 0.999) * (b - a)));
     if (this.vivant) { const [k, f] = this.vivant.image(name, idx); this.sprite.setTexture(k, f); }
     else this.sprite.setFrame(`${name}_${idx}`);
-    let sy = L.scale * this.k, alpha = 1;
+    // Enutrof 16C : le coffre au trésor grossit à chaque palier, et dore à partir de l'Or
+    const own = (e as { base?: string; owner?: Player }).base === 'coffre_tresor' ? (e as { owner?: Player }).owner : undefined;
+    const pal = own?.cls?.coffre ? palierCoffre(own) : -1, kc = 1 + 0.12 * (pal + 1);
+    let sy = L.scale * this.k * kc, alpha = 1;
     if (e.anim === 'idle') sy *= 1 + Math.sin(e.age * 4) * 0.02;
     if (e.anim === 'spawn') alpha = e.animT;
     if ((e as { state?: string }).state === 'return') alpha = 0.5;   // maquette « Aggro » 7A : il abandonne et rentre
     if (e.anim === 'die') alpha = e.animT < 0.7 ? 1 : 1 - (e.animT - 0.7) / 0.3;
-    this.sprite.setScale((flip ? -L.scale : L.scale) * this.k, sy).setAlpha(alpha);
+    this.sprite.setScale((flip ? -L.scale : L.scale) * this.k * kc, sy).setAlpha(alpha);
     // posé pile sur un pixel de l'écran : il ne « bave » plus quand la caméra le suit (voir pixel.ts)
     const cam = this.sprite.scene.cameras.main, pp = auPixel(cam, p.x, p.y - (L.ignoreZ ? 0 : e.z));
     this.sprite.setPosition(pp.x, pp.y).setDepth(p.y);
     if (e.flash > 0) this.sprite.setTintFill(0xffffff);
+    else if (pal >= 2) this.sprite.setTint(mulTint(pal >= 3 ? 0xffc870 : 0xffe9a0, EntityView.ambiance));
     else if (L.tint || EntityView.ambiance !== 0xffffff) this.sprite.setTint(mulTint(L.tint ?? 0xffffff, EntityView.ambiance));
     else this.sprite.clearTint();
     // Ombre au sol : reste au sol pendant les sauts

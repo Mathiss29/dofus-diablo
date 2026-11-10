@@ -1245,6 +1245,18 @@
               "Donjons"
             ]
           }
+        ],
+        "Nouveautés": [
+          {
+            "titre": "L'Enutrof en essai",
+            "phrase": "L'Enutrof et son coffre au trésor permanent, à essayer dans la Partie de test.",
+            "details": "Gêne les monstres puis achève-les pour remplir le coffre de pièces. Ouvre-le au bon palier pour un butin de plus.",
+            "icone": "kamas",
+            "etiquettes": [
+              "Partie de test",
+              "Touche X"
+            ]
+          }
         ]
       }
     }

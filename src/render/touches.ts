@@ -10,6 +10,7 @@ export const ACTIONS: Action[] = [
   ...[1, 2, 3, 4, 5, 6].map(i => ({ id: `sort${i}`, nom: `Sort ${i}`, groupe: 'Combat', def: `Digit${i}` })),
   { id: 'deplacement', nom: 'Déplacement (Bond, Saut…)', groupe: 'Combat', def: 'Space' },
   { id: 'potion', nom: 'Potion', groupe: 'Combat', def: 'E' },
+  { id: 'coffre', nom: 'Ouvrir le coffre (Enutrof)', groupe: 'Combat', def: 'X' },
   ...[1, 2, 3, 4].map(i => ({ id: `invoc${i}`, nom: `Invocation ${i} (Osamodas)`, groupe: 'Combat', def: 'AZRT'[i - 1] })),
   { id: 'inventaire', nom: 'Inventaire', groupe: 'Fenêtres', def: 'I' },
   { id: 'caracs', nom: 'Caractéristiques', groupe: 'Fenêtres', def: 'C' },

@@ -216,6 +216,26 @@ const ENI_MAP: Record<string, AnimSlice> = {
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };
 
+// Enutrof : squelette joueur n° 1 + skin 30/31 (corps), animations officielles (spellscripts casterAnimation, maquette Enutrof 12A) :
+// Lancer de Pièces 300 ; Force de l'Âge 301 ; invocations (Sac, Pelle, Coffre, Malle) 302 ; Roulage de Pelle, Pelle Aurifère 303 ;
+// Opportunité 304 ; Remblai, Clef du Trésor, Avarice 305 ; Ruée vers l'Or, Boîte de Pandore, Pelle Fantomatique 306 ; Souterrain 307 ;
+// Abattement 308 ; Maladresse 310 ; Banqueroute 312.
+const ENU_MAP: Record<string, AnimSlice> = {
+  ...WEAPON_MAP,
+  idle: { anim: 'AnimStatiqueExplo0', loop: true, fps: 20 },
+  run: { anim: 'AnimCourse', loop: true, fps: 32 },
+  attack1: { anim: 'AnimArme0', from: 3 / 28, to: 17 / 28 },
+  attack2: { anim: 'AnimArme0', from: 3 / 28, to: 17 / 28 },
+  attack3: { anim: 'AnimArme0', from: 3 / 28, to: 24 / 28 },
+  ...Object.fromEntries(Object.entries({
+    lancer_pieces: 300, force_age: 301, sac_anime: 302, pelle_animee: 302, coffre_anime: 302, malle_animee: 302, roulage_pelle: 303,
+    pelle_aurifere: 303, opportunite: 304, remblai: 305, clef_tresor: 305, avarice: 305, ruee_or: 306, boite_pandore: 306,
+    pelle_fantomatique: 306, souterrain: 307, abattement: 308, maladresse: 310, banqueroute: 312,
+  }).map(([k, n]) => [k, { anim: `AnimAttaque${n}`, from: 0, to: 0.65 }])),
+  hit: { anim: 'AnimHit', from: 0, to: 1 },
+  die: { anim: 'AnimMort', from: 0, to: 0.75 },
+};
+
 const GOLD = 0xffd87a;
 
 export const LOOKS: Record<string, Look> = {
@@ -232,6 +252,12 @@ export const LOOKS: Record<string, Look> = {
   forgelance: { atlas: 'forgelance', scale: 0.82, map: FL_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
   // Eniripsa : dessiné en direct depuis son squelette, comme les autres classes
   eniripsa: { atlas: 'eniripsa', scale: 0.82, map: ENI_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
+  // Enutrof : dessiné en direct depuis son squelette, comme les autres classes
+  enutrof: { atlas: 'enutrof', scale: 0.82, map: ENU_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
+  // Invocations de l'Enutrof (monster_planche.py, os 4147, 4156, 4166, SCALE 2,5) : Sac Animé, Pelle Animée, coffre au trésor (Coffre Animé)
+  enu_sac: { atlas: 'enu_sac', scale: 0.5, map: MONSTER_MAP(23 / 42, 'AnimAttaque0', { 0: 23 / 42, 1: 18 / 36 }), height: 70, multi: true },
+  enu_pelle: { atlas: 'enu_pelle', scale: 0.5, map: MONSTER_MAP(25 / 37, 'AnimAttaque0', { 0: 25 / 37 }), height: 80, multi: true },
+  enu_coffre: { atlas: 'enu_coffre', scale: 0.45, map: MONSTER_MAP(21 / 33, 'AnimAttaque0', { 0: 21 / 33, 1: 9 / 32 }), height: 70, multi: true },
   // Bêtes de l'Eniripsa (monster_planche.py, os 7599 SCALE 2,5, os 7600 et 7601) : Lapino, Fées, Feux Follets
   eni_lapino: { atlas: 'eni_lapino', scale: 0.55, map: MONSTER_MAP(13 / 37, 'AnimAttaque0', { 0: 13 / 37, 1: 10 / 29, 2: 28 / 31 }), height: 80, multi: true },
   eni_fee: { atlas: 'eni_fee', scale: 0.45, map: MONSTER_MAP(23 / 37), height: 60, multi: true },

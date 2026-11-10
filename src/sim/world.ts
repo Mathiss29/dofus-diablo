@@ -7,6 +7,7 @@ import { NO_INPUT, type PlayerInput } from './input';
 import { AGGRO, CASE, Monster, TOUR, type Cible } from './monster';
 import { jetOfficiel } from './danger';
 import { monstresDeZone, poolNiveau, poolOfficiel, rangDe, tirerButin, type Butin, type CtxButin, type Rang } from './butin';
+import { ajouterPieces, CLE_COFFRE, ouvrirCoffre, piecesMonstre, piecesObjet } from './enutrof';
 import { briser, chanceRune, coutKamas, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
 import { NIVEAU_OBJETS_02, V03_PUBLIC, slotAPouvoirConnu } from './pouvoirs';
 import { fxImpression, imprimable, nouveauPourCodex, prixImpression } from './codex';
@@ -1234,6 +1235,7 @@ export class World {
     // Havre-Sac : bouger ou agir coupe l'incantation ; H la lance (ou fait sortir) ; le Zaap du Havre-Sac fait sortir
     if (this.incantation && (input.dest || input.target != null || input.pickup != null || input.talk || input.pressed || input.recolte != null || input.move.x || input.move.y)) this.couperIncantation();
     if (input.havreSac) this.havreSac();
+    if (input.coffre && this.player.cls.coffre && !this.player.dead) ouvrirCoffre(this.player, this);   // Enutrof : touche du coffre
     if (input.meute != null && this.monsters.some(m => m.id === input.meute && !m.dead)) this.cibleMeute = input.meute;
     if (input.zaap != null) this.voyagerZaap(input.zaap);
     if (input.versZaap) this.versZaap = input.versZaap;
@@ -1577,6 +1579,7 @@ export class World {
       // Retrait PA / PM du joueur contre l'Esquive officielle du monstre : chaque point a sa chance de passer
       const pm = this.removed(def.pmLoss ?? 0, p.retrait('PM'), m.def.caracs?.esquivePM ?? 0);
       const pa = this.removed(def.paLoss ?? 0, p.retrait('PA'), m.def.caracs?.esquivePA ?? 0);
+      if (pm || pa || def.poLoss) m.entraveA = this.time;   // Enutrof 1B : un monstre entravé vaut une pièce de plus
       if (pm) { m.haste = Math.min(m.haste, Math.max(0.3, 1 - 0.15 * pm)); m.hasteT = Math.max(m.hasteT, TOUR);
         this.emit({ k: 'status', x: m.x, y: m.y, text: `-${pm} PM`, color: '#9ad15a' }); }
       if (pa) { m.atkCd = Math.max(m.atkCd, 0) + 0.4 * pa;
@@ -1717,6 +1720,7 @@ export class World {
   killMonster(m: Monster) {
     if (m.mannequin) { m.hp = m.maxHp; return; }   // partie de test (7D) : le mannequin ne meurt pas
     m.dead = true; m.t = 0.6; this.kills++;
+    piecesMonstre(this, m);   // Enutrof (1A 1B) : le coffre au trésor des Enutrofs proches se remplit
     const tq = this.player.dead ? 0 : this.player.pcv('pc-cra-O');
     if (tq) for (const md of this.player.mods) if (md.src === 'tirs_eloignes') {   // Traque sans fin : prolongé, jusqu'à doubler sa durée
       const pl = md.plus ?? 0, base = (md.t0 ?? md.t) - pl, g = Math.min(tq, base - pl);
@@ -1758,10 +1762,35 @@ export class World {
   }
   // --- Butin (choix 24) ----------------------------------------------------
   /** Niveau d'un monstre : celui de la sous-zone où il vit. */
-  monsterLevel(m: Monster): number {
+  monsterLevel(m: Monster): number { return this.niveauEn(m.homeX, m.homeY); }
+  /** Niveau de la sous-zone à cet endroit (celui de la zone hors du monde ouvert). */
+  niveauEn(x: number, y: number): number {
     const wg = this.worldGrid, open = this.zone.open;
-    const sub = wg && open ? open.subareas[String(wg.mapAt(m.homeX, m.homeY)?.sub)] : undefined;
+    const sub = wg && open ? open.subareas[String(wg.mapAt(x, y)?.sub)] : undefined;
     return sub?.level ?? this.zone.level;
+  }
+  /** Coffre au trésor de l'Enutrof (src/sim/enutrof.ts) : butin d'un monstre de ce rang (équipement de la zone et kamas, sans butin
+   *  officiel), tiré avec la Prospection de q ; réservé à `pour` (5A) ; epique : un objet Épique ou mieux garanti (palier Trésor). */
+  butinCoffre(q: Player, rang: Rang, niveau: number, x: number, y: number, pour?: number, epique = false) {
+    const I = this.opts.items;
+    if (!I) return;
+    this.commeJoueur(q, () => {
+      const ctx = this.contexteButin(CLE_COFFRE, rang, niveau), b = tirerButin(this.rng, ctx, () => this.nextId++);
+      if (epique && !b.objets.some(o => RARITIES.indexOf(o.rarity) >= RARITIES.indexOf('epique'))) {
+        const pool = poolNiveau(ctx);
+        if (pool.length) { const id = this.rng.pick(pool).id; b.objets.push(rollItem(id, I.equipment[id], this.rng.next() < 0.1 ? 'legendaire' : 'epique', this.rng, this.nextId++, ctx.pouvoirs)); }
+      }
+      this.poserButin(b, x, y, pour);
+    });
+  }
+  /** 15C : l'Enutrof donne un objet Rare ou Épique de son sac à son coffre, contre des pièces. Jamais un objet sous cadenas. */
+  donnerAuCoffre(uid: number): boolean {
+    const p = this.player, i = p.bag.findIndex(b => b.uid === uid), it = i >= 0 ? p.bag[i] : null;
+    const n = it && !it.cadenas ? piecesObjet(p, it.rarity) : 0;
+    if (!it || !n) return false;
+    p.bag.splice(i, 1); this.collectionner(it.id); this.enregistrerCodex(it);
+    ajouterPieces(p, n, this, p.x, p.y);
+    return true;
   }
   /** Ce que le calcul du butin doit savoir (src/sim/butin.ts) : sert au jeu, au Bestiaire et au simulateur de l'outil de test. */
   contexteButin(type: string, rang: Rang, niveau: number): CtxButin {
@@ -2505,12 +2534,12 @@ export class World {
   invocationsMax(p: Player): number { if (this.test?.invocations) return 99;   // partie de test (Outil test 7B)
     return REGLES_BETES.invocationsBase + Math.max(0, p.stat('invocations')); }
   /** Fait apparaître la bête d'un sort au point visé (case libre la plus proche). */
-  invoquer(p: Player, key: string, sort: string, x: number, y: number): Bete | null {
+  invoquer(p: Player, key: string, sort: string, x: number, y: number, discret = false): Bete | null {
     if (!BETES[key]) return null;
     const q = this.walkable(x, y) ? { x, y } : this.map.nearestFree(x, y);
     const b = new Bete(this.nextId++, p, key, sort, q.x, q.y);
     this.betes.push(b);
-    this.emit({ k: 'status', x: b.x, y: b.y - 40, text: b.def.name, color: '#9fe07a' });
+    if (!discret) this.emit({ k: 'status', x: b.x, y: b.y - 40, text: b.def.name, color: '#9fe07a' });
     this.emit({ k: 'invocation', id: b.id, x: b.x, y: b.y });
     return b;
   }
