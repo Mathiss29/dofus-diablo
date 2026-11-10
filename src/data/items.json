@@ -38175,6 +38175,41 @@
    "icon": 32005,
    "level": 1,
    "cle": "Donjon des Larves"
+  },
+  "405": {
+   "name": "Malt",
+   "icon": 34561,
+   "level": 120
+  },
+  "1779": {
+   "name": "Bar Rikain",
+   "icon": 41290,
+   "level": 160
+  },
+  "1794": {
+   "name": "Carpe d'Iem",
+   "icon": 41305,
+   "level": 60
+  },
+  "1805": {
+   "name": "Sardine Brillante",
+   "icon": 41317,
+   "level": 70
+  },
+  "1847": {
+   "name": "Brochet",
+   "icon": 41400,
+   "level": 80
+  },
+  "16389": {
+   "name": "Mandragore",
+   "icon": 36645,
+   "level": 180
+  },
+  "16461": {
+   "name": "Anguille",
+   "icon": 41407,
+   "level": 100
   }
  },
  "drops": {

@@ -1408,7 +1408,7 @@
           },
           {
             "titre": "Le Château d'Amakna s'ouvre",
-            "phrase": "Huit salles officielles du Château : trône, banquets, cuisines, bibliothèque, conseil, chapelle, Milice.",
+            "phrase": "Huit salles officielles du Château : trône, banquets, chambre du Roi, bibliothèque, conseil, chapelle, Milice.",
             "details": "On entre par la tour du Château, ou par la Milice. Pas de PNJ de service : ils restent au Bastion.",
             "icone": "carte",
             "etiquettes": [
@@ -1441,6 +1441,16 @@
             "phrase": "Les vraies salles des donjons d'Amakna, reliées par des couloirs, mènent à la cour du boss.",
             "details": "Scarafeuilles, Squelettes, Tofus, Gobs, Bworks, Forgerons, Kwakwa, Larves, et les deux donjons Wabbits pour leur île.",
             "icone": "boss",
+            "etiquettes": [
+              "Amakna",
+              "Partie de test"
+            ]
+          },
+          {
+            "titre": "Récolter et fabriquer en Amakna",
+            "phrase": "Arbres, champs, fleurs et rivières d'Amakna à leurs vraies places, ateliers au Château.",
+            "details": "Plus de 3 000 ressources officielles, dont Brochet, Anguille, Malt et Mandragore. Quatre ateliers au Château couvrent tous les métiers.",
+            "icone": "metier",
             "etiquettes": [
               "Amakna",
               "Partie de test"

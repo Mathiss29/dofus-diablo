@@ -569,7 +569,7 @@ Ville vivante (maquette Ville 5F, 8 nov. 2026) :
 - Sous-zone 180 : 65 cartes hors du dehors (salles du Château, chambres de l'auberge, maisons, caves). Cartes sorties des bundles
   `mapdata_assets_world_N` (N = mapId >> 18) de `cache-dofus/chemin200/cartes.0*.tar` par `map_dump.py`.
 - 8 salles gardées (trône 95683075, conseil 222562316, banquets 95686145, bibliothèque 95685121, chapelle 95687171, Milice 95685125
-  et 95686149, cuisines 95684099), rangées en (20..34, 56) : `PARTAGE=1 world_export.py`, `COURANTE=1 batiments.py`,
+  et 95686149, chambre du Roi 95684099, tag chateau_cuisine), rangées en (20..34, 56) : `PARTAGE=1 world_export.py`, `COURANTE=1 batiments.py`,
   `decor_par_carte.py`, puis `monde_continent.py fusion` (ajouter ensuite `pages` et `essai: 1` aux nouvelles salles).
 - Portes dans `zones.json` (`open.portes`) : tour du Château [4,-6] case 330 → trône ; [5,-6] case 356 → Milice ; portes 3507/3520 des salles.
 
@@ -582,3 +582,11 @@ Ville vivante (maquette Ville 5F, 8 nov. 2026) :
   trace les couloirs (sol peint de la salle d'avant), ajoute des petites cartes sans image (`annexes`) sous le creux des couloirs,
   écrit `salles`, `couloirs` et la porte d'entrée (vers la 1re salle) dans `zones.json > astrub > open > donjonsTest`. Puis `envoi.mjs`.
 - Kwakwa : le ciel est peint dans le sol de chaque salle, ses bords droits se voient entre les salles.
+
+## Récoltes et ateliers d'Amakna (0.4 suite : 12A+12C, 10 nov. 2026)
+
+- Relevés officiels des 642 cartes d'Amakna ajoutés à `tools/contenu/recoltables_dofusdb.json` (api.dofusdb.fr/recoltable, par 40 ids).
+  Nouveaux dessins : 667 Malt, 3226 Mandragore, remous de pêche 1021 et 1839 (`POISSONS`) ; 9255 (rivières) absent du cache, laissé de côté.
+- `recoltes.py <liste d'Amakna> <cartes> <tables> <fr.bin> monde.json amakna`, puis `recoltes_cases.py` sur cette seule liste (mise sous la
+  clé astrub le temps du script), puis ajout à la suite de la liste d'Astrub. Les récoltes des cartes en essai ne sortent qu'en partie de test.
+- Ateliers du Château (sans machine dessinée : un poste au milieu de la salle) dans `zones.json > astrub > open > ateliers`.

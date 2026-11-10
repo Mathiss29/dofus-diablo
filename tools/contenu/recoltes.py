@@ -11,7 +11,7 @@ import json, sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'extraction'))
 sys.path.insert(0, os.path.dirname(__file__))
 from i18n import load as i18n
-from recoltes_gfx import GFX, POISSON, ressource
+from recoltes_gfx import GFX, POISSONS, ressource
 
 liste, cartes, tables, frbin, monde = sys.argv[1:6]
 NOM = sys.argv[6] if len(sys.argv) > 6 else 'astrub'   # clé du monde dans recoltes.json (les autres mondes sont gardés)
@@ -38,7 +38,7 @@ for xy, v in L.items():
     for q in r.get('references', {}).get('RefIds', []):
         if q['type']['class'] != 'ClientInteractiveAnimatedElementTransform': continue
         g = q['data']['gfxId']
-        if g not in GFX and g != POISSON: continue
+        if g not in GFX and g not in POISSONS: continue
         # position du dessin (repère Unity de la carte : x = px - 623,5, y = 505,25 - py) : souvent la case, parfois décalée ; m11 < 0 = miroir
         t, c = q['data']['transform'], q['data']['cellId']; row, k = divmod(c, 14)
         dx, dy = round(t['m31'] + 623.5 - (43 + k * 86 + (row % 2) * 43), 1), round(505.25 - t['m32'] - (21.5 + row * 21.5), 1)
