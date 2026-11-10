@@ -39,7 +39,7 @@ describe('donjons en couloirs (Couloirs : 1C 2B 3A 4A)', () => {
     for (const t of cl.salles) expect(G(w).filter(g => g.map === t).length).toBe(d.salles[t].length);
     for (const t of cl.tags) {
       const gs = G(w).filter(g => g.map === t);
-      expect(gs.length).toBe(cl.nErrants);
+      expect(gs.length).toBe(cl.annexes?.includes(t) ? 0 : cl.nErrants);   // petites cartes sous le creux du couloir : vides
       for (const g of gs) { expect(g.members.length).toBe(1); expect(M[g.members[0].type].boss).toBeFalsy(); }
     }
     expect(G(w).some(g => g.map === 'grange_5')).toBe(false);

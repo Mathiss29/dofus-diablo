@@ -3070,7 +3070,11 @@
        "couloir_grange_1",
        "couloir_grange_2",
        "couloir_grange_3",
-       "couloir_grange_4"
+       "couloir_grange_4",
+       "couloir_grange_1_a0",
+       "couloir_grange_1_a1",
+       "couloir_grange_1_a2",
+       "couloir_grange_1_a3"
       ],
       "errants": [
        12635970,
@@ -3809,7 +3813,13 @@
         -4,
         4
        ]
-      }
+      },
+      "annexes": [
+       "couloir_grange_1_a0",
+       "couloir_grange_1_a1",
+       "couloir_grange_1_a2",
+       "couloir_grange_1_a3"
+      ]
      }
     },
     {
