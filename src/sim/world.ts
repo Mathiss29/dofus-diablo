@@ -262,6 +262,14 @@ export class World {
   static readonly PASSAGE = 0.2;
   /** Multi (7A) : bonus d'XP par allié proche quand un monstre tombe. */
   static readonly XP_PAR_ALLIE = 0.1;
+  /** XP d'un monstre trop faible pour le joueur (Mathis 2026-11-10, à la place d'un niveau max) : entière jusqu'à 5 niveaux
+   *  d'écart, moitié à 10, presque rien (5 %) à 20 et au-delà. La montée ralentit toute seule après la dernière zone. */
+  static ecartXp(joueur: number, monstre: number): number {
+    const d = joueur - monstre;
+    if (d <= 5) return 1;
+    if (d <= 10) return 1 - (d - 5) * 0.1;
+    return Math.max(0.05, 0.5 - (d - 10) * 0.045);
+  }
   /** Distance (|dx| + |dy|) au-delà de laquelle un monstre qui attend ne bouge plus. */
   static readonly SOMMEIL = 2400;
   /** Monde ouvert (0.4, Amakna : 11 000 monstres) : un groupe n'existe vraiment qu'à moins de POSE d'un joueur (distance en losange) ;
@@ -1804,9 +1812,10 @@ export class World {
     // Multi (maquette « Multi : » 7A) : chaque joueur proche gagne l'XP comme en solo, +10 % par allié proche
     const proches = this.players.filter(q => q !== p && !q.dead && Math.abs(q.x - m.x) + Math.abs(q.y - m.y) <= World.SOMMEIL);
     const base = (m.def.xp ?? Math.round(m.def.hp / 5)) * this.bonusMassacre() * alm * (1 + World.XP_PAR_ALLIE * proches.length);
-    const xp = p.gainXp(Math.round(base), this);
+    const nm = m.def.level ?? this.monsterLevel(m);
+    const xp = p.gainXp(Math.round(base * World.ecartXp(p.level, nm)), this);
     if (xp > 0) this.emit({ k: 'xp', x: m.x, y: m.y, z: m.radius * 2 + 30, n: xp });
-    for (const q of proches) { const a = this.acteur; this.acteur = q; try { q.gainXp(Math.round(base), this); } finally { this.acteur = a; } }
+    for (const q of proches) { const a = this.acteur; this.acteur = q; try { q.gainXp(Math.round(base * World.ecartXp(q.level, nm)), this); } finally { this.acteur = a; } }
     this.xpFamilier(FAMILIER_XP.chasse(this.monsterLevel(m), !!m.def.elite, !!m.def.boss));
     if (m.def.boss) { this.emit({ k: 'impact', hitstop: 0.15, shake: 0.02, big: true }); this.emit({ k: 'bossDown', monster: m.type }); }
   }
