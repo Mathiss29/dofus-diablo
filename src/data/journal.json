@@ -1434,6 +1434,16 @@
               "Incarnam",
               "Astrub"
             ]
+          },
+          {
+            "titre": "Dix donjons d'Amakna en couloirs",
+            "phrase": "Les vraies salles des donjons d'Amakna, reliées par des couloirs, mènent à la cour du boss.",
+            "details": "Scarafeuilles, Squelettes, Tofus, Gobs, Bworks, Forgerons, Kwakwa, Larves, et les deux donjons Wabbits pour leur île.",
+            "icone": "boss",
+            "etiquettes": [
+              "Amakna",
+              "Partie de test"
+            ]
           }
         ]
       }
