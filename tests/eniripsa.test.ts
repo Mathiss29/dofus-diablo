@@ -166,7 +166,7 @@ describe('Légendaires de l\'Eniripsa (« Légendaires eni : 1A 2C-2P 3A 4A 5A �
   });
 
   it('P : Seconde vie relève sans Insoignable, avec un bouclier', () => {
-    const w = eniItems(), p = w.player, q = allie(w, 200);
+    const w = eniItems(), q = allie(w, 200);
     porter(w, 'pc-eniripsa-P', 20);
     q.dead = true; q.hp = 0;
     press(w, 'reconstitution', { x: q.x, y: q.y }); idle(w, 0.5);
