@@ -40,7 +40,8 @@ import { WorldView } from './worldView';
 import { Particules, type SysData } from './particles';
 import { ambiance, chargerReglages, matriceSaturation, sauverReglages, type Reglages } from './ambiance';
 import { ICON_SHEET, iconFrame } from './icons';
-import { CarteMonde } from './carteMonde';
+import { CarteMonde, COULEURS_GROUPE, type GesteCarte } from './carteMonde';
+import { SIGNAL_DUREE } from '../sim/carte';
 import { Windows } from './windows';
 import { mmss } from './forgeVue';
 import { Chargement, type Arrivee } from './chargement';
@@ -208,7 +209,7 @@ export class ZoneScene extends Phaser.Scene {
     else this.zoneId = 'incarnam';
     // dessins gardés d'une partie à l'autre : ils appartenaient à la scène d'avant (détruits avec elle), on les refait
     // (avant : Sacrieur qui change de zone ou rejoint une coop -> goutte de souffrance d'une scène détruite, jeu figé)
-    this.rageAura = undefined; this.goutteSouffrance = undefined; this.sangG = undefined; this.laisseG = undefined; this.lanceG = undefined; this.lancesVues = new Map(); this.gouttesSol = [];
+    this.rageAura = undefined; this.goutteSouffrance = undefined; this.sangG = undefined; this.laisseG = undefined; this.signalG = undefined; this.lanceG = undefined; this.lancesVues = new Map(); this.gouttesSol = [];
     this.views = new Map(); this.dropViews = new Map(); this.worldView = null; this.questView = null; this.passantsView = null; this.dialogueView = null; this.talkClick = null; this.zaapClick = null; this.zaapAnnonce = null; this.pressed = null; this.aimId = null; this.aimKey = null; this.hoverId = null; this.potion = false; this.hitstop = 0; this.acc = 0;
   }
 
@@ -435,7 +436,9 @@ export class ZoneScene extends Phaser.Scene {
     const pel = this.passantsEnLigne = new PassantsEnLigne(this);
     this.events.once('shutdown', () => { pel.destroy(); if (this.passantsEnLigne === pel) this.passantsEnLigne = null; });
     this.carte?.destroy();
-    this.carte = zone.open ? new CarteMonde(this.world, v(`${worldDir(zone.open.world)}/carte.webp`), `${ASSETS}/ui/reperes`) : null;
+    this.carte = zone.open ? new CarteMonde(this.world, worldDir, `${ASSETS}/ui/reperes`, `${this.slot}_${this.world.player.nom}`) : null;
+    // drapeaux et signal posés depuis la carte (9A, 14B) : partent dans l'entrée du joueur
+    if (this.carte) this.carte.onGeste = g => { this.carteGeste = { ...this.carteGeste, ...g }; };
     this.events.once('shutdown', () => { this.windows?.destroy(); this.windows = null; this.carte?.destroy(); this.carte = null; });
     this.hud.onSlotHover = (id, x, y) => {
       this.hoverId = id;
@@ -464,6 +467,7 @@ export class ZoneScene extends Phaser.Scene {
     this.hud.onPasser = id => this.world.quetes?.passer(id);
     this.hud.onSucces = id => this.windows?.ouvrirSucces(id);
     this.hud.onCarteQuete = () => { if (this.carte?.dispo) this.carte.montrerQuete(); };
+    this.hud.onMini = () => this.basculerCarte();   // 11A : clic sur la mini-carte
     if (this.vitrine) this.initVitrine();
     else {
       this.cameras.main.startFollow(this.viewOf(this.world.player).sprite, true, 0.12, 0.12, 0, 30);
@@ -658,6 +662,11 @@ export class ZoneScene extends Phaser.Scene {
       if (this.reglages.lancer === 'dofus' && this.aimId) { this.pressed = this.aimId; this.aimId = null; this.aimKey = null; this.uiClick = true; return; }
       // Alt + clic sur un monstre (Osamodas 7C) : la meute l'attaque
       if (this.keys.ALT.isDown && this.world.betes.length) { const m = this.monsterUnder(p); if (m && !m.dead) { this.ordreMeute = m.id; this.uiClick = true; return; } }
+      // Alt + clic au sol (carte « suite » 14B) : un signal qui pulse chez tout le groupe
+      if (this.keys.ALT.isDown && this.world.zone.open) {
+        const wp = p.positionToCamera(this.cameras.main) as Phaser.Math.Vector2, q = ISO.toWorld(wp.x, wp.y);
+        this.carteGeste = { ...this.carteGeste, signal: { x: q.x, y: q.y } }; this.uiClick = true; return;
+      }
       this.holding = true;
       if (this.keys.SHIFT.isDown) { this.pressed = 'attaque'; this.clickMode = 'place'; return; }
       const n = this.questView?.pnjUnder(p, this.cameras.main);
@@ -981,6 +990,7 @@ export class ZoneScene extends Phaser.Scene {
       case 'chat': this.chat?.ouvrir(); break;
       case 'options': w?.toggle('opt'); break;
       case 'carte': this.basculerCarte(); break;   // M, comme dans Dofus (maquette 0.2, 18A)
+      case 'carteTab': if (this.carte?.dispo && !this.carte.ouverte) this.carte.basculerSurimpression(); break;   // 11B : carte en surimpression
       case 'havresac': this.havreSacDemande = true; break;
       case 'coffre': this.coffreDemande = true; break;
       case 'muet': this.basculerMuet(); break;
@@ -1024,6 +1034,7 @@ export class ZoneScene extends Phaser.Scene {
     }
     this.pickClick = null;
     if (this.ordreMeute != null) { input.meute = this.ordreMeute; this.ordreMeute = null; }
+    if (this.carteGeste) { input.carte = this.carteGeste; this.carteGeste = null; }
     if (this.havreSacDemande) { input.havreSac = true; this.havreSacDemande = false; }
     if (this.coffreDemande) { input.coffre = true; this.coffreDemande = false; }
     if (this.zaapChoix != null) { input.zaap = this.zaapChoix; this.zaapChoix = null; }
@@ -1131,6 +1142,7 @@ export class ZoneScene extends Phaser.Scene {
     const dt = Math.min(deltaMs / 1000, 0.1) * echelle;
     this.fx.update(dt);
     this.carte?.update();
+    this.majMarquesCarte();
     // fenêtre d'un Zaap du monde : elle se ferme si l'on s'en éloigne
     if (this.windows?.ouverte === 'zaap' && !this.world.dansRefuge && !this.world.zaapProche() && !this.world.zaapDepart) this.windows.close(false);
     // commande chez Malek (Forgemagie UI 9E) : compte à rebours de la fenêtre, une fois par seconde
@@ -1288,6 +1300,10 @@ export class ZoneScene extends Phaser.Scene {
         case 'recycle': this.hud.loot(`+${e.pepites} Pépite${e.pepites > 1 ? 's' : ''}${e.n > 1 ? ` (${e.n} recyclés)` : ''}`, '#b9e54b'); break;
         case 'achat': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Objet'} acheté (−${e.prix} Pépites)`, '#b9e54b'); break;
         case 'rappel': this.hud.banner(`Rappel\n${e.name}`, 1200); this.snapCam = true; break;
+        // 17A : lieu découvert (bandeau, un peu d'XP)
+        case 'lieuDecouvert': this.hud.banner(`Lieu découvert : ${e.nom}\n+${e.xp} XP`, 2000); Son.jouer(MANIFESTE.ui.objectif, 'interface', { vol: 0.7 }); break;
+        // 14B : signal d'un joueur du groupe (Alt + clic)
+        case 'signal': Son.jouer(MANIFESTE.ui.checkpoint, 'interface', { vol: 0.6, vitesse: 1.3, cle: 'signal', ecart: 0.5 }); break;
         case 'recolteFin': {
           const r = RECOLTES.ressources[e.item];
           this.hud.loot(`${r?.nom ?? 'Ressource'} x${e.n}${e.dore ? ' (dorée !)' : ''}`, e.dore ? '#ffd34a' : '#9ad15a'); this.windows?.refresh(); break;
@@ -1528,6 +1544,8 @@ export class ZoneScene extends Phaser.Scene {
   private demandees = new Set<string>();
   /** Alt + clic sur un monstre : ordre donné à la meute de l'Osamodas (7C). */
   private ordreMeute: number | null = null;
+  /** Gestes de la carte du monde (drapeaux, signal) pour la prochaine entrée. */
+  private carteGeste: GesteCarte | null = null;
   /** Dernier usage de chaque planche de monstre chargée à la demande (ms). */
   private readonly vuPlanche = new Map<string, number>();
   private oubliT = 0;
@@ -1623,6 +1641,39 @@ export class ZoneScene extends Phaser.Scene {
       sp.setPosition(s.x, s.y).setDepth(s.y + 0.5).setVisible(true);
     }
     for (const [id, sp] of this.lancesVues) if (!vus.has(id)) { sp.destroy(); this.lancesVues.delete(id); }
+  }
+  /** Drapeaux (9A, 14A), tombe (15A) et groupe sur la mini-carte ; drapeau suivi pour la flèche du HUD. */
+  private majMarquesCarte() {
+    const c = this.carte, w = this.world, zone = w.opts.zone ?? '', l: Hud['marquesMini'] = [];
+    let suivi: Hud['drapeauSuivi'] = null;
+    if (c) w.players.forEach((o, i) => {
+      const coul = parseInt(COULEURS_GROUPE[i % COULEURS_GROUPE.length].slice(1), 16);
+      if (o !== w.player) l.push({ x: o.x, y: o.y, genre: 'allie', coul });
+      o.drapeaux.forEach((d, j) => {
+        if (d.zone !== zone) return;
+        const q = c.versJeu(d.x, d.y); if (!q) return;
+        l.push({ ...q, genre: 'drapeau', coul: o === w.player ? 0xf2d36b : coul });
+        if (o === w.player && c.suivi === j) suivi = { ...q, note: d.note };
+      });
+    });
+    const t = w.player.tombe;
+    if (t && t.zone === zone) l.push({ x: t.x, y: t.y, genre: 'tombe', coul: 0xffffff });
+    this.hud.marquesMini = l; this.hud.drapeauSuivi = suivi;
+  }
+  /** Signal Alt + clic (carte « suite » 14B) : cercles qui pulsent au sol, de la couleur du joueur, chez tout le groupe. */
+  private signalG?: Phaser.GameObjects.Graphics;
+  private dessinerSignaux() {
+    const w = this.world, g = this.signalG ??= this.add.graphics().setDepth(1e5), zone = w.opts.zone ?? '';
+    g.clear();
+    w.players.forEach((o, i) => {
+      const s = o.signal; if (!s || s.zone !== zone) return;
+      const age = w.time - s.t, c = ISO.toScreen(s.x, s.y), coul = parseInt(COULEURS_GROUPE[i % COULEURS_GROUPE.length].slice(1), 16);
+      for (const k of [0, 0.33, 0.66]) {
+        const f = (age * 1.1 + k) % 1, a = Math.max(0, 1 - f) * Math.min(1, (SIGNAL_DUREE - age) * 2);
+        g.lineStyle(4, coul, a); g.strokeEllipse(c.x, c.y, 40 + 140 * f, (40 + 140 * f) / 2);
+      }
+      g.fillStyle(coul, 0.8); g.fillCircle(c.x, c.y, 6);
+    });
   }
   /** Maj enfoncée (maquette Osamodas 14B) : un fil de laisse relie l'Osamodas à chacune de ses bêtes (bleu pour une bête domptée). */
   private laisseG?: Phaser.GameObjects.Graphics;
@@ -1751,6 +1802,7 @@ export class ZoneScene extends Phaser.Scene {
     this.bullesChat?.maj(w, !!this.miroir);
     this.chat?.placer(this.hud.hautSuivi());
     this.dessinerLaisse();
+    this.dessinerSignaux();
     this.dessinerSouffrance();
     this.dessinerLances();
     this.oublierPlanches();

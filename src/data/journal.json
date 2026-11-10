@@ -1314,6 +1314,16 @@
               "Partie de test",
               "Touche D"
             ]
+          },
+          {
+            "titre": "La nouvelle carte du monde",
+            "phrase": "Plein écran sur la carte peinte officielle, brouillard à explorer, filtres, recherche et drapeaux.",
+            "details": "Survole une zone pour ses monstres, ressources et donjons. Tab l'affiche par-dessus le jeu, Alt + clic envoie un signal au groupe.",
+            "icone": "carte",
+            "etiquettes": [
+              "Touche M",
+              "Touche Tab"
+            ]
           }
         ],
         "Corrections": [
@@ -1393,6 +1403,16 @@
             "etiquettes": [
               "Partie de test",
               "Amakna"
+            ]
+          },
+          {
+            "titre": "Lieux à découvrir",
+            "phrase": "Temples, coins secrets et donjons se découvrent en passant, avec un peu d'XP.",
+            "details": "Trois succès Cartographe récompensent 90 % d'une région explorée.",
+            "icone": "succes",
+            "etiquettes": [
+              "Incarnam",
+              "Astrub"
             ]
           }
         ]

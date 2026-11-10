@@ -7,6 +7,7 @@ import type { CommandeFM } from './forgemagie';
 import type { EntreeCodex } from './codex';
 import type { Prereglage } from './player';
 import { DOFUS, EMPLACEMENTS_DOFUS, TROPHEES } from './dofus';
+import { drapeauxPropres, type Drapeau, type Tombe } from './carte';
 
 /** État du joueur gardé entre deux parties (écran « Mes personnages », 3 emplacements, choix 16B).
  *  Pur JSON : l'affichage le range où il veut (navigateur pour l'instant). */
@@ -30,6 +31,11 @@ export interface EtatJoueur {
   /** Havre-Sac (maquette Hub) : Zaaps découverts, zones visitées, et d'où l'on vient si l'on est dans le Havre-Sac. */
   zaaps?: { zone: string; name: string }[];
   zonesVues?: string[];
+  /** Carte du monde (« Carte : » 6A, 9A, 15A ; « Carte suite : » 17A) : brouillard, drapeaux, tombe, lieux trouvés. */
+  explore?: Record<string, string[]>;
+  drapeaux?: Drapeau[];
+  tombe?: Tombe | null;
+  lieuxVus?: string[];
   havreSac?: RetourHavreSac;
   /** Clé d'un donjon encore valable (14A). */
   cleDonjon?: CleDonjon | null;
@@ -56,7 +62,7 @@ export function exporterJoueur(w: World): EtatJoueur {
     bar: p.bar, variants: p.variants, learned: [...p.learned],
     x: p.x, y: p.y, retour: w.pointDeRetour, quetes: w.quetes?.exporter(), zone: w.opts.zone,
     apparats: p.apparats, apparat: p.apparat, codex: p.codex, codexOuvert: p.codexOuvert, ames: p.ames, prereglages: p.prereglages, almanaxJour: p.almanaxJour, dofus: p.dofus, trophees: p.trophees, dofusPortes: p.dofusPortes,
-    zaaps: p.zaaps, zonesVues: p.zonesVues, cleDonjon: p.cleDonjon, commandeFM: p.commandeFM, ...(w.retour ? { havreSac: w.retour } : {}),
+    zaaps: p.zaaps, zonesVues: p.zonesVues, explore: p.explore, drapeaux: p.drapeaux, tombe: p.tombe, lieuxVus: p.lieuxVus, cleDonjon: p.cleDonjon, commandeFM: p.commandeFM, ...(w.retour ? { havreSac: w.retour } : {}),
   });
 }
 
@@ -91,6 +97,12 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
   p.learned = new Set(s.learned ?? []);
   if (Array.isArray(s.zaaps)) p.zaaps = s.zaaps.filter(z => typeof z?.zone === 'string' && typeof z?.name === 'string');
   p.zonesVues = [...new Set([...(s.zonesVues ?? []), ...p.zonesVues])];
+  if (s.explore && typeof s.explore === 'object') for (const [z, l] of Object.entries(s.explore))
+    if (Array.isArray(l)) p.explore[z] = [...new Set([...l.filter(t => typeof t === 'string' && /^-?\d+_-?\d+$/.test(t)), ...(p.explore[z] ?? [])])];
+  p.drapeaux = drapeauxPropres(s.drapeaux);
+  const tb = s.tombe;
+  p.tombe = tb && typeof tb.zone === 'string' && Number.isFinite(tb.x) && Number.isFinite(tb.y) ? { zone: tb.zone, x: tb.x, y: tb.y } : null;
+  if (Array.isArray(s.lieuxVus)) p.lieuxVus = [...new Set([...s.lieuxVus.filter(k => typeof k === 'string'), ...p.lieuxVus])];
   const c = s.cleDonjon;
   if (c && typeof c.nom === 'string' && c.reste > 0) p.cleDonjon = { nom: c.nom, vague: Math.max(1, Math.floor(c.vague) || 1), reste: c.reste };
   const f = s.commandeFM;

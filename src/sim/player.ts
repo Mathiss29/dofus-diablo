@@ -20,6 +20,7 @@ import { aimanter, alchiRhetorique, apresCoupEniripsa, envol, impactEniripsa, ma
 import { impactEnutrof, majEnutrof, perteCoffre } from './enutrof';
 import { DANGER } from './danger';
 import type { EntreeCodex } from './codex';
+import type { Drapeau, Signal, Tombe } from './carte';
 import { POUVOIR_PAR_ID, classeDuPouvoir, gradeAvecPouvoirs, type CtxPouvoirs, type PouvoirDef } from './pouvoirs';
 
 type ActiveSkill =
@@ -85,6 +86,24 @@ export class Player extends Entity {
   /** Zaaps découverts (maquette Hub 2C : le Zaap du Havre-Sac y mène) et zones déjà visitées (3A : les PNJ du Havre-Sac emménagent). */
   zaaps: { zone: string; name: string }[] = [];
   zonesVues: string[] = [];
+  /** Carte du monde (maquette « Carte : » 6A) : cartes du dehors vues, par zone (brouillard). */
+  explore: Record<string, string[]> = {};
+  private _explore = new Map<string, Set<string>>();
+  exploreSet(zone: string): Set<string> {
+    let s = this._explore.get(zone);
+    if (!s || s.size !== (this.explore[zone]?.length ?? 0)) { s = new Set(this.explore[zone] ?? []); this._explore.set(zone, s); }
+    return s;
+  }
+  /** Lieux à découvrir déjà trouvés (« Carte suite : » 17A), clés « zone|carte|nom ». */
+  lieuxVus: string[] = [];
+  /** Drapeaux posés sur la carte (9A, 14A : vus par tout le groupe ; 14C : note). */
+  drapeaux: Drapeau[] = [];
+  /** Signal Alt + clic (14B) : vu par tout le groupe quelques secondes. */
+  signal: Signal | null = null;
+  /** Tombe de la dernière mort (15A). */
+  tombe: Tombe | null = null;
+  /** Carte où le perso était au pas précédent (brouillard et lieux, une fois par carte). */
+  carteIci: string | null = null;
   /** Clé d'un donjon encore valable (maquette « Donjons en vagues » 14A) : on y revient à la vague atteinte. */
   cleDonjon: CleDonjon | null = null;
   /** Commande en cours chez Malek le Forgemage (maquette Forgemagie UI 9E) : l'objet lui est confié, il revient quand c'est fini. */
@@ -1583,7 +1602,7 @@ export class Player extends Entity {
     }
     if (this.hp <= 0 && world.quetes?.immortel) this.hp = 1;   // tutoriel : PV bloqués à 1
     if (world.test?.invincible) this.hp = this.maxHp;   // partie de test (8A) : le coup s'affiche, les PV ne bougent pas
-    if (this.hp <= 0) { this.hp = 0; this.dead = true; this.setAnim('die'); if (this.cls.coffre) perteCoffre(this, world); world.onPlayerDeath(); }
+    if (this.hp <= 0) { this.hp = 0; this.dead = true; this.setAnim('die'); if (this.cls.coffre) perteCoffre(this, world); if (world.zone.open) this.tombe = { zone: world.opts.zone ?? '', x: this.x, y: this.y }; world.onPlayerDeath(); }
     return true;
   }
 }

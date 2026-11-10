@@ -157,6 +157,10 @@ export type SimEvent =
   | { k: 'arche' }
   /** Zaap (maquette « Zaap : » 3A, 9A) : nouveau Zaap découvert ; départ en téléportation (le voyage part dans un instant). */
   | { k: 'zaapDecouvert'; name: string }
+  /** Carte du monde (« Carte suite : » 17A) : lieu à découvrir trouvé (bandeau, XP). g = icône du repère. */
+  | { k: 'lieuDecouvert'; nom: string; g: number; xp: number }
+  /** Signal Alt + clic (14B) : un cercle qui pulse au sol chez tout le groupe. */
+  | { k: 'signal'; x: number; y: number; joueur: number }
   | { k: 'zaapDepart'; x: number; y: number }
   | { k: 'emmenage'; noms: string[] }
   /** Le joueur lance un sort ou son attaque (objectifs « utiliser »). */
