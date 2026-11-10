@@ -1229,8 +1229,21 @@
       "capture": "assets/journal/2026-11-10.webp",
       "legende": "La cour de la Grange du Tournesol Affamé, 10 novembre 2026.",
       "lignes": {
+        "Nouveautés": [
+          {
+            "titre": "Partie de test plus pratique",
+            "phrase": "Barre rapide, DPS sort par sort, pause et ralenti, et tes propres états à garder ou partager.",
+            "details": "Le panneau se déplace et se range en onglets à gauche. Calques pour voir l'aggro, l'IA des monstres et les FPS.",
+            "icone": "options",
+            "etiquettes": [
+              "Partie de test",
+              "Touche F1"
+            ]
+          }
+        ],
         "Corrections": [
-          "Moins de saccades : les monstres endormis loin de toi ne coûtent plus rien à chaque image."
+          "Moins de saccades : les monstres endormis loin de toi ne coûtent plus rien à chaque image.",
+          "Partie de test : toutes les classes visibles, monstre choisi en vue, onglet Butin qui ne fige plus le jeu."
         ],
         "En coulisses": [
           "Mini-carte, portrait et transparence du décor allégés : l'image coûte deux fois moins (≈ 10 → 5 ms)."

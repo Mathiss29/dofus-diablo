@@ -994,7 +994,7 @@ export class Player extends Entity {
       if (!s.impacted && s.t >= d.impactAt) {
         s.impacted = true;
         const arc = (d.arc * Math.PI) / 180;
-        const hits = world.hitCone(this.x, this.y, this.facing, d.range, arc, { dmg: d.dmg + this.weaponDamage(), knock: d.knock, element: this.cls.attaque.element });
+        const hits = world.hitCone(this.x, this.y, this.facing, d.range, arc, { dmg: d.dmg + this.weaponDamage(), knock: d.knock, element: this.cls.attaque.element, sort: 'attaque' });
         this.frenesie(hits, world);
         world.emit({ k: 'spell', fx: 'arc', id: 'attaque', x: this.x, y: this.y, facing: this.facing, size: d.range * 0.85, arc, element: this.cls.attaque.element, big: s.idx === 2, boosted: false });
         world.emit({ k: 'impact', hitstop: hits ? d.hitstop : 0, shake: hits ? d.shake : d.shake * 0.25, big: false });
@@ -1105,7 +1105,7 @@ export class Player extends Entity {
         pmLoss: d.pmLoss && Math.round(d.pmLoss * sig('pm')), paLoss: d.paLoss && Math.round(d.paLoss * sig('pa')),
         poLoss: d.poLoss && this.parGrade(s.id, d.poLoss),
         // Maquette Armes 3B : un coup d'arme fait jaillir un éclat de la couleur de son élément sur chaque monstre touché
-        eclat: s.id === 'arme' || undefined, crit: this.critSort(s.id) || undefined,
+        eclat: s.id === 'arme' || undefined, crit: this.critSort(s.id) || undefined, sort: s.id,
         ...this.effetsPouvoirsClasse(s.id) };
       let hits = 0, size = 0;
       // Pouvoirs officiels (0.3) : zone plus grande, ligne ou cône plus long
@@ -1538,7 +1538,7 @@ export class Player extends Entity {
     this.hp -= dmg; this.flash = 0.1; this.invuln = this.cls.iframesOnHit; this.blesseA = this.age;
     const a = Math.atan2(this.y - fromY, this.x - fromX);
     this.kx += Math.cos(a) * 260; this.ky += Math.sin(a) * 260;
-    world.emit({ k: 'hit', target: 'player', x: this.x, y: this.y, z: 50, amount: dmg, crit: false });
+    world.emit({ k: 'hit', target: 'player', x: this.x, y: this.y, z: 50, amount: dmg, crit: false, element: element === 'meilleur' ? 'neutre' : element });
     world.emit({ k: 'playerHurt' });
     // 3A (maquette « Danger ») : un gros coup secoue l'écran, fige l'action et rougit les bords
     const G = DANGER.grosCoup, gros = dmg >= this.maxHp * G.part;

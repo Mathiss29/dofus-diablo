@@ -4,6 +4,10 @@ import { EQUIP_SLOTS, RARITIES, RARITY_NAMES, rollItem, type EquipSlot, type Rar
 import type { Element } from './defs';
 import type { World } from './world';
 import { DOFUS, EMPLACEMENTS_DOFUS } from './dofus';
+import { LEGENDARY, legendaryPower, type LegendaryFx, type LegendaryId } from './items';
+import { POUVOIR_PAR_ID } from './pouvoirs';
+import { PC_PAR_ID } from './pouvoirsClasse';
+import { ARENE } from './arene';
 
 /** Partie de test (maquette « Test : 1B 2B 3A 4A+4B 5A+5D 6A+6B+6C 7A+7D 8A 9A 10A ») : réglages qui changent les règles
  *  pour le perso de test. Absents (World.test = null) dans une vraie partie. */
@@ -33,14 +37,16 @@ export type CommandeTest =
   /** 4A : niveau 1 à 200 ; auto = les points vont dans la caractéristique de l'élément principal de la classe. */
   | { k: 'niveau'; n: number; auto: boolean }
   /** 5A : va sur une carte du monde (tag de monde.json). */
-  | { k: 'aller'; tag: string; nom: string; case?: number }
+  | { k: 'aller'; tag: string; nom: string; case?: number; vague?: number }
   /** 6A / 6C : un objet officiel (équipement de la rareté voulue) ou une ressource, n fois. */
   | { k: 'objet'; id: string; rarete: Rarity; n: number }
   /** 6B : tenue complète du niveau du perso, de cette rareté. */
   | { k: 'tenue'; rarete: Rarity }
   | { k: 'kamas'; n: number }
   /** 7A / 7D : monstres posés autour d'un point ; mannequin = increvable et immobile (compteur de DPS). */
-  | { k: 'monstre'; type: string; n: number; rang: RangTest; x: number; y: number; mannequin: boolean; frappe?: number }
+  | { k: 'monstre'; type: string; n: number; rang: RangTest; x: number; y: number; mannequin: boolean; frappe?: number;
+      /** Panneau test 6C : résistances du mannequin (sinon celles du monstre). */
+      res?: Partial<Record<Element, number>> }
   /** Retire tous les monstres posés par le panneau. */
   | { k: 'retirer' }
   | { k: 'reglage'; cle: keyof ReglagesTest; on: boolean }
@@ -59,7 +65,32 @@ export type CommandeTest =
   | { k: 'renvoyer' }
   /** Multi (étape 0) : un allié de test de cette classe, au niveau du perso, conduit par la simulation (allie.ts). */
   | { k: 'allie'; classe: string }
-  | { k: 'alliesRetirer' };
+  | { k: 'alliesRetirer' }
+  /** Panneau test 3A : PV pleins, recharges, PA et PM pleins. */
+  | { k: 'soigner' }
+  /** Panneau test 3A : tous les monstres autour du perso tombent (XP et butin comme d'habitude), sauf les mannequins. */
+  | { k: 'tuer' }
+  /** Panneau test 9C : les groupes vaincus reviennent tout de suite. */
+  | { k: 'repeupler' }
+  /** Panneau test 7A : un objet Légendaire de l'emplacement du pouvoir, avec ce pouvoir-là (officiel, de classe ou maison). */
+  | { k: 'pouvoir'; id: string }
+  /** Panneau test 7C. */
+  | { k: 'viderSac' };
+
+/** Rayon de « Tuer la carte » (px du monde) : à peu près l'écran autour du perso. */
+export const RAYON_TUER = 1100;
+
+/** Emplacement et effet d'un pouvoir légendaire choisi dans le panneau (7A) : officiel (src/data/pouvoirs.json), de classe (pc-…), maison. */
+export function pouvoirChoisi(id: string, niveauObjet: number, sortsRecharge: string[]): { slot: Slot | null; fx: LegendaryFx } | null {
+  const o = POUVOIR_PAR_ID[id];
+  if (o) return { slot: o.slot, fx: { id, value: 0 } };
+  const c = PC_PAR_ID[id];
+  if (c) return { slot: c.slot, fx: { id, value: c.jet[1] } };   // le meilleur jet, pour bien voir l'effet
+  if (!(id in LEGENDARY)) return null;
+  const L = LEGENDARY[id as LegendaryId];
+  if (id === 'relance') return sortsRecharge.length ? { slot: null, fx: { id, value: Math.max(0.5, Math.round(L.max * legendaryPower(niveauObjet) * 2) / 2), sort: sortsRecharge[0] } } : null;
+  return { slot: null, fx: { id, value: Math.round(L.max * legendaryPower(niveauObjet)) } };
+}
 
 const xy = (q: { x: number; y: number }): [number, number] => [q.x, q.y];
 
@@ -86,6 +117,9 @@ export function appliquerTest(w: World, c: CommandeTest) {
       break;
     }
     case 'aller': {
+      // Panneau test 9A : arène d'un donjon à la vague voulue (au-delà de la dernière : le boss), comme une clé déjà avancée
+      const dj = c.vague ? w.zone.open?.donjons?.find(x => x.arene?.tag === c.tag) : null;
+      if (dj) p.cleDonjon = { nom: dj.nom, vague: c.vague!, reste: ARENE.cle };
       if (w.allerArene(c.tag)) break;
       const wg = w.worldGrid, libres = wg?.freeByMap.get(c.tag);
       if (!wg || !libres?.length) { dire('Carte introuvable dans cette zone'); break; }
@@ -126,7 +160,7 @@ export function appliquerTest(w: World, c: CommandeTest) {
       const base = w.opts.data.monsters[c.type];
       if (!base) break;
       const xp = base.xp ?? Math.round(base.hp / 5);
-      const def = c.mannequin ? { ...base, hp: base.hp * 20, name: `${base.name} (mannequin)` }
+      const def = c.mannequin ? { ...base, hp: base.hp * 20, name: `${base.name} (mannequin)`, ...(c.res ? { res: c.res } : {}) }
         : c.rang === 'elite' && !base.elite && !base.boss ? { ...base, elite: true, hp: Math.round(base.hp * 3), xp: xp * 3 }
         : c.rang === 'boss' && !base.boss ? { ...base, boss: true, hp: Math.round(base.hp * 10), xp: xp * 10 } : base;
       if (def !== base && !c.mannequin) def.dmg = degatsMonstre(def);   // maquette « Danger » 1A : le rang choisi change aussi ses dégâts
@@ -199,6 +233,35 @@ export function appliquerTest(w: World, c: CommandeTest) {
       const n = w.players.length - 1;
       for (const q of w.players.slice(1)) w.retirerJoueur(q);
       dire(n ? `${n} allié${n > 1 ? 's' : ''} retiré${n > 1 ? 's' : ''}` : 'Aucun allié');
+      break;
+    }
+    case 'soigner': {
+      if (p.dead) break;
+      p.hp = p.maxHp; w.rechargerTout();
+      dire('PV, recharges, PA et PM pleins');
+      break;
+    }
+    case 'tuer': {
+      const l = w.monsters.filter(m => !m.dead && !m.mannequin && Math.hypot(m.x - p.x, m.y - p.y) <= RAYON_TUER);
+      for (const m of l) { m.intouchable = false; m.hp = 0; w.killMonster(m); }
+      dire(l.length ? `${l.length} monstre${l.length > 1 ? 's' : ''} vaincu${l.length > 1 ? 's' : ''}` : 'Aucun monstre autour');
+      break;
+    }
+    case 'repeupler': { const n = w.repeupler(); dire(n ? `${n} groupe${n > 1 ? 's' : ''} revenu${n > 1 ? 's' : ''}` : 'Aucun groupe à faire revenir'); break; }
+    case 'viderSac': { const n = p.bag.length; p.bag = []; dire(`Sac vidé (${n} objet${n > 1 ? 's' : ''})`); break; }
+    case 'pouvoir': {
+      if (!I) break;
+      const ch = pouvoirChoisi(c.id, p.level, p.sortsRecharge);
+      if (!ch) { dire('Pouvoir inconnu'); break; }
+      // l'objet du plus haut niveau (jusqu'au niveau du perso) de cet emplacement ; pouvoir maison : n'importe quel emplacement à pouvoir
+      const pool = Object.entries(I.equipment).filter(([, d]) => !d.horsJeu && !d.familier && d.slot !== 'familier' && (ch.slot ? d.slot === ch.slot : true) && d.level <= Math.max(p.level, 1));
+      const tous = pool.length ? pool : Object.entries(I.equipment).filter(([, d]) => !d.horsJeu && d.slot !== 'familier' && (ch.slot ? d.slot === ch.slot : true));
+      if (!tous.length) { dire('Aucun objet pour cet emplacement'); break; }
+      const max = Math.max(...tous.map(([, d]) => d.level)), [id, d] = w.rng.pick(tous.filter(([, d]) => d.level === max));
+      const it = rollItem(id, d, 'legendaire', w.rng, w.newUid(), p.ctxPouvoirs);
+      it.legendary = c.id === 'relance' || !(c.id in LEGENDARY) ? ch.fx : pouvoirChoisi(c.id, d.level, p.sortsRecharge)!.fx; delete it.legendary2;
+      p.bag.push(it);
+      dire(`${d.name} (Légendaire) dans le sac, avec ce pouvoir`);
       break;
     }
     case 'renvoyer': {
