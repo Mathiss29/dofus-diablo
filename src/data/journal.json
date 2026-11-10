@@ -1231,6 +1231,15 @@
       "lignes": {
         "Nouveautés": [
           {
+            "titre": "Un vrai menu des sorts",
+            "phrase": "Les sorts rangés par rôle, avec des textes écrits pour le temps réel et un schéma de leur zone.",
+            "details": "Filtres, comparaison avec la variante, grade suivant et légendaires qui changent le sort. Clic sur la barre : la fiche du sort.",
+            "icone": "sorts",
+            "etiquettes": [
+              "Touche S"
+            ]
+          },
+          {
             "titre": "Partie de test plus pratique",
             "phrase": "Barre rapide, DPS sort par sort, pause et ralenti, et tes propres états à garder ou partager.",
             "details": "Le panneau se déplace et se range en onglets à gauche. Calques pour voir l'aggro, l'IA des monstres et les FPS.",
@@ -1280,7 +1289,8 @@
         ],
         "En coulisses": [
           "Mini-carte, portrait et transparence du décor allégés : l'image coûte deux fois moins (≈ 10 → 5 ms).",
-          "Le monde passe à la grille de tout le continent : cases marchables rangées carte par carte."
+          "Le monde passe à la grille de tout le continent : cases marchables rangées carte par carte.",
+          "Les 308 sorts des 7 classes ont leur propre texte, sans tours ni PA par tour."
         ],
         "Combat": [
           {

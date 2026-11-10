@@ -3,6 +3,7 @@ import type { SkillId, SpellDef } from '../sim/defs';
 import type { SortGrade } from '../sim/sorts';
 import { ELEMENT_COLORS } from './fx';
 import { STAT_NAMES } from '../sim/items';
+import { avecMotsCles, texteSort } from './sortsTextes';
 
 const ELEMENT_NAMES: Record<string, string> = { neutre: 'Neutre', terre: 'Terre', feu: 'Feu', eau: 'Eau', air: 'Air', meilleur: 'meilleur élément' };
 export const n1 = (v: number) => (Math.round(v * 10) / 10).toString().replace('.', ',');
@@ -105,7 +106,13 @@ export function spellDetail(p: Player, id: SkillId, gOver?: SortGrade) {
   return { d, col, cost, cdS, nCh, dmg, zone: zone(d), extra, rage, grade: o && g ? `Grade ${o.grades.indexOf(g) + 1}/${o.grades.length}` : '' };
 }
 
-/** Infobulle d'un sort de la barre : description officielle, coût, recharge, dommages réels avec les caractéristiques du perso. */
+/** Texte maison d'un sort jouable de la classe (par id Dofus, sinon par clé). */
+export function texteDuSort(p: Player, id: SkillId) {
+  return texteSort(p.cls.sorts, p.cls.spells[id]?.dofusId) ?? texteSort(p.cls.sorts, id);
+}
+
+/** Infobulle d'un sort de la barre (maquette « Menu sorts » 8A) : courte (nom, coût, recharge, accroche, dommages) ;
+ *  Maj maintenu = le texte maison et tous les chiffres (classe .long, montrée par body.maj-tip). */
 export function spellTipHtml(p: Player, id: SkillId): string {
   const d = p.spell(id);
   if (!d) {
@@ -115,11 +122,16 @@ export function spellTipHtml(p: Player, id: SkillId): string {
       Dommages : <b>${Math.round(p.damage(hit.dmg, A.element))}</b> ${ELEMENT_NAMES[A.element]}
       <div class="hint">Équipe une arme pour changer d'auto-attaque (épée, marteau, arc…).</div>`;
   }
-  const x = spellDetail(p, id), slot = p.bar.indexOf(id);
+  const x = spellDetail(p, id), slot = p.bar.indexOf(id), t = texteDuSort(p, id);
   const key = id === p.autoAttack ? 'Auto-attaque · clic gauche' : slot === 7 ? 'Déplacement · Espace' : slot === 6 ? 'Clic droit' : '';
+  const court = [x.dmg, x.zone].filter(Boolean).join(' · ');
+  const corps = t ? `<div class="long">${avecMotsCles(t.texte)}</div>` : d.desc ? `<div class="long">${d.desc.replace(/\n+/g, '<br>')}</div>` : '';
   return `<h4 style="color:${x.col}">${d.name}</h4>
-    <div class="sub">${[x.cost, x.cdS >= 1 ? `recharge ${n1(x.cdS)} s` : '', x.nCh >= 2 ? `${x.nCh} charges` : '', x.grade, key].filter(Boolean).join(' · ')}</div>
-    ${d.desc ? `<div>${d.desc.replace(/\n+/g, '<br>')}</div>` : ''}
-    <div class="cmp">${[x.dmg, x.zone, ...x.extra].filter(Boolean).join('<br>')}</div>
-    ${x.rage ? `<div class="leg" style="${p.rageFull ? '' : 'opacity:.6'}">${x.rage}</div>` : ''}`;
+    <div class="sub">${[x.cost, x.cdS >= 1 ? `recharge ${n1(x.cdS)} s` : '', x.nCh >= 2 ? `${x.nCh} charges` : '', key].filter(Boolean).join(' · ')}</div>
+    ${t ? `<b class="acc">${t.accroche}</b>` : ''}
+    <div class="court">${court}</div>
+    ${corps}
+    <div class="cmp long">${[x.grade, ...x.extra.filter(e => !/charges, chacune/.test(e))].filter(Boolean).join('<br>')}</div>
+    ${x.rage ? `<div class="leg long" style="${p.rageFull ? '' : 'opacity:.6'}">${x.rage}</div>` : ''}
+    <div class="hint court-seul">Maj : détails · clic : fiche du sort</div>`;
 }

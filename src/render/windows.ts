@@ -63,6 +63,31 @@ import { POUVOIR_PAR_ID } from '../sim/pouvoirs';
 import { PC_PAR_ID } from '../sim/pouvoirsClasse';
 import { dmgMoyen, gradeAuNiveau, type SortOfficiel } from '../sim/sorts';
 import { n1, spellDetail } from './spellTip';
+import { ROLES_SORTS, avecMotsCles, texteSort } from './sortsTextes';
+import type { Element, SkillId, SpellDef } from '../sim/defs';
+import type { SortGrade } from '../sim/sorts';
+
+/** Menu sorts 7A : schéma vu de dessus (ton perso au centre, portée en gris, zone en couleur), tiré des données du sort. */
+function schemaZone(d: SpellDef | null, g: SortGrade, col: string): string {
+  const k = 120 / 2 / 7.5, cx = 60, cy = 60, cases = (px: number) => px / 48 * k;
+  const c = (x: number, y: number, r: number, f: string, st: string, dash = '') => `<circle cx="${x}" cy="${y}" r="${Math.max(0, r).toFixed(1)}" fill="${f}" stroke="${st}" stroke-width="1.4"${dash}/>`;
+  const trait = (y: number) => `<line x1="${cx}" y1="${cy}" x2="${cx}" y2="${y.toFixed(1)}" stroke="#e8e2d4" stroke-dasharray="3 3"/>`;
+  let s = '';
+  const h = d?.hit;
+  if (!d || !h) {
+    const r = Math.min(7, g.po[1]) * k;
+    if (r) s += c(cx, cy, r, 'none', '#57554c') + trait(cy - r * 0.85) + c(cx, cy - r * 0.85, 6, `${col}55`, col);
+  } else {
+    const portee = 'range' in h ? h.range : d.move?.maxRange ?? 0;
+    if (portee) s += c(cx, cy, cases(portee), 'none', '#57554c');
+    if (h.shape === 'circle') { const y = d.move ? cy - cases(d.move.maxRange) : cy; s += c(cx, y, cases(h.radius), `${col}55`, col); if (d.move) s += trait(y); }
+    else if (h.shape === 'line') s += `<rect x="${(cx - cases(h.width) / 2 - 3).toFixed(1)}" y="${(cy - cases(h.length)).toFixed(1)}" width="${(cases(h.width) + 6).toFixed(1)}" height="${cases(h.length).toFixed(1)}" fill="${col}55" stroke="${col}"/>`;
+    else if (h.shape === 'cone') { const r = cases(h.range), a = (h.arc / 2) * Math.PI / 180; s += `<path d="M${cx} ${cy} L${(cx - r * Math.sin(a)).toFixed(1)} ${(cy - r * Math.cos(a)).toFixed(1)} A${r.toFixed(1)} ${r.toFixed(1)} 0 0 1 ${(cx + r * Math.sin(a)).toFixed(1)} ${(cy - r * Math.cos(a)).toFixed(1)} Z" fill="${col}55" stroke="${col}"/>`; }
+    else { const y = cy - cases(h.range) * 0.85, z = 'explode' in h && h.explode ? cases(h.explode) : Math.max(5, cases(h.shape === 'point' ? h.radius : 10)); s += trait(y) + c(cx, y, z, `${col}55`, col); }
+  }
+  return `<svg class="zo" viewBox="0 0 120 120" role="img" aria-label="Zone du sort">${s}<circle cx="${cx}" cy="${cy}" r="4.5" fill="#f4efe0"/></svg>`;
+}
+import { ELEMENT_COLORS } from './fx';
 import { World } from '../sim/world';
 import { COFFRE } from '../sim/coffre';
 import { METIERS_FAB, chanceRare, prochainPalier, recettesAvec, recettesDe, sourcesDe } from '../sim/metiers';
@@ -330,6 +355,42 @@ const CSS = `
 .dw .sorts .bs i.drop{border-color:#b9e54b;box-shadow:0 0 8px #b9e54b88}
 .dw .sorts .bs.gap{margin-left:12px}
 .dw .sorts .bb .hint{flex-basis:100%}
+.dw .sorts .ls{gap:4px}
+.dw .sorts .flt{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:2px}
+.dw .sorts .flt span{font-size:11px;padding:2px 8px;border-radius:99px;border:1px solid #45433b;color:#a9a48b;cursor:pointer;background:#1d1c19}
+.dw .sorts .flt span.on{border-color:#b9e54b;color:#e8e2d4}
+.dw .sorts .gh{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#a9a48b;padding:8px 2px 1px}
+.dw .sorts .gh.av{cursor:pointer;color:#c9a55a}
+.dw .sorts .sp{grid-template-columns:40px 1fr 24px}
+.dw .sorts .sp small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dw .sorts .sp img.vv{width:24px;height:24px;border-radius:3px;opacity:.45;filter:grayscale(1);cursor:pointer}
+.dw .sorts .sp img.vv:hover,.dw .sorts .sp img.vv.vu{opacity:1;filter:none;outline:1px solid #f2d36b}
+.dw .sorts .tg{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.dw .sorts .tg span{font-size:11px;padding:1px 6px;border-radius:3px;background:#1d1c19;border:1px solid #45433b;color:#a9a48b}
+.dw .sorts .chips{display:flex;gap:6px;flex-wrap:wrap}
+.dw .sorts .chips span{background:#1d1c19;border:1px solid #34322b;border-radius:3px;padding:3px 8px;font-size:12px;color:#a9a48b}
+.dw .sorts .chips b{color:#e8e2d4}
+.dw .sorts .acc{font-weight:600;font-size:15px;color:#f4efe0}
+.dw .sorts .txt{font-size:13.5px;line-height:1.5;color:#ddd7c6}
+.dw k{color:#f2d36b;border-bottom:1px dotted #f2d36b;cursor:help;position:relative}
+.dw k:hover::after,.dw k:focus::after{content:attr(data-def);position:absolute;left:0;top:1.5em;z-index:20;width:240px;background:#11100e;border:1px solid #6a675c;color:#e8e2d4;font-size:12px;line-height:1.4;padding:6px 8px;border-radius:4px;white-space:normal;font-weight:400}
+.dw .sorts .zr{display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:start}
+.dw .sorts svg.zo{width:120px;height:120px;background:#151411;border:1px solid #34322b;border-radius:4px}
+.dw .sorts .zr .ef{margin:0}
+.dw .sorts .lg{border:1px solid #6a5427;background:#2a2410;border-radius:4px;padding:6px 10px;font-size:12.5px;color:#f2d36b;display:grid;gap:3px}
+.dw .sorts .lg .hd{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#c9a55a}
+.dw .sorts .lg .off{opacity:.55}
+.dw .sorts .amb{font-style:italic;color:#a9a48b;font-size:12.5px}
+.dw .sorts .var{display:flex;gap:8px;align-items:center;border-top:1px solid #34322b;padding-top:8px;font-size:12px;color:#a9a48b;flex-wrap:wrap}
+.dw .sorts .var img{width:30px;height:30px;border-radius:4px}
+.dw .sorts .var b{color:#e8e2d4}.dw .sorts .var>span:nth-child(2){flex:1;min-width:140px}
+.dw .sorts .cmpv{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px}
+.dw .sorts .cmpv>div{background:#1d1c19;border:1px solid #34322b;border-radius:3px;padding:8px;display:grid;gap:2px}
+.dw .sorts .cmpv small{color:#a9a48b;margin-bottom:4px}.dw .sorts .cmpv i{font-style:normal}
+.dw .sorts .up,.dw .sorts .cmpv .up{color:#7be07b}.dw .sorts .cmpv .down{color:#e0625a}
+.dw .tip .acc{display:block;color:#f4efe0;margin-bottom:2px}
+.dw .tip .court{color:#d8d2bc;font-size:12.5px}
+.dw .tip .long{display:none}.dw.maj-tip .tip .long{display:block;margin-top:5px}.dw.maj-tip .tip .court-seul{display:none}
 .dw .win.job{width:min(940px,96vw);height:min(680px,92vh)}
 /* Métiers UI (2026-11-07) : fenêtre Métiers (J) et fenêtre Artisanat, pièces officielles de Dofus 3 */
 .dw .jb{display:grid;grid-template-columns:230px minmax(0,1fr);min-height:0}
@@ -647,6 +708,7 @@ export class Windows {
     this.root = document.createElement('div'); this.root.className = 'dw'; document.body.appendChild(this.root);
     this.tip = document.createElement('div'); this.tip.className = 'tip'; this.tip.style.display = 'none'; this.root.appendChild(this.tip);
     window.addEventListener('keydown', this.captureTouche, true);
+    window.addEventListener('keydown', this.majTip); window.addEventListener('keyup', this.majTip); window.addEventListener('blur', this.majTip);
     // fenêtre Social : suit le groupe (arrivées, départs, vie des membres)
     this.finCoop = Coop.ecouter(() => { if (this.ouverte === 'social') this.refresh(); });
     // (pas pendant qu'on tape un nom dans la fenêtre : le champ garderait sinon ni le texte ni le curseur)
@@ -685,7 +747,8 @@ export class Windows {
     this.win?.remove(); this.win = null; this.tip.style.display = 'none'; this.touchesVue = false; this.touchesEcoute = null;
     this.root.style.zIndex = '';
   }
-  destroy() { this.root.remove(); window.removeEventListener('keydown', this.captureTouche, true); this.finCoop(); this.finEnLigne(); clearInterval(this.minuteSocial); }
+  destroy() { this.root.remove(); window.removeEventListener('keydown', this.captureTouche, true);
+    window.removeEventListener('keydown', this.majTip); window.removeEventListener('keyup', this.majTip); window.removeEventListener('blur', this.majTip); this.finCoop(); this.finEnLigne(); clearInterval(this.minuteSocial); }
 
   show(mode: Mode = 'inv') {
     this.close(false);
@@ -1556,44 +1619,121 @@ export class Windows {
   /** Sort affiché dans la fiche de l'onglet Sorts, et grade montré. */
   private vu: number | null = null;
   private vuGrade = -1;
-  /** Onglet Sorts (choix 8A, comme Dofus 3) : les 22 paires officielles (sort ⇄ variante) triées par niveau, la fiche
-   *  du sort avec ses grades, et la barre où l'on glisse les sorts. Clic sur l'autre sort d'une paire : on l'échange. */
+  /** Menu sorts (2026-11-10) : filtre d'étiquette (5B), rubrique « À venir » dépliée (1C), comparaison avec la variante (6A). */
+  private sortsFiltre: string | null = null;
+  private aVenirOuvert = false;
+  private sortsCmp = false;
+  /** Ouvre l'onglet Sorts sur un sort jouable (10D : clic sur une case de la barre). */
+  ouvrirSort(id: SkillId) {
+    const did = this.world.player.cls.spells[id]?.dofusId;
+    if (did) { this.vu = did; this.vuGrade = -1; this.sortsCmp = false; this.sortsCodex = false; }
+    if (this.win && this.mode === 'sorts') this.render(); else this.show('sorts');
+  }
+  /** Onglet Sorts (maquette « Menu sorts », 2026-11-10) : les paires officielles rangées par rôle (1A), celles qui ne sont pas
+   *  encore à ta portée repliées dans « À venir » (1C), filtres d'étiquettes (5B) ; fiche avec le texte maison (2A, 3A, 4A),
+   *  le schéma de zone (7A), le grade suivant (6B), la comparaison avec la variante (6A), les légendaires qui modifient
+   *  le sort (10A) et la jauge de classe (10B). Clic sur l'autre sort d'une paire : on l'échange (un seul des deux). */
   private renderSorts() {
-    const w = this.win!, p = this.world.player, pairs = p.pairs;
+    const w = this.win!, p = this.world.player, pairs = p.pairs, cl = p.cls.sorts;
     const ico = (s: SortOfficiel) => `assets/ui/sorts/sort_${s.icon}.png`;
     const all = pairs.flat();
     const vu = all.find(s => s.id === this.vu) ?? pairs[0]?.[0];
-    const row = (pr: SortOfficiel[], i: number) => pr.map((s, j) => {
-      const lock = p.level < p.requiredLevel(s), key = p.keyOf(s.id), chosen = (p.variants[i] ?? 0) === j;
-      const drag = !lock && chosen && key ? `draggable="true" data-drag="${key}"` : '';
-      return `<div class="sp ${lock ? 'lock' : ''} ${chosen && !lock ? 'on' : ''} ${vu?.id === s.id ? 'vu' : ''}" data-s="${s.id}" data-p="${i}" data-v="${j}" ${drag}>
-        <img src="${ico(s)}" alt=""><span>${s.name}<small>niv ${p.requiredLevel(s)}${key ? '' : ' · <span class="soon">bientôt jouable</span>'}</small></span></div>`;
-    }).join('<span class="x">⇄</span>');
+    const txt = (s: SortOfficiel) => texteSort(cl, s.id);
+    const ouvert = (s: SortOfficiel) => p.level >= p.requiredLevel(s);
+    const montre = (i: number) => pairs[i][p.variants[i] ?? 0];
+    const dispo = (i: number) => pairs[i].some(s => ouvert(s) && p.keyOf(s.id));
+    // 5B : les étiquettes les plus courantes de la classe deviennent des filtres
+    const compte = new Map<string, number>();
+    for (const s of all) for (const e of txt(s)?.etiquettes ?? []) compte.set(e, (compte.get(e) ?? 0) + 1);
+    const filtres = [...compte.entries()].filter(([, n]) => n >= 3).sort((a, b) => b[1] - a[1]).slice(0, 9).map(([e]) => e);
+    if (this.sortsFiltre && !filtres.includes(this.sortsFiltre)) this.sortsFiltre = null;
+    const garde = (i: number) => !this.sortsFiltre || pairs[i].some(s => txt(s)?.etiquettes.includes(this.sortsFiltre!));
+    const ligne = (i: number) => {
+      const s = montre(i), o = pairs[i].find(x => x !== s)!, t = txt(s), lock = !ouvert(s), key = p.keyOf(s.id);
+      const drag = !lock && key ? `draggable="true" data-drag="${key}"` : '';
+      const sous = lock ? `niveau ${p.requiredLevel(s)}` : !key ? `<span class="soon">bientôt jouable</span>` : escB(t?.accroche ?? '');
+      return `<div class="sp ${lock ? 'lock' : ''} ${!lock && key ? 'on' : ''} ${vu?.id === s.id ? 'vu' : ''}" data-s="${s.id}" data-p="${i}" data-v="${pairs[i].indexOf(s)}" ${drag}>
+        <img src="${ico(s)}" alt=""><span>${s.name}<small>${sous}</small></span>
+        <img class="vv ${vu?.id === o.id ? 'vu' : ''}" src="${ico(o)}" alt="" title="Variante : ${o.name} (niveau ${p.requiredLevel(o)})" data-s="${o.id}" data-p="${i}" data-v="${pairs[i].indexOf(o)}"></div>`;
+    };
+    const idx = pairs.map((_, i) => i).filter(garde);
+    const ici = idx.filter(dispo), plusTard = idx.filter(i => !dispo(i));
+    const liste = `<div class="flt">${filtres.map(e => `<span data-f="${escB(e)}" class="${this.sortsFiltre === e ? 'on' : ''}">${escB(e)}</span>`).join('')}</div>`
+      + ROLES_SORTS.map(([r, nom]) => { const l = ici.filter(i => (txt(montre(i))?.role ?? 'base') === r); return l.length ? `<div class="gh">${nom}</div>${l.map(ligne).join('')}` : ''; }).join('')
+      + (plusTard.length ? `<div class="gh av" data-av>${this.aVenirOuvert ? '▾' : '▸'} À venir · ${plusTard.length}</div>${this.aVenirOuvert ? plusTard.map(ligne).join('') : ''}` : '');
     let fiche = '';
     if (vu) {
       const cur = gradeAuNiveau(vu, p.level), gi = this.vuGrade >= 0 && this.vuGrade < vu.grades.length ? this.vuGrade : vu.grades.indexOf(cur), g = vu.grades[gi];
-      const key = p.keyOf(vu.id), mob = key === p.cls.mobility;
+      const key = p.keyOf(vu.id), mob = key === p.cls.mobility, d = key ? p.cls.spells[key] : null, t = txt(vu);
+      const pi = pairs.findIndex(pr => pr.includes(vu)), autre = pairs[pi]?.find(x => x !== vu);
+      const elOff = (g.element ?? d?.element ?? 'neutre') as Element;
+      const col = '#' + (ELEMENT_COLORS[d?.element ?? elOff] ?? 0xe8e2d4).toString(16).padStart(6, '0');
       const el = (e?: string) => e ? e[0].toUpperCase() + e.slice(1) : '';
-      let rows: [string, string][], effets = '';
+      let chips: [string, string][], liste2: string[] = [], jauge = '';
       if (key) {
         const x = spellDetail(p, key, mob ? undefined : g);
-        rows = [['Coût', mob ? `${x.cost} (déplacement)` : x.cost], ['Recharge', mob ? 'charges de PM' : x.cdS >= 1 ? `${n1(x.cdS)} s` : x.nCh >= 2 ? `${x.nCh} charges (1 toutes les ${n1(p.retourCharge)} s)` : 'aucune'],
-          ['Zone', x.zone.replace(/^Zone : /, '')], ['Dommages', x.dmg ? x.dmg.replace(/^Dommages : /, '') : '—']];
-        effets = `${x.extra.length ? `<ul class="ef">${x.extra.map(t => `<li>${t}</li>`).join('')}</ul>` : ''}${x.rage ? `<div class="rg">${x.rage}</div>` : ''}`;
+        chips = [['Coût', x.cost], ['Recharge', mob ? 'charges de PM' : x.cdS >= 1 ? `${n1(x.cdS)} s` : x.nCh >= 2 ? `${x.nCh} charges` : 'aucune'],
+          ['Dommages', x.dmg ? x.dmg.replace(/^Dommages : /, '') : '—']];
+        liste2 = [x.zone, ...x.extra.map(e => e.replace(/^(\d+) charges, chacune revient/, '$1 charges, chacune revient'))];
+        jauge = x.rage;
       } else {
-        rows = [['Coût', `${g.pa} PA`], ['Recharge', g.relance ? `${g.relance * 3} s` : 'aucune'],
-          ['Portée', g.po[1] === 0 ? 'sur soi' : `${g.po[1]} case${g.po[1] > 1 ? 's' : ''}`],
-          ['Dommages', g.dmg ? `<b>${Math.round(p.damage(dmgMoyen(g) * 1.5, g.element ?? 'neutre'))}</b> ${el(g.element)}${g.vol ? ' (vol de vie)' : ''}` : '—']];
-        if (g.parTour) rows.push(['Cadence', `${g.parTour} lancer${g.parTour > 1 ? 's' : ''} toutes les 3 s au plus`]);
+        chips = [['Coût', `${g.pa} PA`], ['Recharge', g.relance ? `${g.relance * 3} s` : g.parTour ? `${g.parTour} charge${g.parTour > 1 ? 's' : ''}` : 'aucune'],
+          ['Dommages', g.dmg ? `<b>${Math.round(p.damage(dmgMoyen(g) * 1.5, g.element ?? 'neutre'))}</b> ${el(g.element)}` : '—']];
+        liste2 = [g.po[1] === 0 ? 'Sur toi' : `Portée ${g.po[0] > 1 ? `${g.po[0]} à ` : ''}${g.po[1]} case${g.po[1] > 1 ? 's' : ''}`];
       }
-      fiche = `<div class="fh"><img src="${ico(vu)}" alt=""><div><b>${vu.name}</b>
+      chips.push(['Niveau', String(p.requiredLevel(vu))]);
+      // 6B : ce que le grade suivant apporte
+      const nx = vu.grades[gi + 1];
+      if (nx) {
+        const dif: string[] = [];
+        if (nx.dmg && g.dmg) { const k = Math.round((dmgMoyen(nx) / dmgMoyen(g) - 1) * 100); if (k) dif.push(`dommages ${k > 0 ? '+' : ''}${k} %`); }
+        if (nx.po[1] !== g.po[1]) dif.push(`portée ${nx.po[1] > g.po[1] ? '+' : ''}${nx.po[1] - g.po[1]} case${Math.abs(nx.po[1] - g.po[1]) > 1 ? 's' : ''}`);
+        if (nx.pa !== g.pa) dif.push(`coût ${nx.pa > g.pa ? '+' : '−'}${Math.abs(nx.pa - g.pa)} PA`);
+        if (nx.relance !== g.relance) dif.push(`recharge ${nx.relance < g.relance ? '−' : '+'}${Math.abs(nx.relance - g.relance) * 3} s`);
+        if (dif.length) liste2.push(`<span class="up">Grade ${gi + 2} au niveau ${nx.niv} : ${dif.join(', ')}</span>`);
+      }
+      // 10A : pouvoirs légendaires portés qui changent ce sort, et ceux gardés dans le Codex
+      const legs: string[] = [];
+      if (key) for (const it of Object.values(p.equipment)) for (const l of [it?.legendary, it?.legendary2]) {
+        if (!l) continue;
+        const vise = POUVOIR_PAR_ID[l.id]?.dofusId === vu.id || PC_PAR_ID[l.id]?.sort === key || (l.id === 'relance' && l.sort === key);
+        if (!vise) continue;
+        const { nom, texte } = lignePouvoir(l, d?.name, p.zoneSeule(key)), e = p.etatPouvoir(l.id);
+        legs.push(`<div class="${e.actif ? '' : 'off'}"><b>${nom}</b> : ${texte}${e.actif ? '' : ` <i>(${e.raison})</i>`}</div>`);
+      }
+      const auCodex = p.v03 && p.codexOuvert ? p.codex.filter(e => POUVOIR_PAR_ID[e.id]?.dofusId === vu.id || (!!key && (PC_PAR_ID[e.id]?.sort === key || (e.id === 'relance' && e.sort === key)))).length : 0;
+      // 6A : comparaison avec la variante
+      const cmp = (() => {
+        if (!this.sortsCmp || !autre) return '';
+        const ga = gradeAuNiveau(vu, p.level), gb = gradeAuNiveau(autre, p.level);
+        const lignes: [string, number, number, boolean, (v: number) => string][] = [
+          ['Niveau', p.requiredLevel(vu), p.requiredLevel(autre), false, v => String(v)],
+          ['Coût', ga.pa, gb.pa, false, v => `${v} PA`],
+          ['Portée', ga.po[1], gb.po[1], true, v => v ? `${v} cases` : 'sur toi'],
+          ['Dommages de base', dmgMoyen(ga), dmgMoyen(gb), true, v => v ? String(Math.round(v)) : '—'],
+          ['Recharge', ga.relance * 3, gb.relance * 3, false, v => v ? `${v} s` : 'aucune'],
+        ];
+        const c = (a: number, b: number, plus: boolean) => a === b ? '' : (a > b) === plus ? 'up' : 'down';
+        const col2 = (s: SortOfficiel, mien: boolean) => `<div><b>${s.name}</b><small>${escB(txt(s)?.accroche ?? '')}</small>${lignes.map(([n, a, b, plus, f]) =>
+          `<span>${n} : <i class="${mien ? c(a, b, plus) : c(b, a, plus)}">${f(mien ? a : b)}</i></span>`).join('')}</div>`;
+        return `<div class="cmpv">${col2(vu, true)}${col2(autre, false)}</div>`;
+      })();
+      fiche = `<div class="fh"><img src="${ico(vu)}" alt=""><div><b style="color:${col}">${vu.name}</b>
+        ${t?.etiquettes.length ? `<div class="tg">${t.etiquettes.map(e => `<span>${escB(e)}</span>`).join('')}</div>` : ''}
         <div class="gr">${vu.grades.map((x, k) => `<span data-g="${k}" class="${k === gi ? 'on' : ''}">Grade ${k + 1} · niv ${x.niv}</span>`).join('')}</div></div></div>
+        <div class="chips">${chips.map(([a, b]) => `<span>${a} <b>${b}</b></span>`).join('')}</div>
         ${p.level < p.requiredLevel(vu) ? `<div class="note">Se débloque au niveau ${p.requiredLevel(vu)}.</div>` : ''}
-        ${key ? '' : '<div class="note">Pas encore jouable : il arrivera avec les zones de son niveau.</div>'}
-        <dl>${rows.map(([t, v]) => `<dt>${t}</dt><dd>${v}</dd>`).join('')}</dl>
-        ${effets}
-        <div class="ds">${vu.desc}</div>
-        <div class="hint">Glisse un sort débloqué dans la barre, ou clique-le puis clique une case. Clic sur l'autre sort d'une paire pour l'échanger (un seul des deux, comme dans Dofus). Clic droit sur une case de la barre : la vider.</div>`;
+        ${key ? '' : '<div class="note">Pas encore jouable : il arrivera avec les zones de son niveau. Le texte dit comment il marchera.</div>'}
+        ${t ? `<div class="acc">${escB(t.accroche)}</div><div class="txt">${avecMotsCles(t.texte)}</div>` : `<div class="ds">${vu.desc}</div>`}
+        <div class="zr">${schemaZone(d, g, col)}<ul class="ef">${liste2.map(e => `<li>${e}</li>`).join('')}</ul></div>
+        ${jauge ? `<div class="rg">${jauge}</div>` : ''}
+        ${legs.length ? `<div class="lg"><div class="hd">Modifié par ton équipement</div>${legs.join('')}</div>` : ''}
+        ${auCodex ? `<div class="hint">${auCodex} pouvoir${auCodex > 1 ? 's' : ''} pour ce sort dans ton Codex.</div>` : ''}
+        ${t?.ambiance ? `<div class="amb">${escB(t.ambiance)}</div>` : ''}
+        ${autre ? `<div class="var"><img src="${ico(autre)}" alt=""><span>Variante exclusive : <b>${autre.name}</b> · niveau ${p.requiredLevel(autre)}</span>
+          <span class="btn" data-cmp>${this.sortsCmp ? 'Fermer' : 'Comparer'}</span>${ouvert(autre) && (p.variants[pi] ?? 0) === pairs[pi].indexOf(vu) ? `<span class="btn" data-prend="${autre.id}">Prendre</span>` : ''}</div>` : ''}
+        ${cmp}
+        <div class="hint">Glisse un sort débloqué dans la barre, ou clique-le puis clique une case. Petite icône à droite : la variante (un seul des deux, comme dans Dofus). Clic droit sur une case de la barre : la vider.</div>`;
     }
     const KEYS = [...[1, 2, 3, 4, 5, 6].map(i => Touches.nomAction(`sort${i}`)), this.reglages.deplacement === 'droit' ? 'Clic G' : 'Clic D', Touches.nomAction('deplacement')];
     const slot = (i: number) => {
@@ -1603,15 +1743,25 @@ export class Windows {
     // Codex (0.3, 7B) : consultable partout depuis la fenêtre des Sorts
     const codexBtn = p.v03 && p.codexOuvert ? `<span class="btn" data-vcodex>${this.sortsCodex ? 'Retour aux sorts' : `Codex · ${p.codex.length}`}</span>` : '';
     w.innerHTML = `${this.title('Sorts', 'spells')}<div class="sb">
-      ${this.sortsCodex && p.v03 && p.codexOuvert ? `<div class="fi" style="grid-column:1/-1;overflow:auto">${codexPageHtml(p)}</div>` : `<div class="ls">${pairs.map((pr, i) => `<div class="pr">${row(pr, i)}</div>`).join('')}</div>
+      ${this.sortsCodex && p.v03 && p.codexOuvert ? `<div class="fi" style="grid-column:1/-1;overflow:auto">${codexPageHtml(p)}</div>` : `<div class="ls">${liste}</div>
       <div class="fi">${fiche}</div>`}
-      <div class="bb">${p.bar.map((_, i) => slot(i)).join('')}<span class="hint">${p.cls.name} niveau ${p.level} · ${all.filter(s => p.level >= p.requiredLevel(s)).length} sorts débloqués sur ${all.length}</span>${codexBtn}</div>
+      <div class="bb">${p.bar.map((_, i) => slot(i)).join('')}<span class="hint">${p.cls.name} niveau ${p.level} · ${all.filter(s => ouvert(s) && p.keyOf(s.id)).length} sorts débloqués sur ${all.length}</span>${codexBtn}</div>
     </div>`;
     w.querySelector<HTMLElement>('[data-vcodex]')?.addEventListener('click', () => { this.sortsCodex = !this.sortsCodex; this.render(); });
-    w.querySelectorAll<HTMLElement>('.sp').forEach(e => e.addEventListener('click', () => {
-      const id = +e.dataset.s!, i = +e.dataset.p!, v = +e.dataset.v! as 0 | 1;
-      if (this.vu === id && (p.variants[i] ?? 0) !== v) p.setVariant(i, v);
+    w.querySelectorAll<HTMLElement>('.flt [data-f]').forEach(e => e.addEventListener('click', () => { this.sortsFiltre = this.sortsFiltre === e.dataset.f ? null : e.dataset.f!; this.render(); }));
+    w.querySelector<HTMLElement>('[data-av]')?.addEventListener('click', () => { this.aVenirOuvert = !this.aVenirOuvert; this.render(); });
+    w.querySelector<HTMLElement>('[data-cmp]')?.addEventListener('click', () => { this.sortsCmp = !this.sortsCmp; this.render(); });
+    w.querySelector<HTMLElement>('[data-prend]')?.addEventListener('click', e => {
+      const id = +(e.currentTarget as HTMLElement).dataset.prend!, i = pairs.findIndex(pr => pr.some(s => s.id === id));
+      if (i >= 0) { p.setVariant(i, pairs[i].findIndex(s => s.id === id) as 0 | 1); this.vu = id; this.render(); this.onChange(); }
+    });
+    w.querySelectorAll<HTMLElement>('.sp').forEach(e => e.addEventListener('click', ev => {
+      const cible = (ev.target as HTMLElement).closest<HTMLElement>('[data-s]') ?? e;
+      const id = +cible.dataset.s!, i = +cible.dataset.p!, v = +cible.dataset.v! as 0 | 1;
+      // la petite icône : on regarde la variante ; un second clic dessus la prend (si elle est débloquée)
+      if (cible !== e) { if (this.vu === id && p.level >= p.requiredLevel(pairs[i][v])) p.setVariant(i, v); }
       else if ((p.variants[i] ?? 0) !== v && p.level >= p.requiredLevel(pairs[i][v])) p.setVariant(i, v);
+      if (this.vu !== id) this.sortsCmp = false;
       this.vu = id; this.vuGrade = -1; this.render(); this.onChange();
     }));
     w.querySelectorAll<HTMLElement>('.gr span').forEach(e => e.addEventListener('click', () => { this.vuGrade = +e.dataset.g!; this.render(); }));
@@ -2241,12 +2391,25 @@ export class Windows {
     t.style.left = `${Math.min(innerWidth - w - 8, ev.clientX + 16)}px`;
     t.style.top = `${Math.min(innerHeight - h - 8, ev.clientY + 12)}px`;
   }
-  hideTip() { this.tip.style.display = 'none'; }
+  hideTip() { this.tip.style.display = 'none'; this.ancreTip = null; }
   /** Infobulle libre (sorts de la barre), au-dessus du point (x, y) de l'écran. */
   showHtmlTip(html: string, x: number, y: number) {
     const t = this.tip; t.innerHTML = html; t.style.display = 'block';
-    const w = t.offsetWidth, h = t.offsetHeight;
-    t.style.left = `${Math.max(8, Math.min(innerWidth - w - 8, x - w / 2))}px`;
-    t.style.top = `${Math.max(8, y - h - 12)}px`;
+    this.ancreTip = [x, y]; this.placerTip();
   }
+  private ancreTip: [number, number] | null = null;
+  private placerTip() {
+    const t = this.tip, a = this.ancreTip; if (!a || t.style.display === 'none') return;
+    const w = t.offsetWidth, h = t.offsetHeight;
+    t.style.left = `${Math.max(8, Math.min(innerWidth - w - 8, a[0] - w / 2))}px`;
+    t.style.top = `${Math.max(8, a[1] - h - 12)}px`;
+  }
+  /** Menu sorts 8A : Maj maintenu = infobulle des sorts détaillée (le bas reste collé à la barre). */
+  private majTip = (e: Event) => {
+    const on = e instanceof KeyboardEvent ? e.shiftKey : false;
+    if (this.root.classList.contains('maj-tip') === on) return;
+    this.root.classList.toggle('maj-tip', on);
+    this.placerTip();
+  };
+
 }

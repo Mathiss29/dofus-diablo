@@ -10,6 +10,7 @@ import { dessinerPortraits, groupesBestiaire } from './butinVue';
 import { LADDER_CSS, VueLadder, chargerLadder, ladderCharge } from './ladder';
 import { niveauHorsPartie } from '../sim/butin';
 import { SORTS, niveauRequis, type SortOfficiel } from '../sim/sorts';
+import { texteSort } from './sortsTextes';
 import CLASSES_DOFUS from '../data/classes_dofus.json';
 import JOURNAL from '../data/journal.json';
 import DIAPORAMA from '../data/diaporama.json';
@@ -692,7 +693,7 @@ export class Accueil {
           <div style="display:flex;justify-content:space-between"><span>Difficulté</span><span class="dots">${'●'.repeat(c.complexite)}<i>${'●'.repeat(5 - c.complexite)}</i></span></div>
           ${jouable ? `<div class="lab" style="margin-bottom:0">Premiers sorts</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:calc(.5*var(--u))">${this.premiersSorts(c.cle).map(([sp, n]) =>
-            `<div class="sp" data-sort data-nom="${esc(sp.name)}" data-desc="${esc(sp.desc)}" style="cursor:help"><img src="assets/ui/sorts/sort_${sp.icon}.png" alt=""><span>${esc(sp.name)}<small>niveau ${n}</small></span></div>`).join('')}</div>` : ''}
+            `<div class="sp" data-sort data-nom="${esc(sp.name)}" data-desc="${esc(this.texteMaison(c.cle, sp))}" style="cursor:help"><img src="assets/ui/sorts/sort_${sp.icon}.png" alt=""><span>${esc(sp.name)}<small>niveau ${n}</small></span></div>`).join('')}</div>` : ''}
         </div>
       </div>
     </div>
@@ -735,6 +736,11 @@ export class Accueil {
       const dim = s.filtre !== 'Toutes' && (k.roles[s.filtre] ?? 0) < 7;
       return `<button type="button" class="cls${k.cle === s.cle ? ' on' : ''}${JOUABLES.has(k.cle) ? ' play' : ''}${dim ? ' dim' : ''}" data-cls="${k.cle}"><img src="${tete(k, s.sexe)}" alt="">${esc(k.nom)}${JOUABLES.has(k.cle) ? (k.cle === DEBUTANT ? '<span class="soon conseil">débutant</span>' : '') : '<span class="soon">bientôt</span>'}</button>`;
     }).join('')}</div>`;
+  }
+  /** Texte maison du sort (menu des sorts 2A), sinon le texte officiel. */
+  private texteMaison(cle: string, sp: SortOfficiel): string {
+    const t = texteSort(GAME_DATA.classes[cle]?.sorts ?? cle, sp.id);
+    return t ? `${t.accroche} ${t.texte}` : sp.desc;
   }
   /** Les 4 premiers sorts officiels de la classe (Dofus 3), avec le niveau où on les obtient. */
   private premiersSorts(cle: string): [SortOfficiel, number][] {
