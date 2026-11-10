@@ -14,20 +14,20 @@ import DOFUS from '../data/dofus.json';
 
 export interface LigneLadder {
   id: string; c: number; nom: string; classe: string; sexe: 'm' | 'f'; hc: boolean; niveau: number; xp: number; temps: number; lieu: string;
-  zones: number; zaaps: number; dofus: number; metiers: Record<string, [number, number]>;
+  zones: number; zaaps: number; dofus: number; metiers: Record<string, [number, number]>; succes?: number;
 }
 interface RecordDonjon { id: string; temps: number; equipe: { nom: string; classe: string }[]; quand: number }
 interface Tombe { nom: string; classe: string; sexe: 'm' | 'f'; niveau: number; temps: number; lieu: string; tueur: string; quand: number }
 interface Premier { cle: string; id: string; nom: string; classe: string; detail: string; quand: number }
 export interface DonneesLadder {
   maj: number; total: number; persos: Record<string, LigneLadder>;
-  listes: { niveau: string[]; hardcore: string[]; exploration: string[]; metiers: Record<string, string[]> };
+  listes: { niveau: string[]; hardcore: string[]; exploration: string[]; metiers: Record<string, string[]>; succes?: string[] };
   donjons: Record<string, { solo: RecordDonjon[]; groupe: RecordDonjon[] }>;
   tombes: Tombe[]; premiers: Premier[]; enLigne: string[];
 }
 interface Fiche extends LigneLadder {
   equipement: Record<string, { id: string; rarity: Rarity | string }>; dofusPortes: string[]; enLigne: boolean;
-  rangs: { niveau: number | null; hardcore: number | null; exploration: number | null; metiers: Record<string, number>; donjons: Record<string, number> };
+  rangs: { niveau: number | null; hardcore: number | null; exploration: number | null; succes?: number | null; metiers: Record<string, number>; donjons: Record<string, number> };
 }
 interface Moi { compte: number; miens: string[]; amis: number[]; cache: boolean }
 
@@ -78,15 +78,16 @@ const nomMetier = (k: string) => (ITEMS as unknown as { metiers?: Record<string,
 const DOF = (DOFUS as unknown as { dofus: Record<string, { nom: string; icon: number }> }).dofus;
 const nomEquip = (id: string) => ITEMS.equipment[id]?.name ?? id;
 
-export type OngletLadder = 'niveau' | 'metiers' | 'exploration' | 'donjons' | 'premiers';
+export type OngletLadder = 'niveau' | 'metiers' | 'exploration' | 'succes' | 'donjons' | 'premiers';
 const ONGLETS: [OngletLadder, string, string][] = [
-  ['niveau', 'Niveau', 'assets/ui/menu/characteristic.png'], ['metiers', 'Métiers', 'assets/ui/menu/job.png'], ['exploration', 'Exploration', 'assets/ui/menu/map.png'],
+  ['niveau', 'Niveau', 'assets/ui/menu/characteristic.png'], ['metiers', 'Métiers', 'assets/ui/menu/job.png'], ['exploration', 'Exploration', 'assets/ui/menu/map.png'], ['succes', 'Succès', 'assets/ui/menu/success.png'],
   ['donjons', 'Donjons', 'assets/ui/menu/breach.png'], ['premiers', 'Les premiers', 'assets/ui/menu/ladder.png'],
 ];
 const EN_CLAIR: Record<OngletLadder, [string, string]> = {
   niveau: ['Niveau', 'Niveau du perso, puis l\'expérience totale pour départager. Les Hardcore ont aussi leur classement, et ceux qui sont tombés restent dans le mémorial.'],
   metiers: ['Métiers', 'Un classement par métier : niveau, puis expérience du métier.'],
   exploration: ['Exploration', 'Sous-zones découvertes, puis Zaaps activés.'],
+  succes: ['Succès', 'Points de succès du compte (tous ses persos comptent ensemble) : une ligne par compte, avec son perso le plus haut.'],
   donjons: ['Donjons', 'Meilleur temps de chaque perso, en solo et en groupe. Seules les parties tenues par le serveur comptent (en groupe, ou « Partie sur le serveur »).'],
   premiers: ['Les premiers', 'Le premier à atteindre un palier y est gravé pour toujours, même s\'il est dépassé ensuite.'],
 };
@@ -132,6 +133,8 @@ export class VueLadder {
       L = (d.listes.metiers[m] ?? []).map((id, i) => ({ rang: i + 1, p: P[id], valeur: `${P[id].metiers[m]?.[0] ?? 1}`, sous: `${nombre(P[id].metiers[m]?.[1] ?? 0)} XP` }));
     } else if (this.onglet === 'exploration') {
       L = d.listes.exploration.map((id, i) => ({ rang: i + 1, p: P[id], valeur: `${P[id].zones}`, sous: `${P[id].zaaps} Zaap${P[id].zaaps > 1 ? 's' : ''}` }));
+    } else if (this.onglet === 'succes') {
+      L = (d.listes.succes ?? []).map((id, i) => ({ rang: i + 1, p: P[id], valeur: `${P[id].succes ?? 0}`, sous: 'points' }));
     } else if (this.onglet === 'donjons') {
       const k = this.donjon && d.donjons[this.donjon] ? this.donjon : Object.keys(d.donjons)[0] ?? '';
       this.donjon = k;
@@ -181,7 +184,7 @@ export class VueLadder {
     const [t, txt] = EN_CLAIR[this.onglet];
     const maj = new Date(d.maj).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Paris' });
     if (this.compact) return `${ong}<div class="lad-sous">${sous}</div>${filtres}${corps}<p class="lad-note">${this.devant(d) || `${nombre(d.total)} personnages classés · mis à jour à ${maj}`}</p>`;
-    const banniere = { niveau: '2026-11-08', metiers: '2026-11-06', exploration: '2026-11-07', donjons: '2026-11-05', premiers: '2026-11-08' }[this.onglet];
+    const banniere = { niveau: '2026-11-08', metiers: '2026-11-06', exploration: '2026-11-07', succes: '2026-11-08', donjons: '2026-11-05', premiers: '2026-11-08' }[this.onglet];
     return `<div class="lad-hero" style="background-image:url(${v(`assets/journal/${banniere}.webp`)})">
         <div class="lad-maj"><b>Classement du serveur</b><br>Mis à jour chaque minute<br>${maj} · heure de Paris</div>
         <div class="lad-tx"><span class="lad-eb">LADDER · LES DOUZE ENFERS</span><h1>${ONGLETS.find(o => o[0] === this.onglet)![1]}<em>.</em></h1>
@@ -197,7 +200,7 @@ export class VueLadder {
   }
   private htmlTableau(d: DonneesLadder): string {
     const L = this.lignes(d), la = new Set(d.enLigne), mien = new Set(moi?.miens ?? []);
-    const tete2 = this.onglet === 'donjons' ? 'Temps' : this.onglet === 'exploration' ? 'Sous-zones' : this.onglet === 'metiers' ? 'Niveau' : 'Niveau';
+    const tete2 = this.onglet === 'donjons' ? 'Temps' : this.onglet === 'exploration' ? 'Sous-zones' : this.onglet === 'succes' ? 'Points' : this.onglet === 'metiers' ? 'Niveau' : 'Niveau';
     if (!L.length) return `<div class="lad-vide">${this.filtre === 'amis' ? 'Aucun ami dans ce classement.' : this.filtre === 'autour' && !this.moiDans(Object.keys(d.persos)) ? 'Aucun de tes persos n\'est dans ce classement : joue un perso « En ligne ».' : 'Personne ici pour l\'instant.'}</div>`;
     const ligne = (r: Rang) => {
       if (r.tombe) {
@@ -226,6 +229,7 @@ export class VueLadder {
     if (R.niveau) places.push(`${R.niveau === 1 ? '1er' : `${R.niveau}e`} Niveau`);
     if (R.hardcore) places.push(`${R.hardcore === 1 ? '1er' : `${R.hardcore}e`} Hardcore`);
     if (R.exploration) places.push(`${R.exploration === 1 ? '1er' : `${R.exploration}e`} Exploration`);
+    if (R.succes) places.push(`${R.succes === 1 ? '1er' : `${R.succes}e`} Succès`);
     for (const [m, n] of Object.entries(R.metiers)) places.push(`${n === 1 ? '1er' : `${n}e`} ${nomMetier(m)}`);
     for (const [k, n] of Object.entries(R.donjons)) { const [dj, mode] = k.split('|'); places.push(`${n === 1 ? '1er' : `${n}e`} ${dj} (${mode})`); }
     const metiers = Object.entries(f.metiers).sort((a, b) => b[1][0] - a[1][0]).map(([m, [lv]]) => `<span><img src="assets/ui/metier_${m}.png" alt="">${esc(nomMetier(m))} ${lv}</span>`).join('');

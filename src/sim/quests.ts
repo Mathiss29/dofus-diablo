@@ -188,12 +188,28 @@ export type SuccesObjectif = { nom: string } & (
   | { apparence: string }
   /** Nombre de Dofus possédés (0.3). */
   | { dofus: number }
+  /** Menu des succès 9B : victoire sur le boss de ce donjon. */
+  | { donjon: string }
+  /** 9C : défi de donjon en temps réel réussi ([donjon, règle]). */
+  | { defi: [string, RegleDefi] }
+  /** 9E : niveau d'un métier ('*' = n'importe lequel). */
+  | { metier: string; palier: number }
+  /** 9E : objets fabriqués ou runes obtenues en brisant, au total. */
+  | { compteur: 'fabriques' | 'runes'; n: number }
 );
+/** Défis de donjon en temps réel (menu des succès 9C) : à deux au plus, boss en moins de 90 s, sans être touché après son apparition,
+ *  sans potion. */
+export type RegleDefi = 'duo' | 'chrono' | 'prudent' | 'sansPotion';
+export const DEFI_CHRONO = 90;
+/** Ornement officiel (récompense de certains succès, menu des succès 6B) : icône ornament_assets_all/<icone>. */
+export interface OrnementDef { id: number; nom: string; icone: number }
 export interface SuccesDef {
   nom: string; dofusId: number; description: string; categorie: string; sousCategorie: string; points: number; icone: number;
   objectifs: SuccesObjectif[];
   /** XP officielle (ratio des données × XP du niveau), objet officiel. */
-  recompense?: { xp?: number; objet?: string; /** Titre affiché sous le nom du perso (Tour 7A). */ titre?: string };
+  recompense?: { xp?: number; objet?: string; /** Titre affiché sous le nom du perso (Tour 7A). */ titre?: string; ornement?: OrnementDef };
+  /** Contenu de la partie de test (0.4) : caché et jamais obtenu ailleurs. */
+  test?: boolean;
 }
 export interface QuetesData { pnj: Record<string, PnjDef>; quetes: Record<string, QueteDef>; succes: Record<string, SuccesDef>;
   /** Contrats du jour : titres officiels et une ligne de texte par sous-zone (2A). */
@@ -213,6 +229,11 @@ export interface EtatQuetes {
   refaites?: Record<string, string>;
   /** Tableau des contrats (4A) : ceux proposés aujourd'hui et cette semaine (gardés pour que monter de niveau ne les change pas). */
   tableau?: Tableau;
+  /** Menu des succès (2026-11-10) : récompenses déjà récupérées par ce perso (5B), défis de donjon réussis (« donjon|règle », 9C),
+   *  compteurs (objets fabriqués, runes), titre et ornement portés (6A+6B ; '' / 0 = aucun), succès épinglés dans le suivi (7C). */
+  recuperes?: string[]; defis?: string[]; compteurs?: Record<string, number>; titre?: string | null; ornement?: number | null; epingles?: string[];
+  /** Points de succès du compte au moment de la sauvegarde (lu par le classement du serveur, 10B). */
+  points?: number;
 }
 export interface Tableau { jour: string; ids: string[]; semaine: string; hebdo: string[] }
 export interface BilanDonjon { v: number; m: number; dernier?: 'v' | 'm';
@@ -244,6 +265,11 @@ export class Quetes {
   refaites: Record<string, string> = {};
   /** Contrats proposés aujourd'hui et cette semaine. */
   tableau: Tableau | null = null;
+  /** Menu des succès : voir EtatQuetes. recuperes = null tant que la sauvegarde n'en a pas (ancien perso : tout est déjà donné). */
+  recuperes = new Set<string>(); defis = new Set<string>(); compteurs: Record<string, number> = {};
+  titreChoisi: string | null = null; ornementChoisi: number | null = null; epingles: string[] = [];
+  /** Boss du donjon apparu (9C) : moment de son apparition, et coup reçu depuis. */
+  private bossVu: { t: number; touche: boolean } | null = null;
   /** Défense en cours : quête, objectif, temps tenu, prochaine vague. */
   private defense: { q: string; i: number; t: number; vague: number; hors: number } | null = null;
   /** Contre la montre en cours : quête, objectif, temps écoulé. */
@@ -360,7 +386,9 @@ export class Quetes {
   exporter(): EtatQuetes {
     return JSON.parse(JSON.stringify({ enCours: this.enCours, finies: [...this.finies], etapesFinies: [...this.etapesFinies], suivie: this.suivie,
       decouvertes: [...this.decouvertes], vaincus: [...this.vaincus], objets: this.objets, donjons: this.donjons, refaites: this.refaites,
-      ...(this.tableau ? { tableau: this.tableau } : {}) }));
+      ...(this.tableau ? { tableau: this.tableau } : {}),
+      recuperes: [...this.recuperes], defis: [...this.defis], compteurs: this.compteurs, titre: this.titreChoisi, ornement: this.ornementChoisi,
+      epingles: this.epingles, points: this.points }));
   }
   /** Reprend une partie sauvegardée au lieu de demarrer() : mêmes quêtes, mêmes étapes, et les élites de l'étape en cours reviennent. */
   reprendre(e: EtatQuetes) {
@@ -372,6 +400,9 @@ export class Quetes {
     this.suivie = e.suivie && this.enCours.some(c => c.id === e.suivie) ? e.suivie : this.enCours[0]?.id ?? null;
     this.decouvertes = new Set(e.decouvertes ?? []); this.vaincus = new Set(e.vaincus ?? []); this.objets = { ...e.objets };
     this.donjons = JSON.parse(JSON.stringify(e.donjons ?? {}));
+    this.lireSucces(e);
+    // perso d'avant le menu des succès (5B) : les récompenses de ses succès lui ont déjà été données
+    if (!e.recuperes) this.recuperes = new Set(this.succes);
     for (const c of this.enCours) if (!c.aRendre) this.etapeDe(c)!.objectifs.forEach((o, i) => {
       if (o.t === 'elite' && (c.compte[i] ?? 0) < 1) this.faireApparaitre(c.id, o);
     });
@@ -384,7 +415,12 @@ export class Quetes {
     this.suivie = e.suivie ?? null; this.refaites = { ...e.refaites }; this.tableau = e.tableau ?? null;
     this.decouvertes = new Set(e.decouvertes ?? []); this.vaincus = new Set(e.vaincus ?? []); this.objets = { ...e.objets };
     this.donjons = JSON.parse(JSON.stringify(e.donjons ?? {}));
+    this.lireSucces(e);
     if ('dialogue' in e) this.dialogue = e.dialogue ?? null;
+  }
+  private lireSucces(e: EtatQuetes) {
+    this.recuperes = new Set(e.recuperes ?? []); this.defis = new Set(e.defis ?? []); this.compteurs = { ...e.compteurs };
+    this.titreChoisi = e.titre ?? null; this.ornementChoisi = e.ornement ?? null; this.epingles = [...(e.epingles ?? [])];
   }
   def(id: string): QueteDef { return this.data.quetes[id] ?? this.ecrireContrat(id) ?? this.ecrireDefi(id)!; }
   /** La quête existe (écrite dans quetes.json, ou contrat dont la sous-zone existe). */
@@ -628,6 +664,12 @@ export class Quetes {
           const ok = o.regle === 'sansPotion' ? !this.potionDonjon && this.dansDonjon?.nom === ici : tps <= (o.s ?? 300);
           if (ok) c.compte[i] = 1; else w.emit({ k: 'queteInfo', texte: o.regle === 'sansPotion' ? 'Défi raté : une potion a été bue.' : `Défi raté : ${chronoTexte(tps)}, trop lent.` });
         });
+        // défis de donjon en temps réel (menu des succès 9C)
+        const dedans = this.dansDonjon?.nom === ici, bv = this.bossVu, depuis = bv ? w.time - bv.t : Infinity;
+        const regles: [RegleDefi, boolean][] = [['duo', w.players.length <= 2], ['chrono', depuis <= DEFI_CHRONO], ['prudent', !!bv && !bv.touche],
+          ['sansPotion', dedans && !this.potionDonjon]];
+        for (const [r, ok] of regles) if (ok) this.defis.add(`${ici}|${r}`);
+        this.bossVu = null;
         if (!b.premier) b.premier = { ...(w.opts.aujourdhui ? { d: w.opts.aujourdhui } : {}),
           ...(this.dansDonjon?.nom === ici ? { t: Math.round(w.time - this.dansDonjon.t) } : {}) };
       }
@@ -656,10 +698,17 @@ export class Quetes {
       return;
     } else if (e.k === 'playerHurt') {
       this.dialogue = null;   // un coup reçu ferme le dialogue (4B)
+      if (this.bossVu) this.bossVu.touche = true;
+      return;
+    } else if (e.k === 'bossIntro') {
+      if (w.donjonIci()) this.bossVu = { t: w.time, touche: false };
       return;
     } else if (e.k === 'checkpoint') {
       for (const c of this.enCours) this.etapeDe(c)?.objectifs.forEach((o, i) => { if (o.t === 'activer' && o.zaap === e.name) c.compte[i] = 1; });
+    } else if (e.k === 'brisage' || e.k === 'metierLevel' || e.k === 'levelUp') {
+      if (e.k === 'brisage') this.compteurs.runes = (this.compteurs.runes ?? 0) + Object.values(e.runes).reduce((n, x) => n + x, 0);
     } else if (e.k === 'lootResource' || e.k === 'craft') {
+      if (e.k === 'craft') this.compteurs.fabriques = (this.compteurs.fabriques ?? 0) + e.n;
       for (const c of this.enCours) this.etapeDe(c)?.objectifs.forEach((o, i) => {
         if (o.t === 'recolter' && e.k === 'lootResource' && o.ressource === e.id) c.compte[i] = Math.min(o.n, c.compte[i] + e.n);
         if (o.t === 'fabriquer' && e.k === 'craft' && o.objet === e.id) c.compte[i] = Math.min(o.n ?? 1, c.compte[i] + e.n);
@@ -926,27 +975,92 @@ export class Quetes {
     if ('niveau' in o) return this.world.player.level >= o.niveau;
     if ('apparence' in o) return this.world.player.apparats.includes(o.apparence);
     if ('dofus' in o) return this.world.player.dofus.length >= o.dofus;
+    if ('donjon' in o) return (this.donjons[o.donjon]?.v ?? 0) > 0;
+    if ('defi' in o) return this.defis.has(`${o.defi[0]}|${o.defi[1]}`);
+    if ('metier' in o || 'compteur' in o) { const [n, max] = this.progres(o); return n >= max; }
     return this.vaincus.has(o.monstre);
+  }
+  /** Avancement d'un objectif de succès (menu des succès 4B) : [fait, total] (« Niveau 14 / 20 », « Objets fabriqués 37 / 100 »). */
+  progres(o: SuccesObjectif): [number, number] {
+    const p = this.world.player;
+    if ('niveau' in o) return [Math.min(p.level, o.niveau), o.niveau];
+    if ('dofus' in o) return [Math.min(p.dofus.length, o.dofus), o.dofus];
+    if ('metier' in o) {
+      const n = o.metier === '*' ? Math.max(0, ...Object.keys(p.metiers).map(k => p.metierLevel(k))) : p.metierLevel(o.metier);
+      return [Math.min(n, o.palier), o.palier];
+    }
+    if ('compteur' in o) return [Math.min(this.compteurs[o.compteur] ?? 0, o.n), o.n];
+    return [this.objectifSuccesFait(o) ? 1 : 0, 1];
+  }
+  /** Succès montré dans ce jeu : le contenu de la partie de test (0.4) reste caché ailleurs. */
+  visible(id: string): boolean { const s = this.data.succes[id]; return !!s && (!s.test || !!this.world.test); }
+  /** Avancement d'un succès entre 0 et 1 (barre, « Presque finis »). */
+  avancement(id: string): number {
+    const s = this.data.succes[id]; if (!s) return 0;
+    if (this.succes.has(id)) return 1;
+    let a = 0, b = 0;
+    for (const o of s.objectifs) { const [n, m] = this.progres(o); a += n / m; b++; }
+    return b ? a / b : 0;
   }
   private verifierSucces() {
     let encore = true;
     while (encore) {
       encore = false;
       for (const [id, s] of Object.entries(this.data.succes)) {
-        if (this.succes.has(id) || !s.objectifs.every(o => this.objectifSuccesFait(o))) continue;
+        if (this.succes.has(id) || !this.visible(id) || !s.objectifs.every(o => this.objectifSuccesFait(o))) continue;
         this.succes.add(id); encore = true;
-        const w = this.world;
-        if (s.recompense?.xp) w.player.gainXp(s.recompense.xp, w);
-        if (s.recompense?.objet) w.donnerObjet(s.recompense.objet);
-        w.emit({ k: 'succes', id });
+        // les récompenses attendent dans la fenêtre Succès (5B) ; un succès sans récompense est récupéré tout de suite
+        if (!this.aRecompense(id)) this.recuperes.add(id);
+        this.epingles = this.epingles.filter(x => x !== id);
+        this.world.emit({ k: 'succes', id });
       }
     }
   }
-  /** Titre du perso (Tour 7A) : celui du dernier succès obtenu qui en donne un. */
-  get titre(): string | null {
-    let t: string | null = null;
-    for (const id of this.succes) t = this.data.succes[id]?.recompense?.titre ?? t;
+  aRecompense(id: string) { const r = this.data.succes[id]?.recompense; return !!(r?.xp || r?.objet); }
+  /** Récompense de ce succès pas encore récupérée par ce perso (5B : chaque perso du compte récupère la sienne). */
+  aRecuperer(id: string) { return this.succes.has(id) && this.visible(id) && !this.recuperes.has(id) && this.aRecompense(id); }
+  get nbARecuperer() { let n = 0; for (const id of this.succes) if (this.aRecuperer(id)) n++; return n; }
+  /** Récupère la récompense (XP, objet) d'un succès obtenu. */
+  recuperer(id: string): boolean {
+    if (!this.aRecuperer(id)) return false;
+    const w = this.world, r = this.data.succes[id].recompense!;
+    this.recuperes.add(id);
+    if (r.xp) w.player.gainXp(r.xp, w);
+    if (r.objet) w.donnerObjet(r.objet);
+    w.emit({ k: 'succesRecupere', id, xp: r.xp ?? 0 });
+    return true;
+  }
+  /** « Tout récupérer » (5C) : nombre de récompenses récupérées. */
+  recupererTout(): number { let n = 0; for (const id of [...this.succes]) if (this.recuperer(id)) n++; return n; }
+  /** Titres gagnés (6A), dans l'ordre des succès obtenus. */
+  get titres(): string[] {
+    const t: string[] = [];
+    for (const id of this.succes) { const x = this.data.succes[id]?.recompense?.titre; if (x && this.visible(id) && !t.includes(x)) t.push(x); }
     return t;
+  }
+  /** Ornements officiels gagnés (6B). */
+  get ornements(): OrnementDef[] {
+    const o: OrnementDef[] = [];
+    for (const id of this.succes) { const x = this.data.succes[id]?.recompense?.ornement; if (x && this.visible(id) && !o.some(y => y.id === x.id)) o.push(x); }
+    return o;
+  }
+  /** Titre porté (Tour 7A, 6A) : celui choisi ; sans choix, le dernier gagné ; '' = aucun. */
+  get titre(): string | null {
+    const t = this.titres;
+    if (this.titreChoisi === '') return null;
+    if (this.titreChoisi && t.includes(this.titreChoisi)) return this.titreChoisi;
+    return t[t.length - 1] ?? null;
+  }
+  /** Ornement porté (6B) : celui choisi parmi ceux gagnés ; 0 = aucun ; sans choix, le dernier gagné. */
+  get ornement(): OrnementDef | null {
+    const o = this.ornements;
+    if (this.ornementChoisi === 0) return null;
+    return o.find(x => x.id === this.ornementChoisi) ?? o[o.length - 1] ?? null;
+  }
+  /** Épingler un succès dans le suivi (7C, 3 au plus) ou le retirer. */
+  epingler(id: string) {
+    if (this.epingles.includes(id)) this.epingles = this.epingles.filter(x => x !== id);
+    else if (!this.succes.has(id) && this.data.succes[id]) this.epingles = [...this.epingles, id].slice(-3);
   }
   /** Carnet de route (Tour 8B) : une page par donjon du tour du monde, dans l'ordre des chapitres. */
   carnet(): PageCarnet[] {

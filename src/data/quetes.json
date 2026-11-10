@@ -3476,7 +3476,7 @@
    "dofusId": 8518,
    "description": "Terminer la première partie du tutoriel.",
    "categorie": "Quêtes",
-   "sousCategorie": "Général",
+   "sousCategorie": "Incarnam",
    "points": 1,
    "icone": 203,
    "objectifs": [
@@ -3508,7 +3508,7 @@
    "dofusId": 8519,
    "description": "Terminer la seconde partie du tutoriel.",
    "categorie": "Quêtes",
-   "sousCategorie": "Général",
+   "sousCategorie": "Incarnam",
    "points": 1,
    "icone": 203,
    "objectifs": [
@@ -3526,7 +3526,7 @@
    "dofusId": 8520,
    "description": "Terminer les succès du tutoriel.",
    "categorie": "Quêtes",
-   "sousCategorie": "Général",
+   "sousCategorie": "Incarnam",
    "points": 3,
    "icone": 273,
    "objectifs": [
@@ -3549,7 +3549,7 @@
    "dofusId": 3,
    "description": "Atteindre le niveau 10.",
    "categorie": "Général",
-   "sousCategorie": "Général",
+   "sousCategorie": "Niveaux",
    "points": 1,
    "icone": 58,
    "objectifs": [
@@ -3586,8 +3586,8 @@
    "nom": "Deux œufs au nid",
    "dofusId": 0,
    "description": "Posséder 2 Dofus.",
-   "categorie": "Dofus",
-   "sousCategorie": "Collection",
+   "categorie": "Général",
+   "sousCategorie": "Dofus",
    "points": 10,
    "icone": 458,
    "objectifs": [
@@ -3604,8 +3604,8 @@
    "nom": "Six emplacements",
    "dofusId": 0,
    "description": "Posséder 6 Dofus.",
-   "categorie": "Dofus",
-   "sousCategorie": "Collection",
+   "categorie": "Général",
+   "sousCategorie": "Dofus",
    "points": 20,
    "icone": 458,
    "objectifs": [
@@ -3623,8 +3623,8 @@
    "nom": "Un œuf par dieu",
    "dofusId": 0,
    "description": "Posséder 12 Dofus.",
-   "categorie": "Dofus",
-   "sousCategorie": "Collection",
+   "categorie": "Général",
+   "sousCategorie": "Dofus",
    "points": 30,
    "icone": 458,
    "objectifs": [
@@ -3641,8 +3641,8 @@
    "nom": "L'héritage des Dofus",
    "dofusId": 8989,
    "description": "Posséder les 31 Dofus.",
-   "categorie": "Dofus",
-   "sousCategorie": "Collection",
+   "categorie": "Général",
+   "sousCategorie": "Dofus",
    "points": 50,
    "icone": 82,
    "objectifs": [
@@ -3916,7 +3916,7 @@
    "nom": "Panoplie du Bouftou",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Bouftou.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 15,
    "icone": 82,
@@ -3939,7 +3939,7 @@
    "nom": "Panoplie du Jeune Aventurier",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Jeune Aventurier.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 10,
    "icone": 82,
@@ -3958,7 +3958,7 @@
    "nom": "Panoplie de l'Homme Ours",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie de l'Homme Ours.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 10,
    "icone": 82,
@@ -3977,7 +3977,7 @@
    "nom": "Panoplie Champêtre",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie Champêtre.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 10,
    "icone": 82,
@@ -3996,7 +3996,7 @@
    "nom": "Panoplie Moskito",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie Moskito.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 10,
    "icone": 82,
@@ -4015,7 +4015,7 @@
    "nom": "Panoplie Champ Champ",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie Champ Champ.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 10,
    "icone": 82,
@@ -4034,7 +4034,7 @@
    "nom": "Panoplie de l'intrépide",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie de l'intrépide.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 15,
    "icone": 82,
@@ -4057,7 +4057,7 @@
    "nom": "Panoplie du Paysan",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Paysan.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 10,
    "icone": 82,
@@ -4076,7 +4076,7 @@
    "nom": "Panoplie du Tofu",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Tofu.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 10,
    "icone": 82,
@@ -4095,7 +4095,7 @@
    "nom": "Panoplie du Piou Rouge",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Piou Rouge.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 10,
    "icone": 82,
@@ -4114,7 +4114,7 @@
    "nom": "Panoplie du Piou Bleu",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Piou Bleu.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 10,
    "icone": 82,
@@ -4133,7 +4133,7 @@
    "nom": "Panoplie du Piou Violet",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Piou Violet.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 10,
    "icone": 82,
@@ -4152,7 +4152,7 @@
    "nom": "Panoplie en Mousse",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie en Mousse.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 15,
    "icone": 82,
@@ -4175,7 +4175,7 @@
    "nom": "Panoplie du Boune",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Boune.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 15,
    "icone": 82,
@@ -4198,7 +4198,7 @@
    "nom": "Panoplie du Piou Rose",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Piou Rose.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 10,
    "icone": 82,
@@ -4217,7 +4217,7 @@
    "nom": "Panoplie du Piou Jaune",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Piou Jaune.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 10,
    "icone": 82,
@@ -4236,7 +4236,7 @@
    "nom": "Panoplie du Piou Vert",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Piou Vert.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 10,
    "icone": 82,
@@ -4255,7 +4255,7 @@
    "nom": "Panoplie de Nowel",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie de Nowel.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 10,
    "icone": 82,
@@ -4274,7 +4274,7 @@
    "nom": "Panoplie de Bowisse",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie de Bowisse.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 10,
    "icone": 82,
@@ -4293,7 +4293,7 @@
    "nom": "Panoplie prototype du pilote",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie prototype du pilote.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 10,
    "icone": 82,
@@ -4312,7 +4312,7 @@
    "nom": "Panoplie du Glutin",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Glutin.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 10,
    "icone": 82,
@@ -4331,7 +4331,7 @@
    "nom": "Panoplie Invisible",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie Invisible.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 15,
    "icone": 82,
@@ -4354,7 +4354,7 @@
    "nom": "Panoplie de Kardorim",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie de Kardorim.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 10,
    "icone": 82,
@@ -4373,7 +4373,7 @@
    "nom": "Panoplie des Âmes",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie des Âmes.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 10,
    "icone": 82,
@@ -4392,7 +4392,7 @@
    "nom": "Panoplie du Bouftou Royal",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Bouftou Royal.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 15,
    "icone": 82,
@@ -4415,7 +4415,7 @@
    "nom": "Panoplie du Prespic",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie du Prespic.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 15,
    "icone": 82,
@@ -4438,7 +4438,7 @@
    "nom": "Panoplie Larvesque",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie Larvesque.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 10,
    "icone": 82,
@@ -4457,7 +4457,7 @@
    "nom": "Panoplie améliorée du pilote",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Panoplie améliorée du pilote.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 10,
    "icone": 82,
@@ -4476,7 +4476,7 @@
    "nom": "Microplie",
    "dofusId": 0,
    "description": "Collectionner l'apparence de chaque pièce visible : Microplie.",
-   "categorie": "Collection",
+   "categorie": "Général",
    "sousCategorie": "Garde-robe",
    "points": 10,
    "icone": 82,
@@ -4490,6 +4490,5361 @@
      "apparence": "15994"
     }
    ]
+  },
+  "niveau_20": {
+   "nom": "Novice",
+   "dofusId": 4,
+   "description": "Atteindre le niveau 20.",
+   "categorie": "Général",
+   "sousCategorie": "Niveaux",
+   "points": 1,
+   "icone": 59,
+   "objectifs": [
+    {
+     "nom": "Niveau 20",
+     "niveau": 20
+    }
+   ]
+  },
+  "niveau_40": {
+   "nom": "Initié",
+   "dofusId": 5,
+   "description": "Atteindre le niveau 40.",
+   "categorie": "Général",
+   "sousCategorie": "Niveaux",
+   "points": 1,
+   "icone": 61,
+   "objectifs": [
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ]
+  },
+  "niveau_60": {
+   "nom": "Poussin",
+   "dofusId": 6,
+   "description": "Atteindre le niveau 60.",
+   "categorie": "Général",
+   "sousCategorie": "Niveaux",
+   "points": 1,
+   "icone": 63,
+   "objectifs": [
+    {
+     "nom": "Niveau 60",
+     "niveau": 60
+    }
+   ]
+  },
+  "niveau_80": {
+   "nom": "Benjamin",
+   "dofusId": 7,
+   "description": "Atteindre le niveau 80.",
+   "categorie": "Général",
+   "sousCategorie": "Niveaux",
+   "points": 1,
+   "icone": 65,
+   "objectifs": [
+    {
+     "nom": "Niveau 80",
+     "niveau": 80
+    }
+   ]
+  },
+  "niveau_100": {
+   "nom": "Minime",
+   "dofusId": 8,
+   "description": "Atteindre le niveau 100.",
+   "categorie": "Général",
+   "sousCategorie": "Niveaux",
+   "points": 1,
+   "icone": 67,
+   "objectifs": [
+    {
+     "nom": "Niveau 100",
+     "niveau": 100
+    }
+   ],
+   "recompense": {
+    "ornement": {
+     "id": 13,
+     "nom": "Niveau 100",
+     "icone": 0
+    }
+   }
+  },
+  "niveau_120": {
+   "nom": "Cadet",
+   "dofusId": 9,
+   "description": "Atteindre le niveau 120.",
+   "categorie": "Général",
+   "sousCategorie": "Niveaux",
+   "points": 1,
+   "icone": 69,
+   "objectifs": [
+    {
+     "nom": "Niveau 120",
+     "niveau": 120
+    }
+   ]
+  },
+  "niveau_140": {
+   "nom": "Junior",
+   "dofusId": 10,
+   "description": "Atteindre le niveau 140.",
+   "categorie": "Général",
+   "sousCategorie": "Niveaux",
+   "points": 1,
+   "icone": 71,
+   "objectifs": [
+    {
+     "nom": "Niveau 140",
+     "niveau": 140
+    }
+   ]
+  },
+  "niveau_160": {
+   "nom": "Espoir",
+   "dofusId": 11,
+   "description": "Atteindre le niveau 160.",
+   "categorie": "Général",
+   "sousCategorie": "Niveaux",
+   "points": 1,
+   "icone": 73,
+   "objectifs": [
+    {
+     "nom": "Niveau 160",
+     "niveau": 160
+    }
+   ],
+   "recompense": {
+    "ornement": {
+     "id": 14,
+     "nom": "Niveau 160",
+     "icone": 1
+    }
+   }
+  },
+  "niveau_180": {
+   "nom": "Senior",
+   "dofusId": 12,
+   "description": "Atteindre le niveau 180.",
+   "categorie": "Général",
+   "sousCategorie": "Niveaux",
+   "points": 1,
+   "icone": 75,
+   "objectifs": [
+    {
+     "nom": "Niveau 180",
+     "niveau": 180
+    }
+   ]
+  },
+  "niveau_200": {
+   "nom": "Vétéran",
+   "dofusId": 13,
+   "description": "Atteindre le niveau 200.",
+   "categorie": "Général",
+   "sousCategorie": "Niveaux",
+   "points": 1,
+   "icone": 77,
+   "objectifs": [
+    {
+     "nom": "Niveau 200",
+     "niveau": 200
+    }
+   ],
+   "recompense": {
+    "ornement": {
+     "id": 15,
+     "nom": "Niveau 200",
+     "icone": 2
+    }
+   }
+  },
+  "zone_22": {
+   "nom": "Bord de la forêt maléfique",
+   "dofusId": 236,
+   "description": "Découvrir la zone \"Bord de la forêt maléfique\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Amakna",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Bord de la forêt maléfique",
+     "sousZone": 22
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   },
+   "test": true
+  },
+  "zone_8": {
+   "nom": "Campement des Bworks",
+   "dofusId": 237,
+   "description": "Découvrir la zone \"Campement des Bworks\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Amakna",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Campement des Bworks",
+     "sousZone": 8
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   },
+   "test": true
+  },
+  "zone_276": {
+   "nom": "Campement des Gobelins",
+   "dofusId": 238,
+   "description": "Découvrir la zone \"Campement des Gobelins\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Amakna",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Campement des Gobelins",
+     "sousZone": 276
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   },
+   "test": true
+  },
+  "zone_481": {
+   "nom": "Clairière de Brouce Boulgoure",
+   "dofusId": 239,
+   "description": "Découvrir la zone \"Clairière de Brouce Boulgoure\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Amakna",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Clairière de Brouce Boulgoure",
+     "sousZone": 481
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   },
+   "test": true
+  },
+  "zone_27": {
+   "nom": "Côte d'Asse",
+   "dofusId": 240,
+   "description": "Découvrir la zone \"Côte d'Asse\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Amakna",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Côte d'Asse",
+     "sousZone": 27
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   },
+   "test": true
+  },
+  "zone_485": {
+   "nom": "Campagne d'Amakna",
+   "dofusId": 241,
+   "description": "Découvrir la zone \"Campagne d'Amakna\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Amakna",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Campagne d'Amakna",
+     "sousZone": 485
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   },
+   "test": true
+  },
+  "zone_4": {
+   "nom": "Forêt d'Amakna",
+   "dofusId": 242,
+   "description": "Découvrir la zone \"Forêt d'Amakna\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Amakna",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Forêt d'Amakna",
+     "sousZone": 4
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   },
+   "test": true
+  },
+  "zone_482": {
+   "nom": "Milifutaie",
+   "dofusId": 244,
+   "description": "Découvrir la zone \"Milifutaie\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Amakna",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Milifutaie",
+     "sousZone": 482
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   },
+   "test": true
+  },
+  "zone_2": {
+   "nom": "Montagne des Craqueleurs",
+   "dofusId": 245,
+   "description": "Découvrir la zone \"Montagne des Craqueleurs\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Amakna",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Montagne des Craqueleurs",
+     "sousZone": 2
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   },
+   "test": true
+  },
+  "zone_23": {
+   "nom": "Presqu'île des Dragoeufs",
+   "dofusId": 246,
+   "description": "Découvrir la zone \"Presqu'île des Dragoeufs\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Amakna",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Presqu'île des Dragoeufs",
+     "sousZone": 23
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   },
+   "test": true
+  },
+  "zone_12": {
+   "nom": "Péninsule des gelées",
+   "dofusId": 247,
+   "description": "Découvrir la zone \"Péninsule des gelées\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Amakna",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Péninsule des gelées",
+     "sousZone": 12
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   },
+   "test": true
+  },
+  "zone_3": {
+   "nom": "Champ des Ingalsse",
+   "dofusId": 248,
+   "description": "Découvrir la zone \"Champ des Ingalsse\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Amakna",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Champ des Ingalsse",
+     "sousZone": 3
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   },
+   "test": true
+  },
+  "zone_102": {
+   "nom": "Cimetière d'Astrub",
+   "dofusId": 249,
+   "description": "Découvrir la zone \"Cimetière d'Astrub\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Astrub",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Cimetière d'Astrub",
+     "sousZone": 102
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   }
+  },
+  "zone_180": {
+   "nom": "Château d'Amakna",
+   "dofusId": 250,
+   "description": "Découvrir la zone \"Château d'Amakna\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Amakna",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Château d'Amakna",
+     "sousZone": 180
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   },
+   "test": true
+  },
+  "zone_6": {
+   "nom": "Cimetière",
+   "dofusId": 251,
+   "description": "Découvrir la zone \"Cimetière\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Amakna",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Cimetière",
+     "sousZone": 6
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   },
+   "test": true
+  },
+  "zone_179": {
+   "nom": "Coin des Boos",
+   "dofusId": 252,
+   "description": "Découvrir la zone \"Coin des Boos\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Amakna",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Coin des Boos",
+     "sousZone": 179
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   },
+   "test": true
+  },
+  "zone_5": {
+   "nom": "Coin des Bouftous",
+   "dofusId": 253,
+   "description": "Découvrir la zone \"Coin des Bouftous\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Amakna",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Coin des Bouftous",
+     "sousZone": 5
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   },
+   "test": true
+  },
+  "zone_31": {
+   "nom": "Marécages d'Amakna",
+   "dofusId": 254,
+   "description": "Découvrir la zone \"Marécages d'Amakna\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Amakna",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Marécages d'Amakna",
+     "sousZone": 31
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   },
+   "test": true
+  },
+  "zone_10": {
+   "nom": "Village d'Amakna",
+   "dofusId": 255,
+   "description": "Découvrir la zone \"Village d'Amakna\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Amakna",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Village d'Amakna",
+     "sousZone": 10
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   },
+   "test": true
+  },
+  "zone_480": {
+   "nom": "Montagne basse des Craqueleurs",
+   "dofusId": 257,
+   "description": "Découvrir la zone \"Montagne basse des Craqueleurs\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Amakna",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Montagne basse des Craqueleurs",
+     "sousZone": 480
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   },
+   "test": true
+  },
+  "zone_170": {
+   "nom": "Plaine des Scarafeuilles",
+   "dofusId": 259,
+   "description": "Découvrir la zone \"Plaine des Scarafeuilles\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Amakna",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Plaine des Scarafeuilles",
+     "sousZone": 170
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   },
+   "test": true
+  },
+  "zone_1": {
+   "nom": "Port de Madrestam",
+   "dofusId": 260,
+   "description": "Découvrir la zone \"Port de Madrestam\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Amakna",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Port de Madrestam",
+     "sousZone": 1
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   },
+   "test": true
+  },
+  "zone_479": {
+   "nom": "Rivière Kawaii",
+   "dofusId": 262,
+   "description": "Découvrir la zone \"Rivière Kawaii\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Amakna",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Rivière Kawaii",
+     "sousZone": 479
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   },
+   "test": true
+  },
+  "zone_103": {
+   "nom": "Territoire des Bandits",
+   "dofusId": 267,
+   "description": "Découvrir la zone \"Territoire des Bandits\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Amakna",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Territoire des Bandits",
+     "sousZone": 103
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   },
+   "test": true
+  },
+  "zone_277": {
+   "nom": "Village des Bworks",
+   "dofusId": 269,
+   "description": "Découvrir la zone \"Village des Bworks\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Amakna",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Village des Bworks",
+     "sousZone": 277
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   },
+   "test": true
+  },
+  "zone_30": {
+   "nom": "Tainéla",
+   "dofusId": 281,
+   "description": "Découvrir la zone \"Tainéla\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Astrub",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Tainéla",
+     "sousZone": 30
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   }
+  },
+  "zone_335": {
+   "nom": "Calanques d'Astrub",
+   "dofusId": 339,
+   "description": "Découvrir la zone \"Calanques d'Astrub\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Astrub",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Calanques d'Astrub",
+     "sousZone": 335
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   }
+  },
+  "zone_98": {
+   "nom": "Champs d'Astrub",
+   "dofusId": 340,
+   "description": "Découvrir la zone \"Champs d'Astrub\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Astrub",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Champs d'Astrub",
+     "sousZone": 98
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   }
+  },
+  "zone_95": {
+   "nom": "Cité d'Astrub",
+   "dofusId": 341,
+   "description": "Découvrir la zone \"Cité d'Astrub\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Astrub",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Cité d'Astrub",
+     "sousZone": 95
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   }
+  },
+  "zone_96": {
+   "nom": "Carrière d'Astrub",
+   "dofusId": 344,
+   "description": "Découvrir la zone \"Carrière d'Astrub\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Astrub",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Carrière d'Astrub",
+     "sousZone": 96
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   }
+  },
+  "zone_97": {
+   "nom": "Forêt d'Astrub",
+   "dofusId": 345,
+   "description": "Découvrir la zone \"Forêt d'Astrub\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Astrub",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Forêt d'Astrub",
+     "sousZone": 97
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   }
+  },
+  "zone_173": {
+   "nom": "Prairies d'Astrub",
+   "dofusId": 358,
+   "description": "Découvrir la zone \"Prairies d'Astrub\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Astrub",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Prairies d'Astrub",
+     "sousZone": 173
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   }
+  },
+  "zone_99": {
+   "nom": "Souterrains d'Astrub",
+   "dofusId": 359,
+   "description": "Découvrir la zone \"Souterrains d'Astrub\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Astrub",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Souterrains d'Astrub",
+     "sousZone": 99
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   }
+  },
+  "zone_100": {
+   "nom": "Égouts d'Astrub",
+   "dofusId": 360,
+   "description": "Découvrir la zone \"Égouts d'Astrub\".",
+   "categorie": "Exploration",
+   "sousCategorie": "Astrub",
+   "points": 1,
+   "icone": 176,
+   "objectifs": [
+    {
+     "nom": "Égouts d'Astrub",
+     "sousZone": 100
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   }
+  },
+  "explo_841": {
+   "nom": "Terre des novices, terre de nos vices",
+   "dofusId": 841,
+   "description": "Obtenir les Succès suivants.",
+   "categorie": "Exploration",
+   "sousCategorie": "Astrub",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Calanques d'Astrub",
+     "succes": "zone_335"
+    },
+    {
+     "nom": "Carrière d'Astrub",
+     "succes": "zone_96"
+    },
+    {
+     "nom": "Champs d'Astrub",
+     "succes": "zone_98"
+    },
+    {
+     "nom": "Cimetière d'Astrub",
+     "succes": "zone_102"
+    },
+    {
+     "nom": "Cité d'Astrub",
+     "succes": "zone_95"
+    },
+    {
+     "nom": "Égouts d'Astrub",
+     "succes": "zone_100"
+    },
+    {
+     "nom": "Forêt d'Astrub",
+     "succes": "zone_97"
+    },
+    {
+     "nom": "Prairies d'Astrub",
+     "succes": "zone_173"
+    },
+    {
+     "nom": "Souterrains d'Astrub",
+     "succes": "zone_99"
+    },
+    {
+     "nom": "Tainéla",
+     "succes": "zone_30"
+    }
+   ],
+   "recompense": {
+    "xp": 500
+   }
+  },
+  "explo_847": {
+   "nom": "Douce campagne",
+   "dofusId": 847,
+   "description": "Obtenir les Succès suivants.",
+   "categorie": "Exploration",
+   "sousCategorie": "Amakna",
+   "points": 1,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Campagne d'Amakna",
+     "succes": "zone_485"
+    },
+    {
+     "nom": "Champ des Ingalsse",
+     "succes": "zone_3"
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   },
+   "test": true
+  },
+  "famille_175": {
+   "nom": "Araknes",
+   "dofusId": 175,
+   "description": "Vaincre chaque monstre de la famille.",
+   "categorie": "Monstres",
+   "sousCategorie": "Amakna",
+   "points": 10,
+   "icone": 127,
+   "objectifs": [
+    {
+     "nom": "Arakne des Égouts",
+     "monstre": "arakne_des_egouts"
+    },
+    {
+     "nom": "Arakne",
+     "monstre": "arakne"
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "365"
+   },
+   "test": true
+  },
+  "famille_176": {
+   "nom": "Dragoeufs Immatures",
+   "dofusId": 176,
+   "description": "Vaincre chaque monstre de la famille.",
+   "categorie": "Monstres",
+   "sousCategorie": "Amakna",
+   "points": 10,
+   "icone": 128,
+   "objectifs": [
+    {
+     "nom": "Dragoeuf Calcaire",
+     "monstre": "dragoeuf_calcaire"
+    },
+    {
+     "nom": "Dragoeuf Ardoise",
+     "monstre": "dragoeuf_ardoise"
+    },
+    {
+     "nom": "Dragoeuf Argile",
+     "monstre": "dragoeuf_argile"
+    },
+    {
+     "nom": "Dragoeuf Charbon",
+     "monstre": "dragoeuf_charbon"
+    },
+    {
+     "nom": "Niveau 70",
+     "niveau": 70
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "308"
+   },
+   "test": true
+  },
+  "famille_181": {
+   "nom": "Scarafeuilles",
+   "dofusId": 181,
+   "description": "Vaincre chaque monstre de la famille.",
+   "categorie": "Monstres",
+   "sousCategorie": "Amakna",
+   "points": 10,
+   "icone": 133,
+   "objectifs": [
+    {
+     "nom": "Scarafeuille Bleu",
+     "monstre": "scarafeuille_bleu"
+    },
+    {
+     "nom": "Scarafeuille Blanc",
+     "monstre": "scarafeuille_blanc"
+    },
+    {
+     "nom": "Scarafeuille Rouge",
+     "monstre": "scarafeuille_rouge"
+    },
+    {
+     "nom": "Scarafeuille Vert",
+     "monstre": "scarafeuille_vert"
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "1456"
+   },
+   "test": true
+  },
+  "famille_182": {
+   "nom": "Bworks d'Amakna",
+   "dofusId": 182,
+   "description": "Vaincre chaque monstre de la famille.",
+   "categorie": "Monstres",
+   "sousCategorie": "Amakna",
+   "points": 10,
+   "icone": 134,
+   "objectifs": [
+    {
+     "nom": "Bwork",
+     "monstre": "bwork"
+    },
+    {
+     "nom": "Bwork Archer",
+     "monstre": "bwork_archer"
+    },
+    {
+     "nom": "Bwork Mage",
+     "monstre": "bwork_mage"
+    },
+    {
+     "nom": "Niveau 50",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "409"
+   },
+   "test": true
+  },
+  "famille_186": {
+   "nom": "Craqueleurs",
+   "dofusId": 186,
+   "description": "Vaincre chaque monstre de la famille.",
+   "categorie": "Monstres",
+   "sousCategorie": "Amakna",
+   "points": 10,
+   "icone": 137,
+   "objectifs": [
+    {
+     "nom": "Craqueboule",
+     "monstre": "craqueboule"
+    },
+    {
+     "nom": "Craqueleur",
+     "monstre": "craqueleur"
+    },
+    {
+     "nom": "Élémenterre",
+     "monstre": "elementerre"
+    },
+    {
+     "nom": "Craquelourd",
+     "monstre": "craquelourd"
+    },
+    {
+     "nom": "Niveau 70",
+     "niveau": 70
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "431"
+   },
+   "test": true
+  },
+  "famille_187": {
+   "nom": "Gobelins d'Amakna",
+   "dofusId": 187,
+   "description": "Vaincre chaque monstre de la famille.",
+   "categorie": "Monstres",
+   "sousCategorie": "Amakna",
+   "points": 10,
+   "icone": 418,
+   "objectifs": [
+    {
+     "nom": "Gobet",
+     "monstre": "gobet"
+    },
+    {
+     "nom": "Gob-trotteur",
+     "monstre": "gob_trotteur"
+    },
+    {
+     "nom": "Gobaladée",
+     "monstre": "gobaladee"
+    },
+    {
+     "nom": "Gobaliste",
+     "monstre": "gobaliste"
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "302"
+   },
+   "test": true
+  },
+  "famille_189": {
+   "nom": "Kwaks",
+   "dofusId": 189,
+   "description": "Vaincre chaque monstre de la famille.",
+   "categorie": "Monstres",
+   "sousCategorie": "Amakna",
+   "points": 10,
+   "icone": 140,
+   "objectifs": [
+    {
+     "nom": "Kwak de Flamme",
+     "monstre": "kwak_de_flamme"
+    },
+    {
+     "nom": "Kwak de Glace",
+     "monstre": "kwak_de_glace"
+    },
+    {
+     "nom": "Kwak de Terre",
+     "monstre": "kwak_de_terre"
+    },
+    {
+     "nom": "Kwak de Vent",
+     "monstre": "kwak_de_vent"
+    },
+    {
+     "nom": "Niveau 50",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "415"
+   },
+   "test": true
+  },
+  "famille_190": {
+   "nom": "Kwakeres",
+   "dofusId": 190,
+   "description": "Vaincre chaque monstre de la famille.",
+   "categorie": "Monstres",
+   "sousCategorie": "Amakna",
+   "points": 10,
+   "icone": 140,
+   "objectifs": [
+    {
+     "nom": "Kwakere de Flamme",
+     "monstre": "kwakere_de_flamme"
+    },
+    {
+     "nom": "Kwakere de Glace",
+     "monstre": "kwakere_de_glace"
+    },
+    {
+     "nom": "Kwakere de Terre",
+     "monstre": "kwakere_de_terre"
+    },
+    {
+     "nom": "Kwakere de Vent",
+     "monstre": "kwakere_de_vent"
+    },
+    {
+     "nom": "Niveau 50",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "2648"
+   },
+   "test": true
+  },
+  "famille_191": {
+   "nom": "Chafers d'Amakna",
+   "dofusId": 191,
+   "description": "Vaincre chaque monstre de la famille.",
+   "categorie": "Monstres",
+   "sousCategorie": "Amakna",
+   "points": 10,
+   "icone": 141,
+   "objectifs": [
+    {
+     "nom": "Chafer",
+     "monstre": "chafer"
+    },
+    {
+     "nom": "Chafer Invisible",
+     "monstre": "chafer_invisible"
+    },
+    {
+     "nom": "Chafer Fantassin",
+     "monstre": "chafer_fantassin"
+    },
+    {
+     "nom": "Rib",
+     "monstre": "rib"
+    },
+    {
+     "nom": "Niveau 50",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "432"
+   },
+   "test": true
+  },
+  "famille_193": {
+   "nom": "Bêtes de la nuit",
+   "dofusId": 193,
+   "description": "Vaincre chaque monstre de la famille.",
+   "categorie": "Monstres",
+   "sousCategorie": "Amakna",
+   "points": 10,
+   "icone": 143,
+   "objectifs": [
+    {
+     "nom": "Kwoan",
+     "monstre": "kwoan"
+    },
+    {
+     "nom": "Tofu Maléfique",
+     "monstre": "tofu_malefique"
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "376"
+   },
+   "test": true
+  },
+  "famille_200": {
+   "nom": "Bouftous",
+   "dofusId": 200,
+   "description": "Vaincre chaque monstre de la famille.",
+   "categorie": "Monstres",
+   "sousCategorie": "Astrub",
+   "points": 10,
+   "icone": 231,
+   "objectifs": [
+    {
+     "nom": "Boufton Blanc",
+     "monstre": "boufton"
+    },
+    {
+     "nom": "Boufton Noir",
+     "monstre": "boufton_noir"
+    },
+    {
+     "nom": "Chef de Guerre Bouftou",
+     "monstre": "chef_de_guerre_bouftou"
+    },
+    {
+     "nom": "Bouftou",
+     "monstre": "bouftou"
+    },
+    {
+     "nom": "Bouftou Noir",
+     "monstre": "bouftou_noir"
+    },
+    {
+     "nom": "Niveau 30",
+     "niveau": 30
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "2455"
+   }
+  },
+  "famille_201": {
+   "nom": "Champas",
+   "dofusId": 201,
+   "description": "Vaincre chaque monstre de la famille.",
+   "categorie": "Monstres",
+   "sousCategorie": "Amakna",
+   "points": 10,
+   "icone": 145,
+   "objectifs": [
+    {
+     "nom": "Champa Bleu",
+     "monstre": "champa_bleu"
+    },
+    {
+     "nom": "Champa Marron",
+     "monstre": "champa_marron"
+    },
+    {
+     "nom": "Champa Rouge",
+     "monstre": "champa_rouge"
+    },
+    {
+     "nom": "Champa Vert",
+     "monstre": "champa_vert"
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "16165"
+   },
+   "test": true
+  },
+  "famille_203": {
+   "nom": "Larves",
+   "dofusId": 203,
+   "description": "Vaincre chaque monstre de la famille.",
+   "categorie": "Monstres",
+   "sousCategorie": "Astrub",
+   "points": 10,
+   "icone": 147,
+   "objectifs": [
+    {
+     "nom": "Larve Bleue",
+     "monstre": "larve_bleue"
+    },
+    {
+     "nom": "Larve Orange",
+     "monstre": "larve_orange"
+    },
+    {
+     "nom": "Larve Verte",
+     "monstre": "larve_verte"
+    },
+    {
+     "nom": "Larve Jaune",
+     "monstre": "larve_jaune"
+    },
+    {
+     "nom": "Niveau 20",
+     "niveau": 20
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "643"
+   }
+  },
+  "famille_204": {
+   "nom": "Plantes des champs",
+   "dofusId": 204,
+   "description": "Vaincre chaque monstre de la famille.",
+   "categorie": "Monstres",
+   "sousCategorie": "Astrub",
+   "points": 10,
+   "icone": 148,
+   "objectifs": [
+    {
+     "nom": "Pissenlit Diabolique",
+     "monstre": "pissenlit"
+    },
+    {
+     "nom": "Rose Démoniaque",
+     "monstre": "rose"
+    },
+    {
+     "nom": "Tournesol Sauvage",
+     "monstre": "tournesol"
+    },
+    {
+     "nom": "Épouvanteur",
+     "monstre": "epouvanteur"
+    },
+    {
+     "nom": "Gardienne Champêtre",
+     "monstre": "gardienne_champetre"
+    },
+    {
+     "nom": "Niveau 20",
+     "niveau": 20
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "374"
+   }
+  },
+  "famille_205": {
+   "nom": "Tofus",
+   "dofusId": 205,
+   "description": "Vaincre chaque monstre de la famille.",
+   "categorie": "Monstres",
+   "sousCategorie": "Amakna",
+   "points": 10,
+   "icone": 149,
+   "objectifs": [
+    {
+     "nom": "Tofoune",
+     "monstre": "tofoune"
+    },
+    {
+     "nom": "Tofu Noir",
+     "monstre": "tofu_noir"
+    },
+    {
+     "nom": "Tofukaz",
+     "monstre": "tofukaz"
+    },
+    {
+     "nom": "Tofu",
+     "monstre": "tofu_amakna"
+    },
+    {
+     "nom": "Tofu Mutant",
+     "monstre": "tofu_mutant"
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "375"
+   },
+   "test": true
+  },
+  "famille_209": {
+   "nom": "Pichons",
+   "dofusId": 209,
+   "description": "Vaincre chaque monstre de la famille.",
+   "categorie": "Monstres",
+   "sousCategorie": "Astrub",
+   "points": 10,
+   "icone": 153,
+   "objectifs": [
+    {
+     "nom": "Pichon Blanc",
+     "monstre": "pichon_blanc"
+    },
+    {
+     "nom": "Pichon Bleu",
+     "monstre": "pichon_bleu"
+    },
+    {
+     "nom": "Pichon Kloune",
+     "monstre": "pichon_kloune"
+    },
+    {
+     "nom": "Pichon Orange",
+     "monstre": "pichon_orange"
+    },
+    {
+     "nom": "Pichon Vert",
+     "monstre": "pichon_vert"
+    },
+    {
+     "nom": "Niveau 20",
+     "niveau": 20
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8680"
+   }
+  },
+  "famille_215": {
+   "nom": "Rats Strubiens",
+   "dofusId": 215,
+   "description": "Vaincre chaque monstre de la famille.",
+   "categorie": "Monstres",
+   "sousCategorie": "Astrub",
+   "points": 10,
+   "icone": 160,
+   "objectifs": [
+    {
+     "nom": "Ramane Strubien",
+     "monstre": "ramane_strubien"
+    },
+    {
+     "nom": "Milirat Strubien",
+     "monstre": "milirat_strubien"
+    },
+    {
+     "nom": "Scélérat Strubien",
+     "monstre": "scelerat_strubien"
+    },
+    {
+     "nom": "Niveau 30",
+     "niveau": 30
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "881"
+   }
+  },
+  "famille_217": {
+   "nom": "Pious",
+   "dofusId": 217,
+   "description": "Vaincre chaque monstre de la famille.",
+   "categorie": "Monstres",
+   "sousCategorie": "Astrub",
+   "points": 10,
+   "icone": 161,
+   "objectifs": [
+    {
+     "nom": "Piou Bleu",
+     "monstre": "piou_bleu"
+    },
+    {
+     "nom": "Piou Jaune",
+     "monstre": "piou_jaune"
+    },
+    {
+     "nom": "Piou Rose",
+     "monstre": "piou_rose"
+    },
+    {
+     "nom": "Piou Rouge",
+     "monstre": "piou_rouge"
+    },
+    {
+     "nom": "Piou Vert",
+     "monstre": "piou_vert"
+    },
+    {
+     "nom": "Piou Violet",
+     "monstre": "piou_violet"
+    },
+    {
+     "nom": "Niveau 15",
+     "niveau": 15
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "287"
+   }
+  },
+  "famille_222": {
+   "nom": "Bandits d'Amakna",
+   "dofusId": 222,
+   "description": "Vaincre chaque monstre de la famille.",
+   "categorie": "Monstres",
+   "sousCategorie": "Amakna",
+   "points": 10,
+   "icone": 166,
+   "objectifs": [
+    {
+     "nom": "Bandit du clan des Roublards",
+     "monstre": "bandit_du_clan_des_roublards"
+    },
+    {
+     "nom": "Boulanger Sombre",
+     "monstre": "boulanger_sombre"
+    },
+    {
+     "nom": "Forgeron Sombre",
+     "monstre": "forgeron_sombre"
+    },
+    {
+     "nom": "Mineur Sombre",
+     "monstre": "mineur_sombre"
+    },
+    {
+     "nom": "Niveau 50",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "13339"
+   },
+   "test": true
+  },
+  "famille_1185": {
+   "nom": "Vilinsekts",
+   "dofusId": 1185,
+   "description": "Vaincre chaque monstre de la famille.",
+   "categorie": "Monstres",
+   "sousCategorie": "Astrub",
+   "points": 10,
+   "icone": 292,
+   "objectifs": [
+    {
+     "nom": "Cafarcher",
+     "monstre": "cafarcher"
+    },
+    {
+     "nom": "Pyrasite",
+     "monstre": "pyrasite"
+    },
+    {
+     "nom": "Mirgrillon",
+     "monstre": "mirgrillon"
+    },
+    {
+     "nom": "Sakarien",
+     "monstre": "sakarien"
+    },
+    {
+     "nom": "Céglumen",
+     "monstre": "ceglumen"
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "16001"
+   }
+  },
+  "famille_1600": {
+   "nom": "Animaux de la forêt",
+   "dofusId": 1600,
+   "description": "Vaincre chaque monstre de la famille.",
+   "categorie": "Monstres",
+   "sousCategorie": "Astrub",
+   "points": 10,
+   "icone": 352,
+   "objectifs": [
+    {
+     "nom": "Écurouille",
+     "monstre": "ecurouille"
+    },
+    {
+     "nom": "Milimulou",
+     "monstre": "milimulou"
+    },
+    {
+     "nom": "Prespic",
+     "monstre": "prespic"
+    },
+    {
+     "nom": "Sanglier",
+     "monstre": "sanglier"
+    },
+    {
+     "nom": "Niveau 30",
+     "niveau": 30
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "407"
+   }
+  },
+  "famille_1601": {
+   "nom": "Animalades",
+   "dofusId": 1601,
+   "description": "Vaincre chaque monstre de la famille.",
+   "categorie": "Monstres",
+   "sousCategorie": "Astrub",
+   "points": 10,
+   "icone": 350,
+   "objectifs": [
+    {
+     "nom": "Arakmuté",
+     "monstre": "arakmute"
+    },
+    {
+     "nom": "Arakne Malade",
+     "monstre": "arakne_malade"
+    },
+    {
+     "nom": "Araknosé",
+     "monstre": "araknose"
+    },
+    {
+     "nom": "Tofu Malade",
+     "monstre": "tofu_malade"
+    },
+    {
+     "nom": "Niveau 15",
+     "niveau": 15
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "1681"
+   }
+  },
+  "famille_1602": {
+   "nom": "Vermines des champs",
+   "dofusId": 1602,
+   "description": "Vaincre chaque monstre de la famille.",
+   "categorie": "Monstres",
+   "sousCategorie": "Amakna",
+   "points": 10,
+   "icone": 351,
+   "objectifs": [
+    {
+     "nom": "Campagnoll",
+     "monstre": "campagnoll"
+    },
+    {
+     "nom": "Champ Champ",
+     "monstre": "champ_champ"
+    },
+    {
+     "nom": "Moskito",
+     "monstre": "moskito"
+    },
+    {
+     "nom": "Niveau 20",
+     "niveau": 20
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "300"
+   },
+   "test": true
+  },
+  "famille_1669": {
+   "nom": "Monstres du repos",
+   "dofusId": 1669,
+   "description": "Vaincre chaque monstre de la famille.",
+   "categorie": "Monstres",
+   "sousCategorie": "Astrub",
+   "points": 10,
+   "icone": 408,
+   "objectifs": [
+    {
+     "nom": "La Ouassingue",
+     "monstre": "la_ouassingue"
+    },
+    {
+     "nom": "Le Ouassingue",
+     "monstre": "le_ouassingue"
+    },
+    {
+     "nom": "Gargrouille",
+     "monstre": "gargrouille"
+    },
+    {
+     "nom": "Garglyphe",
+     "monstre": "garglyphe"
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "2468"
+   }
+  },
+  "famille_1670": {
+   "nom": "Sidoas",
+   "dofusId": 1670,
+   "description": "Vaincre chaque monstre de la famille.",
+   "categorie": "Monstres",
+   "sousCategorie": "Astrub",
+   "points": 10,
+   "icone": 363,
+   "objectifs": [
+    {
+     "nom": "Martoa",
+     "monstre": "martoa"
+    },
+    {
+     "nom": "Sherpoa",
+     "monstre": "sherpoa"
+    },
+    {
+     "nom": "Douzdoa",
+     "monstre": "douzdoa"
+    },
+    {
+     "nom": "Pikdoa",
+     "monstre": "pikdoa"
+    },
+    {
+     "nom": "Niveau 30",
+     "niveau": 30
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "450"
+   }
+  },
+  "monstres_231": {
+   "nom": "Ils l'ont bien mérité",
+   "dofusId": 231,
+   "description": "Obtenir les Succès suivants.",
+   "categorie": "Monstres",
+   "sousCategorie": "Amakna",
+   "points": 20,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Vermines des champs",
+     "succes": "famille_1602"
+    },
+    {
+     "nom": "Tofus",
+     "succes": "famille_205"
+    },
+    {
+     "nom": "Champas",
+     "succes": "famille_201"
+    },
+    {
+     "nom": "Scarafeuilles",
+     "succes": "famille_181"
+    },
+    {
+     "nom": "Craqueleurs",
+     "succes": "famille_186"
+    }
+   ],
+   "recompense": {
+    "xp": 1000
+   },
+   "test": true
+  },
+  "monstres_233": {
+   "nom": "Ils étaient si mignons",
+   "dofusId": 233,
+   "description": "Obtenir les Succès suivants.",
+   "categorie": "Monstres",
+   "sousCategorie": "Astrub",
+   "points": 20,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Pious",
+     "succes": "famille_217"
+    },
+    {
+     "nom": "Animalades",
+     "succes": "famille_1601"
+    },
+    {
+     "nom": "Larves",
+     "succes": "famille_203"
+    },
+    {
+     "nom": "Pichons",
+     "succes": "famille_209"
+    },
+    {
+     "nom": "Plantes des champs",
+     "succes": "famille_204"
+    },
+    {
+     "nom": "Bouftous",
+     "succes": "famille_200"
+    },
+    {
+     "nom": "Animaux de la forêt",
+     "succes": "famille_1600"
+    },
+    {
+     "nom": "Sidoas",
+     "succes": "famille_1670"
+    },
+    {
+     "nom": "Rats Strubiens",
+     "succes": "famille_215"
+    },
+    {
+     "nom": "Vilinsekts",
+     "succes": "famille_1185"
+    },
+    {
+     "nom": "Monstres du repos",
+     "succes": "famille_1669"
+    }
+   ],
+   "recompense": {
+    "xp": 1000
+   }
+  },
+  "defi_duo_kardorim": {
+   "nom": "Kardorim (Duo)",
+   "dofusId": 487,
+   "description": "Vaincre Kardorim dans son donjon, à deux joueurs au plus.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 20,
+   "icone": 299,
+   "objectifs": [
+    {
+     "nom": "À deux joueurs au plus",
+     "defi": [
+      "Crypte de Kardorim",
+      "duo"
+     ]
+    },
+    {
+     "nom": "Niveau 10",
+     "niveau": 10
+    }
+   ],
+   "recompense": {
+    "xp": 1000,
+    "objet": "16525"
+   }
+  },
+  "defi_chrono_kardorim": {
+   "nom": "Kardorim (Blitzkrieg)",
+   "dofusId": 0,
+   "description": "Vaincre Kardorim moins de 90 secondes après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 299,
+   "objectifs": [
+    {
+     "nom": "En moins de 90 s",
+     "defi": [
+      "Crypte de Kardorim",
+      "chrono"
+     ]
+    },
+    {
+     "nom": "Niveau 10",
+     "niveau": 10
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "16525"
+   }
+  },
+  "defi_prudent_kardorim": {
+   "nom": "Kardorim (Prudent)",
+   "dofusId": 0,
+   "description": "Vaincre Kardorim sans être touché une seule fois après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 299,
+   "objectifs": [
+    {
+     "nom": "Sans être touché",
+     "defi": [
+      "Crypte de Kardorim",
+      "prudent"
+     ]
+    },
+    {
+     "nom": "Niveau 10",
+     "niveau": 10
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "16525"
+   }
+  },
+  "defi_sansPotion_kardorim": {
+   "nom": "Kardorim (Sans potion)",
+   "dofusId": 0,
+   "description": "Vaincre Kardorim sans boire de potion dans le donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 299,
+   "objectifs": [
+    {
+     "nom": "Sans boire de potion",
+     "defi": [
+      "Crypte de Kardorim",
+      "sansPotion"
+     ]
+    },
+    {
+     "nom": "Niveau 10",
+     "niveau": 10
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "16525"
+   }
+  },
+  "donjon_40": {
+   "nom": "Grange du Tournesol Affamé",
+   "dofusId": 40,
+   "description": "Vaincre le Tournesol Affamé dans son donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 11,
+   "objectifs": [
+    {
+     "nom": "Tournesol Affamé",
+     "donjon": "Grange du Tournesol Affamé"
+    },
+    {
+     "nom": "Niveau 20",
+     "niveau": 20
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8157"
+   }
+  },
+  "defi_duo_tournesol_affame": {
+   "nom": "Tournesol Affamé (Duo)",
+   "dofusId": 488,
+   "description": "Vaincre le Tournesol Affamé dans son donjon, à deux joueurs au plus.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 20,
+   "icone": 11,
+   "objectifs": [
+    {
+     "nom": "À deux joueurs au plus",
+     "defi": [
+      "Grange du Tournesol Affamé",
+      "duo"
+     ]
+    },
+    {
+     "nom": "Niveau 20",
+     "niveau": 20
+    }
+   ],
+   "recompense": {
+    "xp": 1000,
+    "objet": "8157"
+   }
+  },
+  "defi_chrono_tournesol_affame": {
+   "nom": "Tournesol Affamé (Blitzkrieg)",
+   "dofusId": 0,
+   "description": "Vaincre le Tournesol Affamé moins de 90 secondes après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 11,
+   "objectifs": [
+    {
+     "nom": "En moins de 90 s",
+     "defi": [
+      "Grange du Tournesol Affamé",
+      "chrono"
+     ]
+    },
+    {
+     "nom": "Niveau 20",
+     "niveau": 20
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8157"
+   }
+  },
+  "defi_prudent_tournesol_affame": {
+   "nom": "Tournesol Affamé (Prudent)",
+   "dofusId": 0,
+   "description": "Vaincre le Tournesol Affamé sans être touché une seule fois après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 11,
+   "objectifs": [
+    {
+     "nom": "Sans être touché",
+     "defi": [
+      "Grange du Tournesol Affamé",
+      "prudent"
+     ]
+    },
+    {
+     "nom": "Niveau 20",
+     "niveau": 20
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8157"
+   }
+  },
+  "defi_sansPotion_tournesol_affame": {
+   "nom": "Tournesol Affamé (Sans potion)",
+   "dofusId": 0,
+   "description": "Vaincre le Tournesol Affamé sans boire de potion dans le donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 11,
+   "objectifs": [
+    {
+     "nom": "Sans boire de potion",
+     "defi": [
+      "Grange du Tournesol Affamé",
+      "sansPotion"
+     ]
+    },
+    {
+     "nom": "Niveau 20",
+     "niveau": 20
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8157"
+   }
+  },
+  "donjon_54": {
+   "nom": "Château Ensablé",
+   "dofusId": 54,
+   "description": "Vaincre Mob l'Eponge dans son donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 10,
+   "objectifs": [
+    {
+     "nom": "Mob l'Éponge",
+     "donjon": "Château Ensablé"
+    },
+    {
+     "nom": "Niveau 20",
+     "niveau": 20
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8682"
+   }
+  },
+  "defi_duo_mob_l_eponge": {
+   "nom": "Mob l'Éponge (Duo)",
+   "dofusId": 489,
+   "description": "Vaincre Mob l'Eponge dans son donjon, à deux joueurs au plus.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 20,
+   "icone": 10,
+   "objectifs": [
+    {
+     "nom": "À deux joueurs au plus",
+     "defi": [
+      "Château Ensablé",
+      "duo"
+     ]
+    },
+    {
+     "nom": "Niveau 20",
+     "niveau": 20
+    }
+   ],
+   "recompense": {
+    "xp": 1000,
+    "objet": "8682"
+   }
+  },
+  "defi_chrono_mob_l_eponge": {
+   "nom": "Mob l'Éponge (Blitzkrieg)",
+   "dofusId": 0,
+   "description": "Vaincre Mob l'Eponge moins de 90 secondes après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 10,
+   "objectifs": [
+    {
+     "nom": "En moins de 90 s",
+     "defi": [
+      "Château Ensablé",
+      "chrono"
+     ]
+    },
+    {
+     "nom": "Niveau 20",
+     "niveau": 20
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8682"
+   }
+  },
+  "defi_prudent_mob_l_eponge": {
+   "nom": "Mob l'Éponge (Prudent)",
+   "dofusId": 0,
+   "description": "Vaincre Mob l'Eponge sans être touché une seule fois après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 10,
+   "objectifs": [
+    {
+     "nom": "Sans être touché",
+     "defi": [
+      "Château Ensablé",
+      "prudent"
+     ]
+    },
+    {
+     "nom": "Niveau 20",
+     "niveau": 20
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8682"
+   }
+  },
+  "defi_sansPotion_mob_l_eponge": {
+   "nom": "Mob l'Éponge (Sans potion)",
+   "dofusId": 0,
+   "description": "Vaincre Mob l'Eponge sans boire de potion dans le donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 10,
+   "objectifs": [
+    {
+     "nom": "Sans boire de potion",
+     "defi": [
+      "Château Ensablé",
+      "sansPotion"
+     ]
+    },
+    {
+     "nom": "Niveau 20",
+     "niveau": 20
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8682"
+   }
+  },
+  "donjon_37": {
+   "nom": "Cour du Bouftou Royal",
+   "dofusId": 37,
+   "description": "Vaincre le Bouftou Royal dans son donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 3,
+   "objectifs": [
+    {
+     "nom": "Bouftou Royal",
+     "donjon": "Cour du Bouftou Royal"
+    },
+    {
+     "nom": "Niveau 30",
+     "niveau": 30
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "886"
+   }
+  },
+  "defi_duo_royal": {
+   "nom": "Bouftou Royal (Duo)",
+   "dofusId": 490,
+   "description": "Vaincre le Bouftou Royal dans son donjon, à deux joueurs au plus.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 20,
+   "icone": 3,
+   "objectifs": [
+    {
+     "nom": "À deux joueurs au plus",
+     "defi": [
+      "Cour du Bouftou Royal",
+      "duo"
+     ]
+    },
+    {
+     "nom": "Niveau 30",
+     "niveau": 30
+    }
+   ],
+   "recompense": {
+    "xp": 1000,
+    "objet": "886"
+   }
+  },
+  "defi_chrono_royal": {
+   "nom": "Bouftou Royal (Blitzkrieg)",
+   "dofusId": 659,
+   "description": "Vaincre le Bouftou Royal moins de 90 secondes après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 3,
+   "objectifs": [
+    {
+     "nom": "En moins de 90 s",
+     "defi": [
+      "Cour du Bouftou Royal",
+      "chrono"
+     ]
+    },
+    {
+     "nom": "Niveau 30",
+     "niveau": 30
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "886"
+   }
+  },
+  "defi_prudent_royal": {
+   "nom": "Bouftou Royal (Prudent)",
+   "dofusId": 658,
+   "description": "Vaincre le Bouftou Royal sans être touché une seule fois après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 3,
+   "objectifs": [
+    {
+     "nom": "Sans être touché",
+     "defi": [
+      "Cour du Bouftou Royal",
+      "prudent"
+     ]
+    },
+    {
+     "nom": "Niveau 30",
+     "niveau": 30
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "886"
+   }
+  },
+  "defi_sansPotion_royal": {
+   "nom": "Bouftou Royal (Sans potion)",
+   "dofusId": 0,
+   "description": "Vaincre le Bouftou Royal sans boire de potion dans le donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 3,
+   "objectifs": [
+    {
+     "nom": "Sans boire de potion",
+     "defi": [
+      "Cour du Bouftou Royal",
+      "sansPotion"
+     ]
+    },
+    {
+     "nom": "Niveau 30",
+     "niveau": 30
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "886"
+   }
+  },
+  "donjon_1184": {
+   "nom": "Cache de Kankreblath",
+   "dofusId": 1184,
+   "description": "Vaincre Kankreblath dans son donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 291,
+   "objectifs": [
+    {
+     "nom": "Kankreblath",
+     "donjon": "Cache de Kankreblath"
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "16002"
+   }
+  },
+  "defi_duo_kankreblath": {
+   "nom": "Kankreblath (Duo)",
+   "dofusId": 1180,
+   "description": "Vaincre Kankreblath dans son donjon, à deux joueurs au plus.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 20,
+   "icone": 291,
+   "objectifs": [
+    {
+     "nom": "À deux joueurs au plus",
+     "defi": [
+      "Cache de Kankreblath",
+      "duo"
+     ]
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 1000,
+    "objet": "16002"
+   }
+  },
+  "defi_chrono_kankreblath": {
+   "nom": "Kankreblath (Blitzkrieg)",
+   "dofusId": 0,
+   "description": "Vaincre Kankreblath moins de 90 secondes après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 291,
+   "objectifs": [
+    {
+     "nom": "En moins de 90 s",
+     "defi": [
+      "Cache de Kankreblath",
+      "chrono"
+     ]
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "16002"
+   }
+  },
+  "defi_prudent_kankreblath": {
+   "nom": "Kankreblath (Prudent)",
+   "dofusId": 0,
+   "description": "Vaincre Kankreblath sans être touché une seule fois après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 291,
+   "objectifs": [
+    {
+     "nom": "Sans être touché",
+     "defi": [
+      "Cache de Kankreblath",
+      "prudent"
+     ]
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "16002"
+   }
+  },
+  "defi_sansPotion_kankreblath": {
+   "nom": "Kankreblath (Sans potion)",
+   "dofusId": 0,
+   "description": "Vaincre Kankreblath sans boire de potion dans le donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 291,
+   "objectifs": [
+    {
+     "nom": "Sans boire de potion",
+     "defi": [
+      "Cache de Kankreblath",
+      "sansPotion"
+     ]
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "16002"
+   }
+  },
+  "donjon_48": {
+   "nom": "Donjon des Scarafeuilles",
+   "dofusId": 48,
+   "description": "Vaincre le Scarabosse Doré dans son donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 7,
+   "objectifs": [
+    {
+     "nom": "Scarabosse Doré",
+     "donjon": "Donjon des Scarafeuilles"
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8161"
+   },
+   "test": true
+  },
+  "defi_duo_scarabosse_dore": {
+   "nom": "Scarabosse Doré (Duo)",
+   "dofusId": 491,
+   "description": "Vaincre le Scarabosse Doré dans son donjon, à deux joueurs au plus.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 20,
+   "icone": 7,
+   "objectifs": [
+    {
+     "nom": "À deux joueurs au plus",
+     "defi": [
+      "Donjon des Scarafeuilles",
+      "duo"
+     ]
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 1000,
+    "objet": "8161"
+   },
+   "test": true
+  },
+  "defi_chrono_scarabosse_dore": {
+   "nom": "Scarabosse Doré (Blitzkrieg)",
+   "dofusId": 0,
+   "description": "Vaincre le Scarabosse Doré moins de 90 secondes après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 7,
+   "objectifs": [
+    {
+     "nom": "En moins de 90 s",
+     "defi": [
+      "Donjon des Scarafeuilles",
+      "chrono"
+     ]
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8161"
+   },
+   "test": true
+  },
+  "defi_prudent_scarabosse_dore": {
+   "nom": "Scarabosse Doré (Prudent)",
+   "dofusId": 0,
+   "description": "Vaincre le Scarabosse Doré sans être touché une seule fois après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 7,
+   "objectifs": [
+    {
+     "nom": "Sans être touché",
+     "defi": [
+      "Donjon des Scarafeuilles",
+      "prudent"
+     ]
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8161"
+   },
+   "test": true
+  },
+  "defi_sansPotion_scarabosse_dore": {
+   "nom": "Scarabosse Doré (Sans potion)",
+   "dofusId": 0,
+   "description": "Vaincre le Scarabosse Doré sans boire de potion dans le donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 7,
+   "objectifs": [
+    {
+     "nom": "Sans boire de potion",
+     "defi": [
+      "Donjon des Scarafeuilles",
+      "sansPotion"
+     ]
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8161"
+   },
+   "test": true
+  },
+  "donjon_49": {
+   "nom": "Donjon des Squelettes",
+   "dofusId": 49,
+   "description": "Vaincre le Chafer Rōnin dans son donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 8,
+   "objectifs": [
+    {
+     "nom": "Chafer Rōnin",
+     "donjon": "Donjon des Squelettes"
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "13096"
+   },
+   "test": true
+  },
+  "defi_duo_chafer_ronin": {
+   "nom": "Chafer Rōnin (Duo)",
+   "dofusId": 494,
+   "description": "Vaincre le Chafer Rōnin dans son donjon, à deux joueurs au plus.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 20,
+   "icone": 8,
+   "objectifs": [
+    {
+     "nom": "À deux joueurs au plus",
+     "defi": [
+      "Donjon des Squelettes",
+      "duo"
+     ]
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 1000,
+    "objet": "13096"
+   },
+   "test": true
+  },
+  "defi_chrono_chafer_ronin": {
+   "nom": "Chafer Rōnin (Blitzkrieg)",
+   "dofusId": 0,
+   "description": "Vaincre le Chafer Rōnin moins de 90 secondes après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 8,
+   "objectifs": [
+    {
+     "nom": "En moins de 90 s",
+     "defi": [
+      "Donjon des Squelettes",
+      "chrono"
+     ]
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "13096"
+   },
+   "test": true
+  },
+  "defi_prudent_chafer_ronin": {
+   "nom": "Chafer Rōnin (Prudent)",
+   "dofusId": 0,
+   "description": "Vaincre le Chafer Rōnin sans être touché une seule fois après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 8,
+   "objectifs": [
+    {
+     "nom": "Sans être touché",
+     "defi": [
+      "Donjon des Squelettes",
+      "prudent"
+     ]
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "13096"
+   },
+   "test": true
+  },
+  "defi_sansPotion_chafer_ronin": {
+   "nom": "Chafer Rōnin (Sans potion)",
+   "dofusId": 0,
+   "description": "Vaincre le Chafer Rōnin sans boire de potion dans le donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 8,
+   "objectifs": [
+    {
+     "nom": "Sans boire de potion",
+     "defi": [
+      "Donjon des Squelettes",
+      "sansPotion"
+     ]
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "13096"
+   },
+   "test": true
+  },
+  "donjon_50": {
+   "nom": "Donjon des Tofus",
+   "dofusId": 50,
+   "description": "Vaincre Batofu dans son donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 9,
+   "objectifs": [
+    {
+     "nom": "Batofu",
+     "donjon": "Donjon des Tofus"
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8557"
+   },
+   "test": true
+  },
+  "defi_duo_batofu": {
+   "nom": "Batofu (Duo)",
+   "dofusId": 492,
+   "description": "Vaincre Batofu dans son donjon, à deux joueurs au plus.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 20,
+   "icone": 9,
+   "objectifs": [
+    {
+     "nom": "À deux joueurs au plus",
+     "defi": [
+      "Donjon des Tofus",
+      "duo"
+     ]
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 1000,
+    "objet": "8557"
+   },
+   "test": true
+  },
+  "defi_chrono_batofu": {
+   "nom": "Batofu (Blitzkrieg)",
+   "dofusId": 0,
+   "description": "Vaincre Batofu moins de 90 secondes après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 9,
+   "objectifs": [
+    {
+     "nom": "En moins de 90 s",
+     "defi": [
+      "Donjon des Tofus",
+      "chrono"
+     ]
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8557"
+   },
+   "test": true
+  },
+  "defi_prudent_batofu": {
+   "nom": "Batofu (Prudent)",
+   "dofusId": 0,
+   "description": "Vaincre Batofu sans être touché une seule fois après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 9,
+   "objectifs": [
+    {
+     "nom": "Sans être touché",
+     "defi": [
+      "Donjon des Tofus",
+      "prudent"
+     ]
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8557"
+   },
+   "test": true
+  },
+  "defi_sansPotion_batofu": {
+   "nom": "Batofu (Sans potion)",
+   "dofusId": 0,
+   "description": "Vaincre Batofu sans boire de potion dans le donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 9,
+   "objectifs": [
+    {
+     "nom": "Sans boire de potion",
+     "defi": [
+      "Donjon des Tofus",
+      "sansPotion"
+     ]
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8557"
+   },
+   "test": true
+  },
+  "donjon_5213": {
+   "nom": "Akadémie des Gobs",
+   "dofusId": 5213,
+   "description": "Vaincre le Directeur Grunob dans son donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 419,
+   "objectifs": [
+    {
+     "nom": "Directeur Grunob",
+     "donjon": "Akadémie des Gobs"
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "838"
+   },
+   "test": true
+  },
+  "defi_duo_directeur_grunob": {
+   "nom": "Directeur Grunob (Duo)",
+   "dofusId": 5216,
+   "description": "Vaincre le Directeur Grunob dans son donjon, à deux joueurs au plus.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 20,
+   "icone": 419,
+   "objectifs": [
+    {
+     "nom": "À deux joueurs au plus",
+     "defi": [
+      "Akadémie des Gobs",
+      "duo"
+     ]
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 1000,
+    "objet": "838"
+   },
+   "test": true
+  },
+  "defi_chrono_directeur_grunob": {
+   "nom": "Directeur Grunob (Blitzkrieg)",
+   "dofusId": 0,
+   "description": "Vaincre le Directeur Grunob moins de 90 secondes après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 419,
+   "objectifs": [
+    {
+     "nom": "En moins de 90 s",
+     "defi": [
+      "Akadémie des Gobs",
+      "chrono"
+     ]
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "838"
+   },
+   "test": true
+  },
+  "defi_prudent_directeur_grunob": {
+   "nom": "Directeur Grunob (Prudent)",
+   "dofusId": 0,
+   "description": "Vaincre le Directeur Grunob sans être touché une seule fois après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 419,
+   "objectifs": [
+    {
+     "nom": "Sans être touché",
+     "defi": [
+      "Akadémie des Gobs",
+      "prudent"
+     ]
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "838"
+   },
+   "test": true
+  },
+  "defi_sansPotion_directeur_grunob": {
+   "nom": "Directeur Grunob (Sans potion)",
+   "dofusId": 0,
+   "description": "Vaincre le Directeur Grunob sans boire de potion dans le donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 419,
+   "objectifs": [
+    {
+     "nom": "Sans boire de potion",
+     "defi": [
+      "Akadémie des Gobs",
+      "sansPotion"
+     ]
+    },
+    {
+     "nom": "Niveau 40",
+     "niveau": 40
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "838"
+   },
+   "test": true
+  },
+  "donjon_38": {
+   "nom": "Donjon des Bworks",
+   "dofusId": 38,
+   "description": "Vaincre la Bworkette dans son donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 4,
+   "objectifs": [
+    {
+     "nom": "Bworkette",
+     "donjon": "Donjon des Bworks"
+    },
+    {
+     "nom": "Niveau 50",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8388"
+   },
+   "test": true
+  },
+  "defi_duo_bworkette": {
+   "nom": "Bworkette (Duo)",
+   "dofusId": 495,
+   "description": "Vaincre la Bworkette dans son donjon, à deux joueurs au plus.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 20,
+   "icone": 4,
+   "objectifs": [
+    {
+     "nom": "À deux joueurs au plus",
+     "defi": [
+      "Donjon des Bworks",
+      "duo"
+     ]
+    },
+    {
+     "nom": "Niveau 50",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "xp": 1000,
+    "objet": "8388"
+   },
+   "test": true
+  },
+  "defi_chrono_bworkette": {
+   "nom": "Bworkette (Blitzkrieg)",
+   "dofusId": 0,
+   "description": "Vaincre la Bworkette moins de 90 secondes après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 4,
+   "objectifs": [
+    {
+     "nom": "En moins de 90 s",
+     "defi": [
+      "Donjon des Bworks",
+      "chrono"
+     ]
+    },
+    {
+     "nom": "Niveau 50",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8388"
+   },
+   "test": true
+  },
+  "defi_prudent_bworkette": {
+   "nom": "Bworkette (Prudent)",
+   "dofusId": 0,
+   "description": "Vaincre la Bworkette sans être touché une seule fois après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 4,
+   "objectifs": [
+    {
+     "nom": "Sans être touché",
+     "defi": [
+      "Donjon des Bworks",
+      "prudent"
+     ]
+    },
+    {
+     "nom": "Niveau 50",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8388"
+   },
+   "test": true
+  },
+  "defi_sansPotion_bworkette": {
+   "nom": "Bworkette (Sans potion)",
+   "dofusId": 0,
+   "description": "Vaincre la Bworkette sans boire de potion dans le donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 4,
+   "objectifs": [
+    {
+     "nom": "Sans boire de potion",
+     "defi": [
+      "Donjon des Bworks",
+      "sansPotion"
+     ]
+    },
+    {
+     "nom": "Niveau 50",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8388"
+   },
+   "test": true
+  },
+  "donjon_43": {
+   "nom": "Donjon des Forgerons",
+   "dofusId": 43,
+   "description": "Vaincre le Coffre des Forgerons dans son donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 5,
+   "objectifs": [
+    {
+     "nom": "Coffre des Forgerons",
+     "donjon": "Donjon des Forgerons"
+    },
+    {
+     "nom": "Niveau 50",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "13140"
+   },
+   "test": true
+  },
+  "defi_duo_coffre_des_forgerons": {
+   "nom": "Coffre des Forgerons (Duo)",
+   "dofusId": 496,
+   "description": "Vaincre le Coffre des Forgerons dans son donjon, à deux joueurs au plus.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 20,
+   "icone": 5,
+   "objectifs": [
+    {
+     "nom": "À deux joueurs au plus",
+     "defi": [
+      "Donjon des Forgerons",
+      "duo"
+     ]
+    },
+    {
+     "nom": "Niveau 50",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "xp": 1000,
+    "objet": "13140"
+   },
+   "test": true
+  },
+  "defi_chrono_coffre_des_forgerons": {
+   "nom": "Coffre des Forgerons (Blitzkrieg)",
+   "dofusId": 0,
+   "description": "Vaincre le Coffre des Forgerons moins de 90 secondes après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 5,
+   "objectifs": [
+    {
+     "nom": "En moins de 90 s",
+     "defi": [
+      "Donjon des Forgerons",
+      "chrono"
+     ]
+    },
+    {
+     "nom": "Niveau 50",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "13140"
+   },
+   "test": true
+  },
+  "defi_prudent_coffre_des_forgerons": {
+   "nom": "Coffre des Forgerons (Prudent)",
+   "dofusId": 0,
+   "description": "Vaincre le Coffre des Forgerons sans être touché une seule fois après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 5,
+   "objectifs": [
+    {
+     "nom": "Sans être touché",
+     "defi": [
+      "Donjon des Forgerons",
+      "prudent"
+     ]
+    },
+    {
+     "nom": "Niveau 50",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "13140"
+   },
+   "test": true
+  },
+  "defi_sansPotion_coffre_des_forgerons": {
+   "nom": "Coffre des Forgerons (Sans potion)",
+   "dofusId": 0,
+   "description": "Vaincre le Coffre des Forgerons sans boire de potion dans le donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 5,
+   "objectifs": [
+    {
+     "nom": "Sans boire de potion",
+     "defi": [
+      "Donjon des Forgerons",
+      "sansPotion"
+     ]
+    },
+    {
+     "nom": "Niveau 50",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "13140"
+   },
+   "test": true
+  },
+  "donjon_67": {
+   "nom": "Nid du Kwakwa",
+   "dofusId": 67,
+   "description": "Vaincre le Kwakwa dans son donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 14,
+   "objectifs": [
+    {
+     "nom": "Kwakwa",
+     "donjon": "Nid du Kwakwa"
+    },
+    {
+     "nom": "Niveau 50",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "12016"
+   },
+   "test": true
+  },
+  "defi_duo_kwakwa": {
+   "nom": "Kwakwa (Duo)",
+   "dofusId": 499,
+   "description": "Vaincre le Kwakwa dans son donjon, à deux joueurs au plus.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 20,
+   "icone": 14,
+   "objectifs": [
+    {
+     "nom": "À deux joueurs au plus",
+     "defi": [
+      "Nid du Kwakwa",
+      "duo"
+     ]
+    },
+    {
+     "nom": "Niveau 50",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "xp": 1000,
+    "objet": "12016"
+   },
+   "test": true
+  },
+  "defi_chrono_kwakwa": {
+   "nom": "Kwakwa (Blitzkrieg)",
+   "dofusId": 0,
+   "description": "Vaincre le Kwakwa moins de 90 secondes après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 14,
+   "objectifs": [
+    {
+     "nom": "En moins de 90 s",
+     "defi": [
+      "Nid du Kwakwa",
+      "chrono"
+     ]
+    },
+    {
+     "nom": "Niveau 50",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "12016"
+   },
+   "test": true
+  },
+  "defi_prudent_kwakwa": {
+   "nom": "Kwakwa (Prudent)",
+   "dofusId": 0,
+   "description": "Vaincre le Kwakwa sans être touché une seule fois après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 14,
+   "objectifs": [
+    {
+     "nom": "Sans être touché",
+     "defi": [
+      "Nid du Kwakwa",
+      "prudent"
+     ]
+    },
+    {
+     "nom": "Niveau 50",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "12016"
+   },
+   "test": true
+  },
+  "defi_sansPotion_kwakwa": {
+   "nom": "Kwakwa (Sans potion)",
+   "dofusId": 0,
+   "description": "Vaincre le Kwakwa sans boire de potion dans le donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 14,
+   "objectifs": [
+    {
+     "nom": "Sans boire de potion",
+     "defi": [
+      "Nid du Kwakwa",
+      "sansPotion"
+     ]
+    },
+    {
+     "nom": "Niveau 50",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "12016"
+   },
+   "test": true
+  },
+  "donjon_34": {
+   "nom": "Donjon des Larves",
+   "dofusId": 34,
+   "description": "Vaincre la Shin Larve dans son donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 6,
+   "objectifs": [
+    {
+     "nom": "Shin Larve",
+     "donjon": "Donjon des Larves"
+    },
+    {
+     "nom": "Niveau 50",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8385"
+   },
+   "test": true
+  },
+  "defi_duo_shin_larve": {
+   "nom": "Shin Larve (Duo)",
+   "dofusId": 497,
+   "description": "Vaincre la Shin Larve dans son donjon, à deux joueurs au plus.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 20,
+   "icone": 6,
+   "objectifs": [
+    {
+     "nom": "À deux joueurs au plus",
+     "defi": [
+      "Donjon des Larves",
+      "duo"
+     ]
+    },
+    {
+     "nom": "Niveau 50",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "xp": 1000,
+    "objet": "8385"
+   },
+   "test": true
+  },
+  "defi_chrono_shin_larve": {
+   "nom": "Shin Larve (Blitzkrieg)",
+   "dofusId": 0,
+   "description": "Vaincre la Shin Larve moins de 90 secondes après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 6,
+   "objectifs": [
+    {
+     "nom": "En moins de 90 s",
+     "defi": [
+      "Donjon des Larves",
+      "chrono"
+     ]
+    },
+    {
+     "nom": "Niveau 50",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8385"
+   },
+   "test": true
+  },
+  "defi_prudent_shin_larve": {
+   "nom": "Shin Larve (Prudent)",
+   "dofusId": 672,
+   "description": "Vaincre la Shin Larve sans être touché une seule fois après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 6,
+   "objectifs": [
+    {
+     "nom": "Sans être touché",
+     "defi": [
+      "Donjon des Larves",
+      "prudent"
+     ]
+    },
+    {
+     "nom": "Niveau 50",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8385"
+   },
+   "test": true
+  },
+  "defi_sansPotion_shin_larve": {
+   "nom": "Shin Larve (Sans potion)",
+   "dofusId": 0,
+   "description": "Vaincre la Shin Larve sans boire de potion dans le donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 1 à 50",
+   "points": 10,
+   "icone": 6,
+   "objectifs": [
+    {
+     "nom": "Sans boire de potion",
+     "defi": [
+      "Donjon des Larves",
+      "sansPotion"
+     ]
+    },
+    {
+     "nom": "Niveau 50",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8385"
+   },
+   "test": true
+  },
+  "donjon_41": {
+   "nom": "Pitons Rocheux des Craqueleurs",
+   "dofusId": 41,
+   "description": "Vaincre le Craqueleur Légendaire dans son donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 51 à 100",
+   "points": 10,
+   "icone": 21,
+   "objectifs": [
+    {
+     "nom": "Craqueleur Légendaire",
+     "donjon": "Pitons Rocheux des Craqueleurs"
+    },
+    {
+     "nom": "Niveau 70",
+     "niveau": 70
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8102"
+   },
+   "test": true
+  },
+  "defi_duo_craqueleur_legendaire": {
+   "nom": "Craqueleur Légendaire (Duo)",
+   "dofusId": 506,
+   "description": "Vaincre le Craqueleur Légendaire dans son donjon, à deux joueurs au plus.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 51 à 100",
+   "points": 20,
+   "icone": 21,
+   "objectifs": [
+    {
+     "nom": "À deux joueurs au plus",
+     "defi": [
+      "Pitons Rocheux des Craqueleurs",
+      "duo"
+     ]
+    },
+    {
+     "nom": "Niveau 70",
+     "niveau": 70
+    }
+   ],
+   "recompense": {
+    "xp": 1000,
+    "objet": "8102"
+   },
+   "test": true
+  },
+  "defi_chrono_craqueleur_legendaire": {
+   "nom": "Craqueleur Légendaire (Blitzkrieg)",
+   "dofusId": 0,
+   "description": "Vaincre le Craqueleur Légendaire moins de 90 secondes après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 51 à 100",
+   "points": 10,
+   "icone": 21,
+   "objectifs": [
+    {
+     "nom": "En moins de 90 s",
+     "defi": [
+      "Pitons Rocheux des Craqueleurs",
+      "chrono"
+     ]
+    },
+    {
+     "nom": "Niveau 70",
+     "niveau": 70
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8102"
+   },
+   "test": true
+  },
+  "defi_prudent_craqueleur_legendaire": {
+   "nom": "Craqueleur Légendaire (Prudent)",
+   "dofusId": 690,
+   "description": "Vaincre le Craqueleur Légendaire sans être touché une seule fois après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 51 à 100",
+   "points": 10,
+   "icone": 21,
+   "objectifs": [
+    {
+     "nom": "Sans être touché",
+     "defi": [
+      "Pitons Rocheux des Craqueleurs",
+      "prudent"
+     ]
+    },
+    {
+     "nom": "Niveau 70",
+     "niveau": 70
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8102"
+   },
+   "test": true
+  },
+  "defi_sansPotion_craqueleur_legendaire": {
+   "nom": "Craqueleur Légendaire (Sans potion)",
+   "dofusId": 0,
+   "description": "Vaincre le Craqueleur Légendaire sans boire de potion dans le donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 51 à 100",
+   "points": 10,
+   "icone": 21,
+   "objectifs": [
+    {
+     "nom": "Sans boire de potion",
+     "defi": [
+      "Pitons Rocheux des Craqueleurs",
+      "sansPotion"
+     ]
+    },
+    {
+     "nom": "Niveau 70",
+     "niveau": 70
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8102"
+   },
+   "test": true
+  },
+  "donjon_57": {
+   "nom": "Château du Wa Wabbit",
+   "dofusId": 57,
+   "description": "Vaincre le Wa Wabbit dans son donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 51 à 100",
+   "points": 10,
+   "icone": 23,
+   "objectifs": [
+    {
+     "nom": "Wa Wabbit",
+     "donjon": "Château du Wa Wabbit"
+    },
+    {
+     "nom": "Niveau 60",
+     "niveau": 60
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8397"
+   },
+   "test": true
+  },
+  "defi_duo_wa_wabbit": {
+   "nom": "Wa Wabbit (Duo)",
+   "dofusId": 501,
+   "description": "Vaincre le Wa Wabbit dans son donjon, à deux joueurs au plus.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 51 à 100",
+   "points": 20,
+   "icone": 23,
+   "objectifs": [
+    {
+     "nom": "À deux joueurs au plus",
+     "defi": [
+      "Château du Wa Wabbit",
+      "duo"
+     ]
+    },
+    {
+     "nom": "Niveau 60",
+     "niveau": 60
+    }
+   ],
+   "recompense": {
+    "xp": 1000,
+    "objet": "8397"
+   },
+   "test": true
+  },
+  "defi_chrono_wa_wabbit": {
+   "nom": "Wa Wabbit (Blitzkrieg)",
+   "dofusId": 681,
+   "description": "Vaincre le Wa Wabbit moins de 90 secondes après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 51 à 100",
+   "points": 10,
+   "icone": 23,
+   "objectifs": [
+    {
+     "nom": "En moins de 90 s",
+     "defi": [
+      "Château du Wa Wabbit",
+      "chrono"
+     ]
+    },
+    {
+     "nom": "Niveau 60",
+     "niveau": 60
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8397"
+   },
+   "test": true
+  },
+  "defi_prudent_wa_wabbit": {
+   "nom": "Wa Wabbit (Prudent)",
+   "dofusId": 0,
+   "description": "Vaincre le Wa Wabbit sans être touché une seule fois après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 51 à 100",
+   "points": 10,
+   "icone": 23,
+   "objectifs": [
+    {
+     "nom": "Sans être touché",
+     "defi": [
+      "Château du Wa Wabbit",
+      "prudent"
+     ]
+    },
+    {
+     "nom": "Niveau 60",
+     "niveau": 60
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8397"
+   },
+   "test": true
+  },
+  "defi_sansPotion_wa_wabbit": {
+   "nom": "Wa Wabbit (Sans potion)",
+   "dofusId": 0,
+   "description": "Vaincre le Wa Wabbit sans boire de potion dans le donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 51 à 100",
+   "points": 10,
+   "icone": 23,
+   "objectifs": [
+    {
+     "nom": "Sans boire de potion",
+     "defi": [
+      "Château du Wa Wabbit",
+      "sansPotion"
+     ]
+    },
+    {
+     "nom": "Niveau 60",
+     "niveau": 60
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "8397"
+   },
+   "test": true
+  },
+  "donjon_1003": {
+   "nom": "Terrier du Wa Wabbit",
+   "dofusId": 1003,
+   "description": "Vaincre le Wa Wobot dans son donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 51 à 100",
+   "points": 10,
+   "icone": 254,
+   "objectifs": [
+    {
+     "nom": "Wa Wobot",
+     "donjon": "Terrier du Wa Wabbit"
+    },
+    {
+     "nom": "Niveau 80",
+     "niveau": 80
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "14468"
+   },
+   "test": true
+  },
+  "defi_duo_wa_wobot": {
+   "nom": "Wa Wobot (Duo)",
+   "dofusId": 1006,
+   "description": "Vaincre le Wa Wobot dans son donjon, à deux joueurs au plus.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 51 à 100",
+   "points": 20,
+   "icone": 254,
+   "objectifs": [
+    {
+     "nom": "À deux joueurs au plus",
+     "defi": [
+      "Terrier du Wa Wabbit",
+      "duo"
+     ]
+    },
+    {
+     "nom": "Niveau 80",
+     "niveau": 80
+    }
+   ],
+   "recompense": {
+    "xp": 1000,
+    "objet": "14468"
+   },
+   "test": true
+  },
+  "defi_chrono_wa_wobot": {
+   "nom": "Wa Wobot (Blitzkrieg)",
+   "dofusId": 1005,
+   "description": "Vaincre le Wa Wobot moins de 90 secondes après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 51 à 100",
+   "points": 10,
+   "icone": 254,
+   "objectifs": [
+    {
+     "nom": "En moins de 90 s",
+     "defi": [
+      "Terrier du Wa Wabbit",
+      "chrono"
+     ]
+    },
+    {
+     "nom": "Niveau 80",
+     "niveau": 80
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "14468"
+   },
+   "test": true
+  },
+  "defi_prudent_wa_wobot": {
+   "nom": "Wa Wobot (Prudent)",
+   "dofusId": 0,
+   "description": "Vaincre le Wa Wobot sans être touché une seule fois après son apparition.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 51 à 100",
+   "points": 10,
+   "icone": 254,
+   "objectifs": [
+    {
+     "nom": "Sans être touché",
+     "defi": [
+      "Terrier du Wa Wabbit",
+      "prudent"
+     ]
+    },
+    {
+     "nom": "Niveau 80",
+     "niveau": 80
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "14468"
+   },
+   "test": true
+  },
+  "defi_sansPotion_wa_wobot": {
+   "nom": "Wa Wobot (Sans potion)",
+   "dofusId": 0,
+   "description": "Vaincre le Wa Wobot sans boire de potion dans le donjon.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 51 à 100",
+   "points": 10,
+   "icone": 254,
+   "objectifs": [
+    {
+     "nom": "Sans boire de potion",
+     "defi": [
+      "Terrier du Wa Wabbit",
+      "sansPotion"
+     ]
+    },
+    {
+     "nom": "Niveau 80",
+     "niveau": 80
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "objet": "14468"
+   },
+   "test": true
+  },
+  "metier_tous_10": {
+   "nom": "Apprenti",
+   "dofusId": 14,
+   "description": "Atteindre le niveau 10 dans un métier.",
+   "categorie": "Métiers",
+   "sousCategorie": "Général",
+   "points": 1,
+   "icone": 167,
+   "objectifs": [
+    {
+     "nom": "Un métier au niveau 10",
+     "metier": "*",
+     "palier": 10
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   }
+  },
+  "metier_tous_100": {
+   "nom": "Travailleur",
+   "dofusId": 15,
+   "description": "Atteindre le niveau 100 dans un métier.",
+   "categorie": "Métiers",
+   "sousCategorie": "Général",
+   "points": 1,
+   "icone": 168,
+   "objectifs": [
+    {
+     "nom": "Un métier au niveau 100",
+     "metier": "*",
+     "palier": 100
+    }
+   ],
+   "recompense": {
+    "xp": 250
+   }
+  },
+  "metier_tous_200": {
+   "nom": "Compagnon",
+   "dofusId": 16,
+   "description": "Atteindre le niveau 200 dans un métier.",
+   "categorie": "Métiers",
+   "sousCategorie": "Général",
+   "points": 10,
+   "icone": 77,
+   "objectifs": [
+    {
+     "nom": "Un métier au niveau 200",
+     "metier": "*",
+     "palier": 200
+    }
+   ],
+   "recompense": {
+    "xp": 500
+   }
+  },
+  "runes_1000": {
+   "nom": "Et si je cassais ces trucs ?",
+   "dofusId": 119,
+   "description": "Obtenir 1000 runes en concassant des objets.",
+   "categorie": "Métiers",
+   "sousCategorie": "Général",
+   "points": 1,
+   "icone": 169,
+   "objectifs": [
+    {
+     "nom": "Runes obtenues",
+     "compteur": "runes",
+     "n": 1000
+    }
+   ],
+   "recompense": {
+    "xp": 100
+   }
+  },
+  "fabriques_1": {
+   "nom": "Je l'ai fait moi-même",
+   "dofusId": 120,
+   "description": "Confectionner 1 objet.",
+   "categorie": "Métiers",
+   "sousCategorie": "Général",
+   "points": 1,
+   "icone": 175,
+   "objectifs": [
+    {
+     "nom": "Objets fabriqués",
+     "compteur": "fabriques",
+     "n": 1
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   }
+  },
+  "fabriques_100": {
+   "nom": "Travail à la chaîne",
+   "dofusId": 121,
+   "description": "Confectionner 100 objets.",
+   "categorie": "Métiers",
+   "sousCategorie": "Général",
+   "points": 1,
+   "icone": 172,
+   "objectifs": [
+    {
+     "nom": "Objets fabriqués",
+     "compteur": "fabriques",
+     "n": 100
+    }
+   ],
+   "recompense": {
+    "xp": 100
+   }
+  },
+  "fabriques_1000": {
+   "nom": "L'atelier",
+   "dofusId": 122,
+   "description": "Confectionner 1000 objets.",
+   "categorie": "Métiers",
+   "sousCategorie": "Général",
+   "points": 1,
+   "icone": 173,
+   "objectifs": [
+    {
+     "nom": "Objets fabriqués",
+     "compteur": "fabriques",
+     "n": 1000
+    }
+   ],
+   "recompense": {
+    "xp": 150
+   }
+  },
+  "fabriques_10000": {
+   "nom": "La manufacture",
+   "dofusId": 123,
+   "description": "Confectionner 10000 objets.",
+   "categorie": "Métiers",
+   "sousCategorie": "Général",
+   "points": 20,
+   "icone": 174,
+   "objectifs": [
+    {
+     "nom": "Objets fabriqués",
+     "compteur": "fabriques",
+     "n": 10000
+    }
+   ],
+   "recompense": {
+    "xp": 1000
+   }
+  },
+  "runes_10000": {
+   "nom": "\"Je m'appelle casse partout\"",
+   "dofusId": 768,
+   "description": "Obtenir 10000 runes en concassant des objets.",
+   "categorie": "Métiers",
+   "sousCategorie": "Général",
+   "points": 10,
+   "icone": 169,
+   "objectifs": [
+    {
+     "nom": "Runes obtenues",
+     "compteur": "runes",
+     "n": 10000
+    }
+   ],
+   "recompense": {
+    "xp": 500
+   }
+  },
+  "runes_100": {
+   "nom": "Concastagne",
+   "dofusId": 769,
+   "description": "Obtenir 100 runes en concassant des objets.",
+   "categorie": "Métiers",
+   "sousCategorie": "Général",
+   "points": 1,
+   "icone": 169,
+   "objectifs": [
+    {
+     "nom": "Runes obtenues",
+     "compteur": "runes",
+     "n": 100
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   }
+  },
+  "metier_chasseur_10": {
+   "nom": "Chasseur niveau 10",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 10 dans le métier Chasseur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Chasseur",
+   "points": 5,
+   "icone": 167,
+   "objectifs": [
+    {
+     "nom": "Niveau de Chasseur",
+     "metier": "chasseur",
+     "palier": 10
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   }
+  },
+  "metier_chasseur_50": {
+   "nom": "Chasseur niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 dans le métier Chasseur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Chasseur",
+   "points": 5,
+   "icone": 167,
+   "objectifs": [
+    {
+     "nom": "Niveau de Chasseur",
+     "metier": "chasseur",
+     "palier": 50
+    }
+   ],
+   "recompense": {
+    "xp": 250
+   }
+  },
+  "metier_chasseur_100": {
+   "nom": "Chasseur niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 dans le métier Chasseur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Chasseur",
+   "points": 10,
+   "icone": 168,
+   "objectifs": [
+    {
+     "nom": "Niveau de Chasseur",
+     "metier": "chasseur",
+     "palier": 100
+    }
+   ],
+   "recompense": {
+    "xp": 500
+   }
+  },
+  "metier_chasseur_150": {
+   "nom": "Chasseur niveau 150",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 150 dans le métier Chasseur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Chasseur",
+   "points": 10,
+   "icone": 168,
+   "objectifs": [
+    {
+     "nom": "Niveau de Chasseur",
+     "metier": "chasseur",
+     "palier": 150
+    }
+   ],
+   "recompense": {
+    "xp": 750
+   }
+  },
+  "metier_chasseur_200": {
+   "nom": "Chasseur niveau 200",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 200 dans le métier Chasseur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Chasseur",
+   "points": 20,
+   "icone": 77,
+   "objectifs": [
+    {
+     "nom": "Niveau de Chasseur",
+     "metier": "chasseur",
+     "palier": 200
+    }
+   ],
+   "recompense": {
+    "xp": 1000
+   }
+  },
+  "metier_paysan_10": {
+   "nom": "Paysan niveau 10",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 10 dans le métier Paysan.",
+   "categorie": "Métiers",
+   "sousCategorie": "Paysan",
+   "points": 5,
+   "icone": 167,
+   "objectifs": [
+    {
+     "nom": "Niveau de Paysan",
+     "metier": "paysan",
+     "palier": 10
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   }
+  },
+  "metier_paysan_50": {
+   "nom": "Paysan niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 dans le métier Paysan.",
+   "categorie": "Métiers",
+   "sousCategorie": "Paysan",
+   "points": 5,
+   "icone": 167,
+   "objectifs": [
+    {
+     "nom": "Niveau de Paysan",
+     "metier": "paysan",
+     "palier": 50
+    }
+   ],
+   "recompense": {
+    "xp": 250
+   }
+  },
+  "metier_paysan_100": {
+   "nom": "Paysan niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 dans le métier Paysan.",
+   "categorie": "Métiers",
+   "sousCategorie": "Paysan",
+   "points": 10,
+   "icone": 168,
+   "objectifs": [
+    {
+     "nom": "Niveau de Paysan",
+     "metier": "paysan",
+     "palier": 100
+    }
+   ],
+   "recompense": {
+    "xp": 500
+   }
+  },
+  "metier_paysan_150": {
+   "nom": "Paysan niveau 150",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 150 dans le métier Paysan.",
+   "categorie": "Métiers",
+   "sousCategorie": "Paysan",
+   "points": 10,
+   "icone": 168,
+   "objectifs": [
+    {
+     "nom": "Niveau de Paysan",
+     "metier": "paysan",
+     "palier": 150
+    }
+   ],
+   "recompense": {
+    "xp": 750
+   }
+  },
+  "metier_paysan_200": {
+   "nom": "Paysan niveau 200",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 200 dans le métier Paysan.",
+   "categorie": "Métiers",
+   "sousCategorie": "Paysan",
+   "points": 20,
+   "icone": 77,
+   "objectifs": [
+    {
+     "nom": "Niveau de Paysan",
+     "metier": "paysan",
+     "palier": 200
+    }
+   ],
+   "recompense": {
+    "xp": 1000
+   }
+  },
+  "metier_bucheron_10": {
+   "nom": "Bûcheron niveau 10",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 10 dans le métier Bûcheron.",
+   "categorie": "Métiers",
+   "sousCategorie": "Bûcheron",
+   "points": 5,
+   "icone": 167,
+   "objectifs": [
+    {
+     "nom": "Niveau de Bûcheron",
+     "metier": "bucheron",
+     "palier": 10
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   }
+  },
+  "metier_bucheron_50": {
+   "nom": "Bûcheron niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 dans le métier Bûcheron.",
+   "categorie": "Métiers",
+   "sousCategorie": "Bûcheron",
+   "points": 5,
+   "icone": 167,
+   "objectifs": [
+    {
+     "nom": "Niveau de Bûcheron",
+     "metier": "bucheron",
+     "palier": 50
+    }
+   ],
+   "recompense": {
+    "xp": 250
+   }
+  },
+  "metier_bucheron_100": {
+   "nom": "Bûcheron niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 dans le métier Bûcheron.",
+   "categorie": "Métiers",
+   "sousCategorie": "Bûcheron",
+   "points": 10,
+   "icone": 168,
+   "objectifs": [
+    {
+     "nom": "Niveau de Bûcheron",
+     "metier": "bucheron",
+     "palier": 100
+    }
+   ],
+   "recompense": {
+    "xp": 500
+   }
+  },
+  "metier_bucheron_150": {
+   "nom": "Bûcheron niveau 150",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 150 dans le métier Bûcheron.",
+   "categorie": "Métiers",
+   "sousCategorie": "Bûcheron",
+   "points": 10,
+   "icone": 168,
+   "objectifs": [
+    {
+     "nom": "Niveau de Bûcheron",
+     "metier": "bucheron",
+     "palier": 150
+    }
+   ],
+   "recompense": {
+    "xp": 750
+   }
+  },
+  "metier_bucheron_200": {
+   "nom": "Bûcheron niveau 200",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 200 dans le métier Bûcheron.",
+   "categorie": "Métiers",
+   "sousCategorie": "Bûcheron",
+   "points": 20,
+   "icone": 77,
+   "objectifs": [
+    {
+     "nom": "Niveau de Bûcheron",
+     "metier": "bucheron",
+     "palier": 200
+    }
+   ],
+   "recompense": {
+    "xp": 1000
+   }
+  },
+  "metier_mineur_10": {
+   "nom": "Mineur niveau 10",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 10 dans le métier Mineur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Mineur",
+   "points": 5,
+   "icone": 167,
+   "objectifs": [
+    {
+     "nom": "Niveau de Mineur",
+     "metier": "mineur",
+     "palier": 10
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   }
+  },
+  "metier_mineur_50": {
+   "nom": "Mineur niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 dans le métier Mineur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Mineur",
+   "points": 5,
+   "icone": 167,
+   "objectifs": [
+    {
+     "nom": "Niveau de Mineur",
+     "metier": "mineur",
+     "palier": 50
+    }
+   ],
+   "recompense": {
+    "xp": 250
+   }
+  },
+  "metier_mineur_100": {
+   "nom": "Mineur niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 dans le métier Mineur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Mineur",
+   "points": 10,
+   "icone": 168,
+   "objectifs": [
+    {
+     "nom": "Niveau de Mineur",
+     "metier": "mineur",
+     "palier": 100
+    }
+   ],
+   "recompense": {
+    "xp": 500
+   }
+  },
+  "metier_mineur_150": {
+   "nom": "Mineur niveau 150",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 150 dans le métier Mineur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Mineur",
+   "points": 10,
+   "icone": 168,
+   "objectifs": [
+    {
+     "nom": "Niveau de Mineur",
+     "metier": "mineur",
+     "palier": 150
+    }
+   ],
+   "recompense": {
+    "xp": 750
+   }
+  },
+  "metier_mineur_200": {
+   "nom": "Mineur niveau 200",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 200 dans le métier Mineur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Mineur",
+   "points": 20,
+   "icone": 77,
+   "objectifs": [
+    {
+     "nom": "Niveau de Mineur",
+     "metier": "mineur",
+     "palier": 200
+    }
+   ],
+   "recompense": {
+    "xp": 1000
+   }
+  },
+  "metier_alchimiste_10": {
+   "nom": "Alchimiste niveau 10",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 10 dans le métier Alchimiste.",
+   "categorie": "Métiers",
+   "sousCategorie": "Alchimiste",
+   "points": 5,
+   "icone": 167,
+   "objectifs": [
+    {
+     "nom": "Niveau de Alchimiste",
+     "metier": "alchimiste",
+     "palier": 10
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   }
+  },
+  "metier_alchimiste_50": {
+   "nom": "Alchimiste niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 dans le métier Alchimiste.",
+   "categorie": "Métiers",
+   "sousCategorie": "Alchimiste",
+   "points": 5,
+   "icone": 167,
+   "objectifs": [
+    {
+     "nom": "Niveau de Alchimiste",
+     "metier": "alchimiste",
+     "palier": 50
+    }
+   ],
+   "recompense": {
+    "xp": 250
+   }
+  },
+  "metier_alchimiste_100": {
+   "nom": "Alchimiste niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 dans le métier Alchimiste.",
+   "categorie": "Métiers",
+   "sousCategorie": "Alchimiste",
+   "points": 10,
+   "icone": 168,
+   "objectifs": [
+    {
+     "nom": "Niveau de Alchimiste",
+     "metier": "alchimiste",
+     "palier": 100
+    }
+   ],
+   "recompense": {
+    "xp": 500
+   }
+  },
+  "metier_alchimiste_150": {
+   "nom": "Alchimiste niveau 150",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 150 dans le métier Alchimiste.",
+   "categorie": "Métiers",
+   "sousCategorie": "Alchimiste",
+   "points": 10,
+   "icone": 168,
+   "objectifs": [
+    {
+     "nom": "Niveau de Alchimiste",
+     "metier": "alchimiste",
+     "palier": 150
+    }
+   ],
+   "recompense": {
+    "xp": 750
+   }
+  },
+  "metier_alchimiste_200": {
+   "nom": "Alchimiste niveau 200",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 200 dans le métier Alchimiste.",
+   "categorie": "Métiers",
+   "sousCategorie": "Alchimiste",
+   "points": 20,
+   "icone": 77,
+   "objectifs": [
+    {
+     "nom": "Niveau de Alchimiste",
+     "metier": "alchimiste",
+     "palier": 200
+    }
+   ],
+   "recompense": {
+    "xp": 1000
+   }
+  },
+  "metier_pecheur_10": {
+   "nom": "Pêcheur niveau 10",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 10 dans le métier Pêcheur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Pêcheur",
+   "points": 5,
+   "icone": 167,
+   "objectifs": [
+    {
+     "nom": "Niveau de Pêcheur",
+     "metier": "pecheur",
+     "palier": 10
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   }
+  },
+  "metier_pecheur_50": {
+   "nom": "Pêcheur niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 dans le métier Pêcheur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Pêcheur",
+   "points": 5,
+   "icone": 167,
+   "objectifs": [
+    {
+     "nom": "Niveau de Pêcheur",
+     "metier": "pecheur",
+     "palier": 50
+    }
+   ],
+   "recompense": {
+    "xp": 250
+   }
+  },
+  "metier_pecheur_100": {
+   "nom": "Pêcheur niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 dans le métier Pêcheur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Pêcheur",
+   "points": 10,
+   "icone": 168,
+   "objectifs": [
+    {
+     "nom": "Niveau de Pêcheur",
+     "metier": "pecheur",
+     "palier": 100
+    }
+   ],
+   "recompense": {
+    "xp": 500
+   }
+  },
+  "metier_pecheur_150": {
+   "nom": "Pêcheur niveau 150",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 150 dans le métier Pêcheur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Pêcheur",
+   "points": 10,
+   "icone": 168,
+   "objectifs": [
+    {
+     "nom": "Niveau de Pêcheur",
+     "metier": "pecheur",
+     "palier": 150
+    }
+   ],
+   "recompense": {
+    "xp": 750
+   }
+  },
+  "metier_pecheur_200": {
+   "nom": "Pêcheur niveau 200",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 200 dans le métier Pêcheur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Pêcheur",
+   "points": 20,
+   "icone": 77,
+   "objectifs": [
+    {
+     "nom": "Niveau de Pêcheur",
+     "metier": "pecheur",
+     "palier": 200
+    }
+   ],
+   "recompense": {
+    "xp": 1000
+   }
+  },
+  "metier_bricoleur_10": {
+   "nom": "Bricoleur niveau 10",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 10 dans le métier Bricoleur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Bricoleur",
+   "points": 5,
+   "icone": 167,
+   "objectifs": [
+    {
+     "nom": "Niveau de Bricoleur",
+     "metier": "bricoleur",
+     "palier": 10
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   }
+  },
+  "metier_bricoleur_50": {
+   "nom": "Bricoleur niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 dans le métier Bricoleur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Bricoleur",
+   "points": 5,
+   "icone": 167,
+   "objectifs": [
+    {
+     "nom": "Niveau de Bricoleur",
+     "metier": "bricoleur",
+     "palier": 50
+    }
+   ],
+   "recompense": {
+    "xp": 250
+   }
+  },
+  "metier_bricoleur_100": {
+   "nom": "Bricoleur niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 dans le métier Bricoleur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Bricoleur",
+   "points": 10,
+   "icone": 168,
+   "objectifs": [
+    {
+     "nom": "Niveau de Bricoleur",
+     "metier": "bricoleur",
+     "palier": 100
+    }
+   ],
+   "recompense": {
+    "xp": 500
+   }
+  },
+  "metier_bricoleur_150": {
+   "nom": "Bricoleur niveau 150",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 150 dans le métier Bricoleur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Bricoleur",
+   "points": 10,
+   "icone": 168,
+   "objectifs": [
+    {
+     "nom": "Niveau de Bricoleur",
+     "metier": "bricoleur",
+     "palier": 150
+    }
+   ],
+   "recompense": {
+    "xp": 750
+   }
+  },
+  "metier_bricoleur_200": {
+   "nom": "Bricoleur niveau 200",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 200 dans le métier Bricoleur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Bricoleur",
+   "points": 20,
+   "icone": 77,
+   "objectifs": [
+    {
+     "nom": "Niveau de Bricoleur",
+     "metier": "bricoleur",
+     "palier": 200
+    }
+   ],
+   "recompense": {
+    "xp": 1000
+   }
+  },
+  "metier_bijoutier_10": {
+   "nom": "Bijoutier niveau 10",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 10 dans le métier Bijoutier.",
+   "categorie": "Métiers",
+   "sousCategorie": "Bijoutier",
+   "points": 5,
+   "icone": 167,
+   "objectifs": [
+    {
+     "nom": "Niveau de Bijoutier",
+     "metier": "bijoutier",
+     "palier": 10
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   }
+  },
+  "metier_bijoutier_50": {
+   "nom": "Bijoutier niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 dans le métier Bijoutier.",
+   "categorie": "Métiers",
+   "sousCategorie": "Bijoutier",
+   "points": 5,
+   "icone": 167,
+   "objectifs": [
+    {
+     "nom": "Niveau de Bijoutier",
+     "metier": "bijoutier",
+     "palier": 50
+    }
+   ],
+   "recompense": {
+    "xp": 250
+   }
+  },
+  "metier_bijoutier_100": {
+   "nom": "Bijoutier niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 dans le métier Bijoutier.",
+   "categorie": "Métiers",
+   "sousCategorie": "Bijoutier",
+   "points": 10,
+   "icone": 168,
+   "objectifs": [
+    {
+     "nom": "Niveau de Bijoutier",
+     "metier": "bijoutier",
+     "palier": 100
+    }
+   ],
+   "recompense": {
+    "xp": 500
+   }
+  },
+  "metier_bijoutier_150": {
+   "nom": "Bijoutier niveau 150",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 150 dans le métier Bijoutier.",
+   "categorie": "Métiers",
+   "sousCategorie": "Bijoutier",
+   "points": 10,
+   "icone": 168,
+   "objectifs": [
+    {
+     "nom": "Niveau de Bijoutier",
+     "metier": "bijoutier",
+     "palier": 150
+    }
+   ],
+   "recompense": {
+    "xp": 750
+   }
+  },
+  "metier_bijoutier_200": {
+   "nom": "Bijoutier niveau 200",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 200 dans le métier Bijoutier.",
+   "categorie": "Métiers",
+   "sousCategorie": "Bijoutier",
+   "points": 20,
+   "icone": 77,
+   "objectifs": [
+    {
+     "nom": "Niveau de Bijoutier",
+     "metier": "bijoutier",
+     "palier": 200
+    }
+   ],
+   "recompense": {
+    "xp": 1000
+   }
+  },
+  "metier_cordonnier_10": {
+   "nom": "Cordonnier niveau 10",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 10 dans le métier Cordonnier.",
+   "categorie": "Métiers",
+   "sousCategorie": "Cordonnier",
+   "points": 5,
+   "icone": 167,
+   "objectifs": [
+    {
+     "nom": "Niveau de Cordonnier",
+     "metier": "cordonnier",
+     "palier": 10
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   }
+  },
+  "metier_cordonnier_50": {
+   "nom": "Cordonnier niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 dans le métier Cordonnier.",
+   "categorie": "Métiers",
+   "sousCategorie": "Cordonnier",
+   "points": 5,
+   "icone": 167,
+   "objectifs": [
+    {
+     "nom": "Niveau de Cordonnier",
+     "metier": "cordonnier",
+     "palier": 50
+    }
+   ],
+   "recompense": {
+    "xp": 250
+   }
+  },
+  "metier_cordonnier_100": {
+   "nom": "Cordonnier niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 dans le métier Cordonnier.",
+   "categorie": "Métiers",
+   "sousCategorie": "Cordonnier",
+   "points": 10,
+   "icone": 168,
+   "objectifs": [
+    {
+     "nom": "Niveau de Cordonnier",
+     "metier": "cordonnier",
+     "palier": 100
+    }
+   ],
+   "recompense": {
+    "xp": 500
+   }
+  },
+  "metier_cordonnier_150": {
+   "nom": "Cordonnier niveau 150",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 150 dans le métier Cordonnier.",
+   "categorie": "Métiers",
+   "sousCategorie": "Cordonnier",
+   "points": 10,
+   "icone": 168,
+   "objectifs": [
+    {
+     "nom": "Niveau de Cordonnier",
+     "metier": "cordonnier",
+     "palier": 150
+    }
+   ],
+   "recompense": {
+    "xp": 750
+   }
+  },
+  "metier_cordonnier_200": {
+   "nom": "Cordonnier niveau 200",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 200 dans le métier Cordonnier.",
+   "categorie": "Métiers",
+   "sousCategorie": "Cordonnier",
+   "points": 20,
+   "icone": 77,
+   "objectifs": [
+    {
+     "nom": "Niveau de Cordonnier",
+     "metier": "cordonnier",
+     "palier": 200
+    }
+   ],
+   "recompense": {
+    "xp": 1000
+   }
+  },
+  "metier_tailleur_10": {
+   "nom": "Tailleur niveau 10",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 10 dans le métier Tailleur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Tailleur",
+   "points": 5,
+   "icone": 167,
+   "objectifs": [
+    {
+     "nom": "Niveau de Tailleur",
+     "metier": "tailleur",
+     "palier": 10
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   }
+  },
+  "metier_tailleur_50": {
+   "nom": "Tailleur niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 dans le métier Tailleur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Tailleur",
+   "points": 5,
+   "icone": 167,
+   "objectifs": [
+    {
+     "nom": "Niveau de Tailleur",
+     "metier": "tailleur",
+     "palier": 50
+    }
+   ],
+   "recompense": {
+    "xp": 250
+   }
+  },
+  "metier_tailleur_100": {
+   "nom": "Tailleur niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 dans le métier Tailleur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Tailleur",
+   "points": 10,
+   "icone": 168,
+   "objectifs": [
+    {
+     "nom": "Niveau de Tailleur",
+     "metier": "tailleur",
+     "palier": 100
+    }
+   ],
+   "recompense": {
+    "xp": 500
+   }
+  },
+  "metier_tailleur_150": {
+   "nom": "Tailleur niveau 150",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 150 dans le métier Tailleur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Tailleur",
+   "points": 10,
+   "icone": 168,
+   "objectifs": [
+    {
+     "nom": "Niveau de Tailleur",
+     "metier": "tailleur",
+     "palier": 150
+    }
+   ],
+   "recompense": {
+    "xp": 750
+   }
+  },
+  "metier_tailleur_200": {
+   "nom": "Tailleur niveau 200",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 200 dans le métier Tailleur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Tailleur",
+   "points": 20,
+   "icone": 77,
+   "objectifs": [
+    {
+     "nom": "Niveau de Tailleur",
+     "metier": "tailleur",
+     "palier": 200
+    }
+   ],
+   "recompense": {
+    "xp": 1000
+   }
+  },
+  "metier_forgeron_10": {
+   "nom": "Forgeron niveau 10",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 10 dans le métier Forgeron.",
+   "categorie": "Métiers",
+   "sousCategorie": "Forgeron",
+   "points": 5,
+   "icone": 167,
+   "objectifs": [
+    {
+     "nom": "Niveau de Forgeron",
+     "metier": "forgeron",
+     "palier": 10
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   }
+  },
+  "metier_forgeron_50": {
+   "nom": "Forgeron niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 dans le métier Forgeron.",
+   "categorie": "Métiers",
+   "sousCategorie": "Forgeron",
+   "points": 5,
+   "icone": 167,
+   "objectifs": [
+    {
+     "nom": "Niveau de Forgeron",
+     "metier": "forgeron",
+     "palier": 50
+    }
+   ],
+   "recompense": {
+    "xp": 250
+   }
+  },
+  "metier_forgeron_100": {
+   "nom": "Forgeron niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 dans le métier Forgeron.",
+   "categorie": "Métiers",
+   "sousCategorie": "Forgeron",
+   "points": 10,
+   "icone": 168,
+   "objectifs": [
+    {
+     "nom": "Niveau de Forgeron",
+     "metier": "forgeron",
+     "palier": 100
+    }
+   ],
+   "recompense": {
+    "xp": 500
+   }
+  },
+  "metier_forgeron_150": {
+   "nom": "Forgeron niveau 150",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 150 dans le métier Forgeron.",
+   "categorie": "Métiers",
+   "sousCategorie": "Forgeron",
+   "points": 10,
+   "icone": 168,
+   "objectifs": [
+    {
+     "nom": "Niveau de Forgeron",
+     "metier": "forgeron",
+     "palier": 150
+    }
+   ],
+   "recompense": {
+    "xp": 750
+   }
+  },
+  "metier_forgeron_200": {
+   "nom": "Forgeron niveau 200",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 200 dans le métier Forgeron.",
+   "categorie": "Métiers",
+   "sousCategorie": "Forgeron",
+   "points": 20,
+   "icone": 77,
+   "objectifs": [
+    {
+     "nom": "Niveau de Forgeron",
+     "metier": "forgeron",
+     "palier": 200
+    }
+   ],
+   "recompense": {
+    "xp": 1000
+   }
+  },
+  "metier_sculpteur_10": {
+   "nom": "Sculpteur niveau 10",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 10 dans le métier Sculpteur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Sculpteur",
+   "points": 5,
+   "icone": 167,
+   "objectifs": [
+    {
+     "nom": "Niveau de Sculpteur",
+     "metier": "sculpteur",
+     "palier": 10
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   }
+  },
+  "metier_sculpteur_50": {
+   "nom": "Sculpteur niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 dans le métier Sculpteur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Sculpteur",
+   "points": 5,
+   "icone": 167,
+   "objectifs": [
+    {
+     "nom": "Niveau de Sculpteur",
+     "metier": "sculpteur",
+     "palier": 50
+    }
+   ],
+   "recompense": {
+    "xp": 250
+   }
+  },
+  "metier_sculpteur_100": {
+   "nom": "Sculpteur niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 dans le métier Sculpteur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Sculpteur",
+   "points": 10,
+   "icone": 168,
+   "objectifs": [
+    {
+     "nom": "Niveau de Sculpteur",
+     "metier": "sculpteur",
+     "palier": 100
+    }
+   ],
+   "recompense": {
+    "xp": 500
+   }
+  },
+  "metier_sculpteur_150": {
+   "nom": "Sculpteur niveau 150",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 150 dans le métier Sculpteur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Sculpteur",
+   "points": 10,
+   "icone": 168,
+   "objectifs": [
+    {
+     "nom": "Niveau de Sculpteur",
+     "metier": "sculpteur",
+     "palier": 150
+    }
+   ],
+   "recompense": {
+    "xp": 750
+   }
+  },
+  "metier_sculpteur_200": {
+   "nom": "Sculpteur niveau 200",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 200 dans le métier Sculpteur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Sculpteur",
+   "points": 20,
+   "icone": 77,
+   "objectifs": [
+    {
+     "nom": "Niveau de Sculpteur",
+     "metier": "sculpteur",
+     "palier": 200
+    }
+   ],
+   "recompense": {
+    "xp": 1000
+   }
+  },
+  "metier_faconneur_10": {
+   "nom": "Façonneur niveau 10",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 10 dans le métier Façonneur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Façonneur",
+   "points": 5,
+   "icone": 167,
+   "objectifs": [
+    {
+     "nom": "Niveau de Façonneur",
+     "metier": "faconneur",
+     "palier": 10
+    }
+   ],
+   "recompense": {
+    "xp": 50
+   }
+  },
+  "metier_faconneur_50": {
+   "nom": "Façonneur niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 dans le métier Façonneur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Façonneur",
+   "points": 5,
+   "icone": 167,
+   "objectifs": [
+    {
+     "nom": "Niveau de Façonneur",
+     "metier": "faconneur",
+     "palier": 50
+    }
+   ],
+   "recompense": {
+    "xp": 250
+   }
+  },
+  "metier_faconneur_100": {
+   "nom": "Façonneur niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 dans le métier Façonneur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Façonneur",
+   "points": 10,
+   "icone": 168,
+   "objectifs": [
+    {
+     "nom": "Niveau de Façonneur",
+     "metier": "faconneur",
+     "palier": 100
+    }
+   ],
+   "recompense": {
+    "xp": 500
+   }
+  },
+  "metier_faconneur_150": {
+   "nom": "Façonneur niveau 150",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 150 dans le métier Façonneur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Façonneur",
+   "points": 10,
+   "icone": 168,
+   "objectifs": [
+    {
+     "nom": "Niveau de Façonneur",
+     "metier": "faconneur",
+     "palier": 150
+    }
+   ],
+   "recompense": {
+    "xp": 750
+   }
+  },
+  "metier_faconneur_200": {
+   "nom": "Façonneur niveau 200",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 200 dans le métier Façonneur.",
+   "categorie": "Métiers",
+   "sousCategorie": "Façonneur",
+   "points": 20,
+   "icone": 77,
+   "objectifs": [
+    {
+     "nom": "Niveau de Façonneur",
+     "metier": "faconneur",
+     "palier": 200
+    }
+   ],
+   "recompense": {
+    "xp": 1000
+   }
   }
  },
  "contrats": {

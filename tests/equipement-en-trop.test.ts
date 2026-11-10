@@ -45,7 +45,7 @@ describe('Équipement en trop : collection d\'apparences (1C)', () => {
 
   it('un succès par panoplie dont toutes les pièces visibles sont collectionnées', () => {
     const w = monde(), [sid, s] = Object.entries(QUETES.succes).find(([k]) => k.startsWith('garde_robe_'))!;
-    expect(s.categorie).toBe('Collection');
+    expect([s.categorie, s.sousCategorie]).toEqual(['Général', 'Garde-robe']);
     for (const o of s.objectifs) { const it = objet(w, (o as { apparence: string }).apparence); w.briserObjet(it.uid); }
     for (let i = 0; i < 3; i++) w.step(0.05, NO_INPUT);
     expect(w.quetes!.succes.has(sid)).toBe(true);
