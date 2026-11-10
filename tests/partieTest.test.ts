@@ -8,6 +8,10 @@ import { REGLAGES_TEST, caracPrincipale, type CommandeTest } from '../src/sim/ou
 import { World } from '../src/sim/world';
 import { DOFUS } from '../src/sim/dofus';
 import { jourAlmanax } from '../src/sim/almanax';
+import { POUVOIRS } from '../src/sim/pouvoirs';
+import { POUVOIRS_CLASSE } from '../src/sim/pouvoirsClasse';
+import { RAYON_TUER } from '../src/sim/outilsTest';
+import { decoderEtat, encoderEtat } from '../src/render/codeEtat';
 
 const astrub = JSON.parse(readFileSync(new URL('../public/assets/mondes/astrub/monde.json', import.meta.url), 'utf8')) as WorldData;
 const monde = (classId = 'iop', test = true) => new World({ data: GAME_DATA, zone: 'astrub', map: new WorldGrid(astrub), seed: 3, classId, items: ITEMS, quetes: QUETES,
@@ -131,5 +135,76 @@ describe('Partie de test (panneau F1)', () => {
     for (let i = 0; i < 120; i++) w.step(1 / 60, NO_INPUT);
     expect(man.frappe).toBe(3);
     expect(p.hp).toBeLessThan(hp);
+  });
+
+  it('Panneau test 3A, 9C, 7C : soigner, tuer la carte (pas le mannequin), repeupler, vider le sac', () => {
+    const w = monde(), p = w.player;
+    ordre(w, { k: 'monstre', type: 'bouftou', n: 3, rang: 'normal', x: p.x + 200, y: p.y, mannequin: false },
+      { k: 'monstre', type: 'bouftou', n: 1, rang: 'normal', x: p.x - 150, y: p.y, mannequin: true });
+    p.hp = 1; p.pa = 0;
+    const xp = p.xp, autour = w.monsters.filter(m => !m.dead && !m.mannequin && Math.hypot(m.x - p.x, m.y - p.y) <= RAYON_TUER).length;
+    ordre(w, { k: 'soigner' }, { k: 'tuer' });
+    expect(p.hp).toBe(p.maxHp);
+    expect(autour).toBeGreaterThanOrEqual(3);
+    expect(w.monsters.filter(m => !m.dead && !m.mannequin && Math.hypot(m.x - p.x, m.y - p.y) <= RAYON_TUER)).toHaveLength(0);
+    expect(w.monsters.some(m => m.mannequin && !m.dead)).toBe(true);
+    expect(p.xp + p.level * 1e6).toBeGreaterThan(xp + p.level * 1e6 - 1);   // XP comme d'habitude
+    const vivants = () => w.monsters.filter(m => !m.dead && !m.poseTest).length;
+    for (let i = 0; i < 90; i++) w.step(1 / 60, NO_INPUT);
+    const avant = vivants();
+    ordre(w, { k: 'repeupler' });
+    expect(vivants()).toBeGreaterThan(avant);
+    ordre(w, { k: 'objet', id: Object.keys(ITEMS.equipment)[0], rarete: 'rare', n: 3 }, { k: 'viderSac' });
+    expect(p.bag).toHaveLength(0);
+  });
+  it('Panneau test 7A : objet Légendaire avec le pouvoir choisi (officiel, de classe, maison)', () => {
+    const w = monde(), p = w.player;
+    ordre(w, { k: 'niveau', n: 40, auto: true });
+    const off = POUVOIRS.iop[0], pc = POUVOIRS_CLASSE.find(x => x.classe === 'iop')!;
+    ordre(w, { k: 'pouvoir', id: off.id }, { k: 'pouvoir', id: pc.id }, { k: 'pouvoir', id: 'potion' });
+    const [a, b, c] = p.bag;
+    expect(a.rarity).toBe('legendaire');
+    expect(a.legendary?.id).toBe(off.id);
+    expect(ITEMS.equipment[a.id].slot).toBe(off.slot);
+    expect(b.legendary).toEqual({ id: pc.id, value: pc.jet[1] });
+    expect(ITEMS.equipment[b.id].slot).toBe(pc.slot);
+    expect(c.legendary?.id).toBe('potion');
+    expect(c.legendary?.value).toBeGreaterThan(0);
+    expect(a.legendary2 ?? b.legendary2 ?? c.legendary2).toBeUndefined();
+  });
+  it('Panneau test 6A : chaque coup dit quel sort l\'a porté', () => {
+    const w = monde(), p = w.player;
+    ordre(w, { k: 'monstre', type: 'bouftou', n: 1, rang: 'normal', x: p.x + 40, y: p.y, mannequin: true });
+    w.drainEvents();
+    const man = w.monsters.find(m => m.mannequin)!, sorts = new Set<string | undefined>();
+    for (let i = 0; i < 240 && !sorts.size; i++) {
+      w.step(1 / 60, { ...NO_INPUT, aim: { x: man.x, y: man.y }, target: man.id } as PlayerInput);
+      for (const e of w.drainEvents()) if (e.k === 'hit' && e.target === 'monster') sorts.add(e.sort);
+    }
+    expect([...sorts].some(s => s && (s === 'attaque' || s === p.cls.basic || p.cls.spells[s]))).toBe(true);
+  });
+  it('Panneau test 9A : arène d\'un donjon à la vague voulue', () => {
+    const w = monde(), p = w.player, d = w.zone.open!.donjons!.find(x => x.arene && x.vagues && x.vagues.length >= 3 && w.worldGrid!.mapByTag(x.arene.tag) && !w.couloirs(x))!;
+    ordre(w, { k: 'aller', tag: d.arene!.tag, nom: d.nom, vague: 3 });
+    for (let i = 0; i < 60 * 8 && !w.arene; i++) w.step(1 / 60, NO_INPUT);
+    for (let i = 0; i < 60 * 5; i++) w.step(1 / 60, NO_INPUT);
+    expect(w.arene?.d.nom).toBe(d.nom);
+    expect(w.arene!.vague).toBe(3);
+    expect(p.cleDonjon?.vague).toBe(3);
+  });
+  it('Panneau test 4E : carte et case sous la souris (inverse de cellOf)', () => {
+    const wg = monde().worldGrid!;
+    for (const m of wg.world.maps.slice(0, 20)) for (const c of [0, 13, 14, 300, 559]) expect(wg.caseLocale(wg.cellOf(m.tag, c))).toMatchObject({ tag: m.tag, c });
+  });
+  it('Panneau test 8B : code d\'état aller-retour', async () => {
+    const w = monde(), etat = { classe: 'cra', sexe: 'f', zone: 'astrub', reglages: { ...REGLAGES_TEST, invincible: true }, etat: { niveau: 40, sac: [1, 2, 3], nom: 'Éva « test »' } };
+    const code = await encoderEtat(etat);
+    expect(code.startsWith('DF1.')).toBe(true);
+    expect(code).toMatch(/^DF1\.[A-Za-z0-9_-]+$/);
+    expect(await decoderEtat(code)).toEqual(etat);
+    expect(await decoderEtat(`  ${code.slice(0, 40)}\n${code.slice(40)} `)).toEqual(etat);   // collé sur deux lignes
+    expect(await decoderEtat('bonjour')).toBeNull();
+    expect(await decoderEtat('DF1.pasdutout')).toBeNull();
+    expect(w.player).toBeTruthy();
   });
 });

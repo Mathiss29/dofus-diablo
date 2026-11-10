@@ -61,7 +61,9 @@ export interface HitDef { dmg: number; knock: number; element?: Element; lifeste
    *  la Lance plantée compte comme un mur et multiplie la poussée par k (Enclume), +n % de dégâts si la cible heurte un obstacle (Estoc en avant). */
   choc?: number; partage?: number; enclume?: { x: number; y: number; k: number }; plusChoc?: number;
   /** Juron fracassant (Eniripsa I) : l'Éloquence gagnée quand la cible heurte un obstacle. */
-  chocRage?: number }
+  chocRage?: number;
+  /** Sort qui frappe (partie de test, DPS sort par sort : maquette « Panneau test » 6A). */
+  sort?: string }
 /** Zone laissée au sol par un légendaire de classe (Épée jumelle) : frappe une fois chaque monstre qui la traverse. */
 export interface ZoneSol { x: number; y: number; r: number; t: number; hit: HitDef; touches: Set<number>; id: string }
 /** Butin au sol (choix 1C 2D 6A) : équipements et kamas seulement. Les Communs et les kamas filent vers le joueur
@@ -1006,6 +1008,12 @@ export class World {
     this.monsters = this.monsters.filter(m => !vieux.has(m.group));
     this.poserGroupes(tag, sub);
   }
+  /** Partie de test (maquette « Panneau test » 9C) : les groupes vaincus reviennent tout de suite, même sous les yeux du joueur. */
+  repeupler(): number {
+    let n = 0;
+    for (const g of this.groups) if (!g.retire && g.cleared && this.groupesPrets(g)) { this.spawnGroup(g); n++; }
+    return n;
+  }
   /** 5B : point libre où le groupe se pose (aucun autre groupe en vie dessus), loin du joueur si possible. */
   private choisirPoint(g: MonsterGroup, pl: PlacementCarte): number {
     const wg = this.worldGrid!, p = this.player;
@@ -1212,7 +1220,7 @@ export class World {
   /** Chemin à pied (A* sur les cases de Dofus) vers un point. */
   findPath(from: { x: number; y: number }, to: { x: number; y: number }) { return this.test?.murs && from === this.player ? [{ x: to.x, y: to.y }] : this.map.findPath(from, to); }
   /** Partie de test (8A) : recharges, PA et PM pleins. */
-  private rechargerTout() {
+  rechargerTout() {
     const p = this.player;
     for (const k of Object.keys(p.cd)) p.cd[k] = 0;
     p.casts = {};   // charges pleines
@@ -1596,7 +1604,7 @@ export class World {
       if (choc && def.chocRage) p.addRage(def.chocRage, this);
       if (choc && def.plusChoc && dmg > 0 && m.hp > 0) {   // Estoc en avant : la cible heurte un obstacle
         const sup = Math.max(1, Math.round(dmg * def.plusChoc / 100)); m.hp -= sup;
-        this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 20, amount: sup, crit: false, element: el });
+        this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 20, amount: sup, crit: false, element: el, sort: def.sort });
       }
       if (!m.def.boss) m.stun = Math.max(m.stun, stun || 0.12);   // petit vacillement : interrompt les télégraphes
       else if (stun) m.stun = Math.max(m.stun, stun * 0.3);
@@ -1622,7 +1630,7 @@ export class World {
         p.couperetA = p.age; m.hp = 0;   // Couperet du bourreau
         this.emit({ k: 'status', x: m.x, y: m.y - 34, text: 'Exécuté !', color: '#ff5050' });
       }
-      if (dmg) this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: dmg, crit, element: el, eclat: def.eclat });
+      if (dmg) this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: dmg, crit, element: el, eclat: def.eclat, sort: def.sort });
       if (n <= 3) p.rageOnHit(Math.hypot(m.x - p.x, m.y - p.y), this);
       if (def.lifesteal) {
         const soin = Math.round(dmg * def.lifesteal), trop = p.hp + soin - p.maxHp;
@@ -1670,7 +1678,7 @@ export class World {
     if (!best || dmg < 1) return;
     const n = Math.round(dmg);
     best.hp -= n; best.flash = 0.09;
-    this.emit({ k: 'hit', target: 'monster', id: best.id, x: best.x, y: best.y, z: best.radius * 2 + 10, amount: n, crit: false, element: 'neutre' });
+    this.emit({ k: 'hit', target: 'monster', id: best.id, x: best.x, y: best.y, z: best.radius * 2 + 10, amount: n, crit: false, element: 'neutre', sort: 'renvoi' });
     if (best.hp <= 0) this.killMonster(best);
   }
   /** Augmente les dommages subis par les monstres dans ce cercle, sans les frapper (Bond). */
@@ -1700,7 +1708,7 @@ export class World {
     if (left <= 0.25) return false;
     const p = this.player, dmg = Math.max(1, Math.round((p.level / 2 + p.stat('dommagesPoussee') + 32) * left / 4 * (1 + bonus / 100) * (lance ? enclume!.k : 1)));
     m.hp -= dmg; m.flash = 0.09; m.calmeT = 0;
-    this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 30, amount: dmg, crit: false });
+    this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 30, amount: dmg, crit: false, sort: 'poussee' });
     this.emit({ k: 'status', x: m.x, y: m.y - 20, text: 'Choc !', color: '#f2d36b' });
     return true;
   }
@@ -1717,7 +1725,7 @@ export class World {
     const n = Math.max(1, Math.round(m.saigneAcc)); m.saigneAcc = 0;
     if (m.saigneT <= 0) m.saigne = 0;
     m.hp -= n;
-    this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: n, crit: false, element: 'feu' });
+    this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: n, crit: false, element: 'feu', sort: 'saignement' });
     if (m.hp <= 0) this.killMonster(m);
   }
   killMonster(m: Monster) {
@@ -1935,7 +1943,7 @@ export class World {
     const p = this.player, el = this.elementFamilier(), res = Math.min(50, m.def.res?.[el] ?? 0);
     const dmg = Math.max(1, Math.round(p.damage(World.MORSURE.jet, el) * this.rng.range(0.9, 1.1) * (1 - res / 100) * m.subis));
     m.hp -= dmg; m.flash = 0.09; m.calmeT = 0; m.struck = true;
-    this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: dmg, crit: false, element: el });
+    this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: dmg, crit: false, element: el, sort: 'familier' });
     if (m.hp <= 0) this.killMonster(m);
   }
   /** XP pour le familier porté (2C) ; ses bonus suivent son niveau. */
@@ -2569,7 +2577,7 @@ export class World {
     const dmg = Math.max(1, Math.round(p.damage(jet, element) * this.rng.range(0.9, 1.1) * (1 - res / 100) * vu));
     m.hp -= dmg; m.flash = 0.09; m.calmeT = 0; m.struck = true; m.agresseur = b.id;
     if (m.state === 'idle' || m.state === 'return') this.aggroGroup(m);
-    this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: dmg, crit: false, element: el });
+    this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: dmg, crit: false, element: el, sort: 'invocations' });
     if (p.cls.rage.mode === 'eveil') { p.lastHitAt = p.age; p.addRage(REGLES_BETES.eveil.parCoupBete, this); }
     if (m.hp <= 0) this.killMonster(m);
     return dmg;
