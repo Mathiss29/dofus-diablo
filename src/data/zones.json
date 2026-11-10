@@ -1844,6 +1844,105 @@
      ],
      "essai": true,
      "region": "Île des Wabbits"
+    },
+    "178": {
+     "name": "Plaine des Porkass",
+     "level": 40,
+     "monsters": [
+      "cochon_de_lait",
+      "sanglier_des_plaines",
+      "cavalier_porkass",
+      "berger_porkass",
+      "bouss_baybe"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Cania"
+    },
+    "334": {
+     "name": "Baie de Cania",
+     "level": 40,
+     "monsters": [
+      "amlub",
+      "codem",
+      "kirevam",
+      "let_emoliug",
+      "susej",
+      "idemas"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Cania"
+    },
+    "62": {
+     "name": "Village des Dopeuls",
+     "level": 40,
+     "monsters": [
+      "aboub",
+      "amlub",
+      "codem",
+      "gink",
+      "kirevam",
+      "let_emoliug",
+      "nebgib",
+      "nipul",
+      "osurc",
+      "susej",
+      "idemas"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Cania"
+    },
+    "93": {
+     "name": "Plage de la Tortue",
+     "level": 40,
+     "monsters": [
+      "tikoko",
+      "kokoko",
+      "nodkoko",
+      "tortue_rouge",
+      "tortue_bleue",
+      "tortue_verte",
+      "tortue_jaune",
+      "grokoko"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Île de Moon"
+    },
+    "166": {
+     "name": "Forêt des Masques",
+     "level": 50,
+     "monsters": [
+      "kanniboul_ark",
+      "kanniboul_eth",
+      "kanniboul_jav",
+      "kanniboul_sarbak"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "essai": true,
+     "region": "Île de Moon"
     }
    },
    "checkpoints": [
@@ -1966,6 +2065,42 @@
       25826.0
      ],
      "sub": 161
+    },
+    {
+     "name": "Zaap Village des Dopeuls",
+     "map": [
+      -34,
+      -8
+     ],
+     "zaap": [
+      -36353,
+      22192.5
+     ],
+     "sub": 62
+    },
+    {
+     "name": "Zaap Plaine des Porkass",
+     "map": [
+      -5,
+      -23
+     ],
+     "zaap": [
+      -1351,
+      9378.5
+     ],
+     "sub": 178
+    },
+    {
+     "name": "Zaap Plage de la Tortue",
+     "map": [
+      35,
+      12
+     ],
+     "zaap": [
+      46594,
+      39285.0
+     ],
+     "sub": 93
     }
    ],
    "portes": [
@@ -3050,6 +3185,30 @@
      ],
      "nom": "Terrier du Wa Wabbit",
      "cle": "14465"
+    },
+    {
+     "a": [
+      "9_-2",
+      165
+     ],
+     "b": [
+      "32_11",
+      147
+     ],
+     "nom": "Bateau pour l'Île de Moon",
+     "marque": true
+    },
+    {
+     "a": [
+      "-6_-25",
+      294
+     ],
+     "b": [
+      "-30_-15",
+      348
+     ],
+     "nom": "Route de Cania (Baie de Cania)",
+     "marque": true
     }
    ],
    "donjons": [

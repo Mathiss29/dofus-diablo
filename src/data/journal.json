@@ -1555,6 +1555,17 @@
               "Île des Wabbits",
               "Partie de test"
             ]
+          },
+          {
+            "titre": "Cania sud et l'Île de Moon",
+            "phrase": "La Plaine des Porkass, la Baie de Cania, le Village des Dopeuls et les plages de Moon rejoignent le monde.",
+            "details": "Trois nouveaux Zaaps. Un bateau part du Port de Madrestam vers Moon, une route mène des Porkass à la Baie.",
+            "icone": "carte",
+            "etiquettes": [
+              "Cania",
+              "Île de Moon",
+              "Partie de test"
+            ]
           }
         ]
       }

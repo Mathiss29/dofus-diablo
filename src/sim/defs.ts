@@ -278,6 +278,8 @@ export interface PorteDef { a: [string, number]; b: [string, number]; nom: strin
   cle?: string;
   /** Traversée payante (« Wabbits : 2C », bateau du Capitaine Lily) : kamas pris en passant de a vers b ; le retour est gratuit. */
   prix?: number;
+  /** Porte en plein air sans bâtiment (bateau sans navire dessiné, route vers une région pas encore exportée) : paillasson aux deux bouts. */
+  marque?: boolean;
   /** Portail vers une autre zone (Incarnam <-> Astrub) : b est une case de cette zone-là. */
   zone?: string;
   /** Portail dessiné hors des cases marchables (le bassin d'Incarnam, l'arche de la tour d'Astrub) : [case du milieu du dessin,

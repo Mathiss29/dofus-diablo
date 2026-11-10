@@ -258,7 +258,7 @@ export class World {
   /** Carte d'un intérieur -> son nom : la carte d'arrivée de chaque porte qui mène dedans (première porte trouvée). */
   readonly lieux = new Map<string, string>();
   /** Portes du monde ouvert : les deux bouts en coordonnées monde, et la carte de chacun. */
-  portes: { nom: string; ends: [PorteEnd, PorteEnd]; verrou: boolean; sens: boolean; cle?: string; prix?: number; vers?: { zone: string; arrivee: [string, number] };
+  portes: { nom: string; ends: [PorteEnd, PorteEnd]; verrou: boolean; sens: boolean; cle?: string; prix?: number; marque?: boolean; vers?: { zone: string; arrivee: [string, number] };
     /** Portail cliquable (PorteDef.dessin) : milieu du dessin dans le monde et taille de la zone de clic à l'écran. */
     dessin?: { x: number; y: number; rx: number; ry: number } }[] = [];
   /** Bout de porte par lequel le joueur vient d'arriver : inactif tant qu'il ne s'en est pas éloigné. */
@@ -667,7 +667,7 @@ export class World {
         const q = wg.cellToWorld(wg.cellOf(tag, c));
         return { tag, ...wg.nearestFree(q.x, q.y, wg.freeByMap.get(tag)!) };
       };
-      this.portes.push({ nom: d.nom, ends: [end(d.a), end(d.b)], verrou: !!d.verrou, sens: !!d.sens, cle: d.cle, ...(d.prix ? { prix: d.prix } : {}) });
+      this.portes.push({ nom: d.nom, ends: [end(d.a), end(d.b)], verrou: !!d.verrou, sens: !!d.sens, cle: d.cle, ...(d.prix ? { prix: d.prix } : {}), ...(d.marque ? { marque: true } : {}) });
       if (wg.mapByTag(d.b[0])?.inside && !this.lieux.has(d.b[0])) this.lieux.set(d.b[0], d.nom);
     }
   }
