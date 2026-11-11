@@ -1611,6 +1611,15 @@
             "titre": "Équipements jusqu'au niveau 60",
             "phrase": "Les objets officiels du niveau 41 au 60 tombent maintenant dans toutes les parties.",
             "icone": "sac"
+          },
+          {
+            "titre": "Ombrelune Studio, notre maison",
+            "phrase": "Diablofus et Idlus ont leur page commune : ombrelune-studio.github.io, avec le jeu à la une.",
+            "details": "En bas de l'accueil, une carte mène aussi vers Idlus, l'idle du même studio.",
+            "icone": "journal",
+            "etiquettes": [
+              "Accueil"
+            ]
           }
         ],
         "Le monde": [
