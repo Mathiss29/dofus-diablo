@@ -73,8 +73,8 @@ describe('Carte du monde (« Carte : » et « Carte suite : »)', () => {
     for (const t of (o as { cartes: string[] }).cartes) if (!p.exploreSet('incarnam').has(t)) { p.exploreSet('incarnam').add(t); (p.explore.incarnam ??= []).push(t); }
     w.step(0.05, NO_INPUT);
     expect(Q.succes.has('cartographe_incarnam')).toBe(true);
-    // Amakna reste caché hors partie de test
-    expect(Q.visible('cartographe_amakna')).toBe(false);
+    // Amakna visible par tous depuis la 0.4
+    expect(Q.visible('cartographe_amakna')).toBe(true);
   });
 
   it('brouillard, lieux, drapeaux et tombe gardés dans la sauvegarde', () => {

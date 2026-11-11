@@ -40,7 +40,7 @@ describe('Menu des succès (« Succès : »)', () => {
     for (const id of ['niveau_20', 'niveau_40', 'niveau_60', 'niveau_80']) q.epingler(id);
     expect(q.epingles).toEqual(['niveau_40', 'niveau_60', 'niveau_80']);
     const cache = Object.keys(QUETES.succes).find(k => QUETES.succes[k].test)!;
-    expect(q.visible(cache)).toBe(false);
+    expect(q.visible(cache)).toBe(true);   // succès de la 0.4 : publics depuis le 2026-11-11
     expect(monde(true).quetes!.visible(cache)).toBe(true);
   });
 });

@@ -1579,6 +1579,57 @@
           }
         ]
       }
+    },
+    {
+      "date": "2026-11-11",
+      "titre": "La 0.4 est ouverte : Amakna pour tous",
+      "resume": "Amakna, l'île des Wabbits, Cania sud et l'île de Moon s'ouvrent à tous, avec leurs donjons et leurs Zaaps.",
+      "capture": "assets/journal/2026-11-11.webp",
+      "legende": "Le Zaap du Château d'Amakna, 11 novembre 2026.",
+      "lignes": {
+        "Nouveautés": [
+          {
+            "titre": "Amakna ouvert à tous",
+            "phrase": "Plus de 1 000 cartes de plus : Amakna, Cania sud, l'île des Wabbits et l'île de Moon.",
+            "details": "On y entre à pied depuis Astrub, sans écran de chargement. Plus besoin de la partie de test.",
+            "icone": "principale",
+            "etiquettes": [
+              "Amakna",
+              "Version 0.4"
+            ]
+          },
+          {
+            "titre": "Douze nouveaux donjons",
+            "phrase": "Scarafeuilles, Squelettes, Tofus, Gobs, Bworks, Forgerons, Kwakwa, Larves, Craqueleurs, Wabbits, Kanniboul.",
+            "details": "Chacun a ses vagues, son boss officiel et sa clé.",
+            "icone": "boss",
+            "etiquettes": [
+              "Donjons"
+            ]
+          },
+          {
+            "titre": "Équipements jusqu'au niveau 60",
+            "phrase": "Les objets officiels du niveau 41 au 60 tombent maintenant dans toutes les parties.",
+            "icone": "sac"
+          }
+        ],
+        "Le monde": [
+          {
+            "titre": "La Guerre des Cawottes",
+            "phrase": "Sur l'île des Wabbits, défends les cawottes contre les pillards.",
+            "details": "Succès et récompenses de l'événement ouverts à tous.",
+            "icone": "succes",
+            "etiquettes": [
+              "Île des Wabbits"
+            ]
+          }
+        ],
+        "Combat": [],
+        "Corrections": [],
+        "En coulisses": [
+          "La 0.4 n'est plus cachée : un seul interrupteur ouvre cartes, portes, récoltes, Zaaps, succès et donjons."
+        ]
+      }
     }
   ]
 }

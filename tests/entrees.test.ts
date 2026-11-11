@@ -41,7 +41,7 @@ describe('entrées et sorties (maquette Entrées)', () => {
     // donjon en arène : l'entrée y mène, sans retour par là (sortie = portail de la fin)
     const g = w.entreeDonjon('Grange du Tournesol Affamé')!;
     expect(w.porteSous(g.ends[0].x, g.ends[0].y)?.nom).toBe('Grange du Tournesol Affamé');
-    expect(w.porteSous(g.ends[1].x, g.ends[1].y)).toBeNull();
+    expect(w.porteSous(g.ends[1].x, g.ends[1].y)?.sortie ?? true).toBe(true);   // Grange en couloirs (0.4) : l'antichambre a sa sortie
     expect(w.porteSous(t.ends[0].x + 300, t.ends[0].y)).toBeNull();
   });
   it('on passe en marchant droit dans la porte, pas en la frôlant (4B)', () => {

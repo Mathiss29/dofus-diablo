@@ -14,11 +14,10 @@ const G = (w: World) => (w as unknown as { groups: { map: string; members: { typ
 const NOM = 'Grange du Tournesol Affamé';
 
 describe('donjons en couloirs (Couloirs : 1C 2B 3A 4A)', () => {
-  it('partie normale : rien ne change, l\'entrée mène droit à l\'arène', () => {
+  it('partie normale (0.4 publique, 2026-11-11) : les couloirs sont ouverts à tous, comme en partie de test', () => {
     const w = monde(false), po = w.entreeDonjon(NOM)!;
-    expect(po.ends[1].tag).toBe('arene_grange');
-    expect(G(w).some(g => g.map.startsWith('couloir_'))).toBe(false);
-    for (const t of ['couloir_grange_1', 'couloir_grange_4']) expect(w.worldGrid!.freeByMap.get(t)).toEqual([]);   // couloirs fermés
+    expect(po.ends[1].tag).toBe('grange_0');
+    for (const t of ['couloir_grange_1', 'couloir_grange_4']) expect(w.worldGrid!.freeByMap.get(t)!.length).toBeGreaterThan(0);
   });
   it('partie de test : antichambre, puis les salles reliées à pied par les couloirs jusqu\'à l\'arène', () => {
     const w = monde(true), wg = w.worldGrid!, d = w.zone.open!.donjons!.find(x => x.nom === NOM)!, cl = w.couloirs(d)!;

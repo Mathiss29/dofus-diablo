@@ -36,7 +36,7 @@ describe('île des Wabbits (« 0.4 suite : 10A », Wabbits : 1B 2A+2B)', () => {
     for (const t of ['25_-4', '24_-13', '21_-12', '27_-12', 'pont_wabbits_0']) expect(tags.has(t), t).toBe(true);
     for (const t of tags) expect(t, 'jamais hors carte').toBeTruthy();
   });
-  it('2A + 2B : le bateau du Port de Madrestam, le Zaap de l’île et la porte du Château (clef chez Goultard), en partie de test', () => {
+  it('2A + 2B : le bateau du Port de Madrestam, le Zaap de l’île et la porte du Château (clef chez Goultard), ouvert à tous depuis la 0.4', () => {
     const w = monde(true);
     const bateau = w.portes.find(p => p.nom === 'Bateau du Capitaine Lily')!;
     expect(bateau.ends.map(e => e.tag)).toEqual(['9_-2', '24_-2']);
@@ -46,6 +46,6 @@ describe('île des Wabbits (« 0.4 suite : 10A », Wabbits : 1B 2A+2B)', () => {
     expect(ITEMS.resources['14464'].cle).toBe('Château du Wa Wabbit');
     expect(w.zone.open!.checkpoints.some(c => c.name === 'Zaap Île de la Cawotte')).toBe(true);
     const hors = monde(false);
-    expect(hors.portes.some(p => p.nom === 'Bateau du Capitaine Lily')).toBe(false);
+    expect(hors.portes.some(p => p.nom === 'Bateau du Capitaine Lily')).toBe(true);   // 0.4 publique (2026-11-11)
   });
 });

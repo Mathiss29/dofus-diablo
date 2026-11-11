@@ -10,7 +10,7 @@ export const V03_PUBLIC = true;
 /** Équipements officiels en jeu avant la 0.3 (jusqu'au niveau 25) ; ceux du niveau 26 au 40 arrivent avec la 0.3 (choix 2A). */
 export const NIVEAU_OBJETS_02 = 25;
 /** Version 0.4 (Amakna, ligne « 0.4 suite : 1A ») : les équipements du niveau 41 au 60 arrivent avec elle, en partie de test d'ici là. */
-export const V04_PUBLIC = false;
+export const V04_PUBLIC = true;
 export const NIVEAU_OBJETS_03 = 40;
 /** Plus haut niveau d'équipement en jeu selon la version visible par le joueur. */
 export const niveauObjetsMax = (v03: boolean, v04 = false) => v04 ? Infinity : v03 ? NIVEAU_OBJETS_03 : NIVEAU_OBJETS_02;

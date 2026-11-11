@@ -81,9 +81,10 @@ describe('Astrub (0.2a)', () => {
     const retour = passerPortail(w2);
     expect(retour).toMatchObject({ zone: 'incarnam', arrivee: ['4_-3', 300] });
   });
-  it('Amakna (0.4) : sous-zones et monstres seulement en partie de test', () => {
+  it('Amakna (0.4) : sous-zones et monstres ouverts à tous (0.4 publique)', () => {
     const pub = new World({ data: GAME_DATA, zone: 'astrub', map: new WorldGrid(astrub), seed: 1 });
-    expect(Object.values(pub.zone.open!.subareas).some(s => s.essai)).toBe(false);
+    expect(Object.values(pub.zone.open!.subareas).filter(s => s.essai).length).toBeGreaterThan(20);
+    expect(pub.worldGrid!.freeByMap.get('2_0')!.length).toBeGreaterThan(20);
     const test = new World({ data: GAME_DATA, zone: 'astrub', map: new WorldGrid(astrub), seed: 1, test: {} as never });
     expect(Object.values(test.zone.open!.subareas).filter(s => s.essai).length).toBeGreaterThan(20);
     expect(test.worldGrid!.freeByMap.get('2_0')!.length).toBeGreaterThan(20);
@@ -100,7 +101,8 @@ describe('Astrub (0.2a)', () => {
       for (const t of [...d.vagues!.flatMap(v => v.m), ...d.bossVague!]) if (t !== '?') expect(LOOKS[GAME_DATA.monsters[t]?.look], t).toBeDefined();
       expect(GAME_DATA.monsters[d.bossVague![0]].boss).toBe(true);
       expect(w.entreeDonjon(d.nom)?.cle).toBeTruthy();
-      expect(w.entreeDonjon(d.nom)?.ends[1].tag).toBe(a.tag);
+      const fin = w.entreeDonjon(d.nom)!.ends[1].tag;   // Grange en couloirs depuis la 0.4 : l'antichambre grange_0
+      expect(fin === a.tag || (!!w.couloirs(d) && fin.startsWith(a.tag.replace('arene_', ''))), fin).toBe(true);
     }
   });
 });

@@ -1030,7 +1030,7 @@ export class Quetes {
     return [this.objectifSuccesFait(o) ? 1 : 0, 1];
   }
   /** Succès montré dans ce jeu : le contenu de la partie de test (0.4) reste caché ailleurs. */
-  visible(id: string): boolean { const s = this.data.succes[id]; return !!s && (!s.test || !!this.world.test); }
+  visible(id: string): boolean { const s = this.data.succes[id]; return !!s && (!s.test || this.world.essaiOuvert); }
   /** Avancement d'un succès entre 0 et 1 (barre, « Presque finis »). */
   avancement(id: string): number {
     const s = this.data.succes[id]; if (!s) return 0;

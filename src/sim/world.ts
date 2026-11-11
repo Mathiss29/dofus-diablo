@@ -309,15 +309,18 @@ export class World {
   guerre: Guerre | null = null;
   arene: Arene | null = null;   // au-delà de ce qu'on voit même dézoomé à fond (avant : monstres figés au bord de l'écran)
 
+  /** Contenu « essai » (0.4 : Amakna, Wabbits, Cania sud, Moon, leurs donjons) : public dès que V04_PUBLIC est vrai, sinon partie de test. */
+  get essaiOuvert(): boolean { return V04_PUBLIC || !!this.opts.test; }
+
   constructor(readonly opts: WorldOptions) {
     this.coffre = opts.coffre ?? coffreVide();
     this.rng = new Rng(opts.seed ?? 1);
     this.zone = opts.data.zones[opts.zone];
     if (!this.zone) throw new Error(`Zone inconnue : ${opts.zone}`);
     const dt = this.zone.open?.donjonsTest;   // 0.4 cachée : ses donjons seulement en partie de test (copie : les données restent intactes)
-    if (opts.test && dt?.length) this.zone = { ...this.zone, open: { ...this.zone.open!, donjons: [...(this.zone.open!.donjons ?? []), ...dt] } };
+    if ((V04_PUBLIC || opts.test) && dt?.length) this.zone = { ...this.zone, open: { ...this.zone.open!, donjons: [...(this.zone.open!.donjons ?? []), ...dt] } };
     const sz = this.zone.open?.subareas;   // 0.4 cachée : les sous-zones d'Amakna (monstres, butin, contrats) seulement en partie de test
-    if (!opts.test && sz && Object.values(sz).some(s => s.essai))
+    if (!V04_PUBLIC && !opts.test && sz && Object.values(sz).some(s => s.essai))
       this.zone = { ...this.zone, open: { ...this.zone.open!, subareas: Object.fromEntries(Object.entries(sz).filter(([, s]) => !s.essai)),
         checkpoints: this.zone.open!.checkpoints.filter(c => !sz[String(c.sub)]?.essai) } };   // Zaaps d'Amakna (0.4 suite 7A) : partie de test
     this.map = opts.map;
@@ -352,7 +355,7 @@ export class World {
     }
     if (open) this.ouvrirCouloirs();
     if (open) { this.buildPortes(); this.buildRecoltes(); this.buildPostes(); }
-    if (open?.guerre && this.test && this.map instanceof WorldGrid && open.guerre.champs.every(c => this.map instanceof WorldGrid && this.map.mapByTag(c.tag))) this.guerre = new Guerre(this, open.guerre.champs);
+    if (open?.guerre && this.essaiOuvert && this.map instanceof WorldGrid && open.guerre.champs.every(c => this.map instanceof WorldGrid && this.map.mapByTag(c.tag))) this.guerre = new Guerre(this, open.guerre.champs);
     if (open && opts.arrivee) this.arriver(opts.arrivee);
     if (open) this.sortieHavreSac(opts);
     // les PNJ d'abord : les groupes de monstres ne se posent pas sur eux
@@ -644,7 +647,7 @@ export class World {
     for (const dj of this.zone.open!.donjons ?? []) if (dj.arene && !Object.keys(dj.salles).length) ancienne.set(dj.arene.tag, dj);
     for (const d of this.zone.open!.portes ?? []) {
       if (d.v03 && !this.player.v03) continue;
-      if (wg.mapByTag(d.a[0])?.essai && !this.test) continue;   // 0.4 cachée : portes d'Amakna en partie de test
+      if (wg.mapByTag(d.a[0])?.essai && !this.essaiOuvert) continue;   // 0.4 cachée : portes d'Amakna en partie de test
       const dj = ancienne.get(d.b[0]);
       if (ancienne.has(d.a[0]) || chaine.has(d.a[0])) continue;
       if (dj && !d.zone && wg.mapByTag(d.a[0])) {
@@ -859,7 +862,7 @@ export class World {
    *  ensemble depuis l'intérieur (WorldView). En partie publique, rien : l'arène reste fermée, comme avant. */
   private ouvrirCouloirs() {
     const wg = this.worldGrid;
-    if (!wg || !this.test) return;
+    if (!wg || !this.essaiOuvert) return;
     wg.ouvrirEssai();   // 0.4 cachée : Amakna seulement en partie de test
     for (const d of this.zone.open!.donjons ?? []) {
       const c = d.couloirs;
@@ -871,7 +874,7 @@ export class World {
   /** Donjon en couloirs (maquette « Couloirs : 1C 2B 3A 4A ») : seulement en partie de test (0.4 cachée), et s'il est exporté. */
   couloirs(d: DonjonDef): DonjonDef['couloirs'] | null {
     const c = d.couloirs, wg = this.worldGrid;
-    return c && this.test && wg && c.tags.every(t => wg.mapByTag(t)) && c.salles.every(t => wg.mapByTag(t)) ? c : null;
+    return c && this.essaiOuvert && wg && c.tags.every(t => wg.mapByTag(t)) && c.salles.every(t => wg.mapByTag(t)) ? c : null;
   }
 
   // --- Arènes des donjons (maquette « Donjons en vagues ») ---------------------------------------------------
@@ -2125,7 +2128,7 @@ export class World {
     if (!R || !wg || !l) return;
     for (const [tag, cell, item, gfx, dx, dy, miroir] of l) {
       if (!wg.mapByTag(tag) || !R.ressources[item]) continue;
-      if (wg.mapByTag(tag)!.essai && !this.test) continue;   // 0.4 cachée : récoltes d'Amakna en partie de test
+      if (wg.mapByTag(tag)!.essai && !this.essaiOuvert) continue;   // 0.4 cachée : récoltes d'Amakna en partie de test
       const q = wg.cellToWorld(wg.cellOf(tag, cell));
       this.recoltes.push({ id: this.nextId++, tag, x: q.x, y: q.y, item, dore: this.rng.next() < RECOLTE.dore, repousse: 0,
         gfx, dessin: dx || dy ? { x: dx!, y: dy! } : undefined, miroir: miroir === 1 });

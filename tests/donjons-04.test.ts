@@ -13,7 +13,7 @@ const DONJONS = ['Donjon des Scarafeuilles', 'Donjon des Squelettes', 'Donjon de
   'Nid du Kwakwa', 'Donjon des Larves', 'Pitons Rocheux des Craqueleurs'];
 
 describe('donjons d’Amakna aux vraies entrées (« 0.4 suite : 5A+5D »)', () => {
-  it('5A : une porte sur la carte d’entrée officielle mène à l’arrivée de l’arène, en partie de test seulement', () => {
+  it('5A : une porte sur la carte d’entrée officielle mène à l’arrivée de l’arène, ouvert à tous depuis la 0.4', () => {
     const w = monde(true), wg = w.worldGrid!;
     for (const nom of DONJONS) {
       const po = w.portes.find(p => p.nom === nom), dj = w.zone.open!.donjons!.find(d => d.nom === nom)!;
@@ -23,7 +23,7 @@ describe('donjons d’Amakna aux vraies entrées (« 0.4 suite : 5A+5D »)', () 
       expect(po!.ends[1].tag).toBe(dj.couloirs?.salles[0] ?? dj.arene!.tag);
       expect(w.map.walkable(po!.ends[0].x, po!.ends[0].y), nom).toBe(true);
     }
-    expect(monde(false).portes.filter(p => DONJONS.includes(p.nom))).toHaveLength(0);
+    expect(monde(false).portes.filter(p => DONJONS.includes(p.nom)).length).toBeGreaterThanOrEqual(DONJONS.length);   // 0.4 publique
   });
   it('5D : les clés officielles, vendues par Goultard au Bastion, seulement quand la 0.4 est visible', () => {
     for (const nom of DONJONS) {
@@ -38,7 +38,7 @@ describe('donjons d’Amakna aux vraies entrées (« 0.4 suite : 5A+5D »)', () 
     if (!pub.player.v04) expect(pub.acheter('goultard', id)).toBe(false);
   });
 
-  it('5B : 10 donjons en couloirs, de la première salle à l’arène du boss en marchant, en partie de test seulement', () => {
+  it('5B : 10 donjons en couloirs, de la première salle à l’arène du boss en marchant, ouvert à tous depuis la 0.4', () => {
     const w = monde(true), wg = w.worldGrid!;
     const enCouloirs = w.zone.open!.donjons!.filter(d => d.couloirs && !d.couloirs.salles[0].startsWith('grange') && w.couloirs(d));
     expect(enCouloirs.length).toBeGreaterThanOrEqual(10);
@@ -54,7 +54,7 @@ describe('donjons d’Amakna aux vraies entrées (« 0.4 suite : 5A+5D »)', () 
       expect(Object.keys(d.salles), d.nom).toEqual(d.couloirs!.salles);
     }
     expect(relies).toBeGreaterThanOrEqual(8);
-    expect(monde(false).zone.open!.donjons!.some(d => d.couloirs?.salles[0]?.startsWith('scarafeuilles'))).toBe(false);
+    expect(monde(false).zone.open!.donjons!.some(d => d.couloirs?.salles[0]?.startsWith('scarafeuilles'))).toBe(true);   // 0.4 publique
   });
 });
 

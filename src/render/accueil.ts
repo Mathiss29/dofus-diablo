@@ -35,7 +35,7 @@ const JOUABLES = new Set(Object.keys(GAME_DATA.classes).filter(k => !EN_ESSAI.ha
 const PLUS_TARD: Record<string, string> = { forgelance: 'En essai : partie de test', eniripsa: 'En essai : partie de test', enutrof: 'En essai : partie de test' };
 const plusTard = (cle: string) => PLUS_TARD[cle] ?? 'Prévue après la 1.0';
 /** Version affichée et textes de l'accueil (Accueil 12A) : ils racontent la zone de la version, pas le moteur. */
-const VERSION = '0.3';
+const VERSION = '0.4';
 const TEXTES: Record<string, { zone: string; slogan: string; ruban: string; lignes: string[] }> = {
   '0.1': {
     zone: 'INCARNAM, LE VILLAGE DANS LES NUAGES', slogan: 'Les nuages d\'Incarnam grouillent de monstres.', ruban: 'En chasse !',
@@ -49,16 +49,20 @@ const TEXTES: Record<string, { zone: string; slogan: string; ruban: string; lign
     zone: 'ASTRUB, LA CITÉ DES AVENTURIERS', slogan: 'Le butin complet est arrivé à Astrub.', ruban: 'En chasse !',
     lignes: ['Brise tes légendaires chez Malek : leur pouvoir reste dans ton Codex.', 'L\'Osamodas et sa meute rejoignent l\'Iop et le Crâ.', 'Amakna et le Sacrieur arrivent dans la prochaine version.'],
   },
+  '0.4': {
+    zone: 'AMAKNA, LE CONTINENT', slogan: 'Amakna s\'ouvre, de Madrestam à l\'île des Wabbits.', ruban: 'En route !',
+    lignes: ['Le Bouftou Royal n\'est plus seul : Bworks, Gobelins et Craqueleurs gardent leurs donjons.', 'Le Wa Wabbit et ses Cawottes t\'attendent sur leur île.', 'Prends le bateau pour Moon : les tambours Kanniboul battent déjà.'],
+  },
 };
 const TEXTE = TEXTES[VERSION];
 /** Accueil des nouveaux venus (maquette « Accueil : » 2A, 4C, 9A) : ce qu'est le jeu, en quelques mots. */
 const PRESENTATION = {
   pitch: 'Un action-RPG <em>en temps réel</em> dans le Monde des Douze.',
   pastilles: ['Gratuit', 'Dans le navigateur', 'Sans téléchargement', `Accès anticipé ${VERSION}`],
-  lignes: ['Choisis ton <b>Iop</b>, ton <b>Crâ</b> ou ton <b>Osamodas</b>.', 'Nettoie Incarnam et Astrub, vague après vague.',
+  lignes: ['Choisis ton <b>Iop</b>, ton <b>Crâ</b>, ton <b>Osamodas</b> ou ton <b>Sacrieur</b>.', 'Nettoie Incarnam, Astrub et Amakna, vague après vague.',
     'Ramasse du butin <b>légendaire</b> qui change tes sorts.', 'Monte de niveau, forge, collectionne les apparences.'],
-  cartes: [['3 classes', 'Iop, Crâ et Osamodas'], ['Butin', '6 raretés, pouvoirs légendaires'],
-    ['Donjons', 'Vagues de monstres et boss officiels'], ['Monde ouvert', 'Incarnam et Astrub, près de 500 cartes']],
+  cartes: [['4 classes', 'Iop, Crâ, Osamodas et Sacrieur'], ['Butin', '6 raretés, pouvoirs légendaires'],
+    ['Donjons', 'Vagues de monstres et boss officiels'], ['Monde ouvert', 'Incarnam, Astrub et Amakna, plus de 1 500 cartes']],
 };
 /** Diaporama (maquette « Diapo : ») : captures prises par le robot (tools/accueil/diaporama.cjs), légendes écrites à la main. */
 const DIAPO = (DIAPORAMA as { captures: { id: string; legende: string }[] }).captures;
