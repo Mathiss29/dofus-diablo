@@ -35,7 +35,7 @@ describe('guerre des Cawottes (« Guerre : 1A 2C 3A+3C+3D 4C 5C 6A+6C+6D 7B 8A-8
       expect(c.entrees.length, c.nom).toBe(3);
       for (const k of [...c.cawottes, ...c.entrees, c.epouvantail]) { const p = wg.cellToWorld(k); expect(wg.walkable(p.x, p.y), `${c.nom} ${k}`).toBe(true); }
     }
-    expect(monde(false).guerre).toBeNull();
+    expect(monde(false).guerre).not.toBeNull();   // 0.4 publique (2026-11-11)
     expect(monde(true).guerre).not.toBeNull();
   });
 
@@ -110,7 +110,7 @@ describe('guerre des Cawottes (« Guerre : 1A 2C 3A+3C+3D 4C 5C 6A+6C+6D 7B 8A-8
     expect(w.recycleRessource(GUERRE.monnaie)).toBe(false);
   });
 
-  it('12A-12D : succès de la guerre et titre « Gardien des Cawottes », en partie de test', () => {
+  it('12A-12D : succès de la guerre et titre « Gardien des Cawottes », ouvert à tous depuis la 0.4', () => {
     const w = monde(true), p = w.player, q = w.quetes!;
     p.guerre.gagnees = 10; p.guerre.or = 25; p.guerre.kiafins = 100; p.guerre.parfaits = champs.map(c => c.nom);
     avancer(w, 0.1);

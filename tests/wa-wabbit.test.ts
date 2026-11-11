@@ -39,7 +39,7 @@ describe('Wa Wabbit et Terrier (« Wabbits : 7C 8A 8B 9A 9B 9C 14A 14D »)', () 
     expect(w.acheter('tiwa_cawoteuw', '14465')).toBe(false);
     w.quetes!.donjons[CHATEAU] = { v: 1, m: 0 };
     expect(w.acheter('tiwa_cawoteuw', '14465')).toBe(true);
-    expect(monde(false).portes.some(x => x.nom === TERRIER)).toBe(false);
+    expect(monde(false).portes.some(x => x.nom === TERRIER)).toBe(true);   // 0.4 publique (2026-11-11)
   });
 
   it('8A + 8B + 9A : Cawottes Woyales à 66 %, Awmuwe Woyale à 33 %, fuite dans le trou qui mène au Terrier la première fois', () => {

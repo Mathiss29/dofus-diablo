@@ -13,14 +13,14 @@ const monde = (test: boolean) => new World({ data: GAME_DATA, zone: 'astrub', ma
 const AMAKNA = QUETES.pnj.garde_chateau2.contrats as number[];
 
 describe('quêtes d’Amakna (« 0.4 suite : 11A + 11B »)', () => {
-  it('11A : le Bailli donne le fil rouge Village → Château → Bworks → Craqueleur Légendaire, en partie de test seulement', () => {
+  it('11A : le Bailli donne le fil rouge Village → Château → Bworks → Craqueleur Légendaire, ouvert à tous depuis la 0.4', () => {
     const w = monde(true), Q = w.quetes!; w.player.level = 30;
     expect(Q.aDonner('bailli')).toBe('amk_1');
     const fil = ['amk_1', 'amk_2', 'amk_3', 'amk_4'].map(id => Q.def(id));
     expect(fil.map(q => q.suivante)).toEqual(['amk_2', 'amk_3', 'amk_4', undefined]);
     const donjons = ['amk_3', 'amk_4'].flatMap(id => Q.etapes(id).flatMap(e => e.objectifs)).filter(o => o.t === 'donjon').map(o => o.t === 'donjon' ? o.donjon : '');
     for (const d of donjons) expect(w.zone.open!.donjons!.some(x => x.nom === d), d).toBe(true);
-    expect(monde(false).quetes!.pnj('bailli')).toBeUndefined();
+    expect(monde(false).quetes!.pnj('bailli')).toBeDefined();   // 0.4 publique (2026-11-11)
   });
   it('11A : la défense du Château fait venir des Bworks (la carte n’a pas de monstres à elle)', () => {
     const w = monde(true), Q = w.quetes!, p = w.player; p.level = 35;
@@ -42,9 +42,8 @@ describe('quêtes d’Amakna (« 0.4 suite : 11A + 11B »)', () => {
     // le tableau d'Amakna est gardé avec le perso
     const e = Q.exporter();
     expect(e.tableaux?.garde_chateau2?.ids).toHaveLength(3);
-    // hors partie de test : pas de garde, et Astrub ne propose rien d'Amakna
+    // 0.4 publique : la garde du Château a aussi son tableau hors partie de test
     const pub = monde(false); pub.player.level = 35;
-    expect(pub.quetes!.contrats('garde_chateau2')).toEqual([]);
-    for (const id of pub.quetes!.contrats()) expect(AMAKNA).not.toContain(+id.split(':')[3]);
+    expect(pub.quetes!.contrats('garde_chateau2')).toHaveLength(4);
   });
 });

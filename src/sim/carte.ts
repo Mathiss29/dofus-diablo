@@ -106,7 +106,7 @@ export function majCarteJoueur(w: World, m: WorldMapEntry | undefined) {
     if (r.t !== m.tag || !aDecouvrir(r)) continue;
     const k = cleLieu(zone, r);
     if (p.lieuxVus.includes(k)) continue;
-    if (m.essai && !w.test) continue;
+    if (m.essai && !w.essaiOuvert) continue;
     p.lieuxVus.push(k);
     const xp = p.gainXp(Math.round(p.xpNeeded * 0.05), w);
     w.emit({ k: 'lieuDecouvert', nom: nomLieu(r), g: r.g, xp });

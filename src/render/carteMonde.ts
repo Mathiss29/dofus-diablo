@@ -353,7 +353,7 @@ export class CarteMonde {
     this.plan.innerHTML = ''; this.moi = null;
     if (!P) { this.plan.innerHTML = '<div class="mk bt" style="left:300px;top:200px">Carte indisponible</div>'; return; }
     const douze = onglet === '_douze', monde = douze ? 'astrub' : onglet, zone = this.zoneDe(monde), ici = this.estIci();
-    const w = this.world, p = w.player, test = !!w.test, subs = GAME_DATA.zones[zone]?.open?.subareas ?? {};
+    const w = this.world, p = w.player, test = w.essaiOuvert, subs = GAME_DATA.zones[zone]?.open?.subareas ?? {};
     // 1C : carte peinte officielle dessous, notre rendu par-dessus (bords fondus, 1A)
     const pe = this.peinte();
     if (pe && !this.sur) { const im = this.image(v(`assets/${pe.img}`), pe.l, pe.t, pe.w, pe.h); im.style.filter = douze ? '' : 'saturate(.85) brightness(.92)'; }
@@ -579,7 +579,7 @@ export class CarteMonde {
     b.style.left = `${Math.min(bx, r.width - 310)}px`; b.style.top = `${Math.min(by, r.height - 200)}px`;
     if (sub === this.survol) return;
     this.survol = sub;
-    const zone = this.zoneDe(this.onglet), d = GAME_DATA.zones[zone]?.open?.subareas[String(sub)], w = this.world, test = !!w.test;
+    const zone = this.zoneDe(this.onglet), d = GAME_DATA.zones[zone]?.open?.subareas[String(sub)], w = this.world, test = w.essaiOuvert;
     if (!d) { b.remove(); return; }
     const cases = P.maps.filter(k => k[2] === sub), vus = w.player.exploreSet(zone), essai = cases.some(k => k[3]) && !test;
     const pc = Math.round(100 * cases.filter(k => vus.has(`${k[0]}_${k[1]}`)).length / cases.length);
@@ -619,7 +619,7 @@ export class CarteMonde {
     const box = this.root?.querySelector('.res'); if (!box) return;
     const q = sansAccent(texte.trim());
     if (q.length < 2 || !this.P) { box.innerHTML = ''; return; }
-    const P = this.P, zone = this.zoneDe(this.onglet === '_douze' ? 'astrub' : this.onglet), subs = GAME_DATA.zones[zone]?.open?.subareas ?? {}, test = !!this.world.test;
+    const P = this.P, zone = this.zoneDe(this.onglet === '_douze' ? 'astrub' : this.onglet), subs = GAME_DATA.zones[zone]?.open?.subareas ?? {}, test = this.world.essaiOuvert;
     const essai = new Set(P.maps.filter(m => m[3] && !test).map(m => m[2]));
     const res: { nom: string; genre: string; u: [number, number][] }[] = [];
     const centreSub = (sub: number) => { const l = P.maps.filter(m => m[2] === sub); return [l.reduce((s, m) => s + m[0] + 0.5, 0) / l.length, l.reduce((s, m) => s + m[1] + 0.5, 0) / l.length] as [number, number]; };
@@ -727,7 +727,7 @@ export class CarteMonde {
   private majTitre(zone: string, P: PlanMonde) {
     const el = this.root?.querySelector('.ttl .xp'); if (!el) return;
     if (this.onglet === '_douze') { el.innerHTML = 'Le Monde des Douze · <b>en couleur</b> : jouable aujourd\'hui'; return; }
-    const p = this.world.player, vus = p.exploreSet(zone), test = !!this.world.test;
+    const p = this.world.player, vus = p.exploreSet(zone), test = this.world.essaiOuvert;
     const l = P.maps.filter(m => !m[3] || test), n = l.filter(m => vus.has(`${m[0]}_${m[1]}`)).length;
     const lieux = P.reperes.filter(r => aDecouvrir(r) && !(P.maps.find(m => `${m[0]}_${m[1]}` === r.t)?.[3] && !test));
     const trouves = lieux.filter(r => p.lieuxVus.includes(cleLieu(zone, r))).length;
