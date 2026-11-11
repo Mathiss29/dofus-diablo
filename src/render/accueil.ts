@@ -16,7 +16,7 @@ import JOURNAL from '../data/journal.json';
 import DIAPORAMA from '../data/diaporama.json';
 import { installable, installer, surChangement } from './installation';
 import { API, Compte } from './compte';
-import { DISCORD_INVITATION } from './liens';
+import { DISCORD_INVITATION, IDLUS, STUDIO } from './liens';
 import { Parcours } from './parcours';
 import { EMPLACEMENTS, NB_SECOURS, dernier, dureeTexte, exporter, importer, lireCimetiere, lirePersos, lireSecours, nomValide, persosEnLigne, prendreSecours, restaurerSecours, sauverPerso, supprimerPerso, type Perso } from './persos';
 
@@ -305,6 +305,14 @@ const CSS = `
 #acc .cartesB{width:calc(36*var(--u));display:grid;grid-template-columns:repeat(4,1fr);gap:calc(.6*var(--u))}
 #acc .cartesB div{background:#191a12e6;border:1px solid #3d3b2a;border-radius:calc(.5*var(--u));padding:calc(.7*var(--u));font-size:calc(.75*var(--u));font-weight:700;line-height:1.35;color:#c9c4ab}
 #acc .cartesB b{display:block;font-family:var(--disp);font-weight:400;color:#ffc14d;font-size:calc(1*var(--u));margin-bottom:calc(.2*var(--u))}
+#acc .studio{display:flex;align-items:center;gap:calc(.8*var(--u));padding:calc(.55*var(--u)) calc(.9*var(--u));background:#1d1e15ee;border:1px solid #45452f;border-radius:calc(.6*var(--u));font-weight:700;font-size:calc(.75*var(--u));color:#c9c4ab;max-width:calc(30*var(--u))}
+#acc .studio>img{width:calc(2.4*var(--u));height:calc(2.4*var(--u))}
+#acc .studio b{display:block;font-family:var(--disp);font-weight:400;font-size:calc(.95*var(--u));color:#bff07a}
+#acc .studio a{color:inherit;text-decoration:none}
+#acc .studio .jouerI{all:unset;cursor:pointer;font-family:var(--disp);font-size:calc(.85*var(--u));background:linear-gradient(#cff26a,#9ccd2c);color:var(--ink);border-radius:calc(.5*var(--u));padding:calc(.35*var(--u)) calc(.8*var(--u));white-space:nowrap}
+#acc .studio .sign{display:flex;align-items:center;gap:calc(.3*var(--u));margin-top:calc(.15*var(--u));color:#e0b45a;font-size:calc(.65*var(--u))}
+#acc .studio .sign img{width:calc(1*var(--u));height:calc(1*var(--u))}
+#acc .studio a:hover b,#acc .studio .sign:hover{text-decoration:underline}
 #acc .lienfaq{all:unset;position:absolute;cursor:pointer;font-weight:800;font-size:calc(.9*var(--u));color:#e8e2c8;border-bottom:1px dashed #8a8566;text-shadow:0 1px 2px #000}
 #acc .lienfaq:hover,#acc .lienfaq:focus-visible{color:var(--lime);border-color:var(--lime)}
 #acc .faq{display:grid;gap:calc(.7*var(--u));margin-top:calc(.6*var(--u))}
@@ -571,7 +579,8 @@ export class Accueil {
       <span class="pastille" style="position:static">nouveau</span><span>Carnet du ${dateLongue(CARNETS[0].date)}<br><span class="tiny">${esc(CARNETS[0].titre)}</span></span>
       <button type="button" class="mini" data-carnet="${CARNETS[0].date}">Lire</button></div>` : ''}</div>
     <div class="abs" style="right:calc(2*var(--u));bottom:calc(1.6*var(--u));display:flex;gap:calc(.6*var(--u))">
-      ${ZONES_ACC.map(z => `<button type="button" class="chip${z.cle === 'astrub' ? ' on' : z.dispo ? '' : ' off'}" style="cursor:pointer" data-zone="${z.cle}">${z.nom}${z.dispo ? '' : ' · bientôt'}</button>`).join('')}</div>`;
+      ${ZONES_ACC.map(z => `<button type="button" class="chip${z.cle === 'astrub' ? ' on' : z.dispo ? '' : ' off'}" style="cursor:pointer" data-zone="${z.cle}">${z.nom}${z.dispo ? '' : ' · bientôt'}</button>`).join('')}</div>
+    ${this.ombrelune()}`;
   }
 
   /** Diaporama (« Diapo : » 7A 7B 8A) : fondu + zoom lent toutes les 4 s, pause au survol, points cliquables, clic = en grand. */
@@ -639,7 +648,17 @@ export class Accueil {
     <div class="abs" style="right:calc(2*var(--u));top:calc(1.6*var(--u));display:flex;gap:calc(.8*var(--u));align-items:center">${this.communaute()}</div>
     ${this.diapo('right:calc(2.4*var(--u));top:calc(7*var(--u));width:calc(36*var(--u))')}
     <div class="abs cartesB" style="right:calc(2.4*var(--u));${DIAPO.length ? 'top:calc(29.4*var(--u))' : 'bottom:calc(5.4*var(--u))'}">${P.cartes.map(([t, x]) => `<div><b>${esc(t)}</b>${esc(x)}</div>`).join('')}</div>
-    <button type="button" class="abs lienfaq" style="right:calc(2.4*var(--u));bottom:calc(2*var(--u))" data-faq>C'est quoi Diablofus ?</button>`;
+    <button type="button" class="abs lienfaq" style="right:calc(2.4*var(--u));bottom:calc(2*var(--u))" data-faq>C'est quoi Diablofus ?</button>
+    ${this.ombrelune()}`;
+  }
+
+  /** « Ombrelune Studio » 5A + 5C : signature du studio et carte « Découvre aussi Idlus », en bas à gauche de l'accueil. */
+  private ombrelune(): string {
+    return `<div class="abs studio" style="left:calc(11.5*var(--u));bottom:calc(1.6*var(--u))">
+      <img src="${v('assets/accueil/idlus.webp')}" alt="">
+      <div><a href="${IDLUS}" target="_blank" rel="noopener"><b>Découvre aussi Idlus</b>L'idle aux 8 héros du même studio, aussi sur téléphone</a>
+        <a class="sign" href="${STUDIO}" target="_blank" rel="noopener"><img src="${v('assets/accueil/ombrelune.webp')}" alt="">Un jeu Ombrelune Studio</a></div>
+      <a class="jouerI" href="${IDLUS}" target="_blank" rel="noopener">Jouer</a></div>`;
   }
 
   /** « La dernière fois… » (Accueil 4C) : la dernière partie du perso, sur une note de parchemin. */

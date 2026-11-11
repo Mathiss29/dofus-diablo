@@ -15,7 +15,7 @@ const HOTE = process.env.HOTE ?? '127.0.0.1';
 /** Version déployée : le commit écrit par le workflow Serveur dans VERSION, sinon « dev ». */
 const VERSION = (() => { try { return readFileSync(new URL('./VERSION', import.meta.url), 'utf8').trim().slice(0, 12); } catch { return 'dev'; } })();
 /** Sites autorisés à ouvrir une connexion (le jeu en ligne, et le jeu lancé en local pour les essais). */
-const ORIGINES = new Set(['https://diablofus.com', 'https://www.diablofus.com', 'https://mathiss29.github.io', 'http://localhost:5173', 'http://localhost:4173']);
+const ORIGINES = new Set(['https://diablofus.com', 'https://www.diablofus.com', 'https://mathiss29.github.io', 'https://ombrelune-studio.github.io', 'http://localhost:5173', 'http://localhost:4173']);
 const depart = Date.now();
 
 /** Salons de coop (maquette « Multi : » 3A) : 2 à 4 joueurs, le premier est l'hôte. Le serveur ne regarde pas la partie,
