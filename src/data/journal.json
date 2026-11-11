@@ -1627,7 +1627,8 @@
         "Combat": [],
         "Corrections": [],
         "En coulisses": [
-          "La 0.4 n'est plus cachée : un seul interrupteur ouvre cartes, portes, récoltes, Zaaps, succès et donjons."
+          "La 0.4 n'est plus cachée : un seul interrupteur ouvre cartes, portes, récoltes, Zaaps, succès et donjons.",
+          "Audit de sécurité : le site bloque les scripts étrangers, une sauvegarde piégée ne vole plus ta connexion."
         ]
       }
     }

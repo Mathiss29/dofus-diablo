@@ -40,7 +40,12 @@ export function noter(e: SimEvent, st: StatsPerso, se: Session, bestiaire: Recor
 // --- Bestiaire du compte, gardé dans le navigateur ------------------------------------------------------------
 export const CLE_BESTIAIRE = 'diablofus.bestiaire';
 export function lireBestiaire(): Record<string, number> {
-  try { const b = JSON.parse(localStorage.getItem(CLE_BESTIAIRE) ?? '{}'); return b && typeof b === 'object' && !Array.isArray(b) ? b : {}; } catch { return {}; }
+  try {
+    const b = JSON.parse(localStorage.getItem(CLE_BESTIAIRE) ?? '{}');
+    if (!b || typeof b !== 'object' || Array.isArray(b)) return {};
+    // sécurité : une sauvegarde importée peut glisser autre chose que des nombres, affichés ensuite dans l'accueil
+    return Object.fromEntries(Object.entries(b).filter(([, n]) => typeof n === 'number' && Number.isFinite(n))) as Record<string, number>;
+  } catch { return {}; }
 }
 export function sauverBestiaire(b: Record<string, number>) {
   try { localStorage.setItem(CLE_BESTIAIRE, JSON.stringify(b)); } catch { /* rien */ }

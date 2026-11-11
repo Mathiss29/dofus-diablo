@@ -445,7 +445,7 @@ export class Accueil {
   }
   /** Canevas du perso vivant, à la place de la planche de l'ancien socle. */
   private canevas(cle: string, app: Apparence, anim: string, style: string, label: string, objets: string[] = []) {
-    return `<canvas class="abs hero vivant" data-cle="${cle}" data-app='${JSON.stringify(app)}' data-objets="${objets.join(',')}" data-anim="${anim}" role="img" aria-label="${esc(label)}" style="${style}"></canvas>`;
+    return `<canvas class="abs hero vivant" data-cle="${cle}" data-app="${esc(JSON.stringify(app))}" data-objets="${esc(objets.join(','))}" data-anim="${anim}" role="img" aria-label="${esc(label)}" style="${style}"></canvas>`;
   }
 
   get visible() { return !this.root.hidden; }

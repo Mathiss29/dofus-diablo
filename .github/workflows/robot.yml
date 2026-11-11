@@ -3,6 +3,8 @@ name: Robot
 # navigateur (tests/chasse.test.ts) tourne avec npm test. Le robot se lance à la main : Actions › Robot › Run workflow.
 on:
   workflow_dispatch:
+permissions:
+  contents: read
 jobs:
   # Robot chasseur de plantages et de gels (tools/verification/plantages.cjs) : chaque classe seule, puis la coop à deux
   # navigateurs avec le serveur lancé à côté. Les images viennent de R2 (assets.diablofus.com).

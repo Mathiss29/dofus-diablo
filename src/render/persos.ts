@@ -43,8 +43,23 @@ const cleDernier = () => (enLigne ? `${CLE_DERNIER}.enligne` : CLE_DERNIER);
 const lireListe = (k: string): (Perso | null)[] => {
   let l: (Perso | null)[] = [];
   try { l = JSON.parse(localStorage.getItem(k) ?? '[]'); } catch { /* stockage indisponible ou abîmé */ }
-  return Array.from({ length: EMPLACEMENTS }, (_, i) => (l[i] && typeof l[i] === 'object' ? l[i] : null));
+  if (!Array.isArray(l)) l = [];
+  return Array.from({ length: EMPLACEMENTS }, (_, i) => (l[i] && typeof l[i] === 'object' ? assainir(l[i]!) : null));
 };
+const nombre = (x: unknown, d = 0) => (typeof x === 'number' && Number.isFinite(x) ? x : d);
+/** Sécurité : une sauvegarde importée (fichier .diablofus reçu de quelqu'un) peut contenir n'importe quoi. Les champs
+ *  affichés dans les pages HTML de l'accueil reprennent ici leur type attendu (nombre, 'm' | 'f', texte). */
+function assainir(p: Perso): Perso {
+  p.nom = String(p.nom ?? ''); p.classe = String(p.classe ?? ''); p.sexe = p.sexe === 'f' ? 'f' : 'm';
+  p.temps = nombre(p.temps); p.maj = nombre(p.maj); p.cree = nombre(p.cree); p.lieu = String(p.lieu ?? '');
+  if (p.etat && typeof p.etat === 'object') p.etat.level = nombre(p.etat.level, 1);
+  else delete p.etat;
+  return p;
+}
+const assainirStele = (s: Stele): Stele => ({
+  cree: nombre(s.cree), nom: String(s.nom ?? ''), classe: String(s.classe ?? ''), sexe: s.sexe === 'f' ? 'f' : 'm',
+  niveau: nombre(s.niveau, 1), temps: nombre(s.temps), lieu: String(s.lieu ?? ''), tueur: String(s.tueur ?? ''), date: nombre(s.date),
+});
 export function lirePersos(): (Perso | null)[] { return lireListe(cle()); }
 /** Les persos du navigateur, même en mode « En ligne » (import unique). */
 export const lirePersosLocaux = () => lireListe(CLE);
@@ -81,7 +96,10 @@ export function dureeTexte(s: number): string {
 export interface Stele { cree: number; nom: string; classe: string; sexe: 'm' | 'f'; niveau: number; temps: number; lieu: string; tueur: string; date: number }
 const CLE_CIMETIERE = 'diablofus.cimetiere';
 export function lireCimetiere(): Stele[] {
-  try { const l = JSON.parse(localStorage.getItem(CLE_CIMETIERE) ?? '[]'); return Array.isArray(l) ? l : []; } catch { return []; }
+  try {
+    const l = JSON.parse(localStorage.getItem(CLE_CIMETIERE) ?? '[]');
+    return Array.isArray(l) ? l.filter(s => s && typeof s === 'object').map(assainirStele) : [];
+  } catch { return []; }
 }
 export function enterrer(s: Stele) {
   try { localStorage.setItem(CLE_CIMETIERE, JSON.stringify([s, ...lireCimetiere()].slice(0, 30))); } catch { /* rien */ }
