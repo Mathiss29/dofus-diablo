@@ -308,6 +308,8 @@ export interface DonjonDef { nom: string; salles: Record<string, string[][]>;
   /** « Wabbits : 10A-D » (Wa Wobot) : Tamponneurs posés par Mékattwaction (changés en `twansmute` s'ils tiennent),
    *  carapace Mékawapace à briser, Substitution avec un Tamponneur, et à la fin `epilogue` sort du Wobot cassé et s'enfuit. */
   wobot?: { tampon: string; twansmute: string; epilogue: string };
+  /** « Kanniboul : 3B » (Village Kanniboul) : tant qu'un `monstre` (joueur de tambour) est debout, le boss a `bonus` % de Dommages en plus. */
+  tambours?: { monstre: string; bonus: number };
   /** Donjon en couloirs (maquette « Couloirs : 1C 2B 3A 4A », tools/extraction/couloirs.py), partie de test seulement :
    *  ses vraies salles dans l'ordre, reliées par des couloirs (cartes `tags`), puis l'arène au bout, sans porte.
    *  Groupes officiels dans les salles, `nErrants` monstres seuls dans chaque couloir (2B) ; les vagues partent à l'entrée de l'arène. */

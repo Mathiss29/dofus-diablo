@@ -32923,9 +32923,9 @@
   "dofusId": 2960,
   "name": "Kanniboul Ebil",
   "hp": 4000,
-  "speed": 95,
+  "speed": 85,
   "radius": 34,
-  "mass": 3,
+  "mass": 6,
   "dmg": 14,
   "attackRange": 60,
   "windup": 0.5,
@@ -32934,7 +32934,7 @@
   "recover": 0.65,
   "look": "kanniboul_ebil",
   "color": "#d8d0b8",
-  "xp": 20,
+  "xp": 1500,
   "spells": [
    {
     "id": 32602,
@@ -33020,7 +33020,8 @@
    "tacle": 0,
    "fuite": 0,
    "retraitPA": 0
-  }
+  },
+  "boss": true
  },
  "kanniboul_tam": {
   "dofusId": 4151,
