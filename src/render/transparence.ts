@@ -84,6 +84,27 @@ export class Transparence {
     return vus;
   }
 
+  /** Dessin d'un objet posé autour d'un point de l'écran (l'arche d'un Zaap autour de sa particule) : les images de décor hautes
+   *  (pas une touffe d'herbe ni un tapis de feuilles), pas trop larges (pas un bâtiment ni une falaise) et immobiles (un arbre au
+   *  vent n'en fait pas partie), dont le cadre passe à moins de « marge » pixels du point ; puis celles qui tiennent pour moitié
+   *  dans le cadre de ce premier groupe (l'autre pilier de l'arche, loin de la particule). */
+  dessinAutour(x: number, y: number, marge: number): Phaser.GameObjects.Image[] {
+    const objet = (p: Piece) => p.x1 - p.x0 <= Transparence.OBJET_LARGE && p.y1 - p.y0 >= Transparence.OBJET_HAUT && p.im.originY !== 1;
+    const pres = [...this.proches(x - marge * 4, y - marge * 4, x + marge * 4, y + marge * 4)].filter(objet);
+    const pris = pres.filter(p => Math.hypot(Math.max(p.x0 - x, 0, x - p.x1), Math.max(p.y0 - y, 0, y - p.y1)) <= marge);
+    if (!pris.length) return [];
+    const X0 = Math.min(...pris.map(p => p.x0)), Y0 = Math.min(...pris.map(p => p.y0)), X1 = Math.max(...pris.map(p => p.x1)), Y1 = Math.max(...pris.map(p => p.y1));
+    for (const p of pres) {
+      if (pris.includes(p)) continue;
+      const dedans = Math.max(0, Math.min(p.x1, X1) - Math.max(p.x0, X0)) * Math.max(0, Math.min(p.y1, Y1) - Math.max(p.y0, Y0));
+      if (dedans >= 0.5 * (p.x1 - p.x0) * (p.y1 - p.y0)) pris.push(p);
+    }
+    return pris.map(p => p.im);
+  }
+  static readonly OBJET_LARGE = 360;
+  static readonly OBJET_HAUT = 120;
+  /** Le pixel (x, y) de l'écran est-il dessiné (pas transparent) sur cette image de décor ? */
+  pixelOpaque(im: Phaser.GameObjects.Image, x: number, y: number) { return this.opaque({ im, x0: 0, y0: 0, x1: 0, y1: 0 }, x, y); }
   /** Le pixel (x, y) de l'écran est-il opaque sur cette image de décor ? */
   private opaque(p: Piece, x: number, y: number) {
     const im = p.im, sx = im.scaleX, sy = im.scaleY;

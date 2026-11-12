@@ -117,7 +117,12 @@ export type SimEvent =
   | { k: 'eat'; id: string; heal: number }
   /** Emp (0.2) : achat dans sa boutique, Potion de Rappel bue, réponse « service » d'un PNJ. */
   /** Forgemagie : rune posée (issue officielle, lignes perdues), objets brisés en runes, runes fusionnées, mode « viser » terminé. */
-  | { k: 'forge'; uid: number; rune: string; issue: 'critique' | 'neutre' | 'echec' | 'puits'; stat: string; gain: number; pertes: [string, number][]; kamas: number; exo: boolean }
+  | { k: 'forge'; uid: number; rune: string; issue: 'critique' | 'neutre' | 'echec' | 'puits'; stat: string; gain: number; pertes: [string, number][]; kamas: number; exo: boolean;
+      /** v2 9C : la ligne vient de passer au-dessus de son max officiel (over) ; nom de l'objet pour l'annonce. */ over: boolean; objet: string }
+  /** Forgemagie v2 : Orbe régénérant utilisé (7A), ligne relancée chez Malek (7B), potion d'élément posée sur une arme (6A). */
+  | { k: 'fmOrbe'; uid: number; objet: string }
+  | { k: 'fmRelance'; uid: number; stat: string; jets: [number, number]; avant: number; apres: number; kamas: number }
+  | { k: 'fmPotion'; uid: number; potion: string; element: string }
   /** auto : objet Commun brisé dès le ramassage (« Équipement en trop » 5B), id de cet objet. */
   | { k: 'brisage'; n: number; runes: Record<string, number>; kamas?: number; auto?: string }
   /** Codex (0.3) : un pouvoir enregistré en brisant un Légendaire ; une impression sur un objet Rare ou Épique. */
@@ -125,6 +130,8 @@ export type SimEvent =
   | { k: 'codexOuvert' }
   /** Coffre partagé (0.3) : ouvert devant le coffre ; changé (l'affichage le sauve avec le perso). */
   | { k: 'coffreOuvert' } | { k: 'coffre' }
+  /** Forgemagie v2 2B : arrivé devant l'établi de forgemagie du Havre-Sac. */
+  | { k: 'etabliForge' }
   /** Archimonstre capturé (0.3, 15B) ; neuf : première fois pour ce perso. */
   | { k: 'capture'; monster: string; neuf: boolean }
   | { k: 'impression'; uid: number; id: string }

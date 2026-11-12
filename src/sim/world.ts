@@ -11,10 +11,10 @@ import { jetOfficiel } from './danger';
 import { REGLAGES_BUTIN, monstresDeZone, panoDuBoss, poolNiveau, poolOfficiel, rangDe, tirerButin, type Butin, type CtxButin, type Rang } from './butin';
 import { PASSIFS, TROPHEES, tropheesDuBoss } from './dofus';
 import { ajouterPieces, CLE_COFFRE, enSurcharge, ouvrirCoffre, piecesMonstre, piecesObjet, seuilsCoffre } from './enutrof';
-import { briser, chanceRune, coutKamas, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
+import { briser, chanceRune, coutKamas, coutRelance, orbeConvient, potionConvient, POTIONS, regenerer, relancerLigne, REGLES_V2, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
 import { V03_PUBLIC, V04_PUBLIC, niveauObjetsMax, slotAPouvoirConnu } from './pouvoirs';
 import { fxImpression, imprimable, nouveauPourCodex, prixImpression } from './codex';
-import { legendaryPower, FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, kamasDefaire, noteObjet, rollItem, type EquipSlot, type Item, type ItemsData, type Rarity, type RecipeDef } from './items';
+import { legendaryPower, FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, kamasDefaire, noteObjet, rollItem, type EquipSlot, type Item, type ItemsData, type Rarity, type RecipeDef, type Stat } from './items';
 import { Player } from './player';
 import { Bete, BETES, REGLES_BETES, type EffetBete, type SortBete } from './bete';
 import { initiativeBonus, removalChance } from './caracs';
@@ -1989,7 +1989,18 @@ export class World {
     // trophées (0.4 suite 3A) : chaque boss de la 0.4 en a deux, rares, une fois chacun
     if (rang === 'boss' && this.player.v04) for (const id of tropheesDuBoss(type))
       if (!this.player.trophees.includes(id) && this.rng.next() < REGLAGES_BUTIN.trophee && this.player.gagnerTrophee(id)) this.emit({ k: 'dofusGagne', id });
+    this.butinForge(b, rang, niveau);
     this.poserButin(b, mx, my, pour);
+  }
+  /** Forgemagie v2 : les boss lâchent les runes maison (5B), élites et boss un Orbe régénérant du niveau du monstre (7A). */
+  private butinForge(b: Butin, rang: Rang, niveau: number) {
+    const R = this.opts.items?.resources;
+    if (!R || (rang !== 'boss' && rang !== 'elite')) return;
+    if (rang === 'boss') for (const id of ['990001', '990002']) if (R[id] && this.rng.next() < REGLES_V2.maison.boss) b.ressources.push({ id });
+    if (this.rng.next() < (rang === 'boss' ? REGLES_V2.orbes.boss : REGLES_V2.orbes.elite)) {
+      const orbe = Object.entries(R).filter(([, r]) => r.orbe && !/\(lié\)/.test(r.name)).sort((x, y) => x[1].orbe! - y[1].orbe!).find(([, r]) => r.orbe! >= niveau)?.[0];
+      if (orbe) b.ressources.push({ id: orbe });
+    }
   }
   /** Butin tiré : ressources dans le sac du joueur qui agit, objets et kamas au sol autour de (mx, my). */
   private poserButin(b: Butin, mx: number, my: number, pour?: number) {
@@ -2282,7 +2293,41 @@ export class World {
     p.kamas -= kamas;
     if (!--p.resources[rune]) delete p.resources[rune];
     if (Object.values(p.equipment).includes(it)) p.recompute();
-    this.emit({ k: 'forge', uid, rune, issue: r.issue, stat: r.stat, gain: r.gain, pertes: r.pertes, kamas, exo: it.exo === r.stat });
+    this.emit({ k: 'forge', uid, rune, issue: r.issue, stat: r.stat, gain: r.gain, pertes: r.pertes, kamas, exo: it.exo === r.stat, over: r.over, objet: def.name });
+    return true;
+  }
+  // --- Forgemagie v2 (maquette « Forgemagie v2 », Mathis 2026-11-12) -----------------------------------------------------------------
+  /** 7A : un Orbe régénérant du sac relance tous les jets de l'objet (niveau d'objet au plus celui de l'orbe). */
+  utiliserOrbe(uid: number, orbe: string): boolean {
+    const p = this.player, it = this.objetForgeable(uid), def = it && this.opts.items!.equipment[it.id], o = this.opts.items!.resources[orbe]?.orbe;
+    if (!it || !def || !o || !((p.resources[orbe] ?? 0) > 0) || !orbeConvient(def, o)) return false;
+    regenerer(this.rng, def, it, it.id);
+    if (!--p.resources[orbe]) delete p.resources[orbe];
+    if (Object.values(p.equipment).includes(it)) p.recompute();
+    this.emit({ k: 'fmOrbe', uid, objet: def.name });
+    return true;
+  }
+  /** 7B : Malek relance une ligne (deux jets, il garde le meilleur, jamais moins que l'actuel) ; le prix double à chaque fois. */
+  relancerLigneFM(uid: number, s: Stat): boolean {
+    const p = this.player, it = this.objetForgeable(uid), def = it && this.opts.items!.equipment[it.id];
+    if (!it || !def) return false;
+    const k = coutRelance(def, it);
+    if (p.kamas < k) return false;
+    const r = relancerLigne(this.rng, def, it, s);
+    if (!r) return false;
+    p.kamas -= k;
+    if (Object.values(p.equipment).includes(it)) p.recompute();
+    this.emit({ k: 'fmRelance', uid, stat: s, jets: r.jets, avant: r.avant, apres: r.apres, kamas: k });
+    return true;
+  }
+  /** 6A : une Potion de forgemagie du sac change les dommages neutres de l'arme dans son élément (remplace une potion déjà posée). */
+  poserPotionFM(uid: number, potion: string): boolean {
+    const p = this.player, it = this.objetForgeable(uid), def = it && this.opts.items!.equipment[it.id], P = POTIONS[potion];
+    if (!it || !def || !P || !((p.resources[potion] ?? 0) > 0) || !potionConvient(def) || it.potion === potion) return false;
+    it.potion = potion;
+    if (!--p.resources[potion]) delete p.resources[potion];
+    if (Object.values(p.equipment).includes(it)) p.recompute();
+    this.emit({ k: 'fmPotion', uid, potion, element: P.element });
     return true;
   }
   // --- Commande à Malek (maquette « Forgemagie UI » 9A-9E) : objectifs, planchers, budget ; estimée, puis confiée --------------
@@ -2595,6 +2640,11 @@ export class World {
     const wg = this.worldGrid, A = this.zone.open?.ateliers;
     if (!wg) return;
     this.buildCoffres();
+    for (const e of this.zone.open?.etablis ?? []) {   // Forgemagie v2 2B : l'établi du Havre-Sac
+      if (!wg.mapByTag(e.carte)) continue;
+      const c = wg.cellToWorld(wg.cellOf(e.carte, e.case)), q = wg.nearestFree(c.x, c.y, wg.freeByMap.get(e.carte)!);
+      this.postes.push({ id: this.nextId++, atelier: e.nom, metiers: [], tag: e.carte, x: q.x, y: q.y, forge: true });
+    }
     if (!A) return;
     for (const a of A) {
       if (!this.player.v03 && a.metiers.every(m => METIERS_FAB.includes(m))) continue;   // 0.3 : ateliers de fabrication
@@ -2682,6 +2732,7 @@ export class World {
     this.versPoste = null;
     p.stopMove(); p.facing = Math.atan2(po.y - p.y, po.x - p.x);
     if (po.coffre) { this.emit({ k: 'coffreOuvert' }); return; }
+    if (po.forge) { this.emit({ k: 'etabliForge' }); return; }
     this.emit({ k: 'atelier', poste: po.id, metier: po.metiers[0] });
   }
   /** Lance la fabrication de n fois la recette i (fenêtre Artisanat) : une barre d'une seconde, puis tout est fait d'un coup. */
