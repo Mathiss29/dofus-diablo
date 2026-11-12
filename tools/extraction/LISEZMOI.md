@@ -241,9 +241,9 @@ Les anciennes planches ont été converties par `tools/hebergement/planches_avif
 
 ## Emp et la boutique (0.2b, 6 nov. 2026)
 
-- Icônes d'objets ajoutées aux planches `public/assets/ui/objets-hd.webp` (128 px, fenêtres) et `objets.webp` (64 px, Phaser) :
+- Icônes d'objets ajoutées en fichiers `public/assets/ui/objets/<iconId>.webp` (128 px, fenêtres ; un fichier par icône pour que l'inventaire s'ouvre sans attendre) et à la planche `objets.webp` (64 px, Phaser) :
   `python icones_ajout.py <item_assets_2x.bundle> <iconId>...` (le paquet 2x est copié dans `/mnt/project-files/cache-dofus/astrub/item_assets_2x.bundle` ;
-  le 1x, 64 px, donnait des icônes floues dans les fenêtres). Sans iconId, refait les deux planches.
+  le 1x, 64 px, donnait des icônes floues dans les fenêtres). Sans iconId, refait la planche et tous les fichiers (≈ 16 min).
 - PNJ dont le look a un skin et des couleurs (`{bone|skin|1=couleur}`) : `SKINS=<skins_assets_skin_N.bundle> COULEURS=1=<couleur>`
   devant `monster_planche.py`. Emp : `PNJ=1 SCALE=1.32 SKINS=.../skins_assets_skin_1981.bundle COULEURS=1=15788464 python monster_planche.py 1979 pnj_emp <bones> <sortie>`.
 - Cadenas : icône officielle `icons_assets_1x/lockShadowOutline` dans `public/assets/ui/emp/`.
