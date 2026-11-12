@@ -1799,6 +1799,15 @@
             "etiquettes": [
               "Bastion des Douze"
             ]
+          },
+          {
+            "titre": "Archimonstre signalé",
+            "phrase": "Chaque jour, le tableau des contrats signale un archimonstre de ton niveau dont tu n'as pas l'âme.",
+            "details": "Trouve-le, capture son âme et rapporte la nouvelle au tableau : Pépites, kamas, XP et un sac Rare.",
+            "icone": "contrat",
+            "etiquettes": [
+              "Contrats"
+            ]
           }
         ],
         "Le monde": [

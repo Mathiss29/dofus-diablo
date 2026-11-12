@@ -1,7 +1,7 @@
 import type { SimEvent } from './events';
 import type { World } from './world';
 import { PEPITE, type Rarity } from './items';
-import { contrat, hache, semaine, tirerContrats, type CtxContrats } from './contrats';
+import { archiDuJour, contrat, contratArchi, hache, semaine, tirerContrats, type CtxContrats } from './contrats';
 import { liensAPied, plusCourt, type GenreLien, type Lien, type Pt } from './trajet';
 
 /** Trajet de la flèche des quêtes : `x, y` = le point à viser maintenant, `pts` = le trajet jusqu'à la première porte
@@ -47,6 +47,8 @@ export type ObjectifDef = { texte: string } & (
   | { t: 'defi'; donjon: string; regle: 'sansPotion' | 'chrono'; s?: number }
   /** « Archis : » 9A : âmes à montrer (archimonstres et boss capturés, carnet des âmes) ; elles restent dans le sac. */
   | { t: 'ames'; monstres: string[] }
+  /** « Archis : » 3C : capturer l'âme de cet archimonstre (pendant la quête, une nouvelle capture). */
+  | { t: 'capturer'; monstre: string }
 );
 export interface EtapeDef {
   nom: string;
@@ -255,7 +257,7 @@ export interface EtatQuetes {
   /** Points de succès du compte au moment de la sauvegarde (lu par le classement du serveur, 10B). */
   points?: number;
 }
-export interface Tableau { jour: string; ids: string[]; semaine: string; hebdo: string[] }
+export interface Tableau { jour: string; ids: string[]; semaine: string; hebdo: string[]; /** « Archis : » 3C : [jour, contrat de l'archimonstre signalé] */ archi?: [string, string | null] }
 export interface BilanDonjon { v: number; m: number; dernier?: 'v' | 'm';
   /** Meilleur temps dans l'arène (s, 12A) ; nouveau record à commenter par le gardien. */
   t?: number; record?: boolean;
@@ -417,8 +419,8 @@ export class Quetes {
     this.refaites = { ...e.refaites }; this.tableau = e.tableau ?? null; this.tableaux = JSON.parse(JSON.stringify(e.tableaux ?? {}));
     this.enCours = (e.enCours ?? []).filter(c => this.existe(c.id) && this.etapeDe(c));
     // les contrats finis des jours passés ne servent plus à rien
-    const vieux = (id: string) => (id.startsWith('ctr:') || id.startsWith('defi:')) && !this.enPeriode(id);
-    this.finies = new Set((e.finies ?? []).filter(id => !vieux(id))); this.etapesFinies = new Set((e.etapesFinies ?? []).filter(k => !k.startsWith('ctr:') && !k.startsWith('defi:')));
+    const vieux = (id: string) => /^(ctr|ctra|defi):/.test(id) && !this.enPeriode(id);
+    this.finies = new Set((e.finies ?? []).filter(id => !vieux(id))); this.etapesFinies = new Set((e.etapesFinies ?? []).filter(k => !/^(ctr|ctra|defi):/.test(k)));
     this.suivie = e.suivie && this.enCours.some(c => c.id === e.suivie) ? e.suivie : this.enCours[0]?.id ?? null;
     this.decouvertes = new Set(e.decouvertes ?? []); this.vaincus = new Set(e.vaincus ?? []); this.objets = { ...e.objets };
     this.donjons = JSON.parse(JSON.stringify(e.donjons ?? {}));
@@ -476,7 +478,16 @@ export class Quetes {
     const id = `defi:${this.jour}:${donjon}`;
     return this.jour && this.existe(id) && !this.finies.has(id) && !this.enCours.some(c => c.id === id) ? id : null;
   }
+  /** Archimonstres du jeu : id -> monstre dont il prend la place. */
+  private archis_: Record<string, string> | null = null;
+  private get archis(): Record<string, string> {
+    return this.archis_ ??= Object.fromEntries(Object.entries(this.world.opts.data.monsters).filter(([, d]) => d.archiDe).map(([k, d]) => [k, d.archiDe!]));
+  }
   private ecrireContrat(id: string): QueteDef | null {
+    if (id.startsWith('ctra:')) {
+      if (!this.dyn.has(id)) this.dyn.set(id, contratArchi(id, this.ctxContrats(this.tableauDe(id.split(':')[3])), this.archis));
+      return this.dyn.get(id)!;
+    }
     if (!id.startsWith('ctr:')) return null;
     if (!this.dyn.has(id)) this.dyn.set(id, contrat(id, this.ctxContrats(this.tableauDe(id.split(':')[3]))));
     return this.dyn.get(id)!;
@@ -508,11 +519,13 @@ export class Quetes {
   contrats(pnj = this.tableaux_()[0] ?? ''): string[] {
     const j = this.jour, s = semaine(j), lvl = this.world.player.level, ctx = this.ctxContrats(pnj);
     if (!j || !ctx.pnj || !Object.keys(ctx.sousZones).length) return [];
-    const vide = () => ({ jour: '', ids: [], semaine: '', hebdo: [] });
+    const vide = (): Tableau => ({ jour: '', ids: [], semaine: '', hebdo: [] });
     const t = pnj === this.tableaux_()[0] ? this.tableau ??= vide() : this.tableaux[pnj] ??= vide();
     if (t.jour !== j) { t.jour = j; t.ids = tirerContrats(j, false, lvl, ctx); }
     if (t.semaine !== s) { t.semaine = s; t.hebdo = tirerContrats(s, true, lvl, ctx); }
-    return [...t.ids, ...t.hebdo].filter(id => this.existe(id));
+    // « Archis : » 3C : l'archimonstre signalé du jour (tiré une fois par jour, avec les autres)
+    if (t.archi?.[0] !== j) t.archi = [j, this.world.player.v03 ? archiDuJour(j, lvl, ctx, this.archis, this.world.player.ames) : null];
+    return [...t.ids, ...(t.archi[1] ? [t.archi[1]] : []), ...t.hebdo].filter(id => this.existe(id));
   }
   /** Contrats qu'on peut encore prendre (ni en cours, ni finis cette période). */
   contratsLibres(pnj?: string): string[] { return this.contrats(pnj).filter(id => !this.finies.has(id) && !this.enCours.some(c => c.id === id)); }
@@ -688,6 +701,7 @@ export class Quetes {
   /** Un événement de la simulation fait avancer les objectifs et les succès. */
   observer(e: SimEvent) {
     const w = this.world;
+    if (e.k === 'capture') for (const c of this.enCours) this.etapeDe(c)?.objectifs.forEach((o, i) => { if (o.t === 'capturer' && o.monstre === e.monster) c.compte[i] = 1; });
     if (e.k === 'kill') {
       this.vaincus.add(e.monster);
       const ici = w.donjonIci();   // victoire sur le boss du donjon (8A)
