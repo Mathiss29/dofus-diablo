@@ -2,6 +2,7 @@
 // sa tête quelques secondes : toi, les joueurs de ton groupe, et les passants du Bastion.
 import Phaser from 'phaser';
 import { EnLigne, type MessageChat } from './presence';
+import { LIEN, lireLien } from './chatOutils';
 import { ISO } from '../sim/iso';
 import type { World } from '../sim/world';
 
@@ -17,7 +18,8 @@ export class BullesChat {
   private nouveau(m: MessageChat) {
     if (m.canal === 'prive' || m.canal === 'infos' || m.id == null) return;
     this.bulles.get(m.id)?.txt.destroy();
-    const texte = m.texte.length > 90 ? m.texte.slice(0, 88) + '…' : m.texte;
+    const brut = m.texte.replace(LIEN, (_t, id, r, st, l) => { const o = lireLien(id, r, st, l); return o ? `[${o.nom}]` : '[objet]'; });   // « Tchat : » 6A
+    const texte = brut.length > 90 ? brut.slice(0, 88) + '…' : brut;
     const txt = this.scene.add.text(0, 0, texte, {
       fontFamily: 'Lexend, sans-serif', fontSize: '12px', color: '#1d1b16', backgroundColor: '#f4efe0ee',
       padding: { x: 7, y: 4 }, wordWrap: { width: 200 }, align: 'center',
