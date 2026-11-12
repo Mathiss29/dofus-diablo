@@ -1,4 +1,5 @@
 import { appliquerCarte, majCarteJoueur } from './carte';
+import { achatsDuJour, etalDuJour, MAGASIN, pieceDeLaSemaine, reserveePiece, type CtxMagasin, type Offre } from './magasin';
 import { angleDiff, Rng } from './math';
 import type { AtelierDef, DonjonDef, Element, GameData, HitZone, MonsterSpell, SubAreaDef, ZoneDef } from './defs';
 import type { PointDeRetour, RetourHavreSac, SimEvent, Telegraph } from './events';
@@ -2378,21 +2379,65 @@ export class World {
   }
   /** Achat dans une boutique (src/data/boutique.json), payé dans la monnaie de l'article : kamas pour l'utile (Magasin 5B), Cawottes chez Tiwa Cawoteuw, sinon Pépites.
    *  Un article « apparat » rejoint la collection d'apparences, une fois pour toutes. */
-  acheter(boutique: string, id: string): boolean {
+  acheter(boutique: string, id: string, n = 1): boolean {
     const a = this.opts.boutiques?.[boutique]?.find(x => x.id === id && (!x.v03 || this.player.v03) && (!x.v04 || this.player.v04)), p = this.player;
-    const m = a?.monnaie ?? PEPITE, solde = m === 'kamas' ? p.kamas : (p.resources[m] ?? 0);
-    if (!a || solde < a.prix || (a.apparat && p.apparats.includes(id)) || (a.apres && !((this.quetes?.donjons[a.apres]?.v ?? 0) > 0))) return false;
-    if (m === 'kamas') p.kamas -= a.prix;
-    else { p.resources[m] -= a.prix; if (!p.resources[m]) delete p.resources[m]; }
-    if (a.apparat) p.apparats.push(id);
-    else p.resources[id] = (p.resources[id] ?? 0) + 1;
-    this.emit({ k: 'achat', id, prix: a.prix, ...(a.monnaie ? { monnaie: a.monnaie } : {}) });
+    if (!a || (a.apres && !((this.quetes?.donjons[a.apres]?.v ?? 0) > 0))) return false;
+    if (a.apparat) n = 1;
+    return this.payer(a.prix * n, a.monnaie ?? PEPITE, () => {
+      if (a.apparat) { if (p.apparats.includes(id)) return false; p.apparats.push(id); }
+      else p.resources[id] = (p.resources[id] ?? 0) + n;
+      return true;
+    }, id, n);
+  }
+  /** Solde d'une monnaie : « kamas », ou une ressource (Pépites, Cawottes). */
+  solde(monnaie: string) { const p = this.player; return monnaie === 'kamas' ? p.kamas : (p.resources[monnaie] ?? 0); }
+  /** Paie prix dans cette monnaie si le joueur l'a et si donner() accepte ; émet l'achat. */
+  private payer(prix: number, monnaie: string, donner: () => boolean, id: string, n = 1): boolean {
+    const p = this.player;
+    if (this.solde(monnaie) < prix || !donner()) return false;
+    if (monnaie === 'kamas') p.kamas -= prix;
+    else { p.resources[monnaie] -= prix; if (!p.resources[monnaie]) delete p.resources[monnaie]; }
+    this.emit({ k: 'achat', id, prix, ...(monnaie !== PEPITE ? { monnaie } : {}), ...(n > 1 ? { n } : {}) });
     return true;
+  }
+  // --- Magasin du Bastion (maquette « Magasin : » 3A+3B 4C) ---------------------
+  private ctxMagasin(): CtxMagasin {
+    return { boutiques: (this.opts.boutiques ?? {}) as CtxMagasin['boutiques'], apparats: this.opts.apparats, v03: this.player.v03, v04: this.player.v04 };
+  }
+  /** Les achats du jour de ce joueur (remis à zéro à minuit). */
+  achatsDuJour() { const p = this.player; return (p.magasin = achatsDuJour(p.magasin, this.opts.aujourdhui ?? '')); }
+  /** L'étal du jour (3A) : six offres tirées de la date, deux à -30 %. */
+  etalDuJour(): Offre[] { return etalDuJour(this.opts.aujourdhui ?? '', this.ctxMagasin()); }
+  /** La pièce de la semaine (3B). */
+  pieceDeLaSemaine(): Offre | null { return pieceDeLaSemaine(this.opts.aujourdhui ?? '', this.ctxMagasin()); }
+  /** Achète l'offre i de l'étal (une fois par jour). */
+  acheterEtal(i: number): boolean {
+    const o = this.etalDuJour()[i], a = this.achatsDuJour(), p = this.player;
+    if (!o || a.etal.includes(i)) return false;
+    const ok = this.payer(o.prix, o.monnaie, () => {
+      if (o.k === 'apparat') { if (p.apparats.includes(o.id)) return false; p.apparats.push(o.id); }
+      else p.resources[o.id] = (p.resources[o.id] ?? 0) + 1;
+      return true;
+    }, o.id);
+    if (ok) a.etal.push(i);
+    return ok;
+  }
+  acheterPiece(): boolean {
+    const o = this.pieceDeLaSemaine(), p = this.player;
+    return !!o && this.payer(o.prix, o.monnaie, () => { if (p.apparats.includes(o.id)) return false; p.apparats.push(o.id); return true; }, o.id);
+  }
+  /** 4C : un sac à rareté garantie (Rare ou Épique) de son niveau, un seul par jour. */
+  acheterSacDuJour(rarete: 'rare' | 'epique'): boolean {
+    const a = this.achatsDuJour(), p = this.player;
+    if (a.sac || p.bag.length >= Player.BAG_SIZE) return false;
+    const ok = this.payer(MAGASIN.sac[rarete], PEPITE, () => true, `sac:${rarete}`);
+    if (ok) { a.sac = true; this.donnerSac(rarete, p.level); }
+    return ok;
   }
   /** Achat d'un objet d'apparat chez Emp (Apparence 5A) : il rejoint la collection du perso, une fois pour toutes. */
   acheterApparat(id: string): boolean {
     const d = this.opts.apparats?.objets[id], prix = d && this.opts.apparats!.prix[d.slot], p = this.player;
-    if (!d || d.collection || prix == null || p.apparats.includes(id) || (p.resources[PEPITE] ?? 0) < prix) return false;
+    if (!d || d.collection || reserveePiece(id) || prix == null || p.apparats.includes(id) || (p.resources[PEPITE] ?? 0) < prix) return false;
     p.resources[PEPITE] -= prix; if (!p.resources[PEPITE]) delete p.resources[PEPITE];
     p.apparats.push(id);
     this.emit({ k: 'achat', id, prix });

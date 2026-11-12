@@ -2,6 +2,7 @@ import { QUALITES, REGLAGES_DEFAUT, sauverReglages, type Reglages } from './ambi
 import * as Touches from './touches';
 import { ICON_CSS, iconHtml } from './icons';
 import { MANIFESTE, Son } from './son';
+import { MAGASIN, MARCHE, reserveePiece, type Article } from '../sim/magasin';
 import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES } from '../sim/data';
 import { v } from './assetUrl';
 import { BUTIN_CSS, butinMonstre, dessinerPortraits, esc as escB, groupesBestiaire, nomObjet, iconeObjet, sourcesHtml } from './butinVue';
@@ -284,7 +285,14 @@ const CSS = `
 .dw .zaap .zp{font-size:12px;color:#9a8f7c;margin-top:6px}
 .dw .in.emp{display:grid;gap:10px;align-content:start;overflow:auto;padding:14px 16px}
 .dw .emp .eh{display:flex;justify-content:space-between;align-items:center}
-.dw .emp .eos{display:flex;gap:6px}
+.dw .emp .eos{display:flex;gap:6px;flex-wrap:wrap}
+.dw .emp .ks{display:flex;gap:14px}
+.dw .emp .px{display:grid;justify-items:end;gap:2px}
+.dw .emp .px i{font-style:normal;font-size:11px;color:#ff6b5a}
+.dw .emp .px .btn.off{color:#ff6b5a}
+.dw .emp .remise{color:#b9e54b;font-weight:bold}
+.dw .emp .ent{font:600 11px Lexend,sans-serif;color:#c9a55a;text-transform:uppercase;letter-spacing:.06em;margin-top:6px}
+.dw .emp .sacs{display:flex;gap:10px}
 .dw .emp .eo{cursor:pointer;padding:6px 16px;border-radius:3px;background:#2e2d28;border:1px solid #45433b;font-weight:bold;color:#d8d2bf}
 .dw .emp .eo.on{background:linear-gradient(#6f9a2a,#4c6e17);border-color:#b9e54b;color:#fff}
 .dw .emp .k{display:flex;gap:4px;align-items:center;font-weight:bold;color:#b9e54b;font-size:16px}.dw .emp .k .ic{width:30px;height:30px}
@@ -709,6 +717,8 @@ type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes
 /** Fenêtres façon Dofus 3 : « Inventaire » (le perso sur son socle, ses emplacements autour, le sac à onglets)
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
  *  Les clics appellent l'API de la partie (World / Player). */
+/** Onglets de la fenêtre des marchands : Défaire (Kerubim), boutique d'un PNJ, et ceux du Marché du Bastion. */
+type OngletEmp = 'recycler' | 'boutique' | 'apparat' | 'etal' | 'conso' | 'cles';
 export class Windows {
   private root: HTMLDivElement;
   private win: HTMLDivElement | null = null;
@@ -722,7 +732,7 @@ export class Windows {
   private succesCat = '';   // '' = Résumé
   /** Fenêtre des services d'un PNJ du Havre-Sac (maquette Hub 4A) : le PNJ, et l'onglet Recycler, Boutique ou Apparats (Apparence 5A). */
   empPnj = 'kerubim';
-  empOnglet: 'recycler' | 'boutique' | 'apparat' = 'recycler';
+  empOnglet: OngletEmp = 'recycler';
   /** Zaap du Havre-Sac (2C) : choix fait dans sa fenêtre (-1 = là où l'on était), lu par la scène. */
   onZaap: (i: number) => void = () => {};
   /** Apparat survolé dans la boutique d'Emp : le perso de l'aperçu le porte. */
@@ -2165,50 +2175,75 @@ export class Windows {
   }
 
   private renderEmp() {
-    const w = this.win!, p = this.world.player, pep = p.resources[PEPITE] ?? 0;
-    // les onglets du PNJ ouvert : ses services (Kerubim recycle, Tissebelle a les apparats et le miroir, les autres une boutique)
-    const def = QUETES.pnj[this.empPnj], sv = new Set((def?.services ?? []).map(x => x.service)), boutique = (BOUTIQUES[this.empPnj] ?? []).filter(a => (!a.v03 || p.v03) && (!a.v04 || p.v04));
-    if (!sv.has(this.empOnglet)) this.empOnglet = sv.has('boutique') ? 'boutique' : sv.has('apparat') ? 'apparat' : 'recycler';
-    const onglet = (k: string, n: string) => sv.has(k) ? `<span class="eo ${this.empOnglet === k ? 'on' : ''}" data-eo="${k}">${n}</span>` : '';
-    // monnaie de la boutique : Pépites, ou celle de ses articles (Tiwa Cawoteuw : Cawottes de la guerre)
-    // Kerubim (Défaire) rend des kamas : son en-tête montre les kamas
-    const mon = this.empOnglet === 'recycler' ? 'kamas' : boutique.find(a => a.monnaie)?.monnaie ?? PEPITE, solde = mon === 'kamas' ? p.kamas : (p.resources[mon] ?? 0);
-    const icMon = mon === 'kamas' ? `<img src="${INV}/kamas.png" alt="" style="width:18px;vertical-align:middle">` : iconHtml(ITEMS.resources[mon]?.icon ?? 0);
-    const tete = `<div class="eh"><div class="eos">${onglet('recycler', 'Défaire')}${onglet('boutique', 'Boutique')}${onglet('apparat', 'Apparats')}${sv.has('garde-robe') ? '<span class="eo" data-garde>Garde-robe</span>' : ''}</div>
-      <span class="k" title="${mon === 'kamas' ? 'Kamas' : ITEMS.resources[mon]?.name ?? 'Pépites'}">${solde.toLocaleString('fr-FR')} ${icMon}</span></div>`;
+    const w = this.win!, p = this.world.player, W = this.world;
+    // Marché du Bastion (Magasin 2A, 13A-13D) : Otomaï, Mère Bouillotte, Goultard et Tissebelle ouvrent la même fenêtre, chacun sur son onglet.
+    // Les autres (Kerubim : Défaire ; Lily, Tiwa Cawoteuw : leur boutique) gardent leurs onglets.
+    const def = QUETES.pnj[this.empPnj], sv = new Set((def?.services ?? []).map(x => x.service)), marche = MARCHE.includes(this.empPnj);
+    const vis = (a: Article) => (!a.v03 || p.v03) && (!a.v04 || p.v04);
+    const boutique = (BOUTIQUES[this.empPnj] ?? []).filter(vis);
+    const onglets: [OngletEmp, string][] = marche ? [['etal', 'Étal du jour'], ['conso', 'Consommables'], ['cles', 'Clés'], ['apparat', 'Apparences']]
+      : ([['recycler', 'Défaire'], ['boutique', 'Boutique'], ['apparat', 'Apparats']] as [OngletEmp, string][]).filter(([k]) => sv.has(k));
+    if (!onglets.some(([k]) => k === this.empOnglet)) this.empOnglet = marche ? (this.empPnj === 'goultard' ? 'cles' : this.empPnj === 'tissebelle' ? 'apparat' : 'conso') : onglets[0]?.[0] ?? 'boutique';
+    const icM = (m: string) => m === 'kamas' ? `<img src="${INV}/kamas.png" alt="" style="width:18px;vertical-align:middle">` : iconHtml(ITEMS.resources[m]?.icon ?? 0);
+    const nomM = (m: string) => m === 'kamas' ? 'kamas' : m === PEPITE ? 'Pépites' : ITEMS.resources[m]?.name ?? '';
+    // 2C : le prix en rouge quand il manque, et combien
+    const prix = (n: number, m: string, attr: string) => { const s = W.solde(m), ok = s >= n;
+      return `<span class="px"><span class="btn ${ok ? '' : 'off'}" ${attr}>${n.toLocaleString('fr-FR')} ${icM(m)}</span>${ok ? '' : `<i>il manque ${(n - s).toLocaleString('fr-FR')} ${nomM(m)}</i>`}</span>`; };
+    const solde = (m: string) => `<span class="k" title="${nomM(m)}">${W.solde(m).toLocaleString('fr-FR')} ${icM(m)}</span>`;
+    const monnaies = marche ? ['kamas', PEPITE] : this.empOnglet === 'recycler' ? ['kamas'] : [boutique.find(a => a.monnaie)?.monnaie ?? PEPITE];
+    const tete = `<div class="eh"><div class="eos">${onglets.map(([k, n]) => `<span class="eo ${this.empOnglet === k ? 'on' : ''}" data-eo="${k}">${n}</span>`).join('')}${sv.has('garde-robe') ? '<span class="eo" data-garde>Garde-robe</span>' : ''}</div>
+      <span class="ks">${monnaies.map(solde).join('')}</span></div>`;
+    const essai = this.essaiApparat && APPARATS.objets[this.essaiApparat];
+    const apercu = () => { const objets = objetsPortes(p.equipment, { ...p.apparat, ...(essai ? { [essai.slot]: this.essaiApparat! } : {}) });
+      return `<div class="apercu">${this.perso ? this.canevas('', objets) : ''}<div class="hint" style="text-align:center">${essai ? essai.name : 'Survole une apparence pour l\'essayer'}</div></div>`; };
+    const ligneApparat = (id: string, fin: string, note = '') => { const d = APPARATS.objets[id];
+      return `<div class="rec" data-essai="${id}">${apparatHtml(id)}<div><b>${d.name}</b> <span class="hint">${d.slot === 'chapeau' ? 'Coiffe' : d.slot === 'cape' ? 'Cape' : 'Familier'} d'apparat</span>${note}${porteur(id)}</div>${p.apparats.includes(id) ? '<span class="hint">Déjà à toi</span>' : fin}</div>`; };
+    const ligneObjet = (id: string, fin: string, note = '') => { const r = ITEMS.resources[id]; if (!r) return '';
+      const effet = r.soin ? `+${r.soin} PV` : r.rappel ? 'Retour au dernier Zaap' : r.cle ? `Entrée : ${r.cle}` : r.pierreAme ? 'Capture un archimonstre vaincu (une pierre par capture)' : '';
+      return `<div class="rec" data-rid="${id}">${iconHtml(r.icon)}<div><b>${r.name}</b> <span class="hint">niveau ${r.level}${(p.resources[id] ?? 0) ? ` · tu en as ${p.resources[id]}` : ''}</span>${note}<div style="font-size:12px;color:#c9c4ab">${effet}</div></div>${fin}</div>`; };
+    const ligneArticle = (b: string, a: Article) => a.apparat ? ligneApparat(a.id, prix(a.prix, a.monnaie ?? PEPITE, `data-achat="${b}|${a.id}"`))
+      : ligneObjet(a.id, a.apres && !((W.quetes?.donjons[a.apres]?.v ?? 0) > 0) ? `<span class="hint">Après le ${a.apres}</span>` : prix(a.prix, a.monnaie ?? PEPITE, `data-achat="${b}|${a.id}"`));
     let corps = '';
     if (this.empOnglet === 'recycler') {
-      corps = defaireHtml(this.world, this.forge);
+      corps = defaireHtml(W, this.forge);
+    } else if (this.empOnglet === 'etal') {
+      // 3A étal du jour, 3B pièce de la semaine, 4C sac du jour ; tout change à minuit (heure du PC)
+      const pris = W.achatsDuJour(), piece = W.pieceDeLaSemaine();
+      const offres = W.etalDuJour().map((o, i) => {
+        const note = o.remise ? ` <span class="remise">-30 %</span> <s class="hint">${(o.avant ?? o.prix).toLocaleString('fr-FR')}</s>` : '', fin = pris.etal.includes(i) ? '<span class="hint">Pris aujourd\'hui</span>' : prix(o.prix, o.monnaie, `data-etal="${i}"`);
+        return o.k === 'apparat' ? ligneApparat(o.id, fin, note) : ligneObjet(o.id, fin, note); }).join('');
+      const sac = pris.sac ? '<span class="hint">Pris aujourd\'hui, reviens demain</span>'
+        : (['rare', 'epique'] as const).map(r => prix(MAGASIN.sac[r], PEPITE, `data-sac="${r}"`).replace(/^<span class="px">/, `<span class="px"><b style="color:${RARITY_COLORS[r]}">${RARITY_NAMES[r]}</b> `)).join('');
+      corps = `<div class="cata">${apercu()}<div class="shop">
+          <div class="ent">Étal du jour <span class="hint">· change à minuit</span></div>${offres}
+          ${piece ? `<div class="ent">Pièce de la semaine <span class="hint">· change le lundi, introuvable ailleurs</span></div>${ligneApparat(piece.id, prix(piece.prix, piece.monnaie, 'data-piece'))}` : ''}
+          <div class="ent">Sac du jour <span class="hint">· un par jour, un équipement de ton niveau à rareté garantie</span></div>
+          <div class="rec sacj">${iconHtml(ITEMS.resources[PEPITE]?.icon ?? 0)}<div><b>Sac garanti</b><div style="font-size:12px;color:#c9c4ab">Jamais Légendaire.</div></div><span class="sacs">${sac}</span></div>
+        </div></div>`;
     } else if (this.empOnglet === 'apparat') {
-      // Apparats officiels (5A) : tout le catalogue, payé en Pépites ; le survol habille le perso de l'aperçu
+      // Apparences officielles (5A, 2B) : tout le catalogue (hors pièces de la semaine), payé en Pépites ; le survol habille le perso
       const q = this.apparatRecherche.toLowerCase();
-      const l = Object.entries(APPARATS.objets).filter(([, d]) => !d.collection && (!this.apparatSlot || d.slot === this.apparatSlot) && (!q || d.name.toLowerCase().includes(q)))
+      const l = Object.entries(APPARATS.objets).filter(([id, d]) => !d.collection && !reserveePiece(id) && (!this.apparatSlot || d.slot === this.apparatSlot) && (!q || d.name.toLowerCase().includes(q)))
         .sort((a, b) => a[1].name.localeCompare(b[1].name, 'fr'));
-      const essai = this.essaiApparat && APPARATS.objets[this.essaiApparat];
-      const objets = objetsPortes(p.equipment, { ...p.apparat, ...(essai ? { [essai.slot]: this.essaiApparat! } : {}) });
-      corps = `<div class="filtre"><input placeholder="Rechercher un apparat..." value="${this.apparatRecherche.replace(/"/g, '&quot;')}" data-arech>
-          <select data-aslot style="width:auto">${[['', 'Tous les apparats'], ['chapeau', 'Coiffes'], ['cape', 'Capes'], ['familier', 'Familiers']].map(([k, n]) => `<option value="${k}" ${this.apparatSlot === k ? 'selected' : ''}>${n}</option>`).join('')}</select>
-          <span class="hint">${l.length} apparat${l.length > 1 ? 's' : ''}</span></div>
-        <div class="cata"><div class="apercu">${this.perso ? this.canevas('', objets) : ''}<div class="hint" style="text-align:center">${essai ? essai.name : 'Survole un apparat pour l\'essayer'}</div></div>
-        <div class="shop">${l.slice(0, 120).map(([id, d]) => { const a = p.apparats.includes(id), prix = APPARATS.prix[d.slot] ?? 0;
-          return `<div class="rec" data-essai="${id}">${apparatHtml(id)}<div><b>${d.name}</b> <span class="hint">${d.slot === 'chapeau' ? 'Coiffe' : d.slot === 'cape' ? 'Cape' : 'Familier'} d'apparat</span>${porteur(id)}</div>
-            ${a ? '<span class="hint">Déjà à toi</span>' : `<span class="btn ${pep >= prix ? '' : 'off'}" data-aachat="${id}">${prix} ${iconHtml(ITEMS.resources[PEPITE].icon)}</span>`}</div>`; }).join('')}
+      corps = `<div class="filtre"><input placeholder="Rechercher une apparence..." value="${this.apparatRecherche.replace(/"/g, '&quot;')}" data-arech>
+          <select data-aslot style="width:auto">${[['', 'Toutes'], ['chapeau', 'Coiffes'], ['cape', 'Capes'], ['familier', 'Familiers']].map(([k, n]) => `<option value="${k}" ${this.apparatSlot === k ? 'selected' : ''}>${n}</option>`).join('')}</select>
+          <span class="hint">${l.length} apparence${l.length > 1 ? 's' : ''}</span></div>
+        <div class="cata">${apercu()}<div class="shop">${l.slice(0, 120).map(([id, d]) => ligneApparat(id, prix(APPARATS.prix[d.slot] ?? 0, PEPITE, `data-aachat="${id}"`))).join('')}
           ${l.length > 120 ? `<div class="hint">… et ${l.length - 120} autres : affine la recherche.</div>` : ''}</div></div>`;
     } else {
-      corps = `<div class="shop">${boutique.map(a => {
-        const ap = a.apparat ? APPARATS.objets[a.id] : null;
-        if (ap) { const eu = p.apparats.includes(a.id);
-          return `<div class="rec">${apparatHtml(a.id)}<div><b>${ap.name}</b> <span class="hint">${ap.slot === 'chapeau' ? 'Coiffe' : 'Cape'} : apparence pour ta collection</span></div>
-            ${eu ? '<span class="hint">Déjà à toi</span>' : `<span class="btn ${solde >= a.prix ? '' : 'off'}" data-achat="${a.id}">${a.prix.toLocaleString('fr-FR')} ${icMon}</span>`}</div>`; }
-        const r = ITEMS.resources[a.id]; if (!r) return '';
-        const effet = r.soin ? `+${r.soin} PV` : r.rappel ? 'Retour au dernier Zaap' : r.cle ? `Entrée : ${r.cle}` : r.pierreAme ? 'Capture un archimonstre vaincu (une pierre par capture)' : '';
-        return `<div class="rec" data-rid="${a.id}">${iconHtml(r.icon)}<div><b>${r.name}</b> <span class="hint">niveau ${r.level}${(p.resources[a.id] ?? 0) ? ` · tu en as ${p.resources[a.id]}` : ''}</span><div style="font-size:12px;color:#c9c4ab">${effet}</div></div>
-          ${a.apres && !((this.world.quetes?.donjons[a.apres]?.v ?? 0) > 0) ? `<span class="hint">Après le ${a.apres}</span>`
-            : `<span class="btn ${solde >= a.prix ? '' : 'off'}" data-achat="${a.id}">${a.prix.toLocaleString('fr-FR')} ${icMon}</span>`}</div>`; }).join('')}</div>
-        <div class="hint">${mon === 'kamas' ? 'Les kamas tombent des monstres, des contrats, et s\'obtiennent en défaisant des objets chez Kerubim Crépin.' : mon === PEPITE ? 'Les Pépites se gagnent avec les contrats, l\'Almanax, les quêtes, les succès et les donjons (premier passage, défis).' : 'Les Cawottes se gagnent en défendant les champs de l\'île contre les Wabbits (clic sur l\'épouvantail d\'un champ).'}</div>`;
+      const liste: [string, Article][] = this.empOnglet === 'conso' ? ['otomai', 'bouillotte'].flatMap(b => (BOUTIQUES[b] ?? []).filter(vis).map(a => [b, a] as [string, Article]))
+        : this.empOnglet === 'cles' ? (BOUTIQUES.goultard ?? []).filter(vis).map(a => ['goultard', a] as [string, Article])
+        : boutique.map(a => [this.empPnj, a] as [string, Article]);
+      const mon = liste.find(([, a]) => a.monnaie)?.[1].monnaie ?? PEPITE;
+      corps = `<div class="shop">${liste.map(([b, a]) => ligneArticle(b, a)).join('')}</div>
+        <div class="hint">${this.empOnglet === 'conso' ? 'Maj + clic : en acheter 10. ' : ''}${mon === 'kamas' ? 'Les kamas tombent des monstres et des contrats, et s\'obtiennent en défaisant des objets chez Kerubim Crépin.' : mon === PEPITE ? 'Les Pépites se gagnent avec les contrats, l\'Almanax, les quêtes, les succès et les donjons (premier passage, défis).' : 'Les Cawottes se gagnent en défendant les champs de l\'île contre les Wabbits (clic sur l\'épouvantail d\'un champ).'}</div>`;
     }
-    w.innerHTML = `${this.title(`${def?.nom ?? 'Marchand'}${def?.titre ? ` · ${def.titre}` : ''}`, 'inventory')}<div class="in emp${this.empOnglet === 'recycler' ? ' fm' : ''}">${tete}${corps}</div>`;
-    w.querySelectorAll<HTMLElement>('[data-eo]').forEach(e => e.addEventListener('click', () => { this.empOnglet = e.dataset.eo as 'recycler' | 'boutique' | 'apparat'; this.render(); }));
+    const titre = marche ? 'Marché du Bastion' : `${def?.nom ?? 'Marchand'}${def?.titre ? ` · ${def.titre}` : ''}`;
+    w.innerHTML = `${this.title(titre, 'inventory')}<div class="in emp${this.empOnglet === 'recycler' ? ' fm' : ''}">${tete}${corps}</div>`;
+    w.querySelectorAll<HTMLElement>('[data-eo]').forEach(e => e.addEventListener('click', () => { this.empOnglet = e.dataset.eo as OngletEmp; this.render(); }));
+    w.querySelectorAll<HTMLElement>('[data-etal]').forEach(e => e.addEventListener('click', () => { W.acheterEtal(+e.dataset.etal!); this.changed(); }));
+    w.querySelector<HTMLElement>('[data-piece]')?.addEventListener('click', () => { W.acheterPiece(); this.changed(); });
+    w.querySelectorAll<HTMLElement>('[data-sac]').forEach(e => e.addEventListener('click', () => { W.acheterSacDuJour(e.dataset.sac as 'rare' | 'epique'); this.changed(); }));
     w.querySelector<HTMLElement>('[data-garde]')?.addEventListener('click', () => this.show('garde'));
     w.querySelectorAll<HTMLElement>('[data-aachat]').forEach(e => e.addEventListener('click', () => { this.world.acheterApparat(e.dataset.aachat!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-essai]').forEach(e => e.addEventListener('mouseenter', () => {
@@ -2223,7 +2258,9 @@ export class Windows {
       ar.addEventListener('keydown', e => e.stopPropagation());
     }
     w.querySelector<HTMLSelectElement>('[data-aslot]')?.addEventListener('change', e => { this.apparatSlot = (e.target as HTMLSelectElement).value as '' | 'chapeau' | 'cape' | 'familier'; this.render(); });
-    w.querySelectorAll<HTMLElement>('[data-achat]').forEach(e => e.addEventListener('click', () => { this.world.acheter(this.empPnj, e.dataset.achat!); this.changed(); }));
+    w.querySelectorAll<HTMLElement>('[data-achat]').forEach(e => e.addEventListener('click', ev => {
+      const [b, id] = e.dataset.achat!.split('|');
+      this.world.acheter(b, id, ev.shiftKey && this.empOnglet === 'conso' ? MAGASIN.lot : 1); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-rid]').forEach(e => {
       const r = ITEMS.resources[e.dataset.rid!];
       e.addEventListener('mouseenter', ev => { this.tip.innerHTML = this.resTip(r, e.dataset.rid!); this.tip.style.display = 'block'; this.moveTip(ev); });

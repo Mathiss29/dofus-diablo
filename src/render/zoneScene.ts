@@ -1355,7 +1355,7 @@ export class ZoneScene extends Phaser.Scene {
           else if (e.etat === 'prete') { this.hud.toast('Malek le Forgemage a fini ta commande : ton objet t\'attend au Bastion des Douze'); this.windows?.noteForge({ t: 'Malek a fini ta commande', c: 'ok' }); }
           this.windows?.majForge(); break;
         case 'signature': this.hud.loot(`Objet signé : ${e.nom}`, '#e6b85c'); break;
-        case 'achat': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Objet'} acheté (−${e.prix.toLocaleString('fr-FR')} ${e.monnaie === 'kamas' ? 'kamas' : e.monnaie ? (ITEMS.resources[e.monnaie]?.name ?? 'Cawottes') : 'Pépites'})`, '#b9e54b'); break;
+        case 'achat': this.hud.loot(`${e.n ? `${e.n} × ` : ''}${e.id.startsWith('sac:') ? 'Sac garanti' : ITEMS.resources[e.id]?.name ?? APPARATS.objets[e.id]?.name ?? 'Objet'} acheté (−${e.prix.toLocaleString('fr-FR')} ${e.monnaie === 'kamas' ? 'kamas' : e.monnaie ? (ITEMS.resources[e.monnaie]?.name ?? 'Cawottes') : 'Pépites'})`, '#b9e54b'); break;
         case 'rappel': this.hud.banner(`Rappel\n${e.name}`, 1200); this.snapCam = true; break;
         // 17A : lieu découvert (bandeau, un peu d'XP)
         case 'lieuDecouvert': this.hud.banner(`Lieu découvert : ${e.nom}\n+${e.xp} XP`, 2000); Son.jouer(MANIFESTE.ui.objectif, 'interface', { vol: 0.7 }); break;
