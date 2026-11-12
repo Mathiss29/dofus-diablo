@@ -1,3 +1,4 @@
+import { ONGLETS_DEFAUT, type Onglet } from './chatOnglets';
 /** Ambiance des cartes (maquette « Ambiance », choix de Mathis du 2026-11-06) :
  *  - cycle jour / soir / nuit / aube calé sur l'heure du PC (7D) ; plus tard, l'heure du serveur en multijoueur ;
  *  - nuit bleue façon Sonstour (3A) avec un soir orangé (3C) ; purement visuel (8A) ; intérieurs en lumière fixe (9A) ;
@@ -68,16 +69,32 @@ export interface Reglages {
   /** 9A : son d'alerte quand un Légendaire ou mieux tombe ; 9B : l'écran pulse en rouge sous 25 % de PV. */
   alerteButin: boolean;
   pulsePv: boolean;
+  /** Fluidité 3A : 'ecran' = aux vrais pixels de l'écran (net, maquette Décors 1A) ; 'normale' = un pixel du jeu par pixel CSS
+   *  (2,25 fois moins de pixels sur un Windows à 150 %). */
+  resolution: 'ecran' | 'normale';
+  // --- Maquette « Tchat : » (2026-11-12) ---
+  /** 2A : onglets du tchat (nom et ce qu'ils montrent) ; 5B : taille du tchat [largeur, hauteur des messages] en pixels CSS. */
+  chatOnglets: Onglet[];
+  chatTaille: [number, number];
+  /** 7A : heure devant chaque ligne ; 9A : opacité du fond, taille du texte (1 = normale), secondes avant l'effacement (0 = jamais). */
+  chatHeure: boolean;
+  chatFond: number;
+  chatTexte: number;
+  chatEffacement: string;
+  /** 9B : recevoir les canaux Tout et Bastion. */
+  chatTout: boolean;
+  chatBastion: boolean;
 }
 /** 7B : ce que règle chaque qualité prédéfinie. */
 export const QUALITES: Record<'basse' | 'moyenne' | 'haute', Partial<Reglages>> = {
-  basse: { vent: false, eau: false, particules: false, lumieres: 0.6, fps: 30 },
-  moyenne: { vent: true, eau: true, particules: false, lumieres: 1, fps: 60 },
-  haute: { vent: true, eau: true, particules: true, lumieres: 1, fps: 0 },
+  basse: { vent: false, eau: false, particules: false, lumieres: 0.6, fps: 30, resolution: 'normale' },
+  moyenne: { vent: true, eau: true, particules: false, lumieres: 1, fps: 60, resolution: 'ecran' },
+  haute: { vent: true, eau: true, particules: true, lumieres: 1, fps: 0, resolution: 'ecran' },
 };
 export const REGLAGES_DEFAUT: Reglages = { heure: 'auto', lumieres: 1, saturation: 1, chaleur: 0, zoom: 0.8, volume: 1, volMusique: 0.5, volEffets: 0.7, volMonstres: 0.5, volAmbiance: 0.6, volInterface: 0.7, musiqueBoss: true, muet: false, vent: true, eau: true, particules: true, transparence: true, lancer: 'relache', approche: false, flecheQuete: true,
   touches: {}, clavier: 'auto', chiffres: true, tailleChiffres: 'normale', dps: false, barresVie: 'blesses', zoomMolette: true, deplacement: 'gauche',
-  verrou: true, modules: {}, coords: true, echelle: 1, qualite: 'haute', fps: 0, compteurFps: false, alerteButin: true, pulsePv: true };
+  verrou: true, modules: {}, coords: true, echelle: 1, qualite: 'haute', fps: 0, compteurFps: false, alerteButin: true, pulsePv: true, resolution: 'ecran',
+  chatOnglets: ONGLETS_DEFAUT, chatTaille: [360, 170], chatHeure: true, chatFond: 0.82, chatTexte: 1, chatEffacement: '20', chatTout: true, chatBastion: true };
 const CLE = 'diablofus.reglages';
 
 export function chargerReglages(): Reglages {

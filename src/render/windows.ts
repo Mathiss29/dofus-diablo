@@ -60,6 +60,7 @@ const ALM_CSS = `.dw .win.almanax{width:420px}.dw .alm{padding:10px 14px 14px;di
 import { SOCIAL_CSS, rendreSocial, tickSocial } from './social';
 import { EnLigne } from './presence';
 import { Coop } from './coop';
+import { TRESOR_CSS, objetTresor, signatureTresor, tresorHtml } from './tresorVue';
 import { FORGE_CSS, defaireHtml, etatForge, forgeHtml, lotConcasseur, mmss, texteForge, type LigneLog } from './forgeVue';
 import { RUNES } from '../sim/forgemagie';
 import { LOOKS } from './looks';
@@ -712,7 +713,7 @@ const CSS = `
 .dw .ttl b{font-weight:700}
 `;
 
-type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap' | 'bestiaire' | 'forge' | 'coffre' | 'almanax' | 'dofus' | 'menu' | 'social' | 'ladder';
+type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap' | 'bestiaire' | 'forge' | 'coffre' | 'almanax' | 'dofus' | 'menu' | 'social' | 'ladder' | 'tresor';
 
 /** Fenêtres façon Dofus 3 : « Inventaire » (le perso sur son socle, ses emplacements autour, le sac à onglets)
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
@@ -754,6 +755,11 @@ export class Windows {
   /** Réglages (render/ambiance.ts), modifiés en direct par la fenêtre Réglages. */
   reglages: Reglages = { ...REGLAGES_DEFAUT };
   onReglages: (r: Reglages) => void = () => {};
+  /** « Tchat : » 6A : Ctrl+clic sur un objet pendant qu'on écrit : le tchat prend son lien (vrai s'il l'a pris). */
+  lienObjet: ((it: Item, nom: string) => boolean) | null = null;
+  /** Objet dont la fiche est montrée (survol). */
+  private tipItem: Item | null = null;
+  private lienPris = false;
   /** Effets d'impact (touche F), et l'étape d'ambiance du moment pour l'affichage. */
   juice = { get: () => true, set: (_on: boolean) => {} };
   heureNom = () => '';
@@ -775,8 +781,15 @@ export class Windows {
   private forge = etatForge();
 
   constructor(private world: World) {
-    const style = document.createElement('style'); style.textContent = DOF_CSS + MENU_CSS + ALM_CSS + SOCIAL_CSS + CSS + ICON_CSS + BUTIN_CSS + FORGE_CSS + CODEX_CSS + LADDER_CSS; document.head.appendChild(style);
+    const style = document.createElement('style'); style.textContent = DOF_CSS + MENU_CSS + ALM_CSS + SOCIAL_CSS + CSS + ICON_CSS + BUTIN_CSS + FORGE_CSS + CODEX_CSS + LADDER_CSS + TRESOR_CSS; document.head.appendChild(style);
     this.root = document.createElement('div'); this.root.className = 'dw'; document.body.appendChild(this.root);
+    // « Tchat : » 6A : le mousedown garde le champ du tchat actif ; le clic qui suit ne fait rien d'autre (pas de cadenas)
+    this.root.addEventListener('mousedown', e => {
+      const it = this.tipItem;
+      this.lienPris = !!(it && (e.ctrlKey || e.metaKey) && this.lienObjet?.(it, ITEMS.equipment[it.id]?.name ?? 'Objet'));
+      if (this.lienPris) { e.preventDefault(); e.stopPropagation(); }
+    }, true);
+    this.root.addEventListener('click', e => { if (this.lienPris) { this.lienPris = false; e.preventDefault(); e.stopPropagation(); } }, true);
     this.tip = document.createElement('div'); this.tip.className = 'tip'; this.tip.style.display = 'none'; this.root.appendChild(this.tip);
     window.addEventListener('keydown', this.captureTouche, true);
     window.addEventListener('keydown', this.majTip); window.addEventListener('keyup', this.majTip); window.addEventListener('blur', this.majTip);
@@ -793,6 +806,43 @@ export class Windows {
   socialSlot = -1;
   socialTest = false;
   private ctxSocial() { return { world: this.world, slot: this.socialSlot, test: this.socialTest, fermer: () => this.close(), refaire: () => this.refresh() }; }
+  /** Enutrof (interface du coffre 2C) : bouton « Ouvrir » de la fenêtre du coffre, branché par la scène sur la touche du coffre. */
+  onOuvrirTresor: () => void = () => {};
+  private tresorSig = '';
+  private tresorGlisse = false;
+  /** À chaque image : la fenêtre du coffre se redessine quand ce qu'elle montre change (pas pendant un glisser-déposer). */
+  majTresor() {
+    if (this.ouverte !== 'tresor' || this.tresorGlisse) return;
+    if (!this.world.player.cls.coffre) { this.close(false); return; }
+    if (signatureTresor(this.world) !== this.tresorSig) this.render();
+  }
+  /** Fenêtre du coffre au trésor de l'Enutrof (src/render/tresorVue.ts). */
+  private renderTresor() {
+    const w = this.win!, wo = this.world;
+    if (!wo.player.cls.coffre) { w.innerHTML = this.title('Coffre au trésor', 'inventory'); return; }
+    this.tresorSig = signatureTresor(wo);
+    w.innerHTML = tresorHtml(wo, this.title('Coffre au trésor', 'inventory'));
+    const donner = (uid: number) => { this.hideTip(); if (wo.donnerAuCoffre(uid)) { Son.jouer(MANIFESTE.ui.ok, 'interface', { cle: 'clic', ecart: 0.05 }); this.changed(); } };
+    const gueule = w.querySelector<HTMLElement>('[data-gueule]')!;
+    w.querySelectorAll<HTMLElement>('[data-du]').forEach(e => {
+      const it = objetTresor(wo, +e.dataset.du!);
+      if (!it) return;
+      e.addEventListener('mouseenter', ev => this.showTip(it, ev, false));
+      e.addEventListener('mousemove', ev => this.moveTip(ev));
+      e.addEventListener('mouseleave', () => this.hideTip());
+      e.addEventListener('click', ev => { if (ev.shiftKey && !it.cadenas) donner(it.uid); });   // 4B : Maj + clic, comme dans le sac
+      e.addEventListener('dragstart', ev => { this.tresorGlisse = true; this.hideTip(); ev.dataTransfer?.setData('text/plain', String(it.uid)); });
+      e.addEventListener('dragend', () => { this.tresorGlisse = false; gueule.classList.remove('sur'); });
+    });
+    // 4A : glisser un objet sur la gueule du coffre
+    gueule.addEventListener('dragover', ev => { ev.preventDefault(); gueule.classList.add('sur'); });
+    gueule.addEventListener('dragleave', () => gueule.classList.remove('sur'));
+    gueule.addEventListener('drop', ev => { ev.preventDefault(); this.tresorGlisse = false; const uid = Number(ev.dataTransfer?.getData('text/plain')); if (uid) donner(uid); });
+    // 4C : tout donner
+    w.querySelector('[data-tout]')?.addEventListener('click', () => { if (wo.donnerToutAuCoffre()) this.changed(); });
+    // 2C : ouvrir le coffre (il s'ouvre en jeu, la fenêtre se ferme pour voir le butin jaillir)
+    w.querySelector('[data-ouvrir]')?.addEventListener('click', () => { this.onOuvrirTresor(); this.close(false); });
+  }
   private renderSocial() { rendreSocial(this.win!, this.title('Social', 'social'), this.ctxSocial()); }
   /** Classement (maquette « Ladder : » 1B) : centré sur le perso joué, ouvert sur « Autour de moi ». */
   private ladder = new VueLadder(true);
@@ -849,7 +899,7 @@ export class Windows {
     else if (this.mode === 'car') this.renderCarac(); else if (this.mode === 'job') this.renderJob(); else if (this.mode === 'art') this.renderArt(); else if (this.mode === 'opt') this.renderOpt();
     else if (this.mode === 'sorts') this.renderSorts(); else if (this.mode === 'quetes') this.renderQuetes();
     else if (this.mode === 'succes') this.renderSucces(); else if (this.mode === 'emp') this.renderEmp(); else if (this.mode === 'zaap') this.renderZaap();
-    else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else if (this.mode === 'forge') this.renderForge(); else if (this.mode === 'coffre') this.renderCoffre(); else if (this.mode === 'almanax') this.renderAlmanax(); else if (this.mode === 'dofus') this.renderDofus(); else if (this.mode === 'menu') this.renderMenu(); else if (this.mode === 'social') this.renderSocial(); else if (this.mode === 'ladder') this.renderLadder(); else this.renderInv();
+    else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else if (this.mode === 'forge') this.renderForge(); else if (this.mode === 'coffre') this.renderCoffre(); else if (this.mode === 'almanax') this.renderAlmanax(); else if (this.mode === 'dofus') this.renderDofus(); else if (this.mode === 'menu') this.renderMenu(); else if (this.mode === 'social') this.renderSocial(); else if (this.mode === 'ladder') this.renderLadder(); else if (this.mode === 'tresor') this.renderTresor(); else this.renderInv();
     this.win!.querySelector('[data-close]')!.addEventListener('click', () => this.close());
   }
   private title(name: string, icon: string) {
@@ -1519,7 +1569,7 @@ export class Windows {
         <h3>Un monde à parcourir</h3><p>Passe d'une carte à l'autre sans chargement, entre dans les maisons par leurs portes et parle aux PNJ en cliquant dessus. La mini-carte en haut à droite montre les monstres (points rouges), les PNJ qui ont une quête (points verts) et ta destination (point doré).</p>
         <h3>Ton but</h3><p>Suis la quête affichée en bas à gauche. Une flèche au bord de l'écran (verte, bleue pour les quêtes répétables) montre le chemin : la porte, le portail ou le Zaap à prendre, avec le nom du but et la distance en cartes. Clic sur le titre de la quête pour en suivre une autre, sur ses objectifs pour voir le but sur la carte. Un losange vert flotte au-dessus des monstres qui comptent pour tes quêtes, et le Zaap le plus proche du but porte une étoile.</p>` },
       { id: 'combat', titre: 'Se déplacer et combattre', html: `<h3>À la souris</h3><p>${k(cG)} sur le sol : y aller (maintenu : suivre le curseur). Sur un monstre : s'approcher et l'attaquer.</p>
-        <p>${k(`Maj + ${cG.toLowerCase()}`)} : attaquer sur place, sans bouger.</p><p>${k(cD)} : lancer le sort de la case libre de la barre. ${k('Clic droit')} sur un PNJ : ses actions.</p>
+        <p>${k(`Maj + ${cG.toLowerCase()}`)}${Touches.nomAction('attaqueSouris') ? ` ou ${k(Touches.nomAction('attaqueSouris'))} maintenue` : ''} : attaquer sur place vers la souris, sans bouger.</p><p>${k(cD)} : lancer le sort de la case libre de la barre. ${k('Clic droit')} sur un PNJ : ses actions.</p>
         <h3>Esquiver</h3><p>${T('deplacement')} : ${mob}. Il a des charges qui se rechargent toutes seules.</p>
         <h3>Se soigner</h3><p>${T('potion')} : boire une potion. Chaque groupe de monstres vaincu en rend une.</p>
         <h3>Mourir</h3><p>Tu reviens au dernier point de retour. En mode Hardcore, la mort est définitive.</p>` },
@@ -1540,7 +1590,7 @@ export class Windows {
       { id: 'metiers', titre: 'Métiers', html: `<p>${T('metiers')} ouvre les métiers. Le Chasseur récupère de la viande sur les monstres quand tu portes une arme de chasse, et cuisine des plats qui soignent.</p>` },
       { id: 'quetes', titre: 'Quêtes et succès', html: `<p>Un PNJ qui a une quête porte une icône au-dessus de la tête. Le suivi en bas à gauche montre l'étape en cours.</p>
         <p>Le journal des quêtes et les succès s'ouvrent depuis la colonne de menus, à droite de l'écran.</p>` },
-      { id: 'touches', titre: 'Toutes les touches', html: `<div class="keys">${[[cG, 'aller / attaquer (maintenu : continuer)'], [`Maj + ${cG.toLowerCase()}`, 'attaquer sur place'], [cD, 'sort de la barre (case libre)'],
+      { id: 'touches', titre: 'Toutes les touches', html: `<div class="keys">${[[cG, 'aller / attaquer (maintenu : continuer)'], [`Maj + ${cG.toLowerCase()}`, 'attaquer sur place'], ...(Touches.nomAction('attaqueSouris') ? [[Touches.nomAction('attaqueSouris'), 'attaquer vers la souris (maintenue)']] : []), [cD, 'sort de la barre (case libre)'],
           ...Touches.ACTIONS.filter(a => (a.id !== 'dofus' || this.world.player.v03) && Touches.nomAction(a.id)).map(a => [Touches.nomAction(a.id), a.nom.toLowerCase()]),
           ['Molette', 'zoom'], ['Échap', 'fermer, menu']]
           .map(([a, b]) => `<b>${a}</b><span>${b}</span>`).join('')}</div>` },
@@ -1616,9 +1666,19 @@ export class Windows {
             [Touches.ACTIONS.slice(0, 6).map(a => Touches.nomAction(a.id)).join(' '), 'barre de sorts'], [T('deplacement'), 'déplacement'], [T('potion'), 'potion'], ['Alt', 'aperçu des sorts, noms'], ['Molette', 'zoom'], ['Échap', 'fermer, menu']]
             .map(([k, d]) => `<b>${k}</b><span>${d}</span>`).join('')}</div>` },
         { id: 'modules', titre: 'Modules d\'interface', opts: [
-          { k: 'verrou', nom: 'Verrouiller la position des modules', aide: 'Décoche pour glisser le cadre du perso, la mini-carte, le suivi de quête et le compteur de dégâts où tu veux.', t: 'check' },
+          { k: 'verrou', nom: 'Verrouiller la position des modules', aide: 'Décoche pour glisser le cadre du perso, la mini-carte, le suivi de quête, le compteur de dégâts et le tchat où tu veux.', t: 'check' },
           { k: 'coords', nom: 'Afficher les coordonnées de la carte', aide: 'Sous la mini-carte, comme [6,-19].', t: 'check' },
         ], reset: () => { r.verrou = true; r.coords = true; r.modules = {}; }, html: '<div class="obtns"><span class="btn" data-obtn="modules">Réinitialiser l\'affichage</span></div>' },
+        // « Tchat : » 9A + 9B (et 7A : l'heure)
+        { id: 'tchat', titre: 'Tchat', opts: [
+          { k: 'chatHeure', nom: 'Heure devant chaque message', t: 'check' },
+          { k: 'chatFond', nom: 'Fond du tchat', aide: 'Opacité du fond quand le tchat est ouvert (Entrée ou survol).', t: 'range', min: 0, max: 100 },
+          { k: 'chatTexte', nom: 'Taille du texte', t: 'range', min: 80, max: 150 },
+          { k: 'chatEffacement', nom: 'Les messages s\'effacent après', aide: 'Quand tu n\'écris pas, seuls les derniers messages flottent un moment au-dessus du suivi de quête.', t: 'select', choix: [['10', '10 secondes'], ['20', '20 secondes'], ['60', '1 minute'], ['0', 'Jamais']] },
+          { k: 'chatTout', nom: 'Recevoir le canal Tout', aide: 'Les messages de tous les joueurs en ligne.', t: 'check' },
+          { k: 'chatBastion', nom: 'Recevoir le canal Bastion', aide: 'Les messages des joueurs du Bastion des Douze.', t: 'check' },
+        ], reset: () => { r.chatOnglets = REGLAGES_DEFAUT.chatOnglets.map(o => ({ nom: o.nom, f: [...o.f] })); r.chatTaille = [...REGLAGES_DEFAUT.chatTaille]; const m = { ...r.modules }; delete m.chat; r.modules = m; },
+          html: '<div class="keys"><b>Entrée</b><span>écrire (Échap : fermer)</span><b>Bouton à gauche du champ</b><span>choisir où tu parles</span><b>Clic droit sur un onglet</b><span>ce qu\'il montre, son nom</span><b>Coin en haut à droite</b><span>taille du tchat</span><b>Ctrl + clic sur un objet</b><span>le montrer (pendant que tu écris)</span><b>↑ / Tab</b><span>derniers messages / compléter un nom</span></div>' },
         { id: 'ambiance', titre: 'Ambiance du monde', opts: [
           { k: 'heure', nom: 'Heure', aide: `En ce moment : ${this.heureNom()}`, t: 'select', choix: heures },
           { k: 'lumieres', nom: 'Lumières (halos, feux)', t: 'range', min: 0, max: 200 },
@@ -1632,7 +1692,8 @@ export class Windows {
           { k: 'echelle', nom: 'Échelle de l\'interface', t: 'range', min: 80, max: 150 },
         ], reset: () => { r.echelle = 1; } },
         { id: 'graphismes', titre: 'Graphismes', opts: [
-          { k: 'qualite', nom: 'Qualité prédéfinie', aide: 'Basse : sans vent, eau animée ni particules, lumières douces, 30 images par seconde. Moyenne : sans particules, 60 images. Haute : tout, sans limite.', t: 'select', choix: [['basse', 'Basse'], ['moyenne', 'Moyenne'], ['haute', 'Haute'], ['perso', 'Personnalisée']] },
+          { k: 'qualite', nom: 'Qualité prédéfinie', aide: 'Basse : sans vent, eau animée ni particules, lumières douces, résolution normale, 30 images par seconde. Moyenne : sans particules, 60 images. Haute : tout, sans limite.', t: 'select', choix: [['basse', 'Basse'], ['moyenne', 'Moyenne'], ['haute', 'Haute'], ['perso', 'Personnalisée']] },
+          { k: 'resolution', nom: 'Résolution', aide: 'Écran : net, aux vrais pixels de ton écran. Normale : bien plus rapide si Windows est réglé à 125 % ou 150 %, image un peu moins nette.', t: 'select', choix: [['ecran', 'Écran (net)'], ['normale', 'Normale (rapide)']] },
           { k: 'fps', nom: 'Images par seconde', t: 'select', choix: [['30', '30'], ['60', '60'], ['120', '120'], ['0', 'Sans limite']] },
           { k: 'compteurFps', nom: 'Afficher le compteur d\'images (FPS)', aide: `Dans le coin de la mini-carte.${Touches.nomAction('fps') ? ` Touche ${Touches.nomAction('fps')}.` : ''}`, t: 'check' },
           { k: 'zoom', nom: 'Zoom de départ', t: 'range', min: 55, max: 120 },
@@ -1727,7 +1788,7 @@ export class Windows {
       }
       if (k === 'fps') { r.fps = +e.value; preset(); }
       else if (k === 'qualite') { if (e.value !== 'perso') Object.assign(r, QUALITES[e.value as keyof typeof QUALITES]); r.qualite = e.value as Reglages['qualite']; }
-      else R[k] = e.value;
+      else { R[k] = e.value; if (k === 'resolution') preset(); }
       if (k === 'clavier') Touches.regler(r.clavier);
       apply(); this.render();
     }));
@@ -2561,6 +2622,7 @@ export class Windows {
 
   // --- Fiche d'objet au survol : jets, rareté, panoplie, comparaison avec l'objet porté ---
   private showTip(it: Item, ev: MouseEvent, worn: boolean) {
+    this.tipItem = it;
     const p = this.world.player, d = ITEMS.equipment[it.id];
     if (!d) return;
     const slot = p.slotFor(it), cur = !worn && slot ? p.equipment[slot] : undefined;
@@ -2613,7 +2675,7 @@ export class Windows {
     t.style.left = `${Math.min(innerWidth - w - 8, ev.clientX + 16)}px`;
     t.style.top = `${Math.min(innerHeight - h - 8, ev.clientY + 12)}px`;
   }
-  hideTip() { this.tip.style.display = 'none'; this.ancreTip = null; }
+  hideTip() { this.tip.style.display = 'none'; this.ancreTip = null; this.tipItem = null; }
   /** Infobulle libre (sorts de la barre), au-dessus du point (x, y) de l'écran. */
   showHtmlTip(html: string, x: number, y: number) {
     const t = this.tip; t.innerHTML = html; t.style.display = 'block';

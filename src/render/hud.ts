@@ -1,4 +1,4 @@
-import { palierCoffre } from '../sim/enutrof';
+import { coffreDe, couleurCoffre, nomsCoffre, palierCoffre, partageurCoffre, seuilsCoffre } from '../sim/enutrof';
 import { RARITY_COLORS } from '../sim/items';
 import { v } from './assetUrl';
 import Phaser from 'phaser';
@@ -161,6 +161,81 @@ export class Hud {
     x /= this.k; y /= this.k;
     return this.portraits.find(([rx, ry, rw, rh]) => x >= rx && y >= ry && x <= rx + rw && y <= ry + rh)?.[4] ?? null;
   }
+  /** Enutrof (interface du coffre 1A + 1D) : le vrai Coffre Animé dans un anneau de pièces à crans (un par palier jusqu'à Trésor,
+   *  puis un anneau rouge de surcharge), ses PV en dessous, le nom du palier ; il tremble en rouge quand le coffre est frappé.
+   *  Clic : la fenêtre du coffre. */
+  private medaillon(g: Phaser.GameObjects.Graphics, cx: number, cy: number, dt: number, juice: boolean) {
+    const w = this.world, p = w.player, CF = p.cls.coffre!, S = seuilsCoffre(CF), tres = CF.paliers[CF.paliers.length - 1];
+    const pal = palierCoffre(p), c = coffreDe(p, w), ko = p.coffreKoT > 0, R = 25, t = w.time;
+    // 1D : le coffre perd des PV → alerte (tremblement rouge + pièces qui tombent)
+    if (c && this.medPv >= 0 && c.hp < this.medPv - 0.5) {
+      this.medAlerte = 0.7;
+      Son.jouer(Son.auHasard(MANIFESTE.kamas), 'effets', { vol: 0.45, vitesse: 0.78 + Math.random() * 0.08, cle: 'coffreFrappe', ecart: 1.2 });
+    }
+    this.medPv = c ? c.hp : -1;
+    this.medAlerte = Math.max(0, this.medAlerte - dt);
+    const hr = c ? Phaser.Math.Clamp(c.hp / c.maxHp, 0, 1) : 0, bas = c && hr < 0.3 && Math.floor(t * 6) % 2 === 0;
+    const sh = juice && this.medAlerte > 0 ? 2.5 * Math.sin(t * 70) : 0, x = cx + sh, y = cy;
+    this.medRect = [cx - R - 4, cy - R - 4, 2 * R + 8, 2 * R + 22];
+    this.rects.push(this.medRect);
+    const col = Phaser.Display.Color.HexStringToColor(couleurCoffre(pal)).color;
+    // anneau : fond, pièces jusqu'à Trésor, crans des paliers
+    g.lineStyle(6, 0x241d16, 1); g.strokeCircle(x, y, R);
+    const f = Phaser.Math.Clamp(p.coffrePieces / tres, 0, 1), a0 = -Math.PI / 2;
+    if (f > 0) { g.lineStyle(6, col, 1); g.beginPath(); g.arc(x, y, R, a0, a0 + f * Math.PI * 2); g.strokePath(); }
+    g.lineStyle(2, 0x000000, 0.9);
+    for (const n of CF.paliers.slice(0, -1)) { const a = a0 + (n / tres) * Math.PI * 2; g.lineBetween(x + Math.cos(a) * (R - 4), y + Math.sin(a) * (R - 4), x + Math.cos(a) * (R + 4), y + Math.sin(a) * (R + 4)); }
+    // 6B : surcharge, un anneau rouge par-dessus qui pulse
+    if (p.coffrePieces > tres) {
+      const fs = Phaser.Math.Clamp((p.coffrePieces - tres) / (S[S.length - 1] - tres), 0, 1), k = 0.6 + 0.4 * Math.sin(t * 8);
+      g.lineStyle(3, 0xff3a2a, k); g.beginPath(); g.arc(x, y, R + 5, a0, a0 + fs * Math.PI * 2); g.strokePath();
+    }
+    // disque, bord rouge si frappé ou à moins de 30 % de PV
+    g.fillStyle(0x16100a, 1); g.fillCircle(x, y, R - 4);
+    const rouge = this.medAlerte > 0 || bas;
+    g.lineStyle(2, rouge ? 0xd24a3a : 0x6a5232, 1); g.strokeCircle(x, y, R - 4);
+    if (rouge && juice) { g.lineStyle(6, 0xd24a3a, 0.35); g.strokeCircle(x, y, R + 2); }
+    // image : première image de la planche du coffre (gardée quand il est assommé)
+    const tex = c && this.scene.textures.exists(c.look) ? this.scene.textures.get(c.look) : null;
+    const fr = tex && (tex.has('AnimStatique_1_0') ? 'AnimStatique_1_0' : tex.getFrameNames().sort()[0]);
+    const im = this.medImg;
+    if (tex && fr && im.frame !== tex.get(fr)) im.setTexture(c!.look, fr);
+    if (im.texture.key !== '__DEFAULT') {
+      const fm = im.frame, ss = (fm as unknown as { data: { spriteSourceSize?: { x: number; y: number; w: number; h: number } } | null }).data?.spriteSourceSize;
+      const r = fm.trimmed && ss ? ss : { x: 0, y: 0, w: fm.realWidth, h: fm.realHeight }, k = (2 * R - 14) / Math.max(r.w, r.h);
+      im.setDisplayOrigin(r.x + r.w / 2, r.y + r.h / 2).setPosition(x, y).setScale(k).setVisible(true).setAlpha(ko ? 0.35 : 1);
+      if (ko) im.setTint(0x888888); else if (pal >= CF.paliers.length) im.setTint(0xffb090); else im.clearTint();
+    }
+    // PV du coffre et nom du palier (ou temps d'assommé)
+    const bw = 40, by = cy + R + 4;
+    g.fillStyle(0x2b1210, 1); g.fillRoundedRect(cx - bw / 2, by, bw, 4, 2);
+    if (hr > 0) { g.fillStyle(0xd24a3a, 1); g.fillRoundedRect(cx - bw / 2, by, Math.max(3, bw * hr), 4, 2); }
+    if (c && c.shield > 0) { g.fillStyle(0x9fd3ff, 0.95); g.fillRoundedRect(cx - bw / 2, by, Math.max(3, bw * Math.min(1, c.shield / c.maxHp)), 2, 1); }
+    this.rageLabel.setPosition(cx, by + 5)
+      .setText(ko ? `Assommé ${Math.ceil(p.coffreKoT)} s` : pal >= 0 ? nomsCoffre(CF)[pal] : `${p.coffrePieces} / ${CF.paliers[0]}`)
+      .setColor(ko ? '#c8c8c8' : couleurCoffre(pal));
+  }
+  /** Enutrof (interface du coffre 7C) : flèche au bord de l'écran vers le coffre quand il est hors de vue. */
+  private flecheCoffre(W: number, H: number) {
+    const w = this.world, p = w.player, c = p.cls.coffre ? coffreDe(p, w) : undefined, cam = this.scene.cameras.main;
+    let vue = false;
+    if (c) {
+      const s2 = ISO.toScreen(c.x, c.y), r = cam.worldView, ex = (s2.x - r.x) * cam.zoom, ey = (s2.y - r.y) * cam.zoom, m = 64;
+      if (ex < 0 || ey < 0 || ex > W || ey > H) {
+        vue = true;
+        const cx = W / 2, cy = H / 2, ang = Math.atan2(ey - cy, ex - cx), co = Math.cos(ang), si = Math.sin(ang);
+        const d = Math.min((W / 2 - m) / Math.max(1e-6, Math.abs(co)), (H / 2 - m) / Math.max(1e-6, Math.abs(si)));
+        const ax = Phaser.Math.Clamp(cx + co * d, m, W - 84), ay = Phaser.Math.Clamp(cy + si * d, 150, H - 150);
+        const pt = (l: number, w2: number) => ({ x: ax + co * l - si * w2, y: ay + si * l + co * w2 });
+        const pts = [pt(20, 0), pt(-8, 13), pt(-2, 0), pt(-8, -13)];
+        this.arrow.fillStyle(Phaser.Display.Color.HexStringToColor(couleurCoffre(palierCoffre(p))).color, 0.92); this.arrow.lineStyle(2.5, 0x3a2208, 1);
+        this.arrow.fillPoints(pts, true); this.arrow.strokePoints(pts, true, true);
+        const lb = pt(-26, 0), cases = Math.round(Math.hypot(c.x - p.x, c.y - p.y) / 48);
+        this.cofFleche.setText(`Coffre\n${cases} cases`).setOrigin(co > 0.35 ? 1 : co < -0.35 ? 0 : 0.5, si > 0.35 ? 1 : si < -0.35 ? 0 : 0.5).setPosition(lb.x, lb.y);
+      }
+    }
+    this.cofFleche.setVisible(vue);
+  }
   private cadresGroupe(g: Phaser.GameObjects.Graphics, x0: number, y0: number, juice: boolean) {
     const w = this.world, L = w.players.filter(p => p !== w.player).slice(0, 3), W = 236, H = 40, gap = 5;
     while (this.groupeUi.length < L.length) {
@@ -185,6 +260,14 @@ export class Hud {
       g.fillStyle(0x2b2b2e, 1); g.fillRoundedRect(bx, y + 24, bw, 8, 3);
       if (hr > 0) { g.fillStyle(hr < 0.3 && juice && Math.floor(w.time * 6) % 2 ? 0xff8a7a : C.hp, 1); g.fillRoundedRect(bx, y + 24, Math.max(5, bw * hr), 8, 3); }
       if (p.shield > 0) { g.fillStyle(0x9a6bff, 0.9); g.fillRoundedRect(bx, y + 24, Math.max(4, bw * Math.min(1, p.shield / (p.maxHp || 1))), 3, 1); }
+      // Enutrof (interface du coffre 8B) : le coffre qui partage avec le groupe, son palier et ses pièces
+      const CF = p.cls.coffre;
+      if (CF && partageurCoffre(w) === p) {
+        const pal = palierCoffre(p), tres = CF.paliers[CF.paliers.length - 1], col = Phaser.Display.Color.HexStringToColor(couleurCoffre(pal)).color;
+        g.fillStyle(0x241d16, 1); g.fillRoundedRect(bx, y + 34, bw, 3, 1);
+        g.fillStyle(col, 1); g.fillRoundedRect(bx, y + 34, Math.max(2, bw * Math.min(1, p.coffrePieces / tres)), 3, 1);
+        if (!p.dead) u.info.setText(`${pal >= 0 ? `Coffre ${nomsCoffre(CF)[pal]}` : 'Coffre'} · niv. ${p.level}`).setColor(couleurCoffre(pal));
+      }
     });
   }
   private cadresBetes(g: Phaser.GameObjects.Graphics, x0: number, y0: number, juice: boolean): number {
@@ -316,6 +399,18 @@ export class Hud {
   private potion: SlotView;
   private xpText: Txt;
   private rageLabel: Txt;
+  /** Enutrof (interface du coffre 1A + 1D + 7C) : image du coffre dans le médaillon, sa case (clic = fenêtre), alerte quand il est frappé,
+   *  PV vus à l'image d'avant, et l'étiquette de la flèche quand il est hors de l'écran. */
+  private medImg!: Phaser.GameObjects.Image;
+  private medRect: [number, number, number, number] | null = null;
+  private medAlerte = 0;
+  private medPv = -1;
+  private cofFleche!: Txt;
+  /** Le point (x, y) de l'écran tombe-t-il sur le médaillon du coffre ? */
+  surMedaillon(x: number, y: number): boolean {
+    const r = this.medRect; x /= this.k; y /= this.k;
+    return !!r && x >= r[0] && y >= r[1] && x <= r[0] + r[2] && y <= r[1] + r[3];
+  }
   // suivi et butin
   private trackTitle: Txt; private trackBody: Txt;
   /** Quêtes : icône de la quête suivie, bouton « Passer » (tutoriel, 7A), ligne de succès discrète (19B), flèche au bord de l'écran (8B). */
@@ -509,6 +604,8 @@ export class Hud {
     this.potion.icon = img('icon_pv', 3);
     this.xpText = txt(12, bold).setOrigin(0.5);
     this.rageLabel = txt(11, { ...bold, color: css(C.rage) }).setOrigin(0.5, 0).setText(cls.rage.name);
+    this.medImg = img('__DEFAULT', 3).setVisible(false);
+    this.cofFleche = txt(11, { ...bold, color: '#ffd86a', stroke: '#1a140c', strokeThickness: 4, align: 'center' }, 3).setVisible(false);
 
     this.trackTitle = txt(13, { ...bold, color: css(C.xp) });
     this.trackBody = txt(12, { lineSpacing: 3 });
@@ -573,10 +670,10 @@ export class Hud {
     this.scene.tweens.add({ targets: show, alpha: 1, duration: 400 });
     this.scene.tweens.add({ targets: show, alpha: 0, delay: 3000, duration: 700 });
   }
-  toast(text: string) {
+  toast(text: string, duree = 1600) {
     this.toastText.setText(text).setAlpha(1);
     this.scene.tweens.killTweensOf(this.toastText);
-    this.scene.tweens.add({ targets: this.toastText, alpha: 0, delay: 1600, duration: 400 });
+    this.scene.tweens.add({ targets: this.toastText, alpha: 0, delay: duree, duration: 400 });
   }
   hurtFlash(strong: boolean) {
     this.hurtRect.setAlpha(strong ? 0.28 : 0.1);
@@ -723,12 +820,12 @@ export class Hud {
     const rep = cls.lance ? p.mods.find(m => m.src === 'reprise') : undefined, fl = cls.lance ? (rep ? rep.t / (rep.t0 || 1) : 0) : -1;
     // Enutrof : les pièces du coffre au trésor (palier en cours : bronze, argent, or, puis orange au palier Trésor)
     const cof = cls.coffre, pal = cof ? palierCoffre(p) : -1;
-    const rr = fl >= 0 ? fl : sf >= 0 ? sf / 10 : cof ? p.coffrePieces / cls.rage.max : p.rage / cls.rage.max;
+    const rr = fl >= 0 ? fl : sf >= 0 ? sf / 10 : cof ? p.coffrePieces / cof.paliers[cof.paliers.length - 1] : p.rage / cls.rage.max;
     // Eniripsa : l'Éloquence en vert d'eau, qui scintille une fois pleine
     const eloq = cls.rage.mode === 'eloquence';
     const rageCol = fl >= 0 ? 0xe8b860 : sf >= 0 ? (sf >= 6 && Math.floor(world.time * 4) % 2 ? 0xff4a3a : 0xc0262a)
       : eloq ? (p.rageFull && Math.floor(world.time * 6) % 2 ? 0xc8ffd8 : 0x4fd88a)
-      : cof ? ([0x8a6a4a, 0xc98b4e, 0xdfe6ee, 0xffcf4a, 0xff9d3a][pal + 1] ?? 0xffcf4a) : p.rageFull ? (Math.floor(world.time * 6) % 2 ? 0xffc04d : C.rage) : C.rage;
+      : cof ? Phaser.Display.Color.HexStringToColor(couleurCoffre(pal)).color : p.rageFull ? (Math.floor(world.time * 6) % 2 ? 0xffc04d : C.rage) : C.rage;
     if (p.rageFull) {
       const k = 0.5 + 0.5 * Math.sin(world.time * 10);
       gs.lineStyle(7, 0xffcf4d, 0.25 + 0.3 * k); gs.strokeRoundedRect(px - 3, py - 3, ps + 6, ps + 6, 8);
@@ -1046,16 +1143,18 @@ export class Hud {
     po.key.setPosition(pox - slot / 2 + 4, sy - slot / 2 + 1);
     po.cost.setPosition(pox + slot / 2 - 3, sy + slot / 2 - 1).setText(String(p.potions)).setColor('#ffffff');
     if (pcd > 0) horloge(this.gSlots, pox, sy, 23, Math.min(1, pcd));
-    // Rage : jauge verticale qui clignote une fois pleine
+    // Rage : jauge verticale qui clignote une fois pleine (Enutrof : le médaillon du coffre au trésor)
     const rx = pox + slot / 2 + 30, rh = slot - 14, ry = sy - slot / 2 + 2;
-    g.fillStyle(C.track, 1); g.fillRoundedRect(rx - 9, ry, 18, rh, 5);
-    g.fillStyle(rageCol, 1); g.fillRoundedRect(rx - 9, ry + rh * (1 - rr), 18, Math.max(4, rh * rr), 5);
-    if (this.rageFlash > 0 && juice) { g.lineStyle(3, 0xffc04d, this.rageFlash); g.strokeRoundedRect(rx - 12, ry - 3, 24, rh + 6, 6); }
-    this.rageLabel.setPosition(rx, ry + rh + 1);
+    if (cof) this.medaillon(g, pox + slot / 2 + 38, sy - 2, dt, juice);
+    else {
+      g.fillStyle(C.track, 1); g.fillRoundedRect(rx - 9, ry, 18, rh, 5);
+      g.fillStyle(rageCol, 1); g.fillRoundedRect(rx - 9, ry + rh * (1 - rr), 18, Math.max(4, rh * rr), 5);
+      if (this.rageFlash > 0 && juice) { g.lineStyle(3, 0xffc04d, this.rageFlash); g.strokeRoundedRect(rx - 12, ry - 3, 24, rh + 6, 6); }
+      this.rageLabel.setPosition(rx, ry + rh + 1);
+      this.medImg.setVisible(false); this.medRect = null;
+    }
     if (sf >= 0) this.rageLabel.setText(sf ? `${cls.rage.name} ${sf}` : cls.rage.name).setColor(sf ? '#ff6a5a' : '#c9a49c');
     if (fl >= 0) this.rageLabel.setText(p.lance ? 'Désarmé' : 'Armé').setColor(p.lance ? '#e8b860' : '#c9c2b0');
-    if (cof) this.rageLabel.setText(p.coffreKoT > 0 ? 'Assommé' : pal >= 0 ? `${cof.noms[pal]} (${Touches.nomAction('coffre')})` : `${p.coffrePieces}/${cof.paliers[0]}`)
-      .setColor(p.coffreKoT > 0 ? '#c8c8c8' : ['#b89a7a', '#e0a46a', '#eef3f8', '#ffd86a', '#ffb060'][pal + 1] ?? '#ffd86a');
     // Tutoriel (3A) : halo doré qui pulse sur l'emplacement de l'étape suivie, et sa touche au-dessus
     const qs = world.quetes, qc = qs?.enCours.find(c => c.id === qs.suivie), halo = qc && !qc.aRendre ? qs!.etapeDe(qc)?.halo : undefined;
     if (halo != null) {
@@ -1154,6 +1253,7 @@ export class Hud {
           .setOrigin(co > 0.35 ? 1 : co < -0.35 ? 0 : 0.5, si > 0.35 ? 1 : si < -0.35 ? 0 : 0.5).setPosition(lb.x, lb.y);
       }
     }
+    this.flecheCoffre(W, H);   // Enutrof (interface du coffre 7C)
     // drapeau suivi (carte 9A) : flèche dorée au bord de l'écran tant qu'il est hors de vue
     const ds = this.drapeauSuivi;
     if (ds) {

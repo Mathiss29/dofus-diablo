@@ -16,6 +16,12 @@ export const Parcours = {
     try { localStorage.setItem(CLE, JSON.stringify(faites)); } catch { return; }
     fetch(`${API}/parcours?etape=${etape}`, { method: 'POST', keepalive: true }).catch(() => { /* serveur injoignable : tant pis */ });
   },
+  /** Maquette « Fluidité : » 5B : images et saccades (image de plus de 50 ms) d'environ 2 minutes de jeu dans une zone. */
+  fluidite(zone: string, images: number, ms: number, saccades: number) {
+    if (/test|cra|astrub|jeu/.test(location.hash) || /localhost|127\.0\.0\.1/.test(location.hostname)) return;
+    const q = new URLSearchParams({ fps: '1', zone: zone.slice(0, 60), images: String(images), ms: String(Math.round(ms)), saccades: String(saccades) });
+    fetch(`${API}/parcours?${q}`, { method: 'POST', keepalive: true }).catch(() => { /* tant pis */ });
+  },
   /** Maquette « Arrivée : » 7A : temps entre le clic sur « Jouer » et le monde affiché (sans rien d'autre sur la personne). */
   arrivee(ms: number) {
     if (!(ms > 0 && ms < 600_000)) return;

@@ -10,7 +10,7 @@ import { AGGRO, CASE, Monster, TOUR, type Cible } from './monster';
 import { jetOfficiel } from './danger';
 import { REGLAGES_BUTIN, monstresDeZone, panoDuBoss, poolNiveau, poolOfficiel, rangDe, tirerButin, type Butin, type CtxButin, type Rang } from './butin';
 import { PASSIFS, TROPHEES, tropheesDuBoss } from './dofus';
-import { ajouterPieces, CLE_COFFRE, ouvrirCoffre, piecesMonstre, piecesObjet } from './enutrof';
+import { ajouterPieces, CLE_COFFRE, enSurcharge, ouvrirCoffre, piecesMonstre, piecesObjet, seuilsCoffre } from './enutrof';
 import { briser, chanceRune, coutKamas, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
 import { V03_PUBLIC, V04_PUBLIC, niveauObjetsMax, slotAPouvoirConnu } from './pouvoirs';
 import { fxImpression, imprimable, nouveauPourCodex, prixImpression } from './codex';
@@ -1914,28 +1914,43 @@ export class World {
     const sub = wg && open ? open.subareas[String(wg.mapAt(x, y)?.sub)] : undefined;
     return sub?.level ?? this.zone.level;
   }
-  /** Coffre au trésor de l'Enutrof (src/sim/enutrof.ts) : butin d'un monstre de ce rang (équipement de la zone et kamas, sans butin
-   *  officiel), tiré avec la Prospection de q ; réservé à `pour` (5A) ; epique : un objet Épique ou mieux garanti (palier Trésor). */
-  butinCoffre(q: Player, rang: Rang, niveau: number, x: number, y: number, pour?: number, epique = false) {
-    const I = this.opts.items;
-    if (!I) return;
+  /** Coffre au trésor de l'Enutrof (src/sim/enutrof.ts) : n tirages du butin d'un monstre de ce rang (équipement de la zone et kamas,
+   *  sans butin officiel), avec la Prospection de q ; epique : un objet Épique ou mieux en plus (palier Trésor). Rien n'est posé. */
+  tirerCoffre(q: Player, rang: Rang, n: number, niveau: number, epique = false): Butin {
+    const out: Butin = { ressources: [], objets: [], kamas: 0 }, I = this.opts.items;
+    if (!I) return out;
     this.commeJoueur(q, () => {
-      const ctx = this.contexteButin(CLE_COFFRE, rang, niveau), b = tirerButin(this.rng, ctx, () => this.nextId++);
-      if (epique && !b.objets.some(o => RARITIES.indexOf(o.rarity) >= RARITIES.indexOf('epique'))) {
+      const ctx = this.contexteButin(CLE_COFFRE, rang, niveau);
+      for (let k = 0; k < n; k++) { const b = tirerButin(this.rng, ctx, () => this.nextId++); out.ressources.push(...b.ressources); out.objets.push(...b.objets); out.kamas += b.kamas; }
+      if (epique) {
         const pool = poolNiveau(ctx);
-        if (pool.length) { const id = this.rng.pick(pool).id; b.objets.push(rollItem(id, I.equipment[id], this.rng.next() < 0.1 ? 'legendaire' : 'epique', this.rng, this.nextId++, ctx.pouvoirs)); }
+        if (pool.length) { const id = this.rng.pick(pool).id; out.objets.push(rollItem(id, I.equipment[id], this.rng.next() < 0.1 ? 'legendaire' : 'epique', this.rng, this.nextId++, ctx.pouvoirs)); }
       }
-      this.poserButin(b, x, y, pour);
     });
+    return out;
   }
+  /** Tire et pose tout de suite un butin de coffre pour q, réservé à `pour` (5A : la part d'un allié). */
+  butinCoffre(q: Player, rang: Rang, n: number, niveau: number, x: number, y: number, pour?: number, epique = false) {
+    const b = this.tirerCoffre(q, rang, n, niveau, epique);
+    this.commeJoueur(q, () => this.poserButin(b, x, y, pour));
+  }
+  /** 7D : un morceau du coffre ouvert jaillit (le joueur qui agit est l'Enutrof). */
+  ejecterCoffre(b: Butin, x: number, y: number) { this.poserButin(b, x, y, this.players.length > 1 ? this.player.id : undefined); }
   /** 15C : l'Enutrof donne un objet Rare ou Épique de son sac à son coffre, contre des pièces. Jamais un objet sous cadenas. */
   donnerAuCoffre(uid: number): boolean {
     const p = this.player, i = p.bag.findIndex(b => b.uid === uid), it = i >= 0 ? p.bag[i] : null;
-    const n = it && !it.cadenas ? piecesObjet(p, it.rarity) : 0;
-    if (!it || !n) return false;
+    const n = it && !it.cadenas ? piecesObjet(p, it.rarity) : 0, S = p.cls.coffre ? seuilsCoffre(p.cls.coffre) : [];
+    if (!it || !n || p.coffrePieces >= S[S.length - 1]) return false;   // coffre plein : l'objet reste dans le sac
     p.bag.splice(i, 1); this.collectionner(it.id); this.enregistrerCodex(it);
-    ajouterPieces(p, n, this, p.x, p.y);
+    ajouterPieces(p, n, this, p.x, p.y, `${this.opts.items?.equipment[it.id]?.name ?? 'Objet'} donné`);
     return true;
+  }
+  /** Interface du coffre 4C : donne d'un coup tous les Rares et Épiques sans cadenas du sac. Renvoie le nombre d'objets donnés. */
+  donnerToutAuCoffre(): number {
+    const p = this.player;
+    let k = 0;
+    for (const it of p.bag.filter(o => !o.cadenas && piecesObjet(p, o.rarity) > 0)) if (this.donnerAuCoffre(it.uid)) k++;
+    return k;
   }
   private panoBoss(type: string) {
     let l = this.panosBoss.get(type);
@@ -2002,12 +2017,17 @@ export class World {
     this.drops = this.drops.filter(d => d.t >= 0 && d.t < 180);
   }
   private ramasser(dt: number, f: FamilierEtat | null) {
-    const p = this.player;
+    const p = this.player, cof = p.cls.coffre && !p.dead ? this.betes.find(b => b.owner === p && b.base === CLE_COFFRE && !b.dead) : undefined;
+    const aimant = cof ? { x: cof.x, y: cof.y, r: p.cls.coffre!.aimant } : null;
     for (const d of this.drops) {
       if (p.dead || d.t < 0.5 || !this.shown(d)) continue;
       const dist = Math.hypot(d.x - p.x, d.y - p.y);
       if (d.familier) { if (f) f.cible = null; }   // rapporté par le familier
-      else if (World.magnetic(d)) {
+      else if (!d.item && aimant && Math.hypot(d.x - aimant.x, d.y - aimant.y) <= aimant.r && Math.hypot(d.x - aimant.x, d.y - aimant.y) < dist) {
+        // Enutrof (interface du coffre 7B) : le coffre ramasse les kamas au sol autour de lui
+        const dc = Math.hypot(d.x - aimant.x, d.y - aimant.y);
+        if (dc > 26) { const s = Math.min(dc, 520 * dt); d.x += (aimant.x - d.x) / dc * s; d.y += (aimant.y - d.y) / dc * s; continue; }
+      } else if (World.magnetic(d)) {
         if (dist > 130) continue;
         if (dist > 26) { const s = Math.min(dist, 520 * dt); d.x += (p.x - d.x) / dist * s; d.y += (p.y - d.y) / dist * s; continue; }
       } else if (p.pickupId !== d.uid || dist > 44) continue;
@@ -2724,6 +2744,9 @@ export class World {
     const vivantes = this.betes.filter(b => !b.dead && b.state !== 'spawn');
     const ag = vivantes.find(b => b.id === m.agresseur);
     if (ag && (m.provoqueJusqua > this.time || Math.hypot(ag.x - m.x, ag.y - m.y) < CASE * 4)) return ag;   // Laine épaisse : provoqué
+    // Enutrof (interface du coffre 6B) : le coffre en surcharge attire les monstres en chasse autour de lui
+    const sur = vivantes.find(b => b.base === CLE_COFFRE && b.owner.cls.coffre && enSurcharge(b.owner) && Math.hypot(b.x - m.x, b.y - m.y) <= CASE * b.owner.cls.coffre.surcharge.attire);
+    if (sur) return sur;
     const dp = Math.hypot(p.x - m.x, p.y - m.y);
     let best: Cible = p, bd = p.dead ? Infinity : dp * 0.6;
     for (const b of vivantes) { const d = Math.hypot(b.x - m.x, b.y - m.y); if (d < bd) { bd = d; best = b; } }

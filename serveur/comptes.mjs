@@ -49,7 +49,8 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
     CREATE TABLE IF NOT EXISTS social (compte INTEGER PRIMARY KEY REFERENCES comptes(id) ON DELETE CASCADE, hors_ligne INTEGER NOT NULL DEFAULT 0,
       inconnus INTEGER NOT NULL DEFAULT 0);
     CREATE TABLE IF NOT EXISTS parcours (jour TEXT NOT NULL, etape TEXT NOT NULL, n INTEGER NOT NULL, PRIMARY KEY (jour, etape));
-    CREATE TABLE IF NOT EXISTS arrivees (jour TEXT NOT NULL, tranche TEXT NOT NULL, n INTEGER NOT NULL, ms INTEGER NOT NULL, PRIMARY KEY (jour, tranche));`);
+    CREATE TABLE IF NOT EXISTS arrivees (jour TEXT NOT NULL, tranche TEXT NOT NULL, n INTEGER NOT NULL, ms INTEGER NOT NULL, PRIMARY KEY (jour, tranche));
+    CREATE TABLE IF NOT EXISTS fluidite (jour TEXT NOT NULL, zone TEXT NOT NULL, envois INTEGER NOT NULL, images INTEGER NOT NULL, ms INTEGER NOT NULL, saccades INTEGER NOT NULL, PRIMARY KEY (jour, zone));`);
   const q = {
     compteDiscord: db.prepare('SELECT * FROM comptes WHERE discord = ?'),
     nouveau: db.prepare('INSERT INTO comptes (discord, nom, avatar, roles, cree, vu) VALUES (?, ?, ?, ?, ?, ?)'),
@@ -78,6 +79,8 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
     lireParcours: db.prepare('SELECT jour, etape, n FROM parcours WHERE jour >= ? ORDER BY jour'),
     arrivee: db.prepare('INSERT INTO arrivees (jour, tranche, n, ms) VALUES (?, ?, 1, ?) ON CONFLICT (jour, tranche) DO UPDATE SET n = n + 1, ms = ms + excluded.ms'),
     lireArrivees: db.prepare('SELECT jour, tranche, n, ms FROM arrivees WHERE jour >= ? ORDER BY jour'),
+    fluidite: db.prepare('INSERT INTO fluidite (jour, zone, envois, images, ms, saccades) VALUES (?, ?, 1, ?, ?, ?) ON CONFLICT (jour, zone) DO UPDATE SET envois = envois + 1, images = images + excluded.images, ms = ms + excluded.ms, saccades = saccades + excluded.saccades'),
+    lireFluidite: db.prepare('SELECT jour, zone, envois, images, ms, saccades FROM fluidite WHERE jour >= ? ORDER BY jour'),
     nb: db.prepare('SELECT (SELECT COUNT(*) FROM comptes) AS inscrits, (SELECT COUNT(*) FROM persos) AS persos'),
   };
   const testeurs = liste(env.ROLES_TESTEUR), admins = liste(env.ROLES_ADMIN);
@@ -174,12 +177,31 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
     return true;
   }
 
+  /** Fluidité (maquette « Fluidité : » 5B) : images par seconde et saccades (image de plus de 50 ms) par zone, envoyées
+   *  par paquets de ~2 minutes de jeu. Rien sur la personne ; au plus 60 envois par adresse IP et par jour (en mémoire). */
+  const fluiditeIp = new Map();
+  let jourFluidite = '';
+  function noterFluidite(req, sp) {
+    const zone = String(sp.get('zone') ?? '').trim(), images = Number(sp.get('images')), ms = Number(sp.get('ms')), saccades = Number(sp.get('saccades'));
+    if (!zone || zone.length > 60 || ![images, ms, saccades].every(Number.isInteger)) return false;
+    if (images < 1 || images > 100_000 || ms < 1000 || ms > 600_000 || saccades < 0 || saccades > images) return false;
+    const jour = new Date(maintenant()).toISOString().slice(0, 10);
+    if (jour !== jourFluidite) { jourFluidite = jour; fluiditeIp.clear(); }
+    const ip = String(req.headers['cf-connecting-ip'] ?? req.socket?.remoteAddress ?? '');
+    const n = fluiditeIp.get(ip) ?? 0;
+    if (n >= 60 || fluiditeIp.size > 200_000) return true;
+    fluiditeIp.set(ip, n + 1);
+    q.fluidite.run(jour, zone, images, ms, saccades);
+    return true;
+  }
+
   /** Répond aux adresses des comptes ; renvoie false si l'adresse n'est pas la sienne. */
   async function route(req, res, url) {
     const p = url.pathname, m = req.method;
     if (p === '/parcours') {
       if (m === 'POST') {
         const a = url.searchParams.get('arrivee');
+        if (url.searchParams.has('fps')) return json(res, noterFluidite(req, url.searchParams) ? 200 : 400, {}), true;
         return json(res, (a !== null ? noterArrivee(req, a) : noterParcours(req, url.searchParams.get('etape') ?? '')) ? 200 : 400, {}), true;
       }
       if (m === 'GET') {
@@ -191,7 +213,11 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
           j.n += r.n; j.ms += r.ms; j.tranches[r.tranche] = r.n;
         }
         for (const j of Object.values(arrivees)) { j.moyenne = Math.round(j.ms / j.n / 100) / 10; delete j.ms; }
-        return json(res, 200, { etapes: PARCOURS, jours, arrivees }), true;
+        // fluidité par jour et par zone : images par seconde moyennes, saccades par minute de jeu
+        const fluidite = {};
+        for (const r of q.lireFluidite.all(depuis))
+          (fluidite[r.jour] ??= {})[r.zone] = { envois: r.envois, fps: Math.round(r.images / r.ms * 10000) / 10, saccadesMin: Math.round(r.saccades / r.ms * 600000) / 10 };
+        return json(res, 200, { etapes: PARCOURS, jours, arrivees, fluidite }), true;
       }
     }
     if (m === 'GET' && p === '/connexion') {

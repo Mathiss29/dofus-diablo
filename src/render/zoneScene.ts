@@ -3,7 +3,7 @@ import { BENEDICTIONS } from '../sim/magasin';
 import { apercuSort } from '../sim/apercu';
 import { dossier, v } from './assetUrl';
 import Phaser from 'phaser';
-import { calerCamera, densite } from './pixel';
+import { calerCamera, densite, densitePleine, reglerDensite } from './pixel';
 import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES } from '../sim/data';
 import type { Compte } from '../sim/quests';
 import { QuestView } from './questView';
@@ -51,6 +51,7 @@ import { mmss } from './forgeVue';
 import { Chargement, type Arrivee } from './chargement';
 import { inviterDiscord } from './inviteDiscord';
 import { Parcours } from './parcours';
+import { MesureFluidite } from './fluidite';
 import { spellTipHtml } from './spellTip';
 import { LEGENDARY, RARITY_COLORS, RARITY_NAMES, rollItem } from '../sim/items';
 import { POUVOIR_PAR_ID, V03_PUBLIC, V04_PUBLIC } from '../sim/pouvoirs';
@@ -71,6 +72,7 @@ import { EnLigne } from './presence';
 import { Compte as CompteEnLigne } from './compte';
 import { PassantsEnLigne } from './passantsEnLigne';
 import { ChatVue } from './chat';
+import { lienObjet } from './chatOutils';
 import { BullesChat } from './bullesChat';
 import { demandesEnAttente, menuJoueur, montrerInvitation } from './social';
 
@@ -177,7 +179,11 @@ export class ZoneScene extends Phaser.Scene {
   private aimId: SkillId | null = null; private aimKey: string | null = null; private hoverId: SkillId | null = null;
   /** Clic gauche en cours : sur le sol, sur un monstre, ou attaque sur place (Maj). */
   private clickMode: 'ground' | 'target' | 'place' | null = null;
+  /** Fluidité 5B : mesure gardée d'une scène à l'autre (voyages, Zaaps). */
+  static readonly mesure = new MesureFluidite();
   private clickTarget: number | null = null;
+  /** Touche « Attaquer vers la souris » tenue (Fluidité 6A). */
+  private attaqueSouris = false;
   private clickDest = false;
   /** Zoom voulu (molette) ; la caméra le rejoint en douceur. */
   private zoom = 1;
@@ -198,6 +204,7 @@ export class ZoneScene extends Phaser.Scene {
   private arrivee?: [string, number];
   private transit: Transit = {};
   init(data: { zone?: string; classe?: string; slot?: number; vitrine?: boolean; arrivee?: [string, number]; essai?: 'm' | 'f'; apparence?: Apparence; par?: Arrivee } & Transit) {
+    this.attaqueSouris = false;   // touche tenue pendant un voyage : son relâchement n'arrive plus à cette scène
     this.depart = false; this.rideau = null; this.arriveePar = data?.par ?? null;
     this.essai = data?.essai ? { sexe: data.essai, t: 0, averti: false } : null;
     this.apparenceEssai = data?.apparence;
@@ -403,6 +410,7 @@ export class ZoneScene extends Phaser.Scene {
     // Bestiaire (maquette « Drops » 1A) : les monstres vaincus du compte ; la partie de test voit tout
     this.windows.vaincus = () => this.bestiaire; this.windows.toutVoir = !!this.test;
     this.windows.onZaap = i => { this.zaapChoix = i; };
+    this.windows.onOuvrirTresor = () => { this.coffreDemande = true; };   // Enutrof (interface du coffre 2C)
     this.windows.onCarte = m => { if (this.carte?.dispo) this.carte.montrer(m); };   // Métiers UI 8B, 11B : où trouver une ressource
     this.windows.portrait = v(`${ASSETS}/ui/perso_${this.classId}${this.perso?.sexe === 'f' ? '_f' : ''}.png`);
     // perso dessiné en direct dans l'inventaire, l'aperçu des apparats et la garde-robe (Apparence 5A, 6B)
@@ -417,7 +425,7 @@ export class ZoneScene extends Phaser.Scene {
     this.hud.onModules = () => { sauverReglages(this.reglages); this.windows?.refresh(); };
     // idée 1 (2026-11-08) : losange au-dessus des monstres qui comptent pour une quête en cours
     EntityView.deQuete = m => { const Q = this.world.quetes; return !!Q && this.hud.flecheQuete && (Q.estEliteDeQuete(m.id) || Q.pourQuete(m.type, m.x, m.y)); };
-    this.windows.onReglages = r => { this.zoom = Phaser.Math.Clamp(r.zoom, ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]); this.appliquerReglages(); this.updateAmbiance(true); this.appliquerSon(); };
+    this.windows.onReglages = r => { this.zoom = Phaser.Math.Clamp(r.zoom, ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]); this.appliquerReglages(); this.chat?.appliquer(); this.updateAmbiance(true); this.appliquerSon(); };
     this.windows.juice = { get: () => this.fx.juice, set: on => { this.fx.juice = on; } };
     this.windows.nomPerso = () => this.perso?.nom ?? 'Aventurier';
     this.windows.heureNom = () => ambiance(this.reglages, new Date(), !!this.world.worldGrid?.mapAt(this.world.player.x, this.world.player.y)?.inside).nom;
@@ -444,10 +452,17 @@ export class ZoneScene extends Phaser.Scene {
       });
       EnLigne.onInfo = t => this.hud.toast(t);
       this.hud.pastilleSocial = demandesEnAttente;
-      // chat à canaux (Social 4A) et bulles au-dessus des têtes (4B)
-      const ch = this.chat = new ChatVue(), bu = this.bullesChat = new BullesChat(this);
-      this.events.once('shutdown', () => { ch.destroy(); bu.destroy(); if (this.chat === ch) this.chat = null; if (this.bullesChat === bu) this.bullesChat = null; });
+      // bulles au-dessus des têtes (Social 4B)
+      const bu = this.bullesChat = new BullesChat(this);
+      this.events.once('shutdown', () => { bu.destroy(); if (this.bullesChat === bu) this.bullesChat = null; });
     } else EnLigne.arreter();
+    // tchat (« Tchat : » 1B) : aussi hors ligne, où il ne montre que le journal de la partie
+    if (!this.vitrine) {
+      const enLigne = !!this.perso && persosEnLigne() && !this.test && !this.essai && this.slot >= 0;
+      const ch = this.chat = new ChatVue({ reglages: this.reglages, enLigne, auBastion: () => !!this.world.dansBastion });
+      this.windows.lienObjet = (it, nom) => ch.insererObjet(it, nom);
+      this.events.once('shutdown', () => { ch.destroy(); if (this.chat === ch) this.chat = null; });
+    }
     const pel = this.passantsEnLigne = new PassantsEnLigne(this);
     this.events.once('shutdown', () => { pel.destroy(); if (this.passantsEnLigne === pel) this.passantsEnLigne = null; });
     this.carte?.destroy();
@@ -641,6 +656,7 @@ export class ZoneScene extends Phaser.Scene {
       this.dialogueView?.fermerMenu();
       // Eniripsa 3D : un sort armé (façon Dofus) se lance sur l'allié dont on clique le portrait
       if (this.aimId && this.world.player.cls.eniripsa && this.hud.joueurPortrait(p.x, p.y) != null) { this.pressed = this.aimId; this.aimId = null; this.aimKey = null; this.uiClick = true; return; }
+      if (this.world.player.cls.coffre && p.leftButtonDown() && this.hud.surMedaillon(p.x, p.y)) { this.windows?.toggle('tresor'); this.uiClick = true; return; }   // Enutrof 1A
       if (over.length || this.hud.blocks(p.x, p.y)) { this.uiClick = true; return; }
       this.uiClick = false;
       // Panneau test 4E : Ctrl + clic droit copie la carte et la case sous la souris
@@ -964,6 +980,8 @@ export class ZoneScene extends Phaser.Scene {
     this.fx.chiffres = r.chiffres; this.fx.tailleChiffres = r.tailleChiffres === 'petite' ? 0.8 : r.tailleChiffres === 'grande' ? 1.3 : 1;
     EntityView.barresVie = r.barresVie;
     // 7A : échelle de l'interface (caméra de l'interface zoomée depuis le coin haut gauche ; les fenêtres en CSS)
+    // Fluidité 3A : résolution du rendu (le canevas est redimensionné, les caméras suivent à l'image suivante)
+    if (densitePleine() !== (r.resolution !== 'normale')) { reglerDensite(r.resolution !== 'normale'); this.game.scale.refresh(); }
     const k = Phaser.Math.Clamp(r.echelle || 1, 0.8, 1.5), ui = this.cameras.getCamera('ui');
     ui?.setOrigin(0, 0).setZoom(k * densite());   // × vrais pixels de l'écran (pixel.ts)
     document.documentElement.style.setProperty('--echelle', String(k));
@@ -974,12 +992,20 @@ export class ZoneScene extends Phaser.Scene {
       loop.sleep(); loop.wake();
     }
   }
+  /** Fluidité 8A : au premier monstre tué, une seule fois, l'astuce de l'attaque sur place vers la souris. */
+  private astuceAttaque() {
+    const CLE = 'diablofus.astuceAttaque';
+    try { if (localStorage.getItem(CLE)) return; localStorage.setItem(CLE, '1'); } catch { return; }
+    const q = Touches.nomAction('attaqueSouris'), clic = this.reglages.deplacement === 'droit' ? 'clic droit' : 'clic';
+    this.hud.toast(`Astuce : ${q ? `${q} maintenue ou ` : ''}Maj + ${clic} = attaquer sur place, vers la souris`, 6000);
+  }
   /** Bouton de la souris qui lance le sort de la case « clic » : le droit, ou le gauche si l'on se déplace au clic droit (Réglages 5B). */
   private boutonSort(b: number) { return this.reglages.deplacement === 'droit' ? b === 0 : b === 2; }
   /** Action d'une touche (render/touches.ts) enfoncée ou relâchée. */
   private action(a: string, enfonce: boolean) {
     const p = this.world.player, w = this.windows;
     const sort = /^sort(\d)$/.exec(a), invoc = /^invoc(\d)$/.exec(a);
+    if (a === 'attaqueSouris') { this.attaqueSouris = enfonce; if (enfonce) this.pressed = 'attaque'; return; }   // Fluidité 6A
     if (!enfonce) { if (sort || invoc || a === 'deplacement') this.up(a); return; }
     if (sort) {
       const i = +sort[1] - 1;
@@ -1007,7 +1033,7 @@ export class ZoneScene extends Phaser.Scene {
       case 'carte': this.basculerCarte(); break;   // M, comme dans Dofus (maquette 0.2, 18A)
       case 'carteTab': if (this.carte?.dispo && !this.carte.ouverte) this.carte.basculerSurimpression(); break;   // 11B : carte en surimpression
       case 'havresac': this.havreSacDemande = true; break;
-      case 'coffre': this.coffreDemande = true; break;
+      case 'coffre': if (p.cls.coffre) w?.toggle('tresor'); break;   // Enutrof (interface du coffre 2C) : la fenêtre du coffre
       case 'muet': this.basculerMuet(); break;
       case 'impact':
         this.fx.juice = !this.fx.juice;
@@ -1036,7 +1062,7 @@ export class ZoneScene extends Phaser.Scene {
     const ptr = this.input.activePointer, wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
     const aim = ISO.toWorld(wp.x, wp.y), held = this.holding && (this.reglages.deplacement === 'droit' ? ptr.rightButtonDown() : ptr.leftButtonDown()) && !this.uiClick;
     const input: PlayerInput = { move: { x: 0, y: 0 }, aim, pressed: this.pressed, potion: this.potion,
-      holdAttack: held && this.clickMode === 'place', pickup: this.pickClick, approach: this.reglages.approche,
+      holdAttack: (held && this.clickMode === 'place') || this.attaqueSouris, pickup: this.pickClick, approach: this.reglages.approche,
       castOn: null };
     // un sort lancé sur un monstre vise le monstre (comme l'aperçu), pas le sol derrière son sprite
     const vise = this.pressed ? this.monsterUnder(ptr) : null;
@@ -1119,6 +1145,8 @@ export class ZoneScene extends Phaser.Scene {
   update(_: number, deltaMs: number) {
     const t0 = performance.now();
     this.updateJeu(deltaMs);
+    // Fluidité 5B : images et saccades par zone (pas en vitrine ni sous le rideau d'un voyage)
+    if (!this.vitrine && !this.worldView?.presse) ZoneScene.mesure.noter(this.world.area?.name ?? this.world.zone.name, deltaMs);
     // Panneau test 4D, 4E : compteur de fluidité et case sous la souris
     const pt = this.panneau;
     if (pt) {
@@ -1197,18 +1225,49 @@ export class ZoneScene extends Phaser.Scene {
     this.render();
   }
 
+  /** « Tchat : » 1A : ce que l'onglet Infos du tchat garde de la partie (la bulle au centre, elle, s'efface). */
+  private journalDe(e: SimEvent): [string, 'butin'?] | null {
+    const pl = (n: number, m: string) => `${n} ${m}${n > 1 ? 's' : ''}`;
+    switch (e.k) {
+      case 'loot': return e.item.rarity === 'commun' ? null : [`Tu as obtenu ${lienObjet(e.item)} (${RARITY_NAMES[e.item.rarity]})`, 'butin'];
+      case 'dofusGagne': return [`${PORTABLE(e.id)?.nom ?? 'Dofus'} obtenu !`, 'butin'];
+      case 'sacQuete': { const it = ITEMS.equipment[e.id]; return it ? [`Sac de quête : ${it.name} (${RARITY_NAMES[e.rarity]})`, 'butin'] : null; }
+      case 'capture': return [`${GAME_DATA.monsters[e.monster]?.name ?? 'Archimonstre'} capturé dans une pierre d'âme${e.neuf ? ' (nouveau)' : ''}`, 'butin'];
+      case 'levelUp': return [`Niveau ${e.level} atteint : +5 points de caractéristiques${e.level === 100 ? ', +1 PA' : ''}`];
+      case 'newSpell': return [`Nouveau sort : ${this.world.player.cls.spells[e.id]?.name ?? e.id}`];
+      case 'queteDebut': { const q = this.world.quetes?.def(e.id); return q && q.type !== 'tutoriel' ? [`Nouvelle quête : ${q.nom}`] : null; }
+      case 'queteFin': { const q = this.world.quetes?.def(e.id); return q && !e.sautee ? [`Quête terminée : ${q.nom}`] : null; }
+      case 'queteInfo': return [e.texte];
+      case 'succes': { const s = QUETES.succes[e.id]; return s ? [`Succès : ${s.nom} (+${pl(s.points, 'point')})`] : null; }
+      case 'zaapDecouvert': return [`Zaap découvert : ${this.nomZaap(e.name)}`];
+      case 'lieuDecouvert': return [`Lieu découvert : ${e.nom} (+${e.xp} XP)`];
+      case 'metierLevel': return [`${ITEMS.metiers?.[e.metier]?.name ?? 'Métier'} niveau ${e.level}`];
+      case 'commande': return e.etat === 'prete' ? ['Malek le Forgemage a fini ta commande : ton objet t\'attend au Bastion des Douze'] : null;
+      case 'codex': { const o = POUVOIR_PAR_ID[e.id], c = PC_PAR_ID[e.id]; return [`Codex : ${o ? o.sort : c ? c.nom : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id} enregistré`]; }
+      case 'apparence': return [`Apparence débloquée : ${ITEMS.equipment[e.id]?.name ?? 'objet'}`];
+      case 'almanax': return [`Almanax : offrande faite, +${e.pepites} Pépites et « ${e.bonus} » jusqu'à minuit`];
+      case 'bagFull': return ['Sac plein : défais des objets chez Kerubim Crépin, au Bastion des Douze'];
+      case 'bossDown': return [`${GAME_DATA.monsters[e.monster]?.name ?? 'Boss'} vaincu !`];
+      case 'massacreFin': return e.n >= 10 ? [`Massacre de ${e.n} monstres`] : null;
+      case 'guerreFin': return [e.coffre ? `${e.champ} défendu : ${e.sauvees} / ${e.total} cawottes, +${e.gain} Cawottes` : `${e.champ} ravagé : toutes les cawottes ont été volées`];
+      default: return null;
+    }
+  }
+
   private consumeEvents() {
     for (const e of this.world.drainEvents()) {
       Coop.noter(e);
       if (this.perso?.stats && this.perso.session) noter(e, this.perso.stats, this.perso.session, this.bestiaire, GAME_DATA.monsters, ITEMS.equipment);
       this.fx.handle(e);
       this.hud.handle(e);
+      if (this.chat) { const jn = this.journalDe(e); if (jn) EnLigne.journal(jn[0], jn[1]); }
       this.havreSacView?.handle(e);
       if (this.panneau && e.k === 'hit' && e.target === 'monster') this.panneau.noterCoup(e);   // DPS sort par sort, journal (Panneau test 6A, 6B)
       if (this.panneau && e.k === 'hit' && e.target === 'player' && Math.hypot(e.x - this.world.player.x, e.y - this.world.player.y) < 8) this.panneau.noterRecu(e);   // Outil test 8C
       if (this.panneau && (e.k === 'test' || e.k === 'queteDebut' || e.k === 'queteEtape' || e.k === 'queteFin' || e.k === 'lootResource')) this.panneau.rafraichir();
       if (this.panneau && e.k === 'heal' && Math.hypot(e.x - this.world.player.x, e.y - this.world.player.y) < 8) this.panneau.noterSoin(e.amount);
       this.son.handle(e);
+      if (e.k === 'kill' && !this.vitrine) this.astuceAttaque();
       const M = GAME_DATA.monsters;
       switch (e.k) {
         case 'impact':
@@ -1218,6 +1277,11 @@ export class ZoneScene extends Phaser.Scene {
           break;
         case 'playerHurt': this.hud.hurtFlash(this.fx.juice); break;
         case 'grosCoup': if (this.fx.juice) this.hud.grosCoup(); break;
+        // Enutrof (interface du coffre 7D) : le coffre s'ouvre ; au palier Trésor et en surcharge, la caméra tremble et l'écran s'illumine
+        case 'tresorOuvert':
+          this.chime(e.palier >= 3 ? 'legendaire' : 'epique');
+          if (this.fx.juice && e.palier >= 2) { this.cameras.main.shake(e.palier >= 3 ? 320 : 180, e.palier >= 3 ? 0.006 : 0.003, true); if (e.palier >= 3) this.cameras.main.flash(260, 255, 210, 120, true); }
+          break;
         // Maquette « Danger » : entrée du boss (7A) et phase Furieux (5A)
         case 'bossIntro': if (!this.world.arene) this.hud.banner(`${M[e.monster].name}\n${this.world.area?.name ?? this.world.zone.name}`, 2200); break;
         case 'furieux': this.hud.banner(`${e.name}\nFurieux !`, 1300, true); break;
@@ -1908,6 +1972,7 @@ export class ZoneScene extends Phaser.Scene {
     EntityView.temps = this.world.time;
     if (this.reglages.barresVie === 'survol' && !this.vitrine) EntityView.survol = this.monsterUnder(this.input.activePointer)?.id ?? null;
     this.hud.draw(this.fx.juice, this.game.loop.delta / 1000);
+    this.windows?.majTresor();
   }
 }
 

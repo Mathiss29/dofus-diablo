@@ -4,7 +4,9 @@ import { Accueil } from './render/accueil';
 import './render/phaserRapide';
 import { preparerInstallation } from './render/installation';
 import { Compte } from './render/compte';
-import { brancherDensite } from './render/pixel';
+import { brancherDensite, reglerDensite } from './render/pixel';
+import { chargerReglages } from './render/ambiance';
+import { prevenirCarteGraphique } from './render/fluidite';
 import { adresseLadder } from './render/ladder';
 import { ecranTelephone, surTelephone } from './render/telephone';
 
@@ -30,7 +32,9 @@ function demarrer() {
     scale: { mode: Phaser.Scale.RESIZE, width: '100%', height: '100%' },
   });
   // Écran aux vrais pixels (maquette « Décors : » 1A) : canevas à la densité de l'écran, avant que Phaser le dimensionne
+  reglerDensite(chargerReglages().resolution !== 'normale');   // Fluidité 3A, avant le premier dimensionnement
   brancherDensite(game);
+  game.events.once(Phaser.Core.Events.READY, () => prevenirCarteGraphique(game));   // Fluidité 4A
 
   // Mode dév (#cra, #astrub, #jeu) : directement en jeu, sans perso ni sauvegarde. #test : partie de test (perso à part, outils sur F1). Sinon : écran d'accueil (17A),
   // avec la partie en vitrine derrière ; « Jouer » relance la scène avec le perso choisi.

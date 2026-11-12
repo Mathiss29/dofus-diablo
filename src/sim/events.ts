@@ -44,6 +44,8 @@ export type SimEvent =
   | { k: 'filSoin'; x: number; y: number; tx: number; ty: number; amount: number }
   /** Enutrof 15A : pièces qui volent du monstre vaincu vers le coffre au trésor. */
   | { k: 'pieces'; x: number; y: number; tx: number; ty: number; n: number }
+  /** Interface du coffre 7D : le coffre au trésor s'ouvre (palier atteint, nombre d'objets qui vont jaillir). */
+  | { k: 'tresorOuvert'; x: number; y: number; palier: number; n: number }
   | { k: 'invocation'; id: number; x: number; y: number }
   | { k: 'eveil'; id: number; name: string; x: number; y: number }
   /** Sacrieur : échange de place (Assaut, Transposition), palier de Souffrance qui change, PV sacrifiés. */
