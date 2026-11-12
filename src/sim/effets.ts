@@ -1,5 +1,6 @@
 import { STAT_NAMES, type Stat } from './items';
 import type { Player } from './player';
+import { BENEDICTION, BENEDICTIONS } from './magasin';
 
 /** Bulles d'effets actifs (maquette « Bulles : 1A 2A+2B+2C 3A 4A 5A 6A 7A 8A ») : ce qui agit sur le perso en ce moment.
  *  sorte : 'sort' = bonus d'un de ses sorts (bord vert), 'monstre' = malus reçu (bord rouge), 'objet' = pouvoir d'objet (bord doré).
@@ -52,6 +53,9 @@ export function effetsActifs(p: Player): EffetActif[] {
     out.push({ id: `stack_${id}`, sorte: 'sort', nom: d.name, sort: d.icon, t: st.t, tMax: d.stack.time, charges: st.n,
       lignes: [`${st.n} charge${st.n > 1 ? 's' : ''} sur ${d.stack.max}`, `Prochain lancer : +${Math.round(d.stack.per * st.n * 100)} % de dommages`] });
   }
+  // Bénédiction achetée au Marché (Magasin 6D), 30 minutes
+  if (p.benediction) { const b = BENEDICTIONS[p.benediction.k];
+    out.push({ id: 'benediction', sorte: 'objet', nom: b.nom, carac: 'puissance', t: p.benediction.reste, tMax: BENEDICTION.duree, lignes: [b.texte, `Encore ${Math.ceil(p.benediction.reste / 60)} min`] }); }
   // Bouclier (Ferveur)
   if (p.shieldT > 0 && p.shield > 0) {
     const d = sp[p.shieldSrc];

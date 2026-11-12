@@ -12,6 +12,19 @@ export const MAGASIN = {
   /** 2D : Maj + clic achète par 10 */
   lot: 10,
 };
+/** 6C : le confort, payé en Pépites (places de sac par 20, 4e et 5e préréglage). Le prix monte à chaque achat. */
+export const CONFORT = {
+  sac: { pas: 20, prix: [150, 300, 450, 600] },
+  prereglage: { prix: [200, 300] },
+};
+/** 6D : bénédictions de 30 minutes (bonus du calendrier officiel), une à la fois, payées en Pépites. */
+export type Benediction = 'xp' | 'butin' | 'metier';
+export const BENEDICTIONS: Record<Benediction, { nom: string; bonus: number; texte: string }> = {
+  xp: { nom: 'Bénédiction de la Sagesse', bonus: 0.25, texte: '+25 % d\'XP des monstres' },
+  butin: { nom: 'Bénédiction de la Fortune', bonus: 0.25, texte: '+25 % de butin (Prospection)' },
+  metier: { nom: 'Bénédiction de l\'Artisan', bonus: 0.5, texte: '+50 % d\'XP de métier' },
+};
+export const BENEDICTION = { duree: 1800, prix: 30 };
 /** Marchands du Marché couvert : ils ouvrent la même fenêtre, chacun sur son onglet (13A-13D). */
 export const MARCHE = ['otomai', 'bouillotte', 'goultard', 'tissebelle'];
 

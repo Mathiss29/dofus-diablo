@@ -1681,6 +1681,15 @@
             "etiquettes": [
               "Bastion des Douze"
             ]
+          },
+          {
+            "titre": "Le confort en Pépites",
+            "phrase": "L'onglet Confort du Marché vend des places de sac, des préréglages et des bénédictions.",
+            "details": "+20 places de sac jusqu'à 200, un 4e et un 5e préréglage. Une bénédiction de 30 minutes : XP, butin ou métiers.",
+            "icone": "sac",
+            "etiquettes": [
+              "Bastion des Douze"
+            ]
           }
         ],
         "Le monde": [],

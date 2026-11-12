@@ -3,7 +3,9 @@ import { describe, expect, it } from 'vitest';
 import { APPARATS, BOUTIQUES, GAME_DATA, ITEMS, QUETES } from '../src/sim/data';
 import { WorldGrid, type WorldData } from '../src/sim/gridmap';
 import { PEPITE } from '../src/sim/items';
-import { etalDuJour, MAGASIN, pieceDeLaSemaine, reserveePiece } from '../src/sim/magasin';
+import { BENEDICTION, CONFORT, etalDuJour, MAGASIN, pieceDeLaSemaine, reserveePiece } from '../src/sim/magasin';
+import { NO_INPUT } from '../src/sim/input';
+import { Player } from '../src/sim/player';
 import { exporterJoueur, restaurerJoueur } from '../src/sim/sauvegarde';
 import { World } from '../src/sim/world';
 
@@ -64,5 +66,30 @@ describe('Magasin du Bastion (« Magasin : » 2A-2D 3A+3B 4C)', () => {
     expect(w.acheter('otomai', a.id, 10)).toBe(true);
     expect(p.resources[a.id]).toBe(10);
     expect(p.kamas).toBe(0);
+  });
+  it('6C : places de sac par 20 (le prix monte), 4e et 5e préréglage, gardés dans la sauvegarde', () => {
+    const w = monde(), p = w.player; p.resources[PEPITE] = 5000;
+    for (const prix of CONFORT.sac.prix) { expect(w.prixSacEnPlus()).toBe(prix); expect(w.acheterPlacesSac()).toBe(true); }
+    expect(w.acheterPlacesSac()).toBe(false);
+    expect(p.tailleSac).toBe(Player.BAG_SIZE + CONFORT.sac.pas * CONFORT.sac.prix.length);
+    expect(w.acheterPrereglage()).toBe(true); expect(w.acheterPrereglage()).toBe(true); expect(w.acheterPrereglage()).toBe(false);
+    expect(p.prereglages.length).toBe(Player.PREREGLAGES + 2);
+    expect(p.enregistrerPrereglage(4)).toBe(true);
+    const s = JSON.parse(JSON.stringify(exporterJoueur(w))), w2 = monde(); restaurerJoueur(w2, s);
+    expect(w2.player.tailleSac).toBe(p.tailleSac);
+    expect(w2.player.prereglages.length).toBe(Player.PREREGLAGES + 2);
+    expect(w2.player.prereglages[4]).not.toBeNull();
+  });
+  it('6D : une bénédiction de 30 minutes à la fois, qui s\'éteint toute seule', () => {
+    const w = monde(), p = w.player; p.resources[PEPITE] = 100;
+    expect(w.acheterBenediction('xp')).toBe(true);
+    expect(p.beni('xp')).toBeGreaterThan(0);
+    expect(w.acheterBenediction('metier')).toBe(true);   // remplace
+    expect(p.beni('xp')).toBe(0);
+    expect(p.benediction?.reste).toBe(BENEDICTION.duree);
+    p.benediction!.reste = 0.05;
+    w.step(0.1, NO_INPUT);
+    expect(p.benediction).toBeNull();
+    expect(p.resources[PEPITE]).toBe(100 - 2 * BENEDICTION.prix);
   });
 });

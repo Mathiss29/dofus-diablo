@@ -1,5 +1,5 @@
 import { ALMANAX } from './almanax';
-import type { AchatsDuJour } from './magasin';
+import { BENEDICTIONS, type AchatsDuJour, type Benediction } from './magasin';
 import { CHATIMENTS, PC_PAR_ID } from './pouvoirsClasse';
 import { DOFUS, EMPLACEMENTS_DOFUS, PASSIFS, PORTABLE, TROPHEES } from './dofus';
 import type { CleDonjon } from './arene';
@@ -141,6 +141,13 @@ export class Player extends Entity {
   setCount: Record<string, number> = {};
   items: ItemsData | null = null;
   static readonly BAG_SIZE = 120;
+  /** Places de sac achetées au Marché (Magasin 6C), par 20. */
+  sacEnPlus = 0;
+  get tailleSac() { return Player.BAG_SIZE + this.sacEnPlus; }
+  /** Bénédiction de 30 minutes (Magasin 6D) : une à la fois, secondes restantes. */
+  benediction: { k: Benediction; reste: number } | null = null;
+  /** Bonus de la bénédiction active de cette sorte (0 sinon). */
+  beni(k: Benediction) { return this.benediction?.k === k ? BENEDICTIONS[k].bonus : 0; }
   /** Déplacement à la souris : points de passage restants, monstre poursuivi, dernière destination. */
   path: { x: number; y: number }[] = [];
   chaseId: number | null = null;
@@ -560,7 +567,7 @@ export class Player extends Entity {
   }
   unequip(slot: EquipSlot): boolean {
     const it = this.equipment[slot];
-    if (!it || this.bag.length >= Player.BAG_SIZE) return false;
+    if (!it || this.bag.length >= this.tailleSac) return false;
     delete this.equipment[slot]; this.bag.push(it); this.recompute();
     return true;
   }
@@ -674,6 +681,7 @@ export class Player extends Entity {
     const m = this.metiers[key] ??= { level: 1, xp: 0 };
     if (m.level >= METIER_MAX) return;
     if (world.almanax?.effet === 'metier') n *= 1 + ALMANAX.metier;   // 15C
+    n *= 1 + this.beni('metier');   // Magasin 6D
     m.xp += n;
     while (m.level < METIER_MAX && m.xp >= metierXpNeeded(m.level)) {
       m.xp -= metierXpNeeded(m.level); m.level++;
@@ -692,7 +700,7 @@ export class Player extends Entity {
   prereglages: (Prereglage | null)[] = Array(Player.PREREGLAGES).fill(null);
   /** Enregistre l'équipement porté, la barre et les variantes dans le préréglage i. */
   enregistrerPrereglage(i: number, nom?: string): boolean {
-    if (i < 0 || i >= Player.PREREGLAGES) return false;
+    if (i < 0 || i >= this.prereglages.length) return false;
     const equipement: Partial<Record<EquipSlot, number>> = {};
     for (const s of EQUIP_SLOTS) { const it = this.equipment[s]; if (it) equipement[s] = it.uid; }
     this.prereglages[i] = { nom: (nom ?? this.prereglages[i]?.nom ?? `Préréglage ${i + 1}`).slice(0, 20), equipement, bar: [...this.bar], variants: [...this.variants] };
@@ -708,7 +716,7 @@ export class Player extends Entity {
     // d'abord on retire ce qui n'est pas dans le préréglage (place faite dans le sac), puis on équipe
     for (const s of EQUIP_SLOTS) {
       const voulu = r.equipement[s], it = this.equipment[s];
-      if (it && it.uid !== voulu && this.bag.length < Player.BAG_SIZE) { delete this.equipment[s]; this.bag.push(it); }
+      if (it && it.uid !== voulu && this.bag.length < this.tailleSac) { delete this.equipment[s]; this.bag.push(it); }
     }
     for (const s of EQUIP_SLOTS) {
       const uid = r.equipement[s];
@@ -859,6 +867,7 @@ export class Player extends Entity {
 
   update(dt: number, input: PlayerInput, world: World) {
     this.age += dt;
+    if (this.benediction && (this.benediction.reste -= dt) <= 0) { world.emit({ k: 'status', x: this.x, y: this.y - 60, text: `${BENEDICTIONS[this.benediction.k].nom} s'achève`, color: '#e8d27a' }); this.benediction = null; }
     if (this.deguise > 0 && (this.deguise -= dt) <= 0) { this.deguise = 0; world.emit({ k: 'status', x: this.x, y: this.y - 60, text: 'Le déguisement de Wabbit tombe', color: '#e8902a' }); }
     for (const k of Object.keys(this.cd)) {
       if (this.cd[k] <= 0) continue;

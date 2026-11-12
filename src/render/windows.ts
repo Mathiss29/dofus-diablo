@@ -2,7 +2,7 @@ import { QUALITES, REGLAGES_DEFAUT, sauverReglages, type Reglages } from './ambi
 import * as Touches from './touches';
 import { ICON_CSS, iconHtml } from './icons';
 import { MANIFESTE, Son } from './son';
-import { MAGASIN, MARCHE, reserveePiece, type Article } from '../sim/magasin';
+import { BENEDICTION, BENEDICTIONS, CONFORT, MAGASIN, MARCHE, reserveePiece, type Article, type Benediction } from '../sim/magasin';
 import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES } from '../sim/data';
 import { v } from './assetUrl';
 import { BUTIN_CSS, butinMonstre, dessinerPortraits, esc as escB, groupesBestiaire, nomObjet, iconeObjet, sourcesHtml } from './butinVue';
@@ -718,7 +718,7 @@ type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
  *  Les clics appellent l'API de la partie (World / Player). */
 /** Onglets de la fenêtre des marchands : Défaire (Kerubim), boutique d'un PNJ, et ceux du Marché du Bastion. */
-type OngletEmp = 'recycler' | 'boutique' | 'apparat' | 'etal' | 'conso' | 'cles';
+type OngletEmp = 'recycler' | 'boutique' | 'apparat' | 'etal' | 'conso' | 'cles' | 'confort';
 export class Windows {
   private root: HTMLDivElement;
   private win: HTMLDivElement | null = null;
@@ -889,7 +889,7 @@ export class Windows {
               <select data-kind>${KINDS.map(([k, v]) => `<option value="${k}" ${this.kind === k ? 'selected' : ''}>${v}</option>`).join('')}</select>
             </div>
             <div class="grid">${html}</div>
-            <div class="foot"><span>Visible(s) : <b>${n}</b> · sac <b>${p.bag.length} / ${Player.BAG_SIZE}</b><br><span class="hint">Clic droit : équiper / retirer · Ctrl + clic : cadenas${p.equipment.familier ? ' · Alt + clic : nourrir le familier' : ''}${p.cls.coffre ? ' · Maj + clic : donner un Rare ou un Épique au coffre' : ''}</span></span>
+            <div class="foot"><span>Visible(s) : <b>${n}</b> · sac <b>${p.bag.length} / ${p.tailleSac}</b><br><span class="hint">Clic droit : équiper / retirer · Ctrl + clic : cadenas${p.equipment.familier ? ' · Alt + clic : nourrir le familier' : ''}${p.cls.coffre ? ' · Maj + clic : donner un Rare ou un Épique au coffre' : ''}</span></span>
               <span class="k">${p.kamas.toLocaleString('fr-FR')} <img src="${INV}/kamas.png" alt="" title="Kamas"></span></div>
             <div class="foot"><span>Butin affiché au sol</span>
               <select data-filter style="width:auto">${['Tout', 'Rare et plus', 'Épique et plus'].map((n, i) => `<option value="${i}" ${p.lootFilter === i ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
@@ -2181,7 +2181,7 @@ export class Windows {
     const def = QUETES.pnj[this.empPnj], sv = new Set((def?.services ?? []).map(x => x.service)), marche = MARCHE.includes(this.empPnj);
     const vis = (a: Article) => (!a.v03 || p.v03) && (!a.v04 || p.v04);
     const boutique = (BOUTIQUES[this.empPnj] ?? []).filter(vis);
-    const onglets: [OngletEmp, string][] = marche ? [['etal', 'Étal du jour'], ['conso', 'Consommables'], ['cles', 'Clés'], ['apparat', 'Apparences']]
+    const onglets: [OngletEmp, string][] = marche ? [['etal', 'Étal du jour'], ['conso', 'Consommables'], ['cles', 'Clés'], ['apparat', 'Apparences'], ['confort', 'Confort']]
       : ([['recycler', 'Défaire'], ['boutique', 'Boutique'], ['apparat', 'Apparats']] as [OngletEmp, string][]).filter(([k]) => sv.has(k));
     if (!onglets.some(([k]) => k === this.empOnglet)) this.empOnglet = marche ? (this.empPnj === 'goultard' ? 'cles' : this.empPnj === 'tissebelle' ? 'apparat' : 'conso') : onglets[0]?.[0] ?? 'boutique';
     const icM = (m: string) => m === 'kamas' ? `<img src="${INV}/kamas.png" alt="" style="width:18px;vertical-align:middle">` : iconHtml(ITEMS.resources[m]?.icon ?? 0);
@@ -2220,6 +2220,18 @@ export class Windows {
           <div class="ent">Sac du jour <span class="hint">· un par jour, un équipement de ton niveau à rareté garantie</span></div>
           <div class="rec sacj">${iconHtml(ITEMS.resources[PEPITE]?.icon ?? 0)}<div><b>Sac garanti</b><div style="font-size:12px;color:#c9c4ab">Jamais Légendaire.</div></div><span class="sacs">${sac}</span></div>
         </div></div>`;
+    } else if (this.empOnglet === 'confort') {
+      // 6C confort, 6D bénédictions de 30 minutes (une à la fois)
+      const ps = W.prixSacEnPlus(), pp = W.prixPrereglage(), b = p.benediction;
+      const ligne = (ic: string, nom: string, texte: string, fin: string) => `<div class="rec">${ic}<div><b>${nom}</b><div style="font-size:12px;color:#c9c4ab">${texte}</div></div>${fin}</div>`;
+      const icS = `${iconHtml(ITEMS.resources[PEPITE]?.icon ?? 0)}`;
+      corps = `<div class="shop">
+          <div class="ent">Confort</div>
+          ${ligne(icS, `+${CONFORT.sac.pas} places de sac`, `Ton sac : ${p.tailleSac} places.`, ps == null ? '<span class="hint">Maximum atteint</span>' : prix(ps, PEPITE, 'data-conf="sac"'))}
+          ${p.v03 ? ligne(icS, `Préréglage ${p.prereglages.length + 1}`, 'Un préréglage d\'équipement de plus (fenêtre du perso).', pp == null ? '<span class="hint">Maximum atteint</span>' : prix(pp, PEPITE, 'data-conf="prer"')) : ''}
+          <div class="ent">Bénédictions <span class="hint">· 30 minutes de jeu, une à la fois (une nouvelle remplace l'autre)</span></div>
+          ${(Object.keys(BENEDICTIONS) as Benediction[]).map(k => ligne(icS, BENEDICTIONS[k].nom, BENEDICTIONS[k].texte + (b?.k === k ? ` · <b style="color:#b9e54b">active, encore ${Math.ceil(b.reste / 60)} min</b>` : ''), prix(BENEDICTION.prix, PEPITE, `data-beni="${k}"`))).join('')}
+        </div><div class="hint">Les Pépites se gagnent avec les contrats, l'Almanax, les quêtes, les succès et les donjons (premier passage, défis).</div>`;
     } else if (this.empOnglet === 'apparat') {
       // Apparences officielles (5A, 2B) : tout le catalogue (hors pièces de la semaine), payé en Pépites ; le survol habille le perso
       const q = this.apparatRecherche.toLowerCase();
@@ -2242,6 +2254,8 @@ export class Windows {
     w.innerHTML = `${this.title(titre, 'inventory')}<div class="in emp${this.empOnglet === 'recycler' ? ' fm' : ''}">${tete}${corps}</div>`;
     w.querySelectorAll<HTMLElement>('[data-eo]').forEach(e => e.addEventListener('click', () => { this.empOnglet = e.dataset.eo as OngletEmp; this.render(); }));
     w.querySelectorAll<HTMLElement>('[data-etal]').forEach(e => e.addEventListener('click', () => { W.acheterEtal(+e.dataset.etal!); this.changed(); }));
+    w.querySelectorAll<HTMLElement>('[data-conf]').forEach(e => e.addEventListener('click', () => { if (e.dataset.conf === 'sac') W.acheterPlacesSac(); else W.acheterPrereglage(); this.changed(); }));
+    w.querySelectorAll<HTMLElement>('[data-beni]').forEach(e => e.addEventListener('click', () => { W.acheterBenediction(e.dataset.beni as Benediction); this.changed(); }));
     w.querySelector<HTMLElement>('[data-piece]')?.addEventListener('click', () => { W.acheterPiece(); this.changed(); });
     w.querySelectorAll<HTMLElement>('[data-sac]').forEach(e => e.addEventListener('click', () => { W.acheterSacDuJour(e.dataset.sac as 'rare' | 'epique'); this.changed(); }));
     w.querySelector<HTMLElement>('[data-garde]')?.addEventListener('click', () => this.show('garde'));
