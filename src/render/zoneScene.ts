@@ -53,7 +53,7 @@ import { inviterDiscord } from './inviteDiscord';
 import { Parcours } from './parcours';
 import { MesureFluidite } from './fluidite';
 import { spellTipHtml } from './spellTip';
-import { LEGENDARY, RARITY_COLORS, RARITY_NAMES, rollItem } from '../sim/items';
+import { LEGENDARY, RARITY_COLORS, RARITY_NAMES, STAT_NAMES, rollItem, type Stat } from '../sim/items';
 import { POUVOIR_PAR_ID, V03_PUBLIC, V04_PUBLIC } from '../sim/pouvoirs';
 import { lieuxDeZone } from '../sim/passants';
 import { PC_PAR_ID } from '../sim/pouvoirsClasse';
@@ -1256,6 +1256,7 @@ export class ZoneScene extends Phaser.Scene {
       case 'almanax': return [`Almanax : offrande faite, +${e.pepites} Pépites et « ${e.bonus} » jusqu'à minuit`];
       case 'bagFull': return ['Sac plein : défais des objets chez Kerubim Crépin, au Bastion des Douze'];
       case 'bossDown': return [`${GAME_DATA.monsters[e.monster]?.name ?? 'Boss'} vaincu !`];
+      case 'forge': return e.issue !== 'echec' && (e.exo || e.over) ? [`Forgemagie : ${e.exo ? 'exo' : 'over'} ${STAT_NAMES[e.stat as Stat] ?? e.stat} passé sur ${e.objet}`] : null;
       case 'massacreFin': return e.n >= 10 ? [`Massacre de ${e.n} monstres`] : null;
       case 'guerreFin': return [e.coffre ? `${e.champ} défendu : ${e.sauvees} / ${e.total} cawottes, +${e.gain} Cawottes` : `${e.champ} ravagé : toutes les cawottes ont été volées`];
       default: return null;
@@ -1269,6 +1270,8 @@ export class ZoneScene extends Phaser.Scene {
       this.fx.handle(e);
       this.hud.handle(e);
       if (this.chat) { const jn = this.journalDe(e); if (jn) EnLigne.journal(jn[0], jn[1]); }
+      // Forgemagie v2 9C : le groupe l'apprend
+      if (e.k === 'forge' && e.issue !== 'echec' && (e.exo || e.over) && EnLigne.groupe) EnLigne.dire('groupe', `✦ vient de passer un ${e.exo ? 'exo' : 'over'} ${STAT_NAMES[e.stat as Stat] ?? e.stat} sur ${e.objet} !`);
       this.havreSacView?.handle(e);
       if (this.panneau && e.k === 'hit' && e.target === 'monster') this.panneau.noterCoup(e);   // DPS sort par sort, journal (Panneau test 6A, 6B)
       if (this.panneau && e.k === 'hit' && e.target === 'player' && Math.hypot(e.x - this.world.player.x, e.y - this.world.player.y) < 8) this.panneau.noterRecu(e);   // Outil test 8C
@@ -1404,6 +1407,7 @@ export class ZoneScene extends Phaser.Scene {
         case 'arche': this.windows?.show('zaap'); break;
         case 'emmenage': this.hud.toast(`${e.noms.join(', ')} ${e.noms.length > 1 ? 'ont emménagé' : 'a emménagé'} au Bastion des Douze (Zaap ou Potion de Rappel)`); break;
         case 'forge': this.windows?.noteForgeEvt(e); break;
+        case 'fmOrbe': case 'fmRelance': case 'fmPotion': this.windows?.noteRetouche(e); break;
         case 'brisage': { const n = Object.values(e.runes).reduce((a, b) => a + b, 0);
           const k = e.kamas ? ` · +${e.kamas.toLocaleString('fr-FR')} kamas` : '';
           if (e.auto) { this.hud.loot(`${ITEMS.equipment[e.auto]?.name ?? 'Objet'} défait : ${n} rune${n > 1 ? 's' : ''}${k}`, '#b77cf0'); this.windows?.refresh(); break; }
@@ -1415,6 +1419,7 @@ export class ZoneScene extends Phaser.Scene {
         case 'dofusGagne': this.hud.loot(`${PORTABLE(e.id)?.nom ?? 'Dofus'} obtenu ! ${TROPHEES[e.id] && !this.world.player.dofusPortes.includes(e.id) ? 'Il est dans ton sac (fenêtre des Dofus, onglet Trophées)' : 'Il est dans tes emplacements de Dofus (Inventaire)'}`, '#e8c76b'); this.sauver(); this.windows?.refresh(); break;
         case 'dofusPassif': if (e.dofus === 'argente') this.hud.loot(`Souvenir d'Argent : +${e.n ?? 0} PV`, '#e8c76b'); break;   // le bouclier du Cacao se voit déjà (bouclier violet)
         case 'almanax': this.hud.loot(`Almanax : offrande faite, +${e.pepites} Pépites et « ${e.bonus} » jusqu'à minuit`, '#ffd27a'); this.sauver(); this.windows?.refresh(); break;
+        case 'etabliForge': this.windows?.ouvrirForge(); break;
         case 'coffreOuvert': if (this.windows) { this.windows.coffreHardcore = this.sorteCoffre === 'hardcore'; this.windows.show('coffre'); } break;
         // l'objet a changé de place : coffre et perso sauvés ensemble (pas d'objet perdu ni doublé si la page se ferme)
         case 'coffre': sauverCoffre(this.sorteCoffre, this.world.coffre); this.sauver(); this.windows?.refresh(); break;

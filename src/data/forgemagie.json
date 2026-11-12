@@ -1,5 +1,5 @@
 {
- "_doc": "Maquette Forgemagie (Mathis 2026-11-07) : 1A 2A 3B 4B 5A 6A+6D 7A+7B 8A+8B+8D 9B 10A+10C 11B. Fenêtre (Mathis 2026-11-08) : Forgemagie UI : 1B 2A 4A+4B+4C 5A 6A 7A 8A 9A+9B+9C+9D+9E. Lu par src/sim/forgemagie.ts. Runes et poids : tables officielles (tools/extraction/runes_export.py). Les chances ne sont pas officielles (Dofus ne publie pas sa formule).",
+ "_doc": "Maquette Forgemagie (Mathis 2026-11-07) : 1A 2A 3B 4B 5A 6A+6D 7A+7B 8A+8B+8D 9B 10A+10C 11B. Fenêtre (Mathis 2026-11-08) : Forgemagie UI : 1B 2A 4A+4B+4C 5A 6A 7A 8A 9A+9B+9C+9D+9E. Lu par src/sim/forgemagie.ts. Runes et poids : tables officielles (tools/extraction/runes_export.py). Les chances ne sont pas officielles (Dofus ne publie pas sa formule). Forgemagie v2 (Mathis 2026-11-12) : 1A+1B+1D+1E 2B 3B 4A 5B+5C 6A 7A+7B 8B 9A+9B+9C, tout public.",
  "chances": {
   "_doc": "chance qu'une rune passe : sous le max officiel = base - pente × jet/max (plancher min) ; au-dessus du max (overmax) = overmax au max, descend à overmaxMin au plafond ; ligne nouvelle (exo) = exo, ou exoLourde si la rune pèse au moins seuilLourde",
   "base": 0.75,
@@ -30,8 +30,20 @@
   "mythique": 0.4
  },
  "exo": {
-  "_doc": "4B : une seule ligne ajoutée, sur un Légendaire ou un Mythique ; poids de la ligne au plus poidsMax (officiel 101)",
+  "_doc": "4B puis v2 8B : une seule ligne ajoutée, dès Épique ; les lignes fortes (PA, PM, Portée, et les runes maison Vitesse / Réduction des recharges, 5C) seulement sur un Légendaire ou un Mythique ; poids de la ligne au plus poidsMax (officiel 101)",
   "raretes": [
+   "epique",
+   "legendaire",
+   "mythique"
+  ],
+  "fortes": [
+   "pa",
+   "pm",
+   "portee",
+   "vitesse",
+   "reductionRecharges"
+  ],
+  "raretesFortes": [
    "legendaire",
    "mythique"
   ],
@@ -520,6 +532,18 @@
    "stat": "redAir",
    "val": 10,
    "poids": 20.0
+  },
+  "990001": {
+   "stat": "vitesse",
+   "val": 1,
+   "poids": 40.0,
+   "maison": true
+  },
+  "990002": {
+   "stat": "reductionRecharges",
+   "val": 1,
+   "poids": 50.0,
+   "maison": true
   }
  },
  "poids": {
@@ -552,6 +576,7 @@
   "redFeu": 2.0,
   "redNeutre": 2.0,
   "redTerre": 2.0,
+  "reductionRecharges": 50.0,
   "resAir": 6.0,
   "resCritiques": 2.0,
   "resEau": 6.0,
@@ -564,6 +589,30 @@
   "sagesse": 3.0,
   "soins": 10.0,
   "tacle": 4.0,
-  "vitalite": 0.2
+  "vitalite": 0.2,
+  "vitesse": 40.0
+ },
+ "maison": {
+  "_doc": "v2 5B+5C : runes maison des stats ARPG (Rune Céléritas = +1 % Vitesse d'attaque, Rune Chronos = +1 % Réduction des recharges). Jamais rendues par le brisage ; lâchées par les boss (chance par rune).",
+  "boss": 0.2
+ },
+ "rafale": {
+  "_doc": "v2 3B : en maintenant le clic, une rune toutes les `intervalle` secondes, jusqu'à la valeur visée",
+  "intervalle": 0.25
+ },
+ "orbes": {
+  "_doc": "v2 7A : Orbes régénérants officiels (17272-17275, niveau d'objet max dans items.json > orbe). Relancent tous les jets d'un objet dans sa rareté (pouvoirs gardés ; puits et exo effacés). Chances de chute : élites et boss, l'orbe du niveau du monstre.",
+  "elite": 0.02,
+  "boss": 0.15
+ },
+ "relance": {
+  "_doc": "v2 7B : Malek relance UNE ligne (jamais un exo, un malus ni une ligne déjà au max) : deux jets, il garde le meilleur, jamais moins que l'actuel. Prix = niveau × kamasParNiveau, doublé à chaque relance sur le même objet.",
+  "kamasParNiveau": 25
+ },
+ "potions": {
+  "_doc": "v2 6A : Potions de forgemagie officielles. Les dommages neutres de l'arme passent dans l'élément de la potion ; l'officiel dit « forte diminution » (potions de niveau 20) ou « faible diminution » (niveau 80) des dommages de base, sans chiffre publié : perte ci-dessous.",
+  "perteFaible": 0.15,
+  "perteForte": 0.05,
+  "niveauForte": 80
  }
 }

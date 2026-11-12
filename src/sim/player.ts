@@ -4,7 +4,7 @@ import { CHATIMENTS, PC_PAR_ID } from './pouvoirsClasse';
 import { DOFUS, EMPLACEMENTS_DOFUS, PASSIFS, PORTABLE, TROPHEES } from './dofus';
 import type { CleDonjon } from './arene';
 import { guerreVide, type EtatGuerre } from './guerre';
-import type { CommandeFM } from './forgemagie';
+import { dmgArme, type CommandeFM } from './forgemagie';
 import { Entity } from './entity';
 import type { ClassDef, ComboHit, Element, SkillId, SpellDef } from './defs';
 import { WEAPONS } from './data';
@@ -588,7 +588,7 @@ export class Player extends Entity {
   private buildWeapon() {
     const it = this.equipment.arme, d = it && this.items?.equipment[it.id], w = d?.weapon, prof = w && WEAPONS[w.type];
     if (!d || !w || !prof) { this.weaponDef = null; return; }
-    const best = [...w.dmg].sort((a, b) => (b.min + b.max) - (a.min + a.max))[0];
+    const best = [...dmgArme(d, it)].sort((a, b) => (b.min + b.max) - (a.min + a.max))[0];   // Forgemagie v2 6A : potion d'élément comprise
     const { base, mult, anim, ...rest } = prof;
     // Maquette Armes 5A : la Vitesse d'attaque accélère aussi le geste (jusqu'à ×1,6), on voit qu'on frappe plus vite
     const k = Math.min(Player.GESTE_MAX, Math.max(1, 1 + this.stat('vitesse') / 100));
@@ -1023,8 +1023,8 @@ export class Player extends Entity {
 
   /** Moyenne des dommages de l'arme portée, ajoutée à l'attaque de base. */
   weaponDamage(): number {
-    const w = this.equipment.arme && this.items?.equipment[this.equipment.arme.id]?.weapon;
-    return w ? w.dmg.reduce((a, d) => a + (d.min + d.max) / 2, 0) : 0;
+    const it = this.equipment.arme, d = it && this.items?.equipment[it.id];
+    return d?.weapon ? dmgArme(d, it).reduce((a, x) => a + (x.min + x.max) / 2, 0) : 0;
   }
 
   endSkill() {
