@@ -13,7 +13,7 @@ import { ajouterPieces, CLE_COFFRE, ouvrirCoffre, piecesMonstre, piecesObjet } f
 import { briser, chanceRune, coutKamas, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
 import { V03_PUBLIC, V04_PUBLIC, niveauObjetsMax, slotAPouvoirConnu } from './pouvoirs';
 import { fxImpression, imprimable, nouveauPourCodex, prixImpression } from './codex';
-import { legendaryPower, FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, recycleResource, recycleValue, rollItem, type EquipSlot, type Item, type ItemsData, type Rarity, type RecipeDef } from './items';
+import { legendaryPower, FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, kamasDefaire, noteObjet, rollItem, type EquipSlot, type Item, type ItemsData, type Rarity, type RecipeDef } from './items';
 import { Player } from './player';
 import { Bete, BETES, REGLES_BETES, type EffetBete, type SortBete } from './bete';
 import { initiativeBonus, removalChance } from './caracs';
@@ -127,7 +127,7 @@ export interface WorldOptions {
   recoltes?: RecoltesData;
   /** Boutiques des PNJ (src/data/boutique.json) : articles et prix en Pépites. */
   boutiques?: Record<string, { id: string; prix: number; /** vendu seulement en 0.3 */ v03?: boolean; /** en 0.4 (clés d'Amakna) */ v04?: boolean;
-    /** payé dans cette monnaie au lieu des Pépites (Tiwa Cawoteuw : Cawottes) */ monnaie?: string; /** apparence (collection) au lieu d'un objet */ apparat?: boolean;
+    /** payé dans cette monnaie au lieu des Pépites (« kamas » = p.kamas ; Tiwa Cawoteuw : Cawottes) */ monnaie?: string; /** apparence (collection) au lieu d'un objet */ apparat?: boolean;
     /** vendu seulement après une victoire dans ce donjon (« Wabbits : 9C ») */ apres?: string }[]>;
   /** Objets d'apparat officiels (src/data/apparat.json) et leur prix en Pépites chez Emp (boutique.json, apparat_prix). */
   apparats?: { objets: Record<string, { slot: string; collection?: boolean }>; prix: Record<string, number> };
@@ -165,7 +165,7 @@ export interface FamilierEtat { x: number; y: number; vx: number; vy: number; ci
  *  (et plus tard sur un serveur pour la coop). L'affichage lit l'état et vide `events`. */
 /** Événements qui ne parlent qu'au joueur qui agit : fenêtres, butin, portes et zones, quêtes, métiers (multi, étape 4). */
 export const EVENEMENTS_PERSONNELS = new Set<SimEvent['k']>(['levelUp', 'newSpell', 'noResource', 'rageFull', 'enterArea', 'enterLieu', 'respawn',
-  'loot', 'lootResource', 'sacQuete', 'queteInfo', 'metierLevel', 'craft', 'atelier', 'fabricationDebut', 'fabricationStop', 'eat', 'recycle', 'forge',
+  'loot', 'lootResource', 'sacQuete', 'queteInfo', 'metierLevel', 'craft', 'atelier', 'fabricationDebut', 'fabricationStop', 'eat', 'forge',
   'brisage', 'codex', 'codexOuvert', 'coffreOuvert', 'capture', 'lieuDecouvert', 'impression', 'apparence', 'fusion', 'commande', 'signature', 'achat', 'familierNiveau',
   'familierRepas', 'rappel', 'cleManquante', 'recolteDebut', 'recolteFin', 'recolteStop', 'recolteNiveau', 'service', 'almanax', 'dofusPassif',
   'dofusGagne', 'lootKamas', 'bagFull', 'checkpoint', 'portalStart', 'portal', 'changeZone', 'incantation', 'incantationStop', 'arche', 'zaapDecouvert',
@@ -2013,11 +2013,12 @@ export class World {
       if (d.item) {
         if (p.pickupId === d.uid) p.pickupId = null;
         const def = this.opts.items?.equipment[d.item.id];
-        if (p.autoBrisage && d.item.rarity === 'commun' && def && !def.familier) {   // 5B : brisé dès le ramassage, ses runes vont au sac
-          const g = briser(this.rng, def, d.item);
-          for (const [id, n] of Object.entries(g)) p.resources[id] = (p.resources[id] ?? 0) + n;
-          this.collectionner(d.item.id);
-          this.emit({ k: 'brisage', n: 1, runes: g, auto: d.item.id });
+        // Magasin 10D : cadenas posé tout seul sur les objets de panoplie et les Légendaires (ou mieux)
+        if (def && (def.set != null || RARITIES.indexOf(d.item.rarity) >= RARITIES.indexOf('legendaire'))) d.item.cadenas = true;
+        // Magasin 10A + 10C : défait dès le ramassage jusqu'à la rareté choisie, sauf s'il vaut mieux que l'objet porté
+        if (p.autoDefaire && def && !def.familier && !d.item.cadenas && RARITIES.indexOf(d.item.rarity) <= RARITIES.indexOf(p.autoDefaire) && !this.meilleurQuePorte(d.item)) {
+          const tout: Record<string, number> = {};
+          this.finDefaire(1, tout, this.defaireUn(d.item, def, tout), d.item.id);
           d.t = -1; continue;
         }
         if (p.bag.length >= Player.BAG_SIZE) { if (!d.warned) this.emit({ k: 'bagFull' }); d.warned = true; d.familier = false; continue; }   // sac plein : l'objet reste au sol
@@ -2237,43 +2238,6 @@ export class World {
     this.emit({ k: 'impression', uid, id });
     return true;
   }
-  private pepites(n: number) { const p = this.player; p.resources[PEPITE] = (p.resources[PEPITE] ?? 0) + n; }
-  /** Recycle un objet du sac contre des Pépites (un objet sous cadenas n'est jamais recyclé). */
-  recycle(uid: number): boolean {
-    const p = this.player, i = p.bag.findIndex(b => b.uid === uid), d = i >= 0 && this.opts.items?.equipment[p.bag[i].id];
-    if (i < 0 || p.bag[i].cadenas) return false;
-    const n = d ? recycleValue(d, p.bag[i]) : 1;
-    this.collectionner(p.bag[i].id);
-    p.bag.splice(i, 1); this.pepites(n);
-    this.emit({ k: 'recycle', n: 1, pepites: n });
-    return true;
-  }
-  /** Recyclage en lot (8B) : tous les objets du sac jusqu'à cette rareté comprise, sauf ceux sous cadenas. */
-  recycleLot(jusqua: Rarity): number {
-    const p = this.player, max = RARITIES.indexOf(jusqua), I = this.opts.items;
-    let n = 0, pep = 0;
-    p.bag = p.bag.filter(it => {
-      if (it.cadenas || RARITIES.indexOf(it.rarity) > max) return true;
-      const d = I?.equipment[it.id]; n++; pep += d ? recycleValue(d, it) : 1; this.collectionner(it.id); return false;
-    });
-    if (n) { this.pepites(pep); this.emit({ k: 'recycle', n, pepites: pep }); }
-    return n;
-  }
-  /** Pépites que rendrait recycleLot (aperçu dans la fenêtre d'Emp). */
-  apercuLot(jusqua: Rarity): { n: number; pepites: number } {
-    const max = RARITIES.indexOf(jusqua), I = this.opts.items;
-    const l = this.player.bag.filter(it => !it.cadenas && RARITIES.indexOf(it.rarity) <= max);
-    return { n: l.length, pepites: l.reduce((a, it) => a + (I?.equipment[it.id] ? recycleValue(I.equipment[it.id], it) : 1), 0) };
-  }
-  /** Recycle toute une pile de ressources (pas les Pépites, ni les clés, ni ce qui se mange). */
-  recycleRessource(id: string): boolean {
-    const p = this.player, r = this.opts.items?.resources[id], q = p.resources[id] ?? 0;
-    if (!r || q <= 0 || r.pepite || r.monnaie || r.cle || r.soin || r.rappel) return false;
-    const n = recycleResource(r) * q;
-    delete p.resources[id]; this.pepites(n);
-    this.emit({ k: 'recycle', n: q, pepites: n });
-    return true;
-  }
   // --- Forgemagie (maquette « Forgemagie » 2A 3B 4B 6A+6D 7A+7B 8D 9B 11B), chez le forgemage --------------------------------
   /** Objet du sac ou porté, par son uid. */
   objetForgeable(uid: number): Item | null {
@@ -2345,43 +2309,44 @@ export class World {
     this.emit({ k: 'signature', uid, nom });
     return true;
   }
-  /** 8A (Concasseur) : brise d'un coup les objets choisis (jamais un objet sous cadenas). */
+  /** « Défaire » (maquette Magasin 7A, 9A-9C) : l'objet rend ses runes et des kamas ; une apparence inconnue rejoint la collection,
+   *  un pouvoir légendaire nouveau va au Codex. Renvoie les kamas gagnés ; les runes sont ajoutées à `tout`. */
+  private defaireUn(it: Item, def: NonNullable<ItemsData['equipment'][string]>, tout: Record<string, number>): number {
+    for (const [id, k] of Object.entries(briser(this.rng, def, it))) tout[id] = (tout[id] ?? 0) + k;
+    this.collectionner(it.id); this.enregistrerCodex(it);
+    return kamasDefaire(def, it);
+  }
+  private finDefaire(n: number, tout: Record<string, number>, kamas: number, auto?: string) {
+    const p = this.player;
+    for (const [id, k] of Object.entries(tout)) p.resources[id] = (p.resources[id] ?? 0) + k;
+    p.kamas += kamas;
+    if (n) this.emit({ k: 'brisage', n, runes: tout, kamas, ...(auto ? { auto } : {}) });
+  }
+  /** Défait d'un coup les objets choisis chez Kerubim (jamais un objet sous cadenas ni un familier). */
   briserChoix(uids: number[]): number {
     const p = this.player, I = this.opts.items, tout: Record<string, number> = {};
-    let n = 0;
+    let n = 0, kamas = 0;
     p.bag = p.bag.filter(it => {
       const def = I?.equipment[it.id];
       if (!uids.includes(it.uid) || !def || def.familier || it.cadenas) return true;
-      for (const [id, k] of Object.entries(briser(this.rng, def, it))) tout[id] = (tout[id] ?? 0) + k;
-      this.collectionner(it.id); this.enregistrerCodex(it); n++; return false;
+      kamas += this.defaireUn(it, def, tout); n++; return false;
     });
-    for (const [id, k] of Object.entries(tout)) p.resources[id] = (p.resources[id] ?? 0) + k;
-    if (n) this.emit({ k: 'brisage', n, runes: tout });
+    this.finDefaire(n, tout, kamas);
     return n;
   }
-  /** Brise un objet du sac en runes (7A+7B, chez le forgemage : 11B). Jamais un objet sous cadenas. */
-  briserObjet(uid: number): boolean {
-    const p = this.player, i = p.bag.findIndex(b => b.uid === uid), it = i >= 0 ? p.bag[i] : null, def = it && this.opts.items?.equipment[it.id];
-    if (!it || !def || it.cadenas || def.familier) return false;
-    const g = briser(this.rng, def, it);
-    p.bag.splice(i, 1); this.collectionner(it.id); this.enregistrerCodex(it);
-    for (const [id, n] of Object.entries(g)) p.resources[id] = (p.resources[id] ?? 0) + n;
-    this.emit({ k: 'brisage', n: 1, runes: g });
-    return true;
-  }
-  /** Brisage en lot : tous les objets du sac jusqu'à cette rareté comprise, sauf ceux sous cadenas. */
+  /** Défait un objet du sac. Jamais un objet sous cadenas. */
+  briserObjet(uid: number): boolean { return this.briserChoix([uid]) === 1; }
+  /** Défaire en lot : tous les objets du sac jusqu'à cette rareté comprise, sauf ceux sous cadenas. */
   briserLot(jusqua: Rarity): number {
-    const p = this.player, max = RARITIES.indexOf(jusqua), I = this.opts.items, tout: Record<string, number> = {};
-    let n = 0;
-    p.bag = p.bag.filter(it => {
-      const def = I?.equipment[it.id];
-      if (!def || def.familier || it.cadenas || RARITIES.indexOf(it.rarity) > max) return true;
-      for (const [id, k] of Object.entries(briser(this.rng, def, it))) tout[id] = (tout[id] ?? 0) + k;
-      this.collectionner(it.id); this.enregistrerCodex(it); n++; return false;
-    });
-    for (const [id, k] of Object.entries(tout)) p.resources[id] = (p.resources[id] ?? 0) + k;
-    if (n) this.emit({ k: 'brisage', n, runes: tout });
-    return n;
+    const max = RARITIES.indexOf(jusqua);
+    return this.briserChoix(this.player.bag.filter(it => RARITIES.indexOf(it.rarity) <= max).map(it => it.uid));
+  }
+  /** Tri 10C : l'objet vaut mieux que celui porté au même emplacement (flèche verte) ; jamais défait automatiquement. */
+  meilleurQuePorte(it: Item): boolean {
+    const p = this.player, def = this.opts.items?.equipment[it.id];
+    if (!def || def.level > p.level) return false;
+    const slot = p.slotFor(it), cur = slot ? p.equipment[slot] : undefined;
+    return !cur || noteObjet(it) > noteObjet(cur);
   }
   /** Fusion (6D) : 3 runes donnent 1 rune du palier suivant, autant de fois que possible (ou une seule fois). */
   fusionner(rune: string, tout = false): number {
@@ -2411,16 +2376,17 @@ export class World {
     if (neuf) p.ames.push(m.type);
     this.emit({ k: 'capture', monster: m.type, neuf });
   }
-  /** Achat dans une boutique (src/data/boutique.json), payé en Pépites (ou dans la monnaie de l'article : Cawottes chez Tiwa Cawoteuw).
+  /** Achat dans une boutique (src/data/boutique.json), payé dans la monnaie de l'article : kamas pour l'utile (Magasin 5B), Cawottes chez Tiwa Cawoteuw, sinon Pépites.
    *  Un article « apparat » rejoint la collection d'apparences, une fois pour toutes. */
   acheter(boutique: string, id: string): boolean {
     const a = this.opts.boutiques?.[boutique]?.find(x => x.id === id && (!x.v03 || this.player.v03) && (!x.v04 || this.player.v04)), p = this.player;
-    const m = a?.monnaie ?? PEPITE;
-    if (!a || (p.resources[m] ?? 0) < a.prix || (a.apparat && p.apparats.includes(id)) || (a.apres && !((this.quetes?.donjons[a.apres]?.v ?? 0) > 0))) return false;
-    p.resources[m] -= a.prix; if (!p.resources[m]) delete p.resources[m];
+    const m = a?.monnaie ?? PEPITE, solde = m === 'kamas' ? p.kamas : (p.resources[m] ?? 0);
+    if (!a || solde < a.prix || (a.apparat && p.apparats.includes(id)) || (a.apres && !((this.quetes?.donjons[a.apres]?.v ?? 0) > 0))) return false;
+    if (m === 'kamas') p.kamas -= a.prix;
+    else { p.resources[m] -= a.prix; if (!p.resources[m]) delete p.resources[m]; }
     if (a.apparat) p.apparats.push(id);
     else p.resources[id] = (p.resources[id] ?? 0) + 1;
-    this.emit({ k: 'achat', id, prix: a.prix });
+    this.emit({ k: 'achat', id, prix: a.prix, ...(a.monnaie ? { monnaie: a.monnaie } : {}) });
     return true;
   }
   /** Achat d'un objet d'apparat chez Emp (Apparence 5A) : il rejoint la collection du perso, une fois pour toutes. */

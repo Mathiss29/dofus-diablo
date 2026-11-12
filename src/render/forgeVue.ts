@@ -1,6 +1,7 @@
 import { ITEMS } from '../sim/data';
 import { apercuBrisage, chanceRune, coutKamas, exoPossible, FUSION_N, fusionVers, lignes, RUNES, runesDe, SIGNATURE, type Commande, type Estimation, type FinCommande } from '../sim/forgemagie';
-import { RARITIES, RARITY_COLORS, RARITY_NAMES, STAT_NAMES, type Item, type Rarity, type Stat } from '../sim/items';
+import { kamasDefaire, RARITIES, RARITY_COLORS, RARITY_NAMES, STAT_NAMES, type Item, type Rarity, type Stat } from '../sim/items';
+import { nouveauPourCodex } from '../sim/codex';
 import type { World } from '../sim/world';
 import { iconHtml } from './icons';
 import { codexOngletHtml, type EtatCodex } from './codexVue';
@@ -8,8 +9,8 @@ import { codexOngletHtml, type EtatCodex } from './codexVue';
 /** Fenêtre de forgemagie façon Dofus 3 (maquette « Forgemagie UI : 1B 2A 4A+4B+4C 5A 6A 7A 8A 9A+9B+9C+9D+9E », Mathis 2026-11-08).
  *  Onglet Forgemagie : cases Objet, Rune et Signature, bouton Fusionner et mode avancé (2A) ; lignes Effet, Valeur, Jet avec l'œil,
  *  les barres et les runes de la ligne au bout (4A+4B+4C) ; historique avec l'icône de la rune (5A). Onglet Malek : la commande
- *  (objectifs, planchers, budget, estimation, objet confié). Onglet Concasseur : le brisage (8A). Onglet Fusion (6D). */
-export type OngletForge = 'forge' | 'malek' | 'brisage' | 'fusion' | 'codex';
+ *  (objectifs, planchers, budget, estimation, objet confié). Onglet Fusion (6D). */
+export type OngletForge = 'forge' | 'malek' | 'fusion' | 'codex';
 export interface LigneLog { t: string; c: string; ic?: string }
 export interface EtatForge {
   onglet: OngletForge; uid: number | null; rune: string | null; avance: boolean; caches: Stat[]; log: LigneLog[];
@@ -114,9 +115,8 @@ export function forgeHtml(world: World, e: EtatForge): string {
   const p = world.player;
   const onglet = (k: OngletForge, n: string) => `<span class="eo ${e.onglet === k ? 'on' : ''}" data-fo="${k}">${n}</span>`;
   const c = p.commandeFM, malek = c ? (c.prete ? 'Malek ✓' : `Malek · ${mmss(c.reste)}`) : 'Commande à Malek';
-  const tete = `<div class="eh"><div class="eos">${onglet('forge', 'Forgemagie')}${onglet('malek', malek)}${onglet('brisage', 'Concasseur')}${onglet('fusion', 'Fusion')}${p.v03 && p.codexOuvert ? onglet('codex', `Codex · ${p.codex.length}`) : ''}</div>
+  const tete = `<div class="eh"><div class="eos">${onglet('forge', 'Forgemagie')}${onglet('malek', malek)}${onglet('fusion', 'Fusion')}${p.v03 && p.codexOuvert ? onglet('codex', `Codex · ${p.codex.length}`) : ''}</div>
     <span class="k" title="Kamas">${p.kamas.toLocaleString('fr-FR')} kamas</span></div>`;
-  if (e.onglet === 'brisage') return tete + brisageHtml(world, e);
   if (e.onglet === 'fusion') return tete + fusionHtml(world);
   if (e.onglet === 'codex' && p.v03 && p.codexOuvert) return tete + codexOngletHtml(world, e.codex);
   if (e.onglet === 'malek') return tete + malekHtml(world, e);
@@ -168,7 +168,7 @@ function forgeOngletHtml(world: World, e: EtatForge): string {
   const objet = `<div class="fob"><b style="color:${RARITY_COLORS[it.rarity]}">${def.name}</b><span class="hint">${RARITY_NAMES[it.rarity]} · niveau ${def.level}${it.signe ? ` · signé par ${esc(it.signe)}` : ''}${it.legendary ? ' · pouvoir légendaire intouchable' : ''}</span></div>`;
   const table = `<table class="ft"><thead><tr><th></th><th>Effet</th><th style="text-align:right">Valeur</th><th>Jet</th><th style="text-align:right">Runes</th></tr></thead><tbody>${rows}</tbody></table>${nl}`;
   const centre = `<div class="fmc">${slots}${objet}${table}<div class="puits"><span>Puits <span class="hint">poids gardé de côté : une rune qu'il couvre passe à coup sûr</span></span><b>${fr(it.puits ?? 0)}</b></div>
-    ${L.some(l => l.rune) && !Object.keys(p.resources).some(id => RUNES[id]) ? '<div class="hint">Aucune rune dans ton sac : brise des objets au Concasseur.</div>' : ''}</div>`;
+    ${L.some(l => l.rune) && !Object.keys(p.resources).some(id => RUNES[id]) ? '<div class="hint">Aucune rune dans ton sac : défais des objets chez Kerubim.</div>' : ''}</div>`;
   const cout = e.rune ? `${coutKamas(def, e.rune)} kamas` : '—';
   const droite = `<div class="fmr">${historique(e)}<div class="hint">Essai : <b>${cout}</b> · ${e.avance ? 'mode avancé : un clic sur une rune la fusionne' : 'choisis une rune au bout de sa ligne, puis Fusionner'}</div></div>`;
   return `<div class="fmg">${L1.html}${centre}${droite}</div>`;
@@ -213,32 +213,39 @@ function malekHtml(world: World, e: EtatForge): string {
   </div><div class="fmr">${historique(e)}</div></div>`;
 }
 
-function brisageHtml(world: World, e: EtatForge): string {
+/** « Défaire » chez Kerubim (maquette Magasin 7A-10D) : objets choisis, aperçu des runes, des kamas et des pouvoirs pour le Codex. */
+export function defaireHtml(world: World, e: EtatForge): string {
   const p = world.player, I = ITEMS;
   e.brise = e.brise.filter(uid => p.bag.some(b => b.uid === uid && !b.cadenas));
   const choisis = e.brise.map(uid => p.bag.find(b => b.uid === uid)!);
   const tot: Record<string, number> = {};
-  for (const it of choisis) { const d = I.equipment[it.id]; if (d) for (const [id, n] of Object.entries(apercuBrisage(d, it))) tot[id] = (tot[id] ?? 0) + n; }
+  let kamas = 0, pouvoirs = 0;
+  for (const it of choisis) {
+    const d = I.equipment[it.id]; if (!d) continue;
+    for (const [id, n] of Object.entries(apercuBrisage(d, it))) tot[id] = (tot[id] ?? 0) + n;
+    kamas += kamasDefaire(d, it);
+    if (p.v03) for (const l of [it.legendary, it.legendary2]) if (l && nouveauPourCodex(p.codex, p.cls.sorts, l)) pouvoirs++;
+  }
   const ap = Object.keys(tot).sort((a, b) => RUNES[a].stat.localeCompare(RUNES[b].stat) || RUNES[a].val - RUNES[b].val)
     .map(id => `<span title="${nomR(id)}">${icR(id)}× ${tot[id]}</span>`).join('');
   const lots: [Rarity, string][] = [['commun', '+ tout le Commun'], ['rare', '+ Commun et Rare'], ['epique', '+ tout sauf Légendaire'], ['mythique', '+ tout le sac']];
   const lotsHtml = lots.map(([r, n]) => `<span class="btn" data-blot="${r}">${n}</span>`).join('');
   const cell = (it: Item, tag: string) => { const d = I.equipment[it.id];
-    return `<div class="cell ${it.cadenas ? 'verrou' : ''} ${e.brise.includes(it.uid) ? 'on' : ''}" data-${tag}="${it.uid}">${iconHtml(d.icon)}<i class="r" style="background:${RARITY_COLORS[it.rarity]}"></i></div>`; };
+    return `<div class="cell ${it.cadenas ? 'verrou' : ''} ${e.brise.includes(it.uid) ? 'on' : ''} ${world.meilleurQuePorte(it) ? 'up' : ''}" data-${tag}="${it.uid}">${iconHtml(d.icon)}<i class="r" style="background:${RARITY_COLORS[it.rarity]}"></i></div>`; };
   const sac = p.bag.filter(it => I.equipment[it.id] && !I.equipment[it.id].familier);
   return `<div class="cz"><div class="czg">
-      <div class="czt"><img src="${D3}/forge/concasseur.webp" alt="Concasseur"><div class="hint">Le Concasseur brise les objets en runes officielles. Pose des objets dedans : il montre les runes sûres qui vont sortir (un petit reste peut en donner une de plus). Une rareté haute rend plus : ×1,5 Rare, ×2 Épique, ×3 Légendaire, ×4 Mythique. Les Pépites, c'est chez Kerubim.</div></div>
-      <span class="ent">Dans le Concasseur (${choisis.length})</span>
+      <div class="czt"><img src="${D3}/forge/concasseur.webp" alt=""><div class="hint">Pose des objets ici : chacun rend ses runes officielles et des kamas, selon son niveau et sa rareté. Un pouvoir légendaire nouveau va dans ton Codex, une coiffe, une cape ou un bouclier inconnu dans ta collection.</div></div>
+      <span class="ent">À défaire (${choisis.length})</span>
       <div class="czs">${choisis.map(it => cell(it, 'bout')).join('') || '<div class="hint" style="grid-column:1/-1">Clique des objets de ton sac pour les poser ici.</div>'}</div>
-      <span class="ent">Runes qui vont sortir</span><div class="czr">${ap || '<span class="hint" style="border:0;background:none">—</span>'}</div>
-      <div class="mkb"><span class="bv ${choisis.length ? '' : 'off'}" data-briser>Briser</span>${lotsHtml}</div>
+      <span class="ent">Ce que tu récupères</span><div class="czr">${ap || '<span class="hint" style="border:0;background:none">—</span>'}${kamas ? `<span>${kamas.toLocaleString('fr-FR')} kamas</span>` : ''}${pouvoirs ? `<span>${pouvoirs} pouvoir${pouvoirs > 1 ? 's' : ''} pour le Codex</span>` : ''}</div>
+      <div class="mkb"><span class="bv ${choisis.length ? '' : 'off'}" data-briser>Défaire</span>${lotsHtml}</div>
     </div><div class="czg"><span class="ent">Ton sac</span>
-      <div class="hint">Clic : poser dans le Concasseur ou l'en retirer · Ctrl + clic (ou clic droit) : cadenas, jamais brisé.</div>
+      <div class="hint">Clic : poser ou retirer · Ctrl + clic (ou clic droit) : cadenas, jamais défait. Flèche verte : meilleur que ce que tu portes.</div>
       <div class="grid eg">${sac.map(it => cell(it, 'buid')).join('') || '<div class="hint" style="grid-column:1/-1">Ton sac est vide.</div>'}</div>
     </div></div>`;
 }
 
-/** Ajoute au Concasseur tous les objets du sac jusqu'à cette rareté (sans cadenas). */
+/** Ajoute à « Défaire » tous les objets du sac jusqu'à cette rareté (sans cadenas). */
 export function lotConcasseur(world: World, e: EtatForge, jusqua: Rarity) {
   const I = ITEMS, max = RARITIES.indexOf(jusqua);
   for (const it of world.player.bag) {

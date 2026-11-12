@@ -1640,6 +1640,47 @@
           "Audit de sécurité : le site bloque les scripts étrangers, une sauvegarde piégée ne vole plus ta connexion."
         ]
       }
+    },
+    {
+      "date": "2026-11-12",
+      "titre": "Kerubim défait tout",
+      "resume": "Les objets en trop rendent des runes et des kamas, et les Pépites deviennent précieuses avant le Marché.",
+      "capture": "assets/journal/2026-11-12.webp",
+      "legende": "Kerubim Crépin défait cinq objets, au Bastion des Douze, 12 novembre 2026.",
+      "lignes": {
+        "Nouveautés": [
+          {
+            "titre": "Défaire chez Kerubim",
+            "phrase": "Un objet en trop rend ses runes et des kamas chez Kerubim, au Bastion des Douze.",
+            "details": "Un pouvoir légendaire nouveau va au Codex. Les Pépites ne viennent plus des objets ni des ressources.",
+            "icone": "kamas",
+            "etiquettes": [
+              "Bastion des Douze"
+            ]
+          },
+          {
+            "titre": "Le tri au ramassage",
+            "phrase": "Défais au ramassage les Communs, ou les Communs et les Rares.",
+            "details": "Jamais un objet meilleur que le tien. Panoplies et Légendaires prennent un cadenas tout seuls.",
+            "icone": "sac"
+          },
+          {
+            "titre": "L'utile en kamas",
+            "phrase": "Potions, pierres d'âme, plats et clés se paient en kamas chez les marchands du Bastion.",
+            "details": "Les Pépites gardent l'envie. Elles tombent des contrats (deux fois plus), de l'Almanax (30), des succès et du premier passage de chaque donjon.",
+            "icone": "kamas",
+            "etiquettes": [
+              "Bastion des Douze"
+            ]
+          }
+        ],
+        "Le monde": [],
+        "Combat": [],
+        "Corrections": [],
+        "En coulisses": [
+          "Le guichet de Kerubim quitte le Havre-Sac, et le Concasseur de Malek passe chez Kerubim."
+        ]
+      }
     }
   ]
 }

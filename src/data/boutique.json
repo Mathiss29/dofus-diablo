@@ -1,97 +1,116 @@
 {
- "_": "Boutiques des PNJ du Havre-Sac (maquette Hub 4A, 2026-11-06) : Otomaï (Potion de Rappel ; Petite pierre d'âme en 0.3, pour capturer les archimonstres), Mère Bouillotte (nourriture), Goultard (clés de donjon) ; apparat_prix = prix par emplacement des apparats officiels chez Tissebelle (src/data/apparat.json). Prix en Pépites (objet officiel 14635), que Kerubim Crépin donne contre les objets recyclés. Tiwa Cawoteuw (île des Wabbits, 0.4) : payé en Cawottes (objet officiel 20446), gagnées à la guerre des Cawottes ; ressources de l'île, clés, Potion de Rappel et apparences Wabbit, jamais d'équipement ni de Dofus.",
+ "_": "Boutiques des PNJ (maquette Magasin 5B, 2026-11-12) : l'utile se paie en kamas (monnaie \"kamas\" = p.kamas) : Otomaï (Potion de Rappel, Petite pierre d'âme), Mère Bouillotte (nourriture), Goultard (clés de donjon), Lily (Potion Wabbit). Les Pépites (objet officiel 14635) paient l'envie : apparat_prix = prix par emplacement des apparats officiels chez Tissebelle (src/data/apparat.json). Tiwa Cawoteuw (île des Wabbits, 0.4) : payé en Cawottes (objet officiel 20446), gagnées à la guerre des Cawottes ; jamais d'équipement ni de Dofus.",
  "otomai": [
   {
    "id": "548",
-   "prix": 30
+   "prix": 300,
+   "monnaie": "kamas"
   },
   {
    "id": "9686",
-   "prix": 15,
-   "v03": true
+   "prix": 150,
+   "v03": true,
+   "monnaie": "kamas"
   }
  ],
  "bouillotte": [
   {
    "id": "16670",
-   "prix": 6
+   "prix": 60,
+   "monnaie": "kamas"
   },
   {
    "id": "17169",
-   "prix": 20
+   "prix": 200,
+   "monnaie": "kamas"
   }
  ],
  "goultard": [
   {
    "id": "8143",
-   "prix": 150
+   "prix": 1500,
+   "monnaie": "kamas"
   },
   {
    "id": "8437",
-   "prix": 150
+   "prix": 1500,
+   "monnaie": "kamas"
   },
   {
    "id": "1568",
-   "prix": 250
+   "prix": 2500,
+   "monnaie": "kamas"
   },
   {
    "id": "15991",
-   "prix": 300
+   "prix": 3000,
+   "monnaie": "kamas"
   },
   {
    "id": "8139",
-   "prix": 300,
-   "v04": true
+   "prix": 3000,
+   "v04": true,
+   "monnaie": "kamas"
   },
   {
    "id": "1570",
-   "prix": 300,
-   "v04": true
+   "prix": 3000,
+   "v04": true,
+   "monnaie": "kamas"
   },
   {
    "id": "7918",
-   "prix": 300,
-   "v04": true
+   "prix": 3000,
+   "v04": true,
+   "monnaie": "kamas"
   },
   {
    "id": "26680",
-   "prix": 300,
-   "v04": true
+   "prix": 3000,
+   "v04": true,
+   "monnaie": "kamas"
   },
   {
    "id": "8135",
-   "prix": 300,
-   "v04": true
+   "prix": 3000,
+   "v04": true,
+   "monnaie": "kamas"
   },
   {
    "id": "1569",
-   "prix": 300,
-   "v04": true
+   "prix": 3000,
+   "v04": true,
+   "monnaie": "kamas"
   },
   {
    "id": "12017",
-   "prix": 300,
-   "v04": true
+   "prix": 3000,
+   "v04": true,
+   "monnaie": "kamas"
   },
   {
    "id": "7927",
-   "prix": 400,
-   "v04": true
+   "prix": 4000,
+   "v04": true,
+   "monnaie": "kamas"
   },
   {
    "id": "7425",
-   "prix": 300,
-   "v04": true
+   "prix": 3000,
+   "v04": true,
+   "monnaie": "kamas"
   },
   {
    "id": "14464",
-   "prix": 400,
-   "v04": true
+   "prix": 4000,
+   "v04": true,
+   "monnaie": "kamas"
   },
   {
    "id": "11798",
-   "prix": 300,
-   "v04": true
+   "prix": 3000,
+   "v04": true,
+   "monnaie": "kamas"
   }
  ],
  "apparat_prix": {
@@ -193,8 +212,9 @@
  "lily": [
   {
    "id": "960",
-   "prix": 300,
-   "v04": true
+   "prix": 3000,
+   "v04": true,
+   "monnaie": "kamas"
   }
  ]
 }

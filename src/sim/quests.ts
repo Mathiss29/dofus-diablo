@@ -211,6 +211,10 @@ export type RegleDefi = 'duo' | 'chrono' | 'prudent' | 'sansPotion';
 export const DEFI_CHRONO = 90;
 /** Ornement officiel (récompense de certains succès, menu des succès 6B) : icône ornament_assets_all/<icone>. */
 export interface OrnementDef { id: number; nom: string; icone: number }
+/** Pépites d'un succès (Magasin 12B) : ses points de succès, une Pépite au moins. */
+/** Pépites du premier passage d'un donjon (Magasin 12D) : le niveau du boss. */
+export const pepitesPremierPassage = (niveau?: number) => Math.max(10, niveau ?? 10);
+export const pepitesSucces = (s: SuccesDef) => Math.max(1, s.points ?? 0);
 export interface SuccesDef {
   nom: string; dofusId: number; description: string; categorie: string; sousCategorie: string; points: number; icone: number;
   objectifs: SuccesObjectif[];
@@ -695,8 +699,14 @@ export class Quetes {
           ['sansPotion', dedans && !this.potionDonjon]];
         for (const [r, ok] of regles) if (ok) this.defis.add(`${ici}|${r}`);
         this.bossVu = null;
-        if (!b.premier) b.premier = { ...(w.opts.aujourdhui ? { d: w.opts.aujourdhui } : {}),
-          ...(this.dansDonjon?.nom === ici ? { t: Math.round(w.time - this.dansDonjon.t) } : {}) };
+        if (!b.premier) {
+          b.premier = { ...(w.opts.aujourdhui ? { d: w.opts.aujourdhui } : {}),
+            ...(this.dansDonjon?.nom === ici ? { t: Math.round(w.time - this.dansDonjon.t) } : {}) };
+          // premier passage (Magasin 12D) : des Pépites, le niveau du boss
+          const pep = pepitesPremierPassage(w.opts.data.monsters[e.monster]?.level);
+          w.donnerObjet(PEPITE, pep);
+          w.emit({ k: 'queteInfo', texte: `Premier passage : ${ici} vaincu, +${pep} Pépites.` });
+        }
       }
       const sub = w.worldGrid?.mapAt(e.x, e.y)?.sub;
       for (const c of this.enCours) this.etapeDe(c)?.objectifs.forEach((o, i) => {
@@ -1054,18 +1064,19 @@ export class Quetes {
       }
     }
   }
-  aRecompense(id: string) { const r = this.data.succes[id]?.recompense; return !!(r?.xp || r?.objet); }
+  aRecompense(id: string) { return !!this.data.succes[id]; }
   /** Récompense de ce succès pas encore récupérée par ce perso (5B : chaque perso du compte récupère la sienne). */
   aRecuperer(id: string) { return this.succes.has(id) && this.visible(id) && !this.recuperes.has(id) && this.aRecompense(id); }
   get nbARecuperer() { let n = 0; for (const id of this.succes) if (this.aRecuperer(id)) n++; return n; }
-  /** Récupère la récompense (XP, objet) d'un succès obtenu. */
+  /** Récupère la récompense (XP, objet, Pépites) d'un succès obtenu. */
   recuperer(id: string): boolean {
     if (!this.aRecuperer(id)) return false;
-    const w = this.world, r = this.data.succes[id].recompense!;
+    const w = this.world, s = this.data.succes[id], r = s.recompense ?? {}, pep = pepitesSucces(s);
     this.recuperes.add(id);
     if (r.xp) w.player.gainXp(r.xp, w);
     if (r.objet) w.donnerObjet(r.objet);
-    w.emit({ k: 'succesRecupere', id, xp: r.xp ?? 0 });
+    w.donnerObjet(PEPITE, pep);
+    w.emit({ k: 'succesRecupere', id, xp: r.xp ?? 0, pepites: pep });
     return true;
   }
   /** « Tout récupérer » (5C) : nombre de récompenses récupérées. */

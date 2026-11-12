@@ -234,9 +234,15 @@ export function rollItem(id: string, def: ItemDef, rarity: Rarity, rng: Rng, uid
 
 /** Id officiel de la Pépite, la monnaie d'Emp (rangée avec les ressources du sac). */
 export const PEPITE = '14635';
-/** Pépites rendues par Emp pour un équipement (maquette 0.2, 8A) : selon le niveau et la rareté
- *  (un Commun niveau 20 rend 6 Pépites, un Épique niveau 20 en rend 41, un Légendaire niveau 50 plus de 300). */
+/** Échelle de rareté (sert à l'XP des familiers nourris). */
 export const PEPITE_RARETE: Record<Rarity, number> = { commun: 1, rare: 3, epique: 8, legendaire: 25, mythique: 60 };
-export const recycleValue = (def: ItemDef, it: Item) => Math.round(def.level * PEPITE_RARETE[it.rarity] / 4) + 1;
-/** Pépites pour une ressource (à l'unité) : une par tranche de 10 niveaux. */
-export const recycleResource = (def: ResourceDef) => Math.max(1, Math.floor(def.level / 10));
+/** « Défaire » chez Kerubim (maquette Magasin 7A, 9B) : un objet rend ses runes et des kamas selon son niveau et sa rareté
+ *  (un Rare niveau 40 rend 240 kamas). Les objets ne rendent plus de Pépites. */
+export const KAMAS_DEFAIRE: Record<Rarity, number> = { commun: 2, rare: 6, epique: 15, legendaire: 40, mythique: 100 };
+export const kamasDefaire = (def: ItemDef, it: Item) => Math.max(1, Math.round(def.level * KAMAS_DEFAIRE[it.rarity]));
+/** Note grossière d'un objet (flèche verte « meilleur que l'objet porté », tri 10C). */
+export function noteObjet(it: Item): number {
+  let s = 0;
+  for (const [k, v] of Object.entries(it.stats) as [Stat, number][]) s += v * (k === 'vitalite' ? 0.5 : k === 'critique' ? 3 : k.startsWith('dommages') ? 4 : k === 'pa' || k === 'pm' ? 40 : 1);
+  return s + (it.legendary ? 30 : 0) + (it.legendary2 ? 30 : 0);
+}

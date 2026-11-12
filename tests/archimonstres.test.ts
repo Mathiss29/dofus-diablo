@@ -2,7 +2,6 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { BOUTIQUES, GAME_DATA, ITEMS, QUETES } from '../src/sim/data';
 import { WorldGrid, type WorldData } from '../src/sim/gridmap';
-import { PEPITE } from '../src/sim/items';
 import { exporterJoueur, restaurerJoueur } from '../src/sim/sauvegarde';
 import { ARCHI, World } from '../src/sim/world';
 import { LOOKS } from '../src/render/looks';
@@ -44,7 +43,7 @@ describe('archimonstres d\'Astrub (version 0.3 : 15B)', () => {
 
   it('Petite pierre d\'âme chez Otomaï (0.3) ; un archimonstre vaincu avec elle est capturé', () => {
     const w = monde(), p = w.player;
-    p.resources[PEPITE] = 100;
+    p.kamas = 1000;
     expect(w.acheter('otomai', ARCHI.pierre)).toBe(true);
     expect(monde(false).acheter('otomai', ARCHI.pierre)).toBe(false);
     const m = w.spawnMonster('archi_bouftou', p.x + 40, p.y);

@@ -34,9 +34,8 @@ describe('Havre-Sac (maquette Hub : 1A 2A+2C 3A 4A 7A 8A 9A)', () => {
     const ids = (w: World) => w.quetes!.pnjs.map(p => p.id).sort();
     expect(ids(monde('bastion'))).toEqual(['bouillotte', 'crieur', 'forgemage', 'garde_bonta', 'garde_brakmar', 'garde_frigost', 'garde_pandala', 'garde_zaap1', 'garde_zaap2', 'gawdien', 'tissebelle']);
     expect(ids(monde('bastion', { zonesVues: ['incarnam', 'astrub'] }))).toEqual(['bouillotte', 'crieur', 'forgemage', 'garde_bonta', 'garde_brakmar', 'garde_frigost', 'garde_pandala', 'garde_zaap1', 'garde_zaap2', 'gawdien', 'goultard', 'kerubim', 'otomai', 'tissebelle']);
-    // Ville 6B : Kerubim garde un guichet de recyclage au Havre-Sac
-    expect(ids(monde('havresac'))).toEqual([]);
-    expect(ids(monde('havresac', { zonesVues: ['astrub'] }))).toEqual(['kerubim_guichet']);
+    // Magasin 8A : plus de guichet de Kerubim au Havre-Sac (on défait seulement au Bastion)
+    expect(ids(monde('havresac', { zonesVues: ['astrub'] }))).toEqual([]);
     // chacun sur sa case, tous à part
     const w = monde('bastion', { zonesVues: ['astrub'] }), l = w.quetes!.pnjs;
     for (const a of l) for (const b of l) if (a !== b) expect(Math.hypot(a.x - b.x, a.y - b.y)).toBeGreaterThan(60);
@@ -50,7 +49,7 @@ describe('Havre-Sac (maquette Hub : 1A 2A+2C 3A 4A 7A 8A 9A)', () => {
     expect(BOUTIQUES.otomai.filter(a => !a.v03).map(a => a.id)).toEqual(['548']);   // + Petite pierre d'âme en 0.3 (tests/archimonstres.test.ts)
     expect(BOUTIQUES.bouillotte.length).toBe(2);
     expect(BOUTIQUES.emp).toBeUndefined();
-    for (const [zone, id] of [['bastion', 'kerubim'], ['havresac', 'kerubim_guichet']]) {
+    for (const [zone, id] of [['bastion', 'kerubim']]) {
       const w = monde(zone, { zonesVues: ['astrub'] }), Q = w.quetes!, k = Q.pnjs.find(p => p.id === id)!;
       w.player.x = k.x + 40; w.player.y = k.y;
       Q.cliquer(id); pas(w, 30);
