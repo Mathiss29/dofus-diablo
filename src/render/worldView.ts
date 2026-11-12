@@ -496,6 +496,7 @@ export class WorldView {
   private cadres: { cam: Phaser.Cameras.Scene2D.Camera; r: Phaser.Geom.Rectangle }[] = [];
   static readonly CADRE = 600;
   private cull() {
+    if (!Masques.ESSAIS.has('cull')) return;
     const cams = [this.scene.cameras.main, this.scene.cameras.getCamera('mini')].filter((c): c is Phaser.Cameras.Scene2D.Camera => !!c);
     let refaire = cams.length !== this.cadres.length || cams.some((c, i) => this.cadres[i].cam !== c);
     if (!refaire) for (const { cam, r } of this.cadres) {
