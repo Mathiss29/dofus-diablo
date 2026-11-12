@@ -1,6 +1,7 @@
 import { ALMANAX } from './almanax';
 import type { StyleChoisi, Tenue } from './style';
 import { BENEDICTIONS, type AchatsDuJour, type Benediction } from './magasin';
+import { avantage, type Palier } from './boutiqueOgrines';
 import { CHATIMENTS, PC_PAR_ID } from './pouvoirsClasse';
 import { DOFUS, EMPLACEMENTS_DOFUS, PASSIFS, PORTABLE, TROPHEES } from './dofus';
 import type { CleDonjon } from './arene';
@@ -130,6 +131,10 @@ export class Player extends Entity {
   menagerie: string[] = [];
   /** « Familiers : » 4C : familier de départ déjà choisi à l'Animalerie. */
   familierOffert = false;
+  /** Abonnement du compte (« Apparats : » 16-17) : réglé par l'affichage à partir du serveur, jamais sauvé avec le perso. */
+  abo: Palier | null = null;
+  /** 17C + 17J : avantages du jour déjà pris (bénédictions offertes, clé de donjon offerte). */
+  aboJour = { jour: '', beni: 0, cles: 0 };
   /** « Apparats : » 5B : auréole, effet de Zaap et ornement de nom portés ; tenues enregistrées et places de tenue achetées. */
   style: StyleChoisi = {};
   tenues: Tenue[] = [];
@@ -700,6 +705,7 @@ export class Player extends Entity {
     if (world.almanax?.effet === 'metier') n *= 1 + ALMANAX.metier;   // 15C
     n *= 1 + this.beni('metier');   // Magasin 6D
     n *= 1 + world.bonusDuWeekEnd('metier');   // 0.5 (9B) : week-end
+    n *= 1 + avantage(this.abo, 'metierXp');   // « Apparats : » 17K
     m.xp += n;
     while (m.level < METIER_MAX && m.xp >= metierXpNeeded(m.level)) {
       m.xp -= metierXpNeeded(m.level); m.level++;

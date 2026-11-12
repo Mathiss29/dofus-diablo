@@ -26,15 +26,15 @@ export function partLegendaire(rang: Rang): number {
 
 export type Raretes = Record<Rarity, number>;
 /** Chances de chaque rareté pour un objet tiré (parts de 1, total 1). */
-export function raretes(rang: Rang, pros = 0): Raretes {
+export function raretes(rang: Rang, pros = 0, coefLeg = 1): Raretes {
   const p = coefRaretes(pros), r = BUTIN.raretes[rang];
-  const leg = Math.min(1, partLegendaire(rang) * p), myth = leg / BUTIN.mythiqueParLegendaire;
+  const leg = Math.min(1, partLegendaire(rang) * p * coefLeg), myth = leg / BUTIN.mythiqueParLegendaire;
   const epique = Math.min(1 - leg, r.epique / 100 * p), rare = Math.min(1 - leg - epique, r.rare / 100 * p);
   return { mythique: myth, legendaire: leg - myth, epique, rare, commun: Math.max(0, 1 - leg - epique - rare) };
 }
 /** Tire une rareté (true = boss, false = monstre normal, pour les appels d'avant les rangs). */
-export function rollRarity(rng: Rng, rang: Rang | boolean, pros = 0): Rarity {
-  const t = raretes(typeof rang === 'boolean' ? (rang ? 'boss' : 'normal') : rang, pros);
+export function rollRarity(rng: Rng, rang: Rang | boolean, pros = 0, coefLeg = 1): Rarity {
+  const t = raretes(typeof rang === 'boolean' ? (rang ? 'boss' : 'normal') : rang, pros, coefLeg);
   let r = rng.next();
   for (const k of ['mythique', 'legendaire', 'epique', 'rare'] as const) { if (r < t[k]) return k; r -= t[k]; }
   return 'commun';
@@ -66,6 +66,8 @@ export interface CtxButin {
   evenement?: boolean;
   /** Tirage des pouvoirs légendaires (classe, sorts connus ; anciens pouvoirs seuls si absent). */
   pouvoirs?: CtxPouvoirs;
+  /** « Apparats : » 17F : chance de légendaire multipliée (abonnement Légende). */
+  legendaire?: number;
 }
 /** État d'une ligne : tombe, ne tombe que pendant un événement ou une quête (6B), ou demande un métier qu'on n'a pas. */
 export type EtatLigne = 'ok' | 'evenement' | 'quete' | 'metier';
@@ -144,7 +146,7 @@ export function tirerButin(rng: Rng, ctx: CtxButin, uid: () => number): Butin {
     if (etatLigne(d, ctx) !== 'ok') continue;
     if (rng.next() >= chanceLigne(d, I, pros, ctx.rang)) continue;
     if (avant03(d, ctx)) continue;
-    if (I.equipment[d.item]) out.objets.push(rollItem(d.item, I.equipment[d.item], rollRarity(rng, ctx.rang, pros), rng, uid(), ctx.pouvoirs));
+    if (I.equipment[d.item]) out.objets.push(rollItem(d.item, I.equipment[d.item], rollRarity(rng, ctx.rang, pros, ctx.legendaire), rng, uid(), ctx.pouvoirs));
     else out.ressources.push({ id: d.item, job: metierDe(d, I) });
   }
   // familier de la famille du monstre (Familiers 1A)
@@ -155,7 +157,7 @@ export function tirerButin(rng: Rng, ctx: CtxButin, uid: () => number): Butin {
     if (rng.next() >= Math.min(1, e.chance * more) || !pool.length) continue;
     const pano = ctx.rang === 'boss' && ctx.panoBoss?.length && rng.next() < BUTIN.equipement.panoBoss ? ctx.panoBoss : null;
     const id = rng.pick(pano ?? pool).id;
-    out.objets.push(rollItem(id, I.equipment[id], rollRarity(rng, ctx.rang, pros), rng, uid(), ctx.pouvoirs));
+    out.objets.push(rollItem(id, I.equipment[id], rollRarity(rng, ctx.rang, pros, ctx.legendaire), rng, uid(), ctx.pouvoirs));
   }
   // kamas : un petit tas de pièces, plus gros pour les élites et les boss
   const K = kamasDe(ctx.rang);
@@ -180,7 +182,7 @@ export function tableButin(ctx: CtxButin): TableButin {
   const I = ctx.items, pros = ctx.prospection, more = coefProspection(pros);
   const officiel = (I.drops[ctx.type] ?? []).filter(d => !avant03(d, ctx)).map(d => ({ d, etat: etatLigne(d, ctx), chance: chanceLigne(d, I, pros, ctx.rang), equipement: !!I.equipment[d.item] }))
     .sort((a, b) => b.d.chance - a.d.chance);
-  const R = raretes(ctx.rang, pros), leg = R.legendaire + R.mythique, e = BUTIN.equipement[ctx.rang], pool = poolNiveau(ctx);
+  const R = raretes(ctx.rang, pros, ctx.legendaire), leg = R.legendaire + R.mythique, e = BUTIN.equipement[ctx.rang], pool = poolNiveau(ctx);
   const c = pool.length ? Math.min(1, e.chance * more) : 0;
   let aucun = Math.pow(1 - c * leg, e.tirages);
   for (const l of officiel) if (l.equipement && l.etat === 'ok') aucun *= 1 - l.chance * leg;

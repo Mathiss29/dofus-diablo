@@ -55,9 +55,9 @@ export function sousZonesPour(niveau: number, ctx: CtxContrats): string[] {
 }
 
 /** Les contrats proposés pour cette période (jour : 3, semaine : 1), selon le niveau du perso. */
-export function tirerContrats(periode: string, hebdo: boolean, niveau: number, ctx: CtxContrats): string[] {
+export function tirerContrats(periode: string, hebdo: boolean, niveau: number, ctx: CtxContrats, enPlus = 0): string[] {
   const subs = sousZonesPour(niveau, ctx), r = suite(hache(`${periode}:${niveau}`)), out: string[] = [];
-  const n = hebdo ? 1 : CONTRATS_PAR_JOUR, pris = new Set<string>();
+  const n = hebdo ? 1 : CONTRATS_PAR_JOUR + enPlus, pris = new Set<string>();
   for (let i = 0; i < n; i++) {
     const libres = subs.filter(s => !pris.has(s)), l = libres.length ? libres : subs;
     const s = l[Math.floor(r() * l.length)]; pris.add(s);
