@@ -4,7 +4,6 @@ import { GAME_DATA, ITEMS } from '../src/sim/data';
 import { icons as ICON_FRAMES } from '../src/data/icones_objets.json';
 import { GridMap, type MapData } from '../src/sim/gridmap';
 import { METIERS_FAB, chanceRare } from '../src/sim/metiers';
-import { Player } from '../src/sim/player';
 import { World } from '../src/sim/world';
 
 const carte = JSON.parse(readFileSync(new URL('../public/assets/cartes/5_-27/carte.json', import.meta.url), 'utf8')) as MapData;
@@ -74,7 +73,7 @@ describe('métiers de fabrication (version 0.3 : 9A 10A+10B)', () => {
     const w = arena(), p = w.player, { i } = recette('forgeron');
     remplir(w, i, 10);
     const id = Object.entries(ITEMS.equipment).find(([, x]) => !x.familier)![0];
-    while (p.bag.length < Player.BAG_SIZE - 2) p.bag.push({ uid: w.newUid(), id, rarity: 'commun', stats: {}, extra: [] });
+    while (p.bag.length < p.tailleSac - 2) p.bag.push({ uid: w.newUid(), id, rarity: 'commun', stats: {}, extra: [] });
     expect(w.craft(i, 10)).toBe(2);
     expect(w.craftMax(i)).toBe(0);
   });

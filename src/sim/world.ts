@@ -1,5 +1,5 @@
 import { appliquerCarte, majCarteJoueur } from './carte';
-import { achatsDuJour, etalDuJour, MAGASIN, pieceDeLaSemaine, reserveePiece, type CtxMagasin, type Offre } from './magasin';
+import { achatsDuJour, BENEDICTION, BENEDICTIONS, CONFORT, etalDuJour, MAGASIN, pieceDeLaSemaine, reserveePiece, type Benediction, type CtxMagasin, type Offre } from './magasin';
 import { angleDiff, Rng } from './math';
 import type { AtelierDef, DonjonDef, Element, GameData, HitZone, MonsterSpell, SubAreaDef, ZoneDef } from './defs';
 import type { PointDeRetour, RetourHavreSac, SimEvent, Telegraph } from './events';
@@ -1884,7 +1884,7 @@ export class World {
     p.soigner(p.cls.healOnKill + p.legendary('vampire'));
     this.dropLoot(m);
     if (m.def.archiDe) this.capturer(m);
-    const alm = this.almanax?.effet === 'xp' ? 1 + ALMANAX.xp : 1;   // 15C
+    const alm = (this.almanax?.effet === 'xp' ? 1 + ALMANAX.xp : 1) * (1 + p.beni('xp'));   // 15C, Magasin 6D
     // Multi (maquette « Multi : » 7A) : chaque joueur proche gagne l'XP comme en solo, +10 % par allié proche
     const proches = this.players.filter(q => q !== p && !q.dead && Math.abs(q.x - m.x) + Math.abs(q.y - m.y) <= World.SOMMEIL);
     const base = (m.def.xp ?? Math.round(m.def.hp / 5)) * this.bonusMassacre() * alm * (1 + World.XP_PAR_ALLIE * proches.length);
@@ -1948,7 +1948,7 @@ export class World {
   /** Ce que le calcul du butin doit savoir (src/sim/butin.ts) : sert au jeu, au Bestiaire et au simulateur de l'outil de test. */
   contexteButin(type: string, rang: Rang, niveau: number): CtxButin {
     const p = this.player;
-    return { type, rang, niveau, prospection: p.prospection + (this.almanax?.effet === 'butin' ? ALMANAX.butin : 0), items: this.opts.items!, familiers: this.familiersDe[type] ?? [], pool: this.equipByLevel, poolSecours: this.equipSecours,
+    return { type, rang, niveau, prospection: p.prospection + (this.almanax?.effet === 'butin' ? ALMANAX.butin : 0) + p.beni('butin') * REGLAGES_BUTIN.prospection.chances, items: this.opts.items!, familiers: this.familiersDe[type] ?? [], pool: this.equipByLevel, poolSecours: this.equipSecours,
       panoBoss: rang === 'boss' ? this.panoBoss(type) : undefined,
       metierNiveau: j => p.metierLevel(j), armeChasse: !!p.huntingWeapon, pouvoirs: rang === 'boss' ? { ...p.ctxPouvoirs, boss: type } : p.ctxPouvoirs };
   }
@@ -2022,7 +2022,7 @@ export class World {
           this.finDefaire(1, tout, this.defaireUn(d.item, def, tout), d.item.id);
           d.t = -1; continue;
         }
-        if (p.bag.length >= Player.BAG_SIZE) { if (!d.warned) this.emit({ k: 'bagFull' }); d.warned = true; d.familier = false; continue; }   // sac plein : l'objet reste au sol
+        if (p.bag.length >= p.tailleSac) { if (!d.warned) this.emit({ k: 'bagFull' }); d.warned = true; d.familier = false; continue; }   // sac plein : l'objet reste au sol
         p.bag.push(d.item);
         this.emit({ k: 'loot', item: d.item });
         this.ouvrirCodex(d.item);
@@ -2047,7 +2047,7 @@ export class World {
     if (!cible && !p.dead) {
       let best = World.FAMILIER_RAYON;
       for (const d of this.drops) {
-        if (d.t < 0.5 || d.familier || !this.shown(d) || (d.item && p.bag.length >= Player.BAG_SIZE)) continue;
+        if (d.t < 0.5 || d.familier || !this.shown(d) || (d.item && p.bag.length >= p.tailleSac)) continue;
         const r = Math.hypot(d.x - p.x, d.y - p.y);
         if (r < best) { best = r; cible = d; }
       }
@@ -2426,10 +2426,28 @@ export class World {
     const o = this.pieceDeLaSemaine(), p = this.player;
     return !!o && this.payer(o.prix, o.monnaie, () => { if (p.apparats.includes(o.id)) return false; p.apparats.push(o.id); return true; }, o.id);
   }
+  /** 6C : +20 places de sac (prix qui monte à chaque achat). */
+  prixSacEnPlus(): number | null { return CONFORT.sac.prix[this.player.sacEnPlus / CONFORT.sac.pas] ?? null; }
+  acheterPlacesSac(): boolean {
+    const prix = this.prixSacEnPlus(), p = this.player;
+    return prix != null && this.payer(prix, PEPITE, () => { p.sacEnPlus += CONFORT.sac.pas; return true; }, 'confort:sac');
+  }
+  /** 6C : un préréglage d'équipement de plus (4e, puis 5e). */
+  prixPrereglage(): number | null { return CONFORT.prereglage.prix[this.player.prereglages.length - Player.PREREGLAGES] ?? null; }
+  acheterPrereglage(): boolean {
+    const prix = this.prixPrereglage(), p = this.player;
+    return prix != null && this.payer(prix, PEPITE, () => { p.prereglages.push(null); return true; }, 'confort:prereglage');
+  }
+  /** 6D : une bénédiction de 30 minutes ; elle remplace celle en cours. */
+  acheterBenediction(k: Benediction): boolean {
+    const p = this.player;
+    if (!BENEDICTIONS[k]) return false;
+    return this.payer(BENEDICTION.prix, PEPITE, () => { p.benediction = { k, reste: BENEDICTION.duree }; return true; }, `benediction:${k}`);
+  }
   /** 4C : un sac à rareté garantie (Rare ou Épique) de son niveau, un seul par jour. */
   acheterSacDuJour(rarete: 'rare' | 'epique'): boolean {
     const a = this.achatsDuJour(), p = this.player;
-    if (a.sac || p.bag.length >= Player.BAG_SIZE) return false;
+    if (a.sac || p.bag.length >= p.tailleSac) return false;
     const ok = this.payer(MAGASIN.sac[rarete], PEPITE, () => true, `sac:${rarete}`);
     if (ok) { a.sac = true; this.donnerSac(rarete, p.level); }
     return ok;
@@ -2491,7 +2509,7 @@ export class World {
     if (!r || !this.recetteVisible(r) || Math.max(1, p.metierLevel(r.metier)) < r.level) return 0;
     let n = Math.min(...r.ingredients.map(([id, q]) => Math.floor((p.resources[id] ?? 0) / q)));
     if (this.opts.items?.equipment[r.result]) {
-      n = Math.min(n, Player.BAG_SIZE - p.bag.length);   // un objet par place du sac
+      n = Math.min(n, p.tailleSac - p.bag.length);   // un objet par place du sac
       if (rare) n = this.ingredientsRares.has(rare) ? Math.min(n, Math.floor((p.resources[rare] ?? 0) / (1 + (r.ingredients.find(([x]) => x === rare)?.[1] ?? 0)))) : 0;
     }
     if (TROPHEES[r.result]) n = p.trophees.includes(r.result) ? 0 : Math.min(n, 1);   // un trophée se possède une fois (3B)
@@ -2567,7 +2585,7 @@ export class World {
   /** Reprend un objet du coffre dans le sac (il prend un numéro de ce perso : il peut venir d'un autre). */
   retirer(onglet: number, index: number): boolean {
     const p = this.player, l = this.coffre.onglets[onglet], it = l?.[index];
-    if (!this.presCoffre || !it || p.bag.length >= Player.BAG_SIZE) return false;
+    if (!this.presCoffre || !it || p.bag.length >= p.tailleSac) return false;
     l.splice(index, 1);
     p.bag.push({ ...it, uid: this.nextId++ });
     this.emit({ k: 'coffre' });

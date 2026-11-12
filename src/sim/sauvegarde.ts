@@ -1,4 +1,5 @@
 import type { EquipSlot, Item, Stat } from './items';
+import { BENEDICTION, BENEDICTIONS, CONFORT, type Benediction } from './magasin';
 import type { EtatQuetes } from './quests';
 import type { RetourHavreSac } from './events';
 import type { World } from './world';
@@ -6,7 +7,7 @@ import type { CleDonjon } from './arene';
 import type { EtatGuerre } from './guerre';
 import type { CommandeFM } from './forgemagie';
 import type { EntreeCodex } from './codex';
-import type { Prereglage } from './player';
+import { Player, type Prereglage } from './player';
 import { DOFUS, EMPLACEMENTS_DOFUS, TROPHEES } from './dofus';
 import { drapeauxPropres, type Drapeau, type Tombe } from './carte';
 
@@ -52,6 +53,8 @@ export interface EtatJoueur {
   /** Jour de la dernière offrande à l'Almanax (15C). */
   almanaxJour?: string | null;
   magasin?: { jour: string; etal: number[]; sac: boolean } | null;
+  sacEnPlus?: number;
+  benediction?: { k: string; reste: number } | null;
   /** Dofus possédés et portés (0.3). */
   dofus?: string[]; trophees?: string[]; dofusPortes?: (string | null)[];
 }
@@ -65,7 +68,7 @@ export function exporterJoueur(w: World): EtatJoueur {
     base: p.base, bag: p.bag, equipment: p.equipment, resources: p.resources, metiers: p.metiers, recetteSuivie: p.recetteSuivie,
     bar: p.bar, variants: p.variants, learned: [...p.learned],
     x: p.x, y: p.y, retour: w.pointDeRetour, quetes: w.quetes?.exporter(), zone: w.opts.zone,
-    apparats: p.apparats, apparat: p.apparat, codex: p.codex, codexOuvert: p.codexOuvert, ames: p.ames, prereglages: p.prereglages, almanaxJour: p.almanaxJour, magasin: p.magasin, dofus: p.dofus, trophees: p.trophees, dofusPortes: p.dofusPortes,
+    apparats: p.apparats, apparat: p.apparat, codex: p.codex, codexOuvert: p.codexOuvert, ames: p.ames, prereglages: p.prereglages, almanaxJour: p.almanaxJour, magasin: p.magasin, sacEnPlus: p.sacEnPlus, benediction: p.benediction, dofus: p.dofus, trophees: p.trophees, dofusPortes: p.dofusPortes,
     zaaps: p.zaaps, zonesVues: p.zonesVues, explore: p.explore, drapeaux: p.drapeaux, tombe: p.tombe, lieuxVus: p.lieuxVus, cleDonjon: p.cleDonjon, guerre: p.guerre, commandeFM: p.commandeFM, ...(w.retour ? { havreSac: w.retour } : {}),
   });
 }
@@ -87,6 +90,11 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
   p.apparats = Array.isArray(s.apparats) ? s.apparats.filter(a => typeof a === 'string') : [];
   p.apparat = {};
   for (const k of ['chapeau', 'cape', 'bouclier', 'familier'] as const) { const a = s.apparat?.[k]; if (a === '0' || (a && p.apparats.includes(a))) p.apparat[k] = a; }
+  p.sacEnPlus = Math.max(0, Math.min(CONFORT.sac.pas * CONFORT.sac.prix.length, Math.floor((s.sacEnPlus ?? 0) / CONFORT.sac.pas) * CONFORT.sac.pas));
+  p.benediction = s.benediction && s.benediction.k in BENEDICTIONS && s.benediction.reste > 0 ? { k: s.benediction.k as Benediction, reste: Math.min(BENEDICTION.duree, s.benediction.reste) } : null;
+  // 6C : 4e et 5e préréglages achetés (la sauvegarde garde leurs cases, même vides)
+  const nPrer = Math.max(Player.PREREGLAGES, Math.min(Player.PREREGLAGES + CONFORT.prereglage.prix.length, Array.isArray(s.prereglages) ? s.prereglages.length : 0));
+  p.prereglages = Array(nPrer).fill(null);
   if (Array.isArray(s.prereglages)) p.prereglages = Array.from({ length: p.prereglages.length }, (_, i) => {
     const r = s.prereglages![i];
     return r && typeof r === 'object' && r.equipement && Array.isArray(r.bar) ? { nom: String(r.nom ?? `Préréglage ${i + 1}`), equipement: r.equipement, bar: r.bar, variants: Array.isArray(r.variants) ? r.variants : [] } : null;
