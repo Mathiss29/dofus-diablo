@@ -8,6 +8,7 @@ import { createHash, randomBytes } from 'node:crypto';
 import { mkdirSync, readdirSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
+import { creerOgrines } from './ogrines.mjs';
 
 export const COMPTES = {
   emplacements: 5,   // 3 + 2 achetés au Marché (Magasin 6C, gardés dans le coffre du compte)
@@ -195,9 +196,12 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
     return true;
   }
 
+  // Ogrines et codes cadeaux (« Apparats : » 10-12) : serveur/ogrines.mjs
+  const ogrines = creerOgrines({ db, connecte, admin: c => vue(c).admin, lireCorps, env, maintenant, adminDiscord: roles => roles.some(r => admins.has(r)) });
   /** Répond aux adresses des comptes ; renvoie false si l'adresse n'est pas la sienne. */
   async function route(req, res, url) {
     const p = url.pathname, m = req.method;
+    if (await ogrines.route(req, res, url)) return true;
     if (p === '/parcours') {
       if (m === 'POST') {
         const a = url.searchParams.get('arrivee');
@@ -251,7 +255,7 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
         for (const r of q.persos.all(c.id)) if (r.emplacement < COMPTES.emplacements) persos[r.emplacement] = { perso: JSON.parse(r.donnees), maj: r.maj };
         const coffres = {};
         for (const r of q.coffres.all(c.id)) coffres[r.sorte] = JSON.parse(r.donnees);
-        return json(res, 200, { compte: vue(c), persos, coffres }), true;
+        return json(res, 200, { compte: vue(c), persos, coffres, ogrines: ogrines.solde(c.id) }), true;
       }
       // coffre partagé du compte (0.3, 12A+12D) : un pour les persos normaux, un pour les Hardcore
       if (p.startsWith('/coffres/')) {
@@ -389,7 +393,7 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
     regler(moi, horsLigne, inconnus) { q.regler.run(moi, horsLigne ? 1 : 0, inconnus ? 1 : 0); },
   };
 
-  const api = { route, copieNocturne, pret, persoPartie, sauverPartie, compteDuJeton, social, stats: () => q.nb.get(), fermer: () => { clearInterval(minuterie); db.close(); },
+  const api = { route, copieNocturne, pret, ogrines, persoPartie, sauverPartie, compteDuJeton, social, stats: () => q.nb.get(), fermer: () => { clearInterval(minuterie); db.close(); },
     /** Pour le classement (classement.mjs) : la base, le compte d'une requête, le corps JSON d'une requête. */
     db, connecte, lireCorps,
     /** Ladder 3B : appelé avec (compte, perso, stèle) quand un perso Hardcore meurt, avant qu'il soit effacé. */

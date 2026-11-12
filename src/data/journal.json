@@ -1864,6 +1864,16 @@
             "etiquettes": [
               "Bastion des Douze"
             ]
+          },
+          {
+            "titre": "Codes cadeaux et Ogrines",
+            "phrase": "Entre un code cadeau dans Options › Compte : Ogrines sur ton compte, objets ou apparats sur ton perso.",
+            "details": "Les Ogrines ne s'achètent pas : elles viennent des codes et des événements du Discord.",
+            "icone": "kamas",
+            "etiquettes": [
+              "Options",
+              "En ligne"
+            ]
           }
         ],
         "Le monde": [

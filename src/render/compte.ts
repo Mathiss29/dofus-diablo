@@ -17,6 +17,11 @@ const ERREURS: Record<string, string> = {
   occupe: 'Trop de connexions en même temps, réessaie dans un instant.',
 };
 
+const ERREURS_CODE: Record<string, string> = {
+  inconnu: 'Ce code n\'existe pas.', expire: 'Ce code a expiré.', deja: 'Tu as déjà utilisé ce code sur ce compte.',
+  epuise: 'Ce code a déjà servi autant de fois que prévu.', essais: 'Trop d\'essais : réessaie dans une heure.',
+};
+
 const lire = (k: string) => { try { return localStorage.getItem(k); } catch { return null; } };
 const ecrireCle = (k: string, v: string | null) => { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch { /* rien */ } };
 
@@ -25,6 +30,8 @@ class CompteEnLigne {
   infos: InfosCompte | null = null;
   /** Message à montrer une fois à l'accueil (erreur de connexion, conflit…). */
   message = '';
+  /** Ogrines du compte (« Apparats : » 10A : seulement par codes cadeaux et événements, jamais vendues). */
+  ogrines = 0;
   private ecouteurs = new Set<() => void>();
   /** Dernière version envoyée (ou reçue) de chaque emplacement et de chaque coffre. */
   private envoye = new Map<string, string>();
@@ -67,8 +74,8 @@ class CompteEnLigne {
     try {
       const r = await this.api('/moi');
       if (!r.ok) throw new Error(String(r.status));
-      const d = await r.json() as { compte: InfosCompte; persos: ({ perso: Perso } | null)[]; coffres: Record<string, unknown> };
-      this.infos = d.compte;
+      const d = await r.json() as { compte: InfosCompte; persos: ({ perso: Perso } | null)[]; coffres: Record<string, unknown>; ogrines?: number };
+      this.infos = d.compte; this.ogrines = d.ogrines ?? 0;
       const l = Array.from({ length: EMPLACEMENTS_MAX }, (_, i) => d.persos[i]?.perso ?? null);
       remplacerPersosEnLigne(l);
       l.forEach((p, i) => this.envoye.set(`p${i}`, JSON.stringify(p)));
@@ -102,6 +109,24 @@ class CompteEnLigne {
     if (!r.ok) return 'Le serveur a refusé ce perso.';
     await this.charger();
     return null;
+  }
+
+  /** 11A : entre un code cadeau. Rend les objets à remettre au perso, ou un message d'erreur. */
+  async utiliserCode(code: string): Promise<{ ogrines: number; objets: string[] } | { erreur: string }> {
+    if (!this.enLigne) return { erreur: 'Les codes cadeaux vont sur ton compte : connecte-toi avec Discord et passe en mode « En ligne ».' };
+    const r = await this.api('/codes/utiliser', { method: 'POST', body: JSON.stringify({ code: code.trim() }) }).catch(() => null);
+    if (!r) return { erreur: 'Le serveur ne répond pas.' };
+    const d = await r.json().catch(() => ({})) as { erreur?: string; ogrines?: number; objets?: string[]; solde?: number };
+    if (d.erreur || !r.ok) return { erreur: ERREURS_CODE[d.erreur ?? ''] ?? 'Ce code ne marche pas.' };
+    this.ogrines = d.solde ?? this.ogrines + (d.ogrines ?? 0); this.changer();
+    return { ogrines: d.ogrines ?? 0, objets: d.objets ?? [] };
+  }
+  /** Admins (12A) : crée un code depuis le jeu. */
+  async creerCode(o: { ogrines: number; objets: string[]; max: number; jours: number; code?: string }): Promise<string> {
+    const r = await this.api('/codes', { method: 'POST', body: JSON.stringify(o) }).catch(() => null);
+    if (!r) return 'Le serveur ne répond pas.';
+    const d = await r.json().catch(() => ({})) as { erreur?: string; code?: string };
+    return d.code ? `Code créé : ${d.code}` : `Code refusé (${d.erreur ?? r.status}).`;
   }
 
   /** Une écriture locale (persos.ts) : envoi groupé, au plus toutes les 30 s par emplacement. */
