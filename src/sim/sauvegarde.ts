@@ -51,6 +51,7 @@ export interface EtatJoueur {
   prereglages?: (Prereglage | null)[];
   /** Jour de la dernière offrande à l'Almanax (15C). */
   almanaxJour?: string | null;
+  magasin?: { jour: string; etal: number[]; sac: boolean } | null;
   /** Dofus possédés et portés (0.3). */
   dofus?: string[]; trophees?: string[]; dofusPortes?: (string | null)[];
 }
@@ -64,7 +65,7 @@ export function exporterJoueur(w: World): EtatJoueur {
     base: p.base, bag: p.bag, equipment: p.equipment, resources: p.resources, metiers: p.metiers, recetteSuivie: p.recetteSuivie,
     bar: p.bar, variants: p.variants, learned: [...p.learned],
     x: p.x, y: p.y, retour: w.pointDeRetour, quetes: w.quetes?.exporter(), zone: w.opts.zone,
-    apparats: p.apparats, apparat: p.apparat, codex: p.codex, codexOuvert: p.codexOuvert, ames: p.ames, prereglages: p.prereglages, almanaxJour: p.almanaxJour, dofus: p.dofus, trophees: p.trophees, dofusPortes: p.dofusPortes,
+    apparats: p.apparats, apparat: p.apparat, codex: p.codex, codexOuvert: p.codexOuvert, ames: p.ames, prereglages: p.prereglages, almanaxJour: p.almanaxJour, magasin: p.magasin, dofus: p.dofus, trophees: p.trophees, dofusPortes: p.dofusPortes,
     zaaps: p.zaaps, zonesVues: p.zonesVues, explore: p.explore, drapeaux: p.drapeaux, tombe: p.tombe, lieuxVus: p.lieuxVus, cleDonjon: p.cleDonjon, guerre: p.guerre, commandeFM: p.commandeFM, ...(w.retour ? { havreSac: w.retour } : {}),
   });
 }
@@ -94,6 +95,7 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
   p.trophees = Array.isArray(s.trophees) ? s.trophees.filter(id => typeof id === 'string' && TROPHEES[id]) : [];
   p.dofusPortes = Array.from({ length: EMPLACEMENTS_DOFUS }, (_, i) => { const id = s.dofusPortes?.[i]; return typeof id === 'string' && (p.dofus.includes(id) || p.trophees.includes(id)) && s.dofusPortes!.indexOf(id) === i ? id : null; });
   p.almanaxJour = typeof s.almanaxJour === 'string' ? s.almanaxJour : null;
+  p.magasin = s.magasin && typeof s.magasin.jour === 'string' ? { jour: s.magasin.jour, etal: Array.isArray(s.magasin.etal) ? s.magasin.etal.filter(n => typeof n === 'number') : [], sac: !!s.magasin.sac } : null;
   p.ames = Array.isArray(s.ames) ? s.ames.filter(a => typeof a === 'string') : [];
   p.codexOuvert = !!s.codexOuvert || (Array.isArray(s.codex) && s.codex.length > 0);
   p.codex = Array.isArray(s.codex) ? s.codex.filter(c => typeof c?.id === 'string').map(c => ({ id: c.id, ...(typeof c.sort === 'string' ? { sort: c.sort } : {}), ...(typeof c.value === 'number' && isFinite(c.value) ? { value: c.value } : {}) })) : [];

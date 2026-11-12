@@ -1672,6 +1672,15 @@
             "etiquettes": [
               "Bastion des Douze"
             ]
+          },
+          {
+            "titre": "Le Marché du Bastion",
+            "phrase": "Otomaï, Mère Bouillotte, Goultard et Tissebelle ouvrent une seule fenêtre à onglets.",
+            "details": "Étal du jour à minuit (deux offres à -30 %), pièce de la semaine introuvable ailleurs, un sac Rare ou Épique par jour. Maj + clic achète par 10.",
+            "icone": "sac",
+            "etiquettes": [
+              "Bastion des Douze"
+            ]
           }
         ],
         "Le monde": [],

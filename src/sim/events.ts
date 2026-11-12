@@ -132,7 +132,7 @@ export type SimEvent =
   /** Commande à Malek (Forgemagie UI 9E) : confiée, prête (l'objet attend chez lui), reprise. */
   | { k: 'commande'; etat: 'confiee' | 'prete' | 'retiree'; reste: number; essais: number }
   | { k: 'signature'; uid: number; nom: string }
-  | { k: 'achat'; id: string; prix: number; /** « kamas », Cawottes (id), sinon Pépites */ monnaie?: string }
+  | { k: 'achat'; id: string; prix: number; /** « kamas », Cawottes (id), sinon Pépites */ monnaie?: string; /** acheté par lot (Maj + clic) */ n?: number }
   /** Familier : niveau gagné, et repas (XP donnée). */
   | { k: 'familierNiveau'; nom: string; niveau: number }
   | { k: 'familierRepas'; xp: number }

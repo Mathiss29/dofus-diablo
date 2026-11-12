@@ -1,4 +1,5 @@
 import { ALMANAX } from './almanax';
+import type { AchatsDuJour } from './magasin';
 import { CHATIMENTS, PC_PAR_ID } from './pouvoirsClasse';
 import { DOFUS, EMPLACEMENTS_DOFUS, PASSIFS, PORTABLE, TROPHEES } from './dofus';
 import type { CleDonjon } from './arene';
@@ -124,6 +125,8 @@ export class Player extends Entity {
   codexOuvert = false;
   /** 15C : jour (AAAA-MM-JJ) de la dernière offrande à l'Almanax ; son bonus dure jusqu'à minuit. */
   almanaxJour: string | null = null;
+  /** Magasin (3A, 4C) : offres de l'étal et sac garanti pris aujourd'hui. */
+  magasin: AchatsDuJour | null = null;
   /** Dofus possédés (ids officiels) et les 6 emplacements (version 0.3, src/sim/dofus.ts). */
   dofus: string[] = [];
   /** Trophées possédés (0.4 suite 3A+3B), portés dans les mêmes emplacements que les Dofus. */
