@@ -1770,6 +1770,7 @@
         "Corrections": [
           "Plus de saccades en marchant près du décor, et moins de travail quand on change de carte.",
           "L'inventaire s'ouvre tout de suite : icônes et personnage sont prêts avant même de l'ouvrir.",
+          "Le Zaap ne s'ouvre plus en cliquant à côté : seul le dessin de l'arche répond au clic.",
           "L'exo s'ouvre dès Épique ; PA, PM et Portée restent réservés aux Légendaires et aux Mythiques."
         ],
         "En coulisses": [
