@@ -4,6 +4,7 @@ import { apercuSort } from '../sim/apercu';
 import { dossier, v } from './assetUrl';
 import Phaser from 'phaser';
 import { calerCamera, densite, densitePleine, reglerDensite } from './pixel';
+import { rareteApparat } from '../sim/apparats';
 import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES, TEINTURES, THEMES_HAVRESAC } from '../sim/data';
 import { themeChoisi, zoneAvecTheme } from '../sim/havresac';
 import type { Compte } from '../sim/quests';
@@ -254,6 +255,8 @@ export class ZoneScene extends Phaser.Scene {
     if (GAME_DATA.classes[this.classId].souffrance) for (let i = 1; i <= 10; i++)
       if (!this.textures.exists(`souffrance_${i}`)) this.load.image(`souffrance_${i}`, v(`${ASSETS}/ui/souffrance/s${i}.png`));
     if (!this.textures.exists(ICON_SHEET.key)) this.load.spritesheet(ICON_SHEET.key, v(`${ASSETS}/${ICON_SHEET.url}`), { frameWidth: ICON_SHEET.cell, frameHeight: ICON_SHEET.cell });
+    // « Apparats : » 1B 1D : un apparat peut tomber au sol (planche des coiffes et capes d'apparat)
+    if (!this.textures.exists('apparats')) this.load.spritesheet('apparats', v(`${ASSETS}/ui/apparat.webp`), { frameWidth: APPARATS.cell, frameHeight: APPARATS.cell });
     const zone = this.zoneVue();
     // On ne charge que les planches utiles à cette zone
     const types = new Set<string>();
@@ -1280,7 +1283,7 @@ export class ZoneScene extends Phaser.Scene {
       case 'metierLevel': return [`${ITEMS.metiers?.[e.metier]?.name ?? 'Métier'} niveau ${e.level}`];
       case 'commande': return e.etat === 'prete' ? ['Malek le Forgemage a fini ta commande : ton objet t\'attend au Bastion des Douze'] : null;
       case 'codex': { const o = POUVOIR_PAR_ID[e.id], c = PC_PAR_ID[e.id]; return [`Codex : ${o ? o.sort : c ? c.nom : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id} enregistré`]; }
-      case 'apparence': return [`Apparence débloquée : ${ITEMS.equipment[e.id]?.name ?? 'objet'}`];
+      case 'apparence': return [`Apparence débloquée : ${APPARATS.objets[e.id]?.name ?? ITEMS.equipment[e.id]?.name ?? 'objet'}`];
       case 'almanax': return [`Almanax : offrande faite, +${e.pepites} Pépites et « ${e.bonus} » jusqu'à minuit`];
       case 'bagFull': return ['Sac plein : défais des objets chez Kerubim Crépin, au Bastion des Douze'];
       case 'bossDown': return [`${GAME_DATA.monsters[e.monster]?.name ?? 'Boss'} vaincu !`];
@@ -1474,7 +1477,7 @@ export class ZoneScene extends Phaser.Scene {
         case 'codexOuvert': this.hud.loot('Le Codex des pouvoirs s\'ouvre : brise un Légendaire chez Malek pour garder son pouvoir', '#f08a2c'); this.windows?.refresh(); break;
         case 'impression': { const o = POUVOIR_PAR_ID[e.id], c = PC_PAR_ID[e.id]; this.hud.loot('Impression réussie : l\'objet devient Légendaire', '#f08a2c');
           this.windows?.noteForge({ t: `Impression : ${o ? o.officiel : c ? c.nom : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id}`, c: 'ok' }); break; }
-        case 'apparence': this.hud.loot(`Apparence débloquée : ${ITEMS.equipment[e.id]?.name ?? 'objet'}`, '#e6b85c'); break;
+        case 'apparence': this.hud.loot(`Apparence débloquée : ${APPARATS.objets[e.id]?.name ?? ITEMS.equipment[e.id]?.name ?? 'objet'}`, e.rarete ? RARITY_COLORS[e.rarete] : '#e6b85c'); break;
         case 'fusion': this.windows?.noteForge({ t: `Fusion : ${e.n} ${ITEMS.resources[e.vers]?.name ?? e.vers}`, c: 'br' }); break;
         case 'commande':
           if (e.etat === 'confiee') this.windows?.noteForge({ t: `Objet confié à Malek : ${e.essais} rune${e.essais > 1 ? 's' : ''} à poser, prêt dans ${mmss(e.reste)}`, c: 'ne' });
@@ -1636,13 +1639,15 @@ export class ZoneScene extends Phaser.Scene {
       let v = this.dropViews.get(d.uid);
       const p = ISO.toScreen(d.x, d.y);
       if (!v) {
-        const col = d.item ? RARITY_COLORS[d.item.rarity] : '#f2d36b', tint = parseInt(col.slice(1), 16);
-        const big = d.item ? ['rare', 'epique', 'legendaire', 'mythique'].indexOf(d.item.rarity) : -1;
+        const ap = d.apparat ? APPARATS.objets[d.apparat] : undefined, rar = d.item?.rarity ?? (d.apparat ? rareteApparat(d.apparat) : undefined);
+        const col = rar ? RARITY_COLORS[rar] : '#f2d36b', tint = parseInt(col.slice(1), 16);
+        const big = rar ? ['rare', 'epique', 'legendaire', 'mythique'].indexOf(rar) : -1;
         v = {
           glow: this.add.ellipse(p.x, p.y, 46, 20, tint, 0.35),
           icon: d.item ? this.add.image(p.x, p.y - 14, ICON_SHEET.key, Math.max(0, iconFrame(ITEMS.equipment[d.item.id]?.icon ?? 0))).setDisplaySize(34, 34)
+            : ap ? (ap.case >= 0 && this.textures.exists('apparats') ? this.add.image(p.x, p.y - 14, 'apparats', ap.case) : this.add.image(p.x, p.y - 14, ICON_SHEET.key, Math.max(0, iconFrame(ap.icon)))).setDisplaySize(34, 34)
             : this.kamasIcon(d.kamas ?? 1, p),
-          label: big >= 0 ? this.add.text(p.x, p.y - 40, ITEMS.equipment[d.item!.id]?.name ?? '', {
+          label: big >= 0 ? this.add.text(p.x, p.y - 40, d.item ? ITEMS.equipment[d.item.id]?.name ?? '' : ap?.name ?? '', {
             fontFamily: 'Lexend, Verdana, sans-serif', fontSize: '13px', fontStyle: 'bold', color: col, stroke: '#000', strokeThickness: 3,
             backgroundColor: '#0d0c0acc', padding: { x: 4, y: 2 },
           }).setOrigin(0.5) : undefined,
@@ -1651,7 +1656,7 @@ export class ZoneScene extends Phaser.Scene {
             .setDisplaySize(30 + big * 6, [110, 160, 220, 290][big]) : undefined,
           core: big >= 0 ? this.add.image(p.x, p.y, 'beam').setOrigin(0.5, 1).setDisplaySize(8 + big * 2, [90, 135, 185, 250][big]) : undefined,
         };
-        if (!d.item) {
+        if (!d.item && !d.apparat) {
           const tier = this.kamasTier(d.kamas ?? 1), n = [3, 5, 8][tier];
           v.tier = tier;
           v.coins = Array.from({ length: n }, () => this.add.image(p.x, p.y, 'kamas_piece').setDisplaySize(15, 8).setOrigin(0.5, 1));
@@ -1659,11 +1664,11 @@ export class ZoneScene extends Phaser.Scene {
         }
         this.dropViews.set(d.uid, v);
       }
-      if (!d.item) { this.drawKamas(d, v, p, w.shown(d)); continue; }
+      if (!d.item && !d.apparat) { this.drawKamas(d, v, p, w.shown(d)); continue; }
       const shown = w.shown(d);
-      const bob = d.item ? Math.sin(w.time * 4 + d.uid) * 3 : 0, pop = Math.min(1, d.t * 4);
+      const bob = Math.sin(w.time * 4 + d.uid) * 3, pop = Math.min(1, d.t * 4);
       v.glow.setPosition(p.x, p.y).setDepth(p.y - 2).setScale(pop).setVisible(shown);
-      v.icon.setPosition(p.x, p.y - (d.item ? 14 : 8) - bob - (1 - pop) * 30).setDepth(p.y + 1).setVisible(shown);
+      v.icon.setPosition(p.x, p.y - 14 - bob - (1 - pop) * 30).setDepth(p.y + 1).setVisible(shown);
       const pulse = (0.85 + Math.sin(w.time * 3 + d.uid) * 0.15) * pop;
       v.beam?.setPosition(p.x, p.y).setDepth(p.y - 1).setAlpha(pulse).setVisible(shown);
       v.core?.setPosition(p.x, p.y).setDepth(p.y - 0.5).setAlpha(pulse * 0.8).setVisible(shown);

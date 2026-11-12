@@ -9,6 +9,8 @@ import { ambiance, chargerReglages } from './ambiance';
 import { aDecouvrir, cleLieu, famille, MAX_DRAPEAUX, NOTE_MAX, nomLieu, secret, type Drapeau, type Famille, type Repere } from '../sim/carte';
 import carteData from '../data/carte.json';
 import { bossAnnonce } from '../sim/mondeVivant';
+import { apparatsDeZone } from '../sim/apparats';
+import MV from '../data/monde_vivant.json';
 
 /** Carte du monde (touche M), maquette « Carte : » et « Carte suite : » du 2026-11-10 (tout d'un bloc, 12A).
  *  Repère commun : la case [x, y] du Monde des Douze couvre [x, x+1] × [y, y+1] en « unités de carte » ; carte.webp d'un monde
@@ -765,7 +767,9 @@ export class CarteMonde {
     const l = P.maps.filter(m => !m[3] || test), n = l.filter(m => vus.has(`${m[0]}_${m[1]}`)).length;
     const lieux = P.reperes.filter(r => aDecouvrir(r) && !(P.maps.find(m => `${m[0]}_${m[1]}` === r.t)?.[3] && !test));
     const trouves = lieux.filter(r => p.lieuxVus.includes(cleLieu(zone, r))).length;
-    el.innerHTML = `Exploré <b>${l.length ? Math.round(100 * n / l.length) : 0} %</b> · Lieux découverts <b>${trouves} / ${lieux.length}</b>`;
+    // « Apparats : » 4C : combien d'apparats de cette zone sont déjà dans la collection
+    const ap = apparatsDeZone(GAME_DATA.zones[zone], (MV as unknown as { boss: { liste: Record<string, { sousZone: number }> } }).boss.liste ?? {});
+    el.innerHTML = `Exploré <b>${l.length ? Math.round(100 * n / l.length) : 0} %</b> · Lieux découverts <b>${trouves} / ${lieux.length}</b>${ap.length ? ` · Apparats <b>${ap.filter(id => p.apparats.includes(id)).length} / ${ap.length}</b>` : ''}`;
   }
   /** 18A : la carte prend la teinte de l'heure (comme le jeu). */
   private majNuit() {

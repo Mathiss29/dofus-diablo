@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { APPARATS, BOUTIQUES, GAME_DATA, ITEMS, QUETES } from '../src/sim/data';
 import { WorldGrid, type WorldData } from '../src/sim/gridmap';
 import { NO_INPUT } from '../src/sim/input';
-import { PEPITE, rollItem } from '../src/sim/items';
+import { rollItem } from '../src/sim/items';
 import { exporterJoueur, restaurerJoueur } from '../src/sim/sauvegarde';
 import { World } from '../src/sim/world';
 
@@ -20,8 +20,6 @@ describe('Équipement en trop : collection d\'apparences (1C)', () => {
     const col = Object.entries(APPARATS.objets).filter(([, d]) => d.collection);
     expect(col.length).toBeGreaterThan(80);
     expect(new Set(col.map(([, d]) => d.slot))).toEqual(new Set(['chapeau', 'cape', 'bouclier']));
-    const w = monde(); w.player.resources[PEPITE] = 9999;
-    expect(w.acheterApparat(col[0][0])).toBe(false);
   });
 
   it('défaire le premier exemplaire débloque son apparence, une seule fois ; elle se porte et se garde', () => {

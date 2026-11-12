@@ -10,6 +10,7 @@ import apparat from '../data/apparat.json';
 import familiers from '../data/familiers.json';
 import butin from '../data/butin.json';
 import carte from '../data/carte.json';
+import apparatsSources from '../data/apparats_sources.json';
 import themes from '../data/havresac_themes.json';
 import teintures from '../data/teintures.json';
 import type { Teintures, ThemesHavreSac } from './havresac';
@@ -41,17 +42,19 @@ export const WEAPONS = Object.fromEntries(Object.entries(armes).filter(([k]) => 
 export const QUETES = quetes as unknown as QuetesData;
 // succès Cartographe (carte du monde 6D, src/data/carte.json écrit par tools/extraction/carte_peinte.py)
 Object.assign(QUETES.succes, (carte as unknown as Pick<QuetesData, 'succes'>).succes);
+// « Apparats : » 1C : succès de classe qui donnent les apparats de la classe (src/data/apparats_sources.json) ; ceux des classes pas encore en jeu attendent
+for (const [k, s] of Object.entries((apparatsSources as unknown as { succes: Record<string, QuetesData['succes'][string] & { classe?: string }> }).succes)) if (!s.classe) QUETES.succes[k] = s;
 /** Boutiques des PNJ (src/data/boutique.json) : articles et prix en Pépites. */
-export const BOUTIQUES = Object.fromEntries(Object.entries(boutique).filter(([k]) => !k.startsWith('_') && k !== 'apparat_prix')) as unknown as Record<string, { id: string; prix: number; v03?: boolean; v04?: boolean; monnaie?: string; apparat?: boolean; apres?: string }[]>;
+export const BOUTIQUES = Object.fromEntries(Object.entries(boutique).filter(([k]) => !k.startsWith('_'))) as unknown as Record<string, { id: string; prix: number; v03?: boolean; v04?: boolean; monnaie?: string; apparat?: boolean; apres?: string }[]>;
 /** Métiers de récolte (src/data/recoltes.json, écrit par tools/contenu/recoltes.py). */
 export const RECOLTES = recoltes as unknown as RecoltesData;
-/** Objets d'apparat officiels (src/data/apparat.json, apparat_export.py) : nom, emplacement, case de l'icône sur ui/apparat.webp ;
- *  prix chez Emp par emplacement (boutique.json, apparat_prix). */
+/** Objets d'apparat officiels (src/data/apparat.json, apparat_export.py) : nom, emplacement, case de l'icône sur ui/apparat.webp.
+ *  Plus aucun ne s'achète au Marché : leurs sources sont dans src/data/apparats_sources.json (src/sim/apparats.ts). */
 export interface ApparatDef { name: string; slot: 'chapeau' | 'cape' | 'bouclier' | 'familier'; icon: number; case: number;
   /** Collection d'apparences (maquette « Équipement en trop » 1C) : coiffe, cape ou bouclier du jeu, débloqué en brisant ou
    *  recyclant son premier exemplaire ; jamais vendu par Tissebelle. */
   collection?: boolean }
-export const APPARATS = { ...(apparat as unknown as { cell: number; cols: number; rows: number; objets: Record<string, ApparatDef> }), prix: boutique.apparat_prix as Record<string, number> };
+export const APPARATS = { ...(apparat as unknown as { cell: number; cols: number; rows: number; objets: Record<string, ApparatDef> }) };
 // familiers d'apparat (5A) : leur icône est sur la planche des objets (case -1)
 for (const [id, f] of Object.entries(FAMILIERS.familiers)) if (f.apparat) APPARATS.objets[id] = { name: f.nom, slot: 'familier', icon: f.icon, case: -1 };
 // collection d'apparences (1C) : les coiffes, capes et boucliers du jeu, icône sur la planche des objets (case -1)

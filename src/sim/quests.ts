@@ -194,6 +194,8 @@ export interface Dialogue { pnj: string; texte: string; reponses: Reponse[]; que
  *  un niveau atteint ou un monstre vaincu. */
 export type SuccesObjectif = { nom: string } & (
   | { quete: string } | { etape: [string, number] } | { succes: string } | { sousZone: number } | { niveau: number } | { monstre: string }
+  /** « Apparats : » 1C : ce niveau avec cette classe (clé de classes.json). */
+  | { classe: string; niveau: number }
   /** Collection d'apparences (« Équipement en trop » 1C) : apparence débloquée. */
   | { apparence: string }
   /** Nombre de Dofus possédés (0.3). */
@@ -231,7 +233,7 @@ export interface SuccesDef {
   nom: string; dofusId: number; description: string; categorie: string; sousCategorie: string; points: number; icone: number;
   objectifs: SuccesObjectif[];
   /** XP officielle (ratio des données × XP du niveau), objet officiel. */
-  recompense?: { xp?: number; objet?: string; /** Titre affiché sous le nom du perso (Tour 7A). */ titre?: string; ornement?: OrnementDef };
+  recompense?: { xp?: number; objet?: string; /** « Apparats : » 1C : apparat donné (id Dofus). */ apparat?: string; /** Titre affiché sous le nom du perso (Tour 7A). */ titre?: string; ornement?: OrnementDef };
   /** Contenu de la partie de test (0.4) : caché et jamais obtenu ailleurs. */
   test?: boolean;
 }
@@ -1035,6 +1037,7 @@ export class Quetes {
     if ('etape' in o) return this.etapesFinies.has(`${o.etape[0]}:${o.etape[1]}`);
     if ('succes' in o) return this.succes.has(o.succes);
     if ('sousZone' in o) return this.decouvertes.has(o.sousZone);
+    if ('classe' in o) return this.world.player.cls.sorts === o.classe && this.world.player.level >= o.niveau;
     if ('niveau' in o) return this.world.player.level >= o.niveau;
     if ('apparence' in o) return this.world.player.apparats.includes(o.apparence);
     if ('dofus' in o) return this.world.player.dofus.length >= o.dofus;
@@ -1048,6 +1051,7 @@ export class Quetes {
   /** Avancement d'un objectif de succès (menu des succès 4B) : [fait, total] (« Niveau 14 / 20 », « Objets fabriqués 37 / 100 »). */
   progres(o: SuccesObjectif): [number, number] {
     const p = this.world.player;
+    if ('classe' in o) return [p.cls.sorts === o.classe ? Math.min(p.level, o.niveau) : 0, o.niveau];
     if ('niveau' in o) return [Math.min(p.level, o.niveau), o.niveau];
     if ('dofus' in o) return [Math.min(p.dofus.length, o.dofus), o.dofus];
     if ('metier' in o) {
@@ -1104,6 +1108,7 @@ export class Quetes {
     this.recuperes.add(id);
     if (r.xp) w.player.gainXp(r.xp, w);
     if (r.objet) w.donnerObjet(r.objet);
+    if (r.apparat) w.ajouterApparat(r.apparat);
     w.donnerObjet(PEPITE, pep);
     w.emit({ k: 'succesRecupere', id, xp: r.xp ?? 0, pepites: pep });
     return true;

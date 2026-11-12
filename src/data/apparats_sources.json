@@ -1,0 +1,4677 @@
+{
+ "_": "Sources des apparats (maquette « Apparats : » 2026-11-12), écrit par tools/contenu/apparats_sources.py. Plus aucun apparat au Marché.",
+ "chances": {
+  "_": "1 chance sur N",
+  "boss": 75,
+  "fete": {
+   "normal": 4000,
+   "elite": 400,
+   "boss": 40
+  },
+  "monde": {
+   "boss": 8,
+   "invasion": 15
+  }
+ },
+ "fetes": {
+  "nowel": {
+   "nom": "Nowel",
+   "debut": "12-15",
+   "fin": "01-06"
+  },
+  "halouine": {
+   "nom": "Halouine",
+   "debut": "10-20",
+   "fin": "11-05"
+  },
+  "ballotin": {
+   "nom": "Saint-Ballotin",
+   "debut": "02-07",
+   "fin": "02-21"
+  },
+  "printemps": {
+   "nom": "Printemps",
+   "debut": "03-20",
+   "fin": "04-20"
+  },
+  "ete": {
+   "nom": "Été",
+   "debut": "07-01",
+   "fin": "08-31"
+  }
+ },
+ "monde": {
+  "gelees_royales": {
+   "nom": "Boss du monde : Gelées Royales"
+  },
+  "chef_de_guerre_bouftou": {
+   "nom": "Boss du monde : Chef de Guerre Bouftou"
+  },
+  "maitre_vampire": {
+   "nom": "Boss du monde : Maître Vampire (la nuit)"
+  },
+  "chef_crocodaille": {
+   "nom": "Boss du monde : Chef Crocodaille"
+  },
+  "invasion": {
+   "nom": "Coffre d'invasion (Éclats Obscurs)"
+  }
+ },
+ "sources": {
+  "19734": {
+   "k": "boss",
+   "boss": "kardorim",
+   "rarete": "rare"
+  },
+  "19733": {
+   "k": "boss",
+   "boss": "kardorim",
+   "rarete": "rare"
+  },
+  "29163": {
+   "k": "boss",
+   "boss": "tournesol_affame",
+   "rarete": "rare"
+  },
+  "27330": {
+   "k": "boss",
+   "boss": "tournesol_affame",
+   "rarete": "rare"
+  },
+  "27331": {
+   "k": "boss",
+   "boss": "tournesol_affame",
+   "rarete": "rare"
+  },
+  "11993": {
+   "k": "boss",
+   "boss": "mob_l_eponge",
+   "rarete": "rare"
+  },
+  "25366": {
+   "k": "boss",
+   "boss": "mob_l_eponge",
+   "rarete": "rare"
+  },
+  "18528": {
+   "k": "boss",
+   "boss": "royal",
+   "rarete": "rare"
+  },
+  "13015": {
+   "k": "boss",
+   "boss": "royal",
+   "rarete": "rare"
+  },
+  "13016": {
+   "k": "boss",
+   "boss": "royal",
+   "rarete": "rare"
+  },
+  "20768": {
+   "k": "boss",
+   "boss": "kankreblath",
+   "rarete": "epique"
+  },
+  "20767": {
+   "k": "boss",
+   "boss": "kankreblath",
+   "rarete": "epique"
+  },
+  "19615": {
+   "k": "boss",
+   "boss": "scarabosse_dore",
+   "rarete": "epique"
+  },
+  "19614": {
+   "k": "boss",
+   "boss": "scarabosse_dore",
+   "rarete": "epique"
+  },
+  "14796": {
+   "k": "boss",
+   "boss": "chafer_ronin",
+   "rarete": "epique"
+  },
+  "14800": {
+   "k": "boss",
+   "boss": "chafer_ronin",
+   "rarete": "epique"
+  },
+  "14801": {
+   "k": "boss",
+   "boss": "chafer_ronin",
+   "rarete": "epique"
+  },
+  "11804": {
+   "k": "boss",
+   "boss": "batofu",
+   "rarete": "epique"
+  },
+  "18906": {
+   "k": "boss",
+   "boss": "batofu",
+   "rarete": "epique"
+  },
+  "30434": {
+   "k": "boss",
+   "boss": "batofu",
+   "rarete": "epique"
+  },
+  "21418": {
+   "k": "boss",
+   "boss": "directeur_grunob",
+   "rarete": "epique"
+  },
+  "11373": {
+   "k": "boss",
+   "boss": "directeur_grunob",
+   "rarete": "epique"
+  },
+  "11372": {
+   "k": "boss",
+   "boss": "directeur_grunob",
+   "rarete": "epique"
+  },
+  "28494": {
+   "k": "boss",
+   "boss": "bworkette",
+   "rarete": "epique"
+  },
+  "28495": {
+   "k": "boss",
+   "boss": "bworkette",
+   "rarete": "epique"
+  },
+  "15238": {
+   "k": "boss",
+   "boss": "coffre_des_forgerons",
+   "rarete": "epique"
+  },
+  "15239": {
+   "k": "boss",
+   "boss": "coffre_des_forgerons",
+   "rarete": "epique"
+  },
+  "11377": {
+   "k": "boss",
+   "boss": "kwakwa",
+   "rarete": "epique"
+  },
+  "11376": {
+   "k": "boss",
+   "boss": "kwakwa",
+   "rarete": "epique"
+  },
+  "10175": {
+   "k": "boss",
+   "boss": "shin_larve",
+   "rarete": "epique"
+  },
+  "10174": {
+   "k": "boss",
+   "boss": "shin_larve",
+   "rarete": "epique"
+  },
+  "9418": {
+   "k": "boss",
+   "boss": "craqueleur_legendaire",
+   "rarete": "legendaire"
+  },
+  "9451": {
+   "k": "boss",
+   "boss": "craqueleur_legendaire",
+   "rarete": "legendaire"
+  },
+  "15818": {
+   "k": "boss",
+   "boss": "wa_wobot",
+   "rarete": "legendaire"
+  },
+  "15816": {
+   "k": "boss",
+   "boss": "wa_wobot",
+   "rarete": "legendaire"
+  },
+  "27991": {
+   "k": "boss",
+   "boss": "wa_wabbit",
+   "rarete": "legendaire"
+  },
+  "27989": {
+   "k": "boss",
+   "boss": "wa_wabbit",
+   "rarete": "legendaire"
+  },
+  "27849": {
+   "k": "boss",
+   "boss": "wa_wabbit",
+   "rarete": "legendaire"
+  },
+  "7422": {
+   "k": "boss",
+   "boss": "kanniboul_ebil",
+   "rarete": "legendaire"
+  },
+  "7999": {
+   "k": "boss",
+   "boss": "kanniboul_ebil",
+   "rarete": "legendaire"
+  },
+  "7581": {
+   "k": "boss",
+   "boss": "kanniboul_ebil",
+   "rarete": "legendaire"
+  },
+  "21416": {
+   "k": "classe",
+   "classe": "iop",
+   "niveau": 50,
+   "rarete": "rare"
+  },
+  "21415": {
+   "k": "classe",
+   "classe": "iop",
+   "niveau": 100,
+   "rarete": "epique"
+  },
+  "21796": {
+   "k": "classe",
+   "classe": "cra",
+   "niveau": 50,
+   "rarete": "rare"
+  },
+  "21797": {
+   "k": "classe",
+   "classe": "cra",
+   "niveau": 100,
+   "rarete": "epique"
+  },
+  "21771": {
+   "k": "classe",
+   "classe": "osamodas",
+   "niveau": 50,
+   "rarete": "rare"
+  },
+  "21769": {
+   "k": "classe",
+   "classe": "osamodas",
+   "niveau": 100,
+   "rarete": "epique"
+  },
+  "23212": {
+   "k": "classe",
+   "classe": "sacrieur",
+   "niveau": 50,
+   "rarete": "rare"
+  },
+  "23213": {
+   "k": "classe",
+   "classe": "sacrieur",
+   "niveau": 100,
+   "rarete": "epique"
+  },
+  "24969": {
+   "k": "classe",
+   "classe": "eniripsa",
+   "niveau": 50,
+   "rarete": "rare"
+  },
+  "24970": {
+   "k": "classe",
+   "classe": "eniripsa",
+   "niveau": 100,
+   "rarete": "epique"
+  },
+  "25361": {
+   "k": "classe",
+   "classe": "enutrof",
+   "niveau": 50,
+   "rarete": "rare"
+  },
+  "25360": {
+   "k": "classe",
+   "classe": "enutrof",
+   "niveau": 100,
+   "rarete": "epique"
+  },
+  "28338": {
+   "k": "classe",
+   "classe": "forgelance",
+   "niveau": 100,
+   "rarete": "epique"
+  },
+  "22362": {
+   "k": "classe",
+   "classe": "feca",
+   "niveau": 50,
+   "rarete": "rare"
+  },
+  "22363": {
+   "k": "classe",
+   "classe": "feca",
+   "niveau": 100,
+   "rarete": "epique"
+  },
+  "21472": {
+   "k": "classe",
+   "classe": "sram",
+   "niveau": 50,
+   "rarete": "rare"
+  },
+  "21473": {
+   "k": "classe",
+   "classe": "sram",
+   "niveau": 100,
+   "rarete": "epique"
+  },
+  "23463": {
+   "k": "classe",
+   "classe": "xelor",
+   "niveau": 50,
+   "rarete": "rare"
+  },
+  "23464": {
+   "k": "classe",
+   "classe": "xelor",
+   "niveau": 100,
+   "rarete": "epique"
+  },
+  "23834": {
+   "k": "classe",
+   "classe": "ecaflip",
+   "niveau": 100,
+   "rarete": "epique"
+  },
+  "23040": {
+   "k": "classe",
+   "classe": "sadida",
+   "niveau": 50,
+   "rarete": "rare"
+  },
+  "23565": {
+   "k": "classe",
+   "classe": "pandawa",
+   "niveau": 50,
+   "rarete": "rare"
+  },
+  "23566": {
+   "k": "classe",
+   "classe": "pandawa",
+   "niveau": 100,
+   "rarete": "epique"
+  },
+  "21455": {
+   "k": "classe",
+   "classe": "roublard",
+   "niveau": 50,
+   "rarete": "rare"
+  },
+  "21456": {
+   "k": "classe",
+   "classe": "roublard",
+   "niveau": 100,
+   "rarete": "epique"
+  },
+  "22452": {
+   "k": "classe",
+   "classe": "zobal",
+   "niveau": 50,
+   "rarete": "rare"
+  },
+  "22453": {
+   "k": "classe",
+   "classe": "zobal",
+   "niveau": 100,
+   "rarete": "epique"
+  },
+  "21787": {
+   "k": "classe",
+   "classe": "steamer",
+   "niveau": 50,
+   "rarete": "rare"
+  },
+  "21788": {
+   "k": "classe",
+   "classe": "steamer",
+   "niveau": 100,
+   "rarete": "epique"
+  },
+  "25998": {
+   "k": "classe",
+   "classe": "eliotrope",
+   "niveau": 50,
+   "rarete": "rare"
+  },
+  "26001": {
+   "k": "classe",
+   "classe": "eliotrope",
+   "niveau": 100,
+   "rarete": "epique"
+  },
+  "25173": {
+   "k": "classe",
+   "classe": "huppermage",
+   "niveau": 50,
+   "rarete": "rare"
+  },
+  "25175": {
+   "k": "classe",
+   "classe": "huppermage",
+   "niveau": 100,
+   "rarete": "epique"
+  },
+  "24941": {
+   "k": "classe",
+   "classe": "ouginak",
+   "niveau": 50,
+   "rarete": "rare"
+  },
+  "24942": {
+   "k": "classe",
+   "classe": "ouginak",
+   "niveau": 100,
+   "rarete": "epique"
+  },
+  "13687": {
+   "k": "fete",
+   "fete": "nowel",
+   "rarete": "epique"
+  },
+  "20646": {
+   "k": "fete",
+   "fete": "nowel",
+   "rarete": "epique"
+  },
+  "22057": {
+   "k": "fete",
+   "fete": "nowel",
+   "rarete": "epique"
+  },
+  "23955": {
+   "k": "fete",
+   "fete": "nowel",
+   "rarete": "epique"
+  },
+  "26176": {
+   "k": "fete",
+   "fete": "nowel",
+   "rarete": "epique"
+  },
+  "27781": {
+   "k": "fete",
+   "fete": "nowel",
+   "rarete": "epique"
+  },
+  "29514": {
+   "k": "fete",
+   "fete": "nowel",
+   "rarete": "epique"
+  },
+  "33505": {
+   "k": "fete",
+   "fete": "nowel",
+   "rarete": "epique"
+  },
+  "16073": {
+   "k": "fete",
+   "fete": "nowel",
+   "rarete": "epique"
+  },
+  "18523": {
+   "k": "fete",
+   "fete": "nowel",
+   "rarete": "epique"
+  },
+  "27826": {
+   "k": "fete",
+   "fete": "nowel",
+   "rarete": "epique"
+  },
+  "29426": {
+   "k": "fete",
+   "fete": "nowel",
+   "rarete": "epique"
+  },
+  "16068": {
+   "k": "fete",
+   "fete": "nowel",
+   "rarete": "epique"
+  },
+  "16069": {
+   "k": "fete",
+   "fete": "nowel",
+   "rarete": "epique"
+  },
+  "29486": {
+   "k": "fete",
+   "fete": "nowel",
+   "rarete": "epique"
+  },
+  "29489": {
+   "k": "fete",
+   "fete": "nowel",
+   "rarete": "epique"
+  },
+  "29487": {
+   "k": "fete",
+   "fete": "nowel",
+   "rarete": "epique"
+  },
+  "29490": {
+   "k": "fete",
+   "fete": "nowel",
+   "rarete": "epique"
+  },
+  "29488": {
+   "k": "fete",
+   "fete": "nowel",
+   "rarete": "epique"
+  },
+  "29491": {
+   "k": "fete",
+   "fete": "nowel",
+   "rarete": "epique"
+  },
+  "16015": {
+   "k": "fete",
+   "fete": "halouine",
+   "rarete": "epique"
+  },
+  "16016": {
+   "k": "fete",
+   "fete": "halouine",
+   "rarete": "epique"
+  },
+  "19147": {
+   "k": "fete",
+   "fete": "halouine",
+   "rarete": "epique"
+  },
+  "19146": {
+   "k": "fete",
+   "fete": "halouine",
+   "rarete": "epique"
+  },
+  "12058": {
+   "k": "fete",
+   "fete": "halouine",
+   "rarete": "epique"
+  },
+  "9471": {
+   "k": "fete",
+   "fete": "ballotin",
+   "rarete": "epique"
+  },
+  "15122": {
+   "k": "fete",
+   "fete": "ballotin",
+   "rarete": "epique"
+  },
+  "26299": {
+   "k": "fete",
+   "fete": "ballotin",
+   "rarete": "epique"
+  },
+  "26300": {
+   "k": "fete",
+   "fete": "ballotin",
+   "rarete": "epique"
+  },
+  "16237": {
+   "k": "fete",
+   "fete": "printemps",
+   "rarete": "epique"
+  },
+  "16238": {
+   "k": "fete",
+   "fete": "printemps",
+   "rarete": "epique"
+  },
+  "17848": {
+   "k": "fete",
+   "fete": "ete",
+   "rarete": "epique"
+  },
+  "17847": {
+   "k": "fete",
+   "fete": "ete",
+   "rarete": "epique"
+  },
+  "28564": {
+   "k": "fete",
+   "fete": "ete",
+   "rarete": "epique"
+  },
+  "20739": {
+   "k": "monde",
+   "evenement": "gelees_royales",
+   "rarete": "legendaire"
+  },
+  "22322": {
+   "k": "monde",
+   "evenement": "gelees_royales",
+   "rarete": "legendaire"
+  },
+  "29498": {
+   "k": "monde",
+   "evenement": "gelees_royales",
+   "rarete": "legendaire"
+  },
+  "31042": {
+   "k": "monde",
+   "evenement": "gelees_royales",
+   "rarete": "legendaire"
+  },
+  "20052": {
+   "k": "monde",
+   "evenement": "gelees_royales",
+   "rarete": "legendaire"
+  },
+  "20136": {
+   "k": "monde",
+   "evenement": "gelees_royales",
+   "rarete": "legendaire"
+  },
+  "18218": {
+   "k": "monde",
+   "evenement": "chef_de_guerre_bouftou",
+   "rarete": "legendaire"
+  },
+  "19521": {
+   "k": "monde",
+   "evenement": "chef_de_guerre_bouftou",
+   "rarete": "legendaire"
+  },
+  "29732": {
+   "k": "monde",
+   "evenement": "maitre_vampire",
+   "rarete": "legendaire"
+  },
+  "29733": {
+   "k": "monde",
+   "evenement": "maitre_vampire",
+   "rarete": "legendaire"
+  },
+  "21778": {
+   "k": "monde",
+   "evenement": "maitre_vampire",
+   "rarete": "legendaire"
+  },
+  "25796": {
+   "k": "monde",
+   "evenement": "chef_crocodaille",
+   "rarete": "legendaire"
+  },
+  "27173": {
+   "k": "monde",
+   "evenement": "chef_crocodaille",
+   "rarete": "legendaire"
+  },
+  "25978": {
+   "k": "monde",
+   "evenement": "invasion",
+   "rarete": "legendaire"
+  },
+  "25979": {
+   "k": "monde",
+   "evenement": "invasion",
+   "rarete": "legendaire"
+  },
+  "27169": {
+   "k": "monde",
+   "evenement": "invasion",
+   "rarete": "legendaire"
+  },
+  "27168": {
+   "k": "monde",
+   "evenement": "invasion",
+   "rarete": "legendaire"
+  },
+  "6500": {
+   "k": "tiwa",
+   "rarete": "epique"
+  },
+  "6501": {
+   "k": "tiwa",
+   "rarete": "epique"
+  },
+  "969": {
+   "k": "tiwa",
+   "rarete": "epique"
+  },
+  "971": {
+   "k": "tiwa",
+   "rarete": "epique"
+  },
+  "1090": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "1907": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "2517": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "2518": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "2519": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "2520": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "6801": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "6802": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "6958": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "8068": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "8069": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "8531": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "8532": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "8558": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "8559": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "8678": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "9120": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "9121": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "9184": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "9185": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "9187": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "9188": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "9189": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "9190": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "9194": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "9195": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "9196": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "9197": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "9404": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "9405": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "9406": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "9407": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "9410": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "9411": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "9414": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "9415": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "9456": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "9457": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "9479": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "9480": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "9485": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "9486": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "9540": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "9541": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "9567": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "9652": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "9653": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "9654": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "9663": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "9924": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "9930": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "9931": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "9933": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "9936": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "9937": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "10170": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "10183": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "10184": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "10185": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "10188": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "10414": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "10552": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "10553": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "10554": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "10957": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "10958": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "10988": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "10989": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "11043": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "11045": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "11049": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "11050": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "11055": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "11056": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "11078": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "11079": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "11084": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "11088": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "11089": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "11382": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "11383": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "11393": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "11397": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "11398": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "11401": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "11402": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "11418": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "11420": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "11810": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "11813": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "11817": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "11818": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "11854": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "12350": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "12377": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "12378": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "12398": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "12420": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "12464": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "12503": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "12597": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "12616": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "12655": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "12656": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "12670": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "12751": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "12755": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "12881": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "12884": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "12885": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "13021": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "13113": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "13209": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "13299": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "13300": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "13305": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "13306": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "13318": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "13319": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "13457": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "13483": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "13484": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "13689": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "13711": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "13892": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "14299": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "14301": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "14303": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "14307": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "14309": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "14423": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "14504": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "14556": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "14557": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "14587": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "14588": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "14592": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "14595": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "14599": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "14600": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "14603": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "14604": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "14607": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "14608": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "14611": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "14612": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "14615": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "14616": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "14619": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "14628": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "14631": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "14632": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "14641": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "14642": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "14804": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "14805": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "14967": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "15158": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "15159": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "15542": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "15613": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "15658": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "15753": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "15755": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "15758": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "15761": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "15766": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "15769": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "15774": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "15777": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "15786": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "15788": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "15797": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "15813": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "15821": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "15825": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "15826": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "15830": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "15842": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "15844": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "15847": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "15857": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "15859": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "15863": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "15865": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "15869": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "15883": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "16223": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "16224": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "16235": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "16307": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "16377": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "17011": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "17014": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "17211": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "17212": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "17296": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "17297": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "17298": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "17299": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "17454": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "17455": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "17489": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "17490": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "17491": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "17497": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "17498": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "17499": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "17500": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "17501": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "17505": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "17731": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "17732": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "18227": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "18228": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "18579": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "18580": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "18637": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "18638": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "18806": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "18883": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "18884": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "19155": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "19158": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "19197": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "19199": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "19205": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "19465": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "19466": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "19720": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "19721": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "19722": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "19723": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "19724": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "19992": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "19993": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "20023": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "20024": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "20031": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "20032": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "20072": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "20074": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "20140": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "20141": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "20296": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "20297": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "20299": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "20302": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "20303": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "20305": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "20306": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "20314": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "20315": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "20316": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "20369": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "20678": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "20679": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "20997": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "21030": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "21032": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "21059": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "21060": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "21101": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "21102": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "21103": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "21104": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "21202": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "21203": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "21220": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "21325": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "21391": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "21399": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "21402": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "21403": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "21419": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "21505": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "21776": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "21802": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "21803": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "21962": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "21963": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "22053": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "22055": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "22268": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "22269": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "22276": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "22277": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "22299": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "22497": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "22498": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "23108": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "23109": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "23110": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "23111": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "23112": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "23113": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "23551": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "23552": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "23560": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "23561": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "24132": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "24147": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "24148": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "24948": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "24952": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "24990": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "24991": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "25028": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "25040": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "25042": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "25089": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "25091": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "25092": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "25093": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "25094": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "25102": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "25103": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "25119": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "25121": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "25122": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "25123": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "25124": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "25348": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "25349": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "25370": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "25379": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "25381": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "25751": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "25774": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "25795": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "25810": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "25811": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "25812": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "25813": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "25814": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "25815": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "25931": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "25932": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "25936": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "25937": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "26179": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26180": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26181": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "26182": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26185": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26186": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "26220": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26283": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26284": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "26303": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26304": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "26315": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "26324": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26671": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26672": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26694": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26734": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "26737": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "26740": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26743": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "26744": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "26794": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26818": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "26819": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "26821": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "26822": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26866": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26867": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26915": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26919": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27059": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27060": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27061": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27062": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27063": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27064": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27065": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27066": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27102": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "27104": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27160": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27172": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27178": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27179": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27181": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27182": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27187": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27314": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27315": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27316": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27321": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27359": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27360": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27376": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27377": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27387": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27393": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27394": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27396": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27419": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27423": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27424": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27428": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27429": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27441": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27443": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27444": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "27462": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "27463": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27577": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "27684": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27685": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27699": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27759": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27760": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27922": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27937": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27939": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "28293": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "28354": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "28424": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "28434": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "28435": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "28479": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "28480": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "28517": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "28518": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "29031": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "29145": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "29152": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "29159": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "29160": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "29161": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "29162": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "29164": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "29218": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "29231": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "29232": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "29287": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "29288": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "29289": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "29290": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "29291": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "29292": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "29293": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "29294": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "29342": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "29396": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "29409": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "29410": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "29412": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "29413": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "29436": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "29438": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "29449": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "29450": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "29466": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "29467": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "29550": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "29555": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "29556": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "29571": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "29573": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "29640": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "29743": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "29744": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "29755": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "29756": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "30022": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "30023": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "30047": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "30048": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "30077": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "30078": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "30081": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "30082": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "30103": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "30104": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "30142": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "30153": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "30155": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "30203": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "30205": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "30225": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "30329": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "30458": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "30459": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "30520": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "30521": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "30525": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "30526": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "30536": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "30538": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "30539": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "30817": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "30819": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "30834": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "30962": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "30963": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "30985": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "30986": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "30989": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "31043": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "31045": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "31046": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "31054": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "31451": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "31452": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "31459": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "31465": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "31466": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "31471": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "31516": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "31535": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "31536": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "31598": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "31599": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "31694": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "31727": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "31728": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "31734": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "31735": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "31896": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "31908": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "31934": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "31944": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "31946": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "32107": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "32141": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "32158": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "32159": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "32160": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "32419": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "32420": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "32531": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "32532": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "32558": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "32559": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "32560": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "32561": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "32562": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "32563": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "32564": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "32565": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "33531": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "33532": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "33546": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "33610": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "33611": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "33647": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "33648": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "33653": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "33660": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "34129": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "34199": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "34214": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "34216": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "34230": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "34231": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "34259": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "34260": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "34278": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "34283": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "34396": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "34397": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "34398": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "34399": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "34441": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "34442": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "34504": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "34505": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "34560": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "34607": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "8071": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "12125": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "15756": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "15790": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "15849": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "17004": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "18486": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "18899": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "18920": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "18945": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "18955": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "18960": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "18965": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "18971": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "18977": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "18982": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "18988": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "18993": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "18998": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "19003": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "19008": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "19013": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "19018": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "19026": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "19200": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "19350": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "19355": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "19360": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "19365": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "19370": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "19375": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "19726": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "20036": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "20053": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "20137": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "20320": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "20321": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "20322": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "20323": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "20324": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "20325": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "20326": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "20327": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "20330": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "20662": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "20663": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "20664": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "20665": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "20666": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "20667": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "20793": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "20794": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "20989": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "21039": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "21144": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "21317": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "21393": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "21405": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "21779": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "21780": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "21781": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "22252": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "22258": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "22300": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "23002": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "23003": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "23004": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "23005": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "23006": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "23007": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "23091": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "23093": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "23546": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "23643": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "23644": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "23645": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "23646": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "23647": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "23648": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "23714": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "23719": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "23721": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "23783": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "23807": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "23910": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "24068": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "24153": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "24155": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "24176": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "24955": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "25019": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "25021": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "25027": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "25033": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "25224": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "25277": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "25351": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "25372": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "25377": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "25378": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "25382": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "25750": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "25770": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "25799": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "25800": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "25801": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "25802": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "25941": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "25947": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "25987": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "25992": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "25993": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "25994": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "25995": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "25996": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "25997": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26110": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26178": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26215": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26216": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "26217": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26239": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26241": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "26286": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26306": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26359": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "26675": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26696": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "26748": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "26749": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26808": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "26869": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27047": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27069": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27071": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27073": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "27076": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "27078": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27105": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27319": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27379": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27383": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27384": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "27389": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27448": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27519": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "27637": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27667": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "27719": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "27722": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "27723": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27729": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27730": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27731": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27732": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "27839": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "27941": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "28267": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "28344": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "28427": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "28436": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "28498": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "29119": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "29121": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "29123": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "29154": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "29215": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "29271": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "29272": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "29273": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "29274": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "29424": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "29453": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "29473": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "29513": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "29565": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "29572": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "29647": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "29734": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "30025": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "30085": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "30107": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "30145": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "30209": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "30220": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "30231": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "30334": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "30523": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "30835": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "30843": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "30956": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "31051": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "31428": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "31449": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "31456": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "31463": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "31474": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "31487": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "31500": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "31563": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "31622": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "31695": {
+   "k": "boutique",
+   "rarete": "legendaire"
+  },
+  "31731": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "31740": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "31795": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "31855": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "31863": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "31864": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "31905": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "32076": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "32173": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "32174": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "32449": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "32503": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "32504": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "32505": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "32506": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "32507": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "33534": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "33551": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "33613": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "33614": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "33814": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "33818": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "34131": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "34233": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "34263": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "34277": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "34296": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "34343": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "34352": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "34416": {
+   "k": "boutique",
+   "rarete": "epique"
+  },
+  "34444": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "34485": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "34487": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "34536": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "34558": {
+   "k": "boutique",
+   "rarete": "epique"
+  }
+ },
+ "succes": {
+  "apparat_iop_50": {
+   "nom": "Iop de niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 avec un Iop.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Iop niveau 50",
+     "classe": "iop",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "apparat": "21416"
+   }
+  },
+  "apparat_iop_100": {
+   "nom": "Iop de niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 avec un Iop.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 20,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Iop niveau 100",
+     "classe": "iop",
+     "niveau": 100
+    }
+   ],
+   "recompense": {
+    "apparat": "21415"
+   }
+  },
+  "apparat_cra_50": {
+   "nom": "Crâ de niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 avec un Crâ.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Crâ niveau 50",
+     "classe": "cra",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "apparat": "21796"
+   }
+  },
+  "apparat_cra_100": {
+   "nom": "Crâ de niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 avec un Crâ.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 20,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Crâ niveau 100",
+     "classe": "cra",
+     "niveau": 100
+    }
+   ],
+   "recompense": {
+    "apparat": "21797"
+   }
+  },
+  "apparat_osamodas_50": {
+   "nom": "Osamodas de niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 avec un Osamodas.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Osamodas niveau 50",
+     "classe": "osamodas",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "apparat": "21771"
+   }
+  },
+  "apparat_osamodas_100": {
+   "nom": "Osamodas de niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 avec un Osamodas.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 20,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Osamodas niveau 100",
+     "classe": "osamodas",
+     "niveau": 100
+    }
+   ],
+   "recompense": {
+    "apparat": "21769"
+   }
+  },
+  "apparat_sacrieur_50": {
+   "nom": "Sacrieur de niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 avec un Sacrieur.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Sacrieur niveau 50",
+     "classe": "sacrieur",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "apparat": "23212"
+   }
+  },
+  "apparat_sacrieur_100": {
+   "nom": "Sacrieur de niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 avec un Sacrieur.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 20,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Sacrieur niveau 100",
+     "classe": "sacrieur",
+     "niveau": 100
+    }
+   ],
+   "recompense": {
+    "apparat": "23213"
+   }
+  },
+  "apparat_eniripsa_50": {
+   "nom": "Eniripsa de niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 avec un Eniripsa.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Eniripsa niveau 50",
+     "classe": "eniripsa",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "apparat": "24969"
+   }
+  },
+  "apparat_eniripsa_100": {
+   "nom": "Eniripsa de niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 avec un Eniripsa.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 20,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Eniripsa niveau 100",
+     "classe": "eniripsa",
+     "niveau": 100
+    }
+   ],
+   "recompense": {
+    "apparat": "24970"
+   }
+  },
+  "apparat_enutrof_50": {
+   "nom": "Enutrof de niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 avec un Enutrof.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Enutrof niveau 50",
+     "classe": "enutrof",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "apparat": "25361"
+   }
+  },
+  "apparat_enutrof_100": {
+   "nom": "Enutrof de niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 avec un Enutrof.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 20,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Enutrof niveau 100",
+     "classe": "enutrof",
+     "niveau": 100
+    }
+   ],
+   "recompense": {
+    "apparat": "25360"
+   }
+  },
+  "apparat_forgelance_100": {
+   "nom": "Forgelance de niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 avec un Forgelance.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 20,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Forgelance niveau 100",
+     "classe": "forgelance",
+     "niveau": 100
+    }
+   ],
+   "recompense": {
+    "apparat": "28338"
+   }
+  },
+  "apparat_feca_50": {
+   "nom": "Féca de niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 avec un Féca.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Féca niveau 50",
+     "classe": "feca",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "apparat": "22362"
+   },
+   "classe": "feca"
+  },
+  "apparat_feca_100": {
+   "nom": "Féca de niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 avec un Féca.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 20,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Féca niveau 100",
+     "classe": "feca",
+     "niveau": 100
+    }
+   ],
+   "recompense": {
+    "apparat": "22363"
+   },
+   "classe": "feca"
+  },
+  "apparat_sram_50": {
+   "nom": "Sram de niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 avec un Sram.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Sram niveau 50",
+     "classe": "sram",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "apparat": "21472"
+   },
+   "classe": "sram"
+  },
+  "apparat_sram_100": {
+   "nom": "Sram de niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 avec un Sram.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 20,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Sram niveau 100",
+     "classe": "sram",
+     "niveau": 100
+    }
+   ],
+   "recompense": {
+    "apparat": "21473"
+   },
+   "classe": "sram"
+  },
+  "apparat_xelor_50": {
+   "nom": "Xélor de niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 avec un Xélor.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Xélor niveau 50",
+     "classe": "xelor",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "apparat": "23463"
+   },
+   "classe": "xelor"
+  },
+  "apparat_xelor_100": {
+   "nom": "Xélor de niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 avec un Xélor.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 20,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Xélor niveau 100",
+     "classe": "xelor",
+     "niveau": 100
+    }
+   ],
+   "recompense": {
+    "apparat": "23464"
+   },
+   "classe": "xelor"
+  },
+  "apparat_ecaflip_100": {
+   "nom": "Ecaflip de niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 avec un Ecaflip.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 20,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Ecaflip niveau 100",
+     "classe": "ecaflip",
+     "niveau": 100
+    }
+   ],
+   "recompense": {
+    "apparat": "23834"
+   },
+   "classe": "ecaflip"
+  },
+  "apparat_sadida_50": {
+   "nom": "Sadida de niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 avec un Sadida.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Sadida niveau 50",
+     "classe": "sadida",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "apparat": "23040"
+   },
+   "classe": "sadida"
+  },
+  "apparat_pandawa_50": {
+   "nom": "Pandawa de niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 avec un Pandawa.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Pandawa niveau 50",
+     "classe": "pandawa",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "apparat": "23565"
+   },
+   "classe": "pandawa"
+  },
+  "apparat_pandawa_100": {
+   "nom": "Pandawa de niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 avec un Pandawa.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 20,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Pandawa niveau 100",
+     "classe": "pandawa",
+     "niveau": 100
+    }
+   ],
+   "recompense": {
+    "apparat": "23566"
+   },
+   "classe": "pandawa"
+  },
+  "apparat_roublard_50": {
+   "nom": "Roublard de niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 avec un Roublard.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Roublard niveau 50",
+     "classe": "roublard",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "apparat": "21455"
+   },
+   "classe": "roublard"
+  },
+  "apparat_roublard_100": {
+   "nom": "Roublard de niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 avec un Roublard.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 20,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Roublard niveau 100",
+     "classe": "roublard",
+     "niveau": 100
+    }
+   ],
+   "recompense": {
+    "apparat": "21456"
+   },
+   "classe": "roublard"
+  },
+  "apparat_zobal_50": {
+   "nom": "Zobal de niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 avec un Zobal.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Zobal niveau 50",
+     "classe": "zobal",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "apparat": "22452"
+   },
+   "classe": "zobal"
+  },
+  "apparat_zobal_100": {
+   "nom": "Zobal de niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 avec un Zobal.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 20,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Zobal niveau 100",
+     "classe": "zobal",
+     "niveau": 100
+    }
+   ],
+   "recompense": {
+    "apparat": "22453"
+   },
+   "classe": "zobal"
+  },
+  "apparat_steamer_50": {
+   "nom": "Steamer de niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 avec un Steamer.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Steamer niveau 50",
+     "classe": "steamer",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "apparat": "21787"
+   },
+   "classe": "steamer"
+  },
+  "apparat_steamer_100": {
+   "nom": "Steamer de niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 avec un Steamer.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 20,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Steamer niveau 100",
+     "classe": "steamer",
+     "niveau": 100
+    }
+   ],
+   "recompense": {
+    "apparat": "21788"
+   },
+   "classe": "steamer"
+  },
+  "apparat_eliotrope_50": {
+   "nom": "Eliotrope de niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 avec un Eliotrope.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Eliotrope niveau 50",
+     "classe": "eliotrope",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "apparat": "25998"
+   },
+   "classe": "eliotrope"
+  },
+  "apparat_eliotrope_100": {
+   "nom": "Eliotrope de niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 avec un Eliotrope.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 20,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Eliotrope niveau 100",
+     "classe": "eliotrope",
+     "niveau": 100
+    }
+   ],
+   "recompense": {
+    "apparat": "26001"
+   },
+   "classe": "eliotrope"
+  },
+  "apparat_huppermage_50": {
+   "nom": "Huppermage de niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 avec un Huppermage.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Huppermage niveau 50",
+     "classe": "huppermage",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "apparat": "25173"
+   },
+   "classe": "huppermage"
+  },
+  "apparat_huppermage_100": {
+   "nom": "Huppermage de niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 avec un Huppermage.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 20,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Huppermage niveau 100",
+     "classe": "huppermage",
+     "niveau": 100
+    }
+   ],
+   "recompense": {
+    "apparat": "25175"
+   },
+   "classe": "huppermage"
+  },
+  "apparat_ouginak_50": {
+   "nom": "Ouginak de niveau 50",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 50 avec un Ouginak.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Ouginak niveau 50",
+     "classe": "ouginak",
+     "niveau": 50
+    }
+   ],
+   "recompense": {
+    "apparat": "24941"
+   },
+   "classe": "ouginak"
+  },
+  "apparat_ouginak_100": {
+   "nom": "Ouginak de niveau 100",
+   "dofusId": 0,
+   "description": "Atteindre le niveau 100 avec un Ouginak.",
+   "categorie": "Général",
+   "sousCategorie": "Apparats",
+   "points": 20,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Ouginak niveau 100",
+     "classe": "ouginak",
+     "niveau": 100
+    }
+   ],
+   "recompense": {
+    "apparat": "24942"
+   },
+   "classe": "ouginak"
+  }
+ }
+}

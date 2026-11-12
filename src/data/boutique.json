@@ -1,5 +1,5 @@
 {
- "_": "Boutiques des PNJ (maquette Magasin 5B, 2026-11-12) : l'utile se paie en kamas (monnaie \"kamas\" = p.kamas) : Otomaï (Potion de Rappel, Petite pierre d'âme), Mère Bouillotte (nourriture), Goultard (clés de donjon), Lily (Potion Wabbit). Les Pépites (objet officiel 14635) paient l'envie : apparat_prix = prix par emplacement des apparats officiels chez Tissebelle (src/data/apparat.json). Tiwa Cawoteuw (île des Wabbits, 0.4) : payé en Cawottes (objet officiel 20446), gagnées à la guerre des Cawottes ; jamais d'équipement ni de Dofus. Otomaï vend aussi la Sphère à Métarias et la Fiole à élément (Forgemagie v2 6A : potions de forgemagie de l'Alchimiste).",
+ "_": "Boutiques des PNJ (maquette Magasin 5B, 2026-11-12) : l'utile se paie en kamas (monnaie \"kamas\" = p.kamas) : Otomaï (Potion de Rappel, Petite pierre d'âme), Mère Bouillotte (nourriture), Goultard (clés de donjon), Lily (Potion Wabbit). Les Pépites (objet officiel 14635) paient l'envie ; plus aucun apparat au Marché (« Apparats : » 2026-11-12, sources dans apparats_sources.json). Tiwa Cawoteuw (île des Wabbits, 0.4) : payé en Cawottes (objet officiel 20446), gagnées à la guerre des Cawottes ; jamais d'équipement ni de Dofus. Otomaï vend aussi la Sphère à Métarias et la Fiole à élément (Forgemagie v2 6A : potions de forgemagie de l'Alchimiste).",
  "otomai": [
   {
    "id": "548",
@@ -123,11 +123,6 @@
    "monnaie": "kamas"
   }
  ],
- "apparat_prix": {
-  "chapeau": 60,
-  "cape": 80,
-  "familier": 100
- },
  "tiwa_cawoteuw": [
   {
    "id": "361",

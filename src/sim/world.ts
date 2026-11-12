@@ -1,5 +1,5 @@
 import { appliquerCarte, majCarteJoueur } from './carte';
-import { achatsDuJour, BENEDICTION, BENEDICTIONS, CONFORT, etalDuJour, MAGASIN, pieceDeLaSemaine, reserveePiece, type Benediction, type CtxMagasin, type Offre } from './magasin';
+import { achatsDuJour, BENEDICTION, BENEDICTIONS, CONFORT, etalDuJour, MAGASIN, type Benediction, type CtxMagasin, type Offre } from './magasin';
 import { angleDiff, Rng } from './math';
 import type { AtelierDef, DonjonDef, Element, GameData, HitZone, MonsterSpell, SubAreaDef, ZoneDef } from './defs';
 import type { PointDeRetour, RetourHavreSac, SimEvent, Telegraph } from './events';
@@ -16,6 +16,7 @@ import { V03_PUBLIC, V04_PUBLIC, niveauObjetsMax, slotAPouvoirConnu } from './po
 import { fxImpression, imprimable, nouveauPourCodex, prixImpression } from './codex';
 import { legendaryPower, FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, kamasDefaire, noteObjet, rollItem, type EquipSlot, type Item, type ItemsData, type Rarity, type RecipeDef, type Stat } from './items';
 import { Player } from './player';
+import { apparatsDuMonde, rareteApparat, tirerApparat } from './apparats';
 import { Bete, BETES, REGLES_BETES, type EffetBete, type SortBete } from './bete';
 import { initiativeBonus, removalChance } from './caracs';
 import { planWave } from './waves';
@@ -80,6 +81,8 @@ export interface ZoneSol { x: number; y: number; r: number; t: number; hit: HitD
 /** Butin au sol (choix 1C 2D 6A) : équipements et kamas seulement. Les Communs et les kamas filent vers le joueur
  *  qui passe près ; Rare et plus se ramassent d'un clic. Les ressources vont directement dans le sac. */
 export interface Drop { uid: number; x: number; y: number; item?: Item; kamas?: number; t: number; warned?: boolean;
+  /** « Apparats : » 1B 1D : un apparat (id Dofus), qui se ramasse d'un clic et rejoint la collection. */
+  apparat?: string;
   /** Rapporté par le familier : ramassé tout de suite. */
   familier?: boolean;
   /** Multi (« Multi : » 7C, butin chacun le sien) : seul ce joueur le voit et le ramasse. */
@@ -137,8 +140,8 @@ export interface WorldOptions {
   boutiques?: Record<string, { id: string; prix: number; /** vendu seulement en 0.3 */ v03?: boolean; /** en 0.4 (clés d'Amakna) */ v04?: boolean;
     /** payé dans cette monnaie au lieu des Pépites (« kamas » = p.kamas ; Tiwa Cawoteuw : Cawottes) */ monnaie?: string; /** apparence (collection) au lieu d'un objet */ apparat?: boolean;
     /** vendu seulement après une victoire dans ce donjon (« Wabbits : 9C ») */ apres?: string }[]>;
-  /** Objets d'apparat officiels (src/data/apparat.json) et leur prix en Pépites chez Emp (boutique.json, apparat_prix). */
-  apparats?: { objets: Record<string, { slot: string; collection?: boolean }>; prix: Record<string, number> };
+  /** Objets d'apparat officiels (src/data/apparat.json) ; plus aucun ne s'achète (« Apparats : »). */
+  apparats?: { objets: Record<string, { slot: string; collection?: boolean }> };
   /** Partie de test (#test) : réglages du panneau F1 ; absent dans une vraie partie. */
   test?: ReglagesTest;
   /** Éditeur de placement (F1 › Placement) : placements de cartes pas encore envoyés, qui remplacent ceux de src/data/placements.json. */
@@ -2087,6 +2090,9 @@ export class World {
     if (rang === 'boss' && this.player.v04) for (const id of tropheesDuBoss(type))
       if (!this.player.trophees.includes(id) && this.rng.next() < REGLAGES_BUTIN.trophee && this.player.gagnerTrophee(id)) this.emit({ k: 'dofusGagne', id });
     this.butinForge(b, rang, niveau);
+    // « Apparats : » 1B (boss, 1 sur 75) et 1D (fêtes) : jamais un apparat déjà possédé (2A)
+    const ap = tirerApparat(type, rang, this.opts.aujourdhui ?? '', this.player.apparats, this.rng);
+    if (ap) (b.apparats ??= []).push(ap);
     this.poserButin(b, mx, my, pour);
   }
   /** Forgemagie v2 : les boss lâchent les runes maison (5B), élites et boss un Orbe régénérant du niveau du monstre (7A). */
@@ -2109,6 +2115,7 @@ export class World {
       this.emit({ k: 'lootResource', id: r.id, n: q });
     }
     const out: Omit<Drop, 'x' | 'y' | 't' | 'uid'>[] = b.objets.map(item => ({ item }));
+    for (const apparat of b.apparats ?? []) out.push({ apparat });
     if (b.kamas) out.push({ kamas: b.kamas });
     out.forEach((o, i) => {
       const a = (i / Math.max(1, out.length)) * Math.PI * 2 + this.rng.range(0, 1), r = out.length > 1 ? 34 : 0;
@@ -2116,12 +2123,13 @@ export class World {
       if (!this.walkable(x, y)) { x = m.x; y = m.y; }
       this.drops.push({ ...o, uid: this.nextId++, x, y, t: 0, ...(pour != null ? { pour } : {}) });
       if (o.item) this.emit({ k: 'itemDrop', x, y, rarity: o.item.rarity });
+      else if (o.apparat) this.emit({ k: 'itemDrop', x, y, rarity: rareteApparat(o.apparat) });
     });
   }
   /** Rareté minimale affichée et ramassable selon le filtre du joueur (0 Commun, 1 Rare, 2 Épique). */
   shown(d: Drop): boolean { return (d.pour == null || d.pour === this.player.id) && (!d.item || RARITIES.indexOf(d.item.rarity) >= this.player.lootFilter); }
   /** Aspiré quand on passe près (kamas et Communs) ou ramassé d'un clic (le reste). */
-  static magnetic(d: Drop): boolean { return !d.item || d.item.rarity === 'commun'; }
+  static magnetic(d: Drop): boolean { return !d.apparat && (!d.item || d.item.rarity === 'commun'); }
   private updateDrops(dt: number) {
     const f = this.updateFamilier(dt);
     for (const d of this.drops) d.t += dt;
@@ -2137,7 +2145,7 @@ export class World {
       if (p.dead || d.t < 0.5 || !this.shown(d)) continue;
       const dist = Math.hypot(d.x - p.x, d.y - p.y);
       if (d.familier) { if (f) f.cible = null; }   // rapporté par le familier
-      else if (!d.item && aimant && Math.hypot(d.x - aimant.x, d.y - aimant.y) <= aimant.r && Math.hypot(d.x - aimant.x, d.y - aimant.y) < dist) {
+      else if (!d.item && !d.apparat && aimant && Math.hypot(d.x - aimant.x, d.y - aimant.y) <= aimant.r && Math.hypot(d.x - aimant.x, d.y - aimant.y) < dist) {
         // Enutrof (interface du coffre 7B) : le coffre ramasse les kamas au sol autour de lui
         const dc = Math.hypot(d.x - aimant.x, d.y - aimant.y);
         if (dc > 26) { const s = Math.min(dc, 520 * dt); d.x += (aimant.x - d.x) / dc * s; d.y += (aimant.y - d.y) / dc * s; continue; }
@@ -2145,7 +2153,10 @@ export class World {
         if (dist > 130) continue;
         if (dist > 26) { const s = Math.min(dist, 520 * dt); d.x += (p.x - d.x) / dist * s; d.y += (p.y - d.y) / dist * s; continue; }
       } else if (p.pickupId !== d.uid || dist > 44) continue;
-      if (d.item) {
+      if (d.apparat) {
+        if (p.pickupId === d.uid) p.pickupId = null;
+        this.ajouterApparat(d.apparat);
+      } else if (d.item) {
         if (p.pickupId === d.uid) p.pickupId = null;
         const def = this.opts.items?.equipment[d.item.id];
         // Magasin 10D : cadenas posé tout seul sur les objets de panoplie et les Légendaires (ou mieux)
@@ -2327,6 +2338,22 @@ export class World {
 
   // --- Emp, le Méryde du Recyclage (maquette 0.2, 8A+8B+8C, 9A+9B) ---------------------------------------------
   /** Collection d'apparences (1C) : le premier exemplaire brisé ou recyclé d'une coiffe, cape ou bouclier débloque son apparence. */
+  /** « Apparats : » : l'apparat rejoint la collection du joueur qui agit (une fois pour toutes : 2A). */
+  ajouterApparat(id: string): boolean {
+    const p = this.player;
+    if (p.apparats.includes(id)) return false;
+    p.apparats.push(id);
+    this.emit({ k: 'apparence', id, rarete: rareteApparat(id) });
+    return true;
+  }
+  /** « Apparats : » 1E : un boss du monde ou une invasion (clé « monde » de apparats_sources.json : gelees_royales, maitre_vampire,
+   *  invasion…) donne au joueur qui agit un de ses apparats qu'il n'a pas encore, avec une chance sur `sur` (1 = toujours). */
+  gagnerApparat(evenement: string, sur = 1): string | null {
+    const p = this.player, manque = apparatsDuMonde(evenement).filter(id => !p.apparats.includes(id));
+    if (!manque.length || this.rng.next() >= 1 / Math.max(1, sur)) return null;
+    const id = this.rng.pick(manque);
+    return this.ajouterApparat(id) ? id : null;
+  }
   private collectionner(id: string) {
     const p = this.player;
     if (!this.opts.apparats?.objets[id]?.collection || p.apparats.includes(id)) return;
@@ -2575,29 +2602,19 @@ export class World {
   }
   // --- Magasin du Bastion (maquette « Magasin : » 3A+3B 4C) ---------------------
   private ctxMagasin(): CtxMagasin {
-    return { boutiques: (this.opts.boutiques ?? {}) as CtxMagasin['boutiques'], apparats: this.opts.apparats, v03: this.player.v03, v04: this.player.v04 };
+    return { boutiques: (this.opts.boutiques ?? {}) as CtxMagasin['boutiques'], v03: this.player.v03, v04: this.player.v04 };
   }
   /** Les achats du jour de ce joueur (remis à zéro à minuit). */
   achatsDuJour() { const p = this.player; return (p.magasin = achatsDuJour(p.magasin, this.opts.aujourdhui ?? '')); }
   /** L'étal du jour (3A) : six offres tirées de la date, deux à -30 %. */
   etalDuJour(): Offre[] { return etalDuJour(this.opts.aujourdhui ?? '', this.ctxMagasin()); }
-  /** La pièce de la semaine (3B). */
-  pieceDeLaSemaine(): Offre | null { return pieceDeLaSemaine(this.opts.aujourdhui ?? '', this.ctxMagasin()); }
   /** Achète l'offre i de l'étal (une fois par jour). */
   acheterEtal(i: number): boolean {
     const o = this.etalDuJour()[i], a = this.achatsDuJour(), p = this.player;
     if (!o || a.etal.includes(i)) return false;
-    const ok = this.payer(o.prix, o.monnaie, () => {
-      if (o.k === 'apparat') { if (p.apparats.includes(o.id)) return false; p.apparats.push(o.id); }
-      else p.resources[o.id] = (p.resources[o.id] ?? 0) + 1;
-      return true;
-    }, o.id);
+    const ok = this.payer(o.prix, o.monnaie, () => { p.resources[o.id] = (p.resources[o.id] ?? 0) + 1; return true; }, o.id);
     if (ok) a.etal.push(i);
     return ok;
-  }
-  acheterPiece(): boolean {
-    const o = this.pieceDeLaSemaine(), p = this.player;
-    return !!o && this.payer(o.prix, o.monnaie, () => { if (p.apparats.includes(o.id)) return false; p.apparats.push(o.id); return true; }, o.id);
   }
   /** 6C : +20 places de sac (prix qui monte à chaque achat). */
   prixSacEnPlus(): number | null { return CONFORT.sac.prix[this.player.sacEnPlus / CONFORT.sac.pas] ?? null; }
@@ -2666,15 +2683,6 @@ export class World {
     const ok = this.payer(MAGASIN.sac[rarete], PEPITE, () => true, `sac:${rarete}`);
     if (ok) { a.sac = true; this.donnerSac(rarete, p.level); }
     return ok;
-  }
-  /** Achat d'un objet d'apparat chez Emp (Apparence 5A) : il rejoint la collection du perso, une fois pour toutes. */
-  acheterApparat(id: string): boolean {
-    const d = this.opts.apparats?.objets[id], prix = d && this.opts.apparats!.prix[d.slot], p = this.player;
-    if (!d || d.collection || reserveePiece(id) || prix == null || p.apparats.includes(id) || (p.resources[PEPITE] ?? 0) < prix) return false;
-    p.resources[PEPITE] -= prix; if (!p.resources[PEPITE]) delete p.resources[PEPITE];
-    p.apparats.push(id);
-    this.emit({ k: 'achat', id, prix });
-    return true;
   }
   /** Case Apparence de l'inventaire : pose un apparat possédé sur l'emplacement, « 0 » cache l'objet porté, null rend sa vraie apparence. */
   porterApparat(slot: 'chapeau' | 'cape' | 'bouclier' | 'familier', id: string | null): boolean {
