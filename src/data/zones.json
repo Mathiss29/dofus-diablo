@@ -14147,12 +14147,12 @@
     "arrivee": 18759,
     "zaap": 17415,
     "pnj": {
-     "kerubim": 16402,
-     "otomai": 16750,
-     "tissebelle": 18973,
-     "goultard": 18770,
+     "kerubim": 17966,
+     "otomai": 2576,
+     "tissebelle": 3082,
+     "goultard": 2588,
      "forgemage": 20333,
-     "bouillotte": 19760,
+     "bouillotte": 1994,
      "gawdien": 18645,
      "garde_zaap1": 17861,
      "garde_zaap2": 17865,
@@ -14160,7 +14160,8 @@
      "garde_bonta": 15958,
      "garde_brakmar": 17203,
      "garde_pandala": 17179,
-     "garde_frigost": 20552
+     "garde_frigost": 20552,
+     "responsable": 3089
     },
     "iles": {
      "bonta": 14951,
@@ -14168,7 +14169,20 @@
      "pandala": 17515,
      "frigost": 20775
     }
-   }
+   },
+   "portes": [
+    {
+     "a": [
+      "bastion",
+      17628
+     ],
+     "b": [
+      "marche",
+      2384
+     ],
+     "nom": "Marché couvert"
+    }
+   ]
   }
  }
 }

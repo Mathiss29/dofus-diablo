@@ -149,12 +149,14 @@ PLACE = ell(760, 420, 0, 30)  # la place pavée
 # Bâtiments : pièce, ancre (bas-milieu), miroir, rayon bloqué (cases non marchables autour du pied), PNJ devant (décalage)
 BATIMENTS = [
     ('taverne', (40, -420), False, 300, None),                      # la taverne : lieu de rencontre en multi (8A)
-    ('maison_astrub', (-500, -360), False, 230, ('kerubim', (40, 90))),
-    ('as_tour_blason', (650, -300), True, 200, ('otomai', (-30, 90))),
-    ('as_boutique', (-1000, 200), False, 250, ('tissebelle', (140, 20))),
-    ('as_maison_bleue', (990, 40), True, 190, ('goultard', (-60, 120))),
+    # Marché couvert (maquette « Magasin : » 1A, 13A-13F) : l'Hôtel de vente des cosmétiques d'Astrub en est la porte ; Otomaï,
+    # Tissebelle, Goultard et Mère Bouillotte vendent dedans, Kerubim attend à la porte : marche.py les place (à lancer après)
+    ('maison_astrub', (-500, -360), False, 230, None),
+    ('as_tour_blason', (650, -300), True, 200, None),
+    ('as_boutique', (-1000, 200), False, 250, None),
+    ('as_maison_bleue', (990, 40), True, 190, None),
     ('as_forge_tour', (700, 470), True, 200, ('forgemage', (-170, -10))),     # quartier des artisans : place du forgemage (5B)
-    ('as_etal_rouge', (-760, 400), False, 150, ('bouillotte', (110, -20))),
+    ('as_etal_rouge', (-760, 400), False, 150, None),
 ]
 OBJETS = [('zaap', (0, 10), False, 120), ('as_etal_orange', (-330, 470), False, 100), ('as_charrette', (330, 470), True, 100),
           ('as_petit_arbre', (-300, -40), False, 50), ('as_petit_arbre', (300, -40), True, 50), ('as_arbre', (480, 180), False, 50)]
