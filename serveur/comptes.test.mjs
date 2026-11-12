@@ -42,7 +42,7 @@ test('connexion Discord : jeton, profil, rôles, déconnexion', async () => {
   assert.equal(moi.compte.nom, 'Mathis');
   assert.equal(moi.compte.testeur, true);
   assert.equal(moi.compte.admin, false);
-  assert.deepEqual(moi.persos, [null, null, null]);
+  assert.deepEqual(moi.persos, [null, null, null, null, null]);
   assert.equal((await fetch(`${base}/moi`)).status, 401);
   await fetch(`${base}/deconnexion`, { method: 'POST', headers: auth });
   assert.equal((await fetch(`${base}/moi`, { headers: auth })).status, 401);
@@ -71,14 +71,14 @@ test('persos en ligne : sauvegarde, plus récent gagne, import unique, suppressi
   const put = (n, corps) => fetch(`${base}/persos/${n}`, { method: 'PUT', headers: auth, body: JSON.stringify(corps) });
   assert.equal((await put(0, { perso: perso('Goultard', 5), maj: 100 })).status, 200);
   assert.equal((await put(0, { perso: perso('Goultard', 4), maj: 50 })).status, 409);   // un vieux PC ne remplace pas une partie plus récente
-  assert.equal((await put(3, { perso: perso('X'), maj: 1 })).status, 404);
+  assert.equal((await put(5, { perso: perso('X'), maj: 1 })).status, 404);   // 5 emplacements au plus (3 + 2 achetés au Marché)
   assert.equal((await put(1, { perso: { nom: 1 } })).status, 400);
   const imp = corps => fetch(`${base}/import`, { method: 'POST', headers: auth, body: JSON.stringify(corps) });
   assert.equal((await imp({ emplacement: 0, perso: perso('Local') })).status, 409);       // emplacement pris
   assert.equal((await imp({ emplacement: 1, perso: perso('Local', 30) })).status, 200);
   assert.equal((await imp({ emplacement: 2, perso: perso('Encore') })).status, 403);      // une seule fois
   const moi = await (await fetch(`${base}/moi`, { headers: auth })).json();
-  assert.deepEqual(moi.persos.map(p => p?.perso.etat.level ?? null), [5, 30, null]);
+  assert.deepEqual(moi.persos.map(p => p?.perso.etat.level ?? null), [5, 30, null, null, null]);
   assert.equal(moi.compte.importe, true);
   assert.equal((await fetch(`${base}/coffres/normal`, { method: 'PUT', headers: auth, body: JSON.stringify({ coffre: { kamas: 12 } }) })).status, 200);
   assert.equal((await fetch(`${base}/coffres/test`, { method: 'PUT', headers: auth, body: JSON.stringify({ coffre: {} }) })).status, 404);
