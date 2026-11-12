@@ -15,7 +15,7 @@ export type SourceApparat =
 export interface FeteDef { nom: string; /** MM-JJ, inclus */ debut: string; fin: string }
 
 export const APPARATS_SOURCES = sources as unknown as {
-  chances: { boss: number; fete: Record<'normal' | 'elite' | 'boss', number> };
+  chances: { boss: number; fete: Record<'normal' | 'elite' | 'boss', number>; monde: { boss: number; invasion: number } };
   fetes: Record<string, FeteDef>;
   monde: Record<string, { nom: string }>;
   sources: Record<string, SourceApparat>;
@@ -83,3 +83,14 @@ export function ouTrouver(id: string, nomMonstre: (k: string) => string, nomClas
 }
 const MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
 function jourMois(md: string) { const [m, j] = md.split('-').map(Number); return `${j === 1 ? '1er' : j} ${MOIS[m - 1]}`; }
+
+/** 4C : apparats à trouver dans une zone (compteur de la carte M) : ceux des boss de ses donjons et des boss du monde qui y apparaissent. */
+type DonjonVu = { salles: Record<string, string[][]>; bossVague?: string[] };
+export function apparatsDeZone(zone: { open?: { donjons?: DonjonVu[]; donjonsTest?: DonjonVu[]; subareas: Record<string, unknown> } } | undefined,
+  bossMonde: Record<string, { sousZone: number }>): string[] {
+  if (!zone) return [];
+  const l = new Set<string>();
+  for (const d of [...(zone.open?.donjons ?? []), ...(zone.open?.donjonsTest ?? [])]) for (const m of [...(d.bossVague ?? []), ...Object.values(d.salles).flat(2)]) apparatsDuBoss(m).forEach(id => l.add(id));
+  for (const [k, b] of Object.entries(bossMonde)) if (zone.open?.subareas[String(b.sousZone)]) apparatsDuMonde(k).forEach(id => l.add(id));
+  return [...l];
+}

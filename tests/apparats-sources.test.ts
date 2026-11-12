@@ -64,8 +64,13 @@ describe('D\'où viennent les apparats (« Apparats : » 1B 1C 1D 1E 2A 3A 4A)',
     const evts = Object.keys(APPARATS_SOURCES.monde);
     expect(evts.length).toBeGreaterThan(0);
     const w = monde(), p = w.player, l = apparatsDuMonde(evts[0]);
-    expect(w.gagnerApparat(evts[0], p.x, p.y)).toEqual([p]);
-    expect(l.filter(id => p.apparats.includes(id)).length).toBe(1);
+    expect(evts).toEqual(expect.arrayContaining(['gelees_royales', 'maitre_vampire', 'chef_de_guerre_bouftou', 'chef_crocodaille', 'invasion']));
+    const id = w.gagnerApparat(evts[0]);
+    expect(l).toContain(id);
+    expect(l.filter(i => p.apparats.includes(i))).toEqual([id]);
+    for (let i = 0; i < 20; i++) w.gagnerApparat(evts[0]);
+    expect(l.every(i => p.apparats.includes(i))).toBe(true);
+    expect(w.gagnerApparat(evts[0])).toBeNull();   // 2A : jamais de double
     expect(w.drainEvents().some(e => e.k === 'apparence')).toBe(true);
   });
 
@@ -83,5 +88,16 @@ describe('D\'où viennent les apparats (« Apparats : » 1B 1C 1D 1E 2A 3A 4A)',
     expect(ouTrouver(apparatsDuBoss('kardorim')[0], nm, nc)).toContain('Boss');
     expect(ouTrouver(apparatsDeFete('nowel')[0], nm, nc)).toContain('Nowel');
     expect(ouTrouver('inconnu', nm, nc)).toContain('Collection');
+  });
+});
+
+describe('4C : compteur d\'apparats par zone sur la carte M', () => {
+  it('Incarnam, Astrub et Amakna ont des apparats à trouver (boss de donjon, boss du monde)', async () => {
+    const { apparatsDeZone } = await import('../src/sim/apparats');
+    const MV = (await import('../src/data/monde_vivant.json')).default as unknown as { boss: { liste: Record<string, { sousZone: number }> } };
+    const inca = apparatsDeZone(GAME_DATA.zones.incarnam, MV.boss.liste), monde = apparatsDeZone(GAME_DATA.zones.astrub, MV.boss.liste);   // Astrub + Amakna
+    expect(inca).toEqual(expect.arrayContaining(apparatsDuBoss('kardorim')));
+    expect(monde.some(id => sourceApparat(id)?.k === 'boss')).toBe(true);
+    expect(monde.some(id => sourceApparat(id)?.k === 'monde')).toBe(true);
   });
 });

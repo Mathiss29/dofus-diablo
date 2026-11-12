@@ -89,12 +89,14 @@ FETES = {
     'ete': {'nom': 'Été', 'debut': '07-01', 'fin': '08-31', 'apparats': ids('Coiffleur de l\'Été', 'Cabalnéaire', 'Paill\'Nama du Plagiste')},
 }
 
-# 1E : boss du monde et invasions (0.5) : sources officielles (Gelées Royales, Gargandyas) et thème (invasions)
+# 1E : boss du monde et invasions de la 0.5 (clés de src/data/monde_vivant.json) : sources officielles (Gelées Royales : Minowang,
+# Bouloute d'Halouine…) et thème pour les autres. Gargandyas n'est pas encore en jeu : ses apparats restent « à venir ».
 MONDE = {
-    'gelees': {'nom': 'Gelées Royales', 'apparats': ids('Couwonne du Wa Dunow', 'Cape du Wa Dunow', 'Couwonne de la Weine Dussud', 'Cape de la Weine Dussud', 'Minowang', 'Bouloute d\'Halouine')},
-    'gargandyas': {'nom': 'Gargandyas', 'apparats': ids('Osacoche d\'Osavora', 'Cornes d\'Osavora', 'Cornes Gargandyesques', 'Gargandynou perturbé')},
-    'invasion_cuirasses': {'nom': 'Invasion des Cuirassés', 'apparats': ids('Kasque ranforcé', 'Kape karapacé')},
-    'invasion_mansots': {'nom': 'Invasion des Mansots', 'apparats': ids('Bob de Manchic', 'Sacarête de Manchic')},
+    'gelees_royales': {'nom': 'Boss du monde : Gelées Royales', 'apparats': ids('Couwonne du Wa Dunow', 'Cape du Wa Dunow', 'Couwonne de la Weine Dussud', 'Cape de la Weine Dussud', 'Minowang', 'Bouloute d\'Halouine')},
+    'chef_de_guerre_bouftou': {'nom': 'Boss du monde : Chef de Guerre Bouftou', 'apparats': ids('Casque du Batailleur', 'Cape du Batailleur')},
+    'maitre_vampire': {'nom': 'Boss du monde : Maître Vampire (la nuit)', 'apparats': ids('Capuche de l\'Ombre Maudite', 'Cape de l\'Ombre Maudite', 'Cornes du Cauchemar')},
+    'chef_crocodaille': {'nom': 'Boss du monde : Chef Crocodaille', 'apparats': ids('Dents de Sherajah', 'Sacardent de Bastortue')},
+    'invasion': {'nom': 'Coffre d\'invasion (Éclats Obscurs)', 'apparats': ids('Kasque ranforcé', 'Kape karapacé', 'Bob de Manchic', 'Sacarête de Manchic')},
 }
 
 ENUTROF = CL['enutrof']['coffre']['tresor']['apparats'] if 'coffre' in CL.get('enutrof', {}) else []
@@ -147,7 +149,7 @@ for c, l in CLASSE.items():
 
 json.dump({
     '_': 'Sources des apparats (maquette « Apparats : » 2026-11-12), écrit par tools/contenu/apparats_sources.py. Plus aucun apparat au Marché.',
-    'chances': {'_': '1 chance sur N', 'boss': 75, 'fete': {'normal': 4000, 'elite': 400, 'boss': 40}},
+    'chances': {'_': '1 chance sur N', 'boss': 75, 'fete': {'normal': 4000, 'elite': 400, 'boss': 40}, 'monde': {'boss': 8, 'invasion': 15}},
     'fetes': {k: {'nom': v['nom'], 'debut': v['debut'], 'fin': v['fin']} for k, v in FETES.items()},
     'monde': {k: {'nom': v['nom']} for k, v in MONDE.items()},
     'sources': out, 'succes': succes,

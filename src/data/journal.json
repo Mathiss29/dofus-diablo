@@ -1827,6 +1827,16 @@
             "etiquettes": [
               "Bastion des Douze"
             ]
+          },
+          {
+            "titre": "Les apparats se méritent",
+            "phrase": "Plus d'apparats au Marché : ils tombent des boss de donjon, des fêtes et des boss du monde.",
+            "details": "Chaque boss a ses 1 à 3 apparats (une chance sur 75), les succès de classe en donnent au niveau 50 et 100. Jamais de double.",
+            "icone": "apparat",
+            "etiquettes": [
+              "Bastion des Douze",
+              "Carte M"
+            ]
           }
         ],
         "Le monde": [
@@ -1847,6 +1857,14 @@
             "icone": "kamas",
             "etiquettes": [
               "Bastion des Douze"
+            ]
+          },
+          {
+            "titre": "Fêtes du calendrier",
+            "phrase": "Nowel, Halouine, Saint-Ballotin, Printemps et Été font tomber leurs apparats pendant la fête.",
+            "icone": "apparat",
+            "etiquettes": [
+              "Partout"
             ]
           }
         ],

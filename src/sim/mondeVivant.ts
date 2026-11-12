@@ -1,4 +1,5 @@
 import MV from '../data/monde_vivant.json';
+import { APPARATS_SOURCES } from './apparats';
 import { degatsMonstre } from './danger';
 import type { GameData, MonsterDef, SubAreaDef } from './defs';
 import { PEPITE } from './items';
@@ -352,6 +353,7 @@ export class MondeVivant {
         q.resources[PEPITE] = (q.resources[PEPITE] ?? 0) + R.pepites;
         w.emit({ k: 'lootResource', id: PEPITE, n: R.pepites });
         w.emit({ k: 'bossMondeVaincu', cle: b.cle, nom: b.def.nom, premier, titre: b.def.titre, pepites: R.pepites });
+        w.gagnerApparat(b.cle, APPARATS_SOURCES.chances.monde.boss);   // « Apparats : » 1E
       });
     }
     w.emit({ k: 'bossMondeFin', cle: b.cle, nom: b.def.nom, fin: 'vaincu' });
@@ -444,6 +446,7 @@ export class MondeVivant {
     const niveau = w.niveauEn(inv.coffre.x, inv.coffre.y);
     w.butinMonstre(p, '', 'elite', niveau, inv.coffre.x, inv.coffre.y, C.tirages, { rarete: w.rng.next() < C.epique ? 'epique' : 'rare', legendaire: 0 });
     w.emit({ k: 'invasionCoffre', nom: inv.nom, x: inv.coffre.x, y: inv.coffre.y });
+    w.commeJoueur(p, () => w.gagnerApparat('invasion', APPARATS_SOURCES.chances.monde.invasion));   // « Apparats : » 1E
     return true;
   }
 

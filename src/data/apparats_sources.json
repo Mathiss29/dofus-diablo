@@ -7,6 +7,10 @@
    "normal": 4000,
    "elite": 400,
    "boss": 40
+  },
+  "monde": {
+   "boss": 8,
+   "invasion": 15
   }
  },
  "fetes": {
@@ -37,17 +41,20 @@
   }
  },
  "monde": {
-  "gelees": {
-   "nom": "Gelées Royales"
+  "gelees_royales": {
+   "nom": "Boss du monde : Gelées Royales"
   },
-  "gargandyas": {
-   "nom": "Gargandyas"
+  "chef_de_guerre_bouftou": {
+   "nom": "Boss du monde : Chef de Guerre Bouftou"
   },
-  "invasion_cuirasses": {
-   "nom": "Invasion des Cuirassés"
+  "maitre_vampire": {
+   "nom": "Boss du monde : Maître Vampire (la nuit)"
   },
-  "invasion_mansots": {
-   "nom": "Invasion des Mansots"
+  "chef_crocodaille": {
+   "nom": "Boss du monde : Chef Crocodaille"
+  },
+  "invasion": {
+   "nom": "Coffre d'invasion (Éclats Obscurs)"
   }
  },
  "sources": {
@@ -638,72 +645,87 @@
   },
   "20739": {
    "k": "monde",
-   "evenement": "gelees",
+   "evenement": "gelees_royales",
    "rarete": "legendaire"
   },
   "22322": {
    "k": "monde",
-   "evenement": "gelees",
+   "evenement": "gelees_royales",
    "rarete": "legendaire"
   },
   "29498": {
    "k": "monde",
-   "evenement": "gelees",
+   "evenement": "gelees_royales",
    "rarete": "legendaire"
   },
   "31042": {
    "k": "monde",
-   "evenement": "gelees",
+   "evenement": "gelees_royales",
    "rarete": "legendaire"
   },
   "20052": {
    "k": "monde",
-   "evenement": "gelees",
+   "evenement": "gelees_royales",
    "rarete": "legendaire"
   },
   "20136": {
    "k": "monde",
-   "evenement": "gelees",
+   "evenement": "gelees_royales",
    "rarete": "legendaire"
   },
-  "31944": {
+  "18218": {
    "k": "monde",
-   "evenement": "gargandyas",
+   "evenement": "chef_de_guerre_bouftou",
    "rarete": "legendaire"
   },
-  "31946": {
+  "19521": {
    "k": "monde",
-   "evenement": "gargandyas",
+   "evenement": "chef_de_guerre_bouftou",
    "rarete": "legendaire"
   },
-  "31934": {
+  "29732": {
    "k": "monde",
-   "evenement": "gargandyas",
+   "evenement": "maitre_vampire",
    "rarete": "legendaire"
   },
-  "31864": {
+  "29733": {
    "k": "monde",
-   "evenement": "gargandyas",
+   "evenement": "maitre_vampire",
+   "rarete": "legendaire"
+  },
+  "21778": {
+   "k": "monde",
+   "evenement": "maitre_vampire",
+   "rarete": "legendaire"
+  },
+  "25796": {
+   "k": "monde",
+   "evenement": "chef_crocodaille",
+   "rarete": "legendaire"
+  },
+  "27173": {
+   "k": "monde",
+   "evenement": "chef_crocodaille",
    "rarete": "legendaire"
   },
   "25978": {
    "k": "monde",
-   "evenement": "invasion_cuirasses",
+   "evenement": "invasion",
    "rarete": "legendaire"
   },
   "25979": {
    "k": "monde",
-   "evenement": "invasion_cuirasses",
+   "evenement": "invasion",
    "rarete": "legendaire"
   },
   "27169": {
    "k": "monde",
-   "evenement": "invasion_mansots",
+   "evenement": "invasion",
    "rarete": "legendaire"
   },
   "27168": {
    "k": "monde",
-   "evenement": "invasion_mansots",
+   "evenement": "invasion",
    "rarete": "legendaire"
   },
   "6500": {
@@ -1574,10 +1596,6 @@
    "k": "boutique",
    "rarete": "epique"
   },
-  "18218": {
-   "k": "boutique",
-   "rarete": "rare"
-  },
   "18227": {
    "k": "boutique",
    "rarete": "epique"
@@ -1641,10 +1659,6 @@
   "19466": {
    "k": "boutique",
    "rarete": "legendaire"
-  },
-  "19521": {
-   "k": "boutique",
-   "rarete": "epique"
   },
   "19720": {
    "k": "boutique",
@@ -1837,10 +1851,6 @@
   "21776": {
    "k": "boutique",
    "rarete": "rare"
-  },
-  "21778": {
-   "k": "boutique",
-   "rarete": "epique"
   },
   "21802": {
    "k": "boutique",
@@ -2054,10 +2064,6 @@
    "k": "boutique",
    "rarete": "rare"
   },
-  "25796": {
-   "k": "boutique",
-   "rarete": "epique"
-  },
   "25810": {
    "k": "boutique",
    "rarete": "rare"
@@ -2265,10 +2271,6 @@
   "27172": {
    "k": "boutique",
    "rarete": "rare"
-  },
-  "27173": {
-   "k": "boutique",
-   "rarete": "epique"
   },
   "27178": {
    "k": "boutique",
@@ -2598,14 +2600,6 @@
    "k": "boutique",
    "rarete": "rare"
   },
-  "29732": {
-   "k": "boutique",
-   "rarete": "epique"
-  },
-  "29733": {
-   "k": "boutique",
-   "rarete": "rare"
-  },
   "29743": {
    "k": "boutique",
    "rarete": "epique"
@@ -2844,6 +2838,18 @@
   },
   "31908": {
    "k": "boutique",
+   "rarete": "epique"
+  },
+  "31934": {
+   "k": "boutique",
+   "rarete": "rare"
+  },
+  "31944": {
+   "k": "avenir",
+   "rarete": "epique"
+  },
+  "31946": {
+   "k": "avenir",
    "rarete": "epique"
   },
   "32107": {
@@ -3857,6 +3863,10 @@
   "31863": {
    "k": "boutique",
    "rarete": "rare"
+  },
+  "31864": {
+   "k": "avenir",
+   "rarete": "epique"
   },
   "31905": {
    "k": "boutique",

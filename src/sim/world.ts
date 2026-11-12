@@ -2346,16 +2346,13 @@ export class World {
     this.emit({ k: 'apparence', id, rarete: rareteApparat(id) });
     return true;
   }
-  /** « Apparats : » 1E : un boss du monde ou une invasion (clé de apparats_sources.json « monde » : gelees, gargandyas,
-   *  invasion_cuirasses…) donne à chaque joueur proche de (x, y) un de ses apparats qu'il n'a pas encore, avec une chance sur `sur`
-   *  (1 = toujours). Renvoie les joueurs servis. */
-  gagnerApparat(evenement: string, x: number, y: number, sur = 1): Player[] {
-    const l = apparatsDuMonde(evenement), servis: Player[] = [];
-    for (const q of this.players.length > 1 ? this.joueursProches(x, y) : this.players) this.commeJoueur(q, () => {
-      const manque = l.filter(id => !q.apparats.includes(id));
-      if (manque.length && this.rng.next() < 1 / Math.max(1, sur) && this.ajouterApparat(this.rng.pick(manque))) servis.push(q);
-    });
-    return servis;
+  /** « Apparats : » 1E : un boss du monde ou une invasion (clé « monde » de apparats_sources.json : gelees_royales, maitre_vampire,
+   *  invasion…) donne au joueur qui agit un de ses apparats qu'il n'a pas encore, avec une chance sur `sur` (1 = toujours). */
+  gagnerApparat(evenement: string, sur = 1): string | null {
+    const p = this.player, manque = apparatsDuMonde(evenement).filter(id => !p.apparats.includes(id));
+    if (!manque.length || this.rng.next() >= 1 / Math.max(1, sur)) return null;
+    const id = this.rng.pick(manque);
+    return this.ajouterApparat(id) ? id : null;
   }
   private collectionner(id: string) {
     const p = this.player;
