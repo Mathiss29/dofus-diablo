@@ -77,6 +77,9 @@ export function archisParLieu(): GroupeArchis[] {
   }
   const places = new Set(out.flatMap(o => o.archis)), reste = tous.filter(a => !places.has(a));
   if (reste.length) out.push({ zone: 'Ailleurs', nom: 'Vagues et donjons', niveau: 0, archis: reste });
+  // « Archis : » 9C : les âmes des boss de donjon comptent aussi (quête de l'Ocre), du plus petit niveau au plus grand
+  const boss = Object.entries(GAME_DATA.monsters).filter(([, d]) => d.boss && d.ame).sort((a, b) => (a[1].level ?? 0) - (b[1].level ?? 0)).map(([k]) => k);
+  if (boss.length) out.push({ zone: 'Donjons', nom: 'Boss de donjon', niveau: 0, archis: boss });
   return archisLieux = out;
 }
 

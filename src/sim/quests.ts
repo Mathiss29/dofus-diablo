@@ -45,6 +45,8 @@ export type ObjectifDef = { texte: string } & (
   | { t: 'chrono'; carte: string; s: number }
   /** Défi de donjon du jour (3B) : vaincre le boss de ce donjon en respectant la règle (sans potion, ou en moins de s secondes). */
   | { t: 'defi'; donjon: string; regle: 'sansPotion' | 'chrono'; s?: number }
+  /** « Archis : » 9A : âmes à montrer (archimonstres et boss capturés, carnet des âmes) ; elles restent dans le sac. */
+  | { t: 'ames'; monstres: string[] }
 );
 export interface EtapeDef {
   nom: string;
@@ -76,6 +78,8 @@ export interface RecompenseDef {
   dofus?: string;
   /** Pépites (la monnaie d'Emp, 5B). */
   pepites?: number;
+  /** « Archis : » 11C : titre officiel et ornement officiel gagnés (comme ceux des succès). */
+  titre?: string; ornement?: OrnementDef;
 }
 export type QueteType = 'tutoriel' | 'principale' | 'secondaire' | 'prime' | 'evenement';
 export interface QueteDef {
@@ -824,6 +828,7 @@ export class Quetes {
       else if (Math.hypot(n.x - p.x, n.y - p.y) < Quetes.PORTEE) { const id = this.versPnj; this.versPnj = null; p.stopMove(); this.parler(id); }
     }
     for (const c of this.enCours) this.etapeDe(c)?.objectifs.forEach((o, i) => {
+      if (o.t === 'ames') { c.compte[i] = o.monstres.filter(m => p.ames.includes(m)).length; return; }
       if (c.compte[i] >= 1 && o.t !== 'vaincre' && o.t !== 'ramasser' && o.t !== 'recolter' && o.t !== 'fabriquer') return;
       if (o.t === 'aller') {
         const n = o.pnj ? this.pnj(o.pnj) : null;
@@ -843,7 +848,7 @@ export class Quetes {
   }
 
   /** Total d'un objectif (pour le suivi : « 2/4 »). */
-  total(o: ObjectifDef): number { return o.t === 'vaincre' || o.t === 'ramasser' || o.t === 'recolter' ? o.n : o.t === 'fabriquer' ? o.n ?? 1 : o.t === 'defense' ? o.s : 1; }
+  total(o: ObjectifDef): number { return o.t === 'vaincre' || o.t === 'ramasser' || o.t === 'recolter' ? o.n : o.t === 'fabriquer' ? o.n ?? 1 : o.t === 'defense' ? o.s : o.t === 'ames' ? o.monstres.length : 1; }
 
   /** Objectif pas fini de ce type dans les quêtes en cours (le premier). */
   private objectifActif<T extends ObjectifDef['t']>(t: T, carte: string | null): { c: QueteEnCours; i: number; o: Extract<ObjectifDef, { t: T }> } | null {
@@ -1030,7 +1035,7 @@ export class Quetes {
       return [Math.min(n, o.palier), o.palier];
     }
     if ('compteur' in o) return [Math.min(this.compteurs[o.compteur] ?? 0, o.n), o.n];
-    if ('archis' in o) return [Math.min(p.ames.length, o.archis), o.archis];
+    if ('archis' in o) { const M = this.world.opts.data.monsters, n = p.ames.filter(a => M[a]?.archiDe).length; return [Math.min(n, o.archis), o.archis]; }
     if ('guerre' in o && o.guerre !== 'parfait') return [Math.min(p.guerre[o.guerre], o.n), o.n];
     if ('exploration' in o) {
       // compté seulement quand le brouillard a bougé (verifierSucces passe à chaque pas)
@@ -1088,12 +1093,14 @@ export class Quetes {
   get titres(): string[] {
     const t: string[] = [];
     for (const id of this.succes) { const x = this.data.succes[id]?.recompense?.titre; if (x && this.visible(id) && !t.includes(x)) t.push(x); }
+    for (const id of this.finies) { const x = this.data.quetes[id]?.recompense?.titre; if (x && !t.includes(x)) t.push(x); }   // 11C : étapes de l'Ocre
     return t;
   }
   /** Ornements officiels gagnés (6B). */
   get ornements(): OrnementDef[] {
     const o: OrnementDef[] = [];
     for (const id of this.succes) { const x = this.data.succes[id]?.recompense?.ornement; if (x && this.visible(id) && !o.some(y => y.id === x.id)) o.push(x); }
+    for (const id of this.finies) { const x = this.data.quetes[id]?.recompense?.ornement; if (x && !o.some(y => y.id === x.id)) o.push(x); }
     return o;
   }
   /** Titre porté (Tour 7A, 6A) : celui choisi ; sans choix, le dernier gagné ; '' = aucun. */

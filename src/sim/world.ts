@@ -1893,7 +1893,7 @@ export class World {
     const p = this.player;
     p.soigner(p.cls.healOnKill + p.legendary('vampire'));
     this.dropLoot(m);
-    if (m.def.archiDe) this.capturer(m);
+    if (m.def.archiDe || (m.def.boss && m.def.ame)) this.capturer(m);
     const alm = (this.almanax?.effet === 'xp' ? 1 + ALMANAX.xp : 1) * (1 + p.beni('xp'));   // 15C, Magasin 6D
     // Multi (maquette « Multi : » 7A) : chaque joueur proche gagne l'XP comme en solo, +10 % par allié proche
     const proches = this.players.filter(q => q !== p && !q.dead && Math.abs(q.x - m.x) + Math.abs(q.y - m.y) <= World.SOMMEIL);
@@ -2449,10 +2449,12 @@ export class World {
     return true;
   }
   /** 15B : un archimonstre vaincu avec une Petite pierre d'âme dans le sac est capturé (pierre pleine, et sa page du Bestiaire). */
-  /** « Archis : » 5E : en groupe, chaque joueur proche qui a une pierre capture sa propre âme ; 6A : l'âme officielle nommée. */
+  /** « Archis : » 5E : en groupe, chaque joueur proche qui a une pierre capture sa propre âme ; 6A : l'âme officielle nommée ;
+   *  9C : un boss de donjon aussi (son « Âme capturée » officielle, une seule fois). */
   private capturer(m: Monster) {
     for (const p of this.joueursProches(m.x, m.y)) {
       if (!p.v03 || p.dead || !(p.resources[ARCHI.pierre] > 0)) continue;
+      if (m.def.boss && p.ames.includes(m.type)) continue;   // « Archis : » 9C : l'âme d'un boss se capture une fois (la pierre reste)
       p.resources[ARCHI.pierre]--; if (!p.resources[ARCHI.pierre]) delete p.resources[ARCHI.pierre];
       const ame = m.def.ame && this.opts.items?.resources[m.def.ame] ? m.def.ame : ARCHI.pleine;
       p.resources[ame] = (p.resources[ame] ?? 0) + 1;

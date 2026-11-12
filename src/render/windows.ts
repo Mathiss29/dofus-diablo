@@ -2064,7 +2064,7 @@ export class Windows {
     const w = this.win!, vus = this.vaincus(), connu = (m: string) => this.toutVoir || (vus[m] ?? 0) > 0 || this.world.player.ames.includes(m);
     const groupes = groupesBestiaire(), q = this.bestRecherche.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
     const va = (n: string) => !q || n.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').includes(q);
-    if (this.bestVue === 'archis' && !GAME_DATA.monsters[this.bestType]?.archiDe) { this.bestType = archisParLieu()[0]?.archis[0] ?? ''; this.bestObjet = null; }
+    if (this.bestVue === 'archis' && !archisParLieu().some(g => g.archis.includes(this.bestType))) { this.bestType = archisParLieu()[0]?.archis[0] ?? ''; this.bestObjet = null; }
     if (!this.bestType || !GAME_DATA.monsters[this.bestType]) this.bestType = groupes.flatMap(g => g.monstres).find(connu) ?? groupes[0]?.monstres[0] ?? '';
     const ligne = (m: string) => {
       const d = GAME_DATA.monsters[m], ok = connu(m), L = LOOKS[d.look];
@@ -2085,7 +2085,8 @@ export class Windows {
       const m = this.bestType, d = GAME_DATA.monsters[m], n = vus[m] ?? 0, L = LOOKS[d.look];
       const ameId = d.ame, pris = this.world.player.ames.includes(m), base = d.archiDe ? GAME_DATA.monsters[d.archiDe] : undefined;
       const ou = d.archiDe ? archisParLieu().find(g => g.archis.includes(m)) : undefined;
-      const ame = d.archiDe ? `<div class="ame">${ameId ? iconeObjet(ameId) : ''}<div><b>${escB(ameId ? nomObjet(ameId) : 'Âme')}</b><div class="sub">${pris ? 'Capturée : elle est dans ton carnet.' : `Pas encore capturée. Il remplace parfois un ${escB(base?.name ?? 'monstre')}${ou ? ` (${escB(ou.nom)}, niv. ${ou.niveau})` : ''} : bats-le avec une Petite pierre d'âme dans le sac (Otomaï, Marché couvert du Bastion).`}</div></div></div>` : '';
+      const ame = d.boss && ameId ? `<div class="ame">${iconeObjet(ameId)}<div><b>${escB(nomObjet(ameId))}</b><div class="sub">${pris ? 'Capturée : elle est dans ton carnet.' : 'Pas encore capturée. Bats ce boss avec une Petite pierre d\'âme dans le sac : son âme se capture une seule fois.'}</div></div></div>`
+        : d.archiDe ? `<div class="ame">${ameId ? iconeObjet(ameId) : ''}<div><b>${escB(ameId ? nomObjet(ameId) : 'Âme')}</b><div class="sub">${pris ? 'Capturée : elle est dans ton carnet.' : `Pas encore capturée. Il remplace parfois un ${escB(base?.name ?? 'monstre')}${ou ? ` (${escB(ou.nom)}, niv. ${ou.niveau})` : ''} : bats-le avec une Petite pierre d'âme dans le sac (Otomaï, Marché couvert du Bastion).`}</div></div></div>` : '';
       if (!connu(m) && d.archiDe) fiche = `<div class="tete"><canvas data-atlas="${L?.atlas ?? ''}" width="220" height="220" style="filter:grayscale(1) brightness(.55)"></canvas><div><h3>${escB(d.name)}</h3><div class="sub">Archimonstre de ${escB(base?.name ?? '?')}</div></div></div>${ame}`;
       else if (!connu(m)) fiche = `<div class="tete"><canvas width="220" height="220"></canvas><div><h3>???</h3><div class="sub">Pas encore croisé. Bats-en un pour remplir sa fiche.</div></div></div>`;
       else {
@@ -2106,9 +2107,9 @@ export class Windows {
     const ames = new Set(this.world.player.ames), archis = this.bestVue === 'archis' ? archisParLieu() : [];
     const carnet = archis.map(g => {
       const ms = g.archis.filter(a => va(GAME_DATA.monsters[a].name) || va(GAME_DATA.monsters[GAME_DATA.monsters[a].archiDe!]?.name ?? ''));
-      return ms.length ? `<div class="bh">${escB(g.zone)} · ${escB(g.nom)} · niv. ${g.niveau}</div>${ms.map(a => {
+      return ms.length ? `<div class="bh">${escB(g.zone)} · ${escB(g.nom)}${g.niveau ? ` · niv. ${g.niveau}` : ''}</div>${ms.map(a => {
         const d = GAME_DATA.monsters[a], ok = ames.has(a), L = LOOKS[d.look];
-        return `<div class="bm ar ${ok ? '' : 'manque'} ${!this.bestObjet && a === this.bestType ? 'on' : ''}" data-bm="${a}"><canvas data-atlas="${L?.atlas ?? ''}" width="68" height="68"></canvas><span>${escB(d.name)}<em>${escB(GAME_DATA.monsters[d.archiDe!]?.name ?? '')}</em></span><small>${ok ? '✔' : ''}</small></div>`;
+        return `<div class="bm ar ${ok ? '' : 'manque'} ${!this.bestObjet && a === this.bestType ? 'on' : ''}" data-bm="${a}"><canvas data-atlas="${L?.atlas ?? ''}" width="68" height="68"></canvas><span>${escB(d.name)}<em>${escB(d.archiDe ? GAME_DATA.monsters[d.archiDe]?.name ?? '' : `Boss · niveau ${d.level ?? '?'}`)}</em></span><small>${ok ? '✔' : ''}</small></div>`;
       }).join('')}` : '';
     }).join('');
     const nbA = archis.reduce((n, g) => n + g.archis.length, 0), prisA = archis.reduce((n, g) => n + g.archis.filter(a => ames.has(a)).length, 0);
