@@ -1,6 +1,6 @@
 import { QUALITES, REGLAGES_DEFAUT, sauverReglages, type Reglages } from './ambiance';
 import * as Touches from './touches';
-import { ICON_CSS, iconHtml } from './icons';
+import { ICON_CSS, iconHtml, prechargerIcones } from './icons';
 import { MANIFESTE, Son } from './son';
 import { BENEDICTION, BENEDICTIONS, CONFORT, MAGASIN, MARCHE, reserveePiece, type Article, type Benediction } from '../sim/magasin';
 import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES } from '../sim/data';
@@ -901,6 +901,7 @@ export class Windows {
     else if (this.mode === 'succes') this.renderSucces(); else if (this.mode === 'emp') this.renderEmp(); else if (this.mode === 'zaap') this.renderZaap();
     else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else if (this.mode === 'forge') this.renderForge(); else if (this.mode === 'coffre') this.renderCoffre(); else if (this.mode === 'almanax') this.renderAlmanax(); else if (this.mode === 'dofus') this.renderDofus(); else if (this.mode === 'menu') this.renderMenu(); else if (this.mode === 'social') this.renderSocial(); else if (this.mode === 'ladder') this.renderLadder(); else if (this.mode === 'tresor') this.renderTresor(); else this.renderInv();
     this.win!.querySelector('[data-close]')!.addEventListener('click', () => this.close());
+    this.imageVivant = -1; this.majPerso(this.tVivant);   // perso dessiné dès cette image (pas un canevas vide jusqu'à la suivante)
   }
   private title(name: string, icon: string) {
     return `<div class="ttl"><img src="assets/ui/menu/${icon}.png" alt="" style="object-fit:contain"><b>${name}</b><span class="x" data-close title="Fermer (Échap)"></span></div>`;
@@ -2539,15 +2540,44 @@ export class Windows {
   }
   private vivants = new Map<string, Assemblage | null>();
   private imageVivant = 0;
+  /** Dernier perso dessiné par sorte de canevas : gardé à l'écran le temps que la nouvelle tenue se charge (rien de vide). */
+  private dernierVivant = new Map<string, Assemblage>();
+  private tVivant = 0;
+  private prepare = '';
+  private prepareT = 0;
+  /** Assemblage du perso pour ces objets (lancé au premier appel, null tant qu'il se charge). */
+  private vivant(app: Apparence, objets: string[]) {
+    const k = `${app.tete}|${objets}`, a = this.vivants.get(k);
+    if (a === undefined) { this.vivants.set(k, null); assemblagePour(this.perso!.cle, app, objets).then(x => this.vivants.set(k, x), () => this.vivants.delete(k)); }
+    return a ?? null;
+  }
+  /** Fenêtres fermées : prépare d'avance le perso dans sa tenue du moment (planches chargées, couleurs posées sur un petit canevas)
+   *  et les icônes du sac et de l'équipement, pour que l'inventaire s'ouvre tout de suite. Vérifié deux fois par seconde. */
+  private preparer(t: number) {
+    if (t - this.prepareT < 500) return; this.prepareT = t;
+    const p = this.world.player, objets = objetsPortes(p.equipment, p.apparat), app = this.perso!.app;
+    const k = `${app.tete}|${app.couleurs}|${objets}|${p.bag.length}|${Object.keys(p.resources).length}`;
+    if (k === this.prepare) return;
+    const a = this.vivant(app, objets);
+    prechargerIcones([...Object.values(p.equipment).map(it => it && ITEMS.equipment[it.id]?.icon), ...p.bag.map(it => ITEMS.equipment[it.id]?.icon),
+      ...Object.keys(p.resources).map(id => ITEMS.resources[id]?.icon)].filter((x): x is number => x != null));
+    if (!a) return;   // pas encore chargé : on repassera
+    a.recolorer(app.couleurs);
+    const anim = 'AnimStatiqueExplo0_1';
+    if (a.compte[anim]) { const cv = document.createElement('canvas'); cv.width = cv.height = 64; a.dessiner(cv.getContext('2d')!, anim, 0, 32, 60, 64 / 330); }   // teintes faites d'avance
+    this.prepare = k;
+  }
   /** À appeler à chaque image du jeu : anime les persos dessinés en direct des fenêtres ouvertes (25 images par seconde). */
   majPerso(t: number) {
-    if (!this.win || !this.perso) return;
+    if (!this.perso) return;
+    this.tVivant = t;
+    if (!this.win) { this.preparer(t); return; }
     const f = Math.floor(t / 40); if (f === this.imageVivant) return; this.imageVivant = f;
     this.win.querySelectorAll<HTMLCanvasElement>('canvas.vivant').forEach(cv => {
       const app = cv.dataset.app ? JSON.parse(cv.dataset.app) as Apparence : this.perso!.app, objets = cv.dataset.objets ? cv.dataset.objets.split(',') : [];
-      const k = `${app.tete}|${objets}`;
-      const a = this.vivants.get(k);
-      if (!a) { if (!this.vivants.has(k)) { this.vivants.set(k, null); assemblagePour(this.perso!.cle, app, objets).then(x => this.vivants.set(k, x), () => this.vivants.delete(k)); } return; }
+      const a = this.vivant(app, objets) ?? this.dernierVivant.get(cv.className);
+      if (!a) return;
+      this.dernierVivant.set(cv.className, a);
       a.recolorer(app.couleurs);
       const dpr = (devicePixelRatio || 1) * 2, W = Math.round(cv.offsetWidth * dpr), H = Math.round(cv.offsetHeight * dpr);   // 2x puis réduit : bords lisses
       if (!W || !H) return;
