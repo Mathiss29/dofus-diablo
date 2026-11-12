@@ -31,6 +31,7 @@ import { Passants, lieuxDeZone } from './passants';
 import { ALMANAX, jourAlmanax, type JourAlmanax } from './almanax';
 import { COFFRE, coffreVide, type Coffre } from './coffre';
 import { FAMILIERS_SOURCES } from './menagerie';
+import { placesTenues, prixPlaceTenue, styleDef, type SorteStyle } from './style';
 import { themeChoisi, themesEnJeu, themesPossedes, zoneAvecTheme, type Teintures, type ThemesHavreSac } from './havresac';
 /** Archimonstres (0.3, 15B) : chance qu'un monstre d'un groupe soit son archimonstre ; pierres d'âme officielles (vide, pleine). */
 export const ARCHI = { chance: 1 / 150, pierre: '9686', pleine: '10418',
@@ -2749,6 +2750,45 @@ export class World {
     if (ok) this.emit({ k: 'coffre' });
     return ok;
   }
+  // --- Style (« Apparats : » 5B) : auréoles, effets de Zaap, ornements de nom (compte) ; tenues enregistrées (perso) ----------
+  aLeStyle(sorte: SorteStyle, id: string): boolean { return !!this.coffre.styles?.includes(`${sorte}:${id}`); }
+  acheterStyle(sorte: SorteStyle, id: string): boolean {
+    const d = styleDef(sorte, id), c = this.coffre;
+    if (!d || this.aLeStyle(sorte, id)) return false;
+    const ok = this.payer(d.prix, PEPITE, () => { (c.styles ??= []).push(`${sorte}:${id}`); return true; }, `style:${sorte}:${id}`);
+    if (ok) { this.player.style[sorte] = id; this.emit({ k: 'coffre' }); }
+    return ok;
+  }
+  /** Porter un style acheté, ou rien (null). */
+  porterStyle(sorte: SorteStyle, id: string | null): boolean {
+    const p = this.player;
+    if (id === null) { delete p.style[sorte]; return true; }
+    if (!this.aLeStyle(sorte, id)) return false;
+    p.style[sorte] = id;
+    return true;
+  }
+  /** Une place de tenue de plus (Pépites, le prix monte). */
+  acheterPlaceTenue(): boolean {
+    const p = this.player, prix = prixPlaceTenue(p.placesTenue);
+    if (prix == null) return false;
+    return this.payer(prix, PEPITE, () => { p.placesTenue++; return true; }, 'placeTenue');
+  }
+  /** Enregistre la tenue du moment (apparats posés, couleurs données par l'affichage) dans la place i. */
+  enregistrerTenue(i: number, nom: string, couleurs?: number[]): boolean {
+    const p = this.player;
+    if (!Number.isInteger(i) || i < 0 || i >= placesTenues(p.placesTenue) || i > p.tenues.length) return false;
+    p.tenues[i] = { nom: (nom.trim() || `Tenue ${i + 1}`).slice(0, 24), apparat: { ...p.apparat }, ...(couleurs ? { couleurs: [...couleurs] } : {}) };
+    return true;
+  }
+  /** Remet la tenue i : ses apparats (ceux qu'on a toujours) ; renvoie ses couleurs pour l'affichage. */
+  mettreTenue(i: number): { couleurs?: number[] } | null {
+    const p = this.player, t = p.tenues[i];
+    if (!t) return null;
+    p.apparat = {};
+    for (const [slot, id] of Object.entries(t.apparat) as ['chapeau' | 'cape' | 'bouclier' | 'familier', string][]) this.porterApparat(slot, id);
+    return { couleurs: t.couleurs };
+  }
+  supprimerTenue(i: number): boolean { const p = this.player; if (!p.tenues[i]) return false; p.tenues.splice(i, 1); return true; }
   /** 6D : une bénédiction de 30 minutes ; elle remplace celle en cours. */
   acheterBenediction(k: Benediction): boolean {
     const p = this.player;

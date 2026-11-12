@@ -1,4 +1,5 @@
 import { ALMANAX } from './almanax';
+import type { StyleChoisi, Tenue } from './style';
 import { BENEDICTIONS, type AchatsDuJour, type Benediction } from './magasin';
 import { CHATIMENTS, PC_PAR_ID } from './pouvoirsClasse';
 import { DOFUS, EMPLACEMENTS_DOFUS, PASSIFS, PORTABLE, TROPHEES } from './dofus';
@@ -129,6 +130,10 @@ export class Player extends Entity {
   menagerie: string[] = [];
   /** « Familiers : » 4C : familier de départ déjà choisi à l'Animalerie. */
   familierOffert = false;
+  /** « Apparats : » 5B : auréole, effet de Zaap et ornement de nom portés ; tenues enregistrées et places de tenue achetées. */
+  style: StyleChoisi = {};
+  tenues: Tenue[] = [];
+  placesTenue = 0;
   /** 8C : Codex ouvert (quête « Le premier pouvoir » finie, ou premier Légendaire trouvé). */
   codexOuvert = false;
   /** 15C : jour (AAAA-MM-JJ) de la dernière offrande à l'Almanax ; son bonus dure jusqu'à minuit. */

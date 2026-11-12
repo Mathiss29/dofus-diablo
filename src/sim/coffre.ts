@@ -18,6 +18,8 @@ export interface Coffre {
   teintures?: string[];
   /** « Familiers : » 7A : Ménagerie du compte, familier -> plus haut niveau atteint. Chaque perso du compte peut en sortir un exemplaire. */
   familiers?: Record<string, number>;
+  /** « Apparats : » 5B : auréoles, effets de Zaap et ornements de nom achetés (ids de style.json), pour tout le compte. */
+  styles?: string[];
 }
 
 export const coffreVide = (): Coffre => ({ onglets: Array.from({ length: COFFRE.onglets }, () => []) });
@@ -35,6 +37,7 @@ export function relireCoffre(c: unknown): Coffre {
   if (ids(o.themes).length) r.themes = ids(o.themes);
   if (Number.isInteger(o.theme) && o.theme! > 0) r.theme = o.theme;
   if (Array.isArray(o.teintures)) { const t = [...new Set(o.teintures.filter(x => typeof x === 'string' && /^[a-z]{2,20}$/.test(x)))]; if (t.length) r.teintures = t; }
+  if (Array.isArray(o.styles)) { const t = [...new Set(o.styles.filter(x => typeof x === 'string' && /^[a-z]+:[a-z]{2,20}$/.test(x)))]; if (t.length) r.styles = t; }
   if (o.familiers && typeof o.familiers === 'object') {
     const f = Object.entries(o.familiers).filter(([k, n]) => /^\d{1,6}$/.test(k) && Number.isInteger(n) && n >= 1 && n <= 100);
     if (f.length) r.familiers = Object.fromEntries(f);

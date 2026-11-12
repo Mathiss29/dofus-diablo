@@ -1,4 +1,5 @@
 import { coffreDe, couleurCoffre, nomsCoffre, palierCoffre, partageurCoffre, seuilsCoffre } from '../sim/enutrof';
+import { nomOrne, styleDef } from '../sim/style';
 import { RARITY_COLORS } from '../sim/items';
 import { v } from './assetUrl';
 import Phaser from 'phaser';
@@ -802,7 +803,8 @@ export class Hud {
     cadre(fx, fy, fw, fh, hd);
     this.embleme.setPosition(fx + 19, fy + hd / 2).setDisplaySize(17, 17 * (this.embleme.height / this.embleme.width || 1));
     const titre = this.world.quetes?.titre;   // titre d'un succès (Tour 7A)
-    this.name.setPosition(fx + 34, fy + hd / 2).setText(`${this.perso?.nom ?? cls.name}${titre ? `  « ${titre} »` : ''}`);
+    const orne = styleDef('ornements', this.world.player.style.ornements);   // « Apparats : » 5B : ornement de nom
+    this.name.setPosition(fx + 34, fy + hd / 2).setText(`${nomOrne(this.perso?.nom ?? cls.name, orne?.id)}${titre ? `  « ${titre} »` : ''}`).setColor(orne?.couleur ?? '#ffffff');
     const orn = this.world.quetes?.ornement;   // ornement porté (menu des succès 6B)
     if (orn && this.scene.textures.exists(`orn_${orn.icone}`)) this.ornImg.setTexture(`orn_${orn.icone}`).setVisible(true).setDisplaySize(20, 20).setPosition(this.name.x + this.name.width + 14, fy + hd / 2);
     else this.ornImg.setVisible(false);
