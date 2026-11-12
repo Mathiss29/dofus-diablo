@@ -6,11 +6,16 @@
 export const PAS = 4;
 export type Masque = { w: number; h: number; a: Uint8Array };
 
-/** Essais de fluidité gardés dans le navigateur (Mathis a vu le jeu ralentir après la PR #306, 2026-11-12) : les deux
- *  changements suspects sont coupés par défaut et se rallument un par un pour trouver le coupable.
- *  localStorage.setItem('diablofus.fluidite', 'masques,cull') puis recharger la page. */
+/** Interrupteur des deux changements de rendu de la PR #306 (masques en fil à part, décor hors écran sauté). Le 2026-11-12,
+ *  Mathis a vu 15 FPS juste après la mise à jour ; les essais un par un ont donné 220 FPS avec et sans : c'était le premier
+ *  chargement et l'enregistrement vidéo. Les deux sont donc allumés ; pour en couper un ou les deux en cas de doute :
+ *  localStorage.setItem('diablofus.fluidite', 'cull') (seulement lui) ou 'aucun', puis recharger. */
 export const ESSAIS: ReadonlySet<string> = (() => {
-  try { return new Set((localStorage.getItem('diablofus.fluidite') ?? '').split(',').map(s => s.trim()).filter(Boolean)); } catch { return new Set<string>(); }
+  try {
+    const v = localStorage.getItem('diablofus.fluidite');
+    if (v !== null) return new Set(v.split(',').map(s => s.trim()).filter(Boolean));
+  } catch { /* pas de stockage : réglage par défaut */ }
+  return new Set(['masques', 'cull']);
 })();
 
 const prets = new Map<string, Masque>();
