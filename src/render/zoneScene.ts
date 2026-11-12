@@ -26,7 +26,7 @@ import type { PlayerInput } from '../sim/input';
 import { entreesAllies } from '../sim/allie';
 import type { SkillId } from '../sim/defs';
 import type { Entity } from '../sim/entity';
-import { World } from '../sim/world';
+import { ARCHI, World } from '../sim/world';
 import { DANGER } from '../sim/danger';
 import { EntityView } from './entityView';
 import * as Touches from './touches';
@@ -76,6 +76,8 @@ import { ChatVue } from './chat';
 import { lienObjet } from './chatOutils';
 import { BullesChat } from './bullesChat';
 import { demandesEnAttente, menuJoueur, montrerInvitation } from './social';
+/** Archimonstres du jeu (carnet des âmes, « Archis : » 8A). */
+const NB_ARCHIS = Object.values(GAME_DATA.monsters).filter(d => d.archiDe).length;
 
 const ASSETS = 'assets';
 const mapDir = ([x, y]: [number, number]) => `${ASSETS}/cartes/${x}_${y}`;
@@ -1167,6 +1169,24 @@ export class ZoneScene extends Phaser.Scene {
       pt.majPerf(pt.calques.perf || pt.calques.coords ? this.texteDebug(pt) : null);
     }
   }
+  /** « Archis : » 2A : un archimonstre en vie sur la carte où l'on est, pas encore annoncé : son et petit bandeau (une fois par archimonstre). */
+  private archisAnnonces = new Set<number>();
+  private guetteArchi = 0;
+  private guetterArchis(dt: number) {
+    if ((this.guetteArchi -= dt) > 0 || this.vitrine) return;
+    this.guetteArchi = 0.4;
+    const w = this.world, wg = w.worldGrid, p = w.player, ici = wg?.mapAt(p.x, p.y)?.tag;
+    for (const m of w.monsters) {
+      if (m.dead || !m.def.archiDe || this.archisAnnonces.has(m.id)) continue;
+      if (wg ? wg.mapAt(m.x, m.y)?.tag !== ici : Math.hypot(m.x - p.x, m.y - p.y) > 900) continue;
+      this.archisAnnonces.add(m.id);
+      const deja = p.ames.includes(m.type);
+      this.hud.plaque(`Archimonstre : ${m.def.name}\n${deja ? 'Âme déjà capturée' : p.resources[ARCHI.pierre] > 0 ? 'Bats-le pour capturer son âme' : 'Il te faut une Petite pierre d\'âme'}`);
+      Son.jouer(MANIFESTE.ui.checkpoint, 'interface', { vol: 0.8, vitesse: 0.8, cle: 'archi', ecart: 2 });
+      const cri = MANIFESTE.monstres[m.type]?.attaque;
+      if (cri?.length) Son.jouer(Son.auHasard(cri), 'effets', { vol: 0.7, cle: 'archiCri', ecart: 2, monstre: true, type: m.type });
+    }
+  }
   /** Temps de calcul moyen d'une image (ms), pour le compteur de fluidité de la partie de test. */
   private msMoyen = 0;
   private calques: CalquesTest | null = null;
@@ -1197,6 +1217,7 @@ export class ZoneScene extends Phaser.Scene {
     this.fx.update(dt);
     this.carte?.update();
     this.majMarquesCarte();
+    this.guetterArchis(dt);
     // fenêtre d'un Zaap du monde : elle se ferme si l'on s'en éloigne
     if (this.windows?.ouverte === 'zaap' && !this.world.dansRefuge && !this.world.zaapProche() && !this.world.zaapDepart) this.windows.close(false);
     // commande chez Malek (Forgemagie UI 9E) : compte à rebours de la fenêtre, une fois par seconde
@@ -1243,7 +1264,7 @@ export class ZoneScene extends Phaser.Scene {
       case 'loot': return e.item.rarity === 'commun' ? null : [`Tu as obtenu ${lienObjet(e.item)} (${RARITY_NAMES[e.item.rarity]})`, 'butin'];
       case 'dofusGagne': return [`${PORTABLE(e.id)?.nom ?? 'Dofus'} obtenu !`, 'butin'];
       case 'sacQuete': { const it = ITEMS.equipment[e.id]; return it ? [`Sac de quête : ${it.name} (${RARITY_NAMES[e.rarity]})`, 'butin'] : null; }
-      case 'capture': return [`${GAME_DATA.monsters[e.monster]?.name ?? 'Archimonstre'} capturé dans une pierre d'âme${e.neuf ? ' (nouveau)' : ''}`, 'butin'];
+      case 'capture': return [`${GAME_DATA.monsters[e.monster]?.name ?? 'Archimonstre'} capturé : ${e.ame ? ITEMS.resources[e.ame]?.name ?? 'âme' : 'pierre pleine'}${e.neuf ? ' (nouveau dans le carnet)' : ''}`, 'butin'];
       case 'levelUp': return [`Niveau ${e.level} atteint : +5 points de caractéristiques${e.level === 100 ? ', +1 PA' : ''}`];
       case 'newSpell': return [`Nouveau sort : ${this.world.player.cls.spells[e.id]?.name ?? e.id}`];
       case 'queteDebut': { const q = this.world.quetes?.def(e.id); return q && q.type !== 'tutoriel' ? [`Nouvelle quête : ${q.nom}`] : null; }
@@ -1418,7 +1439,7 @@ export class ZoneScene extends Phaser.Scene {
           this.windows?.refresh(); break; }
         case 'codex': { const o = POUVOIR_PAR_ID[e.id], c = PC_PAR_ID[e.id]; this.hud.loot(`Codex : ${o ? o.sort : c ? c.nom : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id} enregistré`, '#f08a2c');
           this.windows?.noteForge({ t: `Pouvoir enregistré dans le Codex : ${o ? o.officiel : c ? c.nom : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id}`, c: 'ok' }); break; }
-        case 'capture': this.hud.loot(`${GAME_DATA.monsters[e.monster]?.name ?? 'Archimonstre'} capturé dans une pierre d'âme${e.neuf ? ' (nouveau)' : ''}`, '#ffd27a'); this.windows?.refresh(); break;
+        case 'capture': this.hud.loot(`${e.ame ? ITEMS.resources[e.ame]?.name ?? 'Âme capturée' : `${GAME_DATA.monsters[e.monster]?.name ?? 'Archimonstre'} capturé`}${e.neuf ? ` (nouvelle · ${this.world.player.ames.length} / ${NB_ARCHIS})` : ''}`, '#ffd27a'); this.windows?.refresh(); break;
         case 'dofusGagne': this.hud.loot(`${PORTABLE(e.id)?.nom ?? 'Dofus'} obtenu ! ${TROPHEES[e.id] && !this.world.player.dofusPortes.includes(e.id) ? 'Il est dans ton sac (fenêtre des Dofus, onglet Trophées)' : 'Il est dans tes emplacements de Dofus (Inventaire)'}`, '#e8c76b'); this.sauver(); this.windows?.refresh(); break;
         case 'dofusPassif': if (e.dofus === 'argente') this.hud.loot(`Souvenir d'Argent : +${e.n ?? 0} PV`, '#e8c76b'); break;   // le bouclier du Cacao se voit déjà (bouclier violet)
         case 'almanax': this.hud.loot(`Almanax : offrande faite, +${e.pepites} Pépites et « ${e.bonus} » jusqu'à minuit`, '#ffd27a'); this.sauver(); this.windows?.refresh(); break;

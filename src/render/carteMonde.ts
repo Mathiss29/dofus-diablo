@@ -33,10 +33,10 @@ export interface MarqueCarte { titre: string; icone: number; tags: string[]; poi
 /** Geste de la carte vers la partie (entrée du joueur). */
 export interface GesteCarte { drapeaux?: Drapeau[]; signal?: { x: number; y: number } }
 
-type Filtre = Famille | 'quetes' | 'recoltes' | 'groupe' | 'drapeaux' | 'danger';
+type Filtre = Famille | 'quetes' | 'recoltes' | 'groupe' | 'drapeaux' | 'danger' | 'archis';
 const FILTRES: [Filtre, string][] = [['zaap', 'Zaaps'], ['transport', 'Transports'], ['atelier', 'Ateliers'], ['service', 'Services'], ['donjon', 'Donjons'],
-  ['lieu', 'Lieux'], ['quetes', 'Quêtes'], ['recoltes', 'Mes récoltes'], ['groupe', 'Groupe'], ['drapeaux', 'Drapeaux'], ['danger', 'Teinte de danger']];
-const PAR_DEFAUT: Record<Filtre, boolean> = { zaap: true, transport: true, atelier: true, service: true, donjon: true, lieu: true, quetes: true, recoltes: false, groupe: true, drapeaux: true, danger: false };
+  ['lieu', 'Lieux'], ['quetes', 'Quêtes'], ['recoltes', 'Mes récoltes'], ['groupe', 'Groupe'], ['drapeaux', 'Drapeaux'], ['archis', 'Archimonstres à capturer'], ['danger', 'Teinte de danger']];
+const PAR_DEFAUT: Record<Filtre, boolean> = { zaap: true, transport: true, atelier: true, service: true, donjon: true, lieu: true, quetes: true, recoltes: false, groupe: true, drapeaux: true, danger: false, archis: true };
 /** Couleurs des joueurs du groupe (10A, 14A). */
 export const COULEURS_GROUPE = ['#ff5a4a', '#4fc3f7', '#9ad15a', '#ffb74d', '#f06292'];
 const DEHORS = /^-?\d+_-?\d+$/;
@@ -85,6 +85,7 @@ const CSS = `
 .cm .rp.rc .ic{width:22px;height:22px}
 .cm .gd{width:26px;height:26px;pointer-events:auto;cursor:help;filter:drop-shadow(0 1px 2px #000) drop-shadow(0 0 4px #f2d36b)}
 .cm .gd .ic{width:26px;height:26px}
+.cm .ar{width:24px;height:24px;pointer-events:auto;cursor:help;filter:drop-shadow(0 1px 2px #000) drop-shadow(0 0 5px #ffc844)}.cm .ar .ic{width:24px;height:24px}
 .cm .vd{pointer-events:auto;cursor:help;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;border:2px solid #f2d36b;background:#000a;box-shadow:0 0 0 4px #f2d36b55,0 0 14px #f2d36b;animation:cmvd 1.2s ease-in-out infinite alternate}
 .cm .vd .ic{width:22px;height:22px}
 .cm .ou{width:22px;height:22px;border-radius:50%;border:2px solid #b9e54b;background:#000a;display:grid;place-items:center;box-shadow:0 0 0 3px #b9e54b44,0 0 12px #b9e54b;animation:cmvd 1.1s ease-in-out infinite alternate}
@@ -385,6 +386,19 @@ export class CarteMonde {
       const q = this.u2p(a.x / a.n, a.y / a.n), el = this.marque('mk sz', q.x, q.y);
       el.innerHTML = `${esc(d.name)}<small>niv. ${d.level}</small>`;
     }
+    // « Archis : » 8B : une âme sur chaque sous-zone où il reste un archimonstre à capturer
+    if (this.filtres.archis && !douze) {
+      const M = GAME_DATA.monsters, ames = new Set(p.ames);
+      for (const [sub, a] of parSz) {
+        const d = subs[String(sub)]; if (!d || (a.essai && !test)) continue;
+        const reste = Object.entries(M).filter(([k, x]) => x.archiDe && d.monsters.includes(x.archiDe) && !ames.has(k)).map(([, x]) => x);
+        if (!reste.length) continue;
+        const q = this.u2p(a.x / a.n, a.y / a.n + 0.45), el = this.marque('mk ar', q.x, q.y);
+        el.innerHTML = iconHtml(ITEMS.resources[reste[0].ame ?? '10418']?.icon ?? 85003);
+        el.title = `Archimonstre${reste.length > 1 ? 's' : ''} à capturer : ${reste.map(x => x.name).join(', ')}`;
+        this.marques.push({ el, x: q.x, y: q.y, f: 'archis' });
+      }
+    }
     if (!test && !douze) {
       const es = P.maps.filter(m => m[3]);
       if (es.length) { const q = this.u2p(es.reduce((s, m) => s + m[0] + 0.5, 0) / es.length, es.reduce((s, m) => s + m[1] + 0.5, 0) / es.length); this.marque('mk bt', q.x, q.y).innerHTML = 'Amakna<small>Bientôt · 0.4</small>'; }
@@ -591,7 +605,7 @@ export class CarteMonde {
     b.innerHTML = `<h4>${esc(d.name)}</h4><div>Niveau ${d.level}${d.region ? ` · ${esc(d.region)}` : ''}${essai ? ' · <span class="el">Bientôt (0.4)</span>' : ''}</div>
       ${d.monsters.length ? `<div class="l"><b>Monstres</b> : ${d.monsters.map(nomM).map(esc).join(', ')}</div>` : ''}
       ${d.elite ? `<div class="l el">Élite : ${esc(nomM(d.elite))}</div>` : ''}
-      ${archis.length ? `<div class="l el">Archimonstre${archis.length > 1 ? 's' : ''} : ${archis.slice(0, 4).map(nomM).map(esc).join(', ')}${archis.length > 4 ? '…' : ''}</div>` : ''}
+      ${archis.length ? `<div class="l el">Archimonstre${archis.length > 1 ? 's' : ''} (${archis.filter(a => w.player.ames.includes(a)).length} / ${archis.length} capturés) : ${archis.slice(0, 4).map(a => esc(nomM(a)) + (w.player.ames.includes(a) ? ' ✔' : '')).join(', ')}${archis.length > 4 ? '…' : ''}</div>` : ''}
       ${res.length ? `<div class="l"><b>Ressources</b> : ${res.slice(0, 8).map(x => esc(x!)).join(', ')}${res.length > 8 ? '…' : ''}</div>` : ''}
       ${donjons.map(n => `<div class="l"><b>Donjon</b> : ${esc(this.estIci() ? this.etatDonjon(n) : n)}</div>`).join('')}
       <div class="l ${pc === 100 ? 'ok' : ''}">Exploré : ${pc} %</div>`;

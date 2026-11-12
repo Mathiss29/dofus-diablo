@@ -670,6 +670,15 @@ export class Hud {
     this.scene.tweens.add({ targets: show, alpha: 1, duration: 400 });
     this.scene.tweens.add({ targets: show, alpha: 0, delay: 3000, duration: 700 });
   }
+  /** Petit bandeau doré en haut de l'écran (la plaque des sous-zones), pour une annonce qui ne doit pas cacher le combat. */
+  plaque(text: string, ms = 3200) {
+    const small = [this.zonePlate, this.zonePlateTxt];
+    this.scene.tweens.killTweensOf([this.zoneName, this.zoneOrn, this.zoneSub, ...small]);
+    for (const o of [this.zoneName, this.zoneOrn, this.zoneSub]) o.setAlpha(0);
+    this.zonePlateTxt.setText(text);
+    this.scene.tweens.add({ targets: small, alpha: 1, duration: 300 });
+    this.scene.tweens.add({ targets: small, alpha: 0, delay: ms, duration: 700 });
+  }
   toast(text: string, duree = 1600) {
     this.toastText.setText(text).setAlpha(1);
     this.scene.tweens.killTweensOf(this.toastText);
@@ -1335,7 +1344,7 @@ export class Hud {
     this.zoneName.setPosition(W / 2, zy);
     this.zoneOrn.setPosition(W / 2, zy + 44).setScale(Math.min(1, (W * 0.6) / 733));
     this.zoneSub.setPosition(W / 2, zy + 47);
-    this.zonePlate.setPosition(W / 2, 62).setScale(1.25, 1.15);
+    this.zonePlate.setPosition(W / 2, 62).setScale(Math.max(1.25, (this.zonePlateTxt.width + 90) / Math.max(1, this.zonePlate.width)), 1.15);
     this.zonePlateTxt.setPosition(W / 2, 62);
   }
 }

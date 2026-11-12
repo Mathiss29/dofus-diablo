@@ -29,7 +29,9 @@ import { ALMANAX, jourAlmanax, type JourAlmanax } from './almanax';
 import { COFFRE, coffreVide, type Coffre } from './coffre';
 import { themeChoisi, themesEnJeu, themesPossedes, zoneAvecTheme, type Teintures, type ThemesHavreSac } from './havresac';
 /** Archimonstres (0.3, 15B) : chance qu'un monstre d'un groupe soit son archimonstre ; pierres d'âme officielles (vide, pleine). */
-export const ARCHI = { chance: 1 / 150, pierre: '9686', pleine: '10418' };
+export const ARCHI = { chance: 1 / 150, pierre: '9686', pleine: '10418',
+  /** « Archis : » 5B : chance qu'un élite (archimonstres compris) lâche une Petite pierre d'âme. */
+  pierreElite: 1 / 20 };
 import { FABRICATION, METIERS_FAB, chanceRare, ingredientsRares, type Poste } from './metiers';
 import { PLACEMENT, analyserCarte, groupesAuto, placementPose, placementValide, proposerPlacement, type AnalyseCarte, type PlacementCarte } from './placement';
 import { PC_PAR_ID } from './pouvoirsClasse';
@@ -1986,8 +1988,14 @@ export class World {
   joueursProches(x: number, y: number): Player[] { return this.players.filter(q => Math.abs(q.x - x) + Math.abs(q.y - y) <= World.SOMMEIL); }
   private lacherButin(type: string, rang: Rang, niveau: number, mx: number, my: number, kamas = 0, pour?: number) {
     if (!this.opts.items) return;
-    const b = tirerButin(this.rng, this.contexteButin(type, rang, niveau), () => this.nextId++);
+    const ctx = this.contexteButin(type, rang, niveau), b = tirerButin(this.rng, ctx, () => this.nextId++);
     b.kamas += kamas;
+    // « Archis : » 4B : un archimonstre lâche toujours au moins un objet Rare ; 5B : les élites, parfois une Petite pierre d'âme
+    if (this.opts.data.monsters[type]?.archiDe && !b.objets.some(o => RARITIES.indexOf(o.rarity) >= RARITIES.indexOf('rare'))) {
+      const pool = poolNiveau(ctx);
+      if (pool.length) { const id = this.rng.pick(pool).id; b.objets.push(rollItem(id, this.opts.items.equipment[id], 'rare', this.rng, this.nextId++, ctx.pouvoirs)); }
+    }
+    if (rang === 'elite' && this.player.v03 && this.opts.items.resources[ARCHI.pierre] && this.rng.next() < ARCHI.pierreElite) b.ressources.push({ id: ARCHI.pierre });
     // trophées (0.4 suite 3A) : chaque boss de la 0.4 en a deux, rares, une fois chacun
     if (rang === 'boss' && this.player.v04) for (const id of tropheesDuBoss(type))
       if (!this.player.trophees.includes(id) && this.rng.next() < REGLAGES_BUTIN.trophee && this.player.gagnerTrophee(id)) this.emit({ k: 'dofusGagne', id });
@@ -2153,7 +2161,7 @@ export class World {
       p.bag.splice(i, 1); xp = FAMILIER_XP.objet(d.level, o.rarity);
     } else {
       const r = I.resources[quoi.res], n = p.resources[quoi.res] ?? 0;
-      if (!r || !n || r.pepite || r.monnaie || r.cle) return false;
+      if (!r || !n || r.pepite || r.monnaie || r.cle || r.ame) return false;
       const k = quoi.tout ? n : 1;
       p.resources[quoi.res] -= k; if (!p.resources[quoi.res]) delete p.resources[quoi.res];
       xp = FAMILIER_XP.ressource(r.level) * k;
@@ -2441,14 +2449,17 @@ export class World {
     return true;
   }
   /** 15B : un archimonstre vaincu avec une Petite pierre d'âme dans le sac est capturé (pierre pleine, et sa page du Bestiaire). */
+  /** « Archis : » 5E : en groupe, chaque joueur proche qui a une pierre capture sa propre âme ; 6A : l'âme officielle nommée. */
   private capturer(m: Monster) {
-    const p = this.player;
-    if (!p.v03 || !(p.resources[ARCHI.pierre] > 0)) return;
-    p.resources[ARCHI.pierre]--; if (!p.resources[ARCHI.pierre]) delete p.resources[ARCHI.pierre];
-    p.resources[ARCHI.pleine] = (p.resources[ARCHI.pleine] ?? 0) + 1;
-    const neuf = !p.ames.includes(m.type);
-    if (neuf) p.ames.push(m.type);
-    this.emit({ k: 'capture', monster: m.type, neuf });
+    for (const p of this.joueursProches(m.x, m.y)) {
+      if (!p.v03 || p.dead || !(p.resources[ARCHI.pierre] > 0)) continue;
+      p.resources[ARCHI.pierre]--; if (!p.resources[ARCHI.pierre]) delete p.resources[ARCHI.pierre];
+      const ame = m.def.ame && this.opts.items?.resources[m.def.ame] ? m.def.ame : ARCHI.pleine;
+      p.resources[ame] = (p.resources[ame] ?? 0) + 1;
+      const neuf = !p.ames.includes(m.type);
+      if (neuf) p.ames.push(m.type);
+      this.commeJoueur(p, () => this.emit({ k: 'capture', monster: m.type, neuf, ame }));
+    }
   }
   /** Achat dans une boutique (src/data/boutique.json), payé dans la monnaie de l'article : kamas pour l'utile (Magasin 5B), Cawottes chez Tiwa Cawoteuw, sinon Pépites.
    *  Un article « apparat » rejoint la collection d'apparences, une fois pour toutes. */
