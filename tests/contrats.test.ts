@@ -32,7 +32,8 @@ describe('Contrats du jour et Avis de recherche (Quêtes roadmap 1C, 3A+3C, 4A, 
     const w = monde(), Q = w.quetes!; w.player.level = 22;
     expect(Q.pnj('geolier')?.tag).toBe('5_-19');
     const l = Q.contrats();
-    expect(l).toHaveLength(4);
+    expect(l).toHaveLength(5);   // + l'archimonstre signalé du jour (« Archis : » 3C)
+    expect(l.filter(id => id.startsWith('ctra:'))).toHaveLength(1);
     expect(l.filter(id => Q.def(id).serie === 'Contrat de la semaine')).toHaveLength(1);
     for (const id of l) { const q = Q.def(id); expect(q.rendre).toBe('geolier'); expect(q.recompense.sac).toBeTruthy(); expect(q.recompense.pepites).toBeGreaterThan(0); }
     const w2 = monde(); w2.player.level = 22;
@@ -44,7 +45,7 @@ describe('Contrats du jour et Avis de recherche (Quêtes roadmap 1C, 3A+3C, 4A, 
     const i = Q.dialogue!.reponses.findIndex(r => r.a === 'contrats');
     expect(i).toBeGreaterThanOrEqual(0);
     Q.repondre(i);
-    expect(Q.dialogue!.reponses.filter(r => r.a === 'voir')).toHaveLength(4);
+    expect(Q.dialogue!.reponses.filter(r => r.a === 'voir')).toHaveLength(5);
   });
   it('un contrat fini et rendu : XP, kamas, sac Rare garanti, Pépites ; plus proposé aujourd\'hui, mais gardé à la sauvegarde', () => {
     // le premier jour de la semaine qui propose un contrat « vaincre » seulement (le tirage dépend des sous-zones de la zone)
@@ -69,7 +70,7 @@ describe('Contrats du jour et Avis de recherche (Quêtes roadmap 1C, 3A+3C, 4A, 
     expect(Q.contratsLibres()).not.toContain(id);
     const e = Q.exporter();
     expect(e.finies).toContain(id);
-    expect(monde(jour, e).quetes!.contratsLibres()).toHaveLength(3);
+    expect(monde(jour, e).quetes!.contratsLibres()).toHaveLength(4);
     expect(monde(`2026-11-${+jour.slice(-2) + 2}`, e).quetes!.finies.has(id)).toBe(false);   // les contrats des jours passés s'effacent
   });
   it('Avis de recherche : l\'élite officiel apparaît, la prime se rend aux Geôles, l\'avis revient la semaine suivante', () => {
@@ -199,5 +200,23 @@ describe('Quêtes officielles d\'Astrub écrites en ARPG (Quêtes roadmap 2C)', 
     rendre(w, 'jim');
     expect(Q.finies.has('crime')).toBe(true);
     expect(Q.objets['Bourse rebondie']).toBeUndefined();
+  });
+});
+
+describe('« Archis : » 3C : l\'archimonstre signalé du jour', () => {
+  it('un archimonstre du niveau dont on n\'a pas l\'âme, à capturer, payé en Pépites ; le même pour tout le monde ce jour-là', () => {
+    const w = monde(), Q = w.quetes!, p = w.player; p.level = 22;
+    const id = Q.contrats().find(x => x.startsWith('ctra:'))!, a = id.split(':')[2];
+    expect(GAME_DATA.monsters[a].archiDe).toBeTruthy();
+    expect(Q.def(id).recompense.pepites).toBeGreaterThan(0);
+    const w2 = monde(); w2.player.level = 22;
+    expect(w2.quetes!.contrats()).toContain(id);
+    const w3 = monde(); w3.player.level = 22; w3.player.ames = [a];
+    expect(w3.quetes!.contrats()).not.toContain(id);
+    Q.prendre(id);
+    p.resources['9686'] = 1;
+    w.killMonster(w.spawnMonster(a, p.x + 40, p.y));
+    w.step(1 / 60, NO_INPUT);
+    expect(Q.aRendre('geolier')).toBe(id);
   });
 });

@@ -1790,6 +1790,33 @@
             "etiquettes": [
               "Bestiaire"
             ]
+          },
+          {
+            "titre": "L'éternelle moisson",
+            "phrase": "Otomaï veut le Dofus Ocre : montre tes âmes capturées à son Assistante, au Marché couvert.",
+            "details": "Six pages d'une vingtaine d'âmes, avec Pépites, pierres, sacs et titres officiels. L'Ocre viendra avec le Kralamoure.",
+            "icone": "quete",
+            "etiquettes": [
+              "Bastion des Douze"
+            ]
+          },
+          {
+            "titre": "Archimonstre signalé",
+            "phrase": "Chaque jour, le tableau des contrats signale un archimonstre de ton niveau dont tu n'as pas l'âme.",
+            "details": "Trouve-le, capture son âme et rapporte la nouvelle au tableau : Pépites, kamas, XP et un sac Rare.",
+            "icone": "contrat",
+            "etiquettes": [
+              "Contrats"
+            ]
+          },
+          {
+            "titre": "L'arène des âmes",
+            "phrase": "Clic droit sur une âme, dans l'arène à côté du Marché couvert : l'archimonstre revient avec son groupe.",
+            "details": "L'âme est perdue, mais le groupe se bat comme un boss et lâche un butin de boss.",
+            "icone": "boss",
+            "etiquettes": [
+              "Bastion des Douze"
+            ]
           }
         ],
         "Le monde": [
@@ -1811,6 +1838,15 @@
             "icone": "boss",
             "etiquettes": [
               "Carte M"
+            ]
+          },
+          {
+            "titre": "L'âme des boss",
+            "phrase": "Un boss de donjon vaincu avec une Petite pierre d'âme dans le sac donne son âme officielle, une fois.",
+            "details": "Les 17 boss du jeu comptent dans le carnet des âmes du Bestiaire.",
+            "icone": "boss",
+            "etiquettes": [
+              "Donjons"
             ]
           }
         ],

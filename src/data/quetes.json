@@ -757,6 +757,26 @@
      "texte": "Paw ce que le Wa Wabbit fait twavailler tout le monde, et moi je pwéfèwe le soleil du matin. Chut, ne lui dis pas."
     }
    ]
+  },
+  "assistante_otomai": {
+   "nom": "Assistante d'Otomaï",
+   "dofusId": 6693,
+   "zone": "bastion",
+   "carte": "marche",
+   "case": 2580,
+   "apres": "astrub",
+   "titre": "Gardienne des âmes",
+   "phrase": "Otomaï classe ses fioles par couleur. Moi, je classe les âmes par caractère. Celle-ci boude, celle-là chante faux.",
+   "discussion": [
+    {
+     "reponse": "Tu gardes les âmes que je capture ?",
+     "texte": "Non, elles restent dans ta besace. Je les regarde, je les note dans le grand registre, et je te les rends. Elles sont plus calmes près de leur chasseur."
+    },
+    {
+     "reponse": "Et le Dofus Ocre ?",
+     "texte": "Otomaï en parle à chaque repas. Il faut toutes les âmes du registre, puis celle du Kralamoure Géant. Celle-là, personne ne l'a encore vue passer."
+    }
+   ]
   }
  },
  "quetes": {
@@ -3973,6 +3993,401 @@
       20
      ]
     ]
+   }
+  },
+  "moisson_1": {
+   "type": "secondaire",
+   "serie": "L'éternelle moisson",
+   "pnj": "otomai",
+   "rendre": "assistante_otomai",
+   "nom": "L'éternelle moisson (1/6) : La liste d'Otomaï",
+   "niveau": 10,
+   "texte": "Otomaï veut le Dofus Ocre, et pour ça il lui faut les âmes de tous les archimonstres du monde. Capture-les avec une Petite pierre d'âme, puis montre-les à son Assistante, au Marché couvert. Cette page du registre : 20 archimonstres et 1 boss de donjon.",
+   "etapes": [
+    {
+     "nom": "Page 1 du registre",
+     "bulle": "Une âme, ça se capture quand la bête tombe, avec une Petite pierre d'âme dans le sac. Ensuite, viens me la montrer.",
+     "objectifs": [
+      {
+       "t": "ames",
+       "texte": "Capturer et montrer 21 âmes (20 archimonstres et 1 boss de donjon)",
+       "monstres": [
+        "archi_arakne_malade",
+        "archi_piou_bleu",
+        "archi_piou_jaune",
+        "archi_piou_rose",
+        "archi_piou_rouge",
+        "archi_piou_vert",
+        "archi_piou_violet",
+        "archi_tofu_malade",
+        "kardorim",
+        "archi_arakne",
+        "archi_champ_champ",
+        "archi_larve_bleue",
+        "archi_larve_jaune",
+        "archi_larve_orange",
+        "archi_larve_verte",
+        "archi_moskito",
+        "archi_pichon_blanc",
+        "archi_pichon_bleu",
+        "archi_pichon_orange",
+        "archi_pichon_vert",
+        "archi_arakne_des_egouts"
+       ]
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 3000,
+    "kamas": 600,
+    "pepites": 25,
+    "objets": [
+     [
+      "9686",
+      3
+     ]
+    ],
+    "sac": "rare"
+   },
+   "merci": "Belle page. Je la recopie au propre, Otomaï ne sait pas lire mon écriture."
+  },
+  "moisson_2": {
+   "type": "secondaire",
+   "serie": "L'éternelle moisson",
+   "pnj": "assistante_otomai",
+   "rendre": "assistante_otomai",
+   "nom": "L'éternelle moisson (2/6) : Les petites âmes",
+   "niveau": 20,
+   "requiert": [
+    "moisson_1"
+   ],
+   "texte": "Une nouvelle page du registre de l'Assistante d'Otomaï : 19 archimonstres et 2 boss de donjon, de niveau 20 à 30. Le Bestiaire (onglet Archimonstres) et la carte du monde montrent où les trouver.",
+   "etapes": [
+    {
+     "nom": "Page 2 du registre",
+     "bulle": "Le registre a faim. Vingt âmes de plus, et je tourne la page.",
+     "objectifs": [
+      {
+       "t": "ames",
+       "texte": "Capturer et montrer 21 âmes (19 archimonstres et 2 boss de donjon)",
+       "monstres": [
+        "archi_boo",
+        "archi_boufton",
+        "archi_boufton_noir",
+        "archi_bouftou",
+        "archi_milimulou",
+        "archi_milirat_strubien",
+        "archi_prespic",
+        "archi_sanglier",
+        "archi_scelerat_strubien",
+        "mob_l_eponge",
+        "tournesol_affame",
+        "archi_chafer",
+        "archi_chafer_fantassin",
+        "archi_chafer_invisible",
+        "archi_champa_bleu",
+        "archi_champa_marron",
+        "archi_champa_rouge",
+        "archi_champa_vert",
+        "archi_gargrouille",
+        "archi_gob_trotteur",
+        "archi_gobet"
+       ]
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 4500,
+    "kamas": 900,
+    "pepites": 30,
+    "objets": [
+     [
+      "9686",
+      3
+     ]
+    ],
+    "sac": "epique",
+    "titre": "Chasseur assidu"
+   },
+   "merci": "Belle page. Je la recopie au propre, Otomaï ne sait pas lire mon écriture."
+  },
+  "moisson_3": {
+   "type": "secondaire",
+   "serie": "L'éternelle moisson",
+   "pnj": "assistante_otomai",
+   "rendre": "assistante_otomai",
+   "nom": "L'éternelle moisson (3/6) : Le registre s'épaissit",
+   "niveau": 30,
+   "requiert": [
+    "moisson_2"
+   ],
+   "texte": "Une nouvelle page du registre de l'Assistante d'Otomaï : 21 archimonstres et 1 boss de donjon, de niveau 30 à 40. Le Bestiaire (onglet Archimonstres) et la carte du monde montrent où les trouver.",
+   "etapes": [
+    {
+     "nom": "Page 3 du registre",
+     "bulle": "Certaines ne se montrent qu'une fois sur cent cinquante. La patience est une arme, elle aussi.",
+     "objectifs": [
+      {
+       "t": "ames",
+       "texte": "Capturer et montrer 22 âmes (21 archimonstres et 1 boss de donjon)",
+       "monstres": [
+        "archi_kwoan",
+        "archi_la_ouassingue",
+        "archi_le_ouassingue",
+        "archi_rib",
+        "archi_scarafeuille_blanc",
+        "archi_scarafeuille_bleu",
+        "archi_scarafeuille_rouge",
+        "archi_scarafeuille_vert",
+        "archi_tofu_amakna",
+        "archi_tofu_malefique",
+        "royal",
+        "archi_aboub",
+        "archi_amlub",
+        "archi_bandit_du_clan_des_roublards",
+        "archi_berger_porkass",
+        "archi_black_tiwabbit",
+        "archi_black_wabbit",
+        "archi_boulanger_sombre",
+        "archi_bwork",
+        "archi_bwork_archer",
+        "archi_bwork_mage",
+        "archi_cavalier_porkass"
+       ]
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 6000,
+    "kamas": 1200,
+    "pepites": 35,
+    "objets": [
+     [
+      "9686",
+      3
+     ]
+    ],
+    "sac": "rare"
+   },
+   "merci": "Belle page. Je la recopie au propre, Otomaï ne sait pas lire mon écriture."
+  },
+  "moisson_4": {
+   "type": "secondaire",
+   "serie": "L'éternelle moisson",
+   "pnj": "assistante_otomai",
+   "rendre": "assistante_otomai",
+   "nom": "L'éternelle moisson (4/6) : Âmes de caractère",
+   "niveau": 40,
+   "requiert": [
+    "moisson_3"
+   ],
+   "texte": "Une nouvelle page du registre de l'Assistante d'Otomaï : 21 archimonstres, de niveau 40 à 40. Le Bestiaire (onglet Archimonstres) et la carte du monde montrent où les trouver.",
+   "etapes": [
+    {
+     "nom": "Page 4 du registre",
+     "bulle": "Les boss aussi ont une âme. Petite, souvent. Mais une âme quand même.",
+     "objectifs": [
+      {
+       "t": "ames",
+       "texte": "Capturer et montrer 21 âmes (21 archimonstres)",
+       "monstres": [
+        "archi_cochon_de_lait",
+        "archi_codem",
+        "archi_forgeron_sombre",
+        "archi_gink",
+        "archi_kirevam",
+        "archi_kokoko",
+        "archi_kwak_de_flamme",
+        "archi_kwak_de_glace",
+        "archi_kwak_de_terre",
+        "archi_kwak_de_vent",
+        "archi_let_emoliug",
+        "archi_mineur_sombre",
+        "archi_nebgib",
+        "archi_nipul",
+        "archi_nodkoko",
+        "archi_osurc",
+        "archi_sanglier_des_plaines",
+        "archi_susej",
+        "archi_tikoko",
+        "archi_tiwabbit",
+        "archi_tiwabbit_kiafin"
+       ]
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 6000,
+    "kamas": 1200,
+    "pepites": 40,
+    "objets": [
+     [
+      "9686",
+      3
+     ]
+    ],
+    "sac": "epique",
+    "titre": "Traqueur Implacable"
+   },
+   "merci": "Belle page. Je la recopie au propre, Otomaï ne sait pas lire mon écriture."
+  },
+  "moisson_5": {
+   "type": "secondaire",
+   "serie": "L'éternelle moisson",
+   "pnj": "assistante_otomai",
+   "rendre": "assistante_otomai",
+   "nom": "L'éternelle moisson (5/6) : Les chasses lointaines",
+   "niveau": 40,
+   "requiert": [
+    "moisson_4"
+   ],
+   "texte": "Une nouvelle page du registre de l'Assistante d'Otomaï : 17 archimonstres et 4 boss de donjon, de niveau 40 à 50. Le Bestiaire (onglet Archimonstres) et la carte du monde montrent où les trouver.",
+   "etapes": [
+    {
+     "nom": "Page 5 du registre",
+     "bulle": "Plus on monte, plus elles mordent. Garde des pierres sur toi.",
+     "objectifs": [
+      {
+       "t": "ames",
+       "texte": "Capturer et montrer 21 âmes (17 archimonstres et 4 boss de donjon)",
+       "monstres": [
+        "archi_tortue_bleue",
+        "archi_tortue_jaune",
+        "archi_tortue_rouge",
+        "archi_tortue_verte",
+        "archi_wabbit",
+        "batofu",
+        "chafer_ronin",
+        "kankreblath",
+        "scarabosse_dore",
+        "archi_bandit_manchot",
+        "archi_craqueboule",
+        "archi_craqueleur",
+        "archi_craquelourd",
+        "archi_gelee_bleuet",
+        "archi_gelee_fraise",
+        "archi_gelee_menthe",
+        "archi_grand_pa_wabbit",
+        "archi_kanniboul_ark",
+        "archi_kanniboul_eth",
+        "archi_kanniboul_jav",
+        "archi_kanniboul_sarbak"
+       ]
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 7500,
+    "kamas": 1500,
+    "pepites": 45,
+    "objets": [
+     [
+      "9686",
+      3
+     ]
+    ],
+    "sac": "rare"
+   },
+   "merci": "Belle page. Je la recopie au propre, Otomaï ne sait pas lire mon écriture."
+  },
+  "moisson_6": {
+   "type": "secondaire",
+   "serie": "L'éternelle moisson",
+   "pnj": "assistante_otomai",
+   "rendre": "assistante_otomai",
+   "nom": "L'éternelle moisson (6/6) : Les âmes rebelles",
+   "niveau": 50,
+   "requiert": [
+    "moisson_5"
+   ],
+   "texte": "Une nouvelle page du registre de l'Assistante d'Otomaï : 12 archimonstres et 9 boss de donjon, de niveau 50 à 92. Le Bestiaire (onglet Archimonstres) et la carte du monde montrent où les trouver.",
+   "etapes": [
+    {
+     "nom": "Page 6 du registre",
+     "bulle": "Celles-là se cachent loin des Zaaps. La carte du monde t'indique où il en reste.",
+     "objectifs": [
+      {
+       "t": "ames",
+       "texte": "Capturer et montrer 21 âmes (12 archimonstres et 9 boss de donjon)",
+       "monstres": [
+        "archi_wabbit_squelette",
+        "archi_wo_wabbit",
+        "bworkette",
+        "coffre_des_forgerons",
+        "directeur_grunob",
+        "kwakwa",
+        "shin_larve",
+        "archi_dragodinde_amande_sauvage",
+        "archi_chef_crocodaille",
+        "archi_crocodaille",
+        "archi_dragodinde_rousse_sauvage",
+        "archi_dragoeuf_ardoise",
+        "archi_dragoeuf_argile",
+        "archi_dragoeuf_calcaire",
+        "archi_dragoeuf_charbon",
+        "kanniboul_ebil",
+        "wa_wabbit",
+        "archi_craqueleur_des_plaines",
+        "craqueleur_legendaire",
+        "wa_wobot",
+        "archi_mulou"
+       ]
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 13800,
+    "kamas": 2760,
+    "pepites": 50,
+    "objets": [
+     [
+      "9686",
+      3
+     ]
+    ],
+    "sac": "epique",
+    "titre": "Moissonneur des Âmes",
+    "ornement": {
+     "id": 57,
+     "nom": "Quêteur",
+     "icone": 2
+    }
+   },
+   "merci": "Tout le registre ! Il ne manque plus que l'âme du Kralamoure Géant. Quand la route vers son antre sera ouverte, Otomaï t'attendra."
+  },
+  "moisson_fin": {
+   "type": "secondaire",
+   "serie": "L'éternelle moisson",
+   "pnj": "otomai",
+   "rendre": "otomai",
+   "bientot": true,
+   "requiert": [
+    "moisson_6"
+   ],
+   "nom": "L'ultime Épreuve",
+   "niveau": 160,
+   "texte": "La dernière âme : celle du Kralamoure Géant. Otomaï la changera en Dofus Ocre. Bientôt : le Kralamoure n'est pas encore dans le jeu.",
+   "etapes": [
+    {
+     "nom": "L'âme du Kralamoure",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Apporter l'Âme du Kralamoure à Otomaï",
+       "pnj": "otomai"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 48000,
+    "dofus": "7754"
    }
   }
  },

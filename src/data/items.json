@@ -39301,6 +39301,108 @@
    "icon": 85003,
    "level": 60,
    "ame": "archi_kanniboul_sarbak"
+  },
+  "33684": {
+   "name": "Âme capturée : Bouftou Royal",
+   "icon": 85004,
+   "level": 30,
+   "ame": "royal"
+  },
+  "33683": {
+   "name": "Âme capturée : Kardorim",
+   "icon": 85004,
+   "level": 12,
+   "ame": "kardorim"
+  },
+  "33681": {
+   "name": "Âme capturée : Tournesol Affâmé",
+   "icon": 85004,
+   "level": 20,
+   "ame": "tournesol_affame"
+  },
+  "33682": {
+   "name": "Âme capturée : Mob l'Éponge",
+   "icon": 85004,
+   "level": 20,
+   "ame": "mob_l_eponge"
+  },
+  "33689": {
+   "name": "Âme capturée : Kankreblath",
+   "icon": 85004,
+   "level": 40,
+   "ame": "kankreblath"
+  },
+  "33690": {
+   "name": "Âme capturée : Scarabosse Doré",
+   "icon": 85004,
+   "level": 40,
+   "ame": "scarabosse_dore"
+  },
+  "33687": {
+   "name": "Âme capturée : Chafer Rōnin",
+   "icon": 85004,
+   "level": 40,
+   "ame": "chafer_ronin"
+  },
+  "33685": {
+   "name": "Âme capturée : Batofu",
+   "icon": 85004,
+   "level": 40,
+   "ame": "batofu"
+  },
+  "33688": {
+   "name": "Âme capturée : Directeur Grunob",
+   "icon": 85004,
+   "level": 50,
+   "ame": "directeur_grunob"
+  },
+  "33691": {
+   "name": "Âme capturée : Bworkette",
+   "icon": 85004,
+   "level": 50,
+   "ame": "bworkette"
+  },
+  "33692": {
+   "name": "Âme capturée : Coffre des Forgerons",
+   "icon": 85004,
+   "level": 50,
+   "ame": "coffre_des_forgerons"
+  },
+  "33694": {
+   "name": "Âme capturée : Kwakwa",
+   "icon": 85004,
+   "level": 50,
+   "ame": "kwakwa"
+  },
+  "33696": {
+   "name": "Âme capturée : Shin Larve",
+   "icon": 85004,
+   "level": 50,
+   "ame": "shin_larve"
+  },
+  "33707": {
+   "name": "Âme capturée : Craqueleur Légendaire",
+   "icon": 85004,
+   "level": 70,
+   "ame": "craqueleur_legendaire"
+  },
+  "33712": {
+   "name": "Âme capturée : Wa Wobot",
+   "icon": 85004,
+   "level": 80,
+   "ame": "wa_wobot"
+  },
+  "33706": {
+   "name": "Âme capturée : Wa Wabbit",
+   "icon": 85004,
+   "level": 60,
+   "ame": "wa_wabbit"
+  },
+  "33705": {
+   "name": "Âme capturée : Kanniboul Ebil",
+   "icon": 85004,
+   "level": 60,
+   "ame": "kanniboul_ebil"
   }
  },
  "drops": {

@@ -134,6 +134,8 @@ export type SimEvent =
   | { k: 'etabliForge' }
   /** Archimonstre capturé (0.3, 15B) ; neuf : première fois pour ce perso. */
   | { k: 'capture'; monster: string; neuf: boolean; /** objet reçu (« Âme capturée : … », Archis 6A) */ ame?: string }
+  /** « Archis : » 7B : une âme relâchée dans l'arène des âmes du Bastion. */
+  | { k: 'ameRelachee'; monster: string; x: number; y: number }
   | { k: 'impression'; uid: number; id: string }
   /** Collection d'apparences (1C) : premier exemplaire d'une coiffe, cape ou bouclier brisé ou recyclé. */
   | { k: 'apparence'; id: string }

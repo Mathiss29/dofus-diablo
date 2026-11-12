@@ -415,6 +415,9 @@ Marché couvert (maquette « Magasin : » 1A + 13A-13F, 12 nov. 2026) : `marche.
 191102976, 191106052, world_729) ; l'étal rayé et la charrette de 191105028. Porte du dehors = l'Hôtel de vente des cosmétiques
 (`as_boutique`). Écrit la porte (`bastion.open.portes`), les cases des marchands (cases de la salle) et de Kerubim dans
 `zones.json > bastion > open.bastion.pnj` (place `responsable` gardée pour le Responsable de la boutique) et dans `quetes.json`.
+Depuis « Archis : » 7B+9A : une seconde porte en arche dans le mur de droite du Marché mène à l'**arène des âmes** (tag `arene`,
+place `ARENE_SLOT`, mêmes murs, sol de planches avec une piste de dalles et le tapis au milieu), où l'on relâche une âme
+(`World.relacherAme`) ; l'Assistante d'Otomaï (`ASSISTANTE`) est posée près de l'étal d'Otomaï, à plus de 200 px des autres PNJ.
 **À relancer après chaque `bastion.py`** (qui réécrit `monde.json` et les PNJ) :
 
     TEXDIR=dossier_des_gfx python3 -I tools/extraction/marche.py cartes_dir public/assets/mondes [apercu]

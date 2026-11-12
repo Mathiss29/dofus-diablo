@@ -277,7 +277,8 @@
    "fuite": 0,
    "retraitPA": 0
   },
-  "signature": 2927
+  "signature": 2927,
+  "ame": "33684"
  },
  "pissenlit": {
   "dofusId": 79,
@@ -2787,7 +2788,8 @@
    "retraitPA": 0
   },
   "boss": true,
-  "signature": 5718
+  "signature": 5718,
+  "ame": "33683"
  },
  "milimilou": {
   "dofusId": 4102,
@@ -6724,7 +6726,8 @@
    "fuite": 0,
    "retraitPA": 0
   },
-  "signature": 792
+  "signature": 792,
+  "ame": "33681"
  },
  "gardienne_champetre": {
   "dofusId": 4821,
@@ -7332,7 +7335,8 @@
    "fuite": 0,
    "retraitPA": 0
   },
-  "signature": 990
+  "signature": 990,
+  "ame": "33682"
  },
  "cafarcher": {
   "dofusId": 3940,
@@ -7891,7 +7895,8 @@
    "fuite": 0,
    "retraitPA": 0
   },
-  "signature": 5283
+  "signature": 5283,
+  "ame": "33689"
  },
  "dopeul_iop": {
   "speed": 100,
@@ -11809,7 +11814,8 @@
    "tacle": 0,
    "fuite": 0,
    "retraitPA": 0
-  }
+  },
+  "ame": "33690"
  },
  "scarafeuille_immature": {
   "dofusId": 798,
@@ -12429,7 +12435,8 @@
    "tacle": 0,
    "fuite": 0,
    "retraitPA": 0
-  }
+  },
+  "ame": "33687"
  },
  "chafer_primitif": {
   "dofusId": 3240,
@@ -12745,7 +12752,8 @@
    "tacle": 0,
    "fuite": 0,
    "retraitPA": 0
-  }
+  },
+  "ame": "33685"
  },
  "tofoune": {
   "dofusId": 804,
@@ -13827,7 +13835,8 @@
    "tacle": 0,
    "fuite": 0,
    "retraitPA": 0
-  }
+  },
+  "ame": "33688"
  },
  "bwork_mage": {
   "dofusId": 53,
@@ -14322,7 +14331,8 @@
    "tacle": 0,
    "fuite": 0,
    "retraitPA": 0
-  }
+  },
+  "ame": "33691"
  },
  "bwork": {
   "dofusId": 876,
@@ -15047,7 +15057,8 @@
    "tacle": 0,
    "fuite": 0,
    "retraitPA": 0
-  }
+  },
+  "ame": "33692"
  },
  "kwak_de_vent": {
   "dofusId": 81,
@@ -16219,7 +16230,8 @@
    "tacle": 0,
    "fuite": 0,
    "retraitPA": 0
-  }
+  },
+  "ame": "33694"
  },
  "bwak_de_vent": {
   "dofusId": 3281,
@@ -17094,7 +17106,8 @@
    "tacle": 0,
    "fuite": 0,
    "retraitPA": 0
-  }
+  },
+  "ame": "33696"
  },
  "larve_verte_solitaire": {
   "dofusId": 3358,
@@ -17793,7 +17806,8 @@
    "tacle": 0,
    "fuite": 0,
    "retraitPA": 0
-  }
+  },
+  "ame": "33707"
  },
  "kirboule_l_erode": {
   "dofusId": 826,
@@ -18275,7 +18289,8 @@
    "tacle": 0,
    "fuite": 0,
    "retraitPA": 0
-  }
+  },
+  "ame": "33712"
  },
  "black_wo_wabbit": {
   "dofusId": 3461,
@@ -19499,7 +19514,8 @@
    "fuite": 0,
    "retraitPA": 0
   },
-  "signature": 337
+  "signature": 337,
+  "ame": "33706"
  },
  "tofu_amakna": {
   "dofusId": 98,
@@ -33107,7 +33123,8 @@
    "fuite": 0,
    "retraitPA": 0
   },
-  "boss": true
+  "boss": true,
+  "ame": "33705"
  },
  "kanniboul_tam": {
   "dofusId": 4151,

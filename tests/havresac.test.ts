@@ -33,7 +33,7 @@ describe('Havre-Sac (maquette Hub : 1A 2A+2C 3A 4A 7A 8A 9A)', () => {
   it('les PNJ de service vivent au Bastion (Ville 5A) ; Kerubim, Otomaï et Goultard emménagent après la première visite d\'Astrub (3A)', () => {
     const ids = (w: World) => w.quetes!.pnjs.map(p => p.id).sort();
     expect(ids(monde('bastion'))).toEqual(['bouillotte', 'crieur', 'forgemage', 'garde_bonta', 'garde_brakmar', 'garde_frigost', 'garde_pandala', 'garde_zaap1', 'garde_zaap2', 'gawdien', 'responsable', 'tissebelle']);
-    expect(ids(monde('bastion', { zonesVues: ['incarnam', 'astrub'] }))).toEqual(['bouillotte', 'crieur', 'forgemage', 'garde_bonta', 'garde_brakmar', 'garde_frigost', 'garde_pandala', 'garde_zaap1', 'garde_zaap2', 'gawdien', 'goultard', 'kerubim', 'otomai', 'responsable', 'tissebelle']);
+    expect(ids(monde('bastion', { zonesVues: ['incarnam', 'astrub'] }))).toEqual(['assistante_otomai', 'bouillotte', 'crieur', 'forgemage', 'garde_bonta', 'garde_brakmar', 'garde_frigost', 'garde_pandala', 'garde_zaap1', 'garde_zaap2', 'gawdien', 'goultard', 'kerubim', 'otomai', 'responsable', 'tissebelle']);
     // Magasin 8A : plus de guichet de Kerubim au Havre-Sac (on défait seulement au Bastion)
     expect(ids(monde('havresac', { zonesVues: ['astrub'] }))).toEqual([]);
     // chacun sur sa case, tous à part
@@ -41,7 +41,7 @@ describe('Havre-Sac (maquette Hub : 1A 2A+2C 3A 4A 7A 8A 9A)', () => {
     for (const a of l) for (const b of l) if (a !== b) expect(Math.hypot(a.x - b.x, a.y - b.y)).toBeGreaterThan(60);
     // première visite d'Astrub : l'annonce
     const a = monde('astrub', { zonesVues: ['incarnam'] });
-    expect(a.drainEvents().find(e => e.k === 'emmenage')).toMatchObject({ noms: ['Kerubim Crépin', 'Otomaï', 'Goultard'] });
+    expect(a.drainEvents().find(e => e.k === 'emmenage')).toMatchObject({ noms: ['Kerubim Crépin', 'Otomaï', 'Goultard', 'Assistante d\'Otomaï'] });
     expect(a.player.zonesVues).toEqual(['incarnam', 'astrub']);
   });
   it('chaque service ouvre la bonne boutique (4A) : clés chez Goultard, potions chez Otomaï, plats chez Mère Bouillotte', () => {
@@ -132,7 +132,7 @@ describe('Havre-Sac (maquette Hub : 1A 2A+2C 3A 4A 7A 8A 9A)', () => {
 
 describe('Bastion des Douze (maquette Ville : 1A 2A 3C 7A+7B 10B)', () => {
   it('une grande carte en archipel (8×8, îles des nations en grand), arrivée marchable, PNJ sur la place', () => {
-    expect(BA.maps.map(m => m.tag)).toEqual(['bastion', 'marche']);   // l'archipel, et la salle du Marché couvert
+    expect(BA.maps.map(m => m.tag)).toEqual(['bastion', 'marche', 'arene']);   // l'archipel, la salle du Marché couvert et l'arène des âmes
     expect(BA.maps[0].n).toEqual([8, 8]);
     const w = monde('bastion');
     expect(w.dansBastion && w.dansRefuge && !w.dansHavreSac).toBe(true);
