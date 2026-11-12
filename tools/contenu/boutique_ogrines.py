@@ -53,7 +53,7 @@ for t, l in sorted(groupes.items()):
     ids = chap + cape + fam
     total = sum(prix(i) for i in ids)
     articles[f'c{chap[0]}'] = {'cat': 'costume', 'prix': min(1500, int(total * 0.8 / 50) * 50), 'apparats': ids,
-                               'nom': 'Costume ' + nom(chap[0]).split(' ', 1)[1]}
+                               'nom': (lambda t: t[:1].upper() + t[1:])(nom(chap[0]).split(' ', 1)[1].replace("d'", '', 1) if nom(chap[0]).split(' ', 1)[1].startswith("d'") else re.sub(r'^(de la |de l\'|du |des |de )', '', nom(chap[0]).split(' ', 1)[1]))}   # « Champion », « Aiguisée » : le mot Costume est à côté
 
 for so in ('aureoles', 'zaaps', 'ornements'):
     for d in ST[so]:

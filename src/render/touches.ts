@@ -25,6 +25,7 @@ export const ACTIONS: Action[] = [
   { id: 'social', nom: 'Social (amis, groupe)', groupe: 'Fenêtres', def: 'P' },
   { id: 'ladder', nom: 'Classement (Ladder)', groupe: 'Fenêtres', def: 'L' },
   { id: 'chat', nom: 'Écrire dans le chat', groupe: 'Fenêtres', def: 'Enter' },
+  { id: 'boutique', nom: 'Boutique Ogrines', groupe: 'Fenêtres', def: 'K' },
   { id: 'options', nom: 'Options', groupe: 'Fenêtres', def: 'O' },
   { id: 'carte', nom: 'Carte du monde', groupe: 'Fenêtres', def: 'M' },
   { id: 'carteTab', nom: 'Carte en surimpression', groupe: 'Fenêtres', def: 'Tab' },
