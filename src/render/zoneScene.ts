@@ -1078,6 +1078,7 @@ export class ZoneScene extends Phaser.Scene {
       case 'ladder': w?.toggle('ladder'); break;
       case 'chat': this.chat?.ouvrir(); break;
       case 'options': w?.toggle('opt'); break;
+      case 'boutique': w?.toggle('boutique'); break;   // « Boutique : » 9A
       case 'carte': this.basculerCarte(); break;   // M, comme dans Dofus (maquette 0.2, 18A)
       case 'carteTab': if (this.carte?.dispo && !this.carte.ouverte) this.carte.basculerSurimpression(); break;   // 11B : carte en surimpression
       case 'havresac': this.havreSacDemande = true; break;

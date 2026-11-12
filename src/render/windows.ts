@@ -282,33 +282,71 @@ const CSS = `
 .dw .cell.low{opacity:.5}
 .dw .cell .cad{position:absolute;right:3px;top:3px;width:16px;height:19px;filter:drop-shadow(0 1px 1px #000)}
 .dw .win.emp{width:min(760px,96vw);height:min(640px,92vh)}
-.dw .win.boutique{width:min(980px,96vw);height:min(700px,92vh)}
-.dw .bq{display:grid;grid-template-columns:200px 1fr;gap:12px;min-height:0;overflow:hidden;padding:10px 12px}
-.dw .bq .apercu{align-self:start;display:grid;justify-items:center;gap:6px;background:radial-gradient(ellipse at 50% 70%,#3d4f8a,#16182a 70%);border:1px solid #34322b;border-radius:4px;padding:8px}
-.dw .bq .apercu canvas{width:180px;height:260px}
-.dw .bq .droite{display:grid;grid-template-rows:auto auto minmax(0,1fr);gap:8px;min-height:0}
-.dw .bq .haut{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
-.dw .bq .og{display:flex;align-items:center;gap:6px;font:20px Rowdies,sans-serif;color:#7fe3f2}.dw .bq .og img{width:28px;height:28px}
-.dw .bq .ogp{display:inline-flex;align-items:center;gap:3px}.dw .bq .ogp img{width:16px;height:16px}
-.dw .bq .tabs{display:flex;gap:4px;flex-wrap:wrap}
-.dw .bq .tab{cursor:pointer;padding:5px 12px;border-radius:3px;background:#2e2d28;border:1px solid #45433b;font-weight:bold;color:#d8d2bf;font-size:12px}
-.dw .bq .tab.on{background:linear-gradient(#2a7a9a,#17526e);border-color:#7fe3f2;color:#fff}
-.dw .bq .corps{overflow:auto;min-height:0;padding-right:4px;display:grid;gap:10px;align-content:start}
-.dw .bq .grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
-.dw .bq .carte{display:grid;justify-items:center;gap:4px;padding:8px 6px;border:1px solid #3d3b33;border-top:3px solid var(--r,#3d3b33);border-radius:6px;background:#1a1916;text-align:center;cursor:default}
-.dw .bq .carte:hover{background:#22211c}.dw .bq .carte .ics{display:flex;gap:2px}.dw .bq .carte .ic{width:44px;height:44px}
-.dw .bq .carte b{font-size:12px;line-height:1.2}.dw .bq .carte small{color:#a8a290;font-size:11px}
-.dw .bq .carte .btn{font-size:12px;padding:3px 10px}.dw .bq .carte .btn.conf{color:#ffd77a}.dw .bq .carte .btn.off{opacity:.55}
-.dw .bq .carte .a{color:#b9e54b;font-size:11px}
-.dw .bq .ent{font:600 11px Lexend,sans-serif;color:#7fe3f2;text-transform:uppercase;letter-spacing:.06em}
-.dw .bq .promo{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:12px;border-radius:6px;background:linear-gradient(90deg,#1f3a4a,#1a1916);border:1px solid #2a7a9a}
-.dw .bq .promo .ics .ic{width:56px;height:56px}.dw .bq .promo s{color:#a8a290}.dw .bq .promo .r{color:#b9e54b;font-weight:bold}
-.dw .bq .msg{color:#ffd77a;font-size:12px}.dw .bq .hors{padding:10px;border:1px dashed #5a5040;border-radius:6px;color:#c9bfa8;font-size:12px}
-.dw .bq .abos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.dw .bq .abo{display:grid;gap:6px;align-content:start;padding:10px;border:1px solid #3d3b33;border-top:4px solid var(--c);border-radius:6px;background:#1a1916}
-.dw .bq .abo.on{box-shadow:0 0 0 1px var(--c) inset}.dw .bq .abo h3{margin:0;font:18px Rowdies,sans-serif;color:var(--c)}
-.dw .bq .abo ul{margin:0;padding-left:16px;font-size:12px;color:#d8d2bf;display:grid;gap:3px}
-.dw .bq .filtre{display:flex;gap:8px;align-items:center;font-size:12px}.dw .bq .filtre input[type=search]{flex:1;background:#15130f;border:1px solid #5a5040;color:#f4efe0;padding:4px 8px}
+.dw .win.boutique{width:min(1080px,96vw);height:min(720px,92vh)}
+.dw .bk{position:relative;display:grid;grid-template-rows:auto minmax(0,1fr);min-height:0;overflow:hidden}
+.dw .bk-haut{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid #0b0a07;background:#0003}
+.dw .bk-tabs{display:flex;gap:3px;flex-wrap:wrap}
+.dw .bk-tabs span{cursor:pointer;padding:6px 13px;border-radius:3px;background:#2e2d28;border:1px solid #45433b;font-weight:600;color:#d8d2bf;font-size:12px}
+.dw .bk-tabs span:hover{border-color:#7fe3f2}.dw .bk-tabs span.on{background:linear-gradient(#2a7a9a,#17526e);border-color:#7fe3f2;color:#fff}
+.dw .bk-solde{display:flex;align-items:center;gap:6px;font:20px Rowdies,sans-serif;color:#7fe3f2;white-space:nowrap}.dw .bk-solde img{width:26px;height:26px}
+.dw .bk-msg{font:12px Lexend,sans-serif;color:#ffd77a;white-space:normal;max-width:360px;text-align:right}
+.dw .bk-corps{display:grid;grid-template-columns:190px minmax(0,1fr) 230px;gap:10px;padding:10px 12px;min-height:0}
+.dw .bk-corps.large{grid-template-columns:190px minmax(0,1fr)}
+.dw .bk-perso{display:grid;gap:6px;justify-items:center;align-content:start;background:radial-gradient(ellipse at 50% 70%,#33486f,#14172a 70%);border:1px solid #34322b;border-radius:4px;padding:8px 6px;overflow:hidden}
+.dw .bk-perso canvas{width:174px;height:250px}.dw .bk-perso small{color:#c9c4ab;text-align:center;font-size:11px}
+.dw .bk-centre{overflow:auto;min-height:0;display:grid;gap:10px;align-content:start;padding-right:4px}
+.dw .bk-fiche{display:grid;gap:7px;align-content:start;justify-items:center;text-align:center;background:#1a1916;border:1px solid #3d3b33;border-radius:4px;padding:12px 10px;overflow:auto;min-height:0}
+.dw .bk-vide{color:#a8a290;font-size:12px;padding:40px 6px}
+.dw .bk-grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(122px,1fr));gap:7px}
+.dw .bk-v{display:grid;justify-items:center;gap:4px;padding:8px 5px 7px;background:#1a1916;border:1px solid #3d3b33;border-top:3px solid var(--r);border-radius:4px;text-align:center;cursor:pointer}
+.dw .bk-v:hover{background:#24231e}.dw .bk-v.sel{outline:2px solid #7fe3f2;outline-offset:-1px}.dw .bk-v:focus-visible{outline:2px solid #7fe3f2}
+.dw .bk-v b{font-size:11.5px;line-height:1.2;font-weight:600;min-height:2.4em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.dw .bk-v.moi{opacity:.8}
+.dw .r-rare{--r:#4fa3ff}.dw .r-epique{--r:#b56cff}.dw .r-legendaire{--r:#ff9a2e}
+.dw .bk-ics{display:flex;gap:1px;padding:3px;border-radius:6px;background:radial-gradient(color-mix(in srgb,var(--r) 35%,transparent),transparent 70%)}
+.dw .bk-ics .ic{width:52px;height:52px}.dw .bk-ics.n .ic{width:38px;height:38px}
+.dw .bk-halo{display:inline-block;width:52px;height:26px;border-radius:50%;margin:14px 0}.dw .bk-halo.g{width:86px;height:40px}
+.dw .bk-orn{font-size:22px;line-height:58px}.dw .bk-pot{width:52px;height:52px}
+.dw .bk-p{display:flex;gap:5px;align-items:center;font-size:12px}.dw .bk-p s,.dw .bk-prix s,.dw .bk-promo-p s{color:#a8a290}
+.dw .bk-og{display:inline-flex;align-items:center;gap:3px;color:#7fe3f2;font-weight:700}.dw .bk-og img{width:15px;height:15px}.dw .bk-og.off{color:#8a8578;filter:grayscale(.7)}
+.dw .bk-a{color:#b9e54b;font-size:11px;font-weight:600}
+.dw .bk-t{font:600 11px Lexend,sans-serif;color:#7fe3f2;text-transform:uppercase;letter-spacing:.06em}
+.dw .bk-promo{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;padding:14px 16px;border-radius:6px;background:linear-gradient(100deg,#1f3a4a,#1a1916 70%);border:1px solid #2a7a9a;cursor:pointer}
+.dw .bk-promo .ic{width:64px;height:64px}.dw .bk-promo small{color:#7fe3f2;font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+.dw .bk-promo b{display:block;font:20px Rowdies,sans-serif;color:#f4efe0}.dw .bk-promo span{color:#c9c4ab;font-size:12px}
+.dw .bk-promo-p{display:grid;justify-items:end;gap:2px}.dw .bk-promo-p .bk-og{font:22px Rowdies,sans-serif}.dw .bk-promo-p .bk-og img{width:22px;height:22px}
+.dw .bk-r{color:#b9e54b!important;font-weight:700}
+.dw .bk-bandeau{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:6px;background:#1a1916;border:1px solid #3d3b33;cursor:pointer;flex-wrap:wrap}
+.dw .bk-bandeau b{color:#ffd77a}.dw .bk-bandeau span{color:#c9c4ab;font-size:12px;flex:1;min-width:160px}.dw .bk-bandeau i{font-style:normal;color:#7fe3f2}
+.dw .bk-gagner{display:grid;gap:4px;padding:10px 12px;border:1px dashed #5a5040;border-radius:6px;font-size:12px;color:#c9bfa8}.dw .bk-gagner>b{color:#7fe3f2}
+.dw .bk-note{color:#c9c4ab;font-size:12px}
+.dw .bk-filtre{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:12px}
+.dw .bk-filtre input[type=search]{flex:1 1 200px;width:auto;min-width:120px;margin:0;background:#15130f;border:1px solid #5a5040;color:#f4efe0;padding:4px 8px}
+.dw .bk-filtre select{width:auto;flex:0 0 auto;margin:0;background:#15130f;border:1px solid #5a5040;color:#f4efe0;padding:3px 6px}
+.dw .bk-pas{cursor:pointer;padding:3px 9px;border-radius:10px;border:1px solid var(--r);color:var(--r);font-size:11px;font-weight:600}.dw .bk-pas.on{background:var(--r);color:#14130f}
+.dw .bk-ck{display:flex;gap:4px;align-items:center;color:#c9c4ab;white-space:nowrap}.dw .bk-ck input{width:auto;margin:0;flex:none}.dw .bk-n{color:#a8a290;margin-left:auto}
+.dw .bk-plus{text-align:center}
+.dw .bk-btn{cursor:pointer;display:inline-block;padding:6px 16px;border-radius:3px;font-weight:700;font-size:12px;background:#2e6f8a;color:#fff;border:1px solid #7fe3f2}
+.dw .bk-btn.v{background:linear-gradient(#8cc43a,#5a8a1e);border-color:#b9e54b;width:100%;box-sizing:border-box;text-align:center;font-size:14px}
+.dw .bk-btn.g{background:#2e2d28;border-color:#45433b;color:#d8d2bf;font-weight:600}
+.dw .bk-btn.off{background:#2a2925;border-color:#3d3b33;color:#8a8578;cursor:default}
+.dw .bk-big{width:120px;height:120px;display:grid;place-items:center;border-radius:8px;background:radial-gradient(color-mix(in srgb,var(--r) 40%,transparent),transparent 70%)}
+.dw .bk-big .bk-ics{background:none}.dw .bk-big .ic{width:88px;height:88px}.dw .bk-big .bk-ics.n .ic{width:50px;height:50px}
+.dw .bk-nom{font:17px Rowdies,sans-serif;color:#f4efe0;line-height:1.2}.dw .bk-rar{color:var(--r,#c9c4ab);font-size:11px;font-weight:600}
+.dw .bk-fiche p{margin:0;color:#c9c4ab;font-size:12px}
+.dw .bk-cont{display:grid;gap:3px;width:100%}.dw .bk-cont span{display:flex;gap:6px;align-items:center;font-size:11px;text-align:left}.dw .bk-cont .ic{width:26px;height:26px}
+.dw .bk-fiche small{color:#a8a290;font-size:11px}
+.dw .bk-prix{display:flex;gap:6px;align-items:center}.dw .bk-prix .bk-og{font:22px Rowdies,sans-serif}.dw .bk-prix .bk-og img{width:22px;height:22px}
+.dw .bk-abos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.dw .bk-abo{display:grid;gap:8px;align-content:start;padding:12px;border:1px solid #3d3b33;border-top:4px solid var(--c);border-radius:6px;background:#1a1916}
+.dw .bk-abo.on{box-shadow:inset 0 0 0 1px var(--c)}.dw .bk-abo h3{margin:0;font:20px Rowdies,sans-serif;color:var(--c)}
+.dw .bk-abo-p{display:flex;gap:6px;align-items:baseline}.dw .bk-abo-p .bk-og{font:18px Rowdies,sans-serif}.dw .bk-abo-p small{color:#a8a290}
+.dw .bk-abo ul{margin:0;padding-left:16px;font-size:12px;color:#d8d2bf;display:grid;gap:4px}
+.dw .bk-abo .bk-btn{text-align:center}
+.dw .bk-modale{position:absolute;inset:0;background:#000a;display:grid;place-items:center;z-index:5}
+.dw .bk-modale>div{display:grid;gap:10px;min-width:300px;max-width:420px;padding:18px 20px;background:#24231f;border:1px solid #5a4a2a;border-radius:6px;box-shadow:0 12px 40px #000c;text-align:center}
+.dw .bk-modale b{font:18px Rowdies,sans-serif;color:#f4efe0}.dw .bk-modale span{color:#c9c4ab}.dw .bk-modale>div>div{display:flex;gap:8px;justify-content:center}
+.dw .bk-modale .bk-btn.v{width:auto}
 .dw .prer{position:absolute;top:30px;left:0;right:0;z-index:2;display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;font-size:12px;color:#c9c2ad;text-shadow:0 1px 2px #000}.dw .prer .btn{min-width:30px;padding:3px 8px;text-align:center}.dw .prer .btn.vide{opacity:.55}.dw .prer small{color:#d6cfb8;flex-basis:100%;text-align:center}
 .dw .win.coffre{width:min(760px,96vw);height:min(680px,92vh)}
 /* Zaap (maquette « Zaap : » 5A+5D) : la vraie fenêtre de Dofus 3 (Territoire / Région / Coordonnées / Niveau), groupée par zone */
@@ -895,94 +933,121 @@ export class Windows {
     if (signatureTresor(this.world) !== this.tresorSig) this.render();
   }
   /** Fenêtre du coffre au trésor de l'Enutrof (src/render/tresorVue.ts). */
-  // --- Boutique Ogrines (« Apparats : » 9A+9B+9C+9E+9G 13A 14A+14B+14C 15A 16A+16D 17) -------------------------------
+  // --- Boutique Ogrines (« Apparats : » 9-17 ; refaite selon « Boutique : 1A 2A 3A+3B 4A+4B 5A 6A+6B 7A 8A 9A+9B 10A ») ----------
+  // 1A : onglets en haut, perso à gauche, vignettes au centre, fiche de l'article à droite. Classes « bk- » (les .tab/.tabs du jeu sont pris).
   private renderBoutique() {
     const w = this.win!, W = this.world, p = W.players[0], B = Compte.boutique, enLigne = Compte.enLigne && !!B, A = BOUTIQUE_OGRINES.articles;
-    const jour = W.opts.aujourdhui ?? '', vit = vitrine(jour), fete = feteDuJour(jour), e = escB, bq = this.bq;
-    const og = (n: number) => `<span class="ogp">${n.toLocaleString('fr-FR')}<img src="assets/ui/ogrine.png" alt="Ogrines"></span>`;
-    const aMoi = (id: string) => { const a = A[id]; if (!a) return false; if (a.cat === 'service') return false; if (a.style) { const [so, sid] = a.style.split(':'); return W.aLeStyle(so as SorteStyle, sid); } return !!B?.achats.includes(id) || (a.apparats ?? []).every(x => p.apparats.includes(x)); };
-    const nomArt = (id: string) => { const a = A[id]; if (a.nom) return a.nom; if (a.service) return BOUTIQUE_OGRINES.services[a.service].nom; if (a.style) { const [so, sid] = a.style.split(':'); return STYLE[so as SorteStyle].find(d => d.id === sid)?.nom ?? sid; } return APPARATS.objets[a.apparats![0]]?.name ?? id; };
-    const sousTitre: Record<string, string> = { chapeau: 'Coiffe', cape: 'Cape', familier: 'Familier d\'apparat', costume: 'Costume complet', service: 'Service', style: 'Style' };
-    const icones = (a: ArticleOgrines) => a.apparats ? a.apparats.map(apparatHtml).join('') : a.style ? (() => { const [so, sid] = a.style!.split(':'), d = STYLE[so as SorteStyle].find(x => x.id === sid);
-      return so === 'ornements' ? `<b style="color:${d?.couleur};font-size:18px">${e(nomOrne('', sid).trim())}</b>` : `<span style="display:inline-block;width:44px;height:22px;border-radius:50%;background:radial-gradient(${d?.c2}, ${d?.c} 55%, transparent 72%);box-shadow:0 0 10px ${d?.c}"></span>`; })()
-      : '<img src="assets/ui/inv/tab_consumables.png" alt="" style="width:40px;height:40px">';
-    const bouton = (id: string) => {
-      const prix = prixOgrines(id, jour);
-      if (aMoi(id)) return '<span class="a">Sur ton compte</span>';
-      if (prix == null) return `<small>Pendant ${A[id].fete ? e(A[id].fete!) : 'sa fête'}</small>`;
-      const conf = bq.confirme === id, assez = (B?.solde ?? 0) >= prix;
-      return `<span class="btn ${conf ? 'conf' : ''} ${enLigne && assez ? '' : 'off'}" data-bqa="${id}">${conf ? 'Confirmer ' : ''}${og(prix)}</span>`;
+    const jour = W.opts.aujourdhui ?? '', vit = vitrine(jour), fete = feteDuJour(jour), e = escB, bq = this.bq, solde = enLigne ? B!.solde : 0;
+    const og = (n: number, cls = '') => `<span class="bk-og ${cls}">${n.toLocaleString('fr-FR')}<img src="assets/ui/ogrine.png" alt="Ogrines"></span>`;
+    const styleDe = (a: ArticleOgrines) => { const [so, sid] = (a.style ?? ':').split(':'); return { so: so as SorteStyle, sid, d: STYLE[so as SorteStyle]?.find(x => x.id === sid) }; };
+    const aMoi = (id: string) => { const a = A[id]; if (!a || a.cat === 'service') return false; if (a.style) { const s = styleDe(a); return W.aLeStyle(s.so, s.sid); } return !!B?.achats.includes(id) || (a.apparats ?? []).every(x => p.apparats.includes(x)); };
+    const nomArt = (id: string) => { const a = A[id]; if (a.nom) return a.nom; if (a.service) return BOUTIQUE_OGRINES.services[a.service].nom; if (a.style) return styleDe(a).d?.nom ?? id; return APPARATS.objets[a.apparats![0]]?.name ?? id; };
+    const SOUS: Record<string, string> = { chapeau: 'Coiffe d\'apparat', cape: 'Cape d\'apparat', familier: 'Familier d\'apparat', costume: 'Costume complet', service: 'Potion', style: 'Style' };
+    const sousTitre = (id: string) => { const a = A[id]; if (a.style) return { aureoles: 'Auréole', zaaps: 'Effet de Zaap', ornements: 'Ornement de nom' }[styleDe(a).so] ?? 'Style'; return SOUS[a.cat] ?? ''; };
+    const RANG: Record<string, number> = { rare: 0, epique: 1, legendaire: 2 };
+    const rarete = (id: string) => { const a = A[id]; return a.apparats?.length === 1 ? rareteApparat(a.apparats[0]) as string : a.cat === 'costume' ? 'legendaire' : a.prix >= 500 ? 'epique' : 'rare'; };
+    const icone = (a: ArticleOgrines, grand = false) => {
+      if (a.apparats) return `<span class="bk-ics ${a.apparats.length > 1 ? 'n' : ''}">${a.apparats.map(apparatHtml).join('')}</span>`;
+      if (a.style) { const { so, sid, d } = styleDe(a);
+        return so === 'ornements' ? `<b class="bk-orn" style="color:${d?.couleur}">${e(nomOrne('', sid).trim())}</b>` : `<span class="bk-halo ${grand ? 'g' : ''}" style="background:radial-gradient(${d?.c2}, ${d?.c} 55%, transparent 72%);box-shadow:0 0 14px ${d?.c}"></span>`; }
+      return '<img class="bk-pot" src="assets/ui/inv/tab_consumables.png" alt="">';
     };
-    const carte = (id: string) => { const a = A[id], r = a.apparats?.length === 1 ? rareteApparat(a.apparats[0]) : a.cat === 'costume' ? 'legendaire' : 'rare';
-      const prix = prixOgrines(id, jour), promo = vit.promo === id && prix != null && prix < a.prix;
-      return `<div class="carte" data-bqe="${id}" style="--r:${RARITY_COLORS[r as Rarity] ?? '#3d3b33'}"><div class="ics">${icones(a)}</div><b>${e(nomArt(id))}</b><small>${sousTitre[a.cat] ?? ''}${promo ? ` · <s>${a.prix}</s> -${Math.round(BOUTIQUE_OGRINES.semaine.promo * 100)} %` : ''}</small>${bouton(id)}</div>`; };
+    const prixDe = (id: string) => prixOgrines(id, jour);
+    const vignette = (id: string) => { const a = A[id], pr = prixDe(id), promo = vit.promo === id && pr != null && pr < a.prix, moi = aMoi(id);
+      const bas = moi ? '<span class="bk-a">Sur ton compte</span>' : pr == null ? '<small>Pendant sa fête</small>' : `${promo ? `<s>${a.prix}</s>` : ''}${og(pr, enLigne && solde >= pr ? '' : 'off')}`;
+      return `<div class="bk-v r-${rarete(id)} ${bq.choisi === id ? 'sel' : ''} ${moi ? 'moi' : ''}" data-bkv="${id}" tabindex="0">${icone(a)}<b>${e(nomArt(id))}</b><span class="bk-p">${bas}</span></div>`; };
+    const comment = `<div class="bk-gagner"><b>Comment gagner des Ogrines ?</b><span>Les Ogrines ne s'achètent pas. Elles viennent des <b>codes cadeaux</b> (Options › Compte) et des <b>événements du Discord</b> : lives, concours, fêtes.${enLigne ? '' : ' Connecte-toi avec Discord à l\'accueil et passe en mode « En ligne » pour les recevoir.'}</span></div>`;
     const ONGLETS: [string, string][] = [['accueil', 'Accueil'], ['chapeau', 'Coiffes'], ['cape', 'Capes'], ['familier', 'Familiers'], ['costume', 'Costumes'], ['style', 'Style'], ['service', 'Services'], ['abonnements', 'Abonnements']];
-    const hors = enLigne ? '' : `<div class="hors">La boutique Ogrines est sur ton compte Discord : connecte-toi à l'accueil et passe en mode « En ligne ». Les Ogrines ne s'achètent pas : elles viennent des codes cadeaux (Options › Compte) et des événements du Discord.</div>`;
-    const abo = B?.abonnement && B.abonnement.fin > Date.now() ? B.abonnement : null;
+    const abo = B?.abonnement && B.abonnement.fin > Date.now() ? B.abonnement : null, P = BOUTIQUE_OGRINES.abonnement;
     const finAbo = abo ? new Date(abo.fin).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }) : '';
-    let corps = '';
+    let centre = '';
     if (bq.onglet === 'accueil') {
-      const pr = vit.promo, ap = A[pr], prix = prixOgrines(pr, jour) ?? ap.prix;
-      const fetes = fete ? Object.keys(A).filter(id => A[id].fete === fete) : [];
-      corps = `${hors}<div class="ent">Promotion de la semaine</div>
-        <div class="promo" data-bqe="${pr}"><div class="ics">${icones(ap)}</div><div><b>${e(nomArt(pr))}</b><div><s>${og(ap.prix)}</s> <span class="r">-${Math.round(BOUTIQUE_OGRINES.semaine.promo * 100)} %</span> ${og(prix)}</div><small class="hint">${sousTitre[ap.cat]}, jusqu'à lundi</small></div>${bouton(pr)}</div>
-        <div class="ent">Mises en avant</div><div class="grille">${vit.avant.slice(1).map(carte).join('')}</div>
-        ${fetes.length ? `<div class="ent">Fête en cours : en vente jusqu'à la fin de la fête</div><div class="grille">${fetes.map(carte).join('')}</div>` : ''}
-        <div class="ent">Abonnement</div><div class="hint">${abo ? `<b style="color:${BOUTIQUE_OGRINES.abonnement.paliers[abo.palier].couleur}">${BOUTIQUE_OGRINES.abonnement.paliers[abo.palier].nom}</b> jusqu'au ${finAbo}.` : 'Trois paliers en Ogrines pour 30 jours : XP, butin, confort et style.'} <span class="lien" data-bqo="abonnements">Voir les abonnements</span></div>`;
+      // 2A : la promo de la semaine, 5 mises en avant, bandeau d'abonnement, articles de fête
+      const pr = vit.promo, ap = A[pr], prix = prixDe(pr) ?? ap.prix, fetes = fete ? Object.keys(A).filter(id => A[id].fete === fete) : [];
+      centre = `<div class="bk-promo r-${rarete(pr)}" data-bkv="${pr}">${icone(ap, true)}<div><small>Promotion de la semaine, jusqu'à lundi</small><b>${e(nomArt(pr))}</b><span>${sousTitre(pr)}</span></div>
+          <div class="bk-promo-p"><s>${ap.prix}</s><span class="bk-r">-${Math.round(BOUTIQUE_OGRINES.semaine.promo * 100)} %</span>${og(prix)}</div></div>
+        <div class="bk-t">Mises en avant</div><div class="bk-grille">${vit.avant.slice(1).map(vignette).join('')}</div>
+        ${fetes.length ? `<div class="bk-t">Fête en cours · en vente jusqu'à la fin de la fête</div><div class="bk-grille">${fetes.slice(0, 8).map(vignette).join('')}</div>` : ''}
+        <div class="bk-bandeau" data-bko="abonnements"><b>${abo ? `Abonnement ${P.paliers[abo.palier].nom}` : 'Abonnements'}</b><span>${abo ? `en cours jusqu'au ${finAbo}` : `Aventurier, Héros, Légende : XP, butin, confort et style pour 30 jours${enLigne && !B?.essai ? ` · ${P.essai.jours} jours offerts pour essayer` : ''}`}</span><i>Voir ›</i></div>
+        ${solde < 300 ? comment : ''}`;
     } else if (bq.onglet === 'abonnements') {
-      const P = BOUTIQUE_OGRINES.abonnement, ra = rangAbo(abo?.palier), mois = jour.slice(0, 7), dm = apparatDuMois(mois), dmPris = !!B?.apparats.includes(dm);
-      const col = (k: Palier) => { const d = P.paliers[k], r = rangAbo(k), conf = bq.confirme === `abo:${k}`;
-        const action = !enLigne ? '' : r < ra ? '<small class="hint">Après ton abonnement en cours</small>'
-          : `<span class="btn ${conf ? 'conf' : ''} ${(B?.solde ?? 0) >= d.prix || r > ra ? '' : 'off'}" data-bqab="${k}">${conf ? 'Confirmer · ' : ''}${r === ra ? 'Prolonger 30 jours' : ra ? `Passer à ${d.nom}` : 'S\'abonner 30 jours'} ${og(d.prix)}</span>`;
-        return `<div class="abo ${abo?.palier === k ? 'on' : ''}" style="--c:${d.couleur}"><h3>${d.nom}</h3><div>${og(d.prix)} <small class="hint">/ 30 jours</small></div><ul>${texteAvantages(k).map(t => `<li>${e(t)}</li>`).join('')}</ul>${abo?.palier === k ? `<small class="a">En cours jusqu'au ${finAbo}</small>` : ''}${action}</div>`; };
-      corps = `${hors}<div class="hint">Chaque palier donne tout ce du dessous. Le jeu reste entier et gratuit sans abonnement ; les Ogrines ne s'achètent jamais avec de l'argent. Passer à un palier plus haut reprend les jours restants.</div>
-        <div class="abos">${PALIERS_ABO.map(col).join('')}</div>
-        ${enLigne && !B?.essai && !abo ? `<div class="promo"><div class="ics"><img src="assets/ui/ogrine.png" alt="" style="width:48px"></div><div><b>${P.essai.jours} jours offerts</b><div class="hint">L'abonnement ${P.paliers[P.essai.palier].nom}, une fois par compte, pour essayer.</div></div><span class="btn" data-bqessai>Essayer</span></div>` : ''}
-        ${dm ? `<div class="ent">Apparat du mois (Héros et Légende)</div><div class="promo" data-bqe="m${dm}"><div class="ics">${apparatHtml(dm)}</div><div><b>${e(APPARATS.objets[dm]?.name ?? dm)}</b><div class="hint">Exclusif, gardé pour toujours. Un nouveau chaque mois.</div></div>${dmPris ? '<span class="a">Sur ton compte</span>' : ra >= 2 ? '<span class="btn" data-bqmois>Le prendre</span>' : '<small class="hint">Héros ou Légende</small>'}</div>` : ''}`;
+      // 8A : trois colonnes ; 16D essai ; 17B apparat du mois
+      const ra = rangAbo(abo?.palier), dm = apparatDuMois(jour.slice(0, 7)), dmPris = !!B?.apparats.includes(dm);
+      const col = (k: Palier) => { const d = P.paliers[k], r = rangAbo(k);
+        const action = !enLigne ? '<small>En ligne seulement</small>' : r < ra ? '<small>Après ton abonnement en cours</small>'
+          : `<span class="bk-btn ${solde >= d.prix || r > ra ? '' : 'off'}" data-bkab="${k}">${r === ra ? 'Prolonger 30 jours' : ra ? `Passer à ${d.nom}` : 'S\'abonner'}</span>`;
+        return `<div class="bk-abo ${abo?.palier === k ? 'on' : ''}" style="--c:${d.couleur}"><h3>${d.nom}</h3><div class="bk-abo-p">${og(d.prix)}<small>/ 30 jours</small></div><ul>${texteAvantages(k).map(t => `<li>${e(t)}</li>`).join('')}</ul>${abo?.palier === k ? `<small class="bk-a">En cours jusqu'au ${finAbo}</small>` : ''}${action}</div>`; };
+      centre = `<div class="bk-note">Chaque palier donne tout ce du dessous. Le jeu reste entier et gratuit sans abonnement. Passer à un palier plus haut reprend les jours restants.</div>
+        <div class="bk-abos">${PALIERS_ABO.map(col).join('')}</div>
+        ${enLigne && !B?.essai && !abo ? `<div class="bk-bandeau"><b>${P.essai.jours} jours offerts</b><span>L'abonnement ${P.paliers[P.essai.palier].nom}, une fois par compte.</span><span class="bk-btn" data-bkessai>Essayer</span></div>` : ''}
+        ${dm ? `<div class="bk-bandeau r-legendaire" data-bkv="m${dm}">${apparatHtml(dm)}<b>Apparat du mois</b><span>${e(APPARATS.objets[dm]?.name ?? dm)} · exclusif Héros et Légende, gardé pour toujours</span>${dmPris ? '<span class="bk-a">Sur ton compte</span>' : ra >= 2 ? '<span class="bk-btn" data-bkmois>Le prendre</span>' : ''}</div>` : ''}
+        ${solde < 300 ? comment : ''}`;
     } else {
+      // 6A + 6B : recherche, tri, rareté, masquer ce que j'ai ; 5A : grandes vignettes
       const q = bq.rech.trim().toLowerCase();
-      const l = Object.keys(A).filter(id => A[id].cat === bq.onglet && enVente(id, jour) && (!q || nomArt(id).toLowerCase().includes(q)) && !(bq.cacher && aMoi(id)));
-      const services = bq.onglet === 'service' ? `<div class="hint">Tu as : ${Object.entries(BOUTIQUE_OGRINES.services).map(([k, d]) => `${e(d.nom)} × ${B?.services[k] ?? 0}`).join(' · ')}. Elles s'utilisent à l'accueil, dans Mes personnages (persos en ligne).</div>` : '';
-      corps = `${hors}${services}<div class="filtre"><input type="search" placeholder="Rechercher" value="${e(bq.rech)}" data-bqr><label><input type="checkbox" data-bqc ${bq.cacher ? 'checked' : ''}> Masquer ce que j'ai</label><span class="hint">${l.length} article${l.length > 1 ? 's' : ''}</span></div>
-        <div class="grille">${l.slice(0, bq.max).map(carte).join('')}</div>${l.length > bq.max ? '<div style="text-align:center"><span class="btn" data-bqplus>Afficher plus</span></div>' : ''}`;
+      let l = Object.keys(A).filter(id => A[id].cat === bq.onglet && enVente(id, jour) && (!q || nomArt(id).toLowerCase().includes(q)) && !(bq.cacher && aMoi(id)) && (!bq.raretes.length || bq.raretes.includes(rarete(id))));
+      l = l.sort((x, y) => bq.tri === 'nom' ? nomArt(x).localeCompare(nomArt(y), 'fr') : bq.tri === 'rarete' ? RANG[rarete(y)] - RANG[rarete(x)] || nomArt(x).localeCompare(nomArt(y), 'fr') : (prixDe(x) ?? 0) - (prixDe(y) ?? 0) || nomArt(x).localeCompare(nomArt(y), 'fr'));
+      const avecRarete = ['chapeau', 'cape', 'familier'].includes(bq.onglet);
+      const services = bq.onglet === 'service' ? `<div class="bk-note">Tu as : ${Object.entries(BOUTIQUE_OGRINES.services).map(([k, d]) => `${e(d.nom)} × ${B?.services[k] ?? 0}`).join(' · ')}. Elles s'utilisent à l'accueil, dans Mes personnages.</div>` : '';
+      centre = `${services}<div class="bk-filtre"><input type="search" placeholder="Rechercher" value="${e(bq.rech)}" data-bkr aria-label="Rechercher">
+          <select data-bktri aria-label="Trier"><option value="prix" ${bq.tri === 'prix' ? 'selected' : ''}>Prix</option><option value="rarete" ${bq.tri === 'rarete' ? 'selected' : ''}>Rareté</option><option value="nom" ${bq.tri === 'nom' ? 'selected' : ''}>Nom</option></select>
+          ${avecRarete ? ['rare', 'epique', 'legendaire'].map(r => `<span class="bk-pas r-${r} ${bq.raretes.includes(r) ? 'on' : ''}" data-bkra="${r}">${RARITY_NAMES[r as Rarity]}</span>`).join('') : ''}
+          <label class="bk-ck"><input type="checkbox" data-bkc ${bq.cacher ? 'checked' : ''}> Masquer ce que j'ai</label><span class="bk-n">${l.length} article${l.length > 1 ? 's' : ''}</span></div>
+        <div class="bk-grille">${l.slice(0, bq.max).map(vignette).join('') || '<div class="bk-note">Aucun article.</div>'}</div>${l.length > bq.max ? '<div class="bk-plus"><span class="bk-btn g" data-bkplus>Afficher plus</span></div>' : ''}`;
     }
-    const essai = this.essaiApparat && APPARATS.objets[this.essaiApparat] ? this.essaiApparat : null;
-    const objets = objetsPortes(p.equipment, { ...p.apparat, ...(essai ? { [APPARATS.objets[essai].slot]: essai } : {}) });
-    w.innerHTML = `${this.title('Boutique', 'shop')}<div class="bq"><div class="apercu">${this.perso ? this.canevas('', objets) : ''}<div class="hint" style="text-align:center">${essai ? e(APPARATS.objets[essai].name) : 'Survole un article pour l\'essayer'}</div></div>
-      <div class="droite"><div class="haut"><span class="og"><img src="assets/ui/ogrine.png" alt="">${enLigne ? (B?.solde ?? 0).toLocaleString('fr-FR') : '—'} <small class="hint" style="font:12px Lexend,sans-serif">Ogrines</small></span>${bq.msg ? `<span class="msg">${e(bq.msg)}</span>` : ''}</div>
-      <div class="tabs">${ONGLETS.map(([k, n]) => `<span class="tab ${bq.onglet === k ? 'on' : ''}" data-bqo="${k}">${n}</span>`).join('')}</div>
-      <div class="corps">${corps}</div></div></div>`;
+    // 3A : fiche de l'article choisi
+    const c = bq.choisi && A[bq.choisi] ? bq.choisi : null;
+    let fiche = `<div class="bk-vide">Clique sur un article pour voir sa fiche et l'essayer sur ton perso.</div>`;
+    if (c) {
+      const a = A[c], pr = prixDe(c), moi = aMoi(c), r = rarete(c);
+      const contenu = a.cat === 'costume' ? `<div class="bk-cont">${a.apparats!.map(id => `<span>${apparatHtml(id)}${e(APPARATS.objets[id]?.name ?? id)}</span>`).join('')}</div><small>Prix des pièces : ${a.apparats!.reduce((n, id) => n + (A[`a${id}`]?.prix ?? 0), 0)}</small>` : '';
+      const texte = a.service ? BOUTIQUE_OGRINES.services[a.service].texte : a.style ? (styleDe(a).d?.texte ?? `Autour de ton nom : ${nomOrne(p.nom || 'Ton nom', styleDe(a).sid)}`) : 'Pour tout le compte : chaque perso le porte par-dessus son équipement, sans changer ses caractéristiques.';
+      const bouton = moi ? '<span class="bk-a">Déjà sur ton compte</span>' : pr == null ? `<small>En vente pendant sa fête</small>` : !enLigne ? '<span class="bk-btn off">En ligne seulement</span>'
+        : solde < pr ? `<span class="bk-btn off">Il manque ${(pr - solde).toLocaleString('fr-FR')} Ogrines</span>` : '<span class="bk-btn v" data-bkacheter>Acheter</span>';
+      fiche = `<div class="bk-big r-${r}">${icone(a, true)}</div><b class="bk-nom">${e(nomArt(c))}</b><span class="bk-rar r-${r}">${a.apparats ? `${RARITY_NAMES[r as Rarity] ?? ''} · ` : ''}${sousTitre(c)}</span>
+        <p>${e(texte)}</p>${contenu}${pr != null ? `<div class="bk-prix">${vit.promo === c && pr < a.prix ? `<s>${a.prix}</s>` : ''}${og(pr)}</div>` : ''}${bouton}${a.service ? `<small>Tu en as ${B?.services[a.service] ?? 0}</small>` : ''}`;
+    }
+    // 4A + 4B : essais posés au clic, cumulés par emplacement
+    const essais = Object.values(bq.essais);
+    const objets = objetsPortes(p.equipment, { ...p.apparat, ...bq.essais } as typeof p.apparat);
+    const modale = bq.confirme && A[bq.confirme] ? `<div class="bk-modale"><div><b>Acheter ${e(nomArt(bq.confirme))} ?</b><span>Pour ${og(prixDe(bq.confirme) ?? 0)}. Il te restera ${(solde - (prixDe(bq.confirme) ?? 0)).toLocaleString('fr-FR')} Ogrines.</span><div><span class="bk-btn g" data-bknon>Annuler</span><span class="bk-btn v" data-bkoui>Acheter</span></div></div></div>`
+      : bq.confirme.startsWith('abo:') ? (() => { const k = bq.confirme.slice(4) as Palier, d = P.paliers[k]; return `<div class="bk-modale"><div><b>Abonnement ${d.nom} ?</b><span>30 jours pour ${og(d.prix)}${abo && abo.palier !== k ? ' (moins les jours restants de ton abonnement)' : ''}.</span><div><span class="bk-btn g" data-bknon>Annuler</span><span class="bk-btn v" data-bkoui>Confirmer</span></div></div></div>`; })() : '';
+    w.innerHTML = `${this.title('Boutique', 'shop')}<div class="bk">
+      <div class="bk-haut"><div class="bk-tabs">${ONGLETS.map(([k, n]) => `<span class="${bq.onglet === k ? 'on' : ''}" data-bko="${k}">${n}</span>`).join('')}</div>
+        <div class="bk-solde">${bq.msg ? `<span class="bk-msg">${e(bq.msg)}</span>` : ''}<img src="assets/ui/ogrine.png" alt="">${enLigne ? solde.toLocaleString('fr-FR') : '—'}</div></div>
+      <div class="bk-corps ${bq.onglet === 'abonnements' ? 'large' : ''}">
+        <div class="bk-perso">${this.perso ? this.canevas('', objets) : ''}<small>${essais.length ? `Essai : ${essais.map(id => e(APPARATS.objets[id]?.name ?? id)).join(', ')}` : 'Clique sur un article pour l\'essayer'}</small>${essais.length ? '<span class="bk-btn g" data-bkretirer>Retirer les essais</span>' : ''}</div>
+        <div class="bk-centre">${centre}</div>
+        ${bq.onglet === 'abonnements' ? '' : `<div class="bk-fiche">${fiche}</div>`}
+      </div>${modale}</div>`;
     const re = () => this.render();
-    w.querySelectorAll<HTMLElement>('[data-bqo]').forEach(x => x.addEventListener('click', () => { bq.onglet = x.dataset.bqo!; bq.max = 60; bq.confirme = ''; bq.msg = ''; re(); }));
-    // essayage : survoler un article pose son apparat (le premier pour un costume) sur le perso
-    w.querySelectorAll<HTMLElement>('[data-bqe]').forEach(x => x.addEventListener('pointerenter', () => {
-      const k = x.dataset.bqe!, id = k.startsWith('m') ? k.slice(1) : A[k]?.apparats?.[0];
-      if (!id || !APPARATS.objets[id] || this.essaiApparat === id) return;
-      this.essaiApparat = id;
-      const cv = w.querySelector<HTMLCanvasElement>('.apercu canvas'), d = APPARATS.objets[id], tenue = { ...p.apparat } as Record<string, string>;
-      for (const a of (A[k]?.apparats ?? [id])) { const s = APPARATS.objets[a]?.slot; if (s) tenue[s] = a; }
-      if (cv) cv.dataset.objets = objetsPortes(p.equipment, tenue as typeof p.apparat).join(',');
-      const h = w.querySelector<HTMLElement>('.apercu .hint'); if (h) h.textContent = A[k]?.nom ?? d.name;
+    w.querySelectorAll<HTMLElement>('[data-bko]').forEach(x => x.addEventListener('click', () => { bq.onglet = x.dataset.bko!; bq.max = 48; bq.msg = ''; bq.raretes = []; re(); }));
+    w.querySelectorAll<HTMLElement>('[data-bkv]').forEach(x => x.addEventListener('click', () => {
+      const k = x.dataset.bkv!;
+      if (k.startsWith('m')) { const id = k.slice(1), s = APPARATS.objets[id]?.slot; if (s) bq.essais[s] = id; re(); return; }
+      bq.choisi = k;
+      for (const id of A[k]?.apparats ?? []) { const s = APPARATS.objets[id]?.slot; if (s) bq.essais[s] = id; }
+      re();
     }));
+    w.querySelector('[data-bkretirer]')?.addEventListener('click', () => { bq.essais = {}; re(); });
     const fin = (r: { erreur: string } | { apparat?: string }, ok: string) => { bq.confirme = ''; bq.msg = 'erreur' in r ? r.erreur : ok; if (!('erreur' in r)) Son.jouer(MANIFESTE.ui.ok, 'interface'); re(); };
-    w.querySelectorAll<HTMLElement>('[data-bqa]').forEach(x => x.addEventListener('click', async () => {
-      const id = x.dataset.bqa!;
-      if (!enLigne) return;
-      if (bq.confirme !== id) { bq.confirme = id; re(); return; }
-      fin(await Compte.boutiqueAppel('acheter', { article: id, prix: prixOgrines(id, jour) }), `${nomArt(id)} : sur ton compte, pour tous tes persos.`);
-    }));
-    w.querySelectorAll<HTMLElement>('[data-bqab]').forEach(x => x.addEventListener('click', async () => {
-      const k = x.dataset.bqab as Palier;
-      if (bq.confirme !== `abo:${k}`) { bq.confirme = `abo:${k}`; re(); return; }
-      fin(await Compte.boutiqueAppel('abonnement', { palier: k }), `Abonnement ${BOUTIQUE_OGRINES.abonnement.paliers[k].nom} actif.`);
-    }));
-    w.querySelector('[data-bqessai]')?.addEventListener('click', async () => fin(await Compte.boutiqueAppel('essai'), 'Essai lancé : profite bien !'));
-    w.querySelector('[data-bqmois]')?.addEventListener('click', async () => fin(await Compte.boutiqueAppel('mois'), 'Apparat du mois ajouté à ta collection.'));
-    w.querySelector('[data-bqplus]')?.addEventListener('click', () => { bq.max += 60; re(); });
-    w.querySelector('[data-bqc]')?.addEventListener('change', ev => { bq.cacher = (ev.target as HTMLInputElement).checked; re(); });
-    const ch = w.querySelector<HTMLInputElement>('[data-bqr]');
+    w.querySelector('[data-bkacheter]')?.addEventListener('click', () => { if (c) { bq.confirme = c; re(); } });
+    w.querySelectorAll<HTMLElement>('[data-bkab]').forEach(x => x.addEventListener('click', () => { if (!x.classList.contains('off')) { bq.confirme = `abo:${x.dataset.bkab}`; re(); } }));
+    w.querySelector('[data-bknon]')?.addEventListener('click', () => { bq.confirme = ''; re(); });
+    w.querySelector('[data-bkoui]')?.addEventListener('click', async () => {
+      const k = bq.confirme;
+      if (k.startsWith('abo:')) { const pl = k.slice(4) as Palier; fin(await Compte.boutiqueAppel('abonnement', { palier: pl }), `Abonnement ${P.paliers[pl].nom} actif.`); }
+      else fin(await Compte.boutiqueAppel('acheter', { article: k, prix: prixDe(k) }), `${nomArt(k)} : sur ton compte, pour tous tes persos.`);
+    });
+    w.querySelector('[data-bkessai]')?.addEventListener('click', async () => fin(await Compte.boutiqueAppel('essai'), 'Essai lancé : profite bien !'));
+    w.querySelector('[data-bkmois]')?.addEventListener('click', async () => fin(await Compte.boutiqueAppel('mois'), 'Apparat du mois ajouté à ta collection.'));
+    w.querySelector('[data-bkplus]')?.addEventListener('click', () => { bq.max += 48; re(); });
+    w.querySelector('[data-bkc]')?.addEventListener('change', ev => { bq.cacher = (ev.target as HTMLInputElement).checked; re(); });
+    w.querySelector<HTMLSelectElement>('[data-bktri]')?.addEventListener('change', ev => { bq.tri = (ev.target as HTMLSelectElement).value as typeof bq.tri; re(); });
+    w.querySelectorAll<HTMLElement>('[data-bkra]').forEach(x => x.addEventListener('click', () => { const r = x.dataset.bkra!; bq.raretes = bq.raretes.includes(r) ? bq.raretes.filter(y => y !== r) : [...bq.raretes, r]; re(); }));
+    const ch = w.querySelector<HTMLInputElement>('[data-bkr]');
     ch?.addEventListener('keydown', ev => ev.stopPropagation());
-    ch?.addEventListener('input', () => { bq.rech = ch.value; bq.max = 60; re(); const n = this.win?.querySelector<HTMLInputElement>('[data-bqr]'); n?.focus(); n?.setSelectionRange(n.value.length, n.value.length); });
+    ch?.addEventListener('input', () => { bq.rech = ch.value; bq.max = 48; re(); const n = this.win?.querySelector<HTMLInputElement>('[data-bkr]'); n?.focus(); n?.setSelectionRange(n.value.length, n.value.length); });
   }
   private renderTresor() {
     const w = this.win!, wo = this.world;
@@ -1723,7 +1788,7 @@ export class Windows {
   /** Options › Compte : dernier message du code cadeau. */
   private codeMsg = '';
   /** Boutique Ogrines (« Apparats : » 13A) : onglet, recherche, article à confirmer, message, nombre d'articles montrés. */
-  private bq = { onglet: 'accueil', rech: '', confirme: '', msg: '', max: 60, cacher: false };
+  private bq = { onglet: 'accueil', rech: '', confirme: '', msg: '', max: 48, cacher: false, tri: 'prix' as 'prix' | 'rarete' | 'nom', raretes: [] as string[], choisi: null as string | null, essais: {} as Record<string, string> };
   /** Guide (touche G) : rubrique affichée et recherche. */
   private guideVue = 'bienvenue';
   private guideRecherche = '';
@@ -2532,7 +2597,7 @@ export class Windows {
       return `<span class="px"><span class="btn ${ok ? '' : 'off'}" ${attr}>${n.toLocaleString('fr-FR')} ${icM(m)}</span>${ok ? '' : `<i>il manque ${(n - s).toLocaleString('fr-FR')} ${nomM(m)}</i>`}</span>`; };
     const solde = (m: string) => `<span class="k" title="${nomM(m)}">${W.solde(m).toLocaleString('fr-FR')} ${icM(m)}</span>`;
     const monnaies = marche ? ['kamas', PEPITE] : this.empOnglet === 'recycler' ? ['kamas'] : [boutique.find(a => a.monnaie)?.monnaie ?? PEPITE];
-    const tete = `<div class="eh"><div class="eos">${onglets.map(([k, n]) => `<span class="eo ${this.empOnglet === k ? 'on' : ''}" data-eo="${k}">${n}</span>`).join('')}${sv.has('garde-robe') ? '<span class="eo" data-garde>Garde-robe</span>' : ''}</div>
+    const tete = `<div class="eh"><div class="eos">${onglets.map(([k, n]) => `<span class="eo ${this.empOnglet === k ? 'on' : ''}" data-eo="${k}">${n}</span>`).join('')}${sv.has('garde-robe') ? '<span class="eo" data-garde>Garde-robe</span>' : ''}${this.empPnj === 'responsable' ? '<span class="eo" data-bkouvrir>Boutique Ogrines</span>' : ''}</div>
       <span class="ks">${monnaies.map(solde).join('')}</span></div>`;
     const essai = this.essaiApparat && APPARATS.objets[this.essaiApparat];
     const apercu = () => { const objets = objetsPortes(p.equipment, { ...p.apparat, ...(essai ? { [essai.slot]: this.essaiApparat! } : {}) });
@@ -2646,6 +2711,7 @@ export class Windows {
     w.querySelectorAll<HTMLElement>('[data-fdep]').forEach(e => e.addEventListener('click', () => { W.prendreFamilierDeDepart(e.dataset.fdep!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-sac]').forEach(e => e.addEventListener('click', () => { W.acheterSacDuJour(e.dataset.sac as 'rare' | 'epique'); this.changed(); }));
     w.querySelector<HTMLElement>('[data-garde]')?.addEventListener('click', () => this.show('garde'));
+    w.querySelector<HTMLElement>('[data-bkouvrir]')?.addEventListener('click', () => this.show('boutique'));   // « Boutique : » 9B
     w.querySelectorAll<HTMLElement>('[data-tachat]').forEach(e => e.addEventListener('click', () => { W.acheterTheme(+e.dataset.tachat!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-tpose]').forEach(e => e.addEventListener('click', () => { W.poserTheme(+e.dataset.tpose!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-teint]').forEach(e => e.addEventListener('click', () => { W.acheterTeinture(e.dataset.teint!); this.changed(); }));
