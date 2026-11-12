@@ -215,6 +215,8 @@ export type SuccesObjectif = { nom: string } & (
   | { guerre: 'parfait'; champ: string }
   /** « Archis : » 8C : archimonstres différents capturés (carnet des âmes). */
   | { archis: number }
+  /** « Familiers : » 6C : familiers dans la Ménagerie. */
+  | { familiers: number }
   /** 0.5 « monde vivant » (4D) : ce boss du monde vaincu ; jauges d'invasion remplies (7A). */
   | { bossMonde: string }
   | { invasions: number }
@@ -1041,6 +1043,7 @@ export class Quetes {
     if ('niveau' in o) return this.world.player.level >= o.niveau;
     if ('apparence' in o) return this.world.player.apparats.includes(o.apparence);
     if ('dofus' in o) return this.world.player.dofus.length >= o.dofus;
+    if ('familiers' in o) return this.world.menagerie().length >= o.familiers;
     if ('donjon' in o) return (this.donjons[o.donjon]?.v ?? 0) > 0;
     if ('defi' in o) return this.defis.has(`${o.defi[0]}|${o.defi[1]}`);
     if ('guerre' in o) { if (o.guerre === 'parfait') return this.world.player.guerre.parfaits.includes(o.champ); const [n, max] = this.progres(o); return n >= max; }
@@ -1054,6 +1057,7 @@ export class Quetes {
     if ('classe' in o) return [p.cls.sorts === o.classe ? Math.min(p.level, o.niveau) : 0, o.niveau];
     if ('niveau' in o) return [Math.min(p.level, o.niveau), o.niveau];
     if ('dofus' in o) return [Math.min(p.dofus.length, o.dofus), o.dofus];
+    if ('familiers' in o) return [Math.min(this.world.menagerie().length, o.familiers), o.familiers];
     if ('metier' in o) {
       const n = o.metier === '*' ? Math.max(0, ...Object.keys(p.metiers).map(k => p.metierLevel(k))) : p.metierLevel(o.metier);
       return [Math.min(n, o.palier), o.palier];

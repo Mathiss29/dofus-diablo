@@ -154,6 +154,8 @@ export type SimEvent =
   | { k: 'impression'; uid: number; id: string }
   /** Collection d'apparences (1C) : premier exemplaire d'une coiffe, cape ou bouclier brisé ou recyclé. */
   | { k: 'apparence'; id: string; /** « Apparats : » 3A */ rarete?: Rarity }
+  /** « Familiers : » 6A : nouveau familier dans la Ménagerie (n = combien en tout). */
+  | { k: 'menagerie'; id: string; nom: string; n: number }
   | { k: 'fusion'; de: string; vers: string; n: number }
   /** Commande à Malek (Forgemagie UI 9E) : confiée, prête (l'objet attend chez lui), reprise. */
   | { k: 'commande'; etat: 'confiee' | 'prete' | 'retiree'; reste: number; essais: number }

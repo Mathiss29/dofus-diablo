@@ -30,6 +30,7 @@ import { appliquerTest, type ReglagesTest } from './outilsTest';
 import { Passants, lieuxDeZone } from './passants';
 import { ALMANAX, jourAlmanax, type JourAlmanax } from './almanax';
 import { COFFRE, coffreVide, type Coffre } from './coffre';
+import { FAMILIERS_SOURCES } from './menagerie';
 import { themeChoisi, themesEnJeu, themesPossedes, zoneAvecTheme, type Teintures, type ThemesHavreSac } from './havresac';
 /** Archimonstres (0.3, 15B) : chance qu'un monstre d'un groupe soit son archimonstre ; pierres d'âme officielles (vide, pleine). */
 export const ARCHI = { chance: 1 / 150, pierre: '9686', pleine: '10418',
@@ -2017,7 +2018,7 @@ export class World {
   /** Ce que le calcul du butin doit savoir (src/sim/butin.ts) : sert au jeu, au Bestiaire et au simulateur de l'outil de test. */
   contexteButin(type: string, rang: Rang, niveau: number): CtxButin {
     const p = this.player;
-    return { type, rang, niveau, prospection: p.prospection + (this.almanax?.effet === 'butin' ? ALMANAX.butin : 0) + p.beni('butin') * REGLAGES_BUTIN.prospection.chances + this.bonusDuWeekEnd('butin') + this.prospectionInvasion, items: this.opts.items!, familiers: this.familiersDe[type] ?? [], pool: this.equipByLevel, poolSecours: this.equipSecours,
+    return { type, rang, niveau, prospection: p.prospection + (this.almanax?.effet === 'butin' ? ALMANAX.butin : 0) + p.beni('butin') * REGLAGES_BUTIN.prospection.chances + this.bonusDuWeekEnd('butin') + this.prospectionInvasion, items: this.opts.items!, familiers: (this.familiersDe[type] ?? []).filter(id => !this.aLeFamilier(p, id)), pool: this.equipByLevel, poolSecours: this.equipSecours,
       panoBoss: rang === 'boss' ? this.panoBoss(type) : undefined,
       metierNiveau: j => p.metierLevel(j), armeChasse: !!p.huntingWeapon, pouvoirs: rang === 'boss' ? { ...p.ctxPouvoirs, boss: type } : p.ctxPouvoirs };
   }
@@ -2127,7 +2128,7 @@ export class World {
     });
   }
   /** Rareté minimale affichée et ramassable selon le filtre du joueur (0 Commun, 1 Rare, 2 Épique). */
-  shown(d: Drop): boolean { return (d.pour == null || d.pour === this.player.id) && (!d.item || RARITIES.indexOf(d.item.rarity) >= this.player.lootFilter); }
+  shown(d: Drop): boolean { return (d.pour == null || d.pour === this.player.id) && (!d.item || d.item.xpF != null || RARITIES.indexOf(d.item.rarity) >= this.player.lootFilter); }
   /** Aspiré quand on passe près (kamas et Communs) ou ramassé d'un clic (le reste). */
   static magnetic(d: Drop): boolean { return !d.apparat && (!d.item || d.item.rarity === 'commun'); }
   private updateDrops(dt: number) {
@@ -2170,6 +2171,7 @@ export class World {
         if (p.bag.length >= p.tailleSac) { if (!d.warned) this.emit({ k: 'bagFull' }); d.warned = true; d.familier = false; continue; }   // sac plein : l'objet reste au sol
         p.bag.push(d.item);
         this.emit({ k: 'loot', item: d.item });
+        if (def?.familier) this.noterFamilier(d.item);
         this.ouvrirCodex(d.item);
       } else if (d.kamas) {
         p.kamas += d.kamas;
@@ -2246,6 +2248,7 @@ export class World {
     const avant = it.niv ?? 1, niv = familierNiveau(it.xpF, this.opts.familierXp ?? []);
     if (niv === avant) return;
     it.niv = niv; it.stats = familierStats(def, niv); p.recompute();
+    this.noterFamilier(it);
     this.emit({ k: 'familierNiveau', nom: def.nom, niveau: niv });
   }
   /** Nourrir le familier porté (2C) avec un objet du sac (sauf cadenas) ou une ressource (une unité, ou toute la pile). */
@@ -2257,6 +2260,8 @@ export class World {
       const i = p.bag.findIndex(b => b.uid === quoi.uid), o = p.bag[i], d = o && I.equipment[o.id];
       if (!o || !d || o.cadenas) return false;
       p.bag.splice(i, 1); xp = FAMILIER_XP.objet(d.level, o.rarity);
+      // « Familiers : » 5A : un double du même familier = gros repas (+10 niveaux)
+      if (o.id === it.id) { const C = this.opts.familierXp ?? [], cible = Math.min(FAMILIER_MAX, (it.niv ?? 1) + FAMILIERS_SOURCES.repasDouble); xp = Math.max(0, (C[cible - 1] ?? 0) - (it.xpF ?? 0)); }
     } else {
       const r = I.resources[quoi.res], n = p.resources[quoi.res] ?? 0;
       if (!r || !n || r.pepite || r.monnaie || r.cle || r.ame) return false;
@@ -2345,6 +2350,80 @@ export class World {
     p.apparats.push(id);
     this.emit({ k: 'apparence', id, rarete: rareteApparat(id) });
     return true;
+  }
+  // --- Ménagerie (« Familiers : » 1B 4C 5C 5D 6A 7A) ---------------------------------------------------------------
+  /** 5C : ce familier est déjà dans la Ménagerie de ce joueur (celle du compte pour le joueur de cet écran). */
+  aLeFamilier(p: Player, id: string): boolean { return p.menagerie.includes(id) || (p === this.players[0] && this.coffre.familiers?.[id] != null); }
+  /** Familiers de la Ménagerie du joueur qui agit (perso + compte). */
+  menagerie(): string[] {
+    const p = this.player;
+    return [...new Set([...p.menagerie, ...(p === this.players[0] ? Object.keys(this.coffre.familiers ?? {}) : [])])];
+  }
+  /** Un familier entre dans la Ménagerie (6A), débloque son apparence (6B) et garde son plus haut niveau pour le compte (7A). */
+  noterFamilier(it: Item) {
+    const p = this.player, def = this.opts.items?.equipment[it.id]?.familier;
+    if (!def) return;
+    const nouveau = !this.aLeFamilier(p, it.id);
+    if (!p.menagerie.includes(it.id)) p.menagerie.push(it.id);
+    if (!p.apparats.includes(it.id)) p.apparats.push(it.id);
+    if (p === this.players[0]) { const f = this.coffre.familiers ??= {}; f[it.id] = Math.max(f[it.id] ?? 1, it.niv ?? 1); }
+    if (nouveau) this.emit({ k: 'menagerie', id: it.id, nom: def.nom, n: this.menagerie().length });
+  }
+  /** Le familier est-il sur ce perso (sac, équipement) ou dans le coffre du compte ? */
+  private familierIci(id: string): boolean {
+    const p = this.player;
+    return p.bag.some(o => o.id === id) || p.equipment.familier?.id === id || (p === this.players[0] && this.coffre.onglets.some(l => l.some(o => o.id === id)));
+  }
+  /** 7A : un perso du compte sort de la Ménagerie un familier que le compte a déjà eu, à son plus haut niveau. */
+  sortirDeLaMenagerie(id: string): boolean {
+    const p = this.player, niv = p === this.players[0] ? this.coffre.familiers?.[id] : undefined, d = this.opts.items?.equipment[id];
+    if (!niv || !d?.familier || this.familierIci(id) || p.bag.length >= p.tailleSac) return false;
+    p.bag.push(this.familierAuNiveau(id, niv));
+    this.emit({ k: 'loot', item: p.bag[p.bag.length - 1] });
+    return true;
+  }
+  private familierAuNiveau(id: string, niv: number): Item {
+    const d = this.opts.items!.equipment[id], it = rollItem(id, d, 'commun', this.rng, this.nextId++);
+    if (niv > 1) { it.xpF = (this.opts.familierXp ?? [])[niv - 1] ?? 0; it.niv = niv; it.stats = familierStats(d.familier!, niv); }
+    return it;
+  }
+  /** 1B + 4A : l'Animalerie du Marché vend les familiers domestiques en kamas, toujours (un double se donne ou se mange, 5A + 5D). */
+  acheterFamilier(id: string): boolean {
+    const p = this.player, prix = FAMILIERS_SOURCES.animalerie[id], d = this.opts.items?.equipment[id];
+    if (prix == null || !d?.familier || p.kamas < prix || p.bag.length >= p.tailleSac) return false;
+    p.kamas -= prix;
+    const it = rollItem(id, d, 'commun', this.rng, this.nextId++);
+    p.bag.push(it);
+    this.emit({ k: 'achat', id, n: 1, prix, monnaie: 'kamas' });
+    this.noterFamilier(it);
+    return true;
+  }
+  /** 4C : au niveau 10, l'Animalerie offre un familier de départ au choix (une fois par perso). */
+  familierDeDepartPossible(): boolean { const p = this.player; return !p.familierOffert && p.level >= FAMILIERS_SOURCES.depart.niveau; }
+  prendreFamilierDeDepart(id: string): boolean {
+    const p = this.player, d = this.opts.items?.equipment[id];
+    if (!this.familierDeDepartPossible() || !FAMILIERS_SOURCES.depart.familiers.includes(id) || !d?.familier || p.bag.length >= p.tailleSac) return false;
+    p.familierOffert = true;
+    const it = rollItem(id, d, 'commun', this.rng, this.nextId++);
+    p.bag.push(it);
+    this.emit({ k: 'loot', item: it });
+    this.noterFamilier(it);
+    return true;
+  }
+  /** 5D : donner un familier du sac à un autre joueur de la partie (coop), proche de soi. */
+  donnerFamilier(uid: number, joueur: number): boolean {
+    const p = this.player, q = this.players.find(x => x.id === joueur), i = p.bag.findIndex(o => o.uid === uid), it = p.bag[i];
+    if (!q || q === p || !it || it.cadenas || !this.opts.items?.equipment[it.id]?.familier || q.bag.length >= q.tailleSac || Math.hypot(q.x - p.x, q.y - p.y) > 600) return false;
+    p.bag.splice(i, 1);
+    this.commeJoueur(q, () => { q.bag.push(it); this.emit({ k: 'loot', item: it }); this.noterFamilier(it); });
+    return true;
+  }
+  /** 1C : le coffre d'invasion peut contenir son familier (Écumouth), une chance sur N, s'il n'est pas déjà dans la Ménagerie. */
+  familierInvasion(x: number, y: number) {
+    const p = this.player, I = this.opts.items, l = FAMILIERS_SOURCES.invasion.filter(id => I?.equipment[id] && !this.aLeFamilier(p, id));
+    if (!l.length || !I || this.rng.next() >= 1 / FAMILIERS_SOURCES.chances.invasion) return;
+    const id = this.rng.pick(l);
+    this.poserButin({ ressources: [], objets: [rollItem(id, I.equipment[id], 'commun', this.rng, this.nextId++)], kamas: 0 }, x, y, this.players.length > 1 ? p.id : undefined);
   }
   /** « Apparats : » 1E : un boss du monde ou une invasion (clé « monde » de apparats_sources.json : gelees_royales, maitre_vampire,
    *  invasion…) donne au joueur qui agit un de ses apparats qu'il n'a pas encore, avec une chance sur `sur` (1 = toujours). */
@@ -2905,7 +2984,7 @@ export class World {
   /** Récompense de quête ou de succès : un équipement (Commun) dans le sac, ou une ressource. */
   donnerObjet(id: string, n = 1) {
     const I = this.opts.items, p = this.player;
-    if (I?.equipment[id]) { for (let i = 0; i < n; i++) p.bag.push(rollItem(id, I.equipment[id], 'commun', this.rng, this.nextId++)); }
+    if (I?.equipment[id]) { for (let i = 0; i < n; i++) { const it = rollItem(id, I.equipment[id], 'commun', this.rng, this.nextId++); p.bag.push(it); if (I.equipment[id].familier) this.noterFamilier(it); } }
     else { p.resources[id] = (p.resources[id] ?? 0) + n; this.emit({ k: 'lootResource', id, n }); }
   }
   /** Sac à rareté garantie (récompense de contrat, d'Avis de recherche, Quêtes roadmap 5A) : un équipement de ce niveau, de cette rareté. */

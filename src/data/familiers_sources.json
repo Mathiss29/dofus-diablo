@@ -1,0 +1,395 @@
+{
+ "_": "D'où viennent les familiers (maquette « Revoir l'obtention des familiers », ligne de Mathis du 2026-11-12 :\n« Familiers : 1A+1B+1C+1D 2D 3A 4A+4C 5A+5C+5D 6A+6B+6C 7A 8A »). Écrit par tools/contenu/familiers_sources.py.",
+ "familles": {
+  "7713": [
+   "piou_violet",
+   "archi_piou_violet"
+  ],
+  "7708": [
+   "piou_bleu",
+   "archi_piou_bleu"
+  ],
+  "7709": [
+   "piou_jaune",
+   "archi_piou_jaune"
+  ],
+  "7710": [
+   "piou_rose",
+   "archi_piou_rose"
+  ],
+  "7711": [
+   "piou_rouge",
+   "archi_piou_rouge"
+  ],
+  "7712": [
+   "piou_vert",
+   "archi_piou_vert"
+  ],
+  "12177": [
+   "tofu_chimerique",
+   "tofu_malade",
+   "archi_tofu_malade"
+  ],
+  "27431": [
+   "bouftou_nuageux",
+   "bouftor_ethere",
+   "boufton_palichon",
+   "boufton_orageux"
+  ],
+  "7518": [
+   "kardorim"
+  ],
+  "10865": [
+   "tofu_amakna",
+   "archi_tofu_amakna",
+   "tofu_noir",
+   "tofukaz",
+   "tofu_mutant",
+   "tofu_agressif",
+   "tofu_noir_agressif",
+   "tofu_malefique",
+   "archi_tofu_malefique",
+   "batofu"
+  ],
+  "11858": [
+   "tofu_ventripotent"
+  ],
+  "12988": [
+   "scarafeuille_rouge",
+   "archi_scarafeuille_rouge",
+   "scarafeuille_bleu",
+   "archi_scarafeuille_bleu",
+   "scarafeuille_vert",
+   "archi_scarafeuille_vert",
+   "scarafeuille_blanc",
+   "archi_scarafeuille_blanc",
+   "scarafeuille_noir",
+   "scarafeuille_immature"
+  ],
+  "8154": [
+   "scarabosse_dore"
+  ],
+  "14433": [
+   "moskito",
+   "archi_moskito"
+  ],
+  "12982": [
+   "scelerat_strubien",
+   "archi_scelerat_strubien",
+   "milirat_strubien",
+   "archi_milirat_strubien",
+   "rat_soiffe",
+   "campagnoll"
+  ],
+  "7707": [
+   "sanglier",
+   "archi_sanglier",
+   "sanglier_des_plaines",
+   "archi_sanglier_des_plaines",
+   "cavalier_porkass",
+   "archi_cavalier_porkass",
+   "berger_porkass",
+   "archi_berger_porkass"
+  ],
+  "7704": [
+   "ecurouille"
+  ],
+  "8000": [
+   "bwork",
+   "archi_bwork",
+   "bwork_mage",
+   "archi_bwork_mage",
+   "bwork_archer",
+   "archi_bwork_archer",
+   "bworkette"
+  ],
+  "7524": [
+   "tigrimas"
+  ],
+  "9617": [
+   "ronronchon"
+  ],
+  "7519": [
+   "dragoeuf_calcaire",
+   "archi_dragoeuf_calcaire",
+   "dragoeuf_argile",
+   "archi_dragoeuf_argile"
+  ],
+  "9624": [
+   "dragoeuf_ardoise",
+   "archi_dragoeuf_ardoise",
+   "dragoeuf_charbon",
+   "archi_dragoeuf_charbon"
+  ],
+  "10802": [
+   "dragoeuf_calcaire",
+   "archi_dragoeuf_calcaire",
+   "dragoeuf_argile",
+   "archi_dragoeuf_argile",
+   "dragoeuf_ardoise",
+   "archi_dragoeuf_ardoise",
+   "dragoeuf_charbon",
+   "archi_dragoeuf_charbon"
+  ],
+  "1748": [
+   "wabbit",
+   "archi_wabbit",
+   "black_wabbit",
+   "archi_black_wabbit",
+   "wo_wabbit",
+   "archi_wo_wabbit",
+   "grand_pa_wabbit",
+   "archi_grand_pa_wabbit",
+   "wabbit_squelette",
+   "archi_wabbit_squelette",
+   "black_wabbit_squelette"
+  ],
+  "9619": [
+   "tiwabbit_kiafin",
+   "archi_tiwabbit_kiafin",
+   "tiwabbit",
+   "archi_tiwabbit"
+  ],
+  "15133": [
+   "black_tiwabbit",
+   "archi_black_tiwabbit"
+  ],
+  "13673": [
+   "kokoko",
+   "archi_kokoko"
+  ],
+  "13679": [
+   "tortue_rouge",
+   "archi_tortue_rouge",
+   "tortue_bleue",
+   "archi_tortue_bleue",
+   "tortue_verte",
+   "archi_tortue_verte",
+   "tortue_jaune",
+   "archi_tortue_jaune",
+   "kanniboul_ark",
+   "archi_kanniboul_ark",
+   "kanniboul_eth",
+   "archi_kanniboul_eth",
+   "kanniboul_jav",
+   "archi_kanniboul_jav",
+   "kanniboul_sarbak",
+   "archi_kanniboul_sarbak",
+   "kanniboul_tam",
+   "kanniboul_ebil"
+  ],
+  "8693": [
+   "feu_vif",
+   "feu_de_joie",
+   "feu_furieux",
+   "feu_follet"
+  ],
+  "13099": [
+   "pichon_orange",
+   "archi_pichon_orange",
+   "pichon_bleu",
+   "archi_pichon_bleu",
+   "pichon_blanc",
+   "archi_pichon_blanc",
+   "pichon_vert",
+   "archi_pichon_vert",
+   "pichon_kloune"
+  ],
+  "9623": [
+   "chef_crocodaille",
+   "archi_chef_crocodaille"
+  ],
+  "10106": [
+   "maitre_vampire"
+  ],
+  "10107": [
+   "maitre_vampire"
+  ],
+  "8151": [
+   "chef_de_guerre_bouftou"
+  ],
+  "10544": [
+   "gelee_royale_bleuet",
+   "gelee_royale_menthe",
+   "gelee_royale_fraise",
+   "gelee_royale_citron"
+  ],
+  "7891": [
+   "wa_wabbit"
+  ]
+ },
+ "invasion": [
+  "11777"
+ ],
+ "chances": {
+  "invasion": 40
+ },
+ "animalerie": {
+  "1728": 400000,
+  "6718": 150000,
+  "7414": 400000,
+  "11012": 250000,
+  "6717": 150000,
+  "7415": 400000,
+  "2074": 400000,
+  "2075": 400000,
+  "2076": 400000,
+  "2077": 400000,
+  "6978": 400000,
+  "7520": 400000,
+  "7706": 400000,
+  "7714": 400000,
+  "12009": 400000,
+  "8211": 400000,
+  "8677": 400000
+ },
+ "depart": {
+  "niveau": 10,
+  "familiers": [
+   "1728",
+   "11012",
+   "2074",
+   "2075",
+   "2076",
+   "2077"
+  ]
+ },
+ "repasDouble": 10,
+ "succes": {
+  "menagerie_5": {
+   "nom": "Petite ménagerie",
+   "dofusId": 0,
+   "description": "Avoir 5 familiers dans sa Ménagerie.",
+   "categorie": "Général",
+   "sousCategorie": "Ménagerie",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "5 familiers",
+     "familiers": 5
+    }
+   ],
+   "recompense": {
+    "xp": 2500,
+    "titre": "Dresseur"
+   }
+  },
+  "menagerie_15": {
+   "nom": "Ménagerie",
+   "dofusId": 0,
+   "description": "Avoir 15 familiers dans sa Ménagerie.",
+   "categorie": "Général",
+   "sousCategorie": "Ménagerie",
+   "points": 10,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "15 familiers",
+     "familiers": 15
+    }
+   ],
+   "recompense": {
+    "xp": 7500,
+    "objet": "19531"
+   }
+  },
+  "menagerie_30": {
+   "nom": "Grande ménagerie",
+   "dofusId": 0,
+   "description": "Avoir 30 familiers dans sa Ménagerie.",
+   "categorie": "Général",
+   "sousCategorie": "Ménagerie",
+   "points": 20,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "30 familiers",
+     "familiers": 30
+    }
+   ],
+   "recompense": {
+    "xp": 15000,
+    "objet": "6716"
+   }
+  },
+  "menagerie_50": {
+   "nom": "Arche des Douze",
+   "dofusId": 0,
+   "description": "Avoir 50 familiers dans sa Ménagerie.",
+   "categorie": "Général",
+   "sousCategorie": "Ménagerie",
+   "points": 20,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "50 familiers",
+     "familiers": 50
+    }
+   ],
+   "recompense": {
+    "xp": 25000,
+    "titre": "Gardien de l'Arche",
+    "objet": "15110"
+   }
+  }
+ },
+ "avenir": {
+  "7522": "Labyrinthe du Minotoror",
+  "7523": "",
+  "7703": "",
+  "7705": "",
+  "7892": "",
+  "7911": "Koalaks",
+  "8153": "",
+  "8155": "",
+  "8561": "Pandala",
+  "9594": "",
+  "9620": "Labyrinthe du Minotoror",
+  "9785": "Enfers",
+  "10657": "",
+  "10863": "",
+  "10864": "",
+  "10866": "",
+  "10985": "Frigost",
+  "11013": "",
+  "11014": "",
+  "11015": "",
+  "11765": "",
+  "11771": "Frigost",
+  "11783": "Frigost",
+  "11950": "Frigost",
+  "11955": "",
+  "11966": "",
+  "11971": "",
+  "12133": "",
+  "12975": "Frigost",
+  "12994": "",
+  "13000": "",
+  "13071": "",
+  "13661": "",
+  "13667": "",
+  "14545": "",
+  "15254": "",
+  "15469": "",
+  "15607": "",
+  "15978": "",
+  "16116": "",
+  "16122": "",
+  "16269": "",
+  "16276": "",
+  "16295": "",
+  "17023": "",
+  "17028": "",
+  "17379": "",
+  "17511": "",
+  "17700": "",
+  "17795": "",
+  "17813": "",
+  "17833": "",
+  "18626": "",
+  "19139": "",
+  "31862": "",
+  "31885": ""
+ }
+}

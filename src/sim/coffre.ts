@@ -16,6 +16,8 @@ export interface Coffre {
   themes?: number[];
   theme?: number;
   teintures?: string[];
+  /** « Familiers : » 7A : Ménagerie du compte, familier -> plus haut niveau atteint. Chaque perso du compte peut en sortir un exemplaire. */
+  familiers?: Record<string, number>;
 }
 
 export const coffreVide = (): Coffre => ({ onglets: Array.from({ length: COFFRE.onglets }, () => []) });
@@ -33,6 +35,10 @@ export function relireCoffre(c: unknown): Coffre {
   if (ids(o.themes).length) r.themes = ids(o.themes);
   if (Number.isInteger(o.theme) && o.theme! > 0) r.theme = o.theme;
   if (Array.isArray(o.teintures)) { const t = [...new Set(o.teintures.filter(x => typeof x === 'string' && /^[a-z]{2,20}$/.test(x)))]; if (t.length) r.teintures = t; }
+  if (o.familiers && typeof o.familiers === 'object') {
+    const f = Object.entries(o.familiers).filter(([k, n]) => /^\d{1,6}$/.test(k) && Number.isInteger(n) && n >= 1 && n <= 100);
+    if (f.length) r.familiers = Object.fromEntries(f);
+  }
   if (Array.isArray(o.noms)) r.noms = o.noms.slice(0, COFFRE.max).map(n => String(n ?? '').slice(0, 20));
   return r;
 }
