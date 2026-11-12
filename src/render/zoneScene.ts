@@ -870,7 +870,15 @@ export class ZoneScene extends Phaser.Scene {
     if (this.vitrine || !this.world.zone.open) return null;
     const wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
     const r = this.world.zaapRefuge(), l = r ? [...this.world.zaapsIci(), r] : this.world.zaapsIci();
-    return l.find(z => { const c = ISO.toScreen(z.x, z.y); return ((wp.x - c.x) / 90) ** 2 + ((wp.y - c.y) / 100) ** 2 <= 1; }) ?? null;
+    return l.find(z => {
+      const c = ISO.toScreen(z.x, z.y);
+      if (Math.abs(wp.x - c.x) > 400 || Math.abs(wp.y - c.y) > 400) return false;
+      // seulement sur le dessin de l'arche, au pixel près (Mathis, 2026-11-12 : on entrait en cliquant à côté) ; la particule
+      // officielle n'est pas au milieu de l'arche (souvent à son pied, d'un côté), l'ancien ovale autour d'elle débordait sur le sol
+      const arche = this.transparence?.dessinAutour(c.x, c.y, 40) ?? [];
+      if (arche.length) return arche.some(im => this.transparence!.pixelOpaque(im, wp.x, wp.y));
+      return ((wp.x - c.x) / 60) ** 2 + ((wp.y - c.y) / 70) ** 2 <= 1;   // dessin pas encore posé
+    }) ?? null;
   }
   /** Nom d'un Zaap comme dans la fenêtre (Territoire : sa sous-zone). */
   private nomZaap(name: string) {
