@@ -1763,6 +1763,24 @@
               "Havre-Sac",
               "Bastion des Douze"
             ]
+          },
+          {
+            "titre": "Les thèmes du Havre-Sac",
+            "phrase": "46 thèmes officiels du Havre-Sac à 600 Pépites dans l'onglet Havre-Sac du Marché.",
+            "details": "Pour tout le compte. Un thème acheté se pose aussitôt, avec son arche, son coffre et le Poutch.",
+            "icone": "havre",
+            "etiquettes": [
+              "Bastion des Douze",
+              "Touche H"
+            ]
+          },
+          {
+            "titre": "Les teintures",
+            "phrase": "Les couleurs officielles des 19 classes, à 50 Pépites chez Tissebelle, à poser à la garde-robe.",
+            "icone": "apparat",
+            "etiquettes": [
+              "Bastion des Douze"
+            ]
           }
         ],
         "Le monde": [

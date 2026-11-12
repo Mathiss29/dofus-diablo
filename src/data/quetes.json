@@ -439,6 +439,35 @@
     }
    ]
   },
+  "responsable": {
+   "nom": "Responsable de la boutique",
+   "dofusId": 5136,
+   "zone": "bastion",
+   "carte": "marche",
+   "case": 3089,
+   "titre": "Confort et Havre-Sac",
+   "phrase": "Bienvenue ! Ici, rien ne rend plus fort : juste plus à l'aise. Un sac plus grand, un coffre plus large, un Havre-Sac à ton goût.",
+   "services": [
+    {
+     "texte": "Voir le confort.",
+     "service": "confort"
+    },
+    {
+     "texte": "Changer le décor de mon Havre-Sac.",
+     "service": "havresac"
+    }
+   ],
+   "discussion": [
+    {
+     "reponse": "Pourquoi des Pépites, et pas des kamas ?",
+     "texte": "Les kamas, c'est pour survivre. Les Pépites, c'est pour vivre bien. Et chez moi, on vit très bien."
+    },
+    {
+     "reponse": "Un Havre-Sac en forme de Moon ?",
+     "texte": "Jungle, plage, taverne, pyramide… Quarante-six décors, tous signés. Ton arche et ton coffre déménagent avec toi, promis."
+    }
+   ]
+  },
   "garde_bonta": {
    "nom": "Soldat d'élite bontarien",
    "dofusId": 995,

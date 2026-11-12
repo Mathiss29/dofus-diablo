@@ -635,3 +635,14 @@ Ville vivante (maquette Ville 5F, 8 nov. 2026) :
 - Village Kanniboul (« Kanniboul : » une seule salle, Mathis 2026-11-10) : la vraie salle au masque (carte 157552640) exportée seule comme
   intérieur `arene_kanniboul` en (40, 60) (`PARTAGE=1 world_export.py`, `bords_fondu.py`, `COURANTE=1 batiments.py`, `decor_par_carte.py`,
   `monde_continent.py fusion`, puis `essai: 1`) ; points de l'arène (cases de la salle) dans `zones.json > donjonsTest`, porte [29,9] case 452.
+
+## Thèmes du Havre-Sac et Responsable de la boutique (Magasin 6B, 6E, 13E ; 12 nov. 2026)
+
+- `TEXDIR=<textures en png> python3 havresac_themes.py <cartes world_621> <textures> public/assets/mondes` : exporte les 46 thèmes
+  officiels (monde `havresac_<id>`, Mercenaire reste `havresac` avec nos meubles) et écrit leurs cases (arche, arrivée, coffre, Poutch)
+  dans `src/data/havresac_themes.json`. Spectacle (8) n'a pas de carte dans le jeu. Vignettes du Marché : `public/assets/ui/havresac/<id>.webp`.
+  Cartes : `cache-dofus/havre-sac/mapdata_assets_world_621.bundle` ; textures : `cache-dofus/astrub/textures-1x` suffit. Puis `envoi.mjs`.
+- Responsable de la boutique (PNJ 5136, look `{5460||1=…,5=…}`) : `PNJ=1 SCALE=1.32 COULEURS=1=9591080,2=15707202,3=13910096,4=6930773,5=13368138
+  monster_planche.py 5460 pnj_responsable <Bones du PC> public/assets/sprites`. `build_char.py` lit maintenant aussi les nœuds `colorGray_N_…`
+  (en minuscules) : sans ça, ce squelette restait gris.
+- Teintures (`src/data/teintures.json`) : couleurs de création des 19 classes (table breeds, maleColors 1 à 5).

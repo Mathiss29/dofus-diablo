@@ -27,6 +27,7 @@ import { appliquerTest, type ReglagesTest } from './outilsTest';
 import { Passants, lieuxDeZone } from './passants';
 import { ALMANAX, jourAlmanax, type JourAlmanax } from './almanax';
 import { COFFRE, coffreVide, type Coffre } from './coffre';
+import { themeChoisi, themesEnJeu, themesPossedes, zoneAvecTheme, type Teintures, type ThemesHavreSac } from './havresac';
 /** Archimonstres (0.3, 15B) : chance qu'un monstre d'un groupe soit son archimonstre ; pierres d'âme officielles (vide, pleine). */
 export const ARCHI = { chance: 1 / 150, pierre: '9686', pleine: '10418' };
 import { FABRICATION, METIERS_FAB, chanceRare, ingredientsRares, type Poste } from './metiers';
@@ -145,6 +146,10 @@ export interface WorldOptions {
   zaap?: string;
   /** Dans le Havre-Sac : d'où l'on vient (pour en ressortir au même endroit). */
   retour?: RetourHavreSac;
+  /** Thèmes du Havre-Sac (src/data/havresac_themes.json, Magasin 6B) : le Havre-Sac prend celui choisi par le compte (coffre.theme). */
+  themesHavreSac?: ThemesHavreSac;
+  /** Teintures (src/data/teintures.json, Magasin 6E). */
+  teintures?: Teintures;
   /** Zones déjà visitées par le perso (3A : les PNJ du Havre-Sac emménagent au fil de l'histoire). */
   zonesVues?: string[];  /** Date du jour (AAAA-MM-JJ), donnée par l'affichage : premier passage d'un donjon au carnet de route (Tour 8B). */
   aujourdhui?: string;
@@ -318,6 +323,7 @@ export class World {
     this.rng = new Rng(opts.seed ?? 1);
     this.zone = opts.data.zones[opts.zone];
     if (!this.zone) throw new Error(`Zone inconnue : ${opts.zone}`);
+    if (opts.themesHavreSac) this.zone = zoneAvecTheme(this.zone, themeChoisi(opts.themesHavreSac, this.coffre));   // la carte chargée par l'affichage est celle du thème
     const dt = this.zone.open?.donjonsTest;   // 0.4 cachée : ses donjons seulement en partie de test (copie : les données restent intactes)
     if ((V04_PUBLIC || opts.test) && dt?.length) this.zone = { ...this.zone, open: { ...this.zone.open!, donjons: [...(this.zone.open!.donjons ?? []), ...dt] } };
     const sz = this.zone.open?.subareas;   // 0.4 cachée : les sous-zones d'Amakna (monstres, butin, contrats) seulement en partie de test
@@ -2518,6 +2524,32 @@ export class World {
   acheterEmplacement(): boolean {
     const prix = this.prixEmplacement();
     const ok = prix != null && this.payer(prix, PEPITE, () => { this.coffre.emplacementsEnPlus = (this.coffre.emplacementsEnPlus ?? 0) + 1; return true; }, 'confort:emplacement');
+    if (ok) this.emit({ k: 'coffre' });
+    return ok;
+  }
+  /** 6B : un thème du Havre-Sac (pour tout le compte), posé aussitôt. */
+  acheterTheme(id: number): boolean {
+    const T = this.opts.themesHavreSac, c = this.coffre;
+    if (!T || !themesEnJeu(T).some(t => t.id === id) || themesPossedes(T, c).includes(id)) return false;
+    const ok = this.payer(T.prix, PEPITE, () => { (c.themes ??= []).push(id); return true; }, `theme:${id}`);
+    if (ok) this.poserTheme(id);
+    return ok;
+  }
+  /** 6B : pose un thème possédé ; dans le Havre-Sac, on y revient aussitôt avec le nouveau décor (même point de retour). */
+  poserTheme(id: number): boolean {
+    const T = this.opts.themesHavreSac, c = this.coffre;
+    if (!T || !themesPossedes(T, c).includes(id) || !themesEnJeu(T).some(t => t.id === id)) return false;
+    const avant = themeChoisi(T, c).id;
+    c.theme = id;
+    this.emit({ k: 'coffre' });
+    if (this.dansHavreSac && avant !== id) this.emit({ k: 'changeZone', zone: 'havresac', nom: 'Havre-Sac', retour: this.retour ?? undefined });
+    return true;
+  }
+  /** 6E : une teinture (couleurs officielles d'une classe) pour tout le compte ; elle se pose à la garde-robe. */
+  acheterTeinture(id: string): boolean {
+    const T = this.opts.teintures, c = this.coffre;
+    if (!T?.teintures.some(t => t.id === id) || c.teintures?.includes(id)) return false;
+    const ok = this.payer(T.prix, PEPITE, () => { (c.teintures ??= []).push(id); return true; }, `teinture:${id}`);
     if (ok) this.emit({ k: 'coffre' });
     return ok;
   }

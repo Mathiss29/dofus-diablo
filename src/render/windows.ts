@@ -3,7 +3,8 @@ import * as Touches from './touches';
 import { ICON_CSS, iconHtml, prechargerIcones } from './icons';
 import { MANIFESTE, Son } from './son';
 import { BENEDICTION, BENEDICTIONS, CONFORT, MAGASIN, MARCHE, reserveePiece, type Article, type Benediction } from '../sim/magasin';
-import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES } from '../sim/data';
+import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES, TEINTURES, THEMES_HAVRESAC } from '../sim/data';
+import { themeChoisi, themesEnJeu, themesPossedes } from '../sim/havresac';
 import { v } from './assetUrl';
 import { BUTIN_CSS, butinMonstre, dessinerPortraits, esc as escB, groupesBestiaire, nomObjet, iconeObjet, sourcesHtml } from './butinVue';
 import { PALIERS } from './carnet';
@@ -153,6 +154,14 @@ function apparatHtml(id: string) {
 }
 const hexa = (c: number) => '#' + c.toString(16).padStart(6, '0');
 /** Familier « aux couleurs du porteur » (comme dans Dofus 3) : mention dans sa fiche. */
+/** Teintures (Magasin 6E) : couleurs officielles des 19 classes, pour tout le compte, posées à la garde-robe. */
+function teinturesHtml(W: World, prix: (n: number, m: string, attr: string) => string) {
+  const a = W.coffre.teintures ?? [];
+  return `<div class="ent">Teintures <span class="hint">· couleurs officielles d'une classe, pour tout le compte, à poser à la garde-robe</span></div>
+    <div class="teints">${TEINTURES.teintures.map(t => `<div class="teint"><span class="sw">${t.c.map(c => `<i style="background:#${c.toString(16).padStart(6, '0')}"></i>`).join('')}</span><b>${t.nom}</b>
+      ${a.includes(t.id) ? '<span class="hint">À toi</span>' : prix(TEINTURES.prix, PEPITE, `data-teint="${t.id}"`)}</div>`).join('')}</div>
+    <div class="ent">Apparences</div>`;
+}
 const porteur = (id: string) => FAMILIERS.familiers[id]?.porteur ? '<div class="hint" style="color:#e8c46a">Prend les couleurs de son porteur</div>' : '';
 type Visible = 'chapeau' | 'cape' | 'bouclier' | 'familier';
 const VISIBLES: [Visible, string][] = [['chapeau', 'Coiffe'], ['cape', 'Cape'], ['bouclier', 'Bouclier'], ['familier', 'Familier']];
@@ -303,6 +312,14 @@ const CSS = `
 .dw .emp .cell .pv{position:absolute;right:3px;top:1px;font-size:11px;font-weight:bold;color:#b9e54b;text-shadow:0 0 3px #000}
 .dw .emp .cell.verrou{opacity:.75}
 .dw .emp .sub2{color:#c9a55a;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.dw .emp .themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px;max-height:430px;overflow:auto;padding-right:4px}
+.dw .emp .theme{display:grid;gap:4px;justify-items:center;padding:6px;border:1px solid #3d3b33;border-radius:6px;background:#1a1916;text-align:center}
+.dw .emp .theme.on{border-color:#b9e54b}.dw .emp .theme img{width:100%;aspect-ratio:3/2;object-fit:contain;background:#0d0c0a;border-radius:4px}
+.dw .emp .theme .btn{display:flex;gap:4px;align-items:center}.dw .emp .theme .btn .ic{width:20px;height:20px}
+.dw .emp .teints{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px}
+.dw .emp .teint{display:flex;gap:6px;align-items:center;padding:4px 6px;border:1px solid #3d3b33;border-radius:6px;background:#1a1916}.dw .emp .teint b{flex:1}
+.dw .emp .teint .sw{display:flex}.dw .emp .teint .sw i,.dw .garde .pals i.t{display:inline-block;width:12px;height:16px}
+.dw .emp .teint .btn{display:flex;gap:4px;align-items:center}.dw .emp .teint .btn .ic{width:18px;height:18px}
 .dw .emp .shop{display:grid;gap:6px}.dw .emp .shop .btn{display:flex;gap:4px;align-items:center}.dw .emp .shop .btn .ic{width:22px;height:22px}
 .dw .foot{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#c9c4ab}
 .dw .foot b{color:#f4efe0}
@@ -728,7 +745,7 @@ type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
  *  Les clics appellent l'API de la partie (World / Player). */
 /** Onglets de la fenêtre des marchands : Défaire (Kerubim), boutique d'un PNJ, et ceux du Marché du Bastion. */
-type OngletEmp = 'recycler' | 'boutique' | 'apparat' | 'etal' | 'conso' | 'cles' | 'confort';
+type OngletEmp = 'recycler' | 'boutique' | 'apparat' | 'etal' | 'conso' | 'cles' | 'confort' | 'havresac';
 export class Windows {
   private root: HTMLDivElement;
   private win: HTMLDivElement | null = null;
@@ -2252,9 +2269,9 @@ export class Windows {
     const def = QUETES.pnj[this.empPnj], sv = new Set((def?.services ?? []).map(x => x.service)), marche = MARCHE.includes(this.empPnj);
     const vis = (a: Article) => (!a.v03 || p.v03) && (!a.v04 || p.v04);
     const boutique = (BOUTIQUES[this.empPnj] ?? []).filter(vis);
-    const onglets: [OngletEmp, string][] = marche ? [['etal', 'Étal du jour'], ['conso', 'Consommables'], ['cles', 'Clés'], ['apparat', 'Apparences'], ['confort', 'Confort']]
+    const onglets: [OngletEmp, string][] = marche ? [['etal', 'Étal du jour'], ['conso', 'Consommables'], ['cles', 'Clés'], ['apparat', 'Apparences'], ['havresac', 'Havre-Sac'], ['confort', 'Confort']]
       : ([['recycler', 'Défaire'], ['boutique', 'Boutique'], ['apparat', 'Apparats']] as [OngletEmp, string][]).filter(([k]) => sv.has(k));
-    if (!onglets.some(([k]) => k === this.empOnglet)) this.empOnglet = marche ? (this.empPnj === 'goultard' ? 'cles' : this.empPnj === 'tissebelle' ? 'apparat' : 'conso') : onglets[0]?.[0] ?? 'boutique';
+    if (!onglets.some(([k]) => k === this.empOnglet)) this.empOnglet = marche ? (this.empPnj === 'goultard' ? 'cles' : this.empPnj === 'tissebelle' ? 'apparat' : this.empPnj === 'responsable' ? 'confort' : 'conso') : onglets[0]?.[0] ?? 'boutique';
     const icM = (m: string) => m === 'kamas' ? `<img src="${INV}/kamas.png" alt="" style="width:18px;vertical-align:middle">` : iconHtml(ITEMS.resources[m]?.icon ?? 0);
     const nomM = (m: string) => m === 'kamas' ? 'kamas' : m === PEPITE ? 'Pépites' : ITEMS.resources[m]?.name ?? '';
     // 2C : le prix en rouge quand il manque, et combien
@@ -2306,6 +2323,13 @@ export class Windows {
           <div class="ent">Bénédictions <span class="hint">· 30 minutes de jeu, une à la fois (une nouvelle remplace l'autre)</span></div>
           ${(Object.keys(BENEDICTIONS) as Benediction[]).map(k => ligne(icS, BENEDICTIONS[k].nom, BENEDICTIONS[k].texte + (b?.k === k ? ` · <b style="color:#b9e54b">active, encore ${Math.ceil(b.reste / 60)} min</b>` : ''), prix(BENEDICTION.prix, PEPITE, `data-beni="${k}"`))).join('')}
         </div><div class="hint">Les Pépites se gagnent avec les contrats, l'Almanax, les quêtes, les succès et les donjons (premier passage, défis).</div>`;
+    } else if (this.empOnglet === 'havresac') {
+      // 6B : les thèmes officiels du Havre-Sac, pour tout le compte ; un clic sur un thème possédé le pose
+      const T = THEMES_HAVRESAC, a = themesPossedes(T, W.coffre), pose = themeChoisi(T, W.coffre).id;
+      corps = `<div class="themes">${themesEnJeu(T).map(t => `<div class="theme${t.id === pose ? ' on' : ''}">
+          <img src="assets/ui/havresac/${t.id}.webp" alt="" loading="lazy"><b>${t.nom}</b>
+          ${t.id === pose ? '<span class="hint">Posé</span>' : a.includes(t.id) ? `<span class="btn" data-tpose="${t.id}">Poser</span>` : prix(T.prix, PEPITE, `data-tachat="${t.id}"`)}</div>`).join('')}</div>
+        <div class="hint">Pour tout le compte. Un thème acheté se pose aussitôt ; si tu es dans ton Havre-Sac, tu y reviens avec le nouveau décor.</div>`;
     } else if (this.empOnglet === 'apparat') {
       // Apparences officielles (5A, 2B) : tout le catalogue (hors pièces de la semaine), payé en Pépites ; le survol habille le perso
       const q = this.apparatRecherche.toLowerCase();
@@ -2314,7 +2338,7 @@ export class Windows {
       corps = `<div class="filtre"><input placeholder="Rechercher une apparence..." value="${this.apparatRecherche.replace(/"/g, '&quot;')}" data-arech>
           <select data-aslot style="width:auto">${[['', 'Toutes'], ['chapeau', 'Coiffes'], ['cape', 'Capes'], ['familier', 'Familiers']].map(([k, n]) => `<option value="${k}" ${this.apparatSlot === k ? 'selected' : ''}>${n}</option>`).join('')}</select>
           <span class="hint">${l.length} apparence${l.length > 1 ? 's' : ''}</span></div>
-        <div class="cata">${apercu()}<div class="shop">${l.slice(0, 120).map(([id, d]) => ligneApparat(id, prix(APPARATS.prix[d.slot] ?? 0, PEPITE, `data-aachat="${id}"`))).join('')}
+        <div class="cata">${apercu()}<div class="shop">${this.apparatRecherche || this.apparatSlot ? '' : teinturesHtml(W, prix)}${l.slice(0, 120).map(([id, d]) => ligneApparat(id, prix(APPARATS.prix[d.slot] ?? 0, PEPITE, `data-aachat="${id}"`))).join('')}
           ${l.length > 120 ? `<div class="hint">… et ${l.length - 120} autres : affine la recherche.</div>` : ''}</div></div>`;
     } else {
       const liste: [string, Article][] = this.empOnglet === 'conso' ? ['otomai', 'bouillotte'].flatMap(b => (BOUTIQUES[b] ?? []).filter(vis).map(a => [b, a] as [string, Article]))
@@ -2333,6 +2357,9 @@ export class Windows {
     w.querySelector<HTMLElement>('[data-piece]')?.addEventListener('click', () => { W.acheterPiece(); this.changed(); });
     w.querySelectorAll<HTMLElement>('[data-sac]').forEach(e => e.addEventListener('click', () => { W.acheterSacDuJour(e.dataset.sac as 'rare' | 'epique'); this.changed(); }));
     w.querySelector<HTMLElement>('[data-garde]')?.addEventListener('click', () => this.show('garde'));
+    w.querySelectorAll<HTMLElement>('[data-tachat]').forEach(e => e.addEventListener('click', () => { W.acheterTheme(+e.dataset.tachat!); this.changed(); }));
+    w.querySelectorAll<HTMLElement>('[data-tpose]').forEach(e => e.addEventListener('click', () => { W.poserTheme(+e.dataset.tpose!); this.changed(); }));
+    w.querySelectorAll<HTMLElement>('[data-teint]').forEach(e => e.addEventListener('click', () => { W.acheterTeinture(e.dataset.teint!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-aachat]').forEach(e => e.addEventListener('click', () => { this.world.acheterApparat(e.dataset.aachat!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-essai]').forEach(e => e.addEventListener('mouseenter', () => {
       this.essaiApparat = e.dataset.essai!;
@@ -2580,7 +2607,9 @@ export class Windows {
       <div class="coul">${g.couleurs.map((c, i) => `<label><input type="color" data-gcoul="${i}" value="${hexa(c)}">${ZONES[i]}</label>`).join('')}</div>
       <h5>Palettes</h5>
       <div class="pals">${PALETTES.map((pl, i) => `<button type="button" data-gpal="${i}">${pl.c.slice(0, 3).map(x => `<i style="background:${hexa(x)}"></i>`).join('')}${pl.nom}</button>`).join('')}
+        ${TEINTURES.teintures.filter(t => this.world.coffre.teintures?.includes(t.id)).map(t => `<button type="button" data-gteint="${t.id}" title="Teinture">${t.c.slice(0, 3).map(x => `<i style="background:${hexa(x)}"></i>`).join('')}${t.nom}</button>`).join('')}
         <button type="button" data-gofficiel>Couleurs officielles</button></div>
+      ${(this.world.coffre.teintures?.length ?? 0) < TEINTURES.teintures.length ? '<div class="hint">D\'autres teintures (couleurs officielles des classes) chez Tissebelle, au Marché.</div>' : ''}
       <div style="display:flex;gap:10px;margin-top:14px;align-items:center"><span class="btn" data-genr>Enregistrer</span><span class="hint">Gratuit, à chaque garde-robe des villes.</span></div></div>`;
     w.innerHTML = `${this.title('Garde-robe', 'inventory')}<div class="in garde"><div class="apercu">${g ? this.canevas('', objetsPortes(p.equipment, p.apparat), g) : ''}</div>${corps}</div>`;
     if (!f || !g) return;
@@ -2588,6 +2617,7 @@ export class Windows {
     w.querySelectorAll<HTMLElement>('[data-gtete]').forEach(e => e.addEventListener('click', () => { g.tete = +e.dataset.gtete!; this.render(); }));
     w.querySelectorAll<HTMLInputElement>('[data-gcoul]').forEach(e => e.addEventListener('input', () => { g.couleurs[+e.dataset.gcoul!] = parseInt(e.value.slice(1), 16); apercu(); }));
     w.querySelectorAll<HTMLElement>('[data-gpal]').forEach(e => e.addEventListener('click', () => { g.couleurs = [g.couleurs[0], ...PALETTES[+e.dataset.gpal!].c]; this.render(); }));
+    w.querySelectorAll<HTMLElement>('[data-gteint]').forEach(e => e.addEventListener('click', () => { const t = TEINTURES.teintures.find(x => x.id === e.dataset.gteint); if (t) { g.couleurs = [g.couleurs[0], ...t.c]; this.render(); } }));
     w.querySelector('[data-gofficiel]')?.addEventListener('click', () => { g.couleurs = [...f.couleurs]; this.render(); });
     w.querySelector('[data-genr]')?.addEventListener('click', () => {
       const a = apparenceValide(f, g);
