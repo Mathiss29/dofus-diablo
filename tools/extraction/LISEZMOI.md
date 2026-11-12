@@ -409,6 +409,17 @@ remet le tourbillon officiel du Zaap d'Astrub sur l'arche du Bastion (bastion.py
 avec NS = 8), puis `python3 tools/contenu/quetes.py` et `node tools/hebergement/envoi.mjs`.
 Exemples d'îles hors jeu (planches de pièces, essais de plan) : `/mnt/project-files/ville/ex_ile.py`, `conf_<nation>.py`, `pieces.py`.
 
+Marché couvert (maquette « Magasin : » 1A + 13A-13F, 12 nov. 2026) : `marche.py` ajoute au monde du Bastion une salle de 3 x 3 places
+(tag `marche`, place (0, 9), sous l'archipel) CRÉÉE avec les murs, fenêtres et la porte en arche de la maison 192675846 de la Cité
+(world_735), le sol de dalles et de planches de la même salle, et les trois étals officiels des Hôtels de vente d'Astrub (191104004,
+191102976, 191106052, world_729) ; l'étal rayé et la charrette de 191105028. Porte du dehors = l'Hôtel de vente des cosmétiques
+(`as_boutique`). Écrit la porte (`bastion.open.portes`), les cases des marchands (cases de la salle) et de Kerubim dans
+`zones.json > bastion > open.bastion.pnj` (place `responsable` gardée pour le Responsable de la boutique) et dans `quetes.json`.
+**À relancer après chaque `bastion.py`** (qui réécrit `monde.json` et les PNJ) :
+
+    TEXDIR=dossier_des_gfx python3 -I tools/extraction/marche.py cartes_dir public/assets/mondes [apercu]
+    node tools/hebergement/envoi.mjs
+
 Ville vivante (maquette Ville 5F, 8 nov. 2026) :
 - Habitants qui flânent (`src/data/passants.json`, `src/sim/passants.ts`) : PNJ officiels à look de personnage (table npcs, `{1|corps,tête,skins|couleurs}`),
   planche repos + marche : `BREEDS=breeds.json python3 habitant_planche.py <persos> '<look>' public/assets/sprites/hab_<id>` (skins d'objets

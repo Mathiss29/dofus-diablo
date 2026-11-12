@@ -118,26 +118,27 @@ PNJ = {
     'phrase': "Je suis ce qui reste d'un œuf en chocolat. Une odeur, surtout. Et beaucoup de colère."},
   # --- Bastion des Douze (maquette Ville, tranchée le 2026-11-07 : 5A 6B) : les PNJ de service quittent le Havre-Sac pour notre ville.
   # Noms et apparences officiels, dialogues inédits. apres = ils n'emménagent qu'après la première visite de cette zone.
-  # Cases : devant leur maison (tools/extraction/bastion.py, recopiées dans zones.json > bastion > pnj).
+  # Cases : dans le Marché couvert, Kerubim à sa porte (tools/extraction/marche.py, recopiées dans zones.json > bastion > pnj ;
+  # les marchands sont sur la carte « marche », cases de la salle).
   'kerubim': {'nom': 'Kerubim Crépin', 'dofusId': 3043, 'zone': 'bastion', 'carte': 'bastion', 'case': BASTION['kerubim'], 'apres': 'astrub', 'titre': 'Antiquaire',
     'phrase': "Entre, entre ! Chez Kerubim, rien n'est inutile : il y a juste des trésors qui ne savent pas encore qu'ils en sont.",
     'services': [{'texte': 'Défaire des objets contre des runes et des kamas.', 'service': 'recycler'}],
     'discussion': [{'reponse': 'Tu rachètes vraiment tout ?', 'texte': "Tout. Une fois, j'ai racheté une chaussette à un Iop… relique sacrée."},
       {'reponse': 'Pourquoi ta boutique est au Bastion ?', 'texte': "Parce que le loyer à Astrub, c'est du vol. Ici, les Douze ont offert le terrain. Et tout le monde passe devant mon comptoir en allant au Marché."}]},
-  'tissebelle': {'nom': 'Tissebelle', 'dofusId': 0, 'zone': 'bastion', 'carte': 'bastion', 'case': BASTION['tissebelle'], 'titre': 'Couturière',
+  'tissebelle': {'nom': 'Tissebelle', 'dofusId': 0, 'zone': 'bastion', 'carte': 'marche', 'case': BASTION['tissebelle'], 'titre': 'Couturière',
     'phrase': "Tourne-toi. Non, l'autre côté. Hmm. On va dire que c'est un bon début.",
     'services': [{'texte': 'Voir les apparats.', 'service': 'apparat'}, {'texte': "M'asseoir devant le miroir (garde-robe).", 'service': 'garde-robe'}],
     'discussion': [{'reponse': 'Tu fabriques tes tissus ?', 'texte': "Je les fais pousser. La soie de Sadida, c'est trois saisons de patience et une saison à empêcher les Bouftous de la brouter."},
       {'reponse': 'Je peux changer de tête ?', 'texte': "Assieds-toi devant le miroir. Ta tête, tes couleurs : c'est gratuit. Le style ne devrait jamais coûter un kama."}]},
-  'otomai': {'nom': 'Otomaï', 'dofusId': 914, 'zone': 'bastion', 'carte': 'bastion', 'case': BASTION['otomai'], 'apres': 'astrub', 'titre': 'Alchimiste',
+  'otomai': {'nom': 'Otomaï', 'dofusId': 914, 'zone': 'bastion', 'carte': 'marche', 'case': BASTION['otomai'], 'apres': 'astrub', 'titre': 'Alchimiste',
     'phrase': "Ah, un volontaire ! Je veux dire : un client. Cette potion te ramène au Zaap. Dans 97 % des cas, en un seul morceau.",
     'services': [{'texte': 'Voir ses potions.', 'service': 'boutique'}],
     'discussion': [{'reponse': 'Et les 3 % ?', 'texte': "Ils reviennent aussi. Juste un peu plus tard, et parfois avec une oreille en plus. Je prends des notes."}]},
-  'bouillotte': {'nom': 'Mère Bouillotte', 'dofusId': 0, 'zone': 'bastion', 'carte': 'bastion', 'case': BASTION['bouillotte'], 'titre': 'Cuisinière',
+  'bouillotte': {'nom': 'Mère Bouillotte', 'dofusId': 0, 'zone': 'bastion', 'carte': 'marche', 'case': BASTION['bouillotte'], 'titre': 'Cuisinière',
     'phrase': "Encore toi, et encore tout maigre ! Assieds-toi. Personne ne repart d'ici le ventre vide, même pas les Bouftous.",
     'services': [{'texte': 'Voir ses plats.', 'service': 'boutique'}],
     'discussion': [{'reponse': "C'est quoi ton secret ?", 'texte': "Du lait de Bambou, une pincée de sel et trois heures à crier sur la marmite. Elle n'aime pas qu'on lui parle doucement."}]},
-  'goultard': {'nom': 'Goultard', 'dofusId': 1216, 'zone': 'bastion', 'carte': 'bastion', 'case': BASTION['goultard'], 'apres': 'astrub', 'titre': 'Clés de donjon',
+  'goultard': {'nom': 'Goultard', 'dofusId': 1216, 'zone': 'bastion', 'carte': 'marche', 'case': BASTION['goultard'], 'apres': 'astrub', 'titre': 'Clés de donjon',
     'phrase': "Tu veux une clé ? Montre tes bras. Hmm. Ça ira. Les monstres te trouveront appétissant, c'est déjà ça.",
     'services': [{'texte': 'Voir les clés.', 'service': 'boutique'}],
     'discussion': [{'reponse': 'Tu ne viens pas avec moi ?', 'texte': "Si je viens, il ne restera rien à taper pour toi. Je suis gentil, tu vois."},

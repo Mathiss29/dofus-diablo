@@ -1765,7 +1765,17 @@
             ]
           }
         ],
-        "Le monde": [],
+        "Le monde": [
+          {
+            "titre": "Le Marché couvert",
+            "phrase": "Otomaï, Mère Bouillotte, Goultard et Tissebelle vendent maintenant sous un même toit, au Bastion des Douze.",
+            "details": "Entre par l'Hôtel de vente près de Kerubim. Les étals sont ceux des Hôtels de vente d'Astrub.",
+            "icone": "kamas",
+            "etiquettes": [
+              "Bastion des Douze"
+            ]
+          }
+        ],
         "Combat": [],
         "Corrections": [
           "Plus de saccades en marchant près du décor, et moins de travail quand on change de carte.",
