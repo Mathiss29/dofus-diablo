@@ -755,6 +755,11 @@ export class Windows {
   /** Réglages (render/ambiance.ts), modifiés en direct par la fenêtre Réglages. */
   reglages: Reglages = { ...REGLAGES_DEFAUT };
   onReglages: (r: Reglages) => void = () => {};
+  /** « Tchat : » 6A : Ctrl+clic sur un objet pendant qu'on écrit : le tchat prend son lien (vrai s'il l'a pris). */
+  lienObjet: ((it: Item, nom: string) => boolean) | null = null;
+  /** Objet dont la fiche est montrée (survol). */
+  private tipItem: Item | null = null;
+  private lienPris = false;
   /** Effets d'impact (touche F), et l'étape d'ambiance du moment pour l'affichage. */
   juice = { get: () => true, set: (_on: boolean) => {} };
   heureNom = () => '';
@@ -778,6 +783,13 @@ export class Windows {
   constructor(private world: World) {
     const style = document.createElement('style'); style.textContent = DOF_CSS + MENU_CSS + ALM_CSS + SOCIAL_CSS + CSS + ICON_CSS + BUTIN_CSS + FORGE_CSS + CODEX_CSS + LADDER_CSS + TRESOR_CSS; document.head.appendChild(style);
     this.root = document.createElement('div'); this.root.className = 'dw'; document.body.appendChild(this.root);
+    // « Tchat : » 6A : le mousedown garde le champ du tchat actif ; le clic qui suit ne fait rien d'autre (pas de cadenas)
+    this.root.addEventListener('mousedown', e => {
+      const it = this.tipItem;
+      this.lienPris = !!(it && (e.ctrlKey || e.metaKey) && this.lienObjet?.(it, ITEMS.equipment[it.id]?.name ?? 'Objet'));
+      if (this.lienPris) { e.preventDefault(); e.stopPropagation(); }
+    }, true);
+    this.root.addEventListener('click', e => { if (this.lienPris) { this.lienPris = false; e.preventDefault(); e.stopPropagation(); } }, true);
     this.tip = document.createElement('div'); this.tip.className = 'tip'; this.tip.style.display = 'none'; this.root.appendChild(this.tip);
     window.addEventListener('keydown', this.captureTouche, true);
     window.addEventListener('keydown', this.majTip); window.addEventListener('keyup', this.majTip); window.addEventListener('blur', this.majTip);
@@ -1654,9 +1666,19 @@ export class Windows {
             [Touches.ACTIONS.slice(0, 6).map(a => Touches.nomAction(a.id)).join(' '), 'barre de sorts'], [T('deplacement'), 'déplacement'], [T('potion'), 'potion'], ['Alt', 'aperçu des sorts, noms'], ['Molette', 'zoom'], ['Échap', 'fermer, menu']]
             .map(([k, d]) => `<b>${k}</b><span>${d}</span>`).join('')}</div>` },
         { id: 'modules', titre: 'Modules d\'interface', opts: [
-          { k: 'verrou', nom: 'Verrouiller la position des modules', aide: 'Décoche pour glisser le cadre du perso, la mini-carte, le suivi de quête et le compteur de dégâts où tu veux.', t: 'check' },
+          { k: 'verrou', nom: 'Verrouiller la position des modules', aide: 'Décoche pour glisser le cadre du perso, la mini-carte, le suivi de quête, le compteur de dégâts et le tchat où tu veux.', t: 'check' },
           { k: 'coords', nom: 'Afficher les coordonnées de la carte', aide: 'Sous la mini-carte, comme [6,-19].', t: 'check' },
         ], reset: () => { r.verrou = true; r.coords = true; r.modules = {}; }, html: '<div class="obtns"><span class="btn" data-obtn="modules">Réinitialiser l\'affichage</span></div>' },
+        // « Tchat : » 9A + 9B (et 7A : l'heure)
+        { id: 'tchat', titre: 'Tchat', opts: [
+          { k: 'chatHeure', nom: 'Heure devant chaque message', t: 'check' },
+          { k: 'chatFond', nom: 'Fond du tchat', aide: 'Opacité du fond quand le tchat est ouvert (Entrée ou survol).', t: 'range', min: 0, max: 100 },
+          { k: 'chatTexte', nom: 'Taille du texte', t: 'range', min: 80, max: 150 },
+          { k: 'chatEffacement', nom: 'Les messages s\'effacent après', aide: 'Quand tu n\'écris pas, seuls les derniers messages flottent un moment au-dessus du suivi de quête.', t: 'select', choix: [['10', '10 secondes'], ['20', '20 secondes'], ['60', '1 minute'], ['0', 'Jamais']] },
+          { k: 'chatTout', nom: 'Recevoir le canal Tout', aide: 'Les messages de tous les joueurs en ligne.', t: 'check' },
+          { k: 'chatBastion', nom: 'Recevoir le canal Bastion', aide: 'Les messages des joueurs du Bastion des Douze.', t: 'check' },
+        ], reset: () => { r.chatOnglets = REGLAGES_DEFAUT.chatOnglets.map(o => ({ nom: o.nom, f: [...o.f] })); r.chatTaille = [...REGLAGES_DEFAUT.chatTaille]; const m = { ...r.modules }; delete m.chat; r.modules = m; },
+          html: '<div class="keys"><b>Entrée</b><span>écrire (Échap : fermer)</span><b>Bouton à gauche du champ</b><span>choisir où tu parles</span><b>Clic droit sur un onglet</b><span>ce qu\'il montre, son nom</span><b>Coin en haut à droite</b><span>taille du tchat</span><b>Ctrl + clic sur un objet</b><span>le montrer (pendant que tu écris)</span><b>↑ / Tab</b><span>derniers messages / compléter un nom</span></div>' },
         { id: 'ambiance', titre: 'Ambiance du monde', opts: [
           { k: 'heure', nom: 'Heure', aide: `En ce moment : ${this.heureNom()}`, t: 'select', choix: heures },
           { k: 'lumieres', nom: 'Lumières (halos, feux)', t: 'range', min: 0, max: 200 },
@@ -2597,6 +2619,7 @@ export class Windows {
 
   // --- Fiche d'objet au survol : jets, rareté, panoplie, comparaison avec l'objet porté ---
   private showTip(it: Item, ev: MouseEvent, worn: boolean) {
+    this.tipItem = it;
     const p = this.world.player, d = ITEMS.equipment[it.id];
     if (!d) return;
     const slot = p.slotFor(it), cur = !worn && slot ? p.equipment[slot] : undefined;
@@ -2649,7 +2672,7 @@ export class Windows {
     t.style.left = `${Math.min(innerWidth - w - 8, ev.clientX + 16)}px`;
     t.style.top = `${Math.min(innerHeight - h - 8, ev.clientY + 12)}px`;
   }
-  hideTip() { this.tip.style.display = 'none'; this.ancreTip = null; }
+  hideTip() { this.tip.style.display = 'none'; this.ancreTip = null; this.tipItem = null; }
   /** Infobulle libre (sorts de la barre), au-dessus du point (x, y) de l'écran. */
   showHtmlTip(html: string, x: number, y: number) {
     const t = this.tip; t.innerHTML = html; t.style.display = 'block';

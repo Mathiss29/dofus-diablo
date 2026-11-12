@@ -1711,6 +1711,16 @@
             ]
           },
           {
+            "titre": "Un tchat mieux rangé",
+            "phrase": "Le tchat se replie quand tu n'écris pas et garde le journal de ta partie, même hors ligne.",
+            "details": "Choisis où tu parles avec le bouton à gauche du champ, règle tes onglets au clic droit. Ctrl + clic sur un objet pendant que tu écris le montre aux autres.",
+            "icone": "journal",
+            "etiquettes": [
+              "Touche Entrée",
+              "Options"
+            ]
+          },
+          {
             "titre": "Le coffre de l'Enutrof s'affiche",
             "phrase": "Un médaillon montre les pièces et les PV du coffre, et la touche X ouvre sa fenêtre.",
             "details": "Chaque palier cache un objet qui luit de sa rareté, et après Trésor le coffre peut monter en surcharge. Il ramasse aussi les kamas autour de lui.",

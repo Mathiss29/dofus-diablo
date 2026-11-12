@@ -72,6 +72,7 @@ import { EnLigne } from './presence';
 import { Compte as CompteEnLigne } from './compte';
 import { PassantsEnLigne } from './passantsEnLigne';
 import { ChatVue } from './chat';
+import { lienObjet } from './chatOutils';
 import { BullesChat } from './bullesChat';
 import { demandesEnAttente, menuJoueur, montrerInvitation } from './social';
 
@@ -424,7 +425,7 @@ export class ZoneScene extends Phaser.Scene {
     this.hud.onModules = () => { sauverReglages(this.reglages); this.windows?.refresh(); };
     // idée 1 (2026-11-08) : losange au-dessus des monstres qui comptent pour une quête en cours
     EntityView.deQuete = m => { const Q = this.world.quetes; return !!Q && this.hud.flecheQuete && (Q.estEliteDeQuete(m.id) || Q.pourQuete(m.type, m.x, m.y)); };
-    this.windows.onReglages = r => { this.zoom = Phaser.Math.Clamp(r.zoom, ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]); this.appliquerReglages(); this.updateAmbiance(true); this.appliquerSon(); };
+    this.windows.onReglages = r => { this.zoom = Phaser.Math.Clamp(r.zoom, ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]); this.appliquerReglages(); this.chat?.appliquer(); this.updateAmbiance(true); this.appliquerSon(); };
     this.windows.juice = { get: () => this.fx.juice, set: on => { this.fx.juice = on; } };
     this.windows.nomPerso = () => this.perso?.nom ?? 'Aventurier';
     this.windows.heureNom = () => ambiance(this.reglages, new Date(), !!this.world.worldGrid?.mapAt(this.world.player.x, this.world.player.y)?.inside).nom;
@@ -451,10 +452,17 @@ export class ZoneScene extends Phaser.Scene {
       });
       EnLigne.onInfo = t => this.hud.toast(t);
       this.hud.pastilleSocial = demandesEnAttente;
-      // chat à canaux (Social 4A) et bulles au-dessus des têtes (4B)
-      const ch = this.chat = new ChatVue(), bu = this.bullesChat = new BullesChat(this);
-      this.events.once('shutdown', () => { ch.destroy(); bu.destroy(); if (this.chat === ch) this.chat = null; if (this.bullesChat === bu) this.bullesChat = null; });
+      // bulles au-dessus des têtes (Social 4B)
+      const bu = this.bullesChat = new BullesChat(this);
+      this.events.once('shutdown', () => { bu.destroy(); if (this.bullesChat === bu) this.bullesChat = null; });
     } else EnLigne.arreter();
+    // tchat (« Tchat : » 1B) : aussi hors ligne, où il ne montre que le journal de la partie
+    if (!this.vitrine) {
+      const enLigne = !!this.perso && persosEnLigne() && !this.test && !this.essai && this.slot >= 0;
+      const ch = this.chat = new ChatVue({ reglages: this.reglages, enLigne, auBastion: () => !!this.world.dansBastion });
+      this.windows.lienObjet = (it, nom) => ch.insererObjet(it, nom);
+      this.events.once('shutdown', () => { ch.destroy(); if (this.chat === ch) this.chat = null; });
+    }
     const pel = this.passantsEnLigne = new PassantsEnLigne(this);
     this.events.once('shutdown', () => { pel.destroy(); if (this.passantsEnLigne === pel) this.passantsEnLigne = null; });
     this.carte?.destroy();
@@ -1217,12 +1225,42 @@ export class ZoneScene extends Phaser.Scene {
     this.render();
   }
 
+  /** « Tchat : » 1A : ce que l'onglet Infos du tchat garde de la partie (la bulle au centre, elle, s'efface). */
+  private journalDe(e: SimEvent): [string, 'butin'?] | null {
+    const pl = (n: number, m: string) => `${n} ${m}${n > 1 ? 's' : ''}`;
+    switch (e.k) {
+      case 'loot': return e.item.rarity === 'commun' ? null : [`Tu as obtenu ${lienObjet(e.item)} (${RARITY_NAMES[e.item.rarity]})`, 'butin'];
+      case 'dofusGagne': return [`${PORTABLE(e.id)?.nom ?? 'Dofus'} obtenu !`, 'butin'];
+      case 'sacQuete': { const it = ITEMS.equipment[e.id]; return it ? [`Sac de quête : ${it.name} (${RARITY_NAMES[e.rarity]})`, 'butin'] : null; }
+      case 'capture': return [`${GAME_DATA.monsters[e.monster]?.name ?? 'Archimonstre'} capturé dans une pierre d'âme${e.neuf ? ' (nouveau)' : ''}`, 'butin'];
+      case 'levelUp': return [`Niveau ${e.level} atteint : +5 points de caractéristiques${e.level === 100 ? ', +1 PA' : ''}`];
+      case 'newSpell': return [`Nouveau sort : ${this.world.player.cls.spells[e.id]?.name ?? e.id}`];
+      case 'queteDebut': { const q = this.world.quetes?.def(e.id); return q && q.type !== 'tutoriel' ? [`Nouvelle quête : ${q.nom}`] : null; }
+      case 'queteFin': { const q = this.world.quetes?.def(e.id); return q && !e.sautee ? [`Quête terminée : ${q.nom}`] : null; }
+      case 'queteInfo': return [e.texte];
+      case 'succes': { const s = QUETES.succes[e.id]; return s ? [`Succès : ${s.nom} (+${pl(s.points, 'point')})`] : null; }
+      case 'zaapDecouvert': return [`Zaap découvert : ${this.nomZaap(e.name)}`];
+      case 'lieuDecouvert': return [`Lieu découvert : ${e.nom} (+${e.xp} XP)`];
+      case 'metierLevel': return [`${ITEMS.metiers?.[e.metier]?.name ?? 'Métier'} niveau ${e.level}`];
+      case 'commande': return e.etat === 'prete' ? ['Malek le Forgemage a fini ta commande : ton objet t\'attend au Bastion des Douze'] : null;
+      case 'codex': { const o = POUVOIR_PAR_ID[e.id], c = PC_PAR_ID[e.id]; return [`Codex : ${o ? o.sort : c ? c.nom : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id} enregistré`]; }
+      case 'apparence': return [`Apparence débloquée : ${ITEMS.equipment[e.id]?.name ?? 'objet'}`];
+      case 'almanax': return [`Almanax : offrande faite, +${e.pepites} Pépites et « ${e.bonus} » jusqu'à minuit`];
+      case 'bagFull': return ['Sac plein : défais des objets chez Kerubim Crépin, au Bastion des Douze'];
+      case 'bossDown': return [`${GAME_DATA.monsters[e.monster]?.name ?? 'Boss'} vaincu !`];
+      case 'massacreFin': return e.n >= 10 ? [`Massacre de ${e.n} monstres`] : null;
+      case 'guerreFin': return [e.coffre ? `${e.champ} défendu : ${e.sauvees} / ${e.total} cawottes, +${e.gain} Cawottes` : `${e.champ} ravagé : toutes les cawottes ont été volées`];
+      default: return null;
+    }
+  }
+
   private consumeEvents() {
     for (const e of this.world.drainEvents()) {
       Coop.noter(e);
       if (this.perso?.stats && this.perso.session) noter(e, this.perso.stats, this.perso.session, this.bestiaire, GAME_DATA.monsters, ITEMS.equipment);
       this.fx.handle(e);
       this.hud.handle(e);
+      if (this.chat) { const jn = this.journalDe(e); if (jn) EnLigne.journal(jn[0], jn[1]); }
       this.havreSacView?.handle(e);
       if (this.panneau && e.k === 'hit' && e.target === 'monster') this.panneau.noterCoup(e);   // DPS sort par sort, journal (Panneau test 6A, 6B)
       if (this.panneau && e.k === 'hit' && e.target === 'player' && Math.hypot(e.x - this.world.player.x, e.y - this.world.player.y) < 8) this.panneau.noterRecu(e);   // Outil test 8C
