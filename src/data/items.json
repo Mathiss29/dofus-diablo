@@ -38505,6 +38505,904 @@
    "icon": 84748,
    "level": 60,
    "cle": "Village Kanniboul"
+  },
+  "1333": {
+   "name": "Potion d'Étincelle",
+   "icon": 26001,
+   "level": 20,
+   "potionFM": "feu"
+  },
+  "1335": {
+   "name": "Potion de Crachin",
+   "icon": 26002,
+   "level": 20,
+   "potionFM": "eau"
+  },
+  "1337": {
+   "name": "Potion de Courant d'Air",
+   "icon": 26003,
+   "level": 20,
+   "potionFM": "air"
+  },
+  "1338": {
+   "name": "Potion de Secousse",
+   "icon": 26004,
+   "level": 20,
+   "potionFM": "terre"
+  },
+  "1345": {
+   "name": "Potion d'Incendie",
+   "icon": 26001,
+   "level": 80,
+   "potionFM": "feu"
+  },
+  "1346": {
+   "name": "Potion de Tsunami",
+   "icon": 26002,
+   "level": 80,
+   "potionFM": "eau"
+  },
+  "1347": {
+   "name": "Potion d'Ouragan",
+   "icon": 26003,
+   "level": 80,
+   "potionFM": "air"
+  },
+  "1348": {
+   "name": "Potion de Séisme",
+   "icon": 26004,
+   "level": 80,
+   "potionFM": "terre"
+  },
+  "17272": {
+   "name": "Orbe régénérant mineur",
+   "icon": 50723,
+   "level": 60,
+   "orbe": 60
+  },
+  "17273": {
+   "name": "Orbe régénérant",
+   "icon": 50724,
+   "level": 120,
+   "orbe": 120
+  },
+  "17274": {
+   "name": "Orbe régénérant majeur",
+   "icon": 50725,
+   "level": 180,
+   "orbe": 180
+  },
+  "17275": {
+   "name": "Orbe régénérant magistral",
+   "icon": 50726,
+   "level": 200,
+   "orbe": 200
+  },
+  "1526": {
+   "name": "Métaria rouge",
+   "icon": 66241,
+   "level": 1
+  },
+  "1527": {
+   "name": "Métaria bleue",
+   "icon": 66244,
+   "level": 1
+  },
+  "1528": {
+   "name": "Métaria jaune",
+   "icon": 66247,
+   "level": 1
+  },
+  "1529": {
+   "name": "Métaria verte",
+   "icon": 66250,
+   "level": 1
+  },
+  "1535": {
+   "name": "Métaria Mage rouge",
+   "icon": 66243,
+   "level": 1
+  },
+  "1536": {
+   "name": "Métaria Mage bleue",
+   "icon": 66246,
+   "level": 1
+  },
+  "1537": {
+   "name": "Métaria Mage verte",
+   "icon": 66252,
+   "level": 1
+  },
+  "1538": {
+   "name": "Métaria Mage jaune",
+   "icon": 66249,
+   "level": 1
+  },
+  "1634": {
+   "name": "Sphère à Métarias",
+   "icon": 66240,
+   "level": 1
+  },
+  "1463": {
+   "name": "Fiole à élément",
+   "icon": 71057,
+   "level": 10
+  },
+  "990001": {
+   "name": "Rune Céléritas",
+   "icon": 78092,
+   "level": 40,
+   "rune": true,
+   "maison": true
+  },
+  "990002": {
+   "name": "Rune Chronos",
+   "icon": 78091,
+   "level": 40,
+   "rune": true,
+   "maison": true
+  },
+  "33834": {
+   "name": "Âme capturée : Boufdégou le Refoulant",
+   "icon": 85003,
+   "level": 30,
+   "ame": "archi_bouftou"
+  },
+  "33832": {
+   "name": "Âme capturée : Boudalf le Blanc",
+   "icon": 85003,
+   "level": 30,
+   "ame": "archi_boufton"
+  },
+  "33833": {
+   "name": "Âme capturée : Boulgourvil le Lointain",
+   "icon": 85003,
+   "level": 30,
+   "ame": "archi_boufton_noir"
+  },
+  "33852": {
+   "name": "Âme capturée : Pioussokrim le Délétère",
+   "icon": 85003,
+   "level": 15,
+   "ame": "archi_piou_violet"
+  },
+  "33850": {
+   "name": "Âme capturée : Pioulette la Coquine",
+   "icon": 85003,
+   "level": 15,
+   "ame": "archi_piou_rouge"
+  },
+  "33851": {
+   "name": "Âme capturée : Pioukas la Plante",
+   "icon": 85003,
+   "level": 15,
+   "ame": "archi_piou_vert"
+  },
+  "33847": {
+   "name": "Âme capturée : Pioustone le Problème",
+   "icon": 85003,
+   "level": 15,
+   "ame": "archi_piou_bleu"
+  },
+  "33849": {
+   "name": "Âme capturée : Pioufe la Maquillée",
+   "icon": 85003,
+   "level": 15,
+   "ame": "archi_piou_rose"
+  },
+  "33848": {
+   "name": "Âme capturée : Pioulbrineur le Mercenaire",
+   "icon": 85003,
+   "level": 15,
+   "ame": "archi_piou_jaune"
+  },
+  "33853": {
+   "name": "Âme capturée : Preskapwal le Tendancieux",
+   "icon": 85003,
+   "level": 30,
+   "ame": "archi_prespic"
+  },
+  "34036": {
+   "name": "Âme capturée : Sangria le Fruité",
+   "icon": 85003,
+   "level": 30,
+   "ame": "archi_sanglier"
+  },
+  "33840": {
+   "name": "Âme capturée : Milipatte la Griffe",
+   "icon": 85003,
+   "level": 30,
+   "ame": "archi_milimulou"
+  },
+  "34037": {
+   "name": "Âme capturée : Tofurapin le Pétri",
+   "icon": 85003,
+   "level": 15,
+   "ame": "archi_tofu_malade"
+  },
+  "34011": {
+   "name": "Âme capturée : Arachitik la Souffreteuse",
+   "icon": 85003,
+   "level": 15,
+   "ame": "archi_arakne_malade"
+  },
+  "33872": {
+   "name": "Âme capturée : Araknay la Galopante",
+   "icon": 85003,
+   "level": 30,
+   "ame": "archi_arakne_des_egouts"
+  },
+  "33854": {
+   "name": "Âme capturée : Radoutable le Craint",
+   "icon": 85003,
+   "level": 30,
+   "ame": "archi_scelerat_strubien"
+  },
+  "34032": {
+   "name": "Âme capturée : Milipussien le Géant",
+   "icon": 85003,
+   "level": 30,
+   "ame": "archi_milirat_strubien"
+  },
+  "33999": {
+   "name": "Âme capturée : Ouature la Mobile",
+   "icon": 85003,
+   "level": 40,
+   "ame": "archi_la_ouassingue"
+  },
+  "33938": {
+   "name": "Âme capturée : Ouassébo l'Esthète",
+   "icon": 85003,
+   "level": 40,
+   "ame": "archi_le_ouassingue"
+  },
+  "33917": {
+   "name": "Âme capturée : Garsim le Mort",
+   "icon": 85003,
+   "level": 40,
+   "ame": "archi_gargrouille"
+  },
+  "34114": {
+   "name": "Âme capturée : Larvonika l'Instrument",
+   "icon": 85003,
+   "level": 20,
+   "ame": "archi_larve_bleue"
+  },
+  "34113": {
+   "name": "Âme capturée : Larchimaide la Poussée",
+   "icon": 85003,
+   "level": 20,
+   "ame": "archi_larve_verte"
+  },
+  "34033": {
+   "name": "Âme capturée : Larvapstrè le Subjectif",
+   "icon": 85003,
+   "level": 20,
+   "ame": "archi_larve_orange"
+  },
+  "33845": {
+   "name": "Âme capturée : Larvomatik le Propre",
+   "icon": 85003,
+   "level": 20,
+   "ame": "archi_larve_jaune"
+  },
+  "33846": {
+   "name": "Âme capturée : Pichtoire l'Erudit",
+   "icon": 85003,
+   "level": 20,
+   "ame": "archi_pichon_orange"
+  },
+  "33844": {
+   "name": "Âme capturée : Pichdourse le Puissant",
+   "icon": 85003,
+   "level": 20,
+   "ame": "archi_pichon_bleu"
+  },
+  "34034": {
+   "name": "Âme capturée : Pichduitre le Totem",
+   "icon": 85003,
+   "level": 20,
+   "ame": "archi_pichon_blanc"
+  },
+  "34005": {
+   "name": "Âme capturée : Pichakoté le Dégoutant",
+   "icon": 85003,
+   "level": 20,
+   "ame": "archi_pichon_vert"
+  },
+  "34118": {
+   "name": "Âme capturée : Scarouarze l'Epopée",
+   "icon": 85003,
+   "level": 42,
+   "ame": "archi_scarafeuille_rouge"
+  },
+  "34117": {
+   "name": "Âme capturée : Scarfayss le Balafré",
+   "icon": 85003,
+   "level": 42,
+   "ame": "archi_scarafeuille_bleu"
+  },
+  "34009": {
+   "name": "Âme capturée : Scaramel le Fondant",
+   "icon": 85003,
+   "level": 42,
+   "ame": "archi_scarafeuille_vert"
+  },
+  "34096": {
+   "name": "Âme capturée : Scapé l'Epée",
+   "icon": 85003,
+   "level": 42,
+   "ame": "archi_scarafeuille_blanc"
+  },
+  "34090": {
+   "name": "Âme capturée : Chafemal le Bagarreur",
+   "icon": 85003,
+   "level": 40,
+   "ame": "archi_chafer"
+  },
+  "34008": {
+   "name": "Âme capturée : Ribibi le Cher",
+   "icon": 85003,
+   "level": 42,
+   "ame": "archi_rib"
+  },
+  "34013": {
+   "name": "Âme capturée : Chafalfer l'Optimiste",
+   "icon": 85003,
+   "level": 37,
+   "ame": "archi_chafer_invisible"
+  },
+  "33884": {
+   "name": "Âme capturée : Chaffoin le Sournois",
+   "icon": 85003,
+   "level": 41,
+   "ame": "archi_chafer_fantassin"
+  },
+  "34125": {
+   "name": "Âme capturée : Chevaustine le Reconstruit",
+   "icon": 85003,
+   "level": 40,
+   "ame": "archi_gob_trotteur"
+  },
+  "34116": {
+   "name": "Âme capturée : Gobstiniais le Têtu",
+   "icon": 85003,
+   "level": 40,
+   "ame": "archi_gobet"
+  },
+  "33882": {
+   "name": "Âme capturée : Bwormage le Respectueux",
+   "icon": 85003,
+   "level": 50,
+   "ame": "archi_bwork_mage"
+  },
+  "34063": {
+   "name": "Âme capturée : Barchwork le Multicolore",
+   "icon": 85003,
+   "level": 49,
+   "ame": "archi_bwork_archer"
+  },
+  "34057": {
+   "name": "Âme capturée : Bworkasse le Dégoutant",
+   "icon": 85003,
+   "level": 50,
+   "ame": "archi_bwork"
+  },
+  "33841": {
+   "name": "Âme capturée : Minsinistre l'Elu",
+   "icon": 85003,
+   "level": 50,
+   "ame": "archi_mineur_sombre"
+  },
+  "34031": {
+   "name": "Âme capturée : Forboyar l'Enigmatique",
+   "icon": 85003,
+   "level": 50,
+   "ame": "archi_forgeron_sombre"
+  },
+  "33835": {
+   "name": "Âme capturée : Boudur le Raide",
+   "icon": 85003,
+   "level": 47,
+   "ame": "archi_boulanger_sombre"
+  },
+  "33831": {
+   "name": "Âme capturée : Bandson le Tonitruant",
+   "icon": 85003,
+   "level": 49,
+   "ame": "archi_bandit_du_clan_des_roublards"
+  },
+  "34025": {
+   "name": "Âme capturée : Kwaké le Piraté",
+   "icon": 85003,
+   "level": 50,
+   "ame": "archi_kwak_de_vent"
+  },
+  "33896": {
+   "name": "Âme capturée : Kwakolak le Chocolaté",
+   "icon": 85003,
+   "level": 50,
+   "ame": "archi_kwak_de_flamme"
+  },
+  "33860": {
+   "name": "Âme capturée : Kwakwatique le Trempé",
+   "icon": 85003,
+   "level": 50,
+   "ame": "archi_kwak_de_glace"
+  },
+  "34111": {
+   "name": "Âme capturée : Kwakamole l'Appétissant",
+   "icon": 85003,
+   "level": 50,
+   "ame": "archi_kwak_de_terre"
+  },
+  "34066": {
+   "name": "Âme capturée : Crakmitaine le Faucheur",
+   "icon": 85003,
+   "level": 70,
+   "ame": "archi_craqueleur"
+  },
+  "33890": {
+   "name": "Âme capturée : Cramikaz le Suicidaire",
+   "icon": 85003,
+   "level": 70,
+   "ame": "archi_craqueleur_des_plaines"
+  },
+  "34030": {
+   "name": "Âme capturée : Craquetuss le Piquant",
+   "icon": 85003,
+   "level": 70,
+   "ame": "archi_craqueboule"
+  },
+  "34092": {
+   "name": "Âme capturée : Wabbitud le Constant",
+   "icon": 85003,
+   "level": 52,
+   "ame": "archi_wabbit"
+  },
+  "34061": {
+   "name": "Âme capturée : Wagnagnah le Sanglant",
+   "icon": 85003,
+   "level": 54,
+   "ame": "archi_black_wabbit"
+  },
+  "34060": {
+   "name": "Âme capturée : Tiwa'Missou le Gateux",
+   "icon": 85003,
+   "level": 50,
+   "ame": "archi_black_tiwabbit"
+  },
+  "34091": {
+   "name": "Âme capturée : Tiwoflan le Lâche",
+   "icon": 85003,
+   "level": 48,
+   "ame": "archi_tiwabbit_kiafin"
+  },
+  "34010": {
+   "name": "Âme capturée : Tiwalpé le Dévêtu",
+   "icon": 85003,
+   "level": 49,
+   "ame": "archi_tiwabbit"
+  },
+  "33829": {
+   "name": "Âme capturée : Wokènrôl le Danseur",
+   "icon": 85003,
+   "level": 60,
+   "ame": "archi_wo_wabbit"
+  },
+  "33921": {
+   "name": "Âme capturée : Grandilok le Clameur",
+   "icon": 85003,
+   "level": 60,
+   "ame": "archi_grand_pa_wabbit"
+  },
+  "34046": {
+   "name": "Âme capturée : Tofuldebeu l'Explosif",
+   "icon": 85003,
+   "level": 40,
+   "ame": "archi_tofu_amakna"
+  },
+  "33843": {
+   "name": "Âme capturée : Muloufok l'Hilarant",
+   "icon": 85003,
+   "level": 100,
+   "ame": "archi_mulou"
+  },
+  "34029": {
+   "name": "Âme capturée : Chonstip la Passagère",
+   "icon": 85003,
+   "level": 50,
+   "ame": "archi_cochon_de_lait"
+  },
+  "33837": {
+   "name": "Âme capturée : Chamchie le Difficile",
+   "icon": 85003,
+   "level": 20,
+   "ame": "archi_champ_champ"
+  },
+  "34038": {
+   "name": "Âme capturée : Tofumanchou l'Empereur",
+   "icon": 85003,
+   "level": 40,
+   "ame": "archi_tofu_malefique"
+  },
+  "33937": {
+   "name": "Âme capturée : Kwoanneur le Frimeur",
+   "icon": 85003,
+   "level": 40,
+   "ame": "archi_kwoan"
+  },
+  "33918": {
+   "name": "Âme capturée : Gelanal le Huileux",
+   "icon": 85003,
+   "level": 62,
+   "ame": "archi_gelee_bleuet"
+  },
+  "33862": {
+   "name": "Âme capturée : Geloliaine l'Aérien",
+   "icon": 85003,
+   "level": 62,
+   "ame": "archi_gelee_menthe"
+  },
+  "34047": {
+   "name": "Âme capturée : Gelaviv le Glaçon",
+   "icon": 85003,
+   "level": 62,
+   "ame": "archi_gelee_fraise"
+  },
+  "34050": {
+   "name": "Âme capturée : Champayr le Disjoncté",
+   "icon": 85003,
+   "level": 43,
+   "ame": "archi_champa_vert"
+  },
+  "34056": {
+   "name": "Âme capturée : Chamdblé le Cultivé",
+   "icon": 85003,
+   "level": 43,
+   "ame": "archi_champa_rouge"
+  },
+  "34055": {
+   "name": "Âme capturée : Champayt l'Odorant",
+   "icon": 85003,
+   "level": 43,
+   "ame": "archi_champa_bleu"
+  },
+  "33887": {
+   "name": "Âme capturée : Chamflay le Ballonné",
+   "icon": 85003,
+   "level": 43,
+   "ame": "archi_champa_marron"
+  },
+  "33865": {
+   "name": "Âme capturée : Dragstayr le Fonceur",
+   "icon": 85003,
+   "level": 70,
+   "ame": "archi_dragoeuf_calcaire"
+  },
+  "33895": {
+   "name": "Âme capturée : Dragkouine la Déguisée",
+   "icon": 85003,
+   "level": 70,
+   "ame": "archi_dragoeuf_argile"
+  },
+  "33863": {
+   "name": "Âme capturée : Dragmoclaiss le Fataliste",
+   "icon": 85003,
+   "level": 70,
+   "ame": "archi_dragoeuf_ardoise"
+  },
+  "33894": {
+   "name": "Âme capturée : Dragnostik le Sceptique",
+   "icon": 85003,
+   "level": 70,
+   "ame": "archi_dragoeuf_charbon"
+  },
+  "33953": {
+   "name": "Âme capturée : Boostif l'Affamé",
+   "icon": 85003,
+   "level": 29,
+   "ame": "archi_boo"
+  },
+  "33891": {
+   "name": "Âme capturée : Crolnareff l'Exilé",
+   "icon": 85003,
+   "level": 50,
+   "ame": "archi_crocodaille"
+  },
+  "34051": {
+   "name": "Âme capturée : Crok le Beau",
+   "icon": 85003,
+   "level": 77,
+   "ame": "archi_chef_crocodaille"
+  },
+  "33866": {
+   "name": "Âme capturée : Draglida la Disparue",
+   "icon": 85003,
+   "level": 67,
+   "ame": "archi_dragodinde_amande_sauvage"
+  },
+  "33908": {
+   "name": "Âme capturée : Dragnoute l'Irascible",
+   "icon": 85003,
+   "level": 72,
+   "ame": "archi_dragodinde_rousse_sauvage"
+  },
+  "34027": {
+   "name": "Âme capturée : Arakule la Revancharde",
+   "icon": 85003,
+   "level": 20,
+   "ame": "archi_arakne"
+  },
+  "33842": {
+   "name": "Âme capturée : Mosketère le Dévoué",
+   "icon": 85003,
+   "level": 20,
+   "ame": "archi_moskito"
+  },
+  "33947": {
+   "name": "Âme capturée : Craquecrac l'Endurant",
+   "icon": 85003,
+   "level": 70,
+   "ame": "archi_craquelourd"
+  },
+  "34012": {
+   "name": "Âme capturée : Bandapar l'Exclu",
+   "icon": 85003,
+   "level": 50,
+   "ame": "archi_bandit_manchot"
+  },
+  "34115": {
+   "name": "Âme capturée : Watdogue le Bien Nommé",
+   "icon": 85003,
+   "level": 56,
+   "ame": "archi_wabbit_squelette"
+  },
+  "33821": {
+   "name": "Âme capturée : Sampi l'Eternel",
+   "icon": 85003,
+   "level": 48,
+   "ame": "archi_sanglier_des_plaines"
+  },
+  "33883": {
+   "name": "Âme capturée : Cavordemal le Sorcier",
+   "icon": 85003,
+   "level": 50,
+   "ame": "archi_cavalier_porkass"
+  },
+  "33873": {
+   "name": "Âme capturée : Porfavor le Quémandeur",
+   "icon": 85003,
+   "level": 50,
+   "ame": "archi_berger_porkass"
+  },
+  "33871": {
+   "name": "Âme capturée : Ameur la Laide",
+   "icon": 85003,
+   "level": 47,
+   "ame": "archi_amlub"
+  },
+  "34053": {
+   "name": "Âme capturée : Codenlgaz le Problème",
+   "icon": 85003,
+   "level": 47,
+   "ame": "archi_codem"
+  },
+  "33927": {
+   "name": "Âme capturée : Kiroyal le Sirupeux",
+   "icon": 85003,
+   "level": 47,
+   "ame": "archi_kirevam"
+  },
+  "33939": {
+   "name": "Âme capturée : Let le Rond",
+   "icon": 85003,
+   "level": 47,
+   "ame": "archi_let_emoliug"
+  },
+  "33825": {
+   "name": "Âme capturée : Susbewl l'Hypocrite",
+   "icon": 85003,
+   "level": 47,
+   "ame": "archi_susej"
+  },
+  "33867": {
+   "name": "Âme capturée : Aboudbra le Porteur",
+   "icon": 85003,
+   "level": 47,
+   "ame": "archi_aboub"
+  },
+  "33919": {
+   "name": "Âme capturée : Ginsenk le Stimulant",
+   "icon": 85003,
+   "level": 47,
+   "ame": "archi_gink"
+  },
+  "33943": {
+   "name": "Âme capturée : Nelvin le Boulet",
+   "icon": 85003,
+   "level": 47,
+   "ame": "archi_nebgib"
+  },
+  "33944": {
+   "name": "Âme capturée : Nipulnislip l'Exhibitionniste",
+   "icon": 85003,
+   "level": 47,
+   "ame": "archi_nipul"
+  },
+  "33978": {
+   "name": "Âme capturée : Osuxion le Vampirique",
+   "icon": 85003,
+   "level": 47,
+   "ame": "archi_osurc"
+  },
+  "33826": {
+   "name": "Âme capturée : Tikosto le Mousse",
+   "icon": 85003,
+   "level": 50,
+   "ame": "archi_tikoko"
+  },
+  "34119": {
+   "name": "Âme capturée : Koktèle le Secoué",
+   "icon": 85003,
+   "level": 50,
+   "ame": "archi_kokoko"
+  },
+  "33945": {
+   "name": "Âme capturée : Nodkoku le Trahi",
+   "icon": 85003,
+   "level": 50,
+   "ame": "archi_nodkoko"
+  },
+  "34017": {
+   "name": "Âme capturée : Tortorak le Cornu",
+   "icon": 85003,
+   "level": 50,
+   "ame": "archi_tortue_rouge"
+  },
+  "34015": {
+   "name": "Âme capturée : Tortenssia la Fleurie",
+   "icon": 85003,
+   "level": 50,
+   "ame": "archi_tortue_bleue"
+  },
+  "34016": {
+   "name": "Âme capturée : Tortilleur le Coulé",
+   "icon": 85003,
+   "level": 50,
+   "ame": "archi_tortue_verte"
+  },
+  "34018": {
+   "name": "Âme capturée : Torthur la Lutte",
+   "icon": 85003,
+   "level": 50,
+   "ame": "archi_tortue_jaune"
+  },
+  "33922": {
+   "name": "Âme capturée : Kannibal le Lecteur",
+   "icon": 85003,
+   "level": 60,
+   "ame": "archi_kanniboul_ark"
+  },
+  "33925": {
+   "name": "Âme capturée : Kannisterik le Forcené",
+   "icon": 85003,
+   "level": 60,
+   "ame": "archi_kanniboul_eth"
+  },
+  "33926": {
+   "name": "Âme capturée : Kapota la Fraise",
+   "icon": 85003,
+   "level": 60,
+   "ame": "archi_kanniboul_jav"
+  },
+  "33924": {
+   "name": "Âme capturée : Kannémik le Maigre",
+   "icon": 85003,
+   "level": 60,
+   "ame": "archi_kanniboul_sarbak"
+  },
+  "33684": {
+   "name": "Âme capturée : Bouftou Royal",
+   "icon": 85004,
+   "level": 30,
+   "ame": "royal"
+  },
+  "33683": {
+   "name": "Âme capturée : Kardorim",
+   "icon": 85004,
+   "level": 12,
+   "ame": "kardorim"
+  },
+  "33681": {
+   "name": "Âme capturée : Tournesol Affâmé",
+   "icon": 85004,
+   "level": 20,
+   "ame": "tournesol_affame"
+  },
+  "33682": {
+   "name": "Âme capturée : Mob l'Éponge",
+   "icon": 85004,
+   "level": 20,
+   "ame": "mob_l_eponge"
+  },
+  "33689": {
+   "name": "Âme capturée : Kankreblath",
+   "icon": 85004,
+   "level": 40,
+   "ame": "kankreblath"
+  },
+  "33690": {
+   "name": "Âme capturée : Scarabosse Doré",
+   "icon": 85004,
+   "level": 40,
+   "ame": "scarabosse_dore"
+  },
+  "33687": {
+   "name": "Âme capturée : Chafer Rōnin",
+   "icon": 85004,
+   "level": 40,
+   "ame": "chafer_ronin"
+  },
+  "33685": {
+   "name": "Âme capturée : Batofu",
+   "icon": 85004,
+   "level": 40,
+   "ame": "batofu"
+  },
+  "33688": {
+   "name": "Âme capturée : Directeur Grunob",
+   "icon": 85004,
+   "level": 50,
+   "ame": "directeur_grunob"
+  },
+  "33691": {
+   "name": "Âme capturée : Bworkette",
+   "icon": 85004,
+   "level": 50,
+   "ame": "bworkette"
+  },
+  "33692": {
+   "name": "Âme capturée : Coffre des Forgerons",
+   "icon": 85004,
+   "level": 50,
+   "ame": "coffre_des_forgerons"
+  },
+  "33694": {
+   "name": "Âme capturée : Kwakwa",
+   "icon": 85004,
+   "level": 50,
+   "ame": "kwakwa"
+  },
+  "33696": {
+   "name": "Âme capturée : Shin Larve",
+   "icon": 85004,
+   "level": 50,
+   "ame": "shin_larve"
+  },
+  "33707": {
+   "name": "Âme capturée : Craqueleur Légendaire",
+   "icon": 85004,
+   "level": 70,
+   "ame": "craqueleur_legendaire"
+  },
+  "33712": {
+   "name": "Âme capturée : Wa Wobot",
+   "icon": 85004,
+   "level": 80,
+   "ame": "wa_wobot"
+  },
+  "33706": {
+   "name": "Âme capturée : Wa Wabbit",
+   "icon": 85004,
+   "level": 60,
+   "ame": "wa_wabbit"
+  },
+  "33705": {
+   "name": "Âme capturée : Kanniboul Ebil",
+   "icon": 85004,
+   "level": 60,
+   "ame": "kanniboul_ebil"
   }
  },
  "drops": {
@@ -65907,6 +66805,354 @@
     [
      "8398",
      1
+    ]
+   ]
+  },
+  {
+   "result": "1333",
+   "metier": "alchimiste",
+   "level": 20,
+   "ingredients": [
+    [
+     "1526",
+     5
+    ],
+    [
+     "1463",
+     1
+    ],
+    [
+     "14635",
+     100
+    ]
+   ]
+  },
+  {
+   "result": "1335",
+   "metier": "alchimiste",
+   "level": 20,
+   "ingredients": [
+    [
+     "1527",
+     5
+    ],
+    [
+     "1463",
+     1
+    ],
+    [
+     "14635",
+     100
+    ]
+   ]
+  },
+  {
+   "result": "1337",
+   "metier": "alchimiste",
+   "level": 20,
+   "ingredients": [
+    [
+     "1529",
+     5
+    ],
+    [
+     "1463",
+     1
+    ],
+    [
+     "14635",
+     100
+    ]
+   ]
+  },
+  {
+   "result": "1338",
+   "metier": "alchimiste",
+   "level": 20,
+   "ingredients": [
+    [
+     "1528",
+     5
+    ],
+    [
+     "1463",
+     1
+    ],
+    [
+     "14635",
+     100
+    ]
+   ]
+  },
+  {
+   "result": "1345",
+   "metier": "alchimiste",
+   "level": 80,
+   "ingredients": [
+    [
+     "1535",
+     5
+    ],
+    [
+     "1463",
+     1
+    ],
+    [
+     "14635",
+     300
+    ]
+   ]
+  },
+  {
+   "result": "1346",
+   "metier": "alchimiste",
+   "level": 80,
+   "ingredients": [
+    [
+     "1536",
+     5
+    ],
+    [
+     "1463",
+     1
+    ],
+    [
+     "14635",
+     300
+    ]
+   ]
+  },
+  {
+   "result": "1347",
+   "metier": "alchimiste",
+   "level": 80,
+   "ingredients": [
+    [
+     "1537",
+     5
+    ],
+    [
+     "1463",
+     1
+    ],
+    [
+     "14635",
+     300
+    ]
+   ]
+  },
+  {
+   "result": "1348",
+   "metier": "alchimiste",
+   "level": 80,
+   "ingredients": [
+    [
+     "1538",
+     5
+    ],
+    [
+     "1463",
+     1
+    ],
+    [
+     "14635",
+     300
+    ]
+   ]
+  },
+  {
+   "result": "1526",
+   "metier": "alchimiste",
+   "level": 1,
+   "ingredients": [
+    [
+     "415",
+     4
+    ],
+    [
+     "412",
+     1
+    ],
+    [
+     "1634",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1527",
+   "metier": "alchimiste",
+   "level": 1,
+   "ingredients": [
+    [
+     "414",
+     4
+    ],
+    [
+     "411",
+     1
+    ],
+    [
+     "1634",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1528",
+   "metier": "alchimiste",
+   "level": 1,
+   "ingredients": [
+    [
+     "1141",
+     4
+    ],
+    [
+     "1142",
+     1
+    ],
+    [
+     "1634",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1529",
+   "metier": "alchimiste",
+   "level": 1,
+   "ingredients": [
+    [
+     "1634",
+     1
+    ],
+    [
+     "416",
+     4
+    ],
+    [
+     "413",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1535",
+   "metier": "alchimiste",
+   "level": 1,
+   "ingredients": [
+    [
+     "843",
+     4
+    ],
+    [
+     "846",
+     1
+    ],
+    [
+     "1634",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1536",
+   "metier": "alchimiste",
+   "level": 1,
+   "ingredients": [
+    [
+     "1129",
+     4
+    ],
+    [
+     "844",
+     1
+    ],
+    [
+     "1634",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1537",
+   "metier": "alchimiste",
+   "level": 1,
+   "ingredients": [
+    [
+     "842",
+     4
+    ],
+    [
+     "845",
+     1
+    ],
+    [
+     "1634",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1538",
+   "metier": "alchimiste",
+   "level": 1,
+   "ingredients": [
+    [
+     "308",
+     4
+    ],
+    [
+     "847",
+     1
+    ],
+    [
+     "1634",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "17272",
+   "metier": "mineur",
+   "level": 60,
+   "ingredients": [
+    [
+     "14635",
+     10
+    ]
+   ]
+  },
+  {
+   "result": "17273",
+   "metier": "mineur",
+   "level": 120,
+   "ingredients": [
+    [
+     "14635",
+     30
+    ]
+   ]
+  },
+  {
+   "result": "17274",
+   "metier": "mineur",
+   "level": 180,
+   "ingredients": [
+    [
+     "14635",
+     100
+    ]
+   ]
+  },
+  {
+   "result": "17275",
+   "metier": "mineur",
+   "level": 200,
+   "ingredients": [
+    [
+     "14635",
+     300
     ]
    ]
   }

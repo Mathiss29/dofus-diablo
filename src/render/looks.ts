@@ -601,6 +601,7 @@ export const PNJ_LOOKS: Record<string, PnjLook> = {
   // PNJ des Dofus (0.3) : Gawdien du Dofus (PNJ 148, {321}), Rathrosk (PNJ 4357, {4930}, animFunList officielle),
   // Énergie du Dofus Cacao (PNJ 4842, {3401|||120})
   gawdien: { scale: 0.82, anim: 'AnimStatique_1' },
+  responsable: { scale: 0.82, anim: 'AnimStatique_1' },   // Responsable de la boutique (PNJ 5136, Marché du Bastion, Magasin 13E)
   // Île des Wabbits (« Wabbits : 2A + 12B ») : Capitaine Lily (PNJ 134, {10|||85}), Wabbit du Matin Pewlant (PNJ 141, {959|||130})
   lily: { scale: 0.82, anim: 'AnimStatique_1' },
   wabbit_matin: { scale: 0.82, anim: 'AnimStatique_1' },

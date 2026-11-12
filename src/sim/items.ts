@@ -89,13 +89,19 @@ export interface SetDef { name: string; items: number[]; bonus: Record<string, S
 /** soin : la ressource se mange et rend ce nombre de PV (effet officiel 110, ex. Bouillon de Chair +11 PV).
  *  cle : clé officielle d'un donjon (son nom), demandée et prise à l'entrée (maquette 0.2, 5B).
  *  rappel : Potion de Rappel, renvoie au dernier Zaap. pepite : la monnaie d'Emp, le recycleur (objet officiel 14635). */
-export interface ResourceDef { name: string; icon: number; level: number; soin?: number; cle?: string; rappel?: boolean; /** Pierre d'âme vide (0.3, 15B) : capture un archimonstre vaincu. */ pierreAme?: boolean; pepite?: boolean; /** Monnaie d'un marchand (Cawottes de la guerre des Cawottes) : ni recyclée ni donnée au familier. */ monnaie?: string;
+export interface ResourceDef { name: string; icon: number; level: number; soin?: number; cle?: string; rappel?: boolean; /** Pierre d'âme vide (0.3, 15B) : capture un archimonstre vaincu. */ pierreAme?: boolean; /** « Archis : » 6A : âme capturée de cet archimonstre. */ ame?: string; pepite?: boolean; /** Monnaie d'un marchand (Cawottes de la guerre des Cawottes) : ni recyclée ni donnée au familier. */ monnaie?: string;
   /** « Wabbits : 2D » Potion Wabbit : déguisement de cette durée (s), les Wabbits de l'île ne t'attaquent pas tant que tu ne les tapes pas. */
   deguisement?: number;
   /** Rune de forgemagie officielle (src/data/forgemagie.json). */
   rune?: boolean;
   /** Rune de Signature officielle (7508) : grave le nom du perso sur un objet (maquette Forgemagie UI 6A). */
-  signature?: boolean }
+  signature?: boolean;
+  /** Rune maison (Forgemagie v2 5B) : Céléritas, Chronos ; jamais rendue par le brisage. */
+  maison?: boolean;
+  /** Potion de forgemagie officielle (Forgemagie v2 6A) : l'élément que prennent les dommages neutres de l'arme. */
+  potionFM?: string;
+  /** Orbe régénérant officiel (Forgemagie v2 7A) : niveau d'objet maximum. */
+  orbe?: number }
 /** Butin d'un monstre ; metier = critère officiel « Pj>41,N » (Chasseur au-dessus du niveau N), chasse = « CU>0 » (arme de chasse). */
 export interface DropDef { item: string; chance: number; metier?: { id: number; min: number }; chasse?: boolean;
   /** Maquette « Drops » 6B : ne tombe que pendant une quête de Dofus (jamais chez nous) ou un événement (critères officiels). */
@@ -171,6 +177,8 @@ export interface Item {
   puits?: number; exo?: Stat;
   /** Signé à la Rune de Signature (Forgemagie UI 6A) : le nom du perso, montré dans l'infobulle. */
   signe?: string;
+  /** Forgemagie v2 : runes posées (1D), relances d'une ligne chez Malek (7B, le prix double), potion d'élément de l'arme (6A). */
+  fm?: number; relances?: number; potion?: string;
 }
 
 /** Jet maximum d'une ligne ajoutée par la rareté (aussi le max de forgemagie de ces lignes). */

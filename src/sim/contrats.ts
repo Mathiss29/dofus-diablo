@@ -105,3 +105,25 @@ export function contrat(id: string, ctx: CtxContrats): QueteDef | null {
     serie: hebdo ? 'Contrat de la semaine' : 'Contrat du jour', texte: `${ligne}\n\n${sz.name}, niveau ${lvl}.`,
     etapes: [{ nom: titre, objectifs: objs }], recompense, contrat: periode };
 }
+
+/** « Archis : » 3C : l'archimonstre signalé du jour, « ctra:<jour>:<archimonstre>:<sous-zone> ». Un par jour et par tableau, tiré à partir de la date
+ *  parmi les archimonstres des sous-zones du niveau du perso (d'abord ceux dont il n'a pas l'âme). Ni signal sur la carte ni chance en
+ *  plus (3A, 3B non retenus) : il faut le trouver et le capturer. */
+export function archiDuJour(jour: string, niveau: number, ctx: CtxContrats, archis: Record<string, string>, ames: string[]): string | null {
+  const subs = sousZonesPour(niveau, ctx), dans = (a: string) => subs.some(s => ctx.sousZones[s].monsters.includes(archis[a]));
+  const l = Object.keys(archis).filter(dans).sort(), neufs = l.filter(a => !ames.includes(a)), choix = neufs.length ? neufs : l;
+  if (!choix.length) return null;
+  const a = choix[Math.floor(suite(hache(`${jour}:archi:${niveau}`))() * choix.length)];
+  return `ctra:${jour}:${a}:${subs.find(s => ctx.sousZones[s].monsters.includes(archis[a]))}`;
+}
+export function contratArchi(id: string, ctx: CtxContrats, archis: Record<string, string>): QueteDef | null {
+  const [k, jour, a, sub] = id.split(':'), base = archis[a];
+  if (k !== 'ctra' || !base || !ctx.sousZones[sub]?.monsters.includes(base)) return null;
+  const sz = ctx.sousZones[sub], lvl = sz.level, nom = ctx.nomMonstre(a);
+  const objs: ObjectifDef[] = [{ t: 'capturer', monstre: a, texte: `Capturer l'âme de ${nom} (${sz.name})` }];
+  return { nom: `Archimonstre signalé : ${nom}`, type: 'prime', pnj: ctx.pnj, rendre: ctx.pnj, niveau: lvl, serie: 'Contrat du jour', contrat: jour,
+    texte: `On a vu ${nom} rôder parmi les ${ctx.nomMonstre(base)}s : ${sz.name}, niveau ${lvl}. Il remplace parfois l'un d'eux. Bats-le avec une Petite pierre d'âme dans le sac (Otomaï, Marché couvert du Bastion).`,
+    etapes: [{ nom: 'Archimonstre signalé', objectifs: objs }],
+    recompense: { xp: Math.round(2.5 * lvl * 50), kamas: Math.round(2.5 * lvl * 10), sac: 'rare', pepites: Math.round(2 * lvl) } };
+}
+

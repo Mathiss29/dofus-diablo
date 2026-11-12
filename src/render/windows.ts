@@ -1,11 +1,12 @@
 import { QUALITES, REGLAGES_DEFAUT, sauverReglages, type Reglages } from './ambiance';
 import * as Touches from './touches';
-import { ICON_CSS, iconHtml } from './icons';
+import { ICON_CSS, iconHtml, prechargerIcones } from './icons';
 import { MANIFESTE, Son } from './son';
 import { BENEDICTION, BENEDICTIONS, CONFORT, MAGASIN, MARCHE, reserveePiece, type Article, type Benediction } from '../sim/magasin';
-import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES } from '../sim/data';
+import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES, TEINTURES, THEMES_HAVRESAC } from '../sim/data';
+import { themeChoisi, themesEnJeu, themesPossedes } from '../sim/havresac';
 import { v } from './assetUrl';
-import { BUTIN_CSS, butinMonstre, dessinerPortraits, esc as escB, groupesBestiaire, nomObjet, iconeObjet, sourcesHtml } from './butinVue';
+import { BUTIN_CSS, archisParLieu, butinMonstre, dessinerPortraits, esc as escB, groupesBestiaire, nomObjet, iconeObjet, sourcesHtml } from './butinVue';
 import { PALIERS } from './carnet';
 import { CODEX_CSS, codexPageHtml } from './codexVue';
 import { nouveauPourCodex } from '../sim/codex';
@@ -61,8 +62,9 @@ import { SOCIAL_CSS, rendreSocial, tickSocial } from './social';
 import { EnLigne } from './presence';
 import { Coop } from './coop';
 import { TRESOR_CSS, objetTresor, signatureTresor, tresorHtml } from './tresorVue';
-import { FORGE_CSS, defaireHtml, etatForge, forgeHtml, lotConcasseur, mmss, texteForge, type LigneLog } from './forgeVue';
-import { RUNES } from '../sim/forgemagie';
+import { ECLAT, FORGE_CSS, defaireHtml, etatForge, forgeHtml, lotConcasseur, mmss, pastillesFM, texteForge, type LigneLog } from './forgeVue';
+import type { SimEvent } from '../sim/events';
+import { REGLES_V2, RUNES, dmgArme, etatFM, ligneMax } from '../sim/forgemagie';
 import { LOOKS } from './looks';
 import { niveauHorsPartie, rangDe } from '../sim/butin';
 import { DOSSIER, PALETTES, ZONES, apparenceValide, assemblagePour, fiches, objetsPortes, type Apparence, type Assemblage, type FichePerso } from './squelette';
@@ -152,6 +154,14 @@ function apparatHtml(id: string) {
 }
 const hexa = (c: number) => '#' + c.toString(16).padStart(6, '0');
 /** Familier « aux couleurs du porteur » (comme dans Dofus 3) : mention dans sa fiche. */
+/** Teintures (Magasin 6E) : couleurs officielles des 19 classes, pour tout le compte, posées à la garde-robe. */
+function teinturesHtml(W: World, prix: (n: number, m: string, attr: string) => string) {
+  const a = W.coffre.teintures ?? [];
+  return `<div class="ent">Teintures <span class="hint">· couleurs officielles d'une classe, pour tout le compte, à poser à la garde-robe</span></div>
+    <div class="teints">${TEINTURES.teintures.map(t => `<div class="teint"><span class="sw">${t.c.map(c => `<i style="background:#${c.toString(16).padStart(6, '0')}"></i>`).join('')}</span><b>${t.nom}</b>
+      ${a.includes(t.id) ? '<span class="hint">À toi</span>' : prix(TEINTURES.prix, PEPITE, `data-teint="${t.id}"`)}</div>`).join('')}</div>
+    <div class="ent">Apparences</div>`;
+}
 const porteur = (id: string) => FAMILIERS.familiers[id]?.porteur ? '<div class="hint" style="color:#e8c46a">Prend les couleurs de son porteur</div>' : '';
 type Visible = 'chapeau' | 'cape' | 'bouclier' | 'familier';
 const VISIBLES: [Visible, string][] = [['chapeau', 'Coiffe'], ['cape', 'Cape'], ['bouclier', 'Bouclier'], ['familier', 'Familier']];
@@ -302,6 +312,14 @@ const CSS = `
 .dw .emp .cell .pv{position:absolute;right:3px;top:1px;font-size:11px;font-weight:bold;color:#b9e54b;text-shadow:0 0 3px #000}
 .dw .emp .cell.verrou{opacity:.75}
 .dw .emp .sub2{color:#c9a55a;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.dw .emp .themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px;max-height:430px;overflow:auto;padding-right:4px}
+.dw .emp .theme{display:grid;gap:4px;justify-items:center;padding:6px;border:1px solid #3d3b33;border-radius:6px;background:#1a1916;text-align:center}
+.dw .emp .theme.on{border-color:#b9e54b}.dw .emp .theme img{width:100%;aspect-ratio:3/2;object-fit:contain;background:#0d0c0a;border-radius:4px}
+.dw .emp .theme .btn{display:flex;gap:4px;align-items:center}.dw .emp .theme .btn .ic{width:20px;height:20px}
+.dw .emp .teints{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px}
+.dw .emp .teint{display:flex;gap:6px;align-items:center;padding:4px 6px;border:1px solid #3d3b33;border-radius:6px;background:#1a1916}.dw .emp .teint b{flex:1}
+.dw .emp .teint .sw{display:flex}.dw .emp .teint .sw i,.dw .garde .pals i.t{display:inline-block;width:12px;height:16px}
+.dw .emp .teint .btn{display:flex;gap:4px;align-items:center}.dw .emp .teint .btn .ic{width:18px;height:18px}
 .dw .emp .shop{display:grid;gap:6px}.dw .emp .shop .btn{display:flex;gap:4px;align-items:center}.dw .emp .shop .btn .ic{width:22px;height:22px}
 .dw .foot{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#c9c4ab}
 .dw .foot b{color:#f4efe0}
@@ -318,6 +336,14 @@ const CSS = `
 .dw .pts{color:#b9e54b;font-weight:bold}
 .dw .tip{position:fixed;pointer-events:none;z-index:11;min-width:240px;max-width:320px;background:#14130ff4;border:1px solid #57554c;border-radius:4px;padding:10px 12px;box-shadow:0 6px 20px #000a;line-height:1.45}
 .dw .tip h4{margin:0 0 2px;font-size:15px}.dw .tip .sub{color:#a9a48b;font-size:12px;margin-bottom:6px}
+.dw .tip .tl{display:flex;justify-content:space-between;gap:10px;align-items:baseline}.dw .tip .tl .jt{color:#7f7a64;font-size:11.5px;white-space:nowrap}
+.dw .tip .tl.exo{color:#d68cff}.dw .tip .tl.over{color:#f08a2c}.dw .tip .jm{color:#a9a48b;font-size:11.5px}
+.dw .etq{font:700 9.5px/1 Lexend,sans-serif;letter-spacing:.08em;padding:2px 4px;border-radius:2px;margin-left:5px;vertical-align:1px}
+.dw .etq.x{background:#d68cff;color:#1b0f22}.dw .etq.o{background:#f08a2c;color:#241303}
+.dw .tip .pfm{border-top:1px solid #34322b;margin-top:5px;padding-top:4px;font-size:12px;color:#7cc4ff}.dw .tip .pfm span{color:#a9a48b}
+.dw .tip .potfm{color:#e6b85c;font-size:12px}
+.dw .pfx{position:absolute;top:3px;right:3px;width:9px;height:9px;background:#d68cff;transform:rotate(45deg);box-shadow:0 0 5px #d68cff;pointer-events:none}
+.dw .pfo{position:absolute;top:2px;left:3px;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:9px solid #f08a2c;filter:drop-shadow(0 0 2px #f08a2c);pointer-events:none}
 .dw .tip .up{color:#7be07b}.dw .tip .down{color:#e0625a}.dw .tip .ex{color:#6fb2e8}.dw .tip .leg{color:#f08a2c;margin-top:4px}.dw .tip .leg.off{color:#8a7f70}.dw .tip .leg.off i{font-style:normal;color:#a89c88}
 .dw .tip .set{color:#9ad15a;margin-top:6px;font-size:12px}.dw .tip .sig{color:#e6b85c;margin-top:6px;font-style:italic;font-size:12px}.dw .tip .hint{color:#7f7a64;font-size:11px;margin-top:6px}
 .dw .win.opt{width:min(1000px,96vw);height:min(720px,92vh)}
@@ -540,6 +566,11 @@ const CSS = `
 .dw .bes .ongl button{all:unset;cursor:pointer;font-size:12px;padding:3px 10px;border:1px solid #45433b;border-radius:3px;color:#c9c4ab}
 .dw .bes .ongl button.on{background:#b9e54b;border-color:#b9e54b;color:#15140f;font-weight:bold}
 .dw .bes .lock{color:#8a8672;font-style:italic}
+.dw .bes .bv{display:flex;gap:4px;margin-bottom:4px}.dw .bes .bv button{all:unset;flex:1;text-align:center;cursor:pointer;font-size:12px;padding:4px 6px;border:1px solid #45433b;border-radius:3px;color:#c9c4ab}
+.dw .bes .bv button.on{background:#e8c76b;border-color:#e8c76b;color:#15140f;font-weight:bold}
+.dw .bes .bm.ar span{color:#f2d36b}.dw .bes .bm.ar.manque span{color:#8a8672}.dw .bes .bm.manque canvas{filter:grayscale(1) brightness(.55)}
+.dw .bes .bm em{display:block;font-style:normal;color:#8a8672;font-size:10.5px}
+.dw .bes .ame{display:flex;gap:8px;align-items:center;padding:8px 10px;border:1px solid #6b5a2a;border-radius:4px;background:#2f2a1a;font-size:13px}.dw .bes .ame .ic{width:36px;height:36px}
 .dw .bes .kv{display:grid;gap:4px;font-size:13px}.dw .bes .kv div{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #3a383055;padding:3px 0}
 .dw .tip .bu-src{font-size:12px}.dw .tip .bu-ou{margin-top:8px}
 .dw .qb{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);min-height:0}
@@ -719,7 +750,7 @@ type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
  *  Les clics appellent l'API de la partie (World / Player). */
 /** Onglets de la fenêtre des marchands : Défaire (Kerubim), boutique d'un PNJ, et ceux du Marché du Bastion. */
-type OngletEmp = 'recycler' | 'boutique' | 'apparat' | 'etal' | 'conso' | 'cles' | 'confort';
+type OngletEmp = 'recycler' | 'boutique' | 'apparat' | 'etal' | 'conso' | 'cles' | 'confort' | 'havresac';
 export class Windows {
   private root: HTMLDivElement;
   private win: HTMLDivElement | null = null;
@@ -777,6 +808,8 @@ export class Windows {
   private bestObjet: string | null = null;
   private bestOnglet: 'butin' | 'sorts' | 'res' = 'butin';
   private bestRecherche = '';
+  /** « Archis : » 8A : le Bestiaire montre les monstres ou le carnet des archimonstres. */
+  private bestVue: 'monstres' | 'archis' = 'monstres';
   /** Fenêtre du forgemage (maquette « Forgemagie ») : onglet, objet choisi, journal des essais, mode « viser ». */
   private forge = etatForge();
 
@@ -901,6 +934,7 @@ export class Windows {
     else if (this.mode === 'succes') this.renderSucces(); else if (this.mode === 'emp') this.renderEmp(); else if (this.mode === 'zaap') this.renderZaap();
     else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else if (this.mode === 'forge') this.renderForge(); else if (this.mode === 'coffre') this.renderCoffre(); else if (this.mode === 'almanax') this.renderAlmanax(); else if (this.mode === 'dofus') this.renderDofus(); else if (this.mode === 'menu') this.renderMenu(); else if (this.mode === 'social') this.renderSocial(); else if (this.mode === 'ladder') this.renderLadder(); else if (this.mode === 'tresor') this.renderTresor(); else this.renderInv();
     this.win!.querySelector('[data-close]')!.addEventListener('click', () => this.close());
+    this.imageVivant = -1; this.majPerso(this.tVivant);   // perso dessiné dès cette image (pas un canevas vide jusqu'à la suivante)
   }
   private title(name: string, icon: string) {
     return `<div class="ttl"><img src="assets/ui/menu/${icon}.png" alt="" style="object-fit:contain"><b>${name}</b><span class="x" data-close title="Fermer (Échap)"></span></div>`;
@@ -911,7 +945,7 @@ export class Windows {
     const slot = (s: EquipSlot | null) => {
       if (!s) return '<div class="slot none"></div>';
       const it = p.equipment[s], d = it && ITEMS.equipment[it.id];
-      return `<div class="slot ${d ? 'plein' : ''}" data-slot="${s}" title="${d ? '' : SLOT_NAMES[s]}" style="${it ? `box-shadow:inset 0 -3px 0 ${RARITY_COLORS[it.rarity]}` : `background-image:url(${D3}/tx_slot_${SLOT_D3[s]}.png)`}">${d ? iconHtml(d.icon) : ''}</div>`;
+      return `<div class="slot ${d ? 'plein' : ''}" data-slot="${s}" title="${d ? '' : SLOT_NAMES[s]}" style="${it ? `box-shadow:inset 0 -3px 0 ${RARITY_COLORS[it.rarity]}` : `background-image:url(${D3}/tx_slot_${SLOT_D3[s]}.png)`}">${d ? iconHtml(d.icon) + pastillesFM(it) : ''}</div>`;
     };
     const { html, n } = this.cells();
     w.innerHTML = `${this.title('Inventaire', 'inventory')}
@@ -990,11 +1024,11 @@ export class Windows {
     });
     w.querySelectorAll<HTMLElement>('[data-res]').forEach(e => {
       const id = e.dataset.res!, r = ITEMS.resources[id];
-      const eat = () => { if (r.rappel ? this.world.rappel(id) : r.deguisement ? this.world.boire(id) : this.world.eat(id)) { if (r.rappel) this.close(); else this.changed(); } };
+      const eat = () => { if (r.ame ? this.world.relacherAme(id) : r.rappel ? this.world.rappel(id) : r.deguisement ? this.world.boire(id) : this.world.eat(id)) { if (r.rappel || r.ame) this.close(); else this.changed(); } };
       e.addEventListener('mouseenter', ev => { this.tip.innerHTML = this.resTip(r, id); this.tip.style.display = 'block'; this.moveTip(ev); });
       e.addEventListener('mousemove', ev => this.moveTip(ev));
       e.addEventListener('mouseleave', () => this.hideTip());
-      if (r.soin || r.rappel || r.deguisement) { e.addEventListener('contextmenu', eat); e.addEventListener('dblclick', eat); }
+      if (r.soin || r.rappel || r.deguisement || r.ame) { e.addEventListener('contextmenu', eat); e.addEventListener('dblclick', eat); }
       else e.addEventListener('contextmenu', () => { this.hideTip(); this.recettesAvec(id); });
       e.addEventListener('click', ev => { if (ev.altKey && this.world.nourrirFamilier({ res: id, tout: ev.shiftKey })) { ev.preventDefault(); this.changed(); } });
     });
@@ -2027,9 +2061,10 @@ export class Windows {
   /** Bestiaire en jeu (maquette « Drops » 1A+1B, 2B+2C, 3A, 4A) : monstres par sous-zone, onglets Sorts / Résistances / Butin ;
    *  la recherche trouve aussi les objets, avec leur fiche « Où le trouver ». */
   private renderBestiaire() {
-    const w = this.win!, vus = this.vaincus(), connu = (m: string) => this.toutVoir || (vus[m] ?? 0) > 0;
+    const w = this.win!, vus = this.vaincus(), connu = (m: string) => this.toutVoir || (vus[m] ?? 0) > 0 || this.world.player.ames.includes(m);
     const groupes = groupesBestiaire(), q = this.bestRecherche.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
     const va = (n: string) => !q || n.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').includes(q);
+    if (this.bestVue === 'archis' && !archisParLieu().some(g => g.archis.includes(this.bestType))) { this.bestType = archisParLieu()[0]?.archis[0] ?? ''; this.bestObjet = null; }
     if (!this.bestType || !GAME_DATA.monsters[this.bestType]) this.bestType = groupes.flatMap(g => g.monstres).find(connu) ?? groupes[0]?.monstres[0] ?? '';
     const ligne = (m: string) => {
       const d = GAME_DATA.monsters[m], ok = connu(m), L = LOOKS[d.look];
@@ -2048,7 +2083,12 @@ export class Windows {
       fiche = `<div class="tete">${iconeObjet(id)}<div><h3>${escB(nomObjet(id))}</h3><div class="sub">${e ? `Équipement · ${e.slot}` : r?.soin ? 'Consommable' : 'Ressource'} · niveau ${(r ?? e)?.level ?? '?'}</div></div></div>${sourcesHtml(id)}`;
     } else if (this.bestType) {
       const m = this.bestType, d = GAME_DATA.monsters[m], n = vus[m] ?? 0, L = LOOKS[d.look];
-      if (!connu(m)) fiche = `<div class="tete"><canvas width="220" height="220"></canvas><div><h3>???</h3><div class="sub">Pas encore croisé. Bats-en un pour remplir sa fiche.</div></div></div>`;
+      const ameId = d.ame, pris = this.world.player.ames.includes(m), base = d.archiDe ? GAME_DATA.monsters[d.archiDe] : undefined;
+      const ou = d.archiDe ? archisParLieu().find(g => g.archis.includes(m)) : undefined;
+      const ame = d.boss && ameId ? `<div class="ame">${iconeObjet(ameId)}<div><b>${escB(nomObjet(ameId))}</b><div class="sub">${pris ? 'Capturée : elle est dans ton carnet.' : 'Pas encore capturée. Bats ce boss avec une Petite pierre d\'âme dans le sac : son âme se capture une seule fois.'}</div></div></div>`
+        : d.archiDe ? `<div class="ame">${ameId ? iconeObjet(ameId) : ''}<div><b>${escB(ameId ? nomObjet(ameId) : 'Âme')}</b><div class="sub">${pris ? 'Capturée : elle est dans ton carnet.' : `Pas encore capturée. Il remplace parfois un ${escB(base?.name ?? 'monstre')}${ou ? ` (${escB(ou.nom)}, niv. ${ou.niveau})` : ''} : bats-le avec une Petite pierre d'âme dans le sac (Otomaï, Marché couvert du Bastion).`}</div></div></div>` : '';
+      if (!connu(m) && d.archiDe) fiche = `<div class="tete"><canvas data-atlas="${L?.atlas ?? ''}" width="220" height="220" style="filter:grayscale(1) brightness(.55)"></canvas><div><h3>${escB(d.name)}</h3><div class="sub">Archimonstre de ${escB(base?.name ?? '?')}</div></div></div>${ame}`;
+      else if (!connu(m)) fiche = `<div class="tete"><canvas width="220" height="220"></canvas><div><h3>???</h3><div class="sub">Pas encore croisé. Bats-en un pour remplir sa fiche.</div></div></div>`;
       else {
         const niv = niveauHorsPartie(m, GAME_DATA), ctx = this.world.contexteButin(m, rangDe(d), niv);
         const pal = (k: keyof typeof PALIERS, txt: string) => this.toutVoir || n >= PALIERS[k] ? txt : `<span class="lock">à ${PALIERS[k]} vaincus (${n} pour l'instant)</span>`;
@@ -2059,14 +2099,29 @@ export class Windows {
           : `<div class="kv">${pal('res', res || '<div><span>Aucune résistance</span></div>')}</div>`;
         fiche = `<div class="tete"><canvas data-atlas="${L?.atlas ?? ''}" width="220" height="220"></canvas><div><h3>${escB(d.name)}</h3>
           <div class="sub">${d.boss ? 'Boss · ' : d.elite ? 'Élite · ' : ''}niveau ${niv} · ${n} vaincu${n > 1 ? 's' : ''}${this.toutVoir ? ' · partie de test : tout est visible' : ''}</div>
-          <div class="ongl">${([['sorts', 'Sorts'], ['res', 'Résistances'], ['butin', 'Butin']] as const).map(([k, t]) => `<button type="button" data-bon="${k}" class="${this.bestOnglet === k ? 'on' : ''}">${t}</button>`).join('')}</div></div></div>${corps}`;
+          <div class="ongl">${([['sorts', 'Sorts'], ['res', 'Résistances'], ['butin', 'Butin']] as const).map(([k, t]) => `<button type="button" data-bon="${k}" class="${this.bestOnglet === k ? 'on' : ''}">${t}</button>`).join('')}</div></div></div>${ame}${corps}`;
       }
     }
     const tous = groupes.flatMap(g => g.monstres), nb = tous.filter(m => (vus[m] ?? 0) > 0).length;
+    // « Archis : » 8A : carnet des archimonstres, capturés en couleur, manquants en gris avec leur monstre et leur sous-zone
+    const ames = new Set(this.world.player.ames), archis = this.bestVue === 'archis' ? archisParLieu() : [];
+    const carnet = archis.map(g => {
+      const ms = g.archis.filter(a => va(GAME_DATA.monsters[a].name) || va(GAME_DATA.monsters[GAME_DATA.monsters[a].archiDe!]?.name ?? ''));
+      return ms.length ? `<div class="bh">${escB(g.zone)} · ${escB(g.nom)}${g.niveau ? ` · niv. ${g.niveau}` : ''}</div>${ms.map(a => {
+        const d = GAME_DATA.monsters[a], ok = ames.has(a), L = LOOKS[d.look];
+        return `<div class="bm ar ${ok ? '' : 'manque'} ${!this.bestObjet && a === this.bestType ? 'on' : ''}" data-bm="${a}"><canvas data-atlas="${L?.atlas ?? ''}" width="68" height="68"></canvas><span>${escB(d.name)}<em>${escB(d.archiDe ? GAME_DATA.monsters[d.archiDe]?.name ?? '' : `Boss · niveau ${d.level ?? '?'}`)}</em></span><small>${ok ? '✔' : ''}</small></div>`;
+      }).join('')}` : '';
+    }).join('');
+    const nbA = archis.reduce((n, g) => n + g.archis.length, 0), prisA = archis.reduce((n, g) => n + g.archis.filter(a => ames.has(a)).length, 0);
+    const vue = `<div class="bv"><button type="button" data-bvue="monstres" class="${this.bestVue === 'monstres' ? 'on' : ''}">Monstres</button><button type="button" data-bvue="archis" class="${this.bestVue === 'archis' ? 'on' : ''}">Archimonstres</button></div>`;
+    const gauche = this.bestVue === 'archis'
+      ? `${vue}<input placeholder="Archimonstre ou monstre..." value="${escB(this.bestRecherche)}" data-bsearch><div class="sub" style="margin:4px 2px">${prisA} / ${nbA} âmes capturées</div>${carnet || '<div class="sub">Rien de ce nom.</div>'}`
+      : `${vue}<input placeholder="Monstre ou objet..." value="${escB(this.bestRecherche)}" data-bsearch><div class="sub" style="margin:4px 2px">${nb} / ${tous.length} monstres croisés</div>
+        ${objets ? `<div class="bh">Objets</div>${objets}` : ''}${liste || (objets ? '' : '<div class="sub">Rien de ce nom.</div>')}`;
     w.innerHTML = `${this.title('Bestiaire', 'bestiary')}<div class="bes">
-      <div class="bl"><input placeholder="Monstre ou objet..." value="${escB(this.bestRecherche)}" data-bsearch><div class="sub" style="margin:4px 2px">${nb} / ${tous.length} monstres croisés</div>
-        ${objets ? `<div class="bh">Objets</div>${objets}` : ''}${liste || (objets ? '' : '<div class="sub">Rien de ce nom.</div>')}</div>
+      <div class="bl">${gauche}</div>
       <div class="bd">${fiche}</div></div>`;
+    w.querySelectorAll<HTMLElement>('[data-bvue]').forEach(e => e.addEventListener('click', () => { this.bestVue = e.dataset.bvue as 'monstres' | 'archis'; this.render(); }));
     dessinerPortraits(w);
     const inp = w.querySelector<HTMLInputElement>('[data-bsearch]')!;
     inp.addEventListener('input', () => { this.bestRecherche = inp.value; this.render(); const m = this.win!.querySelector<HTMLInputElement>('[data-bsearch]')!; m.focus(); m.setSelectionRange(m.value.length, m.value.length); });
@@ -2087,8 +2142,9 @@ export class Windows {
       <div class="hint">Fabriqué : Commun, ou Rare (${Math.round(chanceRare(lv) * 100)} % à ton niveau, garanti avec un ingrédient rare). Jamais de pouvoir légendaire.</div>`;
   }
   private resTip(r: ResourceDef, id: string) {
-    const sorte = r.soin || r.rappel || r.deguisement ? 'Consommable' : r.cle ? 'Clé de donjon' : r.pepite ? 'Monnaie du Bastion' : r.monnaie ? 'Monnaie de l\'île des Wabbits' : r.rune || r.signature ? 'Rune de forgemagie' : 'Ressource';
-    const effet = r.soin ? `<div class="up">+${r.soin} PV</div><div class="hint">Clic droit : manger</div>`
+    const sorte = r.ame ? 'Âme d\'archimonstre' : r.soin || r.rappel || r.deguisement ? 'Consommable' : r.cle ? 'Clé de donjon' : r.pepite ? 'Monnaie du Bastion' : r.monnaie ? 'Monnaie de l\'île des Wabbits' : r.rune || r.signature ? 'Rune de forgemagie' : 'Ressource';
+    const effet = r.ame ? `<div class="up">${escB(GAME_DATA.monsters[r.ame]?.name ?? '')}</div><div class="hint">Capturée dans une Petite pierre d'âme : elle compte dans le carnet du Bestiaire et se montre à l'Assistante d'Otomaï (quête du Dofus Ocre).</div><div class="hint">Clic droit dans l'arène des âmes (au fond du Marché couvert, Bastion des Douze) : la relâcher pour recombattre son groupe, avec un meilleur butin. L'âme est perdue.</div>`
+      : r.soin ? `<div class="up">+${r.soin} PV</div><div class="hint">Clic droit : manger</div>`
       : r.rappel ? `<div class="up">Retour au dernier Zaap (${this.world.checkpointName})</div><div class="hint">Clic droit : boire</div>`
       : r.deguisement ? `<div class="up">Déguisé en Wabbit pendant ${Math.round(r.deguisement / 60)} min</div><div class="hint">Les Wabbits de l'île ne t'attaquent pas tant que tu ne les tapes pas. Clic droit : boire</div>`
       : r.cle ? `<div class="up">Ouvre l'entrée : ${r.cle}</div><div class="hint">Prise en entrant dans le donjon</div>`
@@ -2112,7 +2168,7 @@ export class Windows {
   private renderCoffre() {
     const w = this.win!, p = this.world.player, c = this.world.coffre, o = Math.min(this.coffreOnglet, c.onglets.length - 1), l = c.onglets[o] ?? [];
     const cell = (it: Item, attr: string) => { const d = ITEMS.equipment[it.id];
-      return `<div class="cell" ${attr}>${iconHtml(d?.icon ?? 0)}<i class="r" style="background:${RARITY_COLORS[it.rarity]}"></i></div>`; };
+      return `<div class="cell" ${attr}>${iconHtml(d?.icon ?? 0)}<i class="r" style="background:${RARITY_COLORS[it.rarity]}"></i>${pastillesFM(it)}</div>`; };
     const onglets = c.onglets.map((x, i) => `<span class="eo ${i === o ? 'on' : ''}" data-co="${i}">${c.noms?.[i] || `Onglet ${i + 1}`} · ${x.length}</span>`).join('');
     const coffre = Array.from({ length: COFFRE.places }, (_, i) => l[i] ? cell(l[i], `data-cr="${i}"`) : '<div class="cell empty"></div>').join('');
     const sac = p.bag.filter(it => ITEMS.equipment[it.id]).map(it => cell(it, `data-cd="${it.uid}"`)).join('');
@@ -2242,9 +2298,9 @@ export class Windows {
     const def = QUETES.pnj[this.empPnj], sv = new Set((def?.services ?? []).map(x => x.service)), marche = MARCHE.includes(this.empPnj);
     const vis = (a: Article) => (!a.v03 || p.v03) && (!a.v04 || p.v04);
     const boutique = (BOUTIQUES[this.empPnj] ?? []).filter(vis);
-    const onglets: [OngletEmp, string][] = marche ? [['etal', 'Étal du jour'], ['conso', 'Consommables'], ['cles', 'Clés'], ['apparat', 'Apparences'], ['confort', 'Confort']]
+    const onglets: [OngletEmp, string][] = marche ? [['etal', 'Étal du jour'], ['conso', 'Consommables'], ['cles', 'Clés'], ['apparat', 'Apparences'], ['havresac', 'Havre-Sac'], ['confort', 'Confort']]
       : ([['recycler', 'Défaire'], ['boutique', 'Boutique'], ['apparat', 'Apparats']] as [OngletEmp, string][]).filter(([k]) => sv.has(k));
-    if (!onglets.some(([k]) => k === this.empOnglet)) this.empOnglet = marche ? (this.empPnj === 'goultard' ? 'cles' : this.empPnj === 'tissebelle' ? 'apparat' : 'conso') : onglets[0]?.[0] ?? 'boutique';
+    if (!onglets.some(([k]) => k === this.empOnglet)) this.empOnglet = marche ? (this.empPnj === 'goultard' ? 'cles' : this.empPnj === 'tissebelle' ? 'apparat' : this.empPnj === 'responsable' ? 'confort' : 'conso') : onglets[0]?.[0] ?? 'boutique';
     const icM = (m: string) => m === 'kamas' ? `<img src="${INV}/kamas.png" alt="" style="width:18px;vertical-align:middle">` : iconHtml(ITEMS.resources[m]?.icon ?? 0);
     const nomM = (m: string) => m === 'kamas' ? 'kamas' : m === PEPITE ? 'Pépites' : ITEMS.resources[m]?.name ?? '';
     // 2C : le prix en rouge quand il manque, et combien
@@ -2289,10 +2345,20 @@ export class Windows {
       corps = `<div class="shop">
           <div class="ent">Confort</div>
           ${ligne(icS, `+${CONFORT.sac.pas} places de sac`, `Ton sac : ${p.tailleSac} places.`, ps == null ? '<span class="hint">Maximum atteint</span>' : prix(ps, PEPITE, 'data-conf="sac"'))}
+          ${(() => { const po = W.prixOngletCoffre(), pe = W.prixEmplacement();
+            return ligne(icS, `Onglet ${W.coffre.onglets.length + 1} du coffre`, 'Pour tout le compte : 60 places de plus dans le coffre partagé.', po == null ? '<span class="hint">Maximum atteint</span>' : prix(po, PEPITE, 'data-conf="onglet"'))
+              + ligne(icS, `Emplacement de perso ${3 + (W.coffre.emplacementsEnPlus ?? 0) + 1}`, 'Pour tout le compte : un héros de plus à l\'accueil.', pe == null ? '<span class="hint">Maximum atteint</span>' : prix(pe, PEPITE, 'data-conf="emplacement"')); })()}
           ${p.v03 ? ligne(icS, `Préréglage ${p.prereglages.length + 1}`, 'Un préréglage d\'équipement de plus (fenêtre du perso).', pp == null ? '<span class="hint">Maximum atteint</span>' : prix(pp, PEPITE, 'data-conf="prer"')) : ''}
           <div class="ent">Bénédictions <span class="hint">· 30 minutes de jeu, une à la fois (une nouvelle remplace l'autre)</span></div>
           ${(Object.keys(BENEDICTIONS) as Benediction[]).map(k => ligne(icS, BENEDICTIONS[k].nom, BENEDICTIONS[k].texte + (b?.k === k ? ` · <b style="color:#b9e54b">active, encore ${Math.ceil(b.reste / 60)} min</b>` : ''), prix(BENEDICTION.prix, PEPITE, `data-beni="${k}"`))).join('')}
         </div><div class="hint">Les Pépites se gagnent avec les contrats, l'Almanax, les quêtes, les succès et les donjons (premier passage, défis).</div>`;
+    } else if (this.empOnglet === 'havresac') {
+      // 6B : les thèmes officiels du Havre-Sac, pour tout le compte ; un clic sur un thème possédé le pose
+      const T = THEMES_HAVRESAC, a = themesPossedes(T, W.coffre), pose = themeChoisi(T, W.coffre).id;
+      corps = `<div class="themes">${themesEnJeu(T).map(t => `<div class="theme${t.id === pose ? ' on' : ''}">
+          <img src="assets/ui/havresac/${t.id}.webp" alt="" loading="lazy"><b>${t.nom}</b>
+          ${t.id === pose ? '<span class="hint">Posé</span>' : a.includes(t.id) ? `<span class="btn" data-tpose="${t.id}">Poser</span>` : prix(T.prix, PEPITE, `data-tachat="${t.id}"`)}</div>`).join('')}</div>
+        <div class="hint">Pour tout le compte. Un thème acheté se pose aussitôt ; si tu es dans ton Havre-Sac, tu y reviens avec le nouveau décor.</div>`;
     } else if (this.empOnglet === 'apparat') {
       // Apparences officielles (5A, 2B) : tout le catalogue (hors pièces de la semaine), payé en Pépites ; le survol habille le perso
       const q = this.apparatRecherche.toLowerCase();
@@ -2301,7 +2367,7 @@ export class Windows {
       corps = `<div class="filtre"><input placeholder="Rechercher une apparence..." value="${this.apparatRecherche.replace(/"/g, '&quot;')}" data-arech>
           <select data-aslot style="width:auto">${[['', 'Toutes'], ['chapeau', 'Coiffes'], ['cape', 'Capes'], ['familier', 'Familiers']].map(([k, n]) => `<option value="${k}" ${this.apparatSlot === k ? 'selected' : ''}>${n}</option>`).join('')}</select>
           <span class="hint">${l.length} apparence${l.length > 1 ? 's' : ''}</span></div>
-        <div class="cata">${apercu()}<div class="shop">${l.slice(0, 120).map(([id, d]) => ligneApparat(id, prix(APPARATS.prix[d.slot] ?? 0, PEPITE, `data-aachat="${id}"`))).join('')}
+        <div class="cata">${apercu()}<div class="shop">${this.apparatRecherche || this.apparatSlot ? '' : teinturesHtml(W, prix)}${l.slice(0, 120).map(([id, d]) => ligneApparat(id, prix(APPARATS.prix[d.slot] ?? 0, PEPITE, `data-aachat="${id}"`))).join('')}
           ${l.length > 120 ? `<div class="hint">… et ${l.length - 120} autres : affine la recherche.</div>` : ''}</div></div>`;
     } else {
       const liste: [string, Article][] = this.empOnglet === 'conso' ? ['otomai', 'bouillotte'].flatMap(b => (BOUTIQUES[b] ?? []).filter(vis).map(a => [b, a] as [string, Article]))
@@ -2315,11 +2381,14 @@ export class Windows {
     w.innerHTML = `${this.title(titre, 'inventory')}<div class="in emp${this.empOnglet === 'recycler' ? ' fm' : ''}">${tete}${corps}</div>`;
     w.querySelectorAll<HTMLElement>('[data-eo]').forEach(e => e.addEventListener('click', () => { this.empOnglet = e.dataset.eo as OngletEmp; this.render(); }));
     w.querySelectorAll<HTMLElement>('[data-etal]').forEach(e => e.addEventListener('click', () => { W.acheterEtal(+e.dataset.etal!); this.changed(); }));
-    w.querySelectorAll<HTMLElement>('[data-conf]').forEach(e => e.addEventListener('click', () => { if (e.dataset.conf === 'sac') W.acheterPlacesSac(); else W.acheterPrereglage(); this.changed(); }));
+    w.querySelectorAll<HTMLElement>('[data-conf]').forEach(e => e.addEventListener('click', () => { const c = e.dataset.conf; if (c === 'sac') W.acheterPlacesSac(); else if (c === 'onglet') W.acheterOngletCoffre(); else if (c === 'emplacement') W.acheterEmplacement(); else W.acheterPrereglage(); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-beni]').forEach(e => e.addEventListener('click', () => { W.acheterBenediction(e.dataset.beni as Benediction); this.changed(); }));
     w.querySelector<HTMLElement>('[data-piece]')?.addEventListener('click', () => { W.acheterPiece(); this.changed(); });
     w.querySelectorAll<HTMLElement>('[data-sac]').forEach(e => e.addEventListener('click', () => { W.acheterSacDuJour(e.dataset.sac as 'rare' | 'epique'); this.changed(); }));
     w.querySelector<HTMLElement>('[data-garde]')?.addEventListener('click', () => this.show('garde'));
+    w.querySelectorAll<HTMLElement>('[data-tachat]').forEach(e => e.addEventListener('click', () => { W.acheterTheme(+e.dataset.tachat!); this.changed(); }));
+    w.querySelectorAll<HTMLElement>('[data-tpose]').forEach(e => e.addEventListener('click', () => { W.poserTheme(+e.dataset.tpose!); this.changed(); }));
+    w.querySelectorAll<HTMLElement>('[data-teint]').forEach(e => e.addEventListener('click', () => { W.acheterTeinture(e.dataset.teint!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-aachat]').forEach(e => e.addEventListener('click', () => { this.world.acheterApparat(e.dataset.aachat!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-essai]').forEach(e => e.addEventListener('mouseenter', () => {
       this.essaiApparat = e.dataset.essai!;
@@ -2374,7 +2443,39 @@ export class Windows {
   nomPerso: () => string = () => '';
   /** Résultats renvoyés par la partie (forge, brisage, fusion, commande) : l'historique de la fenêtre (5A). */
   noteForge(l: LigneLog) { this.forge.log = [l, ...this.forge.log].slice(0, 40); if (this.mode === 'forge' && this.win) this.render(); }
-  noteForgeEvt(e: Parameters<typeof texteForge>[0]) { this.noteForge(texteForge(e)); }
+  noteForgeEvt(e: Parameters<typeof texteForge>[0] & { over?: boolean }) {
+    // Forgemagie v2 9A+9B+9C : éclat de l'issue, chiffres flottants, ligne qui brille sur un exo ou un over réussi
+    const f = this.forge, t = performance.now();
+    f.eclat = { c: ECLAT[e.issue] ?? '#ffffff', at: t };
+    f.flot = f.flot.filter(x => t - x.at < 1100);
+    if (e.issue !== 'echec') f.flot.push({ s: e.stat, t: `+${e.gain}`, c: 'p', at: t });
+    for (const [s, n] of e.pertes) f.flot.push({ s, t: `−${n}`, c: 'm', at: t });
+    if (e.issue !== 'echec' && (e.exo || e.over)) f.brille = { s: e.stat, at: t };
+    this.noteForge(texteForge(e));
+  }
+  /** Forgemagie v2 : Orbe, relance de ligne, potion (historique de la fenêtre). */
+  noteRetouche(e: Extract<SimEvent, { k: 'fmOrbe' | 'fmRelance' | 'fmPotion' }>) {
+    const R = ITEMS.resources;
+    if (e.k === 'fmOrbe') this.noteForge({ t: `Orbe régénérant : tous les jets de ${e.objet} relancés`, c: 'pu' });
+    else if (e.k === 'fmRelance') this.noteForge({ t: `Malek relance ${STAT_NAMES[e.stat as Stat]} : jets ${e.jets[0]} et ${e.jets[1]}, ${e.apres > e.avant ? `${e.avant} → ${e.apres}` : `on garde ${e.avant}`} (${e.kamas} kamas)`, c: e.apres > e.avant ? 'ok' : 'ne' });
+    else this.noteForge({ t: `${R[e.potion]?.name ?? 'Potion'} : dommages neutres en ${e.element}`, c: 'xo', ic: e.potion });
+  }
+  /** Forgemagie v2 3B : rafale en cours (maintenir le clic). */
+  private rafaleT: number | null = null;
+  private rafale() {
+    if (this.rafaleT != null) return;
+    const f = this.forge, stop = () => { if (this.rafaleT != null) { clearInterval(this.rafaleT); this.rafaleT = null; } removeEventListener('pointerup', stop); removeEventListener('blur', stop); if (this.mode === 'forge' && this.win) this.render(); };
+    const pas = () => {
+      const it = f.uid != null ? this.world.objetForgeable(f.uid) : null, r = f.rune && RUNES[f.rune];
+      if (!it || !r || this.mode !== 'forge' || !this.win) { stop(); return; }
+      if ((it.stats[r.stat] ?? 0) >= (f.vise ?? Infinity)) { this.noteForge({ t: `Arrêt : ${STAT_NAMES[r.stat]} à ${it.stats[r.stat] ?? 0}, valeur visée atteinte`, c: 'pu' }); stop(); return; }
+      if (!this.world.forgemager(f.uid!, f.rune!)) { this.noteForge({ t: 'Arrêt : la rune ne passe plus (plafond, runes ou kamas)', c: 'ko' }); stop(); return; }
+      this.changed();
+    };
+    addEventListener('pointerup', stop); addEventListener('blur', stop);
+    pas();
+    if (this.rafaleT == null && this.mode === 'forge') this.rafaleT = window.setInterval(pas, REGLES_V2.rafale.intervalle * 1000);
+  }
   /** Commande de Malek qui avance : l'onglet se met à jour (compte à rebours). */
   majForge() {
     if (this.mode !== 'forge' || !this.win) return;
@@ -2397,13 +2498,34 @@ export class Windows {
     w.querySelectorAll<HTMLElement>('[data-fo]').forEach(e => e.addEventListener('click', () => { f.onglet = e.dataset.fo as typeof f.onglet; this.render(); }));
     w.querySelectorAll<HTMLElement>('[data-fuid]').forEach(e => {
       const it = this.world.objetForgeable(+e.dataset.fuid!)!;
-      e.addEventListener('click', () => { f.uid = it.uid; f.rune = null; this.render(); }); tip(e, it);
+      e.addEventListener('click', () => { f.uid = it.uid; f.rune = null; f.vise = null; f.orbe = null; this.render(); }); tip(e, it);
     });
     w.querySelectorAll<HTMLElement>('[data-frune]').forEach(e => e.addEventListener('click', () => {
       const id = e.dataset.frune!;
       if (e.classList.contains('off') || f.uid == null) return;
       if (f.avance) { if (this.world.forgemager(f.uid, id)) this.changed(); }
-      else { f.rune = id; this.render(); }
+      else { f.rune = id; f.vise = null; this.render(); }
+    }));
+    // Forgemagie v2 3B : rafale (maintenir le clic ou Espace), valeur visée
+    const raf = w.querySelector<HTMLElement>('[data-rafale]');
+    raf?.addEventListener('pointerdown', ev => { ev.preventDefault(); if (!raf.classList.contains('off') || f.avance) this.rafale(); });
+    raf?.addEventListener('keydown', ev => { if ((ev.key === ' ' || ev.key === 'Enter') && !ev.repeat) { ev.preventDefault(); ev.stopPropagation(); this.rafale(); } });
+    raf?.addEventListener('keyup', ev => { if (ev.key === ' ' || ev.key === 'Enter') dispatchEvent(new Event('pointerup')); });
+    w.querySelector<HTMLInputElement>('[data-vise]')?.addEventListener('input', ev => { const n = Math.floor(+(ev.target as HTMLInputElement).value); f.vise = n > 0 ? n : null; });
+    w.querySelector<HTMLInputElement>('[data-vise]')?.addEventListener('keydown', ev => ev.stopPropagation());
+    // Forgemagie v2 7A, 7B, 6A : onglet « Orbes et potions »
+    w.querySelectorAll<HTMLElement>('[data-orbe]').forEach(e => e.addEventListener('click', () => {
+      if (e.classList.contains('off') || f.uid == null) return;
+      const id = e.dataset.orbe!;
+      if (f.orbe !== id) { f.orbe = id; this.render(); return; }
+      f.orbe = null;
+      if (this.world.utiliserOrbe(f.uid, id)) this.changed(); else this.render();
+    }));
+    w.querySelectorAll<HTMLElement>('[data-relance]').forEach(e => e.addEventListener('click', () => {
+      if (!e.classList.contains('off') && f.uid != null && this.world.relancerLigneFM(f.uid, e.dataset.relance as Stat)) this.changed();
+    }));
+    w.querySelectorAll<HTMLElement>('[data-potion]').forEach(e => e.addEventListener('click', () => {
+      if (!e.classList.contains('off') && f.uid != null && this.world.poserPotionFM(f.uid, e.dataset.potion!)) this.changed();
     }));
     w.querySelector<HTMLElement>('[data-fusionner]')?.addEventListener('click', ev => {
       if ((ev.currentTarget as HTMLElement).classList.contains('off') || f.uid == null || !f.rune) return;
@@ -2514,7 +2636,9 @@ export class Windows {
       <div class="coul">${g.couleurs.map((c, i) => `<label><input type="color" data-gcoul="${i}" value="${hexa(c)}">${ZONES[i]}</label>`).join('')}</div>
       <h5>Palettes</h5>
       <div class="pals">${PALETTES.map((pl, i) => `<button type="button" data-gpal="${i}">${pl.c.slice(0, 3).map(x => `<i style="background:${hexa(x)}"></i>`).join('')}${pl.nom}</button>`).join('')}
+        ${TEINTURES.teintures.filter(t => this.world.coffre.teintures?.includes(t.id)).map(t => `<button type="button" data-gteint="${t.id}" title="Teinture">${t.c.slice(0, 3).map(x => `<i style="background:${hexa(x)}"></i>`).join('')}${t.nom}</button>`).join('')}
         <button type="button" data-gofficiel>Couleurs officielles</button></div>
+      ${(this.world.coffre.teintures?.length ?? 0) < TEINTURES.teintures.length ? '<div class="hint">D\'autres teintures (couleurs officielles des classes) chez Tissebelle, au Marché.</div>' : ''}
       <div style="display:flex;gap:10px;margin-top:14px;align-items:center"><span class="btn" data-genr>Enregistrer</span><span class="hint">Gratuit, à chaque garde-robe des villes.</span></div></div>`;
     w.innerHTML = `${this.title('Garde-robe', 'inventory')}<div class="in garde"><div class="apercu">${g ? this.canevas('', objetsPortes(p.equipment, p.apparat), g) : ''}</div>${corps}</div>`;
     if (!f || !g) return;
@@ -2522,6 +2646,7 @@ export class Windows {
     w.querySelectorAll<HTMLElement>('[data-gtete]').forEach(e => e.addEventListener('click', () => { g.tete = +e.dataset.gtete!; this.render(); }));
     w.querySelectorAll<HTMLInputElement>('[data-gcoul]').forEach(e => e.addEventListener('input', () => { g.couleurs[+e.dataset.gcoul!] = parseInt(e.value.slice(1), 16); apercu(); }));
     w.querySelectorAll<HTMLElement>('[data-gpal]').forEach(e => e.addEventListener('click', () => { g.couleurs = [g.couleurs[0], ...PALETTES[+e.dataset.gpal!].c]; this.render(); }));
+    w.querySelectorAll<HTMLElement>('[data-gteint]').forEach(e => e.addEventListener('click', () => { const t = TEINTURES.teintures.find(x => x.id === e.dataset.gteint); if (t) { g.couleurs = [g.couleurs[0], ...t.c]; this.render(); } }));
     w.querySelector('[data-gofficiel]')?.addEventListener('click', () => { g.couleurs = [...f.couleurs]; this.render(); });
     w.querySelector('[data-genr]')?.addEventListener('click', () => {
       const a = apparenceValide(f, g);
@@ -2536,15 +2661,44 @@ export class Windows {
   }
   private vivants = new Map<string, Assemblage | null>();
   private imageVivant = 0;
+  /** Dernier perso dessiné par sorte de canevas : gardé à l'écran le temps que la nouvelle tenue se charge (rien de vide). */
+  private dernierVivant = new Map<string, Assemblage>();
+  private tVivant = 0;
+  private prepare = '';
+  private prepareT = 0;
+  /** Assemblage du perso pour ces objets (lancé au premier appel, null tant qu'il se charge). */
+  private vivant(app: Apparence, objets: string[]) {
+    const k = `${app.tete}|${objets}`, a = this.vivants.get(k);
+    if (a === undefined) { this.vivants.set(k, null); assemblagePour(this.perso!.cle, app, objets).then(x => this.vivants.set(k, x), () => this.vivants.delete(k)); }
+    return a ?? null;
+  }
+  /** Fenêtres fermées : prépare d'avance le perso dans sa tenue du moment (planches chargées, couleurs posées sur un petit canevas)
+   *  et les icônes du sac et de l'équipement, pour que l'inventaire s'ouvre tout de suite. Vérifié deux fois par seconde. */
+  private preparer(t: number) {
+    if (t - this.prepareT < 500) return; this.prepareT = t;
+    const p = this.world.player, objets = objetsPortes(p.equipment, p.apparat), app = this.perso!.app;
+    const k = `${app.tete}|${app.couleurs}|${objets}|${p.bag.length}|${Object.keys(p.resources).length}`;
+    if (k === this.prepare) return;
+    const a = this.vivant(app, objets);
+    prechargerIcones([...Object.values(p.equipment).map(it => it && ITEMS.equipment[it.id]?.icon), ...p.bag.map(it => ITEMS.equipment[it.id]?.icon),
+      ...Object.keys(p.resources).map(id => ITEMS.resources[id]?.icon)].filter((x): x is number => x != null));
+    if (!a) return;   // pas encore chargé : on repassera
+    a.recolorer(app.couleurs);
+    const anim = 'AnimStatiqueExplo0_1';
+    if (a.compte[anim]) { const cv = document.createElement('canvas'); cv.width = cv.height = 64; a.dessiner(cv.getContext('2d')!, anim, 0, 32, 60, 64 / 330); }   // teintes faites d'avance
+    this.prepare = k;
+  }
   /** À appeler à chaque image du jeu : anime les persos dessinés en direct des fenêtres ouvertes (25 images par seconde). */
   majPerso(t: number) {
-    if (!this.win || !this.perso) return;
+    if (!this.perso) return;
+    this.tVivant = t;
+    if (!this.win) { this.preparer(t); return; }
     const f = Math.floor(t / 40); if (f === this.imageVivant) return; this.imageVivant = f;
     this.win.querySelectorAll<HTMLCanvasElement>('canvas.vivant').forEach(cv => {
       const app = cv.dataset.app ? JSON.parse(cv.dataset.app) as Apparence : this.perso!.app, objets = cv.dataset.objets ? cv.dataset.objets.split(',') : [];
-      const k = `${app.tete}|${objets}`;
-      const a = this.vivants.get(k);
-      if (!a) { if (!this.vivants.has(k)) { this.vivants.set(k, null); assemblagePour(this.perso!.cle, app, objets).then(x => this.vivants.set(k, x), () => this.vivants.delete(k)); } return; }
+      const a = this.vivant(app, objets) ?? this.dernierVivant.get(cv.className);
+      if (!a) return;
+      this.dernierVivant.set(cv.className, a);
       a.recolorer(app.couleurs);
       const dpr = (devicePixelRatio || 1) * 2, W = Math.round(cv.offsetWidth * dpr), H = Math.round(cv.offsetHeight * dpr);   // 2x puis réduit : bords lisses
       if (!W || !H) return;
@@ -2573,7 +2727,7 @@ export class Windows {
       for (const it of items) {
         const d = D(it), slot = p.slotFor(it), cur = slot ? p.equipment[slot] : undefined;
         const up = d.level <= p.level && (!cur || noteObjet(it) > noteObjet(cur));
-        cells.push(`<div class="cell ${up ? 'up' : ''} ${d.level > p.level ? 'low' : ''}" data-uid="${it.uid}">${iconHtml(d.icon)}<i class="r" style="background:${RARITY_COLORS[it.rarity]}"></i>${it.cadenas ? CADENAS : ''}</div>`);
+        cells.push(`<div class="cell ${up ? 'up' : ''} ${d.level > p.level ? 'low' : ''}" data-uid="${it.uid}">${iconHtml(d.icon)}<i class="r" style="background:${RARITY_COLORS[it.rarity]}"></i>${pastillesFM(it)}${it.cadenas ? CADENAS : ''}</div>`);
       }
     }
     if ((this.tab === 'tout' || this.tab === 'ressource' || this.tab === 'conso') && !this.kind) for (const [id, n] of Object.entries(p.resources)) {
@@ -2623,10 +2777,20 @@ export class Windows {
     const p = this.world.player, d = ITEMS.equipment[it.id];
     if (!d) return;
     const slot = p.slotFor(it), cur = !worn && slot ? p.equipment[slot] : undefined;
-    const line = (k: Stat, v: number) => `<div class="${it.extra.includes(k) ? 'ex' : v < 0 ? 'down' : ''}">${v > 0 ? '+' : ''}${v} ${STAT_NAMES[k]}</div>`;
+    // Forgemagie v2 (1A+1B) : exo et over marqués, jet officiel au bout de la ligne
+    const fm = d.familier ? null : etatFM(d, it);
+    const line = (k: Stat, v: number) => {
+      const exo = it.exo === k, over = !!fm?.over.includes(k), off = d.stats[k], m = !d.familier && v > 0 ? ligneMax(d, it, k) : 0;
+      const jet = d.familier || v < 0 ? '' : exo ? `exo · max ${m}` : off && off[1] > 0 ? `${off[0]} à ${off[1]}` : m ? `1 à ${m}` : '';
+      const etq = exo ? '<span class="etq x">EXO</span>' : over ? `<span class="etq o">OVER</span> <span class="jm">(max ${m})</span>` : '';
+      return `<div class="tl ${exo ? 'exo' : over ? 'over' : it.extra.includes(k) ? 'ex' : v < 0 ? 'down' : ''}"><span>${v > 0 ? '+' : ''}${v} ${STAT_NAMES[k]}${etq}</span>${jet ? `<span class="jt">${jet}</span>` : ''}</div>`;
+    };
     const stats = STATS.filter(k => it.stats[k] !== undefined).map(k => line(k, it.stats[k]!)).join('');
-    const weapon = (d.weapon ? `<div>${d.weapon.dmg.map(x => `${x.min}–${x.max} dommages ${x.element}`).join(' · ')}</div>` : '')
+    const potion = it.potion ? ITEMS.resources[it.potion] : undefined;
+    const weapon = (d.weapon ? `<div>${dmgArme(d, it).map(x => `${x.min}–${x.max} dommages ${x.element}`).join(' · ')}</div>` : '')
+      + (potion ? `<div class="potfm">${potion.name} : dommages neutres en ${potion.potionFM}</div>` : '')
       + (d.chasse ? '<div class="ex">Arme de chasse</div>' : '');
+    const fmPied = it.puits || it.fm ? `<div class="pfm">${it.puits ? `Puits : ${String(it.puits).replace('.', ',')}` : ''}${it.puits && it.fm ? ' · ' : ''}${it.fm ? `<span>forgemagé ${it.fm} fois</span>` : ''}</div>` : '';
     const leg = [it.legendary, it.legendary2].map(l => {
       if (!l) return '';
       // Pouvoir officiel (0.3) : grisé s'il ne sert pas encore (sort à venir, autre classe)
@@ -2663,7 +2827,7 @@ export class Windows {
     } else if (p.equipment.familier && !worn) fam = `<div class="hint">Alt + clic : le donner à manger au familier (+${FAMILIER_XP.objet(d.level, it.rarity)} XP)</div>`;
     this.tip.innerHTML = `<h4 style="color:${RARITY_COLORS[it.rarity]}">${d.name}</h4>
       <div class="sub">${d.familier ? 'Familier' : `${RARITY_NAMES[it.rarity]} · ${d.weapon?.type ?? SLOT_NAMES[(slot ?? 'amulette') as EquipSlot]}`} · niveau ${d.level}</div>
-      ${weapon}${stats}${fam}${leg}${neuf}${set}${it.signe ? `<div class="sig">Signé par ${it.signe.replace(/[&<>"]/g, '')}</div>` : ''}${lvl}${cmp}${sourcesHtml(it.id, 3)}
+      ${weapon}${stats}${fmPied}${fam}${leg}${neuf}${set}${it.signe ? `<div class="sig">Signé par ${it.signe.replace(/[&<>"]/g, '')}</div>` : ''}${lvl}${cmp}${sourcesHtml(it.id, 3)}
       <div class="hint">${worn ? 'Clic droit : retirer' : it.cadenas ? 'Sous cadenas : jamais défait · Ctrl + clic : l\'ôter' : `Clic droit : équiper · Ctrl + clic : cadenas (défait chez Kerubim : runes + ${kamasDefaire(d, it).toLocaleString('fr-FR')} kamas)`}</div>`;
     this.tip.style.display = 'block'; this.moveTip(ev);
   }

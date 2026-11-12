@@ -118,30 +118,37 @@ PNJ = {
     'phrase': "Je suis ce qui reste d'un œuf en chocolat. Une odeur, surtout. Et beaucoup de colère."},
   # --- Bastion des Douze (maquette Ville, tranchée le 2026-11-07 : 5A 6B) : les PNJ de service quittent le Havre-Sac pour notre ville.
   # Noms et apparences officiels, dialogues inédits. apres = ils n'emménagent qu'après la première visite de cette zone.
-  # Cases : devant leur maison (tools/extraction/bastion.py, recopiées dans zones.json > bastion > pnj).
+  # Cases : dans le Marché couvert, Kerubim à sa porte (tools/extraction/marche.py, recopiées dans zones.json > bastion > pnj ;
+  # les marchands sont sur la carte « marche », cases de la salle).
   'kerubim': {'nom': 'Kerubim Crépin', 'dofusId': 3043, 'zone': 'bastion', 'carte': 'bastion', 'case': BASTION['kerubim'], 'apres': 'astrub', 'titre': 'Antiquaire',
     'phrase': "Entre, entre ! Chez Kerubim, rien n'est inutile : il y a juste des trésors qui ne savent pas encore qu'ils en sont.",
     'services': [{'texte': 'Défaire des objets contre des runes et des kamas.', 'service': 'recycler'}],
     'discussion': [{'reponse': 'Tu rachètes vraiment tout ?', 'texte': "Tout. Une fois, j'ai racheté une chaussette à un Iop… relique sacrée."},
       {'reponse': 'Pourquoi ta boutique est au Bastion ?', 'texte': "Parce que le loyer à Astrub, c'est du vol. Ici, les Douze ont offert le terrain. Et tout le monde passe devant mon comptoir en allant au Marché."}]},
-  'tissebelle': {'nom': 'Tissebelle', 'dofusId': 0, 'zone': 'bastion', 'carte': 'bastion', 'case': BASTION['tissebelle'], 'titre': 'Couturière',
+  'tissebelle': {'nom': 'Tissebelle', 'dofusId': 0, 'zone': 'bastion', 'carte': 'marche', 'case': BASTION['tissebelle'], 'titre': 'Couturière',
     'phrase': "Tourne-toi. Non, l'autre côté. Hmm. On va dire que c'est un bon début.",
     'services': [{'texte': 'Voir les apparats.', 'service': 'apparat'}, {'texte': "M'asseoir devant le miroir (garde-robe).", 'service': 'garde-robe'}],
     'discussion': [{'reponse': 'Tu fabriques tes tissus ?', 'texte': "Je les fais pousser. La soie de Sadida, c'est trois saisons de patience et une saison à empêcher les Bouftous de la brouter."},
       {'reponse': 'Je peux changer de tête ?', 'texte': "Assieds-toi devant le miroir. Ta tête, tes couleurs : c'est gratuit. Le style ne devrait jamais coûter un kama."}]},
-  'otomai': {'nom': 'Otomaï', 'dofusId': 914, 'zone': 'bastion', 'carte': 'bastion', 'case': BASTION['otomai'], 'apres': 'astrub', 'titre': 'Alchimiste',
+  'otomai': {'nom': 'Otomaï', 'dofusId': 914, 'zone': 'bastion', 'carte': 'marche', 'case': BASTION['otomai'], 'apres': 'astrub', 'titre': 'Alchimiste',
     'phrase': "Ah, un volontaire ! Je veux dire : un client. Cette potion te ramène au Zaap. Dans 97 % des cas, en un seul morceau.",
     'services': [{'texte': 'Voir ses potions.', 'service': 'boutique'}],
     'discussion': [{'reponse': 'Et les 3 % ?', 'texte': "Ils reviennent aussi. Juste un peu plus tard, et parfois avec une oreille en plus. Je prends des notes."}]},
-  'bouillotte': {'nom': 'Mère Bouillotte', 'dofusId': 0, 'zone': 'bastion', 'carte': 'bastion', 'case': BASTION['bouillotte'], 'titre': 'Cuisinière',
+  'bouillotte': {'nom': 'Mère Bouillotte', 'dofusId': 0, 'zone': 'bastion', 'carte': 'marche', 'case': BASTION['bouillotte'], 'titre': 'Cuisinière',
     'phrase': "Encore toi, et encore tout maigre ! Assieds-toi. Personne ne repart d'ici le ventre vide, même pas les Bouftous.",
     'services': [{'texte': 'Voir ses plats.', 'service': 'boutique'}],
     'discussion': [{'reponse': "C'est quoi ton secret ?", 'texte': "Du lait de Bambou, une pincée de sel et trois heures à crier sur la marmite. Elle n'aime pas qu'on lui parle doucement."}]},
-  'goultard': {'nom': 'Goultard', 'dofusId': 1216, 'zone': 'bastion', 'carte': 'bastion', 'case': BASTION['goultard'], 'apres': 'astrub', 'titre': 'Clés de donjon',
+  'goultard': {'nom': 'Goultard', 'dofusId': 1216, 'zone': 'bastion', 'carte': 'marche', 'case': BASTION['goultard'], 'apres': 'astrub', 'titre': 'Clés de donjon',
     'phrase': "Tu veux une clé ? Montre tes bras. Hmm. Ça ira. Les monstres te trouveront appétissant, c'est déjà ça.",
     'services': [{'texte': 'Voir les clés.', 'service': 'boutique'}],
     'discussion': [{'reponse': 'Tu ne viens pas avec moi ?', 'texte': "Si je viens, il ne restera rien à taper pour toi. Je suis gentil, tu vois."},
       {'reponse': 'Pourquoi tu vis ici ?', 'texte': "Au Bastion, chacun a déjà prouvé ce qu'il vaut : personne ne me provoque en duel. J'en avais besoin."}]},
+  # Responsable de la boutique (PNJ officiel 5136, Magasin 13E) : confort et thèmes du Havre-Sac, au Marché couvert.
+  'responsable': {'nom': 'Responsable de la boutique', 'dofusId': 5136, 'zone': 'bastion', 'carte': 'marche', 'case': BASTION['responsable'], 'titre': 'Confort et Havre-Sac',
+    'phrase': "Bienvenue ! Ici, rien ne rend plus fort : juste plus à l'aise. Un sac plus grand, un coffre plus large, un Havre-Sac à ton goût.",
+    'services': [{'texte': 'Voir le confort.', 'service': 'confort'}, {'texte': 'Changer le décor de mon Havre-Sac.', 'service': 'havresac'}],
+    'discussion': [{'reponse': 'Pourquoi des Pépites, et pas des kamas ?', 'texte': "Les kamas, c'est pour survivre. Les Pépites, c'est pour vivre bien. Et chez moi, on vit très bien."},
+      {'reponse': 'Un Havre-Sac en forme de Moon ?', 'texte': "Jungle, plage, taverne, pyramide… Quarante-six décors, tous signés. Ton arche et ton coffre déménagent avec toi, promis."}]},
   # Maquette Ville 5F : gardes et crieur du Bastion. Looks officiels (table npcs), répliques inédites. Un garde de chaque nation
   # attend au départ du pont coupé de son île (bastion.py GARDES) ; deux Gardes d'Amakna encadrent le Zaap.
   'garde_bonta': {'nom': "Soldat d'élite bontarien", 'dofusId': 995, 'zone': 'bastion', 'carte': 'bastion', 'case': BASTION['garde_bonta'], 'titre': 'Garde du pont de Bonta',
@@ -581,6 +588,13 @@ S['dans_les_nuages'] = suc('Dans les nuages', 840, 'Obtenir les Succès suivants
 S['tour_du_monde'] = suc('Le tour du monde en 27 donjons', 559, 'Terminer la série des quêtes du tour du monde.', 'Donjons', 'Le tour du monde', 50, 203,
     [{'nom': q[1], 'quete': q[0]} for q in TDM], 5)
 S['tour_du_monde']['recompense']['titre'] = 'Globe-trotteur'
+# Archimonstres (ligne « Archis : » 8C, 2026-11-12) : paliers du carnet des âmes, titres officiels liés à Otomaï et aux âmes
+ARCHIS = [(10, 'Apprenti d\'Otomaï', 'Dix âmes', 10, 1), (25, 'Farfouilleur d\'Otomaï', 'Vingt-cinq âmes', 20, 2), (50, 'Chasseur d\'Âmes', 'Cinquante âmes', 30, 4),
+          (110, 'Chasseur de Légendes', 'Toutes les âmes', 50, 8)]
+for n, titre, nom, pts, ratio in ARCHIS:
+    S[f'archis_{n}'] = suc(nom, 0, f'Capturer {n} archimonstres différents dans une Petite pierre d\'âme.', 'Monstres', 'Archimonstres', pts, 161,
+        [{'nom': f'{n} archimonstres', 'archis': n}], ratio)
+    S[f'archis_{n}']['recompense']['titre'] = titre
 
 # Collection d'apparences (maquette « Équipement en trop » 1C) : un succès par panoplie dont on a collectionné
 # toutes les pièces visibles (coiffe, cape, bouclier ; au moins deux), en les brisant ou en les recyclant

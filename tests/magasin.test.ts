@@ -6,6 +6,7 @@ import { PEPITE } from '../src/sim/items';
 import { BENEDICTION, CONFORT, etalDuJour, MAGASIN, pieceDeLaSemaine, reserveePiece } from '../src/sim/magasin';
 import { NO_INPUT } from '../src/sim/input';
 import { Player } from '../src/sim/player';
+import { COFFRE, relireCoffre } from '../src/sim/coffre';
 import { exporterJoueur, restaurerJoueur } from '../src/sim/sauvegarde';
 import { World } from '../src/sim/world';
 
@@ -91,5 +92,16 @@ describe('Magasin du Bastion (« Magasin : » 2A-2D 3A+3B 4C)', () => {
     w.step(0.1, NO_INPUT);
     expect(p.benediction).toBeNull();
     expect(p.resources[PEPITE]).toBe(100 - 2 * BENEDICTION.prix);
+  });
+  it('6C : onglets du coffre (jusqu\'à 8) et emplacements de perso (jusqu\'à 5), gardés avec le coffre du compte', () => {
+    const w = monde(), p = w.player; p.resources[PEPITE] = 5000;
+    for (const prix of CONFORT.onglet.prix) { expect(w.prixOngletCoffre()).toBe(prix); expect(w.acheterOngletCoffre()).toBe(true); }
+    expect(w.acheterOngletCoffre()).toBe(false);
+    expect(w.coffre.onglets.length).toBe(COFFRE.max);
+    expect(w.acheterEmplacement()).toBe(true); expect(w.acheterEmplacement()).toBe(true); expect(w.acheterEmplacement()).toBe(false);
+    const relu = relireCoffre(JSON.parse(JSON.stringify(w.coffre)));
+    expect(relu.onglets.length).toBe(COFFRE.max);
+    expect(relu.emplacementsEnPlus).toBe(COFFRE.emplacementsMax);
+    expect(relireCoffre({ onglets: [], emplacementsEnPlus: 99 }).emplacementsEnPlus).toBe(COFFRE.emplacementsMax);
   });
 });

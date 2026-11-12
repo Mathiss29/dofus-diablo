@@ -210,6 +210,8 @@ export interface MonsterDef {
   look: string; color: string; boss?: boolean; elite?: boolean;
   /** Archimonstre (0.3, 15B ; tools/contenu/archimonstres.py) : son monstre (même planche) et le rapport des échelles officielles. */
   archiDe?: string; archiEchelle?: number;
+  /** « Archis : » 6A : objet officiel « Âme capturée : <nom> » donné à la capture. */
+  ame?: string;
   /** Monde ouvert : distance à laquelle il repère le joueur (défaut : OpenDef.aggro). */
   aggro?: number;
   /** Officiel (tools/extraction/monster_stats.py) : niveau, résistances par élément en %, caractéristiques. */
@@ -343,6 +345,8 @@ export interface OpenDef {
   ateliers?: AtelierDef[];
   /** Coffre partagé (0.3, 12A+12B) : où on l'ouvre (Havre-Sac, Banque d'Astrub). Sans case : la case la plus dégagée de la carte. */
   coffres?: { nom: string; carte: string; case?: number }[];
+  /** Forgemagie v2 2B : établi de forgemagie (Havre-Sac) ; le clic ouvre la fenêtre du forgemage. */
+  etablis?: { nom: string; carte: string; case: number }[];
   /** Le Havre-Sac (maquette Hub) : case d'arrivée et case de l'arche officielle (le Zaap du Havre-Sac, 2C), case du Poutch (7A),
    *  thème officiel en jeu (src/data/havresac_themes.json, 5A : les autres thèmes se débloqueront). */
   havreSac?: { arrivee: number; arche: number; poutch?: number; theme?: number };

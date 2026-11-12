@@ -241,9 +241,9 @@ Les anciennes planches ont été converties par `tools/hebergement/planches_avif
 
 ## Emp et la boutique (0.2b, 6 nov. 2026)
 
-- Icônes d'objets ajoutées aux planches `public/assets/ui/objets-hd.webp` (128 px, fenêtres) et `objets.webp` (64 px, Phaser) :
+- Icônes d'objets ajoutées en fichiers `public/assets/ui/objets/<iconId>.webp` (128 px, fenêtres ; un fichier par icône pour que l'inventaire s'ouvre sans attendre) et à la planche `objets.webp` (64 px, Phaser) :
   `python icones_ajout.py <item_assets_2x.bundle> <iconId>...` (le paquet 2x est copié dans `/mnt/project-files/cache-dofus/astrub/item_assets_2x.bundle` ;
-  le 1x, 64 px, donnait des icônes floues dans les fenêtres). Sans iconId, refait les deux planches.
+  le 1x, 64 px, donnait des icônes floues dans les fenêtres). Sans iconId, refait la planche et tous les fichiers (≈ 16 min).
 - PNJ dont le look a un skin et des couleurs (`{bone|skin|1=couleur}`) : `SKINS=<skins_assets_skin_N.bundle> COULEURS=1=<couleur>`
   devant `monster_planche.py`. Emp : `PNJ=1 SCALE=1.32 SKINS=.../skins_assets_skin_1981.bundle COULEURS=1=15788464 python monster_planche.py 1979 pnj_emp <bones> <sortie>`.
 - Cadenas : icône officielle `icons_assets_1x/lockShadowOutline` dans `public/assets/ui/emp/`.
@@ -408,6 +408,20 @@ Ensuite, `python3 -I tools/extraction/zaap_bastion.py <particules.webp d'Astrub>
 remet le tourbillon officiel du Zaap d'Astrub sur l'arche du Bastion (bastion.py réécrit les particules ; 4196 2864 = milieu de l'arche
 avec NS = 8), puis `python3 tools/contenu/quetes.py` et `node tools/hebergement/envoi.mjs`.
 Exemples d'îles hors jeu (planches de pièces, essais de plan) : `/mnt/project-files/ville/ex_ile.py`, `conf_<nation>.py`, `pieces.py`.
+
+Marché couvert (maquette « Magasin : » 1A + 13A-13F, 12 nov. 2026) : `marche.py` ajoute au monde du Bastion une salle de 3 x 3 places
+(tag `marche`, place (0, 9), sous l'archipel) CRÉÉE avec les murs, fenêtres et la porte en arche de la maison 192675846 de la Cité
+(world_735), le sol de dalles et de planches de la même salle, et les trois étals officiels des Hôtels de vente d'Astrub (191104004,
+191102976, 191106052, world_729) ; l'étal rayé et la charrette de 191105028. Porte du dehors = l'Hôtel de vente des cosmétiques
+(`as_boutique`). Écrit la porte (`bastion.open.portes`), les cases des marchands (cases de la salle) et de Kerubim dans
+`zones.json > bastion > open.bastion.pnj` (place `responsable` gardée pour le Responsable de la boutique) et dans `quetes.json`.
+Depuis « Archis : » 7B+9A : une seconde porte en arche dans le mur de droite du Marché mène à l'**arène des âmes** (tag `arene`,
+place `ARENE_SLOT`, mêmes murs, sol de planches avec une piste de dalles et le tapis au milieu), où l'on relâche une âme
+(`World.relacherAme`) ; l'Assistante d'Otomaï (`ASSISTANTE`) est posée près de l'étal d'Otomaï, à plus de 200 px des autres PNJ.
+**À relancer après chaque `bastion.py`** (qui réécrit `monde.json` et les PNJ) :
+
+    TEXDIR=dossier_des_gfx python3 -I tools/extraction/marche.py cartes_dir public/assets/mondes [apercu]
+    node tools/hebergement/envoi.mjs
 
 Ville vivante (maquette Ville 5F, 8 nov. 2026) :
 - Habitants qui flânent (`src/data/passants.json`, `src/sim/passants.ts`) : PNJ officiels à look de personnage (table npcs, `{1|corps,tête,skins|couleurs}`),
@@ -624,3 +638,14 @@ Ville vivante (maquette Ville 5F, 8 nov. 2026) :
 - Village Kanniboul (« Kanniboul : » une seule salle, Mathis 2026-11-10) : la vraie salle au masque (carte 157552640) exportée seule comme
   intérieur `arene_kanniboul` en (40, 60) (`PARTAGE=1 world_export.py`, `bords_fondu.py`, `COURANTE=1 batiments.py`, `decor_par_carte.py`,
   `monde_continent.py fusion`, puis `essai: 1`) ; points de l'arène (cases de la salle) dans `zones.json > donjonsTest`, porte [29,9] case 452.
+
+## Thèmes du Havre-Sac et Responsable de la boutique (Magasin 6B, 6E, 13E ; 12 nov. 2026)
+
+- `TEXDIR=<textures en png> python3 havresac_themes.py <cartes world_621> <textures> public/assets/mondes` : exporte les 46 thèmes
+  officiels (monde `havresac_<id>`, Mercenaire reste `havresac` avec nos meubles) et écrit leurs cases (arche, arrivée, coffre, Poutch)
+  dans `src/data/havresac_themes.json`. Spectacle (8) n'a pas de carte dans le jeu. Vignettes du Marché : `public/assets/ui/havresac/<id>.webp`.
+  Cartes : `cache-dofus/havre-sac/mapdata_assets_world_621.bundle` ; textures : `cache-dofus/astrub/textures-1x` suffit. Puis `envoi.mjs`.
+- Responsable de la boutique (PNJ 5136, look `{5460||1=…,5=…}`) : `PNJ=1 SCALE=1.32 COULEURS=1=9591080,2=15707202,3=13910096,4=6930773,5=13368138
+  monster_planche.py 5460 pnj_responsable <Bones du PC> public/assets/sprites`. `build_char.py` lit maintenant aussi les nœuds `colorGray_N_…`
+  (en minuscules) : sans ça, ce squelette restait gris.
+- Teintures (`src/data/teintures.json`) : couleurs de création des 19 classes (table breeds, maleColors 1 à 5).

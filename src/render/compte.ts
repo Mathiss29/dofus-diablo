@@ -2,7 +2,7 @@
 // Le serveur renvoie le jeu à diablofus.com/#connexion=<jeton> : on garde le jeton dans le navigateur et on efface l'adresse.
 // En mode « En ligne », persos.ts lit et écrit une copie locale des persos du compte ; ce module l'envoie au serveur
 // (au plus toutes les 30 s par emplacement, et tout de suite quand on quitte la page ou revient à l'accueil).
-import { EMPLACEMENTS, lireCoffreBrut, lirePersos, lirePersosLocaux, remplacerCoffreEnLigne, remplacerPersosEnLigne, sourceEnLigne, type Perso } from './persos';
+import { EMPLACEMENTS_MAX, lireCoffreBrut, nbEmplacements, lirePersos, lirePersosLocaux, remplacerCoffreEnLigne, remplacerPersosEnLigne, sourceEnLigne, type Perso } from './persos';
 
 export const API = (import.meta.env.VITE_API_URL as string | undefined) ?? 'https://api.diablofus.com';
 const CLE_JETON = 'diablofus.jeton', CLE_MODE = 'diablofus.mode';
@@ -69,7 +69,7 @@ class CompteEnLigne {
       if (!r.ok) throw new Error(String(r.status));
       const d = await r.json() as { compte: InfosCompte; persos: ({ perso: Perso } | null)[]; coffres: Record<string, unknown> };
       this.infos = d.compte;
-      const l = Array.from({ length: EMPLACEMENTS }, (_, i) => d.persos[i]?.perso ?? null);
+      const l = Array.from({ length: EMPLACEMENTS_MAX }, (_, i) => d.persos[i]?.perso ?? null);
       remplacerPersosEnLigne(l);
       l.forEach((p, i) => this.envoye.set(`p${i}`, JSON.stringify(p)));
       for (const s of ['normal', 'hardcore'] as const) { remplacerCoffreEnLigne(s, d.coffres?.[s] ?? null); this.envoye.set(s, JSON.stringify(d.coffres?.[s] ?? null)); }
@@ -107,7 +107,7 @@ class CompteEnLigne {
   /** Une écriture locale (persos.ts) : envoi groupé, au plus toutes les 30 s par emplacement. */
   private programmer(quoi: 'persos' | 'normal' | 'hardcore' | 'test') {
     if (!this.enLigne || quoi === 'test') return;
-    const cles = quoi === 'persos' ? Array.from({ length: EMPLACEMENTS }, (_, i) => `p${i}`) : [quoi];
+    const cles = quoi === 'persos' ? Array.from({ length: nbEmplacements() }, (_, i) => `p${i}`) : [quoi];
     for (const k of cles) {
       if (this.contenu(k) === this.envoye.get(k) || this.attente.has(k)) continue;
       const delai = Math.max(0, (this.dernierEnvoi.get(k) ?? 0) + ECART - Date.now());
@@ -136,7 +136,7 @@ class CompteEnLigne {
   /** Envoie tout ce qui attend (retour à l'accueil, page fermée). */
   async toutEnvoyer(garder = false) {
     if (!this.enLigne) return;
-    const cles = [...Array.from({ length: EMPLACEMENTS }, (_, i) => `p${i}`), 'normal', 'hardcore'];
+    const cles = [...Array.from({ length: nbEmplacements() }, (_, i) => `p${i}`), 'normal', 'hardcore'];
     await Promise.all(cles.map(k => this.envoyer(k, garder)));
   }
 }

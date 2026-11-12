@@ -16,6 +16,9 @@ export const MAGASIN = {
 export const CONFORT = {
   sac: { pas: 20, prix: [150, 300, 450, 600] },
   prereglage: { prix: [200, 300] },
+  /** onglets du coffre partagé (6e, 7e, 8e) et emplacements de perso (4e, 5e) : pour tout le compte */
+  onglet: { prix: [200, 350, 500] },
+  emplacement: { prix: [400, 600] },
 };
 /** 6D : bénédictions de 30 minutes (bonus du calendrier officiel), une à la fois, payées en Pépites. */
 export type Benediction = 'xp' | 'butin' | 'metier';
@@ -25,8 +28,9 @@ export const BENEDICTIONS: Record<Benediction, { nom: string; bonus: number; tex
   metier: { nom: 'Bénédiction de l\'Artisan', bonus: 0.5, texte: '+50 % d\'XP de métier' },
 };
 export const BENEDICTION = { duree: 1800, prix: 30 };
-/** Marchands du Marché couvert : ils ouvrent la même fenêtre, chacun sur son onglet (13A-13D). */
-export const MARCHE = ['otomai', 'bouillotte', 'goultard', 'tissebelle'];
+/** Marchands du Marché couvert : ils ouvrent la même fenêtre, chacun sur son onglet (13A-13D) ; le Responsable de la boutique
+ *  (PNJ officiel 5136, 13E) tient le confort et les thèmes du Havre-Sac. */
+export const MARCHE = ['otomai', 'bouillotte', 'goultard', 'tissebelle', 'responsable'];
 
 export type Article = { id: string; prix: number; monnaie?: string; v03?: boolean; v04?: boolean; apparat?: boolean; apres?: string };
 export interface Offre { k: 'objet' | 'apparat'; id: string; /** boutique d'origine (objet) */ boutique?: string; prix: number; /** « kamas » ou id de la monnaie */ monnaie: string; remise: boolean; /** prix avant la remise */ avant?: number }

@@ -10,16 +10,21 @@ import apparat from '../data/apparat.json';
 import familiers from '../data/familiers.json';
 import butin from '../data/butin.json';
 import carte from '../data/carte.json';
+import themes from '../data/havresac_themes.json';
+import teintures from '../data/teintures.json';
+import type { Teintures, ThemesHavreSac } from './havresac';
 import type { RecoltesData } from './recolte';
 import type { FamilierDef, ItemsData, Stat } from './items';
 import type { QuetesData } from './quests';
 import type { GameData, WeaponProfile } from './defs';
 import { degatsMonstre } from './danger';
+import { setPotions } from './forgemagie';
 
 export const GAME_DATA = { classes, monsters, zones } as unknown as GameData;
 // 1A (maquette « Danger ») : les dégâts des monstres suivent leur rang et leur niveau (src/data/danger.json) ; le champ dmg du json n'est plus lu
 for (const d of Object.values(GAME_DATA.monsters)) d.dmg = degatsMonstre(d);
 export const ITEMS = items as unknown as ItemsData;
+setPotions(ITEMS.resources);   // Forgemagie v2 6A : potions de forgemagie officielles
 // objets de maître du jeu (Annobusé de Maître Jarbo…) : officiels mais jamais obtenables, hors du butin (butin.json, horsJeu)
 for (const id of Object.keys(butin.horsJeu)) if (ITEMS.equipment[id]) ITEMS.equipment[id].horsJeu = true;
 /** Familiers officiels (src/data/familiers.json, familiers_export.py) : courbe d'XP et familiers, dont ceux d'apparat. */
@@ -52,3 +57,7 @@ for (const [id, f] of Object.entries(FAMILIERS.familiers)) if (f.apparat) APPARA
 // collection d'apparences (1C) : les coiffes, capes et boucliers du jeu, icône sur la planche des objets (case -1)
 for (const [id, d] of Object.entries(ITEMS.equipment))
   if ((d.slot === 'chapeau' || d.slot === 'cape' || d.slot === 'bouclier') && !APPARATS.objets[id]) APPARATS.objets[id] = { name: d.name, slot: d.slot, icon: d.icon, case: -1, collection: true };
+
+/** Thèmes du Havre-Sac et teintures (Magasin 6B, 6E). */
+export const THEMES_HAVRESAC = themes as unknown as ThemesHavreSac;
+export const TEINTURES = teintures as unknown as Teintures;

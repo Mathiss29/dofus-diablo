@@ -1692,6 +1692,15 @@
             ]
           },
           {
+            "titre": "Coffre et héros en plus",
+            "phrase": "L'onglet Confort vend 3 onglets de coffre et 2 emplacements de perso pour tout le compte.",
+            "details": "Le coffre partagé passe jusqu'à 8 onglets. L'accueil accueille jusqu'à 5 héros.",
+            "icone": "sac",
+            "etiquettes": [
+              "Bastion des Douze"
+            ]
+          },
+          {
             "titre": "Attaquer vers la souris",
             "phrase": "Maintiens Q : ton perso attaque sur place vers la souris, sans viser de monstre.",
             "details": "Maj + clic marche toujours. La touche se change dans Options › Touches.",
@@ -1729,12 +1738,124 @@
               "Touche X",
               "Partie de test"
             ]
+          },
+          {
+            "titre": "Exos et overs bien visibles",
+            "phrase": "Les infobulles marquent EXO et OVER, le jet officiel de chaque ligne et le puits.",
+            "details": "Dans le sac et l'équipement, un losange violet signale un exo, un triangle orange un over.",
+            "icone": "forge"
+          },
+          {
+            "titre": "Forgemagie plus rapide",
+            "phrase": "Maintiens « Forger » : quatre runes par seconde, arrêt à la valeur visée.",
+            "details": "Un établi de forgemagie t'attend au Havre-Sac. Les runes Céléritas et Chronos des boss forgent Vitesse et Recharges.",
+            "icone": "forge",
+            "etiquettes": [
+              "Havre-Sac"
+            ]
+          },
+          {
+            "titre": "Orbes, relances et potions",
+            "phrase": "Orbe régénérant, relance d'une ligne chez Malek et potions d'élément pour les armes neutres.",
+            "details": "Les orbes tombent des élites et des boss. L'Alchimiste fabrique les potions officielles, du Crachin au Séisme.",
+            "icone": "forge",
+            "etiquettes": [
+              "Havre-Sac",
+              "Bastion des Douze"
+            ]
+          },
+          {
+            "titre": "Les thèmes du Havre-Sac",
+            "phrase": "46 thèmes officiels du Havre-Sac à 600 Pépites dans l'onglet Havre-Sac du Marché.",
+            "details": "Pour tout le compte. Un thème acheté se pose aussitôt, avec son arche, son coffre et le Poutch.",
+            "icone": "havre",
+            "etiquettes": [
+              "Bastion des Douze",
+              "Touche H"
+            ]
+          },
+          {
+            "titre": "Les teintures",
+            "phrase": "Les couleurs officielles des 19 classes, à 50 Pépites chez Tissebelle, à poser à la garde-robe.",
+            "icone": "apparat",
+            "etiquettes": [
+              "Bastion des Douze"
+            ]
+          },
+          {
+            "titre": "Le carnet des archimonstres",
+            "phrase": "Bestiaire › Archimonstres : les âmes capturées en couleur, celles qui manquent en gris avec leur monstre.",
+            "details": "Chaque capture donne son âme officielle, « Âme capturée : … ». Succès à 10, 25, 50 et 110 âmes, avec un titre.",
+            "icone": "bestiaire",
+            "etiquettes": [
+              "Bestiaire"
+            ]
+          },
+          {
+            "titre": "L'éternelle moisson",
+            "phrase": "Otomaï veut le Dofus Ocre : montre tes âmes capturées à son Assistante, au Marché couvert.",
+            "details": "Six pages d'une vingtaine d'âmes, avec Pépites, pierres, sacs et titres officiels. L'Ocre viendra avec le Kralamoure.",
+            "icone": "quete",
+            "etiquettes": [
+              "Bastion des Douze"
+            ]
+          },
+          {
+            "titre": "Archimonstre signalé",
+            "phrase": "Chaque jour, le tableau des contrats signale un archimonstre de ton niveau dont tu n'as pas l'âme.",
+            "details": "Trouve-le, capture son âme et rapporte la nouvelle au tableau : Pépites, kamas, XP et un sac Rare.",
+            "icone": "contrat",
+            "etiquettes": [
+              "Contrats"
+            ]
+          },
+          {
+            "titre": "L'arène des âmes",
+            "phrase": "Clic droit sur une âme, dans l'arène à côté du Marché couvert : l'archimonstre revient avec son groupe.",
+            "details": "L'âme est perdue, mais le groupe se bat comme un boss et lâche un butin de boss.",
+            "icone": "boss",
+            "etiquettes": [
+              "Bastion des Douze"
+            ]
           }
         ],
-        "Le monde": [],
-        "Combat": [],
+        "Le monde": [
+          {
+            "titre": "Le Marché couvert",
+            "phrase": "Otomaï, Mère Bouillotte, Goultard et Tissebelle vendent maintenant sous un même toit, au Bastion des Douze.",
+            "details": "Entre par l'Hôtel de vente près de Kerubim. Les étals sont ceux des Hôtels de vente d'Astrub.",
+            "icone": "kamas",
+            "etiquettes": [
+              "Bastion des Douze"
+            ]
+          }
+        ],
+        "Combat": [
+          {
+            "titre": "Archimonstre en vue",
+            "phrase": "Un son et un petit bandeau quand un archimonstre est sur ta carte, et un halo doré sous lui.",
+            "details": "Il lâche toujours un objet Rare. Les élites lâchent parfois une Petite pierre d'âme, et en groupe chacun capture son âme.",
+            "icone": "boss",
+            "etiquettes": [
+              "Carte M"
+            ]
+          },
+          {
+            "titre": "L'âme des boss",
+            "phrase": "Un boss de donjon vaincu avec une Petite pierre d'âme dans le sac donne son âme officielle, une fois.",
+            "details": "Les 17 boss du jeu comptent dans le carnet des âmes du Bestiaire.",
+            "icone": "boss",
+            "etiquettes": [
+              "Donjons"
+            ]
+          }
+        ],
         "Corrections": [
-          "Plus de saccades en marchant près du décor, et moins de travail quand on change de carte."
+          "Plus de saccades en marchant près du décor, et moins de travail quand on change de carte.",
+          "L'inventaire s'ouvre tout de suite : icônes et personnage sont prêts avant même de l'ouvrir.",
+          "Le Zaap ne s'ouvre plus en cliquant à côté : seul le dessin de l'arche répond au clic.",
+          "L'exo s'ouvre dès Épique ; PA, PM et Portée restent réservés aux Légendaires et aux Mythiques.",
+          "L'Assistante d'Otomaï a maintenant son vrai visage, avec son petit compagnon, au Marché couvert."
         ],
         "En coulisses": [
           "Le guichet de Kerubim quitte le Havre-Sac, et le Concasseur de Malek passe chez Kerubim.",

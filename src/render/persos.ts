@@ -1,5 +1,5 @@
 import type { EtatJoueur } from '../sim/sauvegarde';
-import { relireCoffre, type Coffre } from '../sim/coffre';
+import { COFFRE, relireCoffre, type Coffre } from '../sim/coffre';
 import type { Apparence } from './squelette';
 import type { Session, StatsPerso } from './carnet';
 
@@ -27,7 +27,11 @@ export interface Perso {
   session?: Session;
 }
 
+/** 3 emplacements, plus ceux achetés au Marché (Magasin 6C), gardés avec le coffre du compte (normal ou Hardcore). */
 export const EMPLACEMENTS = 3;
+/** Le plus d'emplacements possible (le serveur des comptes en garde autant). */
+export const EMPLACEMENTS_MAX = EMPLACEMENTS + COFFRE.emplacementsMax;
+export const nbEmplacements = () => EMPLACEMENTS + Math.max(lireCoffre('normal').emplacementsEnPlus ?? 0, lireCoffre('hardcore').emplacementsEnPlus ?? 0);
 const CLE = 'diablofus.persos';
 const CLE_DERNIER = 'diablofus.dernier';
 
@@ -44,7 +48,7 @@ const lireListe = (k: string): (Perso | null)[] => {
   let l: (Perso | null)[] = [];
   try { l = JSON.parse(localStorage.getItem(k) ?? '[]'); } catch { /* stockage indisponible ou abîmé */ }
   if (!Array.isArray(l)) l = [];
-  return Array.from({ length: EMPLACEMENTS }, (_, i) => (l[i] && typeof l[i] === 'object' ? assainir(l[i]!) : null));
+  return Array.from({ length: nbEmplacements() }, (_, i) => (l[i] && typeof l[i] === 'object' ? assainir(l[i]!) : null));
 };
 const nombre = (x: unknown, d = 0) => (typeof x === 'number' && Number.isFinite(x) ? x : d);
 /** Sécurité : une sauvegarde importée (fichier .diablofus reçu de quelqu'un) peut contenir n'importe quoi. Les champs

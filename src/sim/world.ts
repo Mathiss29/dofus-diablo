@@ -11,10 +11,10 @@ import { jetOfficiel } from './danger';
 import { REGLAGES_BUTIN, monstresDeZone, panoDuBoss, poolNiveau, poolOfficiel, rangDe, tirerButin, type Butin, type CtxButin, type Rang } from './butin';
 import { PASSIFS, TROPHEES, tropheesDuBoss } from './dofus';
 import { ajouterPieces, CLE_COFFRE, enSurcharge, ouvrirCoffre, piecesMonstre, piecesObjet, seuilsCoffre } from './enutrof';
-import { briser, chanceRune, coutKamas, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
+import { briser, chanceRune, coutKamas, coutRelance, orbeConvient, potionConvient, POTIONS, regenerer, relancerLigne, REGLES_V2, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
 import { V03_PUBLIC, V04_PUBLIC, niveauObjetsMax, slotAPouvoirConnu } from './pouvoirs';
 import { fxImpression, imprimable, nouveauPourCodex, prixImpression } from './codex';
-import { legendaryPower, FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, kamasDefaire, noteObjet, rollItem, type EquipSlot, type Item, type ItemsData, type Rarity, type RecipeDef } from './items';
+import { legendaryPower, FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, kamasDefaire, noteObjet, rollItem, type EquipSlot, type Item, type ItemsData, type Rarity, type RecipeDef, type Stat } from './items';
 import { Player } from './player';
 import { Bete, BETES, REGLES_BETES, type EffetBete, type SortBete } from './bete';
 import { initiativeBonus, removalChance } from './caracs';
@@ -27,8 +27,13 @@ import { appliquerTest, type ReglagesTest } from './outilsTest';
 import { Passants, lieuxDeZone } from './passants';
 import { ALMANAX, jourAlmanax, type JourAlmanax } from './almanax';
 import { COFFRE, coffreVide, type Coffre } from './coffre';
+import { themeChoisi, themesEnJeu, themesPossedes, zoneAvecTheme, type Teintures, type ThemesHavreSac } from './havresac';
 /** Archimonstres (0.3, 15B) : chance qu'un monstre d'un groupe soit son archimonstre ; pierres d'âme officielles (vide, pleine). */
-export const ARCHI = { chance: 1 / 150, pierre: '9686', pleine: '10418' };
+export const ARCHI = { chance: 1 / 150, pierre: '9686', pleine: '10418',
+  /** « Archis : » 5B : chance qu'un élite (archimonstres compris) lâche une Petite pierre d'âme. */
+  pierreElite: 1 / 20,
+  /** « Archis : » 7B : salle de l'arène des âmes au Bastion, et monstres de son groupe autour d'un archimonstre relâché (min, max). */
+  arene: 'arene', groupe: [3, 5] as [number, number] };
 import { FABRICATION, METIERS_FAB, chanceRare, ingredientsRares, type Poste } from './metiers';
 import { PLACEMENT, analyserCarte, groupesAuto, placementPose, placementValide, proposerPlacement, type AnalyseCarte, type PlacementCarte } from './placement';
 import { PC_PAR_ID } from './pouvoirsClasse';
@@ -145,6 +150,10 @@ export interface WorldOptions {
   zaap?: string;
   /** Dans le Havre-Sac : d'où l'on vient (pour en ressortir au même endroit). */
   retour?: RetourHavreSac;
+  /** Thèmes du Havre-Sac (src/data/havresac_themes.json, Magasin 6B) : le Havre-Sac prend celui choisi par le compte (coffre.theme). */
+  themesHavreSac?: ThemesHavreSac;
+  /** Teintures (src/data/teintures.json, Magasin 6E). */
+  teintures?: Teintures;
   /** Zones déjà visitées par le perso (3A : les PNJ du Havre-Sac emménagent au fil de l'histoire). */
   zonesVues?: string[];  /** Date du jour (AAAA-MM-JJ), donnée par l'affichage : premier passage d'un donjon au carnet de route (Tour 8B). */
   aujourdhui?: string;
@@ -318,6 +327,7 @@ export class World {
     this.rng = new Rng(opts.seed ?? 1);
     this.zone = opts.data.zones[opts.zone];
     if (!this.zone) throw new Error(`Zone inconnue : ${opts.zone}`);
+    if (opts.themesHavreSac) this.zone = zoneAvecTheme(this.zone, themeChoisi(opts.themesHavreSac, this.coffre));   // la carte chargée par l'affichage est celle du thème
     const dt = this.zone.open?.donjonsTest;   // 0.4 cachée : ses donjons seulement en partie de test (copie : les données restent intactes)
     if ((V04_PUBLIC || opts.test) && dt?.length) this.zone = { ...this.zone, open: { ...this.zone.open!, donjons: [...(this.zone.open!.donjons ?? []), ...dt] } };
     const sz = this.zone.open?.subareas;   // 0.4 cachée : les sous-zones d'Amakna (monstres, butin, contrats) seulement en partie de test
@@ -623,7 +633,9 @@ export class World {
   /** Ce bout de porte fait sortir d'un intérieur vers le dehors. */
   private estSortie(po: World['portes'][number], i: number): boolean {
     const wg = this.worldGrid;
-    return !!wg && !po.vers && !!wg.mapByTag(po.ends[i].tag)?.inside && !wg.mapByTag(po.ends[1 - i].tag)?.inside;
+    // l'archipel du Bastion est rangé en « dedans » (pas de cartes voisines) : sa porte du Marché couvert est pourtant une sortie
+    const dehors = (t: string) => !wg!.mapByTag(t)?.inside || (!!this.zone.open?.bastion && t === 'bastion');
+    return !!wg && !po.vers && !!wg.mapByTag(po.ends[i].tag)?.inside && dehors(po.ends[1 - i].tag) && !dehors(po.ends[i].tag);
   }
   private rayonPorte(po: World['portes'][number], i: number) { return this.estSortie(po, i) ? World.SORTIE_R : World.PORTE_R; }
   static readonly PORTE_ARRIVEE = 80;
@@ -694,7 +706,7 @@ export class World {
       const dedans = !!this.worldGrid.mapByTag(from.tag)?.inside;
       if (po.vers) { best = { x: from.x, y: from.y, nom: po.nom, sortie: false }; continue; }
       const versDedans = !!this.worldGrid.mapByTag(to.tag)?.inside, ici = this.nomCarte(from.tag), la = this.nomCarte(to.tag) ?? po.nom;
-      best = { x: from.x, y: from.y, nom: versDedans && dedans && la === ici ? 'Salle suivante' : la, sortie: dedans && !versDedans };
+      best = { x: from.x, y: from.y, nom: versDedans && dedans && la === ici ? 'Salle suivante' : la, sortie: this.estSortie(po, i) };
     }
     return best;
   }
@@ -790,6 +802,27 @@ export class World {
     p.deguise = r.deguisement;
     this.emit({ k: 'status', x: p.x, y: p.y - 60, text: 'Déguisé en Wabbit !', color: '#e8902a' });
     this.emit({ k: 'potion', x: p.x, y: p.y, amount: 0 });
+    return true;
+  }
+  /** « Archis : » 7B : dans l'arène des âmes du Bastion, relâcher une âme capturée : l'archimonstre revient avec son groupe (le boss seul),
+   *  au milieu de l'arène, et se bat tout de suite ; meilleur butin (celui d'un boss), mais il ne se capture pas. L'âme est perdue. */
+  dansAreneAmes(): boolean { const p = this.player; return this.dansBastion && this.worldGrid?.mapAt(p.x, p.y)?.tag === ARCHI.arene; }
+  relacherAme(id: string): boolean {
+    const p = this.player, r = this.opts.items?.resources[id], type = r?.ame, d = type ? this.opts.data.monsters[type] : undefined;
+    if (!d || !(p.resources[id] > 0) || p.dead) return false;
+    const non = (text: string) => { this.emit({ k: 'status', x: p.x, y: p.y - 60, text, color: '#ff9a5a' }); return false; };
+    if (!this.dansAreneAmes()) return non('À relâcher dans l\'arène des âmes, au Marché couvert du Bastion');
+    if (this.monsters.some(m => m.relache && !m.dead)) return non('L\'arène est déjà occupée');
+    p.resources[id]--; if (!p.resources[id]) delete p.resources[id];
+    const wg = this.worldGrid!, c = this.openestCellOf(ARCHI.arene), libres = wg.freeByMap.get(ARCHI.arene);
+    const types = [type!];
+    if (d.archiDe) { const [a, b] = ARCHI.groupe; for (let i = a + Math.floor(this.rng.next() * (b - a + 1)); i > 0; i--) types.push(d.archiDe); }
+    types.forEach((t, i) => {
+      const ang = i * 2 * Math.PI / Math.max(1, types.length - 1), q = i ? wg.nearestFree(c.x + Math.cos(ang) * 90, c.y + Math.sin(ang) * 45, libres) : c;
+      const m = this.spawnMonster(t, q.x, q.y); m.arene = true; m.relache = true;
+    });
+    this.emit({ k: 'impact', hitstop: 0.05, shake: 0.012, big: true });
+    this.emit({ k: 'ameRelachee', monster: type!, x: c.x, y: c.y });
     return true;
   }
   /** Clé de ce donjon encore valable (14A) : vague atteinte, sinon 0. */
@@ -1883,7 +1916,7 @@ export class World {
     const p = this.player;
     p.soigner(p.cls.healOnKill + p.legendary('vampire'));
     this.dropLoot(m);
-    if (m.def.archiDe) this.capturer(m);
+    if ((m.def.archiDe || (m.def.boss && m.def.ame)) && !m.relache) this.capturer(m);
     const alm = (this.almanax?.effet === 'xp' ? 1 + ALMANAX.xp : 1) * (1 + p.beni('xp'));   // 15C, Magasin 6D
     // Multi (maquette « Multi : » 7A) : chaque joueur proche gagne l'XP comme en solo, +10 % par allié proche
     const proches = this.players.filter(q => q !== p && !q.dead && Math.abs(q.x - m.x) + Math.abs(q.y - m.y) <= World.SOMMEIL);
@@ -1970,20 +2003,39 @@ export class World {
   /** Un monstre vaincu lâche son butin officiel (ressources, parfois un équipement) et, plus rarement, un équipement
    *  de son niveau pris parmi les objets officiels des monstres de la zone. Élites et boss lâchent plus et mieux. Calcul : src/sim/butin.ts. */
   private dropLoot(m: Monster) {
-    if (this.players.length < 2) { this.lacherButin(m.type, rangDe(m.def), this.monsterLevel(m), m.x, m.y); return; }
+    // « Archis : » 7B : l'archimonstre relâché dans l'arène lâche le butin d'un boss ; son niveau est le sien (l'arène est au Bastion)
+    const rang = m.relache && m.def.archiDe ? 'boss' : rangDe(m.def), niv = m.relache ? m.def.level ?? this.monsterLevel(m) : this.monsterLevel(m);
+    if (this.players.length < 2) { this.lacherButin(m.type, rang, niv, m.x, m.y); return; }
     // Multi (« Multi : » 7C) : chaque joueur proche a son propre tirage, que lui seul voit et ramasse
-    for (const q of this.joueursProches(m.x, m.y)) this.commeJoueur(q, () => this.lacherButin(m.type, rangDe(m.def), this.monsterLevel(m), m.x, m.y, 0, q.id));
+    for (const q of this.joueursProches(m.x, m.y)) this.commeJoueur(q, () => this.lacherButin(m.type, rang, niv, m.x, m.y, 0, q.id));
   }
   /** Joueurs qui ont part à ce qui se passe en (x, y) : à moins de SOMMEIL (morts compris : ils se relèvent). */
   joueursProches(x: number, y: number): Player[] { return this.players.filter(q => Math.abs(q.x - x) + Math.abs(q.y - y) <= World.SOMMEIL); }
   private lacherButin(type: string, rang: Rang, niveau: number, mx: number, my: number, kamas = 0, pour?: number) {
     if (!this.opts.items) return;
-    const b = tirerButin(this.rng, this.contexteButin(type, rang, niveau), () => this.nextId++);
+    const ctx = this.contexteButin(type, rang, niveau), b = tirerButin(this.rng, ctx, () => this.nextId++);
     b.kamas += kamas;
+    // « Archis : » 4B : un archimonstre lâche toujours au moins un objet Rare ; 5B : les élites, parfois une Petite pierre d'âme
+    if (this.opts.data.monsters[type]?.archiDe && !b.objets.some(o => RARITIES.indexOf(o.rarity) >= RARITIES.indexOf('rare'))) {
+      const pool = poolNiveau(ctx);
+      if (pool.length) { const id = this.rng.pick(pool).id; b.objets.push(rollItem(id, this.opts.items.equipment[id], 'rare', this.rng, this.nextId++, ctx.pouvoirs)); }
+    }
+    if (rang === 'elite' && this.player.v03 && this.opts.items.resources[ARCHI.pierre] && this.rng.next() < ARCHI.pierreElite) b.ressources.push({ id: ARCHI.pierre });
     // trophées (0.4 suite 3A) : chaque boss de la 0.4 en a deux, rares, une fois chacun
     if (rang === 'boss' && this.player.v04) for (const id of tropheesDuBoss(type))
       if (!this.player.trophees.includes(id) && this.rng.next() < REGLAGES_BUTIN.trophee && this.player.gagnerTrophee(id)) this.emit({ k: 'dofusGagne', id });
+    this.butinForge(b, rang, niveau);
     this.poserButin(b, mx, my, pour);
+  }
+  /** Forgemagie v2 : les boss lâchent les runes maison (5B), élites et boss un Orbe régénérant du niveau du monstre (7A). */
+  private butinForge(b: Butin, rang: Rang, niveau: number) {
+    const R = this.opts.items?.resources;
+    if (!R || (rang !== 'boss' && rang !== 'elite')) return;
+    if (rang === 'boss') for (const id of ['990001', '990002']) if (R[id] && this.rng.next() < REGLES_V2.maison.boss) b.ressources.push({ id });
+    if (this.rng.next() < (rang === 'boss' ? REGLES_V2.orbes.boss : REGLES_V2.orbes.elite)) {
+      const orbe = Object.entries(R).filter(([, r]) => r.orbe && !/\(lié\)/.test(r.name)).sort((x, y) => x[1].orbe! - y[1].orbe!).find(([, r]) => r.orbe! >= niveau)?.[0];
+      if (orbe) b.ressources.push({ id: orbe });
+    }
   }
   /** Butin tiré : ressources dans le sac du joueur qui agit, objets et kamas au sol autour de (mx, my). */
   private poserButin(b: Butin, mx: number, my: number, pour?: number) {
@@ -2134,7 +2186,7 @@ export class World {
       p.bag.splice(i, 1); xp = FAMILIER_XP.objet(d.level, o.rarity);
     } else {
       const r = I.resources[quoi.res], n = p.resources[quoi.res] ?? 0;
-      if (!r || !n || r.pepite || r.monnaie || r.cle) return false;
+      if (!r || !n || r.pepite || r.monnaie || r.cle || r.ame) return false;
       const k = quoi.tout ? n : 1;
       p.resources[quoi.res] -= k; if (!p.resources[quoi.res]) delete p.resources[quoi.res];
       xp = FAMILIER_XP.ressource(r.level) * k;
@@ -2276,7 +2328,41 @@ export class World {
     p.kamas -= kamas;
     if (!--p.resources[rune]) delete p.resources[rune];
     if (Object.values(p.equipment).includes(it)) p.recompute();
-    this.emit({ k: 'forge', uid, rune, issue: r.issue, stat: r.stat, gain: r.gain, pertes: r.pertes, kamas, exo: it.exo === r.stat });
+    this.emit({ k: 'forge', uid, rune, issue: r.issue, stat: r.stat, gain: r.gain, pertes: r.pertes, kamas, exo: it.exo === r.stat, over: r.over, objet: def.name });
+    return true;
+  }
+  // --- Forgemagie v2 (maquette « Forgemagie v2 », Mathis 2026-11-12) -----------------------------------------------------------------
+  /** 7A : un Orbe régénérant du sac relance tous les jets de l'objet (niveau d'objet au plus celui de l'orbe). */
+  utiliserOrbe(uid: number, orbe: string): boolean {
+    const p = this.player, it = this.objetForgeable(uid), def = it && this.opts.items!.equipment[it.id], o = this.opts.items!.resources[orbe]?.orbe;
+    if (!it || !def || !o || !((p.resources[orbe] ?? 0) > 0) || !orbeConvient(def, o)) return false;
+    regenerer(this.rng, def, it, it.id);
+    if (!--p.resources[orbe]) delete p.resources[orbe];
+    if (Object.values(p.equipment).includes(it)) p.recompute();
+    this.emit({ k: 'fmOrbe', uid, objet: def.name });
+    return true;
+  }
+  /** 7B : Malek relance une ligne (deux jets, il garde le meilleur, jamais moins que l'actuel) ; le prix double à chaque fois. */
+  relancerLigneFM(uid: number, s: Stat): boolean {
+    const p = this.player, it = this.objetForgeable(uid), def = it && this.opts.items!.equipment[it.id];
+    if (!it || !def) return false;
+    const k = coutRelance(def, it);
+    if (p.kamas < k) return false;
+    const r = relancerLigne(this.rng, def, it, s);
+    if (!r) return false;
+    p.kamas -= k;
+    if (Object.values(p.equipment).includes(it)) p.recompute();
+    this.emit({ k: 'fmRelance', uid, stat: s, jets: r.jets, avant: r.avant, apres: r.apres, kamas: k });
+    return true;
+  }
+  /** 6A : une Potion de forgemagie du sac change les dommages neutres de l'arme dans son élément (remplace une potion déjà posée). */
+  poserPotionFM(uid: number, potion: string): boolean {
+    const p = this.player, it = this.objetForgeable(uid), def = it && this.opts.items!.equipment[it.id], P = POTIONS[potion];
+    if (!it || !def || !P || !((p.resources[potion] ?? 0) > 0) || !potionConvient(def) || it.potion === potion) return false;
+    it.potion = potion;
+    if (!--p.resources[potion]) delete p.resources[potion];
+    if (Object.values(p.equipment).includes(it)) p.recompute();
+    this.emit({ k: 'fmPotion', uid, potion, element: P.element });
     return true;
   }
   // --- Commande à Malek (maquette « Forgemagie UI » 9A-9E) : objectifs, planchers, budget ; estimée, puis confiée --------------
@@ -2388,14 +2474,19 @@ export class World {
     return true;
   }
   /** 15B : un archimonstre vaincu avec une Petite pierre d'âme dans le sac est capturé (pierre pleine, et sa page du Bestiaire). */
+  /** « Archis : » 5E : en groupe, chaque joueur proche qui a une pierre capture sa propre âme ; 6A : l'âme officielle nommée ;
+   *  9C : un boss de donjon aussi (son « Âme capturée » officielle, une seule fois). */
   private capturer(m: Monster) {
-    const p = this.player;
-    if (!p.v03 || !(p.resources[ARCHI.pierre] > 0)) return;
-    p.resources[ARCHI.pierre]--; if (!p.resources[ARCHI.pierre]) delete p.resources[ARCHI.pierre];
-    p.resources[ARCHI.pleine] = (p.resources[ARCHI.pleine] ?? 0) + 1;
-    const neuf = !p.ames.includes(m.type);
-    if (neuf) p.ames.push(m.type);
-    this.emit({ k: 'capture', monster: m.type, neuf });
+    for (const p of this.joueursProches(m.x, m.y)) {
+      if (!p.v03 || p.dead || !(p.resources[ARCHI.pierre] > 0)) continue;
+      if (m.def.boss && p.ames.includes(m.type)) continue;   // « Archis : » 9C : l'âme d'un boss se capture une fois (la pierre reste)
+      p.resources[ARCHI.pierre]--; if (!p.resources[ARCHI.pierre]) delete p.resources[ARCHI.pierre];
+      const ame = m.def.ame && this.opts.items?.resources[m.def.ame] ? m.def.ame : ARCHI.pleine;
+      p.resources[ame] = (p.resources[ame] ?? 0) + 1;
+      const neuf = !p.ames.includes(m.type);
+      if (neuf) p.ames.push(m.type);
+      this.commeJoueur(p, () => this.emit({ k: 'capture', monster: m.type, neuf, ame }));
+    }
   }
   /** Achat dans une boutique (src/data/boutique.json), payé dans la monnaie de l'article : kamas pour l'utile (Magasin 5B), Cawottes chez Tiwa Cawoteuw, sinon Pépites.
    *  Un article « apparat » rejoint la collection d'apparences, une fois pour toutes. */
@@ -2457,6 +2548,48 @@ export class World {
   acheterPrereglage(): boolean {
     const prix = this.prixPrereglage(), p = this.player;
     return prix != null && this.payer(prix, PEPITE, () => { p.prereglages.push(null); return true; }, 'confort:prereglage');
+  }
+  /** 6C : un onglet de plus au coffre partagé (tout le compte). */
+  prixOngletCoffre(): number | null { return CONFORT.onglet.prix[this.coffre.onglets.length - COFFRE.onglets] ?? null; }
+  acheterOngletCoffre(): boolean {
+    const prix = this.prixOngletCoffre();
+    const ok = prix != null && this.payer(prix, PEPITE, () => { this.coffre.onglets.push([]); return true; }, 'confort:onglet');
+    if (ok) this.emit({ k: 'coffre' });
+    return ok;
+  }
+  /** 6C : un emplacement de perso de plus (tout le compte : gardé avec le coffre). */
+  prixEmplacement(): number | null { return CONFORT.emplacement.prix[this.coffre.emplacementsEnPlus ?? 0] ?? null; }
+  acheterEmplacement(): boolean {
+    const prix = this.prixEmplacement();
+    const ok = prix != null && this.payer(prix, PEPITE, () => { this.coffre.emplacementsEnPlus = (this.coffre.emplacementsEnPlus ?? 0) + 1; return true; }, 'confort:emplacement');
+    if (ok) this.emit({ k: 'coffre' });
+    return ok;
+  }
+  /** 6B : un thème du Havre-Sac (pour tout le compte), posé aussitôt. */
+  acheterTheme(id: number): boolean {
+    const T = this.opts.themesHavreSac, c = this.coffre;
+    if (!T || !themesEnJeu(T).some(t => t.id === id) || themesPossedes(T, c).includes(id)) return false;
+    const ok = this.payer(T.prix, PEPITE, () => { (c.themes ??= []).push(id); return true; }, `theme:${id}`);
+    if (ok) this.poserTheme(id);
+    return ok;
+  }
+  /** 6B : pose un thème possédé ; dans le Havre-Sac, on y revient aussitôt avec le nouveau décor (même point de retour). */
+  poserTheme(id: number): boolean {
+    const T = this.opts.themesHavreSac, c = this.coffre;
+    if (!T || !themesPossedes(T, c).includes(id) || !themesEnJeu(T).some(t => t.id === id)) return false;
+    const avant = themeChoisi(T, c).id;
+    c.theme = id;
+    this.emit({ k: 'coffre' });
+    if (this.dansHavreSac && avant !== id) this.emit({ k: 'changeZone', zone: 'havresac', nom: 'Havre-Sac', retour: this.retour ?? undefined });
+    return true;
+  }
+  /** 6E : une teinture (couleurs officielles d'une classe) pour tout le compte ; elle se pose à la garde-robe. */
+  acheterTeinture(id: string): boolean {
+    const T = this.opts.teintures, c = this.coffre;
+    if (!T?.teintures.some(t => t.id === id) || c.teintures?.includes(id)) return false;
+    const ok = this.payer(T.prix, PEPITE, () => { (c.teintures ??= []).push(id); return true; }, `teinture:${id}`);
+    if (ok) this.emit({ k: 'coffre' });
+    return ok;
   }
   /** 6D : une bénédiction de 30 minutes ; elle remplace celle en cours. */
   acheterBenediction(k: Benediction): boolean {
@@ -2547,6 +2680,11 @@ export class World {
     const wg = this.worldGrid, A = this.zone.open?.ateliers;
     if (!wg) return;
     this.buildCoffres();
+    for (const e of this.zone.open?.etablis ?? []) {   // Forgemagie v2 2B : l'établi du Havre-Sac
+      if (!wg.mapByTag(e.carte)) continue;
+      const c = wg.cellToWorld(wg.cellOf(e.carte, e.case)), q = wg.nearestFree(c.x, c.y, wg.freeByMap.get(e.carte)!);
+      this.postes.push({ id: this.nextId++, atelier: e.nom, metiers: [], tag: e.carte, x: q.x, y: q.y, forge: true });
+    }
     if (!A) return;
     for (const a of A) {
       if (!this.player.v03 && a.metiers.every(m => METIERS_FAB.includes(m))) continue;   // 0.3 : ateliers de fabrication
@@ -2634,6 +2772,7 @@ export class World {
     this.versPoste = null;
     p.stopMove(); p.facing = Math.atan2(po.y - p.y, po.x - p.x);
     if (po.coffre) { this.emit({ k: 'coffreOuvert' }); return; }
+    if (po.forge) { this.emit({ k: 'etabliForge' }); return; }
     this.emit({ k: 'atelier', poste: po.id, metier: po.metiers[0] });
   }
   /** Lance la fabrication de n fois la recette i (fenêtre Artisanat) : une barre d'une seconde, puis tout est fait d'un coup. */

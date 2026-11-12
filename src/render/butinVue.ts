@@ -62,6 +62,27 @@ export function groupesBestiaire(): Groupe[] {
   return groupes = out.filter(g => g.monstres.length);
 }
 
+/** « Archis : » 8A : les archimonstres du jeu rangés par la sous-zone de leur monstre (là où on le croise d'abord). */
+export interface GroupeArchis { zone: string; nom: string; niveau: number; archis: string[] }
+let archisLieux: GroupeArchis[] | null = null;
+export function archisParLieu(): GroupeArchis[] {
+  if (archisLieux) return archisLieux;
+  const out: GroupeArchis[] = [], par = new Map<string, GroupeArchis>();
+  const tous = Object.entries(GAME_DATA.monsters).filter(([, d]) => d.archiDe).map(([k]) => k);
+  for (const g of groupesBestiaire()) for (const a of tous) {
+    if (!g.monstres.includes(GAME_DATA.monsters[a].archiDe!)) continue;
+    const k = `${g.zone}|${g.nom}`;
+    let o = par.get(k); if (!o) { o = { zone: g.zone, nom: g.nom, niveau: g.niveau, archis: [] }; par.set(k, o); out.push(o); }
+    o.archis.push(a);
+  }
+  const places = new Set(out.flatMap(o => o.archis)), reste = tous.filter(a => !places.has(a));
+  if (reste.length) out.push({ zone: 'Ailleurs', nom: 'Vagues et donjons', niveau: 0, archis: reste });
+  // « Archis : » 9C : les âmes des boss de donjon comptent aussi (quête de l'Ocre), du plus petit niveau au plus grand
+  const boss = Object.entries(GAME_DATA.monsters).filter(([, d]) => d.boss && d.ame).sort((a, b) => (a[1].level ?? 0) - (b[1].level ?? 0)).map(([k]) => k);
+  if (boss.length) out.push({ zone: 'Donjons', nom: 'Boss de donjon', niveau: 0, archis: boss });
+  return archisLieux = out;
+}
+
 /** D'où vient un objet (1B, 7A+7B+7C+7D) : monstres, récolte, recettes, boutiques ; et à quoi il sert. */
 export function sourcesDe(id: string): { sources: Source[]; sertA: Source[] } {
   const sources: Source[] = [], sertA: Source[] = [];

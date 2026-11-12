@@ -4,7 +4,8 @@ import { apercuSort } from '../sim/apercu';
 import { dossier, v } from './assetUrl';
 import Phaser from 'phaser';
 import { calerCamera, densite, densitePleine, reglerDensite } from './pixel';
-import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES } from '../sim/data';
+import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES, TEINTURES, THEMES_HAVRESAC } from '../sim/data';
+import { themeChoisi, zoneAvecTheme } from '../sim/havresac';
 import type { Compte } from '../sim/quests';
 import { QuestView } from './questView';
 import { PassantsView } from './passantsView';
@@ -25,7 +26,7 @@ import type { PlayerInput } from '../sim/input';
 import { entreesAllies } from '../sim/allie';
 import type { SkillId } from '../sim/defs';
 import type { Entity } from '../sim/entity';
-import { World } from '../sim/world';
+import { ARCHI, World } from '../sim/world';
 import { DANGER } from '../sim/danger';
 import { EntityView } from './entityView';
 import * as Touches from './touches';
@@ -53,7 +54,7 @@ import { inviterDiscord } from './inviteDiscord';
 import { Parcours } from './parcours';
 import { MesureFluidite } from './fluidite';
 import { spellTipHtml } from './spellTip';
-import { LEGENDARY, RARITY_COLORS, RARITY_NAMES, rollItem } from '../sim/items';
+import { LEGENDARY, RARITY_COLORS, RARITY_NAMES, STAT_NAMES, rollItem, type Stat } from '../sim/items';
 import { POUVOIR_PAR_ID, V03_PUBLIC, V04_PUBLIC } from '../sim/pouvoirs';
 import { lieuxDeZone } from '../sim/passants';
 import { PC_PAR_ID } from '../sim/pouvoirsClasse';
@@ -75,6 +76,8 @@ import { ChatVue } from './chat';
 import { lienObjet } from './chatOutils';
 import { BullesChat } from './bullesChat';
 import { demandesEnAttente, menuJoueur, montrerInvitation } from './social';
+/** Archimonstres du jeu (carnet des âmes, « Archis : » 8A). */
+const NB_ARCHIS = Object.values(GAME_DATA.monsters).filter(d => d.archiDe).length;
 
 const ASSETS = 'assets';
 const mapDir = ([x, y]: [number, number]) => `${ASSETS}/cartes/${x}_${y}`;
@@ -248,7 +251,7 @@ export class ZoneScene extends Phaser.Scene {
     if (GAME_DATA.classes[this.classId].souffrance) for (let i = 1; i <= 10; i++)
       if (!this.textures.exists(`souffrance_${i}`)) this.load.image(`souffrance_${i}`, v(`${ASSETS}/ui/souffrance/s${i}.png`));
     if (!this.textures.exists(ICON_SHEET.key)) this.load.spritesheet(ICON_SHEET.key, v(`${ASSETS}/${ICON_SHEET.url}`), { frameWidth: ICON_SHEET.cell, frameHeight: ICON_SHEET.cell });
-    const zone = GAME_DATA.zones[this.zoneId];
+    const zone = this.zoneVue();
     // On ne charge que les planches utiles à cette zone
     const types = new Set<string>();
     if (zone.open) for (const s of Object.values(zone.open.subareas)) s.monsters.forEach(m => types.add(m));
@@ -309,7 +312,7 @@ export class ZoneScene extends Phaser.Scene {
   }
 
   create() {
-    const zone = GAME_DATA.zones[this.zoneId], seed = (Math.random() * 2 ** 32) >>> 0;
+    const zone = this.zoneVue(), seed = (Math.random() * 2 ** 32) >>> 0;
     this.input.mouse?.disableContextMenu();
     // Deux caméras : celle du jeu (zoom à la molette) et celle de l'interface (jamais zoomée).
     // Tout objet ajouté à la scène est ignoré par la caméra d'interface, sauf l'interface elle-même (Hud).
@@ -332,7 +335,7 @@ export class ZoneScene extends Phaser.Scene {
     if (zone.open) {
       const open = zone.open;
       const wg = new WorldGrid(this.cache.json.get(WorldView.key(open.world, 'monde')) as WorldData);
-      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, apparats: APPARATS, familierXp: FAMILIERS.xp, recoltes: RECOLTES, compte: chargerCompte(), coffre: lireCoffre(this.sorteCoffre), aujourdhui: this.test?.jour ?? jourDuPC(), nuit: () => this.nuitDehors(), tuto: this.test ? false : this.perso?.tuto, test: this.test?.reglages,
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, apparats: APPARATS, themesHavreSac: THEMES_HAVRESAC, teintures: TEINTURES, familierXp: FAMILIERS.xp, recoltes: RECOLTES, compte: chargerCompte(), coffre: lireCoffre(this.sorteCoffre), aujourdhui: this.test?.jour ?? jourDuPC(), nuit: () => this.nuitDehors(), tuto: this.test ? false : this.perso?.tuto, test: this.test?.reglages,
         placements: this.test ? retouchesPlacement(open.world) : undefined,   // éditeur F1 › Placement : retouches pas encore envoyées
         // vitrine : les PNJ sont là, mais aucune quête ne démarre
         arrivee: this.arrivee, position: this.transit.position, point: this.transit.point, zaap: this.transit.zaap, retour: this.transit.retour,
@@ -576,6 +579,8 @@ export class ZoneScene extends Phaser.Scene {
   }
   private get look() { return ((this.perso?.sexe ?? this.essai?.sexe) === 'f' && LOOKS[`${this.classId}_f`]) || LOOKS[this.classId]; }
   /** Coffre partagé (0.3, 12D) : celui des Hardcore est à part, la partie de test a le sien. */
+  /** La zone telle qu'on la charge : le Havre-Sac prend le monde et les cases du thème choisi par le compte (Magasin 6B). */
+  private zoneVue() { return zoneAvecTheme(GAME_DATA.zones[this.zoneId], themeChoisi(THEMES_HAVRESAC, lireCoffre(this.sorteCoffre))); }
   private get sorteCoffre(): SorteCoffre { return this.test ? 'test' : this.perso?.hardcore ? 'hardcore' : 'normal'; }
   /** Sauvegarde automatique du perso (toutes les 5 s, en quittant la page, en revenant à l'accueil). */
   private sauver = () => {
@@ -870,7 +875,15 @@ export class ZoneScene extends Phaser.Scene {
     if (this.vitrine || !this.world.zone.open) return null;
     const wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
     const r = this.world.zaapRefuge(), l = r ? [...this.world.zaapsIci(), r] : this.world.zaapsIci();
-    return l.find(z => { const c = ISO.toScreen(z.x, z.y); return ((wp.x - c.x) / 90) ** 2 + ((wp.y - c.y) / 100) ** 2 <= 1; }) ?? null;
+    return l.find(z => {
+      const c = ISO.toScreen(z.x, z.y);
+      if (Math.abs(wp.x - c.x) > 400 || Math.abs(wp.y - c.y) > 400) return false;
+      // seulement sur le dessin de l'arche, au pixel près (Mathis, 2026-11-12 : on entrait en cliquant à côté) ; la particule
+      // officielle n'est pas au milieu de l'arche (souvent à son pied, d'un côté), l'ancien ovale autour d'elle débordait sur le sol
+      const arche = this.transparence?.dessinAutour(c.x, c.y, 40) ?? [];
+      if (arche.length) return arche.some(im => this.transparence!.pixelOpaque(im, wp.x, wp.y));
+      return ((wp.x - c.x) / 60) ** 2 + ((wp.y - c.y) / 70) ** 2 <= 1;   // dessin pas encore posé
+    }) ?? null;
   }
   /** Nom d'un Zaap comme dans la fenêtre (Territoire : sa sous-zone). */
   private nomZaap(name: string) {
@@ -1156,6 +1169,24 @@ export class ZoneScene extends Phaser.Scene {
       pt.majPerf(pt.calques.perf || pt.calques.coords ? this.texteDebug(pt) : null);
     }
   }
+  /** « Archis : » 2A : un archimonstre en vie sur la carte où l'on est, pas encore annoncé : son et petit bandeau (une fois par archimonstre). */
+  private archisAnnonces = new Set<number>();
+  private guetteArchi = 0;
+  private guetterArchis(dt: number) {
+    if ((this.guetteArchi -= dt) > 0 || this.vitrine) return;
+    this.guetteArchi = 0.4;
+    const w = this.world, wg = w.worldGrid, p = w.player, ici = wg?.mapAt(p.x, p.y)?.tag;
+    for (const m of w.monsters) {
+      if (m.dead || !m.def.archiDe || this.archisAnnonces.has(m.id)) continue;
+      if (wg ? wg.mapAt(m.x, m.y)?.tag !== ici : Math.hypot(m.x - p.x, m.y - p.y) > 900) continue;
+      this.archisAnnonces.add(m.id);
+      const deja = p.ames.includes(m.type);
+      this.hud.plaque(`Archimonstre : ${m.def.name}\n${deja ? 'Âme déjà capturée' : p.resources[ARCHI.pierre] > 0 ? 'Bats-le pour capturer son âme' : 'Il te faut une Petite pierre d\'âme'}`);
+      Son.jouer(MANIFESTE.ui.checkpoint, 'interface', { vol: 0.8, vitesse: 0.8, cle: 'archi', ecart: 2 });
+      const cri = MANIFESTE.monstres[m.type]?.attaque;
+      if (cri?.length) Son.jouer(Son.auHasard(cri), 'effets', { vol: 0.7, cle: 'archiCri', ecart: 2, monstre: true, type: m.type });
+    }
+  }
   /** Temps de calcul moyen d'une image (ms), pour le compteur de fluidité de la partie de test. */
   private msMoyen = 0;
   private calques: CalquesTest | null = null;
@@ -1186,6 +1217,7 @@ export class ZoneScene extends Phaser.Scene {
     this.fx.update(dt);
     this.carte?.update();
     this.majMarquesCarte();
+    this.guetterArchis(dt);
     // fenêtre d'un Zaap du monde : elle se ferme si l'on s'en éloigne
     if (this.windows?.ouverte === 'zaap' && !this.world.dansRefuge && !this.world.zaapProche() && !this.world.zaapDepart) this.windows.close(false);
     // commande chez Malek (Forgemagie UI 9E) : compte à rebours de la fenêtre, une fois par seconde
@@ -1232,7 +1264,7 @@ export class ZoneScene extends Phaser.Scene {
       case 'loot': return e.item.rarity === 'commun' ? null : [`Tu as obtenu ${lienObjet(e.item)} (${RARITY_NAMES[e.item.rarity]})`, 'butin'];
       case 'dofusGagne': return [`${PORTABLE(e.id)?.nom ?? 'Dofus'} obtenu !`, 'butin'];
       case 'sacQuete': { const it = ITEMS.equipment[e.id]; return it ? [`Sac de quête : ${it.name} (${RARITY_NAMES[e.rarity]})`, 'butin'] : null; }
-      case 'capture': return [`${GAME_DATA.monsters[e.monster]?.name ?? 'Archimonstre'} capturé dans une pierre d'âme${e.neuf ? ' (nouveau)' : ''}`, 'butin'];
+      case 'capture': return [`${GAME_DATA.monsters[e.monster]?.name ?? 'Archimonstre'} capturé : ${e.ame ? ITEMS.resources[e.ame]?.name ?? 'âme' : 'pierre pleine'}${e.neuf ? ' (nouveau dans le carnet)' : ''}`, 'butin'];
       case 'levelUp': return [`Niveau ${e.level} atteint : +5 points de caractéristiques${e.level === 100 ? ', +1 PA' : ''}`];
       case 'newSpell': return [`Nouveau sort : ${this.world.player.cls.spells[e.id]?.name ?? e.id}`];
       case 'queteDebut': { const q = this.world.quetes?.def(e.id); return q && q.type !== 'tutoriel' ? [`Nouvelle quête : ${q.nom}`] : null; }
@@ -1248,6 +1280,7 @@ export class ZoneScene extends Phaser.Scene {
       case 'almanax': return [`Almanax : offrande faite, +${e.pepites} Pépites et « ${e.bonus} » jusqu'à minuit`];
       case 'bagFull': return ['Sac plein : défais des objets chez Kerubim Crépin, au Bastion des Douze'];
       case 'bossDown': return [`${GAME_DATA.monsters[e.monster]?.name ?? 'Boss'} vaincu !`];
+      case 'forge': return e.issue !== 'echec' && (e.exo || e.over) ? [`Forgemagie : ${e.exo ? 'exo' : 'over'} ${STAT_NAMES[e.stat as Stat] ?? e.stat} passé sur ${e.objet}`] : null;
       case 'massacreFin': return e.n >= 10 ? [`Massacre de ${e.n} monstres`] : null;
       case 'guerreFin': return [e.coffre ? `${e.champ} défendu : ${e.sauvees} / ${e.total} cawottes, +${e.gain} Cawottes` : `${e.champ} ravagé : toutes les cawottes ont été volées`];
       default: return null;
@@ -1261,6 +1294,8 @@ export class ZoneScene extends Phaser.Scene {
       this.fx.handle(e);
       this.hud.handle(e);
       if (this.chat) { const jn = this.journalDe(e); if (jn) EnLigne.journal(jn[0], jn[1]); }
+      // Forgemagie v2 9C : le groupe l'apprend
+      if (e.k === 'forge' && e.issue !== 'echec' && (e.exo || e.over) && EnLigne.groupe) EnLigne.dire('groupe', `✦ vient de passer un ${e.exo ? 'exo' : 'over'} ${STAT_NAMES[e.stat as Stat] ?? e.stat} sur ${e.objet} !`);
       this.havreSacView?.handle(e);
       if (this.panneau && e.k === 'hit' && e.target === 'monster') this.panneau.noterCoup(e);   // DPS sort par sort, journal (Panneau test 6A, 6B)
       if (this.panneau && e.k === 'hit' && e.target === 'player' && Math.hypot(e.x - this.world.player.x, e.y - this.world.player.y) < 8) this.panneau.noterRecu(e);   // Outil test 8C
@@ -1387,7 +1422,7 @@ export class ZoneScene extends Phaser.Scene {
         case 'craft': this.hud.loot(`${(ITEMS.resources[e.id] ?? ITEMS.equipment[e.id])?.name ?? 'Objet'} x${e.n}${e.rares ? ` (${e.rares} Rare${e.rares > 1 ? 's' : ''})` : ''}`, e.rares ? '#6fb2e8' : '#9ad15a'); this.windows?.refresh(); break;
         case 'eat': this.windows?.refresh(); break;
         // PNJ du Havre-Sac (maquette Hub 4A) : la réponse « service » de son dialogue ouvre sa fenêtre (recycler, boutique, apparats, miroir)
-        case 'service': if (this.windows && (e.service === 'recycler' || e.service === 'boutique' || e.service === 'apparat')) { this.windows.empPnj = e.pnj; this.windows.empOnglet = e.service; this.windows.show('emp'); }
+        case 'service': if (this.windows && (e.service === 'recycler' || e.service === 'boutique' || e.service === 'apparat' || e.service === 'confort' || e.service === 'havresac')) { this.windows.empPnj = e.pnj; this.windows.empOnglet = e.service; this.windows.show('emp'); }
           else if (this.windows && e.service === 'forgemagie') this.windows.ouvrirForge();
           else if (this.windows && e.service === 'garde-robe') this.windows.show('garde');
           else if (this.windows && e.service === 'almanax') this.windows.show('almanax');
@@ -1396,6 +1431,7 @@ export class ZoneScene extends Phaser.Scene {
         case 'arche': this.windows?.show('zaap'); break;
         case 'emmenage': this.hud.toast(`${e.noms.join(', ')} ${e.noms.length > 1 ? 'ont emménagé' : 'a emménagé'} au Bastion des Douze (Zaap ou Potion de Rappel)`); break;
         case 'forge': this.windows?.noteForgeEvt(e); break;
+        case 'fmOrbe': case 'fmRelance': case 'fmPotion': this.windows?.noteRetouche(e); break;
         case 'brisage': { const n = Object.values(e.runes).reduce((a, b) => a + b, 0);
           const k = e.kamas ? ` · +${e.kamas.toLocaleString('fr-FR')} kamas` : '';
           if (e.auto) { this.hud.loot(`${ITEMS.equipment[e.auto]?.name ?? 'Objet'} défait : ${n} rune${n > 1 ? 's' : ''}${k}`, '#b77cf0'); this.windows?.refresh(); break; }
@@ -1403,10 +1439,12 @@ export class ZoneScene extends Phaser.Scene {
           this.windows?.refresh(); break; }
         case 'codex': { const o = POUVOIR_PAR_ID[e.id], c = PC_PAR_ID[e.id]; this.hud.loot(`Codex : ${o ? o.sort : c ? c.nom : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id} enregistré`, '#f08a2c');
           this.windows?.noteForge({ t: `Pouvoir enregistré dans le Codex : ${o ? o.officiel : c ? c.nom : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id}`, c: 'ok' }); break; }
-        case 'capture': this.hud.loot(`${GAME_DATA.monsters[e.monster]?.name ?? 'Archimonstre'} capturé dans une pierre d'âme${e.neuf ? ' (nouveau)' : ''}`, '#ffd27a'); this.windows?.refresh(); break;
+        case 'ameRelachee': this.hud.banner(`${GAME_DATA.monsters[e.monster]?.name ?? 'Archimonstre'}\nrevient se venger !`, 1600, true); break;
+        case 'capture': this.hud.loot(`${e.ame ? ITEMS.resources[e.ame]?.name ?? 'Âme capturée' : `${GAME_DATA.monsters[e.monster]?.name ?? 'Archimonstre'} capturé`}${e.neuf && GAME_DATA.monsters[e.monster]?.archiDe ? ` (nouvelle · ${this.world.player.ames.filter(a => GAME_DATA.monsters[a]?.archiDe).length} / ${NB_ARCHIS})` : e.neuf ? ' (nouvelle)' : ''}`, '#ffd27a'); this.windows?.refresh(); break;
         case 'dofusGagne': this.hud.loot(`${PORTABLE(e.id)?.nom ?? 'Dofus'} obtenu ! ${TROPHEES[e.id] && !this.world.player.dofusPortes.includes(e.id) ? 'Il est dans ton sac (fenêtre des Dofus, onglet Trophées)' : 'Il est dans tes emplacements de Dofus (Inventaire)'}`, '#e8c76b'); this.sauver(); this.windows?.refresh(); break;
         case 'dofusPassif': if (e.dofus === 'argente') this.hud.loot(`Souvenir d'Argent : +${e.n ?? 0} PV`, '#e8c76b'); break;   // le bouclier du Cacao se voit déjà (bouclier violet)
         case 'almanax': this.hud.loot(`Almanax : offrande faite, +${e.pepites} Pépites et « ${e.bonus} » jusqu'à minuit`, '#ffd27a'); this.sauver(); this.windows?.refresh(); break;
+        case 'etabliForge': this.windows?.ouvrirForge(); break;
         case 'coffreOuvert': if (this.windows) { this.windows.coffreHardcore = this.sorteCoffre === 'hardcore'; this.windows.show('coffre'); } break;
         // l'objet a changé de place : coffre et perso sauvés ensemble (pas d'objet perdu ni doublé si la page se ferme)
         case 'coffre': sauverCoffre(this.sorteCoffre, this.world.coffre); this.sauver(); this.windows?.refresh(); break;
@@ -1420,7 +1458,7 @@ export class ZoneScene extends Phaser.Scene {
           else if (e.etat === 'prete') { this.hud.toast('Malek le Forgemage a fini ta commande : ton objet t\'attend au Bastion des Douze'); this.windows?.noteForge({ t: 'Malek a fini ta commande', c: 'ok' }); }
           this.windows?.majForge(); break;
         case 'signature': this.hud.loot(`Objet signé : ${e.nom}`, '#e6b85c'); break;
-        case 'achat': this.hud.loot(`${e.n ? `${e.n} × ` : ''}${e.id.startsWith('sac:') ? 'Sac garanti' : e.id === 'confort:sac' ? 'Places de sac' : e.id === 'confort:prereglage' ? 'Préréglage' : e.id.startsWith('benediction:') ? (BENEDICTIONS[e.id.slice(12) as 'xp']?.nom ?? 'Bénédiction') : ITEMS.resources[e.id]?.name ?? APPARATS.objets[e.id]?.name ?? 'Objet'} acheté (−${e.prix.toLocaleString('fr-FR')} ${e.monnaie === 'kamas' ? 'kamas' : e.monnaie ? (ITEMS.resources[e.monnaie]?.name ?? 'Cawottes') : 'Pépites'})`, '#b9e54b'); break;
+        case 'achat': this.hud.loot(`${e.n ? `${e.n} × ` : ''}${e.id.startsWith('sac:') ? 'Sac garanti' : e.id === 'confort:sac' ? 'Places de sac' : e.id === 'confort:prereglage' ? 'Préréglage' : e.id === 'confort:onglet' ? 'Onglet du coffre' : e.id === 'confort:emplacement' ? 'Emplacement de perso' : e.id.startsWith('benediction:') ? (BENEDICTIONS[e.id.slice(12) as 'xp']?.nom ?? 'Bénédiction') : ITEMS.resources[e.id]?.name ?? APPARATS.objets[e.id]?.name ?? 'Objet'} acheté (−${e.prix.toLocaleString('fr-FR')} ${e.monnaie === 'kamas' ? 'kamas' : e.monnaie ? (ITEMS.resources[e.monnaie]?.name ?? 'Cawottes') : 'Pépites'})`, '#b9e54b'); break;
         case 'rappel': this.hud.banner(`Rappel\n${e.name}`, 1200); this.snapCam = true; break;
         // 17A : lieu découvert (bandeau, un peu d'XP)
         case 'lieuDecouvert': this.hud.banner(`Lieu découvert : ${e.nom}\n+${e.xp} XP`, 2000); Son.jouer(MANIFESTE.ui.objectif, 'interface', { vol: 0.7 }); break;

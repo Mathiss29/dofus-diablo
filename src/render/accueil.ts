@@ -18,7 +18,7 @@ import { installable, installer, surChangement } from './installation';
 import { API, Compte } from './compte';
 import { DISCORD_INVITATION, IDLUS, STUDIO } from './liens';
 import { Parcours } from './parcours';
-import { EMPLACEMENTS, NB_SECOURS, dernier, dureeTexte, exporter, importer, lireCimetiere, lirePersos, lireSecours, nomValide, persosEnLigne, prendreSecours, restaurerSecours, sauverPerso, supprimerPerso, type Perso } from './persos';
+import { nbEmplacements, NB_SECOURS, dernier, dureeTexte, exporter, importer, lireCimetiere, lirePersos, lireSecours, nomValide, persosEnLigne, prendreSecours, restaurerSecours, sauverPerso, supprimerPerso, type Perso } from './persos';
 
 /** Écrans hors du jeu (maquette unique, choix 17A à 23A, 19B, 22D, 30E) : accueil avec Incarnam en direct derrière,
  *  création du perso devant le dieu de sa classe, et « Mes personnages ». Du HTML posé sur le jeu : la partie (ZoneScene)
@@ -569,7 +569,7 @@ export class Accueil {
     </div>
     <div class="abs" style="left:calc(11.5*var(--u));top:calc(39.6*var(--u));display:flex;gap:calc(1*var(--u));align-items:center">
       <button type="button" class="dbtn" style="font-size:calc(.85*var(--u));padding:calc(.5*var(--u)) calc(1*var(--u))" data-go="persos">Mes personnages${n ? ` (${n})` : ''}</button>
-      <span class="tiny">${EMPLACEMENTS} emplacements · sauvegarde automatique</span>
+      <span class="tiny">${nbEmplacements()} emplacements · sauvegarde automatique</span>
       ${installable() ? `<button type="button" class="dbtn" style="font-size:calc(.8*var(--u));padding:calc(.45*var(--u)) calc(.9*var(--u));color:#cfe9a0;border-color:#4d5a2c" data-installer title="Ouvre Diablofus dans sa propre fenêtre, avec une icône sur le bureau. Toujours à jour.">⤓ Installer le jeu</button>` : ''}</div>
     ${p ? this.derniereFois(p) : ''}
     ${this.diapo('right:calc(2*var(--u));top:calc(7.6*var(--u));width:calc(24*var(--u))', true)}
@@ -1056,7 +1056,7 @@ export class Accueil {
     const s = this.crea, c = classe(s.cle);
     if (!JOUABLES.has(c.cle)) return;
     const libre = lirePersos().findIndex(p => !p);
-    if (libre < 0) { this.toast('Tes 3 emplacements sont pris'); return; }
+    if (libre < 0) { this.toast(`Tes ${nbEmplacements()} emplacements sont pris (le Marché du Bastion en vend d'autres)`); return; }
     const nom = s.nom.trim().replace(/\s+/g, ' ');
     if (!nomValide(nom)) { s.err = '3 à 16 lettres (accents, tiret et espace permis).'; this.render(); return; }
     if (lirePersos().some(p => p?.nom.toLowerCase() === nom.toLowerCase())) { s.err = 'Tu as déjà un personnage de ce nom.'; this.render(); return; }

@@ -11,6 +11,8 @@ export interface Poste {
   gfx?: number; dessin?: { x: number; y: number };
   /** Coffre partagé (0.3, 12A+12B) au lieu d'une machine : le clic ouvre le coffre. */
   coffre?: boolean;
+  /** Forgemagie v2 2B : établi de forgemagie, le clic ouvre la forgemagie. */
+  forge?: boolean;
 }
 
 export const FABRICATION = {

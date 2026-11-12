@@ -277,7 +277,8 @@
    "fuite": 0,
    "retraitPA": 0
   },
-  "signature": 2927
+  "signature": 2927,
+  "ame": "33684"
  },
  "pissenlit": {
   "dofusId": 79,
@@ -2787,7 +2788,8 @@
    "retraitPA": 0
   },
   "boss": true,
-  "signature": 5718
+  "signature": 5718,
+  "ame": "33683"
  },
  "milimilou": {
   "dofusId": 4102,
@@ -6724,7 +6726,8 @@
    "fuite": 0,
    "retraitPA": 0
   },
-  "signature": 792
+  "signature": 792,
+  "ame": "33681"
  },
  "gardienne_champetre": {
   "dofusId": 4821,
@@ -7332,7 +7335,8 @@
    "fuite": 0,
    "retraitPA": 0
   },
-  "signature": 990
+  "signature": 990,
+  "ame": "33682"
  },
  "cafarcher": {
   "dofusId": 3940,
@@ -7891,7 +7895,8 @@
    "fuite": 0,
    "retraitPA": 0
   },
-  "signature": 5283
+  "signature": 5283,
+  "ame": "33689"
  },
  "dopeul_iop": {
   "speed": 100,
@@ -8603,7 +8608,8 @@
   },
   "elite": true,
   "archiDe": "bouftou",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33834"
  },
  "archi_boufton": {
   "name": "Boudalf le Blanc",
@@ -8688,7 +8694,8 @@
   },
   "elite": true,
   "archiDe": "boufton",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33832"
  },
  "archi_boufton_noir": {
   "dofusId": 2316,
@@ -8773,7 +8780,8 @@
   },
   "elite": true,
   "archiDe": "boufton_noir",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33833"
  },
  "archi_piou_violet": {
   "dofusId": 2347,
@@ -8867,7 +8875,8 @@
   },
   "elite": true,
   "archiDe": "piou_violet",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33852"
  },
  "archi_piou_rouge": {
   "dofusId": 2344,
@@ -8954,7 +8963,8 @@
   },
   "elite": true,
   "archiDe": "piou_rouge",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33850"
  },
  "archi_piou_vert": {
   "dofusId": 2345,
@@ -9041,7 +9051,8 @@
   },
   "elite": true,
   "archiDe": "piou_vert",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33851"
  },
  "archi_piou_bleu": {
   "dofusId": 2341,
@@ -9128,7 +9139,8 @@
   },
   "elite": true,
   "archiDe": "piou_bleu",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33847"
  },
  "archi_piou_rose": {
   "dofusId": 2343,
@@ -9222,7 +9234,8 @@
   },
   "elite": true,
   "archiDe": "piou_rose",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33849"
  },
  "archi_piou_jaune": {
   "dofusId": 2342,
@@ -9309,7 +9322,8 @@
   },
   "elite": true,
   "archiDe": "piou_jaune",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33848"
  },
  "archi_prespic": {
   "dofusId": 2349,
@@ -9393,7 +9407,8 @@
   },
   "elite": true,
   "archiDe": "prespic",
-  "archiEchelle": 0.833
+  "archiEchelle": 0.833,
+  "ame": "33853"
  },
  "archi_sanglier": {
   "dofusId": 2353,
@@ -9481,7 +9496,8 @@
   },
   "elite": true,
   "archiDe": "sanglier",
-  "archiEchelle": 0.833
+  "archiEchelle": 0.833,
+  "ame": "34036"
  },
  "archi_milimulou": {
   "dofusId": 2333,
@@ -9576,7 +9592,8 @@
   },
   "elite": true,
   "archiDe": "milimulou",
-  "archiEchelle": 0.833
+  "archiEchelle": 0.833,
+  "ame": "33840"
  },
  "archi_tofu_malade": {
   "dofusId": 2356,
@@ -9660,7 +9677,8 @@
   },
   "elite": true,
   "archiDe": "tofu_malade",
-  "archiEchelle": 1.091
+  "archiEchelle": 1.091,
+  "ame": "34037"
  },
  "archi_arakne_malade": {
   "dofusId": 2312,
@@ -9746,7 +9764,8 @@
   },
   "elite": true,
   "archiDe": "arakne_malade",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34011"
  },
  "archi_arakne_des_egouts": {
   "dofusId": 2393,
@@ -9832,7 +9851,8 @@
   },
   "elite": true,
   "archiDe": "arakne_des_egouts",
-  "archiEchelle": 0.769
+  "archiEchelle": 0.769,
+  "ame": "33872"
  },
  "archi_scelerat_strubien": {
   "dofusId": 2350,
@@ -9928,7 +9948,8 @@
   },
   "elite": true,
   "archiDe": "scelerat_strubien",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33854"
  },
  "archi_milirat_strubien": {
   "dofusId": 2334,
@@ -10019,7 +10040,8 @@
   },
   "elite": true,
   "archiDe": "milirat_strubien",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34032"
  },
  "archi_la_ouassingue": {
   "dofusId": 2616,
@@ -10112,7 +10134,8 @@
   },
   "elite": true,
   "archiDe": "la_ouassingue",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33999"
  },
  "archi_le_ouassingue": {
   "dofusId": 2524,
@@ -10205,7 +10228,8 @@
   },
   "elite": true,
   "archiDe": "le_ouassingue",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33938"
  },
  "archi_gargrouille": {
   "dofusId": 2486,
@@ -10319,7 +10343,8 @@
   },
   "elite": true,
   "archiDe": "gargrouille",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33917"
  },
  "archi_larve_bleue": {
   "dofusId": 2574,
@@ -10404,7 +10429,8 @@
   },
   "elite": true,
   "archiDe": "larve_bleue",
-  "archiEchelle": 1.077
+  "archiEchelle": 1.077,
+  "ame": "34114"
  },
  "archi_larve_verte": {
   "dofusId": 2332,
@@ -10483,7 +10509,8 @@
   },
   "elite": true,
   "archiDe": "larve_verte",
-  "archiEchelle": 1.077
+  "archiEchelle": 1.077,
+  "ame": "34113"
  },
  "archi_larve_orange": {
   "dofusId": 2331,
@@ -10562,7 +10589,8 @@
   },
   "elite": true,
   "archiDe": "larve_orange",
-  "archiEchelle": 1.077
+  "archiEchelle": 1.077,
+  "ame": "34033"
  },
  "archi_larve_jaune": {
   "dofusId": 2339,
@@ -10652,7 +10680,8 @@
   },
   "elite": true,
   "archiDe": "larve_jaune",
-  "archiEchelle": 1.077
+  "archiEchelle": 1.077,
+  "ame": "33845"
  },
  "archi_pichon_orange": {
   "dofusId": 2340,
@@ -10743,7 +10772,8 @@
   },
   "elite": true,
   "archiDe": "pichon_orange",
-  "archiEchelle": 1.25
+  "archiEchelle": 1.25,
+  "ame": "33846"
  },
  "archi_pichon_bleu": {
   "dofusId": 2338,
@@ -10827,7 +10857,8 @@
   },
   "elite": true,
   "archiDe": "pichon_bleu",
-  "archiEchelle": 1.25
+  "archiEchelle": 1.25,
+  "ame": "33844"
  },
  "archi_pichon_blanc": {
   "dofusId": 2346,
@@ -10905,7 +10936,8 @@
   },
   "elite": true,
   "archiDe": "pichon_blanc",
-  "archiEchelle": 1.111
+  "archiEchelle": 1.111,
+  "ame": "34034"
  },
  "archi_pichon_vert": {
   "dofusId": 2272,
@@ -10994,7 +11026,8 @@
   },
   "elite": true,
   "archiDe": "pichon_vert",
-  "archiEchelle": 1.25
+  "archiEchelle": 1.25,
+  "ame": "34005"
  },
  "scarafeuille_rouge": {
   "dofusId": 194,
@@ -11781,7 +11814,8 @@
    "tacle": 0,
    "fuite": 0,
    "retraitPA": 0
-  }
+  },
+  "ame": "33690"
  },
  "scarafeuille_immature": {
   "dofusId": 798,
@@ -12401,7 +12435,8 @@
    "tacle": 0,
    "fuite": 0,
    "retraitPA": 0
-  }
+  },
+  "ame": "33687"
  },
  "chafer_primitif": {
   "dofusId": 3240,
@@ -12717,7 +12752,8 @@
    "tacle": 0,
    "fuite": 0,
    "retraitPA": 0
-  }
+  },
+  "ame": "33685"
  },
  "tofoune": {
   "dofusId": 804,
@@ -13799,7 +13835,8 @@
    "tacle": 0,
    "fuite": 0,
    "retraitPA": 0
-  }
+  },
+  "ame": "33688"
  },
  "bwork_mage": {
   "dofusId": 53,
@@ -14294,7 +14331,8 @@
    "tacle": 0,
    "fuite": 0,
    "retraitPA": 0
-  }
+  },
+  "ame": "33691"
  },
  "bwork": {
   "dofusId": 876,
@@ -15019,7 +15057,8 @@
    "tacle": 0,
    "fuite": 0,
    "retraitPA": 0
-  }
+  },
+  "ame": "33692"
  },
  "kwak_de_vent": {
   "dofusId": 81,
@@ -16191,7 +16230,8 @@
    "tacle": 0,
    "fuite": 0,
    "retraitPA": 0
-  }
+  },
+  "ame": "33694"
  },
  "bwak_de_vent": {
   "dofusId": 3281,
@@ -17066,7 +17106,8 @@
    "tacle": 0,
    "fuite": 0,
    "retraitPA": 0
-  }
+  },
+  "ame": "33696"
  },
  "larve_verte_solitaire": {
   "dofusId": 3358,
@@ -17765,7 +17806,8 @@
    "tacle": 0,
    "fuite": 0,
    "retraitPA": 0
-  }
+  },
+  "ame": "33707"
  },
  "kirboule_l_erode": {
   "dofusId": 826,
@@ -18247,7 +18289,8 @@
    "tacle": 0,
    "fuite": 0,
    "retraitPA": 0
-  }
+  },
+  "ame": "33712"
  },
  "black_wo_wabbit": {
   "dofusId": 3461,
@@ -19471,7 +19514,8 @@
    "fuite": 0,
    "retraitPA": 0
   },
-  "signature": 337
+  "signature": 337,
+  "ame": "33706"
  },
  "tofu_amakna": {
   "dofusId": 98,
@@ -23716,7 +23760,8 @@
   },
   "elite": true,
   "archiDe": "scarafeuille_rouge",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34118"
  },
  "archi_scarafeuille_bleu": {
   "dofusId": 2281,
@@ -23834,7 +23879,8 @@
   },
   "elite": true,
   "archiDe": "scarafeuille_bleu",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34117"
  },
  "archi_scarafeuille_vert": {
   "dofusId": 2283,
@@ -23958,7 +24004,8 @@
   },
   "elite": true,
   "archiDe": "scarafeuille_vert",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34009"
  },
  "archi_scarafeuille_blanc": {
   "dofusId": 2280,
@@ -24076,7 +24123,8 @@
   },
   "elite": true,
   "archiDe": "scarafeuille_blanc",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34096"
  },
  "archi_chafer": {
   "dofusId": 2319,
@@ -24140,7 +24188,8 @@
   },
   "elite": true,
   "archiDe": "chafer",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34090"
  },
  "archi_rib": {
   "dofusId": 2276,
@@ -24222,7 +24271,8 @@
   },
   "elite": true,
   "archiDe": "rib",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34008"
  },
  "archi_chafer_invisible": {
   "dofusId": 2321,
@@ -24324,7 +24374,8 @@
   },
   "elite": true,
   "archiDe": "chafer_invisible",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34013"
  },
  "archi_chafer_fantassin": {
   "dofusId": 2421,
@@ -24388,7 +24439,8 @@
   },
   "elite": true,
   "archiDe": "chafer_fantassin",
-  "archiEchelle": 1.2
+  "archiEchelle": 1.2,
+  "ame": "33884"
  },
  "archi_gob_trotteur": {
   "dofusId": 2430,
@@ -24466,7 +24518,8 @@
   },
   "elite": true,
   "archiDe": "gob_trotteur",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34125"
  },
  "archi_gobet": {
   "dofusId": 2494,
@@ -24556,7 +24609,8 @@
   },
   "elite": true,
   "archiDe": "gobet",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34116"
  },
  "archi_bwork_mage": {
   "dofusId": 2418,
@@ -24662,7 +24716,8 @@
   },
   "elite": true,
   "archiDe": "bwork_mage",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33882"
  },
  "archi_bwork_archer": {
   "dofusId": 2417,
@@ -24763,7 +24818,8 @@
   },
   "elite": true,
   "archiDe": "bwork_archer",
-  "archiEchelle": 1.111
+  "archiEchelle": 1.111,
+  "ame": "34063"
  },
  "archi_bwork": {
   "dofusId": 2416,
@@ -24867,7 +24923,8 @@
   },
   "elite": true,
   "archiDe": "bwork",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34057"
  },
  "archi_mineur_sombre": {
   "dofusId": 2335,
@@ -24995,7 +25052,8 @@
   },
   "elite": true,
   "archiDe": "mineur_sombre",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33841"
  },
  "archi_forgeron_sombre": {
   "dofusId": 2328,
@@ -25100,7 +25158,8 @@
   },
   "elite": true,
   "archiDe": "forgeron_sombre",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34031"
  },
  "archi_boulanger_sombre": {
   "dofusId": 2318,
@@ -25192,7 +25251,8 @@
   },
   "elite": true,
   "archiDe": "boulanger_sombre",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33835"
  },
  "archi_bandit_du_clan_des_roublards": {
   "dofusId": 2314,
@@ -25285,7 +25345,8 @@
   },
   "elite": true,
   "archiDe": "bandit_du_clan_des_roublards",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33831"
  },
  "archi_kwak_de_vent": {
   "dofusId": 2369,
@@ -25399,7 +25460,8 @@
   },
   "elite": true,
   "archiDe": "kwak_de_vent",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34025"
  },
  "archi_kwak_de_flamme": {
   "dofusId": 2451,
@@ -25513,7 +25575,8 @@
   },
   "elite": true,
   "archiDe": "kwak_de_flamme",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33896"
  },
  "archi_kwak_de_glace": {
   "dofusId": 2368,
@@ -25627,7 +25690,8 @@
   },
   "elite": true,
   "archiDe": "kwak_de_glace",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33860"
  },
  "archi_kwak_de_terre": {
   "dofusId": 2367,
@@ -25741,7 +25805,8 @@
   },
   "elite": true,
   "archiDe": "kwak_de_terre",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34111"
  },
  "archi_craqueleur": {
   "dofusId": 2436,
@@ -25851,7 +25916,8 @@
   },
   "elite": true,
   "archiDe": "craqueleur",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34066"
  },
  "archi_craqueleur_des_plaines": {
   "dofusId": 2438,
@@ -25967,7 +26033,8 @@
   },
   "elite": true,
   "archiDe": "craqueleur_des_plaines",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33890"
  },
  "archi_craqueboule": {
   "dofusId": 2326,
@@ -26075,7 +26142,8 @@
   },
   "elite": true,
   "archiDe": "craqueboule",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34030"
  },
  "archi_wabbit": {
   "dofusId": 2304,
@@ -26160,7 +26228,8 @@
   },
   "elite": true,
   "archiDe": "wabbit",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34092"
  },
  "archi_black_wabbit": {
   "dofusId": 2403,
@@ -26251,7 +26320,8 @@
   },
   "elite": true,
   "archiDe": "black_wabbit",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34061"
  },
  "archi_black_tiwabbit": {
   "dofusId": 2402,
@@ -26342,7 +26412,8 @@
   },
   "elite": true,
   "archiDe": "black_tiwabbit",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34060"
  },
  "archi_tiwabbit_kiafin": {
   "dofusId": 2294,
@@ -26427,7 +26498,8 @@
   },
   "elite": true,
   "archiDe": "tiwabbit_kiafin",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34091"
  },
  "archi_tiwabbit": {
   "dofusId": 2293,
@@ -26518,7 +26590,8 @@
   },
   "elite": true,
   "archiDe": "tiwabbit",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34010"
  },
  "archi_wo_wabbit": {
   "dofusId": 2308,
@@ -26645,7 +26718,8 @@
   },
   "elite": true,
   "archiDe": "wo_wabbit",
-  "archiEchelle": 1.176
+  "archiEchelle": 1.176,
+  "ame": "33829"
  },
  "archi_grand_pa_wabbit": {
   "dofusId": 2498,
@@ -26779,7 +26853,8 @@
   },
   "elite": true,
   "archiDe": "grand_pa_wabbit",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33921"
  },
  "archi_tofu_amakna": {
   "dofusId": 2355,
@@ -26857,7 +26932,8 @@
   },
   "elite": true,
   "archiDe": "tofu_amakna",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34046"
  },
  "archi_mulou": {
   "dofusId": 2337,
@@ -26963,7 +27039,8 @@
   },
   "elite": true,
   "archiDe": "mulou",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33843"
  },
  "archi_cochon_de_lait": {
   "dofusId": 2325,
@@ -27067,7 +27144,8 @@
   },
   "elite": true,
   "archiDe": "cochon_de_lait",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34029"
  },
  "archi_champ_champ": {
   "dofusId": 2323,
@@ -27154,7 +27232,8 @@
   },
   "elite": true,
   "archiDe": "champ_champ",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33837"
  },
  "archi_tofu_malefique": {
   "dofusId": 2357,
@@ -27253,7 +27332,8 @@
   },
   "elite": true,
   "archiDe": "tofu_malefique",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34038"
  },
  "archi_kwoan": {
   "dofusId": 2522,
@@ -27345,7 +27425,8 @@
   },
   "elite": true,
   "archiDe": "kwoan",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33937"
  },
  "archi_gelee_bleuet": {
   "dofusId": 2487,
@@ -27460,7 +27541,8 @@
   },
   "elite": true,
   "archiDe": "gelee_bleuet",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33918"
  },
  "archi_gelee_menthe": {
   "dofusId": 2371,
@@ -27581,7 +27663,8 @@
   },
   "elite": true,
   "archiDe": "gelee_menthe",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33862"
  },
  "archi_gelee_fraise": {
   "dofusId": 2376,
@@ -27697,7 +27780,8 @@
   },
   "elite": true,
   "archiDe": "gelee_fraise",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34047"
  },
  "archi_champa_vert": {
   "dofusId": 2427,
@@ -27767,7 +27851,8 @@
   },
   "elite": true,
   "archiDe": "champa_vert",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34050"
  },
  "archi_champa_rouge": {
   "dofusId": 2426,
@@ -27852,7 +27937,8 @@
   },
   "elite": true,
   "archiDe": "champa_rouge",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34056"
  },
  "archi_champa_bleu": {
   "dofusId": 2424,
@@ -27949,7 +28035,8 @@
   },
   "elite": true,
   "archiDe": "champa_bleu",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34055"
  },
  "archi_champa_marron": {
   "dofusId": 2425,
@@ -28037,7 +28124,8 @@
   },
   "elite": true,
   "archiDe": "champa_marron",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33887"
  },
  "archi_dragoeuf_calcaire": {
   "dofusId": 2377,
@@ -28165,7 +28253,8 @@
   },
   "elite": true,
   "archiDe": "dragoeuf_calcaire",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33865"
  },
  "archi_dragoeuf_argile": {
   "dofusId": 2450,
@@ -28295,7 +28384,8 @@
   },
   "elite": true,
   "archiDe": "dragoeuf_argile",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33895"
  },
  "archi_dragoeuf_ardoise": {
   "dofusId": 2372,
@@ -28425,7 +28515,8 @@
   },
   "elite": true,
   "archiDe": "dragoeuf_ardoise",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33863"
  },
  "archi_dragoeuf_charbon": {
   "dofusId": 2449,
@@ -28555,7 +28646,8 @@
   },
   "elite": true,
   "archiDe": "dragoeuf_charbon",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33894"
  },
  "archi_boo": {
   "dofusId": 2549,
@@ -28646,7 +28738,8 @@
   },
   "elite": true,
   "archiDe": "boo",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33953"
  },
  "archi_crocodaille": {
   "dofusId": 2439,
@@ -28756,7 +28849,8 @@
   },
   "elite": true,
   "archiDe": "crocodaille",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33891"
  },
  "archi_chef_crocodaille": {
   "dofusId": 2428,
@@ -28870,7 +28964,8 @@
   },
   "elite": true,
   "archiDe": "chef_crocodaille",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34051"
  },
  "archi_dragodinde_amande_sauvage": {
   "dofusId": 2379,
@@ -28949,7 +29044,8 @@
   },
   "elite": true,
   "archiDe": "dragodinde_amande_sauvage",
-  "archiEchelle": 1.043
+  "archiEchelle": 1.043,
+  "ame": "33866"
  },
  "archi_dragodinde_rousse_sauvage": {
   "dofusId": 2465,
@@ -29028,7 +29124,8 @@
   },
   "elite": true,
   "archiDe": "dragodinde_rousse_sauvage",
-  "archiEchelle": 1.043
+  "archiEchelle": 1.043,
+  "ame": "33908"
  },
  "archi_arakne": {
   "dofusId": 2310,
@@ -29112,7 +29209,8 @@
   },
   "elite": true,
   "archiDe": "arakne",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34027"
  },
  "archi_moskito": {
   "dofusId": 2336,
@@ -29197,7 +29295,8 @@
   },
   "elite": true,
   "archiDe": "moskito",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33842"
  },
  "archi_craquelourd": {
   "dofusId": 2543,
@@ -29313,7 +29412,8 @@
   },
   "elite": true,
   "archiDe": "craquelourd",
-  "archiEchelle": 1.1
+  "archiEchelle": 1.1,
+  "ame": "33947"
  },
  "archi_bandit_manchot": {
   "dofusId": 2313,
@@ -29406,7 +29506,8 @@
   },
   "elite": true,
   "archiDe": "bandit_manchot",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34012"
  },
  "wabbit_squelette": {
   "dofusId": 179,
@@ -29667,7 +29768,8 @@
   "xp": 372,
   "elite": true,
   "archiDe": "wabbit_squelette",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34115"
  },
  "cawotte_woyale": {
   "dofusId": 3458,
@@ -33021,7 +33123,8 @@
    "fuite": 0,
    "retraitPA": 0
   },
-  "boss": true
+  "boss": true,
+  "ame": "33705"
  },
  "kanniboul_tam": {
   "dofusId": 4151,
@@ -33217,7 +33320,8 @@
   },
   "elite": true,
   "archiDe": "sanglier_des_plaines",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33821"
  },
  "archi_cavalier_porkass": {
   "dofusId": 2420,
@@ -33321,7 +33425,8 @@
   },
   "elite": true,
   "archiDe": "cavalier_porkass",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33883"
  },
  "archi_berger_porkass": {
   "dofusId": 2397,
@@ -33439,7 +33544,8 @@
   },
   "elite": true,
   "archiDe": "berger_porkass",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33873"
  },
  "archi_amlub": {
   "dofusId": 2391,
@@ -33572,7 +33678,8 @@
   },
   "elite": true,
   "archiDe": "amlub",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33871"
  },
  "archi_codem": {
   "dofusId": 2433,
@@ -33724,7 +33831,8 @@
   },
   "elite": true,
   "archiDe": "codem",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34053"
  },
  "archi_kirevam": {
   "dofusId": 2508,
@@ -33907,7 +34015,8 @@
   },
   "elite": true,
   "archiDe": "kirevam",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33927"
  },
  "archi_let_emoliug": {
   "dofusId": 2525,
@@ -34044,7 +34153,8 @@
   },
   "elite": true,
   "archiDe": "let_emoliug",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33939"
  },
  "archi_susej": {
   "dofusId": 2289,
@@ -34165,7 +34275,8 @@
   },
   "elite": true,
   "archiDe": "susej",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33825"
  },
  "archi_aboub": {
   "dofusId": 2384,
@@ -34266,7 +34377,8 @@
   },
   "elite": true,
   "archiDe": "aboub",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33867"
  },
  "archi_gink": {
   "dofusId": 2493,
@@ -34420,7 +34532,8 @@
   },
   "elite": true,
   "archiDe": "gink",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33919"
  },
  "archi_nebgib": {
   "dofusId": 2539,
@@ -34548,7 +34661,8 @@
   },
   "elite": true,
   "archiDe": "nebgib",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33943"
  },
  "archi_nipul": {
   "dofusId": 2540,
@@ -34676,7 +34790,8 @@
   },
   "elite": true,
   "archiDe": "nipul",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33944"
  },
  "archi_osurc": {
   "dofusId": 2585,
@@ -34779,7 +34894,8 @@
   },
   "elite": true,
   "archiDe": "osurc",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33978"
  },
  "archi_tikoko": {
   "dofusId": 2292,
@@ -34848,7 +34964,8 @@
   },
   "elite": true,
   "archiDe": "tikoko",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33826"
  },
  "archi_kokoko": {
   "dofusId": 2573,
@@ -34933,7 +35050,8 @@
   },
   "elite": true,
   "archiDe": "kokoko",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34119"
  },
  "archi_nodkoko": {
   "dofusId": 2541,
@@ -35019,7 +35137,8 @@
   },
   "elite": true,
   "archiDe": "nodkoko",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33945"
  },
  "archi_tortue_rouge": {
   "dofusId": 2297,
@@ -35126,7 +35245,8 @@
   },
   "elite": true,
   "archiDe": "tortue_rouge",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34017"
  },
  "archi_tortue_bleue": {
   "dofusId": 2295,
@@ -35234,7 +35354,8 @@
   },
   "elite": true,
   "archiDe": "tortue_bleue",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34015"
  },
  "archi_tortue_verte": {
   "dofusId": 2296,
@@ -35351,7 +35472,8 @@
   },
   "elite": true,
   "archiDe": "tortue_verte",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34016"
  },
  "archi_tortue_jaune": {
   "dofusId": 2298,
@@ -35438,7 +35560,8 @@
   },
   "elite": true,
   "archiDe": "tortue_jaune",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "34018"
  },
  "archi_kanniboul_ark": {
   "dofusId": 2502,
@@ -35528,7 +35651,8 @@
   },
   "elite": true,
   "archiDe": "kanniboul_ark",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33922"
  },
  "archi_kanniboul_eth": {
   "dofusId": 2506,
@@ -35635,7 +35759,8 @@
   },
   "elite": true,
   "archiDe": "kanniboul_eth",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33925"
  },
  "archi_kanniboul_jav": {
   "dofusId": 2507,
@@ -35740,7 +35865,8 @@
   },
   "elite": true,
   "archiDe": "kanniboul_jav",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33926"
  },
  "archi_kanniboul_sarbak": {
   "dofusId": 2505,
@@ -35818,6 +35944,7 @@
   },
   "elite": true,
   "archiDe": "kanniboul_sarbak",
-  "archiEchelle": 1.0
+  "archiEchelle": 1.0,
+  "ame": "33924"
  }
 }
