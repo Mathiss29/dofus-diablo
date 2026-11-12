@@ -6,6 +6,13 @@
 export const PAS = 4;
 export type Masque = { w: number; h: number; a: Uint8Array };
 
+/** Essais de fluidité gardés dans le navigateur (Mathis a vu le jeu ralentir après la PR #306, 2026-11-12) : les deux
+ *  changements suspects sont coupés par défaut et se rallument un par un pour trouver le coupable.
+ *  localStorage.setItem('diablofus.fluidite', 'masques,cull') puis recharger la page. */
+export const ESSAIS: ReadonlySet<string> = (() => {
+  try { return new Set((localStorage.getItem('diablofus.fluidite') ?? '').split(',').map(s => s.trim()).filter(Boolean)); } catch { return new Set<string>(); }
+})();
+
 const prets = new Map<string, Masque>();
 const attendus = new Set<string>();
 let fil: Worker | null | undefined;
@@ -28,7 +35,7 @@ function ouvrir(): Worker | null {
 
 /** Demande le masque de la planche `cle` (fichier déjà téléchargé, ou son adresse). Sans fil possible : rien, l'ancien calcul servira. */
 export function demander(cle: string, src: Blob | string) {
-  if (prets.has(cle) || attendus.has(cle)) return;
+  if (!ESSAIS.has('masques') || prets.has(cle) || attendus.has(cle)) return;
   const f = ouvrir();
   if (!f) return;
   attendus.add(cle);
