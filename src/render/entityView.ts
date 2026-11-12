@@ -45,6 +45,8 @@ export class EntityView {
   private k = 1;
   /** Enutrof (interface du coffre 1B) : pièces au-dessus du coffre au trésor (créé seulement pour lui). */
   private pieces: Phaser.GameObjects.Text | null = null;
+  /** « Archis : » 2C : halo doré au sol sous un archimonstre (créé seulement pour eux). */
+  private halo: Phaser.GameObjects.Image | null = null;
 
   /** `vivant` : perso du joueur dessiné en direct depuis son squelette (apparence choisie à la création). */
   constructor(scene: Phaser.Scene, readonly look: Look, private vivant?: PersoVivant) {
@@ -80,6 +82,19 @@ export class EntityView {
     return k;
   }
   static readonly OMBRE: [number, number] = [128, 58];
+  /** Texture du halo des archimonstres : un disque doré qui s'estompe vers le bord (dessiné en mode additif). */
+  static haloDore(scene: Phaser.Scene): string {
+    const k = 'halo_archi';
+    if (!scene.textures.exists(k)) {
+      const t = scene.textures.createCanvas(k, 128, 128), c = t?.getContext();
+      if (t && c) {
+        const g = c.createRadialGradient(64, 64, 4, 64, 64, 64);
+        g.addColorStop(0, 'rgba(255,226,130,0.95)'); g.addColorStop(0.45, 'rgba(255,196,70,0.55)'); g.addColorStop(0.8, 'rgba(255,170,40,0.18)'); g.addColorStop(1, 'rgba(255,160,30,0)');
+        c.fillStyle = g; c.fillRect(0, 0, 128, 128); t.refresh();
+      }
+    }
+    return k;
+  }
 
   /** Barre de vie (fond noir + jauge) au-dessus de l'entité. */
   private barre(x: number, y: number, w: number, frac: number, couleur: number, depth: number) {
@@ -91,7 +106,7 @@ export class EntityView {
   changerVivant(v: PersoVivant) { this.vivant = v; Object.assign(this.counts, v.compte); }
 
   /** Hors de l'écran : rien à dessiner (on ne recalcule pas l'animation). */
-  hide() { this.sprite.setVisible(false); this.bar.setVisible(false); this.shadow.setVisible(false); this.fond.setVisible(false); this.vie.setVisible(false); this.pieces?.setVisible(false); }
+  hide() { this.sprite.setVisible(false); this.bar.setVisible(false); this.shadow.setVisible(false); this.fond.setVisible(false); this.vie.setVisible(false); this.pieces?.setVisible(false); this.halo?.setVisible(false); }
   sync(e: Entity) {
     if (!this.sprite.visible) { this.sprite.setVisible(true); this.bar.setVisible(true); }
     const L = this.look, p = ISO.toScreen(e.x, e.y);
@@ -137,6 +152,12 @@ export class EntityView {
     if (sh.visible) {
       const w = Math.max(30, e.radius * 2.6) * (1 / (1 + e.z / 120));
       sh.setPosition(p.x, p.y).setDisplaySize(w, w * 0.45).setDepth(p.y - 1).setAlpha(0.28 * alpha);
+    }
+    // « Archis : » 2C : halo doré au sol, qui respire, visible de loin
+    if ((e as Monster).def?.archiDe) {
+      const h = this.halo ??= this.sprite.scene.add.image(0, 0, EntityView.haloDore(this.sprite.scene)).setBlendMode(Phaser.BlendModes.ADD);
+      const w = Math.max(70, e.radius * 5.5) * (1 + 0.08 * Math.sin(EntityView.temps * 3));
+      h.setVisible(sh.visible).setPosition(p.x, p.y).setDisplaySize(w, w * 0.5).setDepth(p.y - 2).setAlpha(0.75 * alpha);
     }
     // Barre de vie des monstres touchés
     const g = this.bar; g.clear();
@@ -190,5 +211,5 @@ export class EntityView {
     return Math.hypot(px - (r.x + r.w / 2), py - (r.y + r.h / 2)) * k;
   }
 
-  destroy() { this.sprite.destroy(); this.bar.destroy(); this.shadow.destroy(); this.fond.destroy(); this.vie.destroy(); this.pieces?.destroy(); }
+  destroy() { this.sprite.destroy(); this.bar.destroy(); this.shadow.destroy(); this.fond.destroy(); this.vie.destroy(); this.pieces?.destroy(); this.halo?.destroy(); }
 }

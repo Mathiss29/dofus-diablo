@@ -588,6 +588,13 @@ S['dans_les_nuages'] = suc('Dans les nuages', 840, 'Obtenir les Succès suivants
 S['tour_du_monde'] = suc('Le tour du monde en 27 donjons', 559, 'Terminer la série des quêtes du tour du monde.', 'Donjons', 'Le tour du monde', 50, 203,
     [{'nom': q[1], 'quete': q[0]} for q in TDM], 5)
 S['tour_du_monde']['recompense']['titre'] = 'Globe-trotteur'
+# Archimonstres (ligne « Archis : » 8C, 2026-11-12) : paliers du carnet des âmes, titres officiels liés à Otomaï et aux âmes
+ARCHIS = [(10, 'Apprenti d\'Otomaï', 'Dix âmes', 10, 1), (25, 'Farfouilleur d\'Otomaï', 'Vingt-cinq âmes', 20, 2), (50, 'Chasseur d\'Âmes', 'Cinquante âmes', 30, 4),
+          (110, 'Chasseur de Légendes', 'Toutes les âmes', 50, 8)]
+for n, titre, nom, pts, ratio in ARCHIS:
+    S[f'archis_{n}'] = suc(nom, 0, f'Capturer {n} archimonstres différents dans une Petite pierre d\'âme.', 'Monstres', 'Archimonstres', pts, 161,
+        [{'nom': f'{n} archimonstres', 'archis': n}], ratio)
+    S[f'archis_{n}']['recompense']['titre'] = titre
 
 # Collection d'apparences (maquette « Équipement en trop » 1C) : un succès par panoplie dont on a collectionné
 # toutes les pièces visibles (coiffe, cape, bouclier ; au moins deux), en les brisant ou en les recyclant

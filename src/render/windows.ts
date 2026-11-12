@@ -6,7 +6,7 @@ import { BENEDICTION, BENEDICTIONS, CONFORT, MAGASIN, MARCHE, reserveePiece, typ
 import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES, TEINTURES, THEMES_HAVRESAC } from '../sim/data';
 import { themeChoisi, themesEnJeu, themesPossedes } from '../sim/havresac';
 import { v } from './assetUrl';
-import { BUTIN_CSS, butinMonstre, dessinerPortraits, esc as escB, groupesBestiaire, nomObjet, iconeObjet, sourcesHtml } from './butinVue';
+import { BUTIN_CSS, archisParLieu, butinMonstre, dessinerPortraits, esc as escB, groupesBestiaire, nomObjet, iconeObjet, sourcesHtml } from './butinVue';
 import { PALIERS } from './carnet';
 import { CODEX_CSS, codexPageHtml } from './codexVue';
 import { nouveauPourCodex } from '../sim/codex';
@@ -566,6 +566,11 @@ const CSS = `
 .dw .bes .ongl button{all:unset;cursor:pointer;font-size:12px;padding:3px 10px;border:1px solid #45433b;border-radius:3px;color:#c9c4ab}
 .dw .bes .ongl button.on{background:#b9e54b;border-color:#b9e54b;color:#15140f;font-weight:bold}
 .dw .bes .lock{color:#8a8672;font-style:italic}
+.dw .bes .bv{display:flex;gap:4px;margin-bottom:4px}.dw .bes .bv button{all:unset;flex:1;text-align:center;cursor:pointer;font-size:12px;padding:4px 6px;border:1px solid #45433b;border-radius:3px;color:#c9c4ab}
+.dw .bes .bv button.on{background:#e8c76b;border-color:#e8c76b;color:#15140f;font-weight:bold}
+.dw .bes .bm.ar span{color:#f2d36b}.dw .bes .bm.ar.manque span{color:#8a8672}.dw .bes .bm.manque canvas{filter:grayscale(1) brightness(.55)}
+.dw .bes .bm em{display:block;font-style:normal;color:#8a8672;font-size:10.5px}
+.dw .bes .ame{display:flex;gap:8px;align-items:center;padding:8px 10px;border:1px solid #6b5a2a;border-radius:4px;background:#2f2a1a;font-size:13px}.dw .bes .ame .ic{width:36px;height:36px}
 .dw .bes .kv{display:grid;gap:4px;font-size:13px}.dw .bes .kv div{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #3a383055;padding:3px 0}
 .dw .tip .bu-src{font-size:12px}.dw .tip .bu-ou{margin-top:8px}
 .dw .qb{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);min-height:0}
@@ -803,6 +808,8 @@ export class Windows {
   private bestObjet: string | null = null;
   private bestOnglet: 'butin' | 'sorts' | 'res' = 'butin';
   private bestRecherche = '';
+  /** « Archis : » 8A : le Bestiaire montre les monstres ou le carnet des archimonstres. */
+  private bestVue: 'monstres' | 'archis' = 'monstres';
   /** Fenêtre du forgemage (maquette « Forgemagie ») : onglet, objet choisi, journal des essais, mode « viser ». */
   private forge = etatForge();
 
@@ -2054,9 +2061,10 @@ export class Windows {
   /** Bestiaire en jeu (maquette « Drops » 1A+1B, 2B+2C, 3A, 4A) : monstres par sous-zone, onglets Sorts / Résistances / Butin ;
    *  la recherche trouve aussi les objets, avec leur fiche « Où le trouver ». */
   private renderBestiaire() {
-    const w = this.win!, vus = this.vaincus(), connu = (m: string) => this.toutVoir || (vus[m] ?? 0) > 0;
+    const w = this.win!, vus = this.vaincus(), connu = (m: string) => this.toutVoir || (vus[m] ?? 0) > 0 || this.world.player.ames.includes(m);
     const groupes = groupesBestiaire(), q = this.bestRecherche.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
     const va = (n: string) => !q || n.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').includes(q);
+    if (this.bestVue === 'archis' && !GAME_DATA.monsters[this.bestType]?.archiDe) { this.bestType = archisParLieu()[0]?.archis[0] ?? ''; this.bestObjet = null; }
     if (!this.bestType || !GAME_DATA.monsters[this.bestType]) this.bestType = groupes.flatMap(g => g.monstres).find(connu) ?? groupes[0]?.monstres[0] ?? '';
     const ligne = (m: string) => {
       const d = GAME_DATA.monsters[m], ok = connu(m), L = LOOKS[d.look];
@@ -2075,7 +2083,11 @@ export class Windows {
       fiche = `<div class="tete">${iconeObjet(id)}<div><h3>${escB(nomObjet(id))}</h3><div class="sub">${e ? `Équipement · ${e.slot}` : r?.soin ? 'Consommable' : 'Ressource'} · niveau ${(r ?? e)?.level ?? '?'}</div></div></div>${sourcesHtml(id)}`;
     } else if (this.bestType) {
       const m = this.bestType, d = GAME_DATA.monsters[m], n = vus[m] ?? 0, L = LOOKS[d.look];
-      if (!connu(m)) fiche = `<div class="tete"><canvas width="220" height="220"></canvas><div><h3>???</h3><div class="sub">Pas encore croisé. Bats-en un pour remplir sa fiche.</div></div></div>`;
+      const ameId = d.ame, pris = this.world.player.ames.includes(m), base = d.archiDe ? GAME_DATA.monsters[d.archiDe] : undefined;
+      const ou = d.archiDe ? archisParLieu().find(g => g.archis.includes(m)) : undefined;
+      const ame = d.archiDe ? `<div class="ame">${ameId ? iconeObjet(ameId) : ''}<div><b>${escB(ameId ? nomObjet(ameId) : 'Âme')}</b><div class="sub">${pris ? 'Capturée : elle est dans ton carnet.' : `Pas encore capturée. Il remplace parfois un ${escB(base?.name ?? 'monstre')}${ou ? ` (${escB(ou.nom)}, niv. ${ou.niveau})` : ''} : bats-le avec une Petite pierre d'âme dans le sac (Otomaï, Marché couvert du Bastion).`}</div></div></div>` : '';
+      if (!connu(m) && d.archiDe) fiche = `<div class="tete"><canvas data-atlas="${L?.atlas ?? ''}" width="220" height="220" style="filter:grayscale(1) brightness(.55)"></canvas><div><h3>${escB(d.name)}</h3><div class="sub">Archimonstre de ${escB(base?.name ?? '?')}</div></div></div>${ame}`;
+      else if (!connu(m)) fiche = `<div class="tete"><canvas width="220" height="220"></canvas><div><h3>???</h3><div class="sub">Pas encore croisé. Bats-en un pour remplir sa fiche.</div></div></div>`;
       else {
         const niv = niveauHorsPartie(m, GAME_DATA), ctx = this.world.contexteButin(m, rangDe(d), niv);
         const pal = (k: keyof typeof PALIERS, txt: string) => this.toutVoir || n >= PALIERS[k] ? txt : `<span class="lock">à ${PALIERS[k]} vaincus (${n} pour l'instant)</span>`;
@@ -2086,14 +2098,29 @@ export class Windows {
           : `<div class="kv">${pal('res', res || '<div><span>Aucune résistance</span></div>')}</div>`;
         fiche = `<div class="tete"><canvas data-atlas="${L?.atlas ?? ''}" width="220" height="220"></canvas><div><h3>${escB(d.name)}</h3>
           <div class="sub">${d.boss ? 'Boss · ' : d.elite ? 'Élite · ' : ''}niveau ${niv} · ${n} vaincu${n > 1 ? 's' : ''}${this.toutVoir ? ' · partie de test : tout est visible' : ''}</div>
-          <div class="ongl">${([['sorts', 'Sorts'], ['res', 'Résistances'], ['butin', 'Butin']] as const).map(([k, t]) => `<button type="button" data-bon="${k}" class="${this.bestOnglet === k ? 'on' : ''}">${t}</button>`).join('')}</div></div></div>${corps}`;
+          <div class="ongl">${([['sorts', 'Sorts'], ['res', 'Résistances'], ['butin', 'Butin']] as const).map(([k, t]) => `<button type="button" data-bon="${k}" class="${this.bestOnglet === k ? 'on' : ''}">${t}</button>`).join('')}</div></div></div>${ame}${corps}`;
       }
     }
     const tous = groupes.flatMap(g => g.monstres), nb = tous.filter(m => (vus[m] ?? 0) > 0).length;
+    // « Archis : » 8A : carnet des archimonstres, capturés en couleur, manquants en gris avec leur monstre et leur sous-zone
+    const ames = new Set(this.world.player.ames), archis = this.bestVue === 'archis' ? archisParLieu() : [];
+    const carnet = archis.map(g => {
+      const ms = g.archis.filter(a => va(GAME_DATA.monsters[a].name) || va(GAME_DATA.monsters[GAME_DATA.monsters[a].archiDe!]?.name ?? ''));
+      return ms.length ? `<div class="bh">${escB(g.zone)} · ${escB(g.nom)} · niv. ${g.niveau}</div>${ms.map(a => {
+        const d = GAME_DATA.monsters[a], ok = ames.has(a), L = LOOKS[d.look];
+        return `<div class="bm ar ${ok ? '' : 'manque'} ${!this.bestObjet && a === this.bestType ? 'on' : ''}" data-bm="${a}"><canvas data-atlas="${L?.atlas ?? ''}" width="68" height="68"></canvas><span>${escB(d.name)}<em>${escB(GAME_DATA.monsters[d.archiDe!]?.name ?? '')}</em></span><small>${ok ? '✔' : ''}</small></div>`;
+      }).join('')}` : '';
+    }).join('');
+    const nbA = archis.reduce((n, g) => n + g.archis.length, 0), prisA = archis.reduce((n, g) => n + g.archis.filter(a => ames.has(a)).length, 0);
+    const vue = `<div class="bv"><button type="button" data-bvue="monstres" class="${this.bestVue === 'monstres' ? 'on' : ''}">Monstres</button><button type="button" data-bvue="archis" class="${this.bestVue === 'archis' ? 'on' : ''}">Archimonstres</button></div>`;
+    const gauche = this.bestVue === 'archis'
+      ? `${vue}<input placeholder="Archimonstre ou monstre..." value="${escB(this.bestRecherche)}" data-bsearch><div class="sub" style="margin:4px 2px">${prisA} / ${nbA} âmes capturées</div>${carnet || '<div class="sub">Rien de ce nom.</div>'}`
+      : `${vue}<input placeholder="Monstre ou objet..." value="${escB(this.bestRecherche)}" data-bsearch><div class="sub" style="margin:4px 2px">${nb} / ${tous.length} monstres croisés</div>
+        ${objets ? `<div class="bh">Objets</div>${objets}` : ''}${liste || (objets ? '' : '<div class="sub">Rien de ce nom.</div>')}`;
     w.innerHTML = `${this.title('Bestiaire', 'bestiary')}<div class="bes">
-      <div class="bl"><input placeholder="Monstre ou objet..." value="${escB(this.bestRecherche)}" data-bsearch><div class="sub" style="margin:4px 2px">${nb} / ${tous.length} monstres croisés</div>
-        ${objets ? `<div class="bh">Objets</div>${objets}` : ''}${liste || (objets ? '' : '<div class="sub">Rien de ce nom.</div>')}</div>
+      <div class="bl">${gauche}</div>
       <div class="bd">${fiche}</div></div>`;
+    w.querySelectorAll<HTMLElement>('[data-bvue]').forEach(e => e.addEventListener('click', () => { this.bestVue = e.dataset.bvue as 'monstres' | 'archis'; this.render(); }));
     dessinerPortraits(w);
     const inp = w.querySelector<HTMLInputElement>('[data-bsearch]')!;
     inp.addEventListener('input', () => { this.bestRecherche = inp.value; this.render(); const m = this.win!.querySelector<HTMLInputElement>('[data-bsearch]')!; m.focus(); m.setSelectionRange(m.value.length, m.value.length); });
@@ -2114,8 +2141,9 @@ export class Windows {
       <div class="hint">Fabriqué : Commun, ou Rare (${Math.round(chanceRare(lv) * 100)} % à ton niveau, garanti avec un ingrédient rare). Jamais de pouvoir légendaire.</div>`;
   }
   private resTip(r: ResourceDef, id: string) {
-    const sorte = r.soin || r.rappel || r.deguisement ? 'Consommable' : r.cle ? 'Clé de donjon' : r.pepite ? 'Monnaie du Bastion' : r.monnaie ? 'Monnaie de l\'île des Wabbits' : r.rune || r.signature ? 'Rune de forgemagie' : 'Ressource';
-    const effet = r.soin ? `<div class="up">+${r.soin} PV</div><div class="hint">Clic droit : manger</div>`
+    const sorte = r.ame ? 'Âme d\'archimonstre' : r.soin || r.rappel || r.deguisement ? 'Consommable' : r.cle ? 'Clé de donjon' : r.pepite ? 'Monnaie du Bastion' : r.monnaie ? 'Monnaie de l\'île des Wabbits' : r.rune || r.signature ? 'Rune de forgemagie' : 'Ressource';
+    const effet = r.ame ? `<div class="up">${escB(GAME_DATA.monsters[r.ame]?.name ?? '')}</div><div class="hint">Capturée dans une Petite pierre d'âme. Elle compte dans le carnet des archimonstres (Bestiaire) ; Otomaï s'y intéressera.</div>`
+      : r.soin ? `<div class="up">+${r.soin} PV</div><div class="hint">Clic droit : manger</div>`
       : r.rappel ? `<div class="up">Retour au dernier Zaap (${this.world.checkpointName})</div><div class="hint">Clic droit : boire</div>`
       : r.deguisement ? `<div class="up">Déguisé en Wabbit pendant ${Math.round(r.deguisement / 60)} min</div><div class="hint">Les Wabbits de l'île ne t'attaquent pas tant que tu ne les tapes pas. Clic droit : boire</div>`
       : r.cle ? `<div class="up">Ouvre l'entrée : ${r.cle}</div><div class="hint">Prise en entrant dans le donjon</div>`

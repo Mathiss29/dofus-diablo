@@ -1781,6 +1781,15 @@
             "etiquettes": [
               "Bastion des Douze"
             ]
+          },
+          {
+            "titre": "Le carnet des archimonstres",
+            "phrase": "Bestiaire › Archimonstres : les âmes capturées en couleur, celles qui manquent en gris avec leur monstre.",
+            "details": "Chaque capture donne son âme officielle, « Âme capturée : … ». Succès à 10, 25, 50 et 110 âmes, avec un titre.",
+            "icone": "bestiaire",
+            "etiquettes": [
+              "Bestiaire"
+            ]
           }
         ],
         "Le monde": [
@@ -1794,7 +1803,17 @@
             ]
           }
         ],
-        "Combat": [],
+        "Combat": [
+          {
+            "titre": "Archimonstre en vue",
+            "phrase": "Un son et un petit bandeau quand un archimonstre est sur ta carte, et un halo doré sous lui.",
+            "details": "Il lâche toujours un objet Rare. Les élites lâchent parfois une Petite pierre d'âme, et en groupe chacun capture son âme.",
+            "icone": "boss",
+            "etiquettes": [
+              "Carte M"
+            ]
+          }
+        ],
         "Corrections": [
           "Plus de saccades en marchant près du décor, et moins de travail quand on change de carte.",
           "L'inventaire s'ouvre tout de suite : icônes et personnage sont prêts avant même de l'ouvrir.",

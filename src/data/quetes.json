@@ -10487,6 +10487,82 @@
     "xp": 4000,
     "titre": "Gardien des Cawottes"
    }
+  },
+  "archis_10": {
+   "nom": "Dix âmes",
+   "dofusId": 0,
+   "description": "Capturer 10 archimonstres différents dans une Petite pierre d'âme.",
+   "categorie": "Monstres",
+   "sousCategorie": "Archimonstres",
+   "points": 10,
+   "icone": 161,
+   "objectifs": [
+    {
+     "nom": "10 archimonstres",
+     "archis": 10
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "titre": "Apprenti d'Otomaï"
+   }
+  },
+  "archis_25": {
+   "nom": "Vingt-cinq âmes",
+   "dofusId": 0,
+   "description": "Capturer 25 archimonstres différents dans une Petite pierre d'âme.",
+   "categorie": "Monstres",
+   "sousCategorie": "Archimonstres",
+   "points": 20,
+   "icone": 161,
+   "objectifs": [
+    {
+     "nom": "25 archimonstres",
+     "archis": 25
+    }
+   ],
+   "recompense": {
+    "xp": 1000,
+    "titre": "Farfouilleur d'Otomaï"
+   }
+  },
+  "archis_50": {
+   "nom": "Cinquante âmes",
+   "dofusId": 0,
+   "description": "Capturer 50 archimonstres différents dans une Petite pierre d'âme.",
+   "categorie": "Monstres",
+   "sousCategorie": "Archimonstres",
+   "points": 30,
+   "icone": 161,
+   "objectifs": [
+    {
+     "nom": "50 archimonstres",
+     "archis": 50
+    }
+   ],
+   "recompense": {
+    "xp": 2000,
+    "titre": "Chasseur d'Âmes"
+   }
+  },
+  "archis_110": {
+   "nom": "Toutes les âmes",
+   "dofusId": 0,
+   "description": "Capturer 110 archimonstres différents dans une Petite pierre d'âme.",
+   "categorie": "Monstres",
+   "sousCategorie": "Archimonstres",
+   "points": 50,
+   "icone": 161,
+   "objectifs": [
+    {
+     "nom": "110 archimonstres",
+     "archis": 110
+    }
+   ],
+   "recompense": {
+    "xp": 4000,
+    "titre": "Chasseur de Légendes"
+   }
   }
  },
  "contrats": {

@@ -133,7 +133,7 @@ export type SimEvent =
   /** Forgemagie v2 2B : arrivé devant l'établi de forgemagie du Havre-Sac. */
   | { k: 'etabliForge' }
   /** Archimonstre capturé (0.3, 15B) ; neuf : première fois pour ce perso. */
-  | { k: 'capture'; monster: string; neuf: boolean }
+  | { k: 'capture'; monster: string; neuf: boolean; /** objet reçu (« Âme capturée : … », Archis 6A) */ ame?: string }
   | { k: 'impression'; uid: number; id: string }
   /** Collection d'apparences (1C) : premier exemplaire d'une coiffe, cape ou bouclier brisé ou recyclé. */
   | { k: 'apparence'; id: string }

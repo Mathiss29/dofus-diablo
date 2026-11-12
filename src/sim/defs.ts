@@ -210,6 +210,8 @@ export interface MonsterDef {
   look: string; color: string; boss?: boolean; elite?: boolean;
   /** Archimonstre (0.3, 15B ; tools/contenu/archimonstres.py) : son monstre (même planche) et le rapport des échelles officielles. */
   archiDe?: string; archiEchelle?: number;
+  /** « Archis : » 6A : objet officiel « Âme capturée : <nom> » donné à la capture. */
+  ame?: string;
   /** Monde ouvert : distance à laquelle il repère le joueur (défaut : OpenDef.aggro). */
   aggro?: number;
   /** Officiel (tools/extraction/monster_stats.py) : niveau, résistances par élément en %, caractéristiques. */
