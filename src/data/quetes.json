@@ -565,6 +565,8 @@
    ],
    "cris": [
     "Oyez, oyez ! Almanax du jour : {almanax} ! Les offrandes, c'est au Représentant des Temples !",
+    "Oyez, oyez ! Boss du monde : {boss} ! Prenez le Zaap le plus proche et venez nombreux !",
+    "Oyez ! Les monstres envahissent {invasion} ! Repoussez-les avant la fin de l'heure !",
     "Oyez ! Les ponts sont coupés : Bonta, Brâkmar, Pandala et Frigost attendent ceux qui les libéreront !",
     "Oyez ! Kerubim Crépin rachète tout, même les chaussettes. Surtout les chaussettes !",
     "Oyez ! Malek le Forgemage brise vos objets en runes. Il dit que c'est pour votre bien !",
@@ -10977,6 +10979,119 @@
    "recompense": {
     "xp": 4000,
     "titre": "Chasseur de Légendes"
+   }
+  },
+  "boss_monde_chef_de_guerre_bouftou": {
+   "dofusId": 0,
+   "categorie": "Événements",
+   "sousCategorie": "Boss du monde",
+   "icone": 140,
+   "nom": "Chef de Guerre Bouftou",
+   "description": "Vaincre le Chef de Guerre Bouftou quand il sort en boss du monde.",
+   "points": 20,
+   "objectifs": [
+    {
+     "nom": "Chef de Guerre Bouftou",
+     "bossMonde": "chef_de_guerre_bouftou"
+    }
+   ],
+   "recompense": {
+    "xp": 3000,
+    "titre": "Maître de guerre"
+   }
+  },
+  "boss_monde_gelees_royales": {
+   "dofusId": 0,
+   "categorie": "Événements",
+   "sousCategorie": "Boss du monde",
+   "icone": 140,
+   "nom": "Gelées Royales",
+   "description": "Vaincre les Gelées Royales quand elles sortent en boss du monde.",
+   "points": 20,
+   "objectifs": [
+    {
+     "nom": "Gelées Royales",
+     "bossMonde": "gelees_royales"
+    }
+   ],
+   "recompense": {
+    "xp": 6000,
+    "titre": "Marcheur Dimensionnel"
+   }
+  },
+  "boss_monde_maitre_vampire": {
+   "dofusId": 0,
+   "categorie": "Événements",
+   "sousCategorie": "Boss du monde",
+   "icone": 140,
+   "nom": "Maître Vampire",
+   "description": "Vaincre le Maître Vampire quand il sort en boss du monde.",
+   "points": 20,
+   "objectifs": [
+    {
+     "nom": "Maître Vampire",
+     "bossMonde": "maitre_vampire"
+    }
+   ],
+   "recompense": {
+    "xp": 4900,
+    "titre": "Vampyre"
+   }
+  },
+  "boss_monde_chef_crocodaille": {
+   "dofusId": 0,
+   "categorie": "Événements",
+   "sousCategorie": "Boss du monde",
+   "icone": 140,
+   "nom": "Chef Crocodaille",
+   "description": "Vaincre le Chef Crocodaille quand il sort en boss du monde.",
+   "points": 20,
+   "objectifs": [
+    {
+     "nom": "Chef Crocodaille",
+     "bossMonde": "chef_crocodaille"
+    }
+   ],
+   "recompense": {
+    "xp": 6100,
+    "titre": "Dékrokilliseur"
+   }
+  },
+  "invasion_1": {
+   "dofusId": 0,
+   "categorie": "Événements",
+   "sousCategorie": "Invasions",
+   "icone": 140,
+   "nom": "Première invasion repoussée",
+   "description": "Remplir la jauge d'une invasion.",
+   "points": 10,
+   "objectifs": [
+    {
+     "nom": "Invasions repoussées",
+     "invasions": 1
+    }
+   ],
+   "recompense": {
+    "xp": 1000
+   }
+  },
+  "invasion_10": {
+   "dofusId": 0,
+   "categorie": "Événements",
+   "sousCategorie": "Invasions",
+   "icone": 140,
+   "nom": "Gardien de la Paix",
+   "description": "Remplir la jauge de 10 invasions.",
+   "points": 30,
+   "objectifs": [
+    {
+     "nom": "Invasions repoussées",
+     "invasions": 10
+    }
+   ],
+   "recompense": {
+    "xp": 5000,
+    "titre": "Gardien de la Paix"
    }
   }
  },

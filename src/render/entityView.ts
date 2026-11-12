@@ -6,6 +6,7 @@ import type { Entity } from '../sim/entity';
 import type { Monster } from '../sim/monster';
 import type { Player } from '../sim/player';
 import { couleurCoffre, palierCoffre } from '../sim/enutrof';
+import { VIVANT } from '../sim/mondeVivant';
 import type { Look } from './looks';
 import { PersoVivant } from './persoVivant';
 
@@ -131,12 +132,13 @@ export class EntityView {
     else this.sprite.setFrame(`${name}_${idx}`);
     // Enutrof 16C : le coffre au trésor grossit à chaque palier, et dore à partir de l'Or
     const own = (e as { base?: string; owner?: Player }).base === 'coffre_tresor' ? (e as { owner?: Player }).owner : undefined;
-    const pal = own?.cls?.coffre ? palierCoffre(own) : -1, kc = 1 + 0.12 * (Math.min(pal, 3) + 1), sur = !!own && pal >= own.cls.coffre!.paliers.length;
+    const pal = own?.cls?.coffre ? palierCoffre(own) : -1, kc = (1 + 0.12 * (Math.min(pal, 3) + 1)) * ((e as Monster).bossMonde ? VIVANT.boss.echelle : 1), sur = !!own && pal >= own.cls.coffre!.paliers.length;
     let sy = L.scale * this.k * kc, alpha = 1;
     if (e.anim === 'idle') sy *= 1 + Math.sin(e.age * 4) * 0.02;
     if (e.anim === 'spawn') alpha = e.animT;
     if ((e as { state?: string }).state === 'return') alpha = 0.5;   // maquette « Aggro » 7A : il abandonne et rentre
     if (e.anim === 'die') alpha = e.animT < 0.7 ? 1 : 1 - (e.animT - 0.7) / 0.3;
+    if ((e as Monster).intouchable && (e as Monster).bossMonde) alpha *= 0.55 + 0.1 * Math.sin(EntityView.temps * 5);   // 0.5 (1B, 3C) : intouchable, il pâlit
     this.sprite.setScale((flip ? -L.scale : L.scale) * this.k * kc, sy).setAlpha(alpha);
     // posé pile sur un pixel de l'écran : il ne « bave » plus quand la caméra le suit (voir pixel.ts)
     const cam = this.sprite.scene.cameras.main, pp = auPixel(cam, p.x, p.y - (L.ignoreZ ? 0 : e.z));
@@ -154,11 +156,14 @@ export class EntityView {
       sh.setPosition(p.x, p.y).setDisplaySize(w, w * 0.45).setDepth(p.y - 1).setAlpha(0.28 * alpha);
     }
     // « Archis : » 2C : halo doré au sol, qui respire, visible de loin
-    if ((e as Monster).def?.archiDe) {
+    // 0.5 : halo doré des archimonstres, violet des envahisseurs (5B), éclatant pour la Gelée Royale qui brille (1B)
+    const mo = e as Monster, brille = !!mo.brille && !mo.intouchable;
+    if (mo.def?.archiDe || mo.envahi || brille) {
       const h = this.halo ??= this.sprite.scene.add.image(0, 0, EntityView.haloDore(this.sprite.scene)).setBlendMode(Phaser.BlendModes.ADD);
-      const w = Math.max(70, e.radius * 5.5) * (1 + 0.08 * Math.sin(EntityView.temps * 3));
-      h.setVisible(sh.visible).setPosition(p.x, p.y).setDisplaySize(w, w * 0.5).setDepth(p.y - 2).setAlpha(0.75 * alpha);
-    }
+      const w = Math.max(70, e.radius * 5.5) * (brille ? 1.6 : mo.envahi && !mo.def?.archiDe ? 0.85 : 1) * (1 + 0.08 * Math.sin(EntityView.temps * (brille ? 6 : 3)));
+      h.setVisible(sh.visible).setPosition(p.x, p.y).setDisplaySize(w, w * 0.5).setDepth(p.y - 2).setAlpha((brille ? 1 : 0.75) * alpha);
+      if (mo.def?.archiDe || brille) h.clearTint(); else h.setTint(0xb07bff);
+    } else this.halo?.setVisible(false);
     // Barre de vie des monstres touchés
     const g = this.bar; g.clear();
     let barre = false;

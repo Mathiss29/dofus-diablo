@@ -554,6 +554,14 @@ for (const [k, d] of Object.entries(MONS)) {
   if (base && !LOOKS[k]) LOOKS[k] = { ...base, scale: base.scale * (d.archiEchelle ?? 1) * 1.15, tint: GOLD };
 }
 
+/** 0.5 « monde vivant » : dessins d'attente des boss du monde dont la planche officielle n'est pas encore rendue (os 326, 328,
+ *  330, 434 et 840 à copier du PC de Mathis, puis monster_planche.py) : la Gelée de leur couleur en grand, teintée. */
+const ATTENTE: Record<string, [string, number, number?]> = {
+  gelee_royale_bleuet: ['gelee_bleuet', 1.7], gelee_royale_menthe: ['gelee_menthe', 1.7], gelee_royale_fraise: ['gelee_fraise', 1.7],
+  gelee_royale_citron: ['gelee_menthe', 1.7, 0xfff06a], maitre_vampire: ['sergent_chafer', 1.35, 0xc8a0ff],
+};
+for (const [k, [b, e, t]] of Object.entries(ATTENTE)) if (!LOOKS[k] && LOOKS[b]) LOOKS[k] = { ...LOOKS[b], scale: LOOKS[b].scale * e, ...(t ? { tint: t } : {}) };
+
 /** PNJ dans le monde (planches tools/extraction/monster_planche.py, PNJ=1, SCALE = 1,32 x échelle officielle du look).
  *  Dofus montre un PNJ immobile (AnimStatique, une seule image) qui joue de temps en temps une de ses animations « fun »
  *  (npcsdataroot.animFunList : nom et poids du tirage). `scale` = échelle d'affichage (0,82 comme le perso : même netteté).

@@ -75,7 +75,9 @@ export type CommandeTest =
   /** Panneau test 7A : un objet Légendaire de l'emplacement du pouvoir, avec ce pouvoir-là (officiel, de classe ou maison). */
   | { k: 'pouvoir'; id: string }
   /** Panneau test 7C. */
-  | { k: 'viderSac' };
+  | { k: 'viderSac' }
+  /** 0.5 « monde vivant » : petit événement lancé à côté du joueur (8A défense, 8B coffre gardé). */
+  | { k: 'evenement'; sorte: 'defense' | 'coffre' };
 
 /** Rayon de « Tuer la carte » (px du monde) : à peu près l'écran autour du perso. */
 export const RAYON_TUER = 1100;
@@ -198,6 +200,7 @@ export function appliquerTest(w: World, c: CommandeTest) {
       p.recompute(); dire('Emplacements des Dofus remplis');
       break;
     }
+    case 'evenement': if (!w.vivant?.lancerEvenement(p, c.sorte)) dire('Pas d\'événement possible ici (monde d\'Astrub, dehors)'); break;
     case 'dofusVider': p.dofus = []; p.dofusPortes = Array(EMPLACEMENTS_DOFUS).fill(null); p.recompute(); dire('Plus aucun Dofus'); break;
     case 'quete': {
       const Q = w.quetes;

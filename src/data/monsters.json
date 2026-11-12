@@ -35946,5 +35946,543 @@
   "archiDe": "kanniboul_sarbak",
   "archiEchelle": 1.0,
   "ame": "33924"
+ },
+ "gelee_royale_bleuet": {
+  "dofusId": 58,
+  "name": "Gelée Royale Bleuet",
+  "hp": 3500,
+  "speed": 85,
+  "radius": 30,
+  "mass": 4,
+  "dmg": 14,
+  "attackRange": 70,
+  "windup": 0.6,
+  "lungeSpeed": 420,
+  "lungeTime": 0.2,
+  "recover": 0.7,
+  "color": "#d8d0b8",
+  "xp": 300,
+  "look": "gelee_royale_bleuet",
+  "spells": [
+   {
+    "id": 29851,
+    "name": "Isométrie",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 0,
+    "zone": "G1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 218,
+    "name": "Invocation de Gelée Bleuet",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 5,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "invoque",
+      "monster": "gelee_bleuet"
+     }
+    ],
+    "gfx": 20001
+   },
+   {
+    "id": 29838,
+    "name": "Royale Bleuet Os",
+    "pa": 4,
+    "po": [
+     2,
+     7
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 18,
+      "max": 22,
+      "steal": false
+     },
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 1
+     }
+    ],
+    "gfx": 873
+   },
+   {
+    "id": 29839,
+    "name": "Tartinade",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   }
+  ],
+  "level": 60,
+  "res": {
+   "terre": 70,
+   "feu": 70,
+   "eau": -10,
+   "air": 70,
+   "neutre": 70
+  },
+  "caracs": {
+   "force": 250,
+   "intelligence": 250,
+   "chance": 250,
+   "agilite": 250,
+   "sagesse": 150,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "gelee_royale_menthe": {
+  "dofusId": 85,
+  "name": "Gelée Royale Menthe",
+  "hp": 3500,
+  "speed": 85,
+  "radius": 30,
+  "mass": 4,
+  "dmg": 14,
+  "attackRange": 70,
+  "windup": 0.6,
+  "lungeSpeed": 420,
+  "lungeTime": 0.2,
+  "recover": 0.7,
+  "color": "#d8d0b8",
+  "xp": 300,
+  "look": "gelee_royale_menthe",
+  "spells": [
+   {
+    "id": 29839,
+    "name": "Tartinade",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 29850,
+    "name": "Pik-assaut",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 0,
+    "zone": "G1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "pm",
+      "n": 2,
+      "dur": 2
+     }
+    ]
+   },
+   {
+    "id": 225,
+    "name": "Invocation de Gelée Menthe",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 5,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "invoque",
+      "monster": "gelee_menthe"
+     }
+    ]
+   },
+   {
+    "id": 29835,
+    "name": "Royale Menthe Os",
+    "pa": 4,
+    "po": [
+     2,
+     7
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 18,
+      "max": 22,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -2,
+      "dur": 1
+     }
+    ],
+    "gfx": 760
+   }
+  ],
+  "level": 60,
+  "res": {
+   "terre": -10,
+   "feu": 70,
+   "eau": 70,
+   "air": 70,
+   "neutre": 70
+  },
+  "caracs": {
+   "force": 250,
+   "intelligence": 250,
+   "chance": 250,
+   "agilite": 250,
+   "sagesse": 150,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "gelee_royale_fraise": {
+  "dofusId": 86,
+  "name": "Gelée Royale Fraise",
+  "hp": 3500,
+  "speed": 85,
+  "radius": 30,
+  "mass": 4,
+  "dmg": 14,
+  "attackRange": 70,
+  "windup": 0.6,
+  "lungeSpeed": 420,
+  "lungeTime": 0.2,
+  "recover": 0.7,
+  "color": "#d8d0b8",
+  "xp": 300,
+  "look": "gelee_royale_fraise",
+  "spells": [
+   {
+    "id": 29839,
+    "name": "Tartinade",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 29844,
+    "name": "Gélifiant",
+    "pa": 3,
+    "po": [
+     0,
+     4
+    ],
+    "relance": 2,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [],
+    "gfx": 20108
+   },
+   {
+    "id": 226,
+    "name": "Invocation de Gelée Fraise",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 5,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "invoque",
+      "monster": "gelee_fraise"
+     }
+    ]
+   },
+   {
+    "id": 29836,
+    "name": "Royale Fraise Os",
+    "pa": 4,
+    "po": [
+     2,
+     7
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 18,
+      "max": 22,
+      "steal": false
+     }
+    ],
+    "gfx": 822
+   }
+  ],
+  "level": 60,
+  "res": {
+   "terre": 70,
+   "feu": -10,
+   "eau": 70,
+   "air": 70,
+   "neutre": 70
+  },
+  "caracs": {
+   "force": 250,
+   "intelligence": 250,
+   "chance": 250,
+   "agilite": 250,
+   "sagesse": 150,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "gelee_royale_citron": {
+  "dofusId": 430,
+  "name": "Gelée Royale Citron",
+  "hp": 3500,
+  "speed": 85,
+  "radius": 30,
+  "mass": 4,
+  "dmg": 14,
+  "attackRange": 70,
+  "windup": 0.6,
+  "lungeSpeed": 420,
+  "lungeTime": 0.2,
+  "recover": 0.7,
+  "color": "#d8d0b8",
+  "xp": 300,
+  "look": "gelee_royale_citron",
+  "spells": [
+   {
+    "id": 29839,
+    "name": "Tartinade",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 217,
+    "name": "Fixation Béton",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [],
+    "gfx": 20108
+   },
+   {
+    "id": 663,
+    "name": "Invocation de Gelée Citron",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 5,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 29837,
+    "name": "Royale Citron Os",
+    "pa": 4,
+    "po": [
+     2,
+     7
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 18,
+      "max": 22,
+      "steal": false
+     },
+     {
+      "k": "puissance",
+      "n": -30,
+      "dur": 1
+     }
+    ],
+    "gfx": 875
+   }
+  ],
+  "level": 60,
+  "res": {
+   "terre": 70,
+   "feu": 70,
+   "eau": 70,
+   "air": -10,
+   "neutre": 70
+  },
+  "caracs": {
+   "force": 250,
+   "intelligence": 250,
+   "chance": 250,
+   "agilite": 250,
+   "sagesse": 150,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "maitre_vampire": {
+  "dofusId": 124,
+  "name": "Maître Vampire",
+  "hp": 975,
+  "speed": 85,
+  "radius": 30,
+  "mass": 4,
+  "dmg": 14,
+  "attackRange": 70,
+  "windup": 0.6,
+  "lungeSpeed": 420,
+  "lungeTime": 0.2,
+  "recover": 0.7,
+  "color": "#d8d0b8",
+  "xp": 300,
+  "look": "maitre_vampire",
+  "spells": [
+   {
+    "id": 222,
+    "name": "Éventration",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 31,
+      "max": 50,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 236,
+    "name": "Vol de Vie",
+    "pa": 4,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 15,
+      "max": 22,
+      "steal": true
+     }
+    ]
+   }
+  ],
+  "level": 37,
+  "res": {
+   "terre": 10,
+   "feu": -10,
+   "eau": -10,
+   "air": 10,
+   "neutre": 10
+  },
+  "caracs": {
+   "force": 100,
+   "intelligence": 0,
+   "chance": 250,
+   "agilite": 100,
+   "sagesse": 0,
+   "esquivePA": 4,
+   "esquivePM": 16,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
  }
 }

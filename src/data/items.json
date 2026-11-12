@@ -39403,6 +39403,57 @@
    "icon": 85004,
    "level": 60,
    "ame": "kanniboul_ebil"
+  },
+  "14954": {
+   "name": "Éclat Obscur",
+   "icon": 15859,
+   "level": 1,
+   "monnaie": "invasion"
+  },
+  "370": {
+   "name": "Gelée Bleuet Royale",
+   "icon": 110407,
+   "level": 60
+  },
+  "2469": {
+   "name": "Gelano",
+   "icon": 9047,
+   "level": 60
+  },
+  "2241": {
+   "name": "Gelée Menthe Royale",
+   "icon": 110408,
+   "level": 60
+  },
+  "2242": {
+   "name": "Gelée Fraise Royale",
+   "icon": 110409,
+   "level": 60
+  },
+  "2436": {
+   "name": "Gelée Citron",
+   "icon": 110490,
+   "level": 60
+  },
+  "2437": {
+   "name": "Gelée Citron Royale",
+   "icon": 110491,
+   "level": 60
+  },
+  "2279": {
+   "name": "Canine Vampiresque",
+   "icon": 47432,
+   "level": 35
+  },
+  "2280": {
+   "name": "Paille Vampiresque",
+   "icon": 15433,
+   "level": 43
+  },
+  "2669": {
+   "name": "Chauve-souris",
+   "icon": 15641,
+   "level": 35
   }
  },
  "drops": {
@@ -52742,6 +52793,386 @@
    {
     "item": "16825",
     "chance": 2.0
+   }
+  ],
+  "gelee_royale_bleuet": [
+   {
+    "item": "757",
+    "chance": 100.0
+   },
+   {
+    "item": "12231",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "22318",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "370",
+    "chance": 46.0
+   },
+   {
+    "item": "13526",
+    "chance": 6.0,
+    "cond": "quete"
+   },
+   {
+    "item": "16827",
+    "chance": 3.0
+   },
+   {
+    "item": "17133",
+    "chance": 2.29,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "26256",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "32985",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "20136",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "29498",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "24188",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "20739",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "22322",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "31042",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "27848",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "2469",
+    "chance": 0.1
+   }
+  ],
+  "gelee_royale_menthe": [
+   {
+    "item": "12231",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "369",
+    "chance": 100.0
+   },
+   {
+    "item": "22318",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "2241",
+    "chance": 46.0
+   },
+   {
+    "item": "13526",
+    "chance": 6.0,
+    "cond": "quete"
+   },
+   {
+    "item": "16827",
+    "chance": 3.0
+   },
+   {
+    "item": "17133",
+    "chance": 2.29,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "32985",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "24188",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "26256",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "27848",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "20136",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "29498",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "31042",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "22322",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "20739",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "2469",
+    "chance": 0.1
+   }
+  ],
+  "gelee_royale_fraise": [
+   {
+    "item": "12231",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "368",
+    "chance": 100.0
+   },
+   {
+    "item": "22318",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "2242",
+    "chance": 46.0
+   },
+   {
+    "item": "13526",
+    "chance": 6.0,
+    "cond": "quete"
+   },
+   {
+    "item": "16827",
+    "chance": 3.0
+   },
+   {
+    "item": "17133",
+    "chance": 2.29,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "22322",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "20739",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "20136",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "29498",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "31042",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "24188",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "26256",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "27848",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "32985",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "2469",
+    "chance": 0.1
+   }
+  ],
+  "gelee_royale_citron": [
+   {
+    "item": "2436",
+    "chance": 100.0
+   },
+   {
+    "item": "22318",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "12231",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "2437",
+    "chance": 46.0
+   },
+   {
+    "item": "13526",
+    "chance": 6.0,
+    "cond": "quete"
+   },
+   {
+    "item": "16827",
+    "chance": 3.0
+   },
+   {
+    "item": "17133",
+    "chance": 2.29,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "20739",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "29498",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "32985",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "31042",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "27848",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "22322",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "24188",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "20136",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "26256",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "2469",
+    "chance": 0.1
+   }
+  ],
+  "maitre_vampire": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "17130",
+    "chance": 48.0,
+    "metier": {
+     "id": 41,
+     "min": 50
+    },
+    "chasse": true
+   },
+   {
+    "item": "2279",
+    "chance": 48.0
+   },
+   {
+    "item": "2280",
+    "chance": 8.08
+   },
+   {
+    "item": "2669",
+    "chance": 8.08
+   },
+   {
+    "item": "16833",
+    "chance": 1.0
    }
   ]
  },

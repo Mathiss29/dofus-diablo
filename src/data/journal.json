@@ -1650,6 +1650,16 @@
       "lignes": {
         "Nouveautés": [
           {
+            "titre": "Les boss du monde arrivent",
+            "phrase": "Chef de Guerre Bouftou, Gelées Royales, Chef Crocodaille et, la nuit, Maître Vampire, annoncés 10 min avant.",
+            "details": "Coffre garanti avec un Rare au moins, des Pépites et un titre la première fois. Forgelance, Eniripsa et Enutrof deviennent jouables par tous.",
+            "icone": "boss",
+            "etiquettes": [
+              "Amakna",
+              "Touche M"
+            ]
+          },
+          {
             "titre": "Défaire chez Kerubim",
             "phrase": "Un objet en trop rend ses runes et des kamas chez Kerubim, au Bastion des Douze.",
             "details": "Un pouvoir légendaire nouveau va au Codex. Les Pépites ne viennent plus des objets ni des ressources.",
@@ -1820,6 +1830,16 @@
           }
         ],
         "Le monde": [
+          {
+            "titre": "Une invasion chaque heure",
+            "phrase": "Une sous-zone est envahie : remplis la jauge, puis ouvre son coffre avec tes Éclats Obscurs.",
+            "details": "Des habitants attaqués et des coffres gardés surgissent sur ta route. Le week-end, un bonus officiel tourne : XP, butin, métiers ou clés.",
+            "icone": "carte",
+            "etiquettes": [
+              "Astrub",
+              "Amakna"
+            ]
+          },
           {
             "titre": "Le Marché couvert",
             "phrase": "Otomaï, Mère Bouillotte, Goultard et Tissebelle vendent maintenant sous un même toit, au Bastion des Douze.",

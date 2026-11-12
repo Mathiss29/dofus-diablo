@@ -112,6 +112,12 @@ export class Monster extends Entity {
   /** Guerre des Cawottes : Wabbit d'une attaque (src/sim/guerre.ts le mène vers les cawottes). */
   guerre = false;
   intouchable = false;
+  /** 0.5 « monde vivant » : boss du monde (clé de src/data/monde_vivant.json), Gelée Royale qui brille (1B), envahisseur (5B),
+   *  monstre d'un petit événement (id, -1 : aucun). */
+  bossMonde = '';
+  brille = false;
+  envahi = false;
+  evenement = -1;
   /** Wa Wobot (« Wabbits : 10B ») : carapace Mékawapace encore à briser (1 = intacte, 0 = aucune). */
   carapace = 0;
   /** Wobot Tamponneur (10A) : temps avant que Twansmutation le change en garde (0 = pas un Tamponneur). */

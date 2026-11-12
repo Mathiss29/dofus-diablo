@@ -51,12 +51,12 @@ export const COOP = {
 
 /** Champs jamais envoyés : données du jeu (recréées de l'autre côté), sac et progression propres à chaque joueur, caches. */
 /** Champs du sac et de la progression : refusés pour les autres, envoyés à leur propriétaire seul (instantané.sac). */
-const SAC = ['bag', 'resources', 'kamas', 'metiers', 'apparats', 'dofus', 'trophees', 'zaaps', 'codex', 'codexOuvert', 'ames', 'cleDonjon', 'guerre', 'recetteSuivie',
+const SAC = ['bag', 'resources', 'kamas', 'metiers', 'apparats', 'dofus', 'trophees', 'zaaps', 'codex', 'codexOuvert', 'ames', 'cleDonjon', 'guerre', 'vivant', 'recetteSuivie',
   'commandeFM', 'lootFilter', 'autoDefaire', 'almanaxJour', 'magasin', 'sacEnPlus', 'benediction', 'zonesVues', 'explore', 'lieuxVus', 'tombe',
   'coffreVitrine', 'coffreJournal', 'coffreRecords'] as const;
 const REFUS: Record<Sorte | 'a', Set<string>> = {
   j: new Set(['cls', 'items', 'bag', 'resources', 'codex', 'learned', 'zonesVues', 'metiers', 'prereglages', 'ames', 'apparats', 'dofus', 'trophees',
-    'commandeFM', 'quetes', 'monde', 'evenements', 'cleDonjon', 'guerre', 'recetteSuivie', 'zaaps', '_pouvoirs', 'almanaxJour', 'magasin', 'sacEnPlus', 'benediction', 'codexOuvert', 'lootFilter', 'autoDefaire', 'kamas', 'v03', 'v04', 'repathT', 'bufferT', 'buffer', 'explore', '_explore', 'lieuxVus', 'tombe', 'carteIci',
+    'commandeFM', 'quetes', 'monde', 'evenements', 'cleDonjon', 'guerre', 'vivant', 'recetteSuivie', 'zaaps', '_pouvoirs', 'almanaxJour', 'magasin', 'sacEnPlus', 'benediction', 'codexOuvert', 'lootFilter', 'autoDefaire', 'kamas', 'v03', 'v04', 'repathT', 'bufferT', 'buffer', 'explore', '_explore', 'lieuxVus', 'tombe', 'carteIci',
     'coffreVitrine', 'coffreJournal', 'coffreRecords', 'coffreEjection']),
   // minuteries de l'IA des monstres : l'hôte seul s'en sert
   m: new Set(['def', 'atkCd', 'spellCd', 'sigCd', 'cheminT', 'wanderT', 'wanderX', 'wanderY', 'repathT']),
@@ -69,11 +69,13 @@ const LISTES = ['projectiles', 'drops', 'telegraphs', 'zonesSol'] as const;
  *  parle du joueur de l'écran de l'hôte. */
 const EVENEMENTS = new Set<SimEvent['k']>(['spell', 'shoot', 'slam', 'monsterCast', 'spellFx', 'status', 'massacre', 'massacreFin', 'hit', 'kill',
   'beteMorte', 'heal', 'filSoin', 'pieces', 'tresorOuvert', 'invocation', 'eveil', 'echange', 'souffrance', 'sacrifice', 'dompte', 'impact', 'grosCoup', 'bossIntro', 'furieux', 'wave',
-  'areneDebut', 'areneVague', 'arenePalier', 'areneAlarme', 'bossFuite', 'wobot', 'bossEpilogue', 'areneFin', 'bossDown', 'cast', 'bulle', 'rageSpent', 'signal', 'guerreVague', 'guerreVol', 'guerreFuite', 'guerreReplantee']);
+  'areneDebut', 'areneVague', 'arenePalier', 'areneAlarme', 'bossFuite', 'wobot', 'bossEpilogue', 'areneFin', 'bossDown', 'cast', 'bulle', 'rageSpent', 'signal', 'guerreVague', 'guerreVol', 'guerreFuite', 'guerreReplantee',
+  'bossMondeAnnonce', 'bossMondeArrive', 'bossMondeCombat', 'bossMondePalier', 'bossMondeFin', 'invasionDebut', 'evenementDebut']);
 export const evenementPartage = (e: SimEvent) => EVENEMENTS.has(e.k);
 /** Événements propres à l'invité (World.evenementsDe) qu'il peut jouer chez lui : bandeaux, butin, quêtes, métiers. */
 const PERSONNELS_AFFICHES = new Set<SimEvent['k']>(['levelUp', 'newSpell', 'enterArea', 'enterLieu', 'loot', 'lootResource', 'lootKamas', 'bagFull',
-  'queteInfo', 'objetQuete', 'succes', 'checkpoint', 'zaapDecouvert', 'lieuDecouvert', 'recolteFin', 'recolteStop', 'metierLevel', 'dofusGagne', 'portal', 'itemDrop', 'guerreDebut', 'guerreFin']);
+  'queteInfo', 'objetQuete', 'succes', 'checkpoint', 'zaapDecouvert', 'lieuDecouvert', 'recolteFin', 'recolteStop', 'metierLevel', 'dofusGagne', 'portal', 'itemDrop', 'guerreDebut', 'guerreFin',
+  'bossMondeVaincu', 'invasionPleine', 'invasionCoffre', 'evenementFin']);
 
 const arrondir = (v: number) => (Number.isInteger(v) || !Number.isFinite(v) ? v : Math.round(v * COOP.arrondi) / COOP.arrondi);
 const estEntite = (v: object): v is Entity => v instanceof Entity;
@@ -148,7 +150,7 @@ export class Emetteur {
     for (const k of LISTES) { const v = versReseau((w[k] as { x: number; y: number }[]).filter(pres)) ?? []; if (diff('l', k, v)) (s.l ??= {})[k] = v; }
     const a = w.arene ? { ...champs(w.arene, REFUS.a), nomDonjon: w.arene.d.nom } : null;
     if (diff('a', '', a)) s.a = a;
-    const wc: Champs = { kills: w.kills, cibleMeute: w.cibleMeute };
+    const wc: Champs = { kills: w.kills, cibleMeute: w.cibleMeute, vivantVu: versReseau(w.vivant?.vue() ?? null) ?? null };   // 0.5 : boss du monde, invasion, événements
     if (diff('w', '', wc)) s.w = wc;
     // une entité sortie de la vue (ou morte et retirée) est oubliée : si elle revient, elle repart avec tous ses champs
     // (l'invité l'a effacée de son miroir, il la recrée de zéro)
