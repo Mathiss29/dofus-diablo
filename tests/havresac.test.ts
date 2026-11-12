@@ -46,7 +46,7 @@ describe('Havre-Sac (maquette Hub : 1A 2A+2C 3A 4A 7A 8A 9A)', () => {
   });
   it('chaque service ouvre la bonne boutique (4A) : clés chez Goultard, potions chez Otomaï, plats chez Mère Bouillotte', () => {
     expect(BOUTIQUES.goultard.map(a => a.id)).toContain('8143');
-    expect(BOUTIQUES.otomai.filter(a => !a.v03).map(a => a.id)).toEqual(['548']);   // + Petite pierre d'âme en 0.3 (tests/archimonstres.test.ts)
+    expect(BOUTIQUES.otomai.filter(a => !a.v03).map(a => a.id)).toEqual(['548', '1634', '1463']);   // + Petite pierre d'âme en 0.3 (tests/archimonstres.test.ts)
     expect(BOUTIQUES.bouillotte.length).toBe(2);
     expect(BOUTIQUES.emp).toBeUndefined();
     for (const [zone, id] of [['bastion', 'kerubim']]) {

@@ -14126,6 +14126,13 @@
      "carte": "0_0",
      "case": 243
     }
+   ],
+   "etablis": [
+    {
+     "nom": "Atelier des forgemages",
+     "carte": "0_0",
+     "case": 299
+    }
    ]
   }
  },

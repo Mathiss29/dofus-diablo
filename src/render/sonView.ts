@@ -129,6 +129,17 @@ export class SonView {
       case 'succes': Son.jouer(M.ui.succes, 'interface'); break;
       case 'succesRecupere': Son.jouer(M.ui.objectif, 'interface'); break;
       case 'checkpoint': Son.jouer(M.ui.checkpoint, 'interface'); break;
+      // Forgemagie v2 9A : un son par issue (pas de son de forgemagie dans les fichiers de Dofus 3 : coup de pioche des ateliers et sons d'interface)
+      case 'forge': {
+        const pioche = M.recolte?.AnimPioche;
+        if (e.issue === 'echec') Son.jouer(M.ui.fermer, 'interface', { vitesse: 0.75, cle: 'forge', ecart: 0.05 });
+        else if (e.issue === 'puits') Son.jouer(M.ui.bouton, 'interface', { vitesse: 1.15, cle: 'forge', ecart: 0.05 });
+        else { if (pioche) Son.jouer(Son.auHasard(pioche), 'effets', { vol: 0.6, vitesse: e.issue === 'critique' ? 1.15 : 1, cle: 'forge', ecart: 0.05 }); if (e.issue === 'critique') Son.jouer(M.ui.ok, 'interface', { cle: 'forgeOk', ecart: 0.05 }); }
+        if (e.issue !== 'echec' && (e.exo || e.over)) Son.jouer(M.ui.objectif, 'interface', { cle: 'objectif', ecart: 0.5 });
+        break;
+      }
+      case 'fmOrbe': case 'fmPotion': Son.jouer(M.ui.objectif, 'interface', { cle: 'objectif', ecart: 0.5 }); break;
+      case 'fmRelance': Son.jouer(M.ui.ok, 'interface', { cle: 'forgeOk', ecart: 0.05 }); break;
       // Kamas D : tintement des pièces ramassées (son officiel, plus aigu que la chute au sol)
       case 'lootKamas': Son.jouer(Son.auHasard(M.kamas), 'effets', { vol: 0.7, vitesse: 1.12 + Math.random() * 0.1, cle: 'kamas', ecart: 0.08 }); break;
       // 0.4 suite 13C : sons des donjons (partie de test tant que la 0.4 est cachée)

@@ -38505,6 +38505,142 @@
    "icon": 84748,
    "level": 60,
    "cle": "Village Kanniboul"
+  },
+  "1333": {
+   "name": "Potion d'Étincelle",
+   "icon": 26001,
+   "level": 20,
+   "potionFM": "feu"
+  },
+  "1335": {
+   "name": "Potion de Crachin",
+   "icon": 26002,
+   "level": 20,
+   "potionFM": "eau"
+  },
+  "1337": {
+   "name": "Potion de Courant d'Air",
+   "icon": 26003,
+   "level": 20,
+   "potionFM": "air"
+  },
+  "1338": {
+   "name": "Potion de Secousse",
+   "icon": 26004,
+   "level": 20,
+   "potionFM": "terre"
+  },
+  "1345": {
+   "name": "Potion d'Incendie",
+   "icon": 26001,
+   "level": 80,
+   "potionFM": "feu"
+  },
+  "1346": {
+   "name": "Potion de Tsunami",
+   "icon": 26002,
+   "level": 80,
+   "potionFM": "eau"
+  },
+  "1347": {
+   "name": "Potion d'Ouragan",
+   "icon": 26003,
+   "level": 80,
+   "potionFM": "air"
+  },
+  "1348": {
+   "name": "Potion de Séisme",
+   "icon": 26004,
+   "level": 80,
+   "potionFM": "terre"
+  },
+  "17272": {
+   "name": "Orbe régénérant mineur",
+   "icon": 50723,
+   "level": 60,
+   "orbe": 60
+  },
+  "17273": {
+   "name": "Orbe régénérant",
+   "icon": 50724,
+   "level": 120,
+   "orbe": 120
+  },
+  "17274": {
+   "name": "Orbe régénérant majeur",
+   "icon": 50725,
+   "level": 180,
+   "orbe": 180
+  },
+  "17275": {
+   "name": "Orbe régénérant magistral",
+   "icon": 50726,
+   "level": 200,
+   "orbe": 200
+  },
+  "1526": {
+   "name": "Métaria rouge",
+   "icon": 66241,
+   "level": 1
+  },
+  "1527": {
+   "name": "Métaria bleue",
+   "icon": 66244,
+   "level": 1
+  },
+  "1528": {
+   "name": "Métaria jaune",
+   "icon": 66247,
+   "level": 1
+  },
+  "1529": {
+   "name": "Métaria verte",
+   "icon": 66250,
+   "level": 1
+  },
+  "1535": {
+   "name": "Métaria Mage rouge",
+   "icon": 66243,
+   "level": 1
+  },
+  "1536": {
+   "name": "Métaria Mage bleue",
+   "icon": 66246,
+   "level": 1
+  },
+  "1537": {
+   "name": "Métaria Mage verte",
+   "icon": 66252,
+   "level": 1
+  },
+  "1538": {
+   "name": "Métaria Mage jaune",
+   "icon": 66249,
+   "level": 1
+  },
+  "1634": {
+   "name": "Sphère à Métarias",
+   "icon": 66240,
+   "level": 1
+  },
+  "1463": {
+   "name": "Fiole à élément",
+   "icon": 71057,
+   "level": 10
+  },
+  "990001": {
+   "name": "Rune Céléritas",
+   "icon": 78092,
+   "level": 40,
+   "rune": true,
+   "maison": true
+  },
+  "990002": {
+   "name": "Rune Chronos",
+   "icon": 78091,
+   "level": 40,
+   "rune": true,
+   "maison": true
   }
  },
  "drops": {
@@ -65907,6 +66043,354 @@
     [
      "8398",
      1
+    ]
+   ]
+  },
+  {
+   "result": "1333",
+   "metier": "alchimiste",
+   "level": 20,
+   "ingredients": [
+    [
+     "1526",
+     5
+    ],
+    [
+     "1463",
+     1
+    ],
+    [
+     "14635",
+     100
+    ]
+   ]
+  },
+  {
+   "result": "1335",
+   "metier": "alchimiste",
+   "level": 20,
+   "ingredients": [
+    [
+     "1527",
+     5
+    ],
+    [
+     "1463",
+     1
+    ],
+    [
+     "14635",
+     100
+    ]
+   ]
+  },
+  {
+   "result": "1337",
+   "metier": "alchimiste",
+   "level": 20,
+   "ingredients": [
+    [
+     "1529",
+     5
+    ],
+    [
+     "1463",
+     1
+    ],
+    [
+     "14635",
+     100
+    ]
+   ]
+  },
+  {
+   "result": "1338",
+   "metier": "alchimiste",
+   "level": 20,
+   "ingredients": [
+    [
+     "1528",
+     5
+    ],
+    [
+     "1463",
+     1
+    ],
+    [
+     "14635",
+     100
+    ]
+   ]
+  },
+  {
+   "result": "1345",
+   "metier": "alchimiste",
+   "level": 80,
+   "ingredients": [
+    [
+     "1535",
+     5
+    ],
+    [
+     "1463",
+     1
+    ],
+    [
+     "14635",
+     300
+    ]
+   ]
+  },
+  {
+   "result": "1346",
+   "metier": "alchimiste",
+   "level": 80,
+   "ingredients": [
+    [
+     "1536",
+     5
+    ],
+    [
+     "1463",
+     1
+    ],
+    [
+     "14635",
+     300
+    ]
+   ]
+  },
+  {
+   "result": "1347",
+   "metier": "alchimiste",
+   "level": 80,
+   "ingredients": [
+    [
+     "1537",
+     5
+    ],
+    [
+     "1463",
+     1
+    ],
+    [
+     "14635",
+     300
+    ]
+   ]
+  },
+  {
+   "result": "1348",
+   "metier": "alchimiste",
+   "level": 80,
+   "ingredients": [
+    [
+     "1538",
+     5
+    ],
+    [
+     "1463",
+     1
+    ],
+    [
+     "14635",
+     300
+    ]
+   ]
+  },
+  {
+   "result": "1526",
+   "metier": "alchimiste",
+   "level": 1,
+   "ingredients": [
+    [
+     "415",
+     4
+    ],
+    [
+     "412",
+     1
+    ],
+    [
+     "1634",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1527",
+   "metier": "alchimiste",
+   "level": 1,
+   "ingredients": [
+    [
+     "414",
+     4
+    ],
+    [
+     "411",
+     1
+    ],
+    [
+     "1634",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1528",
+   "metier": "alchimiste",
+   "level": 1,
+   "ingredients": [
+    [
+     "1141",
+     4
+    ],
+    [
+     "1142",
+     1
+    ],
+    [
+     "1634",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1529",
+   "metier": "alchimiste",
+   "level": 1,
+   "ingredients": [
+    [
+     "1634",
+     1
+    ],
+    [
+     "416",
+     4
+    ],
+    [
+     "413",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1535",
+   "metier": "alchimiste",
+   "level": 1,
+   "ingredients": [
+    [
+     "843",
+     4
+    ],
+    [
+     "846",
+     1
+    ],
+    [
+     "1634",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1536",
+   "metier": "alchimiste",
+   "level": 1,
+   "ingredients": [
+    [
+     "1129",
+     4
+    ],
+    [
+     "844",
+     1
+    ],
+    [
+     "1634",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1537",
+   "metier": "alchimiste",
+   "level": 1,
+   "ingredients": [
+    [
+     "842",
+     4
+    ],
+    [
+     "845",
+     1
+    ],
+    [
+     "1634",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1538",
+   "metier": "alchimiste",
+   "level": 1,
+   "ingredients": [
+    [
+     "308",
+     4
+    ],
+    [
+     "847",
+     1
+    ],
+    [
+     "1634",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "17272",
+   "metier": "mineur",
+   "level": 60,
+   "ingredients": [
+    [
+     "14635",
+     10
+    ]
+   ]
+  },
+  {
+   "result": "17273",
+   "metier": "mineur",
+   "level": 120,
+   "ingredients": [
+    [
+     "14635",
+     30
+    ]
+   ]
+  },
+  {
+   "result": "17274",
+   "metier": "mineur",
+   "level": 180,
+   "ingredients": [
+    [
+     "14635",
+     100
+    ]
+   ]
+  },
+  {
+   "result": "17275",
+   "metier": "mineur",
+   "level": 200,
+   "ingredients": [
+    [
+     "14635",
+     300
     ]
    ]
   }

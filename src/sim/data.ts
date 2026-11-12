@@ -15,11 +15,13 @@ import type { FamilierDef, ItemsData, Stat } from './items';
 import type { QuetesData } from './quests';
 import type { GameData, WeaponProfile } from './defs';
 import { degatsMonstre } from './danger';
+import { setPotions } from './forgemagie';
 
 export const GAME_DATA = { classes, monsters, zones } as unknown as GameData;
 // 1A (maquette « Danger ») : les dégâts des monstres suivent leur rang et leur niveau (src/data/danger.json) ; le champ dmg du json n'est plus lu
 for (const d of Object.values(GAME_DATA.monsters)) d.dmg = degatsMonstre(d);
 export const ITEMS = items as unknown as ItemsData;
+setPotions(ITEMS.resources);   // Forgemagie v2 6A : potions de forgemagie officielles
 // objets de maître du jeu (Annobusé de Maître Jarbo…) : officiels mais jamais obtenables, hors du butin (butin.json, horsJeu)
 for (const id of Object.keys(butin.horsJeu)) if (ITEMS.equipment[id]) ITEMS.equipment[id].horsJeu = true;
 /** Familiers officiels (src/data/familiers.json, familiers_export.py) : courbe d'XP et familiers, dont ceux d'apparat. */
