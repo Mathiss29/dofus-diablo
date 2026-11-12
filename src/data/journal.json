@@ -1709,6 +1709,16 @@
             "etiquettes": [
               "Options"
             ]
+          },
+          {
+            "titre": "Un tchat mieux rangé",
+            "phrase": "Le tchat se replie quand tu n'écris pas et garde le journal de ta partie, même hors ligne.",
+            "details": "Choisis où tu parles avec le bouton à gauche du champ, règle tes onglets au clic droit. Ctrl + clic sur un objet pendant que tu écris le montre aux autres.",
+            "icone": "journal",
+            "etiquettes": [
+              "Touche Entrée",
+              "Options"
+            ]
           }
         ],
         "Le monde": [],

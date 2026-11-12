@@ -10,7 +10,13 @@ export interface Profil { id: number; nom: string; classe: string; sexe: 'm' | '
 export interface Passant { id: number; profil: Profil | null; x: number; y: number; tx: number; ty: number; f: number; a: string; vu: number; age: number }
 export type Canal = 'tout' | 'groupe' | 'bastion' | 'prive' | 'infos';
 /** Un message du chat (« Social : » 4A) : reçu du serveur, ou une info du jeu (canal Infos). */
-export interface MessageChat { canal: Canal; de: string; id: number | null; texte: string; vers?: string; t: number }
+export interface MessageChat {
+  canal: Canal; de: string; id: number | null; texte: string; vers?: string;
+  /** t : performance.now() (effacement) ; heure : Date.now() (« Tchat : » 7A). */
+  t: number; heure: number;
+  /** « Tchat : » 1A : ligne de butin du journal (onglet Infos : butin) ; 7C : classe de celui qui parle. */
+  sorte?: 'butin'; classe?: string;
+}
 export interface JoueurEnLigne { id: number; nom: string; classe: string; niveau: number; zone: string; groupe: boolean; ami?: boolean }
 /** Mon groupe (« Social : » 7A 7B), tenu par le serveur de présence : on se groupe sans bouger. */
 export interface Groupe {
@@ -54,11 +60,13 @@ class Presence {
   ecouter(f: () => void) { this.ecouteurs.add(f); return () => this.ecouteurs.delete(f); }
   lire(f: (m: MessageChat) => void) { this.lecteurs.add(f); return () => { this.lecteurs.delete(f); }; }
   /** Ajoute un message au chat (reçu, ou info du jeu dans le canal Infos). */
-  noter(m: Omit<MessageChat, 't'>) {
-    const n = { ...m, t: performance.now() };
-    this.messages.push(n); if (this.messages.length > 150) this.messages.shift();
+  noter(m: Omit<MessageChat, 't' | 'heure'>) {
+    const n = { ...m, t: performance.now(), heure: Date.now() };
+    this.messages.push(n); if (this.messages.length > 200) this.messages.shift();
     for (const f of this.lecteurs) f(n);
   }
+  /** « Tchat : » 1A : une ligne du journal de la partie (onglet Infos), même hors ligne. */
+  journal(texte: string, sorte?: 'butin') { this.noter({ canal: 'infos', de: '', id: null, texte, ...(sorte ? { sorte } : {}) }); }
   /** Envoie un message (canal Privé : a = nom du perso). */
   dire(canal: Exclude<Canal, 'infos'>, texte: string, a?: string) { this.envoyer({ k: 'dire', canal, texte, ...(a ? { a } : {}) }); }
   private changer() { for (const f of this.ecouteurs) f(); }
@@ -156,7 +164,7 @@ class Presence {
     else if (m.k === 'info') { this.onInfo(String(m.texte)); this.noter({ canal: 'infos', de: '', id: null, texte: String(m.texte) }); }
     else if (m.k === 'chat') {
       const c = String(m.canal);
-      this.noter({ canal: (['tout', 'groupe', 'bastion', 'prive'].includes(c) ? c : 'tout') as Canal, de: String(m.de), id: Number(m.id), texte: String(m.texte), ...(m.vers ? { vers: String(m.vers) } : {}) });
+      this.noter({ canal: (['tout', 'groupe', 'bastion', 'prive'].includes(c) ? c : 'tout') as Canal, de: String(m.de), id: Number(m.id), texte: String(m.texte), ...(m.vers ? { vers: String(m.vers) } : {}), ...(m.classe ? { classe: String(m.classe) } : {}) });
     }
   }
 

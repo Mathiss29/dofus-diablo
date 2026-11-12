@@ -13,7 +13,8 @@ export const PRESENCE = {
   /** Invitations : au plus une toutes les … ms par joueur. */
   ecartInvitation: 3000,
   /** Chat : longueur d'un message, et au plus … messages par tranche de … ms. */
-  longueurChat: 200,
+  // « Tchat : » 6A : un lien d'objet prend ~100 caractères dans le texte envoyé
+  longueurChat: 600,
   rafaleChat: 5,
   fenetreChat: 5000,
   /** Groupe (« Social : » 7A-7C) : 4 joueurs au plus ; un joueur déconnecté garde sa place … ms ; une invitation vaut … ms. */
@@ -203,7 +204,7 @@ export function creerPresence({ comptes, envoyer }) {
       j.dits = j.dits.filter(d => t - d < PRESENCE.fenetreChat);
       if (j.dits.length >= PRESENCE.rafaleChat) return envoyer(s, { k: 'info', texte: 'Doucement : attends un peu avant d’écrire de nouveau' }), true;
       j.dits.push(t);
-      const msg = { k: 'chat', canal, id: j.compte, de: j.profil.nom, texte };
+      const msg = { k: 'chat', canal, id: j.compte, de: j.profil.nom, classe: j.profil.classe, texte };
       if (canal === 'prive') {
         const nom = String(m.a ?? '').trim().toLowerCase();
         const cible = [...joueurs].find(([, o]) => o.profil.nom.toLowerCase() === nom);
