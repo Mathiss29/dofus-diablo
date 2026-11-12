@@ -1690,6 +1690,15 @@
             "etiquettes": [
               "Bastion des Douze"
             ]
+          },
+          {
+            "titre": "Coffre et héros en plus",
+            "phrase": "L'onglet Confort vend 3 onglets de coffre et 2 emplacements de perso pour tout le compte.",
+            "details": "Le coffre partagé passe jusqu'à 8 onglets. L'accueil accueille jusqu'à 5 héros.",
+            "icone": "sac",
+            "etiquettes": [
+              "Bastion des Douze"
+            ]
           }
         ],
         "Le monde": [],

@@ -16,6 +16,9 @@ export const MAGASIN = {
 export const CONFORT = {
   sac: { pas: 20, prix: [150, 300, 450, 600] },
   prereglage: { prix: [200, 300] },
+  /** onglets du coffre partagé (6e, 7e, 8e) et emplacements de perso (4e, 5e) : pour tout le compte */
+  onglet: { prix: [200, 350, 500] },
+  emplacement: { prix: [400, 600] },
 };
 /** 6D : bénédictions de 30 minutes (bonus du calendrier officiel), une à la fois, payées en Pépites. */
 export type Benediction = 'xp' | 'butin' | 'metier';

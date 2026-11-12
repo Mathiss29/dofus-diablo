@@ -2228,6 +2228,9 @@ export class Windows {
       corps = `<div class="shop">
           <div class="ent">Confort</div>
           ${ligne(icS, `+${CONFORT.sac.pas} places de sac`, `Ton sac : ${p.tailleSac} places.`, ps == null ? '<span class="hint">Maximum atteint</span>' : prix(ps, PEPITE, 'data-conf="sac"'))}
+          ${(() => { const po = W.prixOngletCoffre(), pe = W.prixEmplacement();
+            return ligne(icS, `Onglet ${W.coffre.onglets.length + 1} du coffre`, 'Pour tout le compte : 60 places de plus dans le coffre partagé.', po == null ? '<span class="hint">Maximum atteint</span>' : prix(po, PEPITE, 'data-conf="onglet"'))
+              + ligne(icS, `Emplacement de perso ${3 + (W.coffre.emplacementsEnPlus ?? 0) + 1}`, 'Pour tout le compte : un héros de plus à l\'accueil.', pe == null ? '<span class="hint">Maximum atteint</span>' : prix(pe, PEPITE, 'data-conf="emplacement"')); })()}
           ${p.v03 ? ligne(icS, `Préréglage ${p.prereglages.length + 1}`, 'Un préréglage d\'équipement de plus (fenêtre du perso).', pp == null ? '<span class="hint">Maximum atteint</span>' : prix(pp, PEPITE, 'data-conf="prer"')) : ''}
           <div class="ent">Bénédictions <span class="hint">· 30 minutes de jeu, une à la fois (une nouvelle remplace l'autre)</span></div>
           ${(Object.keys(BENEDICTIONS) as Benediction[]).map(k => ligne(icS, BENEDICTIONS[k].nom, BENEDICTIONS[k].texte + (b?.k === k ? ` · <b style="color:#b9e54b">active, encore ${Math.ceil(b.reste / 60)} min</b>` : ''), prix(BENEDICTION.prix, PEPITE, `data-beni="${k}"`))).join('')}
@@ -2254,7 +2257,7 @@ export class Windows {
     w.innerHTML = `${this.title(titre, 'inventory')}<div class="in emp${this.empOnglet === 'recycler' ? ' fm' : ''}">${tete}${corps}</div>`;
     w.querySelectorAll<HTMLElement>('[data-eo]').forEach(e => e.addEventListener('click', () => { this.empOnglet = e.dataset.eo as OngletEmp; this.render(); }));
     w.querySelectorAll<HTMLElement>('[data-etal]').forEach(e => e.addEventListener('click', () => { W.acheterEtal(+e.dataset.etal!); this.changed(); }));
-    w.querySelectorAll<HTMLElement>('[data-conf]').forEach(e => e.addEventListener('click', () => { if (e.dataset.conf === 'sac') W.acheterPlacesSac(); else W.acheterPrereglage(); this.changed(); }));
+    w.querySelectorAll<HTMLElement>('[data-conf]').forEach(e => e.addEventListener('click', () => { const c = e.dataset.conf; if (c === 'sac') W.acheterPlacesSac(); else if (c === 'onglet') W.acheterOngletCoffre(); else if (c === 'emplacement') W.acheterEmplacement(); else W.acheterPrereglage(); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-beni]').forEach(e => e.addEventListener('click', () => { W.acheterBenediction(e.dataset.beni as Benediction); this.changed(); }));
     w.querySelector<HTMLElement>('[data-piece]')?.addEventListener('click', () => { W.acheterPiece(); this.changed(); });
     w.querySelectorAll<HTMLElement>('[data-sac]').forEach(e => e.addEventListener('click', () => { W.acheterSacDuJour(e.dataset.sac as 'rare' | 'epique'); this.changed(); }));

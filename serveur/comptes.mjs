@@ -10,7 +10,7 @@ import { join } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 
 export const COMPTES = {
-  emplacements: 3,
+  emplacements: 5,   // 3 + 2 achetés au Marché (Magasin 6C, gardés dans le coffre du compte)
   /** Taille maximale d'un perso envoyé (le gros, c'est l'inventaire et le codex). */
   tailleMax: 2 * 1024 * 1024,
   /** Durée d'un jeton de connexion. */

@@ -2438,6 +2438,22 @@ export class World {
     const prix = this.prixPrereglage(), p = this.player;
     return prix != null && this.payer(prix, PEPITE, () => { p.prereglages.push(null); return true; }, 'confort:prereglage');
   }
+  /** 6C : un onglet de plus au coffre partagé (tout le compte). */
+  prixOngletCoffre(): number | null { return CONFORT.onglet.prix[this.coffre.onglets.length - COFFRE.onglets] ?? null; }
+  acheterOngletCoffre(): boolean {
+    const prix = this.prixOngletCoffre();
+    const ok = prix != null && this.payer(prix, PEPITE, () => { this.coffre.onglets.push([]); return true; }, 'confort:onglet');
+    if (ok) this.emit({ k: 'coffre' });
+    return ok;
+  }
+  /** 6C : un emplacement de perso de plus (tout le compte : gardé avec le coffre). */
+  prixEmplacement(): number | null { return CONFORT.emplacement.prix[this.coffre.emplacementsEnPlus ?? 0] ?? null; }
+  acheterEmplacement(): boolean {
+    const prix = this.prixEmplacement();
+    const ok = prix != null && this.payer(prix, PEPITE, () => { this.coffre.emplacementsEnPlus = (this.coffre.emplacementsEnPlus ?? 0) + 1; return true; }, 'confort:emplacement');
+    if (ok) this.emit({ k: 'coffre' });
+    return ok;
+  }
   /** 6D : une bénédiction de 30 minutes ; elle remplace celle en cours. */
   acheterBenediction(k: Benediction): boolean {
     const p = this.player;
