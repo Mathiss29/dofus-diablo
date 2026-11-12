@@ -7,6 +7,7 @@ import { PEPITE } from '../src/sim/items';
 import { ARCHI, World } from '../src/sim/world';
 
 const AS = JSON.parse(readFileSync(new URL('../public/assets/mondes/astrub/monde.json', import.meta.url), 'utf8')) as WorldData;
+const BA = JSON.parse(readFileSync(new URL('../public/assets/mondes/bastion/monde.json', import.meta.url), 'utf8')) as WorldData;
 const VIDE = { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} };
 const monde = () => new World({ data: GAME_DATA, zone: 'astrub', map: new WorldGrid(AS), seed: 3, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, reprise: VIDE });
 const M = GAME_DATA.monsters;
@@ -60,5 +61,28 @@ describe('quête du Dofus Ocre, « L\'éternelle moisson » (Archis 7A 9A 9C 10A
     expect(p.resources[M.royal.ame!]).toBe(1);
     w.killMonster(w.spawnMonster('royal', p.x + 40, p.y));
     expect(p.resources[ARCHI.pierre]).toBe(1);
+  });
+
+  it('7B : une âme relâchée dans l\'arène des âmes (à côté du Marché couvert) fait revenir le groupe, au butin de boss ; l\'âme est perdue', () => {
+    const w = new World({ data: GAME_DATA, zone: 'bastion', map: new WorldGrid(BA), seed: 3, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, reprise: VIDE }), p = w.player;
+    const archi = Object.keys(M).find(k => M[k].archiDe && M[k].ame)!, ame = M[archi].ame!;
+    p.resources[ame] = 1; p.resources[ARCHI.pierre] = 5;
+    expect(w.relacherAme(ame)).toBe(false);   // pas sur la place du Bastion
+    expect(p.resources[ame]).toBe(1);
+    const po = w.portes.find(q => q.nom === 'Arène des âmes')!;
+    expect(po.ends.map(e => e.tag)).toEqual(['marche', 'arene']);
+    p.x = po.ends[1].x; p.y = po.ends[1].y + 120;
+    expect(w.dansAreneAmes()).toBe(true);
+    expect(w.relacherAme(ame)).toBe(true);
+    expect(p.resources[ame]).toBeUndefined();
+    const rel = w.monsters.filter(m => m.relache);
+    expect(rel.length).toBeGreaterThanOrEqual(1 + ARCHI.groupe[0]);
+    expect(rel.filter(m => m.type === archi).length).toBe(1);
+    expect(rel.every(m => m.arene)).toBe(true);
+    expect(w.relacherAme(ame)).toBe(false);   // une seule âme à la fois
+    // vaincu à nouveau : pas de nouvelle capture, la pierre reste
+    w.killMonster(rel.find(m => m.type === archi)!);
+    expect(p.resources[ame]).toBeUndefined();
+    expect(p.resources[ARCHI.pierre]).toBe(5);
   });
 });

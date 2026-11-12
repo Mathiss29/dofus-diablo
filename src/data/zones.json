@@ -14168,7 +14168,8 @@
      "garde_brakmar": 17203,
      "garde_pandala": 17179,
      "garde_frigost": 20552,
-     "responsable": 3089
+     "responsable": 3089,
+     "assistante_otomai": 2580
     },
     "iles": {
      "bonta": 14951,
@@ -14188,6 +14189,17 @@
       2384
      ],
      "nom": "Marché couvert"
+    },
+    {
+     "a": [
+      "marche",
+      1831
+     ],
+     "b": [
+      "arene",
+      2384
+     ],
+     "nom": "Arène des âmes"
     }
    ]
   }

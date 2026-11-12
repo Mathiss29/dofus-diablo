@@ -1439,6 +1439,7 @@ export class ZoneScene extends Phaser.Scene {
           this.windows?.refresh(); break; }
         case 'codex': { const o = POUVOIR_PAR_ID[e.id], c = PC_PAR_ID[e.id]; this.hud.loot(`Codex : ${o ? o.sort : c ? c.nom : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id} enregistré`, '#f08a2c');
           this.windows?.noteForge({ t: `Pouvoir enregistré dans le Codex : ${o ? o.officiel : c ? c.nom : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id}`, c: 'ok' }); break; }
+        case 'ameRelachee': this.hud.banner(`${GAME_DATA.monsters[e.monster]?.name ?? 'Archimonstre'}\nrevient se venger !`, 1600, true); break;
         case 'capture': this.hud.loot(`${e.ame ? ITEMS.resources[e.ame]?.name ?? 'Âme capturée' : `${GAME_DATA.monsters[e.monster]?.name ?? 'Archimonstre'} capturé`}${e.neuf && GAME_DATA.monsters[e.monster]?.archiDe ? ` (nouvelle · ${this.world.player.ames.filter(a => GAME_DATA.monsters[a]?.archiDe).length} / ${NB_ARCHIS})` : e.neuf ? ' (nouvelle)' : ''}`, '#ffd27a'); this.windows?.refresh(); break;
         case 'dofusGagne': this.hud.loot(`${PORTABLE(e.id)?.nom ?? 'Dofus'} obtenu ! ${TROPHEES[e.id] && !this.world.player.dofusPortes.includes(e.id) ? 'Il est dans ton sac (fenêtre des Dofus, onglet Trophées)' : 'Il est dans tes emplacements de Dofus (Inventaire)'}`, '#e8c76b'); this.sauver(); this.windows?.refresh(); break;
         case 'dofusPassif': if (e.dofus === 'argente') this.hud.loot(`Souvenir d'Argent : +${e.n ?? 0} PV`, '#e8c76b'); break;   // le bouclier du Cacao se voit déjà (bouclier violet)

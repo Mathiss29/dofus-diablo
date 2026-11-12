@@ -107,6 +107,8 @@ export class Monster extends Entity {
   frappe = 0; frappeT = 0;
   /** Arène d'un donjon : arrive en courant vers le joueur et ne lâche jamais ; intouchable = palier du boss (8C). */
   arene = false;
+  /** « Archis : » 7B : relâché d'une âme dans l'arène du Bastion (meilleur butin, ne se capture pas). */
+  relache = false;
   /** Guerre des Cawottes : Wabbit d'une attaque (src/sim/guerre.ts le mène vers les cawottes). */
   guerre = false;
   intouchable = false;

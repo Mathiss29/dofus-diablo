@@ -1024,11 +1024,11 @@ export class Windows {
     });
     w.querySelectorAll<HTMLElement>('[data-res]').forEach(e => {
       const id = e.dataset.res!, r = ITEMS.resources[id];
-      const eat = () => { if (r.rappel ? this.world.rappel(id) : r.deguisement ? this.world.boire(id) : this.world.eat(id)) { if (r.rappel) this.close(); else this.changed(); } };
+      const eat = () => { if (r.ame ? this.world.relacherAme(id) : r.rappel ? this.world.rappel(id) : r.deguisement ? this.world.boire(id) : this.world.eat(id)) { if (r.rappel || r.ame) this.close(); else this.changed(); } };
       e.addEventListener('mouseenter', ev => { this.tip.innerHTML = this.resTip(r, id); this.tip.style.display = 'block'; this.moveTip(ev); });
       e.addEventListener('mousemove', ev => this.moveTip(ev));
       e.addEventListener('mouseleave', () => this.hideTip());
-      if (r.soin || r.rappel || r.deguisement) { e.addEventListener('contextmenu', eat); e.addEventListener('dblclick', eat); }
+      if (r.soin || r.rappel || r.deguisement || r.ame) { e.addEventListener('contextmenu', eat); e.addEventListener('dblclick', eat); }
       else e.addEventListener('contextmenu', () => { this.hideTip(); this.recettesAvec(id); });
       e.addEventListener('click', ev => { if (ev.altKey && this.world.nourrirFamilier({ res: id, tout: ev.shiftKey })) { ev.preventDefault(); this.changed(); } });
     });
@@ -2143,7 +2143,7 @@ export class Windows {
   }
   private resTip(r: ResourceDef, id: string) {
     const sorte = r.ame ? 'Âme d\'archimonstre' : r.soin || r.rappel || r.deguisement ? 'Consommable' : r.cle ? 'Clé de donjon' : r.pepite ? 'Monnaie du Bastion' : r.monnaie ? 'Monnaie de l\'île des Wabbits' : r.rune || r.signature ? 'Rune de forgemagie' : 'Ressource';
-    const effet = r.ame ? `<div class="up">${escB(GAME_DATA.monsters[r.ame]?.name ?? '')}</div><div class="hint">Capturée dans une Petite pierre d'âme. Elle compte dans le carnet des archimonstres (Bestiaire) ; Otomaï s'y intéressera.</div>`
+    const effet = r.ame ? `<div class="up">${escB(GAME_DATA.monsters[r.ame]?.name ?? '')}</div><div class="hint">Capturée dans une Petite pierre d'âme : elle compte dans le carnet du Bestiaire et se montre à l'Assistante d'Otomaï (quête du Dofus Ocre).</div><div class="hint">Clic droit dans l'arène des âmes (au fond du Marché couvert, Bastion des Douze) : la relâcher pour recombattre son groupe, avec un meilleur butin. L'âme est perdue.</div>`
       : r.soin ? `<div class="up">+${r.soin} PV</div><div class="hint">Clic droit : manger</div>`
       : r.rappel ? `<div class="up">Retour au dernier Zaap (${this.world.checkpointName})</div><div class="hint">Clic droit : boire</div>`
       : r.deguisement ? `<div class="up">Déguisé en Wabbit pendant ${Math.round(r.deguisement / 60)} min</div><div class="hint">Les Wabbits de l'île ne t'attaquent pas tant que tu ne les tapes pas. Clic droit : boire</div>`

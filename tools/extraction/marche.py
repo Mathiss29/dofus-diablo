@@ -74,18 +74,31 @@ OBJETS = []
 # dehors : la porte de l'Hôtel de vente des cosmétiques d'Astrub (as_boutique en (-1000, 200) dans bastion.py), Kerubim à côté
 PORTE_DEHORS = (-935, -35)
 KERUBIM = (-830, 30)
+ASSISTANTE = (-175, 63)                  # l'Assistante d'Otomaï, un peu à droite de son étal (les PNJ restent à 200 px l'un de l'autre)
 LUMIERES = {305396, 404317, 57871, 57971, 806080, 305477, 60327, 36648, 39767, 42481, 44653, 805552, 402668, 806081, 62942, 63044}
 
-def composer():
+# --- L'arène des âmes (maquette « Archis : » 7B, 2026-11-12) : une salle jumelle, au fond du Marché (porte dans son mur droit) ---------
+# on y relâche une âme capturée (src/sim/world.ts relacherAme) : sol de planches, piste ronde de dalles, tapis officiel au centre.
+ARENE_SLOT = (4, 9)
+PORTE_ARENE = 3                          # la porte de l'arène : 4e pan du mur droit du Marché
+SALLES = {'marche': {'slot': SLOT, 'portes': [PORTE_PAN, PORTE_ARENE]}, 'arene': {'slot': ARENE_SLOT, 'portes': [PORTE_PAN]}}
+
+def composer(salle='marche'):
     random.seed(7)
     for mid in {m for m, _ in PIECES.values()}:   # lumières retirées (comme bastion.py) : elles font de grandes taches claires
         md = A.carte(mid); md['sortableElements'] = [e for e in md['sortableElements'] if e['gfxId'] not in LUMIERES]
     P = {n: [q for q in piece(m, r) if q['g'] not in SANS.get(n, ())] for n, (m, r) in PIECES.items()}
     a = A.Arene(7)
-    # sol : dalles claires au milieu, planches au bord
-    a.sol(SOL, [63318, 63319, 63320, 63321], 0, pas=(172, 86))
-    a.sol(lambda x, y: SOL(x, y) / 0.86, [61601, 61359, 61360, 61362, 61600], 1, edge=0.08, pas=(172, 86))
-    a.bg(46940, -130, -20, lvl=2); a.bg(46940, 260, 120, -1, lvl=2)   # tapis officiels de la salle
+    if salle == 'arene':   # planches partout, piste ronde de dalles au milieu, tapis au centre
+        PISTE = lambda x, y: math.hypot(x / 560, (y - FOND[1] - HY) / 280)
+        a.sol(SOL, [61601, 61359, 61360, 61362, 61600], 0, pas=(172, 86))
+        a.sol(PISTE, [63318, 63319, 63320, 63321], 1, edge=0.1, pas=(172, 86))
+        a.bg(46940, 0, FOND[1] + HY, lvl=2)
+    else:
+        # sol : dalles claires au milieu, planches au bord
+        a.sol(SOL, [63318, 63319, 63320, 63321], 0, pas=(172, 86))
+        a.sol(lambda x, y: SOL(x, y) / 0.86, [61601, 61359, 61360, 61362, 61600], 1, edge=0.08, pas=(172, 86))
+        a.bg(46940, -130, -20, lvl=2); a.bg(46940, 260, 120, -1, lvl=2)   # tapis officiels de la salle
     # murs : le coin, puis les pans vers la gauche et vers la droite
     fx, fy = FOND; px, py = fx + 0, fy - 132
     def pose(g, d, c, ox, oy):
@@ -97,28 +110,30 @@ def composer():
         for g, d, c in MUR_G: pose(g, d, c, px + i * PAS_G[0], py + i * PAS_G[1])
     for i in range(ND):
         ox, oy = px + i * PAS_D[0], py + i * PAS_D[1]
-        if i == PORTE_PAN:
+        if i in SALLES[salle]['portes']:
             for g, d, c in PORTE_D: pose(g, (d[0] - 129, d[1] - 66.4), c, ox, oy)
         else:
             for g, d, c in PANNEAU_D: pose(g, d, c, ox, oy)
     for g, d, c in BOUT_D: pose(g, (d[0] - 387, d[1] - 199.2), c, px + ND * PAS_D[0], py + ND * PAS_D[1])
     pnj = {}
-    for n, (x, y), f, r, q in ETALS:
+    for n, (x, y), f, r, q in ETALS if salle == 'marche' else []:
         a.put(P[n], x, y, f, bloque=r)
         if q: pnj[q[0]] = (x + q[1][0], y + q[1][1])
-    for n, (x, y), f, r in OBJETS: a.put(P[n], x, y, f, bloque=r)
-    # la porte : seuil devant l'arche (milieu du pan), arrivée une case plus loin dans la salle
-    dx, dy = px + PORTE_PAN * PAS_D[0] + PAS_D[0] / 2, py + PORTE_PAN * PAS_D[1] + PAS_D[1] / 2 + 160
-    return a, pnj, (dx, dy), (dx - 60, dy + 60)
+    for n, (x, y), f, r in OBJETS if salle == 'marche' else []: a.put(P[n], x, y, f, bloque=r)
+    if salle == 'marche': pnj['assistante_otomai'] = ASSISTANTE   # quête de l'Ocre (« Archis : » 9A), près de l'étal d'Otomaï
+    # les portes : seuil devant l'arche (milieu du pan) ; la première est l'entrée, arrivée une case plus loin dans la salle
+    seuils = [(px + i * PAS_D[0] + PAS_D[0] / 2, py + i * PAS_D[1] + PAS_D[1] / 2 + 160) for i in SALLES[salle]['portes']]
+    return a, pnj, seuils, (seuils[0][0] - 60, seuils[0][1] + 60)
 
 def marchable(x, y, bloque):
     if any(math.hypot(x - bx, (y - by) * 2) < r for bx, by, r in bloque): return False
     return SOL(x, y) <= 0.9
 
-def exporter():
-    a, pnj, seuil, arrivee = composer()
+def exporter(salle='marche'):
+    a, pnj, seuils, arrivee = composer(salle); seuil = seuils[0]
     out = f'{mondes}/bastion'; M = json.load(open(f'{out}/monde.json'))
-    X0, Y0 = M['origin']; ix, iy = SLOT[0] - X0, SLOT[1] - Y0; ox, oy = ix * MW + CX, iy * MH + CY
+    slot = SALLES[salle]['slot']
+    X0, Y0 = M['origin']; ix, iy = slot[0] - X0, slot[1] - Y0; ox, oy = ix * MW + CX, iy * MH + CY
     cols, rows = M['grid']['cols'], M['grid']['rows']
     need = (iy + NS) * ROWS
     if need > rows: M['mov'] += '0' * (need - rows) * cols; M['grid']['rows'] = rows = need
@@ -134,7 +149,7 @@ def exporter():
                 if d < bd: bd, best = d, (iy * ROWS + rr) * cols + ix * COLS + kk
         return best
     sol = A.rendre([e for e in a.els if e['k'][0] == 0], BOX, (8, 6, 4))
-    sol.convert('RGB').save(f'{out}/sol_marche.webp', quality=80, method=6)
+    sol.convert('RGB').save(f'{out}/sol_{salle}.webp', quality=80, method=6)
     variants, places = {}, []
     bt0 = max([p.get('bt', 0) for m in M['maps'] for p in m['decor']] + [0]) + 1
     grand = {}
@@ -160,8 +175,8 @@ def exporter():
         ax, ay, b = pos[name]; atlas.paste(im.crop(b), (ax + 1, ay + 1)); w, h = b[2] - b[0], b[3] - b[1]
         frames[name] = {'frame': {'x': ax + 1, 'y': ay + 1, 'w': w, 'h': h}, 'rotated': False, 'trimmed': True,
                         'spriteSourceSize': {'x': b[0], 'y': b[1], 'w': w, 'h': h}, 'sourceSize': {'w': im.width, 'h': im.height}}
-    atlas.save(f'{out}/decor_marche.webp', quality=82, method=6)
-    json.dump({'frames': frames, 'meta': {'image': 'decor_marche.webp', 'size': {'w': maxW, 'h': atlas.height}, 'scale': '1'}}, open(f'{out}/decor_marche.json', 'w'))
+    atlas.save(f'{out}/decor_{salle}.webp', quality=82, method=6)
+    json.dump({'frames': frames, 'meta': {'image': f'decor_{salle}.webp', 'size': {'w': maxW, 'h': atlas.height}, 'scale': '1'}}, open(f'{out}/decor_{salle}.json', 'w'))
     mov = list(M['mov']); vert = []
     for rr in range(NS * ROWS):
         for kk in range(NS * COLS):
@@ -170,9 +185,9 @@ def exporter():
             ok = marchable(x, y, a.bloque); mov[c] = '1' if ok else '0'
             if ok: vert.append((x, y))
     M['mov'] = ''.join(mov)
-    entree = {'x': SLOT[0], 'y': SLOT[1], 'id': 0, 'sub': 0, 'tag': 'marche', 'n': [NS, NS], 'inside': 1, 'batiments': 1,
+    entree = {'x': slot[0], 'y': slot[1], 'id': 0, 'sub': 0, 'tag': salle, 'n': [NS, NS], 'inside': 1, 'batiments': 1,
               'sol': {'x': BOX[0] + ox, 'y': BOX[1] + oy, 'w': sol.width, 'h': sol.height}, 'decor': places}
-    M['maps'] = [m for m in M['maps'] if m['tag'] != 'marche'] + [entree]
+    M['maps'] = [m for m in M['maps'] if m['tag'] != salle] + [entree]
     json.dump(M, open(f'{out}/monde.json', 'w'))
     # dehors : la case libre du Bastion la plus proche de la porte de l'Hôtel de vente (repère du Bastion, centre = 0, 0)
     BCX, BCY = OX + 8 * MW / 2, OY + 8 * MH / 2
@@ -186,7 +201,7 @@ def exporter():
         return best
     def locale(g):   # case de la salle (comme cellOf de src/sim/gridmap.ts : NS x 14 colonnes)
         r, k = divmod(g, cols); return (r - iy * ROWS) * NS * COLS + k - ix * COLS
-    pts = {'seuil': locale(case(*seuil)), 'porte': dehors(*PORTE_DEHORS), 'kerubim': dehors(*KERUBIM),
+    pts = {'seuil': locale(case(*seuil)), 'seuils': [locale(case(*q)) for q in seuils], 'porte': dehors(*PORTE_DEHORS), 'kerubim': dehors(*KERUBIM),
            'pnj': {k: locale(case(*v)) for k, v in pnj.items()}}
     if apercu:
         os.makedirs(apercu, exist_ok=True)
@@ -195,17 +210,18 @@ def exporter():
         for k, (x, y) in list(pnj.items()) + [('seuil', seuil), ('arrivee', arrivee)]:
             d.ellipse((x - BOX[0] - 16, y - BOX[1] - 9, x - BOX[0] + 16, y - BOX[1] + 9), outline=(255, 60, 60, 255), width=4)
             d.text((x - BOX[0] + 18, y - BOX[1] - 8), k, fill=(255, 255, 0, 255))
-        im.convert('RGB').resize((im.width // 2, im.height // 2)).save(f'{apercu}/marche.jpg', quality=85)
-    print('marché :', len(places), 'éléments,', len(variants), 'images, atlas', atlas.size, ', sol', sol.size, ',', len(vert), 'cases')
+        im.convert('RGB').resize((im.width // 2, im.height // 2)).save(f'{apercu}/{salle}.jpg', quality=85)
+    print(salle, ':', len(places), 'éléments,', len(variants), 'images, atlas', atlas.size, ', sol', sol.size, ',', len(vert), 'cases')
     return pts
 
 if __name__ == '__main__':
     if not os.environ.get('TEXDIR'): raise SystemExit('TEXDIR=dossier des <gfx>.png (sortis des bundles mapgfx) : voir LISEZMOI')
-    pts = exporter()
+    pts = exporter(); ar = exporter('arene')
     Z = json.load(open(ZONES)); o = Z['bastion']['open']
     o['bastion']['pnj'].update(pts['pnj']); o['bastion']['pnj']['kerubim'] = pts['kerubim']
-    o['portes'] = [p for p in o.get('portes', []) if p['nom'] != 'Marché couvert'] + \
-        [{'a': ['bastion', pts['porte']], 'b': ['marche', pts['seuil']], 'nom': 'Marché couvert'}]
+    o['portes'] = [p for p in o.get('portes', []) if p['nom'] not in ('Marché couvert', 'Arène des âmes')] + \
+        [{'a': ['bastion', pts['porte']], 'b': ['marche', pts['seuil']], 'nom': 'Marché couvert'},
+         {'a': ['marche', pts['seuils'][1]], 'b': ['arene', ar['seuil']], 'nom': 'Arène des âmes'}]
     open(ZONES, 'w').write(json.dumps(Z, ensure_ascii=False, indent=1) + '\n')
     QP = os.path.join(os.path.dirname(ZONES), 'quetes.json'); Q = json.load(open(QP))
     for k, c in pts['pnj'].items():

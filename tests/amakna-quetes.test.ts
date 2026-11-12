@@ -34,7 +34,7 @@ describe('quêtes d’Amakna (« 0.4 suite : 11A + 11B »)', () => {
   it('11B : la Milice d’Amakna a son tableau de contrats d’Amakna, celle d’Astrub garde les siens', () => {
     const w = monde(true), Q = w.quetes!; w.player.level = 35;
     const amk = Q.contrats('garde_chateau2'), ast = Q.contrats('geolier');
-    expect(amk).toHaveLength(4); expect(ast).toHaveLength(4);
+    expect(amk).toHaveLength(5); expect(ast).toHaveLength(5);   // 4 contrats + l'archimonstre signalé (Archis 3C)
     for (const id of amk) { expect(AMAKNA).toContain(+id.split(':')[3]); expect(Q.def(id).rendre).toBe('garde_chateau2'); }
     for (const id of ast) { expect(AMAKNA).not.toContain(+id.split(':')[3]); expect(Q.def(id).rendre).toBe('geolier'); }
     // titres officiels pour chaque sous-zone d'Amakna à monstres
@@ -44,6 +44,6 @@ describe('quêtes d’Amakna (« 0.4 suite : 11A + 11B »)', () => {
     expect(e.tableaux?.garde_chateau2?.ids).toHaveLength(3);
     // 0.4 publique : la garde du Château a aussi son tableau hors partie de test
     const pub = monde(false); pub.player.level = 35;
-    expect(pub.quetes!.contrats('garde_chateau2')).toHaveLength(4);
+    expect(pub.quetes!.contrats('garde_chateau2')).toHaveLength(5);
   });
 });

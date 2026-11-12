@@ -1808,6 +1808,15 @@
             "etiquettes": [
               "Contrats"
             ]
+          },
+          {
+            "titre": "L'arène des âmes",
+            "phrase": "Clic droit sur une âme, dans l'arène à côté du Marché couvert : l'archimonstre revient avec son groupe.",
+            "details": "L'âme est perdue, mais le groupe se bat comme un boss et lâche un butin de boss.",
+            "icone": "boss",
+            "etiquettes": [
+              "Bastion des Douze"
+            ]
           }
         ],
         "Le monde": [

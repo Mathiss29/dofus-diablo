@@ -31,7 +31,9 @@ import { themeChoisi, themesEnJeu, themesPossedes, zoneAvecTheme, type Teintures
 /** Archimonstres (0.3, 15B) : chance qu'un monstre d'un groupe soit son archimonstre ; pierres d'âme officielles (vide, pleine). */
 export const ARCHI = { chance: 1 / 150, pierre: '9686', pleine: '10418',
   /** « Archis : » 5B : chance qu'un élite (archimonstres compris) lâche une Petite pierre d'âme. */
-  pierreElite: 1 / 20 };
+  pierreElite: 1 / 20,
+  /** « Archis : » 7B : salle de l'arène des âmes au Bastion, et monstres de son groupe autour d'un archimonstre relâché (min, max). */
+  arene: 'arene', groupe: [3, 5] as [number, number] };
 import { FABRICATION, METIERS_FAB, chanceRare, ingredientsRares, type Poste } from './metiers';
 import { PLACEMENT, analyserCarte, groupesAuto, placementPose, placementValide, proposerPlacement, type AnalyseCarte, type PlacementCarte } from './placement';
 import { PC_PAR_ID } from './pouvoirsClasse';
@@ -800,6 +802,27 @@ export class World {
     p.deguise = r.deguisement;
     this.emit({ k: 'status', x: p.x, y: p.y - 60, text: 'Déguisé en Wabbit !', color: '#e8902a' });
     this.emit({ k: 'potion', x: p.x, y: p.y, amount: 0 });
+    return true;
+  }
+  /** « Archis : » 7B : dans l'arène des âmes du Bastion, relâcher une âme capturée : l'archimonstre revient avec son groupe (le boss seul),
+   *  au milieu de l'arène, et se bat tout de suite ; meilleur butin (celui d'un boss), mais il ne se capture pas. L'âme est perdue. */
+  dansAreneAmes(): boolean { const p = this.player; return this.dansBastion && this.worldGrid?.mapAt(p.x, p.y)?.tag === ARCHI.arene; }
+  relacherAme(id: string): boolean {
+    const p = this.player, r = this.opts.items?.resources[id], type = r?.ame, d = type ? this.opts.data.monsters[type] : undefined;
+    if (!d || !(p.resources[id] > 0) || p.dead) return false;
+    const non = (text: string) => { this.emit({ k: 'status', x: p.x, y: p.y - 60, text, color: '#ff9a5a' }); return false; };
+    if (!this.dansAreneAmes()) return non('À relâcher dans l\'arène des âmes, au Marché couvert du Bastion');
+    if (this.monsters.some(m => m.relache && !m.dead)) return non('L\'arène est déjà occupée');
+    p.resources[id]--; if (!p.resources[id]) delete p.resources[id];
+    const wg = this.worldGrid!, c = this.openestCellOf(ARCHI.arene), libres = wg.freeByMap.get(ARCHI.arene);
+    const types = [type!];
+    if (d.archiDe) { const [a, b] = ARCHI.groupe; for (let i = a + Math.floor(this.rng.next() * (b - a + 1)); i > 0; i--) types.push(d.archiDe); }
+    types.forEach((t, i) => {
+      const ang = i * 2 * Math.PI / Math.max(1, types.length - 1), q = i ? wg.nearestFree(c.x + Math.cos(ang) * 90, c.y + Math.sin(ang) * 45, libres) : c;
+      const m = this.spawnMonster(t, q.x, q.y); m.arene = true; m.relache = true;
+    });
+    this.emit({ k: 'impact', hitstop: 0.05, shake: 0.012, big: true });
+    this.emit({ k: 'ameRelachee', monster: type!, x: c.x, y: c.y });
     return true;
   }
   /** Clé de ce donjon encore valable (14A) : vague atteinte, sinon 0. */
@@ -1893,7 +1916,7 @@ export class World {
     const p = this.player;
     p.soigner(p.cls.healOnKill + p.legendary('vampire'));
     this.dropLoot(m);
-    if (m.def.archiDe || (m.def.boss && m.def.ame)) this.capturer(m);
+    if ((m.def.archiDe || (m.def.boss && m.def.ame)) && !m.relache) this.capturer(m);
     const alm = (this.almanax?.effet === 'xp' ? 1 + ALMANAX.xp : 1) * (1 + p.beni('xp'));   // 15C, Magasin 6D
     // Multi (maquette « Multi : » 7A) : chaque joueur proche gagne l'XP comme en solo, +10 % par allié proche
     const proches = this.players.filter(q => q !== p && !q.dead && Math.abs(q.x - m.x) + Math.abs(q.y - m.y) <= World.SOMMEIL);
@@ -1980,9 +2003,11 @@ export class World {
   /** Un monstre vaincu lâche son butin officiel (ressources, parfois un équipement) et, plus rarement, un équipement
    *  de son niveau pris parmi les objets officiels des monstres de la zone. Élites et boss lâchent plus et mieux. Calcul : src/sim/butin.ts. */
   private dropLoot(m: Monster) {
-    if (this.players.length < 2) { this.lacherButin(m.type, rangDe(m.def), this.monsterLevel(m), m.x, m.y); return; }
+    // « Archis : » 7B : l'archimonstre relâché dans l'arène lâche le butin d'un boss ; son niveau est le sien (l'arène est au Bastion)
+    const rang = m.relache && m.def.archiDe ? 'boss' : rangDe(m.def), niv = m.relache ? m.def.level ?? this.monsterLevel(m) : this.monsterLevel(m);
+    if (this.players.length < 2) { this.lacherButin(m.type, rang, niv, m.x, m.y); return; }
     // Multi (« Multi : » 7C) : chaque joueur proche a son propre tirage, que lui seul voit et ramasse
-    for (const q of this.joueursProches(m.x, m.y)) this.commeJoueur(q, () => this.lacherButin(m.type, rangDe(m.def), this.monsterLevel(m), m.x, m.y, 0, q.id));
+    for (const q of this.joueursProches(m.x, m.y)) this.commeJoueur(q, () => this.lacherButin(m.type, rang, niv, m.x, m.y, 0, q.id));
   }
   /** Joueurs qui ont part à ce qui se passe en (x, y) : à moins de SOMMEIL (morts compris : ils se relèvent). */
   joueursProches(x: number, y: number): Player[] { return this.players.filter(q => Math.abs(q.x - x) + Math.abs(q.y - y) <= World.SOMMEIL); }
