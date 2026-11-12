@@ -143,6 +143,12 @@ PNJ = {
     'services': [{'texte': 'Voir les clés.', 'service': 'boutique'}],
     'discussion': [{'reponse': 'Tu ne viens pas avec moi ?', 'texte': "Si je viens, il ne restera rien à taper pour toi. Je suis gentil, tu vois."},
       {'reponse': 'Pourquoi tu vis ici ?', 'texte': "Au Bastion, chacun a déjà prouvé ce qu'il vaut : personne ne me provoque en duel. J'en avais besoin."}]},
+  # Responsable de la boutique (PNJ officiel 5136, Magasin 13E) : confort et thèmes du Havre-Sac, au Marché couvert.
+  'responsable': {'nom': 'Responsable de la boutique', 'dofusId': 5136, 'zone': 'bastion', 'carte': 'marche', 'case': BASTION['responsable'], 'titre': 'Confort et Havre-Sac',
+    'phrase': "Bienvenue ! Ici, rien ne rend plus fort : juste plus à l'aise. Un sac plus grand, un coffre plus large, un Havre-Sac à ton goût.",
+    'services': [{'texte': 'Voir le confort.', 'service': 'confort'}, {'texte': 'Changer le décor de mon Havre-Sac.', 'service': 'havresac'}],
+    'discussion': [{'reponse': 'Pourquoi des Pépites, et pas des kamas ?', 'texte': "Les kamas, c'est pour survivre. Les Pépites, c'est pour vivre bien. Et chez moi, on vit très bien."},
+      {'reponse': 'Un Havre-Sac en forme de Moon ?', 'texte': "Jungle, plage, taverne, pyramide… Quarante-six décors, tous signés. Ton arche et ton coffre déménagent avec toi, promis."}]},
   # Maquette Ville 5F : gardes et crieur du Bastion. Looks officiels (table npcs), répliques inédites. Un garde de chaque nation
   # attend au départ du pont coupé de son île (bastion.py GARDES) ; deux Gardes d'Amakna encadrent le Zaap.
   'garde_bonta': {'nom': "Soldat d'élite bontarien", 'dofusId': 995, 'zone': 'bastion', 'carte': 'bastion', 'case': BASTION['garde_bonta'], 'titre': 'Garde du pont de Bonta',
