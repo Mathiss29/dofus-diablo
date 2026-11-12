@@ -195,6 +195,14 @@ async function sondage(nom, etape) {
 }
 
 async function main() {
+  // « Apparats : » 11B : enregistre /code et /ogrines sur le serveur Discord du jeu (le serveur de jeu y répond : serveur/ogrines.mjs)
+  if (cmd === "commandes") {
+    const { COMMANDES_DISCORD } = await import("../../serveur/ogrines.mjs");
+    const app = (await api("GET", "/oauth2/applications/@me")).id, gid = await guildId();
+    if (DRY) return console.log(JSON.stringify(COMMANDES_DISCORD, null, 2));
+    await api("PUT", `/applications/${app}/guilds/${gid}/commands`, COMMANDES_DISCORD);
+    return console.log("Commandes enregistrées : " + COMMANDES_DISCORD.map((c) => "/" + c.name).join(", "));
+  }
   if (cmd === "liste") {
     const all = await api("GET", `/guilds/${await guildId()}/channels`);
     const cats = all.filter((c) => c.type === CATEGORY).sort((a, b) => a.position - b.position);

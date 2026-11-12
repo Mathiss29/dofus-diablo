@@ -132,6 +132,23 @@ sudo systemctl restart diablofus && sleep 2 && curl -fsS http://127.0.0.1:3100/s
 l'utilisateur `diablofus` ne peut pas le lire directement. Sans ce fichier, tout le reste marche et le bouton de connexion
 du jeu dit simplement « connexion indisponible ».
 
+## Ogrines et codes cadeaux (« Apparats : » 10-12, `ogrines.mjs`)
+
+Les Ogrines sont sur le compte Discord et ne s'achètent jamais : elles viennent des codes cadeaux et des événements.
+Un joueur entre un code dans Options › Compte (20 essais par heure). Un admin (`ROLES_ADMIN`) crée un code dans le jeu,
+au même endroit, ou sur Discord avec `/code` (et donne des Ogrines à un joueur avec `/ogrines`).
+
+**Pour les commandes Discord (une fois, par Mathis)** : portail Discord › General Information, copier la **Public Key**
+(pas secrète) et coller `https://api.diablofus.com/discord/interactions` dans « Interactions Endpoint URL ». Sur le VPS :
+
+```bash
+echo "DISCORD_CLE_PUBLIQUE=<la Public Key>" | sudo tee -a /etc/diablofus/discord.env >/dev/null
+sudo systemctl restart diablofus
+```
+
+Puis, sur GitHub : Actions › « Discord » › Run workflow, action `commandes` (Essai décoché) : `/code` et `/ogrines`
+apparaissent sur le serveur, visibles des admins seulement. Les réponses du robot ne sont vues que par celui qui tape.
+
 ## Classement (Ladder, maquette « Ladder : »)
 
 Le serveur calcule le classement une fois par minute (`classement.mjs`) depuis les persos en ligne : `GET /classement`

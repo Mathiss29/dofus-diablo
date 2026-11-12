@@ -37,6 +37,7 @@ Onglet Actions → « Discord » → Run workflow. « Essai » est coché par d�
 - `plan` : applique `serveur.json`.
 - `journal` : publie ou réécrit le carnet (champ `date` pour un ancien carnet).
 - `categorie` : renomme la catégorie du jeu (`ancien` = un morceau du nom actuel).
+- `commandes` : installe les commandes `/code` et `/ogrines` sur le serveur (codes cadeaux, voir serveur/LISEZMOI.md).
 - `annonce` : publie `texte` dans `salon`, cherché d'abord dans la catégorie du jeu.
 - `sondage` : sondage natif Discord décrit dans `sondages/<nom>.json` (champ `sondage`, `classes` par défaut), en trois étapes (champ `etape`) :
   - `lancer` : crée les émojis du serveur manquants (`dfus_<classe>`, symboles officiels de `sondages/symboles/`), le fil de discussion, puis publie le message (mention `@everyone` ou un rôle) et les sondages (10 réponses et 55 caractères par réponse au plus, plusieurs choix). Ne republie pas un sondage déjà là.

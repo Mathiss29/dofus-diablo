@@ -108,6 +108,7 @@ function schemaZone(d: SpellDef | null, g: SortGrade, col: string): string {
 import { ELEMENT_COLORS } from './fx';
 import { World } from '../sim/world';
 import { COFFRE } from '../sim/coffre';
+import { Compte } from './compte';
 import { METIERS_FAB, chanceRare, prochainPalier, recettesAvec, recettesDe, sourcesDe } from '../sim/metiers';
 /** Produit d'une recette : ressource, ou équipement (métiers de fabrication, 0.3). */
 const produit = (id: string): { name: string; icon: number; soin?: number } | undefined => ITEMS.resources[id] ?? ITEMS.equipment[id];
@@ -716,6 +717,14 @@ const CSS = `
 .dw .opt .row small{margin-top:3px;line-height:1.35}
 .dw .opt .fl{width:18px;height:18px;cursor:pointer;justify-self:end;opacity:.75;background:currentColor;color:#e8e2cc;-webkit-mask:url(assets/ui/d3/contextMenuDownArrow.png) center/12px no-repeat;mask:url(assets/ui/d3/contextMenuDownArrow.png) center/12px no-repeat;transition:transform .15s}
 .dw .opt .fl:hover{opacity:1;color:#b9e54b}.dw .opt .fl.on{transform:rotate(180deg);color:#b9e54b}
+.dw .opt .cpt{display:flex;flex-direction:column;gap:8px;padding:6px 4px}
+.dw .opt .cpt .og{display:flex;align-items:baseline;gap:8px}.dw .opt .cpt .og b{font:22px Rowdies,sans-serif;color:#e7b5ff}.dw .opt .cpt .og span{color:#c9bfa8}
+.dw .opt .cpt p{margin:0;color:#c9bfa8;font-size:12px}
+.dw .opt .cpt .cl{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.dw .opt .cpt input{background:#15130f;border:1px solid #5a5040;color:#f4efe0;padding:4px 8px;font:inherit;font-size:12px;min-width:0}
+.dw .opt .cpt input[data-code]{flex:1;text-transform:uppercase;letter-spacing:1px}.dw .opt .cpt input[type=number]{width:80px}
+.dw .opt .cpt .btn{border-image-source:url(assets/ui/d3/btn_grey_small_normal.png);color:#f4efe0;padding:3px 12px;font-size:12px}
+.dw .opt .cpt .cm{color:#ffd77a;font-size:12px}.dw .opt .cpt summary{cursor:pointer;color:#c9bfa8;font-size:12px;margin-bottom:6px}
 .dw .opt .obtns{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:6px 0 2px}
 .dw .opt .obtns .btn,.dw .opt .tw .btn{border-image-source:url(assets/ui/d3/btn_grey_small_normal.png);color:#f4efe0;text-shadow:0 1px 2px #000;padding:3px 12px;font-size:12px}
 .dw .opt .obtns .btn:hover,.dw .opt .tw .btn:hover{border-image-source:url(assets/ui/d3/btn_grey_small_over.png)}
@@ -1592,6 +1601,8 @@ export class Windows {
    *  sections à droite avec leur « Réinitialiser », cases vertes. Contenu : choix 10A + 10B (ambiance), maquette Aperçu (sorts),
    *  maquette Son (8A volumes, 8B touche M). Tout est gardé dans le navigateur. */
   private optRecherche = '';
+  /** Options › Compte : dernier message du code cadeau. */
+  private codeMsg = '';
   /** Guide (touche G) : rubrique affichée et recherche. */
   private guideVue = 'bienvenue';
   private guideRecherche = '';
@@ -1677,6 +1688,43 @@ export class Windows {
   /** Options ouvertes depuis l'écran d'accueil (11A) : les fenêtres passent devant lui jusqu'à leur fermeture. */
   devant() { this.root.style.zIndex = '30'; }
   get capteTouches() { return this.touchesVue && this.mode === 'opt' && !!this.win; }
+  private compteHtml() {
+    const e = (t: string) => escB(t);
+    const ok = Compte.enLigne, adm = ok && !!Compte.infos?.admin;
+    return `<div class="cpt"><div class="og"><b>${ok ? Compte.ogrines.toLocaleString('fr-FR') : '—'}</b><span>Ogrines</span></div>
+      ${ok ? '' : '<p>Connecte-toi avec Discord à l\'accueil (mode « En ligne ») pour recevoir des Ogrines et utiliser un code.</p>'}
+      <div class="cl"><input type="text" data-code placeholder="DIABLO-XXXX-XXXX" maxlength="32" ${ok ? '' : 'disabled'} aria-label="Code cadeau"><span class="btn" data-cbtn="utiliser">Utiliser le code</span></div>
+      ${this.codeMsg ? `<div class="cm">${e(this.codeMsg)}</div>` : ''}
+      ${adm ? `<details class="adm"><summary>Créer un code (admin)</summary>
+        <div class="cl"><input type="number" data-cc="ogrines" min="0" max="100000" value="500" title="Ogrines"><input type="number" data-cc="max" min="1" value="1" title="Utilisations"><input type="number" data-cc="jours" min="1" value="7" title="Jours"></div>
+        <div class="cl"><input type="text" data-cc="objets" placeholder="Objets ou apparats (ids, séparés par des virgules)"><input type="text" data-cc="code" placeholder="Nom (option)" maxlength="32"></div>
+        <div class="cl"><span class="btn" data-cbtn="creer">Créer</span></div></details>` : ''}</div>`;
+  }
+  private brancherCompte(w: HTMLElement) {
+    const champ = w.querySelector<HTMLInputElement>('[data-code]');
+    const utiliser = async () => {
+      if (!champ?.value.trim()) return;
+      const r = await Compte.utiliserCode(champ.value);
+      if ('erreur' in r) { this.codeMsg = r.erreur; this.render(); return; }
+      // 11D : les objets du code arrivent sur le perso joué (apparat = collection, sinon sac)
+      const noms: string[] = [];
+      for (const id of r.objets) {
+        if (APPARATS.objets[id]) { this.world.ajouterApparat(id); noms.push(APPARATS.objets[id].name ?? id); }
+        else if (ITEMS.equipment[id] || ITEMS.resources?.[id]) { this.world.donnerObjet(id); noms.push(nomObjet(id)); }
+      }
+      this.codeMsg = `Code utilisé : ${r.ogrines ? `+${r.ogrines} Ogrines` : ''}${r.ogrines && noms.length ? ', ' : ''}${noms.join(', ')}.`;
+      Son.jouer(MANIFESTE.ui.ok, 'interface');
+      this.render();
+    };
+    champ?.addEventListener('keydown', ev => { ev.stopPropagation(); if (ev.key === 'Enter') void utiliser(); });
+    w.querySelectorAll<HTMLInputElement>('.cpt input').forEach(i => i.addEventListener('keydown', ev => ev.stopPropagation()));
+    w.querySelector('[data-cbtn="utiliser"]')?.addEventListener('click', () => void utiliser());
+    w.querySelector('[data-cbtn="creer"]')?.addEventListener('click', async () => {
+      const v = (k: string) => w.querySelector<HTMLInputElement>(`[data-cc="${k}"]`)?.value.trim() ?? '';
+      this.codeMsg = await Compte.creerCode({ ogrines: +v('ogrines') || 0, max: +v('max') || 1, jours: +v('jours') || 7, objets: v('objets').split(/[\s,]+/).filter(Boolean), ...(v('code') ? { code: v('code') } : {}) });
+      this.render();
+    });
+  }
   private renderOpt() {
     const w = this.win!, r = this.reglages;
     const vieux = w.querySelector<HTMLElement>('.main')?.scrollTop ?? 0;   // la page garde sa place quand une option la redessine
@@ -1755,6 +1803,10 @@ export class Windows {
           { k: 'volInterface', nom: 'Interface (fenêtres, niveau, quêtes)', t: 'range', min: 0, max: 100 },
           { k: 'musiqueBoss', nom: 'Musique de combat des boss', aide: 'Sinon, la musique de la zone continue pendant les combats de boss.', t: 'check' },
         ] },
+      ] },
+      // « Apparats : » 10A + 11A + 12A : Ogrines du compte, codes cadeaux (jamais d'achat en argent)
+      { nom: 'Compte', desc: 'Les Ogrines vont sur ton compte Discord : elles ne s\'achètent pas, elles viennent des codes cadeaux et des événements.', secs: [
+        { id: 'compte', titre: 'Ogrines et codes cadeaux', opts: [], html: this.compteHtml() },
       ] },
       { nom: 'Alertes', desc: 'Ces options règlent ce qui te prévient pendant que tu joues.', secs: [
         { id: 'alertes', titre: 'Alertes', opts: [
@@ -1865,6 +1917,7 @@ export class Windows {
       if (b === 'modules') { r.modules = {}; apply(); }
       this.render();
     }));
+    this.brancherCompte(w);
     w.querySelectorAll<HTMLElement>('[data-tfermer]').forEach(e => e.addEventListener('click', () => { this.touchesVue = false; this.touchesEcoute = null; this.touchesMsg = ''; this.render(); }));
     w.querySelectorAll<HTMLElement>('[data-tk]').forEach(e => e.addEventListener('click', () => { this.touchesEcoute = e.dataset.tk!; this.touchesMsg = ''; this.render(); }));
     w.querySelector('.tw')?.addEventListener('pointerdown', ev => ev.stopPropagation());

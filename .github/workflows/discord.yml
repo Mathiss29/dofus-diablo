@@ -9,7 +9,7 @@ on:
         description: "liste = voir les salons et le plan actuel ; plan = appliquer serveur.json ; journal = carnet du jour ; categorie = renommer la catégorie du jeu ; annonce = publier un message ; sondage = sondage de tools/discord/sondages (voir étape)"
         type: choice
         default: liste
-        options: [liste, plan, journal, categorie, annonce, sondage]
+        options: [liste, plan, journal, categorie, annonce, sondage, commandes]
       texte:
         description: "annonce : texte (mise en forme Discord, 1 900 caractères au plus, \\n pour aller à la ligne)"
         type: string
