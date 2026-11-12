@@ -52,7 +52,7 @@ for bd in bone_dirs:
         for fr in a['frames']:
             for r in fr:
                 if r.get('sym', 0) < 0 and 0 <= r.get('par', -1) < len(exposed):
-                    nc = re.match(r'^Color\w+?_(\d+)_', exposed[r['par']])
+                    nc = re.match(r'^Color\w+?_(\d+)_', exposed[r['par']], re.I)   # ColorGray_… ou colorGray_… (PNJ 5460)
                     if nc and colors and int(nc.group(1)) <= len(colors): couleur_de.setdefault(r['idx'] - 1, int(nc.group(1)))
         for fr in a['frames']:
             for r in fr:

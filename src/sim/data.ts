@@ -10,6 +10,9 @@ import apparat from '../data/apparat.json';
 import familiers from '../data/familiers.json';
 import butin from '../data/butin.json';
 import carte from '../data/carte.json';
+import themes from '../data/havresac_themes.json';
+import teintures from '../data/teintures.json';
+import type { Teintures, ThemesHavreSac } from './havresac';
 import type { RecoltesData } from './recolte';
 import type { FamilierDef, ItemsData, Stat } from './items';
 import type { QuetesData } from './quests';
@@ -52,3 +55,7 @@ for (const [id, f] of Object.entries(FAMILIERS.familiers)) if (f.apparat) APPARA
 // collection d'apparences (1C) : les coiffes, capes et boucliers du jeu, icône sur la planche des objets (case -1)
 for (const [id, d] of Object.entries(ITEMS.equipment))
   if ((d.slot === 'chapeau' || d.slot === 'cape' || d.slot === 'bouclier') && !APPARATS.objets[id]) APPARATS.objets[id] = { name: d.name, slot: d.slot, icon: d.icon, case: -1, collection: true };
+
+/** Thèmes du Havre-Sac et teintures (Magasin 6B, 6E). */
+export const THEMES_HAVRESAC = themes as unknown as ThemesHavreSac;
+export const TEINTURES = teintures as unknown as Teintures;

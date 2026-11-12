@@ -12,6 +12,10 @@ export interface Coffre {
   noms?: string[];
   /** Emplacements de perso achetés au Marché (Magasin 6C), gardés avec le coffre du compte pour suivre le compte en ligne. */
   emplacementsEnPlus?: number;
+  /** Thèmes du Havre-Sac achetés au Marché (Magasin 6B, ids de havresac_themes.json) et thème posé ; teintures achetées (6E). Tout le compte. */
+  themes?: number[];
+  theme?: number;
+  teintures?: string[];
 }
 
 export const coffreVide = (): Coffre => ({ onglets: Array.from({ length: COFFRE.onglets }, () => []) });
@@ -25,6 +29,10 @@ export function relireCoffre(c: unknown): Coffre {
   });
   const e = Math.floor(Number(o.emplacementsEnPlus) || 0);
   if (e > 0) r.emplacementsEnPlus = Math.min(COFFRE.emplacementsMax, e);
+  const ids = (l: unknown) => Array.isArray(l) ? [...new Set(l.filter(x => Number.isInteger(x) && x > 0 && x < 1000) as number[])] : [];
+  if (ids(o.themes).length) r.themes = ids(o.themes);
+  if (Number.isInteger(o.theme) && o.theme! > 0) r.theme = o.theme;
+  if (Array.isArray(o.teintures)) { const t = [...new Set(o.teintures.filter(x => typeof x === 'string' && /^[a-z]{2,20}$/.test(x)))]; if (t.length) r.teintures = t; }
   if (Array.isArray(o.noms)) r.noms = o.noms.slice(0, COFFRE.max).map(n => String(n ?? '').slice(0, 20));
   return r;
 }

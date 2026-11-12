@@ -4,7 +4,8 @@ import { apercuSort } from '../sim/apercu';
 import { dossier, v } from './assetUrl';
 import Phaser from 'phaser';
 import { calerCamera, densite, densitePleine, reglerDensite } from './pixel';
-import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES } from '../sim/data';
+import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES, TEINTURES, THEMES_HAVRESAC } from '../sim/data';
+import { themeChoisi, zoneAvecTheme } from '../sim/havresac';
 import type { Compte } from '../sim/quests';
 import { QuestView } from './questView';
 import { PassantsView } from './passantsView';
@@ -248,7 +249,7 @@ export class ZoneScene extends Phaser.Scene {
     if (GAME_DATA.classes[this.classId].souffrance) for (let i = 1; i <= 10; i++)
       if (!this.textures.exists(`souffrance_${i}`)) this.load.image(`souffrance_${i}`, v(`${ASSETS}/ui/souffrance/s${i}.png`));
     if (!this.textures.exists(ICON_SHEET.key)) this.load.spritesheet(ICON_SHEET.key, v(`${ASSETS}/${ICON_SHEET.url}`), { frameWidth: ICON_SHEET.cell, frameHeight: ICON_SHEET.cell });
-    const zone = GAME_DATA.zones[this.zoneId];
+    const zone = this.zoneVue();
     // On ne charge que les planches utiles à cette zone
     const types = new Set<string>();
     if (zone.open) for (const s of Object.values(zone.open.subareas)) s.monsters.forEach(m => types.add(m));
@@ -309,7 +310,7 @@ export class ZoneScene extends Phaser.Scene {
   }
 
   create() {
-    const zone = GAME_DATA.zones[this.zoneId], seed = (Math.random() * 2 ** 32) >>> 0;
+    const zone = this.zoneVue(), seed = (Math.random() * 2 ** 32) >>> 0;
     this.input.mouse?.disableContextMenu();
     // Deux caméras : celle du jeu (zoom à la molette) et celle de l'interface (jamais zoomée).
     // Tout objet ajouté à la scène est ignoré par la caméra d'interface, sauf l'interface elle-même (Hud).
@@ -332,7 +333,7 @@ export class ZoneScene extends Phaser.Scene {
     if (zone.open) {
       const open = zone.open;
       const wg = new WorldGrid(this.cache.json.get(WorldView.key(open.world, 'monde')) as WorldData);
-      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, apparats: APPARATS, familierXp: FAMILIERS.xp, recoltes: RECOLTES, compte: chargerCompte(), coffre: lireCoffre(this.sorteCoffre), aujourdhui: this.test?.jour ?? jourDuPC(), nuit: () => this.nuitDehors(), tuto: this.test ? false : this.perso?.tuto, test: this.test?.reglages,
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, apparats: APPARATS, themesHavreSac: THEMES_HAVRESAC, teintures: TEINTURES, familierXp: FAMILIERS.xp, recoltes: RECOLTES, compte: chargerCompte(), coffre: lireCoffre(this.sorteCoffre), aujourdhui: this.test?.jour ?? jourDuPC(), nuit: () => this.nuitDehors(), tuto: this.test ? false : this.perso?.tuto, test: this.test?.reglages,
         placements: this.test ? retouchesPlacement(open.world) : undefined,   // éditeur F1 › Placement : retouches pas encore envoyées
         // vitrine : les PNJ sont là, mais aucune quête ne démarre
         arrivee: this.arrivee, position: this.transit.position, point: this.transit.point, zaap: this.transit.zaap, retour: this.transit.retour,
@@ -576,6 +577,8 @@ export class ZoneScene extends Phaser.Scene {
   }
   private get look() { return ((this.perso?.sexe ?? this.essai?.sexe) === 'f' && LOOKS[`${this.classId}_f`]) || LOOKS[this.classId]; }
   /** Coffre partagé (0.3, 12D) : celui des Hardcore est à part, la partie de test a le sien. */
+  /** La zone telle qu'on la charge : le Havre-Sac prend le monde et les cases du thème choisi par le compte (Magasin 6B). */
+  private zoneVue() { return zoneAvecTheme(GAME_DATA.zones[this.zoneId], themeChoisi(THEMES_HAVRESAC, lireCoffre(this.sorteCoffre))); }
   private get sorteCoffre(): SorteCoffre { return this.test ? 'test' : this.perso?.hardcore ? 'hardcore' : 'normal'; }
   /** Sauvegarde automatique du perso (toutes les 5 s, en quittant la page, en revenant à l'accueil). */
   private sauver = () => {
@@ -1387,7 +1390,7 @@ export class ZoneScene extends Phaser.Scene {
         case 'craft': this.hud.loot(`${(ITEMS.resources[e.id] ?? ITEMS.equipment[e.id])?.name ?? 'Objet'} x${e.n}${e.rares ? ` (${e.rares} Rare${e.rares > 1 ? 's' : ''})` : ''}`, e.rares ? '#6fb2e8' : '#9ad15a'); this.windows?.refresh(); break;
         case 'eat': this.windows?.refresh(); break;
         // PNJ du Havre-Sac (maquette Hub 4A) : la réponse « service » de son dialogue ouvre sa fenêtre (recycler, boutique, apparats, miroir)
-        case 'service': if (this.windows && (e.service === 'recycler' || e.service === 'boutique' || e.service === 'apparat')) { this.windows.empPnj = e.pnj; this.windows.empOnglet = e.service; this.windows.show('emp'); }
+        case 'service': if (this.windows && (e.service === 'recycler' || e.service === 'boutique' || e.service === 'apparat' || e.service === 'confort' || e.service === 'havresac')) { this.windows.empPnj = e.pnj; this.windows.empOnglet = e.service; this.windows.show('emp'); }
           else if (this.windows && e.service === 'forgemagie') this.windows.ouvrirForge();
           else if (this.windows && e.service === 'garde-robe') this.windows.show('garde');
           else if (this.windows && e.service === 'almanax') this.windows.show('almanax');
