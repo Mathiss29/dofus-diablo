@@ -50,6 +50,7 @@ describe('Thèmes du Havre-Sac (Magasin 6B)', () => {
     expect(h.walkable(h.player.x, h.player.y)).toBe(true);
     expect(h.poutch).not.toBeNull();
     expect(h.zaapRefuge()?.name).toBe('Zaap du Havre-Sac');
+    expect(h.zone.open!.etablis?.[0].case).toBe(t.etabli);   // l'établi de forgemagie suit le thème
   });
   it('changer de thème dans le Havre-Sac y ramène avec le nouveau décor', () => {
     const c: Coffre = { ...coffreVide(), themes: [3] }, w = monde('havresac', c);

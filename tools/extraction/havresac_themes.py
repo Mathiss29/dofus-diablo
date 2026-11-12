@@ -6,6 +6,7 @@
 # (havresac.py). Cases trouvées dans la carte officielle :
 #  arche  = milieu du dessin de l'arche officielle (gfx 38003, ou 42294 + une ligne ; Almanax : la fontaine, case 276), 5 lignes au-dessus
 #  arrivee = case marchable la plus proche du devant de l'arche ; coffre = coffre officiel (élément interactif 12367)
+#  etabli = établi de forgemagie, à quelques pas du coffre
 #  poutch = case marchable la plus dégagée, loin de l'arrivée, du coffre et de la machine à meubles (51031)
 import sys, os, json, subprocess
 cdir, tdir, mondes = sys.argv[1:4]
@@ -31,7 +32,9 @@ for t in D['themes']:
     ouvert = lambda c: sum(1 for d in mov if dist(c, d) <= 4)
     cand = [c for c in mov if dist(c, arr) >= 7 and dist(c, coffre) >= 4 and dist(c, machine) >= 4]
     poutch = max(cand, key=lambda c: (ouvert(c), -dist(c, arr)))
-    t.update(monde=f'havresac_{t["id"]}', arrivee=arr, arche=centre - 70, poutch=poutch, coffre=coffre)
+    pres = [c for c in mov if c not in (arr, poutch) and dist(c, arr) >= 2.5 and dist(c, poutch) >= 4]
+    etabli = min(pres, key=lambda c: abs(dist(c, coffre) - 3.5))   # établi de forgemagie (Forgemagie v2 2B) : à quelques pas du coffre
+    t.update(monde=f'havresac_{t["id"]}', arrivee=arr, arche=centre - 70, poutch=poutch, coffre=coffre, etabli=etabli)
     liste = f'/tmp/havresac_{t["id"]}.json'; json.dump({'0,0': [t['carte'], 851]}, open(liste, 'w'))
     subprocess.run([sys.executable, os.path.join(HERE, 'world_export.py'), liste, cdir, tdir, f'{mondes}/{t["monde"]}'], check=True)
 json.dump(D, open(P, 'w'), ensure_ascii=False, indent=1); open(P, 'a').write('\n')

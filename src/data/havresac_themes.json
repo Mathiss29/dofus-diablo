@@ -1,5 +1,5 @@
 {
- "_": "Thèmes officiels du Havre-Sac (table havenbagthemes de Dofus 3 : nom, carte du bundle mapdata_assets_world_621). Magasin 6B : vendus en Pépites au Marché (onglet Havre-Sac), pour tout le compte ; Mercenaire est offert. Chaque thème est un monde public/assets/mondes/<monde> (world_export.py, Mercenaire = havresac avec nos meubles, havresac.py). Cases (0-559) : arrivee devant l'arche officielle, arche = milieu du dessin de l'arche (clic), coffre = coffre officiel, poutch = coin le plus dégagé ; calculées par tools/extraction/havresac_themes.py. Spectacle (8) n'a pas de carte dans les fichiers du jeu : absent.",
+ "_": "Thèmes officiels du Havre-Sac (table havenbagthemes de Dofus 3 : nom, carte du bundle mapdata_assets_world_621). Magasin 6B : vendus en Pépites au Marché (onglet Havre-Sac), pour tout le compte ; Mercenaire est offert. Chaque thème est un monde public/assets/mondes/<monde> (world_export.py, Mercenaire = havresac avec nos meubles, havresac.py). Cases (0-559) : arrivee devant l'arche officielle, arche = milieu du dessin de l'arche (clic), coffre = coffre officiel, poutch = coin le plus dégagé, etabli = établi de forgemagie, près du coffre ; calculées par tools/extraction/havresac_themes.py. Spectacle (8) n'a pas de carte dans les fichiers du jeu : absent.",
  "themes": [
   {
    "id": 1,
@@ -9,7 +9,8 @@
    "arrivee": 340,
    "arche": 240,
    "poutch": 329,
-   "coffre": 313
+   "coffre": 313,
+   "etabli": 355
   },
   {
    "id": 2,
@@ -19,7 +20,8 @@
    "arrivee": 272,
    "arche": 172,
    "poutch": 370,
-   "coffre": 245
+   "coffre": 245,
+   "etabli": 233
   },
   {
    "id": 3,
@@ -29,7 +31,8 @@
    "arrivee": 285,
    "arche": 185,
    "poutch": 357,
-   "coffre": 243
+   "coffre": 243,
+   "etabli": 231
   },
   {
    "id": 4,
@@ -39,7 +42,8 @@
    "arrivee": 285,
    "arche": 185,
    "poutch": 274,
-   "coffre": 258
+   "coffre": 258,
+   "etabli": 300
   },
   {
    "id": 5,
@@ -49,7 +53,8 @@
    "arrivee": 257,
    "arche": 157,
    "poutch": 246,
-   "coffre": 230
+   "coffre": 230,
+   "etabli": 214
   },
   {
    "id": 6,
@@ -59,7 +64,8 @@
    "arrivee": 243,
    "arche": 143,
    "poutch": 233,
-   "coffre": 216
+   "coffre": 216,
+   "etabli": 259
   },
   {
    "id": 7,
@@ -69,7 +75,8 @@
    "arrivee": 242,
    "arche": 142,
    "poutch": 232,
-   "coffre": 215
+   "coffre": 215,
+   "etabli": 200
   },
   {
    "id": 8,
@@ -85,7 +92,8 @@
    "arrivee": 187,
    "arche": 87,
    "poutch": 260,
-   "coffre": 297
+   "coffre": 297,
+   "etabli": 256
   },
   {
    "id": 10,
@@ -95,7 +103,8 @@
    "arrivee": 270,
    "arche": 170,
    "poutch": 260,
-   "coffre": 230
+   "coffre": 230,
+   "etabli": 228
   },
   {
    "id": 11,
@@ -105,7 +114,8 @@
    "arrivee": 312,
    "arche": 212,
    "poutch": 301,
-   "coffre": 351
+   "coffre": 351,
+   "etabli": 310
   },
   {
    "id": 12,
@@ -115,7 +125,8 @@
    "arrivee": 243,
    "arche": 143,
    "poutch": 233,
-   "coffre": 311
+   "coffre": 311,
+   "etabli": 269
   },
   {
    "id": 14,
@@ -125,7 +136,8 @@
    "arrivee": 258,
    "arche": 158,
    "poutch": 330,
-   "coffre": 282
+   "coffre": 282,
+   "etabli": 297
   },
   {
    "id": 15,
@@ -135,7 +147,8 @@
    "arrivee": 257,
    "arche": 157,
    "poutch": 246,
-   "coffre": 230
+   "coffre": 230,
+   "etabli": 272
   },
   {
    "id": 16,
@@ -145,7 +158,8 @@
    "arrivee": 340,
    "arche": 240,
    "poutch": 412,
-   "coffre": 394
+   "coffre": 394,
+   "etabli": 351
   },
   {
    "id": 17,
@@ -155,7 +169,8 @@
    "arrivee": 187,
    "arche": 102,
    "poutch": 177,
-   "coffre": 188
+   "coffre": 188,
+   "etabli": 230
   },
   {
    "id": 18,
@@ -165,7 +180,8 @@
    "arrivee": 270,
    "arche": 170,
    "poutch": 203,
-   "coffre": 173
+   "coffre": 173,
+   "etabli": 214
   },
   {
    "id": 19,
@@ -175,7 +191,8 @@
    "arrivee": 258,
    "arche": 158,
    "poutch": 247,
-   "coffre": 244
+   "coffre": 244,
+   "etabli": 287
   },
   {
    "id": 20,
@@ -185,7 +202,8 @@
    "arrivee": 242,
    "arche": 142,
    "poutch": 232,
-   "coffre": 202
+   "coffre": 202,
+   "etabli": 258
   },
   {
    "id": 21,
@@ -195,7 +213,8 @@
    "arrivee": 228,
    "arche": 128,
    "poutch": 217,
-   "coffre": 282
+   "coffre": 282,
+   "etabli": 240
   },
   {
    "id": 23,
@@ -205,7 +224,8 @@
    "arrivee": 186,
    "arche": 86,
    "poutch": 176,
-   "coffre": 226
+   "coffre": 226,
+   "etabli": 184
   },
   {
    "id": 24,
@@ -215,7 +235,8 @@
    "arrivee": 243,
    "arche": 143,
    "poutch": 233,
-   "coffre": 188
+   "coffre": 188,
+   "etabli": 176
   },
   {
    "id": 25,
@@ -225,7 +246,8 @@
    "arrivee": 215,
    "arche": 115,
    "poutch": 233,
-   "coffre": 296
+   "coffre": 296,
+   "etabli": 255
   },
   {
    "id": 26,
@@ -235,7 +257,8 @@
    "arrivee": 212,
    "arche": 112,
    "poutch": 285,
-   "coffre": 252
+   "coffre": 252,
+   "etabli": 210
   },
   {
    "id": 27,
@@ -245,7 +268,8 @@
    "arrivee": 257,
    "arche": 157,
    "poutch": 274,
-   "coffre": 215
+   "coffre": 215,
+   "etabli": 203
   },
   {
    "id": 28,
@@ -255,7 +279,8 @@
    "arrivee": 187,
    "arche": 87,
    "poutch": 177,
-   "coffre": 146
+   "coffre": 146,
+   "etabli": 133
   },
   {
    "id": 29,
@@ -265,7 +290,8 @@
    "arrivee": 187,
    "arche": 87,
    "poutch": 205,
-   "coffre": 132
+   "coffre": 132,
+   "etabli": 120
   },
   {
    "id": 30,
@@ -275,7 +301,8 @@
    "arrivee": 228,
    "arche": 128,
    "poutch": 245,
-   "coffre": 276
+   "coffre": 276,
+   "etabli": 289
   },
   {
    "id": 31,
@@ -285,7 +312,8 @@
    "arrivee": 214,
    "arche": 114,
    "poutch": 287,
-   "coffre": 238
+   "coffre": 238,
+   "etabli": 226
   },
   {
    "id": 32,
@@ -295,7 +323,8 @@
    "arrivee": 213,
    "arche": 113,
    "poutch": 203,
-   "coffre": 239
+   "coffre": 239,
+   "etabli": 198
   },
   {
    "id": 33,
@@ -305,7 +334,8 @@
    "arrivee": 213,
    "arche": 113,
    "poutch": 203,
-   "coffre": 239
+   "coffre": 239,
+   "etabli": 198
   },
   {
    "id": 34,
@@ -315,7 +345,8 @@
    "arrivee": 201,
    "arche": 101,
    "poutch": 190,
-   "coffre": 174
+   "coffre": 174,
+   "etabli": 216
   },
   {
    "id": 35,
@@ -325,7 +356,8 @@
    "arrivee": 143,
    "arche": 43,
    "poutch": 132,
-   "coffre": 101
+   "coffre": 101,
+   "etabli": 114
   },
   {
    "id": 36,
@@ -335,7 +367,8 @@
    "arrivee": 159,
    "arche": 59,
    "poutch": 232,
-   "coffre": 117
+   "coffre": 117,
+   "etabli": 75
   },
   {
    "id": 39,
@@ -345,7 +378,8 @@
    "arrivee": 172,
    "arche": 72,
    "poutch": 161,
-   "coffre": 145
+   "coffre": 145,
+   "etabli": 187
   },
   {
    "id": 50,
@@ -355,7 +389,8 @@
    "arrivee": 186,
    "arche": 86,
    "poutch": 259,
-   "coffre": 144
+   "coffre": 144,
+   "etabli": 156
   },
   {
    "id": 51,
@@ -365,7 +400,8 @@
    "arrivee": 187,
    "arche": 87,
    "poutch": 303,
-   "coffre": 132
+   "coffre": 132,
+   "etabli": 175
   },
   {
    "id": 52,
@@ -375,7 +411,8 @@
    "arrivee": 286,
    "arche": 186,
    "poutch": 358,
-   "coffre": 244
+   "coffre": 244,
+   "etabli": 203
   },
   {
    "id": 53,
@@ -385,7 +422,8 @@
    "arrivee": 242,
    "arche": 142,
    "poutch": 232,
-   "coffre": 201
+   "coffre": 201,
+   "etabli": 185
   },
   {
    "id": 54,
@@ -395,7 +433,8 @@
    "arrivee": 285,
    "arche": 185,
    "poutch": 357,
-   "coffre": 394
+   "coffre": 394,
+   "etabli": 352
   },
   {
    "id": 55,
@@ -405,7 +444,8 @@
    "arrivee": 258,
    "arche": 158,
    "poutch": 344,
-   "coffre": 300
+   "coffre": 300,
+   "etabli": 285
   },
   {
    "id": 56,
@@ -415,7 +455,8 @@
    "arrivee": 242,
    "arche": 142,
    "poutch": 315,
-   "coffre": 215
+   "coffre": 215,
+   "etabli": 203
   },
   {
    "id": 57,
@@ -425,7 +466,8 @@
    "arrivee": 257,
    "arche": 157,
    "poutch": 371,
-   "coffre": 243
+   "coffre": 243,
+   "etabli": 299
   },
   {
    "id": 58,
@@ -435,7 +477,8 @@
    "arrivee": 200,
    "arche": 100,
    "poutch": 272,
-   "coffre": 173
+   "coffre": 173,
+   "etabli": 160
   },
   {
    "id": 60,
@@ -445,7 +488,8 @@
    "arrivee": 333,
    "arche": 206,
    "poutch": 468,
-   "coffre": 291
+   "coffre": 291,
+   "etabli": 275
   },
   {
    "id": 61,
@@ -455,7 +499,8 @@
    "arrivee": 333,
    "arche": 206,
    "poutch": 468,
-   "coffre": 291
+   "coffre": 291,
+   "etabli": 275
   },
   {
    "id": 62,
@@ -465,7 +510,8 @@
    "arrivee": 333,
    "arche": 206,
    "poutch": 468,
-   "coffre": 291
+   "coffre": 291,
+   "etabli": 275
   },
   {
    "id": 63,
@@ -475,7 +521,8 @@
    "arrivee": 333,
    "arche": 206,
    "poutch": 468,
-   "coffre": 291
+   "coffre": 291,
+   "etabli": 275
   }
  ],
  "prix": 600,

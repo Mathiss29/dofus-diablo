@@ -4,7 +4,7 @@
 import type { ZoneDef } from './defs';
 import type { Coffre } from './coffre';
 
-export interface ThemeHavreSac { id: number; nom: string; carte: number; monde?: string; arrivee?: number; arche?: number; poutch?: number; coffre?: number; absent?: boolean }
+export interface ThemeHavreSac { id: number; nom: string; carte: number; monde?: string; arrivee?: number; arche?: number; poutch?: number; coffre?: number; etabli?: number; absent?: boolean }
 export interface ThemesHavreSac { prix: number; defaut: number; themes: ThemeHavreSac[] }
 export interface Teinture { id: string; nom: string; /** cheveux puis 4 zones de tenue (0xRRGGBB) */ c: number[] }
 export interface Teintures { prix: number; teintures: Teinture[] }
@@ -23,5 +23,5 @@ export function zoneAvecTheme(z: ZoneDef, t: ThemeHavreSac | null | undefined): 
   const o = z.open, h = o?.havreSac;
   if (!o || !h || !t?.monde || t.arrivee == null || t.arche == null) return z;
   return { ...z, open: { ...o, world: t.monde, havreSac: { ...h, arrivee: t.arrivee, arche: t.arche, poutch: t.poutch ?? h.poutch, theme: t.id },
-    coffres: (o.coffres ?? []).map(c => ({ ...c, case: t.coffre ?? c.case })) } };
+    coffres: (o.coffres ?? []).map(c => ({ ...c, case: t.coffre ?? c.case })), etablis: (o.etablis ?? []).map(e => ({ ...e, case: t.etabli ?? e.case })) } };
 }
