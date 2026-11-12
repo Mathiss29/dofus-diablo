@@ -12,7 +12,7 @@ export const ACTIONS: Action[] = [
   // Fluidité 6A + 7A (retour d'un joueur, 2026-11-12) : maintenue, le perso attaque en boucle vers la souris sans bouger (comme Maj + clic)
   { id: 'attaqueSouris', nom: 'Attaquer vers la souris (maintenue)', groupe: 'Combat', def: 'Q' },
   { id: 'potion', nom: 'Potion', groupe: 'Combat', def: 'E' },
-  { id: 'coffre', nom: 'Ouvrir le coffre (Enutrof)', groupe: 'Combat', def: 'X' },
+  { id: 'coffre', nom: 'Coffre au trésor (Enutrof)', groupe: 'Combat', def: 'X' },
   ...[1, 2, 3, 4].map(i => ({ id: `invoc${i}`, nom: `Invocation ${i} (Osamodas)`, groupe: 'Combat', def: 'AZRT'[i - 1] })),
   { id: 'inventaire', nom: 'Inventaire', groupe: 'Fenêtres', def: 'I' },
   { id: 'caracs', nom: 'Caractéristiques', groupe: 'Fenêtres', def: 'C' },

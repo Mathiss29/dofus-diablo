@@ -409,6 +409,7 @@ export class ZoneScene extends Phaser.Scene {
     // Bestiaire (maquette « Drops » 1A) : les monstres vaincus du compte ; la partie de test voit tout
     this.windows.vaincus = () => this.bestiaire; this.windows.toutVoir = !!this.test;
     this.windows.onZaap = i => { this.zaapChoix = i; };
+    this.windows.onOuvrirTresor = () => { this.coffreDemande = true; };   // Enutrof (interface du coffre 2C)
     this.windows.onCarte = m => { if (this.carte?.dispo) this.carte.montrer(m); };   // Métiers UI 8B, 11B : où trouver une ressource
     this.windows.portrait = v(`${ASSETS}/ui/perso_${this.classId}${this.perso?.sexe === 'f' ? '_f' : ''}.png`);
     // perso dessiné en direct dans l'inventaire, l'aperçu des apparats et la garde-robe (Apparence 5A, 6B)
@@ -647,6 +648,7 @@ export class ZoneScene extends Phaser.Scene {
       this.dialogueView?.fermerMenu();
       // Eniripsa 3D : un sort armé (façon Dofus) se lance sur l'allié dont on clique le portrait
       if (this.aimId && this.world.player.cls.eniripsa && this.hud.joueurPortrait(p.x, p.y) != null) { this.pressed = this.aimId; this.aimId = null; this.aimKey = null; this.uiClick = true; return; }
+      if (this.world.player.cls.coffre && p.leftButtonDown() && this.hud.surMedaillon(p.x, p.y)) { this.windows?.toggle('tresor'); this.uiClick = true; return; }   // Enutrof 1A
       if (over.length || this.hud.blocks(p.x, p.y)) { this.uiClick = true; return; }
       this.uiClick = false;
       // Panneau test 4E : Ctrl + clic droit copie la carte et la case sous la souris
@@ -1023,7 +1025,7 @@ export class ZoneScene extends Phaser.Scene {
       case 'carte': this.basculerCarte(); break;   // M, comme dans Dofus (maquette 0.2, 18A)
       case 'carteTab': if (this.carte?.dispo && !this.carte.ouverte) this.carte.basculerSurimpression(); break;   // 11B : carte en surimpression
       case 'havresac': this.havreSacDemande = true; break;
-      case 'coffre': this.coffreDemande = true; break;
+      case 'coffre': if (p.cls.coffre) w?.toggle('tresor'); break;   // Enutrof (interface du coffre 2C) : la fenêtre du coffre
       case 'muet': this.basculerMuet(); break;
       case 'impact':
         this.fx.juice = !this.fx.juice;
@@ -1237,6 +1239,11 @@ export class ZoneScene extends Phaser.Scene {
           break;
         case 'playerHurt': this.hud.hurtFlash(this.fx.juice); break;
         case 'grosCoup': if (this.fx.juice) this.hud.grosCoup(); break;
+        // Enutrof (interface du coffre 7D) : le coffre s'ouvre ; au palier Trésor et en surcharge, la caméra tremble et l'écran s'illumine
+        case 'tresorOuvert':
+          this.chime(e.palier >= 3 ? 'legendaire' : 'epique');
+          if (this.fx.juice && e.palier >= 2) { this.cameras.main.shake(e.palier >= 3 ? 320 : 180, e.palier >= 3 ? 0.006 : 0.003, true); if (e.palier >= 3) this.cameras.main.flash(260, 255, 210, 120, true); }
+          break;
         // Maquette « Danger » : entrée du boss (7A) et phase Furieux (5A)
         case 'bossIntro': if (!this.world.arene) this.hud.banner(`${M[e.monster].name}\n${this.world.area?.name ?? this.world.zone.name}`, 2200); break;
         case 'furieux': this.hud.banner(`${e.name}\nFurieux !`, 1300, true); break;
@@ -1927,6 +1934,7 @@ export class ZoneScene extends Phaser.Scene {
     EntityView.temps = this.world.time;
     if (this.reglages.barresVie === 'survol' && !this.vitrine) EntityView.survol = this.monsterUnder(this.input.activePointer)?.id ?? null;
     this.hud.draw(this.fx.juice, this.game.loop.delta / 1000);
+    this.windows?.majTresor();
   }
 }
 

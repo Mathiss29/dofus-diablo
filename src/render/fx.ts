@@ -151,6 +151,14 @@ export class FX {
       case 'pieces':   // Enutrof 15A : pièces d'or qui volent du monstre vers le coffre
         for (let i = 0; i < Math.min(6, 1 + e.n); i++) this.pieces.push({ x: e.x, y: e.y, tx: e.tx, ty: e.ty, t: -i * 0.05, d: 0.45 + i * 0.03, h: 40 + i * 6 });
         break;
+      case 'tresorOuvert': {   // Enutrof (interface du coffre 7D) : la gueule s'ouvre, gerbe d'or, plus grande à chaque palier
+        const k = Math.min(e.palier, 4), col = e.palier >= 4 ? 0xff6a3a : e.palier >= 3 ? 0xffb040 : 0xffcf4a;
+        this.ring(e.x, e.y, 10, 60 + 22 * k, col, 0.45, 6);
+        if (e.palier >= 2) this.ring(e.x, e.y, 6, 110 + 30 * k, 0xfff0b0, 0.6, 3);
+        this.particles(e.x, e.y, 30, 18 + 10 * k, 0xffd86a, 200 + 40 * k, 0.7, 3, 340);
+        for (let i = 0; i < 6 + 2 * k; i++) this.pieces.push({ x: e.x, y: e.y, tx: e.x + Math.cos(i * 2.4) * (50 + 8 * k), ty: e.y + Math.sin(i * 2.4) * (30 + 6 * k), t: -i * 0.04, d: 0.5, h: 60 + 10 * k });
+        break;
+      }
       case 'filSoin':
         this.fils.push({ x: e.x, y: e.y, tx: e.tx, ty: e.ty, life: 0.45 });
         this.particles(e.tx, e.ty, 40, 5, 0x9ff0c0, 80, 0.45, 3, 160);

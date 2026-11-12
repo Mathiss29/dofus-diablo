@@ -5,7 +5,7 @@ import { clamp } from '../sim/math';
 import type { Entity } from '../sim/entity';
 import type { Monster } from '../sim/monster';
 import type { Player } from '../sim/player';
-import { palierCoffre } from '../sim/enutrof';
+import { couleurCoffre, palierCoffre } from '../sim/enutrof';
 import type { Look } from './looks';
 import { PersoVivant } from './persoVivant';
 
@@ -43,6 +43,8 @@ export class EntityView {
   private readonly counts: Record<string, number> = {};
   /** Images du perso vivant plus fines que celles des planches : le sprite est réduit d'autant. */
   private k = 1;
+  /** Enutrof (interface du coffre 1B) : pièces au-dessus du coffre au trésor (créé seulement pour lui). */
+  private pieces: Phaser.GameObjects.Text | null = null;
 
   /** `vivant` : perso du joueur dessiné en direct depuis son squelette (apparence choisie à la création). */
   constructor(scene: Phaser.Scene, readonly look: Look, private vivant?: PersoVivant) {
@@ -89,7 +91,7 @@ export class EntityView {
   changerVivant(v: PersoVivant) { this.vivant = v; Object.assign(this.counts, v.compte); }
 
   /** Hors de l'écran : rien à dessiner (on ne recalcule pas l'animation). */
-  hide() { this.sprite.setVisible(false); this.bar.setVisible(false); this.shadow.setVisible(false); this.fond.setVisible(false); this.vie.setVisible(false); }
+  hide() { this.sprite.setVisible(false); this.bar.setVisible(false); this.shadow.setVisible(false); this.fond.setVisible(false); this.vie.setVisible(false); this.pieces?.setVisible(false); }
   sync(e: Entity) {
     if (!this.sprite.visible) { this.sprite.setVisible(true); this.bar.setVisible(true); }
     const L = this.look, p = ISO.toScreen(e.x, e.y);
@@ -114,7 +116,7 @@ export class EntityView {
     else this.sprite.setFrame(`${name}_${idx}`);
     // Enutrof 16C : le coffre au trésor grossit à chaque palier, et dore à partir de l'Or
     const own = (e as { base?: string; owner?: Player }).base === 'coffre_tresor' ? (e as { owner?: Player }).owner : undefined;
-    const pal = own?.cls?.coffre ? palierCoffre(own) : -1, kc = 1 + 0.12 * (pal + 1);
+    const pal = own?.cls?.coffre ? palierCoffre(own) : -1, kc = 1 + 0.12 * (Math.min(pal, 3) + 1), sur = !!own && pal >= own.cls.coffre!.paliers.length;
     let sy = L.scale * this.k * kc, alpha = 1;
     if (e.anim === 'idle') sy *= 1 + Math.sin(e.age * 4) * 0.02;
     if (e.anim === 'spawn') alpha = e.animT;
@@ -125,6 +127,7 @@ export class EntityView {
     const cam = this.sprite.scene.cameras.main, pp = auPixel(cam, p.x, p.y - (L.ignoreZ ? 0 : e.z));
     this.sprite.setPosition(pp.x, pp.y).setDepth(p.y);
     if (e.flash > 0) this.sprite.setTintFill(0xffffff);
+    else if (sur) { const k = 0.5 + 0.5 * Math.sin(EntityView.temps * 7); this.sprite.setTint(mulTint(Phaser.Display.Color.GetColor(255, Math.round(150 + 60 * k), Math.round(90 + 60 * k)), EntityView.ambiance)); }   // 6B : surcharge, il rougeoie
     else if (pal >= 2) this.sprite.setTint(mulTint(pal >= 3 ? 0xffc870 : 0xffe9a0, EntityView.ambiance));
     else if (L.tint || EntityView.ambiance !== 0xffffff) this.sprite.setTint(mulTint(L.tint ?? 0xffffff, EntityView.ambiance));
     else this.sprite.clearTint();
@@ -157,7 +160,15 @@ export class EntityView {
       g.fillPoints(d, true); g.strokePoints(d, true, true);
       g.fillStyle(0xffffff, 0.5); g.fillTriangle(p.x, y - r + 2, p.x + r - 3, y, p.x - r + 3, y);
     }
-    if (e.faction === 'monster') { /* barre déjà dessinée */ } else if (e.faction === 'allie' && !e.dead && (e.hp < e.maxHp || EntityView.barresAllies)) {
+    if (own && !e.dead) {
+      // Enutrof (interface du coffre 1B) : le coffre au trésor a toujours sa barre de vie et ses pièces, comme un allié
+      const y = p.y - L.height * L.scale * kc - 6;
+      this.barre(p.x, y, 44, e.hp / e.maxHp, 0xd24a3a, p.y + 1);
+      barre = true;
+      const t = this.pieces ??= this.sprite.scene.add.text(0, 0, '', { fontFamily: 'Lexend, sans-serif', fontSize: '12px', fontStyle: 'bold', color: '#ffd86a', stroke: '#000', strokeThickness: 3 }).setOrigin(0.5, 1);
+      t.setVisible(true).setText(String(own.coffrePieces)).setColor(couleurCoffre(Math.max(0, pal))).setPosition(p.x, y - 2).setDepth(p.y + 1);
+    } else this.pieces?.setVisible(false);
+    if (own) { /* barre déjà dessinée */ } else if (e.faction === 'monster') { /* barre déjà dessinée */ } else if (e.faction === 'allie' && !e.dead && (e.hp < e.maxHp || EntityView.barresAllies)) {
       // bête de l'Osamodas : barre verte
       this.barre(p.x, p.y - L.height * L.scale - 6, Math.max(30, e.radius * 2.2), e.hp / e.maxHp, 0x58c048, p.y + 1);
       barre = true;
@@ -179,5 +190,5 @@ export class EntityView {
     return Math.hypot(px - (r.x + r.w / 2), py - (r.y + r.h / 2)) * k;
   }
 
-  destroy() { this.sprite.destroy(); this.bar.destroy(); this.shadow.destroy(); this.fond.destroy(); this.vie.destroy(); }
+  destroy() { this.sprite.destroy(); this.bar.destroy(); this.shadow.destroy(); this.fond.destroy(); this.vie.destroy(); this.pieces?.destroy(); }
 }

@@ -19,7 +19,8 @@ import { CASE, TOUR } from './monster';
 import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type SortGrade, type SortOfficiel } from './sorts';
 import { porteeSort } from './apercu';
 import { aimanter, alchiRhetorique, apresCoupEniripsa, envol, impactEniripsa, majEniripsa } from './eniripsa';
-import { impactEnutrof, majEnutrof, perteCoffre } from './enutrof';
+import { impactEnutrof, majEnutrof, perteCoffre, recordsVides, type LigneCoffre, type RecordsCoffre, type VitrineCoffre } from './enutrof';
+import type { Butin } from './butin';
 import { DANGER } from './danger';
 import type { EntreeCodex } from './codex';
 import type { Drapeau, Signal, Tombe } from './carte';
@@ -375,6 +376,10 @@ export class Player extends Entity {
   insoignableT = 0; farces: { m: number; x: number; y: number; t: number }[] = []; alchiA = -99;
   /** Enutrof (maquette Enutrof) : pièces du coffre au trésor, secondes où le coffre reste assommé, dernière perte (3D). */
   coffrePieces = 0; coffreKoT = 0; coffrePerteA = -99;
+  /** Interface du coffre : objets tirés à chaque palier (5B), journal des pièces (3B), records (3D),
+   *  objets du coffre ouvert qui jaillissent un par un (7D, propre à l'hôte). */
+  coffreVitrine: VitrineCoffre[] = []; coffreJournal: LigneCoffre[] = []; coffreRecords: RecordsCoffre = recordsVides();
+  coffreEjection: { t: number; b: Butin; x: number; y: number }[] = [];
   courir(k: number, t: number) { this.courseK = this.courseT > 0 ? Math.max(this.courseK, k) : k; this.courseT = Math.max(this.courseT, t); }
   slow(t: number, k: number) { if (this.insensibleT > 0) return; k *= fuiteFactor(this.fuite); this.slowK = this.slowT > 0 ? Math.max(this.slowK, k) : k; if (t >= this.slowT) this.slowT0 = t; this.slowT = Math.max(this.slowT, t); }
   get speed(): number { return this.cls.speed * (1 + vitesseAgilite(this.stat('agilite'))) * this.vitesseTest * (this.slowT > 0 ? 1 - this.slowK : 1) * (this.courseT > 0 ? 1 + this.courseK : 1); }
