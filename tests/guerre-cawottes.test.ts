@@ -107,7 +107,6 @@ describe('guerre des Cawottes (« Guerre : 1A 2C 3A+3C+3D 4C 5C 6A+6C+6D 7B 8A-8
     expect(w.acheter('tiwa_cawoteuw', '14464')).toBe(true);
     expect(p.resources['14464']).toBe(1);
     expect(p.resources[GUERRE.monnaie]).toBe(50);
-    expect(w.recycleRessource(GUERRE.monnaie)).toBe(false);
   });
 
   it('12A-12D : succès de la guerre et titre « Gardien des Cawottes », ouvert à tous depuis la 0.4', () => {

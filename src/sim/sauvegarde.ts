@@ -13,7 +13,7 @@ import { drapeauxPropres, type Drapeau, type Tombe } from './carte';
 /** État du joueur gardé entre deux parties (écran « Mes personnages », 3 emplacements, choix 16B).
  *  Pur JSON : l'affichage le range où il veut (navigateur pour l'instant). */
 export interface EtatJoueur {
-  level: number; xp: number; points: number; kamas: number; potions: number; lootFilter: number; autoBrisage?: boolean;
+  level: number; xp: number; points: number; kamas: number; potions: number; lootFilter: number; autoBrisage?: boolean; autoDefaire?: 'commun' | 'rare' | null;
   base: Partial<Record<Stat, number>>;
   bag: Item[]; equipment: Partial<Record<EquipSlot, Item>>;
   resources: Record<string, number>;
@@ -60,7 +60,7 @@ const copie = <T>(o: T): T => JSON.parse(JSON.stringify(o)) as T;
 export function exporterJoueur(w: World): EtatJoueur {
   const p = w.player;
   return copie({
-    level: p.level, xp: p.xp, points: p.points, kamas: p.kamas, potions: p.potions, lootFilter: p.lootFilter, autoBrisage: p.autoBrisage,
+    level: p.level, xp: p.xp, points: p.points, kamas: p.kamas, potions: p.potions, lootFilter: p.lootFilter, autoDefaire: p.autoDefaire,
     base: p.base, bag: p.bag, equipment: p.equipment, resources: p.resources, metiers: p.metiers, recetteSuivie: p.recetteSuivie,
     bar: p.bar, variants: p.variants, learned: [...p.learned],
     x: p.x, y: p.y, retour: w.pointDeRetour, quetes: w.quetes?.exporter(), zone: w.opts.zone,
@@ -74,7 +74,7 @@ export function exporterJoueur(w: World): EtatJoueur {
 export function restaurerJoueur(w: World, e: EtatJoueur) {
   const p = w.player, s = copie(e);
   const uid = (it: Item) => ({ ...it, uid: w.newUid() });
-  p.level = s.level; p.xp = s.xp; p.points = s.points; p.kamas = s.kamas; p.lootFilter = s.lootFilter ?? 0; p.autoBrisage = !!s.autoBrisage;
+  p.level = s.level; p.xp = s.xp; p.points = s.points; p.kamas = s.kamas; p.lootFilter = s.lootFilter ?? 0; p.autoDefaire = s.autoDefaire !== undefined ? s.autoDefaire : s.autoBrisage ? 'commun' : null;
   p.potions = Math.min(s.potions ?? p.potions, p.cls.potion.charges);
   p.base = s.base ?? {}; p.resources = s.resources ?? {}; p.metiers = { ...p.metiers, ...s.metiers };
   p.recetteSuivie = typeof s.recetteSuivie === 'string' ? s.recetteSuivie : null;

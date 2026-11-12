@@ -59,13 +59,13 @@ const ALM_CSS = `.dw .win.almanax{width:420px}.dw .alm{padding:10px 14px 14px;di
 import { SOCIAL_CSS, rendreSocial, tickSocial } from './social';
 import { EnLigne } from './presence';
 import { Coop } from './coop';
-import { FORGE_CSS, etatForge, forgeHtml, lotConcasseur, mmss, texteForge, type LigneLog } from './forgeVue';
+import { FORGE_CSS, defaireHtml, etatForge, forgeHtml, lotConcasseur, mmss, texteForge, type LigneLog } from './forgeVue';
 import { RUNES } from '../sim/forgemagie';
 import { LOOKS } from './looks';
 import { niveauHorsPartie, rangDe } from '../sim/butin';
 import { DOSSIER, PALETTES, ZONES, apparenceValide, assemblagePour, fiches, objetsPortes, type Apparence, type Assemblage, type FichePerso } from './squelette';
 import {
-  BASE_STATS, REDUCTION_RECHARGES_MAX, FAMILIER_MAX, FAMILIER_XP, METIER_XP, lignePouvoir, PEPITE, RARITY_COLORS, RARITY_NAMES, STATS, STAT_NAMES, metierXpNeeded, recycleResource, recycleValue,
+  BASE_STATS, REDUCTION_RECHARGES_MAX, FAMILIER_MAX, FAMILIER_XP, METIER_XP, lignePouvoir, PEPITE, RARITY_COLORS, RARITY_NAMES, STATS, STAT_NAMES, metierXpNeeded, kamasDefaire, noteObjet,
   type EquipSlot, type Item, type Rarity, type ResourceDef, type Stat,
 } from '../sim/items';
 import { Player } from '../sim/player';
@@ -103,7 +103,7 @@ import { COFFRE } from '../sim/coffre';
 import { METIERS_FAB, chanceRare, prochainPalier, recettesAvec, recettesDe, sourcesDe } from '../sim/metiers';
 /** Produit d'une recette : ressource, ou équipement (métiers de fabrication, 0.3). */
 const produit = (id: string): { name: string; icon: number; soin?: number } | undefined => ITEMS.resources[id] ?? ITEMS.equipment[id];
-import { chrono, type SuccesDef } from '../sim/quests';
+import { chrono, pepitesSucces, type SuccesDef } from '../sim/quests';
 /** Catégories officielles de la fenêtre Succès de Dofus 3 (achievementcategories : nom, bannière cat_N, couleur), dans l'ordre du jeu ;
  *  celles sans succès chez nous restent cachées (Élevage avant les montures, Événements, 2D). */
 export const SUCCES_CATS = [
@@ -883,7 +883,8 @@ export class Windows {
               <span class="k">${p.kamas.toLocaleString('fr-FR')} <img src="${INV}/kamas.png" alt="" title="Kamas"></span></div>
             <div class="foot"><span>Butin affiché au sol</span>
               <select data-filter style="width:auto">${['Tout', 'Rare et plus', 'Épique et plus'].map((n, i) => `<option value="${i}" ${p.lootFilter === i ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
-            <label class="foot" title="Les objets Communs ramassés sont brisés tout de suite : leurs runes vont dans le sac, et une coiffe, cape ou bouclier inconnu rejoint ta collection d'apparences"><span>Briser les Communs au ramassage</span><input type="checkbox" style="width:auto;flex:none;margin:0" data-autobris ${p.autoBrisage ? 'checked' : ''}></label>
+            <div class="foot" title="Les objets ramassés sont défaits tout de suite : runes et kamas dans le sac, une coiffe, cape ou bouclier inconnu rejoint ta collection. Jamais un objet meilleur que celui que tu portes, ni un objet sous cadenas (panoplies et Légendaires en ont un tout seuls)."><span>Défaire au ramassage</span>
+              <select data-autodef style="width:auto">${([['', 'Jamais'], ['commun', 'Les Communs'], ['rare', 'Communs et Rares']] as const).map(([k, n]) => `<option value="${k}" ${(p.autoDefaire ?? '') === k ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
           </div>
         </div>
       </div>`;
@@ -899,7 +900,7 @@ export class Windows {
     w.querySelector<HTMLSelectElement>('[data-sort]')!.addEventListener('change', e => { this.sort = (e.target as HTMLSelectElement).value; this.render(); });
     w.querySelector<HTMLSelectElement>('[data-kind]')!.addEventListener('change', e => { this.kind = (e.target as HTMLSelectElement).value; this.render(); });
     w.querySelector<HTMLSelectElement>('[data-filter]')!.addEventListener('change', e => { p.lootFilter = +(e.target as HTMLSelectElement).value; this.render(); });
-    w.querySelector<HTMLInputElement>('[data-autobris]')!.addEventListener('change', e => { p.autoBrisage = (e.target as HTMLInputElement).checked; this.changed(); });
+    w.querySelector<HTMLSelectElement>('[data-autodef]')!.addEventListener('change', e => { const v = (e.target as HTMLSelectElement).value; p.autoDefaire = v === 'commun' || v === 'rare' ? v : null; this.changed(); });
     w.querySelectorAll('select').forEach(s => s.addEventListener('keydown', e => e.stopPropagation()));
     const inp = w.querySelector<HTMLInputElement>('[data-search]')!;
     inp.addEventListener('input', () => { this.search = inp.value; this.render(); const m = this.win!.querySelector<HTMLInputElement>('[data-search]')!; m.focus(); m.setSelectionRange(m.value.length, m.value.length); });
@@ -1436,6 +1437,7 @@ export class Windows {
       const nom = 'succes' in o ? `<a data-va="${o.succes}">${o.nom}</a>` : o.nom;
       return `<div class="ob ${f ? 'ok' : ''}"><span>${f ? '✓' : '•'} ${nom}</span>${m > 1 && !fait ? `<span>${n} / ${m}</span>` : ''}</div>`; }).join('')}</div>` : '';
     const rw = [r?.xp ? `<span><b>${r.xp}</b> XP</span>` : '', it ? `<span data-rtip="${r!.objet}">${iconHtml(it.icon)}${it.name}</span>` : '',
+      `<span>${iconHtml(ITEMS.resources[PEPITE]?.icon ?? 0)}${pepitesSucces(s)} Pépites</span>`,
       r?.titre ? `<span>Titre « ${escB(r.titre)} »</span>` : '', r?.ornement ? `<span><img class="oi" src="assets/ui/succes/o_${r.ornement.icone}.webp" alt="">Ornement ${escB(r.ornement.nom)}</span>` : ''].filter(Boolean).join('');
     const ou = !fait && this.marquesSucces(s).tags.length + this.marquesSucces(s).points.length > 0;
     const epingle = Q.epingles.includes(id);
@@ -1520,7 +1522,7 @@ export class Windows {
         <h3>S'équiper</h3><p>${T('inventaire')} ouvre l'inventaire. Clic droit sur un objet : l'équiper ou le retirer. Les objets en trop se recyclent chez Kerubim Crépin, ou se brisent en runes chez Malek.</p>
         <p>${T('caracs')} ouvre les caractéristiques : chaque niveau donne 5 points à placer.</p>` },
       { id: 'havresac', titre: 'Le Havre-Sac', html: `<p>${T('havresac')} (ou l'icône du sac dans la colonne de menus) : 1,5 s d'incantation et tu entres dans ton Havre-Sac, ton monde de poche. Bouger ou être touché coupe l'incantation. Impossible dans un donjon ou poursuivi par des monstres.</p>
-        <p>Le Poutch Ingball compte tes dégâts par seconde, et Kerubim Crépin y garde un guichet de recyclage. ${T('havresac')} à nouveau te ramène là où tu étais ; l'arche est un Zaap vers le Bastion des Douze et tous ceux que tu as découverts.</p>` },
+        <p>Le Poutch Ingball compte tes dégâts par seconde. ${T('havresac')} à nouveau te ramène là où tu étais ; l'arche est un Zaap vers le Bastion des Douze et tous ceux que tu as découverts.</p>` },
       { id: 'zaaps', titre: 'Les Zaaps', html: `<p>Clique sur l'arche d'un Zaap : ton perso s'en approche et la liste s'ouvre. Le voyage est gratuit, vers le Bastion des Douze et tous les Zaaps que tu as découverts, rangés par zone.</p>
         <p>Il suffit de passer sur la carte d'un Zaap pour le découvrir : il devient aussi ton point de retour si tu tombes. Ceux que tu n'as pas encore vus sont grisés dans la liste et éteints sur la carte (${T('carte')}).</p>` },
       { id: 'bastion', titre: 'Le Bastion des Douze', html: `<p>Notre ville, en archipel au-dessus du Monde des Douze. On y va par n'importe quel Zaap (il est en tête de liste), par l'arche du Havre-Sac, ou avec une Potion de Rappel. Son Zaap te ramène ensuite là où tu étais.</p>
@@ -2020,7 +2022,7 @@ export class Windows {
       : r.deguisement ? `<div class="up">Déguisé en Wabbit pendant ${Math.round(r.deguisement / 60)} min</div><div class="hint">Les Wabbits de l'île ne t'attaquent pas tant que tu ne les tapes pas. Clic droit : boire</div>`
       : r.cle ? `<div class="up">Ouvre l'entrée : ${r.cle}</div><div class="hint">Prise en entrant dans le donjon</div>`
       : r.monnaie ? '<div class="hint">Gagnée en défendant les champs de l\'île des Wabbits (guerre des Cawottes) ; se dépense chez Tiwa Cawoteuw, sur l\'île de la Cawotte.</div>'
-      : r.pepite ? '<div class="hint">Recycle tes objets chez Kerubim Crépin (au Bastion des Douze, ou à son guichet du Havre-Sac) et dépense-les chez ses voisins du Bastion.</div>'
+      : r.pepite ? '<div class="hint">Les Pépites se gagnent avec les contrats, l\'Almanax, les quêtes, les succès et les donjons ; elles se dépensent chez les marchands du Bastion des Douze.</div>'
       : r.signature ? '<div class="up">Grave ton nom sur un objet</div><div class="hint">Case Signature de la fenêtre du forgemage, au Bastion des Douze ; Malek en vend aussi.</div>'
       : r.rune && RUNES[id] ? `<div class="up">+${RUNES[id].val} ${STAT_NAMES[RUNES[id].stat]} · poids ${String(RUNES[id].poids).replace('.', ',')}</div><div class="hint">Se pose chez le forgemage du Bastion des Douze ; s'obtient en brisant des objets chez lui.</div>` : '';
     const sert = recettesAvec(ITEMS, id).map(x => produit(x.result)?.name).filter(Boolean);
@@ -2169,22 +2171,14 @@ export class Windows {
     if (!sv.has(this.empOnglet)) this.empOnglet = sv.has('boutique') ? 'boutique' : sv.has('apparat') ? 'apparat' : 'recycler';
     const onglet = (k: string, n: string) => sv.has(k) ? `<span class="eo ${this.empOnglet === k ? 'on' : ''}" data-eo="${k}">${n}</span>` : '';
     // monnaie de la boutique : Pépites, ou celle de ses articles (Tiwa Cawoteuw : Cawottes de la guerre)
-    const mon = boutique.find(a => a.monnaie)?.monnaie ?? PEPITE, solde = p.resources[mon] ?? 0, icMon = iconHtml(ITEMS.resources[mon]?.icon ?? 0);
-    const tete = `<div class="eh"><div class="eos">${onglet('recycler', 'Recycler')}${onglet('boutique', 'Boutique')}${onglet('apparat', 'Apparats')}${sv.has('garde-robe') ? '<span class="eo" data-garde>Garde-robe</span>' : ''}</div>
-      <span class="k" title="${ITEMS.resources[mon]?.name ?? 'Pépites'}">${solde.toLocaleString('fr-FR')} ${icMon}</span></div>`;
+    // Kerubim (Défaire) rend des kamas : son en-tête montre les kamas
+    const mon = this.empOnglet === 'recycler' ? 'kamas' : boutique.find(a => a.monnaie)?.monnaie ?? PEPITE, solde = mon === 'kamas' ? p.kamas : (p.resources[mon] ?? 0);
+    const icMon = mon === 'kamas' ? `<img src="${INV}/kamas.png" alt="" style="width:18px;vertical-align:middle">` : iconHtml(ITEMS.resources[mon]?.icon ?? 0);
+    const tete = `<div class="eh"><div class="eos">${onglet('recycler', 'Défaire')}${onglet('boutique', 'Boutique')}${onglet('apparat', 'Apparats')}${sv.has('garde-robe') ? '<span class="eo" data-garde>Garde-robe</span>' : ''}</div>
+      <span class="k" title="${mon === 'kamas' ? 'Kamas' : ITEMS.resources[mon]?.name ?? 'Pépites'}">${solde.toLocaleString('fr-FR')} ${icMon}</span></div>`;
     let corps = '';
     if (this.empOnglet === 'recycler') {
-      const lots: [Rarity, string][] = [['commun', 'Tout le Commun'], ['rare', 'Commun et Rare'], ['epique', 'Tout sauf Légendaire']];
-      const lotsHtml = lots.map(([r, n]) => { const a = this.world.apercuLot(r);
-        return `<span class="btn ${a.n ? '' : 'off'}" data-lot="${r}">${n}<small>${a.n} objet${a.n > 1 ? 's' : ''} · +${a.pepites} Pépites</small></span>`; }).join('');
-      const objets = p.bag.filter(it => ITEMS.equipment[it.id]).map(it => { const d = ITEMS.equipment[it.id];
-        return `<div class="cell ${it.cadenas ? 'verrou' : ''}" data-ruid="${it.uid}">${iconHtml(d.icon)}<i class="r" style="background:${RARITY_COLORS[it.rarity]}"></i>${it.cadenas ? CADENAS : `<span class="pv">+${recycleValue(d, it)}</span>`}</div>`; }).join('');
-      const res = Object.entries(p.resources).filter(([id]) => { const r = ITEMS.resources[id]; return r && !r.pepite && !r.monnaie && !r.cle && !r.soin && !r.rappel; })
-        .map(([id, n]) => `<div class="cell" data-rres="${id}" title="${ITEMS.resources[id].name} : ${n} × ${recycleResource(ITEMS.resources[id])} Pépites">${iconHtml(ITEMS.resources[id].icon)}<span class="n">${n}</span></div>`).join('');
-      corps = `<div class="lots">${lotsHtml}</div>
-        <div class="hint">Clic : recycler l'objet · Ctrl + clic (ou clic droit) : cadenas, l'objet n'est jamais recyclé. Les objets sous cadenas restent hors des lots.</div>
-        <div class="grid eg">${objets || '<div class="hint">Ton sac est vide.</div>'}</div>
-        ${res ? `<div class="sub2">Ressources (la pile entière)</div><div class="grid eg">${res}</div>` : ''}`;
+      corps = defaireHtml(this.world, this.forge);
     } else if (this.empOnglet === 'apparat') {
       // Apparats officiels (5A) : tout le catalogue, payé en Pépites ; le survol habille le perso de l'aperçu
       const q = this.apparatRecherche.toLowerCase();
@@ -2210,10 +2204,10 @@ export class Windows {
         const effet = r.soin ? `+${r.soin} PV` : r.rappel ? 'Retour au dernier Zaap' : r.cle ? `Entrée : ${r.cle}` : r.pierreAme ? 'Capture un archimonstre vaincu (une pierre par capture)' : '';
         return `<div class="rec" data-rid="${a.id}">${iconHtml(r.icon)}<div><b>${r.name}</b> <span class="hint">niveau ${r.level}${(p.resources[a.id] ?? 0) ? ` · tu en as ${p.resources[a.id]}` : ''}</span><div style="font-size:12px;color:#c9c4ab">${effet}</div></div>
           ${a.apres && !((this.world.quetes?.donjons[a.apres]?.v ?? 0) > 0) ? `<span class="hint">Après le ${a.apres}</span>`
-            : `<span class="btn ${solde >= a.prix ? '' : 'off'}" data-achat="${a.id}">${a.prix} ${icMon}</span>`}</div>`; }).join('')}</div>
-        <div class="hint">${mon === PEPITE ? 'Les Pépites se gagnent en recyclant tes objets chez Kerubim Crépin.' : 'Les Cawottes se gagnent en défendant les champs de l\'île contre les Wabbits (clic sur l\'épouvantail d\'un champ).'}</div>`;
+            : `<span class="btn ${solde >= a.prix ? '' : 'off'}" data-achat="${a.id}">${a.prix.toLocaleString('fr-FR')} ${icMon}</span>`}</div>`; }).join('')}</div>
+        <div class="hint">${mon === 'kamas' ? 'Les kamas tombent des monstres, des contrats, et s\'obtiennent en défaisant des objets chez Kerubim Crépin.' : mon === PEPITE ? 'Les Pépites se gagnent avec les contrats, l\'Almanax, les quêtes, les succès et les donjons (premier passage, défis).' : 'Les Cawottes se gagnent en défendant les champs de l\'île contre les Wabbits (clic sur l\'épouvantail d\'un champ).'}</div>`;
     }
-    w.innerHTML = `${this.title(`${def?.nom ?? 'Marchand'}${def?.titre ? ` · ${def.titre}` : ''}`, 'inventory')}<div class="in emp">${tete}${corps}</div>`;
+    w.innerHTML = `${this.title(`${def?.nom ?? 'Marchand'}${def?.titre ? ` · ${def.titre}` : ''}`, 'inventory')}<div class="in emp${this.empOnglet === 'recycler' ? ' fm' : ''}">${tete}${corps}</div>`;
     w.querySelectorAll<HTMLElement>('[data-eo]').forEach(e => e.addEventListener('click', () => { this.empOnglet = e.dataset.eo as 'recycler' | 'boutique' | 'apparat'; this.render(); }));
     w.querySelector<HTMLElement>('[data-garde]')?.addEventListener('click', () => this.show('garde'));
     w.querySelectorAll<HTMLElement>('[data-aachat]').forEach(e => e.addEventListener('click', () => { this.world.acheterApparat(e.dataset.aachat!); this.changed(); }));
@@ -2229,23 +2223,35 @@ export class Windows {
       ar.addEventListener('keydown', e => e.stopPropagation());
     }
     w.querySelector<HTMLSelectElement>('[data-aslot]')?.addEventListener('change', e => { this.apparatSlot = (e.target as HTMLSelectElement).value as '' | 'chapeau' | 'cape' | 'familier'; this.render(); });
-    w.querySelectorAll<HTMLElement>('[data-lot]').forEach(e => e.addEventListener('click', () => { this.world.recycleLot(e.dataset.lot as Rarity); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-achat]').forEach(e => e.addEventListener('click', () => { this.world.acheter(this.empPnj, e.dataset.achat!); this.changed(); }));
-    w.querySelectorAll<HTMLElement>('[data-rres]').forEach(e => e.addEventListener('click', () => { this.world.recycleRessource(e.dataset.rres!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-rid]').forEach(e => {
       const r = ITEMS.resources[e.dataset.rid!];
       e.addEventListener('mouseenter', ev => { this.tip.innerHTML = this.resTip(r, e.dataset.rid!); this.tip.style.display = 'block'; this.moveTip(ev); });
       e.addEventListener('mousemove', ev => this.moveTip(ev));
       e.addEventListener('mouseleave', () => this.hideTip());
     });
-    w.querySelectorAll<HTMLElement>('[data-ruid]').forEach(e => {
-      const uid = +e.dataset.ruid!, it = p.bag.find(b => b.uid === uid)!;
-      const cad = () => { this.world.cadenas(uid); this.changed(); };
+    this.lierDefaire(w);
+  }
+  /** « Défaire » chez Kerubim (Magasin 7A-10D) : lots, choix des objets, cadenas, bouton Défaire. */
+  private lierDefaire(w: HTMLElement) {
+    const f = this.forge, p = this.world.player;
+    const tip = (e: HTMLElement, it: Item) => {
       e.addEventListener('mouseenter', ev => this.showTip(it, ev, false));
       e.addEventListener('mousemove', ev => this.moveTip(ev));
       e.addEventListener('mouseleave', () => this.hideTip());
+    };
+    w.querySelectorAll<HTMLElement>('[data-blot]').forEach(e => e.addEventListener('click', () => { lotConcasseur(this.world, f, e.dataset.blot as Rarity); this.render(); }));
+    w.querySelector<HTMLElement>('[data-briser]')?.addEventListener('click', () => { if (f.brise.length && this.world.briserChoix(f.brise)) { f.brise = []; this.changed(); } });
+    w.querySelectorAll<HTMLElement>('[data-buid],[data-bout]').forEach(e => {
+      const uid = +(e.dataset.buid ?? e.dataset.bout!), it = p.bag.find(b => b.uid === uid)!;
+      const cad = (ev: Event) => { ev.preventDefault(); this.world.cadenas(uid); this.changed(); };
+      tip(e, it);
       e.addEventListener('contextmenu', cad);
-      e.addEventListener('click', ev => { if (ev.ctrlKey || ev.metaKey) cad(); else { this.world.recycle(uid); this.changed(); } });
+      e.addEventListener('click', ev => {
+        if (ev.ctrlKey || ev.metaKey) return cad(ev);
+        if (it.cadenas) return;
+        f.brise = f.brise.includes(uid) ? f.brise.filter(x => x !== uid) : [...f.brise, uid]; this.hideTip(); this.render();
+      });
     });
   }
   /** Forgemage (maquettes « Forgemagie » et « Forgemagie UI ») : forgemagie, commande à Malek, Concasseur et fusion ; la partie de test l'ouvre aussi (F1). */
@@ -2265,7 +2271,7 @@ export class Windows {
     if (t) t.textContent = c ? (c.prete ? 'Malek ✓' : `Malek · ${mmss(c.reste)}`) : 'Commande à Malek';
   }
   private renderForge() {
-    const w = this.win!, f = this.forge, p = this.world.player;
+    const w = this.win!, f = this.forge;
     // garder la saisie en cours (objectif, plancher, budget) quand la fenêtre se redessine
     const actif = document.activeElement as HTMLInputElement | null, cle = actif && w.contains(actif) ? Array.from(actif.attributes).find(a => a.name.startsWith('data-'))?.name : null;
     const champ = cle ? actif!.getAttribute(cle) : null;
@@ -2329,20 +2335,6 @@ export class Windows {
       if (this.world.confierCommande(f.cmdUid, f.cmd)) { f.estim = null; this.changed(); } else this.flash(ev.currentTarget as HTMLElement);
     });
     w.querySelector<HTMLElement>('[data-reprendre]')?.addEventListener('click', () => { if (this.world.retirerCommande()) this.changed(); });
-    // Concasseur (8A)
-    w.querySelectorAll<HTMLElement>('[data-blot]').forEach(e => e.addEventListener('click', () => { lotConcasseur(this.world, f, e.dataset.blot as Rarity); this.render(); }));
-    w.querySelector<HTMLElement>('[data-briser]')?.addEventListener('click', () => { if (f.brise.length && this.world.briserChoix(f.brise)) { f.brise = []; this.changed(); } });
-    w.querySelectorAll<HTMLElement>('[data-buid],[data-bout]').forEach(e => {
-      const uid = +(e.dataset.buid ?? e.dataset.bout!), it = p.bag.find(b => b.uid === uid)!;
-      const cad = (ev: Event) => { ev.preventDefault(); this.world.cadenas(uid); this.changed(); };
-      tip(e, it);
-      e.addEventListener('contextmenu', cad);
-      e.addEventListener('click', ev => {
-        if (ev.ctrlKey || ev.metaKey) return cad(ev);
-        if (it.cadenas) return;
-        f.brise = f.brise.includes(uid) ? f.brise.filter(x => x !== uid) : [...f.brise, uid]; this.hideTip(); this.render();
-      });
-    });
     w.querySelectorAll<HTMLElement>('[data-fus]').forEach(e => e.addEventListener('click', () => { this.world.fusionner(e.dataset.fus!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-fust]').forEach(e => e.addEventListener('click', () => { this.world.fusionner(e.dataset.fust!, true); this.changed(); }));
   }
@@ -2468,7 +2460,7 @@ export class Windows {
       if (this.sort === 'nom') items.sort((x, y) => D(x).name.localeCompare(D(y).name));
       for (const it of items) {
         const d = D(it), slot = p.slotFor(it), cur = slot ? p.equipment[slot] : undefined;
-        const up = d.level <= p.level && (!cur || this.score(it) > this.score(cur));
+        const up = d.level <= p.level && (!cur || noteObjet(it) > noteObjet(cur));
         cells.push(`<div class="cell ${up ? 'up' : ''} ${d.level > p.level ? 'low' : ''}" data-uid="${it.uid}">${iconHtml(d.icon)}<i class="r" style="background:${RARITY_COLORS[it.rarity]}"></i>${it.cadenas ? CADENAS : ''}</div>`);
       }
     }
@@ -2497,19 +2489,12 @@ export class Windows {
     }
     if (this.tab === 'apparat') {   // collection d'apparences (1C) : coiffes, capes et boucliers brisés ou recyclés
       const tous = Object.values(APPARATS.objets).filter(d => d.collection), eu = p.apparats.filter(id => APPARATS.objets[id]?.collection).length;
-      cells.push(`<div class="hint" style="grid-column:1/-1">${p.apparats.length ? '' : 'Les apparats s\'achètent chez Tissebelle, au Bastion des Douze. '}Collection : <b>${eu} / ${tous.length}</b> apparences. Brise ou recycle une coiffe, une cape ou un bouclier pour garder son apparence.</div>`);
+      cells.push(`<div class="hint" style="grid-column:1/-1">${p.apparats.length ? '' : 'Les apparats s\'achètent chez Tissebelle, au Bastion des Douze. '}Collection : <b>${eu} / ${tous.length}</b> apparences. Défais une coiffe, une cape ou un bouclier chez Kerubim pour garder son apparence.</div>`);
     }
     const n = cells.length;
     for (let i = n; i < Math.max(35, Math.ceil(n / 5) * 5); i++) cells.push('<div class="cell empty"></div>');
     return { html: cells.join(''), n };
   }
-  /** Note grossière d'un objet pour la flèche verte « meilleur que l'objet porté ». */
-  private score(it: Item): number {
-    let s = 0;
-    for (const [k, v] of Object.entries(it.stats) as [Stat, number][]) s += v * (k === 'vitalite' ? 0.5 : k === 'critique' ? 3 : k.startsWith('dommages') ? 4 : k === 'pa' || k === 'pm' ? 40 : 1);
-    return s + (it.legendary ? 30 : 0) + (it.legendary2 ? 30 : 0);
-  }
-
   private setsHtml(): string {
     const p = this.world.player, out: string[] = [];
     for (const [id, n] of Object.entries(p.setCount)) {
@@ -2566,7 +2551,7 @@ export class Windows {
     this.tip.innerHTML = `<h4 style="color:${RARITY_COLORS[it.rarity]}">${d.name}</h4>
       <div class="sub">${d.familier ? 'Familier' : `${RARITY_NAMES[it.rarity]} · ${d.weapon?.type ?? SLOT_NAMES[(slot ?? 'amulette') as EquipSlot]}`} · niveau ${d.level}</div>
       ${weapon}${stats}${fam}${leg}${neuf}${set}${it.signe ? `<div class="sig">Signé par ${it.signe.replace(/[&<>"]/g, '')}</div>` : ''}${lvl}${cmp}${sourcesHtml(it.id, 3)}
-      <div class="hint">${worn ? 'Clic droit : retirer' : it.cadenas ? 'Sous cadenas : jamais recyclé · Ctrl + clic : l\'ôter' : `Clic droit : équiper · Ctrl + clic : cadenas (recyclage chez Kerubim : ${recycleValue(d, it)} Pépites)`}</div>`;
+      <div class="hint">${worn ? 'Clic droit : retirer' : it.cadenas ? 'Sous cadenas : jamais défait · Ctrl + clic : l\'ôter' : `Clic droit : équiper · Ctrl + clic : cadenas (défait chez Kerubim : runes + ${kamasDefaire(d, it).toLocaleString('fr-FR')} kamas)`}</div>`;
     this.tip.style.display = 'block'; this.moveTip(ev);
   }
   private moveTip(ev: MouseEvent) {

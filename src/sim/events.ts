@@ -113,12 +113,11 @@ export type SimEvent =
   | { k: 'fabricationDebut'; recette: number; n: number; duree: number }
   | { k: 'fabricationStop' }
   | { k: 'eat'; id: string; heal: number }
-  /** Emp (0.2) : objets recyclés contre des Pépites, achat dans sa boutique, Potion de Rappel bue, réponse « service » d'un PNJ. */
-  | { k: 'recycle'; n: number; pepites: number }
+  /** Emp (0.2) : achat dans sa boutique, Potion de Rappel bue, réponse « service » d'un PNJ. */
   /** Forgemagie : rune posée (issue officielle, lignes perdues), objets brisés en runes, runes fusionnées, mode « viser » terminé. */
   | { k: 'forge'; uid: number; rune: string; issue: 'critique' | 'neutre' | 'echec' | 'puits'; stat: string; gain: number; pertes: [string, number][]; kamas: number; exo: boolean }
   /** auto : objet Commun brisé dès le ramassage (« Équipement en trop » 5B), id de cet objet. */
-  | { k: 'brisage'; n: number; runes: Record<string, number>; auto?: string }
+  | { k: 'brisage'; n: number; runes: Record<string, number>; kamas?: number; auto?: string }
   /** Codex (0.3) : un pouvoir enregistré en brisant un Légendaire ; une impression sur un objet Rare ou Épique. */
   | { k: 'codex'; id: string }
   | { k: 'codexOuvert' }
@@ -133,7 +132,7 @@ export type SimEvent =
   /** Commande à Malek (Forgemagie UI 9E) : confiée, prête (l'objet attend chez lui), reprise. */
   | { k: 'commande'; etat: 'confiee' | 'prete' | 'retiree'; reste: number; essais: number }
   | { k: 'signature'; uid: number; nom: string }
-  | { k: 'achat'; id: string; prix: number }
+  | { k: 'achat'; id: string; prix: number; /** « kamas », Cawottes (id), sinon Pépites */ monnaie?: string }
   /** Familier : niveau gagné, et repas (XP donnée). */
   | { k: 'familierNiveau'; nom: string; niveau: number }
   | { k: 'familierRepas'; xp: number }
@@ -187,7 +186,7 @@ export type SimEvent =
   | { k: 'objetQuete'; nom: string; n: number; sur: number }
   | { k: 'succes'; id: string }
   /** Récompense d'un succès récupérée dans la fenêtre Succès (menu des succès 5B). */
-  | { k: 'succesRecupere'; id: string; xp: number };
+  | { k: 'succesRecupere'; id: string; xp: number; pepites?: number };
 
 /** Zones au sol affichées avant un coup (rouge = danger, or = sort du joueur). */
 export type Telegraph =

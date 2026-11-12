@@ -100,7 +100,7 @@ export function contrat(id: string, ctx: CtxContrats): QueteDef | null {
   }
   // récompenses (5A + 5B) : XP + kamas + un sac à rareté garantie + des Pépites ; la semaine paie trois fois plus et un Épique
   const coef = hebdo ? 5 : 1.6;
-  const recompense: RecompenseDef = { xp: Math.round(coef * lvl * 50), kamas: Math.round(coef * lvl * 10), sac: hebdo ? 'epique' : 'rare', pepites: Math.round((hebdo ? 2 : 0.5) * lvl) };
+  const recompense: RecompenseDef = { xp: Math.round(coef * lvl * 50), kamas: Math.round(coef * lvl * 10), sac: hebdo ? 'epique' : 'rare', pepites: Math.round((hebdo ? 4 : 1) * lvl) };
   return { nom: hebdo ? `Contrat de la semaine : ${titre}` : titre, type: 'prime', pnj: ctx.pnj, rendre: ctx.pnj, niveau: lvl,
     serie: hebdo ? 'Contrat de la semaine' : 'Contrat du jour', texte: `${ligne}\n\n${sz.name}, niveau ${lvl}.`,
     etapes: [{ nom: titre, objectifs: objs }], recompense, contrat: periode };

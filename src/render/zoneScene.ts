@@ -1306,7 +1306,7 @@ export class ZoneScene extends Phaser.Scene {
           break;
         }
         case 'lootKamas': this.hud.loot(`+${e.n} kamas`, '#f2d36b'); this.windows?.refresh(); break;
-        case 'bagFull': this.hud.toast('Sac plein : recycle des objets chez Kerubim Crépin (son guichet du Havre-Sac, touche H) ou Maj + clic dans l\'inventaire'); break;
+        case 'bagFull': this.hud.toast('Sac plein : défais des objets chez Kerubim Crépin, au Bastion des Douze'); break;
         case 'monsterCast': this.castName(e.id, e.name); break;
         case 'itemDrop': if (this.reglages.alerteButin !== false && (e.rarity === 'epique' || e.rarity === 'legendaire' || e.rarity === 'mythique')) this.chime(e.rarity === 'mythique' && !this.world.player.v03 ? 'legendaire' : e.rarity); break;   // 14C : son du Mythique en 0.3
         // Métiers UI 10C : bannière aux paliers (10, 20, 30…) avec les recettes débloquées, une ligne dans le fil sinon
@@ -1332,9 +1332,10 @@ export class ZoneScene extends Phaser.Scene {
         case 'emmenage': this.hud.toast(`${e.noms.join(', ')} ${e.noms.length > 1 ? 'ont emménagé' : 'a emménagé'} au Bastion des Douze (Zaap ou Potion de Rappel)`); break;
         case 'forge': this.windows?.noteForgeEvt(e); break;
         case 'brisage': { const n = Object.values(e.runes).reduce((a, b) => a + b, 0);
-          if (e.auto) { this.hud.loot(`${ITEMS.equipment[e.auto]?.name ?? 'Objet'} brisé : ${n} rune${n > 1 ? 's' : ''}`, '#b77cf0'); this.windows?.refresh(); break; }
-          this.hud.loot(`${n} rune${n > 1 ? 's' : ''} (${e.n} objet${e.n > 1 ? 's' : ''} brisé${e.n > 1 ? 's' : ''})`, '#b77cf0');
-          this.windows?.noteForge({ t: `${e.n > 1 ? `${e.n} objets brisés` : 'Objet brisé'} : ${Object.entries(e.runes).map(([id, k]) => `${k} ${ITEMS.resources[id]?.name ?? id}`).join(', ') || 'aucune rune'}`, c: 'br' }); break; }
+          const k = e.kamas ? ` · +${e.kamas.toLocaleString('fr-FR')} kamas` : '';
+          if (e.auto) { this.hud.loot(`${ITEMS.equipment[e.auto]?.name ?? 'Objet'} défait : ${n} rune${n > 1 ? 's' : ''}${k}`, '#b77cf0'); this.windows?.refresh(); break; }
+          this.hud.loot(`${n} rune${n > 1 ? 's' : ''}${k} (${e.n} objet${e.n > 1 ? 's' : ''} défait${e.n > 1 ? 's' : ''})`, '#b77cf0');
+          this.windows?.refresh(); break; }
         case 'codex': { const o = POUVOIR_PAR_ID[e.id], c = PC_PAR_ID[e.id]; this.hud.loot(`Codex : ${o ? o.sort : c ? c.nom : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id} enregistré`, '#f08a2c');
           this.windows?.noteForge({ t: `Pouvoir enregistré dans le Codex : ${o ? o.officiel : c ? c.nom : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id}`, c: 'ok' }); break; }
         case 'capture': this.hud.loot(`${GAME_DATA.monsters[e.monster]?.name ?? 'Archimonstre'} capturé dans une pierre d'âme${e.neuf ? ' (nouveau)' : ''}`, '#ffd27a'); this.windows?.refresh(); break;
@@ -1354,8 +1355,7 @@ export class ZoneScene extends Phaser.Scene {
           else if (e.etat === 'prete') { this.hud.toast('Malek le Forgemage a fini ta commande : ton objet t\'attend au Bastion des Douze'); this.windows?.noteForge({ t: 'Malek a fini ta commande', c: 'ok' }); }
           this.windows?.majForge(); break;
         case 'signature': this.hud.loot(`Objet signé : ${e.nom}`, '#e6b85c'); break;
-        case 'recycle': this.hud.loot(`+${e.pepites} Pépite${e.pepites > 1 ? 's' : ''}${e.n > 1 ? ` (${e.n} recyclés)` : ''}`, '#b9e54b'); break;
-        case 'achat': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Objet'} acheté (−${e.prix} Pépites)`, '#b9e54b'); break;
+        case 'achat': this.hud.loot(`${ITEMS.resources[e.id]?.name ?? 'Objet'} acheté (−${e.prix.toLocaleString('fr-FR')} ${e.monnaie === 'kamas' ? 'kamas' : e.monnaie ? (ITEMS.resources[e.monnaie]?.name ?? 'Cawottes') : 'Pépites'})`, '#b9e54b'); break;
         case 'rappel': this.hud.banner(`Rappel\n${e.name}`, 1200); this.snapCam = true; break;
         // 17A : lieu découvert (bandeau, un peu d'XP)
         case 'lieuDecouvert': this.hud.banner(`Lieu découvert : ${e.nom}\n+${e.xp} XP`, 2000); Son.jouer(MANIFESTE.ui.objectif, 'interface', { vol: 0.7 }); break;

@@ -8,7 +8,7 @@ export interface JourAlmanax { bonus: string; texte: string; effet: EffetAlmanax
 
 export const ALMANAX = {
   /** Pépites de l'offrande (le double les jours « Pépites », dont le bonus officiel n'a pas d'équivalent). */
-  pepites: 15,
+  pepites: 30,
   xp: 0.25,          // +25 % d'XP des monstres
   butin: 25,         // +25 de Prospection (+25 % de chances de butin)
   recolte: 1,        // +1 ressource par récolte

@@ -121,14 +121,9 @@ PNJ = {
   # Cases : devant leur maison (tools/extraction/bastion.py, recopiées dans zones.json > bastion > pnj).
   'kerubim': {'nom': 'Kerubim Crépin', 'dofusId': 3043, 'zone': 'bastion', 'carte': 'bastion', 'case': BASTION['kerubim'], 'apres': 'astrub', 'titre': 'Antiquaire',
     'phrase': "Entre, entre ! Chez Kerubim, rien n'est inutile : il y a juste des trésors qui ne savent pas encore qu'ils en sont.",
-    'services': [{'texte': 'Recycler des objets contre des Pépites.', 'service': 'recycler'}],
+    'services': [{'texte': 'Défaire des objets contre des runes et des kamas.', 'service': 'recycler'}],
     'discussion': [{'reponse': 'Tu rachètes vraiment tout ?', 'texte': "Tout. Une fois, j'ai racheté une chaussette à un Iop… relique sacrée."},
-      {'reponse': 'Pourquoi ta boutique est au Bastion ?', 'texte': "Parce que le loyer à Astrub, c'est du vol. Ici, les Douze ont offert le terrain. Et je garde un petit guichet dans ton Havre-Sac, pour les urgences."}]},
-  # 6B : un guichet de recyclage reste au Havre-Sac (recyclage seulement)
-  'kerubim_guichet': {'nom': 'Kerubim Crépin', 'sprite': 'kerubim', 'dofusId': 3043, 'zone': 'havresac', 'carte': '0_0', 'case': 284, 'apres': 'astrub', 'titre': 'Guichet de recyclage',
-    'phrase': "La boutique est au Bastion des Douze, mais pour toi j'ai gardé ce guichet. Recyclage seulement, et pas de marchandage avant le petit-déjeuner.",
-    'services': [{'texte': 'Recycler des objets contre des Pépites.', 'service': 'recycler'}],
-    'discussion': [{'reponse': 'Tu es à deux endroits à la fois ?', 'texte': "Un bon antiquaire est toujours là où il y a des trésors. Ne pose pas plus de questions, ça porte malheur au commerce."}]},
+      {'reponse': 'Pourquoi ta boutique est au Bastion ?', 'texte': "Parce que le loyer à Astrub, c'est du vol. Ici, les Douze ont offert le terrain. Et tout le monde passe devant mon comptoir en allant au Marché."}]},
   'tissebelle': {'nom': 'Tissebelle', 'dofusId': 0, 'zone': 'bastion', 'carte': 'bastion', 'case': BASTION['tissebelle'], 'titre': 'Couturière',
     'phrase': "Tourne-toi. Non, l'autre côté. Hmm. On va dire que c'est un bon début.",
     'services': [{'texte': 'Voir les apparats.', 'service': 'apparat'}, {'texte': "M'asseoir devant le miroir (garde-robe).", 'service': 'garde-robe'}],

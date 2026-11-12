@@ -82,7 +82,7 @@ export function sourcesDe(id: string): { sources: Source[]; sertA: Source[] } {
     if (r.ingredients.some(([i]) => i === id)) sertA.push({ k: 'recette', nom: nomObjet(r.result), detail: `${job} niveau ${r.level}` });
   }
   for (const [pnj, l] of Object.entries(BOUTIQUES)) for (const a of l) if (a.id === id)
-    sources.push({ k: 'boutique', nom: QUETES.pnj[pnj]?.nom ?? pnj, detail: `${a.prix} Pépites` });
+    sources.push({ k: 'boutique', nom: QUETES.pnj[pnj]?.nom ?? pnj, detail: `${a.prix.toLocaleString('fr-FR')} ${a.monnaie === 'kamas' ? 'kamas' : a.monnaie ? (ITEMS.resources[a.monnaie]?.name ?? 'Cawottes') : 'Pépites'}` });
   return { sources, sertA };
 }
 const PASTILLE: Record<Source['k'], [string, string]> = { monstre: ['Monstre', '#e0605a'], recolte: ['Récolte', '#6fcf97'], recette: ['Recette', '#5aa8ff'], boutique: ['Boutique', '#e6b85c'] };
