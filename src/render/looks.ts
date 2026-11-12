@@ -544,6 +544,12 @@ export const LOOKS: Record<string, Look> = {
   wo_wabbit: { atlas: 'wo_wabbit', scale: 0.54, map: MONSTER_MAP(11/25, 'AnimAttaque0', { 0: 11/25, 1: 21/34, 2: 27/38 }), height: 287, multi: true },
   grand_pa_wabbit: { atlas: 'grand_pa_wabbit', scale: 0.64, map: MONSTER_MAP(15/32, 'AnimAttaque0', { 0: 15/32, 1: 15/32 }), height: 288, multi: true },
   wa_wabbit: { atlas: 'wa_wabbit', scale: 0.88, map: MONSTER_MAP(24/45, 'AnimAttaque0', { 0: 24/45, 1: 16/31, 2: 16/32 }), height: 219, multi: true },
+  // 0.5 « monde vivant » : boss du monde (os 326, 328, 330, 434, 840 ; SCALE=1.6 ; Maître Vampire à 135 %)
+  gelee_royale_bleuet: { atlas: 'gelee_royale_bleuet', scale: 1, map: MONSTER_MAP(12/41, 'AnimAttaque0', { 0: 12/41, 1: 24/45, 2: 16/37 }), height: 178, multi: true },
+  gelee_royale_menthe: { atlas: 'gelee_royale_menthe', scale: 1, map: MONSTER_MAP(12/41, 'AnimAttaque0', { 0: 12/41, 1: 24/45, 2: 16/37 }), height: 178, multi: true },
+  gelee_royale_fraise: { atlas: 'gelee_royale_fraise', scale: 1, map: MONSTER_MAP(12/41, 'AnimAttaque0', { 0: 12/41, 1: 24/45, 2: 16/37 }), height: 178, multi: true },
+  gelee_royale_citron: { atlas: 'gelee_royale_citron', scale: 1, map: MONSTER_MAP(12/41, 'AnimAttaque0', { 0: 12/41, 1: 24/45, 2: 16/37 }), height: 178, multi: true },
+  maitre_vampire: { atlas: 'maitre_vampire', scale: 1.39, map: MONSTER_MAP(13/26, 'AnimAttaque0', { 0: 13/26, 1: 4/36 }), height: 124, multi: true },
 };
 
 /** Archimonstres d'Astrub (0.3, 15B ; tools/contenu/archimonstres.py) : dans Dofus, un archimonstre a le dessin de son monstre
@@ -553,14 +559,6 @@ for (const [k, d] of Object.entries(MONS)) {
   const base = d.archiDe && (LOOKS[d.archiDe] ?? LOOKS[MONS[d.archiDe]?.look ?? '']);   // monstre au dessin d'un autre (Chafer -> chafer_debutant)
   if (base && !LOOKS[k]) LOOKS[k] = { ...base, scale: base.scale * (d.archiEchelle ?? 1) * 1.15, tint: GOLD };
 }
-
-/** 0.5 « monde vivant » : dessins d'attente des boss du monde dont la planche officielle n'est pas encore rendue (os 326, 328,
- *  330, 434 et 840 à copier du PC de Mathis, puis monster_planche.py) : la Gelée de leur couleur en grand, teintée. */
-const ATTENTE: Record<string, [string, number, number?]> = {
-  gelee_royale_bleuet: ['gelee_bleuet', 1.7], gelee_royale_menthe: ['gelee_menthe', 1.7], gelee_royale_fraise: ['gelee_fraise', 1.7],
-  gelee_royale_citron: ['gelee_menthe', 1.7, 0xfff06a], maitre_vampire: ['sergent_chafer', 1.35, 0xc8a0ff],
-};
-for (const [k, [b, e, t]] of Object.entries(ATTENTE)) if (!LOOKS[k] && LOOKS[b]) LOOKS[k] = { ...LOOKS[b], scale: LOOKS[b].scale * e, ...(t ? { tint: t } : {}) };
 
 /** PNJ dans le monde (planches tools/extraction/monster_planche.py, PNJ=1, SCALE = 1,32 x échelle officielle du look).
  *  Dofus montre un PNJ immobile (AnimStatique, une seule image) qui joue de temps en temps une de ses animations « fun »
