@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import * as Masques from './masques';
 
 /** Voir son perso (et les monstres) derrière les bâtiments et le décor (demande de Mathis, 2026-11-06, rendu de Sanstour).
  *  Le décor de la carte est fait de grandes images triées en profondeur : une image passe « devant » un perso quand
@@ -92,11 +93,20 @@ export class Transparence {
       lx = (dx * c - dy * s) / sx + im.displayOriginX; ly = (dx * s + dy * c) / sy + im.displayOriginY;
     }
     if (lx < 0 || ly < 0 || lx >= im.width || ly >= im.height) return false;
+    // masque lu à l'arrivée de la planche (Fluidité 1A) ; tant qu'il se calcule, le décor reste plein
+    const fr = im.frame, pg = Masques.masque(fr.texture.key);
+    if (pg === 'attente') return false;
+    if (pg) {
+      const cx = lx - fr.x, cy = ly - fr.y;   // planche rognée : le dessin commence à (fr.x, fr.y) dans l'image
+      if (cx < 0 || cy < 0 || cx >= fr.cutWidth || cy >= fr.cutHeight) return false;
+      const X = Math.floor((fr.cutX + cx) / Masques.PAS), Y = Math.floor((fr.cutY + cy) / Masques.PAS);
+      return X < pg.w && Y < pg.h && pg.a[Y * pg.w + X] > 110;
+    }
     const m = this.masque(im.frame), X = Math.floor(lx / Transparence.PAS), Y = Math.floor(ly / Transparence.PAS);
     return X < m.w && Y < m.h && m.a[Y * m.w + X] > 110;
   }
 
-  /** Alpha d'une image de décor, lu UNE fois puis gardé (réduit au quart) : getPixelAlpha de Phaser redessinait et relisait
+  /** Planche sans masque demandé (ne devrait plus arriver) : alpha d'une image de décor, lu UNE fois puis gardé (réduit au quart) : getPixelAlpha de Phaser redessinait et relisait
    *  un pixel à chaque appel, jusqu'à 12 fois par pièce et par image (≈ 2 ms par passe, mesure du 10 nov. 2026). */
   private static readonly PAS = 4;
   private static readonly toile = document.createElement('canvas');

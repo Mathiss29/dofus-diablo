@@ -3,7 +3,7 @@ import { BENEDICTIONS } from '../sim/magasin';
 import { apercuSort } from '../sim/apercu';
 import { dossier, v } from './assetUrl';
 import Phaser from 'phaser';
-import { calerCamera, densite } from './pixel';
+import { calerCamera, densite, densitePleine, reglerDensite } from './pixel';
 import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES } from '../sim/data';
 import type { Compte } from '../sim/quests';
 import { QuestView } from './questView';
@@ -51,6 +51,7 @@ import { mmss } from './forgeVue';
 import { Chargement, type Arrivee } from './chargement';
 import { inviterDiscord } from './inviteDiscord';
 import { Parcours } from './parcours';
+import { MesureFluidite } from './fluidite';
 import { spellTipHtml } from './spellTip';
 import { LEGENDARY, RARITY_COLORS, RARITY_NAMES, rollItem } from '../sim/items';
 import { POUVOIR_PAR_ID, V03_PUBLIC, V04_PUBLIC } from '../sim/pouvoirs';
@@ -177,7 +178,11 @@ export class ZoneScene extends Phaser.Scene {
   private aimId: SkillId | null = null; private aimKey: string | null = null; private hoverId: SkillId | null = null;
   /** Clic gauche en cours : sur le sol, sur un monstre, ou attaque sur place (Maj). */
   private clickMode: 'ground' | 'target' | 'place' | null = null;
+  /** Fluidité 5B : mesure gardée d'une scène à l'autre (voyages, Zaaps). */
+  static readonly mesure = new MesureFluidite();
   private clickTarget: number | null = null;
+  /** Touche « Attaquer vers la souris » tenue (Fluidité 6A). */
+  private attaqueSouris = false;
   private clickDest = false;
   /** Zoom voulu (molette) ; la caméra le rejoint en douceur. */
   private zoom = 1;
@@ -198,6 +203,7 @@ export class ZoneScene extends Phaser.Scene {
   private arrivee?: [string, number];
   private transit: Transit = {};
   init(data: { zone?: string; classe?: string; slot?: number; vitrine?: boolean; arrivee?: [string, number]; essai?: 'm' | 'f'; apparence?: Apparence; par?: Arrivee } & Transit) {
+    this.attaqueSouris = false;   // touche tenue pendant un voyage : son relâchement n'arrive plus à cette scène
     this.depart = false; this.rideau = null; this.arriveePar = data?.par ?? null;
     this.essai = data?.essai ? { sexe: data.essai, t: 0, averti: false } : null;
     this.apparenceEssai = data?.apparence;
@@ -964,6 +970,8 @@ export class ZoneScene extends Phaser.Scene {
     this.fx.chiffres = r.chiffres; this.fx.tailleChiffres = r.tailleChiffres === 'petite' ? 0.8 : r.tailleChiffres === 'grande' ? 1.3 : 1;
     EntityView.barresVie = r.barresVie;
     // 7A : échelle de l'interface (caméra de l'interface zoomée depuis le coin haut gauche ; les fenêtres en CSS)
+    // Fluidité 3A : résolution du rendu (le canevas est redimensionné, les caméras suivent à l'image suivante)
+    if (densitePleine() !== (r.resolution !== 'normale')) { reglerDensite(r.resolution !== 'normale'); this.game.scale.refresh(); }
     const k = Phaser.Math.Clamp(r.echelle || 1, 0.8, 1.5), ui = this.cameras.getCamera('ui');
     ui?.setOrigin(0, 0).setZoom(k * densite());   // × vrais pixels de l'écran (pixel.ts)
     document.documentElement.style.setProperty('--echelle', String(k));
@@ -974,12 +982,20 @@ export class ZoneScene extends Phaser.Scene {
       loop.sleep(); loop.wake();
     }
   }
+  /** Fluidité 8A : au premier monstre tué, une seule fois, l'astuce de l'attaque sur place vers la souris. */
+  private astuceAttaque() {
+    const CLE = 'diablofus.astuceAttaque';
+    try { if (localStorage.getItem(CLE)) return; localStorage.setItem(CLE, '1'); } catch { return; }
+    const q = Touches.nomAction('attaqueSouris'), clic = this.reglages.deplacement === 'droit' ? 'clic droit' : 'clic';
+    this.hud.toast(`Astuce : ${q ? `${q} maintenue ou ` : ''}Maj + ${clic} = attaquer sur place, vers la souris`, 6000);
+  }
   /** Bouton de la souris qui lance le sort de la case « clic » : le droit, ou le gauche si l'on se déplace au clic droit (Réglages 5B). */
   private boutonSort(b: number) { return this.reglages.deplacement === 'droit' ? b === 0 : b === 2; }
   /** Action d'une touche (render/touches.ts) enfoncée ou relâchée. */
   private action(a: string, enfonce: boolean) {
     const p = this.world.player, w = this.windows;
     const sort = /^sort(\d)$/.exec(a), invoc = /^invoc(\d)$/.exec(a);
+    if (a === 'attaqueSouris') { this.attaqueSouris = enfonce; if (enfonce) this.pressed = 'attaque'; return; }   // Fluidité 6A
     if (!enfonce) { if (sort || invoc || a === 'deplacement') this.up(a); return; }
     if (sort) {
       const i = +sort[1] - 1;
@@ -1036,7 +1052,7 @@ export class ZoneScene extends Phaser.Scene {
     const ptr = this.input.activePointer, wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
     const aim = ISO.toWorld(wp.x, wp.y), held = this.holding && (this.reglages.deplacement === 'droit' ? ptr.rightButtonDown() : ptr.leftButtonDown()) && !this.uiClick;
     const input: PlayerInput = { move: { x: 0, y: 0 }, aim, pressed: this.pressed, potion: this.potion,
-      holdAttack: held && this.clickMode === 'place', pickup: this.pickClick, approach: this.reglages.approche,
+      holdAttack: (held && this.clickMode === 'place') || this.attaqueSouris, pickup: this.pickClick, approach: this.reglages.approche,
       castOn: null };
     // un sort lancé sur un monstre vise le monstre (comme l'aperçu), pas le sol derrière son sprite
     const vise = this.pressed ? this.monsterUnder(ptr) : null;
@@ -1119,6 +1135,8 @@ export class ZoneScene extends Phaser.Scene {
   update(_: number, deltaMs: number) {
     const t0 = performance.now();
     this.updateJeu(deltaMs);
+    // Fluidité 5B : images et saccades par zone (pas en vitrine ni sous le rideau d'un voyage)
+    if (!this.vitrine && !this.worldView?.presse) ZoneScene.mesure.noter(this.world.area?.name ?? this.world.zone.name, deltaMs);
     // Panneau test 4D, 4E : compteur de fluidité et case sous la souris
     const pt = this.panneau;
     if (pt) {
@@ -1209,6 +1227,7 @@ export class ZoneScene extends Phaser.Scene {
       if (this.panneau && (e.k === 'test' || e.k === 'queteDebut' || e.k === 'queteEtape' || e.k === 'queteFin' || e.k === 'lootResource')) this.panneau.rafraichir();
       if (this.panneau && e.k === 'heal' && Math.hypot(e.x - this.world.player.x, e.y - this.world.player.y) < 8) this.panneau.noterSoin(e.amount);
       this.son.handle(e);
+      if (e.k === 'kill' && !this.vitrine) this.astuceAttaque();
       const M = GAME_DATA.monsters;
       switch (e.k) {
         case 'impact':

@@ -1690,13 +1690,35 @@
             "etiquettes": [
               "Bastion des Douze"
             ]
+          },
+          {
+            "titre": "Attaquer vers la souris",
+            "phrase": "Maintiens Q : ton perso attaque sur place vers la souris, sans viser de monstre.",
+            "details": "Maj + clic marche toujours. La touche se change dans Options › Touches.",
+            "icone": "arme",
+            "etiquettes": [
+              "Touche Q",
+              "Options"
+            ]
+          },
+          {
+            "titre": "Réglage Résolution",
+            "phrase": "Options › Graphismes : la résolution Normale rend le jeu bien plus fluide sur un écran à 125 ou 150 %.",
+            "details": "La qualité Basse la choisit d'elle-même.",
+            "icone": "options",
+            "etiquettes": [
+              "Options"
+            ]
           }
         ],
         "Le monde": [],
         "Combat": [],
-        "Corrections": [],
+        "Corrections": [
+          "Plus de saccades en marchant près du décor, et moins de travail quand on change de carte."
+        ],
         "En coulisses": [
-          "Le guichet de Kerubim quitte le Havre-Sac, et le Concasseur de Malek passe chez Kerubim."
+          "Le guichet de Kerubim quitte le Havre-Sac, et le Concasseur de Malek passe chez Kerubim.",
+          "Le jeu prévient si ton navigateur n'utilise pas ta carte graphique, et mesure sa fluidité par zone."
         ]
       }
     }
