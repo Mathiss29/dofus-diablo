@@ -544,6 +544,12 @@ export const LOOKS: Record<string, Look> = {
   wo_wabbit: { atlas: 'wo_wabbit', scale: 0.54, map: MONSTER_MAP(11/25, 'AnimAttaque0', { 0: 11/25, 1: 21/34, 2: 27/38 }), height: 287, multi: true },
   grand_pa_wabbit: { atlas: 'grand_pa_wabbit', scale: 0.64, map: MONSTER_MAP(15/32, 'AnimAttaque0', { 0: 15/32, 1: 15/32 }), height: 288, multi: true },
   wa_wabbit: { atlas: 'wa_wabbit', scale: 0.88, map: MONSTER_MAP(24/45, 'AnimAttaque0', { 0: 24/45, 1: 16/31, 2: 16/32 }), height: 219, multi: true },
+  // 0.5 « monde vivant » : boss du monde (os 326, 328, 330, 434, 840 ; SCALE=1.6 ; Maître Vampire à 135 %)
+  gelee_royale_bleuet: { atlas: 'gelee_royale_bleuet', scale: 1, map: MONSTER_MAP(12/41, 'AnimAttaque0', { 0: 12/41, 1: 24/45, 2: 16/37 }), height: 178, multi: true },
+  gelee_royale_menthe: { atlas: 'gelee_royale_menthe', scale: 1, map: MONSTER_MAP(12/41, 'AnimAttaque0', { 0: 12/41, 1: 24/45, 2: 16/37 }), height: 178, multi: true },
+  gelee_royale_fraise: { atlas: 'gelee_royale_fraise', scale: 1, map: MONSTER_MAP(12/41, 'AnimAttaque0', { 0: 12/41, 1: 24/45, 2: 16/37 }), height: 178, multi: true },
+  gelee_royale_citron: { atlas: 'gelee_royale_citron', scale: 1, map: MONSTER_MAP(12/41, 'AnimAttaque0', { 0: 12/41, 1: 24/45, 2: 16/37 }), height: 178, multi: true },
+  maitre_vampire: { atlas: 'maitre_vampire', scale: 1.39, map: MONSTER_MAP(13/26, 'AnimAttaque0', { 0: 13/26, 1: 4/36 }), height: 124, multi: true },
 };
 
 /** Archimonstres d'Astrub (0.3, 15B ; tools/contenu/archimonstres.py) : dans Dofus, un archimonstre a le dessin de son monstre

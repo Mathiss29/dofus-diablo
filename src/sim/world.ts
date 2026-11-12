@@ -21,6 +21,8 @@ import { initiativeBonus, removalChance } from './caracs';
 import { planWave } from './waves';
 import { Arene, ARENE } from './arene';
 import { Guerre } from './guerre';
+import { MondeVivant, VIVANT, bonusWeekEnd, type BonusWeekEnd, type VueVivant } from './mondeVivant';
+import PASSANTS from '../data/passants.json';
 import type { EtatMonde } from './etatMonde';
 import { Quetes, type Compte, type EtatQuetes, type QuetesData } from './quests';
 import { appliquerTest, type ReglagesTest } from './outilsTest';
@@ -163,6 +165,9 @@ export interface WorldOptions {
   sansGroupes?: boolean;
   /** Nuit à l'heure du PC (donnée par l'affichage, « Wabbits : 12A ») : l'îlot des Tombeaux se réveille. */
   nuit?: () => boolean;
+  /** 0.5 « monde vivant » (2E) : heure de Paris en secondes « murales » (comme si Paris était à l'heure UTC), donnée par
+   *  l'affichage : boss du monde, invasions, bonus du week-end. Absente (tests, serveur) : pas de rendez-vous. */
+  horloge?: () => number;
   /** Tous les groupes posés dès le départ, même loin des joueurs (tests qui regardent tout le monde ; le jeu pose à la demande, World.POSE). */
   groupesPartout?: boolean;
 }
@@ -179,7 +184,8 @@ export const EVENEMENTS_PERSONNELS = new Set<SimEvent['k']>(['levelUp', 'newSpel
   'brisage', 'codex', 'codexOuvert', 'coffreOuvert', 'capture', 'lieuDecouvert', 'impression', 'apparence', 'fusion', 'commande', 'signature', 'achat', 'familierNiveau',
   'familierRepas', 'rappel', 'cleManquante', 'recolteDebut', 'recolteFin', 'recolteStop', 'recolteNiveau', 'service', 'almanax', 'dofusPassif',
   'dofusGagne', 'lootKamas', 'bagFull', 'checkpoint', 'portalStart', 'portal', 'changeZone', 'incantation', 'incantationStop', 'arche', 'zaapDecouvert',
-  'zaapDepart', 'emmenage', 'queteDebut', 'queteEtape', 'queteFin', 'objetQuete', 'succes', 'succesRecupere', 'itemDrop', 'guerreDebut', 'guerreFin']);
+  'zaapDepart', 'emmenage', 'queteDebut', 'queteEtape', 'queteFin', 'objetQuete', 'succes', 'succesRecupere', 'itemDrop', 'guerreDebut', 'guerreFin',
+  'bossMondeVaincu', 'invasionPleine', 'invasionCoffre', 'evenementFin']);
 
 export class World {
   readonly rng: Rng;
@@ -317,6 +323,12 @@ export class World {
   /** Arène du donjon où l'on se bat (maquette « Donjons en vagues »), null ailleurs. */
   /** Guerre des Cawottes (0.4, île des Wabbits) : partie de test seulement tant que la 0.4 est cachée. */
   guerre: Guerre | null = null;
+  /** 0.5 « monde vivant » (src/sim/mondeVivant.ts) : boss du monde, invasions, petits événements (monde d'Astrub). */
+  vivant: MondeVivant | null = null;
+  /** Coop, chez l'invité : l'état du monde vivant reçu de l'hôte (il ne fait pas tourner la partie). */
+  vivantVu: VueVivant | null = null;
+  /** Ce que l'affichage montre du monde vivant (hôte ou invité). */
+  get vueVivant(): VueVivant | null { return this.vivantVu ?? this.vivant?.vue() ?? null; }
   arene: Arene | null = null;   // au-delà de ce qu'on voit même dézoomé à fond (avant : monstres figés au bord de l'écran)
 
   /** Contenu « essai » (0.4 : Amakna, Wabbits, Cania sud, Moon, leurs donjons) : public dès que V04_PUBLIC est vrai, sinon partie de test. */
@@ -367,6 +379,7 @@ export class World {
     if (open) this.ouvrirCouloirs();
     if (open) { this.buildPortes(); this.buildRecoltes(); this.buildPostes(); }
     if (open?.guerre && this.essaiOuvert && this.map instanceof WorldGrid && open.guerre.champs.every(c => this.map instanceof WorldGrid && this.map.mapByTag(c.tag))) this.guerre = new Guerre(this, open.guerre.champs);
+    if (open && this.map instanceof WorldGrid && opts.zone === 'astrub' && !opts.partieServeur) this.vivant = new MondeVivant(this);
     if (open && opts.arrivee) this.arriver(opts.arrivee);
     if (open) this.sortieHavreSac(opts);
     // les PNJ d'abord : les groupes de monstres ne se posent pas sur eux
@@ -777,6 +790,7 @@ export class World {
     if (!po.cle) return true;
     const p = this.player, r = p.resources[po.cle] ?? 0;
     if (this.cleValable(po.nom)) return true;   // 14A : clé encore valable, rien n'est repris
+    if (this.bonusDuWeekEnd('cles')) return true;   // 9B : Trousseau de clefs illimité
     if (r <= 0) {
       this.emit({ k: 'status', x: p.x, y: p.y - 60, text: `Il faut une ${this.opts.items?.resources[po.cle]?.name ?? 'clé'}`, color: '#ff9a5a' });
       this.emit({ k: 'cleManquante', id: po.cle });
@@ -1187,7 +1201,9 @@ export class World {
     if (pt) { const c = wg.cellOf(g.map, pt.c); pos = ok.has(c) ? wg.cellToWorld(c) : wg.nearestFree(...xy(wg.cellToWorld(c)), free); }
     g.x = pos.x; g.y = pos.y; g.members = []; g.cleared = false;
     const taille = g.sub.nuit && this.estNuit() ? g.sub.nuit.groupSize : g.sub.groupSize;
-    const [a, b] = (!g.fixe && this.quetes?.tailleGroupe(this.worldGrid!.mapByTag(g.map)?.sub ?? -1)) || pt?.n || taille, n = g.fixe ? g.fixe.length : a + this.rng.int(b - a + 1);
+    const [a, b] = (!g.fixe && this.quetes?.tailleGroupe(this.worldGrid!.mapByTag(g.map)?.sub ?? -1)) || pt?.n || taille;
+    // 0.5 (5B) : dans la sous-zone envahie, groupes plus gros et monstres plus durs
+    const envahi = !g.fixe && !!this.vivant?.envahie(wg.mapByTag(g.map)?.sub), n = g.fixe ? g.fixe.length : a + this.rng.int(b - a + 1) + (envahi ? VIVANT.invasion.membres : 0);
     const a0 = this.rng.range(0, Math.PI * 2), [r0, r1] = PLACEMENT.auto.rayonGroupe;
     // les membres restent du même côté des obstacles que le chef : cases atteignables à pied en quelques pas (plus de monstre derrière un mur ou une rivière)
     const c0 = wg.cellAtWorld(pos.x, pos.y), proches = new Map<number, number>(ok.has(c0) ? [[c0, 0]] : []), file = [...proches.keys()];
@@ -1217,8 +1233,8 @@ export class World {
       const archi = `archi_${type}`;
       if (!g.fixe && !elite && this.player.v03 && this.opts.data.monsters[archi]?.archiDe === type && this.rng.next() < ARCHI.chance * (this.test?.archis ? 100 : 1)   // partie de test (Outil test 4C) : ×100
         && !this.monsters.some(o => !o.dead && o.type === archi)) type = archi;
-      const mo = this.spawnMonster(type, q.x, q.y);
-      mo.group = g.id; g.members.push(mo);
+      const mo = this.spawnMonster(type, q.x, q.y, envahi ? this.vivant!.defEnvahi(type) : undefined);
+      mo.group = g.id; mo.envahi = envahi; g.members.push(mo);
       if (elite) this.doreesPresElite(g.map, q.x, q.y);
     }
   }
@@ -1260,6 +1276,7 @@ export class World {
     const open = this.zone.open!;
     this.updateArene(dt);
     this.guerre?.update(dt);
+    this.vivant?.update(dt);
     if (!this.opts.groupesPartout) this.poserAutourDesJoueurs();
     for (const g of this.groups) {
       if (g.retire || g.dort || g.members.some(m => !m.dead)) continue;
@@ -1270,7 +1287,7 @@ export class World {
       }
       // tutoriel : les esprits du Temple reviennent vite, même pas loin (de quoi finir chaque étape sans attendre)
       const tuto = !g.fixe && !!this.quetes?.tailleGroupe(this.worldGrid!.mapByTag(g.map)?.sub ?? -1);
-      g.timer -= tuto ? dt * 4 : dt;
+      g.timer -= tuto ? dt * 4 : this.vivant?.envahie(this.worldGrid!.mapByTag(g.map)?.sub) ? dt / VIVANT.invasion.reapparition : dt;   // 0.5 (5B) : l'invasion revient vite
       // Réapparition hors de la vue du joueur
       if (g.timer <= 0 && this.players.every(p => Math.hypot(g.x - p.x, g.y - p.y) > (tuto ? 500 : 900)) && !(g.donjon && this.dansDonjon(g.donjon)) && this.groupesPrets(g)) {
         if (!g.fixe && !g.members.length && !g.x && !g.y) this.attendreAuMilieu(g);   // tutoriel : jamais posé
@@ -1445,6 +1462,7 @@ export class World {
       if (this.zone.open && m.state === 'idle' && !m.dead && this.players.every(q => Math.abs(m.x - q.x) + Math.abs(m.y - q.y) > World.SOMMEIL)) { m.regenCalme(dt); continue; }
       if (m.guerre && this.guerre?.attaque?.piloter(m, dt)) continue;
       if (m.arene && this.arene?.piloter(m, dt)) continue;
+      if (m.evenement >= 0 && this.vivant?.piloter(m, dt)) continue;
       m.update(dt, this.cibleDe(m), this);
     }
     for (const b of this.betes) b.update(dt, this);
@@ -1915,9 +1933,9 @@ export class World {
     this.emit({ k: 'kill', x: m.x, y: m.y, radius: m.radius, monster: m.type });
     const p = this.player;
     p.soigner(p.cls.healOnKill + p.legendary('vampire'));
-    this.dropLoot(m);
+    if (!this.vivant?.monstreVaincu(m)) this.dropLoot(m);   // boss du monde : son coffre est donné par le monde vivant (4A)
     if ((m.def.archiDe || (m.def.boss && m.def.ame)) && !m.relache) this.capturer(m);
-    const alm = (this.almanax?.effet === 'xp' ? 1 + ALMANAX.xp : 1) * (1 + p.beni('xp'));   // 15C, Magasin 6D
+    const alm = (this.almanax?.effet === 'xp' ? 1 + ALMANAX.xp : 1) * (1 + p.beni('xp')) * (1 + this.bonusDuWeekEnd('xp'));   // 15C, Magasin 6D, 9B (week-end)
     // Multi (maquette « Multi : » 7A) : chaque joueur proche gagne l'XP comme en solo, +10 % par allié proche
     const proches = this.players.filter(q => q !== p && !q.dead && Math.abs(q.x - m.x) + Math.abs(q.y - m.y) <= World.SOMMEIL);
     const base = (m.def.xp ?? Math.round(m.def.hp / 5)) * this.bonusMassacre() * alm * (1 + World.XP_PAR_ALLIE * proches.length);
@@ -1996,19 +2014,63 @@ export class World {
   /** Ce que le calcul du butin doit savoir (src/sim/butin.ts) : sert au jeu, au Bestiaire et au simulateur de l'outil de test. */
   contexteButin(type: string, rang: Rang, niveau: number): CtxButin {
     const p = this.player;
-    return { type, rang, niveau, prospection: p.prospection + (this.almanax?.effet === 'butin' ? ALMANAX.butin : 0) + p.beni('butin') * REGLAGES_BUTIN.prospection.chances, items: this.opts.items!, familiers: this.familiersDe[type] ?? [], pool: this.equipByLevel, poolSecours: this.equipSecours,
+    return { type, rang, niveau, prospection: p.prospection + (this.almanax?.effet === 'butin' ? ALMANAX.butin : 0) + p.beni('butin') * REGLAGES_BUTIN.prospection.chances + this.bonusDuWeekEnd('butin') + this.prospectionInvasion, items: this.opts.items!, familiers: this.familiersDe[type] ?? [], pool: this.equipByLevel, poolSecours: this.equipSecours,
       panoBoss: rang === 'boss' ? this.panoBoss(type) : undefined,
       metierNiveau: j => p.metierLevel(j), armeChasse: !!p.huntingWeapon, pouvoirs: rang === 'boss' ? { ...p.ctxPouvoirs, boss: type } : p.ctxPouvoirs };
   }
   /** Un monstre vaincu lâche son butin officiel (ressources, parfois un équipement) et, plus rarement, un équipement
    *  de son niveau pris parmi les objets officiels des monstres de la zone. Élites et boss lâchent plus et mieux. Calcul : src/sim/butin.ts. */
   private dropLoot(m: Monster) {
+    this.prospectionInvasion = m.envahi ? VIVANT.invasion.prospection : 0;   // 0.5 (5B) : butin meilleur pendant une invasion
+    try { this.dropLootDe(m); } finally { this.prospectionInvasion = 0; }
+  }
+  /** Prospection en plus du butin en cours de tirage (envahisseur). */
+  private prospectionInvasion = 0;
+  private dropLootDe(m: Monster) {
     // « Archis : » 7B : l'archimonstre relâché dans l'arène lâche le butin d'un boss ; son niveau est le sien (l'arène est au Bastion)
     const rang = m.relache && m.def.archiDe ? 'boss' : rangDe(m.def), niv = m.relache ? m.def.level ?? this.monsterLevel(m) : this.monsterLevel(m);
     if (this.players.length < 2) { this.lacherButin(m.type, rang, niv, m.x, m.y); return; }
     // Multi (« Multi : » 7C) : chaque joueur proche a son propre tirage, que lui seul voit et ramasse
     for (const q of this.joueursProches(m.x, m.y)) this.commeJoueur(q, () => this.lacherButin(m.type, rang, niv, m.x, m.y, 0, q.id));
   }
+  /** 0.5 (4A, 7B, 8A-8B) : n tirages de butin d'un monstre de ce rang (type vide : équipement de la zone et kamas) pour q, posés en (x, y)
+   *  et réservés à q en multi ; garanti : un objet de cette rareté au moins (Légendaire avec la chance donnée). */
+  butinMonstre(q: Player, type: string, rang: Rang, niveau: number, x: number, y: number, n: number, garanti?: { rarete: Rarity; legendaire: number }) {
+    const I = this.opts.items;
+    if (!I) return;
+    this.commeJoueur(q, () => {
+      const pour = this.players.length > 1 ? q.id : undefined, cle = type || CLE_COFFRE;
+      for (let k = 0; k < n; k++) this.lacherButin(cle, rang, niveau, x, y, 0, pour);
+      if (!garanti) return;
+      const pool = poolNiveau(this.contexteButin(cle, rang, niveau));
+      if (!pool.length) return;
+      const id = this.rng.pick(pool).id, r: Rarity = this.rng.next() < garanti.legendaire ? 'legendaire' : garanti.rarete;
+      this.poserButin({ ressources: [], objets: [rollItem(id, I.equipment[id], r, this.rng, this.nextId++, this.contexteButin(cle, rang, niveau).pouvoirs)], kamas: 0 }, x, y, pour);
+    });
+  }
+  /** 9B : valeur du bonus officiel du week-end s'il est de cette sorte (0 sinon). */
+  bonusDuWeekEnd(cle: BonusWeekEnd['cle']): number { const b = this.weekEnd; return b?.cle === cle ? b.n : 0; }
+  /** 9B : bonus officiel du week-end en cours (heure de Paris), ou null. */
+  get weekEnd(): BonusWeekEnd | null { const h = this.opts.horloge; return h ? bonusWeekEnd(h()) : null; }
+  /** 5B : une invasion commence. Les groupes au calme de la sous-zone repartent (ils reviennent envahis, plus gros). */
+  relancerSousZone(sub: number) {
+    const wg = this.worldGrid;
+    if (!wg) return;
+    let retires = false;
+    for (const g of this.groups) {
+      if (g.retire || g.fixe || g.dort || g.cleared || wg.mapByTag(g.map)?.sub !== sub) continue;
+      if (g.members.some(m => !m.dead && m.state !== 'idle')) continue;
+      const c = g.members.find(m => !m.dead) ?? g;
+      g.x = c.x; g.y = c.y; g.dort = true; retires = true;
+      for (const m of g.members) m.group = -2;
+      g.members = [];
+    }
+    if (retires) this.monsters = this.monsters.filter(m => m.group > -2);
+  }
+  /** Identifiant neuf (entités et événements du monde vivant). */
+  nextIdPublic(): number { return this.nextId++; }
+  /** 8A : habitants officiels qui peuvent appeler à l'aide (planches des passants du Bastion, src/data/passants.json). */
+  habitantsEvenement(): { id: string; nom: string }[] { return (PASSANTS as { habitants: { id: string; nom: string }[] }).habitants; }
   /** Joueurs qui ont part à ce qui se passe en (x, y) : à moins de SOMMEIL (morts compris : ils se relèvent). */
   joueursProches(x: number, y: number): Player[] { return this.players.filter(q => Math.abs(q.x - x) + Math.abs(q.y - y) <= World.SOMMEIL); }
   private lacherButin(type: string, rang: Rang, niveau: number, mx: number, my: number, kamas = 0, pour?: number) {

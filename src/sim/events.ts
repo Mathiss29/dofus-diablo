@@ -77,6 +77,21 @@ export type SimEvent =
   | { k: 'areneFin'; nom: string; temps: number; record: boolean }
   /** Guerre des Cawottes (0.4) : attaque d'un champ (annoncée aux joueurs de l'île), vague, cawotte volée ou emportée par un
    *  Kiafin (fuite = il est sorti du champ avec), Kiafin qui s'enfuit, cawotte replantée, bilan (coffre, Cawottes gagnées, record). */
+  /** 0.5 « monde vivant » : boss du monde annoncé 10 min avant (2D), arrivé, combat commencé (minuterie 3D), palier (3C), fin ;
+   *  vaincu = la part de ce joueur (coffre, Pépites, titre la première fois). */
+  | { k: 'bossMondeAnnonce'; cle: string; nom: string; lieu: string; dans: number; heure: string }
+  | { k: 'bossMondeArrive'; cle: string; nom: string; lieu: string; x: number; y: number }
+  | { k: 'bossMondeCombat'; cle: string; nom: string; minuterie: number }
+  | { k: 'bossMondePalier'; cle: string; nom: string; n: number; x: number; y: number }
+  | { k: 'bossMondeFin'; cle: string; nom: string; fin: 'vaincu' | 'parti' | 'enfui' }
+  | { k: 'bossMondeVaincu'; cle: string; nom: string; premier: boolean; titre: string; pepites: number }
+  /** Invasion de l'heure (5B), jauge pleine (7A : Pépites de ce joueur, coffre posé), coffre ouvert avec des Éclats (7B). */
+  | { k: 'invasionDebut'; nom: string; sub: number; fin: number }
+  | { k: 'invasionPleine'; nom: string; pepites: number; x: number; y: number }
+  | { k: 'invasionCoffre'; nom: string; x: number; y: number }
+  /** Petit événement près du joueur (8A défense, 8B coffre gardé). */
+  | { k: 'evenementDebut'; id: number; sorte: 'defense' | 'coffre'; nom: string; lieu: string; x: number; y: number }
+  | { k: 'evenementFin'; id: number; sorte: 'defense' | 'coffre'; reussi: boolean; nom: string }
   | { k: 'guerreDebut'; champ: string; spontanee: boolean; vagues: number; cawottes: number }
   | { k: 'guerreVague'; n: number; total: number }
   | { k: 'guerreVol'; x: number; y: number; reste: number; fuite: boolean }

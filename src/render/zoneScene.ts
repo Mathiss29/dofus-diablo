@@ -65,6 +65,8 @@ import { SonView, synthe } from './sonView';
 import { MANIFESTE, Son } from './son';
 import { retouchesPlacement } from './placementVue';
 import { etatsPrets, jourDuPC, PanneauTest, lireTest, modeTest, sauverTest, type EtatTest } from './panneauTest';
+import { heureParis } from './heure';
+import { VivantView } from './vivantView';
 import { CalquesTest } from './calquesTest';
 import { REGLAGES_TEST, type CommandeTest } from '../sim/outilsTest';
 import { Coop } from './coop';
@@ -147,6 +149,7 @@ export class ZoneScene extends Phaser.Scene {
   private recolteView: RecolteView | null = null;
   private havreSacView: HavreSacView | null = null;
   private areneView: AreneView | null = null;
+  private vivantView: VivantView | null = null;
   private brume: BrumeNuit | null = null;
   private guerreView: GuerreView | null = null;
   /** Boss enfui dans son trou (« Wabbits : 8B »), pour la bannière de fin qui suit. */
@@ -335,7 +338,7 @@ export class ZoneScene extends Phaser.Scene {
     if (zone.open) {
       const open = zone.open;
       const wg = new WorldGrid(this.cache.json.get(WorldView.key(open.world, 'monde')) as WorldData);
-      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, apparats: APPARATS, themesHavreSac: THEMES_HAVRESAC, teintures: TEINTURES, familierXp: FAMILIERS.xp, recoltes: RECOLTES, compte: chargerCompte(), coffre: lireCoffre(this.sorteCoffre), aujourdhui: this.test?.jour ?? jourDuPC(), nuit: () => this.nuitDehors(), tuto: this.test ? false : this.perso?.tuto, test: this.test?.reglages,
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, apparats: APPARATS, themesHavreSac: THEMES_HAVRESAC, teintures: TEINTURES, familierXp: FAMILIERS.xp, recoltes: RECOLTES, compte: chargerCompte(), coffre: lireCoffre(this.sorteCoffre), aujourdhui: this.test?.jour ?? jourDuPC(), nuit: () => this.nuitDehors(), horloge: heureParis, tuto: this.test ? false : this.perso?.tuto, test: this.test?.reglages,
         placements: this.test ? retouchesPlacement(open.world) : undefined,   // éditeur F1 › Placement : retouches pas encore envoyées
         // vitrine : les PNJ sont là, mais aucune quête ne démarre
         arrivee: this.arrivee, position: this.transit.position, point: this.transit.point, zaap: this.transit.zaap, retour: this.transit.retour,
@@ -360,6 +363,7 @@ export class ZoneScene extends Phaser.Scene {
       if (this.world.zone.open) { const hv = this.havreSacView = new HavreSacView(this, this.world); this.events.once('shutdown', () => { hv.destroy(); if (this.havreSacView === hv) this.havreSacView = null; }); }
       if (this.world.zone.open?.donjons?.some(d => d.arene)) { const av = this.areneView = new AreneView(this, this.world); this.events.once('shutdown', () => { av.destroy(); if (this.areneView === av) this.areneView = null; }); }
       if (this.world.zone.open?.subareas['163']) { const b = this.brume = new BrumeNuit(this, this.world); this.events.once('shutdown', () => { b.destroy(); if (this.brume === b) this.brume = null; }); }
+      if (this.world.vivant) { const vv = this.vivantView = new VivantView(this, this.world); this.events.once('shutdown', () => { vv.destroy(); if (this.vivantView === vv) this.vivantView = null; }); }
       if (this.world.guerre) { const gv = this.guerreView = new GuerreView(this, this.world); this.events.once('shutdown', () => { gv.destroy(); if (this.guerreView === gv) this.guerreView = null; }); }
       if (this.world.postes.length) { const av = this.atelierView = new AtelierView(this, this.world, `${ASSETS}/ui/reperes`); this.events.once('shutdown', () => { av.destroy(); if (this.atelierView === av) this.atelierView = null; }); }
       if (this.world.recoltes.length) { const rv = this.recolteView = new RecolteView(this, this.world); this.events.once('shutdown', () => { rv.destroy(); if (this.recolteView === rv) this.recolteView = null; }); }
@@ -1283,6 +1287,10 @@ export class ZoneScene extends Phaser.Scene {
       case 'forge': return e.issue !== 'echec' && (e.exo || e.over) ? [`Forgemagie : ${e.exo ? 'exo' : 'over'} ${STAT_NAMES[e.stat as Stat] ?? e.stat} passé sur ${e.objet}`] : null;
       case 'massacreFin': return e.n >= 10 ? [`Massacre de ${e.n} monstres`] : null;
       case 'guerreFin': return [e.coffre ? `${e.champ} défendu : ${e.sauvees} / ${e.total} cawottes, +${e.gain} Cawottes` : `${e.champ} ravagé : toutes les cawottes ont été volées`];
+      case 'bossMondeAnnonce': return [`Boss du monde : ${e.nom} à ${e.heure}, ${e.lieu}`];
+      case 'bossMondeVaincu': return [`${e.nom} vaincu : coffre et ${e.pepites} Pépites${e.premier ? `, titre « ${e.titre} »` : ''}`, 'butin'];
+      case 'invasionDebut': return [`Invasion : ${e.nom}, pendant une heure`];
+      case 'invasionPleine': return [`Invasion de ${e.nom} repoussée : +${e.pepites} Pépites`, 'butin'];
       default: return null;
     }
   }
@@ -1371,6 +1379,21 @@ export class ZoneScene extends Phaser.Scene {
         case 'guerreVague': this.hud.banner(`Vague ${e.n} / ${e.total}`, 800); break;
         case 'guerreVol': this.hud.toast(e.fuite ? `Le Kiafin s'est enfui avec une cawotte (${e.reste} restantes)` : `Une cawotte arrachée ! (${e.reste} restantes)`); break;
         case 'guerreFuite': this.hud.toast('Un Tiwabbit Kiafin s\'enfuit avec une cawotte : rattrape-le !'); break;
+        // 0.5 « monde vivant » : boss du monde (2D : annoncé 10 min avant), invasions, petits événements
+        case 'bossMondeAnnonce': this.hud.banner(`${e.nom}\narrive à ${e.heure} · ${e.lieu}`, 2600); Son.jouer(MANIFESTE.ui.objectif, 'interface', { vol: 0.7 }); break;
+        case 'bossMondeArrive': this.hud.banner(`${e.nom}\nest apparu · ${e.lieu}`, 2400, true); Son.jouer(MANIFESTE.ui.objectif, 'interface', { vol: 0.8 }); break;
+        case 'bossMondeCombat': this.hud.toast(`${Math.round(e.minuterie / 60)} minutes pour vaincre ${e.nom} !`, 2400); break;
+        case 'bossMondePalier': this.hud.banner(`${e.nom}\nappelle sa garde !`, 1600, true); break;
+        case 'bossMondeFin': if (e.fin !== 'vaincu') this.hud.toast(e.fin === 'enfui' ? `${e.nom} s'est échappé : le temps est écoulé` : `${e.nom} est reparti : personne n'est venu`, 2600); break;
+        case 'bossMondeVaincu':
+          this.chime('legendaire'); this.hud.loot(`Coffre de ${e.nom} : +${e.pepites} Pépites`, '#ffd27a');
+          if (e.premier) this.hud.banner(`Titre obtenu\n« ${e.titre} »`, 2600);
+          this.sauver(); this.windows?.refresh(); break;
+        case 'invasionDebut': this.hud.toast(`Invasion : ${e.nom} est envahie pendant ${Math.max(1, Math.round(e.fin / 60))} min`, 2600); break;
+        case 'invasionPleine': this.hud.banner(`Invasion repoussée !\n+${e.pepites} Pépites · le coffre d'invasion est apparu`, 2400); Son.jouer(MANIFESTE.ui.objectif, 'interface', { vol: 0.8 }); this.sauver(); break;
+        case 'invasionCoffre': this.chime('epique'); this.hud.loot('Coffre d\'invasion ouvert', '#b9a3e8'); this.sauver(); this.windows?.refresh(); break;
+        case 'evenementDebut': this.hud.banner(`${e.nom}\n${e.lieu}`, 2000, e.sorte === 'defense'); Son.jouer(MANIFESTE.ui.checkpoint, 'interface', { vol: 0.7 }); break;
+        case 'evenementFin': if (e.reussi) { this.hud.banner(e.nom, 1600); this.sauver(); this.windows?.refresh(); } else this.hud.toast(e.nom, 2200); break;
         case 'guerreReplantee': this.hud.toast('Kiafin rattrapé : la cawotte est replantée'); break;
         case 'guerreFin': {
           const C = { or: 'Coffre en or', argent: 'Coffre en argent', bronze: 'Coffre en bronze' };
@@ -1818,6 +1841,11 @@ export class ZoneScene extends Phaser.Scene {
     });
     const t = w.player.tombe;
     if (t && t.zone === zone) l.push({ x: t.x, y: t.y, genre: 'tombe', coul: 0xffffff });
+    // 0.5 « monde vivant » : boss du monde (rouge), coffre d'invasion (violet), petits événements (orange)
+    const vv = w.vueVivant;
+    if (vv?.boss && !vv.boss.fin) l.push({ x: vv.boss.x, y: vv.boss.y, genre: 'vivant', coul: 0xe0402f });
+    if (vv?.invasion?.coffre) l.push({ ...vv.invasion.coffre, genre: 'vivant', coul: 0xb07bff });
+    for (const e of vv?.evenements ?? []) if (!e.fin) l.push({ x: e.x, y: e.y, genre: 'vivant', coul: 0xf08a2c });
     this.hud.marquesMini = l; this.hud.drapeauSuivi = suivi;
   }
   /** Signal Alt + clic (carte « suite » 14B) : cercles qui pulsent au sol, de la couleur du joueur, chez tout le groupe. */
@@ -2002,6 +2030,7 @@ export class ZoneScene extends Phaser.Scene {
     this.atelierView?.update(this.cameras.main, this.input.activePointer, mobSurvol);
     this.havreSacView?.update(this.game.loop.delta / 1000);
     this.areneView?.update(this.game.loop.delta / 1000);
+    this.vivantView?.update(this.game.loop.delta / 1000);
     this.guerreView?.update(this.game.loop.delta / 1000);
     this.brume?.update(this.game.loop.delta / 1000);
     this.questView?.update();

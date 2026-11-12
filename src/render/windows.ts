@@ -118,6 +118,7 @@ export const SUCCES_CATS = [
 ];
 import { LADDER_CSS, VueLadder, chargerLadder, idDuPerso, ladderCharge } from './ladder';
 import type { MarqueCarte } from './carteMonde';
+import { bossAnnonce } from '../sim/mondeVivant';
 
 const SLOT_NAMES: Record<EquipSlot, string> = {
   chapeau: 'Coiffe', cape: 'Cape', amulette: 'Amulette', anneau1: 'Anneau', anneau2: 'Anneau', ceinture: 'Ceinture',
@@ -2142,12 +2143,13 @@ export class Windows {
       <div class="hint">Fabriqué : Commun, ou Rare (${Math.round(chanceRare(lv) * 100)} % à ton niveau, garanti avec un ingrédient rare). Jamais de pouvoir légendaire.</div>`;
   }
   private resTip(r: ResourceDef, id: string) {
-    const sorte = r.ame ? 'Âme d\'archimonstre' : r.soin || r.rappel || r.deguisement ? 'Consommable' : r.cle ? 'Clé de donjon' : r.pepite ? 'Monnaie du Bastion' : r.monnaie ? 'Monnaie de l\'île des Wabbits' : r.rune || r.signature ? 'Rune de forgemagie' : 'Ressource';
+    const sorte = r.ame ? 'Âme d\'archimonstre' : r.soin || r.rappel || r.deguisement ? 'Consommable' : r.cle ? 'Clé de donjon' : r.pepite ? 'Monnaie du Bastion' : r.monnaie === 'invasion' ? 'Éclat d\'invasion' : r.monnaie ? 'Monnaie de l\'île des Wabbits' : r.rune || r.signature ? 'Rune de forgemagie' : 'Ressource';
     const effet = r.ame ? `<div class="up">${escB(GAME_DATA.monsters[r.ame]?.name ?? '')}</div><div class="hint">Capturée dans une Petite pierre d'âme : elle compte dans le carnet du Bestiaire et se montre à l'Assistante d'Otomaï (quête du Dofus Ocre).</div><div class="hint">Clic droit dans l'arène des âmes (au fond du Marché couvert, Bastion des Douze) : la relâcher pour recombattre son groupe, avec un meilleur butin. L'âme est perdue.</div>`
       : r.soin ? `<div class="up">+${r.soin} PV</div><div class="hint">Clic droit : manger</div>`
       : r.rappel ? `<div class="up">Retour au dernier Zaap (${this.world.checkpointName})</div><div class="hint">Clic droit : boire</div>`
       : r.deguisement ? `<div class="up">Déguisé en Wabbit pendant ${Math.round(r.deguisement / 60)} min</div><div class="hint">Les Wabbits de l'île ne t'attaquent pas tant que tu ne les tapes pas. Clic droit : boire</div>`
       : r.cle ? `<div class="up">Ouvre l'entrée : ${r.cle}</div><div class="hint">Prise en entrant dans le donjon</div>`
+      : r.monnaie === 'invasion' ? '<div class="hint">Lâché par les envahisseurs de la sous-zone envahie. Ouvre le coffre d\'invasion quand la jauge est pleine. Se dissipe à la fin de l\'heure.</div>'
       : r.monnaie ? '<div class="hint">Gagnée en défendant les champs de l\'île des Wabbits (guerre des Cawottes) ; se dépense chez Tiwa Cawoteuw, sur l\'île de la Cawotte.</div>'
       : r.pepite ? '<div class="hint">Les Pépites se gagnent avec les contrats, l\'Almanax, les quêtes, les succès et les donjons ; elles se dépensent chez les marchands du Bastion des Douze.</div>'
       : r.signature ? '<div class="up">Grave ton nom sur un objet</div><div class="hint">Case Signature de la fenêtre du forgemage, au Bastion des Douze ; Malek en vend aussi.</div>'
@@ -2586,6 +2588,9 @@ export class Windows {
     const ICO = `<img src="${v('assets/ui/reperes/410.webp')}" alt="">`;
     // idée 2 (2026-11-08) : étoile sur le Zaap découvert le plus proche du but de la quête suivie
     const Q = wo.quetes, conseil = this.reglages.flecheQuete ? Q?.zaapConseille() ?? null : null, quete = Q?.suivie ? Q.def(Q.suivie).nom : '';
+    // 0.5 (2D) : le Zaap découvert le plus près du boss du monde annoncé ou présent
+    const bm = bossAnnonce(wo), cb = bm && wo.opts.zone === 'astrub' ? /^(-?\d+)_(-?\d+)$/.exec(bm.carte) : null;
+    const conseilBoss = cb && Q ? Q.zaapPres('astrub', [+cb[1], +cb[2]]) : null;
     const ligne = (o: { i?: number; nom: string; region: string; co: string; niv: string; nc: string; cls?: string; titre?: string; marque?: string }) =>
       `<div class="zl ${o.cls ?? ''}" ${o.i != null ? `data-zaap="${o.i}"` : ''} data-q="${escB(`${o.nom} ${o.region}`.toLowerCase())}" title="${escB(o.titre ?? '')}">`
       + `<span class="t">${ICO}<b>${escB(o.nom)}</b>${o.marque ? `<span class="ici-m">${o.marque}</span>` : ''}</span><span>${escB(o.region)}</span><span>${o.co}</span><span class="${o.nc}">${o.niv}</span></div>`;
@@ -2600,9 +2605,10 @@ export class Windows {
         const sub = c.sub != null ? z.open!.subareas[String(c.sub)] : undefined, niv = sub?.level ?? z.level ?? 1;
         const i = p.zaaps.findIndex(o => o.zone === id && o.name === c.name), lui = !!ici && wo.opts.zone === id && ici.name === c.name;
         const terr = sub?.name ?? c.name, co = c.map.join(','), bon = !!conseil && conseil.zone === id && conseil.name === c.name;
+        const boss = !!conseilBoss && conseilBoss.zone === id && conseilBoss.name === c.name;
         const l = lui ? ligne({ nom: terr, region: z.name, co, niv: String(niv), nc: couleur(niv), cls: 'ici', marque: bon ? 'Tu es ici · ★ le plus près de ta quête' : 'Tu es ici' })
-          : i >= 0 ? ligne({ i, nom: terr, region: z.name, co, niv: String(niv), nc: couleur(niv), cls: bon ? 'cons' : '', marque: bon ? '★ le plus près de ta quête' : undefined,
-            titre: bon ? `Voyager (gratuit) · le Zaap le plus proche de « ${quete} »` : 'Voyager (gratuit)' })
+          : i >= 0 ? ligne({ i, nom: terr, region: z.name, co, niv: String(niv), nc: couleur(niv), cls: bon || boss ? 'cons' : '', marque: boss ? `☠ ${bm!.nom}` : bon ? '★ le plus près de ta quête' : undefined,
+            titre: boss ? `Voyager (gratuit) · le Zaap le plus proche de ${bm!.nom}` : bon ? `Voyager (gratuit) · le Zaap le plus proche de « ${quete} »` : 'Voyager (gratuit)' })
           : ligne({ nom: '???', region: z.name, co, niv: String(niv), nc: couleur(niv), cls: 'nd', titre: `À découvrir : passe sur la carte [${co}] (${terr})` });
         return { niv, l };
       }).sort((a, b) => a.niv - b.niv);

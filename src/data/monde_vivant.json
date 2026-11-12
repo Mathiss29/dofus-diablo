@@ -1,0 +1,49 @@
+{
+ "_": "Version 0.5 « monde vivant » (maquette « 0.5 : 1A+1B+1C+1D 2A+2D+2E 3A+3C+3D+3E 4A+4B+4C+4D 5B 6B 7A+7B 8A+8B 9B 11A 12A 14A », Mathis 2026-11-12). Tout se règle ici. Les heures sont celles de Paris, les mêmes pour tous les joueurs (2E).",
+ "boss": {
+  "_": "2A : un boss du monde toutes les 3 h pile (0 h, 3 h… 21 h). programme = les 8 rendez-vous du jour : « nuit » = le Maître Vampire (1C, seulement la nuit), « jour » = le suivant de rotation (qui tourne d'un cran chaque jour). 2D : annoncé 10 min avant. Il attend 30 min qu'on vienne ; 3D : une fois touché, 5 min pour le battre, sinon il repart.",
+  "periode": 10800, "annonce": 600, "attente": 1800, "minuterie": 300,
+  "programme": ["nuit", "jour", "jour", "jour", "jour", "jour", "jour", "nuit"],
+  "rotation": ["chef_de_guerre_bouftou", "gelees_royales", "chef_crocodaille"],
+  "_pv": "PV du boss = base + parNiveau × niveau, +parJoueur par joueur en plus présent quand il apparaît ; dégâts = ceux d'un boss de son niveau × degats.",
+  "pv": { "base": 3000, "parNiveau": 300 }, "parJoueur": 0.6, "degats": 1.15, "echelle": 1.6,
+  "_paliers": "3C : à 66 % puis 33 % de ses PV, il appelle sa garde (renforts de sa sous-zone, ils foncent) et devient intouchable tant qu'elle vit (au plus intouchableMax s).",
+  "paliers": [0.66, 0.33], "renforts": 4, "intouchableMax": 12,
+  "_seisme": "3C : l'attaque géante annoncée au sol, sur un joueur au hasard : rayon (px), annonce (s), relance (s) au palier 0 / 1 / 2, part des PV max retirée.",
+  "seisme": { "rayon": 230, "telegraphe": 2.2, "relance": [18, 14, 10], "degats": 0.35 },
+  "_gelees": "1B : on ne tape que celle qui brille (les autres sont intouchables) ; elle change toutes les brille s ; celle qui brille perd vuln points de résistance. Chaque Gelée a part × les PV d'un boss.",
+  "gelees": { "brille": 10, "vuln": 50, "part": 0.4 },
+  "_recompense": "4A : coffre garanti (tirages de butin de boss + un objet Rare au moins, Légendaire 1/50) ; 4B : une fois par apparition ; 4C : Pépites ; 4D : titre officiel la première fois (succès).",
+  "recompense": { "tirages": 3, "legendaire": 0.02, "pepites": 40 },
+  "liste": {
+   "chef_de_guerre_bouftou": { "nom": "Chef de Guerre Bouftou", "monstres": ["chef_de_guerre_bouftou"], "sousZone": 5, "carte": "3_10", "niveau": 30, "renforts": ["bouftou", "boufton", "boufton_noir"], "titre": "Maître de guerre", "cri": "La harde du Chef de Guerre Bouftou charge au Coin des Bouftous" },
+   "gelees_royales": { "nom": "Gelées Royales", "monstres": ["gelee_royale_bleuet", "gelee_royale_menthe", "gelee_royale_fraise", "gelee_royale_citron"], "sousZone": 12, "carte": "10_28", "niveau": 60, "renforts": ["gelee_bleuet", "gelee_menthe", "gelee_fraise"], "titre": "Marcheur Dimensionnel", "brille": true, "cri": "Les quatre Gelées Royales sortent de la Gelaxième Dimension sur la Péninsule des gelées" },
+   "maitre_vampire": { "nom": "Maître Vampire", "monstres": ["maitre_vampire"], "sousZone": 6, "carte": "10_16", "niveau": 49, "renforts": ["chafer", "chafer_fantassin", "rib"], "titre": "Vampyre", "nuit": true, "cri": "Le Maître Vampire sort de sa crypte au Cimetière d'Amakna" },
+   "chef_crocodaille": { "nom": "Chef Crocodaille", "monstres": ["chef_crocodaille"], "sousZone": 31, "carte": "-6_11", "niveau": 61, "renforts": ["crocodaille", "boo"], "titre": "Dékrokilliseur", "cri": "Le Chef Crocodaille remonte des Marécages d'Amakna" }
+  }
+ },
+ "invasion": {
+  "_": "5B + 6B : à chaque heure pile, une sous-zone d'Amakna ou d'Astrub est envahie pendant 1 h (toujours une en cours) : groupes plus gros (membres en plus), monstres plus durs (pv, degats), réapparition plus rapide, butin meilleur (Prospection).",
+  "membres": 2, "pv": 1.6, "degats": 1.25, "reapparition": 0.35, "prospection": 50,
+  "_jauge": "7A : chaque envahisseur vaincu remplit la jauge (élite : 3) ; pleine = Pépites à tous ceux qui ont aidé, et le coffre d'invasion apparaît au cœur de la sous-zone. +parJoueur par joueur en plus.",
+  "jauge": 60, "parJoueur": 0.5, "pepites": 25,
+  "_eclats": "7B : chaque envahisseur lâche des Éclats Obscurs (objet officiel 14954 ; élite : 3) ; on ouvre le coffre d'invasion avec prix éclats (tirages de butin d'élite + un Rare au moins). Les éclats se dissipent à la fin de l'heure.",
+  "eclat": "14954", "eclatsElite": 3,
+  "coffre": { "prix": 15, "tirages": 2, "epique": 0.15 }
+ },
+ "evenements": {
+  "_": "8A + 8B : petits événements qui arrivent près du joueur quand il traverse une sous-zone, environ toutes les 5 min (intervalle en s). Lieux et monstres de la sous-zone, déroulé à nous.",
+  "intervalle": [240, 360], "distance": [380, 620], "abandon": 1800,
+  "defense": { "_": "8A : un habitant attaqué, à défendre pendant duree s ; vagues de monstres à t s ; un monstre au contact lui retire pvParSeconde % par seconde.", "duree": 60, "vagues": [0, 18, 36], "taille": [3, 4], "pvParSeconde": 4, "tirages": 2 },
+  "coffre": { "_": "8B : un coffre gardé par l'élite de la sous-zone et deux vagues ; vaincus, il s'ouvre (tirages de butin d'élite, un Rare au moins).", "gardes": 2, "vagues": [3, 4], "tirages": 3 }
+ },
+ "weekend": {
+  "_": "9B : un bonus officiel du calendrier de Dofus 3, à tour de rôle chaque week-end (samedi et dimanche, heure de Paris).",
+  "bonus": [
+   { "id": 9, "cle": "xp", "nom": "Expérience améliorée : + 50% XP", "texte": "Les gains d'expérience des monstres et des quêtes sont augmentés de 50 %.", "n": 0.5 },
+   { "id": 14, "cle": "butin", "nom": "Butin augmenté : + 50% de butin", "texte": "Les chances d'obtenir du butin sur les monstres sont accrues de 50 %.", "n": 50 },
+   { "id": 13, "cle": "metier", "nom": "Expérience des métiers améliorée : + 50% XP", "texte": "Les gains d'expérience des métiers sont augmentés de 50 %.", "n": 0.5 },
+   { "id": 12, "cle": "cles", "nom": "Trousseau de clefs illimité", "texte": "Les entrées des donjons sont gratuites : aucune clé n'est prise.", "n": 1 }
+  ]
+ }
+}

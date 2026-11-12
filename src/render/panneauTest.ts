@@ -3,6 +3,8 @@ import { RUNES } from '../sim/forgemagie';
 import { GAME_DATA, ITEMS, QUETES } from '../sim/data';
 import { DOFUS, PORTABLE } from '../sim/dofus';
 import { ALMANAX, jourAlmanax } from '../sim/almanax';
+import { BOSS_MONDE, heureDe, heureTexte, rendezVous } from '../sim/mondeVivant';
+import { avanceHorloge, avancerHorloge, heureParis } from './heure';
 import { ARCHI } from '../sim/world';
 import type { EtatJoueur } from '../sim/sauvegarde';
 import { RARITY_COLORS, RARITY_NAMES, type Rarity } from '../sim/items';
@@ -622,6 +624,12 @@ export class PanneauTest {
     tous('[data-vit]', b => this.changerVitesse(+b.dataset.vit!));
     tous('[data-heure]', b => { this.heure = b.dataset.heure as Heure; this.dessiner(); });
     tous('[data-repeupler]', () => this.actions.envoyer({ k: 'repeupler' }));
+    // 0.5 « monde vivant »
+    tous('[data-vboss]', () => { const s = heureParis(), sv = rendezVous(s).suivant; avancerHorloge(sv.debut - s - 60); this.dessiner(); });
+    tous('[data-vheure]', () => { const s = heureParis(); avancerHorloge(3600 - (((s % 3600) + 3600) % 3600) + 1); this.dessiner(); });
+    tous('[data-vzero]', () => { avancerHorloge(0); this.dessiner(); });
+    tous('[data-valler]', b => { if (b.dataset.valler) this.actions.envoyer({ k: 'aller', tag: b.dataset.valler, nom: b.dataset.nom ?? '' }); });
+    tous('[data-vevt]', b => this.actions.envoyer({ k: 'evenement', sorte: b.dataset.vevt as 'defense' | 'coffre' }));
     tous('[data-bsoin2]', () => this.actions.envoyer({ k: 'soigner' }));
     tous('[data-rapport]', () => { void this.copierRapport(); });
     tous('[data-errvider]', () => viderErreurs());
@@ -983,6 +991,7 @@ export class PanneauTest {
       <div class="liste" style="max-height:170px;overflow:auto">${quetes}</div>
       ${detail}
       <h4>Almanax</h4>${alm}
+      <h4>Monde vivant (0.5)</h4>${this.htmlVivant()}
       <h4>Archimonstres</h4>
       <div class="l" style="flex-wrap:wrap;justify-content:flex-start">
         <button type="button" class="b g" data-res="${ARCHI.pierre}:10">Pierres d'âme ×10</button>
@@ -990,6 +999,23 @@ export class PanneauTest {
       </div>
       ${this.inter('archis', 'Archimonstres ×100', 'Dans les groupes, 1 chance sur 1,5 au lieu de 1 sur 150.')}
       <p class="note">${p.ames.length} archimonstre${p.ames.length > 1 ? 's' : ''} capturé${p.ames.length > 1 ? 's' : ''} sur ${nbArchis}.</p>`;
+  }
+  /** 0.5 « monde vivant » : heure de Paris (avancée à la main), boss du monde, invasion, petits événements. */
+  private htmlVivant() {
+    const s = heureParis(), sv = rendezVous(s).suivant, d = BOSS_MONDE[sv.cle], v = this.world.vueVivant, av = avanceHorloge();
+    const hm = (x: number) => `${heureDe(x)} h ${String(Math.floor((((x % 3600) + 3600) % 3600) / 60)).padStart(2, '0')}`;
+    return `<div class="l"><span>Paris : ${hm(s)}${av ? ` (avancée de ${Math.round(av / 60)} min)` : ''}</span></div>
+      <div class="l"><span>Prochain boss : ${esc(d?.nom ?? '?')} à ${heureTexte(sv.debut)}</span></div>
+      <div class="l"><span>Invasion : ${esc(v?.invasion?.nom ?? 'aucune ici')}${v?.invasion ? ` · ${v.invasion.jauge} / ${v.invasion.max}` : ''}</span></div>
+      <div class="l" style="flex-wrap:wrap;justify-content:flex-start">
+        <button type="button" class="b" data-vboss>Boss dans 1 min</button>
+        <button type="button" class="b g" data-valler="${d?.carte ?? ''}" data-nom="${esc(d?.nom ?? '')}">Y aller</button>
+        <button type="button" class="b g" data-vheure>Heure suivante</button>
+        <button type="button" class="b g" data-vevt="defense">Habitant attaqué</button>
+        <button type="button" class="b g" data-vevt="coffre">Coffre gardé</button>
+        <button type="button" class="b g" data-vzero>Remettre à l'heure</button>
+      </div>
+      <p class="note">L'horloge avancée ne vaut que pour cette partie de test. Le boss apparaît quand un joueur approche de sa carte.</p>`;
   }
   private boutonDofus(id: string, d: (typeof DOFUS)[string]) {
     const p = this.world.player, porte = p.dofusPortes.includes(id), a = p.dofus.includes(id);

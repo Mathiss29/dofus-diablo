@@ -4,6 +4,7 @@ import { CHATIMENTS, PC_PAR_ID } from './pouvoirsClasse';
 import { DOFUS, EMPLACEMENTS_DOFUS, PASSIFS, PORTABLE, TROPHEES } from './dofus';
 import type { CleDonjon } from './arene';
 import { guerreVide, type EtatGuerre } from './guerre';
+import { vivantVide, type EtatVivant } from './mondeVivant';
 import { dmgArme, type CommandeFM } from './forgemagie';
 import { Entity } from './entity';
 import type { ClassDef, ComboHit, Element, SkillId, SpellDef } from './defs';
@@ -113,6 +114,8 @@ export class Player extends Entity {
   cleDonjon: CleDonjon | null = null;
   /** Guerre des Cawottes (0.4) : attaques gagnées, en or, champs parfaits, Kiafin rattrapés, records par champ. */
   guerre: EtatGuerre = guerreVide();
+  /** 0.5 « monde vivant » : boss du monde vaincus (titres), apparitions récompensées, invasions, Éclats, événements. */
+  vivant: EtatVivant = vivantVide();
   /** Commande en cours chez Malek le Forgemage (maquette Forgemagie UI 9E) : l'objet lui est confié, il revient quand c'est fini. */
   commandeFM: CommandeFM | null = null;
   /** Apparat (maquette Apparence 5A) : objets d'apparat officiels possédés (id Dofus), et ceux posés par-dessus
@@ -687,6 +690,7 @@ export class Player extends Entity {
     if (m.level >= METIER_MAX) return;
     if (world.almanax?.effet === 'metier') n *= 1 + ALMANAX.metier;   // 15C
     n *= 1 + this.beni('metier');   // Magasin 6D
+    n *= 1 + world.bonusDuWeekEnd('metier');   // 0.5 (9B) : week-end
     m.xp += n;
     while (m.level < METIER_MAX && m.xp >= metierXpNeeded(m.level)) {
       m.xp -= metierXpNeeded(m.level); m.level++;

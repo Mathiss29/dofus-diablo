@@ -8,6 +8,7 @@ import { MANIFESTE, Son } from './son';
 import { ambiance, chargerReglages } from './ambiance';
 import { aDecouvrir, cleLieu, famille, MAX_DRAPEAUX, NOTE_MAX, nomLieu, secret, type Drapeau, type Famille, type Repere } from '../sim/carte';
 import carteData from '../data/carte.json';
+import { bossAnnonce } from '../sim/mondeVivant';
 
 /** Carte du monde (touche M), maquette « Carte : » et « Carte suite : » du 2026-11-10 (tout d'un bloc, 12A).
  *  Repère commun : la case [x, y] du Monde des Douze couvre [x, x+1] × [y, y+1] en « unités de carte » ; carte.webp d'un monde
@@ -33,10 +34,10 @@ export interface MarqueCarte { titre: string; icone: number; tags: string[]; poi
 /** Geste de la carte vers la partie (entrée du joueur). */
 export interface GesteCarte { drapeaux?: Drapeau[]; signal?: { x: number; y: number } }
 
-type Filtre = Famille | 'quetes' | 'recoltes' | 'groupe' | 'drapeaux' | 'danger' | 'archis';
+type Filtre = Famille | 'quetes' | 'recoltes' | 'groupe' | 'drapeaux' | 'danger' | 'archis' | 'vivant';
 const FILTRES: [Filtre, string][] = [['zaap', 'Zaaps'], ['transport', 'Transports'], ['atelier', 'Ateliers'], ['service', 'Services'], ['donjon', 'Donjons'],
-  ['lieu', 'Lieux'], ['quetes', 'Quêtes'], ['recoltes', 'Mes récoltes'], ['groupe', 'Groupe'], ['drapeaux', 'Drapeaux'], ['archis', 'Archimonstres à capturer'], ['danger', 'Teinte de danger']];
-const PAR_DEFAUT: Record<Filtre, boolean> = { zaap: true, transport: true, atelier: true, service: true, donjon: true, lieu: true, quetes: true, recoltes: false, groupe: true, drapeaux: true, danger: false, archis: true };
+  ['lieu', 'Lieux'], ['quetes', 'Quêtes'], ['recoltes', 'Mes récoltes'], ['groupe', 'Groupe'], ['drapeaux', 'Drapeaux'], ['archis', 'Archimonstres à capturer'], ['vivant', 'Boss du monde et invasion'], ['danger', 'Teinte de danger']];
+const PAR_DEFAUT: Record<Filtre, boolean> = { zaap: true, transport: true, atelier: true, service: true, donjon: true, lieu: true, quetes: true, recoltes: false, groupe: true, drapeaux: true, danger: false, archis: true, vivant: true };
 /** Couleurs des joueurs du groupe (10A, 14A). */
 export const COULEURS_GROUPE = ['#ff5a4a', '#4fc3f7', '#9ad15a', '#ffb74d', '#f06292'];
 const DEHORS = /^-?\d+_-?\d+$/;
@@ -60,6 +61,11 @@ const CSS = `
 .cm .nuit{position:absolute;inset:0;pointer-events:none;mix-blend-mode:multiply}
 .cm .mk{position:absolute;transform:translate(-50%,-50%);pointer-events:none;white-space:nowrap}
 .cm .mk.cache{display:none}
+.cm .mk.bm,.cm .mk.iv,.cm .mk.ev{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:bold 16px Lexend,sans-serif;color:#fff;border:2px solid #14130f;animation:cmPulse 1.2s ease-in-out infinite}
+.cm .mk.bm{background:#c8352a;box-shadow:0 0 12px #ff5a4a}
+.cm .mk.iv{background:#7a4fd0;box-shadow:0 0 12px #b07bff}
+.cm .mk.ev{background:#d97a1c;box-shadow:0 0 10px #f08a2c;width:22px;height:22px;font-size:13px}
+@keyframes cmPulse{50%{transform:translate(-50%,-50%) scale(1.15)}}
 .cm .mk.qt img{width:30px;height:30px;filter:drop-shadow(0 0 6px #ffd76a)}
 .cm .mk.tr{width:6px;height:6px;border-radius:50%;background:#ffd76a;box-shadow:0 0 0 1.5px #3a2208,0 0 6px #ffd76a}
 .cm .sz{font:bold 12px Lexend,sans-serif;color:#f4efe0;text-shadow:0 0 3px #000,0 1px 2px #000;opacity:.92;text-align:center}
@@ -241,7 +247,6 @@ export class CarteMonde {
       <div class="co"></div></div>
       <div class="panneau"><input type="text" placeholder="Chercher un lieu, un monstre, une ressource, un PNJ…" spellcheck="false"><div class="res"></div>
       <h5>Afficher</h5>${FILTRES.map(([f, n]) => `<label class="ck"><input type="checkbox" data-f="${f}" ${this.filtres[f] ? 'checked' : ''}>${n}</label>`).join('')}
-      <label class="ck off" title="Bientôt"><input type="checkbox" disabled>Boss du monde · bientôt</label>
       <label class="ck off" title="Fin de jeu"><input type="checkbox" disabled>Entrées des Enfers · bientôt</label>
       <div class="aide">Clic droit : poser un drapeau (5 au plus, clic dessus pour une note ou le suivre)<br>Alt + clic : signal au groupe<br>Molette ou + / − : zoom · Espace : me recentrer</div></div></div></div>`;
     root.addEventListener('pointerdown', e => { e.stopPropagation(); if (e.target === root) this.fermer(); });
@@ -490,6 +495,21 @@ export class CarteMonde {
       if (pts.length) this.centreVoulu = { x: pts.reduce((s, q) => s + q.x, 0) / pts.length, y: pts.reduce((s, q) => s + q.y, 0) / pts.length };
       const t = document.createElement('div'); t.className = 'ttlou'; t.innerHTML = `${ic}Où trouver : ${esc(ou.titre)} (${pts.length} endroit${pts.length > 1 ? 's' : ''})`;
       this.vue.appendChild(t);
+    }
+    // 0.5 « monde vivant » (2D) : boss du monde (là, ou annoncé), invasion de l'heure et son coffre, petits événements
+    const vv = w.vueVivant;
+    if (vv && this.filtres.vivant) {
+      const bm = bossAnnonce(w);
+      if (bm) {
+        const ici = vv.boss && !vv.boss.fin ? this.duJeu(vv.boss.x, vv.boss.y) : wg.mapByTag(bm.carte) ? this.duJeu(...centreCarte(w, bm.carte)) : null;
+        if (ici) { const d = this.marque('mk bm', ici.x, ici.y, '☠'); d.title = `${bm.nom} · ${vv.boss && !vv.boss.fin ? 'il est là' : 'annoncé'}`; }
+      }
+      const inv = vv.invasion;
+      if (inv && w.vivant) {
+        const c = inv.coffre ?? w.vivant.centreSousZone(inv.sub), q = this.duJeu(c.x, c.y);
+        const d = this.marque('mk iv', q.x, q.y, inv.coffre ? '✦' : '⚔'); d.title = inv.coffre ? `Coffre d'invasion · ${inv.nom}` : `Invasion · ${inv.nom} (${inv.jauge} / ${inv.max})`;
+      }
+      for (const e of vv.evenements) if (!e.fin) { const q = this.duJeu(e.x, e.y), d = this.marque('mk ev', q.x, q.y, '!'); d.title = e.sorte === 'defense' ? `Défends ${e.nom}` : 'Coffre gardé'; }
     }
     // tombe de la dernière mort (15A)
     const tb = w.player.tombe;

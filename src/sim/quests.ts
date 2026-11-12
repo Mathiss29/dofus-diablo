@@ -3,6 +3,7 @@ import type { World } from './world';
 import { PEPITE, type Rarity } from './items';
 import { archiDuJour, contrat, contratArchi, hache, semaine, tirerContrats, type CtxContrats } from './contrats';
 import { liensAPied, plusCourt, type GenreLien, type Lien, type Pt } from './trajet';
+import { nouvellesDuMonde } from './mondeVivant';
 
 /** Trajet de la flèche des quêtes : `x, y` = le point à viser maintenant, `pts` = le trajet jusqu'à la première porte
  *  (ou au but), `cartes` = nombre de cartes à traverser, `autreZone` = nom de la zone du but quand il n'est pas ici. */
@@ -212,6 +213,9 @@ export type SuccesObjectif = { nom: string } & (
   | { guerre: 'parfait'; champ: string }
   /** « Archis : » 8C : archimonstres différents capturés (carnet des âmes). */
   | { archis: number }
+  /** 0.5 « monde vivant » (4D) : ce boss du monde vaincu ; jauges d'invasion remplies (7A). */
+  | { bossMonde: string }
+  | { invasions: number }
 );
 /** Défis de donjon en temps réel (menu des succès 9C) : à deux au plus, boss en moins de 90 s, sans être touché après son apparition,
  *  sans potion. */
@@ -803,11 +807,12 @@ export class Quetes {
     const p = this.world.player, n = this.pnjs.find(o => o.def.cris?.length);
     if (!n || Math.hypot(n.x - p.x, n.y - p.y) > 1300 || this.dialogue || p.dead) return;
     if ((this.cri.t -= dt) > 0 || this.bulle) return;
-    const cris = n.def.cris!, alm = this.world.almanaxDuJour;
+    const cris = n.def.cris!, alm = this.world.almanaxDuJour, h = this.world.opts.horloge;
+    const nv = h ? nouvellesDuMonde(this.world.opts.data, h()) : { boss: '', invasion: '' };   // 0.5 (2D)
     for (let k = 0; k < cris.length; k++) {
       const c = cris[this.cri.i++ % cris.length];
-      if (c.includes('{almanax}') && !alm) continue;
-      this.dire(n.id, c.replace('{almanax}', alm?.bonus ?? '')); break;
+      if ((c.includes('{almanax}') && !alm) || (c.includes('{boss}') && !nv.boss) || (c.includes('{invasion}') && !nv.invasion)) continue;
+      this.dire(n.id, c.replace('{almanax}', alm?.bonus ?? '').replace('{boss}', nv.boss).replace('{invasion}', nv.invasion)); break;
     }
     this.cri.t = 14;
   }
@@ -1036,7 +1041,8 @@ export class Quetes {
     if ('donjon' in o) return (this.donjons[o.donjon]?.v ?? 0) > 0;
     if ('defi' in o) return this.defis.has(`${o.defi[0]}|${o.defi[1]}`);
     if ('guerre' in o) { if (o.guerre === 'parfait') return this.world.player.guerre.parfaits.includes(o.champ); const [n, max] = this.progres(o); return n >= max; }
-    if ('metier' in o || 'compteur' in o || 'exploration' in o || 'archis' in o) { const [n, max] = this.progres(o); return n >= max; }
+    if ('bossMonde' in o) return this.world.player.vivant.boss.includes(o.bossMonde);
+    if ('metier' in o || 'compteur' in o || 'exploration' in o || 'archis' in o || 'invasions' in o) { const [n, max] = this.progres(o); return n >= max; }
     return this.vaincus.has(o.monstre);
   }
   /** Avancement d'un objectif de succès (menu des succès 4B) : [fait, total] (« Niveau 14 / 20 », « Objets fabriqués 37 / 100 »). */
@@ -1049,6 +1055,7 @@ export class Quetes {
       return [Math.min(n, o.palier), o.palier];
     }
     if ('compteur' in o) return [Math.min(this.compteurs[o.compteur] ?? 0, o.n), o.n];
+    if ('invasions' in o) return [Math.min(p.vivant.invasions, o.invasions), o.invasions];
     if ('archis' in o) { const M = this.world.opts.data.monsters, n = p.ames.filter(a => M[a]?.archiDe).length; return [Math.min(n, o.archis), o.archis]; }
     if ('guerre' in o && o.guerre !== 'parfait') return [Math.min(p.guerre[o.guerre], o.n), o.n];
     if ('exploration' in o) {
@@ -1226,7 +1233,11 @@ export class Quetes {
       but = coords(tag);
     }
     if (!but) return null;
-    const cps = w.opts.data.zones[zone]?.open?.checkpoints ?? [];
+    return this.zaapPres(zone, but);
+  }
+  /** Zaap découvert le plus proche d'une carte [x, y] de la zone (quête suivie, boss du monde 2D). */
+  zaapPres(zone: string, but: readonly [number, number]): { zone: string; name: string } | null {
+    const w = this.world, cps = w.opts.data.zones[zone]?.open?.checkpoints ?? [];
     let best: { zone: string; name: string } | null = null, bd = Infinity;
     for (const k of w.player.zaaps) {
       if (k.zone !== zone) continue;

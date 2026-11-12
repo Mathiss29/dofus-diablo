@@ -12,6 +12,7 @@ import type { SimEvent } from '../sim/events';
 import type { Monster } from '../sim/monster';
 import type { World } from '../sim/world';
 import { chrono } from '../sim/quests';
+import { BOSS_MONDE, heureTexte, rendezVous, VIVANT } from '../sim/mondeVivant';
 import { QUEST_ICON } from './questView';
 import { MANIFESTE, Son } from './son';
 import type { Reglages } from './ambiance';
@@ -383,6 +384,8 @@ export class Hud {
   private miniLabel: Txt;
   /** Arène d'un donjon (12A) : « Vague 2 / 3 » et le chrono, sous la mini-carte. */
   private areneTxt: Txt;
+  /** 0.5 « monde vivant » : prochain boss du monde, invasion de l'heure, événement proche, bonus du week-end. */
+  private vivantTxt: Txt;
   private menus: { icon: Img; zone: Phaser.GameObjects.Zone; label: string }[] = [];
   /** Social 5B : pastille sur le bouton Social (demandes d'ami en attente), branchée par la scène. */
   pastilleSocial: () => number = () => 0;
@@ -447,7 +450,7 @@ export class Hud {
   /** Drapeau suivi (carte 9A), en point du jeu : flèche au bord de l'écran comme pour une quête. */
   drapeauSuivi: { x: number; y: number; note?: string } | null = null;
   /** Drapeaux du joueur et du groupe (14A) et tombe (15A) en points du jeu, pour la mini-carte. */
-  marquesMini: { x: number; y: number; genre: 'drapeau' | 'tombe' | 'allie'; coul: number }[] = [];
+  marquesMini: { x: number; y: number; genre: 'drapeau' | 'tombe' | 'allie' | 'vivant'; coul: number }[] = [];
   private rpMini: Phaser.GameObjects.Image[] = [];
   private rpDemandes = new Set<string>();
   private rpPos: { wg: unknown; l: { x: number; y: number; g: number }[] } | null = null;
@@ -557,6 +560,7 @@ export class Hud {
     this.fpsTxt = txt(11, { ...bold, color: '#b9e54b', strokeThickness: 3 }, 6).setOrigin(0, 0).setVisible(false);
     for (const [id, n] of Object.entries(MODULES)) this.modTxt.set(id, txt(11, { ...bold, color: '#2a1e05', backgroundColor: '#e6b85c', padding: { x: 5, y: 2 }, strokeThickness: 0 }, 9).setText(n).setVisible(false));
     this.areneTxt = txt(14, { ...bold, color: '#ffe3b0', stroke: '#14130f', strokeThickness: 4 }).setOrigin(0.5, 0);
+    this.vivantTxt = txt(12, { ...bold, color: '#e6dcc0', stroke: '#14130f', strokeThickness: 4, align: 'center', lineSpacing: 2 }).setOrigin(0.5, 0);
     this.bulleTip = txt(12, { backgroundColor: '#14130f', padding: { x: 8, y: 5 }, lineSpacing: 2 }, 9).setOrigin(0.5, 1).setVisible(false);
     this.menuTip = txt(12, { backgroundColor: '#14130f', padding: { x: 6, y: 3 } }, 9).setOrigin(1, 0.5).setVisible(false);
     this.pastille = txt(10, { ...bold, color: '#ffffff', backgroundColor: '#d8402f', padding: { x: 4, y: 1 }, strokeThickness: 0 }, 6).setOrigin(0.5).setVisible(false);
@@ -647,6 +651,28 @@ export class Hud {
   }
 
   /** Bannière centrale ; defeat = ruban rouge de défaite au lieu du ruban doré. */
+  /** 0.5 « monde vivant » (2D) : ce qu'on suit sous la mini-carte. */
+  private texteVivant(world: World): string {
+    const v = world.vueVivant, h = world.opts.horloge, l: string[] = [], p = world.player;
+    if (!v || !h || world.donjonIci()) return '';
+    const s = h();
+    if (v.boss && !v.boss.fin) l.push(`☠ ${v.boss.nom} · ${v.boss.lieu}${v.boss.reste != null ? ` · ${chrono(v.boss.reste)}` : ''}`);
+    else {
+      const sv = rendezVous(s).suivant, d = BOSS_MONDE[sv.cle], dans = Math.ceil((sv.debut - s) / 60);
+      if (d) l.push(dans <= 60 ? `Boss du monde dans ${dans} min : ${d.nom}` : `Prochain boss du monde : ${heureTexte(sv.debut)}`);
+    }
+    const inv = v.invasion;
+    if (inv) {
+      const ec = p.resources[VIVANT.invasion.eclat] ?? 0;
+      l.push(inv.pleine ? `Invasion repoussée : ${inv.nom}${inv.coffre ? ` · coffre ${ec} / ${VIVANT.invasion.coffre.prix} Éclats` : ''}` : `Invasion : ${inv.nom} · ${inv.jauge} / ${inv.max}${ec ? ` · ${ec} Éclats` : ''}`);
+    }
+    for (const e of v.evenements) if (!e.fin && Math.hypot(e.x - p.x, e.y - p.y) < 1400)
+      l.push(e.sorte === 'defense' ? `Défends ${e.nom} · ${e.pv} % · ${e.reste} s` : `Coffre gardé · vague ${Math.min(e.vague + 1, e.vagues)} / ${e.vagues}`);
+    const we = world.weekEnd;
+    if (we) l.push(`Week-end : ${we.nom}`);
+    return l.join('\n');
+  }
+
   banner(text: string, ms = 1400, defeat = false) {
     const c = this.center, b = this.bannerBg;
     b.setTexture(defeat ? 'background_defeat_banner' : 'background_levelup_banner');
@@ -1019,6 +1045,11 @@ export class Hud {
         g.lineStyle(1, 0x000000, 1);
         if (o.genre === 'drapeau') { g.fillStyle(0x3a2a14, 1); g.fillRect(cx - 1, cy - 9, 2, 10); g.fillStyle(o.coul, 1); g.fillTriangle(cx + 1, cy - 9, cx + 8, cy - 6, cx + 1, cy - 3); }
         else if (o.genre === 'tombe') { g.fillStyle(0xd8d2c0, 1); g.fillRect(cx - 1, cy - 7, 2, 10); g.fillRect(cx - 4, cy - 4, 8, 2); }
+        else if (o.genre === 'vivant') {   // 0.5 : losange qui pulse (boss du monde, coffre d'invasion, événement)
+          const r = 5.5 + Math.sin(this.scene.time.now / 160);
+          const d = [{ x: cx, y: cy - r }, { x: cx + r, y: cy }, { x: cx, y: cy + r }, { x: cx - r, y: cy }];
+          g.fillStyle(o.coul, 1); g.fillPoints(d, true); g.lineStyle(1.5, 0x000000, 1); g.strokePoints(d, true, true);
+        }
         else { g.fillStyle(o.coul, 1); g.fillCircle(cx, cy, 3.5); g.strokeCircle(cx, cy, 3.5); }
       }
       for (let i = nRp; i < this.rpMini.length; i++) this.rpMini[i].setVisible(false);
@@ -1043,6 +1074,9 @@ export class Hud {
     if (ga) this.areneTxt.setVisible(true).setPosition(mx + mw / 2, my + mh + 22).setText(`${ga.c.nom}\nVague ${ga.vague} / 5 · ${ga.restantes} / ${ga.cawottes.length} cawottes · ${chrono(ga.chrono)}`);
     else this.areneTxt.setVisible(!!ar).setPosition(mx + mw / 2, my + mh + 22);
     if (ar) this.areneTxt.setText(ar.fini ? `Terminé en ${chrono(ar.chrono)}` : !ar.demarre ? `${ar.total} vagues + le boss` : ar.vague > ar.total ? `Boss · ${chrono(ar.chrono)}` : `Vague ${ar.vague} / ${ar.total} · ${chrono(ar.chrono)}`);
+    const txtVivant = this.texteVivant(world);
+    this.vivantTxt.setVisible(!!txtVivant && !ar).setPosition(mx + mw / 2, my + mh + (ga ? 62 : 22));
+    if (txtVivant && !ar && this.vivantTxt.text !== txtVivant) this.vivantTxt.setText(txtVivant);
     // Colonne de menus : boutons carrés sombres en relief, comme le bandeau de Dofus 3
     // Boutons carrés sombres serrés les uns contre les autres ; ils rapetissent si l'écran est bas
     const top = 10;   // la colonne reste en haut même quand la mini-carte est déplacée (6A)
