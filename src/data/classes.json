@@ -3453,7 +3453,7 @@
    }
   },
   "coffre": {
-   "_doc": "Coffre au trésor (maquette Enutrof, ligne du 10 nov. 2026, src/sim/enutrof.ts) : paliers = pièces de Bronze, Argent, Or, Trésor ; gains = pièces par monstre vaincu à moins de portee px d'un Enutrof (1A), entrave = pièce en plus si le monstre a perdu des PM, PA ou de la Portée moins de fenetre s avant (1B) ; ko = secondes où le coffre tombé reste assommé (3D, il perd la moitié de ses pièces, comme à la mort de l'Enutrof) ; butin = tirages de chaque palier avec les tables des monstres (4A) ; tresor = apparat de chasseur de trésor (4C) ; avale = pièces pour un objet Rare ou Épique donné au coffre (15C, Maj + clic dans le sac).",
+   "_doc": "Coffre au trésor (maquette Enutrof, ligne du 10 nov. 2026, src/sim/enutrof.ts) : paliers = pièces de Bronze, Argent, Or, Trésor ; gains = pièces par monstre vaincu à moins de portee px d'un Enutrof (1A), entrave = pièce en plus si le monstre a perdu des PM, PA ou de la Portée moins de fenetre s avant (1B) ; ko = secondes où le coffre tombé reste assommé (3D, il perd la moitié de ses pièces, comme à la mort de l'Enutrof) ; butin = ce qui s'ajoute dans le coffre en atteignant chaque palier, tiré tout de suite et gardé caché dans la vitrine (4A, interface du coffre 5B : le coffre ouvert rend tout jusqu'au palier atteint) ; surcharge = paliers après Trésor, chacun ajoute surcharge.butin, le coffre attire les monstres en chasse à attire cases et perd tout s'il tombe (6B) ; aimant = px autour du coffre où il ramasse les kamas (7B) ; tresor = apparat de chasseur de trésor (4C) ; avale = pièces pour un objet Rare ou Épique donné au coffre (15C, Maj + clic dans le sac).",
    "paliers": [
     50,
     100,
@@ -3483,18 +3483,36 @@
     },
     {
      "rang": "elite",
-     "n": 2
+     "n": 1
     },
     {
      "rang": "boss",
      "n": 1
     },
     {
-     "rang": "boss",
-     "n": 1,
+     "rang": "elite",
+     "n": 0,
      "epique": true
     }
    ],
+   "surcharge": {
+    "paliers": [
+     300,
+     350,
+     400
+    ],
+    "noms": [
+     "Surcharge I",
+     "Surcharge II",
+     "Surcharge III"
+    ],
+    "butin": {
+     "rang": "boss",
+     "n": 1
+    },
+    "attire": 8
+   },
+   "aimant": 144,
    "tresor": {
     "chance": 0.05,
     "dePalier": 2,

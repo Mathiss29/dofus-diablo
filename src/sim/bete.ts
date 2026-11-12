@@ -5,7 +5,7 @@ import type { Player } from './player';
 import type { World } from './world';
 import BETES_JSON from '../data/betes.json';
 import { allieLePlusBlesse, lucioleMaj, soignerAllie } from './eniripsa';
-import { coffreAssomme } from './enutrof';
+import { coffreAssomme, EJECTION } from './enutrof';
 
 /** Un effet officiel d'un sort de bête que le jeu sait jouer (tools/extraction/osa_betes.py). */
 export type EffetBete =
@@ -75,6 +75,8 @@ export class Bete extends Entity {
   force = 1;
   /** Seconde épée des Épées jumelles : ne prend pas de place d'Invocation (elle part avec sa jumelle). */
   horsCompte = false;
+  /** Coffre au trésor de l'Enutrof (interface du coffre 7D) : secondes de gueule ouverte qui restent. */
+  ouvreT = 0;
   /** Laine épaisse : prochaine provocation du Bouftou. */
   provoqueT = 0;
   /** Eniripsa (maquette 5B 6B) : Luciole (Fée ou Feu Follet) qui file vers un allié ou un ennemi, y applique son Mot puis meurt.
@@ -146,6 +148,7 @@ export class Bete extends Entity {
     if (this.dead) { this.t -= dt; this.setAnim('die', 1 - this.t / 0.6); this.applyKnock(dt); return; }
     if (this.state === 'spawn') { this.t -= dt; this.setAnim('spawn', 1 - this.t / 0.4); if (this.t <= 0) this.state = 'suit'; return; }
     if (this.luciole) { lucioleMaj(this, dt, world); return; }
+    if (this.ouvreT > 0) { this.ouvreT -= dt; this.setAnim('ouvre', 1 - Math.max(0, this.ouvreT) / EJECTION.gueule); this.applyKnock(dt); return; }   // 7D : gueule ouverte
     if (this.eveilT > 0 && (this.eveilT -= dt) <= 0) this.finEveil();
     if (this.shieldT > 0 && (this.shieldT -= dt) <= 0) this.shield = 0;
     if (this.dompteT > 0 && (this.dompteT -= dt) <= 0) {   // 15A : le monstre dompté s'enfuit

@@ -261,7 +261,7 @@ export const LOOKS: Record<string, Look> = {
   // Invocations de l'Enutrof (monster_planche.py, os 4147, 4156, 4166, SCALE 2,5) : Sac Animé, Pelle Animée, coffre au trésor (Coffre Animé)
   enu_sac: { atlas: 'enu_sac', scale: 0.5, map: MONSTER_MAP(23 / 42, 'AnimAttaque0', { 0: 23 / 42, 1: 18 / 36 }), height: 70, multi: true },
   enu_pelle: { atlas: 'enu_pelle', scale: 0.5, map: MONSTER_MAP(25 / 37, 'AnimAttaque0', { 0: 25 / 37 }), height: 80, multi: true },
-  enu_coffre: { atlas: 'enu_coffre', scale: 0.45, map: MONSTER_MAP(21 / 33, 'AnimAttaque0', { 0: 21 / 33, 1: 9 / 32 }), height: 70, multi: true },
+  enu_coffre: { atlas: 'enu_coffre', scale: 0.45, map: { ...MONSTER_MAP(21 / 33, 'AnimAttaque0', { 0: 21 / 33, 1: 9 / 32 }), ouvre: { anim: 'AnimAttaque0' } }, height: 70, multi: true },   // ouvre : interface du coffre 7D
   // Bêtes de l'Eniripsa (monster_planche.py, os 7599 SCALE 2,5, os 7600 et 7601) : Lapino, Fées, Feux Follets
   eni_lapino: { atlas: 'eni_lapino', scale: 0.55, map: MONSTER_MAP(13 / 37, 'AnimAttaque0', { 0: 13 / 37, 1: 10 / 29, 2: 28 / 31 }), height: 80, multi: true },
   eni_fee: { atlas: 'eni_fee', scale: 0.45, map: MONSTER_MAP(23 / 37), height: 60, multi: true },

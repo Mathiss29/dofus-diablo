@@ -60,6 +60,7 @@ const ALM_CSS = `.dw .win.almanax{width:420px}.dw .alm{padding:10px 14px 14px;di
 import { SOCIAL_CSS, rendreSocial, tickSocial } from './social';
 import { EnLigne } from './presence';
 import { Coop } from './coop';
+import { TRESOR_CSS, objetTresor, signatureTresor, tresorHtml } from './tresorVue';
 import { FORGE_CSS, defaireHtml, etatForge, forgeHtml, lotConcasseur, mmss, texteForge, type LigneLog } from './forgeVue';
 import { RUNES } from '../sim/forgemagie';
 import { LOOKS } from './looks';
@@ -712,7 +713,7 @@ const CSS = `
 .dw .ttl b{font-weight:700}
 `;
 
-type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap' | 'bestiaire' | 'forge' | 'coffre' | 'almanax' | 'dofus' | 'menu' | 'social' | 'ladder';
+type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap' | 'bestiaire' | 'forge' | 'coffre' | 'almanax' | 'dofus' | 'menu' | 'social' | 'ladder' | 'tresor';
 
 /** Fenêtres façon Dofus 3 : « Inventaire » (le perso sur son socle, ses emplacements autour, le sac à onglets)
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
@@ -780,7 +781,7 @@ export class Windows {
   private forge = etatForge();
 
   constructor(private world: World) {
-    const style = document.createElement('style'); style.textContent = DOF_CSS + MENU_CSS + ALM_CSS + SOCIAL_CSS + CSS + ICON_CSS + BUTIN_CSS + FORGE_CSS + CODEX_CSS + LADDER_CSS; document.head.appendChild(style);
+    const style = document.createElement('style'); style.textContent = DOF_CSS + MENU_CSS + ALM_CSS + SOCIAL_CSS + CSS + ICON_CSS + BUTIN_CSS + FORGE_CSS + CODEX_CSS + LADDER_CSS + TRESOR_CSS; document.head.appendChild(style);
     this.root = document.createElement('div'); this.root.className = 'dw'; document.body.appendChild(this.root);
     // « Tchat : » 6A : le mousedown garde le champ du tchat actif ; le clic qui suit ne fait rien d'autre (pas de cadenas)
     this.root.addEventListener('mousedown', e => {
@@ -805,6 +806,43 @@ export class Windows {
   socialSlot = -1;
   socialTest = false;
   private ctxSocial() { return { world: this.world, slot: this.socialSlot, test: this.socialTest, fermer: () => this.close(), refaire: () => this.refresh() }; }
+  /** Enutrof (interface du coffre 2C) : bouton « Ouvrir » de la fenêtre du coffre, branché par la scène sur la touche du coffre. */
+  onOuvrirTresor: () => void = () => {};
+  private tresorSig = '';
+  private tresorGlisse = false;
+  /** À chaque image : la fenêtre du coffre se redessine quand ce qu'elle montre change (pas pendant un glisser-déposer). */
+  majTresor() {
+    if (this.ouverte !== 'tresor' || this.tresorGlisse) return;
+    if (!this.world.player.cls.coffre) { this.close(false); return; }
+    if (signatureTresor(this.world) !== this.tresorSig) this.render();
+  }
+  /** Fenêtre du coffre au trésor de l'Enutrof (src/render/tresorVue.ts). */
+  private renderTresor() {
+    const w = this.win!, wo = this.world;
+    if (!wo.player.cls.coffre) { w.innerHTML = this.title('Coffre au trésor', 'inventory'); return; }
+    this.tresorSig = signatureTresor(wo);
+    w.innerHTML = tresorHtml(wo, this.title('Coffre au trésor', 'inventory'));
+    const donner = (uid: number) => { this.hideTip(); if (wo.donnerAuCoffre(uid)) { Son.jouer(MANIFESTE.ui.ok, 'interface', { cle: 'clic', ecart: 0.05 }); this.changed(); } };
+    const gueule = w.querySelector<HTMLElement>('[data-gueule]')!;
+    w.querySelectorAll<HTMLElement>('[data-du]').forEach(e => {
+      const it = objetTresor(wo, +e.dataset.du!);
+      if (!it) return;
+      e.addEventListener('mouseenter', ev => this.showTip(it, ev, false));
+      e.addEventListener('mousemove', ev => this.moveTip(ev));
+      e.addEventListener('mouseleave', () => this.hideTip());
+      e.addEventListener('click', ev => { if (ev.shiftKey && !it.cadenas) donner(it.uid); });   // 4B : Maj + clic, comme dans le sac
+      e.addEventListener('dragstart', ev => { this.tresorGlisse = true; this.hideTip(); ev.dataTransfer?.setData('text/plain', String(it.uid)); });
+      e.addEventListener('dragend', () => { this.tresorGlisse = false; gueule.classList.remove('sur'); });
+    });
+    // 4A : glisser un objet sur la gueule du coffre
+    gueule.addEventListener('dragover', ev => { ev.preventDefault(); gueule.classList.add('sur'); });
+    gueule.addEventListener('dragleave', () => gueule.classList.remove('sur'));
+    gueule.addEventListener('drop', ev => { ev.preventDefault(); this.tresorGlisse = false; const uid = Number(ev.dataTransfer?.getData('text/plain')); if (uid) donner(uid); });
+    // 4C : tout donner
+    w.querySelector('[data-tout]')?.addEventListener('click', () => { if (wo.donnerToutAuCoffre()) this.changed(); });
+    // 2C : ouvrir le coffre (il s'ouvre en jeu, la fenêtre se ferme pour voir le butin jaillir)
+    w.querySelector('[data-ouvrir]')?.addEventListener('click', () => { this.onOuvrirTresor(); this.close(false); });
+  }
   private renderSocial() { rendreSocial(this.win!, this.title('Social', 'social'), this.ctxSocial()); }
   /** Classement (maquette « Ladder : » 1B) : centré sur le perso joué, ouvert sur « Autour de moi ». */
   private ladder = new VueLadder(true);
@@ -861,7 +899,7 @@ export class Windows {
     else if (this.mode === 'car') this.renderCarac(); else if (this.mode === 'job') this.renderJob(); else if (this.mode === 'art') this.renderArt(); else if (this.mode === 'opt') this.renderOpt();
     else if (this.mode === 'sorts') this.renderSorts(); else if (this.mode === 'quetes') this.renderQuetes();
     else if (this.mode === 'succes') this.renderSucces(); else if (this.mode === 'emp') this.renderEmp(); else if (this.mode === 'zaap') this.renderZaap();
-    else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else if (this.mode === 'forge') this.renderForge(); else if (this.mode === 'coffre') this.renderCoffre(); else if (this.mode === 'almanax') this.renderAlmanax(); else if (this.mode === 'dofus') this.renderDofus(); else if (this.mode === 'menu') this.renderMenu(); else if (this.mode === 'social') this.renderSocial(); else if (this.mode === 'ladder') this.renderLadder(); else this.renderInv();
+    else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else if (this.mode === 'forge') this.renderForge(); else if (this.mode === 'coffre') this.renderCoffre(); else if (this.mode === 'almanax') this.renderAlmanax(); else if (this.mode === 'dofus') this.renderDofus(); else if (this.mode === 'menu') this.renderMenu(); else if (this.mode === 'social') this.renderSocial(); else if (this.mode === 'ladder') this.renderLadder(); else if (this.mode === 'tresor') this.renderTresor(); else this.renderInv();
     this.win!.querySelector('[data-close]')!.addEventListener('click', () => this.close());
   }
   private title(name: string, icon: string) {

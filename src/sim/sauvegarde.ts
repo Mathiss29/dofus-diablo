@@ -10,6 +10,7 @@ import type { EntreeCodex } from './codex';
 import { Player, type Prereglage } from './player';
 import { DOFUS, EMPLACEMENTS_DOFUS, TROPHEES } from './dofus';
 import { drapeauxPropres, type Drapeau, type Tombe } from './carte';
+import { exporterCoffre, restaurerCoffre, type EtatCoffre } from './enutrof';
 
 /** État du joueur gardé entre deux parties (écran « Mes personnages », 3 emplacements, choix 16B).
  *  Pur JSON : l'affichage le range où il veut (navigateur pour l'instant). */
@@ -57,6 +58,8 @@ export interface EtatJoueur {
   benediction?: { k: string; reste: number } | null;
   /** Dofus possédés et portés (0.3). */
   dofus?: string[]; trophees?: string[]; dofusPortes?: (string | null)[];
+  /** Enutrof : le coffre au trésor (pièces, objets de la vitrine, journal, records ; interface du coffre 8A). */
+  coffreEnu?: EtatCoffre;
 }
 
 const copie = <T>(o: T): T => JSON.parse(JSON.stringify(o)) as T;
@@ -70,6 +73,7 @@ export function exporterJoueur(w: World): EtatJoueur {
     x: p.x, y: p.y, retour: w.pointDeRetour, quetes: w.quetes?.exporter(), zone: w.opts.zone,
     apparats: p.apparats, apparat: p.apparat, codex: p.codex, codexOuvert: p.codexOuvert, ames: p.ames, prereglages: p.prereglages, almanaxJour: p.almanaxJour, magasin: p.magasin, sacEnPlus: p.sacEnPlus, benediction: p.benediction, dofus: p.dofus, trophees: p.trophees, dofusPortes: p.dofusPortes,
     zaaps: p.zaaps, zonesVues: p.zonesVues, explore: p.explore, drapeaux: p.drapeaux, tombe: p.tombe, lieuxVus: p.lieuxVus, cleDonjon: p.cleDonjon, guerre: p.guerre, commandeFM: p.commandeFM, ...(w.retour ? { havreSac: w.retour } : {}),
+    ...(p.cls.coffre ? { coffreEnu: exporterCoffre(p) } : {}),
   });
 }
 
@@ -128,6 +132,7 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
   const f = s.commandeFM;
   if (f?.item && f.rapport && typeof f.reste === 'number') p.commandeFM = { ...f, item: uid(f.item), reste: Math.max(0, f.reste) };
   if (s.havreSac && w.dansRefuge && !w.retour) w.retour = s.havreSac;
+  restaurerCoffre(p, s.coffreEnu, uid);
   if (s.bar?.length === p.bar.length) p.bar = s.bar.map(k => (k && p.cls.spells[k] ? k : null));
   p.recompute();
   if (p.verifierPoints()) w.emit({ k: 'status', x: p.x, y: p.y - 60, text: 'Points de caractéristiques rendus (nouveaux coûts)', color: '#b9e54b' });

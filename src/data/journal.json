@@ -1719,6 +1719,16 @@
               "Touche Entrée",
               "Options"
             ]
+          },
+          {
+            "titre": "Le coffre de l'Enutrof s'affiche",
+            "phrase": "Un médaillon montre les pièces et les PV du coffre, et la touche X ouvre sa fenêtre.",
+            "details": "Chaque palier cache un objet qui luit de sa rareté, et après Trésor le coffre peut monter en surcharge. Il ramasse aussi les kamas autour de lui.",
+            "icone": "kamas",
+            "etiquettes": [
+              "Touche X",
+              "Partie de test"
+            ]
           }
         ],
         "Le monde": [],
@@ -1728,7 +1738,8 @@
         ],
         "En coulisses": [
           "Le guichet de Kerubim quitte le Havre-Sac, et le Concasseur de Malek passe chez Kerubim.",
-          "Le jeu prévient si ton navigateur n'utilise pas ta carte graphique, et mesure sa fluidité par zone."
+          "Le jeu prévient si ton navigateur n'utilise pas ta carte graphique, et mesure sa fluidité par zone.",
+          "Les pièces du coffre de l'Enutrof, sa vitrine et ses records sont gardés avec le perso."
         ]
       }
     }
