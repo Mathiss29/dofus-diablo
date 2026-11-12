@@ -132,7 +132,7 @@ describe('Havre-Sac (maquette Hub : 1A 2A+2C 3A 4A 7A 8A 9A)', () => {
 
 describe('Bastion des Douze (maquette Ville : 1A 2A 3C 7A+7B 10B)', () => {
   it('une grande carte en archipel (8×8, îles des nations en grand), arrivée marchable, PNJ sur la place', () => {
-    expect(BA.maps).toHaveLength(1);
+    expect(BA.maps.map(m => m.tag)).toEqual(['bastion', 'marche']);   // l'archipel, et la salle du Marché couvert
     expect(BA.maps[0].n).toEqual([8, 8]);
     const w = monde('bastion');
     expect(w.dansBastion && w.dansRefuge && !w.dansHavreSac).toBe(true);
@@ -141,9 +141,26 @@ describe('Bastion des Douze (maquette Ville : 1A 2A 3C 7A+7B 10B)', () => {
     // chaque PNJ est posé près de sa case (pas renvoyé loin faute de place)
     const B = GAME_DATA.zones.bastion.open!.bastion!, wg = w.worldGrid!;
     for (const p of monde('bastion', { zonesVues: ['astrub'] }).quetes!.pnjs) {
-      const c = wg.cellToWorld(wg.cellOf('bastion', B.pnj![p.id]));
+      const c = wg.cellToWorld(wg.cellOf(QUETES.pnj[p.id].carte, B.pnj![p.id]));
       expect(Math.hypot(c.x - p.x, c.y - p.y), p.id).toBeLessThan(60);
     }
+  });
+  it('Marché couvert (Magasin : 1A, 13A-13F) : les marchands vendent dedans, Kerubim attend à la porte, on entre et on ressort', () => {
+    const w = monde('bastion', { zonesVues: ['astrub'] }), wg = w.worldGrid!;
+    for (const id of ['otomai', 'bouillotte', 'goultard', 'tissebelle']) expect(QUETES.pnj[id].carte, id).toBe('marche');
+    const ici = (id: string) => wg.mapAt(w.quetes!.pnjs.find(p => p.id === id)!.x, w.quetes!.pnjs.find(p => p.id === id)!.y)?.tag;
+    expect(['otomai', 'bouillotte', 'goultard', 'tissebelle'].map(ici)).toEqual(['marche', 'marche', 'marche', 'marche']);
+    expect(ici('kerubim')).toBe('bastion');
+    const po = w.portes.find(p => p.nom === 'Marché couvert')!;
+    expect(po.ends.map(e => e.tag)).toEqual(['bastion', 'marche']);
+    // Kerubim est juste à côté de la porte du dehors
+    const k = w.quetes!.pnjs.find(p => p.id === 'kerubim')!;
+    expect(Math.hypot(k.x - po.ends[0].x, k.y - po.ends[0].y)).toBeLessThan(250);
+    // dedans, l'endroit porte le nom de la porte
+    expect(w.lieux.get('marche')).toBe('Marché couvert');
+    w.player.x = po.ends[1].x; w.player.y = po.ends[1].y + 120; w.drainEvents(); w.step(1 / 60, NO_INPUT);
+    expect(w.lieu).toBe('Marché couvert');
+    expect(w.porteSous(po.ends[1].x, po.ends[1].y - 10)?.sortie).toBe(true);
   });
   it('le Zaap du Havre-Sac mène au Bastion (7B) en gardant d\'où l\'on vient ; son Zaap y ramène (7A)', () => {
     const retour = { zone: 'astrub', x: 1, y: 2, point: { name: "Zaap d'Astrub", x: 3, y: 4 } };

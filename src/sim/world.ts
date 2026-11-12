@@ -629,7 +629,9 @@ export class World {
   /** Ce bout de porte fait sortir d'un intérieur vers le dehors. */
   private estSortie(po: World['portes'][number], i: number): boolean {
     const wg = this.worldGrid;
-    return !!wg && !po.vers && !!wg.mapByTag(po.ends[i].tag)?.inside && !wg.mapByTag(po.ends[1 - i].tag)?.inside;
+    // l'archipel du Bastion est rangé en « dedans » (pas de cartes voisines) : sa porte du Marché couvert est pourtant une sortie
+    const dehors = (t: string) => !wg!.mapByTag(t)?.inside || (!!this.zone.open?.bastion && t === 'bastion');
+    return !!wg && !po.vers && !!wg.mapByTag(po.ends[i].tag)?.inside && dehors(po.ends[1 - i].tag) && !dehors(po.ends[i].tag);
   }
   private rayonPorte(po: World['portes'][number], i: number) { return this.estSortie(po, i) ? World.SORTIE_R : World.PORTE_R; }
   static readonly PORTE_ARRIVEE = 80;
@@ -700,7 +702,7 @@ export class World {
       const dedans = !!this.worldGrid.mapByTag(from.tag)?.inside;
       if (po.vers) { best = { x: from.x, y: from.y, nom: po.nom, sortie: false }; continue; }
       const versDedans = !!this.worldGrid.mapByTag(to.tag)?.inside, ici = this.nomCarte(from.tag), la = this.nomCarte(to.tag) ?? po.nom;
-      best = { x: from.x, y: from.y, nom: versDedans && dedans && la === ici ? 'Salle suivante' : la, sortie: dedans && !versDedans };
+      best = { x: from.x, y: from.y, nom: versDedans && dedans && la === ici ? 'Salle suivante' : la, sortie: this.estSortie(po, i) };
     }
     return best;
   }
