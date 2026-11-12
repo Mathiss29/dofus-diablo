@@ -1519,7 +1519,7 @@ export class Windows {
         <h3>Un monde à parcourir</h3><p>Passe d'une carte à l'autre sans chargement, entre dans les maisons par leurs portes et parle aux PNJ en cliquant dessus. La mini-carte en haut à droite montre les monstres (points rouges), les PNJ qui ont une quête (points verts) et ta destination (point doré).</p>
         <h3>Ton but</h3><p>Suis la quête affichée en bas à gauche. Une flèche au bord de l'écran (verte, bleue pour les quêtes répétables) montre le chemin : la porte, le portail ou le Zaap à prendre, avec le nom du but et la distance en cartes. Clic sur le titre de la quête pour en suivre une autre, sur ses objectifs pour voir le but sur la carte. Un losange vert flotte au-dessus des monstres qui comptent pour tes quêtes, et le Zaap le plus proche du but porte une étoile.</p>` },
       { id: 'combat', titre: 'Se déplacer et combattre', html: `<h3>À la souris</h3><p>${k(cG)} sur le sol : y aller (maintenu : suivre le curseur). Sur un monstre : s'approcher et l'attaquer.</p>
-        <p>${k(`Maj + ${cG.toLowerCase()}`)} : attaquer sur place, sans bouger.</p><p>${k(cD)} : lancer le sort de la case libre de la barre. ${k('Clic droit')} sur un PNJ : ses actions.</p>
+        <p>${k(`Maj + ${cG.toLowerCase()}`)}${Touches.nomAction('attaqueSouris') ? ` ou ${k(Touches.nomAction('attaqueSouris'))} maintenue` : ''} : attaquer sur place vers la souris, sans bouger.</p><p>${k(cD)} : lancer le sort de la case libre de la barre. ${k('Clic droit')} sur un PNJ : ses actions.</p>
         <h3>Esquiver</h3><p>${T('deplacement')} : ${mob}. Il a des charges qui se rechargent toutes seules.</p>
         <h3>Se soigner</h3><p>${T('potion')} : boire une potion. Chaque groupe de monstres vaincu en rend une.</p>
         <h3>Mourir</h3><p>Tu reviens au dernier point de retour. En mode Hardcore, la mort est définitive.</p>` },
@@ -1540,7 +1540,7 @@ export class Windows {
       { id: 'metiers', titre: 'Métiers', html: `<p>${T('metiers')} ouvre les métiers. Le Chasseur récupère de la viande sur les monstres quand tu portes une arme de chasse, et cuisine des plats qui soignent.</p>` },
       { id: 'quetes', titre: 'Quêtes et succès', html: `<p>Un PNJ qui a une quête porte une icône au-dessus de la tête. Le suivi en bas à gauche montre l'étape en cours.</p>
         <p>Le journal des quêtes et les succès s'ouvrent depuis la colonne de menus, à droite de l'écran.</p>` },
-      { id: 'touches', titre: 'Toutes les touches', html: `<div class="keys">${[[cG, 'aller / attaquer (maintenu : continuer)'], [`Maj + ${cG.toLowerCase()}`, 'attaquer sur place'], [cD, 'sort de la barre (case libre)'],
+      { id: 'touches', titre: 'Toutes les touches', html: `<div class="keys">${[[cG, 'aller / attaquer (maintenu : continuer)'], [`Maj + ${cG.toLowerCase()}`, 'attaquer sur place'], ...(Touches.nomAction('attaqueSouris') ? [[Touches.nomAction('attaqueSouris'), 'attaquer vers la souris (maintenue)']] : []), [cD, 'sort de la barre (case libre)'],
           ...Touches.ACTIONS.filter(a => (a.id !== 'dofus' || this.world.player.v03) && Touches.nomAction(a.id)).map(a => [Touches.nomAction(a.id), a.nom.toLowerCase()]),
           ['Molette', 'zoom'], ['Échap', 'fermer, menu']]
           .map(([a, b]) => `<b>${a}</b><span>${b}</span>`).join('')}</div>` },
@@ -1632,7 +1632,8 @@ export class Windows {
           { k: 'echelle', nom: 'Échelle de l\'interface', t: 'range', min: 80, max: 150 },
         ], reset: () => { r.echelle = 1; } },
         { id: 'graphismes', titre: 'Graphismes', opts: [
-          { k: 'qualite', nom: 'Qualité prédéfinie', aide: 'Basse : sans vent, eau animée ni particules, lumières douces, 30 images par seconde. Moyenne : sans particules, 60 images. Haute : tout, sans limite.', t: 'select', choix: [['basse', 'Basse'], ['moyenne', 'Moyenne'], ['haute', 'Haute'], ['perso', 'Personnalisée']] },
+          { k: 'qualite', nom: 'Qualité prédéfinie', aide: 'Basse : sans vent, eau animée ni particules, lumières douces, résolution normale, 30 images par seconde. Moyenne : sans particules, 60 images. Haute : tout, sans limite.', t: 'select', choix: [['basse', 'Basse'], ['moyenne', 'Moyenne'], ['haute', 'Haute'], ['perso', 'Personnalisée']] },
+          { k: 'resolution', nom: 'Résolution', aide: 'Écran : net, aux vrais pixels de ton écran. Normale : bien plus rapide si Windows est réglé à 125 % ou 150 %, image un peu moins nette.', t: 'select', choix: [['ecran', 'Écran (net)'], ['normale', 'Normale (rapide)']] },
           { k: 'fps', nom: 'Images par seconde', t: 'select', choix: [['30', '30'], ['60', '60'], ['120', '120'], ['0', 'Sans limite']] },
           { k: 'compteurFps', nom: 'Afficher le compteur d\'images (FPS)', aide: `Dans le coin de la mini-carte.${Touches.nomAction('fps') ? ` Touche ${Touches.nomAction('fps')}.` : ''}`, t: 'check' },
           { k: 'zoom', nom: 'Zoom de départ', t: 'range', min: 55, max: 120 },
@@ -1727,7 +1728,7 @@ export class Windows {
       }
       if (k === 'fps') { r.fps = +e.value; preset(); }
       else if (k === 'qualite') { if (e.value !== 'perso') Object.assign(r, QUALITES[e.value as keyof typeof QUALITES]); r.qualite = e.value as Reglages['qualite']; }
-      else R[k] = e.value;
+      else { R[k] = e.value; if (k === 'resolution') preset(); }
       if (k === 'clavier') Touches.regler(r.clavier);
       apply(); this.render();
     }));

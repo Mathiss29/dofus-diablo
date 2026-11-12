@@ -573,10 +573,10 @@ export class Hud {
     this.scene.tweens.add({ targets: show, alpha: 1, duration: 400 });
     this.scene.tweens.add({ targets: show, alpha: 0, delay: 3000, duration: 700 });
   }
-  toast(text: string) {
+  toast(text: string, duree = 1600) {
     this.toastText.setText(text).setAlpha(1);
     this.scene.tweens.killTweensOf(this.toastText);
-    this.scene.tweens.add({ targets: this.toastText, alpha: 0, delay: 1600, duration: 400 });
+    this.scene.tweens.add({ targets: this.toastText, alpha: 0, delay: duree, duration: 400 });
   }
   hurtFlash(strong: boolean) {
     this.hurtRect.setAlpha(strong ? 0.28 : 0.1);

@@ -197,3 +197,17 @@ test('arrivée en jeu : temps rangés par tranche, moyenne par jour, valeurs abs
   assert.deepEqual(jour.tranches, { '<2 s': 1, '2-4 s': 1, '4-6 s': 1 });
   await fin();
 });
+
+test('fluidité : images par seconde et saccades par zone, valeurs absurdes refusées', async () => {
+  const { base, fin } = await serveur();
+  const noter = q => fetch(`${base}/parcours?fps=1&${q}`, { method: 'POST' });
+  assert.equal((await noter('zone=Champs%20d%27Astrub&images=6000&ms=120000&saccades=12')).status, 200);
+  await noter('zone=Champs%20d%27Astrub&images=3000&ms=120000&saccades=0');
+  assert.equal((await noter('zone=&images=10&ms=2000&saccades=0')).status, 400);
+  assert.equal((await noter('zone=X&images=10&ms=2000&saccades=11')).status, 400);
+  assert.equal((await noter('zone=X&images=abc&ms=2000&saccades=0')).status, 400);
+  const r = await (await fetch(`${base}/parcours`)).json();
+  const jour = Object.values(r.fluidite)[0];
+  assert.deepEqual(jour, { "Champs d'Astrub": { envois: 2, fps: 37.5, saccadesMin: 3 } });
+  await fin();
+});

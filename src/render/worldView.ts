@@ -4,6 +4,7 @@ import { ISO } from '../sim/iso';
 import { GridMap, MAP_COLS, MAP_ROWS, type DecorPlace, type WorldGrid, type WorldMapEntry } from '../sim/gridmap';
 import type { Particules } from './particles';
 import type { Transparence } from './transparence';
+import * as Masques from './masques';
 
 /** Profondeur du sol. Le reste (perso, monstres, décor) est trié par sa hauteur à l'écran, qui descend sous -10 000 au nord
  *  d'Astrub (Tainéla, Cour du Bouftou Royal) : un sol à -10 000 passait alors au-dessus du perso et des PNJ. */
@@ -14,6 +15,8 @@ export const SOL = -1e8;
 const LOAD_RING = 1, UNLOAD_RING = 2;
 /** Préchargement (choix 2A) : la 2e couronne est téléchargée d'avance sans être affichée ; les fichiers sont oubliés au-delà de OUBLI_RING. */
 const PREFETCH_RING = 2, OUBLI_RING = 3;
+/** Distance (en cartes) au-delà de laquelle une carte ne peut pas être dans le champ de la caméra (dézoom maximal, écran 4K). */
+const VUE_MAX = 5;
 
 /** Une carte affichée ; `next` = prochain élément de décor à poser (le décor arrive en plusieurs images, voir pump()). */
 type Slot = { state: 'none' | 'loading' | 'ready'; objs: Phaser.GameObjects.GameObject[]; next: number };
@@ -57,6 +60,9 @@ export class WorldView {
   private readonly uploads: { m: WorldMapEntry; add: () => void }[] = [];
   /** Fichiers des cartes déjà téléchargés (ou en cours), par nom : préchargement de la 2e couronne et retours rapides. */
   private readonly blobs = new Map<string, Promise<Blob>>();
+  /** Carte où le préchargement a fait son tri, et sa 2e couronne (Fluidité 2A). */
+  private prefCentre = '';
+  private couronne: WorldMapEntry[] = [];
   /** Rideau baissé (arrivée par une porte, un Zaap, après une mort) : on pose le décor plus vite, l'écran est noir. */
   presse = false;
   /** Ambiance (render/ambiance.ts) : teinte des cartes et force des lumières, appliquées aux objets posés et à venir. */
@@ -168,6 +174,7 @@ export class WorldView {
     this.upload();
     if (this.presse) this.upload();   // écran noir : deux textures par image, et plus de temps pour le décor
     this.pump(this.presse ? 14 : BUDGET_MS);
+    this.cull();
     const t = this.scene.time.now / 1000;
     this.animate(t);
     this.parts?.update(this.lastT ? t - this.lastT : 0);
@@ -190,9 +197,10 @@ export class WorldView {
       }
       this.scene.cameras.main.setBackgroundColor(here.inside && !here.ciel ? '#000000' : here.mer !== undefined ? `#${here.mer.toString(16).padStart(6, '0')}` : '#0d2b36');
     }
-    const seen = (m: WorldMapEntry, marge: number) => this.seen(m, here, marge);
     for (const m of this.wg.world.maps) {
       const d = ring(m, here.x, here.y), s = this.slots.get(m.tag)!;
+      // à plus de VUE_MAX cartes, la caméra ne peut pas la voir, même dézoomée : pas besoin de calculer (Fluidité 2A)
+      const seen = (m: WorldMapEntry, marge: number) => d <= VUE_MAX && this.seen(m, here, marge);
       // dans un intérieur, seule sa salle est dessinée : les salles voisines dans la grille ne doivent pas se voir
       // donjon en couloirs (partie de test) : ses salles, couloirs et arène se voient ensemble, comme des cartes du dehors
       const lie = !!here.inside && !!here.groupe && m.groupe === here.groupe;
@@ -243,10 +251,17 @@ export class WorldView {
    *  Les fichiers des cartes lointaines sont oubliés (mémoire). */
   private prefetch(here: WorldMapEntry, px: number, py: number) {
     const derriere = this.derrierePortes(here, px, py);
-    for (const m of this.wg.world.maps) {
-      if (this.slots.get(m.tag)!.state !== 'none' || derriere.has(m.tag)) continue;
-      const d = !!m.inside === !!here.inside ? ring(m, here.x, here.y) : Infinity;
-      if (d > OUBLI_RING) for (const n of this.fichiers(m)) this.blobs.delete(n);
+    // fichiers oubliés et 2e couronne : recalculés seulement quand on change de carte (Fluidité 2A : tout le continent,
+    // 1 442 cartes, était reparcouru 4 fois par seconde)
+    if (this.prefCentre !== here.tag) {
+      this.prefCentre = here.tag;
+      const gardes = new Set<string>();
+      for (const m of this.wg.world.maps) {
+        const d = !!m.inside === !!here.inside ? ring(m, here.x, here.y) : Infinity;
+        if (d <= OUBLI_RING || this.slots.get(m.tag)!.state !== 'none' || derriere.has(m.tag)) for (const n of this.fichiers(m)) gardes.add(n);
+      }
+      for (const n of [...this.blobs.keys()]) if (!gardes.has(n)) this.blobs.delete(n);
+      this.couronne = here.inside ? [] : this.wg.world.maps.filter(m => !m.inside && ring(m, here.x, here.y) === PREFETCH_RING);
     }
     if (this.fetching.size) return;
     // derrière les portes proches d'abord (2A) : l'intérieur, ou en sortant la carte du dehors et ses voisines
@@ -258,9 +273,8 @@ export class WorldView {
       for (const n of f) this.blob(n).catch(() => { /* retenté plus tard */ });
       return;
     }
-    if (here.inside) return;
-    for (const m of this.wg.world.maps) {
-      if (m.inside || ring(m, here.x, here.y) !== PREFETCH_RING || this.slots.get(m.tag)!.state !== 'none') continue;
+    for (const m of this.couronne) {
+      if (this.slots.get(m.tag)!.state !== 'none') continue;
       const f = this.fichiers(m);
       if (f.every(n => this.blobs.has(n))) continue;
       for (const n of f) this.blob(n).catch(() => { /* retenté plus tard */ });
@@ -355,6 +369,8 @@ export class WorldView {
       s.objs.push(this.scene.add.image(f.x, f.y, this.k(`bord_${m.tag}`)).setOrigin(0).setScale(S).setDepth(SOL + 1.4 - rang * 1e-6).setTint(this.tint));
     }
     s.next = 0;
+    // forme du décor lue hors du jeu (Fluidité 1A) : le fichier déjà téléchargé s'il est là, sinon il est relu (cache du navigateur)
+    for (const d of decors(m)) this.blobs.has(`${d}.webp`) ? this.blobs.get(`${d}.webp`)!.then(b => Masques.demander(this.k(d), b), () => {}) : Masques.demander(this.k(d), v(`${this.dir}/${d}.webp`));
     // plus de repère doré au sol (maquette Entrées 18A, comme Sanstour) : la porte et le paillasson officiels se voient,
     // et le survol donne le nom et le curseur maison
     s.state = 'ready';
@@ -468,9 +484,36 @@ export class WorldView {
         }
         if (p.c >= 0 && !p.b) this.transparence?.ajouter(im, p.bt);
         if (p.h || p.cc) { this.selonCarte.push({ im, p, tag: m.tag }); if (!this.montre(p, m.tag)) im.setVisible(false); }
+        this.filtrer(im);
         s.objs.push(im);
       }
     }
+  }
+  /** Fluidité 2B (2026-11-12) : le décor des cartes chargées autour du joueur était dessiné en entier à chaque image, alors que
+   *  ~84 % est hors de l'écran (et la mini-carte, une 2e caméra, le redessinait aussi). Chaque caméra garde un cadre = sa vue
+   *  plus une marge ; une image hors du cadre est sautée par cette caméra (cameraFilter, sans toucher à visible, que le
+   *  jour/nuit, les débords et la transparence utilisent). Le tri est refait quand la vue s'approche du bord du cadre. */
+  private cadres: { cam: Phaser.Cameras.Scene2D.Camera; r: Phaser.Geom.Rectangle }[] = [];
+  static readonly CADRE = 600;
+  private cull() {
+    const cams = [this.scene.cameras.main, this.scene.cameras.getCamera('mini')].filter((c): c is Phaser.Cameras.Scene2D.Camera => !!c);
+    let refaire = cams.length !== this.cadres.length || cams.some((c, i) => this.cadres[i].cam !== c);
+    if (!refaire) for (const { cam, r } of this.cadres) {
+      const v = cam.worldView, M = WorldView.CADRE / 2;
+      if (v.x < r.x + M || v.y < r.y + M || v.right > r.right - M || v.bottom > r.bottom - M) { refaire = true; break; }
+    }
+    if (!refaire) return;
+    this.cadres = cams.map(cam => { const v = cam.worldView, M = WorldView.CADRE; return { cam, r: new Phaser.Geom.Rectangle(v.x - M, v.y - M, v.width + 2 * M, v.height + 2 * M) }; });
+    for (const s of this.slots.values()) if (s.state === 'ready') for (const o of s.objs) this.filtrer(o);
+  }
+  private filtrer(o: Phaser.GameObjects.GameObject) {
+    if (!(o instanceof Phaser.GameObjects.Image)) return;
+    const sx = Math.abs(o.scaleX), sy = Math.abs(o.scaleY), x0 = o.x - o.displayOriginX * sx, y0 = o.y - o.displayOriginY * sy, x1 = x0 + o.width * sx, y1 = y0 + o.height * sy;
+    let f = o.cameraFilter;
+    for (const { cam, r } of this.cadres) {
+      if (x1 < r.x || x0 > r.right || y1 < r.y || y0 > r.bottom) f |= cam.id; else f &= ~cam.id;
+    }
+    o.cameraFilter = f;
   }
   /** Contour de la porte survolée (façon Sanstour, comme les éléments interactifs de Dofus 3) : le dessin pile au-dessus
    *  de la porte (sx, sy : la case de la porte à l'écran) reçoit un trait lilas. null = plus rien de survolé. */
@@ -616,7 +659,7 @@ export class WorldView {
     const enUsage = (d: string) => this.wg.world.maps.some(o => o !== m && this.slots.get(o.tag)!.state !== 'none' && decors(o).includes(d));
     const decor = decors(m).filter(d => !enUsage(d));
     for (const n of [`sol_${m.tag}`, ...decor, ...CALQUES.map(c => `${c}_${m.tag}`)]) if (this.scene.textures.exists(this.k(n))) this.scene.textures.remove(this.k(n));
-    for (const d of decor) this.scene.cache.json.remove(this.k(d));
+    for (const d of decor) { this.scene.cache.json.remove(this.k(d)); Masques.oublier(this.k(d)); }
   }
 
   /** Ciel : couvre l'écran avec 20 % de marge et glisse de cette marge d'un bout à l'autre du monde. */

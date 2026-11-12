@@ -48,7 +48,12 @@ export function auPixel(cam: Phaser.Cameras.Scene2D.Camera, x: number, y: number
  * au lieu d'être agrandi (donc flouté) par le navigateur. Plafonnée à 2 pour la carte graphique.
  * Les caméras du jeu et de l'interface sont zoomées d'autant : tout garde la même taille à l'écran.
  */
+let pleine = true;
+/** Réglage « Résolution » (Fluidité 3A) : false = un pixel du jeu par pixel CSS, plus rapide. */
+export function reglerDensite(ecran: boolean) { pleine = ecran; }
+export function densitePleine() { return pleine; }
 export function densite(): number {
+  if (!pleine) return 1;
   const d = typeof window === 'undefined' ? 1 : window.devicePixelRatio || 1;
   return Math.min(2, Math.max(1, d));
 }

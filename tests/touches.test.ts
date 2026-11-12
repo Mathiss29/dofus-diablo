@@ -16,6 +16,17 @@ describe('touches (Réglages 3A + 3C)', () => {
     expect(T.nomAction('sort1')).toBe('1');
     expect(T.nomAction('muet')).toBe('Ctrl M');
   });
+  it('Fluidité 6A : « Attaquer vers la souris » sur Q, sans doublon, en AZERTY comme en QWERTY', () => {
+    T.appliquer({});
+    T.regler('azerty');
+    expect(T.touche('attaqueSouris')).toBe('KeyA');   // le Q d'un AZERTY
+    expect(T.actionDe(ev('KeyA'))).toBe('attaqueSouris');
+    expect(T.actionDe(ev('KeyA', { shiftKey: true }))).toBe('attaqueSouris');
+    expect(T.doublons().size).toBe(0);
+    T.regler('qwerty');
+    expect(T.actionDe(ev('KeyQ'))).toBe('attaqueSouris');
+    expect(T.doublons().size).toBe(0);
+  });
   it('une touche choisie remplace celle par défaut, Alt et Ctrl en plus si besoin', () => {
     T.regler('azerty'); T.appliquer({ sort1: 'KeyQ', potion: 'Alt+Digit1' });
     expect(T.actionDe(ev('KeyQ'))).toBe('sort1');
