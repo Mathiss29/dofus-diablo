@@ -2,7 +2,6 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { APPARATS, BOUTIQUES, GAME_DATA, ITEMS, QUETES } from '../src/sim/data';
 import { WorldGrid, type WorldData } from '../src/sim/gridmap';
-import { PEPITE } from '../src/sim/items';
 import { exporterJoueur, restaurerJoueur } from '../src/sim/sauvegarde';
 import { World } from '../src/sim/world';
 import { objetsPortes } from '../src/render/squelette';
@@ -17,7 +16,6 @@ describe('apparat et objets visibles (Apparence 4A 4B 5A)', () => {
     const l = Object.entries(APPARATS.objets).filter(([, d]) => d.slot !== 'familier' && !d.collection);   // familiers d'apparat : tests/familiers.test.ts
     expect(l.length).toBeGreaterThan(600);
     for (const [id, d] of l) { expect(['chapeau', 'cape']).toContain(d.slot); expect(EQ.objets[id], d.name).toBeTruthy(); }
-    expect(APPARATS.prix.chapeau).toBeGreaterThan(0);
   });
 
   it('coiffes, capes et boucliers du jeu : la plupart ont leur dessin', () => {
@@ -26,13 +24,10 @@ describe('apparat et objets visibles (Apparence 4A 4B 5A)', () => {
     expect(faits.length / vis.length).toBeGreaterThan(0.6);
   });
 
-  it('achat chez Emp en Pépites, une seule fois ; porté par-dessus l\'objet, ou objet caché ; gardé dans la sauvegarde', () => {
+  it('gagné une seule fois ; porté par-dessus l\'objet, ou objet caché ; gardé dans la sauvegarde', () => {
     const w = monde(), p = w.player, id = Object.keys(APPARATS.objets).find(k => APPARATS.objets[k].slot === 'chapeau' && !APPARATS.objets[k].collection)!;
-    expect(w.acheterApparat(id)).toBe(false);   // pas de Pépites
-    p.resources[PEPITE] = 500;
-    expect(w.acheterApparat(id)).toBe(true);
-    expect(p.resources[PEPITE]).toBe(500 - APPARATS.prix.chapeau);
-    expect(w.acheterApparat(id)).toBe(false);   // déjà à lui
+    expect(w.ajouterApparat(id)).toBe(true);
+    expect(w.ajouterApparat(id)).toBe(false);   // déjà à lui (2A)
     expect(w.porterApparat('cape', id)).toBe(false);   // pas le bon emplacement
     const coiffe = Object.keys(EQ.objets).find(k => ITEMS.equipment[k]?.slot === 'chapeau')!;
     p.equipment.chapeau = { uid: 1, id: coiffe, rarity: 'commun', stats: {}, extra: [] };

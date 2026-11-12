@@ -351,7 +351,7 @@
    "phrase": "Tourne-toi. Non, l'autre côté. Hmm. On va dire que c'est un bon début.",
    "services": [
     {
-     "texte": "Voir les apparats.",
+     "texte": "Voir la collection d'apparats et les teintures.",
      "service": "apparat"
     },
     {

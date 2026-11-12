@@ -134,6 +134,8 @@ export interface Butin {
   ressources: { id: string; job?: string }[];
   objets: Item[];
   kamas: number;
+  /** « Apparats : » 1B 1D : apparats tombés (id Dofus). */
+  apparats?: string[];
 }
 /** Tire le butin d'un monstre vaincu. Sert au jeu et au simulateur de l'outil de test (8B). */
 export function tirerButin(rng: Rng, ctx: CtxButin, uid: () => number): Butin {

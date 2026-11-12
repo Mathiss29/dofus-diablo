@@ -153,7 +153,7 @@ export type SimEvent =
   | { k: 'ameRelachee'; monster: string; x: number; y: number }
   | { k: 'impression'; uid: number; id: string }
   /** Collection d'apparences (1C) : premier exemplaire d'une coiffe, cape ou bouclier brisé ou recyclé. */
-  | { k: 'apparence'; id: string }
+  | { k: 'apparence'; id: string; /** « Apparats : » 3A */ rarete?: Rarity }
   | { k: 'fusion'; de: string; vers: string; n: number }
   /** Commande à Malek (Forgemagie UI 9E) : confiée, prête (l'objet attend chez lui), reprise. */
   | { k: 'commande'; etat: 'confiee' | 'prete' | 'retiree'; reste: number; essais: number }

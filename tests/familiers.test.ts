@@ -26,7 +26,6 @@ describe('familiers (maquette Familiers 1A+1C+1D 2C 3A 4A 5A 6A)', () => {
     expect(ITEMS.equipment[PIOUTE].stats.puissance).toEqual([7, 70]);
     expect(Object.values(ITEMS.equipment).filter(d => d.familier?.monstres?.includes('piou_violet')).length).toBeGreaterThan(0);
     expect(QUETES.succes.dans_les_nuages.recompense?.objet).toBe('1711');
-    expect(APPARATS.prix.familier).toBeGreaterThan(0);
   });
 
   it('niveau 1 à 100 : XP en chassant et en nourrissant, bonus qui grandissent', () => {

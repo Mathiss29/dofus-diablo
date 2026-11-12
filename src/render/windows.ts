@@ -2,8 +2,9 @@ import { QUALITES, REGLAGES_DEFAUT, sauverReglages, type Reglages } from './ambi
 import * as Touches from './touches';
 import { ICON_CSS, iconHtml, prechargerIcones } from './icons';
 import { MANIFESTE, Son } from './son';
-import { BENEDICTION, BENEDICTIONS, CONFORT, MAGASIN, MARCHE, reserveePiece, type Article, type Benediction } from '../sim/magasin';
+import { BENEDICTION, BENEDICTIONS, CONFORT, MAGASIN, MARCHE, type Article, type Benediction } from '../sim/magasin';
 import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES, TEINTURES, THEMES_HAVRESAC } from '../sim/data';
+import { ouTrouver, rareteApparat } from '../sim/apparats';
 import { themeChoisi, themesEnJeu, themesPossedes } from '../sim/havresac';
 import { v } from './assetUrl';
 import { BUTIN_CSS, archisParLieu, butinMonstre, dessinerPortraits, esc as escB, groupesBestiaire, nomObjet, iconeObjet, sourcesHtml } from './butinVue';
@@ -1621,7 +1622,7 @@ export class Windows {
       { id: 'zaaps', titre: 'Les Zaaps', html: `<p>Clique sur l'arche d'un Zaap : ton perso s'en approche et la liste s'ouvre. Le voyage est gratuit, vers le Bastion des Douze et tous les Zaaps que tu as découverts, rangés par zone.</p>
         <p>Il suffit de passer sur la carte d'un Zaap pour le découvrir : il devient aussi ton point de retour si tu tombes. Ceux que tu n'as pas encore vus sont grisés dans la liste et éteints sur la carte (${T('carte')}).</p>` },
       { id: 'bastion', titre: 'Le Bastion des Douze', html: `<p>Notre ville, en archipel au-dessus du Monde des Douze. On y va par n'importe quel Zaap (il est en tête de liste), par l'arche du Havre-Sac, ou avec une Potion de Rappel. Son Zaap te ramène ensuite là où tu étais.</p>
-        <p>Les PNJ de service y vivent : Kerubim Crépin recycle tes objets en Pépites, Tissebelle vend les apparats et tient le miroir, Otomaï ses potions, Mère Bouillotte ses plats, Goultard les clés de donjon. Certains emménagent au fil de ton aventure. Chaque nation libérée y ajoutera son île.</p>` },
+        <p>Les PNJ de service y vivent : Kerubim Crépin recycle tes objets en Pépites, Tissebelle vend les teintures et tient le miroir, Otomaï ses potions, Mère Bouillotte ses plats, Goultard les clés de donjon. Certains emménagent au fil de ton aventure. Chaque nation libérée y ajoutera son île.</p>` },
       { id: 'metiers', titre: 'Métiers', html: `<p>${T('metiers')} ouvre les métiers. Le Chasseur récupère de la viande sur les monstres quand tu portes une arme de chasse, et cuisine des plats qui soignent.</p>` },
       { id: 'quetes', titre: 'Quêtes et succès', html: `<p>Un PNJ qui a une quête porte une icône au-dessus de la tête. Le suivi en bas à gauche montre l'étape en cours.</p>
         <p>Le journal des quêtes et les succès s'ouvrent depuis la colonne de menus, à droite de l'écran.</p>` },
@@ -2326,16 +2327,15 @@ export class Windows {
     if (this.empOnglet === 'recycler') {
       corps = defaireHtml(W, this.forge);
     } else if (this.empOnglet === 'etal') {
-      // 3A étal du jour, 3B pièce de la semaine, 4C sac du jour ; tout change à minuit (heure du PC)
-      const pris = W.achatsDuJour(), piece = W.pieceDeLaSemaine();
+      // 3A étal du jour, 4C sac du jour ; tout change à minuit (heure du PC). Plus d'apparats au Marché (maquette « Apparats : »).
+      const pris = W.achatsDuJour();
       const offres = W.etalDuJour().map((o, i) => {
         const note = o.remise ? ` <span class="remise">-30 %</span> <s class="hint">${(o.avant ?? o.prix).toLocaleString('fr-FR')}</s>` : '', fin = pris.etal.includes(i) ? '<span class="hint">Pris aujourd\'hui</span>' : prix(o.prix, o.monnaie, `data-etal="${i}"`);
-        return o.k === 'apparat' ? ligneApparat(o.id, fin, note) : ligneObjet(o.id, fin, note); }).join('');
+        return ligneObjet(o.id, fin, note); }).join('');
       const sac = pris.sac ? '<span class="hint">Pris aujourd\'hui, reviens demain</span>'
         : (['rare', 'epique'] as const).map(r => prix(MAGASIN.sac[r], PEPITE, `data-sac="${r}"`).replace(/^<span class="px">/, `<span class="px"><b style="color:${RARITY_COLORS[r]}">${RARITY_NAMES[r]}</b> `)).join('');
       corps = `<div class="cata">${apercu()}<div class="shop">
           <div class="ent">Étal du jour <span class="hint">· change à minuit</span></div>${offres}
-          ${piece ? `<div class="ent">Pièce de la semaine <span class="hint">· change le lundi, introuvable ailleurs</span></div>${ligneApparat(piece.id, prix(piece.prix, piece.monnaie, 'data-piece'))}` : ''}
           <div class="ent">Sac du jour <span class="hint">· un par jour, un équipement de ton niveau à rareté garantie</span></div>
           <div class="rec sacj">${iconHtml(ITEMS.resources[PEPITE]?.icon ?? 0)}<div><b>Sac garanti</b><div style="font-size:12px;color:#c9c4ab">Jamais Légendaire.</div></div><span class="sacs">${sac}</span></div>
         </div></div>`;
@@ -2362,14 +2362,21 @@ export class Windows {
           ${t.id === pose ? '<span class="hint">Posé</span>' : a.includes(t.id) ? `<span class="btn" data-tpose="${t.id}">Poser</span>` : prix(T.prix, PEPITE, `data-tachat="${t.id}"`)}</div>`).join('')}</div>
         <div class="hint">Pour tout le compte. Un thème acheté se pose aussitôt ; si tu es dans ton Havre-Sac, tu y reviens avec le nouveau décor.</div>`;
     } else if (this.empOnglet === 'apparat') {
-      // Apparences officielles (5A, 2B) : tout le catalogue (hors pièces de la semaine), payé en Pépites ; le survol habille le perso
+      // Collection des apparats (maquette « Apparats : » 4A) : rien ne s'achète ; ceux qu'on a s'essaient, les autres en silhouette avec leur source.
+      // Tissebelle garde les teintures (8A).
       const q = this.apparatRecherche.toLowerCase();
-      const l = Object.entries(APPARATS.objets).filter(([id, d]) => !d.collection && !reserveePiece(id) && (!this.apparatSlot || d.slot === this.apparatSlot) && (!q || d.name.toLowerCase().includes(q)))
-        .sort((a, b) => a[1].name.localeCompare(b[1].name, 'fr'));
+      const nomMonstre = (k: string) => GAME_DATA.monsters[k]?.name ?? k, nomClasse = (k: string) => (GAME_DATA.classes as Record<string, { name?: string }>)[k]?.name ?? k[0].toUpperCase() + k.slice(1);
+      const tous = Object.entries(APPARATS.objets).filter(([, d]) => !d.collection);
+      const l = tous.filter(([, d]) => (!this.apparatSlot || d.slot === this.apparatSlot) && (!q || d.name.toLowerCase().includes(q)))
+        .sort((a, b) => (+p.apparats.includes(b[0]) - +p.apparats.includes(a[0])) || a[1].name.localeCompare(b[1].name, 'fr'));
+      const ligneCol = (id: string) => { const d = APPARATS.objets[id], a = p.apparats.includes(id), r = rareteApparat(id);
+        return `<div class="rec"${a ? ` data-essai="${id}"` : ''} style="box-shadow:inset 3px 0 0 ${RARITY_COLORS[r]}">${a ? apparatHtml(id) : `<span style="filter:brightness(0) opacity(.45)">${apparatHtml(id)}</span>`}<div><b style="color:${a ? RARITY_COLORS[r] : '#8d8a7c'}">${d.name}</b> <span class="hint">${RARITY_NAMES[r]} · ${d.slot === 'chapeau' ? 'Coiffe' : d.slot === 'cape' ? 'Cape' : 'Familier'} d'apparat</span>${porteur(id)}<div style="font-size:12px;color:#c9c4ab">${ouTrouver(id, nomMonstre, nomClasse)}</div></div>${a ? '<span class="hint">À toi</span>' : ''}</div>`; };
       corps = `<div class="filtre"><input placeholder="Rechercher une apparence..." value="${this.apparatRecherche.replace(/"/g, '&quot;')}" data-arech>
           <select data-aslot style="width:auto">${[['', 'Toutes'], ['chapeau', 'Coiffes'], ['cape', 'Capes'], ['familier', 'Familiers']].map(([k, n]) => `<option value="${k}" ${this.apparatSlot === k ? 'selected' : ''}>${n}</option>`).join('')}</select>
-          <span class="hint">${l.length} apparence${l.length > 1 ? 's' : ''}</span></div>
-        <div class="cata">${apercu()}<div class="shop">${this.apparatRecherche || this.apparatSlot ? '' : teinturesHtml(W, prix)}${l.slice(0, 120).map(([id, d]) => ligneApparat(id, prix(APPARATS.prix[d.slot] ?? 0, PEPITE, `data-aachat="${id}"`))).join('')}
+          <span class="hint">${tous.filter(([id]) => p.apparats.includes(id)).length} / ${tous.length} dans ta collection</span></div>
+        <div class="cata">${apercu()}<div class="shop">${this.apparatRecherche || this.apparatSlot ? '' : teinturesHtml(W, prix)}
+          <div class="hint">Les apparats ne s'achètent plus : ils tombent des boss de donjon, des fêtes et des boss du monde, ou récompensent les succès de classe.</div>
+          ${l.slice(0, 120).map(([id]) => ligneCol(id)).join('')}
           ${l.length > 120 ? `<div class="hint">… et ${l.length - 120} autres : affine la recherche.</div>` : ''}</div></div>`;
     } else {
       const liste: [string, Article][] = this.empOnglet === 'conso' ? ['otomai', 'bouillotte'].flatMap(b => (BOUTIQUES[b] ?? []).filter(vis).map(a => [b, a] as [string, Article]))
@@ -2385,13 +2392,11 @@ export class Windows {
     w.querySelectorAll<HTMLElement>('[data-etal]').forEach(e => e.addEventListener('click', () => { W.acheterEtal(+e.dataset.etal!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-conf]').forEach(e => e.addEventListener('click', () => { const c = e.dataset.conf; if (c === 'sac') W.acheterPlacesSac(); else if (c === 'onglet') W.acheterOngletCoffre(); else if (c === 'emplacement') W.acheterEmplacement(); else W.acheterPrereglage(); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-beni]').forEach(e => e.addEventListener('click', () => { W.acheterBenediction(e.dataset.beni as Benediction); this.changed(); }));
-    w.querySelector<HTMLElement>('[data-piece]')?.addEventListener('click', () => { W.acheterPiece(); this.changed(); });
     w.querySelectorAll<HTMLElement>('[data-sac]').forEach(e => e.addEventListener('click', () => { W.acheterSacDuJour(e.dataset.sac as 'rare' | 'epique'); this.changed(); }));
     w.querySelector<HTMLElement>('[data-garde]')?.addEventListener('click', () => this.show('garde'));
     w.querySelectorAll<HTMLElement>('[data-tachat]').forEach(e => e.addEventListener('click', () => { W.acheterTheme(+e.dataset.tachat!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-tpose]').forEach(e => e.addEventListener('click', () => { W.poserTheme(+e.dataset.tpose!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-teint]').forEach(e => e.addEventListener('click', () => { W.acheterTeinture(e.dataset.teint!); this.changed(); }));
-    w.querySelectorAll<HTMLElement>('[data-aachat]').forEach(e => e.addEventListener('click', () => { this.world.acheterApparat(e.dataset.aachat!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-essai]').forEach(e => e.addEventListener('mouseenter', () => {
       this.essaiApparat = e.dataset.essai!;
       const d = APPARATS.objets[this.essaiApparat], p2 = this.world.player, cv = w.querySelector<HTMLCanvasElement>('.apercu canvas');
@@ -2761,7 +2766,7 @@ export class Windows {
     }
     if (this.tab === 'apparat') {   // collection d'apparences (1C) : coiffes, capes et boucliers brisés ou recyclés
       const tous = Object.values(APPARATS.objets).filter(d => d.collection), eu = p.apparats.filter(id => APPARATS.objets[id]?.collection).length;
-      cells.push(`<div class="hint" style="grid-column:1/-1">${p.apparats.length ? '' : 'Les apparats s\'achètent chez Tissebelle, au Bastion des Douze. '}Collection : <b>${eu} / ${tous.length}</b> apparences. Défais une coiffe, une cape ou un bouclier chez Kerubim pour garder son apparence.</div>`);
+      cells.push(`<div class="hint" style="grid-column:1/-1">${p.apparats.length ? '' : 'Les apparats tombent des boss de donjon et des fêtes, ou récompensent les succès de classe. '}Collection : <b>${eu} / ${tous.length}</b> apparences. Défais une coiffe, une cape ou un bouclier chez Kerubim pour garder son apparence.</div>`);
     }
     const n = cells.length;
     for (let i = n; i < Math.max(35, Math.ceil(n / 5) * 5); i++) cells.push('<div class="cell empty"></div>');
