@@ -1,0 +1,26 @@
+{
+ "_": "Nouveaux usages des Pépites (ligne « Apparats : » 5B, Mathis 2026-11-12) : tenues enregistrées de la garde-robe, auréoles, effets de Zaap et ornements de nom. Auréoles, effets et ornements sont achetés pour tout le compte chez Tissebelle (onglet Style du Marché) ; chaque perso choisit les siens. Couleurs en hexadécimal. Inventés (pas de données officielles).",
+ "tenues": { "_": "Places de tenue : une offerte, puis ces prix (Pépites) pour chaque place de plus.", "offertes": 1, "prix": [150, 300, 500, 800] },
+ "aureoles": [
+  { "id": "braise", "nom": "Braise", "texte": "Un cercle de braises qui couve sous tes pieds.", "c": "#f08a2c", "c2": "#ffc04d", "prix": 300 },
+  { "id": "givre", "nom": "Givre", "texte": "Un anneau de givre bleuté.", "c": "#7cc7ff", "c2": "#e8f6ff", "prix": 300 },
+  { "id": "seve", "nom": "Sève", "texte": "Une lueur verte de sous-bois.", "c": "#6fbf4a", "c2": "#c8f08a", "prix": 300 },
+  { "id": "ombre", "nom": "Ombre", "texte": "Un halo violet qui avale la lumière.", "c": "#7a4ad0", "c2": "#c9a6ff", "prix": 400 },
+  { "id": "or", "nom": "Or des Douze", "texte": "Un cercle doré, digne d'un champion.", "c": "#e8c46a", "c2": "#fff2c0", "prix": 600 },
+  { "id": "sang", "nom": "Sang", "texte": "Un halo rouge qui bat comme un cœur.", "c": "#c8323a", "c2": "#ff8a8a", "prix": 400 }
+ ],
+ "zaaps": [
+  { "id": "flammes", "nom": "Flammes", "texte": "Tu pars et arrives dans un tourbillon de flammes.", "c": "#f08a2c", "c2": "#ffe08a", "prix": 200 },
+  { "id": "feuilles", "nom": "Feuilles", "texte": "Un tourbillon de feuilles vertes.", "c": "#6fbf4a", "c2": "#d8f0a0", "prix": 200 },
+  { "id": "ombres", "nom": "Ombres", "texte": "Un tourbillon d'ombre violette.", "c": "#7a4ad0", "c2": "#e0ccff", "prix": 250 },
+  { "id": "etoiles", "nom": "Étoiles", "texte": "Une pluie d'étoiles dorées.", "c": "#e8c46a", "c2": "#ffffff", "prix": 350 }
+ ],
+ "ornements": [
+  { "id": "etoile", "nom": "Étoiles", "avant": "✦ ", "apres": " ✦", "couleur": "#e8c46a", "prix": 150 },
+  { "id": "lames", "nom": "Lames", "avant": "⚔ ", "apres": "", "couleur": "#ff9a5a", "prix": 150 },
+  { "id": "fleur", "nom": "Fleur", "avant": "❀ ", "apres": " ❀", "couleur": "#f2a6d0", "prix": 150 },
+  { "id": "couronne", "nom": "Couronne", "avant": "♛ ", "apres": "", "couleur": "#ffd76a", "prix": 300 },
+  { "id": "givre", "nom": "Givre", "avant": "❄ ", "apres": " ❄", "couleur": "#a8dcff", "prix": 150 },
+  { "id": "crane", "nom": "Crâne", "avant": "☠ ", "apres": "", "couleur": "#d0d0d0", "prix": 200 }
+ ]
+}

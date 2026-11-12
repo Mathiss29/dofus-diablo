@@ -6,6 +6,7 @@ import Phaser from 'phaser';
 import { calerCamera, densite, densitePleine, reglerDensite } from './pixel';
 import { rareteApparat } from '../sim/apparats';
 import { FAMILIERS_SOURCES } from '../sim/menagerie';
+import { styleDef } from '../sim/style';
 import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES, TEINTURES, THEMES_HAVRESAC } from '../sim/data';
 import { themeChoisi, zoneAvecTheme } from '../sim/havresac';
 import type { Compte } from '../sim/quests';
@@ -133,6 +134,8 @@ export class ZoneScene extends Phaser.Scene {
   private fx!: FX;
   /** Aura de la jauge de classe pleine (ligne Rage 27B), sous le perso. */
   private rageAura?: Phaser.GameObjects.Graphics;
+  /** « Apparats : » 5B : auréole portée, par joueur. */
+  private aureoles = new Map<number, Phaser.GameObjects.Graphics>();
   private hud!: Hud;
   private keys!: Record<string, Phaser.Input.Keyboard.Key>;
   private pressed: SkillId | null = null;
@@ -785,6 +788,23 @@ export class ZoneScene extends Phaser.Scene {
   }
   /** Petit carillon (synthétisé, pas de fichier) quand un objet Rare ou Légendaire tombe (choix 3D). */
   /** Jauge pleine : halo qui pulse aux pieds du perso, couleur de la jauge (ligne Rage 27B). */
+  private drawAureoles() {
+    const vus = new Set<number>();
+    for (const p of this.world.players) {
+      const d = styleDef('aureoles', p.style.aureoles);
+      if (!d || p.dead) continue;
+      vus.add(p.id);
+      const v = this.viewOf(p), s = ISO.toScreen(p.x, p.y), t = this.world.time, k = 0.5 + 0.5 * Math.sin(t * 2.5 + p.id);
+      let g = this.aureoles.get(p.id);
+      if (!g) { g = this.add.graphics(); this.cameras.getCamera('mini')?.ignore(g); this.aureoles.set(p.id, g); }
+      const c = parseInt(d.c!.slice(1), 16), c2 = parseInt(d.c2!.slice(1), 16);
+      g.clear().setDepth(v.sprite.depth - 0.6).setBlendMode(Phaser.BlendModes.ADD).setVisible(v.sprite.visible);
+      g.fillStyle(c, 0.12 + 0.06 * k); g.fillEllipse(s.x, s.y, 74, 32);
+      g.lineStyle(2, c2, 0.35 + 0.25 * k); g.strokeEllipse(s.x, s.y, 64 + 6 * k, 27 + 3 * k);
+      for (let i = 0; i < 6; i++) { const a = t * 0.8 + i / 6 * Math.PI * 2; g.fillStyle(c2, 0.5 + 0.4 * Math.sin(t * 3 + i)); g.fillCircle(s.x + Math.cos(a) * 34, s.y + Math.sin(a) * 14, 1.6); }
+    }
+    for (const [id, g] of this.aureoles) if (!vus.has(id)) { g.destroy(); this.aureoles.delete(id); }
+  }
   private drawRageAura() {
     const p = this.world.player, g = this.rageAura ??= this.add.graphics();
     g.clear();
@@ -945,20 +965,21 @@ export class ZoneScene extends Phaser.Scene {
   private tourbillon(x: number, y: number, arrivee: boolean) {
     const c = ISO.toScreen(x, y), g = this.add.graphics().setDepth(c.y + 5), o = { k: 0 };
     this.cameras.getCamera('mini')?.ignore(g);
-    const N = 22, depart = Math.random() * Math.PI * 2;
+    const N = 22, depart = Math.random() * Math.PI * 2, st = styleDef('zaaps', this.world.player.style.zaaps);   // « Apparats : » 5B : effet de Zaap porté
+    const c1 = st ? parseInt(st.c!.slice(1), 16) : 0x7cc7ff, c2 = st ? parseInt(st.c2!.slice(1), 16) : 0xe8f6ff, c0 = st ? c1 : 0x9fd8ff;
     this.tweens.add({ targets: o, k: 1, duration: arrivee ? 450 : World.ZAAP_DEPART * 1000, ease: arrivee ? 'Sine.easeOut' : 'Sine.easeIn',
       onUpdate: () => {
         const k = arrivee ? 1 - o.k : o.k;   // k : 0 = loin, 1 = sur le perso
         g.clear();
-        g.fillStyle(0x9fd8ff, 0.25 * (1 - Math.abs(0.6 - k))).fillEllipse(c.x, c.y - 40, 70 * (1.2 - k * 0.5), 110 * (1.2 - k * 0.5));
+        g.fillStyle(c0, 0.25 * (1 - Math.abs(0.6 - k))).fillEllipse(c.x, c.y - 40, 70 * (1.2 - k * 0.5), 110 * (1.2 - k * 0.5));
         for (let i = 0; i < N; i++) {
           const a = depart + i / N * Math.PI * 2 + k * 5, r = 90 * (1 - k) + 6, h = 20 + (i % 5) * 18;
-          g.fillStyle(i % 3 ? 0x7cc7ff : 0xe8f6ff, arrivee ? o.k < 0.9 ? 1 - o.k : 0 : 0.4 + k * 0.6);
+          g.fillStyle(i % 3 ? c1 : c2, arrivee ? o.k < 0.9 ? 1 - o.k : 0 : 0.4 + k * 0.6);
           g.fillCircle(c.x + Math.cos(a) * r, c.y - h + Math.sin(a) * r * 0.5, 2.5 + (i % 2));
         }
       },
       onComplete: () => g.destroy() });
-    this.fx.ring(x, y, arrivee ? 10 : 90, arrivee ? 90 : 10, 0x7cc7ff, arrivee ? 0.45 : World.ZAAP_DEPART, 4);
+    this.fx.ring(x, y, arrivee ? 10 : 90, arrivee ? 90 : 10, c1, arrivee ? 0.45 : World.ZAAP_DEPART, 4);
   }
 
   /** Monstre sous le curseur : on vise le corps dessiné (rectangle rogné de la frame), ou à défaut ses pieds ;
@@ -1973,6 +1994,7 @@ export class ZoneScene extends Phaser.Scene {
     wv?.update(w.player.x, w.player.y);
     this.leverRideau(this.game.loop.delta / 1000);
     this.drawRageAura();
+    this.drawAureoles();
     for (const e of [...w.players, ...w.betes, ...w.monsters]) {
       // monde ouvert : on n'affiche que les monstres des cartes chargées (les autres vivent quand même dans la simulation)
       if (wv && wg && e !== w.player && !wv.isReady(wg.mapAt(e.x, e.y)?.tag)) continue;

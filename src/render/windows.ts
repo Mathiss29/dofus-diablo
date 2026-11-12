@@ -7,6 +7,7 @@ import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES, TEI
 import { ouTrouver, rareteApparat } from '../sim/apparats';
 import { FAMILIERS_SOURCES, ouTrouverFamilier, sourceFamilier } from '../sim/menagerie';
 import { REGLAGES_BUTIN } from '../sim/butin';
+import { nomOrne, placesTenues, prixPlaceTenue, STYLE, type SorteStyle, type StyleDef } from '../sim/style';
 import { themeChoisi, themesEnJeu, themesPossedes } from '../sim/havresac';
 import { v } from './assetUrl';
 import { BUTIN_CSS, archisParLieu, butinMonstre, dessinerPortraits, esc as escB, groupesBestiaire, nomObjet, iconeObjet, sourcesHtml } from './butinVue';
@@ -754,7 +755,7 @@ type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
  *  Les clics appellent l'API de la partie (World / Player). */
 /** Onglets de la fenêtre des marchands : Défaire (Kerubim), boutique d'un PNJ, et ceux du Marché du Bastion. */
-type OngletEmp = 'recycler' | 'boutique' | 'apparat' | 'etal' | 'conso' | 'cles' | 'animalerie' | 'confort' | 'havresac';
+type OngletEmp = 'recycler' | 'boutique' | 'apparat' | 'etal' | 'conso' | 'cles' | 'animalerie' | 'style' | 'confort' | 'havresac';
 export class Windows {
   private root: HTMLDivElement;
   private win: HTMLDivElement | null = null;
@@ -2347,7 +2348,7 @@ export class Windows {
     const def = QUETES.pnj[this.empPnj], sv = new Set((def?.services ?? []).map(x => x.service)), marche = MARCHE.includes(this.empPnj);
     const vis = (a: Article) => (!a.v03 || p.v03) && (!a.v04 || p.v04);
     const boutique = (BOUTIQUES[this.empPnj] ?? []).filter(vis);
-    const onglets: [OngletEmp, string][] = marche ? [['etal', 'Étal du jour'], ['conso', 'Consommables'], ['cles', 'Clés'], ['animalerie', 'Animalerie'], ['apparat', 'Apparences'], ['havresac', 'Havre-Sac'], ['confort', 'Confort']]
+    const onglets: [OngletEmp, string][] = marche ? [['etal', 'Étal du jour'], ['conso', 'Consommables'], ['cles', 'Clés'], ['animalerie', 'Animalerie'], ['apparat', 'Apparences'], ['style', 'Style'], ['havresac', 'Havre-Sac'], ['confort', 'Confort']]
       : ([['recycler', 'Défaire'], ['boutique', 'Boutique'], ['apparat', 'Apparats']] as [OngletEmp, string][]).filter(([k]) => sv.has(k));
     if (!onglets.some(([k]) => k === this.empOnglet)) this.empOnglet = marche ? (this.empPnj === 'goultard' ? 'cles' : this.empPnj === 'tissebelle' ? 'apparat' : this.empPnj === 'responsable' ? 'confort' : 'conso') : onglets[0]?.[0] ?? 'boutique';
     const icM = (m: string) => m === 'kamas' ? `<img src="${INV}/kamas.png" alt="" style="width:18px;vertical-align:middle">` : iconHtml(ITEMS.resources[m]?.icon ?? 0);
@@ -2400,6 +2401,21 @@ export class Windows {
           <div class="ent">Bénédictions <span class="hint">· 30 minutes de jeu, une à la fois (une nouvelle remplace l'autre)</span></div>
           ${(Object.keys(BENEDICTIONS) as Benediction[]).map(k => ligne(icS, BENEDICTIONS[k].nom, BENEDICTIONS[k].texte + (b?.k === k ? ` · <b style="color:#b9e54b">active, encore ${Math.ceil(b.reste / 60)} min</b>` : ''), prix(BENEDICTION.prix, PEPITE, `data-beni="${k}"`))).join('')}
         </div><div class="hint">Les Pépites se gagnent avec les contrats, l'Almanax, les quêtes, les succès et les donjons (premier passage, défis).</div>`;
+    } else if (this.empOnglet === 'style') {
+      // « Apparats : » 5B : auréoles, effets de Zaap et ornements de nom, pour tout le compte ; chaque perso porte les siens
+      const ic = iconHtml(ITEMS.resources[PEPITE]?.icon ?? 0), nomP = p.nom || 'Ton nom';
+      const pastille = (d: StyleDef, sorte: SorteStyle) => sorte === 'ornements' ? `<span style="color:${d.couleur};font-weight:700;min-width:48px">${escB(nomOrne('', d.id).trim())}</span>`
+        : `<span style="display:inline-block;width:44px;height:22px;border-radius:50%;background:radial-gradient(${d.c2}, ${d.c} 55%, transparent 72%);box-shadow:0 0 10px ${d.c}"></span>`;
+      const section = (sorte: SorteStyle, titre: string, aide: string) => `<div class="ent">${titre} <span class="hint">· ${aide}</span></div>${STYLE[sorte].map(d => {
+        const a = W.aLeStyle(sorte, d.id), porte = p.style[sorte] === d.id;
+        const fin = porte ? `<span class="btn" data-sret="${sorte}">Retirer</span>` : a ? `<span class="btn" data-sporte="${sorte}|${d.id}">Porter</span>` : prix(d.prix, PEPITE, `data-sachat="${sorte}|${d.id}"`);
+        const texte = sorte === 'ornements' ? `<span style="color:${d.couleur}">${escB(nomOrne(nomP, d.id))}</span>` : escB(d.texte ?? '');
+        return `<div class="rec">${pastille(d, sorte)}<div><b>${escB(d.nom)}</b>${porte ? ' <span class="hint">· porté</span>' : ''}<div style="font-size:12px;color:#c9c4ab">${texte}</div></div>${fin}</div>`; }).join('')}`;
+      corps = `<div class="shop">
+          ${section('aureoles', 'Auréoles', 'un cercle de lumière sous tes pieds')}
+          ${section('zaaps', 'Effets de Zaap', 'ton départ et ton arrivée en Zaap')}
+          ${section('ornements', 'Ornements de nom', 'autour de ton nom, dans ton cadre')}
+        </div><div class="hint">Pour tout le compte : chaque perso choisit ce qu'il porte. Les tenues se gardent au miroir (garde-robe). ${ic}</div>`;
     } else if (this.empOnglet === 'animalerie') {
       // « Familiers : » 1B + 4A : les familiers domestiques, toujours en vente, en kamas ; 4C : un familier offert au niveau 10
       const S = FAMILIERS_SOURCES, deja = new Set(W.menagerie());
@@ -2449,6 +2465,9 @@ export class Windows {
     w.querySelectorAll<HTMLElement>('[data-etal]').forEach(e => e.addEventListener('click', () => { W.acheterEtal(+e.dataset.etal!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-conf]').forEach(e => e.addEventListener('click', () => { const c = e.dataset.conf; if (c === 'sac') W.acheterPlacesSac(); else if (c === 'onglet') W.acheterOngletCoffre(); else if (c === 'emplacement') W.acheterEmplacement(); else W.acheterPrereglage(); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-beni]').forEach(e => e.addEventListener('click', () => { W.acheterBenediction(e.dataset.beni as Benediction); this.changed(); }));
+    w.querySelectorAll<HTMLElement>('[data-sachat]').forEach(e => e.addEventListener('click', () => { const [k, id] = e.dataset.sachat!.split('|'); W.acheterStyle(k as SorteStyle, id); this.changed(); }));
+    w.querySelectorAll<HTMLElement>('[data-sporte]').forEach(e => e.addEventListener('click', () => { const [k, id] = e.dataset.sporte!.split('|'); W.porterStyle(k as SorteStyle, id); this.changed(); }));
+    w.querySelectorAll<HTMLElement>('[data-sret]').forEach(e => e.addEventListener('click', () => { W.porterStyle(e.dataset.sret as SorteStyle, null); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-fachat]').forEach(e => e.addEventListener('click', () => { W.acheterFamilier(e.dataset.fachat!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-fdep]').forEach(e => e.addEventListener('click', () => { W.prendreFamilierDeDepart(e.dataset.fdep!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-sac]').forEach(e => e.addEventListener('click', () => { W.acheterSacDuJour(e.dataset.sac as 'rare' | 'epique'); this.changed(); }));
@@ -2709,7 +2728,13 @@ export class Windows {
         ${TEINTURES.teintures.filter(t => this.world.coffre.teintures?.includes(t.id)).map(t => `<button type="button" data-gteint="${t.id}" title="Teinture">${t.c.slice(0, 3).map(x => `<i style="background:${hexa(x)}"></i>`).join('')}${t.nom}</button>`).join('')}
         <button type="button" data-gofficiel>Couleurs officielles</button></div>
       ${(this.world.coffre.teintures?.length ?? 0) < TEINTURES.teintures.length ? '<div class="hint">D\'autres teintures (couleurs officielles des classes) chez Tissebelle, au Marché.</div>' : ''}
-      <div style="display:flex;gap:10px;margin-top:14px;align-items:center"><span class="btn" data-genr>Enregistrer</span><span class="hint">Gratuit, à chaque garde-robe des villes.</span></div></div>`;
+      <div style="display:flex;gap:10px;margin-top:14px;align-items:center"><span class="btn" data-genr>Enregistrer</span><span class="hint">Gratuit, à chaque garde-robe des villes.</span></div>
+      <h5>Tenues enregistrées</h5>
+      ${Array.from({ length: placesTenues(p.placesTenue) }, (_, i) => { const t = p.tenues[i];
+        return `<div style="display:flex;gap:8px;align-items:center;margin:4px 0"><b style="min-width:110px">${t ? escB(t.nom) : `<span class="hint">Place ${i + 1} libre</span>`}</b>
+          ${t ? `<span class="btn" data-tmettre="${i}">Mettre</span>` : ''}${i <= p.tenues.length ? `<span class="btn" data-tenr="${i}">${t ? 'Remplacer' : 'Garder la tenue du moment'}</span>` : ''}${t ? `<span class="btn" data-tsup="${i}">×</span>` : ''}</div>`; }).join('')}
+      ${(() => { const px = prixPlaceTenue(p.placesTenue); return px == null ? '' : `<div style="display:flex;gap:8px;align-items:center;margin-top:6px"><span class="btn ${this.world.solde(PEPITE) >= px ? '' : 'off'}" data-tplace>Une place de plus : ${px} Pépites</span></div>`; })()}
+      <div class="hint">Une tenue garde tes apparats posés et tes couleurs.</div></div>`;
     w.innerHTML = `${this.title('Garde-robe', 'inventory')}<div class="in garde"><div class="apercu">${g ? this.canevas('', objetsPortes(p.equipment, p.apparat), g) : ''}</div>${corps}</div>`;
     if (!f || !g) return;
     const apercu = () => { const cv = w.querySelector<HTMLCanvasElement>('.apercu canvas'); if (cv) cv.dataset.app = JSON.stringify(g); };
@@ -2718,6 +2743,14 @@ export class Windows {
     w.querySelectorAll<HTMLElement>('[data-gpal]').forEach(e => e.addEventListener('click', () => { g.couleurs = [g.couleurs[0], ...PALETTES[+e.dataset.gpal!].c]; this.render(); }));
     w.querySelectorAll<HTMLElement>('[data-gteint]').forEach(e => e.addEventListener('click', () => { const t = TEINTURES.teintures.find(x => x.id === e.dataset.gteint); if (t) { g.couleurs = [g.couleurs[0], ...t.c]; this.render(); } }));
     w.querySelector('[data-gofficiel]')?.addEventListener('click', () => { g.couleurs = [...f.couleurs]; this.render(); });
+    w.querySelectorAll<HTMLElement>('[data-tenr]').forEach(e => e.addEventListener('click', () => { const i = +e.dataset.tenr!;
+      this.world.enregistrerTenue(i, p.tenues[i]?.nom ?? `Tenue ${i + 1}`, [...g.couleurs]); this.render(); }));
+    w.querySelectorAll<HTMLElement>('[data-tmettre]').forEach(e => e.addEventListener('click', () => {
+      const r = this.world.mettreTenue(+e.dataset.tmettre!); if (!r) return;
+      if (r.couleurs) { g.couleurs = [...r.couleurs]; const a = apparenceValide(f, g); if (this.perso) this.perso.app = a; this.onApparence(a); }
+      this.render(); }));
+    w.querySelectorAll<HTMLElement>('[data-tsup]').forEach(e => e.addEventListener('click', () => { this.world.supprimerTenue(+e.dataset.tsup!); this.render(); }));
+    w.querySelector('[data-tplace]')?.addEventListener('click', () => { this.world.acheterPlaceTenue(); this.render(); });
     w.querySelector('[data-genr]')?.addEventListener('click', () => {
       const a = apparenceValide(f, g);
       if (this.perso) this.perso.app = a;

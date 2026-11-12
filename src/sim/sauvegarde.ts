@@ -1,4 +1,5 @@
 import type { EquipSlot, Item, Stat } from './items';
+import { placesTenues, SORTES_STYLE, STYLE, type StyleChoisi, type Tenue } from './style';
 import { BENEDICTION, BENEDICTIONS, CONFORT, type Benediction } from './magasin';
 import type { EtatQuetes } from './quests';
 import type { RetourHavreSac } from './events';
@@ -54,6 +55,7 @@ export interface EtatJoueur {
   codexOuvert?: boolean;
   ames?: string[];
   menagerie?: string[];
+  style?: StyleChoisi; tenues?: Tenue[]; placesTenue?: number;
   familierOffert?: boolean;
   prereglages?: (Prereglage | null)[];
   /** Jour de la dernière offrande à l'Almanax (15C). */
@@ -76,7 +78,7 @@ export function exporterJoueur(w: World): EtatJoueur {
     base: p.base, bag: p.bag, equipment: p.equipment, resources: p.resources, metiers: p.metiers, recetteSuivie: p.recetteSuivie,
     bar: p.bar, variants: p.variants, learned: [...p.learned],
     x: p.x, y: p.y, retour: w.pointDeRetour, quetes: w.quetes?.exporter(), zone: w.opts.zone,
-    apparats: p.apparats, apparat: p.apparat, codex: p.codex, codexOuvert: p.codexOuvert, ames: p.ames, menagerie: p.menagerie, familierOffert: p.familierOffert, prereglages: p.prereglages, almanaxJour: p.almanaxJour, magasin: p.magasin, sacEnPlus: p.sacEnPlus, benediction: p.benediction, dofus: p.dofus, trophees: p.trophees, dofusPortes: p.dofusPortes,
+    apparats: p.apparats, apparat: p.apparat, codex: p.codex, codexOuvert: p.codexOuvert, ames: p.ames, menagerie: p.menagerie, familierOffert: p.familierOffert, style: p.style, tenues: p.tenues, placesTenue: p.placesTenue, prereglages: p.prereglages, almanaxJour: p.almanaxJour, magasin: p.magasin, sacEnPlus: p.sacEnPlus, benediction: p.benediction, dofus: p.dofus, trophees: p.trophees, dofusPortes: p.dofusPortes,
     zaaps: p.zaaps, zonesVues: p.zonesVues, explore: p.explore, drapeaux: p.drapeaux, tombe: p.tombe, lieuxVus: p.lieuxVus, cleDonjon: p.cleDonjon, guerre: p.guerre, vivant: p.vivant, commandeFM: p.commandeFM, ...(w.retour ? { havreSac: w.retour } : {}),
     ...(p.cls.coffre ? { coffreEnu: exporterCoffre(p) } : {}),
   });
@@ -116,6 +118,11 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
   p.ames = Array.isArray(s.ames) ? s.ames.filter(a => typeof a === 'string') : [];
   p.menagerie = Array.isArray(s.menagerie) ? [...new Set(s.menagerie.filter(a => typeof a === 'string'))] : [];
   p.familierOffert = !!s.familierOffert;
+  p.style = Object.fromEntries(SORTES_STYLE.filter(k => typeof s.style?.[k] === 'string').map(k => [k, s.style![k]!]));
+  p.placesTenue = Math.max(0, Math.min(STYLE.tenues.prix.length, Math.floor(Number(s.placesTenue) || 0)));
+  p.tenues = Array.isArray(s.tenues) ? s.tenues.filter(t => t && typeof t.nom === 'string' && t.apparat && typeof t.apparat === 'object').slice(0, placesTenues(p.placesTenue))
+    .map(t => ({ nom: t.nom.slice(0, 24), apparat: Object.fromEntries(Object.entries(t.apparat).filter(([k, v]) => ['chapeau', 'cape', 'bouclier', 'familier'].includes(k) && typeof v === 'string')),
+      ...(Array.isArray(t.couleurs) && t.couleurs.every(c => Number.isInteger(c)) ? { couleurs: t.couleurs.slice(0, 8) } : {}) })) : [];
   p.codexOuvert = !!s.codexOuvert || (Array.isArray(s.codex) && s.codex.length > 0);
   p.codex = Array.isArray(s.codex) ? s.codex.filter(c => typeof c?.id === 'string').map(c => ({ id: c.id, ...(typeof c.sort === 'string' ? { sort: c.sort } : {}), ...(typeof c.value === 'number' && isFinite(c.value) ? { value: c.value } : {}) })) : [];
   p.learned = new Set(s.learned ?? []);
