@@ -47,7 +47,7 @@ const MODULES: Record<string, string> = { perso: 'Cadre du perso', mini: 'Mini-c
 const MENUS: [string, string, string][] = [
   ['inventory', 'Inventaire', 'I'], ['characteristic', 'Caractéristiques', 'C'], ['job', 'Métiers', 'J'], ['spells', 'Sorts', 'S'], ['quest', 'Quêtes', ''],
   ['map', 'Carte du monde', ''], ['bestiary', 'Bestiaire', 'B'], ['success', 'Succès', 'U'], ['breach', 'Failles', ''],
-  ['home', 'Havre-Sac', 'H'], ['social', 'Social', 'P'], ['ladder', 'Classement', 'L'], ['guide', 'Guide', 'G'], ['options', 'Réglages', 'O'],
+  ['home', 'Havre-Sac', 'H'], ['social', 'Social', 'P'], ['ladder', 'Classement', 'L'], ['guide', 'Guide', 'G'], ['shop', 'Boutique', ''], ['options', 'Réglages', 'O'],
 ];
 
 const C = {

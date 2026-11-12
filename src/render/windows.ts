@@ -109,6 +109,8 @@ import { ELEMENT_COLORS } from './fx';
 import { World } from '../sim/world';
 import { COFFRE } from '../sim/coffre';
 import { Compte } from './compte';
+import { BOUTIQUE_OGRINES, PALIERS as PALIERS_ABO, apparatDuMois, enVente, prixOgrines, rangAbo, texteAvantages, vitrine, type ArticleOgrines, type Palier } from '../sim/boutiqueOgrines';
+import { feteDuJour } from '../sim/apparats';
 import { METIERS_FAB, chanceRare, prochainPalier, recettesAvec, recettesDe, sourcesDe } from '../sim/metiers';
 /** Produit d'une recette : ressource, ou équipement (métiers de fabrication, 0.3). */
 const produit = (id: string): { name: string; icon: number; soin?: number } | undefined => ITEMS.resources[id] ?? ITEMS.equipment[id];
@@ -280,6 +282,33 @@ const CSS = `
 .dw .cell.low{opacity:.5}
 .dw .cell .cad{position:absolute;right:3px;top:3px;width:16px;height:19px;filter:drop-shadow(0 1px 1px #000)}
 .dw .win.emp{width:min(760px,96vw);height:min(640px,92vh)}
+.dw .win.boutique{width:min(980px,96vw);height:min(700px,92vh)}
+.dw .bq{display:grid;grid-template-columns:200px 1fr;gap:12px;min-height:0;overflow:hidden;padding:10px 12px}
+.dw .bq .apercu{align-self:start;display:grid;justify-items:center;gap:6px;background:radial-gradient(ellipse at 50% 70%,#3d4f8a,#16182a 70%);border:1px solid #34322b;border-radius:4px;padding:8px}
+.dw .bq .apercu canvas{width:180px;height:260px}
+.dw .bq .droite{display:grid;grid-template-rows:auto auto minmax(0,1fr);gap:8px;min-height:0}
+.dw .bq .haut{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.dw .bq .og{display:flex;align-items:center;gap:6px;font:20px Rowdies,sans-serif;color:#7fe3f2}.dw .bq .og img{width:28px;height:28px}
+.dw .bq .ogp{display:inline-flex;align-items:center;gap:3px}.dw .bq .ogp img{width:16px;height:16px}
+.dw .bq .tabs{display:flex;gap:4px;flex-wrap:wrap}
+.dw .bq .tab{cursor:pointer;padding:5px 12px;border-radius:3px;background:#2e2d28;border:1px solid #45433b;font-weight:bold;color:#d8d2bf;font-size:12px}
+.dw .bq .tab.on{background:linear-gradient(#2a7a9a,#17526e);border-color:#7fe3f2;color:#fff}
+.dw .bq .corps{overflow:auto;min-height:0;padding-right:4px;display:grid;gap:10px;align-content:start}
+.dw .bq .grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.dw .bq .carte{display:grid;justify-items:center;gap:4px;padding:8px 6px;border:1px solid #3d3b33;border-top:3px solid var(--r,#3d3b33);border-radius:6px;background:#1a1916;text-align:center;cursor:default}
+.dw .bq .carte:hover{background:#22211c}.dw .bq .carte .ics{display:flex;gap:2px}.dw .bq .carte .ic{width:44px;height:44px}
+.dw .bq .carte b{font-size:12px;line-height:1.2}.dw .bq .carte small{color:#a8a290;font-size:11px}
+.dw .bq .carte .btn{font-size:12px;padding:3px 10px}.dw .bq .carte .btn.conf{color:#ffd77a}.dw .bq .carte .btn.off{opacity:.55}
+.dw .bq .carte .a{color:#b9e54b;font-size:11px}
+.dw .bq .ent{font:600 11px Lexend,sans-serif;color:#7fe3f2;text-transform:uppercase;letter-spacing:.06em}
+.dw .bq .promo{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:12px;border-radius:6px;background:linear-gradient(90deg,#1f3a4a,#1a1916);border:1px solid #2a7a9a}
+.dw .bq .promo .ics .ic{width:56px;height:56px}.dw .bq .promo s{color:#a8a290}.dw .bq .promo .r{color:#b9e54b;font-weight:bold}
+.dw .bq .msg{color:#ffd77a;font-size:12px}.dw .bq .hors{padding:10px;border:1px dashed #5a5040;border-radius:6px;color:#c9bfa8;font-size:12px}
+.dw .bq .abos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.dw .bq .abo{display:grid;gap:6px;align-content:start;padding:10px;border:1px solid #3d3b33;border-top:4px solid var(--c);border-radius:6px;background:#1a1916}
+.dw .bq .abo.on{box-shadow:0 0 0 1px var(--c) inset}.dw .bq .abo h3{margin:0;font:18px Rowdies,sans-serif;color:var(--c)}
+.dw .bq .abo ul{margin:0;padding-left:16px;font-size:12px;color:#d8d2bf;display:grid;gap:3px}
+.dw .bq .filtre{display:flex;gap:8px;align-items:center;font-size:12px}.dw .bq .filtre input[type=search]{flex:1;background:#15130f;border:1px solid #5a5040;color:#f4efe0;padding:4px 8px}
 .dw .prer{position:absolute;top:30px;left:0;right:0;z-index:2;display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;font-size:12px;color:#c9c2ad;text-shadow:0 1px 2px #000}.dw .prer .btn{min-width:30px;padding:3px 8px;text-align:center}.dw .prer .btn.vide{opacity:.55}.dw .prer small{color:#d6cfb8;flex-basis:100%;text-align:center}
 .dw .win.coffre{width:min(760px,96vw);height:min(680px,92vh)}
 /* Zaap (maquette « Zaap : » 5A+5D) : la vraie fenêtre de Dofus 3 (Territoire / Région / Coordonnées / Niveau), groupée par zone */
@@ -758,7 +787,7 @@ const CSS = `
 .dw .ttl b{font-weight:700}
 `;
 
-type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap' | 'bestiaire' | 'forge' | 'coffre' | 'almanax' | 'dofus' | 'menu' | 'social' | 'ladder' | 'tresor';
+type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap' | 'bestiaire' | 'forge' | 'coffre' | 'almanax' | 'dofus' | 'menu' | 'social' | 'ladder' | 'tresor' | 'boutique';
 
 /** Fenêtres façon Dofus 3 : « Inventaire » (le perso sur son socle, ses emplacements autour, le sac à onglets)
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
@@ -866,6 +895,95 @@ export class Windows {
     if (signatureTresor(this.world) !== this.tresorSig) this.render();
   }
   /** Fenêtre du coffre au trésor de l'Enutrof (src/render/tresorVue.ts). */
+  // --- Boutique Ogrines (« Apparats : » 9A+9B+9C+9E+9G 13A 14A+14B+14C 15A 16A+16D 17) -------------------------------
+  private renderBoutique() {
+    const w = this.win!, W = this.world, p = W.players[0], B = Compte.boutique, enLigne = Compte.enLigne && !!B, A = BOUTIQUE_OGRINES.articles;
+    const jour = W.opts.aujourdhui ?? '', vit = vitrine(jour), fete = feteDuJour(jour), e = escB, bq = this.bq;
+    const og = (n: number) => `<span class="ogp">${n.toLocaleString('fr-FR')}<img src="assets/ui/ogrine.png" alt="Ogrines"></span>`;
+    const aMoi = (id: string) => { const a = A[id]; if (!a) return false; if (a.cat === 'service') return false; if (a.style) { const [so, sid] = a.style.split(':'); return W.aLeStyle(so as SorteStyle, sid); } return !!B?.achats.includes(id) || (a.apparats ?? []).every(x => p.apparats.includes(x)); };
+    const nomArt = (id: string) => { const a = A[id]; if (a.nom) return a.nom; if (a.service) return BOUTIQUE_OGRINES.services[a.service].nom; if (a.style) { const [so, sid] = a.style.split(':'); return STYLE[so as SorteStyle].find(d => d.id === sid)?.nom ?? sid; } return APPARATS.objets[a.apparats![0]]?.name ?? id; };
+    const sousTitre: Record<string, string> = { chapeau: 'Coiffe', cape: 'Cape', familier: 'Familier d\'apparat', costume: 'Costume complet', service: 'Service', style: 'Style' };
+    const icones = (a: ArticleOgrines) => a.apparats ? a.apparats.map(apparatHtml).join('') : a.style ? (() => { const [so, sid] = a.style!.split(':'), d = STYLE[so as SorteStyle].find(x => x.id === sid);
+      return so === 'ornements' ? `<b style="color:${d?.couleur};font-size:18px">${e(nomOrne('', sid).trim())}</b>` : `<span style="display:inline-block;width:44px;height:22px;border-radius:50%;background:radial-gradient(${d?.c2}, ${d?.c} 55%, transparent 72%);box-shadow:0 0 10px ${d?.c}"></span>`; })()
+      : '<img src="assets/ui/inv/tab_consumables.png" alt="" style="width:40px;height:40px">';
+    const bouton = (id: string) => {
+      const prix = prixOgrines(id, jour);
+      if (aMoi(id)) return '<span class="a">Sur ton compte</span>';
+      if (prix == null) return `<small>Pendant ${A[id].fete ? e(A[id].fete!) : 'sa fête'}</small>`;
+      const conf = bq.confirme === id, assez = (B?.solde ?? 0) >= prix;
+      return `<span class="btn ${conf ? 'conf' : ''} ${enLigne && assez ? '' : 'off'}" data-bqa="${id}">${conf ? 'Confirmer ' : ''}${og(prix)}</span>`;
+    };
+    const carte = (id: string) => { const a = A[id], r = a.apparats?.length === 1 ? rareteApparat(a.apparats[0]) : a.cat === 'costume' ? 'legendaire' : 'rare';
+      const prix = prixOgrines(id, jour), promo = vit.promo === id && prix != null && prix < a.prix;
+      return `<div class="carte" data-bqe="${id}" style="--r:${RARITY_COLORS[r as Rarity] ?? '#3d3b33'}"><div class="ics">${icones(a)}</div><b>${e(nomArt(id))}</b><small>${sousTitre[a.cat] ?? ''}${promo ? ` · <s>${a.prix}</s> -${Math.round(BOUTIQUE_OGRINES.semaine.promo * 100)} %` : ''}</small>${bouton(id)}</div>`; };
+    const ONGLETS: [string, string][] = [['accueil', 'Accueil'], ['chapeau', 'Coiffes'], ['cape', 'Capes'], ['familier', 'Familiers'], ['costume', 'Costumes'], ['style', 'Style'], ['service', 'Services'], ['abonnements', 'Abonnements']];
+    const hors = enLigne ? '' : `<div class="hors">La boutique Ogrines est sur ton compte Discord : connecte-toi à l'accueil et passe en mode « En ligne ». Les Ogrines ne s'achètent pas : elles viennent des codes cadeaux (Options › Compte) et des événements du Discord.</div>`;
+    const abo = B?.abonnement && B.abonnement.fin > Date.now() ? B.abonnement : null;
+    const finAbo = abo ? new Date(abo.fin).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }) : '';
+    let corps = '';
+    if (bq.onglet === 'accueil') {
+      const pr = vit.promo, ap = A[pr], prix = prixOgrines(pr, jour) ?? ap.prix;
+      const fetes = fete ? Object.keys(A).filter(id => A[id].fete === fete) : [];
+      corps = `${hors}<div class="ent">Promotion de la semaine</div>
+        <div class="promo" data-bqe="${pr}"><div class="ics">${icones(ap)}</div><div><b>${e(nomArt(pr))}</b><div><s>${og(ap.prix)}</s> <span class="r">-${Math.round(BOUTIQUE_OGRINES.semaine.promo * 100)} %</span> ${og(prix)}</div><small class="hint">${sousTitre[ap.cat]}, jusqu'à lundi</small></div>${bouton(pr)}</div>
+        <div class="ent">Mises en avant</div><div class="grille">${vit.avant.slice(1).map(carte).join('')}</div>
+        ${fetes.length ? `<div class="ent">Fête en cours : en vente jusqu'à la fin de la fête</div><div class="grille">${fetes.map(carte).join('')}</div>` : ''}
+        <div class="ent">Abonnement</div><div class="hint">${abo ? `<b style="color:${BOUTIQUE_OGRINES.abonnement.paliers[abo.palier].couleur}">${BOUTIQUE_OGRINES.abonnement.paliers[abo.palier].nom}</b> jusqu'au ${finAbo}.` : 'Trois paliers en Ogrines pour 30 jours : XP, butin, confort et style.'} <span class="lien" data-bqo="abonnements">Voir les abonnements</span></div>`;
+    } else if (bq.onglet === 'abonnements') {
+      const P = BOUTIQUE_OGRINES.abonnement, ra = rangAbo(abo?.palier), mois = jour.slice(0, 7), dm = apparatDuMois(mois), dmPris = !!B?.apparats.includes(dm);
+      const col = (k: Palier) => { const d = P.paliers[k], r = rangAbo(k), conf = bq.confirme === `abo:${k}`;
+        const action = !enLigne ? '' : r < ra ? '<small class="hint">Après ton abonnement en cours</small>'
+          : `<span class="btn ${conf ? 'conf' : ''} ${(B?.solde ?? 0) >= d.prix || r > ra ? '' : 'off'}" data-bqab="${k}">${conf ? 'Confirmer · ' : ''}${r === ra ? 'Prolonger 30 jours' : ra ? `Passer à ${d.nom}` : 'S\'abonner 30 jours'} ${og(d.prix)}</span>`;
+        return `<div class="abo ${abo?.palier === k ? 'on' : ''}" style="--c:${d.couleur}"><h3>${d.nom}</h3><div>${og(d.prix)} <small class="hint">/ 30 jours</small></div><ul>${texteAvantages(k).map(t => `<li>${e(t)}</li>`).join('')}</ul>${abo?.palier === k ? `<small class="a">En cours jusqu'au ${finAbo}</small>` : ''}${action}</div>`; };
+      corps = `${hors}<div class="hint">Chaque palier donne tout ce du dessous. Le jeu reste entier et gratuit sans abonnement ; les Ogrines ne s'achètent jamais avec de l'argent. Passer à un palier plus haut reprend les jours restants.</div>
+        <div class="abos">${PALIERS_ABO.map(col).join('')}</div>
+        ${enLigne && !B?.essai && !abo ? `<div class="promo"><div class="ics"><img src="assets/ui/ogrine.png" alt="" style="width:48px"></div><div><b>${P.essai.jours} jours offerts</b><div class="hint">L'abonnement ${P.paliers[P.essai.palier].nom}, une fois par compte, pour essayer.</div></div><span class="btn" data-bqessai>Essayer</span></div>` : ''}
+        ${dm ? `<div class="ent">Apparat du mois (Héros et Légende)</div><div class="promo" data-bqe="m${dm}"><div class="ics">${apparatHtml(dm)}</div><div><b>${e(APPARATS.objets[dm]?.name ?? dm)}</b><div class="hint">Exclusif, gardé pour toujours. Un nouveau chaque mois.</div></div>${dmPris ? '<span class="a">Sur ton compte</span>' : ra >= 2 ? '<span class="btn" data-bqmois>Le prendre</span>' : '<small class="hint">Héros ou Légende</small>'}</div>` : ''}`;
+    } else {
+      const q = bq.rech.trim().toLowerCase();
+      const l = Object.keys(A).filter(id => A[id].cat === bq.onglet && enVente(id, jour) && (!q || nomArt(id).toLowerCase().includes(q)) && !(bq.cacher && aMoi(id)));
+      const services = bq.onglet === 'service' ? `<div class="hint">Tu as : ${Object.entries(BOUTIQUE_OGRINES.services).map(([k, d]) => `${e(d.nom)} × ${B?.services[k] ?? 0}`).join(' · ')}. Elles s'utilisent à l'accueil, dans Mes personnages (persos en ligne).</div>` : '';
+      corps = `${hors}${services}<div class="filtre"><input type="search" placeholder="Rechercher" value="${e(bq.rech)}" data-bqr><label><input type="checkbox" data-bqc ${bq.cacher ? 'checked' : ''}> Masquer ce que j'ai</label><span class="hint">${l.length} article${l.length > 1 ? 's' : ''}</span></div>
+        <div class="grille">${l.slice(0, bq.max).map(carte).join('')}</div>${l.length > bq.max ? '<div style="text-align:center"><span class="btn" data-bqplus>Afficher plus</span></div>' : ''}`;
+    }
+    const essai = this.essaiApparat && APPARATS.objets[this.essaiApparat] ? this.essaiApparat : null;
+    const objets = objetsPortes(p.equipment, { ...p.apparat, ...(essai ? { [APPARATS.objets[essai].slot]: essai } : {}) });
+    w.innerHTML = `${this.title('Boutique', 'shop')}<div class="bq"><div class="apercu">${this.perso ? this.canevas('', objets) : ''}<div class="hint" style="text-align:center">${essai ? e(APPARATS.objets[essai].name) : 'Survole un article pour l\'essayer'}</div></div>
+      <div class="droite"><div class="haut"><span class="og"><img src="assets/ui/ogrine.png" alt="">${enLigne ? (B?.solde ?? 0).toLocaleString('fr-FR') : '—'} <small class="hint" style="font:12px Lexend,sans-serif">Ogrines</small></span>${bq.msg ? `<span class="msg">${e(bq.msg)}</span>` : ''}</div>
+      <div class="tabs">${ONGLETS.map(([k, n]) => `<span class="tab ${bq.onglet === k ? 'on' : ''}" data-bqo="${k}">${n}</span>`).join('')}</div>
+      <div class="corps">${corps}</div></div></div>`;
+    const re = () => this.render();
+    w.querySelectorAll<HTMLElement>('[data-bqo]').forEach(x => x.addEventListener('click', () => { bq.onglet = x.dataset.bqo!; bq.max = 60; bq.confirme = ''; bq.msg = ''; re(); }));
+    // essayage : survoler un article pose son apparat (le premier pour un costume) sur le perso
+    w.querySelectorAll<HTMLElement>('[data-bqe]').forEach(x => x.addEventListener('pointerenter', () => {
+      const k = x.dataset.bqe!, id = k.startsWith('m') ? k.slice(1) : A[k]?.apparats?.[0];
+      if (!id || !APPARATS.objets[id] || this.essaiApparat === id) return;
+      this.essaiApparat = id;
+      const cv = w.querySelector<HTMLCanvasElement>('.apercu canvas'), d = APPARATS.objets[id], tenue = { ...p.apparat } as Record<string, string>;
+      for (const a of (A[k]?.apparats ?? [id])) { const s = APPARATS.objets[a]?.slot; if (s) tenue[s] = a; }
+      if (cv) cv.dataset.objets = objetsPortes(p.equipment, tenue as typeof p.apparat).join(',');
+      const h = w.querySelector<HTMLElement>('.apercu .hint'); if (h) h.textContent = A[k]?.nom ?? d.name;
+    }));
+    const fin = (r: { erreur: string } | { apparat?: string }, ok: string) => { bq.confirme = ''; bq.msg = 'erreur' in r ? r.erreur : ok; if (!('erreur' in r)) Son.jouer(MANIFESTE.ui.ok, 'interface'); re(); };
+    w.querySelectorAll<HTMLElement>('[data-bqa]').forEach(x => x.addEventListener('click', async () => {
+      const id = x.dataset.bqa!;
+      if (!enLigne) return;
+      if (bq.confirme !== id) { bq.confirme = id; re(); return; }
+      fin(await Compte.boutiqueAppel('acheter', { article: id, prix: prixOgrines(id, jour) }), `${nomArt(id)} : sur ton compte, pour tous tes persos.`);
+    }));
+    w.querySelectorAll<HTMLElement>('[data-bqab]').forEach(x => x.addEventListener('click', async () => {
+      const k = x.dataset.bqab as Palier;
+      if (bq.confirme !== `abo:${k}`) { bq.confirme = `abo:${k}`; re(); return; }
+      fin(await Compte.boutiqueAppel('abonnement', { palier: k }), `Abonnement ${BOUTIQUE_OGRINES.abonnement.paliers[k].nom} actif.`);
+    }));
+    w.querySelector('[data-bqessai]')?.addEventListener('click', async () => fin(await Compte.boutiqueAppel('essai'), 'Essai lancé : profite bien !'));
+    w.querySelector('[data-bqmois]')?.addEventListener('click', async () => fin(await Compte.boutiqueAppel('mois'), 'Apparat du mois ajouté à ta collection.'));
+    w.querySelector('[data-bqplus]')?.addEventListener('click', () => { bq.max += 60; re(); });
+    w.querySelector('[data-bqc]')?.addEventListener('change', ev => { bq.cacher = (ev.target as HTMLInputElement).checked; re(); });
+    const ch = w.querySelector<HTMLInputElement>('[data-bqr]');
+    ch?.addEventListener('keydown', ev => ev.stopPropagation());
+    ch?.addEventListener('input', () => { bq.rech = ch.value; bq.max = 60; re(); const n = this.win?.querySelector<HTMLInputElement>('[data-bqr]'); n?.focus(); n?.setSelectionRange(n.value.length, n.value.length); });
+  }
   private renderTresor() {
     const w = this.win!, wo = this.world;
     if (!wo.player.cls.coffre) { w.innerHTML = this.title('Coffre au trésor', 'inventory'); return; }
@@ -948,7 +1066,7 @@ export class Windows {
     else if (this.mode === 'car') this.renderCarac(); else if (this.mode === 'job') this.renderJob(); else if (this.mode === 'art') this.renderArt(); else if (this.mode === 'opt') this.renderOpt();
     else if (this.mode === 'sorts') this.renderSorts(); else if (this.mode === 'quetes') this.renderQuetes();
     else if (this.mode === 'succes') this.renderSucces(); else if (this.mode === 'emp') this.renderEmp(); else if (this.mode === 'zaap') this.renderZaap();
-    else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else if (this.mode === 'forge') this.renderForge(); else if (this.mode === 'coffre') this.renderCoffre(); else if (this.mode === 'almanax') this.renderAlmanax(); else if (this.mode === 'dofus') this.renderDofus(); else if (this.mode === 'menu') this.renderMenu(); else if (this.mode === 'social') this.renderSocial(); else if (this.mode === 'ladder') this.renderLadder(); else if (this.mode === 'tresor') this.renderTresor(); else this.renderInv();
+    else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else if (this.mode === 'forge') this.renderForge(); else if (this.mode === 'coffre') this.renderCoffre(); else if (this.mode === 'almanax') this.renderAlmanax(); else if (this.mode === 'dofus') this.renderDofus(); else if (this.mode === 'menu') this.renderMenu(); else if (this.mode === 'social') this.renderSocial(); else if (this.mode === 'ladder') this.renderLadder(); else if (this.mode === 'tresor') this.renderTresor(); else if (this.mode === 'boutique') this.renderBoutique(); else this.renderInv();
     this.win!.querySelector('[data-close]')!.addEventListener('click', () => this.close());
     this.imageVivant = -1; this.majPerso(this.tVivant);   // perso dessiné dès cette image (pas un canevas vide jusqu'à la suivante)
   }
@@ -989,7 +1107,7 @@ export class Windows {
               <select data-kind>${KINDS.map(([k, v]) => `<option value="${k}" ${this.kind === k ? 'selected' : ''}>${v}</option>`).join('')}</select>
             </div>
             <div class="grid">${html}</div>
-            <div class="foot"><span>Visible(s) : <b>${n}</b> · sac <b>${p.bag.length} / ${p.tailleSac}</b><br><span class="hint">Clic droit : équiper / retirer · Ctrl + clic : cadenas${p.equipment.familier ? ' · Alt + clic : nourrir le familier' : ''}${p.cls.coffre ? ' · Maj + clic : donner un Rare ou un Épique au coffre' : ''}</span></span>
+            <div class="foot"><span>Visible(s) : <b>${n}</b> · sac <b>${p.bag.length} / ${p.tailleSac}</b><br><span class="hint">Clic droit : équiper / retirer · Ctrl + clic : cadenas${p.equipment.familier ? ' · Alt + clic : nourrir le familier' : ''}${p.cls.coffre ? ' · Maj + clic : donner un Rare ou un Épique au coffre' : ''}${rangAbo(p.abo) ? ' · Ctrl + Maj + clic : défaire (abonnement)' : ''}</span></span>
               <span class="k">${p.kamas.toLocaleString('fr-FR')} <img src="${INV}/kamas.png" alt="" title="Kamas"></span></div>
             <div class="foot"><span>Butin affiché au sol</span>
               <select data-filter style="width:auto">${['Tout', 'Rare et plus', 'Épique et plus'].map((n, i) => `<option value="${i}" ${p.lootFilter === i ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
@@ -1058,6 +1176,7 @@ export class Windows {
       e.addEventListener('dblclick', equip);
       e.addEventListener('click', ev => {
         if (ev.altKey) { ev.preventDefault(); if (this.world.nourrirFamilier({ uid })) this.changed(); else this.flash(e); }
+        else if (ev.shiftKey && (ev.ctrlKey || ev.metaKey)) { ev.preventDefault(); if (rangAbo(p.abo) && this.world.briserObjet(uid)) this.changed(); else this.flash(e); }   // « Apparats : » 17C : défaire partout
         else if (ev.shiftKey && p.cls.coffre) { ev.preventDefault(); if (this.world.donnerAuCoffre(uid)) this.changed(); else this.flash(e); }   // Enutrof 15C
         else if (ev.ctrlKey || ev.metaKey) { this.world.cadenas(uid); this.changed(); } });
     });
@@ -1603,6 +1722,8 @@ export class Windows {
   private optRecherche = '';
   /** Options › Compte : dernier message du code cadeau. */
   private codeMsg = '';
+  /** Boutique Ogrines (« Apparats : » 13A) : onglet, recherche, article à confirmer, message, nombre d'articles montrés. */
+  private bq = { onglet: 'accueil', rech: '', confirme: '', msg: '', max: 60, cacher: false };
   /** Guide (touche G) : rubrique affichée et recherche. */
   private guideVue = 'bienvenue';
   private guideRecherche = '';
@@ -2459,7 +2580,7 @@ export class Windows {
       const ic = iconHtml(ITEMS.resources[PEPITE]?.icon ?? 0), nomP = p.nom || 'Ton nom';
       const pastille = (d: StyleDef, sorte: SorteStyle) => sorte === 'ornements' ? `<span style="color:${d.couleur};font-weight:700;min-width:48px">${escB(nomOrne('', d.id).trim())}</span>`
         : `<span style="display:inline-block;width:44px;height:22px;border-radius:50%;background:radial-gradient(${d.c2}, ${d.c} 55%, transparent 72%);box-shadow:0 0 10px ${d.c}"></span>`;
-      const section = (sorte: SorteStyle, titre: string, aide: string) => `<div class="ent">${titre} <span class="hint">· ${aide}</span></div>${STYLE[sorte].map(d => {
+      const section = (sorte: SorteStyle, titre: string, aide: string) => `<div class="ent">${titre} <span class="hint">· ${aide}</span></div>${STYLE[sorte].filter(d => (!d.ogrines && !d.abo) || W.aLeStyle(sorte, d.id)).map(d => {
         const a = W.aLeStyle(sorte, d.id), porte = p.style[sorte] === d.id;
         const fin = porte ? `<span class="btn" data-sret="${sorte}">Retirer</span>` : a ? `<span class="btn" data-sporte="${sorte}|${d.id}">Porter</span>` : prix(d.prix, PEPITE, `data-sachat="${sorte}|${d.id}"`);
         const texte = sorte === 'ornements' ? `<span style="color:${d.couleur}">${escB(nomOrne(nomP, d.id))}</span>` : escB(d.texte ?? '');

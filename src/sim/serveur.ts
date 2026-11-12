@@ -6,6 +6,7 @@ export { GAME_DATA, ITEMS } from './data';
 export { NO_INPUT, type PlayerInput } from './input';
 export { COOP, Emetteur, entreeInvite, classeDe, garderUneFois } from './miroir';
 export { exporterJoueur, restaurerJoueur } from './sauvegarde';
+export { BOUTIQUE_OGRINES, apparatDuMois, prixOgrines, rangAbo } from './boutiqueOgrines';
 import QUETES_JSON from '../data/quetes.json';
 import type { QuetesData } from './quests';
 /** Quêtes et PNJ (monde ouvert tenu par le serveur, étape 4). */

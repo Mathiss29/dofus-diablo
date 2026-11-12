@@ -392,6 +392,11 @@ export class ZoneScene extends Phaser.Scene {
     this.events.once('shutdown', () => { fv.destroy(); if (this.familierView === fv) this.familierView = null; });
     if (this.perso?.etat) restaurerJoueur(this.world, this.perso.etat);
     else if (this.test?.etat) restaurerJoueur(this.world, this.test.etat);
+    // « Apparats : » 9 + 16-17 : achats Ogrines et abonnement du compte en ligne (le perso joué en profite)
+    const compte = () => { const w = this.world, b = CompteEnLigne.boutique; if (!w || this.test) return; w.reglerAbo(w.players[0], CompteEnLigne.palier); if (CompteEnLigne.enLigne && b) w.recevoirAchats(b.achats, b.apparats); };
+    compte();
+    const finCompte = CompteEnLigne.ecouter(compte);
+    this.events.once('shutdown', () => { finCompte(); });
     if (this.test?.apres) { this.cmdTest = this.test.apres; this.test.apres = undefined; }
     this.hud = new Hud(this, this.world, this.perso ?? undefined);
     // Accès de test (?test dans l'adresse) : le robot de test lit la partie et téléporte le perso. Le jeu normal n'en a pas.
@@ -497,6 +502,7 @@ export class ZoneScene extends Phaser.Scene {
       else if (name === 'Caractéristiques') this.windows!.toggle('car');
       else if (name === 'Métiers') this.windows!.toggle('job');
       else if (name === 'Réglages') this.windows!.toggle('opt');
+      else if (name === 'Boutique') this.windows!.toggle('boutique');
       else if (name === 'Guide') this.windows!.toggle('guide');
       else if (name === 'Social') this.windows!.toggle('social');
       else if (name === 'Classement') this.windows!.toggle('ladder');

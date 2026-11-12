@@ -1874,6 +1874,24 @@
               "Options",
               "En ligne"
             ]
+          },
+          {
+            "titre": "La boutique Ogrines",
+            "phrase": "Bouton Boutique dans l'interface : apparats, costumes, styles et potions, avec essayage sur ton perso.",
+            "details": "Une promotion et des mises en avant chaque semaine, les articles de fête pendant leur fête. Rien qui donne de la puissance.",
+            "icone": "kamas",
+            "etiquettes": [
+              "En ligne"
+            ]
+          },
+          {
+            "titre": "Trois abonnements en Ogrines",
+            "phrase": "Aventurier, Héros et Légende : XP, butin, kamas, familier, métiers, confort et style pour 30 jours.",
+            "details": "7 jours de Héros offerts pour essayer, et un apparat exclusif chaque mois pour Héros et Légende.",
+            "icone": "kamas",
+            "etiquettes": [
+              "En ligne"
+            ]
           }
         ],
         "Le monde": [

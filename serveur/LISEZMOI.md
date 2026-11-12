@@ -149,6 +149,11 @@ sudo systemctl restart diablofus
 Puis, sur GitHub : Actions › « Discord » › Run workflow, action `commandes` (Essai décoché) : `/code` et `/ogrines`
 apparaissent sur le serveur, visibles des admins seulement. Les réponses du robot ne sont vues que par celui qui tape.
 
+**Boutique et abonnements** (`boutique.mjs`) : le catalogue et les prix viennent de la simulation (`partie/sim.mjs`, construite
+par `construire-sim.mjs` depuis `src/sim/boutiqueOgrines.ts` et `src/data/boutique_ogrines.json`). Le serveur décide du prix
+(promotion de la semaine, articles de fête), débite les Ogrines et garde les achats, les potions, l'abonnement (30 jours,
+essai Héros de 7 jours une fois par compte) et les apparats du mois. Rien à régler sur le VPS.
+
 ## Classement (Ladder, maquette « Ladder : »)
 
 Le serveur calcule le classement une fois par minute (`classement.mjs`) depuis les persos en ligne : `GET /classement`

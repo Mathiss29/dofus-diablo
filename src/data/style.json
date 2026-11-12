@@ -1,5 +1,5 @@
 {
- "_": "Nouveaux usages des Pépites (ligne « Apparats : » 5B, Mathis 2026-11-12) : tenues enregistrées de la garde-robe, auréoles, effets de Zaap et ornements de nom. Auréoles, effets et ornements sont achetés pour tout le compte chez Tissebelle (onglet Style du Marché) ; chaque perso choisit les siens. Couleurs en hexadécimal. Inventés (pas de données officielles).",
+ "_": "Nouveaux usages des Pépites (ligne « Apparats : » 5B, Mathis 2026-11-12) : tenues enregistrées de la garde-robe, auréoles, effets de Zaap et ornements de nom. Auréoles, effets et ornements sont achetés pour tout le compte chez Tissebelle (onglet Style du Marché) ; chaque perso choisit les siens. Couleurs en hexadécimal. Inventés (pas de données officielles). « ogrines » : vendu à la boutique Ogrines ; « abo » : offert pendant l'abonnement de ce palier ou mieux.",
  "tenues": { "_": "Places de tenue : une offerte, puis ces prix (Pépites) pour chaque place de plus.", "offertes": 1, "prix": [150, 300, 500, 800] },
  "aureoles": [
   { "id": "braise", "nom": "Braise", "texte": "Un cercle de braises qui couve sous tes pieds.", "c": "#f08a2c", "c2": "#ffc04d", "prix": 300 },
@@ -7,13 +7,18 @@
   { "id": "seve", "nom": "Sève", "texte": "Une lueur verte de sous-bois.", "c": "#6fbf4a", "c2": "#c8f08a", "prix": 300 },
   { "id": "ombre", "nom": "Ombre", "texte": "Un halo violet qui avale la lumière.", "c": "#7a4ad0", "c2": "#c9a6ff", "prix": 400 },
   { "id": "or", "nom": "Or des Douze", "texte": "Un cercle doré, digne d'un champion.", "c": "#e8c46a", "c2": "#fff2c0", "prix": 600 },
-  { "id": "sang", "nom": "Sang", "texte": "Un halo rouge qui bat comme un cœur.", "c": "#c8323a", "c2": "#ff8a8a", "prix": 400 }
+  { "id": "sang", "nom": "Sang", "texte": "Un halo rouge qui bat comme un cœur.", "c": "#c8323a", "c2": "#ff8a8a", "prix": 400 },
+  {"id": "arcane", "nom": "Arcane", "texte": "Des runes bleues tournent lentement sous tes pieds.", "c": "#4a8cff", "c2": "#b8e0ff", "prix": 0, "ogrines": 500},
+  {"id": "aurore", "nom": "Aurore", "texte": "Un halo rose et or, comme un lever de soleil.", "c": "#ff7ab8", "c2": "#ffe0a0", "prix": 0, "ogrines": 500},
+  {"id": "heros", "nom": "Héros", "texte": "Le cercle violet des abonnés Héros.", "c": "#9a5cff", "c2": "#e6d0ff", "prix": 0, "abo": "heros"}
  ],
  "zaaps": [
   { "id": "flammes", "nom": "Flammes", "texte": "Tu pars et arrives dans un tourbillon de flammes.", "c": "#f08a2c", "c2": "#ffe08a", "prix": 200 },
   { "id": "feuilles", "nom": "Feuilles", "texte": "Un tourbillon de feuilles vertes.", "c": "#6fbf4a", "c2": "#d8f0a0", "prix": 200 },
   { "id": "ombres", "nom": "Ombres", "texte": "Un tourbillon d'ombre violette.", "c": "#7a4ad0", "c2": "#e0ccff", "prix": 250 },
-  { "id": "etoiles", "nom": "Étoiles", "texte": "Une pluie d'étoiles dorées.", "c": "#e8c46a", "c2": "#ffffff", "prix": 350 }
+  { "id": "etoiles", "nom": "Étoiles", "texte": "Une pluie d'étoiles dorées.", "c": "#e8c46a", "c2": "#ffffff", "prix": 350 },
+  {"id": "eclairs", "nom": "Éclairs", "texte": "Tu pars dans un claquement d'éclairs blancs.", "c": "#c8e8ff", "c2": "#ffffff", "prix": 0, "ogrines": 400},
+  {"id": "legende", "nom": "Légende", "texte": "Le tourbillon doré des abonnés Légende.", "c": "#ffb347", "c2": "#fff2c0", "prix": 0, "abo": "legende"}
  ],
  "ornements": [
   { "id": "etoile", "nom": "Étoiles", "avant": "✦ ", "apres": " ✦", "couleur": "#e8c46a", "prix": 150 },
@@ -21,6 +26,9 @@
   { "id": "fleur", "nom": "Fleur", "avant": "❀ ", "apres": " ❀", "couleur": "#f2a6d0", "prix": 150 },
   { "id": "couronne", "nom": "Couronne", "avant": "♛ ", "apres": "", "couleur": "#ffd76a", "prix": 300 },
   { "id": "givre", "nom": "Givre", "avant": "❄ ", "apres": " ❄", "couleur": "#a8dcff", "prix": 150 },
-  { "id": "crane", "nom": "Crâne", "avant": "☠ ", "apres": "", "couleur": "#d0d0d0", "prix": 200 }
+  { "id": "crane", "nom": "Crâne", "avant": "☠ ", "apres": "", "couleur": "#d0d0d0", "prix": 200 },
+  {"id": "dragon", "nom": "Dragon", "avant": "🜂 ", "apres": " 🜂", "couleur": "#ff7a4a", "prix": 0, "ogrines": 300},
+  {"id": "lune", "nom": "Lune", "avant": "☾ ", "apres": " ☽", "couleur": "#d8d0ff", "prix": 0, "ogrines": 300},
+  {"id": "aventurier", "nom": "Aventurier", "avant": "◆ ", "apres": " ◆", "couleur": "#7cc7ff", "prix": 0, "abo": "aventurier"}
  ]
 }

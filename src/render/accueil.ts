@@ -377,6 +377,8 @@ export class Accueil {
   /** « Mes personnages » : emplacement choisi, et suppression en attente de confirmation. */
   private choix = 0;
   private confirmer = -1;
+  /** « Apparats : » 9C : potion de la boutique Ogrines en cours d'utilisation (la page Création sert d'atelier). */
+  private retouche: { slot: number; sorte: 'nom' | 'apparence' } | null = null;
   private anim = 0;
   private toastT = 0;
   /** Fenêtre ouverte par-dessus la page (fiche de zone, cimetière, copies de secours). */
@@ -485,6 +487,7 @@ export class Accueil {
   destroy() { cancelAnimationFrame(this.anim); this.root.remove(); }
 
   private go(page: Page) {
+    if (page !== 'creation' && this.retouche) { this.retouche = null; Object.assign(this.crea, { nom: '', tete: 0, couleurs: null }); }
     this.page = page; this.confirmer = -1; this.crea.err = ''; this.modal = null;
     // parcours des nouveaux venus (idée C) : seulement tant qu'on n'a aucun perso
     if (nouveauVenu() && (page === 'accueil' || page === 'creation')) Parcours.noter(page);
@@ -703,11 +706,11 @@ export class Accueil {
     const pose = POSES.find(p => p[0] === s.pose)!;
     const roles = Object.entries(c.roles).slice(0, 3);
     const libre = lirePersos().findIndex(p => !p);
-    const bouton = !jouable ? plusTard(c.cle) : libre < 0 ? 'Emplacements pleins' : 'Créer et jouer';
+    const rt = this.retouche, bouton = rt ? 'Utiliser la potion' : !jouable ? plusTard(c.cle) : libre < 0 ? 'Emplacements pleins' : 'Créer et jouer';
     const app = jouable ? this.appCrea() : null, fiche = this.fiches?.[`${c.cle}_${s.sexe}`];
     return `<div class="cover" style="background-image:url(${img(DIEUX.has(c.cle) ? `dieu_${c.cle}.jpg` : 'login.jpg')})"></div>
     <div class="cover" style="background:radial-gradient(ellipse 60% 70% at 52% 55%,transparent 30%,#0d0e09d0 80%),linear-gradient(90deg,#0d0e09f0 8%,#0d0e0980 32%,transparent 50%,#0d0e0980 72%,#0d0e09f0 92%)"></div>
-    <div class="abs tiny" style="left:calc(8.4*var(--u));top:calc(1.4*var(--u));font-weight:800">Créer un personnage</div>
+    <div class="abs tiny" style="left:calc(8.4*var(--u));top:calc(1.4*var(--u));font-weight:800">${rt ? (rt.sorte === 'nom' ? 'Potion de changement de nom' : 'Potion de changement d\'apparence') : 'Créer un personnage'}</div>
     <button type="button" class="abs dbtn" style="right:calc(2*var(--u));top:calc(1*var(--u));font-size:calc(.8*var(--u));padding:calc(.35*var(--u)) calc(.9*var(--u))" data-go="accueil">Retour</button>
     <div class="abs" style="left:calc(8.4*var(--u));top:calc(4.2*var(--u));width:calc(23*var(--u))">
       <div style="display:flex;align-items:center;gap:calc(.6*var(--u));font-weight:800;font-size:calc(1.15*var(--u))"><img src="${img(`c_${c.cle}.png`)}" alt="" style="height:calc(1.9*var(--u))">${esc(c.titre)}${c.cle === DEBUTANT ? '<span class="conseilT">Conseillé pour débuter</span>' : ''}</div>
@@ -734,27 +737,27 @@ export class Accueil {
     <div class="abs card" style="right:calc(2*var(--u));top:calc(4.2*var(--u));width:calc(17.5*var(--u));padding:0 0 calc(1*var(--u));${jouable ? '' : 'opacity:.55'}">
       <div class="panelT">Ton personnage</div>
       <div style="padding:calc(.8*var(--u)) calc(1*var(--u)) 0">
-        <div style="display:flex;gap:calc(.5*var(--u))">
+        <div style="display:${rt ? 'none' : 'flex'};gap:calc(.5*var(--u))">
           <button class="tab${s.sexe === 'm' ? ' on' : ''}" type="button" data-sexe="m"><img src="${tete(c, 'm')}" alt="">Homme</button>
           <button class="tab${s.sexe === 'f' ? ' on' : ''}" type="button" data-sexe="f"><img src="${tete(c, 'f')}" alt="">Femme</button>
         </div>
         <div class="lab">Pose</div>
         <div style="display:flex;gap:calc(.3*var(--u))">${POSES.map(([k, n]) =>
           `<button class="tab${s.pose === k ? ' on' : ''}" type="button" data-pose="${k}">${n}</button>`).join('')}</div>
-        ${app && fiche ? `<div class="lab">Tête</div>
+        ${app && fiche && rt?.sorte !== 'nom' ? `<div class="lab">Tête</div>
         <div class="tetes">${fiche.tetes.map((_, i) => `<button type="button" data-tete="${i}" class="${app.tete === i ? 'on' : ''}" aria-label="Tête ${i + 1}" title="Tête ${i + 1}"
           style="background-image:url(${v(`${DOSSIER}/tetes_${c.cle}_${s.sexe}.webp`)});background-size:${fiche.tetes.length * 100}% 100%;background-position:${fiche.tetes.length > 1 ? (i / (fiche.tetes.length - 1)) * 100 : 0}% 0"></button>`).join('')}</div>
         <div class="lab" style="display:flex;justify-content:space-between;align-items:center">Couleurs<button type="button" class="mini" data-officielles style="font-size:calc(.6*var(--u))">Couleurs officielles</button></div>
         <div class="coul">${app.couleurs.map((col, i) => `<label><input type="color" data-coul="${i}" value="${hexa(col)}" style="background:${hexa(col)}" aria-label="${ZONES[i]}">${ZONES[i]}</label>`).join('')}</div>
         <div class="pals">${PALETTES.map((pl, i) => `<button type="button" data-palette="${i}">${pl.c.slice(0, 3).map(x => `<i style="background:${hexa(x)}"></i>`).join('')}${pl.nom}</button>`).join('')}</div>` : ''}
         <div class="lab">Nom du personnage</div>
-        <input class="field" data-nom maxlength="16" spellcheck="false" autocomplete="off" value="${esc(s.nom)}" placeholder="3 à 16 lettres" ${jouable ? '' : 'disabled'}>
+        <input class="field" data-nom maxlength="16" spellcheck="false" autocomplete="off" value="${esc(s.nom)}" placeholder="3 à 16 lettres" ${jouable && rt?.sorte !== 'apparence' ? '' : 'disabled'}>
         <div class="err">${esc(s.err)}</div>
-        <label class="check"><input type="checkbox" data-hc ${s.hardcore ? 'checked' : ''} ${jouable ? '' : 'disabled'}><span>Mode Hardcore <span class="hc">(mort définitive)</span></span></label>
-        <label class="check"><input type="checkbox" data-tuto ${s.tuto ? 'checked' : ''} ${jouable ? '' : 'disabled'}><span>Faire le tutoriel <span style="opacity:.7">(Temple Céleste)</span></span></label>
-        <button type="button" class="lbtn" data-creer style="display:block;width:100%;box-sizing:border-box;margin-top:calc(1*var(--u));font-size:calc(1.15*var(--u));padding:calc(.7*var(--u))" ${jouable && libre >= 0 ? '' : 'aria-disabled="true"'}>${bouton}</button>
-        ${jouable && libre < 0 ? `<div class="tiny" style="margin-top:calc(.4*var(--u))">Supprime un personnage dans « Mes personnages ».</div>` : ''}
-        ${jouable && this.onEssayer ? `<button type="button" class="dbtn" data-essayer style="display:block;width:100%;box-sizing:border-box;margin-top:calc(.6*var(--u));font-size:calc(.85*var(--u));padding:calc(.5*var(--u))">Essayer 60 secondes</button>` : ''}
+        ${rt ? '' : `<label class="check"><input type="checkbox" data-hc ${s.hardcore ? 'checked' : ''} ${jouable ? '' : 'disabled'}><span>Mode Hardcore <span class="hc">(mort définitive)</span></span></label>
+        <label class="check"><input type="checkbox" data-tuto ${s.tuto ? 'checked' : ''} ${jouable ? '' : 'disabled'}><span>Faire le tutoriel <span style="opacity:.7">(Temple Céleste)</span></span></label>`}
+        <button type="button" class="lbtn" data-creer style="display:block;width:100%;box-sizing:border-box;margin-top:calc(1*var(--u));font-size:calc(1.15*var(--u));padding:calc(.7*var(--u))" ${jouable && (libre >= 0 || rt) ? '' : 'aria-disabled="true"'}>${bouton}</button>
+        ${jouable && libre < 0 && !rt ? `<div class="tiny" style="margin-top:calc(.4*var(--u))">Supprime un personnage dans « Mes personnages ».</div>` : ''}
+        ${jouable && this.onEssayer && !rt ? `<button type="button" class="dbtn" data-essayer style="display:block;width:100%;box-sizing:border-box;margin-top:calc(.6*var(--u));font-size:calc(.85*var(--u));padding:calc(.5*var(--u))">Essayer 60 secondes</button>` : ''}
       </div>
     </div>
     <div class="abs" style="left:calc(8.4*var(--u));bottom:calc(6.4*var(--u));display:flex;gap:calc(.5*var(--u))">${FILTRES.map(f =>
@@ -814,6 +817,7 @@ export class Accueil {
       : `<div class="abs hero" data-n="24" role="img" aria-label="${esc(p.nom)}" style="left:calc(50% - 4.85*var(--u));top:calc(15.4*var(--u));width:calc(17.7*var(--u));height:calc(24*var(--u));background-image:url(${img(`${c.cle}_${p.sexe}_repos.webp`)});background-size:2400% 100%" data-src="${img(`${c.cle}_${p.sexe}_repos.webp`)}"></div>`}
       ${this.resume(p)}
       <div class="abs" style="left:calc(50% + 4*var(--u));transform:translateX(-50%);top:calc(47*var(--u));display:flex;gap:calc(1*var(--u));align-items:center">
+        ${this.potions()}
         <button type="button" class="dbtn rouge" data-suppr="${this.choix}" style="font-size:calc(.9*var(--u))">${this.confirmer === this.choix ? 'Vraiment supprimer ?' : 'Supprimer'}</button>
         <button type="button" class="lbtn" data-jouer-slot="${this.choix}" style="font-size:calc(1.5*var(--u));padding:calc(.8*var(--u)) calc(3*var(--u))">Jouer</button>
       </div>`
@@ -988,8 +992,8 @@ export class Accueil {
     on('[data-jouer]', () => { const d = dernier(); if (d != null) this.jouer(d); else this.go('creation'); });
     on('[data-continuer]', () => { const d = dernier(); if (d != null) this.jouer(d); });
     // création
-    on('[data-cls]', e => { if (this.crea.cle !== e.dataset.cls) { this.crea.tete = 0; this.crea.couleurs = null; } this.crea.cle = e.dataset.cls!; this.crea.err = ''; this.render(); });
-    on('[data-sexe]', e => { if (this.crea.sexe !== e.dataset.sexe) { this.crea.tete = 0; this.crea.couleurs = null; } this.crea.sexe = e.dataset.sexe as 'm' | 'f'; this.render(); });
+    on('[data-cls]', e => { if (this.retouche) return; if (this.crea.cle !== e.dataset.cls) { this.crea.tete = 0; this.crea.couleurs = null; } this.crea.cle = e.dataset.cls!; this.crea.err = ''; this.render(); });
+    on('[data-sexe]', e => { if (this.retouche) return; if (this.crea.sexe !== e.dataset.sexe) { this.crea.tete = 0; this.crea.couleurs = null; } this.crea.sexe = e.dataset.sexe as 'm' | 'f'; this.render(); });
     // Apparence : tête (1A), couleurs libres (2A), palettes (2C) ; le perso du socle change tout de suite
     on('[data-tete]', e => { this.crea.tete = +e.dataset.tete!; this.render(); });
     on('[data-officielles]', () => { this.crea.couleurs = null; this.render(); });
@@ -1044,6 +1048,14 @@ export class Accueil {
       supprimerPerso(i); this.confirmer = -1; this.choix = Math.max(0, lirePersos().findIndex(p => p)); this.render();
     });
     on('[data-jouer-slot]', e => this.jouer(+e.dataset.jouerSlot!));
+    on('[data-potion]', e => {
+      const i = this.choix, p = lirePersos()[i], sorte = e.dataset.potion as 'nom' | 'apparence';
+      if (!p) return;
+      this.go('creation');
+      this.retouche = { slot: i, sorte };
+      Object.assign(this.crea, { cle: p.classe, sexe: p.sexe, nom: p.nom, tete: p.apparence?.tete ?? 0, couleurs: p.apparence?.couleurs ?? null, err: '' });
+      this.render();
+    });
     // compte Discord
     on('[data-discord]', () => Compte.connecter());
     on('[data-deconnexion]', () => void Compte.deconnecter());
@@ -1056,7 +1068,33 @@ export class Accueil {
     if (Compte.message) { const m = Compte.message; Compte.message = ''; setTimeout(() => this.toast(m), 50); }
   }
 
+  /** 9C : boutons des potions de la boutique Ogrines (persos en ligne). */
+  private potions(): string {
+    const n = Compte.enLigne ? Compte.boutique?.services ?? {} : {};
+    return (['nom', 'apparence'] as const).filter(k => (n[k] ?? 0) > 0).map(k => `<button type="button" class="dbtn" data-potion="${k}" style="font-size:calc(.8*var(--u))">${k === 'nom' ? 'Renommer' : 'Changer d\'apparence'} (${n[k]})</button>`).join('');
+  }
+  /** 9C : la potion sert, puis le perso change (le serveur la reprend d'abord). */
+  private async retoucher() {
+    const rt = this.retouche!, s = this.crea, l = lirePersos(), p = l[rt.slot];
+    if (!p) { this.go('persos'); return; }
+    const nom = s.nom.trim().replace(/\s+/g, ' ');
+    if (rt.sorte === 'nom') {
+      if (!nomValide(nom)) { s.err = '3 à 16 lettres (accents, tiret et espace permis).'; this.render(); return; }
+      if (l.some((q, i) => i !== rt.slot && q?.nom.toLowerCase() === nom.toLowerCase())) { s.err = 'Tu as déjà un personnage de ce nom.'; this.render(); return; }
+      if (nom === p.nom) { s.err = 'Choisis un autre nom.'; this.render(); return; }
+    }
+    const r = await Compte.boutiqueAppel('service', { service: rt.sorte });
+    if ('erreur' in r) { s.err = r.erreur; this.render(); return; }
+    if (rt.sorte === 'nom') p.nom = nom;
+    else { const app = this.appCrea(); if (app) p.apparence = app; }
+    p.maj = Date.now();
+    sauverPerso(rt.slot, p);
+    this.toast(rt.sorte === 'nom' ? `Ton perso s'appelle maintenant ${nom}` : 'Nouvelle apparence enregistrée');
+    this.go('persos');
+  }
+
   private creer() {
+    if (this.retouche) { void this.retoucher(); return; }
     const s = this.crea, c = classe(s.cle);
     if (!JOUABLES.has(c.cle)) return;
     const libre = lirePersos().findIndex(p => !p);

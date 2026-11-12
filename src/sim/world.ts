@@ -32,6 +32,7 @@ import { ALMANAX, jourAlmanax, type JourAlmanax } from './almanax';
 import { COFFRE, coffreVide, type Coffre } from './coffre';
 import { FAMILIERS_SOURCES } from './menagerie';
 import { placesTenues, prixPlaceTenue, styleDef, type SorteStyle } from './style';
+import { avantage, BOUTIQUE_OGRINES, rangAbo, type Palier } from './boutiqueOgrines';
 import { themeChoisi, themesEnJeu, themesPossedes, zoneAvecTheme, type Teintures, type ThemesHavreSac } from './havresac';
 /** Archimonstres (0.3, 15B) : chance qu'un monstre d'un groupe soit son archimonstre ; pierres d'âme officielles (vide, pleine). */
 export const ARCHI = { chance: 1 / 150, pierre: '9686', pleine: '10418',
@@ -796,6 +797,11 @@ export class World {
     const p = this.player, r = p.resources[po.cle] ?? 0;
     if (this.cleValable(po.nom)) return true;   // 14A : clé encore valable, rien n'est repris
     if (this.bonusDuWeekEnd('cles')) return true;   // 9B : Trousseau de clefs illimité
+    if (r <= 0 && this.aboDuJour().cles < avantage(p.abo, 'cles')) {   // « Apparats : » 17J : une clé offerte par jour
+      p.aboJour.cles++;
+      this.emit({ k: 'status', x: p.x, y: p.y - 60, text: 'Clé offerte par ton abonnement', color: '#c28bff' });
+      return true;
+    }
     if (r <= 0) {
       this.emit({ k: 'status', x: p.x, y: p.y - 60, text: `Il faut une ${this.opts.items?.resources[po.cle]?.name ?? 'clé'}`, color: '#ff9a5a' });
       this.emit({ k: 'cleManquante', id: po.cle });
@@ -1005,6 +1011,11 @@ export class World {
     const niveau = M[boss].level ?? this.zone.level;
     const b = tirerButin(this.rng, this.contexteButin(boss, 'boss', niveau), () => this.nextId++);
     b.kamas += 20 * niveau;
+    // « Apparats : » 17J : Légende, un coffre de plus (un second tirage du boss dans le même coffre)
+    for (let i = 0; i < avantage(this.player.abo, 'coffreDonjon'); i++) {
+      const c = tirerButin(this.rng, this.contexteButin(boss, 'boss', niveau), () => this.nextId++);
+      b.ressources.push(...c.ressources); b.objets.push(...c.objets); b.kamas += c.kamas + 20 * niveau;
+    }
     return b;
   }
   /** Multi : le butin du coffre d'un joueur (commeJoueur), que lui seul voit et ramasse. */
@@ -1945,9 +1956,9 @@ export class World {
     const proches = this.players.filter(q => q !== p && !q.dead && Math.abs(q.x - m.x) + Math.abs(q.y - m.y) <= World.SOMMEIL);
     const base = (m.def.xp ?? Math.round(m.def.hp / 5)) * this.bonusMassacre() * alm * (1 + World.XP_PAR_ALLIE * proches.length);
     const nm = m.def.level ?? this.monsterLevel(m);
-    const xp = p.gainXp(Math.round(base * World.ecartXp(p.level, nm)), this);
+    const xp = p.gainXp(Math.round(base * World.ecartXp(p.level, nm) * (1 + avantage(p.abo, 'xp'))), this);   // « Apparats : » 17E
     if (xp > 0) this.emit({ k: 'xp', x: m.x, y: m.y, z: m.radius * 2 + 30, n: xp });
-    for (const q of proches) { const a = this.acteur; this.acteur = q; try { q.gainXp(Math.round(base * World.ecartXp(q.level, nm)), this); } finally { this.acteur = a; } }
+    for (const q of proches) { const a = this.acteur; this.acteur = q; try { q.gainXp(Math.round(base * World.ecartXp(q.level, nm) * (1 + avantage(q.abo, 'xp'))), this); } finally { this.acteur = a; } }
     this.xpFamilier(FAMILIER_XP.chasse(this.monsterLevel(m), !!m.def.elite, !!m.def.boss));
     if (m.def.boss) { this.emit({ k: 'impact', hitstop: 0.15, shake: 0.02, big: true }); this.emit({ k: 'bossDown', monster: m.type }); }
   }
@@ -2019,7 +2030,7 @@ export class World {
   /** Ce que le calcul du butin doit savoir (src/sim/butin.ts) : sert au jeu, au Bestiaire et au simulateur de l'outil de test. */
   contexteButin(type: string, rang: Rang, niveau: number): CtxButin {
     const p = this.player;
-    return { type, rang, niveau, prospection: p.prospection + (this.almanax?.effet === 'butin' ? ALMANAX.butin : 0) + p.beni('butin') * REGLAGES_BUTIN.prospection.chances + this.bonusDuWeekEnd('butin') + this.prospectionInvasion, items: this.opts.items!, familiers: (this.familiersDe[type] ?? []).filter(id => !this.aLeFamilier(p, id)), pool: this.equipByLevel, poolSecours: this.equipSecours,
+    return { type, rang, niveau, prospection: p.prospection + (this.almanax?.effet === 'butin' ? ALMANAX.butin : 0) + p.beni('butin') * REGLAGES_BUTIN.prospection.chances + this.bonusDuWeekEnd('butin') + this.prospectionInvasion + avantage(p.abo, 'prospection'), legendaire: avantage(p.abo, 'legendaire'), items: this.opts.items!, familiers: (this.familiersDe[type] ?? []).filter(id => !this.aLeFamilier(p, id)), pool: this.equipByLevel, poolSecours: this.equipSecours,
       panoBoss: rang === 'boss' ? this.panoBoss(type) : undefined,
       metierNiveau: j => p.metierLevel(j), armeChasse: !!p.huntingWeapon, pouvoirs: rang === 'boss' ? { ...p.ctxPouvoirs, boss: type } : p.ctxPouvoirs };
   }
@@ -2175,8 +2186,9 @@ export class World {
         if (def?.familier) this.noterFamilier(d.item);
         this.ouvrirCodex(d.item);
       } else if (d.kamas) {
-        p.kamas += d.kamas;
-        this.emit({ k: 'lootKamas', n: d.kamas });
+        const n = Math.round(d.kamas * (1 + avantage(p.abo, 'kamas')));   // 17G
+        p.kamas += n;
+        this.emit({ k: 'lootKamas', n });
       }
       d.t = -1;
     }
@@ -2193,7 +2205,7 @@ export class World {
     if (Math.hypot(f.x - p.x, f.y - p.y) > 600) { f.x = p.x - 30; f.y = p.y + 10; f.cible = null; }   // porte, Zaap, Rappel : il arrive avec toi
     let cible = f.cible != null ? this.drops.find(d => d.uid === f.cible && d.t >= 0.5) : undefined;
     if (!cible && !p.dead) {
-      let best = World.FAMILIER_RAYON;
+      let best = World.FAMILIER_RAYON * avantage(p.abo, 'familierRayon');   // 17H
       for (const d of this.drops) {
         if (d.t < 0.5 || d.familier || !this.shown(d) || (d.item && p.bag.length >= p.tailleSac)) continue;
         const r = Math.hypot(d.x - p.x, d.y - p.y);
@@ -2245,7 +2257,7 @@ export class World {
   xpFamilier(n: number) {
     const p = this.player, it = p.equipment.familier, def = it && this.opts.items?.equipment[it.id]?.familier;
     if (!it || !def || n <= 0 || (it.niv ?? 1) >= FAMILIER_MAX) return;
-    it.xpF = (it.xpF ?? 0) + Math.round(n);
+    it.xpF = (it.xpF ?? 0) + Math.round(n * avantage(p.abo, 'familierXp'));   // 17H
     const avant = it.niv ?? 1, niv = familierNiveau(it.xpF, this.opts.familierXp ?? []);
     if (niv === avant) return;
     it.niv = niv; it.stats = familierStats(def, niv); p.recompute();
@@ -2308,8 +2320,8 @@ export class World {
       p.stopMove(); g.t += dt;
       // Maquette Armes 9A : le perso joue l'animation officielle du métier (faucher, couper, piocher, cueillir, pêcher)
       const geste = R.ressources[r.item]?.anim;
-      if (geste) p.setAnim(`r_${geste}`, g.t / RECOLTE.duree);
-      if (g.t < RECOLTE.duree) return;
+      if (geste) p.setAnim(`r_${geste}`, g.t / this.dureeRecolte());
+      if (g.t < this.dureeRecolte()) return;
       this.enRecolte = null;
       const def = R.ressources[r.item], lv = Math.max(1, p.metierLevel(def.metier));
       const n = quantite(this.rng, lv, def.niveau, r.dore) + (def.metier && this.almanax?.effet === 'recolte' ? ALMANAX.recolte : 0);   // 15C
@@ -2339,7 +2351,7 @@ export class World {
     p.facing = Math.atan2(r.y - p.y, r.x - p.x);
     this.enRecolte = { id: r.id, t: 0, hp: p.hp };
     if (def.anim) p.setAnim(`r_${def.anim}`, 0);
-    this.emit({ k: 'recolteDebut', id: r.id, duree: RECOLTE.duree });
+    this.emit({ k: 'recolteDebut', id: r.id, duree: this.dureeRecolte() });
   }
 
   // --- Emp, le Méryde du Recyclage (maquette 0.2, 8A+8B+8C, 9A+9B) ---------------------------------------------
@@ -2352,6 +2364,29 @@ export class World {
     this.emit({ k: 'apparence', id, rarete: rareteApparat(id) });
     return true;
   }
+  // --- Boutique Ogrines et abonnements (« Apparats : » 9-17) -------------------------------------------------------
+  /** Le compte de ce joueur a cet abonnement (ou aucun) : les styles offerts par un palier perdu sont retirés. */
+  reglerAbo(p: Player, palier: Palier | null) {
+    p.abo = palier;
+    for (const sorte of ['aureoles', 'zaaps', 'ornements'] as SorteStyle[]) {
+      const d = styleDef(sorte, p.style[sorte]);
+      if (d?.abo && rangAbo(palier) < rangAbo(d.abo as Palier)) delete p.style[sorte];
+    }
+  }
+  /** Achats Ogrines du compte (articles de boutique_ogrines.json, et apparats du mois), donnés au joueur de cet écran
+   *  sans bruit : apparats dans sa collection, styles dans le coffre du compte. Rend le nombre de nouveautés. */
+  recevoirAchats(articles: string[], apparats: string[] = []): number {
+    const p = this.players[0], A = BOUTIQUE_OGRINES.articles, c = this.coffre;
+    let n = 0;
+    const ids = [...apparats, ...articles.flatMap(a => A[a]?.apparats ?? [])];
+    for (const id of ids) if (!p.apparats.includes(id)) { p.apparats.push(id); n++; }
+    for (const a of articles) { const s = A[a]?.style; if (s && !c.styles?.includes(s)) { (c.styles ??= []).push(s); n++; } }
+    return n;
+  }
+  /** 17C + 17J : avantages déjà pris aujourd'hui (remis à zéro chaque jour). */
+  aboDuJour() { const p = this.player, j = this.opts.aujourdhui ?? ''; if (p.aboJour.jour !== j) p.aboJour = { jour: j, beni: 0, cles: 0 }; return p.aboJour; }
+  /** 17K : durée d'une récolte (plus courte avec l'abonnement). */
+  dureeRecolte() { return RECOLTE.duree * avantage(this.player.abo, 'recolte'); }
   // --- Ménagerie (« Familiers : » 1B 4C 5C 5D 6A 7A) ---------------------------------------------------------------
   /** 5C : ce familier est déjà dans la Ménagerie de ce joueur (celle du compte pour le joueur de cet écran). */
   aLeFamilier(p: Player, id: string): boolean { return p.menagerie.includes(id) || (p === this.players[0] && this.coffre.familiers?.[id] != null); }
@@ -2751,10 +2786,14 @@ export class World {
     return ok;
   }
   // --- Style (« Apparats : » 5B) : auréoles, effets de Zaap, ornements de nom (compte) ; tenues enregistrées (perso) ----------
-  aLeStyle(sorte: SorteStyle, id: string): boolean { return !!this.coffre.styles?.includes(`${sorte}:${id}`); }
+  aLeStyle(sorte: SorteStyle, id: string): boolean {
+    const d = styleDef(sorte, id);
+    if (d?.abo) return rangAbo(this.player.abo) >= rangAbo(d.abo as Palier);   // 17A : offert pendant l'abonnement
+    return !!this.coffre.styles?.includes(`${sorte}:${id}`);
+  }
   acheterStyle(sorte: SorteStyle, id: string): boolean {
     const d = styleDef(sorte, id), c = this.coffre;
-    if (!d || this.aLeStyle(sorte, id)) return false;
+    if (!d || d.ogrines || d.abo || this.aLeStyle(sorte, id)) return false;   // Ogrines et abonnement : pas en Pépites
     const ok = this.payer(d.prix, PEPITE, () => { (c.styles ??= []).push(`${sorte}:${id}`); return true; }, `style:${sorte}:${id}`);
     if (ok) { this.player.style[sorte] = id; this.emit({ k: 'coffre' }); }
     return ok;
@@ -2793,6 +2832,8 @@ export class World {
   acheterBenediction(k: Benediction): boolean {
     const p = this.player;
     if (!BENEDICTIONS[k]) return false;
+    // « Apparats : » 17C : bénédictions offertes chaque jour par l'abonnement
+    if (this.aboDuJour().beni < avantage(p.abo, 'benedictions')) { p.aboJour.beni++; p.benediction = { k, reste: BENEDICTION.duree }; return true; }
     return this.payer(BENEDICTION.prix, PEPITE, () => { p.benediction = { k, reste: BENEDICTION.duree }; return true; }, `benediction:${k}`);
   }
   /** 4C : un sac à rareté garantie (Rare ou Épique) de son niveau, un seul par jour. */

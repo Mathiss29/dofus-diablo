@@ -2,12 +2,15 @@
 // Le serveur renvoie le jeu à diablofus.com/#connexion=<jeton> : on garde le jeton dans le navigateur et on efface l'adresse.
 // En mode « En ligne », persos.ts lit et écrit une copie locale des persos du compte ; ce module l'envoie au serveur
 // (au plus toutes les 30 s par emplacement, et tout de suite quand on quitte la page ou revient à l'accueil).
+import type { Palier } from '../sim/boutiqueOgrines';
 import { EMPLACEMENTS_MAX, lireCoffreBrut, nbEmplacements, lirePersos, lirePersosLocaux, remplacerCoffreEnLigne, remplacerPersosEnLigne, sourceEnLigne, type Perso } from './persos';
 
 export const API = (import.meta.env.VITE_API_URL as string | undefined) ?? 'https://api.diablofus.com';
 const CLE_JETON = 'diablofus.jeton', CLE_MODE = 'diablofus.mode';
 const ECART = 30_000;
 
+/** Boutique Ogrines du compte (serveur/boutique.mjs) : articles achetés, apparats du mois, potions, abonnement. */
+export interface EtatBoutique { solde: number; achats: string[]; apparats: string[]; services: Record<string, number>; abonnement: { palier: Palier; fin: number } | null; essai: boolean }
 export interface InfosCompte { nom: string; avatar: string | null; testeur: boolean; admin: boolean; importe: boolean }
 type Etat = 'hors' | 'chargement' | 'connecte' | 'erreur';
 const ERREURS: Record<string, string> = {
@@ -22,6 +25,13 @@ const ERREURS_CODE: Record<string, string> = {
   epuise: 'Ce code a déjà servi autant de fois que prévu.', essais: 'Trop d\'essais : réessaie dans une heure.',
 };
 
+const ERREURS_BOUTIQUE: Record<string, string> = {
+  solde: 'Pas assez d\'Ogrines.', deja: 'Déjà sur ton compte.', pasEnVente: 'Cet article n\'est pas en vente aujourd\'hui.',
+  prix: 'Le prix vient de changer (nouvelle semaine) : regarde-le à nouveau.', plusBas: 'Ton abonnement en cours est plus haut : attends sa fin.',
+  actif: 'Tu as déjà un abonnement en cours.', palier: 'Réservé aux abonnés Héros et Légende.', catalogue: 'La boutique se met à jour, réessaie dans un instant.',
+  aucun: 'Tu n\'as plus cette potion.',
+};
+
 const lire = (k: string) => { try { return localStorage.getItem(k); } catch { return null; } };
 const ecrireCle = (k: string, v: string | null) => { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch { /* rien */ } };
 
@@ -32,6 +42,9 @@ class CompteEnLigne {
   message = '';
   /** Ogrines du compte (« Apparats : » 10A : seulement par codes cadeaux et événements, jamais vendues). */
   ogrines = 0;
+  boutique: EtatBoutique | null = null;
+  /** Palier d'abonnement en cours (null sans abonnement ou hors ligne). */
+  get palier(): Palier | null { const a = this.boutique?.abonnement; return this.enLigne && a && a.fin > Date.now() ? a.palier : null; }
   private ecouteurs = new Set<() => void>();
   /** Dernière version envoyée (ou reçue) de chaque emplacement et de chaque coffre. */
   private envoye = new Map<string, string>();
@@ -74,8 +87,8 @@ class CompteEnLigne {
     try {
       const r = await this.api('/moi');
       if (!r.ok) throw new Error(String(r.status));
-      const d = await r.json() as { compte: InfosCompte; persos: ({ perso: Perso } | null)[]; coffres: Record<string, unknown>; ogrines?: number };
-      this.infos = d.compte; this.ogrines = d.ogrines ?? 0;
+      const d = await r.json() as { compte: InfosCompte; persos: ({ perso: Perso } | null)[]; coffres: Record<string, unknown>; ogrines?: number; boutique?: EtatBoutique };
+      this.infos = d.compte; this.ogrines = d.ogrines ?? 0; this.boutique = d.boutique ?? null;
       const l = Array.from({ length: EMPLACEMENTS_MAX }, (_, i) => d.persos[i]?.perso ?? null);
       remplacerPersosEnLigne(l);
       l.forEach((p, i) => this.envoye.set(`p${i}`, JSON.stringify(p)));
@@ -120,6 +133,16 @@ class CompteEnLigne {
     if (d.erreur || !r.ok) return { erreur: ERREURS_CODE[d.erreur ?? ''] ?? 'Ce code ne marche pas.' };
     this.ogrines = d.solde ?? this.ogrines + (d.ogrines ?? 0); this.changer();
     return { ogrines: d.ogrines ?? 0, objets: d.objets ?? [] };
+  }
+  /** Boutique (9, 16, 17B) : achat, abonnement, essai, apparat du mois, potion utilisée. Rend l'erreur ou null. */
+  async boutiqueAppel(chemin: 'acheter' | 'abonnement' | 'essai' | 'mois' | 'service', corps: Record<string, unknown> = {}): Promise<{ erreur: string } | { apparat?: string }> {
+    if (!this.enLigne) return { erreur: 'La boutique Ogrines demande ton compte Discord : connecte-toi et passe en mode « En ligne ».' };
+    const r = await this.api(`/boutique/${chemin}`, { method: 'POST', body: JSON.stringify(corps) }).catch(() => null);
+    if (!r) return { erreur: 'Le serveur ne répond pas.' };
+    const d = await r.json().catch(() => ({})) as Partial<EtatBoutique> & { erreur?: string; apparat?: string; prix?: number };
+    if (d.erreur || !r.ok) return { erreur: ERREURS_BOUTIQUE[d.erreur ?? ''] ?? 'La boutique a refusé.' };
+    this.boutique = d as EtatBoutique; this.ogrines = d.solde ?? this.ogrines; this.changer();
+    return { apparat: d.apparat };
   }
   /** Admins (12A) : crée un code depuis le jeu. */
   async creerCode(o: { ogrines: number; objets: string[]; max: number; jours: number; code?: string }): Promise<string> {

@@ -79,3 +79,37 @@ test('robot Discord : signature vérifiée, /code et /ogrines réservés aux adm
   assert.equal(comptes.ogrines.bouger(1, -600, 'test'), false);   // pas assez
   await fin();
 });
+
+test('boutique : achat au prix du serveur, une fois ; abonnement, essai, apparat du mois', async t => {
+  const { base, auth, comptes, fin } = await serveur();
+  t.after(fin);
+  const S = await import('./partie/sim.mjs');
+  const post = (p, corps = {}) => fetch(`${base}${p}`, { method: 'POST', headers: auth, body: JSON.stringify(corps) });
+  const jour = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Paris' });
+  const id = Object.keys(S.BOUTIQUE_OGRINES.articles).find(a => S.BOUTIQUE_OGRINES.articles[a].cat === 'chapeau' && S.prixOgrines(a, jour) === S.BOUTIQUE_OGRINES.articles[a].prix);
+  assert.equal((await post('/boutique/acheter', { article: id })).status, 402);   // pas d'Ogrines
+  comptes.ogrines.bouger(1, 5000, 'test');
+  assert.equal((await (await post('/boutique/acheter', { article: id, prix: 1 })).json()).erreur, 'prix');
+  const e = await (await post('/boutique/acheter', { article: id })).json();
+  assert.deepEqual(e.achats, [id]);
+  assert.equal(e.solde, 5000 - S.BOUTIQUE_OGRINES.articles[id].prix);
+  assert.equal((await (await post('/boutique/acheter', { article: id })).json()).erreur, 'deja');
+  // services : consommables
+  await post('/boutique/acheter', { article: 'vnom' }); await post('/boutique/acheter', { article: 'vnom' });
+  assert.equal((await (await post('/boutique/service', { service: 'nom' })).json()).services.nom, 1);
+  // 16D : essai Héros 7 jours, une fois ; 17B : apparat du mois
+  const es = await (await post('/boutique/essai')).json();
+  assert.equal(es.abonnement.palier, 'heros');
+  assert.equal((await (await post('/boutique/essai')).json()).erreur, 'deja');
+  const mo = await (await post('/boutique/mois')).json();
+  assert.ok(S.BOUTIQUE_OGRINES.abonnement.apparatsDuMois.includes(mo.apparat));
+  assert.equal((await (await post('/boutique/mois')).json()).erreur, 'deja');
+  // palier plus bas refusé pendant l'abonnement, plus haut au prorata
+  assert.equal((await (await post('/boutique/abonnement', { palier: 'aventurier' })).json()).erreur, 'plusBas');
+  const avant = (await (await fetch(`${base}/boutique`, { headers: auth })).json()).solde;
+  const le = await (await post('/boutique/abonnement', { palier: 'legende' })).json();
+  assert.equal(le.abonnement.palier, 'legende');
+  assert.ok(avant - le.solde < 1500 && avant - le.solde > 1000);
+  const moi = await (await fetch(`${base}/moi`, { headers: auth })).json();
+  assert.equal(moi.boutique.abonnement.palier, 'legende');
+});

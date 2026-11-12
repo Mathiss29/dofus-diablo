@@ -1,7 +1,8 @@
 import type { SimEvent } from './events';
 import type { World } from './world';
 import { PEPITE, type Rarity } from './items';
-import { archiDuJour, contrat, contratArchi, hache, semaine, tirerContrats, type CtxContrats } from './contrats';
+import { archiDuJour, contrat, contratArchi, CONTRATS_PAR_JOUR, hache, semaine, tirerContrats, type CtxContrats } from './contrats';
+import { avantage } from './boutiqueOgrines';
 import { liensAPied, plusCourt, type GenreLien, type Lien, type Pt } from './trajet';
 import { nouvellesDuMonde } from './mondeVivant';
 
@@ -529,7 +530,8 @@ export class Quetes {
     if (!j || !ctx.pnj || !Object.keys(ctx.sousZones).length) return [];
     const vide = (): Tableau => ({ jour: '', ids: [], semaine: '', hebdo: [] });
     const t = pnj === this.tableaux_()[0] ? this.tableau ??= vide() : this.tableaux[pnj] ??= vide();
-    if (t.jour !== j) { t.jour = j; t.ids = tirerContrats(j, false, lvl, ctx); }
+    const plus = avantage(this.world.player.abo, 'contrats');   // « Apparats : » 17C : +1 contrat du jour
+    if (t.jour !== j || t.ids.length !== CONTRATS_PAR_JOUR + plus) { t.jour = j; t.ids = tirerContrats(j, false, lvl, ctx, plus); }
     if (t.semaine !== s) { t.semaine = s; t.hebdo = tirerContrats(s, true, lvl, ctx); }
     // « Archis : » 3C : l'archimonstre signalé du jour (tiré une fois par jour, avec les autres)
     if (t.archi?.[0] !== j) t.archi = [j, this.world.player.v03 ? archiDuJour(j, lvl, ctx, this.archis, this.world.player.ames) : null];
@@ -953,7 +955,7 @@ export class Quetes {
     for (const [m, qid] of this.elites) if (qid === id) { this.elites.delete(m); }
     const r = q.recompense;
     if (r.niveau) while (p.level < r.niveau && p.level < p.cls.maxLevel) p.gainXp(p.xpNeeded - p.xp, w);
-    if (r.xp) p.gainXp(r.xp, w);
+    if (r.xp) p.gainXp(Math.round(r.xp * (1 + avantage(p.abo, 'xp'))), w);   // 17E
     if (r.kamas) p.kamas += r.kamas;
     if (r.potions) p.potions = p.cls.potion.charges;
     const obj = r.objetParClasse?.[this.classe] ?? r.objet;
@@ -961,7 +963,7 @@ export class Quetes {
     for (const [o, n] of r.objets ?? []) w.donnerObjet(o, n);
     if (r.sac) w.donnerSac(r.sac, q.niveau, !!r.pouvoirClasse);
     if (q.codex) w.ouvrirCodex();
-    if (r.pepites) w.donnerObjet(PEPITE, r.pepites);
+    if (r.pepites) w.donnerObjet(PEPITE, Math.round(r.pepites * (1 + (id.startsWith('ctr:') ? avantage(p.abo, 'pepites') : 0))));   // 17G
     if (r.dofus && w.player.gagnerDofus(r.dofus)) w.emit({ k: 'dofusGagne', id: r.dofus });
     for (const o of this.etapes(id).flatMap(e => e.objectifs)) if (o.t === 'ramasser') delete this.objets[o.objet];
     if (this.suivie === id) this.suivie = null;

@@ -2,7 +2,8 @@
  *  Réglages dans src/data/style.json. Pur style : rien ne change les caractéristiques. */
 import data from '../data/style.json';
 
-export interface StyleDef { id: string; nom: string; texte?: string; c?: string; c2?: string; prix: number; avant?: string; apres?: string; couleur?: string }
+export interface StyleDef { id: string; nom: string; texte?: string; c?: string; c2?: string; prix: number; avant?: string; apres?: string; couleur?: string;
+  /** Vendu à la boutique Ogrines (9E), pas en Pépites. */ ogrines?: number; /** Offert pendant l'abonnement de ce palier ou mieux (17A). */ abo?: string }
 export type SorteStyle = 'aureoles' | 'zaaps' | 'ornements';
 export const STYLE = data as unknown as { tenues: { offertes: number; prix: number[] } } & Record<SorteStyle, StyleDef[]>;
 export const SORTES_STYLE: SorteStyle[] = ['aureoles', 'zaaps', 'ornements'];
