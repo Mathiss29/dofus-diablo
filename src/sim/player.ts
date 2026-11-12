@@ -125,6 +125,10 @@ export class Player extends Entity {
   codex: EntreeCodex[] = [];
   /** 15B : archimonstres capturés (clés des monstres). */
   ames: string[] = [];
+  /** « Familiers : » 6A : familiers obtenus par ce perso (la Ménagerie du compte est dans le coffre, Coffre.familiers). */
+  menagerie: string[] = [];
+  /** « Familiers : » 4C : familier de départ déjà choisi à l'Animalerie. */
+  familierOffert = false;
   /** 8C : Codex ouvert (quête « Le premier pouvoir » finie, ou premier Légendaire trouvé). */
   codexOuvert = false;
   /** 15C : jour (AAAA-MM-JJ) de la dernière offrande à l'Almanax ; son bonus dure jusqu'à minuit. */

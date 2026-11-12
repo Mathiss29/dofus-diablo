@@ -19,7 +19,7 @@ describe('Équipement en trop : collection d\'apparences (1C)', () => {
   it('les coiffes, capes et boucliers du jeu sont dans la collection, jamais vendus par Tissebelle', () => {
     const col = Object.entries(APPARATS.objets).filter(([, d]) => d.collection);
     expect(col.length).toBeGreaterThan(80);
-    expect(new Set(col.map(([, d]) => d.slot))).toEqual(new Set(['chapeau', 'cape', 'bouclier']));
+    expect(new Set(col.map(([, d]) => d.slot))).toEqual(new Set(['chapeau', 'cape', 'bouclier', 'familier']));   // « Familiers : » 6B
   });
 
   it('défaire le premier exemplaire débloque son apparence, une seule fois ; elle se porte et se garde', () => {

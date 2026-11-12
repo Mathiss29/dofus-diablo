@@ -5,6 +5,8 @@ import { MANIFESTE, Son } from './son';
 import { BENEDICTION, BENEDICTIONS, CONFORT, MAGASIN, MARCHE, type Article, type Benediction } from '../sim/magasin';
 import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES, TEINTURES, THEMES_HAVRESAC } from '../sim/data';
 import { ouTrouver, rareteApparat } from '../sim/apparats';
+import { FAMILIERS_SOURCES, ouTrouverFamilier, sourceFamilier } from '../sim/menagerie';
+import { REGLAGES_BUTIN } from '../sim/butin';
 import { themeChoisi, themesEnJeu, themesPossedes } from '../sim/havresac';
 import { v } from './assetUrl';
 import { BUTIN_CSS, archisParLieu, butinMonstre, dessinerPortraits, esc as escB, groupesBestiaire, nomObjet, iconeObjet, sourcesHtml } from './butinVue';
@@ -752,7 +754,7 @@ type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
  *  Les clics appellent l'API de la partie (World / Player). */
 /** Onglets de la fenêtre des marchands : Défaire (Kerubim), boutique d'un PNJ, et ceux du Marché du Bastion. */
-type OngletEmp = 'recycler' | 'boutique' | 'apparat' | 'etal' | 'conso' | 'cles' | 'confort' | 'havresac';
+type OngletEmp = 'recycler' | 'boutique' | 'apparat' | 'etal' | 'conso' | 'cles' | 'animalerie' | 'confort' | 'havresac';
 export class Windows {
   private root: HTMLDivElement;
   private win: HTMLDivElement | null = null;
@@ -811,7 +813,9 @@ export class Windows {
   private bestOnglet: 'butin' | 'sorts' | 'res' = 'butin';
   private bestRecherche = '';
   /** « Archis : » 8A : le Bestiaire montre les monstres ou le carnet des archimonstres. */
-  private bestVue: 'monstres' | 'archis' = 'monstres';
+  private bestVue: 'monstres' | 'archis' | 'menagerie' = 'monstres';
+  /** « Familiers : » 6A : familier choisi dans la Ménagerie. */
+  private bestFam = '';
   /** Fenêtre du forgemage (maquette « Forgemagie ») : onglet, objet choisi, journal des essais, mode « viser ». */
   private forge = etatForge();
 
@@ -2060,6 +2064,42 @@ export class Windows {
     if (o.objet) this.bestObjet = o.objet;
     this.show('bestiaire');
   }
+  /** « Familiers : » 6A + 7A + 8A : Ménagerie du Bestiaire : tous les familiers à bonus, rangés par source, obtenus en couleur. */
+  private menagerieHtml(va: (n: string) => boolean): { liste: string; fiche: string } {
+    const W = this.world, a = new Set(W.menagerie()), F = FAMILIERS.familiers;
+    const succesDe = (id: string) => Object.entries(QUETES.succes).find(([, s]) => s.recompense?.objet === id)?.[0];
+    const tous = Object.keys(F).filter(id => !F[id].apparat && ITEMS.equipment[id]?.familier);
+    const src = (id: string) => sourceFamilier(id, succesDe(id));
+    const groupes: [string, (id: string) => boolean][] = [
+      ['Monstres de leur famille', id => src(id)?.k === 'famille' && !(src(id) as { monstres: string[] }).monstres.some(m => GAME_DATA.monsters[m]?.boss || m.startsWith('gelee_royale') || m === 'maitre_vampire' || m === 'chef_crocodaille' || m === 'chef_de_guerre_bouftou')],
+      ['Boss et boss du monde', id => src(id)?.k === 'famille' && (src(id) as { monstres: string[] }).monstres.some(m => GAME_DATA.monsters[m]?.boss || m.startsWith('gelee_royale') || m === 'maitre_vampire' || m === 'chef_crocodaille' || m === 'chef_de_guerre_bouftou') || src(id)?.k === 'invasion'],
+      ['Animalerie du Marché', id => src(id)?.k === 'animalerie'],
+      ['Succès', id => src(id)?.k === 'succes'],
+      ['Avec une zone à venir', id => !src(id) || src(id)?.k === 'avenir'],
+    ];
+    if (!this.bestFam || !F[this.bestFam]) this.bestFam = tous.find(id => a.has(id)) ?? tous[0] ?? '';
+    const liste = `<div class="sub" style="margin:4px 2px">${tous.filter(id => a.has(id)).length} / ${tous.length} familiers dans ta Ménagerie</div>` + groupes.map(([nom, ok]) => {
+      const l = tous.filter(id => ok(id) && va(F[id].nom));
+      return l.length ? `<div class="bh">${escB(nom)} · ${l.filter(id => a.has(id)).length} / ${l.length}</div>${l.map(id =>
+        `<div class="bm ${a.has(id) ? '' : 'inc'} ${id === this.bestFam ? 'on' : ''}" data-bfam="${id}"><span style="${a.has(id) ? '' : 'filter:grayscale(1) brightness(.6)'}">${iconHtml(F[id].icon)}</span><span>${escB(F[id].nom)}</span><small>${a.has(id) ? '✔' : ''}</small></div>`).join('')}` : '';
+    }).join('');
+    const id = this.bestFam, f = F[id];
+    if (!f) return { liste, fiche: '' };
+    const s = src(id), p = W.player, eu = a.has(id);
+    const bonus = (f.stats ?? []).map(([k, b, g]) => `<div><span>${STAT_NAMES[k] ?? k}</span><b>${Math.floor(b)} à ${Math.floor(b + 100 * g)}</b></div>`).join('') || '<div><span>Aucun bonus : pour le plaisir</span></div>';
+    const monstres = s?.k === 'famille' ? [...new Set(s.monstres.filter(m => !m.startsWith('archi_')))].map(m => `<span class="btn" data-fmon="${m}">${escB(GAME_DATA.monsters[m]?.name ?? m)}</span>`).join(' ') : '';
+    const niv = p === W.players[0] ? W.coffre.familiers?.[id] : undefined, ici = p.bag.some(o => o.id === id) || p.equipment.familier?.id === id || W.coffre.onglets.some(l => l.some(o => o.id === id));
+    const sortir = eu && niv && !ici ? `<span class="btn" data-fsortir>Le sortir (niveau ${niv})</span>` : '';
+    const doubles = p.bag.filter(o => o.id === id && !o.cadenas), amis = W.players.filter(q => q !== p);
+    const dons = doubles.length && amis.length ? amis.map(q => `<span class="btn" data-fdon="${doubles[0].uid}|${q.id}">Le donner à ${escB(q.nom || `joueur ${q.id}`)}</span>`).join(' ') : '';
+    const fiche = `<div class="tete"><span style="transform:scale(2.4);margin:40px;${eu ? '' : 'filter:grayscale(1) brightness(.55)'}">${iconHtml(f.icon)}</span><div><h3>${escB(f.nom)}</h3>
+        <div class="sub">${eu ? 'Dans ta Ménagerie : son apparence se porte sur n\'importe quel familier (Apparence, inventaire).' : 'Pas encore obtenu.'}</div>
+        <div class="sub">${escB(ouTrouverFamilier(s, k => GAME_DATA.monsters[k]?.name ?? k, k => QUETES.succes[k]?.nom ?? k))}</div></div></div>
+      <div class="kv">${bonus}</div>${monstres ? `<div class="sub" style="margin:8px 0 4px">Monstres qui le lâchent (une chance sur ${REGLAGES_BUTIN.familier.normal}, élite ${REGLAGES_BUTIN.familier.elite}, boss ${REGLAGES_BUTIN.familier.boss}) :</div><div>${monstres}</div>` : ''}
+      ${sortir || dons ? `<div style="margin-top:10px">${sortir} ${dons}</div>` : ''}
+      ${eu && !sortir && !dons ? '<div class="hint" style="margin-top:10px">Un double ne tombe plus. Acheté en double, il se mange (gros repas) ou se donne à un ami du groupe.</div>' : ''}`;
+    return { liste, fiche };
+  }
   /** Bestiaire en jeu (maquette « Drops » 1A+1B, 2B+2C, 3A, 4A) : monstres par sous-zone, onglets Sorts / Résistances / Butin ;
    *  la recherche trouve aussi les objets, avec leur fiche « Où le trouver ». */
   private renderBestiaire() {
@@ -2105,6 +2145,7 @@ export class Windows {
       }
     }
     const tous = groupes.flatMap(g => g.monstres), nb = tous.filter(m => (vus[m] ?? 0) > 0).length;
+    let gaucheMen = '';
     // « Archis : » 8A : carnet des archimonstres, capturés en couleur, manquants en gris avec leur monstre et leur sous-zone
     const ames = new Set(this.world.player.ames), archis = this.bestVue === 'archis' ? archisParLieu() : [];
     const carnet = archis.map(g => {
@@ -2115,15 +2156,20 @@ export class Windows {
       }).join('')}` : '';
     }).join('');
     const nbA = archis.reduce((n, g) => n + g.archis.length, 0), prisA = archis.reduce((n, g) => n + g.archis.filter(a => ames.has(a)).length, 0);
-    const vue = `<div class="bv"><button type="button" data-bvue="monstres" class="${this.bestVue === 'monstres' ? 'on' : ''}">Monstres</button><button type="button" data-bvue="archis" class="${this.bestVue === 'archis' ? 'on' : ''}">Archimonstres</button></div>`;
-    const gauche = this.bestVue === 'archis'
+    const vue = `<div class="bv"><button type="button" data-bvue="monstres" class="${this.bestVue === 'monstres' ? 'on' : ''}">Monstres</button><button type="button" data-bvue="archis" class="${this.bestVue === 'archis' ? 'on' : ''}">Archimonstres</button><button type="button" data-bvue="menagerie" class="${this.bestVue === 'menagerie' ? 'on' : ''}">Ménagerie</button></div>`;
+    if (this.bestVue === 'menagerie') { const m = this.menagerieHtml(va); fiche = m.fiche; gaucheMen = `${vue}<input placeholder="Familier..." value="${escB(this.bestRecherche)}" data-bsearch>${m.liste}`; }
+    const gauche = gaucheMen ? gaucheMen : this.bestVue === 'archis'
       ? `${vue}<input placeholder="Archimonstre ou monstre..." value="${escB(this.bestRecherche)}" data-bsearch><div class="sub" style="margin:4px 2px">${prisA} / ${nbA} âmes capturées</div>${carnet || '<div class="sub">Rien de ce nom.</div>'}`
       : `${vue}<input placeholder="Monstre ou objet..." value="${escB(this.bestRecherche)}" data-bsearch><div class="sub" style="margin:4px 2px">${nb} / ${tous.length} monstres croisés</div>
         ${objets ? `<div class="bh">Objets</div>${objets}` : ''}${liste || (objets ? '' : '<div class="sub">Rien de ce nom.</div>')}`;
     w.innerHTML = `${this.title('Bestiaire', 'bestiary')}<div class="bes">
       <div class="bl">${gauche}</div>
       <div class="bd">${fiche}</div></div>`;
-    w.querySelectorAll<HTMLElement>('[data-bvue]').forEach(e => e.addEventListener('click', () => { this.bestVue = e.dataset.bvue as 'monstres' | 'archis'; this.render(); }));
+    w.querySelectorAll<HTMLElement>('[data-bvue]').forEach(e => e.addEventListener('click', () => { this.bestVue = e.dataset.bvue as 'monstres' | 'archis' | 'menagerie'; this.render(); }));
+    w.querySelectorAll<HTMLElement>('[data-bfam]').forEach(e => e.addEventListener('click', () => { this.bestFam = e.dataset.bfam!; this.render(); }));
+    w.querySelectorAll<HTMLElement>('[data-fmon]').forEach(e => e.addEventListener('click', () => { this.bestVue = 'monstres'; this.bestType = e.dataset.fmon!; this.bestObjet = null; this.bestOnglet = 'butin'; this.render(); }));
+    w.querySelector<HTMLElement>('[data-fsortir]')?.addEventListener('click', () => { if (this.world.sortirDeLaMenagerie(this.bestFam)) this.changed(); });
+    w.querySelectorAll<HTMLElement>('[data-fdon]').forEach(e => e.addEventListener('click', () => { const [uid, j] = e.dataset.fdon!.split('|').map(Number); if (this.world.donnerFamilier(uid, j)) this.changed(); }));
     dessinerPortraits(w);
     const inp = w.querySelector<HTMLInputElement>('[data-bsearch]')!;
     inp.addEventListener('input', () => { this.bestRecherche = inp.value; this.render(); const m = this.win!.querySelector<HTMLInputElement>('[data-bsearch]')!; m.focus(); m.setSelectionRange(m.value.length, m.value.length); });
@@ -2301,7 +2347,7 @@ export class Windows {
     const def = QUETES.pnj[this.empPnj], sv = new Set((def?.services ?? []).map(x => x.service)), marche = MARCHE.includes(this.empPnj);
     const vis = (a: Article) => (!a.v03 || p.v03) && (!a.v04 || p.v04);
     const boutique = (BOUTIQUES[this.empPnj] ?? []).filter(vis);
-    const onglets: [OngletEmp, string][] = marche ? [['etal', 'Étal du jour'], ['conso', 'Consommables'], ['cles', 'Clés'], ['apparat', 'Apparences'], ['havresac', 'Havre-Sac'], ['confort', 'Confort']]
+    const onglets: [OngletEmp, string][] = marche ? [['etal', 'Étal du jour'], ['conso', 'Consommables'], ['cles', 'Clés'], ['animalerie', 'Animalerie'], ['apparat', 'Apparences'], ['havresac', 'Havre-Sac'], ['confort', 'Confort']]
       : ([['recycler', 'Défaire'], ['boutique', 'Boutique'], ['apparat', 'Apparats']] as [OngletEmp, string][]).filter(([k]) => sv.has(k));
     if (!onglets.some(([k]) => k === this.empOnglet)) this.empOnglet = marche ? (this.empPnj === 'goultard' ? 'cles' : this.empPnj === 'tissebelle' ? 'apparat' : this.empPnj === 'responsable' ? 'confort' : 'conso') : onglets[0]?.[0] ?? 'boutique';
     const icM = (m: string) => m === 'kamas' ? `<img src="${INV}/kamas.png" alt="" style="width:18px;vertical-align:middle">` : iconHtml(ITEMS.resources[m]?.icon ?? 0);
@@ -2354,6 +2400,17 @@ export class Windows {
           <div class="ent">Bénédictions <span class="hint">· 30 minutes de jeu, une à la fois (une nouvelle remplace l'autre)</span></div>
           ${(Object.keys(BENEDICTIONS) as Benediction[]).map(k => ligne(icS, BENEDICTIONS[k].nom, BENEDICTIONS[k].texte + (b?.k === k ? ` · <b style="color:#b9e54b">active, encore ${Math.ceil(b.reste / 60)} min</b>` : ''), prix(BENEDICTION.prix, PEPITE, `data-beni="${k}"`))).join('')}
         </div><div class="hint">Les Pépites se gagnent avec les contrats, l'Almanax, les quêtes, les succès et les donjons (premier passage, défis).</div>`;
+    } else if (this.empOnglet === 'animalerie') {
+      // « Familiers : » 1B + 4A : les familiers domestiques, toujours en vente, en kamas ; 4C : un familier offert au niveau 10
+      const S = FAMILIERS_SOURCES, deja = new Set(W.menagerie());
+      const ligneF = (id: string, fin: string) => { const d = ITEMS.equipment[id], f = d?.familier; if (!f) return '';
+        const bonus = (f.stats ?? []).map(([k, b, g]) => `${STAT_NAMES[k] ?? k} ${Math.floor(b)} à ${Math.floor(b + 100 * g)}`).join(' · ') || 'Aucun bonus : pour le plaisir';
+        return `<div class="rec" data-essai="${id}">${iconHtml(f.icon)}<div><b>${escB(f.nom)}</b> <span class="hint">familier${deja.has(id) ? ' · déjà dans ta Ménagerie' : ''}</span>${porteur(id)}<div style="font-size:12px;color:#c9c4ab">${bonus} (niveau 1 à 100)</div></div>${fin}</div>`; };
+      const depart = W.familierDeDepartPossible() ? `<div class="ent">Familier offert <span class="hint">· un seul, au choix, pour fêter ton niveau ${S.depart.niveau}</span></div>${S.depart.familiers.map(id => ligneF(id, `<span class="btn" data-fdep="${id}">Le prendre</span>`)).join('')}` : '';
+      corps = `<div class="cata">${apercu()}<div class="shop">${depart}
+          <div class="ent">Familiers domestiques <span class="hint">· les autres se trouvent sur les monstres de leur famille (Ménagerie du Bestiaire)</span></div>
+          ${Object.entries(S.animalerie).map(([id, px]) => ligneF(id, prix(px, 'kamas', `data-fachat="${id}"`))).join('')}
+        </div></div><div class="hint">Un double se donne à manger à son familier (+${S.repasDouble} niveaux) ou à un ami de ton groupe.</div>`;
     } else if (this.empOnglet === 'havresac') {
       // 6B : les thèmes officiels du Havre-Sac, pour tout le compte ; un clic sur un thème possédé le pose
       const T = THEMES_HAVRESAC, a = themesPossedes(T, W.coffre), pose = themeChoisi(T, W.coffre).id;
@@ -2392,6 +2449,8 @@ export class Windows {
     w.querySelectorAll<HTMLElement>('[data-etal]').forEach(e => e.addEventListener('click', () => { W.acheterEtal(+e.dataset.etal!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-conf]').forEach(e => e.addEventListener('click', () => { const c = e.dataset.conf; if (c === 'sac') W.acheterPlacesSac(); else if (c === 'onglet') W.acheterOngletCoffre(); else if (c === 'emplacement') W.acheterEmplacement(); else W.acheterPrereglage(); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-beni]').forEach(e => e.addEventListener('click', () => { W.acheterBenediction(e.dataset.beni as Benediction); this.changed(); }));
+    w.querySelectorAll<HTMLElement>('[data-fachat]').forEach(e => e.addEventListener('click', () => { W.acheterFamilier(e.dataset.fachat!); this.changed(); }));
+    w.querySelectorAll<HTMLElement>('[data-fdep]').forEach(e => e.addEventListener('click', () => { W.prendreFamilierDeDepart(e.dataset.fdep!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-sac]').forEach(e => e.addEventListener('click', () => { W.acheterSacDuJour(e.dataset.sac as 'rare' | 'epique'); this.changed(); }));
     w.querySelector<HTMLElement>('[data-garde]')?.addEventListener('click', () => this.show('garde'));
     w.querySelectorAll<HTMLElement>('[data-tachat]').forEach(e => e.addEventListener('click', () => { W.acheterTheme(+e.dataset.tachat!); this.changed(); }));

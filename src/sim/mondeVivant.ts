@@ -446,7 +446,7 @@ export class MondeVivant {
     const niveau = w.niveauEn(inv.coffre.x, inv.coffre.y);
     w.butinMonstre(p, '', 'elite', niveau, inv.coffre.x, inv.coffre.y, C.tirages, { rarete: w.rng.next() < C.epique ? 'epique' : 'rare', legendaire: 0 });
     w.emit({ k: 'invasionCoffre', nom: inv.nom, x: inv.coffre.x, y: inv.coffre.y });
-    w.commeJoueur(p, () => w.gagnerApparat('invasion', APPARATS_SOURCES.chances.monde.invasion));   // « Apparats : » 1E
+    w.commeJoueur(p, () => { w.gagnerApparat('invasion', APPARATS_SOURCES.chances.monde.invasion); w.familierInvasion(inv.coffre!.x, inv.coffre!.y); });   // « Apparats : » 1E, « Familiers : » 1C
     return true;
   }
 

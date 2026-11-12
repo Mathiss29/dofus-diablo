@@ -1837,6 +1837,24 @@
               "Bastion des Douze",
               "Carte M"
             ]
+          },
+          {
+            "titre": "La Ménagerie",
+            "phrase": "58 familiers à trouver : sur leur famille de monstres, les boss du monde, à l'Animalerie ou par succès.",
+            "details": "Bestiaire › Ménagerie : où trouver chacun, et sa liste pour tout le compte. Un double se mange (+10 niveaux) ou se donne à un ami.",
+            "icone": "bestiaire",
+            "etiquettes": [
+              "Bestiaire",
+              "Bastion des Douze"
+            ]
+          },
+          {
+            "titre": "L'Animalerie du Marché",
+            "phrase": "Chacha, Bwaks et Péki en kamas, et un familier offert au niveau 10.",
+            "icone": "kamas",
+            "etiquettes": [
+              "Bastion des Douze"
+            ]
           }
         ],
         "Le monde": [

@@ -5,6 +5,7 @@ import { dossier, v } from './assetUrl';
 import Phaser from 'phaser';
 import { calerCamera, densite, densitePleine, reglerDensite } from './pixel';
 import { rareteApparat } from '../sim/apparats';
+import { FAMILIERS_SOURCES } from '../sim/menagerie';
 import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES, TEINTURES, THEMES_HAVRESAC } from '../sim/data';
 import { themeChoisi, zoneAvecTheme } from '../sim/havresac';
 import type { Compte } from '../sim/quests';
@@ -1272,7 +1273,7 @@ export class ZoneScene extends Phaser.Scene {
       case 'dofusGagne': return [`${PORTABLE(e.id)?.nom ?? 'Dofus'} obtenu !`, 'butin'];
       case 'sacQuete': { const it = ITEMS.equipment[e.id]; return it ? [`Sac de quête : ${it.name} (${RARITY_NAMES[e.rarity]})`, 'butin'] : null; }
       case 'capture': return [`${GAME_DATA.monsters[e.monster]?.name ?? 'Archimonstre'} capturé : ${e.ame ? ITEMS.resources[e.ame]?.name ?? 'âme' : 'pierre pleine'}${e.neuf ? ' (nouveau dans le carnet)' : ''}`, 'butin'];
-      case 'levelUp': return [`Niveau ${e.level} atteint : +5 points de caractéristiques${e.level === 100 ? ', +1 PA' : ''}`];
+      case 'levelUp': return [`Niveau ${e.level} atteint : +5 points de caractéristiques${e.level === 100 ? ', +1 PA' : ''}${e.level === FAMILIERS_SOURCES.depart.niveau && this.world.familierDeDepartPossible() ? '. L\'Animalerie du Marché (Bastion des Douze) t\'offre un familier : viens le choisir' : ''}`];
       case 'newSpell': return [`Nouveau sort : ${this.world.player.cls.spells[e.id]?.name ?? e.id}`];
       case 'queteDebut': { const q = this.world.quetes?.def(e.id); return q && q.type !== 'tutoriel' ? [`Nouvelle quête : ${q.nom}`] : null; }
       case 'queteFin': { const q = this.world.quetes?.def(e.id); return q && !e.sautee ? [`Quête terminée : ${q.nom}`] : null; }
@@ -1284,6 +1285,7 @@ export class ZoneScene extends Phaser.Scene {
       case 'commande': return e.etat === 'prete' ? ['Malek le Forgemage a fini ta commande : ton objet t\'attend au Bastion des Douze'] : null;
       case 'codex': { const o = POUVOIR_PAR_ID[e.id], c = PC_PAR_ID[e.id]; return [`Codex : ${o ? o.sort : c ? c.nom : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id} enregistré`]; }
       case 'apparence': return [`Apparence débloquée : ${APPARATS.objets[e.id]?.name ?? ITEMS.equipment[e.id]?.name ?? 'objet'}`];
+      case 'menagerie': return [`Ménagerie : ${e.nom} (${e.n} familier${e.n > 1 ? 's' : ''})`];
       case 'almanax': return [`Almanax : offrande faite, +${e.pepites} Pépites et « ${e.bonus} » jusqu'à minuit`];
       case 'bagFull': return ['Sac plein : défais des objets chez Kerubim Crépin, au Bastion des Douze'];
       case 'bossDown': return [`${GAME_DATA.monsters[e.monster]?.name ?? 'Boss'} vaincu !`];
@@ -1477,6 +1479,7 @@ export class ZoneScene extends Phaser.Scene {
         case 'codexOuvert': this.hud.loot('Le Codex des pouvoirs s\'ouvre : brise un Légendaire chez Malek pour garder son pouvoir', '#f08a2c'); this.windows?.refresh(); break;
         case 'impression': { const o = POUVOIR_PAR_ID[e.id], c = PC_PAR_ID[e.id]; this.hud.loot('Impression réussie : l\'objet devient Légendaire', '#f08a2c');
           this.windows?.noteForge({ t: `Impression : ${o ? o.officiel : c ? c.nom : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id}`, c: 'ok' }); break; }
+        case 'menagerie': this.hud.loot(`Nouveau dans ta Ménagerie : ${e.nom}`, '#e8c46a'); break;
         case 'apparence': this.hud.loot(`Apparence débloquée : ${APPARATS.objets[e.id]?.name ?? ITEMS.equipment[e.id]?.name ?? 'objet'}`, e.rarete ? RARITY_COLORS[e.rarete] : '#e6b85c'); break;
         case 'fusion': this.windows?.noteForge({ t: `Fusion : ${e.n} ${ITEMS.resources[e.vers]?.name ?? e.vers}`, c: 'br' }); break;
         case 'commande':
@@ -1640,8 +1643,9 @@ export class ZoneScene extends Phaser.Scene {
       const p = ISO.toScreen(d.x, d.y);
       if (!v) {
         const ap = d.apparat ? APPARATS.objets[d.apparat] : undefined, rar = d.item?.rarity ?? (d.apparat ? rareteApparat(d.apparat) : undefined);
-        const col = rar ? RARITY_COLORS[rar] : '#f2d36b', tint = parseInt(col.slice(1), 16);
-        const big = rar ? ['rare', 'epique', 'legendaire', 'mythique'].indexOf(rar) : -1;
+        const fam = d.item?.xpF != null;   // « Familiers : » 3A : un familier tombe au sol, bien visible
+        const col = fam ? '#e8c46a' : rar ? RARITY_COLORS[rar] : '#f2d36b', tint = parseInt(col.slice(1), 16);
+        const big = fam ? 1 : rar ? ['rare', 'epique', 'legendaire', 'mythique'].indexOf(rar) : -1;
         v = {
           glow: this.add.ellipse(p.x, p.y, 46, 20, tint, 0.35),
           icon: d.item ? this.add.image(p.x, p.y - 14, ICON_SHEET.key, Math.max(0, iconFrame(ITEMS.equipment[d.item.id]?.icon ?? 0))).setDisplaySize(34, 34)
