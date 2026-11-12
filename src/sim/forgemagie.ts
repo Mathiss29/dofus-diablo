@@ -1,11 +1,11 @@
 import FM from '../data/forgemagie.json';
-import { extraBase, type Item, type ItemDef, type Rarity, type Stat } from './items';
+import { extraBase, rollItem, type Item, type ItemDef, type Rarity, type Stat } from './items';
 import type { Rng } from './math';
 
 /** Forgemagie (maquette « Forgemagie : 1A 2A 3B 4B 5A 6A+6D 7A+7B 8A+8B+8D 9B 10A+10C 11B », Mathis 2026-11-07).
  *  Runes et poids officiels (src/data/forgemagie.json, tools/extraction/runes_export.py) ; règles officielles de Dofus (2A) :
  *  succès critique, succès neutre, échec, et le puits de l'objet. Les chances ne sont pas officielles (Dofus ne les publie pas). */
-export interface RuneDef { stat: Stat; val: number; poids: number }
+export interface RuneDef { stat: Stat; val: number; poids: number; /** Rune maison (v2 5B) : jamais rendue par le brisage. */ maison?: boolean }
 export const REGLES_FM = FM;
 export const RUNES = FM.runes as Record<string, RuneDef>;
 /** Poids officiel d'un point de chaque caractéristique (effectPowerRate) ; une caractéristique sans rune n'est pas forgemageable (5A). */
@@ -15,6 +15,9 @@ export const POIDS = FM.poids as Partial<Record<Stat, number>>;
 export function runesDe(stat: Stat): string[] {
   return Object.keys(RUNES).filter(id => RUNES[id].stat === stat).sort((a, b) => RUNES[a].val - RUNES[b].val);
 }
+
+/** Runes que rend le brisage : les officielles seulement (v2 5B : les runes maison se gagnent sur les boss). */
+const runesBrisage = (stat: Stat) => runesDe(stat).filter(id => !RUNES[id].maison);
 
 /** Jet max d'une ligne : officiel, sinon celui des lignes de rareté ; une ligne ajoutée (exo) est limitée au poids officiel 101 (4B). */
 export function ligneMax(def: ItemDef, it: Item, s: Stat): number {
@@ -33,9 +36,16 @@ export function plafond(def: ItemDef, it: Item, s: Stat): number {
 }
 /** La ligne existe sur l'objet (une ligne officielle tombée à 0 compte encore : elle peut remonter). */
 const aLaLigne = (def: ItemDef, it: Item, s: Stat) => (it.stats[s] ?? 0) > 0 || !!def.stats[s] || it.extra.includes(s) || it.exo === s;
-/** 4B : une seule ligne ajoutée, sur un Légendaire ou un Mythique. */
+/** 4B puis v2 8B : une seule ligne ajoutée, dès Épique ; PA, PM, Portée et les runes maison (5C) seulement sur un Légendaire ou un Mythique. */
 export function exoPossible(def: ItemDef, it: Item, s: Stat): boolean {
-  return !aLaLigne(def, it, s) && !it.exo && FM.exo.raretes.includes(it.rarity) && POIDS[s] != null;
+  if (aLaLigne(def, it, s) || it.exo || POIDS[s] == null) return false;
+  const E = FM.exo;
+  return (E.fortes.includes(s) ? E.raretesFortes : E.raretes).includes(it.rarity);
+}
+/** v2 1A+1E : l'objet a-t-il un exo, une ligne au-dessus de son jet max officiel (over) ? */
+export function etatFM(def: ItemDef, it: Item): { exo: boolean; over: Stat[] } {
+  const over = (Object.keys(it.stats) as Stat[]).filter(s => s !== it.exo && (it.stats[s] ?? 0) > 0 && POIDS[s] != null && (it.stats[s] ?? 0) > ligneMax(def, it, s));
+  return { exo: !!it.exo && (it.stats[it.exo] ?? 0) > 0, over };
 }
 
 export type Refus = 'plafond' | 'exo' | 'objet';
@@ -59,7 +69,7 @@ export function chanceRune(def: ItemDef, it: Item, runeId: string): { p: number;
 const ligneMaxExo = (def: ItemDef, s: Stat) => Math.max(1, Math.min(Math.round(extraBase(s, def.level)), Math.floor(FM.exo.poidsMax / (POIDS[s] ?? 1))));
 
 export type Issue = 'critique' | 'neutre' | 'echec' | 'puits';
-export interface ResultatFM { issue: Issue; stat: Stat; gain: number; pertes: [Stat, number][]; puits: number }
+export interface ResultatFM { issue: Issue; stat: Stat; gain: number; pertes: [Stat, number][]; puits: number; /** v2 9C : la ligne vient de passer au-dessus de son max officiel. */ over: boolean }
 
 /** Retire environ `poids` sur les autres lignes forgemageables de l'objet (jamais les malus ni les lignes sans rune) ; rend le poids perdu. */
 function perdre(rng: Rng, it: Item, poids: number, sauf: Stat, pertes: [Stat, number][]): number {
@@ -88,6 +98,7 @@ export function forger(rng: Rng, def: ItemDef, it: Item, runeId: string): Result
     if (!aLaLigne(def, it, s)) it.exo = s;
     it.stats[s] = (it.stats[s] ?? 0) + r.val;
   };
+  const avant = it.stats[s] ?? 0;
   let puits = it.puits ?? 0, issue: Issue;
   if (c.certain) {   // le puits couvre la rune : elle passe, le puits paie
     monter(); puits -= r.poids; issue = 'puits';
@@ -106,7 +117,9 @@ export function forger(rng: Rng, def: ItemDef, it: Item, runeId: string): Result
   }
   puits = Math.round(puits * 100) / 100;
   if (puits > 0) it.puits = puits; else delete it.puits;
-  return { issue, stat: s, gain: issue === 'echec' ? 0 : r.val, pertes, puits };
+  it.fm = (it.fm ?? 0) + 1;
+  const m = ligneMax(def, it, s), over = issue !== 'echec' && it.exo !== s && avant <= m && (it.stats[s] ?? 0) > m;
+  return { issue, stat: s, gain: issue === 'echec' ? 0 : r.val, pertes, puits, over };
 }
 
 /** Coût d'un essai en kamas (9B), plus la commission du forgemage en mode « viser » (8D). */
@@ -122,7 +135,7 @@ export function briser(rng: Rng, def: ItemDef, it: Item): Record<string, number>
   const gains: Record<string, number> = {}, bonus = (FM.brisage.rarete as Record<Rarity, number>)[it.rarity] ?? 1;
   const add = (id: string, n = 1) => { gains[id] = (gains[id] ?? 0) + n; };
   for (const [s, v] of Object.entries(it.stats) as [Stat, number][]) {
-    const w0 = POIDS[s], rs = runesDe(s);
+    const w0 = POIDS[s], rs = runesBrisage(s);
     if (w0 == null || v <= 0 || !rs.length) continue;
     let w = (3 * v * w0 * def.level / 200 + 1) * bonus;
     for (const id of [...rs].reverse()) { const n = Math.floor(w / RUNES[id].poids + 1e-9); if (n > 0) { add(id, n); w -= n * RUNES[id].poids; } }
@@ -134,7 +147,7 @@ export function briser(rng: Rng, def: ItemDef, it: Item): Record<string, number>
 export function poidsBrisage(def: ItemDef, it: Item): number {
   const bonus = (FM.brisage.rarete as Record<Rarity, number>)[it.rarity] ?? 1;
   let t = 0;
-  for (const [s, v] of Object.entries(it.stats) as [Stat, number][]) { const w0 = POIDS[s]; if (w0 != null && v > 0 && runesDe(s).length) t += (3 * v * w0 * def.level / 200 + 1) * bonus; }
+  for (const [s, v] of Object.entries(it.stats) as [Stat, number][]) { const w0 = POIDS[s]; if (w0 != null && v > 0 && runesBrisage(s).length) t += (3 * v * w0 * def.level / 200 + 1) * bonus; }
   return Math.round(t * 10) / 10;
 }
 
@@ -225,7 +238,7 @@ export const dureeCommande = (essais: number, test = false) =>
 export function apercuBrisage(def: ItemDef, it: Item): Record<string, number> {
   const gains: Record<string, number> = {}, bonus = (FM.brisage.rarete as Record<Rarity, number>)[it.rarity] ?? 1;
   for (const [s, v] of Object.entries(it.stats) as [Stat, number][]) {
-    const w0 = POIDS[s], rs = runesDe(s);
+    const w0 = POIDS[s], rs = runesBrisage(s);
     if (w0 == null || v <= 0 || !rs.length) continue;
     let w = (3 * v * w0 * def.level / 200 + 1) * bonus;
     for (const id of [...rs].reverse()) { const n = Math.floor(w / RUNES[id].poids + 1e-9); if (n > 0) { gains[id] = (gains[id] ?? 0) + n; w -= n * RUNES[id].poids; } }
@@ -233,3 +246,57 @@ export function apercuBrisage(def: ItemDef, it: Item): Record<string, number> {
   return gains;
 }
 export const SIGNATURE = FM.signature;
+
+// --- Forgemagie v2 (maquette « Forgemagie v2 », Mathis 2026-11-12) ------------------------------------------------------------------
+export const REGLES_V2 = { rafale: FM.rafale, orbes: FM.orbes, relance: FM.relance, potions: FM.potions, maison: FM.maison };
+
+/** 7A : un Orbe régénérant officiel peut-il relancer cet objet (niveau d'objet au plus `orbe`) ? */
+export const orbeConvient = (def: ItemDef, orbe: number) => !def.familier && def.level <= orbe;
+/** 7A : relance tous les jets de l'objet dans sa rareté (lignes officielles et lignes de rareté) ; les pouvoirs légendaires,
+ *  la signature et le cadenas restent ; le puits, l'exo et la relance de ligne repartent de zéro. */
+export function regenerer(rng: Rng, def: ItemDef, it: Item, id: string): void {
+  const neuf = rollItem(id, def, it.rarity, rng, it.uid, []);
+  it.stats = neuf.stats; it.extra = neuf.extra;
+  delete it.puits; delete it.exo; delete it.relances;
+}
+
+/** 7B : lignes que Malek peut relancer (pas un exo, pas un malus, pas une ligne déjà à son max ou au-dessus). */
+export function lignesRelancables(def: ItemDef, it: Item): Stat[] {
+  return (Object.keys(it.stats) as Stat[]).filter(s => s !== it.exo && (it.stats[s] ?? 0) > 0 && (def.stats[s]?.[0] ?? 0) >= 0
+    && (it.stats[s] ?? 0) < ligneMax(def, it, s));
+}
+/** 7B : prix d'une relance (niveau × kamasParNiveau, doublé à chaque relance sur le même objet). */
+export const coutRelance = (def: ItemDef, it: Item) => Math.round(Math.max(1, def.level) * FM.relance.kamasParNiveau * 2 ** (it.relances ?? 0));
+/** 7B : un jet de la ligne, dans la fourchette de sa rareté (comme au butin). */
+function jetLigne(rng: Rng, def: ItemDef, it: Item, s: Stat): number {
+  const off = def.stats[s];
+  if (off && off[1] > 0) {
+    const lo = { commun: 0, rare: 0, epique: 0.5, legendaire: 0.7, mythique: 1 }[it.rarity], hi = { commun: 0.5, rare: 1, epique: 1, legendaire: 1, mythique: 1 }[it.rarity];
+    return Math.round(off[0] + (off[1] - off[0]) * (lo + (hi - lo) * rng.next()));
+  }
+  return Math.max(1, Math.round(extraBase(s, def.level) * (it.rarity === 'mythique' ? 1 : 0.6 + 0.4 * rng.next())));
+}
+/** 7B : Malek tire deux jets et garde le meilleur, jamais moins que la valeur actuelle. Rend les deux jets et la valeur gardée. */
+export function relancerLigne(rng: Rng, def: ItemDef, it: Item, s: Stat): { jets: [number, number]; avant: number; apres: number } | null {
+  if (!lignesRelancables(def, it).includes(s)) return null;
+  const jets: [number, number] = [jetLigne(rng, def, it, s), jetLigne(rng, def, it, s)], avant = it.stats[s] ?? 0;
+  const apres = Math.min(ligneMax(def, it, s), Math.max(avant, ...jets));
+  it.stats[s] = apres; it.relances = (it.relances ?? 0) + 1;
+  return { jets, avant, apres };
+}
+
+/** 6A : la potion peut-elle aller sur cet objet (une arme qui a des dommages neutres) ? */
+export const potionConvient = (def: ItemDef) => !!def.weapon?.dmg.some(d => d.element === 'neutre');
+/** 6A : dommages de l'arme, potion de forgemagie comprise (les lignes neutres prennent l'élément, avec la perte officielle « forte » ou « faible »). */
+export function dmgArme(def: ItemDef, it?: Item | null): { element: string; min: number; max: number }[] {
+  const w = def.weapon?.dmg ?? [], P = it?.potion ? POTIONS[it.potion] : undefined;
+  if (!P) return w;
+  const k = 1 - P.perte;
+  return w.map(d => d.element === 'neutre' ? { element: P.element, min: Math.max(1, Math.round(d.min * k)), max: Math.max(1, Math.round(d.max * k)) } : d);
+}
+/** Potions de forgemagie : id -> élément et perte (rempli par setPotions, depuis items.json). */
+export const POTIONS: Record<string, { element: string; perte: number }> = {};
+export function setPotions(res: Record<string, { level: number; potionFM?: string }>) {
+  for (const [id, r] of Object.entries(res)) if (r.potionFM)
+    POTIONS[id] = { element: r.potionFM, perte: r.level >= FM.potions.niveauForte ? FM.potions.perteForte : FM.potions.perteFaible };
+}

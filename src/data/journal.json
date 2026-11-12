@@ -1738,12 +1738,38 @@
               "Touche X",
               "Partie de test"
             ]
+          },
+          {
+            "titre": "Exos et overs bien visibles",
+            "phrase": "Les infobulles marquent EXO et OVER, le jet officiel de chaque ligne et le puits.",
+            "details": "Dans le sac et l'équipement, un losange violet signale un exo, un triangle orange un over.",
+            "icone": "forge"
+          },
+          {
+            "titre": "Forgemagie plus rapide",
+            "phrase": "Maintiens « Forger » : quatre runes par seconde, arrêt à la valeur visée.",
+            "details": "Un établi de forgemagie t'attend au Havre-Sac. Les runes Céléritas et Chronos des boss forgent Vitesse et Recharges.",
+            "icone": "forge",
+            "etiquettes": [
+              "Havre-Sac"
+            ]
+          },
+          {
+            "titre": "Orbes, relances et potions",
+            "phrase": "Orbe régénérant, relance d'une ligne chez Malek et potions d'élément pour les armes neutres.",
+            "details": "Les orbes tombent des élites et des boss. L'Alchimiste fabrique les potions officielles, du Crachin au Séisme.",
+            "icone": "forge",
+            "etiquettes": [
+              "Havre-Sac",
+              "Bastion des Douze"
+            ]
           }
         ],
         "Le monde": [],
         "Combat": [],
         "Corrections": [
-          "Plus de saccades en marchant près du décor, et moins de travail quand on change de carte."
+          "Plus de saccades en marchant près du décor, et moins de travail quand on change de carte.",
+          "L'exo s'ouvre dès Épique ; PA, PM et Portée restent réservés aux Légendaires et aux Mythiques."
         ],
         "En coulisses": [
           "Le guichet de Kerubim quitte le Havre-Sac, et le Concasseur de Malek passe chez Kerubim.",

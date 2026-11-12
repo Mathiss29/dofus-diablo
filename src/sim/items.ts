@@ -95,7 +95,13 @@ export interface ResourceDef { name: string; icon: number; level: number; soin?:
   /** Rune de forgemagie officielle (src/data/forgemagie.json). */
   rune?: boolean;
   /** Rune de Signature officielle (7508) : grave le nom du perso sur un objet (maquette Forgemagie UI 6A). */
-  signature?: boolean }
+  signature?: boolean;
+  /** Rune maison (Forgemagie v2 5B) : Céléritas, Chronos ; jamais rendue par le brisage. */
+  maison?: boolean;
+  /** Potion de forgemagie officielle (Forgemagie v2 6A) : l'élément que prennent les dommages neutres de l'arme. */
+  potionFM?: string;
+  /** Orbe régénérant officiel (Forgemagie v2 7A) : niveau d'objet maximum. */
+  orbe?: number }
 /** Butin d'un monstre ; metier = critère officiel « Pj>41,N » (Chasseur au-dessus du niveau N), chasse = « CU>0 » (arme de chasse). */
 export interface DropDef { item: string; chance: number; metier?: { id: number; min: number }; chasse?: boolean;
   /** Maquette « Drops » 6B : ne tombe que pendant une quête de Dofus (jamais chez nous) ou un événement (critères officiels). */
@@ -171,6 +177,8 @@ export interface Item {
   puits?: number; exo?: Stat;
   /** Signé à la Rune de Signature (Forgemagie UI 6A) : le nom du perso, montré dans l'infobulle. */
   signe?: string;
+  /** Forgemagie v2 : runes posées (1D), relances d'une ligne chez Malek (7B, le prix double), potion d'élément de l'arme (6A). */
+  fm?: number; relances?: number; potion?: string;
 }
 
 /** Jet maximum d'une ligne ajoutée par la rareté (aussi le max de forgemagie de ces lignes). */

@@ -61,8 +61,9 @@ import { SOCIAL_CSS, rendreSocial, tickSocial } from './social';
 import { EnLigne } from './presence';
 import { Coop } from './coop';
 import { TRESOR_CSS, objetTresor, signatureTresor, tresorHtml } from './tresorVue';
-import { FORGE_CSS, defaireHtml, etatForge, forgeHtml, lotConcasseur, mmss, texteForge, type LigneLog } from './forgeVue';
-import { RUNES } from '../sim/forgemagie';
+import { ECLAT, FORGE_CSS, defaireHtml, etatForge, forgeHtml, lotConcasseur, mmss, pastillesFM, texteForge, type LigneLog } from './forgeVue';
+import type { SimEvent } from '../sim/events';
+import { REGLES_V2, RUNES, dmgArme, etatFM, ligneMax } from '../sim/forgemagie';
 import { LOOKS } from './looks';
 import { niveauHorsPartie, rangDe } from '../sim/butin';
 import { DOSSIER, PALETTES, ZONES, apparenceValide, assemblagePour, fiches, objetsPortes, type Apparence, type Assemblage, type FichePerso } from './squelette';
@@ -318,6 +319,14 @@ const CSS = `
 .dw .pts{color:#b9e54b;font-weight:bold}
 .dw .tip{position:fixed;pointer-events:none;z-index:11;min-width:240px;max-width:320px;background:#14130ff4;border:1px solid #57554c;border-radius:4px;padding:10px 12px;box-shadow:0 6px 20px #000a;line-height:1.45}
 .dw .tip h4{margin:0 0 2px;font-size:15px}.dw .tip .sub{color:#a9a48b;font-size:12px;margin-bottom:6px}
+.dw .tip .tl{display:flex;justify-content:space-between;gap:10px;align-items:baseline}.dw .tip .tl .jt{color:#7f7a64;font-size:11.5px;white-space:nowrap}
+.dw .tip .tl.exo{color:#d68cff}.dw .tip .tl.over{color:#f08a2c}.dw .tip .jm{color:#a9a48b;font-size:11.5px}
+.dw .etq{font:700 9.5px/1 Lexend,sans-serif;letter-spacing:.08em;padding:2px 4px;border-radius:2px;margin-left:5px;vertical-align:1px}
+.dw .etq.x{background:#d68cff;color:#1b0f22}.dw .etq.o{background:#f08a2c;color:#241303}
+.dw .tip .pfm{border-top:1px solid #34322b;margin-top:5px;padding-top:4px;font-size:12px;color:#7cc4ff}.dw .tip .pfm span{color:#a9a48b}
+.dw .tip .potfm{color:#e6b85c;font-size:12px}
+.dw .pfx{position:absolute;top:3px;right:3px;width:9px;height:9px;background:#d68cff;transform:rotate(45deg);box-shadow:0 0 5px #d68cff;pointer-events:none}
+.dw .pfo{position:absolute;top:2px;left:3px;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:9px solid #f08a2c;filter:drop-shadow(0 0 2px #f08a2c);pointer-events:none}
 .dw .tip .up{color:#7be07b}.dw .tip .down{color:#e0625a}.dw .tip .ex{color:#6fb2e8}.dw .tip .leg{color:#f08a2c;margin-top:4px}.dw .tip .leg.off{color:#8a7f70}.dw .tip .leg.off i{font-style:normal;color:#a89c88}
 .dw .tip .set{color:#9ad15a;margin-top:6px;font-size:12px}.dw .tip .sig{color:#e6b85c;margin-top:6px;font-style:italic;font-size:12px}.dw .tip .hint{color:#7f7a64;font-size:11px;margin-top:6px}
 .dw .win.opt{width:min(1000px,96vw);height:min(720px,92vh)}
@@ -911,7 +920,7 @@ export class Windows {
     const slot = (s: EquipSlot | null) => {
       if (!s) return '<div class="slot none"></div>';
       const it = p.equipment[s], d = it && ITEMS.equipment[it.id];
-      return `<div class="slot ${d ? 'plein' : ''}" data-slot="${s}" title="${d ? '' : SLOT_NAMES[s]}" style="${it ? `box-shadow:inset 0 -3px 0 ${RARITY_COLORS[it.rarity]}` : `background-image:url(${D3}/tx_slot_${SLOT_D3[s]}.png)`}">${d ? iconHtml(d.icon) : ''}</div>`;
+      return `<div class="slot ${d ? 'plein' : ''}" data-slot="${s}" title="${d ? '' : SLOT_NAMES[s]}" style="${it ? `box-shadow:inset 0 -3px 0 ${RARITY_COLORS[it.rarity]}` : `background-image:url(${D3}/tx_slot_${SLOT_D3[s]}.png)`}">${d ? iconHtml(d.icon) + pastillesFM(it) : ''}</div>`;
     };
     const { html, n } = this.cells();
     w.innerHTML = `${this.title('Inventaire', 'inventory')}
@@ -2112,7 +2121,7 @@ export class Windows {
   private renderCoffre() {
     const w = this.win!, p = this.world.player, c = this.world.coffre, o = Math.min(this.coffreOnglet, c.onglets.length - 1), l = c.onglets[o] ?? [];
     const cell = (it: Item, attr: string) => { const d = ITEMS.equipment[it.id];
-      return `<div class="cell" ${attr}>${iconHtml(d?.icon ?? 0)}<i class="r" style="background:${RARITY_COLORS[it.rarity]}"></i></div>`; };
+      return `<div class="cell" ${attr}>${iconHtml(d?.icon ?? 0)}<i class="r" style="background:${RARITY_COLORS[it.rarity]}"></i>${pastillesFM(it)}</div>`; };
     const onglets = c.onglets.map((x, i) => `<span class="eo ${i === o ? 'on' : ''}" data-co="${i}">${c.noms?.[i] || `Onglet ${i + 1}`} · ${x.length}</span>`).join('');
     const coffre = Array.from({ length: COFFRE.places }, (_, i) => l[i] ? cell(l[i], `data-cr="${i}"`) : '<div class="cell empty"></div>').join('');
     const sac = p.bag.filter(it => ITEMS.equipment[it.id]).map(it => cell(it, `data-cd="${it.uid}"`)).join('');
@@ -2377,7 +2386,39 @@ export class Windows {
   nomPerso: () => string = () => '';
   /** Résultats renvoyés par la partie (forge, brisage, fusion, commande) : l'historique de la fenêtre (5A). */
   noteForge(l: LigneLog) { this.forge.log = [l, ...this.forge.log].slice(0, 40); if (this.mode === 'forge' && this.win) this.render(); }
-  noteForgeEvt(e: Parameters<typeof texteForge>[0]) { this.noteForge(texteForge(e)); }
+  noteForgeEvt(e: Parameters<typeof texteForge>[0] & { over?: boolean }) {
+    // Forgemagie v2 9A+9B+9C : éclat de l'issue, chiffres flottants, ligne qui brille sur un exo ou un over réussi
+    const f = this.forge, t = performance.now();
+    f.eclat = { c: ECLAT[e.issue] ?? '#ffffff', at: t };
+    f.flot = f.flot.filter(x => t - x.at < 1100);
+    if (e.issue !== 'echec') f.flot.push({ s: e.stat, t: `+${e.gain}`, c: 'p', at: t });
+    for (const [s, n] of e.pertes) f.flot.push({ s, t: `−${n}`, c: 'm', at: t });
+    if (e.issue !== 'echec' && (e.exo || e.over)) f.brille = { s: e.stat, at: t };
+    this.noteForge(texteForge(e));
+  }
+  /** Forgemagie v2 : Orbe, relance de ligne, potion (historique de la fenêtre). */
+  noteRetouche(e: Extract<SimEvent, { k: 'fmOrbe' | 'fmRelance' | 'fmPotion' }>) {
+    const R = ITEMS.resources;
+    if (e.k === 'fmOrbe') this.noteForge({ t: `Orbe régénérant : tous les jets de ${e.objet} relancés`, c: 'pu' });
+    else if (e.k === 'fmRelance') this.noteForge({ t: `Malek relance ${STAT_NAMES[e.stat as Stat]} : jets ${e.jets[0]} et ${e.jets[1]}, ${e.apres > e.avant ? `${e.avant} → ${e.apres}` : `on garde ${e.avant}`} (${e.kamas} kamas)`, c: e.apres > e.avant ? 'ok' : 'ne' });
+    else this.noteForge({ t: `${R[e.potion]?.name ?? 'Potion'} : dommages neutres en ${e.element}`, c: 'xo', ic: e.potion });
+  }
+  /** Forgemagie v2 3B : rafale en cours (maintenir le clic). */
+  private rafaleT: number | null = null;
+  private rafale() {
+    if (this.rafaleT != null) return;
+    const f = this.forge, stop = () => { if (this.rafaleT != null) { clearInterval(this.rafaleT); this.rafaleT = null; } removeEventListener('pointerup', stop); removeEventListener('blur', stop); if (this.mode === 'forge' && this.win) this.render(); };
+    const pas = () => {
+      const it = f.uid != null ? this.world.objetForgeable(f.uid) : null, r = f.rune && RUNES[f.rune];
+      if (!it || !r || this.mode !== 'forge' || !this.win) { stop(); return; }
+      if ((it.stats[r.stat] ?? 0) >= (f.vise ?? Infinity)) { this.noteForge({ t: `Arrêt : ${STAT_NAMES[r.stat]} à ${it.stats[r.stat] ?? 0}, valeur visée atteinte`, c: 'pu' }); stop(); return; }
+      if (!this.world.forgemager(f.uid!, f.rune!)) { this.noteForge({ t: 'Arrêt : la rune ne passe plus (plafond, runes ou kamas)', c: 'ko' }); stop(); return; }
+      this.changed();
+    };
+    addEventListener('pointerup', stop); addEventListener('blur', stop);
+    pas();
+    if (this.rafaleT == null && this.mode === 'forge') this.rafaleT = window.setInterval(pas, REGLES_V2.rafale.intervalle * 1000);
+  }
   /** Commande de Malek qui avance : l'onglet se met à jour (compte à rebours). */
   majForge() {
     if (this.mode !== 'forge' || !this.win) return;
@@ -2400,13 +2441,34 @@ export class Windows {
     w.querySelectorAll<HTMLElement>('[data-fo]').forEach(e => e.addEventListener('click', () => { f.onglet = e.dataset.fo as typeof f.onglet; this.render(); }));
     w.querySelectorAll<HTMLElement>('[data-fuid]').forEach(e => {
       const it = this.world.objetForgeable(+e.dataset.fuid!)!;
-      e.addEventListener('click', () => { f.uid = it.uid; f.rune = null; this.render(); }); tip(e, it);
+      e.addEventListener('click', () => { f.uid = it.uid; f.rune = null; f.vise = null; f.orbe = null; this.render(); }); tip(e, it);
     });
     w.querySelectorAll<HTMLElement>('[data-frune]').forEach(e => e.addEventListener('click', () => {
       const id = e.dataset.frune!;
       if (e.classList.contains('off') || f.uid == null) return;
       if (f.avance) { if (this.world.forgemager(f.uid, id)) this.changed(); }
-      else { f.rune = id; this.render(); }
+      else { f.rune = id; f.vise = null; this.render(); }
+    }));
+    // Forgemagie v2 3B : rafale (maintenir le clic ou Espace), valeur visée
+    const raf = w.querySelector<HTMLElement>('[data-rafale]');
+    raf?.addEventListener('pointerdown', ev => { ev.preventDefault(); if (!raf.classList.contains('off') || f.avance) this.rafale(); });
+    raf?.addEventListener('keydown', ev => { if ((ev.key === ' ' || ev.key === 'Enter') && !ev.repeat) { ev.preventDefault(); ev.stopPropagation(); this.rafale(); } });
+    raf?.addEventListener('keyup', ev => { if (ev.key === ' ' || ev.key === 'Enter') dispatchEvent(new Event('pointerup')); });
+    w.querySelector<HTMLInputElement>('[data-vise]')?.addEventListener('input', ev => { const n = Math.floor(+(ev.target as HTMLInputElement).value); f.vise = n > 0 ? n : null; });
+    w.querySelector<HTMLInputElement>('[data-vise]')?.addEventListener('keydown', ev => ev.stopPropagation());
+    // Forgemagie v2 7A, 7B, 6A : onglet « Orbes et potions »
+    w.querySelectorAll<HTMLElement>('[data-orbe]').forEach(e => e.addEventListener('click', () => {
+      if (e.classList.contains('off') || f.uid == null) return;
+      const id = e.dataset.orbe!;
+      if (f.orbe !== id) { f.orbe = id; this.render(); return; }
+      f.orbe = null;
+      if (this.world.utiliserOrbe(f.uid, id)) this.changed(); else this.render();
+    }));
+    w.querySelectorAll<HTMLElement>('[data-relance]').forEach(e => e.addEventListener('click', () => {
+      if (!e.classList.contains('off') && f.uid != null && this.world.relancerLigneFM(f.uid, e.dataset.relance as Stat)) this.changed();
+    }));
+    w.querySelectorAll<HTMLElement>('[data-potion]').forEach(e => e.addEventListener('click', () => {
+      if (!e.classList.contains('off') && f.uid != null && this.world.poserPotionFM(f.uid, e.dataset.potion!)) this.changed();
     }));
     w.querySelector<HTMLElement>('[data-fusionner]')?.addEventListener('click', ev => {
       if ((ev.currentTarget as HTMLElement).classList.contains('off') || f.uid == null || !f.rune) return;
@@ -2576,7 +2638,7 @@ export class Windows {
       for (const it of items) {
         const d = D(it), slot = p.slotFor(it), cur = slot ? p.equipment[slot] : undefined;
         const up = d.level <= p.level && (!cur || noteObjet(it) > noteObjet(cur));
-        cells.push(`<div class="cell ${up ? 'up' : ''} ${d.level > p.level ? 'low' : ''}" data-uid="${it.uid}">${iconHtml(d.icon)}<i class="r" style="background:${RARITY_COLORS[it.rarity]}"></i>${it.cadenas ? CADENAS : ''}</div>`);
+        cells.push(`<div class="cell ${up ? 'up' : ''} ${d.level > p.level ? 'low' : ''}" data-uid="${it.uid}">${iconHtml(d.icon)}<i class="r" style="background:${RARITY_COLORS[it.rarity]}"></i>${pastillesFM(it)}${it.cadenas ? CADENAS : ''}</div>`);
       }
     }
     if ((this.tab === 'tout' || this.tab === 'ressource' || this.tab === 'conso') && !this.kind) for (const [id, n] of Object.entries(p.resources)) {
@@ -2626,10 +2688,20 @@ export class Windows {
     const p = this.world.player, d = ITEMS.equipment[it.id];
     if (!d) return;
     const slot = p.slotFor(it), cur = !worn && slot ? p.equipment[slot] : undefined;
-    const line = (k: Stat, v: number) => `<div class="${it.extra.includes(k) ? 'ex' : v < 0 ? 'down' : ''}">${v > 0 ? '+' : ''}${v} ${STAT_NAMES[k]}</div>`;
+    // Forgemagie v2 (1A+1B) : exo et over marqués, jet officiel au bout de la ligne
+    const fm = d.familier ? null : etatFM(d, it);
+    const line = (k: Stat, v: number) => {
+      const exo = it.exo === k, over = !!fm?.over.includes(k), off = d.stats[k], m = !d.familier && v > 0 ? ligneMax(d, it, k) : 0;
+      const jet = d.familier || v < 0 ? '' : exo ? `exo · max ${m}` : off && off[1] > 0 ? `${off[0]} à ${off[1]}` : m ? `1 à ${m}` : '';
+      const etq = exo ? '<span class="etq x">EXO</span>' : over ? `<span class="etq o">OVER</span> <span class="jm">(max ${m})</span>` : '';
+      return `<div class="tl ${exo ? 'exo' : over ? 'over' : it.extra.includes(k) ? 'ex' : v < 0 ? 'down' : ''}"><span>${v > 0 ? '+' : ''}${v} ${STAT_NAMES[k]}${etq}</span>${jet ? `<span class="jt">${jet}</span>` : ''}</div>`;
+    };
     const stats = STATS.filter(k => it.stats[k] !== undefined).map(k => line(k, it.stats[k]!)).join('');
-    const weapon = (d.weapon ? `<div>${d.weapon.dmg.map(x => `${x.min}–${x.max} dommages ${x.element}`).join(' · ')}</div>` : '')
+    const potion = it.potion ? ITEMS.resources[it.potion] : undefined;
+    const weapon = (d.weapon ? `<div>${dmgArme(d, it).map(x => `${x.min}–${x.max} dommages ${x.element}`).join(' · ')}</div>` : '')
+      + (potion ? `<div class="potfm">${potion.name} : dommages neutres en ${potion.potionFM}</div>` : '')
       + (d.chasse ? '<div class="ex">Arme de chasse</div>' : '');
+    const fmPied = it.puits || it.fm ? `<div class="pfm">${it.puits ? `Puits : ${String(it.puits).replace('.', ',')}` : ''}${it.puits && it.fm ? ' · ' : ''}${it.fm ? `<span>forgemagé ${it.fm} fois</span>` : ''}</div>` : '';
     const leg = [it.legendary, it.legendary2].map(l => {
       if (!l) return '';
       // Pouvoir officiel (0.3) : grisé s'il ne sert pas encore (sort à venir, autre classe)
@@ -2666,7 +2738,7 @@ export class Windows {
     } else if (p.equipment.familier && !worn) fam = `<div class="hint">Alt + clic : le donner à manger au familier (+${FAMILIER_XP.objet(d.level, it.rarity)} XP)</div>`;
     this.tip.innerHTML = `<h4 style="color:${RARITY_COLORS[it.rarity]}">${d.name}</h4>
       <div class="sub">${d.familier ? 'Familier' : `${RARITY_NAMES[it.rarity]} · ${d.weapon?.type ?? SLOT_NAMES[(slot ?? 'amulette') as EquipSlot]}`} · niveau ${d.level}</div>
-      ${weapon}${stats}${fam}${leg}${neuf}${set}${it.signe ? `<div class="sig">Signé par ${it.signe.replace(/[&<>"]/g, '')}</div>` : ''}${lvl}${cmp}${sourcesHtml(it.id, 3)}
+      ${weapon}${stats}${fmPied}${fam}${leg}${neuf}${set}${it.signe ? `<div class="sig">Signé par ${it.signe.replace(/[&<>"]/g, '')}</div>` : ''}${lvl}${cmp}${sourcesHtml(it.id, 3)}
       <div class="hint">${worn ? 'Clic droit : retirer' : it.cadenas ? 'Sous cadenas : jamais défait · Ctrl + clic : l\'ôter' : `Clic droit : équiper · Ctrl + clic : cadenas (défait chez Kerubim : runes + ${kamasDefaire(d, it).toLocaleString('fr-FR')} kamas)`}</div>`;
     this.tip.style.display = 'block'; this.moveTip(ev);
   }
