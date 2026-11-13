@@ -4,6 +4,7 @@ import { RARITIES, RARITY_COLORS } from '../sim/items';
 import type { World } from '../sim/world';
 import { dossier, v } from './assetUrl';
 import { textureUneFois } from './uneFois';
+import { SOL } from './worldView';
 
 const SP = 'assets/sprites';
 /** Maquette « Coffres » (1A 2A 3A+3B 4A+4B+4C 5A 6B 7A 8A) : de vrais coffres vivants de Dofus 3, rendus depuis leur squelette
@@ -37,6 +38,9 @@ export class AreneView {
   /** Temps depuis l'ouverture (-1 : fermé) ; temps depuis le dernier sursaut. */
   private ouvert = -1;
   private repos = 0;
+  /** 0.6 (« Arènes : » 2D, 6B) : cercles de choix des Blops Royaux et toiles au sol, sous les télégraphes ; noms des cercles. */
+  private sol06: Phaser.GameObjects.Graphics;
+  private noms06: Phaser.GameObjects.Text[] = [];
 
   constructor(private scene: Phaser.Scene, private world: World) {
     this.portail = scene.add.graphics().setBlendMode(Phaser.BlendModes.ADD).setVisible(false);
@@ -49,6 +53,31 @@ export class AreneView {
       .setOrigin(0.5, 1).setVisible(false);
     // planches chargées d'avance : le coffre doit être prêt à la mort du boss
     for (const c of Object.values(COFFRES)) this.planche(c.atlas);
+    this.sol06 = scene.add.graphics().setDepth(SOL + 40);
+  }
+  /** 2D : un cercle de la couleur de chaque Royal, son nom au-dessus ; 6B : toiles (blanches, collantes) ou brûlées (cendre). */
+  private dessiner06() {
+    const a = this.world.arene, g = this.sol06.clear(), C = a?.choix ?? [];
+    for (const [i, c] of C.entries()) {
+      const s = ISO.toScreen(c.x, c.y), col = Phaser.Display.Color.HexStringToColor(c.couleur).color, p = 0.5 + 0.5 * Math.sin(this.tw * 3 + i);
+      g.fillStyle(col, 0.18 + 0.1 * p).fillEllipse(s.x, s.y, 104, 52);
+      g.lineStyle(3, col, 0.7 + 0.3 * p).strokeEllipse(s.x, s.y, 104 + 8 * p, 52 + 4 * p);
+      const t = this.noms06[i] ??= this.scene.add.text(0, 0, '', { fontFamily: 'Rowdies, Lexend, sans-serif', fontSize: '14px', color: '#fff', stroke: '#000', strokeThickness: 4, align: 'center' }).setOrigin(0.5, 1);
+      t.setText(c.nom).setColor(c.couleur).setPosition(s.x, s.y - 30).setDepth(s.y + 1).setVisible(true);
+    }
+    for (let i = C.length; i < this.noms06.length; i++) this.noms06[i].setVisible(false);
+    for (const t of a?.toiles ?? []) {
+      const s = ISO.toScreen(t.x, t.y), rx = t.r, ry = t.r / 2, fin = t.vie != null ? Math.min(1, t.vie / 2) : 1;
+      if (t.brule > 0) { g.fillStyle(0x2a2420, 0.45 * fin).fillEllipse(s.x, s.y, rx * 2, ry * 2); continue; }
+      g.lineStyle(1.5, 0xf4f0ff, 0.55 * fin);
+      for (let k = 0; k < 8; k++) { const an = k * Math.PI / 4 + 0.2; g.lineBetween(s.x, s.y, s.x + Math.cos(an) * rx, s.y + Math.sin(an) * ry); }
+      for (const f of [0.35, 0.65, 0.95]) {
+        g.beginPath();
+        for (let k = 0; k <= 8; k++) { const an = k * Math.PI / 4 + 0.2, x = s.x + Math.cos(an) * rx * f, y = s.y + Math.sin(an) * ry * f; if (k) g.lineTo(x, y); else g.moveTo(x, y); }
+        g.strokePath();
+      }
+      g.fillStyle(0xe8e4ff, 0.08 * fin).fillEllipse(s.x, s.y, rx * 2, ry * 2);
+    }
   }
   /** Carapace = demi-dôme d'acier autour du Wa Wobot, qui se fissure à mesure qu'on la frappe ; Tamponneur = anneau qui se vide. */
   private dessinerWobot(dt: number) {
@@ -83,11 +112,12 @@ export class AreneView {
     g.setDepth(prof + 300);
   }
   private planche(a: string) { return textureUneFois(this.scene, a, l => l.multiatlas(a, v(`${SP}/${a}.json`), dossier(`${SP}/`))); }
-  destroy() { this.wobot.destroy(); this.trou.destroy(); this.trouNom.destroy(); this.portail.destroy(); this.lueur.destroy(); this.coffre?.destroy(); this.nom.destroy(); }
+  destroy() { this.sol06.destroy(); this.noms06.forEach(t => t.destroy()); this.wobot.destroy(); this.trou.destroy(); this.trouNom.destroy(); this.portail.destroy(); this.lueur.destroy(); this.coffre?.destroy(); this.nom.destroy(); }
 
   update(dt: number) {
     const a = this.world.arene, vu = !!a?.fini;
     this.dessinerWobot(dt);
+    this.dessiner06();
     this.portail.setVisible(vu); this.nom.setVisible(vu); this.lueur.setVisible(vu);
     // trou du boss enfui : visible seulement pour qui il mène encore quelque part
     const t = vu && a!.trou && a!.premiers.has(this.world.player.id) ? a!.trou : null;

@@ -1005,6 +1005,7 @@ export class World {
     this.arene = new Arene(this, d, reprise || 1);
     const boss = this.bossDuDonjon(d.nom), cle = this.entreeDonjon(d.nom)?.cle ?? null;
     this.emit({ k: 'areneDebut', nom: d.nom, boss, vagues: this.arene.total, cle, reprise: reprise > 1 ? reprise : 0 });
+    if (this.arene.choix) this.emit({ k: 'status', x: p.x, y: p.y - 90, text: 'Choisis ton Royal : entre dans un cercle', color: '#f2d36b' });   // 0.6 (2D)
   }
   private updateArene(dt: number) {
     const p = this.player, tag = this.worldGrid?.mapAt(p.x, p.y)?.tag;
@@ -1066,9 +1067,16 @@ export class World {
   /** 13A : coffre du donjon à côté du portail : un second butin du boss, et une bourse de kamas. Tiré à la mort du boss
    *  (maquette Coffres 4C : le coffre luit de la couleur du meilleur objet avant qu'on l'ouvre), posé à l'ouverture. */
   tirerCoffreDonjon(d: DonjonDef): Butin | null {
-    const boss = this.bossDuDonjon(d.nom), M = this.opts.data.monsters;
+    const boss = this.bossDuDonjon(d.nom);
     if (!boss || !this.opts.items) return null;
-    const niveau = M[boss].level ?? this.zone.level;
+    // « Arènes : 2D » : le butin du Royal choisi ; « Les 4 Royaux » : celui des quatre, dans le même coffre
+    const choisis = this.arene?.d === d ? this.arene.bossCoffre : [];
+    const [b, ...autres] = (choisis.length ? choisis : [boss]).map(m => this.tirerCoffreDe(m));
+    for (const c of autres) { b.ressources.push(...c.ressources); b.objets.push(...c.objets); b.kamas += c.kamas; }
+    return b;
+  }
+  private tirerCoffreDe(boss: string): Butin {
+    const M = this.opts.data.monsters, niveau = M[boss].level ?? this.zone.level;
     const b = tirerButin(this.rng, this.contexteButin(boss, 'boss', niveau), () => this.nextId++);
     b.kamas += 20 * niveau;
     // « Apparats : » 17J : Légende, un coffre de plus (un second tirage du boss dans le même coffre)
@@ -1860,6 +1868,7 @@ export class World {
   }
   applyHits(test: (m: Monster) => boolean, def: HitDef, ox: number, oy: number, stun: number, pushDir?: number): number {
     const p = this.player, cls = p.cls;
+    this.arene?.coup(test as (o: { x: number; y: number; radius: number }) => boolean, p.resolveElement(def.element ?? 'neutre'));   // 0.6 : toiles, œufs
     let n = 0;
     for (const m of this.monsters) {
       if (m.dead || m.state === 'spawn' || !test(m)) continue;

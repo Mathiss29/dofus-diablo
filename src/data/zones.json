@@ -14607,6 +14607,290 @@
       "blop_indigo_royal",
       "blop_reinette_royal",
       "blop_griotte_royal"
+     ],
+     "choix": [
+      {
+       "nom": "Blop Coco Royal",
+       "couleur": "#eadbb4",
+       "vagues": [
+        {
+         "m": [
+          "blop_coco",
+          "blop_coco",
+          "blop_coco",
+          "gloutoblop",
+          "blop_coco",
+          "blop_coco",
+          "blopignon",
+          "blop_coco",
+          "blop_coco",
+          "tronkoblop"
+         ]
+        },
+        {
+         "m": [
+          "gloutoblop",
+          "blop_coco",
+          "blop_coco",
+          "blopignon",
+          "blop_coco",
+          "blop_coco",
+          "tronkoblop",
+          "blop_coco",
+          "blop_coco",
+          "blop_coco"
+         ]
+        },
+        {
+         "m": [
+          "blopignon",
+          "blop_coco",
+          "blop_coco",
+          "tronkoblop",
+          "blop_coco",
+          "blop_coco",
+          "blop_coco",
+          "gloutoblop",
+          "blop_coco",
+          "blop_coco",
+          "blopignon",
+          "blop_coco"
+         ]
+        }
+       ],
+       "bossVague": [
+        "blop_coco_royal",
+        "blop_coco",
+        "blop_coco"
+       ]
+      },
+      {
+       "nom": "Blop Indigo Royal",
+       "couleur": "#8f7dff",
+       "vagues": [
+        {
+         "m": [
+          "blop_indigo",
+          "blop_indigo",
+          "blop_indigo",
+          "gloutoblop",
+          "blop_indigo",
+          "blop_indigo",
+          "blopignon",
+          "blop_indigo",
+          "blop_indigo",
+          "tronkoblop"
+         ]
+        },
+        {
+         "m": [
+          "gloutoblop",
+          "blop_indigo",
+          "blop_indigo",
+          "blopignon",
+          "blop_indigo",
+          "blop_indigo",
+          "tronkoblop",
+          "blop_indigo",
+          "blop_indigo",
+          "blop_indigo"
+         ]
+        },
+        {
+         "m": [
+          "blopignon",
+          "blop_indigo",
+          "blop_indigo",
+          "tronkoblop",
+          "blop_indigo",
+          "blop_indigo",
+          "blop_indigo",
+          "gloutoblop",
+          "blop_indigo",
+          "blop_indigo",
+          "blopignon",
+          "blop_indigo"
+         ]
+        }
+       ],
+       "bossVague": [
+        "blop_indigo_royal",
+        "blop_indigo",
+        "blop_indigo"
+       ]
+      },
+      {
+       "nom": "Blop Reinette Royal",
+       "couleur": "#8fd25a",
+       "vagues": [
+        {
+         "m": [
+          "blop_reinette",
+          "blop_reinette",
+          "blop_reinette",
+          "gloutoblop",
+          "blop_reinette",
+          "blop_reinette",
+          "blopignon",
+          "blop_reinette",
+          "blop_reinette",
+          "tronkoblop"
+         ]
+        },
+        {
+         "m": [
+          "gloutoblop",
+          "blop_reinette",
+          "blop_reinette",
+          "blopignon",
+          "blop_reinette",
+          "blop_reinette",
+          "tronkoblop",
+          "blop_reinette",
+          "blop_reinette",
+          "blop_reinette"
+         ]
+        },
+        {
+         "m": [
+          "blopignon",
+          "blop_reinette",
+          "blop_reinette",
+          "tronkoblop",
+          "blop_reinette",
+          "blop_reinette",
+          "blop_reinette",
+          "gloutoblop",
+          "blop_reinette",
+          "blop_reinette",
+          "blopignon",
+          "blop_reinette"
+         ]
+        }
+       ],
+       "bossVague": [
+        "blop_reinette_royal",
+        "blop_reinette",
+        "blop_reinette"
+       ]
+      },
+      {
+       "nom": "Blop Griotte Royal",
+       "couleur": "#ff5a6a",
+       "vagues": [
+        {
+         "m": [
+          "blop_griotte",
+          "blop_griotte",
+          "blop_griotte",
+          "gloutoblop",
+          "blop_griotte",
+          "blop_griotte",
+          "blopignon",
+          "blop_griotte",
+          "blop_griotte",
+          "tronkoblop"
+         ]
+        },
+        {
+         "m": [
+          "gloutoblop",
+          "blop_griotte",
+          "blop_griotte",
+          "blopignon",
+          "blop_griotte",
+          "blop_griotte",
+          "tronkoblop",
+          "blop_griotte",
+          "blop_griotte",
+          "blop_griotte"
+         ]
+        },
+        {
+         "m": [
+          "blopignon",
+          "blop_griotte",
+          "blop_griotte",
+          "tronkoblop",
+          "blop_griotte",
+          "blop_griotte",
+          "blop_griotte",
+          "gloutoblop",
+          "blop_griotte",
+          "blop_griotte",
+          "blopignon",
+          "blop_griotte"
+         ]
+        }
+       ],
+       "bossVague": [
+        "blop_griotte_royal",
+        "blop_griotte",
+        "blop_griotte"
+       ]
+      },
+      {
+       "nom": "Les 4 Royaux",
+       "couleur": "#f2d36b",
+       "vagues": [
+        {
+         "m": [
+          "blop_coco",
+          "blop_indigo",
+          "blop_griotte",
+          "blop_reinette",
+          "gloutoblop",
+          "blopignon",
+          "tronkoblop",
+          "blop_coco",
+          "blop_indigo",
+          "blop_griotte",
+          "blop_reinette",
+          "gloutoblop"
+         ]
+        },
+        {
+         "m": [
+          "blop_reinette",
+          "gloutoblop",
+          "blopignon",
+          "tronkoblop",
+          "blop_coco",
+          "blop_indigo",
+          "blop_griotte",
+          "blop_reinette",
+          "gloutoblop",
+          "blopignon",
+          "tronkoblop",
+          "blop_coco"
+         ]
+        },
+        {
+         "m": [
+          "tronkoblop",
+          "blop_coco",
+          "blop_indigo",
+          "blop_griotte",
+          "blop_reinette",
+          "gloutoblop",
+          "blopignon",
+          "tronkoblop",
+          "blop_coco",
+          "blop_indigo",
+          "blop_griotte",
+          "blop_reinette",
+          "gloutoblop",
+          "blopignon"
+         ]
+        }
+       ],
+       "bossVague": [
+        "blop_coco_royal",
+        "blop_indigo_royal",
+        "blop_reinette_royal",
+        "blop_griotte_royal"
+       ]
+      }
      ]
     },
     {
@@ -14674,7 +14958,33 @@
       "draegnerys",
       "dragoeuf_albatre",
       "dragoeuf_albatre"
-     ]
+     ],
+     "oeufs": {
+      "pos": [
+       [
+        -430,
+        -450
+       ],
+       [
+        430,
+        -450
+       ],
+       [
+        -300,
+        -110
+       ],
+       [
+        300,
+        -110
+       ]
+      ],
+      "eclot": [
+       "dragoeuf_calcaire",
+       "dragoeuf_argile",
+       "dragoeuf_ardoise",
+       "dragoeuf_charbon"
+      ]
+     }
     },
     {
      "nom": "Antre de la Reine Nyée",
@@ -14741,7 +15051,46 @@
       "reine_nyee",
       "gargantul",
       "gargantul"
-     ]
+     ],
+     "toiles": [
+      [
+       -700,
+       -530
+      ],
+      [
+       700,
+       -530
+      ],
+      [
+       0,
+       -480
+      ],
+      [
+       -600,
+       0
+      ],
+      [
+       600,
+       0
+      ],
+      [
+       -170,
+       -290
+      ],
+      [
+       170,
+       -290
+      ],
+      [
+       -850,
+       -210
+      ],
+      [
+       850,
+       -210
+      ]
+     ],
+     "tisse": 5514
     },
     {
      "nom": "Domaine Ancestral",
@@ -14808,7 +15157,9 @@
       "abraknyde_ancestral",
       "abraknyde_venerable",
       "abraknyde_venerable"
-     ]
+     ],
+     "fixe": true,
+     "racines": 240
     },
     {
      "nom": "Labyrinthe du Dragon Cochon",

@@ -333,6 +333,17 @@ export interface DonjonDef { nom: string; salles: Record<string, string[][]>;
   wobot?: { tampon: string; twansmute: string; epilogue: string };
   /** « Kanniboul : 3B » (Village Kanniboul) : tant qu'un `monstre` (joueur de tambour) est debout, le boss a `bonus` % de Dommages en plus. */
   tambours?: { monstre: string; bonus: number };
+  /** 0.6 (« Arènes : 2D ») : à l'arrivée, un cercle par variante ; le premier joueur qui entre dans un cercle la choisit
+   *  (ses vagues, son boss, le butin de son coffre). Clos des Blops : un Blop Royal, ou « Les 4 Royaux ». */
+  choix?: { nom: string; couleur: string; vagues: { nom?: string; m: string[] }[]; bossVague: string[] }[];
+  /** 0.6 (4A+4C) : œufs (px depuis l'arrivée) ; pendant le boss, un œuf touché éclot et libère un monstre de `eclot`. */
+  oeufs?: { pos: [number, number][]; eclot: string[] };
+  /** 0.6 (6B) : toiles collantes au sol (px depuis l'arrivée) ; 6C : sort officiel (id) dont la zone sert à tisser sous les joueurs. */
+  toiles?: [number, number][];
+  tisse?: number;
+  /** 0.6 (8A+8B) : le boss ne quitte pas son estrade ; sort officiel (id) qui fait sortir des racines sous les joueurs. */
+  fixe?: boolean;
+  racines?: number;
   /** Donjon en couloirs (maquette « Couloirs : 1C 2B 3A 4A », tools/extraction/couloirs.py), partie de test seulement :
    *  ses vraies salles dans l'ordre, reliées par des couloirs (cartes `tags`), puis l'arène au bout, sans porte.
    *  Groupes officiels dans les salles, `nErrants` monstres seuls dans chaque couloir (2B) ; les vagues partent à l'entrée de l'arène. */

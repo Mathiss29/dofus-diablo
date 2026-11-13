@@ -1,9 +1,10 @@
 import type { Butin } from './butin';
 import { poserAutel } from './autels';
 import { tenterDofusCawotte } from './guerre';
-import type { DonjonDef } from './defs';
+import type { DonjonDef, Element } from './defs';
 import { RARITIES, type Rarity } from './items';
 import { CASE, type Monster } from './monster';
+import { choisir06, coup06, preparer06, update06, A06, type Choix06, type Oeuf06, type Toile06 } from './arene06';
 import type { World } from './world';
 
 /** Réglages des arènes (maquette « Donjons en vagues », ligne Donjons : 1B 2D 3A 4A 5A+5B+5C 6A 7A 8A+8C 9C 10B 11A 12A 13A 14A 15A 16A). */
@@ -51,7 +52,8 @@ export const WOBOT = {
 export const pvGroupe = (n: number) => 1 + ARENE.pvParJoueur * Math.max(0, n - 1);
 
 /** Clé d'un donjon encore valable (14A), gardée dans la sauvegarde : vague atteinte et temps restant (s). */
-export interface CleDonjon { nom: string; vague: number; reste: number; /** « Métiers : » 9C : entrée avec une clé renforcée. */ renforcee?: boolean }
+export interface CleDonjon { nom: string; vague: number; reste: number; /** « Métiers : » 9C : entrée avec une clé renforcée. */ renforcee?: boolean;
+  /** « Arènes : 2D » : variante choisie à l'entrée (Blop Royal), gardée pour la reprise. */ choix?: number }
 
 interface Attente { type: string; x: number; y: number; t: number; vague: number }
 
@@ -88,7 +90,7 @@ export class Arene {
   /** Temps avant que le butin jaillisse, une fois le coffre touché. */
   private eclat = -1;
   readonly pts: { arrivee: Pt; entrees: Pt[]; boss: Pt; sortie: Pt; coffre: Pt };
-  private readonly pool: string[];
+  private pool: string[];
   private depart: Pt;
   /** « Wabbits : 8B + 9A » : trou où le boss s'est enfui ; joueurs pour qui c'est la première victoire (le trou les mène à la suite). */
   trou: Pt | null = null;
@@ -107,21 +109,49 @@ export class Arene {
   epilogue: { m: Monster; e: Pt } | null = null;
   /** « Kanniboul : 3B » : un joueur de tambour est encore debout (le boss frappe plus fort). */
   tambours = false;
+  /** 0.6 (« Arènes : » 2D) : cercles de choix devant l'arrivée tant que personne n'a choisi ; variante choisie (-1 : aucune). */
+  choix: Choix06[] | null = null;
+  variante = -1;
+  /** 0.6 (4C, 6B+6C, 8B) : œufs de Draegnerys, toiles de la Reine Nyée, toiles et racines annoncées au sol (arene06.ts). */
+  oeufs: Oeuf06[] = [];
+  toiles: Toile06[] = [];
+  tisse: { x: number; y: number; t: number; r: number }[] = [];
+  racines: { x: number; y: number; t: number; r: number }[] = [];
+  tTisse = 3;
+  tRacines = A06.racine.premier;
 
   constructor(readonly w: World, readonly d: DonjonDef, reprise: number) {
     const wg = w.worldGrid!, a = d.arene!, at = (c: number) => wg.cellToWorld(c);
     this.pts = { arrivee: at(a.arrivee), entrees: a.entrees.map(at), boss: at(a.boss), sortie: at(a.sortie), coffre: at(a.coffre) };
     this.total = d.vagues?.length ?? 0;
-    const M = w.opts.data.monsters;
-    // sans salles officielles en jeu (arènes de la 0.4, Amakna pas encore exporté) : les monstres des vagues
-    const tous = Object.values(d.salles).flat(2);
-    this.pool = [...new Set(tous.length ? tous : (d.vagues ?? []).flatMap(v => v.m))].filter(m => M[m] && !M[m].boss);
+    this.pool = [];
     this.vague = Math.max(0, Math.min(this.total + 1, reprise) - 1);   // la vague atteinte recommence (monstres remis à neuf)
     this.depart = { ...this.pts.arrivee };
+    preparer06(this, d, this.depart);
+    const cv = w.player.cleDonjon?.choix;   // reprise : le Royal déjà choisi
+    if (reprise > 1 && cv != null && d.choix?.[cv]) { this.variante = cv; this.choix = null; }
+    this.majPool();
     if (d.fuite) for (const q of w.players) if (w.commeJoueur(q, () => (w.quetes?.donjons[d.nom]?.v ?? 0) === 0)) this.premiers.add(q.id);
   }
 
   get nom() { return this.d.nom; }
+  /** Vagues et boss de la variante choisie (2D), sinon ceux du donjon. */
+  get vagues() { return this.variante >= 0 ? this.d.choix![this.variante].vagues : this.d.vagues ?? []; }
+  get bossVague() { return this.variante >= 0 ? this.d.choix![this.variante].bossVague : this.d.bossVague ?? []; }
+  /** Boss dont le coffre donne le butin : ceux de la variante (« Les 4 Royaux » : les quatre). */
+  get bossCoffre(): string[] { const M = this.w.opts.data.monsters; return this.variante >= 0 ? this.bossVague.filter(m => M[m]?.boss) : []; }
+  /** Monstres tirés pour les « ? » et les paliers. Sans salles officielles en jeu (arènes de la 0.4 et 0.6) : ceux des vagues. */
+  majPool() {
+    const M = this.w.opts.data.monsters, tous = this.variante >= 0 ? [] : Object.values(this.d.salles).flat(2);
+    this.pool = [...new Set(tous.length ? tous : this.vagues.flatMap(v => v.m))].filter(m => M[m] && !M[m].boss);
+  }
+  /** Case libre la plus proche (pour les mécaniques de arene06.ts). */
+  libreA(x: number, y: number) { return this.libre(x, y); }
+  /** 4C : un monstre qui sort d'un œuf, compté dans la vague en cours. */
+  renfort(type: string, x: number, y: number) { this.arrivees.push({ ...this.libre(x, y), type, t: 0.3, vague: this.vague }); }
+  /** Coup d'un joueur (applyHits) : toiles brûlées, œufs qui éclosent. */
+  coup(touche: (o: { x: number; y: number; radius: number }) => boolean, element: Element) { if (this.demarre) coup06(this, touche, element); }
+
   /** Monstres de l'arène encore en vie. */
   vivants() { return this.tous.filter(m => !m.dead).length; }
 
@@ -136,6 +166,8 @@ export class Arene {
     this.arrivees = this.arrivees.filter(a => a.t > 0);
     if (this.fini) { this.updateFin(dt); return; }
     if (w.players.every(q => q.dead)) return;   // tout le groupe à terre : l'arène attend
+    // 2D : rien ne part tant qu'on n'a pas choisi son Royal
+    if (this.choix && !choisir06(this)) return;
     // 15A : la vague 1 attend le premier geste (ou 3 s), de n'importe quel joueur
     if (!this.demarre) {
       const geste = w.players.some(q => q.state !== 'free' || Math.hypot(q.x - this.depart.x, q.y - this.depart.y) > 60);
@@ -149,6 +181,7 @@ export class Arene {
     this.updateBoss();
     this.updateWobot(dt);
     this.updateTambours();
+    update06(this, dt);
     if (this.vague > this.total) return;   // la vague du boss finit quand il tombe
     const reste = this.membres.filter(m => !m.dead).length + this.arrivees.filter(a => a.vague === this.vague).length;
     if (reste <= ARENE.reste || this.tVague >= ARENE.delai) this.lancerVague();
@@ -159,7 +192,7 @@ export class Arene {
     const w = this.w, d = this.d;
     this.vague++; this.tVague = 0;
     const boss = this.vague > this.total;
-    const liste = boss ? d.bossVague ?? [] : (d.vagues![this.vague - 1].m).map(m => (m === '?' ? w.rng.pick(this.pool) : m));
+    const liste = boss ? [...this.bossVague] : (this.vagues[this.vague - 1].m).map(m => (m === '?' ? w.rng.pick(this.pool) : m));
     // à plusieurs : des monstres en plus, pris parmi ceux de la vague
     const plus = boss ? 0 : Math.round(liste.length * ARENE.monstresParJoueur * Math.max(0, w.players.length - 1));
     for (let i = 0; i < plus && liste.length; i++) liste.push(liste[i % liste.length]);
@@ -170,7 +203,7 @@ export class Arene {
       const a = this.pts.arrivee, b = this.pts.boss, q = w.map.nearestFree((a.x + b.x) / 2, (a.y + b.y) / 2);
       poserAutel(w, q.x, q.y, 'arene', true);
     }
-    w.emit({ k: 'areneVague', n: this.vague, total: this.total, nom: boss ? null : d.vagues![this.vague - 1].nom ?? null, boss: boss ? liste[0] ?? null : null });
+    w.emit({ k: 'areneVague', n: this.vague, total: this.total, nom: boss ? null : this.vagues[this.vague - 1].nom ?? null, boss: boss ? liste[0] ?? null : null });
     liste.forEach((type, i) => {
       // le boss et ses compagnons descendent de l'estrade ; les autres arrivent par les entrées, chacun à son tour
       const e = boss ? this.pts.boss : this.pts.entrees[i % this.pts.entrees.length];
@@ -188,6 +221,7 @@ export class Arene {
     const m = w.spawnMonster(a.type, a.x, a.y, k > 1 && D ? { ...D, hp: Math.round(D.hp * k), xp: D.xp ?? Math.round(D.hp / 5) } : D);
     m.arene = true; this.tous.push(m);
     if (a.vague < 0) this.renforts.push(m); else this.membres.push(m);
+    if (m.def.boss && this.d.fixe) m.fixe = true;   // 0.6 (8A) : l'Ancestral ne quitte pas son estrade
     if (m.def.boss && !this.boss) { this.boss = m; w.emit({ k: 'impact', hitstop: 0.05, shake: 0.012, big: true }); }
   }
 
