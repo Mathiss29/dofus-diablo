@@ -45848,5 +45848,2317 @@
   "archiDe": "dragoss_ardoise",
   "archiEchelle": 1.111,
   "ame": "33904"
+ },
+ "blop_coco": {
+  "dofusId": 273,
+  "name": "Blop Coco",
+  "hp": 1700,
+  "speed": 95,
+  "radius": 22,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "blop_coco",
+  "color": "#d8d0b8",
+  "xp": 96,
+  "spells": [
+   {
+    "id": 471,
+    "name": "Biblopition",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 5,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 472,
+    "name": "Cache Biblop",
+    "pa": 2,
+    "po": [
+     1,
+     12
+    ],
+    "relance": 7,
+    "anim": 1,
+    "zone": "C5",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 473,
+    "name": "Bibloperie",
+    "pa": 4,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 17,
+      "max": 24,
+      "steal": false
+     }
+    ],
+    "gfx": 20112
+   },
+   {
+    "id": 475,
+    "name": "Blopition",
+    "pa": 7,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 10,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "invoque",
+      "monster": "blop_coco"
+     }
+    ]
+   },
+   {
+    "id": 476,
+    "name": "Blyphe",
+    "pa": 4,
+    "po": [
+     1,
+     14
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     }
+    ],
+    "gfx": 20112
+   }
+  ],
+  "level": 52,
+  "res": {
+   "terre": -62,
+   "feu": 15,
+   "eau": 15,
+   "air": 50,
+   "neutre": 15
+  },
+  "caracs": {
+   "force": 208,
+   "intelligence": 208,
+   "chance": 208,
+   "agilite": 208,
+   "sagesse": 156,
+   "esquivePA": 7,
+   "esquivePM": 7,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "blop_indigo": {
+  "dofusId": 274,
+  "name": "Blop Indigo",
+  "hp": 1700,
+  "speed": 95,
+  "radius": 23,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "blop_indigo",
+  "color": "#d8d0b8",
+  "xp": 96,
+  "spells": [
+   {
+    "id": 471,
+    "name": "Biblopition",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 5,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 472,
+    "name": "Cache Biblop",
+    "pa": 2,
+    "po": [
+     1,
+     12
+    ],
+    "relance": 7,
+    "anim": 1,
+    "zone": "C5",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 473,
+    "name": "Bibloperie",
+    "pa": 4,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 17,
+      "max": 24,
+      "steal": false
+     }
+    ],
+    "gfx": 20112
+   },
+   {
+    "id": 475,
+    "name": "Blopition",
+    "pa": 7,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 10,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "invoque",
+      "monster": "blop_coco"
+     }
+    ]
+   },
+   {
+    "id": 476,
+    "name": "Blyphe",
+    "pa": 4,
+    "po": [
+     1,
+     14
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     }
+    ],
+    "gfx": 20112
+   }
+  ],
+  "level": 52,
+  "res": {
+   "terre": 15,
+   "feu": -62,
+   "eau": 50,
+   "air": 15,
+   "neutre": 15
+  },
+  "caracs": {
+   "force": 208,
+   "intelligence": 208,
+   "chance": 208,
+   "agilite": 208,
+   "sagesse": 156,
+   "esquivePA": 7,
+   "esquivePM": 7,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "blop_griotte": {
+  "dofusId": 275,
+  "name": "Blop Griotte",
+  "hp": 1700,
+  "speed": 95,
+  "radius": 23,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "blop_griotte",
+  "color": "#d8d0b8",
+  "xp": 96,
+  "spells": [
+   {
+    "id": 471,
+    "name": "Biblopition",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 5,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 472,
+    "name": "Cache Biblop",
+    "pa": 2,
+    "po": [
+     1,
+     12
+    ],
+    "relance": 7,
+    "anim": 1,
+    "zone": "C5",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 473,
+    "name": "Bibloperie",
+    "pa": 4,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 17,
+      "max": 24,
+      "steal": false
+     }
+    ],
+    "gfx": 20112
+   },
+   {
+    "id": 475,
+    "name": "Blopition",
+    "pa": 7,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 10,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "invoque",
+      "monster": "blop_coco"
+     }
+    ]
+   },
+   {
+    "id": 476,
+    "name": "Blyphe",
+    "pa": 4,
+    "po": [
+     1,
+     14
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     }
+    ],
+    "gfx": 20112
+   }
+  ],
+  "level": 52,
+  "res": {
+   "terre": 15,
+   "feu": 50,
+   "eau": -62,
+   "air": 15,
+   "neutre": 15
+  },
+  "caracs": {
+   "force": 208,
+   "intelligence": 208,
+   "chance": 208,
+   "agilite": 208,
+   "sagesse": 156,
+   "esquivePA": 7,
+   "esquivePM": 7,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "blop_reinette": {
+  "dofusId": 276,
+  "name": "Blop Reinette",
+  "hp": 1700,
+  "speed": 95,
+  "radius": 22,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "blop_reinette",
+  "color": "#d8d0b8",
+  "xp": 96,
+  "spells": [
+   {
+    "id": 471,
+    "name": "Biblopition",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 5,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 472,
+    "name": "Cache Biblop",
+    "pa": 2,
+    "po": [
+     1,
+     12
+    ],
+    "relance": 7,
+    "anim": 1,
+    "zone": "C5",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 473,
+    "name": "Bibloperie",
+    "pa": 4,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 17,
+      "max": 24,
+      "steal": false
+     }
+    ],
+    "gfx": 20112
+   },
+   {
+    "id": 475,
+    "name": "Blopition",
+    "pa": 7,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 10,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "invoque",
+      "monster": "blop_coco"
+     }
+    ]
+   },
+   {
+    "id": 476,
+    "name": "Blyphe",
+    "pa": 4,
+    "po": [
+     1,
+     14
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     }
+    ],
+    "gfx": 20112
+   }
+  ],
+  "level": 52,
+  "res": {
+   "terre": 50,
+   "feu": 15,
+   "eau": 15,
+   "air": -62,
+   "neutre": 15
+  },
+  "caracs": {
+   "force": 208,
+   "intelligence": 208,
+   "chance": 208,
+   "agilite": 208,
+   "sagesse": 156,
+   "esquivePA": 7,
+   "esquivePM": 7,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "gloutoblop": {
+  "dofusId": 1181,
+  "name": "Gloutoblop",
+  "hp": 2000,
+  "speed": 95,
+  "radius": 29,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "gloutoblop",
+  "color": "#d8d0b8",
+  "xp": 96,
+  "spells": [
+   {
+    "id": 1164,
+    "name": "Gloutage",
+    "pa": 6,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   }
+  ],
+  "level": 52,
+  "res": {
+   "terre": -9,
+   "feu": -24,
+   "eau": 26,
+   "air": 11,
+   "neutre": 21
+  },
+  "caracs": {
+   "force": 208,
+   "intelligence": 208,
+   "chance": 208,
+   "agilite": 208,
+   "sagesse": 156,
+   "esquivePA": 5,
+   "esquivePM": 5,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "blopignon": {
+  "dofusId": 1182,
+  "name": "Blopignon",
+  "hp": 1525,
+  "speed": 95,
+  "radius": 19,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "blopignon",
+  "color": "#d8d0b8",
+  "xp": 96,
+  "spells": [
+   {
+    "id": 1165,
+    "name": "Bloblo",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 1166,
+    "name": "Blopiction",
+    "pa": 3,
+    "po": [
+     1,
+     12
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 7067,
+    "name": "Bloprojection",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "O2",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 7,
+      "max": 10,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 52,
+  "res": {
+   "terre": -19,
+   "feu": -14,
+   "eau": 0,
+   "air": 26,
+   "neutre": 21
+  },
+  "caracs": {
+   "force": 208,
+   "intelligence": 208,
+   "chance": 208,
+   "agilite": 208,
+   "sagesse": 156,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "tronkoblop": {
+  "dofusId": 1183,
+  "name": "Tronkoblop",
+  "hp": 1525,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "tronkoblop",
+  "color": "#d8d0b8",
+  "xp": 96,
+  "spells": [
+   {
+    "id": 1167,
+    "name": "Blopzone",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "C3",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 21,
+      "max": 30,
+      "steal": true
+     },
+     {
+      "k": "pm",
+      "n": 1,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 1168,
+    "name": "Blopsoin",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 2,
+    "anim": 1,
+    "zone": "C3",
+    "allies": true,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 21,
+      "max": 30
+     }
+    ]
+   },
+   {
+    "id": 7070,
+    "name": "Blopium",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "C3",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 52,
+  "res": {
+   "terre": 41,
+   "feu": 31,
+   "eau": -9,
+   "air": -24,
+   "neutre": 0
+  },
+  "caracs": {
+   "force": 208,
+   "intelligence": 208,
+   "chance": 208,
+   "agilite": 208,
+   "sagesse": 156,
+   "esquivePA": -5,
+   "esquivePM": 15,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "blop_coco_royal": {
+  "dofusId": 1184,
+  "name": "Blop Coco Royal",
+  "hp": 6000,
+  "speed": 85,
+  "radius": 28,
+  "mass": 6,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "blop_coco_royal",
+  "color": "#d8d0b8",
+  "xp": 1500,
+  "spells": [
+   {
+    "id": 1169,
+    "name": "Blopunition Royale",
+    "pa": 6,
+    "po": [
+     1,
+     4
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 21,
+      "max": 30,
+      "steal": true
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 0
+     }
+    ]
+   },
+   {
+    "id": 1170,
+    "name": "Blovocation",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "invoque",
+      "monster": "blop_coco"
+     },
+     {
+      "k": "invoque",
+      "monster": "blop_griotte"
+     },
+     {
+      "k": "invoque",
+      "monster": "blop_indigo"
+     },
+     {
+      "k": "invoque",
+      "monster": "blop_reinette"
+     },
+     {
+      "k": "invoque",
+      "monster": "blopignon"
+     },
+     {
+      "k": "invoque",
+      "monster": "tronkoblop"
+     },
+     {
+      "k": "invoque",
+      "monster": "gloutoblop"
+     },
+     {
+      "k": "invoque",
+      "monster": "blopignon"
+     }
+    ]
+   },
+   {
+    "id": 1171,
+    "name": "Blotection",
+    "pa": 3,
+    "po": [
+     1,
+     4
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   }
+  ],
+  "level": 60,
+  "res": {
+   "terre": -12,
+   "feu": -12,
+   "eau": -12,
+   "air": 94,
+   "neutre": -12
+  },
+  "caracs": {
+   "force": 280,
+   "intelligence": 280,
+   "chance": 280,
+   "agilite": 280,
+   "sagesse": 280,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "boss": true,
+  "ame": "33697"
+ },
+ "blop_griotte_royal": {
+  "dofusId": 1185,
+  "name": "Blop Griotte Royal",
+  "hp": 6000,
+  "speed": 85,
+  "radius": 28,
+  "mass": 6,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "blop_griotte_royal",
+  "color": "#d8d0b8",
+  "xp": 1500,
+  "spells": [
+   {
+    "id": 1169,
+    "name": "Blopunition Royale",
+    "pa": 6,
+    "po": [
+     1,
+     4
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 21,
+      "max": 30,
+      "steal": true
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 0
+     }
+    ]
+   },
+   {
+    "id": 1170,
+    "name": "Blovocation",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "invoque",
+      "monster": "blop_coco"
+     },
+     {
+      "k": "invoque",
+      "monster": "blop_griotte"
+     },
+     {
+      "k": "invoque",
+      "monster": "blop_indigo"
+     },
+     {
+      "k": "invoque",
+      "monster": "blop_reinette"
+     },
+     {
+      "k": "invoque",
+      "monster": "blopignon"
+     },
+     {
+      "k": "invoque",
+      "monster": "tronkoblop"
+     },
+     {
+      "k": "invoque",
+      "monster": "gloutoblop"
+     },
+     {
+      "k": "invoque",
+      "monster": "blopignon"
+     }
+    ]
+   },
+   {
+    "id": 1171,
+    "name": "Blotection",
+    "pa": 3,
+    "po": [
+     1,
+     4
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   }
+  ],
+  "level": 60,
+  "res": {
+   "terre": -12,
+   "feu": 94,
+   "eau": -12,
+   "air": -12,
+   "neutre": -12
+  },
+  "caracs": {
+   "force": 280,
+   "intelligence": 280,
+   "chance": 280,
+   "agilite": 280,
+   "sagesse": 280,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "boss": true,
+  "ame": "33698"
+ },
+ "blop_indigo_royal": {
+  "dofusId": 1186,
+  "name": "Blop Indigo Royal",
+  "hp": 6000,
+  "speed": 85,
+  "radius": 28,
+  "mass": 6,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "blop_indigo_royal",
+  "color": "#d8d0b8",
+  "xp": 1500,
+  "spells": [
+   {
+    "id": 1169,
+    "name": "Blopunition Royale",
+    "pa": 6,
+    "po": [
+     1,
+     4
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 21,
+      "max": 30,
+      "steal": true
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 0
+     }
+    ]
+   },
+   {
+    "id": 1170,
+    "name": "Blovocation",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "invoque",
+      "monster": "blop_coco"
+     },
+     {
+      "k": "invoque",
+      "monster": "blop_griotte"
+     },
+     {
+      "k": "invoque",
+      "monster": "blop_indigo"
+     },
+     {
+      "k": "invoque",
+      "monster": "blop_reinette"
+     },
+     {
+      "k": "invoque",
+      "monster": "blopignon"
+     },
+     {
+      "k": "invoque",
+      "monster": "tronkoblop"
+     },
+     {
+      "k": "invoque",
+      "monster": "gloutoblop"
+     },
+     {
+      "k": "invoque",
+      "monster": "blopignon"
+     }
+    ]
+   },
+   {
+    "id": 1171,
+    "name": "Blotection",
+    "pa": 3,
+    "po": [
+     1,
+     4
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   }
+  ],
+  "level": 60,
+  "res": {
+   "terre": -12,
+   "feu": -12,
+   "eau": 94,
+   "air": -12,
+   "neutre": -12
+  },
+  "caracs": {
+   "force": 280,
+   "intelligence": 280,
+   "chance": 280,
+   "agilite": 280,
+   "sagesse": 280,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "boss": true,
+  "ame": "33699"
+ },
+ "blop_reinette_royal": {
+  "dofusId": 1187,
+  "name": "Blop Reinette Royal",
+  "hp": 6000,
+  "speed": 85,
+  "radius": 28,
+  "mass": 6,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "blop_reinette_royal",
+  "color": "#d8d0b8",
+  "xp": 1500,
+  "spells": [
+   {
+    "id": 1169,
+    "name": "Blopunition Royale",
+    "pa": 6,
+    "po": [
+     1,
+     4
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 21,
+      "max": 30,
+      "steal": true
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 0
+     }
+    ]
+   },
+   {
+    "id": 1170,
+    "name": "Blovocation",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "invoque",
+      "monster": "blop_coco"
+     },
+     {
+      "k": "invoque",
+      "monster": "blop_griotte"
+     },
+     {
+      "k": "invoque",
+      "monster": "blop_indigo"
+     },
+     {
+      "k": "invoque",
+      "monster": "blop_reinette"
+     },
+     {
+      "k": "invoque",
+      "monster": "blopignon"
+     },
+     {
+      "k": "invoque",
+      "monster": "tronkoblop"
+     },
+     {
+      "k": "invoque",
+      "monster": "gloutoblop"
+     },
+     {
+      "k": "invoque",
+      "monster": "blopignon"
+     }
+    ]
+   },
+   {
+    "id": 1171,
+    "name": "Blotection",
+    "pa": 3,
+    "po": [
+     1,
+     4
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   }
+  ],
+  "level": 60,
+  "res": {
+   "terre": 94,
+   "feu": -12,
+   "eau": -12,
+   "air": -12,
+   "neutre": -12
+  },
+  "caracs": {
+   "force": 280,
+   "intelligence": 280,
+   "chance": 280,
+   "agilite": 280,
+   "sagesse": 280,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "boss": true,
+  "ame": "33700"
+ },
+ "dragoeuf_albatre": {
+  "dofusId": 5822,
+  "name": "Dragoeuf Albâtre",
+  "hp": 2450,
+  "speed": 95,
+  "radius": 31,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "dragoeuf_albatre",
+  "color": "#d8d0b8",
+  "xp": 99,
+  "spells": [
+   {
+    "id": 14246,
+    "name": "Dragloméra",
+    "pa": 3,
+    "po": [
+     3,
+     10
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 6,
+      "max": 10,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 6,
+      "max": 10,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 6,
+      "max": 10,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 6,
+      "max": 10,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 14247,
+    "name": "Dralbatre",
+    "pa": 4,
+    "po": [
+     3,
+     12
+    ],
+    "relance": 2,
+    "anim": 1,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 1
+     },
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 11,
+      "max": 15,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 62,
+  "res": {
+   "terre": 12,
+   "feu": 12,
+   "eau": 12,
+   "air": 12,
+   "neutre": 12
+  },
+  "caracs": {
+   "force": 190,
+   "intelligence": 190,
+   "chance": 190,
+   "agilite": 190,
+   "sagesse": 150,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "draegnerys": {
+  "dofusId": 5823,
+  "name": "Draegnerys",
+  "hp": 3500,
+  "speed": 85,
+  "radius": 30,
+  "mass": 6,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "draegnerys",
+  "color": "#d8d0b8",
+  "xp": 1425,
+  "spells": [
+   {
+    "id": 14241,
+    "name": "Somatotropine",
+    "pa": 4,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 3,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "pm",
+      "n": 2,
+      "dur": 2
+     },
+     {
+      "k": "dommages",
+      "n": 200,
+      "pct": true,
+      "dur": 2
+     }
+    ],
+    "gfx": 3786
+   },
+   {
+    "id": 14242,
+    "name": "Knout",
+    "pa": 3,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 0,
+    "anim": 3,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 2
+     }
+    ]
+   },
+   {
+    "id": 14243,
+    "name": "Drakaaris",
+    "pa": 3,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 16,
+      "max": 25,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 70,
+  "res": {
+   "terre": 8,
+   "feu": 17,
+   "eau": 10,
+   "air": 20,
+   "neutre": 12
+  },
+  "caracs": {
+   "force": 220,
+   "intelligence": 220,
+   "chance": 220,
+   "agilite": 220,
+   "sagesse": 180,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "boss": true,
+  "ame": "33708"
+ },
+ "arapex": {
+  "dofusId": 3991,
+  "name": "Arapex",
+  "hp": 3250,
+  "speed": 95,
+  "radius": 30,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "arapex",
+  "color": "#d8d0b8",
+  "xp": 92,
+  "spells": [
+   {
+    "id": 5499,
+    "name": "Exécution",
+    "pa": 2,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [],
+    "gfx": 3144
+   },
+   {
+    "id": 5511,
+    "name": "Estocade",
+    "pa": 3,
+    "po": [
+     2,
+     3
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 46,
+      "max": 50,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 60,
+      "max": 60,
+      "steal": false
+     },
+     {
+      "k": "avance",
+      "n": 2
+     }
+    ]
+   },
+   {
+    "id": 5512,
+    "name": "Tourbillon mortel",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 1,
+    "anim": 2,
+    "zone": "C2",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 41,
+      "max": 45,
+      "steal": false
+     },
+     {
+      "k": "attire",
+      "n": 1
+     }
+    ]
+   }
+  ],
+  "level": 82,
+  "res": {
+   "terre": 20,
+   "feu": 10,
+   "eau": 5,
+   "air": -20,
+   "neutre": -20
+  },
+  "caracs": {
+   "force": 200,
+   "intelligence": 200,
+   "chance": 200,
+   "agilite": 200,
+   "sagesse": 125,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "reine_nyee": {
+  "dofusId": 3996,
+  "name": "Reine Nyée",
+  "hp": 9000,
+  "speed": 85,
+  "radius": 34,
+  "mass": 6,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "reine_nyee",
+  "color": "#d8d0b8",
+  "xp": 1350,
+  "spells": [
+   {
+    "id": 5503,
+    "name": "Ponte d'Oeuf",
+    "pa": 3,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 2,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 5513,
+    "name": "Cisaillage",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "T1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 41,
+      "max": 45,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 1
+     },
+     {
+      "k": "pm",
+      "n": -2,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 5514,
+    "name": "Mitraille de soie",
+    "pa": 2,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 1,
+    "anim": 2,
+    "zone": "C2",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 36,
+      "max": 45,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 90,
+  "res": {
+   "terre": 30,
+   "feu": -5,
+   "eau": -20,
+   "air": 40,
+   "neutre": 20
+  },
+  "caracs": {
+   "force": 300,
+   "intelligence": 300,
+   "chance": 300,
+   "agilite": 300,
+   "sagesse": 200,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "boss": true,
+  "ame": "33716"
+ },
+ "abraknyde_ancestral": {
+  "dofusId": 173,
+  "name": "Abraknyde Ancestral",
+  "hp": 9000,
+  "speed": 85,
+  "radius": 34,
+  "mass": 6,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "abraknyde_ancestral",
+  "color": "#d8d0b8",
+  "xp": 1350,
+  "spells": [
+   {
+    "id": 231,
+    "name": "Morsure Sylvestre",
+    "pa": 4,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 1
+     },
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "puissance",
+      "n": -100,
+      "dur": 2
+     }
+    ]
+   },
+   {
+    "id": 240,
+    "name": "Branche Paralysante",
+    "pa": 2,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [],
+    "gfx": 3147
+   },
+   {
+    "id": 466,
+    "name": "Invocation d'Arakne Majeure",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 5,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "invoque",
+      "monster": "arakne_majeure"
+     }
+    ]
+   },
+   {
+    "id": 5526,
+    "name": "Reconstitution Abraknydienne",
+    "pa": 5,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 5,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 181,
+      "max": 230
+     }
+    ],
+    "gfx": 20106
+   }
+  ],
+  "level": 90,
+  "res": {
+   "terre": 53,
+   "feu": -5,
+   "eau": 53,
+   "air": -5,
+   "neutre": 53
+  },
+  "caracs": {
+   "force": 600,
+   "intelligence": 800,
+   "chance": 700,
+   "agilite": 320,
+   "sagesse": 440,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "boss": true,
+  "ame": "33713"
+ },
+ "araknotron": {
+  "dofusId": 917,
+  "name": "Araknotron",
+  "hp": 2750,
+  "speed": 95,
+  "radius": 28,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "araknotron",
+  "color": "#d8d0b8",
+  "xp": 93,
+  "spells": [
+   {
+    "id": 975,
+    "name": "Lancer d'Arakne Morte",
+    "pa": 4,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     },
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 976,
+    "name": "Complicité",
+    "pa": 1,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 0,
+    "zone": "C63",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 200,
+      "pct": true,
+      "dur": 3
+     }
+    ]
+   },
+   {
+    "id": 3376,
+    "name": "Bond Glissant",
+    "pa": 4,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 2,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [],
+    "gfx": 20801
+   }
+  ],
+  "level": 76,
+  "res": {
+   "terre": -27,
+   "feu": 7,
+   "eau": -27,
+   "air": 7,
+   "neutre": 6
+  },
+  "caracs": {
+   "force": 100,
+   "intelligence": 100,
+   "chance": 100,
+   "agilite": 100,
+   "sagesse": 100,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "dragon_cochon": {
+  "dofusId": 113,
+  "name": "Dragon Cochon",
+  "hp": 5250,
+  "speed": 85,
+  "radius": 34,
+  "mass": 6,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "dragon_cochon",
+  "color": "#d8d0b8",
+  "xp": 1380,
+  "spells": [
+   {
+    "id": 206,
+    "name": "Écrasement Handicapant",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 1
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 13,
+      "max": 18,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 228,
+    "name": "Étourderie Mortelle",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 12,
+    "anim": 2,
+    "zone": "C63",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 229,
+    "name": "Croutage",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 31,
+      "max": 45,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 6
+     }
+    ]
+   },
+   {
+    "id": 244,
+    "name": "Immobilisation",
+    "pa": 3,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 2,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "pm",
+      "n": -14,
+      "dur": 1
+     }
+    ]
+   }
+  ],
+  "level": 100,
+  "res": {
+   "terre": 38,
+   "feu": 38,
+   "eau": -5,
+   "air": -5,
+   "neutre": 38
+  },
+  "caracs": {
+   "force": 1100,
+   "intelligence": 1100,
+   "chance": 0,
+   "agilite": 1100,
+   "sagesse": 720,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "boss": true,
+  "ame": "33717"
+ },
+ "don_duss_ang": {
+  "dofusId": 600,
+  "name": "Don Duss Ang",
+  "hp": 4000,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "don_duss_ang",
+  "color": "#d8d0b8",
+  "xp": 90,
+  "spells": [
+   {
+    "id": 596,
+    "name": "Vampirisation Cochonne",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 71,
+      "max": 100,
+      "steal": true
+     }
+    ]
+   },
+   {
+    "id": 597,
+    "name": "Tire-Bouffon",
+    "pa": 1,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "attire",
+      "n": 3
+     }
+    ]
+   },
+   {
+    "id": 598,
+    "name": "Perfusion",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 5,
+    "anim": 1,
+    "zone": "C3",
+    "allies": true,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 71,
+      "max": 100
+     },
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 31,
+      "max": 60,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 92,
+  "res": {
+   "terre": -20,
+   "feu": -20,
+   "eau": 20,
+   "air": 20,
+   "neutre": 20
+  },
+  "caracs": {
+   "force": 0,
+   "intelligence": 100,
+   "chance": 50,
+   "agilite": 0,
+   "sagesse": 0,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "don_dorgan": {
+  "dofusId": 601,
+  "name": "Don Dorgan",
+  "hp": 4000,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "don_dorgan",
+  "color": "#d8d0b8",
+  "xp": 90,
+  "spells": [
+   {
+    "id": 593,
+    "name": "Menotage",
+    "pa": 4,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "C2",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 31,
+      "max": 45,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 594,
+    "name": "Charge Sanguinaire",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 31,
+      "max": 50,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 595,
+    "name": "Invocation de Cochon de Farle",
+    "pa": 2,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 5,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "invoque",
+      "monster": "cochon_de_farle"
+     }
+    ]
+   }
+  ],
+  "level": 92,
+  "res": {
+   "terre": -20,
+   "feu": 50,
+   "eau": -20,
+   "air": -20,
+   "neutre": 10
+  },
+  "caracs": {
+   "force": 50,
+   "intelligence": 150,
+   "chance": 0,
+   "agilite": 100,
+   "sagesse": 100,
+   "esquivePA": 1,
+   "esquivePM": 6,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
  }
 }

@@ -52592,6 +52592,294 @@
    "icon": 85003,
    "level": 100,
    "ame": "archi_dragoss_ardoise"
+  },
+  "33697": {
+   "name": "Âme capturée : Blop Coco Royal",
+   "icon": 85004,
+   "level": 60,
+   "ame": "blop_coco_royal"
+  },
+  "33698": {
+   "name": "Âme capturée : Blop Griotte Royal",
+   "icon": 85004,
+   "level": 60,
+   "ame": "blop_griotte_royal"
+  },
+  "33699": {
+   "name": "Âme capturée : Blop Indigo Royal",
+   "icon": 85004,
+   "level": 60,
+   "ame": "blop_indigo_royal"
+  },
+  "33700": {
+   "name": "Âme capturée : Blop Reinette Royal",
+   "icon": 85004,
+   "level": 60,
+   "ame": "blop_reinette_royal"
+  },
+  "33708": {
+   "name": "Âme capturée : Draegnerys",
+   "icon": 85004,
+   "level": 70,
+   "ame": "draegnerys"
+  },
+  "33716": {
+   "name": "Âme capturée : Reine Nyée",
+   "icon": 85004,
+   "level": 90,
+   "ame": "reine_nyee"
+  },
+  "33713": {
+   "name": "Âme capturée : Abraknyde Ancestral",
+   "icon": 85004,
+   "level": 90,
+   "ame": "abraknyde_ancestral"
+  },
+  "33717": {
+   "name": "Âme capturée : Dragon Cochon",
+   "icon": 85004,
+   "level": 100,
+   "ame": "dragon_cochon"
+  },
+  "1770": {
+   "name": "Bout de Blop Coco",
+   "icon": 15281,
+   "level": 26
+  },
+  "2558": {
+   "name": "Blop mort",
+   "icon": 15568,
+   "level": 44
+  },
+  "1777": {
+   "name": "Bout de Blop Indigo",
+   "icon": 15288,
+   "level": 26
+  },
+  "1775": {
+   "name": "Bout de Blop Griotte",
+   "icon": 15286,
+   "level": 26
+  },
+  "1773": {
+   "name": "Bout de Blop Reinette",
+   "icon": 15284,
+   "level": 26
+  },
+  "9381": {
+   "name": "Fleur de Gloutoblop",
+   "icon": 35007,
+   "level": 60
+  },
+  "9382": {
+   "name": "Fleur de Blopignon",
+   "icon": 35008,
+   "level": 54
+  },
+  "9383": {
+   "name": "Racine de Tronkoblop",
+   "icon": 98001,
+   "level": 52
+  },
+  "9251": {
+   "name": "Morceau de clef Coco",
+   "icon": 84252,
+   "level": 80
+  },
+  "16356": {
+   "name": "Huile de Blop Royal",
+   "icon": 60073,
+   "level": 59
+  },
+  "9388": {
+   "name": "Feuille de Blop Royal",
+   "icon": 36013,
+   "level": 60
+  },
+  "9385": {
+   "name": "Fleur de Blop Coco Royal",
+   "icon": 35009,
+   "level": 60
+  },
+  "9249": {
+   "name": "Morceau de clef Griotte",
+   "icon": 84250,
+   "level": 80
+  },
+  "9384": {
+   "name": "Fleur de Blop Griotte Royal",
+   "icon": 35012,
+   "level": 60
+  },
+  "9252": {
+   "name": "Morceau de clef Indigo",
+   "icon": 84249,
+   "level": 80
+  },
+  "9386": {
+   "name": "Fleur de Blop Indigo Royal",
+   "icon": 35011,
+   "level": 60
+  },
+  "9250": {
+   "name": "Morceau de clef Reinette",
+   "icon": 84251,
+   "level": 80
+  },
+  "9387": {
+   "name": "Fleur de Blop Reinette Royal",
+   "icon": 35010,
+   "level": 60
+  },
+  "21263": {
+   "name": "Peau de Dragoeuf Albâtre",
+   "icon": 59675,
+   "level": 70
+  },
+  "21256": {
+   "name": "Griffe de Dragoeuf Albâtre",
+   "icon": 47701,
+   "level": 70
+  },
+  "21264": {
+   "name": "Étoffe de Draegnerys",
+   "icon": 55739,
+   "level": 70
+  },
+  "21271": {
+   "name": "Cheveux de Draegnerys",
+   "icon": 54714,
+   "level": 70
+  },
+  "29572": {
+   "name": "Kinryu",
+   "icon": 18295,
+   "level": 1
+  },
+  "16216": {
+   "name": "Chélicères d'Arapex",
+   "icon": 47843,
+   "level": 86
+  },
+  "31515": {
+   "name": "Bouclinyée",
+   "icon": 82544,
+   "level": 1
+  },
+  "26368": {
+   "name": "Œuf noir",
+   "icon": 72069,
+   "level": 1
+  },
+  "20057": {
+   "name": "Patte de la Reine Nyée",
+   "icon": 103392,
+   "level": 1
+  },
+  "16201": {
+   "name": "Œuf d'Arak-haï",
+   "icon": 126039,
+   "level": 1
+  },
+  "16180": {
+   "name": "Soie Baveuse",
+   "icon": 164060,
+   "level": 90
+  },
+  "16181": {
+   "name": "Globule de Nyée",
+   "icon": 164061,
+   "level": 90
+  },
+  "17139": {
+   "name": "Bidoche Rassie",
+   "icon": 63474,
+   "level": 90
+  },
+  "8496": {
+   "name": "Racine d'Abraknyde Ancestral",
+   "icon": 98668,
+   "level": 90
+  },
+  "8495": {
+   "name": "Bourgeon d'Abraknyde Ancestral",
+   "icon": 108755,
+   "level": 90
+  },
+  "16152": {
+   "name": "Masque Brisé d'Araknotron",
+   "icon": 164053,
+   "level": 82
+  },
+  "16153": {
+   "name": "Arakne Écrabouillée",
+   "icon": 164055,
+   "level": 82
+  },
+  "30214": {
+   "name": "Bouclier Cochon Krollector",
+   "icon": 82503,
+   "level": 1
+  },
+  "16241": {
+   "name": "Bouclier Cochon",
+   "icon": 82121,
+   "level": 1
+  },
+  "2645": {
+   "name": "Groin de Dragon Cochon",
+   "icon": 15620,
+   "level": 100
+  },
+  "8393": {
+   "name": "Poil de Dragon Cochon",
+   "icon": 54666,
+   "level": 100
+  },
+  "20793": {
+   "name": "Porçailé",
+   "icon": 18179,
+   "level": 1
+  },
+  "8392": {
+   "name": "Peau de Don Duss Ang",
+   "icon": 59618,
+   "level": 97
+  },
+  "8391": {
+   "name": "Peau de Don Dorgan",
+   "icon": 59617,
+   "level": 100
+  },
+  "9248": {
+   "name": "Clef du Clos des Blops",
+   "icon": 84248,
+   "level": 60,
+   "cle": "Clos des Blops"
+  },
+  "8343": {
+   "name": "Clef de l'Épreuve de Draegnerys",
+   "icon": 84017,
+   "level": 70,
+   "cle": "Épreuve de Draegnerys"
+  },
+  "16179": {
+   "name": "Clef de l'Antre de la Reine Nyée",
+   "icon": 84744,
+   "level": 90,
+   "cle": "Antre de la Reine Nyée"
+  },
+  "7557": {
+   "name": "Clef du Domaine Ancestral",
+   "icon": 84004,
+   "level": 90,
+   "cle": "Domaine Ancestral"
+  },
+  "7511": {
+   "name": "Clef du labyrinthe du Dragon Cochon",
+   "icon": 84003,
+   "level": 100,
+   "cle": "Labyrinthe du Dragon Cochon"
   }
  },
  "drops": {
@@ -68802,6 +69090,1111 @@
    {
     "item": "16833",
     "chance": 2.0
+   }
+  ],
+  "blop_coco": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "1770",
+    "chance": 46.0
+   },
+   {
+    "item": "17132",
+    "chance": 46.0,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "2558",
+    "chance": 7.6
+   },
+   {
+    "item": "16827",
+    "chance": 1.0
+   }
+  ],
+  "blop_indigo": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "17132",
+    "chance": 46.0,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "1777",
+    "chance": 46.0
+   },
+   {
+    "item": "2558",
+    "chance": 7.6
+   },
+   {
+    "item": "16827",
+    "chance": 1.0
+   }
+  ],
+  "blop_griotte": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "17132",
+    "chance": 46.0,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "1775",
+    "chance": 46.0
+   },
+   {
+    "item": "2558",
+    "chance": 7.6
+   },
+   {
+    "item": "16827",
+    "chance": 1.0
+   }
+  ],
+  "blop_reinette": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "1773",
+    "chance": 46.0
+   },
+   {
+    "item": "17132",
+    "chance": 46.0,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "2558",
+    "chance": 7.6
+   },
+   {
+    "item": "16827",
+    "chance": 1.0
+   }
+  ],
+  "gloutoblop": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "9381",
+    "chance": 46.0
+   },
+   {
+    "item": "17132",
+    "chance": 46.0,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "2558",
+    "chance": 7.6
+   },
+   {
+    "item": "16827",
+    "chance": 1.0
+   }
+  ],
+  "blopignon": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "17132",
+    "chance": 46.0,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "9382",
+    "chance": 46.0
+   },
+   {
+    "item": "2558",
+    "chance": 7.6
+   },
+   {
+    "item": "16827",
+    "chance": 1.0
+   }
+  ],
+  "tronkoblop": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "17132",
+    "chance": 46.0,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "9383",
+    "chance": 46.0
+   },
+   {
+    "item": "2558",
+    "chance": 7.64
+   },
+   {
+    "item": "16827",
+    "chance": 1.0
+   }
+  ],
+  "blop_coco_royal": [
+   {
+    "item": "9251",
+    "chance": 100.0
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "12231",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "22318",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "16356",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "9388",
+    "chance": 45.0
+   },
+   {
+    "item": "2558",
+    "chance": 7.6
+   },
+   {
+    "item": "9385",
+    "chance": 7.6
+   },
+   {
+    "item": "13526",
+    "chance": 6.0,
+    "cond": "quete"
+   },
+   {
+    "item": "16827",
+    "chance": 3.0
+   },
+   {
+    "item": "17133",
+    "chance": 2.29,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "20739",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "22322",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "20136",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "27848",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "24188",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "26256",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "32985",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "29498",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "31042",
+    "chance": 0.15,
+    "cond": "evenement"
+   }
+  ],
+  "blop_griotte_royal": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "12231",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "9249",
+    "chance": 100.0
+   },
+   {
+    "item": "22318",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "16356",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "9388",
+    "chance": 45.0
+   },
+   {
+    "item": "9384",
+    "chance": 7.6
+   },
+   {
+    "item": "2558",
+    "chance": 7.6
+   },
+   {
+    "item": "13526",
+    "chance": 6.0,
+    "cond": "quete"
+   },
+   {
+    "item": "16827",
+    "chance": 3.0
+   },
+   {
+    "item": "17133",
+    "chance": 2.29,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "27848",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "24188",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "31042",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "20739",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "26256",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "29498",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "22322",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "20136",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "32985",
+    "chance": 0.15,
+    "cond": "evenement"
+   }
+  ],
+  "blop_indigo_royal": [
+   {
+    "item": "9252",
+    "chance": 100.0
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "12231",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "22318",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "16356",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "9388",
+    "chance": 45.0
+   },
+   {
+    "item": "9386",
+    "chance": 7.6
+   },
+   {
+    "item": "2558",
+    "chance": 7.6
+   },
+   {
+    "item": "13526",
+    "chance": 6.0,
+    "cond": "quete"
+   },
+   {
+    "item": "16827",
+    "chance": 3.0
+   },
+   {
+    "item": "17133",
+    "chance": 2.29,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "20739",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "32985",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "27848",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "26256",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "29498",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "20136",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "22322",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "24188",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "31042",
+    "chance": 0.15,
+    "cond": "evenement"
+   }
+  ],
+  "blop_reinette_royal": [
+   {
+    "item": "12231",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "22318",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "9250",
+    "chance": 100.0
+   },
+   {
+    "item": "16356",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "9388",
+    "chance": 45.0
+   },
+   {
+    "item": "9387",
+    "chance": 7.6
+   },
+   {
+    "item": "2558",
+    "chance": 7.6
+   },
+   {
+    "item": "13526",
+    "chance": 6.0,
+    "cond": "quete"
+   },
+   {
+    "item": "16827",
+    "chance": 3.0
+   },
+   {
+    "item": "17133",
+    "chance": 2.29,
+    "metier": {
+     "id": 41,
+     "min": 60
+    },
+    "chasse": true
+   },
+   {
+    "item": "31042",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "32985",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "27848",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "22322",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "20739",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "26256",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "20136",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "29498",
+    "chance": 0.15,
+    "cond": "evenement"
+   },
+   {
+    "item": "24188",
+    "chance": 0.15,
+    "cond": "evenement"
+   }
+  ],
+  "dragoeuf_albatre": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21263",
+    "chance": 43.0
+   },
+   {
+    "item": "17134",
+    "chance": 43.0,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "21256",
+    "chance": 7.24
+   },
+   {
+    "item": "16833",
+    "chance": 1.0
+   },
+   {
+    "item": "20796",
+    "chance": 0.7
+   }
+  ],
+  "draegnerys": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21264",
+    "chance": 43.0
+   },
+   {
+    "item": "21271",
+    "chance": 7.24
+   },
+   {
+    "item": "17135",
+    "chance": 2.17,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "20796",
+    "chance": 2.1
+   },
+   {
+    "item": "16833",
+    "chance": 1.0
+   },
+   {
+    "item": "20136",
+    "chance": 0.2,
+    "cond": "evenement"
+   },
+   {
+    "item": "29572",
+    "chance": 0.01,
+    "cond": "evenement"
+   }
+  ],
+  "arapex": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "17138",
+    "chance": 39.0,
+    "metier": {
+     "id": 41,
+     "min": 90
+    },
+    "chasse": true
+   },
+   {
+    "item": "16216",
+    "chance": 38.0
+   },
+   {
+    "item": "16215",
+    "chance": 6.4
+   },
+   {
+    "item": "16834",
+    "chance": 1.0
+   }
+  ],
+  "reine_nyee": [
+   {
+    "item": "12232",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "31515",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "26368",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "20057",
+    "chance": 100.0,
+    "cond": "quete"
+   },
+   {
+    "item": "22318",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "16201",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "16180",
+    "chance": 39.0
+   },
+   {
+    "item": "16181",
+    "chance": 6.44
+   },
+   {
+    "item": "16215",
+    "chance": 6.4
+   },
+   {
+    "item": "13526",
+    "chance": 6.0,
+    "cond": "quete"
+   },
+   {
+    "item": "16834",
+    "chance": 3.0
+   },
+   {
+    "item": "17139",
+    "chance": 1.93,
+    "metier": {
+     "id": 41,
+     "min": 90
+    },
+    "chasse": true
+   },
+   {
+    "item": "22322",
+    "chance": 0.3,
+    "cond": "evenement"
+   },
+   {
+    "item": "26256",
+    "chance": 0.3,
+    "cond": "evenement"
+   },
+   {
+    "item": "32985",
+    "chance": 0.3,
+    "cond": "evenement"
+   },
+   {
+    "item": "24188",
+    "chance": 0.3,
+    "cond": "evenement"
+   },
+   {
+    "item": "31042",
+    "chance": 0.3,
+    "cond": "evenement"
+   },
+   {
+    "item": "20739",
+    "chance": 0.3,
+    "cond": "evenement"
+   },
+   {
+    "item": "20136",
+    "chance": 0.3,
+    "cond": "evenement"
+   },
+   {
+    "item": "29498",
+    "chance": 0.3,
+    "cond": "evenement"
+   },
+   {
+    "item": "27848",
+    "chance": 0.3,
+    "cond": "evenement"
+   }
+  ],
+  "abraknyde_ancestral": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "10918",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "12232",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "10917",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "10919",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "8496",
+    "chance": 39.0
+   },
+   {
+    "item": "8495",
+    "chance": 6.44
+   },
+   {
+    "item": "13526",
+    "chance": 6.0,
+    "cond": "quete"
+   },
+   {
+    "item": "16835",
+    "chance": 3.0
+   },
+   {
+    "item": "17139",
+    "chance": 1.93,
+    "metier": {
+     "id": 41,
+     "min": 90
+    },
+    "chasse": true
+   },
+   {
+    "item": "20136",
+    "chance": 0.3,
+    "cond": "evenement"
+   }
+  ],
+  "araknotron": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "16152",
+    "chance": 39.0
+   },
+   {
+    "item": "17138",
+    "chance": 39.0,
+    "metier": {
+     "id": 41,
+     "min": 90
+    },
+    "chasse": true
+   },
+   {
+    "item": "16153",
+    "chance": 6.52
+   },
+   {
+    "item": "16835",
+    "chance": 1.0
+   }
+  ],
+  "dragon_cochon": [
+   {
+    "item": "30214",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "10917",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "16241",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "10918",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "12232",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "10919",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "2645",
+    "chance": 36.0
+   },
+   {
+    "item": "8393",
+    "chance": 6.0
+   },
+   {
+    "item": "13526",
+    "chance": 6.0,
+    "cond": "quete"
+   },
+   {
+    "item": "479",
+    "chance": 6.0
+   },
+   {
+    "item": "20796",
+    "chance": 3.0
+   },
+   {
+    "item": "16830",
+    "chance": 3.0
+   },
+   {
+    "item": "17141",
+    "chance": 1.81,
+    "metier": {
+     "id": 41,
+     "min": 100
+    },
+    "chasse": true
+   },
+   {
+    "item": "20136",
+    "chance": 0.35,
+    "cond": "evenement"
+   },
+   {
+    "item": "20793",
+    "chance": 0.05,
+    "cond": "evenement"
+   }
+  ],
+  "don_duss_ang": [
+   {
+    "item": "8392",
+    "chance": 36.0
+   },
+   {
+    "item": "17140",
+    "chance": 36.0,
+    "metier": {
+     "id": 41,
+     "min": 100
+    },
+    "chasse": true
+   },
+   {
+    "item": "479",
+    "chance": 6.0
+   },
+   {
+    "item": "16830",
+    "chance": 1.0
+   },
+   {
+    "item": "20796",
+    "chance": 1.0
+   }
+  ],
+  "don_dorgan": [
+   {
+    "item": "8391",
+    "chance": 35.0
+   },
+   {
+    "item": "17140",
+    "chance": 35.0,
+    "metier": {
+     "id": 41,
+     "min": 100
+    },
+    "chasse": true
+   },
+   {
+    "item": "479",
+    "chance": 5.88
+   },
+   {
+    "item": "20796",
+    "chance": 1.0
+   },
+   {
+    "item": "16830",
+    "chance": 1.0
    }
   ]
  },

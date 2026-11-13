@@ -1,0 +1,62 @@
+{
+ "blops": {
+  "tag": "arene_blops",
+  "arrivee": 13962836,
+  "entrees": [
+   13957280,
+   13957305,
+   13992404
+  ],
+  "boss": 13892612,
+  "sortie": 13903700,
+  "coffre": 13903702
+ },
+ "draeg": {
+  "tag": "arene_draegnerys",
+  "arrivee": 13962892,
+  "entrees": [
+   13957336,
+   13957361,
+   13992460
+  ],
+  "boss": 13892668,
+  "sortie": 13903756,
+  "coffre": 13903758
+ },
+ "nyee": {
+  "tag": "arene_nyee",
+  "arrivee": 13962948,
+  "entrees": [
+   13957392,
+   13957417,
+   13992516
+  ],
+  "boss": 13892724,
+  "sortie": 13903812,
+  "coffre": 13903814
+ },
+ "ancestral": {
+  "tag": "arene_ancestral",
+  "arrivee": 13963004,
+  "entrees": [
+   13957448,
+   13957473,
+   13992572
+  ],
+  "boss": 13892780,
+  "sortie": 13903868,
+  "coffre": 13903870
+ },
+ "labyrinthe": {
+  "tag": "arene_dragon_cochon",
+  "arrivee": 13981540,
+  "entrees": [
+   13907628,
+   13907612,
+   13966764
+  ],
+  "boss": 13937188,
+  "sortie": 13929796,
+  "coffre": 13944580
+ }
+}

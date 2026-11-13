@@ -693,3 +693,21 @@ Ville vivante (maquette Ville 5F, 8 nov. 2026) :
   de test (`WorldGrid.ouvrirV06`), comme leurs portes, récoltes et Zaaps.
 - Frigost (3D) : même monde, bateau du Port de Madrestam (porte `voyage: [arrivée en a, arrivée en b]`) : écran de voyage de
   `render/chargement.ts` (`src/data/voyage.json`, illustration `public/assets/voyage/<clé>.webp`) au moins 2,2 s, le temps que la région se charge.
+
+## Arènes des donjons de la 0.6 (ligne « Arènes : 1A 2D 3A 4A+4C 5B 6B+6C 7A 8A+8B 9A+9C 10A+10C 11A », 13 nov. 2026)
+
+- `arenes06/compo06.py` : les 5 compositions de la maquette (Clos des Blops, Épreuve de Draegnerys, Antre de la Reine Nyée sur sol plein,
+  Domaine Ancestral, Labyrinthe du Dragon Cochon sur les dalles crème, murets bas et pilier aux coins). Les pièces sont des groupes
+  d'éléments des salles officielles (`pieces.json` : donjon -> [carte, cadre]). Lancé depuis un dossier de travail avec `cartes/`
+  (map_<id>.json des salles des donjons, `map_dump.py` sur `cache-dofus/chemin200/cartes.0*.tar`) et `tex/` (<gfx>.png de
+  `cache-dofus/astrub/textures-1x`) ; `python3 compo06.py apercu` écrit les images de contrôle (cases marchables en vert).
+- `regions_monde.py joindre`, puis `export06.py public/assets/mondes [apercu|-] [noms]` (arènes en y = 94 sous Astrub, cartes `v06: 1`,
+  points dans `arenes06_points.json`), puis `donjons06.py` (sous-zones, `astrub.open.donjonsV06`, portes, clés chez Goultard),
+  puis `regions_monde.py scinder`, puis `envoi.mjs`.
+- Monstres (20, squelettes du PC dans `cache-dofus/bones-arenes06/`) : `monster_planche.py` à SCALE 2.5, `amakna04/ajout.py`,
+  `monster_spells.py`, `monster_stats.py` (en ne gardant que les nouveaux), boss marqués à la main, XP par la courbe de `xp_monstres.py`,
+  `archis_ames.py` (âmes des 8 boss), `drops_ajout.py`, `icones_ajout.py`. La Gorgouille (niveau 400 dans les tables) est laissée de côté.
+- Entrées : Draegnerys [-4,29] et Domaine Ancestral [-9,-14] sur leur vraie carte ; Reine Nyée [-6,-15] (carte du dehors de son entrée) ;
+  Clos des Blops au bord des Pics de Cania [-14,-43] (entrée officielle [-7,-43], Champs de Cania pas encore exportés) ;
+  Dragon Cochon en [5,32] (entrée officielle par les Souterrains des Porcos, pas encore exportés).
+

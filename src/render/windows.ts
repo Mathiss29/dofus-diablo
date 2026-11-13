@@ -2718,7 +2718,7 @@ export class Windows {
     // Marché du Bastion (Magasin 2A, 13A-13D) : Otomaï, Mère Bouillotte, Goultard et Tissebelle ouvrent la même fenêtre, chacun sur son onglet.
     // Les autres (Kerubim : Défaire ; Lily, Tiwa Cawoteuw : leur boutique) gardent leurs onglets.
     const def = QUETES.pnj[this.empPnj], sv = new Set((def?.services ?? []).map(x => x.service)), marche = MARCHE.includes(this.empPnj);
-    const vis = (a: Article) => (!a.v03 || p.v03) && (!a.v04 || p.v04);
+    const vis = (a: Article) => (!a.v03 || p.v03) && (!a.v04 || p.v04) && (!a.v06 || p.v06);
     const boutique = (BOUTIQUES[this.empPnj] ?? []).filter(vis);
     const onglets: [OngletEmp, string][] = marche ? [['etal', 'Étal du jour'], ['conso', 'Consommables'], ['cles', 'Clés'], ['animalerie', 'Animalerie'], ['apparat', 'Apparences'], ['style', 'Style'], ['havresac', 'Havre-Sac'], ['confort', 'Confort']]
       : ([['recycler', 'Défaire'], ['boutique', 'Boutique'], ['apparat', 'Apparats']] as [OngletEmp, string][]).filter(([k]) => sv.has(k));

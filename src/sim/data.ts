@@ -54,7 +54,7 @@ Object.assign(QUETES.succes, (carte as unknown as Pick<QuetesData, 'succes'>).su
 Object.assign(QUETES.succes, (familiersSources as unknown as Pick<QuetesData, 'succes'>).succes);
 for (const [k, s] of Object.entries((apparatsSources as unknown as { succes: Record<string, QuetesData['succes'][string] & { classe?: string }> }).succes)) if (!s.classe) QUETES.succes[k] = s;
 /** Boutiques des PNJ (src/data/boutique.json) : articles et prix en Pépites. */
-export const BOUTIQUES = Object.fromEntries(Object.entries(boutique).filter(([k]) => !k.startsWith('_'))) as unknown as Record<string, { id: string; prix: number; v03?: boolean; v04?: boolean; monnaie?: string; apparat?: boolean; apres?: string }[]>;
+export const BOUTIQUES = Object.fromEntries(Object.entries(boutique).filter(([k]) => !k.startsWith('_'))) as unknown as Record<string, { id: string; prix: number; v03?: boolean; v04?: boolean; v06?: boolean; monnaie?: string; apparat?: boolean; apres?: string }[]>;
 /** Métiers de récolte (src/data/recoltes.json, écrit par tools/contenu/recoltes.py). */
 export const RECOLTES = recoltes as unknown as RecoltesData;
 /** Objets d'apparat officiels (src/data/apparat.json, apparat_export.py) : nom, emplacement, case de l'icône sur ui/apparat.webp.
