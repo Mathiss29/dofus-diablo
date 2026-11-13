@@ -479,6 +479,250 @@
      }
     },
     "v06": true
+   },
+   "vitalite_iop": {
+    "name": "Vitalité",
+    "dofusId": 13120,
+    "icon": 11848,
+    "element": "neutre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Augmente la Vitalité de la cible.\nLa Vitalité est plus importante sur le lanceur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 30
+    },
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "burst",
+    "self": true,
+    "rage": "buff",
+    "e61": {
+     "renfort": {
+      "mods": {},
+      "vitalite": 0.06,
+      "vitaliteSoi": 0.12,
+      "t": 12
+     }
+    },
+    "v06": true
+   },
+   "souffle": {
+    "name": "Souffle",
+    "dofusId": 13116,
+    "icon": 13328,
+    "element": "air",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Repousse les cibles depuis le centre et occasionne des dommages Air aux ennemis en zone.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 14,
+    "knock": 342,
+    "hit": {
+     "shape": "point",
+     "range": 312,
+     "radius": 72
+    },
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "burst",
+    "rage": "knock",
+    "pushDmg": true,
+    "v06": true
+   },
+   "epee_destructrice": {
+    "name": "Épée Destructrice",
+    "dofusId": 13119,
+    "icon": 11834,
+    "element": "feu",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Érode les cibles et occasionne des dommages Feu en zone.",
+    "duration": 0.46,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 32,
+    "knock": 0,
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 72
+    },
+    "hitstop": 0.07,
+    "shake": 0.008,
+    "fx": "line",
+    "erosion": 0.13,
+    "rage": "erosion",
+    "v06": true
+   },
+   "puissance_iop": {
+    "name": "Puissance",
+    "dofusId": 13118,
+    "icon": 11844,
+    "element": "neutre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Augmente la Puissance et les Dommages Poussée de la cible.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 30
+    },
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "burst",
+    "self": true,
+    "rage": "buff",
+    "e61": {
+     "renfort": {
+      "mods": {
+       "puissance": 150,
+       "dommagesPoussee": 40
+      },
+      "t": 9
+     }
+    },
+    "v06": true
+   },
+   "tempete": {
+    "name": "Tempête de Puissance",
+    "dofusId": 13121,
+    "icon": 11842,
+    "element": "feu",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Feu.\nN'affecte pas le lanceur.\n\nOccasionne également des dommages Feu sur l'ennemi initial si le sort est lancé sur une autre cible.\nCes dommages sont plus importants après 2 lancers consécutifs sur un même ennemi.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 27,
+    "knock": 0,
+    "hit": {
+     "shape": "point",
+     "range": 312,
+     "radius": 30
+    },
+    "hitstop": 0.06,
+    "shake": 0.007,
+    "fx": "arc",
+    "rage": "stack",
+    "e61": {
+     "devorante": {
+      "mult": [
+       1,
+       1.42
+      ],
+      "dernier": [
+       1,
+       1.42
+      ],
+      "t": 6
+     }
+    },
+    "v06": true
+   },
+   "endurance": {
+    "name": "Endurance",
+    "dofusId": 13133,
+    "icon": 11869,
+    "element": "eau",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Applique un bouclier sur le lanceur et occasionne des dommages Eau.\nLes dommages n'affectent pas le lanceur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 35,
+    "knock": 0,
+    "hit": {
+     "shape": "point",
+     "range": 120,
+     "radius": 30
+    },
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "burst",
+    "shield": {
+     "part": 0.075,
+     "t": 6
+    },
+    "rage": "shield",
+    "v06": true
+   },
+   "vertu": {
+    "name": "Vertu",
+    "dofusId": 13142,
+    "icon": 11860,
+    "element": "neutre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Applique un bouclier sur les alliés en zone.\nRetire également de la Puissance au lanceur pour chaque allié à son contact (cumulable 4 fois).",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hit": {
+     "shape": "circle",
+     "radius": 96
+    },
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "burst",
+    "self": true,
+    "shield": {
+     "part": 0.25,
+     "t": 6
+    },
+    "allies": {
+     "shield": 0.25,
+     "t": 6
+    },
+    "rage": "shield",
+    "e61": {
+     "vertu": {
+      "malus": 25,
+      "t": 6
+     }
+    },
+    "v06": true
+   },
+   "epee_iop": {
+    "name": "Épée de Iop",
+    "dofusId": 13125,
+    "icon": 11847,
+    "element": "terre",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Terre en zone.\nN'affecte pas le lanceur.",
+    "duration": 0.5,
+    "impactAt": 0.2,
+    "cancelAt": 0.3,
+    "dmg": 43,
+    "knock": 0,
+    "hit": {
+     "shape": "point",
+     "range": 312,
+     "radius": 120
+    },
+    "hitstop": 0.09,
+    "shake": 0.012,
+    "fx": "line",
+    "rage": "radius",
+    "v06": true
    }
   },
   "mobility": "bond",
@@ -1061,6 +1305,132 @@
     "e61": {
      "acuite": {
       "t": 12
+     }
+    },
+    "v06": true
+   },
+   "immobilisation": {
+    "name": "Flèche d'Immobilisation",
+    "dofusId": 32436,
+    "icon": 11885,
+    "element": "eau",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Vole des PM et occasionne des dommages Eau\nLes dommages du sort sont augmentés après chaque lancer.",
+    "duration": 0.4,
+    "impactAt": 0.12,
+    "cancelAt": 0.18,
+    "dmg": 12,
+    "knock": 0,
+    "hit": {
+     "shape": "projectile",
+     "speed": 1100,
+     "range": 264,
+     "width": 16
+    },
+    "hitstop": 0.04,
+    "shake": 0.004,
+    "fx": "burst",
+    "pmLoss": 1,
+    "stack": {
+     "per": 0.25,
+     "max": 3,
+     "time": 3
+    },
+    "rage": "pm",
+    "v06": true
+   },
+   "tirs_puissants": {
+    "name": "Tirs Puissants",
+    "dofusId": 32466,
+    "icon": 15272,
+    "element": "neutre",
+    "pa": 1,
+    "cooldown": 0,
+    "desc": "Sacrifie la Portée du lanceur pour augmenter sa Puissance, ses Dommages Poussée et ses Critiques.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hit": {
+     "shape": "circle",
+     "radius": 1
+    },
+    "hitstop": 0,
+    "shake": 0,
+    "fx": "land",
+    "self": true,
+    "rage": "buff",
+    "e61": {
+     "renfort": {
+      "mods": {
+       "portee": -1,
+       "puissance": 150,
+       "dommagesPoussee": 50,
+       "critique": 10
+      },
+      "t": 3,
+      "seul": true
+     }
+    },
+    "v06": true
+   },
+   "oeil_taupe": {
+    "name": "Œil de Taupe",
+    "dofusId": 32437,
+    "icon": 11883,
+    "element": "eau",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Dévoile les invisibles, retire de la Portée et vole de la vie dans l'élément Eau en zone.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 20,
+    "knock": 0,
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 120
+    },
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "arc",
+    "lifesteal": 0.5,
+    "poLoss": [
+     2
+    ],
+    "rage": "lifesteal",
+    "v06": true
+   },
+   "oeil_pour_oeil": {
+    "name": "Œil pour Œil",
+    "dofusId": 32454,
+    "icon": 15256,
+    "element": "terre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Vole de la vie dans l'élément Terre en zone.\nN'affecte pas le lanceur.\n\nLes dommages du sort sont augmentés pour chaque attaque ennemie subie au tour précédent.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 28,
+    "knock": 0,
+    "hit": {
+     "shape": "circle",
+     "radius": 96
+    },
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "burst",
+    "lifesteal": 0.5,
+    "rage": "lifesteal",
+    "e61": {
+     "oeil": {
+      "par": 0.2,
+      "t": 3,
+      "max": 5
      }
     },
     "v06": true
