@@ -1,4 +1,5 @@
 import type { Element, SpellDef } from './defs';
+import type { Stat } from './items';
 import type { Monster } from './monster';
 import type { Player } from './player';
 import type { HitDef, World } from './world';
@@ -38,6 +39,13 @@ export interface Effets61 {
   berserk?: { sacrifice: number; dommages: number; soins: number; fin: number };
   /** Punition (Sacrieur) : dommages Neutre en plus = part des PV déjà perdus. */
   punition?: { part: number };
+  /** Sorts 25-60 du Iop et du Crâ (0.6) : bonus posés sur l'allié visé (joueur le plus proche du point), sinon sur soi, pendant t s.
+   *  Vitalité en part des PV max (Vitalité du Iop) ; `soi` : bonus quand on se vise soi-même (plus fort). */
+  renfort?: { mods: Partial<Record<Stat, number>>; soi?: Partial<Record<Stat, number>>; vitalite?: number; vitaliteSoi?: number; t: number; seul?: boolean };
+  /** Vertu (Iop) : Puissance perdue par allié (joueur ou bête) collé au lanceur, pendant t s. */
+  vertu?: { malus: number; t: number };
+  /** Œil pour Œil (Crâ) : dommages en plus (part) par coup reçu dans les t dernières secondes, jusqu'à max coups. */
+  oeil?: { par: number; t: number; max: number };
 }
 
 /** État propre à un joueur (dans Player, jamais dans World). */
@@ -47,7 +55,9 @@ export interface Etat61 {
   precip: { qid: number; bete: boolean; t: number; vite: number; lent: number; t0: number }[];
   emprises: { mid: number; t: number }[];
   destinA: number;
-  dev: { mid: number; n: number; t: number; gm: number } | null;
+  dev: { sid: string; mid: number; n: number; t: number; gm: number } | null;
+  /** Coups reçus récemment (Œil pour Œil). */
+  coupsRecus: number[];
   acuiteT: number;
   sacrificeT: number; sacrificeR: number;
   libationT: number; libAcc: number;
@@ -56,7 +66,7 @@ export interface Etat61 {
   pasT: number;
 }
 const CASE = 48;
-export const etat61 = (): Etat61 => ({ frictions: [], auras: [], precip: [], emprises: [], destinA: -99, dev: null, acuiteT: 0,
+export const etat61 = (): Etat61 => ({ frictions: [], auras: [], precip: [], emprises: [], destinA: -99, dev: null, coupsRecus: [], acuiteT: 0,
   sacrificeT: 0, sacrificeR: 0, libationT: 0, libAcc: 0, berserk: null, pasT: 0 });
 const etat = (p: Player): Etat61 => (p.e61 ??= etat61());
 
@@ -89,11 +99,15 @@ export function avantImpact61(p: Player, id: string, d: SpellDef, tx: number, ty
   if (s.devorante) {
     const D = s.devorante, m = cible(world, tx, ty);
     if (m) {
-      if (e.dev && e.dev.mid === m.id) e.dev.n = Math.min(D.mult.length, e.dev.n + 1);
-      else { dernierCoup(p, D, world); e.dev = { mid: m.id, n: 1, t: 0, gm } }
+      if (e.dev && e.dev.mid === m.id && e.dev.sid === id) e.dev.n = Math.min(D.mult.length, e.dev.n + 1);
+      else { dernierCoup(p, world); e.dev = { sid: id, mid: m.id, n: 1, t: 0, gm } }
       e.dev.t = D.t; e.dev.gm = gm;
       mult *= D.mult[e.dev.n - 1];
     }
+  }
+  if (s.oeil) {   // Œil pour Œil : plus fort pour chaque coup reçu ces dernières secondes
+    e.coupsRecus = e.coupsRecus.filter(t => p.age - t < s.oeil!.t);
+    mult *= 1 + s.oeil.par * Math.min(s.oeil.max, e.coupsRecus.length);
   }
   if (s.bain) {   // Tacle en plus par ennemi dans la zone autour du lanceur
     const r = d.hit.shape === 'circle' ? d.hit.radius : CASE;
@@ -104,16 +118,15 @@ export function avantImpact61(p: Player, id: string, d: SpellDef, tx: number, ty
   return mult;
 }
 
-/** Flèche Dévorante : l'ancienne cible prend son dernier coup Feu (selon le nombre de lancers sur elle). */
-function dernierCoup(p: Player, D: NonNullable<Effets61['devorante']>, world: World) {
+/** Flèche Dévorante, Tempête de Puissance : l'ancienne cible prend son dernier coup (selon le nombre de lancers sur elle). */
+function dernierCoup(p: Player, world: World) {
   const e = etat(p), v = e.dev;
   e.dev = null;
   if (!v) return;
-  const m = world.monsters.find(x => x.id === v.mid && !x.dead);
-  if (!m) return;
-  const base = p.cls.spells.devorante?.dmg ?? 15;
-  world.applyHits(x => x === m, { dmg: base * D.dernier[v.n - 1] * v.gm, knock: 0, element: 'feu', sort: 'devorante' }, m.x, m.y, 0);
-  world.emit({ k: 'spell', fx: 'burst', id: 'devorante', x: m.x, y: m.y, cx: m.x, cy: m.y, facing: 0, size: CASE, arc: 0, element: 'feu', big: v.n >= 3, boosted: false });
+  const sd = p.cls.spells[v.sid], D = sd?.e61?.devorante, m = world.monsters.find(x => x.id === v.mid && !x.dead);
+  if (!m || !sd || !D) return;
+  world.applyHits(x => x === m, { dmg: sd.dmg * D.dernier[v.n - 1] * v.gm, knock: 0, element: sd.element, sort: v.sid }, m.x, m.y, 0);
+  world.emit({ k: 'spell', fx: 'burst', id: v.sid, x: m.x, y: m.y, cx: m.x, cy: m.y, facing: 0, size: CASE, arc: 0, element: sd.element, big: v.n >= D.mult.length, boosted: false });
 }
 
 /** Après le coup : les effets propres aux sorts 61-90. */
@@ -152,6 +165,21 @@ export function impact61(p: Player, id: string, d: SpellDef, tx: number, ty: num
     const a = Math.atan2(ty - p.y, tx - p.x), q = allie(world, tx, ty, false), v = s.repli.cases * CASE * 7.13;
     const sens = q && !cible(world, tx, ty) ? Math.min(1, Math.max(0, Math.hypot(q.x - p.x, q.y - p.y) - CASE) / (s.repli.cases * CASE)) : -1;
     p.kx += Math.cos(a) * v * sens; p.ky += Math.sin(a) * v * sens;
+  }
+  if (s.renfort) {
+    const R = s.renfort, q = (R.seul ? null : allie(world, tx, ty, false)) ?? p, soi = q === p;
+    const mods = { ...R.mods, ...(soi ? R.soi : {}) };
+    q.mods = q.mods.filter(m => m.src !== id);
+    for (const [k, n] of Object.entries(mods) as [Stat, number][]) q.addMod(k, n, R.t, id);
+    const vp = soi ? R.vitaliteSoi ?? R.vitalite : R.vitalite;
+    if (vp) { q.addMod('vitalite', Math.round(q.maxHp * vp), R.t, id); q.recompute(); }
+    statut(world, q.x, q.y, p.cls.spells[id]?.name ?? '', '#e8d27a');
+  }
+  if (s.vertu) {   // moins de Puissance pour chaque allié collé au lanceur
+    const n = world.players.filter(q => q !== p && !q.dead && Math.hypot(q.x - p.x, q.y - p.y) <= CASE * 1.6).length
+      + world.betes.filter(b => !b.dead && b.owner === p && Math.hypot(b.x - p.x, b.y - p.y) <= CASE * 1.6).length;
+    p.mods = p.mods.filter(m => m.src !== id);
+    if (n) p.addMod('puissance', -s.vertu.malus * n, s.vertu.t, id);
   }
   if (s.acuite) { e.acuiteT = s.acuite.t; statut(world, p.x, p.y, 'Acuité Absolue', '#7be07b'); }
   if (d.invoque) for (const b of world.betes) if (b.owner === p && b.sort === id && !b.dead) b.poids = 1;   // forme évoluée invoquée directement : une seule Invocation
@@ -250,10 +278,7 @@ export function maj61(p: Player, dt: number, world: World) {
     if (m) m.intouchable = false;
   }
   e.emprises = e.emprises.filter(x => x.t > 0);
-  if (e.dev && (e.dev.t -= dt) <= 0) {   // pas relancée à temps : l'ennemi prend son dernier coup
-    const D = p.cls.spells.devorante?.e61?.devorante;
-    if (D) dernierCoup(p, D, world); else e.dev = null;
-  }
+  if (e.dev && (e.dev.t -= dt) <= 0) dernierCoup(p, world);   // pas relancée à temps : l'ennemi prend son dernier coup
   if (e.acuiteT > 0) e.acuiteT = Math.max(0, e.acuiteT - dt);
   if (e.sacrificeT > 0) e.sacrificeT = Math.max(0, e.sacrificeT - dt);
   if (e.libationT > 0) {
@@ -274,6 +299,7 @@ export function maj61(p: Player, dt: number, world: World) {
 
 /** Sacrifice : un autre joueur près d'un Sacrieur sous Sacrifice lui passe le coup. Renvoie vrai si le coup est pris par lui. */
 export function redirige61(q: Player, raw: number, fromX: number, fromY: number, world: World, element: Element, loin?: boolean): boolean {
+  if (q.cls.spells.oeil_pour_oeil && raw > 0) { const e = etat(q); e.coupsRecus.push(q.age); if (e.coupsRecus.length > 12) e.coupsRecus.shift(); }   // Œil pour Œil
   for (const p of world.players) {
     if (p === q || p.dead || !p.e61 || p.e61.sacrificeT <= 0 || Math.hypot(p.x - q.x, p.y - q.y) > p.e61.sacrificeR) continue;
     p.hurt(raw, fromX, fromY, world, element, loin);
