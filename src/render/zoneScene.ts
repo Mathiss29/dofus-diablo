@@ -94,6 +94,9 @@ const ASSETS = 'assets';
 const mapDir = ([x, y]: [number, number]) => `${ASSETS}/cartes/${x}_${y}`;
 const worldDir = (w: string) => `${ASSETS}/mondes/${w}`;
 const hex = (c: string) => parseInt(c.replace('#', ''), 16);
+/** Case du dieu sur ui/dieux.webp (symbol_1 à 12 de class_assets : ordre des classes du jeu). */
+const DOUZE = ['Féca', 'Osamodas', 'Enutrof', 'Sram', 'Xélor', 'Écaflip', 'Eniripsa', 'Iop', 'Crâ', 'Sadida', 'Sacrieur', 'Pandawa'];
+const symboleDieu = (d: string) => Math.max(0, DOUZE.indexOf(d));
 /** Curseur au survol d'une porte ou d'une sortie (maquette Entrées 17A) : la maison officielle de Dofus 3 (uidarkstone « house »). */
 const CURSEUR_PORTE = `url("${v(`${ASSETS}/ui/curseur_porte.png`)}") 1 1, pointer`;
 
@@ -276,6 +279,8 @@ export class ZoneScene extends Phaser.Scene {
     if (!this.textures.exists(ICON_SHEET.key)) this.load.spritesheet(ICON_SHEET.key, v(`${ASSETS}/${ICON_SHEET.url}`), { frameWidth: ICON_SHEET.cell, frameHeight: ICON_SHEET.cell });
     // « Apparats : » 1B 1D : un apparat peut tomber au sol (planche des coiffes et capes d'apparat)
     if (!this.textures.exists('apparats')) this.load.spritesheet('apparats', v(`${ASSETS}/ui/apparat.webp`), { frameWidth: APPARATS.cell, frameHeight: APPARATS.cell });
+    // 0.6 (20A, 21A) : symboles officiels des Douze (class_assets, symbol_1 à 12) au-dessus des autels et des sanctuaires
+    if (!this.textures.exists('dieux')) this.load.spritesheet('dieux', v(`${ASSETS}/ui/dieux.webp`), { frameWidth: 64, frameHeight: 64 });
     const zone = this.zoneVue();
     // On ne charge que les planches utiles à cette zone
     const types = new Set<string>();
@@ -1712,12 +1717,13 @@ export class ZoneScene extends Phaser.Scene {
     for (const a of w.autels) {
       vus.add(a.id);
       const p = ISO.toScreen(a.x, a.y), E = infoAutel(a.effet), tint = parseInt(E.couleur.slice(1), 16);
-      let v = this.autelViews.get(a.id) as [Phaser.GameObjects.Ellipse, Phaser.GameObjects.Image, Phaser.GameObjects.Image, Phaser.GameObjects.Text] | undefined;
+      let v = this.autelViews.get(a.id) as [Phaser.GameObjects.Ellipse, Phaser.GameObjects.Image, Phaser.GameObjects.Image, Phaser.GameObjects.Text, Phaser.GameObjects.Image] | undefined;
       if (!v) {
         v = [this.add.ellipse(p.x, p.y, 70, 30, tint, 0.45), this.add.image(p.x, p.y, 'beam').setOrigin(0.5, 1).setTint(tint).setDisplaySize(46, 260),
           this.add.image(p.x, p.y, 'beam').setOrigin(0.5, 1).setDisplaySize(12, 220),
           this.add.text(p.x, p.y - 70, `Autel de ${E.dieu} · ${E.nom}`, { fontFamily: 'Lexend, Verdana, sans-serif', fontSize: '13px', fontStyle: 'bold', color: E.couleur,
-            stroke: '#000', strokeThickness: 3, backgroundColor: '#0d0c0acc', padding: { x: 4, y: 2 } }).setOrigin(0.5)];
+            stroke: '#000', strokeThickness: 3, backgroundColor: '#0d0c0acc', padding: { x: 4, y: 2 } }).setOrigin(0.5),
+          this.add.image(p.x, p.y, 'dieux', symboleDieu(E.dieu)).setDisplaySize(44, 44)];
         this.autelViews.set(a.id, v);
       }
       const pulse = 0.75 + Math.sin(w.time * 3 + a.id) * 0.25;
@@ -1725,6 +1731,7 @@ export class ZoneScene extends Phaser.Scene {
       v[1].setPosition(p.x, p.y).setDepth(p.y - 1).setAlpha(pulse);
       v[2].setPosition(p.x, p.y).setDepth(p.y - 0.5).setAlpha(pulse * 0.8);
       v[3].setPosition(p.x, p.y - 74).setDepth(1e6 - 1);
+      v[4].setPosition(p.x, p.y - 40 - pulse * 6).setDepth(p.y);
     }
     // 0.6 (20A) : sanctuaires des Douze pas encore trouvés, visibles de près seulement (à trouver en explorant)
     const p0 = w.player;
@@ -1735,12 +1742,14 @@ export class ZoneScene extends Phaser.Scene {
       let v = this.autelViews.get(id);
       if (!v) {
         v = [this.add.ellipse(p.x, p.y, 40, 18, 0xe8c25a, 0.4), this.add.image(p.x, p.y, 'beam').setOrigin(0.5, 1).setTint(0xe8c25a).setDisplaySize(22, 120).setAlpha(0.7),
-          this.add.text(p.x, p.y - 40, `Sanctuaire de ${s.dieu}`, { fontFamily: 'Lexend, Verdana, sans-serif', fontSize: '12px', fontStyle: 'bold', color: '#e8c25a', stroke: '#000', strokeThickness: 3 }).setOrigin(0.5)];
+          this.add.text(p.x, p.y - 40, `Sanctuaire de ${s.dieu}`, { fontFamily: 'Lexend, Verdana, sans-serif', fontSize: '12px', fontStyle: 'bold', color: '#e8c25a', stroke: '#000', strokeThickness: 3 }).setOrigin(0.5),
+          this.add.image(p.x, p.y, 'dieux', symboleDieu(s.dieu)).setDisplaySize(34, 34)];
         this.autelViews.set(id, v);
       }
       (v[0] as Phaser.GameObjects.Ellipse).setPosition(p.x, p.y).setDepth(p.y - 2);
       (v[1] as Phaser.GameObjects.Image).setPosition(p.x, p.y).setDepth(p.y - 1);
       (v[2] as Phaser.GameObjects.Text).setPosition(p.x, p.y - 128).setDepth(1e6 - 1);
+      (v[3] as Phaser.GameObjects.Image).setPosition(p.x, p.y - 30 - Math.sin(w.time * 2) * 4).setDepth(p.y);
     }
     for (const [id, v] of this.autelViews) if (!vus.has(id)) { v.forEach(o => o.destroy()); this.autelViews.delete(id); }
   }

@@ -1962,7 +1962,19 @@
      "monsters": [
       "mulou",
       "chafer_invisible",
-      "milimulou"
+      "milimulou",
+      "arakne_majeure",
+      "chafer_lancier",
+      "chafer_archer",
+      "chafer_d_elite",
+      "dardalaine",
+      "nefileuse",
+      "saltik",
+      "gargantul",
+      "bebe_gargantul",
+      "bebe_dardalaine",
+      "bebe_arapex",
+      "oeuf_arakoq"
      ],
      "groupsPerMap": 2,
      "groupSize": [
@@ -1975,8 +1987,14 @@
     "168": {
      "name": "Forêt Sombre",
      "level": 80,
-     "monsters": [],
-     "groupsPerMap": 0,
+     "monsters": [
+      "abraknyde_sombre",
+      "abraknyde_venerable",
+      "coffre_sombre",
+      "abrakne_sombre",
+      "tyranne_la_terrible"
+     ],
+     "groupsPerMap": 2,
      "groupSize": [
       3,
       6
@@ -1989,7 +2007,9 @@
      "level": 60,
      "monsters": [
       "dragodinde_amande_sauvage",
-      "dragodinde_rousse_sauvage"
+      "dragodinde_rousse_sauvage",
+      "dragodinde_doree_sauvage",
+      "dragodingo"
      ],
      "groupsPerMap": 2,
      "groupSize": [
@@ -2006,6 +2026,7 @@
       "boo",
       "crocodaille",
       "chef_crocodaille",
+      "gadoo",
       "arakne_olithique"
      ],
      "groupsPerMap": 2,
@@ -2019,8 +2040,14 @@
     "234": {
      "name": "Forêt de Kaliptus",
      "level": 70,
-     "monsters": [],
-     "groupsPerMap": 0,
+     "monsters": [
+      "aermyne_braco_scalptaras",
+      "warko_marron",
+      "dok_alako",
+      "koalak_immature",
+      "koalak_forestier"
+     ],
+     "groupsPerMap": 2,
      "groupSize": [
       3,
       6
@@ -2031,8 +2058,17 @@
     "253": {
      "name": "Canyon sauvage",
      "level": 80,
-     "monsters": [],
-     "groupsPerMap": 0,
+     "monsters": [
+      "warko_marron",
+      "dok_alako",
+      "koalak_indigo",
+      "koalak_coco",
+      "koalak_griotte",
+      "koalak_reinette",
+      "mama_koalak",
+      "drakoalak"
+     ],
+     "groupsPerMap": 2,
      "groupSize": [
       3,
       6
@@ -2043,8 +2079,14 @@
     "231": {
      "name": "Lacs enchantés",
      "level": 80,
-     "monsters": [],
-     "groupsPerMap": 0,
+     "monsters": [
+      "rok_gnorok",
+      "dok_alako",
+      "koalak_immature",
+      "piralak",
+      "pekeualak"
+     ],
+     "groupsPerMap": 2,
      "groupSize": [
       3,
       6
@@ -2074,9 +2116,17 @@
      "level": 60,
      "monsters": [
       "mineur_sombre",
+      "arakne_majeure",
+      "kanigrou",
+      "serpentin",
       "craqueleur_des_plaines",
+      "maitre_bolet",
+      "pioussere",
+      "sousouris_agressive",
       "craquelourd",
-      "craquelope"
+      "craquelope",
+      "foufayteur",
+      "vetauran"
      ],
      "groupsPerMap": 2,
      "groupSize": [
@@ -2089,8 +2139,13 @@
     "521": {
      "name": "Pics de Cania",
      "level": 80,
-     "monsters": [],
-     "groupsPerMap": 0,
+     "monsters": [
+      "megabwork",
+      "medibwork",
+      "bizarbwork",
+      "krambwork"
+     ],
+     "groupsPerMap": 2,
      "groupSize": [
       3,
       6
@@ -2101,8 +2156,11 @@
     "11": {
      "name": "Territoire des Porcos",
      "level": 90,
-     "monsters": [],
-     "groupsPerMap": 0,
+     "monsters": [
+      "cochon_de_farle",
+      "porsalu"
+     ],
+     "groupsPerMap": 2,
      "groupSize": [
       3,
       6
@@ -2113,8 +2171,13 @@
     "315": {
      "name": "Village des Dragoeufs",
      "level": 90,
-     "monsters": [],
-     "groupsPerMap": 0,
+     "monsters": [
+      "dragoss_charbon",
+      "dragoss_calcaire",
+      "dragoss_argile",
+      "dragoss_ardoise"
+     ],
+     "groupsPerMap": 2,
      "groupSize": [
       3,
       6
@@ -2125,8 +2188,14 @@
     "601": {
      "name": "La Bourgade",
      "level": 80,
-     "monsters": [],
-     "groupsPerMap": 0,
+     "monsters": [
+      "rat_bougri",
+      "crabe_hijacob",
+      "rat_bougri_delave",
+      "chachachovage",
+      "gelikan"
+     ],
+     "groupsPerMap": 2,
      "groupSize": [
       3,
       6
@@ -2137,8 +2206,13 @@
     "600": {
      "name": "Port de givre",
      "level": 80,
-     "monsters": [],
-     "groupsPerMap": 0,
+     "monsters": [
+      "rat_bougri",
+      "crabe_hijacob",
+      "chachachovage",
+      "gelikan"
+     ],
+     "groupsPerMap": 2,
      "groupSize": [
       3,
       6
