@@ -2303,6 +2303,42 @@
       39285.0
      ],
      "sub": 93
+    },
+    {
+     "name": "Zaap Plaines Rocheuses",
+     "map": [
+      -17,
+      -47
+     ],
+     "zaap": [
+      -15799,
+      -11261.5
+     ],
+     "sub": 70
+    },
+    {
+     "name": "Zaap Routes Rocailleuses",
+     "map": [
+      -20,
+      -20
+     ],
+     "zaap": [
+      -19282,
+      11980.0
+     ],
+     "sub": 525
+    },
+    {
+     "name": "Zaap La Bourgade",
+     "map": [
+      -78,
+      -41
+     ],
+     "zaap": [
+      -89028,
+      -6080.0
+     ],
+     "sub": 601
     }
    ],
    "portes": [
@@ -3424,6 +3460,22 @@
      "nom": "Village Kanniboul",
      "cle": "11798",
      "marque": true
+    },
+    {
+     "a": [
+      "9_-2",
+      485
+     ],
+     "b": [
+      "-79_-37",
+      215
+     ],
+     "nom": "Bateau pour Frigost",
+     "marque": true,
+     "voyage": [
+      "madrestam",
+      "frigost"
+     ]
     }
    ],
    "donjons": [

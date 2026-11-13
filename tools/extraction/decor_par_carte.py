@@ -37,10 +37,12 @@ def page(p):
     while len(cache) > 48: cache.popitem(last=False)
     return im
 
-POOL = ThreadPoolExecutor(4); EN_COURS = []
+# WEBP_METHOD=4 : 3 à 4 fois plus rapide que 6 pour quelques % de plus (838 cartes de la 0.6 : plus de 30 min en 6)
+METHODE = int(os.environ.get('WEBP_METHOD', '6'))
+POOL = ThreadPoolExecutor(int(os.environ.get('FILS', '4'))); EN_COURS = []
 def ecrire(atlas, frames, n):
     def f():
-        atlas.save(f'{out}/decor_p{n}.webp', 'WEBP', quality=82, method=6)
+        atlas.save(f'{out}/decor_p{n}.webp', 'WEBP', quality=82, method=METHODE)
         json.dump({'frames': frames, 'meta': {'image': f'decor_p{n}.webp', 'size': {'w': atlas.width, 'h': atlas.height}, 'scale': '1'}},
                   open(f'{out}/decor_p{n}.json', 'w'))
     EN_COURS.append(POOL.submit(f))

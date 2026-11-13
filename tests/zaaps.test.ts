@@ -22,7 +22,9 @@ describe('Zaaps du monde (maquette « Zaap : » 1A 2A 3A 4A 5A+5D 6A 7A 8A 9A)',
     // 0.4 suite 7A : les 7 Zaaps d'Amakna (+ celui de l'île des Wabbits, 10A, et ceux de Cania sud et de Moon, 9A+9B), seulement en partie de test tant que la 0.4 est cachée
     expect(noms('astrub').slice(2).sort()).toEqual(['Zaap Bord de la forêt maléfique [-1,13]', 'Zaap Château d\'Amakna [3,-5]', 'Zaap Coin des Bouftous [5,7]',
       'Zaap Montagne des Craqueleurs [-5,-8]', 'Zaap Plaine des Scarafeuilles [-1,24]', 'Zaap Port de Madrestam [7,-4]', 'Zaap Village d\'Amakna [-2,0]', 'Zaap Île de la Cawotte [25,-4]',
-      'Zaap Plaine des Porkass [-5,-23]', 'Zaap Village des Dopeuls [-34,-8]', 'Zaap Plage de la Tortue [35,12]'].sort());
+      'Zaap Plaine des Porkass [-5,-23]', 'Zaap Village des Dopeuls [-34,-8]', 'Zaap Plage de la Tortue [35,12]',
+      // 0.6 (partie de test) : Bourgade de Frigost, Plaines Rocheuses, Routes Rocailleuses
+      'Zaap La Bourgade [-78,-41]', 'Zaap Plaines Rocheuses [-17,-47]', 'Zaap Routes Rocailleuses [-20,-20]'].sort());
     expect(monde('astrub').zone.open!.checkpoints).toHaveLength(13);   // 0.4 publique : les Zaaps d'Amakna pour tous
     for (const z of ['incarnam', 'astrub']) {
       const w = monde(z, { test: {} as never }), wg = w.worldGrid!;

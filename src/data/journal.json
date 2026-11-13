@@ -2059,7 +2059,10 @@
         "Le monde": [],
         "Combat": [],
         "Corrections": [],
-        "En coulisses": []
+        "En coulisses": [
+          "Le monde se charge par région : au lancement, 1,5 Mo de cartes au lieu de 22, la suite arrive en chemin.",
+          "Partie de test : 838 cartes de la 0.6 (Abraknydes, Koalaks, Cania, Porcos, Bourgade de Frigost) et son bateau."
+        ]
       }
     }
   ]

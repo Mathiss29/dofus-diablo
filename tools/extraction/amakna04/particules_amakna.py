@@ -15,7 +15,7 @@ M = json.load(open(f'{D}/monde.json')); g = M['grid']; X0c, Y0c = M['origin']; c
 L = json.load(open(sys.argv[2] if len(sys.argv) > 2 else f'{ICI}/liste.json')); xs = [tuple(map(int, k.split(','))) for k in L]
 X0p, Y0p = min(x for x, _ in xs), min(y for _, y in xs); NX = max(x for x, _ in xs) - X0p + 1
 DX, DY = g['ox'] + 620 + (X0p - X0c) * MW, g['oy'] + 490 + (Y0p - Y0c) * MH
-amk = {m['tag'] for m in M['maps'] if m.get('essai')}
+amk = {m['tag'] for m in M['maps'] if m.get('essai') or m.get('v06')}   # cartes en essai (0.4) ou de la 0.6
 P = json.load(open(f'{D}/particules.json')); N = json.load(open(f'{src}/particules.json'))
 n = 0
 for t, l in N.items():
