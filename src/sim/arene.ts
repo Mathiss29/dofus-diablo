@@ -4,7 +4,7 @@ import { tenterDofusCawotte } from './guerre';
 import type { DonjonDef, Element } from './defs';
 import { RARITIES, type Rarity } from './items';
 import { CASE, type Monster } from './monster';
-import { choisir06, coup06, preparer06, update06, A06, type Choix06, type Oeuf06, type Toile06 } from './arene06';
+import { choisir06, coup06, poserDedale, preparer06, update06, A06, type Choix06, type Oeuf06, type Toile06 } from './arene06';
 import type { World } from './world';
 
 /** Réglages des arènes (maquette « Donjons en vagues », ligne Donjons : 1B 2D 3A 4A 5A+5B+5C 6A 7A 8A+8C 9C 10B 11A 12A 13A 14A 15A 16A). */
@@ -118,6 +118,8 @@ export class Arene {
   tisse: { x: number; y: number; t: number; r: number }[] = [];
   racines: { x: number; y: number; t: number; r: number }[] = [];
   tTisse = 3;
+  /** 10A : dédale tiré à l'entrée (n° dans arene.murs), -1 sans dédale. */
+  dedale = -1;
   tRacines = A06.racine.premier;
 
   constructor(readonly w: World, readonly d: DonjonDef, reprise: number) {
@@ -128,6 +130,7 @@ export class Arene {
     this.vague = Math.max(0, Math.min(this.total + 1, reprise) - 1);   // la vague atteinte recommence (monstres remis à neuf)
     this.depart = { ...this.pts.arrivee };
     preparer06(this, d, this.depart);
+    poserDedale(this);
     const cv = w.player.cleDonjon?.choix;   // reprise : le Royal déjà choisi
     if (reprise > 1 && cv != null && d.choix?.[cv]) { this.variante = cv; this.choix = null; }
     this.majPool();

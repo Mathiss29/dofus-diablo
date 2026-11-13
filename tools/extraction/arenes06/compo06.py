@@ -148,16 +148,39 @@ def lab_murs(graine):
     return sorted(murs)
 
 
-def lab_segments(murs):
-    """Milieu et sens de chaque mur (dedans + tour du dédale, avec une ouverture au milieu de chaque côté)."""
+# 10A (« le dédale change à chaque entrée », 16A) : plusieurs dédales tirés d'avance ; le jeu en prend un à l'entrée.
+# Les murs du dedans de chaque dédale sont des éléments de décor marqués `lab` (affichés pour le dédale tiré), le tour et
+# les piliers sont communs ; les cases bloquées par les murs du dedans de chaque dédale vont dans arene.murs.
+LAB_GRAINES = [7, 11, 23, 31, 42, 57, 64, 88]
+
+
+def lab_dedans(murs):
+    """Milieu et sens de chaque mur du dedans."""
     segs = []
     for a1, b1 in murs:
         (x1, y1), (x2, y2) = lab_pos(*a1), lab_pos(*b1); segs.append(((x1 + x2) / 2, (y1 + y2) / 2, b1[0] != a1[0]))
+    return segs
+
+
+def lab_tour():
+    """Le tour du dédale, avec une ouverture au milieu de chaque côté."""
+    segs = []
     for k2 in range(LAB_N):
         for (u, v, f) in [(k2, -0.5, False), (k2, LAB_N - 0.5, False), (-0.5, k2, True), (LAB_N - 0.5, k2, True)]:
             if (u, v) in LAB_PORTES: continue
             x, y = lab_pos(u, v); segs.append((x, y, f))
     return segs
+
+
+def lab_segments(murs): return lab_dedans(murs) + lab_tour()
+
+
+def pres_mur(x, y, segs):   # à moins de 40 px d'un mur (distance écran, y compté double)
+    for sx, sy, f in segs:
+        dx, dy = lab_demi(f); L2 = dx * dx + dy * dy * 4
+        t = max(-1, min(1, ((x - sx) * dx + (y - sy) * dy * 4) / L2))
+        if math.hypot(x - sx - t * dx, (y - sy - t * dy) * 2) < 40: return True
+    return False
 
 
 def lab_demi(f):   # demi-arête d'un mur (le mur est perpendiculaire à l'écart entre ses deux cases)
@@ -178,12 +201,18 @@ def labyrinthe():
                 u, v = lab_uv(x, y); t = int(0x78 - max(abs(u - 2), abs(v - 2)) * 9)
                 a.bg(random.choice([30785, 30785, 30784, 30787, 30788, 30786]), x, y, c=0xFF000000 | (t << 16) | (t << 8) | t)
                 a.els[-1]['k'] = (0, 0, y, x)
-    segs = lab_segments(lab_murs(7))
+    tour = lab_tour(); dedans = [lab_dedans(lab_murs(g)) for g in LAB_GRAINES]
     PIED = 40   # les murets sont posés par le milieu de leur image : on les descend pour que leur pied tombe sur la ligne du mur
     W1 = [P(d, i) for i in (23, 32, 34, 35, 36, 41)]
-    for x, y, f in segs:
-        dx, dy = lab_demi(f)
-        for s_ in (-2, -1, 0, 1, 2): a.put(random.choice(W1), x + s_ * dx * 0.4, y + s_ * dy * 0.4 + PIED, flip=not f)
+    def muret(segs, lab=None):
+        for x, y, f in segs:
+            dx, dy = lab_demi(f)
+            for s_ in (-2, -1, 0, 1, 2):
+                n = len(a.els); a.put(random.choice(W1), x + s_ * dx * 0.4, y + s_ * dy * 0.4 + PIED, flip=not f)
+                if lab is not None:
+                    for e in a.els[n:]: e['lab'] = lab
+    muret(tour)
+    for k, segs in enumerate(dedans): muret(segs, k)
     for u in range(N + 1):
         for v in range(N + 1):
             x, y = lab_pos(u - 0.5, v - 0.5); a.put(P(d, 28 if (u + v) % 2 else 40), x, y + PIED)
@@ -194,18 +223,15 @@ def labyrinthe():
     # 10C : les monstres arrivent par les trois autres ouvertures et cherchent leur chemin ; arrivée du joueur dans le coin du bas
     pts = dict(arrivee=lab_pos(4, 4), entrees=[lab_pos(2, -0.8), lab_pos(-0.8, 2), lab_pos(4.8, 2)], boss=lab_pos(2, 2),
                sortie=lab_pos(1.7, 1.7), coffre=lab_pos(2.3, 2.3))
-    def ok(x, y, bl):
-        if not dans(x, y): return False
-        for sx, sy, f in segs:   # à moins de 40 px d'un mur (distance écran, y compté double) : bloqué
-            dx, dy = lab_demi(f); L2 = dx * dx + dy * dy * 4
-            t = max(-1, min(1, ((x - sx) * dx + (y - sy) * dy * 4) / L2))
-            if math.hypot(x - sx - t * dx, (y - sy - t * dy) * 2) < 40: return False
+    def ok(x, y, bl):   # sans les murs du dedans (ils changent : arene.murs)
+        if not dans(x, y) or pres_mur(x, y, tour): return False
         for u in range(N + 1):   # piliers
             for v in range(N + 1):
                 px, py = lab_pos(u - 0.5, v - 0.5)
                 if math.hypot(x - px, (y - py) * 2) < 50: return False
         return not any(math.hypot(x - bx, (y - by) * 2) < r for bx, by, r in bl)
     a.bloque.append((cx - 90, cy - 10, 60)); a.bloque.append((cx + 90, cy - 10, 60))
+    a.dedans = dedans
     return a, (10, 9, 8), pts, ok
 
 

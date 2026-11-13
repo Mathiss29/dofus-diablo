@@ -74,7 +74,7 @@ describe('arènes de la 0.6 (maquette « Arènes : 1A 2D 3A 4A+4C 5B 6B+6C 7A 8A
   });
 });
 
-describe('mécaniques des arènes de la 0.6 (2D, 4C, 6B+6C, 8A+8B)', () => {
+describe('mécaniques des arènes de la 0.6 (2D, 4C, 6B+6C, 8A+8B, 10A)', () => {
   const entrer = (tag: string) => {
     const w = monde(true); w.player.level = 100; w.player.recompute();
     expect(w.allerArene(tag)).toBe(true);
@@ -146,5 +146,28 @@ describe('mécaniques des arènes de la 0.6 (2D, 4C, 6B+6C, 8A+8B)', () => {
     pas(w, 1.2);
     expect(p.slowK).toBeGreaterThan(0.5);
     expect(Math.hypot(a.boss.x - x0, a.boss.y - y0)).toBeLessThan(5);
+  });
+
+  it('10A : le dédale du Labyrinthe est tiré à l’entrée ; ses murs bloquent leurs cases, ceux des autres dédales non', () => {
+    const vus = new Set<number>();
+    for (const seed of [1, 2, 3, 4, 5, 6]) {
+      const w = new World({ data: GAME_DATA, zone: 'astrub', map: new WorldGrid(AS), seed, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES,
+        reprise: VIDE, sansGroupes: true, test: {} as never });
+      w.player.level = 100; w.player.recompute();
+      expect(w.allerArene('arene_dragon_cochon')).toBe(true);
+      pas(w, 1);
+      const a = w.arene!, M = a.d.arene!.murs!, wg = w.worldGrid!;
+      expect(M.length).toBe(8);
+      expect(a.dedale).toBeGreaterThanOrEqual(0);
+      vus.add(a.dedale);
+      for (const c of M[a.dedale]) expect(wg.mov[c]).toBe(0);
+      const autres = M.flatMap((l, k) => k === a.dedale ? [] : l).filter(c => !M[a.dedale].includes(c));
+      expect(autres.some(c => wg.mov[c] === 1)).toBe(true);
+      // le boss au centre reste atteignable depuis l'arrivée
+      expect(wg.findPath(a.pts.arrivee, a.pts.boss, 20000).length).toBeGreaterThan(0);
+    }
+    expect(vus.size).toBeGreaterThan(1);
+    const libres = [...AS.movCartes!['arene_dragon_cochon']].filter(c => c === '1').length;
+    expect(libres).toBeGreaterThan(600);
   });
 });

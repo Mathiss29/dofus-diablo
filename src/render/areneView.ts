@@ -60,10 +60,12 @@ export class AreneView {
     const a = this.world.arene, g = this.sol06.clear(), C = a?.choix ?? [];
     for (const [i, c] of C.entries()) {
       const s = ISO.toScreen(c.x, c.y), col = Phaser.Display.Color.HexStringToColor(c.couleur).color, p = 0.5 + 0.5 * Math.sin(this.tw * 3 + i);
-      g.fillStyle(col, 0.18 + 0.1 * p).fillEllipse(s.x, s.y, 104, 52);
-      g.lineStyle(3, col, 0.7 + 0.3 * p).strokeEllipse(s.x, s.y, 104 + 8 * p, 52 + 4 * p);
-      const t = this.noms06[i] ??= this.scene.add.text(0, 0, '', { fontFamily: 'Rowdies, Lexend, sans-serif', fontSize: '14px', color: '#fff', stroke: '#000', strokeThickness: 4, align: 'center' }).setOrigin(0.5, 1);
-      t.setText(c.nom).setColor(c.couleur).setPosition(s.x, s.y - 30).setDepth(s.y + 1).setVisible(true);
+      g.fillStyle(0x000000, 0.25).fillEllipse(s.x, s.y + 3, 112, 56);
+      g.fillStyle(col, 0.38 + 0.12 * p).fillEllipse(s.x, s.y, 104, 52);
+      g.lineStyle(4, col, 0.8 + 0.2 * p).strokeEllipse(s.x, s.y, 104 + 8 * p, 52 + 4 * p);
+      g.lineStyle(2, 0xffffff, 0.35 * p).strokeEllipse(s.x, s.y, 80, 40);
+      const t = this.noms06[i] ??= this.scene.add.text(0, 0, '', { fontFamily: 'Rowdies, Lexend, sans-serif', fontSize: '16px', color: '#fff', stroke: '#000', strokeThickness: 5, align: 'center' }).setOrigin(0.5, 1);
+      t.setText(c.nom).setColor(c.couleur).setPosition(s.x, s.y - 30 - (i % 2) * 20).setDepth(1e6 - 10).setVisible(true);
     }
     for (let i = C.length; i < this.noms06.length; i++) this.noms06[i].setVisible(false);
     for (const t of a?.toiles ?? []) {

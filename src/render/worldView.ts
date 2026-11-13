@@ -515,7 +515,7 @@ export class WorldView {
           this.vivants.push({ im, p, x0: im.x, y0: im.y, ph: (p.x * 0.013 + p.y * 0.007) % (Math.PI * 2) });
         }
         if (p.c >= 0 && !p.b) this.transparence?.ajouter(im, p.bt);
-        if (p.h || p.cc) { this.selonCarte.push({ im, p, tag: m.tag }); if (!this.montre(p, m.tag)) im.setVisible(false); }
+        if (p.h || p.cc || p.lab != null) { this.selonCarte.push({ im, p, tag: m.tag }); if (!this.montre(p, m.tag)) im.setVisible(false); }
         this.filtrer(im);
         s.objs.push(im);
       }
@@ -645,9 +645,13 @@ export class WorldView {
    *  n'affiche que la carte courante. Ici les voisines restent affichées en objets entiers (centre dans leur cadre), et les
    *  débords de la carte du joueur s'ajoutent, en cachant les originaux des voisines qu'ils recopient (« cc »). */
   private montre(p: DecorPlace, tag: string) {
+    if (p.lab != null) return p.lab === this.dedale;
     if (p.h) return tag === this.center;
     return !p.cc?.includes(this.center);
   }
+  /** 0.6 (10A) : dédale tiré à l'entrée du Labyrinthe (world.arene.dedale) : seuls ses murs sont affichés. */
+  private dedale = -1;
+  setDedale(k: number) { if (k !== this.dedale) { this.dedale = k; this.majSelonCarte(); } }
   private majSelonCarte() {
     let n = 0;
     for (const e of this.selonCarte) {
@@ -663,7 +667,7 @@ export class WorldView {
   private light(im: Phaser.GameObjects.Image, p: DecorPlace) {
     im.setBlendMode(p.b === 'a' ? Phaser.BlendModes.ADD : Phaser.BlendModes.SCREEN).setData('k', p.k ?? 1).setData('j', !!p.j);
     const f = p.j ? this.sol : this.lum;
-    im.setAlpha(Math.min(1, (p.k ?? 1) * f)).setVisible(f > 0.01 && ((!p.h && !p.cc) || this.montre(p, im.getData('tag') ?? '')));
+    im.setAlpha(Math.min(1, (p.k ?? 1) * f)).setVisible(f > 0.01 && ((!p.h && !p.cc && p.lab == null) || this.montre(p, im.getData('tag') ?? '')));
   }
   /** Change l'ambiance : teinte des cartes (sol, décor, ciel) et force des lumières. Ne refait le travail que si ça a changé. */
   setAmbiance(tint: number, lum: number, sol: number) {

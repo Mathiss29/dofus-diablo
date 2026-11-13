@@ -27,7 +27,7 @@ def exporter(k):
     out = f'{mondes}/astrub'; M = json.load(open(f'{out}/monde.json'))
     if any('decor' not in m for m in M['maps']): sys.exit('monde scindé : lancer regions_monde.py joindre avant')
     X0, Y0 = M['origin']; ix, iy = sx - X0, sy - Y0; dx, dy = ix * MW, iy * MH
-    ox, oy = dx + CX, dy + CY
+    G = M['grid']; ox, oy = dx + CX - OX + G['ox'], dy + CY - OY + G['oy']   # pixels de la grande grille (elle commence en grid.ox, grid.oy)
     cols, rows = M['grid']['cols'], M['grid']['rows']
     need_rows = (iy + NS) * ROWS
     if need_rows > rows: M['grid']['rows'] = rows = need_rows   # cases marchables carte par carte (movCartes) : seule la grille grandit
@@ -60,7 +60,8 @@ def exporter(k):
             if im is None: continue
             variants[key] = ('d%d' % len(variants), im)
         bt = {'bt': bt0 + e['grp']} if 'grp' in e and grand[e['grp']] > 30000 else {}
-        places.append({'f': variants[key][0], 'x': round(e['x'] + ox, 1), 'y': round(e['y'] + oy, 1), 'c': case(e['fx'], e['fy']), 'o': e['o'], **bt})
+        lab = {'lab': e['lab']} if 'lab' in e else {}   # 10A : mur d'un des dédales du Labyrinthe (affiché pour le dédale tiré)
+        places.append({'f': variants[key][0], 'x': round(e['x'] + ox, 1), 'y': round(e['y'] + oy, 1), 'c': case(e['fx'], e['fy']), 'o': e['o'], **bt, **lab})
     BT0[tag] = (bt0, bt0 + getattr(a, 'ngrp', 0))
     items = sorted(variants.values(), key=lambda v: -v[1].height); maxW = 2048; px = py = rowH = 0; pos = {}
     for name, im in items:
@@ -74,19 +75,23 @@ def exporter(k):
                         'spriteSourceSize': {'x': b[0], 'y': b[1], 'w': w, 'h': h}, 'sourceSize': {'w': im.width, 'h': im.height}}
     atlas.save(f'{out}/decor_{tag}.webp', quality=82, method=6)
     json.dump({'frames': frames, 'meta': {'image': f'decor_{tag}.webp', 'size': {'w': maxW, 'h': atlas.height}, 'scale': '1'}}, open(f'{out}/decor_{tag}.json', 'w'))
-    vert = []
+    vert = []; dedans = getattr(a, 'dedans', None); murs = [[] for _ in dedans or []]
     for rr in range(NS * ROWS):
         for kk in range(NS * COLS):
             c = rr * NS * COLS + kk
             x = OX + W / 2 + kk * W + (rr % 2) * W / 2 - CX; y = OY + H / 2 + rr * H / 2 - CY
             o = ok(x, y, a.bloque); mov[c] = '1' if o else '0'
             if o: vert.append((x, y))
+            if o and dedans:   # cases que bloquent les murs du dedans de chaque dédale (grande grille)
+                for k2, segs in enumerate(dedans):
+                    if C['pres_mur'](x, y, segs): murs[k2].append((iy * ROWS + rr) * cols + ix * COLS + kk)
     M['movCartes'][tag] = ''.join(mov)
     entree = {'x': sx, 'y': sy, 'id': mid, 'sub': sub, 'tag': tag, 'n': [NS, NS], 'inside': 1, 'batiments': 1, 'v06': 1,
               'sol': {'x': BOX[0] + ox, 'y': BOX[1] + oy, 'w': sol.width, 'h': sol.height}, 'decor': places}
     M['maps'] = [m for m in M['maps'] if m['tag'] != tag] + [entree]
     open(f'{out}/monde.json', 'w').write(json.dumps(M, ensure_ascii=False, separators=(',', ':')))
     pts = {kk: ([case(*p) for p in v] if kk == 'entrees' else case(*v)) for kk, v in POINTS.items()}
+    if dedans: pts['murs'] = murs
     if apercu:
         im = C['rendre'](a.els, BOX, fond); d = ImageDraw.Draw(im, 'RGBA')
         for x, y in vert: d.ellipse((x - BOX[0] - 5, y - BOX[1] - 3, x - BOX[0] + 5, y - BOX[1] + 3), fill=(80, 255, 80, 90))
