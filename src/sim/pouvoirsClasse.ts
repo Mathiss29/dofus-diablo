@@ -141,6 +141,23 @@ export const POUVOIRS_CLASSE: PouvoirClasseDef[] = [
   pc('eniripsa', 'N', 'Sentence', 'interdit', 'arme', [10, 20], 1, v => `Mot Interdit marque sa cible 4 s : tes coups et ceux de tes alliés lui font +${v} % de dégâts.`),
   pc('eniripsa', 'O', 'Jouvence éternelle', 'jouvence', 'bouclier', [3, 6], 1, v => `Le soin continu de Jouvence dure ${v} s de plus et retire les malus de l'allié à chaque soin.`),
   pc('eniripsa', 'P', 'Seconde vie', 'reconstitution', 'bouclier', [15, 25], 5, v => `Un allié relevé par le Mot de Reconstitution n'est pas Insoignable, et reçoit un bouclier de ${v} % de ses PV pendant 4 s.`),
+  // --- Écaflip (« Légendaires éca : 1A 2A-2P 3A 4A 5A », 2026-11-13) : 16 pouvoirs, deux par emplacement --------------------
+  pc('ecaflip', 'A', 'Carte maîtresse', 'bonne_pioche', 'chapeau', [15, 30], 1, v => `Bonne Pioche a ${v} % de chances de tirer un As, avec son gros bonus de Table, même avant le niveau 125.`),
+  pc('ecaflip', 'B', 'Coup de bluff', 'tromperie', 'chapeau', [40, 60], 5, v => `Tromperie touche aussi 2 ennemis près de la cible, dans le même élément tiré, à ${v} % de ses dégâts.`),
+  pc('ecaflip', 'C', 'Tapis vert', 'bonne_pioche', 'cape', [3, 6], 1, v => `Les cartes posées sur la Table gardent leur bonus ${v} s de plus.`),
+  pc('ecaflip', 'D', 'Partage du pot', 'chateau_cartes', 'cape', [75, 100], 5, v => `Tes alliés proches reçoivent ${v} % des bonus de Table au lieu de la moitié, et le Château de Cartes les protège aussi.`),
+  pc('ecaflip', 'E', 'Jackpot', 'bonne_pioche', 'amulette', [2, 4], 1, v => `Un carré ou une suite remet toutes tes recharges à zéro et te rend ${v} PA.`),
+  pc('ecaflip', 'F', 'Double ou rien', 'roulette', 'amulette', [40, 60], 5, v => `Jouer une Main sans combinaison te coûte 5 % de tes PV ; une Main gagnante donne ${v} % de bonus en plus.`),
+  pc('ecaflip', 'G', 'Pièce à deux faces', 'pile_face', 'anneau', [40, 60], 5, v => `Pile ou Face donne aussi l'effet de l'autre côté, à ${v} % de sa force.`),
+  pc('ecaflip', 'H', 'Yams parfait', 'yams', 'anneau', [60, 100], 5, v => `Un 6 au dé du Yams frappe une seconde fois (${v} % des dégâts) et pioche aussi une carte au hasard.`),
+  pc('ecaflip', 'I', 'Roulette truquée', 'roulette', 'ceinture', [50, 80], 5, v => `${v} % de chances que l'effet de la Roulette ne profite qu'à toi et tes alliés, et ne nuise qu'aux monstres.`),
+  pc('ecaflip', 'J', 'Château fort', 'chateau_cartes', 'ceinture', [30, 50], 5, v => `Bouclier du Château de Cartes +${v} % ; quand il se brise, il repousse les monstres à 2 cases.`),
+  pc('ecaflip', 'K', 'Pattes de velours', 'bond_felin', 'bottes', [3, 5], 0.5, v => `Bond du Félin gagne 1 charge, et chaque bond pioche une carte au hasard (au plus une fois toutes les ${n(v)} s).`),
+  pc('ecaflip', 'L', 'Chat de gouttière', 'reflexes', 'bottes', [10, 20], 1, v => `Réflexes fait courir 35 % plus vite au lieu de 20 %, et donne +${v} % de vitesse d'attaque pendant 3 s.`),
+  pc('ecaflip', 'M', 'Main lourde', 'jass', 'arme', [25, 35], 1, v => `Les Dames (Jass, Baraka, Blakjak, Belote) gagnent ${v} % de dégâts par carte de leur couleur au lieu de 15 %.`),
+  pc('ecaflip', 'N', 'Topkaj brûlant', 'topkaj', 'arme', [30, 50], 5, v => `Topkaj frappe en zone d'une case, et soigne l'allié le plus blessé à 3 cases de ${v} % des dégâts faits.`),
+  pc('ecaflip', 'O', 'Chaton protecteur', 'griffe_invocatrice', 'bouclier', [30, 50], 5, v => `Le Chaton a ${v} % de PV en plus, et pioche 2 cartes pour toi quand il tombe.`),
+  pc('ecaflip', 'P', 'Neuvième vie', 'perception', 'bouclier', [20, 30], 1, v => `Un coup mortel te laisse à 1 PV et te soigne de ${v} % (une fois par minute). Perception soigne 50 % de plus un allié sous 30 %.`),
 ];
 /** Châtiments du Sacrieur (Dofus Rétro, 14B) : caractéristique gagnée à chaque coup reçu. */
 export const CHATIMENTS: Record<string, 'force' | 'agilite' | 'chance' | 'intelligence' | 'vitalite'> =
@@ -152,11 +169,11 @@ export const estPouvoirClasse = (id: string) => !!PC_PAR_ID[id];
 
 /** 2D : pouvoirs préférés de chaque boss (chance triplée sur son butin), un par classe. */
 export const BOSS_PREFERES: Record<string, string[]> = {
-  royal: ['pc-iop-A', 'pc-cra-G', 'pc-osamodas-E', 'pc-sacrieur-E', 'pc-sacrieur-L', 'pc-iop-K', 'pc-cra-P', 'pc-osamodas-L', 'pc-forgelance-E', 'pc-forgelance-M', 'pc-eniripsa-E', 'pc-eniripsa-I'],
-  kardorim: ['pc-iop-F', 'pc-cra-H', 'pc-osamodas-F', 'pc-sacrieur-D', 'pc-sacrieur-O', 'pc-iop-J', 'pc-cra-O', 'pc-osamodas-O', 'pc-forgelance-C', 'pc-forgelance-L', 'pc-eniripsa-P', 'pc-eniripsa-H'],
-  tournesol_affame: ['pc-iop-H', 'pc-cra-A', 'pc-osamodas-D', 'pc-sacrieur-A', 'pc-sacrieur-J', 'pc-iop-L', 'pc-cra-K', 'pc-osamodas-J', 'pc-forgelance-I', 'pc-forgelance-A', 'pc-eniripsa-C', 'pc-eniripsa-G'],
-  mob_l_eponge: ['pc-iop-E', 'pc-cra-F', 'pc-osamodas-B', 'pc-sacrieur-C', 'pc-sacrieur-P', 'pc-iop-M', 'pc-cra-M', 'pc-osamodas-K', 'pc-forgelance-K', 'pc-forgelance-H', 'pc-eniripsa-A', 'pc-eniripsa-O'],
-  kankreblath: ['pc-iop-B', 'pc-cra-C', 'pc-osamodas-C', 'pc-sacrieur-B', 'pc-sacrieur-K', 'pc-iop-O', 'pc-cra-J', 'pc-osamodas-P', 'pc-forgelance-D', 'pc-forgelance-O', 'pc-eniripsa-M', 'pc-eniripsa-N'],
+  royal: ['pc-iop-A', 'pc-cra-G', 'pc-osamodas-E', 'pc-sacrieur-E', 'pc-sacrieur-L', 'pc-iop-K', 'pc-cra-P', 'pc-osamodas-L', 'pc-forgelance-E', 'pc-forgelance-M', 'pc-eniripsa-E', 'pc-eniripsa-I', 'pc-ecaflip-A', 'pc-ecaflip-J'],
+  kardorim: ['pc-iop-F', 'pc-cra-H', 'pc-osamodas-F', 'pc-sacrieur-D', 'pc-sacrieur-O', 'pc-iop-J', 'pc-cra-O', 'pc-osamodas-O', 'pc-forgelance-C', 'pc-forgelance-L', 'pc-eniripsa-P', 'pc-eniripsa-H', 'pc-ecaflip-P', 'pc-ecaflip-E'],
+  tournesol_affame: ['pc-iop-H', 'pc-cra-A', 'pc-osamodas-D', 'pc-sacrieur-A', 'pc-sacrieur-J', 'pc-iop-L', 'pc-cra-K', 'pc-osamodas-J', 'pc-forgelance-I', 'pc-forgelance-A', 'pc-eniripsa-C', 'pc-eniripsa-G', 'pc-ecaflip-N', 'pc-ecaflip-G'],
+  mob_l_eponge: ['pc-iop-E', 'pc-cra-F', 'pc-osamodas-B', 'pc-sacrieur-C', 'pc-sacrieur-P', 'pc-iop-M', 'pc-cra-M', 'pc-osamodas-K', 'pc-forgelance-K', 'pc-forgelance-H', 'pc-eniripsa-A', 'pc-eniripsa-O', 'pc-ecaflip-O', 'pc-ecaflip-C'],
+  kankreblath: ['pc-iop-B', 'pc-cra-C', 'pc-osamodas-C', 'pc-sacrieur-B', 'pc-sacrieur-K', 'pc-iop-O', 'pc-cra-J', 'pc-osamodas-P', 'pc-forgelance-D', 'pc-forgelance-O', 'pc-eniripsa-M', 'pc-eniripsa-N', 'pc-ecaflip-M', 'pc-ecaflip-I'],
 };
 /** 2A : part des pouvoirs de Légendaire qui sont des pouvoirs de classe inventés. */
 export const CHANCE_POUVOIR_CLASSE = 0.2;

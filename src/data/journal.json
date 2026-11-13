@@ -1902,6 +1902,15 @@
               "Partie de test",
               "Touche X"
             ]
+          },
+          {
+            "titre": "Les légendaires de l'Écaflip",
+            "phrase": "40 pouvoirs officiels de la Panoplie de Gouttière et 16 pouvoirs à nous pour l'Écaflip.",
+            "details": "Jackpot, Double ou rien, Roulette truquée, Neuvième vie… De quoi tricher un peu avec la chance.",
+            "icone": "principale",
+            "etiquettes": [
+              "Partie de test"
+            ]
           }
         ],
         "Le monde": [

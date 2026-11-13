@@ -23,7 +23,7 @@ import { CASE, TOUR } from './monster';
 import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type SortGrade, type SortOfficiel } from './sorts';
 import { porteeSort } from './apercu';
 import { aimanter, alchiRhetorique, apresCoupEniripsa, envol, impactEniripsa, majEniripsa } from './eniripsa';
-import { avantImpactEcaflip, impactEcaflip, majEcaflip, type Carte, type MainGagnante } from './ecaflip';
+import { avantImpactEcaflip, chateauBrise, impactEcaflip, majEcaflip, neuviemeVie, type Carte, type MainGagnante } from './ecaflip';
 import { impactEnutrof, majEnutrof, perteCoffre, recordsVides, type LigneCoffre, type RecordsCoffre, type VitrineCoffre } from './enutrof';
 import type { Butin } from './butin';
 import { DANGER } from './danger';
@@ -291,7 +291,7 @@ export class Player extends Entity {
   critSort(id: SkillId): number { return this.aPouvoir(id, 'crit') / 100; }
   /** Taille de zone en plus, en px : « lancer en ligne désactivé » = +1 case (6A) ; ligne de vue et portée d'un sort sans case visée. */
   zoneBonus(id: SkillId): number {
-    const z = this.aPouvoir(id, 'ligne') * CASE / 2;
+    const z = this.aPouvoir(id, 'ligne') * CASE / 2 + (id === 'topkaj' && this.pcv('pc-ecaflip-N') ? CASE - 30 : 0);   // Topkaj brûlant : zone d'une case
     return this.zoneSeule(id) ? z + (this.aPouvoir(id, 'ldv') ? CASE / 2 : 0) + this.aPouvoir(id, 'po') * CASE / 2 : z;
   }
   /** Portée en plus d'une ligne, d'un cône ou d'un déplacement (« +N Portée maximale »), en px. */
@@ -414,6 +414,8 @@ export class Player extends Entity {
   coffreEjection: { t: number; b: Butin; x: number; y: number }[] = [];
   /** Écaflip (maquette Écaflip) : cartes de la Main, Pile ou Face (0 aucun, 1 Pile, 2 Face) et ses secondes, Main gagnante en cours. */
   ecaMain: Carte[] = []; ecaPF = 0; ecaPFT = 0; ecaGagnante: MainGagnante | null = null;
+  /** Légendaires de l'Écaflip : dernière pioche de Pattes de velours (K), dernière Neuvième vie (P). */
+  ecaPattesA = -99; ecaVieA = -999;
   courir(k: number, t: number) { this.courseK = this.courseT > 0 ? Math.max(this.courseK, k) : k; this.courseT = Math.max(this.courseT, t); }
   slow(t: number, k: number) { if (this.insensibleT > 0) return; k *= fuiteFactor(this.fuite); this.slowK = this.slowT > 0 ? Math.max(this.slowK, k) : k; if (t >= this.slowT) this.slowT0 = t; this.slowT = Math.max(this.slowT, t); }
   get speed(): number { return this.cls.speed * (1 + vitesseAgilite(this.stat('agilite'))) * this.vitesseTest * (this.slowT > 0 ? 1 - this.slowK : 1) * (this.courseT > 0 ? 1 + this.courseK : 1); }
@@ -447,7 +449,7 @@ export class Player extends Entity {
   }
   /** +1 PA au niveau 100, comme dans Dofus (6 PA au départ, 7 ensuite). */
   get paMax(): number { return this.cls.pa.max + (this.level >= 100 ? 1 : 0) + this.stat('pa'); }
-  get pmMax(): number { return this.cls.pm.max + this.stat('pm') + (this.pcv('pc-eniripsa-K') ? 1 : 0); }   // Envol en série : une charge de Mot d'Envol en plus
+  get pmMax(): number { return this.cls.pm.max + this.stat('pm') + (this.pcv('pc-eniripsa-K') ? 1 : 0) + (this.pcv('pc-ecaflip-K') ? 1 : 0); }   // Pattes de velours : une charge de Bond du Félin en plus   // Envol en série : une charge de Mot d'Envol en plus
   get critChance(): number { return this.cls.critChance + this.stat('critique') / 100; }
   /** Effet légendaire porté (somme si plusieurs). */
   legendary(id: string): number {
@@ -1649,6 +1651,7 @@ export class Player extends Entity {
     if (gf && !(loin ?? Math.hypot(fromX - this.x, fromY - this.y) > CASE * 1.6)) world.renvoyer(fromX, fromY, dmg * (gf - 3) / 100);   // Garde de fer : renvoi en mêlée
     if (this.shield > 0) {   // le bouclier prend les coups d'abord
       const a = Math.min(this.shield, dmg); this.shield -= a; dmg -= a;
+      if (this.shield <= 0 && this.shieldSrc === 'chateau_cartes') { this.shieldSrc = ''; chateauBrise(this, world); }   // Château fort
       const fb = this.shield <= 0 && this.shieldSrc === 'ferveur' ? this.pcv('pc-iop-K') : 0;
       if (fb) {   // Ferveur bouillonnante : le bouclier qui casse éclate en dégâts Eau sur 2 cases
         world.hitCircle(this.x, this.y, CASE * 2, { dmg: this.ferveurBouclier * fb / 100, knock: 0, element: 'eau' });
@@ -1675,6 +1678,7 @@ export class Player extends Entity {
         world.emit({ k: 'status', x: this.x, y: this.y - 60, text: 'Dernier souffle !', color: '#ff3b3b' });
       }
     }
+    if (this.hp <= 0 && this.cls.poker) neuviemeVie(this, world);   // Écaflip : Neuvième vie
     if (this.hp <= 0 && world.quetes?.immortel) this.hp = 1;   // tutoriel : PV bloqués à 1
     if (world.test?.invincible) this.hp = this.maxHp;   // partie de test (8A) : le coup s'affiche, les PV ne bougent pas
     if (this.hp <= 0) { this.hp = 0; this.dead = true; this.setAnim('die'); if (this.cls.coffre) perteCoffre(this, world); if (world.zone.open) this.tombe = { zone: world.opts.zone ?? '', x: this.x, y: this.y }; world.onPlayerDeath(); }

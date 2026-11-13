@@ -4,11 +4,22 @@ import { GAME_DATA, ITEMS } from '../src/sim/data';
 import { GridMap, type MapData } from '../src/sim/gridmap';
 import { NO_INPUT, type PlayerInput } from '../src/sim/input';
 import { World } from '../src/sim/world';
+import { PC_PAR_ID } from '../src/sim/pouvoirsClasse';
+import type { EquipSlot, Item } from '../src/sim/items';
 import { avantImpactEcaflip, evaluerMain, impactEcaflip, jouerMain, type Carte } from '../src/sim/ecaflip';
 
 const carte = JSON.parse(readFileSync(new URL('../public/assets/cartes/5_-27/carte.json', import.meta.url), 'utf8')) as MapData;
 const STEP = 1 / 60;
-const eca = (seed = 7) => { const w = new World({ data: GAME_DATA, zone: 'champs-astrub', map: new GridMap(carte), seed, items: ITEMS, classId: 'ecaflip' }); w.waveDelay = 1e9; return w; };
+const eca = (seed = 7, test = false) => { const w = new World({ data: GAME_DATA, zone: 'champs-astrub', map: new GridMap(carte), seed, items: ITEMS, classId: 'ecaflip', ...(test ? { test: {} as never } : {}) }); w.waveDelay = 1e9; return w; };
+/** Porte un Légendaire avec ce pouvoir de l'Écaflip (comme tests/pouvoirsClasse.test.ts). */
+const porter = (w: World, id: string, value: number) => {
+  const c = PC_PAR_ID[id], [iid] = Object.entries(ITEMS.equipment).find(([, d]) => d.slot === c.slot && !d.familier && d.level <= 20)!;
+  const it: Item = { uid: w.newUid(), id: iid, rarity: 'legendaire', stats: {}, extra: [], legendary: { id, value } };
+  const sl = (c.slot === 'anneau' ? 'anneau1' : c.slot) as EquipSlot, deja = w.player.equipment[sl];
+  if (deja?.legendary?.id.startsWith('pc-ecaflip')) deja.legendary2 = { id, value };   // deux pouvoirs du même emplacement : sur la même pièce
+  else w.player.equipment[sl] = it;
+  w.player.recompute();
+};
 const idle = (w: World, s: number) => { for (let i = 0; i < s * 60; i++) w.step(STEP, NO_INPUT); };
 const press = (w: World, pressed: PlayerInput['pressed'], aim: { x: number; y: number }) => w.step(STEP, { ...NO_INPUT, aim, pressed });
 const P = GAME_DATA.classes.ecaflip.poker!;
@@ -103,5 +114,42 @@ describe('Écaflip (maquette Écaflip, « 1A 2A+2C 3A+3B 4A+4C 5A 6B … 15A+15C
   it('jouer une Main vide ne fait rien', () => {
     const w = eca(); idle(w, 0.2);
     expect(jouerMain(w.player, w)).toBe(false);
+  });
+
+  it('Légendaires éca : Main lourde, Tapis vert, Partage du pot, Double ou rien, Jackpot', () => {
+    const w = eca(7, true); idle(w, 0.2);
+    const p = w.player, q = w.ajouterJoueur('iop');
+    q.x = p.x + 60; q.y = p.y; idle(w, 0.1);
+    for (const [id, v] of [['pc-ecaflip-M', 30], ['pc-ecaflip-C', 5], ['pc-ecaflip-D', 100], ['pc-ecaflip-F', 50], ['pc-ecaflip-E', 3]] as const) porter(w, id, v);
+    expect(p.pcv('pc-ecaflip-M')).toBe(30);
+    p.ecaMain = [k(0, 0), k(0, 0)];
+    expect(avantImpactEcaflip(p, p.cls.spells.jass, w).mult).toBeCloseTo(1.6);
+    p.ecaMain = [k(0, 0), k(1, 0), k(2, 0), k(3, 0)];
+    p.cd.reflexes = 5; p.pa = 0;
+    jouerMain(p, w);
+    expect(p.ecaGagnante?.pct).toBe(Math.round(P.mains.carre[0] * 1.5));
+    expect(p.cd.reflexes).toBe(0); expect(p.pa).toBe(3);
+    expect(p.mods.find(m => m.src === 'table')!.t).toBe(P.table.t + 5);
+    expect(q.mods.find(m => m.src === 'table' && m.k === 'soins')?.n).toBe(P.table.valeurs[2][0]);
+    const hp = p.hp; p.ecaMain = [k(0, 0), k(1, 1)];
+    jouerMain(p, w);
+    expect(p.hp).toBe(hp - Math.round(p.maxHp * 0.05));
+  });
+
+  it('Légendaires éca : Carte maîtresse, Pièce à deux faces, Neuvième vie, Pattes de velours', () => {
+    const w = eca(7, true); idle(w, 0.2);
+    const p = w.player;
+    porter(w, 'pc-ecaflip-A', 100); porter(w, 'pc-ecaflip-G', 50); porter(w, 'pc-ecaflip-P', 25); porter(w, 'pc-ecaflip-K', 4);
+    impactEcaflip(p, 'bonne_pioche', p.cls.spells.bonne_pioche, p.x, p.y, 0, 0, w);
+    expect(p.ecaMain[0].v).toBe(3);
+    impactEcaflip(p, 'pile_face', p.cls.spells.pile_face, p.x, p.y, 0, 10, w);
+    expect(p.courseT).toBeGreaterThan(0);
+    expect(p.mods.some(m => m.src === 'pile')).toBe(true);
+    const pm = p.pmMax;
+    expect(pm).toBe(p.cls.pm.max + p.stat('pm') + 1);
+    p.hp = 5; p.invuln = 0; p.shield = 0;
+    p.hurt(9999, p.x + 30, p.y, w);
+    expect(p.dead).toBe(false);
+    expect(p.hp).toBeGreaterThan(1);
   });
 });

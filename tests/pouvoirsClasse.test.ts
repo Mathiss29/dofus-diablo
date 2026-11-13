@@ -25,7 +25,7 @@ const monstre = (w: World, dx: number, dy = 0, type = 'bouftou') => { const m = 
 
 describe('Légendaires de classe inventés (Légendaires classe : 1A 2A+2D 3C 4A …)', () => {
   it('47 pouvoirs (+ 17 du Sacrieur, + 24 du Forgelance), deux par emplacement, chacun sur un vrai sort de sa classe', () => {
-    expect(POUVOIRS_CLASSE).toHaveLength(104);   // + 16 de l'Eniripsa
+    expect(POUVOIRS_CLASSE).toHaveLength(120);   // + 16 de l'Eniripsa, + 16 de l'Écaflip
     expect(PC_PAR_ID['pc-cra-D']).toBeUndefined();   // 6D Pas piégé refusé
     for (const p of POUVOIRS_CLASSE) {
       expect(GAME_DATA.classes[p.classe].spells[p.sort], p.id).toBeDefined();
