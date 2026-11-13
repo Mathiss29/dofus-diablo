@@ -1,3 +1,4 @@
+import { TEINTES } from '../sim/ecaflip';
 import { coffreDe, couleurCoffre, nomsCoffre, palierCoffre, partageurCoffre, seuilsCoffre } from '../sim/enutrof';
 import { nomOrne, styleDef } from '../sim/style';
 import { RARITY_COLORS } from '../sim/items';
@@ -80,6 +81,7 @@ export class Hud {
     for (const c of Object.keys(GAME_DATA.classes)) if (!scene.textures.exists(`embleme_${c}`)) scene.load.image(`embleme_${c}`, v(`assets/accueil/c_${c}.png`));
     const icons = new Set<number>();
     for (const c of Object.values(GAME_DATA.classes)) for (const s of Object.values(c.spells)) icons.add(s.icon);
+    for (const c of Object.values(GAME_DATA.classes)) for (const i of c.poker?.icones ?? []) icons.add(i);   // Écaflip : les 16 cartes du Poker
     for (const i of icons) if (!scene.textures.exists(`sort_${i}`)) scene.load.image(`sort_${i}`, v(`${UI}/sorts/sort_${i}.png`));
     // Bulles d'effets actifs : icônes officielles des caractéristiques pour les malus des monstres
     for (const k of Object.values(CARAC_BULLE)) if (!scene.textures.exists(`carac_${k}`)) scene.load.image(`carac_${k}`, v(`${UI}/d3/caracs/${k}.png`));
@@ -166,6 +168,25 @@ export class Hud {
   /** Enutrof (interface du coffre 1A + 1D) : le vrai Coffre Animé dans un anneau de pièces à crans (un par palier jusqu'à Trésor,
    *  puis un anneau rouge de surcharge), ses PV en dessous, le nom du palier ; il tremble en rouge quand le coffre est frappé.
    *  Clic : la fenêtre du coffre. */
+  /** Écaflip (maquette 2A) : la Main en 2 × 2 cases (carte officielle ou case vide), la Main gagnante en cours dessous. */
+  private mainEcaflip(g: Phaser.GameObjects.Graphics, cx: number, cy: number, slot: number) {
+    const p = this.world.player, P = p.cls.poker!, c = 21, gap = 3, x0 = cx - c - gap / 2, y0 = cy - slot / 2 + 1;
+    this.medImg.setVisible(false); this.medRect = null;
+    for (let i = 0; i < P.main; i++) {
+      const x = x0 + (i % 2) * (c + gap), y = y0 + Math.floor(i / 2) * (c + gap), k = p.ecaMain[i];
+      g.fillStyle(0x15120e, 1); g.fillRoundedRect(x, y, c, c, 4);
+      g.lineStyle(1.5, k ? Phaser.Display.Color.HexStringToColor(TEINTES[k.c]).color : 0x4a4236, 1); g.strokeRoundedRect(x, y, c, c, 4);
+      const im = this.cartesImg[i];
+      if (!k || !im) continue;
+      const key = `sort_${P.icones[k.c * 4 + k.v]}`;
+      if (this.scene.textures.exists(key)) im.setTexture(key).setPosition(x + c / 2, y + c / 2).setDisplaySize(c - 3, c - 3).setVisible(true);
+    }
+    const gm = p.ecaGagnante, pleine = p.ecaMain.length >= P.main;
+    this.rageLabel.setPosition(cx, y0 + 2 * c + gap + 1)
+      .setText(gm ? `${gm.nom.replace('Suite Royale', 'Suite')} ${Math.ceil(gm.t)} s` : `Main (${Touches.nomAction('coffre')})`)
+      .setColor(gm ? '#ffd86a' : pleine && Math.floor(this.world.time * 4) % 2 ? '#ffe9a0' : '#c9b48a');
+  }
+
   private medaillon(g: Phaser.GameObjects.Graphics, cx: number, cy: number, dt: number, juice: boolean) {
     const w = this.world, p = w.player, CF = p.cls.coffre!, S = seuilsCoffre(CF), tres = CF.paliers[CF.paliers.length - 1];
     const pal = palierCoffre(p), c = coffreDe(p, w), ko = p.coffreKoT > 0, R = 25, t = w.time;
@@ -406,6 +427,8 @@ export class Hud {
   /** Enutrof (interface du coffre 1A + 1D + 7C) : image du coffre dans le médaillon, sa case (clic = fenêtre), alerte quand il est frappé,
    *  PV vus à l'image d'avant, et l'étiquette de la flèche quand il est hors de l'écran. */
   private medImg!: Phaser.GameObjects.Image;
+  /** Écaflip (maquette 2A) : les 4 cases de la Main, à la place de la jauge. */
+  private cartesImg: Phaser.GameObjects.Image[] = [];
   private medRect: [number, number, number, number] | null = null;
   private medAlerte = 0;
   private medPv = -1;
@@ -610,6 +633,7 @@ export class Hud {
     this.xpText = txt(12, bold).setOrigin(0.5);
     this.rageLabel = txt(11, { ...bold, color: css(C.rage) }).setOrigin(0.5, 0).setText(cls.rage.name);
     this.medImg = img('__DEFAULT', 3).setVisible(false);
+    for (let i = 0; i < 4; i++) this.cartesImg.push(img('__DEFAULT', 3).setVisible(false));
     this.cofFleche = txt(11, { ...bold, color: '#ffd86a', stroke: '#1a140c', strokeThickness: 4, align: 'center' }, 3).setVisible(false);
 
     this.trackTitle = txt(13, { ...bold, color: css(C.xp) });
@@ -1190,7 +1214,10 @@ export class Hud {
     if (pcd > 0) horloge(this.gSlots, pox, sy, 23, Math.min(1, pcd));
     // Rage : jauge verticale qui clignote une fois pleine (Enutrof : le médaillon du coffre au trésor)
     const rx = pox + slot / 2 + 30, rh = slot - 14, ry = sy - slot / 2 + 2;
+    const pk = cls.poker;
+    for (const im of this.cartesImg) im.setVisible(false);
     if (cof) this.medaillon(g, pox + slot / 2 + 38, sy - 2, dt, juice);
+    else if (pk) this.mainEcaflip(g, pox + slot / 2 + 34, sy, slot);
     else {
       g.fillStyle(C.track, 1); g.fillRoundedRect(rx - 9, ry, 18, rh, 5);
       g.fillStyle(rageCol, 1); g.fillRoundedRect(rx - 9, ry + rh * (1 - rr), 18, Math.max(4, rh * rr), 5);

@@ -12830,5 +12830,1834 @@
     "pom": 0
    }
   ]
+ ],
+ "ecaflip": [
+  [
+   {
+    "id": 12857,
+    "name": "Réflexes",
+    "icon": 13462,
+    "desc": "Occasionne des dommages Air et augmente les PM du lanceur.\nLes dommages n'affectent pas le lanceur.\n\nPioche un Valet de Pique.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 2,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       8,
+       10
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 66,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       11,
+       13
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 132,
+      "pa": 2,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       14,
+       17
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 12873,
+    "name": "Lapement",
+    "icon": 12946,
+    "desc": "Occasionne des dommages Terre et retire aléatoirement des PM ou des PA en zone.\nN'affecte pas le lanceur.\n\n• Pile : l'aléatoire est supprimé pour retirer des PM.\n• Face : l'aléatoire est supprimé pour retirer des PA.\n\nPioche un Roi de Carreau.",
+    "grades": [
+     {
+      "niv": 95,
+      "pa": 4,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       26,
+       29
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 162,
+      "pa": 4,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       32,
+       36
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 29680,
+    "name": "Yams",
+    "icon": 13413,
+    "desc": "Occasionne des dommages Eau et augmente les chances de Critique du lanceur.\nLes dommages n'affectent pas le lanceur.\n\nPioche un Valet de Trèfle.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 2,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       1,
+       6
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 67,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       2,
+       12
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 133,
+      "pa": 2,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       3,
+       18
+      ],
+      "element": "eau"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 12855,
+    "name": "Langue Râpeuse",
+    "icon": 12307,
+    "desc": "Soigne les alliés et occasionne des dommages Feu aux ennemis en zone.\nN'affecte pas le lanceur.\n\nPioche un Roi de Cœur.",
+    "grades": [
+     {
+      "niv": 100,
+      "pa": 4,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       24,
+       27
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 167,
+      "pa": 4,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       30,
+       33
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 12846,
+    "name": "Topkaj",
+    "icon": 13422,
+    "desc": "Occasionne des dommages Feu aux ennemis ou soigne les alliés.\n\nPioche un Valet de Cœur.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 2,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       7,
+       7
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 68,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       13,
+       13
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 134,
+      "pa": 2,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       16,
+       16
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 12849,
+    "name": "Griffe Joueuse",
+    "icon": 12313,
+    "desc": "Occasionne des dommages Eau et réduit les Résistances Critiques en zone.\n\nPioche un Roi de Trèfle.",
+    "grades": [
+     {
+      "niv": 105,
+      "pa": 4,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       25,
+       28
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 172,
+      "pa": 4,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       31,
+       35
+      ],
+      "element": "eau"
+     }
+    ],
+    "ligne": 1,
+    "ldv": 0,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 12841,
+    "name": "Pile ou Face",
+    "icon": 13378,
+    "desc": "Occasionne des dommages Terre.\n\nSur le lanceur : applique aléatoirement l'état Pile ou l'état Face et lui rend 1 PA.\n• Pile : donne 1 PA.\n• Face : donne 1 PM.\n• Relancer le sort dans un état permet de s'appliquer l'autre.\n\nPioche un Valet de Carreau.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 2,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       10,
+       10
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 69,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       14,
+       14
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 136,
+      "pa": 2,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       18,
+       18
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 12878,
+    "name": "Fanfaronnade",
+    "icon": 13460,
+    "desc": "Occasionne des dommages Air en zone.\nN'affecte pas le lanceur.\n\nLes dommages du sort sont augmentés pour chaque attirance, poussée, échange de position ou téléportation effectué par le lanceur.\nLes effets sont retirés après utilisation du sort.",
+    "grades": [
+     {
+      "niv": 110,
+      "pa": 4,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       24,
+       27
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 177,
+      "pa": 4,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       28,
+       32
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 12843,
+    "name": "Bonne Pioche",
+    "icon": 13417,
+    "desc": "Pioche une Carte aléatoire du Poker d'Ecaflip.\nJoue la Main avant de Piocher si elle est pleine.\n\nLe coût en PA du sort est remboursé.",
+    "grades": [
+     {
+      "niv": 5,
+      "pa": 1,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 72,
+      "pa": 1,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0
+     },
+     {
+      "niv": 139,
+      "pa": 1,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 12877,
+    "name": "Redistribution",
+    "icon": 13418,
+    "desc": "Joue la Main et Pioche 4 Cartes aléatoires du Poker d'Ecaflip.\n\nLe coût en PA du sort est remboursé.",
+    "grades": [
+     {
+      "niv": 115,
+      "pa": 1,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 182,
+      "pa": 1,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 12844,
+    "name": "Bond du Félin",
+    "icon": 12298,
+    "desc": "Augmente les PM de l'allié ciblé ou téléporte le lanceur sur la case ciblée.",
+    "grades": [
+     {
+      "niv": 10,
+      "pa": 1,
+      "po": [
+       0,
+       1
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 77,
+      "pa": 1,
+      "po": [
+       0,
+       1
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0
+     },
+     {
+      "niv": 144,
+      "pa": 1,
+      "po": [
+       0,
+       1
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 12865,
+    "name": "Entrechat",
+    "icon": 12322,
+    "desc": "Téléporte le lanceur sur la case ciblée ou échange de position avec la cible.\nAugmente la Fuite du lanceur et de ses alliés en zone.",
+    "grades": [
+     {
+      "niv": 120,
+      "pa": 2,
+      "po": [
+       0,
+       2
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 187,
+      "pa": 2,
+      "po": [
+       0,
+       2
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 12864,
+    "name": "Jass",
+    "icon": 13416,
+    "desc": "Occasionne des dommages Air et Pioche une Dame de Pique.\nN'affecte pas le lanceur.\n\nRéduit également les Résistances Poussée selon les Cartes de Pique dans la Main (cumulable une fois par Carte).\nLes dommages du sort sont augmentés selon les Cartes de Pique dans la Main.\n\nJoue les Cartes de Pique si le lanceur en possède initialement au moins une dans la Main.",
+    "grades": [
+     {
+      "niv": 15,
+      "pa": 3,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       16,
+       18
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 82,
+      "pa": 3,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       21,
+       23
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 149,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       26,
+       29
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 12880,
+    "name": "Infortune",
+    "icon": 13268,
+    "desc": "Vole de la vie dans l'élément Eau et applique l'état Infortune sur l'ennemi ciblé :\n• Occasionne des dommages Eau à la fin du tour de la cible si elle n'a pas effectué de coup critique durant son tour.\n\nPioche un As de Trèfle.",
+    "grades": [
+     {
+      "niv": 125,
+      "pa": 5,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       36,
+       39
+      ],
+      "element": "eau",
+      "vol": true
+     },
+     {
+      "niv": 192,
+      "pa": 5,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       41,
+       45
+      ],
+      "element": "eau",
+      "vol": true
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 12852,
+    "name": "Perception",
+    "icon": 12301,
+    "desc": "Soigne l'allié ciblé pour chaque ennemi dans la zone d'effet et dévoile les invisibles en zone.",
+    "grades": [
+     {
+      "niv": 20,
+      "pa": 2,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 87,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 154,
+      "pa": 2,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 12867,
+    "name": "Prédation",
+    "icon": 13319,
+    "desc": "Érode l'ennemi ciblé et dévoile les invisibles en zone.",
+    "grades": [
+     {
+      "niv": 130,
+      "pa": 2,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 197,
+      "pa": 2,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 12848,
+    "name": "Baraka",
+    "icon": 13396,
+    "desc": "Occasionne des dommages Eau et Pioche une Dame de Trèfle.\nN'affecte pas le lanceur.\n\nRéduit également des Critiques selon les Cartes de Trèfle dans la Main (cumulable une fois par Carte).\nLes dommages du sort sont augmentés selon les Cartes de Trèfle dans la Main.\n\nJoue les Cartes de Trèfle si le lanceur en possède initialement au moins une dans la Main.",
+    "grades": [
+     {
+      "niv": 25,
+      "pa": 3,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       15,
+       17
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 92,
+      "pa": 3,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       20,
+       23
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 159,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       27,
+       30
+      ],
+      "element": "eau"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 12882,
+    "name": "Toupet",
+    "icon": 13270,
+    "desc": "Rapproche le lanceur vers la cible, vole de la vie dans l'élément Air aux ennemis, repousse la cible et applique l'état Toupet sur l'ennemi ciblé :\n• Occasionne des dommages Air et retire l'état si la cible attire, repousse, échange de position ou occasionne des dommages de poussée.\n\nPioche un As de Pique.",
+    "grades": [
+     {
+      "niv": 135,
+      "pa": 5,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       44,
+       48
+      ],
+      "element": "air",
+      "vol": true
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 12845,
+    "name": "Château de Cartes",
+    "icon": 13415,
+    "desc": "Applique un bouclier sur la cible pour chaque Carte dans la Main selon leur valeur.\n\nJoue la Main.",
+    "grades": [
+     {
+      "niv": 30,
+      "pa": 3,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 97,
+      "pa": 3,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 164,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 12876,
+    "name": "Bonne Étoile",
+    "icon": 12333,
+    "desc": "Soigne la cible et lui applique l'état Bonne Étoile :\n• Applique un bouclier sur la cible si elle effectue un coup critique (cumulable 5 fois).\n\nPioche une Carte aléatoire du Poker d'Ecaflip si la Main est vide.",
+    "grades": [
+     {
+      "niv": 140,
+      "pa": 2,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 12870,
+    "name": "Blakjak",
+    "icon": 13414,
+    "desc": "Occasionne des dommages Feu et Pioche une Dame de Cœur.\nN'affecte pas le lanceur.\n\nRéduit également les soins reçus par la cible selon les Cartes de Cœur dans la Main (cumulable une fois par Carte).\nLes dommages du sort sont augmentés selon les Cartes de Cœur dans la Main.\n\nJoue les Cartes de Cœur si le lanceur en possède initialement au moins une dans la Main.",
+    "grades": [
+     {
+      "niv": 35,
+      "pa": 3,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       17,
+       20
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 102,
+      "pa": 3,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       22,
+       25
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 169,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       27,
+       31
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 12859,
+    "name": "Destin d'Ecaflip",
+    "icon": 13380,
+    "desc": "Vole de la vie dans l'élément Terre aux ennemis, attire ou repousse aléatoirement la cible et applique l'état Destin d'Ecaflip sur l'ennemi ciblé :\n• Occasionne des dommages Terre et retire l'état si la cible effectue un coup critique.\n\n• Pile : l'aléatoire est supprimé pour attirer la cible.\n• Face : l'aléatoire est supprimé pour repousser la cible.\n\nPioche un As de Carreau.",
+    "grades": [
+     {
+      "niv": 145,
+      "pa": 5,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       42,
+       46
+      ],
+      "element": "terre",
+      "vol": true
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 12840,
+    "name": "Roulette",
+    "icon": 15097,
+    "desc": "Applique un effet aléatoire sur tout le monde.\n\nLe coût en PA du sort est remboursé.",
+    "grades": [
+     {
+      "niv": 40,
+      "pa": 1,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 107,
+      "pa": 1,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 174,
+      "pa": 1,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 12850,
+    "name": "Tarot d'Ecaflip",
+    "icon": 13464,
+    "desc": "Pioche une Carte aléatoire du Tarot d'Ecaflip pour appliquer ses effets sur le lanceur et sur tout le monde.",
+    "grades": [
+     {
+      "niv": 150,
+      "pa": 1,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 12866,
+    "name": "Belote",
+    "icon": 13377,
+    "desc": "Occasionne des dommages Terre aux ennemis et Pioche une Dame de Carreau.\nN'affecte pas le lanceur.\n\nRéduit également les Dommages Critiques selon les Cartes de Carreau dans la Main (cumulable une fois par Carte).\nLes dommages du sort sont augmentés selon les Cartes de Carreau dans la Main.\n\nJoue les Cartes de Carreau si le lanceur en possède initialement au moins une dans la Main.",
+    "grades": [
+     {
+      "niv": 45,
+      "pa": 3,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       17,
+       19
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 112,
+      "pa": 3,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       22,
+       25
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 179,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       27,
+       30
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 14311,
+    "name": "Péril",
+    "icon": 12320,
+    "desc": "Vole de la vie dans l'élément Feu et applique l'état Péril sur l'ennemi ciblé :\n• Occasionne des dommages Feu et retire l'état si la cible est soignée.\n\nPioche un As de Cœur.",
+    "grades": [
+     {
+      "niv": 155,
+      "pa": 5,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       43,
+       47
+      ],
+      "element": "feu",
+      "vol": true
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 12881,
+    "name": "Tromperie",
+    "icon": 13491,
+    "desc": "Vole de la vie aux ennemis ou soigne les alliés dans l'élément Air, Eau, Feu ou Terre.\nLe coût en PA, les dommages et soins et l'élément d'attaque sont modifiés aléatoirement à chaque lancer et lorsque le lanceur effectue un coup critique.\n\nPioche une Carte selon les conditions de lancer et l'élément du sort.\nJoue la Main avant de Piocher si elle est pleine.",
+    "grades": [
+     {
+      "niv": 50,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       11,
+       12
+      ],
+      "element": "air",
+      "vol": true
+     },
+     {
+      "niv": 117,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       15,
+       16
+      ],
+      "element": "air",
+      "vol": true
+     },
+     {
+      "niv": 184,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       19,
+       20
+      ],
+      "element": "air",
+      "vol": true
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 12858,
+    "name": "Tout ou Rien",
+    "icon": 13459,
+    "desc": "Soigne les alliés et occasionne des dommages dans le meilleur élément du lanceur aux ennemis en zone.\nLes soins sont augmentés selon les Cartes sur la Table et les dommages selon les Cartes dans la Main.\n\nDéfausse la Main et récupère la Table.",
+    "grades": [
+     {
+      "niv": 160,
+      "pa": 3,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0,
+      "dmg": [
+       16,
+       18
+      ],
+      "element": "meilleur"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 14310,
+    "name": "Pelotage",
+    "icon": 13359,
+    "desc": "Occasionne des dommages Feu aux ennemis et attire les cibles vers le centre en zone.\n\nPioche une Dame de Cœur.",
+    "grades": [
+     {
+      "niv": 55,
+      "pa": 3,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       17,
+       19
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 122,
+      "pa": 3,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       23,
+       25
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 189,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       29,
+       32
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 12851,
+    "name": "Griffe de Ceangal",
+    "icon": 12315,
+    "desc": "Repousse la cible, rapproche le lanceur vers elle et occasionne des dommages Air aux ennemis.\n\nPioche une Dame de Pique.",
+    "grades": [
+     {
+      "niv": 165,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       27,
+       29
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 1,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 12856,
+    "name": "Griffe Invocatrice",
+    "icon": 12300,
+    "desc": "Invoque un Chaton maîtrisable qui peut voler de la vie dans l'élément Eau, donner des PM et se téléporter.\nTant qu'il est en vie, augmente la Puissance du lanceur.",
+    "grades": [
+     {
+      "niv": 60,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 127,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 194,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 12869,
+    "name": "Caresse Invocatrice",
+    "icon": 12324,
+    "desc": "Invoque un Chaton maîtrisable qui peut soigner, se téléporter ou échanger de position.",
+    "grades": [
+     {
+      "niv": 170,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 12847,
+    "name": "Esprit Félin",
+    "icon": 12309,
+    "desc": "Téléporte aléatoirement et symétriquement la cible par rapport au lanceur ou le lanceur par rapport à la cible, occasionne des dommages Terre aux ennemis et augmente les Résistances Critiques du lanceur.\n\n• Pile : l'aléatoire est supprimé pour téléporter la cible.\n• Face : l'aléatoire est supprimé pour téléporter le lanceur.\n\nPioche une Dame de Carreau.",
+    "grades": [
+     {
+      "niv": 65,
+      "pa": 3,
+      "po": [
+       0,
+       1
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       19,
+       21
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 131,
+      "pa": 3,
+      "po": [
+       0,
+       1
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       26,
+       29
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 198,
+      "pa": 3,
+      "po": [
+       0,
+       1
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       31,
+       34
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 1,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 12883,
+    "name": "Kraps",
+    "icon": 12337,
+    "desc": "Occasionne des dommages Eau aux ennemis et repousse les cibles depuis le centre en zone.\nAugmente également les Dommages Critiques du lanceur.\n\nPioche une Dame de Trèfle.",
+    "grades": [
+     {
+      "niv": 175,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       28,
+       30
+      ],
+      "element": "eau"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 12854,
+    "name": "Odorat",
+    "icon": 12311,
+    "desc": "Retire immédiatement des PA non esquivables pour augmenter les PM en zone.\nRetire des PM non esquivables pour augmenter les PA au tour suivant.\nLe retrait de PA n'affecte pas le lanceur.\n\nJoue la Main.",
+    "grades": [
+     {
+      "niv": 70,
+      "pa": 3,
+      "po": [
+       0,
+       1
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 137,
+      "pa": 3,
+      "po": [
+       0,
+       2
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 12863,
+    "name": "Roue de la Fortune",
+    "icon": 13283,
+    "desc": "Minimise immédiatement les effets aléatoires et augmente les chances de Critique au tour suivant des ennemis en zone.\nLes effets sont permutés sur les alliés en zone.\n\nJoue immédiatement la Main et la défausse pour récupérer la Table au tour suivant.\nLa Main n'est pas défaussée s'il n'y a aucune Carte sur la Table.",
+    "grades": [
+     {
+      "niv": 180,
+      "pa": 3,
+      "po": [
+       0,
+       2
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 12875,
+    "name": "Coussinets",
+    "icon": 13360,
+    "desc": "Éloigne le lanceur de la cible, repousse la cible et occasionne des dommages Air aux ennemis.\n\nPioche un Roi de Pique.",
+    "grades": [
+     {
+      "niv": 75,
+      "pa": 4,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       28,
+       31
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 142,
+      "pa": 4,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       35,
+       38
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 12872,
+    "name": "Feulement",
+    "icon": 13381,
+    "desc": "Occasionne des dommages Feu aux ennemis et repousse les cibles en zone.\n\nPioche un Roi de Cœur.",
+    "grades": [
+     {
+      "niv": 185,
+      "pa": 4,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       30,
+       34
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 1,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 12842,
+    "name": "Seconde Chance",
+    "icon": 13400,
+    "desc": "Réduit immédiatement les dommages subis par l'allié ciblé mais les augmente au tour suivant.\n\nJoue immédiatement la Main et la défausse pour récupérer la Table au tour suivant.\nLa Main n'est pas défaussée s'il n'y a aucune Carte sur la Table.",
+    "grades": [
+     {
+      "niv": 80,
+      "pa": 2,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 147,
+      "pa": 2,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 12874,
+    "name": "Neuf Vies",
+    "icon": 12331,
+    "desc": "Soigne la cible immédiatement et sur les tours suivants.\n\nPioche une Carte aléatoire du Poker d'Ecaflip immédiatement et sur les tours suivants.",
+    "grades": [
+     {
+      "niv": 190,
+      "pa": 3,
+      "po": [
+       0,
+       9
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 12861,
+    "name": "Félintion",
+    "icon": 13282,
+    "desc": "Rapproche le lanceur vers la cible, attire la cible et occasionne des dommages Eau aux ennemis.\n\nPioche un Roi de Trèfle.",
+    "grades": [
+     {
+      "niv": 85,
+      "pa": 4,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       27,
+       29
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 152,
+      "pa": 4,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       33,
+       36
+      ],
+      "element": "eau"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 12879,
+    "name": "Mésaventure",
+    "icon": 13318,
+    "desc": "Téléporte les cibles symétriquement par rapport au centre, occasionne des dommages Terre et retire aléatoirement des PM ou des PA aux ennemis en zone.\nN'affecte pas directement le lanceur.\n\n• Pile : l'aléatoire est supprimé pour retirer des PM.\n• Face : l'aléatoire est supprimé pour retirer des PA.\n\nPioche un Roi de Carreau.",
+    "grades": [
+     {
+      "niv": 195,
+      "pa": 4,
+      "po": [
+       0,
+       2
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       37,
+       41
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 29785,
+    "name": "Bluff",
+    "icon": 13395,
+    "desc": "Occasionne des dommages dans un ou plusieurs éléments selon les Cartes dans la Main et Joue la Main.\nLes dommages du sort dans un élément sont augmentés selon les Cartes.\n\nPioche 4 Cartes aléatoires du Poker d'Ecaflip avant d'appliquer les effets si la Main est vide.",
+    "grades": [
+     {
+      "niv": 90,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       4,
+       56
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 157,
+      "pa": 3,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       4,
+       56
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 12853,
+    "name": "Rekop",
+    "icon": 12316,
+    "desc": "Utilise la Main Gagnante pour occasionner des dommages :\n• Carrés ou Suite Royale Couleurs : dommages dans tous les éléments.\n• Suite Royale d'une Couleur : dommages dans l'élément de la Couleur par Carte.\n• Suite Royale : dommages dans le meilleur élément.\n• Paires : dommages dans le meilleur élément par Paires.\n• Brelans : dommages dans le meilleur élément par Carte du Brelan.\n\nDéfausse la Main.",
+    "grades": [
+     {
+      "niv": 200,
+      "pa": 4,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       20,
+       20
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ]
  ]
 }

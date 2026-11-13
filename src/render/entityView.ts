@@ -6,6 +6,7 @@ import type { Entity } from '../sim/entity';
 import type { Monster } from '../sim/monster';
 import type { Player } from '../sim/player';
 import { couleurCoffre, palierCoffre } from '../sim/enutrof';
+import { TEINTES, type Carte } from '../sim/ecaflip';
 import { VIVANT } from '../sim/mondeVivant';
 import type { Look } from './looks';
 import { PersoVivant } from './persoVivant';
@@ -48,6 +49,8 @@ export class EntityView {
   private pieces: Phaser.GameObjects.Text | null = null;
   /** « Archis : » 2C : halo doré au sol sous un archimonstre (créé seulement pour eux). */
   private halo: Phaser.GameObjects.Image | null = null;
+  /** Écaflip 15A : les cartes de la Main qui tournent autour de lui (créé seulement pour lui). */
+  private cartes: Phaser.GameObjects.Graphics | null = null;
 
   /** `vivant` : perso du joueur dessiné en direct depuis son squelette (apparence choisie à la création). */
   constructor(scene: Phaser.Scene, readonly look: Look, private vivant?: PersoVivant) {
@@ -107,7 +110,7 @@ export class EntityView {
   changerVivant(v: PersoVivant) { this.vivant = v; Object.assign(this.counts, v.compte); }
 
   /** Hors de l'écran : rien à dessiner (on ne recalcule pas l'animation). */
-  hide() { this.sprite.setVisible(false); this.bar.setVisible(false); this.shadow.setVisible(false); this.fond.setVisible(false); this.vie.setVisible(false); this.pieces?.setVisible(false); this.halo?.setVisible(false); }
+  hide() { this.sprite.setVisible(false); this.bar.setVisible(false); this.shadow.setVisible(false); this.fond.setVisible(false); this.vie.setVisible(false); this.pieces?.setVisible(false); this.halo?.setVisible(false); this.cartes?.setVisible(false); }
   sync(e: Entity) {
     if (!this.sprite.visible) { this.sprite.setVisible(true); this.bar.setVisible(true); }
     const L = this.look, p = ISO.toScreen(e.x, e.y);
@@ -194,6 +197,19 @@ export class EntityView {
       const t = this.pieces ??= this.sprite.scene.add.text(0, 0, '', { fontFamily: 'Lexend, sans-serif', fontSize: '12px', fontStyle: 'bold', color: '#ffd86a', stroke: '#000', strokeThickness: 3 }).setOrigin(0.5, 1);
       t.setVisible(true).setText(String(own.coffrePieces)).setColor(couleurCoffre(Math.max(0, pal))).setPosition(p.x, y - 2).setDepth(p.y + 1);
     } else this.pieces?.setVisible(false);
+    // Écaflip 15A : les cartes de la Main tournent autour du perso, de la couleur de leur famille
+    const main = (e as { cls?: { poker?: unknown }; ecaMain?: Carte[] }).cls?.poker ? (e as { ecaMain?: Carte[] }).ecaMain : null;
+    if (main?.length && !e.dead && this.sprite.visible) {
+      const g = this.cartes ??= this.sprite.scene.add.graphics();
+      g.clear().setVisible(true).setDepth(p.y + 2);
+      main.forEach((k, i) => {
+        const a = e.age * 1.8 + (i * Math.PI * 2) / main.length, x = p.x + Math.cos(a) * 30, y = p.y - 58 + Math.sin(a) * 11, col = Phaser.Display.Color.HexStringToColor(TEINTES[k.c]).color;
+        g.fillStyle(0x000000, 0.35); g.fillRoundedRect(x - 5, y - 6, 11, 15, 2);
+        g.fillStyle(0xf6efe0, 1); g.fillRoundedRect(x - 5.5, y - 7.5, 11, 15, 2);
+        g.lineStyle(1.5, col, 1); g.strokeRoundedRect(x - 5.5, y - 7.5, 11, 15, 2);
+        g.fillStyle(col, 1); g.fillCircle(x, y, k.v === 0 ? 2 : 3);
+      });
+    } else this.cartes?.setVisible(false);
     if (own) { /* barre déjà dessinée */ } else if (e.faction === 'monster') { /* barre déjà dessinée */ } else if (e.faction === 'allie' && !e.dead && (e.hp < e.maxHp || EntityView.barresAllies)) {
       // bête de l'Osamodas : barre verte
       this.barre(p.x, p.y - L.height * L.scale - 6, Math.max(30, e.radius * 2.2), e.hp / e.maxHp, 0x58c048, p.y + 1);
@@ -216,5 +232,5 @@ export class EntityView {
     return Math.hypot(px - (r.x + r.w / 2), py - (r.y + r.h / 2)) * k;
   }
 
-  destroy() { this.sprite.destroy(); this.bar.destroy(); this.shadow.destroy(); this.fond.destroy(); this.vie.destroy(); this.pieces?.destroy(); this.halo?.destroy(); }
+  destroy() { this.sprite.destroy(); this.bar.destroy(); this.shadow.destroy(); this.fond.destroy(); this.vie.destroy(); this.pieces?.destroy(); this.halo?.destroy(); this.cartes?.destroy(); }
 }

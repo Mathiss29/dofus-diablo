@@ -1,3 +1,4 @@
+import { COULEURS, VALEURS } from '../sim/ecaflip';
 import type { Player } from '../sim/player';
 import type { SkillId, SpellDef } from '../sim/defs';
 import type { SortGrade } from '../sim/sorts';
@@ -73,6 +74,22 @@ export function spellDetail(p: Player, id: SkillId, gOver?: SortGrade) {
     d.enutrof?.coffreBouclier ? `Bouclier de ${Math.round(d.enutrof.coffreBouclier.part * 100)} % de ses PV sur ton coffre au trésor, ${d.enutrof.coffreBouclier.t} s` : '',
     d.enutrof?.coffreSoin ? `Soigne ton coffre au trésor de ${Math.round(d.enutrof.coffreSoin * 100)} % de ses PV` : '',
     d.invocDuree ? `Repart au bout de ${d.invocDuree} s` : '',
+    // Écaflip (Poker d'Ecaflip)
+    d.ecaflip?.carte ? `Pioche : ${VALEURS[d.ecaflip.carte[1]]} de ${COULEURS[d.ecaflip.carte[0]]}` : '',
+    d.ecaflip?.couleur != null ? `+${Math.round((d.ecaflip.parCarte ?? 0) * 100)} % de dommages par carte de ${COULEURS[d.ecaflip.couleur]} dans la Main, puis ces cartes sont jouées` : '',
+    d.ecaflip?.course ? `Course +${Math.round(d.ecaflip.course.k * 100)} % pendant ${d.ecaflip.course.t} s` : '',
+    d.ecaflip?.de ? `Dé : dommages de ${d.ecaflip.de[0]} à ${d.ecaflip.de[1]} fois la moyenne divisée par ${(d.ecaflip.de[0] + d.ecaflip.de[1]) / 2}` : '',
+    d.ecaflip?.crit ? `+${d.ecaflip.crit.n} % Critique pendant ${d.ecaflip.crit.t} s (cumul ×${d.ecaflip.crit.max})` : '',
+    d.ecaflip?.soinSiRien ? 'Sans ennemi touché : soigne l\'allié visé du même montant' : '',
+    d.ecaflip?.pileFace ? 'Pile (+vitesse d\'attaque) ou Face (+course), au hasard ; relancer donne l\'autre' : '',
+    d.ecaflip?.pioche ? 'Pioche une carte au hasard ; Main pleine : la joue d\'abord' : '',
+    d.ecaflip?.perception ? `Soigne l'allié visé (ou toi) de ${Math.round(d.ecaflip.perception.soin * 100)} % de ses PV, +${Math.round(d.ecaflip.perception.parEnnemi * 100)} % par ennemi dans la zone` : '',
+    d.ecaflip?.chateau ? `Bouclier sur l'allié visé (ou toi) selon les cartes de la Main (${d.ecaflip.chateau.parValeur.slice(0, 2).map(v => Math.round(v * 100)).join(' / ')} % des PV par Valet / Dame), ${d.ecaflip.chateau.t} s, puis Joue la Main` : '',
+    d.ecaflip?.roulette ? 'Un effet au hasard sur tout le monde autour (alliés et monstres) : course, lenteur, soin, Critique, fragilité ou Puissance' : '',
+    d.ecaflip?.tromperie ? 'Élément tiré au hasard à chaque lancer ; pioche le Valet de sa couleur (Main pleine : la joue d\'abord)' : '',
+    d.ecaflip?.chaton ? `Tant que le Chaton vit : +${d.ecaflip.chaton.puissance} Puissance` : '',
+    d.ecaflip?.rembourse ? 'Coût en PA remboursé' : '',
+    d.ecaflip?.bondAllie ? `Sur un allié : +${Math.round(d.ecaflip.bondAllie.k * 100)} % de course ${d.ecaflip.bondAllie.t} s` : '',
     // Eniripsa
     d.soin ? `Soigne les alliés touchés de ${Math.round(d.soin)} PV (+ Intelligence et Soins)${d.soinLanceur === false ? ', pas toi' : ''}` : '',
     d.soinVol ? `Soigne les alliés de la zone de ${Math.round(d.soinVol * 100)} % des dommages faits${d.soinLanceur === false ? ' (pas toi)' : ''}` : '',

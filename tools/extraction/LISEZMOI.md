@@ -557,6 +557,14 @@ Ville vivante (maquette Ville 5F, 8 nov. 2026) :
   `SCALE=2.5 FORMAT=AVIF python3 monster_planche.py 4147 enu_sac <Bones>`, puis `4156 enu_pelle` et `4166 enu_coffre`.
   Entrées de betes.json ajoutées à la main (comme l'Eniripsa) ; le coffre est passif, sans sort, réglages dans classes.json > enutrof.coffre.
 
+## Écaflip (classe 6, maquette du 13 nov. 2026)
+
+- `python squelette_export.py <persos> <donnees> 6 public/assets/sprites/squelette`, puis, une fois le premier fini, `python tetes_vignettes.py <persos> <donnees> public/assets/sprites/squelette 6`.
+- Sorts : `class_spells.py ... ecaflip:6` -> src/data/sorts.json ; icônes `sort_<id>.png`, y compris les 16 cartes du Poker (classes.json > ecaflip.poker.icones).
+  Animations : AnimAttaque601 à 613, AnimAttaque6 (Château de Cartes) et AnimAttaque4 (Bond du Félin), voir ECA_MAP de looks.ts.
+- Chaton Enragé 5847 (os 289, Griffe Invocatrice ; os dans le cache : `cache-dofus/ecaflip-bones/`, avec le Chaton Affectueux 4813 pour plus tard) :
+  `SCALE=2.5 FORMAT=AVIF python3 monster_planche.py 289 eca_chaton <Bones>`. Entrée de betes.json ajoutée à la main.
+
 ## Amakna sans coupure (0.4, 10 nov. 2026)
 
 - Grille du continent : `python3 monde_continent.py regrille public/assets/mondes/astrub src/data/zones.json` (fait UNE fois) passe le monde d'Astrub

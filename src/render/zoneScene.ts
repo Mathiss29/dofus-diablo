@@ -1082,7 +1082,7 @@ export class ZoneScene extends Phaser.Scene {
       case 'carte': this.basculerCarte(); break;   // M, comme dans Dofus (maquette 0.2, 18A)
       case 'carteTab': if (this.carte?.dispo && !this.carte.ouverte) this.carte.basculerSurimpression(); break;   // 11B : carte en surimpression
       case 'havresac': this.havreSacDemande = true; break;
-      case 'coffre': if (p.cls.coffre) w?.toggle('tresor'); break;   // Enutrof (interface du coffre 2C) : la fenêtre du coffre
+      case 'coffre': if (p.cls.coffre) w?.toggle('tresor'); else if (p.cls.poker) this.coffreDemande = true; break;   // Enutrof (interface du coffre 2C) : la fenêtre du coffre ; Écaflip : Joue la Main
       case 'muet': this.basculerMuet(); break;
       case 'impact':
         this.fx.juice = !this.fx.juice;
@@ -1285,7 +1285,7 @@ export class ZoneScene extends Phaser.Scene {
       // alliés de test (F1) conduits par le jeu, invités de la coop par leurs propres entrées
       const autres = this.world.players.length > 1 ? { ...entreesAllies(this.world), ...Coop.entrees() } : undefined;
       this.world.step(ZoneScene.STEP, input, autres);
-      input = { ...input, pressed: null, potion: false, reponse: null, test: null, havreSac: false, zaap: null };
+      input = { ...input, pressed: null, potion: false, reponse: null, test: null, havreSac: false, coffre: false, zaap: null };
       this.consumeEvents();
       Coop.apresPas(this.world, ZoneScene.STEP);
     }

@@ -46,6 +46,10 @@ export type SimEvent =
   | { k: 'pieces'; x: number; y: number; tx: number; ty: number; n: number }
   /** Interface du coffre 7D : le coffre au trésor s'ouvre (palier atteint, nombre d'objets qui vont jaillir). */
   | { k: 'tresorOuvert'; x: number; y: number; palier: number; n: number }
+  /** Écaflip : cartes posées sur la Table (couleur × 4 + valeur), Main gagnante (4C : jackpot), effet de la Roulette. */
+  | { k: 'cartesJouees'; x: number; y: number; cartes: number[] }
+  | { k: 'mainGagnante'; x: number; y: number; nom: string; jackpot: boolean }
+  | { k: 'roulette'; x: number; y: number; effet: string }
   | { k: 'invocation'; id: number; x: number; y: number }
   | { k: 'eveil'; id: number; name: string; x: number; y: number }
   /** Sacrieur : échange de place (Assaut, Transposition), palier de Souffrance qui change, PV sacrifiés. */

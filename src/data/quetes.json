@@ -1711,6 +1711,157 @@
        }
       ]
      }
+    ],
+    "ecaflip": [
+     {
+      "nom": "Premiers pas",
+      "bulle": "Bienvenue sur Incarnam, jeune Écaflip ! Contemple les Dofus, puis clique sur le sol et suis le chemin. Je t'attends dans la salle suivante.",
+      "objectifs": [
+       {
+        "t": "aller",
+        "texte": "Passer dans la salle suivante (clic gauche)",
+        "carte": "temple_2"
+       }
+      ]
+     },
+     {
+      "nom": "La salle d'entraînement",
+      "pnj": "ganymede_temple",
+      "objectifs": [
+       {
+        "t": "aller",
+        "texte": "Rejoindre Ganymède",
+        "pnj": "ganymede_temple"
+       }
+      ]
+     },
+     {
+      "nom": "Frapper",
+      "pnj": "ganymede_temple",
+      "bulle": "Des esprits de feu se sont glissés dans le Temple. Clique sur l'un d'eux : tu le poursuis et tu le frappes.",
+      "objectifs": [
+       {
+        "t": "vaincre",
+        "texte": "Vaincre un monstre (clic dessus)",
+        "n": 1,
+        "sousZone": 446
+       }
+      ]
+     },
+     {
+      "nom": "Ton premier sort",
+      "pnj": "ganymede_temple",
+      "bulle": "Tes sorts sont sur & é \" '. Touche & : Réflexes, un coup Air qui te fait courir plus vite. Regarde : une carte s'ajoute à ta Main, le Valet de Pique.",
+      "halo": 0,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "sort": "reflexes",
+        "texte": "Lancer ton premier sort (&)"
+       }
+      ]
+     },
+     {
+      "nom": "Pile ou Face",
+      "pnj": "ganymede_temple",
+      "bulle": "Clic droit : Pile ou Face. Pile, tu frappes plus vite ; Face, tu cours plus vite. Relance-le pour changer de côté.",
+      "halo": 6,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "sort": "pile_face",
+        "texte": "Jouer à Pile ou Face (clic droit)"
+       }
+      ]
+     },
+     {
+      "nom": "Le Poker d'Ecaflip",
+      "pnj": "ganymede_temple",
+      "bulle": "Chaque sort pioche sa carte : Réflexes un Valet de Pique, Yams un Valet de Trèfle, Topkaj un Valet de Cœur, Pile ou Face un Valet de Carreau. Les quatre Valets, puis X : Carré de Valets !",
+      "halo": "jauge",
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "quoi": "jauge",
+        "texte": "Jouer une Main gagnante (X)"
+       }
+      ]
+     },
+     {
+      "nom": "Se déplacer vite",
+      "pnj": "ganymede_temple",
+      "bulle": "Espace : Bond du Félin. Tu bondis un peu plus loin, par-dessus les monstres.",
+      "halo": 7,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "quoi": "mobilite",
+        "texte": "Se déplacer avec Espace"
+       }
+      ]
+     },
+     {
+      "nom": "La potion",
+      "pnj": "ganymede_temple",
+      "bulle": "Blessé ? E : une potion. Tu en regagnes une à chaque groupe vaincu.",
+      "halo": "potion",
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "quoi": "potion",
+        "texte": "Boire une potion (E) une fois blessé"
+       }
+      ]
+     },
+     {
+      "nom": "Premières armes",
+      "pnj": "ganymede_temple",
+      "bulle": "Voici ton équipement : une Épée Tulante et la panoplie de l'Intrépide. I ouvre ton sac : équipe tout.",
+      "donner": {
+       "ecaflip": [
+        "10797",
+        "10801",
+        "10800",
+        "10784",
+        "10785",
+        "10799",
+        "10794",
+        "10798"
+       ]
+      },
+      "objectifs": [
+       {
+        "t": "equiper",
+        "objet": "10797",
+        "texte": "Équiper ton épée (I)"
+       },
+       {
+        "t": "equiper",
+        "objets": [
+         "10801",
+         "10800",
+         "10784",
+         "10785",
+         "10799",
+         "10794",
+         "10798"
+        ],
+        "texte": "Équiper la panoplie de l'Intrépide"
+       }
+      ]
+     },
+     {
+      "nom": "Descendre sur Incarnam",
+      "pnj": "ganymede_temple",
+      "bulle": "Tu es prêt. Parle-moi et je t'envoie au village, près de Lykhen. Le Zaap de la Route des âmes sera ton point de retour si tu tombes.",
+      "objectifs": [
+       {
+        "t": "parler",
+        "texte": "Parler à Ganymède pour descendre au village",
+        "pnj": "ganymede_temple"
+       }
+      ]
+     }
     ]
    },
    "recompense": {

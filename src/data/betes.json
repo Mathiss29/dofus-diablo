@@ -1353,5 +1353,39 @@
   "sorts": [],
   "passif": true,
   "_doc": "Coffre au trésor de l'Enutrof (maquette Enutrof 2D 3D 16A, Mathis 2026-11-10) : compagnon permanent qui se remplit de pièces, ne frappe jamais les monstres (son sort officiel Prospection n'est pas joué), peut être frappé : à 0 PV il perd la moitié de ses pièces et reste assommé 10 s."
+ },
+ "chaton_enrage": {
+  "dofusId": 5847,
+  "name": "Chaton Enragé",
+  "look": 289,
+  "atlas": "eca_chaton",
+  "rang": 1,
+  "element": "eau",
+  "suivant": null,
+  "pv": 0.5,
+  "sorts": [
+   {
+    "id": 12860,
+    "name": "Âme Féline",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 26,
+      "max": 27,
+      "vol": true
+     }
+    ],
+    "desc": "Vole de la vie dans l'élément Eau."
+   }
+  ],
+  "_doc": "Chaton Enragé (Griffe Invocatrice, maquette Écaflip 9A) : Âme Féline officielle (vol de vie Eau) ; tant qu'il vit, l'Écaflip gagne de la Puissance (classes.json > ecaflip.spells.griffe_invocatrice.ecaflip.chaton). Déplacement Félin pas encore joué."
  }
 }
