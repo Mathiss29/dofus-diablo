@@ -86,6 +86,11 @@ const IOP_MAP: Record<string, AnimSlice> = {
   intimidation: { anim: 'AnimAttaque803', from: 0, to: 0.6 },
   deferlement: { anim: 'AnimAttaque809', from: 0, to: 0.55 },
   fureur: { anim: 'AnimAttaque808', from: 0, to: 0.25 },
+  // Sorts 61-90 (0.6) : Friction et Précipitation 806, Épée du Destin 800, Emprise 802
+  friction: { anim: 'AnimAttaque806', from: 0, to: 0.6 },
+  precipitation: { anim: 'AnimAttaque806', from: 0, to: 0.6 },
+  epee_destin: { anim: 'AnimAttaque800', from: 0.4, to: 1 },
+  emprise: { anim: 'AnimAttaque802', from: 0.1, to: 0.75 },
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   colere_charge: { anim: 'AnimAttaque800', from: 0, to: 21 / 32 },
   colere_hit: { anim: 'AnimAttaque800', from: 21 / 32, to: 1 },
@@ -114,6 +119,13 @@ const CRA_MAP: Record<string, AnimSlice> = {
   vagabonde: { anim: 'AnimAttaque917', from: 0, to: 0.75 },
   tirs_eloignes: { anim: 'AnimAttaque902', from: 0, to: 0.6 },
   detonante: { anim: 'AnimAttaque907', from: 0, to: 0.6 },
+  // Sorts 61-90 (0.6) : Tir de Repli 905, Punitive 913, Expiation 918, Perforante 919, Dévorante 912, Acuité Absolue 902
+  tir_repli: { anim: 'AnimAttaque905', from: 0, to: 0.6 },
+  punitive: { anim: 'AnimAttaque913', from: 0, to: 0.62 },
+  expiation: { anim: 'AnimAttaque918', from: 0, to: 0.62 },
+  perforante: { anim: 'AnimAttaque919', from: 0, to: 0.82 },
+  devorante: { anim: 'AnimAttaque912', from: 0, to: 0.6 },
+  acuite: { anim: 'AnimAttaque902', from: 0, to: 0.6 },
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };
@@ -143,6 +155,12 @@ const OSA_MAP: Record<string, AnimSlice> = {
   souffle_draconique: { anim: 'AnimAttaque200', from: 0, to: 0.6 },
   charge_bestiale: { anim: 'AnimAttaque218', from: 0, to: 0.6 },
   laisse_spirituelle: { anim: 'AnimAttaque19', from: 0, to: 0.7 },
+  // Sorts 61-90 (0.6) : invocations 204
+  ventritofu: { anim: 'AnimAttaque204', from: 0, to: 0.7 },
+  bouflourd: { anim: 'AnimAttaque204', from: 0, to: 0.7 },
+  crapipaud: { anim: 'AnimAttaque204', from: 0, to: 0.7 },
+  dragonnet: { anim: 'AnimAttaque204', from: 0, to: 0.7 },
+  esprit_glouton: { anim: 'AnimAttaque204', from: 0, to: 0.7 },
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };
@@ -173,6 +191,13 @@ const SAC_MAP: Record<string, AnimSlice> = {
   transfusion: { anim: 'AnimAttaque1105', from: 0, to: 0.65 },
   dissolution: { anim: 'AnimAttaque1101', from: 0, to: 0.65 },
   desolation: { anim: 'AnimAttaque1111', from: 0, to: 0.65 },
+  // Sorts 61-90 (0.6) : Sacrifice et Hécatombe 1101, Bain de Sang 1106, Libation 1100, Berserk 1116, Punition 1109
+  sacrifice: { anim: 'AnimAttaque1101', from: 0, to: 0.65 },
+  bain_sang: { anim: 'AnimAttaque1106', from: 0, to: 0.65 },
+  hecatombe: { anim: 'AnimAttaque1101', from: 0, to: 0.65 },
+  libation: { anim: 'AnimAttaque1100', from: 0, to: 0.65 },
+  berserk: { anim: 'AnimAttaque1116', from: 0, to: 0.65 },
+  punition: { anim: 'AnimAttaque1109', from: 0, to: 0.65 },
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };

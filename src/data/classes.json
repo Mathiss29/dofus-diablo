@@ -358,6 +358,127 @@
     "shake": 0.005,
     "fx": "arc",
     "rage": "summon"
+   },
+   "friction": {
+    "name": "Friction",
+    "dofusId": 13113,
+    "icon": 11840,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Attire la cible et lui applique l'état Friction :\n• Sur un ennemi : attire la cible vers son attaquant ennemi.\n• Sur un allié : attire ses attaquants ennemis vers elle.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 30
+    },
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "burst",
+    "self": true,
+    "e61": {
+     "friction": {
+      "t": 6,
+      "rayon": 4,
+      "pas": 0.5
+     }
+    },
+    "v06": true
+   },
+   "precipitation": {
+    "name": "Précipitation",
+    "dofusId": 13114,
+    "icon": 12939,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Augmente les PA de l'allié ciblé et lui applique l'état Affaibli.\nRetire des PA non esquivables à cet allié au tour suivant.\n\nL'état n'est pas appliqué sur le lanceur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hit": {
+     "shape": "point",
+     "range": 264,
+     "radius": 30
+    },
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "burst",
+    "self": true,
+    "e61": {
+     "precipitation": {
+      "vite": 3,
+      "lent": 0.5,
+      "t": 3
+     }
+    },
+    "v06": true
+   },
+   "epee_destin": {
+    "name": "Épée du Destin",
+    "dofusId": 13111,
+    "icon": 11849,
+    "element": "feu",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Feu.\nLes dommages du sort sont augmentés à la récupération du sort.",
+    "duration": 0.46,
+    "impactAt": 0.16,
+    "cancelAt": 0.28,
+    "dmg": 49,
+    "knock": 0,
+    "hit": {
+     "shape": "point",
+     "range": 264,
+     "radius": 36
+    },
+    "hitstop": 0.08,
+    "shake": 0.009,
+    "fx": "line",
+    "rage": "radius",
+    "e61": {
+     "destin": {
+      "max": 1,
+      "plein": 15
+     }
+    },
+    "v06": true
+   },
+   "emprise": {
+    "name": "Emprise",
+    "dofusId": 13141,
+    "icon": 12209,
+    "element": "neutre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Rend l'ennemi ciblé Invulnérable et l'immobilise.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hit": {
+     "shape": "point",
+     "range": 72,
+     "radius": 30
+    },
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "burst",
+    "self": true,
+    "e61": {
+     "emprise": {
+      "t": 3
+     }
+    },
+    "v06": true
    }
   },
   "mobility": "bond",
@@ -738,6 +859,211 @@
      2,
      3
     ]
+   },
+   "tir_repli": {
+    "name": "Tir de Repli",
+    "dofusId": 32470,
+    "icon": 15417,
+    "element": "neutre",
+    "pa": 1,
+    "cooldown": 0,
+    "desc": "Éloigne le lanceur de l'ennemi ciblé ou rapproche le lanceur vers l'allié ciblé.\nAugmente également la Portée du lanceur.",
+    "duration": 0.3,
+    "impactAt": 0.12,
+    "cancelAt": 0.18,
+    "dmg": 0,
+    "knock": 0,
+    "hit": {
+     "shape": "point",
+     "range": 312,
+     "radius": 30
+    },
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "land",
+    "self": true,
+    "buff": {
+     "stat": "portee",
+     "n": 2,
+     "t": 3
+    },
+    "e61": {
+     "repli": {
+      "cases": 2
+     }
+    },
+    "v06": true
+   },
+   "punitive": {
+    "name": "Flèche Punitive",
+    "dofusId": 32456,
+    "icon": 15406,
+    "element": "terre",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Érode la cible et occasionne des dommages Terre.\nLes dommages du sort sont augmentés pour les prochains lancers.",
+    "duration": 0.4,
+    "impactAt": 0.14,
+    "cancelAt": 0.2,
+    "dmg": 38,
+    "knock": 0,
+    "hit": {
+     "shape": "projectile",
+     "speed": 1100,
+     "range": 408,
+     "width": 16
+    },
+    "hitstop": 0.04,
+    "shake": 0.005,
+    "fx": "burst",
+    "erosion": 0.15,
+    "stack": {
+     "per": 0.35,
+     "max": 2,
+     "time": 9
+    },
+    "rage": "erosion",
+    "v06": true
+   },
+   "expiation": {
+    "name": "Flèche d'Expiation",
+    "dofusId": 32438,
+    "icon": 11882,
+    "element": "eau",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Réduit les soins reçus par la cible et occasionne des dommages Eau.\nLes dommages du sort sont augmentés pour les prochains lancers.",
+    "duration": 0.4,
+    "impactAt": 0.14,
+    "cancelAt": 0.2,
+    "dmg": 44,
+    "knock": 0,
+    "hit": {
+     "shape": "projectile",
+     "speed": 1100,
+     "range": 504,
+     "width": 16
+    },
+    "hitstop": 0.05,
+    "shake": 0.007,
+    "fx": "burst",
+    "stack": {
+     "per": 0.5,
+     "max": 2,
+     "time": 12
+    },
+    "rage": "stack",
+    "e61": {
+     "antiSoin": {
+      "n": 0.5,
+      "t": 6
+     }
+    },
+    "v06": true
+   },
+   "perforante": {
+    "name": "Flèche Perforante",
+    "dofusId": 32429,
+    "icon": 11914,
+    "element": "air",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Air aux ennemis et repousse les cibles en zone.\nLes dommages de zone ne sont pas dégressifs et sont plus importants sur les cibles ayant du bouclier.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.22,
+    "dmg": 49,
+    "knock": 1026,
+    "hit": {
+     "shape": "projectile",
+     "speed": 1100,
+     "range": 360,
+     "width": 16,
+     "explode": 72
+    },
+    "hitstop": 0.06,
+    "shake": 0.009,
+    "fx": "burst",
+    "pushDmg": true,
+    "rage": "knock",
+    "e61": {
+     "vsBouclier": 1.3
+    },
+    "v06": true
+   },
+   "devorante": {
+    "name": "Flèche Dévorante",
+    "dofusId": 32446,
+    "icon": 15195,
+    "element": "feu",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Vole de la vie dans l'élément Feu.\nN'affecte pas le lanceur.\nLe vol de vie est plus important après chaque lancer sur un même ennemi.\n\nOccasionne également des dommages Feu à l'ennemi initial si le sort est lancé sur une autre cible, ou dans les prochains tours s'il n'est pas relancé.\nLes dommages sont plus importants selon le nombre de lancers effectués sur un même ennemi.",
+    "duration": 0.4,
+    "impactAt": 0.14,
+    "cancelAt": 0.2,
+    "dmg": 15,
+    "knock": 0,
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 30
+    },
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "arc",
+    "lifesteal": 0.5,
+    "rage": "lifesteal",
+    "e61": {
+     "devorante": {
+      "mult": [
+       1,
+       2.05,
+       2.9
+      ],
+      "dernier": [
+       2.9,
+       4.4,
+       5.8
+      ],
+      "t": 6
+     }
+    },
+    "v06": true
+   },
+   "acuite": {
+    "name": "Acuité Absolue",
+    "dofusId": 32469,
+    "icon": 15431,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Augmente la portée minimale de tous les sorts offensifs Crâ du lanceur pour désactiver la ligne de vue sur tous ses sorts.\nAugmente également ses Critiques.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hit": {
+     "shape": "circle",
+     "radius": 1
+    },
+    "hitstop": 0,
+    "shake": 0,
+    "fx": "land",
+    "self": true,
+    "buff": {
+     "stat": "critique",
+     "n": 10,
+     "t": 12
+    },
+    "rage": "buff",
+    "e61": {
+     "acuite": {
+      "t": 12
+     }
+    },
+    "v06": true
    }
   },
   "mobility": "pas_chasse",
@@ -1221,6 +1547,140 @@
      "duree": 20
     },
     "rage": "summon"
+   },
+   "ventritofu": {
+    "name": "Ventritofu",
+    "dofusId": 31126,
+    "icon": 14435,
+    "element": "neutre",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Invoque un Ventritofu maîtrisable qui peut occasionner des dommages Air, augmenter la Fuite, se téléporter, téléporter symétriquement des entités, repousser et se rapprocher.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hit": {
+     "shape": "point",
+     "range": 120,
+     "radius": 0
+    },
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "land",
+    "invoque": "ventritofu",
+    "rage": "summon",
+    "v06": true,
+    "e61": {}
+   },
+   "bouflourd": {
+    "name": "Bouflourd",
+    "dofusId": 31127,
+    "icon": 14445,
+    "element": "neutre",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Invoque un Bouflourd maîtrisable qui peut occasionner des dommages Terre, réduire les dommages subis, se rapprocher et attirer.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hit": {
+     "shape": "point",
+     "range": 120,
+     "radius": 0
+    },
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "land",
+    "invoque": "bouflourd",
+    "rage": "summon",
+    "v06": true,
+    "e61": {}
+   },
+   "crapipaud": {
+    "name": "Crapipaud",
+    "dofusId": 31128,
+    "icon": 12986,
+    "element": "neutre",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Invoque un Crapipaud maîtrisable qui peut occasionner des dommages et appliquer un poison Eau, augmenter les PM, repousser et se téléporter symétriquement.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hit": {
+     "shape": "point",
+     "range": 120,
+     "radius": 0
+    },
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "land",
+    "invoque": "crapipaud",
+    "rage": "summon",
+    "v06": true,
+    "e61": {}
+   },
+   "dragonnet": {
+    "name": "Dragonnet",
+    "dofusId": 31129,
+    "icon": 12990,
+    "element": "neutre",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Invoque un Dragonnet maîtrisable qui peut occasionner des dommages Feu, augmenter la Puissance et repousser.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hit": {
+     "shape": "point",
+     "range": 120,
+     "radius": 0
+    },
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "land",
+    "invoque": "dragonnet",
+    "rage": "summon",
+    "v06": true,
+    "e61": {}
+   },
+   "esprit_glouton": {
+    "name": "Esprit Glouton",
+    "dofusId": 31131,
+    "icon": 14432,
+    "element": "neutre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Invoque un Gobgob Glouton contrôlable qui peut occasionner des dommages Neutre selon sa vie, tuer des invocations alliés pour augmenter sa Vitalité et ses PM, intercepter les dommages d'un allié et se téléporter en créant des illusions.\n\nLe temps de relance est fixé à la mort du Gobgob.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hit": {
+     "shape": "point",
+     "range": 120,
+     "radius": 0
+    },
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "land",
+    "invoque": "gobgob_glouton",
+    "rage": "summon",
+    "e61": {
+     "glouton": {
+      "recharge": 6
+     }
+    },
+    "v06": true
    }
   },
   "mobility": "saute_granouille",
@@ -1716,6 +2176,196 @@
     },
     "lifesteal": 0.5,
     "pmLoss": 3
+   },
+   "sacrifice": {
+    "name": "Sacrifice",
+    "dofusId": 12739,
+    "icon": 13796,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Intercepte les dommages subis par les alliés en zone.\nDétruit également les Épées du lanceur dans la zone pour lui transférer une partie de leur vie restante.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hit": {
+     "shape": "circle",
+     "radius": 144
+    },
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "burst",
+    "self": true,
+    "e61": {
+     "sacrifice": {
+      "t": 12,
+      "rayon": 3,
+      "epees": 0.5
+     }
+    },
+    "v06": true
+   },
+   "bain_sang": {
+    "name": "Bain de Sang",
+    "dofusId": 12732,
+    "icon": 11931,
+    "element": "terre",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Augmente le Tacle du lanceur pour chaque entité dans la zone d'effet et vole de la vie dans l'élément Terre en zone.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 34,
+    "knock": 0,
+    "hit": {
+     "shape": "circle",
+     "radius": 72
+    },
+    "hitstop": 0.05,
+    "shake": 0.007,
+    "fx": "burst",
+    "lifesteal": 0.5,
+    "e61": {
+     "bain": {
+      "tacle": 10,
+      "t": 3
+     }
+    },
+    "v06": true
+   },
+   "hecatombe": {
+    "name": "Hécatombe",
+    "dofusId": 12750,
+    "icon": 11973,
+    "element": "feu",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Réduit les soins reçus par les cibles et vole de la vie dans l'élément Feu en zone.\nN'affecte pas le lanceur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 34,
+    "knock": 0,
+    "hit": {
+     "shape": "point",
+     "range": 264,
+     "radius": 72
+    },
+    "hitstop": 0.05,
+    "shake": 0.007,
+    "fx": "arc",
+    "lifesteal": 0.5,
+    "e61": {
+     "antiSoin": {
+      "n": 0.7,
+      "t": 6
+     }
+    },
+    "v06": true
+   },
+   "libation": {
+    "name": "Libation",
+    "dofusId": 12759,
+    "icon": 11951,
+    "element": "neutre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Sacrifie une partie de la vie du lanceur pour réduire la durée de ses effets et le soigner à la fin de son prochain tour.\nLes soins sont plus importants selon la Souffrance.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hit": {
+     "shape": "circle",
+     "radius": 1
+    },
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "burst",
+    "self": true,
+    "e61": {
+     "libation": {
+      "sacrifice": 0.3,
+      "t": 6,
+      "base": 5,
+      "parSouffrance": [
+       1,
+       3,
+       5,
+       9,
+       14,
+       19,
+       23,
+       26,
+       28,
+       30
+      ]
+     }
+    },
+    "v06": true
+   },
+   "berserk": {
+    "name": "Berserk",
+    "dofusId": 12743,
+    "icon": 12484,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Sacrifie une partie de la vie du lanceur pour lui appliquer l'état Berserk :\n• Rend le lanceur Intaclable.\n• Augmente ses dommages aux sorts.\n• Réduit les soins reçus par le lanceur.\n\nL'état Berserk est retiré si le lanceur retourne en Souffrance 5 ou moins ou relance le sort.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hit": {
+     "shape": "circle",
+     "radius": 1
+    },
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "burst",
+    "self": true,
+    "e61": {
+     "berserk": {
+      "sacrifice": 0.7,
+      "dommages": 0.25,
+      "soins": 0.3,
+      "fin": 6
+     }
+    },
+    "v06": true
+   },
+   "punition": {
+    "name": "Punition",
+    "dofusId": 12741,
+    "icon": 11954,
+    "element": "meilleur",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages dans le meilleur élément du lanceur et des dommages Neutre selon sa vie érodée.",
+    "duration": 0.5,
+    "impactAt": 0.2,
+    "cancelAt": 0.32,
+    "dmg": 40,
+    "knock": 0,
+    "hit": {
+     "shape": "point",
+     "range": 72,
+     "radius": 30
+    },
+    "hitstop": 0.1,
+    "shake": 0.012,
+    "fx": "burst",
+    "e61": {
+     "punition": {
+      "part": 0.15
+     }
+    },
+    "v06": true
    }
   },
   "mobility": "ravage",

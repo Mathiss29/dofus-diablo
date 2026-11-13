@@ -2925,6 +2925,250 @@
     }
    ]
   },
+  "friction": {
+   "target": [
+    {
+     "gfx": 8061,
+     "bg": true
+    },
+    {
+     "gfx": 8060
+    }
+   ]
+  },
+  "precipitation": {
+   "target": [
+    {
+     "gfx": 8012
+    }
+   ],
+   "caster": [
+    {
+     "gfx": 7955
+    }
+   ]
+  },
+  "epee_destin": {
+   "target": [
+    {
+     "gfx": 8018
+    },
+    {
+     "gfx": 8019,
+     "bg": true
+    }
+   ],
+   "caster": [
+    {
+     "gfx": 8030
+    },
+    {
+     "gfx": 8031,
+     "bg": true
+    },
+    {
+     "gfx": 8065
+    }
+   ]
+  },
+  "emprise": {
+   "target": [
+    {
+     "gfx": 8043
+    }
+   ]
+  },
+  "tir_repli": {
+   "target": [
+    {
+     "gfx": 8268
+    }
+   ]
+  },
+  "punitive": {
+   "target": [
+    {
+     "gfx": 10086
+    },
+    {
+     "gfx": 10087,
+     "bg": true
+    }
+   ],
+   "caster": [
+    {
+     "gfx": 9106
+    }
+   ]
+  },
+  "expiation": {
+   "target": [
+    {
+     "gfx": 8158
+    }
+   ],
+   "projectile": {
+    "gfx": 8202,
+    "curvature": 0,
+    "offsetY": 3
+   }
+  },
+  "perforante": {
+   "target": [
+    {
+     "gfx": 8189
+    },
+    {
+     "gfx": 8188,
+     "bg": true
+    }
+   ],
+   "projectile": {
+    "gfx": 8201,
+    "curvature": 0,
+    "offsetY": 3
+   }
+  },
+  "devorante": {
+   "target": [
+    {
+     "gfx": 10083
+    },
+    {
+     "gfx": 10084,
+     "bg": true
+    }
+   ],
+   "caster": [
+    {
+     "gfx": 10083
+    },
+    {
+     "gfx": 10084,
+     "bg": true
+    }
+   ]
+  },
+  "acuite": {
+   "target": [
+    {
+     "gfx": 8154,
+     "bg": true
+    },
+    {
+     "gfx": 8155
+    }
+   ]
+  },
+  "ventritofu": {
+   "target": [
+    {
+     "gfx": 8679
+    },
+    {
+     "gfx": 8680
+    }
+   ]
+  },
+  "bouflourd": {
+   "target": [
+    {
+     "gfx": 8679
+    },
+    {
+     "gfx": 8680
+    }
+   ]
+  },
+  "crapipaud": {
+   "target": [
+    {
+     "gfx": 8679
+    },
+    {
+     "gfx": 8680
+    }
+   ]
+  },
+  "dragonnet": {
+   "target": [
+    {
+     "gfx": 8679
+    },
+    {
+     "gfx": 8680
+    }
+   ]
+  },
+  "esprit_glouton": {
+   "target": [
+    {
+     "gfx": 8679
+    },
+    {
+     "gfx": 8680
+    }
+   ]
+  },
+  "sacrifice": {
+   "target": [
+    {
+     "gfx": 8412
+    }
+   ]
+  },
+  "bain_sang": {
+   "target": [
+    {
+     "gfx": 8359
+    },
+    {
+     "gfx": 8360
+    }
+   ]
+  },
+  "hecatombe": {
+   "target": [
+    {
+     "gfx": 8385
+    },
+    {
+     "gfx": 8386
+    }
+   ]
+  },
+  "libation": {
+   "target": [
+    {
+     "gfx": 8394
+    },
+    {
+     "gfx": 8395
+    }
+   ]
+  },
+  "berserk": {
+   "target": [
+    {
+     "gfx": 8416
+    },
+    {
+     "gfx": 8415
+    }
+   ]
+  },
+  "punition": {
+   "target": [
+    {
+     "gfx": 8407
+    }
+   ],
+   "caster": [
+    {
+     "gfx": 8406
+    }
+   ]
+  },
   "fleuri": {
    "target": [
     {
