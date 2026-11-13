@@ -27,7 +27,7 @@ nb = max(1, round(len(ames) / 20)); taille = len(ames) / nb
 chap = [ames[round(i * taille):round((i + 1) * taille)] for i in range(nb)]
 
 PNJ = 'assistante_otomai'
-Q['pnj'][PNJ] = {'nom': "Assistante d'Otomaï", 'dofusId': 6693, 'zone': 'bastion', 'carte': 'marche', 'case': Q['pnj']['otomai']['case'] + 2,
+Q['pnj'][PNJ] = {'nom': "Assistante d'Otomaï", 'dofusId': 6693, 'zone': 'bastion', 'carte': 'marche', 'case': Q['pnj'].get(PNJ, {}).get('case', Q['pnj']['otomai']['case'] + 2),
   'apres': 'astrub', 'titre': 'Gardienne des âmes',
   'phrase': "Otomaï classe ses fioles par couleur. Moi, je classe les âmes par caractère. Celle-ci boude, celle-là chante faux.",
   'discussion': [{'reponse': 'Tu gardes les âmes que je capture ?', 'texte': "Non, elles restent dans ta besace. Je les regarde, je les note dans le grand registre, et je te les rends. Elles sont plus calmes près de leur chasseur."},
