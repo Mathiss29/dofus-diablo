@@ -60,6 +60,8 @@ export interface Reglages {
   verrou: boolean;
   modules: Record<string, [number, number]>;
   coords: boolean;
+  /** « Métiers : » 6E : ressources de mes métiers (récoltables à mon niveau) sur la mini-carte. */
+  recoltesMini: boolean;
   /** 7A : échelle de l'interface (1 = 100 %). */
   echelle: number;
   /** 7B : qualité prédéfinie ; 7C : images par seconde (0 = sans limite) et compteur. */
@@ -93,7 +95,7 @@ export const QUALITES: Record<'basse' | 'moyenne' | 'haute', Partial<Reglages>> 
 };
 export const REGLAGES_DEFAUT: Reglages = { heure: 'auto', lumieres: 1, saturation: 1, chaleur: 0, zoom: 0.8, volume: 1, volMusique: 0.5, volEffets: 0.7, volMonstres: 0.5, volAmbiance: 0.6, volInterface: 0.7, musiqueBoss: true, muet: false, vent: true, eau: true, particules: true, transparence: true, lancer: 'relache', approche: false, flecheQuete: true,
   touches: {}, clavier: 'auto', chiffres: true, tailleChiffres: 'normale', dps: false, barresVie: 'blesses', zoomMolette: true, deplacement: 'gauche',
-  verrou: true, modules: {}, coords: true, echelle: 1, qualite: 'haute', fps: 0, compteurFps: false, alerteButin: true, pulsePv: true, resolution: 'ecran',
+  verrou: true, modules: {}, coords: true, recoltesMini: true, echelle: 1, qualite: 'haute', fps: 0, compteurFps: false, alerteButin: true, pulsePv: true, resolution: 'ecran',
   chatOnglets: ONGLETS_DEFAUT, chatTaille: [360, 170], chatHeure: true, chatFond: 0.82, chatTexte: 1, chatEffacement: '20', chatTout: true, chatBastion: true };
 const CLE = 'diablofus.reglages';
 

@@ -48,6 +48,7 @@ export const ARCHI = { chance: 1 / 150, pierre: '9686', pleine: '10418',
 import { FABRICATION, METIERS_FAB, chanceRare, ingredientsRares, type Poste } from './metiers';
 import { PLACEMENT, analyserCarte, groupesAuto, placementPose, placementValide, proposerPlacement, type AnalyseCarte, type PlacementCarte } from './placement';
 import { PC_PAR_ID } from './pouvoirsClasse';
+import { ARTISANS, POUCE } from './artisans';
 import { BOISSONS, CONSO, ELIXIRS, PARCHEMINS, RARES_RECOLTE, REPAS, RES_BOISSON, sorteConso, texteBonus } from './consommables';
 import { RECOLTE, porteeRecolte, quantite, xpRecolte, type Recolte, type RecoltesData } from './recolte';
 
@@ -1446,6 +1447,7 @@ export class World {
   /** Entrées de world.player qui touchent au monde : récolte, atelier, Havre-Sac, Zaap, portail, PNJ. */
   private entreesMonde(input: PlayerInput) {
     appliquerCarte(this, this.player, input.carte);   // carte du monde : drapeaux, signal (« Carte : » 9A, 14A-B)
+    this.player.monde.recolteTenue = !!input.recolteTenue;   // « Métiers : » 6D
     if (input.recolte != null) { this.versRecolte = input.recolte; this.approche = this.approcheRecolte(input.recolte); this.enRecolte = null; }
     else if (input.dest || input.target != null || input.pickup != null || input.talk || input.pressed || input.move.x || input.move.y) {
       if (this.enRecolte) this.emit({ k: 'recolteStop' });
@@ -2120,7 +2122,7 @@ export class World {
   /** Ce que le calcul du butin doit savoir (src/sim/butin.ts) : sert au jeu, au Bestiaire et au simulateur de l'outil de test. */
   contexteButin(type: string, rang: Rang, niveau: number): CtxButin {
     const p = this.player;
-    return { type, rang, niveau, prospection: p.prospection + (this.almanax?.effet === 'butin' ? ALMANAX.butin : 0) + p.beni('butin') * REGLAGES_BUTIN.prospection.chances + this.bonusDuWeekEnd('butin') + this.prospectionInvasion + avantage(p.abo, 'prospection') + this.bonusIdoles * REGLAGES_BUTIN.prospection.chances, legendaire: avantage(p.abo, 'legendaire') * (rang === 'boss' && p.v06 ? coefChanceQuiMonte(p.bossSansLeg[type] ?? 0) : 1), items: this.opts.items!, familiers: (this.familiersDe[type] ?? []).filter(id => !this.aLeFamilier(p, id)), pool: this.equipByLevel, poolSecours: this.equipSecours,
+    return { type, rang, niveau, prospection: p.prospection + p.bonusMetier('chasseur') * REGLAGES_BUTIN.prospection.chances + (this.almanax?.effet === 'butin' ? ALMANAX.butin : 0) + p.beni('butin') * REGLAGES_BUTIN.prospection.chances + this.bonusDuWeekEnd('butin') + this.prospectionInvasion + avantage(p.abo, 'prospection') + this.bonusIdoles * REGLAGES_BUTIN.prospection.chances, legendaire: avantage(p.abo, 'legendaire') * (rang === 'boss' && p.v06 ? coefChanceQuiMonte(p.bossSansLeg[type] ?? 0) : 1), items: this.opts.items!, familiers: (this.familiersDe[type] ?? []).filter(id => !this.aLeFamilier(p, id)), pool: this.equipByLevel, poolSecours: this.equipSecours,
       panoBoss: rang === 'boss' ? this.panoBoss(type) : undefined,
       metierNiveau: j => p.metierLevel(j), armeChasse: !!p.huntingWeapon, pouvoirs: rang === 'boss' ? { ...p.ctxPouvoirs, boss: type } : p.ctxPouvoirs };
   }
@@ -2398,7 +2400,7 @@ export class World {
   /** Les ressources récoltées repoussent (commun à tous). */
   private updateRepousse(dt: number) {
     for (const r of this.recoltes) if (r.repousse > 0 && (r.repousse -= dt) <= 0) {
-      r.repousse = 0; r.dore = this.rng.next() < (this.eliteSur(r.tag) ? RECOLTE.doreElite : RECOLTE.dore);
+      r.repousse = 0; r.dore = this.rng.next() < (this.eliteSur(r.tag) ? RECOLTE.doreElite : RECOLTE.dore); delete r.garde;
     }
   }
   /** Récolte de world.player. */
@@ -2419,11 +2421,13 @@ export class World {
       p.resources[r.item] = (p.resources[r.item] ?? 0) + n;
       if (def.metier) p.gainMetierXp(def.metier, xpRecolte(def.niveau, r.dore), this);   // puits : sans métier, sans XP
       this.emit({ k: 'recolteFin', id: r.id, item: r.item, n, dore: r.dore });
+      if (r.dore && def.metier) this.coupDePouce(def.metier);   // « Métiers : » 6A
       const rare = RARES_RECOLTE[r.item];   // « Métiers : » 5A : la variante rare d'une plante (Trèfle Agare…), pour les parchemins
       if (rare && this.rng.next() < (r.dore ? CONSO.rare.dore : CONSO.rare.chance)) {
         p.resources[rare] = (p.resources[rare] ?? 0) + 1;
         this.emit({ k: 'lootResource', id: rare, n: 1 });
       }
+      if (p.monde.recolteTenue && def.metier) this.recolteSuivante(r, def.metier);   // 6D : clic maintenu
       r.repousse = RECOLTE.repousse; r.dore = false;
       return;
     }
@@ -2444,10 +2448,52 @@ export class World {
       return;
     }
     p.stopMove();
+    if (this.gardee(r)) return;   // « Métiers : » 6B
     p.facing = Math.atan2(r.y - p.y, r.x - p.x);
     this.enRecolte = { id: r.id, t: 0, hp: p.hp };
     if (def.anim) p.setAnim(`r_${def.anim}`, 0);
     this.emit({ k: 'recolteDebut', id: r.id, duree: this.dureeRecolte() });
+  }
+
+  /** « Métiers : » 6A : coup de pouce de 20 s d'une ressource dorée, selon le métier. */
+  private coupDePouce(metier: string) {
+    const c = POUCE[metier], p = this.player, t = ARTISANS.coupDePouce;
+    if (!c) return;
+    p.mods = p.mods.filter(m => m.src !== 'dore');
+    for (const [k, n] of c.mods ?? []) p.addMod(k, n, t, 'dore');
+    if (c.soin) p.soigner(p.maxHp * c.soin);
+    if (c.course) p.courir(c.course, t);
+    this.emit({ k: 'status', x: p.x, y: p.y - 70, text: `Ressource dorée : ${c.texte} (${t} s)`, color: '#ffd75a' });
+  }
+  /** 6B : une ressource dorée de haut niveau est gardée : au premier clic, un élite de sa sous-zone surgit ; tant qu'il vit, on ne récolte pas. */
+  private gardee(r: Recolte): boolean {
+    const p = this.player, def = this.opts.recoltes?.ressources[r.item];
+    if (!r.dore || !def?.metier || def.niveau < ARTISANS.gardeNiveau) return false;
+    if (r.garde != null) {
+      const g = this.monsters.find(m => m.id === r.garde);
+      if (!g || g.dead) return false;
+      this.emit({ k: 'status', x: p.x, y: p.y - 60, text: 'Le gardien du filon est encore là', color: '#ff9a5a' });
+      return true;
+    }
+    const sub = this.worldGrid?.mapByTag(r.tag)?.sub, pool = this.zone.open?.subareas[String(sub)]?.monsters ?? [];
+    const type = pool.length ? this.rng.pick(pool) : null, base = type ? this.opts.data.monsters[type] : null;
+    if (!type || !base) { r.garde = -1; return false; }
+    const q = this.map.nearestFree(r.x + 40, r.y + 40);
+    const m = this.spawnMonster(type, q.x, q.y, { ...base, elite: true, hp: Math.round(base.hp * ARTISANS.gardePv), name: `${base.name} gardien`, xp: (base.xp ?? Math.round(base.hp / 5)) * ARTISANS.gardePv });
+    r.garde = m.id;
+    this.emit({ k: 'status', x: p.x, y: p.y - 60, text: `${base.name} gardien surgit : ce filon est gardé !`, color: '#ff9a5a' });
+    return true;
+  }
+  /** 6D : la ressource prête la plus proche du même métier, que le perso sait récolter. */
+  private recolteSuivante(fait: Recolte, metier: string) {
+    const p = this.player, R = this.opts.recoltes!;
+    let best: Recolte | null = null, bd = ARTISANS.rayonChaine;
+    for (const r of this.recoltes) {
+      if (r === fait || r.repousse > 0) continue;
+      const d = Math.hypot(r.x - p.x, r.y - p.y), def = R.ressources[r.item];
+      if (d < bd && def?.metier === metier && p.metierLevel(metier) >= def.niveau && !(r.dore && def.niveau >= ARTISANS.gardeNiveau && r.garde == null)) { bd = d; best = r; }
+    }
+    if (best) { this.versRecolte = best.id; this.approche = this.approcheRecolte(best.id); }
   }
 
   // --- Emp, le Méryde du Recyclage (maquette 0.2, 8A+8B+8C, 9A+9B) ---------------------------------------------
@@ -2719,7 +2765,8 @@ export class World {
   /** « Défaire » (maquette Magasin 7A, 9A-9C) : l'objet rend ses runes et des kamas ; une apparence inconnue rejoint la collection,
    *  un pouvoir légendaire nouveau va au Codex. Renvoie les kamas gagnés ; les runes sont ajoutées à `tout`. */
   private defaireUn(it: Item, def: NonNullable<ItemsData['equipment'][string]>, tout: Record<string, number>): number {
-    for (const [id, k] of Object.entries(briser(this.rng, def, it))) tout[id] = (tout[id] ?? 0) + k;
+    const plus = this.player.bonusMetier('mineur');   // « Métiers : » 7A : Mineur, plus de runes
+    for (const [id, k] of Object.entries(briser(this.rng, def, it))) tout[id] = (tout[id] ?? 0) + k + (plus > 0 ? Math.floor(k * plus + this.rng.next()) : 0);
     this.collectionner(it.id); this.enregistrerCodex(it);
     return kamasDefaire(def, it);
   }

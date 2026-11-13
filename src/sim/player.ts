@@ -20,6 +20,7 @@ import type { Quetes } from './quests';
 import type { SimEvent } from './events';
 import { etatMondeNeuf, type EtatMonde } from './etatMonde';
 import { CONSO, ELIXIRS, REPAS } from './consommables';
+import { ARTISANS, BONUS_FAB, BONUS_RECOLTE, PAR_PALIER_FAB, paliers } from './artisans';
 import { coutPoint, coutTotal, fuiteFactor, pointsAchetables, prospectionDeChance, soinRecu, tackleSlow, tacleOf, vitesseAgilite } from './caracs';
 import { CASE, TOUR } from './monster';
 import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type SortGrade, type SortOfficiel } from './sorts';
@@ -430,7 +431,7 @@ export class Player extends Entity {
   ecaPattesA = -99; ecaVieA = -999;
   courir(k: number, t: number) { this.courseK = this.courseT > 0 ? Math.max(this.courseK, k) : k; this.courseT = Math.max(this.courseT, t); }
   slow(t: number, k: number) { if (this.insensibleT > 0) return; k *= fuiteFactor(this.fuite); this.slowK = this.slowT > 0 ? Math.max(this.slowK, k) : k; if (t >= this.slowT) this.slowT0 = t; this.slowT = Math.max(this.slowT, t); }
-  get speed(): number { return this.cls.speed * (1 + vitesseAgilite(this.stat('agilite'))) * this.vitesseTest * (this.slowT > 0 ? 1 - this.slowK : 1) * (this.courseT > 0 ? 1 + this.courseK : 1); }
+  get speed(): number { return this.cls.speed * (1 + vitesseAgilite(this.stat('agilite'))) * this.vitesseTest * (this.slowT > 0 ? 1 - this.slowK : 1) * (this.courseT > 0 ? 1 + this.courseK : 1) * (1 + this.bonusMetier('pecheur')); }
   /** Partie de test (5D) : course ×3. */
   vitesseTest = 1;
   /** Tacle et Fuite (base Agilité / 10), Retrait et Esquive PA / PM (base Sagesse / 10), comme dans Dofus. */
@@ -443,7 +444,7 @@ export class Player extends Entity {
   /** Soigne le perso (potion, nourriture, soin à chaque monstre tué) : Intelligence et Soins s'y ajoutent (Caracs 3B + 3C). Renvoie les PV rendus. */
   soigner(base: number): number {
     if (this.dead || base <= 0) return 0;
-    const n = Math.min(this.maxHp - this.hp, Math.round(soinRecu(base, this.stat('intelligence'), this.stat('soins')) * (this.soinsRecusT > 0 ? 1.2 : 1) * (this.fxIdoles?.soins ?? 1)));   // Bihilete, Ougah
+    const n = Math.min(this.maxHp - this.hp, Math.round(soinRecu(base, this.stat('intelligence'), this.stat('soins')) * (this.soinsRecusT > 0 ? 1.2 : 1) * (1 + this.bonusMetier('paysan')) * (this.fxIdoles?.soins ?? 1)));   // Bihilete, Ougah
     this.hp += Math.max(0, n);
     return Math.max(0, n);
   }
@@ -503,9 +504,10 @@ export class Player extends Entity {
     const st: Stats = {}, add = (k: Stat, v: number) => { st[k] = (st[k] ?? 0) + v; };
     for (const [k, v] of Object.entries(this.base) as [Stat, number][]) add(k, v);
     const sets: Record<string, number> = {};
-    for (const it of Object.values(this.equipment)) {
+    for (const [slot, it] of Object.entries(this.equipment)) {
       if (!it) continue;
-      for (const [k, v] of Object.entries(it.stats) as [Stat, number][]) add(k, v);
+      const f = 1 + this.bonusFab(slot);   // « Métiers : » 7B
+      for (const [k, v] of Object.entries(it.stats) as [Stat, number][]) add(k, f > 1 && v > 0 ? Math.round(v * f) : v);
       const set = this.items?.equipment[it.id]?.set;
       if (set) sets[set] = (sets[set] ?? 0) + 1;
     }
@@ -518,7 +520,7 @@ export class Player extends Entity {
     }
     this.stats = st; this.setCount = sets;
     const was = this.maxHp;
-    this.maxHp = Math.max(1, this.cls.hp + (this.level - 1) * 5 + this.stat('vitalite'));
+    this.maxHp = Math.max(1, Math.round((this.cls.hp + (this.level - 1) * 5 + this.stat('vitalite')) * (1 + this.bonusMetier('bucheron'))));   // 7A : Bûcheron
     if (this.maxHp > was) this.hp += this.maxHp - was;
     this.hp = Math.min(this.hp, this.maxHp);
     this.buildWeapon();
@@ -731,6 +733,14 @@ export class Player extends Entity {
   /** L'arme en main a-t-elle l'effet officiel « Arme de chasse » ? */
   get huntingWeapon(): boolean { const it = this.equipment.arme; return !!(it && this.items?.equipment[it.id]?.chasse); }
   metierLevel(key: string): number { return this.metiers[key]?.level ?? 0; }
+  /** « Métiers : » 7A : bonus permanent d'un métier de récolte (0.03 = +3 %). */
+  bonusMetier(key: string): number { return paliers(this.metierLevel(key)) * (BONUS_RECOLTE[key]?.par ?? 0); }
+  /** 7B : bonus de stats des objets portés à cet emplacement (le meilleur des métiers qui le fabriquent). */
+  bonusFab(slot: string): number {
+    let b = 0;
+    for (const [m, l] of Object.entries(BONUS_FAB)) if (l.includes(slot)) b = Math.max(b, paliers(this.metierLevel(m)) * PAR_PALIER_FAB);
+    return b;
+  }
   /** XP de métier ; prévient l'affichage à chaque niveau. */
   gainMetierXp(key: string, n: number, world: World) {
     const m = this.metiers[key] ??= { level: 1, xp: 0 };
@@ -743,6 +753,7 @@ export class Player extends Entity {
     while (m.level < METIER_MAX && m.xp >= metierXpNeeded(m.level)) {
       m.xp -= metierXpNeeded(m.level); m.level++;
       world.emit({ k: 'metierLevel', metier: key, level: m.level });
+      if (m.level % ARTISANS.palier === 0) this.recompute();   // « Métiers : » 7A + 7B : nouveau palier
     }
   }
 
@@ -810,7 +821,7 @@ export class Player extends Entity {
   drinkPotion(world: World): boolean {
     if (this.dead || this.potions <= 0 || this.potionCd > 0 || this.hp >= this.maxHp) return false;
     // « Métiers : » 4A : la potion soigne plus selon le niveau d'Alchimiste
-    const amount = this.soigner(this.maxHp * this.cls.potion.heal * (1 + this.legendary('potion') / 100) * (1 + this.metierLevel('alchimiste') * CONSO.potionParNiveau));
+    const amount = this.soigner(this.maxHp * this.cls.potion.heal * (1 + this.legendary('potion') / 100) * (1 + this.metierLevel('alchimiste') * CONSO.potionParNiveau + this.bonusMetier('alchimiste')));
     this.potions--; this.potionCd = this.cls.potion.cooldown;
     world.emit({ k: 'potion', x: this.x, y: this.y, amount });
     return true;

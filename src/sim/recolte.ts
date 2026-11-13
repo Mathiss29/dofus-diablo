@@ -14,7 +14,9 @@ export interface RecoltesData {
 /** Une ressource posée dans le monde. repousse > 0 : déjà récoltée, elle repousse. */
 export interface Recolte { id: number; tag: string; x: number; y: number; item: string; dore: boolean; repousse: number;
   /** Dessin officiel (élément interactif de la carte) : son gfx, son décalage en pixels Dofus, en miroir ou non. Affichage seulement. */
-  gfx?: number; dessin?: { x: number; y: number }; miroir?: boolean }
+  gfx?: number; dessin?: { x: number; y: number }; miroir?: boolean;
+  /** « Métiers : » 6B : élite qui garde cette ressource dorée (id du monstre), apparu au premier clic. */
+  garde?: number }
 
 export const RECOLTE = {
   /** Durée du geste (s), portée (px monde) à laquelle on récolte, délai de repousse (s). */
