@@ -69,6 +69,7 @@ import { TRESOR_CSS, objetTresor, signatureTresor, tresorHtml } from './tresorVu
 import { ECLAT, FORGE_CSS, defaireHtml, etatForge, forgeHtml, lotConcasseur, mmss, pastillesFM, texteForge, type LigneLog } from './forgeVue';
 import type { SimEvent } from '../sim/events';
 import { REGLES_V2, RUNES, dmgArme, etatFM, ligneMax } from '../sim/forgemagie';
+import { CONSO, NOM_SORTE, PARCHEMINS, sorteConso, texteConso } from '../sim/consommables';
 import { LOOKS } from './looks';
 import { niveauHorsPartie, rangDe } from '../sim/butin';
 import { DOSSIER, PALETTES, ZONES, apparenceValide, assemblagePour, fiches, objetsPortes, type Apparence, type Assemblage, type FichePerso } from './squelette';
@@ -1223,11 +1224,11 @@ export class Windows {
     });
     w.querySelectorAll<HTMLElement>('[data-res]').forEach(e => {
       const id = e.dataset.res!, r = ITEMS.resources[id];
-      const eat = () => { if (r.ame ? this.world.relacherAme(id) : r.rappel ? this.world.rappel(id) : r.deguisement ? this.world.boire(id) : this.world.eat(id)) { if (r.rappel || r.ame) this.close(); else this.changed(); } };
+      const eat = () => { if (r.ame ? this.world.relacherAme(id) : r.rappel ? this.world.rappel(id) : r.deguisement ? this.world.boire(id) : this.world.utiliser(id)) { if (r.rappel || r.ame) this.close(); else this.changed(); } };
       e.addEventListener('mouseenter', ev => { this.tip.innerHTML = this.resTip(r, id); this.tip.style.display = 'block'; this.moveTip(ev); });
       e.addEventListener('mousemove', ev => this.moveTip(ev));
       e.addEventListener('mouseleave', () => this.hideTip());
-      if (r.soin || r.rappel || r.deguisement || r.ame) { e.addEventListener('contextmenu', eat); e.addEventListener('dblclick', eat); }
+      if (r.soin || r.rappel || r.deguisement || r.ame || sorteConso(id)) { e.addEventListener('contextmenu', eat); e.addEventListener('dblclick', eat); }
       else e.addEventListener('contextmenu', () => { this.hideTip(); this.recettesAvec(id); });
       e.addEventListener('click', ev => { if (ev.altKey && this.world.nourrirFamilier({ res: id, tout: ev.shiftKey })) { ev.preventDefault(); this.changed(); } });
     });
@@ -1483,7 +1484,7 @@ export class Windows {
       corps = filtres + ou + `<div class="recs">${l.map(({ r, i }) => {
         const out = produit(r.result), ok = lv >= r.level, max = this.world.craftMax(i), suivie = p.recetteSuivie === r.result;
         return `<div class="rec ${max > 0 ? 'ok' : ''} ${ok ? '' : 'lock'}"><span class="rs" data-rtip="${r.result}">${iconHtml(out?.icon ?? 0)}</span>
-          <div><b>${out?.name ?? r.result}</b> <span class="hint">niv. ${r.level}${out?.soin ? ` · +${out.soin} PV` : ''}</span>
+          <div><b>${out?.name ?? r.result}</b> <span class="hint">niv. ${r.level}${out?.soin ? ` · +${out.soin} PV` : ''}${sorteConso(r.result) ? ` · ${texteConso(r.result)}` : ''}</span>
           ${ok ? '' : `<div class="lack" style="font-size:12px">Niveau ${r.level} requis</div>`}<div class="ings">${r.ingredients.map(([id, n]) => this.ingHtml(id, n)).join('')}</div></div>
           <span class="cb">${max > 0 ? `<span class="nb" title="Tu peux en faire ${max}">×${max}</span>` : ''}<img class="pin ${suivie ? 'on' : ''}" data-pin="${r.result}" src="${D3}/pin_mark_yellow.png" alt="" title="${suivie ? 'Ne plus suivre' : 'Suivre cette recette à l\'écran'}"></span></div>`;
       }).join('') || '<div class="hint">Aucune recette ne correspond.</div>'}</div>`;
@@ -1552,7 +1553,7 @@ export class Windows {
       <div class="livre"><input placeholder="Chercher…" value="${this.artRecherche.replace(/"/g, '&quot;')}" data-asr>
         <label class="ck"><input type="checkbox" data-aso ${this.artSeulement ? 'checked' : ''}>Seulement ce que je peux faire</label><div class="als">${livre}</div></div>
       <div class="plan"><div class="am"><img src="assets/ui/metier_${k}.png" alt="">${m?.name ?? ''} niveau ${lv}</div>
-        ${rec && out ? `<div class="ares"><span class="ac big" data-rtip="${rec.result}">${iconHtml(out.icon)}</span><b>${out.name}</b><small>${out.soin ? `Rend ${out.soin} PV · ` : ''}${equip ? `${ITEMS.equipment[rec.result].slot.replace(/^./, c => c.toUpperCase())} · ` : ''}niveau ${rec.level}</small></div>
+        ${rec && out ? `<div class="ares"><span class="ac big" data-rtip="${rec.result}">${iconHtml(out.icon)}</span><b>${out.name}</b><small>${out.soin ? `Rend ${out.soin} PV · ` : ''}${sorteConso(rec.result) ? `${texteConso(rec.result)} · ` : ''}${equip ? `${ITEMS.equipment[rec.result].slot.replace(/^./, c => c.toUpperCase())} · ` : ''}niveau ${rec.level}</small></div>
         <div class="acs"><span class="lab">Ingrédients</span>${cases}</div>
         ${equip ? `<div class="acs"><span class="lab">Ingrédient rare</span>${rares.map(id => `<span class="ac ${this.artRare === id ? 'on' : ''}" data-arare="${id}" data-ing="${id}">${iconHtml(ITEMS.resources[id]?.icon ?? 0)}<b>${p.resources[id]}</b></span>`).join('') || '<span class="hint">Aucun dans ton sac : les boss et les élites en lâchent.</span>'}</div>
         <div class="axp" style="color:${RARITY_COLORS.rare}">${this.artRare ? `Rare garanti (1 ${ITEMS.resources[this.artRare]?.name} par objet)` : `Commun ou Rare : ${Math.round(chanceRare(lv) * 100)} % de chance de Rare à ton niveau · ajoute un ingrédient rare pour le garantir`}</div>` : ''}
@@ -2430,8 +2431,11 @@ export class Windows {
       <div class="hint">Fabriqué : Commun, ou Rare (${Math.round(chanceRare(lv) * 100)} % à ton niveau, garanti avec un ingrédient rare). Jamais de pouvoir légendaire.</div>`;
   }
   private resTip(r: ResourceDef, id: string) {
-    const sorte = r.ame ? 'Âme d\'archimonstre' : r.soin || r.rappel || r.deguisement ? 'Consommable' : r.cle ? 'Clé de donjon' : r.pepite ? 'Monnaie du Bastion' : r.monnaie === 'invasion' ? 'Éclat d\'invasion' : r.monnaie ? 'Monnaie de l\'île des Wabbits' : r.rune || r.signature ? 'Rune de forgemagie' : 'Ressource';
+    const sc = sorteConso(id), p = this.world.player;
+    const sorte = r.ame ? 'Âme d\'archimonstre' : sc ? NOM_SORTE[sc] : r.soin || r.rappel || r.deguisement ? 'Consommable' : r.cle ? 'Clé de donjon' : r.pepite ? 'Monnaie du Bastion' : r.monnaie === 'invasion' ? 'Éclat d\'invasion' : r.monnaie ? 'Monnaie de l\'île des Wabbits' : r.rune || r.signature ? 'Rune de forgemagie' : 'Ressource';
     const effet = r.ame ? `<div class="up">${escB(GAME_DATA.monsters[r.ame]?.name ?? '')}</div><div class="hint">Capturée dans une Petite pierre d'âme : elle compte dans le carnet du Bestiaire et se montre à l'Assistante d'Otomaï (quête du Dofus Ocre).</div><div class="hint">Clic droit dans l'arène des âmes (au fond du Marché couvert, Bastion des Douze) : la relâcher pour recombattre son groupe, avec un meilleur butin. L'âme est perdue.</div>`
+      : sc ? `<div class="up">${texteConso(id)}</div>${sc === 'parchemin' ? `<div class="hint">Déjà ${p.parchemins[PARCHEMINS[id]] ?? 0} / ${CONSO.parcheminMax} points de parchemin en ${STAT_NAMES[PARCHEMINS[id]]}.</div>` : ''}<div class="hint">${
+        sc === 'boisson' ? `Clic droit : boire. La dernière boisson bue va sur la touche ${Touches.nomAction('boisson')} (recharge ${CONSO.boisson.recharge} s).` : sc === 'parchemin' ? 'Clic droit : lire' : sc === 'repas' ? 'Clic droit : manger' : 'Clic droit : boire'}</div>`
       : r.soin ? `<div class="up">+${r.soin} PV</div><div class="hint">Clic droit : manger</div>`
       : r.rappel ? `<div class="up">Retour au dernier Zaap (${this.world.checkpointName})</div><div class="hint">Clic droit : boire</div>`
       : r.deguisement ? `<div class="up">Déguisé en Wabbit pendant ${Math.round(r.deguisement / 60)} min</div><div class="hint">Les Wabbits de l'île ne t'attaquent pas tant que tu ne les tapes pas. Clic droit : boire</div>`
@@ -2442,7 +2446,7 @@ export class Windows {
       : r.signature ? '<div class="up">Grave ton nom sur un objet</div><div class="hint">Case Signature de la fenêtre du forgemage, au Bastion des Douze ; Malek en vend aussi.</div>'
       : r.rune && RUNES[id] ? `<div class="up">+${RUNES[id].val} ${STAT_NAMES[RUNES[id].stat]} · poids ${String(RUNES[id].poids).replace('.', ',')}</div><div class="hint">Se pose chez le forgemage du Bastion des Douze ; s'obtient en brisant des objets chez lui.</div>` : '';
     const sert = recettesAvec(ITEMS, id).map(x => produit(x.result)?.name).filter(Boolean);
-    const sertA = sert.length ? `<div class="ou"><div class="hd">Sert à</div><div>${sert.slice(0, 5).join(', ')}${sert.length > 5 ? '…' : ''}</div></div>${!r.soin && !r.rappel && !r.deguisement ? '<div class="hint">Clic droit : recettes qui l\'utilisent</div>' : ''}` : '';
+    const sertA = sert.length ? `<div class="ou"><div class="hd">Sert à</div><div>${sert.slice(0, 5).join(', ')}${sert.length > 5 ? '…' : ''}</div></div>${!r.soin && !r.rappel && !r.deguisement && !sc ? '<div class="hint">Clic droit : recettes qui l\'utilisent</div>' : ''}` : '';
     return `<h4>${r.name}</h4><div class="sub">${sorte} · niveau ${r.level}</div>${effet}${sertA}${sourcesHtml(id, 3)}`;   // 1B : où le trouver
   }
 
@@ -3076,7 +3080,7 @@ export class Windows {
     if ((this.tab === 'tout' || this.tab === 'ressource' || this.tab === 'conso') && !this.kind) for (const [id, n] of Object.entries(p.resources)) {
       const r = ITEMS.resources[id];
       if (!r || (q && !r.name.toLowerCase().includes(q))) continue;
-      if (this.tab === 'conso' && !r.soin && !r.rappel) continue;
+      if (this.tab === 'conso' && !r.soin && !r.rappel && !sorteConso(id)) continue;
       cells.push(`<div class="cell" data-res="${id}">${iconHtml(r.icon)}<span class="n">${n}</span></div>`);
     }
     // Dofus possédés mais pas portés (6B : on les glisse du sac vers la rangée de 6 cases)

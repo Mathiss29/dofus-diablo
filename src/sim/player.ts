@@ -17,6 +17,7 @@ import type { HitDef, World } from './world';
 import type { Quetes } from './quests';
 import type { SimEvent } from './events';
 import { etatMondeNeuf, type EtatMonde } from './etatMonde';
+import { CONSO, ELIXIRS, REPAS } from './consommables';
 import { coutPoint, coutTotal, fuiteFactor, pointsAchetables, prospectionDeChance, soinRecu, tackleSlow, tacleOf, vitesseAgilite } from './caracs';
 import { CASE, TOUR } from './monster';
 import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type SortGrade, type SortOfficiel } from './sorts';
@@ -59,6 +60,13 @@ export class Player extends Entity {
   invuln = 0;
   /** Potion Wabbit (« Wabbits : 2D ») : temps restant du déguisement (s). */
   deguise = 0;
+  /** « Métiers : » 4B + 4C : repas et élixir actifs (un de chaque, secondes restantes) ; 5A : points de parchemin par caractéristique ;
+   *  4A : boisson de résistance mise sur sa touche, et recharge commune des boissons (src/sim/consommables.ts). */
+  repas: { id: string; reste: number } | null = null;
+  elixir: { id: string; reste: number } | null = null;
+  parchemins: Partial<Record<Stat, number>> = {};
+  ceinture: string | null = null;
+  boissonCd = 0;
   /** Multi (« Multi complet » 7B) : temps à terre, et temps passé par un allié à le relever (s). */
   aTerre = 0;
   releve = 0;
@@ -482,6 +490,8 @@ export class Player extends Entity {
       if (set) sets[set] = (sets[set] ?? 0) + 1;
     }
     for (const id of this.dofusPortes) if (id) for (const [k, v] of Object.entries(PORTABLE(id)?.stats ?? {}) as [Stat, number][]) add(k, v);
+    for (const [k, v] of Object.entries(this.parchemins) as [Stat, number][]) add(k, v);   // « Métiers : » 5A
+    for (const c of [this.repas && REPAS[this.repas.id], this.elixir && ELIXIRS[this.elixir.id]]) if (c) add(c.stat, c.n);   // 4B + 4C
     for (const [id, n] of Object.entries(sets)) {
       const b = this.items?.sets[id]?.bonus[String(n - 1)];
       if (b) for (const [k, v] of Object.entries(b) as [Stat, number][]) add(k, v);
@@ -779,7 +789,8 @@ export class Player extends Entity {
 
   drinkPotion(world: World): boolean {
     if (this.dead || this.potions <= 0 || this.potionCd > 0 || this.hp >= this.maxHp) return false;
-    const amount = this.soigner(this.maxHp * this.cls.potion.heal * (1 + this.legendary('potion') / 100));
+    // « Métiers : » 4A : la potion soigne plus selon le niveau d'Alchimiste
+    const amount = this.soigner(this.maxHp * this.cls.potion.heal * (1 + this.legendary('potion') / 100) * (1 + this.metierLevel('alchimiste') * CONSO.potionParNiveau));
     this.potions--; this.potionCd = this.cls.potion.cooldown;
     world.emit({ k: 'potion', x: this.x, y: this.y, amount });
     return true;
@@ -895,6 +906,14 @@ export class Player extends Entity {
   update(dt: number, input: PlayerInput, world: World) {
     this.age += dt;
     if (this.benediction && (this.benediction.reste -= dt) <= 0) { world.emit({ k: 'status', x: this.x, y: this.y - 60, text: `${BENEDICTIONS[this.benediction.k].nom} s'achève`, color: '#e8d27a' }); this.benediction = null; }
+    for (const k of ['repas', 'elixir'] as const) {   // « Métiers : » 4B + 4C
+      const c = this[k];
+      if (c && (c.reste -= dt) <= 0) {
+        this[k] = null; this.recompute();
+        world.emit({ k: 'status', x: this.x, y: this.y - 60, text: `${world.opts.items?.resources[c.id]?.name ?? (k === 'repas' ? 'Le repas' : "L'élixir")} : effet terminé`, color: '#e8d27a' });
+      }
+    }
+    if (this.boissonCd > 0) this.boissonCd = Math.max(0, this.boissonCd - dt);
     if (this.deguise > 0 && (this.deguise -= dt) <= 0) { this.deguise = 0; world.emit({ k: 'status', x: this.x, y: this.y - 60, text: 'Le déguisement de Wabbit tombe', color: '#e8902a' }); }
     for (const k of Object.keys(this.cd)) {
       if (this.cd[k] <= 0) continue;
@@ -945,6 +964,7 @@ export class Player extends Entity {
     if (this.dead) { this.setAnim('die', Math.min(1, this.animT + dt * 1.5)); return; }
     if (this.comboTimer > 0) this.comboTimer -= dt;
     if (input.potion) this.drinkPotion(world);
+    if (input.boisson && this.ceinture) world.utiliser(this.ceinture);   // « Métiers : » 4A : la boisson de résistance de sa touche
     // Déplacement à la souris (clic gauche) : sur le sol on y va, sur un monstre on s'approche pour l'attaquer
     let aim = input.aim;
     this.repathT -= dt;

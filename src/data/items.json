@@ -39454,6 +39454,96 @@
    "name": "Chauve-souris",
    "icon": 15641,
    "level": 35
+  },
+  "16378": {
+   "name": "Ortie Roïde",
+   "icon": 36646,
+   "level": 1
+  },
+  "16379": {
+   "name": "Sauge Divine au Rhum",
+   "icon": 36647,
+   "level": 20
+  },
+  "16380": {
+   "name": "Trèfle Agare",
+   "icon": 36648,
+   "level": 40
+  },
+  "16381": {
+   "name": "Menthe Religieuse",
+   "icon": 36649,
+   "level": 60
+  },
+  "16382": {
+   "name": "Orchidée de Génie",
+   "icon": 35639,
+   "level": 80
+  },
+  "16383": {
+   "name": "Edelweiss Marguerite",
+   "icon": 35640,
+   "level": 100
+  },
+  "21673": {
+   "name": "Boisson épicée",
+   "icon": 37004,
+   "level": 10
+  },
+  "21674": {
+   "name": "Boisson givrée",
+   "icon": 37004,
+   "level": 10
+  },
+  "21678": {
+   "name": "Boisson orientale",
+   "icon": 37004,
+   "level": 20
+  },
+  "21677": {
+   "name": "Boisson sombre",
+   "icon": 37004,
+   "level": 20
+  },
+  "21675": {
+   "name": "Boisson angélique",
+   "icon": 37004,
+   "level": 30
+  },
+  "20962": {
+   "name": "Élixir uchronique mineur",
+   "icon": 12781,
+   "level": 40
+  },
+  "795": {
+   "name": "Parchemin de Force",
+   "icon": 76029,
+   "level": 40
+  },
+  "815": {
+   "name": "Parchemin d'Intelligence",
+   "icon": 76035,
+   "level": 40
+  },
+  "811": {
+   "name": "Parchemin de Chance",
+   "icon": 76032,
+   "level": 40
+  },
+  "799": {
+   "name": "Parchemin d'Agilité",
+   "icon": 76026,
+   "level": 40
+  },
+  "807": {
+   "name": "Parchemin de Vitalité",
+   "icon": 76041,
+   "level": 40
+  },
+  "803": {
+   "name": "Parchemin de Sagesse",
+   "icon": 76038,
+   "level": 40
   }
  },
  "drops": {
@@ -67584,6 +67674,190 @@
     [
      "14635",
      300
+    ]
+   ]
+  },
+  {
+   "result": "21673",
+   "metier": "alchimiste",
+   "level": 10,
+   "ingredients": [
+    [
+     "421",
+     4
+    ],
+    [
+     "399",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "21674",
+   "metier": "alchimiste",
+   "level": 10,
+   "ingredients": [
+    [
+     "421",
+     4
+    ],
+    [
+     "311",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "21678",
+   "metier": "alchimiste",
+   "level": 20,
+   "ingredients": [
+    [
+     "428",
+     3
+    ],
+    [
+     "400",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "21677",
+   "metier": "alchimiste",
+   "level": 20,
+   "ingredients": [
+    [
+     "428",
+     3
+    ],
+    [
+     "441",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "21675",
+   "metier": "alchimiste",
+   "level": 30,
+   "ingredients": [
+    [
+     "428",
+     3
+    ],
+    [
+     "473",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "20962",
+   "metier": "alchimiste",
+   "level": 40,
+   "ingredients": [
+    [
+     "395",
+     5
+    ],
+    [
+     "311",
+     2
+    ],
+    [
+     "1182",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "795",
+   "metier": "alchimiste",
+   "level": 40,
+   "ingredients": [
+    [
+     "16380",
+     2
+    ],
+    [
+     "442",
+     10
+    ]
+   ]
+  },
+  {
+   "result": "815",
+   "metier": "alchimiste",
+   "level": 40,
+   "ingredients": [
+    [
+     "16380",
+     2
+    ],
+    [
+     "533",
+     10
+    ]
+   ]
+  },
+  {
+   "result": "811",
+   "metier": "alchimiste",
+   "level": 40,
+   "ingredients": [
+    [
+     "16380",
+     2
+    ],
+    [
+     "395",
+     10
+    ]
+   ]
+  },
+  {
+   "result": "799",
+   "metier": "alchimiste",
+   "level": 40,
+   "ingredients": [
+    [
+     "16380",
+     2
+    ],
+    [
+     "603",
+     10
+    ]
+   ]
+  },
+  {
+   "result": "807",
+   "metier": "alchimiste",
+   "level": 40,
+   "ingredients": [
+    [
+     "16380",
+     2
+    ],
+    [
+     "476",
+     10
+    ]
+   ]
+  },
+  {
+   "result": "803",
+   "metier": "alchimiste",
+   "level": 40,
+   "ingredients": [
+    [
+     "16380",
+     2
+    ],
+    [
+     "7652",
+     3
     ]
    ]
   }

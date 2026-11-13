@@ -15,6 +15,8 @@ export interface PlayerInput {
   holdAttack: boolean;
   /** Boire une potion pendant cette frame. */
   potion?: boolean;
+  /** « Métiers : » 4A : boire la boisson de résistance mise sur sa touche. */
+  boisson?: boolean;
   /** Clic gauche sur le sol (maintenu : suit le curseur) : le perso y va par le plus court chemin. */
   dest?: Vec | null;
   /** Clic sur un objet au sol (Rare et plus) : aller le ramasser. */

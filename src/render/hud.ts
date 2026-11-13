@@ -1,4 +1,6 @@
 import { TEINTES } from '../sim/ecaflip';
+import { CONSO } from '../sim/consommables';
+import { ICON_SHEET, iconFrame } from './icons';
 import { coffreDe, couleurCoffre, nomsCoffre, palierCoffre, partageurCoffre, seuilsCoffre } from '../sim/enutrof';
 import { nomOrne, styleDef } from '../sim/style';
 import { RARITY_COLORS } from '../sim/items';
@@ -422,6 +424,8 @@ export class Hud {
   private slots: SlotView[] = [];
   private auto: SlotView;
   private potion: SlotView;
+  /** « Métiers : » 4A : boisson de résistance de sa touche, en petit au-dessus de la potion. */
+  private boisson!: { bg: Phaser.GameObjects.Image; icon: Phaser.GameObjects.Image; key: Phaser.GameObjects.Text; n: Phaser.GameObjects.Text };
   private xpText: Txt;
   private rageLabel: Txt;
   /** Enutrof (interface du coffre 1A + 1D + 7C) : image du coffre dans le médaillon, sa case (clic = fenêtre), alerte quand il est frappé,
@@ -630,6 +634,8 @@ export class Hud {
     this.potion = mkSlot(null, '');
     this.potion.bg.setTexture('slot_dark_background_full');
     this.potion.icon = img('icon_pv', 3);
+    this.boisson = { bg: img('slot_dark_background_full', 2).setVisible(false), icon: fixed(scene.add.image(0, 0, ICON_SHEET.key, 0), 3).setVisible(false),
+      key: txt(10, { ...bold, strokeThickness: 3 }, 6).setOrigin(0, 0).setVisible(false), n: txt(10, { ...bold, strokeThickness: 3 }, 6).setOrigin(1, 1).setVisible(false) };
     this.xpText = txt(12, bold).setOrigin(0.5);
     this.rageLabel = txt(11, { ...bold, color: css(C.rage) }).setOrigin(0.5, 0).setText(cls.rage.name);
     this.medImg = img('__DEFAULT', 3).setVisible(false);
@@ -1212,6 +1218,16 @@ export class Hud {
     po.key.setPosition(pox - slot / 2 + 4, sy - slot / 2 + 1);
     po.cost.setPosition(pox + slot / 2 - 3, sy + slot / 2 - 1).setText(String(p.potions)).setColor('#ffffff');
     if (pcd > 0) horloge(this.gSlots, pox, sy, 23, Math.min(1, pcd));
+    const bo = this.boisson, bid = p.ceinture, bn = bid ? p.resources[bid] ?? 0 : 0, bfr = bid ? iconFrame(world.opts.items?.resources[bid]?.icon ?? 0) : -1;
+    for (const o of [bo.bg, bo.icon, bo.key, bo.n]) o.setVisible(bfr >= 0);
+    if (bid && bfr >= 0) {
+      const by = sy - slot / 2 - 20;
+      bo.bg.setPosition(pox, by).setDisplaySize(30, 30);
+      bo.icon.setFrame(bfr).setPosition(pox, by).setDisplaySize(24, 24).setAlpha(bn > 0 ? 1 : 0.35);
+      bo.key.setPosition(pox - 14, by - 15).setText(court(Touches.nomAction('boisson')));
+      bo.n.setPosition(pox + 15, by + 15).setText(String(bn));
+      if (p.boissonCd > 0) horloge(this.gSlots, pox, by, 13, Math.min(1, p.boissonCd / CONSO.boisson.recharge));
+    }
     // Rage : jauge verticale qui clignote une fois pleine (Enutrof : le médaillon du coffre au trésor)
     const rx = pox + slot / 2 + 30, rh = slot - 14, ry = sy - slot / 2 + 2;
     const pk = cls.poker;

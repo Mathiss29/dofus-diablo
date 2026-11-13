@@ -12,6 +12,8 @@ export const ACTIONS: Action[] = [
   // Fluidité 6A + 7A (retour d'un joueur, 2026-11-12) : maintenue, le perso attaque en boucle vers la souris sans bouger (comme Maj + clic)
   { id: 'attaqueSouris', nom: 'Attaquer vers la souris (maintenue)', groupe: 'Combat', def: 'Q' },
   { id: 'potion', nom: 'Potion', groupe: 'Combat', def: 'E' },
+  // « Métiers : » 4A : la boisson de résistance (5 s d'un élément) bue en dernier
+  { id: 'boisson', nom: 'Boisson de résistance', groupe: 'Combat', def: 'V' },
   { id: 'coffre', nom: 'Coffre (Enutrof) · Jouer la Main (Écaflip)', groupe: 'Combat', def: 'X' },
   ...[1, 2, 3, 4].map(i => ({ id: `invoc${i}`, nom: `Invocation ${i} (Osamodas)`, groupe: 'Combat', def: 'AZRT'[i - 1] })),
   { id: 'inventaire', nom: 'Inventaire', groupe: 'Fenêtres', def: 'I' },

@@ -1968,6 +1968,45 @@
           "Les pièces du coffre de l'Enutrof, sa vitrine et ses records sont gardés avec le perso."
         ]
       }
+    },
+    {
+      "date": "2026-11-13",
+      "titre": "Des métiers qui servent vraiment",
+      "resume": "Repas, élixirs, boissons de résistance et parchemins : les artisans préparent tes combats.",
+      "capture": "assets/journal/2026-11-13.webp",
+      "legende": "Les nouveaux consommables des artisans, 13 novembre 2026.",
+      "lignes": {
+        "Nouveautés": [
+          {
+            "titre": "Repas et élixirs de 30 min",
+            "phrase": "Un repas donne une caractéristique, un élixir un bonus de combat, les deux se cumulent.",
+            "details": "Paysan, Pêcheur et Chasseur cuisinent les repas, l'Alchimiste les élixirs. Clic droit dans le sac.",
+            "icone": "metier",
+            "etiquettes": [
+              "Touche I"
+            ]
+          },
+          {
+            "titre": "Boissons de résistance",
+            "phrase": "L'Alchimiste prépare 5 s d'élément à +30 % de résistance, sur leur propre touche.",
+            "details": "La dernière boisson bue va sur la touche V, au-dessus de la potion. Ta potion E soigne aussi plus avec ton niveau d'Alchimiste.",
+            "icone": "vie",
+            "etiquettes": [
+              "Touche V"
+            ]
+          },
+          {
+            "titre": "Les parchemins de caractéristique",
+            "phrase": "Les parchemins officiels se fabriquent : +1 point pour toujours, 100 par caractéristique.",
+            "details": "Il faut le Trèfle Agare, que le Trèfle à 5 feuilles donne parfois à la récolte.",
+            "icone": "caracs"
+          }
+        ],
+        "Le monde": [],
+        "Combat": [],
+        "Corrections": [],
+        "En coulisses": []
+      }
     }
   ]
 }

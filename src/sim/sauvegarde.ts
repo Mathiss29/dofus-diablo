@@ -1,4 +1,5 @@
-import type { EquipSlot, Item, Stat } from './items';
+import { BASE_STATS, type EquipSlot, type Item, type Stat } from './items';
+import { BOISSONS, CONSO, ELIXIRS, REPAS } from './consommables';
 import { placesTenues, SORTES_STYLE, STYLE, type StyleChoisi, type Tenue } from './style';
 import { BENEDICTION, BENEDICTIONS, CONFORT, type Benediction } from './magasin';
 import type { EtatQuetes } from './quests';
@@ -64,6 +65,9 @@ export interface EtatJoueur {
   magasin?: { jour: string; etal: number[]; sac: boolean } | null;
   sacEnPlus?: number;
   benediction?: { k: string; reste: number } | null;
+  /** « Métiers : » 4A-4C, 5A : repas et élixir actifs, points de parchemin, boisson sur sa touche. */
+  repas?: { id: string; reste: number } | null; elixir?: { id: string; reste: number } | null;
+  parchemins?: Partial<Record<Stat, number>>; ceinture?: string | null;
   /** Dofus possédés et portés (0.3). */
   dofus?: string[]; trophees?: string[]; dofusPortes?: (string | null)[];
   /** Enutrof : le coffre au trésor (pièces, objets de la vitrine, journal, records ; interface du coffre 8A). */
@@ -79,7 +83,7 @@ export function exporterJoueur(w: World): EtatJoueur {
     base: p.base, bag: p.bag, equipment: p.equipment, resources: p.resources, metiers: p.metiers, recetteSuivie: p.recetteSuivie,
     bar: p.bar, variants: p.variants, learned: [...p.learned],
     x: p.x, y: p.y, retour: w.pointDeRetour, quetes: w.quetes?.exporter(), zone: w.opts.zone,
-    apparats: p.apparats, apparat: p.apparat, codex: p.codex, codexOuvert: p.codexOuvert, ames: p.ames, menagerie: p.menagerie, familierOffert: p.familierOffert, aboJour: p.aboJour, style: p.style, tenues: p.tenues, placesTenue: p.placesTenue, prereglages: p.prereglages, almanaxJour: p.almanaxJour, magasin: p.magasin, sacEnPlus: p.sacEnPlus, benediction: p.benediction, dofus: p.dofus, trophees: p.trophees, dofusPortes: p.dofusPortes,
+    apparats: p.apparats, apparat: p.apparat, codex: p.codex, codexOuvert: p.codexOuvert, ames: p.ames, menagerie: p.menagerie, familierOffert: p.familierOffert, aboJour: p.aboJour, style: p.style, tenues: p.tenues, placesTenue: p.placesTenue, prereglages: p.prereglages, almanaxJour: p.almanaxJour, magasin: p.magasin, sacEnPlus: p.sacEnPlus, benediction: p.benediction, repas: p.repas, elixir: p.elixir, parchemins: p.parchemins, ceinture: p.ceinture, dofus: p.dofus, trophees: p.trophees, dofusPortes: p.dofusPortes,
     zaaps: p.zaaps, zonesVues: p.zonesVues, explore: p.explore, drapeaux: p.drapeaux, tombe: p.tombe, lieuxVus: p.lieuxVus, cleDonjon: p.cleDonjon, guerre: p.guerre, vivant: p.vivant, commandeFM: p.commandeFM, ...(w.retour ? { havreSac: w.retour } : {}),
     ...(p.cls.coffre ? { coffreEnu: exporterCoffre(p) } : {}),
   });
@@ -104,6 +108,12 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
   for (const k of ['chapeau', 'cape', 'bouclier', 'familier'] as const) { const a = s.apparat?.[k]; if (a === '0' || (a && p.apparats.includes(a))) p.apparat[k] = a; }
   p.sacEnPlus = Math.max(0, Math.min(CONFORT.sac.pas * CONFORT.sac.prix.length, Math.floor((s.sacEnPlus ?? 0) / CONFORT.sac.pas) * CONFORT.sac.pas));
   p.benediction = s.benediction && s.benediction.k in BENEDICTIONS && s.benediction.reste > 0 ? { k: s.benediction.k as Benediction, reste: Math.min(BENEDICTION.duree, s.benediction.reste) } : null;
+  const conso = (c: { id: string; reste: number } | null | undefined, l: Record<string, unknown>) =>
+    c && typeof c.id === 'string' && l[c.id] && c.reste > 0 ? { id: c.id, reste: Math.min(CONSO.duree, c.reste) } : null;
+  p.repas = conso(s.repas, REPAS); p.elixir = conso(s.elixir, ELIXIRS);
+  p.parchemins = Object.fromEntries(Object.entries(s.parchemins ?? {}).filter(([k, n]) => BASE_STATS.includes(k as Stat) && Number.isFinite(n) && (n as number) > 0)
+    .map(([k, n]) => [k, Math.min(CONSO.parcheminMax, Math.floor(n as number))]));
+  p.ceinture = typeof s.ceinture === 'string' && BOISSONS[s.ceinture] ? s.ceinture : null;
   // 6C : 4e et 5e préréglages achetés (la sauvegarde garde leurs cases, même vides)
   const nPrer = Math.max(Player.PREREGLAGES, Math.min(Player.PREREGLAGES + CONFORT.prereglage.prix.length, Array.isArray(s.prereglages) ? s.prereglages.length : 0));
   p.prereglages = Array(nPrer).fill(null);

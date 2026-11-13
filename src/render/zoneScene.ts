@@ -140,6 +140,7 @@ export class ZoneScene extends Phaser.Scene {
   private keys!: Record<string, Phaser.Input.Keyboard.Key>;
   private pressed: SkillId | null = null;
   private potion = false;
+  private boisson = false;
   private hitstop = 0;
   private windows: Windows | null = null;
   /** Carte du monde (touche M, 0.2 18A). */
@@ -1066,6 +1067,7 @@ export class ZoneScene extends Phaser.Scene {
     switch (a) {
       case 'deplacement': this.down(a, p.bar[7]); break;
       case 'potion': this.potion = true; break;
+      case 'boisson': this.boisson = true; break;
       case 'inventaire': w?.toggle('inv'); break;
       case 'caracs': w?.toggle('car'); break;
       case 'sorts': w?.toggle('sorts'); break;
@@ -1110,7 +1112,7 @@ export class ZoneScene extends Phaser.Scene {
   private readInput(): PlayerInput {
     const ptr = this.input.activePointer, wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
     const aim = ISO.toWorld(wp.x, wp.y), held = this.holding && (this.reglages.deplacement === 'droit' ? ptr.rightButtonDown() : ptr.leftButtonDown()) && !this.uiClick;
-    const input: PlayerInput = { move: { x: 0, y: 0 }, aim, pressed: this.pressed, potion: this.potion,
+    const input: PlayerInput = { move: { x: 0, y: 0 }, aim, pressed: this.pressed, potion: this.potion, boisson: this.boisson,
       holdAttack: (held && this.clickMode === 'place') || this.attaqueSouris, pickup: this.pickClick, approach: this.reglages.approche,
       castOn: null };
     // un sort lancé sur un monstre vise le monstre (comme l'aperçu), pas le sol derrière son sprite
@@ -1156,7 +1158,7 @@ export class ZoneScene extends Phaser.Scene {
     // clic bref sur le sol : une seule destination
     if (!held && this.clickMode === 'ground' && this.clickDest) { input.dest = aim; }
     this.clickDest = held && this.clickMode === 'ground';
-    this.pressed = null; this.potion = false;
+    this.pressed = null; this.potion = false; this.boisson = false;
     // curseur : une épée sur un monstre
     const surPnj = this.questView?.pnjUnder(ptr, this.cameras.main) ?? null;
     if (this.questView) this.questView.survole = surPnj;
@@ -1285,7 +1287,7 @@ export class ZoneScene extends Phaser.Scene {
       // alliés de test (F1) conduits par le jeu, invités de la coop par leurs propres entrées
       const autres = this.world.players.length > 1 ? { ...entreesAllies(this.world), ...Coop.entrees() } : undefined;
       this.world.step(ZoneScene.STEP, input, autres);
-      input = { ...input, pressed: null, potion: false, reponse: null, test: null, havreSac: false, coffre: false, zaap: null };
+      input = { ...input, pressed: null, potion: false, boisson: false, reponse: null, test: null, havreSac: false, coffre: false, zaap: null };
       this.consumeEvents();
       Coop.apresPas(this.world, ZoneScene.STEP);
     }
@@ -1476,7 +1478,7 @@ export class ZoneScene extends Phaser.Scene {
         case 'fabricationDebut': Son.jouer(MANIFESTE.ui.ok, 'interface', { cle: 'clic', ecart: 0.05 }); this.windows?.refresh(); break;
         case 'fabricationStop': this.hud.toast('Fabrication interrompue'); this.windows?.refresh(); break;
         case 'craft': this.hud.loot(`${(ITEMS.resources[e.id] ?? ITEMS.equipment[e.id])?.name ?? 'Objet'} x${e.n}${e.rares ? ` (${e.rares} Rare${e.rares > 1 ? 's' : ''})` : ''}`, e.rares ? '#6fb2e8' : '#9ad15a'); this.windows?.refresh(); break;
-        case 'eat': this.windows?.refresh(); break;
+        case 'eat': case 'consommer': this.windows?.refresh(); break;
         // PNJ du Havre-Sac (maquette Hub 4A) : la réponse « service » de son dialogue ouvre sa fenêtre (recycler, boutique, apparats, miroir)
         case 'service': if (this.windows && (e.service === 'recycler' || e.service === 'boutique' || e.service === 'apparat' || e.service === 'confort' || e.service === 'havresac')) { this.windows.empPnj = e.pnj; this.windows.empOnglet = e.service; this.windows.show('emp'); }
           else if (this.windows && e.service === 'forgemagie') this.windows.ouvrirForge();

@@ -1,0 +1,42 @@
+{
+ "_": "« Métiers : » 4A+4B+4C+5A (2026-11-13) : effets des consommables fabriqués. repas et élixirs = 30 min, un de chaque actif à la fois (cumulables) ; boissons = 5 s de résistance à un élément (touche de la boisson) ; parchemins = +1 point permanent (100 par caractéristique, comme Dofus) ; rares = variante rare qu'une plante de l'Alchimiste donne parfois à la récolte. Recettes : tools/contenu/consommables.py.",
+ "repas": {
+  "521": { "stat": "force", "n": 20 },
+  "1811": { "stat": "agilite", "n": 20 },
+  "17168": { "stat": "vitalite", "n": 40 },
+  "524": { "stat": "intelligence", "n": 40 },
+  "1764": { "stat": "chance", "n": 40 },
+  "17171": { "stat": "force", "n": 40 },
+  "17172": { "stat": "vitalite", "n": 80 },
+  "32128": { "stat": "agilite", "n": 50 },
+  "32138": { "stat": "intelligence", "n": 50 }
+ },
+ "elixirs": {
+  "16402": { "stat": "vitesse", "n": 3 },
+  "16404": { "stat": "critique", "n": 3 },
+  "20962": { "stat": "reductionRecharges", "n": 5 }
+ },
+ "boissons": {
+  "21673": "feu",
+  "21674": "eau",
+  "21678": "air",
+  "21677": "terre",
+  "21675": "neutre"
+ },
+ "parchemins": {
+  "795": "force",
+  "815": "intelligence",
+  "811": "chance",
+  "799": "agilite",
+  "807": "vitalite",
+  "803": "sagesse"
+ },
+ "rares": {
+  "421": "16378",
+  "428": "16379",
+  "395": "16380",
+  "380": "16381",
+  "593": "16382",
+  "594": "16383"
+ }
+}

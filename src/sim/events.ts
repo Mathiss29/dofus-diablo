@@ -1,5 +1,6 @@
 import type { Element, SpellDef } from './defs';
 import type { Item, Rarity } from './items';
+import type { SorteConso } from './consommables';
 /** Point de retour (dernier Zaap atteint) : nom et position. */
 export interface PointDeRetour { name: string; x: number; y: number }
 /** Havre-Sac (maquette Hub 2A) : où était le perso avant d'y entrer, pour en ressortir au même endroit. */
@@ -134,6 +135,8 @@ export type SimEvent =
   | { k: 'fabricationDebut'; recette: number; n: number; duree: number }
   | { k: 'fabricationStop' }
   | { k: 'eat'; id: string; heal: number }
+  /** « Métiers : » 4A-4C, 5A : repas, élixir, boisson de résistance ou parchemin utilisé. */
+  | { k: 'consommer'; id: string; sorte: SorteConso }
   /** Emp (0.2) : achat dans sa boutique, Potion de Rappel bue, réponse « service » d'un PNJ. */
   /** Forgemagie : rune posée (issue officielle, lignes perdues), objets brisés en runes, runes fusionnées, mode « viser » terminé. */
   | { k: 'forge'; uid: number; rune: string; issue: 'critique' | 'neutre' | 'echec' | 'puits'; stat: string; gain: number; pertes: [string, number][]; kamas: number; exo: boolean;

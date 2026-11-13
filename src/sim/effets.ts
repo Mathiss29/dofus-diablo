@@ -1,6 +1,7 @@
 import { STAT_NAMES, type Stat } from './items';
 import type { Player } from './player';
 import { BENEDICTION, BENEDICTIONS } from './magasin';
+import { CONSO, ELIXIRS, REPAS, texteBonus } from './consommables';
 
 /** Bulles d'effets actifs (maquette « Bulles : 1A 2A+2B+2C 3A 4A 5A 6A 7A 8A ») : ce qui agit sur le perso en ce moment.
  *  sorte : 'sort' = bonus d'un de ses sorts (bord vert), 'monstre' = malus reçu (bord rouge), 'objet' = pouvoir d'objet (bord doré).
@@ -35,6 +36,8 @@ export function effetsActifs(p: Player): EffetActif[] {
       if (!e) { e = { id: m.src, sorte: 'sort', nom: d.name, sort: d.icon, t: m.t, tMax: m.t0 ?? m.t, lignes: [] }; parSort.set(m.src, e); out.push(e); }
       e.t = Math.max(e.t, m.t); e.tMax = Math.max(e.tMax, m.t0 ?? m.t);
       e.lignes.push(`${signe(m.n)} ${STAT_NAMES[m.k] ?? m.k}`);
+    } else if (m.src === 'boisson') {   // « Métiers : » 4A : boisson de résistance
+      out.push({ id: 'boisson', sorte: 'objet', nom: 'Boisson de résistance', carac: 'vie', t: m.t, tMax: m.t0 ?? m.t, lignes: [`${signe(m.n)} ${STAT_NAMES[m.k] ?? m.k}`] });
     } else if (!m.src) {   // sort de monstre (ex. Puissance retirée)
       let e = malus.get(m.k);
       const neg = m.n < 0;
@@ -56,6 +59,11 @@ export function effetsActifs(p: Player): EffetActif[] {
   // Bénédiction achetée au Marché (Magasin 6D), 30 minutes
   if (p.benediction) { const b = BENEDICTIONS[p.benediction.k];
     out.push({ id: 'benediction', sorte: 'objet', nom: b.nom, carac: 'puissance', t: p.benediction.reste, tMax: BENEDICTION.duree, lignes: [b.texte, `Encore ${Math.ceil(p.benediction.reste / 60)} min`] }); }
+  // « Métiers : » 4B + 4C : repas et élixir de 30 minutes
+  for (const [k, c, l] of [['repas', p.repas, REPAS], ['elixir', p.elixir, ELIXIRS]] as const) if (c && l[c.id]) {
+    out.push({ id: k, sorte: 'objet', nom: p.items?.resources[c.id]?.name ?? (k === 'repas' ? 'Repas' : 'Élixir'), carac: k === 'repas' ? 'vie' : 'puissance',
+      t: c.reste, tMax: CONSO.duree, lignes: [texteBonus(l[c.id]), `Encore ${Math.ceil(c.reste / 60)} min`] });
+  }
   // Bouclier (Ferveur)
   if (p.shieldT > 0 && p.shield > 0) {
     const d = sp[p.shieldSrc];
