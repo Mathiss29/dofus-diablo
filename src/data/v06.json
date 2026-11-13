@@ -1,4 +1,62 @@
 {
   "_doc": "Réglages de la 0.6 « du 60 au 90 » (maquette du 2026-11-13). Tout est en partie de test tant que V06_PUBLIC (src/sim/pouvoirs.ts) est faux.",
-  "decouverte": { "_doc": "6D : premier groupe vaincu sur une carte du dehors jamais chassée par ce perso : XP × (1 + xp)", "xp": 0.5 }
+  "decouverte": {
+    "_doc": "6D : premier groupe vaincu sur une carte du dehors jamais chassée par ce perso : XP × (1 + xp)",
+    "xp": 0.5
+  },
+  "elites": {
+    "_doc": "23A+23B : les élites (pas les boss) tirent nombre affixes au hasard, nombreIdoles si le score des idoles atteint scoreIdoles. Temps en secondes, parts des PV max.",
+    "nombre": 2,
+    "nombreIdoles": 3,
+    "scoreIdoles": 30,
+    "affixes": {
+      "glacial": {
+        "nom": "Glacial",
+        "couleur": "#8fd8ff",
+        "periode": 3,
+        "rayon": 60,
+        "duree": 5,
+        "pvParSeconde": 0.02,
+        "lent": 0.4
+      },
+      "ardent": {
+        "nom": "Ardent",
+        "couleur": "#ff8a3c",
+        "periode": 0.5,
+        "rayon": 34,
+        "duree": 2.5,
+        "pvParSeconde": 0.05
+      },
+      "vampirique": {
+        "nom": "Vampirique",
+        "couleur": "#d0102a",
+        "vol": 0.3
+      },
+      "rapide": {
+        "nom": "Rapide",
+        "couleur": "#f2d36b",
+        "vitesse": 0.4,
+        "attaque": 0.3
+      },
+      "bouclier": {
+        "nom": "Bouclier",
+        "couleur": "#7cc4ff",
+        "part": 0.3,
+        "periode": 10,
+        "regen": 0.1
+      },
+      "teleporteur": {
+        "nom": "Téléporteur",
+        "couleur": "#c9a2ff",
+        "periode": 6,
+        "distance": 220
+      },
+      "invocateur": {
+        "nom": "Invocateur",
+        "couleur": "#9ad15a",
+        "periode": 12,
+        "nombre": 2
+      }
+    }
+  }
 }

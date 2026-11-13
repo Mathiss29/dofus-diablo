@@ -1,4 +1,5 @@
 import { ALMANAX } from './almanax';
+import { ELITES } from './elites';
 import { etatIdolesVide, type EtatIdoles, type FxIdole } from './idoles';
 import type { StyleChoisi, Tenue } from './style';
 import { BENEDICTIONS, type AchatsDuJour, type Benediction } from './magasin';
@@ -1658,7 +1659,7 @@ export class Player extends Entity {
   }
   hurt(raw: number, fromX: number, fromY: number, world: World, element: Element = 'neutre', loin?: boolean): boolean {
     if (this.invuln > 0 || this.dead) return false;
-    const fi = this.fxIdoles, qui = fi ? world.monsters.find(m => !m.dead && m.x === fromX && m.y === fromY) : undefined;
+    const fi = this.fxIdoles, qui = world.monsters.find(m => !m.dead && m.x === fromX && m.y === fromY);
     if (fi) {   // idoles : Brouce (rage sous 50 % de PV), Hadibel et Tigel (critiques des monstres)
       if (fi.rage && qui && qui.hp < qui.maxHp / 2) raw *= 1 + fi.rage;
       if (fi.critMonstres && world.rng.next() < fi.critMonstres) {
@@ -1688,7 +1689,8 @@ export class Player extends Entity {
       }
     }
     this.hp -= dmg; this.flash = 0.1; this.invuln = this.cls.iframesOnHit; this.blesseA = this.age;
-    if (fi?.vol && qui && dmg > 0) qui.hp = Math.min(qui.maxHp, qui.hp + Math.round(dmg * fi.vol));   // Nehik : le monstre vole des PV
+    const vol = (fi?.vol ?? 0) + (qui?.affixes.includes('vampirique') ? ELITES.affixes.vampirique.vol : 0);   // Nehik ; élite Vampirique
+    if (vol && qui && dmg > 0) qui.hp = Math.min(qui.maxHp, qui.hp + Math.round(dmg * vol));
     const a = Math.atan2(this.y - fromY, this.x - fromX);
     this.kx += Math.cos(a) * 260; this.ky += Math.sin(a) * 260;
     world.emit({ k: 'hit', target: 'player', x: this.x, y: this.y, z: 50, amount: dmg, crit: false, element: element === 'meilleur' ? 'neutre' : element });

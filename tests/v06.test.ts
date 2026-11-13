@@ -7,6 +7,7 @@ import { coefChanceQuiMonte, raretes } from '../src/sim/butin';
 import { World } from '../src/sim/world';
 import { NO_INPUT } from '../src/sim/input';
 import { idolesGroupe } from '../src/sim/idolesCombat';
+import { poserAffixes } from '../src/sim/elites';
 
 const AS = JSON.parse(readFileSync(new URL('../public/assets/mondes/astrub/monde.json', import.meta.url), 'utf8')) as WorldData;
 const VIDE = { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} };
@@ -160,5 +161,30 @@ describe('0.6 : idoles (17-18)', () => {
     for (let i = 0; i < 60 * 5.2; i++) { m.state = 'chase'; m.x = p.x + 500; m.y = p.y; w.step(1 / 60, { ...NO_INPUT, aim: { x: p.x, y: p.y } }); vu ||= w.zonesIdoles.length > 0; }
     expect(vu).toBe(true);
     expect(p.hp).toBeLessThan(hp);
+  });
+});
+
+describe('0.6 : élites à affixes (23A+23B)', () => {
+  const ELITE = Object.keys(GAME_DATA.monsters).find(k => GAME_DATA.monsters[k].elite && !GAME_DATA.monsters[k].boss)!;
+  it('2 affixes, 3 avec 30 points d\'idoles ; rien hors partie de test ni sur un monstre normal', () => {
+    const w = monde(), p = w.player;
+    expect(ELITE).toBeDefined();
+    const e = w.spawnMonster(ELITE, p.x + 300, p.y);
+    expect(e.affixes.length).toBe(2);
+    expect(new Set(e.affixes).size).toBe(2);
+    expect(w.spawnMonster('bouftou', p.x + 300, p.y).affixes).toEqual([]);
+    expect(monde(false).spawnMonster(ELITE, p.x, p.y).affixes).toEqual([]);
+    p.idoles.possedees.push('walet'); w.basculerIdole('walet');
+    expect(w.spawnMonster(ELITE, p.x + 300, p.y).affixes.length).toBe(3);
+  });
+  it('Glacial laisse des flaques qui ralentissent ; Bouclier protège', () => {
+    const w = monde(), p = w.player;
+    const e = w.spawnMonster(ELITE, p.x + 40, p.y);
+    e.affixes = ['glacial']; e.state = 'chase';
+    for (let i = 0; i < 60 * 3.2; i++) { e.state = 'chase'; e.x = p.x + 20; e.y = p.y; w.step(1 / 60, { ...NO_INPUT, aim: { x: p.x, y: p.y } }); }
+    expect(w.zonesIdoles.some(z => z.lent)).toBe(true);
+    const b = w.spawnMonster(ELITE, p.x + 300, p.y);
+    b.bouclier = 0; poserAffixes(b, ['bouclier']);
+    expect(b.bouclier).toBe(Math.round(b.maxHp * 0.3));
   });
 });
