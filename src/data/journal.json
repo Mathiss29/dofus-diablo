@@ -2094,6 +2094,13 @@
               "Havre-Sac",
               "Partie de test"
             ]
+          },
+          {
+            "titre": "Un écran d'accueil plus clair",
+            "phrase": "Le prochain boss du monde et l'invasion de l'heure en direct, ton perso et Continuer réunis au même endroit.",
+            "details": "La touche Entrée relance ta partie. Le dernier carnet du Journal remplace le diaporama.",
+            "icone": "boss",
+            "etiquettes": ["Accueil"]
           }
         ],
         "Le monde": [],
@@ -2122,7 +2129,8 @@
         ],
         "Corrections": [
           "Le jeu ne se fige plus au bout de quelques minutes ou en entrant en jeu (image retirée encore à l'écran).",
-          "Les nouveaux sorts Iop, Crâ, Osamodas et Sacrieur ont leurs vrais effets visuels officiels."
+          "Les nouveaux sorts Iop, Crâ, Osamodas et Sacrieur ont leurs vrais effets visuels officiels.",
+          "Accueil : le texte de la version ne passe plus derrière le bouton Continuer."
         ],
         "En coulisses": [
           "Les sorts du niveau 61 au 90 se préparent en partie de test, sans rien changer au jeu public.",

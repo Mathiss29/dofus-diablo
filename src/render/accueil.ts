@@ -18,6 +18,8 @@ import { installable, installer, surChangement } from './installation';
 import { API, Compte } from './compte';
 import { DISCORD_INVITATION, IDLUS, STUDIO } from './liens';
 import { Parcours } from './parcours';
+import { heureParis } from './heure';
+import { BOSS_MONDE, VIVANT, candidatsInvasion, heureTexte, invasionDe, rendezVous } from '../sim/mondeVivant';
 import { nbEmplacements, NB_SECOURS, dernier, dureeTexte, exporter, importer, lireCimetiere, lirePersos, lireSecours, nomValide, persosEnLigne, prendreSecours, restaurerSecours, sauverPerso, supprimerPerso, type Perso } from './persos';
 
 /** Écrans hors du jeu (maquette unique, choix 17A à 23A, 19B, 22D, 30E) : accueil avec Incarnam en direct derrière,
@@ -36,29 +38,12 @@ const PLUS_TARD: Record<string, string> = { ecaflip: 'En essai : partie de test'
 const plusTard = (cle: string) => PLUS_TARD[cle] ?? 'Prévue après la 1.0';
 /** Version affichée et textes de l'accueil (Accueil 12A) : ils racontent la zone de la version, pas le moteur. */
 const VERSION = '0.5';
-const TEXTES: Record<string, { zone: string; slogan: string; ruban: string; lignes: string[] }> = {
-  '0.1': {
-    zone: 'INCARNAM, LE VILLAGE DANS LES NUAGES', slogan: 'Les nuages d\'Incarnam grouillent de monstres.', ruban: 'En chasse !',
-    lignes: ['Le Milimilou rôde dans la forêt, et la Milice cherche des bras.', 'Kardorim ne dort que d\'un œil au fond de sa crypte.', 'Astrub t\'attend sous les nuages, dans la prochaine version.'],
-  },
-  '0.2': {
-    zone: 'ASTRUB, LA CITÉ DES AVENTURIERS', slogan: 'Astrub et ses environs grouillent de monstres.', ruban: 'En chasse !',
-    lignes: ['Kankreblath et ses Vilinsekts pillent les maisons de la Cité.', 'Sous les pavés, les égouts grouillent de Rats Strubiens.', 'L\'Osamodas et le butin complet arrivent dans la prochaine version.'],
-  },
-  '0.3': {
-    zone: 'ASTRUB, LA CITÉ DES AVENTURIERS', slogan: 'Le butin complet est arrivé à Astrub.', ruban: 'En chasse !',
-    lignes: ['Brise tes légendaires chez Malek : leur pouvoir reste dans ton Codex.', 'L\'Osamodas et sa meute rejoignent l\'Iop et le Crâ.', 'Amakna et le Sacrieur arrivent dans la prochaine version.'],
-  },
-  '0.4': {
-    zone: 'AMAKNA, LE CONTINENT', slogan: 'Amakna s\'ouvre, de Madrestam à l\'île des Wabbits.', ruban: 'En route !',
-    lignes: ['Le Bouftou Royal n\'est plus seul : Bworks, Gobelins et Craqueleurs gardent leurs donjons.', 'Le Wa Wabbit et ses Cawottes t\'attendent sur leur île.', 'Prends le bateau pour Moon : les tambours Kanniboul battent déjà.'],
-  },
-  '0.5': {
-    zone: 'LE MONDE VIVANT', slogan: 'Toutes les 3 heures, un boss du monde se lève sur Amakna.', ruban: 'Il arrive !',
-    lignes: ['Chef de Guerre Bouftou, Gelées Royales, Chef Crocodaille et, la nuit, le Maître Vampire.', 'Chaque heure, une sous-zone est envahie : repousse-la et ouvre son coffre.', 'Forgelance, Eniripsa et Enutrof rejoignent l\'aventure.'],
-  },
+/** Écran d'accueil v2 (« Accueil : » 3B, 2026-11-13) : un slogan et une seule ligne « Nouveau » par version ; le détail est dans le Journal.
+ *  Le ruban et le bandeau du monde vivant (3A) se calculent à l'heure de Paris (voir vivantHtml). */
+const TEXTE = {
+  zone: 'LE MONDE VIVANT', slogan: 'Toutes les 3 heures, un boss du monde se lève sur Amakna.',
+  nouveau: 'Forgelance, Eniripsa et Enutrof rejoignent l\'aventure.',
 };
-const TEXTE = TEXTES[VERSION];
 /** Accueil des nouveaux venus (maquette « Accueil : » 2A, 4C, 9A) : ce qu'est le jeu, en quelques mots. */
 const PRESENTATION = {
   pitch: 'Un action-RPG <em>en temps réel</em> dans le Monde des Douze.',
@@ -84,13 +69,6 @@ const FAQ: [string, string][] = [
 /** Classe conseillée pour débuter (idée A) : badge à la création. */
 const DEBUTANT = 'iop';
 const nouveauVenu = () => lirePersos().every(p => !p) && lireCimetiere().length === 0;
-/** Pastilles de zones (Accueil 7A) : un clic ouvre la fiche de la zone. */
-const ZONES_ACC: { cle: string; nom: string; zone: string; sous: string[]; dispo: boolean; plus?: string }[] = [
-  { cle: 'incarnam', nom: 'Incarnam', zone: 'incarnam', sous: ['450', '444', '445', '442', '443', '778', '449', '446'], dispo: true },
-  { cle: 'crypte', nom: 'Crypte de Kardorim', zone: 'incarnam', sous: ['447'], dispo: true },
-  { cle: 'astrub', nom: 'Astrub', zone: 'astrub', sous: ['95', '99', '98', '173', '335', '96', '97', '30', '100', '102', '843'], dispo: true },
-  { cle: 'donjons-astrub', nom: 'Donjons d\'Astrub', zone: 'astrub', sous: ['306', '336', '82', '842'], dispo: true },
-];
 /** Illustration du dieu de la classe (class_/LevelUp{N} de Dofus 3) ; les autres classes ont le décor du titre. */
 const DIEUX = new Set(['iop', 'cra', 'osamodas']);
 /** Animations du perso sur le socle : nombre d'images de chaque bande (rendues comme le jeu, voir LISEZMOI ;
@@ -309,14 +287,49 @@ const CSS = `
 #acc .cartesB{width:calc(36*var(--u));display:grid;grid-template-columns:repeat(4,1fr);gap:calc(.6*var(--u))}
 #acc .cartesB div{background:#191a12e6;border:1px solid #3d3b2a;border-radius:calc(.5*var(--u));padding:calc(.7*var(--u));font-size:calc(.75*var(--u));font-weight:700;line-height:1.35;color:#c9c4ab}
 #acc .cartesB b{display:block;font-family:var(--disp);font-weight:400;color:#ffc14d;font-size:calc(1*var(--u));margin-bottom:calc(.2*var(--u))}
-#acc .studio{display:flex;align-items:center;gap:calc(.8*var(--u));padding:calc(.55*var(--u)) calc(.9*var(--u));background:#1d1e15ee;border:1px solid #45452f;border-radius:calc(.6*var(--u));font-weight:700;font-size:calc(.75*var(--u));color:#c9c4ab;max-width:calc(30*var(--u))}
-#acc .studio>img{width:calc(2.4*var(--u));height:calc(2.4*var(--u))}
-#acc .studio b{display:block;font-family:var(--disp);font-weight:400;font-size:calc(.95*var(--u));color:#bff07a}
-#acc .studio a{color:inherit;text-decoration:none}
-#acc .studio .jouerI{all:unset;cursor:pointer;font-family:var(--disp);font-size:calc(.85*var(--u));background:linear-gradient(#cff26a,#9ccd2c);color:var(--ink);border-radius:calc(.5*var(--u));padding:calc(.35*var(--u)) calc(.8*var(--u));white-space:nowrap}
-#acc .studio .sign{display:flex;align-items:center;gap:calc(.3*var(--u));margin-top:calc(.15*var(--u));color:#e0b45a;font-size:calc(.65*var(--u))}
-#acc .studio .sign img{width:calc(1*var(--u));height:calc(1*var(--u))}
-#acc .studio a:hover b,#acc .studio .sign:hover{text-decoration:underline}
+#acc .colA{left:calc(11*var(--u));top:calc(2.2*var(--u));bottom:calc(2*var(--u));width:calc(40*var(--u));display:flex;flex-direction:column;gap:calc(1*var(--u));align-items:flex-start}
+#acc .colA>.logoI{margin:calc(-.4*var(--u)) 0 0 calc(-.8*var(--u))}
+#acc .colA .pitch{position:static}
+#acc .slogan{font-weight:800;font-size:calc(1.6*var(--u));line-height:1.3;text-shadow:0 1px 3px #000}
+#acc .colA [data-vivant]{display:flex;flex-direction:column;gap:calc(.9*var(--u));align-items:flex-start;width:100%}
+#acc .colA .ribbon{font-size:calc(2.8*var(--u));margin-left:calc(-1.6*var(--u))}
+#acc .vivantC{display:grid;grid-template-columns:auto 1fr auto;gap:calc(.3*var(--u)) calc(1*var(--u));align-items:center;width:100%;background:#1d1e15ee;border:1px solid #5a4d2a;border-radius:calc(.6*var(--u));padding:calc(.7*var(--u)) calc(1*var(--u));box-shadow:0 calc(.3*var(--u)) calc(1*var(--u)) #0008}
+#acc .vivantC>img{width:calc(2.6*var(--u));height:calc(2.6*var(--u));object-fit:contain}
+#acc .vivantC>div:not(.inv){display:flex;flex-direction:column;min-width:0}
+#acc .vivantC b{font-family:var(--disp);font-weight:400;font-size:calc(1.25*var(--u));color:#ffd98a;line-height:1.15}
+#acc .vivantC .l2{font-size:calc(.8*var(--u));font-weight:700;color:#c9c4ab}
+#acc .vivantC .cpt{font-family:var(--disp);font-size:calc(1.3*var(--u));color:#e6fa9c;white-space:nowrap;font-variant-numeric:tabular-nums}
+#acc .vivantC .inv{grid-column:1/-1;border-top:1px solid #3c3a28;padding-top:calc(.45*var(--u));font-size:calc(.8*var(--u));font-weight:700;color:#e9d8b0;display:flex;gap:calc(.5*var(--u));align-items:center}
+#acc .vivantC .inv i{width:calc(.65*var(--u));height:calc(.65*var(--u));border-radius:50%;background:#e0572a;box-shadow:0 0 calc(.5*var(--u)) #e0572a;flex:none}
+#acc .nouv{font-weight:700;font-size:calc(.9*var(--u));color:#d7ecb0;text-shadow:0 1px 2px #000;line-height:1.5}
+#acc .nouv>span{background:#3c5a12;color:#e6fa9c;border-radius:calc(1*var(--u));padding:calc(.05*var(--u)) calc(.6*var(--u));margin-right:calc(.5*var(--u));font-weight:800;text-shadow:none}
+#acc .lien{all:unset;cursor:pointer;text-decoration:underline;color:#f1ecd8}
+#acc .lien:hover,#acc .lien:focus-visible{color:var(--lime)}
+#acc .actions{display:flex;gap:calc(.8*var(--u));align-items:center;flex-wrap:wrap}
+#acc .dbtn.petit{font-size:calc(.85*var(--u));padding:calc(.5*var(--u)) calc(1*var(--u))}
+#acc .perso{margin-top:auto;width:100%;display:grid;grid-template-columns:calc(4.4*var(--u)) 1fr;gap:calc(.35*var(--u)) calc(1*var(--u));align-items:center;background:#1b1c13f0;border:1px solid #4c4b3a;border-radius:calc(.7*var(--u));padding:calc(.9*var(--u)) calc(1*var(--u));box-shadow:0 calc(.4*var(--u)) calc(1.2*var(--u)) #0009}
+#acc .perso .tete{width:calc(4.4*var(--u));height:calc(4.4*var(--u));object-fit:contain;border-radius:50%;background:#2a2c1f;border:calc(.15*var(--u)) solid var(--lime);grid-row:span 3}
+#acc .perso .nom{font-family:var(--disp);font-size:calc(1.35*var(--u));color:#f6f1dc;line-height:1.1}
+#acc .perso .nom em{font-style:normal;font-family:inherit;font-family:Nunito,system-ui,sans-serif;font-weight:800;font-size:calc(.85*var(--u));color:#c9c4ab;margin-left:calc(.5*var(--u))}
+#acc .perso .xp{height:calc(.45*var(--u));border-radius:9px;background:#33342a;overflow:hidden}
+#acc .perso .xp i{display:block;height:100%;background:linear-gradient(90deg,#9ccd2c,#d3f46f)}
+#acc .perso .det{font-size:calc(.8*var(--u));font-weight:700;color:#c9c4ab}
+#acc .perso .det b{color:#f1ecd8}
+#acc .perso .actions{grid-column:1/-1;margin-top:calc(.5*var(--u))}
+#acc .kbd{font-size:calc(.7*var(--u));color:#a39f88;white-space:nowrap}
+#acc .kbd b{border:1px solid #5b5946;border-radius:calc(.25*var(--u));padding:0 calc(.3*var(--u));color:#d8d2bb}
+#acc .haut{right:calc(2*var(--u));top:calc(1.6*var(--u));display:flex;gap:calc(.8*var(--u));align-items:center}
+#acc .carnetA{right:calc(2*var(--u));top:calc(5.8*var(--u));width:calc(24*var(--u));cursor:pointer;background:#1d1e15ee;border:1px solid #5a4d2a;border-radius:calc(.7*var(--u));overflow:hidden;box-shadow:0 calc(1*var(--u)) calc(3*var(--u)) #000a}
+#acc .carnetA:hover,#acc .carnetA:focus-visible{border-color:#e0b45a;outline:none}
+#acc .carnetA>img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
+#acc .carnetA>div{padding:calc(.7*var(--u)) calc(.9*var(--u));display:flex;flex-direction:column;gap:calc(.25*var(--u))}
+#acc .carnetA b{font-family:var(--disp);font-weight:400;font-size:calc(1.15*var(--u));color:#f6f1dc}
+#acc .carnetA .pastille{top:calc(.6*var(--u));left:calc(.6*var(--u));right:auto}
+#acc .pied{right:calc(2*var(--u));bottom:calc(1.4*var(--u));display:flex;gap:calc(.5*var(--u));align-items:center;font-weight:700;font-size:calc(.75*var(--u));color:#a39f88;text-shadow:0 1px 2px #000}
+#acc .pied a{display:flex;gap:calc(.35*var(--u));align-items:center;color:inherit;text-decoration:none}
+#acc .pied img{width:calc(1.2*var(--u));height:calc(1.2*var(--u))}
+#acc .pied b{color:#d7ecb0}
+#acc .pied a:hover b,#acc .pied a:hover{text-decoration:underline}
 #acc .lienfaq{all:unset;position:absolute;cursor:pointer;font-weight:800;font-size:calc(.9*var(--u));color:#e8e2c8;border-bottom:1px dashed #8a8566;text-shadow:0 1px 2px #000}
 #acc .lienfaq:hover,#acc .lienfaq:focus-visible{color:var(--lime);border-color:var(--lime)}
 #acc .faq{display:grid;gap:calc(.7*var(--u));margin-top:calc(.6*var(--u))}
@@ -356,6 +369,14 @@ function entreeHtml(l: Ligne): string {
     <p class="jp">${esc(l.phrase)}</p>${l.details ? `<details><summary>Détails</summary><p>${esc(l.details)}</p></details>` : ''}</div></div>`;
 }
 const dateLongue = (d: string) => new Date(`${d}T12:00:00`).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+/** « il y a 2 h », « hier », « il y a 3 jours » (carte du perso, écran d'accueil v2 4A). */
+function ilYa(t: number): string {
+  const m = Math.floor((Date.now() - t) / 60000);
+  if (m < 1) return 'à l\'instant';
+  if (m < 60) return `il y a ${m} min`;
+  const h = Math.floor(m / 60); if (h < 24) return `il y a ${h} h`;
+  const j = Math.floor(h / 24); return j === 1 ? 'hier' : `il y a ${j} jours`;
+}
 const CLE_LU = 'diablofus.journal';
 function carnetNonLu(): boolean {
   if (!CARNETS.length) return false;
@@ -415,6 +436,8 @@ export class Accueil {
       this.anim = requestAnimationFrame(tick);
       if (t - last < 40) return;   // 25 images par seconde, comme les animations de Dofus
       last = t; f++;
+      // bandeau du monde vivant (écran d'accueil v2 3A) : le compte à rebours suit l'heure de Paris
+      if (t - this.vivantT > 1000) { this.vivantT = t; const el = this.root.hidden ? null : this.root.querySelector<HTMLElement>('[data-vivant]'); if (el) { const h = this.vivantHtml(!nouveauVenu()); if (h !== el.innerHTML) el.innerHTML = h; } }
       // diaporama : capture suivante toutes les 4 s, sauf sous la souris ou fenêtre ouverte (« Diapo : » 7B)
       if (t - this.diapoT > 4000) { this.diapoT = t; if (!this.root.hidden && !this.modal && !this.root.querySelector('.diapo:hover') && this.root.querySelector('.diapo')) this.montrerDiapo(this.diapoI + 1); }
       this.root.querySelectorAll<HTMLCanvasElement>('canvas.vivant').forEach(cv => this.socle(cv, f));
@@ -430,7 +453,24 @@ export class Accueil {
       });
     };
     if (!matchMedia('(prefers-reduced-motion: reduce)').matches) this.anim = requestAnimationFrame(tick);
+    else setInterval(() => { const el = this.root.hidden ? null : this.root.querySelector<HTMLElement>('[data-vivant]'); if (el) el.innerHTML = this.vivantHtml(!nouveauVenu()); }, 15000);
+    // écran d'accueil v2 (9A) : Entrée = Continuer ; sur un bouton ou un carnet qui a le focus, Entrée garde son sens
+    window.addEventListener('keydown', e => {
+      if (e.key !== 'Enter' || e.repeat || this.root.hidden || this.page !== 'accueil' || this.modal) return;
+      const a = document.activeElement as HTMLElement | null;
+      if (a && a !== document.body && this.root.contains(a)) {
+        if (a.matches('[role=button]')) { e.preventDefault(); e.stopImmediatePropagation(); a.click(); }
+        return;
+      }
+      if (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return;
+      const d = dernier();
+      if (d == null || !lirePersos()[d]) return;
+      e.preventDefault(); e.stopImmediatePropagation();
+      Son.jouer(MANIFESTE.ui.ok, 'interface', { cle: 'clic', ecart: 0.05 });
+      this.jouer(d);
+    }, true);
   }
+  private vivantT = 0;
 
   /** Perso dessiné en direct sur le socle (maquette Apparence 3A) : mêmes place et taille que les anciennes planches
    *  (rendu à l'échelle 3,2, pied en (210, 592) d'une image de 504 x 684 pixels affichée sur 24 unités de haut). */
@@ -557,37 +597,73 @@ export class Accueil {
       <button type="button" class="play" data-jouer>Jouer</button><div class="ver">VERSION ${VERSION}</div></nav>`;
   }
 
-  // --- Accueil (17A) : Incarnam en direct derrière, titre, Continuer / Nouvelle partie --------------------------
+  // --- Accueil (17A ; écran d'accueil v2, « Accueil : 1A 2A 3A+3B 4A 5A 6A 7A 8A 9A 10A+10B ») ---------------------------
+  // Une colonne à gauche qui se lit de haut en bas, en flux (1A : un texte plus long pousse la suite, rien ne passe dessous) ;
+  // à droite, le dernier carnet du Journal (6A). Le décor en direct reste derrière, sous un voile plus fort (2A).
   private pageAccueil(): string {
     if (nouveauVenu()) return this.pageBienvenue();
-    const l = lirePersos(), d = dernier(), p = d != null ? l[d] : null, n = l.filter(Boolean).length;
-    const c = p && classe(p.classe);
-    return `<div class="cover" style="background:linear-gradient(90deg,#0d0e09f0 6%,#0d0e09b0 30%,#0d0e0918 55%,transparent 70%)"></div>
-    <div class="abs tiny" style="left:calc(11*var(--u));top:calc(2.2*var(--u));letter-spacing:.15em;font-weight:800">${TEXTE.zone}</div>
-    <img class="abs logoI" style="left:calc(10.4*var(--u));top:calc(3.6*var(--u))" src="${v('assets/logo/logo.webp')}" alt="Diablofus : Les Douze Enfers">
-    <div class="abs" style="left:calc(11.5*var(--u));top:calc(15.2*var(--u));font-weight:800;font-size:calc(1.7*var(--u))">${TEXTE.slogan}</div>
-    <div class="abs ribbon" style="left:calc(9.8*var(--u));top:calc(18.2*var(--u))">${TEXTE.ruban}</div>
-    <div class="abs" style="left:calc(11.5*var(--u));top:calc(26.8*var(--u));font-weight:700;font-size:calc(1.05*var(--u));line-height:1.75;max-width:calc(34*var(--u))">
-      ${TEXTE.lignes.join('<br>')}</div>
-    <div class="abs" style="left:calc(11.5*var(--u));top:calc(34.5*var(--u));display:flex;gap:calc(1*var(--u));align-items:center">
-      ${p ? `<button type="button" class="lbtn" data-continuer>Continuer · ${esc(p.nom)}, ${c!.nom} niv. ${p.etat?.level ?? 1}</button>
-        <button type="button" class="dbtn" data-go="creation">Nouvelle partie</button>`
-        : `<button type="button" class="lbtn" data-go="creation">Nouvelle partie</button>`}
+    const l = lirePersos(), d = dernier(), p = d != null ? l[d] : null;
+    const c0 = CARNETS[0];
+    return `<div class="cover" style="background:linear-gradient(90deg,#0d0e09f5 6%,#0d0e09e3 32%,#0d0e09a8 48%,#0d0e0938 62%,transparent 76%)"></div>
+    <div class="abs colA">
+      <div class="tiny" style="letter-spacing:.15em;font-weight:800">${TEXTE.zone} · VERSION ${VERSION}</div>
+      <img class="logoI" src="${v('assets/logo/logo.webp')}" alt="Diablofus : Les Douze Enfers">
+      <div class="slogan">${TEXTE.slogan}</div>
+      <div data-vivant>${this.vivantHtml(true)}</div>
+      ${TEXTE.nouveau ? `<div class="nouv"><span>Nouveau</span>${esc(TEXTE.nouveau)}${c0 ? ` <button type="button" class="lien" data-carnet="${c0.date}">Lire le carnet</button>` : ''}</div>` : ''}
+      ${p ? this.cartePerso(p) : `<div class="actions" style="margin-top:auto"><button type="button" class="lbtn" data-go="creation">Nouvelle partie</button>
+        <button type="button" class="dbtn petit" data-go="persos">Mes personnages</button></div>`}
     </div>
-    <div class="abs" style="left:calc(11.5*var(--u));top:calc(39.6*var(--u));display:flex;gap:calc(1*var(--u));align-items:center">
-      <button type="button" class="dbtn" style="font-size:calc(.85*var(--u));padding:calc(.5*var(--u)) calc(1*var(--u))" data-go="persos">Mes personnages${n ? ` (${n})` : ''}</button>
-      <span class="tiny">${nbEmplacements()} emplacements · sauvegarde automatique</span>
-      ${installable() ? `<button type="button" class="dbtn" style="font-size:calc(.8*var(--u));padding:calc(.45*var(--u)) calc(.9*var(--u));color:#cfe9a0;border-color:#4d5a2c" data-installer title="Ouvre Diablofus dans sa propre fenêtre, avec une icône sur le bureau. Toujours à jour.">⤓ Installer le jeu</button>` : ''}</div>
-    ${p ? this.derniereFois(p) : ''}
-    ${this.diapo('right:calc(2*var(--u));top:calc(7.6*var(--u));width:calc(24*var(--u))', true)}
-    <div class="abs" style="right:calc(2*var(--u));top:calc(1.6*var(--u));display:flex;gap:calc(.8*var(--u));align-items:center">
-    ${this.communaute()}
-    ${carnetNonLu() ? `<div class="card" style="padding:calc(.7*var(--u)) calc(1*var(--u));display:flex;gap:calc(1*var(--u));align-items:center;font-weight:800;font-size:calc(.85*var(--u))">
-      <span class="pastille" style="position:static">nouveau</span><span>Carnet du ${dateLongue(CARNETS[0].date)}<br><span class="tiny">${esc(CARNETS[0].titre)}</span></span>
-      <button type="button" class="mini" data-carnet="${CARNETS[0].date}">Lire</button></div>` : ''}</div>
-    <div class="abs" style="right:calc(2*var(--u));bottom:calc(1.6*var(--u));display:flex;gap:calc(.6*var(--u))">
-      ${ZONES_ACC.map(z => `<button type="button" class="chip${z.cle === 'astrub' ? ' on' : z.dispo ? '' : ' off'}" style="cursor:pointer" data-zone="${z.cle}">${z.nom}${z.dispo ? '' : ' · bientôt'}</button>`).join('')}</div>
-    ${this.ombrelune()}`;
+    <div class="abs haut">${this.communaute()}</div>
+    ${c0 ? `<div class="abs carnetA" data-carnet="${c0.date}" role="button" tabindex="0" aria-label="Lire le carnet du ${dateLongue(c0.date)}">
+      ${carnetNonLu() ? '<span class="pastille">nouveau</span>' : ''}${c0.capture ? `<img src="${v(c0.capture)}" alt="">` : ''}
+      <div><span class="tiny">Carnet du ${dateLongue(c0.date)}</span><b>${esc(c0.titre)}</b><span class="mini" style="align-self:flex-start">Lire</span></div></div>` : ''}
+    ${this.pied()}`;
+  }
+
+  /** Bandeau du monde vivant (3A, 10B) : le prochain boss du monde et l'invasion de l'heure, à l'heure de Paris (la même que le jeu,
+   *  le crieur du Bastion et la carte M). Avec ruban : celui-ci suit l'état (« Dans 1 h 12 », « Il arrive ! » 10 min avant, « Il est là ! »).
+   *  Redessiné chaque seconde par tick(), sans toucher au reste de la page. */
+  private vivantHtml(ruban: boolean): string {
+    const s = heureParis(), rv = rendezVous(s), B = VIVANT.boss;
+    const cur = rv.enCours, cle = cur ? cur.cle : rv.suivant.cle, def = BOSS_MONDE[cle];
+    if (!def) return '';
+    const subs = GAME_DATA.zones.astrub?.open?.subareas ?? {}, lieu = subs[String(def.sousZone)]?.name ?? 'Amakna';
+    const minutes = (n: number) => { const m = Math.max(1, Math.ceil(n / 60)); return m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')}`; };
+    const reste = rv.suivant.debut - s;
+    const etat = cur ? 'Il est là !' : reste <= B.annonce ? 'Il arrive !' : `Dans ${minutes(reste)}`;
+    const l2 = cur ? `Il attend encore ${minutes(cur.debut + B.attente - s)} · ${esc(lieu)}` : `À ${heureTexte(rv.suivant.debut)} · ${esc(lieu)}`;
+    if (!this.candidats) this.candidats = candidatsInvasion(GAME_DATA);
+    const inv = invasionDe(s, this.candidats), nomInv = inv ? subs[String(inv.sub)]?.name : '';
+    return `${ruban ? `<div class="ribbon">${etat}</div>` : ''}
+      <div class="vivantC"><img src="${v('assets/ui/iconBossSkull.png')}" alt="">
+        <div><span class="tiny">${cur ? 'Boss du monde' : 'Prochain boss du monde'}</span><b>${esc(def.nom)}</b><span class="l2">${l2}</span></div>
+        ${ruban ? '' : `<span class="cpt">${etat}</span>`}
+        ${nomInv ? `<div class="inv"><i></i>Invasion en cours : ${esc(nomInv)} · encore ${minutes(inv!.fin - s)}</div>` : ''}</div>`;
+  }
+  private candidats: number[] | null = null;
+
+  /** Carte du perso autour du bouton Continuer (4A, 8A, 9A) : tête, niveau, XP, lieu, quand, et la dernière partie en une ligne. */
+  private cartePerso(p: Perso): string {
+    const c = classe(p.classe), niv = p.etat?.level ?? 1, base = GAME_DATA.classes[p.classe]?.xpBase ?? 0;
+    const xp = base ? Math.max(0, Math.min(1, (p.etat?.xp ?? 0) / (base * niv))) : 0;
+    const s = p.session, duree = s ? (p.maj - s.debut) / 1000 : 0;
+    const bouts: string[] = [];
+    if (s && (duree >= 60 || s.vaincus > 0)) {
+      if (s.niveau > s.niveau0) bouts.push(`<b>+${s.niveau - s.niveau0} niveau${s.niveau - s.niveau0 > 1 ? 'x' : ''}</b>`);
+      if (s.vaincus) bouts.push(`<b>${s.vaincus} monstre${s.vaincus > 1 ? 's' : ''}</b>`);
+      if (s.quetes) bouts.push(`<b>${s.quetes} quête${s.quetes > 1 ? 's' : ''}</b>`);
+      if (s.meilleur) bouts.push(`meilleur objet <b style="color:${RARITY_COLORS[s.meilleur.rarete]}">${esc(s.meilleur.nom)}</b>`);
+    }
+    return `<div class="perso">
+      <img class="tete" src="${tete(c, p.sexe)}" alt="">
+      <div class="nom">${esc(p.nom)}<em>${c.nom} niv. ${niv}${p.hardcore ? ' · Hardcore' : ''}</em></div>
+      <div class="xp" title="Expérience : ${Math.floor(xp * 100)} %"><i style="width:${(xp * 100).toFixed(1)}%"></i></div>
+      <div class="det">${esc(p.lieu)} · joué ${ilYa(p.maj)}${bouts.length ? ` · ${bouts.join(', ')}` : ''}</div>
+      <div class="actions"><button type="button" class="lbtn" data-continuer>Continuer</button>
+        <button type="button" class="dbtn petit" data-go="persos">Changer de perso</button>
+        <button type="button" class="dbtn petit" data-go="creation">Nouvelle partie</button>
+        <span class="kbd">ou <b>Entrée</b></span></div></div>`;
   }
 
   /** Diaporama (« Diapo : » 7A 7B 8A) : fondu + zoom lent toutes les 4 s, pause au survol, points cliquables, clic = en grand. */
@@ -616,9 +692,10 @@ export class Accueil {
   }
   private modalLarge = false;
 
-  /** Joueurs en ligne (Accueil 9B, caché à 0) et invitation au Discord (6A). */
+  /** Joueurs en ligne (Accueil 9B, caché à 0), « Installer » (écran d'accueil v2, 8A) et invitation au Discord (6A). */
   private communaute(): string {
     return `${this.enLigne > 0 ? `<span class="enligne"><i></i>${this.enLigne} aventurier${this.enLigne > 1 ? 's' : ''} en ligne</span>` : ''}
+      ${installable() ? `<button type="button" class="dbtn petit" style="color:#cfe9a0;border-color:#4d5a2c" data-installer title="Ouvre Diablofus dans sa propre fenêtre, avec une icône sur le bureau. Toujours à jour.">⤓ Installer</button>` : ''}
       <a class="dbtn discord" href="${DISCORD_INVITATION}" target="_blank" rel="noopener" data-discord-rejoindre>Rejoindre le Discord</a>`;
   }
   /** Joueurs en ligne lus sur le serveur (/sante), au plus une fois par minute. */
@@ -637,52 +714,34 @@ export class Accueil {
    *  un seul gros bouton. Les anciens joueurs gardent l'accueil de version. */
   private pageBienvenue(): string {
     const P = PRESENTATION;
-    return `<div class="cover" style="background:linear-gradient(90deg,#0d0e09f5 6%,#0d0e09c8 36%,#0d0e0930 60%,transparent 78%)"></div>
-    <div class="abs tiny" style="left:calc(11*var(--u));top:calc(2.2*var(--u));letter-spacing:.15em;font-weight:800">${TEXTE.zone}</div>
-    <img class="abs logoI" style="left:calc(10.4*var(--u));top:calc(3.6*var(--u))" src="${v('assets/logo/logo.webp')}" alt="Diablofus : Les Douze Enfers">
-    <h1 class="abs pitch" style="left:calc(11.5*var(--u));top:calc(15*var(--u))">${P.pitch}</h1>
-    <div class="abs pastilles" style="left:calc(11.5*var(--u));top:calc(21.4*var(--u))">${P.pastilles.map(x => `<span>${esc(x)}</span>`).join('')}</div>
-    <div class="abs" style="left:calc(11.5*var(--u));top:calc(24.9*var(--u));font-weight:700;font-size:calc(1.05*var(--u));line-height:1.75;max-width:calc(36*var(--u))">
-      ${P.lignes.map(x => `<div class="point">${x}</div>`).join('')}</div>
-    <div class="abs" style="left:calc(11.5*var(--u));top:calc(33.6*var(--u));display:flex;gap:calc(1*var(--u));align-items:center">
-      <button type="button" class="lbtn" style="font-size:calc(1.6*var(--u));padding:calc(.9*var(--u)) calc(2.6*var(--u))" data-go="creation">Jouer gratuitement</button>
-      <button type="button" class="dbtn" style="font-size:calc(.85*var(--u));padding:calc(.5*var(--u)) calc(1*var(--u))" data-go="persos">Mes personnages</button></div>
-    <div class="abs" style="left:calc(11.5*var(--u));top:calc(39.4*var(--u));display:flex;gap:calc(1*var(--u));align-items:center">
-      ${Compte.etat === 'connecte' ? '' : `<button type="button" class="mini" data-discord style="background:#5865f2;border-color:#7983f5;padding:calc(.45*var(--u)) calc(1*var(--u))">Se connecter avec Discord</button>`}
-      <span class="tiny">${Compte.etat === 'connecte' ? 'Connecté : tes persos sont sauvés en ligne' : 'Facultatif · sauvegarde automatique dans ton navigateur'}</span>
-      ${installable() ? `<button type="button" class="dbtn" style="font-size:calc(.8*var(--u));padding:calc(.45*var(--u)) calc(.9*var(--u));color:#cfe9a0;border-color:#4d5a2c" data-installer title="Ouvre Diablofus dans sa propre fenêtre, avec une icône sur le bureau. Toujours à jour.">⤓ Installer le jeu</button>` : ''}</div>
-    <div class="abs" style="left:calc(11.5*var(--u));top:calc(42.6*var(--u))" ><span class="tiny">⌨ Clavier + souris · PC conseillé</span></div>
-    <div class="abs" style="right:calc(2*var(--u));top:calc(1.6*var(--u));display:flex;gap:calc(.8*var(--u));align-items:center">${this.communaute()}</div>
+    return `<div class="cover" style="background:linear-gradient(90deg,#0d0e09f7 6%,#0d0e09e6 34%,#0d0e09b0 50%,#0d0e0940 64%,transparent 78%)"></div>
+    <div class="abs colA" style="gap:calc(.85*var(--u))">
+      <div class="tiny" style="letter-spacing:.15em;font-weight:800">${TEXTE.zone}</div>
+      <img class="logoI" src="${v('assets/logo/logo.webp')}" alt="Diablofus : Les Douze Enfers">
+      <h1 class="pitch">${P.pitch}</h1>
+      <div class="pastilles">${P.pastilles.map(x => `<span>${esc(x)}</span>`).join('')}</div>
+      <div style="font-weight:700;font-size:calc(1*var(--u));line-height:1.65">${P.lignes.map(x => `<div class="point">${x}</div>`).join('')}</div>
+      <div data-vivant>${this.vivantHtml(false)}</div>
+      <div class="actions" style="margin-top:auto">
+        <button type="button" class="lbtn" style="font-size:calc(1.6*var(--u));padding:calc(.9*var(--u)) calc(2.6*var(--u))" data-go="creation">Jouer gratuitement</button>
+        <button type="button" class="dbtn petit" data-go="persos">Mes personnages</button></div>
+      <div class="actions">
+        ${Compte.etat === 'connecte' ? '' : `<button type="button" class="mini" data-discord style="background:#5865f2;border-color:#7983f5;padding:calc(.45*var(--u)) calc(1*var(--u))">Se connecter avec Discord</button>`}
+        <span class="tiny">${Compte.etat === 'connecte' ? 'Connecté : tes persos sont sauvés en ligne' : 'Facultatif · sauvegarde automatique dans ton navigateur'} · ⌨ Clavier + souris, PC conseillé</span></div>
+    </div>
+    <div class="abs haut">${this.communaute()}</div>
     ${this.diapo('right:calc(2.4*var(--u));top:calc(7*var(--u));width:calc(36*var(--u))')}
-    <div class="abs cartesB" style="right:calc(2.4*var(--u));${DIAPO.length ? 'top:calc(29.4*var(--u))' : 'bottom:calc(5.4*var(--u))'}">${P.cartes.map(([t, x]) => `<div><b>${esc(t)}</b>${esc(x)}</div>`).join('')}</div>
-    <button type="button" class="abs lienfaq" style="right:calc(2.4*var(--u));bottom:calc(2*var(--u))" data-faq>C'est quoi Diablofus ?</button>
-    ${this.ombrelune()}`;
+    <div class="abs cartesB" style="right:calc(2.4*var(--u));${DIAPO.length ? 'top:calc(29.4*var(--u))' : 'bottom:calc(7*var(--u))'}">${P.cartes.map(([t, x]) => `<div><b>${esc(t)}</b>${esc(x)}</div>`).join('')}</div>
+    <button type="button" class="abs lienfaq" style="right:calc(2.4*var(--u));bottom:calc(4.2*var(--u))" data-faq>C'est quoi Diablofus ?</button>
+    ${this.pied()}`;
   }
 
-  /** « Ombrelune Studio » 5A + 5C : signature du studio et carte « Découvre aussi Idlus », en bas à gauche de l'accueil. */
-  private ombrelune(): string {
-    return `<div class="abs studio" style="left:calc(11.5*var(--u));bottom:calc(1.6*var(--u))">
-      <img src="${v('assets/accueil/idlus.webp')}" alt="">
-      <div><a href="${IDLUS}" target="_blank" rel="noopener"><b>Découvre aussi Idlus</b>L'idle aux 8 héros du même studio, aussi sur téléphone</a>
-        <a class="sign" href="${STUDIO}" target="_blank" rel="noopener"><img src="${v('assets/accueil/ombrelune.webp')}" alt="">Un jeu Ombrelune Studio</a></div>
-      <a class="jouerI" href="${IDLUS}" target="_blank" rel="noopener">Jouer</a></div>`;
+  /** Pied de page (7A) : la signature du studio et Idlus, en une ligne discrète en bas à droite. */
+  private pied(): string {
+    return `<div class="abs pied"><a class="sign" href="${STUDIO}" target="_blank" rel="noopener"><img src="${v('assets/accueil/ombrelune.webp')}" alt="">Un jeu Ombrelune Studio</a>
+      <span>·</span><a href="${IDLUS}" target="_blank" rel="noopener"><img src="${v('assets/accueil/idlus.webp')}" alt=""><b>Découvre aussi Idlus →</b></a></div>`;
   }
 
-  /** « La dernière fois… » (Accueil 4C) : la dernière partie du perso, sur une note de parchemin. */
-  private derniereFois(p: Perso): string {
-    const s = p.session, d = s ? Math.max(0, Math.round((p.maj - s.debut) / 1000)) : 0;
-    const l: [string, string][] = s ? [
-      ...(s.niveau > s.niveau0 ? [['Niveaux', `+${s.niveau - s.niveau0}`] as [string, string]] : []),
-      ['Monstres vaincus', String(s.vaincus)],
-      ...(s.quetes ? [['Quêtes finies', String(s.quetes)] as [string, string]] : []),
-      ...(s.elites.length ? [['Élites', s.elites.join(', ')] as [string, string]] : []),
-      ...(s.meilleur ? [['Meilleur objet', `<span style="color:${RARITY_COLORS[s.meilleur.rarete] === '#e8e2d4' ? '#2a2615' : RARITY_COLORS[s.meilleur.rarete]}">${esc(s.meilleur.nom)}</span>`] as [string, string]] : []),
-    ] : [];
-    return `<div class="abs card" style="right:calc(2*var(--u));bottom:calc(5.4*var(--u));width:calc(19*var(--u));padding:calc(.8*var(--u)) calc(1.1*var(--u));font-weight:700;font-size:calc(.85*var(--u));transform:rotate(-1deg);background:#f4ecd0;color:#2a2615;border-color:#c9b98a">
-      <div style="font-family:var(--disp);font-size:calc(1.2*var(--u));margin-bottom:calc(.3*var(--u))">${s ? 'La dernière fois…' : 'Dernière sortie'}</div>
-      <div style="display:flex;justify-content:space-between;gap:calc(.6*var(--u))"><span>${esc(p.lieu)}</span><span>${dureeTexte(s ? d : p.temps)}${s ? '' : ' de jeu'}</span></div>
-      ${l.map(([k, x]) => `<div style="display:flex;justify-content:space-between;gap:calc(.6*var(--u));color:#5a5236"><span>${k}</span><span style="color:#2a2615;text-align:right">${k === 'Meilleur objet' ? x : esc(x)}</span></div>`).join('')}</div>`;
-  }
   /** Résumé du perso choisi (Accueil 4A). */
   private resume(p: Perso): string {
     const st = p.stats, e = p.etat;
@@ -934,16 +993,7 @@ export class Accueil {
       const l = lireSecours();
       this.modal = `<h2>Copies de secours</h2><div class="tiny">Les ${NB_SECOURS} dernières, prises en lançant une partie, avant un import et avant une suppression. Restaurer remplace la sauvegarde actuelle (elle-même gardée en copie).</div>
         <div class="lst">${l.length ? l.map((c, i) => `<div><span>${new Date(c.date).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })}</span><button type="button" class="mini" data-restaurer="${i}">Restaurer</button><small>${esc(c.resume)}</small></div>`).join('') : '<div><span class="no">Aucune copie pour l\'instant.</span></div>'}</div>`;
-    } else {
-      const z = ZONES_ACC.find(x => x.cle === k); if (!z) return;
-      const sub = GAME_DATA.zones[z.zone]?.open?.subareas ?? {}, vues = new Set(lirePersos().flatMap(p => p?.zones ?? []));
-      const lignes = z.sous.map(id => sub[id]).filter(Boolean);
-      const nb = lignes.filter(x => vues.has(x.name)).length;
-      this.modal = `<h2>${esc(z.nom)}</h2>${z.dispo ? `<div class="tiny">${nb} / ${lignes.length} sous-zone${lignes.length > 1 ? 's' : ''} découverte${nb > 1 ? 's' : ''} par tes personnages</div>
-        <div class="lst">${lignes.map(x => { const vu = vues.has(x.name), mons = [...new Set(x.monsters)].map(m => GAME_DATA.monsters[m]?.name ?? m);
-          return `<div><span class="${vu ? 'ok' : 'no'}">${vu ? '✓ ' : ''}${esc(x.name)}</span><span class="tiny">niveau ${x.level}</span><small>${mons.length ? esc(mons.join(', ')) : 'Pas de monstres'}</small></div>`; }).join('')}</div>`
-        : `<div class="tiny" style="font-size:calc(.9*var(--u));margin-top:calc(.6*var(--u))">${esc(z.plus ?? '')}</div>`}`;
-    }
+    } else return;
     this.render();
   }
 
@@ -959,7 +1009,6 @@ export class Accueil {
     on('[data-go]', e => this.go(e.dataset.go as Page));
     on('[data-installer]', () => installer().then(ok => { this.render(); if (ok) this.toast('Diablofus est installé : il se lance depuis le bureau ou le menu Démarrer'); }));
     // fenêtres par-dessus (fiche de zone, cimetière, copies de secours)
-    on('[data-zone]', e => this.ouvrir(e.dataset.zone!));
     on('[data-faq]', () => this.ouvrir('faq'));
     r.querySelector<HTMLElement>('[data-diapo]')?.addEventListener('click', e => {
       const b = (e.target as HTMLElement).closest<HTMLElement>('[data-diapo-i]');
