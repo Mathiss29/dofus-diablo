@@ -29,6 +29,7 @@ import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type Sor
 import { porteeSort } from './apercu';
 import { aimanter, alchiRhetorique, apresCoupEniripsa, envol, impactEniripsa, majEniripsa } from './eniripsa';
 import { avantImpactEcaflip, chateauBrise, impactEcaflip, majEcaflip, neuviemeVie, type Carte, type MainGagnante } from './ecaflip';
+import { impactSorts06, pasJoueur06 } from './sorts06';
 import { impactEnutrof, majEnutrof, perteCoffre, recordsVides, type LigneCoffre, type RecordsCoffre, type VitrineCoffre } from './enutrof';
 import type { Butin } from './butin';
 import { DANGER } from './danger';
@@ -210,6 +211,8 @@ export class Player extends Entity {
   shield = 0; shieldT = 0; shieldT0 = 0; shieldSrc = '';
   /** Sorts officiels de monstres : dommages subis × subis pendant subisT s (Grognement : 1,2), Pacifiste pendant pacifiste s (Hyperleukocytine : ne peut plus infliger de dommages). */
   subis = 1; subisT = 0; pacifiste = 0;
+  /** Poinçon (Forgelance, 0.6) : secondes où la Lance plantée immobilise les ennemis à poinconR px. */
+  poinconT = 0; poinconR = 0;
   /** Sacrieur : palier de Souffrance gardé après un soin (maquette 3B) et secondes restantes ; Mutilation en cours ; Couronne d'Épines (renvoi). */
   souffPic = 0; souffT = 0;
   /** Forgelance : la Lance Immortelle plantée au sol (Désarmé) ou null (Armé, Lance en main) ; t = secondes depuis qu'elle est plantée. */
@@ -984,6 +987,7 @@ export class Player extends Entity {
     if (this.encourage || this.soinContinu.length || this.insoignableT > 0 || this.farces.length) majEniripsa(this, dt, world);
     if (this.cls.coffre) majEnutrof(this, dt, world);
     if (this.cls.poker) majEcaflip(this, dt, world);
+    if (this.poinconT > 0) pasJoueur06(this, dt, world);
     if (this.renvoiT > 0) this.renvoiT -= dt;
     if (this.mutil) {   // Mutilation : re-sacrifie toutes les `periode` s et gagne un cran de Puissance
       const M = this.cls.spells.mutilation?.mutilation;
@@ -1298,6 +1302,7 @@ export class Player extends Entity {
       if (eni && !pasDeCoup) { apresCoupEniripsa(this, d, s.tx, s.ty, rEni, world.degatsCoup, world); alchiRhetorique(this, d, s.tx, s.ty, rEni, world); }
       if (d.enutrof) impactEnutrof(this, d, s.tx, s.ty, hits, world);
       if (d.ecaflip && this.cls.poker) impactEcaflip(this, s.id, d, s.tx, s.ty, hits, base * mult, world);
+      if (d.s06) { const z = impactSorts06(this, s.id, d, s.tx, s.ty, hits, hit, world); if (z) size = z; }   // sorts 61-90 (0.6)
       if (d.envol) envol(this, s.sx, s.sy, s.tx, s.ty, world);   // Mot d'Envol : échange de place avec l'allié visé
       if (d.lance && this.cls.lance) this.apresImpactLance(d, s.tx, s.ty, world);
       if (d.traverse) {   // Balestra : de l'autre côté de la cible, puis petit recul

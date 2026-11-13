@@ -128,6 +128,8 @@ export class Monster extends Entity {
   carapace = 0;
   /** Wobot Tamponneur (10A) : temps avant que Twansmutation le change en garde (0 = pas un Tamponneur). */
   twansT = 0;
+  /** États des sorts 61-90 (Noa, Floraison, Peinture tribale, Cryothérapie, Corruption, immobilisé), src/sim/sorts06.ts ; null sans effet. */
+  e06: import('./sorts06').Etats06 | null = null;
 
   /** Zone d'une attaque annoncée au sol avant l'impact : seulement pour les élites et les boss (maquette Aperçu 8A, Mathis 2026-11-06). */
   private annonce(world: World, tg: World['telegraphs'][number]) { if (this.def.elite || this.def.boss) world.telegraphs.push(tg); }

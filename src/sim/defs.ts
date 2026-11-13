@@ -155,6 +155,8 @@ export interface SpellDef {
     coffreBouclier?: { part: number; t: number }; coffreSoin?: number };
   /** Écaflip (maquette Écaflip, 13 nov. 2026) : Pioche, Dames, Pile ou Face, Roulette… joués par src/sim/ecaflip.ts. */
   ecaflip?: import('./ecaflip').EffetsEcaflip;
+  /** Sorts 61-90 de la Forgelance, de l'Eniripsa et de l'Enutrof (0.6), joués par src/sim/sorts06.ts après l'impact. */
+  s06?: import('./sorts06').Effets06;
 }
 /** Auto-attaque d'un type d'arme : un sort sans coût dont les dommages viennent de l'arme portée. */
 export interface WeaponProfile extends Omit<SpellDef, 'name' | 'icon' | 'element' | 'dmg' | 'cooldown' | 'anim'> {

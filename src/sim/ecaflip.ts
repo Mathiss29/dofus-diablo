@@ -42,6 +42,14 @@ export interface EffetsEcaflip {
   roulette?: boolean; tromperie?: boolean;
   chaton?: { puissance: number };
   bondAllie?: { k: number; t: number };
+  /** Sorts 61-90 (0.6). Esprit Félin : téléportation symétrique (Pile la cible, Face le lanceur), Résistances Critiques en plus. */
+  esprit?: { resCrit: number; t: number };
+  /** Odorat : les ennemis autour attaquent et courent moins vite (t s) ; le lanceur gagne des PA et des charges de PM, puis Joue la Main. */
+  odorat?: { ralenti: number; retard: number; t: number; pa: number; pm: number };
+  /** Seconde Chance : l'allié visé (ou soi) subit `subis` × les dommages pendant t s ; la Main est jouée puis revient en main. */
+  seconde?: { subis: number; t: number };
+  /** Bluff : un coup par couleur de la Main (élément de la couleur), base + parValeur de chaque carte ; Main vide : pioche 4 cartes. */
+  bluff?: { base: number; parValeur: number[] };
 }
 
 export const ELEMENTS_CARTE = ['air', 'eau', 'feu', 'terre'] as const;
@@ -51,8 +59,9 @@ export const TEINTES = ['#7fe0a0', '#6fb8ff', '#ff7a5a', '#d8a35a'];
 export const nomCarte = (k: Carte) => `${VALEURS[k.v]} de ${COULEURS[k.c]}`;
 const R = (p: Player): ReglesPoker | undefined => p.cls.poker;
 
-/** Valeur la plus haute qu'une Pioche aléatoire peut donner : les Rois arrivent avec leurs sorts (niveau 95), les As au 125. */
-export function valeurMax(p: Player): number { return p.level >= 125 ? 3 : p.level >= 95 ? 2 : 1; }
+/** Valeur la plus haute qu'une Pioche aléatoire peut donner : les Rois arrivent avec leurs sorts (palier 2 du Poker, 0.6 : niveau 75
+ *  avec Coussinets ; 95 sans la 0.6), les As au 125. */
+export function valeurMax(p: Player): number { return p.level >= 125 ? 3 : p.level >= (p.v06 ? 75 : 95) ? 2 : 1; }
 
 /** Pioche une carte dans la Main (rien si elle est pleine). */
 export function piocher(p: Player, k: Carte, world: World): boolean {
@@ -136,6 +145,8 @@ export function jouerMain(p: Player, world: World): boolean {
 const tromperieEl = new WeakMap<Player, number>();
 /** Dames : cartes de leur couleur dans la Main au moment du lancer. */
 const damesN = new WeakMap<Player, number>();
+/** Bluff : coups par couleur pour le lancer en cours (le premier part avec le sort, les autres à l'impact). */
+const bluffCoups = new WeakMap<Player, { c: number; k: number }[]>();
 /** Yams : le dé tiré pour le lancer en cours (Yams parfait). */
 const deYams = new WeakMap<Player, number>();
 /** Chatons déjà renforcés par Chaton protecteur. */
@@ -151,6 +162,13 @@ export function avantImpactEcaflip(p: Player, d: SpellDef, world: World): { mult
     damesN.set(p, n);
     const ml = p.pcv('pc-ecaflip-M');   // Main lourde
     mult *= 1 + (ml ? ml / 100 : E.parCarte ?? 0) * n;
+  }
+  if (E?.bluff) {   // Bluff : Main vide, 4 cartes d'abord ; puis un coup par couleur tenue
+    if (!p.ecaMain.length) for (let i = 0; i < 4; i++) piocherHasard(p, world);
+    const parC = new Map<number, number>();
+    for (const k of p.ecaMain) parC.set(k.c, (parC.get(k.c) ?? E.bluff.base) + (E.bluff.parValeur[k.v] ?? 0));
+    const coups = [...parC].map(([c, k]) => ({ c, k })).sort((a, b) => b.k - a.k);
+    if (coups.length) { bluffCoups.set(p, coups); element = ELEMENTS_CARTE[coups[0].c]; mult *= coups[0].k; }
   }
   if (E?.de) { const de = E.de[0] + world.rng.int(E.de[1] - E.de[0] + 1); deYams.set(p, de); mult *= de / ((E.de[0] + E.de[1]) / 2); }
   const g = p.ecaGagnante, el = element ?? d.element;
@@ -246,8 +264,49 @@ export function impactEcaflip(p: Player, id: string, d: SpellDef, tx: number, ty
     if (p.ecaMain.length >= P.main) jouerMain(p, world);
     piocher(p, { c, v: 0 }, world);
   }
+  if (E.esprit) espritFelin(p, tx, ty, E.esprit, world);
+  if (E.odorat) {
+    const O = E.odorat, r = d.hit.shape === 'circle' ? d.hit.radius : CASE * 2;
+    const proches = world.monsters.filter(m => !m.dead && m.state !== 'spawn' && Math.hypot(m.x - p.x, m.y - p.y) <= r + m.radius);
+    for (const m of proches) { m.atkCd = Math.max(m.atkCd, 0) + O.retard; m.haste = Math.min(m.haste, 1 - O.ralenti); m.hasteT = Math.max(m.hasteT, O.t); }
+    p.pa = Math.min(p.paMax, p.pa + O.pa);
+    if (proches.length) p.pm = Math.min(p.pmMax, p.pm + O.pm);
+    world.emit({ k: 'status', x: p.x, y: p.y - 60, text: `Odorat : +${O.pa} PA${proches.length ? `, +${O.pm} PM` : ''}`, color: '#e8d27a' });
+    jouerMain(p, world);
+  }
+  if (E.seconde) {
+    const q = allieVise(p, tx, ty, CASE * 1.5, world, true)!;
+    q.subis = Math.min(q.subis, E.seconde.subis); q.subisT = q.subisT0 = E.seconde.t;
+    world.emit({ k: 'status', x: q.x, y: q.y - 60, text: 'Seconde Chance', color: '#9fd3ff' });
+    if (p.ecaMain.length) { const main = p.ecaMain.map(k => ({ ...k })); jouerMain(p, world); p.ecaMain = main; }   // la Main revient en main
+  }
+  const bl = E.bluff ? bluffCoups.get(p) : undefined;
+  if (bl) {   // Bluff : les autres couleurs frappent la cible dans leur élément, puis la Main est jouée
+    bluffCoups.delete(p);
+    const r = d.hit.shape === 'point' ? d.hit.radius : CASE;
+    const brut = base / bl[0].k;   // dommages du sort avant le bonus de la première couleur
+    for (const c of bl.slice(1)) world.hitCircle(tx, ty, r, { dmg: brut * c.k, knock: 0, element: ELEMENTS_CARTE[c.c], sort: id });
+    jouerMain(p, world);
+  }
   if (E.carte) piocher(p, { c: E.carte[0], v: E.carte[1] }, world);
   if (E.rembourse) p.pa = Math.min(p.paMax, p.pa + p.paCost(id));
+}
+
+/** Esprit Félin : la cible passe de l'autre côté du lanceur (Pile), ou le lanceur de l'autre côté de la cible (Face) ; sans Pile ou Face, au hasard. */
+function espritFelin(p: Player, tx: number, ty: number, E: NonNullable<EffetsEcaflip['esprit']>, world: World) {
+  p.mods = p.mods.filter(m => m.src !== 'esprit_felin');
+  p.addMod('resCritiques', E.resCrit, E.t, 'esprit_felin');
+  let m = null as World['monsters'][number] | null, bd = CASE;
+  for (const o of world.monsters) { if (o.dead || o.state === 'spawn' || o.def.boss) continue; const dd = Math.hypot(o.x - tx, o.y - ty) - o.radius; if (dd < bd) { bd = dd; m = o; } }
+  if (!m) return;
+  const pile = p.ecaPF === 1 ? true : p.ecaPF === 2 ? false : world.rng.next() < 0.5;
+  const qui = pile ? m : p, autour = pile ? p : m;
+  const ox = qui.x, oy = qui.y;
+  let x = 2 * autour.x - qui.x, y = 2 * autour.y - qui.y;
+  if (!world.walkable(x, y)) ({ x, y } = world.map.nearestFree(x, y));
+  qui.x = x; qui.y = y; qui.kx = qui.ky = 0;
+  world.emit({ k: 'echange', x, y, ox, oy });
+  world.emit({ k: 'status', x: p.x, y: p.y - 60, text: pile ? 'Pile : la cible passe derrière toi' : 'Face : tu passes derrière', color: '#e8d27a' });
 }
 
 /** Roulette (7A) : un effet tiré au hasard, sur tout le monde (alliés, Écaflip et monstres) dans la zone. */

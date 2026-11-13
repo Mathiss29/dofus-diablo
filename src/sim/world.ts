@@ -13,6 +13,7 @@ import { PASSIFS, TROPHEES, tropheesDuBoss } from './dofus';
 import { jouerMain } from './ecaflip';
 import { ajouterPieces, CLE_COFFRE, enSurcharge, ouvrirCoffre, piecesMonstre, piecesObjet, seuilsCoffre } from './enutrof';
 import { briser, chanceRune, coutKamas, coutRelance, orbeConvient, potionConvient, POTIONS, regenerer, relancerLigne, REGLES_V2, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
+import { chocNoa, mortSorts06, pasMonstre06 } from './sorts06';
 import { V03_PUBLIC, V04_PUBLIC, V06_PUBLIC, niveauObjetsMax, slotAPouvoirConnu } from './pouvoirs';
 import { fxImpression, imprimable, nouveauPourCodex, prixImpression } from './codex';
 import { legendaryPower, FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, kamasDefaire, noteObjet, rollItem, STAT_NAMES, type EquipSlot, type Item, type ItemDef, type ItemsData, type Rarity, type RecipeDef, type Stat } from './items';
@@ -1519,6 +1520,7 @@ export class World {
     // Monde ouvert : un monstre qui attend loin du joueur dort (pas d'errance ni d'IA) : bien moins de calcul
     for (const m of this.monsters) {
       if (m.saigneT > 0 && !m.dead) this.saigner(m, dt);
+      if (m.e06) pasMonstre06(this, m, dt);   // sorts 61-90 (0.6) : Noa, Floraison, Corruption, immobilisé…
       if (m.fuyard && piloterCoffre(this, m, dt)) continue;   // 0.6 (22A) : le Coffre Malveillant détale
       if (this.zone.open && m.state === 'idle' && !m.dead && this.players.every(q => Math.abs(m.x - q.x) + Math.abs(m.y - q.y) > World.SOMMEIL)) { m.regenCalme(dt); continue; }
       if (m.guerre && this.guerre?.attaque?.piloter(m, dt)) continue;
@@ -1973,6 +1975,7 @@ export class World {
     m.hp -= dmg; m.flash = 0.09; m.calmeT = 0;
     this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 30, amount: dmg, crit: false, sort: 'poussee' });
     this.emit({ k: 'status', x: m.x, y: m.y - 20, text: 'Choc !', color: '#f2d36b' });
+    if (m.e06?.noa) chocNoa(this, m);   // Noa (Forgelance, 0.6) : second coup Air
     return true;
   }
   /** Points de PA / PM réellement retirés : chacun passe selon Retrait contre Esquive. */
@@ -1996,6 +1999,7 @@ export class World {
     const fxm = this.fxIdoles;
     if (fxm && idolesMort(this, m, this.groups[m.group], fxm)) return;   // Sakai : revient à la vie ; Chokwa, Serpi, Nahuatl
     m.dead = true; m.t = 0.6; this.kills++;
+    if (m.e06) mortSorts06(this, m);   // Cryothérapie : l'état éclate
     piecesMonstre(this, m);   // Enutrof (1A 1B) : le coffre au trésor des Enutrofs proches se remplit
     const tq = this.player.dead ? 0 : this.player.pcv('pc-cra-O');
     if (tq) for (const md of this.player.mods) if (md.src === 'tirs_eloignes') {   // Traque sans fin : prolongé, jusqu'à doubler sa durée

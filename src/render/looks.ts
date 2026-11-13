@@ -196,6 +196,8 @@ const FL_MAP: Record<string, AnimSlice> = {
     trident: 2008, effondrement: 2012, estoc_brulant: 2001, volee_airain: 2003, epilogue: 2000, charge_heroique: 2008, lance_lac: 2000,
     lance_pierre: 2000, phalange: 2012, lance_incendie: 2000, javeline_myr: 2000, balestra: 2008, talon_argile: 2008, kyrja: 2003,
     muspel: 2012, prelude_fer: 2005, saut: 2008,
+    // sorts 61-90 (0.6) : Terre du Milieu 2012, Chevalerie 2010, Jormun 2002, Poinçon 2000, Noa 2005 ; Éclipse n'a pas d'animation officielle (2010)
+    terre_milieu: 2012, chevalerie: 2010, jormun: 2002, poincon: 2000, noa: 2005, eclipse: 2010,
   }).map(([k, n]) => [k, { anim: `AnimAttaque${n}`, from: 0, to: 0.65 }])),
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
@@ -215,6 +217,8 @@ const ENI_MAP: Record<string, AnimSlice> = {
     amitie: 700, stimulant: 702, lamentations: 702, vivifiant: 702, jouvence: 702, reconstitution: 702, farceur: 703, envol: 703,
     espiegle: 704, interdit: 704, accablant: 704, juron: 705, frayeur: 705, peinture: 705, vampirique: 707, tapageur: 708, turbulent: 708,
     cri_guerre: 709,
+    // sorts 61-90 (0.6) : Chapardage 707, Mot Fleuri 700, Pinceau Tribal 709, Cryothérapie 700
+    chapardage: 707, fleuri: 700, pinceau: 709, cryotherapie: 700,
   }).map(([k, n]) => [k, { anim: `AnimAttaque${n}`, from: 0, to: 0.65 }])),
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
@@ -235,6 +239,8 @@ const ENU_MAP: Record<string, AnimSlice> = {
     lancer_pieces: 300, force_age: 301, sac_anime: 302, pelle_animee: 302, coffre_anime: 302, malle_animee: 302, roulage_pelle: 303,
     pelle_aurifere: 303, opportunite: 304, remblai: 305, clef_tresor: 305, avarice: 305, ruee_or: 306, boite_pandore: 306,
     pelle_fantomatique: 306, souterrain: 307, abattement: 308, maladresse: 310, banqueroute: 312,
+    // sorts 61-90 (0.6) : Pelle des Anciens et Péremption 305, Corruption 309, Retraite Anticipée 306
+    pelle_anciens: 305, peremption: 305, corruption: 309, retraite: 306,
   }).map(([k, n]) => [k, { anim: `AnimAttaque${n}`, from: 0, to: 0.65 }])),
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
@@ -253,6 +259,8 @@ const ECA_MAP: Record<string, AnimSlice> = {
   ...Object.fromEntries(Object.entries({
     griffe_invocatrice: 601, yams: 602, pelotage: 602, perception: 603, pile_face: 604, jass: 606, baraka: 606, blakjak: 606, belote: 606,
     tromperie: 606, reflexes: 607, topkaj: 608, bonne_pioche: 611, roulette: 612, chateau_cartes: 6, bond_felin: 4,
+    // sorts 61-90 (0.6) : Esprit Félin 605, Odorat 601, Coussinets et Félintion 602, Seconde Chance 603, Bluff 613
+    esprit_felin: 605, odorat: 601, coussinets: 602, felintion: 602, seconde_chance: 603, bluff: 613,
   }).map(([k, n]) => [k, { anim: `AnimAttaque${n}`, from: 0, to: 0.65 }])),
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
