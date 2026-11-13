@@ -260,6 +260,12 @@ export class Player extends Entity {
   v03 = false;
   /** 0.4 visible (partie de test tant que V04_PUBLIC est faux) : équipements du niveau 41 au 60. */
   v04 = false;
+  /** 0.6 visible (partie de test tant que V06_PUBLIC est faux). */
+  v06 = false;
+  /** 0.6 (6D) : cartes où ce perso a déjà vaincu un groupe, par zone ; la première fois sur une carte, +50 % d'XP. */
+  chasse: Record<string, string[]> = {};
+  /** 0.6 (24A) : boss vaincus d'affilée sans Légendaire de boss, par type de boss (la chance monte à chaque essai). */
+  bossSansLeg: Record<string, number> = {};
   private _pouvoirs: PouvoirDef[] | null = null;
   /** Pouvoirs officiels de sa classe portés, chacun une seule fois (5A : deux anneaux au même pouvoir ne cumulent pas). */
   get pouvoirsPortes(): PouvoirDef[] {

@@ -39,6 +39,8 @@ export interface EtatJoueur {
   zonesVues?: string[];
   /** Carte du monde (« Carte : » 6A, 9A, 15A ; « Carte suite : » 17A) : brouillard, drapeaux, tombe, lieux trouvés. */
   explore?: Record<string, string[]>;
+  /** 0.6 : cartes chassées (6D) et boss sans Légendaire d'affilée (24A). */
+  chasse?: Record<string, string[]>; bossSansLeg?: Record<string, number>;
   drapeaux?: Drapeau[];
   tombe?: Tombe | null;
   lieuxVus?: string[];
@@ -84,7 +86,7 @@ export function exporterJoueur(w: World): EtatJoueur {
     bar: p.bar, variants: p.variants, learned: [...p.learned],
     x: p.x, y: p.y, retour: w.pointDeRetour, quetes: w.quetes?.exporter(), zone: w.opts.zone,
     apparats: p.apparats, apparat: p.apparat, codex: p.codex, codexOuvert: p.codexOuvert, ames: p.ames, menagerie: p.menagerie, familierOffert: p.familierOffert, aboJour: p.aboJour, style: p.style, tenues: p.tenues, placesTenue: p.placesTenue, prereglages: p.prereglages, almanaxJour: p.almanaxJour, magasin: p.magasin, sacEnPlus: p.sacEnPlus, benediction: p.benediction, repas: p.repas, elixir: p.elixir, parchemins: p.parchemins, ceinture: p.ceinture, dofus: p.dofus, trophees: p.trophees, dofusPortes: p.dofusPortes,
-    zaaps: p.zaaps, zonesVues: p.zonesVues, explore: p.explore, drapeaux: p.drapeaux, tombe: p.tombe, lieuxVus: p.lieuxVus, cleDonjon: p.cleDonjon, guerre: p.guerre, vivant: p.vivant, commandeFM: p.commandeFM, ...(w.retour ? { havreSac: w.retour } : {}),
+    zaaps: p.zaaps, zonesVues: p.zonesVues, explore: p.explore, chasse: p.chasse, bossSansLeg: p.bossSansLeg, drapeaux: p.drapeaux, tombe: p.tombe, lieuxVus: p.lieuxVus, cleDonjon: p.cleDonjon, guerre: p.guerre, vivant: p.vivant, commandeFM: p.commandeFM, ...(w.retour ? { havreSac: w.retour } : {}),
     ...(p.cls.coffre ? { coffreEnu: exporterCoffre(p) } : {}),
   });
 }
@@ -140,6 +142,10 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
   p.learned = new Set(s.learned ?? []);
   if (Array.isArray(s.zaaps)) p.zaaps = s.zaaps.filter(z => typeof z?.zone === 'string' && typeof z?.name === 'string');
   p.zonesVues = [...new Set([...(s.zonesVues ?? []), ...p.zonesVues])];
+  if (s.chasse && typeof s.chasse === 'object') for (const [z, l] of Object.entries(s.chasse))
+    if (Array.isArray(l)) p.chasse[z] = [...new Set(l.filter(t => typeof t === 'string' && /^-?\d+_-?\d+$/.test(t)))];
+  if (s.bossSansLeg && typeof s.bossSansLeg === 'object') for (const [b, n] of Object.entries(s.bossSansLeg))
+    if (typeof n === 'number' && n > 0 && Number.isFinite(n)) p.bossSansLeg[b] = Math.min(1000, Math.floor(n));
   if (s.explore && typeof s.explore === 'object') for (const [z, l] of Object.entries(s.explore))
     if (Array.isArray(l)) p.explore[z] = [...new Set([...l.filter(t => typeof t === 'string' && /^-?\d+_-?\d+$/.test(t)), ...(p.explore[z] ?? [])])];
   p.drapeaux = drapeauxPropres(s.drapeaux);

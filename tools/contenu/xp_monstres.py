@@ -14,7 +14,13 @@ import json
 PROVISOIRE = 20
 
 
-def tues_par_niveau(L): return 25 if L <= 10 else 25 + 35 * (min(L, 60) - 10) / 50 + max(0, L - 60) * 0.7
+def tues_par_niveau(L):
+    """Monstres de son niveau pour passer un niveau, avant le ×2 de xpBase. 0.6 (« 0.6 : » 6B, 2026-11-13) : en vrai 120 tués au 60,
+    200 au 90, 400 au 200 (donc 60 → 100 → 200 ici)."""
+    if L <= 10: return 25
+    if L <= 60: return 25 + 35 * (L - 10) / 50
+    if L <= 90: return 60 + 40 * (L - 60) / 30
+    return 100 + 100 * (L - 90) / 110
 
 
 def xp(L): return round(100 * L / tues_par_niveau(L))
@@ -37,4 +43,4 @@ for k, m in M.items():
         m['xp'] = round(M[b]['xp'] * vieux[k] / vieux[b]); n += 1
 open('src/data/monsters.json', 'w').write(json.dumps(M, ensure_ascii=False, indent=1) + '\n')
 print(n, 'monstres')
-for L in (11, 16, 22, 32, 42, 54, 62): print(f'niveau {L:>2} : {xp(L):>3} XP, {tues_par_niveau(L):.0f} tués par niveau')
+for L in (11, 16, 22, 32, 42, 54, 62, 75, 90, 120, 200): print(f'niveau {L:>2} : {xp(L):>3} XP, {tues_par_niveau(L):.0f} tués par niveau')
