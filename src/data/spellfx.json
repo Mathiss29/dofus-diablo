@@ -3293,6 +3293,34 @@
      "scale": 1.6
     }
    ]
+  },
+  "fleuri": {
+   "target": [
+    {
+     "gfx": 7907
+    }
+   ]
+  },
+  "pinceau": {
+   "target": [
+    {
+     "gfx": 8845
+    }
+   ]
+  },
+  "odorat": {
+   "caster": [
+    {
+     "gfx": 7962
+    }
+   ]
+  },
+  "seconde_chance": {
+   "target": [
+    {
+     "gfx": 7959
+    }
+   ]
   }
  },
  "gfx": {

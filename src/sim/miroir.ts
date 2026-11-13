@@ -59,7 +59,7 @@ const REFUS: Record<Sorte | 'a', Set<string>> = {
     'commandeFM', 'quetes', 'monde', 'evenements', 'cleDonjon', 'renfortDonjon', 'guerre', 'vivant', 'recetteSuivie', 'zaaps', '_pouvoirs', 'almanaxJour', 'magasin', 'sacEnPlus', 'benediction', 'repas', 'elixir', 'parchemins', 'ceinture', 'boissonCd', 'codexOuvert', 'lootFilter', 'autoDefaire', 'kamas', 'v03', 'v04', 'v06', 'chasse', 'bossSansLeg', 'idoles', 'renommee', 'sanctuaires', 'fxIdoles', 'bouclierVu', 'idoleT', 'repathT', 'bufferT', 'buffer', 'explore', '_explore', 'lieuxVus', 'tombe', 'carteIci',
     'coffreVitrine', 'coffreJournal', 'coffreRecords', 'coffreEjection']),
   // minuteries de l'IA des monstres : l'hôte seul s'en sert
-  m: new Set(['def', 'atkCd', 'spellCd', 'sigCd', 'cheminT', 'wanderT', 'wanderX', 'wanderY', 'repathT']),
+  m: new Set(['def', 'atkCd', 'spellCd', 'sigCd', 'cheminT', 'wanderT', 'wanderX', 'wanderY', 'repathT', 'e06']),
   b: new Set(['def']),
   a: new Set(['w', 'd', 'butin', 'butins']),
 };

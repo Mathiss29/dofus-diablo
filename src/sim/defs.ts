@@ -155,6 +155,8 @@ export interface SpellDef {
     coffreBouclier?: { part: number; t: number }; coffreSoin?: number };
   /** Écaflip (maquette Écaflip, 13 nov. 2026) : Pioche, Dames, Pile ou Face, Roulette… joués par src/sim/ecaflip.ts. */
   ecaflip?: import('./ecaflip').EffetsEcaflip;
+  /** Sorts 61-90 de la Forgelance, de l'Eniripsa et de l'Enutrof (0.6), joués par src/sim/sorts06.ts après l'impact. */
+  s06?: import('./sorts06').Effets06;
   /** Sorts 61-90 du Iop, du Crâ, de l'Osamodas et du Sacrieur (0.6), joués par src/sim/sorts61.ts. */
   e61?: import('./sorts61').Effets61;
 }
