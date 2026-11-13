@@ -61,6 +61,8 @@ export class Monster extends Entity {
   stun = 0;
   /** Idoles (0.6) : bouclier (Tynril, Kori), Champion (Djim), déjà revenu à la vie (Sakai), prochain soin ou bouclier (s). */
   bouclier = 0; champion = false; revenu = false; idoleT = 0;
+  /** Élite à affixes (0.6, 23A) : ses affixes et le temps passé réveillé. */
+  affixes: string[] = []; affixeT = 0;
   dirX = 1; dirY = 0;
   hitDone = false;
   mode: 'lunge' | 'slam' | 'spell' = 'lunge';

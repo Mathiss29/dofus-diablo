@@ -1,4 +1,5 @@
 import { TEINTES } from '../sim/ecaflip';
+import { nomAffixe } from '../sim/elites';
 import { CONSO } from '../sim/consommables';
 import { ICON_SHEET, iconFrame } from './icons';
 import { coffreDe, couleurCoffre, nomsCoffre, palierCoffre, partageurCoffre, seuilsCoffre } from '../sim/enutrof';
@@ -949,7 +950,7 @@ export class Hud {
     const showT = !!tgt && this.targetT > 0 && !dlg;
     this.targetName.setVisible(showT || !!dlg); this.targetHp.setVisible(showT); this.targetIco.setVisible(showT);
     if (this.pnjImg) this.pnjImg.setVisible(!!port);
-    const tx0 = fx + fw + 8, tw = 240;
+    const tx0 = fx + fw + 8, tw = !dlg && tgt && showT && (tgt.affixes.length || tgt.champion) ? 340 : 240;   // élite à affixes : fiche plus large
     if (dlg) {   // pendant un dialogue, la fiche de cible montre le PNJ : son portrait et son nom
       const th = 56;
       cadre(tx0, fy, tw, th, th);
@@ -966,7 +967,8 @@ export class Hud {
       if (this.targetTrailId !== tgt.id) { this.targetTrailId = tgt.id; this.targetTrail = r; }
       this.targetTrail = r >= this.targetTrail ? r : Math.max(r, this.targetTrail - dt * 0.8);
       cadre(tx0, fy, tw, th, hd);
-      this.targetName.setPosition(tx0 + 10, fy + hd / 2).setText(`${tgt.def.name}  ·  niv. ${this.world.monsterLevel(tgt)}`);
+      const aff = [...(tgt.champion ? ['Champion'] : []), ...tgt.affixes.map(nomAffixe)];   // 0.6 : affixes des élites, Champion des idoles
+      this.targetName.setPosition(tx0 + 10, fy + hd / 2).setText(aff.length ? `${tgt.def.name}  ·  ${aff.join(', ')}` : `${tgt.def.name}  ·  niv. ${this.world.monsterLevel(tgt)}`);
       const ty = fy + hd + 15, ttx = tx0 + tw - 10;
       this.targetIco.setPosition(tx0 + 19, ty).setDisplaySize(18, 18);
       this.targetHp.setPosition(ttx, ty).setText(`${Math.max(0, Math.ceil(tgt.hp))} / ${tgt.maxHp}`);

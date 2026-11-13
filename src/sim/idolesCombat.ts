@@ -14,7 +14,9 @@ const C = (REGLES_IDOLES as unknown as { combat: {
 export { C as COMBAT_IDOLES };
 
 /** Zone qui blesse les joueurs : annoncée (annonce s), puis un coup (part des PV max) et/ou une brûlure par seconde pendant t s. */
-export interface ZoneIdole { x: number; y: number; r: number; annonce: number; a0: number; t: number; coup: number; dps: number; el: Element; tick: number }
+export interface ZoneIdole { x: number; y: number; r: number; annonce: number; a0: number; t: number; coup: number; dps: number; el: Element; tick: number;
+  /** Ralentit les joueurs dedans (Glacial). */
+  lent?: number }
 
 const actif = (m: Monster) => !m.dead && m.state !== 'idle' && m.state !== 'return' && m.state !== 'spawn';
 /** Un monstre réveillé près de ce joueur : il est en combat. */
@@ -62,7 +64,11 @@ export function idolesMort(w: World, m: Monster, groupe: { members: Monster[]; r
 
 /** Chaque pas : soins et boucliers des monstres réveillés (Abdinde, Kori), usure du perso (Dokoko, Jiva), éclairs (Zaihort), zones. */
 export function idolesPas(w: World, dt: number, fx: FxIdole | null) {
-  if (!fx) { w.zonesIdoles.length = 0; return; }
+  if (fx) effetsIdoles(w, dt, fx);
+  zonesPas(w, dt);
+  for (const q of w.players) q.bouclierVu = q.shield;
+}
+function effetsIdoles(w: World, dt: number, fx: FxIdole) {
   if (fx.regen || fx.bouclierRegen) for (const m of w.monsters) {
     if (!actif(m) || m.mannequin) continue;
     const t0 = m.idoleT; m.idoleT += dt;
@@ -81,6 +87,10 @@ export function idolesPas(w: World, dt: number, fx: FxIdole | null) {
       w.zonesIdoles.push({ x: q.x + Math.cos(a) * d, y: q.y + Math.sin(a) * d, r: E.rayon, annonce: E.annonce, a0: E.annonce, t: 0, coup: E.pv, dps: 0, el: 'air', tick: 0 });
     }
   }
+}
+/** Zones au sol qui blessent les joueurs : idoles (éclairs, flaques) et élites (Glacial, Ardent). */
+function zonesPas(w: World, dt: number) {
+  if (!w.zonesIdoles.length) return;
   for (const z of w.zonesIdoles) {
     if (z.annonce > 0) {
       z.annonce -= dt;
@@ -97,9 +107,11 @@ export function idolesPas(w: World, dt: number, fx: FxIdole | null) {
     w.telegraphs.push({ kind: 'circle', x: z.x, y: z.y, r: z.r, progress: 1, danger: true });
     if ((z.tick -= dt) <= 0) {
       z.tick = 0.5;
-      for (const q of w.players) if (!q.dead && Math.hypot(q.x - z.x, q.y - z.y) <= z.r + q.radius) q.hurt(q.maxHp * z.dps * 0.5, z.x, z.y, w, z.el, true);
+      for (const q of w.players) if (!q.dead && Math.hypot(q.x - z.x, q.y - z.y) <= z.r + q.radius) {
+        q.hurt(q.maxHp * z.dps * 0.5, z.x, z.y, w, z.el, true);
+        if (z.lent) q.slow(0.6, z.lent);
+      }
     }
   }
   w.zonesIdoles = w.zonesIdoles.filter(z => z.annonce > 0 || z.t > 0);
-  for (const q of w.players) q.bouclierVu = q.shield;
 }

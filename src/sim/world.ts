@@ -26,7 +26,8 @@ import { Guerre } from './guerre';
 import { MondeVivant, VIVANT, bonusWeekEnd, type BonusWeekEnd, type VueVivant } from './mondeVivant';
 import PASSANTS from '../data/passants.json';
 import V06 from '../data/v06.json';
-import { IDOLES_DEFS, basculerIdole, bonusIdoles, chargerJeu, defSousIdoles, enregistrerJeu, fxIdoles, recetteIdole, type FxIdole } from './idoles';
+import { IDOLES_DEFS, basculerIdole, bonusIdoles, chargerJeu, defSousIdoles, enregistrerJeu, fxIdoles, recetteIdole, scoreIdoles, type FxIdole } from './idoles';
+import { defAffixes, elitesPas, poserAffixes, tirerAffixes } from './elites';
 import { idolesApparition, idolesGroupe, idolesMort, idolesPas, type ZoneIdole } from './idolesCombat';
 import type { EtatMonde } from './etatMonde';
 import { Quetes, type Compte, type EtatQuetes, type QuetesData } from './quests';
@@ -1512,6 +1513,7 @@ export class World {
     if (this.massacre.n >= M.min && this.time - this.massacre.t > M.fenetre) { this.emit({ k: 'massacreFin', n: this.massacre.n }); this.massacre.n = 0; }
     this.updateProjectiles(dt);
     this.updateZonesSol(dt);
+    elitesPas(this, dt);
     idolesPas(this, dt, fxI);
     this.updateDrops(dt);
     if (this.opts.partieServeur && this.players.length > 1) this.releverAllies(dt);
@@ -1562,8 +1564,11 @@ export class World {
     if (!def) throw new Error(`Monstre inconnu : ${type}`);
     const fx = this.fxIdoles;
     if (fx) def = defSousIdoles(def, fx);   // 0.6 (17) : PV, dégâts, vitesse et résistances sous les idoles
+    const aff = this.players[0]?.v06 ? tirerAffixes(this, def, scoreIdoles(this.idolesActives)) : [];   // 0.6 (23) : élites à affixes
+    if (aff.length) def = defAffixes(def, aff);
     const m = new Monster(this.nextId++, type, def, x, y, this);
     if (fx) idolesApparition(m, fx);
+    if (aff.length) poserAffixes(m, aff);
     this.monsters.push(m);
     return m;
   }
@@ -2005,6 +2010,11 @@ export class World {
     const ids = this.idolesActives, cle = ids.join(',');
     if (cle !== this._fxIdoles.cle) this._fxIdoles = { cle, fx: fxIdoles(ids) };
     return this._fxIdoles.fx;
+  }
+  /** Monstres de la sous-zone de ce monstre (Invocateur), sans élite ni boss. */
+  typesAutour(m: Monster): string[] {
+    const sub = this.groups[m.group]?.sub;
+    return (sub?.monsters ?? []).filter(t => !this.opts.data.monsters[t]?.elite && !this.opts.data.monsters[t]?.boss);
   }
   /** Bonus d'XP et de butin des idoles (part de 1), plafonné en donjon. */
   get bonusIdoles(): number { return bonusIdoles(this.idolesActives, !!this.arene); }
