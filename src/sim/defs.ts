@@ -69,6 +69,8 @@ export interface SpellDef {
   itemIcon?: number;
   /** Id du sort dans Dofus (spellsdataroot) : son niveau, ses grades, son coût et sa relance officiels (src/data/sorts.json). */
   dofusId?: number;
+  /** Sort de la 0.6 (sorts 61-90) : connu seulement si la 0.6 est visible pour ce perso (Player.v06 : partie de test ou V06_PUBLIC). */
+  v06?: boolean;
   /** Sort sur soi : ne touche aucun ennemi (Tirs Éloignés). */
   self?: boolean;
   /** Bonus sur le lanceur (tours officiels × 3 s) : Dommages de l'Épée Divine, Portée des Tirs Éloignés. */
