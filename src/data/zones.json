@@ -3471,6 +3471,7 @@
       215
      ],
      "nom": "Bateau pour Frigost",
+     "quete": "frigost_passage",
      "marque": true,
      "voyage": [
       "madrestam",

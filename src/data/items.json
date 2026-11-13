@@ -29190,6 +29190,10962 @@
     ]
    },
    "set": 1087
+  },
+  "160": {
+   "name": "Le Flan des Étoiles",
+   "slot": "amulette",
+   "level": 61,
+   "icon": 1010,
+   "stats": {
+    "vitalite": [
+     16,
+     20
+    ],
+    "intelligence": [
+     16,
+     20
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "pa": [
+     1,
+     1
+    ]
+   }
+  },
+  "200": {
+   "name": "God Rod",
+   "slot": "arme",
+   "level": 67,
+   "icon": 4007,
+   "stats": {
+    "pa": [
+     1,
+     1
+    ],
+    "vitalite": [
+     40,
+     40
+    ],
+    "sagesse": [
+     25,
+     25
+    ],
+    "agilite": [
+     -40,
+     -40
+    ],
+    "critique": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Bâton",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 11,
+      "max": 15
+     }
+    ]
+   }
+  },
+  "204": {
+   "name": "Kryst O'Boul",
+   "slot": "arme",
+   "level": 68,
+   "icon": 4063,
+   "stats": {
+    "sagesse": [
+     21,
+     30
+    ],
+    "intelligence": [
+     21,
+     30
+    ],
+    "critique": [
+     3,
+     5
+    ],
+    "vitalite": [
+     -20,
+     -11
+    ],
+    "chance": [
+     21,
+     30
+    ]
+   },
+   "weapon": {
+    "type": "Bâton",
+    "dmg": [
+     {
+      "element": "feu",
+      "min": 5,
+      "max": 9
+     },
+     {
+      "element": "eau",
+      "min": 5,
+      "max": 9
+     }
+    ]
+   },
+   "set": 38
+  },
+  "219": {
+   "name": "Blessdags",
+   "slot": "arme",
+   "level": 64,
+   "icon": 5055,
+   "stats": {
+    "chance": [
+     31,
+     40
+    ],
+    "vitalite": [
+     31,
+     40
+    ],
+    "critique": [
+     2,
+     6
+    ],
+    "force": [
+     -20,
+     -11
+    ],
+    "agilite": [
+     31,
+     40
+    ]
+   },
+   "weapon": {
+    "type": "Dague",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 12,
+      "max": 18
+     }
+    ]
+   }
+  },
+  "220": {
+   "name": "Chakra Style",
+   "slot": "arme",
+   "level": 73,
+   "icon": 5008,
+   "stats": {
+    "vitalite": [
+     31,
+     40
+    ],
+    "chance": [
+     21,
+     30
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "dommagesEau": [
+     4,
+     5
+    ],
+    "pa": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Dague",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 10,
+      "max": 14
+     }
+    ]
+   }
+  },
+  "234": {
+   "name": "Ragnarok",
+   "slot": "arme",
+   "level": 66,
+   "icon": 7055,
+   "stats": {
+    "invocations": [
+     1,
+     1
+    ],
+    "intelligence": [
+     36,
+     45
+    ],
+    "sagesse": [
+     36,
+     45
+    ],
+    "vitalite": [
+     11,
+     20
+    ]
+   },
+   "weapon": {
+    "type": "Marteau",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 16,
+      "max": 23
+     }
+    ]
+   }
+  },
+  "250": {
+   "name": "Ares",
+   "slot": "arme",
+   "level": 72,
+   "icon": 8009,
+   "stats": {
+    "vitalite": [
+     21,
+     30
+    ],
+    "chance": [
+     16,
+     20
+    ],
+    "dommagesEau": [
+     4,
+     5
+    ],
+    "invocations": [
+     1,
+     1
+    ],
+    "pa": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Pelle",
+    "dmg": [
+     {
+      "element": "eau",
+      "min": 7,
+      "max": 13
+     }
+    ]
+   }
+  },
+  "515": {
+   "name": "Boulgourde des Clairières",
+   "slot": "arme",
+   "level": 62,
+   "icon": 19005,
+   "stats": {
+    "vitalite": [
+     41,
+     50
+    ],
+    "puissance": [
+     11,
+     15
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "resTerre": [
+     4,
+     5
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Hache",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 31,
+      "max": 45
+     }
+    ]
+   }
+  },
+  "619": {
+   "name": "Bâton du Maître des Bouftous",
+   "slot": "arme",
+   "level": 85,
+   "icon": 4006,
+   "stats": {
+    "force": [
+     -50,
+     -50
+    ],
+    "agilite": [
+     41,
+     50
+    ],
+    "puissance": [
+     11,
+     15
+    ],
+    "dommages": [
+     2,
+     3
+    ],
+    "invocations": [
+     3,
+     3
+    ],
+    "critique": [
+     4,
+     5
+    ]
+   },
+   "weapon": {
+    "type": "Bâton",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 11,
+      "max": 15
+     }
+    ]
+   }
+  },
+  "620": {
+   "name": "Découpeuse de Kralamoure",
+   "slot": "arme",
+   "level": 61,
+   "icon": 6008,
+   "stats": {
+    "dommages": [
+     4,
+     6
+    ],
+    "force": [
+     21,
+     30
+    ],
+    "critique": [
+     1,
+     2
+    ],
+    "intelligence": [
+     -20,
+     -1
+    ]
+   },
+   "weapon": {
+    "type": "Épée",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 31,
+      "max": 45
+     }
+    ]
+   }
+  },
+  "706": {
+   "name": "Crystal O'Boul",
+   "slot": "chapeau",
+   "level": 72,
+   "icon": 16012,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "chance": [
+     31,
+     40
+    ],
+    "puissance": [
+     16,
+     20
+    ],
+    "dommages": [
+     3,
+     4
+    ],
+    "soins": [
+     4,
+     7
+    ],
+    "critique": [
+     2,
+     3
+    ]
+   },
+   "set": 38
+  },
+  "910": {
+   "name": "Bottes d'Hogmeiser",
+   "slot": "bottes",
+   "level": 75,
+   "icon": 11011,
+   "stats": {
+    "vitalite": [
+     31,
+     40
+    ],
+    "agilite": [
+     31,
+     40
+    ],
+    "sagesse": [
+     21,
+     30
+    ],
+    "dommages": [
+     2,
+     3
+    ],
+    "invocations": [
+     1,
+     1
+    ],
+    "critique": [
+     3,
+     4
+    ]
+   }
+  },
+  "917": {
+   "name": "La Feuille d'Automne",
+   "slot": "amulette",
+   "level": 89,
+   "icon": 1064,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "force": [
+     -100,
+     -100
+    ],
+    "intelligence": [
+     -100,
+     -100
+    ],
+    "agilite": [
+     41,
+     50
+    ],
+    "chance": [
+     41,
+     50
+    ],
+    "prospection": [
+     11,
+     15
+    ],
+    "critique": [
+     7,
+     10
+    ],
+    "portee": [
+     2,
+     2
+    ]
+   }
+  },
+  "923": {
+   "name": "Fendeuse d'Abraknyde",
+   "slot": "arme",
+   "level": 74,
+   "icon": 19012,
+   "stats": {
+    "vitalite": [
+     71,
+     100
+    ],
+    "force": [
+     41,
+     60
+    ],
+    "intelligence": [
+     -60,
+     -60
+    ],
+    "puissance": [
+     11,
+     15
+    ],
+    "sagesse": [
+     21,
+     25
+    ],
+    "dommagesTerre": [
+     4,
+     5
+    ],
+    "dommagesNeutre": [
+     4,
+     5
+    ],
+    "critique": [
+     3,
+     4
+    ]
+   },
+   "weapon": {
+    "type": "Hache",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 21,
+      "max": 35
+     }
+    ]
+   }
+  },
+  "1039": {
+   "name": "Dagues Fourbesques",
+   "slot": "arme",
+   "level": 67,
+   "icon": 5011,
+   "stats": {
+    "vitalite": [
+     51,
+     70
+    ],
+    "force": [
+     -35,
+     -35
+    ],
+    "intelligence": [
+     -35,
+     -35
+    ],
+    "agilite": [
+     51,
+     70
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "fuite": [
+     4,
+     5
+    ],
+    "dommagesCritiques": [
+     7,
+     10
+    ],
+    "critique": [
+     4,
+     5
+    ]
+   },
+   "weapon": {
+    "type": "Dague",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 9,
+      "max": 14
+     }
+    ]
+   }
+  },
+  "1040": {
+   "name": "Lames sanglantes d'Ortimus Contrari",
+   "slot": "arme",
+   "level": 80,
+   "icon": 5019,
+   "stats": {
+    "vitalite": [
+     21,
+     30
+    ],
+    "agilite": [
+     41,
+     50
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "dommagesAir": [
+     2,
+     3
+    ],
+    "dommagesNeutre": [
+     2,
+     3
+    ],
+    "critique": [
+     2,
+     2
+    ],
+    "pm": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Dague",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 11,
+      "max": 18
+     }
+    ]
+   }
+  },
+  "1053": {
+   "name": "Pelle Woukuis",
+   "slot": "arme",
+   "level": 64,
+   "icon": 8021,
+   "stats": {
+    "vitalite": [
+     -50,
+     -50
+    ],
+    "force": [
+     41,
+     50
+    ],
+    "intelligence": [
+     41,
+     50
+    ],
+    "dommagesTerre": [
+     2,
+     3
+    ],
+    "dommagesNeutre": [
+     2,
+     3
+    ],
+    "dommagesEau": [
+     2,
+     3
+    ],
+    "critique": [
+     3,
+     4
+    ]
+   },
+   "weapon": {
+    "type": "Pelle",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 16,
+      "max": 31
+     }
+    ]
+   }
+  },
+  "1083": {
+   "name": "Marteau Pospodrol",
+   "slot": "arme",
+   "level": 70,
+   "icon": 7005,
+   "stats": {
+    "vitalite": [
+     61,
+     80
+    ],
+    "force": [
+     31,
+     40
+    ],
+    "intelligence": [
+     31,
+     40
+    ],
+    "chance": [
+     -40,
+     -40
+    ],
+    "resPoussee": [
+     7,
+     10
+    ],
+    "resCritiques": [
+     7,
+     10
+    ],
+    "invocations": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Marteau",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 24,
+      "max": 31
+     }
+    ]
+   }
+  },
+  "1084": {
+   "name": "Marteau à Torts",
+   "slot": "arme",
+   "level": 81,
+   "icon": 7020,
+   "stats": {
+    "initiative": [
+     301,
+     350
+    ],
+    "vitalite": [
+     -50,
+     -50
+    ],
+    "intelligence": [
+     46,
+     55
+    ],
+    "chance": [
+     36,
+     45
+    ],
+    "sagesse": [
+     21,
+     30
+    ],
+    "critique": [
+     4,
+     5
+    ]
+   },
+   "weapon": {
+    "type": "Marteau",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 11,
+      "max": 20
+     }
+    ]
+   }
+  },
+  "1085": {
+   "name": "Marteau des Falistos",
+   "slot": "arme",
+   "level": 79,
+   "icon": 7019,
+   "stats": {
+    "force": [
+     41,
+     80
+    ],
+    "sagesse": [
+     16,
+     25
+    ],
+    "vitalite": [
+     31,
+     50
+    ],
+    "portee": [
+     -2,
+     -1
+    ]
+   },
+   "weapon": {
+    "type": "Marteau",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 31,
+      "max": 50
+     }
+    ]
+   },
+   "chasse": true
+  },
+  "1128": {
+   "name": "Arc du Roi des Borins",
+   "slot": "arme",
+   "level": 72,
+   "icon": 2023,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "force": [
+     41,
+     50
+    ],
+    "agilite": [
+     41,
+     50
+    ],
+    "chance": [
+     -50,
+     -50
+    ],
+    "dommages": [
+     4,
+     5
+    ],
+    "critique": [
+     4,
+     5
+    ]
+   },
+   "weapon": {
+    "type": "Arc",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 14,
+      "max": 25
+     }
+    ]
+   }
+  },
+  "1146": {
+   "name": "Baguette Meneuse",
+   "slot": "arme",
+   "level": 71,
+   "icon": 3021,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "force": [
+     26,
+     35
+    ],
+    "intelligence": [
+     46,
+     65
+    ],
+    "agilite": [
+     -35,
+     -35
+    ],
+    "resEau": [
+     2,
+     3
+    ],
+    "resAir": [
+     2,
+     3
+    ],
+    "resFeu": [
+     2,
+     3
+    ]
+   },
+   "weapon": {
+    "type": "Baguette",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 13,
+      "max": 23
+     }
+    ]
+   }
+  },
+  "1362": {
+   "name": "Pieu Vampirique",
+   "slot": "arme",
+   "level": 65,
+   "icon": 3014,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "intelligence": [
+     31,
+     40
+    ],
+    "soins": [
+     7,
+     10
+    ],
+    "invocations": [
+     1,
+     1
+    ],
+    "critique": [
+     4,
+     5
+    ]
+   },
+   "weapon": {
+    "type": "Baguette",
+    "dmg": []
+   }
+  },
+  "1435": {
+   "name": "La Pelle du Large",
+   "slot": "arme",
+   "level": 80,
+   "icon": 8011,
+   "stats": {
+    "initiative": [
+     301,
+     400
+    ],
+    "vitalite": [
+     71,
+     100
+    ],
+    "intelligence": [
+     41,
+     60
+    ],
+    "agilite": [
+     -60,
+     -60
+    ],
+    "chance": [
+     31,
+     31
+    ],
+    "fuite": [
+     4,
+     5
+    ],
+    "dommagesFeu": [
+     7,
+     10
+    ],
+    "dommagesEau": [
+     4,
+     5
+    ]
+   },
+   "weapon": {
+    "type": "Pelle",
+    "dmg": [
+     {
+      "element": "feu",
+      "min": 26,
+      "max": 35
+     }
+    ]
+   }
+  },
+  "1651": {
+   "name": "Le Cutter",
+   "slot": "arme",
+   "level": 64,
+   "icon": 6023,
+   "stats": {
+    "initiative": [
+     251,
+     300
+    ],
+    "force": [
+     46,
+     65
+    ],
+    "intelligence": [
+     -65,
+     -65
+    ],
+    "agilite": [
+     26,
+     35
+    ],
+    "chance": [
+     16,
+     20
+    ],
+    "dommages": [
+     4,
+     5
+    ]
+   },
+   "weapon": {
+    "type": "Épée",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 17,
+      "max": 39
+     }
+    ]
+   }
+  },
+  "1669": {
+   "name": "Ceinture des Vents",
+   "slot": "ceinture",
+   "level": 84,
+   "icon": 10015,
+   "stats": {
+    "intelligence": [
+     21,
+     30
+    ],
+    "chance": [
+     21,
+     30
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "dommages": [
+     4,
+     6
+    ],
+    "critique": [
+     4,
+     5
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   }
+  },
+  "1695": {
+   "name": "Cape d'Elya Wood",
+   "slot": "cape",
+   "level": 80,
+   "icon": 17009,
+   "stats": {
+    "intelligence": [
+     21,
+     30
+    ],
+    "resEau": [
+     2,
+     2
+    ],
+    "resAir": [
+     2,
+     2
+    ],
+    "resFeu": [
+     2,
+     2
+    ],
+    "dommages": [
+     2,
+     3
+    ],
+    "portee": [
+     2,
+     2
+    ]
+   },
+   "set": 39
+  },
+  "1739": {
+   "name": "Baguette Affeulante",
+   "slot": "arme",
+   "level": 80,
+   "icon": 3024,
+   "stats": {
+    "initiative": [
+     251,
+     300
+    ],
+    "vitalite": [
+     61,
+     80
+    ],
+    "force": [
+     -60,
+     -60
+    ],
+    "intelligence": [
+     41,
+     60
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "resEau": [
+     4,
+     5
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Baguette",
+    "dmg": [
+     {
+      "element": "feu",
+      "min": 11,
+      "max": 14
+     }
+    ]
+   }
+  },
+  "1904": {
+   "name": "Dragocoiffe Calcaire",
+   "slot": "chapeau",
+   "level": 63,
+   "icon": 16028,
+   "stats": {
+    "vitalite": [
+     31,
+     40
+    ],
+    "force": [
+     21,
+     30
+    ],
+    "puissance": [
+     11,
+     20
+    ],
+    "dommagesTerre": [
+     4,
+     5
+    ],
+    "resEau": [
+     2,
+     3
+    ],
+    "resAir": [
+     2,
+     3
+    ]
+   }
+  },
+  "2341": {
+   "name": "Arc de Mech Riorraw",
+   "slot": "arme",
+   "level": 90,
+   "icon": 2008,
+   "stats": {
+    "agilite": [
+     -150,
+     -150
+    ]
+   },
+   "weapon": {
+    "type": "Arc",
+    "dmg": [
+     {
+      "element": "air",
+      "min": 31,
+      "max": 50
+     }
+    ]
+   }
+  },
+  "2369": {
+   "name": "Puissante Ceinture Fulgurante",
+   "slot": "ceinture",
+   "level": 80,
+   "icon": 10026,
+   "stats": {
+    "pa": [
+     1,
+     1
+    ],
+    "vitalite": [
+     31,
+     40
+    ],
+    "sagesse": [
+     31,
+     40
+    ],
+    "dommages": [
+     4,
+     5
+    ]
+   },
+   "set": 994
+  },
+  "2373": {
+   "name": "Moon Boutse",
+   "slot": "bottes",
+   "level": 62,
+   "icon": 11019,
+   "stats": {
+    "vitalite": [
+     61,
+     80
+    ],
+    "intelligence": [
+     -20,
+     -20
+    ],
+    "agilite": [
+     41,
+     50
+    ],
+    "sagesse": [
+     21,
+     30
+    ],
+    "resAir": [
+     4,
+     5
+    ]
+   }
+  },
+  "2375": {
+   "name": "Bottes Orino",
+   "slot": "bottes",
+   "level": 72,
+   "icon": 11021,
+   "stats": {
+    "vitalite": [
+     31,
+     40
+    ],
+    "force": [
+     21,
+     25
+    ],
+    "puissance": [
+     7,
+     10
+    ],
+    "sagesse": [
+     7,
+     10
+    ],
+    "resTerre": [
+     2,
+     2
+    ],
+    "pm": [
+     1,
+     1
+    ]
+   }
+  },
+  "2381": {
+   "name": "Cape Flotteuse",
+   "slot": "cape",
+   "level": 61,
+   "icon": 17036,
+   "stats": {
+    "vitalite": [
+     71,
+     90
+    ],
+    "puissance": [
+     21,
+     25
+    ],
+    "resNeutre": [
+     4,
+     5
+    ],
+    "resEau": [
+     4,
+     5
+    ]
+   }
+  },
+  "2385": {
+   "name": "La Brouteuse",
+   "slot": "cape",
+   "level": 88,
+   "icon": 17039,
+   "stats": {
+    "vitalite": [
+     41,
+     50
+    ],
+    "force": [
+     41,
+     50
+    ],
+    "resNeutre": [
+     3,
+     4
+    ],
+    "resFeu": [
+     3,
+     4
+    ],
+    "dommages": [
+     2,
+     3
+    ],
+    "invocations": [
+     2,
+     2
+    ]
+   }
+  },
+  "2387": {
+   "name": "La Poilue",
+   "slot": "cape",
+   "level": 63,
+   "icon": 17041,
+   "stats": {
+    "vitalite": [
+     41,
+     50
+    ],
+    "puissance": [
+     11,
+     15
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "resTerre": [
+     4,
+     5
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   }
+  },
+  "2391": {
+   "name": "Amulette de la Bouboule",
+   "slot": "amulette",
+   "level": 83,
+   "icon": 1039,
+   "stats": {
+    "puissance": [
+     11,
+     15
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "prospection": [
+     11,
+     15
+    ],
+    "resNeutre": [
+     3,
+     4
+    ],
+    "resEau": [
+     3,
+     4
+    ],
+    "invocations": [
+     2,
+     2
+    ],
+    "pa": [
+     1,
+     1
+    ]
+   }
+  },
+  "2600": {
+   "name": "Coupeuse de Sifflet",
+   "slot": "arme",
+   "level": 66,
+   "icon": 19017,
+   "stats": {
+    "vitalite": [
+     31,
+     40
+    ],
+    "force": [
+     41,
+     50
+    ],
+    "agilite": [
+     41,
+     50
+    ],
+    "puissance": [
+     11,
+     15
+    ],
+    "sagesse": [
+     16,
+     20
+    ]
+   },
+   "weapon": {
+    "type": "Hache",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 21,
+      "max": 30
+     }
+    ]
+   }
+  },
+  "2603": {
+   "name": "Trancheuse de Partie",
+   "slot": "arme",
+   "level": 66,
+   "icon": 19002,
+   "stats": {
+    "vitalite": [
+     71,
+     100
+    ],
+    "force": [
+     41,
+     50
+    ],
+    "puissance": [
+     16,
+     20
+    ],
+    "sagesse": [
+     21,
+     30
+    ],
+    "dommages": [
+     3,
+     4
+    ],
+    "portee": [
+     -1,
+     -1
+    ]
+   },
+   "weapon": {
+    "type": "Hache",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 21,
+      "max": 25
+     }
+    ]
+   }
+  },
+  "2604": {
+   "name": "Bardiche du Milicien",
+   "slot": "arme",
+   "level": 78,
+   "icon": 19003,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "force": [
+     41,
+     50
+    ],
+    "intelligence": [
+     -50,
+     -50
+    ],
+    "chance": [
+     41,
+     50
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "tacle": [
+     5,
+     7
+    ],
+    "retraitPM": [
+     4,
+     5
+    ],
+    "invocations": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Hache",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 26,
+      "max": 32
+     }
+    ]
+   }
+  },
+  "2606": {
+   "name": "Hachette Savante",
+   "slot": "arme",
+   "level": 81,
+   "icon": 19004,
+   "stats": {
+    "initiative": [
+     -200,
+     -200
+    ],
+    "vitalite": [
+     71,
+     100
+    ],
+    "force": [
+     -50,
+     -50
+    ],
+    "intelligence": [
+     31,
+     40
+    ],
+    "agilite": [
+     31,
+     40
+    ],
+    "puissance": [
+     21,
+     30
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "fuite": [
+     4,
+     5
+    ],
+    "dommages": [
+     5,
+     7
+    ]
+   },
+   "weapon": {
+    "type": "Hache",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 23,
+      "max": 29
+     }
+    ]
+   }
+  },
+  "2608": {
+   "name": "Francisque Basquaise",
+   "slot": "arme",
+   "level": 84,
+   "icon": 19001,
+   "stats": {
+    "vitalite": [
+     41,
+     50
+    ],
+    "force": [
+     51,
+     70
+    ],
+    "fuite": [
+     7,
+     10
+    ],
+    "dommagesTerre": [
+     4,
+     5
+    ],
+    "dommagesNeutre": [
+     4,
+     5
+    ],
+    "dommagesPoussee": [
+     7,
+     10
+    ],
+    "critique": [
+     4,
+     5
+    ]
+   },
+   "weapon": {
+    "type": "Hache",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 28,
+      "max": 32
+     }
+    ]
+   }
+  },
+  "2612": {
+   "name": "Vouge à Poisson",
+   "slot": "arme",
+   "level": 87,
+   "icon": 19004,
+   "stats": {
+    "vitalite": [
+     81,
+     120
+    ],
+    "force": [
+     41,
+     60
+    ],
+    "agilite": [
+     41,
+     60
+    ],
+    "chance": [
+     -40,
+     -40
+    ],
+    "puissance": [
+     16,
+     20
+    ],
+    "dommages": [
+     4,
+     5
+    ],
+    "critique": [
+     2,
+     3
+    ]
+   },
+   "weapon": {
+    "type": "Hache",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 31,
+      "max": 35
+     }
+    ]
+   }
+  },
+  "2614": {
+   "name": "Hache de Dame Oise",
+   "slot": "arme",
+   "level": 89,
+   "icon": 19005,
+   "stats": {
+    "initiative": [
+     -500,
+     -500
+    ],
+    "vitalite": [
+     81,
+     120
+    ],
+    "force": [
+     41,
+     60
+    ],
+    "resPoussee": [
+     7,
+     10
+    ],
+    "resCritiques": [
+     7,
+     10
+    ],
+    "esquivePA": [
+     5,
+     7
+    ],
+    "dommages": [
+     4,
+     5
+    ],
+    "invocations": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Hache",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 31,
+      "max": 35
+     }
+    ]
+   }
+  },
+  "2638": {
+   "name": "La Griffe Aiguisée",
+   "slot": "arme",
+   "level": 68,
+   "icon": 6034,
+   "stats": {
+    "initiative": [
+     251,
+     300
+    ],
+    "vitalite": [
+     41,
+     60
+    ],
+    "force": [
+     21,
+     30
+    ],
+    "agilite": [
+     21,
+     30
+    ],
+    "fuite": [
+     7,
+     10
+    ],
+    "dommages": [
+     2,
+     3
+    ]
+   },
+   "weapon": {
+    "type": "Épée",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 16,
+      "max": 30
+     }
+    ]
+   }
+  },
+  "2804": {
+   "name": "Ceinture Mulante",
+   "slot": "ceinture",
+   "level": 81,
+   "icon": 10050,
+   "stats": {
+    "initiative": [
+     151,
+     200
+    ],
+    "vitalite": [
+     51,
+     70
+    ],
+    "force": [
+     31,
+     40
+    ],
+    "agilite": [
+     31,
+     40
+    ],
+    "sagesse": [
+     21,
+     25
+    ],
+    "resTerre": [
+     2,
+     3
+    ],
+    "resEau": [
+     2,
+     3
+    ]
+   }
+  },
+  "2811": {
+   "name": "Ceinture Ouginakale",
+   "slot": "ceinture",
+   "level": 65,
+   "icon": 10055,
+   "stats": {
+    "agilite": [
+     21,
+     25
+    ],
+    "chance": [
+     21,
+     25
+    ],
+    "puissance": [
+     11,
+     15
+    ],
+    "resAir": [
+     4,
+     5
+    ],
+    "resFeu": [
+     4,
+     5
+    ]
+   },
+   "set": 998
+  },
+  "3206": {
+   "name": "La Xerbo",
+   "slot": "ceinture",
+   "level": 67,
+   "icon": 10039,
+   "stats": {
+    "pods": [
+     101,
+     150
+    ],
+    "force": [
+     21,
+     30
+    ],
+    "agilite": [
+     21,
+     30
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "resAir": [
+     2,
+     2
+    ],
+    "dommages": [
+     2,
+     2
+    ],
+    "invocations": [
+     1,
+     1
+    ]
+   }
+  },
+  "3647": {
+   "name": "La Thor-Boyaux",
+   "slot": "arme",
+   "level": 83,
+   "icon": 5031,
+   "stats": {
+    "vitalite": [
+     51,
+     70
+    ],
+    "force": [
+     31,
+     40
+    ],
+    "agilite": [
+     31,
+     40
+    ],
+    "retraitPM": [
+     4,
+     5
+    ],
+    "dommages": [
+     4,
+     5
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Dague",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 14,
+      "max": 23
+     }
+    ]
+   }
+  },
+  "3648": {
+   "name": "Daguette du Captain Chafer",
+   "slot": "arme",
+   "level": 83,
+   "icon": 5032,
+   "stats": {
+    "initiative": [
+     151,
+     200
+    ],
+    "vitalite": [
+     41,
+     60
+    ],
+    "agilite": [
+     41,
+     60
+    ],
+    "puissance": [
+     11,
+     15
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "esquivePA": [
+     4,
+     5
+    ],
+    "critique": [
+     4,
+     5
+    ]
+   },
+   "weapon": {
+    "type": "Dague",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 15,
+      "max": 22
+     }
+    ]
+   }
+  },
+  "3651": {
+   "name": "Dague Lutination",
+   "slot": "arme",
+   "level": 90,
+   "icon": 5035,
+   "stats": {
+    "initiative": [
+     351,
+     400
+    ],
+    "vitalite": [
+     41,
+     60
+    ],
+    "agilite": [
+     41,
+     60
+    ],
+    "sagesse": [
+     21,
+     25
+    ],
+    "resNeutre": [
+     4,
+     5
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Dague",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 10,
+      "max": 14
+     }
+    ]
+   }
+  },
+  "4242": {
+   "name": "Eventail Tranchant",
+   "slot": "arme",
+   "level": 75,
+   "icon": 6024,
+   "stats": {
+    "force": [
+     31,
+     40
+    ],
+    "intelligence": [
+     31,
+     40
+    ],
+    "agilite": [
+     31,
+     40
+    ],
+    "chance": [
+     31,
+     40
+    ],
+    "puissance": [
+     4,
+     5
+    ],
+    "dommages": [
+     2,
+     3
+    ]
+   },
+   "weapon": {
+    "type": "Épée",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 26,
+      "max": 40
+     }
+    ]
+   }
+  },
+  "4381": {
+   "name": "Amulette Argie",
+   "slot": "amulette",
+   "level": 82,
+   "icon": 1054,
+   "stats": {
+    "redTerre": [
+     10,
+     10
+    ],
+    "redEau": [
+     10,
+     10
+    ],
+    "redAir": [
+     10,
+     10
+    ],
+    "redFeu": [
+     10,
+     10
+    ],
+    "resTerre": [
+     3,
+     4
+    ],
+    "resEau": [
+     3,
+     4
+    ],
+    "resAir": [
+     3,
+     4
+    ],
+    "resFeu": [
+     3,
+     4
+    ]
+   }
+  },
+  "4382": {
+   "name": "Pic à Glace",
+   "slot": "arme",
+   "level": 85,
+   "icon": 6014,
+   "stats": {
+    "vitalite": [
+     71,
+     100
+    ],
+    "chance": [
+     41,
+     50
+    ],
+    "fuite": [
+     2,
+     3
+    ],
+    "resEau": [
+     4,
+     5
+    ],
+    "resFeu": [
+     -5,
+     -5
+    ],
+    "dommages": [
+     4,
+     5
+    ],
+    "dommagesCritiques": [
+     7,
+     10
+    ],
+    "critique": [
+     4,
+     5
+    ]
+   },
+   "weapon": {
+    "type": "Épée",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 26,
+      "max": 30
+     }
+    ]
+   }
+  },
+  "5122": {
+   "name": "La Maîtrise des Poupées",
+   "slot": "amulette",
+   "level": 69,
+   "icon": 1056,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "force": [
+     -25,
+     -25
+    ],
+    "intelligence": [
+     -25,
+     -25
+    ],
+    "agilite": [
+     -25,
+     -25
+    ],
+    "chance": [
+     -25,
+     -25
+    ],
+    "resTerre": [
+     2,
+     2
+    ],
+    "resNeutre": [
+     2,
+     2
+    ],
+    "invocations": [
+     2,
+     2
+    ],
+    "pa": [
+     1,
+     1
+    ]
+   }
+  },
+  "5999": {
+   "name": "Baguette Helles",
+   "slot": "arme",
+   "level": 75,
+   "icon": 3022,
+   "stats": {
+    "vitalite": [
+     41,
+     50
+    ],
+    "intelligence": [
+     41,
+     50
+    ],
+    "sagesse": [
+     21,
+     30
+    ],
+    "dommagesFeu": [
+     4,
+     5
+    ],
+    "resNeutre": [
+     4,
+     5
+    ],
+    "critique": [
+     2,
+     3
+    ]
+   },
+   "weapon": {
+    "type": "Baguette",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 11,
+      "max": 14
+     }
+    ]
+   }
+  },
+  "6438": {
+   "name": "Baguette Molle",
+   "slot": "arme",
+   "level": 83,
+   "icon": 3033,
+   "stats": {
+    "initiative": [
+     -400,
+     -400
+    ],
+    "vitalite": [
+     61,
+     80
+    ],
+    "puissance": [
+     21,
+     30
+    ],
+    "sagesse": [
+     21,
+     30
+    ],
+    "prospection": [
+     7,
+     10
+    ],
+    "dommages": [
+     7,
+     10
+    ],
+    "critique": [
+     2,
+     3
+    ]
+   },
+   "weapon": {
+    "type": "Baguette",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 11,
+      "max": 15
+     }
+    ]
+   }
+  },
+  "6439": {
+   "name": "Baguette Irréelle",
+   "slot": "arme",
+   "level": 90,
+   "icon": 3032,
+   "stats": {
+    "intelligence": [
+     41,
+     50
+    ],
+    "resCritiques": [
+     7,
+     10
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "resTerre": [
+     2,
+     3
+    ],
+    "resNeutre": [
+     2,
+     3
+    ],
+    "resEau": [
+     2,
+     3
+    ],
+    "resAir": [
+     2,
+     3
+    ],
+    "resFeu": [
+     2,
+     3
+    ]
+   },
+   "weapon": {
+    "type": "Baguette",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 1,
+      "max": 40
+     }
+    ]
+   }
+  },
+  "6442": {
+   "name": "Lance d'Aga Dou",
+   "slot": "arme",
+   "level": 81,
+   "icon": 4031,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "force": [
+     41,
+     50
+    ],
+    "sagesse": [
+     21,
+     30
+    ],
+    "tacle": [
+     4,
+     5
+    ],
+    "invocations": [
+     1,
+     1
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Lance",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 16,
+      "max": 27
+     }
+    ]
+   }
+  },
+  "6444": {
+   "name": "Amulette Turquoise",
+   "slot": "amulette",
+   "level": 63,
+   "icon": 1058,
+   "stats": {
+    "prospection": [
+     3,
+     5
+    ],
+    "intelligence": [
+     21,
+     40
+    ],
+    "portee": [
+     1,
+     1
+    ],
+    "chance": [
+     16,
+     25
+    ],
+    "agilite": [
+     16,
+     25
+    ],
+    "vitalite": [
+     21,
+     30
+    ]
+   }
+  },
+  "6445": {
+   "name": "Arc Boutant",
+   "slot": "arme",
+   "level": 80,
+   "icon": 2013,
+   "stats": {
+    "vitalite": [
+     51,
+     70
+    ],
+    "chance": [
+     41,
+     60
+    ],
+    "puissance": [
+     11,
+     15
+    ],
+    "resFeu": [
+     4,
+     5
+    ],
+    "dommages": [
+     2,
+     3
+    ],
+    "critique": [
+     3,
+     4
+    ]
+   },
+   "weapon": {
+    "type": "Arc",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 20,
+      "max": 29
+     }
+    ]
+   }
+  },
+  "6446": {
+   "name": "Arc Chiduc",
+   "slot": "arme",
+   "level": 87,
+   "icon": 2014,
+   "stats": {
+    "initiative": [
+     151,
+     200
+    ],
+    "vitalite": [
+     61,
+     80
+    ],
+    "puissance": [
+     21,
+     30
+    ],
+    "sagesse": [
+     21,
+     25
+    ],
+    "prospection": [
+     7,
+     10
+    ],
+    "dommages": [
+     4,
+     5
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Arc",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 17,
+      "max": 31
+     }
+    ]
+   }
+  },
+  "6451": {
+   "name": "Arc Ange",
+   "slot": "arme",
+   "level": 82,
+   "icon": 2031,
+   "stats": {
+    "initiative": [
+     151,
+     200
+    ],
+    "vitalite": [
+     41,
+     50
+    ],
+    "intelligence": [
+     41,
+     50
+    ],
+    "chance": [
+     41,
+     50
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "resEau": [
+     2,
+     2
+    ],
+    "resAir": [
+     2,
+     2
+    ],
+    "resFeu": [
+     2,
+     2
+    ]
+   },
+   "weapon": {
+    "type": "Arc",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 17,
+      "max": 31
+     }
+    ]
+   }
+  },
+  "6453": {
+   "name": "Arc du Pêcheur",
+   "slot": "arme",
+   "level": 70,
+   "icon": 2032,
+   "stats": {
+    "initiative": [
+     151,
+     200
+    ],
+    "force": [
+     31,
+     40
+    ],
+    "puissance": [
+     11,
+     15
+    ],
+    "critique": [
+     4,
+     5
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Arc",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 13,
+      "max": 22
+     }
+    ]
+   }
+  },
+  "6454": {
+   "name": "Abraton Sombre",
+   "slot": "arme",
+   "level": 87,
+   "icon": 4023,
+   "stats": {
+    "pa": [
+     -1,
+     -1
+    ],
+    "force": [
+     21,
+     35
+    ],
+    "intelligence": [
+     21,
+     35
+    ],
+    "agilite": [
+     21,
+     35
+    ],
+    "dommages": [
+     4,
+     5
+    ],
+    "invocations": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Bâton",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 15,
+      "max": 29
+     }
+    ]
+   },
+   "chasse": true
+  },
+  "6465": {
+   "name": "Anneau de Loopine",
+   "slot": "anneau",
+   "level": 71,
+   "icon": 9052,
+   "stats": {
+    "initiative": [
+     51,
+     100
+    ],
+    "vitalite": [
+     21,
+     30
+    ],
+    "chance": [
+     21,
+     30
+    ],
+    "prospection": [
+     7,
+     10
+    ],
+    "resTerre": [
+     2,
+     2
+    ],
+    "resAir": [
+     2,
+     2
+    ],
+    "dommages": [
+     2,
+     2
+    ]
+   }
+  },
+  "6467": {
+   "name": "Anneau Nime",
+   "slot": "anneau",
+   "level": 67,
+   "icon": 9053,
+   "stats": {
+    "initiative": [
+     101,
+     150
+    ],
+    "vitalite": [
+     21,
+     30
+    ],
+    "intelligence": [
+     21,
+     25
+    ],
+    "chance": [
+     21,
+     25
+    ],
+    "sagesse": [
+     7,
+     10
+    ],
+    "prospection": [
+     7,
+     10
+    ]
+   }
+  },
+  "6469": {
+   "name": "Alliance de Farle",
+   "slot": "anneau",
+   "level": 87,
+   "icon": 9055,
+   "stats": {
+    "vitalite": [
+     41,
+     50
+    ],
+    "force": [
+     21,
+     30
+    ],
+    "puissance": [
+     4,
+     5
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "prospection": [
+     7,
+     10
+    ],
+    "dommages": [
+     2,
+     3
+    ],
+    "critique": [
+     2,
+     3
+    ]
+   }
+  },
+  "6470": {
+   "name": "Bottes de l'Eleveur de Bouftous",
+   "slot": "bottes",
+   "level": 64,
+   "icon": 11040,
+   "stats": {
+    "vitalite": [
+     16,
+     20
+    ],
+    "chance": [
+     16,
+     20
+    ],
+    "invocations": [
+     1,
+     1
+    ],
+    "pm": [
+     1,
+     1
+    ]
+   }
+  },
+  "6472": {
+   "name": "Dragocoiffe Argile",
+   "slot": "chapeau",
+   "level": 63,
+   "icon": 16055,
+   "stats": {
+    "initiative": [
+     101,
+     150
+    ],
+    "vitalite": [
+     16,
+     25
+    ],
+    "agilite": [
+     11,
+     20
+    ],
+    "sagesse": [
+     6,
+     15
+    ],
+    "dommagesAir": [
+     5,
+     7
+    ],
+    "dommagesPoussee": [
+     4,
+     5
+    ],
+    "resFeu": [
+     2,
+     3
+    ],
+    "critique": [
+     2,
+     3
+    ]
+   }
+  },
+  "6473": {
+   "name": "Dragocoiffe Ardoise",
+   "slot": "chapeau",
+   "level": 63,
+   "icon": 16057,
+   "stats": {
+    "vitalite": [
+     21,
+     30
+    ],
+    "chance": [
+     26,
+     35
+    ],
+    "dommagesEau": [
+     3,
+     4
+    ],
+    "resNeutre": [
+     3,
+     4
+    ],
+    "resFeu": [
+     2,
+     3
+    ],
+    "invocations": [
+     1,
+     1
+    ]
+   }
+  },
+  "6474": {
+   "name": "Dragocoiffe Charbon",
+   "slot": "chapeau",
+   "level": 63,
+   "icon": 16056,
+   "stats": {
+    "initiative": [
+     101,
+     150
+    ],
+    "vitalite": [
+     26,
+     35
+    ],
+    "intelligence": [
+     31,
+     40
+    ],
+    "sagesse": [
+     6,
+     10
+    ],
+    "fuite": [
+     6,
+     8
+    ],
+    "dommagesFeu": [
+     2,
+     3
+    ],
+    "resTerre": [
+     2,
+     3
+    ]
+   }
+  },
+  "6482": {
+   "name": "Korko Kousto",
+   "slot": "chapeau",
+   "level": 73,
+   "icon": 16059,
+   "stats": {
+    "vitalite": [
+     16,
+     20
+    ],
+    "force": [
+     31,
+     40
+    ],
+    "intelligence": [
+     31,
+     40
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "dommages": [
+     2,
+     2
+    ],
+    "invocations": [
+     2,
+     2
+    ]
+   }
+  },
+  "6484": {
+   "name": "Arc du Sram Archer",
+   "slot": "arme",
+   "level": 89,
+   "icon": 2040,
+   "stats": {
+    "vitalite": [
+     31,
+     40
+    ],
+    "force": [
+     31,
+     40
+    ],
+    "agilite": [
+     31,
+     40
+    ],
+    "puissance": [
+     16,
+     20
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "dommagesAir": [
+     7,
+     10
+    ],
+    "dommagesNeutre": [
+     7,
+     10
+    ],
+    "critique": [
+     -5,
+     -5
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Arc",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 16,
+      "max": 23
+     }
+    ]
+   }
+  },
+  "6496": {
+   "name": "Baguette en Racine d'Abraknyde Sombre",
+   "slot": "arme",
+   "level": 67,
+   "icon": 3040,
+   "stats": {
+    "vitalite": [
+     31,
+     40
+    ],
+    "force": [
+     -40,
+     -40
+    ],
+    "intelligence": [
+     41,
+     60
+    ],
+    "agilite": [
+     -40,
+     -40
+    ],
+    "chance": [
+     -40,
+     -40
+    ],
+    "sagesse": [
+     21,
+     30
+    ],
+    "fuite": [
+     4,
+     5
+    ],
+    "dommagesCritiques": [
+     16,
+     20
+    ],
+    "critique": [
+     4,
+     5
+    ]
+   },
+   "weapon": {
+    "type": "Baguette",
+    "dmg": [
+     {
+      "element": "feu",
+      "min": 12,
+      "max": 16
+     }
+    ]
+   }
+  },
+  "6497": {
+   "name": "Balgourde des Clairettes",
+   "slot": "arme",
+   "level": 63,
+   "icon": 3043,
+   "stats": {
+    "intelligence": [
+     41,
+     50
+    ],
+    "puissance": [
+     11,
+     15
+    ],
+    "fuite": [
+     4,
+     6
+    ],
+    "esquivePA": [
+     4,
+     5
+    ],
+    "portee": [
+     1,
+     1
+    ],
+    "esquivePM": [
+     -5,
+     -5
+    ]
+   },
+   "weapon": {
+    "type": "Baguette",
+    "dmg": [
+     {
+      "element": "feu",
+      "min": 8,
+      "max": 20
+     }
+    ]
+   }
+  },
+  "6504": {
+   "name": "Marteau Fantal",
+   "slot": "arme",
+   "level": 81,
+   "icon": 7036,
+   "stats": {
+    "vitalite": [
+     51,
+     70
+    ],
+    "force": [
+     46,
+     55
+    ],
+    "sagesse": [
+     21,
+     25
+    ],
+    "prospection": [
+     4,
+     5
+    ],
+    "dommagesTerre": [
+     2,
+     3
+    ],
+    "dommagesNeutre": [
+     2,
+     3
+    ],
+    "invocations": [
+     2,
+     2
+    ]
+   },
+   "weapon": {
+    "type": "Marteau",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 21,
+      "max": 38
+     }
+    ]
+   }
+  },
+  "6506": {
+   "name": "Anneau du Mineur Gogorifiant",
+   "slot": "anneau",
+   "level": 84,
+   "icon": 9040,
+   "stats": {
+    "initiative": [
+     51,
+     100
+    ],
+    "vitalite": [
+     31,
+     40
+    ],
+    "chance": [
+     21,
+     30
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "prospection": [
+     11,
+     15
+    ],
+    "dommagesEau": [
+     2,
+     3
+    ],
+    "resEau": [
+     2,
+     3
+    ]
+   }
+  },
+  "6507": {
+   "name": "Marteau de la Terps",
+   "slot": "arme",
+   "level": 90,
+   "icon": 7038,
+   "stats": {
+    "vitalite": [
+     61,
+     80
+    ],
+    "force": [
+     21,
+     30
+    ],
+    "intelligence": [
+     41,
+     50
+    ],
+    "sagesse": [
+     7,
+     10
+    ],
+    "dommagesFeu": [
+     4,
+     5
+    ],
+    "dommagesNeutre": [
+     5,
+     7
+    ],
+    "invocations": [
+     1,
+     1
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Marteau",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 6,
+      "max": 10
+     },
+     {
+      "element": "feu",
+      "min": 6,
+      "max": 10
+     }
+    ]
+   }
+  },
+  "6512": {
+   "name": "Marteau Nitruhant",
+   "slot": "arme",
+   "level": 82,
+   "icon": 7043,
+   "stats": {
+    "vitalite": [
+     61,
+     80
+    ],
+    "intelligence": [
+     31,
+     40
+    ],
+    "chance": [
+     41,
+     50
+    ],
+    "dommages": [
+     2,
+     3
+    ],
+    "critique": [
+     2,
+     3
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Marteau",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 19,
+      "max": 38
+     }
+    ]
+   }
+  },
+  "6517": {
+   "name": "Dagues Hischantes",
+   "slot": "arme",
+   "level": 80,
+   "icon": 5042,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "force": [
+     21,
+     25
+    ],
+    "agilite": [
+     41,
+     50
+    ],
+    "dommagesNeutre": [
+     7,
+     10
+    ],
+    "soins": [
+     7,
+     10
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Dague",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 13,
+      "max": 22
+     }
+    ]
+   }
+  },
+  "6519": {
+   "name": "Baguette de Kouartz",
+   "slot": "arme",
+   "level": 78,
+   "icon": 3041,
+   "stats": {
+    "initiative": [
+     301,
+     400
+    ],
+    "vitalite": [
+     61,
+     80
+    ],
+    "intelligence": [
+     41,
+     50
+    ],
+    "puissance": [
+     11,
+     15
+    ],
+    "sagesse": [
+     21,
+     25
+    ],
+    "critique": [
+     2,
+     3
+    ]
+   },
+   "weapon": {
+    "type": "Baguette",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 13,
+      "max": 27
+     }
+    ]
+   }
+  },
+  "6520": {
+   "name": "La Migraine",
+   "slot": "arme",
+   "level": 84,
+   "icon": 3045,
+   "stats": {
+    "initiative": [
+     301,
+     350
+    ],
+    "vitalite": [
+     71,
+     90
+    ],
+    "puissance": [
+     21,
+     25
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "resTerre": [
+     2,
+     3
+    ],
+    "resNeutre": [
+     2,
+     3
+    ],
+    "dommages": [
+     4,
+     5
+    ]
+   },
+   "weapon": {
+    "type": "Baguette",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 11,
+      "max": 19
+     }
+    ]
+   }
+  },
+  "6528": {
+   "name": "Pelle Rinage",
+   "slot": "arme",
+   "level": 88,
+   "icon": 8004,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "intelligence": [
+     36,
+     45
+    ],
+    "chance": [
+     36,
+     45
+    ],
+    "puissance": [
+     7,
+     10
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "prospection": [
+     7,
+     10
+    ],
+    "dommagesFeu": [
+     2,
+     3
+    ],
+    "dommagesNeutre": [
+     2,
+     3
+    ],
+    "dommagesEau": [
+     2,
+     3
+    ],
+    "invocations": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Pelle",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 11,
+      "max": 16
+     }
+    ]
+   }
+  },
+  "6537": {
+   "name": "Pelle Mairhe",
+   "slot": "arme",
+   "level": 88,
+   "icon": 8037,
+   "stats": {
+    "vitalite": [
+     71,
+     100
+    ],
+    "agilite": [
+     41,
+     50
+    ],
+    "chance": [
+     41,
+     50
+    ],
+    "prospection": [
+     7,
+     10
+    ],
+    "invocations": [
+     1,
+     1
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Pelle",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 11,
+      "max": 20
+     }
+    ]
+   }
+  },
+  "6538": {
+   "name": "Pelle Vaidaire",
+   "slot": "arme",
+   "level": 84,
+   "icon": 8039,
+   "stats": {
+    "vitalite": [
+     51,
+     70
+    ],
+    "chance": [
+     31,
+     40
+    ],
+    "dommages": [
+     4,
+     6
+    ],
+    "portee": [
+     2,
+     2
+    ]
+   },
+   "weapon": {
+    "type": "Pelle",
+    "dmg": [
+     {
+      "element": "eau",
+      "min": 6,
+      "max": 13
+     },
+     {
+      "element": "neutre",
+      "min": 6,
+      "max": 13
+     }
+    ]
+   }
+  },
+  "6539": {
+   "name": "Pelle Gicque",
+   "slot": "arme",
+   "level": 71,
+   "icon": 8035,
+   "stats": {
+    "vitalite": [
+     51,
+     70
+    ],
+    "intelligence": [
+     31,
+     40
+    ],
+    "chance": [
+     31,
+     40
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "fuite": [
+     5,
+     7
+    ],
+    "soins": [
+     7,
+     10
+    ]
+   },
+   "weapon": {
+    "type": "Pelle",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 21,
+      "max": 40
+     }
+    ]
+   }
+  },
+  "6540": {
+   "name": "La Pelle Hélabète",
+   "slot": "arme",
+   "level": 86,
+   "icon": 8033,
+   "stats": {
+    "initiative": [
+     151,
+     200
+    ],
+    "vitalite": [
+     21,
+     30
+    ],
+    "chance": [
+     51,
+     70
+    ],
+    "prospection": [
+     7,
+     10
+    ],
+    "dommagesNeutre": [
+     4,
+     5
+    ],
+    "dommagesEau": [
+     4,
+     5
+    ],
+    "resTerre": [
+     3,
+     4
+    ],
+    "resNeutre": [
+     3,
+     4
+    ]
+   },
+   "weapon": {
+    "type": "Pelle",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 18,
+      "max": 37
+     }
+    ]
+   }
+  },
+  "6654": {
+   "name": "Bottes du Gardien des Égouts",
+   "slot": "bottes",
+   "level": 83,
+   "icon": 11028,
+   "stats": {
+    "vitalite": [
+     41,
+     50
+    ],
+    "puissance": [
+     11,
+     15
+    ],
+    "prospection": [
+     5,
+     7
+    ],
+    "dommages": [
+     4,
+     5
+    ],
+    "critique": [
+     2,
+     3
+    ],
+    "pm": [
+     1,
+     1
+    ]
+   }
+  },
+  "6712": {
+   "name": "Cape Hucine",
+   "slot": "cape",
+   "level": 71,
+   "icon": 17082,
+   "stats": {
+    "vitalite": [
+     71,
+     100
+    ],
+    "sagesse": [
+     31,
+     40
+    ],
+    "pa": [
+     1,
+     1
+    ],
+    "invocations": [
+     2,
+     2
+    ],
+    "resEau": [
+     6,
+     10
+    ],
+    "resTerre": [
+     6,
+     10
+    ],
+    "agilite": [
+     -100,
+     -100
+    ],
+    "chance": [
+     -100,
+     -100
+    ],
+    "force": [
+     -100,
+     -100
+    ],
+    "intelligence": [
+     -100,
+     -100
+    ]
+   }
+  },
+  "6766": {
+   "name": "Epis de Farle",
+   "slot": "amulette",
+   "level": 75,
+   "icon": 1068,
+   "stats": {
+    "vitalite": [
+     21,
+     30
+    ],
+    "force": [
+     21,
+     30
+    ],
+    "sagesse": [
+     7,
+     10
+    ],
+    "prospection": [
+     4,
+     5
+    ],
+    "invocations": [
+     1,
+     1
+    ],
+    "pa": [
+     1,
+     1
+    ]
+   },
+   "set": 17
+  },
+  "6767": {
+   "name": "Bracelet Magique de Farle",
+   "slot": "anneau",
+   "level": 79,
+   "icon": 9061,
+   "stats": {
+    "vitalite": [
+     21,
+     30
+    ],
+    "force": [
+     21,
+     30
+    ],
+    "intelligence": [
+     16,
+     20
+    ],
+    "agilite": [
+     16,
+     20
+    ],
+    "puissance": [
+     4,
+     5
+    ],
+    "sagesse": [
+     7,
+     10
+    ],
+    "resEau": [
+     2,
+     2
+    ],
+    "resFeu": [
+     2,
+     2
+    ]
+   },
+   "set": 17
+  },
+  "6769": {
+   "name": "Fourche de Farle",
+   "slot": "arme",
+   "level": 76,
+   "icon": 4043,
+   "stats": {
+    "initiative": [
+     151,
+     200
+    ],
+    "vitalite": [
+     51,
+     70
+    ],
+    "force": [
+     61,
+     80
+    ],
+    "puissance": [
+     11,
+     15
+    ],
+    "dommages": [
+     2,
+     3
+    ],
+    "critique": [
+     2,
+     3
+    ]
+   },
+   "weapon": {
+    "type": "Lance",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 15,
+      "max": 26
+     }
+    ]
+   },
+   "set": 17
+  },
+  "6774": {
+   "name": "Sabots de Farle",
+   "slot": "bottes",
+   "level": 80,
+   "icon": 11046,
+   "stats": {
+    "vitalite": [
+     41,
+     50
+    ],
+    "force": [
+     21,
+     25
+    ],
+    "agilite": [
+     21,
+     25
+    ],
+    "resEau": [
+     2,
+     3
+    ],
+    "dommages": [
+     2,
+     2
+    ],
+    "pm": [
+     1,
+     1
+    ]
+   },
+   "set": 17
+  },
+  "6775": {
+   "name": "Cape de Farle",
+   "slot": "cape",
+   "level": 76,
+   "icon": 17070,
+   "stats": {
+    "pods": [
+     251,
+     300
+    ],
+    "vitalite": [
+     31,
+     40
+    ],
+    "agilite": [
+     26,
+     35
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "resEau": [
+     2,
+     3
+    ],
+    "resAir": [
+     2,
+     3
+    ],
+    "invocations": [
+     1,
+     1
+    ]
+   },
+   "set": 17
+  },
+  "6776": {
+   "name": "Farlature",
+   "slot": "ceinture",
+   "level": 80,
+   "icon": 10061,
+   "stats": {
+    "force": [
+     21,
+     30
+    ],
+    "puissance": [
+     7,
+     10
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "prospection": [
+     4,
+     5
+    ],
+    "resEau": [
+     4,
+     5
+    ],
+    "resAir": [
+     4,
+     5
+    ],
+    "resFeu": [
+     4,
+     5
+    ]
+   },
+   "set": 17
+  },
+  "6778": {
+   "name": "Farlacoiffe",
+   "slot": "chapeau",
+   "level": 78,
+   "icon": 16067,
+   "stats": {
+    "vitalite": [
+     61,
+     80
+    ],
+    "sagesse": [
+     21,
+     30
+    ],
+    "prospection": [
+     7,
+     10
+    ],
+    "resEau": [
+     4,
+     5
+    ],
+    "dommages": [
+     2,
+     3
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "set": 17
+  },
+  "6817": {
+   "name": "Amulette du Chef Crocodaille",
+   "slot": "amulette",
+   "level": 70,
+   "icon": 1067,
+   "stats": {
+    "vitalite": [
+     21,
+     30
+    ],
+    "resEau": [
+     2,
+     2
+    ],
+    "resAir": [
+     2,
+     2
+    ],
+    "invocations": [
+     1,
+     1
+    ],
+    "pa": [
+     1,
+     1
+    ]
+   },
+   "set": 20
+  },
+  "6819": {
+   "name": "Bracelet du Chef Crocodaille",
+   "slot": "anneau",
+   "level": 70,
+   "icon": 9059,
+   "stats": {
+    "agilite": [
+     21,
+     30
+    ],
+    "chance": [
+     21,
+     30
+    ],
+    "prospection": [
+     2,
+     3
+    ],
+    "resTerre": [
+     2,
+     2
+    ],
+    "resFeu": [
+     2,
+     2
+    ],
+    "critique": [
+     2,
+     2
+    ]
+   },
+   "set": 20
+  },
+  "6821": {
+   "name": "Lame du Chef Crocodaille",
+   "slot": "arme",
+   "level": 70,
+   "icon": 6049,
+   "stats": {
+    "vitalite": [
+     46,
+     55
+    ],
+    "agilite": [
+     41,
+     50
+    ],
+    "chance": [
+     41,
+     50
+    ],
+    "dommages": [
+     2,
+     3
+    ],
+    "invocations": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Épée",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 21,
+      "max": 40
+     }
+    ]
+   },
+   "set": 20
+  },
+  "6825": {
+   "name": "Pantoufles Crochues du Chef Crocodaille",
+   "slot": "bottes",
+   "level": 69,
+   "icon": 11045,
+   "stats": {
+    "agilite": [
+     16,
+     20
+    ],
+    "resEau": [
+     2,
+     3
+    ],
+    "resAir": [
+     2,
+     3
+    ],
+    "pm": [
+     1,
+     1
+    ]
+   },
+   "set": 20
+  },
+  "6830": {
+   "name": "Petit sac d'écolier du Chef Crocodaille",
+   "slot": "cape",
+   "level": 70,
+   "icon": 81058,
+   "stats": {
+    "pods": [
+     251,
+     300
+    ],
+    "vitalite": [
+     21,
+     30
+    ],
+    "agilite": [
+     21,
+     30
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "resEau": [
+     2,
+     3
+    ],
+    "resFeu": [
+     2,
+     3
+    ],
+    "critique": [
+     2,
+     3
+    ]
+   },
+   "set": 20
+  },
+  "6831": {
+   "name": "Ceinture du Chef Crocodaille",
+   "slot": "ceinture",
+   "level": 66,
+   "icon": 10060,
+   "stats": {
+    "agilite": [
+     21,
+     30
+    ],
+    "chance": [
+     21,
+     30
+    ],
+    "puissance": [
+     11,
+     15
+    ],
+    "resEau": [
+     4,
+     5
+    ],
+    "resFeu": [
+     4,
+     5
+    ]
+   },
+   "set": 20
+  },
+  "6834": {
+   "name": "Coiffe du Chef Crocodaille",
+   "slot": "chapeau",
+   "level": 70,
+   "icon": 16066,
+   "stats": {
+    "vitalite": [
+     16,
+     20
+    ],
+    "agilite": [
+     21,
+     25
+    ],
+    "chance": [
+     21,
+     25
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "resFeu": [
+     2,
+     2
+    ],
+    "invocations": [
+     1,
+     1
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "set": 20
+  },
+  "6930": {
+   "name": "Casque du Craqueleur",
+   "slot": "chapeau",
+   "level": 62,
+   "icon": 16085,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "force": [
+     21,
+     30
+    ],
+    "chance": [
+     21,
+     30
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "prospection": [
+     7,
+     10
+    ],
+    "tacle": [
+     4,
+     7
+    ],
+    "resEau": [
+     3,
+     5
+    ],
+    "portee": [
+     -1,
+     -1
+    ],
+    "fuite": [
+     -10,
+     -10
+    ]
+   },
+   "set": 26
+  },
+  "6931": {
+   "name": "Craquelocape",
+   "slot": "cape",
+   "level": 61,
+   "icon": 17077,
+   "stats": {
+    "vitalite": [
+     51,
+     70
+    ],
+    "force": [
+     21,
+     25
+    ],
+    "chance": [
+     21,
+     25
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "tacle": [
+     3,
+     5
+    ],
+    "fuite": [
+     -5,
+     -5
+    ],
+    "resFeu": [
+     3,
+     5
+    ]
+   },
+   "set": 26
+  },
+  "6952": {
+   "name": "Coiffe du Mulou",
+   "slot": "chapeau",
+   "level": 61,
+   "icon": 16131,
+   "stats": {
+    "vitalite": [
+     31,
+     40
+    ],
+    "agilite": [
+     31,
+     40
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "prospection": [
+     7,
+     10
+    ],
+    "dommagesAir": [
+     2,
+     3
+    ],
+    "invocations": [
+     1,
+     1
+    ]
+   },
+   "set": 32
+  },
+  "6953": {
+   "name": "Bottines du Mulou",
+   "slot": "bottes",
+   "level": 61,
+   "icon": 11076,
+   "stats": {
+    "vitalite": [
+     21,
+     25
+    ],
+    "agilite": [
+     16,
+     20
+    ],
+    "resTerre": [
+     2,
+     2
+    ],
+    "pm": [
+     1,
+     1
+    ]
+   },
+   "set": 32
+  },
+  "6954": {
+   "name": "Cape du Mulou",
+   "slot": "cape",
+   "level": 64,
+   "icon": 17099,
+   "stats": {
+    "vitalite": [
+     61,
+     80
+    ],
+    "force": [
+     21,
+     25
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "prospection": [
+     4,
+     5
+    ],
+    "soins": [
+     7,
+     10
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "set": 32
+  },
+  "6957": {
+   "name": "Lame du Craqueleur",
+   "slot": "arme",
+   "level": 64,
+   "icon": 6054,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "force": [
+     21,
+     30
+    ],
+    "chance": [
+     21,
+     30
+    ],
+    "fuite": [
+     -10,
+     -10
+    ],
+    "resNeutre": [
+     3,
+     5
+    ],
+    "critique": [
+     2,
+     3
+    ],
+    "pm": [
+     -1,
+     -1
+    ],
+    "puissance": [
+     7,
+     10
+    ],
+    "sagesse": [
+     7,
+     10
+    ]
+   },
+   "weapon": {
+    "type": "Épée",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 15,
+      "max": 17
+     },
+     {
+      "element": "eau",
+      "min": 15,
+      "max": 17
+     }
+    ]
+   },
+   "set": 26
+  },
+  "6997": {
+   "name": "Anneau Fioutioure",
+   "slot": "anneau",
+   "level": 65,
+   "icon": 9079,
+   "stats": {
+    "initiative": [
+     151,
+     200
+    ],
+    "vitalite": [
+     41,
+     50
+    ],
+    "agilite": [
+     21,
+     30
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "soins": [
+     4,
+     6
+    ]
+   }
+  },
+  "7011": {
+   "name": "Cape du Désir O'Boul",
+   "slot": "cape",
+   "level": 67,
+   "icon": 17083,
+   "stats": {
+    "initiative": [
+     151,
+     200
+    ],
+    "vitalite": [
+     41,
+     60
+    ],
+    "sagesse": [
+     21,
+     30
+    ],
+    "dommages": [
+     4,
+     5
+    ],
+    "critique": [
+     4,
+     5
+    ]
+   },
+   "set": 38
+  },
+  "7012": {
+   "name": "La Doubitch O'Boul",
+   "slot": "amulette",
+   "level": 77,
+   "icon": 1087,
+   "stats": {
+    "vitalite": [
+     51,
+     70
+    ],
+    "intelligence": [
+     31,
+     40
+    ],
+    "prospection": [
+     11,
+     15
+    ],
+    "pa": [
+     1,
+     1
+    ]
+   },
+   "set": 38
+  },
+  "7029": {
+   "name": "Ceinture de Sangroku",
+   "slot": "ceinture",
+   "level": 86,
+   "icon": 10080,
+   "stats": {
+    "vitalite": [
+     61,
+     80
+    ],
+    "agilite": [
+     41,
+     60
+    ],
+    "prospection": [
+     11,
+     15
+    ],
+    "fuite": [
+     5,
+     7
+    ],
+    "resEau": [
+     4,
+     5
+    ],
+    "soins": [
+     11,
+     15
+    ]
+   }
+  },
+  "7038": {
+   "name": "Couronne du Roi Gelax",
+   "slot": "chapeau",
+   "level": 79,
+   "icon": 16094,
+   "stats": {
+    "initiative": [
+     151,
+     200
+    ],
+    "vitalite": [
+     251,
+     300
+    ],
+    "fuite": [
+     4,
+     5
+    ],
+    "soins": [
+     7,
+     10
+    ],
+    "critique": [
+     4,
+     5
+    ]
+   }
+  },
+  "7058": {
+   "name": "Octovius",
+   "slot": "chapeau",
+   "level": 77,
+   "icon": 16096,
+   "stats": {
+    "vitalite": [
+     201,
+     250
+    ],
+    "resCritiques": [
+     7,
+     10
+    ],
+    "tacle": [
+     2,
+     3
+    ],
+    "resTerre": [
+     3,
+     4
+    ],
+    "resEau": [
+     3,
+     4
+    ]
+   }
+  },
+  "7104": {
+   "name": "Tongues Baques",
+   "slot": "bottes",
+   "level": 63,
+   "icon": 11058,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "intelligence": [
+     21,
+     30
+    ],
+    "puissance": [
+     11,
+     15
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "resTerre": [
+     4,
+     5
+    ],
+    "soins": [
+     4,
+     5
+    ]
+   }
+  },
+  "7118": {
+   "name": "Anneau K'Tuelle",
+   "slot": "anneau",
+   "level": 88,
+   "icon": 9094,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "agilite": [
+     21,
+     30
+    ],
+    "chance": [
+     21,
+     30
+    ],
+    "prospection": [
+     7,
+     10
+    ],
+    "resAir": [
+     2,
+     2
+    ],
+    "resFeu": [
+     2,
+     2
+    ],
+    "dommages": [
+     2,
+     3
+    ]
+   }
+  },
+  "7123": {
+   "name": "Anneau Bsène",
+   "slot": "anneau",
+   "level": 68,
+   "icon": 9095,
+   "stats": {
+    "vitalite": [
+     26,
+     35
+    ],
+    "resEau": [
+     2,
+     2
+    ],
+    "resFeu": [
+     2,
+     2
+    ],
+    "dommages": [
+     2,
+     3
+    ],
+    "soins": [
+     2,
+     3
+    ],
+    "invocations": [
+     1,
+     1
+    ]
+   }
+  },
+  "7146": {
+   "name": "La Bertheuze",
+   "slot": "chapeau",
+   "level": 81,
+   "icon": 16114,
+   "stats": {
+    "vitalite": [
+     81,
+     120
+    ],
+    "intelligence": [
+     31,
+     40
+    ],
+    "agilite": [
+     31,
+     40
+    ],
+    "resTerre": [
+     3,
+     4
+    ],
+    "resEau": [
+     3,
+     4
+    ],
+    "soins": [
+     7,
+     10
+    ]
+   }
+  },
+  "7168": {
+   "name": "Baguette Hylique",
+   "slot": "arme",
+   "level": 63,
+   "icon": 3051,
+   "stats": {
+    "intelligence": [
+     41,
+     50
+    ],
+    "puissance": [
+     11,
+     15
+    ],
+    "dommagesFeu": [
+     4,
+     5
+    ],
+    "dommagesNeutre": [
+     4,
+     5
+    ],
+    "retraitPM": [
+     4,
+     5
+    ],
+    "soins": [
+     7,
+     10
+    ]
+   },
+   "weapon": {
+    "type": "Baguette",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 5,
+      "max": 8
+     },
+     {
+      "element": "feu",
+      "min": 5,
+      "max": 8
+     }
+    ]
+   }
+  },
+  "7169": {
+   "name": "Baguette Hincelle",
+   "slot": "arme",
+   "level": 81,
+   "icon": 3052,
+   "stats": {
+    "vitalite": [
+     61,
+     80
+    ],
+    "intelligence": [
+     41,
+     50
+    ],
+    "fuite": [
+     4,
+     5
+    ],
+    "dommagesFeu": [
+     5,
+     7
+    ],
+    "dommagesNeutre": [
+     5,
+     7
+    ],
+    "resFeu": [
+     4,
+     5
+    ],
+    "soins": [
+     7,
+     10
+    ]
+   },
+   "weapon": {
+    "type": "Baguette",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 11,
+      "max": 20
+     }
+    ]
+   }
+  },
+  "7178": {
+   "name": "Racine Horodon",
+   "slot": "arme",
+   "level": 86,
+   "icon": 4058,
+   "stats": {
+    "vitalite": [
+     36,
+     45
+    ],
+    "intelligence": [
+     36,
+     45
+    ],
+    "puissance": [
+     11,
+     15
+    ],
+    "sagesse": [
+     21,
+     25
+    ],
+    "dommages": [
+     4,
+     5
+    ],
+    "soins": [
+     11,
+     15
+    ],
+    "invocations": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Bâton",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 2,
+      "max": 11
+     }
+    ]
+   }
+  },
+  "7183": {
+   "name": "Racine Huzohide",
+   "slot": "arme",
+   "level": 88,
+   "icon": 4055,
+   "stats": {
+    "vitalite": [
+     71,
+     100
+    ],
+    "intelligence": [
+     41,
+     60
+    ],
+    "sagesse": [
+     21,
+     25
+    ],
+    "dommagesFeu": [
+     3,
+     4
+    ],
+    "dommagesNeutre": [
+     3,
+     4
+    ],
+    "retraitPA": [
+     4,
+     5
+    ],
+    "soins": [
+     16,
+     20
+    ]
+   },
+   "weapon": {
+    "type": "Bâton",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 13,
+      "max": 30
+     }
+    ]
+   }
+  },
+  "7184": {
+   "name": "Racine Histre",
+   "slot": "arme",
+   "level": 86,
+   "icon": 4056,
+   "stats": {
+    "vitalite": [
+     151,
+     200
+    ],
+    "puissance": [
+     21,
+     30
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "dommages": [
+     4,
+     5
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Bâton",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 13,
+      "max": 30
+     }
+    ]
+   }
+  },
+  "7201": {
+   "name": "Sabre Nidanwa",
+   "slot": "arme",
+   "level": 66,
+   "icon": 6056,
+   "stats": {
+    "vitalite": [
+     36,
+     45
+    ],
+    "agilite": [
+     36,
+     45
+    ],
+    "sagesse": [
+     21,
+     25
+    ],
+    "tacle": [
+     2,
+     3
+    ],
+    "critique": [
+     5,
+     7
+    ]
+   },
+   "weapon": {
+    "type": "Épée",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 26,
+      "max": 37
+     }
+    ]
+   }
+  },
+  "7202": {
+   "name": "Sabre Sandanwa",
+   "slot": "arme",
+   "level": 83,
+   "icon": 6057,
+   "stats": {
+    "vitalite": [
+     61,
+     80
+    ],
+    "force": [
+     51,
+     70
+    ],
+    "puissance": [
+     21,
+     30
+    ],
+    "tacle": [
+     4,
+     5
+    ],
+    "dommages": [
+     5,
+     8
+    ]
+   },
+   "weapon": {
+    "type": "Épée",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 28,
+      "max": 41
+     }
+    ]
+   }
+  },
+  "7205": {
+   "name": "Bâton du Nidanwa",
+   "slot": "arme",
+   "level": 62,
+   "icon": 4050,
+   "stats": {
+    "vitalite": [
+     36,
+     45
+    ],
+    "force": [
+     36,
+     45
+    ],
+    "dommages": [
+     3,
+     4
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Bâton",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 11,
+      "max": 20
+     }
+    ]
+   }
+  },
+  "7206": {
+   "name": "Bâton du Sandanwa",
+   "slot": "arme",
+   "level": 77,
+   "icon": 4051,
+   "stats": {
+    "initiative": [
+     251,
+     300
+    ],
+    "vitalite": [
+     51,
+     70
+    ],
+    "intelligence": [
+     36,
+     45
+    ],
+    "agilite": [
+     36,
+     45
+    ],
+    "fuite": [
+     4,
+     5
+    ],
+    "soins": [
+     11,
+     15
+    ]
+   },
+   "weapon": {
+    "type": "Bâton",
+    "dmg": [
+     {
+      "element": "air",
+      "min": 9,
+      "max": 13
+     },
+     {
+      "element": "neutre",
+      "min": 9,
+      "max": 13
+     }
+    ]
+   }
+  },
+  "7210": {
+   "name": "Hache du Sandanwa",
+   "slot": "arme",
+   "level": 83,
+   "icon": 19035,
+   "stats": {
+    "initiative": [
+     151,
+     200
+    ],
+    "vitalite": [
+     71,
+     100
+    ],
+    "puissance": [
+     21,
+     30
+    ],
+    "sagesse": [
+     21,
+     25
+    ],
+    "dommages": [
+     3,
+     4
+    ],
+    "critique": [
+     4,
+     6
+    ]
+   },
+   "weapon": {
+    "type": "Hache",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 11,
+      "max": 45
+     }
+    ]
+   }
+  },
+  "7218": {
+   "name": "Sandales Adin",
+   "slot": "bottes",
+   "level": 76,
+   "icon": 11063,
+   "stats": {
+    "vitalite": [
+     101,
+     150
+    ],
+    "puissance": [
+     16,
+     20
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "dommages": [
+     4,
+     6
+    ],
+    "critique": [
+     4,
+     5
+    ]
+   }
+  },
+  "7227": {
+   "name": "Chapeau Terrdala",
+   "slot": "chapeau",
+   "level": 75,
+   "icon": 16147,
+   "stats": {
+    "vitalite": [
+     41,
+     50
+    ],
+    "force": [
+     31,
+     40
+    ],
+    "sagesse": [
+     21,
+     25
+    ],
+    "resAir": [
+     2,
+     3
+    ],
+    "resFeu": [
+     2,
+     3
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "set": 36
+  },
+  "7229": {
+   "name": "Chapeau Aerdala",
+   "slot": "chapeau",
+   "level": 64,
+   "icon": 16148,
+   "stats": {
+    "vitalite": [
+     31,
+     40
+    ],
+    "agilite": [
+     31,
+     40
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "resNeutre": [
+     2,
+     3
+    ],
+    "resFeu": [
+     2,
+     3
+    ],
+    "dommages": [
+     2,
+     3
+    ]
+   },
+   "set": 35
+  },
+  "7231": {
+   "name": "Cape Terrdala",
+   "slot": "cape",
+   "level": 63,
+   "icon": 17112,
+   "stats": {
+    "initiative": [
+     201,
+     250
+    ],
+    "vitalite": [
+     41,
+     60
+    ],
+    "force": [
+     31,
+     40
+    ],
+    "dommagesTerre": [
+     4,
+     5
+    ],
+    "resTerre": [
+     2,
+     3
+    ],
+    "resEau": [
+     2,
+     3
+    ]
+   },
+   "set": 36
+  },
+  "7233": {
+   "name": "Cape Aerdala",
+   "slot": "cape",
+   "level": 65,
+   "icon": 17114,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "agilite": [
+     41,
+     50
+    ],
+    "prospection": [
+     7,
+     10
+    ],
+    "dommagesAir": [
+     4,
+     5
+    ],
+    "resEau": [
+     2,
+     3
+    ],
+    "resFeu": [
+     2,
+     3
+    ]
+   },
+   "set": 35
+  },
+  "7239": {
+   "name": "Ceinture Terrdala",
+   "slot": "ceinture",
+   "level": 80,
+   "icon": 10078,
+   "stats": {
+    "pods": [
+     200,
+     200
+    ],
+    "force": [
+     31,
+     40
+    ],
+    "invocations": [
+     2,
+     2
+    ],
+    "resTerre": [
+     7,
+     10
+    ],
+    "vitalite": [
+     41,
+     60
+    ],
+    "dommages": [
+     3,
+     4
+    ]
+   },
+   "set": 36
+  },
+  "7240": {
+   "name": "Ceinture Feudala",
+   "slot": "ceinture",
+   "level": 81,
+   "icon": 10077,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "intelligence": [
+     31,
+     40
+    ],
+    "sagesse": [
+     7,
+     10
+    ],
+    "dommages": [
+     4,
+     5
+    ],
+    "soins": [
+     16,
+     20
+    ],
+    "critique": [
+     4,
+     5
+    ]
+   },
+   "set": 37
+  },
+  "7241": {
+   "name": "Ceinture Aerdala",
+   "slot": "ceinture",
+   "level": 70,
+   "icon": 10079,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "agilite": [
+     31,
+     40
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "resAir": [
+     4,
+     5
+    ],
+    "resFeu": [
+     4,
+     5
+    ]
+   },
+   "set": 35
+  },
+  "7243": {
+   "name": "Geta Terrdala",
+   "slot": "bottes",
+   "level": 76,
+   "icon": 11055,
+   "stats": {
+    "vitalite": [
+     31,
+     40
+    ],
+    "force": [
+     21,
+     30
+    ],
+    "resAir": [
+     2,
+     3
+    ],
+    "resFeu": [
+     2,
+     3
+    ],
+    "pm": [
+     1,
+     1
+    ]
+   },
+   "set": 36
+  },
+  "7244": {
+   "name": "Geta Feudala",
+   "slot": "bottes",
+   "level": 68,
+   "icon": 11056,
+   "stats": {
+    "vitalite": [
+     21,
+     30
+    ],
+    "intelligence": [
+     21,
+     30
+    ],
+    "critique": [
+     2,
+     3
+    ],
+    "pm": [
+     1,
+     1
+    ]
+   },
+   "set": 37
+  },
+  "7247": {
+   "name": "Alliance Terrdala",
+   "slot": "anneau",
+   "level": 77,
+   "icon": 9081,
+   "stats": {
+    "vitalite": [
+     31,
+     40
+    ],
+    "sagesse": [
+     21,
+     25
+    ],
+    "resTerre": [
+     2,
+     3
+    ],
+    "resEau": [
+     2,
+     3
+    ],
+    "dommages": [
+     3,
+     4
+    ]
+   },
+   "set": 36
+  },
+  "7248": {
+   "name": "Alliance Feudala",
+   "slot": "anneau",
+   "level": 81,
+   "icon": 9082,
+   "stats": {
+    "vitalite": [
+     26,
+     35
+    ],
+    "intelligence": [
+     26,
+     35
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "resEau": [
+     2,
+     3
+    ],
+    "soins": [
+     4,
+     5
+    ],
+    "critique": [
+     2,
+     3
+    ]
+   },
+   "set": 37
+  },
+  "7251": {
+   "name": "Amulette Terrdala",
+   "slot": "amulette",
+   "level": 78,
+   "icon": 1080,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "resEau": [
+     2,
+     3
+    ],
+    "resAir": [
+     2,
+     3
+    ],
+    "pa": [
+     1,
+     1
+    ]
+   },
+   "set": 36
+  },
+  "7253": {
+   "name": "Amulette Aerdala",
+   "slot": "amulette",
+   "level": 62,
+   "icon": 1082,
+   "stats": {
+    "vitalite": [
+     16,
+     20
+    ],
+    "agilite": [
+     21,
+     30
+    ],
+    "dommagesAir": [
+     2,
+     3
+    ],
+    "pa": [
+     1,
+     1
+    ]
+   },
+   "set": 35
+  },
+  "7255": {
+   "name": "Hache Terrdala",
+   "slot": "arme",
+   "level": 83,
+   "icon": 19032,
+   "stats": {
+    "vitalite": [
+     71,
+     100
+    ],
+    "force": [
+     41,
+     60
+    ],
+    "puissance": [
+     16,
+     20
+    ],
+    "fuite": [
+     4,
+     5
+    ],
+    "resNeutre": [
+     4,
+     5
+    ],
+    "critique": [
+     3,
+     4
+    ]
+   },
+   "weapon": {
+    "type": "Hache",
+    "dmg": [
+     {
+      "element": "terre",
+      "min": 11,
+      "max": 35
+     }
+    ]
+   },
+   "set": 36
+  },
+  "7256": {
+   "name": "Dagues Aerdala",
+   "slot": "arme",
+   "level": 62,
+   "icon": 5051,
+   "stats": {
+    "initiative": [
+     151,
+     200
+    ],
+    "vitalite": [
+     51,
+     70
+    ],
+    "agilite": [
+     21,
+     30
+    ],
+    "resAir": [
+     2,
+     3
+    ],
+    "resFeu": [
+     2,
+     3
+    ],
+    "critique": [
+     2,
+     3
+    ]
+   },
+   "weapon": {
+    "type": "Dague",
+    "dmg": [
+     {
+      "element": "air",
+      "min": 11,
+      "max": 16
+     }
+    ]
+   },
+   "set": 35
+  },
+  "7257": {
+   "name": "Sabre Feudala",
+   "slot": "arme",
+   "level": 76,
+   "icon": 6064,
+   "stats": {
+    "pa": [
+     -1,
+     -1
+    ],
+    "vitalite": [
+     56,
+     75
+    ],
+    "intelligence": [
+     41,
+     50
+    ],
+    "resTerre": [
+     4,
+     5
+    ],
+    "resFeu": [
+     4,
+     5
+    ],
+    "critique": [
+     3,
+     4
+    ]
+   },
+   "weapon": {
+    "type": "Épée",
+    "dmg": [
+     {
+      "element": "feu",
+      "min": 11,
+      "max": 30
+     }
+    ]
+   },
+   "set": 37
+  },
+  "7339": {
+   "name": "Coiffe du Kitsou",
+   "slot": "chapeau",
+   "level": 61,
+   "icon": 16097,
+   "stats": {
+    "vitalite": [
+     101,
+     150
+    ],
+    "puissance": [
+     16,
+     20
+    ],
+    "resNeutre": [
+     3,
+     4
+    ],
+    "resEau": [
+     3,
+     4
+    ]
+   },
+   "set": 41
+  },
+  "7340": {
+   "name": "Cape du Kitsou",
+   "slot": "cape",
+   "level": 62,
+   "icon": 17084,
+   "stats": {
+    "vitalite": [
+     81,
+     100
+    ],
+    "fuite": [
+     4,
+     5
+    ],
+    "resAir": [
+     4,
+     5
+    ],
+    "resFeu": [
+     4,
+     5
+    ],
+    "soins": [
+     5,
+     7
+    ]
+   },
+   "set": 41
+  },
+  "7880": {
+   "name": "Amulette du Boufcoul",
+   "slot": "amulette",
+   "level": 84,
+   "icon": 1093,
+   "stats": {
+    "initiative": [
+     -50,
+     -50
+    ],
+    "vitalite": [
+     41,
+     50
+    ],
+    "force": [
+     16,
+     25
+    ],
+    "intelligence": [
+     16,
+     25
+    ],
+    "agilite": [
+     16,
+     25
+    ],
+    "sagesse": [
+     7,
+     10
+    ],
+    "dommagesTerre": [
+     1,
+     2
+    ],
+    "dommagesFeu": [
+     1,
+     2
+    ],
+    "dommagesAir": [
+     1,
+     2
+    ],
+    "soins": [
+     4,
+     6
+    ],
+    "pa": [
+     1,
+     1
+    ]
+   },
+   "set": 43
+  },
+  "7881": {
+   "name": "Anneau du Boufcoul",
+   "slot": "anneau",
+   "level": 86,
+   "icon": 9098,
+   "stats": {
+    "initiative": [
+     -50,
+     -50
+    ],
+    "vitalite": [
+     41,
+     50
+    ],
+    "force": [
+     16,
+     20
+    ],
+    "intelligence": [
+     16,
+     20
+    ],
+    "agilite": [
+     16,
+     20
+    ],
+    "sagesse": [
+     4,
+     7
+    ],
+    "resFeu": [
+     2,
+     3
+    ],
+    "resTerre": [
+     2,
+     3
+    ],
+    "soins": [
+     4,
+     6
+    ]
+   },
+   "set": 43
+  },
+  "7882": {
+   "name": "Marteau du Boufcoul",
+   "slot": "arme",
+   "level": 88,
+   "icon": 7054,
+   "stats": {
+    "initiative": [
+     -50,
+     -50
+    ],
+    "vitalite": [
+     51,
+     70
+    ],
+    "force": [
+     21,
+     30
+    ],
+    "intelligence": [
+     21,
+     30
+    ],
+    "agilite": [
+     21,
+     30
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "dommagesTerre": [
+     2,
+     3
+    ],
+    "dommagesFeu": [
+     2,
+     3
+    ],
+    "dommagesAir": [
+     2,
+     3
+    ],
+    "resNeutre": [
+     2,
+     3
+    ],
+    "invocations": [
+     1,
+     1
+    ],
+    "critique": [
+     2,
+     3
+    ]
+   },
+   "weapon": {
+    "type": "Marteau",
+    "dmg": [
+     {
+      "element": "terre",
+      "min": 6,
+      "max": 12
+     }
+    ]
+   },
+   "set": 43
+  },
+  "7883": {
+   "name": "Bottes du Boufcoul",
+   "slot": "bottes",
+   "level": 87,
+   "icon": 11066,
+   "stats": {
+    "initiative": [
+     -50,
+     -50
+    ],
+    "vitalite": [
+     61,
+     70
+    ],
+    "puissance": [
+     21,
+     30
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "resTerre": [
+     2,
+     3
+    ],
+    "esquivePM": [
+     3,
+     5
+    ],
+    "pm": [
+     1,
+     1
+    ]
+   },
+   "set": 43
+  },
+  "7884": {
+   "name": "Cape du Boufcoul",
+   "slot": "cape",
+   "level": 90,
+   "icon": 17093,
+   "stats": {
+    "initiative": [
+     -50,
+     -50
+    ],
+    "vitalite": [
+     81,
+     120
+    ],
+    "force": [
+     21,
+     30
+    ],
+    "intelligence": [
+     21,
+     30
+    ],
+    "agilite": [
+     21,
+     30
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "dommagesTerre": [
+     2,
+     3
+    ],
+    "dommagesFeu": [
+     2,
+     3
+    ],
+    "dommagesAir": [
+     2,
+     3
+    ],
+    "resAir": [
+     2,
+     3
+    ],
+    "esquivePM": [
+     3,
+     4
+    ],
+    "soins": [
+     4,
+     6
+    ]
+   },
+   "set": 43
+  },
+  "7885": {
+   "name": "Ceinture du Boufcoul",
+   "slot": "ceinture",
+   "level": 85,
+   "icon": 10084,
+   "stats": {
+    "initiative": [
+     -50,
+     -50
+    ],
+    "vitalite": [
+     51,
+     60
+    ],
+    "force": [
+     21,
+     30
+    ],
+    "intelligence": [
+     21,
+     30
+    ],
+    "agilite": [
+     21,
+     30
+    ],
+    "sagesse": [
+     9,
+     12
+    ],
+    "dommagesTerre": [
+     2,
+     3
+    ],
+    "dommagesFeu": [
+     2,
+     3
+    ],
+    "dommagesAir": [
+     2,
+     3
+    ],
+    "resAir": [
+     2,
+     3
+    ],
+    "invocations": [
+     1,
+     1
+    ],
+    "pods": [
+     300,
+     300
+    ]
+   },
+   "set": 43
+  },
+  "7886": {
+   "name": "Coiffe du Boufcoul",
+   "slot": "chapeau",
+   "level": 89,
+   "icon": 16119,
+   "stats": {
+    "initiative": [
+     -50,
+     -50
+    ],
+    "vitalite": [
+     81,
+     100
+    ],
+    "force": [
+     21,
+     30
+    ],
+    "intelligence": [
+     21,
+     30
+    ],
+    "agilite": [
+     21,
+     30
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "dommagesTerre": [
+     2,
+     3
+    ],
+    "dommagesFeu": [
+     2,
+     3
+    ],
+    "dommagesAir": [
+     2,
+     3
+    ],
+    "resFeu": [
+     2,
+     3
+    ],
+    "resTerre": [
+     2,
+     3
+    ],
+    "soins": [
+     4,
+     6
+    ]
+   },
+   "set": 43
+  },
+  "7887": {
+   "name": "Coiffe du Koulosse",
+   "slot": "chapeau",
+   "level": 82,
+   "icon": 16122,
+   "stats": {
+    "vitalite": [
+     251,
+     300
+    ],
+    "force": [
+     -100,
+     -100
+    ],
+    "intelligence": [
+     -100,
+     -100
+    ],
+    "agilite": [
+     -100,
+     -100
+    ],
+    "chance": [
+     -100,
+     -100
+    ],
+    "sagesse": [
+     21,
+     30
+    ],
+    "tacle": [
+     7,
+     10
+    ],
+    "resNeutre": [
+     4,
+     5
+    ],
+    "resFeu": [
+     4,
+     5
+    ],
+    "dommages": [
+     2,
+     3
+    ],
+    "soins": [
+     16,
+     20
+    ],
+    "invocations": [
+     1,
+     1
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "set": 44
+  },
+  "7888": {
+   "name": "Sac du Koulosse",
+   "slot": "cape",
+   "level": 69,
+   "icon": 81002,
+   "stats": {
+    "pods": [
+     401,
+     500
+    ],
+    "vitalite": [
+     151,
+     200
+    ],
+    "force": [
+     -100,
+     -100
+    ],
+    "intelligence": [
+     -100,
+     -100
+    ],
+    "agilite": [
+     -100,
+     -100
+    ],
+    "chance": [
+     -100,
+     -100
+    ],
+    "tacle": [
+     2,
+     3
+    ],
+    "resTerre": [
+     4,
+     5
+    ],
+    "resEau": [
+     4,
+     5
+    ],
+    "dommages": [
+     7,
+     10
+    ],
+    "invocations": [
+     1,
+     1
+    ],
+    "critique": [
+     4,
+     5
+    ]
+   },
+   "set": 44
+  },
+  "7889": {
+   "name": "Bottes du Koulosse",
+   "slot": "bottes",
+   "level": 73,
+   "icon": 11069,
+   "stats": {
+    "vitalite": [
+     151,
+     200
+    ],
+    "force": [
+     -100,
+     -100
+    ],
+    "intelligence": [
+     -100,
+     -100
+    ],
+    "agilite": [
+     -100,
+     -100
+    ],
+    "chance": [
+     -100,
+     -100
+    ],
+    "sagesse": [
+     7,
+     10
+    ],
+    "tacle": [
+     7,
+     10
+    ],
+    "resTerre": [
+     4,
+     5
+    ],
+    "resAir": [
+     4,
+     5
+    ],
+    "soins": [
+     16,
+     20
+    ],
+    "invocations": [
+     1,
+     1
+    ],
+    "pm": [
+     1,
+     1
+    ]
+   },
+   "set": 44
+  },
+  "7890": {
+   "name": "Bâton du Koulosse",
+   "slot": "arme",
+   "level": 73,
+   "icon": 4062,
+   "stats": {
+    "pa": [
+     -2,
+     -1
+    ],
+    "vitalite": [
+     251,
+     300
+    ],
+    "force": [
+     -100,
+     -100
+    ],
+    "intelligence": [
+     -100,
+     -100
+    ],
+    "agilite": [
+     -100,
+     -100
+    ],
+    "chance": [
+     -100,
+     -100
+    ],
+    "resPoussee": [
+     4,
+     5
+    ],
+    "tacle": [
+     11,
+     15
+    ],
+    "resAir": [
+     4,
+     5
+    ],
+    "retraitPA": [
+     7,
+     10
+    ],
+    "dommages": [
+     7,
+     10
+    ],
+    "soins": [
+     16,
+     20
+    ]
+   },
+   "weapon": {
+    "type": "Bâton",
+    "dmg": []
+   },
+   "set": 44
+  },
+  "7902": {
+   "name": "Ceinture d'une Femme en Or",
+   "slot": "ceinture",
+   "level": 71,
+   "icon": 10086,
+   "stats": {
+    "pods": [
+     401,
+     500
+    ],
+    "vitalite": [
+     51,
+     70
+    ],
+    "intelligence": [
+     31,
+     40
+    ],
+    "prospection": [
+     11,
+     15
+    ],
+    "invocations": [
+     1,
+     1
+    ]
+   }
+  },
+  "8005": {
+   "name": "Arc du Koalak",
+   "slot": "arme",
+   "level": 61,
+   "icon": 2052,
+   "stats": {
+    "agilite": [
+     41,
+     60
+    ],
+    "dommages": [
+     3,
+     4
+    ],
+    "dommagesCritiques": [
+     5,
+     7
+    ],
+    "critique": [
+     3,
+     4
+    ]
+   },
+   "weapon": {
+    "type": "Arc",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 6,
+      "max": 15
+     }
+    ]
+   },
+   "set": 46
+  },
+  "8007": {
+   "name": "Cape du Koalak",
+   "slot": "cape",
+   "level": 61,
+   "icon": 17095,
+   "stats": {
+    "vitalite": [
+     81,
+     100
+    ],
+    "agilite": [
+     31,
+     40
+    ],
+    "resTerre": [
+     2,
+     3
+    ],
+    "resEau": [
+     2,
+     3
+    ],
+    "resFeu": [
+     2,
+     3
+    ]
+   },
+   "set": 46
+  },
+  "8146": {
+   "name": "Bottes du Craqueleur Légendaire",
+   "slot": "bottes",
+   "level": 86,
+   "icon": 11077,
+   "stats": {
+    "intelligence": [
+     16,
+     25
+    ],
+    "agilite": [
+     16,
+     25
+    ],
+    "soins": [
+     4,
+     5
+    ],
+    "dommages": [
+     4,
+     5
+    ],
+    "pm": [
+     1,
+     1
+    ],
+    "redEau": [
+     5,
+     7
+    ],
+    "redTerre": [
+     5,
+     7
+    ]
+   },
+   "set": 52
+  },
+  "8147": {
+   "name": "Casque du Craqueleur Légendaire",
+   "slot": "chapeau",
+   "level": 80,
+   "icon": 16133,
+   "stats": {
+    "initiative": [
+     151,
+     200
+    ],
+    "vitalite": [
+     41,
+     60
+    ],
+    "agilite": [
+     31,
+     40
+    ],
+    "puissance": [
+     11,
+     15
+    ],
+    "sagesse": [
+     21,
+     25
+    ],
+    "critique": [
+     2,
+     3
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "set": 52
+  },
+  "8148": {
+   "name": "Marteau du Craqueleur Légendaire",
+   "slot": "arme",
+   "level": 81,
+   "icon": 7058,
+   "stats": {
+    "vitalite": [
+     61,
+     80
+    ],
+    "intelligence": [
+     36,
+     45
+    ],
+    "agilite": [
+     36,
+     45
+    ],
+    "puissance": [
+     11,
+     15
+    ],
+    "tacle": [
+     4,
+     5
+    ],
+    "dommages": [
+     5,
+     7
+    ]
+   },
+   "weapon": {
+    "type": "Marteau",
+    "dmg": [
+     {
+      "element": "air",
+      "min": 13,
+      "max": 24
+     },
+     {
+      "element": "neutre",
+      "min": 9,
+      "max": 14
+     }
+    ]
+   },
+   "set": 52
+  },
+  "8149": {
+   "name": "Craquanneau Légendaire",
+   "slot": "anneau",
+   "level": 72,
+   "icon": 9105,
+   "stats": {
+    "intelligence": [
+     16,
+     20
+    ],
+    "agilite": [
+     16,
+     20
+    ],
+    "resEau": [
+     2,
+     2
+    ],
+    "resAir": [
+     2,
+     2
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "set": 52
+  },
+  "8150": {
+   "name": "Amulette du Craqueleur Légendaire",
+   "slot": "amulette",
+   "level": 84,
+   "icon": 1099,
+   "stats": {
+    "vitalite": [
+     31,
+     50
+    ],
+    "sagesse": [
+     16,
+     25
+    ],
+    "intelligence": [
+     16,
+     25
+    ],
+    "agilite": [
+     16,
+     25
+    ],
+    "pa": [
+     1,
+     1
+    ],
+    "redEau": [
+     4,
+     5
+    ],
+    "redTerre": [
+     4,
+     5
+    ]
+   },
+   "set": 52
+  },
+  "8152": {
+   "name": "Ceinture du Craqueleur Légendaire",
+   "slot": "ceinture",
+   "level": 79,
+   "icon": 10094,
+   "stats": {
+    "initiative": [
+     101,
+     150
+    ],
+    "pods": [
+     251,
+     300
+    ],
+    "vitalite": [
+     41,
+     60
+    ],
+    "agilite": [
+     21,
+     30
+    ],
+    "sagesse": [
+     21,
+     25
+    ],
+    "dommages": [
+     4,
+     5
+    ],
+    "invocations": [
+     1,
+     1
+    ]
+   },
+   "set": 52
+  },
+  "8181": {
+   "name": "Craquelocape Légendaire",
+   "slot": "cape",
+   "level": 84,
+   "icon": 17101,
+   "stats": {
+    "vitalite": [
+     71,
+     90
+    ],
+    "agilite": [
+     31,
+     40
+    ],
+    "puissance": [
+     16,
+     20
+    ],
+    "sagesse": [
+     21,
+     25
+    ],
+    "prospection": [
+     4,
+     5
+    ],
+    "tacle": [
+     7,
+     10
+    ],
+    "critique": [
+     4,
+     5
+    ]
+   },
+   "set": 52
+  },
+  "8298": {
+   "name": "Epis de Shika",
+   "slot": "amulette",
+   "level": 76,
+   "icon": 1113,
+   "stats": {
+    "vitalite": [
+     21,
+     30
+    ],
+    "chance": [
+     21,
+     30
+    ],
+    "sagesse": [
+     7,
+     10
+    ],
+    "prospection": [
+     4,
+     5
+    ],
+    "invocations": [
+     1,
+     1
+    ],
+    "pa": [
+     1,
+     1
+    ]
+   },
+   "set": 53
+  },
+  "8299": {
+   "name": "Bracelet Magique de Shika",
+   "slot": "anneau",
+   "level": 73,
+   "icon": 9118,
+   "stats": {
+    "vitalite": [
+     21,
+     25
+    ],
+    "intelligence": [
+     21,
+     25
+    ],
+    "agilite": [
+     11,
+     15
+    ],
+    "chance": [
+     11,
+     15
+    ],
+    "puissance": [
+     7,
+     10
+    ],
+    "sagesse": [
+     7,
+     10
+    ],
+    "resTerre": [
+     2,
+     2
+    ],
+    "resAir": [
+     2,
+     2
+    ]
+   },
+   "set": 53
+  },
+  "8300": {
+   "name": "Binette de Shika",
+   "slot": "arme",
+   "level": 80,
+   "icon": 4069,
+   "stats": {
+    "initiative": [
+     151,
+     200
+    ],
+    "vitalite": [
+     51,
+     70
+    ],
+    "intelligence": [
+     41,
+     60
+    ],
+    "chance": [
+     16,
+     20
+    ],
+    "puissance": [
+     11,
+     15
+    ],
+    "dommages": [
+     2,
+     3
+    ],
+    "critique": [
+     4,
+     5
+    ]
+   },
+   "weapon": {
+    "type": "Lance",
+    "dmg": [
+     {
+      "element": "feu",
+      "min": 15,
+      "max": 26
+     }
+    ]
+   },
+   "set": 53
+  },
+  "8301": {
+   "name": "Sabots de Shika",
+   "slot": "bottes",
+   "level": 80,
+   "icon": 11091,
+   "stats": {
+    "vitalite": [
+     41,
+     50
+    ],
+    "intelligence": [
+     21,
+     25
+    ],
+    "chance": [
+     21,
+     25
+    ],
+    "resAir": [
+     2,
+     3
+    ],
+    "dommages": [
+     2,
+     2
+    ],
+    "pm": [
+     1,
+     1
+    ]
+   },
+   "set": 53
+  },
+  "8302": {
+   "name": "Cape de Shika",
+   "slot": "cape",
+   "level": 80,
+   "icon": 17120,
+   "stats": {
+    "pods": [
+     151,
+     200
+    ],
+    "vitalite": [
+     21,
+     30
+    ],
+    "chance": [
+     21,
+     30
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "resTerre": [
+     4,
+     5
+    ],
+    "resFeu": [
+     4,
+     5
+    ],
+    "invocations": [
+     1,
+     1
+    ]
+   },
+   "set": 53
+  },
+  "8303": {
+   "name": "Shikature",
+   "slot": "ceinture",
+   "level": 80,
+   "icon": 10107,
+   "stats": {
+    "intelligence": [
+     21,
+     30
+    ],
+    "puissance": [
+     7,
+     10
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "prospection": [
+     4,
+     5
+    ],
+    "resTerre": [
+     4,
+     5
+    ],
+    "resNeutre": [
+     4,
+     5
+    ],
+    "resFeu": [
+     4,
+     5
+    ]
+   },
+   "set": 53
+  },
+  "8304": {
+   "name": "Shikacoiffe",
+   "slot": "chapeau",
+   "level": 80,
+   "icon": 16156,
+   "stats": {
+    "vitalite": [
+     61,
+     80
+    ],
+    "sagesse": [
+     21,
+     30
+    ],
+    "prospection": [
+     7,
+     10
+    ],
+    "resAir": [
+     4,
+     5
+    ],
+    "dommages": [
+     2,
+     3
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "set": 53
+  },
+  "8598": {
+   "name": "Dagues Ruyère",
+   "slot": "arme",
+   "level": 67,
+   "icon": 5061,
+   "stats": {
+    "pa": [
+     -1,
+     -1
+    ],
+    "agilite": [
+     41,
+     60
+    ],
+    "sagesse": [
+     21,
+     25
+    ],
+    "retraitPA": [
+     4,
+     5
+    ],
+    "critique": [
+     4,
+     5
+    ]
+   },
+   "weapon": {
+    "type": "Dague",
+    "dmg": []
+   }
+  },
+  "8599": {
+   "name": "Griffettes",
+   "slot": "arme",
+   "level": 69,
+   "icon": 5062,
+   "stats": {
+    "agilite": [
+     26,
+     40
+    ],
+    "sagesse": [
+     16,
+     30
+    ],
+    "vitalite": [
+     31,
+     50
+    ],
+    "force": [
+     26,
+     40
+    ]
+   },
+   "weapon": {
+    "type": "Dague",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 9,
+      "max": 18
+     }
+    ]
+   },
+   "chasse": true
+  },
+  "8605": {
+   "name": "Épée Zervatif",
+   "slot": "arme",
+   "level": 73,
+   "icon": 6074,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "force": [
+     26,
+     35
+    ],
+    "intelligence": [
+     26,
+     35
+    ],
+    "agilite": [
+     26,
+     35
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "dommages": [
+     2,
+     3
+    ]
+   },
+   "weapon": {
+    "type": "Épée",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 15,
+      "max": 22
+     },
+     {
+      "element": "air",
+      "min": 6,
+      "max": 10
+     },
+     {
+      "element": "feu",
+      "min": 6,
+      "max": 10
+     }
+    ]
+   }
+  },
+  "8608": {
+   "name": "La Bastonneuze",
+   "slot": "arme",
+   "level": 85,
+   "icon": 4073,
+   "stats": {
+    "vitalite": [
+     91,
+     130
+    ],
+    "puissance": [
+     26,
+     35
+    ],
+    "sagesse": [
+     21,
+     30
+    ],
+    "critique": [
+     4,
+     5
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Bâton",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 14,
+      "max": 28
+     }
+    ]
+   }
+  },
+  "8609": {
+   "name": "Geish'Arc",
+   "slot": "arme",
+   "level": 81,
+   "icon": 2056,
+   "stats": {
+    "vitalite": [
+     41,
+     50
+    ],
+    "agilite": [
+     51,
+     70
+    ],
+    "sagesse": [
+     21,
+     30
+    ],
+    "dommages": [
+     4,
+     5
+    ],
+    "critique": [
+     4,
+     5
+    ]
+   },
+   "weapon": {
+    "type": "Arc",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 5,
+      "max": 12
+     },
+     {
+      "element": "air",
+      "min": 5,
+      "max": 12
+     }
+    ]
+   }
+  },
+  "8610": {
+   "name": "Le Kikoularc",
+   "slot": "arme",
+   "level": 79,
+   "icon": 2057,
+   "stats": {
+    "intelligence": [
+     21,
+     35
+    ],
+    "chance": [
+     21,
+     35
+    ],
+    "pa": [
+     1,
+     1
+    ],
+    "dommages": [
+     4,
+     5
+    ]
+   },
+   "weapon": {
+    "type": "Arc",
+    "dmg": [
+     {
+      "element": "feu",
+      "min": 7,
+      "max": 12
+     },
+     {
+      "element": "eau",
+      "min": 7,
+      "max": 12
+     }
+    ]
+   }
+  },
+  "8611": {
+   "name": "Bagdette Café",
+   "slot": "arme",
+   "level": 69,
+   "icon": 3061,
+   "stats": {
+    "vitalite": [
+     41,
+     50
+    ],
+    "intelligence": [
+     26,
+     35
+    ],
+    "chance": [
+     26,
+     35
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "soins": [
+     4,
+     5
+    ],
+    "dommagesCritiques": [
+     7,
+     10
+    ],
+    "critique": [
+     2,
+     3
+    ]
+   },
+   "weapon": {
+    "type": "Baguette",
+    "dmg": [
+     {
+      "element": "eau",
+      "min": 5,
+      "max": 8
+     },
+     {
+      "element": "neutre",
+      "min": 5,
+      "max": 8
+     }
+    ]
+   }
+  },
+  "8612": {
+   "name": "La Bidjiz",
+   "slot": "arme",
+   "level": 74,
+   "icon": 3062,
+   "stats": {
+    "vitalite": [
+     31,
+     40
+    ],
+    "agilite": [
+     31,
+     40
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "critique": [
+     2,
+     2
+    ],
+    "pm": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Baguette",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 13,
+      "max": 22
+     }
+    ]
+   }
+  },
+  "8613": {
+   "name": "Pelle Minstère",
+   "slot": "arme",
+   "level": 70,
+   "icon": 8046,
+   "stats": {
+    "vitalite": [
+     61,
+     80
+    ],
+    "chance": [
+     41,
+     50
+    ],
+    "puissance": [
+     11,
+     15
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "dommages": [
+     5,
+     7
+    ]
+   },
+   "weapon": {
+    "type": "Pelle",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 16,
+      "max": 24
+     }
+    ]
+   }
+  },
+  "8614": {
+   "name": "Pelle Ripe",
+   "slot": "arme",
+   "level": 66,
+   "icon": 8047,
+   "stats": {
+    "intelligence": [
+     21,
+     30
+    ],
+    "chance": [
+     21,
+     30
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "critique": [
+     2,
+     3
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Pelle",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 6,
+      "max": 12
+     },
+     {
+      "element": "feu",
+      "min": 6,
+      "max": 12
+     }
+    ]
+   }
+  },
+  "8615": {
+   "name": "Marteau Mato",
+   "slot": "arme",
+   "level": 83,
+   "icon": 7061,
+   "stats": {
+    "vitalite": [
+     81,
+     120
+    ],
+    "intelligence": [
+     51,
+     70
+    ],
+    "sagesse": [
+     21,
+     30
+    ],
+    "soins": [
+     11,
+     15
+    ],
+    "invocations": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Marteau",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 7,
+      "max": 14
+     },
+     {
+      "element": "feu",
+      "min": 7,
+      "max": 14
+     }
+    ]
+   }
+  },
+  "8617": {
+   "name": "Hache Ebbah",
+   "slot": "arme",
+   "level": 62,
+   "icon": 19045,
+   "stats": {
+    "vitalite": [
+     51,
+     150
+    ],
+    "puissance": [
+     16,
+     20
+    ],
+    "sagesse": [
+     21,
+     30
+    ],
+    "tacle": [
+     5,
+     7
+    ],
+    "dommagesNeutre": [
+     2,
+     3
+    ]
+   },
+   "weapon": {
+    "type": "Hache",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 23,
+      "max": 28
+     }
+    ]
+   }
+  },
+  "8618": {
+   "name": "Hache Eulouh",
+   "slot": "arme",
+   "level": 80,
+   "icon": 19046,
+   "stats": {
+    "initiative": [
+     151,
+     200
+    ],
+    "vitalite": [
+     31,
+     40
+    ],
+    "agilite": [
+     21,
+     30
+    ],
+    "chance": [
+     41,
+     50
+    ],
+    "sagesse": [
+     21,
+     25
+    ],
+    "prospection": [
+     7,
+     10
+    ],
+    "dommages": [
+     4,
+     5
+    ]
+   },
+   "weapon": {
+    "type": "Hache",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 11,
+      "max": 17
+     },
+     {
+      "element": "eau",
+      "min": 11,
+      "max": 17
+     }
+    ]
+   }
+  },
+  "8829": {
+   "name": "Chapeau de Barbroussa",
+   "slot": "chapeau",
+   "level": 74,
+   "icon": 16197,
+   "stats": {
+    "initiative": [
+     101,
+     150
+    ],
+    "agilite": [
+     31,
+     40
+    ],
+    "sagesse": [
+     7,
+     10
+    ],
+    "resTerre": [
+     2,
+     3
+    ],
+    "dommagesCritiques": [
+     5,
+     7
+    ],
+    "critique": [
+     2,
+     3
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   }
+  },
+  "8833": {
+   "name": "Masse du Corailleur",
+   "slot": "arme",
+   "level": 85,
+   "icon": 7065,
+   "stats": {
+    "vitalite": [
+     61,
+     80
+    ],
+    "agilite": [
+     46,
+     55
+    ],
+    "chance": [
+     46,
+     55
+    ],
+    "sagesse": [
+     21,
+     30
+    ],
+    "dommages": [
+     2,
+     3
+    ],
+    "critique": [
+     2,
+     3
+    ]
+   },
+   "weapon": {
+    "type": "Marteau",
+    "dmg": [
+     {
+      "element": "eau",
+      "min": 8,
+      "max": 16
+     },
+     {
+      "element": "air",
+      "min": 8,
+      "max": 16
+     }
+    ]
+   }
+  },
+  "8867": {
+   "name": "Cape de la Meupette",
+   "slot": "cape",
+   "level": 61,
+   "icon": 17146,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "agilite": [
+     31,
+     40
+    ],
+    "chance": [
+     21,
+     30
+    ],
+    "soins": [
+     2,
+     3
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   }
+  },
+  "8878": {
+   "name": "Kidorteau",
+   "slot": "arme",
+   "level": 77,
+   "icon": 7066,
+   "stats": {
+    "vitalite": [
+     31,
+     40
+    ],
+    "puissance": [
+     11,
+     15
+    ],
+    "sagesse": [
+     21,
+     25
+    ],
+    "dommages": [
+     2,
+     3
+    ],
+    "invocations": [
+     3,
+     3
+    ]
+   },
+   "weapon": {
+    "type": "Marteau",
+    "dmg": [
+     {
+      "element": "air",
+      "min": 7,
+      "max": 12
+     },
+     {
+      "element": "eau",
+      "min": 7,
+      "max": 12
+     },
+     {
+      "element": "feu",
+      "min": 7,
+      "max": 12
+     }
+    ]
+   },
+   "set": 999
+  },
+  "8879": {
+   "name": "Anneau Poli",
+   "slot": "anneau",
+   "level": 66,
+   "icon": 9143,
+   "stats": {
+    "initiative": [
+     151,
+     200
+    ],
+    "vitalite": [
+     41,
+     60
+    ],
+    "force": [
+     11,
+     15
+    ],
+    "intelligence": [
+     11,
+     15
+    ],
+    "agilite": [
+     11,
+     15
+    ],
+    "chance": [
+     11,
+     15
+    ],
+    "puissance": [
+     11,
+     15
+    ],
+    "resTerre": [
+     -5,
+     -5
+    ],
+    "resNeutre": [
+     -5,
+     -5
+    ],
+    "resEau": [
+     -5,
+     -5
+    ],
+    "resAir": [
+     -5,
+     -5
+    ],
+    "resFeu": [
+     -5,
+     -5
+    ],
+    "dommages": [
+     4,
+     5
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "set": 999
+  },
+  "8880": {
+   "name": "Amufafah",
+   "slot": "amulette",
+   "level": 83,
+   "icon": 1126,
+   "stats": {
+    "force": [
+     21,
+     25
+    ],
+    "agilite": [
+     21,
+     25
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "resEau": [
+     2,
+     2
+    ],
+    "resFeu": [
+     2,
+     2
+    ],
+    "dommagesCritiques": [
+     4,
+     5
+    ],
+    "pm": [
+     1,
+     1
+    ]
+   },
+   "set": 999
+  },
+  "9126": {
+   "name": "Blopanneau Griotte Royal",
+   "slot": "anneau",
+   "level": 80,
+   "icon": 9153,
+   "stats": {
+    "vitalite": [
+     21,
+     35
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "intelligence": [
+     16,
+     30
+    ],
+    "dommages": [
+     4,
+     5
+    ],
+    "initiative": [
+     101,
+     200
+    ],
+    "prospection": [
+     6,
+     10
+    ]
+   },
+   "set": 102
+  },
+  "9127": {
+   "name": "Blopanneau Reinette Royal",
+   "slot": "anneau",
+   "level": 80,
+   "icon": 9154,
+   "stats": {
+    "vitalite": [
+     21,
+     35
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "force": [
+     16,
+     30
+    ],
+    "dommages": [
+     4,
+     5
+    ],
+    "initiative": [
+     101,
+     200
+    ],
+    "prospection": [
+     6,
+     10
+    ]
+   },
+   "set": 103
+  },
+  "9128": {
+   "name": "Blopanneau Coco Royal",
+   "slot": "anneau",
+   "level": 80,
+   "icon": 9155,
+   "stats": {
+    "vitalite": [
+     21,
+     35
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "agilite": [
+     16,
+     30
+    ],
+    "dommages": [
+     4,
+     5
+    ],
+    "initiative": [
+     101,
+     200
+    ],
+    "prospection": [
+     6,
+     10
+    ]
+   },
+   "set": 104
+  },
+  "9129": {
+   "name": "Blopanneau Indigo Royal",
+   "slot": "anneau",
+   "level": 80,
+   "icon": 9156,
+   "stats": {
+    "vitalite": [
+     21,
+     35
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "chance": [
+     16,
+     30
+    ],
+    "dommages": [
+     4,
+     5
+    ],
+    "initiative": [
+     101,
+     200
+    ],
+    "prospection": [
+     6,
+     10
+    ]
+   },
+   "set": 105
+  },
+  "9148": {
+   "name": "Blopanneau Multicolore Royal",
+   "slot": "anneau",
+   "level": 90,
+   "icon": 9157,
+   "stats": {
+    "vitalite": [
+     21,
+     40
+    ],
+    "sagesse": [
+     16,
+     25
+    ],
+    "soins": [
+     3,
+     5
+    ],
+    "puissance": [
+     16,
+     25
+    ],
+    "invocations": [
+     1,
+     1
+    ],
+    "resAir": [
+     2,
+     3
+    ]
+   },
+   "set": 106
+  },
+  "9153": {
+   "name": "Amublop Griotte Royale",
+   "slot": "amulette",
+   "level": 80,
+   "icon": 1132,
+   "stats": {
+    "vitalite": [
+     31,
+     40
+    ],
+    "intelligence": [
+     21,
+     30
+    ],
+    "dommagesFeu": [
+     4,
+     5
+    ],
+    "soins": [
+     4,
+     5
+    ],
+    "invocations": [
+     1,
+     1
+    ],
+    "pa": [
+     1,
+     1
+    ]
+   },
+   "set": 102
+  },
+  "9154": {
+   "name": "Amublop Reinette Royale",
+   "slot": "amulette",
+   "level": 80,
+   "icon": 1133,
+   "stats": {
+    "vitalite": [
+     31,
+     40
+    ],
+    "force": [
+     21,
+     30
+    ],
+    "dommagesTerre": [
+     4,
+     5
+    ],
+    "soins": [
+     4,
+     5
+    ],
+    "invocations": [
+     1,
+     1
+    ],
+    "pa": [
+     1,
+     1
+    ]
+   },
+   "set": 103
+  },
+  "9155": {
+   "name": "Amublop Coco Royale",
+   "slot": "amulette",
+   "level": 80,
+   "icon": 1134,
+   "stats": {
+    "vitalite": [
+     31,
+     40
+    ],
+    "agilite": [
+     21,
+     30
+    ],
+    "dommagesAir": [
+     4,
+     5
+    ],
+    "soins": [
+     4,
+     5
+    ],
+    "invocations": [
+     1,
+     1
+    ],
+    "pa": [
+     1,
+     1
+    ]
+   },
+   "set": 104
+  },
+  "9156": {
+   "name": "Amublop Indigo Royale",
+   "slot": "amulette",
+   "level": 80,
+   "icon": 1135,
+   "stats": {
+    "vitalite": [
+     31,
+     40
+    ],
+    "chance": [
+     21,
+     30
+    ],
+    "dommagesEau": [
+     4,
+     5
+    ],
+    "soins": [
+     4,
+     5
+    ],
+    "invocations": [
+     1,
+     1
+    ],
+    "pa": [
+     1,
+     1
+    ]
+   },
+   "set": 105
+  },
+  "9157": {
+   "name": "Amublop Multicolore Royale",
+   "slot": "amulette",
+   "level": 90,
+   "icon": 1136,
+   "stats": {
+    "vitalite": [
+     41,
+     50
+    ],
+    "puissance": [
+     21,
+     25
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "resFeu": [
+     2,
+     3
+    ],
+    "dommages": [
+     4,
+     5
+    ],
+    "pa": [
+     1,
+     1
+    ]
+   },
+   "set": 106
+  },
+  "9162": {
+   "name": "Bloptes Griotte Royales",
+   "slot": "bottes",
+   "level": 80,
+   "icon": 11121,
+   "stats": {
+    "vitalite": [
+     21,
+     30
+    ],
+    "intelligence": [
+     21,
+     30
+    ],
+    "resFeu": [
+     2,
+     3
+    ],
+    "portee": [
+     1,
+     1
+    ],
+    "pm": [
+     1,
+     1
+    ]
+   },
+   "set": 102
+  },
+  "9163": {
+   "name": "Bloptes Reinette Royales",
+   "slot": "bottes",
+   "level": 80,
+   "icon": 11122,
+   "stats": {
+    "vitalite": [
+     21,
+     30
+    ],
+    "force": [
+     21,
+     30
+    ],
+    "resTerre": [
+     2,
+     3
+    ],
+    "portee": [
+     1,
+     1
+    ],
+    "pm": [
+     1,
+     1
+    ]
+   },
+   "set": 103
+  },
+  "9164": {
+   "name": "Bloptes Coco Royales",
+   "slot": "bottes",
+   "level": 80,
+   "icon": 11123,
+   "stats": {
+    "vitalite": [
+     21,
+     30
+    ],
+    "agilite": [
+     21,
+     30
+    ],
+    "resAir": [
+     2,
+     3
+    ],
+    "portee": [
+     1,
+     1
+    ],
+    "pm": [
+     1,
+     1
+    ]
+   },
+   "set": 104
+  },
+  "9165": {
+   "name": "Bloptes Indigo Royales",
+   "slot": "bottes",
+   "level": 80,
+   "icon": 11124,
+   "stats": {
+    "vitalite": [
+     21,
+     30
+    ],
+    "chance": [
+     21,
+     30
+    ],
+    "resEau": [
+     2,
+     3
+    ],
+    "portee": [
+     1,
+     1
+    ],
+    "pm": [
+     1,
+     1
+    ]
+   },
+   "set": 105
+  },
+  "9166": {
+   "name": "Bloptes Multicolores Royales",
+   "slot": "bottes",
+   "level": 90,
+   "icon": 11125,
+   "stats": {
+    "vitalite": [
+     41,
+     50
+    ],
+    "puissance": [
+     21,
+     30
+    ],
+    "sagesse": [
+     21,
+     25
+    ],
+    "resEau": [
+     2,
+     3
+    ],
+    "dommages": [
+     2,
+     3
+    ],
+    "pm": [
+     1,
+     1
+    ]
+   },
+   "set": 106
+  },
+  "9171": {
+   "name": "Blopture Griotte Royale",
+   "slot": "ceinture",
+   "level": 80,
+   "icon": 10140,
+   "stats": {
+    "vitalite": [
+     26,
+     45
+    ],
+    "sagesse": [
+     16,
+     25
+    ],
+    "intelligence": [
+     16,
+     30
+    ],
+    "critique": [
+     2,
+     3
+    ],
+    "pods": [
+     201,
+     400
+    ],
+    "prospection": [
+     6,
+     10
+    ],
+    "resFeu": [
+     3,
+     5
+    ]
+   },
+   "set": 102
+  },
+  "9172": {
+   "name": "Blopture Reinette Royale",
+   "slot": "ceinture",
+   "level": 80,
+   "icon": 10141,
+   "stats": {
+    "vitalite": [
+     26,
+     45
+    ],
+    "sagesse": [
+     16,
+     25
+    ],
+    "force": [
+     16,
+     30
+    ],
+    "critique": [
+     2,
+     3
+    ],
+    "pods": [
+     201,
+     400
+    ],
+    "prospection": [
+     6,
+     10
+    ],
+    "resTerre": [
+     3,
+     5
+    ]
+   },
+   "set": 103
+  },
+  "9173": {
+   "name": "Blopture Coco Royale",
+   "slot": "ceinture",
+   "level": 80,
+   "icon": 10142,
+   "stats": {
+    "vitalite": [
+     26,
+     45
+    ],
+    "sagesse": [
+     16,
+     25
+    ],
+    "agilite": [
+     16,
+     30
+    ],
+    "critique": [
+     2,
+     3
+    ],
+    "pods": [
+     201,
+     400
+    ],
+    "prospection": [
+     6,
+     10
+    ],
+    "resAir": [
+     3,
+     5
+    ]
+   },
+   "set": 104
+  },
+  "9174": {
+   "name": "Blopture Indigo Royale",
+   "slot": "ceinture",
+   "level": 80,
+   "icon": 10143,
+   "stats": {
+    "vitalite": [
+     26,
+     45
+    ],
+    "sagesse": [
+     16,
+     25
+    ],
+    "chance": [
+     16,
+     30
+    ],
+    "critique": [
+     2,
+     3
+    ],
+    "pods": [
+     201,
+     400
+    ],
+    "prospection": [
+     6,
+     10
+    ],
+    "resEau": [
+     3,
+     5
+    ]
+   },
+   "set": 105
+  },
+  "9175": {
+   "name": "Blopture Multicolore Royale",
+   "slot": "ceinture",
+   "level": 88,
+   "icon": 10144,
+   "stats": {
+    "vitalite": [
+     71,
+     100
+    ],
+    "puissance": [
+     26,
+     35
+    ],
+    "sagesse": [
+     21,
+     30
+    ],
+    "resTerre": [
+     2,
+     3
+    ],
+    "dommages": [
+     5,
+     7
+    ],
+    "soins": [
+     7,
+     10
+    ]
+   },
+   "set": 106
+  },
+  "10836": {
+   "name": "Boufbamu",
+   "slot": "amulette",
+   "level": 64,
+   "icon": 1158,
+   "stats": {
+    "chance": [
+     7,
+     10
+    ],
+    "portee": [
+     1,
+     1
+    ],
+    "pa": [
+     1,
+     1
+    ]
+   }
+  },
+  "10846": {
+   "name": "Phéro-Cape",
+   "slot": "cape",
+   "level": 61,
+   "icon": 17173,
+   "stats": {
+    "vitalite": [
+     41,
+     50
+    ],
+    "puissance": [
+     21,
+     30
+    ],
+    "portee": [
+     1,
+     1
+    ],
+    "pods": [
+     101,
+     150
+    ],
+    "initiative": [
+     201,
+     250
+    ]
+   }
+  },
+  "11374": {
+   "name": "Amupapier",
+   "slot": "amulette",
+   "level": 62,
+   "icon": 1177,
+   "stats": {
+    "sagesse": [
+     11,
+     15
+    ],
+    "chance": [
+     21,
+     30
+    ],
+    "prospection": [
+     11,
+     15
+    ],
+    "initiative": [
+     101,
+     150
+    ],
+    "dommagesEau": [
+     4,
+     5
+    ],
+    "critique": [
+     3,
+     4
+    ]
+   },
+   "set": 929
+  },
+  "11375": {
+   "name": "Slipapier",
+   "slot": "ceinture",
+   "level": 61,
+   "icon": 10188,
+   "stats": {
+    "chance": [
+     21,
+     30
+    ],
+    "dommages": [
+     2,
+     3
+    ],
+    "prospection": [
+     7,
+     10
+    ],
+    "vitalite": [
+     41,
+     50
+    ],
+    "tacle": [
+     7,
+     10
+    ],
+    "retraitPM": [
+     4,
+     5
+    ]
+   },
+   "set": 929
+  },
+  "11417": {
+   "name": "Anokio",
+   "slot": "anneau",
+   "level": 61,
+   "icon": 9231,
+   "stats": {
+    "vitalite": [
+     41,
+     50
+    ],
+    "sagesse": [
+     6,
+     10
+    ],
+    "agilite": [
+     16,
+     25
+    ],
+    "puissance": [
+     6,
+     10
+    ],
+    "invocations": [
+     1,
+     1
+    ]
+   },
+   "set": 924
+  },
+  "12069": {
+   "name": "Amulette de Nelween",
+   "slot": "amulette",
+   "level": 74,
+   "icon": 1187,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "resCritiques": [
+     7,
+     10
+    ],
+    "tacle": [
+     7,
+     10
+    ],
+    "dommagesNeutre": [
+     5,
+     7
+    ],
+    "retraitPA": [
+     7,
+     10
+    ],
+    "dommagesCritiques": [
+     7,
+     10
+    ]
+   },
+   "set": 204
+  },
+  "12070": {
+   "name": "Cape de Nelween",
+   "slot": "cape",
+   "level": 71,
+   "icon": 17219,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "resCritiques": [
+     7,
+     10
+    ],
+    "fuite": [
+     7,
+     10
+    ],
+    "dommagesNeutre": [
+     4,
+     5
+    ],
+    "esquivePA": [
+     7,
+     10
+    ],
+    "dommagesCritiques": [
+     7,
+     10
+    ]
+   },
+   "set": 204
+  },
+  "12071": {
+   "name": "Bottes de Nelween",
+   "slot": "bottes",
+   "level": 74,
+   "icon": 11185,
+   "stats": {
+    "vitalite": [
+     61,
+     80
+    ],
+    "resPoussee": [
+     7,
+     10
+    ],
+    "fuite": [
+     7,
+     10
+    ],
+    "dommagesNeutre": [
+     7,
+     10
+    ],
+    "dommagesPoussee": [
+     7,
+     10
+    ],
+    "esquivePM": [
+     7,
+     10
+    ]
+   },
+   "set": 204
+  },
+  "12072": {
+   "name": "Ceinture de Nelween",
+   "slot": "ceinture",
+   "level": 78,
+   "icon": 10199,
+   "stats": {
+    "vitalite": [
+     81,
+     100
+    ],
+    "resPoussee": [
+     7,
+     10
+    ],
+    "tacle": [
+     7,
+     10
+    ],
+    "dommagesNeutre": [
+     7,
+     10
+    ],
+    "dommagesPoussee": [
+     7,
+     10
+    ],
+    "retraitPM": [
+     7,
+     10
+    ]
+   },
+   "set": 204
+  },
+  "12674": {
+   "name": "Coiffe de Daïgoro",
+   "slot": "chapeau",
+   "level": 83,
+   "icon": 16320,
+   "stats": {
+    "vitalite": [
+     51,
+     70
+    ],
+    "agilite": [
+     21,
+     30
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "tacle": [
+     2,
+     3
+    ],
+    "dommagesAir": [
+     4,
+     6
+    ],
+    "resEau": [
+     2,
+     2
+    ],
+    "resFeu": [
+     2,
+     2
+    ],
+    "esquivePA": [
+     2,
+     3
+    ],
+    "invocations": [
+     1,
+     1
+    ],
+    "critique": [
+     2,
+     2
+    ]
+   },
+   "set": 229
+  },
+  "12675": {
+   "name": "Collier Rouge de Daïgoro",
+   "slot": "amulette",
+   "level": 86,
+   "icon": 1210,
+   "stats": {
+    "vitalite": [
+     41,
+     50
+    ],
+    "intelligence": [
+     21,
+     30
+    ],
+    "resCritiques": [
+     5,
+     8
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "fuite": [
+     2,
+     3
+    ],
+    "dommagesFeu": [
+     4,
+     5
+    ],
+    "pa": [
+     1,
+     1
+    ]
+   },
+   "set": 229
+  },
+  "12676": {
+   "name": "Pagne de Daïgoro",
+   "slot": "ceinture",
+   "level": 82,
+   "icon": 10216,
+   "stats": {
+    "vitalite": [
+     51,
+     70
+    ],
+    "chance": [
+     21,
+     30
+    ],
+    "resPoussee": [
+     5,
+     8
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "dommagesEau": [
+     3,
+     5
+    ],
+    "dommagesPoussee": [
+     5,
+     7
+    ],
+    "resTerre": [
+     3,
+     4
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "set": 229
+  },
+  "12677": {
+   "name": "Bâton de Daïgoro",
+   "slot": "arme",
+   "level": 88,
+   "icon": 4108,
+   "stats": {
+    "vitalite": [
+     101,
+     150
+    ],
+    "force": [
+     31,
+     40
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "dommagesTerre": [
+     4,
+     6
+    ],
+    "dommagesNeutre": [
+     4,
+     6
+    ],
+    "resNeutre": [
+     3,
+     4
+    ],
+    "resAir": [
+     3,
+     4
+    ],
+    "esquivePM": [
+     2,
+     3
+    ]
+   },
+   "weapon": {
+    "type": "Bâton",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 11,
+      "max": 17
+     },
+     {
+      "element": "terre",
+      "min": 9,
+      "max": 13
+     }
+    ]
+   },
+   "set": 229
+  },
+  "12856": {
+   "name": "Sacoche de Redolphe",
+   "slot": "cape",
+   "level": 85,
+   "icon": 81063,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "puissance": [
+     31,
+     40
+    ],
+    "fuite": [
+     4,
+     5
+    ],
+    "resNeutre": [
+     2,
+     3
+    ],
+    "esquivePM": [
+     3,
+     4
+    ],
+    "invocations": [
+     1,
+     1
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "set": 233
+  },
+  "12857": {
+   "name": "Coiffe de Redolphe",
+   "slot": "chapeau",
+   "level": 85,
+   "icon": 16322,
+   "stats": {
+    "initiative": [
+     151,
+     200
+    ],
+    "vitalite": [
+     41,
+     60
+    ],
+    "tacle": [
+     4,
+     5
+    ],
+    "dommagesFeu": [
+     5,
+     8
+    ],
+    "dommagesAir": [
+     5,
+     8
+    ],
+    "dommagesTerre": [
+     5,
+     8
+    ],
+    "dommagesEau": [
+     5,
+     8
+    ],
+    "esquivePA": [
+     3,
+     4
+    ],
+    "critique": [
+     2,
+     3
+    ]
+   },
+   "set": 233
+  },
+  "12858": {
+   "name": "Licol de Redolphe",
+   "slot": "amulette",
+   "level": 85,
+   "icon": 1213,
+   "stats": {
+    "vitalite": [
+     41,
+     50
+    ],
+    "intelligence": [
+     21,
+     30
+    ],
+    "chance": [
+     21,
+     30
+    ],
+    "resCritiques": [
+     4,
+     5
+    ],
+    "dommagesAir": [
+     2,
+     2
+    ],
+    "dommagesTerre": [
+     2,
+     2
+    ],
+    "esquivePA": [
+     2,
+     3
+    ],
+    "soins": [
+     2,
+     3
+    ],
+    "pa": [
+     1,
+     1
+    ]
+   },
+   "set": 233
+  },
+  "12859": {
+   "name": "Sabots de Redolphe",
+   "slot": "bottes",
+   "level": 85,
+   "icon": 11208,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "force": [
+     21,
+     30
+    ],
+    "agilite": [
+     21,
+     30
+    ],
+    "resCritiques": [
+     4,
+     5
+    ],
+    "dommagesFeu": [
+     2,
+     2
+    ],
+    "dommagesEau": [
+     2,
+     2
+    ],
+    "esquivePM": [
+     2,
+     3
+    ],
+    "pm": [
+     1,
+     1
+    ]
+   },
+   "set": 233
+  },
+  "14491": {
+   "name": "Couronne du Wa Wobot",
+   "slot": "chapeau",
+   "level": 80,
+   "icon": 16374,
+   "stats": {
+    "vitalite": [
+     71,
+     100
+    ],
+    "force": [
+     31,
+     40
+    ],
+    "intelligence": [
+     31,
+     40
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "fuite": [
+     7,
+     10
+    ],
+    "dommagesFeu": [
+     2,
+     3
+    ],
+    "dommagesTerre": [
+     2,
+     3
+    ],
+    "dommagesNeutre": [
+     2,
+     3
+    ]
+   },
+   "set": 294
+  },
+  "14492": {
+   "name": "Cape du Wa Wobot",
+   "slot": "cape",
+   "level": 81,
+   "icon": 17276,
+   "stats": {
+    "vitalite": [
+     81,
+     120
+    ],
+    "force": [
+     21,
+     30
+    ],
+    "intelligence": [
+     21,
+     30
+    ],
+    "sagesse": [
+     7,
+     10
+    ],
+    "fuite": [
+     2,
+     3
+    ],
+    "dommagesFeu": [
+     2,
+     2
+    ],
+    "dommagesTerre": [
+     2,
+     2
+    ],
+    "invocations": [
+     1,
+     1
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "set": 294
+  },
+  "14493": {
+   "name": "Ceinture du Wa Wobot",
+   "slot": "ceinture",
+   "level": 83,
+   "icon": 10253,
+   "stats": {
+    "vitalite": [
+     101,
+     150
+    ],
+    "force": [
+     16,
+     20
+    ],
+    "intelligence": [
+     16,
+     20
+    ],
+    "sagesse": [
+     21,
+     30
+    ],
+    "fuite": [
+     7,
+     10
+    ],
+    "dommagesFeu": [
+     3,
+     5
+    ],
+    "dommagesTerre": [
+     3,
+     5
+    ],
+    "soins": [
+     5,
+     7
+    ]
+   },
+   "set": 294
+  },
+  "14494": {
+   "name": "Casque du Blanc Pa Wabbit",
+   "slot": "chapeau",
+   "level": 82,
+   "icon": 16373,
+   "stats": {
+    "vitalite": [
+     51,
+     70
+    ],
+    "chance": [
+     26,
+     35
+    ],
+    "sagesse": [
+     16,
+     25
+    ],
+    "critique": [
+     1,
+     2
+    ],
+    "soins": [
+     6,
+     8
+    ],
+    "dommagesEau": [
+     4,
+     6
+    ],
+    "esquivePA": [
+     4,
+     6
+    ],
+    "retraitPM": [
+     4,
+     6
+    ]
+   },
+   "set": 295
+  },
+  "14495": {
+   "name": "Ceinture du Blanc Pa Wabbit",
+   "slot": "ceinture",
+   "level": 83,
+   "icon": 10251,
+   "stats": {
+    "vitalite": [
+     61,
+     80
+    ],
+    "chance": [
+     21,
+     30
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "resTerre": [
+     3,
+     5
+    ],
+    "retraitPM": [
+     3,
+     5
+    ],
+    "soins": [
+     5,
+     7
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "set": 295
+  },
+  "14496": {
+   "name": "Bracelet du Blanc Pa Wabbit",
+   "slot": "anneau",
+   "level": 84,
+   "icon": 9274,
+   "stats": {
+    "initiative": [
+     51,
+     100
+    ],
+    "vitalite": [
+     31,
+     40
+    ],
+    "chance": [
+     21,
+     30
+    ],
+    "dommagesEau": [
+     4,
+     5
+    ],
+    "esquivePA": [
+     4,
+     5
+    ],
+    "soins": [
+     5,
+     7
+    ],
+    "invocations": [
+     1,
+     1
+    ]
+   },
+   "set": 295
+  },
+  "14506": {
+   "name": "Perruque de Iop",
+   "slot": "chapeau",
+   "level": 66,
+   "icon": 16376,
+   "stats": {
+    "puissance": [
+     31,
+     50
+    ],
+    "critique": [
+     3,
+     5
+    ],
+    "initiative": [
+     151,
+     200
+    ],
+    "dommagesPoussee": [
+     7,
+     10
+    ],
+    "dommagesCritiques": [
+     7,
+     10
+    ]
+   }
+  },
+  "15997": {
+   "name": "Ceinture Anesthésiante",
+   "slot": "ceinture",
+   "level": 62,
+   "icon": 10288,
+   "stats": {
+    "intelligence": [
+     31,
+     40
+    ],
+    "sagesse": [
+     16,
+     25
+    ],
+    "soins": [
+     4,
+     5
+    ],
+    "dommagesFeu": [
+     4,
+     5
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "set": 365
+  },
+  "16175": {
+   "name": "Coiffe de la Néfileuse",
+   "slot": "chapeau",
+   "level": 90,
+   "icon": 16464,
+   "stats": {
+    "initiative": [
+     151,
+     200
+    ],
+    "vitalite": [
+     71,
+     100
+    ],
+    "chance": [
+     41,
+     50
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "fuite": [
+     2,
+     3
+    ],
+    "dommagesEau": [
+     4,
+     5
+    ],
+    "resAir": [
+     2,
+     3
+    ],
+    "retraitPM": [
+     4,
+     5
+    ],
+    "invocations": [
+     1,
+     1
+    ]
+   },
+   "set": 371
+  },
+  "16178": {
+   "name": "Gaine Nyée",
+   "slot": "ceinture",
+   "level": 90,
+   "icon": 10291,
+   "stats": {
+    "vitalite": [
+     61,
+     80
+    ],
+    "force": [
+     21,
+     30
+    ],
+    "agilite": [
+     21,
+     30
+    ],
+    "sagesse": [
+     21,
+     25
+    ],
+    "dommagesAir": [
+     4,
+     5
+    ],
+    "dommagesTerre": [
+     4,
+     5
+    ],
+    "resEau": [
+     2,
+     3
+    ],
+    "esquivePA": [
+     4,
+     5
+    ],
+    "invocations": [
+     1,
+     1
+    ]
+   },
+   "set": 372
+  },
+  "16209": {
+   "name": "Alliance des Forestiers",
+   "slot": "anneau",
+   "level": 90,
+   "icon": 9307,
+   "stats": {
+    "vitalite": [
+     51,
+     80
+    ],
+    "intelligence": [
+     31,
+     40
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "tacle": [
+     -20,
+     -20
+    ],
+    "fuite": [
+     4,
+     5
+    ],
+    "dommagesFeu": [
+     4,
+     5
+    ],
+    "esquivePA": [
+     4,
+     5
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   }
+  },
+  "18423": {
+   "name": "Cape Ouroboulos",
+   "slot": "cape",
+   "level": 78,
+   "icon": 17374,
+   "stats": {
+    "vitalite": [
+     61,
+     80
+    ],
+    "force": [
+     26,
+     35
+    ],
+    "chance": [
+     26,
+     35
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "tacle": [
+     4,
+     5
+    ],
+    "resAir": [
+     4,
+     5
+    ],
+    "retraitPM": [
+     2,
+     3
+    ]
+   },
+   "set": 420
+  },
+  "18424": {
+   "name": "Anneau Ouroboulos",
+   "slot": "anneau",
+   "level": 80,
+   "icon": 9321,
+   "stats": {
+    "initiative": [
+     -400,
+     -400
+    ],
+    "vitalite": [
+     21,
+     30
+    ],
+    "force": [
+     21,
+     25
+    ],
+    "chance": [
+     21,
+     25
+    ],
+    "tacle": [
+     2,
+     3
+    ],
+    "resFeu": [
+     2,
+     2
+    ],
+    "dommages": [
+     2,
+     3
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "set": 420
+  },
+  "18425": {
+   "name": "Bottes Ouroboulos",
+   "slot": "bottes",
+   "level": 83,
+   "icon": 11317,
+   "stats": {
+    "vitalite": [
+     61,
+     80
+    ],
+    "force": [
+     21,
+     25
+    ],
+    "chance": [
+     21,
+     25
+    ],
+    "sagesse": [
+     7,
+     10
+    ],
+    "dommagesTerre": [
+     2,
+     2
+    ],
+    "dommagesNeutre": [
+     2,
+     2
+    ],
+    "dommagesEau": [
+     2,
+     2
+    ],
+    "retraitPM": [
+     2,
+     3
+    ],
+    "pm": [
+     1,
+     1
+    ]
+   },
+   "set": 420
+  },
+  "18426": {
+   "name": "Cape du Désert",
+   "slot": "cape",
+   "level": 79,
+   "icon": 17375,
+   "stats": {
+    "vitalite": [
+     51,
+     70
+    ],
+    "agilite": [
+     41,
+     60
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "fuite": [
+     2,
+     3
+    ],
+    "resTerre": [
+     2,
+     3
+    ],
+    "retraitPA": [
+     2,
+     3
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "set": 421
+  },
+  "18427": {
+   "name": "Coiffennex",
+   "slot": "chapeau",
+   "level": 82,
+   "icon": 16505,
+   "stats": {
+    "vitalite": [
+     41,
+     50
+    ],
+    "agilite": [
+     41,
+     50
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "fuite": [
+     4,
+     5
+    ],
+    "dommagesAir": [
+     3,
+     4
+    ],
+    "resFeu": [
+     2,
+     3
+    ],
+    "invocations": [
+     1,
+     1
+    ],
+    "critique": [
+     2,
+     3
+    ]
+   },
+   "set": 421
+  },
+  "18428": {
+   "name": "String Léolhyène",
+   "slot": "ceinture",
+   "level": 80,
+   "icon": 10317,
+   "stats": {
+    "vitalite": [
+     41,
+     50
+    ],
+    "agilite": [
+     31,
+     40
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "prospection": [
+     7,
+     10
+    ],
+    "dommagesAir": [
+     2,
+     3
+    ],
+    "resNeutre": [
+     3,
+     4
+    ],
+    "retraitPA": [
+     2,
+     3
+    ],
+    "esquivePM": [
+     2,
+     3
+    ],
+    "invocations": [
+     1,
+     1
+    ]
+   },
+   "set": 421
+  },
+  "18429": {
+   "name": "Hache du Mantiscore",
+   "slot": "arme",
+   "level": 80,
+   "icon": 19077,
+   "stats": {
+    "chance": [
+     41,
+     60
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "tacle": [
+     5,
+     7
+    ],
+    "dommagesEau": [
+     2,
+     3
+    ],
+    "resAir": [
+     2,
+     3
+    ],
+    "soins": [
+     7,
+     10
+    ],
+    "critique": [
+     3,
+     4
+    ]
+   },
+   "weapon": {
+    "type": "Hache",
+    "dmg": [
+     {
+      "element": "eau",
+      "min": 31,
+      "max": 36
+     }
+    ]
+   }
+  },
+  "18430": {
+   "name": "Masse Boulépique",
+   "slot": "arme",
+   "level": 80,
+   "icon": 7739,
+   "stats": {
+    "intelligence": [
+     21,
+     30
+    ],
+    "agilite": [
+     21,
+     30
+    ],
+    "prospection": [
+     4,
+     5
+    ],
+    "tacle": [
+     4,
+     5
+    ],
+    "dommagesFeu": [
+     2,
+     3
+    ],
+    "dommagesAir": [
+     2,
+     3
+    ],
+    "soins": [
+     4,
+     5
+    ],
+    "invocations": [
+     1,
+     1
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Marteau",
+    "dmg": [
+     {
+      "element": "air",
+      "min": 11,
+      "max": 15
+     },
+     {
+      "element": "feu",
+      "min": 11,
+      "max": 15
+     }
+    ]
+   }
+  },
+  "18661": {
+   "name": "Bouclier Aerdala",
+   "slot": "bouclier",
+   "level": 65,
+   "icon": 82030,
+   "stats": {
+    "vitalite": [
+     51,
+     70
+    ],
+    "agilite": [
+     31,
+     40
+    ],
+    "sagesse": [
+     7,
+     10
+    ],
+    "critique": [
+     2,
+     3
+    ],
+    "resAir": [
+     5,
+     7
+    ]
+   },
+   "set": 35
+  },
+  "18663": {
+   "name": "Bouclier Terrdala",
+   "slot": "bouclier",
+   "level": 75,
+   "icon": 82032,
+   "stats": {
+    "vitalite": [
+     61,
+     80
+    ],
+    "force": [
+     31,
+     40
+    ],
+    "sagesse": [
+     7,
+     10
+    ],
+    "critique": [
+     3,
+     4
+    ],
+    "resTerre": [
+     5,
+     7
+    ]
+   },
+   "set": 36
+  },
+  "18664": {
+   "name": "Bouclier du Craqueleur",
+   "slot": "bouclier",
+   "level": 63,
+   "icon": 82023,
+   "stats": {
+    "vitalite": [
+     51,
+     70
+    ],
+    "force": [
+     16,
+     25
+    ],
+    "redNeutre": [
+     3,
+     6
+    ],
+    "redTerre": [
+     3,
+     6
+    ],
+    "redFeu": [
+     3,
+     6
+    ],
+    "redEau": [
+     3,
+     6
+    ],
+    "redAir": [
+     3,
+     6
+    ],
+    "resPoussee": [
+     16,
+     20
+    ],
+    "chance": [
+     16,
+     25
+    ]
+   },
+   "set": 26
+  },
+  "18667": {
+   "name": "Bouclier du Chouque",
+   "slot": "bouclier",
+   "level": 85,
+   "icon": 82018,
+   "stats": {
+    "vitalite": [
+     71,
+     90
+    ],
+    "chance": [
+     16,
+     25
+    ],
+    "agilite": [
+     26,
+     35
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "dommagesPoussee": [
+     7,
+     10
+    ],
+    "retraitPA": [
+     4,
+     5
+    ]
+   },
+   "set": 378
+  },
+  "18671": {
+   "name": "Derma Tho",
+   "slot": "bouclier",
+   "level": 65,
+   "icon": 82003,
+   "stats": {
+    "vitalite": [
+     51,
+     70
+    ],
+    "intelligence": [
+     16,
+     25
+    ],
+    "chance": [
+     16,
+     25
+    ],
+    "soins": [
+     4,
+     6
+    ],
+    "retraitPA": [
+     3,
+     4
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   }
+  },
+  "18689": {
+   "name": "Ftalmo",
+   "slot": "bouclier",
+   "level": 90,
+   "icon": 82005,
+   "stats": {
+    "vitalite": [
+     71,
+     90
+    ],
+    "agilite": [
+     21,
+     30
+    ],
+    "force": [
+     21,
+     30
+    ],
+    "retraitPM": [
+     4,
+     6
+    ],
+    "resNeutre": [
+     5,
+     7
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   }
+  },
+  "18690": {
+   "name": "Bouclier de Sidimote",
+   "slot": "bouclier",
+   "level": 80,
+   "icon": 82008,
+   "stats": {
+    "vitalite": [
+     61,
+     80
+    ],
+    "retraitPA": [
+     5,
+     7
+    ],
+    "retraitPM": [
+     5,
+     7
+    ],
+    "dommagesPoussee": [
+     7,
+     10
+    ],
+    "dommagesCritiques": [
+     7,
+     10
+    ],
+    "dommagesNeutre": [
+     7,
+     10
+    ],
+    "resNeutre": [
+     7,
+     10
+    ]
+   }
+  },
+  "18713": {
+   "name": "Bouclier du Chef Crocodaille",
+   "slot": "bouclier",
+   "level": 70,
+   "icon": 82154,
+   "stats": {
+    "vitalite": [
+     51,
+     70
+    ],
+    "initiative": [
+     151,
+     250
+    ],
+    "chance": [
+     31,
+     40
+    ],
+    "sagesse": [
+     7,
+     10
+    ],
+    "resFeu": [
+     4,
+     6
+    ],
+    "resEau": [
+     4,
+     6
+    ],
+    "resNeutre": [
+     2,
+     3
+    ]
+   },
+   "set": 20
+  },
+  "19081": {
+   "name": "Casque du Scorbute",
+   "slot": "chapeau",
+   "level": 68,
+   "icon": 16520,
+   "stats": {
+    "vitalite": [
+     61,
+     80
+    ],
+    "intelligence": [
+     21,
+     30
+    ],
+    "agilite": [
+     21,
+     30
+    ],
+    "dommagesFeu": [
+     2,
+     2
+    ],
+    "dommagesAir": [
+     2,
+     2
+    ],
+    "critique": [
+     2,
+     2
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "set": 437
+  },
+  "19082": {
+   "name": "Cape du Scorbute",
+   "slot": "cape",
+   "level": 70,
+   "icon": 17386,
+   "stats": {
+    "vitalite": [
+     71,
+     90
+    ],
+    "intelligence": [
+     21,
+     30
+    ],
+    "agilite": [
+     21,
+     30
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "dommagesFeu": [
+     4,
+     5
+    ],
+    "dommagesAir": [
+     4,
+     5
+    ],
+    "soins": [
+     7,
+     10
+    ]
+   },
+   "set": 437
+  },
+  "19083": {
+   "name": "Amulette du Scorbute",
+   "slot": "amulette",
+   "level": 72,
+   "icon": 1296,
+   "stats": {
+    "initiative": [
+     -300,
+     -300
+    ],
+    "intelligence": [
+     26,
+     35
+    ],
+    "agilite": [
+     26,
+     35
+    ],
+    "tacle": [
+     2,
+     3
+    ],
+    "dommagesFeu": [
+     2,
+     2
+    ],
+    "dommagesAir": [
+     2,
+     2
+    ],
+    "pa": [
+     1,
+     1
+    ]
+   },
+   "set": 437
+  },
+  "19084": {
+   "name": "Bouclier de Choudini",
+   "slot": "bouclier",
+   "level": 90,
+   "icon": 82171,
+   "stats": {
+    "vitalite": [
+     71,
+     90
+    ],
+    "intelligence": [
+     21,
+     30
+    ],
+    "chance": [
+     21,
+     30
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "critique": [
+     4,
+     6
+    ],
+    "fuite": [
+     5,
+     7
+    ],
+    "dommagesCritiques": [
+     5,
+     7
+    ],
+    "resNeutre": [
+     5,
+     7
+    ]
+   },
+   "set": 438
+  },
+  "19086": {
+   "name": "Masque de Choudini",
+   "slot": "chapeau",
+   "level": 88,
+   "icon": 16521,
+   "stats": {
+    "vitalite": [
+     71,
+     100
+    ],
+    "intelligence": [
+     26,
+     35
+    ],
+    "chance": [
+     26,
+     35
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "dommagesFeu": [
+     2,
+     3
+    ],
+    "dommagesEau": [
+     2,
+     3
+    ],
+    "resAir": [
+     2,
+     3
+    ],
+    "critique": [
+     2,
+     2
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "set": 438
+  },
+  "19088": {
+   "name": "Cape Riktus",
+   "slot": "cape",
+   "level": 90,
+   "icon": 17387,
+   "stats": {
+    "vitalite": [
+     81,
+     120
+    ],
+    "intelligence": [
+     41,
+     50
+    ],
+    "resCritiques": [
+     11,
+     15
+    ],
+    "dommagesFeu": [
+     4,
+     5
+    ],
+    "resNeutre": [
+     4,
+     5
+    ],
+    "retraitPM": [
+     2,
+     3
+    ],
+    "soins": [
+     7,
+     10
+    ]
+   },
+   "set": 439
+  },
+  "19089": {
+   "name": "Anneau Riktus",
+   "slot": "anneau",
+   "level": 88,
+   "icon": 9327,
+   "stats": {
+    "vitalite": [
+     71,
+     100
+    ],
+    "intelligence": [
+     31,
+     40
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "dommagesFeu": [
+     4,
+     6
+    ],
+    "resEau": [
+     2,
+     3
+    ],
+    "soins": [
+     5,
+     7
+    ]
+   },
+   "set": 439
+  },
+  "20848": {
+   "name": "Sceptre Zor",
+   "slot": "arme",
+   "level": 61,
+   "icon": 4136,
+   "stats": {
+    "initiative": [
+     76,
+     100
+    ],
+    "vitalite": [
+     26,
+     30
+    ],
+    "force": [
+     16,
+     20
+    ],
+    "agilite": [
+     16,
+     20
+    ],
+    "puissance": [
+     13,
+     20
+    ],
+    "sagesse": [
+     29,
+     45
+    ]
+   },
+   "weapon": {
+    "type": "Bâton",
+    "dmg": [
+     {
+      "element": "terre",
+      "min": 20,
+      "max": 30
+     }
+    ]
+   }
+  },
+  "23563": {
+   "name": "Sacrifice volontaire",
+   "slot": "anneau",
+   "level": 80,
+   "icon": 9003,
+   "stats": {
+    "vitalite": [
+     -1,
+     -1
+    ]
+   }
+  },
+  "30688": {
+   "name": "Doritoclier",
+   "slot": "bouclier",
+   "level": 80,
+   "icon": 82386,
+   "stats": {
+    "vitalite": [
+     31,
+     40
+    ],
+    "puissance": [
+     31,
+     40
+    ],
+    "critique": [
+     4,
+     5
+    ],
+    "resCritiques": [
+     -30,
+     -30
+    ],
+    "resPoussee": [
+     -30,
+     -30
+    ],
+    "dommagesCritiques": [
+     4,
+     5
+    ]
+   }
+  },
+  "33562": {
+   "name": "Oreilles de Marzwel",
+   "slot": "chapeau",
+   "level": 62,
+   "icon": 16887,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "intelligence": [
+     21,
+     30
+    ],
+    "agilite": [
+     21,
+     30
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "tacle": [
+     3,
+     4
+    ],
+    "critique": [
+     4,
+     6
+    ]
+   },
+   "set": 1062
+  },
+  "33563": {
+   "name": "Bracelet de Marzwel",
+   "slot": "anneau",
+   "level": 64,
+   "icon": 9411,
+   "stats": {
+    "intelligence": [
+     16,
+     25
+    ],
+    "agilite": [
+     16,
+     25
+    ],
+    "prospection": [
+     3,
+     5
+    ],
+    "retraitPM": [
+     3,
+     4
+    ],
+    "resCritiques": [
+     7,
+     10
+    ]
+   },
+   "set": 1062
+  },
+  "33564": {
+   "name": "Javeline de Marzwel",
+   "slot": "arme",
+   "level": 66,
+   "icon": 183014,
+   "stats": {
+    "vitalite": [
+     31,
+     50
+    ],
+    "intelligence": [
+     21,
+     30
+    ],
+    "agilite": [
+     21,
+     30
+    ],
+    "retraitPM": [
+     3,
+     4
+    ],
+    "tacle": [
+     3,
+     4
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "weapon": {
+    "type": "Lance",
+    "dmg": [
+     {
+      "element": "feu",
+      "min": 21,
+      "max": 25
+     },
+     {
+      "element": "air",
+      "min": 21,
+      "max": 25
+     }
+    ]
+   },
+   "set": 1062
+  },
+  "33565": {
+   "name": "Casque de Qil Bil",
+   "slot": "chapeau",
+   "level": 73,
+   "icon": 16892,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "puissance": [
+     16,
+     25
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "dommagesPoussee": [
+     11,
+     15
+    ],
+    "critique": [
+     4,
+     6
+    ],
+    "portee": [
+     1,
+     1
+    ]
+   },
+   "set": 1063
+  },
+  "33566": {
+   "name": "Anneau de Qil Bil",
+   "slot": "anneau",
+   "level": 75,
+   "icon": 9413,
+   "stats": {
+    "vitalite": [
+     31,
+     50
+    ],
+    "puissance": [
+     16,
+     20
+    ],
+    "dommagesPoussee": [
+     7,
+     10
+    ],
+    "critique": [
+     3,
+     4
+    ],
+    "invocations": [
+     1,
+     1
+    ]
+   },
+   "set": 1063
+  },
+  "33567": {
+   "name": "Tonfas de Qil Bil",
+   "slot": "arme",
+   "level": 77,
+   "icon": 5109,
+   "stats": {
+    "vitalite": [
+     51,
+     80
+    ],
+    "puissance": [
+     21,
+     30
+    ],
+    "sagesse": [
+     16,
+     25
+    ],
+    "dommagesPoussee": [
+     11,
+     15
+    ],
+    "critique": [
+     5,
+     7
+    ],
+    "prospection": [
+     7,
+     10
+    ]
+   },
+   "weapon": {
+    "type": "Dague",
+    "dmg": [
+     {
+      "element": "neutre",
+      "min": 18,
+      "max": 21
+     }
+    ]
+   },
+   "set": 1063
+  },
+  "33568": {
+   "name": "Capuche de Tyranne",
+   "slot": "chapeau",
+   "level": 81,
+   "icon": 16888,
+   "stats": {
+    "vitalite": [
+     51,
+     90
+    ],
+    "force": [
+     41,
+     50
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "dommagesPoussee": [
+     11,
+     15
+    ],
+    "resFeu": [
+     3,
+     4
+    ],
+    "invocations": [
+     1,
+     1
+    ]
+   },
+   "set": 1064
+  },
+  "33569": {
+   "name": "Ceinture de Tyranne",
+   "slot": "ceinture",
+   "level": 83,
+   "icon": 10366,
+   "stats": {
+    "vitalite": [
+     51,
+     90
+    ],
+    "prospection": [
+     7,
+     10
+    ],
+    "sagesse": [
+     16,
+     25
+    ],
+    "dommagesPoussee": [
+     7,
+     10
+    ],
+    "resNeutre": [
+     3,
+     4
+    ],
+    "portee": [
+     1,
+     1
+    ],
+    "dommagesNeutre": [
+     7,
+     10
+    ],
+    "dommagesTerre": [
+     7,
+     10
+    ]
+   },
+   "set": 1064
+  },
+  "33570": {
+   "name": "Gant de Tyranne",
+   "slot": "anneau",
+   "level": 85,
+   "icon": 9412,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "force": [
+     31,
+     40
+    ],
+    "prospection": [
+     7,
+     10
+    ],
+    "dommagesPoussee": [
+     7,
+     10
+    ],
+    "resEau": [
+     3,
+     4
+    ],
+    "invocations": [
+     1,
+     1
+    ]
+   },
+   "set": 1064
+  },
+  "33571": {
+   "name": "Bague des Scalptaras",
+   "slot": "anneau",
+   "level": 82,
+   "icon": 9414,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "force": [
+     16,
+     20
+    ],
+    "intelligence": [
+     16,
+     20
+    ],
+    "chance": [
+     16,
+     20
+    ],
+    "sagesse": [
+     7,
+     10
+    ],
+    "retraitPA": [
+     3,
+     4
+    ],
+    "resTerre": [
+     3,
+     4
+    ]
+   },
+   "set": 1065
+  },
+  "33572": {
+   "name": "Tablier des Scalptaras",
+   "slot": "ceinture",
+   "level": 84,
+   "icon": 10367,
+   "stats": {
+    "vitalite": [
+     51,
+     70
+    ],
+    "force": [
+     21,
+     30
+    ],
+    "intelligence": [
+     21,
+     30
+    ],
+    "chance": [
+     21,
+     30
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "retraitPA": [
+     3,
+     4
+    ],
+    "resFeu": [
+     3,
+     4
+    ],
+    "prospection": [
+     7,
+     10
+    ],
+    "initiative": [
+     101,
+     150
+    ]
+   },
+   "set": 1065
+  },
+  "33573": {
+   "name": "Bottines des Scalptaras",
+   "slot": "bottes",
+   "level": 86,
+   "icon": 11386,
+   "stats": {
+    "vitalite": [
+     41,
+     60
+    ],
+    "force": [
+     21,
+     30
+    ],
+    "intelligence": [
+     21,
+     30
+    ],
+    "chance": [
+     21,
+     30
+    ],
+    "sagesse": [
+     16,
+     20
+    ],
+    "pm": [
+     1,
+     1
+    ],
+    "resEau": [
+     3,
+     4
+    ],
+    "prospection": [
+     7,
+     10
+    ],
+    "initiative": [
+     151,
+     200
+    ]
+   },
+   "set": 1065
+  },
+  "33574": {
+   "name": "Capuche de Musha",
+   "slot": "chapeau",
+   "level": 83,
+   "icon": 16893,
+   "stats": {
+    "vitalite": [
+     51,
+     70
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "prospection": [
+     7,
+     10
+    ],
+    "dommages": [
+     7,
+     10
+    ],
+    "resNeutre": [
+     3,
+     5
+    ],
+    "resTerre": [
+     3,
+     5
+    ],
+    "tacle": [
+     4,
+     6
+    ],
+    "critique": [
+     -10,
+     -10
+    ]
+   },
+   "set": 1066
+  },
+  "33575": {
+   "name": "Voile de Musha",
+   "slot": "cape",
+   "level": 85,
+   "icon": 17681,
+   "stats": {
+    "vitalite": [
+     51,
+     70
+    ],
+    "sagesse": [
+     11,
+     15
+    ],
+    "prospection": [
+     7,
+     10
+    ],
+    "dommages": [
+     7,
+     10
+    ],
+    "resEau": [
+     3,
+     5
+    ],
+    "resFeu": [
+     3,
+     5
+    ],
+    "fuite": [
+     4,
+     6
+    ],
+    "critique": [
+     -10,
+     -10
+    ]
+   },
+   "set": 1066
+  },
+  "33576": {
+   "name": "Boucliœil de Musha",
+   "slot": "bouclier",
+   "level": 87,
+   "icon": 82572,
+   "stats": {
+    "vitalite": [
+     61,
+     80
+    ],
+    "sagesse": [
+     7,
+     10
+    ],
+    "resNeutre": [
+     3,
+     5
+    ],
+    "resTerre": [
+     3,
+     5
+    ],
+    "portee": [
+     2,
+     2
+    ],
+    "critique": [
+     -10,
+     -10
+    ],
+    "resFeu": [
+     3,
+     5
+    ],
+    "resEau": [
+     3,
+     5
+    ]
+   },
+   "set": 1066
   }
  },
  "sets": {
@@ -31583,9 +42539,13 @@
   "26": {
    "name": "Panoplie du Craqueleur",
    "items": [
+    6930,
+    6931,
     6933,
     6934,
-    6935
+    6935,
+    6957,
+    18664
    ],
    "bonus": {
     "1": {
@@ -31774,6 +42734,9 @@
   "32": {
    "name": "Panoplie du Mulou",
    "items": [
+    6952,
+    6953,
+    6954,
     6955,
     6956,
     8129,
@@ -31833,8 +42796,14 @@
   "35": {
    "name": "Panoplie Aerdala",
    "items": [
+    7229,
+    7233,
+    7241,
     7245,
-    7249
+    7249,
+    7253,
+    7256,
+    18661
    ],
    "bonus": {
     "1": {
@@ -31940,6 +42909,8 @@
   "41": {
    "name": "Panoplie du Kitsou",
    "items": [
+    7339,
+    7340,
     7341,
     7342
    ],
@@ -32015,7 +42986,9 @@
    "items": [
     8003,
     8004,
+    8005,
     8006,
+    8007,
     8008,
     8009
    ],
@@ -32959,6 +43932,7 @@
    "name": "Panoplie Palliative",
    "items": [
     15996,
+    15997,
     15998
    ],
    "bonus": {
@@ -33449,7 +44423,8 @@
   "924": {
    "name": "Panoplinokio",
    "items": [
-    11416
+    11416,
+    11417
    ],
    "bonus": {
     "1": {
@@ -33622,7 +44597,8 @@
   "998": {
    "name": "Panoplie Ouginakale",
    "items": [
-    1910
+    1910,
+    2811
    ],
    "bonus": {
     "1": {
@@ -33857,6 +44833,1268 @@
      "dommagesNeutre": 3,
      "dommagesEau": 3,
      "dommagesTerre": 3
+    }
+   }
+  },
+  "17": {
+   "name": "Panoplie de Farle Ingalsse",
+   "items": [
+    6766,
+    6767,
+    6769,
+    6774,
+    6775,
+    6776,
+    6778
+   ],
+   "bonus": {
+    "1": {
+     "vitalite": 20,
+     "force": 20,
+     "agilite": 10
+    },
+    "2": {
+     "vitalite": 30,
+     "force": 30,
+     "agilite": 15,
+     "resTerre": 5
+    },
+    "3": {
+     "vitalite": 40,
+     "force": 40,
+     "agilite": 20,
+     "resTerre": 5,
+     "pa": 1
+    },
+    "4": {
+     "vitalite": 60,
+     "force": 60,
+     "agilite": 30,
+     "resTerre": 10,
+     "sagesse": 10,
+     "pa": 1
+    },
+    "5": {
+     "vitalite": 80,
+     "force": 80,
+     "agilite": 40,
+     "resTerre": 15,
+     "sagesse": 20,
+     "portee": 1,
+     "pa": 1
+    },
+    "6": {
+     "vitalite": 100,
+     "force": 100,
+     "agilite": 50,
+     "resTerre": 20,
+     "sagesse": 30,
+     "pm": 1,
+     "portee": 1,
+     "pa": 1
+    }
+   }
+  },
+  "20": {
+   "name": "Panoplie du Chef Crocodaille",
+   "items": [
+    6817,
+    6819,
+    6821,
+    6825,
+    6830,
+    6831,
+    6834,
+    18713
+   ],
+   "bonus": {
+    "1": {
+     "chance": 15,
+     "agilite": 15,
+     "vitalite": 25
+    },
+    "2": {
+     "chance": 20,
+     "vitalite": 30,
+     "agilite": 20,
+     "resAir": 5,
+     "resTerre": 5
+    },
+    "3": {
+     "resAir": 10,
+     "vitalite": 35,
+     "agilite": 25,
+     "chance": 25,
+     "resTerre": 10,
+     "pa": 1
+    },
+    "4": {
+     "resTerre": 12,
+     "resAir": 12,
+     "vitalite": 40,
+     "agilite": 30,
+     "chance": 30,
+     "pa": 1
+    },
+    "5": {
+     "sagesse": 10,
+     "resTerre": 14,
+     "resAir": 14,
+     "vitalite": 55,
+     "agilite": 40,
+     "chance": 40,
+     "pa": 1,
+     "portee": 1
+    },
+    "6": {
+     "pa": 1,
+     "sagesse": 20,
+     "resTerre": 16,
+     "resAir": 16,
+     "vitalite": 70,
+     "agilite": 60,
+     "chance": 60,
+     "portee": 1
+    },
+    "7": {
+     "pa": 1,
+     "sagesse": 30,
+     "resTerre": 20,
+     "resAir": 20,
+     "vitalite": 100,
+     "agilite": 80,
+     "chance": 80,
+     "portee": 1,
+     "pm": 1
+    }
+   }
+  },
+  "36": {
+   "name": "Panoplie Terrdala",
+   "items": [
+    7227,
+    7231,
+    7239,
+    7243,
+    7247,
+    7251,
+    7255,
+    18663
+   ],
+   "bonus": {
+    "1": {
+     "vitalite": 20,
+     "dommagesTerre": 2,
+     "dommagesNeutre": 2,
+     "force": 20
+    },
+    "2": {
+     "dommagesNeutre": 4,
+     "resTerre": 5,
+     "resNeutre": 5,
+     "dommagesTerre": 4,
+     "force": 30,
+     "vitalite": 30
+    },
+    "3": {
+     "dommagesNeutre": 4,
+     "pa": 1,
+     "resNeutre": 5,
+     "resTerre": 5,
+     "vitalite": 30,
+     "dommagesTerre": 4,
+     "force": 30
+    },
+    "4": {
+     "dommagesNeutre": 6,
+     "pa": 1,
+     "resTerre": 10,
+     "vitalite": 40,
+     "dommagesTerre": 6,
+     "resNeutre": 10,
+     "force": 40
+    },
+    "5": {
+     "dommagesNeutre": 6,
+     "pa": 1,
+     "pm": 1,
+     "resTerre": 15,
+     "vitalite": 40,
+     "dommagesTerre": 6,
+     "resNeutre": 15,
+     "force": 40
+    },
+    "6": {
+     "dommagesNeutre": 10,
+     "pm": 1,
+     "resTerre": 20,
+     "vitalite": 60,
+     "dommagesTerre": 10,
+     "resNeutre": 20,
+     "force": 60,
+     "pa": 1
+    },
+    "7": {
+     "dommagesNeutre": 10,
+     "portee": 1,
+     "pm": 1,
+     "resTerre": 20,
+     "vitalite": 60,
+     "dommagesTerre": 10,
+     "resNeutre": 20,
+     "force": 60,
+     "pa": 1
+    }
+   }
+  },
+  "37": {
+   "name": "Panoplie Feudala",
+   "items": [
+    7240,
+    7244,
+    7248,
+    7257
+   ],
+   "bonus": {
+    "1": {
+     "vitalite": 20,
+     "soins": 4,
+     "intelligence": 20
+    },
+    "2": {
+     "intelligence": 30,
+     "initiative": 100,
+     "soins": 6,
+     "vitalite": 30
+    },
+    "3": {
+     "pa": 1,
+     "intelligence": 30,
+     "initiative": 100,
+     "soins": 6,
+     "vitalite": 30
+    },
+    "4": {
+     "pa": 1,
+     "intelligence": 40,
+     "sagesse": 10,
+     "initiative": 150,
+     "soins": 10,
+     "vitalite": 40
+    },
+    "5": {
+     "pa": 1,
+     "portee": 1,
+     "intelligence": 40,
+     "sagesse": 10,
+     "initiative": 150,
+     "soins": 10,
+     "vitalite": 40
+    },
+    "6": {
+     "pa": 1,
+     "vitalite": 40,
+     "soins": 10,
+     "initiative": 150,
+     "sagesse": 10,
+     "portee": 1,
+     "intelligence": 40,
+     "pm": 1
+    },
+    "7": {
+     "invocations": 1,
+     "pa": 1,
+     "vitalite": 60,
+     "soins": 20,
+     "initiative": 300,
+     "sagesse": 20,
+     "portee": 1,
+     "intelligence": 60,
+     "pm": 1
+    }
+   }
+  },
+  "38": {
+   "name": "Panoplie O'Boul",
+   "items": [
+    204,
+    706,
+    7011,
+    7012
+   ],
+   "bonus": {
+    "1": {
+     "intelligence": 10,
+     "vitalite": 20,
+     "chance": 10,
+     "sagesse": 5,
+     "critique": 2
+    },
+    "2": {
+     "chance": 20,
+     "sagesse": 10,
+     "critique": 4,
+     "vitalite": 40,
+     "intelligence": 20
+    },
+    "3": {
+     "chance": 40,
+     "sagesse": 20,
+     "critique": 8,
+     "vitalite": 80,
+     "intelligence": 40,
+     "pa": 1
+    }
+   }
+  },
+  "39": {
+   "name": "Panoplie d'Elya Wood",
+   "items": [
+    1695
+   ],
+   "bonus": {
+    "1": {
+     "vitalite": 100,
+     "intelligence": 50,
+     "soins": 20
+    },
+    "2": {
+     "pa": 1,
+     "soins": 20,
+     "intelligence": 50,
+     "vitalite": 100
+    },
+    "3": {
+     "pa": 1,
+     "portee": 1,
+     "soins": 20,
+     "intelligence": 50,
+     "vitalite": 100
+    }
+   }
+  },
+  "43": {
+   "name": "Panoplie du Boufcoul",
+   "items": [
+    7880,
+    7881,
+    7882,
+    7883,
+    7884,
+    7885,
+    7886
+   ],
+   "bonus": {
+    "1": {
+     "force": 10,
+     "intelligence": 10,
+     "esquivePM": 5,
+     "soins": 5,
+     "agilite": 10
+    },
+    "2": {
+     "pa": 1,
+     "esquivePM": 5,
+     "soins": 5,
+     "agilite": 10,
+     "intelligence": 10,
+     "force": 10
+    },
+    "3": {
+     "pa": 1,
+     "invocations": 1,
+     "esquivePM": 7,
+     "soins": 7,
+     "agilite": 20,
+     "intelligence": 20,
+     "force": 20
+    },
+    "4": {
+     "pa": 1,
+     "portee": 1,
+     "invocations": 1,
+     "esquivePM": 7,
+     "soins": 7,
+     "agilite": 20,
+     "intelligence": 20,
+     "force": 20
+    },
+    "5": {
+     "pa": 1,
+     "portee": 1,
+     "invocations": 1,
+     "esquivePM": 10,
+     "soins": 10,
+     "agilite": 30,
+     "intelligence": 30,
+     "force": 30
+    },
+    "6": {
+     "pm": 1,
+     "pa": 1,
+     "portee": 1,
+     "invocations": 1,
+     "esquivePM": 10,
+     "soins": 10,
+     "agilite": 30,
+     "intelligence": 30,
+     "force": 30
+    }
+   }
+  },
+  "44": {
+   "name": "Panoplie du Koulosse",
+   "items": [
+    7887,
+    7888,
+    7889,
+    7890
+   ],
+   "bonus": {
+    "1": {
+     "soins": 8,
+     "dommages": 8,
+     "prospection": 10,
+     "critique": 4,
+     "retraitPA": 3
+    },
+    "2": {
+     "soins": 12,
+     "dommages": 12,
+     "critique": 6,
+     "prospection": 20,
+     "retraitPA": 6
+    },
+    "3": {
+     "soins": 16,
+     "dommages": 16,
+     "critique": 10,
+     "prospection": 30,
+     "retraitPA": 9,
+     "pa": 1
+    }
+   }
+  },
+  "1063": {
+   "name": "Panoplie de Qil Bil",
+   "items": [
+    33565,
+    33566,
+    33567
+   ],
+   "bonus": {
+    "1": {
+     "puissance": 20,
+     "dommagesPoussee": 15,
+     "critique": 5
+    },
+    "2": {
+     "puissance": 20,
+     "dommagesPoussee": 15,
+     "critique": 5,
+     "pm": 1
+    }
+   }
+  },
+  "52": {
+   "name": "Panoplie du Craqueleur Légendaire",
+   "items": [
+    8146,
+    8147,
+    8148,
+    8149,
+    8150,
+    8152,
+    8181
+   ],
+   "bonus": {
+    "1": {
+     "agilite": 10,
+     "critique": 2,
+     "sagesse": 10,
+     "intelligence": 10
+    },
+    "2": {
+     "critique": 2,
+     "agilite": 15,
+     "sagesse": 15,
+     "intelligence": 25
+    },
+    "3": {
+     "critique": 2,
+     "agilite": 15,
+     "sagesse": 15,
+     "pa": 1,
+     "intelligence": 50
+    },
+    "4": {
+     "critique": 4,
+     "sagesse": 20,
+     "agilite": 20,
+     "pa": 1,
+     "intelligence": 75,
+     "resTerre": 6,
+     "resEau": 5,
+     "resAir": 5,
+     "redAir": 6
+    },
+    "5": {
+     "critique": 8,
+     "sagesse": 30,
+     "agilite": 30,
+     "pa": 1,
+     "intelligence": 100,
+     "redAir": 12,
+     "resAir": 10,
+     "resEau": 10,
+     "resTerre": 12
+    },
+    "6": {
+     "critique": 8,
+     "sagesse": 30,
+     "pa": 1,
+     "agilite": 30,
+     "pm": 1,
+     "intelligence": 140,
+     "redAir": 12,
+     "resAir": 10,
+     "resEau": 10,
+     "resTerre": 12
+    }
+   }
+  },
+  "53": {
+   "name": "Panoplie de Shika Ingalsse",
+   "items": [
+    8298,
+    8299,
+    8300,
+    8301,
+    8302,
+    8303,
+    8304
+   ],
+   "bonus": {
+    "1": {
+     "vitalite": 20,
+     "intelligence": 20,
+     "chance": 10
+    },
+    "2": {
+     "resFeu": 5,
+     "chance": 15,
+     "intelligence": 30,
+     "vitalite": 30
+    },
+    "3": {
+     "pa": 1,
+     "resFeu": 5,
+     "chance": 20,
+     "intelligence": 40,
+     "vitalite": 40
+    },
+    "4": {
+     "pa": 1,
+     "sagesse": 10,
+     "resFeu": 10,
+     "chance": 30,
+     "intelligence": 60,
+     "vitalite": 60
+    },
+    "5": {
+     "pa": 1,
+     "portee": 1,
+     "sagesse": 20,
+     "resFeu": 15,
+     "chance": 40,
+     "intelligence": 80,
+     "vitalite": 80
+    },
+    "6": {
+     "pa": 1,
+     "portee": 1,
+     "pm": 1,
+     "sagesse": 30,
+     "resFeu": 20,
+     "chance": 50,
+     "intelligence": 100,
+     "vitalite": 100
+    }
+   }
+  },
+  "102": {
+   "name": "Panoplie Blop Griotte Royale",
+   "items": [
+    9126,
+    9153,
+    9162,
+    9171
+   ],
+   "bonus": {
+    "1": {
+     "intelligence": 10,
+     "sagesse": 10,
+     "critique": 2
+    },
+    "2": {
+     "intelligence": 20,
+     "sagesse": 20,
+     "critique": 4
+    },
+    "3": {
+     "intelligence": 30,
+     "sagesse": 30,
+     "critique": 6,
+     "pa": 1
+    }
+   }
+  },
+  "103": {
+   "name": "Panoplie Blop Reinette Royale",
+   "items": [
+    9127,
+    9154,
+    9163,
+    9172
+   ],
+   "bonus": {
+    "1": {
+     "force": 10,
+     "sagesse": 10,
+     "critique": 2
+    },
+    "2": {
+     "force": 20,
+     "sagesse": 20,
+     "critique": 4
+    },
+    "3": {
+     "force": 30,
+     "sagesse": 30,
+     "critique": 6,
+     "pa": 1
+    }
+   }
+  },
+  "104": {
+   "name": "Panoplie Blop Coco Royale",
+   "items": [
+    9128,
+    9155,
+    9164,
+    9173
+   ],
+   "bonus": {
+    "1": {
+     "agilite": 10,
+     "sagesse": 10,
+     "critique": 2
+    },
+    "2": {
+     "agilite": 20,
+     "sagesse": 20,
+     "critique": 4
+    },
+    "3": {
+     "agilite": 30,
+     "sagesse": 30,
+     "critique": 6,
+     "pa": 1
+    }
+   }
+  },
+  "105": {
+   "name": "Panoplie Blop Indigo Royale",
+   "items": [
+    9129,
+    9156,
+    9165,
+    9174
+   ],
+   "bonus": {
+    "1": {
+     "chance": 10,
+     "sagesse": 10,
+     "critique": 2
+    },
+    "2": {
+     "chance": 20,
+     "sagesse": 20,
+     "critique": 4
+    },
+    "3": {
+     "chance": 30,
+     "sagesse": 30,
+     "critique": 6,
+     "pa": 1
+    }
+   }
+  },
+  "106": {
+   "name": "Panoplie Blop Multicolore Royale",
+   "items": [
+    9148,
+    9157,
+    9166,
+    9175
+   ],
+   "bonus": {
+    "1": {
+     "vitalite": 20,
+     "dommages": 3,
+     "soins": 5,
+     "puissance": 10
+    },
+    "2": {
+     "vitalite": 40,
+     "dommages": 5,
+     "soins": 10,
+     "portee": 1,
+     "puissance": 20
+    },
+    "3": {
+     "vitalite": 60,
+     "dommages": 10,
+     "soins": 15,
+     "portee": 1,
+     "pa": 1,
+     "puissance": 30
+    }
+   }
+  },
+  "204": {
+   "name": "Panoplie de Nelween",
+   "items": [
+    12069,
+    12070,
+    12071,
+    12072
+   ],
+   "bonus": {
+    "1": {
+     "dommagesTerre": 5,
+     "dommagesFeu": 5,
+     "dommagesEau": 5,
+     "dommagesAir": 5,
+     "vitalite": 50,
+     "sagesse": 20,
+     "pm": 1
+    },
+    "2": {
+     "dommagesTerre": 10,
+     "dommagesFeu": 10,
+     "dommagesEau": 10,
+     "dommagesAir": 10,
+     "vitalite": 100,
+     "sagesse": 40,
+     "pm": 1
+    },
+    "3": {
+     "dommagesTerre": 15,
+     "dommagesFeu": 15,
+     "dommagesEau": 15,
+     "dommagesAir": 15,
+     "vitalite": 150,
+     "sagesse": 60,
+     "pa": 1,
+     "pm": 1
+    }
+   }
+  },
+  "1062": {
+   "name": "Panoplie de Marzwel",
+   "items": [
+    33562,
+    33563,
+    33564
+   ],
+   "bonus": {
+    "1": {
+     "dommagesFeu": 10,
+     "dommagesAir": 10,
+     "tacle": 5,
+     "retraitPM": 5
+    },
+    "2": {
+     "portee": 1,
+     "dommagesFeu": 10,
+     "dommagesAir": 10,
+     "tacle": 5,
+     "retraitPM": 5
+    }
+   }
+  },
+  "229": {
+   "name": "Panoplie de Daïgoro",
+   "items": [
+    12674,
+    12675,
+    12676,
+    12677
+   ],
+   "bonus": {
+    "1": {
+     "vitalite": 50,
+     "puissance": 30,
+     "critique": 4,
+     "prospection": 6,
+     "dommagesFeu": 5,
+     "dommagesEau": 5,
+     "dommagesTerre": 4,
+     "dommagesAir": 4,
+     "dommagesNeutre": 4,
+     "resFeu": 4,
+     "resEau": 4,
+     "resTerre": 2,
+     "resNeutre": 2,
+     "resAir": 2,
+     "tacle": 3,
+     "fuite": 3,
+     "esquivePA": 3,
+     "esquivePM": 3,
+     "resPoussee": 4,
+     "resCritiques": 4,
+     "dommagesPoussee": 7
+    },
+    "2": {
+     "vitalite": 100,
+     "puissance": 60,
+     "critique": 8,
+     "prospection": 12,
+     "dommagesFeu": 5,
+     "dommagesEau": 5,
+     "dommagesTerre": 4,
+     "dommagesAir": 4,
+     "dommagesNeutre": 4,
+     "resFeu": 4,
+     "resEau": 4,
+     "resTerre": 2,
+     "resNeutre": 2,
+     "resAir": 2,
+     "tacle": 6,
+     "fuite": 6,
+     "esquivePA": 6,
+     "esquivePM": 6,
+     "resPoussee": 8,
+     "resCritiques": 8,
+     "dommagesPoussee": 10
+    },
+    "3": {
+     "vitalite": 150,
+     "puissance": 90,
+     "critique": 12,
+     "prospection": 18,
+     "pa": 1,
+     "dommagesFeu": 5,
+     "dommagesEau": 5,
+     "dommagesTerre": 4,
+     "dommagesAir": 4,
+     "dommagesNeutre": 4,
+     "resFeu": 4,
+     "resEau": 4,
+     "resTerre": 2,
+     "resNeutre": 2,
+     "resAir": 2,
+     "tacle": 9,
+     "fuite": 9,
+     "esquivePA": 9,
+     "esquivePM": 9,
+     "resPoussee": 12,
+     "resCritiques": 12,
+     "dommagesPoussee": 13
+    }
+   }
+  },
+  "233": {
+   "name": "Panoplie de Redolphe",
+   "items": [
+    12856,
+    12857,
+    12858,
+    12859
+   ],
+   "bonus": {
+    "1": {
+     "puissance": 20,
+     "dommages": 4,
+     "prospection": 10,
+     "sagesse": 20
+    },
+    "2": {
+     "prospection": 20,
+     "sagesse": 40,
+     "dommages": 8,
+     "puissance": 40
+    },
+    "3": {
+     "portee": 1,
+     "prospection": 30,
+     "sagesse": 60,
+     "dommages": 12,
+     "puissance": 60,
+     "pa": 1
+    }
+   }
+  },
+  "1064": {
+   "name": "Panoplie de la Terrible",
+   "items": [
+    33568,
+    33569,
+    33570
+   ],
+   "bonus": {
+    "1": {
+     "force": 30,
+     "dommagesPoussee": 10,
+     "dommagesTerre": 5,
+     "dommagesNeutre": 5
+    },
+    "2": {
+     "force": 30,
+     "dommagesPoussee": 10,
+     "dommagesTerre": 5,
+     "dommagesNeutre": 5,
+     "pa": 1
+    }
+   }
+  },
+  "1065": {
+   "name": "Panoplie des Scalptaras",
+   "items": [
+    33571,
+    33572,
+    33573
+   ],
+   "bonus": {
+    "1": {
+     "initiative": 300,
+     "dommagesTerre": 10,
+     "dommagesFeu": 10,
+     "dommagesEau": 10,
+     "dommagesNeutre": 10,
+     "retraitPA": 5
+    },
+    "2": {
+     "pa": 1,
+     "initiative": 300,
+     "dommagesTerre": 10,
+     "dommagesFeu": 10,
+     "dommagesEau": 10,
+     "dommagesNeutre": 10,
+     "retraitPA": 5
+    }
+   }
+  },
+  "1066": {
+   "name": "Panoplie de Musha",
+   "items": [
+    33574,
+    33575,
+    33576
+   ],
+   "bonus": {
+    "1": {
+     "portee": 2,
+     "critique": -10,
+     "resEau": 5,
+     "resFeu": 5,
+     "resTerre": 5,
+     "resNeutre": 5,
+     "dommages": 10
+    },
+    "2": {
+     "dommages": 10,
+     "resNeutre": 5,
+     "resTerre": 5,
+     "resFeu": 5,
+     "resEau": 5,
+     "critique": -10,
+     "pa": 1,
+     "portee": 2
+    }
+   }
+  },
+  "294": {
+   "name": "Panoplie du Wa Wobot",
+   "items": [
+    14491,
+    14492,
+    14493
+   ],
+   "bonus": {
+    "1": {
+     "force": 30,
+     "intelligence": 30,
+     "fuite": 5,
+     "soins": 20,
+     "portee": 1
+    },
+    "2": {
+     "portee": 1,
+     "fuite": 5,
+     "soins": 20,
+     "intelligence": 30,
+     "force": 30,
+     "pa": 1
+    }
+   }
+  },
+  "295": {
+   "name": "Panoplie du Blanc Pa Wabbit",
+   "items": [
+    14494,
+    14495,
+    14496
+   ],
+   "bonus": {
+    "1": {
+     "chance": 30,
+     "soins": 10,
+     "esquivePA": 5,
+     "retraitPM": 5
+    },
+    "2": {
+     "chance": 30,
+     "soins": 10,
+     "esquivePA": 5,
+     "retraitPM": 5,
+     "pm": 1
+    }
+   }
+  },
+  "378": {
+   "name": "Panoplie du Capitaine Pirate",
+   "items": [
+    18667
+   ],
+   "bonus": {
+    "1": {
+     "agilite": 20,
+     "chance": 20,
+     "retraitPA": 4,
+     "esquivePM": 4
+    },
+    "2": {
+     "pm": 1,
+     "chance": 20,
+     "retraitPA": 4,
+     "esquivePM": 4,
+     "agilite": 20
+    },
+    "3": {
+     "pm": 1,
+     "chance": 20,
+     "retraitPA": 4,
+     "esquivePM": 4,
+     "agilite": 20,
+     "portee": 1
+    }
+   }
+  },
+  "371": {
+   "name": "Panoplie de la Tisseuse",
+   "items": [
+    16175
+   ],
+   "bonus": {
+    "1": {
+     "retraitPM": 5,
+     "dommagesEau": 5,
+     "chance": 20
+    },
+    "2": {
+     "dommagesEau": 5,
+     "chance": 20,
+     "retraitPM": 5,
+     "pa": 1
+    }
+   }
+  },
+  "372": {
+   "name": "Panoplie de la Pondeuse",
+   "items": [
+    16178
+   ],
+   "bonus": {
+    "1": {
+     "agilite": 20,
+     "force": 20,
+     "esquivePA": 10
+    },
+    "2": {
+     "esquivePA": 10,
+     "agilite": 20,
+     "force": 20,
+     "pa": 1
+    }
+   }
+  },
+  "929": {
+   "name": "Panopapier",
+   "items": [
+    11374,
+    11375
+   ],
+   "bonus": {
+    "1": {
+     "pa": 1,
+     "chance": 15
+    }
+   }
+  },
+  "420": {
+   "name": "Panoplie Ouroboulos",
+   "items": [
+    18423,
+    18424,
+    18425
+   ],
+   "bonus": {
+    "1": {
+     "force": 30,
+     "chance": 30,
+     "retraitPM": 5,
+     "portee": 1
+    },
+    "2": {
+     "force": 30,
+     "chance": 30,
+     "retraitPM": 5,
+     "portee": 1,
+     "pa": 1
+    }
+   }
+  },
+  "421": {
+   "name": "Panoplie du Désert",
+   "items": [
+    18426,
+    18427,
+    18428
+   ],
+   "bonus": {
+    "1": {
+     "agilite": 30,
+     "retraitPA": 5,
+     "portee": 1
+    },
+    "2": {
+     "agilite": 30,
+     "portee": 1,
+     "retraitPA": 5,
+     "pa": 1
+    }
+   }
+  },
+  "437": {
+   "name": "Panoplie du Scorbute",
+   "items": [
+    19081,
+    19082,
+    19083
+   ],
+   "bonus": {
+    "1": {
+     "intelligence": 20,
+     "agilite": 20,
+     "critique": 3,
+     "soins": 10
+    },
+    "2": {
+     "critique": 5,
+     "soins": 15,
+     "agilite": 30,
+     "intelligence": 30,
+     "pm": 1
+    }
+   }
+  },
+  "438": {
+   "name": "Panoplie de Choudini",
+   "items": [
+    19084,
+    19086
+   ],
+   "bonus": {
+    "1": {
+     "intelligence": 20,
+     "chance": 20,
+     "fuite": 10,
+     "dommagesCritiques": 10
+    },
+    "2": {
+     "pa": 1,
+     "intelligence": 20,
+     "chance": 20,
+     "fuite": 10,
+     "dommagesCritiques": 10
+    }
+   }
+  },
+  "439": {
+   "name": "Panoplie Riktus",
+   "items": [
+    19088,
+    19089
+   ],
+   "bonus": {
+    "1": {
+     "intelligence": 30,
+     "retraitPM": 5,
+     "soins": 20,
+     "portee": 1
+    },
+    "2": {
+     "portee": 1,
+     "soins": 20,
+     "retraitPM": 5,
+     "intelligence": 30,
+     "pm": 1
+    }
+   }
+  },
+  "994": {
+   "name": "Puissante Panoplie Fulgurante",
+   "items": [
+    2369
+   ],
+   "bonus": {
+    "1": {
+     "dommages": 10,
+     "esquivePA": 10,
+     "esquivePM": 10,
+     "critique": 10,
+     "pm": 1
+    }
+   }
+  },
+  "999": {
+   "name": "Panoplie des Herboricoles",
+   "items": [
+    8878,
+    8879,
+    8880
+   ],
+   "bonus": {
+    "1": {
+     "vitalite": 100,
+     "puissance": 30,
+     "dommages": 10,
+     "intelligence": 25,
+     "chance": 25,
+     "dommagesCritiques": 10,
+     "portee": 1
+    },
+    "2": {
+     "vitalite": 100,
+     "puissance": 30,
+     "dommages": 10,
+     "intelligence": 25,
+     "chance": 25,
+     "dommagesCritiques": 10,
+     "pm": 1,
+     "portee": 1
     }
    }
   }

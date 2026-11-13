@@ -295,6 +295,8 @@ export interface PorteDef { a: [string, number]; b: [string, number]; nom: strin
   /** Voyage en bateau vers une île (0.6, 3D : Frigost) : écran de voyage (render/chargement.ts, clés de src/data/voyage.json)
    *  en arrivant en a, puis en arrivant en b. Les deux bouts sont dans le même monde : pas de changement de zone. */
   voyage?: [string, string];
+  /** Quête à finir avant de passer de a vers b (0.6, 12C : « Cap sur Frigost » ouvre le bateau de Madrestam). */
+  quete?: string;
   /** Porte en plein air sans bâtiment (bateau sans navire dessiné, route vers une région pas encore exportée) : paillasson aux deux bouts. */
   marque?: boolean;
   /** Portail vers une autre zone (Incarnam <-> Astrub) : b est une case de cette zone-là. */

@@ -307,7 +307,7 @@ export class World {
   /** Carte d'un intérieur -> son nom : la carte d'arrivée de chaque porte qui mène dedans (première porte trouvée). */
   readonly lieux = new Map<string, string>();
   /** Portes du monde ouvert : les deux bouts en coordonnées monde, et la carte de chacun. */
-  portes: { nom: string; ends: [PorteEnd, PorteEnd]; verrou: boolean; sens: boolean; cle?: string; prix?: number; marque?: boolean; vers?: { zone: string; arrivee: [string, number] };
+  portes: { nom: string; ends: [PorteEnd, PorteEnd]; verrou: boolean; sens: boolean; cle?: string; prix?: number; quete?: string; marque?: boolean; vers?: { zone: string; arrivee: [string, number] };
     /** Portail cliquable (PorteDef.dessin) : milieu du dessin dans le monde et taille de la zone de clic à l'écran. */
     dessin?: { x: number; y: number; rx: number; ry: number } }[] = [];
   /** Bout de porte par lequel le joueur vient d'arriver : inactif tant qu'il ne s'en est pas éloigné. */
@@ -744,7 +744,7 @@ export class World {
         const q = wg.cellToWorld(wg.cellOf(tag, c));
         return { tag, ...wg.nearestFree(q.x, q.y, wg.freeByMap.get(tag)!) };
       };
-      this.portes.push({ nom: d.nom, ends: [end(d.a), end(d.b)], verrou: !!d.verrou, sens: !!d.sens, cle: d.cle, ...(d.prix ? { prix: d.prix } : {}), ...(d.marque ? { marque: true } : {}) });
+      this.portes.push({ nom: d.nom, ends: [end(d.a), end(d.b)], verrou: !!d.verrou, sens: !!d.sens, cle: d.cle, ...(d.prix ? { prix: d.prix } : {}), ...(d.quete ? { quete: d.quete } : {}), ...(d.marque ? { marque: true } : {}) });
       if (wg.mapByTag(d.b[0])?.inside && !this.lieux.has(d.b[0])) this.lieux.set(d.b[0], d.nom);
     }
   }
@@ -861,8 +861,13 @@ export class World {
   }
   /** « Wabbits : 2C » : traversée payante à l'aller (bateau du Capitaine Lily), gratuite au retour. Vrai si on peut passer. */
   private payerTraversee(po: World['portes'][number]): boolean {
-    if (!po.prix) return true;
     const p = this.player;
+    if (po.quete && p.v06 && this.quetes && !this.quetes.finies.has(po.quete)) {
+      const nom = this.opts.quetes?.quetes[po.quete]?.nom ?? 'une quête';
+      this.emit({ k: 'status', x: p.x, y: p.y - 60, text: `Il faut d'abord finir « ${nom} »`, color: '#ff9a5a' });
+      return false;
+    }
+    if (!po.prix) return true;
     if (p.kamas < po.prix) { this.emit({ k: 'status', x: p.x, y: p.y - 60, text: `La traversée coûte ${po.prix} kamas`, color: '#ff9a5a' }); return false; }
     p.kamas -= po.prix;
     this.emit({ k: 'status', x: p.x, y: p.y - 60, text: `-${po.prix} kamas`, color: '#f2d36b' });
