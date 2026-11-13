@@ -38,6 +38,7 @@ import { DANGER } from '../sim/danger';
 import { EntityView } from './entityView';
 import * as Touches from './touches';
 import { Attente, PersoVivant } from './persoVivant';
+import { textureAffichee } from './texturesSures';
 import { Assemblage, LANCE_EN_MAIN, apparenceValide, fiches, objetsPortes, type Apparence } from './squelette';
 import { SpellFx } from './spellFx';
 import { FX } from './fx';
@@ -251,6 +252,9 @@ export class ZoneScene extends Phaser.Scene {
     // dessins gardés d'une partie à l'autre : ils appartenaient à la scène d'avant (détruits avec elle), on les refait
     // (avant : Sacrieur qui change de zone ou rejoint une coop -> goutte de souffrance d'une scène détruite, jeu figé)
     this.rageAura = undefined; this.goutteSouffrance = undefined; this.sangG = undefined; this.laisseG = undefined; this.signalG = undefined; this.lanceG = undefined; this.lancesVues = new Map(); this.gouttesSol = [];
+    // alliés dessinés de la partie d'avant : leurs pages ont été détruites avec elle (les reprendre = texture morte à l'écran)
+    for (const vv of this.vivantsAllies.values()) vv?.destroy();
+    this.vivantsAllies = new Map(); this.vivant = null;
     this.views = new Map(); this.dropViews = new Map(); this.worldView = null; this.questView = null; this.passantsView = null; this.dialogueView = null; this.talkClick = null; this.zaapClick = null; this.zaapAnnonce = null; this.pressed = null; this.aimId = null; this.aimKey = null; this.hoverId = null; this.potion = false; this.hitstop = 0; this.acc = 0;
   }
 
@@ -1866,6 +1870,8 @@ export class ZoneScene extends Phaser.Scene {
     this.oubliT = now;
     for (const [a, t] of this.vuPlanche) {
       if (now - t < 30000 || this.demandees.has(a) || a.startsWith('fam_')) continue;   // (familier : sa vue garde la planche)
+      // encore affichée ailleurs (habitant ou coffre du monde vivant, PNJ, silhouette...) : on la garde, sinon le jeu se figeait
+      if (this.textures.exists(a) && textureAffichee(this.game, a)) { this.vuPlanche.set(a, now); continue; }
       this.vuPlanche.delete(a);
       if (this.textures.exists(a)) this.textures.remove(a);
     }

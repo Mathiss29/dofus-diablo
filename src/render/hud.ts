@@ -849,17 +849,20 @@ export class Hud {
     const ps = 60, px = fx + 10, py = fy + hd + 10, pcx = px + ps / 2;
     g.fillStyle(0x1c2620, 1); g.fillRoundedRect(px, py, ps, ps, 6);
     const vv = this.vivant?.(), idle = 'AnimStatiqueExplo0_1', nIdle = vv?.compte[idle] ?? 0;
-    if (vv && nIdle) {
-      const [k, f] = vv.image(idle, Math.floor(world.time * 20) % nIdle), P = this.portrait;
+    const im0 = vv && nIdle ? vv.image(idle, Math.floor(world.time * 20) % nIdle) : null;
+    // page du perso pas (ou plus) là, ex. perso réassemblé : la tête par défaut pour cette image, au lieu de planter
+    if (vv && im0 && this.scene.textures.exists(im0[0]) && this.scene.textures.get(im0[0]).has(im0[1])) {
+      const [k, f] = im0, P = this.portrait;
       if (this.portraitImg !== k + f) {   // nouvelle image de l'animation : on la montre dans la case (128 px, affichée en 60)
         this.portraitImg = k + f;
         // Chaque image du repos est recopiée UNE fois dans une case de la planche 'portrait_vivant' (8 × 8 cases de 128 px) ;
         // ensuite on ne fait que changer de case : plus d'envoi à la carte graphique 20 fois par seconde (mesure du 10 nov. 2026)
         let cell = this.portraitCases.get(k + f);
         if (cell === undefined) {
+          const fr = this.scene.textures.getFrame(k, f);
           if (this.portraitCases.size >= 64) this.portraitCases.clear();   // autre perso, autre tenue : on repart de zéro
           cell = this.portraitCases.size; this.portraitCases.set(k + f, cell);
-          const fr = this.scene.textures.getFrame(k, f), src = fr.source.image as CanvasImageSource;
+          const src = fr.source.image as CanvasImageSource;
           const ss = (fr as unknown as { data: { spriteSourceSize?: { x: number; y: number } } }).data.spriteSourceSize;
           const sx = fr.trimmed && ss ? ss.x : 0, sy = fr.trimmed && ss ? ss.y : 0;
           // fenêtre fixe sur le visage, prise sur la 1re image du repos : la tête respire dedans (coiffe comprise, sans la suivre)
