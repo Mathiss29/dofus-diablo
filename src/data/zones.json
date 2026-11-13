@@ -1955,6 +1955,196 @@
      ],
      "essai": true,
      "region": "Île de Moon"
+    },
+    "33": {
+     "name": "Bois des Arak-haï",
+     "level": 80,
+     "monsters": [
+      "mulou",
+      "chafer_invisible",
+      "milimulou"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v06": true,
+     "region": "Forêt des Abraknydes"
+    },
+    "168": {
+     "name": "Forêt Sombre",
+     "level": 80,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v06": true,
+     "region": "Forêt des Abraknydes"
+    },
+    "235": {
+     "name": "Territoire des dragodindes sauvages",
+     "level": 60,
+     "monsters": [
+      "dragodinde_amande_sauvage",
+      "dragodinde_rousse_sauvage"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v06": true,
+     "region": "Montagne des Koalaks"
+    },
+    "233": {
+     "name": "Marécages sans fond",
+     "level": 60,
+     "monsters": [
+      "boo",
+      "crocodaille",
+      "chef_crocodaille",
+      "arakne_olithique"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v06": true,
+     "region": "Montagne des Koalaks"
+    },
+    "234": {
+     "name": "Forêt de Kaliptus",
+     "level": 70,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v06": true,
+     "region": "Montagne des Koalaks"
+    },
+    "253": {
+     "name": "Canyon sauvage",
+     "level": 80,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v06": true,
+     "region": "Montagne des Koalaks"
+    },
+    "231": {
+     "name": "Lacs enchantés",
+     "level": 80,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v06": true,
+     "region": "Montagne des Koalaks"
+    },
+    "70": {
+     "name": "Plaines Rocheuses",
+     "level": 60,
+     "monsters": [
+      "craqueleur_des_plaines",
+      "elementerre",
+      "craquelourd",
+      "craquelope"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v06": true,
+     "region": "Cania"
+    },
+    "525": {
+     "name": "Routes Rocailleuses",
+     "level": 60,
+     "monsters": [
+      "mineur_sombre",
+      "craqueleur_des_plaines",
+      "craquelourd",
+      "craquelope"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v06": true,
+     "region": "Cania"
+    },
+    "521": {
+     "name": "Pics de Cania",
+     "level": 80,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v06": true,
+     "region": "Cania"
+    },
+    "11": {
+     "name": "Territoire des Porcos",
+     "level": 90,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v06": true,
+     "region": "Amakna"
+    },
+    "315": {
+     "name": "Village des Dragoeufs",
+     "level": 90,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v06": true,
+     "region": "Amakna"
+    },
+    "601": {
+     "name": "La Bourgade",
+     "level": 80,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v06": true,
+     "region": "Frigost"
+    },
+    "600": {
+     "name": "Port de givre",
+     "level": 80,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v06": true,
+     "region": "Frigost"
     }
    },
    "checkpoints": [

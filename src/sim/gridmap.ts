@@ -31,7 +31,12 @@ export interface MapData {
 
 /** Une carte Dofus dans un monde (tools/extraction/world_export.py). */
 export interface WorldMapEntry {
-  x: number; y: number; id: number; sub: number; tag: string; sol: Rect; fond?: Rect & { k?: number }; decor: DecorPlace[];
+  x: number; y: number; id: number; sub: number; tag: string; sol: Rect; fond?: Rect & { k?: number };
+  /** Décor de la carte. Monde chargé par régions (0.6, 3B) : absent de monde.json, il arrive avec le fichier de sa région
+   *  (`region_<r>.json`, lu par l'affichage) ; WorldGrid le met à [] en attendant. */
+  decor: DecorPlace[];
+  /** Région de la carte (0.6, 3B) : son décor est dans `region_<r>.json` (tools/extraction/regions_monde.py). */
+  r?: string;
   /** Ce que la carte dessine au-delà de son cadre, posé en fondu sur les voisines (plus de coupure au raccord). */
   bord?: Rect;
   /** Contours officiels des portes au survol (boîtes de survol Dofus 3, tools/extraction/survols.py) : dessin de l'atlas, centre. */
@@ -44,6 +49,8 @@ export interface WorldMapEntry {
   inside?: number;
   /** Carte de la version en essai (0.4 : Amakna) : dessinée, mais on n'y marche qu'en partie de test (WorldGrid.ouvrirEssai). */
   essai?: number;
+  /** Carte de la 0.6 (régions 60-90) : on n'y marche que si la 0.6 est ouverte (V06_PUBLIC ou partie de test, WorldGrid.ouvrirV06). */
+  v06?: number;
   /** Intérieur à ciel ouvert (Temple Céleste) : le ciel reste derrière. */
   ciel?: number;
   /** Décor partagé entre cartes (world_export.py PARTAGE=1) : pages d'atlas communes utilisées par cette carte. */
@@ -65,7 +72,9 @@ export interface WorldData extends MapData { origin: [number, number]; maps: Wor
   /** Carte du monde (touche M) : carte.webp, coin haut-gauche (repère des sols) et échelle (tools/extraction/carte_monde.py). */
   carte?: { x: number; y: number; k: number };
   /** Points d'intérêt officiels (table hints) : carte, nom, icône, catégorie (tools/extraction/reperes.py). */
-  reperes?: { t: string; n: string; g: number; c: number }[] }
+  reperes?: { t: string; n: string; g: number; c: number }[];
+  /** Monde chargé par régions (0.6, 3B) : régions dont le décor est à part, dans `region_<clé>.json`. */
+  regions?: string[] }
 
 /** Taille d'une carte Dofus en cases. */
 export const MAP_COLS = 14, MAP_ROWS = 40;
@@ -91,7 +100,7 @@ export class GridMap {
     this.mov = new Uint8Array(this.cols * this.rows);
     const w = data as Partial<WorldData>;
     if (w.movCartes && w.maps && w.origin) {   // grand monde : carte par carte (les cases libres restent dans l'ordre de la grille)
-      for (const m of w.maps) if (!m.essai) for (const c of this.casesCarte(m)) this.mov[c] = 1;
+      for (const m of w.maps) if (!m.essai && !m.v06) for (const c of this.casesCarte(m)) this.mov[c] = 1;
       for (let c = 0; c < this.mov.length; c++) if (this.mov[c]) this.free.push(c);
     } else {
       const mov = data.mov ?? '';
@@ -251,6 +260,7 @@ export class WorldGrid extends GridMap {
     super(world);
     const [X0, Y0] = world.origin;
     for (const m of world.maps) {
+      m.decor ??= [];   // monde chargé par régions : le décor arrive plus tard (render/worldView.ts)
       const [nx, ny] = m.n ?? [1, 1];
       for (let i = 0; i < nx; i++) for (let j = 0; j < ny; j++) this.byIndex.set(`${m.x - X0 + i},${m.y - Y0 + j}`, m);
       this.freeByMap.set(m.tag, []);
@@ -259,7 +269,9 @@ export class WorldGrid extends GridMap {
   }
   /** Ouvre des cases à la marche (couloirs d'un donjon, partie de test). */
   /** Partie de test : les cartes en essai (0.4 : Amakna) deviennent marchables. */
-  ouvrirEssai() { for (const m of this.world.maps) if (m.essai) this.ouvrir(this.casesCarte(m)); }
+  ouvrirEssai() { for (const m of this.world.maps) if (m.essai && !m.v06) this.ouvrir(this.casesCarte(m)); }
+  /** 0.6 ouverte (V06_PUBLIC ou partie de test) : ses régions deviennent marchables. */
+  ouvrirV06() { for (const m of this.world.maps) if (m.v06) this.ouvrir(this.casesCarte(m)); }
   ouvrir(cases: number[]) {
     for (const c of cases) {
       if (c < 0 || c >= this.mov.length || this.mov[c] === 1) continue;

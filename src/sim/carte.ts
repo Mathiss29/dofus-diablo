@@ -1,6 +1,7 @@
 import type { Player } from './player';
 import type { World } from './world';
 import type { WorldMapEntry } from './gridmap';
+import { V06_PUBLIC } from './pouvoirs';
 
 /** Carte du monde (maquette « Carte : » 2026-11-10 et « Carte suite : ») côté partie : brouillard par carte (6A), lieux à
  *  découvrir (17A), drapeaux (9A, 14A, 14C), signal au sol (14B), tombe de la dernière mort (15A). Tout est propre au joueur
@@ -67,7 +68,7 @@ export function partExploree(p: Player, zone: string, maps: WorldMapEntry[], tes
   const vus = p.exploreSet(zone);
   let n = 0, t = 0;
   for (const m of maps) {
-    if (!dehors(m) || (m.essai && !test)) continue;
+    if (!dehors(m) || (m.essai && !test) || (m.v06 && !test && !V06_PUBLIC)) continue;
     if (region !== undefined && (subs?.[String(m.sub)]?.region ?? '') !== region) continue;
     t++; if (vus.has(m.tag)) n++;
   }
@@ -107,6 +108,7 @@ export function majCarteJoueur(w: World, m: WorldMapEntry | undefined) {
     const k = cleLieu(zone, r);
     if (p.lieuxVus.includes(k)) continue;
     if (m.essai && !w.essaiOuvert) continue;
+    if (m.v06 && !w.v06Ouvert) continue;
     p.lieuxVus.push(k);
     const xp = p.gainXp(Math.round(p.xpNeeded * 0.05), w);
     w.emit({ k: 'lieuDecouvert', nom: nomLieu(r), g: r.g, xp });

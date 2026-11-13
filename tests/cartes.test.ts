@@ -1,11 +1,12 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { WorldData } from '../src/sim/gridmap';
+import { mondeComplet } from './monde';
 
 /** Détecteurs des cartes (choix de Mathis « Cartes : 4B », 2026-11-07) : ce qu'un export peut casser sans que ça se voie
  *  dans les autres tests. Ils ne lisent que les JSON (les images sont sur R2, pas dans git). */
 const dossier = (w: string) => new URL(`../public/assets/mondes/${w}/`, import.meta.url);
-const lire = (w: string) => JSON.parse(readFileSync(new URL('monde.json', dossier(w)), 'utf8')) as WorldData;
+const lire = (w: string): WorldData => mondeComplet(w);
 const lourds = JSON.parse(readFileSync(new URL('../src/data/fichiers-lourds.json', import.meta.url), 'utf8')) as Record<string, string>;
 type Frame = { frame: { w: number; h: number }; spriteSourceSize: { x: number; y: number }; sourceSize: { w: number; h: number } };
 const pages = new Map<string, Record<string, Frame>>();

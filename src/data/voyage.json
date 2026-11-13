@@ -3,7 +3,9 @@
   "zones": {
     "incarnam": { "sous": "Le monde des âmes, au-dessus des nuages", "niveau": "Niveaux 1 à 10" },
     "astrub": { "sous": "La cité des débutants et ses champs", "niveau": "Niveaux 10 à 40" },
-    "bastion": { "sous": "Notre ville, à l'abri des monstres", "niveau": "Ville" }
+    "bastion": { "sous": "Notre ville, à l'abri des monstres", "niveau": "Ville" },
+    "frigost": { "nom": "Frigost : la Bourgade", "sous": "L'île gelée, au port de givre", "niveau": "Niveaux 80 à 90" },
+    "madrestam": { "nom": "Port de Madrestam", "sous": "Retour sur le continent, côte d'Amakna", "niveau": "Niveaux 40 à 60" }
   },
   "astuces": [
     "H : 1,5 s d'incantation et tu es dans ton Havre-Sac. Bouger ou être touché la coupe.",
