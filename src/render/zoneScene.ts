@@ -1481,7 +1481,7 @@ export class ZoneScene extends Phaser.Scene {
           else this.hud.loot(`${nom} niveau ${e.level}${neuves.length ? ` · nouvelle recette : ${neuves.join(', ')}` : ''}`, '#b9e54b');
           this.windows?.refresh(); break;
         }
-        case 'atelier': this.windows?.artisanat(e.metier); break;
+        case 'atelier': this.windows?.artisanat(e.metier, this.world.postes.find(po => po.id === e.poste)?.metiers); break;
         case 'fabricationDebut': Son.jouer(MANIFESTE.ui.ok, 'interface', { cle: 'clic', ecart: 0.05 }); this.windows?.refresh(); break;
         case 'fabricationStop': this.hud.toast('Fabrication interrompue'); this.windows?.refresh(); break;
         case 'craft': this.hud.loot(`${(ITEMS.resources[e.id] ?? ITEMS.equipment[e.id])?.name ?? 'Objet'} x${e.n}${e.rares ? ` (${e.rares} Rare${e.rares > 1 ? 's' : ''})` : ''}`, e.rares ? '#6fb2e8' : '#9ad15a'); this.windows?.refresh(); break;

@@ -71,6 +71,7 @@ import { ECLAT, FORGE_CSS, defaireHtml, etatForge, forgeHtml, lotConcasseur, mms
 import type { SimEvent } from '../sim/events';
 import { REGLES_V2, RUNES, dmgArme, etatFM, ligneMax } from '../sim/forgemagie';
 import { BONUS_FAB, BONUS_RECOLTE, PAR_PALIER_FAB, paliers, POUCE } from '../sim/artisans';
+import { texteRenfort } from '../sim/clesRenforcees';
 import { CHASSE, OEUVRE, PIERRES, bonusPierre, metiersOeuvre, pieceArtisan } from '../sim/oeuvre';
 import { CONSO, NOM_SORTE, PARCHEMINS, sorteConso, texteConso } from '../sim/consommables';
 import { LOOKS } from './looks';
@@ -593,6 +594,7 @@ const CSS = `
 .dw .ac.on{outline:2px solid #6fb2e8;outline-offset:-4px;cursor:pointer}.dw .ac[data-arare]{cursor:pointer}
 .dw .ac.big{width:84px;height:84px}.dw .ac.big .ic{width:64px;height:64px}
 .dw .acs{display:grid;grid-template-columns:repeat(4,52px);gap:8px 14px}
+.dw .amets{display:flex;justify-content:center;gap:6px;padding:6px 0 0}.dw .amets img{width:34px;height:34px;cursor:pointer;opacity:.55;border-radius:4px}.dw .amets img.on{opacity:1;background:#b9e54b33;box-shadow:0 0 0 1px #b9e54b}.dw .amets img:hover{opacity:1}
 .dw .ajet{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:420px}.dw .ajet .lab{width:100%;text-align:center;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#9b9585}.dw .ajet .btn.on{outline:2px solid #b9e54b}
 .dw .axp.regle{max-width:420px;text-align:center;color:#cfc9b6;font-size:12px}.dw .plan .ttr{font:15px Rowdies,Lexend,sans-serif;color:#f4efe0}.dw .plan .note{max-width:440px;text-align:center}
 .dw .acs .lab{grid-column:1/-1;text-align:center;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#9b9585}
@@ -1401,14 +1403,22 @@ export class Windows {
   /** « Métiers : » 3B : ligne choisie qui sort à son maximum ; 2A + 2C : onglet « Travailler un objet » et objet choisi. */
   private artJet: string | null = null;
   private artOnglet: 'fab' | 'objet' = 'fab';
+  private artMetiers: string[] = [];
   private artObjet = -1;
   /** « Montrer sur la carte » (8B, 11B) : ouvre la carte M avec ces cartes et points mis en évidence. */
   onCarte: (m: MarqueCarte) => void = () => {};
 
   /** Ouvre l'Artisanat d'un atelier (clic sur une machine). */
-  artisanat(metier: string) {
-    if (this.artMetier !== metier) { this.artMetier = metier; this.artRecette = -1; this.artQte = 1; this.artRecherche = ''; this.artJet = null; this.artOnglet = 'fab'; this.artObjet = -1; }
+  /** liste : tous les métiers du poste (machine partagée, établi des artisans du Havre-Sac, « Métiers : » 9B). */
+  artisanat(metier: string, liste: string[] = [metier]) {
+    const p = this.world.player;
+    this.artMetiers = liste.filter(m => p.v03 || !METIERS_FAB.includes(m));
+    if (this.artMetiers.includes(this.artMetier)) metier = this.artMetier;
+    this.choisirMetierArt(metier);
     this.show('art');
+  }
+  private choisirMetierArt(metier: string) {
+    if (this.artMetier !== metier) { this.artMetier = metier; this.artRecette = -1; this.artQte = 1; this.artRecherche = ''; this.artJet = null; this.artOnglet = 'fab'; this.artObjet = -1; }
   }
   /** 12A : « Recettes qui l'utilisent » (clic droit sur une ressource du sac) : J filtré sur l'ingrédient. */
   recettesAvec(id: string) {
@@ -1582,7 +1592,7 @@ export class Windows {
     const xp = rec ? this.artQte * METIER_XP.parIngredient * rec.ingredients.reduce((s, [, n]) => s + n, 0) : 0;
     const raison = !rec ? '' : lv < rec.level ? `${m?.name ?? ''} niveau ${rec.level} requis` : ici === null ? 'Tu n\'es plus à l\'atelier' : max <= 0 ? 'Il manque des ingrédients' : '';
     const peut = !!rec && !raison && !f;
-    w.innerHTML = `${this.title(ici?.nom ?? `Artisanat · ${m?.name ?? ''}`, 'job')}${travail ? this.artOngletsHtml() : ''}<div class="ab">
+    w.innerHTML = `${this.title(ici?.nom ?? `Artisanat · ${m?.name ?? ''}`, 'job')}${this.artOngletsHtml()}<div class="ab">
       <div class="livre"><input placeholder="Chercher…" value="${this.artRecherche.replace(/"/g, '&quot;')}" data-asr>
         <label class="ck"><input type="checkbox" data-aso ${this.artSeulement ? 'checked' : ''}>Seulement ce que je peux faire</label><div class="als">${livre}</div></div>
       <div class="plan"><div class="am"><img src="assets/ui/metier_${k}.png" alt="">${m?.name ?? ''} niveau ${lv}</div>
@@ -1620,12 +1630,19 @@ export class Windows {
     this.lierIngredients(w);
   }
 
+  /** Choix du métier quand le poste en a plusieurs (« Métiers : » 9B). */
+  private artMetiersHtml() {
+    if (this.artMetiers.length < 2) return '';
+    return `<div class="amets">${this.artMetiers.map(m => `<img class="${m === this.artMetier ? 'on' : ''}" data-amet="${m}" src="assets/ui/metier_${m}.png" alt="" title="${ITEMS.metiers?.[m]?.name ?? m}">`).join('')}</div>`;
+  }
   private artOngletsHtml() {
-    const k = this.artMetier;
-    return `<div class="otabs"><span class="${this.artOnglet === 'fab' ? 'on' : ''}" data-aon="fab">Fabriquer</span><span class="${this.artOnglet === 'objet' ? 'on' : ''}" data-aon="objet">${k === 'mineur' ? 'Percer une châsse' : 'Travailler un objet'}</span></div>`;
+    const k = this.artMetier, travail = this.world.player.v03 && (k === 'mineur' || !!BONUS_FAB[k]);
+    if (!travail) return this.artMetiersHtml();
+    return `${this.artMetiersHtml()}<div class="otabs"><span class="${this.artOnglet === 'fab' ? 'on' : ''}" data-aon="fab">Fabriquer</span><span class="${this.artOnglet === 'objet' ? 'on' : ''}" data-aon="objet">${k === 'mineur' ? 'Percer une châsse' : 'Travailler un objet'}</span></div>`;
   }
   private lierArtOnglets(w: HTMLElement) {
     w.querySelectorAll<HTMLElement>('[data-aon]').forEach(e => e.addEventListener('click', () => { this.artOnglet = e.dataset.aon as 'fab' | 'objet'; this.render(); }));
+    w.querySelectorAll<HTMLElement>('[data-amet]').forEach(e => e.addEventListener('click', () => { this.choisirMetierArt(e.dataset.amet!); this.render(); }));
   }
   /** « Métiers : » 2A + 2C : chef-d'œuvre (métier de l'emplacement), châsse percée (Mineur), pierre sertie (Bijoutier). */
   private renderTravail() {
@@ -2531,13 +2548,14 @@ export class Windows {
   }
   private resTip(r: ResourceDef, id: string) {
     const sc = sorteConso(id), p = this.world.player;
-    const sorte = r.ame ? 'Âme d\'archimonstre' : sc ? NOM_SORTE[sc] : r.soin || r.rappel || r.deguisement ? 'Consommable' : r.cle ? 'Clé de donjon' : r.pepite ? 'Monnaie du Bastion' : r.monnaie === 'invasion' ? 'Éclat d\'invasion' : r.monnaie ? 'Monnaie de l\'île des Wabbits' : r.rune || r.signature ? 'Rune de forgemagie' : 'Ressource';
+    const sorte = r.ame ? 'Âme d\'archimonstre' : sc ? NOM_SORTE[sc] : r.soin || r.rappel || r.deguisement ? 'Consommable' : r.renforcee ? 'Clé renforcée' : r.cle ? 'Clé de donjon' : r.pepite ? 'Monnaie du Bastion' : r.monnaie === 'invasion' ? 'Éclat d\'invasion' : r.monnaie ? 'Monnaie de l\'île des Wabbits' : r.rune || r.signature ? 'Rune de forgemagie' : 'Ressource';
     const effet = r.ame ? `<div class="up">${escB(GAME_DATA.monsters[r.ame]?.name ?? '')}</div><div class="hint">Capturée dans une Petite pierre d'âme : elle compte dans le carnet du Bestiaire et se montre à l'Assistante d'Otomaï (quête du Dofus Ocre).</div><div class="hint">Clic droit dans l'arène des âmes (au fond du Marché couvert, Bastion des Douze) : la relâcher pour recombattre son groupe, avec un meilleur butin. L'âme est perdue.</div>`
       : sc ? `<div class="up">${texteConso(id)}</div>${sc === 'parchemin' ? `<div class="hint">Déjà ${p.parchemins[PARCHEMINS[id]] ?? 0} / ${CONSO.parcheminMax} points de parchemin en ${STAT_NAMES[PARCHEMINS[id]]}.</div>` : ''}<div class="hint">${
         sc === 'boisson' ? `Clic droit : boire. La dernière boisson bue va sur la touche ${Touches.nomAction('boisson')} (recharge ${CONSO.boisson.recharge} s).` : sc === 'parchemin' ? 'Clic droit : lire' : sc === 'repas' ? 'Clic droit : manger' : 'Clic droit : boire'}</div>`
       : r.soin ? `<div class="up">+${r.soin} PV</div><div class="hint">Clic droit : manger</div>`
       : r.rappel ? `<div class="up">Retour au dernier Zaap (${this.world.checkpointName})</div><div class="hint">Clic droit : boire</div>`
       : r.deguisement ? `<div class="up">Déguisé en Wabbit pendant ${Math.round(r.deguisement / 60)} min</div><div class="hint">Les Wabbits de l'île ne t'attaquent pas tant que tu ne les tapes pas. Clic droit : boire</div>`
+      : r.renforcee ? `<div class="up">Ouvre l'entrée : ${ITEMS.resources[r.renforcee]?.cle ?? ''}</div><div class="ex">${texteRenfort()}</div><div class="hint">Prise en entrant, avant la clé normale</div>`
       : r.cle ? `<div class="up">Ouvre l'entrée : ${r.cle}</div><div class="hint">Prise en entrant dans le donjon</div>`
       : r.monnaie === 'invasion' ? '<div class="hint">Lâché par les envahisseurs de la sous-zone envahie. Ouvre le coffre d\'invasion quand la jauge est pleine. Se dissipe à la fin de l\'heure.</div>'
       : r.monnaie ? '<div class="hint">Gagnée en défendant les champs de l\'île des Wabbits (guerre des Cawottes) ; se dépense chez Tiwa Cawoteuw, sur l\'île de la Cawotte.</div>'
