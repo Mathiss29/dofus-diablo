@@ -15,7 +15,7 @@ import { ajouterPieces, CLE_COFFRE, enSurcharge, ouvrirCoffre, piecesMonstre, pi
 import { briser, chanceRune, coutKamas, coutRelance, orbeConvient, potionConvient, POTIONS, regenerer, relancerLigne, REGLES_V2, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
 import { V03_PUBLIC, V04_PUBLIC, V06_PUBLIC, niveauObjetsMax, slotAPouvoirConnu } from './pouvoirs';
 import { fxImpression, imprimable, nouveauPourCodex, prixImpression } from './codex';
-import { legendaryPower, FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, kamasDefaire, noteObjet, rollItem, type EquipSlot, type Item, type ItemsData, type Rarity, type RecipeDef, type Stat } from './items';
+import { legendaryPower, FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, kamasDefaire, noteObjet, rollItem, STAT_NAMES, type EquipSlot, type Item, type ItemsData, type Rarity, type RecipeDef, type Stat } from './items';
 import { Player } from './player';
 import { apparatsDuMonde, rareteApparat, tirerApparat } from './apparats';
 import { Bete, BETES, REGLES_BETES, type EffetBete, type SortBete } from './bete';
@@ -45,6 +45,7 @@ export const ARCHI = { chance: 1 / 150, pierre: '9686', pleine: '10418',
 import { FABRICATION, METIERS_FAB, chanceRare, ingredientsRares, type Poste } from './metiers';
 import { PLACEMENT, analyserCarte, groupesAuto, placementPose, placementValide, proposerPlacement, type AnalyseCarte, type PlacementCarte } from './placement';
 import { PC_PAR_ID } from './pouvoirsClasse';
+import { BOISSONS, CONSO, ELIXIRS, PARCHEMINS, RARES_RECOLTE, REPAS, RES_BOISSON, sorteConso, texteBonus } from './consommables';
 import { RECOLTE, porteeRecolte, quantite, xpRecolte, type Recolte, type RecoltesData } from './recolte';
 
 export interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: number;
@@ -188,7 +189,7 @@ export interface FamilierEtat { x: number; y: number; vx: number; vy: number; ci
  *  (et plus tard sur un serveur pour la coop). L'affichage lit l'état et vide `events`. */
 /** Événements qui ne parlent qu'au joueur qui agit : fenêtres, butin, portes et zones, quêtes, métiers (multi, étape 4). */
 export const EVENEMENTS_PERSONNELS = new Set<SimEvent['k']>(['levelUp', 'newSpell', 'noResource', 'rageFull', 'enterArea', 'enterLieu', 'respawn',
-  'loot', 'lootResource', 'sacQuete', 'queteInfo', 'metierLevel', 'craft', 'atelier', 'fabricationDebut', 'fabricationStop', 'eat', 'forge',
+  'loot', 'lootResource', 'sacQuete', 'queteInfo', 'metierLevel', 'craft', 'atelier', 'fabricationDebut', 'fabricationStop', 'eat', 'consommer', 'forge',
   'brisage', 'codex', 'codexOuvert', 'coffreOuvert', 'capture', 'lieuDecouvert', 'impression', 'apparence', 'fusion', 'commande', 'signature', 'achat', 'familierNiveau',
   'familierRepas', 'rappel', 'cleManquante', 'recolteDebut', 'recolteFin', 'recolteStop', 'recolteNiveau', 'service', 'almanax', 'dofusPassif',
   'dofusGagne', 'lootKamas', 'bagFull', 'checkpoint', 'portalStart', 'portal', 'changeZone', 'incantation', 'incantationStop', 'arche', 'zaapDecouvert',
@@ -2351,6 +2352,11 @@ export class World {
       p.resources[r.item] = (p.resources[r.item] ?? 0) + n;
       if (def.metier) p.gainMetierXp(def.metier, xpRecolte(def.niveau, r.dore), this);   // puits : sans métier, sans XP
       this.emit({ k: 'recolteFin', id: r.id, item: r.item, n, dore: r.dore });
+      const rare = RARES_RECOLTE[r.item];   // « Métiers : » 5A : la variante rare d'une plante (Trèfle Agare…), pour les parchemins
+      if (rare && this.rng.next() < (r.dore ? CONSO.rare.dore : CONSO.rare.chance)) {
+        p.resources[rare] = (p.resources[rare] ?? 0) + 1;
+        this.emit({ k: 'lootResource', id: rare, n: 1 });
+      }
       r.repousse = RECOLTE.repousse; r.dore = false;
       return;
     }
@@ -3082,6 +3088,35 @@ export class World {
     const heal = p.soigner(r.soin);
     this.emit({ k: 'eat', id, heal });
     this.emit({ k: 'potion', x: p.x, y: p.y, amount: r.soin });
+    return true;
+  }
+
+  /** Utilise un consommable du sac (clic droit) : nourriture qui soigne, ou repas, élixir, boisson, parchemin (« Métiers : » 4A-4C, 5A). */
+  utiliser(id: string): boolean {
+    const p = this.player, sorte = sorteConso(id), nom = this.opts.items?.resources[id]?.name ?? id;
+    if (!sorte) return this.eat(id);
+    if (p.dead || !((p.resources[id] ?? 0) > 0)) return false;
+    const dire = (text: string, color = '#b9e54b') => this.emit({ k: 'status', x: p.x, y: p.y - 60, text, color });
+    if (sorte === 'boisson') {
+      p.ceinture = id;   // la dernière boisson bue va sur sa touche
+      if (p.boissonCd > 0) return false;
+      const k = RES_BOISSON[BOISSONS[id]];
+      p.mods = p.mods.filter(m => m.src !== 'boisson');   // une boisson à la fois
+      p.addMod(k, CONSO.boisson.bonus, CONSO.boisson.duree, 'boisson');
+      p.boissonCd = CONSO.boisson.recharge;
+      this.emit({ k: 'potion', x: p.x, y: p.y, amount: 0 });
+    } else if (sorte === 'parchemin') {
+      const k = PARCHEMINS[id], n = p.parchemins[k] ?? 0;
+      if (n >= CONSO.parcheminMax) { dire(`${STAT_NAMES[k]} : déjà ${CONSO.parcheminMax} points de parchemin`, '#ff9a5a'); return false; }
+      p.parchemins[k] = n + 1; p.recompute();
+      dire(`+1 ${STAT_NAMES[k]} pour toujours (${n + 1} / ${CONSO.parcheminMax})`);
+    } else {
+      const b = sorte === 'repas' ? REPAS[id] : ELIXIRS[id], avant = p[sorte];
+      p[sorte] = { id, reste: CONSO.duree }; p.recompute();
+      dire(`${nom} : ${texteBonus(b)} pendant 30 min${avant && avant.id !== id ? ' (remplace le précédent)' : ''}`);
+    }
+    if (!--p.resources[id]) delete p.resources[id];
+    this.emit({ k: 'consommer', id, sorte });
     return true;
   }
 
