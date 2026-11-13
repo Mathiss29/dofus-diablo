@@ -782,6 +782,75 @@
      "texte": "Otomaï en parle à chaque repas. Il faut toutes les âmes du registre, puis celle du Kralamoure Géant. Celle-là, personne ne l'a encore vue passer."
     }
    ]
+  },
+  "tableau_abraknydes": {
+   "nom": "Garde forestier",
+   "sprite": "garde_amakna",
+   "dofusId": 2849,
+   "zone": "astrub",
+   "carte": "-15_-17",
+   "v06": true,
+   "titre": "Milice des Abraknydes",
+   "phrase": "Dans cette forêt, même les arbres ont des dents. Et les Mulous, c'est pire.",
+   "contrats": [
+    33
+   ],
+   "discussion": [
+    {
+     "reponse": "Comment marchent les contrats ?",
+     "texte": "Trois contrats par jour, un gros par semaine. Les Mulous et les Chafers ne se chassent pas tout seuls : tu tapes, tu reviens, je paie."
+    }
+   ]
+  },
+  "tableau_koalaks": {
+   "nom": "Guetteur des Koalaks",
+   "sprite": "garde_amakna",
+   "dofusId": 2849,
+   "zone": "astrub",
+   "carte": "-22_-2",
+   "v06": true,
+   "titre": "Milice des Koalaks",
+   "phrase": "Les dragodindes sauvages ne se laissent pas monter, et les Crocodailles ne se laissent pas approcher. Ça fait du travail.",
+   "contrats": [
+    235,
+    233
+   ],
+   "discussion": [
+    {
+     "reponse": "Comment marchent les contrats ?",
+     "texte": "Comme partout : trois contrats par jour, un par semaine. Ici, c'est le marais et les dragodindes. Prends des bottes."
+    }
+   ]
+  },
+  "tableau_cania": {
+   "nom": "Garde de Cania",
+   "sprite": "garde_amakna",
+   "dofusId": 2849,
+   "zone": "astrub",
+   "carte": "-17_-47",
+   "v06": true,
+   "titre": "Milice de Cania",
+   "phrase": "Les Craqueleurs bloquent les routes de Cania. Les caravanes attendent, et moi aussi.",
+   "contrats": [
+    70,
+    525
+   ],
+   "discussion": [
+    {
+     "reponse": "Comment marchent les contrats ?",
+     "texte": "Trois contrats par jour, un gros par semaine. Pierre, cailloux, Craqueleurs : le travail ne manque pas dans les plaines."
+    }
+   ]
+  },
+  "marin_madrestam": {
+   "nom": "Marin frigostien",
+   "sprite": "garde_frigost",
+   "dofusId": 4175,
+   "zone": "astrub",
+   "carte": "9_-2",
+   "v06": true,
+   "titre": "Bateau pour Frigost",
+   "phrase": "Frigost ? Le bateau part quand la coque tiendra. Et elle tiendra quand quelqu'un m'aura aidé."
   }
  },
  "quetes": {
@@ -4544,6 +4613,48 @@
    "recompense": {
     "xp": 48000,
     "dofus": "7754"
+   }
+  },
+  "frigost_passage": {
+   "type": "secondaire",
+   "pnj": "marin_madrestam",
+   "rendre": "marin_madrestam",
+   "serie": "Frigost",
+   "nom": "Cap sur Frigost",
+   "niveau": 75,
+   "requiert": [],
+   "v06": true,
+   "texte": "Le marin frigostien de Madrestam veut bien t'emmener à Frigost, mais sa coque a besoin d'être lestée de pierre de Cania et la route est tenue par les Craqueleurs. Dégage-la, puis reviens le voir pour embarquer.",
+   "etapes": [
+    {
+     "nom": "Du lest pour la coque",
+     "bulle": "Les Craqueleurs des Plaines Rocheuses gardent la meilleure pierre. Va leur en prendre.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 25 monstres des Plaines Rocheuses",
+       "n": 25,
+       "sousZone": 70
+      }
+     ]
+    },
+    {
+     "nom": "Paré à l'embarquement",
+     "bulle": "La pierre arrive au port. Viens me voir, on largue les amarres.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler au marin frigostien",
+       "pnj": "marin_madrestam"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 22000,
+    "kamas": 4000,
+    "pepites": 40,
+    "sac": "epique"
    }
   }
  },
@@ -11601,6 +11712,76 @@
     [
      "À un poil près",
      "Les Boos ont effrayé un convoi entier. Fais-leur peur à ton tour."
+    ]
+   ],
+   "33": [
+    [
+     "Le Bois des loups",
+     "Les Mulous rôdent entre les Abraknydes. Les bûcherons n'osent plus sortir la hache."
+    ],
+    [
+     "Invisible mais pas invincible",
+     "Des Chafers invisibles hantent le Bois des Arak-haï. Frappe là où l'air bouge."
+    ],
+    [
+     "Une forêt qui mord",
+     "Le Bois des Arak-haï ne dort jamais. Fais-y un peu de silence."
+    ]
+   ],
+   "235": [
+    [
+     "Dragodindes sans selle",
+     "Les dragodindes sauvages piétinent les sentiers des Koalaks. Calme-les."
+    ],
+    [
+     "Ruade en montagne",
+     "Un troupeau de dragodindes a chargé une caravane. La Milice veut des têtes."
+    ],
+    [
+     "Pas de dressage aujourd'hui",
+     "Les dragodindes sauvages ne veulent pas d'éleveur. Montre-leur qui commande."
+    ]
+   ],
+   "233": [
+    [
+     "Les pieds dans la vase",
+     "Les Crocodailles tiennent les Marécages sans fond. Avance, mais pas trop vite."
+    ],
+    [
+     "Le chef du marais",
+     "Un Chef Crocodaille terrorise les pêcheurs. Va lui expliquer les règles."
+    ],
+    [
+     "Des Boos dans la brume",
+     "Les Boos sortent de la brume des marais. Dissipe-la à coups de sorts."
+    ]
+   ],
+   "70": [
+    [
+     "Pierre qui roule",
+     "Les Craqueleurs des Plaines Rocheuses bloquent la route de Cania. Brise-les."
+    ],
+    [
+     "Terre en colère",
+     "Les Élémenterres grondent dans les plaines. Fais-les taire."
+    ],
+    [
+     "Cailloux en trop",
+     "Les Craquelopes s'entassent sur les chemins. Les caravanes veulent passer."
+    ]
+   ],
+   "525": [
+    [
+     "Route barrée",
+     "Des Mineurs sombres ont pris les Routes Rocailleuses. Rouvre le passage."
+    ],
+    [
+     "Éboulement vivant",
+     "Les Craquelourds descendent des pics. Arrête-les avant qu'ils ne bouchent tout."
+    ],
+    [
+     "Péage sauvage",
+     "Les Routes Rocailleuses ont de nouveaux maîtres. Ils ne paieront pas, eux."
     ]
    ]
   }

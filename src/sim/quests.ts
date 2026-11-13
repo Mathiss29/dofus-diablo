@@ -119,6 +119,8 @@ export interface QueteDef {
   auDepart?: boolean;
   /** Version 0.3 : proposée seulement en partie de test tant que la 0.3 n'est pas sortie (V03_PUBLIC). */
   v03?: boolean;
+  /** Quête de la 0.6 : seulement pour un perso qui voit la 0.6. */
+  v06?: boolean;
   /** Ouvre le Codex des pouvoirs à la fin (« Le premier pouvoir », 8C). */
   codex?: boolean;
   /** Carte (tag de monde.json) où le perso apparaît quand la quête démarre au départ (tutoriel : le Temple Céleste). */
@@ -153,6 +155,8 @@ export interface PnjDef {
   v03?: boolean;
   /** PNJ de la version 0.4 (Château d'Amakna : caché hors partie de test). */
   v04?: boolean;
+  /** PNJ de la 0.6 (tableaux de contrats des régions, port de Madrestam) : caché tant que la 0.6 ne se voit pas. */
+  v06?: boolean;
   /** Havre-Sac (maquette Hub 3A) : il n'emménage qu'après la première visite de cette zone. */
   apres?: string;
   /** Métier affiché dans la fenêtre de ses services (Antiquaire, Couturière…). */
@@ -349,6 +353,7 @@ export class Quetes {
       if ((def.zone ?? 'incarnam') !== world.opts.zone) continue;
       if (def.v03 && !world.player?.v03) continue;   // PNJ de la 0.3 : partie de test seulement jusqu'à la sortie
       if (def.v04 && !world.player?.v04) continue;
+      if (def.v06 && !world.player?.v06) continue;
       if (def.apres && !(world.opts.zonesVues ?? []).includes(def.apres) && world.opts.zone !== def.apres) continue;   // pas encore emménagé (3A)
       const m = wg.mapByTag(def.carte);
       if (!m || !wg.freeByMap.get(def.carte)?.length) continue;   // carte pas (encore) exportée
@@ -560,7 +565,7 @@ export class Quetes {
   /** PNJ à contrats de la zone : d'abord celui de toutes les sous-zones (Milice d'Astrub), puis ceux à liste (Milice d'Amakna, 0.4). */
   private tableaux_(): string[] {
     const w = this.world;
-    return Object.entries(this.data.pnj).filter(([, d]) => d.contrats && (d.zone ?? 'incarnam') === w.opts.zone && (!d.v04 || w.player.v04))
+    return Object.entries(this.data.pnj).filter(([, d]) => d.contrats && (d.zone ?? 'incarnam') === w.opts.zone && (!d.v04 || w.player.v04) && (!d.v06 || w.player.v06))
       .sort((a, b) => +Array.isArray(a[1].contrats) - +Array.isArray(b[1].contrats)).map(([k]) => k);
   }
   /** Le PNJ dont le tableau propose cette sous-zone. */
@@ -610,7 +615,7 @@ export class Quetes {
   aDonnerTous(pnj: string): string[] {
     const lvl = this.world.player.level, out: string[] = [];
     for (const [id, q] of Object.entries(this.data.quetes)) {
-      if (q.pnj !== pnj || q.bientot || (q.v03 && !this.world.player.v03) || (this.finies.has(id) && !this.reprenable(id)) || this.enCours.some(c => c.id === id) || q.auDepart) continue;
+      if (q.pnj !== pnj || q.bientot || (q.v03 && !this.world.player.v03) || (q.v06 && !this.world.player.v06) || (this.finies.has(id) && !this.reprenable(id)) || this.enCours.some(c => c.id === id) || q.auDepart) continue;
       if (q.niveau > lvl + 2 || !(q.requiert ?? []).every(r => this.finies.has(r))) continue;
       // une quête qui suit une autre (fil principal) démarre seule à la fin de la précédente : son PNJ ne la propose pas
       if (Object.values(this.data.quetes).some(o => o.suivante === id)) continue;

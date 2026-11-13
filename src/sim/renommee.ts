@@ -20,7 +20,7 @@ export function regionDe(w: World, tag: string): string | null {
   const m = w.worldGrid?.mapByTag(tag);
   if (!m || m.inside) return null;
   const sub = w.zone.open?.subareas[String(m.sub)];
-  if (!sub || (sub.essai && !w.players[0]?.v04)) return null;
+  if (!sub || (sub.essai && !w.players[0]?.v04) || (sub.v06 && !w.players[0]?.v06)) return null;   // régions en essai : seulement là où elles sont visibles
   return sub.region ?? w.zone.name;
 }
 
