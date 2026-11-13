@@ -42,6 +42,8 @@ export class FX {
   private rings: Ring[] = [];
   /** Eniripsa 12C : fils de soin verts (du soigneur vers l'allié soigné), qui s'effacent en 0,45 s. */
   private fils: { x: number; y: number; tx: number; ty: number; life: number }[] = [];
+  /** Sadida 13A : lianes de l'Infection (du premier Infecté touché vers les autres), qui s'effacent en 0,5 s. */
+  private lianes: { x: number; y: number; tx: number; ty: number; life: number }[] = [];
   /** Enutrof 15A : pièces en vol (t de 0 à d, en cloche de hauteur h). */
   private pieces: { x: number; y: number; tx: number; ty: number; t: number; d: number; h: number }[] = [];
   /** Effets officiels des sorts (planches Dofus 3). */
@@ -186,8 +188,58 @@ export class FX {
         this.number(e.x, e.y, 90, `${e.name} dompté !`, false, '#9fd0ff');
         break;
       case 'beteMorte':
-        this.particles(e.x, e.y, e.radius, 18, 0xbfbfbf, 240, 0.5, 4, 260);
+        if (e.discret) this.particles(e.x, e.y, e.radius, 10, 0x8fbf5a, 140, 0.45, 3, 180);   // Sadida : l'Arbre retourne sous terre
+        else this.particles(e.x, e.y, e.radius, 18, 0xbfbfbf, 240, 0.5, 4, 260);
         break;
+      // Sadida : Arbre Feuillu (feuilles), Infection propagée (lianes vers chaque Infecté), ralliement des Poupées
+      case 'feuillu':
+        this.ring(e.x, e.y, 10, 60, 0x6fd04a, 0.45, 6);
+        this.particles(e.x, e.y, 60, 16, 0x8fe05a, 160, 0.7, 4, 120);
+        break;
+      case 'infection':
+        for (const [tx, ty] of e.cibles) { this.lianes.push({ x: e.x, y: e.y, tx, ty, life: 0.5 }); this.particles(tx, ty, 30, 4, 0x9be36a, 90, 0.4, 3, 140); }
+        break;
+      case 'ralliement':
+        this.ring(e.x, e.y, 70, 12, 0x9be36a, 0.45, 6);
+        break;
+    }
+  }
+
+  /** Ligne ondulée d'une liane (Sadida 13A), de a à b ; `t` fait onduler. */
+  private liane(a: Vec, b: Vec, t: number): Phaser.Math.Vector2[] {
+    const dx = b.x - a.x, dy = b.y - a.y, L = Math.hypot(dx, dy) || 1, nx = -dy / L, ny = dx / L, pts: Phaser.Math.Vector2[] = [];
+    const n = Math.max(6, Math.min(20, Math.round(L / 14)));
+    for (let i = 0; i <= n; i++) {
+      const u = i / n, w = Math.sin(u * Math.PI) * (5 * Math.sin(u * 9 + t * 3) - 10);
+      pts.push(new Phaser.Math.Vector2(a.x + dx * u + nx * w, a.y + dy * u + ny * w + (w < 0 ? w * 0.4 : 0)));
+    }
+    return pts;
+  }
+  /** Sadida (13A, 8B) : à chaque image, lianes vertes entre les Infectés voisins et ronces au sol sous les monstres ralentis. */
+  sadida(ms: readonly { x: number; y: number; radius: number; infecteT: number; ronceT: number; dead: boolean }[], temps: number) {
+    const g = this.ground, inf = ms.filter(m => !m.dead && m.infecteT > 0);
+    for (const m of ms) {
+      if (m.dead || m.ronceT <= 0) continue;
+      const r = m.radius + 6, k = Math.min(1, m.ronceT);
+      g.lineStyle(3, 0x4a3218, 0.75 * k); g.strokePoints(isoCircle(m.x, m.y, r, 18), true, true);
+      g.lineStyle(2, 0x6fa83a, 0.9 * k);
+      for (let i = 0; i < 8; i++) {   // épines vers l'extérieur
+        const a = (i / 8) * TAU + m.x * 0.01, p = ISO.toScreen(m.x + Math.cos(a) * r, m.y + Math.sin(a) * r), q = ISO.toScreen(m.x + Math.cos(a + 0.2) * (r + 9), m.y + Math.sin(a + 0.2) * (r + 9));
+        g.lineBetween(p.x, p.y, q.x, q.y);
+      }
+    }
+    if (inf.length < 2) return;
+    const top = this.top, vu = new Set<string>();
+    for (const m of inf) {   // chaque Infecté relié à son plus proche voisin Infecté (à 8 cases au plus)
+      let best: typeof m | null = null, bd = 48 * 8;
+      for (const o of inf) { if (o === m) continue; const d = Math.hypot(o.x - m.x, o.y - m.y); if (d < bd) { bd = d; best = o; } }
+      if (!best) continue;
+      const cle = m.x < best.x ? `${m.x},${m.y},${best.x},${best.y}` : `${best.x},${best.y},${m.x},${m.y}`;
+      if (vu.has(cle)) continue;
+      vu.add(cle);
+      const a = ISO.toScreen(m.x, m.y, 20), b = ISO.toScreen(best.x, best.y, 20), k = Math.min(1, Math.min(m.infecteT, best.infecteT));
+      top.lineStyle(4, 0x2f6a1c, 0.35 * k); top.strokePoints(this.liane(a, b, temps), false, false);
+      top.lineStyle(1.5, 0x9be36a, 0.7 * k); top.strokePoints(this.liane(a, b, temps), false, false);
     }
   }
 
@@ -251,6 +303,8 @@ export class FX {
     for (const c of this.pieces) c.t += dt;
     this.pieces = this.pieces.filter(c => c.t < c.d);
     this.fils = this.fils.filter(f => f.life > 0);
+    for (const f of this.lianes) f.life -= dt;
+    this.lianes = this.lianes.filter(f => f.life > 0);
     this.rings = this.rings.filter(r => r.life > 0);
     for (const f of this.plantees) { f.life -= dt; f.img.setAlpha(Math.min(1, f.life / 0.3)); if (f.life <= 0) f.img.destroy(); }
     this.plantees = this.plantees.filter(f => f.life > 0);
@@ -364,6 +418,11 @@ export class FX {
       for (let i = 0; i <= 12; i++) { const t = i / 12, u = 1 - t; pts.push(new Phaser.Math.Vector2(u * u * a.x + 2 * u * t * mx + t * t * b.x, u * u * a.y + 2 * u * t * my + t * t * b.y)); }
       top.lineStyle(7, 0x4fd88a, 0.28 * k); top.strokePoints(pts, false, false);
       top.lineStyle(2.5, 0xc8ffd8, 0.9 * k); top.strokePoints(pts, false, false);
+    }
+    for (const f of this.lianes) {   // Sadida 13A : liane d'Infection, verte et épineuse, qui ondule
+      const k = f.life / 0.5, a = ISO.toScreen(f.x, f.y, 26), b = ISO.toScreen(f.tx, f.ty, 26);
+      top.lineStyle(6, 0x2f6a1c, 0.5 * k); top.strokePoints(this.liane(a, b, 0), false, false);
+      top.lineStyle(2.5, 0x9be36a, 0.95 * k); top.strokePoints(this.liane(a, b, 0), false, false);
     }
     for (const r of this.rings) {
       const k = 1 - r.life / r.max, rad = r.r0 + (r.r1 - r.r0) * Phaser.Math.Easing.Cubic.Out(k);

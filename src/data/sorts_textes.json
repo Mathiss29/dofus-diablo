@@ -3391,5 +3391,432 @@
    "accroche": "La main gagnante, en pleine face.",
    "texte": "Frappe selon ta main gagnante : carrés et suites dans tous les éléments, paires et brelans dans ton meilleur. Défausse la Main."
   }
+ },
+ "sadida": {
+  "13516": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Zone"
+   ],
+   "accroche": "La première épine donne le ton.",
+   "texte": "Frappe en Terre jusqu'à 6 cases et Infecte 3 s. Sur un Arbre Feuillu, frappe tout le cercle de 2 cases ; sur un Infecté, tous les Infectés.",
+   "ambiance": "« Une ronce, puis la forêt entière. »"
+  },
+  "13521": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Affaiblit"
+   ],
+   "accroche": "Elle pique là où ça fait mal.",
+   "texte": "Frappe en Terre jusqu'à 6 cases et raccourcit les bonus de la cible. Sur un Infecté, touche tous les Infectés."
+  },
+  "13528": {
+   "role": "soutien",
+   "etiquettes": [
+    "Distance",
+    "Soin",
+    "Allié",
+    "Zone"
+   ],
+   "accroche": "Une larme, et la sève monte.",
+   "texte": "Soigne l'allié visé (ou toi) ou frappe en Eau un ennemi. Sur un de tes Arbres : il devient Feuillu tout de suite et l'effet couvre 2 cases autour.",
+   "ambiance": "« Les arbres boivent ce que les hommes pleurent. »"
+  },
+  "13563": {
+   "role": "soutien",
+   "etiquettes": [
+    "Zone",
+    "Vol de vie",
+    "Soin",
+    "Allié"
+   ],
+   "accroche": "La sève remonte vers les tiens.",
+   "texte": "Vole de la vie en Eau dans la zone et soigne tes alliés autour selon les dommages faits. Rend Feuillus les Arbres touchés."
+  },
+  "13574": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Ralentit"
+   ],
+   "accroche": "Ça brûle, et ça n'avance plus.",
+   "texte": "Frappe en Feu jusqu'à 6 cases et retire 2 PM. Sur un Arbre Feuillu, tout le cercle de 2 cases ; sur un Infecté, tous les Infectés."
+  },
+  "13568": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Ralentit"
+   ],
+   "accroche": "Le feu court d'herbe en herbe.",
+   "texte": "Frappe en Feu et retire des PM dans la zone ; les ennemis touchés brûlent ensuite ceux qui les entourent."
+  },
+  "13577": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Zone"
+   ],
+   "accroche": "Le poison qui ne lâche rien.",
+   "texte": "Frappe en Air jusqu'à 6 cases. Sur un Infecté, touche tous les Infectés et leur garde l'Infection 3 s de plus."
+  },
+  "13529": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Cumul"
+   ],
+   "accroche": "Un souffle, et l'air se gâte.",
+   "texte": "Infecte la cible et l'empoisonne en Air : les dommages tombent en continu pendant 3 s."
+  },
+  "13519": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Distance"
+   ],
+   "accroche": "Planter d'abord, régner ensuite.",
+   "texte": "Plante un Arbre qui bloque les monstres ; il devient Feuillu au bout de 3 s et relaie tes sorts. 3 charges, 6 Arbres et Poupées au plus dans le groupe.",
+   "ambiance": "« Là où il y a un Arbre, il y a un Sadida. »"
+  },
+  "13560": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Distance"
+   ],
+   "accroche": "Toute la forêt reverdit d'un coup.",
+   "texte": "Plante un Arbre déjà Feuillu, et tous tes Arbres deviennent Feuillus sur-le-champ."
+  },
+  "13564": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Distance"
+   ],
+   "accroche": "Elle rit, et ça empoisonne.",
+   "texte": "Change ton Arbre le plus proche du point visé en Folle : elle Infecte et empoisonne en Air. À sa mort, elle redevient Arbre."
+  },
+  "13515": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Distance"
+   ],
+   "accroche": "Une Folle sortie de nulle part.",
+   "texte": "Fait naître une Folle sans Arbre, tout près de toi. Elle laisse un Arbre à sa place au bout de 9 s."
+  },
+  "13533": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Ralentit",
+    "Cumul"
+   ],
+   "accroche": "La sève colle aux jambes.",
+   "texte": "Infecte, empoisonne en Feu pendant 3 s et empêche la cible d'éviter tes retraits de PM pendant 9 s."
+  },
+  "13562": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Cumul"
+   ],
+   "accroche": "Les miasmes montent des racines.",
+   "texte": "Infecte et empoisonne en Air tous les ennemis autour de tes Arbres Feuillus et de tes Poupées."
+  },
+  "13575": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Ralentit",
+    "Zone"
+   ],
+   "accroche": "Ça s'attrape, et ça se répand.",
+   "texte": "Frappe en Air et retire 2 PM. Sur un Infecté, l'Infection saute aux ennemis à 2 cases de lui."
+  },
+  "14396": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Soin",
+    "Allié",
+    "Ralentit"
+   ],
+   "accroche": "Les racines tiennent le terrain.",
+   "texte": "Soigne tes alliés, frappe en Eau et retire des PM autour de tes Arbres, une seule fois par ennemi. Tous tes Arbres deviennent Feuillus."
+  },
+  "13525": {
+   "role": "soutien",
+   "etiquettes": [
+    "Distance",
+    "Soin",
+    "Allié",
+    "Ralentit"
+   ],
+   "accroche": "Des ronces qui pansent les plaies.",
+   "texte": "Soigne l'allié visé (ou toi) ou retire 2 PM à un ennemi. Sur un Arbre Feuillu, tout le cercle de 2 cases."
+  },
+  "13565": {
+   "role": "soutien",
+   "etiquettes": [
+    "Distance",
+    "Soin",
+    "Invocation"
+   ],
+   "accroche": "On déterre, on replante.",
+   "texte": "Soigne une de tes Poupées ou un de tes Arbres, le ramène vers toi et plante un Arbre sur la case visée."
+  },
+  "13561": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Contrôle"
+   ],
+   "accroche": "Rien ne passe, rien ne fuit.",
+   "texte": "Change ton Arbre le plus proche du point visé en Bloqueuse : elle file vers les ennemis, attire leurs coups et freine ceux à son contact."
+  },
+  "13526": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Contrôle"
+   ],
+   "accroche": "Un mur de chiffon, tout de suite.",
+   "texte": "Fait naître une Bloqueuse sans Arbre, tout près de toi. Elle laisse un Arbre à sa place au bout de 9 s."
+  },
+  "13527": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Mêlée",
+    "Ralentit",
+    "Renforce"
+   ],
+   "accroche": "Les ronces volent les jambes.",
+   "texte": "Frappe en Terre à 4 cases et vole un PM : tu cours 15 % plus vite 3 s. Sur un Infecté, touche tous les Infectés."
+  },
+  "14393": {
+   "role": "base",
+   "etiquettes": [
+    "Distance"
+   ],
+   "accroche": "Qui frappe l'Arbre se brûle.",
+   "texte": "Frappe en Feu ; tant qu'elle est marquée, la cible se prend une part des coups portés à tes Arbres."
+  },
+  "13571": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Vol de vie",
+    "Zone"
+   ],
+   "accroche": "La Poupée sert de paratonnerre.",
+   "texte": "Vole de la vie en Eau à 4 cases. Sur une de tes Poupées, frappe tout autour d'elle ; sur un Infecté, tous les Infectés."
+  },
+  "13524": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone"
+   ],
+   "accroche": "La forêt ne pardonne pas.",
+   "texte": "Frappe en Terre autour de tes Arbres Feuillus ; qui frappe ensuite un de tes Arbres devient Infecté."
+  },
+  "13530": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Repousse",
+    "Soin"
+   ],
+   "accroche": "Le Groute sort de terre.",
+   "texte": "Change un Arbre Feuillu en Groute enraciné : il repousse et Infecte les ennemis, et soigne tes alliés autour de lui."
+  },
+  "13566": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Attire",
+    "Bouclier"
+   ],
+   "accroche": "Le bois tend les bras.",
+   "texte": "Change un Arbre Feuillu en gardien enraciné qui attire et Infecte, protège tes alliés d'un bouclier et ralentit les ennemis."
+  },
+  "13567": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Zone"
+   ],
+   "accroche": "Plus elle attend, plus ça fait mal.",
+   "texte": "Change ton Arbre le plus proche en Sacrifiée : elle grossit toutes les 3 s puis fonce exploser en Eau au milieu des ennemis, qu'elle Infecte."
+  },
+  "13522": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Zone"
+   ],
+   "accroche": "Une bombe de chiffon, prête à partir.",
+   "texte": "Fait naître une Sacrifiée sans Arbre, tout près de toi. Elle laisse un Arbre à sa place au bout de 9 s."
+  },
+  "13518": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Ralentit"
+   ],
+   "accroche": "Les herbes s'enroulent aux chevilles.",
+   "texte": "Frappe en Feu et retire 3 PM à tous les ennemis à 2 cases du point visé ; des ronces poussent sous leurs pieds."
+  },
+  "13576": {
+   "role": "base",
+   "etiquettes": [
+    "Distance"
+   ],
+   "accroche": "Chaque Poupée perdue se paie.",
+   "texte": "Frappe en Eau ; tant qu'elle est maudite, la cible prend des dommages à chaque mort d'une de tes Poupées."
+  },
+  "13531": {
+   "role": "gros",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Soin",
+    "Anti-invocations"
+   ],
+   "accroche": "Une Poupée donne tout ce qu'elle a.",
+   "texte": "Frappe en Eau, plus fort contre les invocations. Sur une de tes Poupées : elle se sacrifie, soigne tes alliés et frappe tout autour en Infectant."
+  },
+  "13517": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Cumul"
+   ],
+   "accroche": "Chaque pas brûle un peu plus.",
+   "texte": "La cible brûle en Feu à chaque fois qu'elle bouge, jusqu'à 3 fois. Sur un Infecté, touche tous les Infectés."
+  },
+  "13534": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Distance"
+   ],
+   "accroche": "Un Arbre qui refuse de mourir.",
+   "texte": "Plante un Arbre de Vie, plus solide, qui redevient Feuillu 6 s après avoir été abîmé."
+  },
+  "13572": {
+   "role": "soutien",
+   "etiquettes": [
+    "Soin",
+    "Invocation"
+   ],
+   "accroche": "Le bois nourrit les siens.",
+   "texte": "Sacrifie un Arbre Feuillu ou une Poupée : tes Poupées gagnent des PV et tu es soigné."
+  },
+  "13573": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Repousse",
+    "Soin"
+   ],
+   "accroche": "Elle gonfle, et tout le monde recule.",
+   "texte": "Change ton Arbre le plus proche en Gonflable : elle soigne tes alliés, frappe en Feu et repousse. À sa mort, elle redevient Arbre."
+  },
+  "13523": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Repousse",
+    "Soin"
+   ],
+   "accroche": "Gonflée à bloc, sans attendre.",
+   "texte": "Fait naître une Gonflable sans Arbre, tout près de toi. Elle laisse un Arbre à sa place au bout de 9 s."
+  },
+  "13514": {
+   "role": "zone",
+   "etiquettes": [
+    "Autour de toi",
+    "Zone",
+    "Attire"
+   ],
+   "accroche": "La terre tremble sous la forêt.",
+   "texte": "Frappe en Terre autour de toi, d'un Arbre Feuillu ou d'une Poupée, et attire les ennemis vers le centre."
+  },
+  "13559": {
+   "role": "base",
+   "etiquettes": [
+    "Distance"
+   ],
+   "accroche": "La racine qui crie.",
+   "texte": "Frappe en Air ; ensuite, un poison ou un coup de Poupée sur la cible l'Infecte. Sur un Infecté, touche tous les Infectés."
+  },
+  "13569": {
+   "role": "gros",
+   "etiquettes": [
+    "Distance",
+    "Cumul"
+   ],
+   "accroche": "Toute l'Infection en un seul coup.",
+   "texte": "Frappe en Air, plus fort pour chaque Infecté, puis consomme les Infections autour de la cible."
+  },
+  "13570": {
+   "role": "gros",
+   "etiquettes": [
+    "Distance",
+    "Cumul"
+   ],
+   "accroche": "La forêt entière frappe avec toi.",
+   "texte": "Frappe en Terre, plus fort pour chacun de tes Arbres Feuillus. Sur un Infecté, touche tous les Infectés."
+  },
+  "13532": {
+   "role": "soutien",
+   "etiquettes": [
+    "Zone",
+    "Soin",
+    "Allié"
+   ],
+   "accroche": "Le bois prend les coups pour toi.",
+   "texte": "Sacrifie un Arbre Feuillu ou une Poupée : tes alliés autour se partagent les dommages et sont soignés."
+  },
+  "13579": {
+   "role": "soutien",
+   "etiquettes": [
+    "Autour de toi",
+    "Bouclier"
+   ],
+   "accroche": "Enraciné, tu ne fais qu'un avec eux.",
+   "texte": "Tu ne bouges plus, et les dommages que tu prends se répartissent entre tes Arbres et toi."
+  },
+  "13578": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Ralentit"
+   ],
+   "accroche": "La Poupée la plus redoutable.",
+   "texte": "Change ton Arbre le plus proche en Surpuissante : elle frappe en Terre, retire des PM et appelle une petite Poupée voleuse de Portée."
+  },
+  "13520": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Ralentit"
+   ],
+   "accroche": "La Surpuissante, ici et maintenant.",
+   "texte": "Fait naître une Surpuissante sans Arbre, tout près de toi. Elle laisse un Arbre à sa place au bout de 9 s."
+  },
+  "passage": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement"
+   ],
+   "accroche": "Les racines t'emportent.",
+   "texte": "Saute jusqu'à 4 cases, ou prends la place d'un de tes Arbres à 8 cases : il prend la tienne.",
+   "ambiance": "« Sous terre, la forêt est un seul chemin. »"
+  }
  }
 }

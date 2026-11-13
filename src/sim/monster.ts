@@ -1,5 +1,5 @@
 import { Entity } from './entity';
-import type { MonsterDef, MonsterSpell } from './defs';
+import type { Element, MonsterDef, MonsterSpell } from './defs';
 import type { Player } from './player';
 import type { Bete } from './bete';
 /** Ce qu'un monstre poursuit et frappe : le joueur, ou une bête de l'Osamodas (maquette Osamodas 8A). */
@@ -84,6 +84,9 @@ export class Monster extends Entity {
   get soinsK(): number { return this.antiSoinT > 0 ? 1 - this.antiSoin : 1; }
   /** Coups qui saignent (légendaire Sacrieur C) : dégâts par seconde, durée restante, dégâts pas encore affichés. */
   saigne = 0; saigneT = 0; saigneAcc = 0;
+  /** Sadida : Infecté (s restantes), poison continu (dégâts par s, durée, reste à afficher, élément),
+   *  ronces au sol (retrait de PM visible, 8B), Sève Paralysante (n'esquive plus les retraits de PM). */
+  infecteT = 0; poison = 0; poisonT = 0; poisonAcc = 0; poisonEl: Element = 'terre'; ronceT = 0; seveT = 0;
   /** Portée retirée (cases) à ses sorts à distance pendant poMalusT s (Flèche Détonante). */
   poMalus = 0; poMalusT = 0;
   /** Bonus de Dommages (Frénésie : %, Euphorie malsaine : fixes) et durée restante. */

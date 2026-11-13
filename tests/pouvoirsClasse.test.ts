@@ -25,12 +25,12 @@ const monstre = (w: World, dx: number, dy = 0, type = 'bouftou') => { const m = 
 
 describe('Légendaires de classe inventés (Légendaires classe : 1A 2A+2D 3C 4A …)', () => {
   it('47 pouvoirs (+ 17 du Sacrieur, + 24 du Forgelance), deux par emplacement, chacun sur un vrai sort de sa classe', () => {
-    expect(POUVOIRS_CLASSE).toHaveLength(120);   // + 16 de l'Eniripsa, + 16 de l'Écaflip
+    expect(POUVOIRS_CLASSE).toHaveLength(121);   // + 16 de l'Eniripsa, + 16 de l'Écaflip, + 1 du Sadida (17D)
     expect(PC_PAR_ID['pc-cra-D']).toBeUndefined();   // 6D Pas piégé refusé
     for (const p of POUVOIRS_CLASSE) {
       expect(GAME_DATA.classes[p.classe].spells[p.sort], p.id).toBeDefined();
       const fl = p.classe === 'forgelance' ? (p.slot === 'arme' ? 2 : p.slot === 'ceinture' ? 4 : 3) : 0;   // Forgelance : 2 inventés + sa lance, + Lance enracinée
-      expect(POUVOIRS_CLASSE.filter(q => q.classe === p.classe && q.slot === p.slot)).toHaveLength(fl || (p.classe === 'cra' && p.slot === 'bottes' ? 1 : p.classe === 'sacrieur' && p.slot === 'bouclier' ? 3 : 2));
+      expect(POUVOIRS_CLASSE.filter(q => q.classe === p.classe && q.slot === p.slot)).toHaveLength(fl || (p.classe === 'sadida' || p.classe === 'cra' && p.slot === 'bottes' ? 1 : p.classe === 'sacrieur' && p.slot === 'bouclier' ? 3 : 2));
       expect(p.texte(p.jet[1])).not.toMatch(/\btours?\b/i);
     }
   });

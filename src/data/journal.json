@@ -2101,7 +2101,8 @@
             "details": "La touche Entrée relance ta partie. Le dernier carnet du Journal remplace le diaporama.",
             "icone": "boss",
             "etiquettes": ["Accueil"]
-          }
+          },
+          {"titre": "Le Sadida en essai", "phrase": "Plante tes Arbres, Infecte les monstres et lâche tes Poupées : un sort sur un Infecté les touche tous.", "details": "Jouable dans la partie de test, jusqu'au niveau 60, avec la Folle, la Bloqueuse, la Sacrifiée et le Groute. X rallie tes Poupées sur l'ennemi sous la souris.", "icone": "sorts", "etiquettes": ["Partie de test", "Touche X"]}
         ],
         "Le monde": [],
         "Combat": [
@@ -2140,6 +2141,7 @@
           "Partie de test : 285 objets du 61 au 90, tableaux de contrats des régions et quête du bateau pour Frigost.",
           "Partie de test : effets visuels officiels de 17 sorts 61-90 (Forgelance, Eniripsa, Enutrof, Écaflip).",
           "Partie de test : 56 monstres et 30 archimonstres de la 0.6, symboles des Douze sur autels et sanctuaires.",
+          "Le Sadida : squelette, 15 têtes, 44 icônes de sorts et 5 invocations officielles extraites de Dofus 3.",
           "Quête « L'éternelle moisson » : les âmes des 30 nouveaux archimonstres ont rejoint ses pages."
         ]
       }

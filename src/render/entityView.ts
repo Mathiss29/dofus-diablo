@@ -51,6 +51,8 @@ export class EntityView {
   private halo: Phaser.GameObjects.Image | null = null;
   /** Écaflip 15A : les cartes de la Main qui tournent autour de lui (créé seulement pour lui). */
   private cartes: Phaser.GameObjects.Graphics | null = null;
+  /** Sadida 13A : icône officielle « Infecté » au-dessus du monstre (créée seulement pour eux). */
+  private infecte: Phaser.GameObjects.Image | null = null;
 
   /** `vivant` : perso du joueur dessiné en direct depuis son squelette (apparence choisie à la création). */
   constructor(scene: Phaser.Scene, readonly look: Look, private vivant?: PersoVivant) {
@@ -110,7 +112,7 @@ export class EntityView {
   changerVivant(v: PersoVivant) { this.vivant = v; Object.assign(this.counts, v.compte); }
 
   /** Hors de l'écran : rien à dessiner (on ne recalcule pas l'animation). */
-  hide() { this.sprite.setVisible(false); this.bar.setVisible(false); this.shadow.setVisible(false); this.fond.setVisible(false); this.vie.setVisible(false); this.pieces?.setVisible(false); this.halo?.setVisible(false); this.cartes?.setVisible(false); }
+  hide() { this.sprite.setVisible(false); this.bar.setVisible(false); this.shadow.setVisible(false); this.fond.setVisible(false); this.vie.setVisible(false); this.pieces?.setVisible(false); this.halo?.setVisible(false); this.cartes?.setVisible(false); this.infecte?.setVisible(false); }
   sync(e: Entity) {
     if (!this.sprite.visible) { this.sprite.setVisible(true); this.bar.setVisible(true); }
     const L = this.look, p = ISO.toScreen(e.x, e.y);
@@ -135,7 +137,12 @@ export class EntityView {
     else this.sprite.setFrame(`${name}_${idx}`);
     // Enutrof 16C : le coffre au trésor grossit à chaque palier, et dore à partir de l'Or
     const own = (e as { base?: string; owner?: Player }).base === 'coffre_tresor' ? (e as { owner?: Player }).owner : undefined;
-    const pal = own?.cls?.coffre ? palierCoffre(own) : -1, kc = (1 + 0.12 * (Math.min(pal, 3) + 1)) * ((e as Monster).bossMonde ? VIVANT.boss.echelle : 1), sur = !!own && pal >= own.cls.coffre!.paliers.length;
+    const pal = own?.cls?.coffre ? palierCoffre(own) : -1;
+    let kc = (1 + 0.12 * (Math.min(pal, 3) + 1)) * ((e as Monster).bossMonde ? VIVANT.boss.echelle : 1);
+    const sur = !!own && pal >= own.cls.coffre!.paliers.length;
+    // Sadida : un Arbre pas encore Feuillu est plus petit et terne ; le Feuillu est en plein et respire en vert
+    const sadi = (e as { sadi?: { feuillu: boolean } | null; def?: { sadida?: { arbre?: boolean } } }), arbre = !!sadi.sadi && !!sadi.def?.sadida?.arbre;
+    if (arbre && !sadi.sadi!.feuillu) kc *= 0.72;
     let sy = L.scale * this.k * kc, alpha = 1;
     if (e.anim === 'idle') sy *= 1 + Math.sin(e.age * 4) * 0.02;
     if (e.anim === 'spawn') alpha = e.animT;
@@ -148,6 +155,7 @@ export class EntityView {
     this.sprite.setPosition(pp.x, pp.y).setDepth(p.y);
     if (e.flash > 0) this.sprite.setTintFill(0xffffff);
     else if (sur) { const k = 0.5 + 0.5 * Math.sin(EntityView.temps * 7); this.sprite.setTint(mulTint(Phaser.Display.Color.GetColor(255, Math.round(150 + 60 * k), Math.round(90 + 60 * k)), EntityView.ambiance)); }   // 6B : surcharge, il rougeoie
+    else if (arbre) this.sprite.setTint(mulTint(sadi.sadi!.feuillu ? Phaser.Display.Color.GetColor(Math.round(215 + 25 * Math.sin(EntityView.temps * 3 + e.id)), 255, Math.round(200 + 25 * Math.sin(EntityView.temps * 3 + e.id))) : 0x9c9c84, EntityView.ambiance));
     else if (pal >= 2) this.sprite.setTint(mulTint(pal >= 3 ? 0xffc870 : 0xffe9a0, EntityView.ambiance));
     else if (L.tint || EntityView.ambiance !== 0xffffff) this.sprite.setTint(mulTint(L.tint ?? 0xffffff, EntityView.ambiance));
     else this.sprite.clearTint();
@@ -216,6 +224,12 @@ export class EntityView {
       barre = true;
     }
     if (!barre) { this.fond.setVisible(false); this.vie.setVisible(false); }
+    // Sadida 13A : icône officielle de l'état Infecté au-dessus du monstre
+    const it = (e as Monster).infecteT;
+    if (it > 0 && !e.dead && this.sprite.scene.textures.exists('sadi_infecte')) {
+      const im = this.infecte ??= this.sprite.scene.add.image(0, 0, 'sadi_infecte').setDisplaySize(20, 20);
+      im.setVisible(true).setPosition(p.x + Math.max(18, e.radius * 1.2), p.y - L.height * L.scale - 14).setDepth(p.y + 2).setAlpha(Math.min(1, it * 2));
+    } else this.infecte?.setVisible(false);
   }
 
   /** Le point (x, y) du monde tombe-t-il sur le corps dessiné ? On teste le rectangle rogné de la frame
@@ -232,5 +246,5 @@ export class EntityView {
     return Math.hypot(px - (r.x + r.w / 2), py - (r.y + r.h / 2)) * k;
   }
 
-  destroy() { this.sprite.destroy(); this.bar.destroy(); this.shadow.destroy(); this.fond.destroy(); this.vie.destroy(); this.pieces?.destroy(); this.halo?.destroy(); this.cartes?.destroy(); }
+  destroy() { this.sprite.destroy(); this.bar.destroy(); this.shadow.destroy(); this.fond.destroy(); this.vie.destroy(); this.pieces?.destroy(); this.halo?.destroy(); this.cartes?.destroy(); this.infecte?.destroy(); }
 }

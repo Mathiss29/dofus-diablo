@@ -29,6 +29,7 @@ import { avantImpact61, dommages61, hit61, impact61, maj61, redirige61, soins61,
 import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type SortGrade, type SortOfficiel } from './sorts';
 import { porteeSort } from './apercu';
 import { aimanter, alchiRhetorique, apresCoupEniripsa, envol, impactEniripsa, majEniripsa } from './eniripsa';
+import { arbrePassage, avantImpactSadida, impactSadida, majSadida } from './sadida';
 import { avantImpactEcaflip, chateauBrise, impactEcaflip, majEcaflip, neuviemeVie, type Carte, type MainGagnante } from './ecaflip';
 import { impactSorts06, pasJoueur06 } from './sorts06';
 import { impactEnutrof, majEnutrof, perteCoffre, recordsVides, type LigneCoffre, type RecordsCoffre, type VitrineCoffre } from './enutrof';
@@ -226,6 +227,8 @@ export class Player extends Entity {
   get arme(): boolean { return !!this.cls.lance && !this.lance; }
   mutil: { n: number; next: number } | null = null;
   renvoiT = 0; renvoiPart = 0;
+  /** Sadida : propagations récentes de l'Infection (1A), ennemi du ralliement (6B) et secondes qui restent. */
+  sadiProp: number[] = []; sadiCible: number | null = null; sadiCibleT = 0;
   /** Dernier souffle (légendaire Sacrieur D) : dernière fois qu'il a sauvé le perso. */
   dernierSouffleA = -999;
   /** Eniripsa : Dernier Mot déjà servi depuis le passage sous 20 % (3A) ; dernier PA d'Envol en série (K). */
@@ -356,14 +359,14 @@ export class Player extends Entity {
   etatPouvoir(id: string): { actif: true } | { actif: false; raison: string } {
     const c = PC_PAR_ID[id];
     if (c) {   // légendaire de classe inventé : sa classe, et son sort connu
-      if (c.classe !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur', forgelance: 'Forgelance', eniripsa: 'Eniripsa', enutrof: 'Enutrof', ecaflip: 'Écaflip' } as Record<string, string>)[c.classe] ?? 'une autre classe'}` };
+      if (c.classe !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur', forgelance: 'Forgelance', eniripsa: 'Eniripsa', enutrof: 'Enutrof', ecaflip: 'Écaflip', sadida: 'Sadida' } as Record<string, string>)[c.classe] ?? 'une autre classe'}` };
       if (this.knows(c.sort)) return { actif: true };
       const o = this.official(c.sort), n = o ? this.requiredLevel(o) : 0;
       return { actif: false, raison: n > this.level ? `s'éveille au niveau ${n}` : 'variante non choisie' };
     }
     const p = POUVOIR_PAR_ID[id];
     if (!p) return { actif: true };
-    if (classeDuPouvoir(id) !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur', forgelance: 'Forgelance', eniripsa: 'Eniripsa', enutrof: 'Enutrof', ecaflip: 'Écaflip' } as Record<string, string>)[classeDuPouvoir(id)] ?? 'une autre classe'}` };
+    if (classeDuPouvoir(id) !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur', forgelance: 'Forgelance', eniripsa: 'Eniripsa', enutrof: 'Enutrof', ecaflip: 'Écaflip', sadida: 'Sadida' } as Record<string, string>)[classeDuPouvoir(id)] ?? 'une autre classe'}` };
     const k = Object.keys(this.cls.spells).find(x => this.cls.spells[x].dofusId === p.dofusId);
     if (!k) return { actif: false, raison: 'sort pas encore en jeu' };
     if (this.knows(k)) return { actif: true };
@@ -687,13 +690,18 @@ export class Player extends Entity {
   chargesMax(id: SkillId): number {
     const d = this.spell(id);
     if (!d || d.pm || d.grosCoup) return 0;
+    if (d.sadida?.charges) return d.sadida.charges[0];   // Sadida 3A : Arbre à 3 charges
     const n = this.grade(id)?.parTour ?? 0;
     return n >= 2 ? n + (id === 'epee' && this.pcv('pc-iop-O') ? 1 : 0) : 0;   // Tempête d'acier : une charge de plus
   }
   /** Lancers des 3 dernières secondes (raccourcies par la réduction des recharges). */
   private recents(id: SkillId): number[] { const r = this.retourDe(id); return (this.casts[id] ?? []).filter(t => this.age - t < r); }
   /** Retour d'une charge de ce sort (Tempête d'acier : Épée Céleste plus rapide). */
-  retourDe(id: SkillId): number { return this.retourCharge * (id === 'epee' ? 1 - this.pcv('pc-iop-O') / 100 : 1); }
+  retourDe(id: SkillId): number {
+    const ch = this.cls.spells[id]?.sadida?.charges;   // Sadida 3B : une charge d'Arbre toutes les 4 s
+    if (ch) return ch[1] * (1 - this.reductionRecharges);
+    return this.retourCharge * (id === 'epee' ? 1 - this.pcv('pc-iop-O') / 100 : 1);
+  }
   /** Charges disponibles et temps avant le retour de la prochaine. */
   charges(id: SkillId): { n: number; max: number; prochaine: number } {
     const max = this.chargesMax(id);
@@ -719,7 +727,7 @@ export class Player extends Entity {
    *  puis le pouvoir Relance éclair (7A) et la réduction des recharges (7B). */
   recharge(id: SkillId): number {
     const d = this.spell(id);
-    if (!d) return 0;
+    if (!d || d.sadida?.charges) return 0;
     const gr = d.pm && !d.relanceOfficielle ? null : this.grade(id);
     let t = d.grosCoup ? d.grosCoup.recharge : gr ? Math.max(gr.relance * TOUR, d.cooldown, gr.parTour === 1 ? TOUR : 0) : d.cooldown;
     if (t <= 0) return 0;
@@ -898,6 +906,7 @@ export class Player extends Entity {
     // Forgelance : Désarmé, un sort « sur la Lance » part d'elle (5A) ; le Saut à la Lance y bondit (8B)
     if (this.lance && (def?.lance?.surLance || def?.lance?.saut)) return { x: this.lance.x, y: this.lance.y };
     if (this.lance && def?.lance?.epilogue) return { x: this.lance.x, y: this.lance.y };
+    if (def?.sadida?.passage) { const a = arbrePassage(this, aim, world); if (a) return { x: a.x, y: a.y }; }   // Passage racinaire : jusqu'à un de tes Arbres
     if (def?.hit.shape === 'point' && !def.move) {   // case visée, ramenée à la portée du sort
       if (this.cls.eniripsa) aim = aimanter(this, def, aim, world);   // Eniripsa 3A : un Mot à cible unique s'aimante sur le perso le plus proche
       const R = (this.shot(id).range ?? def.hit.range) + this.porteeStat(id) + (def.souffrance6?.po && this.souffrance >= 6 ? def.souffrance6.po * CASE : 0), dx = aim.x - this.x, dy = aim.y - this.y, d = Math.hypot(dx, dy);
@@ -958,7 +967,7 @@ export class Player extends Entity {
     this.cd[id] = this.cdMax[id] = this.recharge(id);
     this.pa -= this.paCost(id); this.pm -= def.pm ?? 0;
     (this.casts[id] ??= []).push(this.age);
-    this.casts[id] = this.casts[id].filter(t => this.age - t < Math.max(TOUR, this.retourCharge));
+    this.casts[id] = this.casts[id].filter(t => this.age - t < Math.max(TOUR, this.retourDe(id)));
     if (def.move?.kind === 'leap') this.invuln = Math.max(this.invuln, def.duration + 0.05);
     this.setAnim(def.charge ? `${id}_charge` : def.anim ?? id);
     this.facing = def.move && (tx !== this.x || ty !== this.y) ? Math.atan2(ty - this.y, tx - this.x) : Math.atan2(aim.y - this.y, aim.x - this.x);
@@ -995,6 +1004,7 @@ export class Player extends Entity {
     if (this.encourage || this.soinContinu.length || this.insoignableT > 0 || this.farces.length) majEniripsa(this, dt, world);
     if (this.cls.coffre) majEnutrof(this, dt, world);
     if (this.cls.poker) majEcaflip(this, dt, world);
+    if (this.sadiCibleT > 0) majSadida(this, dt);
     if (this.poinconT > 0) pasJoueur06(this, dt, world);
     if (this.e61) maj61(this, dt, world);
     if (this.renvoiT > 0) this.renvoiT -= dt;
@@ -1190,6 +1200,10 @@ export class Player extends Entity {
     if (!s.impacted && s.t >= d.impactAt) {
       s.impacted = true; this.z = 0;
       if (mv) { this.x = s.tx; this.y = s.ty; }
+      if (d.sadida?.passage) {   // Passage racinaire : l'Arbre prend la place de départ du Sadida
+        const a = world.betes.find(b => !b.dead && b.owner === this && b.def.sadida?.arbre && Math.hypot(b.x - s.tx, b.y - s.ty) < 4);
+        if (a && world.walkable(s.sx, s.sy)) { a.x = s.sx; a.y = s.sy; world.emit({ k: 'status', x: a.x, y: a.y - 40, text: 'Passage racinaire', color: '#9be36a' }); }
+      }
       // Cumul (Fureur) : chaque lancer augmente les dommages du suivant
       let mult = boost;
       if (this.elanT > 0 && s.id !== 'bond') { mult *= 1 + this.elanV / 100; this.elanT = 0; }   // Élan du héros
@@ -1281,7 +1295,11 @@ export class Player extends Entity {
       const rEni = hz.shape === 'point' || hz.shape === 'circle' ? hz.radius * area + zb : 0;
       const eni = !!this.cls.eniripsa && !mv, pasDeCoup = eni && impactEniripsa(this, s.id, d, s.tx, s.ty, rEni, mult, world);
       world.degatsCoup = 0;
+      // Sadida : relais par un Feuillu (cercle de 2 cases), Larme qui rend Feuillu, Infectés d'avant le coup
+      const sadi = d.sadida && this.cls.sadida && !mv ? avantImpactSadida(this, d, s, world) : null;
       if (d.self) { size = 60; }
+      else if (sadi && hit.dmg <= 0 && !hit.pmLoss) { size = (sadi.r ?? rz) * area + zb; }   // Arbre, Poupées, soins : aucun coup
+      else if (sadi && hz.shape === 'point') { size = (sadi.r ?? hz.radius) * area + zb; hits = world.hitCircle(s.tx, s.ty, size, hit, d.stun, this.facing); }
       else if (pasDeCoup) { size = rEni; }
       else if (hz.shape === 'cone') { size = hz.range * area + pp + zb; hits = world.hitCone(this.x, this.y, this.facing, size, (hz.arc * Math.PI) / 180, hit, d.stun); }
       else if (hz.shape === 'line') { size = hz.length * area + pp; hits = world.hitLine(this.x, this.y, this.facing, size, hz.width * area + zb, hit, d.stun); }
@@ -1311,6 +1329,7 @@ export class Player extends Entity {
       if (d.echange) world.echanger(this, s.tx, s.ty, CASE * 0.75);   // Assaut, Transposition : après le coup
       if (eni && !pasDeCoup) { apresCoupEniripsa(this, d, s.tx, s.ty, rEni, world.degatsCoup, world); alchiRhetorique(this, d, s.tx, s.ty, rEni, world); }
       if (d.enutrof) impactEnutrof(this, d, s.tx, s.ty, hits, world);
+      if (sadi) impactSadida(this, s.id, d, s.tx, s.ty, size, hit, sadi, s.gm, world);
       if (d.ecaflip && this.cls.poker) impactEcaflip(this, s.id, d, s.tx, s.ty, hits, base * mult, world);
       if (d.s06) { const z = impactSorts06(this, s.id, d, s.tx, s.ty, hits, hit, world); if (z) size = z; }   // sorts 61-90 (0.6)
       if (d.envol) envol(this, s.sx, s.sy, s.tx, s.ty, world);   // Mot d'Envol : échange de place avec l'allié visé

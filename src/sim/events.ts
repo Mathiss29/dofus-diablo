@@ -38,7 +38,11 @@ export type SimEvent =
   | { k: 'xp'; x: number; y: number; z: number; n: number }
   | { k: 'kill'; x: number; y: number; radius: number; monster: string }
   /** Bête de l'Osamodas tombée (pas un monstre vaincu : ni XP, ni bestiaire, ni quêtes). */
-  | { k: 'beteMorte'; id: number; x: number; y: number; radius: number; name: string }
+  | { k: 'beteMorte'; id: number; x: number; y: number; radius: number; name: string; discret?: boolean }
+  /** Sadida : un Arbre devient Feuillu ; l'Infection propage un sort (lianes du premier Infecté vers les autres, 13A) ; ralliement (6B). */
+  | { k: 'feuillu'; id: number; x: number; y: number }
+  | { k: 'infection'; x: number; y: number; cibles: [number, number][] }
+  | { k: 'ralliement'; x: number; y: number }
   /** Osamodas : soin (chiffre vert), bête invoquée, bête éveillée (8C), monstre dompté (15A). */
   | { k: 'heal'; x: number; y: number; z: number; amount: number }
   /** Eniripsa 12C : fil de soin vert du soigneur (ou de sa bête) vers l'allié soigné, vu de tous les joueurs. */
