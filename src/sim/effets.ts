@@ -36,8 +36,10 @@ export function effetsActifs(p: Player): EffetActif[] {
       if (!e) { e = { id: m.src, sorte: 'sort', nom: d.name, sort: d.icon, t: m.t, tMax: m.t0 ?? m.t, lignes: [] }; parSort.set(m.src, e); out.push(e); }
       e.t = Math.max(e.t, m.t); e.tMax = Math.max(e.tMax, m.t0 ?? m.t);
       e.lignes.push(`${signe(m.n)} ${STAT_NAMES[m.k] ?? m.k}`);
-    } else if (m.src === 'boisson') {   // « Métiers : » 4A : boisson de résistance
-      out.push({ id: 'boisson', sorte: 'objet', nom: 'Boisson de résistance', carac: 'vie', t: m.t, tMax: m.t0 ?? m.t, lignes: [`${signe(m.n)} ${STAT_NAMES[m.k] ?? m.k}`] });
+    } else if (m.src === 'boisson' || m.src === 'dore') {   // « Métiers : » 4A boisson de résistance, 6A coup de pouce d'une ressource dorée
+      const id = m.src, e = out.find(x => x.id === id);
+      if (e) { e.lignes.push(`${signe(m.n)} ${STAT_NAMES[m.k] ?? m.k}`); continue; }
+      out.push({ id, sorte: 'objet', nom: id === 'dore' ? 'Ressource dorée' : 'Boisson de résistance', carac: id === 'dore' ? 'puissance' : 'vie', t: m.t, tMax: m.t0 ?? m.t, lignes: [`${signe(m.n)} ${STAT_NAMES[m.k] ?? m.k}`] });
     } else if (!m.src) {   // sort de monstre (ex. Puissance retirée)
       let e = malus.get(m.k);
       const neg = m.n < 0;

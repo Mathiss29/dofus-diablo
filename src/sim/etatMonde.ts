@@ -9,6 +9,8 @@ export interface EtatMonde {
   versRecolte: number | null;
   approche: { x: number; y: number } | null;
   enRecolte: { id: number; t: number; hp: number } | null;
+  /** « Métiers : » 6D : clic maintenu sur une ressource : le perso enchaîne les suivantes de son métier. */
+  recolteTenue?: boolean;
   versPoste: number | null;
   approcheP: { x: number; y: number } | null;
   enFabrication: { recette: number; n: number; t: number; hp: number; rare?: string | null } | null;

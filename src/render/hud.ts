@@ -1014,6 +1014,16 @@ export class Hud {
       const toMini = (wx: number, wy: number) => { const s2 = ISO.toScreen(wx, wy); return { x: mx + mw / 2 + (s2.x - ps.x) * mc.zoom / this.k, y: my + mh / 2 + (s2.y - ps.y + 20) * mc.zoom / this.k }; };
       // tri grossier d'abord (distance monde) : la carte ne montre qu'environ 1000 unités autour du perso, le reste du monde ouvert est sauté
       const zk = mc.zoom / this.k, lim = Math.max(mw, mh) / zk * 1.6;
+      // « Métiers : » 6E : les ressources que mes métiers savent récolter (vert, doré pour une dorée)
+      const RC = world.opts.recoltes;
+      if (RC && this.reglages?.recoltesMini !== false) for (const r of world.recoltes) {
+        if (r.repousse > 0 || Math.abs(r.x - p.x) + Math.abs(r.y - p.y) > lim) continue;
+        const d = RC.ressources[r.item];
+        if (!d?.metier || p.metierLevel(d.metier) < d.niveau) continue;
+        const q = toMini(r.x, r.y);
+        if (q.x < mx || q.y < my || q.x > mx + mw || q.y > my + mh) continue;
+        this.pointMini(nPts++, q.x, q.y, r.dore ? 2.6 : 1.8, r.dore ? 0xffd75a : 0x6ad06a);
+      }
       for (const m of world.monsters) {
         if (m.dead || Math.abs(m.x - p.x) + Math.abs(m.y - p.y) > lim) continue;
         const q = toMini(m.x, m.y);

@@ -2021,6 +2021,21 @@
               "Bastion des Douze",
               "Astrub"
             ]
+          },
+          {
+            "titre": "Une récolte utile tout de suite",
+            "phrase": "Une ressource dorée donne 20 s de bonus selon le métier, et le clic maintenu enchaîne les récoltes.",
+            "details": "Les dorées de niveau 20 et plus sont gardées par un élite. Tes ressources apparaissent sur la mini-carte (réglable dans les Options).",
+            "icone": "paysan"
+          },
+          {
+            "titre": "Les métiers font monter le perso",
+            "phrase": "Tous les 20 niveaux de métier, un bonus permanent : PV, vitesse, soins, runes, butin, stats des objets portés.",
+            "details": "Le détail est dans la fenêtre des métiers, sous la barre d'XP.",
+            "icone": "metier",
+            "etiquettes": [
+              "Touche J"
+            ]
           }
         ],
         "Le monde": [],

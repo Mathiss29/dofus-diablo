@@ -175,6 +175,8 @@ export class ZoneScene extends Phaser.Scene {
   private zaapAnnonce: string | null = null;
   private zaapLabel: Phaser.GameObjects.Text | null = null;
   private recolteClick: number | null = null;
+  /** « Métiers : » 6D : le clic sur une ressource est encore maintenu (le perso enchaîne les suivantes). */
+  private recolteMaintenu = false;
   private atelierView: AtelierView | null = null;
   private posteClick: number | null = null;
   /** PNJ cliqué (quêtes) et leur affichage. */
@@ -737,7 +739,7 @@ export class ZoneScene extends Phaser.Scene {
         const at = this.atelierView?.sous(p, this.cameras.main);
         if (at != null) { this.posteClick = at; this.clickMode = null; this.holding = false; return; }
         const rc = this.recolteView?.sous(p, this.cameras.main);
-        if (rc != null) { this.recolteClick = rc; this.clickMode = null; this.holding = false; return; }
+        if (rc != null) { this.recolteClick = rc; this.recolteMaintenu = true; this.clickMode = null; this.holding = false; return; }
       }
       this.clickMode = m ? 'target' : 'ground';
       this.clickTarget = m?.id ?? null;
@@ -1146,6 +1148,8 @@ export class ZoneScene extends Phaser.Scene {
     const pc = this.portailClick && this.world.portes.find(o => o.dessin && o.nom === this.portailClick);
     if (pc) { input.dest = { x: pc.ends[0].x, y: pc.ends[0].y }; input.versPortail = pc.nom; this.clickMode = null; }
     this.portailClick = null;
+    if (this.recolteMaintenu && !this.input.activePointer.leftButtonDown()) this.recolteMaintenu = false;
+    input.recolteTenue = this.recolteMaintenu;
     const ar = this.recolteClick != null ? this.world.approcheRecolte(this.recolteClick) : null;
     if (ar) { input.recolte = this.recolteClick; input.dest = ar; this.clickMode = null; }
     this.recolteClick = null;

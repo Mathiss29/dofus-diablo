@@ -70,6 +70,7 @@ import { TRESOR_CSS, objetTresor, signatureTresor, tresorHtml } from './tresorVu
 import { ECLAT, FORGE_CSS, defaireHtml, etatForge, forgeHtml, lotConcasseur, mmss, pastillesFM, texteForge, type LigneLog } from './forgeVue';
 import type { SimEvent } from '../sim/events';
 import { REGLES_V2, RUNES, dmgArme, etatFM, ligneMax } from '../sim/forgemagie';
+import { BONUS_FAB, BONUS_RECOLTE, PAR_PALIER_FAB, paliers, POUCE } from '../sim/artisans';
 import { CONSO, NOM_SORTE, PARCHEMINS, sorteConso, texteConso } from '../sim/consommables';
 import { LOOKS } from './looks';
 import { niveauHorsPartie, rangDe } from '../sim/butin';
@@ -115,6 +116,15 @@ import { BOUTIQUE_OGRINES, PALIERS as PALIERS_ABO, apparatDuMois, enVente, prixO
 import { feteDuJour } from '../sim/apparats';
 import { METIERS_FAB, chanceRare, prochainPalier, recettesAvec, recettesDe, sourcesDe } from '../sim/metiers';
 /** Produit d'une recette : ressource, ou équipement (métiers de fabrication, 0.3). */
+/** « Métiers : » 6A + 7A + 7B : ce que le métier apporte au perso (un palier tous les 20 niveaux). */
+function bonusMetierHtml(k: string, lv: number): string {
+  const n = paliers(lv), r = BONUS_RECOLTE[k], f = BONUS_FAB[k], pouce = POUCE[k];
+  const l: string[] = [];
+  if (r) l.push(`+${Math.round(n * r.par * 100)} % ${r.texte}`);
+  if (f) l.push(`+${Math.round(n * PAR_PALIER_FAB * 100)} % de stats sur ${k === 'bijoutier' ? 'les anneaux et l\'amulette' : k === 'cordonnier' ? 'les bottes et la ceinture' : k === 'tailleur' ? 'la coiffe et la cape' : k === 'faconneur' ? 'le bouclier' : 'l\'arme'} que tu portes`);
+  if (!l.length && !pouce) return '';
+  return `<div class="hint" style="color:#b9e54b">Bonus permanent (palier ${n} / 10, un tous les 20 niveaux) : ${l.join(' · ') || 'aucun'}${pouce ? `<br>Ressource dorée : ${pouce.texte} pendant 20 s` : ''}</div>`;
+}
 const produit = (id: string): { name: string; icon: number; soin?: number } | undefined => ITEMS.resources[id] ?? ITEMS.equipment[id];
 import { chrono, pepitesSucces, type SuccesDef } from '../sim/quests';
 /** Catégories officielles de la fenêtre Succès de Dofus 3 (achievementcategories : nom, bannière cat_N, couleur), dans l'ordre du jeu ;
@@ -1479,7 +1489,7 @@ export class Windows {
     const gain = k === 'chasseur' ? 'une viande ramassée ou un plat cuisiné' : recolte.length ? 'chaque récolte et chaque objet fabriqué' : 'chaque objet fabriqué';
     const ateliers = [...new Set(this.world.ateliersDe(k).map(a => a.nom))];
     const tete = `<div class="jt"><img src="assets/ui/metier_${k}.png" alt=""><div><h3>${m.name} <span>niveau ${lv}</span></h3>
-        <div class="xpb big"><i style="width:${Math.round(st.xp / need * 100)}%"></i></div><div class="hint">${st.xp} / ${need} XP · ${gain} fait monter le métier</div></div>
+        <div class="xpb big"><i style="width:${Math.round(st.xp / need * 100)}%"></i></div><div class="hint">${st.xp} / ${need} XP · ${gain} fait monter le métier</div>${bonusMetierHtml(k, lv)}</div>
         ${pal ? `<div class="pal"><b>Prochain palier : ${pal.niveau}</b>${pal.recettes.map(r => produit(r.result)?.name).join(', ')}</div>` : ''}</div>`;
     const onglets = `<div class="otabs"><span class="${this.jobOnglet === 'recettes' ? 'on' : ''}" data-jo="recettes">Recettes (${recettesDe(ITEMS, k).length})</span><span class="${this.jobOnglet === 'recoltes' ? 'on' : ''}" data-jo="recoltes">Récoltes (${recolte.length})</span></div>`;
     let corps = '';
@@ -1955,6 +1965,7 @@ export class Windows {
         { id: 'modules', titre: 'Modules d\'interface', opts: [
           { k: 'verrou', nom: 'Verrouiller la position des modules', aide: 'Décoche pour glisser le cadre du perso, la mini-carte, le suivi de quête, le compteur de dégâts et le tchat où tu veux.', t: 'check' },
           { k: 'coords', nom: 'Afficher les coordonnées de la carte', aide: 'Sous la mini-carte, comme [6,-19].', t: 'check' },
+          { k: 'recoltesMini', nom: 'Mes récoltes sur la mini-carte', aide: 'Un point vert pour chaque ressource que tes métiers savent récolter, doré pour une ressource dorée.', t: 'check' },
         ], reset: () => { r.verrou = true; r.coords = true; r.modules = {}; }, html: '<div class="obtns"><span class="btn" data-obtn="modules">Réinitialiser l\'affichage</span></div>' },
         // « Tchat : » 9A + 9B (et 7A : l'heure)
         { id: 'tchat', titre: 'Tchat', opts: [
