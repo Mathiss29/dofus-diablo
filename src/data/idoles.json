@@ -3,6 +3,27 @@
  "max": 6,
  "pctParPoint": 0.5,
  "plafondDonjon": 60,
+ "combat": {
+  "_doc": "Effets en combat (secondes, parts des PV max). bouclierMax : plafond du bouclier de Kori. eclairs : un éclair annoncé tombe près du perso toutes les periode s. flaque : feu laissé par un monstre mort (Nahuatl).",
+  "rayonCombat": 900,
+  "bouclierRegenPeriode": 8,
+  "bouclierMax": 0.3,
+  "regenPeriode": 5,
+  "usurePeriode": 5,
+  "eclairs": {
+   "periode": 4,
+   "annonce": 1,
+   "rayon": 70,
+   "ecart": 170,
+   "pv": 0.1
+  },
+  "flaque": {
+   "annonce": 0.3,
+   "duree": 4,
+   "rayon": 60,
+   "pvParSeconde": 0.05
+  }
+ },
  "familles": {
   "vie": {
    "nom": "Vie",
@@ -236,7 +257,7 @@
    "famille": "tempo",
    "score": 15,
    "niveau": 75,
-   "desc": "Tes déplacements rapides ont une charge de moins.",
+   "desc": "Tes déplacements rapides ont une charge de moins (s'il n'en reste qu'une, elle revient deux fois moins vite).",
    "fx": {
     "chargesMoins": 1
    }

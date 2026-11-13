@@ -59,6 +59,8 @@ export class Monster extends Entity {
   t = 0.6;
   atkCd: number;
   stun = 0;
+  /** Idoles (0.6) : bouclier (Tynril, Kori), Champion (Djim), déjà revenu à la vie (Sakai), prochain soin ou bouclier (s). */
+  bouclier = 0; champion = false; revenu = false; idoleT = 0;
   dirX = 1; dirY = 0;
   hitDone = false;
   mode: 'lunge' | 'slam' | 'spell' = 'lunge';
@@ -150,9 +152,11 @@ export class Monster extends Entity {
       }
       return;
     }
+    const fi = world.fxIdoles;
+    if (fi?.inarretables) { this.stun = 0; if (this.haste < 1) this.haste = 1; }   // Gakri : ni ralentis ni immobilisés
     if (this.stun > 0) { this.stun -= dt; this.setAnim('stun'); this.applyKnock(dt); if (this.state === 'windup') { this.state = 'chase'; this.sig = false; } if (this.state === 'idle') this.state = 'chase'; return; }
     const dx = player.x - this.x, dy = player.y - this.y, dist = Math.hypot(dx, dy) || 1;
-    this.atkCd -= dt;
+    this.atkCd -= dt * (1 + (fi?.vitesse ?? 0));   // Nocturne : attaques plus rapides
     const rel = this.furieux ? 1 / DANGER.furieux.relance : 1;   // Furieux : relances plus courtes
     for (let i = 0; i < this.spellCd.length; i++) this.spellCd[i] -= dt * rel;
     this.sigCd -= dt * rel;

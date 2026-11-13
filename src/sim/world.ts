@@ -27,6 +27,7 @@ import { MondeVivant, VIVANT, bonusWeekEnd, type BonusWeekEnd, type VueVivant } 
 import PASSANTS from '../data/passants.json';
 import V06 from '../data/v06.json';
 import { IDOLES_DEFS, basculerIdole, bonusIdoles, chargerJeu, defSousIdoles, enregistrerJeu, fxIdoles, recetteIdole, type FxIdole } from './idoles';
+import { idolesApparition, idolesGroupe, idolesMort, idolesPas, type ZoneIdole } from './idolesCombat';
 import type { EtatMonde } from './etatMonde';
 import { Quetes, type Compte, type EtatQuetes, type QuetesData } from './quests';
 import { appliquerTest, type ReglagesTest } from './outilsTest';
@@ -112,6 +113,8 @@ interface MonsterGroup {
   id: number; map: string; sub: SubAreaDef; members: Monster[]; timer: number; cleared: boolean; x: number; y: number;
   /** Donjon : monstres fixes du groupe et nom du donjon (ne réapparaît pas tant que le joueur y est). */
   fixe?: string[]; donjon?: string;
+  /** Idoles (Serpi) : renfort déjà venu. */
+  renfort?: boolean;
   /** Point du placement de la carte où le groupe s'est posé (-1 : aucun). */
   point: number;
   /** Retiré par l'éditeur de placement (F1) : ne revient plus. */
@@ -252,6 +255,8 @@ export class World {
   /** Télégraphes du dernier pas (recalculés à chaque pas). */
   telegraphs: Telegraph[] = [];
   zonesSol: ZoneSol[] = [];
+  /** Idoles (0.6) : éclairs de Zaihort, flaques de Nahuatl (blessent les joueurs). */
+  zonesIdoles: ZoneIdole[] = [];
   /** Festin du piranya : dégâts comptés pendant le coup en cours. */
   festin = 0;
   /** Dommages faits par le dernier coup du joueur (Mot de Lamentations : soigne selon les dommages). */
@@ -1228,11 +1233,11 @@ export class World {
       if (best >= 80 || pt) break;
     }
     if (pt) { const c = wg.cellOf(g.map, pt.c); pos = ok.has(c) ? wg.cellToWorld(c) : wg.nearestFree(...xy(wg.cellToWorld(c)), free); }
-    g.x = pos.x; g.y = pos.y; g.members = []; g.cleared = false;
+    g.x = pos.x; g.y = pos.y; g.members = []; g.cleared = false; g.renfort = false;
     const taille = g.sub.nuit && this.estNuit() ? g.sub.nuit.groupSize : g.sub.groupSize;
     const [a, b] = (!g.fixe && this.quetes?.tailleGroupe(this.worldGrid!.mapByTag(g.map)?.sub ?? -1)) || pt?.n || taille;
     // 0.5 (5B) : dans la sous-zone envahie, groupes plus gros et monstres plus durs
-    const envahi = !g.fixe && !!this.vivant?.envahie(wg.mapByTag(g.map)?.sub), n = g.fixe ? g.fixe.length : a + this.rng.int(b - a + 1) + (envahi ? VIVANT.invasion.membres : 0);
+    const envahi = !g.fixe && !!this.vivant?.envahie(wg.mapByTag(g.map)?.sub), n = g.fixe ? g.fixe.length : a + this.rng.int(b - a + 1) + (envahi ? VIVANT.invasion.membres : 0) + (this.fxIdoles?.enPlus ?? 0);   // Farle, Nahuss : des monstres en plus
     const a0 = this.rng.range(0, Math.PI * 2), [r0, r1] = PLACEMENT.auto.rayonGroupe;
     // les membres restent du même côté des obstacles que le chef : cases atteignables à pied en quelques pas (plus de monstre derrière un mur ou une rivière)
     const c0 = wg.cellAtWorld(pos.x, pos.y), proches = new Map<number, number>(ok.has(c0) ? [[c0, 0]] : []), file = [...proches.keys()];
@@ -1266,6 +1271,8 @@ export class World {
       mo.group = g.id; mo.envahi = envahi; g.members.push(mo);
       if (elite) this.doreesPresElite(g.map, q.x, q.y);
     }
+    const fxg = this.fxIdoles;
+    if (fxg) idolesGroupe(this, g.members, fxg);   // Payo, Djim
   }
   /** Ressources dorées près des élites (maquette Métiers 13C) : les ressources prêtes les plus proches de l'élite brillent. */
   private doreesPresElite(tag: string, x: number, y: number) {
@@ -1287,6 +1294,7 @@ export class World {
     for (const o of g ? g.members : [m]) if (!o.dead && (o.state === 'idle' || o.state === 'return' || o === m)) {
       if (o.state === 'idle' || o.state === 'return') reveil = true;
       o.state = 'chase'; o.perduT = 0;
+      if (this.fxIdoles?.eveil) o.atkCd = Math.min(o.atkCd, 0);   // Major : pas de temps d'éveil
     }
     if (reveil && g && !m.mannequin) this.emit({ k: 'status', x: m.x, y: m.y - 30, text: '!', color: '#e0605a' });
   }
@@ -1467,7 +1475,8 @@ export class World {
   step(dt: number, input: PlayerInput, autres?: Record<number, PlayerInput>) {
     this.time += dt;
     this.telegraphs.length = 0;
-    const p = this.player;
+    const p = this.player, fxI = this.fxIdoles;
+    for (const q of this.players) q.fxIdoles = fxI;   // 0.6 (17) : effets des idoles sur les persos
     if (this.test) {
       for (const c of input.test ?? []) appliquerTest(this, c);
       p.vitesseTest = this.test.course ? 3 : 1;
@@ -1503,6 +1512,7 @@ export class World {
     if (this.massacre.n >= M.min && this.time - this.massacre.t > M.fenetre) { this.emit({ k: 'massacreFin', n: this.massacre.n }); this.massacre.n = 0; }
     this.updateProjectiles(dt);
     this.updateZonesSol(dt);
+    idolesPas(this, dt, fxI);
     this.updateDrops(dt);
     if (this.opts.partieServeur && this.players.length > 1) this.releverAllies(dt);
     this.separate();
@@ -1553,6 +1563,7 @@ export class World {
     const fx = this.fxIdoles;
     if (fx) def = defSousIdoles(def, fx);   // 0.6 (17) : PV, dégâts, vitesse et résistances sous les idoles
     const m = new Monster(this.nextId++, type, def, x, y, this);
+    if (fx) idolesApparition(m, fx);
     this.monsters.push(m);
     return m;
   }
@@ -1567,7 +1578,7 @@ export class World {
   monsterMissile(m: Monster, spell: MonsterSpell, range: number) {
     const el = (spell.effects.find(e => e.k === 'dmg') as { element: Element } | undefined)?.element ?? 'neutre';
     this.projectiles.push({ id: this.nextId++, spell: `m${spell.id}`, x: m.x + m.dirX * m.radius, y: m.y + m.dirY * m.radius, dx: m.dirX, dy: m.dirY,
-      left: range, speed: 420, width: 12, explode: 0, pierce: false, hit: { dmg: 0, knock: 0, element: el }, stun: 0, touched: new Set(), hostile: true,
+      left: range, speed: 420 * (1 + (this.fxIdoles?.projectiles ?? 0)), width: 12, explode: 0, pierce: false, hit: { dmg: 0, knock: 0, element: el }, stun: 0, touched: new Set(), hostile: true,
       from: { monster: m, spell } });
   }
   /** Applique au joueur les effets d'un sort de monstre, dans l'ordre des données de Dofus 3.
@@ -1765,7 +1776,8 @@ export class World {
     }, def, x, y, stun, facing);
   }
   hitCircle(x: number, y: number, r: number, def: HitDef, stun = 0, pushDir?: number) {
-    return this.applyHits(m => Math.hypot(m.x - x, m.y - y) <= r + m.radius, def, x, y, stun, pushDir);
+    const z = this.fxIdoles?.zone;   // Gilimin : les zones frappent moins fort
+    return this.applyHits(m => Math.hypot(m.x - x, m.y - y) <= r + m.radius, z ? { ...def, dmg: def.dmg * z } : def, x, y, stun, pushDir);
   }
   applyHits(test: (m: Monster) => boolean, def: HitDef, ox: number, oy: number, stun: number, pushDir?: number): number {
     const p = this.player, cls = p.cls;
@@ -1777,7 +1789,8 @@ export class World {
       n++; this.cibleMeute = m.id;
       const crit = this.rng.next() < p.critChance + (def.crit ?? 0);
       // Choix 19A : résistances officielles du monstre dans l'élément du coup (plafonnées à 50 %, comme Dofus)
-      const el = p.resolveElement(def.element ?? 'neutre'), res = Math.min(50, m.def.res?.[el] ?? 0);
+      const el = p.resolveElement(def.element ?? 'neutre'), fi = this.fxIdoles;
+      const res = Math.min(50, (m.def.res?.[el] ?? 0) + (fi?.resDernier && p.dernierElement === el ? fi.resDernier : 0));   // Garu
       // Initiative : le premier coup porté à un monstre est renforcé ; Dommages Critiques et Dommages Poussée s'ajoutent au coup
       const first = m.struck ? 1 : 1 + initiativeBonus(p.initiative); m.struck = true;
       const flat = (crit ? p.stat('dommagesCritiques') : 0) + (def.knock > 0 ? p.stat('dommagesPoussee') : 0);
@@ -1789,7 +1802,9 @@ export class World {
         * (def.loin ? 1 + Math.min(def.loin * 10, def.loin * Math.hypot(m.x - p.x, m.y - p.y) / CASE) / 100 : 1);
       // Sort sans dommages (Attirance, Transposition) : seulement ses effets
       const dmg = def.dmg <= 0 ? 0 : Math.max(1, Math.round((p.damage(def.dmg * vs, def.element ?? 'neutre') * this.rng.range(0.9, 1.1) * (crit ? cls.critMult : 1) * first + flat) * (1 - res / 100) * vu * pc));
-      m.hp -= dmg; m.flash = 0.09; m.calmeT = 0; this.degatsCoup += dmg;
+      let reste = dmg;
+      if (m.bouclier > 0 && reste > 0) { const a = Math.min(m.bouclier, reste); m.bouclier -= a; reste -= a; }   // Tynril, Kori : le bouclier prend d'abord
+      m.hp -= reste; m.flash = 0.09; m.calmeT = 0; this.degatsCoup += dmg;
       if (def.festin) this.festin += dmg;
       if (dmg && m.suppliceT > 0) p.hp = Math.min(p.maxHp, p.hp + Math.round(dmg * m.supplice));   // Supplice : frapper la cible soigne
       if (def.supplice) { m.supplice = def.supplice.part; m.suppliceT = def.supplice.t; }
@@ -1867,6 +1882,7 @@ export class World {
       }   // la Rage monte avec les coups portés (3 cibles max par coup)
       if (m.hp <= 0) { this.killMonster(m); if (def.tue) p.aTue(def.tue, this); }
     }
+    if (n && def.dmg > 0) p.dernierElement = p.resolveElement(def.element ?? 'neutre');   // Garu : l'élément du dernier coup
     return n;
   }
   /** Sacrieur (Assaut, Transposition) : échange de place avec le monstre le plus proche du point visé. */
@@ -1946,6 +1962,8 @@ export class World {
   }
   killMonster(m: Monster) {
     if (m.mannequin) { m.hp = m.maxHp; return; }   // partie de test (7D) : le mannequin ne meurt pas
+    const fxm = this.fxIdoles;
+    if (fxm && idolesMort(this, m, this.groups[m.group], fxm)) return;   // Sakai : revient à la vie ; Chokwa, Serpi, Nahuatl
     m.dead = true; m.t = 0.6; this.kills++;
     piecesMonstre(this, m);   // Enutrof (1A 1B) : le coffre au trésor des Enutrofs proches se remplit
     const tq = this.player.dead ? 0 : this.player.pcv('pc-cra-O');
@@ -1965,7 +1983,7 @@ export class World {
     this.emit({ k: 'kill', x: m.x, y: m.y, radius: m.radius, monster: m.type });
     const p = this.player;
     p.soigner(p.cls.healOnKill + p.legendary('vampire'));
-    if (!this.vivant?.monstreVaincu(m)) this.dropLoot(m);   // boss du monde : son coffre est donné par le monde vivant (4A)
+    if (!this.vivant?.monstreVaincu(m)) { this.dropLoot(m); if (m.champion) this.dropLoot(m); }   // Djim : le Champion donne deux fois   // boss du monde : son coffre est donné par le monde vivant (4A)
     if ((m.def.archiDe || (m.def.boss && m.def.ame)) && !m.relache) this.capturer(m);
     const alm = (this.almanax?.effet === 'xp' ? 1 + ALMANAX.xp : 1) * (1 + p.beni('xp')) * (1 + this.bonusDuWeekEnd('xp'));   // 15C, Magasin 6D, 9B (week-end)
     // Multi (maquette « Multi : » 7A) : chaque joueur proche gagne l'XP comme en solo, +10 % par allié proche
