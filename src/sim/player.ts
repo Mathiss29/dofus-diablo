@@ -1,5 +1,7 @@
 import { ALMANAX } from './almanax';
 import { ELITES } from './elites';
+import { AUTELS, type AutelActif } from './autels';
+import { bonusSanctuaires, potionsRenommee } from './renommee';
 import { etatIdolesVide, type EtatIdoles, type FxIdole } from './idoles';
 import type { StyleChoisi, Tenue } from './style';
 import { BENEDICTIONS, type AchatsDuJour, type Benediction } from './magasin';
@@ -239,7 +241,7 @@ export class Player extends Entity {
   get pairs(): PaireSorts[] { return SORTS[this.cls.sorts] ?? []; }
   /** Identifiant du sort jouable correspondant à un sort officiel (null : pas encore jouable). */
   keyOf(dofusId: number): SkillId | null {
-    for (const [k, d] of Object.entries(this.cls.spells)) if (d.dofusId === dofusId) return k;
+    for (const [k, d] of Object.entries(this.cls.spells)) if (d.dofusId === dofusId && (!d.v06 || this.v06)) return k;
     return null;
   }
   /** Fiche officielle d'un sort de la classe. */
@@ -280,6 +282,13 @@ export class Player extends Entity {
   bouclierVu = 0;
   /** Temps passé en combat (usure, éclairs des idoles). */
   idoleT = 0;
+  /** Autel de combat pris (0.6, 21) : effet, temps restant. */
+  autel: AutelActif | null = null;
+  /** 0.6 (19, 20) : paliers de renommée obtenus par région ; sanctuaires des Douze trouvés (« région|n|carac »). */
+  renommee: Record<string, number> = {};
+  sanctuaires: string[] = [];
+  /** Charges de potion : celles de la classe, +1 par région au palier 2 de renommée. */
+  get potionsMax(): number { return this.cls.potion.charges + potionsRenommee(this); }
   /** Élément du dernier coup porté (Garu). */
   dernierElement: Element | '' = '';
   private _pouvoirs: PouvoirDef[] | null = null;
@@ -328,7 +337,7 @@ export class Player extends Entity {
   get ctxPouvoirs(): CtxPouvoirs {
     const connus: number[] = [], aVenir: { dofusId: number; niveau: number }[] = [];
     for (const [k, d] of Object.entries(this.cls.spells)) {
-      if (!d.dofusId) continue;
+      if (!d.dofusId || (d.v06 && !this.v06)) continue;
       if (this.knows(k)) { connus.push(d.dofusId); continue; }
       const o = this.official(k), n = o ? this.requiredLevel(o) : 0;
       if (o && n > this.level) aVenir.push({ dofusId: d.dofusId, niveau: n });
@@ -357,6 +366,7 @@ export class Player extends Entity {
   knows(id: SkillId): boolean {
     const d = this.cls.spells[id];
     if (!d?.dofusId) return !!d;
+    if (d.v06 && !this.v06) return false;
     const i = this.pairs.findIndex(p => p.some(s => s.id === d.dofusId));
     if (i < 0) return true;
     const s = this.pairs[i][this.variants[i] ?? 0];
@@ -518,6 +528,7 @@ export class Player extends Entity {
     }
     for (const id of this.dofusPortes) if (id) for (const [k, v] of Object.entries(PORTABLE(id)?.stats ?? {}) as [Stat, number][]) add(k, v);
     for (const [k, v] of Object.entries(this.parchemins) as [Stat, number][]) add(k, v);   // « Métiers : » 5A
+    for (const [k, v] of Object.entries(bonusSanctuaires(this.sanctuaires)) as [Stat, number][]) add(k, v);   // 0.6 (20A) : sanctuaires des Douze
     for (const c of [this.repas && REPAS[this.repas.id], this.elixir && ELIXIRS[this.elixir.id]]) if (c) add(c.stat, c.n);   // 4B + 4C
     for (const [id, n] of Object.entries(sets)) {
       const b = this.items?.sets[id]?.bonus[String(n - 1)];
@@ -1676,6 +1687,7 @@ export class Player extends Entity {
   hurt(raw: number, fromX: number, fromY: number, world: World, element: Element = 'neutre', loin?: boolean): boolean {
     if (this.invuln > 0 || this.dead) return false;
     const fi = this.fxIdoles, qui = world.monsters.find(m => !m.dead && m.x === fromX && m.y === fromY);
+    if (this.autel?.effet === 'protection') raw *= AUTELS.effets.protection.subis;   // autel de Féca
     if (fi) {   // idoles : Brouce (rage sous 50 % de PV), Hadibel et Tigel (critiques des monstres)
       if (fi.rage && qui && qui.hp < qui.maxHp / 2) raw *= 1 + fi.rage;
       if (fi.critMonstres && world.rng.next() < fi.critMonstres) {

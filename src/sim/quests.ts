@@ -1022,7 +1022,7 @@ export class Quetes {
       p.resources[o.objet] = (p.resources[o.objet] ?? 0) - o.n;
       if (p.resources[o.objet] <= 0) delete p.resources[o.objet];
     }
-    if (r.potions) p.potions = p.cls.potion.charges;
+    if (r.potions) p.potions = p.potionsMax;
     const obj = r.objetParClasse?.[this.classe] ?? r.objet;
     if (obj) w.donnerObjet(obj);
     for (const [o, n] of r.objets ?? []) w.donnerObjet(o, n);

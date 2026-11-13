@@ -1,4 +1,5 @@
 import { TEINTES } from '../sim/ecaflip';
+import { STAT_NAMES, type Stat } from '../sim/items';
 import { nomAffixe } from '../sim/elites';
 import { CONSO } from '../sim/consommables';
 import { ICON_SHEET, iconFrame } from './icons';
@@ -785,6 +786,10 @@ export class Hud {
       case 'rechargePrete': this.eclats[e.id] = 0.8; break;
       case 'groupCleared': this.loot('Groupe vaincu  ·  +1 potion', '#7be07b'); break;
       case 'decouverte': this.loot('Nouvelle carte chassée  ·  +50 % d\'XP', '#e8c25a'); break;
+      case 'autel': this.loot(`Autel de ${e.dieu}  ·  ${e.nom}`, '#e8c25a'); break;
+      case 'renommee': this.loot(`Renommée ${e.region} : palier ${e.palier}  ·  ${e.texte}`, '#b9e54b'); break;
+      case 'sanctuaire': this.loot(`Sanctuaire de ${e.dieu}  ·  +${e.bonus} ${STAT_NAMES[e.carac as Stat] ?? e.carac}  (${e.n}/${e.total} en ${e.region})`, '#e8c25a'); break;
+      case 'coffreFuyard': this.loot('Un Coffre Malveillant détale : 15 secondes pour l\'abattre !', '#f2d36b'); break;
       case 'massacre': this.toast(`Massacre ×${e.n}  ·  +${e.bonus} % XP`); break;
       case 'massacreFin': this.loot(`Massacre de ${e.n} monstres`, '#e6b85c'); break;
     }

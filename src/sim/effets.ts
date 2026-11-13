@@ -2,6 +2,7 @@ import { STAT_NAMES, type Stat } from './items';
 import type { Player } from './player';
 import { BENEDICTION, BENEDICTIONS } from './magasin';
 import { CONSO, ELIXIRS, REPAS, texteBonus } from './consommables';
+import { infoAutel } from './autels';
 
 /** Bulles d'effets actifs (maquette « Bulles : 1A 2A+2B+2C 3A 4A 5A 6A 7A 8A ») : ce qui agit sur le perso en ce moment.
  *  sorte : 'sort' = bonus d'un de ses sorts (bord vert), 'monstre' = malus reçu (bord rouge), 'objet' = pouvoir d'objet (bord doré).
@@ -72,6 +73,9 @@ export function effetsActifs(p: Player): EffetActif[] {
     out.push({ id: 'bouclier', sorte: 'sort', nom: d?.name ?? 'Bouclier', sort: d?.icon, carac: d ? undefined : 'vie', t: p.shieldT, tMax: p.shieldT0 || p.shieldT,
       lignes: [`Bouclier de ${p.shield} PV`] });
   }
+  // 0.6 (21) : autel de combat
+  if (p.autel) { const A = infoAutel(p.autel.effet);
+    out.push({ id: 'autel', sorte: 'objet', nom: `Autel de ${A.dieu} · ${A.nom}`, carac: 'puissance', t: p.autel.t, tMax: p.autel.t0, lignes: [A.texte] }); }
   // Malus reçus des monstres (2B)
   if (p.slowT > 0) out.push({ id: 'ralenti', sorte: 'monstre', nom: 'Ralenti', carac: 'pm', t: p.slowT, tMax: p.slowT0 || p.slowT,
     lignes: [`Vitesse -${Math.round(p.slowK * 100)} %`, 'PM retirés par un monstre'] });

@@ -1,4 +1,5 @@
 import type { Butin } from './butin';
+import { poserAutel } from './autels';
 import { tenterDofusCawotte } from './guerre';
 import type { DonjonDef } from './defs';
 import { RARITIES, type Rarity } from './items';
@@ -165,6 +166,10 @@ export class Arene {
     this.membres = [];   // les restes de la vague d'avant ne retiennent plus la suivante
     const cle = w.player.cleDonjon;
     if (cle && cle.nom === d.nom) cle.vague = this.vague;
+    if (!boss && this.vague === Math.ceil(this.total / 2) + 1 && w.players[0]?.v06) {   // 0.6 (21B) : un autel entre deux vagues, au milieu de l'arène
+      const a = this.pts.arrivee, b = this.pts.boss, q = w.map.nearestFree((a.x + b.x) / 2, (a.y + b.y) / 2);
+      poserAutel(w, q.x, q.y, 'arene', true);
+    }
     w.emit({ k: 'areneVague', n: this.vague, total: this.total, nom: boss ? null : d.vagues![this.vague - 1].nom ?? null, boss: boss ? liste[0] ?? null : null });
     liste.forEach((type, i) => {
       // le boss et ses compagnons descendent de l'estrade ; les autres arrivent par les entrées, chacun à son tour
