@@ -1,5 +1,5 @@
 import { ALMANAX } from './almanax';
-import { etatIdolesVide, type EtatIdoles } from './idoles';
+import { etatIdolesVide, type EtatIdoles, type FxIdole } from './idoles';
 import type { StyleChoisi, Tenue } from './style';
 import { BENEDICTIONS, type AchatsDuJour, type Benediction } from './magasin';
 import { avantage, type Palier } from './boutiqueOgrines';
@@ -270,6 +270,14 @@ export class Player extends Entity {
   bossSansLeg: Record<string, number> = {};
   /** 0.6 (17-18) : idoles fabriquées, actives et jeux enregistrés (par perso). */
   idoles: EtatIdoles = etatIdolesVide();
+  /** Effets des idoles actives dans ce monde (posés par le World à chaque pas ; null sans idole ou hors partie de test). */
+  fxIdoles: FxIdole | null = null;
+  /** Bouclier vu au pas précédent (Pluvior : les boucliers gagnés sont réduits). */
+  bouclierVu = 0;
+  /** Temps passé en combat (usure, éclairs des idoles). */
+  idoleT = 0;
+  /** Élément du dernier coup porté (Garu). */
+  dernierElement: Element | '' = '';
   private _pouvoirs: PouvoirDef[] | null = null;
   /** Pouvoirs officiels de sa classe portés, chacun une seule fois (5A : deux anneaux au même pouvoir ne cumulent pas). */
   get pouvoirsPortes(): PouvoirDef[] {
@@ -435,7 +443,7 @@ export class Player extends Entity {
   /** Soigne le perso (potion, nourriture, soin à chaque monstre tué) : Intelligence et Soins s'y ajoutent (Caracs 3B + 3C). Renvoie les PV rendus. */
   soigner(base: number): number {
     if (this.dead || base <= 0) return 0;
-    const n = Math.min(this.maxHp - this.hp, Math.round(soinRecu(base, this.stat('intelligence'), this.stat('soins')) * (this.soinsRecusT > 0 ? 1.2 : 1) * (1 + this.bonusMetier('paysan'))));
+    const n = Math.min(this.maxHp - this.hp, Math.round(soinRecu(base, this.stat('intelligence'), this.stat('soins')) * (this.soinsRecusT > 0 ? 1.2 : 1) * (1 + this.bonusMetier('paysan')) * (this.fxIdoles?.soins ?? 1)));   // Bihilete, Ougah
     this.hp += Math.max(0, n);
     return Math.max(0, n);
   }
@@ -453,8 +461,8 @@ export class Player extends Entity {
   }
   /** +1 PA au niveau 100, comme dans Dofus (6 PA au départ, 7 ensuite). */
   get paMax(): number { return this.cls.pa.max + (this.level >= 100 ? 1 : 0) + this.stat('pa'); }
-  get pmMax(): number { return this.cls.pm.max + this.stat('pm') + (this.pcv('pc-eniripsa-K') ? 1 : 0) + (this.pcv('pc-ecaflip-K') ? 1 : 0); }   // Pattes de velours : une charge de Bond du Félin en plus   // Envol en série : une charge de Mot d'Envol en plus
-  get critChance(): number { return this.cls.critChance + this.stat('critique') / 100; }
+  get pmMax(): number { return Math.max(1, this.cls.pm.max + this.stat('pm') + (this.pcv('pc-eniripsa-K') ? 1 : 0) + (this.pcv('pc-ecaflip-K') ? 1 : 0) - (this.fxIdoles?.chargesMoins ?? 0)); }   // Pattes de velours : une charge de Bond du Félin en plus   // Envol en série : une charge de Mot d'Envol en plus
+  get critChance(): number { return this.fxIdoles?.sansCrit ? 0 : this.cls.critChance + this.stat('critique') / 100; }   // Jewai : plus de critiques
   /** Effet légendaire porté (somme si plusieurs). */
   legendary(id: string): number {
     let v = 0;
@@ -692,7 +700,7 @@ export class Player extends Entity {
     let bonus = 0;
     for (const it of Object.values(this.equipment)) for (const l of [it?.legendary, it?.legendary2]) if (l?.id === 'relance' && l.sort === id) bonus += l.value;
     t = Math.max(t > 1 ? 1 : t, t - bonus);
-    return t * (1 - this.reductionRecharges);
+    return t * (1 - this.reductionRecharges) * (1 + (this.fxIdoles?.recharges ?? 0));   // Kyoub : recharges plus longues
   }
   /** Le sort a-t-il ses ressources (PA, ou une charge de PM pour un déplacement) ? */
   hasResource(id: SkillId): boolean {
@@ -903,6 +911,12 @@ export class Player extends Entity {
       return;
     }
     const def = this.spell(id)!;
+    const ech = def.pm ? 0 : this.fxIdoles?.echec ?? 0;
+    if (ech && world.rng.next() < ech) {   // Yushe : le sort échoue (PA et recharge perdus)
+      this.cd[id] = this.cdMax[id] = this.recharge(id); this.pa -= this.paCost(id);
+      world.emit({ k: 'status', x: this.x, y: this.y - 70, text: 'Échec !', color: '#c8c8c8' });
+      return;
+    }
     if (this.cls.lance && !def.pm) this.incendies = id === 'lance_incendie' ? this.incendies + 1 : 0;   // Lance ardente : d'affilée
     if (def.lance?.rappel && this.lance) this.rappelerLance(world);   // Charge Héroïque, Talon d'Argile, Kyrja : la Lance revient d'abord
     const { x: tx, y: ty } = this.landing(id, aim, world);
@@ -926,6 +940,8 @@ export class Player extends Entity {
   }
 
   update(dt: number, input: PlayerInput, world: World) {
+    const pv = this.fxIdoles?.boucliersJoueur;   // Pluvior : tout bouclier gagné est réduit
+    if (pv && this.shield > this.bouclierVu) this.shield = Math.round(this.bouclierVu + (this.shield - this.bouclierVu) * (1 - pv));
     this.age += dt;
     if (this.benediction && (this.benediction.reste -= dt) <= 0) { world.emit({ k: 'status', x: this.x, y: this.y - 60, text: `${BENEDICTIONS[this.benediction.k].nom} s'achève`, color: '#e8d27a' }); this.benediction = null; }
     for (const k of ['repas', 'elixir'] as const) {   // « Métiers : » 4B + 4C
@@ -970,7 +986,8 @@ export class Player extends Entity {
     if (this.rage > 0 && this.age - this.lastHitAt > 6) this.rage = Math.max(0, this.rage - 8 * dt);   // 26B : la jauge retombe hors combat
     this.potionCd = Math.max(0, this.potionCd - dt);
     this.pa = Math.min(this.paMax, this.pa + this.cls.pa.regen * (1 + (this.encourage?.regen ?? 0)) * dt);   // Mot Stimulant
-    this.pm = Math.min(this.pmMax, this.pm + dt * (1 + this.legendary('mobilite') / 100) / this.cls.pm.recharge);
+    const minor = this.fxIdoles?.chargesMoins && this.pmMax <= 1 ? 0.5 : 1;   // Minor : une seule charge, elle revient deux fois moins vite
+    this.pm = Math.min(this.pmMax, this.pm + dt * (1 + this.legendary('mobilite') / 100) * minor / this.cls.pm.recharge);
     this.flash = Math.max(0, this.flash - dt);
     if (this.slowT > 0) this.slowT -= dt;
     if (this.insensibleT > 0) this.insensibleT -= dt;
@@ -1652,6 +1669,14 @@ export class Player extends Entity {
   }
   hurt(raw: number, fromX: number, fromY: number, world: World, element: Element = 'neutre', loin?: boolean): boolean {
     if (this.invuln > 0 || this.dead) return false;
+    const fi = this.fxIdoles, qui = fi ? world.monsters.find(m => !m.dead && m.x === fromX && m.y === fromY) : undefined;
+    if (fi) {   // idoles : Brouce (rage sous 50 % de PV), Hadibel et Tigel (critiques des monstres)
+      if (fi.rage && qui && qui.hp < qui.maxHp / 2) raw *= 1 + fi.rage;
+      if (fi.critMonstres && world.rng.next() < fi.critMonstres) {
+        raw *= 1.5 * (1 + (fi.critForce ?? 0));
+        world.emit({ k: 'status', x: this.x, y: this.y - 76, text: 'Critique !', color: '#ff5a5a' });
+      }
+    }
     const E = element === 'meilleur' ? 'Neutre' : `${element[0].toUpperCase()}${element.slice(1)}`;
     const S = this.cls.souffrance, sf = S ? this.souffrance : 0;   // Souffrance : dommages subis réduits
     const gf = this.arme ? this.pcv('pc-forgelance-E') : 0;   // Garde de fer : Garde plus forte
@@ -1674,6 +1699,7 @@ export class Player extends Entity {
       }
     }
     this.hp -= dmg; this.flash = 0.1; this.invuln = this.cls.iframesOnHit; this.blesseA = this.age;
+    if (fi?.vol && qui && dmg > 0) qui.hp = Math.min(qui.maxHp, qui.hp + Math.round(dmg * fi.vol));   // Nehik : le monstre vole des PV
     const a = Math.atan2(this.y - fromY, this.x - fromX);
     this.kx += Math.cos(a) * 260; this.ky += Math.sin(a) * 260;
     world.emit({ k: 'hit', target: 'player', x: this.x, y: this.y, z: 50, amount: dmg, crit: false, element: element === 'meilleur' ? 'neutre' : element });
