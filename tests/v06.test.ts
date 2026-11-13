@@ -5,6 +5,8 @@ import { WorldGrid, type WorldData } from '../src/sim/gridmap';
 import { exporterJoueur, restaurerJoueur } from '../src/sim/sauvegarde';
 import { coefChanceQuiMonte, raretes } from '../src/sim/butin';
 import { World } from '../src/sim/world';
+import { NO_INPUT } from '../src/sim/input';
+import { idolesGroupe } from '../src/sim/idolesCombat';
 
 const AS = JSON.parse(readFileSync(new URL('../public/assets/mondes/astrub/monde.json', import.meta.url), 'utf8')) as WorldData;
 const VIDE = { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} };
@@ -110,5 +112,53 @@ describe('0.6 : idoles (17-18)', () => {
     expect(p.idoles.possedees).toContain('hebdo');
     expect(Object.keys(p.resources).length).toBe(0);
     expect(w.fabriquerIdole('hebdo')).toMatch(/Déjà/);
+  });
+
+  const avecIdoles = (ids: string[]) => {
+    const w = monde(), p = w.player;
+    p.idoles.possedees.push(...ids);
+    for (const id of ids) expect(w.basculerIdole(id)).toBeNull();
+    w.step(1 / 60, { ...NO_INPUT, aim: { x: p.x, y: p.y } });
+    return w;
+  };
+
+  it('effets en combat : Sakai revient à la vie, Tynril donne un bouclier, Payo et Djim', () => {
+    const t = avecIdoles(['tynril']), b = t.spawnMonster('bouftou', t.player.x + 300, t.player.y);
+    expect(b.bouclier).toBe(Math.round(b.maxHp * 0.15));
+    const w = avecIdoles(['sakai', 'payo', 'djim']), p = w.player;
+    const m = w.spawnMonster('bouftou', p.x + 300, p.y);
+    m.hp = 0; w.killMonster(m);
+    expect(m.dead).toBe(false);
+    expect(m.hp).toBe(Math.round(m.maxHp * 0.3));
+    m.hp = 0; w.killMonster(m);
+    expect(m.dead).toBe(true);
+    const g = ['bouftou', 'bouftou', 'bouftou'].map((t, i) => w.spawnMonster(t, p.x + 400 + i * 60, p.y));
+    const pv = g[0].maxHp;
+    idolesGroupe(w, g, w.fxIdoles!);
+    expect(g.filter(x => x.champion).length).toBe(1);
+    expect(Math.max(...g.map(x => x.maxHp))).toBeGreaterThanOrEqual(pv * 3);
+  });
+
+  it('effets sur le perso : soins, critiques, charges, boucliers', () => {
+    const sans = monde().player;
+    const w = avecIdoles(['bihilete', 'jewai', 'minor', 'pluvior']), p = w.player;
+    expect(p.critChance).toBe(0);
+    expect(p.pmMax).toBe(Math.max(1, sans.pmMax - 1));
+    p.hp = 1; expect(p.soigner(1000)).toBeLessThan(sans.maxHp);
+    p.hp = 1; const n = p.soigner(100); sans.hp = 1;
+    expect(n).toBeCloseTo(sans.soigner(100) / 2, -1);
+    p.shield = 100; w.step(1 / 60, { ...NO_INPUT, aim: { x: p.x, y: p.y } });
+    expect(p.shield).toBe(50);
+  });
+
+  it('éclairs de Zaihort et usure de Jiva pendant un combat', () => {
+    const w = avecIdoles(['zaihort', 'jiva']), p = w.player;
+    const m = w.spawnMonster('bouftou', p.x + 500, p.y);
+    m.state = 'chase'; m.t = 0; (m as unknown as { atkCd: number }).atkCd = 999;
+    const hp = p.hp;
+    let vu = false;
+    for (let i = 0; i < 60 * 5.2; i++) { m.state = 'chase'; m.x = p.x + 500; m.y = p.y; w.step(1 / 60, { ...NO_INPUT, aim: { x: p.x, y: p.y } }); vu ||= w.zonesIdoles.length > 0; }
+    expect(vu).toBe(true);
+    expect(p.hp).toBeLessThan(hp);
   });
 });
