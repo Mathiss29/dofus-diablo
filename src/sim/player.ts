@@ -238,7 +238,7 @@ export class Player extends Entity {
   get pairs(): PaireSorts[] { return SORTS[this.cls.sorts] ?? []; }
   /** Identifiant du sort jouable correspondant à un sort officiel (null : pas encore jouable). */
   keyOf(dofusId: number): SkillId | null {
-    for (const [k, d] of Object.entries(this.cls.spells)) if (d.dofusId === dofusId) return k;
+    for (const [k, d] of Object.entries(this.cls.spells)) if (d.dofusId === dofusId && (!d.v06 || this.v06)) return k;
     return null;
   }
   /** Fiche officielle d'un sort de la classe. */
@@ -329,7 +329,7 @@ export class Player extends Entity {
   get ctxPouvoirs(): CtxPouvoirs {
     const connus: number[] = [], aVenir: { dofusId: number; niveau: number }[] = [];
     for (const [k, d] of Object.entries(this.cls.spells)) {
-      if (!d.dofusId) continue;
+      if (!d.dofusId || (d.v06 && !this.v06)) continue;
       if (this.knows(k)) { connus.push(d.dofusId); continue; }
       const o = this.official(k), n = o ? this.requiredLevel(o) : 0;
       if (o && n > this.level) aVenir.push({ dofusId: d.dofusId, niveau: n });
@@ -358,6 +358,7 @@ export class Player extends Entity {
   knows(id: SkillId): boolean {
     const d = this.cls.spells[id];
     if (!d?.dofusId) return !!d;
+    if (d.v06 && !this.v06) return false;
     const i = this.pairs.findIndex(p => p.some(s => s.id === d.dofusId));
     if (i < 0) return true;
     const s = this.pairs[i][this.variants[i] ?? 0];

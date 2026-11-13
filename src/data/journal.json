@@ -2059,7 +2059,9 @@
         "Le monde": [],
         "Combat": [],
         "Corrections": [],
-        "En coulisses": []
+        "En coulisses": [
+          "Les sorts du niveau 61 au 90 se préparent en partie de test, sans rien changer au jeu public."
+        ]
       }
     }
   ]
