@@ -1,0 +1,4 @@
+{
+  "_doc": "Réglages de la 0.6 « du 60 au 90 » (maquette du 2026-11-13). Tout est en partie de test tant que V06_PUBLIC (src/sim/pouvoirs.ts) est faux.",
+  "decouverte": { "_doc": "6D : premier groupe vaincu sur une carte du dehors jamais chassée par ce perso : XP × (1 + xp)", "xp": 0.5 }
+}
