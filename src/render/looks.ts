@@ -168,6 +168,8 @@ const OSA_MAP: Record<string, AnimSlice> = {
   saute_granouille: { anim: 'AnimAttaque201', from: 0, to: 0.6 },
   souffle_draconique: { anim: 'AnimAttaque200', from: 0, to: 0.6 },
   charge_bestiale: { anim: 'AnimAttaque218', from: 0, to: 0.6 },
+  aeropique: { anim: 'AnimAttaque220', from: 0, to: 0.6 },
+  discipline: { anim: 'AnimAttaque211', from: 0, to: 0.6 },
   laisse_spirituelle: { anim: 'AnimAttaque19', from: 0, to: 0.7 },
   // Sorts 61-90 (0.6) : invocations 204
   ventritofu: { anim: 'AnimAttaque204', from: 0, to: 0.7 },

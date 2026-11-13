@@ -1891,6 +1891,67 @@
     "rappel": true,
     "rage": "dash"
    },
+   "aeropique": {
+    "name": "Aéropique",
+    "dofusId": 31124,
+    "icon": 12834,
+    "element": "air",
+    "cooldown": 0,
+    "desc": "Rapproche le lanceur vers la cible, occasionne des dommages Air aux ennemis et repousse la cible.\nRepousse également les entités au contact de la cible si cette dernière est une invocation.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 26,
+    "knock": 684,
+    "hitstop": 0.05,
+    "shake": 0.008,
+    "fx": "land",
+    "pa": 3,
+    "hit": {
+     "shape": "circle",
+     "radius": 60
+    },
+    "move": {
+     "kind": "dash",
+     "maxRange": 168
+    },
+    "rage": "knock",
+    "v06": true,
+    "e61": {
+     "aeropique": {
+      "cases": 2
+     }
+    }
+   },
+   "discipline": {
+    "name": "Discipline",
+    "dofusId": 31125,
+    "icon": 14291,
+    "element": "meilleur",
+    "cooldown": 0,
+    "desc": "Occasionne des dommages dans le meilleur élément du lanceur et retire des PM aux ennemis, et attire la cible.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 22,
+    "knock": 0,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "line",
+    "pa": 2,
+    "hit": {
+     "shape": "point",
+     "range": 264,
+     "radius": 30
+    },
+    "pmLoss": 2,
+    "attire": {
+     "cases": 4,
+     "vers": "lanceur"
+    },
+    "rage": "pm",
+    "v06": true
+   },
    "laisse_spirituelle": {
     "name": "Laisse Spirituelle",
     "dofusId": 31152,
