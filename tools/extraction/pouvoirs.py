@@ -8,7 +8,7 @@ python pouvoirs.py tools/extraction/panos_classe.json src/data/sorts.json src/da
 import json, re, sys
 
 panos, sorts, out = sys.argv[1:4]
-CLASSES = {'Iop': 'iop', 'Crâ': 'cra', 'Osamodas': 'osamodas', 'Sacrieur': 'sacrieur', 'Forgelance': 'forgelance', 'Eniripsa': 'eniripsa'}
+CLASSES = {'Iop': 'iop', 'Crâ': 'cra', 'Osamodas': 'osamodas', 'Sacrieur': 'sacrieur', 'Forgelance': 'forgelance', 'Eniripsa': 'eniripsa', 'Ecaflip': 'ecaflip'}
 SLOT = {'Chapeau': 'chapeau', 'Cape': 'cape', 'Ceinture': 'ceinture', 'Bottes': 'bottes', 'Anneau': 'anneau'}
 EXTRA = ['amulette', 'arme', 'bouclier']
 S = json.load(open(sorts, encoding='utf-8'))

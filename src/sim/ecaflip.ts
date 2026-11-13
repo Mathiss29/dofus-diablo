@@ -62,18 +62,19 @@ export function piocher(p: Player, k: Carte, world: World): boolean {
   world.emit({ k: 'status', x: p.x + (world.rng.next() - 0.5) * 30, y: p.y - 78, text: nomCarte(k), color: TEINTES[k.c] });
   return true;
 }
-function piocherHasard(p: Player, world: World) {
-  piocher(p, { c: world.rng.int(4), v: world.rng.int(valeurMax(p) + 1) }, world);
+function piocherHasard(p: Player, world: World, maitresse = 0) {
+  const as = maitresse > 0 && world.rng.next() < maitresse / 100;   // Carte maîtresse (légendaire A) : un As
+  piocher(p, { c: world.rng.int(4), v: as ? 3 : world.rng.int(valeurMax(p) + 1) }, world);
 }
 
 /** Pose des cartes sur la Table : bonus officiel de chacune pendant `t` s, moitié aux alliés à portée (3B). */
 function poserTable(p: Player, cartes: Carte[], world: World) {
   const P = R(p)!;
-  const T = P.table;
+  const T = P.table, t = T.t + p.pcv('pc-ecaflip-C'), part = p.pcv('pc-ecaflip-D') ? p.pcv('pc-ecaflip-D') / 100 : T.allies;   // Tapis vert, Partage du pot
   for (const k of cartes) {
     const stat = T.stats[k.c], n = T.valeurs[k.c][k.v];
-    p.addMod(stat, n, T.t, 'table');
-    for (const q of world.players) if (q !== p && !q.dead && Math.hypot(q.x - p.x, q.y - p.y) <= T.portee) q.addMod(stat, Math.round(n * T.allies), T.t, 'table');
+    p.addMod(stat, n, t, 'table');
+    for (const q of world.players) if (q !== p && !q.dead && Math.hypot(q.x - p.x, q.y - p.y) <= T.portee) q.addMod(stat, Math.round(n * part), t, 'table');
   }
   world.emit({ k: 'cartesJouees', x: p.x, y: p.y, cartes: cartes.map(k => k.c * 4 + k.v) });
 }
@@ -110,10 +111,20 @@ export function jouerMain(p: Player, world: World): boolean {
   const cartes = p.ecaMain;
   p.ecaMain = [];
   poserTable(p, cartes, world);
-  const g = evaluerMain(cartes, P);
+  const g = evaluerMain(cartes, P), dr = p.pcv('pc-ecaflip-F');
+  if (g && dr) g.pct = Math.round(g.pct * (1 + dr / 100));   // Double ou rien : gagné
+  else if (!g && dr) {   // Double ou rien : perdu, 5 % des PV (jamais mortel)
+    const n = Math.min(p.hp - 1, Math.round(p.maxHp * 0.05));
+    if (n > 0) { p.hp -= n; world.emit({ k: 'hit', target: 'player', x: p.x, y: p.y, z: 50, amount: n, crit: false, element: 'neutre' }); }
+  }
   if (g) {
     p.ecaGagnante = g;
-    const j = jackpot(g);
+    const j = jackpot(g), jp = j ? p.pcv('pc-ecaflip-E') : 0;
+    if (jp) {   // Jackpot (légendaire E) : toutes les recharges à zéro, des PA rendus
+      for (const k of Object.keys(p.cd)) p.cd[k] = 0;
+      p.casts = {};
+      p.pa = Math.min(p.paMax, p.pa + jp);
+    }
     world.emit({ k: 'status', x: p.x, y: p.y - 96, text: `${j ? 'JACKPOT ! ' : ''}${g.nom} : +${g.pct} % dommages${g.el >= 0 ? ` ${ELEMENTS_CARTE[g.el]}` : ''}`, color: j ? '#ffd84a' : '#f2e3b0' });
     world.emit({ k: 'mainGagnante', x: p.x, y: p.y, nom: g.nom, jackpot: j });
     if (j) world.emit({ k: 'impact', hitstop: 0.08, shake: 0.014, big: true });
@@ -125,6 +136,10 @@ export function jouerMain(p: Player, world: World): boolean {
 const tromperieEl = new WeakMap<Player, number>();
 /** Dames : cartes de leur couleur dans la Main au moment du lancer. */
 const damesN = new WeakMap<Player, number>();
+/** Yams : le dé tiré pour le lancer en cours (Yams parfait). */
+const deYams = new WeakMap<Player, number>();
+/** Chatons déjà renforcés par Chaton protecteur. */
+const chatonsForts = new WeakSet<object>();
 
 /** Avant le coup d'un sort de l'Écaflip : multiplicateur de dommages (Main gagnante, Dames, dé du Yams) et élément (Tromperie). */
 export function avantImpactEcaflip(p: Player, d: SpellDef, world: World): { mult: number; element?: SpellDef['element'] } {
@@ -134,9 +149,10 @@ export function avantImpactEcaflip(p: Player, d: SpellDef, world: World): { mult
   if (E?.couleur != null) {
     const n = p.ecaMain.filter(k => k.c === E.couleur).length;
     damesN.set(p, n);
-    mult *= 1 + (E.parCarte ?? 0) * n;
+    const ml = p.pcv('pc-ecaflip-M');   // Main lourde
+    mult *= 1 + (ml ? ml / 100 : E.parCarte ?? 0) * n;
   }
-  if (E?.de) mult *= (E.de[0] + world.rng.int(E.de[1] - E.de[0] + 1)) / ((E.de[0] + E.de[1]) / 2);
+  if (E?.de) { const de = E.de[0] + world.rng.int(E.de[1] - E.de[0] + 1); deYams.set(p, de); mult *= de / ((E.de[0] + E.de[1]) / 2); }
   const g = p.ecaGagnante, el = element ?? d.element;
   if (g && g.t > 0 && d.dmg > 0 && (g.el < 0 || ELEMENTS_CARTE[g.el] === el)) mult *= 1 + g.pct / 100;
   return { mult, element };
@@ -157,7 +173,26 @@ function soigner(q: Player, n: number, world: World) {
 export function impactEcaflip(p: Player, id: string, d: SpellDef, tx: number, ty: number, touches: number, base: number, world: World) {
   const E = d.ecaflip, P = R(p);
   if (!E || !P) return;
-  if (E.course) p.courir(E.course.k, E.course.t);
+  const gt = id === 'reflexes' ? p.pcv('pc-ecaflip-L') : 0;   // Chat de gouttière
+  if (E.course) p.courir(gt ? 0.35 : E.course.k, E.course.t);
+  if (gt) { p.mods = p.mods.filter(m => m.src !== 'gouttiere'); p.addMod('vitesse', gt, 3, 'gouttiere'); }
+  const de = deYams.get(p); deYams.delete(p);
+  if (de === 6 && p.pcv('pc-ecaflip-H')) {   // Yams parfait : un 6, une seconde frappe et une carte
+    const r = d.hit.shape === 'point' ? d.hit.radius : CASE;
+    world.hitCircle(tx, ty, r, { dmg: base * p.pcv('pc-ecaflip-H') / 100, knock: 0, element: d.element, sort: id });
+    world.emit({ k: 'status', x: p.x, y: p.y - 70, text: 'Yams parfait !', color: '#ffd84a' });
+    piocherHasard(p, world);
+  }
+  if (E.tromperie && p.pcv('pc-ecaflip-B')) {   // Coup de bluff : 2 ennemis de plus près de la cible
+    const el = ELEMENTS_CARTE[tromperieEl.get(p) ?? 0];
+    const l = world.monsters.filter(m => !m.dead && Math.hypot(m.x - tx, m.y - ty) > CASE * 0.75 && Math.hypot(m.x - tx, m.y - ty) <= CASE * 2.5)
+      .sort((a, b) => Math.hypot(a.x - tx, a.y - ty) - Math.hypot(b.x - tx, b.y - ty)).slice(0, 2);
+    for (const m of l) world.hitCircle(m.x, m.y, 1, { dmg: base * p.pcv('pc-ecaflip-B') / 100, knock: 0, element: el, lifesteal: d.lifesteal, sort: id });
+  }
+  if (id === 'topkaj' && touches && p.pcv('pc-ecaflip-N')) {   // Topkaj brûlant : soigne l'allié le plus blessé à 3 cases
+    const q = world.players.filter(o => !o.dead && o.hp < o.maxHp && Math.hypot(o.x - p.x, o.y - p.y) <= CASE * 3).sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0];
+    if (q) soigner(q, world.degatsCoup * p.pcv('pc-ecaflip-N') / 100, world);
+  }
   if (E.crit) {   // Yams : cumul de Critique
     const l = p.mods.filter(m => m.src === 'yams');
     if (l.length >= E.crit.max) p.mods.splice(p.mods.indexOf(l[0]), 1);
@@ -168,27 +203,33 @@ export function impactEcaflip(p: Player, id: string, d: SpellDef, tx: number, ty
     const F = P.pileFace, pile = p.ecaPF === 0 ? world.rng.next() < 0.5 : p.ecaPF === 2;
     p.mods = p.mods.filter(m => m.src !== 'pile');
     p.ecaPF = pile ? 1 : 2; p.ecaPFT = F.t;
-    if (pile) p.addMod('vitesse', F.vitesse, F.t, 'pile');
-    else p.courir(F.course, F.t);
+    const deux = p.pcv('pc-ecaflip-G') / 100;   // Pièce à deux faces : l'autre côté aussi, en plus faible
+    if (pile || deux) p.addMod('vitesse', Math.round(F.vitesse * (pile ? 1 : deux)), F.t, 'pile');
+    if (!pile || deux) p.courir(F.course * (pile ? deux : 1), F.t);
     world.emit({ k: 'status', x: p.x, y: p.y - 60, text: pile ? `Pile : +${F.vitesse} % vitesse d'attaque` : 'Face : vitesse de course', color: '#e8d27a' });
   }
   if (E.perception) {
     const q = allieVise(p, tx, ty, CASE * 1.5, world, true)!, r = d.hit.shape === 'point' ? d.hit.radius : CASE * 2;
     const n = Math.min(E.perception.max, world.monsters.filter(m => !m.dead && Math.hypot(m.x - tx, m.y - ty) <= r + m.radius).length);
-    soigner(q, q.maxHp * (E.perception.soin + E.perception.parEnnemi * n), world);
+    const nv = p.pcv('pc-ecaflip-P') && q.hp < q.maxHp * 0.3 ? 1.5 : 1;   // Neuvième vie : +50 % sur un allié sous 30 %
+    soigner(q, q.maxHp * (E.perception.soin + E.perception.parEnnemi * n) * nv, world);
   }
   if (E.chateau) {
     const q = allieVise(p, tx, ty, CASE * 1.5, world, true)!;
-    const part = p.ecaMain.reduce((a, k) => a + (E.chateau!.parValeur[k.v] ?? 0), 0);
-    if (part > 0) {
-      q.shield = Math.max(q.shield, Math.round(q.maxHp * part)); q.shieldT = q.shieldT0 = E.chateau.t; q.shieldSrc = id;
-      world.emit({ k: 'status', x: q.x, y: q.y - 60, text: 'Château de Cartes', color: '#9fd3ff' });
+    const part = p.ecaMain.reduce((a, k) => a + (E.chateau!.parValeur[k.v] ?? 0), 0) * (1 + p.pcv('pc-ecaflip-J') / 100);   // Château fort
+    // Partage du pot : les alliés proches de la cible sont protégés aussi
+    const cibles = p.pcv('pc-ecaflip-D') ? world.players.filter(o => !o.dead && (o === q || Math.hypot(o.x - q.x, o.y - q.y) <= CASE * 2)) : [q];
+    if (part > 0) for (const o of cibles) {
+      o.shield = Math.max(o.shield, Math.round(o.maxHp * part)); o.shieldT = o.shieldT0 = E.chateau.t; o.shieldSrc = id;
+      world.emit({ k: 'status', x: o.x, y: o.y - 60, text: 'Château de Cartes', color: '#9fd3ff' });
     }
     jouerMain(p, world);
   }
   if (E.roulette) roulette(p, world);
   if (E.chaton) { /* la Puissance du Chaton est tenue par majEcaflip, tant qu'il vit */ }
   if (E.bondAllie) { const q = allieVise(p, tx, ty, CASE, world); if (q && q !== p) q.courir(E.bondAllie.k, E.bondAllie.t); }
+  const pv = E.bondAllie ? p.pcv('pc-ecaflip-K') : 0;
+  if (pv && p.age - p.ecaPattesA >= pv) { p.ecaPattesA = p.age; piocherHasard(p, world); }   // Pattes de velours
   // Dames : joue les cartes de leur couleur tenues au lancer, puis pioche la Dame
   if (E.couleur != null && (damesN.get(p) ?? 0) > 0) {
     const jouees = p.ecaMain.filter(k => k.c === E.couleur);
@@ -198,7 +239,7 @@ export function impactEcaflip(p: Player, id: string, d: SpellDef, tx: number, ty
   damesN.delete(p);
   if (E.pioche) {   // Bonne Pioche : joue la Main si elle est pleine, puis pioche au hasard
     if (p.ecaMain.length >= P.main) jouerMain(p, world);
-    for (let i = 0; i < E.pioche; i++) piocherHasard(p, world);
+    for (let i = 0; i < E.pioche; i++) piocherHasard(p, world, p.pcv('pc-ecaflip-A'));
   }
   if (E.tromperie) {   // la carte de l'élément tiré ; Main pleine : jouée avant
     const c = tromperieEl.get(p) ?? 0; tromperieEl.delete(p);
@@ -213,8 +254,10 @@ export function impactEcaflip(p: Player, id: string, d: SpellDef, tx: number, ty
 function roulette(p: Player, world: World) {
   const Ro = R(p)!.roulette, r = p.cls.spells.roulette?.hit.shape === 'circle' ? p.cls.spells.roulette.hit.radius : CASE * 6;
   const e = world.rng.pick(Ro.effets);
-  const joueurs = world.players.filter(q => !q.dead && Math.hypot(q.x - p.x, q.y - p.y) <= r);
-  const monstres = world.monsters.filter(m => !m.dead && Math.hypot(m.x - p.x, m.y - p.y) <= r + m.radius);
+  // Roulette truquée (légendaire I) : l'effet ne profite qu'aux joueurs et ne nuit qu'aux monstres
+  const truquee = p.pcv('pc-ecaflip-I') > 0 && world.rng.next() < p.pcv('pc-ecaflip-I') / 100, nuit = e === 'lenteur' || e === 'fragile';
+  const joueurs = truquee && nuit ? [] : world.players.filter(q => !q.dead && Math.hypot(q.x - p.x, q.y - p.y) <= r);
+  const monstres = truquee && !nuit ? [] : world.monsters.filter(m => !m.dead && Math.hypot(m.x - p.x, m.y - p.y) <= r + m.radius);
   const T = Ro.t;
   const textes: Record<string, string> = { course: 'Tout le monde court plus vite', lenteur: 'Tout le monde ralentit', soin: 'Tout le monde est soigné',
     critique: `+${Ro.critique} % Critique pour tous`, fragile: `Tout le monde subit +${Ro.fragile} % de dommages`, puissance: `+${Ro.puissance} Puissance pour tous` };
@@ -233,8 +276,25 @@ function roulette(p: Player, world: World) {
     else if (e === 'fragile') { m.vuln = Math.max(m.vuln, Ro.fragile); m.vulnT = Math.max(m.vulnT, T); }
     else if (e === 'puissance') { m.furyPct = Math.max(m.furyPct, Ro.puissance / 2); m.furyT = Math.max(m.furyT, T); }
   }
-  world.emit({ k: 'status', x: p.x, y: p.y - 96, text: `Roulette : ${textes[e] ?? e}`, color: '#ffd84a' });
+  world.emit({ k: 'status', x: p.x, y: p.y - 96, text: `Roulette${truquee ? ' truquée' : ''} : ${textes[e] ?? e}`, color: '#ffd84a' });
   world.emit({ k: 'roulette', x: p.x, y: p.y, effet: e });
+}
+
+/** Neuvième vie (légendaire P) : un coup mortel laisse à 1 PV et soigne, une fois par minute. Vrai s'il a sauvé l'Écaflip. */
+export function neuviemeVie(p: Player, world: World): boolean {
+  const v = p.pcv('pc-ecaflip-P');
+  if (!v || p.hp > 0 || p.age - p.ecaVieA < 60) return false;
+  p.ecaVieA = p.age; p.hp = 1;
+  soigner(p, p.maxHp * v / 100, world);
+  world.emit({ k: 'status', x: p.x, y: p.y - 70, text: 'Neuvième vie !', color: '#ffd84a' });
+  return true;
+}
+
+/** Château fort (légendaire J) : le bouclier du Château de Cartes qui se brise repousse les monstres à 2 cases. */
+export function chateauBrise(q: Player, world: World) {
+  if (!world.players.some(x => x.cls.poker && x.pcv('pc-ecaflip-J'))) return;   // l'Écaflip qui a posé le Château porte le pouvoir
+  world.repousser(q.x, q.y, CASE * 2, 684);
+  world.emit({ k: 'status', x: q.x, y: q.y - 60, text: 'Château fort', color: '#9fd3ff' });
 }
 
 /** À chaque pas de l'Écaflip : minuteries de Pile ou Face et de la Main gagnante, Puissance du Chaton tant qu'il vit. */
@@ -244,8 +304,15 @@ export function majEcaflip(p: Player, dt: number, world: World) {
   if (g && (g.t -= dt) <= 0) p.ecaGagnante = null;
   const C = p.cls.spells.griffe_invocatrice?.ecaflip?.chaton;
   if (!C) return;
-  const vivant = !p.dead && world.betes.some(b => b.owner === p && !b.dead && b.base === 'chaton_enrage');
+  const chatons = world.betes.filter(b => b.owner === p && !b.dead && b.base === 'chaton_enrage'), vivant = !p.dead && chatons.length > 0;
+  const cp = p.pcv('pc-ecaflip-O');
+  if (cp) for (const b of chatons) if (!chatonsForts.has(b)) {   // Chaton protecteur : plus de PV
+    chatonsForts.add(b); b.maxHp = Math.round(b.maxHp * (1 + cp / 100)); b.hp = b.maxHp;
+  }
   const a = p.mods.some(m => m.src === 'chaton');
   if (vivant && !a) p.addMod('puissance', C.puissance, Infinity, 'chaton');
-  else if (!vivant && a) p.mods = p.mods.filter(m => m.src !== 'chaton');
+  else if (!vivant && a) {
+    p.mods = p.mods.filter(m => m.src !== 'chaton');
+    if (cp && !p.dead) { piocherHasard(p, world); piocherHasard(p, world); }   // Chaton protecteur : 2 cartes quand il tombe
+  }
 }

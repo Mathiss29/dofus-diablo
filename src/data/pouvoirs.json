@@ -401,6 +401,408 @@
    "officiel": "Vendetta : +1 lancer(s) par tour"
   }
  ],
+ "ecaflip": [
+  {
+   "id": "ecaflip-01",
+   "slot": "chapeau",
+   "piece": "Chapeau Leufère",
+   "sort": "Réflexes",
+   "dofusId": 12857,
+   "effet": "parCible",
+   "n": 1,
+   "officiel": "Réflexes : +1 lancer(s) par cible"
+  },
+  {
+   "id": "ecaflip-02",
+   "slot": "chapeau",
+   "piece": "Chapeau Leufère",
+   "sort": "Lapement",
+   "dofusId": 12873,
+   "effet": "crit",
+   "n": 35,
+   "officiel": "Lapement : +35% Critique"
+  },
+  {
+   "id": "ecaflip-03",
+   "slot": "chapeau",
+   "piece": "Chapeau Leufère",
+   "sort": "Yams",
+   "dofusId": 29680,
+   "effet": "parCible",
+   "n": 1,
+   "officiel": "Yams : +1 lancer(s) par cible"
+  },
+  {
+   "id": "ecaflip-04",
+   "slot": "chapeau",
+   "piece": "Chapeau Leufère",
+   "sort": "Langue Râpeuse",
+   "dofusId": 12855,
+   "effet": "crit",
+   "n": 35,
+   "officiel": "Langue Râpeuse : +35% Critique"
+  },
+  {
+   "id": "ecaflip-05",
+   "slot": "chapeau",
+   "piece": "Chapeau Leufère",
+   "sort": "Topkaj",
+   "dofusId": 12846,
+   "effet": "parCible",
+   "n": 1,
+   "officiel": "Topkaj : +1 lancer(s) par cible"
+  },
+  {
+   "id": "ecaflip-06",
+   "slot": "amulette",
+   "piece": "Chapeau Leufère",
+   "sort": "Griffe Joueuse",
+   "dofusId": 12849,
+   "effet": "crit",
+   "n": 35,
+   "officiel": "Griffe Joueuse : +35% Critique"
+  },
+  {
+   "id": "ecaflip-07",
+   "slot": "arme",
+   "piece": "Chapeau Leufère",
+   "sort": "Pile ou Face",
+   "dofusId": 12841,
+   "effet": "parCible",
+   "n": 1,
+   "officiel": "Pile ou Face : +1 lancer(s) par cible"
+  },
+  {
+   "id": "ecaflip-08",
+   "slot": "bouclier",
+   "piece": "Chapeau Leufère",
+   "sort": "Fanfaronnade",
+   "dofusId": 12878,
+   "effet": "crit",
+   "n": 30,
+   "officiel": "Fanfaronnade : +30% Critique"
+  },
+  {
+   "id": "ecaflip-09",
+   "slot": "cape",
+   "piece": "Cape Aillé",
+   "sort": "Pelotage",
+   "dofusId": 14310,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Pelotage : Portée modifiable"
+  },
+  {
+   "id": "ecaflip-10",
+   "slot": "cape",
+   "piece": "Cape Aillé",
+   "sort": "Griffe de Ceangal",
+   "dofusId": 12851,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Griffe de Ceangal : Portée modifiable"
+  },
+  {
+   "id": "ecaflip-11",
+   "slot": "cape",
+   "piece": "Cape Aillé",
+   "sort": "Coussinets",
+   "dofusId": 12875,
+   "effet": "crit",
+   "n": 35,
+   "officiel": "Coussinets : +35% Critique"
+  },
+  {
+   "id": "ecaflip-12",
+   "slot": "cape",
+   "piece": "Cape Aillé",
+   "sort": "Feulement",
+   "dofusId": 12872,
+   "effet": "crit",
+   "n": 35,
+   "officiel": "Feulement : +35% Critique"
+  },
+  {
+   "id": "ecaflip-13",
+   "slot": "cape",
+   "piece": "Cape Aillé",
+   "sort": "Perception",
+   "dofusId": 12852,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Perception : -1 PA"
+  },
+  {
+   "id": "ecaflip-14",
+   "slot": "amulette",
+   "piece": "Cape Aillé",
+   "sort": "Prédation",
+   "dofusId": 12867,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Prédation : -1 PA"
+  },
+  {
+   "id": "ecaflip-15",
+   "slot": "arme",
+   "piece": "Cape Aillé",
+   "sort": "Château de Cartes",
+   "dofusId": 12845,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Château de Cartes : -1 de relance"
+  },
+  {
+   "id": "ecaflip-16",
+   "slot": "bouclier",
+   "piece": "Cape Aillé",
+   "sort": "Bonne Étoile",
+   "dofusId": 12876,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Bonne Étoile : -1 PA"
+  },
+  {
+   "id": "ecaflip-17",
+   "slot": "ceinture",
+   "piece": "Ceinture Buhlent",
+   "sort": "Jass",
+   "dofusId": 12864,
+   "effet": "crit",
+   "n": 40,
+   "officiel": "Jass : +40% Critique"
+  },
+  {
+   "id": "ecaflip-18",
+   "slot": "ceinture",
+   "piece": "Ceinture Buhlent",
+   "sort": "Infortune",
+   "dofusId": 12880,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Infortune : Portée modifiable"
+  },
+  {
+   "id": "ecaflip-19",
+   "slot": "ceinture",
+   "piece": "Ceinture Buhlent",
+   "sort": "Baraka",
+   "dofusId": 12848,
+   "effet": "crit",
+   "n": 40,
+   "officiel": "Baraka : +40% Critique"
+  },
+  {
+   "id": "ecaflip-20",
+   "slot": "ceinture",
+   "piece": "Ceinture Buhlent",
+   "sort": "Toupet",
+   "dofusId": 12882,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Toupet : Portée modifiable"
+  },
+  {
+   "id": "ecaflip-21",
+   "slot": "ceinture",
+   "piece": "Ceinture Buhlent",
+   "sort": "Blakjak",
+   "dofusId": 12870,
+   "effet": "crit",
+   "n": 40,
+   "officiel": "Blakjak : +40% Critique"
+  },
+  {
+   "id": "ecaflip-22",
+   "slot": "amulette",
+   "piece": "Ceinture Buhlent",
+   "sort": "Destin d'Ecaflip",
+   "dofusId": 12859,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Destin d'Ecaflip : Portée modifiable"
+  },
+  {
+   "id": "ecaflip-23",
+   "slot": "arme",
+   "piece": "Ceinture Buhlent",
+   "sort": "Belote",
+   "dofusId": 12866,
+   "effet": "crit",
+   "n": 40,
+   "officiel": "Belote : +40% Critique"
+  },
+  {
+   "id": "ecaflip-24",
+   "slot": "bouclier",
+   "piece": "Ceinture Buhlent",
+   "sort": "Péril",
+   "dofusId": 14311,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Péril : Portée modifiable"
+  },
+  {
+   "id": "ecaflip-25",
+   "slot": "bottes",
+   "piece": "Charentaises à poils",
+   "sort": "Esprit Félin",
+   "dofusId": 12847,
+   "effet": "po",
+   "n": 1,
+   "officiel": "Esprit Félin : +1 Portée maximale"
+  },
+  {
+   "id": "ecaflip-26",
+   "slot": "bottes",
+   "piece": "Charentaises à poils",
+   "sort": "Kraps",
+   "dofusId": 12883,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Kraps : Portée modifiable"
+  },
+  {
+   "id": "ecaflip-27",
+   "slot": "bottes",
+   "piece": "Charentaises à poils",
+   "sort": "Félintion",
+   "dofusId": 12861,
+   "effet": "crit",
+   "n": 35,
+   "officiel": "Félintion : +35% Critique"
+  },
+  {
+   "id": "ecaflip-28",
+   "slot": "bottes",
+   "piece": "Charentaises à poils",
+   "sort": "Mésaventure",
+   "dofusId": 12879,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Mésaventure : ligne de vue désactivée"
+  },
+  {
+   "id": "ecaflip-29",
+   "slot": "bottes",
+   "piece": "Charentaises à poils",
+   "sort": "Bond du Félin",
+   "dofusId": 12844,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Bond du Félin : +1 lancer(s) par tour"
+  },
+  {
+   "id": "ecaflip-30",
+   "slot": "amulette",
+   "piece": "Charentaises à poils",
+   "sort": "Entrechat",
+   "dofusId": 12865,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Entrechat : +1 lancer(s) par tour"
+  },
+  {
+   "id": "ecaflip-31",
+   "slot": "arme",
+   "piece": "Charentaises à poils",
+   "sort": "Griffe Invocatrice",
+   "dofusId": 12856,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Griffe Invocatrice : -1 de relance"
+  },
+  {
+   "id": "ecaflip-32",
+   "slot": "bouclier",
+   "piece": "Charentaises à poils",
+   "sort": "Caresse Invocatrice",
+   "dofusId": 12869,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Caresse Invocatrice : -1 de relance"
+  },
+  {
+   "id": "ecaflip-33",
+   "slot": "anneau",
+   "piece": "Bague Houx",
+   "sort": "Seconde Chance",
+   "dofusId": 12842,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Seconde Chance : -1 de relance"
+  },
+  {
+   "id": "ecaflip-34",
+   "slot": "anneau",
+   "piece": "Bague Houx",
+   "sort": "Neuf Vies",
+   "dofusId": 12874,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Neuf Vies : -1 PA"
+  },
+  {
+   "id": "ecaflip-35",
+   "slot": "anneau",
+   "piece": "Bague Houx",
+   "sort": "Tout ou Rien",
+   "dofusId": 12858,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Tout ou Rien : +2 Portée maximale"
+  },
+  {
+   "id": "ecaflip-36",
+   "slot": "anneau",
+   "piece": "Bague Houx",
+   "sort": "Tromperie",
+   "dofusId": 12881,
+   "effet": "parCible",
+   "n": 1,
+   "officiel": "Tromperie : +1 lancer(s) par cible"
+  },
+  {
+   "id": "ecaflip-37",
+   "slot": "anneau",
+   "piece": "Bague Houx",
+   "sort": "Bluff",
+   "dofusId": 29785,
+   "effet": "crit",
+   "n": 40,
+   "officiel": "Bluff : +40% Critique"
+  },
+  {
+   "id": "ecaflip-38",
+   "slot": "amulette",
+   "piece": "Bague Houx",
+   "sort": "Rekop",
+   "dofusId": 12853,
+   "effet": "crit",
+   "n": 40,
+   "officiel": "Rekop : +40% Critique"
+  },
+  {
+   "id": "ecaflip-39",
+   "slot": "arme",
+   "piece": "Bague Houx",
+   "sort": "Odorat",
+   "dofusId": 12854,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Odorat : -1 PA"
+  },
+  {
+   "id": "ecaflip-40",
+   "slot": "bouclier",
+   "piece": "Bague Houx",
+   "sort": "Roue de la Fortune",
+   "dofusId": 12863,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Roue de la Fortune : -1 PA"
+  }
+ ],
  "eniripsa": [
   {
    "id": "eniripsa-01",
