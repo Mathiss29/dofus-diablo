@@ -1078,6 +1078,7 @@ export class ZoneScene extends Phaser.Scene {
       case 'guide': w?.toggle('guide'); break;
       case 'social': w?.toggle('social'); break;
       case 'ladder': w?.toggle('ladder'); break;
+      case 'idoles': if (p.v06) w?.toggle('idoles'); break;   // 0.6 (17-18)
       case 'chat': this.chat?.ouvrir(); break;
       case 'options': w?.toggle('opt'); break;
       case 'boutique': w?.toggle('boutique'); break;   // « Boutique : » 9A

@@ -1,5 +1,6 @@
 import { BASE_STATS, type EquipSlot, type Item, type Stat } from './items';
 import { BOISSONS, CONSO, ELIXIRS, REPAS } from './consommables';
+import { IDOLES_DEFS, basculerIdole, etatIdolesVide, type EtatIdoles } from './idoles';
 import { placesTenues, SORTES_STYLE, STYLE, type StyleChoisi, type Tenue } from './style';
 import { BENEDICTION, BENEDICTIONS, CONFORT, type Benediction } from './magasin';
 import type { EtatQuetes } from './quests';
@@ -41,6 +42,8 @@ export interface EtatJoueur {
   explore?: Record<string, string[]>;
   /** 0.6 : cartes chassées (6D) et boss sans Légendaire d'affilée (24A). */
   chasse?: Record<string, string[]>; bossSansLeg?: Record<string, number>;
+  /** 0.6 : idoles (17-18). */
+  idoles?: EtatIdoles;
   drapeaux?: Drapeau[];
   tombe?: Tombe | null;
   lieuxVus?: string[];
@@ -86,7 +89,7 @@ export function exporterJoueur(w: World): EtatJoueur {
     bar: p.bar, variants: p.variants, learned: [...p.learned],
     x: p.x, y: p.y, retour: w.pointDeRetour, quetes: w.quetes?.exporter(), zone: w.opts.zone,
     apparats: p.apparats, apparat: p.apparat, codex: p.codex, codexOuvert: p.codexOuvert, ames: p.ames, menagerie: p.menagerie, familierOffert: p.familierOffert, aboJour: p.aboJour, style: p.style, tenues: p.tenues, placesTenue: p.placesTenue, prereglages: p.prereglages, almanaxJour: p.almanaxJour, magasin: p.magasin, sacEnPlus: p.sacEnPlus, benediction: p.benediction, repas: p.repas, elixir: p.elixir, parchemins: p.parchemins, ceinture: p.ceinture, dofus: p.dofus, trophees: p.trophees, dofusPortes: p.dofusPortes,
-    zaaps: p.zaaps, zonesVues: p.zonesVues, explore: p.explore, chasse: p.chasse, bossSansLeg: p.bossSansLeg, drapeaux: p.drapeaux, tombe: p.tombe, lieuxVus: p.lieuxVus, cleDonjon: p.cleDonjon, guerre: p.guerre, vivant: p.vivant, commandeFM: p.commandeFM, ...(w.retour ? { havreSac: w.retour } : {}),
+    zaaps: p.zaaps, zonesVues: p.zonesVues, explore: p.explore, chasse: p.chasse, bossSansLeg: p.bossSansLeg, idoles: p.idoles, drapeaux: p.drapeaux, tombe: p.tombe, lieuxVus: p.lieuxVus, cleDonjon: p.cleDonjon, guerre: p.guerre, vivant: p.vivant, commandeFM: p.commandeFM, ...(w.retour ? { havreSac: w.retour } : {}),
     ...(p.cls.coffre ? { coffreEnu: exporterCoffre(p) } : {}),
   });
 }
@@ -144,6 +147,14 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
   p.zonesVues = [...new Set([...(s.zonesVues ?? []), ...p.zonesVues])];
   if (s.chasse && typeof s.chasse === 'object') for (const [z, l] of Object.entries(s.chasse))
     if (Array.isArray(l)) p.chasse[z] = [...new Set(l.filter(t => typeof t === 'string' && /^-?\d+_-?\d+$/.test(t)))];
+  if (s.idoles && typeof s.idoles === 'object') {
+    const ok = (l: unknown) => Array.isArray(l) ? [...new Set(l.filter((id): id is string => typeof id === 'string' && !!IDOLES_DEFS[id]))] : [];
+    const possedees = ok(s.idoles.possedees), e = etatIdolesVide();
+    e.possedees = possedees;
+    for (const id of ok(s.idoles.actives)) if (possedees.includes(id)) basculerIdole(e, id);
+    if (Array.isArray(s.idoles.jeux)) e.jeux = e.jeux.map((_, i) => { const j = s.idoles!.jeux[i]; return j && typeof j === 'object' ? { nom: String(j.nom ?? `Jeu ${i + 1}`).slice(0, 24), ids: ok(j.ids) } : null; });
+    p.idoles = e;
+  }
   if (s.bossSansLeg && typeof s.bossSansLeg === 'object') for (const [b, n] of Object.entries(s.bossSansLeg))
     if (typeof n === 'number' && n > 0 && Number.isFinite(n)) p.bossSansLeg[b] = Math.min(1000, Math.floor(n));
   if (s.explore && typeof s.explore === 'object') for (const [z, l] of Object.entries(s.explore))

@@ -1,4 +1,5 @@
 import { ALMANAX } from './almanax';
+import { etatIdolesVide, type EtatIdoles } from './idoles';
 import type { StyleChoisi, Tenue } from './style';
 import { BENEDICTIONS, type AchatsDuJour, type Benediction } from './magasin';
 import { avantage, type Palier } from './boutiqueOgrines';
@@ -266,6 +267,8 @@ export class Player extends Entity {
   chasse: Record<string, string[]> = {};
   /** 0.6 (24A) : boss vaincus d'affilée sans Légendaire de boss, par type de boss (la chance monte à chaque essai). */
   bossSansLeg: Record<string, number> = {};
+  /** 0.6 (17-18) : idoles fabriquées, actives et jeux enregistrés (par perso). */
+  idoles: EtatIdoles = etatIdolesVide();
   private _pouvoirs: PouvoirDef[] | null = null;
   /** Pouvoirs officiels de sa classe portés, chacun une seule fois (5A : deux anneaux au même pouvoir ne cumulent pas). */
   get pouvoirsPortes(): PouvoirDef[] {

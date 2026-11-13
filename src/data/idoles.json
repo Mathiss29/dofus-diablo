@@ -1,0 +1,446 @@
+{
+ "_doc": "Idoles (maquette 0.6, questions 17-18, 2026-11-13) : modèle d'Idlus (Idlus/idlus.github.io, js/idols.js), effets traduits en temps réel ; Zaihort, Leukide, Nahuatl = idoles d'ARPG (17C). Par perso (pas liées au compte). Score : +pctParPoint % d'XP et de butin par point, plafonné à plafondDonjon en donjon. niveau = niveau de Bricoleur pour la fabriquer.",
+ "max": 6,
+ "pctParPoint": 0.5,
+ "plafondDonjon": 60,
+ "familles": {
+  "vie": {
+   "nom": "Vie",
+   "couleur": "#8fe36a",
+   "icone": "178109"
+  },
+  "deg": {
+   "nom": "Dégâts",
+   "couleur": "#ff6b6b",
+   "icone": "178108"
+  },
+  "pro": {
+   "nom": "Protection",
+   "couleur": "#7cc4ff",
+   "icone": "178112"
+  },
+  "nb": {
+   "nom": "Nombre",
+   "couleur": "#ffb35c",
+   "icone": "178117"
+  },
+  "tempo": {
+   "nom": "Tempo",
+   "couleur": "#c9a2ff",
+   "icone": "178114"
+  },
+  "rythme": {
+   "nom": "Rythme",
+   "couleur": "#f08fb0",
+   "icone": "178105"
+  },
+  "soins": {
+   "nom": "Soins",
+   "couleur": "#5ee0c8",
+   "icone": "178048"
+  },
+  "res": {
+   "nom": "Résistances",
+   "couleur": "#9ad7ff",
+   "icone": "178110"
+  },
+  "crit": {
+   "nom": "Critiques",
+   "couleur": "#ffd166",
+   "icone": "178116"
+  }
+ },
+ "idoles": {
+  "hebdo": {
+   "nom": "Hebdo",
+   "famille": "vie",
+   "score": 10,
+   "niveau": 20,
+   "desc": "Les monstres ont +25 % de PV.",
+   "fx": {
+    "pv": 1.25
+   }
+  },
+  "payo": {
+   "nom": "Payo",
+   "famille": "vie",
+   "score": 20,
+   "niveau": 60,
+   "desc": "Le monstre le plus fort de chaque groupe a ses PV ×3.",
+   "fx": {
+    "payo": 3
+   }
+  },
+  "muta": {
+   "nom": "Muta",
+   "famille": "vie",
+   "score": 25,
+   "niveau": 100,
+   "desc": "Les monstres ont +60 % de PV.",
+   "fx": {
+    "pv": 1.6
+   }
+  },
+  "walet": {
+   "nom": "Walet",
+   "famille": "vie",
+   "score": 40,
+   "niveau": 160,
+   "desc": "Les monstres ont +100 % de PV.",
+   "fx": {
+    "pv": 2
+   }
+  },
+  "dynamo": {
+   "nom": "Dynamo",
+   "famille": "deg",
+   "score": 10,
+   "niveau": 25,
+   "desc": "Les monstres infligent +15 % de dégâts.",
+   "fx": {
+    "degats": 1.15
+   }
+  },
+  "brouce": {
+   "nom": "Brouce",
+   "famille": "deg",
+   "score": 15,
+   "niveau": 55,
+   "desc": "Les monstres s'enragent : +25 % de dégâts sous 50 % de leurs PV.",
+   "fx": {
+    "rage": 0.25
+   }
+  },
+  "kaminara": {
+   "nom": "Kaminara",
+   "famille": "deg",
+   "score": 25,
+   "niveau": 120,
+   "desc": "Les monstres infligent +40 % de dégâts.",
+   "fx": {
+    "degats": 1.4
+   }
+  },
+  "hurzz": {
+   "nom": "Hurzz",
+   "famille": "deg",
+   "score": 40,
+   "niveau": 170,
+   "desc": "Les monstres infligent +80 % de dégâts.",
+   "fx": {
+    "degats": 1.8
+   }
+  },
+  "zaihort": {
+   "nom": "Zaihort",
+   "famille": "deg",
+   "score": 20,
+   "niveau": 90,
+   "desc": "Des éclairs tombent au sol autour de toi pendant les combats (idole d'ARPG).",
+   "fx": {
+    "eclairs": 1
+   }
+  },
+  "tynril": {
+   "nom": "Tynril",
+   "famille": "pro",
+   "score": 10,
+   "niveau": 30,
+   "desc": "Les monstres apparaissent avec un bouclier de 15 % de leurs PV.",
+   "fx": {
+    "bouclier": 0.15
+   }
+  },
+  "gakri": {
+   "nom": "Gakri",
+   "famille": "pro",
+   "score": 15,
+   "niveau": 65,
+   "desc": "Les monstres ne sont plus ralentis ni immobilisés.",
+   "fx": {
+    "inarretables": 1
+   }
+  },
+  "kori": {
+   "nom": "Kori",
+   "famille": "pro",
+   "score": 20,
+   "niveau": 85,
+   "desc": "Les monstres gagnent un bouclier de 5 % de leurs PV toutes les 8 s.",
+   "fx": {
+    "bouclierRegen": 0.05
+   }
+  },
+  "djim": {
+   "nom": "Djim",
+   "famille": "pro",
+   "score": 30,
+   "niveau": 160,
+   "desc": "Un monstre de chaque groupe est un Champion : PV ×2 et butin doublé.",
+   "fx": {
+    "champion": 1
+   }
+  },
+  "farle": {
+   "nom": "Farle",
+   "famille": "nb",
+   "score": 15,
+   "niveau": 40,
+   "desc": "Un monstre de plus dans chaque groupe.",
+   "fx": {
+    "enPlus": 1
+   }
+  },
+  "serpi": {
+   "nom": "Serpi",
+   "famille": "nb",
+   "score": 20,
+   "niveau": 90,
+   "desc": "Quand un monstre meurt, un renfort arrive (une fois par groupe).",
+   "fx": {
+    "renfort": 1
+   }
+  },
+  "nahuss": {
+   "nom": "Nahuss",
+   "famille": "nb",
+   "score": 30,
+   "niveau": 130,
+   "desc": "Deux monstres de plus dans chaque groupe.",
+   "fx": {
+    "enPlus": 2
+   }
+  },
+  "sakai": {
+   "nom": "Sakai",
+   "famille": "nb",
+   "score": 35,
+   "niveau": 180,
+   "desc": "Chaque monstre revient à la vie une fois, avec 30 % de ses PV.",
+   "fx": {
+    "retour": 0.3
+   }
+  },
+  "nocturne": {
+   "nom": "Nocturne",
+   "famille": "tempo",
+   "score": 15,
+   "niveau": 50,
+   "desc": "Les monstres se déplacent et attaquent 20 % plus vite.",
+   "fx": {
+    "vitesse": 0.2
+   }
+  },
+  "minor": {
+   "nom": "Minor",
+   "famille": "tempo",
+   "score": 15,
+   "niveau": 75,
+   "desc": "Tes déplacements rapides ont une charge de moins.",
+   "fx": {
+    "chargesMoins": 1
+   }
+  },
+  "major": {
+   "nom": "Major",
+   "famille": "tempo",
+   "score": 25,
+   "niveau": 115,
+   "desc": "Les monstres attaquent dès qu'ils te voient, sans temps d'éveil.",
+   "fx": {
+    "eveil": 1
+   }
+  },
+  "kyoub": {
+   "nom": "Kyoub",
+   "famille": "tempo",
+   "score": 30,
+   "niveau": 140,
+   "desc": "Tes sorts rechargent 20 % moins vite.",
+   "fx": {
+    "recharges": 0.2
+   }
+  },
+  "leukide": {
+   "nom": "Leukide",
+   "famille": "tempo",
+   "score": 20,
+   "niveau": 95,
+   "desc": "Les projectiles des monstres vont 50 % plus vite (idole d'ARPG).",
+   "fx": {
+    "projectiles": 0.5
+   }
+  },
+  "dokoko": {
+   "nom": "Dokoko",
+   "famille": "rythme",
+   "score": 15,
+   "niveau": 60,
+   "desc": "Tu perds 3 % de tes PV maximum toutes les 5 s en combat.",
+   "fx": {
+    "usure": 0.03
+   }
+  },
+  "nehik": {
+   "nom": "Nehik",
+   "famille": "rythme",
+   "score": 20,
+   "niveau": 80,
+   "desc": "Les monstres volent 15 % des dégâts qu'ils infligent.",
+   "fx": {
+    "vol": 0.15
+   }
+  },
+  "pluvior": {
+   "nom": "Pluvior",
+   "famille": "rythme",
+   "score": 20,
+   "niveau": 95,
+   "desc": "Tes boucliers sont réduits de moitié.",
+   "fx": {
+    "boucliersJoueur": 0.5
+   }
+  },
+  "jiva": {
+   "nom": "Jiva",
+   "famille": "rythme",
+   "score": 30,
+   "niveau": 150,
+   "desc": "Tu perds 6 % de tes PV maximum toutes les 5 s en combat.",
+   "fx": {
+    "usure": 0.06
+   }
+  },
+  "nahuatl": {
+   "nom": "Nahuatl",
+   "famille": "rythme",
+   "score": 20,
+   "niveau": 100,
+   "desc": "Les monstres laissent une flaque de feu en mourant (idole d'ARPG).",
+   "fx": {
+    "flaques": 1
+   }
+  },
+  "bihilete": {
+   "nom": "Bihilète",
+   "famille": "soins",
+   "score": 10,
+   "niveau": 35,
+   "desc": "Tes soins sont réduits de moitié.",
+   "fx": {
+    "soins": 0.5
+   }
+  },
+  "abdinde": {
+   "nom": "Abdinde",
+   "famille": "soins",
+   "score": 15,
+   "niveau": 70,
+   "desc": "Les monstres récupèrent 5 % de leurs PV toutes les 5 s.",
+   "fx": {
+    "regen": 0.05
+   }
+  },
+  "chokwa": {
+   "nom": "Chokwa",
+   "famille": "soins",
+   "score": 20,
+   "niveau": 105,
+   "desc": "Quand un monstre meurt, les autres du groupe se soignent de 15 % de leurs PV.",
+   "fx": {
+    "chokwa": 0.15
+   }
+  },
+  "ougah": {
+   "nom": "Ougah",
+   "famille": "soins",
+   "score": 25,
+   "niveau": 110,
+   "desc": "Tu ne peux plus te soigner : soins et vol de vie annulés.",
+   "fx": {
+    "soins": 0
+   }
+  },
+  "croum": {
+   "nom": "Croum",
+   "famille": "res",
+   "score": 15,
+   "niveau": 45,
+   "desc": "Les monstres ont +15 % de résistance à tous les éléments.",
+   "fx": {
+    "res": 15
+   }
+  },
+  "gilimin": {
+   "nom": "Gilimin",
+   "famille": "res",
+   "score": 15,
+   "niveau": 55,
+   "desc": "Tes sorts de zone infligent 40 % de dégâts en moins.",
+   "fx": {
+    "zone": 0.6
+   }
+  },
+  "garu": {
+   "nom": "Garu",
+   "famille": "res",
+   "score": 25,
+   "niveau": 125,
+   "desc": "Les monstres ont +50 % de résistance à l'élément de ton dernier sort.",
+   "fx": {
+    "resDernier": 50
+   }
+  },
+  "dinam": {
+   "nom": "Dinam",
+   "famille": "res",
+   "score": 30,
+   "niveau": 135,
+   "desc": "Les monstres ont +30 % de résistance à tous les éléments.",
+   "fx": {
+    "res": 30
+   }
+  },
+  "hadibel": {
+   "nom": "Hadibel",
+   "famille": "crit",
+   "score": 10,
+   "niveau": 25,
+   "desc": "Les monstres ont +10 % de coups critiques.",
+   "fx": {
+    "critMonstres": 0.1
+   }
+  },
+  "yushe": {
+   "nom": "Yushe",
+   "famille": "crit",
+   "score": 15,
+   "niveau": 65,
+   "desc": "Un sort sur dix échoue.",
+   "fx": {
+    "echec": 0.1
+   }
+  },
+  "jewai": {
+   "nom": "Jewai",
+   "famille": "crit",
+   "score": 20,
+   "niveau": 95,
+   "desc": "Tu ne fais plus de coups critiques.",
+   "fx": {
+    "sansCrit": 1
+   }
+  },
+  "tigel": {
+   "nom": "Tigel",
+   "famille": "crit",
+   "score": 25,
+   "niveau": 145,
+   "desc": "Les monstres ont +25 % de coups critiques, qui frappent 30 % plus fort.",
+   "fx": {
+    "critMonstres": 0.25,
+    "critForce": 0.3
+   }
+  }
+ }
+}
