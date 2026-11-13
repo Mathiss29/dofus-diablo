@@ -120,6 +120,10 @@ export type SimEvent =
   | { k: 'groupCleared' }
   /** 0.6 (6D) : premier groupe vaincu sur cette carte par ce perso (bonus de découverte touché). */
   | { k: 'decouverte'; carte: string }
+  /** 0.6 (21) : autel de combat pris. */
+  | { k: 'autel'; effet: string; dieu: string; nom: string }
+  /** 0.6 (22A) : un Coffre Malveillant se met à détaler. */
+  | { k: 'coffreFuyard'; x: number; y: number }
   /** 0.6 (17-18) : idole fabriquée, ou idoles actives changées. */
   | { k: 'idole'; id: string; quoi: 'fabriquee' | 'active' }
   | { k: 'respawn' }

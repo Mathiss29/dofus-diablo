@@ -142,6 +142,7 @@ export class SonView {
       case 'fmRelance': Son.jouer(M.ui.ok, 'interface', { cle: 'forgeOk', ecart: 0.05 }); break;
       // Kamas D : tintement des pièces ramassées (son officiel, plus aigu que la chute au sol)
       case 'lootKamas': Son.jouer(Son.auHasard(M.kamas), 'effets', { vol: 0.7, vitesse: 1.12 + Math.random() * 0.1, cle: 'kamas', ecart: 0.08 }); break;
+      case 'coffreFuyard': for (let i = 0; i < 3; i++) Son.jouer(Son.auHasard(M.kamas), 'effets', { vol: 0.8, vitesse: 0.9 + i * 0.15, cle: `fuyard${i}`, ecart: 0 }); break;   // 0.6 (22A) : bruit de pièces
       // 0.4 suite 13C : sons des donjons (partie de test tant que la 0.4 est cachée)
       case 'areneDebut': this.donjon('fermeture'); break;
       case 'areneVague': if (e.boss) this.donjon('boss'); else if (e.n > 1) this.donjon('vague', 0.8); break;

@@ -785,6 +785,8 @@ export class Hud {
       case 'rechargePrete': this.eclats[e.id] = 0.8; break;
       case 'groupCleared': this.loot('Groupe vaincu  ·  +1 potion', '#7be07b'); break;
       case 'decouverte': this.loot('Nouvelle carte chassée  ·  +50 % d\'XP', '#e8c25a'); break;
+      case 'autel': this.loot(`Autel de ${e.dieu}  ·  ${e.nom}`, '#e8c25a'); break;
+      case 'coffreFuyard': this.loot('Un Coffre Malveillant détale : 15 secondes pour l\'abattre !', '#f2d36b'); break;
       case 'massacre': this.toast(`Massacre ×${e.n}  ·  +${e.bonus} % XP`); break;
       case 'massacreFin': this.loot(`Massacre de ${e.n} monstres`, '#e6b85c'); break;
     }

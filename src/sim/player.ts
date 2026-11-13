@@ -1,5 +1,6 @@
 import { ALMANAX } from './almanax';
 import { ELITES } from './elites';
+import { AUTELS, type AutelActif } from './autels';
 import { etatIdolesVide, type EtatIdoles, type FxIdole } from './idoles';
 import type { StyleChoisi, Tenue } from './style';
 import { BENEDICTIONS, type AchatsDuJour, type Benediction } from './magasin';
@@ -277,6 +278,8 @@ export class Player extends Entity {
   bouclierVu = 0;
   /** Temps passé en combat (usure, éclairs des idoles). */
   idoleT = 0;
+  /** Autel de combat pris (0.6, 21) : effet, temps restant. */
+  autel: AutelActif | null = null;
   /** Élément du dernier coup porté (Garu). */
   dernierElement: Element | '' = '';
   private _pouvoirs: PouvoirDef[] | null = null;
@@ -1671,6 +1674,7 @@ export class Player extends Entity {
   hurt(raw: number, fromX: number, fromY: number, world: World, element: Element = 'neutre', loin?: boolean): boolean {
     if (this.invuln > 0 || this.dead) return false;
     const fi = this.fxIdoles, qui = world.monsters.find(m => !m.dead && m.x === fromX && m.y === fromY);
+    if (this.autel?.effet === 'protection') raw *= AUTELS.effets.protection.subis;   // autel de Féca
     if (fi) {   // idoles : Brouce (rage sous 50 % de PV), Hadibel et Tigel (critiques des monstres)
       if (fi.rage && qui && qui.hp < qui.maxHp / 2) raw *= 1 + fi.rage;
       if (fi.critMonstres && world.rng.next() < fi.critMonstres) {
