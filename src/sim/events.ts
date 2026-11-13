@@ -124,6 +124,9 @@ export type SimEvent =
   | { k: 'autel'; effet: string; dieu: string; nom: string }
   /** 0.6 (22A) : un Coffre Malveillant se met à détaler. */
   | { k: 'coffreFuyard'; x: number; y: number }
+  /** 0.6 (19-20) : palier de renommée atteint ; sanctuaire des Douze trouvé. */
+  | { k: 'renommee'; region: string; palier: number; texte: string }
+  | { k: 'sanctuaire'; dieu: string; carac: string; bonus: number; region: string; n: number; total: number }
   /** 0.6 (17-18) : idole fabriquée, ou idoles actives changées. */
   | { k: 'idole'; id: string; quoi: 'fabriquee' | 'active' }
   | { k: 'respawn' }
