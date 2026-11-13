@@ -86,8 +86,16 @@ export class WorldView {
   /** Mer du rivage fondue depuis la vraie côte (poserRivage), cachée dans les intérieurs. */
   private rivage?: Phaser.GameObjects.Image;
 
+  /** Monde chargé par régions (0.6, 3B) : décor des régions déjà lu ('pret') ou en téléchargement. */
+  private readonly regions = new Map<string, 'charge' | 'pret'>();
+
   constructor(private readonly scene: Phaser.Scene, private readonly wg: WorldGrid, private readonly dir: string, private readonly prefix: string) {
     for (const m of wg.world.maps) this.slots.set(m.tag, { state: 'none', objs: [], next: 0 });
+    // régions lues pendant le preload (celle du départ)
+    for (const r of wg.world.regions ?? []) {
+      const d = scene.cache.json.get(WorldView.key(prefix, `region_${r}`)) as Record<string, DecorPlace[]> | undefined;
+      if (d) { this.poserRegion(r, d); scene.cache.json.remove(WorldView.key(prefix, `region_${r}`)); }
+    }
     scene.load.on(Phaser.Loader.Events.FILE_COMPLETE, (key: string) => this.onFile(key));
     scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
       for (const m of wg.world.maps) if (this.slots.get(m.tag)!.state === 'loading' && this.texturesReady(m)) this.build(m);
@@ -104,6 +112,27 @@ export class WorldView {
     if (world.maps.some(m => m.survols?.length) && !scene.textures.exists(`survols_${prefix}`))
       scene.load.atlas(`survols_${prefix}`, v(`assets/ui/survols_${prefix}.png`), v(`assets/ui/survols_${prefix}.json`));
     for (const m of world.maps) if (ring(m, start[0], start[1]) <= LOAD_RING) WorldView.queue(scene, m, dir, prefix);
+    // monde chargé par régions (3B) : seulement le décor des régions autour du départ
+    const regions = new Set(world.maps.filter(m => m.r && !m.inside && ring(m, start[0], start[1]) <= LOAD_RING).map(m => m.r!));
+    for (const r of regions) scene.load.json(WorldView.key(prefix, `region_${r}`), v(`${dir}/region_${r}.json`));
+  }
+  /** Le décor de la carte est là (monde chargé par régions, 3B) ; sinon on demande sa région. */
+  private regionPrete(m: WorldMapEntry) {
+    if (!m.r || this.regions.get(m.r) === 'pret') return true;
+    this.chargerRegion(m.r);
+    return false;
+  }
+  /** Télécharge le décor d'une région (une fois) ; les cartes de la région se posent ensuite comme les autres. */
+  private chargerRegion(r: string) {
+    if (this.regions.has(r)) return;
+    this.regions.set(r, 'charge');
+    fetch(v(`${this.dir}/region_${r}.json`)).then(x => { if (!x.ok) throw new Error(r); return x.json(); })
+      .then((d: Record<string, DecorPlace[]>) => { this.poserRegion(r, d); this.viewT = 0; this.prefCentre = ''; })
+      .catch(e => { console.warn('Région non chargée', r, e); this.regions.delete(r); });
+  }
+  private poserRegion(r: string, d: Record<string, DecorPlace[]>) {
+    for (const m of this.wg.world.maps) if (m.r === r) m.decor = d[m.tag] ?? [];
+    this.regions.set(r, 'pret');
   }
   private static queue(scene: Phaser.Scene, m: WorldMapEntry, dir: string, prefix: string) {
     scene.load.image(WorldView.key(prefix, `sol_${m.tag}`), v(`${dir}/sol_${m.tag}.webp`));
@@ -114,7 +143,7 @@ export class WorldView {
   /** Après preload : pose le ciel et les cartes déjà chargées. */
   create() {
     if (this.scene.textures.exists(this.k('ciel'))) this.sky = this.scene.add.image(0, 0, this.k('ciel')).setScrollFactor(0).setDepth(SOL - 1e7).setTint(this.tint);
-    for (const m of this.wg.world.maps) if (this.texturesReady(m)) { this.slots.get(m.tag)!.state = 'loading'; this.build(m); }
+    for (const m of this.wg.world.maps) if (this.texturesReady(m) && this.regionPrete(m)) { this.slots.get(m.tag)!.state = 'loading'; this.build(m); }
     this.poserBrume();
     this.poserRivage();
     this.pump(Infinity);   // au lancement, tout de suite (l'écran de chargement couvre)
@@ -207,6 +236,7 @@ export class WorldView {
       const veut = lie ? d <= UNLOAD_RING || seen(m, 400) : here.inside ? m.tag === here.tag : d <= LOAD_RING || seen(m, 400);
       const jette = lie ? d > UNLOAD_RING + 1 && !seen(m, 1200) : here.inside ? m.tag !== here.tag : d > UNLOAD_RING && !seen(m, 1200);
       if (veut && s.state === 'none') {
+        if (!this.regionPrete(m)) continue;   // 3B : le décor de sa région arrive, la carte se posera au prochain tour
         s.state = 'loading';
         if (this.texturesReady(m)) this.build(m);
         else this.fetchMap(m);
@@ -261,6 +291,8 @@ export class WorldView {
         if (d <= OUBLI_RING || this.slots.get(m.tag)!.state !== 'none' || derriere.has(m.tag)) for (const n of this.fichiers(m)) gardes.add(n);
       }
       for (const n of [...this.blobs.keys()]) if (!gardes.has(n)) this.blobs.delete(n);
+      // 3B : les régions voisines se téléchargent dès qu'on est à 3 cartes de leur bord (et celles derrière les portes proches)
+      for (const m of this.wg.world.maps) if (m.r && !this.regions.has(m.r) && (derriere.has(m.tag) || !m.inside && !here.inside && ring(m, here.x, here.y) <= OUBLI_RING)) this.chargerRegion(m.r);
       this.couronne = here.inside ? [] : this.wg.world.maps.filter(m => !m.inside && ring(m, here.x, here.y) === PREFETCH_RING);
     }
     if (this.fetching.size) return;
@@ -310,7 +342,7 @@ export class WorldView {
       if (!voulue) continue;
       const s = this.slots.get(m.tag)!;
       n++;
-      if (s.state === 'ready' && s.next >= m.decor.length) ok++;
+      if (this.regionPrete(m) && s.state === 'ready' && s.next >= m.decor.length) ok++;
     }
     return { ok: ok === n, p: n ? ok / n : 1 };
   }
@@ -330,7 +362,7 @@ export class WorldView {
     if (this.texturesReady(u.m)) this.build(u.m);
   }
   private texturesReady(m: WorldMapEntry) {
-    return this.scene.textures.exists(this.k(`sol_${m.tag}`)) && decors(m).every(d => this.scene.textures.exists(this.k(d)))
+    return (!m.r || this.regions.get(m.r) === 'pret') && this.scene.textures.exists(this.k(`sol_${m.tag}`)) && decors(m).every(d => this.scene.textures.exists(this.k(d)))
       && CALQUES.every(c => !m[c] || this.scene.textures.exists(this.k(`${c}_${m.tag}`)));
   }
   private onFile(key: string) {
@@ -682,7 +714,7 @@ export class WorldView {
 /** Distance en cartes (anneau) entre une carte et (x, y). */
 /** Atlas de décor d'une carte : le sien, ou les pages communes du décor partagé (world_export.py PARTAGE=1). */
 /** Atlas de décor d'une carte (aucun pour une carte sans décor : couloir d'un donjon). */
-function decors(m: WorldMapEntry) { return m.pages ? m.pages.map(p => `decor_p${p}`) : m.decor.length ? [`decor_${m.tag}`] : []; }
+function decors(m: WorldMapEntry) { return m.pages ? m.pages.map(p => `decor_p${p}`) : m.decor?.length ? [`decor_${m.tag}`] : []; }
 function ring(m: { x: number; y: number }, x: number, y: number) { return Math.max(Math.abs(m.x - x), Math.abs(m.y - y)); }
 
 /** Produit de deux teintes 0xRRGGBB, et mélange de a vers b (f de 0 à 1). */

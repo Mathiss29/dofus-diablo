@@ -368,6 +368,8 @@ export class World {
 
   /** Contenu « essai » (0.4 : Amakna, Wabbits, Cania sud, Moon, leurs donjons) : public dès que V04_PUBLIC est vrai, sinon partie de test. */
   get essaiOuvert(): boolean { return V04_PUBLIC || !!this.opts.test; }
+  /** Régions de la 0.6 (Abraknydes, Koalaks, Cania, Porcos, Bourgade) : publiques dès que V06_PUBLIC est vrai, sinon partie de test. */
+  get v06Ouvert(): boolean { return V06_PUBLIC || !!this.opts.test; }
 
   constructor(readonly opts: WorldOptions) {
     this.coffre = opts.coffre ?? coffreVide();
@@ -384,6 +386,10 @@ export class World {
     if (!V04_PUBLIC && !opts.test && sz && Object.values(sz).some(s => s.essai))
       this.zone = { ...this.zone, open: { ...this.zone.open!, subareas: Object.fromEntries(Object.entries(sz).filter(([, s]) => !s.essai)),
         checkpoints: this.zone.open!.checkpoints.filter(c => !sz[String(c.sub)]?.essai) } };   // Zaaps d'Amakna (0.4 suite 7A) : partie de test
+    const sz6 = this.zone.open?.subareas;   // 0.6 cachée : ses sous-zones et ses Zaaps seulement en partie de test
+    if (!V06_PUBLIC && !opts.test && sz6 && Object.values(sz6).some(s => s.v06))
+      this.zone = { ...this.zone, open: { ...this.zone.open!, subareas: Object.fromEntries(Object.entries(sz6).filter(([, s]) => !s.v06)),
+        checkpoints: this.zone.open!.checkpoints.filter(c => !sz6[String(c.sub)]?.v06) } };
     this.map = opts.map;
     this.test = opts.test ? { ...opts.test } : null;
     let start = this.map.nearestFree(GridMap.OFFSET_Y, GridMap.OFFSET_Y);
@@ -416,6 +422,7 @@ export class World {
       // sac vide au départ (Mathis, 2026-11-06) : l'équipement vient du tutoriel (panoplie de l'Intrépide, Arc de Chasse du Crâ)
     }
     if (open) this.ouvrirCouloirs();
+    if (open && this.v06Ouvert) this.worldGrid?.ouvrirV06();   // 0.6 cachée : ses régions seulement en partie de test
     if (open) { this.buildPortes(); this.buildRecoltes(); this.buildPostes(); }
     if (open?.guerre && this.essaiOuvert && this.map instanceof WorldGrid && open.guerre.champs.every(c => this.map instanceof WorldGrid && this.map.mapByTag(c.tag))) this.guerre = new Guerre(this, open.guerre.champs);
     if (open && this.map instanceof WorldGrid && opts.zone === 'astrub' && !opts.partieServeur) this.vivant = new MondeVivant(this);
@@ -714,6 +721,7 @@ export class World {
     for (const d of this.zone.open!.portes ?? []) {
       if (d.v03 && !this.player.v03) continue;
       if (wg.mapByTag(d.a[0])?.essai && !this.essaiOuvert) continue;   // 0.4 cachée : portes d'Amakna en partie de test
+      if ((wg.mapByTag(d.a[0])?.v06 || wg.mapByTag(d.b[0])?.v06) && !this.v06Ouvert) continue;   // 0.6 cachée (bateau de Frigost…)
       const dj = ancienne.get(d.b[0]);
       if (ancienne.has(d.a[0]) || chaine.has(d.a[0])) continue;
       if (dj && !d.zone && wg.mapByTag(d.a[0])) {
@@ -2444,6 +2452,7 @@ export class World {
     for (const [tag, cell, item, gfx, dx, dy, miroir] of l) {
       if (!wg.mapByTag(tag) || !R.ressources[item]) continue;
       if (wg.mapByTag(tag)!.essai && !this.essaiOuvert) continue;   // 0.4 cachée : récoltes d'Amakna en partie de test
+      if (wg.mapByTag(tag)!.v06 && !this.v06Ouvert) continue;
       const q = wg.cellToWorld(wg.cellOf(tag, cell));
       this.recoltes.push({ id: this.nextId++, tag, x: q.x, y: q.y, item, dore: this.rng.next() < RECOLTE.dore, repousse: 0,
         gfx, dessin: dx || dy ? { x: dx!, y: dy! } : undefined, miroir: miroir === 1 });

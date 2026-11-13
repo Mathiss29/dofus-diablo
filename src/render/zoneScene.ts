@@ -57,6 +57,7 @@ import { SIGNAL_DUREE } from '../sim/carte';
 import { Windows } from './windows';
 import { mmss } from './forgeVue';
 import { Chargement, type Arrivee } from './chargement';
+import VOYAGE from '../data/voyage.json';
 import { inviterDiscord } from './inviteDiscord';
 import { Parcours } from './parcours';
 import { MesureFluidite } from './fluidite';
@@ -122,7 +123,7 @@ export class ZoneScene extends Phaser.Scene {
   private snapCam = false;
   /** Rideau des arrivées (choix 1A + 5A) : 'sortie' = fondu au noir devant une porte ; 'attente' = noir tant que la carte
    *  d'arrivée et ses voisines ne sont pas posées (la partie est en pause). Au-delà de RIDEAU_ECRAN s, l'écran de chargement s'affiche. */
-  private rideau: { etat: 'sortie' | 'attente'; t: number; ecran: boolean; arrivee?: boolean } | null = null;
+  private rideau: { etat: 'sortie' | 'attente'; t: number; ecran: boolean; arrivee?: boolean; /** écran de voyage montré au moins ce temps (s) */ min?: number } | null = null;
   /** Changement de zone en cours (Entrées 14A) : fondu au noir de 0,2 s, la partie s'arrête, puis la scène repart. */
   private depart = false;
   /** Comment on arrive dans cette zone : écran de voyage (15A), noir de porte (Havre-Sac, 14A) ou logo. */
@@ -1615,7 +1616,7 @@ export class ZoneScene extends Phaser.Scene {
         }   // fondu de sortie (0,2 s), le perso attend devant la porte
         // portail vers une autre zone : on sauve le perso puis la partie repart là-bas (même emplacement)
         case 'changeZone': this.partir(e); return;
-        case 'portal': this.attendreCartes(); this.snapCam = true; break;   // noir, la caméra saute avec le joueur
+        case 'portal': this.attendreCartes(); this.snapCam = true; this.voyageBateau(e.nom); break;   // noir, la caméra saute avec le joueur
       }
     }
   }
@@ -1650,6 +1651,18 @@ export class ZoneScene extends Phaser.Scene {
     this.rideau = { etat: 'attente', t: 0, ecran: false };
     this.worldView.presse = true;
   }
+  /** Traversée en bateau vers une île du même monde (0.6, 3D : Port de Madrestam <-> Port de givre) : écran de voyage
+   *  (illustration, nom, niveaux, astuce) au lieu du noir, le temps que la région d'arrivée se charge, au moins VOYAGE_MIN s. */
+  private voyageBateau(nom: string) {
+    const r = this.rideau, d = this.world.zone.open?.portes?.find(p => p.nom === nom && p.voyage);
+    if (!r || !d?.voyage) return;
+    const ici = this.world.worldGrid?.mapAt(this.world.player.x, this.world.player.y)?.tag, versB = ici === d.b[0];
+    const zone = d.voyage[versB ? 1 : 0], z = (VOYAGE.zones as Record<string, { nom?: string }>)[zone];
+    r.ecran = true; r.min = ZoneScene.VOYAGE_MIN;
+    Chargement.montrer({ mode: 'voyage', zone, nom: z?.nom ?? nom });
+  }
+  /** Durée minimale de l'écran de voyage d'un bateau (s) : on a le temps de lire où l'on va. */
+  static readonly VOYAGE_MIN = 2.2;
   /** Lève le rideau quand la carte du joueur et ses voisines sont posées (fondu d'entrée 0,3 s). */
   private leverRideau(dt: number) {
     const r = this.rideau, wv = this.worldView;
@@ -1662,7 +1675,7 @@ export class ZoneScene extends Phaser.Scene {
     const p = this.world.player, etat = wv.pret(p.x, p.y);
     if (!r.ecran && r.t > ZoneScene.RIDEAU_ECRAN && !etat.ok) { r.ecran = true; Chargement.montrer(); }
     if (r.ecran) Chargement.monde(etat.p);
-    if (!etat.ok && r.t < ZoneScene.RIDEAU_MAX) return;
+    if ((!etat.ok || r.t < (r.min ?? 0)) && r.t < ZoneScene.RIDEAU_MAX) return;
     if (r.ecran) Chargement.cacher();
     this.cameras.main.fadeIn(r.ecran ? 400 : 300, 0, 0, 0);
     // 5A : l'interface (HUD, bandeau, mini-carte) apparaît sous le même fondu que le monde, jamais sur un écran vide

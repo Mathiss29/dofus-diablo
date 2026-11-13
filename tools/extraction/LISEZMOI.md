@@ -657,3 +657,29 @@ Ville vivante (maquette Ville 5F, 8 nov. 2026) :
   monster_planche.py 5460 pnj_responsable <Bones du PC> public/assets/sprites`. `build_char.py` lit maintenant aussi les nœuds `colorGray_N_…`
   (en minuscules) : sans ça, ce squelette restait gris.
 - Teintures (`src/data/teintures.json`) : couleurs de création des 19 classes (table breeds, maleColors 1 à 5).
+
+## Monde chargé par régions (0.6, choix 3B, 13 nov. 2026)
+
+- Le décor des cartes (97 % de `monde.json`) est rangé par région dans `region_<clé>.json` (`{tag: [décor]}`), la région étant celle de
+  la sous-zone dans `zones.json` (Astrub sinon). `monde.json` garde la grille, les cases marchables et la liste des cartes (`r` = région,
+  `regions` = liste) : Astrub + Amakna passent de 22 Mo à 1,5 Mo. Le jeu lit au lancement la région du départ, puis celles à 3 cartes
+  ou derrière une porte proche (`render/worldView.ts`, `regionPrete`) ; la partie (sim) n'a pas besoin du décor.
+- `python3 regions_monde.py joindre public/assets/mondes/astrub` AVANT tout outil qui lit ou écrit le décor (`monde_continent.py fusion`,
+  `batiments.py`, `fige.py`, `decor_par_carte.py`, `carte_monde.py`, `survols.py`, `raccord_doubles.py`…), puis
+  `python3 regions_monde.py scinder public/assets/mondes/astrub src/data/zones.json`. Les tests lisent le décor par `tests/monde.ts`.
+
+## Régions de la 0.6 (ligne « 0.6 : » 1A-1E, 13 nov. 2026)
+
+- `regions06/liste.json` : les 838 cartes du dehors (worldMap 1, sans les copies en (0, 0) ; coordonnée doublée = carte aux bits 23-24
+  de `m_flags` les plus hauts) de Forêt des Abraknydes (33, 168), Montagne des Koalaks (235, 233, 234, 253, 231), Plaines de Cania
+  (70, 525, 521), Porcos et Dragoeufs (11, 315) et Frigost (601, 600). Les 1 243 cartes officielles comptent aussi 284 intérieurs
+  (worldMap -1 : maisons, Souterrains des Porcos et des Dragoeufs) et les copies, pas encore exportés.
+- Cartes : bundles `mapdata_assets_world_N` de `cache-dofus/chemin200/cartes.0*.tar`, `map_dump.py`. Textures : `cache-dofus/astrub/textures-1x`
+  sorties en `<gfx>.png` (TEXDIR). Export comme Amakna : `PARTAGE=1 FILS=4 TEXDIR=… CACHE_SOLS=… world_export.py`, `bords_fondu.py`,
+  `COURANTE=1 batiments.py`, `decor_par_carte.py`, puis `regions_monde.py joindre`, `monde_continent.py fusion`, `v06: 1` sur les
+  nouvelles cartes, `regions_monde.py scinder`.
+- `regions06/sous_zones.py <tables> <fr.bin>` : sous-zones `v06: true` (monstres déjà en jeu seulement ; les autres sont listés dans
+  `regions06/monstres_manquants.json`, squelettes sur le PC de Mathis). Cartes `v06: 1` : marchables seulement si `V06_PUBLIC` ou en partie
+  de test (`WorldGrid.ouvrirV06`), comme leurs portes, récoltes et Zaaps.
+- Frigost (3D) : même monde, bateau du Port de Madrestam (porte `voyage: [arrivée en a, arrivée en b]`) : écran de voyage de
+  `render/chargement.ts` (`src/data/voyage.json`, illustration `public/assets/voyage/<clé>.webp`) au moins 2,2 s, le temps que la région se charge.

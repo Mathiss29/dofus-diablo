@@ -1,12 +1,13 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { BOUTIQUES, GAME_DATA, ITEMS, QUETES } from '../src/sim/data';
-import { WorldGrid, type WorldData } from '../src/sim/gridmap';
+import { WorldGrid } from '../src/sim/gridmap';
 import { NO_INPUT } from '../src/sim/input';
 import { World } from '../src/sim/world';
 import { ISO } from '../src/sim/iso';
+import { mondeComplet } from './monde';
 
-const astrub = JSON.parse(readFileSync(new URL('../public/assets/mondes/astrub/monde.json', import.meta.url), 'utf8')) as WorldData;
+const astrub = mondeComplet('astrub');
 const vide = { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} };
 const monde = () => new World({ data: GAME_DATA, zone: 'astrub', map: new WorldGrid(astrub), seed: 3, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, reprise: vide, groupesPartout: true });
 const porte = (w: World, nom: string) => w.portes.find(p => p.nom === nom)!;

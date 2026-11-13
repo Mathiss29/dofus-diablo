@@ -26,14 +26,17 @@ function passerPortail(w: World, clic = true) {
 describe('Astrub (0.2a)', () => {
   it('359 cartes du dehors + les 642 d\'Amakna, les 58 de l\'île des Wabbits et les 169 de Cania sud et de Moon (0.4, sur la grille du continent), chacune avec des cases marchables', () => {
     const wg = new WorldGrid(astrub);
-    expect(astrub.maps.filter(m => !m.inside).length).toBe(359 + 642 + 58 + 5 + 169);
+    expect(astrub.maps.filter(m => !m.inside).length).toBe(359 + 642 + 58 + 5 + 169 + 838);
+    // 0.6 (cachée) : les 838 cartes du dehors des 5 régions, fermées hors partie de test (tools/extraction/regions06)
+    expect(astrub.maps.filter(m => m.v06).length).toBe(838);
+    expect(astrub.maps.filter(m => m.v06).every(m => wg.freeByMap.get(m.tag)!.length === 0)).toBe(true);
     // Amakna (0.4 cachée) : dessiné, mais fermé hors partie de test ; île des Wabbits : 58 cartes + 5 petites cartes de ses passerelles
     // + les 8 salles du Château d'Amakna (0.4 suite : 6A, intérieurs aussi en essai) et, pour les donjons en couloirs (5B),
     // 36 vraies salles et leurs couloirs (36 couloirs + 38 petites cartes sans image sous le creux des couloirs ; 4 de plus sous la Grange d'Astrub)
     expect(astrub.maps.filter(m => m.essai && !m.inside).length).toBe(642 + 58 + 5 + 169);
     expect(astrub.maps.filter(m => m.essai && m.inside).length).toBe(8 + 36 + 36 + 38 + 4 + 1);   // + la salle au masque du Village Kanniboul (« Kanniboul : » une seule salle)
     expect(astrub.maps.filter(m => m.essai).every(m => wg.freeByMap.get(m.tag)!.length === 0)).toBe(true);
-    wg.ouvrirEssai();
+    wg.ouvrirEssai(); wg.ouvrirV06();
     expect(astrub.origin).toEqual([-88, -93]);
     // (les couloirs des donjons en couloirs ne s'ouvrent qu'en partie de test : tests/couloirs.test.ts)
     for (const m of astrub.maps) if (!m.dessus) expect(wg.freeByMap.get(m.tag)!.length, m.tag).toBeGreaterThan(20);

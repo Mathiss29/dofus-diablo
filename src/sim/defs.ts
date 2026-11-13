@@ -268,6 +268,8 @@ export interface SubAreaDef {
   name: string; level: number; monsters: string[]; groupsPerMap: number; groupSize: [number, number];
   /** Version en essai (0.4 : Amakna) : la sous-zone n'existe qu'en partie de test (World), comme ses cartes (WorldGrid.ouvrirEssai). */
   essai?: boolean;
+  /** Sous-zone de la 0.6 : n'existe que si la 0.6 est ouverte (V06_PUBLIC ou partie de test), comme ses cartes (WorldGrid.ouvrirV06). */
+  v06?: boolean;
   /** Région affichée (bandeau, haut de l'écran) quand ce n'est pas le nom de la zone : « Amakna » dans le monde d'Astrub. */
   region?: string;
   /** « Wabbits : 12A » : la nuit (heure du PC), groupes de cette taille (l'îlot des Tombeaux se réveille). */
@@ -290,6 +292,9 @@ export interface PorteDef { a: [string, number]; b: [string, number]; nom: strin
   cle?: string;
   /** Traversée payante (« Wabbits : 2C », bateau du Capitaine Lily) : kamas pris en passant de a vers b ; le retour est gratuit. */
   prix?: number;
+  /** Voyage en bateau vers une île (0.6, 3D : Frigost) : écran de voyage (render/chargement.ts, clés de src/data/voyage.json)
+   *  en arrivant en a, puis en arrivant en b. Les deux bouts sont dans le même monde : pas de changement de zone. */
+  voyage?: [string, string];
   /** Porte en plein air sans bâtiment (bateau sans navire dessiné, route vers une région pas encore exportée) : paillasson aux deux bouts. */
   marque?: boolean;
   /** Portail vers une autre zone (Incarnam <-> Astrub) : b est une case de cette zone-là. */

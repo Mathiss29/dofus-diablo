@@ -17506,7 +17506,7 @@
     ]
    }
   ],
-  "xp": 20,
+  "xp": 99,
   "level": 62,
   "res": {
    "terre": -8,
@@ -18132,7 +18132,7 @@
     ]
    }
   ],
-  "xp": 20,
+  "xp": 99,
   "level": 62,
   "res": {
    "terre": 12,
@@ -19607,7 +19607,7 @@
   "recover": 0.65,
   "look": "mulou",
   "color": "#d8d0b8",
-  "xp": 20,
+  "xp": 90,
   "spells": [
    {
     "id": 254,
@@ -22511,7 +22511,7 @@
   "recover": 0.65,
   "look": "dragodinde_amande_sauvage",
   "color": "#d8d0b8",
-  "xp": 20,
+  "xp": 99,
   "spells": [
    {
     "id": 3402,
@@ -22587,7 +22587,7 @@
   "recover": 0.65,
   "look": "dragodinde_rousse_sauvage",
   "color": "#d8d0b8",
-  "xp": 20,
+  "xp": 99,
   "spells": [
    {
     "id": 269,
@@ -26010,7 +26010,7 @@
     ]
    }
   ],
-  "xp": 80,
+  "xp": 396,
   "level": 62,
   "res": {
    "terre": 2,
@@ -26950,7 +26950,7 @@
   "recover": 0.65,
   "look": "archi_mulou",
   "color": "#ffd27a",
-  "xp": 80,
+  "xp": 360,
   "spells": [
    {
     "id": 254,
@@ -28982,7 +28982,7 @@
   "recover": 0.65,
   "look": "archi_dragodinde_amande_sauvage",
   "color": "#ffd27a",
-  "xp": 67,
+  "xp": 332,
   "spells": [
    {
     "id": 3402,
@@ -29062,7 +29062,7 @@
   "recover": 0.65,
   "look": "archi_dragodinde_rousse_sauvage",
   "color": "#ffd27a",
-  "xp": 77,
+  "xp": 381,
   "spells": [
    {
     "id": 269,
