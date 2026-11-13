@@ -14133,6 +14133,30 @@
      "carte": "0_0",
      "case": 299
     }
+   ],
+   "ateliers": [
+    {
+     "nom": "Établi des artisans",
+     "metiers": [
+      "paysan",
+      "bucheron",
+      "mineur",
+      "alchimiste",
+      "pecheur",
+      "chasseur",
+      "bricoleur",
+      "bijoutier",
+      "cordonnier",
+      "tailleur",
+      "forgeron",
+      "sculpteur",
+      "faconneur"
+     ],
+     "cartes": [
+      "0_0"
+     ],
+     "pres": "etabli"
+    }
    ]
   }
  },

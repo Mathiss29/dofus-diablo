@@ -169,7 +169,7 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
   p.tombe = tb && typeof tb.zone === 'string' && Number.isFinite(tb.x) && Number.isFinite(tb.y) ? { zone: tb.zone, x: tb.x, y: tb.y } : null;
   if (Array.isArray(s.lieuxVus)) p.lieuxVus = [...new Set([...s.lieuxVus.filter(k => typeof k === 'string'), ...p.lieuxVus])];
   const c = s.cleDonjon;
-  if (c && typeof c.nom === 'string' && c.reste > 0) p.cleDonjon = { nom: c.nom, vague: Math.max(1, Math.floor(c.vague) || 1), reste: c.reste };
+  if (c && typeof c.nom === 'string' && c.reste > 0) p.cleDonjon = { nom: c.nom, vague: Math.max(1, Math.floor(c.vague) || 1), reste: c.reste, ...(c.renforcee === true ? { renforcee: true } : {}) };
   const g = s.guerre;
   if (g && typeof g === 'object') {
     const n = (v: unknown) => Math.max(0, Math.floor(Number(v)) || 0);

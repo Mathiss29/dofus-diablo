@@ -371,6 +371,8 @@ export interface AtelierDef {
   nom: string; metiers: string[]; cartes: string[];
   /** Machines officielles (Métiers UI 3A, tools/contenu/ateliers_postes.py) : [carte, case, gfx, décalage x, y du dessin]. */
   postes?: [string, number, number, number, number][];
+  /** « Métiers : » 9B : poste posé à côté de l'établi de forgemagie (Havre-Sac : un poste pour tous les métiers). */
+  pres?: 'etabli';
 }
 export interface ZoneDef {
   name: string; level: number;

@@ -131,6 +131,8 @@ export class Player extends Entity {
   carteIci: string | null = null;
   /** Clé d'un donjon encore valable (maquette « Donjons en vagues » 14A) : on y revient à la vague atteinte. */
   cleDonjon: CleDonjon | null = null;
+  /** « Métiers : » 9C : clé renforcée prise à l'entrée de ce donjon, en attendant l'arène. */
+  renfortDonjon: string | null = null;
   /** Guerre des Cawottes (0.4) : attaques gagnées, en or, champs parfaits, Kiafin rattrapés, records par champ. */
   guerre: EtatGuerre = guerreVide();
   /** 0.5 « monde vivant » : boss du monde vaincus (titres), apparitions récompensées, invasions, Éclats, événements. */
