@@ -26,6 +26,8 @@ export interface Effets61 {
   /** Hit : soins reçus par la cible réduits de n (part) pendant t s (Flèche d'Expiation, Hécatombe) ; dommages × k sur un ennemi
    *  qui a un bouclier (Flèche Perforante). */
   antiSoin?: { n: number; t: number }; vsBouclier?: number;
+  /** Aéropique (Osamodas) : visée sur une de ses bêtes, elle repousse de n cases tout ce qui la touche. */
+  aeropique?: { cases: number };
   /** Esprit Glouton (Osamodas) : la recharge (s) ne part qu'à la mort du Gobgob. */
   glouton?: { recharge: number };
   /** Sacrifice (Sacrieur) : pendant t s, encaisse à la place des alliés à `rayon` cases ; les Épées de la zone lui rendent `epees` de leur vie. */
@@ -152,6 +154,10 @@ export function impact61(p: Player, id: string, d: SpellDef, tx: number, ty: num
       e.precip.push({ qid, bete: !q, t: P.t * 2, vite: P.vite, lent: P.lent, t0: P.t });
       statut(world, q ? q.x : b!.x, q ? q.y : b!.y, 'Précipitation', '#5aa8ff');
     }
+  }
+  if (s.aeropique) {   // sur une bête du lanceur : elle repousse tout ce qui est à son contact
+    const b = world.betes.find(x => !x.dead && x.owner === p && Math.hypot(x.x - tx, x.y - ty) <= x.radius + CASE);
+    if (b && world.repousser(b.x, b.y, b.radius + CASE, s.aeropique.cases * 342)) statut(world, b.x, b.y, 'Aéropique', '#9fe0c8');
   }
   if (s.emprise) {
     const m = cible(world, tx, ty);

@@ -4114,6 +4114,24 @@
   "m2364": {},
   "m2365": {
    "target": []
+  },
+  "aeropique": {
+   "target": [
+    {
+     "gfx": 9677
+    }
+   ]
+  },
+  "discipline": {
+   "target": [
+    {
+     "gfx": 8708,
+     "bg": true
+    },
+    {
+     "gfx": 8709
+    }
+   ]
   }
  },
  "gfx": {

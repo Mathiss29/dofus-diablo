@@ -120,8 +120,8 @@ describe('Sorts 61-90 du Iop, du Crâ, de l\'Osamodas et du Sacrieur (0.6, ligne
     expect(a - m.hp).toBeGreaterThan(plein * 1.5);
   });
 
-  it('Sorts 25-60 de l\'Iop et du Crâ : tous jouables en partie de test (sauf la Balise de Survie, qui attend son dessin officiel)', () => {
-    for (const cls of ['iop', 'cra']) {
+  it('Sorts 25-60 de l\'Iop, du Crâ et de l\'Osamodas : tous jouables en partie de test (sauf la Balise de Survie, qui attend son dessin officiel)', () => {
+    for (const cls of ['iop', 'cra', 'osamodas']) {
       const C = GAME_DATA.classes[cls], joues = Object.values(C.spells).map(d => d.dofusId);
       for (const s of SORTS[C.sorts].flatMap(p => p)) {
         if (s.grades[0].niv > 90 || s.id === 32474) continue;
@@ -152,5 +152,18 @@ describe('Sorts 61-90 du Iop, du Crâ, de l\'Osamodas et du Sacrieur (0.6, ligne
     expect(avantImpact61(p, 'oeil_pour_oeil', d, p.x, p.y, 1, w)).toBeCloseTo(1.8);
     idle(w, 3.2);
     expect(avantImpact61(p, 'oeil_pour_oeil', d, p.x, p.y, 1, w)).toBe(1);
+  });
+
+  it('Osamodas : Aéropique fonce, frappe en Air et repousse ; Discipline attire, ralentit et frappe', () => {
+    const w = monde('osamodas'), p = w.player, m = monstre(w, 140); m.stun = 99;
+    expect(p.knows('aeropique') && p.knows('discipline')).toBe(true);
+    const x0 = p.x, h = m.hp, mx = m.x;
+    lancer(w, 'aeropique', { x: m.x, y: m.y }); idle(w, 1);
+    expect(p.x).toBeGreaterThan(x0 + 40); expect(m.hp).toBeLessThan(h);
+    expect(m.x).toBeGreaterThan(mx + 80);
+    const n = monstre(w, -180), d0 = Math.hypot(n.x - p.x, n.y - p.y), hn = n.hp;
+    lancer(w, 'discipline', { x: n.x, y: n.y }); idle(w, 1);
+    expect(n.hp).toBeLessThan(hn);
+    expect(Math.hypot(n.x - p.x, n.y - p.y)).toBeLessThan(d0 - 60);
   });
 });
