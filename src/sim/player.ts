@@ -25,7 +25,7 @@ import { CONSO, ELIXIRS, REPAS } from './consommables';
 import { ARTISANS, BONUS_FAB, BONUS_RECOLTE, PAR_PALIER_FAB, paliers } from './artisans';
 import { coutPoint, coutTotal, fuiteFactor, pointsAchetables, prospectionDeChance, soinRecu, tackleSlow, tacleOf, vitesseAgilite } from './caracs';
 import { CASE, TOUR } from './monster';
-import { avantImpact61, dommages61, hit61, impact61, maj61, redirige61, soins61, type Etat61 } from './sorts61';
+import { avantImpact61, dommages61, echangeBalise61, hit61, viseBalise61, impact61, maj61, redirige61, soins61, type Etat61 } from './sorts61';
 import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type SortGrade, type SortOfficiel } from './sorts';
 import { porteeSort } from './apercu';
 import { aimanter, alchiRhetorique, apresCoupEniripsa, envol, impactEniripsa, majEniripsa } from './eniripsa';
@@ -955,6 +955,7 @@ export class Player extends Entity {
     if (this.cls.lance && !def.pm) this.incendies = id === 'lance_incendie' ? this.incendies + 1 : 0;   // Lance ardente : d'affilée
     if (def.lance?.rappel && this.lance) this.rappelerLance(world);   // Charge Héroïque, Talon d'Argile, Kyrja : la Lance revient d'abord
     const { x: tx, y: ty } = this.landing(id, aim, world);
+    if (!def.invoque && !def.move) viseBalise61(this, aim, world);
     // Rage pleine : ce sort est renforcé (pas les déplacements)
     const boosted = this.rageFull && def.move?.kind !== 'leap' && this.cls.rage.mode !== 'eveil';   // l'Éveil ne renforce pas les sorts
     if (boosted) { this.rage = 0; world.emit({ k: 'rageSpent', spell: id }); if (this.pcv('pc-eniripsa-J')) this.rage = this.cls.rage.max * this.pcv('pc-eniripsa-J') / 100; }   // Verbe intarissable
@@ -1343,6 +1344,7 @@ export class Player extends Entity {
       if (s.id === 'arme') this.frenesie(hits, world);
       this.apresImpactClasse(s.id, s.sx, s.sy, s.tx, s.ty, hit, s.gm, size, world);
       if (d.e61) impact61(this, s.id, d, s.tx, s.ty, world);
+      if (this.e61?.baliseVisee) echangeBalise61(this, world);   // Balise de Survie frappée : on échange de place avec elle
       const pt = hz.shape === 'point';
       if (d.self && surL && hz.shape === 'circle') size = hz.radius * area + zb;   // Forgelance Désarmé : l'effet se voit autour de la Lance
       if (hz.shape !== 'projectile') world.emit({ k: 'spell', fx: pt ? 'burst' : d.fx, id: s.id, x: pt ? s.tx : surL ? cx : this.x, y: pt ? s.ty : surL ? cy : this.y, cx: this.x, cy: this.y, facing: this.facing, size,

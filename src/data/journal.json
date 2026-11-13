@@ -2116,7 +2116,7 @@
           {
             "titre": "12 sorts Iop et Crâ (25-60)",
             "phrase": "Vitalité, Souffle, Épée de Iop, Tempête de Puissance, Œil de Taupe, Tirs Puissants et les autres arrivent.",
-            "details": "Seule la Balise de Survie du Crâ attend encore son dessin officiel. En partie de test jusqu'à la 0.6.",
+            "details": "Avec la Balise de Survie du Crâ, tous les sorts jusqu'au niveau 90 sont là. En partie de test jusqu'à la 0.6.",
             "icone": "sorts",
             "etiquettes": ["Partie de test", "Touche S"]
           },
@@ -2124,6 +2124,13 @@
             "titre": "Aéropique et Discipline pour l'Osamodas",
             "phrase": "Aéropique fonce sur la cible et la repousse, Discipline la ralentit et la tire vers toi.",
             "details": "Sur une de tes bêtes, Aéropique repousse tout ce qui la touche. En partie de test jusqu'à la 0.6.",
+            "icone": "sorts",
+            "etiquettes": ["Partie de test", "Touche S"]
+          },
+          {
+            "titre": "La Balise de Survie du Crâ",
+            "phrase": "Une balise posée 6 s soigne les alliés qui la voient ; tire dessus pour échanger de place.",
+            "details": "Elle soigne 7 % des PV à la pose puis 3 s après. En partie de test jusqu'à la 0.6.",
             "icone": "sorts",
             "etiquettes": ["Partie de test", "Touche S"]
           }

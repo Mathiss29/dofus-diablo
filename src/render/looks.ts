@@ -140,6 +140,7 @@ const CRA_MAP: Record<string, AnimSlice> = {
   oeil_taupe: { anim: 'AnimAttaque914', from: 0, to: 0.6 },
   tirs_puissants: { anim: 'AnimAttaque902', from: 0, to: 0.6 },
   oeil_pour_oeil: { anim: 'AnimAttaque902', from: 0, to: 0.6 },
+  balise_survie: { anim: 'AnimAttaque904', from: 0, to: 0.7 },
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };
@@ -360,6 +361,7 @@ export const LOOKS: Record<string, Look> = {
   enu_pelle: { atlas: 'enu_pelle', scale: 0.5, map: MONSTER_MAP(25 / 37, 'AnimAttaque0', { 0: 25 / 37 }), height: 80, multi: true },
   enu_coffre: { atlas: 'enu_coffre', scale: 0.45, map: { ...MONSTER_MAP(21 / 33, 'AnimAttaque0', { 0: 21 / 33, 1: 9 / 32 }), ouvre: { anim: 'AnimAttaque0' } }, height: 70, multi: true },   // ouvre : interface du coffre 7D
   // Bêtes de l'Eniripsa (monster_planche.py, os 7599 SCALE 2,5, os 7600 et 7601) : Lapino, Fées, Feux Follets
+  cra_balise: { atlas: 'cra_balise', scale: 0.55, map: { ...MONSTER_MAP(7 / 30), soin: { anim: 'AnimAttaque0', from: 0, to: 1 } }, height: 90, multi: true },
   eni_lapino: { atlas: 'eni_lapino', scale: 0.55, map: MONSTER_MAP(13 / 37, 'AnimAttaque0', { 0: 13 / 37, 1: 10 / 29, 2: 28 / 31 }), height: 80, multi: true },
   eni_fee: { atlas: 'eni_fee', scale: 0.45, map: MONSTER_MAP(23 / 37), height: 60, multi: true },
   eni_feu_follet: { atlas: 'eni_feu_follet', scale: 0.45, map: MONSTER_MAP(23 / 37), height: 60, multi: true },

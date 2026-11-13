@@ -1534,5 +1534,23 @@
    "infecte": true
   },
   "_doc": "Groute (Puissance Sylvestre, maquette Sadida 5A) : Arbre Feuillu qui se bat sans bouger ; Rejet Sylvestre (Infecte, repousse) et Photosynthèse (soin) officiels ; Détoxication pas jouée."
+ },
+ "balise_survie": {
+  "dofusId": 8348,
+  "name": "Balise de Survie",
+  "look": 8152,
+  "atlas": "cra_balise",
+  "rang": 1,
+  "element": "neutre",
+  "suivant": null,
+  "pv": 0.25,
+  "sorts": [],
+  "passif": true,
+  "balise": {
+   "soin": 0.07,
+   "periode": 3,
+   "portee": 10
+  },
+  "_doc": "Balise de Survie du Crâ (sort 32474, monstre 8348, os 8152) : immobile 6 s (2 tours) ; soigne 7 % des PV max (effet officiel 1109) des alliés qu'elle voit, à la pose puis 3 s après ; le Crâ qui la frappe en la voyant échange de place avec elle."
  }
 }

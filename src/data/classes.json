@@ -1434,6 +1434,31 @@
      }
     },
     "v06": true
+   },
+   "balise_survie": {
+    "name": "Balise de Survie",
+    "dofusId": 32474,
+    "icon": 15416,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Invoque une Balise qui peut soigner tous les alliés dans sa ligne de vue au début de son tour.\nElle peut également échanger de position avec le lanceur s'il l'attaque en étant dans sa ligne de vue.\n\nLa balise est détruite 2 tours après son invocation.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hit": {
+     "shape": "point",
+     "range": 120,
+     "radius": 0
+    },
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "land",
+    "invoque": "balise_survie",
+    "invocDuree": 6,
+    "v06": true
    }
   },
   "mobility": "pas_chasse",
