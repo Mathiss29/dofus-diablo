@@ -77,5 +77,5 @@ export function completer(texte: string, noms: string[], k = 0): string | null {
 
 /** 7C : couleur du nom d'un joueur selon sa classe. */
 export const COULEUR_CLASSE: Record<string, string> = {
-  iop: '#ff7a5c', cra: '#8fd16a', osamodas: '#c99bff', sacrieur: '#ff5a74', forgelance: '#5fd3c5', eniripsa: '#ff9ad5', enutrof: '#e8c35c', ecaflip: '#f0a8e0',
+  iop: '#ff7a5c', cra: '#8fd16a', osamodas: '#c99bff', sacrieur: '#ff5a74', forgelance: '#5fd3c5', eniripsa: '#ff9ad5', enutrof: '#e8c35c', ecaflip: '#f0a8e0', sadida: '#7fc84a',
 };

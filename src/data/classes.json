@@ -5886,5 +5886,582 @@
     }
    }
   }
+ },
+ "sadida": {
+  "name": "Sadida",
+  "hp": 230,
+  "speed": 230,
+  "radius": 16,
+  "iframesOnHit": 0.45,
+  "healOnKill": 3,
+  "critChance": 0.15,
+  "critMult": 1.6,
+  "pa": {
+   "max": 6,
+   "regen": 1.25
+  },
+  "pm": {
+   "max": 2,
+   "recharge": 3.5
+  },
+  "potion": {
+   "charges": 3,
+   "heal": 0.35,
+   "cooldown": 1
+  },
+  "xpBase": 200,
+  "maxLevel": 200,
+  "attaque": {
+   "name": "Coup de poing",
+   "element": "terre",
+   "comboWindow": 0.45,
+   "combo": [
+    {
+     "duration": 0.28,
+     "impactAt": 0.07,
+     "cancelAt": 0.13,
+     "dmg": 14,
+     "range": 78,
+     "arc": 110,
+     "knock": 210,
+     "step": 120,
+     "hitstop": 0.05,
+     "shake": 0.0035
+    },
+    {
+     "duration": 0.28,
+     "impactAt": 0.07,
+     "cancelAt": 0.13,
+     "dmg": 14,
+     "range": 78,
+     "arc": 110,
+     "knock": 210,
+     "step": 120,
+     "hitstop": 0.05,
+     "shake": 0.0035
+    },
+    {
+     "duration": 0.4,
+     "impactAt": 0.11,
+     "cancelAt": 0.22,
+     "dmg": 30,
+     "range": 92,
+     "arc": 160,
+     "knock": 480,
+     "step": 220,
+     "hitstop": 0.085,
+     "shake": 0.008
+    }
+   ]
+  },
+  "rage": {
+   "name": "Forêt",
+   "max": 100,
+   "perHit": 0,
+   "perHurt": 0,
+   "bonus": 0,
+   "signature": 1,
+   "mode": "foret"
+  },
+  "sadida": {
+   "_doc": "Sadida (maquette Sadida, ligne de Mathis du 13 nov. 2026 : « 1A 2A+2B 3A+3B 4A 5A 6A+6B 7A 8A+8B 9A 10A 11A 12A 13A 14B 15A 16A 17B », 17D en légendaire). Infection officielle (état 263) : t s, un sort Sadida sur un Infecté touche tous les Infectés, propagations au plus par fenêtre ; Arbres : 6 au plus par groupe (14B), Feuillu après feuillu s, relais en cercle de relais px ; Poupées : naissent d'un Arbre, redeviennent Arbre à leur mort ; poison : dégâts officiels étalés sur poison s (7A). Voir src/sim/sadida.ts.",
+   "infection": {
+    "t": 3,
+    "max": 6,
+    "propagations": 3,
+    "fenetre": 3
+   },
+   "arbres": {
+    "max": 6,
+    "feuillu": 3,
+    "pv": 0.25,
+    "pvFeuillu": 2,
+    "relais": 120
+   },
+   "poison": 3,
+   "sacrifiee": {
+    "croissance": 0.1,
+    "periode": 3,
+    "max": 2,
+    "rayon": 120
+   },
+   "bloqueuse": {
+    "provoque": 3,
+    "rayon": 3,
+    "tacle": 0.35
+   },
+   "passage": {
+    "portee": 8
+   }
+  },
+  "mobility": "passage",
+  "sorts": "sadida",
+  "clicDroit": "ronce",
+  "niveau1": [
+   13519
+  ],
+  "spells": {
+   "ronce": {
+    "name": "Ronce",
+    "dofusId": 13516,
+    "icon": 12699,
+    "element": "terre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Infecte la cible et occasionne des dommages Terre.\n\nSur un Arbre Feuillu : applique les effets sur les ennemis dans un cercle de taille 2.\n\nSur un ennemi : applique également les effets sur tous les ennemis Infectés.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "knock": 0,
+    "dmg": 22,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 288,
+     "radius": 30
+    },
+    "sadida": {
+     "infecte": true,
+     "relais": true,
+     "propage": true
+    }
+   },
+   "larme": {
+    "name": "Larme de Sadida",
+    "dofusId": 13528,
+    "icon": 13057,
+    "element": "eau",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Soigne les alliés ou occasionne des dommages Eau aux ennemis.\n\nSur un Arbre : applique les effets dans un cercle de taille 2 et transforme l'Arbre en Arbre Feuillu.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "knock": 0,
+    "dmg": 24,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 288,
+     "radius": 30
+    },
+    "soin": 24,
+    "sadida": {
+     "relais": true,
+     "propage": true,
+     "feuillit": true,
+     "soinSiRien": true
+    }
+   },
+   "buisson_ardent": {
+    "name": "Buisson Ardent",
+    "dofusId": 13574,
+    "icon": 12977,
+    "element": "feu",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Feu et retire des PM.\n\nSur un Arbre Feuillu : applique les effets sur les ennemis dans un cercle de taille 2.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "knock": 0,
+    "dmg": 24,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 288,
+     "radius": 30
+    },
+    "pmLoss": 2,
+    "sadida": {
+     "relais": true,
+     "propage": true
+    }
+   },
+   "cigue": {
+    "name": "Cigüe",
+    "dofusId": 13577,
+    "icon": 12747,
+    "element": "air",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Air.\n\nSur un Arbre Feuillu : applique les effets et maintient l'Infection sur les ennemis dans un cercle de taille 2.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés et maintient l'Infection sur la cible.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "knock": 0,
+    "dmg": 24,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 288,
+     "radius": 30
+    },
+    "sadida": {
+     "relais": true,
+     "propage": true,
+     "maintient": true
+    }
+   },
+   "arbre": {
+    "name": "Arbre",
+    "dofusId": 13519,
+    "icon": 12700,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Plante un Arbre.\nUn Arbre devient Feuillu après 1 tour.\n\nIl ne peut y avoir que 6 Arbres par équipe. Le septième Arbre planté entraîne la mort du premier.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "knock": 0,
+    "dmg": 0,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 288,
+     "radius": 0
+    },
+    "sadida": {
+     "plante": true,
+     "charges": [
+      3,
+      4
+     ]
+    }
+   },
+   "la_folle": {
+    "name": "La Folle",
+    "dofusId": 13564,
+    "icon": 13263,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Remplace un Arbre par une Poupée maîtrisable qui peut Infecter et appliquer un poison Air de début de tour.\n\nÀ sa mort, la Poupée redevient un Arbre.\nSi elle a été invoquée à partir d'un Arbre Feuillu, l'Arbre à sa mort redevient Feuillu.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "knock": 0,
+    "dmg": 0,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 288,
+     "radius": 0
+    },
+    "sadida": {
+     "poupee": "sadi_folle"
+    }
+   },
+   "seve_paralysante": {
+    "name": "Sève Paralysante",
+    "dofusId": 13533,
+    "icon": 12705,
+    "element": "feu",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Infecte, retire de l'Esquive PM et applique un poison Feu de fin de tour sur la cible.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "knock": 0,
+    "dmg": 0,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 288,
+     "radius": 30
+    },
+    "sadida": {
+     "infecte": true,
+     "poison": 15,
+     "seve": 9
+    }
+   },
+   "contagion": {
+    "name": "Contagion",
+    "dofusId": 13575,
+    "icon": 13054,
+    "element": "air",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Air et retire des PM. \n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés en propageant l'Infection en zone autour de la cible.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "knock": 0,
+    "dmg": 35,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 240,
+     "radius": 30
+    },
+    "pmLoss": 2,
+    "sadida": {
+     "propage": true,
+     "contagion": 2
+    }
+   },
+   "ronce_apaisante": {
+    "name": "Ronce Apaisante",
+    "dofusId": 13525,
+    "icon": 13177,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Soigne les alliés ou retire des PM aux ennemis.\n\nSur un Arbre Feuillu : applique les effets dans un cercle de taille 2.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "knock": 0,
+    "dmg": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 240,
+     "radius": 30
+    },
+    "pmLoss": 2,
+    "soin": 47,
+    "sadida": {
+     "relais": true,
+     "propage": true,
+     "soinSiRien": true,
+     "soinSeul": true
+    }
+   },
+   "la_bloqueuse": {
+    "name": "La Bloqueuse",
+    "dofusId": 13561,
+    "icon": 12703,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Remplace un Arbre par une Poupée maîtrisable qui peut échanger de position si elle est maîtrisée et bloquer les ennemis.\nElle peut également augmenter ses PM et se rendre Intaclable.\n\nÀ sa mort, la Poupée redevient un Arbre.\nSi elle a été invoquée à partir d'un Arbre Feuillu, l'Arbre à sa mort redevient Feuillu.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "knock": 0,
+    "dmg": 0,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 288,
+     "radius": 0
+    },
+    "sadida": {
+     "poupee": "sadi_bloqueuse"
+    }
+   },
+   "ronces_agressives": {
+    "name": "Ronces Agressives",
+    "dofusId": 13527,
+    "icon": 12715,
+    "element": "terre",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Vole des PM et occasionne des dommages Terre.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "knock": 0,
+    "dmg": 38,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 192,
+     "radius": 30
+    },
+    "pmLoss": 1,
+    "sadida": {
+     "propage": true,
+     "volPM": {
+      "k": 0.15,
+      "t": 3
+     }
+    }
+   },
+   "fleau": {
+    "name": "Fléau",
+    "dofusId": 13571,
+    "icon": 12738,
+    "element": "eau",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Vole de la vie dans l'élément Eau.\n\nSur une Poupée : applique les effets sur les ennemis dans un carré de taille 1.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "knock": 0,
+    "dmg": 26,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 192,
+     "radius": 30
+    },
+    "lifesteal": 0.5,
+    "sadida": {
+     "propage": true,
+     "relaisPoupee": true
+    }
+   },
+   "puissance_sylvestre": {
+    "name": "Puissance Sylvestre",
+    "dofusId": 13530,
+    "icon": 12707,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Remplace un Arbre Feuillu par un Arbre Feuillu contrôlable qui peut :\n• Infecter et pousser une cible.\n• Soigner les alliés et réduire les soins reçus par les ennemis en zone.\n• Réduire la durée des effets sur une cible.\n\nL'Arbre contrôlable est remplacé par un Arbre Feuillu 2 tours après son invocation.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "knock": 0,
+    "dmg": 0,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 288,
+     "radius": 0
+    },
+    "sadida": {
+     "groute": "sadi_groute"
+    }
+   },
+   "la_sacrifiee": {
+    "name": "La Sacrifiée",
+    "dofusId": 13567,
+    "icon": 12708,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Remplace un Arbre par une Poupée maîtrisable qui peut se sacrifier pour Infecter et occasionner des dommages Eau en zone.\nSa Vitalité et ses dommages finaux augmentent au fil des tours.\n\nÀ sa mort, la Poupée redevient un Arbre.\nSi elle a été invoquée à partir d'un Arbre Feuillu, l'Arbre à sa mort redevient Feuillu.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "knock": 0,
+    "dmg": 0,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 288,
+     "radius": 0
+    },
+    "sadida": {
+     "poupee": "sadi_sacrifiee"
+    }
+   },
+   "herbes_folles": {
+    "name": "Herbes Folles",
+    "dofusId": 13518,
+    "icon": 12716,
+    "element": "feu",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Feu et retire des PM aux ennemis en zone.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.009,
+    "knock": 0,
+    "dmg": 32,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 240,
+     "radius": 120
+    },
+    "pmLoss": 3,
+    "sadida": {}
+   },
+   "sacrifice_vaudou": {
+    "name": "Sacrifice Vaudou",
+    "dofusId": 13531,
+    "icon": 12712,
+    "element": "eau",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Eau.\nLes dommages sont plus importants sur les invocations.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.\n\nSur une Poupée :\n• Sacrifie la Poupée pour soigner les alliés, appliquer les effets sur les ennemis et les Infecter en zone.\n• Réinitialise son temps de relance.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "knock": 0,
+    "dmg": 35,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 240,
+     "radius": 30
+    },
+    "vsSummon": 1.3,
+    "sadida": {
+     "propage": true,
+     "vaudou": {
+      "rayon": 120,
+      "soin": 35
+     }
+    }
+   },
+   "passage": {
+    "name": "Passage racinaire",
+    "icon": 13376,
+    "element": "neutre",
+    "pm": 1,
+    "cooldown": 0.4,
+    "desc": "Le Sadida plonge sous terre et ressort à un de ses Arbres à 8 cases (l'Arbre prend sa place) ; sans Arbre à portée, simple pas de 4 cases.",
+    "duration": 0.3,
+    "impactAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hit": {
+     "shape": "circle",
+     "radius": 48
+    },
+    "move": {
+     "kind": "leap",
+     "maxRange": 192,
+     "height": 6
+    },
+    "hitstop": 0.03,
+    "shake": 0.004,
+    "fx": "land",
+    "sadida": {
+     "passage": 8
+    }
+   }
+  }
  }
 }

@@ -267,6 +267,7 @@ export class ZoneScene extends Phaser.Scene {
     Hud.preload(this);
     // Icônes des objets officiels : une seule planche
     // kamas au sol (Kamas A) : le tas de pièces officiel (figs_/kamastack) et une pièce seule, prise sur le dessus du tas
+    if (!this.textures.exists('sadi_infecte')) this.load.image('sadi_infecte', v(`${ASSETS}/ui/sadida/infecte.png`));   // Sadida 13A : icône officielle Infecté
     if (!this.textures.exists('kamas_tas')) this.load.image('kamas_tas', v(`${ASSETS}/ui/kamas_tas.png`));
     if (!this.textures.exists('fleche_arme')) this.load.image('fleche_arme', v(`${ASSETS}/fx/fleche_arme.webp`));   // Armes 4B
     if (!this.textures.exists('kamas_piece')) this.load.image('kamas_piece', v(`${ASSETS}/ui/kamas_piece.png`));
@@ -1118,7 +1119,7 @@ export class ZoneScene extends Phaser.Scene {
       case 'carteTab': if (this.carte?.dispo && !this.carte.ouverte) this.carte.basculerSurimpression(); break;   // 11B : carte en surimpression
       case 'havresac': this.havreSacDemande = true; break;
       case 'deco': if (this.decoPanneau) this.decoPanneau.basculer(); else if (this.world.dansHavreSac) this.hud.toast('La déco du Havre-Sac arrive avec la 0.6'); break;
-      case 'coffre': if (p.cls.coffre) w?.toggle('tresor'); else if (p.cls.poker) this.coffreDemande = true; break;   // Enutrof (interface du coffre 2C) : la fenêtre du coffre ; Écaflip : Joue la Main
+      case 'coffre': if (p.cls.coffre) w?.toggle('tresor'); else if (p.cls.poker || p.cls.sadida) this.coffreDemande = true; break;   // Enutrof (interface du coffre 2C) : la fenêtre du coffre ; Écaflip : Joue la Main
       case 'muet': this.basculerMuet(); break;
       case 'impact':
         this.fx.juice = !this.fx.juice;
@@ -2158,6 +2159,7 @@ export class ZoneScene extends Phaser.Scene {
     const s = w.player.skill;
     if (s && 'charge' in s.def && s.def.charge && !s.def.move && s.t < s.def.impactAt) this.fx.chargeSparks(w.player.x, w.player.y);
     this.fx.draw(w.telegraphs, w.projectiles);
+    if (w.players.some(q => q.cls.sadida)) this.fx.sadida(w.monsters, this.time.now / 1000);   // Sadida : lianes d'Infection, ronces
     // Aperçu du sort visé (ou survolé dans la barre), et portée de l'arme en maintenant Maj (9B)
     {
       const p = w.player, id = this.aimId ?? this.hoverId, ptr = this.input.activePointer;

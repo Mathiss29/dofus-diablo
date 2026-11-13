@@ -1978,6 +1978,163 @@
        }
       ]
      }
+    ],
+    "sadida": [
+     {
+      "nom": "Premiers pas",
+      "bulle": "Bienvenue sur Incarnam, jeune Sadida ! Contemple les Dofus, puis clique sur le sol et suis le chemin. Je t'attends dans la salle suivante.",
+      "objectifs": [
+       {
+        "t": "aller",
+        "texte": "Passer dans la salle suivante (clic gauche)",
+        "carte": "temple_2"
+       }
+      ]
+     },
+     {
+      "nom": "La salle d'entraînement",
+      "pnj": "ganymede_temple",
+      "objectifs": [
+       {
+        "t": "aller",
+        "texte": "Rejoindre Ganymède",
+        "pnj": "ganymede_temple"
+       }
+      ]
+     },
+     {
+      "nom": "Frapper",
+      "pnj": "ganymede_temple",
+      "bulle": "Des esprits de feu se sont glissés dans le Temple. Clique sur l'un d'eux : tu le poursuis et tu le frappes.",
+      "objectifs": [
+       {
+        "t": "vaincre",
+        "texte": "Vaincre un monstre (clic dessus)",
+        "n": 1,
+        "sousZone": 446
+       }
+      ]
+     },
+     {
+      "nom": "Planter un Arbre",
+      "pnj": "ganymede_temple",
+      "bulle": "Tes sorts sont sur & é \" '. Touche ' : Arbre. Plante-le près des esprits : il les gêne, et au bout de 3 s il devient Feuillu.",
+      "halo": 3,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "sort": "arbre",
+        "texte": "Planter un Arbre (')"
+       }
+      ]
+     },
+     {
+      "nom": "Un Arbre Feuillu",
+      "pnj": "ganymede_temple",
+      "bulle": "Touche & : Larme de Sadida. Vise ton Arbre : il devient Feuillu tout de suite. Un Feuillu relaie tes sorts sur 2 cases autour de lui.",
+      "halo": 0,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "sort": "larme",
+        "texte": "Lancer Larme de Sadida sur ton Arbre (&)"
+       }
+      ]
+     },
+     {
+      "nom": "L'Infection",
+      "pnj": "ganymede_temple",
+      "bulle": "Clic droit : Ronce. Vise ton Arbre Feuillu quand deux esprits sont à côté : ils sont Infectés. Un sort lancé sur un Infecté touche alors tous les Infectés.",
+      "halo": 6,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "sort": "ronce",
+        "texte": "Infecter avec Ronce sur le Feuillu (clic droit)"
+       },
+       {
+        "t": "vaincre",
+        "texte": "Vaincre deux esprits Infectés",
+        "n": 2,
+        "sousZone": 446
+       }
+      ]
+     },
+     {
+      "nom": "La Cigüe",
+      "pnj": "ganymede_temple",
+      "bulle": "Touche \" : Cigüe. Sur un Infecté, elle frappe tous les Infectés et garde leur Infection 3 s de plus. Finis le groupe.",
+      "halo": 2,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "sort": "cigue",
+        "texte": "Lancer Cigüe sur un Infecté (\")"
+       }
+      ]
+     },
+     {
+      "nom": "Se déplacer vite",
+      "pnj": "ganymede_temple",
+      "bulle": "Espace : Passage racinaire. Vise un de tes Arbres : tu ressors à sa place et lui à la tienne. Sans Arbre, tu fais un petit bond.",
+      "halo": 7,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "quoi": "mobilite",
+        "texte": "Se déplacer avec Espace"
+       }
+      ]
+     },
+     {
+      "nom": "Premières armes",
+      "pnj": "ganymede_temple",
+      "bulle": "Voici ton équipement : une Demi-Baguette et la panoplie de l'Intrépide. I ouvre ton sac : équipe tout.",
+      "donner": {
+       "sadida": [
+        "1356",
+        "10801",
+        "10800",
+        "10784",
+        "10785",
+        "10799",
+        "10794",
+        "10798"
+       ]
+      },
+      "objectifs": [
+       {
+        "t": "equiper",
+        "objet": "1356",
+        "texte": "Équiper ta baguette (I)"
+       },
+       {
+        "t": "equiper",
+        "objets": [
+         "10801",
+         "10800",
+         "10784",
+         "10785",
+         "10799",
+         "10794",
+         "10798"
+        ],
+        "texte": "Équiper la panoplie de l'Intrépide"
+       }
+      ]
+     },
+     {
+      "nom": "Descendre sur Incarnam",
+      "pnj": "ganymede_temple",
+      "bulle": "Tu es prêt. Parle-moi et je t'envoie au village, près de Lykhen. Le Zaap de la Route des âmes sera ton point de retour si tu tombes.",
+      "objectifs": [
+       {
+        "t": "parler",
+        "texte": "Parler à Ganymède pour descendre au village",
+        "pnj": "ganymede_temple"
+       }
+      ]
+     }
     ]
    },
    "recompense": {
@@ -11402,6 +11559,28 @@
     "xp": 5000,
     "titre": "Gardien de la Paix"
    }
+  },
+  "foret_hantee": {
+   "nom": "Forêt Hantée",
+   "dofusId": 0,
+   "description": "Avec un Sadida, avoir en même temps 6 Arbres Feuillus et 10 ennemis Infectés.",
+   "categorie": "Général",
+   "sousCategorie": "Classes",
+   "points": 20,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "6 Feuillus et 10 Infectés en même temps",
+     "compteur": "foretHantee",
+     "n": 1
+    }
+   ],
+   "recompense": {
+    "xp": 1000,
+    "apparat": "29449",
+    "titre": "Esprit de la Forêt Hantée"
+   },
+   "test": true
   }
  },
  "contrats": {
