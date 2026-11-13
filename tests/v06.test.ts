@@ -10,6 +10,8 @@ import { idolesGroupe } from '../src/sim/idolesCombat';
 import { poserAffixes } from '../src/sim/elites';
 import { poserAutel } from '../src/sim/autels';
 import { defCoffreFuyard } from '../src/sim/coffreFuyard';
+import { majRenommee, regions, renommee } from '../src/sim/renommee';
+import { PEPITE } from '../src/sim/items';
 
 const AS = JSON.parse(readFileSync(new URL('../public/assets/mondes/astrub/monde.json', import.meta.url), 'utf8')) as WorldData;
 const VIDE = { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} };
@@ -217,5 +219,32 @@ describe('0.6 : autels de combat (21) et Coffre Malveillant (22A)', () => {
     pas(w, 60 * 16);
     expect(c.dead).toBe(true);
     expect(w.monsters.includes(c)).toBe(false);
+  });
+});
+
+describe('0.6 : renommée de région (19) et sanctuaires des Douze (20)', () => {
+  it('régions déjà faites : Astrub et Amakna ont leur renommée et leurs sanctuaires', () => {
+    const w = monde(), R = regions(w);
+    expect(R.get('Astrub')?.cartes.size).toBeGreaterThan(50);
+    expect(R.get('Amakna')?.sanctuaires.length).toBe(6);
+    expect(renommee(w, w.player, 'Amakna').palier).toBe(0);
+  });
+  it('un sanctuaire trouvé donne +2 pour toujours ; explorer une région donne ses paliers', () => {
+    const w = monde(), p = w.player, s = regions(w).get('Astrub')!.sanctuaires[0], v0 = p.stat(s.carac);
+    p.x = s.x; p.y = s.y;
+    w.step(1 / 60, { ...NO_INPUT, aim: { x: p.x, y: p.y } });
+    expect(p.sanctuaires).toContain(s.id);
+    expect(p.stat(s.carac)).toBe(v0 + 2);
+    const z = w.opts.zone!, I = regions(w).get('Astrub')!;
+    p.explore[z] = [...I.cartes]; p.chasse[z] = [...I.cartes];
+    const pep = p.resources[PEPITE] ?? 0, pts = p.points, pot = p.potionsMax;
+    majRenommee(w, p);
+    expect(p.renommee.Astrub).toBeGreaterThanOrEqual(3);
+    expect(p.resources[PEPITE]).toBe(pep + 30);
+    expect(p.points).toBe(pts + 5);
+    expect(p.potionsMax).toBe(pot + 1);
+    const w2 = monde(); restaurerJoueur(w2, exporterJoueur(w));
+    expect(w2.player.sanctuaires).toEqual(p.sanctuaires);
+    expect(w2.player.renommee.Astrub).toBe(p.renommee.Astrub);
   });
 });

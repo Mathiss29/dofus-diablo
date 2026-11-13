@@ -1,4 +1,5 @@
 import type { World } from '../sim/world';
+import { regions, renommee } from '../sim/renommee';
 import { v } from './assetUrl';
 import { ISO } from '../sim/iso';
 import { GAME_DATA, ITEMS, RECOLTES } from '../sim/data';
@@ -236,6 +237,16 @@ export class CarteMonde {
     const p = this.duJeu(wx, wy), c = P.carte; return { x: (p.x - c.ox) / c.cw, y: (p.y - c.oy) / c.ch };
   }
   private estIci() { return this.onglet === this.monde; }
+  /** 0.6 (19B, 20B) : renommée de la région et sanctuaires trouvés, dans la bulle de la sous-zone (monde où l'on est). */
+  private renommeeHtml(zone: string, region?: string): string {
+    const w = this.world, p = w.player;
+    if (!p.v06 || zone !== w.opts.zone) return '';
+    const r = region ?? w.zone.name, I = regions(w).get(r);
+    if (!I) return '';
+    const R = renommee(w, p, r), suiv = R.seuils[R.palier], vus = I.sanctuaires.filter(x => p.sanctuaires.includes(x.id)).length;
+    return `<div class="l el"><b>Renommée ${esc(r)}</b> : palier ${R.palier} / 4${suiv ? ` (${R.points} / ${suiv})` : ' ✔'}</div>
+      <div class="l">Sanctuaires des Douze : ${vus} / ${I.sanctuaires.length}</div>`;
+  }
   private zoneDe(monde: string) { return Object.entries(GAME_DATA.zones).find(([, z]) => z.open?.world === monde)?.[0] ?? monde; }
 
   ouvrir(ou?: MarqueCarte, surQuete = false, sur = false) {
@@ -630,7 +641,7 @@ export class CarteMonde {
       ${archis.length ? `<div class="l el">Archimonstre${archis.length > 1 ? 's' : ''} (${archis.filter(a => w.player.ames.includes(a)).length} / ${archis.length} capturés) : ${archis.slice(0, 4).map(a => esc(nomM(a)) + (w.player.ames.includes(a) ? ' ✔' : '')).join(', ')}${archis.length > 4 ? '…' : ''}</div>` : ''}
       ${res.length ? `<div class="l"><b>Ressources</b> : ${res.slice(0, 8).map(x => esc(x!)).join(', ')}${res.length > 8 ? '…' : ''}</div>` : ''}
       ${donjons.map(n => `<div class="l"><b>Donjon</b> : ${esc(this.estIci() ? this.etatDonjon(n) : n)}</div>`).join('')}
-      <div class="l ${pc === 100 ? 'ok' : ''}">Exploré : ${pc} %</div>`;
+      <div class="l ${pc === 100 ? 'ok' : ''}">Exploré : ${pc} %</div>${this.renommeeHtml(zone, d.region)}`;
     // contour lumineux de la sous-zone
     const t = this.surCanvas!, xs = cases.map(k => k[0]), ys = cases.map(k => k[1]), x0 = Math.min(...xs) - 1, y0 = Math.min(...ys) - 1;
     const nx = Math.max(...xs) - x0 + 2, ny = Math.max(...ys) - y0 + 2, S = Math.max(12, Math.min(48, Math.floor(1600 / Math.max(nx, ny))));

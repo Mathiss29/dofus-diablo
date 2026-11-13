@@ -27,6 +27,7 @@ import { MondeVivant, VIVANT, bonusWeekEnd, type BonusWeekEnd, type VueVivant } 
 import PASSANTS from '../data/passants.json';
 import V06 from '../data/v06.json';
 import { IDOLES_DEFS, basculerIdole, bonusIdoles, chargerJeu, defSousIdoles, enregistrerJeu, fxIdoles, recetteIdole, scoreIdoles, type FxIdole } from './idoles';
+import { majRenommee, sanctuairesPas } from './renommee';
 import { autelsPas, poserAutel, AUTELS, type Autel } from './autels';
 import { COFFRE_FUYARD, defCoffreFuyard, piloterCoffre } from './coffreFuyard';
 import { defAffixes, elitesPas, poserAffixes, tirerAffixes } from './elites';
@@ -1338,7 +1339,7 @@ export class World {
       if (g.retire || g.dort || g.members.some(m => !m.dead)) continue;
       if (!g.cleared) {
         g.cleared = true; g.timer = open.respawn;
-        for (const p of this.players) p.potions = Math.min(p.cls.potion.charges, p.potions + 1);   // un groupe vaincu rend une potion
+        for (const p of this.players) p.potions = Math.min(p.potionsMax, p.potions + 1);   // un groupe vaincu rend une potion
         this.emit({ k: 'groupCleared' });
       }
       // tutoriel : les esprits du Temple reviennent vite, même pas loin (de quoi finir chaque étape sans attendre)
@@ -1535,6 +1536,10 @@ export class World {
     this.updateZonesSol(dt);
     elitesPas(this, dt);
     autelsPas(this, dt);
+    if (this.zone.open && this.players[0]?.v06) {   // 0.6 (19-20) : sanctuaires trouvés en passant, renommée relue toutes les 3 s
+      sanctuairesPas(this);
+      if (Math.floor(this.time / 3) > Math.floor((this.time - dt) / 3)) for (const q of this.players) this.commeJoueur(q, () => majRenommee(this, q));
+    }
     idolesPas(this, dt, fxI);
     this.updateDrops(dt);
     if (this.opts.partieServeur && this.players.length > 1) this.releverAllies(dt);
@@ -1572,7 +1577,7 @@ export class World {
     this.emit({ k: 'wave', n: this.wave, boss: plan.boss, archi: plan.archi });
     // chaque nouvelle vague rend une potion
     const p = this.player;
-    if (this.wave > 1) p.potions = Math.min(p.cls.potion.charges, p.potions + 1);
+    if (this.wave > 1) p.potions = Math.min(p.potionsMax, p.potions + 1);
     for (const type of plan.monsters) {
       let pos = this.map.randomFree(this.rng), tries = 0;
       while (Math.hypot(pos.x - this.player.x, pos.y - this.player.y) < 300 && ++tries < 50) pos = this.map.randomFree(this.rng);

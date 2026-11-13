@@ -1,6 +1,7 @@
 import { ALMANAX } from './almanax';
 import { ELITES } from './elites';
 import { AUTELS, type AutelActif } from './autels';
+import { bonusSanctuaires, potionsRenommee } from './renommee';
 import { etatIdolesVide, type EtatIdoles, type FxIdole } from './idoles';
 import type { StyleChoisi, Tenue } from './style';
 import { BENEDICTIONS, type AchatsDuJour, type Benediction } from './magasin';
@@ -281,6 +282,11 @@ export class Player extends Entity {
   idoleT = 0;
   /** Autel de combat pris (0.6, 21) : effet, temps restant. */
   autel: AutelActif | null = null;
+  /** 0.6 (19, 20) : paliers de renommée obtenus par région ; sanctuaires des Douze trouvés (« région|n|carac »). */
+  renommee: Record<string, number> = {};
+  sanctuaires: string[] = [];
+  /** Charges de potion : celles de la classe, +1 par région au palier 2 de renommée. */
+  get potionsMax(): number { return this.cls.potion.charges + potionsRenommee(this); }
   /** Élément du dernier coup porté (Garu). */
   dernierElement: Element | '' = '';
   private _pouvoirs: PouvoirDef[] | null = null;
@@ -520,6 +526,7 @@ export class Player extends Entity {
     }
     for (const id of this.dofusPortes) if (id) for (const [k, v] of Object.entries(PORTABLE(id)?.stats ?? {}) as [Stat, number][]) add(k, v);
     for (const [k, v] of Object.entries(this.parchemins) as [Stat, number][]) add(k, v);   // « Métiers : » 5A
+    for (const [k, v] of Object.entries(bonusSanctuaires(this.sanctuaires)) as [Stat, number][]) add(k, v);   // 0.6 (20A) : sanctuaires des Douze
     for (const c of [this.repas && REPAS[this.repas.id], this.elixir && ELIXIRS[this.elixir.id]]) if (c) add(c.stat, c.n);   // 4B + 4C
     for (const [id, n] of Object.entries(sets)) {
       const b = this.items?.sets[id]?.bonus[String(n - 1)];
