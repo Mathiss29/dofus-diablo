@@ -1,4 +1,5 @@
 import type { Item } from './items';
+import { relireDeco, type Pose } from './meubles';
 
 /** Coffre partagé (version 0.3, choix 12A+12B+12D) : un coffre au Havre-Sac, partagé par tous les persos du compte (12A), que la
  *  Banque d'Astrub ouvre aussi (12B). Les persos Hardcore ont le leur, à part (12D, comme Diablo 4). Il garde des équipements,
@@ -20,6 +21,12 @@ export interface Coffre {
   familiers?: Record<string, number>;
   /** « Apparats : » 5B : auréoles, effets de Zaap et ornements de nom achetés (ids de style.json), pour tout le compte. */
   styles?: string[];
+  /** 0.6 (Havre-Sac complet, src/sim/meubles.ts) : meubles gagnés un par un (rares, fabriqués), meubles posés par thème,
+   *  potager (« thème:case » -> ressource plantée et jour) et vitrine (« thème:case » -> d:Dofus, t:trophée, f:familier). Tout le compte. */
+  meubles?: number[];
+  deco?: Record<string, Pose[]>;
+  potager?: Record<string, { r: string; j: string }>;
+  vitrine?: Record<string, string>;
 }
 
 export const coffreVide = (): Coffre => ({ onglets: Array.from({ length: COFFRE.onglets }, () => []) });
@@ -42,6 +49,7 @@ export function relireCoffre(c: unknown): Coffre {
     const f = Object.entries(o.familiers).filter(([k, n]) => /^\d{1,6}$/.test(k) && Number.isInteger(n) && n >= 1 && n <= 100);
     if (f.length) r.familiers = Object.fromEntries(f);
   }
+  relireDeco(o, r);
   if (Array.isArray(o.noms)) r.noms = o.noms.slice(0, COFFRE.max).map(n => String(n ?? '').slice(0, 20));
   return r;
 }

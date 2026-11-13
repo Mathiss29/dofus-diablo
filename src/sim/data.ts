@@ -21,12 +21,15 @@ import type { QuetesData } from './quests';
 import type { GameData, WeaponProfile } from './defs';
 import { degatsMonstre } from './danger';
 import { setPotions } from './forgemagie';
+import { PREFIXE_MEUBLE, RECETTES_MEUBLES } from './meubles';
 
 export const GAME_DATA = { classes, monsters, zones } as unknown as GameData;
 // 1A (maquette « Danger ») : les dégâts des monstres suivent leur rang et leur niveau (src/data/danger.json) ; le champ dmg du json n'est plus lu
 for (const d of Object.values(GAME_DATA.monsters)) d.dmg = degatsMonstre(d);
 export const ITEMS = items as unknown as ItemsData;
 setPotions(ITEMS.resources);   // Forgemagie v2 6A : potions de forgemagie officielles
+// « Métiers : » 9A (0.6) : meubles du Havre-Sac fabriqués par le Bricoleur et le Sculpteur (src/data/meubles.json › recettes)
+ITEMS.recipes = [...(ITEMS.recipes ?? []), ...RECETTES_MEUBLES.map(r => ({ result: `${PREFIXE_MEUBLE}${r.id}`, metier: r.metier, level: r.level, ingredients: r.ingredients }))];
 // objets de maître du jeu (Annobusé de Maître Jarbo…) : officiels mais jamais obtenables, hors du butin (butin.json, horsJeu)
 for (const id of Object.keys(butin.horsJeu)) if (ITEMS.equipment[id]) ITEMS.equipment[id].horsJeu = true;
 /** Familiers officiels (src/data/familiers.json, familiers_export.py) : courbe d'XP et familiers, dont ceux d'apparat. */

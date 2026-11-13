@@ -11,7 +11,7 @@ const arena = (test = true, seed = 5) => {
   const w = new World({ data: GAME_DATA, zone: 'champs-astrub', map: new GridMap(carte), seed, classId: 'iop', items: ITEMS, ...(test ? { test: {} as never } : {}) });
   w.player.bag.length = 0; return w;
 };
-const R = ITEMS.recipes!;
+const R = ITEMS.recipes!.filter(r => !r.result.startsWith('meuble:'));   // meubles du Havre-Sac (0.6, Métiers 9A) : tests/deco.test.ts
 /** Une recette d'équipement du métier, la plus basse. */
 const recette = (m: string) => R.map((r, i) => ({ r, i })).filter(x => x.r.metier === m && ITEMS.equipment[x.r.result]).sort((a, b) => a.r.level - b.r.level)[0];
 const remplir = (w: World, i: number, n: number) => { for (const [id, q] of R[i].ingredients) w.player.resources[id] = q * n; };

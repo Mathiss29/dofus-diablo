@@ -6,8 +6,8 @@ import data from '../data/boutique_ogrines.json';
 import { feteDuJour } from './apparats';
 import { hache } from './contrats';
 
-export type CatArticle = 'chapeau' | 'cape' | 'familier' | 'costume' | 'style' | 'service';
-export interface ArticleOgrines { cat: CatArticle; prix: number; apparats?: string[]; fete?: string; nom?: string; style?: string; service?: string }
+export type CatArticle = 'chapeau' | 'cape' | 'familier' | 'costume' | 'style' | 'service' | 'meuble';
+export interface ArticleOgrines { cat: CatArticle; prix: number; /** 11B (0.6) : lot des meubles rares de ce thème du Havre-Sac */ meubles?: number; apparats?: string[]; fete?: string; nom?: string; style?: string; service?: string }
 export type Palier = 'aventurier' | 'heros' | 'legende';
 export const PALIERS: Palier[] = ['aventurier', 'heros', 'legende'];
 export const BOUTIQUE_OGRINES = data as unknown as {
