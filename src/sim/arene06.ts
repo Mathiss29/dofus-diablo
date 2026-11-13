@@ -6,8 +6,8 @@ import { CASE, zoneRadius } from './monster';
  *  L'état vit dans l'arène (champs simples, recopiés tels quels chez l'invité) ; ces fonctions le font avancer, chez l'hôte.
  *  Aucun hasard hors de world.rng. */
 export const A06 = {
-  /** 2D : cercles de choix devant l'arrivée (px au-dessus de l'arrivée, écart entre deux cercles), rayon pour entrer dedans. */
-  choix: { haut: 230, ecart: 165, rayon: 52 },
+  /** 2D : cercles de choix en rang devant l'arrivée (px d'écran au-dessus d'elle, écart entre deux cercles), rayon pour entrer dedans. */
+  choix: { haut: 110, ecart: 155, rayon: 52 },
   /** 4C : un coup sur un œuf à moins de `r` px de son pied, pendant le boss, le fait éclore. */
   oeuf: { r: 75 },
   /** 6B : rayon d'une toile, lenteur en marchant dessus, durée de la brûlure (s) ; 6C : la Reine tisse toutes les `cadence` s
@@ -27,10 +27,24 @@ export function preparer06(a: Arene, d: DonjonDef, depart: { x: number; y: numbe
   const C = A06.choix;
   if (d.choix?.length) {
     const n = d.choix.length;
-    a.choix = d.choix.map((c, i) => ({ ...a.libreA(depart.x + (i - (n - 1) / 2) * C.ecart, depart.y - C.haut - (i % 2 ? 40 : 0)), nom: c.nom, couleur: c.couleur }));
+    // en rang à l'écran : un pas à droite de l'écran = (+½, -½) dans le monde, un pas vers le haut = (-1, -1)
+    a.choix = d.choix.map((c, i) => {
+      const sx = (i - (n - 1) / 2) * C.ecart, sy = -C.haut;
+      return { ...a.libreA(depart.x + sx / 2 + sy, depart.y - sx / 2 + sy), nom: c.nom, couleur: c.couleur };
+    });
   }
   a.oeufs = (d.oeufs?.pos ?? []).map(([dx, dy]) => ({ x: depart.x + dx, y: depart.y + dy, eclos: false }));
   a.toiles = (d.toiles ?? []).map(([dx, dy]) => ({ x: depart.x + dx, y: depart.y + dy, r: A06.toile.r, brule: 0 }));
+}
+
+/** 10A : le dédale du Labyrinthe est tiré à l'entrée, puis fixe jusqu'à la sortie : ses murs bloquent leurs cases. */
+export function poserDedale(a: Arene) {
+  const M = a.d.arene?.murs, wg = a.w.worldGrid;
+  if (!M?.length || !wg) return;
+  a.dedale = a.w.rng.int(M.length);
+  for (const l of M) for (const c of l) wg.mov[c] = 1;   // cases des murs : libres hors dédale (elles le sont dans la carte)
+  for (const c of M[a.dedale]) wg.mov[c] = 0;
+  wg.refaireLibres();
 }
 
 /** 2D : un joueur entre dans un cercle : la variante est choisie (vagues, boss et butin de ce Royal). */

@@ -352,7 +352,9 @@ export interface DonjonDef { nom: string; salles: Record<string, string[][]>;
     cases: number[]; origine?: Record<string, number[]>;
     /** Petites cartes sans image sous le creux d'un couloir (dans tags, pour savoir où l'on est) : pas de monstres errants dessus. */
     annexes?: string[] } }
-export interface AreneDef { tag: string; arrivee: number; entrees: number[]; boss: number; sortie: number; coffre: number }
+export interface AreneDef { tag: string; arrivee: number; entrees: number[]; boss: number; sortie: number; coffre: number;
+  /** 0.6 (« Arènes : » 10A) : dédales tirés d'avance (Labyrinthe) ; pour chacun, les cases (grande grille) que ses murs bloquent. */
+  murs?: number[][] }
 /** Monde ouvert : cartes Dofus collées, groupes de monstres posés sur chaque carte, qui réapparaissent. */
 export interface OpenDef {
   /** Dossier public/assets/mondes/<world>. */

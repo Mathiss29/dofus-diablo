@@ -2177,6 +2177,7 @@ export class ZoneScene extends Phaser.Scene {
     this.meublesVue?.update(this.game.loop.delta / 1000);
     if (this.decoPanneau?.actif && this.meublesVue) this.meublesVue.apercu(this.decoPanneau.choisi, this.caseDeco(this.input.activePointer), this.decoPanneau.tourne);
     this.areneView?.update(this.game.loop.delta / 1000);
+    if (this.world.arene && this.world.arene.dedale >= 0) this.worldView?.setDedale(this.world.arene.dedale);   // 0.6 (10A)
     this.vivantView?.update(this.game.loop.delta / 1000);
     this.guerreView?.update(this.game.loop.delta / 1000);
     this.brume?.update(this.game.loop.delta / 1000);
