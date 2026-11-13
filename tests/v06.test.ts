@@ -8,6 +8,8 @@ import { World } from '../src/sim/world';
 import { NO_INPUT } from '../src/sim/input';
 import { idolesGroupe } from '../src/sim/idolesCombat';
 import { poserAffixes } from '../src/sim/elites';
+import { poserAutel } from '../src/sim/autels';
+import { defCoffreFuyard } from '../src/sim/coffreFuyard';
 
 const AS = JSON.parse(readFileSync(new URL('../public/assets/mondes/astrub/monde.json', import.meta.url), 'utf8')) as WorldData;
 const VIDE = { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} };
@@ -186,5 +188,34 @@ describe('0.6 : élites à affixes (23A+23B)', () => {
     const b = w.spawnMonster(ELITE, p.x + 300, p.y);
     b.bouclier = 0; poserAffixes(b, ['bouclier']);
     expect(b.bouclier).toBe(Math.round(b.maxHp * 0.3));
+  });
+});
+
+describe('0.6 : autels de combat (21) et Coffre Malveillant (22A)', () => {
+  const pas = (w: World, n: number) => { for (let i = 0; i < n; i++) w.step(1 / 60, { ...NO_INPUT, aim: { x: w.player.x, y: w.player.y } }); };
+  it('toucher un autel donne son effet 30 s : Frénésie, Protection', () => {
+    const w = monde(), p = w.player, v0 = p.stat('vitesse');
+    poserAutel(w, p.x, p.y, 'x', false, 'frenesie');
+    pas(w, 2);
+    expect(w.autels.length).toBe(0);
+    expect(p.autel?.effet).toBe('frenesie');
+    expect(p.stat('vitesse')).toBe(v0 + 60);
+    pas(w, 60 * 31);
+    expect(p.autel).toBeNull();
+    const a = monde(), b = monde(), pa = a.player, pb = b.player;
+    poserAutel(b, pb.x, pb.y, 'x', false, 'protection'); pas(b, 1);
+    pa.invuln = pb.invuln = 0; pa.hurt(200, pa.x + 50, pa.y, a); pb.hurt(200, pb.x + 50, pb.y, b);
+    expect(pb.maxHp - pb.hp).toBeLessThan((pa.maxHp - pa.hp) * 0.6);
+  });
+  it('le Coffre Malveillant fuit le joueur puis s\'enfuit au bout de 15 s', () => {
+    const w = monde(), p = w.player, d = GAME_DATA.monsters.coffre_malveillant;
+    const c = w.spawnMonster('coffre_malveillant', p.x + 200, p.y, defCoffreFuyard(d, 70));
+    c.fuyard = true;
+    expect(c.maxHp).toBe(Math.round(d.hp * 70 / 50));
+    pas(w, 60);
+    expect(c.fuiteT).toBeGreaterThan(0);
+    pas(w, 60 * 16);
+    expect(c.dead).toBe(true);
+    expect(w.monsters.includes(c)).toBe(false);
   });
 });

@@ -1,4 +1,5 @@
 import { PORTABLE, TROPHEES } from '../sim/dofus';
+import { infoAutel } from '../sim/autels';
 import { BENEDICTIONS } from '../sim/magasin';
 import { apercuSort } from '../sim/apercu';
 import { dossier, v } from './assetUrl';
@@ -1658,6 +1659,29 @@ export class ZoneScene extends Phaser.Scene {
 
   /** Butin au sol (choix 3A) : icône officielle qui flotte, colonne de lumière de la couleur de la rareté dès Rare
    *  (plus haute pour Rare et Légendaire), nom au survol ou avec Alt ; les kamas sont un petit tas de pièces. */
+  /** 0.6 (21) : autels de combat, une colonne de lumière de la couleur de leur effet, avec le nom du dieu. */
+  private autelViews = new Map<number, Phaser.GameObjects.GameObject[]>();
+  private drawAutels() {
+    const w = this.world, vus = new Set<number>();
+    for (const a of w.autels) {
+      vus.add(a.id);
+      const p = ISO.toScreen(a.x, a.y), E = infoAutel(a.effet), tint = parseInt(E.couleur.slice(1), 16);
+      let v = this.autelViews.get(a.id) as [Phaser.GameObjects.Ellipse, Phaser.GameObjects.Image, Phaser.GameObjects.Image, Phaser.GameObjects.Text] | undefined;
+      if (!v) {
+        v = [this.add.ellipse(p.x, p.y, 70, 30, tint, 0.45), this.add.image(p.x, p.y, 'beam').setOrigin(0.5, 1).setTint(tint).setDisplaySize(46, 260),
+          this.add.image(p.x, p.y, 'beam').setOrigin(0.5, 1).setDisplaySize(12, 220),
+          this.add.text(p.x, p.y - 70, `Autel de ${E.dieu} · ${E.nom}`, { fontFamily: 'Lexend, Verdana, sans-serif', fontSize: '13px', fontStyle: 'bold', color: E.couleur,
+            stroke: '#000', strokeThickness: 3, backgroundColor: '#0d0c0acc', padding: { x: 4, y: 2 } }).setOrigin(0.5)];
+        this.autelViews.set(a.id, v);
+      }
+      const pulse = 0.75 + Math.sin(w.time * 3 + a.id) * 0.25;
+      v[0].setPosition(p.x, p.y).setDepth(p.y - 2).setScale(0.9 + 0.1 * pulse);
+      v[1].setPosition(p.x, p.y).setDepth(p.y - 1).setAlpha(pulse);
+      v[2].setPosition(p.x, p.y).setDepth(p.y - 0.5).setAlpha(pulse * 0.8);
+      v[3].setPosition(p.x, p.y - 74).setDepth(1e6 - 1);
+    }
+    for (const [id, v] of this.autelViews) if (!vus.has(id)) { v.forEach(o => o.destroy()); this.autelViews.delete(id); }
+  }
   private drawDrops() {
     const seen = new Set<number>(), w = this.world;
     if (!this.textures.exists('beam')) {
@@ -2069,6 +2093,7 @@ export class ZoneScene extends Phaser.Scene {
       this.fx.apercu(id && !p.dead ? apercuSort(w, id, aim) : null, p, w.monsters.filter(q => !q.dead), !!this.keys?.SHIFT?.isDown && !p.dead ? p.attackReach() : 0);
     }
     this.drawDrops();
+    this.drawAutels();
     // monstre sous le curseur : pas de halo ni de bulle sur la ressource ou l'atelier derrière lui
     const mobSurvol = !!this.monsterUnder(this.input.activePointer);
     this.recolteView?.update(this.cameras.main, this.input.activePointer, mobSurvol);

@@ -27,6 +27,8 @@ import { MondeVivant, VIVANT, bonusWeekEnd, type BonusWeekEnd, type VueVivant } 
 import PASSANTS from '../data/passants.json';
 import V06 from '../data/v06.json';
 import { IDOLES_DEFS, basculerIdole, bonusIdoles, chargerJeu, defSousIdoles, enregistrerJeu, fxIdoles, recetteIdole, scoreIdoles, type FxIdole } from './idoles';
+import { autelsPas, poserAutel, AUTELS, type Autel } from './autels';
+import { COFFRE_FUYARD, defCoffreFuyard, piloterCoffre } from './coffreFuyard';
 import { defAffixes, elitesPas, poserAffixes, tirerAffixes } from './elites';
 import { idolesApparition, idolesGroupe, idolesMort, idolesPas, type ZoneIdole } from './idolesCombat';
 import type { EtatMonde } from './etatMonde';
@@ -260,6 +262,8 @@ export class World {
   zonesSol: ZoneSol[] = [];
   /** Idoles (0.6) : éclairs de Zaihort, flaques de Nahuatl (blessent les joueurs). */
   zonesIdoles: ZoneIdole[] = [];
+  /** Autels de combat posés (0.6, 21). */
+  autels: Autel[] = [];
   /** Festin du piranya : dégâts comptés pendant le coup en cours. */
   festin = 0;
   /** Dommages faits par le dernier coup du joueur (Mot de Lamentations : soigne selon les dommages). */
@@ -272,7 +276,7 @@ export class World {
   /** 6A : série de monstres tués de près (Massacre) : nombre, heure du dernier, et prochain appel à l'aide (4B). */
   massacre = { n: 0, t: -99 };
   private appelT = 0;
-  private nextId = 1;
+  nextId = 1;
   private groups: MonsterGroup[] = [];
   /** Point de retour après une mort (le dernier Zaap atteint). */
   private get checkpoint(): EtatMonde['checkpoint'] { return this.player.monde.checkpoint; }
@@ -1276,6 +1280,18 @@ export class World {
     }
     const fxg = this.fxIdoles;
     if (fxg) idolesGroupe(this, g.members, fxg);   // Payo, Djim
+    // 0.6 (22A) : très rarement, un Coffre Malveillant attend près du groupe (un seul en vie à la fois)
+    const CF = COFFRE_FUYARD, dcf = this.opts.data.monsters[CF.monstre];
+    if (dcf && !g.fixe && this.players[0]?.v06 && !this.monsters.some(o => o.fuyard && !o.dead) && this.rng.next() < CF.chance * (this.test?.archis ? 10 : 1)) {
+      const a = this.rng.range(0, Math.PI * 2), q = wg.nearestFree(pos.x + Math.cos(a) * 130, pos.y + Math.sin(a) * 130, free);
+      const c = this.spawnMonster(CF.monstre, q.x, q.y, defCoffreFuyard(dcf, this.niveauEn(q.x, q.y)));
+      c.fuyard = true;
+    }
+    // 0.6 (21A) : parfois un autel de combat près du groupe, un par carte
+    if (!g.fixe && this.players[0]?.v06 && !this.autels.some(a => a.carte === g.map) && this.rng.next() < AUTELS.chance * (this.test?.archis ? 10 : 1)) {
+      const a = this.rng.range(0, Math.PI * 2), q = wg.nearestFree(pos.x + Math.cos(a) * 160, pos.y + Math.sin(a) * 160, free);
+      poserAutel(this, q.x, q.y, g.map, false);
+    }
   }
   /** Ressources dorées près des élites (maquette Métiers 13C) : les ressources prêtes les plus proches de l'élite brillent. */
   private doreesPresElite(tag: string, x: number, y: number) {
@@ -1502,6 +1518,7 @@ export class World {
     // Monde ouvert : un monstre qui attend loin du joueur dort (pas d'errance ni d'IA) : bien moins de calcul
     for (const m of this.monsters) {
       if (m.saigneT > 0 && !m.dead) this.saigner(m, dt);
+      if (m.fuyard && piloterCoffre(this, m, dt)) continue;   // 0.6 (22A) : le Coffre Malveillant détale
       if (this.zone.open && m.state === 'idle' && !m.dead && this.players.every(q => Math.abs(m.x - q.x) + Math.abs(m.y - q.y) > World.SOMMEIL)) { m.regenCalme(dt); continue; }
       if (m.guerre && this.guerre?.attaque?.piloter(m, dt)) continue;
       if (m.arene && this.arene?.piloter(m, dt)) continue;
@@ -1517,6 +1534,7 @@ export class World {
     this.updateProjectiles(dt);
     this.updateZonesSol(dt);
     elitesPas(this, dt);
+    autelsPas(this, dt);
     idolesPas(this, dt, fxI);
     this.updateDrops(dt);
     if (this.opts.partieServeur && this.players.length > 1) this.releverAllies(dt);
@@ -1991,7 +2009,7 @@ export class World {
     this.emit({ k: 'kill', x: m.x, y: m.y, radius: m.radius, monster: m.type });
     const p = this.player;
     p.soigner(p.cls.healOnKill + p.legendary('vampire'));
-    if (!this.vivant?.monstreVaincu(m)) { this.dropLoot(m); if (m.champion) this.dropLoot(m); }   // Djim : le Champion donne deux fois   // boss du monde : son coffre est donné par le monde vivant (4A)
+    if (!this.vivant?.monstreVaincu(m)) { this.dropLoot(m); if (m.champion) this.dropLoot(m); if (this.player.autel?.effet === 'fortune') this.dropLoot(m); if (m.fuyard) for (let i = 1; i < COFFRE_FUYARD.butins; i++) this.dropLoot(m); }   // coffre qui fuit : butin ×5   // Djim : le Champion donne deux fois ; autel de Fortune   // boss du monde : son coffre est donné par le monde vivant (4A)
     if ((m.def.archiDe || (m.def.boss && m.def.ame)) && !m.relache) this.capturer(m);
     const alm = (this.almanax?.effet === 'xp' ? 1 + ALMANAX.xp : 1) * (1 + p.beni('xp')) * (1 + this.bonusDuWeekEnd('xp'));   // 15C, Magasin 6D, 9B (week-end)
     // Multi (maquette « Multi : » 7A) : chaque joueur proche gagne l'XP comme en solo, +10 % par allié proche

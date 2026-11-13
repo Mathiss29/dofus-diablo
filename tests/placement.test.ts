@@ -12,7 +12,7 @@ const lireMonde = (z: string) => JSON.parse(readFileSync(new URL(`../public/asse
 const incarnam = lireMonde('incarnam'), astrub = lireMonde('astrub');
 const nouveau = (z: string, placements?: Record<string, PlacementCarte>, seed = 4) =>
   new World({ data: GAME_DATA, zone: z, map: new WorldGrid(z === 'astrub' ? astrub : incarnam), seed, placements, groupesPartout: true, test: { ...REGLAGES_TEST } });
-const surCarte = (w: World, tag: string) => w.monsters.filter(m => !m.dead && w.worldGrid!.mapAt(m.homeX, m.homeY)?.tag === tag);
+const surCarte = (w: World, tag: string) => w.monsters.filter(m => !m.dead && !m.fuyard && w.worldGrid!.mapAt(m.homeX, m.homeY)?.tag === tag);
 const STEP = 1 / 60;
 
 describe('placement des groupes de monstres', () => {
