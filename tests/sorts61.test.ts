@@ -120,11 +120,11 @@ describe('Sorts 61-90 du Iop, du Crâ, de l\'Osamodas et du Sacrieur (0.6, ligne
     expect(a - m.hp).toBeGreaterThan(plein * 1.5);
   });
 
-  it('Sorts 25-60 de l\'Iop, du Crâ et de l\'Osamodas : tous jouables en partie de test (sauf la Balise de Survie, qui attend son dessin officiel)', () => {
+  it('Sorts 25-60 de l\'Iop, du Crâ et de l\'Osamodas : tous jouables en partie de test ', () => {
     for (const cls of ['iop', 'cra', 'osamodas']) {
       const C = GAME_DATA.classes[cls], joues = Object.values(C.spells).map(d => d.dofusId);
       for (const s of SORTS[C.sorts].flatMap(p => p)) {
-        if (s.grades[0].niv > 90 || s.id === 32474) continue;
+        if (s.grades[0].niv > 90) continue;
         expect(joues, `${cls} ${s.name}`).toContain(s.id);
       }
     }
@@ -165,5 +165,21 @@ describe('Sorts 61-90 du Iop, du Crâ, de l\'Osamodas et du Sacrieur (0.6, ligne
     lancer(w, 'discipline', { x: n.x, y: n.y }); idle(w, 1);
     expect(n.hp).toBeLessThan(hn);
     expect(Math.hypot(n.x - p.x, n.y - p.y)).toBeLessThan(d0 - 60);
+  });
+
+  it('Crâ : la Balise de Survie soigne les alliés qu\'elle voit, part au bout de 6 s, et échange de place quand on la frappe', () => {
+    const w = monde('cra'), p = w.player;
+    lancer(w, 'balise_survie', { x: p.x + 80, y: p.y });
+    const b = w.betes.find(x => x.base === 'balise_survie' && !x.dead)!;
+    expect(b).toBeTruthy();
+    const bx = b.x; p.hp = Math.round(p.maxHp * 0.5); const h = p.hp;
+    idle(w, 3.2);
+    expect(p.hp).toBeGreaterThan(h);
+    expect(b.x).toBe(bx);   // immobile
+    const px = p.x; p.cd.cinglante = 0;
+    lancer(w, 'cinglante', { x: b.x, y: b.y });
+    expect(p.x).toBeCloseTo(bx, 0); expect(b.x).toBeCloseTo(px, 0);
+    idle(w, 3);
+    expect(w.betes.some(x => x.base === 'balise_survie' && !x.dead)).toBe(false);
   });
 });

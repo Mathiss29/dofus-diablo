@@ -25,6 +25,9 @@ export interface BeteDef {
   /** Sadida : Arbre, Poupée, Groute (fixe = ne marche pas), effets des coups (Infecte, poison), IA de la Bloqueuse et de la Sacrifiée. */
   sadida?: { arbre?: boolean; poupee?: boolean; fixe?: boolean; infecte?: boolean; poison?: boolean; bloqueuse?: boolean;
     sacrifiee?: { element: Element; min: number; max: number } };
+  /** Balise de Survie du Crâ (0.6) : immobile ; toutes les `periode` s (dès sa pose), soigne de `soin` (part des PV max)
+   *  les alliés qu'elle voit à `portee` cases, comme au début de chacun de ses tours dans Dofus. */
+  balise?: { soin: number; periode: number; portee: number };
 }
 export interface ReglesBetes {
   /** Part des dommages officiels (× 1,5 comme les sorts du joueur, puis × degats) ; PA par seconde et réserve (6A). */
@@ -77,6 +80,8 @@ export class Bete extends Entity {
   dompteT = 0;
   /** Horde sauvage : secondes avant de repartir (0 = reste). Coup de fouet : vitesse d'attaque +hate % pendant hateT s. */
   finT = 0; hate = 0; hateT = 0;
+  /** Balise de Survie : prochain soin, et animation du soin en cours. */
+  pulseT = 0; soinAnimT = 0;
   /** Épées jumelles (légendaire Sacrieur N) : part des dégâts de la bête. */
   force = 1;
   /** Seconde épée des Épées jumelles : ne prend pas de place d'Invocation (elle part avec sa jumelle). */
@@ -169,6 +174,7 @@ export class Bete extends Entity {
       world.emit({ k: 'status', x: this.x, y: this.y - 40, text: 'Repart', color: '#a89fb6' });
       this.dead = true; this.t = 0; return;
     }
+    if (this.def.balise) { this.majBalise(dt, world); return; }
     if (this.hateT > 0 && (this.hateT -= dt) <= 0) this.hate = 0;
     const le = this.base === 'bouftou' && !this.dompteT ? p.pcv('pc-osamodas-E') : 0;
     if (le && (this.provoqueT -= dt) <= 0) {   // Laine épaisse : attire les monstres proches à l'arrivée puis toutes les 8 s
@@ -216,6 +222,21 @@ export class Bete extends Entity {
     }
     this.ecarter(world);
     this.applyKnock(dt);
+  }
+
+  /** Balise de Survie : ne bouge pas, soigne les alliés en vue toutes les `periode` s (animation officielle AnimAttaque0). */
+  private majBalise(dt: number, world: World) {
+    const B = this.def.balise!;
+    this.soinAnimT = Math.max(0, this.soinAnimT - dt);
+    if ((this.pulseT -= dt) <= 0) {
+      this.pulseT = B.periode; this.soinAnimT = 1;
+      for (const q of world.players) if (!q.dead && Math.hypot(q.x - this.x, q.y - this.y) <= B.portee * CASE && world.clearShot(this, q))
+        soignerAllie(this.owner, q, q.maxHp * B.soin, world, { brut: true, de: this });
+      for (const b of world.betes) if (b !== this && !b.dead && Math.hypot(b.x - this.x, b.y - this.y) <= B.portee * CASE && world.clearShot(this, b))
+        soignerAllie(this.owner, b, b.maxHp * B.soin, world, { brut: true, de: this });
+    }
+    this.kx = this.ky = 0;
+    if (this.soinAnimT > 0) this.setAnim('soin', 1 - this.soinAnimT); else this.setAnim('idle');
   }
 
   /** Ne marche ni sur l'Osamodas ni sur les autres bêtes : on se pousse doucement hors de leur cercle. */
