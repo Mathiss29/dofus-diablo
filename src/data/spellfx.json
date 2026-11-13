@@ -3169,6 +3169,131 @@
     }
    ]
   },
+  "vitalite_iop": {
+   "target": [
+    {
+     "gfx": 8041
+    }
+   ]
+  },
+  "souffle": {
+   "target": [
+    {
+     "gfx": 8042
+    }
+   ]
+  },
+  "epee_destructrice": {
+   "target": [
+    {
+     "gfx": 8022
+    }
+   ]
+  },
+  "puissance_iop": {
+   "target": [
+    {
+     "gfx": 8064
+    }
+   ]
+  },
+  "tempete": {
+   "target": [
+    {
+     "gfx": 8053
+    },
+    {
+     "gfx": 8054,
+     "bg": true
+    }
+   ],
+   "caster": [
+    {
+     "gfx": 8053
+    },
+    {
+     "gfx": 8054,
+     "bg": true
+    }
+   ]
+  },
+  "endurance": {
+   "target": [
+    {
+     "gfx": 8013
+    },
+    {
+     "gfx": 8050,
+     "bg": true
+    }
+   ]
+  },
+  "vertu": {
+   "target": [
+    {
+     "gfx": 8040
+    }
+   ]
+  },
+  "epee_iop": {
+   "target": [
+    {
+     "gfx": 8063,
+     "bg": true
+    },
+    {
+     "gfx": 8062
+    }
+   ]
+  },
+  "immobilisation": {
+   "target": [
+    {
+     "gfx": 8258
+    },
+    {
+     "gfx": 8259,
+     "bg": true
+    }
+   ]
+  },
+  "tirs_puissants": {
+   "target": [
+    {
+     "gfx": 8190,
+     "bg": true
+    },
+    {
+     "gfx": 8191
+    }
+   ]
+  },
+  "oeil_taupe": {
+   "target": [
+    {
+     "gfx": 8174,
+     "scale": 0.7
+    },
+    {
+     "gfx": 8173,
+     "bg": true,
+     "scale": 0.7
+    }
+   ]
+  },
+  "oeil_pour_oeil": {
+   "target": [
+    {
+     "gfx": 10090,
+     "scale": 1.6
+    },
+    {
+     "gfx": 10091,
+     "bg": true,
+     "scale": 1.6
+    }
+   ]
+  },
   "fleuri": {
    "target": [
     {

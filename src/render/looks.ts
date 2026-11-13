@@ -91,6 +91,15 @@ const IOP_MAP: Record<string, AnimSlice> = {
   precipitation: { anim: 'AnimAttaque806', from: 0, to: 0.6 },
   epee_destin: { anim: 'AnimAttaque800', from: 0.4, to: 1 },
   emprise: { anim: 'AnimAttaque802', from: 0.1, to: 0.75 },
+  // Sorts 25-60 (0.6) : Vitalité, Puissance et Vertu 814 ; Souffle, Épée Destructrice, Tempête de Puissance, Endurance 801 ; Épée de Iop 803
+  vitalite_iop: { anim: 'AnimAttaque814', from: 0, to: 0.33 },
+  puissance_iop: { anim: 'AnimAttaque814', from: 0, to: 0.33 },
+  vertu: { anim: 'AnimAttaque814', from: 0, to: 0.33 },
+  souffle: { anim: 'AnimAttaque801', from: 6 / 32, to: 1 },
+  epee_destructrice: { anim: 'AnimAttaque801', from: 6 / 32, to: 1 },
+  tempete: { anim: 'AnimAttaque801', from: 6 / 32, to: 1 },
+  endurance: { anim: 'AnimAttaque801', from: 6 / 32, to: 1 },
+  epee_iop: { anim: 'AnimAttaque803', from: 0, to: 0.6 },
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   colere_charge: { anim: 'AnimAttaque800', from: 0, to: 21 / 32 },
   colere_hit: { anim: 'AnimAttaque800', from: 21 / 32, to: 1 },
@@ -126,6 +135,11 @@ const CRA_MAP: Record<string, AnimSlice> = {
   perforante: { anim: 'AnimAttaque919', from: 0, to: 0.82 },
   devorante: { anim: 'AnimAttaque912', from: 0, to: 0.6 },
   acuite: { anim: 'AnimAttaque902', from: 0, to: 0.6 },
+  // Sorts 25-60 (0.6) : Immobilisation et Œil de Taupe 914, Tirs Puissants et Œil pour Œil 902
+  immobilisation: { anim: 'AnimAttaque914', from: 0, to: 0.6 },
+  oeil_taupe: { anim: 'AnimAttaque914', from: 0, to: 0.6 },
+  tirs_puissants: { anim: 'AnimAttaque902', from: 0, to: 0.6 },
+  oeil_pour_oeil: { anim: 'AnimAttaque902', from: 0, to: 0.6 },
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };

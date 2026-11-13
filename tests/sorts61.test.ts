@@ -5,6 +5,7 @@ import { GridMap, type MapData } from '../src/sim/gridmap';
 import { NO_INPUT, type PlayerInput } from '../src/sim/input';
 import { World } from '../src/sim/world';
 import { SORTS } from '../src/sim/sorts';
+import { avantImpact61 } from '../src/sim/sorts61';
 
 const carte = JSON.parse(readFileSync(new URL('../public/assets/cartes/5_-27/carte.json', import.meta.url), 'utf8')) as MapData;
 const STEP = 1 / 60;
@@ -117,5 +118,39 @@ describe('Sorts 61-90 du Iop, du Crâ, de l\'Osamodas et du Sacrieur (0.6, ligne
     p.cd.punition = 0; p.hp = Math.round(p.maxHp * 0.3); idle(w, 5); a = m.hp;   // Souffrance retombée à 7 : on compare la part Neutre
     lancer(w, 'punition', { x: m.x, y: m.y });
     expect(a - m.hp).toBeGreaterThan(plein * 1.5);
+  });
+
+  it('Sorts 25-60 de l\'Iop et du Crâ : tous jouables en partie de test (sauf la Balise de Survie, qui attend son dessin officiel)', () => {
+    for (const cls of ['iop', 'cra']) {
+      const C = GAME_DATA.classes[cls], joues = Object.values(C.spells).map(d => d.dofusId);
+      for (const s of SORTS[C.sorts].flatMap(p => p)) {
+        if (s.grades[0].niv > 90 || s.id === 32474) continue;
+        expect(joues, `${cls} ${s.name}`).toContain(s.id);
+      }
+    }
+  });
+
+  it('Iop : Vitalité plus forte sur soi, Tempête de Puissance frappe l\'ancienne cible quand on change, Vertu coûte de la Puissance par allié collé', () => {
+    const w = monde('iop'), p = w.player, pv = p.maxHp;
+    lancer(w, 'vitalite_iop', { x: p.x, y: p.y });
+    expect(p.maxHp).toBe(pv + Math.round(pv * 0.12));
+    const m = monstre(w, 120), n = monstre(w, -120);
+    lancer(w, 'tempete', { x: m.x, y: m.y });
+    const avant = m.hp; p.casts.tempete = [];
+    lancer(w, 'tempete', { x: n.x, y: n.y });
+    expect(m.hp).toBeLessThan(avant);
+    const q = w.ajouterJoueur('cra'); q.x = p.x + 40; q.y = p.y; idle(w, 0.1);
+    lancer(w, 'vertu', { x: p.x, y: p.y });
+    expect(p.shield).toBeGreaterThan(0); expect(q.shield).toBeGreaterThan(0);
+    expect(p.mods.find(x => x.src === 'vertu')?.n).toBe(-25);
+  });
+
+  it('Crâ : Œil pour Œil frappe plus fort après des coups reçus', () => {
+    const w = monde('cra'), p = w.player, d = p.cls.spells.oeil_pour_oeil;
+    expect(avantImpact61(p, 'oeil_pour_oeil', d, p.x, p.y, 1, w)).toBe(1);
+    for (let i = 0; i < 4; i++) { p.invuln = 0; p.hurt(1, p.x + 50, p.y, w); }
+    expect(avantImpact61(p, 'oeil_pour_oeil', d, p.x, p.y, 1, w)).toBeCloseTo(1.8);
+    idle(w, 3.2);
+    expect(avantImpact61(p, 'oeil_pour_oeil', d, p.x, p.y, 1, w)).toBe(1);
   });
 });

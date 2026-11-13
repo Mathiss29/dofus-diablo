@@ -2083,6 +2083,13 @@
             "details": "Emprise, Flèche Dévorante, Esprit Glouton, Berserk, Libation et les autres. En partie de test jusqu'à la sortie de la 0.6.",
             "icone": "sorts",
             "etiquettes": ["Partie de test", "Touche S"]
+          },
+          {
+            "titre": "12 sorts Iop et Crâ (25-60)",
+            "phrase": "Vitalité, Souffle, Épée de Iop, Tempête de Puissance, Œil de Taupe, Tirs Puissants et les autres arrivent.",
+            "details": "Seule la Balise de Survie du Crâ attend encore son dessin officiel. En partie de test jusqu'à la 0.6.",
+            "icone": "sorts",
+            "etiquettes": ["Partie de test", "Touche S"]
           }
         ],
         "Corrections": [],
