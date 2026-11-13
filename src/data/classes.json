@@ -3526,5 +3526,663 @@
     "epique": 5
    }
   }
+ },
+ "ecaflip": {
+  "name": "Écaflip",
+  "hp": 230,
+  "speed": 230,
+  "radius": 16,
+  "iframesOnHit": 0.45,
+  "healOnKill": 3,
+  "critChance": 0.15,
+  "critMult": 1.6,
+  "pa": {
+   "max": 6,
+   "regen": 1.25
+  },
+  "pm": {
+   "max": 2,
+   "recharge": 3.5
+  },
+  "potion": {
+   "charges": 3,
+   "heal": 0.35,
+   "cooldown": 1
+  },
+  "xpBase": 200,
+  "maxLevel": 200,
+  "attaque": {
+   "name": "Coup de poing",
+   "element": "terre",
+   "comboWindow": 0.45,
+   "combo": [
+    {
+     "duration": 0.28,
+     "impactAt": 0.07,
+     "cancelAt": 0.13,
+     "dmg": 14,
+     "range": 78,
+     "arc": 110,
+     "knock": 210,
+     "step": 120,
+     "hitstop": 0.05,
+     "shake": 0.0035
+    },
+    {
+     "duration": 0.28,
+     "impactAt": 0.07,
+     "cancelAt": 0.13,
+     "dmg": 14,
+     "range": 78,
+     "arc": 110,
+     "knock": 210,
+     "step": 120,
+     "hitstop": 0.05,
+     "shake": 0.0035
+    },
+    {
+     "duration": 0.4,
+     "impactAt": 0.11,
+     "cancelAt": 0.22,
+     "dmg": 30,
+     "range": 92,
+     "arc": 160,
+     "knock": 480,
+     "step": 220,
+     "hitstop": 0.085,
+     "shake": 0.008
+    }
+   ]
+  },
+  "rage": {
+   "name": "Main",
+   "max": 100,
+   "perHit": 0,
+   "perHurt": 0,
+   "bonus": 0,
+   "signature": 1,
+   "mode": "poker"
+  },
+  "poker": {
+   "_doc": "Poker d'Ecaflip (maquette Écaflip, ligne du 13 nov. 2026, src/sim/ecaflip.ts). Carte = couleur (0 Pique/Air, 1 Trèfle/Eau, 2 Cœur/Feu, 3 Carreau/Terre) et valeur (0 Valet 2 PA, 1 Dame 3 PA, 2 Roi 4 PA, 3 As 5 PA) ; main = cartes tenues au plus ; table = bonus officiels de chaque carte jouée pendant t s (Pique Dommages Poussée, Trèfle % Critique, Cœur Soins, Carreau Résistances Critiques ; valeurs Valet/Dame/Roi/As), allies = part donnée aux alliés à portee px (3B) ; mains = % de dommages de la main gagnante pendant t s (4A, carre par valeur) ; pileFace = Pile : % vitesse d'attaque, Face : vitesse de course, pendant t s (5A) ; roulette = effets possibles (7A) sur tout le monde dans la zone pendant t s ; icones = iconId des 16 cartes (couleur × 4 + valeur).",
+   "main": 4,
+   "table": {
+    "t": 9,
+    "stats": [
+     "dommagesPoussee",
+     "critique",
+     "soins",
+     "resCritiques"
+    ],
+    "valeurs": [
+     [
+      21,
+      32,
+      43,
+      54
+     ],
+     [
+      3,
+      6,
+      8,
+      10
+     ],
+     [
+      21,
+      32,
+      43,
+      54
+     ],
+     [
+      21,
+      32,
+      43,
+      54
+     ]
+    ],
+    "allies": 0.5,
+    "portee": 192
+   },
+   "mains": {
+    "paire": 8,
+    "doublePaire": 15,
+    "brelan": 20,
+    "couleur": 30,
+    "carre": [
+     30,
+     40,
+     50,
+     60
+    ],
+    "suite": 40,
+    "suiteCouleur": 60,
+    "suiteCouleurs": 80,
+    "t": 9
+   },
+   "pileFace": {
+    "vitesse": 10,
+    "course": 0.1,
+    "t": 9
+   },
+   "roulette": {
+    "t": 9,
+    "effets": [
+     "course",
+     "lenteur",
+     "soin",
+     "critique",
+     "fragile",
+     "puissance"
+    ],
+    "course": 0.25,
+    "lenteur": 0.25,
+    "soin": 0.03,
+    "critique": 10,
+    "fragile": 15,
+    "puissance": 40
+   },
+   "icones": [
+    13424,
+    13429,
+    13434,
+    13439,
+    13423,
+    13428,
+    13433,
+    13438,
+    13425,
+    13430,
+    13435,
+    13440,
+    13426,
+    13431,
+    13436,
+    13441
+   ]
+  },
+  "mobility": "bond_felin",
+  "sorts": "ecaflip",
+  "clicDroit": "pile_face",
+  "spells": {
+   "reflexes": {
+    "name": "Réflexes",
+    "dofusId": 12857,
+    "icon": 13462,
+    "element": "air",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Air et augmente les PM du lanceur.\nLes dommages n'affectent pas le lanceur.\n\nPioche un Valet de Pique.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 14,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 192,
+     "radius": 30
+    },
+    "ecaflip": {
+     "carte": [
+      0,
+      0
+     ],
+     "course": {
+      "k": 0.2,
+      "t": 3
+     }
+    }
+   },
+   "yams": {
+    "name": "Yams",
+    "dofusId": 29680,
+    "icon": 13413,
+    "element": "eau",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Eau et augmente les chances de Critique du lanceur.\nLes dommages n'affectent pas le lanceur.\n\nPioche un Valet de Trèfle.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 5,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 192,
+     "radius": 30
+    },
+    "ecaflip": {
+     "carte": [
+      1,
+      0
+     ],
+     "de": [
+      1,
+      6
+     ],
+     "crit": {
+      "n": 3,
+      "t": 6,
+      "max": 3
+     }
+    }
+   },
+   "topkaj": {
+    "name": "Topkaj",
+    "dofusId": 12846,
+    "icon": 13422,
+    "element": "feu",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Feu aux ennemis ou soigne les alliés.\n\nPioche un Valet de Cœur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 10,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 192,
+     "radius": 30
+    },
+    "ecaflip": {
+     "carte": [
+      2,
+      0
+     ],
+     "soinSiRien": true
+    }
+   },
+   "pile_face": {
+    "name": "Pile ou Face",
+    "dofusId": 12841,
+    "icon": 13378,
+    "element": "terre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Terre.\n\nSur le lanceur : applique aléatoirement l'état Pile ou l'état Face et lui rend 1 PA.\n• Pile : donne 1 PA.\n• Face : donne 1 PM.\n• Relancer le sort dans un état permet de s'appliquer l'autre.\n\nPioche un Valet de Carreau.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 15,
+    "knock": 0,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 192,
+     "radius": 30
+    },
+    "ecaflip": {
+     "carte": [
+      3,
+      0
+     ],
+     "pileFace": true
+    }
+   },
+   "bonne_pioche": {
+    "name": "Bonne Pioche",
+    "dofusId": 12843,
+    "icon": 13417,
+    "element": "neutre",
+    "pa": 1,
+    "cooldown": 0,
+    "desc": "Pioche une Carte aléatoire du Poker d'Ecaflip.\nJoue la Main avant de Piocher si elle est pleine.\n\nLe coût en PA du sort est remboursé.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "land",
+    "hit": {
+     "shape": "circle",
+     "radius": 1
+    },
+    "ecaflip": {
+     "pioche": 1,
+     "rembourse": true
+    },
+    "self": true
+   },
+   "jass": {
+    "name": "Jass",
+    "dofusId": 12864,
+    "icon": 13416,
+    "element": "air",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Air et Pioche une Dame de Pique.\nN'affecte pas le lanceur.\n\nRéduit également les Résistances Poussée selon les Cartes de Pique dans la Main (cumulable une fois par Carte).\nLes dommages du sort sont augmentés selon les Cartes de Pique dans la Main.\n\nJoue les Cartes de Pique si le lanceur en possède initialement au moins une dans la Main.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 26,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 192,
+     "radius": 30
+    },
+    "ecaflip": {
+     "carte": [
+      0,
+      1
+     ],
+     "couleur": 0,
+     "parCarte": 0.15
+    }
+   },
+   "perception": {
+    "name": "Perception",
+    "dofusId": 12852,
+    "icon": 12301,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Soigne l'allié ciblé pour chaque ennemi dans la zone d'effet et dévoile les invisibles en zone.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 192,
+     "radius": 96
+    },
+    "ecaflip": {
+     "perception": {
+      "soin": 0.06,
+      "parEnnemi": 0.02,
+      "max": 5
+     }
+    }
+   },
+   "baraka": {
+    "name": "Baraka",
+    "dofusId": 12848,
+    "icon": 13396,
+    "element": "eau",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Eau et Pioche une Dame de Trèfle.\nN'affecte pas le lanceur.\n\nRéduit également des Critiques selon les Cartes de Trèfle dans la Main (cumulable une fois par Carte).\nLes dommages du sort sont augmentés selon les Cartes de Trèfle dans la Main.\n\nJoue les Cartes de Trèfle si le lanceur en possède initialement au moins une dans la Main.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 24,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 192,
+     "radius": 30
+    },
+    "ecaflip": {
+     "carte": [
+      1,
+      1
+     ],
+     "couleur": 1,
+     "parCarte": 0.15
+    }
+   },
+   "chateau_cartes": {
+    "name": "Château de Cartes",
+    "dofusId": 12845,
+    "icon": 13415,
+    "element": "neutre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Applique un bouclier sur la cible pour chaque Carte dans la Main selon leur valeur.\n\nJoue la Main.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 192,
+     "radius": 30
+    },
+    "ecaflip": {
+     "chateau": {
+      "parValeur": [
+       0.04,
+       0.06,
+       0.08,
+       0.1
+      ],
+      "t": 6
+     }
+    }
+   },
+   "blakjak": {
+    "name": "Blakjak",
+    "dofusId": 12870,
+    "icon": 13414,
+    "element": "feu",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Feu et Pioche une Dame de Cœur.\nN'affecte pas le lanceur.\n\nRéduit également les soins reçus par la cible selon les Cartes de Cœur dans la Main (cumulable une fois par Carte).\nLes dommages du sort sont augmentés selon les Cartes de Cœur dans la Main.\n\nJoue les Cartes de Cœur si le lanceur en possède initialement au moins une dans la Main.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 28,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 192,
+     "radius": 30
+    },
+    "ecaflip": {
+     "carte": [
+      2,
+      1
+     ],
+     "couleur": 2,
+     "parCarte": 0.15
+    }
+   },
+   "roulette": {
+    "name": "Roulette",
+    "dofusId": 12840,
+    "icon": 15097,
+    "element": "neutre",
+    "pa": 1,
+    "cooldown": 0,
+    "desc": "Applique un effet aléatoire sur tout le monde.\n\nLe coût en PA du sort est remboursé.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "circle",
+     "radius": 288
+    },
+    "ecaflip": {
+     "roulette": true,
+     "rembourse": true
+    },
+    "self": true
+   },
+   "belote": {
+    "name": "Belote",
+    "dofusId": 12866,
+    "icon": 13377,
+    "element": "terre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Terre aux ennemis et Pioche une Dame de Carreau.\nN'affecte pas le lanceur.\n\nRéduit également les Dommages Critiques selon les Cartes de Carreau dans la Main (cumulable une fois par Carte).\nLes dommages du sort sont augmentés selon les Cartes de Carreau dans la Main.\n\nJoue les Cartes de Carreau si le lanceur en possède initialement au moins une dans la Main.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 27,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 192,
+     "radius": 30
+    },
+    "ecaflip": {
+     "carte": [
+      3,
+      1
+     ],
+     "couleur": 3,
+     "parCarte": 0.15
+    }
+   },
+   "tromperie": {
+    "name": "Tromperie",
+    "dofusId": 12881,
+    "icon": 13491,
+    "element": "air",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Vole de la vie aux ennemis ou soigne les alliés dans l'élément Air, Eau, Feu ou Terre.\nLe coût en PA, les dommages et soins et l'élément d'attaque sont modifiés aléatoirement à chaque lancer et lorsque le lanceur effectue un coup critique.\n\nPioche une Carte selon les conditions de lancer et l'élément du sort.\nJoue la Main avant de Piocher si elle est pleine.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 17,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 240,
+     "radius": 30
+    },
+    "ecaflip": {
+     "tromperie": true
+    },
+    "lifesteal": 0.5
+   },
+   "pelotage": {
+    "name": "Pelotage",
+    "dofusId": 14310,
+    "icon": 13359,
+    "element": "feu",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Feu aux ennemis et attire les cibles vers le centre en zone.\n\nPioche une Dame de Cœur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 27,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 192,
+     "radius": 96
+    },
+    "ecaflip": {
+     "carte": [
+      2,
+      1
+     ]
+    },
+    "attire": {
+     "cases": 1,
+     "vers": "centre"
+    }
+   },
+   "griffe_invocatrice": {
+    "name": "Griffe Invocatrice",
+    "dofusId": 12856,
+    "icon": 12300,
+    "element": "neutre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Invoque un Chaton maîtrisable qui peut voler de la vie dans l'élément Eau, donner des PM et se téléporter.\nTant qu'il est en vie, augmente la Puissance du lanceur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 192,
+     "radius": 0
+    },
+    "ecaflip": {
+     "chaton": {
+      "puissance": 30
+     }
+    },
+    "invoque": "chaton_enrage",
+    "rage": "summon"
+   },
+   "bond_felin": {
+    "name": "Bond du Félin",
+    "dofusId": 12844,
+    "icon": 12298,
+    "element": "neutre",
+    "pm": 1,
+    "cooldown": 0.4,
+    "desc": "Augmente les PM de l'allié ciblé ou téléporte le lanceur sur la case ciblée.",
+    "duration": 0.3,
+    "impactAt": 0.28,
+    "dmg": 0,
+    "knock": 0,
+    "hit": {
+     "shape": "circle",
+     "radius": 48
+    },
+    "move": {
+     "kind": "leap",
+     "maxRange": 192,
+     "height": 40
+    },
+    "hitstop": 0.03,
+    "shake": 0.004,
+    "fx": "land",
+    "ecaflip": {
+     "bondAllie": {
+      "k": 0.2,
+      "t": 3
+     }
+    }
+   }
+  }
  }
 }

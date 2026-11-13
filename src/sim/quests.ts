@@ -747,13 +747,13 @@ export class Quetes {
           w.emit({ k: 'objetQuete', nom: o.objet, n: c.compte[i], sur: o.n });
         }
       });
-    } else if (e.k === 'cast' || e.k === 'rageSpent' || e.k === 'potion') {
+    } else if (e.k === 'cast' || e.k === 'rageSpent' || e.k === 'potion' || e.k === 'mainGagnante') {
       const p = w.player;
       if (e.k === 'potion' && this.dansDonjon) this.potionDonjon = true;
       for (const c of this.enCours) this.etapeDe(c)?.objectifs.forEach((o, i) => {
         if (o.t !== 'utiliser') return;
         const ok = e.k === 'potion' ? o.quoi === 'potion'
-          : e.k === 'rageSpent' ? o.quoi === 'jauge'
+          : e.k === 'rageSpent' || e.k === 'mainGagnante' ? o.quoi === 'jauge'   // Écaflip : une Main gagnante jouée
           : (o.sort && o.sort === e.id) || (o.quoi === 'mobilite' && e.id === p.cls.mobility) || (o.quoi === 'sort' && e.id !== p.cls.mobility && e.id !== 'attaque');
         if (ok) c.compte[i] = 1;
       });

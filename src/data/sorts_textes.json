@@ -2981,5 +2981,415 @@
    "accroche": "La malle de secours.",
    "texte": "Soigne ton coffre au trésor de 25 % de ses PV."
   }
+ },
+ "ecaflip": {
+  "12857": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Renforce"
+   ],
+   "accroche": "Le chat retombe toujours sur ses pattes.",
+   "texte": "Frappe une cible jusqu'à 4 cases en Air et te fait courir 20 % plus vite 3 s. Pioche un Valet de Pique.",
+   "ambiance": "« Neuf vies, mais pas une de trop. »"
+  },
+  "12873": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Zone",
+    "Contrôle"
+   ],
+   "accroche": "Un coup de langue qui coûte cher.",
+   "texte": "Dommages Terre en zone jusqu'à 4 cases, qui retirent au hasard des PM ou des PA. Pile retire des PM, Face des PA ; pioche un Roi de Carreau."
+  },
+  "29680": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Cumul"
+   ],
+   "accroche": "Lance les dés.",
+   "texte": "Dommages Eau jusqu'à 4 cases, de 1 à 6 selon le dé, et +3 % de Critique pendant 6 s (3 fois). Pioche un Valet de Trèfle."
+  },
+  "12855": {
+   "role": "soutien",
+   "etiquettes": [
+    "Zone",
+    "Soin"
+   ],
+   "accroche": "Ça gratte, mais ça soigne.",
+   "texte": "En zone jusqu'à 5 cases : soigne les alliés et brûle les ennemis en Feu. Pioche un Roi de Cœur."
+  },
+  "12846": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Soin",
+    "Allié"
+   ],
+   "accroche": "Sur l'ennemi ou sur l'ami.",
+   "texte": "Dommages Feu jusqu'à 4 cases ; sans ennemi touché, soigne l'allié visé d'autant. Pioche un Valet de Cœur."
+  },
+  "12849": {
+   "role": "zone",
+   "etiquettes": [
+    "Ligne",
+    "Affaiblit"
+   ],
+   "accroche": "Ses griffes visent les points faibles.",
+   "texte": "Dommages Eau en ligne jusqu'à 5 cases, qui baissent les Résistances Critiques des cibles. Pioche un Roi de Trèfle."
+  },
+  "12841": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Renforce"
+   ],
+   "accroche": "Pile je gagne, face tu perds.",
+   "texte": "Dommages Terre jusqu'à 4 cases. Sur toi, Pile (vitesse d'attaque) ou Face (course) au hasard, l'autre en relançant ; pioche un Valet de Carreau."
+  },
+  "12878": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Cumul"
+   ],
+   "accroche": "Plus on bouge, plus on frappe.",
+   "texte": "Dommages Air en zone jusqu'à 5 cases, plus forts pour chaque poussée, attirance, échange ou téléportation faite avant. Le compte repart à zéro après."
+  },
+  "12843": {
+   "role": "soutien",
+   "etiquettes": [
+    "Autour de toi"
+   ],
+   "accroche": "Une carte, n'importe laquelle.",
+   "texte": "Pioche une carte au hasard du Poker d'Ecaflip ; Main pleine, elle la joue d'abord. PA remboursés."
+  },
+  "12877": {
+   "role": "soutien",
+   "etiquettes": [
+    "Autour de toi"
+   ],
+   "accroche": "On rebat les cartes.",
+   "texte": "Joue toute ta Main puis pioche 4 cartes au hasard. PA remboursés."
+  },
+  "12844": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Allié"
+   ],
+   "accroche": "D'un bond, ailleurs.",
+   "texte": "Bondis un peu plus loin, par-dessus les monstres. Retombé près d'un allié, il court 20 % plus vite 3 s."
+  },
+  "12865": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement",
+    "Allié"
+   ],
+   "accroche": "Un pas de danse, une place volée.",
+   "texte": "Téléporte-toi jusqu'à 2 cases ou échange de place avec la cible, et tes alliés autour se dégagent mieux des monstres."
+  },
+  "12864": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Cumul"
+   ],
+   "accroche": "Tout sur le Pique.",
+   "texte": "Dommages Air jusqu'à 4 cases, +15 % par Pique dans ta Main ; ces Piques sont alors jouées sur la Table. Pioche une Dame de Pique."
+  },
+  "12880": {
+   "role": "gros",
+   "etiquettes": [
+    "Distance",
+    "Vol de vie"
+   ],
+   "accroche": "La malchance a un prix.",
+   "texte": "Vole de la vie en Eau jusqu'à 6 cases et maudit la cible : sans coup critique de sa part dans les 3 s, elle reprend un coup Eau. Pioche un As de Trèfle."
+  },
+  "12852": {
+   "role": "soutien",
+   "etiquettes": [
+    "Soin",
+    "Allié",
+    "Zone"
+   ],
+   "accroche": "Il sent venir les ennuis.",
+   "texte": "Soigne l'allié visé (ou toi) de 6 % des PV, +2 % par ennemi dans la zone (5 au plus), et révèle les invisibles."
+  },
+  "12867": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Érosion"
+   ],
+   "accroche": "Il joue avec sa proie.",
+   "texte": "Érode la cible jusqu'à 3 cases : ses PV perdus ne reviennent plus en entier. Révèle aussi les invisibles autour."
+  },
+  "12848": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Cumul"
+   ],
+   "accroche": "Le Trèfle porte chance.",
+   "texte": "Dommages Eau jusqu'à 4 cases, +15 % par Trèfle dans ta Main ; ces Trèfles sont alors joués sur la Table. Pioche une Dame de Trèfle."
+  },
+  "12882": {
+   "role": "gros",
+   "etiquettes": [
+    "Distance",
+    "Vol de vie",
+    "Repousse"
+   ],
+   "accroche": "Il faut oser.",
+   "texte": "Te rapproche de la cible, vole de la vie en Air, la repousse et la marque : poussée ou poussée subie, elle reprend un coup Air. Pioche un As de Pique."
+  },
+  "12845": {
+   "role": "soutien",
+   "etiquettes": [
+    "Bouclier",
+    "Allié"
+   ],
+   "accroche": "Fragile, mais ça tient.",
+   "texte": "Bouclier sur l'allié visé (ou toi) selon les cartes de ta Main, plus fort pour les hautes valeurs, 6 s. Puis joue toute la Main."
+  },
+  "12876": {
+   "role": "soutien",
+   "etiquettes": [
+    "Soin",
+    "Bouclier",
+    "Allié"
+   ],
+   "accroche": "Les étoiles sont alignées.",
+   "texte": "Soigne l'allié visé ; chacun de ses coups critiques lui donne un bouclier (5 fois). Main vide : pioche une carte."
+  },
+  "12870": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Cumul"
+   ],
+   "accroche": "Vingt et un, et Cœur.",
+   "texte": "Dommages Feu jusqu'à 4 cases, +15 % par Cœur dans ta Main ; ces Cœurs sont alors joués sur la Table. Pioche une Dame de Cœur."
+  },
+  "12859": {
+   "role": "gros",
+   "etiquettes": [
+    "Distance",
+    "Vol de vie",
+    "Attire",
+    "Repousse"
+   ],
+   "accroche": "Le destin tranche.",
+   "texte": "Vole de la vie en Terre jusqu'à 6 cases, attire ou repousse au hasard (Pile attire, Face repousse) et marque la cible. Pioche un As de Carreau."
+  },
+  "12840": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Autour de toi",
+    "Contrôle"
+   ],
+   "accroche": "Rien ne va plus.",
+   "texte": "Un effet au hasard sur tout le monde autour, monstres compris : course, lenteur, soin, Critique, fragilité ou Puissance, 9 s. PA remboursés.",
+   "ambiance": "« Faites vos jeux. »"
+  },
+  "12850": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Autour de toi"
+   ],
+   "accroche": "Les arcanes décident.",
+   "texte": "Tire une carte du Tarot d'Ecaflip : son effet tombe sur toi et sur tout le monde autour."
+  },
+  "12866": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Cumul"
+   ],
+   "accroche": "Et rebelote.",
+   "texte": "Dommages Terre jusqu'à 4 cases, +15 % par Carreau dans ta Main ; ces Carreaux sont alors joués sur la Table. Pioche une Dame de Carreau."
+  },
+  "14311": {
+   "role": "gros",
+   "etiquettes": [
+    "Distance",
+    "Vol de vie"
+   ],
+   "accroche": "Ne te soigne pas trop vite.",
+   "texte": "Vole de la vie en Feu jusqu'à 8 cases et marque la cible : le premier soin qu'elle reçoit lui coûte un coup Feu. Pioche un As de Cœur."
+  },
+  "12881": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Vol de vie",
+    "Soin"
+   ],
+   "accroche": "Quel élément ? Surprise.",
+   "texte": "Vole de la vie jusqu'à 5 cases dans un élément tiré à chaque lancer, ou soigne un allié. Pioche le Valet de sa couleur ; Main pleine, elle la joue d'abord."
+  },
+  "12858": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Soin",
+    "Meilleur élément"
+   ],
+   "accroche": "Tapis.",
+   "texte": "En zone : soigne les alliés selon les cartes sur la Table, frappe les ennemis dans ton meilleur élément selon ta Main. Défausse la Main et reprend la Table."
+  },
+  "14310": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Attire"
+   ],
+   "accroche": "Viens par ici, petite souris.",
+   "texte": "Dommages Feu en zone jusqu'à 4 cases, qui attirent les cibles vers le centre. Pioche une Dame de Cœur."
+  },
+  "12851": {
+   "role": "zone",
+   "etiquettes": [
+    "Ligne",
+    "Repousse"
+   ],
+   "accroche": "Le coup de patte du dieu chat.",
+   "texte": "Repousse la cible, te rapproche d'elle et frappe en Air en ligne jusqu'à 4 cases. Pioche une Dame de Pique."
+  },
+  "12856": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Renforce"
+   ],
+   "accroche": "Un chaton, pas si mignon.",
+   "texte": "Invoque un Chaton Enragé qui vole de la vie en Eau. Tant qu'il vit, tu gagnes 30 Puissance.",
+   "ambiance": "« Il griffe d'abord, il ronronne après. »"
+  },
+  "12869": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Soin"
+   ],
+   "accroche": "Ronron réparateur.",
+   "texte": "Invoque un Chaton Affectueux qui soigne tes alliés, se téléporte et échange de place."
+  },
+  "12847": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Mêlée",
+    "Déplacement"
+   ],
+   "accroche": "Symétrie parfaite.",
+   "texte": "Dommages Terre au contact, puis la cible ou toi passez de l'autre côté (Pile la cible, Face toi), avec Résistances Critiques en plus. Pioche une Dame de Carreau."
+  },
+  "12883": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Repousse",
+    "Renforce"
+   ],
+   "accroche": "Les dés roulent, les monstres aussi.",
+   "texte": "Dommages Eau en zone jusqu'à 6 cases qui repoussent depuis le centre, et Dommages Critiques en plus pour toi. Pioche une Dame de Trèfle."
+  },
+  "12854": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Autour de toi",
+    "Contrôle"
+   ],
+   "accroche": "Il flaire la bonne affaire.",
+   "texte": "Retire des PA aux ennemis autour pour donner des PM, et des PM pour donner des PA ensuite. Joue la Main."
+  },
+  "12863": {
+   "role": "soutien",
+   "etiquettes": [
+    "Zone",
+    "Allié"
+   ],
+   "accroche": "La roue tourne.",
+   "texte": "Les ennemis en zone subissent le pire du hasard, tes alliés le meilleur, avec plus de Critique ensuite. Joue la Main ; la Table revient un peu plus tard."
+  },
+  "12875": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Repousse",
+    "Déplacement"
+   ],
+   "accroche": "Sur la pointe des pattes.",
+   "texte": "Te recule de la cible, la repousse et la frappe en Air jusqu'à 5 cases. Pioche un Roi de Pique."
+  },
+  "12872": {
+   "role": "zone",
+   "etiquettes": [
+    "Ligne",
+    "Repousse"
+   ],
+   "accroche": "Pfffft !",
+   "texte": "Dommages Feu en zone jusqu'à 5 cases qui repoussent les cibles. Pioche un Roi de Cœur."
+  },
+  "12842": {
+   "role": "soutien",
+   "etiquettes": [
+    "Allié",
+    "Bouclier"
+   ],
+   "accroche": "Rejoue ta vie.",
+   "texte": "L'allié visé subit beaucoup moins de dommages tout de suite, puis un peu plus ensuite. Joue la Main ; la Table revient plus tard."
+  },
+  "12874": {
+   "role": "soutien",
+   "etiquettes": [
+    "Soin",
+    "Allié"
+   ],
+   "accroche": "Il en reste huit.",
+   "texte": "Soigne la cible tout de suite puis en continu quelques secondes, et pioche une carte au hasard à chaque soin."
+  },
+  "12861": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Attire",
+    "Déplacement"
+   ],
+   "accroche": "Le chat fond sur sa proie.",
+   "texte": "Te rapproche de la cible, l'attire et la frappe en Eau jusqu'à 5 cases. Pioche un Roi de Trèfle."
+  },
+  "12879": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Contrôle"
+   ],
+   "accroche": "Tout est sens dessus dessous.",
+   "texte": "Téléporte les cibles à l'opposé du centre, frappe en Terre et retire au hasard des PM ou des PA (Pile des PM, Face des PA). Pioche un Roi de Carreau."
+  },
+  "29785": {
+   "role": "gros",
+   "etiquettes": [
+    "Distance",
+    "Meilleur élément"
+   ],
+   "accroche": "Tout dépend de ta Main.",
+   "texte": "Frappe dans chaque élément des cartes de ta Main, plus fort pour chaque carte, puis joue la Main. Main vide : pioche 4 cartes d'abord."
+  },
+  "12853": {
+   "role": "gros",
+   "etiquettes": [
+    "Distance",
+    "Meilleur élément"
+   ],
+   "accroche": "La main gagnante, en pleine face.",
+   "texte": "Frappe selon ta main gagnante : carrés et suites dans tous les éléments, paires et brelans dans ton meilleur. Défausse la Main."
+  }
  }
 }

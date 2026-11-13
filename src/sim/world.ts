@@ -10,6 +10,7 @@ import { AGGRO, CASE, Monster, TOUR, type Cible } from './monster';
 import { jetOfficiel } from './danger';
 import { REGLAGES_BUTIN, monstresDeZone, panoDuBoss, poolNiveau, poolOfficiel, rangDe, tirerButin, type Butin, type CtxButin, type Rang } from './butin';
 import { PASSIFS, TROPHEES, tropheesDuBoss } from './dofus';
+import { jouerMain } from './ecaflip';
 import { ajouterPieces, CLE_COFFRE, enSurcharge, ouvrirCoffre, piecesMonstre, piecesObjet, seuilsCoffre } from './enutrof';
 import { briser, chanceRune, coutKamas, coutRelance, orbeConvient, potionConvient, POTIONS, regenerer, relancerLigne, REGLES_V2, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
 import { V03_PUBLIC, V04_PUBLIC, niveauObjetsMax, slotAPouvoirConnu } from './pouvoirs';
@@ -1438,6 +1439,7 @@ export class World {
     if (this.incantation && (input.dest || input.target != null || input.pickup != null || input.talk || input.pressed || input.recolte != null || input.move.x || input.move.y)) this.couperIncantation();
     if (input.havreSac) this.havreSac();
     if (input.coffre && this.player.cls.coffre && !this.player.dead) ouvrirCoffre(this.player, this);   // Enutrof : touche du coffre
+    if (input.coffre && this.player.cls.poker && !this.player.dead) jouerMain(this.player, this);   // Écaflip : la même touche Joue la Main
     if (input.meute != null && this.monsters.some(m => m.id === input.meute && !m.dead)) this.cibleMeute = input.meute;
     if (input.zaap != null) this.voyagerZaap(input.zaap);
     if (input.versZaap) this.versZaap = input.versZaap;

@@ -22,6 +22,7 @@ import { CASE, TOUR } from './monster';
 import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type SortGrade, type SortOfficiel } from './sorts';
 import { porteeSort } from './apercu';
 import { aimanter, alchiRhetorique, apresCoupEniripsa, envol, impactEniripsa, majEniripsa } from './eniripsa';
+import { avantImpactEcaflip, impactEcaflip, majEcaflip, type Carte, type MainGagnante } from './ecaflip';
 import { impactEnutrof, majEnutrof, perteCoffre, recordsVides, type LigneCoffre, type RecordsCoffre, type VitrineCoffre } from './enutrof';
 import type { Butin } from './butin';
 import { DANGER } from './danger';
@@ -308,14 +309,14 @@ export class Player extends Entity {
   etatPouvoir(id: string): { actif: true } | { actif: false; raison: string } {
     const c = PC_PAR_ID[id];
     if (c) {   // légendaire de classe inventé : sa classe, et son sort connu
-      if (c.classe !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur', forgelance: 'Forgelance', eniripsa: 'Eniripsa', enutrof: 'Enutrof' } as Record<string, string>)[c.classe] ?? 'une autre classe'}` };
+      if (c.classe !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur', forgelance: 'Forgelance', eniripsa: 'Eniripsa', enutrof: 'Enutrof', ecaflip: 'Écaflip' } as Record<string, string>)[c.classe] ?? 'une autre classe'}` };
       if (this.knows(c.sort)) return { actif: true };
       const o = this.official(c.sort), n = o ? this.requiredLevel(o) : 0;
       return { actif: false, raison: n > this.level ? `s'éveille au niveau ${n}` : 'variante non choisie' };
     }
     const p = POUVOIR_PAR_ID[id];
     if (!p) return { actif: true };
-    if (classeDuPouvoir(id) !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur', forgelance: 'Forgelance', eniripsa: 'Eniripsa', enutrof: 'Enutrof' } as Record<string, string>)[classeDuPouvoir(id)] ?? 'une autre classe'}` };
+    if (classeDuPouvoir(id) !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur', forgelance: 'Forgelance', eniripsa: 'Eniripsa', enutrof: 'Enutrof', ecaflip: 'Écaflip' } as Record<string, string>)[classeDuPouvoir(id)] ?? 'une autre classe'}` };
     const k = Object.keys(this.cls.spells).find(x => this.cls.spells[x].dofusId === p.dofusId);
     if (!k) return { actif: false, raison: 'sort pas encore en jeu' };
     if (this.knows(k)) return { actif: true };
@@ -397,6 +398,8 @@ export class Player extends Entity {
    *  objets du coffre ouvert qui jaillissent un par un (7D, propre à l'hôte). */
   coffreVitrine: VitrineCoffre[] = []; coffreJournal: LigneCoffre[] = []; coffreRecords: RecordsCoffre = recordsVides();
   coffreEjection: { t: number; b: Butin; x: number; y: number }[] = [];
+  /** Écaflip (maquette Écaflip) : cartes de la Main, Pile ou Face (0 aucun, 1 Pile, 2 Face) et ses secondes, Main gagnante en cours. */
+  ecaMain: Carte[] = []; ecaPF = 0; ecaPFT = 0; ecaGagnante: MainGagnante | null = null;
   courir(k: number, t: number) { this.courseK = this.courseT > 0 ? Math.max(this.courseK, k) : k; this.courseT = Math.max(this.courseT, t); }
   slow(t: number, k: number) { if (this.insensibleT > 0) return; k *= fuiteFactor(this.fuite); this.slowK = this.slowT > 0 ? Math.max(this.slowK, k) : k; if (t >= this.slowT) this.slowT0 = t; this.slowT = Math.max(this.slowT, t); }
   get speed(): number { return this.cls.speed * (1 + vitesseAgilite(this.stat('agilite'))) * this.vitesseTest * (this.slowT > 0 ? 1 - this.slowK : 1) * (this.courseT > 0 ? 1 + this.courseK : 1); }
@@ -908,6 +911,7 @@ export class Player extends Entity {
     if (this.lance) this.majLance(dt, world);
     if (this.encourage || this.soinContinu.length || this.insoignableT > 0 || this.farces.length) majEniripsa(this, dt, world);
     if (this.cls.coffre) majEnutrof(this, dt, world);
+    if (this.cls.poker) majEcaflip(this, dt, world);
     if (this.renvoiT > 0) this.renvoiT -= dt;
     if (this.mutil) {   // Mutilation : re-sacrifie toutes les `periode` s et gagne un cran de Puissance
       const M = this.cls.spells.mutilation?.mutilation;
@@ -1169,9 +1173,11 @@ export class Player extends Entity {
       const depuisLance = !!(d.lance?.surLance && L) && (hz.shape === 'circle' || Math.hypot(s.tx - L!.x, s.ty - L!.y) < CASE);
       if (depuisLance && this.pcv('pc-forgelance-enracinee')) { const v = this.pcv('pc-forgelance-enracinee'); mult *= 1 + Math.min(v * 7, v * L!.t) / 100; }   // Lance enracinée
       // Transfusion : dommages en part des PV restants ; Attirance (plus forte à Souffrance 6+), Condensation, Supplice
+      const eca = this.cls.poker ? avantImpactEcaflip(this, d, world) : null;   // Écaflip : Main gagnante, Dames, dé du Yams, élément de Tromperie
+      if (eca) mult *= eca.mult;
       const base = d.dmgPV ? this.hp * d.dmgPV : d.dmg * s.gm;
       const attire = d.attire && { px: ((this.souffrance >= 6 && d.souffrance6?.attire) || d.attire.cases) * CASE, vers: d.attire.vers };
-      const hit = { dmg: (base + (s.id === this.cls.basic ? this.weaponDamage() : 0)) * mult, attire, supplice: d.supplice, knock: d.knock * sig('knock'), element: d.element, vsSummon: d.vsSummon && 1 + (d.vsSummon - 1) * sig('summon'), vsElite: sig('summon') > 1,
+      const hit = { dmg: (base + (s.id === this.cls.basic ? this.weaponDamage() : 0)) * mult, attire, supplice: d.supplice, knock: d.knock * sig('knock'), element: eca?.element ?? d.element, vsSummon: d.vsSummon && 1 + (d.vsSummon - 1) * sig('summon'), vsElite: sig('summon') > 1,
         pushDmg: (d.pushDmg && s.boosted) || (!!this.cls.lance && d.knock > 0),   // Forgelance : dommages de poussée officiels (10A)
         affaiblit: d.affaiblit,
         lifesteal: d.lifesteal && d.lifesteal * sig('lifesteal'), erosion: d.erosion && d.erosion * sig('erosion'),
@@ -1217,6 +1223,7 @@ export class Player extends Entity {
       if (d.echange) world.echanger(this, s.tx, s.ty, CASE * 0.75);   // Assaut, Transposition : après le coup
       if (eni && !pasDeCoup) { apresCoupEniripsa(this, d, s.tx, s.ty, rEni, world.degatsCoup, world); alchiRhetorique(this, d, s.tx, s.ty, rEni, world); }
       if (d.enutrof) impactEnutrof(this, d, s.tx, s.ty, hits, world);
+      if (d.ecaflip && this.cls.poker) impactEcaflip(this, s.id, d, s.tx, s.ty, hits, base * mult, world);
       if (d.envol) envol(this, s.sx, s.sy, s.tx, s.ty, world);   // Mot d'Envol : échange de place avec l'allié visé
       if (d.lance && this.cls.lance) this.apresImpactLance(d, s.tx, s.ty, world);
       if (d.traverse) {   // Balestra : de l'autre côté de la cible, puis petit recul

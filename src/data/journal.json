@@ -1892,6 +1892,16 @@
             "etiquettes": [
               "En ligne"
             ]
+          },
+          {
+            "titre": "L'Écaflip en essai",
+            "phrase": "L'Écaflip et son Poker : chaque sort pioche une carte, X joue la Main.",
+            "details": "Les cartes posées donnent leur bonus officiel, et une paire, un brelan ou un carré te font frapper plus fort. Pile ou Face, Roulette et Chaton sont là.",
+            "icone": "principale",
+            "etiquettes": [
+              "Partie de test",
+              "Touche X"
+            ]
           }
         ],
         "Le monde": [

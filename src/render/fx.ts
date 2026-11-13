@@ -148,6 +148,17 @@ export class FX {
         this.number(e.x, e.y, 60, `-${e.amount}`, false, '#b02020');
         this.particles(e.x, e.y, 24, 12, 0x9a1010, 160, 0.5, 3, 260);
         break;
+      case 'cartesJouees':   // Écaflip : les cartes posées sur la Table, une gerbe de la couleur de chaque famille
+        for (const c of e.cartes) this.particles(e.x, e.y, 60, 6, [0x7fe0a0, 0x6fb8ff, 0xff7a5a, 0xd8a35a][Math.floor(c / 4)] ?? 0xffffff, 180, 0.5, 3, 220);
+        this.ring(e.x, e.y, 10, 70, 0xf2e3b0, 0.35, 6);
+        break;
+      case 'mainGagnante':   // 4C : jackpot, grand anneau doré et pluie d'or
+        this.ring(e.x, e.y, 10, e.jackpot ? 200 : 110, 0xffd84a, e.jackpot ? 0.6 : 0.4, e.jackpot ? 16 : 8);
+        if (e.jackpot) this.particles(e.x, e.y, 80, 40, 0xffd84a, 320, 0.8, 4, 380);
+        break;
+      case 'roulette':   // Roulette : un anneau qui tourne vite autour de l'Écaflip
+        this.ring(e.x, e.y, 10, 288, 0xe8a0ff, 0.5, 10);
+        break;
       case 'pieces':   // Enutrof 15A : pièces d'or qui volent du monstre vers le coffre
         for (let i = 0; i < Math.min(6, 1 + e.n); i++) this.pieces.push({ x: e.x, y: e.y, tx: e.tx, ty: e.ty, t: -i * 0.05, d: 0.45 + i * 0.03, h: 40 + i * 6 });
         break;

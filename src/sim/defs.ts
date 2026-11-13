@@ -151,6 +151,8 @@ export interface SpellDef {
   enutrof?: { course?: { k: number; t: number }; ruee?: { vitesse: number; t: number; puissance: number; soin: number };
     pandore?: { rayon: number; soin: number; hate: number; t: number }; clef?: { portee: number; t: number };
     coffreBouclier?: { part: number; t: number }; coffreSoin?: number };
+  /** Écaflip (maquette Écaflip, 13 nov. 2026) : Pioche, Dames, Pile ou Face, Roulette… joués par src/sim/ecaflip.ts. */
+  ecaflip?: import('./ecaflip').EffetsEcaflip;
 }
 /** Auto-attaque d'un type d'arme : un sort sans coût dont les dommages viennent de l'arme portée. */
 export interface WeaponProfile extends Omit<SpellDef, 'name' | 'icon' | 'element' | 'dmg' | 'cooldown' | 'anim'> {
@@ -172,7 +174,9 @@ export interface ClassDef {
   /** bonus : dommages en plus ; signature : multiplicateur de l'effet propre au sort (SpellDef.rage), 1,5 = +50 %. */
   rage: { name: string; max: number; perHit: number; perHurt: number; bonus: number; signature: number;
     /** Ligne Rage 24B : la Rage du Iop monte plus en mêlée, la Précision du Crâ plus de loin (et pas en prenant des coups). */
-    mode?: 'melee' | 'distance' | 'eveil' | 'souffrance' | 'lance' | 'eloquence' | 'coffre' };
+    mode?: 'melee' | 'distance' | 'eveil' | 'souffrance' | 'lance' | 'eloquence' | 'coffre' | 'poker' };
+  /** Écaflip : le Poker d'Ecaflip (maquette Écaflip), voir src/sim/ecaflip.ts et classes.json > ecaflip.poker._doc. */
+  poker?: import('./ecaflip').ReglesPoker;
   /** Enutrof : le coffre au trésor (maquette Enutrof), voir src/sim/enutrof.ts et classes.json > enutrof.coffre._doc. */
   coffre?: import('./enutrof').ReglesCoffre;
   /** Eniripsa (maquette Eniripsa) : réglages des soins, voir classes.json > eniripsa._doc. */

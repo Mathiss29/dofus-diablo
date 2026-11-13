@@ -240,6 +240,24 @@ const ENU_MAP: Record<string, AnimSlice> = {
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };
 
+// Écaflip : squelette joueur n° 1 + skin 60/61 (corps), animations officielles (spellscripts casterAnimation, maquette Écaflip 12A) :
+// Griffe Invocatrice 601 ; Yams, Pelotage 602 ; Perception 603 ; Pile ou Face 604 ; Jass, Baraka, Blakjak, Belote, Tromperie 606 ;
+// Réflexes 607 ; Topkaj 608 ; Bonne Pioche 611 ; Roulette 612 ; Château de Cartes 6 ; Bond du Félin 4.
+const ECA_MAP: Record<string, AnimSlice> = {
+  ...WEAPON_MAP,
+  idle: { anim: 'AnimStatiqueExplo0', loop: true, fps: 20 },
+  run: { anim: 'AnimCourse', loop: true, fps: 32 },
+  attack1: { anim: 'AnimArme0', from: 3 / 28, to: 17 / 28 },
+  attack2: { anim: 'AnimArme0', from: 3 / 28, to: 17 / 28 },
+  attack3: { anim: 'AnimArme0', from: 3 / 28, to: 24 / 28 },
+  ...Object.fromEntries(Object.entries({
+    griffe_invocatrice: 601, yams: 602, pelotage: 602, perception: 603, pile_face: 604, jass: 606, baraka: 606, blakjak: 606, belote: 606,
+    tromperie: 606, reflexes: 607, topkaj: 608, bonne_pioche: 611, roulette: 612, chateau_cartes: 6, bond_felin: 4,
+  }).map(([k, n]) => [k, { anim: `AnimAttaque${n}`, from: 0, to: 0.65 }])),
+  hit: { anim: 'AnimHit', from: 0, to: 1 },
+  die: { anim: 'AnimMort', from: 0, to: 0.75 },
+};
+
 const GOLD = 0xffd87a;
 
 export const LOOKS: Record<string, Look> = {
@@ -258,6 +276,10 @@ export const LOOKS: Record<string, Look> = {
   eniripsa: { atlas: 'eniripsa', scale: 0.82, map: ENI_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
   // Enutrof : dessiné en direct depuis son squelette, comme les autres classes
   enutrof: { atlas: 'enutrof', scale: 0.82, map: ENU_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
+  // Écaflip : dessiné en direct depuis son squelette, comme les autres classes
+  ecaflip: { atlas: 'ecaflip', scale: 0.82, map: ECA_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
+  // Chaton Enragé de l'Écaflip (monster_planche.py, os 289, SCALE 2,5) : Griffe Invocatrice
+  eca_chaton: { atlas: 'eca_chaton', scale: 0.5, map: MONSTER_MAP(11 / 30, 'AnimAttaque0', { 0: 11 / 30, 1: 21 / 44 }), height: 60, multi: true },
   // Invocations de l'Enutrof (monster_planche.py, os 4147, 4156, 4166, SCALE 2,5) : Sac Animé, Pelle Animée, coffre au trésor (Coffre Animé)
   enu_sac: { atlas: 'enu_sac', scale: 0.5, map: MONSTER_MAP(23 / 42, 'AnimAttaque0', { 0: 23 / 42, 1: 18 / 36 }), height: 70, multi: true },
   enu_pelle: { atlas: 'enu_pelle', scale: 0.5, map: MONSTER_MAP(25 / 37, 'AnimAttaque0', { 0: 25 / 37 }), height: 80, multi: true },
