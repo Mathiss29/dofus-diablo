@@ -30,11 +30,29 @@ DJ = {
                        monstres=['cochon_de_farle', 'porsalu', 'don_duss_ang', 'don_dorgan'], boss=['dragon_cochon', 'don_duss_ang', 'don_dorgan']),
 }
 TAILLES = [10, 10, 12]   # 3 vagues (comme les donjons de la 0.4), la suivante part quand il en reste 4
+ARRIVEE = (0, 330)   # POINTS['arrivee'] d'arenes.py : les positions des mécaniques sont comptées depuis l'arrivée
+def depuis_arrivee(l): return [[x - ARRIVEE[0], y - ARRIVEE[1]] for x, y in l]
+# 2D : le Blop Royal se choisit à l'entrée (un cercle par Royal) ; ses vagues sont des Blops de sa couleur, son coffre son butin.
+# « Les 4 Royaux » : les vagues mêlées, plus nombreuses, les quatre Royaux ensemble, le butin des quatre.
+ROYAUX = [('Blop Coco Royal', 'coco', '#eadbb4'), ('Blop Indigo Royal', 'indigo', '#8f7dff'), ('Blop Reinette Royal', 'reinette', '#8fd25a'),
+          ('Blop Griotte Royal', 'griotte', '#ff5a6a')]
+def choix_blops(d):
+    c = [{'nom': nom, 'couleur': coul, 'vagues': vagues([f'blop_{k}'] * 3 + ['gloutoblop', f'blop_{k}', f'blop_{k}', 'blopignon', f'blop_{k}', f'blop_{k}', 'tronkoblop']),
+          'bossVague': [f'blop_{k}_royal', f'blop_{k}', f'blop_{k}']} for nom, k, coul in ROYAUX]
+    return c + [{'nom': 'Les 4 Royaux', 'couleur': '#f2d36b', 'vagues': vagues(d['monstres'], [12, 12, 14]), 'bossVague': d['boss']}]
+# 4C : les quatre œufs-abris (ABRIS d'arenes.py) ; 6B : toiles au sol, 6C : Mitraille de soie (zone C2) ; 8B : Branche Paralysante
+MECA = {
+    'draeg': {'oeufs': {'pos': depuis_arrivee([(-430, -120), (430, -120), (-300, 220), (300, 220)]),
+                        'eclot': ['dragoeuf_calcaire', 'dragoeuf_argile', 'dragoeuf_ardoise', 'dragoeuf_charbon']}},
+    'nyee': {'toiles': depuis_arrivee([(-700, -200), (700, -200), (0, -150), (-600, 330), (600, 330), (-170, 40), (170, 40), (-850, 120), (850, 120)]),
+             'tisse': 5514},
+    'ancestral': {'fixe': True, 'racines': 240},
+}
 
 
-def vagues(l):
+def vagues(l, tailles=TAILLES):
     out = []
-    for n in TAILLES:
+    for n in tailles:
         out.append({'m': [l[i % len(l)] for i in range(len(out) * 3, len(out) * 3 + n)]})
     return out
 
@@ -56,7 +74,8 @@ for k, d in DJ.items():
     for m in d['monstres'] + d['boss']: assert m in M, m
     p = PTS[k]; tag = p['tag']
     S[str(d['sub'])] = {'name': d['nom'], 'level': d['niveau'], 'monsters': [], 'groupsPerMap': 0, 'groupSize': [0, 0], 'v06': True, 'region': d['region']}
-    dv.append({'nom': d['nom'], 'salles': {}, 'arene': {kk: v for kk, v in p.items()}, 'vagues': vagues(d['monstres']), 'bossVague': d['boss']})
+    dv.append({'nom': d['nom'], 'salles': {}, 'arene': {kk: v for kk, v in p.items()}, 'vagues': vagues(d['monstres']), 'bossVague': d['boss'],
+               **({'choix': choix_blops(d)} if k == 'blops' else {}), **MECA.get(k, {})})
     cid, cnom, icone, niv, prix = d['cle']
     I['resources'][cid] = {'name': cnom, 'icon': icone, 'level': niv, 'cle': d['nom']}
     portes.append({'a': [d['porte'], case_porte(d['porte'])], 'b': [tag, 0], 'nom': d['nom'], 'cle': cid, 'marque': True})

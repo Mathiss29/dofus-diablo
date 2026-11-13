@@ -73,3 +73,78 @@ describe('arènes de la 0.6 (maquette « Arènes : 1A 2D 3A 4A+4C 5B 6B+6C 7A 8A
     expect(wg.mapByTag('arene_dragon_cochon')).toBeDefined();
   });
 });
+
+describe('mécaniques des arènes de la 0.6 (2D, 4C, 6B+6C, 8A+8B)', () => {
+  const entrer = (tag: string) => {
+    const w = monde(true); w.player.level = 100; w.player.recompute();
+    expect(w.allerArene(tag)).toBe(true);
+    for (let i = 0; i < 60 * 2; i++) w.step(1 / 60, NO_INPUT);
+    return w;
+  };
+  const pas = (w: World, s: number) => { for (let i = 0; i < 60 * s; i++) w.step(1 / 60, NO_INPUT); };
+
+  it('2D : au Clos des Blops, rien ne part avant le choix ; le cercle choisit les vagues et le boss du Royal', () => {
+    const w = entrer('arene_blops'), a = w.arene!;
+    expect(a.choix?.map(c => c.nom)).toEqual(['Blop Coco Royal', 'Blop Indigo Royal', 'Blop Reinette Royal', 'Blop Griotte Royal', 'Les 4 Royaux']);
+    pas(w, 5);
+    expect(a.vague).toBe(0);
+    const c = a.choix![1]; w.player.x = c.x; w.player.y = c.y;
+    pas(w, 3);
+    expect(a.variante).toBe(1);
+    expect(a.choix).toBeNull();
+    expect(a.vague).toBeGreaterThanOrEqual(1);
+    expect(a.bossVague[0]).toBe('blop_indigo_royal');
+    expect(a.bossCoffre).toEqual(['blop_indigo_royal']);
+    expect(new Set(a.vagues.flatMap(v => v.m))).toEqual(new Set(['blop_indigo', 'gloutoblop', 'blopignon', 'tronkoblop']));
+    expect(w.player.cleDonjon?.choix).toBe(1);
+    // « Les 4 Royaux » : le coffre tire le butin des quatre
+    a.variante = 4;
+    expect(a.bossCoffre.length).toBe(4);
+    expect(w.tirerCoffreDonjon(a.d)).not.toBeNull();
+  });
+
+  it('6B+6C : les toiles de la Reine Nyée ralentissent, le feu les brûle 15 s ; pendant le boss elle en tisse sous les joueurs', () => {
+    const w = entrer('arene_nyee'), a = w.arene!, p = w.player;
+    pas(w, 2);
+    expect(a.demarre).toBe(true);
+    const t = a.toiles.find(x => w.map.walkable(x.x, x.y))!;
+    expect(t).toBeDefined();
+    p.x = t.x; p.y = t.y; p.slowT = 0;
+    w.step(1 / 60, NO_INPUT);
+    expect(p.slowT).toBeGreaterThan(0);
+    w.hitCircle(t.x, t.y, 40, { dmg: 1, knock: 0, element: 'feu' });
+    expect(t.brule).toBe(15);
+    a.boss = w.spawnMonster('reine_nyee', a.pts.boss.x, a.pts.boss.y); a.boss.arene = true;
+    pas(w, 5);
+    expect(a.tisse.length + a.toiles.filter(x => x.vie != null).length).toBeGreaterThan(0);
+  });
+
+  it('4C : pendant le boss, un œuf de Draegnerys touché éclot et libère un Dragœuf', () => {
+    const w = entrer('arene_draegnerys'), a = w.arene!;
+    pas(w, 2);
+    expect(a.oeufs.length).toBe(4);
+    const o = a.oeufs[0], n = a.arrivees.length;
+    w.hitCircle(o.x, o.y, 30, { dmg: 1, knock: 0 });
+    expect(o.eclos).toBe(false);   // pas avant le boss
+    a.boss = w.spawnMonster('draegnerys', a.pts.boss.x, a.pts.boss.y); a.boss.arene = true;
+    w.hitCircle(o.x, o.y, 30, { dmg: 1, knock: 0 });
+    expect(o.eclos).toBe(true);
+    expect(a.arrivees.length).toBe(n + 1);
+    expect(a.arrivees.at(-1)!.type).toMatch(/^dragoeuf_/);
+  });
+
+  it('8A+8B : l’Abraknyde Ancestral reste sur l’estrade et fait sortir des racines qui enracinent', () => {
+    const w = entrer('arene_ancestral'), a = w.arene!, p = w.player;
+    pas(w, 1);
+    expect(a.d.fixe).toBe(true);
+    a.boss = w.spawnMonster('abraknyde_ancestral', a.pts.boss.x, a.pts.boss.y); a.boss.arene = true; a.boss.fixe = true;
+    const x0 = a.boss.x, y0 = a.boss.y;
+    p.invuln = 99;
+    for (let i = 0; i < 60 * 6 && !a.racines.length; i++) w.step(1 / 60, NO_INPUT);
+    expect(a.racines.length).toBeGreaterThan(0);
+    p.slowT = 0;
+    pas(w, 1.2);
+    expect(p.slowK).toBeGreaterThan(0.5);
+    expect(Math.hypot(a.boss.x - x0, a.boss.y - y0)).toBeLessThan(5);
+  });
+});

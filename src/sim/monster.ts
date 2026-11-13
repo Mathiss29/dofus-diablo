@@ -115,6 +115,8 @@ export class Monster extends Entity {
   /** Partie de test : posé par le panneau F1 ; mannequin = immobile et increvable (compteur de DPS, 7D). */
   poseTest = false;
   mannequin = false;
+  /** 0.6 (« Arènes : » 8A) : boss qui reste sur son estrade (sorts à distance seulement). */
+  fixe = false;
   /** Partie de test (maquette « Outil test » 8B) : le mannequin frappe le perso N fois par seconde (0 : il ne frappe pas). */
   frappe = 0; frappeT = 0;
   /** Arène d'un donjon : arrive en courant vers le joueur et ne lâche jamais ; intouchable = palier du boss (8C). */
@@ -239,7 +241,8 @@ export class Monster extends Entity {
             this.state = 'windup'; this.mode = 'lunge'; this.spell = null; this.t = D.windup; this.dirX = dx / dist; this.dirY = dy / dist; break;
           }
         }
-        if (dist > this.radius + player.radius + 4) {
+        if (this.fixe) this.setAnim('idle');
+        else if (dist > this.radius + player.radius + 4) {
           const [mx, my] = this.evite(...(this.versCible(player.x, player.y, dt, world) ?? this.contourne(dx / dist, dy / dist, dist, player, world)), world);
           const v = speed * this.rattrapage(dist);
           this.x += mx * v * dt; this.y += my * v * dt; this.setAnim('run');
@@ -293,7 +296,7 @@ export class Monster extends Entity {
       case 'lunge': {
         const S = this.spell, dur = D.lungeTime, sp = S && this.kind === 'charge' ? this.chargeLen(S) / dur : D.lungeSpeed;
         this.t -= dt; this.setAnim(S ? `lunge${S.anim}` : 'lunge', 1 - this.t / dur);
-        this.x += this.dirX * sp * dt; this.y += this.dirY * sp * dt;
+        if (!this.fixe) { this.x += this.dirX * sp * dt; this.y += this.dirY * sp * dt; }
         if (!this.hitDone && Math.hypot(player.x - this.x, player.y - this.y) < this.radius + player.radius + 6) {
           this.hitDone = true;
           if (S) {
