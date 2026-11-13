@@ -114,5 +114,91 @@
     "fuite": 15,
     "vitesse": 2.4,
     "butins": 5
+  },
+  "renommee": {
+    "_doc": "19A+19C : renommée par région et par perso (Incarnam, Astrub, Amakna… et les régions de la 0.6). Points : carte vue, carte chassée, lieu découvert, archimonstre capturé, sanctuaire trouvé. Le palier 4 demande objectif × le total possible de la région ; les paliers 1-3 en sont le quart, la moitié, les trois quarts.",
+    "points": {
+      "carte": 1,
+      "chassee": 2,
+      "lieu": 10,
+      "archi": 15,
+      "sanctuaire": 20
+    },
+    "objectif": 0.6,
+    "paliers": [
+      {
+        "pepites": 30,
+        "texte": "30 Pépites"
+      },
+      {
+        "potion": 1,
+        "texte": "+1 charge de potion"
+      },
+      {
+        "points": 5,
+        "texte": "5 points de caractéristiques"
+      },
+      {
+        "apparat": 1,
+        "texte": "Un apparat"
+      }
+    ]
+  },
+  "sanctuaires": {
+    "_doc": "20A+20C : statues des Douze cachées dans les coins des cartes du dehors, parRegion par région (moins si la région est petite : une pour cartesParSanctuaire cartes). Trouvée en passant à rayon px : +bonus à sa carac, pour toujours (perso).",
+    "parRegion": 6,
+    "cartesParSanctuaire": 8,
+    "rayon": 60,
+    "bonus": 2,
+    "dieux": [
+      [
+        "Iop",
+        "force"
+      ],
+      [
+        "Crâ",
+        "agilite"
+      ],
+      [
+        "Eniripsa",
+        "intelligence"
+      ],
+      [
+        "Enutrof",
+        "chance"
+      ],
+      [
+        "Sacrieur",
+        "vitalite"
+      ],
+      [
+        "Xélor",
+        "sagesse"
+      ],
+      [
+        "Féca",
+        "vitalite"
+      ],
+      [
+        "Sadida",
+        "force"
+      ],
+      [
+        "Osamodas",
+        "intelligence"
+      ],
+      [
+        "Écaflip",
+        "chance"
+      ],
+      [
+        "Sram",
+        "agilite"
+      ],
+      [
+        "Pandawa",
+        "sagesse"
+      ]
+    ]
   }
 }

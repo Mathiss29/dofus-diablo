@@ -51,15 +51,15 @@ export const COOP = {
 
 /** Champs jamais envoyés : données du jeu (recréées de l'autre côté), sac et progression propres à chaque joueur, caches. */
 /** Champs du sac et de la progression : refusés pour les autres, envoyés à leur propriétaire seul (instantané.sac). */
-const SAC = ['bag', 'resources', 'kamas', 'metiers', 'apparats', 'dofus', 'trophees', 'zaaps', 'codex', 'codexOuvert', 'ames', 'cleDonjon', 'guerre', 'vivant', 'recetteSuivie',
+const SAC = ['bag', 'resources', 'kamas', 'metiers', 'apparats', 'dofus', 'trophees', 'zaaps', 'codex', 'codexOuvert', 'ames', 'cleDonjon', 'renfortDonjon', 'guerre', 'vivant', 'recetteSuivie',
   'commandeFM', 'lootFilter', 'autoDefaire', 'almanaxJour', 'magasin', 'sacEnPlus', 'benediction', 'repas', 'elixir', 'parchemins', 'ceinture', 'zonesVues', 'explore', 'lieuxVus', 'tombe',
-  'coffreVitrine', 'coffreJournal', 'coffreRecords'] as const;
+  'coffreVitrine', 'coffreJournal', 'coffreRecords', 'recoltees'] as const;
 const REFUS: Record<Sorte | 'a', Set<string>> = {
   j: new Set(['cls', 'items', 'bag', 'resources', 'codex', 'learned', 'zonesVues', 'metiers', 'prereglages', 'ames', 'apparats', 'dofus', 'trophees',
-    'commandeFM', 'quetes', 'monde', 'evenements', 'cleDonjon', 'guerre', 'vivant', 'recetteSuivie', 'zaaps', '_pouvoirs', 'almanaxJour', 'magasin', 'sacEnPlus', 'benediction', 'repas', 'elixir', 'parchemins', 'ceinture', 'boissonCd', 'codexOuvert', 'lootFilter', 'autoDefaire', 'kamas', 'v03', 'v04', 'v06', 'chasse', 'bossSansLeg', 'idoles', 'fxIdoles', 'bouclierVu', 'idoleT', 'repathT', 'bufferT', 'buffer', 'explore', '_explore', 'lieuxVus', 'tombe', 'carteIci',
-    'coffreVitrine', 'coffreJournal', 'coffreRecords', 'coffreEjection']),
+    'commandeFM', 'quetes', 'monde', 'evenements', 'cleDonjon', 'renfortDonjon', 'guerre', 'vivant', 'recetteSuivie', 'zaaps', '_pouvoirs', 'almanaxJour', 'magasin', 'sacEnPlus', 'benediction', 'repas', 'elixir', 'parchemins', 'ceinture', 'boissonCd', 'codexOuvert', 'lootFilter', 'autoDefaire', 'kamas', 'v03', 'v04', 'v06', 'chasse', 'bossSansLeg', 'idoles', 'renommee', 'sanctuaires', 'fxIdoles', 'bouclierVu', 'idoleT', 'repathT', 'bufferT', 'buffer', 'explore', '_explore', 'lieuxVus', 'tombe', 'carteIci',
+    'coffreVitrine', 'coffreJournal', 'coffreRecords', 'coffreEjection', 'recoltees']),
   // minuteries de l'IA des monstres : l'hôte seul s'en sert
-  m: new Set(['def', 'atkCd', 'spellCd', 'sigCd', 'cheminT', 'wanderT', 'wanderX', 'wanderY', 'repathT']),
+  m: new Set(['def', 'atkCd', 'spellCd', 'sigCd', 'cheminT', 'wanderT', 'wanderX', 'wanderY', 'repathT', 'e06']),
   b: new Set(['def']),
   a: new Set(['w', 'd', 'butin', 'butins']),
 };

@@ -69,6 +69,8 @@ export interface SpellDef {
   itemIcon?: number;
   /** Id du sort dans Dofus (spellsdataroot) : son niveau, ses grades, son coût et sa relance officiels (src/data/sorts.json). */
   dofusId?: number;
+  /** Sort de la 0.6 (sorts 61-90) : connu seulement si la 0.6 est visible pour ce perso (Player.v06 : partie de test ou V06_PUBLIC). */
+  v06?: boolean;
   /** Sort sur soi : ne touche aucun ennemi (Tirs Éloignés). */
   self?: boolean;
   /** Bonus sur le lanceur (tours officiels × 3 s) : Dommages de l'Épée Divine, Portée des Tirs Éloignés. */
@@ -153,6 +155,10 @@ export interface SpellDef {
     coffreBouclier?: { part: number; t: number }; coffreSoin?: number };
   /** Écaflip (maquette Écaflip, 13 nov. 2026) : Pioche, Dames, Pile ou Face, Roulette… joués par src/sim/ecaflip.ts. */
   ecaflip?: import('./ecaflip').EffetsEcaflip;
+  /** Sorts 61-90 de la Forgelance, de l'Eniripsa et de l'Enutrof (0.6), joués par src/sim/sorts06.ts après l'impact. */
+  s06?: import('./sorts06').Effets06;
+  /** Sorts 61-90 du Iop, du Crâ, de l'Osamodas et du Sacrieur (0.6), joués par src/sim/sorts61.ts. */
+  e61?: import('./sorts61').Effets61;
 }
 /** Auto-attaque d'un type d'arme : un sort sans coût dont les dommages viennent de l'arme portée. */
 export interface WeaponProfile extends Omit<SpellDef, 'name' | 'icon' | 'element' | 'dmg' | 'cooldown' | 'anim'> {
@@ -370,6 +376,8 @@ export interface AtelierDef {
   nom: string; metiers: string[]; cartes: string[];
   /** Machines officielles (Métiers UI 3A, tools/contenu/ateliers_postes.py) : [carte, case, gfx, décalage x, y du dessin]. */
   postes?: [string, number, number, number, number][];
+  /** « Métiers : » 9B : poste posé à côté de l'établi de forgemagie (Havre-Sac : un poste pour tous les métiers). */
+  pres?: 'etabli';
 }
 export interface ZoneDef {
   name: string; level: number;

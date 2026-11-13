@@ -279,6 +279,12 @@ export class WorldGrid extends GridMap {
       const m = this.mapOfCell(c); if (m) this.freeByMap.get(m.tag)!.push(c);
     }
   }
+  /** Après avoir changé des cases de mov (meubles du Havre-Sac, 0.6) : les listes de cases libres suivent. */
+  refaireLibres() {
+    this.free.length = 0;
+    for (const l of this.freeByMap.values()) l.length = 0;
+    for (let c = 0; c < this.mov.length; c++) if (this.mov[c]) { this.free.push(c); const m = this.mapOfCell(c); if (m) this.freeByMap.get(m.tag)!.push(c); }
+  }
   mapOfCell(c: number): WorldMapEntry | undefined {
     if (c < 0) return undefined;
     const r = Math.floor(c / this.cols), k = c % this.cols;

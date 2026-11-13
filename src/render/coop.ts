@@ -6,6 +6,7 @@ import type { World } from '../sim/world';
 import { classeDe, COOP, Emetteur, entreeInvite, garderUneFois, type Instantane, type UneFois } from '../sim/miroir';
 import { exporterJoueur, restaurerJoueur, type EtatJoueur } from '../sim/sauvegarde';
 import { Compte } from './compte';
+import { sacVuValide, type SacVu } from '../sim/meubles';
 
 /** Coop à plusieurs (maquette « Multi : » 3A, 11A), premier essai dans la partie de test : un salon à code sur le serveur
  *  (api.diablofus.com), l'hôte fait tourner la partie, ses invités lui envoient leurs entrées et reçoivent des instantanés.
@@ -18,7 +19,7 @@ const RELEVE = 5;
 export interface SceneCoop {
   world: World;
   /** Invité : aller dans la zone de l'hôte (la scène repart), ou revenir à sa propre partie (zone = null). */
-  allerA(zone: string | null, position?: { x: number; y: number }, arrivee?: [string, number]): void;
+  allerA(zone: string | null, position?: { x: number; y: number }, arrivee?: [string, number], sacHote?: SacVu): void;
   annonce(texte: string): void;
   /** Nom du perso joué (portraits du groupe). */
   nom: string;
@@ -194,7 +195,7 @@ class Salon {
     }
     if (d.k === 'zone' && typeof d.zone === 'string' && GAME_DATA.zones[d.zone]) {
       this.dansZoneHote = true; this.recus = []; this.monId = Number(d.id) || 0;
-      this.scene?.allerA(d.zone, { x: Number(d.x), y: Number(d.y) });
+      this.scene?.allerA(d.zone, { x: Number(d.x), y: Number(d.y) }, undefined, d.zone === 'havresac' ? sacVuValide(d.sac) ?? undefined : undefined);   // 10E : le Havre-Sac de l'hôte
     } else if (d.k === 'instantane' && this.dansZoneHote) {
       if (this.attendPlein && !d.plein) return;
       this.attendPlein = false;
@@ -237,7 +238,7 @@ class Salon {
     if (i.etat) { const e = { ...i.etat, zone: '__coop', havreSac: undefined }; try { w.commeJoueur(q, () => restaurerJoueur(w, e)); } catch (err) { console.warn('coop', err); } }
     q.hp = q.maxHp; q.nom = i.nom;
     i.joueur = q.id; i.em = new Emetteur(q.id); i.pret = false;
-    this.envoyer({ k: 'zone', zone: w.opts.zone, x: q.x, y: q.y, id: q.id }, id);
+    this.envoyer({ k: 'zone', zone: w.opts.zone, x: q.x, y: q.y, id: q.id, ...(w.deco ? { sac: w.deco.sac } : {}) }, id);   // 10E : on reçoit ses amis chez soi
   }
   private retirer(i: Invite) {
     const w = this.scene?.world, q = w?.players.find(p => p.id === i.joueur);

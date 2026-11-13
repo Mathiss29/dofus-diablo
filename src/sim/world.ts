@@ -13,6 +13,7 @@ import { PASSIFS, TROPHEES, tropheesDuBoss } from './dofus';
 import { jouerMain } from './ecaflip';
 import { ajouterPieces, CLE_COFFRE, enSurcharge, ouvrirCoffre, piecesMonstre, piecesObjet, seuilsCoffre } from './enutrof';
 import { briser, chanceRune, coutKamas, coutRelance, orbeConvient, potionConvient, POTIONS, regenerer, relancerLigne, REGLES_V2, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
+import { chocNoa, mortSorts06, pasMonstre06 } from './sorts06';
 import { V03_PUBLIC, V04_PUBLIC, V06_PUBLIC, niveauObjetsMax, slotAPouvoirConnu } from './pouvoirs';
 import { fxImpression, imprimable, nouveauPourCodex, prixImpression } from './codex';
 import { legendaryPower, FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, kamasDefaire, noteObjet, rollItem, STAT_NAMES, type EquipSlot, type Item, type ItemDef, type ItemsData, type Rarity, type RecipeDef, type Stat } from './items';
@@ -27,7 +28,11 @@ import { MondeVivant, VIVANT, bonusWeekEnd, type BonusWeekEnd, type VueVivant } 
 import PASSANTS from '../data/passants.json';
 import V06 from '../data/v06.json';
 import { IDOLES_DEFS, basculerIdole, bonusIdoles, chargerJeu, defSousIdoles, enregistrerJeu, fxIdoles, recetteIdole, scoreIdoles, type FxIdole } from './idoles';
+import { majRenommee, sanctuairesPas } from './renommee';
 import { autelsPas, poserAutel, AUTELS, type Autel } from './autels';
+import { DecoHavreSac, gagnerMeuble } from './deco';
+import { hache } from './contrats';
+import { DECO, MEUBLES, meubleDeRecette, raresDuTheme, type SacVu, type SorteSpeciale } from './meubles';
 import { COFFRE_FUYARD, defCoffreFuyard, piloterCoffre } from './coffreFuyard';
 import { defAffixes, elitesPas, poserAffixes, tirerAffixes } from './elites';
 import { idolesApparition, idolesGroupe, idolesMort, idolesPas, type ZoneIdole } from './idolesCombat';
@@ -51,6 +56,7 @@ import { FABRICATION, METIERS_FAB, chanceRare, ingredientsRares, type Poste } fr
 import { PLACEMENT, analyserCarte, groupesAuto, placementPose, placementValide, proposerPlacement, type AnalyseCarte, type PlacementCarte } from './placement';
 import { PC_PAR_ID } from './pouvoirsClasse';
 import { ARTISANS, POUCE } from './artisans';
+import { RENFORT, cleRenforceeDe, texteRenfort } from './clesRenforcees';
 import { CHASSE, OEUVRE, PIERRES, coutOeuvre, coutPerce, metiersOeuvre, type Cout } from './oeuvre';
 import { BOISSONS, CONSO, ELIXIRS, PARCHEMINS, RARES_RECOLTE, REPAS, RES_BOISSON, sorteConso, texteBonus } from './consommables';
 import { RECOLTE, porteeRecolte, quantite, xpRecolte, type Recolte, type RecoltesData } from './recolte';
@@ -87,6 +93,9 @@ export interface HitDef { dmg: number; knock: number; element?: Element; lifeste
   choc?: number; partage?: number; enclume?: { x: number; y: number; k: number }; plusChoc?: number;
   /** Juron fracassant (Eniripsa I) : l'Éloquence gagnée quand la cible heurte un obstacle. */
   chocRage?: number;
+  /** Sorts 61-90 (0.6) : soins reçus par la cible réduits de n pendant t s (Flèche d'Expiation, Hécatombe) ; × k sur un ennemi
+   *  qui a un bouclier (Flèche Perforante). */
+  antiSoin?: { n: number; t: number }; vsBouclier?: number;
   /** Sort qui frappe (partie de test, DPS sort par sort : maquette « Panneau test » 6A). */
   sort?: string }
 /** Zone laissée au sol par un légendaire de classe (Épée jumelle) : frappe une fois chaque monstre qui la traverse. */
@@ -188,6 +197,8 @@ export interface WorldOptions {
   horloge?: () => number;
   /** Tous les groupes posés dès le départ, même loin des joueurs (tests qui regardent tout le monde ; le jeu pose à la demande, World.POSE). */
   groupesPartout?: boolean;
+  /** 10E (0.6) : en coop, l'invité voit le Havre-Sac de l'hôte (thème, meubles, potager, vitrine), envoyé à l'arrivée. */
+  sacHote?: SacVu;
 }
 
 /** Le familier porté (maquette Familiers 4A) : il suit le perso et va chercher le butin autour de lui. */
@@ -342,6 +353,8 @@ export class World {
   set retour(v: EtatMonde['retour']) { this.player.monde.retour = v; }
   /** Poutch Ingball du Havre-Sac (7A) : id du monstre. */
   poutch: number | null = null;
+  /** Havre-Sac complet (0.6, src/sim/deco.ts) : meubles posés, vitrine, potager, mannequins ; null hors du Havre-Sac. */
+  deco: DecoHavreSac | null = null;
   /** Arène du donjon où l'on se bat (maquette « Donjons en vagues »), null ailleurs. */
   /** Guerre des Cawottes (0.4, île des Wabbits) : partie de test seulement tant que la 0.4 est cachée. */
   guerre: Guerre | null = null;
@@ -363,7 +376,10 @@ export class World {
     this.rng = new Rng(opts.seed ?? 1);
     this.zone = opts.data.zones[opts.zone];
     if (!this.zone) throw new Error(`Zone inconnue : ${opts.zone}`);
-    if (opts.themesHavreSac) this.zone = zoneAvecTheme(this.zone, themeChoisi(opts.themesHavreSac, this.coffre));   // la carte chargée par l'affichage est celle du thème
+    if (opts.themesHavreSac) {   // la carte chargée par l'affichage est celle du thème (10E : celui de l'hôte en coop)
+      const h = opts.sacHote && opts.themesHavreSac.themes.find(t => t.id === opts.sacHote!.theme);
+      this.zone = zoneAvecTheme(this.zone, h || themeChoisi(opts.themesHavreSac, this.coffre));
+    }
     const dt = this.zone.open?.donjonsTest;   // 0.4 cachée : ses donjons seulement en partie de test (copie : les données restent intactes)
     if ((V04_PUBLIC || opts.test) && dt?.length) this.zone = { ...this.zone, open: { ...this.zone.open!, donjons: [...(this.zone.open!.donjons ?? []), ...dt] } };
     const sz = this.zone.open?.subareas;   // 0.4 cachée : les sous-zones d'Amakna (monstres, butin, contrats) seulement en partie de test
@@ -425,6 +441,7 @@ export class World {
     }
     if (open && !opts.sansGroupes) this.spawnGroups();
     if (open?.havreSac?.poutch != null) this.poserPoutch(open.havreSac.poutch);
+    if (open?.havreSac && this.player.v06 && this.map instanceof WorldGrid) { this.deco = new DecoHavreSac(this, this.map); this.deco.installer(); }
     if (open) this.visiter(opts.zonesVues ?? []);
     if (open && (opts.arrivee || opts.position || opts.zaap)) this.proteger();
   }
@@ -821,6 +838,13 @@ export class World {
     if (!po.cle) return true;
     const p = this.player, r = p.resources[po.cle] ?? 0;
     if (this.cleValable(po.nom)) return true;   // 14A : clé encore valable, rien n'est repris
+    const rf = cleRenforceeDe(this.opts.items, po.cle);   // « Métiers : » 9C : la clé renforcée passe avant la clé normale
+    if (rf && (p.resources[rf] ?? 0) > 0) {
+      if (!--p.resources[rf]) delete p.resources[rf];
+      p.renfortDonjon = po.nom;
+      this.emit({ k: 'status', x: p.x, y: p.y - 60, text: `Clé renforcée · ${texteRenfort()}`, color: '#ffb84a' });
+      return true;
+    }
     if (this.bonusDuWeekEnd('cles')) return true;   // 9B : Trousseau de clefs illimité
     if (r <= 0 && this.aboDuJour().cles < avantage(p.abo, 'cles')) {   // « Apparats : » 17J : une clé offerte par jour
       p.aboJour.cles++;
@@ -966,7 +990,8 @@ export class World {
   private lancerArene(d: DonjonDef) {
     const p = this.player, reprise = this.cleValable(d.nom);
     this.arene?.abandonner();
-    if (!reprise) p.cleDonjon = { nom: d.nom, vague: 1, reste: ARENE.cle };
+    if (!reprise) p.cleDonjon = { nom: d.nom, vague: 1, reste: ARENE.cle, ...(p.renfortDonjon === d.nom ? { renforcee: true } : {}) };
+    p.renfortDonjon = null;
     this.arene = new Arene(this, d, reprise || 1);
     const boss = this.bossDuDonjon(d.nom), cle = this.entreeDonjon(d.nom)?.cle ?? null;
     this.emit({ k: 'areneDebut', nom: d.nom, boss, vagues: this.arene.total, cle, reprise: reprise > 1 ? reprise : 0 });
@@ -1042,6 +1067,8 @@ export class World {
       b.ressources.push(...c.ressources); b.objets.push(...c.objets); b.kamas += c.kamas + 20 * niveau;
     }
     this.noterBossLeg(boss, b, false);
+    // 0.6 (11C) : un meuble rare du Havre-Sac, parfois, pour le compte (le joueur de l'écran)
+    if (this.player.v06 && this.player === this.players[0] && this.rng.next() < DECO.chanceDonjon) this.gagnerMeubleRare();
     return b;
   }
   /** 0.6 (24A) : un Légendaire ou un Mythique de ce boss remet sa chance à zéro ; sinon (à la mort du boss seulement) elle monte d'un cran. */
@@ -1346,7 +1373,7 @@ export class World {
       if (g.retire || g.dort || g.members.some(m => !m.dead)) continue;
       if (!g.cleared) {
         g.cleared = true; g.timer = open.respawn;
-        for (const p of this.players) p.potions = Math.min(p.cls.potion.charges, p.potions + 1);   // un groupe vaincu rend une potion
+        for (const p of this.players) p.potions = Math.min(p.potionsMax, p.potions + 1);   // un groupe vaincu rend une potion
         this.emit({ k: 'groupCleared' });
       }
       // tutoriel : les esprits du Temple reviennent vite, même pas loin (de quoi finir chaque étape sans attendre)
@@ -1526,6 +1553,7 @@ export class World {
     // Monde ouvert : un monstre qui attend loin du joueur dort (pas d'errance ni d'IA) : bien moins de calcul
     for (const m of this.monsters) {
       if (m.saigneT > 0 && !m.dead) this.saigner(m, dt);
+      if (m.e06) pasMonstre06(this, m, dt);   // sorts 61-90 (0.6) : Noa, Floraison, Corruption, immobilisé…
       if (m.fuyard && piloterCoffre(this, m, dt)) continue;   // 0.6 (22A) : le Coffre Malveillant détale
       if (this.zone.open && m.state === 'idle' && !m.dead && this.players.every(q => Math.abs(m.x - q.x) + Math.abs(m.y - q.y) > World.SOMMEIL)) { m.regenCalme(dt); continue; }
       if (m.guerre && this.guerre?.attaque?.piloter(m, dt)) continue;
@@ -1543,6 +1571,10 @@ export class World {
     this.updateZonesSol(dt);
     elitesPas(this, dt);
     autelsPas(this, dt);
+    if (this.zone.open && this.players[0]?.v06) {   // 0.6 (19-20) : sanctuaires trouvés en passant, renommée relue toutes les 3 s
+      sanctuairesPas(this);
+      if (Math.floor(this.time / 3) > Math.floor((this.time - dt) / 3)) for (const q of this.players) this.commeJoueur(q, () => majRenommee(this, q));
+    }
     idolesPas(this, dt, fxI);
     this.updateDrops(dt);
     if (this.opts.partieServeur && this.players.length > 1) this.releverAllies(dt);
@@ -1580,7 +1612,7 @@ export class World {
     this.emit({ k: 'wave', n: this.wave, boss: plan.boss, archi: plan.archi });
     // chaque nouvelle vague rend une potion
     const p = this.player;
-    if (this.wave > 1) p.potions = Math.min(p.cls.potion.charges, p.potions + 1);
+    if (this.wave > 1) p.potions = Math.min(p.potionsMax, p.potions + 1);
     for (const type of plan.monsters) {
       let pos = this.map.randomFree(this.rng), tries = 0;
       while (Math.hypot(pos.x - this.player.x, pos.y - this.player.y) < 300 && ++tries < 50) pos = this.map.randomFree(this.rng);
@@ -1593,6 +1625,7 @@ export class World {
     if (!def) throw new Error(`Monstre inconnu : ${type}`);
     const fx = this.fxIdoles;
     if (fx) def = defSousIdoles(def, fx);   // 0.6 (17) : PV, dégâts, vitesse et résistances sous les idoles
+    if (this.renforce) def = { ...def, hp: Math.round(def.hp * RENFORT.pv), dmg: Math.round(def.dmg * RENFORT.degats) };   // « Métiers : » 9C
     const aff = this.players[0]?.v06 ? tirerAffixes(this, def, scoreIdoles(this.idolesActives)) : [];   // 0.6 (23) : élites à affixes
     if (aff.length) def = defAffixes(def, aff);
     const m = new Monster(this.nextId++, type, def, x, y, this);
@@ -1625,7 +1658,7 @@ export class World {
       for (const e of spell.effects) {
         if (e.k === 'dmg') {
           const n = Math.round((e.perPa ? e.min : this.rng.range(e.min, e.max + 1)) * k * (1 + m.furyPct / 100) + m.furyFlat * k);
-          if (n > 0 && c.hurt(n, m.x, m.y, this, e.element) && e.steal) m.hp = Math.min(m.maxHp, m.hp + Math.round(n / 2));
+          if (n > 0 && c.hurt(n, m.x, m.y, this, e.element) && e.steal) m.hp = Math.min(m.maxHp, m.hp + Math.round(n / 2 * m.soinsK));
         } else if (e.k === 'attire' || e.k === 'repousse') {
           const dx = m.x - c.x, dy = m.y - c.y, d = Math.hypot(dx, dy) || 1, sign = e.k === 'attire' ? 1 : -1;
           c.kx += sign * dx / d * e.n * CASE * 4; c.ky += sign * dy / d * e.n * CASE * 4;
@@ -1642,7 +1675,7 @@ export class World {
         if (n <= 0) continue;
         landed = p.hurt(n, m.x, m.y, this, e.element);
         if (!landed) return;
-        if (e.steal) m.hp = Math.min(m.maxHp, m.hp + Math.round(n / 2));
+        if (e.steal) m.hp = Math.min(m.maxHp, m.hp + Math.round(n / 2 * m.soinsK));
       } else if (!landed) return;
       else if ((e.k === 'pa' || e.k === 'pm') && e.n < 0) {
         // Retrait officiel du monstre (Retrait PA ; pas de Retrait PM dans ses données) contre l'Esquive du joueur
@@ -1665,7 +1698,7 @@ export class World {
         const len = sign > 0 ? Math.min(e.n * CASE, Math.max(0, d - m.radius - p.radius - 4)) : e.n * CASE;
         p.kx += sign * dx / d * len * 7.13; p.ky += sign * dy / d * len * 7.13;   // le recul freine en 0,0008^t : distance = vitesse / 7,13
       }
-      else if (e.k === 'soin') m.hp = Math.min(m.maxHp, m.hp + Math.round(this.rng.range(e.min, e.max + 1) * k / mult));
+      else if (e.k === 'soin') m.hp = Math.min(m.maxHp, m.hp + Math.round(this.rng.range(e.min, e.max + 1) * k / mult * m.soinsK));
       else if (e.k === 'subis') {   // Grognement, Bave Affaiblissante : le joueur prend plus de dommages
         p.subis = e.n / 100; p.subisT = p.subisT0 = Math.max(1, e.dur) * TOUR;
         this.emit({ k: 'status', x: p.x, y: p.y, text: `Dommages subis ${e.n > 100 ? '+' : ''}${e.n - 100} %`, color: '#e07cf0' });
@@ -1832,7 +1865,7 @@ export class World {
       const vu = (m.vulnT > 0 ? 1 + m.vuln / 100 : 1) * m.subis;   // dommages subis augmentés (Bond) ou réduits (Cuirasse Laineuse)
       // Légendaires de classe : Marque du chasseur (les autres coups), Œil d'aigle (par case de distance)
       const pc = (m.marqueJusqua > this.time && !def.marque ? 1 + m.marque / 100 : 1)
-        * (def.vsGros && (m.def.elite || m.def.boss) ? 1 + def.vsGros / 100 : 1) * (def.plus ? 1 + def.plus / 100 : 1)
+        * (def.vsGros && (m.def.elite || m.def.boss) ? 1 + def.vsGros / 100 : 1) * (def.plus ? 1 + def.plus / 100 : 1) * (def.vsBouclier && m.bouclier > 0 ? def.vsBouclier : 1)
         * (def.loin ? 1 + Math.min(def.loin * 10, def.loin * Math.hypot(m.x - p.x, m.y - p.y) / CASE) / 100 : 1);
       // Sort sans dommages (Attirance, Transposition) : seulement ses effets
       const dmg = def.dmg <= 0 ? 0 : Math.max(1, Math.round((p.damage(def.dmg * vs, def.element ?? 'neutre') * this.rng.range(0.9, 1.1) * (crit ? cls.critMult : 1) * first + flat) * (1 - res / 100) * vu * pc));
@@ -1842,6 +1875,7 @@ export class World {
       if (def.festin) this.festin += dmg;
       if (dmg && m.suppliceT > 0) p.hp = Math.min(p.maxHp, p.hp + Math.round(dmg * m.supplice));   // Supplice : frapper la cible soigne
       if (def.supplice) { m.supplice = def.supplice.part; m.suppliceT = def.supplice.t; }
+      if (def.antiSoin) { m.antiSoin = Math.max(m.antiSoinT > 0 ? m.antiSoin : 0, def.antiSoin.n); m.antiSoinT = def.antiSoin.t; }
       if (def.affaiblit && m.furyPct <= 0) { m.furyPct = -def.affaiblit.n; m.furyT = Math.max(m.furyT, def.affaiblit.t); }   // Kyrja
       if (def.attire) {   // attire vers le lanceur (jusqu'au contact) ou vers le centre de la zone, sans tenir compte du poids (officiel)
         const vx = def.attire.vers === 'lanceur' ? p.x : ox, vy = def.attire.vers === 'lanceur' ? p.y : oy;
@@ -1976,6 +2010,7 @@ export class World {
     m.hp -= dmg; m.flash = 0.09; m.calmeT = 0;
     this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 30, amount: dmg, crit: false, sort: 'poussee' });
     this.emit({ k: 'status', x: m.x, y: m.y - 20, text: 'Choc !', color: '#f2d36b' });
+    if (m.e06?.noa) chocNoa(this, m);   // Noa (Forgelance, 0.6) : second coup Air
     return true;
   }
   /** Points de PA / PM réellement retirés : chacun passe selon Retrait contre Esquive. */
@@ -1999,6 +2034,7 @@ export class World {
     const fxm = this.fxIdoles;
     if (fxm && idolesMort(this, m, this.groups[m.group], fxm)) return;   // Sakai : revient à la vie ; Chokwa, Serpi, Nahuatl
     m.dead = true; m.t = 0.6; this.kills++;
+    if (m.e06) mortSorts06(this, m);   // Cryothérapie : l'état éclate
     piecesMonstre(this, m);   // Enutrof (1A 1B) : le coffre au trésor des Enutrofs proches se remplit
     const tq = this.player.dead ? 0 : this.player.pcv('pc-cra-O');
     if (tq) for (const md of this.player.mods) if (md.src === 'tirs_eloignes') {   // Traque sans fin : prolongé, jusqu'à doubler sa durée
@@ -2022,7 +2058,7 @@ export class World {
     const alm = (this.almanax?.effet === 'xp' ? 1 + ALMANAX.xp : 1) * (1 + p.beni('xp')) * (1 + this.bonusDuWeekEnd('xp'));   // 15C, Magasin 6D, 9B (week-end)
     // Multi (maquette « Multi : » 7A) : chaque joueur proche gagne l'XP comme en solo, +10 % par allié proche
     const proches = this.players.filter(q => q !== p && !q.dead && Math.abs(q.x - m.x) + Math.abs(q.y - m.y) <= World.SOMMEIL);
-    const base = (m.def.xp ?? Math.round(m.def.hp / 5)) * this.bonusMassacre() * alm * (1 + World.XP_PAR_ALLIE * proches.length) * (1 + this.bonusIdoles);   // 0.6 (17) : idoles
+    const base = (m.def.xp ?? Math.round(m.def.hp / 5)) * this.bonusMassacre() * alm * (1 + World.XP_PAR_ALLIE * proches.length) * (1 + this.bonusIdoles) * (this.renforce ? 1 + RENFORT.xp : 1);   // 0.6 (17) : idoles ; 9C : clé renforcée
     const nm = m.def.level ?? this.monsterLevel(m);
     const carte = this.groups[m.group]?.map, fini = !!carte && !this.groups[m.group].members.some(o => !o.dead);
     const xp = p.gainXp(Math.round(base * World.ecartXp(p.level, nm) * (1 + avantage(p.abo, 'xp')) * this.decouverte(p, carte, fini)), this);   // « Apparats : » 17E ; 0.6 6D
@@ -2047,6 +2083,8 @@ export class World {
   }
   /** Bonus d'XP et de butin des idoles (part de 1), plafonné en donjon. */
   get bonusIdoles(): number { return bonusIdoles(this.idolesActives, !!this.arene); }
+  /** « Métiers : » 9C : l'arène en cours a été ouverte avec une clé renforcée (par un des joueurs). */
+  get renforce(): boolean { const a = this.arene; return !!a && this.players.some(q => q.cleDonjon?.renforcee && q.cleDonjon.nom === a.d.nom); }
   /** Recette de l'idole chez le Bricoleur. */
   recetteIdole(id: string): [string, number][] { return this.opts.recoltes ? recetteIdole(id, this.opts.recoltes) : []; }
   /** Fabrique une idole à l'atelier du Bricoleur : niveau de Bricoleur, ingrédients ; une seule fois, elle reste au perso. */
@@ -2149,7 +2187,7 @@ export class World {
   /** Ce que le calcul du butin doit savoir (src/sim/butin.ts) : sert au jeu, au Bestiaire et au simulateur de l'outil de test. */
   contexteButin(type: string, rang: Rang, niveau: number): CtxButin {
     const p = this.player;
-    return { type, rang, niveau, prospection: p.prospection + p.bonusMetier('chasseur') * REGLAGES_BUTIN.prospection.chances + (this.almanax?.effet === 'butin' ? ALMANAX.butin : 0) + p.beni('butin') * REGLAGES_BUTIN.prospection.chances + this.bonusDuWeekEnd('butin') + this.prospectionInvasion + avantage(p.abo, 'prospection') + this.bonusIdoles * REGLAGES_BUTIN.prospection.chances, legendaire: avantage(p.abo, 'legendaire') * (rang === 'boss' && p.v06 ? coefChanceQuiMonte(p.bossSansLeg[type] ?? 0) : 1), items: this.opts.items!, familiers: (this.familiersDe[type] ?? []).filter(id => !this.aLeFamilier(p, id)), pool: this.equipByLevel, poolSecours: this.equipSecours,
+    return { type, rang, niveau, prospection: p.prospection + p.bonusMetier('chasseur') * REGLAGES_BUTIN.prospection.chances + (this.almanax?.effet === 'butin' ? ALMANAX.butin : 0) + p.beni('butin') * REGLAGES_BUTIN.prospection.chances + this.bonusDuWeekEnd('butin') + this.prospectionInvasion + avantage(p.abo, 'prospection') + this.bonusIdoles * REGLAGES_BUTIN.prospection.chances + (this.renforce ? RENFORT.butin * REGLAGES_BUTIN.prospection.chances : 0), legendaire: avantage(p.abo, 'legendaire') * (rang === 'boss' && p.v06 ? coefChanceQuiMonte(p.bossSansLeg[type] ?? 0) : 1), items: this.opts.items!, familiers: (this.familiersDe[type] ?? []).filter(id => !this.aLeFamilier(p, id)), pool: this.equipByLevel, poolSecours: this.equipSecours,
       panoBoss: rang === 'boss' ? this.panoBoss(type) : undefined,
       metierNiveau: j => p.metierLevel(j), armeChasse: !!p.huntingWeapon, pouvoirs: rang === 'boss' ? { ...p.ctxPouvoirs, boss: type } : p.ctxPouvoirs };
   }
@@ -2447,6 +2485,7 @@ export class World {
       const def = R.ressources[r.item], lv = Math.max(1, p.metierLevel(def.metier));
       const n = quantite(this.rng, lv, def.niveau, r.dore) + (def.metier && this.almanax?.effet === 'recolte' ? ALMANAX.recolte : 0);   // 15C
       p.resources[r.item] = (p.resources[r.item] ?? 0) + n;
+      if (!p.recoltees.includes(r.item)) p.recoltees.push(r.item);   // 10C : on pourra la semer au potager du Havre-Sac
       if (def.metier) p.gainMetierXp(def.metier, xpRecolte(def.niveau, r.dore), this);   // puits : sans métier, sans XP
       this.emit({ k: 'recolteFin', id: r.id, item: r.item, n, dore: r.dore });
       if (r.dore && def.metier) this.coupDePouce(def.metier);   // « Métiers : » 6A
@@ -2556,6 +2595,8 @@ export class World {
     const ids = [...apparats, ...articles.flatMap(a => A[a]?.apparats ?? [])];
     for (const id of ids) if (!p.apparats.includes(id)) { p.apparats.push(id); n++; }
     for (const a of articles) { const s = A[a]?.style; if (s && !c.styles?.includes(s)) { (c.styles ??= []).push(s); n++; } }
+    // 11B : lot de meubles rares d'un thème
+    for (const a of articles) { const t = A[a]?.meubles; if (t != null) for (const id of raresDuTheme(t)) if (!c.meubles?.includes(id)) { (c.meubles ??= []).push(id); n++; } }
     return n;
   }
   /** 17C + 17J : avantages déjà pris aujourd'hui (remis à zéro chaque jour). */
@@ -3072,14 +3113,31 @@ export class World {
       if (rare) n = this.ingredientsRares.has(rare) ? Math.min(n, Math.floor((p.resources[rare] ?? 0) / (1 + (r.ingredients.find(([x]) => x === rare)?.[1] ?? 0)))) : 0;
     }
     if (TROPHEES[r.result]) n = p.trophees.includes(r.result) ? 0 : Math.min(n, 1);   // un trophée se possède une fois (3B)
+    const mb = meubleDeRecette(r.result);
+    if (mb) n = this.coffre.meubles?.includes(mb.id) || p !== this.players[0] ? 0 : Math.min(n, 1);   // 9A : un meuble se possède une fois
     return Math.max(0, n);
   }
   /** 0.3 (9A) : les métiers de fabrication d'équipement n'existent qu'en partie de test tant que la 0.3 n'est pas sortie. */
-  recetteVisible(r: RecipeDef): boolean { return (this.player.v03 || !METIERS_FAB.includes(r.metier)) && (this.player.v04 || !TROPHEES[r.result]); }
+  recetteVisible(r: RecipeDef): boolean { return (this.player.v03 || !METIERS_FAB.includes(r.metier)) && (this.player.v04 || !TROPHEES[r.result]) && (this.player.v06 || !meubleDeRecette(r.result)); }
   private _rares: Set<string> | null = null;
   /** 10B : ressources de boss ou d'élite qui garantissent un objet fabriqué Rare. */
   get ingredientsRares(): Set<string> {
     return this._rares ??= this.opts.items ? ingredientsRares(this.opts.items, this.opts.data.monsters) : new Set();
+  }
+  /** 11C : un meuble rare du Havre-Sac pas encore gagné (coffre de donjon, succès), pour le compte ; graine = tirage fixe (succès). */
+  gagnerMeubleRare(graine?: string): number | null {
+    const a = new Set(this.coffre.meubles ?? []), l = Object.values(MEUBLES).filter(m => m.tier === 'rare' && !a.has(m.id));
+    if (!l.length) return null;
+    const m = graine ? l[hache(graine) % l.length] : this.rng.pick(l);
+    gagnerMeuble(this, m);
+    return m.id;
+  }
+  /** 10B-D : les socles, parcelles et mannequins posés (DecoHavreSac.appliquer) remplacent les postes de meubles d'avant. */
+  postesDeco(l: { sorte: SorteSpeciale; c: number; x: number; y: number }[]) {
+    const tag = this.deco?.tag ?? '';
+    this.postes = this.postes.filter(po => !po.meuble);
+    const noms: Record<SorteSpeciale, string> = { potager: 'Potager', vitrine: 'Vitrine', mannequin: 'Mannequin' };
+    for (const m of l) this.postes.push({ id: this.nextId++, atelier: noms[m.sorte], metiers: [], tag, x: m.x, y: m.y, gfx: -1, meuble: { sorte: m.sorte, c: m.c } });
   }
   /** Postes des ateliers : les machines officielles (ateliers_postes.py), sinon un poste au milieu de la première carte. */
   private buildPostes() {
@@ -3103,6 +3161,12 @@ export class World {
         this.postes.push({ id: this.nextId++, atelier: a.nom, metiers: a.metiers, tag, x: q.x, y: q.y, gfx, dessin: dx || dy ? { x: dx, y: dy } : undefined });
       }
       const tag = a.cartes.find(t => wg.mapByTag(t) && wg.freeByMap.get(t)?.length);
+      const etabli = a.pres === 'etabli' ? this.postes.find(po => po.forge && po.tag === tag) : undefined;
+      if (!l.length && tag && etabli) {   // « Métiers : » 9B : l'établi des artisans du Havre-Sac, à côté de celui des forgemages
+        const q = wg.nearestFree(etabli.x + 2 * CASE, etabli.y + CASE, wg.freeByMap.get(tag)!);
+        this.postes.push({ id: this.nextId++, atelier: a.nom, metiers: a.metiers, tag, x: q.x, y: q.y });
+        continue;
+      }
       if (!l.length && tag) { const q = this.openestCell(tag); this.postes.push({ id: this.nextId++, atelier: a.nom, metiers: a.metiers, tag, x: q.x, y: q.y }); }
     }
   }
@@ -3179,6 +3243,13 @@ export class World {
     p.stopMove(); p.facing = Math.atan2(po.y - p.y, po.x - p.x);
     if (po.coffre) { this.emit({ k: 'coffreOuvert' }); return; }
     if (po.forge) { this.emit({ k: 'etabliForge' }); return; }
+    if (po.meuble && this.deco) {   // 10B-D : socle (choisir quoi exposer), parcelle (récolter ou semer), mannequin (changer de tenue)
+      const { sorte, c } = po.meuble, d = this.deco;
+      if (sorte === 'mannequin') { d.changerTenue(c); return; }
+      if (sorte === 'potager' && d.parcelle(c)?.pret && d.recolter(c)) return;
+      this.emit({ k: 'meubleActif', sorte, c });
+      return;
+    }
     this.emit({ k: 'atelier', poste: po.id, metier: po.metiers[0] });
   }
   /** Lance la fabrication de n fois la recette i (fenêtre Artisanat) : une barre d'une seconde, puis tout est fait d'un coup. */
@@ -3218,6 +3289,13 @@ export class World {
       p.gainMetierXp(r.metier, n * METIER_XP.parIngredient * r.ingredients.reduce((s, [, q]) => s + q, 0), this);
       this.emit({ k: 'craft', id: r.result, n, rares });
       return n;
+    }
+    const mb = meubleDeRecette(r.result);
+    if (mb) {   // « Métiers : » 9A : un meuble du Havre-Sac, pour le compte (une fois)
+      p.gainMetierXp(r.metier, METIER_XP.parIngredient * r.ingredients.reduce((s, [, q]) => s + q, 0), this);
+      gagnerMeuble(this, mb);
+      this.emit({ k: 'craft', id: r.result, n: 1 });
+      return 1;
     }
     if (TROPHEES[r.result]) {   // trophée (0.4 suite 3B) : dans les emplacements de Dofus, pas dans le sac
       p.gainMetierXp(r.metier, METIER_XP.parIngredient * r.ingredients.reduce((s, [, q]) => s + q, 0), this);
@@ -3389,7 +3467,7 @@ export class World {
   /** Bête vivante invoquée par ce sort (une par sort, la touche la rappelle ou l'éveille). */
   beteDe(sort: string): Bete | undefined { return this.betes.find(b => b.sort === sort && !b.dead); }
   /** Coût en Invocations (2A) : 1 / 2 / 3 selon le rang ; le joueur en a 1 de base + objets + Cortège Sauvage. */
-  invocationsPrises(p?: Player): number { return this.betes.filter(b => !b.dead && !b.dompteT && !b.finT && !b.horsCompte && (!p || b.owner === p)).reduce((a, b) => a + BETES[b.base].rang, 0); }
+  invocationsPrises(p?: Player): number { return this.betes.filter(b => !b.dead && !b.dompteT && !b.finT && !b.horsCompte && (!p || b.owner === p)).reduce((a, b) => a + (b.poids || BETES[b.base].rang), 0); }
   /** Cortège Sauvage : quand le bonus d'Invocations retombe, les bêtes en trop repartent (les plus anciennes d'abord). */
   renvoyerSurplus(p: Player) {
     const max = this.invocationsMax(p);

@@ -10,6 +10,7 @@ import { REGLAGES_BUTIN } from '../sim/butin';
 import { nomOrne, placesTenues, prixPlaceTenue, STYLE, type SorteStyle, type StyleDef } from '../sim/style';
 import { themeChoisi, themesEnJeu, themesPossedes } from '../sim/havresac';
 import { v } from './assetUrl';
+import { MEUBLES, raresDuTheme, meubleDeRecette } from '../sim/meubles';
 import { BUTIN_CSS, archisParLieu, butinMonstre, dessinerPortraits, esc as escB, groupesBestiaire, nomObjet, iconeObjet, sourcesHtml } from './butinVue';
 import { PALIERS } from './carnet';
 import { CODEX_CSS, codexPageHtml } from './codexVue';
@@ -71,6 +72,7 @@ import { ECLAT, FORGE_CSS, defaireHtml, etatForge, forgeHtml, lotConcasseur, mms
 import type { SimEvent } from '../sim/events';
 import { REGLES_V2, RUNES, dmgArme, etatFM, ligneMax } from '../sim/forgemagie';
 import { BONUS_FAB, BONUS_RECOLTE, PAR_PALIER_FAB, paliers, POUCE } from '../sim/artisans';
+import { texteRenfort } from '../sim/clesRenforcees';
 import { CHASSE, OEUVRE, PIERRES, bonusPierre, metiersOeuvre, pieceArtisan } from '../sim/oeuvre';
 import { CONSO, NOM_SORTE, PARCHEMINS, sorteConso, texteConso } from '../sim/consommables';
 import { LOOKS } from './looks';
@@ -126,7 +128,16 @@ function bonusMetierHtml(k: string, lv: number): string {
   if (!l.length && !pouce) return '';
   return `<div class="hint" style="color:#b9e54b">Bonus permanent (palier ${n} / 10, un tous les 20 niveaux) : ${l.join(' · ') || 'aucun'}${pouce ? `<br>Ressource dorée : ${pouce.texte} pendant 20 s` : ''}</div>`;
 }
-const produit = (id: string): { name: string; icon: number; soin?: number } | undefined => ITEMS.resources[id] ?? ITEMS.equipment[id];
+const produit = (id: string): { name: string; icon: number; soin?: number; img?: string } | undefined => ITEMS.resources[id] ?? ITEMS.equipment[id] ?? meubleProduit(id);
+/** « Métiers : » 9A : un meuble du Havre-Sac fabriqué (nom : sorte, thème et numéro ; image du meuble). */
+function meubleProduit(id: string) {
+  const m = meubleDeRecette(id);
+  if (!m) return undefined;
+  const memes = (ITEMS.recipes ?? []).filter(r => meubleDeRecette(r.result)?.theme === m.theme && meubleDeRecette(r.result)?.couche === m.couche).map(r => r.result);
+  const n = memes.length > 1 ? ` n°${memes.indexOf(id) + 1}` : '';
+  return { name: `${m.couche === 0 ? 'Tapis' : m.couche === 2 ? 'Bibelot' : 'Meuble'} ${THEMES_HAVRESAC.themes.find(t => t.id === m.theme)?.nom ?? ''}${n} (Havre-Sac)`, icon: 0, img: v(`assets/sprites/meubles/${m.gfx}.webp`) };
+}
+const icProduit = (o: { icon: number; img?: string } | undefined) => o?.img ? `<i class="ic" style="background-image:url(${o.img})"></i>` : iconHtml(o?.icon ?? 0);
 import { chrono, pepitesSucces, type SuccesDef } from '../sim/quests';
 /** Catégories officielles de la fenêtre Succès de Dofus 3 (achievementcategories : nom, bannière cat_N, couleur), dans l'ordre du jeu ;
  *  celles sans succès chez nous restent cachées (Élevage avant les montures, Événements, 2D). */
@@ -593,6 +604,7 @@ const CSS = `
 .dw .ac.on{outline:2px solid #6fb2e8;outline-offset:-4px;cursor:pointer}.dw .ac[data-arare]{cursor:pointer}
 .dw .ac.big{width:84px;height:84px}.dw .ac.big .ic{width:64px;height:64px}
 .dw .acs{display:grid;grid-template-columns:repeat(4,52px);gap:8px 14px}
+.dw .amets{display:flex;justify-content:center;gap:6px;padding:6px 0 0}.dw .amets img{width:34px;height:34px;cursor:pointer;opacity:.55;border-radius:4px}.dw .amets img.on{opacity:1;background:#b9e54b33;box-shadow:0 0 0 1px #b9e54b}.dw .amets img:hover{opacity:1}
 .dw .ajet{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:420px}.dw .ajet .lab{width:100%;text-align:center;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#9b9585}.dw .ajet .btn.on{outline:2px solid #b9e54b}
 .dw .axp.regle{max-width:420px;text-align:center;color:#cfc9b6;font-size:12px}.dw .plan .ttr{font:15px Rowdies,Lexend,sans-serif;color:#f4efe0}.dw .plan .note{max-width:440px;text-align:center}
 .dw .acs .lab{grid-column:1/-1;text-align:center;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#9b9585}
@@ -955,13 +967,14 @@ export class Windows {
     const jour = W.opts.aujourdhui ?? '', vit = vitrine(jour), fete = feteDuJour(jour), e = escB, bq = this.bq, solde = enLigne ? B!.solde : 0;
     const og = (n: number, cls = '') => `<span class="bk-og ${cls}">${n.toLocaleString('fr-FR')}<img src="assets/ui/ogrine.png" alt="Ogrines"></span>`;
     const styleDe = (a: ArticleOgrines) => { const [so, sid] = (a.style ?? ':').split(':'); return { so: so as SorteStyle, sid, d: STYLE[so as SorteStyle]?.find(x => x.id === sid) }; };
-    const aMoi = (id: string) => { const a = A[id]; if (!a || a.cat === 'service') return false; if (a.style) { const s = styleDe(a); return W.aLeStyle(s.so, s.sid); } return !!B?.achats.includes(id) || (a.apparats ?? []).every(x => p.apparats.includes(x)); };
+    const aMoi = (id: string) => { const a = A[id]; if (!a || a.cat === 'service') return false; if (a.meubles != null) return !!B?.achats.includes(id) || raresDuTheme(a.meubles).every(x => W.coffre.meubles?.includes(x)); if (a.style) { const s = styleDe(a); return W.aLeStyle(s.so, s.sid); } return !!B?.achats.includes(id) || (a.apparats ?? []).every(x => p.apparats.includes(x)); };
     const nomArt = (id: string) => { const a = A[id]; if (a.nom) return a.nom; if (a.service) return BOUTIQUE_OGRINES.services[a.service].nom; if (a.style) return styleDe(a).d?.nom ?? id; return APPARATS.objets[a.apparats![0]]?.name ?? id; };
-    const SOUS: Record<string, string> = { chapeau: 'Coiffe d\'apparat', cape: 'Cape d\'apparat', familier: 'Familier d\'apparat', costume: 'Costume complet', service: 'Potion', style: 'Style' };
+    const SOUS: Record<string, string> = { meuble: 'Meubles du Havre-Sac', chapeau: 'Coiffe d\'apparat', cape: 'Cape d\'apparat', familier: 'Familier d\'apparat', costume: 'Costume complet', service: 'Potion', style: 'Style' };
     const sousTitre = (id: string) => { const a = A[id]; if (a.style) return { aureoles: 'Auréole', zaaps: 'Effet de Zaap', ornements: 'Ornement de nom' }[styleDe(a).so] ?? 'Style'; return SOUS[a.cat] ?? ''; };
     const RANG: Record<string, number> = { rare: 0, epique: 1, legendaire: 2 };
     const rarete = (id: string) => { const a = A[id]; return a.apparats?.length === 1 ? rareteApparat(a.apparats[0]) as string : a.cat === 'costume' ? 'legendaire' : a.prix >= 500 ? 'epique' : 'rare'; };
     const icone = (a: ArticleOgrines, grand = false) => {
+      if (a.meubles != null) { const r = raresDuTheme(a.meubles)[0]; return `<img class="bk-pot" style="object-fit:contain" src="${r ? v(`assets/sprites/meubles/${MEUBLES[r].gfx}.webp`) : ''}" alt="">`; }
       if (a.apparats) return `<span class="bk-ics ${a.apparats.length > 1 ? 'n' : ''}">${a.apparats.map(apparatHtml).join('')}</span>`;
       if (a.style) { const { so, sid, d } = styleDe(a);
         return so === 'ornements' ? `<b class="bk-orn" style="color:${d?.couleur}">${e(nomOrne('', sid).trim())}</b>` : `<span class="bk-halo ${grand ? 'g' : ''}" style="background:radial-gradient(${d?.c2}, ${d?.c} 55%, transparent 72%);box-shadow:0 0 14px ${d?.c}"></span>`; }
@@ -972,7 +985,7 @@ export class Windows {
       const bas = moi ? '<span class="bk-a">Sur ton compte</span>' : pr == null ? '<small>Pendant sa fête</small>' : `${promo ? `<s>${a.prix}</s>` : ''}${og(pr, enLigne && solde >= pr ? '' : 'off')}`;
       return `<div class="bk-v r-${rarete(id)} ${bq.choisi === id ? 'sel' : ''} ${moi ? 'moi' : ''}" data-bkv="${id}" tabindex="0">${icone(a)}<b>${e(nomArt(id))}</b><span class="bk-p">${bas}</span></div>`; };
     const comment = `<div class="bk-gagner"><b>Comment gagner des Ogrines ?</b><span>Les Ogrines ne s'achètent pas. Elles viennent des <b>codes cadeaux</b> (Options › Compte) et des <b>événements du Discord</b> : lives, concours, fêtes.${enLigne ? '' : ' Connecte-toi avec Discord à l\'accueil et passe en mode « En ligne » pour les recevoir.'}</span></div>`;
-    const ONGLETS: [string, string][] = [['accueil', 'Accueil'], ['chapeau', 'Coiffes'], ['cape', 'Capes'], ['familier', 'Familiers'], ['costume', 'Costumes'], ['style', 'Style'], ['service', 'Services'], ['abonnements', 'Abonnements']];
+    const ONGLETS: [string, string][] = [['accueil', 'Accueil'], ['chapeau', 'Coiffes'], ['cape', 'Capes'], ['familier', 'Familiers'], ['costume', 'Costumes'], ['style', 'Style'], ...(p.v06 ? [['meuble', 'Meubles']] as [string, string][] : []), ['service', 'Services'], ['abonnements', 'Abonnements']];
     const abo = B?.abonnement && B.abonnement.fin > Date.now() ? B.abonnement : null, P = BOUTIQUE_OGRINES.abonnement;
     const finAbo = abo ? new Date(abo.fin).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }) : '';
     let centre = '';
@@ -1016,7 +1029,7 @@ export class Windows {
     if (c) {
       const a = A[c], pr = prixDe(c), moi = aMoi(c), r = rarete(c);
       const contenu = a.cat === 'costume' ? `<div class="bk-cont">${a.apparats!.map(id => `<span>${apparatHtml(id)}${e(APPARATS.objets[id]?.name ?? id)}</span>`).join('')}</div><small>Prix des pièces : ${a.apparats!.reduce((n, id) => n + (A[`a${id}`]?.prix ?? 0), 0)}</small>` : '';
-      const texte = a.service ? BOUTIQUE_OGRINES.services[a.service].texte : a.style ? (styleDe(a).d?.texte ?? `Autour de ton nom : ${nomOrne(p.nom || 'Ton nom', styleDe(a).sid)}`) : 'Pour tout le compte : chaque perso le porte par-dessus son équipement, sans changer ses caractéristiques.';
+      const texte = a.meubles != null ? `Les ${raresDuTheme(a.meubles).length} meubles rares de ce thème, à poser dans ton Havre-Sac (touche ${Touches.nomAction('deco')} chez toi), pour tout le compte. Ils tombent aussi, un par un, des coffres de donjon et des succès.` : a.service ? BOUTIQUE_OGRINES.services[a.service].texte : a.style ? (styleDe(a).d?.texte ?? `Autour de ton nom : ${nomOrne(p.nom || 'Ton nom', styleDe(a).sid)}`) : 'Pour tout le compte : chaque perso le porte par-dessus son équipement, sans changer ses caractéristiques.';
       const bouton = moi ? '<span class="bk-a">Déjà sur ton compte</span>' : pr == null ? `<small>En vente pendant sa fête</small>` : !enLigne ? '<span class="bk-btn off">En ligne seulement</span>'
         : solde < pr ? `<span class="bk-btn off">Il manque ${(pr - solde).toLocaleString('fr-FR')} Ogrines</span>` : '<span class="bk-btn v" data-bkacheter>Acheter</span>';
       fiche = `<div class="bk-big r-${r}">${icone(a, true)}</div><b class="bk-nom">${e(nomArt(c))}</b><span class="bk-rar r-${r}">${a.apparats ? `${RARITY_NAMES[r as Rarity] ?? ''} · ` : ''}${sousTitre(c)}</span>
@@ -1401,14 +1414,22 @@ export class Windows {
   /** « Métiers : » 3B : ligne choisie qui sort à son maximum ; 2A + 2C : onglet « Travailler un objet » et objet choisi. */
   private artJet: string | null = null;
   private artOnglet: 'fab' | 'objet' = 'fab';
+  private artMetiers: string[] = [];
   private artObjet = -1;
   /** « Montrer sur la carte » (8B, 11B) : ouvre la carte M avec ces cartes et points mis en évidence. */
   onCarte: (m: MarqueCarte) => void = () => {};
 
   /** Ouvre l'Artisanat d'un atelier (clic sur une machine). */
-  artisanat(metier: string) {
-    if (this.artMetier !== metier) { this.artMetier = metier; this.artRecette = -1; this.artQte = 1; this.artRecherche = ''; this.artJet = null; this.artOnglet = 'fab'; this.artObjet = -1; }
+  /** liste : tous les métiers du poste (machine partagée, établi des artisans du Havre-Sac, « Métiers : » 9B). */
+  artisanat(metier: string, liste: string[] = [metier]) {
+    const p = this.world.player;
+    this.artMetiers = liste.filter(m => p.v03 || !METIERS_FAB.includes(m));
+    if (this.artMetiers.includes(this.artMetier)) metier = this.artMetier;
+    this.choisirMetierArt(metier);
     this.show('art');
+  }
+  private choisirMetierArt(metier: string) {
+    if (this.artMetier !== metier) { this.artMetier = metier; this.artRecette = -1; this.artQte = 1; this.artRecherche = ''; this.artJet = null; this.artOnglet = 'fab'; this.artObjet = -1; }
   }
   /** 12A : « Recettes qui l'utilisent » (clic droit sur une ressource du sac) : J filtré sur l'ingrédient. */
   recettesAvec(id: string) {
@@ -1510,7 +1531,7 @@ export class Windows {
       const ou = ateliers.length ? `<div class="note">On fabrique en cliquant une machine : ${ateliers.join(', ')}.</div>` : `<div class="note">Pas d'atelier de ${m.name.toLowerCase()} dans cette zone.</div>`;
       corps = filtres + ou + `<div class="recs">${l.map(({ r, i }) => {
         const out = produit(r.result), ok = lv >= r.level, max = this.world.craftMax(i), suivie = p.recetteSuivie === r.result;
-        return `<div class="rec ${max > 0 ? 'ok' : ''} ${ok ? '' : 'lock'}"><span class="rs" data-rtip="${r.result}">${iconHtml(out?.icon ?? 0)}</span>
+        return `<div class="rec ${max > 0 ? 'ok' : ''} ${ok ? '' : 'lock'}"><span class="rs" data-rtip="${r.result}">${icProduit(out)}</span>
           <div><b>${out?.name ?? r.result}</b> <span class="hint">niv. ${r.level}${out?.soin ? ` · +${out.soin} PV` : ''}${sorteConso(r.result) ? ` · ${texteConso(r.result)}` : ''}</span>
           ${ok ? '' : `<div class="lack" style="font-size:12px">Niveau ${r.level} requis</div>`}<div class="ings">${r.ingredients.map(([id, n]) => this.ingHtml(id, n)).join('')}</div></div>
           <span class="cb">${max > 0 ? `<span class="nb" title="Tu peux en faire ${max}">×${max}</span>` : ''}<img class="pin ${suivie ? 'on' : ''}" data-pin="${r.result}" src="${D3}/pin_mark_yellow.png" alt="" title="${suivie ? 'Ne plus suivre' : 'Suivre cette recette à l\'écran'}"></span></div>`;
@@ -1571,7 +1592,7 @@ export class Windows {
     const f = this.world.enFabrication, out = rec && produit(rec.result);
     const livre = l.map(({ r, i }) => {
       const o = produit(r.result), mx = this.world.craftMax(i), ok = lv >= r.level;
-      return `<div class="al ${i === this.artRecette ? 'on' : ''} ${mx > 0 ? '' : 'non'}" data-ar="${i}">${iconHtml(o?.icon ?? 0)}<div>${o?.name ?? r.result}<br><small>niv. ${r.level}</small></div>${mx > 0 ? `<b class="have">×${mx}</b>` : ok ? '<small>manque</small>' : `<small class="lack">niv. ${r.level}</small>`}</div>`;
+      return `<div class="al ${i === this.artRecette ? 'on' : ''} ${mx > 0 ? '' : 'non'}" data-ar="${i}">${icProduit(o)}<div>${o?.name ?? r.result}<br><small>niv. ${r.level}</small></div>${mx > 0 ? `<b class="have">×${mx}</b>` : ok ? '<small>manque</small>' : `<small class="lack">niv. ${r.level}</small>`}</div>`;
     }).join('') || '<div class="hint">Aucune recette.</div>';
     const cases = rec ? Array.from({ length: 8 }, (_, j) => {
       const g = rec.ingredients[j];
@@ -1582,11 +1603,11 @@ export class Windows {
     const xp = rec ? this.artQte * METIER_XP.parIngredient * rec.ingredients.reduce((s, [, n]) => s + n, 0) : 0;
     const raison = !rec ? '' : lv < rec.level ? `${m?.name ?? ''} niveau ${rec.level} requis` : ici === null ? 'Tu n\'es plus à l\'atelier' : max <= 0 ? 'Il manque des ingrédients' : '';
     const peut = !!rec && !raison && !f;
-    w.innerHTML = `${this.title(ici?.nom ?? `Artisanat · ${m?.name ?? ''}`, 'job')}${travail ? this.artOngletsHtml() : ''}<div class="ab">
+    w.innerHTML = `${this.title(ici?.nom ?? `Artisanat · ${m?.name ?? ''}`, 'job')}${this.artOngletsHtml()}<div class="ab">
       <div class="livre"><input placeholder="Chercher…" value="${this.artRecherche.replace(/"/g, '&quot;')}" data-asr>
         <label class="ck"><input type="checkbox" data-aso ${this.artSeulement ? 'checked' : ''}>Seulement ce que je peux faire</label><div class="als">${livre}</div></div>
       <div class="plan"><div class="am"><img src="assets/ui/metier_${k}.png" alt="">${m?.name ?? ''} niveau ${lv}</div>
-        ${rec && out ? `<div class="ares"><span class="ac big" data-rtip="${rec.result}">${iconHtml(out.icon)}</span><b>${out.name}</b><small>${out.soin ? `Rend ${out.soin} PV · ` : ''}${sorteConso(rec.result) ? `${texteConso(rec.result)} · ` : ''}${equip ? `${ITEMS.equipment[rec.result].slot.replace(/^./, c => c.toUpperCase())} · ` : ''}niveau ${rec.level}</small></div>
+        ${rec && out ? `<div class="ares"><span class="ac big" data-rtip="${rec.result}">${icProduit(out)}</span><b>${out.name}</b><small>${out.soin ? `Rend ${out.soin} PV · ` : ''}${sorteConso(rec.result) ? `${texteConso(rec.result)} · ` : ''}${equip ? `${ITEMS.equipment[rec.result].slot.replace(/^./, c => c.toUpperCase())} · ` : ''}niveau ${rec.level}</small></div>
         <div class="acs"><span class="lab">Ingrédients</span>${cases}</div>
         ${equip ? `<div class="acs"><span class="lab">Ingrédient rare</span>${rares.map(id => `<span class="ac ${this.artRare === id ? 'on' : ''}" data-arare="${id}" data-ing="${id}">${iconHtml(ITEMS.resources[id]?.icon ?? 0)}<b>${p.resources[id]}</b></span>`).join('') || '<span class="hint">Aucun dans ton sac : les boss et les élites en lâchent.</span>'}</div>
         ${jets.length ? `<div class="ajet"><span class="lab">Jet choisi : une ligne sort à son maximum</span>${jets.map(([s, [, b]]) => `<span class="btn ${this.artJet === s ? 'on' : ''}" data-ajet="${s}">${b} ${STAT_NAMES[s]}</span>`).join('')}</div>` : ''}
@@ -1620,12 +1641,19 @@ export class Windows {
     this.lierIngredients(w);
   }
 
+  /** Choix du métier quand le poste en a plusieurs (« Métiers : » 9B). */
+  private artMetiersHtml() {
+    if (this.artMetiers.length < 2) return '';
+    return `<div class="amets">${this.artMetiers.map(m => `<img class="${m === this.artMetier ? 'on' : ''}" data-amet="${m}" src="assets/ui/metier_${m}.png" alt="" title="${ITEMS.metiers?.[m]?.name ?? m}">`).join('')}</div>`;
+  }
   private artOngletsHtml() {
-    const k = this.artMetier;
-    return `<div class="otabs"><span class="${this.artOnglet === 'fab' ? 'on' : ''}" data-aon="fab">Fabriquer</span><span class="${this.artOnglet === 'objet' ? 'on' : ''}" data-aon="objet">${k === 'mineur' ? 'Percer une châsse' : 'Travailler un objet'}</span></div>`;
+    const k = this.artMetier, travail = this.world.player.v03 && (k === 'mineur' || !!BONUS_FAB[k]);
+    if (!travail) return this.artMetiersHtml();
+    return `${this.artMetiersHtml()}<div class="otabs"><span class="${this.artOnglet === 'fab' ? 'on' : ''}" data-aon="fab">Fabriquer</span><span class="${this.artOnglet === 'objet' ? 'on' : ''}" data-aon="objet">${k === 'mineur' ? 'Percer une châsse' : 'Travailler un objet'}</span></div>`;
   }
   private lierArtOnglets(w: HTMLElement) {
     w.querySelectorAll<HTMLElement>('[data-aon]').forEach(e => e.addEventListener('click', () => { this.artOnglet = e.dataset.aon as 'fab' | 'objet'; this.render(); }));
+    w.querySelectorAll<HTMLElement>('[data-amet]').forEach(e => e.addEventListener('click', () => { this.choisirMetierArt(e.dataset.amet!); this.render(); }));
   }
   /** « Métiers : » 2A + 2C : chef-d'œuvre (métier de l'emplacement), châsse percée (Mineur), pierre sertie (Bijoutier). */
   private renderTravail() {
@@ -1919,7 +1947,8 @@ export class Windows {
         <h3>S'équiper</h3><p>${T('inventaire')} ouvre l'inventaire. Clic droit sur un objet : l'équiper ou le retirer. Les objets en trop se recyclent chez Kerubim Crépin, ou se brisent en runes chez Malek.</p>
         <p>${T('caracs')} ouvre les caractéristiques : chaque niveau donne 5 points à placer.</p>` },
       { id: 'havresac', titre: 'Le Havre-Sac', html: `<p>${T('havresac')} (ou l'icône du sac dans la colonne de menus) : 1,5 s d'incantation et tu entres dans ton Havre-Sac, ton monde de poche. Bouger ou être touché coupe l'incantation. Impossible dans un donjon ou poursuivi par des monstres.</p>
-        <p>Le Poutch Ingball compte tes dégâts par seconde. ${T('havresac')} à nouveau te ramène là où tu étais ; l'arche est un Zaap vers le Bastion des Douze et tous ceux que tu as découverts.</p>` },
+        <p>Le Poutch Ingball compte tes dégâts par seconde. ${T('havresac')} à nouveau te ramène là où tu étais ; l'arche est un Zaap vers le Bastion des Douze et tous ceux que tu as découverts.</p>
+        <p>${T('deco')} chez toi : le mode déco. Pose les meubles officiels de tes thèmes, des socles de vitrine pour tes trophées, Dofus et familiers, des parcelles de potager (une récolte par jour) et un mannequin par préréglage d'équipement.</p>` },
       { id: 'zaaps', titre: 'Les Zaaps', html: `<p>Clique sur l'arche d'un Zaap : ton perso s'en approche et la liste s'ouvre. Le voyage est gratuit, vers le Bastion des Douze et tous les Zaaps que tu as découverts, rangés par zone.</p>
         <p>Il suffit de passer sur la carte d'un Zaap pour le découvrir : il devient aussi ton point de retour si tu tombes. Ceux que tu n'as pas encore vus sont grisés dans la liste et éteints sur la carte (${T('carte')}).</p>` },
       { id: 'bastion', titre: 'Le Bastion des Douze', html: `<p>Notre ville, en archipel au-dessus du Monde des Douze. On y va par n'importe quel Zaap (il est en tête de liste), par l'arche du Havre-Sac, ou avec une Potion de Rappel. Son Zaap te ramène ensuite là où tu étais.</p>
@@ -2531,13 +2560,14 @@ export class Windows {
   }
   private resTip(r: ResourceDef, id: string) {
     const sc = sorteConso(id), p = this.world.player;
-    const sorte = r.ame ? 'Âme d\'archimonstre' : sc ? NOM_SORTE[sc] : r.soin || r.rappel || r.deguisement ? 'Consommable' : r.cle ? 'Clé de donjon' : r.pepite ? 'Monnaie du Bastion' : r.monnaie === 'invasion' ? 'Éclat d\'invasion' : r.monnaie ? 'Monnaie de l\'île des Wabbits' : r.rune || r.signature ? 'Rune de forgemagie' : 'Ressource';
+    const sorte = r.ame ? 'Âme d\'archimonstre' : sc ? NOM_SORTE[sc] : r.soin || r.rappel || r.deguisement ? 'Consommable' : r.renforcee ? 'Clé renforcée' : r.cle ? 'Clé de donjon' : r.pepite ? 'Monnaie du Bastion' : r.monnaie === 'invasion' ? 'Éclat d\'invasion' : r.monnaie ? 'Monnaie de l\'île des Wabbits' : r.rune || r.signature ? 'Rune de forgemagie' : 'Ressource';
     const effet = r.ame ? `<div class="up">${escB(GAME_DATA.monsters[r.ame]?.name ?? '')}</div><div class="hint">Capturée dans une Petite pierre d'âme : elle compte dans le carnet du Bestiaire et se montre à l'Assistante d'Otomaï (quête du Dofus Ocre).</div><div class="hint">Clic droit dans l'arène des âmes (au fond du Marché couvert, Bastion des Douze) : la relâcher pour recombattre son groupe, avec un meilleur butin. L'âme est perdue.</div>`
       : sc ? `<div class="up">${texteConso(id)}</div>${sc === 'parchemin' ? `<div class="hint">Déjà ${p.parchemins[PARCHEMINS[id]] ?? 0} / ${CONSO.parcheminMax} points de parchemin en ${STAT_NAMES[PARCHEMINS[id]]}.</div>` : ''}<div class="hint">${
         sc === 'boisson' ? `Clic droit : boire. La dernière boisson bue va sur la touche ${Touches.nomAction('boisson')} (recharge ${CONSO.boisson.recharge} s).` : sc === 'parchemin' ? 'Clic droit : lire' : sc === 'repas' ? 'Clic droit : manger' : 'Clic droit : boire'}</div>`
       : r.soin ? `<div class="up">+${r.soin} PV</div><div class="hint">Clic droit : manger</div>`
       : r.rappel ? `<div class="up">Retour au dernier Zaap (${this.world.checkpointName})</div><div class="hint">Clic droit : boire</div>`
       : r.deguisement ? `<div class="up">Déguisé en Wabbit pendant ${Math.round(r.deguisement / 60)} min</div><div class="hint">Les Wabbits de l'île ne t'attaquent pas tant que tu ne les tapes pas. Clic droit : boire</div>`
+      : r.renforcee ? `<div class="up">Ouvre l'entrée : ${ITEMS.resources[r.renforcee]?.cle ?? ''}</div><div class="ex">${texteRenfort()}</div><div class="hint">Prise en entrant, avant la clé normale</div>`
       : r.cle ? `<div class="up">Ouvre l'entrée : ${r.cle}</div><div class="hint">Prise en entrant dans le donjon</div>`
       : r.monnaie === 'invasion' ? '<div class="hint">Lâché par les envahisseurs de la sous-zone envahie. Ouvre le coffre d\'invasion quand la jauge est pleine. Se dissipe à la fin de l\'heure.</div>'
       : r.monnaie ? '<div class="hint">Gagnée en défendant les champs de l\'île des Wabbits (guerre des Cawottes) ; se dépense chez Tiwa Cawoteuw, sur l\'île de la Cawotte.</div>'

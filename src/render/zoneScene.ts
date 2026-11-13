@@ -1,5 +1,6 @@
 import { PORTABLE, TROPHEES } from '../sim/dofus';
 import { infoAutel } from '../sim/autels';
+import { regions } from '../sim/renommee';
 import { BENEDICTIONS } from '../sim/magasin';
 import { apercuSort } from '../sim/apercu';
 import { dossier, v } from './assetUrl';
@@ -17,6 +18,8 @@ import { RecolteView } from './recolteView';
 import { AtelierView } from './atelierView';
 import { estPalier, recettesAuNiveau } from '../sim/metiers';
 import { HavreSacView } from './havreSacView';
+import { DecoPanneau, MeublesVue } from './decoVue';
+import { MEUBLES, type SacVu } from '../sim/meubles';
 import { AreneView } from './areneView';
 import { BrumeNuit } from './brume';
 import { GuerreView } from './guerreView';
@@ -156,6 +159,9 @@ export class ZoneScene extends Phaser.Scene {
   /** Métiers de récolte (0.2b) : ressources du monde, et celle cliquée. */
   private recolteView: RecolteView | null = null;
   private havreSacView: HavreSacView | null = null;
+  /** 0.6 Havre-Sac complet : meubles posés et mode déco (touche N). */
+  private meublesVue: MeublesVue | null = null;
+  private decoPanneau: DecoPanneau | null = null;
   private areneView: AreneView | null = null;
   private vivantView: VivantView | null = null;
   private brume: BrumeNuit | null = null;
@@ -235,7 +241,7 @@ export class ZoneScene extends Phaser.Scene {
     // #astrub dans l'adresse : l'ancienne zone à vagues des Champs d'Astrub
     // #astrub2 : Astrub en monde ouvert, sans perso (mode dév) ; un perso reprend dans sa zone
     this.arrivee = data?.arrivee;
-    this.transit = { position: data?.position, point: data?.point, zaap: data?.zaap, retour: data?.retour, vues: data?.vues };
+    this.transit = { position: data?.position, point: data?.point, zaap: data?.zaap, retour: data?.retour, vues: data?.vues, sacHote: data?.sacHote };
     if (data?.zone) this.zoneId = data.zone;
     else if (this.perso?.etat?.zone && GAME_DATA.zones[this.perso.etat.zone]) this.zoneId = this.perso.etat.zone;
     else if (this.test) { const z = this.test.zone ?? this.test.etat?.zone; this.zoneId = z && GAME_DATA.zones[z] ? z : 'incarnam'; }
@@ -350,7 +356,7 @@ export class ZoneScene extends Phaser.Scene {
     if (zone.open) {
       const open = zone.open;
       const wg = new WorldGrid(this.cache.json.get(WorldView.key(open.world, 'monde')) as WorldData);
-      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, apparats: APPARATS, themesHavreSac: THEMES_HAVRESAC, teintures: TEINTURES, familierXp: FAMILIERS.xp, recoltes: RECOLTES, compte: chargerCompte(), coffre: lireCoffre(this.sorteCoffre), aujourdhui: this.test?.jour ?? jourDuPC(), nuit: () => this.nuitDehors(), horloge: heureParis, tuto: this.test ? false : this.perso?.tuto, test: this.test?.reglages,
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, apparats: APPARATS, themesHavreSac: THEMES_HAVRESAC, sacHote: this.zoneId === 'havresac' ? this.transit.sacHote : undefined, teintures: TEINTURES, familierXp: FAMILIERS.xp, recoltes: RECOLTES, compte: chargerCompte(), coffre: lireCoffre(this.sorteCoffre), aujourdhui: this.test?.jour ?? jourDuPC(), nuit: () => this.nuitDehors(), horloge: heureParis, tuto: this.test ? false : this.perso?.tuto, test: this.test?.reglages,
         placements: this.test ? retouchesPlacement(open.world) : undefined,   // éditeur F1 › Placement : retouches pas encore envoyées
         // vitrine : les PNJ sont là, mais aucune quête ne démarre
         arrivee: this.arrivee, position: this.transit.position, point: this.transit.point, zaap: this.transit.zaap, retour: this.transit.retour,
@@ -373,6 +379,11 @@ export class ZoneScene extends Phaser.Scene {
       this.events.once('shutdown', () => { tr.destroy(); if (this.transparence === tr) this.transparence = null; });
       this.worldView.create();
       if (this.world.zone.open) { const hv = this.havreSacView = new HavreSacView(this, this.world); this.events.once('shutdown', () => { hv.destroy(); if (this.havreSacView === hv) this.havreSacView = null; }); }
+      if (this.world.deco) {   // 0.6 (10A-E) : meubles du Havre-Sac et mode déco
+        const mv = this.meublesVue = new MeublesVue(this, this.world);
+        const dp = this.decoPanneau = new DecoPanneau(this.world, t => this.hud.toast(t), () => mv.finApercu());
+        this.events.once('shutdown', () => { mv.destroy(); dp.destroy(); if (this.meublesVue === mv) this.meublesVue = null; if (this.decoPanneau === dp) this.decoPanneau = null; });
+      }
       if (this.world.zone.open?.donjons?.some(d => d.arene)) { const av = this.areneView = new AreneView(this, this.world); this.events.once('shutdown', () => { av.destroy(); if (this.areneView === av) this.areneView = null; }); }
       if (this.world.zone.open?.subareas['163']) { const b = this.brume = new BrumeNuit(this, this.world); this.events.once('shutdown', () => { b.destroy(); if (this.brume === b) this.brume = null; }); }
       if (this.world.vivant) { const vv = this.vivantView = new VivantView(this, this.world); this.events.once('shutdown', () => { vv.destroy(); if (this.vivantView === vv) this.vivantView = null; }); }
@@ -461,7 +472,7 @@ export class ZoneScene extends Phaser.Scene {
     this.miroir = Coop.miroir;
     const wc = this.world;
     Coop.attacher({ world: wc, annonce: t => this.hud.toast(t), nom: this.perso?.nom ?? '', sauver: () => this.sauver(),
-      allerA: (zone, position, arrivee) => { if (this.world === wc) this.scene.restart(zone ? { slot: this.slot, zone, position, arrivee } : { slot: this.slot }); } });
+      allerA: (zone, position, arrivee, sacHote) => { if (this.world === wc) this.scene.restart(zone ? { slot: this.slot, zone, position, arrivee, sacHote } : { slot: this.slot }); } });
     this.events.once('shutdown', () => Coop.detacher(wc));
     // Présence en ligne (Bastion partagé) : seulement avec un perso du compte, hors partie de test et hors vitrine
     if (this.perso && persosEnLigne() && !this.test && !this.vitrine && !this.essai && this.slot >= 0) {
@@ -602,7 +613,10 @@ export class ZoneScene extends Phaser.Scene {
   private get look() { return ((this.perso?.sexe ?? this.essai?.sexe) === 'f' && LOOKS[`${this.classId}_f`]) || LOOKS[this.classId]; }
   /** Coffre partagé (0.3, 12D) : celui des Hardcore est à part, la partie de test a le sien. */
   /** La zone telle qu'on la charge : le Havre-Sac prend le monde et les cases du thème choisi par le compte (Magasin 6B). */
-  private zoneVue() { return zoneAvecTheme(GAME_DATA.zones[this.zoneId], themeChoisi(THEMES_HAVRESAC, lireCoffre(this.sorteCoffre))); }
+  private zoneVue() {
+    const h = this.transit.sacHote, t = h && THEMES_HAVRESAC.themes.find(x => x.id === h.theme);   // 10E : le thème de l'hôte en coop
+    return zoneAvecTheme(GAME_DATA.zones[this.zoneId], t || themeChoisi(THEMES_HAVRESAC, lireCoffre(this.sorteCoffre)));
+  }
   private get sorteCoffre(): SorteCoffre { return this.test ? 'test' : this.perso?.hardcore ? 'hardcore' : 'normal'; }
   /** Sauvegarde automatique du perso (toutes les 5 s, en quittant la page, en revenant à l'accueil). */
   private sauver = () => {
@@ -691,6 +705,11 @@ export class ZoneScene extends Phaser.Scene {
         const t = this.caseSouris(); this.uiClick = true;
         if (t) navigator.clipboard?.writeText(t).then(() => this.hud.toast(`Copié : ${t}`), () => this.hud.toast(t));
         return;
+      }
+      // 0.6 (10A) : mode déco du Havre-Sac : le clic pose ou range un meuble, le clic droit tourne
+      if (this.decoPanneau?.actif) {
+        this.uiClick = true;
+        this.decoPanneau.clic(this.caseDeco(p), p.rightButtonDown()); return;
       }
       // partie de test, onglet Placement (maquette « Monstres » 2A) : clic = poser un point, clic droit = le retirer
       if (this.panneau?.editionPlacement) {
@@ -1089,6 +1108,7 @@ export class ZoneScene extends Phaser.Scene {
       case 'carte': this.basculerCarte(); break;   // M, comme dans Dofus (maquette 0.2, 18A)
       case 'carteTab': if (this.carte?.dispo && !this.carte.ouverte) this.carte.basculerSurimpression(); break;   // 11B : carte en surimpression
       case 'havresac': this.havreSacDemande = true; break;
+      case 'deco': if (this.decoPanneau) this.decoPanneau.basculer(); else if (this.world.dansHavreSac) this.hud.toast('La déco du Havre-Sac arrive avec la 0.6'); break;
       case 'coffre': if (p.cls.coffre) w?.toggle('tresor'); else if (p.cls.poker) this.coffreDemande = true; break;   // Enutrof (interface du coffre 2C) : la fenêtre du coffre ; Écaflip : Joue la Main
       case 'muet': this.basculerMuet(); break;
       case 'impact':
@@ -1247,6 +1267,12 @@ export class ZoneScene extends Phaser.Scene {
     return l.join('\n');
   }
   /** Carte et case sous la souris (4E). */
+  /** Case de la carte du Havre-Sac sous ce pointeur (mode déco), -1 hors carte. */
+  private caseDeco(ptr: Phaser.Input.Pointer): number {
+    const wg = this.world.worldGrid, wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2, q = ISO.toWorld(wp.x, wp.y);
+    const c = wg?.caseLocale(wg.cellAtWorld(q.x, q.y));
+    return c && c.tag === this.world.deco?.tag ? c.c : -1;
+  }
   private caseSouris(): string | null {
     const wg = this.world.worldGrid, ptr = this.input.activePointer, wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2, q = ISO.toWorld(wp.x, wp.y);
     const c = wg?.caseLocale(wg.cellAtWorld(q.x, q.y));
@@ -1481,7 +1507,7 @@ export class ZoneScene extends Phaser.Scene {
           else this.hud.loot(`${nom} niveau ${e.level}${neuves.length ? ` · nouvelle recette : ${neuves.join(', ')}` : ''}`, '#b9e54b');
           this.windows?.refresh(); break;
         }
-        case 'atelier': this.windows?.artisanat(e.metier); break;
+        case 'atelier': this.windows?.artisanat(e.metier, this.world.postes.find(po => po.id === e.poste)?.metiers); break;
         case 'fabricationDebut': Son.jouer(MANIFESTE.ui.ok, 'interface', { cle: 'clic', ecart: 0.05 }); this.windows?.refresh(); break;
         case 'fabricationStop': this.hud.toast('Fabrication interrompue'); this.windows?.refresh(); break;
         case 'craft': this.hud.loot(`${(ITEMS.resources[e.id] ?? ITEMS.equipment[e.id])?.name ?? 'Objet'} x${e.n}${e.rares ? ` (${e.rares} Rare${e.rares > 1 ? 's' : ''})` : ''}`, e.rares ? '#6fb2e8' : '#9ad15a'); this.windows?.refresh(); break;
@@ -1510,6 +1536,9 @@ export class ZoneScene extends Phaser.Scene {
         case 'dofusPassif': if (e.dofus === 'argente') this.hud.loot(`Souvenir d'Argent : +${e.n ?? 0} PV`, '#e8c76b'); break;   // le bouclier du Cacao se voit déjà (bouclier violet)
         case 'almanax': this.hud.loot(`Almanax : offrande faite, +${e.pepites} Pépites et « ${e.bonus} » jusqu'à minuit`, '#ffd27a'); this.sauver(); this.windows?.refresh(); break;
         case 'etabliForge': this.windows?.ouvrirForge(); break;
+        case 'deco': if (!e.ok && e.texte) this.hud.toast(e.texte); else this.decoPanneau?.dessiner(); break;
+        case 'meubleGagne': this.hud.loot(`Meuble ${MEUBLES[e.id]?.tier === 'fabrique' ? 'fabriqué' : 'rare'} pour ton Havre-Sac ! (touche ${Touches.nomAction('deco')} chez toi)`, '#c28bff'); this.decoPanneau?.dessiner(); break;
+        case 'meubleActif': this.decoPanneau?.choix(e.sorte, e.c); break;
         case 'coffreOuvert': if (this.windows) { this.windows.coffreHardcore = this.sorteCoffre === 'hardcore'; this.windows.show('coffre'); } break;
         // l'objet a changé de place : coffre et perso sauvés ensemble (pas d'objet perdu ni doublé si la page se ferme)
         case 'coffre': sauverCoffre(this.sorteCoffre, this.world.coffre); this.sauver(); this.windows?.refresh(); break;
@@ -1692,6 +1721,22 @@ export class ZoneScene extends Phaser.Scene {
       v[1].setPosition(p.x, p.y).setDepth(p.y - 1).setAlpha(pulse);
       v[2].setPosition(p.x, p.y).setDepth(p.y - 0.5).setAlpha(pulse * 0.8);
       v[3].setPosition(p.x, p.y - 74).setDepth(1e6 - 1);
+    }
+    // 0.6 (20A) : sanctuaires des Douze pas encore trouvés, visibles de près seulement (à trouver en explorant)
+    const p0 = w.player;
+    if (p0.v06 && w.zone.open) for (const I of regions(w).values()) for (const s of I.sanctuaires) {
+      if (p0.sanctuaires.includes(s.id) || Math.hypot(s.x - p0.x, s.y - p0.y) > 700) continue;
+      const id = -1 - (I.sanctuaires.indexOf(s) + 100 * [...regions(w).keys()].indexOf(s.region)), p = ISO.toScreen(s.x, s.y);
+      vus.add(id);
+      let v = this.autelViews.get(id);
+      if (!v) {
+        v = [this.add.ellipse(p.x, p.y, 40, 18, 0xe8c25a, 0.4), this.add.image(p.x, p.y, 'beam').setOrigin(0.5, 1).setTint(0xe8c25a).setDisplaySize(22, 120).setAlpha(0.7),
+          this.add.text(p.x, p.y - 40, `Sanctuaire de ${s.dieu}`, { fontFamily: 'Lexend, Verdana, sans-serif', fontSize: '12px', fontStyle: 'bold', color: '#e8c25a', stroke: '#000', strokeThickness: 3 }).setOrigin(0.5)];
+        this.autelViews.set(id, v);
+      }
+      (v[0] as Phaser.GameObjects.Ellipse).setPosition(p.x, p.y).setDepth(p.y - 2);
+      (v[1] as Phaser.GameObjects.Image).setPosition(p.x, p.y).setDepth(p.y - 1);
+      (v[2] as Phaser.GameObjects.Text).setPosition(p.x, p.y - 128).setDepth(1e6 - 1);
     }
     for (const [id, v] of this.autelViews) if (!vus.has(id)) { v.forEach(o => o.destroy()); this.autelViews.delete(id); }
   }
@@ -2112,6 +2157,8 @@ export class ZoneScene extends Phaser.Scene {
     this.recolteView?.update(this.cameras.main, this.input.activePointer, mobSurvol);
     this.atelierView?.update(this.cameras.main, this.input.activePointer, mobSurvol);
     this.havreSacView?.update(this.game.loop.delta / 1000);
+    this.meublesVue?.update(this.game.loop.delta / 1000);
+    if (this.decoPanneau?.actif && this.meublesVue) this.meublesVue.apercu(this.decoPanneau.choisi, this.caseDeco(this.input.activePointer), this.decoPanneau.tourne);
     this.areneView?.update(this.game.loop.delta / 1000);
     this.vivantView?.update(this.game.loop.delta / 1000);
     this.guerreView?.update(this.game.loop.delta / 1000);
@@ -2127,7 +2174,7 @@ export class ZoneScene extends Phaser.Scene {
 }
 
 /** Passage par le Havre-Sac (maquette Hub) : sortie à une position précise ou à un Zaap, entrée (retour), zones visitées. */
-interface Transit { position?: { x: number; y: number }; point?: PointDeRetour; zaap?: string; retour?: RetourHavreSac; vues?: string[] }
+interface Transit { position?: { x: number; y: number }; point?: PointDeRetour; zaap?: string; retour?: RetourHavreSac; vues?: string[]; /** 10E : coop, le Havre-Sac de l'hôte */ sacHote?: SacVu }
 
 /** Sous-zones déjà vues sans perso (mode dév), gardées dans le navigateur. Affichage seulement. */
 function decouvrir(nom: string): boolean {

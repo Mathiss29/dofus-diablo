@@ -74,6 +74,7 @@ export class AtelierView {
       const a = this.ancre(po.id);
       if (Math.abs(a.x - cx) > 1500 || Math.abs(a.y - cy) > 1100) continue;
       vus.add(po.id);
+      if (po.meuble) continue;   // 0.6 : socle, parcelle, mannequin : pas d'icône d'atelier (bulle au survol seulement)
       let v = this.vues.get(po.id);
       const g = po.coffre ? 401 : po.forge ? 308 : this.pictos.get(po.atelier) ?? 305;   // coffre : repère officiel de la Banque ; établi : « Atelier des forgemages »
       if (!v) { v = { img: null, g }; this.vues.set(po.id, v); }
@@ -102,7 +103,8 @@ export class AtelierView {
     const M = this.world.opts.items?.metiers ?? {};
     if (this.bulle.dataset.cle !== String(po.id)) {
       this.bulle.dataset.cle = String(po.id);
-      this.bulle.innerHTML = po.forge ? `<b>${po.atelier}</b><i>Clic : forgemager tes objets</i>` : po.coffre ? `<b>${po.atelier}</b><i>Clic : ouvrir (partagé par tes persos)</i>`
+      const MB = { vitrine: 'Clic : exposer un trophée, un Dofus ou un familier', potager: 'Clic : semer ou récolter', mannequin: 'Clic : prendre cette tenue' };
+      this.bulle.innerHTML = po.meuble ? `<b>${po.atelier}</b><i>${MB[po.meuble.sorte]}</i>` : po.forge ? `<b>${po.atelier}</b><i>Clic : forgemager tes objets</i>` : po.coffre ? `<b>${po.atelier}</b><i>Clic : ouvrir (partagé par tes persos)</i>`
         : `<b>${po.atelier}</b><i>Clic : fabriquer (${po.metiers.map(m => M[m]?.name ?? m).join(', ')})</i>`;
     }
     const a = this.ancre(po.id), rect = this.scene.game.canvas.getBoundingClientRect(), k = rect.width / this.scene.scale.width;

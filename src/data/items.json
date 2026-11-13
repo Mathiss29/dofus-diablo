@@ -39544,6 +39544,96 @@
    "name": "Parchemin de Sagesse",
    "icon": 76038,
    "level": 40
+  },
+  "cr8143": {
+   "name": "Clef des Champs renforcée",
+   "icon": 84013,
+   "level": 20,
+   "renforcee": "8143"
+  },
+  "cr8437": {
+   "name": "Clef du Château Ensablé renforcée",
+   "icon": 84237,
+   "level": 30,
+   "renforcee": "8437"
+  },
+  "cr1568": {
+   "name": "Clef de la Cour du Bouftou Royal renforcée",
+   "icon": 84226,
+   "level": 40,
+   "renforcee": "1568"
+  },
+  "cr1570": {
+   "name": "Clef du Donjon des Squelettes renforcée",
+   "icon": 84228,
+   "level": 50,
+   "renforcee": "1570"
+  },
+  "cr15991": {
+   "name": "Clef de la Cache de Kankreblath renforcée",
+   "icon": 84743,
+   "level": 50,
+   "renforcee": "15991"
+  },
+  "cr26680": {
+   "name": "Clef de l'Akadémie des Gobs renforcée",
+   "icon": 84790,
+   "level": 50,
+   "renforcee": "26680"
+  },
+  "cr7918": {
+   "name": "Clef du Donjon des Tofus renforcée",
+   "icon": 84006,
+   "level": 50,
+   "renforcee": "7918"
+  },
+  "cr8139": {
+   "name": "Clef du Donjon des Scarafeuilles renforcée",
+   "icon": 84233,
+   "level": 50,
+   "renforcee": "8139"
+  },
+  "cr12017": {
+   "name": "Clef du Nid du Kwakwa renforcée",
+   "icon": 84265,
+   "level": 60,
+   "renforcee": "12017"
+  },
+  "cr1569": {
+   "name": "Clef du Donjon des Forgerons renforcée",
+   "icon": 84227,
+   "level": 60,
+   "renforcee": "1569"
+  },
+  "cr8135": {
+   "name": "Clef du Donjon des Bworks renforcée",
+   "icon": 84234,
+   "level": 60,
+   "renforcee": "8135"
+  },
+  "cr11798": {
+   "name": "Clef du Village Kanniboul renforcée",
+   "icon": 84748,
+   "level": 70,
+   "renforcee": "11798"
+  },
+  "cr14464": {
+   "name": "Clef du Château du Wa Wabbit renforcée",
+   "icon": 84726,
+   "level": 70,
+   "renforcee": "14464"
+  },
+  "cr7927": {
+   "name": "Clef des Pitons Rocheux des Craqueleurs renforcée",
+   "icon": 84009,
+   "level": 80,
+   "renforcee": "7927"
+  },
+  "cr14465": {
+   "name": "Clef du Terrier du Wa Wabbit renforcée",
+   "icon": 84726,
+   "level": 90,
+   "renforcee": "14465"
   }
  },
  "drops": {
@@ -67858,6 +67948,291 @@
     [
      "7652",
      3
+    ]
+   ]
+  },
+  {
+   "result": "cr8143",
+   "metier": "bricoleur",
+   "level": 20,
+   "ingredients": [
+    [
+     "8143",
+     1
+    ],
+    [
+     "303",
+     10
+    ],
+    [
+     "312",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "cr8437",
+   "metier": "bricoleur",
+   "level": 30,
+   "ingredients": [
+    [
+     "8437",
+     1
+    ],
+    [
+     "473",
+     10
+    ],
+    [
+     "441",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "cr1568",
+   "metier": "bricoleur",
+   "level": 40,
+   "ingredients": [
+    [
+     "1568",
+     1
+    ],
+    [
+     "473",
+     10
+    ],
+    [
+     "441",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "cr1570",
+   "metier": "bricoleur",
+   "level": 50,
+   "ingredients": [
+    [
+     "1570",
+     1
+    ],
+    [
+     "476",
+     10
+    ],
+    [
+     "442",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "cr15991",
+   "metier": "bricoleur",
+   "level": 50,
+   "ingredients": [
+    [
+     "15991",
+     1
+    ],
+    [
+     "476",
+     10
+    ],
+    [
+     "442",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "cr26680",
+   "metier": "bricoleur",
+   "level": 50,
+   "ingredients": [
+    [
+     "26680",
+     1
+    ],
+    [
+     "476",
+     10
+    ],
+    [
+     "442",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "cr7918",
+   "metier": "bricoleur",
+   "level": 50,
+   "ingredients": [
+    [
+     "7918",
+     1
+    ],
+    [
+     "476",
+     10
+    ],
+    [
+     "442",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "cr8139",
+   "metier": "bricoleur",
+   "level": 50,
+   "ingredients": [
+    [
+     "8139",
+     1
+    ],
+    [
+     "476",
+     10
+    ],
+    [
+     "442",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "cr12017",
+   "metier": "bricoleur",
+   "level": 60,
+   "ingredients": [
+    [
+     "12017",
+     1
+    ],
+    [
+     "476",
+     10
+    ],
+    [
+     "442",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "cr1569",
+   "metier": "bricoleur",
+   "level": 60,
+   "ingredients": [
+    [
+     "1569",
+     1
+    ],
+    [
+     "476",
+     10
+    ],
+    [
+     "442",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "cr8135",
+   "metier": "bricoleur",
+   "level": 60,
+   "ingredients": [
+    [
+     "8135",
+     1
+    ],
+    [
+     "476",
+     10
+    ],
+    [
+     "442",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "cr11798",
+   "metier": "bricoleur",
+   "level": 70,
+   "ingredients": [
+    [
+     "11798",
+     1
+    ],
+    [
+     "460",
+     10
+    ],
+    [
+     "443",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "cr14464",
+   "metier": "bricoleur",
+   "level": 70,
+   "ingredients": [
+    [
+     "14464",
+     1
+    ],
+    [
+     "460",
+     10
+    ],
+    [
+     "443",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "cr7927",
+   "metier": "bricoleur",
+   "level": 80,
+   "ingredients": [
+    [
+     "7927",
+     1
+    ],
+    [
+     "460",
+     10
+    ],
+    [
+     "443",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "cr14465",
+   "metier": "bricoleur",
+   "level": 90,
+   "ingredients": [
+    [
+     "14465",
+     1
+    ],
+    [
+     "471",
+     10
+    ],
+    [
+     "443",
+     5
     ]
    ]
   }

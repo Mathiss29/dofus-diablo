@@ -215,7 +215,7 @@
     "Renforce"
    ],
    "accroche": "Gonfle les muscles.",
-   "texte": "L'allié visé, ou toi, gagne beaucoup de Puissance et des dommages de poussée pendant 12 s."
+   "texte": "L'allié visé, ou toi, gagne beaucoup de Puissance et des dommages de poussée pendant 9 s."
   },
   "14677": {
    "role": "base",
@@ -615,7 +615,7 @@
     "Renforce"
    ],
    "accroche": "Moins loin, plus fort.",
-   "texte": "Pendant 9 s, tu perds de la Portée mais gagnes Puissance, dommages de poussée et Critique."
+   "texte": "Pendant 3 s, tu perds de la Portée mais gagnes beaucoup de Puissance, des dommages de poussée et du Critique."
   },
   "32618": {
    "role": "soutien",
@@ -831,7 +831,7 @@
     "Renforce"
    ],
    "accroche": "Le décor ne gêne plus.",
-   "texte": "Pendant 12 s, tes flèches passent par-dessus le décor et tu gagnes du Critique, mais tu ne peux plus tirer de tout près."
+   "texte": "Pendant 12 s, tes sorts passent par-dessus le décor et tu gagnes du Critique."
   },
   "32475": {
    "role": "gros",
@@ -2535,7 +2535,7 @@
     "Ralentit"
    ],
    "accroche": "Le froid qui protège.",
-   "texte": "Bouclier sur un allié, ou dommages Eau sur un ennemi qui a alors du mal à fuir. Quand l'effet tombe, il soigne les alliés et frappe les ennemis autour."
+   "texte": "Bouclier sur un allié, ou dommages Eau sur un ennemi qui ralentit. Si l'ennemi meurt ou reprend une Cryothérapie, l'effet éclate : soin des alliés et dommages Eau autour."
   },
   "25883": {
    "role": "base",
@@ -2952,7 +2952,7 @@
     "Contrôle"
    ],
    "accroche": "La retraite anticipée.",
-   "texte": "Immobilise et cloue au sol toutes les créatures autour de toi pendant 3 s. Ensuite, c'est toi qui restes immobile un instant."
+   "texte": "Immobilise toutes les créatures autour de toi pendant 3 s. En échange, tu perds tout de suite tes charges de PM."
   },
   "29755": {
    "role": "invoc",
@@ -3306,7 +3306,7 @@
     "Contrôle"
    ],
    "accroche": "Il flaire la bonne affaire.",
-   "texte": "Retire des PA aux ennemis autour pour donner des PM, et des PM pour donner des PA ensuite. Joue la Main."
+   "texte": "Les ennemis autour attaquent et courent moins vite ; tu gagnes tout de suite 2 PA et une charge de PM. Joue la Main."
   },
   "12863": {
    "role": "soutien",
@@ -3343,7 +3343,7 @@
     "Bouclier"
    ],
    "accroche": "Rejoue ta vie.",
-   "texte": "L'allié visé subit beaucoup moins de dommages tout de suite, puis un peu plus ensuite. Joue la Main ; la Table revient plus tard."
+   "texte": "L'allié visé (ou toi) subit 40 % de dommages en moins pendant 4 s. Joue la Main, puis tes cartes reviennent en main."
   },
   "12874": {
    "role": "soutien",

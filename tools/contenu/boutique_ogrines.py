@@ -10,6 +10,7 @@ Jamais de puissance à vendre (ni équipement, ni familier à bonus, ni Dofus) ;
   costumes  (9B) : coiffe + cape (+ familier) du même nom, 20 % moins cher, 1 500 au plus ;
   style     (9E) : auréoles, effets de Zaap et ornements « ogrines » de style.json ;
   services  (9C) : changement de nom, de tête et de couleurs ;
+  meubles   (0.6, 11B) : un lot par thème du Havre-Sac (ses meubles rares), 400 ;
   abonnements (9G, 16, 17) : trois paliers pour 30 jours ; 12 apparats gardés pour « l'apparat du mois » (17B), pas vendus.
 Mises en avant et promotion de la semaine (14B) : calculées par src/sim/boutiqueOgrines.ts."""
 import json, os, re, hashlib
@@ -58,6 +59,14 @@ for t, l in sorted(groupes.items()):
 for so in ('aureoles', 'zaaps', 'ornements'):
     for d in ST[so]:
         if d.get('ogrines'): articles[f's{so}:{d["id"]}'] = {'cat': 'style', 'prix': d['ogrines'], 'style': f'{so}:{d["id"]}'}
+
+# 0.6 (« 0.6 : » 11B) : un lot par thème du Havre-Sac = ses meubles rares (src/data/meubles.json › rares, meubles_tiers.py)
+MEUBLES = lire('meubles.json'); TH = {t['id']: t['nom'] for t in lire('havresac_themes.json')['themes'] if not t.get('absent')}
+rares = {}
+for m in MEUBLES['meubles']:
+    if m[0] in set(MEUBLES.get('rares', [])): rares.setdefault(m[1], []).append(m[0])
+for t in sorted(rares):
+    if t in TH: articles[f'm{t}'] = {'cat': 'meuble', 'prix': 400, 'meubles': t, 'nom': f'Meubles rares : {TH[t]}'}
 
 SERVICES = {
     'nom': {'nom': 'Potion de changement de nom', 'texte': 'Renomme un de tes persos en ligne (à l\'accueil, Mes personnages).', 'prix': 500},

@@ -1979,7 +1979,8 @@
           "Partie de test : 39 idoles à fabriquer chez le Bricoleur (touche Y), monstres plus forts, XP et butin en plus.",
           "Partie de test : les idoles jouent en combat (Champion, renforts, retour à la vie, éclairs, flaques de feu…).",
           "Partie de test : élites à 2 affixes (Glacial, Ardent, Vampirique, Rapide, Bouclier, Téléporteur, Invocateur).",
-          "Partie de test : autels des Douze (30 s de pouvoir) et Coffre Malveillant qui détale, butin ×5."
+          "Partie de test : autels des Douze (30 s de pouvoir) et Coffre Malveillant qui détale, butin ×5.",
+          "Partie de test : renommée par région (4 paliers) et sanctuaires des Douze cachés, +2 carac chacun."
         ]
       }
     },
@@ -2054,13 +2055,69 @@
             "phrase": "Avant de fabriquer, choisis une ligne de l'objet : elle sort à son maximum.",
             "details": "Les panoplies d'artisan ne tombent plus des monstres : seul l'atelier les fabrique.",
             "icone": "metier"
+          },
+          {
+            "titre": "Clés renforcées du Bricoleur",
+            "phrase": "Une clé de donjon renforcée rend l'arène plus dure, avec plus de butin et d'XP.",
+            "details": "Elle se fabrique avec la clé, du bois et du minerai. Prise à l'entrée avant la clé normale.",
+            "icone": "metier",
+            "etiquettes": [
+              "Donjons"
+            ]
+          },
+          {
+            "titre": "Un établi des artisans chez soi",
+            "phrase": "Le Havre-Sac a son établi : tous les métiers y fabriquent, à côté de l'établi des forgemages.",
+            "details": "En haut de la fenêtre, une icône par métier pour passer de l'un à l'autre.",
+            "icone": "metier",
+            "etiquettes": [
+              "Havre-Sac"
+            ]
+          },
+          {
+            "titre": "Décore ton Havre-Sac",
+            "phrase": "Pose les 4 083 meubles officiels de Dofus 3 sur la grille de ton Havre-Sac, et tourne-les.",
+            "details": "Chaque thème donne ses meubles de base. Les rares viennent des coffres de donjon, des succès, de la Boutique d'Ogrines ou du Bricoleur et du Sculpteur.",
+            "icone": "havre",
+            "etiquettes": [
+              "Touche N",
+              "Havre-Sac",
+              "Partie de test"
+            ]
+          },
+          {
+            "titre": "Vitrine, potager et mannequins",
+            "phrase": "Expose trophées, Dofus et familiers, sème tes plantes et change de tenue d'un clic sur un mannequin.",
+            "details": "Le potager se récolte une fois par jour. En coop, tes amis entrent dans ton Havre-Sac tel que tu l'as décoré.",
+            "icone": "havre",
+            "etiquettes": [
+              "Havre-Sac",
+              "Partie de test"
+            ]
           }
         ],
         "Le monde": [],
-        "Combat": [],
+        "Combat": [
+          {
+            "titre": "21 sorts du niveau 61-90",
+            "phrase": "Iop, Crâ, Osamodas et Sacrieur reçoivent leurs vrais sorts du niveau 61 au 90, en temps réel.",
+            "details": "Emprise, Flèche Dévorante, Esprit Glouton, Berserk, Libation et les autres. En partie de test jusqu'à la sortie de la 0.6.",
+            "icone": "sorts",
+            "etiquettes": ["Partie de test", "Touche S"]
+          },
+          {
+            "titre": "12 sorts Iop et Crâ (25-60)",
+            "phrase": "Vitalité, Souffle, Épée de Iop, Tempête de Puissance, Œil de Taupe, Tirs Puissants et les autres arrivent.",
+            "details": "Seule la Balise de Survie du Crâ attend encore son dessin officiel. En partie de test jusqu'à la 0.6.",
+            "icone": "sorts",
+            "etiquettes": ["Partie de test", "Touche S"]
+          }
+        ],
         "Corrections": [],
         "En coulisses": [
-          "Le monde se charge par région : au lancement, 1,5 Mo de cartes au lieu de 22, la suite arrive en chemin.",
+          "Les sorts du niveau 61 au 90 se préparent en partie de test, sans rien changer au jeu public.",
+          "Partie de test : 20 sorts du 61 au 90 pour Forgelance, Eniripsa, Enutrof et Écaflip, et les Rois du Poker.",
+          "Le monde se charge par région : au lancement, 8 Mo de cartes au lieu de 40, la suite arrive en chemin.",
           "Partie de test : 838 cartes de la 0.6 (Abraknydes, Koalaks, Cania, Porcos, Bourgade de Frigost) et son bateau."
         ]
       }

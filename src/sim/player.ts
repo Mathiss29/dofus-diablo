@@ -1,6 +1,7 @@
 import { ALMANAX } from './almanax';
 import { ELITES } from './elites';
 import { AUTELS, type AutelActif } from './autels';
+import { bonusSanctuaires, potionsRenommee } from './renommee';
 import { etatIdolesVide, type EtatIdoles, type FxIdole } from './idoles';
 import type { StyleChoisi, Tenue } from './style';
 import { BENEDICTIONS, type AchatsDuJour, type Benediction } from './magasin';
@@ -24,10 +25,12 @@ import { CONSO, ELIXIRS, REPAS } from './consommables';
 import { ARTISANS, BONUS_FAB, BONUS_RECOLTE, PAR_PALIER_FAB, paliers } from './artisans';
 import { coutPoint, coutTotal, fuiteFactor, pointsAchetables, prospectionDeChance, soinRecu, tackleSlow, tacleOf, vitesseAgilite } from './caracs';
 import { CASE, TOUR } from './monster';
+import { avantImpact61, dommages61, hit61, impact61, maj61, redirige61, soins61, type Etat61 } from './sorts61';
 import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type SortGrade, type SortOfficiel } from './sorts';
 import { porteeSort } from './apercu';
 import { aimanter, alchiRhetorique, apresCoupEniripsa, envol, impactEniripsa, majEniripsa } from './eniripsa';
 import { avantImpactEcaflip, chateauBrise, impactEcaflip, majEcaflip, neuviemeVie, type Carte, type MainGagnante } from './ecaflip';
+import { impactSorts06, pasJoueur06 } from './sorts06';
 import { impactEnutrof, majEnutrof, perteCoffre, recordsVides, type LigneCoffre, type RecordsCoffre, type VitrineCoffre } from './enutrof';
 import type { Butin } from './butin';
 import { DANGER } from './danger';
@@ -128,6 +131,8 @@ export class Player extends Entity {
   carteIci: string | null = null;
   /** Clé d'un donjon encore valable (maquette « Donjons en vagues » 14A) : on y revient à la vague atteinte. */
   cleDonjon: CleDonjon | null = null;
+  /** « Métiers : » 9C : clé renforcée prise à l'entrée de ce donjon, en attendant l'arène. */
+  renfortDonjon: string | null = null;
   /** Guerre des Cawottes (0.4) : attaques gagnées, en or, champs parfaits, Kiafin rattrapés, records par champ. */
   guerre: EtatGuerre = guerreVide();
   /** 0.5 « monde vivant » : boss du monde vaincus (titres), apparitions récompensées, invasions, Éclats, événements. */
@@ -163,6 +168,8 @@ export class Player extends Entity {
   dofus: string[] = [];
   /** Trophées possédés (0.4 suite 3A+3B), portés dans les mêmes emplacements que les Dofus. */
   trophees: string[] = [];
+  /** 0.6 (10C) : ressources déjà récoltées une fois dans le monde (on peut les semer au potager du Havre-Sac). */
+  recoltees: string[] = [];
   dofusPortes: (string | null)[] = Array(EMPLACEMENTS_DOFUS).fill(null);
   /** Moment (âge du perso) du dernier Souvenir d'Argent et du dernier bouclier du Cacao. */
   private argenteA = -1e9; private cacaoA = -1e9;
@@ -209,6 +216,8 @@ export class Player extends Entity {
   shield = 0; shieldT = 0; shieldT0 = 0; shieldSrc = '';
   /** Sorts officiels de monstres : dommages subis × subis pendant subisT s (Grognement : 1,2), Pacifiste pendant pacifiste s (Hyperleukocytine : ne peut plus infliger de dommages). */
   subis = 1; subisT = 0; pacifiste = 0;
+  /** Poinçon (Forgelance, 0.6) : secondes où la Lance plantée immobilise les ennemis à poinconR px. */
+  poinconT = 0; poinconR = 0;
   /** Sacrieur : palier de Souffrance gardé après un soin (maquette 3B) et secondes restantes ; Mutilation en cours ; Couronne d'Épines (renvoi). */
   souffPic = 0; souffT = 0;
   /** Forgelance : la Lance Immortelle plantée au sol (Désarmé) ou null (Armé, Lance en main) ; t = secondes depuis qu'elle est plantée. */
@@ -238,7 +247,7 @@ export class Player extends Entity {
   get pairs(): PaireSorts[] { return SORTS[this.cls.sorts] ?? []; }
   /** Identifiant du sort jouable correspondant à un sort officiel (null : pas encore jouable). */
   keyOf(dofusId: number): SkillId | null {
-    for (const [k, d] of Object.entries(this.cls.spells)) if (d.dofusId === dofusId) return k;
+    for (const [k, d] of Object.entries(this.cls.spells)) if (d.dofusId === dofusId && (!d.v06 || this.v06)) return k;
     return null;
   }
   /** Fiche officielle d'un sort de la classe. */
@@ -267,6 +276,8 @@ export class Player extends Entity {
   v04 = false;
   /** 0.6 visible (partie de test tant que V06_PUBLIC est faux). */
   v06 = false;
+  /** Sorts 61-90 (Iop, Crâ, Osamodas, Sacrieur) : effets en cours lancés par ce perso (src/sim/sorts61.ts). */
+  e61: Etat61 | null = null;
   /** 0.6 (6D) : cartes où ce perso a déjà vaincu un groupe, par zone ; la première fois sur une carte, +50 % d'XP. */
   chasse: Record<string, string[]> = {};
   /** 0.6 (24A) : boss vaincus d'affilée sans Légendaire de boss, par type de boss (la chance monte à chaque essai). */
@@ -281,6 +292,11 @@ export class Player extends Entity {
   idoleT = 0;
   /** Autel de combat pris (0.6, 21) : effet, temps restant. */
   autel: AutelActif | null = null;
+  /** 0.6 (19, 20) : paliers de renommée obtenus par région ; sanctuaires des Douze trouvés (« région|n|carac »). */
+  renommee: Record<string, number> = {};
+  sanctuaires: string[] = [];
+  /** Charges de potion : celles de la classe, +1 par région au palier 2 de renommée. */
+  get potionsMax(): number { return this.cls.potion.charges + potionsRenommee(this); }
   /** Élément du dernier coup porté (Garu). */
   dernierElement: Element | '' = '';
   private _pouvoirs: PouvoirDef[] | null = null;
@@ -324,12 +340,12 @@ export class Player extends Entity {
   /** Portée ajoutée par la stat Portée de l'équipement, en px (0 si le sort n'a pas une portée modifiable). */
   porteeStat(id: SkillId): number { return this.porteeModifiable(id) ? this.stat('portee') * CASE : 0; }
   /** Le sort demande-t-il une ligne de vue vers la case visée (officiel, sauf pouvoir « ligne de vue désactivée ») ? */
-  demandeVue(id: SkillId): boolean { return this.official(id)?.ldv === 1 && !this.aPouvoir(id, 'ldv'); }
+  demandeVue(id: SkillId): boolean { return this.official(id)?.ldv === 1 && !this.aPouvoir(id, 'ldv') && !(this.e61?.acuiteT ?? 0); }   // Acuité Absolue
   /** Pour tirer le pouvoir d'un Légendaire : classe, sorts connus, sorts du jeu à venir. */
   get ctxPouvoirs(): CtxPouvoirs {
     const connus: number[] = [], aVenir: { dofusId: number; niveau: number }[] = [];
     for (const [k, d] of Object.entries(this.cls.spells)) {
-      if (!d.dofusId) continue;
+      if (!d.dofusId || (d.v06 && !this.v06)) continue;
       if (this.knows(k)) { connus.push(d.dofusId); continue; }
       const o = this.official(k), n = o ? this.requiredLevel(o) : 0;
       if (o && n > this.level) aVenir.push({ dofusId: d.dofusId, niveau: n });
@@ -358,6 +374,7 @@ export class Player extends Entity {
   knows(id: SkillId): boolean {
     const d = this.cls.spells[id];
     if (!d?.dofusId) return !!d;
+    if (d.v06 && !this.v06) return false;
     const i = this.pairs.findIndex(p => p.some(s => s.id === d.dofusId));
     if (i < 0) return true;
     const s = this.pairs[i][this.variants[i] ?? 0];
@@ -448,13 +465,14 @@ export class Player extends Entity {
   /** Soigne le perso (potion, nourriture, soin à chaque monstre tué) : Intelligence et Soins s'y ajoutent (Caracs 3B + 3C). Renvoie les PV rendus. */
   soigner(base: number): number {
     if (this.dead || base <= 0) return 0;
-    const n = Math.min(this.maxHp - this.hp, Math.round(soinRecu(base, this.stat('intelligence'), this.stat('soins')) * (this.soinsRecusT > 0 ? 1.2 : 1) * (1 + this.bonusMetier('paysan')) * (this.fxIdoles?.soins ?? 1)));   // Bihilete, Ougah
+    const n = Math.min(this.maxHp - this.hp, Math.round(soinRecu(base, this.stat('intelligence'), this.stat('soins')) * (this.soinsRecusT > 0 ? 1.2 : 1) * (1 + this.bonusMetier('paysan')) * (this.fxIdoles?.soins ?? 1) * soins61(this)));   // Bihilete, Ougah ; Berserk
     this.hp += Math.max(0, n);
     return Math.max(0, n);
   }
   get initiative(): number { return this.stat('initiative') + this.stat('force') + this.stat('intelligence') + this.stat('chance') + this.stat('agilite'); }
   /** Tacle des monstres au contact : on avance moins vite en s'éloignant d'eux (la Fuite y résiste). */
   private tackled(dx: number, dy: number, world: World): number {
+    if (this.e61?.berserk) return 1;   // Berserk : rien ne le bloque
     let k = 0;
     for (const m of world.monsters) {
       if (m.dead || m.state === 'spawn') continue;
@@ -519,6 +537,7 @@ export class Player extends Entity {
     }
     for (const id of this.dofusPortes) if (id) for (const [k, v] of Object.entries(PORTABLE(id)?.stats ?? {}) as [Stat, number][]) add(k, v);
     for (const [k, v] of Object.entries(this.parchemins) as [Stat, number][]) add(k, v);   // « Métiers : » 5A
+    for (const [k, v] of Object.entries(bonusSanctuaires(this.sanctuaires)) as [Stat, number][]) add(k, v);   // 0.6 (20A) : sanctuaires des Douze
     for (const c of [this.repas && REPAS[this.repas.id], this.elixir && ELIXIRS[this.elixir.id]]) if (c) add(c.stat, c.n);   // 4B + 4C
     for (const [id, n] of Object.entries(sets)) {
       const b = this.items?.sets[id]?.bonus[String(n - 1)];
@@ -564,7 +583,7 @@ export class Player extends Entity {
     const c = E[el] ? this.stat(E[el]) : this.stat('force');
     const flat = this.stat('dommages') + this.stat((`dommages${el[0].toUpperCase()}${el.slice(1)}`) as Stat);
     const S = this.cls.souffrance, n = S ? this.souffrance : 0;   // Souffrance : dommages finaux en plus
-    return Math.max(1, (base * (1 + Math.max(-50, c + this.stat('puissance')) / 100) + flat) * (n ? 1 + S!.finaux[n - 1] / 100 : 1));
+    return Math.max(1, (base * (1 + Math.max(-50, c + this.stat('puissance')) / 100) + flat) * (n ? 1 + S!.finaux[n - 1] / 100 : 1) * dommages61(this));   // Berserk
   }
   /** Partie de test (4A) : passe directement au niveau n. Tous les points sont rendus (5 par niveau) ; carac donnée = ils y vont tous (au coût officiel), le reste en Vitalité.
    *  Les objets d'un niveau trop haut retournent dans le sac, les sorts pas encore connus quittent la barre. */
@@ -976,6 +995,8 @@ export class Player extends Entity {
     if (this.encourage || this.soinContinu.length || this.insoignableT > 0 || this.farces.length) majEniripsa(this, dt, world);
     if (this.cls.coffre) majEnutrof(this, dt, world);
     if (this.cls.poker) majEcaflip(this, dt, world);
+    if (this.poinconT > 0) pasJoueur06(this, dt, world);
+    if (this.e61) maj61(this, dt, world);
     if (this.renvoiT > 0) this.renvoiT -= dt;
     if (this.mutil) {   // Mutilation : re-sacrifie toutes les `periode` s et gagne un cran de Puissance
       const M = this.cls.spells.mutilation?.mutilation;
@@ -1241,6 +1262,7 @@ export class Player extends Entity {
       // Transfusion : dommages en part des PV restants ; Attirance (plus forte à Souffrance 6+), Condensation, Supplice
       const eca = this.cls.poker ? avantImpactEcaflip(this, d, world) : null;   // Écaflip : Main gagnante, Dames, dé du Yams, élément de Tromperie
       if (eca) mult *= eca.mult;
+      if (d.e61) mult *= avantImpact61(this, s.id, d, s.tx, s.ty, s.gm, world);   // Épée du Destin, Flèche Dévorante, Bain de Sang
       const base = d.dmgPV ? this.hp * d.dmgPV : d.dmg * s.gm;
       const attire = d.attire && { px: ((this.souffrance >= 6 && d.souffrance6?.attire) || d.attire.cases) * CASE, vers: d.attire.vers };
       const hit = { dmg: (base + (s.id === this.cls.basic ? this.weaponDamage() : 0)) * mult, attire, supplice: d.supplice, knock: d.knock * sig('knock'), element: eca?.element ?? d.element, vsSummon: d.vsSummon && 1 + (d.vsSummon - 1) * sig('summon'), vsElite: sig('summon') > 1,
@@ -1251,7 +1273,7 @@ export class Player extends Entity {
         poLoss: d.poLoss && this.parGrade(s.id, d.poLoss),
         // Maquette Armes 3B : un coup d'arme fait jaillir un éclat de la couleur de son élément sur chaque monstre touché
         eclat: s.id === 'arme' || undefined, crit: this.critSort(s.id) || undefined, sort: s.id,
-        ...this.effetsPouvoirsClasse(s.id) };
+        ...this.effetsPouvoirsClasse(s.id), ...hit61(d) };
       let hits = 0, size = 0;
       // Pouvoirs officiels (0.3) : zone plus grande, ligne ou cône plus long
       const zb = this.zoneBonus(s.id) + (s.boosted && R.mode === 'eloquence' ? this.cls.eniripsa?.zoneEloquence ?? 0 : 0), pp = this.porteePlus(s.id);   // Éloquence : +2 cases de zone
@@ -1290,6 +1312,7 @@ export class Player extends Entity {
       if (eni && !pasDeCoup) { apresCoupEniripsa(this, d, s.tx, s.ty, rEni, world.degatsCoup, world); alchiRhetorique(this, d, s.tx, s.ty, rEni, world); }
       if (d.enutrof) impactEnutrof(this, d, s.tx, s.ty, hits, world);
       if (d.ecaflip && this.cls.poker) impactEcaflip(this, s.id, d, s.tx, s.ty, hits, base * mult, world);
+      if (d.s06) { const z = impactSorts06(this, s.id, d, s.tx, s.ty, hits, hit, world); if (z) size = z; }   // sorts 61-90 (0.6)
       if (d.envol) envol(this, s.sx, s.sy, s.tx, s.ty, world);   // Mot d'Envol : échange de place avec l'allié visé
       if (d.lance && this.cls.lance) this.apresImpactLance(d, s.tx, s.ty, world);
       if (d.traverse) {   // Balestra : de l'autre côté de la cible, puis petit recul
@@ -1300,6 +1323,7 @@ export class Player extends Entity {
       }
       if (s.id === 'arme') this.frenesie(hits, world);
       this.apresImpactClasse(s.id, s.sx, s.sy, s.tx, s.ty, hit, s.gm, size, world);
+      if (d.e61) impact61(this, s.id, d, s.tx, s.ty, world);
       const pt = hz.shape === 'point';
       if (d.self && surL && hz.shape === 'circle') size = hz.radius * area + zb;   // Forgelance Désarmé : l'effet se voit autour de la Lance
       if (hz.shape !== 'projectile') world.emit({ k: 'spell', fx: pt ? 'burst' : d.fx, id: s.id, x: pt ? s.tx : surL ? cx : this.x, y: pt ? s.ty : surL ? cy : this.y, cx: this.x, cy: this.y, facing: this.facing, size,
@@ -1676,6 +1700,7 @@ export class Player extends Entity {
   }
   hurt(raw: number, fromX: number, fromY: number, world: World, element: Element = 'neutre', loin?: boolean): boolean {
     if (this.invuln > 0 || this.dead) return false;
+    if (redirige61(this, raw, fromX, fromY, world, element, loin)) return true;   // Sacrifice : un Sacrieur proche encaisse à sa place
     const fi = this.fxIdoles, qui = world.monsters.find(m => !m.dead && m.x === fromX && m.y === fromY);
     if (this.autel?.effet === 'protection') raw *= AUTELS.effets.protection.subis;   // autel de Féca
     if (fi) {   // idoles : Brouce (rage sous 50 % de PV), Hadibel et Tigel (critiques des monstres)

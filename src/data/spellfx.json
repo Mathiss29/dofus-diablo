@@ -2924,6 +2924,403 @@
      "gfx": 3385
     }
    ]
+  },
+  "friction": {
+   "target": [
+    {
+     "gfx": 8061,
+     "bg": true
+    },
+    {
+     "gfx": 8060
+    }
+   ]
+  },
+  "precipitation": {
+   "target": [
+    {
+     "gfx": 8012
+    }
+   ],
+   "caster": [
+    {
+     "gfx": 7955
+    }
+   ]
+  },
+  "epee_destin": {
+   "target": [
+    {
+     "gfx": 8018
+    },
+    {
+     "gfx": 8019,
+     "bg": true
+    }
+   ],
+   "caster": [
+    {
+     "gfx": 8030
+    },
+    {
+     "gfx": 8031,
+     "bg": true
+    },
+    {
+     "gfx": 8065
+    }
+   ]
+  },
+  "emprise": {
+   "target": [
+    {
+     "gfx": 8043
+    }
+   ]
+  },
+  "tir_repli": {
+   "target": [
+    {
+     "gfx": 8268
+    }
+   ]
+  },
+  "punitive": {
+   "target": [
+    {
+     "gfx": 10086
+    },
+    {
+     "gfx": 10087,
+     "bg": true
+    }
+   ],
+   "caster": [
+    {
+     "gfx": 9106
+    }
+   ]
+  },
+  "expiation": {
+   "target": [
+    {
+     "gfx": 8158
+    }
+   ],
+   "projectile": {
+    "gfx": 8202,
+    "curvature": 0,
+    "offsetY": 3
+   }
+  },
+  "perforante": {
+   "target": [
+    {
+     "gfx": 8189
+    },
+    {
+     "gfx": 8188,
+     "bg": true
+    }
+   ],
+   "projectile": {
+    "gfx": 8201,
+    "curvature": 0,
+    "offsetY": 3
+   }
+  },
+  "devorante": {
+   "target": [
+    {
+     "gfx": 10083
+    },
+    {
+     "gfx": 10084,
+     "bg": true
+    }
+   ],
+   "caster": [
+    {
+     "gfx": 10083
+    },
+    {
+     "gfx": 10084,
+     "bg": true
+    }
+   ]
+  },
+  "acuite": {
+   "target": [
+    {
+     "gfx": 8154,
+     "bg": true
+    },
+    {
+     "gfx": 8155
+    }
+   ]
+  },
+  "ventritofu": {
+   "target": [
+    {
+     "gfx": 8679
+    },
+    {
+     "gfx": 8680
+    }
+   ]
+  },
+  "bouflourd": {
+   "target": [
+    {
+     "gfx": 8679
+    },
+    {
+     "gfx": 8680
+    }
+   ]
+  },
+  "crapipaud": {
+   "target": [
+    {
+     "gfx": 8679
+    },
+    {
+     "gfx": 8680
+    }
+   ]
+  },
+  "dragonnet": {
+   "target": [
+    {
+     "gfx": 8679
+    },
+    {
+     "gfx": 8680
+    }
+   ]
+  },
+  "esprit_glouton": {
+   "target": [
+    {
+     "gfx": 8679
+    },
+    {
+     "gfx": 8680
+    }
+   ]
+  },
+  "sacrifice": {
+   "target": [
+    {
+     "gfx": 8412
+    }
+   ]
+  },
+  "bain_sang": {
+   "target": [
+    {
+     "gfx": 8359
+    },
+    {
+     "gfx": 8360
+    }
+   ]
+  },
+  "hecatombe": {
+   "target": [
+    {
+     "gfx": 8385
+    },
+    {
+     "gfx": 8386
+    }
+   ]
+  },
+  "libation": {
+   "target": [
+    {
+     "gfx": 8394
+    },
+    {
+     "gfx": 8395
+    }
+   ]
+  },
+  "berserk": {
+   "target": [
+    {
+     "gfx": 8416
+    },
+    {
+     "gfx": 8415
+    }
+   ]
+  },
+  "punition": {
+   "target": [
+    {
+     "gfx": 8407
+    }
+   ],
+   "caster": [
+    {
+     "gfx": 8406
+    }
+   ]
+  },
+  "vitalite_iop": {
+   "target": [
+    {
+     "gfx": 8041
+    }
+   ]
+  },
+  "souffle": {
+   "target": [
+    {
+     "gfx": 8042
+    }
+   ]
+  },
+  "epee_destructrice": {
+   "target": [
+    {
+     "gfx": 8022
+    }
+   ]
+  },
+  "puissance_iop": {
+   "target": [
+    {
+     "gfx": 8064
+    }
+   ]
+  },
+  "tempete": {
+   "target": [
+    {
+     "gfx": 8053
+    },
+    {
+     "gfx": 8054,
+     "bg": true
+    }
+   ],
+   "caster": [
+    {
+     "gfx": 8053
+    },
+    {
+     "gfx": 8054,
+     "bg": true
+    }
+   ]
+  },
+  "endurance": {
+   "target": [
+    {
+     "gfx": 8013
+    },
+    {
+     "gfx": 8050,
+     "bg": true
+    }
+   ]
+  },
+  "vertu": {
+   "target": [
+    {
+     "gfx": 8040
+    }
+   ]
+  },
+  "epee_iop": {
+   "target": [
+    {
+     "gfx": 8063,
+     "bg": true
+    },
+    {
+     "gfx": 8062
+    }
+   ]
+  },
+  "immobilisation": {
+   "target": [
+    {
+     "gfx": 8258
+    },
+    {
+     "gfx": 8259,
+     "bg": true
+    }
+   ]
+  },
+  "tirs_puissants": {
+   "target": [
+    {
+     "gfx": 8190,
+     "bg": true
+    },
+    {
+     "gfx": 8191
+    }
+   ]
+  },
+  "oeil_taupe": {
+   "target": [
+    {
+     "gfx": 8174,
+     "scale": 0.7
+    },
+    {
+     "gfx": 8173,
+     "bg": true,
+     "scale": 0.7
+    }
+   ]
+  },
+  "oeil_pour_oeil": {
+   "target": [
+    {
+     "gfx": 10090,
+     "scale": 1.6
+    },
+    {
+     "gfx": 10091,
+     "bg": true,
+     "scale": 1.6
+    }
+   ]
+  },
+  "fleuri": {
+   "target": [
+    {
+     "gfx": 7907
+    }
+   ]
+  },
+  "pinceau": {
+   "target": [
+    {
+     "gfx": 8845
+    }
+   ]
+  },
+  "odorat": {
+   "caster": [
+    {
+     "gfx": 7962
+    }
+   ]
+  },
+  "seconde_chance": {
+   "target": [
+    {
+     "gfx": 7959
+    }
+   ]
   }
  },
  "gfx": {

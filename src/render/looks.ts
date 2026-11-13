@@ -86,6 +86,20 @@ const IOP_MAP: Record<string, AnimSlice> = {
   intimidation: { anim: 'AnimAttaque803', from: 0, to: 0.6 },
   deferlement: { anim: 'AnimAttaque809', from: 0, to: 0.55 },
   fureur: { anim: 'AnimAttaque808', from: 0, to: 0.25 },
+  // Sorts 61-90 (0.6) : Friction et Précipitation 806, Épée du Destin 800, Emprise 802
+  friction: { anim: 'AnimAttaque806', from: 0, to: 0.6 },
+  precipitation: { anim: 'AnimAttaque806', from: 0, to: 0.6 },
+  epee_destin: { anim: 'AnimAttaque800', from: 0.4, to: 1 },
+  emprise: { anim: 'AnimAttaque802', from: 0.1, to: 0.75 },
+  // Sorts 25-60 (0.6) : Vitalité, Puissance et Vertu 814 ; Souffle, Épée Destructrice, Tempête de Puissance, Endurance 801 ; Épée de Iop 803
+  vitalite_iop: { anim: 'AnimAttaque814', from: 0, to: 0.33 },
+  puissance_iop: { anim: 'AnimAttaque814', from: 0, to: 0.33 },
+  vertu: { anim: 'AnimAttaque814', from: 0, to: 0.33 },
+  souffle: { anim: 'AnimAttaque801', from: 6 / 32, to: 1 },
+  epee_destructrice: { anim: 'AnimAttaque801', from: 6 / 32, to: 1 },
+  tempete: { anim: 'AnimAttaque801', from: 6 / 32, to: 1 },
+  endurance: { anim: 'AnimAttaque801', from: 6 / 32, to: 1 },
+  epee_iop: { anim: 'AnimAttaque803', from: 0, to: 0.6 },
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   colere_charge: { anim: 'AnimAttaque800', from: 0, to: 21 / 32 },
   colere_hit: { anim: 'AnimAttaque800', from: 21 / 32, to: 1 },
@@ -114,6 +128,18 @@ const CRA_MAP: Record<string, AnimSlice> = {
   vagabonde: { anim: 'AnimAttaque917', from: 0, to: 0.75 },
   tirs_eloignes: { anim: 'AnimAttaque902', from: 0, to: 0.6 },
   detonante: { anim: 'AnimAttaque907', from: 0, to: 0.6 },
+  // Sorts 61-90 (0.6) : Tir de Repli 905, Punitive 913, Expiation 918, Perforante 919, Dévorante 912, Acuité Absolue 902
+  tir_repli: { anim: 'AnimAttaque905', from: 0, to: 0.6 },
+  punitive: { anim: 'AnimAttaque913', from: 0, to: 0.62 },
+  expiation: { anim: 'AnimAttaque918', from: 0, to: 0.62 },
+  perforante: { anim: 'AnimAttaque919', from: 0, to: 0.82 },
+  devorante: { anim: 'AnimAttaque912', from: 0, to: 0.6 },
+  acuite: { anim: 'AnimAttaque902', from: 0, to: 0.6 },
+  // Sorts 25-60 (0.6) : Immobilisation et Œil de Taupe 914, Tirs Puissants et Œil pour Œil 902
+  immobilisation: { anim: 'AnimAttaque914', from: 0, to: 0.6 },
+  oeil_taupe: { anim: 'AnimAttaque914', from: 0, to: 0.6 },
+  tirs_puissants: { anim: 'AnimAttaque902', from: 0, to: 0.6 },
+  oeil_pour_oeil: { anim: 'AnimAttaque902', from: 0, to: 0.6 },
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };
@@ -143,6 +169,12 @@ const OSA_MAP: Record<string, AnimSlice> = {
   souffle_draconique: { anim: 'AnimAttaque200', from: 0, to: 0.6 },
   charge_bestiale: { anim: 'AnimAttaque218', from: 0, to: 0.6 },
   laisse_spirituelle: { anim: 'AnimAttaque19', from: 0, to: 0.7 },
+  // Sorts 61-90 (0.6) : invocations 204
+  ventritofu: { anim: 'AnimAttaque204', from: 0, to: 0.7 },
+  bouflourd: { anim: 'AnimAttaque204', from: 0, to: 0.7 },
+  crapipaud: { anim: 'AnimAttaque204', from: 0, to: 0.7 },
+  dragonnet: { anim: 'AnimAttaque204', from: 0, to: 0.7 },
+  esprit_glouton: { anim: 'AnimAttaque204', from: 0, to: 0.7 },
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };
@@ -173,6 +205,13 @@ const SAC_MAP: Record<string, AnimSlice> = {
   transfusion: { anim: 'AnimAttaque1105', from: 0, to: 0.65 },
   dissolution: { anim: 'AnimAttaque1101', from: 0, to: 0.65 },
   desolation: { anim: 'AnimAttaque1111', from: 0, to: 0.65 },
+  // Sorts 61-90 (0.6) : Sacrifice et Hécatombe 1101, Bain de Sang 1106, Libation 1100, Berserk 1116, Punition 1109
+  sacrifice: { anim: 'AnimAttaque1101', from: 0, to: 0.65 },
+  bain_sang: { anim: 'AnimAttaque1106', from: 0, to: 0.65 },
+  hecatombe: { anim: 'AnimAttaque1101', from: 0, to: 0.65 },
+  libation: { anim: 'AnimAttaque1100', from: 0, to: 0.65 },
+  berserk: { anim: 'AnimAttaque1116', from: 0, to: 0.65 },
+  punition: { anim: 'AnimAttaque1109', from: 0, to: 0.65 },
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };
@@ -196,6 +235,8 @@ const FL_MAP: Record<string, AnimSlice> = {
     trident: 2008, effondrement: 2012, estoc_brulant: 2001, volee_airain: 2003, epilogue: 2000, charge_heroique: 2008, lance_lac: 2000,
     lance_pierre: 2000, phalange: 2012, lance_incendie: 2000, javeline_myr: 2000, balestra: 2008, talon_argile: 2008, kyrja: 2003,
     muspel: 2012, prelude_fer: 2005, saut: 2008,
+    // sorts 61-90 (0.6) : Terre du Milieu 2012, Chevalerie 2010, Jormun 2002, Poinçon 2000, Noa 2005 ; Éclipse n'a pas d'animation officielle (2010)
+    terre_milieu: 2012, chevalerie: 2010, jormun: 2002, poincon: 2000, noa: 2005, eclipse: 2010,
   }).map(([k, n]) => [k, { anim: `AnimAttaque${n}`, from: 0, to: 0.65 }])),
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
@@ -215,6 +256,8 @@ const ENI_MAP: Record<string, AnimSlice> = {
     amitie: 700, stimulant: 702, lamentations: 702, vivifiant: 702, jouvence: 702, reconstitution: 702, farceur: 703, envol: 703,
     espiegle: 704, interdit: 704, accablant: 704, juron: 705, frayeur: 705, peinture: 705, vampirique: 707, tapageur: 708, turbulent: 708,
     cri_guerre: 709,
+    // sorts 61-90 (0.6) : Chapardage 707, Mot Fleuri 700, Pinceau Tribal 709, Cryothérapie 700
+    chapardage: 707, fleuri: 700, pinceau: 709, cryotherapie: 700,
   }).map(([k, n]) => [k, { anim: `AnimAttaque${n}`, from: 0, to: 0.65 }])),
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
@@ -235,6 +278,8 @@ const ENU_MAP: Record<string, AnimSlice> = {
     lancer_pieces: 300, force_age: 301, sac_anime: 302, pelle_animee: 302, coffre_anime: 302, malle_animee: 302, roulage_pelle: 303,
     pelle_aurifere: 303, opportunite: 304, remblai: 305, clef_tresor: 305, avarice: 305, ruee_or: 306, boite_pandore: 306,
     pelle_fantomatique: 306, souterrain: 307, abattement: 308, maladresse: 310, banqueroute: 312,
+    // sorts 61-90 (0.6) : Pelle des Anciens et Péremption 305, Corruption 309, Retraite Anticipée 306
+    pelle_anciens: 305, peremption: 305, corruption: 309, retraite: 306,
   }).map(([k, n]) => [k, { anim: `AnimAttaque${n}`, from: 0, to: 0.65 }])),
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
@@ -253,6 +298,8 @@ const ECA_MAP: Record<string, AnimSlice> = {
   ...Object.fromEntries(Object.entries({
     griffe_invocatrice: 601, yams: 602, pelotage: 602, perception: 603, pile_face: 604, jass: 606, baraka: 606, blakjak: 606, belote: 606,
     tromperie: 606, reflexes: 607, topkaj: 608, bonne_pioche: 611, roulette: 612, chateau_cartes: 6, bond_felin: 4,
+    // sorts 61-90 (0.6) : Esprit Félin 605, Odorat 601, Coussinets et Félintion 602, Seconde Chance 603, Bluff 613
+    esprit_felin: 605, odorat: 601, coussinets: 602, felintion: 602, seconde_chance: 603, bluff: 613,
   }).map(([k, n]) => [k, { anim: `AnimAttaque${n}`, from: 0, to: 0.65 }])),
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },

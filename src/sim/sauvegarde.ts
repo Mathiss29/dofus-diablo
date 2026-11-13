@@ -44,6 +44,8 @@ export interface EtatJoueur {
   chasse?: Record<string, string[]>; bossSansLeg?: Record<string, number>;
   /** 0.6 : idoles (17-18). */
   idoles?: EtatIdoles;
+  /** 0.6 : renommée par région (paliers obtenus) et sanctuaires trouvés (19-20). */
+  renommee?: Record<string, number>; sanctuaires?: string[];
   drapeaux?: Drapeau[];
   tombe?: Tombe | null;
   lieuxVus?: string[];
@@ -75,6 +77,8 @@ export interface EtatJoueur {
   parchemins?: Partial<Record<Stat, number>>; ceinture?: string | null;
   /** Dofus possédés et portés (0.3). */
   dofus?: string[]; trophees?: string[]; dofusPortes?: (string | null)[];
+  /** 0.6 (10C) : ressources déjà récoltées (potager du Havre-Sac). */
+  recoltees?: string[];
   /** Enutrof : le coffre au trésor (pièces, objets de la vitrine, journal, records ; interface du coffre 8A). */
   coffreEnu?: EtatCoffre;
 }
@@ -88,8 +92,8 @@ export function exporterJoueur(w: World): EtatJoueur {
     base: p.base, bag: p.bag, equipment: p.equipment, resources: p.resources, metiers: p.metiers, recetteSuivie: p.recetteSuivie,
     bar: p.bar, variants: p.variants, learned: [...p.learned],
     x: p.x, y: p.y, retour: w.pointDeRetour, quetes: w.quetes?.exporter(), zone: w.opts.zone,
-    apparats: p.apparats, apparat: p.apparat, codex: p.codex, codexOuvert: p.codexOuvert, ames: p.ames, menagerie: p.menagerie, familierOffert: p.familierOffert, aboJour: p.aboJour, style: p.style, tenues: p.tenues, placesTenue: p.placesTenue, prereglages: p.prereglages, almanaxJour: p.almanaxJour, magasin: p.magasin, sacEnPlus: p.sacEnPlus, benediction: p.benediction, repas: p.repas, elixir: p.elixir, parchemins: p.parchemins, ceinture: p.ceinture, dofus: p.dofus, trophees: p.trophees, dofusPortes: p.dofusPortes,
-    zaaps: p.zaaps, zonesVues: p.zonesVues, explore: p.explore, chasse: p.chasse, bossSansLeg: p.bossSansLeg, idoles: p.idoles, drapeaux: p.drapeaux, tombe: p.tombe, lieuxVus: p.lieuxVus, cleDonjon: p.cleDonjon, guerre: p.guerre, vivant: p.vivant, commandeFM: p.commandeFM, ...(w.retour ? { havreSac: w.retour } : {}),
+    apparats: p.apparats, apparat: p.apparat, codex: p.codex, codexOuvert: p.codexOuvert, ames: p.ames, menagerie: p.menagerie, familierOffert: p.familierOffert, aboJour: p.aboJour, style: p.style, tenues: p.tenues, placesTenue: p.placesTenue, prereglages: p.prereglages, almanaxJour: p.almanaxJour, magasin: p.magasin, sacEnPlus: p.sacEnPlus, benediction: p.benediction, repas: p.repas, elixir: p.elixir, parchemins: p.parchemins, ceinture: p.ceinture, dofus: p.dofus, trophees: p.trophees, recoltees: p.recoltees, dofusPortes: p.dofusPortes,
+    zaaps: p.zaaps, zonesVues: p.zonesVues, explore: p.explore, chasse: p.chasse, bossSansLeg: p.bossSansLeg, idoles: p.idoles, renommee: p.renommee, sanctuaires: p.sanctuaires, drapeaux: p.drapeaux, tombe: p.tombe, lieuxVus: p.lieuxVus, cleDonjon: p.cleDonjon, guerre: p.guerre, vivant: p.vivant, commandeFM: p.commandeFM, ...(w.retour ? { havreSac: w.retour } : {}),
     ...(p.cls.coffre ? { coffreEnu: exporterCoffre(p) } : {}),
   });
 }
@@ -100,7 +104,7 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
   const p = w.player, s = copie(e);
   const uid = (it: Item) => ({ ...it, uid: w.newUid() });
   p.level = s.level; p.xp = s.xp; p.points = s.points; p.kamas = s.kamas; p.lootFilter = s.lootFilter ?? 0; p.autoDefaire = s.autoDefaire !== undefined ? s.autoDefaire : s.autoBrisage ? 'commun' : null;
-  p.potions = Math.min(s.potions ?? p.potions, p.cls.potion.charges);
+  p.potions = Math.min(s.potions ?? p.potions, p.potionsMax);
   p.base = s.base ?? {}; p.resources = s.resources ?? {}; p.metiers = { ...p.metiers, ...s.metiers };
   p.recetteSuivie = typeof s.recetteSuivie === 'string' ? s.recetteSuivie : null;
   // objets de maître du jeu tombés par erreur (Annobusé de Maître Jarbo…) : retirés, sauf en partie de test
@@ -127,6 +131,7 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
     return r && typeof r === 'object' && r.equipement && Array.isArray(r.bar) ? { nom: String(r.nom ?? `Préréglage ${i + 1}`), equipement: r.equipement, bar: r.bar, variants: Array.isArray(r.variants) ? r.variants : [] } : null;
   });
   p.dofus = Array.isArray(s.dofus) ? s.dofus.filter(id => typeof id === 'string' && DOFUS[id]) : [];
+  p.recoltees = Array.isArray(s.recoltees) ? [...new Set(s.recoltees.filter(id => typeof id === 'string' && /^\d{1,7}$/.test(id)))] : [];
   p.trophees = Array.isArray(s.trophees) ? s.trophees.filter(id => typeof id === 'string' && TROPHEES[id]) : [];
   p.dofusPortes = Array.from({ length: EMPLACEMENTS_DOFUS }, (_, i) => { const id = s.dofusPortes?.[i]; return typeof id === 'string' && (p.dofus.includes(id) || p.trophees.includes(id)) && s.dofusPortes!.indexOf(id) === i ? id : null; });
   p.almanaxJour = typeof s.almanaxJour === 'string' ? s.almanaxJour : null;
@@ -155,6 +160,9 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
     if (Array.isArray(s.idoles.jeux)) e.jeux = e.jeux.map((_, i) => { const j = s.idoles!.jeux[i]; return j && typeof j === 'object' ? { nom: String(j.nom ?? `Jeu ${i + 1}`).slice(0, 24), ids: ok(j.ids) } : null; });
     p.idoles = e;
   }
+  if (s.renommee && typeof s.renommee === 'object') for (const [r, n] of Object.entries(s.renommee))
+    if (typeof n === 'number' && n > 0) p.renommee[r.slice(0, 40)] = Math.min(4, Math.floor(n));
+  if (Array.isArray(s.sanctuaires)) p.sanctuaires = [...new Set(s.sanctuaires.filter((x): x is string => typeof x === 'string' && /^[^|]{1,40}\|\d+\|(vitalite|sagesse|force|intelligence|chance|agilite)$/.test(x)))];
   if (s.bossSansLeg && typeof s.bossSansLeg === 'object') for (const [b, n] of Object.entries(s.bossSansLeg))
     if (typeof n === 'number' && n > 0 && Number.isFinite(n)) p.bossSansLeg[b] = Math.min(1000, Math.floor(n));
   if (s.explore && typeof s.explore === 'object') for (const [z, l] of Object.entries(s.explore))
@@ -164,7 +172,7 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
   p.tombe = tb && typeof tb.zone === 'string' && Number.isFinite(tb.x) && Number.isFinite(tb.y) ? { zone: tb.zone, x: tb.x, y: tb.y } : null;
   if (Array.isArray(s.lieuxVus)) p.lieuxVus = [...new Set([...s.lieuxVus.filter(k => typeof k === 'string'), ...p.lieuxVus])];
   const c = s.cleDonjon;
-  if (c && typeof c.nom === 'string' && c.reste > 0) p.cleDonjon = { nom: c.nom, vague: Math.max(1, Math.floor(c.vague) || 1), reste: c.reste };
+  if (c && typeof c.nom === 'string' && c.reste > 0) p.cleDonjon = { nom: c.nom, vague: Math.max(1, Math.floor(c.vague) || 1), reste: c.reste, ...(c.renforcee === true ? { renforcee: true } : {}) };
   const g = s.guerre;
   if (g && typeof g === 'object') {
     const n = (v: unknown) => Math.max(0, Math.floor(Number(v)) || 0);

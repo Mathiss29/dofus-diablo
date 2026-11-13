@@ -57,6 +57,8 @@ export class Bete extends Entity {
   pa: number;
   /** Éveil en cours : secondes restantes (0 = forme de base). */
   eveilT = 0;
+  /** Invocations prises (0 = son rang) : une forme évoluée invoquée directement (sorts 61-90 de l'Osamodas) n'en prend qu'une. */
+  poids = 0;
   /** Sort en cours : index, cible (monstre ou joueur à soigner), temps écoulé, impact fait. */
   cast: { i: number; cible: Monster | Player; t: number; fait: boolean } | null = null;
   /** Le monstre qu'elle attaque. */

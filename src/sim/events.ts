@@ -124,6 +124,9 @@ export type SimEvent =
   | { k: 'autel'; effet: string; dieu: string; nom: string }
   /** 0.6 (22A) : un Coffre Malveillant se met à détaler. */
   | { k: 'coffreFuyard'; x: number; y: number }
+  /** 0.6 (19-20) : palier de renommée atteint ; sanctuaire des Douze trouvé. */
+  | { k: 'renommee'; region: string; palier: number; texte: string }
+  | { k: 'sanctuaire'; dieu: string; carac: string; bonus: number; region: string; n: number; total: number }
   /** 0.6 (17-18) : idole fabriquée, ou idoles actives changées. */
   | { k: 'idole'; id: string; quoi: 'fabriquee' | 'active' }
   | { k: 'respawn' }
@@ -162,6 +165,9 @@ export type SimEvent =
   | { k: 'codexOuvert' }
   /** Coffre partagé (0.3) : ouvert devant le coffre ; changé (l'affichage le sauve avec le perso). */
   | { k: 'coffreOuvert' } | { k: 'coffre' }
+  /** 0.6 Havre-Sac (src/sim/deco.ts) : meuble posé ou rangé (ok), ou refus (texte) ; meuble gagné (11C, 11B, 9A) ;
+   *  clic sur un socle de vitrine ou une parcelle à semer (fenêtre de choix). */
+  | { k: 'deco'; ok: boolean; texte?: string } | { k: 'meubleGagne'; id: number } | { k: 'meubleActif'; sorte: 'potager' | 'vitrine' | 'mannequin'; c: number }
   /** Forgemagie v2 2B : arrivé devant l'établi de forgemagie du Havre-Sac. */
   | { k: 'etabliForge' }
   /** Archimonstre capturé (0.3, 15B) ; neuf : première fois pour ce perso. */
