@@ -165,6 +165,9 @@ export type SimEvent =
   | { k: 'codexOuvert' }
   /** Coffre partagé (0.3) : ouvert devant le coffre ; changé (l'affichage le sauve avec le perso). */
   | { k: 'coffreOuvert' } | { k: 'coffre' }
+  /** 0.6 Havre-Sac (src/sim/deco.ts) : meuble posé ou rangé (ok), ou refus (texte) ; meuble gagné (11C, 11B, 9A) ;
+   *  clic sur un socle de vitrine ou une parcelle à semer (fenêtre de choix). */
+  | { k: 'deco'; ok: boolean; texte?: string } | { k: 'meubleGagne'; id: number } | { k: 'meubleActif'; sorte: 'potager' | 'vitrine' | 'mannequin'; c: number }
   /** Forgemagie v2 2B : arrivé devant l'établi de forgemagie du Havre-Sac. */
   | { k: 'etabliForge' }
   /** Archimonstre capturé (0.3, 15B) ; neuf : première fois pour ce perso. */

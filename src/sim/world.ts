@@ -29,6 +29,9 @@ import V06 from '../data/v06.json';
 import { IDOLES_DEFS, basculerIdole, bonusIdoles, chargerJeu, defSousIdoles, enregistrerJeu, fxIdoles, recetteIdole, scoreIdoles, type FxIdole } from './idoles';
 import { majRenommee, sanctuairesPas } from './renommee';
 import { autelsPas, poserAutel, AUTELS, type Autel } from './autels';
+import { DecoHavreSac, gagnerMeuble } from './deco';
+import { hache } from './contrats';
+import { DECO, MEUBLES, meubleDeRecette, raresDuTheme, type SacVu, type SorteSpeciale } from './meubles';
 import { COFFRE_FUYARD, defCoffreFuyard, piloterCoffre } from './coffreFuyard';
 import { defAffixes, elitesPas, poserAffixes, tirerAffixes } from './elites';
 import { idolesApparition, idolesGroupe, idolesMort, idolesPas, type ZoneIdole } from './idolesCombat';
@@ -193,6 +196,8 @@ export interface WorldOptions {
   horloge?: () => number;
   /** Tous les groupes posés dès le départ, même loin des joueurs (tests qui regardent tout le monde ; le jeu pose à la demande, World.POSE). */
   groupesPartout?: boolean;
+  /** 10E (0.6) : en coop, l'invité voit le Havre-Sac de l'hôte (thème, meubles, potager, vitrine), envoyé à l'arrivée. */
+  sacHote?: SacVu;
 }
 
 /** Le familier porté (maquette Familiers 4A) : il suit le perso et va chercher le butin autour de lui. */
@@ -347,6 +352,8 @@ export class World {
   set retour(v: EtatMonde['retour']) { this.player.monde.retour = v; }
   /** Poutch Ingball du Havre-Sac (7A) : id du monstre. */
   poutch: number | null = null;
+  /** Havre-Sac complet (0.6, src/sim/deco.ts) : meubles posés, vitrine, potager, mannequins ; null hors du Havre-Sac. */
+  deco: DecoHavreSac | null = null;
   /** Arène du donjon où l'on se bat (maquette « Donjons en vagues »), null ailleurs. */
   /** Guerre des Cawottes (0.4, île des Wabbits) : partie de test seulement tant que la 0.4 est cachée. */
   guerre: Guerre | null = null;
@@ -366,7 +373,10 @@ export class World {
     this.rng = new Rng(opts.seed ?? 1);
     this.zone = opts.data.zones[opts.zone];
     if (!this.zone) throw new Error(`Zone inconnue : ${opts.zone}`);
-    if (opts.themesHavreSac) this.zone = zoneAvecTheme(this.zone, themeChoisi(opts.themesHavreSac, this.coffre));   // la carte chargée par l'affichage est celle du thème
+    if (opts.themesHavreSac) {   // la carte chargée par l'affichage est celle du thème (10E : celui de l'hôte en coop)
+      const h = opts.sacHote && opts.themesHavreSac.themes.find(t => t.id === opts.sacHote!.theme);
+      this.zone = zoneAvecTheme(this.zone, h || themeChoisi(opts.themesHavreSac, this.coffre));
+    }
     const dt = this.zone.open?.donjonsTest;   // 0.4 cachée : ses donjons seulement en partie de test (copie : les données restent intactes)
     if ((V04_PUBLIC || opts.test) && dt?.length) this.zone = { ...this.zone, open: { ...this.zone.open!, donjons: [...(this.zone.open!.donjons ?? []), ...dt] } };
     const sz = this.zone.open?.subareas;   // 0.4 cachée : les sous-zones d'Amakna (monstres, butin, contrats) seulement en partie de test
@@ -423,6 +433,7 @@ export class World {
     }
     if (open && !opts.sansGroupes) this.spawnGroups();
     if (open?.havreSac?.poutch != null) this.poserPoutch(open.havreSac.poutch);
+    if (open?.havreSac && this.player.v06 && this.map instanceof WorldGrid) { this.deco = new DecoHavreSac(this, this.map); this.deco.installer(); }
     if (open) this.visiter(opts.zonesVues ?? []);
     if (open && (opts.arrivee || opts.position || opts.zaap)) this.proteger();
   }
@@ -1047,6 +1058,8 @@ export class World {
       b.ressources.push(...c.ressources); b.objets.push(...c.objets); b.kamas += c.kamas + 20 * niveau;
     }
     this.noterBossLeg(boss, b, false);
+    // 0.6 (11C) : un meuble rare du Havre-Sac, parfois, pour le compte (le joueur de l'écran)
+    if (this.player.v06 && this.player === this.players[0] && this.rng.next() < DECO.chanceDonjon) this.gagnerMeubleRare();
     return b;
   }
   /** 0.6 (24A) : un Légendaire ou un Mythique de ce boss remet sa chance à zéro ; sinon (à la mort du boss seulement) elle monte d'un cran. */
@@ -2459,6 +2472,7 @@ export class World {
       const def = R.ressources[r.item], lv = Math.max(1, p.metierLevel(def.metier));
       const n = quantite(this.rng, lv, def.niveau, r.dore) + (def.metier && this.almanax?.effet === 'recolte' ? ALMANAX.recolte : 0);   // 15C
       p.resources[r.item] = (p.resources[r.item] ?? 0) + n;
+      if (!p.recoltees.includes(r.item)) p.recoltees.push(r.item);   // 10C : on pourra la semer au potager du Havre-Sac
       if (def.metier) p.gainMetierXp(def.metier, xpRecolte(def.niveau, r.dore), this);   // puits : sans métier, sans XP
       this.emit({ k: 'recolteFin', id: r.id, item: r.item, n, dore: r.dore });
       if (r.dore && def.metier) this.coupDePouce(def.metier);   // « Métiers : » 6A
@@ -2568,6 +2582,8 @@ export class World {
     const ids = [...apparats, ...articles.flatMap(a => A[a]?.apparats ?? [])];
     for (const id of ids) if (!p.apparats.includes(id)) { p.apparats.push(id); n++; }
     for (const a of articles) { const s = A[a]?.style; if (s && !c.styles?.includes(s)) { (c.styles ??= []).push(s); n++; } }
+    // 11B : lot de meubles rares d'un thème
+    for (const a of articles) { const t = A[a]?.meubles; if (t != null) for (const id of raresDuTheme(t)) if (!c.meubles?.includes(id)) { (c.meubles ??= []).push(id); n++; } }
     return n;
   }
   /** 17C + 17J : avantages déjà pris aujourd'hui (remis à zéro chaque jour). */
@@ -3084,14 +3100,31 @@ export class World {
       if (rare) n = this.ingredientsRares.has(rare) ? Math.min(n, Math.floor((p.resources[rare] ?? 0) / (1 + (r.ingredients.find(([x]) => x === rare)?.[1] ?? 0)))) : 0;
     }
     if (TROPHEES[r.result]) n = p.trophees.includes(r.result) ? 0 : Math.min(n, 1);   // un trophée se possède une fois (3B)
+    const mb = meubleDeRecette(r.result);
+    if (mb) n = this.coffre.meubles?.includes(mb.id) || p !== this.players[0] ? 0 : Math.min(n, 1);   // 9A : un meuble se possède une fois
     return Math.max(0, n);
   }
   /** 0.3 (9A) : les métiers de fabrication d'équipement n'existent qu'en partie de test tant que la 0.3 n'est pas sortie. */
-  recetteVisible(r: RecipeDef): boolean { return (this.player.v03 || !METIERS_FAB.includes(r.metier)) && (this.player.v04 || !TROPHEES[r.result]); }
+  recetteVisible(r: RecipeDef): boolean { return (this.player.v03 || !METIERS_FAB.includes(r.metier)) && (this.player.v04 || !TROPHEES[r.result]) && (this.player.v06 || !meubleDeRecette(r.result)); }
   private _rares: Set<string> | null = null;
   /** 10B : ressources de boss ou d'élite qui garantissent un objet fabriqué Rare. */
   get ingredientsRares(): Set<string> {
     return this._rares ??= this.opts.items ? ingredientsRares(this.opts.items, this.opts.data.monsters) : new Set();
+  }
+  /** 11C : un meuble rare du Havre-Sac pas encore gagné (coffre de donjon, succès), pour le compte ; graine = tirage fixe (succès). */
+  gagnerMeubleRare(graine?: string): number | null {
+    const a = new Set(this.coffre.meubles ?? []), l = Object.values(MEUBLES).filter(m => m.tier === 'rare' && !a.has(m.id));
+    if (!l.length) return null;
+    const m = graine ? l[hache(graine) % l.length] : this.rng.pick(l);
+    gagnerMeuble(this, m);
+    return m.id;
+  }
+  /** 10B-D : les socles, parcelles et mannequins posés (DecoHavreSac.appliquer) remplacent les postes de meubles d'avant. */
+  postesDeco(l: { sorte: SorteSpeciale; c: number; x: number; y: number }[]) {
+    const tag = this.deco?.tag ?? '';
+    this.postes = this.postes.filter(po => !po.meuble);
+    const noms: Record<SorteSpeciale, string> = { potager: 'Potager', vitrine: 'Vitrine', mannequin: 'Mannequin' };
+    for (const m of l) this.postes.push({ id: this.nextId++, atelier: noms[m.sorte], metiers: [], tag, x: m.x, y: m.y, gfx: -1, meuble: { sorte: m.sorte, c: m.c } });
   }
   /** Postes des ateliers : les machines officielles (ateliers_postes.py), sinon un poste au milieu de la première carte. */
   private buildPostes() {
@@ -3197,6 +3230,13 @@ export class World {
     p.stopMove(); p.facing = Math.atan2(po.y - p.y, po.x - p.x);
     if (po.coffre) { this.emit({ k: 'coffreOuvert' }); return; }
     if (po.forge) { this.emit({ k: 'etabliForge' }); return; }
+    if (po.meuble && this.deco) {   // 10B-D : socle (choisir quoi exposer), parcelle (récolter ou semer), mannequin (changer de tenue)
+      const { sorte, c } = po.meuble, d = this.deco;
+      if (sorte === 'mannequin') { d.changerTenue(c); return; }
+      if (sorte === 'potager' && d.parcelle(c)?.pret && d.recolter(c)) return;
+      this.emit({ k: 'meubleActif', sorte, c });
+      return;
+    }
     this.emit({ k: 'atelier', poste: po.id, metier: po.metiers[0] });
   }
   /** Lance la fabrication de n fois la recette i (fenêtre Artisanat) : une barre d'une seconde, puis tout est fait d'un coup. */
@@ -3236,6 +3276,13 @@ export class World {
       p.gainMetierXp(r.metier, n * METIER_XP.parIngredient * r.ingredients.reduce((s, [, q]) => s + q, 0), this);
       this.emit({ k: 'craft', id: r.result, n, rares });
       return n;
+    }
+    const mb = meubleDeRecette(r.result);
+    if (mb) {   // « Métiers : » 9A : un meuble du Havre-Sac, pour le compte (une fois)
+      p.gainMetierXp(r.metier, METIER_XP.parIngredient * r.ingredients.reduce((s, [, q]) => s + q, 0), this);
+      gagnerMeuble(this, mb);
+      this.emit({ k: 'craft', id: r.result, n: 1 });
+      return 1;
     }
     if (TROPHEES[r.result]) {   // trophée (0.4 suite 3B) : dans les emplacements de Dofus, pas dans le sac
       p.gainMetierXp(r.metier, METIER_XP.parIngredient * r.ingredients.reduce((s, [, q]) => s + q, 0), this);

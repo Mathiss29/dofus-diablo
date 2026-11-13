@@ -77,6 +77,8 @@ export interface EtatJoueur {
   parchemins?: Partial<Record<Stat, number>>; ceinture?: string | null;
   /** Dofus possédés et portés (0.3). */
   dofus?: string[]; trophees?: string[]; dofusPortes?: (string | null)[];
+  /** 0.6 (10C) : ressources déjà récoltées (potager du Havre-Sac). */
+  recoltees?: string[];
   /** Enutrof : le coffre au trésor (pièces, objets de la vitrine, journal, records ; interface du coffre 8A). */
   coffreEnu?: EtatCoffre;
 }
@@ -90,7 +92,7 @@ export function exporterJoueur(w: World): EtatJoueur {
     base: p.base, bag: p.bag, equipment: p.equipment, resources: p.resources, metiers: p.metiers, recetteSuivie: p.recetteSuivie,
     bar: p.bar, variants: p.variants, learned: [...p.learned],
     x: p.x, y: p.y, retour: w.pointDeRetour, quetes: w.quetes?.exporter(), zone: w.opts.zone,
-    apparats: p.apparats, apparat: p.apparat, codex: p.codex, codexOuvert: p.codexOuvert, ames: p.ames, menagerie: p.menagerie, familierOffert: p.familierOffert, aboJour: p.aboJour, style: p.style, tenues: p.tenues, placesTenue: p.placesTenue, prereglages: p.prereglages, almanaxJour: p.almanaxJour, magasin: p.magasin, sacEnPlus: p.sacEnPlus, benediction: p.benediction, repas: p.repas, elixir: p.elixir, parchemins: p.parchemins, ceinture: p.ceinture, dofus: p.dofus, trophees: p.trophees, dofusPortes: p.dofusPortes,
+    apparats: p.apparats, apparat: p.apparat, codex: p.codex, codexOuvert: p.codexOuvert, ames: p.ames, menagerie: p.menagerie, familierOffert: p.familierOffert, aboJour: p.aboJour, style: p.style, tenues: p.tenues, placesTenue: p.placesTenue, prereglages: p.prereglages, almanaxJour: p.almanaxJour, magasin: p.magasin, sacEnPlus: p.sacEnPlus, benediction: p.benediction, repas: p.repas, elixir: p.elixir, parchemins: p.parchemins, ceinture: p.ceinture, dofus: p.dofus, trophees: p.trophees, recoltees: p.recoltees, dofusPortes: p.dofusPortes,
     zaaps: p.zaaps, zonesVues: p.zonesVues, explore: p.explore, chasse: p.chasse, bossSansLeg: p.bossSansLeg, idoles: p.idoles, renommee: p.renommee, sanctuaires: p.sanctuaires, drapeaux: p.drapeaux, tombe: p.tombe, lieuxVus: p.lieuxVus, cleDonjon: p.cleDonjon, guerre: p.guerre, vivant: p.vivant, commandeFM: p.commandeFM, ...(w.retour ? { havreSac: w.retour } : {}),
     ...(p.cls.coffre ? { coffreEnu: exporterCoffre(p) } : {}),
   });
@@ -129,6 +131,7 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
     return r && typeof r === 'object' && r.equipement && Array.isArray(r.bar) ? { nom: String(r.nom ?? `Préréglage ${i + 1}`), equipement: r.equipement, bar: r.bar, variants: Array.isArray(r.variants) ? r.variants : [] } : null;
   });
   p.dofus = Array.isArray(s.dofus) ? s.dofus.filter(id => typeof id === 'string' && DOFUS[id]) : [];
+  p.recoltees = Array.isArray(s.recoltees) ? [...new Set(s.recoltees.filter(id => typeof id === 'string' && /^\d{1,7}$/.test(id)))] : [];
   p.trophees = Array.isArray(s.trophees) ? s.trophees.filter(id => typeof id === 'string' && TROPHEES[id]) : [];
   p.dofusPortes = Array.from({ length: EMPLACEMENTS_DOFUS }, (_, i) => { const id = s.dofusPortes?.[i]; return typeof id === 'string' && (p.dofus.includes(id) || p.trophees.includes(id)) && s.dofusPortes!.indexOf(id) === i ? id : null; });
   p.almanaxJour = typeof s.almanaxJour === 'string' ? s.almanaxJour : null;

@@ -13,6 +13,8 @@ export interface Poste {
   coffre?: boolean;
   /** Forgemagie v2 2B : établi de forgemagie, le clic ouvre la forgemagie. */
   forge?: boolean;
+  /** 0.6 (10B-D) : socle de vitrine, parcelle de potager ou mannequin posé au Havre-Sac, et sa case. */
+  meuble?: { sorte: 'potager' | 'vitrine' | 'mannequin'; c: number };
 }
 
 export const FABRICATION = {

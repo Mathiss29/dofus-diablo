@@ -4,6 +4,7 @@ import { PEPITE, type Rarity } from './items';
 import { TROPHEES } from './dofus';
 import { COMMANDES, commande, tirerCommandes, type SorteCommandes } from './commandes';
 import { archiDuJour, contrat, contratArchi, CONTRATS_PAR_JOUR, hache, semaine, tirerContrats, type CtxContrats } from './contrats';
+import { DECO } from './meubles';
 import { avantage } from './boutiqueOgrines';
 import { liensAPied, plusCourt, type GenreLien, type Lien, type Pt } from './trajet';
 import { nouvellesDuMonde } from './mondeVivant';
@@ -1181,6 +1182,8 @@ export class Quetes {
     if (r.objet) w.donnerObjet(r.objet);
     if (r.apparat) w.ajouterApparat(r.apparat);
     w.donnerObjet(PEPITE, pep);
+    // 0.6 (11C) : un succès sur quatre (toujours les mêmes) donne aussi un meuble rare du Havre-Sac, au compte
+    if (w.player.v06 && w.player === w.players[0] && hache(`meuble:${id}`) % DECO.unSuccesSur === 0) w.gagnerMeubleRare(`succes:${id}`);
     w.emit({ k: 'succesRecupere', id, xp: r.xp ?? 0, pepites: pep });
     return true;
   }

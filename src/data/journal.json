@@ -2073,6 +2073,27 @@
             "etiquettes": [
               "Havre-Sac"
             ]
+          },
+          {
+            "titre": "Décore ton Havre-Sac",
+            "phrase": "Pose les 4 083 meubles officiels de Dofus 3 sur la grille de ton Havre-Sac, et tourne-les.",
+            "details": "Chaque thème donne ses meubles de base. Les rares viennent des coffres de donjon, des succès, de la Boutique d'Ogrines ou du Bricoleur et du Sculpteur.",
+            "icone": "havre",
+            "etiquettes": [
+              "Touche N",
+              "Havre-Sac",
+              "Partie de test"
+            ]
+          },
+          {
+            "titre": "Vitrine, potager et mannequins",
+            "phrase": "Expose trophées, Dofus et familiers, sème tes plantes et change de tenue d'un clic sur un mannequin.",
+            "details": "Le potager se récolte une fois par jour. En coop, tes amis entrent dans ton Havre-Sac tel que tu l'as décoré.",
+            "icone": "havre",
+            "etiquettes": [
+              "Havre-Sac",
+              "Partie de test"
+            ]
           }
         ],
         "Le monde": [],

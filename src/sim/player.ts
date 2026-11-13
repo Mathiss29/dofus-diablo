@@ -167,6 +167,8 @@ export class Player extends Entity {
   dofus: string[] = [];
   /** Trophées possédés (0.4 suite 3A+3B), portés dans les mêmes emplacements que les Dofus. */
   trophees: string[] = [];
+  /** 0.6 (10C) : ressources déjà récoltées une fois dans le monde (on peut les semer au potager du Havre-Sac). */
+  recoltees: string[] = [];
   dofusPortes: (string | null)[] = Array(EMPLACEMENTS_DOFUS).fill(null);
   /** Moment (âge du perso) du dernier Souvenir d'Argent et du dernier bouclier du Cacao. */
   private argenteA = -1e9; private cacaoA = -1e9;
