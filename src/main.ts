@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { ZoneScene } from './render/zoneScene';
 import { Accueil } from './render/accueil';
 import './render/phaserRapide';
+import { brancherTexturesSures } from './render/texturesSures';
 import { preparerInstallation } from './render/installation';
 import { Compte } from './render/compte';
 import { brancherDensite, reglerDensite } from './render/pixel';
@@ -34,6 +35,7 @@ function demarrer() {
   // Écran aux vrais pixels (maquette « Décors : » 1A) : canevas à la densité de l'écran, avant que Phaser le dimensionne
   reglerDensite(chargerReglages().resolution !== 'normale');   // Fluidité 3A, avant le premier dimensionnement
   brancherDensite(game);
+  brancherTexturesSures(game);   // plus de jeu figé sur une texture détruite encore affichée (rapport du 2026-11-13)
   game.events.once(Phaser.Core.Events.READY, () => prevenirCarteGraphique(game));   // Fluidité 4A
 
   // Mode dév (#cra, #astrub, #jeu) : directement en jeu, sans perso ni sauvegarde. #test : partie de test (perso à part, outils sur F1). Sinon : écran d'accueil (17A),
