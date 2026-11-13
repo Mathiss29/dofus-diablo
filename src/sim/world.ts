@@ -8,12 +8,12 @@ import { ISO } from './iso';
 import { NO_INPUT, type PlayerInput } from './input';
 import { AGGRO, CASE, Monster, TOUR, type Cible } from './monster';
 import { jetOfficiel } from './danger';
-import { REGLAGES_BUTIN, monstresDeZone, panoDuBoss, poolNiveau, poolOfficiel, rangDe, tirerButin, type Butin, type CtxButin, type Rang } from './butin';
+import { REGLAGES_BUTIN, coefChanceQuiMonte, monstresDeZone, panoDuBoss, poolNiveau, poolOfficiel, rangDe, tirerButin, type Butin, type CtxButin, type Rang } from './butin';
 import { PASSIFS, TROPHEES, tropheesDuBoss } from './dofus';
 import { jouerMain } from './ecaflip';
 import { ajouterPieces, CLE_COFFRE, enSurcharge, ouvrirCoffre, piecesMonstre, piecesObjet, seuilsCoffre } from './enutrof';
 import { briser, chanceRune, coutKamas, coutRelance, orbeConvient, potionConvient, POTIONS, regenerer, relancerLigne, REGLES_V2, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
-import { V03_PUBLIC, V04_PUBLIC, niveauObjetsMax, slotAPouvoirConnu } from './pouvoirs';
+import { V03_PUBLIC, V04_PUBLIC, V06_PUBLIC, niveauObjetsMax, slotAPouvoirConnu } from './pouvoirs';
 import { fxImpression, imprimable, nouveauPourCodex, prixImpression } from './codex';
 import { legendaryPower, FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, kamasDefaire, noteObjet, rollItem, type EquipSlot, type Item, type ItemsData, type Rarity, type RecipeDef, type Stat } from './items';
 import { Player } from './player';
@@ -25,6 +25,7 @@ import { Arene, ARENE } from './arene';
 import { Guerre } from './guerre';
 import { MondeVivant, VIVANT, bonusWeekEnd, type BonusWeekEnd, type VueVivant } from './mondeVivant';
 import PASSANTS from '../data/passants.json';
+import V06 from '../data/v06.json';
 import type { EtatMonde } from './etatMonde';
 import { Quetes, type Compte, type EtatQuetes, type QuetesData } from './quests';
 import { appliquerTest, type ReglagesTest } from './outilsTest';
@@ -374,6 +375,7 @@ export class World {
     this.checkpoint = start; this.checkpointName = cpName;
     this.player.v03 = V03_PUBLIC || !!opts.test;
     this.player.v04 = V04_PUBLIC || !!opts.test;
+    this.player.v06 = V06_PUBLIC || !!opts.test;
     if (opts.items) {
       this.player.items = opts.items;
       // équipement aléatoire : objets officiels des monstres de la zone (butin + fabrication), sinon de tout le jeu (Mathis 2026-11-09)
@@ -413,7 +415,7 @@ export class World {
     if (!cls) throw new Error(`Classe inconnue : ${classId}`);
     const h = this.players[0], n = this.players.length, f = this.map.nearestFree(h.x + h.radius * 3 * (n % 2 ? 1 : -1) * Math.ceil(n / 2), h.y + h.radius * 2 * (n - 1));
     const q = new Player(this.nextId++, f.x, f.y, cls);
-    q.v03 = h.v03; q.v04 = h.v04;
+    q.v03 = h.v03; q.v04 = h.v04; q.v06 = h.v06;
     q.monde.checkpoint = { ...h.monde.checkpoint }; q.monde.checkpointName = h.monde.checkpointName; q.monde.avant = { x: q.x, y: q.y };
     if (this.opts.items) q.items = this.opts.items;
     this.players.push(q);
@@ -1017,7 +1019,15 @@ export class World {
       const c = tirerButin(this.rng, this.contexteButin(boss, 'boss', niveau), () => this.nextId++);
       b.ressources.push(...c.ressources); b.objets.push(...c.objets); b.kamas += c.kamas + 20 * niveau;
     }
+    this.noterBossLeg(boss, b, false);
     return b;
+  }
+  /** 0.6 (24A) : un Légendaire ou un Mythique de ce boss remet sa chance à zéro ; sinon (à la mort du boss seulement) elle monte d'un cran. */
+  private noterBossLeg(boss: string, b: Butin, essai: boolean) {
+    const p = this.player;
+    if (!p.v06) return;
+    if (b.objets.some(o => o.rarity === 'legendaire' || o.rarity === 'mythique')) delete p.bossSansLeg[boss];
+    else if (essai) p.bossSansLeg[boss] = (p.bossSansLeg[boss] ?? 0) + 1;
   }
   /** Multi : le butin du coffre d'un joueur (commeJoueur), que lui seul voit et ramasse. */
   poserButinDe(b: Butin, x: number, y: number) { this.poserButin(b, x, y, this.player.id); }
@@ -1958,11 +1968,21 @@ export class World {
     const proches = this.players.filter(q => q !== p && !q.dead && Math.abs(q.x - m.x) + Math.abs(q.y - m.y) <= World.SOMMEIL);
     const base = (m.def.xp ?? Math.round(m.def.hp / 5)) * this.bonusMassacre() * alm * (1 + World.XP_PAR_ALLIE * proches.length);
     const nm = m.def.level ?? this.monsterLevel(m);
-    const xp = p.gainXp(Math.round(base * World.ecartXp(p.level, nm) * (1 + avantage(p.abo, 'xp'))), this);   // « Apparats : » 17E
+    const carte = this.groups[m.group]?.map, fini = !!carte && !this.groups[m.group].members.some(o => !o.dead);
+    const xp = p.gainXp(Math.round(base * World.ecartXp(p.level, nm) * (1 + avantage(p.abo, 'xp')) * this.decouverte(p, carte, fini)), this);   // « Apparats : » 17E ; 0.6 6D
     if (xp > 0) this.emit({ k: 'xp', x: m.x, y: m.y, z: m.radius * 2 + 30, n: xp });
-    for (const q of proches) { const a = this.acteur; this.acteur = q; try { q.gainXp(Math.round(base * World.ecartXp(q.level, nm) * (1 + avantage(q.abo, 'xp'))), this); } finally { this.acteur = a; } }
+    for (const q of proches) { const a = this.acteur; this.acteur = q; try { q.gainXp(Math.round(base * World.ecartXp(q.level, nm) * (1 + avantage(q.abo, 'xp')) * this.decouverte(q, carte, fini)), this); } finally { this.acteur = a; } }
     this.xpFamilier(FAMILIER_XP.chasse(this.monsterLevel(m), !!m.def.elite, !!m.def.boss));
     if (m.def.boss) { this.emit({ k: 'impact', hitstop: 0.15, shake: 0.02, big: true }); this.emit({ k: 'bossDown', monster: m.type }); }
+  }
+  /** 0.6 (6D) : bonus de découverte. Tant que ce perso n'a vaincu aucun groupe sur cette carte du dehors, ses monstres rapportent +50 % d'XP ;
+   *  le groupe fini (fini), la carte est notée comme chassée. */
+  private decouverte(q: Player, carte: string | undefined, fini: boolean): number {
+    if (!q.v06 || !carte || !/^-?\d+_-?\d+$/.test(carte)) return 1;
+    const z = this.opts.zone ?? '', l = (q.chasse[z] ??= []);
+    if (l.includes(carte)) return 1;
+    if (fini) { l.push(carte); this.emit({ k: 'decouverte', carte }); }
+    return 1 + V06.decouverte.xp;
   }
   /** 6A : chaque monstre tué moins de 3 s après le précédent allonge la série ; dès 5, +2 % d'XP par monstre (plafond +40 %). */
   private bonusMassacre(): number {
@@ -2032,7 +2052,7 @@ export class World {
   /** Ce que le calcul du butin doit savoir (src/sim/butin.ts) : sert au jeu, au Bestiaire et au simulateur de l'outil de test. */
   contexteButin(type: string, rang: Rang, niveau: number): CtxButin {
     const p = this.player;
-    return { type, rang, niveau, prospection: p.prospection + (this.almanax?.effet === 'butin' ? ALMANAX.butin : 0) + p.beni('butin') * REGLAGES_BUTIN.prospection.chances + this.bonusDuWeekEnd('butin') + this.prospectionInvasion + avantage(p.abo, 'prospection'), legendaire: avantage(p.abo, 'legendaire'), items: this.opts.items!, familiers: (this.familiersDe[type] ?? []).filter(id => !this.aLeFamilier(p, id)), pool: this.equipByLevel, poolSecours: this.equipSecours,
+    return { type, rang, niveau, prospection: p.prospection + (this.almanax?.effet === 'butin' ? ALMANAX.butin : 0) + p.beni('butin') * REGLAGES_BUTIN.prospection.chances + this.bonusDuWeekEnd('butin') + this.prospectionInvasion + avantage(p.abo, 'prospection'), legendaire: avantage(p.abo, 'legendaire') * (rang === 'boss' && p.v06 ? coefChanceQuiMonte(p.bossSansLeg[type] ?? 0) : 1), items: this.opts.items!, familiers: (this.familiersDe[type] ?? []).filter(id => !this.aLeFamilier(p, id)), pool: this.equipByLevel, poolSecours: this.equipSecours,
       panoBoss: rang === 'boss' ? this.panoBoss(type) : undefined,
       metierNiveau: j => p.metierLevel(j), armeChasse: !!p.huntingWeapon, pouvoirs: rang === 'boss' ? { ...p.ctxPouvoirs, boss: type } : p.ctxPouvoirs };
   }
@@ -2104,6 +2124,7 @@ export class World {
     // trophées (0.4 suite 3A) : chaque boss de la 0.4 en a deux, rares, une fois chacun
     if (rang === 'boss' && this.player.v04) for (const id of tropheesDuBoss(type))
       if (!this.player.trophees.includes(id) && this.rng.next() < REGLAGES_BUTIN.trophee && this.player.gagnerTrophee(id)) this.emit({ k: 'dofusGagne', id });
+    if (rang === 'boss') this.noterBossLeg(type, b, true);
     this.butinForge(b, rang, niveau);
     // « Apparats : » 1B (boss, 1 sur 75) et 1D (fêtes) : jamais un apparat déjà possédé (2A)
     const ap = tirerApparat(type, rang, this.opts.aujourdhui ?? '', this.player.apparats, this.rng);

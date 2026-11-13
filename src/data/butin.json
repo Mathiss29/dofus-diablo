@@ -28,6 +28,7 @@
     "boss": { "rare": 45, "epique": 22 }
   },
   "legendaireParMonstre": { "_doc": "Légendaire ou Mythique : 1 monstre sur N, sans Prospection (décision du 2026-11-05)", "normal": 1500, "elite": 150, "boss": 50 },
+  "chanceQuiMonte": { "_doc": "0.6 (24A) : chaque boss vaincu sans Légendaire ni Mythique ajoute « parEssai » à la chance d'en avoir un sur ce boss (1/50 = 2 %, puis 3 %, 4 %…), remise à zéro quand il tombe", "parEssai": 0.01 },
   "mythiqueParLegendaire": 20,
   "familier": { "_doc": "familier de la famille du monstre : 1 sur N", "normal": 1000, "elite": 120, "boss": 40 },
   "kamas": { "chance": 0.6, "min": 1, "max": 3, "_doc2": "kamas = niveau × (min à max) × mult ; élites et boss en lâchent toujours", "mult": { "normal": 1, "elite": 4, "boss": 12 } }

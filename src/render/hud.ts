@@ -777,6 +777,7 @@ export class Hud {
       case 'rageFull': this.rageFlash = 1.2; break;
       case 'rechargePrete': this.eclats[e.id] = 0.8; break;
       case 'groupCleared': this.loot('Groupe vaincu  ·  +1 potion', '#7be07b'); break;
+      case 'decouverte': this.loot('Nouvelle carte chassée  ·  +50 % d\'XP', '#e8c25a'); break;
       case 'massacre': this.toast(`Massacre ×${e.n}  ·  +${e.bonus} % XP`); break;
       case 'massacreFin': this.loot(`Massacre de ${e.n} monstres`, '#e6b85c'); break;
     }

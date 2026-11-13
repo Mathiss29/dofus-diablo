@@ -24,6 +24,9 @@ export function partLegendaire(rang: Rang): number {
   return c > 0 ? Math.min(1, (1 - Math.pow(1 - cible, 1 / e.tirages)) / c) : 0;
 }
 
+/** 0.6 (24A) : multiplicateur de la part de Légendaires d'un boss vaincu `n` fois d'affilée sans Légendaire ni Mythique. */
+export const coefChanceQuiMonte = (n: number) => 1 + Math.max(0, n) * BUTIN.chanceQuiMonte.parEssai * BUTIN.legendaireParMonstre.boss;
+
 export type Raretes = Record<Rarity, number>;
 /** Chances de chaque rareté pour un objet tiré (parts de 1, total 1). */
 export function raretes(rang: Rang, pros = 0, coefLeg = 1): Raretes {
