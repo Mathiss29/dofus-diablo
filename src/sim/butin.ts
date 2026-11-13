@@ -3,6 +3,7 @@ import type { GameData, MonsterDef, ZoneDef } from './defs';
 import { niveauObjetsMax, type CtxPouvoirs } from './pouvoirs';
 import { rollItem, type DropDef, type Item, type ItemsData, type Rarity } from './items';
 import type { Rng } from './math';
+import { pieceArtisan } from './oeuvre';
 
 /** Butin des monstres (maquette « Drops », Mathis 2026-11-07 : 5A+5C, 6B, 1A+1B+1C, 8B).
  *  Un seul calcul pour le jeu (World.dropLoot), le Bestiaire (B), la fiche « Où le trouver » et l'outil de test (F1) :
@@ -112,7 +113,8 @@ export function poolOfficiel(items: ItemsData, monstres: Iterable<string>): { id
     (items.equipment[d.item] ? ids : res).add(d.item);
   }
   for (const r of items.recipes ?? []) if (items.equipment[r.result] && r.ingredients.some(([i]) => res.has(String(i)))) ids.add(r.result);
-  return [...ids].filter(id => { const d = items.equipment[id]; return d && !d.familier && !d.horsJeu; }).sort().map(id => ({ id, level: items.equipment[id].level }));
+  // « Métiers : » 3D : les pièces des panoplies d'artisan ne se trouvent qu'à l'atelier
+  return [...ids].filter(id => { const d = items.equipment[id]; return d && !d.familier && !d.horsJeu && !pieceArtisan(items, id); }).sort().map(id => ({ id, level: items.equipment[id].level }));
 }
 /** Panoplies d'un boss (0.4 suite 1C) : celles dont il lâche une pièce, ou dont une pièce se fabrique avec une ressource
  *  que lui seul lâche (Bworkette, Craqueleur Légendaire… n'ont pas de pièce dans leur butin, leurs panoplies se fabriquent).

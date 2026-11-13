@@ -71,6 +71,7 @@ import { ECLAT, FORGE_CSS, defaireHtml, etatForge, forgeHtml, lotConcasseur, mms
 import type { SimEvent } from '../sim/events';
 import { REGLES_V2, RUNES, dmgArme, etatFM, ligneMax } from '../sim/forgemagie';
 import { BONUS_FAB, BONUS_RECOLTE, PAR_PALIER_FAB, paliers, POUCE } from '../sim/artisans';
+import { CHASSE, OEUVRE, PIERRES, bonusPierre, metiersOeuvre, pieceArtisan } from '../sim/oeuvre';
 import { CONSO, NOM_SORTE, PARCHEMINS, sorteConso, texteConso } from '../sim/consommables';
 import { LOOKS } from './looks';
 import { niveauHorsPartie, rangDe } from '../sim/butin';
@@ -592,6 +593,8 @@ const CSS = `
 .dw .ac.on{outline:2px solid #6fb2e8;outline-offset:-4px;cursor:pointer}.dw .ac[data-arare]{cursor:pointer}
 .dw .ac.big{width:84px;height:84px}.dw .ac.big .ic{width:64px;height:64px}
 .dw .acs{display:grid;grid-template-columns:repeat(4,52px);gap:8px 14px}
+.dw .ajet{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:420px}.dw .ajet .lab{width:100%;text-align:center;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#9b9585}.dw .ajet .btn.on{outline:2px solid #b9e54b}
+.dw .axp.regle{max-width:420px;text-align:center;color:#cfc9b6;font-size:12px}.dw .plan .ttr{font:15px Rowdies,Lexend,sans-serif;color:#f4efe0}.dw .plan .note{max-width:440px;text-align:center}
 .dw .acs .lab{grid-column:1/-1;text-align:center;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#9b9585}
 .dw .aq{display:flex;gap:8px;align-items:center}
 .dw .aq .pm{width:34px;height:34px;display:grid;place-items:center;border:6px solid transparent;border-image:url(assets/ui/d3/btn_grey_small_normal.png) 8 fill/6px;cursor:pointer;box-sizing:border-box}
@@ -1395,12 +1398,16 @@ export class Windows {
   private artSeulement = false;
   /** 10B : ingrédient rare ajouté à la fabrication d'un équipement (Rare garanti). */
   private artRare: string | null = null;
+  /** « Métiers : » 3B : ligne choisie qui sort à son maximum ; 2A + 2C : onglet « Travailler un objet » et objet choisi. */
+  private artJet: string | null = null;
+  private artOnglet: 'fab' | 'objet' = 'fab';
+  private artObjet = -1;
   /** « Montrer sur la carte » (8B, 11B) : ouvre la carte M avec ces cartes et points mis en évidence. */
   onCarte: (m: MarqueCarte) => void = () => {};
 
   /** Ouvre l'Artisanat d'un atelier (clic sur une machine). */
   artisanat(metier: string) {
-    if (this.artMetier !== metier) { this.artMetier = metier; this.artRecette = -1; this.artQte = 1; this.artRecherche = ''; }
+    if (this.artMetier !== metier) { this.artMetier = metier; this.artRecette = -1; this.artQte = 1; this.artRecherche = ''; this.artJet = null; this.artOnglet = 'fab'; this.artObjet = -1; }
     this.show('art');
   }
   /** 12A : « Recettes qui l'utilisent » (clic droit sur une ressource du sac) : J filtré sur l'ingrédient. */
@@ -1544,12 +1551,18 @@ export class Windows {
    *  quantité −/+/Max (6A), gros bouton Fabriquer, une barre d'une seconde pour toute la série (5B). */
   private renderArt() {
     const w = this.win!, p = this.world.player, k = this.artMetier, M = ITEMS.metiers ?? {}, m = M[k];
+    const travail = p.v03 && (k === 'mineur' || !!BONUS_FAB[k]);
+    if (!travail) this.artOnglet = 'fab';
+    if (this.artOnglet === 'objet') { this.renderTravail(); return; }
     const lv = Math.max(1, p.metierLevel(k)), ici = this.world.atelierIci(k);
     const toutes = recettesDe(ITEMS, k), q = this.artRecherche.trim().toLowerCase();
     let l = toutes.filter(({ r }) => !q || produit(r.result)?.name.toLowerCase().includes(q) || r.ingredients.some(([id]) => ITEMS.resources[id]?.name.toLowerCase().includes(q)));
     if (this.artSeulement) l = l.filter(({ i }) => this.world.craftMax(i) > 0);
     if (!toutes.some(x => x.i === this.artRecette)) this.artRecette = (toutes.find(({ i }) => this.world.craftMax(i) > 0) ?? toutes[0])?.i ?? -1;
     const rec = this.artRecette >= 0 ? ITEMS.recipes![this.artRecette] : null, equip = !!rec && !!ITEMS.equipment[rec.result];
+    // 3B : lignes de l'objet qu'on peut choisir de sortir à leur maximum
+    const jets = equip ? (Object.entries(ITEMS.equipment[rec!.result].stats) as [Stat, [number, number]][]).filter(([, [a, b]]) => a >= 0 && b > a) : [];
+    if (this.artJet && !jets.some(([s]) => s === this.artJet)) this.artJet = null;
     // 10B : ingrédients rares du sac (ressources de boss ou d'élite) ; un par objet, Rare garanti
     const rares = equip ? [...this.world.ingredientsRares].filter(id => (p.resources[id] ?? 0) > 0) : [];
     if (this.artRare && !rares.includes(this.artRare)) this.artRare = null;
@@ -1569,14 +1582,16 @@ export class Windows {
     const xp = rec ? this.artQte * METIER_XP.parIngredient * rec.ingredients.reduce((s, [, n]) => s + n, 0) : 0;
     const raison = !rec ? '' : lv < rec.level ? `${m?.name ?? ''} niveau ${rec.level} requis` : ici === null ? 'Tu n\'es plus à l\'atelier' : max <= 0 ? 'Il manque des ingrédients' : '';
     const peut = !!rec && !raison && !f;
-    w.innerHTML = `${this.title(ici?.nom ?? `Artisanat · ${m?.name ?? ''}`, 'job')}<div class="ab">
+    w.innerHTML = `${this.title(ici?.nom ?? `Artisanat · ${m?.name ?? ''}`, 'job')}${travail ? this.artOngletsHtml() : ''}<div class="ab">
       <div class="livre"><input placeholder="Chercher…" value="${this.artRecherche.replace(/"/g, '&quot;')}" data-asr>
         <label class="ck"><input type="checkbox" data-aso ${this.artSeulement ? 'checked' : ''}>Seulement ce que je peux faire</label><div class="als">${livre}</div></div>
       <div class="plan"><div class="am"><img src="assets/ui/metier_${k}.png" alt="">${m?.name ?? ''} niveau ${lv}</div>
         ${rec && out ? `<div class="ares"><span class="ac big" data-rtip="${rec.result}">${iconHtml(out.icon)}</span><b>${out.name}</b><small>${out.soin ? `Rend ${out.soin} PV · ` : ''}${sorteConso(rec.result) ? `${texteConso(rec.result)} · ` : ''}${equip ? `${ITEMS.equipment[rec.result].slot.replace(/^./, c => c.toUpperCase())} · ` : ''}niveau ${rec.level}</small></div>
         <div class="acs"><span class="lab">Ingrédients</span>${cases}</div>
         ${equip ? `<div class="acs"><span class="lab">Ingrédient rare</span>${rares.map(id => `<span class="ac ${this.artRare === id ? 'on' : ''}" data-arare="${id}" data-ing="${id}">${iconHtml(ITEMS.resources[id]?.icon ?? 0)}<b>${p.resources[id]}</b></span>`).join('') || '<span class="hint">Aucun dans ton sac : les boss et les élites en lâchent.</span>'}</div>
-        <div class="axp" style="color:${RARITY_COLORS.rare}">${this.artRare ? `Rare garanti (1 ${ITEMS.resources[this.artRare]?.name} par objet)` : `Commun ou Rare : ${Math.round(chanceRare(lv) * 100)} % de chance de Rare à ton niveau · ajoute un ingrédient rare pour le garantir`}</div>` : ''}
+        ${jets.length ? `<div class="ajet"><span class="lab">Jet choisi : une ligne sort à son maximum</span>${jets.map(([s, [, b]]) => `<span class="btn ${this.artJet === s ? 'on' : ''}" data-ajet="${s}">${b} ${STAT_NAMES[s]}</span>`).join('')}</div>` : ''}
+        <div class="axp" style="color:${RARITY_COLORS.rare}">${this.artRare ? `Rare garanti (1 ${ITEMS.resources[this.artRare]?.name} par objet)` : `Commun ou Rare : ${Math.round(chanceRare(lv) * 100)} % de chance de Rare à ton niveau · ajoute un ingrédient rare pour le garantir`}</div>
+        <div class="axp regle">Fabriqué = Commun ou Rare. <b>Rare + Codex = ton Légendaire à la carte</b> : imprime-lui un pouvoir de ton Codex chez Malek.${pieceArtisan(ITEMS, rec!.result) ? '<br><b>Panoplie d\'artisan</b> : elle ne tombe d\'aucun monstre, seul l\'atelier la fabrique.' : ''}</div>` : ''}
         <div class="aq"><span class="pm" data-aq="-1"><img src="${D3}/minus.png" alt="−"></span><input value="${this.artQte}" data-aqv inputmode="numeric"><span class="pm" data-aq="1"><img src="${D3}/plus.png" alt="+"></span><span class="btn ${max > 1 ? '' : 'off'}" data-amax>Max (${max})</span></div>
         <div class="gros ${peut ? '' : 'off'}" data-fab>${f ? 'Fabrication…' : 'Fabriquer'}</div>
         <div class="abar"><i class="${f ? 'run' : ''}" style="${f ? `animation-duration:${Math.max(0.05, 1 - f.t)}s` : ''}"></i></div>
@@ -1592,7 +1607,9 @@ export class Windows {
     qv?.addEventListener('keydown', e => e.stopPropagation());
     qv?.addEventListener('change', () => { this.artQte = Math.max(1, Math.min(Math.max(1, max), Math.floor(+qv.value || 1))); this.render(); });
     w.querySelector<HTMLElement>('[data-amax]')?.addEventListener('click', () => { this.artQte = Math.max(1, max); this.render(); });
-    w.querySelector<HTMLElement>('[data-fab]')?.addEventListener('click', () => { if (this.world.lancerFabrication(this.artRecette, this.artQte, equip ? this.artRare : null)) this.render(); });
+    w.querySelector<HTMLElement>('[data-fab]')?.addEventListener('click', () => { if (this.world.lancerFabrication(this.artRecette, this.artQte, equip ? this.artRare : null, equip ? this.artJet : null)) this.render(); });
+    w.querySelectorAll<HTMLElement>('[data-ajet]').forEach(e => e.addEventListener('click', () => { this.artJet = this.artJet === e.dataset.ajet ? null : e.dataset.ajet!; this.render(); }));
+    this.lierArtOnglets(w);
     w.querySelectorAll<HTMLElement>('[data-arare]').forEach(e => e.addEventListener('click', ev => { ev.stopPropagation(); this.hideTip(); this.artRare = this.artRare === e.dataset.arare ? null : e.dataset.arare!; this.render(); }));
     w.querySelectorAll<HTMLElement>('[data-rtip]').forEach(e => {
       const r = ITEMS.resources[e.dataset.rtip!], eq = ITEMS.equipment[e.dataset.rtip!];
@@ -1600,6 +1617,66 @@ export class Windows {
       e.addEventListener('mousemove', ev => this.moveTip(ev));
       e.addEventListener('mouseleave', () => this.hideTip());
     });
+    this.lierIngredients(w);
+  }
+
+  private artOngletsHtml() {
+    const k = this.artMetier;
+    return `<div class="otabs"><span class="${this.artOnglet === 'fab' ? 'on' : ''}" data-aon="fab">Fabriquer</span><span class="${this.artOnglet === 'objet' ? 'on' : ''}" data-aon="objet">${k === 'mineur' ? 'Percer une châsse' : 'Travailler un objet'}</span></div>`;
+  }
+  private lierArtOnglets(w: HTMLElement) {
+    w.querySelectorAll<HTMLElement>('[data-aon]').forEach(e => e.addEventListener('click', () => { this.artOnglet = e.dataset.aon as 'fab' | 'objet'; this.render(); }));
+  }
+  /** « Métiers : » 2A + 2C : chef-d'œuvre (métier de l'emplacement), châsse percée (Mineur), pierre sertie (Bijoutier). */
+  private renderTravail() {
+    const w = this.win!, W = this.world, p = W.player, k = this.artMetier, m = ITEMS.metiers?.[k], ici = W.atelierIci(k);
+    const ok = (id: string) => { const d = ITEMS.equipment[id]; return !!d && !d.familier && (k === 'mineur' || metiersOeuvre(d.slot).includes(k) || (k === 'bijoutier')); };
+    const portes = (Object.values(p.equipment).filter(Boolean) as Item[]).filter(it => ok(it.id)), sac = p.bag.filter(it => ok(it.id));
+    const tous = [...portes, ...sac];
+    if (!tous.some(it => it.uid === this.artObjet)) this.artObjet = tous[0]?.uid ?? -1;
+    const nomPal = (it: Item) => it.oeuvre ? ` · ${it.oeuvre}/${OEUVRE.paliers}` : '';
+    const ligne = (it: Item, porte: boolean) => {
+      const d = ITEMS.equipment[it.id];
+      return `<div class="al ${it.uid === this.artObjet ? 'on' : ''}" data-aobj="${it.uid}">${iconHtml(d.icon)}<div><span style="color:${RARITY_COLORS[it.rarity]}">${d.name}</span><br><small>niv. ${d.level}${porte ? ' · porté' : ''}${nomPal(it)}${it.perce ? ` · ${it.pierre ? ITEMS.resources[it.pierre]?.name ?? 'pierre' : 'châsse vide'}` : ''}</small></div></div>`;
+    };
+    const livre = (portes.length ? '<div class="hint">Équipement porté</div>' + portes.map(it => ligne(it, true)).join('') : '')
+      + (sac.length ? '<div class="hint">Dans le sac</div>' + sac.map(it => ligne(it, false)).join('') : '') || '<div class="hint">Aucun objet à travailler ici.</div>';
+    const it = tous.find(x => x.uid === this.artObjet), d = it && ITEMS.equipment[it.id];
+    const cases = (res: [string, number][]) => res.map(([id, n]) => { const have = p.resources[id] ?? 0;
+      return `<span class="ac ${have >= n ? '' : 'manque'}" data-ing="${id}" data-q="${n}">${iconHtml(ITEMS.resources[id]?.icon ?? 0)}<b class="${have >= n ? '' : 'lack'}">${have}/${n}</b></span>`; }).join('');
+    const kamas = (n: number) => `<div class="axp"><img src="${INV}/kamas.png" alt="" style="width:16px"> <span class="${p.kamas >= n ? '' : 'lack'}">${n.toLocaleString('fr-FR')} kamas</span></div>`;
+    let corps = '<div class="hint">Choisis un objet dans la liste.</div>';
+    if (it && d) {
+      const tete = `<div class="ares"><span class="ac big">${iconHtml(d.icon)}</span><b style="color:${RARITY_COLORS[it.rarity]}">${d.name}</b><small>${RARITY_NAMES[it.rarity]} · niveau ${d.level}</small></div>`;
+      if (k === 'mineur') {
+        const e = W.etatPerce(it.uid);
+        corps = tete + (it.perce ? `<div class="note ok">Châsse percée${it.pierre ? ` · ${ITEMS.resources[it.pierre]?.name} sertie` : ''}. Le Bijoutier y sertit une pierre précieuse.</div>`
+          : `<div class="note">Le Mineur perce une châsse dans l'objet. Le Bijoutier y sertit ensuite une pierre précieuse (Rubis, Saphir, Émeraude, Diamant, Cristal), qu'on change quand on veut.</div>
+            ${e.cout ? `<div class="acs"><span class="lab">Il faut</span>${cases(e.cout.res)}</div>${kamas(e.cout.kamas)}` : ''}
+            <div class="gros ${e.raison ? 'off' : ''}" data-percer>Percer</div><div class="axp">${e.raison ? `<span class="lack">${e.raison}</span>` : `+${CHASSE.xp} XP de Mineur`}</div>`);
+      } else {
+        const e = W.etatOeuvre(it.uid), pal = it.oeuvre ?? 0, peutOeuvre = metiersOeuvre(d.slot).includes(k);
+        const oeuvre = !peutOeuvre ? '' : `<div class="ttr">Chef-d'œuvre · palier ${pal} / ${OEUVRE.paliers}</div>
+          <div class="note">Chaque palier monte tous les jets de l'objet de ${Math.round(OEUVRE.parPalier * 100)} %${pal ? ` (déjà +${pal * 5} %)` : ''}. Ressources liées à l'objet, et une ressource de boss au dernier palier.</div>
+          ${e.cout ? `<div class="acs"><span class="lab">Palier ${pal + 1}</span>${cases(e.cout.res)}</div>${kamas(e.cout.kamas)}` : ''}
+          <div class="gros ${e.raison ? 'off' : ''}" data-oeuvre>${pal >= OEUVRE.paliers ? 'Achevé' : `Palier ${pal + 1}`}</div>
+          <div class="axp">${e.raison ? `<span class="lack">${e.raison}</span>` : `+${OEUVRE.xp * (pal + 1)} XP de ${m?.name ?? ''}`}</div>`;
+        const pierres = Object.keys(PIERRES).filter(id => (p.resources[id] ?? 0) > 0);
+        const chasse = k !== 'bijoutier' ? '' : `<div class="ttr">Châsse</div>${!it.perce ? '<div class="note">Pas de châsse : un Mineur doit d\'abord la percer (atelier des mineurs).</div>'
+          : `<div class="note">${it.pierre ? `Sertie : ${ITEMS.resources[it.pierre]?.name} (+${bonusPierre(it.pierre, d.level)![1]} ${STAT_NAMES[PIERRES[it.pierre]]}). Une autre pierre la remplace, l'ancienne est perdue.` : 'Châsse vide : sertis une pierre précieuse.'}</div>
+            <div class="acs"><span class="lab">Pierres du sac</span>${pierres.map(id => { const b = bonusPierre(id, d.level)!;
+              return `<span class="ac ${it.pierre === id ? 'on' : ''}" data-sertir="${id}" title="${ITEMS.resources[id]?.name} : +${b[1]} ${STAT_NAMES[b[0]]}">${iconHtml(ITEMS.resources[id]?.icon ?? 0)}<b>${p.resources[id]}</b></span>`; }).join('') || '<span class="hint">Aucune : les mineurs en trouvent en récoltant, certains monstres en lâchent.</span>'}</div>
+            ${ici === null ? '<div class="axp"><span class="lack">Tu n\'es plus à l\'atelier</span></div>' : ''}`}`;
+        corps = tete + oeuvre + chasse;
+      }
+    }
+    w.innerHTML = `${this.title(ici?.nom ?? `Artisanat · ${m?.name ?? ''}`, 'job')}${this.artOngletsHtml()}<div class="ab"><div class="livre" style="grid-template-rows:1fr"><div class="als">${livre}</div></div><div class="plan">${corps}</div></div>`;
+    this.lierArtOnglets(w);
+    w.querySelectorAll<HTMLElement>('[data-aobj]').forEach(e => e.addEventListener('click', () => { this.artObjet = +e.dataset.aobj!; this.render(); }));
+    const dire = (r: string | null) => { if (r) this.world.emit({ k: 'status', x: p.x, y: p.y - 60, text: r, color: '#ff9a5a' }); this.render(); };
+    w.querySelector<HTMLElement>('[data-oeuvre]')?.addEventListener('click', () => dire(this.world.oeuvrer(this.artObjet)));
+    w.querySelector<HTMLElement>('[data-percer]')?.addEventListener('click', () => dire(this.world.percer(this.artObjet)));
+    w.querySelectorAll<HTMLElement>('[data-sertir]').forEach(e => e.addEventListener('click', () => dire(this.world.sertir(this.artObjet, e.dataset.sertir!))));
     this.lierIngredients(w);
   }
 
@@ -3159,6 +3236,10 @@ export class Windows {
     const weapon = (d.weapon ? `<div>${dmgArme(d, it).map(x => `${x.min}–${x.max} dommages ${x.element}`).join(' · ')}</div>` : '')
       + (potion ? `<div class="potfm">${potion.name} : dommages neutres en ${potion.potionFM}</div>` : '')
       + (d.chasse ? '<div class="ex">Arme de chasse</div>' : '');
+    // « Métiers : » 2A + 2C : chef-d'œuvre et châsse
+    const pierre = bonusPierre(it.pierre, d.level);
+    const travail = (it.oeuvre ? `<div class="ex">Chef-d'œuvre ${it.oeuvre} / ${OEUVRE.paliers} : jets +${Math.round(it.oeuvre * OEUVRE.parPalier * 100)} % une fois porté</div>` : '')
+      + (it.perce ? `<div class="ex">${pierre ? `Châsse : ${ITEMS.resources[it.pierre!]?.name}, +${pierre[1]} ${STAT_NAMES[pierre[0]]}` : 'Châsse vide (le Bijoutier y sertit une pierre)'}</div>` : '');
     const fmPied = it.puits || it.fm ? `<div class="pfm">${it.puits ? `Puits : ${String(it.puits).replace('.', ',')}` : ''}${it.puits && it.fm ? ' · ' : ''}${it.fm ? `<span>forgemagé ${it.fm} fois</span>` : ''}</div>` : '';
     const leg = [it.legendary, it.legendary2].map(l => {
       if (!l) return '';
@@ -3196,7 +3277,7 @@ export class Windows {
     } else if (p.equipment.familier && !worn) fam = `<div class="hint">Alt + clic : le donner à manger au familier (+${FAMILIER_XP.objet(d.level, it.rarity)} XP)</div>`;
     this.tip.innerHTML = `<h4 style="color:${RARITY_COLORS[it.rarity]}">${d.name}</h4>
       <div class="sub">${d.familier ? 'Familier' : `${RARITY_NAMES[it.rarity]} · ${d.weapon?.type ?? SLOT_NAMES[(slot ?? 'amulette') as EquipSlot]}`} · niveau ${d.level}</div>
-      ${weapon}${stats}${fmPied}${fam}${leg}${neuf}${set}${it.signe ? `<div class="sig">Signé par ${it.signe.replace(/[&<>"]/g, '')}</div>` : ''}${lvl}${cmp}${sourcesHtml(it.id, 3)}
+      ${weapon}${stats}${travail}${fmPied}${fam}${leg}${neuf}${set}${it.signe ? `<div class="sig">Signé par ${it.signe.replace(/[&<>"]/g, '')}</div>` : ''}${lvl}${cmp}${sourcesHtml(it.id, 3)}
       <div class="hint">${worn ? 'Clic droit : retirer' : it.cadenas ? 'Sous cadenas : jamais défait · Ctrl + clic : l\'ôter' : `Clic droit : équiper · Ctrl + clic : cadenas (défait chez Kerubim : runes + ${kamasDefaire(d, it).toLocaleString('fr-FR')} kamas)`}</div>`;
     this.tip.style.display = 'block'; this.moveTip(ev);
   }

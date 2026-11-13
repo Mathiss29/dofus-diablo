@@ -2038,6 +2038,21 @@
             "etiquettes": [
               "Touche J"
             ]
+          },
+          {
+            "titre": "Chef-d'œuvre et châsse",
+            "phrase": "À l'atelier, un objet trouvé monte de 4 paliers à +5 % sur tous ses jets, et reçoit une pierre précieuse.",
+            "details": "Le métier de l'emplacement fait le chef-d'œuvre. Le Mineur perce la châsse, le Bijoutier y sertit Rubis, Saphir ou Émeraude.",
+            "icone": "metier",
+            "etiquettes": [
+              "Ateliers"
+            ]
+          },
+          {
+            "titre": "Fabriquer avec un jet choisi",
+            "phrase": "Avant de fabriquer, choisis une ligne de l'objet : elle sort à son maximum.",
+            "details": "Les panoplies d'artisan ne tombent plus des monstres : seul l'atelier les fabrique.",
+            "icone": "metier"
           }
         ],
         "Le monde": [],

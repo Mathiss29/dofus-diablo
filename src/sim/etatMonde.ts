@@ -13,7 +13,7 @@ export interface EtatMonde {
   recolteTenue?: boolean;
   versPoste: number | null;
   approcheP: { x: number; y: number } | null;
-  enFabrication: { recette: number; n: number; t: number; hp: number; rare?: string | null } | null;
+  enFabrication: { recette: number; n: number; t: number; hp: number; rare?: string | null; jet?: string | null } | null;
   checkpoint: { x: number; y: number };
   checkpointName: string;
   area: SubAreaDef | null;

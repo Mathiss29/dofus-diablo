@@ -141,6 +141,8 @@ export type SimEvent =
   | { k: 'eat'; id: string; heal: number }
   /** « Métiers : » 4A-4C, 5A : repas, élixir, boisson de résistance ou parchemin utilisé. */
   | { k: 'consommer'; id: string; sorte: SorteConso }
+  /** « Métiers : » 2A + 2C : objet travaillé à l'atelier (palier de chef-d'œuvre, châsse percée, pierre sertie). */
+  | { k: 'travail'; uid: number; quoi: 'oeuvre' | 'perce' | 'pierre'; palier?: number }
   /** Emp (0.2) : achat dans sa boutique, Potion de Rappel bue, réponse « service » d'un PNJ. */
   /** Forgemagie : rune posée (issue officielle, lignes perdues), objets brisés en runes, runes fusionnées, mode « viser » terminé. */
   | { k: 'forge'; uid: number; rune: string; issue: 'critique' | 'neutre' | 'echec' | 'puits'; stat: string; gain: number; pertes: [string, number][]; kamas: number; exo: boolean;

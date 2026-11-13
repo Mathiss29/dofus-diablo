@@ -30,6 +30,7 @@ import { avantImpactEcaflip, chateauBrise, impactEcaflip, majEcaflip, neuviemeVi
 import { impactEnutrof, majEnutrof, perteCoffre, recordsVides, type LigneCoffre, type RecordsCoffre, type VitrineCoffre } from './enutrof';
 import type { Butin } from './butin';
 import { DANGER } from './danger';
+import { bonusPierre, coefOeuvre } from './oeuvre';
 import type { EntreeCodex } from './codex';
 import type { Drapeau, Signal, Tombe } from './carte';
 import { POUVOIR_PAR_ID, classeDuPouvoir, gradeAvecPouvoirs, type CtxPouvoirs, type PouvoirDef } from './pouvoirs';
@@ -506,8 +507,10 @@ export class Player extends Entity {
     const sets: Record<string, number> = {};
     for (const [slot, it] of Object.entries(this.equipment)) {
       if (!it) continue;
-      const f = 1 + this.bonusFab(slot);   // « Métiers : » 7B
+      const f = 1 + this.bonusFab(slot) + coefOeuvre(it.oeuvre);   // « Métiers : » 7B + 2A (chef-d'œuvre)
       for (const [k, v] of Object.entries(it.stats) as [Stat, number][]) add(k, f > 1 && v > 0 ? Math.round(v * f) : v);
+      const pierre = bonusPierre(it.pierre, this.items?.equipment[it.id]?.level ?? 1);   // 2C : pierre sertie
+      if (pierre) add(pierre[0], pierre[1]);
       const set = this.items?.equipment[it.id]?.set;
       if (set) sets[set] = (sets[set] ?? 0) + 1;
     }
