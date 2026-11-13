@@ -88,6 +88,9 @@ export interface HitDef { dmg: number; knock: number; element?: Element; lifeste
   choc?: number; partage?: number; enclume?: { x: number; y: number; k: number }; plusChoc?: number;
   /** Juron fracassant (Eniripsa I) : l'Éloquence gagnée quand la cible heurte un obstacle. */
   chocRage?: number;
+  /** Sorts 61-90 (0.6) : soins reçus par la cible réduits de n pendant t s (Flèche d'Expiation, Hécatombe) ; × k sur un ennemi
+   *  qui a un bouclier (Flèche Perforante). */
+  antiSoin?: { n: number; t: number }; vsBouclier?: number;
   /** Sort qui frappe (partie de test, DPS sort par sort : maquette « Panneau test » 6A). */
   sort?: string }
 /** Zone laissée au sol par un légendaire de classe (Épée jumelle) : frappe une fois chaque monstre qui la traverse. */
@@ -1622,7 +1625,7 @@ export class World {
       for (const e of spell.effects) {
         if (e.k === 'dmg') {
           const n = Math.round((e.perPa ? e.min : this.rng.range(e.min, e.max + 1)) * k * (1 + m.furyPct / 100) + m.furyFlat * k);
-          if (n > 0 && c.hurt(n, m.x, m.y, this, e.element) && e.steal) m.hp = Math.min(m.maxHp, m.hp + Math.round(n / 2));
+          if (n > 0 && c.hurt(n, m.x, m.y, this, e.element) && e.steal) m.hp = Math.min(m.maxHp, m.hp + Math.round(n / 2 * m.soinsK));
         } else if (e.k === 'attire' || e.k === 'repousse') {
           const dx = m.x - c.x, dy = m.y - c.y, d = Math.hypot(dx, dy) || 1, sign = e.k === 'attire' ? 1 : -1;
           c.kx += sign * dx / d * e.n * CASE * 4; c.ky += sign * dy / d * e.n * CASE * 4;
@@ -1639,7 +1642,7 @@ export class World {
         if (n <= 0) continue;
         landed = p.hurt(n, m.x, m.y, this, e.element);
         if (!landed) return;
-        if (e.steal) m.hp = Math.min(m.maxHp, m.hp + Math.round(n / 2));
+        if (e.steal) m.hp = Math.min(m.maxHp, m.hp + Math.round(n / 2 * m.soinsK));
       } else if (!landed) return;
       else if ((e.k === 'pa' || e.k === 'pm') && e.n < 0) {
         // Retrait officiel du monstre (Retrait PA ; pas de Retrait PM dans ses données) contre l'Esquive du joueur
@@ -1662,7 +1665,7 @@ export class World {
         const len = sign > 0 ? Math.min(e.n * CASE, Math.max(0, d - m.radius - p.radius - 4)) : e.n * CASE;
         p.kx += sign * dx / d * len * 7.13; p.ky += sign * dy / d * len * 7.13;   // le recul freine en 0,0008^t : distance = vitesse / 7,13
       }
-      else if (e.k === 'soin') m.hp = Math.min(m.maxHp, m.hp + Math.round(this.rng.range(e.min, e.max + 1) * k / mult));
+      else if (e.k === 'soin') m.hp = Math.min(m.maxHp, m.hp + Math.round(this.rng.range(e.min, e.max + 1) * k / mult * m.soinsK));
       else if (e.k === 'subis') {   // Grognement, Bave Affaiblissante : le joueur prend plus de dommages
         p.subis = e.n / 100; p.subisT = p.subisT0 = Math.max(1, e.dur) * TOUR;
         this.emit({ k: 'status', x: p.x, y: p.y, text: `Dommages subis ${e.n > 100 ? '+' : ''}${e.n - 100} %`, color: '#e07cf0' });
@@ -1829,7 +1832,7 @@ export class World {
       const vu = (m.vulnT > 0 ? 1 + m.vuln / 100 : 1) * m.subis;   // dommages subis augmentés (Bond) ou réduits (Cuirasse Laineuse)
       // Légendaires de classe : Marque du chasseur (les autres coups), Œil d'aigle (par case de distance)
       const pc = (m.marqueJusqua > this.time && !def.marque ? 1 + m.marque / 100 : 1)
-        * (def.vsGros && (m.def.elite || m.def.boss) ? 1 + def.vsGros / 100 : 1) * (def.plus ? 1 + def.plus / 100 : 1)
+        * (def.vsGros && (m.def.elite || m.def.boss) ? 1 + def.vsGros / 100 : 1) * (def.plus ? 1 + def.plus / 100 : 1) * (def.vsBouclier && m.bouclier > 0 ? def.vsBouclier : 1)
         * (def.loin ? 1 + Math.min(def.loin * 10, def.loin * Math.hypot(m.x - p.x, m.y - p.y) / CASE) / 100 : 1);
       // Sort sans dommages (Attirance, Transposition) : seulement ses effets
       const dmg = def.dmg <= 0 ? 0 : Math.max(1, Math.round((p.damage(def.dmg * vs, def.element ?? 'neutre') * this.rng.range(0.9, 1.1) * (crit ? cls.critMult : 1) * first + flat) * (1 - res / 100) * vu * pc));
@@ -1839,6 +1842,7 @@ export class World {
       if (def.festin) this.festin += dmg;
       if (dmg && m.suppliceT > 0) p.hp = Math.min(p.maxHp, p.hp + Math.round(dmg * m.supplice));   // Supplice : frapper la cible soigne
       if (def.supplice) { m.supplice = def.supplice.part; m.suppliceT = def.supplice.t; }
+      if (def.antiSoin) { m.antiSoin = Math.max(m.antiSoinT > 0 ? m.antiSoin : 0, def.antiSoin.n); m.antiSoinT = def.antiSoin.t; }
       if (def.affaiblit && m.furyPct <= 0) { m.furyPct = -def.affaiblit.n; m.furyT = Math.max(m.furyT, def.affaiblit.t); }   // Kyrja
       if (def.attire) {   // attire vers le lanceur (jusqu'au contact) ou vers le centre de la zone, sans tenir compte du poids (officiel)
         const vx = def.attire.vers === 'lanceur' ? p.x : ox, vy = def.attire.vers === 'lanceur' ? p.y : oy;
@@ -3385,7 +3389,7 @@ export class World {
   /** Bête vivante invoquée par ce sort (une par sort, la touche la rappelle ou l'éveille). */
   beteDe(sort: string): Bete | undefined { return this.betes.find(b => b.sort === sort && !b.dead); }
   /** Coût en Invocations (2A) : 1 / 2 / 3 selon le rang ; le joueur en a 1 de base + objets + Cortège Sauvage. */
-  invocationsPrises(p?: Player): number { return this.betes.filter(b => !b.dead && !b.dompteT && !b.finT && !b.horsCompte && (!p || b.owner === p)).reduce((a, b) => a + BETES[b.base].rang, 0); }
+  invocationsPrises(p?: Player): number { return this.betes.filter(b => !b.dead && !b.dompteT && !b.finT && !b.horsCompte && (!p || b.owner === p)).reduce((a, b) => a + (b.poids || BETES[b.base].rang), 0); }
   /** Cortège Sauvage : quand le bonus d'Invocations retombe, les bêtes en trop repartent (les plus anciennes d'abord). */
   renvoyerSurplus(p: Player) {
     const max = this.invocationsMax(p);

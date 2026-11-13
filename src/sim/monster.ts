@@ -79,6 +79,9 @@ export class Monster extends Entity {
   vuln = 0; vulnT = 0;
   /** Supplice (Sacrieur) : pendant suppliceT s, chaque coup du joueur sur ce monstre le soigne de supplice × les dommages. */
   supplice = 0; suppliceT = 0;
+  /** Soins reçus réduits de antiSoin (part) pendant antiSoinT s (Flèche d'Expiation, Hécatombe : sorts 61-90). */
+  antiSoin = 0; antiSoinT = 0;
+  get soinsK(): number { return this.antiSoinT > 0 ? 1 - this.antiSoin : 1; }
   /** Coups qui saignent (légendaire Sacrieur C) : dégâts par seconde, durée restante, dégâts pas encore affichés. */
   saigne = 0; saigneT = 0; saigneAcc = 0;
   /** Portée retirée (cases) à ses sorts à distance pendant poMalusT s (Flèche Détonante). */
@@ -174,6 +177,7 @@ export class Monster extends Entity {
     if (this.hasteT > 0 && (this.hasteT -= dt) <= 0) this.haste = 1;
     if (this.vulnT > 0 && (this.vulnT -= dt) <= 0) this.vuln = 0;
     if (this.suppliceT > 0 && (this.suppliceT -= dt) <= 0) this.supplice = 0;
+    if (this.antiSoinT > 0 && (this.antiSoinT -= dt) <= 0) this.antiSoin = 0;
     if (this.poMalusT > 0 && (this.poMalusT -= dt) <= 0) this.poMalus = 0;
     if (this.furyT > 0 && (this.furyT -= dt) <= 0) this.furyPct = this.furyFlat = 0;
     if (this.moqueT > 0) this.moqueT -= dt;
