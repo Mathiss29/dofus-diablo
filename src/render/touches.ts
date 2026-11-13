@@ -26,6 +26,7 @@ export const ACTIONS: Action[] = [
   { id: 'guide', nom: 'Guide', groupe: 'Fenêtres', def: 'G' },
   { id: 'social', nom: 'Social (amis, groupe)', groupe: 'Fenêtres', def: 'P' },
   { id: 'ladder', nom: 'Classement (Ladder)', groupe: 'Fenêtres', def: 'L' },
+  { id: 'idoles', nom: 'Idoles', groupe: 'Fenêtres', def: 'Y' },
   { id: 'chat', nom: 'Écrire dans le chat', groupe: 'Fenêtres', def: 'Enter' },
   { id: 'boutique', nom: 'Boutique Ogrines', groupe: 'Fenêtres', def: 'K' },
   { id: 'options', nom: 'Options', groupe: 'Fenêtres', def: 'O' },

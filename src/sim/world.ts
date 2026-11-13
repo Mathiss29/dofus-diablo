@@ -26,6 +26,7 @@ import { Guerre } from './guerre';
 import { MondeVivant, VIVANT, bonusWeekEnd, type BonusWeekEnd, type VueVivant } from './mondeVivant';
 import PASSANTS from '../data/passants.json';
 import V06 from '../data/v06.json';
+import { IDOLES_DEFS, basculerIdole, bonusIdoles, chargerJeu, defSousIdoles, enregistrerJeu, fxIdoles, recetteIdole, type FxIdole } from './idoles';
 import type { EtatMonde } from './etatMonde';
 import { Quetes, type Compte, type EtatQuetes, type QuetesData } from './quests';
 import { appliquerTest, type ReglagesTest } from './outilsTest';
@@ -1549,6 +1550,8 @@ export class World {
   /** def : définition modifiée (élite de quête : PV et nom). */
   spawnMonster(type: string, x: number, y: number, def = this.opts.data.monsters[type]): Monster {
     if (!def) throw new Error(`Monstre inconnu : ${type}`);
+    const fx = this.fxIdoles;
+    if (fx) def = defSousIdoles(def, fx);   // 0.6 (17) : PV, dégâts, vitesse et résistances sous les idoles
     const m = new Monster(this.nextId++, type, def, x, y, this);
     this.monsters.push(m);
     return m;
@@ -1967,7 +1970,7 @@ export class World {
     const alm = (this.almanax?.effet === 'xp' ? 1 + ALMANAX.xp : 1) * (1 + p.beni('xp')) * (1 + this.bonusDuWeekEnd('xp'));   // 15C, Magasin 6D, 9B (week-end)
     // Multi (maquette « Multi : » 7A) : chaque joueur proche gagne l'XP comme en solo, +10 % par allié proche
     const proches = this.players.filter(q => q !== p && !q.dead && Math.abs(q.x - m.x) + Math.abs(q.y - m.y) <= World.SOMMEIL);
-    const base = (m.def.xp ?? Math.round(m.def.hp / 5)) * this.bonusMassacre() * alm * (1 + World.XP_PAR_ALLIE * proches.length);
+    const base = (m.def.xp ?? Math.round(m.def.hp / 5)) * this.bonusMassacre() * alm * (1 + World.XP_PAR_ALLIE * proches.length) * (1 + this.bonusIdoles);   // 0.6 (17) : idoles
     const nm = m.def.level ?? this.monsterLevel(m);
     const carte = this.groups[m.group]?.map, fini = !!carte && !this.groups[m.group].members.some(o => !o.dead);
     const xp = p.gainXp(Math.round(base * World.ecartXp(p.level, nm) * (1 + avantage(p.abo, 'xp')) * this.decouverte(p, carte, fini)), this);   // « Apparats : » 17E ; 0.6 6D
@@ -1976,6 +1979,42 @@ export class World {
     this.xpFamilier(FAMILIER_XP.chasse(this.monsterLevel(m), !!m.def.elite, !!m.def.boss));
     if (m.def.boss) { this.emit({ k: 'impact', hitstop: 0.15, shake: 0.02, big: true }); this.emit({ k: 'bossDown', monster: m.type }); }
   }
+  // --- Idoles (0.6, questions 17-18) : src/sim/idoles.ts ------------------------------------------------
+  /** Idoles qui comptent dans ce monde : celles du joueur de cet écran (en coop, celles de l'hôte valent pour tout le groupe). */
+  get idolesActives(): string[] { const h = this.players[0]; return h?.v06 ? h.idoles.actives : []; }
+  private _fxIdoles: { cle: string; fx: FxIdole | null } = { cle: '', fx: null };
+  get fxIdoles(): FxIdole | null {
+    const ids = this.idolesActives, cle = ids.join(',');
+    if (cle !== this._fxIdoles.cle) this._fxIdoles = { cle, fx: fxIdoles(ids) };
+    return this._fxIdoles.fx;
+  }
+  /** Bonus d'XP et de butin des idoles (part de 1), plafonné en donjon. */
+  get bonusIdoles(): number { return bonusIdoles(this.idolesActives, !!this.arene); }
+  /** Recette de l'idole chez le Bricoleur. */
+  recetteIdole(id: string): [string, number][] { return this.opts.recoltes ? recetteIdole(id, this.opts.recoltes) : []; }
+  /** Fabrique une idole à l'atelier du Bricoleur : niveau de Bricoleur, ingrédients ; une seule fois, elle reste au perso. */
+  fabriquerIdole(id: string): string | null {
+    const I = IDOLES_DEFS[id], p = this.player;
+    if (!I || !p.v06) return 'Idole inconnue.';
+    if (p.idoles.possedees.includes(id)) return 'Déjà fabriquée.';
+    if (this.atelierIci('bricoleur') === null) return 'Il faut être à un atelier de Bricoleur.';
+    if (p.metierLevel('bricoleur') < I.niveau) return `Bricoleur niveau ${I.niveau} requis.`;
+    const r = this.recetteIdole(id);
+    if (!r.length || r.some(([x, q]) => (p.resources[x] ?? 0) < q)) return 'Ingrédients manquants.';
+    for (const [x, q] of r) { p.resources[x] -= q; if (p.resources[x] <= 0) delete p.resources[x]; }
+    p.idoles.possedees.push(id);
+    p.gainMetierXp('bricoleur', METIER_XP.parIngredient * r.reduce((s, [, q]) => s + q, 0), this);
+    this.emit({ k: 'idole', id, quoi: 'fabriquee' });
+    return null;
+  }
+  /** Active ou retire une idole (une par famille, 6 au plus). */
+  basculerIdole(id: string): string | null {
+    const e = basculerIdole(this.player.idoles, id);
+    if (!e) this.emit({ k: 'idole', id, quoi: 'active' });
+    return e;
+  }
+  enregistrerJeuIdoles(i: number, nom?: string) { enregistrerJeu(this.player.idoles, i, nom); }
+  chargerJeuIdoles(i: number): string | null { const e = chargerJeu(this.player.idoles, i); if (!e) this.emit({ k: 'idole', id: '', quoi: 'active' }); return e; }
   /** 0.6 (6D) : bonus de découverte. Tant que ce perso n'a vaincu aucun groupe sur cette carte du dehors, ses monstres rapportent +50 % d'XP ;
    *  le groupe fini (fini), la carte est notée comme chassée. */
   private decouverte(q: Player, carte: string | undefined, fini: boolean): number {
@@ -2053,7 +2092,7 @@ export class World {
   /** Ce que le calcul du butin doit savoir (src/sim/butin.ts) : sert au jeu, au Bestiaire et au simulateur de l'outil de test. */
   contexteButin(type: string, rang: Rang, niveau: number): CtxButin {
     const p = this.player;
-    return { type, rang, niveau, prospection: p.prospection + (this.almanax?.effet === 'butin' ? ALMANAX.butin : 0) + p.beni('butin') * REGLAGES_BUTIN.prospection.chances + this.bonusDuWeekEnd('butin') + this.prospectionInvasion + avantage(p.abo, 'prospection'), legendaire: avantage(p.abo, 'legendaire') * (rang === 'boss' && p.v06 ? coefChanceQuiMonte(p.bossSansLeg[type] ?? 0) : 1), items: this.opts.items!, familiers: (this.familiersDe[type] ?? []).filter(id => !this.aLeFamilier(p, id)), pool: this.equipByLevel, poolSecours: this.equipSecours,
+    return { type, rang, niveau, prospection: p.prospection + (this.almanax?.effet === 'butin' ? ALMANAX.butin : 0) + p.beni('butin') * REGLAGES_BUTIN.prospection.chances + this.bonusDuWeekEnd('butin') + this.prospectionInvasion + avantage(p.abo, 'prospection') + this.bonusIdoles * REGLAGES_BUTIN.prospection.chances, legendaire: avantage(p.abo, 'legendaire') * (rang === 'boss' && p.v06 ? coefChanceQuiMonte(p.bossSansLeg[type] ?? 0) : 1), items: this.opts.items!, familiers: (this.familiersDe[type] ?? []).filter(id => !this.aLeFamilier(p, id)), pool: this.equipByLevel, poolSecours: this.equipSecours,
       panoBoss: rang === 'boss' ? this.panoBoss(type) : undefined,
       metierNiveau: j => p.metierLevel(j), armeChasse: !!p.huntingWeapon, pouvoirs: rang === 'boss' ? { ...p.ctxPouvoirs, boss: type } : p.ctxPouvoirs };
   }

@@ -120,6 +120,8 @@ export type SimEvent =
   | { k: 'groupCleared' }
   /** 0.6 (6D) : premier groupe vaincu sur cette carte par ce perso (bonus de découverte touché). */
   | { k: 'decouverte'; carte: string }
+  /** 0.6 (17-18) : idole fabriquée, ou idoles actives changées. */
+  | { k: 'idole'; id: string; quoi: 'fabriquee' | 'active' }
   | { k: 'respawn' }
   /** Butin : un objet tombe (rareté pour l'effet), puis il est ramassé. */
   | { k: 'itemDrop'; x: number; y: number; rarity: Rarity }

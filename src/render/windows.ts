@@ -65,6 +65,7 @@ const ALM_CSS = `.dw .win.almanax{width:420px}.dw .alm{padding:10px 14px 14px;di
 import { SOCIAL_CSS, rendreSocial, tickSocial } from './social';
 import { EnLigne } from './presence';
 import { Coop } from './coop';
+import { IDOLES_CSS, brancherIdoles, idolesHtml } from './idolesVue';
 import { TRESOR_CSS, objetTresor, signatureTresor, tresorHtml } from './tresorVue';
 import { ECLAT, FORGE_CSS, defaireHtml, etatForge, forgeHtml, lotConcasseur, mmss, pastillesFM, texteForge, type LigneLog } from './forgeVue';
 import type { SimEvent } from '../sim/events';
@@ -826,7 +827,7 @@ const CSS = `
 .dw .ttl b{font-weight:700}
 `;
 
-type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap' | 'bestiaire' | 'forge' | 'coffre' | 'almanax' | 'dofus' | 'menu' | 'social' | 'ladder' | 'tresor' | 'boutique';
+type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap' | 'bestiaire' | 'forge' | 'coffre' | 'almanax' | 'dofus' | 'menu' | 'social' | 'ladder' | 'tresor' | 'boutique' | 'idoles';
 
 /** Fenêtres façon Dofus 3 : « Inventaire » (le perso sur son socle, ses emplacements autour, le sac à onglets)
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
@@ -898,7 +899,7 @@ export class Windows {
   private forge = etatForge();
 
   constructor(private world: World) {
-    const style = document.createElement('style'); style.textContent = DOF_CSS + MENU_CSS + ALM_CSS + SOCIAL_CSS + CSS + ICON_CSS + BUTIN_CSS + FORGE_CSS + CODEX_CSS + LADDER_CSS + TRESOR_CSS; document.head.appendChild(style);
+    const style = document.createElement('style'); style.textContent = DOF_CSS + MENU_CSS + ALM_CSS + SOCIAL_CSS + CSS + ICON_CSS + BUTIN_CSS + FORGE_CSS + CODEX_CSS + LADDER_CSS + TRESOR_CSS + IDOLES_CSS; document.head.appendChild(style);
     this.root = document.createElement('div'); this.root.className = 'dw'; document.body.appendChild(this.root);
     // « Tchat : » 6A : le mousedown garde le champ du tchat actif ; le clic qui suit ne fait rien d'autre (pas de cadenas)
     this.root.addEventListener('mousedown', e => {
@@ -1076,6 +1077,15 @@ export class Windows {
     // 2C : ouvrir le coffre (il s'ouvre en jeu, la fenêtre se ferme pour voir le butin jaillir)
     w.querySelector('[data-ouvrir]')?.addEventListener('click', () => { this.onOuvrirTresor(); this.close(false); });
   }
+  /** Idoles (maquette 0.6, 17-18) : fabriquer chez le Bricoleur, activer, jeux enregistrés. */
+  private idolesMsg = '';
+  private renderIdoles() {
+    const w = this.win!;
+    if (!this.world.player.v06) { this.close(false); return; }
+    w.innerHTML = idolesHtml(this.world, this.title('Idoles', 'bestiary'), this.idolesMsg);
+    this.idolesMsg = '';
+    brancherIdoles(w, this.world, msg => { this.idolesMsg = msg ?? ''; this.changed(); });
+  }
   private renderSocial() { rendreSocial(this.win!, this.title('Social', 'social'), this.ctxSocial()); }
   /** Classement (maquette « Ladder : » 1B) : centré sur le perso joué, ouvert sur « Autour de moi ». */
   private ladder = new VueLadder(true);
@@ -1132,7 +1142,7 @@ export class Windows {
     else if (this.mode === 'car') this.renderCarac(); else if (this.mode === 'job') this.renderJob(); else if (this.mode === 'art') this.renderArt(); else if (this.mode === 'opt') this.renderOpt();
     else if (this.mode === 'sorts') this.renderSorts(); else if (this.mode === 'quetes') this.renderQuetes();
     else if (this.mode === 'succes') this.renderSucces(); else if (this.mode === 'emp') this.renderEmp(); else if (this.mode === 'zaap') this.renderZaap();
-    else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else if (this.mode === 'forge') this.renderForge(); else if (this.mode === 'coffre') this.renderCoffre(); else if (this.mode === 'almanax') this.renderAlmanax(); else if (this.mode === 'dofus') this.renderDofus(); else if (this.mode === 'menu') this.renderMenu(); else if (this.mode === 'social') this.renderSocial(); else if (this.mode === 'ladder') this.renderLadder(); else if (this.mode === 'tresor') this.renderTresor(); else if (this.mode === 'boutique') this.renderBoutique(); else this.renderInv();
+    else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else if (this.mode === 'forge') this.renderForge(); else if (this.mode === 'coffre') this.renderCoffre(); else if (this.mode === 'almanax') this.renderAlmanax(); else if (this.mode === 'dofus') this.renderDofus(); else if (this.mode === 'menu') this.renderMenu(); else if (this.mode === 'social') this.renderSocial(); else if (this.mode === 'ladder') this.renderLadder(); else if (this.mode === 'tresor') this.renderTresor(); else if (this.mode === 'boutique') this.renderBoutique(); else if (this.mode === 'idoles') this.renderIdoles(); else this.renderInv();
     this.win!.querySelector('[data-close]')!.addEventListener('click', () => this.close());
     this.imageVivant = -1; this.majPerso(this.tVivant);   // perso dessiné dès cette image (pas un canevas vide jusqu'à la suivante)
   }

@@ -56,7 +56,7 @@ const SAC = ['bag', 'resources', 'kamas', 'metiers', 'apparats', 'dofus', 'troph
   'coffreVitrine', 'coffreJournal', 'coffreRecords'] as const;
 const REFUS: Record<Sorte | 'a', Set<string>> = {
   j: new Set(['cls', 'items', 'bag', 'resources', 'codex', 'learned', 'zonesVues', 'metiers', 'prereglages', 'ames', 'apparats', 'dofus', 'trophees',
-    'commandeFM', 'quetes', 'monde', 'evenements', 'cleDonjon', 'guerre', 'vivant', 'recetteSuivie', 'zaaps', '_pouvoirs', 'almanaxJour', 'magasin', 'sacEnPlus', 'benediction', 'repas', 'elixir', 'parchemins', 'ceinture', 'boissonCd', 'codexOuvert', 'lootFilter', 'autoDefaire', 'kamas', 'v03', 'v04', 'v06', 'chasse', 'bossSansLeg', 'repathT', 'bufferT', 'buffer', 'explore', '_explore', 'lieuxVus', 'tombe', 'carteIci',
+    'commandeFM', 'quetes', 'monde', 'evenements', 'cleDonjon', 'guerre', 'vivant', 'recetteSuivie', 'zaaps', '_pouvoirs', 'almanaxJour', 'magasin', 'sacEnPlus', 'benediction', 'repas', 'elixir', 'parchemins', 'ceinture', 'boissonCd', 'codexOuvert', 'lootFilter', 'autoDefaire', 'kamas', 'v03', 'v04', 'v06', 'chasse', 'bossSansLeg', 'idoles', 'repathT', 'bufferT', 'buffer', 'explore', '_explore', 'lieuxVus', 'tombe', 'carteIci',
     'coffreVitrine', 'coffreJournal', 'coffreRecords', 'coffreEjection']),
   // minuteries de l'IA des monstres : l'hôte seul s'en sert
   m: new Set(['def', 'atkCd', 'spellCd', 'sigCd', 'cheminT', 'wanderT', 'wanderX', 'wanderY', 'repathT']),
