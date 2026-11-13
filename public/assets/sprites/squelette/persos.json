@@ -590,5 +590,77 @@
    "os_1-combat.webp",
    "os_1-metier.webp"
   ]
+ },
+ "sadida_m": {
+  "classe": 10,
+  "anims": "anims_10.json",
+  "corps": 100,
+  "tetes": [
+   2156,
+   2157,
+   2158,
+   2159,
+   2160,
+   2161,
+   2162,
+   2163,
+   5413,
+   5414,
+   5417,
+   5418,
+   5416,
+   5415,
+   5919
+  ],
+  "couleurs": [
+   9329441,
+   7966996,
+   15914657,
+   7820329,
+   15914657,
+   15914657
+  ],
+  "os": [
+   "os_1-10-combat.webp",
+   "os_1-combat-armes.webp",
+   "os_1-combat.webp",
+   "os_1-metier.webp"
+  ]
+ },
+ "sadida_f": {
+  "classe": 10,
+  "anims": "anims_10.json",
+  "corps": 101,
+  "tetes": [
+   2164,
+   2165,
+   2166,
+   2167,
+   2168,
+   2169,
+   2170,
+   2171,
+   5419,
+   5420,
+   5423,
+   5421,
+   5422,
+   5424,
+   5920
+  ],
+  "couleurs": [
+   12282670,
+   7966996,
+   14994072,
+   10711608,
+   15258276,
+   15258276
+  ],
+  "os": [
+   "os_1-10-combat.webp",
+   "os_1-combat-armes.webp",
+   "os_1-combat.webp",
+   "os_1-metier.webp"
+  ]
  }
 }

@@ -155,6 +155,8 @@ export interface SpellDef {
     coffreBouclier?: { part: number; t: number }; coffreSoin?: number };
   /** Écaflip (maquette Écaflip, 13 nov. 2026) : Pioche, Dames, Pile ou Face, Roulette… joués par src/sim/ecaflip.ts. */
   ecaflip?: import('./ecaflip').EffetsEcaflip;
+  /** Sadida (maquette Sadida, 13 nov. 2026) : Infection, Arbres, Poupées, joués par src/sim/sadida.ts. */
+  sadida?: import('./sadida').EffetsSadida;
   /** Sorts 61-90 de la Forgelance, de l'Eniripsa et de l'Enutrof (0.6), joués par src/sim/sorts06.ts après l'impact. */
   s06?: import('./sorts06').Effets06;
   /** Sorts 61-90 du Iop, du Crâ, de l'Osamodas et du Sacrieur (0.6), joués par src/sim/sorts61.ts. */
@@ -180,11 +182,13 @@ export interface ClassDef {
   /** bonus : dommages en plus ; signature : multiplicateur de l'effet propre au sort (SpellDef.rage), 1,5 = +50 %. */
   rage: { name: string; max: number; perHit: number; perHurt: number; bonus: number; signature: number;
     /** Ligne Rage 24B : la Rage du Iop monte plus en mêlée, la Précision du Crâ plus de loin (et pas en prenant des coups). */
-    mode?: 'melee' | 'distance' | 'eveil' | 'souffrance' | 'lance' | 'eloquence' | 'coffre' | 'poker' };
+    mode?: 'melee' | 'distance' | 'eveil' | 'souffrance' | 'lance' | 'eloquence' | 'coffre' | 'poker' | 'foret' };
   /** Écaflip : le Poker d'Ecaflip (maquette Écaflip), voir src/sim/ecaflip.ts et classes.json > ecaflip.poker._doc. */
   poker?: import('./ecaflip').ReglesPoker;
   /** Enutrof : le coffre au trésor (maquette Enutrof), voir src/sim/enutrof.ts et classes.json > enutrof.coffre._doc. */
   coffre?: import('./enutrof').ReglesCoffre;
+  /** Sadida : Infection, Arbres, Poupées (classes.json > sadida), voir src/sim/sadida.ts. */
+  sadida?: import('./sadida').ReglesSadida;
   /** Eniripsa (maquette Eniripsa) : réglages des soins, voir classes.json > eniripsa._doc. */
   eniripsa?: { soinSoi: number; zoneEloquence: number; parSoin: number; aimant: number; aggro: { portee: number; chance: number; t: number } };
   /** Forgelance : la Lance Immortelle (états officiels Armé 24629 et Désarmé 24630).

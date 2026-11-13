@@ -66,10 +66,12 @@ export interface Etat61 {
   berserk: { dommages: number; soins: number; fin: number } | null;
   /** Temps pour les tirages (0,5 s) des attirances. */
   pasT: number;
+  /** Balise de Survie visée par le sort en cours (id de la bête), échange de place au coup. */
+  baliseVisee: number;
 }
 const CASE = 48;
 export const etat61 = (): Etat61 => ({ frictions: [], auras: [], precip: [], emprises: [], destinA: -99, dev: null, coupsRecus: [], acuiteT: 0,
-  sacrificeT: 0, sacrificeR: 0, libationT: 0, libAcc: 0, berserk: null, pasT: 0 });
+  sacrificeT: 0, sacrificeR: 0, libationT: 0, libAcc: 0, berserk: null, pasT: 0, baliseVisee: 0 });
 const etat = (p: Player): Etat61 => (p.e61 ??= etat61());
 
 /** Monstre visé : le plus proche du point, s'il est assez près. */
@@ -317,3 +319,18 @@ export function redirige61(q: Player, raw: number, fromX: number, fromY: number,
 export const soins61 = (p: Player): number => (p.e61?.berserk ? 1 - p.e61.berserk.soins : 1);
 /** Dommages en plus (Berserk). */
 export const dommages61 = (p: Player): number => (p.e61?.berserk ? 1 + p.e61.berserk.dommages : 1);
+
+/** Balise de Survie (Crâ) : un sort du lanceur visé sur sa Balise (point visé au lancer, les flèches partent du lanceur),
+ *  s'il la voit, les fait échanger de place au moment du coup. */
+export function viseBalise61(p: Player, aim: { x: number; y: number }, world: World) {
+  const b = world.betes.find(x => !x.dead && x.owner === p && x.def.balise && x.state !== 'spawn' && Math.hypot(x.x - aim.x, x.y - aim.y) <= x.radius + CASE * 0.6);
+  if (b) etat(p).baliseVisee = b.id; else if (p.e61) p.e61.baliseVisee = 0;
+}
+export function echangeBalise61(p: Player, world: World) {
+  const e = p.e61, b = e?.baliseVisee ? world.betes.find(x => x.id === e.baliseVisee && !x.dead) : null;
+  if (!e || !b) return;
+  e.baliseVisee = 0;
+  if (!world.clearShot(p, b)) return;
+  const x = p.x, y = p.y; p.x = b.x; p.y = b.y; b.x = x; b.y = y;
+  statut(world, p.x, p.y, 'Échange', '#9fe0c8');
+}

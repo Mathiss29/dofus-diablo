@@ -1387,5 +1387,170 @@
    }
   ],
   "_doc": "Chaton Enragé (Griffe Invocatrice, maquette Écaflip 9A) : Âme Féline officielle (vol de vie Eau) ; tant qu'il vit, l'Écaflip gagne de la Puissance (classes.json > ecaflip.spells.griffe_invocatrice.ecaflip.chaton). Déplacement Félin pas encore joué."
+ },
+ "sadi_arbre": {
+  "dofusId": 5894,
+  "name": "Arbre",
+  "look": 3163,
+  "atlas": "sadi_arbre",
+  "rang": 1,
+  "element": "neutre",
+  "suivant": null,
+  "pv": 0.25,
+  "sorts": [],
+  "passif": true,
+  "sadida": {
+   "arbre": true,
+   "fixe": true
+  },
+  "_doc": "Arbre du Sadida (sort Arbre, maquette Sadida 2A 3A 4A) : immobile, devient Feuillu (PV doublés, relais des sorts) ; obstacle pour les monstres, qui le frappent quand il les gêne."
+ },
+ "sadi_folle": {
+  "dofusId": 5896,
+  "name": "La Folle",
+  "look": 292,
+  "atlas": "sadi_folle",
+  "rang": 1,
+  "element": "air",
+  "suivant": null,
+  "pv": 0.35,
+  "sorts": [
+   {
+    "id": 14380,
+    "name": "Agacement",
+    "pa": 3,
+    "po": [
+     1,
+     4
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 12,
+      "max": 12
+     }
+    ],
+    "desc": "Infecte et applique un poison Air de début de tour sur la cible."
+   }
+  ],
+  "sadida": {
+   "poupee": true,
+   "infecte": true,
+   "poison": true
+  },
+  "_doc": "La Folle (maquette Sadida 5A 6A 7A) : Agacement officiel, Infecte et empoisonne (poison continu 3 s)."
+ },
+ "sadi_bloqueuse": {
+  "dofusId": 5895,
+  "name": "La Bloqueuse",
+  "look": 417,
+  "atlas": "sadi_bloqueuse",
+  "rang": 1,
+  "element": "neutre",
+  "suivant": null,
+  "pv": 0.6,
+  "sorts": [],
+  "passif": true,
+  "sadida": {
+   "poupee": true,
+   "bloqueuse": true
+  },
+  "_doc": "La Bloqueuse (maquette Sadida 5A 6A) : file se planter devant les monstres, les provoque et les tacle (ralentis au contact) ; Substitution et Célérité officiels pas joués."
+ },
+ "sadi_sacrifiee": {
+  "dofusId": 5898,
+  "name": "La Sacrifiée",
+  "look": 415,
+  "atlas": "sadi_sacrifiee",
+  "rang": 1,
+  "element": "eau",
+  "suivant": null,
+  "pv": 0.35,
+  "sorts": [],
+  "passif": true,
+  "sadida": {
+   "poupee": true,
+   "sacrifiee": {
+    "element": "eau",
+    "min": 19,
+    "max": 19
+   }
+  },
+  "_doc": "La Sacrifiée (maquette Sadida 5A 6A) : grossit avec le temps (PV et dégâts), puis file au milieu des monstres et explose (Explosion Ouatée officielle : Eau en zone, Infecte)."
+ },
+ "sadi_groute": {
+  "dofusId": 5901,
+  "name": "Groute",
+  "look": 3165,
+  "atlas": "sadi_groute",
+  "rang": 1,
+  "element": "neutre",
+  "suivant": null,
+  "pv": 0.5,
+  "sorts": [
+   {
+    "id": 13536,
+    "name": "Rejet Sylvestre",
+    "pa": 4,
+    "po": [
+     2,
+     6
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "repousse",
+      "n": 2
+     }
+    ],
+    "desc": "Infecte et pousse la cible jusqu'à la case ciblée."
+   },
+   {
+    "id": 13539,
+    "name": "Photosynthèse",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "anim": 0,
+    "zone": "C2",
+    "effets": [
+     {
+      "k": "soinPct",
+      "n": 8
+     }
+    ],
+    "desc": "Soigne les alliés et réduit les soins reçus par les ennemis en zone autour du Groute."
+   }
+  ],
+  "sadida": {
+   "poupee": true,
+   "fixe": true,
+   "infecte": true
+  },
+  "_doc": "Groute (Puissance Sylvestre, maquette Sadida 5A) : Arbre Feuillu qui se bat sans bouger ; Rejet Sylvestre (Infecte, repousse) et Photosynthèse (soin) officiels ; Détoxication pas jouée."
+ },
+ "balise_survie": {
+  "dofusId": 8348,
+  "name": "Balise de Survie",
+  "look": 8152,
+  "atlas": "cra_balise",
+  "rang": 1,
+  "element": "neutre",
+  "suivant": null,
+  "pv": 0.25,
+  "sorts": [],
+  "passif": true,
+  "balise": {
+   "soin": 0.07,
+   "periode": 3,
+   "portee": 10
+  },
+  "_doc": "Balise de Survie du Crâ (sort 32474, monstre 8348, os 8152) : immobile 6 s (2 tours) ; soigne 7 % des PV max (effet officiel 1109) des alliés qu'elle voit, à la pose puis 3 s après ; le Crâ qui la frappe en la voyant échange de place avec elle."
  }
 }

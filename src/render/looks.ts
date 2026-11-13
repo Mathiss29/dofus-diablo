@@ -140,6 +140,7 @@ const CRA_MAP: Record<string, AnimSlice> = {
   oeil_taupe: { anim: 'AnimAttaque914', from: 0, to: 0.6 },
   tirs_puissants: { anim: 'AnimAttaque902', from: 0, to: 0.6 },
   oeil_pour_oeil: { anim: 'AnimAttaque902', from: 0, to: 0.6 },
+  balise_survie: { anim: 'AnimAttaque904', from: 0, to: 0.7 },
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };
@@ -307,6 +308,24 @@ const ECA_MAP: Record<string, AnimSlice> = {
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };
 
+// Sadida : squelette joueur n° 1 + skin 100/101 (corps), animations officielles (spellscripts casterAnimation, maquette Sadida) :
+// Arbre, Larme… 1000 / 1007 ; sorts d'attaque (Ronce, Buisson Ardent, Cigüe…) 1001 ; Poupées 1003 ; Tremblement et Passage racinaire 1008.
+const SADI_MAP: Record<string, AnimSlice> = {
+  ...WEAPON_MAP,
+  idle: { anim: 'AnimStatiqueExplo0', loop: true, fps: 20 },
+  run: { anim: 'AnimCourse', loop: true, fps: 32 },
+  attack1: { anim: 'AnimArme0', from: 3 / 28, to: 17 / 28 },
+  attack2: { anim: 'AnimArme0', from: 3 / 28, to: 17 / 28 },
+  attack3: { anim: 'AnimArme0', from: 3 / 28, to: 24 / 28 },
+  ...Object.fromEntries(Object.entries({
+    ronce: 1001, buisson_ardent: 1001, cigue: 1001, seve_paralysante: 1001, contagion: 1001, ronces_agressives: 1001, fleau: 1001,
+    herbes_folles: 1001, larme: 1007, arbre: 1000, ronce_apaisante: 1000, la_folle: 1003, la_bloqueuse: 1003, la_sacrifiee: 1003,
+    puissance_sylvestre: 1003, sacrifice_vaudou: 1003, passage: 1008,
+  }).map(([k, n]) => [k, { anim: `AnimAttaque${n}`, from: 0, to: 0.65 }])),
+  hit: { anim: 'AnimHit', from: 0, to: 1 },
+  die: { anim: 'AnimMort', from: 0, to: 0.75 },
+};
+
 const GOLD = 0xffd87a;
 
 export const LOOKS: Record<string, Look> = {
@@ -327,6 +346,14 @@ export const LOOKS: Record<string, Look> = {
   enutrof: { atlas: 'enutrof', scale: 0.82, map: ENU_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
   // Écaflip : dessiné en direct depuis son squelette, comme les autres classes
   ecaflip: { atlas: 'ecaflip', scale: 0.82, map: ECA_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
+  // Sadida : dessiné en direct depuis son squelette, comme les autres classes
+  sadida: { atlas: 'sadida', scale: 0.82, map: SADI_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
+  // Arbre et Poupées du Sadida (monster_planche.py, os 3163, 292, 417, 415, 3165 ; SCALE 1,6 pour l'Arbre et le Groute, 2,5 sinon)
+  sadi_arbre: { atlas: 'sadi_arbre', scale: 0.78, map: MONSTER_MAP(11 / 23, 'AnimAttaque0', { 0: 11 / 23 }), height: 110, multi: true },
+  sadi_folle: { atlas: 'sadi_folle', scale: 0.5, map: MONSTER_MAP(22 / 29, 'AnimAttaque0', { 0: 22 / 29 }), height: 70, multi: true },
+  sadi_bloqueuse: { atlas: 'sadi_bloqueuse', scale: 0.5, map: MONSTER_MAP(11 / 23, 'AnimAttaque0', { 0: 11 / 23 }), height: 70, multi: true },
+  sadi_sacrifiee: { atlas: 'sadi_sacrifiee', scale: 0.5, map: MONSTER_MAP(22 / 30, 'AnimAttaque0', { 0: 22 / 30 }), height: 70, multi: true },
+  sadi_groute: { atlas: 'sadi_groute', scale: 0.78, map: MONSTER_MAP(8 / 30, 'AnimAttaque0', { 0: 8 / 30 }), height: 120, multi: true },
   // Chaton Enragé de l'Écaflip (monster_planche.py, os 289, SCALE 2,5) : Griffe Invocatrice
   eca_chaton: { atlas: 'eca_chaton', scale: 0.5, map: MONSTER_MAP(11 / 30, 'AnimAttaque0', { 0: 11 / 30, 1: 21 / 44 }), height: 60, multi: true },
   // Invocations de l'Enutrof (monster_planche.py, os 4147, 4156, 4166, SCALE 2,5) : Sac Animé, Pelle Animée, coffre au trésor (Coffre Animé)
@@ -334,6 +361,7 @@ export const LOOKS: Record<string, Look> = {
   enu_pelle: { atlas: 'enu_pelle', scale: 0.5, map: MONSTER_MAP(25 / 37, 'AnimAttaque0', { 0: 25 / 37 }), height: 80, multi: true },
   enu_coffre: { atlas: 'enu_coffre', scale: 0.45, map: { ...MONSTER_MAP(21 / 33, 'AnimAttaque0', { 0: 21 / 33, 1: 9 / 32 }), ouvre: { anim: 'AnimAttaque0' } }, height: 70, multi: true },   // ouvre : interface du coffre 7D
   // Bêtes de l'Eniripsa (monster_planche.py, os 7599 SCALE 2,5, os 7600 et 7601) : Lapino, Fées, Feux Follets
+  cra_balise: { atlas: 'cra_balise', scale: 0.55, map: { ...MONSTER_MAP(7 / 30), soin: { anim: 'AnimAttaque0', from: 0, to: 1 } }, height: 90, multi: true },
   eni_lapino: { atlas: 'eni_lapino', scale: 0.55, map: MONSTER_MAP(13 / 37, 'AnimAttaque0', { 0: 13 / 37, 1: 10 / 29, 2: 28 / 31 }), height: 80, multi: true },
   eni_fee: { atlas: 'eni_fee', scale: 0.45, map: MONSTER_MAP(23 / 37), height: 60, multi: true },
   eni_feu_follet: { atlas: 'eni_feu_follet', scale: 0.45, map: MONSTER_MAP(23 / 37), height: 60, multi: true },

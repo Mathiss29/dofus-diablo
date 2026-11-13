@@ -59,9 +59,12 @@ import { ARTISANS, POUCE } from './artisans';
 import { RENFORT, cleRenforceeDe, texteRenfort } from './clesRenforcees';
 import { CHASSE, OEUVRE, PIERRES, coutOeuvre, coutPerce, metiersOeuvre, type Cout } from './oeuvre';
 import { BOISSONS, CONSO, ELIXIRS, PARCHEMINS, RARES_RECOLTE, REPAS, RES_BOISSON, sorteConso, texteBonus } from './consommables';
+import { majMonstreSadida, rallier } from './sadida';
 import { RECOLTE, porteeRecolte, quantite, xpRecolte, type Recolte, type RecoltesData } from './recolte';
 
 export interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: number;
+  /** Sadida : copie d'un sort propagée par l'Infection, jamais critique (1A). */
+  sansCrit?: boolean;
   /** Effets officiels : Érosion (part des dommages ôtée aux PV max), retrait de PM / PA. */
   erosion?: number; pmLoss?: number; paLoss?: number; poLoss?: number;
   /** Dommages multipliés sur les invocations (Concentration), et aussi sur les élites et les boss (Rage pleine). */
@@ -1245,7 +1248,7 @@ export class World {
       if (g.cleared) continue;
       const c = g.members.find(m => !m.dead);
       if (!c || !loinDeTous(c.x, c.y, World.RETRAIT)) continue;
-      if (g.members.some(m => !m.dead && (m.state !== 'idle' || m.poseTest || m.saigneT > 0))) continue;
+      if (g.members.some(m => !m.dead && (m.state !== 'idle' || m.poseTest || m.saigneT > 0 || m.poisonT > 0))) continue;
       g.x = c.x; g.y = c.y; g.dort = true; retires = true;
       for (const m of g.members) m.group = -2;   // retirés ci-dessous
       g.members = [];
@@ -1522,6 +1525,7 @@ export class World {
     if (input.havreSac) this.havreSac();
     if (input.coffre && this.player.cls.coffre && !this.player.dead) ouvrirCoffre(this.player, this);   // Enutrof : touche du coffre
     if (input.coffre && this.player.cls.poker && !this.player.dead) jouerMain(this.player, this);   // Écaflip : la même touche Joue la Main
+    if (input.coffre && this.player.cls.sadida) rallier(this.player, input.aim, this);   // Sadida 6B : ralliement des Poupées
     if (input.meute != null && this.monsters.some(m => m.id === input.meute && !m.dead)) this.cibleMeute = input.meute;
     if (input.zaap != null) this.voyagerZaap(input.zaap);
     if (input.versZaap) this.versZaap = input.versZaap;
@@ -1560,6 +1564,7 @@ export class World {
     // Monde ouvert : un monstre qui attend loin du joueur dort (pas d'errance ni d'IA) : bien moins de calcul
     for (const m of this.monsters) {
       if (m.saigneT > 0 && !m.dead) this.saigner(m, dt);
+      if ((m.infecteT > 0 || m.poisonT > 0 || m.ronceT > 0 || m.seveT > 0) && !m.dead) majMonstreSadida(this, m, dt);   // Sadida
       if (m.e06) pasMonstre06(this, m, dt);   // sorts 61-90 (0.6) : Noa, Floraison, Corruption, immobilisé…
       if (m.fuyard && piloterCoffre(this, m, dt)) continue;   // 0.6 (22A) : le Coffre Malveillant détale
       if (this.zone.open && m.state === 'idle' && !m.dead && this.players.every(q => Math.abs(m.x - q.x) + Math.abs(m.y - q.y) > World.SOMMEIL)) { m.regenCalme(dt); continue; }
@@ -1861,7 +1866,7 @@ export class World {
       if (p.pacifiste > 0) { this.emit({ k: 'status', x: m.x, y: m.y - 20, text: 'Pacifiste', color: '#c8c8c8' }); return 0; }   // Hyperleukocytine : aucun dommage
       if (m.intouchable) { if (this.time - this.intouchableT > 0.6) { this.intouchableT = this.time; this.emit({ k: 'status', x: m.x, y: m.y - 30, text: 'Intouchable', color: '#c8c8c8' }); } continue; }
       n++; this.cibleMeute = m.id;
-      const crit = this.rng.next() < p.critChance + (def.crit ?? 0);
+      const crit = !def.sansCrit && this.rng.next() < p.critChance + (def.crit ?? 0);
       // Choix 19A : résistances officielles du monstre dans l'élément du coup (plafonnées à 50 %, comme Dofus)
       const el = p.resolveElement(def.element ?? 'neutre'), fi = this.fxIdoles;
       const res = Math.min(50, (m.def.res?.[el] ?? 0) + (fi?.resDernier && p.dernierElement === el ? fi.resDernier : 0));   // Garu
@@ -1893,7 +1898,7 @@ export class World {
       if (m.state === 'idle' || m.state === 'return') this.aggroGroup(m);   // 3A + 4A : un coup, même de loin, réveille tout son groupe
       if (def.erosion) { m.maxHp = Math.max(1, m.maxHp - Math.round(dmg * def.erosion)); m.hp = Math.min(m.hp, m.maxHp); }
       // Retrait PA / PM du joueur contre l'Esquive officielle du monstre : chaque point a sa chance de passer
-      const pm = this.removed(def.pmLoss ?? 0, p.retrait('PM'), m.def.caracs?.esquivePM ?? 0);
+      const pm = this.removed(def.pmLoss ?? 0, p.retrait('PM'), m.seveT > 0 ? 0 : m.def.caracs?.esquivePM ?? 0);   // Sève Paralysante : plus d'esquive
       const pa = this.removed(def.paLoss ?? 0, p.retrait('PA'), m.def.caracs?.esquivePA ?? 0);
       if (pm || pa || def.poLoss) m.entraveA = this.time;   // Enutrof 1B : un monstre entravé vaut une pièce de plus
       if (pm) { m.haste = Math.min(m.haste, Math.max(0.3, 1 - 0.15 * pm)); m.hasteT = Math.max(m.hasteT, TOUR);
@@ -3468,7 +3473,8 @@ export class World {
     if (sur) return sur;
     const dp = Math.hypot(p.x - m.x, p.y - m.y);
     let best: Cible = p, bd = p.dead ? Infinity : dp * 0.6;
-    for (const b of vivantes) { const d = Math.hypot(b.x - m.x, b.y - m.y); if (d < bd) { bd = d; best = b; } }
+    for (const b of vivantes) { if (b.def.sadida?.arbre) continue;   // un Arbre n'attire que le monstre qu'il gêne (4A)
+ const d = Math.hypot(b.x - m.x, b.y - m.y); if (d < bd) { bd = d; best = b; } }
     return best;
   }
   /** Bête vivante invoquée par ce sort (une par sort, la touche la rappelle ou l'éveille). */
@@ -3572,6 +3578,17 @@ export class World {
         const push = (min - d) / 2, nx = dx / d, ny = dy / d, wa = b.def.mass / (a.def.mass + b.def.mass), wb = 1 - wa;
         a.x -= nx * push * 2 * wa; a.y -= ny * push * 2 * wa; b.x += nx * push * 2 * wb; b.y += ny * push * 2 * wb;
       }
+      }
+    }
+    // Sadida 4A : les Arbres sont des obstacles ; le monstre en chasse qu'un Arbre gêne finit par le frapper
+    for (const b of this.betes) {
+      if (b.dead || !b.def.sadida?.arbre) continue;
+      for (const m of all) {
+        const dx = m.x - b.x, dy = m.y - b.y, d = Math.hypot(dx, dy) || 0.01, min = m.radius + b.radius;
+        if (d >= min || m.def.boss) continue;
+        const nx = m.x + dx / d * (min - d), ny = m.y + dy / d * (min - d);
+        if (this.walkable(nx, ny)) { m.x = nx; m.y = ny; }
+        if (m.state !== 'idle' && m.state !== 'return' && m.provoqueJusqua < this.time && this.rng.next() < 0.02) { m.agresseur = b.id; m.provoqueJusqua = this.time + 2; }
       }
     }
     const p = this.player;

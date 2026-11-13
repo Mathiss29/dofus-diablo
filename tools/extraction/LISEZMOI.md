@@ -565,6 +565,16 @@ Ville vivante (maquette Ville 5F, 8 nov. 2026) :
 - Chaton Enragé 5847 (os 289, Griffe Invocatrice ; os dans le cache : `cache-dofus/ecaflip-bones/`, avec le Chaton Affectueux 4813 pour plus tard) :
   `SCALE=2.5 FORMAT=AVIF python3 monster_planche.py 289 eca_chaton <Bones>`. Entrée de betes.json ajoutée à la main.
 
+## Sadida (classe 10, maquette du 13 nov. 2026)
+
+- `python squelette_export.py <persos> <donnees> 10 public/assets/sprites/squelette`, puis `python tetes_vignettes.py <persos> <donnees> public/assets/sprites/squelette 10`.
+- Sorts : `class_spells.py ... sadida:10` -> src/data/sorts.json ; icônes `sort_<id>.png` ; icône de l'état Infecté (stateInfected) dans `ui/sadida/infecte.png`.
+  Animations : AnimAttaque1000 (Arbre), 1001 (sorts d'attaque), 1003 (Poupées), 1007 (Larme), 1008 (Passage racinaire), voir SADI_MAP de looks.ts.
+- Invocations (os dans le cache : `cache-dofus/sadida-bones/`) : Arbre 5894 (os 3163), Folle 5896 (292), Bloqueuse 5895 (417), Sacrifiée 5898 (415),
+  Groute 5901 (3165) ; Gonflable 416, Surpuissante 414 et Tréant 6869 pour plus tard.
+  `SCALE=1.6 FORMAT=AVIF python3 monster_planche.py 3163 sadi_arbre <Bones>` (et `3165 sadi_groute`), `SCALE=2.5` pour les trois Poupées.
+  Entrées de betes.json ajoutées à la main ; réglages dans classes.json > sadida.
+
 ## Amakna sans coupure (0.4, 10 nov. 2026)
 
 - Grille du continent : `python3 monde_continent.py regrille public/assets/mondes/astrub src/data/zones.json` (fait UNE fois) passe le monde d'Astrub

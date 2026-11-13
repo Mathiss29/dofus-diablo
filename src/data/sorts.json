@@ -14659,5 +14659,1801 @@
     "pom": 1
    }
   ]
+ ],
+ "sadida": [
+  [
+   {
+    "id": 13516,
+    "name": "Ronce",
+    "icon": 12699,
+    "desc": "Infecte la cible et occasionne des dommages Terre.\n\nSur un Arbre Feuillu : applique les effets sur les ennemis dans un cercle de taille 2.\n\nSur un ennemi : applique également les effets sur tous les ennemis Infectés.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       14,
+       16
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 66,
+      "pa": 3,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       19,
+       21
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 132,
+      "pa": 3,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       24,
+       27
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 13521,
+    "name": "Ronce Insolente",
+    "icon": 13176,
+    "desc": "Réduit la durée des effets sur la cible et occasionne des dommages Terre aux ennemis.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.",
+    "grades": [
+     {
+      "niv": 95,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       25,
+       28
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 162,
+      "pa": 3,
+      "po": [
+       0,
+       7
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       31,
+       35
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 13528,
+    "name": "Larme de Sadida",
+    "icon": 13057,
+    "desc": "Soigne les alliés ou occasionne des dommages Eau aux ennemis.\n\nSur un Arbre : applique les effets dans un cercle de taille 2 et transforme l'Arbre en Arbre Feuillu.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       15,
+       17
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 67,
+      "pa": 3,
+      "po": [
+       0,
+       7
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       20,
+       22
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 133,
+      "pa": 3,
+      "po": [
+       0,
+       8
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       25,
+       28
+      ],
+      "element": "eau"
+     }
+    ],
+    "ligne": 1,
+    "ldv": 0,
+    "pom": 1
+   },
+   {
+    "id": 13563,
+    "name": "Montée de Sève",
+    "icon": 12731,
+    "desc": "Vole de la vie dans l'élément Eau aux ennemis et soigne les alliés (hors lanceur) selon les dommages occasionnés en zone.\n\nSur des Arbres : les transforme également en Arbres Feuillus.",
+    "grades": [
+     {
+      "niv": 100,
+      "pa": 4,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       24,
+       27
+      ],
+      "element": "eau",
+      "vol": true
+     },
+     {
+      "niv": 167,
+      "pa": 4,
+      "po": [
+       0,
+       7
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       30,
+       34
+      ],
+      "element": "eau",
+      "vol": true
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 13574,
+    "name": "Buisson Ardent",
+    "icon": 12977,
+    "desc": "Occasionne des dommages Feu et retire des PM.\n\nSur un Arbre Feuillu : applique les effets sur les ennemis dans un cercle de taille 2.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       15,
+       17
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 68,
+      "pa": 3,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       20,
+       22
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 134,
+      "pa": 3,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       25,
+       28
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 13568,
+    "name": "Feu de Brousse",
+    "icon": 13073,
+    "desc": "Occasionne des dommages Feu et retire des PM aux ennemis et applique l'état Feu de Brousse sur les Arbres et les ennemis en zone :\n• À la fin du tour de la cible, occasionne des dommages Feu aux ennemis en zone autour d'elle.\n• Peut occasionner des dommages aux Arbres.",
+    "grades": [
+     {
+      "niv": 105,
+      "pa": 4,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       26,
+       28
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 172,
+      "pa": 4,
+      "po": [
+       0,
+       7
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       32,
+       35
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 13577,
+    "name": "Cigüe",
+    "icon": 12747,
+    "desc": "Occasionne des dommages Air.\n\nSur un Arbre Feuillu : applique les effets et maintient l'Infection sur les ennemis dans un cercle de taille 2.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés et maintient l'Infection sur la cible.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       15,
+       17
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 69,
+      "pa": 3,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       21,
+       23
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 136,
+      "pa": 3,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       26,
+       29
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 13529,
+    "name": "Vent Empoisonné",
+    "icon": 13387,
+    "desc": "Infecte la cible et lui applique un poison Air de début de tour.",
+    "grades": [
+     {
+      "niv": 110,
+      "pa": 2,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       11,
+       13
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 177,
+      "pa": 2,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       13,
+       15
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 13519,
+    "name": "Arbre",
+    "icon": 12700,
+    "desc": "Plante un Arbre.\nUn Arbre devient Feuillu après 1 tour.\n\nIl ne peut y avoir que 6 Arbres par équipe. Le septième Arbre planté entraîne la mort du premier.",
+    "grades": [
+     {
+      "niv": 5,
+      "pa": 2,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0
+     },
+     {
+      "niv": 72,
+      "pa": 2,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0
+     },
+     {
+      "niv": 139,
+      "pa": 2,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 13560,
+    "name": "Arbre Feuillu",
+    "icon": 12724,
+    "desc": "Plante un Arbre Feuillu.\nTous les Arbres invoqués par le lanceur se transforment immédiatement en Arbres Feuillus.\n\nIl ne peut y avoir que 6 Arbres par équipe. Le septième Arbre planté entraîne la mort du premier.",
+    "grades": [
+     {
+      "niv": 115,
+      "pa": 3,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 182,
+      "pa": 3,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13564,
+    "name": "La Folle",
+    "icon": 13263,
+    "desc": "Remplace un Arbre par une Poupée maîtrisable qui peut Infecter et appliquer un poison Air de début de tour.\n\nÀ sa mort, la Poupée redevient un Arbre.\nSi elle a été invoquée à partir d'un Arbre Feuillu, l'Arbre à sa mort redevient Feuillu.",
+    "grades": [
+     {
+      "niv": 10,
+      "pa": 2,
+      "po": [
+       1,
+       63
+      ],
+      "relance": 3,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 77,
+      "pa": 2,
+      "po": [
+       1,
+       63
+      ],
+      "relance": 3,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 144,
+      "pa": 2,
+      "po": [
+       1,
+       63
+      ],
+      "relance": 3,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 13515,
+    "name": "La Folle Transmutée",
+    "icon": 13264,
+    "desc": "Invoque une Poupée maîtrisable qui peut Infecter et appliquer un poison Air de début de tour.\n\nLa Poupée est remplacée par un Arbre 3 tours après son invocation.",
+    "grades": [
+     {
+      "niv": 120,
+      "pa": 3,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 3,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 144,
+      "pa": 3,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 3,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13533,
+    "name": "Sève Paralysante",
+    "icon": 12705,
+    "desc": "Infecte, retire de l'Esquive PM et applique un poison Feu de fin de tour sur la cible.",
+    "grades": [
+     {
+      "niv": 15,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       9,
+       11
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 82,
+      "pa": 3,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       12,
+       14
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 149,
+      "pa": 3,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       15,
+       18
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 13562,
+    "name": "Miasmes",
+    "icon": 12737,
+    "desc": "Infecte et applique un poison Air de fin de tour sur les ennemis en zone.\nLa zone s'étend autour des Arbres Feuillus et des Poupées.",
+    "grades": [
+     {
+      "niv": 125,
+      "pa": 2,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       10,
+       12
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 192,
+      "pa": 2,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       12,
+       14
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13575,
+    "name": "Contagion",
+    "icon": 13054,
+    "desc": "Occasionne des dommages Air et retire des PM. \n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés en propageant l'Infection en zone autour de la cible.",
+    "grades": [
+     {
+      "niv": 20,
+      "pa": 4,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       22,
+       25
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 87,
+      "pa": 4,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       28,
+       31
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 154,
+      "pa": 4,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       35,
+       39
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 14396,
+    "name": "Mangrove",
+    "icon": 13070,
+    "desc": "Soigne les alliés, occasionne des dommages Eau et retire des PM aux ennemis en zone.\nLa zone s'étend autour des Arbres et les effets sont appliqués qu'une seule fois par lancer.\n\nTransforme également tous les Arbres en Arbres Feuillus.",
+    "grades": [
+     {
+      "niv": 130,
+      "pa": 4,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       29,
+       32
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 197,
+      "pa": 4,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       32,
+       36
+      ],
+      "element": "eau"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 13525,
+    "name": "Ronce Apaisante",
+    "icon": 13177,
+    "desc": "Soigne les alliés ou retire des PM aux ennemis.\n\nSur un Arbre Feuillu : applique les effets dans un cercle de taille 2.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.",
+    "grades": [
+     {
+      "niv": 25,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 92,
+      "pa": 2,
+      "po": [
+       0,
+       7
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 159,
+      "pa": 2,
+      "po": [
+       0,
+       9
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 1,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 13565,
+    "name": "Rempotage",
+    "icon": 13376,
+    "desc": "Soigne une invocation Sadida, la téléporte sur la première case disponible entre le lanceur et elle et plante un Arbre sur la case ciblée.",
+    "grades": [
+     {
+      "niv": 135,
+      "pa": 2,
+      "po": [
+       1,
+       9
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 1,
+    "ldv": 0,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13561,
+    "name": "La Bloqueuse",
+    "icon": 12703,
+    "desc": "Remplace un Arbre par une Poupée maîtrisable qui peut échanger de position si elle est maîtrisée et bloquer les ennemis.\nElle peut également augmenter ses PM et se rendre Intaclable.\n\nÀ sa mort, la Poupée redevient un Arbre.\nSi elle a été invoquée à partir d'un Arbre Feuillu, l'Arbre à sa mort redevient Feuillu.",
+    "grades": [
+     {
+      "niv": 30,
+      "pa": 2,
+      "po": [
+       1,
+       63
+      ],
+      "relance": 3,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 97,
+      "pa": 2,
+      "po": [
+       1,
+       63
+      ],
+      "relance": 3,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 140,
+      "pa": 2,
+      "po": [
+       1,
+       63
+      ],
+      "relance": 3,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 13526,
+    "name": "La Bloqueuse Transmutée",
+    "icon": 12730,
+    "desc": "Invoque une Poupée maîtrisable qui peut échanger de position si elle est maîtrisée et bloquer les ennemis.\nElle peut également augmenter ses PM et se rendre Intaclable.\n\nLa Poupée est remplacée par un Arbre 3 tours après son invocation.",
+    "grades": [
+     {
+      "niv": 140,
+      "pa": 3,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 3,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13527,
+    "name": "Ronces Agressives",
+    "icon": 12715,
+    "desc": "Vole des PM et occasionne des dommages Terre.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.",
+    "grades": [
+     {
+      "niv": 35,
+      "pa": 4,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       24,
+       27
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 102,
+      "pa": 4,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       31,
+       34
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 169,
+      "pa": 4,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       38,
+       42
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 14393,
+    "name": "Fétiches Calcinés",
+    "icon": 12702,
+    "desc": "Occasionne des dommages Feu et applique l'état Fétiches Calcinés sur l'ennemi ciblé :\n• Une partie des dommages subis par les Arbres du lanceur est renvoyée à la cible.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.",
+    "grades": [
+     {
+      "niv": 145,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       28,
+       31
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 13571,
+    "name": "Fléau",
+    "icon": 12738,
+    "desc": "Vole de la vie dans l'élément Eau.\n\nSur une Poupée : applique les effets sur les ennemis dans un carré de taille 1.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.",
+    "grades": [
+     {
+      "niv": 40,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       16,
+       18
+      ],
+      "element": "eau",
+      "vol": true
+     },
+     {
+      "niv": 107,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       21,
+       23
+      ],
+      "element": "eau",
+      "vol": true
+     },
+     {
+      "niv": 174,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       26,
+       29
+      ],
+      "element": "eau",
+      "vol": true
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 13524,
+    "name": "Forêt Hantée",
+    "icon": 12711,
+    "desc": "Occasionne des dommages Terre aux ennemis et leur applique l'état Forêt Hantée en zone :\n• Infecte la cible si elle attaque un Arbre du lanceur.\n\nLa zone s'étend dans un carré de taille 1 autour des Arbres Feuillus et les effets ne sont appliqués qu'une seule fois par lancer.",
+    "grades": [
+     {
+      "niv": 150,
+      "pa": 3,
+      "po": [
+       0,
+       7
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       29,
+       32
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 1,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13530,
+    "name": "Puissance Sylvestre",
+    "icon": 12707,
+    "desc": "Remplace un Arbre Feuillu par un Arbre Feuillu contrôlable qui peut :\n• Infecter et pousser une cible.\n• Soigner les alliés et réduire les soins reçus par les ennemis en zone.\n• Réduire la durée des effets sur une cible.\n\nL'Arbre contrôlable est remplacé par un Arbre Feuillu 2 tours après son invocation.",
+    "grades": [
+     {
+      "niv": 45,
+      "pa": 2,
+      "po": [
+       1,
+       63
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 112,
+      "pa": 2,
+      "po": [
+       1,
+       63
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 179,
+      "pa": 2,
+      "po": [
+       1,
+       63
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 13566,
+    "name": "Influence Végétale",
+    "icon": 13313,
+    "desc": "Remplace un Arbre Feuillu par un Arbre Feuillu contrôlable qui peut :\n• Infecter et attirer une cible.\n• Appliquer un bouclier sur les alliés et retirer des PM aux ennemis en zone.\n• Planter des Ronces Indéplaçables.\n\nL'Arbre contrôlable est remplacé par un Arbre Feuillu 2 tours après son invocation.",
+    "grades": [
+     {
+      "niv": 155,
+      "pa": 2,
+      "po": [
+       1,
+       63
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13567,
+    "name": "La Sacrifiée",
+    "icon": 12708,
+    "desc": "Remplace un Arbre par une Poupée maîtrisable qui peut se sacrifier pour Infecter et occasionner des dommages Eau en zone.\nSa Vitalité et ses dommages finaux augmentent au fil des tours.\n\nÀ sa mort, la Poupée redevient un Arbre.\nSi elle a été invoquée à partir d'un Arbre Feuillu, l'Arbre à sa mort redevient Feuillu.",
+    "grades": [
+     {
+      "niv": 50,
+      "pa": 2,
+      "po": [
+       1,
+       63
+      ],
+      "relance": 2,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 117,
+      "pa": 2,
+      "po": [
+       1,
+       63
+      ],
+      "relance": 2,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 160,
+      "pa": 2,
+      "po": [
+       1,
+       63
+      ],
+      "relance": 2,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 13522,
+    "name": "La Sacrifiée Transmutée",
+    "icon": 12735,
+    "desc": "Invoque une Poupée maîtrisable qui peut se sacrifier pour Infecter et occasionner des dommages Eau en zone.\nSa Vitalité et ses dommages finaux augmentent au fil des tours.\n\nLa Poupée est remplacée par un Arbre 3 tours après son invocation.",
+    "grades": [
+     {
+      "niv": 160,
+      "pa": 3,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 2,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13518,
+    "name": "Herbes Folles",
+    "icon": 12716,
+    "desc": "Occasionne des dommages Feu et retire des PM aux ennemis en zone.",
+    "grades": [
+     {
+      "niv": 55,
+      "pa": 3,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       20,
+       23
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 122,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       27,
+       31
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 189,
+      "pa": 3,
+      "po": [
+       0,
+       7
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       31,
+       35
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 13576,
+    "name": "Malédiction Vaudou",
+    "icon": 13257,
+    "desc": "Occasionne des dommages Eau et applique l'état Vaudou sur l'ennemi ciblé :\n• Occasionne des dommages Eau à la cible à la mort d'une Poupée du lanceur.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.",
+    "grades": [
+     {
+      "niv": 165,
+      "pa": 3,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0,
+      "dmg": [
+       25,
+       28
+      ],
+      "element": "eau"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 13531,
+    "name": "Sacrifice Vaudou",
+    "icon": 12712,
+    "desc": "Occasionne des dommages Eau.\nLes dommages sont plus importants sur les invocations.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.\n\nSur une Poupée :\n• Sacrifie la Poupée pour soigner les alliés, appliquer les effets sur les ennemis et les Infecter en zone.\n• Réinitialise son temps de relance.",
+    "grades": [
+     {
+      "niv": 60,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 1,
+      "dmg": [
+       22,
+       25
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 127,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 1,
+      "dmg": [
+       27,
+       30
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 194,
+      "pa": 3,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 1,
+      "dmg": [
+       30,
+       34
+      ],
+      "element": "eau"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 13517,
+    "name": "Chardons Ardents",
+    "icon": 13388,
+    "desc": "Applique l'état Chardons Ardents sur l'ennemi ciblé :\n• Applique un poison Feu de fin de tour sur la cible pour chaque PM qu'elle utilise (cumulable 3 fois).\n\nSur un ennemi : applique les effets sur tous les ennemis Infectés.",
+    "grades": [
+     {
+      "niv": 170,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0,
+      "dmg": [
+       8,
+       8
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 13534,
+    "name": "Arbre de Vie",
+    "icon": 12718,
+    "desc": "Plante un Arbre de Vie.\nL'Arbre de Vie redevient Feuillu 2 tours après son invocation.",
+    "grades": [
+     {
+      "niv": 65,
+      "pa": 4,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 131,
+      "pa": 4,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 198,
+      "pa": 4,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 13572,
+    "name": "Altruisme Végétal",
+    "icon": 12740,
+    "desc": "Sacrifie un Arbre Feuillu ou une Poupée pour augmenter la Vitalité des Poupées et soigner le lanceur.",
+    "grades": [
+     {
+      "niv": 175,
+      "pa": 2,
+      "po": [
+       1,
+       63
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13573,
+    "name": "La Gonflable",
+    "icon": 12714,
+    "desc": "Remplace un Arbre par une Poupée maîtrisable qui peut soigner, occasionner des dommages Feu et repousser.\n\nÀ sa mort, la Poupée redevient un Arbre.\nSi elle a été invoquée à partir d'un Arbre Feuillu, l'Arbre à sa mort redevient Feuillu.",
+    "grades": [
+     {
+      "niv": 70,
+      "pa": 2,
+      "po": [
+       1,
+       63
+      ],
+      "relance": 4,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 137,
+      "pa": 2,
+      "po": [
+       1,
+       63
+      ],
+      "relance": 4,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 13523,
+    "name": "La Gonflable Transmutée",
+    "icon": 12741,
+    "desc": "Invoque une Poupée maîtrisable qui peut soigner, occasionner des dommages Feu et repousser.\n\nLa Poupée est remplacée par un Arbre 3 tours après son invocation.",
+    "grades": [
+     {
+      "niv": 180,
+      "pa": 3,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 4,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13514,
+    "name": "Tremblement",
+    "icon": 12975,
+    "desc": "En zone autour du lanceur, d'un Arbre Feuillu ou d'une Poupée :\n• Occasionne des dommages Terre aux ennemis.\n• Attire les entités vers le centre de la zone.\n• Dévoile les invisibles.",
+    "grades": [
+     {
+      "niv": 75,
+      "pa": 3,
+      "po": [
+       0,
+       63
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       23,
+       27
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 142,
+      "pa": 3,
+      "po": [
+       0,
+       63
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       29,
+       33
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 13559,
+    "name": "Mandragore",
+    "icon": 13256,
+    "desc": "Occasionne des dommages Air et applique l'état Mandragore sur l'ennemi ciblé :\n• Infecte la cible si elle subit des dommages de poison ou d'invocation.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.",
+    "grades": [
+     {
+      "niv": 185,
+      "pa": 3,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       30,
+       34
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 1,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 13569,
+    "name": "Inoculation",
+    "icon": 12976,
+    "desc": "Augmente les dommages du sort pour chaque ennemi Infecté et occasionne des dommages Air.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.\n\nConsomme toutes les Infections autour de la cible.",
+    "grades": [
+     {
+      "niv": 80,
+      "pa": 5,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       31,
+       35
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 147,
+      "pa": 5,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       39,
+       43
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 13570,
+    "name": "Force de la Nature",
+    "icon": 12739,
+    "desc": "Occasionne des dommages Terre.\nLes dommages du sort sont augmentés pour chaque Arbre Feuillu du lanceur planté.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.",
+    "grades": [
+     {
+      "niv": 190,
+      "pa": 5,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       40,
+       45
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13532,
+    "name": "Don Naturel",
+    "icon": 13178,
+    "desc": "Sacrifie un Arbre Feuillu ou une Poupée pour partager les dommages entre les alliés et les soigner en zone.\nLe partage de dommages n'affecte pas les invocations statiques.",
+    "grades": [
+     {
+      "niv": 85,
+      "pa": 2,
+      "po": [
+       1,
+       63
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 152,
+      "pa": 2,
+      "po": [
+       1,
+       63
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 13579,
+    "name": "Harmonie",
+    "icon": 12744,
+    "desc": "Enracine le lanceur et partage les dommages entre tous ses Arbres et lui.",
+    "grades": [
+     {
+      "niv": 195,
+      "pa": 3,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13578,
+    "name": "La Surpuissante",
+    "icon": 13075,
+    "desc": "Remplace un Arbre par une Poupée maîtrisable qui peut occasionner des dommages Terre, retirer ou donner des PM.\nElle peut également invoquer une autre Poupée maîtrisable qui peut voler ou donner de la Portée.\n\nÀ sa mort, la Poupée redevient un Arbre.\nSi elle a été invoquée à partir d'un Arbre Feuillu, l'Arbre à sa mort redevient Feuillu.",
+    "grades": [
+     {
+      "niv": 90,
+      "pa": 2,
+      "po": [
+       1,
+       63
+      ],
+      "relance": 4,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 157,
+      "pa": 2,
+      "po": [
+       1,
+       63
+      ],
+      "relance": 4,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 13520,
+    "name": "La Surpuissante Transmutée",
+    "icon": 13076,
+    "desc": "Invoque une Poupée maîtrisable qui peut occasionner des dommages Terre, retirer ou donner des PM.\nElle peut également invoquer une autre Poupée maîtrisable qui peut voler ou donner de la Portée.\n\nLa Poupée est remplacée par un Arbre 3 tours après son invocation.",
+    "grades": [
+     {
+      "niv": 200,
+      "pa": 3,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 4,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ]
  ]
 }

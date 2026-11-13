@@ -67,7 +67,7 @@ const REFUS: Record<Sorte | 'a', Set<string>> = {
 const LISTES = ['projectiles', 'drops', 'telegraphs', 'zonesSol'] as const;
 /** Événements joués chez l'invité : ce qui se voit et s'entend. Le reste (quêtes, fenêtres, changement de zone, XP, mort…)
  *  parle du joueur de l'écran de l'hôte. */
-const EVENEMENTS = new Set<SimEvent['k']>(['spell', 'shoot', 'slam', 'monsterCast', 'spellFx', 'status', 'massacre', 'massacreFin', 'hit', 'kill',
+const EVENEMENTS = new Set<SimEvent['k']>(['feuillu', 'infection', 'ralliement', 'spell', 'shoot', 'slam', 'monsterCast', 'spellFx', 'status', 'massacre', 'massacreFin', 'hit', 'kill',
   'beteMorte', 'heal', 'filSoin', 'pieces', 'tresorOuvert', 'cartesJouees', 'mainGagnante', 'roulette', 'invocation', 'eveil', 'echange', 'souffrance', 'sacrifice', 'dompte', 'impact', 'grosCoup', 'bossIntro', 'furieux', 'wave',
   'areneDebut', 'areneVague', 'arenePalier', 'areneAlarme', 'bossFuite', 'wobot', 'bossEpilogue', 'areneFin', 'bossDown', 'cast', 'bulle', 'rageSpent', 'signal', 'guerreVague', 'guerreVol', 'guerreFuite', 'guerreReplantee',
   'bossMondeAnnonce', 'bossMondeArrive', 'bossMondeCombat', 'bossMondePalier', 'bossMondeFin', 'invasionDebut', 'evenementDebut']);

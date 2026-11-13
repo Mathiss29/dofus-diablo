@@ -6,6 +6,7 @@ import type { World } from './world';
 import BETES_JSON from '../data/betes.json';
 import { allieLePlusBlesse, lucioleMaj, soignerAllie } from './eniripsa';
 import { coffreAssomme, EJECTION } from './enutrof';
+import { beteSadidaMorte, cibleRalliement, empoisonner, infecter, majBeteSadida, type EtatSadi } from './sadida';
 
 /** Un effet officiel d'un sort de bête que le jeu sait jouer (tools/extraction/osa_betes.py). */
 export type EffetBete =
@@ -21,6 +22,12 @@ export interface BeteDef {
   suivant: string | null; pv: number; sorts: SortBete[];
   /** Ne frappe jamais (coffre au trésor et Sac Animé de l'Enutrof) : suit son maître, les monstres peuvent le viser. */
   passif?: boolean;
+  /** Sadida : Arbre, Poupée, Groute (fixe = ne marche pas), effets des coups (Infecte, poison), IA de la Bloqueuse et de la Sacrifiée. */
+  sadida?: { arbre?: boolean; poupee?: boolean; fixe?: boolean; infecte?: boolean; poison?: boolean; bloqueuse?: boolean;
+    sacrifiee?: { element: Element; min: number; max: number } };
+  /** Balise de Survie du Crâ (0.6) : immobile ; toutes les `periode` s (dès sa pose), soigne de `soin` (part des PV max)
+   *  les alliés qu'elle voit à `portee` cases, comme au début de chacun de ses tours dans Dofus. */
+  balise?: { soin: number; periode: number; portee: number };
 }
 export interface ReglesBetes {
   /** Part des dommages officiels (× 1,5 comme les sorts du joueur, puis × degats) ; PA par seconde et réserve (6A). */
@@ -73,6 +80,8 @@ export class Bete extends Entity {
   dompteT = 0;
   /** Horde sauvage : secondes avant de repartir (0 = reste). Coup de fouet : vitesse d'attaque +hate % pendant hateT s. */
   finT = 0; hate = 0; hateT = 0;
+  /** Balise de Survie : prochain soin, et animation du soin en cours. */
+  pulseT = 0; soinAnimT = 0;
   /** Épées jumelles (légendaire Sacrieur N) : part des dégâts de la bête. */
   force = 1;
   /** Seconde épée des Épées jumelles : ne prend pas de place d'Invocation (elle part avec sa jumelle). */
@@ -86,6 +95,8 @@ export class Bete extends Entity {
   luciole: { kind: 'fee' | 'feu'; mot: string } | null = null;
   /** Lapino : élément de l'Alchi-Rhétorique (dernier Mot élémentaire lancé sur lui), pour Lapinopoing. */
   alchi: Element | null = null;
+  /** Sadida : état de l'Arbre (Feuillu, temps avant Feuillu, calme 2B) ou de la Poupée (née d'un Feuillu). */
+  sadi: EtatSadi | null = null;
   constructor(id: number, readonly owner: Player, key: string, sort: string, x: number, y: number, def: BeteDef = BETES[key], pv?: number) {
     const d = def;
     super(id, x, y, 16, pv ?? Math.max(1, Math.round(owner.maxHp * d.pv)));
@@ -134,6 +145,7 @@ export class Bete extends Entity {
       world.emit({ k: 'spell', fx: 'burst', id: 'pc-osamodas-D', x: this.x, y: this.y, facing: 0, size: CASE * 2, arc: 0, element: 'air', big: true, boosted: false });
     }
     if (this.base === 'coffre_tresor') coffreAssomme(this, world);   // Enutrof 3D
+    if (this.def.sadida) beteSadidaMorte(this, world);   // la Poupée redevient Arbre ; Racines vengeresses
     world.emit({ k: 'beteMorte', id: this.id, x: this.x, y: this.y, radius: this.radius, name: this.def.name });
   }
   soigner(n: number, world: World) {
@@ -150,6 +162,7 @@ export class Bete extends Entity {
     if (this.dead) { this.t -= dt; this.setAnim('die', 1 - this.t / 0.6); this.applyKnock(dt); return; }
     if (this.state === 'spawn') { this.t -= dt; this.setAnim('spawn', 1 - this.t / 0.4); if (this.t <= 0) this.state = 'suit'; return; }
     if (this.luciole) { lucioleMaj(this, dt, world); return; }
+    if (this.def.sadida && majBeteSadida(this, dt, world)) return;   // Arbres, Bloqueuse, Sacrifiée
     if (this.ouvreT > 0) { this.ouvreT -= dt; this.setAnim('ouvre', 1 - Math.max(0, this.ouvreT) / EJECTION.gueule); this.applyKnock(dt); return; }   // 7D : gueule ouverte
     if (this.eveilT > 0 && (this.eveilT -= dt) <= 0) this.finEveil();
     if (this.shieldT > 0 && (this.shieldT -= dt) <= 0) this.shield = 0;
@@ -161,6 +174,7 @@ export class Bete extends Entity {
       world.emit({ k: 'status', x: this.x, y: this.y - 40, text: 'Repart', color: '#a89fb6' });
       this.dead = true; this.t = 0; return;
     }
+    if (this.def.balise) { this.majBalise(dt, world); return; }
     if (this.hateT > 0 && (this.hateT -= dt) <= 0) this.hate = 0;
     const le = this.base === 'bouftou' && !this.dompteT ? p.pcv('pc-osamodas-E') : 0;
     if (le && (this.provoqueT -= dt) <= 0) {   // Laine épaisse : attire les monstres proches à l'arrivée puis toutes les 8 s
@@ -174,7 +188,7 @@ export class Bete extends Entity {
     this.pa = Math.min(R.paMax, this.pa + R.regenPA * (1 + this.hate / 100) * dt);
     const dP = Math.hypot(p.x - this.x, p.y - this.y);
     // laisse (7A) : trop loin de l'Osamodas, elle revient ; vraiment trop loin (porte, Zaap…), elle apparaît à côté de lui
-    if (dP > R.laisse * CASE * 2.5) { this.x = p.x - Math.cos(p.facing) * CASE; this.y = p.y - Math.sin(p.facing) * CASE; this.cast = null; this.state = 'suit'; }
+    if (dP > R.laisse * CASE * 2.5 && !this.def.sadida?.fixe) { this.x = p.x - Math.cos(p.facing) * CASE; this.y = p.y - Math.sin(p.facing) * CASE; this.cast = null; this.state = 'suit'; }
     if (this.state === 'cast' && this.cast) { this.majCast(dt, world); this.applyKnock(dt); return; }
     if (this.base === 'sac_anime' && (this.provoqueT -= dt) <= 0) {   // Sac Animé : « intercepte les dommages des alliés » = attire les monstres proches
       this.provoqueT = 2;
@@ -198,7 +212,7 @@ export class Bete extends Entity {
       this.setAnim('idle');
     } else {
       // suit l'Osamodas à sa place dans la meute : en éventail derrière lui, à `suivi` cases (pas dans ses pieds, Mathis 2026-11-08)
-      const meute = world.betes.filter(q => !q.dead), i = Math.max(0, meute.indexOf(this)), n = meute.length;
+      const meute = world.betes.filter(q => !q.dead && !q.def.sadida?.arbre), i = Math.max(0, meute.indexOf(this)), n = meute.length;
       const a = p.facing + Math.PI + (n > 1 ? (i / (n - 1) - 0.5) * 1.8 : 0);
       const sx = p.x + Math.cos(a) * R.suivi * CASE, sy = p.y + Math.sin(a) * R.suivi * CASE;
       // une fois en route, elle va jusqu'à sa place (sinon elle s'arrête et repart sans cesse derrière un maître qui court)
@@ -208,6 +222,21 @@ export class Bete extends Entity {
     }
     this.ecarter(world);
     this.applyKnock(dt);
+  }
+
+  /** Balise de Survie : ne bouge pas, soigne les alliés en vue toutes les `periode` s (animation officielle AnimAttaque0). */
+  private majBalise(dt: number, world: World) {
+    const B = this.def.balise!;
+    this.soinAnimT = Math.max(0, this.soinAnimT - dt);
+    if ((this.pulseT -= dt) <= 0) {
+      this.pulseT = B.periode; this.soinAnimT = 1;
+      for (const q of world.players) if (!q.dead && Math.hypot(q.x - this.x, q.y - this.y) <= B.portee * CASE && world.clearShot(this, q))
+        soignerAllie(this.owner, q, q.maxHp * B.soin, world, { brut: true, de: this });
+      for (const b of world.betes) if (b !== this && !b.dead && Math.hypot(b.x - this.x, b.y - this.y) <= B.portee * CASE && world.clearShot(this, b))
+        soignerAllie(this.owner, b, b.maxHp * B.soin, world, { brut: true, de: this });
+    }
+    this.kx = this.ky = 0;
+    if (this.soinAnimT > 0) this.setAnim('soin', 1 - this.soinAnimT); else this.setAnim('idle');
   }
 
   /** Ne marche ni sur l'Osamodas ni sur les autres bêtes : on se pousse doucement hors de leur cercle. */
@@ -223,6 +252,7 @@ export class Bete extends Entity {
   }
 
   private marcher(x: number, y: number, dt: number, world: World, vit = 1.15) {
+    if (this.def.sadida?.fixe) { this.setAnim('idle'); return; }   // Groute : enraciné
     const dx = x - this.x, dy = y - this.y, d = Math.hypot(dx, dy);
     if (d < 1) { this.setAnim('idle'); return; }   // (à 4 px, elle s'arrêtait une image sur deux en suivant son maître : saccades)
     const st = Math.min(d, this.owner.speed * vit * dt);
@@ -239,6 +269,7 @@ export class Bete extends Entity {
    *  sinon le monstre en chasse le plus proche à moins de cibleAutour cases de lui. */
   private choisirCible(world: World): Monster | null {
     const R = REGLES_BETES, p = this.owner, prise = world.cibleMeute;
+    if (this.def.sadida) { const r = cibleRalliement(p, world); if (r) return r; }   // Sadida 6B : ralliement (touche X)
     if (prise != null) {
       const m = world.monsters.find(q => q.id === prise && !q.dead);
       if (m && Math.hypot(m.x - p.x, m.y - p.y) <= R.laisse * CASE) return m;
@@ -310,7 +341,10 @@ export class Bete extends Entity {
             if (o.saigneT <= 0) world.emit({ k: 'status', x: o.x, y: o.y - 34, text: 'Empoisonné', color: '#7fd35a' });
             o.saigne = jet * vc / 100 / 2; o.saigneT = 2;
           }
-          const n = world.coupDeBete(this, m, jet, el);
+          const SD = this.def.sadida;
+          const n = SD?.poison ? 0 : world.coupDeBete(this, m, jet, el);   // la Folle : poison continu (7A) au lieu d'un coup
+          if (SD?.poison) empoisonner(p, m, jet, el, world);
+          if (SD?.infecte) infecter(m, world, p.cls.sadida?.infection.t);
           if (e.vol && n > 0) this.soigner(n / 2, world);
         }
       } else if (e.k === 'soinPct' && allie) {   // Bisou Magique du Lapino : % des PV max de l'allié ciblé
@@ -326,6 +360,7 @@ export class Bete extends Entity {
         const m = cible as Monster, dx = m.x - this.x, dy = m.y - this.y, d = Math.hypot(dx, dy) || 1, s = e.k === 'repousse' ? 1 : -1;
         const len = s > 0 ? e.n * CASE : Math.min(e.n * CASE, Math.max(0, d - m.radius - this.radius - 4));
         if (!m.def.boss) { m.kx += s * dx / d * len * 7.13; m.ky += s * dy / d * len * 7.13; }
+        if (this.def.sadida?.infecte) infecter(m, world, p.cls.sadida?.infection.t);   // Rejet Sylvestre du Groute
       } else if (e.k === 'bouclier') {
         const q = allie ? cible as Player : p;   // Prévention du Lapino : sur l'allié ciblé
         q.shield = Math.max(q.shield, Math.round(q.maxHp * e.n / 1000)); q.shieldT = TOUR * 2;

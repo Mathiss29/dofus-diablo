@@ -1,4 +1,5 @@
 import { TEINTES } from '../sim/ecaflip';
+import { foretDuGroupe } from '../sim/sadida';
 import { STAT_NAMES, type Stat } from '../sim/items';
 import { nomAffixe } from '../sim/elites';
 import { CONSO } from '../sim/consommables';
@@ -189,6 +190,24 @@ export class Hud {
     this.rageLabel.setPosition(cx, y0 + 2 * c + gap + 1)
       .setText(gm ? `${gm.nom.replace('Suite Royale', 'Suite')} ${Math.ceil(gm.t)} s` : `Main (${Touches.nomAction('coffre')})`)
       .setColor(gm ? '#ffd86a' : pleine && Math.floor(this.world.time * 4) % 2 ? '#ffe9a0' : '#c9b48a');
+  }
+
+  /** Sadida (12A) : la forêt du groupe en 6 pastilles (Arbre terne, Feuillu vert vif, Poupée dorée), le nombre d'Infectés dessous. */
+  private foretSadida(g: Phaser.GameObjects.Graphics, cx: number, cy: number, slot: number) {
+    const w = this.world, p = w.player, max = p.cls.sadida!.arbres.max, r = 7, gap = 4, y0 = cy - slot / 2 + 4;
+    this.medImg.setVisible(false); this.medRect = null;
+    const foret = foretDuGroupe(w), inf = w.monsters.filter(m => !m.dead && m.infecteT > 0).length;
+    for (let i = 0; i < max; i++) {
+      const x = cx + (i % 2 ? 1 : -1) * (r + gap / 2), y = y0 + r + Math.floor(i / 2) * (2 * r + gap), b = foret[i];
+      g.fillStyle(0x15120e, 1); g.fillCircle(x, y, r + 1.5);
+      if (b) {
+        const pou = !!b.def.sadida?.poupee, feu = !!b.sadi?.feuillu, mien = b.owner === p;
+        g.fillStyle(pou ? 0xe8c35c : feu ? 0x7fe04a : 0x6f8a52, mien ? 1 : 0.55); g.fillCircle(x, y, r);
+        if (feu) { g.fillStyle(0xd8ffc0, 0.8); g.fillCircle(x - 2, y - 2, 2); }
+      }
+      g.lineStyle(1.5, b ? 0x2f4a1c : 0x4a4236, 1); g.strokeCircle(x, y, r + 1.5);
+    }
+    this.rageLabel.setPosition(cx, y0 + 3 * (2 * r + gap) + 1).setText(inf ? `Infectés ${inf}` : `${foret.length}/${max} Arbres`).setColor(inf ? '#9be36a' : '#a8c890');
   }
 
   private medaillon(g: Phaser.GameObjects.Graphics, cx: number, cy: number, dt: number, juice: boolean) {
@@ -1255,6 +1274,7 @@ export class Hud {
     for (const im of this.cartesImg) im.setVisible(false);
     if (cof) this.medaillon(g, pox + slot / 2 + 38, sy - 2, dt, juice);
     else if (pk) this.mainEcaflip(g, pox + slot / 2 + 34, sy, slot);
+    else if (cls.sadida) this.foretSadida(g, pox + slot / 2 + 30, sy, slot);
     else {
       g.fillStyle(C.track, 1); g.fillRoundedRect(rx - 9, ry, 18, rh, 5);
       g.fillStyle(rageCol, 1); g.fillRoundedRect(rx - 9, ry + rh * (1 - rr), 18, Math.max(4, rh * rr), 5);

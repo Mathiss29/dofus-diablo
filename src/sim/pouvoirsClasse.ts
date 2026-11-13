@@ -158,6 +158,8 @@ export const POUVOIRS_CLASSE: PouvoirClasseDef[] = [
   pc('ecaflip', 'N', 'Topkaj brûlant', 'topkaj', 'arme', [30, 50], 5, v => `Topkaj frappe en zone d'une case, et soigne l'allié le plus blessé à 3 cases de ${v} % des dégâts faits.`),
   pc('ecaflip', 'O', 'Chaton protecteur', 'griffe_invocatrice', 'bouclier', [30, 50], 5, v => `Le Chaton a ${v} % de PV en plus, et pioche 2 cartes pour toi quand il tombe.`),
   pc('ecaflip', 'P', 'Neuvième vie', 'perception', 'bouclier', [20, 30], 1, v => `Un coup mortel te laisse à 1 PV et te soigne de ${v} % (une fois par minute). Perception soigne 50 % de plus un allié sous 30 %.`),
+  // --- Sadida (maquette Sadida 17D, « 17D en légendaire », 13 nov. 2026) ----------------------------------------------
+  pc('sadida', 'A', 'Racines vengeresses', 'arbre', 'bottes', [60, 100], 5, v => `Quand un de tes Arbres meurt, ses racines Infectent les ennemis à 2 cases et leur font ${v} % des dégâts de Ronce.`),
 ];
 /** Châtiments du Sacrieur (Dofus Rétro, 14B) : caractéristique gagnée à chaque coup reçu. */
 export const CHATIMENTS: Record<string, 'force' | 'agilite' | 'chance' | 'intelligence' | 'vitalite'> =
@@ -171,7 +173,7 @@ export const estPouvoirClasse = (id: string) => !!PC_PAR_ID[id];
 export const BOSS_PREFERES: Record<string, string[]> = {
   royal: ['pc-iop-A', 'pc-cra-G', 'pc-osamodas-E', 'pc-sacrieur-E', 'pc-sacrieur-L', 'pc-iop-K', 'pc-cra-P', 'pc-osamodas-L', 'pc-forgelance-E', 'pc-forgelance-M', 'pc-eniripsa-E', 'pc-eniripsa-I', 'pc-ecaflip-A', 'pc-ecaflip-J'],
   kardorim: ['pc-iop-F', 'pc-cra-H', 'pc-osamodas-F', 'pc-sacrieur-D', 'pc-sacrieur-O', 'pc-iop-J', 'pc-cra-O', 'pc-osamodas-O', 'pc-forgelance-C', 'pc-forgelance-L', 'pc-eniripsa-P', 'pc-eniripsa-H', 'pc-ecaflip-P', 'pc-ecaflip-E'],
-  tournesol_affame: ['pc-iop-H', 'pc-cra-A', 'pc-osamodas-D', 'pc-sacrieur-A', 'pc-sacrieur-J', 'pc-iop-L', 'pc-cra-K', 'pc-osamodas-J', 'pc-forgelance-I', 'pc-forgelance-A', 'pc-eniripsa-C', 'pc-eniripsa-G', 'pc-ecaflip-N', 'pc-ecaflip-G'],
+  tournesol_affame: ['pc-sadida-A', 'pc-iop-H', 'pc-cra-A', 'pc-osamodas-D', 'pc-sacrieur-A', 'pc-sacrieur-J', 'pc-iop-L', 'pc-cra-K', 'pc-osamodas-J', 'pc-forgelance-I', 'pc-forgelance-A', 'pc-eniripsa-C', 'pc-eniripsa-G', 'pc-ecaflip-N', 'pc-ecaflip-G'],
   mob_l_eponge: ['pc-iop-E', 'pc-cra-F', 'pc-osamodas-B', 'pc-sacrieur-C', 'pc-sacrieur-P', 'pc-iop-M', 'pc-cra-M', 'pc-osamodas-K', 'pc-forgelance-K', 'pc-forgelance-H', 'pc-eniripsa-A', 'pc-eniripsa-O', 'pc-ecaflip-O', 'pc-ecaflip-C'],
   kankreblath: ['pc-iop-B', 'pc-cra-C', 'pc-osamodas-C', 'pc-sacrieur-B', 'pc-sacrieur-K', 'pc-iop-O', 'pc-cra-J', 'pc-osamodas-P', 'pc-forgelance-D', 'pc-forgelance-O', 'pc-eniripsa-M', 'pc-eniripsa-N', 'pc-ecaflip-M', 'pc-ecaflip-I'],
 };

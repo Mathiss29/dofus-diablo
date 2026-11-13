@@ -2101,7 +2101,8 @@
             "details": "La touche Entrée relance ta partie. Le dernier carnet du Journal remplace le diaporama.",
             "icone": "boss",
             "etiquettes": ["Accueil"]
-          }
+          },
+          {"titre": "Le Sadida en essai", "phrase": "Plante tes Arbres, Infecte les monstres et lâche tes Poupées : un sort sur un Infecté les touche tous.", "details": "Jouable dans la partie de test, jusqu'au niveau 60, avec la Folle, la Bloqueuse, la Sacrifiée et le Groute. X rallie tes Poupées sur l'ennemi sous la souris.", "icone": "sorts", "etiquettes": ["Partie de test", "Touche X"]}
         ],
         "Le monde": [],
         "Combat": [
@@ -2115,7 +2116,7 @@
           {
             "titre": "12 sorts Iop et Crâ (25-60)",
             "phrase": "Vitalité, Souffle, Épée de Iop, Tempête de Puissance, Œil de Taupe, Tirs Puissants et les autres arrivent.",
-            "details": "Seule la Balise de Survie du Crâ attend encore son dessin officiel. En partie de test jusqu'à la 0.6.",
+            "details": "Avec la Balise de Survie du Crâ, tous les sorts jusqu'au niveau 90 sont là. En partie de test jusqu'à la 0.6.",
             "icone": "sorts",
             "etiquettes": ["Partie de test", "Touche S"]
           },
@@ -2123,6 +2124,13 @@
             "titre": "Aéropique et Discipline pour l'Osamodas",
             "phrase": "Aéropique fonce sur la cible et la repousse, Discipline la ralentit et la tire vers toi.",
             "details": "Sur une de tes bêtes, Aéropique repousse tout ce qui la touche. En partie de test jusqu'à la 0.6.",
+            "icone": "sorts",
+            "etiquettes": ["Partie de test", "Touche S"]
+          },
+          {
+            "titre": "La Balise de Survie du Crâ",
+            "phrase": "Une balise posée 6 s soigne les alliés qui la voient ; tire dessus pour échanger de place.",
+            "details": "Elle soigne 7 % des PV à la pose puis 3 s après. En partie de test jusqu'à la 0.6.",
             "icone": "sorts",
             "etiquettes": ["Partie de test", "Touche S"]
           }
@@ -2140,6 +2148,7 @@
           "Partie de test : 285 objets du 61 au 90, tableaux de contrats des régions et quête du bateau pour Frigost.",
           "Partie de test : effets visuels officiels de 17 sorts 61-90 (Forgelance, Eniripsa, Enutrof, Écaflip).",
           "Partie de test : 56 monstres et 30 archimonstres de la 0.6, symboles des Douze sur autels et sanctuaires.",
+          "Le Sadida : squelette, 15 têtes, 44 icônes de sorts et 5 invocations officielles extraites de Dofus 3.",
           "Quête « L'éternelle moisson » : les âmes des 30 nouveaux archimonstres ont rejoint ses pages.",
           "Partie de test : 5 donjons de la 0.6 en arène (Blops, Draegnerys, Reine Nyée, Ancestral, Dragon Cochon)."
         ]

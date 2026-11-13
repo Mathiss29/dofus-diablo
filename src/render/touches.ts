@@ -14,7 +14,7 @@ export const ACTIONS: Action[] = [
   { id: 'potion', nom: 'Potion', groupe: 'Combat', def: 'E' },
   // « Métiers : » 4A : la boisson de résistance (5 s d'un élément) bue en dernier
   { id: 'boisson', nom: 'Boisson de résistance', groupe: 'Combat', def: 'V' },
-  { id: 'coffre', nom: 'Coffre (Enutrof) · Jouer la Main (Écaflip)', groupe: 'Combat', def: 'X' },
+  { id: 'coffre', nom: 'Coffre (Enutrof) · Jouer la Main (Écaflip) · Ralliement (Sadida)', groupe: 'Combat', def: 'X' },
   ...[1, 2, 3, 4].map(i => ({ id: `invoc${i}`, nom: `Invocation ${i} (Osamodas)`, groupe: 'Combat', def: 'AZRT'[i - 1] })),
   { id: 'inventaire', nom: 'Inventaire', groupe: 'Fenêtres', def: 'I' },
   { id: 'caracs', nom: 'Caractéristiques', groupe: 'Fenêtres', def: 'C' },
