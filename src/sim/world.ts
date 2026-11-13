@@ -161,7 +161,7 @@ export interface WorldOptions {
   /** Métiers de récolte (src/data/recoltes.json) : ressources et leurs emplacements par monde. */
   recoltes?: RecoltesData;
   /** Boutiques des PNJ (src/data/boutique.json) : articles et prix en Pépites. */
-  boutiques?: Record<string, { id: string; prix: number; /** vendu seulement en 0.3 */ v03?: boolean; /** en 0.4 (clés d'Amakna) */ v04?: boolean;
+  boutiques?: Record<string, { id: string; prix: number; /** vendu seulement en 0.3 */ v03?: boolean; /** en 0.4 (clés d'Amakna) */ v04?: boolean; /** en 0.6 (clés de ses donjons) */ v06?: boolean;
     /** payé dans cette monnaie au lieu des Pépites (« kamas » = p.kamas ; Tiwa Cawoteuw : Cawottes) */ monnaie?: string; /** apparence (collection) au lieu d'un objet */ apparat?: boolean;
     /** vendu seulement après une victoire dans ce donjon (« Wabbits : 9C ») */ apres?: string }[]>;
   /** Objets d'apparat officiels (src/data/apparat.json) ; plus aucun ne s'achète (« Apparats : »). */
@@ -382,6 +382,8 @@ export class World {
     }
     const dt = this.zone.open?.donjonsTest;   // 0.4 cachée : ses donjons seulement en partie de test (copie : les données restent intactes)
     if ((V04_PUBLIC || opts.test) && dt?.length) this.zone = { ...this.zone, open: { ...this.zone.open!, donjons: [...(this.zone.open!.donjons ?? []), ...dt] } };
+    const d6 = this.zone.open?.donjonsV06;   // 0.6 cachée : ses donjons seulement en partie de test
+    if ((V06_PUBLIC || opts.test) && d6?.length) this.zone = { ...this.zone, open: { ...this.zone.open!, donjons: [...(this.zone.open!.donjons ?? []), ...d6] } };
     const sz = this.zone.open?.subareas;   // 0.4 cachée : les sous-zones d'Amakna (monstres, butin, contrats) seulement en partie de test
     if (!V04_PUBLIC && !opts.test && sz && Object.values(sz).some(s => s.essai))
       this.zone = { ...this.zone, open: { ...this.zone.open!, subareas: Object.fromEntries(Object.entries(sz).filter(([, s]) => !s.essai)),
@@ -2917,7 +2919,7 @@ export class World {
   /** Achat dans une boutique (src/data/boutique.json), payé dans la monnaie de l'article : kamas pour l'utile (Magasin 5B), Cawottes chez Tiwa Cawoteuw, sinon Pépites.
    *  Un article « apparat » rejoint la collection d'apparences, une fois pour toutes. */
   acheter(boutique: string, id: string, n = 1): boolean {
-    const a = this.opts.boutiques?.[boutique]?.find(x => x.id === id && (!x.v03 || this.player.v03) && (!x.v04 || this.player.v04)), p = this.player;
+    const a = this.opts.boutiques?.[boutique]?.find(x => x.id === id && (!x.v03 || this.player.v03) && (!x.v04 || this.player.v04) && (!x.v06 || this.player.v06)), p = this.player;
     if (!a || (a.apres && !((this.quetes?.donjons[a.apres]?.v ?? 0) > 0))) return false;
     if (a.apparat) n = 1;
     return this.payer(a.prix * n, a.monnaie ?? PEPITE, () => {
@@ -2939,7 +2941,7 @@ export class World {
   }
   // --- Magasin du Bastion (maquette « Magasin : » 3A+3B 4C) ---------------------
   private ctxMagasin(): CtxMagasin {
-    return { boutiques: (this.opts.boutiques ?? {}) as CtxMagasin['boutiques'], v03: this.player.v03, v04: this.player.v04 };
+    return { boutiques: (this.opts.boutiques ?? {}) as CtxMagasin['boutiques'], v03: this.player.v03, v04: this.player.v04, v06: this.player.v06 };
   }
   /** Les achats du jour de ce joueur (remis à zéro à minuit). */
   achatsDuJour() { const p = this.player; return (p.magasin = achatsDuJour(p.magasin, this.opts.aujourdhui ?? '')); }

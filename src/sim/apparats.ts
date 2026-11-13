@@ -86,11 +86,11 @@ function jourMois(md: string) { const [m, j] = md.split('-').map(Number); return
 
 /** 4C : apparats à trouver dans une zone (compteur de la carte M) : ceux des boss de ses donjons et des boss du monde qui y apparaissent. */
 type DonjonVu = { salles: Record<string, string[][]>; bossVague?: string[] };
-export function apparatsDeZone(zone: { open?: { donjons?: DonjonVu[]; donjonsTest?: DonjonVu[]; subareas: Record<string, unknown> } } | undefined,
+export function apparatsDeZone(zone: { open?: { donjons?: DonjonVu[]; donjonsTest?: DonjonVu[]; donjonsV06?: DonjonVu[]; subareas: Record<string, unknown> } } | undefined,
   bossMonde: Record<string, { sousZone: number }>): string[] {
   if (!zone) return [];
   const l = new Set<string>();
-  for (const d of [...(zone.open?.donjons ?? []), ...(zone.open?.donjonsTest ?? [])]) for (const m of [...(d.bossVague ?? []), ...Object.values(d.salles).flat(2)]) apparatsDuBoss(m).forEach(id => l.add(id));
+  for (const d of [...(zone.open?.donjons ?? []), ...(zone.open?.donjonsTest ?? []), ...(zone.open?.donjonsV06 ?? [])]) for (const m of [...(d.bossVague ?? []), ...Object.values(d.salles).flat(2)]) apparatsDuBoss(m).forEach(id => l.add(id));
   for (const [k, b] of Object.entries(bossMonde)) if (zone.open?.subareas[String(b.sousZone)]) apparatsDuMonde(k).forEach(id => l.add(id));
   return [...l];
 }

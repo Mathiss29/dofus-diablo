@@ -2219,6 +2219,66 @@
      ],
      "v06": true,
      "region": "Frigost"
+    },
+    "493": {
+     "name": "Clos des Blops",
+     "level": 60,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ],
+     "v06": true,
+     "region": "Cania"
+    },
+    "920": {
+     "name": "Épreuve de Draegnerys",
+     "level": 70,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ],
+     "v06": true,
+     "region": "Amakna"
+    },
+    "844": {
+     "name": "Antre de la Reine Nyée",
+     "level": 90,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ],
+     "v06": true,
+     "region": "Forêt des Abraknydes"
+    },
+    "175": {
+     "name": "Domaine Ancestral",
+     "level": 90,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ],
+     "v06": true,
+     "region": "Forêt des Abraknydes"
+    },
+    "154": {
+     "name": "Labyrinthe du Dragon Cochon",
+     "level": 100,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ],
+     "v06": true,
+     "region": "Amakna"
     }
    },
    "checkpoints": [
@@ -3551,6 +3611,71 @@
       "madrestam",
       "frigost"
      ]
+    },
+    {
+     "a": [
+      "-14_-43",
+      287
+     ],
+     "b": [
+      "arene_blops",
+      0
+     ],
+     "nom": "Clos des Blops",
+     "cle": "9248",
+     "marque": true
+    },
+    {
+     "a": [
+      "-4_29",
+      288
+     ],
+     "b": [
+      "arene_draegnerys",
+      0
+     ],
+     "nom": "Épreuve de Draegnerys",
+     "cle": "8343",
+     "marque": true
+    },
+    {
+     "a": [
+      "-6_-15",
+      287
+     ],
+     "b": [
+      "arene_nyee",
+      0
+     ],
+     "nom": "Antre de la Reine Nyée",
+     "cle": "16179",
+     "marque": true
+    },
+    {
+     "a": [
+      "-9_-14",
+      285
+     ],
+     "b": [
+      "arene_ancestral",
+      0
+     ],
+     "nom": "Domaine Ancestral",
+     "cle": "7557",
+     "marque": true
+    },
+    {
+     "a": [
+      "5_32",
+      259
+     ],
+     "b": [
+      "arene_dragon_cochon",
+      0
+     ],
+     "nom": "Labyrinthe du Dragon Cochon",
+     "cle": "7511",
+     "marque": true
     }
    ],
    "donjons": [
@@ -14414,7 +14539,345 @@
       "epouvantail": 5922555
      }
     ]
-   }
+   },
+   "donjonsV06": [
+    {
+     "nom": "Clos des Blops",
+     "salles": {},
+     "arene": {
+      "tag": "arene_blops",
+      "arrivee": 13962836,
+      "entrees": [
+       13957280,
+       13957305,
+       13992404
+      ],
+      "boss": 13892612,
+      "sortie": 13903700,
+      "coffre": 13903702
+     },
+     "vagues": [
+      {
+       "m": [
+        "blop_coco",
+        "blop_indigo",
+        "blop_griotte",
+        "blop_reinette",
+        "gloutoblop",
+        "blopignon",
+        "tronkoblop",
+        "blop_coco",
+        "blop_indigo",
+        "blop_griotte"
+       ]
+      },
+      {
+       "m": [
+        "blop_reinette",
+        "gloutoblop",
+        "blopignon",
+        "tronkoblop",
+        "blop_coco",
+        "blop_indigo",
+        "blop_griotte",
+        "blop_reinette",
+        "gloutoblop",
+        "blopignon"
+       ]
+      },
+      {
+       "m": [
+        "tronkoblop",
+        "blop_coco",
+        "blop_indigo",
+        "blop_griotte",
+        "blop_reinette",
+        "gloutoblop",
+        "blopignon",
+        "tronkoblop",
+        "blop_coco",
+        "blop_indigo",
+        "blop_griotte",
+        "blop_reinette"
+       ]
+      }
+     ],
+     "bossVague": [
+      "blop_coco_royal",
+      "blop_indigo_royal",
+      "blop_reinette_royal",
+      "blop_griotte_royal"
+     ]
+    },
+    {
+     "nom": "Épreuve de Draegnerys",
+     "salles": {},
+     "arene": {
+      "tag": "arene_draegnerys",
+      "arrivee": 13962892,
+      "entrees": [
+       13957336,
+       13957361,
+       13992460
+      ],
+      "boss": 13892668,
+      "sortie": 13903756,
+      "coffre": 13903758
+     },
+     "vagues": [
+      {
+       "m": [
+        "dragoeuf_calcaire",
+        "dragoeuf_argile",
+        "dragoeuf_ardoise",
+        "dragoeuf_charbon",
+        "dragoeuf_albatre",
+        "dragoeuf_calcaire",
+        "dragoeuf_argile",
+        "dragoeuf_ardoise",
+        "dragoeuf_charbon",
+        "dragoeuf_albatre"
+       ]
+      },
+      {
+       "m": [
+        "dragoeuf_charbon",
+        "dragoeuf_albatre",
+        "dragoeuf_calcaire",
+        "dragoeuf_argile",
+        "dragoeuf_ardoise",
+        "dragoeuf_charbon",
+        "dragoeuf_albatre",
+        "dragoeuf_calcaire",
+        "dragoeuf_argile",
+        "dragoeuf_ardoise"
+       ]
+      },
+      {
+       "m": [
+        "dragoeuf_argile",
+        "dragoeuf_ardoise",
+        "dragoeuf_charbon",
+        "dragoeuf_albatre",
+        "dragoeuf_calcaire",
+        "dragoeuf_argile",
+        "dragoeuf_ardoise",
+        "dragoeuf_charbon",
+        "dragoeuf_albatre",
+        "dragoeuf_calcaire",
+        "dragoeuf_argile",
+        "dragoeuf_ardoise"
+       ]
+      }
+     ],
+     "bossVague": [
+      "draegnerys",
+      "dragoeuf_albatre",
+      "dragoeuf_albatre"
+     ]
+    },
+    {
+     "nom": "Antre de la Reine Nyée",
+     "salles": {},
+     "arene": {
+      "tag": "arene_nyee",
+      "arrivee": 13962948,
+      "entrees": [
+       13957392,
+       13957417,
+       13992516
+      ],
+      "boss": 13892724,
+      "sortie": 13903812,
+      "coffre": 13903814
+     },
+     "vagues": [
+      {
+       "m": [
+        "arapex",
+        "dardalaine",
+        "nefileuse",
+        "saltik",
+        "gargantul",
+        "arapex",
+        "dardalaine",
+        "nefileuse",
+        "saltik",
+        "gargantul"
+       ]
+      },
+      {
+       "m": [
+        "saltik",
+        "gargantul",
+        "arapex",
+        "dardalaine",
+        "nefileuse",
+        "saltik",
+        "gargantul",
+        "arapex",
+        "dardalaine",
+        "nefileuse"
+       ]
+      },
+      {
+       "m": [
+        "dardalaine",
+        "nefileuse",
+        "saltik",
+        "gargantul",
+        "arapex",
+        "dardalaine",
+        "nefileuse",
+        "saltik",
+        "gargantul",
+        "arapex",
+        "dardalaine",
+        "nefileuse"
+       ]
+      }
+     ],
+     "bossVague": [
+      "reine_nyee",
+      "gargantul",
+      "gargantul"
+     ]
+    },
+    {
+     "nom": "Domaine Ancestral",
+     "salles": {},
+     "arene": {
+      "tag": "arene_ancestral",
+      "arrivee": 13963004,
+      "entrees": [
+       13957448,
+       13957473,
+       13992572
+      ],
+      "boss": 13892780,
+      "sortie": 13903868,
+      "coffre": 13903870
+     },
+     "vagues": [
+      {
+       "m": [
+        "abraknyde_sombre",
+        "abraknyde_venerable",
+        "abrakne_sombre",
+        "araknotron",
+        "abraknyde_sombre",
+        "abraknyde_venerable",
+        "abrakne_sombre",
+        "araknotron",
+        "abraknyde_sombre",
+        "abraknyde_venerable"
+       ]
+      },
+      {
+       "m": [
+        "araknotron",
+        "abraknyde_sombre",
+        "abraknyde_venerable",
+        "abrakne_sombre",
+        "araknotron",
+        "abraknyde_sombre",
+        "abraknyde_venerable",
+        "abrakne_sombre",
+        "araknotron",
+        "abraknyde_sombre"
+       ]
+      },
+      {
+       "m": [
+        "abrakne_sombre",
+        "araknotron",
+        "abraknyde_sombre",
+        "abraknyde_venerable",
+        "abrakne_sombre",
+        "araknotron",
+        "abraknyde_sombre",
+        "abraknyde_venerable",
+        "abrakne_sombre",
+        "araknotron",
+        "abraknyde_sombre",
+        "abraknyde_venerable"
+       ]
+      }
+     ],
+     "bossVague": [
+      "abraknyde_ancestral",
+      "abraknyde_venerable",
+      "abraknyde_venerable"
+     ]
+    },
+    {
+     "nom": "Labyrinthe du Dragon Cochon",
+     "salles": {},
+     "arene": {
+      "tag": "arene_dragon_cochon",
+      "arrivee": 13981540,
+      "entrees": [
+       13907628,
+       13907612,
+       13966764
+      ],
+      "boss": 13937188,
+      "sortie": 13929796,
+      "coffre": 13944580
+     },
+     "vagues": [
+      {
+       "m": [
+        "cochon_de_farle",
+        "porsalu",
+        "don_duss_ang",
+        "don_dorgan",
+        "cochon_de_farle",
+        "porsalu",
+        "don_duss_ang",
+        "don_dorgan",
+        "cochon_de_farle",
+        "porsalu"
+       ]
+      },
+      {
+       "m": [
+        "don_dorgan",
+        "cochon_de_farle",
+        "porsalu",
+        "don_duss_ang",
+        "don_dorgan",
+        "cochon_de_farle",
+        "porsalu",
+        "don_duss_ang",
+        "don_dorgan",
+        "cochon_de_farle"
+       ]
+      },
+      {
+       "m": [
+        "don_duss_ang",
+        "don_dorgan",
+        "cochon_de_farle",
+        "porsalu",
+        "don_duss_ang",
+        "don_dorgan",
+        "cochon_de_farle",
+        "porsalu",
+        "don_duss_ang",
+        "don_dorgan",
+        "cochon_de_farle",
+        "porsalu"
+       ]
+      }
+     ],
+     "bossVague": [
+      "dragon_cochon",
+      "don_duss_ang",
+      "don_dorgan"
+     ]
+    }
+   ]
   }
  },
  "havresac": {

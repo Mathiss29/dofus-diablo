@@ -121,6 +121,36 @@
    "prix": 3000,
    "v04": true,
    "monnaie": "kamas"
+  },
+  {
+   "id": "9248",
+   "prix": 4500,
+   "v06": true,
+   "monnaie": "kamas"
+  },
+  {
+   "id": "8343",
+   "prix": 5500,
+   "v06": true,
+   "monnaie": "kamas"
+  },
+  {
+   "id": "16179",
+   "prix": 7000,
+   "v06": true,
+   "monnaie": "kamas"
+  },
+  {
+   "id": "7557",
+   "prix": 7000,
+   "v06": true,
+   "monnaie": "kamas"
+  },
+  {
+   "id": "7511",
+   "prix": 8000,
+   "v06": true,
+   "monnaie": "kamas"
   }
  ],
  "tiwa_cawoteuw": [

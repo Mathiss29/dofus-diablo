@@ -4313,7 +4313,7 @@
    "rendre": "assistante_otomai",
    "nom": "L'éternelle moisson (1/8) : La liste d'Otomaï",
    "niveau": 10,
-   "texte": "Otomaï veut le Dofus Ocre, et pour ça il lui faut les âmes de tous les archimonstres du monde. Capture-les avec une Petite pierre d'âme, puis montre-les à son Assistante, au Marché couvert. Cette page du registre : 19 archimonstres et 1 boss de donjon.",
+   "texte": "Otomaï veut le Dofus Ocre, et pour ça il lui faut les âmes de tous les archimonstres du monde. Capture-les avec une Petite pierre d'âme, puis montre-les à son Assistante, au Marché couvert. Cette page du registre : 20 archimonstres et 1 boss de donjon.",
    "etapes": [
     {
      "nom": "Page 1 du registre",
@@ -4321,7 +4321,7 @@
      "objectifs": [
       {
        "t": "ames",
-       "texte": "Capturer et montrer 20 âmes (19 archimonstres et 1 boss de donjon)",
+       "texte": "Capturer et montrer 21 âmes (20 archimonstres et 1 boss de donjon)",
        "monstres": [
         "archi_arakne_malade",
         "archi_piou_bleu",
@@ -4342,15 +4342,16 @@
         "archi_pichon_blanc",
         "archi_pichon_bleu",
         "archi_pichon_orange",
-        "archi_pichon_vert"
+        "archi_pichon_vert",
+        "archi_arakne_des_egouts"
        ]
       }
      ]
     }
    ],
    "recompense": {
-    "xp": 2250,
-    "kamas": 450,
+    "xp": 3000,
+    "kamas": 600,
     "pepites": 25,
     "objets": [
      [
@@ -4372,7 +4373,7 @@
    "requiert": [
     "moisson_1"
    ],
-   "texte": "Une nouvelle page du registre de l'Assistante d'Otomaï : 17 archimonstres et 2 boss de donjon, de niveau 20 à 30. Le Bestiaire (onglet Archimonstres) et la carte du monde montrent où les trouver.",
+   "texte": "Une nouvelle page du registre de l'Assistante d'Otomaï : 18 archimonstres et 2 boss de donjon, de niveau 20 à 30. Le Bestiaire (onglet Archimonstres) et la carte du monde montrent où les trouver.",
    "etapes": [
     {
      "nom": "Page 2 du registre",
@@ -4380,9 +4381,8 @@
      "objectifs": [
       {
        "t": "ames",
-       "texte": "Capturer et montrer 19 âmes (17 archimonstres et 2 boss de donjon)",
+       "texte": "Capturer et montrer 20 âmes (18 archimonstres et 2 boss de donjon)",
        "monstres": [
-        "archi_arakne_des_egouts",
         "archi_boo",
         "archi_boufton",
         "archi_boufton_noir",
@@ -4400,7 +4400,9 @@
         "archi_champa_bleu",
         "archi_champa_marron",
         "archi_champa_rouge",
-        "archi_champa_vert"
+        "archi_champa_vert",
+        "archi_gargrouille",
+        "archi_gob_trotteur"
        ]
       }
      ]
@@ -4431,7 +4433,7 @@
    "requiert": [
     "moisson_2"
    ],
-   "texte": "Une nouvelle page du registre de l'Assistante d'Otomaï : 19 archimonstres et 1 boss de donjon, de niveau 30 à 40. Le Bestiaire (onglet Archimonstres) et la carte du monde montrent où les trouver.",
+   "texte": "Une nouvelle page du registre de l'Assistante d'Otomaï : 20 archimonstres et 1 boss de donjon, de niveau 30 à 40. Le Bestiaire (onglet Archimonstres) et la carte du monde montrent où les trouver.",
    "etapes": [
     {
      "nom": "Page 3 du registre",
@@ -4439,10 +4441,8 @@
      "objectifs": [
       {
        "t": "ames",
-       "texte": "Capturer et montrer 20 âmes (19 archimonstres et 1 boss de donjon)",
+       "texte": "Capturer et montrer 21 âmes (20 archimonstres et 1 boss de donjon)",
        "monstres": [
-        "archi_gargrouille",
-        "archi_gob_trotteur",
         "archi_gobet",
         "archi_kwoan",
         "archi_la_ouassingue",
@@ -4460,7 +4460,10 @@
         "archi_bandit_du_clan_des_roublards",
         "archi_berger_porkass",
         "archi_black_tiwabbit",
-        "archi_black_wabbit"
+        "archi_black_wabbit",
+        "archi_boulanger_sombre",
+        "archi_bwork",
+        "archi_bwork_archer"
        ]
       }
      ]
@@ -4490,7 +4493,7 @@
    "requiert": [
     "moisson_3"
    ],
-   "texte": "Une nouvelle page du registre de l'Assistante d'Otomaï : 19 archimonstres, de niveau 40 à 40. Le Bestiaire (onglet Archimonstres) et la carte du monde montrent où les trouver.",
+   "texte": "Une nouvelle page du registre de l'Assistante d'Otomaï : 20 archimonstres, de niveau 40 à 40. Le Bestiaire (onglet Archimonstres) et la carte du monde montrent où les trouver.",
    "etapes": [
     {
      "nom": "Page 4 du registre",
@@ -4498,11 +4501,8 @@
      "objectifs": [
       {
        "t": "ames",
-       "texte": "Capturer et montrer 19 âmes (19 archimonstres)",
+       "texte": "Capturer et montrer 20 âmes (20 archimonstres)",
        "monstres": [
-        "archi_boulanger_sombre",
-        "archi_bwork",
-        "archi_bwork_archer",
         "archi_bwork_mage",
         "archi_cavalier_porkass",
         "archi_cochon_de_lait",
@@ -4518,7 +4518,11 @@
         "archi_let_emoliug",
         "archi_mineur_sombre",
         "archi_nebgib",
-        "archi_nipul"
+        "archi_nipul",
+        "archi_nodkoko",
+        "archi_osurc",
+        "archi_sanglier_des_plaines",
+        "archi_susej"
        ]
       }
      ]
@@ -4549,7 +4553,7 @@
    "requiert": [
     "moisson_4"
    ],
-   "texte": "Une nouvelle page du registre de l'Assistante d'Otomaï : 16 archimonstres et 4 boss de donjon, de niveau 40 à 50. Le Bestiaire (onglet Archimonstres) et la carte du monde montrent où les trouver.",
+   "texte": "Une nouvelle page du registre de l'Assistante d'Otomaï : 17 archimonstres et 4 boss de donjon, de niveau 40 à 50. Le Bestiaire (onglet Archimonstres) et la carte du monde montrent où les trouver.",
    "etapes": [
     {
      "nom": "Page 5 du registre",
@@ -4557,12 +4561,8 @@
      "objectifs": [
       {
        "t": "ames",
-       "texte": "Capturer et montrer 20 âmes (16 archimonstres et 4 boss de donjon)",
+       "texte": "Capturer et montrer 21 âmes (17 archimonstres et 4 boss de donjon)",
        "monstres": [
-        "archi_nodkoko",
-        "archi_osurc",
-        "archi_sanglier_des_plaines",
-        "archi_susej",
         "archi_tikoko",
         "archi_tiwabbit",
         "archi_tiwabbit_kiafin",
@@ -4578,7 +4578,12 @@
         "archi_bandit_manchot",
         "archi_craqueboule",
         "archi_craqueleur",
-        "archi_craquelourd"
+        "archi_craquelourd",
+        "archi_gelee_bleuet",
+        "archi_gelee_fraise",
+        "archi_gelee_menthe",
+        "archi_grand_pa_wabbit",
+        "archi_kanniboul_ark"
        ]
       }
      ]
@@ -4608,7 +4613,7 @@
    "requiert": [
     "moisson_5"
    ],
-   "texte": "Une nouvelle page du registre de l'Assistante d'Otomaï : 15 archimonstres et 5 boss de donjon, de niveau 50 à 60. Le Bestiaire (onglet Archimonstres) et la carte du monde montrent où les trouver.",
+   "texte": "Une nouvelle page du registre de l'Assistante d'Otomaï : 16 archimonstres et 5 boss de donjon, de niveau 50 à 60. Le Bestiaire (onglet Archimonstres) et la carte du monde montrent où les trouver.",
    "etapes": [
     {
      "nom": "Page 6 du registre",
@@ -4616,13 +4621,8 @@
      "objectifs": [
       {
        "t": "ames",
-       "texte": "Capturer et montrer 20 âmes (15 archimonstres et 5 boss de donjon)",
+       "texte": "Capturer et montrer 21 âmes (16 archimonstres et 5 boss de donjon)",
        "monstres": [
-        "archi_gelee_bleuet",
-        "archi_gelee_fraise",
-        "archi_gelee_menthe",
-        "archi_grand_pa_wabbit",
-        "archi_kanniboul_ark",
         "archi_kanniboul_eth",
         "archi_kanniboul_jav",
         "archi_kanniboul_sarbak",
@@ -4637,7 +4637,13 @@
         "archi_chef_crocodaille",
         "archi_craqueleur_des_plaines",
         "archi_crocodaille",
-        "archi_dragodinde_amande_sauvage"
+        "archi_dragodinde_amande_sauvage",
+        "archi_dragodinde_rousse_sauvage",
+        "archi_dragoeuf_ardoise",
+        "archi_dragoeuf_argile",
+        "archi_dragoeuf_calcaire",
+        "archi_dragoeuf_charbon",
+        "archi_foufayteur"
        ]
       }
      ]
@@ -4667,7 +4673,7 @@
    "requiert": [
     "moisson_6"
    ],
-   "texte": "Une nouvelle page du registre de l'Assistante d'Otomaï : 16 archimonstres et 3 boss de donjon, de niveau 60 à 80. Le Bestiaire (onglet Archimonstres) et la carte du monde montrent où les trouver.",
+   "texte": "Une nouvelle page du registre de l'Assistante d'Otomaï : 12 archimonstres et 8 boss de donjon, de niveau 60 à 80. Le Bestiaire (onglet Archimonstres) et la carte du monde montrent où les trouver.",
    "etapes": [
     {
      "nom": "Page 7 du registre",
@@ -4675,18 +4681,16 @@
      "objectifs": [
       {
        "t": "ames",
-       "texte": "Capturer et montrer 19 âmes (16 archimonstres et 3 boss de donjon)",
+       "texte": "Capturer et montrer 20 âmes (12 archimonstres et 8 boss de donjon)",
        "monstres": [
-        "archi_dragodinde_rousse_sauvage",
-        "archi_dragoeuf_ardoise",
-        "archi_dragoeuf_argile",
-        "archi_dragoeuf_calcaire",
-        "archi_dragoeuf_charbon",
-        "archi_foufayteur",
         "archi_kanigrou",
         "archi_maitre_bolet",
         "archi_serpentin",
         "archi_vetauran",
+        "blop_coco_royal",
+        "blop_griotte_royal",
+        "blop_indigo_royal",
+        "blop_reinette_royal",
         "kanniboul_ebil",
         "wa_wabbit",
         "archi_dok_alako",
@@ -4694,8 +4698,11 @@
         "archi_koalak_immature",
         "archi_warko_marron",
         "craqueleur_legendaire",
+        "draegnerys",
         "archi_abrakne_sombre",
-        "archi_abraknyde_sombre"
+        "archi_abraknyde_sombre",
+        "archi_abraknyde_venerable",
+        "archi_chafer_archer"
        ]
       }
      ]
@@ -4725,7 +4732,7 @@
    "requiert": [
     "moisson_7"
    ],
-   "texte": "Une nouvelle page du registre de l'Assistante d'Otomaï : 19 archimonstres et 1 boss de donjon, de niveau 80 à 90. Le Bestiaire (onglet Archimonstres) et la carte du monde montrent où les trouver.",
+   "texte": "Une nouvelle page du registre de l'Assistante d'Otomaï : 17 archimonstres et 4 boss de donjon, de niveau 80 à 100. Le Bestiaire (onglet Archimonstres) et la carte du monde montrent où les trouver.",
    "etapes": [
     {
      "nom": "Page 8 du registre",
@@ -4733,10 +4740,8 @@
      "objectifs": [
       {
        "t": "ames",
-       "texte": "Capturer et montrer 20 âmes (19 archimonstres et 1 boss de donjon)",
+       "texte": "Capturer et montrer 21 âmes (17 archimonstres et 4 boss de donjon)",
        "monstres": [
-        "archi_abraknyde_venerable",
-        "archi_chafer_archer",
         "archi_chafer_d_elite",
         "archi_chafer_lancier",
         "archi_drakoalak",
@@ -4754,15 +4759,18 @@
         "archi_dragoss_argile",
         "archi_dragoss_calcaire",
         "archi_dragoss_charbon",
-        "archi_porsalu"
+        "archi_porsalu",
+        "abraknyde_ancestral",
+        "reine_nyee",
+        "dragon_cochon"
        ]
       }
      ]
     }
    ],
    "recompense": {
-    "xp": 13500,
-    "kamas": 2700,
+    "xp": 15000,
+    "kamas": 3000,
     "pepites": 60,
     "objets": [
      [

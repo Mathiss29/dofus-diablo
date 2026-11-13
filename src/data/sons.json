@@ -3084,7 +3084,15 @@
   "craqueleur_legendaire": "boss_souterrain",
   "wa_wobot": "boss_magique",
   "wa_wabbit": "boss_feerique",
-  "kanniboul_ebil": "boss_bestial"
+  "kanniboul_ebil": "boss_bestial",
+  "blop_coco_royal": "boss_feerique",
+  "blop_indigo_royal": "boss_feerique",
+  "blop_reinette_royal": "boss_feerique",
+  "blop_griotte_royal": "boss_feerique",
+  "draegnerys": "boss_magique",
+  "reine_nyee": "boss_lugubre",
+  "abraknyde_ancestral": "boss_lugubre",
+  "dragon_cochon": "boss_bestial"
  },
  "donjon": {
   "fermeture": "ambiance/AMB_MeS_Grille_Fermeture.mp3",
