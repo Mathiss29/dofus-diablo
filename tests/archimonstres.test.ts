@@ -63,7 +63,7 @@ describe('archimonstres d\'Astrub (version 0.3 : 15B)', () => {
 
   it('« Archis : » 6A : une âme officielle par archimonstre (« Âme capturée : <nom> »), jamais mangée par un familier', () => {
     const l = Object.entries(M).filter(([, d]) => d.archiDe);
-    expect(l.length).toBe(110);
+    expect(l.length).toBe(140);
     for (const [k, d] of l) {
       const r = ITEMS.resources[d.ame!];
       expect(r, k).toBeDefined();

@@ -813,7 +813,10 @@
    "phrase": "Les dragodindes sauvages ne se laissent pas monter, et les Crocodailles ne se laissent pas approcher. Ça fait du travail.",
    "contrats": [
     235,
-    233
+    233,
+    234,
+    253,
+    231
    ],
    "discussion": [
     {
@@ -833,7 +836,8 @@
    "phrase": "Les Craqueleurs bloquent les routes de Cania. Les caravanes attendent, et moi aussi.",
    "contrats": [
     70,
-    525
+    525,
+    521
    ],
    "discussion": [
     {
@@ -851,6 +855,46 @@
    "v06": true,
    "titre": "Bateau pour Frigost",
    "phrase": "Frigost ? Le bateau part quand la coque tiendra. Et elle tiendra quand quelqu'un m'aura aidé."
+  },
+  "tableau_porcos": {
+   "nom": "Garde des Porcos",
+   "sprite": "garde_amakna",
+   "dofusId": 2849,
+   "zone": "astrub",
+   "carte": "-2_31",
+   "v06": true,
+   "titre": "Milice du sud d'Amakna",
+   "phrase": "Les Porcos labourent tout le sud, et les Dragoss gardent leurs œufs comme des trésors. Il y a de quoi faire.",
+   "contrats": [
+    11,
+    315
+   ],
+   "discussion": [
+    {
+     "reponse": "Comment marchent les contrats ?",
+     "texte": "Trois contrats par jour, un gros par semaine. Porcos ou Dragoss, c'est toi qui vois : je paie pareil."
+    }
+   ]
+  },
+  "tableau_frigost": {
+   "nom": "Milicien de la Bourgade",
+   "sprite": "garde_frigost",
+   "dofusId": 4175,
+   "zone": "astrub",
+   "carte": "-78_-41",
+   "v06": true,
+   "titre": "Milice de Frigost",
+   "phrase": "Les Rats Bougris ont pris le port, et le froid ne les gêne pas. Moi, si.",
+   "contrats": [
+    601,
+    600
+   ],
+   "discussion": [
+    {
+     "reponse": "Comment marchent les contrats ?",
+     "texte": "Ici aussi, trois contrats par jour et un gros chaque semaine. Rats, Crabes, Gélikans : la Bourgade a besoin de bras chauds."
+    }
+   ]
   }
  },
  "quetes": {
@@ -11782,6 +11826,48 @@
     [
      "Péage sauvage",
      "Les Routes Rocailleuses ont de nouveaux maîtres. Ils ne paieront pas, eux."
+    ]
+   ],
+   "601": [
+    [
+     "Rats sur les quais",
+     "Les Rats Bougris pillent les réserves de la Bourgade. Chasse-les avant l'hiver, enfin, le prochain."
+    ],
+    [
+     "Le froid et les crocs",
+     "Des Chachachovages rôdent entre les maisons gelées. Rends les rues sûres."
+    ],
+    [
+     "Bec gelé",
+     "Les Gélikans volent le poisson des pêcheurs. Récupère le dîner de la Bourgade."
+    ]
+   ],
+   "11": [
+    [
+     "Groin de colère",
+     "Les Porcos retournent les champs du sud. Les paysans voudraient récolter autre chose que de la boue."
+    ],
+    [
+     "Cochonnerie",
+     "Les Cochons de Farle se croient chez eux. Rappelle-leur que non."
+    ],
+    [
+     "Le roi de la porcherie",
+     "Un Porsalu effraie les voyageurs. Va lui expliquer la politesse."
+    ]
+   ],
+   "315": [
+    [
+     "Œufs gardés",
+     "Les Dragoss défendent le Village des Dragoeufs comme des fous. Fais-toi respecter."
+    ],
+    [
+     "Coquille dure",
+     "Les Dragoss d'Ardoise ont la peau épaisse. Frappe plus fort."
+    ],
+    [
+     "Village en flammes",
+     "Les Dragoss Charbon mettent le feu partout. Éteins-les."
     ]
    ]
   }
