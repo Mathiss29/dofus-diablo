@@ -179,6 +179,8 @@ export interface Item {
   signe?: string;
   /** Forgemagie v2 : runes posées (1D), relances d'une ligne chez Malek (7B, le prix double), potion d'élément de l'arme (6A). */
   fm?: number; relances?: number; potion?: string;
+  /** « Métiers : » 2A : palier de chef-d'œuvre (1 à 4, +5 % sur tous les jets chacun) ; 2C : châsse percée et pierre sertie. */
+  oeuvre?: number; perce?: boolean; pierre?: string;
 }
 
 /** Jet maximum d'une ligne ajoutée par la rareté (aussi le max de forgemagie de ces lignes). */

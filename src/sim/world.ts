@@ -15,7 +15,7 @@ import { ajouterPieces, CLE_COFFRE, enSurcharge, ouvrirCoffre, piecesMonstre, pi
 import { briser, chanceRune, coutKamas, coutRelance, orbeConvient, potionConvient, POTIONS, regenerer, relancerLigne, REGLES_V2, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
 import { V03_PUBLIC, V04_PUBLIC, V06_PUBLIC, niveauObjetsMax, slotAPouvoirConnu } from './pouvoirs';
 import { fxImpression, imprimable, nouveauPourCodex, prixImpression } from './codex';
-import { legendaryPower, FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, kamasDefaire, noteObjet, rollItem, STAT_NAMES, type EquipSlot, type Item, type ItemsData, type Rarity, type RecipeDef, type Stat } from './items';
+import { legendaryPower, FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, kamasDefaire, noteObjet, rollItem, STAT_NAMES, type EquipSlot, type Item, type ItemDef, type ItemsData, type Rarity, type RecipeDef, type Stat } from './items';
 import { Player } from './player';
 import { apparatsDuMonde, rareteApparat, tirerApparat } from './apparats';
 import { Bete, BETES, REGLES_BETES, type EffetBete, type SortBete } from './bete';
@@ -49,6 +49,7 @@ import { FABRICATION, METIERS_FAB, chanceRare, ingredientsRares, type Poste } fr
 import { PLACEMENT, analyserCarte, groupesAuto, placementPose, placementValide, proposerPlacement, type AnalyseCarte, type PlacementCarte } from './placement';
 import { PC_PAR_ID } from './pouvoirsClasse';
 import { ARTISANS, POUCE } from './artisans';
+import { CHASSE, OEUVRE, PIERRES, coutOeuvre, coutPerce, metiersOeuvre, type Cout } from './oeuvre';
 import { BOISSONS, CONSO, ELIXIRS, PARCHEMINS, RARES_RECOLTE, REPAS, RES_BOISSON, sorteConso, texteBonus } from './consommables';
 import { RECOLTE, porteeRecolte, quantite, xpRecolte, type Recolte, type RecoltesData } from './recolte';
 
@@ -195,7 +196,7 @@ export interface FamilierEtat { x: number; y: number; vx: number; vy: number; ci
  *  (et plus tard sur un serveur pour la coop). L'affichage lit l'état et vide `events`. */
 /** Événements qui ne parlent qu'au joueur qui agit : fenêtres, butin, portes et zones, quêtes, métiers (multi, étape 4). */
 export const EVENEMENTS_PERSONNELS = new Set<SimEvent['k']>(['levelUp', 'newSpell', 'noResource', 'rageFull', 'enterArea', 'enterLieu', 'respawn',
-  'loot', 'lootResource', 'sacQuete', 'queteInfo', 'metierLevel', 'craft', 'atelier', 'fabricationDebut', 'fabricationStop', 'eat', 'consommer', 'forge',
+  'loot', 'lootResource', 'sacQuete', 'queteInfo', 'metierLevel', 'craft', 'atelier', 'fabricationDebut', 'fabricationStop', 'eat', 'consommer', 'travail', 'forge',
   'brisage', 'codex', 'codexOuvert', 'coffreOuvert', 'capture', 'lieuDecouvert', 'impression', 'apparence', 'fusion', 'commande', 'signature', 'achat', 'familierNiveau',
   'familierRepas', 'rappel', 'cleManquante', 'recolteDebut', 'recolteFin', 'recolteStop', 'recolteNiveau', 'service', 'almanax', 'dofusPassif',
   'dofusGagne', 'lootKamas', 'bagFull', 'checkpoint', 'portalStart', 'portal', 'changeZone', 'incantation', 'incantationStop', 'arche', 'zaapDecouvert',
@@ -2427,6 +2428,11 @@ export class World {
         p.resources[rare] = (p.resources[rare] ?? 0) + 1;
         this.emit({ k: 'lootResource', id: rare, n: 1 });
       }
+      if (def.metier === 'mineur' && this.rng.next() < (r.dore ? CHASSE.pierreDoree : CHASSE.pierreRecolte)) {   // 2C : une pierre précieuse
+        const g = this.rng.pick(Object.keys(PIERRES));
+        p.resources[g] = (p.resources[g] ?? 0) + 1;
+        this.emit({ k: 'lootResource', id: g, n: 1 });
+      }
       if (p.monde.recolteTenue && def.metier) this.recolteSuivante(r, def.metier);   // 6D : clic maintenu
       r.repousse = RECOLTE.repousse; r.dore = false;
       return;
@@ -3134,7 +3140,7 @@ export class World {
       p.stopMove(); f.t += dt;
       if (f.t < FABRICATION.duree) return;
       this.enFabrication = null;
-      this.craft(f.recette, f.n, f.rare);
+      this.craft(f.recette, f.n, f.rare, f.jet);
       return;
     }
     if (this.versPoste == null) return;
@@ -3149,19 +3155,20 @@ export class World {
     this.emit({ k: 'atelier', poste: po.id, metier: po.metiers[0] });
   }
   /** Lance la fabrication de n fois la recette i (fenêtre Artisanat) : une barre d'une seconde, puis tout est fait d'un coup. */
-  lancerFabrication(i: number, n = 1, rare: string | null = null): boolean {
+  lancerFabrication(i: number, n = 1, rare: string | null = null, jet: string | null = null): boolean {
     const r = this.opts.items?.recipes?.[i], p = this.player;
     if (!r || this.enFabrication || p.dead || this.atelierIci(r.metier) === null) return false;
     n = Math.min(Math.max(1, Math.floor(n)), this.craftMax(i, rare));
     if (n <= 0) return false;
     p.stopMove(); this.versPoste = null;
-    this.enFabrication = { recette: i, n, t: 0, hp: p.hp, rare };
+    this.enFabrication = { recette: i, n, t: 0, hp: p.hp, rare, jet };
     this.emit({ k: 'fabricationDebut', recette: i, n, duree: FABRICATION.duree });
     return true;
   }
   annulerFabrication() { if (this.enFabrication) { this.enFabrication = null; this.emit({ k: 'fabricationStop' }); } }
   /** Fait n fois une recette officielle si on a les ingrédients, le niveau de métier et qu'on est à son atelier. Rend le nombre fait. */
-  craft(i: number, n = 1, rare: string | null = null): number {
+  /** jet (« Métiers : » 3B) : une ligne de l'objet qui sort à son maximum. */
+  craft(i: number, n = 1, rare: string | null = null, jet: string | null = null): number {
     const r = this.opts.items?.recipes?.[i], p = this.player, def = this.opts.items?.equipment[r?.result ?? ''];
     if (!r || this.atelierIci(r.metier) === null) return 0;
     if (!def) rare = null;
@@ -3176,6 +3183,8 @@ export class World {
       let rares = 0;
       for (let k = 0; k < n; k++) {
         const it = rollItem(r.result, def, rare || this.rng.next() < ch ? 'rare' : 'commun', this.rng, this.nextId++);
+        const j = jet ? def.stats[jet as Stat] : undefined;
+        if (j && j[1] > 0) it.stats[jet as Stat] = j[1];   // 3B : jet choisi, à son maximum
         if (it.rarity === 'rare') rares++;
         p.bag.push(it);
       }
@@ -3193,6 +3202,79 @@ export class World {
     p.gainMetierXp(r.metier, n * METIER_XP.parIngredient * r.ingredients.reduce((s, [, q]) => s + q, 0), this);
     this.emit({ k: 'craft', id: r.result, n });
     return n;
+  }
+  // --- Travailler le butin (« Métiers : » 2A + 2C) ---------------------------------
+  /** Objet du sac ou porté, par son numéro. */
+  objetDuPerso(uid: number): Item | undefined {
+    const p = this.player;
+    return p.bag.find(b => b.uid === uid) ?? Object.values(p.equipment).find(e => e?.uid === uid) ?? undefined;
+  }
+  /** Ce qui manque pour payer (null si tout y est). */
+  private manque(c: Cout): string | null {
+    const p = this.player, I = this.opts.items!;
+    for (const [id, n] of c.res) if ((p.resources[id] ?? 0) < n) return `Il manque ${n - (p.resources[id] ?? 0)} × ${I.resources[id]?.name ?? id}`;
+    return p.kamas < c.kamas ? `Il manque ${(c.kamas - p.kamas).toLocaleString('fr-FR')} kamas` : null;
+  }
+  private payerCout(c: Cout) {
+    const p = this.player;
+    for (const [id, n] of c.res) { p.resources[id] -= n; if (p.resources[id] <= 0) delete p.resources[id]; }
+    p.kamas -= c.kamas;
+  }
+  /** 2A : le métier de l'atelier où l'on est qui peut faire de cet objet un chef-d'œuvre (Forgeron ou Sculpteur pour une arme…). */
+  metierOeuvreIci(def: ItemDef): string | null { return metiersOeuvre(def.slot).find(m => this.atelierIci(m) != null) ?? null; }
+  /** 2A : prix et raison du refus du palier suivant (null = faisable). */
+  etatOeuvre(uid: number): { cout: Cout | null; metier: string | null; raison: string | null } {
+    const I = this.opts.items, it = this.objetDuPerso(uid), def = it && I?.equipment[it.id];
+    if (!I || !it || !def || def.familier) return { cout: null, metier: null, raison: 'Objet introuvable' };
+    const palier = (it.oeuvre ?? 0) + 1, metier = this.metierOeuvreIci(def);
+    if (palier > OEUVRE.paliers) return { cout: null, metier, raison: 'Chef-d\'œuvre achevé' };
+    const cout = coutOeuvre(I, this.opts.data.monsters, it.id, palier);
+    const raison = !metier ? 'Pas le bon atelier pour cet objet' : Math.max(1, this.player.metierLevel(metier)) < cout.niveau ? `${I.metiers?.[metier]?.name ?? metier} niveau ${cout.niveau} requis` : this.manque(cout);
+    return { cout, metier, raison };
+  }
+  /** 2A : monte l'objet d'un palier de chef-d'œuvre. */
+  oeuvrer(uid: number): string | null {
+    const e = this.etatOeuvre(uid), it = this.objetDuPerso(uid), p = this.player;
+    if (e.raison || !it || !e.cout || !e.metier) return e.raison ?? 'Impossible';
+    this.payerCout(e.cout);
+    it.oeuvre = (it.oeuvre ?? 0) + 1;
+    p.gainMetierXp(e.metier, OEUVRE.xp * it.oeuvre, this);
+    p.recompute();
+    this.emit({ k: 'travail', uid, quoi: 'oeuvre', palier: it.oeuvre });
+    return null;
+  }
+  /** 2C : prix et raison du refus du perçage (Mineur). */
+  etatPerce(uid: number): { cout: Cout | null; raison: string | null } {
+    const I = this.opts.items, it = this.objetDuPerso(uid), def = it && I?.equipment[it.id];
+    if (!I || !it || !def || def.familier) return { cout: null, raison: 'Objet introuvable' };
+    if (it.perce) return { cout: null, raison: 'Déjà percé' };
+    const cout = coutPerce(def);
+    const raison = this.atelierIci('mineur') == null ? 'Il faut un atelier de Mineur' : Math.max(1, this.player.metierLevel('mineur')) < cout.niveau ? `Mineur niveau ${cout.niveau} requis` : this.manque(cout);
+    return { cout, raison };
+  }
+  percer(uid: number): string | null {
+    const e = this.etatPerce(uid), it = this.objetDuPerso(uid);
+    if (e.raison || !it || !e.cout) return e.raison ?? 'Impossible';
+    this.payerCout(e.cout);
+    it.perce = true;
+    this.player.gainMetierXp('mineur', CHASSE.xp, this);
+    this.emit({ k: 'travail', uid, quoi: 'perce' });
+    return null;
+  }
+  /** 2C : sertit une pierre précieuse (Bijoutier) ; elle remplace l'ancienne, qui est perdue. */
+  sertir(uid: number, pierre: string): string | null {
+    const it = this.objetDuPerso(uid), p = this.player;
+    if (!it || !PIERRES[pierre]) return 'Impossible';
+    if (!it.perce) return 'Il faut d\'abord percer une châsse (Mineur)';
+    if (this.atelierIci('bijoutier') == null) return 'Il faut un atelier de Bijoutier';
+    if (it.pierre === pierre) return 'Cette pierre y est déjà';
+    if (!((p.resources[pierre] ?? 0) > 0)) return 'Pas de pierre dans le sac';
+    if (!--p.resources[pierre]) delete p.resources[pierre];
+    it.pierre = pierre;
+    p.gainMetierXp('bijoutier', CHASSE.xp, this);
+    p.recompute();
+    this.emit({ k: 'travail', uid, quoi: 'pierre' });
+    return null;
   }
   /** Mange une ressource qui soigne (Bouillon de Chair : +11 PV). */
   eat(id: string): boolean {
