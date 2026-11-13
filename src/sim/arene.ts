@@ -50,7 +50,7 @@ export const WOBOT = {
 export const pvGroupe = (n: number) => 1 + ARENE.pvParJoueur * Math.max(0, n - 1);
 
 /** Clé d'un donjon encore valable (14A), gardée dans la sauvegarde : vague atteinte et temps restant (s). */
-export interface CleDonjon { nom: string; vague: number; reste: number }
+export interface CleDonjon { nom: string; vague: number; reste: number; /** « Métiers : » 9C : entrée avec une clé renforcée. */ renforcee?: boolean }
 
 interface Attente { type: string; x: number; y: number; t: number; vague: number }
 

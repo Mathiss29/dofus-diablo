@@ -49,6 +49,7 @@ import { FABRICATION, METIERS_FAB, chanceRare, ingredientsRares, type Poste } fr
 import { PLACEMENT, analyserCarte, groupesAuto, placementPose, placementValide, proposerPlacement, type AnalyseCarte, type PlacementCarte } from './placement';
 import { PC_PAR_ID } from './pouvoirsClasse';
 import { ARTISANS, POUCE } from './artisans';
+import { RENFORT, cleRenforceeDe, texteRenfort } from './clesRenforcees';
 import { CHASSE, OEUVRE, PIERRES, coutOeuvre, coutPerce, metiersOeuvre, type Cout } from './oeuvre';
 import { BOISSONS, CONSO, ELIXIRS, PARCHEMINS, RARES_RECOLTE, REPAS, RES_BOISSON, sorteConso, texteBonus } from './consommables';
 import { RECOLTE, porteeRecolte, quantite, xpRecolte, type Recolte, type RecoltesData } from './recolte';
@@ -809,6 +810,13 @@ export class World {
     if (!po.cle) return true;
     const p = this.player, r = p.resources[po.cle] ?? 0;
     if (this.cleValable(po.nom)) return true;   // 14A : clé encore valable, rien n'est repris
+    const rf = cleRenforceeDe(this.opts.items, po.cle);   // « Métiers : » 9C : la clé renforcée passe avant la clé normale
+    if (rf && (p.resources[rf] ?? 0) > 0) {
+      if (!--p.resources[rf]) delete p.resources[rf];
+      p.renfortDonjon = po.nom;
+      this.emit({ k: 'status', x: p.x, y: p.y - 60, text: `Clé renforcée · ${texteRenfort()}`, color: '#ffb84a' });
+      return true;
+    }
     if (this.bonusDuWeekEnd('cles')) return true;   // 9B : Trousseau de clefs illimité
     if (r <= 0 && this.aboDuJour().cles < avantage(p.abo, 'cles')) {   // « Apparats : » 17J : une clé offerte par jour
       p.aboJour.cles++;
@@ -954,7 +962,8 @@ export class World {
   private lancerArene(d: DonjonDef) {
     const p = this.player, reprise = this.cleValable(d.nom);
     this.arene?.abandonner();
-    if (!reprise) p.cleDonjon = { nom: d.nom, vague: 1, reste: ARENE.cle };
+    if (!reprise) p.cleDonjon = { nom: d.nom, vague: 1, reste: ARENE.cle, ...(p.renfortDonjon === d.nom ? { renforcee: true } : {}) };
+    p.renfortDonjon = null;
     this.arene = new Arene(this, d, reprise || 1);
     const boss = this.bossDuDonjon(d.nom), cle = this.entreeDonjon(d.nom)?.cle ?? null;
     this.emit({ k: 'areneDebut', nom: d.nom, boss, vagues: this.arene.total, cle, reprise: reprise > 1 ? reprise : 0 });
@@ -1567,6 +1576,7 @@ export class World {
     if (!def) throw new Error(`Monstre inconnu : ${type}`);
     const fx = this.fxIdoles;
     if (fx) def = defSousIdoles(def, fx);   // 0.6 (17) : PV, dégâts, vitesse et résistances sous les idoles
+    if (this.renforce) def = { ...def, hp: Math.round(def.hp * RENFORT.pv), dmg: Math.round(def.dmg * RENFORT.degats) };   // « Métiers : » 9C
     const aff = this.players[0]?.v06 ? tirerAffixes(this, def, scoreIdoles(this.idolesActives)) : [];   // 0.6 (23) : élites à affixes
     if (aff.length) def = defAffixes(def, aff);
     const m = new Monster(this.nextId++, type, def, x, y, this);
@@ -1996,7 +2006,7 @@ export class World {
     const alm = (this.almanax?.effet === 'xp' ? 1 + ALMANAX.xp : 1) * (1 + p.beni('xp')) * (1 + this.bonusDuWeekEnd('xp'));   // 15C, Magasin 6D, 9B (week-end)
     // Multi (maquette « Multi : » 7A) : chaque joueur proche gagne l'XP comme en solo, +10 % par allié proche
     const proches = this.players.filter(q => q !== p && !q.dead && Math.abs(q.x - m.x) + Math.abs(q.y - m.y) <= World.SOMMEIL);
-    const base = (m.def.xp ?? Math.round(m.def.hp / 5)) * this.bonusMassacre() * alm * (1 + World.XP_PAR_ALLIE * proches.length) * (1 + this.bonusIdoles);   // 0.6 (17) : idoles
+    const base = (m.def.xp ?? Math.round(m.def.hp / 5)) * this.bonusMassacre() * alm * (1 + World.XP_PAR_ALLIE * proches.length) * (1 + this.bonusIdoles) * (this.renforce ? 1 + RENFORT.xp : 1);   // 0.6 (17) : idoles ; 9C : clé renforcée
     const nm = m.def.level ?? this.monsterLevel(m);
     const carte = this.groups[m.group]?.map, fini = !!carte && !this.groups[m.group].members.some(o => !o.dead);
     const xp = p.gainXp(Math.round(base * World.ecartXp(p.level, nm) * (1 + avantage(p.abo, 'xp')) * this.decouverte(p, carte, fini)), this);   // « Apparats : » 17E ; 0.6 6D
@@ -2021,6 +2031,8 @@ export class World {
   }
   /** Bonus d'XP et de butin des idoles (part de 1), plafonné en donjon. */
   get bonusIdoles(): number { return bonusIdoles(this.idolesActives, !!this.arene); }
+  /** « Métiers : » 9C : l'arène en cours a été ouverte avec une clé renforcée (par un des joueurs). */
+  get renforce(): boolean { const a = this.arene; return !!a && this.players.some(q => q.cleDonjon?.renforcee && q.cleDonjon.nom === a.d.nom); }
   /** Recette de l'idole chez le Bricoleur. */
   recetteIdole(id: string): [string, number][] { return this.opts.recoltes ? recetteIdole(id, this.opts.recoltes) : []; }
   /** Fabrique une idole à l'atelier du Bricoleur : niveau de Bricoleur, ingrédients ; une seule fois, elle reste au perso. */
@@ -2123,7 +2135,7 @@ export class World {
   /** Ce que le calcul du butin doit savoir (src/sim/butin.ts) : sert au jeu, au Bestiaire et au simulateur de l'outil de test. */
   contexteButin(type: string, rang: Rang, niveau: number): CtxButin {
     const p = this.player;
-    return { type, rang, niveau, prospection: p.prospection + p.bonusMetier('chasseur') * REGLAGES_BUTIN.prospection.chances + (this.almanax?.effet === 'butin' ? ALMANAX.butin : 0) + p.beni('butin') * REGLAGES_BUTIN.prospection.chances + this.bonusDuWeekEnd('butin') + this.prospectionInvasion + avantage(p.abo, 'prospection') + this.bonusIdoles * REGLAGES_BUTIN.prospection.chances, legendaire: avantage(p.abo, 'legendaire') * (rang === 'boss' && p.v06 ? coefChanceQuiMonte(p.bossSansLeg[type] ?? 0) : 1), items: this.opts.items!, familiers: (this.familiersDe[type] ?? []).filter(id => !this.aLeFamilier(p, id)), pool: this.equipByLevel, poolSecours: this.equipSecours,
+    return { type, rang, niveau, prospection: p.prospection + p.bonusMetier('chasseur') * REGLAGES_BUTIN.prospection.chances + (this.almanax?.effet === 'butin' ? ALMANAX.butin : 0) + p.beni('butin') * REGLAGES_BUTIN.prospection.chances + this.bonusDuWeekEnd('butin') + this.prospectionInvasion + avantage(p.abo, 'prospection') + this.bonusIdoles * REGLAGES_BUTIN.prospection.chances + (this.renforce ? RENFORT.butin * REGLAGES_BUTIN.prospection.chances : 0), legendaire: avantage(p.abo, 'legendaire') * (rang === 'boss' && p.v06 ? coefChanceQuiMonte(p.bossSansLeg[type] ?? 0) : 1), items: this.opts.items!, familiers: (this.familiersDe[type] ?? []).filter(id => !this.aLeFamilier(p, id)), pool: this.equipByLevel, poolSecours: this.equipSecours,
       panoBoss: rang === 'boss' ? this.panoBoss(type) : undefined,
       metierNiveau: j => p.metierLevel(j), armeChasse: !!p.huntingWeapon, pouvoirs: rang === 'boss' ? { ...p.ctxPouvoirs, boss: type } : p.ctxPouvoirs };
   }
@@ -3076,6 +3088,12 @@ export class World {
         this.postes.push({ id: this.nextId++, atelier: a.nom, metiers: a.metiers, tag, x: q.x, y: q.y, gfx, dessin: dx || dy ? { x: dx, y: dy } : undefined });
       }
       const tag = a.cartes.find(t => wg.mapByTag(t) && wg.freeByMap.get(t)?.length);
+      const etabli = a.pres === 'etabli' ? this.postes.find(po => po.forge && po.tag === tag) : undefined;
+      if (!l.length && tag && etabli) {   // « Métiers : » 9B : l'établi des artisans du Havre-Sac, à côté de celui des forgemages
+        const q = wg.nearestFree(etabli.x + 2 * CASE, etabli.y + CASE, wg.freeByMap.get(tag)!);
+        this.postes.push({ id: this.nextId++, atelier: a.nom, metiers: a.metiers, tag, x: q.x, y: q.y });
+        continue;
+      }
       if (!l.length && tag) { const q = this.openestCell(tag); this.postes.push({ id: this.nextId++, atelier: a.nom, metiers: a.metiers, tag, x: q.x, y: q.y }); }
     }
   }

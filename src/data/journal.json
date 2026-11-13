@@ -2053,6 +2053,24 @@
             "phrase": "Avant de fabriquer, choisis une ligne de l'objet : elle sort à son maximum.",
             "details": "Les panoplies d'artisan ne tombent plus des monstres : seul l'atelier les fabrique.",
             "icone": "metier"
+          },
+          {
+            "titre": "Clés renforcées du Bricoleur",
+            "phrase": "Une clé de donjon renforcée rend l'arène plus dure, avec plus de butin et d'XP.",
+            "details": "Elle se fabrique avec la clé, du bois et du minerai. Prise à l'entrée avant la clé normale.",
+            "icone": "metier",
+            "etiquettes": [
+              "Donjons"
+            ]
+          },
+          {
+            "titre": "Un établi des artisans chez soi",
+            "phrase": "Le Havre-Sac a son établi : tous les métiers y fabriquent, à côté de l'établi des forgemages.",
+            "details": "En haut de la fenêtre, une icône par métier pour passer de l'un à l'autre.",
+            "icone": "metier",
+            "etiquettes": [
+              "Havre-Sac"
+            ]
           }
         ],
         "Le monde": [],
