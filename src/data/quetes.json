@@ -203,7 +203,8 @@
    "dofusId": 4313,
    "zone": "astrub",
    "carte": "6_-17",
-   "phrase": "J'avais commandé des chaudrons. On m'a livré des enclumes. Essaie donc de faire une soupe dans une enclume."
+   "phrase": "J'avais commandé des chaudrons. On m'a livré des enclumes. Essaie donc de faire une soupe dans une enclume.",
+   "commandes": "ville"
   },
   "nepra": {
    "nom": "Nepra Lido",
@@ -573,7 +574,8 @@
     "Oyez, oyez ! Mère Bouillotte a encore fait trop de soupe. Ventres creux, au rapport !",
     "Oyez ! Goultard vend des clés de donjon. Le courage, lui, n'est pas en vente : apportez le vôtre !",
     "Oyez ! N'importe quel Zaap mène au Bastion des Douze. Les Douze vous saluent, aventuriers !"
-   ]
+   ],
+   "commandes": "atelier"
   },
   "garde_chateau1": {
    "nom": "Garde du château",
@@ -654,7 +656,8 @@
     "Oyez ! Les Scarafeuilles grouillent au sud, les Kwaks à la montagne : aventuriers, à vos armes !",
     "Oyez, oyez ! Les Zaaps d'Amakna relient le village, le château et les champs. Plus d'excuse pour arriver en retard !",
     "Oyez ! Le cuisinier du château a encore perdu une tarte. Quiconque la retrouve la rend. Entière !"
-   ]
+   ],
+   "commandes": "ville"
   },
   "forgemage": {
    "nom": "Malek le Forgemage",

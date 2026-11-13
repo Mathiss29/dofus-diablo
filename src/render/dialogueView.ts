@@ -156,6 +156,7 @@ function recompense(r: RecompenseDef, classe: string) {
     ...(r.objets ?? []).map(([o, n]) => `<span>${iconHtml(obj(o)?.icon ?? 0)}${n} × ${esc(obj(o)?.name ?? o)}</span>`),
     r.sac ? `<span style="color:${RARITY_COLORS[r.sac]}">Sac ${RARITY_NAMES[r.sac]} garanti</span>` : '',
     r.pepites ? `<span>${iconHtml(ITEMS.resources[PEPITE]?.icon ?? 0)}${r.pepites} Pépites</span>` : '',
+    r.metier ? `<span>${r.metier[1]} XP ${ITEMS.metiers?.[r.metier[0]]?.name ?? ''}</span>` : '',
     r.potions ? '<span>Potions remplies</span>' : ''].filter(Boolean).join('');
 }
 const esc = (s: string) => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));

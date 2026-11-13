@@ -80,7 +80,7 @@ PNJ = {
     'phrase': "Les temples de Iop et de Crâ sont loin d'Astrub, alors c'est moi qui fais le lien. Et qui envoie les Dopeuls. Ils adorent ça.",
     'discussion': [{'reponse': "C'est quoi, un Dopeul ?", 'texte': "Ton double, en plus violet et en plus vexé. Il connaît tes sorts aussi bien que toi. Une fois par jour, il vient voir si tu as progressé."}]},
   # Quêtes officielles d'Astrub écrites en ARPG (Quêtes roadmap 2C) : leurs PNJ officiels, à l'endroit où l'on rend la quête dans Dofus 3.
-  'hazel': {'nom': 'Hazel Ementaire', 'dofusId': 4313, 'zone': 'astrub', 'carte': '6_-17',
+  'hazel': {'nom': 'Hazel Ementaire', 'commandes': 'ville', 'dofusId': 4313, 'zone': 'astrub', 'carte': '6_-17',
     'phrase': "J'avais commandé des chaudrons. On m'a livré des enclumes. Essaie donc de faire une soupe dans une enclume."},
   'nepra': {'nom': 'Nepra Lido', 'dofusId': 4334, 'zone': 'astrub', 'carte': '3_-21',
     'phrase': "L'aventurite, c'est cette manie de foncer dans les monstres sans réfléchir. Très contagieux. Tu en as tous les symptômes."},
@@ -167,7 +167,7 @@ PNJ = {
     'phrase': "Bienvenue au Bastion des Douze. Le Zaap est à toi, les bagarres sont pour dehors."},
   'garde_zaap2': {'nom': "Garde d'Amakna", 'sprite': 'garde_amakna', 'dofusId': 2261, 'zone': 'bastion', 'carte': 'bastion', 'case': BASTION['garde_zaap2'], 'titre': 'Garde du Zaap',
     'phrase': "Tout ce qui sort de ce Zaap passe devant moi. Tu as l'air d'un honnête aventurier. Plutôt."},
-  'crieur': {'nom': "Héraut d'Ecaflip", 'sprite': 'heraut_ecaflip', 'dofusId': 3098, 'zone': 'bastion', 'carte': 'bastion', 'case': BASTION['crieur'], 'titre': 'Crieur du Bastion',
+  'crieur': {'nom': "Héraut d'Ecaflip", 'sprite': 'heraut_ecaflip', 'dofusId': 3098, 'zone': 'bastion', 'carte': 'bastion', 'case': BASTION['crieur'], 'titre': 'Crieur du Bastion', 'commandes': 'atelier',
     'phrase': "Une nouvelle à crier ? Donne-la-moi, je la crie trois fois plus fort et deux fois plus belle. Ecaflip aime les belles histoires.",
     'discussion': [{'reponse': "Pourquoi un héraut d'Ecaflip ?", 'texte': "Les Douze ont tiré au sort qui crierait les nouvelles. Ecaflip a gagné. Bizarrement, il gagne toujours."}],
     'cris': ["Oyez, oyez ! Almanax du jour : {almanax} ! Les offrandes, c'est au Représentant des Temples !",

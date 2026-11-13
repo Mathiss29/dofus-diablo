@@ -32,7 +32,7 @@ export function hache(s: string): number {
   return h >>> 0;
 }
 /** Suite de nombres [0, 1) tirée d'une graine (mulberry32). */
-function suite(graine: number) {
+export function suite(graine: number) {
   let a = graine;
   return () => { a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
 }
