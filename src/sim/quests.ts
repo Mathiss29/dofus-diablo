@@ -1,6 +1,8 @@
 import type { SimEvent } from './events';
 import type { World } from './world';
 import { PEPITE, type Rarity } from './items';
+import { TROPHEES } from './dofus';
+import { COMMANDES, commande, tirerCommandes, type SorteCommandes } from './commandes';
 import { archiDuJour, contrat, contratArchi, CONTRATS_PAR_JOUR, hache, semaine, tirerContrats, type CtxContrats } from './contrats';
 import { avantage } from './boutiqueOgrines';
 import { liensAPied, plusCourt, type GenreLien, type Lien, type Pt } from './trajet';
@@ -51,6 +53,8 @@ export type ObjectifDef = { texte: string } & (
   | { t: 'ames'; monstres: string[] }
   /** « Archis : » 3C : capturer l'âme de cet archimonstre (pendant la quête, une nouvelle capture). */
   | { t: 'capturer'; monstre: string }
+  /** « Métiers : » 8A + 8B : apporter N objets du sac (ressources, plats, potions…) au PNJ qui rend la quête ; il les prend. */
+  | { t: 'livrer'; objet: string; n: number }
 );
 export interface EtapeDef {
   nom: string;
@@ -82,6 +86,8 @@ export interface RecompenseDef {
   dofus?: string;
   /** Pépites (la monnaie d'Emp, 5B). */
   pepites?: number;
+  /** « Métiers : » 8A + 8B : XP de ce métier. */
+  metier?: [string, number];
   /** « Archis : » 11C : titre officiel et ornement officiel gagnés (comme ceux des succès). */
   titre?: string; ornement?: OrnementDef;
 }
@@ -162,6 +168,8 @@ export interface PnjDef {
   /** Tient le tableau des contrats du jour (Quêtes roadmap 3C). Liste = les sous-zones de son tableau (0.4 suite 11B : Milice
    *  d'Amakna) ; true = toutes les autres sous-zones de la zone (Milice d'Astrub). */
   contrats?: boolean | number[];
+  /** « Métiers : » 8A + 8B : tient des commandes du jour, d'objets fabriqués (atelier) ou de ressources récoltées autour de lui (ville). */
+  commandes?: SorteCommandes;
   /** Crieur (maquette Ville 5F) : il crie ces nouvelles à tour de rôle quand on passe sur la place. {almanax} = bonus du jour
    *  de l'Almanax (la ligne est sautée sans Almanax). */
   cris?: string[];
@@ -187,7 +195,7 @@ const chronoTexte = (s: number) => { const m = Math.floor(s / 60), r = Math.roun
 /** Réponse du cadre vert sous la bulle (maquette Dialogues 3A) : voir une quête, l'accepter, revenir à la liste, fermer. */
 export type Reponse = { texte: string; detail?: string } & (
   { a: 'voir' | 'accepter'; quete: string } | { a: 'retour' } | { a: 'fermer' } | { a: 'service'; service: string } | { a: 'suite'; i: number }
-  | { a: 'entrer'; donjon: string } | { a: 'sansCle'; donjon: string } | { a: 'contrats' }
+  | { a: 'entrer'; donjon: string } | { a: 'sansCle'; donjon: string } | { a: 'contrats' } | { a: 'commandes' }
 );
 /** Dialogue ouvert avec un PNJ (bulle officielle à ruban, réponses 1 à 4). Le jeu continue derrière (4A). */
 export interface Dialogue { pnj: string; texte: string; reponses: Reponse[]; quete?: string; recompense?: RecompenseDef; donjon?: InfoDonjon }
@@ -428,8 +436,8 @@ export class Quetes {
     this.refaites = { ...e.refaites }; this.tableau = e.tableau ?? null; this.tableaux = JSON.parse(JSON.stringify(e.tableaux ?? {}));
     this.enCours = (e.enCours ?? []).filter(c => this.existe(c.id) && this.etapeDe(c));
     // les contrats finis des jours passés ne servent plus à rien
-    const vieux = (id: string) => /^(ctr|ctra|defi):/.test(id) && !this.enPeriode(id);
-    this.finies = new Set((e.finies ?? []).filter(id => !vieux(id))); this.etapesFinies = new Set((e.etapesFinies ?? []).filter(k => !/^(ctr|ctra|defi):/.test(k)));
+    const vieux = (id: string) => /^(ctr|ctra|defi|cmd):/.test(id) && !this.enPeriode(id);
+    this.finies = new Set((e.finies ?? []).filter(id => !vieux(id))); this.etapesFinies = new Set((e.etapesFinies ?? []).filter(k => !/^(ctr|ctra|defi|cmd):/.test(k)));
     this.suivie = e.suivie && this.enCours.some(c => c.id === e.suivie) ? e.suivie : this.enCours[0]?.id ?? null;
     this.decouvertes = new Set(e.decouvertes ?? []); this.vaincus = new Set(e.vaincus ?? []); this.objets = { ...e.objets };
     this.donjons = JSON.parse(JSON.stringify(e.donjons ?? {}));
@@ -455,9 +463,56 @@ export class Quetes {
     this.recuperes = new Set(e.recuperes ?? []); this.defis = new Set(e.defis ?? []); this.compteurs = { ...e.compteurs };
     this.titreChoisi = e.titre ?? null; this.ornementChoisi = e.ornement ?? null; this.epingles = [...(e.epingles ?? [])];
   }
-  def(id: string): QueteDef { return this.data.quetes[id] ?? this.ecrireContrat(id) ?? this.ecrireDefi(id)!; }
+  def(id: string): QueteDef { return this.data.quetes[id] ?? this.ecrireContrat(id) ?? this.ecrireDefi(id) ?? this.ecrireCommande(id)!; }
   /** La quête existe (écrite dans quetes.json, ou contrat dont la sous-zone existe). */
-  existe(id: string) { return !!(this.data.quetes[id] ?? this.ecrireContrat(id) ?? this.ecrireDefi(id)); }
+  existe(id: string) { return !!(this.data.quetes[id] ?? this.ecrireContrat(id) ?? this.ecrireDefi(id) ?? this.ecrireCommande(id)); }
+
+  // --- Commandes des artisans (« Métiers : » 8A + 8B, src/sim/commandes.ts) ----------
+  private ecrireCommande(id: string): QueteDef | null {
+    if (!id.startsWith('cmd:')) return null;
+    if (!this.dyn.has(id)) {
+      const I = this.world.opts.items;
+      this.dyn.set(id, commande(id, { nomObjet: o => I?.resources[o]?.name, nomMetier: m => I?.metiers?.[m]?.name ?? m, nomPnj: nomPnj => this.data.pnj[nomPnj]?.nom ?? nomPnj,
+        sorte: x => this.data.pnj[x]?.commandes, ingredients: o => I?.recipes?.find(r => r.result === o)?.ingredients.reduce((t, [, n]) => t + n, 0) ?? 1 }));
+    }
+    return this.dyn.get(id)!;
+  }
+  /** Les commandes du jour de ce PNJ (tirées au premier coup d'œil de la journée, gardées dans tableaux[« cmd:<pnj> »]). */
+  commandes(pnj: string): string[] {
+    const j = this.jour, sorte = this.data.pnj[pnj]?.commandes, w = this.world, I = w.opts.items, p = w.player;
+    if (!j || !sorte || !I) return [];
+    const k = `cmd:${pnj}`, t = this.tableaux[k];
+    if (t?.jour === j) return t.ids.filter(id => this.existe(id));
+    const niveaux = Object.fromEntries(Object.keys(I.metiers ?? {}).map(m => [m, p.metierLevel(m)]));
+    const recettes = (I.recipes ?? []).filter(r => I.resources[r.result] && !TROPHEES[r.result] && w.recetteVisible(r));
+    let locales: { id: string; metier: string; niveau: number }[] | undefined;
+    const ici = this.pnj(pnj), R = w.opts.recoltes, wg = w.worldGrid;
+    if (sorte === 'ville' && ici && R && wg) {
+      const [x0, y0] = ici.tag.split('_').map(Number), vus = new Set<string>();
+      locales = [];
+      for (const r of w.recoltes) {
+        const [x, y] = r.tag.split('_').map(Number), d = R.ressources[r.item];
+        if (vus.has(r.item) || !d?.metier || !(Math.max(Math.abs(x - x0), Math.abs(y - y0)) <= COMMANDES.rayon)) continue;
+        vus.add(r.item); locales.push({ id: r.item, metier: d.metier, niveau: d.niveau });
+      }
+    }
+    const ids = tirerCommandes(j, pnj, sorte, { recettes, niveaux, locales });
+    this.tableaux[k] = { jour: j, ids, semaine: '', hebdo: [] };
+    return ids.filter(id => this.existe(id));
+  }
+  commandesLibres(pnj: string): string[] { return this.commandes(pnj).filter(id => !this.finies.has(id) && !this.enCours.some(c => c.id === id)); }
+  /** Les objets d'une commande sont dans le sac (au moment de la rendre). */
+  private livrable(id: string): boolean {
+    const r = this.world.player.resources;
+    return this.etapes(id).every(e => e.objectifs.every(o => o.t !== 'livrer' || (r[o.objet] ?? 0) >= o.n));
+  }
+  private tableauCommandes(pnj: string) {
+    const l = this.commandesLibres(pnj), atelier = this.data.pnj[pnj]?.commandes === 'atelier';
+    this.dialogue = { pnj, texte: l.length ? (atelier ? 'Les commandes du jour. Fabrique, rapporte, encaisse : elles changent à minuit.' : 'J\'ai besoin de quelques ressources du coin. Ça te dit ?')
+      : 'Plus de commande pour aujourd\'hui. Reviens demain !',
+      reponses: [...l.map(id => ({ a: 'voir' as const, quete: id, texte: this.def(id).nom, detail: `niv ${this.def(id).niveau}` })),
+        { a: 'retour', texte: 'Retour.' }, { a: 'fermer', texte: 'Au revoir.' }] };
+  }
 
   // --- Répétables et contrats du jour (Quêtes roadmap 1C, 3A+3C, 4A) ----------
   /** Aujourd'hui (AAAA-MM-JJ, heure du PC) et la semaine. */
@@ -570,7 +625,7 @@ export class Quetes {
   icone(pnj: string): { quete: string; rendre: boolean } | null {
     const r = this.aRendre(pnj); if (r) return { quete: r, rendre: true };
     const def = this.data.pnj[pnj];
-    const d = this.aDonner(pnj) ?? (def?.contrats ? this.contratsLibres(pnj)[0] : null) ?? (def?.gardien ? this.defiLibre(def.gardien.donjon) : null);
+    const d = this.aDonner(pnj) ?? (def?.contrats ? this.contratsLibres(pnj)[0] : null) ?? (def?.commandes ? this.commandesLibres(pnj)[0] : null) ?? (def?.gardien ? this.defiLibre(def.gardien.donjon) : null);
     return d ? { quete: d, rendre: false } : null;
   }
   /** Le PNJ attend qu'on lui parle pour un objectif « parler ». */
@@ -618,7 +673,8 @@ export class Quetes {
     const avant = this.bulle;
     let intro: string | null = null;
     const r = this.aRendre(pnj);
-    if (r) { this.terminer(r); intro = this.def(r).merci ?? 'Beau travail. Voici ta récompense.'; }
+    if (r && !this.livrable(r)) intro = 'Il manque encore des objets de la commande dans ton sac. Reviens quand tu les as.';   // 8A + 8B
+    else if (r) { this.terminer(r); intro = this.def(r).merci ?? 'Beau travail. Voici ta récompense.'; }
     else if (this.attendParler(pnj)) {
       for (const c of this.enCours) this.etapeDe(c)?.objectifs.forEach((o, i) => {
         if (o.t === 'parler' && o.pnj === pnj && (!o.objet || (this.objets[o.objet] ?? 0) > 0)) c.compte[i] = 1;
@@ -637,10 +693,11 @@ export class Quetes {
   private ouvrir(pnj: string, intro: string | null, liste = false) {
     const ds = this.aDonnerTous(pnj), def = this.data.pnj[pnj], dis = def?.discussion?.[0];
     if (def?.gardien) { this.garder(pnj, def, intro, ds); return; }
-    if (ds.length === 1 && !liste && !def?.contrats) { this.offre(pnj, ds[0], intro); return; }
+    if (ds.length === 1 && !liste && !def?.contrats && !def?.commandes) { this.offre(pnj, ds[0], intro); return; }
     this.dialogue = { pnj, texte: intro ?? def?.phrase ?? 'Bonne route, aventurier.',
       reponses: [...ds.map(id => ({ a: 'voir' as const, quete: id, texte: this.def(id).nom })),
         ...(def?.contrats ? [{ a: 'contrats' as const, texte: 'Le tableau des contrats.', detail: `${this.contratsLibres(pnj).length} à prendre` }] : []),
+        ...(def?.commandes ? [{ a: 'commandes' as const, texte: def.commandes === 'atelier' ? 'Le tableau des commandes.' : 'Des commandes ?', detail: `${this.commandesLibres(pnj).length} à prendre` }] : []),
         ...this.services(def),
         ...(dis && !ds.length ? [{ a: 'suite' as const, i: 0, texte: dis.reponse }] : []),
         { a: 'fermer', texte: def?.adieu ?? 'Au revoir.' }] };
@@ -704,6 +761,7 @@ export class Quetes {
       this.dialogue = { pnj: d.pnj, donjon: d.donjon, texte: t, reponses: [{ a: 'fermer', texte: def?.adieu ?? 'Au revoir.' }] };
     }
     else if (r.a === 'contrats') this.tableauContrats(d.pnj);
+    else if (r.a === 'commandes') this.tableauCommandes(d.pnj);
     else if (r.a === 'service') { this.dialogue = null; this.world.emit({ k: 'service', service: r.service, pnj: d.pnj }); }
     else { this.dialogue = null; this.prendre(r.quete); this.suivie = r.quete; }
   }
@@ -854,6 +912,7 @@ export class Quetes {
     }
     for (const c of this.enCours) this.etapeDe(c)?.objectifs.forEach((o, i) => {
       if (o.t === 'ames') { c.compte[i] = o.monstres.filter(m => p.ames.includes(m)).length; return; }
+      if (o.t === 'livrer') { c.compte[i] = Math.min(o.n, p.resources[o.objet] ?? 0); return; }   // 8A + 8B : ce qu'on en a dans le sac
       if (c.compte[i] >= 1 && o.t !== 'vaincre' && o.t !== 'ramasser' && o.t !== 'recolter' && o.t !== 'fabriquer') return;
       if (o.t === 'aller') {
         const n = o.pnj ? this.pnj(o.pnj) : null;
@@ -873,7 +932,7 @@ export class Quetes {
   }
 
   /** Total d'un objectif (pour le suivi : « 2/4 »). */
-  total(o: ObjectifDef): number { return o.t === 'vaincre' || o.t === 'ramasser' || o.t === 'recolter' ? o.n : o.t === 'fabriquer' ? o.n ?? 1 : o.t === 'defense' ? o.s : o.t === 'ames' ? o.monstres.length : 1; }
+  total(o: ObjectifDef): number { return o.t === 'vaincre' || o.t === 'ramasser' || o.t === 'recolter' ? o.n : o.t === 'fabriquer' ? o.n ?? 1 : o.t === 'defense' ? o.s : o.t === 'ames' ? o.monstres.length : o.t === 'livrer' ? o.n : 1; }
 
   /** Objectif pas fini de ce type dans les quêtes en cours (le premier). */
   private objectifActif<T extends ObjectifDef['t']>(t: T, carte: string | null): { c: QueteEnCours; i: number; o: Extract<ObjectifDef, { t: T }> } | null {
@@ -957,6 +1016,12 @@ export class Quetes {
     if (r.niveau) while (p.level < r.niveau && p.level < p.cls.maxLevel) p.gainXp(p.xpNeeded - p.xp, w);
     if (r.xp) p.gainXp(Math.round(r.xp * (1 + avantage(p.abo, 'xp'))), w);   // 17E
     if (r.kamas) p.kamas += r.kamas;
+    if (r.metier) p.gainMetierXp(r.metier[0], r.metier[1], w);
+    // « Métiers : » 8A + 8B : le PNJ prend les objets de la commande
+    if (!sautee) for (const o of this.etapes(id).flatMap(e => e.objectifs)) if (o.t === 'livrer') {
+      p.resources[o.objet] = (p.resources[o.objet] ?? 0) - o.n;
+      if (p.resources[o.objet] <= 0) delete p.resources[o.objet];
+    }
     if (r.potions) p.potions = p.cls.potion.charges;
     const obj = r.objetParClasse?.[this.classe] ?? r.objet;
     if (obj) w.donnerObjet(obj);

@@ -1617,6 +1617,7 @@ export class Windows {
         ...(r.objets ?? []).map(([o, n]) => `<span title="${res(o)?.name ?? o}">${iconHtml(res(o)?.icon ?? 0)}${n} × ${res(o)?.name ?? o}</span>`),
         r.sac ? `<span style="color:${RARITY_COLORS[r.sac]}">Sac ${RARITY_NAMES[r.sac]} garanti</span>` : '',
         r.pepites ? `<span>${iconHtml(ITEMS.resources[PEPITE]?.icon ?? 0)}${r.pepites} Pépites</span>` : '',
+        r.metier ? `<span>${r.metier[1]} XP ${ITEMS.metiers?.[r.metier[0]]?.name ?? ''}</span>` : '',
         r.potions ? '<span>Potions remplies</span>' : ''].filter(Boolean).join('');
       det = `<div><h3>${q.nom}</h3><div class="sub">${q.serie ? `${q.serie} · ` : ''}Niveau ${q.niveau}${pnj ? ` · ${pnj}` : ''}${done ? ' · Terminée' : ''}</div></div>
         <p>${q.texte}</p>${steps}<div class="qh">Récompenses</div><div class="rw">${rw || '<span class="hint">Aucune</span>'}</div>

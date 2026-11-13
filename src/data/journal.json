@@ -2001,6 +2001,16 @@
             "phrase": "Les parchemins officiels se fabriquent : +1 point pour toujours, 100 par caractéristique.",
             "details": "Il faut le Trèfle Agare, que le Trèfle à 5 feuilles donne parfois à la récolte.",
             "icone": "caracs"
+          },
+          {
+            "titre": "Les commandes des artisans",
+            "phrase": "Trois commandes par jour au Bastion, et des ressources à livrer à Astrub et au Château.",
+            "details": "Le Héraut d'Ecaflip veut des objets fabriqués, Hazel Ementaire et le Bailli des récoltes du coin. Kamas, XP de métier et Pépites.",
+            "icone": "metier",
+            "etiquettes": [
+              "Bastion des Douze",
+              "Astrub"
+            ]
           }
         ],
         "Le monde": [],
