@@ -1552,5 +1552,97 @@
    "portee": 10
   },
   "_doc": "Balise de Survie du Crâ (sort 32474, monstre 8348, os 8152) : immobile 6 s (2 tours) ; soigne 7 % des PV max (effet officiel 1109) des alliés qu'elle voit, à la pose puis 3 s après ; le Crâ qui la frappe en la voyant échange de place avec elle."
+ },
+ "sadi_gonflable": {
+  "dofusId": 5897,
+  "name": "La Gonflable",
+  "look": 416,
+  "atlas": "sadi_gonflable",
+  "rang": 1,
+  "element": "feu",
+  "suivant": null,
+  "pv": 0.4,
+  "sorts": [],
+  "passif": true,
+  "sadida": {
+   "poupee": true,
+   "gonflable": {
+    "soin": 30,
+    "rayon": 3,
+    "periode": 3,
+    "seuil": 0.7,
+    "brise": {
+     "min": 30,
+     "max": 30,
+     "repousse": 2,
+     "recharge": 6,
+     "rayon": 1.5
+    }
+   }
+  },
+  "_doc": "La Gonflable (sorts 61-90, « Sorts sadi : 2A ») : reste près du Sadida ; Souffle Printanier officiel (soin 30 à 3 cases et au contact des Feuillus) quand un allié passe sous 70 %, Brise Automnale officielle (30 Feu, repousse 2 cases) sur les monstres au contact du Sadida, toutes les 6 s."
+ },
+ "sadi_surpuissante": {
+  "dofusId": 5899,
+  "name": "La Surpuissante",
+  "look": 414,
+  "atlas": "sadi_surpuissante",
+  "rang": 1,
+  "element": "terre",
+  "suivant": null,
+  "pv": 0.45,
+  "sorts": [
+   {
+    "id": 14387,
+    "name": "Choc Hivernal",
+    "pa": 3,
+    "po": [
+     1,
+     6
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 18,
+      "max": 18
+     }
+    ],
+    "desc": "Occasionne des dommages Terre et retire des PM. Sur un ennemi Infecté : applique les effets sur tous les ennemis Infectés."
+   }
+  ],
+  "sadida": {
+   "poupee": true,
+   "surpuissante": {
+    "course": 0.3,
+    "t": 4,
+    "periode": 9,
+    "fourbe": "sadi_fourbe"
+   }
+  },
+  "_doc": "La Surpuissante (« Sorts sadi : 6A ») : Choc Hivernal officiel (Terre, -1 PM, propage l'Infection), Ardeur Estivale (+3 PM officiel = le Sadida court 30 % plus vite 4 s, toutes les 9 s), appelle une fois La Fourbe."
+ },
+ "sadi_fourbe": {
+  "dofusId": 7934,
+  "name": "La Fourbe",
+  "look": 418,
+  "atlas": "sadi_fourbe",
+  "rang": 1,
+  "element": "neutre",
+  "suivant": null,
+  "pv": 0.2,
+  "sorts": [],
+  "passif": true,
+  "sadida": {
+   "fourbe": {
+    "portee": 1,
+    "t": 6,
+    "periode": 6,
+    "cases": 6
+   }
+  },
+  "_doc": "La Fourbe (invoquée par la Surpuissante, sort officiel La Fourbe 29619) : Bouture officielle = -1 Portée au monstre le plus proche à 6 cases et +1 Portée aux sorts du Sadida, 6 s, toutes les 6 s. Part avec la Surpuissante."
  }
 }

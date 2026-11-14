@@ -176,6 +176,15 @@ export const POUVOIRS_CLASSE: PouvoirClasseDef[] = [
   pc('sadida', 'N', 'Fléau insatiable', 'fleau', 'arme', [75, 100], 5, v => `Fléau vole ${v} % des dommages au lieu de 50 %, et la vie en trop soigne ta Poupée la plus blessée.`),
   pc('sadida', 'O', 'Ronces bienveillantes', 'ronce_apaisante', 'bouclier', [8, 12], 1, v => `Ronce Apaisante donne aussi à l'allié soigné un bouclier de ${v} % de ses PV, 4 s.`),
   pc('sadida', 'P', 'Poupée immortelle', 'sacrifice_vaudou', 'bouclier', [30, 50], 1, v => `La Poupée sacrifiée par Sacrifice Vaudou renaît aussitôt en Arbre Feuillu, et le soin du Vaudou monte de ${v} %.`),
+  // « Sorts sadi : 7A-7H » (Mathis, 14 nov. 2026) : 8 de plus sur les sorts 61-90, un par emplacement
+  pc('sadida', 'Q', 'Sève éternelle', 'arbre_de_vie', 'amulette', [20, 35], 1, v => `Les soins de l'Arbre de Vie font ${v} % de plus, et ses alliés soignés regagnent encore 4 % de leurs PV 2 s plus tard.`),
+  pc('sadida', 'R', 'Bois de cœur', 'arbre_de_vie', 'cape', [30, 50], 1, v => `L'Arbre de Vie a ${v} % de PV en plus et provoque les monstres à 2 cases toutes les 4 s.`),
+  pc('sadida', 'S', 'Baudruche piquante', 'la_gonflable', 'ceinture', [30, 50], 1, v => `La Brise Automnale de la Gonflable Infecte les monstres repoussés, et ceux qui heurtent un obstacle prennent ${v} % de dégâts en plus.`),
+  pc('sadida', 'T', 'Faille tellurique', 'tremblement', 'bottes', [15, 25], 1, v => `Tremblement gagne 1 case de zone et fait ${v} % de dégâts en plus aux Infectés.`),
+  pc('sadida', 'U', 'Vaccin', 'inoculation', 'chapeau', [3, 5], 0.5, v => `Inoculation ne consomme plus les Infections autour de sa cible : elle les prolonge de ${n(v)} s.`),
+  pc('sadida', 'V', 'Pandémie', 'inoculation', 'arme', [8, 12], 1, v => `Inoculation gagne ${v} % de dégâts en plus par Infecté, et n'a plus de plafond.`),
+  pc('sadida', 'W', 'Don de la forêt', 'don_naturel', 'bouclier', [20, 35], 1, v => `Don Naturel te rend tout de suite une charge d'Arbre, et son soin monte de ${v} %.`),
+  pc('sadida', 'X', 'Hiver éternel', 'la_surpuissante', 'anneau', [30, 50], 1, v => `Le Choc Hivernal de la Surpuissante frappe aussi les monstres à 1 case de sa cible, à ${v} % de ses dégâts, et les Infecte.`),
 ];
 /** Châtiments du Sacrieur (Dofus Rétro, 14B) : caractéristique gagnée à chaque coup reçu. */
 export const CHATIMENTS: Record<string, 'force' | 'agilite' | 'chance' | 'intelligence' | 'vitalite'> =
@@ -187,11 +196,11 @@ export const estPouvoirClasse = (id: string) => !!PC_PAR_ID[id];
 
 /** 2D : pouvoirs préférés de chaque boss (chance triplée sur son butin), un par classe. */
 export const BOSS_PREFERES: Record<string, string[]> = {
-  royal: ['pc-iop-A', 'pc-cra-G', 'pc-osamodas-E', 'pc-sacrieur-E', 'pc-sacrieur-L', 'pc-iop-K', 'pc-cra-P', 'pc-osamodas-L', 'pc-forgelance-E', 'pc-forgelance-M', 'pc-eniripsa-E', 'pc-eniripsa-I', 'pc-ecaflip-A', 'pc-ecaflip-J', 'pc-sadida-C', 'pc-sadida-J'],
-  kardorim: ['pc-iop-F', 'pc-cra-H', 'pc-osamodas-F', 'pc-sacrieur-D', 'pc-sacrieur-O', 'pc-iop-J', 'pc-cra-O', 'pc-osamodas-O', 'pc-forgelance-C', 'pc-forgelance-L', 'pc-eniripsa-P', 'pc-eniripsa-H', 'pc-ecaflip-P', 'pc-ecaflip-E', 'pc-sadida-P', 'pc-sadida-F'],
-  tournesol_affame: ['pc-sadida-A', 'pc-iop-H', 'pc-cra-A', 'pc-osamodas-D', 'pc-sacrieur-A', 'pc-sacrieur-J', 'pc-iop-L', 'pc-cra-K', 'pc-osamodas-J', 'pc-forgelance-I', 'pc-forgelance-A', 'pc-eniripsa-C', 'pc-eniripsa-G', 'pc-ecaflip-N', 'pc-ecaflip-G', 'pc-sadida-K'],
-  mob_l_eponge: ['pc-iop-E', 'pc-cra-F', 'pc-osamodas-B', 'pc-sacrieur-C', 'pc-sacrieur-P', 'pc-iop-M', 'pc-cra-M', 'pc-osamodas-K', 'pc-forgelance-K', 'pc-forgelance-H', 'pc-eniripsa-A', 'pc-eniripsa-O', 'pc-ecaflip-O', 'pc-ecaflip-C', 'pc-sadida-M', 'pc-sadida-H'],
-  kankreblath: ['pc-iop-B', 'pc-cra-C', 'pc-osamodas-C', 'pc-sacrieur-B', 'pc-sacrieur-K', 'pc-iop-O', 'pc-cra-J', 'pc-osamodas-P', 'pc-forgelance-D', 'pc-forgelance-O', 'pc-eniripsa-M', 'pc-eniripsa-N', 'pc-ecaflip-M', 'pc-ecaflip-I', 'pc-sadida-D', 'pc-sadida-N'],
+  royal: ['pc-iop-A', 'pc-cra-G', 'pc-osamodas-E', 'pc-sacrieur-E', 'pc-sacrieur-L', 'pc-iop-K', 'pc-cra-P', 'pc-osamodas-L', 'pc-forgelance-E', 'pc-forgelance-M', 'pc-eniripsa-E', 'pc-eniripsa-I', 'pc-ecaflip-A', 'pc-ecaflip-J', 'pc-sadida-C', 'pc-sadida-J', 'pc-sadida-Q'],
+  kardorim: ['pc-iop-F', 'pc-cra-H', 'pc-osamodas-F', 'pc-sacrieur-D', 'pc-sacrieur-O', 'pc-iop-J', 'pc-cra-O', 'pc-osamodas-O', 'pc-forgelance-C', 'pc-forgelance-L', 'pc-eniripsa-P', 'pc-eniripsa-H', 'pc-ecaflip-P', 'pc-ecaflip-E', 'pc-sadida-P', 'pc-sadida-F', 'pc-sadida-R'],
+  tournesol_affame: ['pc-sadida-A', 'pc-iop-H', 'pc-cra-A', 'pc-osamodas-D', 'pc-sacrieur-A', 'pc-sacrieur-J', 'pc-iop-L', 'pc-cra-K', 'pc-osamodas-J', 'pc-forgelance-I', 'pc-forgelance-A', 'pc-eniripsa-C', 'pc-eniripsa-G', 'pc-ecaflip-N', 'pc-ecaflip-G', 'pc-sadida-K', 'pc-sadida-S', 'pc-sadida-T'],
+  mob_l_eponge: ['pc-iop-E', 'pc-cra-F', 'pc-osamodas-B', 'pc-sacrieur-C', 'pc-sacrieur-P', 'pc-iop-M', 'pc-cra-M', 'pc-osamodas-K', 'pc-forgelance-K', 'pc-forgelance-H', 'pc-eniripsa-A', 'pc-eniripsa-O', 'pc-ecaflip-O', 'pc-ecaflip-C', 'pc-sadida-M', 'pc-sadida-H', 'pc-sadida-U', 'pc-sadida-V'],
+  kankreblath: ['pc-iop-B', 'pc-cra-C', 'pc-osamodas-C', 'pc-sacrieur-B', 'pc-sacrieur-K', 'pc-iop-O', 'pc-cra-J', 'pc-osamodas-P', 'pc-forgelance-D', 'pc-forgelance-O', 'pc-eniripsa-M', 'pc-eniripsa-N', 'pc-ecaflip-M', 'pc-ecaflip-I', 'pc-sadida-D', 'pc-sadida-N', 'pc-sadida-W', 'pc-sadida-X'],
 };
 /** 2A : part des pouvoirs de Légendaire qui sont des pouvoirs de classe inventés. */
 export const CHANCE_POUVOIR_CLASSE = 0.2;
