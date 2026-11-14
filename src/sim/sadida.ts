@@ -63,6 +63,14 @@ export interface EffetsSadida {
 export interface EtatSadi { feuillu: boolean; t: number; calme: number; deFeuillu?: boolean; age: number }
 
 const R = (p: Player): ReglesSadida | undefined => p.cls.sadida;
+/** Durée de l'Infection (Épidémie, pc-sadida-C : quelques secondes de plus). */
+export const dureeInfection = (p: Player) => (R(p)?.infection.t ?? 3) + p.pcv('pc-sadida-C');
+/** -1 PM sans esquive, ronces visibles au sol (Sentier de ronces, Contagion galopante). */
+function entraver(m: Monster, w: World) {
+  if (m.dead) return;
+  m.haste = Math.min(m.haste, 0.85); m.hasteT = Math.max(m.hasteT, 3); m.ronceT = Math.max(m.ronceT, 3); m.entraveA = w.time;
+  w.emit({ k: 'status', x: m.x, y: m.y, text: '-1 PM', color: '#9ad15a' });
+}
 const vivantes = (w: World) => w.betes.filter(b => !b.dead && b.def.sadida && b.sadi);
 /** 14B : Arbres et Poupées de tout le groupe (les plus anciens d'abord). */
 export const foretDuGroupe = (w: World) => vivantes(w).filter(b => b.def.sadida!.arbre || b.def.sadida!.poupee);
@@ -124,7 +132,7 @@ export function planter(p: Player, x: number, y: number, w: World, feuillu = fal
   if (!b) return null;
   b.horsCompte = true;
   b.maxHp = b.hp = Math.max(1, Math.round(p.maxHp * r.arbres.pv));
-  b.sadi = { feuillu: false, t: feuillu ? 0 : r.arbres.feuillu, calme: 0, age: w.time };
+  b.sadi = { feuillu: false, t: feuillu ? 0 : r.arbres.feuillu - p.pcv('pc-sadida-E'), calme: 0, age: w.time };   // Forêt dense : Feuillu plus tôt
   if (feuillu) rendreFeuillu(b, w);
   return b;
 }
@@ -191,12 +199,12 @@ function marcherVers(b: Bete, x: number, y: number, dt: number, w: World, arret:
 }
 /** La Bloqueuse : file se planter devant la cible, provoque les monstres autour (toutes les n s) et tacle ceux à son contact. */
 function majBloqueuse(b: Bete, dt: number, w: World, r: ReglesSadida): boolean {
-  const B = r.bloqueuse, c = cibleProche(b, w, CASE * 10);
+  const B = r.bloqueuse, c = cibleProche(b, w, CASE * 10), J = b.owner.pcv('pc-sadida-J') > 0;   // Bloqueuse inébranlable
   if (!c) return false;   // personne : elle suit le Sadida comme une bête
   marcherVers(b, c.x, c.y, dt, w, c.radius + b.radius + 4);
   b.applyKnock(dt);
   if ((b.provoqueT -= dt) <= 0) {
-    b.provoqueT = B.provoque;
+    b.provoqueT = B.provoque - (J ? 1 : 0);
     let n = 0;
     for (const m of w.monsters) if (!m.dead && !m.def.boss && m.state !== 'idle' && m.state !== 'return' && Math.hypot(m.x - b.x, m.y - b.y) <= CASE * B.rayon) {
       m.agresseur = b.id; m.provoqueJusqua = w.time + B.provoque; n++;
@@ -204,14 +212,14 @@ function majBloqueuse(b: Bete, dt: number, w: World, r: ReglesSadida): boolean {
     if (n) w.emit({ k: 'status', x: b.x, y: b.y - 50, text: 'Provocation', color: '#f2d36b' });
   }
   for (const m of w.monsters) if (!m.dead && Math.hypot(m.x - b.x, m.y - b.y) <= m.radius + b.radius + CASE * 0.5) {   // tacle
-    m.haste = Math.min(m.haste, 1 - B.tacle); m.hasteT = Math.max(m.hasteT, 0.3);
+    m.haste = Math.min(m.haste, 1 - Math.min(0.7, B.tacle * (J ? 2 : 1))); m.hasteT = Math.max(m.hasteT, 0.3);
   }
   return true;
 }
 /** La Sacrifiée : grossit (PV et dégâts) toutes les `periode` s, puis file au milieu des monstres et explose (Explosion Ouatée). */
 function majSacrifiee(b: Bete, dt: number, w: World, r: ReglesSadida): boolean {
-  const S = r.sacrifiee, s = b.sadi!;
-  const k = Math.min(S.max, 1 + S.croissance * Math.floor((w.time - s.age) / S.periode));
+  const S = r.sacrifiee, s = b.sadi!, K = b.owner.pcv('pc-sadida-K');   // Sacrifice éclatant : grossit deux fois plus vite
+  const k = Math.min(S.max, 1 + S.croissance * Math.floor((w.time - s.age) / (S.periode / (K ? 2 : 1))));
   const pvMax = Math.round(b.owner.maxHp * b.def.pv * k);
   if (pvMax > b.maxHp) { b.hp += pvMax - b.maxHp; b.maxHp = pvMax; }
   const c = cibleProche(b, w, CASE * 10);
@@ -220,9 +228,10 @@ function majSacrifiee(b: Bete, dt: number, w: World, r: ReglesSadida): boolean {
   const E = b.def.sadida!.sacrifiee!, p = b.owner;
   for (const m of w.monsters) {
     if (m.dead || m.state === 'spawn' || Math.hypot(m.x - b.x, m.y - b.y) > S.rayon + m.radius) continue;
-    w.coupDeBete(b, m, w.rng.range(E.min, E.max + 1) * 1.5 * k, E.element);
-    infecter(m, w, R(p)?.infection.t);
+    w.coupDeBete(b, m, w.rng.range(E.min, E.max + 1) * 1.5 * k * (1 + K / 100), E.element);
+    infecter(m, w, dureeInfection(p));
   }
+  if (K) w.zonesSol.push({ x: b.x, y: b.y, r: S.rayon, t: 3, tick: 1, ronce: true, hit: { dmg: 0, knock: 0, pmLoss: 2, element: E.element, sort: 'pc-sadida-K' }, touches: new Set(), id: 'pc-sadida-K' });
   w.emit({ k: 'spell', fx: 'burst', id: 'sadi_sacrifiee', x: b.x, y: b.y, facing: 0, size: S.rayon, arc: 0, element: E.element, big: true, boosted: false, cx: b.x, cy: b.y });
   w.emit({ k: 'impact', hitstop: 0.05, shake: 0.01, big: true });
   b.mourir(w);
@@ -240,7 +249,7 @@ export function beteSadidaMorte(b: Bete, w: World) {
     const ronce = p.cls.spells.ronce?.dmg ?? 20;
     for (const m of w.monsters) {
       if (m.dead || m.state === 'spawn' || Math.hypot(m.x - b.x, m.y - b.y) > CASE * 2 + m.radius) continue;
-      infecter(m, w, R(p)!.infection.t);
+      infecter(m, w, dureeInfection(p));
       w.coupDeBete(b, m, ronce * v / 100, 'terre');
     }
     w.emit({ k: 'spell', fx: 'burst', id: 'pc-sadida-A', x: b.x, y: b.y, facing: 0, size: CASE * 2, arc: 0, element: 'terre', big: true, boosted: false, cx: b.x, cy: b.y });
@@ -262,7 +271,28 @@ function fairePoupee(p: Player, cle: string, x: number, y: number, feuilluSeul: 
   if (!b) return null;
   b.horsCompte = true;
   b.sadi = { feuillu: false, t: 0, calme: 0, deFeuillu: deF || feuilluSeul, age: w.time };
+  const J = cle === 'sadi_bloqueuse' ? p.pcv('pc-sadida-J') : 0;   // Bloqueuse inébranlable : PV en plus
+  if (J) { b.maxHp = Math.round(b.maxHp * (1 + J / 100)); b.hp = b.maxHp; }
   return b;
+}
+/** Écorce épineuse (pc-sadida-F) : un Arbre frappé renvoie une part des dommages au monstre qui frappe, et l'Infecte. */
+export function ecorce(b: Bete, dmg: number, fx: number, fy: number, w: World) {
+  const v = b.owner.pcv('pc-sadida-F');
+  if (!v || !estArbre(b)) return;
+  let m: Monster | null = null, bd = CASE * 1.5;
+  for (const q of w.monsters) { if (q.dead || q.intouchable) continue; const d = Math.hypot(q.x - fx, q.y - fy); if (d < bd) { bd = d; m = q; } }
+  if (!m) return;
+  const n = Math.max(1, Math.round(dmg * v / 100));
+  m.hp -= n; m.flash = 0.09;
+  w.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: n, crit: false, element: 'terre', sort: 'pc-sadida-F' });
+  infecter(m, w, dureeInfection(b.owner));
+  if (m.hp <= 0) w.killMonster(m);
+}
+/** Fléau insatiable (pc-sadida-N) : la vie volée en trop soigne ta Poupée la plus blessée. */
+export function soignerPoupee(p: Player, n: number, w: World) {
+  let best: Bete | null = null;
+  for (const b of vivantes(w)) if (b.owner === p && b.def.sadida!.poupee && b.hp < b.maxHp && (!best || b.hp / b.maxHp < best.hp / best.maxHp)) best = b;
+  if (best) best.soigner(n, w);
 }
 
 /** Passage racinaire (10A) : un de tes Arbres à portée, près du point visé. */
@@ -274,9 +304,9 @@ export function arbrePassage(p: Player, aim: { x: number; y: number }, w: World)
 }
 
 // --- Sorts ------------------------------------------------------------------------------------------------------------
-export interface CtxSadida { r?: number; infectes: Set<Monster>; sx: number; sy: number }
+export interface CtxSadida { r?: number; infectes: Set<Monster>; sx: number; sy: number; /** Cigüe mortelle : dégâts × mult sur un Infecté. */ mult?: number }
 /** Avant l'impact : relais par un Feuillu (ou une Poupée pour Fléau), Larme qui rend Feuillu, Infectés d'avant le coup. */
-export function avantImpactSadida(p: Player, d: SpellDef, s: { tx: number; ty: number; sx: number; sy: number }, w: World): CtxSadida {
+export function avantImpactSadida(p: Player, d: SpellDef, s: { id: string; tx: number; ty: number; sx: number; sy: number }, w: World): CtxSadida {
   const S = d.sadida!, r = R(p)!, c: CtxSadida = { infectes: new Set(w.monsters.filter(m => !m.dead && m.infecteT > 0)), sx: s.sx, sy: s.sy };
   if (S.relais) {
     const a = prochePoint(w, s.tx, s.ty, CASE * 0.9, b => estArbre(b) && (estFeuillu(b) || !!S.feuillit));
@@ -289,6 +319,8 @@ export function avantImpactSadida(p: Player, d: SpellDef, s: { tx: number; ty: n
     const a = prochePoint(w, s.tx, s.ty, CASE * 0.9, b => b.owner === p && !!b.def.sadida?.poupee);
     if (a) { s.tx = a.x; s.ty = a.y; c.r = CASE * 1.5; }
   }
+  const D = s.id === 'cigue' ? p.pcv('pc-sadida-D') : 0;   // Cigüe mortelle : plus fort sur un Infecté
+  if (D && w.monsters.some(m => !m.dead && m.infecteT > 0 && Math.hypot(m.x - s.tx, m.y - s.ty) <= (c.r ?? CASE * 0.75) + m.radius)) c.mult = 1 + D / 100;
   return c;
 }
 /** Propagations de l'Infection (1A : au plus n par fenêtre de t s). */
@@ -298,7 +330,7 @@ function propagationPossible(p: Player, w: World, r: ReglesSadida): boolean {
 }
 /** Après l'impact d'un sort Sadida : Infection, propagation, poison, soins, Poupées, Arbres. */
 export function impactSadida(p: Player, id: string, d: SpellDef, tx: number, ty: number, size: number, hit: HitDef, c: CtxSadida, gm: number, w: World) {
-  const S = d.sadida!, r = R(p)!, IT = r.infection.t;
+  const S = d.sadida!, r = R(p)!, IT = dureeInfection(p), IMAX = r.infection.max + p.pcv('pc-sadida-C');
   const zone = size > 0 ? w.monsters.filter(m => !m.dead && m.state !== 'spawn' && Math.hypot(m.x - tx, m.y - ty) <= size + m.radius) : [];
   if (S.plante) { planter(p, tx, ty, w); return; }
   if (S.poupee) { fairePoupee(p, S.poupee, tx, ty, false, w); return; }
@@ -307,41 +339,57 @@ export function impactSadida(p: Player, id: string, d: SpellDef, tx: number, ty:
   if (S.vaudou) {
     const pou = prochePoint(w, tx, ty, CASE, b => b.owner === p && !!b.def.sadida?.poupee);
     if (pou) {
-      const V = S.vaudou;
-      soignerZone(p, pou.x, pou.y, V.rayon, V.soin * gm, w);
+      const V = S.vaudou, P = p.pcv('pc-sadida-P');   // Poupée immortelle : soin en plus, la Poupée renaît en Feuillu
+      soignerZone(p, pou.x, pou.y, V.rayon, V.soin * gm * (1 + P / 100), w);
       w.hitCircle(pou.x, pou.y, V.rayon, hit);
       for (const m of w.monsters) if (!m.dead && Math.hypot(m.x - pou.x, m.y - pou.y) <= V.rayon + m.radius) infecter(m, w, IT);
       w.emit({ k: 'spell', fx: 'burst', id, x: pou.x, y: pou.y, facing: 0, size: V.rayon, arc: 0, element: 'eau', big: true, boosted: false, cx: p.x, cy: p.y });
+      if (P && pou.sadi) pou.sadi.deFeuillu = true;
       pou.mourir(w);
     }
   }
   if (S.poison) for (const m of zone) empoisonner(p, m, S.poison * gm, d.element, w);
   if (S.infecte) for (const m of zone) infecter(m, w, IT);
+  if (id === 'ronce' && zone.length && p.pcv('pc-sadida-C')) {   // Épidémie : Ronce Infecte aussi l'ennemi le plus proche de sa cible
+    let o: Monster | null = null, bd = CASE * 3;
+    for (const m of w.monsters) { if (m.dead || zone.includes(m) || m.state === 'spawn') continue; const dd = Math.hypot(m.x - tx, m.y - ty) - m.radius; if (dd < bd) { bd = dd; o = m; } }
+    if (o) infecter(o, w, IT);
+  }
+  const M = id === 'buisson_ardent' ? p.pcv('pc-sadida-M') : 0;   // Buisson incendiaire : sol en feu 2 s
+  if (M && hit.dmg > 0) w.zonesSol.push({ x: tx, y: ty, r: CASE * 1.5, t: 2, tick: 1, hit: { ...hit, dmg: hit.dmg * M / 100, pmLoss: undefined, sansCrit: true, sort: 'pc-sadida-M' }, touches: new Set(), id: 'pc-sadida-M' });
   if (S.seve) for (const m of zone) m.seveT = Math.max(m.seveT, S.seve);
-  if (S.maintient) for (const m of zone) if (m.infecteT > 0) m.infecteT = Math.min(r.infection.max, m.infecteT + IT);
+  if (S.maintient) for (const m of zone) if (m.infecteT > 0) m.infecteT = Math.min(IMAX, m.infecteT + IT);
   // 8B : ronces au sol sous les monstres ralentis par ce sort
   if (hit.pmLoss) for (const m of zone) if (m.entraveA === w.time && m.hasteT > 0) m.ronceT = Math.max(m.ronceT, m.hasteT);
   if (S.volPM && zone.some(m => m.entraveA === w.time)) p.courir(S.volPM.k, S.volPM.t);
   // Soins (9A) : Larme / Ronce Apaisante sur un relais soignent tout le cercle ; sans ennemi touché, l'allié visé ou soi
-  const soin = (d.soin ?? 0) * gm;
+  const G = p.pcv('pc-sadida-G'), soin = (d.soin ?? 0) * gm * (id === 'larme' ? 1 + G / 100 : 1);   // Sève vivifiante
   if (soin > 0) {
-    if (c.r) soignerZone(p, tx, ty, c.r, soin, w);
+    if (c.r) soignerZone(p, tx, ty, c.r, soin, w, G > 0);
     else if (S.soinSiRien && !zone.length) soignerVise(p, tx, ty, soin, w);
+  }
+  const O = id === 'ronce_apaisante' ? p.pcv('pc-sadida-O') : 0;   // Ronces bienveillantes : bouclier aux alliés soignés
+  if (O && soin > 0) {
+    const vises = c.r ? w.players.filter(q => !q.dead && Math.hypot(q.x - tx, q.y - ty) <= c.r! + q.radius)
+      : !zone.length ? [w.players.find(j => j !== p && !j.dead && Math.hypot(j.x - tx, j.y - ty) <= CASE + j.radius) ?? p] : [];
+    for (const q of vises) { q.shield = Math.max(q.shield, Math.round(q.maxHp * O / 100)); q.shieldT = q.shieldT0 = 4; q.shieldSrc = 'pc-sadida-O'; }
   }
   // 1A : propagation à tous les autres Infectés, sans critique ; Contagion fait sauter l'Infection autour de la cible
   const touches = zone.filter(m => c.infectes.has(m));
+  const H = S.contagion ? p.pcv('pc-sadida-H') : 0;   // Contagion galopante : plus loin, -1 PM
   if (S.contagion && touches.length) for (const t of touches) for (const m of w.monsters)
-    if (!m.dead && m !== t && Math.hypot(m.x - t.x, m.y - t.y) <= S.contagion * CASE + m.radius) infecter(m, w, IT);
-  if (S.propage && touches.length && propagationPossible(p, w, r)) {
+    if (!m.dead && m !== t && Math.hypot(m.x - t.x, m.y - t.y) <= (S.contagion + H) * CASE + m.radius) { infecter(m, w, IT); if (H) entraver(m, w); }
+  const libre = id === 'cigue' && p.pcv('pc-sadida-D') > 0;   // Cigüe mortelle : hors de la limite des 3 propagations
+  if (S.propage && touches.length && (libre || propagationPossible(p, w, r))) {
     const autres = w.monsters.filter(m => !m.dead && m.infecteT > 0 && !zone.includes(m) && m.state !== 'spawn');
     if (autres.length) {
-      p.sadiProp.push(w.time);
+      if (!libre) p.sadiProp.push(w.time);
       const copie: HitDef = { ...hit, sansCrit: true, sort: id };
       for (const m of autres) {
         if (hit.dmg > 0 || hit.pmLoss || hit.lifesteal) w.applyHits(q => q === m, copie, tx, ty, 0);
         if (S.poison) empoisonner(p, m, S.poison * gm, d.element, w);
         if (S.seve) m.seveT = Math.max(m.seveT, S.seve);
-        if (S.maintient) m.infecteT = Math.min(r.infection.max, m.infecteT + IT);
+        if (S.maintient) m.infecteT = Math.min(IMAX, m.infecteT + IT);
         if (hit.pmLoss && m.entraveA === w.time && m.hasteT > 0) m.ronceT = Math.max(m.ronceT, m.hasteT);
       }
       w.emit({ k: 'infection', x: touches[0].x, y: touches[0].y, cibles: autres.map(m => [m.x, m.y] as [number, number]) });
@@ -356,9 +404,9 @@ function foretHantee(p: Player, w: World) {
   if (arbresDe(p, w).filter(b => b.sadi?.feuillu).length < 6) return;
   if (w.monsters.filter(m => !m.dead && m.infecteT > 0).length >= 10) q.compteurs.foretHantee = 1;
 }
-function soignerZone(p: Player, x: number, y: number, r: number, n: number, w: World) {
+function soignerZone(p: Player, x: number, y: number, r: number, n: number, w: World, arbres = false) {
   for (const q of w.players) if (!q.dead && Math.hypot(q.x - x, q.y - y) <= r + q.radius) soignerAllie(p, q, n, w, { x, y });
-  for (const b of w.betes) if (!b.dead && !b.def.sadida?.arbre && Math.hypot(b.x - x, b.y - y) <= r + b.radius) b.soigner(n, w);
+  for (const b of w.betes) if (!b.dead && (arbres || !b.def.sadida?.arbre) && Math.hypot(b.x - x, b.y - y) <= r + b.radius) b.soigner(n, w);
 }
 /** 9A : l'allié visé (à une case du point) ou soi. */
 function soignerVise(p: Player, x: number, y: number, n: number, w: World) {
@@ -377,6 +425,17 @@ export function rallier(p: Player, aim: { x: number; y: number }, w: World): boo
   w.emit({ k: 'status', x: best.x, y: best.y - 50, text: 'Ralliement !', color: '#9be36a' });
   w.emit({ k: 'ralliement', x: best.x, y: best.y });
   return true;
+}
+/** Sentier de ronces (pc-sadida-B) : Passage racinaire Infecte les ennemis traversés et leur retire 1 PM. */
+export function sentierDeRonces(p: Player, sx: number, sy: number, tx: number, ty: number, w: World) {
+  if (!p.pcv('pc-sadida-B')) return;
+  const dx = tx - sx, dy = ty - sy, L2 = dx * dx + dy * dy || 1;
+  for (const m of w.monsters) {
+    if (m.dead || m.state === 'spawn') continue;
+    const k = Math.max(0, Math.min(1, ((m.x - sx) * dx + (m.y - sy) * dy) / L2));
+    if (Math.hypot(m.x - sx - dx * k, m.y - sy - dy * k) > CASE * 0.6 + m.radius) continue;
+    infecter(m, w, dureeInfection(p)); entraver(m, w);
+  }
 }
 export function majSadida(p: Player, dt: number) {
   if (p.sadiCibleT > 0 && (p.sadiCibleT -= dt) <= 0) p.sadiCible = null;

@@ -2155,6 +2155,22 @@
           "Partie de test : le dédale du Labyrinthe change à chaque entrée, décor des arènes 0.6 remis à sa place."
         ]
       }
+    },
+    {
+      "date": "2026-11-14",
+      "titre": "Les légendaires du Sadida",
+      "resume": "56 pouvoirs légendaires pour le Sadida : ses Arbres, ses Poupées et l'Infection changent de visage.",
+      "capture": "assets/journal/2026-11-14.webp",
+      "legende": "Les pouvoirs inventés du Sadida, 14 novembre 2026.",
+      "lignes": {
+        "Nouveautés": [
+          {"titre": "Légendaires du Sadida", "phrase": "40 pouvoirs officiels de la Panoplie Sauvage et 16 inventés qui transforment ses sorts.", "details": "Forêt dense, Écorce épineuse, Buisson incendiaire, Poupée immortelle… Les boss du jeu ont chacun leurs préférés.", "icone": "dofus", "etiquettes": ["Partie de test"]}
+        ],
+        "Le monde": [],
+        "Combat": [],
+        "Corrections": [],
+        "En coulisses": []
+      }
     }
   ]
 }

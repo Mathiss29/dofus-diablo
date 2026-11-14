@@ -6,7 +6,7 @@ import type { World } from './world';
 import BETES_JSON from '../data/betes.json';
 import { allieLePlusBlesse, lucioleMaj, soignerAllie } from './eniripsa';
 import { coffreAssomme, EJECTION } from './enutrof';
-import { beteSadidaMorte, cibleRalliement, empoisonner, infecter, majBeteSadida, type EtatSadi } from './sadida';
+import { beteSadidaMorte, cibleRalliement, dureeInfection, ecorce, empoisonner, infecter, majBeteSadida, type EtatSadi } from './sadida';
 
 /** Un effet officiel d'un sort de bête que le jeu sait jouer (tools/extraction/osa_betes.py). */
 export type EffetBete =
@@ -133,6 +133,7 @@ export class Bete extends Entity {
     const a = Math.atan2(this.y - fromY, this.x - fromX);
     this.kx += Math.cos(a) * 180; this.ky += Math.sin(a) * 180;
     world.emit({ k: 'hit', target: 'allie', id: this.id, x: this.x, y: this.y, z: 40, amount: dmg, crit: false, element });
+    if (this.def.sadida?.arbre && dmg > 0) ecorce(this, dmg, fromX, fromY, world);   // Écorce épineuse
     if (this.hp <= 0) this.mourir(world);
     return true;
   }
@@ -343,12 +344,22 @@ export class Bete extends Entity {
           }
           const SD = this.def.sadida;
           const n = SD?.poison ? 0 : world.coupDeBete(this, m, jet, el);   // la Folle : poison continu (7A) au lieu d'un coup
-          if (SD?.poison) empoisonner(p, m, jet, el, world);
-          if (SD?.infecte) infecter(m, world, p.cls.sadida?.infection.t);
+          const fol = SD?.poison ? p.pcv('pc-sadida-I') : 0;   // Folle à lier : poison plus fort, qui gagne les ennemis à 1 case
+          if (SD?.poison) empoisonner(p, m, jet * (1 + fol / 100), el, world);
+          if (fol) for (const o of world.monsters) {
+            const d = Math.hypot(o.x - m.x, o.y - m.y);
+            if (o === m || o.dead || o.state === 'spawn' || d > CASE + o.radius + m.radius) continue;
+            empoisonner(p, o, jet * (1 + fol / 100), el, world); infecter(o, world, dureeInfection(p));
+          }
+          if (SD?.infecte) infecter(m, world, dureeInfection(p));
           if (e.vol && n > 0) this.soigner(n / 2, world);
         }
       } else if (e.k === 'soinPct' && allie) {   // Bisou Magique du Lapino : % des PV max de l'allié ciblé
         soignerAllie(p, cible as Player, (cible as Player).maxHp * e.n / 100, world, { brut: true, de: this });
+        const gp = this.base === 'sadi_groute' ? p.pcv('pc-sadida-L') : 0;   // Groute protecteur : bouclier aux alliés soignés
+        if (gp) for (const q of world.players) if (!q.dead && (q === cible || Math.hypot(q.x - cx, q.y - cy) <= r + q.radius)) {
+          q.shield = Math.max(q.shield, Math.round(q.maxHp * gp / 100)); q.shieldT = q.shieldT0 = 4; q.shieldSrc = 'pc-sadida-L';
+        }
         if (p.pcv('pc-eniripsa-G')) for (const q of world.players)   // Lapino gardien : les alliés à 2 cases de la cible aussi
           if (q !== cible && !q.dead && Math.hypot(q.x - cible.x, q.y - cible.y) <= CASE * 2) soignerAllie(p, q, q.maxHp * e.n / 100, world, { brut: true, de: this });
       } else if (e.k === 'soin' && allie) {
@@ -360,7 +371,7 @@ export class Bete extends Entity {
         const m = cible as Monster, dx = m.x - this.x, dy = m.y - this.y, d = Math.hypot(dx, dy) || 1, s = e.k === 'repousse' ? 1 : -1;
         const len = s > 0 ? e.n * CASE : Math.min(e.n * CASE, Math.max(0, d - m.radius - this.radius - 4));
         if (!m.def.boss) { m.kx += s * dx / d * len * 7.13; m.ky += s * dy / d * len * 7.13; }
-        if (this.def.sadida?.infecte) infecter(m, world, p.cls.sadida?.infection.t);   // Rejet Sylvestre du Groute
+        if (this.def.sadida?.infecte) infecter(m, world, dureeInfection(p));   // Rejet Sylvestre du Groute
       } else if (e.k === 'bouclier') {
         const q = allie ? cible as Player : p;   // Prévention du Lapino : sur l'allié ciblé
         q.shield = Math.max(q.shield, Math.round(q.maxHp * e.n / 1000)); q.shieldT = TOUR * 2;
