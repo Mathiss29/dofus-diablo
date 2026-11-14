@@ -235,7 +235,54 @@ def labyrinthe():
     return a, (10, 9, 8), pts, ok
 
 
-COMPOS = {'blops': blops, 'draeg': draeg, 'nyee': nyee, 'ancestral': ancestral, 'labyrinthe': labyrinthe}
+# --- 0.6 (22B) : salle au trésor du Coffre Malveillant (portail une fois sur 20) ----------------------------------------------
+# Petite salle 3 x 3 sur les dalles du Labyrinthe teintées d'or, murets bas tout autour, grands piliers aux coins.
+TR_N, TR_S, TR_DY = 3, 420, 30
+def tr_pos(u, v): return ((u - v) * TR_S * 0.5, (u + v - TR_N + 1) * TR_S * 0.25 + TR_DY)
+def tr_uv(x, y):
+    a, b = x / (TR_S * 0.5), (y - TR_DY) / (TR_S * 0.25)
+    return (a + b) / 2 + (TR_N - 1) / 2, (b - a) / 2 + (TR_N - 1) / 2
+
+
+def tresor():
+    d = 'cochon'; a = Arene(103)
+    random.seed(13)
+    N = TR_N
+    def dans(x, y):
+        u, v = tr_uv(x, y); return -0.6 < u < N - 0.4 and -0.6 < v < N - 0.4
+    for i in range(-48, 49):
+        for j in range(-48, 49):
+            x, y = (i - j) * 43, (i + j) * 21.5
+            if BOX[0] - 60 < x < BOX[2] + 60 and BOX[1] - 60 < y < BOX[3] + 60 and dans(x, y):
+                u, v = tr_uv(x, y); k = 1 - max(abs(u - 1), abs(v - 1)) * 0.22
+                r, g, b = int(0xC8 * k), int(0xA6 * k), int(0x6C * k)
+                a.bg(random.choice([30785, 30785, 30784, 30787, 30788, 30786]), x, y, c=0xFF000000 | (r << 16) | (g << 8) | b)
+                a.els[-1]['k'] = (0, 0, y, x)
+    PIED = 40
+    W1 = [P(d, i) for i in (23, 32, 34, 35, 36, 41)]
+    segs = []
+    for k2 in range(N):
+        for (u, v, f) in [(k2, -0.5, False), (k2, N - 0.5, False), (-0.5, k2, True), (N - 0.5, k2, True)]:
+            x, y = tr_pos(u, v); segs.append((x, y, f))
+    def demi(f): return (TR_S * 0.25, -TR_S * 0.125) if f else (TR_S * 0.25, TR_S * 0.125)
+    for x, y, f in segs:
+        dx, dy = demi(f)
+        for s_ in (-2, -1, 0, 1, 2): a.put(random.choice(W1), x + s_ * dx * 0.4, y + s_ * dy * 0.4 + PIED, flip=not f)
+    for u, v in [(0, 0), (N, 0), (0, N)]:   # pas de pilier devant : il cacherait la salle
+        x, y = tr_pos(u - 0.5, v - 0.5); a.put(P(d, 26), x, y + PIED)
+    pts = dict(arrivee=tr_pos(2.1, 2.1), entrees=[tr_pos(0, 0), tr_pos(0, 2), tr_pos(2, 0)], boss=tr_pos(0.9, 0.9),
+               sortie=tr_pos(1.8, 1.5), coffre=tr_pos(1.5, 1.8))
+    def ok(x, y, bl):
+        if not dans(x, y): return False
+        for sx, sy, f in segs:
+            dx, dy = demi(f); L2 = dx * dx + dy * dy * 4
+            t = max(-1, min(1, ((x - sx) * dx + (y - sy) * dy * 4) / L2))
+            if math.hypot(x - sx - t * dx, (y - sy - t * dy) * 2) < 40: return False
+        return not any(math.hypot(x - bx, (y - by) * 2) < r for bx, by, r in bl)
+    return a, (10, 8, 4), pts, ok
+
+
+COMPOS = {'blops': blops, 'draeg': draeg, 'nyee': nyee, 'ancestral': ancestral, 'labyrinthe': labyrinthe, 'tresor': tresor}
 
 if __name__ == '__main__' and _ARGS[:1] == ['apercu']:
     os.makedirs('vues', exist_ok=True)

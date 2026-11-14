@@ -113,7 +113,9 @@
     "repere": 380,
     "fuite": 15,
     "vitesse": 2.4,
-    "butins": 5
+    "butins": 5,
+    "_portail": "22B : une fois sur 20 (×10 en partie de test avec archimonstres ×100), le coffre abattu laisse un portail (duree s, rayon px) vers la Salle au trésor : vagues de coffres et de monstres dorés de la sous-zone, au niveau de la sous-zone ; doré = PV ×pvDore, butin en plus ; le coffre final tire tirages butins de boss.",
+    "portail": { "chance": 0.05, "duree": 30, "rayon": 55, "nom": "Salle au trésor", "pvDore": 1.5, "tirages": 2 }
   },
   "renommee": {
     "_doc": "19A+19C : renommée par région et par perso (Incarnam, Astrub, Amakna… et les régions de la 0.6). Points : carte vue, carte chassée, lieu découvert, archimonstre capturé, sanctuaire trouvé. Le palier 4 demande objectif × le total possible de la région ; les paliers 1-3 en sont le quart, la moitié, les trois quarts.",

@@ -809,6 +809,7 @@ export class Hud {
       case 'renommee': this.loot(`Renommée ${e.region} : palier ${e.palier}  ·  ${e.texte}`, '#b9e54b'); break;
       case 'sanctuaire': this.loot(`Sanctuaire de ${e.dieu}  ·  +${e.bonus} ${STAT_NAMES[e.carac as Stat] ?? e.carac}  (${e.n}/${e.total} en ${e.region})`, '#e8c25a'); break;
       case 'coffreFuyard': this.loot('Un Coffre Malveillant détale : 15 secondes pour l\'abattre !', '#f2d36b'); break;
+      case 'tresorPortail': this.loot('Un portail doré vers la Salle au trésor : 30 secondes pour y entrer !', '#f2d36b'); break;
       case 'massacre': this.toast(`Massacre ×${e.n}  ·  +${e.bonus} % XP`); break;
       case 'massacreFin': this.loot(`Massacre de ${e.n} monstres`, '#e6b85c'); break;
     }

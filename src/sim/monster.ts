@@ -65,6 +65,8 @@ export class Monster extends Entity {
   affixes: string[] = []; affixeT = 0;
   /** Coffre Malveillant qui détale (0.6, 22A) : temps de fuite restant (0 : pas encore repéré). */
   fuyard = false; fuiteT = 0;
+  /** 0.6 (22B) : monstre doré de la Salle au trésor (butin en plus). */
+  dore = false;
   dirX = 1; dirY = 0;
   hitDone = false;
   mode: 'lunge' | 'slam' | 'spell' = 'lunge';

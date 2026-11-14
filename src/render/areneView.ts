@@ -41,6 +41,9 @@ export class AreneView {
   /** 0.6 (« Arènes : » 2D, 6B) : cercles de choix des Blops Royaux et toiles au sol, sous les télégraphes ; noms des cercles. */
   private sol06: Phaser.GameObjects.Graphics;
   private noms06: Phaser.GameObjects.Text[] = [];
+  /** 0.6 (22B) : portail doré du Coffre Malveillant, dans le monde. */
+  private tresor: Phaser.GameObjects.Graphics;
+  private tresorNom: Phaser.GameObjects.Text;
 
   constructor(private scene: Phaser.Scene, private world: World) {
     this.portail = scene.add.graphics().setBlendMode(Phaser.BlendModes.ADD).setVisible(false);
@@ -54,6 +57,23 @@ export class AreneView {
     // planches chargées d'avance : le coffre doit être prêt à la mort du boss
     for (const c of Object.values(COFFRES)) this.planche(c.atlas);
     this.sol06 = scene.add.graphics().setDepth(SOL + 40);
+    this.tresor = scene.add.graphics().setBlendMode(Phaser.BlendModes.ADD).setVisible(false);
+    this.tresorNom = scene.add.text(0, 0, '', { fontFamily: 'Rowdies, Lexend, sans-serif', fontSize: '15px', color: '#ffe08a', stroke: '#000', strokeThickness: 4, align: 'center' })
+      .setOrigin(0.5, 1).setVisible(false);
+  }
+  /** 22B : anneaux d'or qui tournent, comme le portail de sortie des arènes ; le nom et les secondes qui restent au-dessus. */
+  private dessinerTresor() {
+    const P = this.world.portailTresor;
+    this.tresor.setVisible(!!P); this.tresorNom.setVisible(!!P);
+    if (!P) return;
+    const s = ISO.toScreen(P.x, P.y), g = this.tresor.clear().setDepth(s.y + 1), fin = Math.min(1, P.vie / 2), R = 46 * fin, H = 110 * fin;
+    g.fillStyle(0xe0a020, 0.3).fillEllipse(s.x, s.y, R * 2.4, R * 1.2);
+    for (let i = 0; i < 4; i++) {
+      const ph = this.tw * 2.4 + i * Math.PI / 2, w = R * (1.1 + 0.18 * Math.sin(ph)), h = H * (1 + 0.05 * Math.cos(ph));
+      g.lineStyle(4 - i * 0.6, i % 2 ? 0xffe08a : 0xffb52e, 0.6 - i * 0.08).strokeEllipse(s.x, s.y - h / 2, w, h);
+    }
+    g.fillStyle(0xfff0b0, 0.2 + 0.08 * Math.sin(this.tw * 5)).fillEllipse(s.x, s.y - H / 2, R * 0.9, H * 0.85);
+    this.tresorNom.setText(`Salle au trésor\n${Math.ceil(P.vie)} s`).setPosition(s.x, s.y - H - 6).setDepth(s.y + 2);
   }
   /** 2D : un cercle de la couleur de chaque Royal, son nom au-dessus ; 6B : toiles (blanches, collantes) ou brûlées (cendre). */
   private dessiner06() {
@@ -114,12 +134,13 @@ export class AreneView {
     g.setDepth(prof + 300);
   }
   private planche(a: string) { return textureUneFois(this.scene, a, l => l.multiatlas(a, v(`${SP}/${a}.json`), dossier(`${SP}/`))); }
-  destroy() { this.sol06.destroy(); this.noms06.forEach(t => t.destroy()); this.wobot.destroy(); this.trou.destroy(); this.trouNom.destroy(); this.portail.destroy(); this.lueur.destroy(); this.coffre?.destroy(); this.nom.destroy(); }
+  destroy() { this.tresor.destroy(); this.tresorNom.destroy(); this.sol06.destroy(); this.noms06.forEach(t => t.destroy()); this.wobot.destroy(); this.trou.destroy(); this.trouNom.destroy(); this.portail.destroy(); this.lueur.destroy(); this.coffre?.destroy(); this.nom.destroy(); }
 
   update(dt: number) {
     const a = this.world.arene, vu = !!a?.fini;
     this.dessinerWobot(dt);
     this.dessiner06();
+    this.dessinerTresor();
     this.portail.setVisible(vu); this.nom.setVisible(vu); this.lueur.setVisible(vu);
     // trou du boss enfui : visible seulement pour qui il mène encore quelque part
     const t = vu && a!.trou && a!.premiers.has(this.world.player.id) ? a!.trou : null;

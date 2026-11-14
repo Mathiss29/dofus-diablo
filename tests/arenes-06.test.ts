@@ -35,14 +35,14 @@ describe('arènes de la 0.6 (maquette « Arènes : 1A 2D 3A 4A+4C 5B 6B+6C 7A 8A
   it('les monstres des vagues et les boss existent, avec leur planche ; les boss ont leur âme officielle', () => {
     const o = GAME_DATA.zones.astrub.open!;
     for (const d of o.donjonsV06 ?? []) {
-      for (const m of [...d.vagues!.flatMap(v => v.m), ...d.bossVague!]) {
+      for (const m of [...d.vagues!.flatMap(v => v.m), ...d.bossVague!].filter(m => m !== '?')) {   // ? : Salle au trésor (monstres de la sous-zone)
         expect(GAME_DATA.monsters[m], `${d.nom} : ${m}`).toBeDefined();
         expect(LOOKS[GAME_DATA.monsters[m].look ?? m], `${d.nom} : planche de ${m}`).toBeDefined();
       }
       expect(GAME_DATA.monsters[d.bossVague![0]].boss, d.nom).toBe(true);
       expect(GAME_DATA.monsters[d.bossVague![0]].ame, d.nom).toBeTruthy();
     }
-    expect((o.donjonsV06 ?? []).map(d => d.nom).sort()).toEqual([...DONJONS].sort());
+    expect((o.donjonsV06 ?? []).filter(d => !d.tresor).map(d => d.nom).sort()).toEqual([...DONJONS].sort());   // + la Salle au trésor (22B)
   });
 
   it('clés officielles chez Goultard, seulement quand la 0.6 est visible', () => {

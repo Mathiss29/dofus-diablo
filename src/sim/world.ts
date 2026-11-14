@@ -34,6 +34,7 @@ import { DecoHavreSac, gagnerMeuble } from './deco';
 import { hache } from './contrats';
 import { DECO, MEUBLES, meubleDeRecette, raresDuTheme, type SacVu, type SorteSpeciale } from './meubles';
 import { COFFRE_FUYARD, defCoffreFuyard, piloterCoffre } from './coffreFuyard';
+import { portailPas, tenterPortail, PORTAIL_TRESOR, type PortailTresor, type VisiteTresor } from './salleTresor';
 import { defAffixes, elitesPas, poserAffixes, tirerAffixes } from './elites';
 import { idolesApparition, idolesGroupe, idolesMort, idolesPas, type ZoneIdole } from './idolesCombat';
 import type { EtatMonde } from './etatMonde';
@@ -282,6 +283,9 @@ export class World {
   zonesIdoles: ZoneIdole[] = [];
   /** Autels de combat posés (0.6, 21). */
   autels: Autel[] = [];
+  /** 0.6 (22B) : portail doré laissé par le Coffre Malveillant ; visite de la Salle au trésor en cours (salleTresor.ts). */
+  portailTresor: PortailTresor | null = null;
+  visiteTresor: VisiteTresor | null = null;
   /** Festin du piranya : dégâts comptés pendant le coup en cours. */
   festin = 0;
   /** Dommages faits par le dernier coup du joueur (Mot de Lamentations : soigne selon les dommages). */
@@ -1004,7 +1008,7 @@ export class World {
   private lancerArene(d: DonjonDef) {
     const p = this.player, reprise = this.cleValable(d.nom);
     this.arene?.abandonner();
-    if (!reprise) p.cleDonjon = { nom: d.nom, vague: 1, reste: ARENE.cle, ...(p.renfortDonjon === d.nom ? { renforcee: true } : {}) };
+    if (!reprise && !d.tresor) p.cleDonjon = { nom: d.nom, vague: 1, reste: ARENE.cle, ...(p.renfortDonjon === d.nom ? { renforcee: true } : {}) };
     p.renfortDonjon = null;
     this.arene = new Arene(this, d, reprise || 1);
     const boss = this.bossDuDonjon(d.nom), cle = this.entreeDonjon(d.nom)?.cle ?? null;
@@ -1048,10 +1052,27 @@ export class World {
     if (po) this.traverser(po.ends[0], d.nom);
     else { p.x = this.checkpoint.x; p.y = this.checkpoint.y; }
   }
+  /** 0.6 (22B) : le joueur passe le portail doré : droit dans la Salle au trésor. */
+  entrerTresor(d: DonjonDef) {
+    const wg = this.worldGrid;
+    if (!wg?.mapByTag(d.arene!.tag)) return;
+    this.player.stopMove();
+    this.emit({ k: 'portalStart', nom: d.nom });
+    this.traverser({ tag: d.arene!.tag, ...wg.cellToWorld(d.arene!.arrivee) }, d.nom);
+  }
   /** 13A : le portail de sortie ramène devant le gardien. */
   quitterArene(d: DonjonDef) {
     // partie tenue par le serveur : l'arène est toute la partie ; celui qui sort quitte le groupe et retrouve son monde
     if (this.opts.partieServeur) { this.player.stopMove(); this.emit({ k: 'sortieArene', joueur: this.player.id }); return; }
+    if (d.tresor) {   // 0.6 (22B) : la Salle au trésor ramène là où était le portail (sinon au Zaap)
+      if (this.passage) return;
+      const r = this.visiteTresor?.retour ?? { tag: this.worldGrid!.mapAt(this.checkpoint.x, this.checkpoint.y)?.tag ?? '', x: this.checkpoint.x, y: this.checkpoint.y };
+      this.arene = null; this.visiteTresor = null;
+      this.player.stopMove();
+      this.passage = { to: r, nom: d.nom, t: World.PASSAGE };
+      this.emit({ k: 'portalStart', nom: d.nom });
+      return;
+    }
     const po = this.entreeDonjon(d.nom);
     if (!po || this.passage) return;
     this.arene = null;
@@ -1075,12 +1096,14 @@ export class World {
     if (!boss || !this.opts.items) return null;
     // « Arènes : 2D » : le butin du Royal choisi ; « Les 4 Royaux » : celui des quatre, dans le même coffre
     const choisis = this.arene?.d === d ? this.arene.bossCoffre : [];
-    const [b, ...autres] = (choisis.length ? choisis : [boss]).map(m => this.tirerCoffreDe(m));
+    // 0.6 (22B) : Salle au trésor, au niveau de la sous-zone d'où l'on vient, et plusieurs tirages
+    const n = d.tresor ? this.visiteTresor?.niveau : undefined, tirages = d.tresor ? Array(PORTAIL_TRESOR.tirages).fill(boss) : [];
+    const [b, ...autres] = (choisis.length ? choisis : [boss, ...tirages.slice(1)]).map(m => this.tirerCoffreDe(m, n));
     for (const c of autres) { b.ressources.push(...c.ressources); b.objets.push(...c.objets); b.kamas += c.kamas; }
     return b;
   }
-  private tirerCoffreDe(boss: string): Butin {
-    const M = this.opts.data.monsters, niveau = M[boss].level ?? this.zone.level;
+  private tirerCoffreDe(boss: string, n?: number): Butin {
+    const M = this.opts.data.monsters, niveau = n ?? M[boss].level ?? this.zone.level;
     const b = tirerButin(this.rng, this.contexteButin(boss, 'boss', niveau), () => this.nextId++);
     b.kamas += 20 * niveau;
     // « Apparats : » 17J : Légende, un coffre de plus (un second tirage du boss dans le même coffre)
@@ -1597,6 +1620,7 @@ export class World {
     this.updateZonesSol(dt);
     elitesPas(this, dt);
     autelsPas(this, dt);
+    portailPas(this, dt);
     if (this.zone.open && this.players[0]?.v06) {   // 0.6 (19-20) : sanctuaires trouvés en passant, renommée relue toutes les 3 s
       sanctuairesPas(this);
       if (Math.floor(this.time / 3) > Math.floor((this.time - dt) / 3)) for (const q of this.players) this.commeJoueur(q, () => majRenommee(this, q));
@@ -2083,7 +2107,8 @@ export class World {
     this.emit({ k: 'kill', x: m.x, y: m.y, radius: m.radius, monster: m.type });
     const p = this.player;
     p.soigner(p.cls.healOnKill + p.legendary('vampire'));
-    if (!this.vivant?.monstreVaincu(m)) { this.dropLoot(m); if (m.champion) this.dropLoot(m); if (this.player.autel?.effet === 'fortune') this.dropLoot(m); if (m.fuyard) for (let i = 1; i < COFFRE_FUYARD.butins; i++) this.dropLoot(m); }   // coffre qui fuit : butin ×5   // Djim : le Champion donne deux fois ; autel de Fortune   // boss du monde : son coffre est donné par le monde vivant (4A)
+    if (!this.vivant?.monstreVaincu(m)) { this.dropLoot(m); if (m.champion) this.dropLoot(m); if (this.player.autel?.effet === 'fortune') this.dropLoot(m); if (m.fuyard) for (let i = 1; i < COFFRE_FUYARD.butins; i++) this.dropLoot(m); if (m.dore) this.dropLoot(m); }
+    if (m.fuyard) tenterPortail(this, m);   // 0.6 (22B) : une fois sur 20, un portail vers la Salle au trésor   // coffre qui fuit : butin ×5   // Djim : le Champion donne deux fois ; autel de Fortune   // boss du monde : son coffre est donné par le monde vivant (4A)
     if ((m.def.archiDe || (m.def.boss && m.def.ame)) && !m.relache) this.capturer(m);
     const alm = (this.almanax?.effet === 'xp' ? 1 + ALMANAX.xp : 1) * (1 + p.beni('xp')) * (1 + this.bonusDuWeekEnd('xp'));   // 15C, Magasin 6D, 9B (week-end)
     // Multi (maquette « Multi : » 7A) : chaque joueur proche gagne l'XP comme en solo, +10 % par allié proche

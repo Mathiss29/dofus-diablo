@@ -15,7 +15,9 @@ from PIL import Image, ImageDraw
 # arène -> (tag, place [x, y] dans le monde d'Astrub, salle officielle du boss (id), sous-zone officielle du donjon)
 DJ = {'blops': ('arene_blops', (-4, 94), 166985730, 493), 'draeg': ('arene_draegnerys', (0, 94), 199757824, 920),
       'nyee': ('arene_nyee', (4, 94), 149165056, 844), 'ancestral': ('arene_ancestral', (8, 94), 149688320, 175),
-      'labyrinthe': ('arene_dragon_cochon', (12, 94), 72355840, 154)}
+      'labyrinthe': ('arene_dragon_cochon', (12, 94), 72355840, 154),
+      # 0.6 (22B) : salle au trésor du Coffre Malveillant (sous-zone maison 90022 ; id d'une salle du Labyrinthe, dont elle prend les dalles)
+      'tresor': ('arene_tresor', (16, 94), 72351744, 90022)}
 W, H, OX, OY, COLS, ROWS, NS = C['W'], C['H'], C['OX'], C['OY'], C['COLS'], C['ROWS'], C['NS']
 MW, MH, CX, CY, BOX = C['MW'], C['MH'], C['CX'], C['CY'], C['BOX']
 BT0 = {}

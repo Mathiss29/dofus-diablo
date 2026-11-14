@@ -344,6 +344,9 @@ export interface DonjonDef { nom: string; salles: Record<string, string[][]>;
   /** 0.6 (8A+8B) : le boss ne quitte pas son estrade ; sort officiel (id) qui fait sortir des racines sous les joueurs. */
   fixe?: boolean;
   racines?: number;
+  /** 0.6 (22B) : Salle au trésor du Coffre Malveillant : on y entre par le portail qu'il laisse (pas de porte ni de clé), au niveau
+   *  de la sous-zone d'où l'on vient ; '?' = monstres dorés de cette sous-zone ; la sortie ramène là où était le portail. */
+  tresor?: boolean;
   /** Donjon en couloirs (maquette « Couloirs : 1C 2B 3A 4A », tools/extraction/couloirs.py), partie de test seulement :
    *  ses vraies salles dans l'ordre, reliées par des couloirs (cartes `tags`), puis l'arène au bout, sans porte.
    *  Groupes officiels dans les salles, `nErrants` monstres seuls dans chaque couloir (2B) ; les vagues partent à l'entrée de l'arène. */
