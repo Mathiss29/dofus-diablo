@@ -2291,6 +2291,22 @@
      ],
      "v06": true,
      "region": "Amakna"
+    },
+    "90011": {
+     "name": "Souterrains des Porcos",
+     "level": 90,
+     "monsters": [
+      "cochon_de_farle",
+      "porsalu"
+     ],
+     "groupsPerMap": 1,
+     "groupSize": [
+      2,
+      4
+     ],
+     "v06": true,
+     "region": "Amakna",
+     "interieur": true
     }
    },
    "checkpoints": [
@@ -3688,6 +3704,570 @@
      "nom": "Labyrinthe du Dragon Cochon",
      "cle": "7511",
      "marque": true
+    },
+    {
+     "a": [
+      "-10_-11",
+      364
+     ],
+     "b": [
+      "dede_1",
+      537
+     ],
+     "nom": "Mine de Dédé",
+     "i06": 1
+    },
+    {
+     "a": [
+      "dede_1",
+      189
+     ],
+     "b": [
+      "dede_2",
+      495
+     ],
+     "nom": "Mine de Dédé",
+     "i06": 1
+    },
+    {
+     "a": [
+      "dede_2",
+      246
+     ],
+     "b": [
+      "dede_3",
+      454
+     ],
+     "nom": "Mine de Dédé",
+     "i06": 1
+    },
+    {
+     "a": [
+      "dede_3",
+      218
+     ],
+     "b": [
+      "dede_4",
+      471
+     ],
+     "nom": "Mine de Dédé",
+     "i06": 1
+    },
+    {
+     "a": [
+      "dede_4",
+      161
+     ],
+     "b": [
+      "dede_5",
+      537
+     ],
+     "nom": "Mine de Dédé",
+     "i06": 1
+    },
+    {
+     "a": [
+      "-22_-24",
+      329
+     ],
+     "b": [
+      "voyageurs_1",
+      558
+     ],
+     "nom": "Tour des Voyageurs Dimensionnels",
+     "i06": 1
+    },
+    {
+     "a": [
+      "voyageurs_1",
+      229
+     ],
+     "b": [
+      "voyageurs_2",
+      558
+     ],
+     "nom": "Tour des Voyageurs Dimensionnels",
+     "i06": 1
+    },
+    {
+     "a": [
+      "voyageurs_2",
+      242
+     ],
+     "b": [
+      "voyageurs_3",
+      558
+     ],
+     "nom": "Tour des Voyageurs Dimensionnels",
+     "i06": 1
+    },
+    {
+     "a": [
+      "voyageurs_3",
+      216
+     ],
+     "b": [
+      "voyageurs_4",
+      558
+     ],
+     "nom": "Tour des Voyageurs Dimensionnels",
+     "i06": 1
+    },
+    {
+     "a": [
+      "voyageurs_4",
+      216
+     ],
+     "b": [
+      "voyageurs_5",
+      557
+     ],
+     "nom": "Tour des Voyageurs Dimensionnels",
+     "i06": 1
+    },
+    {
+     "a": [
+      "voyageurs_5",
+      230
+     ],
+     "b": [
+      "voyageurs_6",
+      558
+     ],
+     "nom": "Tour des Voyageurs Dimensionnels",
+     "i06": 1
+    },
+    {
+     "a": [
+      "voyageurs_6",
+      216
+     ],
+     "b": [
+      "voyageurs_7",
+      558
+     ],
+     "nom": "Tour des Voyageurs Dimensionnels",
+     "i06": 1
+    },
+    {
+     "a": [
+      "voyageurs_7",
+      242
+     ],
+     "b": [
+      "voyageurs_8",
+      557
+     ],
+     "nom": "Tour des Voyageurs Dimensionnels",
+     "i06": 1
+    },
+    {
+     "a": [
+      "-22_-27",
+      200
+     ],
+     "b": [
+      "grotte_rocailleuse_1",
+      470
+     ],
+     "nom": "Grotte des Routes Rocailleuses",
+     "i06": 1
+    },
+    {
+     "a": [
+      "grotte_rocailleuse_1",
+      243
+     ],
+     "b": [
+      "grotte_rocailleuse_2",
+      485
+     ],
+     "nom": "Grotte des Routes Rocailleuses",
+     "i06": 1
+    },
+    {
+     "a": [
+      "grotte_rocailleuse_2",
+      172
+     ],
+     "b": [
+      "grotte_rocailleuse_3",
+      497
+     ],
+     "nom": "Grotte des Routes Rocailleuses",
+     "i06": 1
+    },
+    {
+     "a": [
+      "grotte_rocailleuse_3",
+      257
+     ],
+     "b": [
+      "grotte_rocailleuse_4",
+      550
+     ],
+     "nom": "Grotte des Routes Rocailleuses",
+     "i06": 1
+    },
+    {
+     "a": [
+      "grotte_rocailleuse_4",
+      205
+     ],
+     "b": [
+      "grotte_rocailleuse_5",
+      536
+     ],
+     "nom": "Grotte des Routes Rocailleuses",
+     "i06": 1
+    },
+    {
+     "a": [
+      "grotte_rocailleuse_5",
+      233
+     ],
+     "b": [
+      "grotte_rocailleuse_6",
+      467
+     ],
+     "nom": "Grotte des Routes Rocailleuses",
+     "i06": 1
+    },
+    {
+     "a": [
+      "-18_-33",
+      235
+     ],
+     "b": [
+      "cabane_rocailleuse_1",
+      441
+     ],
+     "nom": "Cabane des Routes Rocailleuses",
+     "i06": 1
+    },
+    {
+     "a": [
+      "cabane_rocailleuse_1",
+      215
+     ],
+     "b": [
+      "cabane_rocailleuse_2",
+      480
+     ],
+     "nom": "Cabane des Routes Rocailleuses",
+     "i06": 1
+    },
+    {
+     "a": [
+      "0_33",
+      165
+     ],
+     "b": [
+      "porcos_mine_1",
+      384
+     ],
+     "nom": "Souterrains des Porcos",
+     "i06": 1
+    },
+    {
+     "a": [
+      "porcos_mine_1",
+      244
+     ],
+     "b": [
+      "porcos_mine_2",
+      482
+     ],
+     "nom": "Souterrains des Porcos",
+     "i06": 1
+    },
+    {
+     "a": [
+      "porcos_mine_2",
+      247
+     ],
+     "b": [
+      "porcos_mine_3",
+      507
+     ],
+     "nom": "Souterrains des Porcos",
+     "i06": 1
+    },
+    {
+     "a": [
+      "porcos_mine_3",
+      188
+     ],
+     "b": [
+      "porcos_mine_4",
+      512
+     ],
+     "nom": "Souterrains des Porcos",
+     "i06": 1
+    },
+    {
+     "a": [
+      "porcos_mine_4",
+      285
+     ],
+     "b": [
+      "porcos_mine_5",
+      467
+     ],
+     "nom": "Souterrains des Porcos",
+     "i06": 1
+    },
+    {
+     "a": [
+      "porcos_mine_5",
+      177
+     ],
+     "b": [
+      "porcos_mine_6",
+      409
+     ],
+     "nom": "Souterrains des Porcos",
+     "i06": 1
+    },
+    {
+     "a": [
+      "porcos_mine_6",
+      175
+     ],
+     "b": [
+      "porcos_mine_7",
+      441
+     ],
+     "nom": "Souterrains des Porcos",
+     "i06": 1
+    },
+    {
+     "a": [
+      "porcos_mine_7",
+      271
+     ],
+     "b": [
+      "porcos_mine_8",
+      508
+     ],
+     "nom": "Souterrains des Porcos",
+     "i06": 1
+    },
+    {
+     "a": [
+      "porcos_mine_8",
+      177
+     ],
+     "b": [
+      "porcos_mine_9",
+      493
+     ],
+     "nom": "Souterrains des Porcos",
+     "i06": 1
+    },
+    {
+     "a": [
+      "1_32",
+      132
+     ],
+     "b": [
+      "porcos_grotte_1",
+      431
+     ],
+     "nom": "Souterrains des Porcos",
+     "i06": 1
+    },
+    {
+     "a": [
+      "porcos_grotte_1",
+      174
+     ],
+     "b": [
+      "porcos_grotte_2",
+      498
+     ],
+     "nom": "Souterrains des Porcos",
+     "i06": 1
+    },
+    {
+     "a": [
+      "porcos_grotte_2",
+      189
+     ],
+     "b": [
+      "porcos_grotte_3",
+      413
+     ],
+     "nom": "Souterrains des Porcos",
+     "i06": 1
+    },
+    {
+     "a": [
+      "porcos_grotte_3",
+      203
+     ],
+     "b": [
+      "porcos_grotte_4",
+      440
+     ],
+     "nom": "Souterrains des Porcos",
+     "i06": 1
+    },
+    {
+     "a": [
+      "porcos_grotte_4",
+      173
+     ],
+     "b": [
+      "porcos_grotte_5",
+      415
+     ],
+     "nom": "Souterrains des Porcos",
+     "i06": 1
+    },
+    {
+     "a": [
+      "-4_24",
+      202
+     ],
+     "b": [
+      "kanojedo_1",
+      511
+     ],
+     "nom": "Le Kanojedo",
+     "i06": 1
+    },
+    {
+     "a": [
+      "-81_-41",
+      357
+     ],
+     "b": [
+      "lisa_kaya_1",
+      440
+     ],
+     "nom": "Taverne de Lisa Kaya",
+     "i06": 1
+    },
+    {
+     "a": [
+      "-77_-38",
+      249
+     ],
+     "b": [
+      "paradis_1",
+      468
+     ],
+     "nom": "Taverne du Paradis Frigostien",
+     "i06": 1
+    },
+    {
+     "a": [
+      "paradis_1",
+      176
+     ],
+     "b": [
+      "paradis_2",
+      440
+     ],
+     "nom": "Taverne du Paradis Frigostien",
+     "i06": 1
+    },
+    {
+     "a": [
+      "-83_-40",
+      288
+     ],
+     "b": [
+      "hdv_runes_1",
+      484
+     ],
+     "nom": "Hôtel de vente des runes",
+     "i06": 1
+    },
+    {
+     "a": [
+      "-77_-44",
+      397
+     ],
+     "b": [
+      "taverne_argent_1",
+      486
+     ],
+     "nom": "Taverne d'Argent",
+     "i06": 1
+    },
+    {
+     "a": [
+      "taverne_argent_1",
+      214
+     ],
+     "b": [
+      "taverne_argent_2",
+      458
+     ],
+     "nom": "Taverne d'Argent",
+     "i06": 1
+    },
+    {
+     "a": [
+      "taverne_argent_2",
+      212
+     ],
+     "b": [
+      "taverne_argent_3",
+      499
+     ],
+     "nom": "Taverne d'Argent",
+     "i06": 1
+    },
+    {
+     "a": [
+      "-80_-45",
+      220
+     ],
+     "b": [
+      "medecin_1",
+      427
+     ],
+     "nom": "Médecin de Frigost",
+     "i06": 1
+    },
+    {
+     "a": [
+      "medecin_1",
+      203
+     ],
+     "b": [
+      "medecin_2",
+      441
+     ],
+     "nom": "Médecin de Frigost",
+     "i06": 1
+    },
+    {
+     "a": [
+      "-82_-46",
+      397
+     ],
+     "b": [
+      "skis_1",
+      426
+     ],
+     "nom": "Fabricant de skis",
+     "i06": 1
+    },
+    {
+     "a": [
+      "skis_1",
+      259
+     ],
+     "b": [
+      "skis_2",
+      468
+     ],
+     "nom": "Fabricant de skis",
+     "i06": 1
     }
    ],
    "donjons": [

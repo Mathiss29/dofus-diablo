@@ -249,3 +249,17 @@ describe('0.6 : renommée de région (19) et sanctuaires des Douze (20)', () => 
     expect(w2.player.renommee.Astrub).toBe(p.renommee.Astrub);
   });
 });
+
+describe('0.6 : intérieurs utiles des 5 régions (Mathis 2026-11-14)', () => {
+  it('chaque porte mène d\'une case marchable à une case marchable, et seulement en partie de test', () => {
+    const w = monde(), wg = w.worldGrid!;
+    const noms = ['Mine de Dédé', 'Tour des Voyageurs Dimensionnels', 'Souterrains des Porcos', 'Taverne de Lisa Kaya', "Taverne d'Argent", 'Fabricant de skis'];
+    for (const n of noms) {
+      const l = w.portes.filter(p => p.nom === n);
+      expect(l.length, n).toBeGreaterThan(0);
+      for (const p of l) for (const e of p.ends) expect(wg.walkable(e.x, e.y), `${n} ${e.tag}`).toBe(true);
+    }
+    expect(w.portes.filter(p => p.nom === 'Souterrains des Porcos').length).toBe(14);
+    expect(monde(false).portes.some(p => p.nom === 'Mine de Dédé')).toBe(false);
+  });
+});

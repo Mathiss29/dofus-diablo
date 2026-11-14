@@ -2168,7 +2168,8 @@
           {"titre": "Légendaires du Sadida", "phrase": "40 pouvoirs officiels de la Panoplie Sauvage et 16 inventés qui transforment ses sorts.", "details": "Forêt dense, Écorce épineuse, Buisson incendiaire, Poupée immortelle… Les boss du jeu ont chacun leurs préférés.", "icone": "dofus", "etiquettes": ["Partie de test"]}
         ],
         "Le monde": [
-          {"titre": "Les 5 régions prennent vie", "phrase": "Bois, plantes et poissons officiels à récolter dans les 5 régions, avec leurs musiques.", "details": "Kaliptus, Bombu, Ébène, Perche et Kralamoure arrivent. Les Koalaks, Frigost, la Bourgade et la Forêt Malsaine ont leur musique.", "icone": "metier", "etiquettes": ["Partie de test"]}
+          {"titre": "Les 5 régions prennent vie", "phrase": "Bois, plantes et poissons officiels à récolter dans les 5 régions, avec leurs musiques.", "details": "Kaliptus, Bombu, Ébène, Perche et Kralamoure arrivent. Les Koalaks, Frigost, la Bourgade et la Forêt Malsaine ont leur musique.", "icone": "metier", "etiquettes": ["Partie de test"]},
+          {"titre": "Souterrains, tavernes et Mine de Dédé", "phrase": "47 salles officielles s'ouvrent dans les 5 régions : souterrains, tavernes, boutiques de Frigost.", "details": "Les Souterrains des Porcos ont leurs monstres. La Mine de Dédé et la Tour des Voyageurs se visitent salle après salle.", "icone": "carte", "etiquettes": ["Partie de test"]}
         ],
         "Combat": [],
         "Corrections": [
