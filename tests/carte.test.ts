@@ -94,7 +94,7 @@ describe('Carte du monde (« Carte : » et « Carte suite : »)', () => {
     expect(carte.regions[0].lab).toBe('Astrub');
     expect(carte.regions.some((r: { ver: string }) => r.ver === '0.10')).toBe(true);
     const plan = lire('astrub/plan.json');
-    expect(plan.carte.cw).toBeGreaterThan(100);
+    expect(plan.carte.cw).toBeGreaterThan(50);   // 60 px par carte depuis que la carte couvre tout le continent (0.6)
     expect(plan.plans.egout_1.length).toBeGreaterThan(10);
   });
 });

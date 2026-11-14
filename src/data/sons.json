@@ -133,6 +133,21 @@
   "donjon_souterrain": {
    "calme": "musique/donjon_souterrain_calme.mp3",
    "renfort": "musique/donjon_souterrain_renfort.mp3"
+  },
+  "koalaks": {
+   "calme": "musique/koalaks_calme.mp3"
+  },
+  "frigost": {
+   "calme": "musique/frigost_calme.mp3",
+   "renfort": "musique/frigost_renfort.mp3"
+  },
+  "frigost_bourgade": {
+   "calme": "musique/frigost_bourgade_calme.mp3",
+   "renfort": "musique/frigost_bourgade_renfort.mp3"
+  },
+  "foret_malsaine": {
+   "calme": "musique/foret_malsaine_calme.mp3",
+   "renfort": "musique/foret_malsaine_renfort.mp3"
   }
  },
  "ambiances": {
@@ -154,7 +169,8 @@
   "lave": "ambiance/lave.mp3",
   "grillons_nuit": "ambiance/grillons_nuit.mp3",
   "cimetiere_nuit": "ambiance/cimetiere_nuit.mp3",
-  "cimetiere": "ambiance/cimetiere.mp3"
+  "cimetiere": "ambiance/cimetiere.mp3",
+  "froid": "ambiance/froid.mp3"
  },
  "ui": {
   "niveau": "ui/16062_Int_Level_Up.mp3",
@@ -3396,6 +3412,112 @@
    ],
    "fondNuit": [
     "grillons_nuit"
+   ]
+  },
+  "33": {
+   "musique": "amakna_1",
+   "fond": [
+    "foret"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
+  },
+  "168": {
+   "musique": "foret_malsaine",
+   "fond": [
+    "foret"
+   ],
+   "fondNuit": [
+    "cimetiere_nuit"
+   ]
+  },
+  "233": {
+   "musique": "foret_malsaine",
+   "fond": [
+    "foret"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
+  },
+  "231": {
+   "musique": "koalaks",
+   "fond": [
+    "foret"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
+  },
+  "234": {
+   "musique": "koalaks",
+   "fond": [
+    "foret"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
+  },
+  "235": {
+   "musique": "koalaks",
+   "fond": [
+    "amakna_campagne"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
+  },
+  "253": {
+   "musique": "koalaks",
+   "fond": [
+    "montagne_vent"
+   ]
+  },
+  "70": {
+   "musique": "cania_2",
+   "fond": [
+    "montagne_vent"
+   ]
+  },
+  "521": {
+   "musique": "cania_2",
+   "fond": [
+    "montagne_vent"
+   ]
+  },
+  "525": {
+   "musique": "cania_1",
+   "fond": [
+    "amakna_campagne"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
+  },
+  "11": {
+   "musique": "amakna_2",
+   "fond": [
+    "montagne_vent"
+   ]
+  },
+  "315": {
+   "musique": "amakna_2",
+   "fond": [
+    "montagne_vent"
+   ]
+  },
+  "600": {
+   "musique": "frigost",
+   "fond": [
+    "froid",
+    "mer"
+   ]
+  },
+  "601": {
+   "musique": "frigost_bourgade",
+   "fond": [
+    "froid"
    ]
   }
  }

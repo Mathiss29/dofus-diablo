@@ -43,18 +43,30 @@ for m in maps:
     for d in m['decor']:
         if d.get('b') or d.get('h'): continue   # lumières additives, débords (vus seulement depuis leur carte) : pas sur la carte
         decor.append((0 if d['c'] < 0 else 1, d['y'], d.get('o', 0), m, d))
-for _, _, _, m, d in sorted(decor, key=lambda t: t[:3]):
-    a = atlas(f"decor_p{d['p']}" if 'p' in d else f"decor_{m['tag']}")
-    if not a or d['f'] not in a[1]: continue
-    img, frames = a; f = frames[d['f']]; fr, ss, src = f['frame'], f['spriteSourceSize'], f['sourceSize']
-    z = d.get('z', 1) * K
-    w, h = int(fr['w'] * z), int(fr['h'] * z)
-    if w < 1 or h < 1: continue
-    crop = img.crop((fr['x'], fr['y'], fr['x'] + fr['w'], fr['y'] + fr['h'])).resize((w, h), Image.BILINEAR)
-    # (x, y) = centre de l'image entière (origine 0,5 en jeu) ; le cadre rogné commence à spriteSourceSize
-    left = d['x'] - src['w'] * d.get('z', 1) / 2 + ss['x'] * d.get('z', 1)
-    top = d['y'] - src['h'] * d.get('z', 1) / 2 + ss['y'] * d.get('z', 1)
-    pose(crop, left, top)
+# réductions faites page par page (chaque page d'atlas n'est ouverte qu'une fois), puis collées dans l'ordre d'affichage
+cle = lambda m, d: f"decor_p{d['p']}" if 'p' in d else f"decor_{m['tag']}"
+par_page = {}
+for i, (_, _, _, m, d) in enumerate(decor): par_page.setdefault(cle(m, d), []).append(i)
+petits = {}
+for page, idx in par_page.items():
+    a = atlas(page)
+    if not a: continue
+    img, frames = a
+    for i in idx:
+        d = decor[i][4]
+        if d['f'] not in frames: continue
+        f = frames[d['f']]; fr, ss, src = f['frame'], f['spriteSourceSize'], f['sourceSize']
+        z = d.get('z', 1) * K
+        w, h = int(fr['w'] * z), int(fr['h'] * z)
+        if w < 1 or h < 1: continue
+        crop = img.crop((fr['x'], fr['y'], fr['x'] + fr['w'], fr['y'] + fr['h'])).resize((w, h), Image.BILINEAR)
+        # (x, y) = centre de l'image entière (origine 0,5 en jeu) ; le cadre rogné commence à spriteSourceSize
+        left = d['x'] - src['w'] * d.get('z', 1) / 2 + ss['x'] * d.get('z', 1)
+        top = d['y'] - src['h'] * d.get('z', 1) / 2 + ss['y'] * d.get('z', 1)
+        petits[i] = (crop, left, top)
+    _atlas.clear()
+for i in sorted(petits, key=lambda i: decor[i][:3]):
+    pose(*petits[i])
 
 carte.save(f'{D}/carte.webp', 'WEBP', quality=80, method=6)
 monde['carte'] = {'x': x0, 'y': y0, 'k': K}

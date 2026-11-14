@@ -197,9 +197,10 @@ describe('0.6 : autels de combat (21) et Coffre Malveillant (22A)', () => {
   const pas = (w: World, n: number) => { for (let i = 0; i < n; i++) w.step(1 / 60, { ...NO_INPUT, aim: { x: w.player.x, y: w.player.y } }); };
   it('toucher un autel donne son effet 30 s : Frénésie, Protection', () => {
     const w = monde(), p = w.player, v0 = p.stat('vitesse');
-    poserAutel(w, p.x, p.y, 'x', false, 'frenesie');
+    w.autels.length = 0;   // les autels que le monde pose tout seul (selon le hasard de la partie) ne comptent pas ici
+    const fr = poserAutel(w, p.x, p.y, 'x', false, 'frenesie');
     pas(w, 2);
-    expect(w.autels.length).toBe(0);
+    expect(w.autels.includes(fr)).toBe(false);
     expect(p.autel?.effet).toBe('frenesie');
     expect(p.stat('vitesse')).toBe(v0 + 60);
     pas(w, 60 * 31);

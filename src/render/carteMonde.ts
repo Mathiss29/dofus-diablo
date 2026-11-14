@@ -27,6 +27,8 @@ import MV from '../data/monde_vivant.json';
 
 interface CarteRepere { ox: number; oy: number; cw: number; ch: number; w?: number; h?: number }
 interface Salle { tag: string; img: string; u: [number, number]; du: [number, number] }
+/** 4e champ de plan.json › maps : 1 = cartes de la 0.4 (partie de test tant que V04_PUBLIC est faux), 2 = régions de la 0.6 (V06_PUBLIC). */
+function fermee(essai: number, w: { essaiOuvert: boolean; v06Ouvert: boolean }): boolean { return essai === 1 ? !w.essaiOuvert : essai === 2 ? !w.v06Ouvert : false; }
 interface PlanMonde { monde: string; carte: CarteRepere; maps: [number, number, number, number][]; reperes: Repere[]; plans?: Record<string, Salle[]> }
 interface Peinte { nom: string; img: string; w: number; h: number; k: number; ox: number; oy: number; mw: number; mh: number }
 interface Region { lab: string; ver: string; niv?: string; cases: [number, number][] }
@@ -384,7 +386,7 @@ export class CarteMonde {
     const voile = this.toile(x0, y0, nx, ny, 1);
     const g = voile.getContext('2d')!;
     for (const [x, y, sub, essai] of douze || this.sur ? [] : P.maps) {
-      const cache = !!essai && !test;
+      const cache = fermee(essai, w);
       if (cache) g.fillStyle = 'rgba(40,38,34,.72)';
       else if (!vus.has(`${x}_${y}`)) g.fillStyle = 'rgba(8,10,14,.8)';
       else if (this.filtres.danger && !douze) {
@@ -398,9 +400,9 @@ export class CarteMonde {
     this.surCanvas = document.createElement('canvas'); this.surCanvas.style.display = 'none'; this.plan.appendChild(this.surCanvas);
     // noms des sous-zones (3B) et de la région en essai (7A)
     const parSz = new Map<number, { x: number; y: number; n: number; essai: boolean }>();
-    for (const [x, y, sub, essai] of P.maps) { const a = parSz.get(sub) ?? { x: 0, y: 0, n: 0, essai: !!essai }; a.x += x + 0.5; a.y += y + 0.5; a.n++; parSz.set(sub, a); }
+    for (const [x, y, sub, essai] of P.maps) { const a = parSz.get(sub) ?? { x: 0, y: 0, n: 0, essai: fermee(essai, w) }; a.x += x + 0.5; a.y += y + 0.5; a.n++; parSz.set(sub, a); }
     if (!douze) for (const [sub, a] of parSz) {
-      const d = subs[String(sub)]; if (!d || (a.essai && !test)) continue;
+      const d = subs[String(sub)]; if (!d || a.essai) continue;
       const q = this.u2p(a.x / a.n, a.y / a.n), el = this.marque('mk sz', q.x, q.y);
       el.innerHTML = `${esc(d.name)}<small>niv. ${d.level}</small>`;
     }
@@ -408,7 +410,7 @@ export class CarteMonde {
     if (this.filtres.archis && !douze) {
       const M = GAME_DATA.monsters, ames = new Set(p.ames);
       for (const [sub, a] of parSz) {
-        const d = subs[String(sub)]; if (!d || (a.essai && !test)) continue;
+        const d = subs[String(sub)]; if (!d || a.essai) continue;
         const reste = Object.entries(M).filter(([k, x]) => x.archiDe && d.monsters.includes(x.archiDe) && !ames.has(k)).map(([, x]) => x);
         if (!reste.length) continue;
         const q = this.u2p(a.x / a.n, a.y / a.n + 0.45), el = this.marque('mk ar', q.x, q.y);
@@ -418,13 +420,13 @@ export class CarteMonde {
       }
     }
     if (!test && !douze) {
-      const es = P.maps.filter(m => m[3]);
+      const es = P.maps.filter(m => m[3] === 1);
       if (es.length) { const q = this.u2p(es.reduce((s, m) => s + m[0] + 0.5, 0) / es.length, es.reduce((s, m) => s + m[1] + 0.5, 0) / es.length); this.marque('mk bt', q.x, q.y).innerHTML = 'Amakna<small>Bientôt · 0.4</small>'; }
     }
     // repères officiels (4A, 4B, 5A) et lieux à découvrir (17A)
-    const essaiTag = new Set(P.maps.filter(m => m[3]).map(m => `${m[0]}_${m[1]}`)), parCarte = new Map<string, Repere[]>();
+    const essaiTag = new Set(P.maps.filter(m => fermee(m[3], w)).map(m => `${m[0]}_${m[1]}`)), parCarte = new Map<string, Repere[]>();
     for (const r of douze ? [] : P.reperes) {
-      const f = famille(r); if (!f || !this.filtres[f] || (essaiTag.has(r.t) && !test)) continue;
+      const f = famille(r); if (!f || !this.filtres[f] || essaiTag.has(r.t)) continue;
       const trouve = p.lieuxVus.includes(cleLieu(zone, r));
       if (secret(r) && !trouve) continue;
       const l = parCarte.get(r.t) ?? []; l.push(r); parCarte.set(r.t, l);
@@ -448,7 +450,7 @@ export class CarteMonde {
       const vu = new Set<string>();
       for (const e of (RECOLTES as unknown as Record<string, [string, number, string][]>)[zone] ?? []) {
         const [tag, , id] = e, d = RECOLTES.ressources[id];
-        if (!d || p.metierLevel(d.metier) < d.niveau || vu.has(`${tag}|${id}`) || (essaiTag.has(tag) && !test) || !DEHORS.test(tag)) continue;
+        if (!d || p.metierLevel(d.metier) < d.niveau || vu.has(`${tag}|${id}`) || essaiTag.has(tag) || !DEHORS.test(tag)) continue;
         vu.add(`${tag}|${id}`);
         const [tx, ty] = tag.split('_').map(Number), q = this.u2p(tx + 0.3 + (vu.size % 3) * 0.2, ty + 0.7);
         const el = this.marque('mk rp rc', q.x, q.y); el.innerHTML = iconHtml(d.icone); el.title = `${d.nom} · ${d.metier} niv. ${d.niveau}`;
@@ -626,16 +628,16 @@ export class CarteMonde {
     b.style.left = `${Math.min(bx, r.width - 310)}px`; b.style.top = `${Math.min(by, r.height - 200)}px`;
     if (sub === this.survol) return;
     this.survol = sub;
-    const zone = this.zoneDe(this.onglet), d = GAME_DATA.zones[zone]?.open?.subareas[String(sub)], w = this.world, test = w.essaiOuvert;
+    const zone = this.zoneDe(this.onglet), d = GAME_DATA.zones[zone]?.open?.subareas[String(sub)], w = this.world;
     if (!d) { b.remove(); return; }
-    const cases = P.maps.filter(k => k[2] === sub), vus = w.player.exploreSet(zone), essai = cases.some(k => k[3]) && !test;
+    const cases = P.maps.filter(k => k[2] === sub), vus = w.player.exploreSet(zone), ferme = cases.find(k => fermee(k[3], w)), essai = !!ferme;
     const pc = Math.round(100 * cases.filter(k => vus.has(`${k[0]}_${k[1]}`)).length / cases.length);
     const M = GAME_DATA.monsters, nomM = (id: string) => M[id]?.name ?? id;
     const archis = Object.entries(M).filter(([, x]) => x.archiDe && d.monsters.includes(x.archiDe)).map(([id]) => id);
     const tags = new Set(cases.map(k => `${k[0]}_${k[1]}`));
     const res = [...new Set(((RECOLTES as unknown as Record<string, [string, number, string][]>)[zone] ?? []).filter(e2 => tags.has(e2[0])).map(e2 => RECOLTES.ressources[e2[2]]?.nom).filter(Boolean))];
     const donjons = P.reperes.filter(x => x.c === 6 && tags.has(x.t)).map(x => x.n);
-    b.innerHTML = `<h4>${esc(d.name)}</h4><div>Niveau ${d.level}${d.region ? ` · ${esc(d.region)}` : ''}${essai ? ' · <span class="el">Bientôt (0.4)</span>' : ''}</div>
+    b.innerHTML = `<h4>${esc(d.name)}</h4><div>Niveau ${d.level}${d.region ? ` · ${esc(d.region)}` : ''}${essai ? ` · <span class="el">Bientôt (${ferme?.[3] === 2 ? '0.6' : '0.4'})</span>` : ''}</div>
       ${d.monsters.length ? `<div class="l"><b>Monstres</b> : ${d.monsters.map(nomM).map(esc).join(', ')}</div>` : ''}
       ${d.elite ? `<div class="l el">Élite : ${esc(nomM(d.elite))}</div>` : ''}
       ${archis.length ? `<div class="l el">Archimonstre${archis.length > 1 ? 's' : ''} (${archis.filter(a => w.player.ames.includes(a)).length} / ${archis.length} capturés) : ${archis.slice(0, 4).map(a => esc(nomM(a)) + (w.player.ames.includes(a) ? ' ✔' : '')).join(', ')}${archis.length > 4 ? '…' : ''}</div>` : ''}
@@ -667,7 +669,7 @@ export class CarteMonde {
     const q = sansAccent(texte.trim());
     if (q.length < 2 || !this.P) { box.innerHTML = ''; return; }
     const P = this.P, zone = this.zoneDe(this.onglet === '_douze' ? 'astrub' : this.onglet), subs = GAME_DATA.zones[zone]?.open?.subareas ?? {}, test = this.world.essaiOuvert;
-    const essai = new Set(P.maps.filter(m => m[3] && !test).map(m => m[2]));
+    const essai = new Set(P.maps.filter(m => fermee(m[3], this.world)).map(m => m[2]));
     const res: { nom: string; genre: string; u: [number, number][] }[] = [];
     const centreSub = (sub: number) => { const l = P.maps.filter(m => m[2] === sub); return [l.reduce((s, m) => s + m[0] + 0.5, 0) / l.length, l.reduce((s, m) => s + m[1] + 0.5, 0) / l.length] as [number, number]; };
     for (const [id, d] of Object.entries(subs)) if (!essai.has(+id) && sansAccent(d.name).includes(q) && P.maps.some(m => m[2] === +id)) res.push({ nom: d.name, genre: `niv. ${d.level}`, u: [centreSub(+id)] });
@@ -774,9 +776,9 @@ export class CarteMonde {
   private majTitre(zone: string, P: PlanMonde) {
     const el = this.root?.querySelector('.ttl .xp'); if (!el) return;
     if (this.onglet === '_douze') { el.innerHTML = 'Le Monde des Douze · <b>en couleur</b> : jouable aujourd\'hui'; return; }
-    const p = this.world.player, vus = p.exploreSet(zone), test = this.world.essaiOuvert;
-    const l = P.maps.filter(m => !m[3] || test), n = l.filter(m => vus.has(`${m[0]}_${m[1]}`)).length;
-    const lieux = P.reperes.filter(r => aDecouvrir(r) && !(P.maps.find(m => `${m[0]}_${m[1]}` === r.t)?.[3] && !test));
+    const p = this.world.player, vus = p.exploreSet(zone);
+    const l = P.maps.filter(m => !fermee(m[3], this.world)), n = l.filter(m => vus.has(`${m[0]}_${m[1]}`)).length;
+    const lieux = P.reperes.filter(r => aDecouvrir(r) && !fermee(P.maps.find(m => `${m[0]}_${m[1]}` === r.t)?.[3] ?? 0, this.world));
     const trouves = lieux.filter(r => p.lieuxVus.includes(cleLieu(zone, r))).length;
     // « Apparats : » 4C : combien d'apparats de cette zone sont déjà dans la collection
     const ap = apparatsDeZone(GAME_DATA.zones[zone], (MV as unknown as { boss: { liste: Record<string, { sousZone: number }> } }).boss.liste ?? {});
