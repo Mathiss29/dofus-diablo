@@ -2164,6 +2164,7 @@
       "legende": "Les pouvoirs inventés du Sadida, 14 novembre 2026.",
       "lignes": {
         "Nouveautés": [
+          {"titre": "Le Sadida jusqu'au niveau 90", "phrase": "Arbre de Vie, Gonflable, Tremblement, Inoculation, Don Naturel et Surpuissante rejoignent ses sorts.", "details": "Avec 8 légendaires de plus sur ces sorts. Tremblement regroupe les monstres, Inoculation encaisse toute l'Infection d'un coup.", "icone": "sorts", "etiquettes": ["Partie de test", "Niveau 65 à 90"]},
           {"titre": "Légendaires du Sadida", "phrase": "40 pouvoirs officiels de la Panoplie Sauvage et 16 inventés qui transforment ses sorts.", "details": "Forêt dense, Écorce épineuse, Buisson incendiaire, Poupée immortelle… Les boss du jeu ont chacun leurs préférés.", "icone": "dofus", "etiquettes": ["Partie de test"]}
         ],
         "Le monde": [],

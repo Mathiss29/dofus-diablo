@@ -321,6 +321,7 @@ const SADI_MAP: Record<string, AnimSlice> = {
     ronce: 1001, buisson_ardent: 1001, cigue: 1001, seve_paralysante: 1001, contagion: 1001, ronces_agressives: 1001, fleau: 1001,
     herbes_folles: 1001, larme: 1007, arbre: 1000, ronce_apaisante: 1000, la_folle: 1003, la_bloqueuse: 1003, la_sacrifiee: 1003,
     puissance_sylvestre: 1003, sacrifice_vaudou: 1003, passage: 1008,
+    arbre_de_vie: 1000, la_gonflable: 1003, tremblement: 1008, inoculation: 1001, don_naturel: 1003, la_surpuissante: 1003,
   }).map(([k, n]) => [k, { anim: `AnimAttaque${n}`, from: 0, to: 0.65 }])),
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
@@ -353,6 +354,10 @@ export const LOOKS: Record<string, Look> = {
   sadi_folle: { atlas: 'sadi_folle', scale: 0.5, map: MONSTER_MAP(22 / 29, 'AnimAttaque0', { 0: 22 / 29 }), height: 70, multi: true },
   sadi_bloqueuse: { atlas: 'sadi_bloqueuse', scale: 0.5, map: MONSTER_MAP(11 / 23, 'AnimAttaque0', { 0: 11 / 23 }), height: 70, multi: true },
   sadi_sacrifiee: { atlas: 'sadi_sacrifiee', scale: 0.5, map: MONSTER_MAP(22 / 30, 'AnimAttaque0', { 0: 22 / 30 }), height: 70, multi: true },
+  // Poupées des sorts 61-90 (monster_planche.py, os 416, 414, 418, SCALE 2,5) : Gonflable, Surpuissante et La Fourbe
+  sadi_gonflable: { atlas: 'sadi_gonflable', scale: 0.5, map: MONSTER_MAP(16 / 44, 'AnimAttaque0', { 0: 16 / 44 }), height: 80, multi: true },
+  sadi_surpuissante: { atlas: 'sadi_surpuissante', scale: 0.5, map: MONSTER_MAP(18 / 35, 'AnimAttaque0', { 0: 18 / 35 }), height: 70, multi: true },
+  sadi_fourbe: { atlas: 'sadi_fourbe', scale: 0.45, map: MONSTER_MAP(15 / 29, 'AnimAttaque0', { 0: 15 / 29 }), height: 55, multi: true },
   sadi_groute: { atlas: 'sadi_groute', scale: 0.78, map: MONSTER_MAP(8 / 30, 'AnimAttaque0', { 0: 8 / 30 }), height: 120, multi: true },
   // Chaton Enragé de l'Écaflip (monster_planche.py, os 289, SCALE 2,5) : Griffe Invocatrice
   eca_chaton: { atlas: 'eca_chaton', scale: 0.5, map: MONSTER_MAP(11 / 30, 'AnimAttaque0', { 0: 11 / 30, 1: 21 / 44 }), height: 60, multi: true },

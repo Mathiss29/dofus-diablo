@@ -29,7 +29,7 @@ import { avantImpact61, dommages61, echangeBalise61, hit61, viseBalise61, impact
 import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type SortGrade, type SortOfficiel } from './sorts';
 import { porteeSort } from './apercu';
 import { aimanter, alchiRhetorique, apresCoupEniripsa, envol, impactEniripsa, majEniripsa } from './eniripsa';
-import { arbrePassage, avantImpactSadida, impactSadida, majSadida, sentierDeRonces } from './sadida';
+import { arbrePassage, avantImpactSadida, impactSadida, majSadida, partagerDon, sentierDeRonces } from './sadida';
 import { avantImpactEcaflip, chateauBrise, impactEcaflip, majEcaflip, neuviemeVie, type Carte, type MainGagnante } from './ecaflip';
 import { impactSorts06, pasJoueur06 } from './sorts06';
 import { impactEnutrof, majEnutrof, perteCoffre, recordsVides, type LigneCoffre, type RecordsCoffre, type VitrineCoffre } from './enutrof';
@@ -229,6 +229,8 @@ export class Player extends Entity {
   renvoiT = 0; renvoiPart = 0;
   /** Sadida : propagations récentes de l'Infection (1A), ennemi du ralliement (6B) et secondes qui restent. */
   sadiProp: number[] = []; sadiCible: number | null = null; sadiCibleT = 0;
+  /** Don Naturel (Sadida 5A) : secondes de partage des dommages, et le Sadida qui l'a donné. */
+  donT = 0; donDe = -1;
   /** Dernier souffle (légendaire Sacrieur D) : dernière fois qu'il a sauvé le perso. */
   dernierSouffleA = -999;
   /** Eniripsa : Dernier Mot déjà servi depuis le passage sous 20 % (3A) ; dernier PA d'Envol en série (K). */
@@ -709,6 +711,8 @@ export class Player extends Entity {
     const r = this.recents(id), n = Math.max(0, max - r.length);
     return { n, max, prochaine: n < max ? Math.max(0, this.retourDe(id) - (this.age - Math.min(...r))) : 0 };
   }
+  /** Rend une charge d'un sort (Don de la forêt : une charge d'Arbre). */
+  rendreCharge(id: SkillId) { const l = this.casts[id]; if (l?.length) l.splice(l.indexOf(Math.min(...l)), 1); }
   private castsLeft(id: SkillId): boolean {
     const max = this.chargesMax(id);
     return !max || this.recents(id).length < max;
@@ -1006,6 +1010,7 @@ export class Player extends Entity {
     if (this.cls.coffre) majEnutrof(this, dt, world);
     if (this.cls.poker) majEcaflip(this, dt, world);
     if (this.sadiCibleT > 0) majSadida(this, dt);
+    if (this.donT > 0) this.donT = Math.max(0, this.donT - dt);
     if (this.poinconT > 0) pasJoueur06(this, dt, world);
     if (this.e61) maj61(this, dt, world);
     if (this.renvoiT > 0) this.renvoiT -= dt;
@@ -1467,6 +1472,7 @@ export class Player extends Entity {
     if (id === 'abolition' && v('pc-cra-N')) o.surplus = v('pc-cra-N');
     if (id === 'dents_piranya' && v('pc-osamodas-K')) o.festin = true;
     if (id === 'fleau' && v('pc-sadida-N')) { o.lifesteal = v('pc-sadida-N') / 100; o.soinPoupee = true; }   // Fléau insatiable
+    if (id === 'tremblement' && v('pc-sadida-T')) o.vsInfecte = v('pc-sadida-T');   // Faille tellurique
     // Forgelance (« Légendaires forgelance : 4A-4P »)
     if (id === 'charge_heroique' && v('pc-forgelance-D')) o.choc = 100;
     if (id === 'kyrja' && v('pc-forgelance-K')) o.partage = v('pc-forgelance-K');
@@ -1755,6 +1761,7 @@ export class Player extends Entity {
         this.shieldSrc = '';
       }
     }
+    if (this.donT > 0 && dmg > 0) dmg = partagerDon(this, dmg, world);   // Don Naturel : dommages partagés
     this.hp -= dmg; this.flash = 0.1; this.invuln = this.cls.iframesOnHit; this.blesseA = this.age;
     const vol = (fi?.vol ?? 0) + (qui?.affixes.includes('vampirique') ? ELITES.affixes.vampirique.vol : 0);   // Nehik ; élite Vampirique
     if (vol && qui && dmg > 0) qui.hp = Math.min(qui.maxHp, qui.hp + Math.round(dmg * vol));

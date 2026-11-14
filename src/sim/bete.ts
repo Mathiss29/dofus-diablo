@@ -6,7 +6,7 @@ import type { World } from './world';
 import BETES_JSON from '../data/betes.json';
 import { allieLePlusBlesse, lucioleMaj, soignerAllie } from './eniripsa';
 import { coffreAssomme, EJECTION } from './enutrof';
-import { beteSadidaMorte, cibleRalliement, dureeInfection, ecorce, empoisonner, infecter, majBeteSadida, type EtatSadi } from './sadida';
+import { beteSadidaMorte, chocHivernal, cibleRalliement, dureeInfection, ecorce, empoisonner, infecter, majBeteSadida, type EtatSadi, type ReglesFourbe, type ReglesGonflable, type ReglesSurpuissante } from './sadida';
 
 /** Un effet officiel d'un sort de bête que le jeu sait jouer (tools/extraction/osa_betes.py). */
 export type EffetBete =
@@ -24,7 +24,9 @@ export interface BeteDef {
   passif?: boolean;
   /** Sadida : Arbre, Poupée, Groute (fixe = ne marche pas), effets des coups (Infecte, poison), IA de la Bloqueuse et de la Sacrifiée. */
   sadida?: { arbre?: boolean; poupee?: boolean; fixe?: boolean; infecte?: boolean; poison?: boolean; bloqueuse?: boolean;
-    sacrifiee?: { element: Element; min: number; max: number } };
+    sacrifiee?: { element: Element; min: number; max: number };
+    /** Sorts 61-90 : la Gonflable (soin, Brise Automnale), la Surpuissante (Choc Hivernal, Ardeur Estivale, La Fourbe), La Fourbe (Bouture). */
+    gonflable?: ReglesGonflable; surpuissante?: ReglesSurpuissante; fourbe?: ReglesFourbe };
   /** Balise de Survie du Crâ (0.6) : immobile ; toutes les `periode` s (dès sa pose), soigne de `soin` (part des PV max)
    *  les alliés qu'elle voit à `portee` cases, comme au début de chacun de ses tours dans Dofus. */
   balise?: { soin: number; periode: number; portee: number };
@@ -352,6 +354,7 @@ export class Bete extends Entity {
             empoisonner(p, o, jet * (1 + fol / 100), el, world); infecter(o, world, dureeInfection(p));
           }
           if (SD?.infecte) infecter(m, world, dureeInfection(p));
+          if (SD?.surpuissante) chocHivernal(this, m, jet, world);   // Choc Hivernal : -1 PM, propage l'Infection
           if (e.vol && n > 0) this.soigner(n / 2, world);
         }
       } else if (e.k === 'soinPct' && allie) {   // Bisou Magique du Lapino : % des PV max de l'allié ciblé

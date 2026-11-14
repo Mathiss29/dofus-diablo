@@ -6460,6 +6460,181 @@
      }
     }
    },
+   "arbre_de_vie": {
+    "name": "Arbre de Vie",
+    "dofusId": 13534,
+    "icon": 12718,
+    "desc": "Plante un Arbre de Vie.\nL'Arbre de Vie redevient Feuillu 2 tours après son invocation.",
+    "cooldown": 0,
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "knock": 0,
+    "element": "neutre",
+    "pa": 4,
+    "dmg": 0,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 288,
+     "radius": 0
+    },
+    "sadida": {
+     "plante": true,
+     "arbreDeVie": {
+      "pv": 3,
+      "periode": 3,
+      "rayon": 2,
+      "soin": 5,
+      "soinInvoc": 25
+     }
+    },
+    "v06": true
+   },
+   "la_gonflable": {
+    "name": "La Gonflable",
+    "dofusId": 13573,
+    "icon": 12714,
+    "desc": "Remplace un Arbre par une Poupée maîtrisable qui peut soigner, occasionner des dommages Feu et repousser.\n\nÀ sa mort, la Poupée redevient un Arbre.\nSi elle a été invoquée à partir d'un Arbre Feuillu, l'Arbre à sa mort redevient Feuillu.",
+    "cooldown": 0,
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "knock": 0,
+    "element": "neutre",
+    "pa": 2,
+    "dmg": 0,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 288,
+     "radius": 0
+    },
+    "sadida": {
+     "poupee": "sadi_gonflable"
+    },
+    "v06": true
+   },
+   "tremblement": {
+    "name": "Tremblement",
+    "dofusId": 13514,
+    "icon": 12975,
+    "desc": "En zone autour du lanceur, d'un Arbre Feuillu ou d'une Poupée :\n• Occasionne des dommages Terre aux ennemis.\n• Attire les entités vers le centre de la zone.\n• Dévoile les invisibles.",
+    "cooldown": 0,
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.012,
+    "knock": 0,
+    "element": "terre",
+    "pa": 3,
+    "dmg": 37,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 960,
+     "radius": 144
+    },
+    "sadida": {
+     "tremblement": {
+      "rayon": 3,
+      "attire": 2
+     }
+    },
+    "v06": true
+   },
+   "inoculation": {
+    "name": "Inoculation",
+    "dofusId": 13569,
+    "icon": 12976,
+    "desc": "Augmente les dommages du sort pour chaque ennemi Infecté et occasionne des dommages Air.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.\n\nConsomme toutes les Infections autour de la cible.",
+    "cooldown": 0,
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.009,
+    "knock": 0,
+    "element": "air",
+    "pa": 5,
+    "dmg": 50,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 240,
+     "radius": 30
+    },
+    "sadida": {
+     "propage": true,
+     "inoculation": {
+      "parInfecte": 0.1,
+      "max": 1,
+      "rayon": 1
+     }
+    },
+    "v06": true
+   },
+   "don_naturel": {
+    "name": "Don Naturel",
+    "dofusId": 13532,
+    "icon": 13178,
+    "desc": "Sacrifie un Arbre Feuillu ou une Poupée pour partager les dommages entre les alliés et les soigner en zone.\nLe partage de dommages n'affecte pas les invocations statiques.",
+    "cooldown": 0,
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "knock": 0,
+    "element": "eau",
+    "pa": 2,
+    "dmg": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 288,
+     "radius": 0
+    },
+    "sadida": {
+     "don": {
+      "rayon": 2,
+      "soin": 39,
+      "partage": 3
+     }
+    },
+    "v06": true
+   },
+   "la_surpuissante": {
+    "name": "La Surpuissante",
+    "dofusId": 13578,
+    "icon": 13075,
+    "desc": "Remplace un Arbre par une Poupée maîtrisable qui peut occasionner des dommages Terre, retirer ou donner des PM.\nElle peut également invoquer une autre Poupée maîtrisable qui peut voler ou donner de la Portée.\n\nÀ sa mort, la Poupée redevient un Arbre.\nSi elle a été invoquée à partir d'un Arbre Feuillu, l'Arbre à sa mort redevient Feuillu.",
+    "cooldown": 0,
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "knock": 0,
+    "element": "neutre",
+    "pa": 2,
+    "dmg": 0,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 288,
+     "radius": 0
+    },
+    "sadida": {
+     "poupee": "sadi_surpuissante"
+    },
+    "v06": true
+   },
    "passage": {
     "name": "Passage racinaire",
     "icon": 13376,
