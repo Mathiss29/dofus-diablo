@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { V06_PUBLIC } from '../src/sim/pouvoirs';
 import { describe, expect, it } from 'vitest';
 import { BOUTIQUES, GAME_DATA, ITEMS, QUETES, RECOLTES } from '../src/sim/data';
 import { WorldGrid, type WorldData } from '../src/sim/gridmap';
@@ -21,7 +22,7 @@ const monde = (test = true, seed = 3) => new World({ data: GAME_DATA, zone: 'ast
 describe('0.6 : courbe d\'XP, découverte, chance de boss qui monte', () => {
   it('cachée hors partie de test', () => {
     expect(monde().player.v06).toBe(true);
-    expect(monde(false).player.v06).toBe(false);
+    expect(monde(false).player.v06).toBe(V06_PUBLIC);
   });
 
   it('24A : 2 % de Légendaire au 1er boss, puis +1 % par boss raté', () => {
@@ -56,7 +57,7 @@ describe('0.6 : courbe d\'XP, découverte, chance de boss qui monte', () => {
     expect(d.decouverte(p, g!.map, false)).toBe(1);
     expect(w.drainEvents().some(e => e.k === 'decouverte')).toBe(true);
     const v = monde(false);
-    expect((v as unknown as typeof d).decouverte(v.player, g!.map, false)).toBe(1);
+    if (!V06_PUBLIC) expect((v as unknown as typeof d).decouverte(v.player, g!.map, false)).toBe(1);
   });
 });
 
@@ -103,7 +104,7 @@ describe('0.6 : idoles (17-18)', () => {
     expect(w2.player.idoles.actives).toEqual(['walet', 'hurzz', 'dinam']);
     const v = monde(false);
     v.player.idoles.possedees.push('walet'); v.basculerIdole('walet');
-    expect(v.fxIdoles).toBeNull();   // hors partie de test : rien ne change
+    if (!V06_PUBLIC) expect(v.fxIdoles).toBeNull();   // hors partie de test (0.6 cachée) : rien ne change
   });
 
   it('fabriquée chez le Bricoleur avec ses ingrédients et le niveau', () => {
@@ -177,7 +178,7 @@ describe('0.6 : élites à affixes (23A+23B)', () => {
     expect(e.affixes.length).toBe(2);
     expect(new Set(e.affixes).size).toBe(2);
     expect(w.spawnMonster('bouftou', p.x + 300, p.y).affixes).toEqual([]);
-    expect(monde(false).spawnMonster(ELITE, p.x, p.y).affixes).toEqual([]);
+    if (!V06_PUBLIC) expect(monde(false).spawnMonster(ELITE, p.x, p.y).affixes).toEqual([]);
     p.idoles.possedees.push('walet'); w.basculerIdole('walet');
     expect(w.spawnMonster(ELITE, p.x + 300, p.y).affixes.length).toBe(3);
   });
@@ -260,6 +261,6 @@ describe('0.6 : intérieurs utiles des 5 régions (Mathis 2026-11-14)', () => {
       for (const p of l) for (const e of p.ends) expect(wg.walkable(e.x, e.y), `${n} ${e.tag}`).toBe(true);
     }
     expect(w.portes.filter(p => p.nom === 'Souterrains des Porcos').length).toBe(14);
-    expect(monde(false).portes.some(p => p.nom === 'Mine de Dédé')).toBe(false);
+    expect(monde(false).portes.some(p => p.nom === 'Mine de Dédé')).toBe(V06_PUBLIC);
   });
 });

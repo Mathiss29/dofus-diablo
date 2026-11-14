@@ -45,11 +45,12 @@ describe('« Métiers : » récolte et bonus des artisans (6A 6B 6D, 7A 7B)', ()
     const orge = w.recoltes.find(r => RECOLTES.ressources[r.item]?.niveau === ARTISANS.gardeNiveau && RECOLTES.ressources[r.item].metier === 'paysan')!;
     p.metiers.paysan = { level: 40, xp: 0 }; orge.dore = true;
     recolter(w, orge.id, {}, 60);
-    expect(orge.garde).toBeGreaterThan(0);
+    expect(orge.garde).toBeGreaterThanOrEqual(0);   // id du gardien (le premier monstre du monde peut porter l'id 0)
     expect(orge.repousse).toBe(0);
     const g = w.monsters.find(m => m.id === orge.garde)!;
     expect(g.def.elite).toBe(true);
     g.hp = 0; g.dead = true;
+    for (const m of w.monsters) if (!m.dead && Math.hypot(m.x - orge.x, m.y - orge.y) < 900) { m.hp = 0; m.dead = true; }   // les monstres du champ ne coupent pas la récolte
     recolter(w, orge.id);
     expect(orge.repousse).toBeGreaterThan(0);
   });

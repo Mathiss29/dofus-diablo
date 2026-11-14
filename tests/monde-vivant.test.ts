@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { V06_PUBLIC } from '../src/sim/pouvoirs';
 import { describe, expect, it } from 'vitest';
 import { APPARATS, BOUTIQUES, GAME_DATA, ITEMS, QUETES } from '../src/sim/data';
 import { WorldGrid, type WorldData } from '../src/sim/gridmap';
@@ -41,7 +42,7 @@ describe('0.5 « monde vivant » : les rendez-vous (2A 2D 2E 1C)', () => {
         expect(cle === 'maitre_vampire', `${j} ${h} h`).toBe(h === 0 || h === 21);
         jour.push(cle);
       }
-      expect(new Set(jour).size).toBe(4);   // les quatre boss chaque jour
+      expect(new Set(jour).size).toBe(V06_PUBLIC ? 7 : 4);   // les quatre boss chaque jour (sept avec ceux de la 0.6)
     }
     expect(bossDuCreneau(paris(12, 6) / P)).not.toBe(bossDuCreneau(paris(13, 6) / P));   // la rotation avance d'un cran par jour
   });

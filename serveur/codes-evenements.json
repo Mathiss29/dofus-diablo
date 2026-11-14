@@ -1,0 +1,6 @@
+{
+ "_": "Codes cadeaux d'événement, créés au démarrage du serveur s'ils n'existent pas encore (serveur/ogrines.mjs). Un compte ne prend un code qu'une fois. jours = durée depuis sa création.",
+ "codes": [
+  { "code": "DIABLOFUS-06", "ogrines": 600, "max": 100000, "jours": 30, "note": "Sortie de la 0.6 (14 novembre 2026)" }
+ ]
+}

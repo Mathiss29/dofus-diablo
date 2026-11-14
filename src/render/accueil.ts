@@ -31,27 +31,27 @@ const CLASSES = CLASSES_DOFUS as ClasseDofus[];
 /** Classes jouables (planches en jeu) et date prévue des suivantes. */
 /** Classes codées mais encore à l'essai (maquette Osamodas 13A) : jouables seulement dans la partie de test (diablofus.com/#test, F1),
  *  elles arrivent à la création quand Mathis les a validées. */
-const EN_ESSAI = new Set<string>(['ecaflip', 'sadida']);   // Osamodas ouvert à tous avec la 0.3 (Public : 2A) ; Sacrieur public depuis « 0.4 suite : 14B » ; Forgelance, Eniripsa, Enutrof publics avec la 0.5 (12A)
+const EN_ESSAI = new Set<string>([]);   // Écaflip et Sadida publics avec la 0.6 (15B, 2026-11-14) ; Osamodas ouvert à tous avec la 0.3 (Public : 2A) ; Sacrieur public depuis « 0.4 suite : 14B » ; Forgelance, Eniripsa, Enutrof publics avec la 0.5 (12A)
 const JOUABLES = new Set(Object.keys(GAME_DATA.classes).filter(k => !EN_ESSAI.has(k)));
 /** Classes pas encore jouables (Accueil 9A) : leur fiche s'affiche quand même, avec la version prévue (feuille de route). */
-const PLUS_TARD: Record<string, string> = { ecaflip: 'En essai : partie de test', sadida: 'En essai : partie de test' };
+const PLUS_TARD: Record<string, string> = {};
 const plusTard = (cle: string) => PLUS_TARD[cle] ?? 'Prévue après la 1.0';
 /** Version affichée et textes de l'accueil (Accueil 12A) : ils racontent la zone de la version, pas le moteur. */
-const VERSION = '0.5';
+const VERSION = '0.6';
 /** Écran d'accueil v2 (« Accueil : » 3B, 2026-11-13) : un slogan et une seule ligne « Nouveau » par version ; le détail est dans le Journal.
  *  Le ruban et le bandeau du monde vivant (3A) se calculent à l'heure de Paris (voir vivantHtml). */
 const TEXTE = {
-  zone: 'LE MONDE VIVANT', slogan: 'Toutes les 3 heures, un boss du monde se lève sur Amakna.',
-  nouveau: 'Forgelance, Eniripsa et Enutrof rejoignent l\'aventure.',
+  zone: 'JUSQU\'AU NIVEAU 90', slogan: 'Koalaks, Abraknydes, Cania, Porcos et Frigost : cinq régions et cinq donjons de plus.',
+  nouveau: 'L\'Écaflip et le Sadida rejoignent l\'aventure, avec les idoles et la renommée.',
 };
 /** Accueil des nouveaux venus (maquette « Accueil : » 2A, 4C, 9A) : ce qu'est le jeu, en quelques mots. */
 const PRESENTATION = {
   pitch: 'Un action-RPG <em>en temps réel</em> dans le Monde des Douze.',
   pastilles: ['Gratuit', 'Dans le navigateur', 'Sans téléchargement', `Accès anticipé ${VERSION}`],
-  lignes: ['Choisis ton <b>Iop</b>, ton <b>Crâ</b>, ton <b>Osamodas</b> ou ton <b>Sacrieur</b>.', 'Nettoie Incarnam, Astrub et Amakna, vague après vague.',
+  lignes: ['Choisis parmi <b>9 classes</b>, du <b>Iop</b> au <b>Sadida</b>.', 'Nettoie Incarnam, Astrub, Amakna et Frigost, vague après vague.',
     'Ramasse du butin <b>légendaire</b> qui change tes sorts.', 'Monte de niveau, forge, collectionne les apparences.'],
-  cartes: [['4 classes', 'Iop, Crâ, Osamodas et Sacrieur'], ['Butin', '6 raretés, pouvoirs légendaires'],
-    ['Donjons', 'Vagues de monstres et boss officiels'], ['Monde ouvert', 'Incarnam, Astrub et Amakna, plus de 1 500 cartes']],
+  cartes: [['9 classes', 'Iop, Crâ, Osamodas, Sacrieur, Forgelance, Eniripsa, Enutrof, Écaflip, Sadida'], ['Butin', '6 raretés, pouvoirs légendaires'],
+    ['Donjons', 'Vagues de monstres et boss officiels'], ['Monde ouvert', 'Incarnam, Astrub, Amakna et Frigost, plus de 2 000 cartes']],
 };
 /** Diaporama (maquette « Diapo : ») : captures prises par le robot (tools/accueil/diaporama.cjs), légendes écrites à la main. */
 const DIAPO = (DIAPORAMA as { captures: { id: string; legende: string }[] }).captures;

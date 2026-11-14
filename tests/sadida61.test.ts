@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { V06_PUBLIC } from '../src/sim/pouvoirs';
 import { describe, expect, it } from 'vitest';
 import { GAME_DATA, ITEMS } from '../src/sim/data';
 import { SORTS } from '../src/sim/sorts';
@@ -32,7 +33,7 @@ describe('Sorts 61-90 du Sadida (« Sorts sadi : 1A 2A 3A 4A 5A 6A 7A-7H 8A 9A �
     expect(officiels).toHaveLength(6);
     for (const id of officiels) expect(Object.values(C.spells).map(d => d.dofusId)).toContain(id);
     const pub = monde(false), test = monde(true);
-    for (const k of NOUVEAUX) { expect(C.spells[k].v06, k).toBe(true); expect(pub.player.knows(k), k).toBe(false); expect(test.player.knows(k), k).toBe(true); }
+    for (const k of NOUVEAUX) { expect(C.spells[k].v06, k).toBe(true); expect(pub.player.knows(k), k).toBe(V06_PUBLIC); expect(test.player.knows(k), k).toBe(true); }
   });
 
   it('1A Arbre de Vie : Feuillu tout de suite, PV triplés, un seul, soigne les alliés près des Feuillus toutes les 3 s', () => {
