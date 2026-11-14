@@ -29,7 +29,7 @@ import { avantImpact61, dommages61, echangeBalise61, hit61, viseBalise61, impact
 import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type SortGrade, type SortOfficiel } from './sorts';
 import { porteeSort } from './apercu';
 import { aimanter, alchiRhetorique, apresCoupEniripsa, envol, impactEniripsa, majEniripsa } from './eniripsa';
-import { arbrePassage, avantImpactSadida, impactSadida, majSadida } from './sadida';
+import { arbrePassage, avantImpactSadida, impactSadida, majSadida, sentierDeRonces } from './sadida';
 import { avantImpactEcaflip, chateauBrise, impactEcaflip, majEcaflip, neuviemeVie, type Carte, type MainGagnante } from './ecaflip';
 import { impactSorts06, pasJoueur06 } from './sorts06';
 import { impactEnutrof, majEnutrof, perteCoffre, recordsVides, type LigneCoffre, type RecordsCoffre, type VitrineCoffre } from './enutrof';
@@ -690,7 +690,7 @@ export class Player extends Entity {
   chargesMax(id: SkillId): number {
     const d = this.spell(id);
     if (!d || d.pm || d.grosCoup) return 0;
-    if (d.sadida?.charges) return d.sadida.charges[0];   // Sadida 3A : Arbre à 3 charges
+    if (d.sadida?.charges) return d.sadida.charges[0] + (id === 'arbre' && this.pcv('pc-sadida-E') ? 1 : 0);   // Sadida 3A : Arbre à 3 charges (Forêt dense : une de plus)
     const n = this.grade(id)?.parTour ?? 0;
     return n >= 2 ? n + (id === 'epee' && this.pcv('pc-iop-O') ? 1 : 0) : 0;   // Tempête d'acier : une charge de plus
   }
@@ -1026,7 +1026,7 @@ export class Player extends Entity {
     this.potionCd = Math.max(0, this.potionCd - dt);
     this.pa = Math.min(this.paMax, this.pa + this.cls.pa.regen * (1 + (this.encourage?.regen ?? 0)) * dt);   // Mot Stimulant
     const minor = this.fxIdoles?.chargesMoins && this.pmMax <= 1 ? 0.5 : 1;   // Minor : une seule charge, elle revient deux fois moins vite
-    this.pm = Math.min(this.pmMax, this.pm + dt * (1 + this.legendary('mobilite') / 100) * minor / this.cls.pm.recharge);
+    this.pm = Math.min(this.pmMax, this.pm + dt * (1 + this.legendary('mobilite') / 100 + this.pcv('pc-sadida-B') / 100) * minor / this.cls.pm.recharge);
     this.flash = Math.max(0, this.flash - dt);
     if (this.slowT > 0) this.slowT -= dt;
     if (this.insensibleT > 0) this.insensibleT -= dt;
@@ -1204,6 +1204,7 @@ export class Player extends Entity {
       if (d.sadida?.passage) {   // Passage racinaire : l'Arbre prend la place de départ du Sadida
         const a = world.betes.find(b => !b.dead && b.owner === this && b.def.sadida?.arbre && Math.hypot(b.x - s.tx, b.y - s.ty) < 4);
         if (a && world.walkable(s.sx, s.sy)) { a.x = s.sx; a.y = s.sy; world.emit({ k: 'status', x: a.x, y: a.y - 40, text: 'Passage racinaire', color: '#9be36a' }); }
+        sentierDeRonces(this, s.sx, s.sy, s.tx, s.ty, world);   // Sentier de ronces
       }
       // Cumul (Fureur) : chaque lancer augmente les dommages du suivant
       let mult = boost;
@@ -1298,6 +1299,7 @@ export class Player extends Entity {
       world.degatsCoup = 0;
       // Sadida : relais par un Feuillu (cercle de 2 cases), Larme qui rend Feuillu, Infectés d'avant le coup
       const sadi = d.sadida && this.cls.sadida && !mv ? avantImpactSadida(this, d, s, world) : null;
+      if (sadi?.mult) hit.dmg *= sadi.mult;   // Cigüe mortelle
       if (d.self) { size = 60; }
       else if (sadi && hit.dmg <= 0 && !hit.pmLoss) { size = (sadi.r ?? rz) * area + zb; }   // Arbre, Poupées, soins : aucun coup
       else if (sadi && hz.shape === 'point') { size = (sadi.r ?? hz.radius) * area + zb; hits = world.hitCircle(s.tx, s.ty, size, hit, d.stun, this.facing); }
@@ -1464,6 +1466,7 @@ export class Player extends Entity {
     if (id === 'glacee' && v('pc-cra-M')) o.perce = v('pc-cra-M') - 1;
     if (id === 'abolition' && v('pc-cra-N')) o.surplus = v('pc-cra-N');
     if (id === 'dents_piranya' && v('pc-osamodas-K')) o.festin = true;
+    if (id === 'fleau' && v('pc-sadida-N')) { o.lifesteal = v('pc-sadida-N') / 100; o.soinPoupee = true; }   // Fléau insatiable
     // Forgelance (« Légendaires forgelance : 4A-4P »)
     if (id === 'charge_heroique' && v('pc-forgelance-D')) o.choc = 100;
     if (id === 'kyrja' && v('pc-forgelance-K')) o.partage = v('pc-forgelance-K');

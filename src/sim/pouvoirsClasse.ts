@@ -160,6 +160,22 @@ export const POUVOIRS_CLASSE: PouvoirClasseDef[] = [
   pc('ecaflip', 'P', 'Neuvième vie', 'perception', 'bouclier', [20, 30], 1, v => `Un coup mortel te laisse à 1 PV et te soigne de ${v} % (une fois par minute). Perception soigne 50 % de plus un allié sous 30 %.`),
   // --- Sadida (maquette Sadida 17D, « 17D en légendaire », 13 nov. 2026) ----------------------------------------------
   pc('sadida', 'A', 'Racines vengeresses', 'arbre', 'bottes', [60, 100], 5, v => `Quand un de tes Arbres meurt, ses racines Infectent les ennemis à 2 cases et leur font ${v} % des dégâts de Ronce.`),
+  // « Légendaires sadi : 1A 2A-2P 3A 4A 5A » (Mathis, 14 nov. 2026) : 15 de plus, 2 par emplacement
+  pc('sadida', 'B', 'Sentier de ronces', 'passage', 'bottes', [20, 35], 1, v => `Passage racinaire Infecte les ennemis que tu traverses et leur retire 1 PM ; tes charges de déplacement reviennent ${v} % plus vite.`),
+  pc('sadida', 'C', 'Épidémie', 'ronce', 'chapeau', [2, 4], 0.5, v => `L'Infection dure ${n(v)} s de plus, et Ronce Infecte aussi l'ennemi le plus proche de sa cible.`),
+  pc('sadida', 'D', 'Cigüe mortelle', 'cigue', 'chapeau', [25, 40], 1, v => `Cigüe fait ${v} % de dégâts en plus sur un Infecté, et sa propagation ne compte pas dans la limite de 3.`),
+  pc('sadida', 'E', 'Forêt dense', 'arbre', 'cape', [1, 1.5], 0.5, v => `Arbre gagne 1 charge, et un Arbre devient Feuillu en ${n(3 - v)} s au lieu de 3.`),
+  pc('sadida', 'F', 'Écorce épineuse', 'arbre', 'cape', [15, 25], 1, v => `Un de tes Arbres frappé renvoie ${v} % des dommages au monstre et l'Infecte.`),
+  pc('sadida', 'G', 'Sève vivifiante', 'larme', 'amulette', [25, 40], 1, v => `Larme de Sadida soigne ${v} % de plus, et un soin lancé sur un Feuillu soigne aussi tes Poupées et tes Arbres autour.`),
+  pc('sadida', 'H', 'Contagion galopante', 'contagion', 'amulette', [1, 2], 1, v => `Contagion fait sauter l'Infection ${v} case${v > 1 ? 's' : ''} plus loin, et chaque ennemi qu'elle Infecte perd 1 PM.`),
+  pc('sadida', 'I', 'Folle à lier', 'la_folle', 'anneau', [40, 60], 1, v => `Le poison de la Folle fait ${v} % de plus et gagne aussi les ennemis à 1 case de sa cible.`),
+  pc('sadida', 'J', 'Bloqueuse inébranlable', 'la_bloqueuse', 'anneau', [30, 50], 1, v => `La Bloqueuse a ${v} % de PV en plus, provoque toutes les 2 s au lieu de 3 et freine deux fois plus ceux à son contact.`),
+  pc('sadida', 'K', 'Sacrifice éclatant', 'la_sacrifiee', 'ceinture', [40, 60], 1, v => `La Sacrifiée grossit deux fois plus vite, son explosion fait ${v} % de dégâts en plus et laisse 3 s de ronces qui retirent 2 PM.`),
+  pc('sadida', 'L', 'Groute protecteur', 'puissance_sylvestre', 'ceinture', [10, 15], 1, v => `La Photosynthèse du Groute donne aussi aux alliés soignés un bouclier de ${v} % de leurs PV, 4 s.`),
+  pc('sadida', 'M', 'Buisson incendiaire', 'buisson_ardent', 'arme', [30, 50], 1, v => `Buisson Ardent laisse le sol en feu 2 s sur 1 case autour de la cible : ${v} % de ses dégâts par seconde à qui reste dedans.`),
+  pc('sadida', 'N', 'Fléau insatiable', 'fleau', 'arme', [75, 100], 5, v => `Fléau vole ${v} % des dommages au lieu de 50 %, et la vie en trop soigne ta Poupée la plus blessée.`),
+  pc('sadida', 'O', 'Ronces bienveillantes', 'ronce_apaisante', 'bouclier', [8, 12], 1, v => `Ronce Apaisante donne aussi à l'allié soigné un bouclier de ${v} % de ses PV, 4 s.`),
+  pc('sadida', 'P', 'Poupée immortelle', 'sacrifice_vaudou', 'bouclier', [30, 50], 1, v => `La Poupée sacrifiée par Sacrifice Vaudou renaît aussitôt en Arbre Feuillu, et le soin du Vaudou monte de ${v} %.`),
 ];
 /** Châtiments du Sacrieur (Dofus Rétro, 14B) : caractéristique gagnée à chaque coup reçu. */
 export const CHATIMENTS: Record<string, 'force' | 'agilite' | 'chance' | 'intelligence' | 'vitalite'> =
@@ -171,11 +187,11 @@ export const estPouvoirClasse = (id: string) => !!PC_PAR_ID[id];
 
 /** 2D : pouvoirs préférés de chaque boss (chance triplée sur son butin), un par classe. */
 export const BOSS_PREFERES: Record<string, string[]> = {
-  royal: ['pc-iop-A', 'pc-cra-G', 'pc-osamodas-E', 'pc-sacrieur-E', 'pc-sacrieur-L', 'pc-iop-K', 'pc-cra-P', 'pc-osamodas-L', 'pc-forgelance-E', 'pc-forgelance-M', 'pc-eniripsa-E', 'pc-eniripsa-I', 'pc-ecaflip-A', 'pc-ecaflip-J'],
-  kardorim: ['pc-iop-F', 'pc-cra-H', 'pc-osamodas-F', 'pc-sacrieur-D', 'pc-sacrieur-O', 'pc-iop-J', 'pc-cra-O', 'pc-osamodas-O', 'pc-forgelance-C', 'pc-forgelance-L', 'pc-eniripsa-P', 'pc-eniripsa-H', 'pc-ecaflip-P', 'pc-ecaflip-E'],
-  tournesol_affame: ['pc-sadida-A', 'pc-iop-H', 'pc-cra-A', 'pc-osamodas-D', 'pc-sacrieur-A', 'pc-sacrieur-J', 'pc-iop-L', 'pc-cra-K', 'pc-osamodas-J', 'pc-forgelance-I', 'pc-forgelance-A', 'pc-eniripsa-C', 'pc-eniripsa-G', 'pc-ecaflip-N', 'pc-ecaflip-G'],
-  mob_l_eponge: ['pc-iop-E', 'pc-cra-F', 'pc-osamodas-B', 'pc-sacrieur-C', 'pc-sacrieur-P', 'pc-iop-M', 'pc-cra-M', 'pc-osamodas-K', 'pc-forgelance-K', 'pc-forgelance-H', 'pc-eniripsa-A', 'pc-eniripsa-O', 'pc-ecaflip-O', 'pc-ecaflip-C'],
-  kankreblath: ['pc-iop-B', 'pc-cra-C', 'pc-osamodas-C', 'pc-sacrieur-B', 'pc-sacrieur-K', 'pc-iop-O', 'pc-cra-J', 'pc-osamodas-P', 'pc-forgelance-D', 'pc-forgelance-O', 'pc-eniripsa-M', 'pc-eniripsa-N', 'pc-ecaflip-M', 'pc-ecaflip-I'],
+  royal: ['pc-iop-A', 'pc-cra-G', 'pc-osamodas-E', 'pc-sacrieur-E', 'pc-sacrieur-L', 'pc-iop-K', 'pc-cra-P', 'pc-osamodas-L', 'pc-forgelance-E', 'pc-forgelance-M', 'pc-eniripsa-E', 'pc-eniripsa-I', 'pc-ecaflip-A', 'pc-ecaflip-J', 'pc-sadida-C', 'pc-sadida-J'],
+  kardorim: ['pc-iop-F', 'pc-cra-H', 'pc-osamodas-F', 'pc-sacrieur-D', 'pc-sacrieur-O', 'pc-iop-J', 'pc-cra-O', 'pc-osamodas-O', 'pc-forgelance-C', 'pc-forgelance-L', 'pc-eniripsa-P', 'pc-eniripsa-H', 'pc-ecaflip-P', 'pc-ecaflip-E', 'pc-sadida-P', 'pc-sadida-F'],
+  tournesol_affame: ['pc-sadida-A', 'pc-iop-H', 'pc-cra-A', 'pc-osamodas-D', 'pc-sacrieur-A', 'pc-sacrieur-J', 'pc-iop-L', 'pc-cra-K', 'pc-osamodas-J', 'pc-forgelance-I', 'pc-forgelance-A', 'pc-eniripsa-C', 'pc-eniripsa-G', 'pc-ecaflip-N', 'pc-ecaflip-G', 'pc-sadida-K'],
+  mob_l_eponge: ['pc-iop-E', 'pc-cra-F', 'pc-osamodas-B', 'pc-sacrieur-C', 'pc-sacrieur-P', 'pc-iop-M', 'pc-cra-M', 'pc-osamodas-K', 'pc-forgelance-K', 'pc-forgelance-H', 'pc-eniripsa-A', 'pc-eniripsa-O', 'pc-ecaflip-O', 'pc-ecaflip-C', 'pc-sadida-M', 'pc-sadida-H'],
+  kankreblath: ['pc-iop-B', 'pc-cra-C', 'pc-osamodas-C', 'pc-sacrieur-B', 'pc-sacrieur-K', 'pc-iop-O', 'pc-cra-J', 'pc-osamodas-P', 'pc-forgelance-D', 'pc-forgelance-O', 'pc-eniripsa-M', 'pc-eniripsa-N', 'pc-ecaflip-M', 'pc-ecaflip-I', 'pc-sadida-D', 'pc-sadida-N'],
 };
 /** 2A : part des pouvoirs de Légendaire qui sont des pouvoirs de classe inventés. */
 export const CHANCE_POUVOIR_CLASSE = 0.2;

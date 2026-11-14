@@ -2812,5 +2812,407 @@
    "n": 2,
    "officiel": "Désolation : +2 Portée maximale"
   }
+ ],
+ "sadida": [
+  {
+   "id": "sadida-01",
+   "slot": "chapeau",
+   "piece": "Chapeau Tyron",
+   "sort": "Buisson Ardent",
+   "dofusId": 13574,
+   "effet": "po",
+   "n": 3,
+   "officiel": "Buisson Ardent : +3 Portée maximale"
+  },
+  {
+   "id": "sadida-02",
+   "slot": "chapeau",
+   "piece": "Chapeau Tyron",
+   "sort": "Feu de Brousse",
+   "dofusId": 13568,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Feu de Brousse : -1 PA"
+  },
+  {
+   "id": "sadida-03",
+   "slot": "chapeau",
+   "piece": "Chapeau Tyron",
+   "sort": "Cigüe",
+   "dofusId": 13577,
+   "effet": "po",
+   "n": 3,
+   "officiel": "Cigüe : +3 Portée maximale"
+  },
+  {
+   "id": "sadida-04",
+   "slot": "chapeau",
+   "piece": "Chapeau Tyron",
+   "sort": "Vent Empoisonné",
+   "dofusId": 13529,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Vent Empoisonné : +1 lancer(s) par tour"
+  },
+  {
+   "id": "sadida-05",
+   "slot": "chapeau",
+   "piece": "Chapeau Tyron",
+   "sort": "Sève Paralysante",
+   "dofusId": 13533,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Sève Paralysante : -1 PA"
+  },
+  {
+   "id": "sadida-06",
+   "slot": "amulette",
+   "piece": "Chapeau Tyron",
+   "sort": "Miasmes",
+   "dofusId": 13562,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Miasmes : -1 PA"
+  },
+  {
+   "id": "sadida-07",
+   "slot": "arme",
+   "piece": "Chapeau Tyron",
+   "sort": "La Bloqueuse",
+   "dofusId": 13561,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "La Bloqueuse : -1 de relance"
+  },
+  {
+   "id": "sadida-08",
+   "slot": "bouclier",
+   "piece": "Chapeau Tyron",
+   "sort": "La Bloqueuse Transmutée",
+   "dofusId": 13526,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "La Bloqueuse Transmutée : -1 de relance"
+  },
+  {
+   "id": "sadida-09",
+   "slot": "cape",
+   "piece": "Cape Hitton",
+   "sort": "Tremblement",
+   "dofusId": 13514,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Tremblement : -1 PA"
+  },
+  {
+   "id": "sadida-10",
+   "slot": "cape",
+   "piece": "Cape Hitton",
+   "sort": "Mandragore",
+   "dofusId": 13559,
+   "effet": "ligne",
+   "n": 1,
+   "officiel": "Mandragore : lancer en ligne désactivé"
+  },
+  {
+   "id": "sadida-11",
+   "slot": "cape",
+   "piece": "Cape Hitton",
+   "sort": "Inoculation",
+   "dofusId": 13569,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Inoculation : -1 PA"
+  },
+  {
+   "id": "sadida-12",
+   "slot": "cape",
+   "piece": "Cape Hitton",
+   "sort": "Force de la Nature",
+   "dofusId": 13570,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Force de la Nature : Portée modifiable"
+  },
+  {
+   "id": "sadida-13",
+   "slot": "cape",
+   "piece": "Cape Hitton",
+   "sort": "Puissance Sylvestre",
+   "dofusId": 13530,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Puissance Sylvestre : -1 de relance"
+  },
+  {
+   "id": "sadida-14",
+   "slot": "amulette",
+   "piece": "Cape Hitton",
+   "sort": "Influence Végétale",
+   "dofusId": 13566,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Influence Végétale : -1 de relance"
+  },
+  {
+   "id": "sadida-15",
+   "slot": "arme",
+   "piece": "Cape Hitton",
+   "sort": "La Folle",
+   "dofusId": 13564,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "La Folle : -1 de relance"
+  },
+  {
+   "id": "sadida-16",
+   "slot": "bouclier",
+   "piece": "Cape Hitton",
+   "sort": "La Folle Transmutée",
+   "dofusId": 13515,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "La Folle Transmutée : -1 de relance"
+  },
+  {
+   "id": "sadida-17",
+   "slot": "ceinture",
+   "piece": "Ceinture Luthe",
+   "sort": "Herbes Folles",
+   "dofusId": 13518,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Herbes Folles : -1 PA"
+  },
+  {
+   "id": "sadida-18",
+   "slot": "ceinture",
+   "piece": "Ceinture Luthe",
+   "sort": "Malédiction Vaudou",
+   "dofusId": 13576,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Malédiction Vaudou : -1 PA"
+  },
+  {
+   "id": "sadida-19",
+   "slot": "ceinture",
+   "piece": "Ceinture Luthe",
+   "sort": "Sacrifice Vaudou",
+   "dofusId": 13531,
+   "effet": "parCible",
+   "n": 1,
+   "officiel": "Sacrifice Vaudou : +1 lancer(s) par cible"
+  },
+  {
+   "id": "sadida-20",
+   "slot": "ceinture",
+   "piece": "Ceinture Luthe",
+   "sort": "Chardons Ardents",
+   "dofusId": 13517,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Chardons Ardents : -1 de relance"
+  },
+  {
+   "id": "sadida-21",
+   "slot": "ceinture",
+   "piece": "Ceinture Luthe",
+   "sort": "Ronce Apaisante",
+   "dofusId": 13525,
+   "effet": "ligne",
+   "n": 1,
+   "officiel": "Ronce Apaisante : lancer en ligne désactivé"
+  },
+  {
+   "id": "sadida-22",
+   "slot": "amulette",
+   "piece": "Ceinture Luthe",
+   "sort": "Rempotage",
+   "dofusId": 13565,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Rempotage : Portée modifiable"
+  },
+  {
+   "id": "sadida-23",
+   "slot": "arme",
+   "piece": "Ceinture Luthe",
+   "sort": "La Sacrifiée",
+   "dofusId": 13567,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "La Sacrifiée : -1 de relance"
+  },
+  {
+   "id": "sadida-24",
+   "slot": "bouclier",
+   "piece": "Ceinture Luthe",
+   "sort": "La Sacrifiée Transmutée",
+   "dofusId": 13522,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "La Sacrifiée Transmutée : -1 de relance"
+  },
+  {
+   "id": "sadida-25",
+   "slot": "bottes",
+   "piece": "Bottes Hanik",
+   "sort": "Ronce",
+   "dofusId": 13516,
+   "effet": "po",
+   "n": 3,
+   "officiel": "Ronce : +3 Portée maximale"
+  },
+  {
+   "id": "sadida-26",
+   "slot": "bottes",
+   "piece": "Bottes Hanik",
+   "sort": "Ronce Insolente",
+   "dofusId": 13521,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Ronce Insolente : -1 PA"
+  },
+  {
+   "id": "sadida-27",
+   "slot": "bottes",
+   "piece": "Bottes Hanik",
+   "sort": "Larme de Sadida",
+   "dofusId": 13528,
+   "effet": "ligne",
+   "n": 1,
+   "officiel": "Larme de Sadida : lancer en ligne désactivé"
+  },
+  {
+   "id": "sadida-28",
+   "slot": "bottes",
+   "piece": "Bottes Hanik",
+   "sort": "Montée de Sève",
+   "dofusId": 13563,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Montée de Sève : +1 lancer(s) par tour"
+  },
+  {
+   "id": "sadida-29",
+   "slot": "bottes",
+   "piece": "Bottes Hanik",
+   "sort": "Fléau",
+   "dofusId": 13571,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Fléau : Portée modifiable"
+  },
+  {
+   "id": "sadida-30",
+   "slot": "amulette",
+   "piece": "Bottes Hanik",
+   "sort": "Forêt Hantée",
+   "dofusId": 13524,
+   "effet": "ligne",
+   "n": 1,
+   "officiel": "Forêt Hantée : lancer en ligne désactivé"
+  },
+  {
+   "id": "sadida-31",
+   "slot": "arme",
+   "piece": "Bottes Hanik",
+   "sort": "Arbre",
+   "dofusId": 13519,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Arbre : -1 PA"
+  },
+  {
+   "id": "sadida-32",
+   "slot": "bouclier",
+   "piece": "Bottes Hanik",
+   "sort": "Arbre Feuillu",
+   "dofusId": 13560,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Arbre Feuillu : -1 PA"
+  },
+  {
+   "id": "sadida-33",
+   "slot": "anneau",
+   "piece": "Anneau Pwal",
+   "sort": "Ronces Agressives",
+   "dofusId": 13527,
+   "effet": "parCible",
+   "n": 1,
+   "officiel": "Ronces Agressives : +1 lancer(s) par cible"
+  },
+  {
+   "id": "sadida-34",
+   "slot": "anneau",
+   "piece": "Anneau Pwal",
+   "sort": "Fétiches Calcinés",
+   "dofusId": 14393,
+   "effet": "po",
+   "n": 3,
+   "officiel": "Fétiches Calcinés : +3 Portée maximale"
+  },
+  {
+   "id": "sadida-35",
+   "slot": "anneau",
+   "piece": "Anneau Pwal",
+   "sort": "Contagion",
+   "dofusId": 13575,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Contagion : +1 lancer(s) par tour"
+  },
+  {
+   "id": "sadida-36",
+   "slot": "anneau",
+   "piece": "Anneau Pwal",
+   "sort": "Mangrove",
+   "dofusId": 14396,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Mangrove : -1 PA"
+  },
+  {
+   "id": "sadida-37",
+   "slot": "anneau",
+   "piece": "Anneau Pwal",
+   "sort": "La Gonflable",
+   "dofusId": 13573,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "La Gonflable : -1 de relance"
+  },
+  {
+   "id": "sadida-38",
+   "slot": "amulette",
+   "piece": "Anneau Pwal",
+   "sort": "La Gonflable Transmutée",
+   "dofusId": 13523,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "La Gonflable Transmutée : -1 de relance"
+  },
+  {
+   "id": "sadida-39",
+   "slot": "arme",
+   "piece": "Anneau Pwal",
+   "sort": "La Surpuissante",
+   "dofusId": 13578,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "La Surpuissante : -1 de relance"
+  },
+  {
+   "id": "sadida-40",
+   "slot": "bouclier",
+   "piece": "Anneau Pwal",
+   "sort": "La Surpuissante Transmutée",
+   "dofusId": 13520,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "La Surpuissante Transmutée : -1 de relance"
+  }
  ]
 }
