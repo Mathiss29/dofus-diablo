@@ -704,6 +704,11 @@ Ville vivante (maquette Ville 5F, 8 nov. 2026) :
 - Carte M : `carte_monde.py` réduit maintenant chaque page de décor une seule fois (plus de 30 min avant, ~5 min) ; tout le continent à
   l'échelle 0,1 puis réduit à 0,05 (7480 × 3948). `plan_carte.py` : 4e champ de `maps` = 1 (0.4) ou 2 (0.6, grisé tant que V06_PUBLIC est faux).
 
+- Intérieurs utiles (choix de Mathis du 14 nov. : pas les 126 maisons vides de la Bourgade) : `python3 regions06/interieurs06.py <cartes> liste.json`
+  (13 groupes, 47 salles en rangées y = 80/82, portes `i06` dans zones.json, sous-zone 90011 « Souterrains des Porcos » avec monstres), puis
+  `CACHE=… PARTAGE=1 world_export.py liste.json <cartes> <textures-1x> ex`, `COURANTE=1 batiments.py ex <cartes>`, `decor_par_carte.py ex`,
+  `regions_monde.py joindre`, `monde_continent.py fusion … ex`, `v06: 1` sur les 47 salles, `regions_monde.py scinder`, `envoi.mjs`.
+
 ## Arènes des donjons de la 0.6 (ligne « Arènes : 1A 2D 3A 4A+4C 5B 6B+6C 7A 8A+8B 9A+9C 10A+10C 11A », 13 nov. 2026)
 
 - `arenes06/compo06.py` : les 5 compositions de la maquette (Clos des Blops, Épreuve de Draegnerys, Antre de la Reine Nyée sur sol plein,

@@ -2,7 +2,8 @@
 
 Usage : python reperes.py <hints.json (data_dump.py)> <fr.bin> <public/assets/mondes/<monde>>
 Écrit monde.json['reperes'] = [{t: tag de la carte, n: nom, g: icône (public/assets/ui/reperes/<g>.webp), c: catégorie}].
-Les icônes sont les sprites numérotés de uidarkstone_assets_all (même numéro que hints.gfx), réduites à 40 px.
+Les icônes sont les sprites numérotés de uidarkstone_assets_all (même numéro que hints.gfx), réduites à 40 px. Sans le PC de Mathis :
+les mêmes icônes officielles sont servies par api.dofusdb.fr/img/hints/<gfx>.png (64 px, rognées puis 40 px de haut).
 """
 import sys, os, json
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
