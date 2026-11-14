@@ -2155,6 +2155,19 @@
           "Partie de test : le dédale du Labyrinthe change à chaque entrée, décor des arènes 0.6 remis à sa place."
         ]
       }
+    },
+    {
+      "date": "2026-11-14",
+      "titre": "Frigost attaque en coulisses",
+      "resume": "Les boss du monde et l'invasion de Frigost de la 0.6 se mettent en place en partie de test.",
+      "capture": "assets/journal/2026-11-14.webp",
+      "legende": "Rats Bougris et Gélikans à la Bourgade, 14 novembre 2026.",
+      "lignes": {
+        "En coulisses": [
+          "Partie de test : Tyranne, Mama Koalak et le Méga Craqueleur rejoignent les boss du monde.",
+          "Partie de test : à 13 h, 19 h et 22 h, Rats Bougris et Gélikans envahissent la Bourgade."
+        ]
+      }
     }
   ]
 }

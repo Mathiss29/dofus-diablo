@@ -5,6 +5,8 @@
   "periode": 10800, "annonce": 600, "attente": 1800, "minuterie": 300,
   "programme": ["nuit", "jour", "jour", "jour", "jour", "jour", "jour", "nuit"],
   "rotation": ["chef_de_guerre_bouftou", "gelees_royales", "chef_crocodaille"],
+  "_rotationV06": "0.6 (« 0.6 : » 9B) : un boss du monde par région de la 0.6, ajoutés à la rotation quand la 0.6 est visible (V06_PUBLIC ou partie de test).",
+  "rotationV06": ["tyranne_la_terrible", "mama_koalak", "mega_craqueleur_des_plaines"],
   "_pv": "PV du boss = base + parNiveau × niveau, +parJoueur par joueur en plus présent quand il apparaît ; dégâts = ceux d'un boss de son niveau × degats.",
   "pv": { "base": 3000, "parNiveau": 300 }, "parJoueur": 0.6, "degats": 1.15, "echelle": 1.6,
   "_paliers": "3C : à 66 % puis 33 % de ses PV, il appelle sa garde (renforts de sa sous-zone, ils foncent) et devient intouchable tant qu'elle vit (au plus intouchableMax s).",
@@ -19,7 +21,10 @@
    "chef_de_guerre_bouftou": { "nom": "Chef de Guerre Bouftou", "monstres": ["chef_de_guerre_bouftou"], "sousZone": 5, "carte": "3_10", "niveau": 30, "renforts": ["bouftou", "boufton", "boufton_noir"], "titre": "Maître de guerre", "cri": "La harde du Chef de Guerre Bouftou charge au Coin des Bouftous" },
    "gelees_royales": { "nom": "Gelées Royales", "monstres": ["gelee_royale_bleuet", "gelee_royale_menthe", "gelee_royale_fraise", "gelee_royale_citron"], "sousZone": 12, "carte": "10_28", "niveau": 60, "renforts": ["gelee_bleuet", "gelee_menthe", "gelee_fraise"], "titre": "Marcheur Dimensionnel", "brille": true, "cri": "Les quatre Gelées Royales sortent de la Gelaxième Dimension sur la Péninsule des gelées" },
    "maitre_vampire": { "nom": "Maître Vampire", "monstres": ["maitre_vampire"], "sousZone": 6, "carte": "10_16", "niveau": 49, "renforts": ["chafer", "chafer_fantassin", "rib"], "titre": "Vampyre", "nuit": true, "cri": "Le Maître Vampire sort de sa crypte au Cimetière d'Amakna" },
-   "chef_crocodaille": { "nom": "Chef Crocodaille", "monstres": ["chef_crocodaille"], "sousZone": 31, "carte": "-6_11", "niveau": 61, "renforts": ["crocodaille", "boo"], "titre": "Dékrokilliseur", "cri": "Le Chef Crocodaille remonte des Marécages d'Amakna" }
+   "chef_crocodaille": { "nom": "Chef Crocodaille", "monstres": ["chef_crocodaille"], "sousZone": 31, "carte": "-6_11", "niveau": 61, "renforts": ["crocodaille", "boo"], "titre": "Dékrokilliseur", "cri": "Le Chef Crocodaille remonte des Marécages d'Amakna" },
+   "tyranne_la_terrible": { "nom": "Tyranne la Terrible", "monstres": ["tyranne_la_terrible"], "sousZone": 168, "carte": "-10_-13", "niveau": 80, "renforts": ["abraknyde_sombre", "abrakne_sombre", "abraknyde_venerable"], "titre": "Tyrannicide", "v06": true, "cri": "Tyranne la Terrible fait trembler la Forêt Sombre" },
+   "mama_koalak": { "nom": "Mama Koalak", "monstres": ["mama_koalak"], "sousZone": 253, "carte": "-15_9", "niveau": 90, "renforts": ["koalak_indigo", "koalak_coco", "koalak_griotte", "koalak_reinette"], "titre": "Dompteur de Koalaks", "v06": true, "cri": "Mama Koalak rassemble sa portée dans le Canyon sauvage" },
+   "mega_craqueleur_des_plaines": { "nom": "Méga Craqueleur des plaines", "monstres": ["mega_craqueleur_des_plaines"], "sousZone": 525, "carte": "-21_-22", "niveau": 80, "renforts": ["craqueleur_des_plaines", "craquelourd", "elementerre"], "titre": "Casseur de rocs", "v06": true, "cri": "Le Méga Craqueleur des plaines se lève sur les Routes Rocailleuses" }
   }
  },
  "invasion": {
@@ -29,7 +34,9 @@
   "jauge": 60, "parJoueur": 0.5, "pepites": 25,
   "_eclats": "7B : chaque envahisseur lâche des Éclats Obscurs (objet officiel 14954 ; élite : 3) ; on ouvre le coffre d'invasion avec prix éclats (tirages de butin d'élite + un Rare au moins). Les éclats se dissipent à la fin de l'heure.",
   "eclat": "14954", "eclatsElite": 3,
-  "coffre": { "prix": 15, "tirages": 2, "epique": 0.15 }
+  "coffre": { "prix": 15, "tirages": 2, "epique": 0.15 },
+  "_frigost": "0.6 (« 0.6 : » 9D) : invasion de Frigost : à ces heures (Paris), les Rats Bougris et les Gélikans envahissent le Port de givre ou la Bourgade (un jour sur deux), seuls envahisseurs. Seulement quand la 0.6 est visible.",
+  "frigost": { "nom": "Invasion de Frigost", "subs": [600, 601], "heures": [13, 19, 22], "envahisseurs": ["rat_bougri", "rat_bougri_delave", "gelikan"] }
  },
  "evenements": {
   "_": "8A + 8B : petits événements qui arrivent près du joueur quand il traverse une sous-zone, environ toutes les 5 min (intervalle en s). Lieux et monstres de la sous-zone, déroulé à nous.",
