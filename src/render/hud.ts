@@ -710,7 +710,7 @@ export class Hud {
     const s = h();
     if (v.boss && !v.boss.fin) l.push(`☠ ${v.boss.nom} · ${v.boss.lieu}${v.boss.reste != null ? ` · ${chrono(v.boss.reste)}` : ''}`);
     else {
-      const sv = rendezVous(s).suivant, d = BOSS_MONDE[sv.cle], dans = Math.ceil((sv.debut - s) / 60);
+      const sv = rendezVous(s, this.world.v06Ouvert).suivant, d = BOSS_MONDE[sv.cle], dans = Math.ceil((sv.debut - s) / 60);
       if (d) l.push(dans <= 60 ? `Boss du monde dans ${dans} min : ${d.nom}` : `Prochain boss du monde : ${heureTexte(sv.debut)}`);
     }
     const inv = v.invasion;

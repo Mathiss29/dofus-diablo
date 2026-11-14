@@ -48160,5 +48160,118 @@
    "fuite": 0,
    "retraitPA": 0
   }
+ },
+ "mega_craqueleur_des_plaines": {
+  "dofusId": 2882,
+  "name": "Méga Craqueleur des plaines",
+  "hp": 4000,
+  "speed": 100,
+  "radius": 20,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "craqueleur_des_plaines",
+  "color": "#e8dcc0",
+  "spells": [
+   {
+    "id": 206,
+    "name": "Écrasement Handicapant",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 1
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 13,
+      "max": 18,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 235,
+    "name": "Jet de pierre",
+    "pa": 4,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 9,
+      "max": 10,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 470,
+    "name": "Frappe Sismique",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 6,
+    "anim": 0,
+    "zone": "C5",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pa",
+      "n": -1,
+      "dur": 4
+     }
+    ]
+   }
+  ],
+  "xp": 99,
+  "level": 132,
+  "res": {
+   "terre": 44,
+   "feu": 58,
+   "eau": 88,
+   "air": 68,
+   "neutre": 44
+  },
+  "caracs": {
+   "force": 840,
+   "intelligence": 840,
+   "chance": 0,
+   "agilite": 840,
+   "sagesse": 380,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
  }
 }

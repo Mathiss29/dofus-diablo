@@ -2169,7 +2169,10 @@
         "Le monde": [],
         "Combat": [],
         "Corrections": [],
-        "En coulisses": []
+        "En coulisses": [
+          "Partie de test : Tyranne, Mama Koalak et le Méga Craqueleur rejoignent les boss du monde.",
+          "Partie de test : à 13 h, 19 h et 22 h, Rats Bougris et Gélikans envahissent la Bourgade."
+        ]
       }
     }
   ]

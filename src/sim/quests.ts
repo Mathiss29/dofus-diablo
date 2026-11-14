@@ -879,7 +879,7 @@ export class Quetes {
     if (!n || Math.hypot(n.x - p.x, n.y - p.y) > 1300 || this.dialogue || p.dead) return;
     if ((this.cri.t -= dt) > 0 || this.bulle) return;
     const cris = n.def.cris!, alm = this.world.almanaxDuJour, h = this.world.opts.horloge;
-    const nv = h ? nouvellesDuMonde(this.world.opts.data, h()) : { boss: '', invasion: '' };   // 0.5 (2D)
+    const nv = h ? nouvellesDuMonde(this.world.opts.data, h(), this.world.v06Ouvert) : { boss: '', invasion: '' };   // 0.5 (2D)
     for (let k = 0; k < cris.length; k++) {
       const c = cris[this.cri.i++ % cris.length];
       if ((c.includes('{almanax}') && !alm) || (c.includes('{boss}') && !nv.boss) || (c.includes('{invasion}') && !nv.invasion)) continue;

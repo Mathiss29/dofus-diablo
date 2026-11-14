@@ -1324,6 +1324,8 @@ export class World {
       // l'élite unique de la sous-zone mène parfois un groupe (souvent sur son repaire, 4D), s'il n'est pas déjà en vie ailleurs
       const elite = !g.fixe && i === 0 && g.sub.elite && this.rng.next() < (pt?.r ? PLACEMENT.elite.repaire : PLACEMENT.elite.hasard) && !this.monsters.some(o => !o.dead && o.type === g.sub.elite);
       let type = g.fixe ? g.fixe[i] : elite ? g.sub.elite! : this.rng.pick(g.sub.monsters);
+      const ev = envahi && !g.fixe && !elite ? this.vivant!.envahisseurs() : null;   // 0.6 (9D) : Rats Bougris et Gélikans de Frigost
+      if (ev?.length) type = this.rng.pick(ev);
       // « Wabbits : 11C » : très rarement, un monstre caché mène le groupe (un seul en vie à la fois)
       const R = g.sub.rare;
       if (R && !g.fixe && i === 0 && !elite && this.rng.next() < R.chance * (this.test?.archis ? 100 : 1) && !this.monsters.some(o => !o.dead && o.type === R.monstre)) type = R.monstre;

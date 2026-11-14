@@ -67039,6 +67039,39 @@
     "cond": "evenement"
    }
   ],
+  "mega_craqueleur_des_plaines": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "2305",
+    "chance": 29.0
+   },
+   {
+    "item": "17134",
+    "chance": 29.0,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "2306",
+    "chance": 4.76
+   },
+   {
+    "item": "16819",
+    "chance": 1.0
+   }
+  ],
   "tyranne_la_terrible": [
    {
     "item": "16228",
