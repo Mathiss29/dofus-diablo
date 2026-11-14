@@ -4,6 +4,7 @@ import type { Monster } from './monster';
 import type { Player } from './player';
 import type { HitDef, World } from './world';
 import { soignerAllie } from './eniripsa';
+import { REGLES_BETES } from './bete';
 
 /** Sadida (maquette Sadida, ligne de Mathis du 13 nov. 2026 :
  *  « 1A 2A+2B 3A+3B 4A 5A 6A+6B 7A 8A+8B 9A 10A 11A 12A 13A 14B 15A 16A 17B », 17D en légendaire).
@@ -58,9 +59,20 @@ export interface EffetsSadida {
   vaudou?: { rayon: number; soin: number };
   /** Passage racinaire (10A) : portée en cases jusqu'à un de tes Arbres. */
   passage?: number;
+  /** Sorts 61-90 (« Sorts sadi : 1A … 6A ») : Arbre de Vie (PV × pv d'un Arbre, aura de soin toutes les `periode` s :
+   *  soin % des PV max des alliés à `rayon` cases d'un de tes Feuillus, soinInvoc % pour tes Arbres et Poupées). */
+  arbreDeVie?: { pv: number; periode: number; rayon: number; soin: number; soinInvoc: number };
+  /** Tremblement : part de toi, ou du Feuillu / de la Poupée visé ; cercle de `rayon` cases, attire de `attire` cases (pas les boss). */
+  tremblement?: { rayon: number; attire: number };
+  /** Inoculation : +parInfecte par ennemi Infecté (plafond max), puis consomme les Infections à `rayon` cases de la cible. */
+  inoculation?: { parInfecte: number; max: number; rayon: number };
+  /** Don Naturel : sacrifie un Feuillu ou une Poupée, soigne à `rayon` cases et partage les dommages `partage` s. */
+  don?: { rayon: number; soin: number; partage: number };
 }
 /** État d'un Arbre ou d'une Poupée du Sadida (Bete.sadi). */
-export interface EtatSadi { feuillu: boolean; t: number; calme: number; deFeuillu?: boolean; age: number }
+export interface EtatSadi { feuillu: boolean; t: number; calme: number; deFeuillu?: boolean; age: number;
+  /** Arbre de Vie (aura de soin) ; minuteurs des Poupées 61-90 (soin, Brise, Ardeur, Bouture, provocation) ; Fourbe de la Surpuissante. */
+  vie?: boolean; vieT?: number; provoqueT?: number; soinT?: number; briseT?: number; ardeurT?: number; boutureT?: number; fourbe?: number }
 
 const R = (p: Player): ReglesSadida | undefined => p.cls.sadida;
 /** Durée de l'Infection (Épidémie, pc-sadida-C : quelques secondes de plus). */
@@ -120,9 +132,10 @@ export function majMonstreSadida(w: World, m: Monster, dt: number) {
 
 // --- Arbres -----------------------------------------------------------------------------------------------------------
 /** Plante un Arbre (14B : 6 par groupe ; au-delà, le plus ancien Arbre meurt, le sien d'abord). */
-export function planter(p: Player, x: number, y: number, w: World, feuillu = false): Bete | null {
+export function planter(p: Player, x: number, y: number, w: World, feuillu = false, vie?: EffetsSadida['arbreDeVie']): Bete | null {
   const r = R(p);
   if (!r) return null;
+  if (vie) for (const a of arbresDe(p, w)) if (a.sadi?.vie) retirer(a, w);   // un seul Arbre de Vie
   const foret = foretDuGroupe(w);
   if (foret.length >= r.arbres.max) {
     const arbres = foret.filter(estArbre), vieux = arbres.find(b => b.owner === p) ?? arbres[0] ?? foret.find(b => b.owner === p) ?? foret[0];
@@ -133,7 +146,11 @@ export function planter(p: Player, x: number, y: number, w: World, feuillu = fal
   b.horsCompte = true;
   b.maxHp = b.hp = Math.max(1, Math.round(p.maxHp * r.arbres.pv));
   b.sadi = { feuillu: false, t: feuillu ? 0 : r.arbres.feuillu - p.pcv('pc-sadida-E'), calme: 0, age: w.time };   // Forêt dense : Feuillu plus tôt
-  if (feuillu) rendreFeuillu(b, w);
+  if (feuillu || vie) rendreFeuillu(b, w);
+  if (vie) {   // Arbre de Vie : Feuillu tout de suite, PV triplés par rapport à un Arbre (Bois de cœur : plus encore)
+    b.maxHp = b.hp = Math.max(1, Math.round(p.maxHp * r.arbres.pv * vie.pv * (1 + p.pcv('pc-sadida-R') / 100)));
+    b.sadi.vie = true; b.sadi.vieT = 0;
+  }
   return b;
 }
 /** Un Arbre devient Feuillu : PV doublés, sert de relais, ne bouge plus. */
@@ -160,9 +177,13 @@ export function majBeteSadida(b: Bete, dt: number, w: World): boolean {
   if (s.calme >= 20) { w.emit({ k: 'status', x: b.x, y: b.y - 40, text: 'Retourne sous terre', color: '#a8c890' }); retirer(b, w); return true; }
   if (S.arbre) {
     if (!s.feuillu && (s.t -= dt) <= 0) rendreFeuillu(b, w);
+    if (s.vie) majArbreDeVie(b, s, dt, w);
     b.kx = b.ky = 0; b.setAnim('idle');
     return true;
   }
+  if (S.gonflable) { majGonflable(b, s, dt, w, S.gonflable); return false; }   // passive : suit le Sadida
+  if (S.surpuissante) { majSurpuissante(b, s, dt, w, S.surpuissante); return false; }
+  if (S.fourbe) { majFourbe(b, s, dt, w, S.fourbe); return false; }
   if (S.fixe) { b.kx = b.ky = 0; return false; }   // Groute : se bat sans bouger
   if (S.bloqueuse) return majBloqueuse(b, dt, w, r);
   if (S.sacrifiee) return majSacrifiee(b, dt, w, r);
@@ -243,6 +264,10 @@ function majSacrifiee(b: Bete, dt: number, w: World, r: ReglesSadida): boolean {
 export function beteSadidaMorte(b: Bete, w: World) {
   const p = b.owner;
   if (!b.sadi || !R(p)) return;
+  if (b.def.sadida!.surpuissante && b.sadi.fourbe != null) {   // La Fourbe part avec la Surpuissante
+    const f = w.betes.find(q => q.id === b.sadi!.fourbe && !q.dead);
+    if (f) retirer(f, w);
+  }
   if (b.def.sadida!.poupee) { planter(p, b.x, b.y, w, !!b.sadi.deFeuillu); return; }
   const v = p.pcv('pc-sadida-A');
   if (v && estArbre(b)) {
@@ -319,8 +344,17 @@ export function avantImpactSadida(p: Player, d: SpellDef, s: { id: string; tx: n
     const a = prochePoint(w, s.tx, s.ty, CASE * 0.9, b => b.owner === p && !!b.def.sadida?.poupee);
     if (a) { s.tx = a.x; s.ty = a.y; c.r = CASE * 1.5; }
   }
+  if (S.tremblement) {   // Tremblement : part du Feuillu ou de la Poupée visé, sinon du Sadida
+    const a = prochePoint(w, s.tx, s.ty, CASE * 0.9, b => b.owner === p && (estFeuillu(b) || !!b.def.sadida?.poupee));
+    if (a) { s.tx = a.x; s.ty = a.y; } else { s.tx = p.x; s.ty = p.y; }
+    c.r = (S.tremblement.rayon + (p.pcv('pc-sadida-T') ? 1 : 0)) * CASE;   // Faille tellurique : une case de plus
+  }
+  if (S.inoculation) {   // Inoculation : plus forte pour chaque ennemi Infecté (Pandémie : plus encore, sans plafond)
+    const I = S.inoculation, n = w.monsters.filter(m => !m.dead && m.infecteT > 0).length, V = p.pcv('pc-sadida-V');
+    c.mult = (c.mult ?? 1) * (1 + (V ? n * (I.parInfecte + V / 100) : Math.min(I.max, n * I.parInfecte)));
+  }
   const D = s.id === 'cigue' ? p.pcv('pc-sadida-D') : 0;   // Cigüe mortelle : plus fort sur un Infecté
-  if (D && w.monsters.some(m => !m.dead && m.infecteT > 0 && Math.hypot(m.x - s.tx, m.y - s.ty) <= (c.r ?? CASE * 0.75) + m.radius)) c.mult = 1 + D / 100;
+  if (D && w.monsters.some(m => !m.dead && m.infecteT > 0 && Math.hypot(m.x - s.tx, m.y - s.ty) <= (c.r ?? CASE * 0.75) + m.radius)) c.mult = (c.mult ?? 1) * (1 + D / 100);
   return c;
 }
 /** Propagations de l'Infection (1A : au plus n par fenêtre de t s). */
@@ -332,7 +366,8 @@ function propagationPossible(p: Player, w: World, r: ReglesSadida): boolean {
 export function impactSadida(p: Player, id: string, d: SpellDef, tx: number, ty: number, size: number, hit: HitDef, c: CtxSadida, gm: number, w: World) {
   const S = d.sadida!, r = R(p)!, IT = dureeInfection(p), IMAX = r.infection.max + p.pcv('pc-sadida-C');
   const zone = size > 0 ? w.monsters.filter(m => !m.dead && m.state !== 'spawn' && Math.hypot(m.x - tx, m.y - ty) <= size + m.radius) : [];
-  if (S.plante) { planter(p, tx, ty, w); return; }
+  if (S.plante) { planter(p, tx, ty, w, false, S.arbreDeVie); return; }
+  if (S.don) { donNaturel(p, S.don, tx, ty, gm, w); return; }
   if (S.poupee) { fairePoupee(p, S.poupee, tx, ty, false, w); return; }
   if (S.groute) { fairePoupee(p, S.groute, tx, ty, true, w); return; }
   // Sacrifice Vaudou sur une de tes Poupées : elle se sacrifie, soigne les alliés et frappe les ennemis autour (Infecte)
@@ -395,6 +430,15 @@ export function impactSadida(p: Player, id: string, d: SpellDef, tx: number, ty:
       w.emit({ k: 'infection', x: touches[0].x, y: touches[0].y, cibles: autres.map(m => [m.x, m.y] as [number, number]) });
     }
   }
+  if (S.tremblement) for (const m of zone) {   // attire vers le centre de la secousse (pas les boss)
+    const d0 = Math.hypot(tx - m.x, ty - m.y), L = Math.min(S.tremblement.attire * CASE, d0);
+    if (!m.def.boss && L > 0 && d0 > 0) { m.kx += (tx - m.x) / d0 * L * 7.13; m.ky += (ty - m.y) / d0 * L * 7.13; }
+  }
+  if (S.inoculation) {   // consomme les Infections autour de la cible (Vaccin : les prolonge à la place)
+    const U = p.pcv('pc-sadida-U');
+    for (const m of w.monsters) if (!m.dead && m.infecteT > 0 && Math.hypot(m.x - tx, m.y - ty) <= S.inoculation.rayon * CASE + m.radius)
+      m.infecteT = U ? Math.min(IMAX + U, m.infecteT + U) : 0;
+  }
   if (S.infecte || S.contagion || S.propage) foretHantee(p, w);
 }
 /** 17B : succès « Forêt Hantée » : 6 Arbres Feuillus du Sadida et 10 ennemis Infectés en même temps. */
@@ -412,6 +456,129 @@ function soignerZone(p: Player, x: number, y: number, r: number, n: number, w: W
 function soignerVise(p: Player, x: number, y: number, n: number, w: World) {
   const q = w.players.find(j => j !== p && !j.dead && Math.hypot(j.x - x, j.y - y) <= CASE + j.radius) ?? p;
   soignerAllie(p, q, n, w);
+}
+
+// --- Sorts 61-90 (« Sorts sadi : 1A 2A 3A 4A 5A 6A 7A-7H 8A 9A », Mathis 2026-11-14) ---------------------------------
+const degatsBete = (min: number, max: number, w: World) => w.rng.range(min, max + 1) * 1.5 * REGLES_BETES.degats;
+/** Arbre de Vie (1A) : aura de soin continue ; Sève éternelle (Q) soigne plus, Bois de cœur (R) provoque. */
+function majArbreDeVie(b: Bete, s: EtatSadi, dt: number, w: World) {
+  const p = b.owner, V = p.cls.spells.arbre_de_vie?.sadida?.arbreDeVie;
+  if (!V) return;
+  if (p.pcv('pc-sadida-R') && (s.provoqueT = (s.provoqueT ?? 0) - dt) <= 0) {
+    s.provoqueT = 4;
+    let n = 0;
+    for (const m of w.monsters) if (!m.dead && !m.def.boss && m.state !== 'idle' && m.state !== 'return' && Math.hypot(m.x - b.x, m.y - b.y) <= CASE * 2 + m.radius) {
+      m.agresseur = b.id; m.provoqueJusqua = w.time + 4; n++;
+    }
+    if (n) w.emit({ k: 'status', x: b.x, y: b.y - 50, text: 'Provocation', color: '#f2d36b' });
+  }
+  if ((s.vieT = (s.vieT ?? 0) - dt) > 0) return;
+  s.vieT = V.periode;
+  const Q = p.pcv('pc-sadida-Q'), k = 1 + Q / 100, feuillus = arbresDe(p, w).filter(estFeuillu);
+  for (const q of w.players) {
+    if (q.dead || !feuillus.some(f => Math.hypot(q.x - f.x, q.y - f.y) <= V.rayon * CASE + q.radius)) continue;
+    soignerAllie(p, q, q.maxHp * V.soin / 100 * k, w, { brut: true, de: b });
+    if (Q) { q.soinContinu = q.soinContinu.filter(x => x.src !== 'pc-sadida-Q'); q.soinContinu.push({ n: q.maxHp * 0.04, t: 2.05, next: 2, de: p.id, src: 'pc-sadida-Q' }); }
+  }
+  for (const o of vivantes(w)) if (o.owner === p && o !== b && o.hp < o.maxHp) o.soigner(o.maxHp * V.soinInvoc / 100 * k, w);
+  w.emit({ k: 'spell', fx: 'burst', id: 'arbre_de_vie', x: b.x, y: b.y, facing: 0, size: V.rayon * CASE, arc: 0, element: 'eau', big: false, boosted: false, discret: true, cx: b.x, cy: b.y });
+}
+/** La Gonflable (2A) : Souffle Printanier quand un allié proche passe sous 70 % ; Brise Automnale sur les monstres au contact du Sadida. */
+export interface ReglesGonflable { soin: number; rayon: number; periode: number; seuil: number; brise: { min: number; max: number; repousse: number; recharge: number; rayon: number } }
+function majGonflable(b: Bete, s: EtatSadi, dt: number, w: World, G: ReglesGonflable) {
+  const p = b.owner;
+  s.soinT = (s.soinT ?? 0) - dt; s.briseT = (s.briseT ?? 0) - dt;
+  if (s.soinT <= 0 && w.players.some(q => !q.dead && q.hp < q.maxHp * G.seuil && Math.hypot(q.x - b.x, q.y - b.y) <= CASE * 6)) {
+    s.soinT = G.periode;
+    const feuillus = arbresDe(p, w).filter(estFeuillu), n = degatsBete(G.soin, G.soin, w);
+    for (const q of w.players) if (!q.dead && (Math.hypot(q.x - b.x, q.y - b.y) <= G.rayon * CASE + q.radius || feuillus.some(f => Math.hypot(q.x - f.x, q.y - f.y) <= CASE * 1.5 + q.radius)))
+      soignerAllie(p, q, n, w, { brut: true, de: b });
+    w.emit({ k: 'spell', fx: 'burst', id: 'b14383', x: b.x, y: b.y, facing: 0, size: G.rayon * CASE, arc: 0, element: 'eau', big: false, boosted: false, discret: true, cx: b.x, cy: b.y });
+  }
+  if (s.briseT > 0) return;
+  const B = G.brise, pres = w.monsters.filter(m => !m.dead && m.state !== 'spawn' && !m.intouchable && Math.hypot(m.x - p.x, m.y - p.y) <= B.rayon * CASE + m.radius);
+  if (!pres.length) return;
+  s.briseT = B.recharge;
+  const S = p.pcv('pc-sadida-S');   // Baudruche piquante : Infecte, et plus fort contre un obstacle
+  for (const m of pres) {
+    const jet = degatsBete(B.min, B.max, w);
+    w.coupDeBete(b, m, jet, 'feu');
+    if (m.def.boss || m.dead) continue;
+    const d0 = Math.hypot(m.x - p.x, m.y - p.y) || 1, ux = (m.x - p.x) / d0, uy = (m.y - p.y) / d0, L = B.repousse * CASE;
+    if (S) {
+      infecter(m, w, dureeInfection(p));
+      if (!w.walkable(m.x + ux * L, m.y + uy * L)) w.coupDeBete(b, m, jet * S / 100, 'feu');
+    }
+    m.kx += ux * L * 7.13; m.ky += uy * L * 7.13;
+  }
+  w.emit({ k: 'spell', fx: 'burst', id: 'b29624', x: p.x, y: p.y, facing: 0, size: B.rayon * CASE, arc: 0, element: 'feu', big: false, boosted: false, cx: b.x, cy: b.y });
+}
+/** La Surpuissante (6A) : Ardeur Estivale (le Sadida court plus vite) et La Fourbe, appelée une fois. */
+export interface ReglesSurpuissante { course: number; t: number; periode: number; fourbe: string }
+function majSurpuissante(b: Bete, s: EtatSadi, dt: number, w: World, S: ReglesSurpuissante) {
+  const p = b.owner;
+  if (s.fourbe == null && w.time - s.age > 0.5) {
+    const f = w.invoquer(p, S.fourbe, S.fourbe, b.x + CASE * 0.7, b.y);
+    if (f) { f.horsCompte = true; f.sadi = { feuillu: false, t: 0, calme: 0, age: w.time }; s.fourbe = f.id; }
+    else s.fourbe = -1;
+  }
+  if ((s.ardeurT = (s.ardeurT ?? 0) - dt) <= 0 && w.monsters.some(m => !m.dead && m.state !== 'idle' && m.state !== 'return' && Math.hypot(m.x - p.x, m.y - p.y) <= CASE * 10)) {
+    s.ardeurT = S.periode; p.courir(S.course, S.t);
+    w.emit({ k: 'status', x: p.x, y: p.y - 70, text: 'Ardeur Estivale', color: '#f2d36b' });
+  }
+}
+/** Choc Hivernal de la Surpuissante : -1 PM ; sur un Infecté, touche tous les Infectés ; Hiver éternel (X) : aussi autour de la cible. */
+export function chocHivernal(b: Bete, m: Monster, jet: number, w: World) {
+  const p = b.owner;
+  entraver(m, w);
+  const X = p.pcv('pc-sadida-X');
+  if (X) for (const o of w.monsters) if (o !== m && !o.dead && o.state !== 'spawn' && Math.hypot(o.x - m.x, o.y - m.y) <= CASE + o.radius + m.radius) {
+    w.coupDeBete(b, o, jet * X / 100, 'terre'); infecter(o, w, dureeInfection(p));
+  }
+  if (m.infecteT > 0) for (const o of w.monsters) if (o !== m && !o.dead && o.infecteT > 0 && o.state !== 'spawn') { w.coupDeBete(b, o, jet, 'terre'); entraver(o, w); }
+}
+/** La Fourbe (6A) : Bouture vole une case de Portée au monstre le plus proche et la donne aux sorts du Sadida. */
+export interface ReglesFourbe { portee: number; t: number; periode: number; cases: number }
+function majFourbe(b: Bete, s: EtatSadi, dt: number, w: World, F: ReglesFourbe) {
+  if ((s.boutureT = (s.boutureT ?? 0) - dt) > 0) return;
+  let m: Monster | null = null, bd = F.cases * CASE;
+  for (const q of w.monsters) {
+    if (q.dead || q.state === 'idle' || q.state === 'return' || q.state === 'spawn' || q.intouchable) continue;
+    const d = Math.hypot(q.x - b.x, q.y - b.y); if (d < bd) { bd = d; m = q; }
+  }
+  if (!m) return;
+  s.boutureT = F.periode;
+  m.poMalus = Math.max(m.poMalus, F.portee); m.poMalusT = Math.max(m.poMalusT, F.t);
+  b.owner.addMod('portee', F.portee, F.t, 'bouture');
+  w.emit({ k: 'status', x: m.x, y: m.y - 30, text: `-${F.portee} PO`, color: '#c8a0ff' });
+  w.emit({ k: 'spell', fx: 'burst', id: 'b29620', x: m.x, y: m.y, facing: 0, size: 30, arc: 0, element: 'neutre', big: false, boosted: false, discret: true, cx: b.x, cy: b.y });
+}
+/** Don Naturel (5A) : sacrifie un Feuillu ou une Poupée, soigne autour et partage les dommages des alliés proches. */
+function donNaturel(p: Player, D: NonNullable<EffetsSadida['don']>, tx: number, ty: number, gm: number, w: World) {
+  const c = prochePoint(w, tx, ty, CASE, b => b.owner === p && (estFeuillu(b) || !!b.def.sadida?.poupee));
+  if (!c) { w.emit({ k: 'status', x: p.x, y: p.y - 70, text: 'Il faut un Feuillu ou une Poupée', color: '#c8c8c8' }); return; }
+  const W = p.pcv('pc-sadida-W'), x = c.x, y = c.y;   // Don de la forêt : soin en plus, une charge d'Arbre rendue
+  soignerZone(p, x, y, D.rayon * CASE, D.soin * gm * (1 + W / 100), w);
+  for (const q of w.players) if (!q.dead && Math.hypot(q.x - x, q.y - y) <= D.rayon * CASE + q.radius) { q.donT = D.partage; q.donDe = p.id; }
+  if (W) p.rendreCharge('arbre');
+  w.emit({ k: 'spell', fx: 'burst', id: 'don_naturel', x, y, facing: 0, size: D.rayon * CASE, arc: 0, element: 'eau', big: true, boosted: false, cx: p.x, cy: p.y });
+  c.mourir(w);
+}
+/** Partage des dommages de Don Naturel : à parts égales entre les alliés liés et les Poupées du Sadida (pas les Arbres). */
+export function partagerDon(p: Player, dmg: number, w: World): number {
+  const de = w.players.find(q => q.id === p.donDe);
+  const joueurs = w.players.filter(q => q !== p && !q.dead && q.donT > 0);
+  const poupees = de ? vivantes(w).filter(b => b.owner === de && !!b.def.sadida!.poupee) : [];
+  const n = joueurs.length + poupees.length;
+  if (!n) return dmg;
+  const part = Math.max(1, Math.round(dmg / (n + 1)));
+  for (const q of joueurs) { q.hp = Math.max(1, q.hp - part); w.emit({ k: 'hit', target: 'player', x: q.x, y: q.y, z: 50, amount: part, crit: false, element: 'neutre' }); }
+  for (const b of poupees) {
+    b.hp -= part; b.flash = 0.1;
+    w.emit({ k: 'hit', target: 'allie', id: b.id, x: b.x, y: b.y, z: 40, amount: part, crit: false, element: 'neutre' });
+    if (b.hp <= 0) b.mourir(w);
+  }
+  return part;
 }
 
 /** 6B : touche de classe (X) : toutes les Poupées foncent sur l'ennemi le plus proche de la souris (8 s). */

@@ -209,7 +209,7 @@ describe('Sadida (maquette Sadida, « 1A 2A+2B 3A+3B 4A 5A 6A+6B 7A 8A+8B 9A 10A
   it('Légendaires sadi 1A : les 40 pouvoirs officiels de la Panoplie Sauvage, dont ceux des sorts déjà en jeu', () => {
     expect(POUVOIRS.sadida).toHaveLength(40);
     expect(POUVOIRS.sadida.filter(p => EN_JEU.sadida.includes(p.dofusId)).length).toBeGreaterThanOrEqual(15);
-    expect(POUVOIRS_CLASSE.filter(p => p.classe === 'sadida')).toHaveLength(16);
+    expect(POUVOIRS_CLASSE.filter(p => p.classe === 'sadida')).toHaveLength(24);
   });
 
   it('Forêt dense (E) : une charge d\'Arbre de plus, Feuillu plus tôt ; Épidémie (C) : Infection plus longue', () => {

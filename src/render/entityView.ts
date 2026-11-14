@@ -141,8 +141,10 @@ export class EntityView {
     let kc = (1 + 0.12 * (Math.min(pal, 3) + 1)) * ((e as Monster).bossMonde ? VIVANT.boss.echelle : 1);
     const sur = !!own && pal >= own.cls.coffre!.paliers.length;
     // Sadida : un Arbre pas encore Feuillu est plus petit et terne ; le Feuillu est en plein et respire en vert
-    const sadi = (e as { sadi?: { feuillu: boolean } | null; def?: { sadida?: { arbre?: boolean } } }), arbre = !!sadi.sadi && !!sadi.def?.sadida?.arbre;
+    const sadi = (e as { sadi?: { feuillu: boolean; vie?: boolean } | null; def?: { sadida?: { arbre?: boolean } } }), arbre = !!sadi.sadi && !!sadi.def?.sadida?.arbre;
     if (arbre && !sadi.sadi!.feuillu) kc *= 0.72;
+    const vie = arbre && !!sadi.sadi!.vie;   // Arbre de Vie : plus grand, doré
+    if (vie) kc *= 1.2;
     let sy = L.scale * this.k * kc, alpha = 1;
     if (e.anim === 'idle') sy *= 1 + Math.sin(e.age * 4) * 0.02;
     if (e.anim === 'spawn') alpha = e.animT;
@@ -155,6 +157,7 @@ export class EntityView {
     this.sprite.setPosition(pp.x, pp.y).setDepth(p.y);
     if (e.flash > 0) this.sprite.setTintFill(0xffffff);
     else if (sur) { const k = 0.5 + 0.5 * Math.sin(EntityView.temps * 7); this.sprite.setTint(mulTint(Phaser.Display.Color.GetColor(255, Math.round(150 + 60 * k), Math.round(90 + 60 * k)), EntityView.ambiance)); }   // 6B : surcharge, il rougeoie
+    else if (vie) this.sprite.setTint(mulTint(Phaser.Display.Color.GetColor(255, Math.round(225 + 20 * Math.sin(EntityView.temps * 2.5 + e.id)), 150), EntityView.ambiance));
     else if (arbre) this.sprite.setTint(mulTint(sadi.sadi!.feuillu ? Phaser.Display.Color.GetColor(Math.round(215 + 25 * Math.sin(EntityView.temps * 3 + e.id)), 255, Math.round(200 + 25 * Math.sin(EntityView.temps * 3 + e.id))) : 0x9c9c84, EntityView.ambiance));
     else if (pal >= 2) this.sprite.setTint(mulTint(pal >= 3 ? 0xffc870 : 0xffe9a0, EntityView.ambiance));
     else if (L.tint || EntityView.ambiance !== 0xffffff) this.sprite.setTint(mulTint(L.tint ?? 0xffffff, EntityView.ambiance));

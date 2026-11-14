@@ -67,6 +67,8 @@ export interface HitDef { dmg: number; knock: number; element?: Element; lifeste
   sansCrit?: boolean;
   /** Fléau insatiable (pc-sadida-N) : la vie volée en trop soigne la Poupée la plus blessée. */
   soinPoupee?: boolean;
+  /** Faille tellurique (pc-sadida-T) : +n % de dégâts sur un Infecté. */
+  vsInfecte?: number;
   /** Effets officiels : Érosion (part des dommages ôtée aux PV max), retrait de PM / PA. */
   erosion?: number; pmLoss?: number; paLoss?: number; poLoss?: number;
   /** Dommages multipliés sur les invocations (Concentration), et aussi sur les élites et les boss (Rage pleine). */
@@ -1894,7 +1896,7 @@ export class World {
       const vu = (m.vulnT > 0 ? 1 + m.vuln / 100 : 1) * m.subis;   // dommages subis augmentés (Bond) ou réduits (Cuirasse Laineuse)
       // Légendaires de classe : Marque du chasseur (les autres coups), Œil d'aigle (par case de distance)
       const pc = (m.marqueJusqua > this.time && !def.marque ? 1 + m.marque / 100 : 1)
-        * (def.vsGros && (m.def.elite || m.def.boss) ? 1 + def.vsGros / 100 : 1) * (def.plus ? 1 + def.plus / 100 : 1) * (def.vsBouclier && m.bouclier > 0 ? def.vsBouclier : 1)
+        * (def.vsGros && (m.def.elite || m.def.boss) ? 1 + def.vsGros / 100 : 1) * (def.vsInfecte && m.infecteT > 0 ? 1 + def.vsInfecte / 100 : 1) * (def.plus ? 1 + def.plus / 100 : 1) * (def.vsBouclier && m.bouclier > 0 ? def.vsBouclier : 1)
         * (def.loin ? 1 + Math.min(def.loin * 10, def.loin * Math.hypot(m.x - p.x, m.y - p.y) / CASE) / 100 : 1);
       // Sort sans dommages (Attirance, Transposition) : seulement ses effets
       const dmg = def.dmg <= 0 ? 0 : Math.max(1, Math.round((p.damage(def.dmg * vs, def.element ?? 'neutre') * this.rng.range(0.9, 1.1) * (crit ? cls.critMult : 1) * first + flat) * (1 - res / 100) * vu * pc));

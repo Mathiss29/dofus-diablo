@@ -3705,7 +3705,7 @@
     "Distance"
    ],
    "accroche": "Un Arbre qui refuse de mourir.",
-   "texte": "Plante un Arbre de Vie, plus solide, qui redevient Feuillu 6 s après avoir été abîmé."
+   "texte": "Plante l'Arbre de Vie, déjà Feuillu et trois fois plus solide : toutes les 3 s, il soigne les alliés près de tes Feuillus."
   },
   "13572": {
    "role": "soutien",
@@ -3724,7 +3724,7 @@
     "Soin"
    ],
    "accroche": "Elle gonfle, et tout le monde recule.",
-   "texte": "Change ton Arbre le plus proche en Gonflable : elle soigne tes alliés, frappe en Feu et repousse. À sa mort, elle redevient Arbre."
+   "texte": "Change ton Arbre le plus proche en Gonflable : elle soigne les alliés blessés et repousse les monstres collés à toi."
   },
   "13523": {
    "role": "invoc",
