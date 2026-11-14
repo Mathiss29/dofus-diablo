@@ -384,6 +384,7 @@ export class Monster extends Entity {
       if (this.spellCd[i] > 0) return;
       const k = castKind(s), [a, b] = this.reach(s, player);
       if (k === 'invoque') {   // une invocation à la fois, quand le joueur est proche
+        if (this.summoner) return;   // une invocation n'invoque pas (Blop Coco : sinon les Blops s'invoquent en chaîne, sans fin)
         const max = this.furieux ? DANGER.furieux.invocations : 1;   // Furieux : plus d'invocations à la fois
         if (dist < CASE * 6 && world.monsters.filter(m => m.summoner === this && !m.dead).length < max) ok.push(i);
         return;
