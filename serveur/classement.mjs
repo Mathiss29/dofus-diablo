@@ -18,7 +18,16 @@ export const CLASSEMENT = {
   paliers: [50, 100, 150, 200],
   /** 9A : niveau de métier qui grave un « premier ». */
   metier: 100,
+  /** 0.6 (25A) : donjons au chrono de la semaine (lundi 0 h, heure de Paris), avec le score d'idoles. */
+  hebdo: ['Labyrinthe du Dragon Cochon'],
 };
+/** 0.6 (18D) : meilleur = plus haut score d'idoles, puis meilleur temps à score égal. */
+export const meilleur = (a, b) => (b.idoles ?? 0) - (a.idoles ?? 0) || a.temps - b.temps;
+/** 0.6 (25A) : semaine d'un instant (ms), « 2026-11-09 » = son lundi, heure de Paris (décalage fixe d'hiver : une heure près). */
+export function semaineDe(ms) {
+  const j = Math.floor((ms + 3_600_000) / 86_400_000), lundi = j - ((j + 3) % 7);
+  return new Date(lundi * 86_400_000).toISOString().slice(0, 10);
+}
 
 const ent = (v, min, max) => { const n = Math.floor(Number(v)); return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : null; };
 const texte = (v, n) => String(v ?? '').slice(0, n);
@@ -35,7 +44,11 @@ export function creerClassement({ comptes, enLigne = () => [], annoncer = () => 
     CREATE TABLE IF NOT EXISTS premiers (cle TEXT PRIMARY KEY, perso TEXT NOT NULL, nom TEXT NOT NULL, classe TEXT NOT NULL, detail TEXT NOT NULL DEFAULT '', quand INTEGER NOT NULL);
     CREATE TABLE IF NOT EXISTS records (donjon TEXT NOT NULL, mode TEXT NOT NULL, compte INTEGER NOT NULL, emplacement INTEGER NOT NULL,
       temps REAL NOT NULL, equipe TEXT NOT NULL, quand INTEGER NOT NULL, PRIMARY KEY (donjon, mode, compte, emplacement));
+    CREATE TABLE IF NOT EXISTS semaines (semaine TEXT NOT NULL, donjon TEXT NOT NULL, mode TEXT NOT NULL, compte INTEGER NOT NULL, emplacement INTEGER NOT NULL,
+      temps REAL NOT NULL, idoles INTEGER NOT NULL, equipe TEXT NOT NULL, quand INTEGER NOT NULL, PRIMARY KEY (semaine, donjon, mode, compte, emplacement));
     CREATE TABLE IF NOT EXISTS classement_kv (cle TEXT PRIMARY KEY, valeur TEXT NOT NULL);`);
+  // 0.6 (18D) : score d'idoles du record
+  try { db.exec('ALTER TABLE records ADD COLUMN idoles INTEGER NOT NULL DEFAULT 0'); } catch { /* colonne déjà là */ }
   // 5A : case « Me cacher du classement », dans la table des réglages sociaux
   try { db.exec('ALTER TABLE social ADD COLUMN cache INTEGER NOT NULL DEFAULT 0'); } catch { /* colonne déjà là */ }
   const q = {
@@ -47,10 +60,14 @@ export function creerClassement({ comptes, enLigne = () => [], annoncer = () => 
         json_extract(p.donnees, '$.etat.level') AS niveau, json_extract(p.donnees, '$.etat.quetes.points') AS succes, json_extract(p.donnees, '$.etat.xp') AS xp, json_extract(p.donnees, '$.etat.metiers') AS metiers
       FROM persos p LEFT JOIN social s ON s.compte = p.compte WHERE coalesce(s.cache, 0) = 0`),
     donnees: db.prepare(`SELECT p.donnees FROM persos p LEFT JOIN social s ON s.compte = p.compte WHERE p.compte = ? AND p.emplacement = ? AND coalesce(s.cache, 0) = 0`),
-    records: db.prepare(`SELECT r.* FROM records r LEFT JOIN social s ON s.compte = r.compte WHERE coalesce(s.cache, 0) = 0 ORDER BY r.donjon, r.mode, r.temps`),
-    record: db.prepare('SELECT temps FROM records WHERE donjon = ? AND mode = ? AND compte = ? AND emplacement = ?'),
-    noter: db.prepare(`INSERT INTO records (donjon, mode, compte, emplacement, temps, equipe, quand) VALUES (?, ?, ?, ?, ?, ?, ?)
-      ON CONFLICT (donjon, mode, compte, emplacement) DO UPDATE SET temps = excluded.temps, equipe = excluded.equipe, quand = excluded.quand`),
+    records: db.prepare(`SELECT r.* FROM records r LEFT JOIN social s ON s.compte = r.compte WHERE coalesce(s.cache, 0) = 0 ORDER BY r.donjon, r.mode, r.idoles DESC, r.temps`),
+    record: db.prepare('SELECT temps, idoles FROM records WHERE donjon = ? AND mode = ? AND compte = ? AND emplacement = ?'),
+    noter: db.prepare(`INSERT INTO records (donjon, mode, compte, emplacement, temps, equipe, quand, idoles) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT (donjon, mode, compte, emplacement) DO UPDATE SET temps = excluded.temps, equipe = excluded.equipe, quand = excluded.quand, idoles = excluded.idoles`),
+    semaine: db.prepare(`SELECT r.* FROM semaines r LEFT JOIN social s ON s.compte = r.compte WHERE coalesce(s.cache, 0) = 0 AND r.semaine = ? ORDER BY r.donjon, r.mode, r.idoles DESC, r.temps`),
+    recordSemaine: db.prepare('SELECT temps, idoles FROM semaines WHERE semaine = ? AND donjon = ? AND mode = ? AND compte = ? AND emplacement = ?'),
+    noterSemaine: db.prepare(`INSERT INTO semaines (semaine, donjon, mode, compte, emplacement, temps, idoles, equipe, quand) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT (semaine, donjon, mode, compte, emplacement) DO UPDATE SET temps = excluded.temps, idoles = excluded.idoles, equipe = excluded.equipe, quand = excluded.quand`),
     tombes: db.prepare(`SELECT t.nom, t.classe, t.sexe, t.niveau, t.temps, t.lieu, t.tueur, t.quand FROM tombes t LEFT JOIN social s ON s.compte = t.compte
       WHERE coalesce(s.cache, 0) = 0 ORDER BY t.quand DESC LIMIT ${CLASSEMENT.maxTombes}`),
     tomber: db.prepare('INSERT INTO tombes (compte, nom, classe, sexe, niveau, temps, lieu, tueur, quand) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'),
@@ -109,7 +126,21 @@ export function creerClassement({ comptes, enLigne = () => [], annoncer = () => 
     const donjons = {};
     for (const r of q.records.all()) {
       const d = (donjons[r.donjon] ??= { solo: [], groupe: [] }), l = d[r.mode === 'groupe' ? 'groupe' : 'solo'];
-      if (l.length < CLASSEMENT.maxDonjon) l.push({ id: idDe(r.compte, r.emplacement), temps: Math.round(r.temps * 10) / 10, equipe: json(r.equipe) ?? [], quand: r.quand });
+      if (l.length < CLASSEMENT.maxDonjon) l.push({ id: idDe(r.compte, r.emplacement), temps: Math.round(r.temps * 10) / 10, idoles: r.idoles ?? 0, equipe: json(r.equipe) ?? [], quand: r.quand });
+    }
+    // 0.6 (25A) : le chrono de la semaine (Labyrinthe), remis à zéro chaque lundi ; le gagnant de la semaine passée est annoncé
+    const cleSemaine = semaineDe(maintenant()), hebdo = { semaine: cleSemaine, donjons: {} };
+    for (const r of q.semaine.all(cleSemaine)) {
+      const d = (hebdo.donjons[r.donjon] ??= { solo: [], groupe: [] }), l = d[r.mode === 'groupe' ? 'groupe' : 'solo'];
+      if (l.length < CLASSEMENT.maxDonjon) l.push({ id: idDe(r.compte, r.emplacement), temps: Math.round(r.temps * 10) / 10, idoles: r.idoles, equipe: json(r.equipe) ?? [], quand: r.quand });
+    }
+    const semAvant = q.kv.get('semaine')?.valeur;
+    if (semAvant !== cleSemaine) {
+      q.ecrireKv.run('semaine', cleSemaine);
+      if (semAvant) for (const nom of CLASSEMENT.hebdo) {
+        const g = q.semaine.all(semAvant).find(r => r.donjon === nom);
+        if (g) annoncer(`🏆 ${(json(g.equipe) ?? []).map(m => `**${texte(m.nom, 20)}**`).join(', ')} remporte **${nom}** de la semaine (${Math.floor(g.temps / 60)} min ${String(Math.round(g.temps % 60)).padStart(2, '0')} s, idoles ${g.idoles}) !`);
+      }
     }
     // 9A : les premiers (niveaux, Dofus, métier 100) ; le premier dans l'ordre du classement s'il y en a plusieurs d'un coup
     for (const n of CLASSEMENT.paliers) { const p = niveau.find(x => x.niveau >= n); if (p) graver(`niveau_${n}`, p, '', `🏛️ **${p.nom}** est le premier aventurier à atteindre le **niveau ${n}** !`); }
@@ -126,7 +157,7 @@ export function creerClassement({ comptes, enLigne = () => [], annoncer = () => 
       if (avant) annoncer(`👑 **${tete.nom}** prend la **1re place** du classement Niveau (niveau ${tete.niveau}) !`);
     }
     const premiers = q.premiers.all().map(r => ({ cle: r.cle, id: r.perso, nom: r.nom, classe: r.classe, detail: r.detail, quand: r.quand }));
-    cache = { maj: maintenant(), total: persos.length, persos: P, listes, donjons, tombes: q.tombes.all(), premiers };
+    cache = { maj: maintenant(), total: persos.length, persos: P, listes, donjons, hebdo, tombes: q.tombes.all(), premiers };
     cacheJson = JSON.stringify(cache);
     return cache;
   }
@@ -165,14 +196,18 @@ export function creerClassement({ comptes, enLigne = () => [], annoncer = () => 
     return { ...L, equipement, dofusPortes: Array.isArray(e.dofusPortes) ? e.dofusPortes.filter(x => typeof x === 'string') : [], apparat: e.apparat ?? null, rangs: rangs(L.id) };
   }
 
-  /** 2D + 4B : fin d'un donjon dans une partie du serveur. membres = persos de comptes présents à la fin. */
-  function noterDonjon(donjon, temps, membres) {
-    const t = Number(temps), nom = texte(donjon, 40);
+  /** 2D + 4B : fin d'un donjon dans une partie du serveur. membres = persos de comptes présents à la fin.
+   *  0.6 (18D) : idoles = score d'idoles du groupe (plafonné en donjon) ; un record le bat s'il a plus d'idoles, ou autant et un meilleur temps. */
+  function noterDonjon(donjon, temps, membres, idoles = 0) {
+    const t = Number(temps), nom = texte(donjon, 40), id = ent(idoles, 0, 1000) ?? 0;
     if (!nom || !Number.isFinite(t) || t <= 0 || !membres.length) return;
     const mode = membres.length > 1 ? 'groupe' : 'solo', equipe = JSON.stringify(membres.map(m => ({ nom: texte(m.nom, 20), classe: texte(m.classe, 20) })));
+    const nouveau = { temps: t, idoles: id }, sem = semaineDe(maintenant()), hebdo = CLASSEMENT.hebdo.includes(nom);
     for (const m of membres) {
-      const avant = q.record.get(nom, mode, m.compte, m.emplacement)?.temps;
-      if (avant == null || t < avant) q.noter.run(nom, mode, m.compte, m.emplacement, t, equipe, maintenant());
+      const avant = q.record.get(nom, mode, m.compte, m.emplacement);
+      if (!avant || meilleur(nouveau, avant) < 0) q.noter.run(nom, mode, m.compte, m.emplacement, t, equipe, maintenant(), id);
+      const avantS = hebdo && q.recordSemaine.get(sem, nom, mode, m.compte, m.emplacement);
+      if (hebdo && (!avantS || meilleur(nouveau, avantS) < 0)) q.noterSemaine.run(sem, nom, mode, m.compte, m.emplacement, t, id, equipe, maintenant());
     }
     const noms = membres.map(m => `**${texte(m.nom, 20)}**`).join(', ');
     const m0 = membres[0];

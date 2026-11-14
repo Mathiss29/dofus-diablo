@@ -11676,6 +11676,72 @@
     "titre": "Gardien de la Paix"
    }
   },
+  "maitre_tranche_60_90": {
+   "nom": "Maître de la tranche",
+   "dofusId": 0,
+   "description": "Vaincre les cinq donjons du niveau 60 au 90 et atteindre le palier 2 de renommée dans leurs cinq régions.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 51 à 100",
+   "points": 50,
+   "icone": 254,
+   "objectifs": [
+    {
+     "nom": "Clos des Blops",
+     "donjon": "Clos des Blops"
+    },
+    {
+     "nom": "Épreuve de Draegnerys",
+     "donjon": "Épreuve de Draegnerys"
+    },
+    {
+     "nom": "Antre de la Reine Nyée",
+     "donjon": "Antre de la Reine Nyée"
+    },
+    {
+     "nom": "Domaine Ancestral",
+     "donjon": "Domaine Ancestral"
+    },
+    {
+     "nom": "Labyrinthe du Dragon Cochon",
+     "donjon": "Labyrinthe du Dragon Cochon"
+    },
+    {
+     "nom": "Renommée : Forêt des Abraknydes (palier 2)",
+     "renommee": "Forêt des Abraknydes",
+     "palier": 2
+    },
+    {
+     "nom": "Renommée : Montagne des Koalaks (palier 2)",
+     "renommee": "Montagne des Koalaks",
+     "palier": 2
+    },
+    {
+     "nom": "Renommée : Cania (palier 2)",
+     "renommee": "Cania",
+     "palier": 2
+    },
+    {
+     "nom": "Renommée : Amakna (palier 2)",
+     "renommee": "Amakna",
+     "palier": 2
+    },
+    {
+     "nom": "Renommée : Frigost (palier 2)",
+     "renommee": "Frigost",
+     "palier": 2
+    }
+   ],
+   "recompense": {
+    "xp": 20000,
+    "titre": "Maître de la tranche",
+    "ornement": {
+     "id": 900,
+     "nom": "Maître de la tranche",
+     "icone": 1
+    }
+   },
+   "test": true
+  },
   "foret_hantee": {
    "nom": "Forêt Hantée",
    "dofusId": 0,

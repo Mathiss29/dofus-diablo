@@ -102,6 +102,9 @@ const CURSEUR_PORTE = `url("${v(`${ASSETS}/ui/curseur_porte.png`)}") 1 1, pointe
 
 /** Scène d'une zone : charge la carte et les planches de la zone, fait tourner la simulation
  *  à pas fixe, et dessine son état. Toute la logique de jeu est dans World (src/sim). */
+/** 0.6 (25B) : ornement du succès « Maître de la tranche » : le porter allume son aura dorée. */
+const AURA_MAITRE = 900;
+
 export class ZoneScene extends Phaser.Scene {
   private zoneId = 'incarnam';
   /** Classe jouée (#cra dans l'adresse, ou touche K pour changer). */
@@ -848,6 +851,13 @@ export class ZoneScene extends Phaser.Scene {
   private drawRageAura() {
     const p = this.world.player, g = this.rageAura ??= this.add.graphics();
     g.clear();
+    if (this.world.quetes?.ornement?.id === AURA_MAITRE && !p.dead && !p.rageFull) {   // 0.6 (25B) : aura du « Maître de la tranche », portée avec son ornement
+      const v = this.viewOf(p), s = ISO.toScreen(p.x, p.y), t = this.world.time;
+      g.setDepth(v.sprite.depth - 0.5).setBlendMode(Phaser.BlendModes.ADD);
+      g.fillStyle(0xffd36b, 0.1 + 0.05 * Math.sin(t * 2)); g.fillEllipse(s.x, s.y, 110, 48);
+      for (let i = 0; i < 3; i++) { const k = (t * 0.6 + i / 3) % 1; g.lineStyle(2, 0xffe08a, 0.5 * (1 - k)); g.strokeEllipse(s.x, s.y, 50 + 80 * k, 22 + 34 * k); }
+      for (let i = 0; i < 6; i++) { const a = t * 1.3 + i * Math.PI / 3, y = s.y - 20 - ((t * 30 + i * 17) % 70); g.fillStyle(0xfff0b0, 0.6).fillCircle(s.x + Math.cos(a) * 30, y, 2); }
+    }
     if (!p.rageFull || p.dead) return;
     const v = this.viewOf(p), s = ISO.toScreen(p.x, p.y), k = 0.5 + 0.5 * Math.sin(this.world.time * 6);
     g.setDepth(v.sprite.depth - 0.5).setBlendMode(Phaser.BlendModes.ADD);
