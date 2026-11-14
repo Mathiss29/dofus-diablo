@@ -707,6 +707,9 @@ Ville vivante (maquette Ville 5F, 8 nov. 2026) :
 - Monstres (20, squelettes du PC dans `cache-dofus/bones-arenes06/`) : `monster_planche.py` à SCALE 2.5, `amakna04/ajout.py`,
   `monster_spells.py`, `monster_stats.py` (en ne gardant que les nouveaux), boss marqués à la main, XP par la courbe de `xp_monstres.py`,
   `archis_ames.py` (âmes des 8 boss), `drops_ajout.py`, `icones_ajout.py`. La Gorgouille (niveau 400 dans les tables) est laissée de côté.
+- 0.6 (22B) : Salle au trésor du Coffre Malveillant = composition `tresor` (dalles du Labyrinthe teintées d'or, carte `arene_tresor` en [16,94],
+  sous-zone maison 90022) : `export06.py public/assets/mondes - tresor` entre `joindre` et `scinder` ; l'entrée « Salle au trésor » de
+  `donjonsV06` (`tresor: true`, sans porte ni clé) est écrite à la main avec les points de `arenes06_points.json`.
 - Entrées : Draegnerys [-4,29] et Domaine Ancestral [-9,-14] sur leur vraie carte ; Reine Nyée [-6,-15] (carte du dehors de son entrée) ;
   Clos des Blops au bord des Pics de Cania [-14,-43] (entrée officielle [-7,-43], Champs de Cania pas encore exportés) ;
   Dragon Cochon en [5,32] (entrée officielle par les Souterrains des Porcos, pas encore exportés).

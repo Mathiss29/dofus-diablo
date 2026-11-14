@@ -5,6 +5,7 @@ import type { DonjonDef, Element } from './defs';
 import { RARITIES, type Rarity } from './items';
 import { CASE, type Monster } from './monster';
 import { choisir06, coup06, poserDedale, preparer06, update06, A06, type Choix06, type Oeuf06, type Toile06 } from './arene06';
+import { apparuTresor, defTresor, poolTresor } from './salleTresor';
 import type { World } from './world';
 
 /** Réglages des arènes (maquette « Donjons en vagues », ligne Donjons : 1B 2D 3A 4A 5A+5B+5C 6A 7A 8A+8C 9C 10B 11A 12A 13A 14A 15A 16A). */
@@ -145,6 +146,7 @@ export class Arene {
   get bossCoffre(): string[] { const M = this.w.opts.data.monsters; return this.variante >= 0 ? this.bossVague.filter(m => M[m]?.boss) : []; }
   /** Monstres tirés pour les « ? » et les paliers. Sans salles officielles en jeu (arènes de la 0.4 et 0.6) : ceux des vagues. */
   majPool() {
+    if (this.d.tresor) { const t = poolTresor(this.w); this.pool = t.length ? t : ['coffre_malveillant']; return; }   // 0.6 (22B) : monstres dorés
     const M = this.w.opts.data.monsters, tous = this.variante >= 0 ? [] : Object.values(this.d.salles).flat(2);
     this.pool = [...new Set(tous.length ? tous : this.vagues.flatMap(v => v.m))].filter(m => M[m] && !M[m].boss);
   }
@@ -219,10 +221,12 @@ export class Arene {
     this.arrivees.push({ type, x: q.x, y: q.y, t, vague: this.vague });
   }
   private apparaitre(a: Attente) {
-    const w = this.w, k = pvGroupe(w.players.length), D = w.opts.data.monsters[a.type];
+    const w = this.w, k = pvGroupe(w.players.length), D0 = w.opts.data.monsters[a.type];
+    const D = D0 && this.d.tresor ? defTresor(w, D0, poolTresor(w).includes(a.type)) : D0;   // 0.6 (22B) : au niveau de la sous-zone d'où l'on vient
     // à plusieurs : la fiche du monstre a plus de PV (il les garde même s'il rentre se calmer)
     const m = w.spawnMonster(a.type, a.x, a.y, k > 1 && D ? { ...D, hp: Math.round(D.hp * k), xp: D.xp ?? Math.round(D.hp / 5) } : D);
     m.arene = true; this.tous.push(m);
+    if (this.d.tresor) apparuTresor(this, m);
     if (a.vague < 0) this.renforts.push(m); else this.membres.push(m);
     if (m.def.boss && this.d.fixe) m.fixe = true;   // 0.6 (8A) : l'Ancestral ne quitte pas son estrade
     if (m.def.boss && !this.boss) { this.boss = m; w.emit({ k: 'impact', hitstop: 0.05, shake: 0.012, big: true }); }
@@ -431,7 +435,7 @@ export class Arene {
     this.rareteCoffre = objets.reduce<Rarity | null>((m, it) => !m || RARITIES.indexOf(it.rarity) > RARITIES.indexOf(m) ? it.rarity : m, null);
     // Dofus Cawotte (« Wabbits : 14A + 14D ») : un tirage par joueur sur le Wa Wabbit et le Wa Wobot
     if (this.boss) for (const q of w.players) w.commeJoueur(q, () => tenterDofusCawotte(w, this.boss!.type));
-    const record = w.quetes?.tempsDonjon(this.d.nom, this.chrono) ?? false;
+    const record = !this.d.tresor && (w.quetes?.tempsDonjon(this.d.nom, this.chrono) ?? false);
     w.emit({ k: 'areneFin', nom: this.d.nom, temps: this.chrono, record });
   }
   private updateFin(dt: number) {

@@ -2268,6 +2268,18 @@
      "v06": true,
      "region": "Forêt des Abraknydes"
     },
+    "90022": {
+     "name": "Salle au trésor",
+     "level": 90,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ],
+     "v06": true,
+     "region": "Amakna"
+    },
     "154": {
      "name": "Labyrinthe du Dragon Cochon",
      "level": 100,
@@ -14541,6 +14553,54 @@
     ]
    },
    "donjonsV06": [
+    {
+     "nom": "Salle au trésor",
+     "salles": {},
+     "arene": {
+      "tag": "arene_tresor",
+      "arrivee": 13955724,
+      "entrees": [
+       13918764,
+       13937239,
+       13937249
+      ],
+      "boss": 13933548,
+      "sortie": 13948333,
+      "coffre": 13948331
+     },
+     "tresor": true,
+     "coffre": "precieux",
+     "vagues": [
+      {
+       "nom": "Les coffres",
+       "m": [
+        "coffre_malveillant",
+        "coffre_sombre",
+        "coffre_malveillant",
+        "coffre_sombre",
+        "coffre_malveillant",
+        "coffre_sombre"
+       ]
+      },
+      {
+       "nom": "Les gardiens dorés",
+       "m": [
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?"
+       ]
+      }
+     ],
+     "bossVague": [
+      "coffre_des_forgerons"
+     ]
+    },
     {
      "nom": "Clos des Blops",
      "salles": {},

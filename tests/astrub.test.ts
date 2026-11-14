@@ -29,7 +29,7 @@ describe('Astrub (0.2a)', () => {
     expect(astrub.maps.filter(m => !m.inside).length).toBe(359 + 642 + 58 + 5 + 169 + 838);
     // 0.6 (cachée) : les 838 cartes du dehors des 5 régions, fermées hors partie de test (tools/extraction/regions06)
     expect(astrub.maps.filter(m => m.v06 && !m.inside).length).toBe(838);
-    expect(astrub.maps.filter(m => m.v06 && m.inside).length).toBe(5);   // les 5 arènes des donjons de la 0.6 (tools/extraction/arenes06)
+    expect(astrub.maps.filter(m => m.v06 && m.inside).length).toBe(6);   // les 5 arènes des donjons de la 0.6 et la Salle au trésor (tools/extraction/arenes06)
     expect(astrub.maps.filter(m => m.v06).every(m => wg.freeByMap.get(m.tag)!.length === 0)).toBe(true);
     // Amakna (0.4 cachée) : dessiné, mais fermé hors partie de test ; île des Wabbits : 58 cartes + 5 petites cartes de ses passerelles
     // + les 8 salles du Château d'Amakna (0.4 suite : 6A, intérieurs aussi en essai) et, pour les donjons en couloirs (5B),

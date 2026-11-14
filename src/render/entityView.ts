@@ -156,6 +156,7 @@ export class EntityView {
     if (e.flash > 0) this.sprite.setTintFill(0xffffff);
     else if (sur) { const k = 0.5 + 0.5 * Math.sin(EntityView.temps * 7); this.sprite.setTint(mulTint(Phaser.Display.Color.GetColor(255, Math.round(150 + 60 * k), Math.round(90 + 60 * k)), EntityView.ambiance)); }   // 6B : surcharge, il rougeoie
     else if (arbre) this.sprite.setTint(mulTint(sadi.sadi!.feuillu ? Phaser.Display.Color.GetColor(Math.round(215 + 25 * Math.sin(EntityView.temps * 3 + e.id)), 255, Math.round(200 + 25 * Math.sin(EntityView.temps * 3 + e.id))) : 0x9c9c84, EntityView.ambiance));
+    else if ((e as Monster).dore) { const k = 0.5 + 0.5 * Math.sin(EntityView.temps * 4 + e.id); this.sprite.setTint(mulTint(Phaser.Display.Color.GetColor(255, Math.round(205 + 25 * k), Math.round(90 + 50 * k)), EntityView.ambiance)); }   // 0.6 (22B) : monstre doré
     else if (pal >= 2) this.sprite.setTint(mulTint(pal >= 3 ? 0xffc870 : 0xffe9a0, EntityView.ambiance));
     else if (L.tint || EntityView.ambiance !== 0xffffff) this.sprite.setTint(mulTint(L.tint ?? 0xffffff, EntityView.ambiance));
     else this.sprite.clearTint();
