@@ -4,7 +4,7 @@ import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { creerComptes } from './comptes.mjs';
-import { creerClassement, annonceurDiscord } from './classement.mjs';
+import { creerClassement, annonceurDiscord, semaineDe } from './classement.mjs';
 
 function monde() {
   const comptes = creerComptes({ dossier: mkdtempSync(join(tmpdir(), 'diablofus-cl-')), env: {}, origines: new Set() });
@@ -86,6 +86,35 @@ test('classement : records de donjon par perso et par mode, premier à finir (2D
   assert.deepEqual(c.donjons['Crypte de Kardorim'].groupe.map(r => r.id).sort(), ['1-0', '2-0']);
   assert.equal(annonces.filter(a => /Crypte/.test(a)).length, 1);
   assert.equal(cl.rangs('2-0').donjons['Crypte de Kardorim|groupe'] > 0, true);
+  comptes.fermer();
+});
+
+test('0.6 (18D, 25A) : score d\'idoles d\'abord, puis le temps ; Labyrinthe de la semaine, gagnant annoncé le lundi', () => {
+  const comptes = creerComptes({ dossier: mkdtempSync(join(tmpdir(), 'diablofus-cl-')), env: {}, origines: new Set() });
+  comptes.db.prepare("INSERT INTO comptes (id, discord, nom, cree, vu) VALUES (1, 'a', 'A', 0, 0), (2, 'b', 'B', 0, 0)").run();
+  for (const [c, n] of [[1, 'Goultard'], [2, 'Fleche']]) comptes.db.prepare('INSERT INTO persos (compte, emplacement, donnees, maj) VALUES (?, 0, ?, 0)').run(c, JSON.stringify(perso(n, 90, 0)));
+  const annonces = [];
+  let t = Date.UTC(2026, 10, 12, 12);   // jeudi
+  const cl = creerClassement({ comptes, auto: false, annoncer: x => annonces.push(x), maintenant: () => t });
+  assert.equal(semaineDe(t), '2026-11-09');
+  assert.equal(semaineDe(Date.UTC(2026, 10, 15, 23, 30)), '2026-11-16');   // dimanche 23 h 30 UTC = lundi 0 h 30 à Paris
+  const G = [{ compte: 1, emplacement: 0, nom: 'Goultard', classe: 'iop' }], F = [{ compte: 2, emplacement: 0, nom: 'Fleche', classe: 'cra' }];
+  const L = 'Labyrinthe du Dragon Cochon';
+  cl.noterDonjon(L, 300, G, 0);
+  cl.noterDonjon(L, 400, F, 30);
+  cl.noterDonjon(L, 500, G, 30);   // plus d'idoles : il bat son 300 s sans idoles
+  cl.noterDonjon(L, 600, G, 30);   // même score, plus lent : ignoré
+  let c = cl.calculer();
+  assert.deepEqual(c.donjons[L].solo.map(r => [r.id, r.temps, r.idoles]), [['2-0', 400, 30], ['1-0', 500, 30]]);
+  assert.deepEqual(c.hebdo.donjons[L].solo.map(r => r.id), ['2-0', '1-0']);
+  cl.noterDonjon('Crypte de Kardorim', 100, G, 10);
+  assert.equal(cl.calculer().hebdo.donjons['Crypte de Kardorim'], undefined);   // seulement le Labyrinthe chaque semaine
+  t = Date.UTC(2026, 10, 17, 9);   // la semaine d'après
+  c = cl.calculer();
+  assert.equal(c.hebdo.semaine, '2026-11-16');
+  assert.equal(c.hebdo.donjons[L], undefined);
+  assert.equal(c.donjons[L].solo.length, 2);   // les records de toujours restent
+  assert.ok(annonces.some(a => /Fleche.*Labyrinthe du Dragon Cochon.*semaine/.test(a)));
   comptes.fermer();
 });
 

@@ -16,13 +16,15 @@ export interface LigneLadder {
   id: string; c: number; nom: string; classe: string; sexe: 'm' | 'f'; hc: boolean; niveau: number; xp: number; temps: number; lieu: string;
   zones: number; zaaps: number; dofus: number; metiers: Record<string, [number, number]>; succes?: number;
 }
-interface RecordDonjon { id: string; temps: number; equipe: { nom: string; classe: string }[]; quand: number }
+interface RecordDonjon { id: string; temps: number; /** 0.6 (18D) : score d'idoles. */ idoles?: number; equipe: { nom: string; classe: string }[]; quand: number }
 interface Tombe { nom: string; classe: string; sexe: 'm' | 'f'; niveau: number; temps: number; lieu: string; tueur: string; quand: number }
 interface Premier { cle: string; id: string; nom: string; classe: string; detail: string; quand: number }
 export interface DonneesLadder {
   maj: number; total: number; persos: Record<string, LigneLadder>;
   listes: { niveau: string[]; hardcore: string[]; exploration: string[]; metiers: Record<string, string[]>; succes?: string[] };
   donjons: Record<string, { solo: RecordDonjon[]; groupe: RecordDonjon[] }>;
+  /** 0.6 (25A) : chrono de la semaine (Labyrinthe), remis à zéro chaque lundi. */
+  hebdo?: { semaine: string; donjons: Record<string, { solo: RecordDonjon[]; groupe: RecordDonjon[] }> };
   tombes: Tombe[]; premiers: Premier[]; enLigne: string[];
 }
 interface Fiche extends LigneLadder {
@@ -78,6 +80,9 @@ const nomMetier = (k: string) => (ITEMS as unknown as { metiers?: Record<string,
 const DOF = (DOFUS as unknown as { dofus: Record<string, { nom: string; icon: number }> }).dofus;
 const nomEquip = (id: string) => ITEMS.equipment[id]?.name ?? id;
 
+/** 0.6 (25A) : clé d'un classement de la semaine dans la liste des donjons. */
+const SEMAINE = 'semaine:';
+const tousDonjons = (d: DonneesLadder) => ({ ...Object.fromEntries(Object.entries(d.hebdo?.donjons ?? {}).map(([k, v]) => [`${SEMAINE}${k}`, v])), ...d.donjons });
 export type OngletLadder = 'niveau' | 'metiers' | 'exploration' | 'succes' | 'donjons' | 'premiers';
 const ONGLETS: [OngletLadder, string, string][] = [
   ['niveau', 'Niveau', 'assets/ui/menu/characteristic.png'], ['metiers', 'Métiers', 'assets/ui/menu/job.png'], ['exploration', 'Exploration', 'assets/ui/menu/map.png'], ['succes', 'Succès', 'assets/ui/menu/success.png'],
@@ -88,7 +93,7 @@ const EN_CLAIR: Record<OngletLadder, [string, string]> = {
   metiers: ['Métiers', 'Un classement par métier : niveau, puis expérience du métier.'],
   exploration: ['Exploration', 'Sous-zones découvertes, puis Zaaps activés.'],
   succes: ['Succès', 'Points de succès du compte (tous ses persos comptent ensemble) : une ligne par compte, avec son perso le plus haut.'],
-  donjons: ['Donjons', 'Meilleur temps de chaque perso, en solo et en groupe. Seules les parties tenues par le serveur comptent (en groupe, ou « Partie sur le serveur »).'],
+  donjons: ['Donjons', 'Meilleur résultat de chaque perso, en solo et en groupe : le plus haut score d\'idoles d\'abord, puis le meilleur temps. Le Labyrinthe du Dragon Cochon a aussi son classement de la semaine, remis à zéro le lundi. Seules les parties tenues par le serveur comptent (en groupe, ou « Partie sur le serveur »).'],
   premiers: ['Les premiers', 'Le premier à atteindre un palier y est gravé pour toujours, même s\'il est dépassé ensuite.'],
 };
 const NOM_PREMIER = (p: Premier) => p.cle.startsWith('niveau_') ? `Niveau ${p.cle.slice(7)}` : p.cle === 'dofus' ? 'Premier Dofus'
@@ -136,10 +141,11 @@ export class VueLadder {
     } else if (this.onglet === 'succes') {
       L = (d.listes.succes ?? []).map((id, i) => ({ rang: i + 1, p: P[id], valeur: `${P[id].succes ?? 0}`, sous: 'points' }));
     } else if (this.onglet === 'donjons') {
-      const k = this.donjon && d.donjons[this.donjon] ? this.donjon : Object.keys(d.donjons)[0] ?? '';
+      const D = tousDonjons(d), k = this.donjon && D[this.donjon] ? this.donjon : Object.keys(D)[0] ?? '';
       this.donjon = k;
-      const l = d.donjons[k]?.[this.sous === 'groupe' ? 'groupe' : 'solo'] ?? [];
-      L = l.filter(r => P[r.id]).map((r, i) => ({ rang: i + 1, p: P[r.id], valeur: chrono(r.temps), sous: jour(r.quand), equipe: r.equipe.length > 1 ? r.equipe.map(e => e.nom).join(', ') : '' }));
+      const l = D[k]?.[this.sous === 'groupe' ? 'groupe' : 'solo'] ?? [];
+      // 0.6 (18D) : plus haut score d'idoles d'abord, puis le temps (le serveur les range déjà ainsi)
+      L = l.filter(r => P[r.id]).map((r, i) => ({ rang: i + 1, p: P[r.id], valeur: chrono(r.temps), sous: `${r.idoles ? `Idoles ${r.idoles} · ` : ''}${jour(r.quand)}`, equipe: r.equipe.length > 1 ? r.equipe.map(e => e.nom).join(', ') : '' }));
     } else return [];
     const tous = L;
     if (this.classes.size) L = L.filter(r => r.p && this.classes.has(r.p.classe));
@@ -173,8 +179,9 @@ export class VueLadder {
     let sous = '';
     if (this.onglet === 'niveau') sous = [['tous', 'Tout le monde'], ['hardcore', 'Hardcore'], ['tombes', 'Tombés en Hardcore']].map(([k, n]) => `<button type="button" class="${this.sous === k ? 'on' : ''}" data-lad-sous="${k}">${n}</button>`).join('');
     if (this.onglet === 'metiers') sous = Object.keys(d.listes.metiers).map(k => `<button type="button" class="${this.metier === k || (!this.metier && k === Object.keys(d.listes.metiers)[0]) ? 'on' : ''}" data-lad-metier="${k}"><img src="assets/ui/metier_${k}.png" alt="">${esc(nomMetier(k))}</button>`).join('') || '<span class="lad-note">Personne n\'a encore progressé dans un métier.</span>';
-    if (this.onglet === 'donjons') sous = Object.keys(d.donjons).map(k => `<button type="button" class="${this.donjon === k || (!this.donjon && k === Object.keys(d.donjons)[0]) ? 'on' : ''}" data-lad-donjon="${esc(k)}">${esc(k)}</button>`).join('')
-      + (Object.keys(d.donjons).length ? `<span class="lad-sep"></span>${[['solo', 'Solo'], ['groupe', 'Groupe']].map(([k, n]) => `<button type="button" class="${(this.sous === 'groupe' ? 'groupe' : 'solo') === k ? 'on' : ''}" data-lad-sous="${k}">${n}</button>`).join('')}` : '<span class="lad-note">Aucun record pour l\'instant : finis un donjon en groupe ou en « Partie sur le serveur ».</span>');
+    const D = tousDonjons(d);
+    if (this.onglet === 'donjons') sous = Object.keys(D).map(k => `<button type="button" class="${this.donjon === k || (!this.donjon && k === Object.keys(D)[0]) ? 'on' : ''}" data-lad-donjon="${esc(k)}">${esc(k.startsWith(SEMAINE) ? `${k.slice(SEMAINE.length)} · cette semaine` : k)}</button>`).join('')
+      + (Object.keys(D).length ? `<span class="lad-sep"></span>${[['solo', 'Solo'], ['groupe', 'Groupe']].map(([k, n]) => `<button type="button" class="${(this.sous === 'groupe' ? 'groupe' : 'solo') === k ? 'on' : ''}" data-lad-sous="${k}">${n}</button>`).join('')}` : '<span class="lad-note">Aucun record pour l\'instant : finis un donjon en groupe ou en « Partie sur le serveur ».</span>');
     const corps = this.onglet === 'premiers' ? this.htmlPremiers(d) : this.htmlTableau(d);
     const filtres = this.onglet === 'premiers' ? '' : `<div class="lad-fil">
         <input type="search" placeholder="Nom de personnage" value="${esc(this.recherche)}" data-lad-recherche autocomplete="off">

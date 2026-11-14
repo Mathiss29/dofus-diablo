@@ -5,6 +5,7 @@ import type { DonjonDef, Element } from './defs';
 import { RARITIES, type Rarity } from './items';
 import { CASE, type Monster } from './monster';
 import { choisir06, coup06, poserDedale, preparer06, update06, A06, type Choix06, type Oeuf06, type Toile06 } from './arene06';
+import { REGLES_IDOLES, scoreIdoles } from './idoles';
 import { apparuTresor, defTresor, poolTresor } from './salleTresor';
 import type { World } from './world';
 
@@ -436,7 +437,7 @@ export class Arene {
     // Dofus Cawotte (« Wabbits : 14A + 14D ») : un tirage par joueur sur le Wa Wabbit et le Wa Wobot
     if (this.boss) for (const q of w.players) w.commeJoueur(q, () => tenterDofusCawotte(w, this.boss!.type));
     const record = !this.d.tresor && (w.quetes?.tempsDonjon(this.d.nom, this.chrono) ?? false);
-    w.emit({ k: 'areneFin', nom: this.d.nom, temps: this.chrono, record });
+    w.emit({ k: 'areneFin', nom: this.d.nom, temps: this.chrono, record, idoles: Math.min(scoreIdoles(w.idolesActives), REGLES_IDOLES.plafondDonjon) });
   }
   private updateFin(dt: number) {
     const w = this.w, c = this.pts.coffre;

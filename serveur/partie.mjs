@@ -159,7 +159,7 @@ export class Partie {
       for (const e of evs) if (e.k === 'areneFin' && this.donjonFini) {
         const L = [...this.membres.values()].filter(m => m.compte && m.joueur != null)
           .map(m => ({ compte: m.compte.compte, emplacement: m.compte.emplacement, nom: m.compte.perso.nom, classe: m.compte.perso.classe }));
-        try { this.donjonFini(e.nom, e.temps, L); } catch (err) { console.warn('partie : record raté', err.message); }
+        try { this.donjonFini(e.nom, e.temps, L, e.idoles ?? 0); } catch (err) { console.warn('partie : record raté', err.message); }
       }
       this.relever(PARTIE.pas);
       if ((this.depuisSauvegarde += PARTIE.pas) >= PARTIE.sauvegarde) { this.depuisSauvegarde = 0; for (const m of this.membres.values()) this.sauverMembre(m); }

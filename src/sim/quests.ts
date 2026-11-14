@@ -235,6 +235,8 @@ export type SuccesObjectif = { nom: string } & (
   /** 0.5 « monde vivant » (4D) : ce boss du monde vaincu ; jauges d'invasion remplies (7A). */
   | { bossMonde: string }
   | { invasions: number }
+  /** 0.6 (25B) : palier de renommée atteint dans cette région (renommee.ts). */
+  | { renommee: string; palier: number }
 );
 /** Défis de donjon en temps réel (menu des succès 9C) : à deux au plus, boss en moins de 90 s, sans être touché après son apparition,
  *  sans potion. */
@@ -1122,7 +1124,7 @@ export class Quetes {
     if ('defi' in o) return this.defis.has(`${o.defi[0]}|${o.defi[1]}`);
     if ('guerre' in o) { if (o.guerre === 'parfait') return this.world.player.guerre.parfaits.includes(o.champ); const [n, max] = this.progres(o); return n >= max; }
     if ('bossMonde' in o) return this.world.player.vivant.boss.includes(o.bossMonde);
-    if ('metier' in o || 'compteur' in o || 'exploration' in o || 'archis' in o || 'invasions' in o) { const [n, max] = this.progres(o); return n >= max; }
+    if ('metier' in o || 'compteur' in o || 'exploration' in o || 'archis' in o || 'invasions' in o || 'renommee' in o) { const [n, max] = this.progres(o); return n >= max; }
     return this.vaincus.has(o.monstre);
   }
   /** Avancement d'un objectif de succès (menu des succès 4B) : [fait, total] (« Niveau 14 / 20 », « Objets fabriqués 37 / 100 »). */
@@ -1138,6 +1140,7 @@ export class Quetes {
     }
     if ('compteur' in o) return [Math.min(this.compteurs[o.compteur] ?? 0, o.n), o.n];
     if ('invasions' in o) return [Math.min(p.vivant.invasions, o.invasions), o.invasions];
+    if ('renommee' in o) return [Math.min(p.renommee[o.renommee] ?? 0, o.palier), o.palier];
     if ('archis' in o) { const M = this.world.opts.data.monsters, n = p.ames.filter(a => M[a]?.archiDe).length; return [Math.min(n, o.archis), o.archis]; }
     if ('guerre' in o && o.guerre !== 'parfait') return [Math.min(p.guerre[o.guerre], o.n), o.n];
     if ('exploration' in o) {

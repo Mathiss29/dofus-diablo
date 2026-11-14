@@ -83,7 +83,7 @@ export type SimEvent =
   | { k: 'wobot'; id: number; x: number; y: number; quoi: 'tampon' | 'twansmute' | 'carapace' | 'brisee' | 'durcie' | 'substitution' }
   | { k: 'bossEpilogue'; id: number; name: string; x: number; y: number }
   | { k: 'bossFuite'; id: number; name: string; x: number; y: number; suite: string; premiers: number[] }
-  | { k: 'areneFin'; nom: string; temps: number; record: boolean }
+  | { k: 'areneFin'; nom: string; temps: number; record: boolean; /** 0.6 (18D) : score d'idoles du groupe (plafonné en donjon), pour le Ladder. */ idoles: number }
   /** Guerre des Cawottes (0.4) : attaque d'un champ (annoncée aux joueurs de l'île), vague, cawotte volée ou emportée par un
    *  Kiafin (fuite = il est sorti du champ avec), Kiafin qui s'enfuit, cawotte replantée, bilan (coffre, Cawottes gagnées, record). */
   /** 0.5 « monde vivant » : boss du monde annoncé 10 min avant (2D), arrivé, combat commencé (minuterie 3D), palier (3C), fin ;
