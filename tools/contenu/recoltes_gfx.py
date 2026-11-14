@@ -50,12 +50,17 @@ GFX = {
     # Amakna (relevés de ses cartes ajoutés le 2026-11-10)
     667: 405,    # Malt (6/15, les autres cartes : blé autour)
     3226: 16389, # Mandragore (11/12)
+    # Régions de la 0.6 (relevés des 838 cartes du dehors ajoutés le 2026-11-14)
+    689: 7925,   # Kaliptus (77/99)
+    681: 2358,   # Bombu (24/43)
+    657: 449,    # Ébène (10/14)
 }
 # Pas des ressources : 5249 (un effet bleu, pas de dessin « prête ») ; 1953 (coquillage sans relevé officiel).
 POISSON = 1018   # remous de pêche : le poisson vient du relevé de la carte (sinon de la liste de la sous-zone)
-# autres remous d'Amakna (rivières : Brochet, Anguille ; côtes : Bar Rikain), même tirage. 9255 (rivières) n'a pas de dessin
-# dans le cache des éléments animés : laissé de côté.
-POISSONS = {POISSON, 1021, 1839}
+# autres remous d'Amakna (rivières : Brochet, Anguille ; côtes : Bar Rikain), même tirage.
+POISSONS = {POISSON, 1021, 1839, 9248, 9255}
+# 9248 (Frigost, Cania) et 9255 (rivières) n'ont pas de dessin animé dans le cache : ces coins de pêche prennent le dessin d'un autre remous.
+DESSIN = {9248: 1018, 9255: 1021}
 
 _REL = json.load(open(os.path.join(os.path.dirname(__file__), 'recoltables_dofusdb.json')))['cartes']
 

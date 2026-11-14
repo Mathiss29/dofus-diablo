@@ -3,7 +3,7 @@
 Usage : python plan_carte.py <public/assets/mondes/<monde>> [--plans]
 Écrit <monde>/carte_fondu.webp (carte.webp aux bords fondus, 1A) et <monde>/plan.json :
   carte  : repère de carte.webp en unités de carte (case [x, y] = coin haut-gauche ox + x·cw, oy + y·ch, en pixels de l'image)
-  maps   : [x, y, sous-zone, essai] des cartes du dehors (brouillard, survol, teinte de danger, onglets des autres mondes)
+  maps   : [x, y, sous-zone, essai (1 = 0.4, 2 = 0.6)] des cartes du dehors (brouillard, survol, teinte de danger, onglets des autres mondes)
   reperes: repères officiels (monde.json reperes)
   plans  : avec --plans, plan des intérieurs à plusieurs salles reliées par des portes (13A) : image plan_<groupe>.webp, son coin et sa taille en unités,
            et les salles [tag, x, y]. Les images sont dessinées comme carte.webp (sol puis décor) ; les fichiers lourds manquants
@@ -35,7 +35,7 @@ if im:
     f.save(f'{D}/carte_fondu.webp', 'WEBP', quality=80, method=6)
 
 plan = {'monde': NOM, 'carte': carte,
-        'maps': [[m['x'], m['y'], m['sub'], 1 if m.get('essai') else 0] for m in sorted(dehors, key=lambda m: (m['y'], m['x']))],
+        'maps': [[m['x'], m['y'], m['sub'], 2 if m.get('v06') else 1 if m.get('essai') else 0] for m in sorted(dehors, key=lambda m: (m['y'], m['x']))],
         'reperes': M.get('reperes', [])}
 
 # --- intérieurs à plusieurs salles (13A) : salles reliées par des portes (zones.json), une composante = un plan ---

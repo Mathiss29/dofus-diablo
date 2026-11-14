@@ -2167,7 +2167,9 @@
           {"titre": "Le Sadida jusqu'au niveau 90", "phrase": "Arbre de Vie, Gonflable, Tremblement, Inoculation, Don Naturel et Surpuissante rejoignent ses sorts.", "details": "Avec 8 légendaires de plus sur ces sorts. Tremblement regroupe les monstres, Inoculation encaisse toute l'Infection d'un coup.", "icone": "sorts", "etiquettes": ["Partie de test", "Niveau 65 à 90"]},
           {"titre": "Légendaires du Sadida", "phrase": "40 pouvoirs officiels de la Panoplie Sauvage et 16 inventés qui transforment ses sorts.", "details": "Forêt dense, Écorce épineuse, Buisson incendiaire, Poupée immortelle… Les boss du jeu ont chacun leurs préférés.", "icone": "dofus", "etiquettes": ["Partie de test"]}
         ],
-        "Le monde": [],
+        "Le monde": [
+          {"titre": "Les 5 régions prennent vie", "phrase": "Bois, plantes et poissons officiels à récolter dans les 5 régions, avec leurs musiques.", "details": "Kaliptus, Bombu, Ébène, Perche et Kralamoure arrivent. Les Koalaks, Frigost, la Bourgade et la Forêt Malsaine ont leur musique.", "icone": "metier", "etiquettes": ["Partie de test"]}
+        ],
         "Combat": [],
         "Corrections": [
           "Partie de test : les Blops Coco du Clos des Blops ne s'invoquent plus en chaîne, sans fin."
@@ -2177,7 +2179,8 @@
           "Partie de test : à 13 h, 19 h et 22 h, Rats Bougris et Gélikans envahissent la Bourgade.",
           "Partie de test : le Coffre Malveillant ouvre parfois un portail doré vers une Salle au trésor.",
           "Ladder : records de donjon au score d'idoles, et le Labyrinthe a son classement de la semaine.",
-          "Un robot joue seul la tranche 60 → 90 et vérifie le bateau de Frigost de bout en bout."
+          "Un robot joue seul la tranche 60 → 90 et vérifie le bateau de Frigost de bout en bout.",
+          "Carte du monde (M) : tout le continent est dessiné, les régions de la 0.6 restent grisées."
         ]
       }
     }

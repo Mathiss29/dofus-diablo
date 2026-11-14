@@ -52880,6 +52880,144 @@
    "icon": 84003,
    "level": 100,
    "cle": "Labyrinthe du Dragon Cochon"
+  },
+  "449": {
+   "name": "Bois d'Ébène",
+   "icon": 38073,
+   "level": 140
+  },
+  "600": {
+   "name": "Kralamoure",
+   "icon": 41309,
+   "level": 90
+  },
+  "1801": {
+   "name": "Perche",
+   "icon": 41313,
+   "level": 120
+  },
+  "2358": {
+   "name": "Bois de Bombu",
+   "icon": 38482,
+   "level": 70
+  },
+  "7925": {
+   "name": "Bois de Kaliptus",
+   "icon": 38001,
+   "level": 150
+  },
+  "11106": {
+   "name": "Poisskaille",
+   "icon": 41403,
+   "level": 200
+  },
+  "16465": {
+   "name": "Lotte",
+   "icon": 41411,
+   "level": 140
+  },
+  "16471": {
+   "name": "Espadon",
+   "icon": 41417,
+   "level": 190
+  },
+  "390": {
+   "name": "Huile de Noix",
+   "icon": 60062,
+   "level": 32
+  },
+  "396": {
+   "name": "Huile de Palme",
+   "icon": 60068,
+   "level": 32
+  },
+  "397": {
+   "name": "Huile de Koode",
+   "icon": 60069,
+   "level": 32
+  },
+  "10969": {
+   "name": "Potion de Fwaîchew",
+   "icon": 12141,
+   "level": 50,
+   "soin": 175
+  },
+  "14648": {
+   "name": "Essence du Scarabosse Doré",
+   "icon": 167001,
+   "level": 40
+  },
+  "14649": {
+   "name": "Essence de Batofu",
+   "icon": 167001,
+   "level": 40
+  },
+  "14651": {
+   "name": "Essence du Chafer Rōnin",
+   "icon": 167001,
+   "level": 40
+  },
+  "14652": {
+   "name": "Essence de la Bworkette",
+   "icon": 167001,
+   "level": 50
+  },
+  "14653": {
+   "name": "Essence des Forgerons",
+   "icon": 167001,
+   "level": 50
+  },
+  "14654": {
+   "name": "Essence de la Shin Larve",
+   "icon": 167001,
+   "level": 50
+  },
+  "14657": {
+   "name": "Essence du Wa Wabbit",
+   "icon": 167001,
+   "level": 60
+  },
+  "14658": {
+   "name": "Essence du Blop Royal",
+   "icon": 167001,
+   "level": 60
+  },
+  "14659": {
+   "name": "Essence de la Gelée Royale",
+   "icon": 167001,
+   "level": 60
+  },
+  "14720": {
+   "name": "Essence du Kwakwa",
+   "icon": 167001,
+   "level": 50
+  },
+  "14774": {
+   "name": "Essence du Kanniboul Ebil",
+   "icon": 167001,
+   "level": 60
+  },
+  "16401": {
+   "name": "Potion Droïde",
+   "icon": 12756,
+   "level": 1,
+   "soin": 20
+  },
+  "16403": {
+   "name": "Potion de Divination",
+   "icon": 12757,
+   "level": 20,
+   "soin": 30
+  },
+  "26804": {
+   "name": "Essence du Directeur Grunob",
+   "icon": 167001,
+   "level": 40
+  },
+  "32093": {
+   "name": "Potion Hiri-Kara",
+   "icon": 12814,
+   "level": 20
   }
  },
  "drops": {
@@ -70259,6 +70397,169 @@
    ]
   },
   {
+   "result": "1526",
+   "metier": "alchimiste",
+   "level": 1,
+   "ingredients": [
+    [
+     "415",
+     4
+    ],
+    [
+     "412",
+     1
+    ],
+    [
+     "1634",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1527",
+   "metier": "alchimiste",
+   "level": 1,
+   "ingredients": [
+    [
+     "414",
+     4
+    ],
+    [
+     "411",
+     1
+    ],
+    [
+     "1634",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1528",
+   "metier": "alchimiste",
+   "level": 1,
+   "ingredients": [
+    [
+     "1141",
+     4
+    ],
+    [
+     "1142",
+     1
+    ],
+    [
+     "1634",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1529",
+   "metier": "alchimiste",
+   "level": 1,
+   "ingredients": [
+    [
+     "1634",
+     1
+    ],
+    [
+     "416",
+     4
+    ],
+    [
+     "413",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1535",
+   "metier": "alchimiste",
+   "level": 1,
+   "ingredients": [
+    [
+     "843",
+     4
+    ],
+    [
+     "846",
+     1
+    ],
+    [
+     "1634",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1536",
+   "metier": "alchimiste",
+   "level": 1,
+   "ingredients": [
+    [
+     "1129",
+     4
+    ],
+    [
+     "844",
+     1
+    ],
+    [
+     "1634",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1537",
+   "metier": "alchimiste",
+   "level": 1,
+   "ingredients": [
+    [
+     "842",
+     4
+    ],
+    [
+     "845",
+     1
+    ],
+    [
+     "1634",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "1538",
+   "metier": "alchimiste",
+   "level": 1,
+   "ingredients": [
+    [
+     "308",
+     4
+    ],
+    [
+     "847",
+     1
+    ],
+    [
+     "1634",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "16401",
+   "metier": "alchimiste",
+   "level": 1,
+   "ingredients": [
+    [
+     "16378",
+     1
+    ]
+   ]
+  },
+  {
    "result": "766",
    "metier": "bijoutier",
    "level": 1,
@@ -72095,6 +72396,36 @@
     [
      "16525",
      4
+    ]
+   ]
+  },
+  {
+   "result": "21673",
+   "metier": "alchimiste",
+   "level": 10,
+   "ingredients": [
+    [
+     "421",
+     4
+    ],
+    [
+     "399",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "21674",
+   "metier": "alchimiste",
+   "level": 10,
+   "ingredients": [
+    [
+     "421",
+     4
+    ],
+    [
+     "311",
+     2
     ]
    ]
   },
@@ -74278,6 +74609,146 @@
    ]
   },
   {
+   "result": "1333",
+   "metier": "alchimiste",
+   "level": 20,
+   "ingredients": [
+    [
+     "1526",
+     5
+    ],
+    [
+     "1463",
+     1
+    ],
+    [
+     "14635",
+     100
+    ]
+   ]
+  },
+  {
+   "result": "1335",
+   "metier": "alchimiste",
+   "level": 20,
+   "ingredients": [
+    [
+     "1527",
+     5
+    ],
+    [
+     "1463",
+     1
+    ],
+    [
+     "14635",
+     100
+    ]
+   ]
+  },
+  {
+   "result": "1337",
+   "metier": "alchimiste",
+   "level": 20,
+   "ingredients": [
+    [
+     "1529",
+     5
+    ],
+    [
+     "1463",
+     1
+    ],
+    [
+     "14635",
+     100
+    ]
+   ]
+  },
+  {
+   "result": "1338",
+   "metier": "alchimiste",
+   "level": 20,
+   "ingredients": [
+    [
+     "1528",
+     5
+    ],
+    [
+     "1463",
+     1
+    ],
+    [
+     "14635",
+     100
+    ]
+   ]
+  },
+  {
+   "result": "21678",
+   "metier": "alchimiste",
+   "level": 20,
+   "ingredients": [
+    [
+     "428",
+     3
+    ],
+    [
+     "400",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "21677",
+   "metier": "alchimiste",
+   "level": 20,
+   "ingredients": [
+    [
+     "428",
+     3
+    ],
+    [
+     "441",
+     2
+    ]
+   ]
+  },
+  {
+   "result": "16403",
+   "metier": "alchimiste",
+   "level": 20,
+   "ingredients": [
+    [
+     "16379",
+     1
+    ],
+    [
+     "289",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "32093",
+   "metier": "alchimiste",
+   "level": 20,
+   "ingredients": [
+    [
+     "16379",
+     1
+    ],
+    [
+     "1844",
+     100
+    ],
+    [
+     "311",
+     1
+    ]
+   ]
+  },
+  {
    "result": "1496",
    "metier": "bijoutier",
    "level": 20,
@@ -74448,6 +74919,25 @@
     [
      "400",
      2
+    ]
+   ]
+  },
+  {
+   "result": "cr8143",
+   "metier": "bricoleur",
+   "level": 20,
+   "ingredients": [
+    [
+     "8143",
+     1
+    ],
+    [
+     "303",
+     10
+    ],
+    [
+     "312",
+     5
     ]
    ]
   },
@@ -76753,6 +77243,21 @@
    ]
   },
   {
+   "result": "21675",
+   "metier": "alchimiste",
+   "level": 30,
+   "ingredients": [
+    [
+     "428",
+     3
+    ],
+    [
+     "473",
+     2
+    ]
+   ]
+  },
+  {
    "result": "1498",
    "metier": "bijoutier",
    "level": 30,
@@ -76883,6 +77388,25 @@
     [
      "400",
      3
+    ]
+   ]
+  },
+  {
+   "result": "cr8437",
+   "metier": "bricoleur",
+   "level": 30,
+   "ingredients": [
+    [
+     "8437",
+     1
+    ],
+    [
+     "473",
+     10
+    ],
+    [
+     "441",
+     5
     ]
    ]
   },
@@ -77969,6 +78493,47 @@
     [
      "2467",
      1
+    ]
+   ]
+  },
+  {
+   "result": "390",
+   "metier": "paysan",
+   "level": 32,
+   "ingredients": [
+    [
+     "391",
+     5
+    ],
+    [
+     "392",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "396",
+   "metier": "paysan",
+   "level": 32,
+   "ingredients": [
+    [
+     "2294",
+     8
+    ]
+   ]
+  },
+  {
+   "result": "397",
+   "metier": "paysan",
+   "level": 32,
+   "ingredients": [
+    [
+     "390",
+     1
+    ],
+    [
+     "13730",
+     3
     ]
    ]
   },
@@ -79257,6 +79822,159 @@
    ]
   },
   {
+   "result": "20962",
+   "metier": "alchimiste",
+   "level": 40,
+   "ingredients": [
+    [
+     "395",
+     5
+    ],
+    [
+     "311",
+     2
+    ],
+    [
+     "1182",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "795",
+   "metier": "alchimiste",
+   "level": 40,
+   "ingredients": [
+    [
+     "16380",
+     2
+    ],
+    [
+     "442",
+     10
+    ]
+   ]
+  },
+  {
+   "result": "815",
+   "metier": "alchimiste",
+   "level": 40,
+   "ingredients": [
+    [
+     "16380",
+     2
+    ],
+    [
+     "533",
+     10
+    ]
+   ]
+  },
+  {
+   "result": "811",
+   "metier": "alchimiste",
+   "level": 40,
+   "ingredients": [
+    [
+     "16380",
+     2
+    ],
+    [
+     "395",
+     10
+    ]
+   ]
+  },
+  {
+   "result": "799",
+   "metier": "alchimiste",
+   "level": 40,
+   "ingredients": [
+    [
+     "16380",
+     2
+    ],
+    [
+     "603",
+     10
+    ]
+   ]
+  },
+  {
+   "result": "807",
+   "metier": "alchimiste",
+   "level": 40,
+   "ingredients": [
+    [
+     "16380",
+     2
+    ],
+    [
+     "476",
+     10
+    ]
+   ]
+  },
+  {
+   "result": "803",
+   "metier": "alchimiste",
+   "level": 40,
+   "ingredients": [
+    [
+     "16380",
+     2
+    ],
+    [
+     "7652",
+     3
+    ]
+   ]
+  },
+  {
+   "result": "14648",
+   "metier": "alchimiste",
+   "level": 40,
+   "ingredients": [
+    [
+     "8161",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "14649",
+   "metier": "alchimiste",
+   "level": 40,
+   "ingredients": [
+    [
+     "8557",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "14651",
+   "metier": "alchimiste",
+   "level": 40,
+   "ingredients": [
+    [
+     "13096",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "26804",
+   "metier": "alchimiste",
+   "level": 40,
+   "ingredients": [
+    [
+     "838",
+     4
+    ]
+   ]
+  },
+  {
    "result": "159",
    "metier": "bijoutier",
    "level": 40,
@@ -79432,6 +80150,25 @@
     [
      "533",
      2
+    ]
+   ]
+  },
+  {
+   "result": "cr1568",
+   "metier": "bricoleur",
+   "level": 40,
+   "ingredients": [
+    [
+     "1568",
+     1
+    ],
+    [
+     "473",
+     10
+    ],
+    [
+     "441",
+     5
     ]
    ]
   },
@@ -82831,6 +83568,69 @@
    ]
   },
   {
+   "result": "10969",
+   "metier": "alchimiste",
+   "level": 50,
+   "ingredients": [
+    [
+     "361",
+     1
+    ],
+    [
+     "311",
+     1
+    ],
+    [
+     "10970",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "14652",
+   "metier": "alchimiste",
+   "level": 50,
+   "ingredients": [
+    [
+     "8388",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "14653",
+   "metier": "alchimiste",
+   "level": 50,
+   "ingredients": [
+    [
+     "13140",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "14654",
+   "metier": "alchimiste",
+   "level": 50,
+   "ingredients": [
+    [
+     "8385",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "14720",
+   "metier": "alchimiste",
+   "level": 50,
+   "ingredients": [
+    [
+     "12016",
+     4
+    ]
+   ]
+  },
+  {
    "result": "12033",
    "metier": "bijoutier",
    "level": 50,
@@ -82877,6 +83677,101 @@
    ]
   },
   {
+   "result": "cr1570",
+   "metier": "bricoleur",
+   "level": 50,
+   "ingredients": [
+    [
+     "1570",
+     1
+    ],
+    [
+     "476",
+     10
+    ],
+    [
+     "442",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "cr15991",
+   "metier": "bricoleur",
+   "level": 50,
+   "ingredients": [
+    [
+     "15991",
+     1
+    ],
+    [
+     "476",
+     10
+    ],
+    [
+     "442",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "cr26680",
+   "metier": "bricoleur",
+   "level": 50,
+   "ingredients": [
+    [
+     "26680",
+     1
+    ],
+    [
+     "476",
+     10
+    ],
+    [
+     "442",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "cr7918",
+   "metier": "bricoleur",
+   "level": 50,
+   "ingredients": [
+    [
+     "7918",
+     1
+    ],
+    [
+     "476",
+     10
+    ],
+    [
+     "442",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "cr8139",
+   "metier": "bricoleur",
+   "level": 50,
+   "ingredients": [
+    [
+     "8139",
+     1
+    ],
+    [
+     "476",
+     10
+    ],
+    [
+     "442",
+     5
+    ]
+   ]
+  },
+  {
    "result": "968",
    "metier": "cordonnier",
    "level": 50,
@@ -82906,52 +83801,6 @@
     ],
     [
      "2588",
-     1
-    ],
-    [
-     "2540",
-     1
-    ],
-    [
-     "10970",
-     3
-    ]
-   ]
-  },
-  {
-   "result": "333",
-   "metier": "sculpteur",
-   "level": 50,
-   "ingredients": [
-    [
-     "16166",
-     6
-    ],
-    [
-     "901",
-     6
-    ],
-    [
-     "16002",
-     3
-    ],
-    [
-     "748",
-     1
-    ]
-   ]
-  },
-  {
-   "result": "7553",
-   "metier": "tailleur",
-   "level": 50,
-   "ingredients": [
-    [
-     "2599",
-     7
-    ],
-    [
-     "2586",
      1
     ],
     [
@@ -83245,6 +84094,52 @@
     [
      "2266",
      5
+    ]
+   ]
+  },
+  {
+   "result": "333",
+   "metier": "sculpteur",
+   "level": 50,
+   "ingredients": [
+    [
+     "16166",
+     6
+    ],
+    [
+     "901",
+     6
+    ],
+    [
+     "16002",
+     3
+    ],
+    [
+     "748",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "7553",
+   "metier": "tailleur",
+   "level": 50,
+   "ingredients": [
+    [
+     "2599",
+     7
+    ],
+    [
+     "2586",
+     1
+    ],
+    [
+     "2540",
+     1
+    ],
+    [
+     "10970",
+     3
     ]
    ]
   },
@@ -83985,6 +84880,62 @@
    ]
   },
   {
+   "result": "14657",
+   "metier": "alchimiste",
+   "level": 60,
+   "ingredients": [
+    [
+     "8397",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "14658",
+   "metier": "alchimiste",
+   "level": 60,
+   "ingredients": [
+    [
+     "9388",
+     4
+    ]
+   ]
+  },
+  {
+   "result": "14659",
+   "metier": "alchimiste",
+   "level": 60,
+   "ingredients": [
+    [
+     "370",
+     1
+    ],
+    [
+     "2437",
+     1
+    ],
+    [
+     "2242",
+     1
+    ],
+    [
+     "2241",
+     1
+    ]
+   ]
+  },
+  {
+   "result": "14774",
+   "metier": "alchimiste",
+   "level": 60,
+   "ingredients": [
+    [
+     "11695",
+     4
+    ]
+   ]
+  },
+  {
    "result": "14311",
    "metier": "bijoutier",
    "level": 60,
@@ -84004,6 +84955,63 @@
     [
      "2252",
      1
+    ]
+   ]
+  },
+  {
+   "result": "cr12017",
+   "metier": "bricoleur",
+   "level": 60,
+   "ingredients": [
+    [
+     "12017",
+     1
+    ],
+    [
+     "476",
+     10
+    ],
+    [
+     "442",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "cr1569",
+   "metier": "bricoleur",
+   "level": 60,
+   "ingredients": [
+    [
+     "1569",
+     1
+    ],
+    [
+     "476",
+     10
+    ],
+    [
+     "442",
+     5
+    ]
+   ]
+  },
+  {
+   "result": "cr8135",
+   "metier": "bricoleur",
+   "level": 60,
+   "ingredients": [
+    [
+     "8135",
+     1
+    ],
+    [
+     "476",
+     10
+    ],
+    [
+     "442",
+     5
     ]
    ]
   },
@@ -84207,6 +85215,17 @@
    ]
   },
   {
+   "result": "17272",
+   "metier": "mineur",
+   "level": 60,
+   "ingredients": [
+    [
+     "14635",
+     10
+    ]
+   ]
+  },
+  {
    "result": "2024",
    "metier": "paysan",
    "level": 60,
@@ -84295,78 +85314,40 @@
    ]
   },
   {
-   "result": "1333",
-   "metier": "alchimiste",
-   "level": 20,
+   "result": "cr11798",
+   "metier": "bricoleur",
+   "level": 70,
    "ingredients": [
     [
-     "1526",
-     5
-    ],
-    [
-     "1463",
+     "11798",
      1
     ],
     [
-     "14635",
-     100
+     "460",
+     10
+    ],
+    [
+     "443",
+     5
     ]
    ]
   },
   {
-   "result": "1335",
-   "metier": "alchimiste",
-   "level": 20,
+   "result": "cr14464",
+   "metier": "bricoleur",
+   "level": 70,
    "ingredients": [
     [
-     "1527",
-     5
-    ],
-    [
-     "1463",
+     "14464",
      1
     ],
     [
-     "14635",
-     100
-    ]
-   ]
-  },
-  {
-   "result": "1337",
-   "metier": "alchimiste",
-   "level": 20,
-   "ingredients": [
+     "460",
+     10
+    ],
     [
-     "1529",
+     "443",
      5
-    ],
-    [
-     "1463",
-     1
-    ],
-    [
-     "14635",
-     100
-    ]
-   ]
-  },
-  {
-   "result": "1338",
-   "metier": "alchimiste",
-   "level": 20,
-   "ingredients": [
-    [
-     "1528",
-     5
-    ],
-    [
-     "1463",
-     1
-    ],
-    [
-     "14635",
-     100
     ]
    ]
   },
@@ -84447,633 +85428,6 @@
    ]
   },
   {
-   "result": "1526",
-   "metier": "alchimiste",
-   "level": 1,
-   "ingredients": [
-    [
-     "415",
-     4
-    ],
-    [
-     "412",
-     1
-    ],
-    [
-     "1634",
-     1
-    ]
-   ]
-  },
-  {
-   "result": "1527",
-   "metier": "alchimiste",
-   "level": 1,
-   "ingredients": [
-    [
-     "414",
-     4
-    ],
-    [
-     "411",
-     1
-    ],
-    [
-     "1634",
-     1
-    ]
-   ]
-  },
-  {
-   "result": "1528",
-   "metier": "alchimiste",
-   "level": 1,
-   "ingredients": [
-    [
-     "1141",
-     4
-    ],
-    [
-     "1142",
-     1
-    ],
-    [
-     "1634",
-     1
-    ]
-   ]
-  },
-  {
-   "result": "1529",
-   "metier": "alchimiste",
-   "level": 1,
-   "ingredients": [
-    [
-     "1634",
-     1
-    ],
-    [
-     "416",
-     4
-    ],
-    [
-     "413",
-     1
-    ]
-   ]
-  },
-  {
-   "result": "1535",
-   "metier": "alchimiste",
-   "level": 1,
-   "ingredients": [
-    [
-     "843",
-     4
-    ],
-    [
-     "846",
-     1
-    ],
-    [
-     "1634",
-     1
-    ]
-   ]
-  },
-  {
-   "result": "1536",
-   "metier": "alchimiste",
-   "level": 1,
-   "ingredients": [
-    [
-     "1129",
-     4
-    ],
-    [
-     "844",
-     1
-    ],
-    [
-     "1634",
-     1
-    ]
-   ]
-  },
-  {
-   "result": "1537",
-   "metier": "alchimiste",
-   "level": 1,
-   "ingredients": [
-    [
-     "842",
-     4
-    ],
-    [
-     "845",
-     1
-    ],
-    [
-     "1634",
-     1
-    ]
-   ]
-  },
-  {
-   "result": "1538",
-   "metier": "alchimiste",
-   "level": 1,
-   "ingredients": [
-    [
-     "308",
-     4
-    ],
-    [
-     "847",
-     1
-    ],
-    [
-     "1634",
-     1
-    ]
-   ]
-  },
-  {
-   "result": "17272",
-   "metier": "mineur",
-   "level": 60,
-   "ingredients": [
-    [
-     "14635",
-     10
-    ]
-   ]
-  },
-  {
-   "result": "17273",
-   "metier": "mineur",
-   "level": 120,
-   "ingredients": [
-    [
-     "14635",
-     30
-    ]
-   ]
-  },
-  {
-   "result": "17274",
-   "metier": "mineur",
-   "level": 180,
-   "ingredients": [
-    [
-     "14635",
-     100
-    ]
-   ]
-  },
-  {
-   "result": "17275",
-   "metier": "mineur",
-   "level": 200,
-   "ingredients": [
-    [
-     "14635",
-     300
-    ]
-   ]
-  },
-  {
-   "result": "21673",
-   "metier": "alchimiste",
-   "level": 10,
-   "ingredients": [
-    [
-     "421",
-     4
-    ],
-    [
-     "399",
-     1
-    ]
-   ]
-  },
-  {
-   "result": "21674",
-   "metier": "alchimiste",
-   "level": 10,
-   "ingredients": [
-    [
-     "421",
-     4
-    ],
-    [
-     "311",
-     2
-    ]
-   ]
-  },
-  {
-   "result": "21678",
-   "metier": "alchimiste",
-   "level": 20,
-   "ingredients": [
-    [
-     "428",
-     3
-    ],
-    [
-     "400",
-     2
-    ]
-   ]
-  },
-  {
-   "result": "21677",
-   "metier": "alchimiste",
-   "level": 20,
-   "ingredients": [
-    [
-     "428",
-     3
-    ],
-    [
-     "441",
-     2
-    ]
-   ]
-  },
-  {
-   "result": "21675",
-   "metier": "alchimiste",
-   "level": 30,
-   "ingredients": [
-    [
-     "428",
-     3
-    ],
-    [
-     "473",
-     2
-    ]
-   ]
-  },
-  {
-   "result": "20962",
-   "metier": "alchimiste",
-   "level": 40,
-   "ingredients": [
-    [
-     "395",
-     5
-    ],
-    [
-     "311",
-     2
-    ],
-    [
-     "1182",
-     1
-    ]
-   ]
-  },
-  {
-   "result": "795",
-   "metier": "alchimiste",
-   "level": 40,
-   "ingredients": [
-    [
-     "16380",
-     2
-    ],
-    [
-     "442",
-     10
-    ]
-   ]
-  },
-  {
-   "result": "815",
-   "metier": "alchimiste",
-   "level": 40,
-   "ingredients": [
-    [
-     "16380",
-     2
-    ],
-    [
-     "533",
-     10
-    ]
-   ]
-  },
-  {
-   "result": "811",
-   "metier": "alchimiste",
-   "level": 40,
-   "ingredients": [
-    [
-     "16380",
-     2
-    ],
-    [
-     "395",
-     10
-    ]
-   ]
-  },
-  {
-   "result": "799",
-   "metier": "alchimiste",
-   "level": 40,
-   "ingredients": [
-    [
-     "16380",
-     2
-    ],
-    [
-     "603",
-     10
-    ]
-   ]
-  },
-  {
-   "result": "807",
-   "metier": "alchimiste",
-   "level": 40,
-   "ingredients": [
-    [
-     "16380",
-     2
-    ],
-    [
-     "476",
-     10
-    ]
-   ]
-  },
-  {
-   "result": "803",
-   "metier": "alchimiste",
-   "level": 40,
-   "ingredients": [
-    [
-     "16380",
-     2
-    ],
-    [
-     "7652",
-     3
-    ]
-   ]
-  },
-  {
-   "result": "cr8143",
-   "metier": "bricoleur",
-   "level": 20,
-   "ingredients": [
-    [
-     "8143",
-     1
-    ],
-    [
-     "303",
-     10
-    ],
-    [
-     "312",
-     5
-    ]
-   ]
-  },
-  {
-   "result": "cr8437",
-   "metier": "bricoleur",
-   "level": 30,
-   "ingredients": [
-    [
-     "8437",
-     1
-    ],
-    [
-     "473",
-     10
-    ],
-    [
-     "441",
-     5
-    ]
-   ]
-  },
-  {
-   "result": "cr1568",
-   "metier": "bricoleur",
-   "level": 40,
-   "ingredients": [
-    [
-     "1568",
-     1
-    ],
-    [
-     "473",
-     10
-    ],
-    [
-     "441",
-     5
-    ]
-   ]
-  },
-  {
-   "result": "cr1570",
-   "metier": "bricoleur",
-   "level": 50,
-   "ingredients": [
-    [
-     "1570",
-     1
-    ],
-    [
-     "476",
-     10
-    ],
-    [
-     "442",
-     5
-    ]
-   ]
-  },
-  {
-   "result": "cr15991",
-   "metier": "bricoleur",
-   "level": 50,
-   "ingredients": [
-    [
-     "15991",
-     1
-    ],
-    [
-     "476",
-     10
-    ],
-    [
-     "442",
-     5
-    ]
-   ]
-  },
-  {
-   "result": "cr26680",
-   "metier": "bricoleur",
-   "level": 50,
-   "ingredients": [
-    [
-     "26680",
-     1
-    ],
-    [
-     "476",
-     10
-    ],
-    [
-     "442",
-     5
-    ]
-   ]
-  },
-  {
-   "result": "cr7918",
-   "metier": "bricoleur",
-   "level": 50,
-   "ingredients": [
-    [
-     "7918",
-     1
-    ],
-    [
-     "476",
-     10
-    ],
-    [
-     "442",
-     5
-    ]
-   ]
-  },
-  {
-   "result": "cr8139",
-   "metier": "bricoleur",
-   "level": 50,
-   "ingredients": [
-    [
-     "8139",
-     1
-    ],
-    [
-     "476",
-     10
-    ],
-    [
-     "442",
-     5
-    ]
-   ]
-  },
-  {
-   "result": "cr12017",
-   "metier": "bricoleur",
-   "level": 60,
-   "ingredients": [
-    [
-     "12017",
-     1
-    ],
-    [
-     "476",
-     10
-    ],
-    [
-     "442",
-     5
-    ]
-   ]
-  },
-  {
-   "result": "cr1569",
-   "metier": "bricoleur",
-   "level": 60,
-   "ingredients": [
-    [
-     "1569",
-     1
-    ],
-    [
-     "476",
-     10
-    ],
-    [
-     "442",
-     5
-    ]
-   ]
-  },
-  {
-   "result": "cr8135",
-   "metier": "bricoleur",
-   "level": 60,
-   "ingredients": [
-    [
-     "8135",
-     1
-    ],
-    [
-     "476",
-     10
-    ],
-    [
-     "442",
-     5
-    ]
-   ]
-  },
-  {
-   "result": "cr11798",
-   "metier": "bricoleur",
-   "level": 70,
-   "ingredients": [
-    [
-     "11798",
-     1
-    ],
-    [
-     "460",
-     10
-    ],
-    [
-     "443",
-     5
-    ]
-   ]
-  },
-  {
-   "result": "cr14464",
-   "metier": "bricoleur",
-   "level": 70,
-   "ingredients": [
-    [
-     "14464",
-     1
-    ],
-    [
-     "460",
-     10
-    ],
-    [
-     "443",
-     5
-    ]
-   ]
-  },
-  {
    "result": "cr7927",
    "metier": "bricoleur",
    "level": 80,
@@ -85108,6 +85462,39 @@
     [
      "443",
      5
+    ]
+   ]
+  },
+  {
+   "result": "17273",
+   "metier": "mineur",
+   "level": 120,
+   "ingredients": [
+    [
+     "14635",
+     30
+    ]
+   ]
+  },
+  {
+   "result": "17274",
+   "metier": "mineur",
+   "level": 180,
+   "ingredients": [
+    [
+     "14635",
+     100
+    ]
+   ]
+  },
+  {
+   "result": "17275",
+   "metier": "mineur",
+   "level": 200,
+   "ingredients": [
+    [
+     "14635",
+     300
     ]
    ]
   }

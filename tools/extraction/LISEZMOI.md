@@ -694,6 +694,16 @@ Ville vivante (maquette Ville 5F, 8 nov. 2026) :
 - Frigost (3D) : même monde, bateau du Port de Madrestam (porte `voyage: [arrivée en a, arrivée en b]`) : écran de voyage de
   `render/chargement.ts` (`src/data/voyage.json`, illustration `public/assets/voyage/<clé>.webp`) au moins 2,2 s, le temps que la région se charge.
 
+## Récoltes, musiques et carte des régions de la 0.6 (finitions, 14 nov. 2026)
+- Récoltes : relevés officiels des 838 cartes ajoutés à `tools/contenu/recoltables_dofusdb.json` (api.dofusdb.fr/recoltable, 40 ids par appel),
+  puis `python3 regions06/recoltes06.py <cartes map_*.json> <tables> <fr.bin>` (recoltes.py + recoltes_cases.py sur la seule liste de la 0.6,
+  ajoutée à la suite d'Astrub). Nouveaux dessins : 689 Kaliptus, 681 Bombu, 657 Ébène (`recoltes_planches.py`) ; remous 9248/9255 sans dessin
+  animé = dessin d'un autre remous (`recoltes_gfx.DESSIN`). Nouvelles ressources dans items.json : `recettes.py`, puis `icones_ajout.py`.
+- Musiques : `python3 regions06/sons06.py <banques> <dossier de fsb5> . <cartes>` ; le choix suit le GUID FMOD de la musique des cartes
+  (une sous-zone qui le partage avec Amakna reprend sa musique ; sinon Koalaks, Frigost, Bourgade, Forêt Malsaine, Cania).
+- Carte M : `carte_monde.py` réduit maintenant chaque page de décor une seule fois (plus de 30 min avant, ~5 min) ; tout le continent à
+  l'échelle 0,1 puis réduit à 0,05 (7480 × 3948). `plan_carte.py` : 4e champ de `maps` = 1 (0.4) ou 2 (0.6, grisé tant que V06_PUBLIC est faux).
+
 ## Arènes des donjons de la 0.6 (ligne « Arènes : 1A 2D 3A 4A+4C 5B 6B+6C 7A 8A+8B 9A+9C 10A+10C 11A », 13 nov. 2026)
 
 - `arenes06/compo06.py` : les 5 compositions de la maquette (Clos des Blops, Épreuve de Draegnerys, Antre de la Reine Nyée sur sol plein,
