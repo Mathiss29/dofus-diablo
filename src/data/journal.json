@@ -2158,11 +2158,17 @@
     },
     {
       "date": "2026-11-14",
-      "titre": "Frigost attaque en coulisses",
-      "resume": "Les boss du monde et l'invasion de Frigost de la 0.6 se mettent en place en partie de test.",
+      "titre": "Les légendaires du Sadida",
+      "resume": "56 pouvoirs légendaires pour le Sadida : ses Arbres, ses Poupées et l'Infection changent de visage.",
       "capture": "assets/journal/2026-11-14.webp",
-      "legende": "Rats Bougris et Gélikans à la Bourgade, 14 novembre 2026.",
+      "legende": "Les pouvoirs inventés du Sadida, 14 novembre 2026.",
       "lignes": {
+        "Nouveautés": [
+          {"titre": "Légendaires du Sadida", "phrase": "40 pouvoirs officiels de la Panoplie Sauvage et 16 inventés qui transforment ses sorts.", "details": "Forêt dense, Écorce épineuse, Buisson incendiaire, Poupée immortelle… Les boss du jeu ont chacun leurs préférés.", "icone": "dofus", "etiquettes": ["Partie de test"]}
+        ],
+        "Le monde": [],
+        "Combat": [],
+        "Corrections": [],
         "En coulisses": [
           "Partie de test : Tyranne, Mama Koalak et le Méga Craqueleur rejoignent les boss du monde.",
           "Partie de test : à 13 h, 19 h et 22 h, Rats Bougris et Gélikans envahissent la Bourgade."

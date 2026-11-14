@@ -4,7 +4,8 @@ import { GAME_DATA, ITEMS, QUETES } from '../src/sim/data';
 import { GridMap, type MapData } from '../src/sim/gridmap';
 import { NO_INPUT, type PlayerInput } from '../src/sim/input';
 import { World } from '../src/sim/world';
-import { PC_PAR_ID } from '../src/sim/pouvoirsClasse';
+import { PC_PAR_ID, POUVOIRS_CLASSE } from '../src/sim/pouvoirsClasse';
+import { EN_JEU, POUVOIRS } from '../src/sim/pouvoirs';
 import type { EquipSlot } from '../src/sim/items';
 import { arbresDe, foretDuGroupe, planter, rendreFeuillu } from '../src/sim/sadida';
 
@@ -203,6 +204,57 @@ describe('Sadida (maquette Sadida, « 1A 2A+2B 3A+3B 4A 5A 6A+6B 7A 8A+8B 9A 10A
     w.quetes && (w.quetes.compteurs.foretHantee = 0);
     press(w, 'ronce', { x: ms[0].x, y: ms[0].y }); idle(w, 0.4);
     if (w.quetes) expect(w.quetes.compteurs.foretHantee).toBe(1);
+  });
+
+  it('Légendaires sadi 1A : les 40 pouvoirs officiels de la Panoplie Sauvage, dont ceux des sorts déjà en jeu', () => {
+    expect(POUVOIRS.sadida).toHaveLength(40);
+    expect(POUVOIRS.sadida.filter(p => EN_JEU.sadida.includes(p.dofusId)).length).toBeGreaterThanOrEqual(15);
+    expect(POUVOIRS_CLASSE.filter(p => p.classe === 'sadida')).toHaveLength(16);
+  });
+
+  it('Forêt dense (E) : une charge d\'Arbre de plus, Feuillu plus tôt ; Épidémie (C) : Infection plus longue', () => {
+    const w = sadi(); idle(w, 0.2);
+    const p = w.player; porter(w, 'pc-sadida-E', 1.5); porter(w, 'pc-sadida-C', 4);
+    expect(p.chargesMax('arbre')).toBe(4);
+    const a = planter(p, p.x + 200, p.y, w)!;
+    idle(w, 2);
+    expect(a.sadi!.feuillu).toBe(true);
+    const m = cible(w, p.x + 120, p.y - 80);
+    press(w, 'ronce', { x: m.x, y: m.y }); idle(w, 0.4);
+    expect(m.infecteT).toBeGreaterThan(5);
+  });
+
+  it('Écorce épineuse (F) : un Arbre frappé renvoie des dommages et Infecte', () => {
+    const w = sadi(); idle(w, 0.2);
+    const p = w.player; porter(w, 'pc-sadida-F', 20);
+    const a = planter(p, p.x + 200, p.y, w)!, m = cible(w, a.x + 40, a.y), h = m.hp;
+    idle(w, 0.5);
+    a.hurt(50, m.x, m.y, w);
+    expect(m.hp).toBe(h - 10);
+    expect(m.infecteT).toBeGreaterThan(0);
+  });
+
+  it('Buisson incendiaire (M) : le sol brûle et refrappe qui reste dedans', () => {
+    const w = sadi(); idle(w, 0.2);
+    const p = w.player; porter(w, 'pc-sadida-M', 40);
+    const m = cible(w, p.x + 150, p.y);
+    press(w, 'buisson_ardent', { x: m.x, y: m.y }); idle(w, 0.3);
+    expect(w.zonesSol.some(z => z.id === 'pc-sadida-M')).toBe(true);
+    const h = m.hp; idle(w, 1.2);
+    expect(m.hp).toBeLessThan(h);
+  });
+
+  it('Poupée immortelle (P) : la Poupée sacrifiée renaît en Arbre Feuillu', () => {
+    const w = sadi(); idle(w, 0.2);
+    const p = w.player; niveau(p, 60); porter(w, 'pc-sadida-P', 40);
+    cible(w, p.x + 400, p.y);
+    const a = planter(p, p.x + 150, p.y, w)!;
+    press(w, 'la_folle', { x: a.x, y: a.y }); idle(w, 0.4);
+    const fol = w.betes.find(b => !b.dead && b.base === 'sadi_folle')!;
+    expect(fol).toBeTruthy();
+    fol.x = p.x + 150; fol.y = p.y;
+    p.cd = {}; press(w, 'sacrifice_vaudou', { x: fol.x, y: fol.y }); idle(w, 0.3);
+    expect(arbresDe(p, w).some(b => b.sadi!.feuillu)).toBe(true);
   });
 
   it('16A : trame du tutoriel au Temple Céleste, avec des sorts qui existent', () => {

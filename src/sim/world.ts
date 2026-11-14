@@ -59,12 +59,14 @@ import { ARTISANS, POUCE } from './artisans';
 import { RENFORT, cleRenforceeDe, texteRenfort } from './clesRenforcees';
 import { CHASSE, OEUVRE, PIERRES, coutOeuvre, coutPerce, metiersOeuvre, type Cout } from './oeuvre';
 import { BOISSONS, CONSO, ELIXIRS, PARCHEMINS, RARES_RECOLTE, REPAS, RES_BOISSON, sorteConso, texteBonus } from './consommables';
-import { majMonstreSadida, rallier } from './sadida';
+import { majMonstreSadida, rallier, soignerPoupee } from './sadida';
 import { RECOLTE, porteeRecolte, quantite, xpRecolte, type Recolte, type RecoltesData } from './recolte';
 
 export interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: number;
   /** Sadida : copie d'un sort propagée par l'Infection, jamais critique (1A). */
   sansCrit?: boolean;
+  /** Fléau insatiable (pc-sadida-N) : la vie volée en trop soigne la Poupée la plus blessée. */
+  soinPoupee?: boolean;
   /** Effets officiels : Érosion (part des dommages ôtée aux PV max), retrait de PM / PA. */
   erosion?: number; pmLoss?: number; paLoss?: number; poLoss?: number;
   /** Dommages multipliés sur les invocations (Concentration), et aussi sur les élites et les boss (Rage pleine). */
@@ -102,7 +104,9 @@ export interface HitDef { dmg: number; knock: number; element?: Element; lifeste
   /** Sort qui frappe (partie de test, DPS sort par sort : maquette « Panneau test » 6A). */
   sort?: string }
 /** Zone laissée au sol par un légendaire de classe (Épée jumelle) : frappe une fois chaque monstre qui la traverse. */
-export interface ZoneSol { x: number; y: number; r: number; t: number; hit: HitDef; touches: Set<number>; id: string }
+export interface ZoneSol { x: number; y: number; r: number; t: number; hit: HitDef; touches: Set<number>; id: string;
+  /** Refrappe toutes les `tick` s qui reste dedans (Buisson incendiaire) ; ronce : ronces visibles au sol (Sacrifice éclatant). */
+  tick?: number; acc?: number; ronce?: boolean }
 /** Butin au sol (choix 1C 2D 6A) : équipements et kamas seulement. Les Communs et les kamas filent vers le joueur
  *  qui passe près ; Rare et plus se ramassent d'un clic. Les ressources vont directement dans le sac. */
 export interface Drop { uid: number; x: number; y: number; item?: Item; kamas?: number; t: number; warned?: boolean;
@@ -1833,6 +1837,8 @@ export class World {
     if (!this.zonesSol.length) return;
     for (const z of this.zonesSol) {
       z.t -= dt;
+      if (z.tick && (z.acc = (z.acc ?? 0) + dt) >= z.tick) { z.acc -= z.tick; z.touches.clear(); }
+      if (z.ronce) for (const m of this.monsters) if (!m.dead && Math.hypot(m.x - z.x, m.y - z.y) <= z.r + m.radius && m.hasteT > 0) m.ronceT = Math.max(m.ronceT, 0.3);
       this.telegraphs.push({ kind: 'circle', x: z.x, y: z.y, r: z.r, progress: 1, danger: false });
       const n = this.applyHits(m => !z.touches.has(m.id) && Math.hypot(m.x - z.x, m.y - z.y) <= z.r + m.radius, z.hit, z.x, z.y, 0);
       if (n) for (const m of this.monsters) if (!m.dead && Math.hypot(m.x - z.x, m.y - z.y) <= z.r + m.radius) z.touches.add(m.id);
@@ -1962,6 +1968,7 @@ export class World {
           for (const q of this.players) if (q !== p && !q.dead && Math.hypot(q.x - p.x, q.y - p.y) <= CASE * 3) q.hp = Math.min(q.maxHp, q.hp + Math.round(n));
           for (const b of this.betes) if (!b.dead && Math.hypot(b.x - p.x, b.y - p.y) <= CASE * 3) b.soigner(n, this);
         }
+        if (def.soinPoupee && trop > 0) soignerPoupee(p, trop, this);   // Fléau insatiable : la vie en trop soigne ta Poupée la plus blessée
         if (def.surplus && trop > 0) {   // Sève d'Abolition : la vie volée en trop devient un bouclier (5 s)
           p.shield = Math.min(Math.round(p.maxHp * def.surplus / 100), Math.max(p.shieldSrc === 'pc-cra-N' ? p.shield : 0, 0) + trop);
           p.shieldT = p.shieldT0 = 5; p.shieldSrc = 'pc-cra-N';
