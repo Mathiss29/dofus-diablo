@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { V06_PUBLIC } from '../src/sim/pouvoirs';
 import { describe, expect, it } from 'vitest';
 import { GAME_DATA, ITEMS } from '../src/sim/data';
 import { GridMap, type MapData } from '../src/sim/gridmap';
@@ -40,7 +41,7 @@ describe('Sorts 61-90 (0.6, 7A+7C) : Forgelance, Eniripsa, Enutrof, Écaflip', (
       const pub = monde(cl, false), t = monde(cl, true);
       niveau(pub.player, 90); niveau(t.player, 90);
       for (const id of ids) {
-        expect(pub.player.knows(id), `${cl} ${id} public`).toBe(false);
+        expect(pub.player.knows(id), `${cl} ${id} public`).toBe(V06_PUBLIC);
         expect(t.player.knows(id), `${cl} ${id} test`).toBe(true);
       }
       niveau(t.player, 64);
@@ -124,7 +125,7 @@ describe('Sorts 61-90 (0.6, 7A+7C) : Forgelance, Eniripsa, Enutrof, Écaflip', (
     const p = w.player; niveau(p, 75);
     expect(valeurMax(p)).toBe(2);
     const pub = monde('ecaflip', false); niveau(pub.player, 75);
-    expect(valeurMax(pub.player)).toBe(1);
+    expect(valeurMax(pub.player)).toBe(V06_PUBLIC ? 2 : 1);
     const m = bouftou(w, p.x + 120, p.y);
     p.ecaMain = [];
     press(w, 'coussinets', { x: m.x, y: m.y }); idle(w, 0.4);

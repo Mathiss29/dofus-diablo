@@ -20,9 +20,10 @@ const objetsValides = l => Array.isArray(l) ? l.filter(x => typeof x === 'string
 
 /**
  * @param {{ db: import('node:sqlite').DatabaseSync, connecte: (req: any) => any, admin: (c: any) => boolean, lireCorps: (req: any) => Promise<any>,
- *   env?: Record<string, string|undefined>, maintenant?: () => number, adminDiscord?: (roles: string[]) => boolean }} o
+ *   env?: Record<string, string|undefined>, maintenant?: () => number, adminDiscord?: (roles: string[]) => boolean,
+ *   evenements?: { code: string, ogrines?: number, objets?: string[], max?: number, jours?: number, note?: string }[] }} o
  */
-export function creerOgrines({ db, connecte, admin, lireCorps, env = process.env, maintenant = Date.now, adminDiscord = () => false }) {
+export function creerOgrines({ db, connecte, admin, lireCorps, env = process.env, maintenant = Date.now, adminDiscord = () => false, evenements = [] }) {
   db.exec(`CREATE TABLE IF NOT EXISTS ogrines (compte INTEGER PRIMARY KEY REFERENCES comptes(id) ON DELETE CASCADE, solde INTEGER NOT NULL DEFAULT 0);
     CREATE TABLE IF NOT EXISTS ogrines_journal (compte INTEGER NOT NULL REFERENCES comptes(id) ON DELETE CASCADE, n INTEGER NOT NULL, raison TEXT NOT NULL, quand INTEGER NOT NULL);
     CREATE TABLE IF NOT EXISTS codes (code TEXT PRIMARY KEY, ogrines INTEGER NOT NULL, objets TEXT NOT NULL DEFAULT '[]', max INTEGER NOT NULL,
@@ -65,6 +66,8 @@ export function creerOgrines({ db, connecte, admin, lireCorps, env = process.env
     q.creer.run(c, n, JSON.stringify(l), m, maintenant() + j * 86400e3, maintenant(), String(par).slice(0, 40), String(note).slice(0, 80));
     return { code: c, ogrines: n, objets: l, max: m, jours: j };
   }
+  // Codes d'événement (serveur/codes-evenements.json) : créés une fois, au premier démarrage qui les voit
+  for (const e of evenements) if (e?.code && !q.code.get(normal(e.code))) creerCode({ ...e, par: 'Diablofus' });
   /** 11A : un joueur entre un code. Rend { ogrines, objets, solde } ou { erreur }. */
   const essais = new Map();
   function utiliser(compte, brut) {

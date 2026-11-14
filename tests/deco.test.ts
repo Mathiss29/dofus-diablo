@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { V06_PUBLIC } from '../src/sim/pouvoirs';
 import { describe, expect, it } from 'vitest';
 import { BOUTIQUES, GAME_DATA, ITEMS, QUETES, RECOLTES, THEMES_HAVRESAC } from '../src/sim/data';
 import { WorldGrid, type WorldData } from '../src/sim/gridmap';
@@ -136,7 +137,7 @@ describe('Havre-Sac complet (0.6 : 10A-E, 11B+11C, Métiers 9A)', () => {
     const w2 = monde({ coffre: r });
     expect(w2.worldGrid!.mov[w2.worldGrid!.cellOf(w2.deco!.tag, c)]).toBe(MEUBLES[id].bloque ? 0 : 1);
     expect(relireCoffre({ onglets: [], deco: { 57: [{ m: 999999999, c: 3 }, { m: id, c: 9999 }] } }).deco).toBeUndefined();
-    expect(monde({ test: undefined }).deco).toBeNull();
+    if (!V06_PUBLIC) expect(monde({ test: undefined }).deco).toBeNull();
   });
   it('10E : l\'invité voit le Havre-Sac de l\'hôte (thème et meubles) et ne peut pas le décorer', () => {
     const h = monde(), id = Object.values(MEUBLES).find(m => m.theme === MERCENAIRE && m.tier === 'base' && m.couche === 1 && m.bloque)!.id, c = caseLibre(h, id, 200);

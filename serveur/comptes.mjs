@@ -5,11 +5,16 @@
 // Secrets (posés sur le VPS par le projet Idlus, jamais dans le dépôt) : DISCORD_ID, DISCORD_SECRET dans /etc/diablofus/discord.env.
 // Facultatif : DISCORD_SERVEUR (id du serveur Discord), ROLES_TESTEUR et ROLES_ADMIN (ids de rôles, séparés par des virgules).
 import { createHash, randomBytes } from 'node:crypto';
-import { mkdirSync, readdirSync, rmSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import { creerOgrines } from './ogrines.mjs';
 import { creerBoutique } from './boutique.mjs';
+
+/** Codes cadeaux d'événement (serveur/codes-evenements.json), créés au démarrage s'ils n'existent pas. */
+function codesEvenements() {
+  try { return JSON.parse(readFileSync(new URL('./codes-evenements.json', import.meta.url), 'utf8')).codes ?? []; } catch { return []; }
+}
 
 export const COMPTES = {
   emplacements: 5,   // 3 + 2 achetés au Marché (Magasin 6C, gardés dans le coffre du compte)
@@ -198,7 +203,7 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
   }
 
   // Ogrines et codes cadeaux (« Apparats : » 10-12) : serveur/ogrines.mjs
-  const ogrines = creerOgrines({ db, connecte, admin: c => vue(c).admin, lireCorps, env, maintenant, adminDiscord: roles => roles.some(r => admins.has(r)) });
+  const ogrines = creerOgrines({ db, connecte, admin: c => vue(c).admin, lireCorps, env, maintenant, adminDiscord: roles => roles.some(r => admins.has(r)), evenements: codesEvenements() });
   // Boutique Ogrines et abonnements (« Apparats : » 9, 13-17) : serveur/boutique.mjs
   const boutique = creerBoutique({ db, connecte, lireCorps, ogrines, maintenant, ...(catalogue ? { catalogue } : {}) });
   /** Répond aux adresses des comptes ; renvoie false si l'adresse n'est pas la sienne. */

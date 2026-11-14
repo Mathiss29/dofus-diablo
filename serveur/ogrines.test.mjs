@@ -113,3 +113,12 @@ test('boutique : achat au prix du serveur, une fois ; abonnement, essai, apparat
   const moi = await (await fetch(`${base}/moi`, { headers: auth })).json();
   assert.equal(moi.boutique.abonnement.palier, 'legende');
 });
+
+test('code d\'événement (codes-evenements.json) : créé au démarrage, 600 Ogrines une fois par compte', async () => {
+  const { base, auth, fin } = await serveur(false);
+  const r = await (await fetch(`${base}/codes/utiliser`, { method: 'POST', headers: auth, body: JSON.stringify({ code: 'diablofus-06' }) })).json();
+  assert.equal(r.ogrines, 600);
+  const encore = await fetch(`${base}/codes/utiliser`, { method: 'POST', headers: auth, body: JSON.stringify({ code: 'DIABLOFUS-06' }) });
+  assert.equal(encore.status, 400);
+  await fin();
+});

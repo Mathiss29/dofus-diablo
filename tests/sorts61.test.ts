@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { V06_PUBLIC } from '../src/sim/pouvoirs';
 import { describe, expect, it } from 'vitest';
 import { GAME_DATA, ITEMS } from '../src/sim/data';
 import { GridMap, type MapData } from '../src/sim/gridmap';
@@ -33,7 +34,7 @@ describe('Sorts 61-90 du Iop, du Crâ, de l\'Osamodas et du Sacrieur (0.6, ligne
       for (const id of officiels) expect(joues, `${cls} ${id}`).toContain(id);
       for (const k of keys) expect(C.spells[k].v06, k).toBe(true);
       const pub = monde(cls, false), test = monde(cls, true);
-      for (const k of keys) { expect(pub.player.knows(k), k).toBe(false); expect(test.player.knows(k), k).toBe(true); }
+      for (const k of keys) { expect(pub.player.knows(k), k).toBe(V06_PUBLIC); expect(test.player.knows(k), k).toBe(true); }
     }
   });
 

@@ -2158,27 +2158,32 @@
     },
     {
       "date": "2026-11-14",
-      "titre": "Les légendaires du Sadida",
-      "resume": "56 pouvoirs légendaires pour le Sadida : ses Arbres, ses Poupées et l'Infection changent de visage.",
+      "titre": "La 0.6 est ouverte",
+      "resume": "Jusqu'au niveau 90 : cinq régions, cinq donjons, l'Écaflip et le Sadida, les idoles et la renommée, pour tout le monde.",
       "capture": "assets/journal/2026-11-14.webp",
-      "legende": "Les pouvoirs inventés du Sadida, 14 novembre 2026.",
+      "legende": "La 0.6, 14 novembre 2026.",
       "lignes": {
         "Nouveautés": [
-          {"titre": "Le Sadida jusqu'au niveau 90", "phrase": "Arbre de Vie, Gonflable, Tremblement, Inoculation, Don Naturel et Surpuissante rejoignent ses sorts.", "details": "Avec 8 légendaires de plus sur ces sorts. Tremblement regroupe les monstres, Inoculation encaisse toute l'Infection d'un coup.", "icone": "sorts", "etiquettes": ["Partie de test", "Niveau 65 à 90"]},
-          {"titre": "Légendaires du Sadida", "phrase": "40 pouvoirs officiels de la Panoplie Sauvage et 16 inventés qui transforment ses sorts.", "details": "Forêt dense, Écorce épineuse, Buisson incendiaire, Poupée immortelle… Les boss du jeu ont chacun leurs préférés.", "icone": "dofus", "etiquettes": ["Partie de test"]}
+          {"titre": "Cinq régions jusqu'au niveau 90", "phrase": "Koalaks, Abraknydes, Cania, Porcos et Frigost s'ouvrent à tous, sans coupure avec Amakna.", "details": "Le bateau de Madrestam mène à Frigost après la quête du marin. La renommée de chaque région débloque ses sanctuaires.", "icone": "carte", "etiquettes": ["Niveau 60 à 90", "Frigost"]},
+          {"titre": "L'Écaflip et le Sadida pour tous", "phrase": "Deux classes de plus à la création : le Poker de l'Écaflip et les Arbres du Sadida.", "details": "Tous leurs sorts jusqu'au niveau 90 et leurs légendaires, officiels et inventés.", "icone": "perso", "etiquettes": ["Création de perso"]},
+          {"titre": "Idoles et élites à affixes", "phrase": "Les idoles rendent les monstres plus forts contre plus d'XP et de butin, et comptent au Ladder.", "details": "Touche Y pour les choisir, fabriquées chez le Bricoleur. Les élites de la 0.6 sortent avec 2 ou 3 affixes.", "icone": "dofus", "etiquettes": ["Touche Y", "Ladder"]},
+          {"titre": "Le Sadida jusqu'au niveau 90", "phrase": "Arbre de Vie, Gonflable, Tremblement, Inoculation, Don Naturel et Surpuissante rejoignent ses sorts.", "details": "Avec 8 légendaires de plus sur ces sorts. Tremblement regroupe les monstres, Inoculation encaisse toute l'Infection d'un coup.", "icone": "sorts", "etiquettes": ["Niveau 65 à 90"]},
+          {"titre": "Légendaires du Sadida", "phrase": "40 pouvoirs officiels de la Panoplie Sauvage et 16 inventés qui transforment ses sorts.", "details": "Forêt dense, Écorce épineuse, Buisson incendiaire, Poupée immortelle… Les boss du jeu ont chacun leurs préférés.", "icone": "dofus"}
         ],
         "Le monde": [
-          {"titre": "Les 5 régions prennent vie", "phrase": "Bois, plantes et poissons officiels à récolter dans les 5 régions, avec leurs musiques.", "details": "Kaliptus, Bombu, Ébène, Perche et Kralamoure arrivent. Les Koalaks, Frigost, la Bourgade et la Forêt Malsaine ont leur musique.", "icone": "metier", "etiquettes": ["Partie de test"]},
-          {"titre": "Souterrains, tavernes et Mine de Dédé", "phrase": "47 salles officielles s'ouvrent dans les 5 régions : souterrains, tavernes, boutiques de Frigost.", "details": "Les Souterrains des Porcos ont leurs monstres. La Mine de Dédé et la Tour des Voyageurs se visitent salle après salle.", "icone": "carte", "etiquettes": ["Partie de test"]}
+          {"titre": "Les 5 régions prennent vie", "phrase": "Bois, plantes et poissons officiels à récolter dans les 5 régions, avec leurs musiques.", "details": "Kaliptus, Bombu, Ébène, Perche et Kralamoure arrivent. Les Koalaks, Frigost, la Bourgade et la Forêt Malsaine ont leur musique.", "icone": "metier"},
+          {"titre": "Souterrains, tavernes et Mine de Dédé", "phrase": "47 salles officielles s'ouvrent dans les 5 régions : souterrains, tavernes, boutiques de Frigost.", "details": "Les Souterrains des Porcos ont leurs monstres. La Mine de Dédé et la Tour des Voyageurs se visitent salle après salle.", "icone": "carte"}
         ],
-        "Combat": [],
+        "Combat": [
+          {"titre": "Cinq donjons en vagues", "phrase": "Blops, Draegnerys, Reine Nyée, Abraknyde Ancestral et Labyrinthe du Dragon Cochon, chacun avec sa mécanique.", "details": "Clés chez Goultard. Le Labyrinthe a son classement de la semaine au Ladder.", "icone": "boss", "etiquettes": ["Niveau 60 à 100"]}
+        ],
         "Corrections": [
-          "Partie de test : les Blops Coco du Clos des Blops ne s'invoquent plus en chaîne, sans fin."
+          "Les Blops Coco du Clos des Blops ne s'invoquent plus en chaîne, sans fin."
         ],
         "En coulisses": [
-          "Partie de test : Tyranne, Mama Koalak et le Méga Craqueleur rejoignent les boss du monde.",
-          "Partie de test : à 13 h, 19 h et 22 h, Rats Bougris et Gélikans envahissent la Bourgade.",
-          "Partie de test : le Coffre Malveillant ouvre parfois un portail doré vers une Salle au trésor.",
+          "Tyranne, Mama Koalak et le Méga Craqueleur rejoignent les boss du monde.",
+          "À 13 h, 19 h et 22 h, Rats Bougris et Gélikans envahissent la Bourgade.",
+          "Le Coffre Malveillant ouvre parfois un portail doré vers une Salle au trésor.",
           "Ladder : records de donjon au score d'idoles, et le Labyrinthe a son classement de la semaine.",
           "Un robot joue seul la tranche 60 → 90 et vérifie le bateau de Frigost de bout en bout.",
           "Carte du monde (M) : tout le continent est dessiné, les régions de la 0.6 restent grisées."
