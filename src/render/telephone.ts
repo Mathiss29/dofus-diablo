@@ -7,12 +7,19 @@ import { DISCORD_INVITATION } from './liens';
 const CLE = 'diablofus.telephone';
 const ADRESSE = 'https://diablofus.com';
 
-/** Vrai sur un appareil tactile sans souris ni pavé tactile (téléphone, tablette), si on n'a pas déjà choisi de continuer. */
+/** Vrai sur un appareil tactile sans souris ni pavé tactile (téléphone, tablette), si on n'a pas déjà choisi de jouer.
+ *  Console (AYN Thor…, maquette « Console : » 6A) : une manette déjà détectée ou l'app installée = on joue. */
 export function surTelephone(): boolean {
-  try { if (sessionStorage.getItem(CLE)) return false; } catch { /* stockage bloqué */ }
+  try { if (localStorage.getItem(CLE) || sessionStorage.getItem(CLE)) return false; } catch { /* stockage bloqué */ }
   if (/test|cra|astrub|jeu/.test(location.hash)) return false;
+  if (manetteBranchee() || matchMedia('(display-mode: standalone), (display-mode: fullscreen)').matches) return false;
   return matchMedia('(pointer: coarse)').matches && !matchMedia('(any-pointer: fine)').matches;
 }
+function manetteBranchee(): boolean {
+  try { return [...(navigator.getGamepads?.() ?? [])].some(g => g?.connected); } catch { return false; }
+}
+/** Retenu pour de bon : la console ne revoit plus cet écran. */
+function retenir() { try { localStorage.setItem(CLE, '1'); } catch { try { sessionStorage.setItem(CLE, '1'); } catch { /* rien */ } } }
 
 /** Montre l'écran ; continuer() lance le jeu quand le joueur insiste. */
 export function ecranTelephone(continuer: () => void) {
@@ -32,8 +39,9 @@ export function ecranTelephone(continuer: () => void) {
 #tel .copier{background:linear-gradient(#d3f46f,#a2d332);color:#1d2a06;box-shadow:0 3px 0 #5d7d14}
 #tel .discord{background:#5865f2;color:#fff;box-shadow:0 3px 0 #2f3699;font-size:16px}
 #tel .adresse{font:600 15px ui-monospace,Menlo,monospace;color:#ffc14d;user-select:all;-webkit-user-select:all}
-#tel .plus{all:unset;cursor:pointer;color:#a7a28a;font-size:14px;text-decoration:underline;text-underline-offset:3px;margin-top:4px}
-#tel .b:focus-visible,#tel .plus:focus-visible{outline:2px solid #b9e54b;outline-offset:3px}`;
+#tel .jouer{background:linear-gradient(#ffd27a,#f0a93a);color:#3a2204;box-shadow:0 3px 0 #9a6413}
+#tel .manette{font-size:13px;color:#8e8a78}
+#tel .b:focus-visible{outline:2px solid #b9e54b;outline-offset:3px}`;
   document.head.appendChild(st);
   const d = document.createElement('div'); d.id = 'tel';
   d.innerHTML = `<img src="${v('assets/logo/logo.webp')}" alt="Diablofus : Les Douze Enfers">
@@ -44,7 +52,8 @@ export function ecranTelephone(continuer: () => void) {
     <button type="button" class="b copier">Copier le lien</button>
     <a class="b discord" href="${DISCORD_INVITATION}" target="_blank" rel="noopener">Rejoindre le Discord</a>
     <p style="font-size:13px;color:#8e8a78">Sur Discord, tu peux suivre les nouveautés et poser tes questions en attendant.</p>
-    <button type="button" class="plus">Continuer quand même</button>`;
+    <button type="button" class="b jouer">Jouer quand même</button>
+    <p class="manette">Sur une console avec manette (AYN Thor…), appuie sur un bouton : le jeu se lance.</p>`;
   document.body.appendChild(d);
   const copier = d.querySelector<HTMLButtonElement>('.copier')!;
   copier.onclick = () => {
@@ -54,10 +63,15 @@ export function ecranTelephone(continuer: () => void) {
       copier.textContent = 'Adresse sélectionnée';
     }) ?? fait();
   };
-  d.querySelector<HTMLButtonElement>('.plus')!.onclick = () => {
-    try { sessionStorage.setItem(CLE, '1'); } catch { /* rien */ }
+  let parti = false;
+  const jouer = () => {
+    if (parti) return; parti = true;
+    retenir(); window.removeEventListener('gamepadconnected', jouer);
     d.remove(); st.remove();
     document.getElementById('chargement')?.removeAttribute('hidden');
     continuer();
   };
+  d.querySelector<HTMLButtonElement>('.jouer')!.onclick = jouer;
+  // le navigateur ne montre la manette qu'au premier bouton appuyé : on lance le jeu à ce moment-là
+  window.addEventListener('gamepadconnected', jouer);
 }

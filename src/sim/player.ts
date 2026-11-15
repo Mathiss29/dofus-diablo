@@ -1126,9 +1126,12 @@ export class Player extends Entity {
     if (this.state === 'free') {
       const m = input.move;
       if (m.x || m.y) {
-        this.path = []; this.chaseId = null;
-        const v = this.speed * this.tackled(m.x, m.y, world);
-        this.x += m.x * v * dt; this.y += m.y * v * dt;
+        this.path = []; this.chaseId = null; this.dest = null; this.castChase = null; this.pickupId = null;
+        // manette (maquette « Console : ») : on marche dans la direction du stick et on glisse le long des murs
+        const v = this.speed * this.tackled(m.x, m.y, world), nx = this.x + m.x * v * dt, ny = this.y + m.y * v * dt;
+        if (world.walkable(nx, ny)) { this.x = nx; this.y = ny; }
+        else if (world.walkable(nx, this.y)) this.x = nx;
+        else if (world.walkable(this.x, ny)) this.y = ny;
         this.facing = Math.atan2(m.y, m.x); this.setAnim('run');
       } else if (this.path.length) {
         const t = this.path[0], dx = t.x - this.x, dy = t.y - this.y, d = Math.hypot(dx, dy), step = this.speed * this.tackled(dx, dy, world) * dt;

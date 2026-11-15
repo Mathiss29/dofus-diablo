@@ -123,6 +123,8 @@ export class DialogueView {
     this.root.appendChild(m); this.menu = m;
   }
   get menuOuvert() { return !!this.menu; }
+  /** Cadre du dialogue (ou du menu d'un PNJ), pour la manette. */
+  get element(): HTMLElement { return this.root; }
   fermerMenu() { this.menu?.remove(); this.menu = null; }
 
   /** Survol (8B) : nom du PNJ et ce qu'il propose. */

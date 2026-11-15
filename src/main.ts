@@ -10,6 +10,7 @@ import { chargerReglages } from './render/ambiance';
 import { prevenirCarteGraphique } from './render/fluidite';
 import { adresseLadder } from './render/ladder';
 import { ecranTelephone, surTelephone } from './render/telephone';
+import { demarrerManette } from './render/manette';
 
 // Compte Discord (maquette « Vrai multi : ») : lit le jeton renvoyé par le serveur (#connexion=…) avant de regarder l'adresse
 Compte.demarrer();
@@ -19,6 +20,9 @@ preparerInstallation();
 
 // Polices de Dofus 3 : chargées tout de suite, les textes de Phaser (dégâts, noms, HUD) les dessinent sur le canevas
 for (const f of ['400 13px Lexend', '600 13px Lexend', '700 13px Lexend', '13px Rowdies']) document.fonts?.load(f).catch(() => {});
+
+// Manette (maquette « Console : ») : lue dès l'écran d'accueil
+demarrerManette();
 
 // Téléphone et tablette (maquette « Accueil : » 7A) : écran léger, le jeu ne se charge que si on insiste
 if (surTelephone()) ecranTelephone(demarrer); else demarrer();

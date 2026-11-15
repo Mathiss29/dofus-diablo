@@ -192,6 +192,8 @@ export class CarteMonde {
     this.charger(this.monde);
   }
   get ouverte() { return !!this.root && !this.sur; }
+  /** Carte ouverte en grand, pour la manette. */
+  get element(): HTMLElement | null { return this.ouverte ? this.root : null; }
   get surimpression() { return !!this.root && this.sur; }
   get dispo() { return !!this.world.worldGrid?.world.carte && !!this.world.zone.open; }
   private get monde() { return this.world.zone.open?.world ?? ''; }

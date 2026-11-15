@@ -1223,6 +1223,8 @@ export class Windows {
   /** Relu au plus une fois par minute pendant que la fenêtre est ouverte. */
   private ladderVieux() { const t = Date.now(); if (t - this.ladderLu < 60_000) return false; this.ladderLu = t; return true; }
   get open() { return !!this.win; }
+  /** Fenêtre ouverte, pour la manette (render/manette.ts). */
+  get fenetre(): HTMLElement | null { return this.win; }
   /** Fenêtre ouverte (ou null). */
   get ouverte(): Mode | null { return this.win ? this.mode : null; }
   /** Ouvre la fenêtre demandée, ou la ferme si c'est déjà elle. */
