@@ -1,4 +1,5 @@
 import { QUALITES, REGLAGES_DEFAUT, sauverReglages, type Reglages } from './ambiance';
+import { reculPetitEcran } from './pixel';
 import { reglerControles } from './manette';
 import * as Touches from './touches';
 import { ICON_CSS, iconHtml, prechargerIcones } from './icons';
@@ -220,7 +221,7 @@ const VISIBLES: [Visible, string][] = [['chapeau', 'Coiffe'], ['cape', 'Cape'], 
 
 const CSS = `
 .dw canvas.vivant{display:block}
-.dw .stage canvas.who{position:relative;bottom:118px;height:min(270px,40vh);width:200px;max-width:100%}
+.dw .stage canvas.who{position:relative;bottom:118px;height:min(270px,calc(40 * var(--vh, 1vh)));width:200px;max-width:100%}
 .dw .appa{display:flex;justify-content:center;align-items:center;gap:10px;padding:8px 14px 0;z-index:1;position:relative}
 .dw .appa > span{font-weight:bold;color:#f4efe0;text-shadow:0 1px 2px #000;font-size:12px}
 .dw .appa .slot{width:50px;height:50px;background-size:100%}
@@ -232,7 +233,7 @@ const CSS = `
 .dw .emp .apercu canvas{width:180px;height:260px}
 .dw .emp .filtre{display:flex;gap:6px;align-items:center}
 .dw .emp .filtre input{flex:1}
-.dw .win.garde{width:min(820px,96vw);height:min(640px,92vh)}
+.dw .win.garde{width:min(820px,calc(96 * var(--vw, 1vw)));height:min(640px,calc(92 * var(--vh, 1vh)))}
 .dw .in.garde{display:grid;grid-template-columns:280px 1fr;gap:16px;padding:14px 16px;min-height:0;overflow:auto}
 .dw .garde .apercu{display:grid;justify-items:center;align-content:start;gap:8px;background:radial-gradient(ellipse at 50% 70%,#4f8a58,#1b231c 70%);border:1px solid #34322b;border-radius:4px;padding:10px}
 .dw .garde .apercu canvas{width:250px;height:360px}
@@ -250,8 +251,8 @@ const CSS = `
 .dw{position:fixed;inset:0;pointer-events:none;font:13px Lexend,Verdana,sans-serif;color:#e8e2d4;z-index:10}
 .dw .win{pointer-events:auto;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#24231f;border:1px solid #0d0c0a;
  box-shadow:inset 0 0 0 1px #4a4840,0 12px 40px #000c;border-radius:4px;display:grid;grid-template-rows:38px 1fr;overflow:hidden}
-.dw .win.inv{width:min(910px,96vw);height:min(720px,92vh)}
-.dw .win.car{width:min(470px,96vw);height:auto;max-height:min(700px,94vh);grid-template-rows:46px minmax(0,1fr) auto}
+.dw .win.inv{width:min(910px,calc(96 * var(--vw, 1vw)));height:min(720px,calc(92 * var(--vh, 1vh)))}
+.dw .win.car{width:min(470px,calc(96 * var(--vw, 1vw)));height:auto;max-height:min(700px,calc(94 * var(--vh, 1vh)));grid-template-rows:46px minmax(0,1fr) auto}
 .dw .carac2{padding:8px 12px 10px;overflow:auto;display:grid;gap:6px;align-content:start}
 .dw .clv{display:flex;gap:10px;align-items:center;font-weight:600;font-size:14px;color:#f4efe0;padding:2px 4px}
 .dw .clv .cxp{flex:1;height:8px;background:#111;border:1px solid #000;border-radius:4px;overflow:hidden}.dw .clv .cxp i{display:block;height:100%;background:linear-gradient(#c9f04c,#7fb81e)}
@@ -301,7 +302,7 @@ const CSS = `
 .dw .slot:hover{border-color:#b9e54b}
 .dw .stage{position:relative;display:grid;place-items:end center;min-height:0}
 .dw .stage .socle{position:absolute;bottom:40px;width:250px;max-width:100%;filter:drop-shadow(0 8px 10px #0008)}
-.dw .stage .who{position:relative;bottom:118px;height:min(270px,40vh);max-width:100%;object-fit:contain}
+.dw .stage .who{position:relative;bottom:118px;height:min(270px,calc(40 * var(--vh, 1vh)));max-width:100%;object-fit:contain}
 .dw .stage .lv{position:absolute;top:2px;left:0;right:0;text-align:center;font-weight:bold;color:#f4efe0;text-shadow:0 1px 3px #000}
 .dw .dofus{display:flex;justify-content:center;gap:10px;padding:12px 14px 16px;z-index:1}
 .dw .dofus .slot{width:54px;height:54px;opacity:.85}
@@ -325,8 +326,8 @@ const CSS = `
 .dw .cell.up::after{content:'';position:absolute;right:4px;top:4px;border:5px solid transparent;border-bottom:7px solid #7be07b;border-top:0}
 .dw .cell.low{opacity:.5}
 .dw .cell .cad{position:absolute;right:3px;top:3px;width:16px;height:19px;filter:drop-shadow(0 1px 1px #000)}
-.dw .win.emp{width:min(760px,96vw);height:min(640px,92vh)}
-.dw .win.boutique{width:min(1080px,96vw);height:min(720px,92vh)}
+.dw .win.emp{width:min(760px,calc(96 * var(--vw, 1vw)));height:min(640px,calc(92 * var(--vh, 1vh)))}
+.dw .win.boutique{width:min(1080px,calc(96 * var(--vw, 1vw)));height:min(720px,calc(92 * var(--vh, 1vh)))}
 .dw .bk{position:relative;display:grid;grid-template-rows:auto minmax(0,1fr);min-height:0;overflow:hidden}
 .dw .bk-haut{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid #0b0a07;background:#0003}
 .dw .bk-tabs{display:flex;gap:3px;flex-wrap:wrap}
@@ -392,9 +393,9 @@ const CSS = `
 .dw .bk-modale b{font:18px Rowdies,sans-serif;color:#f4efe0}.dw .bk-modale span{color:#c9c4ab}.dw .bk-modale>div>div{display:flex;gap:8px;justify-content:center}
 .dw .bk-modale .bk-btn.v{width:auto}
 .dw .prer{position:absolute;top:30px;left:0;right:0;z-index:2;display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;font-size:12px;color:#c9c2ad;text-shadow:0 1px 2px #000}.dw .prer .btn{min-width:30px;padding:3px 8px;text-align:center}.dw .prer .btn.vide{opacity:.55}.dw .prer small{color:#d6cfb8;flex-basis:100%;text-align:center}
-.dw .win.coffre{width:min(760px,96vw);height:min(680px,92vh)}
+.dw .win.coffre{width:min(760px,calc(96 * var(--vw, 1vw)));height:min(680px,calc(92 * var(--vh, 1vh)))}
 /* Zaap (maquette « Zaap : » 5A+5D) : la vraie fenêtre de Dofus 3 (Territoire / Région / Coordonnées / Niveau), groupée par zone */
-.dw .win.zaap{width:min(860px,96vw);height:min(620px,92vh)}
+.dw .win.zaap{width:min(860px,calc(96 * var(--vw, 1vw)));height:min(620px,calc(92 * var(--vh, 1vh)))}
 .dw .in.zaap{display:grid;grid-template-rows:auto auto 1fr;gap:6px;padding:12px 16px 14px;min-height:0}
 .dw .zaap .zt,.dw .zaap .zl{display:grid;grid-template-columns:2.2fr 1.6fr 1.1fr .6fr;gap:8px;align-items:center}
 .dw .zaap .zt{padding:6px 16px 2px 46px;color:#c9bfa8;font-size:14px}
@@ -463,7 +464,7 @@ const CSS = `
 .dw .pfo{position:absolute;top:2px;left:3px;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:9px solid #f08a2c;filter:drop-shadow(0 0 2px #f08a2c);pointer-events:none}
 .dw .tip .up{color:#7be07b}.dw .tip .down{color:#e0625a}.dw .tip .ex{color:#6fb2e8}.dw .tip .leg{color:#f08a2c;margin-top:4px}.dw .tip .leg.off{color:#8a7f70}.dw .tip .leg.off i{font-style:normal;color:#a89c88}
 .dw .tip .set{color:#9ad15a;margin-top:6px;font-size:12px}.dw .tip .sig{color:#e6b85c;margin-top:6px;font-style:italic;font-size:12px}.dw .tip .hint{color:#7f7a64;font-size:11px;margin-top:6px}
-.dw .win.opt{width:min(1000px,96vw);height:min(720px,92vh)}
+.dw .win.opt{width:min(1000px,calc(96 * var(--vw, 1vw)));height:min(720px,calc(92 * var(--vh, 1vh)))}
 .dw .opt .ob{display:grid;grid-template-columns:270px minmax(0,1fr);min-height:0}
 .dw .opt .nav{background:#2a2823;border-right:1px solid #0d0c0a;display:grid;grid-template-rows:auto 1fr auto;min-height:0}
 .dw .opt .nav input{margin:10px;width:calc(100% - 20px);box-sizing:border-box;padding:7px 9px;background:#1d1c19;border:1px solid #4a4840;border-radius:3px;color:#e8e2cc;font:inherit}
@@ -495,7 +496,7 @@ const CSS = `
 .dw .opt .keys{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;font-size:13px;color:#d8d2bf}
 .dw .opt .keys b{color:#f4efe0;font-family:monospace;font-size:12.5px;background:#1d1c19;border:1px solid #4a4840;border-radius:3px;padding:1px 6px;justify-self:start}
 .dw .opt .vide{color:#a9a390;font-style:italic;padding:20px}
-.dw .win.sorts{width:min(900px,96vw);height:min(680px,92vh)}
+.dw .win.sorts{width:min(900px,calc(96 * var(--vw, 1vw)));height:min(680px,calc(92 * var(--vh, 1vh)))}
 .dw .sorts .sb{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;min-height:0}
 .dw .sorts .ls{overflow:auto;padding:10px;border-right:1px solid #0d0c0a;background:#292824;display:grid;gap:5px;align-content:start}
 .dw .sorts .pr{display:grid;grid-template-columns:1fr 16px 1fr;gap:4px;align-items:center}
@@ -561,7 +562,7 @@ const CSS = `
 .dw .tip .acc{display:block;color:#f4efe0;margin-bottom:2px}
 .dw .tip .court{color:#d8d2bc;font-size:12.5px}
 .dw .tip .long{display:none}.dw.maj-tip .tip .long{display:block;margin-top:5px}.dw.maj-tip .tip .court-seul{display:none}
-.dw .win.job{width:min(940px,96vw);height:min(680px,92vh)}
+.dw .win.job{width:min(940px,calc(96 * var(--vw, 1vw)));height:min(680px,calc(92 * var(--vh, 1vh)))}
 /* Métiers UI (2026-11-07) : fenêtre Métiers (J) et fenêtre Artisanat, pièces officielles de Dofus 3 */
 .dw .jb{display:grid;grid-template-columns:230px minmax(0,1fr);min-height:0}
 .dw .jl{background:#0000002e;border-right:1px solid #0b0a07;padding:10px 8px;display:grid;gap:4px;align-content:start;overflow:auto}
@@ -603,7 +604,7 @@ const CSS = `
 .dw .tip .ou{border-top:1px solid #3a3a2c;margin-top:6px;padding-top:6px;font-size:12px;display:grid;gap:2px}
 .dw .tip .ou .hd{color:#a9a48b;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
 .dw .tip .ok{color:#9ad15a}.dw .tip .ko{color:#e0625a}
-.dw .win.art{width:min(980px,96vw);height:min(700px,92vh)}
+.dw .win.art{width:min(980px,calc(96 * var(--vw, 1vw)));height:min(700px,calc(92 * var(--vh, 1vh)))}
 .dw .ab{display:grid;grid-template-columns:300px minmax(0,1fr);min-height:0}
 .dw .livre{background:#0000002e;border-right:1px solid #0b0a07;padding:10px;display:grid;grid-template-rows:auto auto 1fr;gap:6px;min-height:0}
 .dw .als{overflow:auto;display:grid;gap:2px;align-content:start}
@@ -658,7 +659,7 @@ const CSS = `
 .dw .tip .cmp{border-top:1px solid #3a3a2c;margin-top:6px;padding-top:6px;font-size:12px}
 .dw .tip .xpf{height:5px;background:#2a2620;border-radius:3px;margin:3px 0 5px;overflow:hidden}.dw .tip .xpf i{display:block;height:100%;background:#6fb2e8}
 
-.dw .win.quetes,.dw .win.succes{width:min(900px,96vw);height:min(660px,92vh)}
+.dw .win.quetes,.dw .win.succes{width:min(900px,calc(96 * var(--vw, 1vw)));height:min(660px,calc(92 * var(--vh, 1vh)))}
 .dw .carnet{display:grid;grid-template-columns:repeat(auto-fill,minmax(122px,1fr));gap:8px;margin-bottom:10px}
 .dw .carnet .pg{background:#e9dcbc;color:#3b2b14;border-radius:4px;padding:9px 7px 7px;display:grid;gap:3px;justify-items:center;text-align:center;min-height:132px;box-shadow:inset 0 0 0 1px #c9b386}
 .dw .carnet .pg b{font-size:12.5px;line-height:1.2}
@@ -667,7 +668,7 @@ const CSS = `
 .dw .carnet .pg.vide .tp{border:2px dashed #b9a57c;color:#b9a57c;transform:none}
 .dw .carnet .pg.bientot{opacity:.55}
 .dw .carnet .pg.bientot .tp{border:2px dashed #a0937a;color:#8a7d62;transform:none;font-size:9px}
-.dw .win.bestiaire{width:min(980px,96vw);height:min(700px,92vh)}
+.dw .win.bestiaire{width:min(980px,calc(96 * var(--vw, 1vw)));height:min(700px,calc(92 * var(--vh, 1vh)))}
 .dw .bes{display:grid;grid-template-columns:minmax(0,250px) minmax(0,1fr);min-height:0}
 .dw .bes .bl{overflow:auto;padding:10px;border-right:1px solid #0d0c0a;background:#292824;display:grid;gap:3px;align-content:start}
 .dw .bes .bh{color:#c9a55a;font-size:11px;text-transform:uppercase;letter-spacing:.06em;margin:8px 2px 2px;line-height:1.3}
@@ -868,7 +869,7 @@ const CSS = `
 .dw .opt .row input[type=range]{-webkit-appearance:none;appearance:none;height:8px;border-radius:4px;background:linear-gradient(90deg,#8fae3a,#b9e54b) 0/var(--v,50%) 100% no-repeat,#15140f;box-shadow:inset 0 1px 2px #000,0 0 0 1px #3d3b33;cursor:pointer}
 .dw .opt .row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:20px;border-radius:3px;background:linear-gradient(#e8ff8a,#9cc62a);border:1px solid #1e2a05;box-shadow:0 1px 3px #000}
 .dw .opt .row input[type=range]::-moz-range-thumb{width:12px;height:20px;border-radius:3px;background:linear-gradient(#e8ff8a,#9cc62a);border:1px solid #1e2a05}
-.dw .win{transform:translate(-50%,-50%) scale(var(--echelle,1))}
+.dw .win{transform:translate(-50%,-50%) scale(calc(var(--echelle,1) * var(--ajuste,1)))}
 .dw .opt .main{grid-template-columns:minmax(0,1fr);scroll-behavior:smooth}
 .dw .opt .row{grid-template-columns:minmax(0,1fr) minmax(140px,240px) 46px 18px}
 .dw .opt .row.ck{grid-template-columns:28px minmax(0,1fr) 18px}
@@ -1242,10 +1243,10 @@ export class Windows {
   toggle(mode: Mode = 'inv') { if (this.win && this.mode === mode) this.close(); else this.show(mode); }
   close(son = true) {
     if (this.win && son) Son.jouer(MANIFESTE.ui.fermer, 'interface', { cle: 'fenetre', ecart: 0.1 });   // 6B
-    this.win?.remove(); this.win = null; this.tip.style.display = 'none'; this.touchesVue = false; this.touchesEcoute = null;
+    this.win?.remove(); this.win = null; this.ajusteur?.disconnect(); this.ajusteur = null; this.tip.style.display = 'none'; this.touchesVue = false; this.touchesEcoute = null;
     this.root.style.zIndex = '';
   }
-  destroy() { this.root.remove(); window.removeEventListener('keydown', this.captureTouche, true);
+  destroy() { this.root.remove(); window.removeEventListener('keydown', this.captureTouche, true); window.removeEventListener('resize', this.surResize);
     window.removeEventListener('keydown', this.majTip); window.removeEventListener('keyup', this.majTip); window.removeEventListener('blur', this.majTip); this.finCoop(); this.finEnLigne(); clearInterval(this.minuteSocial); }
 
   show(mode: Mode = 'inv') {
@@ -1266,8 +1267,26 @@ export class Windows {
       else if (t.closest('.it,[data-c],[data-tab],.tab,.lien')) Son.jouer(MANIFESTE.ui.onglet, 'interface', { cle: 'clic', ecart: 0.05 });
     });
     this.win = w; this.root.appendChild(w);
+    this.ajuster();
     this.render();
+    // petit écran (AYN Thor, ~850×480 px CSS) : la fenêtre rétrécit pour tenir entière dans l'écran au lieu d'être coupée
+    this.ajusteur?.disconnect();
+    this.ajusteur = new ResizeObserver(() => this.ajuster()); this.ajusteur.observe(w);
     if (mode === 'hdv') this.hdv.ouvrir();
+  }
+  private ajusteur: ResizeObserver | null = null;
+  private surResize = (() => { const f = () => this.ajuster(); if (typeof window !== 'undefined') window.addEventListener('resize', f); return f; })();
+  /** Échelle qui fait tenir la fenêtre ouverte dans l'écran (1 = taille normale ; jamais plus grande, jamais sous 0,5). */
+  private ajuster() {
+    // les fenêtres se mettent en page comme sur un écran d'au moins 720 px de haut (--vw / --vh remplacent vw / vh), puis rétrécissent d'autant
+    const k = reculPetitEcran(), racine = document.documentElement.style;
+    if (k < 1) { racine.setProperty('--vw', `${(innerWidth / k / 100).toFixed(2)}px`); racine.setProperty('--vh', `${(innerHeight / k / 100).toFixed(2)}px`); }
+    else { racine.removeProperty('--vw'); racine.removeProperty('--vh'); }
+    const w = this.win; if (!w) return;
+    const e = Number(getComputedStyle(document.documentElement).getPropertyValue('--echelle')) || 1;
+    const ow = w.offsetWidth * e * k, oh = w.offsetHeight * e * k;
+    const a = ow && oh ? k * Math.max(0.5, Math.min(1, (innerWidth - 8) / ow, (innerHeight - 8) / oh)) : k;
+    w.style.setProperty('--ajuste', a < 0.999 ? a.toFixed(3) : '1');
   }
   /** Redessine si la fenêtre est ouverte (après un ramassage, un niveau...). */
   refresh() { if (this.win) this.render(); }

@@ -2217,6 +2217,7 @@
           {"titre": "Kerubim dès Incarnam", "phrase": "Kerubim Crépin tient boutique au Bastion des Douze dès le début, sans passer par Astrub.", "details": "Prends un Zaap d'Incarnam ou ton Havre-Sac (touche H) pour le rejoindre et défaire tes objets en trop.", "icone": "zaap", "etiquettes": ["Bastion des Douze", "Incarnam"]}
         ],
         "Corrections": [
+          "Petit écran (console, petit portable) : la caméra recule et les fenêtres tiennent entières dans l'écran.",
           "Le jeu se recharge tout seul au lancement quand une nouvelle version est en ligne.",
           "Une console tactile avec manette ne tombe plus sur l'écran « se joue sur PC » ; bouton « Jouer quand même ».",
           "Les 22 sorts du Sadida et 14 sorts de l'Écaflip ont enfin leurs effets visuels officiels.",
