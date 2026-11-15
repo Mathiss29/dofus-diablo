@@ -239,6 +239,11 @@ export type SimEvent =
   | { k: 'queteEtape'; id: string; etape: number }
   | { k: 'queteFin'; id: string; sautee: boolean }
   | { k: 'bulle'; pnj: string; texte: string }
+  /** Campagne (maquette Campagne) : chapitre suivant annoncé (2D), Sceau des Douze repris (10B), acte fini, élite de chapitre qui surgit (10A). */
+  | { k: 'campagneSuite'; id: string }
+  | { k: 'sceau'; n: number; id: string }
+  | { k: 'acteFini'; acte: string }
+  | { k: 'campagneBoss'; x: number; y: number; nom: string }
   | { k: 'objetQuete'; nom: string; n: number; sur: number }
   | { k: 'succes'; id: string }
   /** Récompense d'un succès récupérée dans la fenêtre Succès (menu des succès 5B). */

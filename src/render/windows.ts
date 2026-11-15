@@ -68,6 +68,7 @@ import { SOCIAL_CSS, rendreSocial, tickSocial } from './social';
 import { EnLigne } from './presence';
 import { Coop } from './coop';
 import { IDOLES_CSS, brancherIdoles, idolesHtml } from './idolesVue';
+import { CARNET_CSS, brancherCarnet, carnetHtml, type EtatCarnet } from './carnetFelures';
 import { TRESOR_CSS, objetTresor, signatureTresor, tresorHtml } from './tresorVue';
 import { ECLAT, FORGE_CSS, defaireHtml, etatForge, forgeHtml, lotConcasseur, mmss, pastillesFM, texteForge, type LigneLog } from './forgeVue';
 import type { SimEvent } from '../sim/events';
@@ -853,7 +854,7 @@ const CSS = `
 .dw .ttl b{font-weight:700}
 `;
 
-type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap' | 'bestiaire' | 'forge' | 'coffre' | 'almanax' | 'dofus' | 'menu' | 'social' | 'ladder' | 'tresor' | 'boutique' | 'idoles';
+type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap' | 'bestiaire' | 'forge' | 'coffre' | 'almanax' | 'dofus' | 'menu' | 'social' | 'ladder' | 'tresor' | 'boutique' | 'idoles' | 'campagne';
 
 /** Fenêtres façon Dofus 3 : « Inventaire » (le perso sur son socle, ses emplacements autour, le sac à onglets)
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
@@ -925,7 +926,7 @@ export class Windows {
   private forge = etatForge();
 
   constructor(private world: World) {
-    const style = document.createElement('style'); style.textContent = DOF_CSS + MENU_CSS + ALM_CSS + SOCIAL_CSS + CSS + ICON_CSS + BUTIN_CSS + FORGE_CSS + CODEX_CSS + LADDER_CSS + TRESOR_CSS + IDOLES_CSS; document.head.appendChild(style);
+    const style = document.createElement('style'); style.textContent = DOF_CSS + MENU_CSS + ALM_CSS + SOCIAL_CSS + CSS + ICON_CSS + BUTIN_CSS + FORGE_CSS + CODEX_CSS + LADDER_CSS + TRESOR_CSS + IDOLES_CSS + CARNET_CSS; document.head.appendChild(style);
     this.root = document.createElement('div'); this.root.className = 'dw'; document.body.appendChild(this.root);
     // « Tchat : » 6A : le mousedown garde le champ du tchat actif ; le clic qui suit ne fait rien d'autre (pas de cadenas)
     this.root.addEventListener('mousedown', e => {
@@ -952,6 +953,8 @@ export class Windows {
   private ctxSocial() { return { world: this.world, slot: this.socialSlot, test: this.socialTest, fermer: () => this.close(), refaire: () => this.refresh() }; }
   /** Enutrof (interface du coffre 2C) : bouton « Ouvrir » de la fenêtre du coffre, branché par la scène sur la touche du coffre. */
   onOuvrirTresor: () => void = () => {};
+  /** Carnet des Fêlures : « Voir sur la carte » (la carte M s'ouvre sur le but du chapitre). */
+  onCarteQuete: () => void = () => {};
   private tresorSig = '';
   private tresorGlisse = false;
   /** À chaque image : la fenêtre du coffre se redessine quand ce qu'elle montre change (pas pendant un glisser-déposer). */
@@ -1113,6 +1116,14 @@ export class Windows {
     this.idolesMsg = '';
     brancherIdoles(w, this.world, msg => { this.idolesMsg = msg ?? ''; this.changed(); });
   }
+  /** Le Carnet des Fêlures (maquette Campagne 1A, touche W). */
+  private carnetVue: EtatCarnet = { acte: null, confirmer: null };
+  private renderCampagne() {
+    const w = this.win!, Q = this.world.quetes;
+    if (!Q?.campagneOuverte) { this.close(false); return; }
+    w.innerHTML = carnetHtml(this.world, this.title('Le Carnet des Fêlures', 'campagne'), this.carnetVue);
+    brancherCarnet(w, this.world, this.carnetVue, () => this.changed(), () => { this.close(false); this.onCarteQuete(); });
+  }
   private renderSocial() { rendreSocial(this.win!, this.title('Social', 'social'), this.ctxSocial()); }
   /** Classement (maquette « Ladder : » 1B) : centré sur le perso joué, ouvert sur « Autour de moi ». */
   private ladder = new VueLadder(true);
@@ -1169,7 +1180,7 @@ export class Windows {
     else if (this.mode === 'car') this.renderCarac(); else if (this.mode === 'job') this.renderJob(); else if (this.mode === 'art') this.renderArt(); else if (this.mode === 'opt') this.renderOpt();
     else if (this.mode === 'sorts') this.renderSorts(); else if (this.mode === 'quetes') this.renderQuetes();
     else if (this.mode === 'succes') this.renderSucces(); else if (this.mode === 'emp') this.renderEmp(); else if (this.mode === 'zaap') this.renderZaap();
-    else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else if (this.mode === 'forge') this.renderForge(); else if (this.mode === 'coffre') this.renderCoffre(); else if (this.mode === 'almanax') this.renderAlmanax(); else if (this.mode === 'dofus') this.renderDofus(); else if (this.mode === 'menu') this.renderMenu(); else if (this.mode === 'social') this.renderSocial(); else if (this.mode === 'ladder') this.renderLadder(); else if (this.mode === 'tresor') this.renderTresor(); else if (this.mode === 'boutique') this.renderBoutique(); else if (this.mode === 'idoles') this.renderIdoles(); else this.renderInv();
+    else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else if (this.mode === 'forge') this.renderForge(); else if (this.mode === 'coffre') this.renderCoffre(); else if (this.mode === 'almanax') this.renderAlmanax(); else if (this.mode === 'dofus') this.renderDofus(); else if (this.mode === 'menu') this.renderMenu(); else if (this.mode === 'social') this.renderSocial(); else if (this.mode === 'ladder') this.renderLadder(); else if (this.mode === 'tresor') this.renderTresor(); else if (this.mode === 'boutique') this.renderBoutique(); else if (this.mode === 'idoles') this.renderIdoles(); else if (this.mode === 'campagne') this.renderCampagne(); else this.renderInv();
     this.win!.querySelector('[data-close]')!.addEventListener('click', () => this.close());
     this.imageVivant = -1; this.majPerso(this.tVivant);   // perso dessiné dès cette image (pas un canevas vide jusqu'à la suivante)
   }
@@ -1716,7 +1727,7 @@ export class Windows {
     const w = this.win!, Q = this.world.quetes!, QI = 'assets/ui/quetes';
     const icon = (id: string, rendre = false) => {
       const t = Q.def(id).type, m: Record<string, [string, string]> = { tutoriel: ['questInitiation', 'questObjective'], principale: ['questPrincipale', 'questPrincipaleObjective'],
-        secondaire: ['quest', 'questObjective'], prime: ['questRepeatable', 'questRepeatableObjective'], evenement: ['questEvent', 'questObjective'] };
+        secondaire: ['quest', 'questObjective'], prime: ['questRepeatable', 'questRepeatableObjective'], evenement: ['questEvent', 'questObjective'], campagne: ['questPrincipale', 'questPrincipaleObjective'] };
       return `${QI}/${m[t][rendre ? 1 : 0]}.png`;
     };
     const ids = Q.enCours.map(c => c.id), fin = [...Q.finies].filter(id => Q.existe(id));
@@ -1724,7 +1735,7 @@ export class Windows {
     const item = (id: string, done: boolean) => {
       const q = Q.def(id), c = Q.enCours.find(x => x.id === id);
       return `<div class="qi ${this.queteVue === id ? 'on' : ''} ${done ? 'fin' : ''}" data-q="${id}"><img src="${icon(id, !!c?.aRendre)}" alt="">
-        <div>${q.nom}<br><small>${q.serie ?? ({ tutoriel: 'Tutoriel', principale: 'Quête principale', secondaire: 'Quête', prime: 'Prime', evenement: 'Événement' })[q.type]} · niv. ${q.niveau}</small></div>
+        <div>${q.nom}<br><small>${q.serie ?? ({ tutoriel: 'Tutoriel', principale: 'Quête principale', secondaire: 'Quête', prime: 'Prime', evenement: 'Événement', campagne: 'Campagne' })[q.type]} · niv. ${q.niveau}</small></div>
         ${Q.suivie === id ? '<span class="pin" title="Quête suivie">◆</span>' : ''}</div>`;
     };
     let det = '<div class="hint">Aucune quête. Les PNJ avec une icône verte au-dessus de la tête en ont une à te confier.</div>';

@@ -281,6 +281,8 @@ export class Player extends Entity {
   v04 = false;
   /** 0.6 visible (partie de test tant que V06_PUBLIC est faux). */
   v06 = false;
+  /** Campagne « Le Carnet des Fêlures » visible (partie de test tant que CAMPAGNE_PUBLIC est faux). */
+  campagne = false;
   /** Sorts 61-90 (Iop, Crâ, Osamodas, Sacrieur) : effets en cours lancés par ce perso (src/sim/sorts61.ts). */
   e61: Etat61 | null = null;
   /** 0.6 (6D) : cartes où ce perso a déjà vaincu un groupe, par zone ; la première fois sur une carte, +50 % d'XP. */

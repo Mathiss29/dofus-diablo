@@ -24,6 +24,7 @@ import { AreneView } from './areneView';
 import { BrumeNuit } from './brume';
 import { GuerreView } from './guerreView';
 import { GUERRE } from '../sim/guerre';
+import { SCEAUX } from '../sim/campagne';
 import { chrono } from '../sim/quests';
 import type { PointDeRetour, RetourHavreSac, SimEvent } from '../sim/events';
 import { DialogueView } from './dialogueView';
@@ -459,6 +460,7 @@ export class ZoneScene extends Phaser.Scene {
     this.windows.vaincus = () => this.bestiaire; this.windows.toutVoir = !!this.test;
     this.windows.onZaap = i => { this.zaapChoix = i; };
     this.windows.onOuvrirTresor = () => { this.coffreDemande = true; };   // Enutrof (interface du coffre 2C)
+    this.windows.onCarteQuete = () => { if (this.carte?.dispo) this.carte.montrerQuete(); };   // Carnet des Fêlures : voir le chapitre sur la carte
     this.windows.onCarte = m => { if (this.carte?.dispo) this.carte.montrer(m); };   // Métiers UI 8B, 11B : où trouver une ressource
     this.windows.portrait = v(`${ASSETS}/ui/perso_${this.classId}${this.perso?.sexe === 'f' ? '_f' : ''}.png`);
     // perso dessiné en direct dans l'inventaire, l'aperçu des apparats et la garde-robe (Apparence 5A, 6B)
@@ -539,6 +541,7 @@ export class ZoneScene extends Phaser.Scene {
       else if (name === 'Sorts') this.windows!.toggle('sorts');
       else if (name === 'Quêtes' && this.world.quetes) this.windows!.toggle('quetes');
       else if (name === 'Succès' && this.world.quetes) this.windows!.toggle('succes');
+      else if (name === 'Carnet des Fêlures' && this.world.quetes?.campagneOuverte) this.windows!.toggle('campagne');
       else if (name === 'Carte du monde') this.basculerCarte();
       else if (name === 'Bestiaire') this.windows!.toggle('bestiaire');
       else this.hud.toast(`${name} : arrive dans une prochaine version`);
@@ -1117,6 +1120,7 @@ export class ZoneScene extends Phaser.Scene {
       case 'metiers': w?.toggle('job'); break;
       case 'bestiaire': w?.toggle('bestiaire'); break;
       case 'succes': if (this.world.quetes) w?.toggle('succes'); break;
+      case 'campagne': if (this.world.quetes?.campagneOuverte) w?.toggle('campagne'); break;
       case 'dofus': if (p.v03) w?.toggle('dofus'); break;
       case 'guide': w?.toggle('guide'); break;
       case 'social': w?.toggle('social'); break;
@@ -1606,13 +1610,14 @@ export class ZoneScene extends Phaser.Scene {
         case 'enterLieu': if (!this.vitrine) this.hud.zoneBanner(e.name, e.region, e.level, this.decouvrir(e.name)); break;
         case 'queteDebut': {
           const q = this.world.quetes!.def(e.id);
-          if (q.type !== 'tutoriel') this.hud.toast(`Nouvelle quête : ${q.nom}`);
+          if (q.type === 'campagne') this.hud.toast(`Campagne · ${q.serie ?? ''} : ${q.nom}`, 2400);
+          else if (q.type !== 'tutoriel') this.hud.toast(`Nouvelle quête : ${q.nom}`);
           this.windows?.refresh(); break;
         }
         case 'queteEtape': this.windows?.refresh(); break;
         case 'queteFin': {
           const q = this.world.quetes!.def(e.id);
-          if (!e.sautee) this.hud.banner(`Quête terminée\n${q.nom}`, 1600);
+          if (!e.sautee) this.hud.banner(`${q.type === 'campagne' ? 'Chapitre terminé' : 'Quête terminée'}\n${q.nom}`, 1600);
           if (q.type === 'tutoriel' && !this.test) sauverCompte(this.world, 1);   // partie de test : rien ne compte (10A)
           // fin du tutoriel (idée B) : plus aucune quête de tutoriel en cours un instant après, on invite au Discord
           if (q.type === 'tutoriel' && !e.sautee && !this.test) this.time.delayedCall(2500, () => {
@@ -1621,6 +1626,20 @@ export class ZoneScene extends Phaser.Scene {
           });
           this.windows?.refresh(); break;
         }
+        // Campagne « Le Carnet des Fêlures »
+        case 'campagneSuite': {   // 2D : le chapitre suivant est annoncé, après le bandeau de fin
+          const q = this.world.quetes?.def(e.id); if (!q) break;
+          const o = this.world.quetes!.etapes(e.id)[0]?.objectifs[0]?.texte;
+          this.time.delayedCall(1900, () => this.hud.plaque(`Chapitre suivant : ${q.nom}${o ? `\n${o}` : ''}`, 3600));
+          break;
+        }
+        case 'sceau': this.time.delayedCall(400, () => this.hud.sceau(e.n, SCEAUX)); this.windows?.refresh(); break;   // 10B
+        case 'acteFini': {
+          const a = this.world.quetes?.actes.find(x => x.id === e.acte); if (!a) break;
+          this.time.delayedCall(e.acte === 'prologue' ? 0 : 3200, () => this.hud.banner(`${a.nom} terminé${a.titre ? `\nTitre : ${a.titre}` : ''}`, 2400));
+          break;
+        }
+        case 'campagneBoss': this.sceneBoss(e.x, e.y, e.nom); break;   // 10A
         case 'queteInfo': this.hud.toast(e.texte); break;
         case 'sacQuete': { const it = ITEMS.equipment[e.id]; if (it) this.hud.loot(`Sac de quête : ${it.name}`, RARITY_COLORS[e.rarity]); break; }
         case 'objetQuete': this.hud.loot(`${e.nom}  ${e.n}/${e.sur}`, '#9ad15a'); break;
@@ -1900,6 +1919,20 @@ export class ZoneScene extends Phaser.Scene {
   private lookDe(e: Entity): Look {
     if (e instanceof Player) return LOOKS.iop;   // allié (multi) : dessiné par son assemblage, la planche ne sert qu'aux mesures
     return e instanceof Bete ? LOOKS[e.look] ?? LOOKS.osa_tofu : LOOKS[GAME_DATA.monsters[(e as { type?: string }).type!].look];
+  }
+  /** Campagne 10A : la caméra glisse vers l'élite du chapitre, montre son nom, puis revient sur le perso. */
+  private sceneBoss(x: number, y: number, nom: string) {
+    if (this.vitrine) return;
+    const cam = this.cameras.main, s = ISO.toScreen(x, y);
+    cam.stopFollow();
+    cam.pan(s.x, s.y - 30, 600, 'Sine.easeInOut');
+    this.hud.banner(nom, 1500);
+    this.time.delayedCall(1700, () => {
+      const pv = this.viewOf(this.world.player).sprite;
+      cam.pan(pv.x, pv.y - 30, 450, 'Sine.easeInOut', true, (_c: Phaser.Cameras.Scene2D.Camera, t: number) => {
+        if (t >= 1) cam.startFollow(this.viewOf(this.world.player).sprite, true, 0.12, 0.12, 0, 30);
+      });
+    });
   }
   private viewOf(e: Entity): EntityView {
     let v = this.views.get(e.id);

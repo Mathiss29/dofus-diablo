@@ -14,7 +14,7 @@ import { jouerMain } from './ecaflip';
 import { ajouterPieces, CLE_COFFRE, enSurcharge, ouvrirCoffre, piecesMonstre, piecesObjet, seuilsCoffre } from './enutrof';
 import { briser, chanceRune, coutKamas, coutRelance, orbeConvient, potionConvient, POTIONS, regenerer, relancerLigne, REGLES_V2, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
 import { chocNoa, mortSorts06, pasMonstre06 } from './sorts06';
-import { V03_PUBLIC, V04_PUBLIC, V06_PUBLIC, niveauObjetsMax, slotAPouvoirConnu } from './pouvoirs';
+import { CAMPAGNE_PUBLIC, V03_PUBLIC, V04_PUBLIC, V06_PUBLIC, niveauObjetsMax, slotAPouvoirConnu } from './pouvoirs';
 import { fxImpression, imprimable, nouveauPourCodex, prixImpression } from './codex';
 import { legendaryPower, FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, kamasDefaire, noteObjet, rollItem, STAT_NAMES, type EquipSlot, type Item, type ItemDef, type ItemsData, type Rarity, type RecipeDef, type Stat } from './items';
 import { Player } from './player';
@@ -439,6 +439,7 @@ export class World {
     this.player.v03 = V03_PUBLIC || !!opts.test;
     this.player.v04 = V04_PUBLIC || !!opts.test;
     this.player.v06 = V06_PUBLIC || !!opts.test;
+    this.player.campagne = CAMPAGNE_PUBLIC || !!opts.test;
     if (opts.items) {
       this.player.items = opts.items;
       // équipement aléatoire : objets officiels des monstres de la zone (butin + fabrication), sinon de tout le jeu (Mathis 2026-11-09)
@@ -480,7 +481,7 @@ export class World {
     if (!cls) throw new Error(`Classe inconnue : ${classId}`);
     const h = this.players[0], n = this.players.length, f = this.map.nearestFree(h.x + h.radius * 3 * (n % 2 ? 1 : -1) * Math.ceil(n / 2), h.y + h.radius * 2 * (n - 1));
     const q = new Player(this.nextId++, f.x, f.y, cls);
-    q.v03 = h.v03; q.v04 = h.v04; q.v06 = h.v06;
+    q.v03 = h.v03; q.v04 = h.v04; q.v06 = h.v06; q.campagne = h.campagne;
     q.monde.checkpoint = { ...h.monde.checkpoint }; q.monde.checkpointName = h.monde.checkpointName; q.monde.avant = { x: q.x, y: q.y };
     if (this.opts.items) q.items = this.opts.items;
     this.players.push(q);
@@ -889,7 +890,7 @@ export class World {
   /** « Wabbits : 2C » : traversée payante à l'aller (bateau du Capitaine Lily), gratuite au retour. Vrai si on peut passer. */
   private payerTraversee(po: World['portes'][number]): boolean {
     const p = this.player;
-    if (po.quete && p.v06 && this.quetes && !this.quetes.finies.has(po.quete)) {
+    if (po.quete && p.v06 && this.quetes && !this.quetes.ouvert(po.quete)) {
       const nom = this.opts.quetes?.quetes[po.quete]?.nom ?? 'une quête';
       this.emit({ k: 'status', x: p.x, y: p.y - 60, text: `Il faut d'abord finir « ${nom} »`, color: '#ff9a5a' });
       return false;

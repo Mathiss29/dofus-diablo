@@ -17,6 +17,7 @@ const FUN_PAUSE: [number, number] = [5, 12], FPS = 25;
 export const QUEST_ICON: Record<QueteType, [string, string]> = {
   tutoriel: ['questInitiation', 'questObjective'], principale: ['questPrincipale', 'questPrincipaleObjective'],
   secondaire: ['quest', 'questObjective'], prime: ['questRepeatable', 'questRepeatableObjective'], evenement: ['questEvent', 'questObjective'],
+  campagne: ['questPrincipale', 'questPrincipaleObjective'],   // campagne : l'icône dorée officielle des quêtes principales
 };
 const STYLE = { fontFamily: 'Lexend, Verdana, sans-serif' };
 

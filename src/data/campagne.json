@@ -1,0 +1,2497 @@
+{
+ "actes": [
+  {
+   "id": "prologue",
+   "nom": "Prologue",
+   "region": "Incarnam",
+   "niveaux": [
+    1,
+    3
+   ],
+   "guide": "lykhen",
+   "resume": "Au sortir du Temple Céleste, une fêlure rouge traverse le ciel d'Incarnam. Fécaline la Sage sait ce qu'elle annonce.",
+   "chapitres": [
+    "cmp_p1",
+    "cmp_p2"
+   ]
+  },
+  {
+   "id": "incarnam",
+   "nom": "Acte I",
+   "region": "Incarnam",
+   "niveaux": [
+    3,
+    12
+   ],
+   "guide": "fecaline",
+   "resume": "La fêlure a laissé tomber des éclats sur l'île. Ils rendent les esprits fous. Le plus gros est tombé dans la Crypte de Kardorim.",
+   "chapitres": [
+    "cmp_i1",
+    "cmp_i2",
+    "cmp_i3",
+    "cmp_i4",
+    "cmp_i5",
+    "cmp_i6",
+    "cmp_i7",
+    "cmp_i8",
+    "cmp_i9"
+   ],
+   "sac": "rare",
+   "titre": "Gardien des nuages"
+  },
+  {
+   "id": "astrub",
+   "nom": "Acte II",
+   "region": "Astrub",
+   "niveaux": [
+    12,
+    40
+   ],
+   "guide": "cindy",
+   "resume": "La Milice d'Astrub croule sous les Vilinsekts. Leur chef, Kankreblath, a trouvé un éclat rouge et s'en sert pour piller la Cité.",
+   "chapitres": [
+    "cmp_a1",
+    "cmp_a2",
+    "cmp_a3",
+    "cmp_a4",
+    "cmp_a5",
+    "cmp_a6",
+    "cmp_a7",
+    "cmp_a8",
+    "cmp_a9",
+    "cmp_a10"
+   ],
+   "sac": "epique",
+   "titre": "Fléau des Vilinsekts"
+  },
+  {
+   "id": "amakna",
+   "nom": "Acte III",
+   "region": "Amakna",
+   "niveaux": [
+    30,
+    62
+   ],
+   "guide": "bailli",
+   "resume": "Le Royaume d'Amakna perd la tête : Tofus, Gobelins, Bworks, tout le monde s'agite. Au sommet des Pitons Rocheux, le Craqueleur Légendaire garde le troisième éclat.",
+   "chapitres": [
+    "cmp_m1",
+    "cmp_m2",
+    "cmp_m3",
+    "cmp_m4",
+    "cmp_m5",
+    "cmp_m6",
+    "cmp_m7",
+    "cmp_m8",
+    "cmp_m9",
+    "cmp_m10"
+   ],
+   "sac": "legendaire",
+   "titre": "Émissaire du Royaume"
+  },
+  {
+   "id": "wabbits",
+   "nom": "Île",
+   "region": "Île des Wabbits",
+   "niveaux": [
+    40,
+    60
+   ],
+   "guide": "lily",
+   "resume": "Le Capitaine Lily a vu les Wabbits creuser vers quelque chose qui brille. Le Wa Wabbit en a fait sa couronne.",
+   "chapitres": [
+    "cmp_w1",
+    "cmp_w2",
+    "cmp_w3",
+    "cmp_w4",
+    "cmp_w5",
+    "cmp_w6"
+   ],
+   "sac": "epique",
+   "titre": "Ami des Wabbits"
+  },
+  {
+   "id": "moon",
+   "nom": "Île",
+   "region": "Moon et Cania",
+   "niveaux": [
+    40,
+    60
+   ],
+   "guide": "garde_chateau2",
+   "resume": "Un navire de la Baie de Cania s'est échoué sur Moon. Les Kanniboul ont gardé la cargaison, et ce qu'elle transportait.",
+   "chapitres": [
+    "cmp_n1",
+    "cmp_n2",
+    "cmp_n3",
+    "cmp_n4",
+    "cmp_n5",
+    "cmp_n6",
+    "cmp_n7"
+   ],
+   "sac": "epique",
+   "titre": "Naufrageur de Moon"
+  },
+  {
+   "id": "continent",
+   "nom": "Acte IV",
+   "region": "Le continent sauvage",
+   "niveaux": [
+    60,
+    100
+   ],
+   "guide": "tableau_cania",
+   "resume": "Les fêlures se multiplient : les Blops, Draegnerys, la Reine Nyée, l'Abraknyde Ancestral et le Dragon Cochon ont chacun leur éclat.",
+   "chapitres": [
+    "cmp_c1",
+    "cmp_c2",
+    "cmp_c3",
+    "cmp_c4",
+    "cmp_c5",
+    "cmp_c6",
+    "cmp_c7",
+    "cmp_c8",
+    "cmp_c9",
+    "cmp_c10"
+   ],
+   "sac": "legendaire",
+   "titre": "Chasseur de Fêlures"
+  },
+  {
+   "id": "frigost",
+   "nom": "Acte V",
+   "region": "Frigost",
+   "niveaux": [
+    80,
+    200
+   ],
+   "guide": "marin_madrestam",
+   "resume": "Toutes les fêlures mènent au nord. Les deux derniers Sceaux sont sous la glace de Frigost. La suite de l'acte arrive avec Frigost.",
+   "chapitres": [
+    "cmp_f1",
+    "cmp_f2",
+    "cmp_f3",
+    "cmp_f4",
+    "cmp_f5"
+   ],
+   "sac": "epique",
+   "titre": "Briseur de glace"
+  }
+ ],
+ "quetes": {
+  "cmp_p1": {
+   "nom": "Un ciel qui se fend",
+   "type": "campagne",
+   "acte": "prologue",
+   "serie": "Prologue · Incarnam",
+   "pnj": "lykhen",
+   "niveau": 1,
+   "texte": "Tu viens de poser le pied sur Incarnam et le ciel se fend au-dessus du village. Lykhen n'a jamais vu ça. Fécaline, peut-être.",
+   "etapes": [
+    {
+     "nom": "Le trait rouge",
+     "bulle": "Tu as vu ça ? Un trait rouge, en plein ciel ! Fécaline la Sage saura ce que c'est. Sa maison est juste à côté.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Montrer le ciel à Fécaline la Sage",
+       "pnj": "fecaline"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 125,
+    "kamas": 25
+   },
+   "suivante": "cmp_p2"
+  },
+  "cmp_p2": {
+   "nom": "Le Carnet des Fêlures",
+   "type": "campagne",
+   "acte": "prologue",
+   "serie": "Prologue · Incarnam",
+   "pnj": "fecaline",
+   "niveau": 2,
+   "texte": "Fécaline a reconnu la fêlure : les Douze ont scellé les Enfers jadis, et leurs Sceaux se fendent. Elle te confie son carnet.",
+   "etapes": [
+    {
+     "nom": "Les Feux nerveux",
+     "bulle": "Ce trait, c'est une fêlure dans les Sceaux des Douze. Les esprits le sentent déjà : calme ceux de la Route des âmes.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 6 monstres : Route des âmes",
+       "n": 6,
+       "sousZone": 450
+      }
+     ],
+     "pnj": "fecaline"
+    },
+    {
+     "nom": "Le carnet",
+     "bulle": "Reviens me voir. J'ai quelque chose pour toi, un vieux carnet qui attendait quelqu'un comme toi.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Retourner voir Fécaline la Sage",
+       "pnj": "fecaline"
+      }
+     ],
+     "pnj": "fecaline"
+    }
+   ],
+   "recompense": {
+    "xp": 250,
+    "kamas": 50
+   },
+   "merci": "Voici le Carnet des Fêlures. Chaque Sceau repris s'y inscrit. Ouvre-le quand tu ne sais plus où aller.",
+   "suivante": "cmp_i1"
+  },
+  "cmp_i1": {
+   "nom": "Les esprits des Champs",
+   "type": "campagne",
+   "acte": "incarnam",
+   "serie": "Acte I · Incarnam",
+   "pnj": "anta_brok",
+   "niveau": 3,
+   "texte": "Anta Brok a vu un Tournesol Nébuleux grandir d'un coup, un éclat rouge planté dans la tige.",
+   "etapes": [
+    {
+     "nom": "Les Champs affolés",
+     "bulle": "Les esprits des Champs mordent tout ce qui passe. Fais-leur entendre raison, à ta façon.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 10 monstres : Champs",
+       "n": 10,
+       "sousZone": 444
+      },
+      {
+       "t": "elite",
+       "texte": "Vaincre Tournesol Nébuleux fêlé",
+       "monstre": "tournesol_nebuleux",
+       "carte": "-2_-5",
+       "pv": 3,
+       "nom": "Tournesol Nébuleux fêlé"
+      }
+     ],
+     "pnj": "anta_brok"
+    }
+   ],
+   "recompense": {
+    "xp": 375,
+    "kamas": 75
+   },
+   "suivante": "cmp_i2"
+  },
+  "cmp_i2": {
+   "nom": "Le troupeau affolé",
+   "type": "campagne",
+   "acte": "incarnam",
+   "serie": "Acte I · Incarnam",
+   "pnj": "fecaline",
+   "niveau": 4,
+   "texte": "Les Bouftous des Pâturages chargent tout ce qui bouge depuis la fêlure. Il faut tenir le pré le temps qu'ils se calment.",
+   "etapes": [
+    {
+     "nom": "Les Pâturages",
+     "bulle": "Les Bouftous nuageux foncent sur le moindre aventurier. Tiens bon au milieu du pré.",
+     "objectifs": [
+      {
+       "t": "defense",
+       "texte": "Tenir 45 secondes dans les Pâturages",
+       "carte": "2_-4",
+       "s": 45
+      },
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 8 monstres : Pâturages",
+       "n": 8,
+       "sousZone": 445
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 500,
+    "kamas": 100
+   },
+   "suivante": "cmp_i3"
+  },
+  "cmp_i3": {
+   "nom": "Ce qui dort sous le lac",
+   "type": "campagne",
+   "acte": "incarnam",
+   "serie": "Acte I · Incarnam",
+   "pnj": "fecaline",
+   "niveau": 5,
+   "texte": "Des éclats sont tombés dans le Lac. Les Gloots les avalent comme des bonbons, et ça ne leur réussit pas.",
+   "etapes": [
+    {
+     "nom": "Les éclats du Lac",
+     "bulle": "Les Gloots ont avalé des éclats. Récupère-les, avant qu'ils ne deviennent aussi gros qu'un Bouftou.",
+     "objectifs": [
+      {
+       "t": "ramasser",
+       "texte": "Récupérer 5 Éclats ternis (Lac)",
+       "objet": "Éclats ternis",
+       "n": 5,
+       "chance": 0.35,
+       "sousZone": 442
+      },
+      {
+       "t": "elite",
+       "texte": "Vaincre Plikplok gonflé",
+       "monstre": "plikplok",
+       "carte": "-1_0",
+       "pv": 3,
+       "nom": "Plikplok gonflé"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 625,
+    "kamas": 125
+   },
+   "suivante": "cmp_i4"
+  },
+  "cmp_i4": {
+   "nom": "La forêt qui gronde",
+   "type": "campagne",
+   "acte": "incarnam",
+   "serie": "Acte I · Incarnam",
+   "pnj": "fecaline",
+   "niveau": 6,
+   "texte": "La Forêt d'Incarnam gronde. Les Tigrimas ne dorment plus et les Ronronchons ont perdu leur ronron.",
+   "etapes": [
+    {
+     "nom": "Nettoyer la clairière",
+     "bulle": "Va vite : plus tu traînes, plus ils s'énervent. Vide la clairière avant qu'ils ne se regroupent.",
+     "objectifs": [
+      {
+       "t": "chrono",
+       "texte": "Vider la clairière en moins de 75 secondes",
+       "carte": "2_-1",
+       "s": 75
+      },
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 10 monstres : Forêt",
+       "n": 10,
+       "sousZone": 443
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 750,
+    "kamas": 150
+   },
+   "suivante": "cmp_i5"
+  },
+  "cmp_i5": {
+   "nom": "La Milice en alerte",
+   "type": "campagne",
+   "acte": "incarnam",
+   "serie": "Acte I · Incarnam",
+   "pnj": "fecaline",
+   "niveau": 7,
+   "texte": "Le Capitaine des Kerubims a vu les Chafers sortir du Cimetière en pleine journée. Ce n'est jamais bon signe.",
+   "etapes": [
+    {
+     "nom": "Au rapport",
+     "bulle": "Le Capitaine veut te voir. Il n'aime pas qu'on le fasse attendre, ni qu'on le fasse rire.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler à Capitaine des Kerubims",
+       "pnj": "capitaine"
+      }
+     ]
+    },
+    {
+     "nom": "Les Chafers dehors",
+     "bulle": "Les Chafers sortent du Cimetière. Renvoie-les à leur place, c'est-à-dire sous terre.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 12 monstres : Cimetière",
+       "n": 12,
+       "sousZone": 449
+      }
+     ],
+     "pnj": "capitaine"
+    }
+   ],
+   "recompense": {
+    "xp": 875,
+    "kamas": 175
+   },
+   "suivante": "cmp_i6"
+  },
+  "cmp_i6": {
+   "nom": "Vu des nuages",
+   "type": "campagne",
+   "acte": "incarnam",
+   "serie": "Acte I · Incarnam",
+   "pnj": "ternette",
+   "niveau": 8,
+   "texte": "Ternette Nhin connaît un point d'où l'on voit toute l'île. De là-haut, on peut suivre la trace rouge jusqu'à sa source.",
+   "etapes": [
+    {
+     "nom": "Le guetteur",
+     "bulle": "Ternette dit que la fêlure se voit mieux d'en haut. Va la trouver.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler à Ternette Nhin",
+       "pnj": "ternette"
+      }
+     ]
+    },
+    {
+     "nom": "Le belvédère",
+     "bulle": "Monte voir Marylork : elle passe ses journées le nez dans les nuages.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Rejoindre Marylork au belvédère",
+       "pnj": "marylork"
+      }
+     ],
+     "pnj": "ternette"
+    }
+   ],
+   "recompense": {
+    "xp": 1000,
+    "kamas": 200
+   },
+   "suivante": "cmp_i7"
+  },
+  "cmp_i7": {
+   "nom": "La Mine rouge",
+   "type": "campagne",
+   "acte": "incarnam",
+   "serie": "Acte I · Incarnam",
+   "pnj": "fecaline",
+   "niveau": 9,
+   "texte": "La trace rouge plonge dans la Mine. Les Aminites y creusent comme des forcenés, comme si quelque chose les appelait.",
+   "etapes": [
+    {
+     "nom": "Descendre",
+     "bulle": "Les Aminites creusent vers le bas. Suis-les et ramène ce qu'elles déterrent.",
+     "objectifs": [
+      {
+       "t": "aller",
+       "texte": "Aller : Mine",
+       "sousZone": 778
+      },
+      {
+       "t": "ramasser",
+       "texte": "Récupérer 6 Pierres rougies (Mine)",
+       "objet": "Pierres rougies",
+       "n": 6,
+       "chance": 0.4,
+       "sousZone": 778
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 1125,
+    "kamas": 225
+   },
+   "suivante": "cmp_i8"
+  },
+  "cmp_i8": {
+   "nom": "La crypte entrouverte",
+   "type": "campagne",
+   "acte": "incarnam",
+   "serie": "Acte I · Incarnam",
+   "pnj": "klasmor",
+   "niveau": 10,
+   "texte": "Klasmor le fossoyeur a entendu frapper sous les dalles de la crypte. De l'intérieur.",
+   "etapes": [
+    {
+     "nom": "Le fossoyeur",
+     "bulle": "Klasmor garde l'entrée de la Crypte de Kardorim. Il a des choses à te dire.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler à Klasmor le fossoyeur",
+       "pnj": "klasmor"
+      }
+     ]
+    },
+    {
+     "nom": "Les salles du bas",
+     "bulle": "Les Chafers de la crypte gardent le passage. Ouvre-toi la route.",
+     "objectifs": [
+      {
+       "t": "aller",
+       "texte": "Aller : Crypte de Kardorim",
+       "sousZone": 447
+      },
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 10 monstres : Crypte de Kardorim",
+       "n": 10,
+       "sousZone": 447
+      }
+     ],
+     "pnj": "klasmor"
+    }
+   ],
+   "recompense": {
+    "xp": 1250,
+    "kamas": 250
+   },
+   "suivante": "cmp_i9"
+  },
+  "cmp_i9": {
+   "nom": "Le premier Sceau",
+   "type": "campagne",
+   "acte": "incarnam",
+   "serie": "Acte I · Incarnam",
+   "pnj": "fecaline",
+   "niveau": 12,
+   "texte": "Kardorim serre dans ses os le premier éclat des Enfers. Reprends-le : c'est le premier Sceau des Douze.",
+   "etapes": [
+    {
+     "nom": "Kardorim",
+     "bulle": "Il est là, au fond. Il ne dort pas, il attend. Ne le fais pas attendre plus longtemps.",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Kardorim (Crypte de Kardorim)",
+       "donjon": "Crypte de Kardorim",
+       "boss": "Kardorim",
+       "niveau": 10,
+       "region": "Incarnam"
+      }
+     ],
+     "pnj": "klasmor"
+    },
+    {
+     "nom": "Le Sceau au carnet",
+     "bulle": "Rapporte l'éclat à Fécaline. Elle saura l'inscrire au carnet.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Rapporter l'éclat à Fécaline la Sage",
+       "pnj": "fecaline"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 3600,
+    "kamas": 300,
+    "sac": "rare",
+    "titre": "Gardien des nuages"
+   },
+   "sceau": 1,
+   "merci": "Le premier Sceau est repris. Mais la fêlure ne vient pas d'ici : elle descend vers Astrub. Va, et garde le carnet ouvert.",
+   "suivante": "cmp_a1"
+  },
+  "cmp_a1": {
+   "nom": "Les portes d'Astrub",
+   "type": "campagne",
+   "acte": "astrub",
+   "serie": "Acte II · Astrub",
+   "pnj": "cindy",
+   "niveau": 12,
+   "texte": "Fécaline t'envoie en bas, à Astrub. Là-bas, la Milice de Cindy Cah aura besoin de bras.",
+   "etapes": [
+    {
+     "nom": "Descendre à Astrub",
+     "bulle": "Prends le portail d'Incarnam et rejoins la Cité. Active le Zaap en arrivant : tu y reviendras souvent.",
+     "objectifs": [
+      {
+       "t": "aller",
+       "texte": "Arriver dans la Cité d'Astrub",
+       "sousZone": 95
+      },
+      {
+       "t": "activer",
+       "texte": "Activer le Zaap d'Astrub",
+       "zaap": "Zaap d'Astrub"
+      }
+     ],
+     "pnj": "fecaline"
+    },
+    {
+     "nom": "La Milice",
+     "bulle": "Cindy Cah tient la Milice près du Zaap. Présente-toi.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler à Cindy Cah",
+       "pnj": "cindy"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 1500,
+    "kamas": 300
+   },
+   "suivante": "cmp_a2"
+  },
+  "cmp_a2": {
+   "nom": "Les champs brûlés",
+   "type": "campagne",
+   "acte": "astrub",
+   "serie": "Acte II · Astrub",
+   "pnj": "cindy",
+   "niveau": 15,
+   "texte": "Un Épouvanteur a pris racine dans les Champs d'Astrub, un éclat rouge au cœur. Les fermiers n'osent plus sortir.",
+   "etapes": [
+    {
+     "nom": "Les Champs",
+     "bulle": "Les Champs sont au nord de la Cité. L'Épouvanteur fêlé fait fuir jusqu'aux corbeaux.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 15 monstres : Champs d'Astrub",
+       "n": 15,
+       "sousZone": 98
+      },
+      {
+       "t": "elite",
+       "texte": "Vaincre Épouvanteur fêlé",
+       "monstre": "epouvanteur",
+       "carte": "5_-26",
+       "pv": 3,
+       "nom": "Épouvanteur fêlé"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 1875,
+    "kamas": 375
+   },
+   "suivante": "cmp_a3"
+  },
+  "cmp_a3": {
+   "nom": "La grange affamée",
+   "type": "campagne",
+   "acte": "astrub",
+   "serie": "Acte II · Astrub",
+   "pnj": "mawy",
+   "niveau": 20,
+   "texte": "Mawy Ingalsse jure que son tournesol a doublé de taille en une nuit. Le Tournesol Affamé a avalé un éclat.",
+   "etapes": [
+    {
+     "nom": "Mawy",
+     "bulle": "Mawy garde la grange, de loin. Elle te dira où trouver une Clef des Champs.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler à Mawy Ingalsse",
+       "pnj": "mawy"
+      }
+     ]
+    },
+    {
+     "nom": "La grange",
+     "bulle": "Fais-lui recracher l'éclat. Il n'a jamais su mâcher.",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Tournesol Affamé (Grange du Tournesol Affamé)",
+       "donjon": "Grange du Tournesol Affamé",
+       "boss": "Tournesol Affamé",
+       "niveau": 20,
+       "region": "Astrub"
+      }
+     ],
+     "pnj": "mawy"
+    }
+   ],
+   "recompense": {
+    "xp": 2500,
+    "kamas": 500
+   },
+   "suivante": "cmp_a4"
+  },
+  "cmp_a4": {
+   "nom": "Les Bouftous de Tainéla",
+   "type": "campagne",
+   "acte": "astrub",
+   "serie": "Acte II · Astrub",
+   "pnj": "cindy",
+   "niveau": 22,
+   "texte": "Les Bouftous de Tainéla se sont donné un chef de guerre. Ce chef porte un éclat en guise de collier.",
+   "etapes": [
+    {
+     "nom": "Tainéla",
+     "bulle": "Tainéla est tout au nord. Le Chef de Guerre Bouftou ne charge jamais seul, alors ne t'y présente pas les mains vides.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 15 monstres : Tainéla",
+       "n": 15,
+       "sousZone": 30
+      },
+      {
+       "t": "elite",
+       "texte": "Vaincre Chef de Guerre fêlé",
+       "monstre": "chef_de_guerre_bouftou",
+       "carte": "0_-32",
+       "pv": 3,
+       "nom": "Chef de Guerre fêlé"
+      },
+      {
+       "t": "activer",
+       "texte": "Activer le Zaap de Tainéla",
+       "zaap": "Zaap de Tainéla"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 2750,
+    "kamas": 550
+   },
+   "suivante": "cmp_a5"
+  },
+  "cmp_a5": {
+   "nom": "Les prairies grouillantes",
+   "type": "campagne",
+   "acte": "astrub",
+   "serie": "Acte II · Astrub",
+   "pnj": "cindy",
+   "niveau": 24,
+   "texte": "Les Larves des Prairies pondent des œufs fêlés. Si on les laisse éclore, Astrub aura un sérieux problème de voisinage.",
+   "etapes": [
+    {
+     "nom": "Les œufs",
+     "bulle": "Récupère les œufs fêlés avant qu'ils n'éclosent, puis tiens la prairie le temps que la ponte se calme.",
+     "objectifs": [
+      {
+       "t": "ramasser",
+       "texte": "Récupérer 8 Œufs fêlés (Prairies d'Astrub)",
+       "objet": "Œufs fêlés",
+       "n": 8,
+       "chance": 0.35,
+       "sousZone": 173
+      },
+      {
+       "t": "defense",
+       "texte": "Tenir 60 secondes dans les Prairies",
+       "carte": "7_-11",
+       "s": 60
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 3000,
+    "kamas": 600
+   },
+   "suivante": "cmp_a6"
+  },
+  "cmp_a6": {
+   "nom": "La couronne de laine",
+   "type": "campagne",
+   "acte": "astrub",
+   "serie": "Acte II · Astrub",
+   "pnj": "rotabla",
+   "niveau": 30,
+   "texte": "Rotabla le berger a perdu son troupeau au profit d'un Bouftou couronné. La couronne brille d'un rouge qui ne lui va pas.",
+   "etapes": [
+    {
+     "nom": "Le berger",
+     "bulle": "Rotabla attend devant la Cour du Bouftou Royal. Il te faut sa clé, ou celle d'un marchand.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler à Rotabla le berger",
+       "pnj": "rotabla"
+      }
+     ]
+    },
+    {
+     "nom": "Le Royal",
+     "bulle": "Le Royal porte l'éclat sur sa couronne. Fais-la tomber.",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Bouftou Royal (Cour du Bouftou Royal)",
+       "donjon": "Cour du Bouftou Royal",
+       "boss": "Bouftou Royal",
+       "niveau": 30,
+       "region": "Astrub"
+      }
+     ],
+     "pnj": "rotabla"
+    }
+   ],
+   "recompense": {
+    "xp": 3750,
+    "kamas": 750
+   },
+   "suivante": "cmp_a7"
+  },
+  "cmp_a7": {
+   "nom": "Le Cimetière qui veille",
+   "type": "campagne",
+   "acte": "astrub",
+   "serie": "Acte II · Astrub",
+   "pnj": "becky",
+   "niveau": 30,
+   "texte": "Becky Gorr entend les gargouilles bouger la nuit au Cimetière d'Astrub. Elle ne dort plus beaucoup.",
+   "etapes": [
+    {
+     "nom": "Becky",
+     "bulle": "Becky Gorr garde le Cimetière. Elle a vu une Gargrouille aux yeux rouges.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler à Becky Gorr",
+       "pnj": "becky"
+      }
+     ]
+    },
+    {
+     "nom": "Les tombes",
+     "bulle": "Elle se cache parmi les tombes. Les autres veillent sur elle.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 15 monstres : Cimetière d'Astrub",
+       "n": 15,
+       "sousZone": 102
+      },
+      {
+       "t": "elite",
+       "texte": "Vaincre Gargrouille fêlée",
+       "monstre": "gargrouille",
+       "carte": "-1_-11",
+       "pv": 3,
+       "nom": "Gargrouille fêlée"
+      }
+     ],
+     "pnj": "becky"
+    }
+   ],
+   "recompense": {
+    "xp": 3750,
+    "kamas": 750
+   },
+   "suivante": "cmp_a8"
+  },
+  "cmp_a8": {
+   "nom": "La planque des Vilinsekts",
+   "type": "campagne",
+   "acte": "astrub",
+   "serie": "Acte II · Astrub",
+   "pnj": "cindy",
+   "niveau": 35,
+   "texte": "Les Vilinsekts volent partout dans la Cité. Ils mènent tous à la même planque, et à son chef.",
+   "etapes": [
+    {
+     "nom": "La planque",
+     "bulle": "Entre dans une Planque des Vilinsekts. Le chemin vers Kankreblath passe par là.",
+     "objectifs": [
+      {
+       "t": "aller",
+       "texte": "Aller : Planque des Vilinsekts",
+       "sousZone": 843
+      },
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 15 monstres : Planque des Vilinsekts",
+       "n": 15,
+       "sousZone": 843
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 4375,
+    "kamas": 875
+   },
+   "suivante": "cmp_a9"
+  },
+  "cmp_a9": {
+   "nom": "Le deuxième Sceau",
+   "type": "campagne",
+   "acte": "astrub",
+   "serie": "Acte II · Astrub",
+   "pnj": "cindy",
+   "niveau": 40,
+   "texte": "Kankreblath a caché l'éclat dans sa cache, sous le Grenier de Kerubim. Le Cloportier sait comment y entrer.",
+   "etapes": [
+    {
+     "nom": "Le Cloportier",
+     "bulle": "Le Cloportier garde le trou du Grenier. Un coup de Baguette Rikiki, et on y est.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler à Cloportier",
+       "pnj": "cloportier"
+      }
+     ]
+    },
+    {
+     "nom": "Kankreblath",
+     "bulle": "Kankreblath a l'éclat. Il ne le lâchera pas de lui-même.",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Kankreblath (Cache de Kankreblath)",
+       "donjon": "Cache de Kankreblath",
+       "boss": "Kankreblath",
+       "niveau": 40,
+       "region": "Astrub"
+      }
+     ],
+     "pnj": "cloportier"
+    },
+    {
+     "nom": "Au rapport",
+     "bulle": "Reviens me voir avec l'éclat. Doucement : il chauffe.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Rapporter l'éclat à Cindy Cah",
+       "pnj": "cindy"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 5000,
+    "kamas": 1000
+   },
+   "sceau": 2,
+   "suivante": "cmp_a10"
+  },
+  "cmp_a10": {
+   "nom": "Le Bastion des Douze",
+   "type": "campagne",
+   "acte": "astrub",
+   "serie": "Acte II · Astrub",
+   "pnj": "gawdien",
+   "niveau": 40,
+   "texte": "Deux Sceaux repris, et la fêlure ne fait que grandir. Au Bastion des Douze, le Gawdien du Dofus veille sur la Porte des Enfers.",
+   "etapes": [
+    {
+     "nom": "Le Gawdien",
+     "bulle": "Va au Bastion par le Zaap. Le Gawdien du Dofus doit voir ces éclats.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Montrer les éclats au Gawdien du Dofus",
+       "pnj": "gawdien"
+      }
+     ],
+     "pnj": "cindy"
+    }
+   ],
+   "recompense": {
+    "xp": 12000,
+    "kamas": 1000,
+    "sac": "epique",
+    "titre": "Fléau des Vilinsekts"
+   },
+   "merci": "Douze Sceaux, douze éclats. Tu en tiens deux. Les autres sont dispersés dans le Monde des Douze, chez les plus forts. Va à Amakna : le Roi Allister cherche des bras.",
+   "suivante": "cmp_m1"
+  },
+  "cmp_m1": {
+   "nom": "Au Château d'Amakna",
+   "type": "campagne",
+   "acte": "amakna",
+   "serie": "Acte III · Amakna",
+   "pnj": "bailli",
+   "niveau": 30,
+   "texte": "Le Bailli du Roi Allister a besoin de quelqu'un qui n'a pas peur des éclats rouges. Ça tombe bien.",
+   "etapes": [
+    {
+     "nom": "Le Château",
+     "bulle": "Le Château d'Amakna est au nord du village. Active le Zaap, puis va voir le Bailli.",
+     "objectifs": [
+      {
+       "t": "activer",
+       "texte": "Activer le Zaap Château d'Amakna",
+       "zaap": "Zaap Château d'Amakna"
+      },
+      {
+       "t": "parler",
+       "texte": "Parler à Bailli du Roi Allister",
+       "pnj": "bailli"
+      }
+     ],
+     "pnj": "gawdien"
+    }
+   ],
+   "recompense": {
+    "xp": 3750,
+    "kamas": 750
+   },
+   "suivante": "cmp_m2"
+  },
+  "cmp_m2": {
+   "nom": "Les potagers dévastés",
+   "type": "campagne",
+   "acte": "amakna",
+   "serie": "Acte III · Amakna",
+   "pnj": "bailli",
+   "niveau": 32,
+   "texte": "Dans le Champ des Ingalsse, un Tofukaz a picoré un éclat. Depuis, il explose de rage plutôt que de joie.",
+   "etapes": [
+    {
+     "nom": "Le Champ des Ingalsse",
+     "bulle": "Le Champ est au sud-est du Château. Les Tofus y sont nerveux, le Tofukaz encore plus.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 15 monstres : Champ des Ingalsse",
+       "n": 15,
+       "sousZone": 3
+      },
+      {
+       "t": "elite",
+       "texte": "Vaincre Tofukaz fêlé",
+       "monstre": "tofukaz",
+       "carte": "8_6",
+       "pv": 3,
+       "nom": "Tofukaz fêlé"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 4000,
+    "kamas": 800
+   },
+   "suivante": "cmp_m3"
+  },
+  "cmp_m3": {
+   "nom": "La plaine des carapaces",
+   "type": "campagne",
+   "acte": "amakna",
+   "serie": "Acte III · Amakna",
+   "pnj": "bailli",
+   "niveau": 38,
+   "texte": "Les Scarafeuilles de la Plaine se sont mis en rangs. Au fond de leur donjon, le Scarabosse Doré brille un peu trop rouge.",
+   "etapes": [
+    {
+     "nom": "La Plaine",
+     "bulle": "Le Zaap de la Plaine des Scarafeuilles t'y dépose. Fais de la place, puis entre dans leur donjon.",
+     "objectifs": [
+      {
+       "t": "activer",
+       "texte": "Activer le Zaap Plaine des Scarafeuilles",
+       "zaap": "Zaap Plaine des Scarafeuilles"
+      },
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 15 monstres : Plaine des Scarafeuilles",
+       "n": 15,
+       "sousZone": 170
+      }
+     ]
+    },
+    {
+     "nom": "Le Scarabosse Doré",
+     "bulle": "Le Scarabosse Doré a l'éclat sous la carapace.",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Scarabosse Doré (Donjon des Scarafeuilles)",
+       "donjon": "Donjon des Scarafeuilles",
+       "boss": "Scarabosse Doré",
+       "niveau": 40,
+       "region": "Amakna"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 4750,
+    "kamas": 950
+   },
+   "suivante": "cmp_m4"
+  },
+  "cmp_m4": {
+   "nom": "Les os qui marchent",
+   "type": "campagne",
+   "acte": "amakna",
+   "serie": "Acte III · Amakna",
+   "pnj": "bailli",
+   "niveau": 40,
+   "texte": "Au Cimetière d'Amakna, les Chafers ont un nouveau chef : un Fantassin aux yeux rouges, qui mène les morts au Donjon des Squelettes.",
+   "etapes": [
+    {
+     "nom": "Le Cimetière",
+     "bulle": "Le Cimetière est au sud. Le Fantassin fêlé mène la danse.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 15 monstres : Cimetière",
+       "n": 15,
+       "sousZone": 6
+      },
+      {
+       "t": "elite",
+       "texte": "Vaincre Chafer Fantassin fêlé",
+       "monstre": "chafer_fantassin",
+       "carte": "10_16",
+       "pv": 3,
+       "nom": "Chafer Fantassin fêlé"
+      }
+     ]
+    },
+    {
+     "nom": "Le Chafer Rōnin",
+     "bulle": "Les morts filent au Donjon des Squelettes. Suis-les.",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Chafer Rōnin (Donjon des Squelettes)",
+       "donjon": "Donjon des Squelettes",
+       "boss": "Chafer Rōnin",
+       "niveau": 40,
+       "region": "Amakna"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 5000,
+    "kamas": 1000
+   },
+   "suivante": "cmp_m5"
+  },
+  "cmp_m5": {
+   "nom": "L'Akadémie des Gobs",
+   "type": "campagne",
+   "acte": "amakna",
+   "serie": "Acte III · Amakna",
+   "pnj": "bailli",
+   "niveau": 45,
+   "texte": "Les Gobelins prennent des cours très particuliers : le Directeur Grunob leur apprend à piller avec méthode.",
+   "etapes": [
+    {
+     "nom": "Le campement",
+     "bulle": "Le Campement des Gobelins est à l'ouest. Fais-leur sauter un cours.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 12 monstres : Campement des Gobelins",
+       "n": 12,
+       "sousZone": 276
+      }
+     ]
+    },
+    {
+     "nom": "Le Directeur",
+     "bulle": "Le Directeur Grunob garde un éclat sur son bureau, en presse-papier.",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Directeur Grunob (Akadémie des Gobs)",
+       "donjon": "Akadémie des Gobs",
+       "boss": "Directeur Grunob",
+       "niveau": 50,
+       "region": "Amakna"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 5625,
+    "kamas": 1125
+   },
+   "suivante": "cmp_m6"
+  },
+  "cmp_m6": {
+   "nom": "Le campement des Bworks",
+   "type": "campagne",
+   "acte": "amakna",
+   "serie": "Acte III · Amakna",
+   "pnj": "bailli",
+   "niveau": 48,
+   "texte": "Les Bworks ont senti l'éclat et se rassemblent. Leur campement ressemble de plus en plus à une armée.",
+   "etapes": [
+    {
+     "nom": "Le campement",
+     "bulle": "Tiens leur campement le temps qu'ils comprennent qui commande.",
+     "objectifs": [
+      {
+       "t": "defense",
+       "texte": "Tenir 60 secondes au Campement des Bworks",
+       "carte": "-5_7",
+       "s": 60
+      }
+     ]
+    },
+    {
+     "nom": "La Bworkette",
+     "bulle": "La Bworkette les commande depuis son donjon.",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Bworkette (Donjon des Bworks)",
+       "donjon": "Donjon des Bworks",
+       "boss": "Bworkette",
+       "niveau": 50,
+       "region": "Amakna"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 6000,
+    "kamas": 1200
+   },
+   "suivante": "cmp_m7"
+  },
+  "cmp_m7": {
+   "nom": "La forêt maléfique",
+   "type": "campagne",
+   "acte": "amakna",
+   "serie": "Acte III · Amakna",
+   "pnj": "bailli",
+   "niveau": 50,
+   "texte": "Au Bord de la forêt maléfique, les Champas poussent rouges. Un Champa Écarlate y répand des spores fêlées.",
+   "etapes": [
+    {
+     "nom": "Les spores",
+     "bulle": "Ramasse les spores avant que le vent ne les porte jusqu'au village.",
+     "objectifs": [
+      {
+       "t": "activer",
+       "texte": "Activer le Zaap Bord de la forêt maléfique",
+       "zaap": "Zaap Bord de la forêt maléfique"
+      },
+      {
+       "t": "ramasser",
+       "texte": "Récupérer 8 Spores rouges (Bord de la forêt maléfique)",
+       "objet": "Spores rouges",
+       "n": 8,
+       "chance": 0.35,
+       "sousZone": 22
+      },
+      {
+       "t": "elite",
+       "texte": "Vaincre Champa Écarlate",
+       "monstre": "champa_rouge",
+       "carte": "1_16",
+       "pv": 3,
+       "nom": "Champa Écarlate"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 6250,
+    "kamas": 1250
+   },
+   "suivante": "cmp_m8"
+  },
+  "cmp_m8": {
+   "nom": "Les marécages",
+   "type": "campagne",
+   "acte": "amakna",
+   "serie": "Acte III · Amakna",
+   "pnj": "bailli",
+   "niveau": 56,
+   "texte": "Dans les Marécages d'Amakna, un Chef Crocodaille a mordu dans un éclat. Il n'a pas aimé, et il le fait savoir.",
+   "etapes": [
+    {
+     "nom": "Les Marécages",
+     "bulle": "Les Marécages sont au sud-ouest. Ne reste pas trop longtemps dans la vase.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 15 monstres : Marécages d'Amakna",
+       "n": 15,
+       "sousZone": 31
+      },
+      {
+       "t": "elite",
+       "texte": "Vaincre Chef Crocodaille fêlé",
+       "monstre": "chef_crocodaille",
+       "carte": "-6_11",
+       "pv": 3,
+       "nom": "Chef Crocodaille fêlé"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 7000,
+    "kamas": 1400
+   },
+   "suivante": "cmp_m9"
+  },
+  "cmp_m9": {
+   "nom": "La montagne qui gronde",
+   "type": "campagne",
+   "acte": "amakna",
+   "serie": "Acte III · Amakna",
+   "pnj": "bailli",
+   "niveau": 58,
+   "texte": "La Montagne basse des Craqueleurs tremble. Les Craquelourds descendent vers les champs, poussés par quelque chose au sommet.",
+   "etapes": [
+    {
+     "nom": "Le pied de la montagne",
+     "bulle": "Dégage le passage, vite, avant qu'ils ne se regroupent.",
+     "objectifs": [
+      {
+       "t": "chrono",
+       "texte": "Vider le passage en moins de 90 secondes",
+       "carte": "-2_7",
+       "s": 90
+      },
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 15 monstres : Montagne basse des Craqueleurs",
+       "n": 15,
+       "sousZone": 480
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 7250,
+    "kamas": 1450
+   },
+   "suivante": "cmp_m10"
+  },
+  "cmp_m10": {
+   "nom": "Le troisième Sceau",
+   "type": "campagne",
+   "acte": "amakna",
+   "serie": "Acte III · Amakna",
+   "pnj": "bailli",
+   "niveau": 62,
+   "texte": "Au sommet des Pitons Rocheux, le Craqueleur Légendaire a fait de l'éclat son cœur de pierre.",
+   "etapes": [
+    {
+     "nom": "Les Pitons Rocheux",
+     "bulle": "Le Craqueleur Légendaire garde le troisième éclat. Va le chercher.",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Craqueleur Légendaire (Pitons Rocheux des Craqueleurs)",
+       "donjon": "Pitons Rocheux des Craqueleurs",
+       "boss": "Craqueleur Légendaire",
+       "niveau": 62,
+       "region": "Amakna"
+      }
+     ]
+    },
+    {
+     "nom": "Audience royale",
+     "bulle": "Le Roi doit savoir. Reviens au Château.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Rapporter l'éclat au Bailli",
+       "pnj": "bailli"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 18600,
+    "kamas": 1550,
+    "sac": "legendaire",
+    "titre": "Émissaire du Royaume"
+   },
+   "sceau": 3,
+   "merci": "Le Roi Allister te remercie. Il a ouvert les ports : les bateaux de Madrestam t'attendent pour l'île des Wabbits, Moon et Cania.",
+   "suivante": "cmp_w1"
+  },
+  "cmp_w1": {
+   "nom": "La traversée",
+   "type": "campagne",
+   "acte": "wabbits",
+   "serie": "Île · Île des Wabbits",
+   "pnj": "lily",
+   "niveau": 40,
+   "texte": "Le bateau du Capitaine Lily part du Port de Madrestam. La traversée coûte quelques kamas, le retour est gratuit.",
+   "etapes": [
+    {
+     "nom": "L'île",
+     "bulle": "Prends le bateau à Madrestam. Le Capitaine Lily t'attendra sur la plage.",
+     "objectifs": [
+      {
+       "t": "activer",
+       "texte": "Activer le Zaap Port de Madrestam",
+       "zaap": "Zaap Port de Madrestam"
+      },
+      {
+       "t": "parler",
+       "texte": "Retrouver le Capitaine Lily sur l'île",
+       "pnj": "lily"
+      }
+     ],
+     "pnj": "bailli"
+    }
+   ],
+   "recompense": {
+    "xp": 5000,
+    "kamas": 1000
+   },
+   "suivante": "cmp_w2"
+  },
+  "cmp_w2": {
+   "nom": "La Cawotte fêlée",
+   "type": "campagne",
+   "acte": "wabbits",
+   "serie": "Île · Île des Wabbits",
+   "pnj": "lily",
+   "niveau": 44,
+   "texte": "Sur l'Île de la Cawotte, les Black Wabbits ont trouvé un éclat dans un champ. Ils le gardent mieux que leurs cawottes.",
+   "etapes": [
+    {
+     "nom": "Les champs",
+     "bulle": "Les Black Wabbits gardent l'éclat. Le plus gros le porte.",
+     "objectifs": [
+      {
+       "t": "activer",
+       "texte": "Activer le Zaap Île de la Cawotte",
+       "zaap": "Zaap Île de la Cawotte"
+      },
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 15 monstres : Île de la Cawotte",
+       "n": 15,
+       "sousZone": 161
+      },
+      {
+       "t": "elite",
+       "texte": "Vaincre Black Wabbit fêlé",
+       "monstre": "black_wabbit",
+       "carte": "24_-7",
+       "pv": 3,
+       "nom": "Black Wabbit fêlé"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 5500,
+    "kamas": 1100
+   },
+   "suivante": "cmp_w3"
+  },
+  "cmp_w3": {
+   "nom": "Les tombeaux",
+   "type": "campagne",
+   "acte": "wabbits",
+   "serie": "Île · Île des Wabbits",
+   "pnj": "lily",
+   "niveau": 48,
+   "texte": "Sur l'Îlot des Tombeaux, les Wabbits Squelettes rongent des os devenus rouges. Ils n'auraient pas dû.",
+   "etapes": [
+    {
+     "nom": "Les os rouges",
+     "bulle": "Récupère les os rongés avant que les squelettes ne se relèvent pour de bon.",
+     "objectifs": [
+      {
+       "t": "ramasser",
+       "texte": "Récupérer 8 Os rougis (Îlot des Tombeaux)",
+       "objet": "Os rougis",
+       "n": 8,
+       "chance": 0.35,
+       "sousZone": 163
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 6000,
+    "kamas": 1200
+   },
+   "suivante": "cmp_w4"
+  },
+  "cmp_w4": {
+   "nom": "Le sage de Waldo",
+   "type": "campagne",
+   "acte": "wabbits",
+   "serie": "Île · Île des Wabbits",
+   "pnj": "lily",
+   "niveau": 52,
+   "texte": "Le Grand Pa Wabbit de l'Îlot de Waldo sait où creusent les siens. Il ne le dira qu'au plus fort.",
+   "etapes": [
+    {
+     "nom": "L'îlot de Waldo",
+     "bulle": "Le Grand Pa Wabbit ne parle qu'aux plus forts. Prouve-le-lui.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 10 monstres : Îlot de Waldo",
+       "n": 10,
+       "sousZone": 162
+      },
+      {
+       "t": "elite",
+       "texte": "Vaincre Grand Pa Wabbit",
+       "monstre": "grand_pa_wabbit",
+       "carte": "27_-12",
+       "pv": 3,
+       "nom": "Grand Pa Wabbit"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 6500,
+    "kamas": 1300
+   },
+   "suivante": "cmp_w5"
+  },
+  "cmp_w5": {
+   "nom": "La Couronne",
+   "type": "campagne",
+   "acte": "wabbits",
+   "serie": "Île · Île des Wabbits",
+   "pnj": "lily",
+   "niveau": 55,
+   "texte": "Sur l'Îlot de la Couronne, toute l'île se rassemble pour défendre le passage vers le Château.",
+   "etapes": [
+    {
+     "nom": "Le passage",
+     "bulle": "Tiens le passage le temps que la garde du Château se lasse.",
+     "objectifs": [
+      {
+       "t": "defense",
+       "texte": "Tenir 60 secondes sur l'Îlot de la Couronne",
+       "carte": "24_-13",
+       "s": 60
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 6875,
+    "kamas": 1375
+   },
+   "suivante": "cmp_w6"
+  },
+  "cmp_w6": {
+   "nom": "Le quatrième Sceau",
+   "type": "campagne",
+   "acte": "wabbits",
+   "serie": "Île · Île des Wabbits",
+   "pnj": "lily",
+   "niveau": 60,
+   "texte": "Le Wa Wabbit a fait de l'éclat la pierre de sa couronne. Il ne la prête à personne.",
+   "etapes": [
+    {
+     "nom": "Le Château du Wa Wabbit",
+     "bulle": "Le quatrième éclat est sur la couronne du Wa Wabbit.",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Wa Wabbit (Château du Wa Wabbit)",
+       "donjon": "Château du Wa Wabbit",
+       "boss": "Wa Wabbit",
+       "niveau": 60,
+       "region": "Île des Wabbits"
+      }
+     ]
+    },
+    {
+     "nom": "Retour au bateau",
+     "bulle": "Reviens au bateau, on rentre.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Retourner voir le Capitaine Lily",
+       "pnj": "lily"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 18000,
+    "kamas": 1500,
+    "sac": "epique",
+    "titre": "Ami des Wabbits"
+   },
+   "sceau": 4,
+   "suivante": "cmp_n1"
+  },
+  "cmp_n1": {
+   "nom": "La route de Cania",
+   "type": "campagne",
+   "acte": "moon",
+   "serie": "Île · Moon et Cania",
+   "pnj": "garde_chateau2",
+   "niveau": 40,
+   "texte": "La Milice du Château a perdu la trace d'un convoi parti vers la Baie de Cania. La route passe par la Plaine des Porkass.",
+   "etapes": [
+    {
+     "nom": "La Plaine des Porkass",
+     "bulle": "Le Zaap de la Plaine des Porkass est au nord-ouest. Les Porkass n'aiment pas les convois.",
+     "objectifs": [
+      {
+       "t": "activer",
+       "texte": "Activer le Zaap Plaine des Porkass",
+       "zaap": "Zaap Plaine des Porkass"
+      },
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 15 monstres : Plaine des Porkass",
+       "n": 15,
+       "sousZone": 178
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 5000,
+    "kamas": 1000
+   },
+   "suivante": "cmp_n2"
+  },
+  "cmp_n2": {
+   "nom": "Le cavalier rouge",
+   "type": "campagne",
+   "acte": "moon",
+   "serie": "Île · Moon et Cania",
+   "pnj": "garde_chateau2",
+   "niveau": 42,
+   "texte": "Un Cavalier Porkass porte un éclat à son harnais. C'est lui qui a pillé le convoi.",
+   "etapes": [
+    {
+     "nom": "Le cavalier",
+     "bulle": "Il galope sur la Plaine. Fais-le descendre de sa monture.",
+     "objectifs": [
+      {
+       "t": "elite",
+       "texte": "Vaincre Cavalier Porkass fêlé",
+       "monstre": "cavalier_porkass",
+       "carte": "-4_-29",
+       "pv": 3,
+       "nom": "Cavalier Porkass fêlé"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 5250,
+    "kamas": 1050
+   },
+   "suivante": "cmp_n3"
+  },
+  "cmp_n3": {
+   "nom": "La Baie de Cania",
+   "type": "campagne",
+   "acte": "moon",
+   "serie": "Île · Moon et Cania",
+   "pnj": "garde_chateau2",
+   "niveau": 44,
+   "texte": "Le convoi a fini dans la Baie de Cania, et sa cargaison sur un bateau parti pour Moon.",
+   "etapes": [
+    {
+     "nom": "La Baie",
+     "bulle": "La Baie de Cania grouille de Dopeuls. Ils copient tout ce qu'ils voient, même les pillards.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 15 monstres : Baie de Cania",
+       "n": 15,
+       "sousZone": 334
+      },
+      {
+       "t": "activer",
+       "texte": "Activer le Zaap Village des Dopeuls",
+       "zaap": "Zaap Village des Dopeuls"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 5500,
+    "kamas": 1100
+   },
+   "suivante": "cmp_n4"
+  },
+  "cmp_n4": {
+   "nom": "Les Dopeuls",
+   "type": "campagne",
+   "acte": "moon",
+   "serie": "Île · Moon et Cania",
+   "pnj": "garde_chateau2",
+   "niveau": 46,
+   "texte": "Au Village des Dopeuls, un Dopeul a pris l'éclat pour un jouet. Il copie ta classe, en plus méchant.",
+   "etapes": [
+    {
+     "nom": "Le village",
+     "bulle": "Le Dopeul fêlé t'attend au village. Il a déjà vu tes sorts.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 12 monstres : Village des Dopeuls",
+       "n": 12,
+       "sousZone": 62
+      },
+      {
+       "t": "elite",
+       "texte": "Vaincre Dopeul fêlé",
+       "monstre": "nebgib",
+       "carte": "-32_-8",
+       "pv": 3,
+       "nom": "Dopeul fêlé"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 5750,
+    "kamas": 1150
+   },
+   "suivante": "cmp_n5"
+  },
+  "cmp_n5": {
+   "nom": "Cap sur Moon",
+   "type": "campagne",
+   "acte": "moon",
+   "serie": "Île · Moon et Cania",
+   "pnj": "garde_chateau2",
+   "niveau": 48,
+   "texte": "Le bateau de la cargaison a fait naufrage sur Moon. Un autre bateau part de Madrestam.",
+   "etapes": [
+    {
+     "nom": "La Plage de la Tortue",
+     "bulle": "Débarque sur la Plage de la Tortue et active le Zaap. Les Kokokos n'aiment pas les visiteurs.",
+     "objectifs": [
+      {
+       "t": "aller",
+       "texte": "Aller : Plage de la Tortue",
+       "sousZone": 93
+      },
+      {
+       "t": "activer",
+       "texte": "Activer le Zaap Plage de la Tortue",
+       "zaap": "Zaap Plage de la Tortue"
+      },
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 12 monstres : Plage de la Tortue",
+       "n": 12,
+       "sousZone": 93
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 6000,
+    "kamas": 1200
+   },
+   "suivante": "cmp_n6"
+  },
+  "cmp_n6": {
+   "nom": "La Forêt des Masques",
+   "type": "campagne",
+   "acte": "moon",
+   "serie": "Île · Moon et Cania",
+   "pnj": "garde_chateau2",
+   "niveau": 52,
+   "texte": "L'épave est dans la Forêt des Masques. Les Kanniboul ne veulent pas qu'on y touche.",
+   "etapes": [
+    {
+     "nom": "L'épave",
+     "bulle": "Tiens l'épave le temps de fouiller la cale.",
+     "objectifs": [
+      {
+       "t": "defense",
+       "texte": "Tenir 60 secondes près de l'épave",
+       "carte": "30_10",
+       "s": 60
+      }
+     ]
+    },
+    {
+     "nom": "Les masques",
+     "bulle": "Les Kanniboul ont emporté l'éclat au village.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 12 monstres : Forêt des Masques",
+       "n": 12,
+       "sousZone": 166
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 6500,
+    "kamas": 1300
+   },
+   "suivante": "cmp_n7"
+  },
+  "cmp_n7": {
+   "nom": "Le cinquième Sceau",
+   "type": "campagne",
+   "acte": "moon",
+   "serie": "Île · Moon et Cania",
+   "pnj": "garde_chateau2",
+   "niveau": 60,
+   "texte": "Kanniboul Ebil a mis l'éclat dans sa marmite. Il pense que ça donne du goût.",
+   "etapes": [
+    {
+     "nom": "Le Village Kanniboul",
+     "bulle": "Le cinquième éclat est dans la marmite de Kanniboul Ebil.",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Kanniboul Ebil (Village Kanniboul)",
+       "donjon": "Village Kanniboul",
+       "boss": "Kanniboul Ebil",
+       "niveau": 60,
+       "region": "Île de Moon"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 18000,
+    "kamas": 1500,
+    "sac": "epique",
+    "titre": "Naufrageur de Moon"
+   },
+   "sceau": 5,
+   "merci": "Cinq Sceaux. Le Gawdien a fait passer le mot : les fêlures se multiplient sur le continent, à l'ouest. Les Milices de Cania et des Abraknydes t'attendent.",
+   "suivante": "cmp_c1"
+  },
+  "cmp_c1": {
+   "nom": "Les Plaines Rocheuses",
+   "type": "campagne",
+   "acte": "continent",
+   "serie": "Acte IV · Le continent sauvage",
+   "pnj": "tableau_cania",
+   "niveau": 60,
+   "texte": "Au-delà des Porkass, les Plaines Rocheuses grondent. La Milice de Cania a besoin d'aide.",
+   "etapes": [
+    {
+     "nom": "Les Plaines",
+     "bulle": "Active le Zaap des Plaines Rocheuses et calme les Craqueleurs des plaines.",
+     "objectifs": [
+      {
+       "t": "activer",
+       "texte": "Activer le Zaap Plaines Rocheuses",
+       "zaap": "Zaap Plaines Rocheuses"
+      },
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 20 monstres : Plaines Rocheuses",
+       "n": 20,
+       "sousZone": 70
+      }
+     ]
+    },
+    {
+     "nom": "La Milice de Cania",
+     "bulle": "Le Garde de Cania attend ton rapport.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler à Garde de Cania",
+       "pnj": "tableau_cania"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 7500,
+    "kamas": 1500
+   },
+   "suivante": "cmp_c2"
+  },
+  "cmp_c2": {
+   "nom": "Le sixième Sceau",
+   "type": "campagne",
+   "acte": "continent",
+   "serie": "Acte IV · Le continent sauvage",
+   "pnj": "tableau_cania",
+   "niveau": 62,
+   "texte": "Au Clos des Blops, le Blop Coco Royal a gobé un éclat entier. Il en a des reflets rouges.",
+   "etapes": [
+    {
+     "nom": "Le Clos des Blops",
+     "bulle": "Le sixième éclat brille dans le Blop Coco Royal.",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Blop Coco Royal (Clos des Blops)",
+       "donjon": "Clos des Blops",
+       "boss": "Blop Coco Royal",
+       "niveau": 60,
+       "region": "Cania"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 7750,
+    "kamas": 1550
+   },
+   "sceau": 6,
+   "suivante": "cmp_c3"
+  },
+  "cmp_c3": {
+   "nom": "Les Routes Rocailleuses",
+   "type": "campagne",
+   "acte": "continent",
+   "serie": "Acte IV · Le continent sauvage",
+   "pnj": "tableau_cania",
+   "niveau": 64,
+   "texte": "Les Routes Rocailleuses sont jonchées d'éclats de roche rouge. Quelqu'un les sème de la montagne jusqu'aux marais.",
+   "etapes": [
+    {
+     "nom": "Les éclats de roche",
+     "bulle": "Ramasse les éclats de roche et active le Zaap des Routes Rocailleuses.",
+     "objectifs": [
+      {
+       "t": "activer",
+       "texte": "Activer le Zaap Routes Rocailleuses",
+       "zaap": "Zaap Routes Rocailleuses"
+      },
+      {
+       "t": "ramasser",
+       "texte": "Récupérer 10 Éclats de roche rouge (Routes Rocailleuses)",
+       "objet": "Éclats de roche rouge",
+       "n": 10,
+       "chance": 0.35,
+       "sousZone": 525
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 8000,
+    "kamas": 1600
+   },
+   "suivante": "cmp_c4"
+  },
+  "cmp_c4": {
+   "nom": "Le Territoire des dragodindes",
+   "type": "campagne",
+   "acte": "continent",
+   "serie": "Acte IV · Le continent sauvage",
+   "pnj": "tableau_koalaks",
+   "niveau": 66,
+   "texte": "Les dragodindes sauvages courent en cercle. Le Guetteur des Koalaks pense qu'un Dragodingo a avalé un éclat.",
+   "etapes": [
+    {
+     "nom": "Le Guetteur",
+     "bulle": "Le Guetteur des Koalaks surveille la montagne.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler à Guetteur des Koalaks",
+       "pnj": "tableau_koalaks"
+      }
+     ]
+    },
+    {
+     "nom": "Le Dragodingo",
+     "bulle": "Le Dragodingo fêlé court plus vite que les autres. Rattrape-le.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 15 monstres : Territoire des dragodindes sauvages",
+       "n": 15,
+       "sousZone": 235
+      },
+      {
+       "t": "elite",
+       "texte": "Vaincre Dragodingo fêlé",
+       "monstre": "dragodingo",
+       "carte": "-19_3",
+       "pv": 1,
+       "nom": "Dragodingo fêlé"
+      }
+     ],
+     "pnj": "tableau_koalaks"
+    }
+   ],
+   "recompense": {
+    "xp": 8250,
+    "kamas": 1650
+   },
+   "suivante": "cmp_c5"
+  },
+  "cmp_c5": {
+   "nom": "Le septième Sceau",
+   "type": "campagne",
+   "acte": "continent",
+   "serie": "Acte IV · Le continent sauvage",
+   "pnj": "tableau_cania",
+   "niveau": 70,
+   "texte": "Draegnerys couve ses œufs sur la Presqu'île des Dragoeufs. Un des œufs est un éclat.",
+   "etapes": [
+    {
+     "nom": "L'Épreuve de Draegnerys",
+     "bulle": "Draegnerys ne laisse personne approcher de ses œufs, surtout pas du rouge.",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Draegnerys (Épreuve de Draegnerys)",
+       "donjon": "Épreuve de Draegnerys",
+       "boss": "Draegnerys",
+       "niveau": 70,
+       "region": "Amakna"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 8750,
+    "kamas": 1750
+   },
+   "sceau": 7,
+   "suivante": "cmp_c6"
+  },
+  "cmp_c6": {
+   "nom": "La Forêt de Kaliptus",
+   "type": "campagne",
+   "acte": "continent",
+   "serie": "Acte IV · Le continent sauvage",
+   "pnj": "tableau_cania",
+   "niveau": 72,
+   "texte": "Dans la Forêt de Kaliptus, les Koalaks Forestiers tapent sur tout ce qui bouge. La chaleur des éclats leur monte à la tête.",
+   "etapes": [
+    {
+     "nom": "Kaliptus",
+     "bulle": "Fais vite, ils se regroupent dès qu'ils t'entendent.",
+     "objectifs": [
+      {
+       "t": "chrono",
+       "texte": "Vider la clairière en moins de 90 secondes",
+       "carte": "-9_11",
+       "s": 90
+      },
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 15 monstres : Forêt de Kaliptus",
+       "n": 15,
+       "sousZone": 234
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 9000,
+    "kamas": 1800
+   },
+   "suivante": "cmp_c7"
+  },
+  "cmp_c7": {
+   "nom": "La Mama du Canyon",
+   "type": "campagne",
+   "acte": "continent",
+   "serie": "Acte IV · Le continent sauvage",
+   "pnj": "tableau_cania",
+   "niveau": 80,
+   "texte": "Dans le Canyon sauvage, la Mama Koalak protège un éclat comme son petit.",
+   "etapes": [
+    {
+     "nom": "Le Canyon",
+     "bulle": "La Mama Koalak ne lâchera rien. Ses petits non plus.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 15 monstres : Canyon sauvage",
+       "n": 15,
+       "sousZone": 253
+      },
+      {
+       "t": "elite",
+       "texte": "Vaincre Mama Koalak fêlée",
+       "monstre": "mama_koalak",
+       "carte": "-15_10",
+       "pv": 3,
+       "nom": "Mama Koalak fêlée"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 10000,
+    "kamas": 2000
+   },
+   "suivante": "cmp_c8"
+  },
+  "cmp_c8": {
+   "nom": "Le Bois des Arak-haï",
+   "type": "campagne",
+   "acte": "continent",
+   "serie": "Acte IV · Le continent sauvage",
+   "pnj": "tableau_abraknydes",
+   "niveau": 84,
+   "texte": "Le Garde forestier des Abraknydes a vu des toiles rouges dans le Bois des Arak-haï. La Reine Nyée tisse.",
+   "etapes": [
+    {
+     "nom": "Le Garde forestier",
+     "bulle": "Le Garde forestier t'attend à l'orée de la forêt.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler à Garde forestier",
+       "pnj": "tableau_abraknydes"
+      }
+     ]
+    },
+    {
+     "nom": "Les toiles",
+     "bulle": "Déchire les toiles et fais reculer les Gargantûls.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 20 monstres : Bois des Arak-haï",
+       "n": 20,
+       "sousZone": 33
+      }
+     ],
+     "pnj": "tableau_abraknydes"
+    },
+    {
+     "nom": "La Reine Nyée",
+     "bulle": "Le huitième éclat est au fond de son antre.",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Reine Nyée (Antre de la Reine Nyée)",
+       "donjon": "Antre de la Reine Nyée",
+       "boss": "Reine Nyée",
+       "niveau": 90,
+       "region": "Forêt des Abraknydes"
+      }
+     ],
+     "pnj": "tableau_abraknydes"
+    }
+   ],
+   "recompense": {
+    "xp": 10500,
+    "kamas": 2100
+   },
+   "sceau": 8,
+   "suivante": "cmp_c9"
+  },
+  "cmp_c9": {
+   "nom": "Le neuvième Sceau",
+   "type": "campagne",
+   "acte": "continent",
+   "serie": "Acte IV · Le continent sauvage",
+   "pnj": "tableau_abraknydes",
+   "niveau": 90,
+   "texte": "Dans la Forêt Sombre, l'Abraknyde Ancestral s'est réveillé, un éclat planté dans l'écorce.",
+   "etapes": [
+    {
+     "nom": "La Forêt Sombre",
+     "bulle": "Tyranne la Terrible garde l'entrée de la Forêt Sombre.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 15 monstres : Forêt Sombre",
+       "n": 15,
+       "sousZone": 168
+      },
+      {
+       "t": "elite",
+       "texte": "Vaincre Tyranne la Terrible",
+       "monstre": "tyranne_la_terrible",
+       "carte": "-11_-13",
+       "pv": 1,
+       "nom": "Tyranne la Terrible"
+      }
+     ]
+    },
+    {
+     "nom": "L'Abraknyde Ancestral",
+     "bulle": "Le neuvième éclat est dans l'Ancestral.",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Abraknyde Ancestral (Domaine Ancestral)",
+       "donjon": "Domaine Ancestral",
+       "boss": "Abraknyde Ancestral",
+       "niveau": 90,
+       "region": "Forêt des Abraknydes"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 11250,
+    "kamas": 2250
+   },
+   "sceau": 9,
+   "suivante": "cmp_c10"
+  },
+  "cmp_c10": {
+   "nom": "Le dixième Sceau",
+   "type": "campagne",
+   "acte": "continent",
+   "serie": "Acte IV · Le continent sauvage",
+   "pnj": "tableau_porcos",
+   "niveau": 100,
+   "texte": "Au sud d'Amakna, les Porcos gardent le Labyrinthe du Dragon Cochon. Le dixième éclat est dans son trésor.",
+   "etapes": [
+    {
+     "nom": "Le Territoire des Porcos",
+     "bulle": "Le Garde des Porcos te montrera l'entrée.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler à Garde des Porcos",
+       "pnj": "tableau_porcos"
+      },
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 15 monstres : Territoire des Porcos",
+       "n": 15,
+       "sousZone": 11
+      }
+     ]
+    },
+    {
+     "nom": "Le Dragon Cochon",
+     "bulle": "Le dixième éclat dort sur le trésor du Dragon Cochon.",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Dragon Cochon (Labyrinthe du Dragon Cochon)",
+       "donjon": "Labyrinthe du Dragon Cochon",
+       "boss": "Dragon Cochon",
+       "niveau": 100,
+       "region": "Amakna"
+      }
+     ],
+     "pnj": "tableau_porcos"
+    },
+    {
+     "nom": "Le Bastion",
+     "bulle": "Dix Sceaux. Rapporte-les au Gawdien du Dofus.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Rapporter les éclats au Gawdien du Dofus",
+       "pnj": "gawdien"
+      }
+     ],
+     "pnj": "tableau_porcos"
+    }
+   ],
+   "recompense": {
+    "xp": 30000,
+    "kamas": 2500,
+    "sac": "legendaire",
+    "titre": "Chasseur de Fêlures"
+   },
+   "sceau": 10,
+   "merci": "Dix Sceaux. Il en reste deux, et ils sont au nord, sous la glace de Frigost. Le marin de Madrestam connaît la route.",
+   "suivante": "cmp_f1"
+  },
+  "cmp_f1": {
+   "nom": "Du lest pour la coque",
+   "type": "campagne",
+   "acte": "frigost",
+   "serie": "Acte V · Frigost",
+   "pnj": "marin_madrestam",
+   "niveau": 80,
+   "texte": "Le marin frigostien de Madrestam veut bien t'emmener, mais sa coque a besoin de lest. La pierre des Plaines Rocheuses fera l'affaire.",
+   "etapes": [
+    {
+     "nom": "La pierre",
+     "bulle": "Les Craqueleurs des Plaines Rocheuses gardent la meilleure pierre.",
+     "objectifs": [
+      {
+       "t": "ramasser",
+       "texte": "Récupérer 10 Pierres de lest (Plaines Rocheuses)",
+       "objet": "Pierres de lest",
+       "n": 10,
+       "chance": 0.4,
+       "sousZone": 70
+      }
+     ]
+    },
+    {
+     "nom": "Embarquer",
+     "bulle": "Reviens au port, on largue les amarres.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler au marin frigostien",
+       "pnj": "marin_madrestam"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 10000,
+    "kamas": 2000
+   },
+   "ouvre": [
+    "frigost_passage"
+   ],
+   "suivante": "cmp_f2"
+  },
+  "cmp_f2": {
+   "nom": "Le Port de givre",
+   "type": "campagne",
+   "acte": "frigost",
+   "serie": "Acte V · Frigost",
+   "pnj": "marin_madrestam",
+   "niveau": 82,
+   "texte": "Le Port de givre est pris par les Rats Bougris. Ils ont rongé jusqu'aux amarres.",
+   "etapes": [
+    {
+     "nom": "Les quais",
+     "bulle": "Débarrasse les quais des Rats Bougris.",
+     "objectifs": [
+      {
+       "t": "aller",
+       "texte": "Aller : Port de givre",
+       "sousZone": 600
+      },
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 15 monstres : Port de givre",
+       "n": 15,
+       "sousZone": 600
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 10250,
+    "kamas": 2050
+   },
+   "suivante": "cmp_f3"
+  },
+  "cmp_f3": {
+   "nom": "La Bourgade",
+   "type": "campagne",
+   "acte": "frigost",
+   "serie": "Acte V · Frigost",
+   "pnj": "tableau_frigost",
+   "niveau": 84,
+   "texte": "La Bourgade est le dernier abri avant la grande glace. Sa Milice sait où la fêlure s'enfonce.",
+   "etapes": [
+    {
+     "nom": "Le Zaap",
+     "bulle": "Active le Zaap de la Bourgade : le froid ne pardonne pas les longs trajets.",
+     "objectifs": [
+      {
+       "t": "activer",
+       "texte": "Activer le Zaap La Bourgade",
+       "zaap": "Zaap La Bourgade"
+      }
+     ]
+    },
+    {
+     "nom": "La Milice",
+     "bulle": "Le Milicien de la Bourgade t'attend.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler à Milicien de la Bourgade",
+       "pnj": "tableau_frigost"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 10500,
+    "kamas": 2100
+   },
+   "suivante": "cmp_f4"
+  },
+  "cmp_f4": {
+   "nom": "Le froid qui mord",
+   "type": "campagne",
+   "acte": "frigost",
+   "serie": "Acte V · Frigost",
+   "pnj": "tableau_frigost",
+   "niveau": 86,
+   "texte": "Les Chachachovages descendent sur la Bourgade, attirés par la chaleur d'un éclat. Il faut tenir.",
+   "etapes": [
+    {
+     "nom": "La Bourgade assiégée",
+     "bulle": "Tiens la place le temps que la Milice ferme les portes.",
+     "objectifs": [
+      {
+       "t": "defense",
+       "texte": "Tenir 75 secondes dans la Bourgade",
+       "carte": "-77_-41",
+       "s": 75
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 10750,
+    "kamas": 2150
+   },
+   "suivante": "cmp_f5"
+  },
+  "cmp_f5": {
+   "nom": "Sous la glace",
+   "type": "campagne",
+   "acte": "frigost",
+   "serie": "Acte V · Frigost",
+   "pnj": "tableau_frigost",
+   "niveau": 88,
+   "texte": "Un Gélikan géant couve un éclat sur la banquise. Plus loin, la glace cache les deux derniers Sceaux.",
+   "etapes": [
+    {
+     "nom": "Le Gélikan",
+     "bulle": "Le Gélikan fêlé couve l'éclat. Il ne s'envolera pas sans se défendre.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 15 monstres : La Bourgade",
+       "n": 15,
+       "sousZone": 601
+      },
+      {
+       "t": "elite",
+       "texte": "Vaincre Gélikan fêlé",
+       "monstre": "gelikan",
+       "carte": "-76_-41",
+       "pv": 3,
+       "nom": "Gélikan fêlé"
+      }
+     ]
+    },
+    {
+     "nom": "La suite au nord",
+     "bulle": "Reviens me voir. La suite est sous la glace, et la glace ne s'ouvre pas encore.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Retourner voir le Milicien de la Bourgade",
+       "pnj": "tableau_frigost"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 26400,
+    "kamas": 2200,
+    "sac": "epique",
+    "titre": "Briseur de glace",
+    "apparats": [
+     "19465",
+     "19466"
+    ]
+   },
+   "merci": "Tu as fait reculer la fêlure jusqu'à la grande glace. La suite viendra avec Frigost. Garde le carnet ouvert."
+  }
+ }
+}
