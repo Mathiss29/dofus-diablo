@@ -2210,6 +2210,7 @@
           {"titre": "Le menu des succès rangé", "phrase": "Un donjon et ses 4 défis tiennent sur une carte, chaque métier sur une frise de paliers.", "details": "Nouvelle catégorie Collection, conseils dans le Résumé, onglet Titres et ornements, filtres, régions pas encore atteintes repliées. La page Succès de l'accueil disparaît : tout est dans la touche U.", "icone": "succes", "etiquettes": ["Touche U"]}
         ],
         "Le monde": [
+          {"titre": "Des gradins pour l'arène", "phrase": "L'arène des âmes a ses gradins de pierre, et le public du Bastion t'acclame ou te hue.", "details": "Marches, bannières et cordons dorés viennent de l'Amphithéâtre du Kolizéum. La foule saute quand une âme revient et à chaque victoire.", "icone": "boss", "etiquettes": ["Bastion des Douze", "Arène des âmes"]},
           {"titre": "Kerubim dès Incarnam", "phrase": "Kerubim Crépin tient boutique au Bastion des Douze dès le début, sans passer par Astrub.", "details": "Prends un Zaap d'Incarnam ou ton Havre-Sac (touche H) pour le rejoindre et défaire tes objets en trop.", "icone": "zaap", "etiquettes": ["Bastion des Douze", "Incarnam"]}
         ],
         "Corrections": [

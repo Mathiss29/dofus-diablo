@@ -420,6 +420,10 @@ Marché couvert (maquette « Magasin : » 1A + 13A-13F, 12 nov. 2026) : `marche.
 Depuis « Archis : » 7B+9A : une seconde porte en arche dans le mur de droite du Marché mène à l'**arène des âmes** (tag `arene`,
 place `ARENE_SLOT`, mêmes murs, sol de planches avec une piste de dalles et le tapis au milieu), où l'on relâche une âme
 (`World.relacherAme`) ; l'Assistante d'Otomaï (`ASSISTANTE`) est posée près de l'étal d'Otomaï, à plus de 200 px des autres PNJ.
+Depuis « Arène : » 11B (15 nov. 2026) : l'arène a des **gradins** (`gradins()` : marches de pierre 10477 sur 3 rangs le long des
+deux murs du fond, la porte laissée libre, bannières 32495, blason 32568, cordons 68030/59764, gardes 15592, pièces de l'Amphithéâtre du
+Kolizéum, world_312, à mettre dans cartes_dir et TEXDIR) et écrit les places du public (`PUBLIC`, pixels des cartes) dans
+`src/data/arene_ames.json > public`, lues par `src/render/publicArene.ts`.
 **À relancer après chaque `bastion.py`** (qui réécrit `monde.json` et les PNJ) :
 
     TEXDIR=dossier_des_gfx python3 -I tools/extraction/marche.py cartes_dir public/assets/mondes [apercu]

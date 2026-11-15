@@ -14,7 +14,7 @@
 #               cases de la salle « marche », la place « responsable » est gardée pour le Responsable de la boutique, 13E) ;
 #               dans src/data/quetes.json : carte et case des marchands (marche) et de Kerubim (dehors).
 # À relancer APRÈS bastion.py (qui réécrit monde.json et les PNJ du Bastion).
-import sys, os, json, math, random
+import sys, os, json, math, random, re
 from PIL import Image, ImageDraw
 cdir, mondes = sys.argv[1:3]
 apercu = sys.argv[3] if len(sys.argv) > 3 else None
@@ -83,6 +83,39 @@ ARENE_SLOT = (4, 9)
 PORTE_ARENE = 3                          # la porte de l'arène : 4e pan du mur droit du Marché
 SALLES = {'marche': {'slot': SLOT, 'portes': [PORTE_PAN, PORTE_ARENE]}, 'arene': {'slot': ARENE_SLOT, 'portes': [PORTE_PAN]}}
 
+# --- « Arène : » 11B (2026-11-15) : gradins et public, avec les pièces officielles de l'Amphithéâtre du Kolizéum (world_312,
+# cartes 81788928-81789954) : marches de pierre en gradins le long des deux murs du fond, bancs de bois dessus, cordons dorés
+# entre les gradins et la piste, bannières et blason du Kolizéum aux murs, gardes en armure de part et d'autre de la porte.
+MARCHE, BANC, CHAISE, POTEAU, CORDE, BANNIERE, BLASON, GARDE = 10477, 32466, 31509, 68030, 59764, 32495, 32568, 15592
+GRADINS = 0.70                          # les gradins couvrent le fond de la salle au-delà de SOL = 0.70 (la piste reste en deçà)
+PUBLIC = []                              # places des spectateurs (repère de la salle), remplies par gradins()
+def gradins(a, rangs=3, pas=(40, 20), haut=46):
+    cy = FOND[1] + HY; PUBLIC.clear()
+    for cote in (-1, 1):                 # -1 : mur de gauche, 1 : mur de droite (la porte de l'arène est près de son bout)
+        sx = 1 if cote < 0 else -1
+        debut = 2 if cote < 0 else 9      # à droite, les gradins s'arrêtent avant la porte
+        # bannières du Kolizéum au mur, au-dessus des gradins
+        for t in (0.25, 0.45, 0.65, 0.85) if cote < 0 else (0.45, 0.65, 0.85):
+            x, y = cote * HX * (1 - t), cy - HY * t
+            a.one(BANNIERE, x + cote * 8, y - 175, sx, pied=FOND[1] - 380 + y * 0.01)
+        for r in range(rangs - 1, -1, -1):   # du rang le plus haut (contre le mur) au plus bas
+            for i in range(debut, 28):
+                t = min(i, 26.6) / 26
+                x, y = cote * HX * (1 - t) * 0.82 + cote * pas[0] * r, cy - HY * t * 0.82 - pas[1] * r
+                a.one(MARCHE, x, y - 40 - haut * r, sx, pied=y - 40 * r)
+                if r == 0: a.bloque.append((x + cote * 30, y - 15, 95))
+                if i % 3 == r % 3 and 3 <= i <= 24: PUBLIC.append((round(x - cote * 6), round(y - 52 - haut * r)))
+        # cordons dorés entre la piste et les gradins, un garde au bout du premier rang
+        for i in range(debut, 27, 2):
+            t = i / 26; x, y = cote * HX * (1 - t) * 0.74, cy - HY * t * 0.74
+            a.one(POTEAU, x, y - 26, 1, pied=y)
+            if i + 2 <= 26:
+                t2 = (i + 1) / 26; x2, y2 = cote * HX * (1 - t2) * 0.74, cy - HY * t2 * 0.74
+                a.one(CORDE, x2, y2 - 32, -sx, pied=y2 - 1)
+        t = debut / 26; x, y = cote * HX * (1 - t) * 0.86, cy - HY * t * 0.86
+        a.one(GARDE, x + cote * 40, y + 10, sx, pied=y + 60, bloque=60)
+    a.one(BLASON, 0, FOND[1] - 150, 1, pied=FOND[1] - 370)   # blason du Kolizéum dans le coin du fond
+
 def composer(salle='marche'):
     random.seed(7)
     for mid in {m for m, _ in PIECES.values()}:   # lumières retirées (comme bastion.py) : elles font de grandes taches claires
@@ -115,6 +148,7 @@ def composer(salle='marche'):
         else:
             for g, d, c in PANNEAU_D: pose(g, d, c, ox, oy)
     for g, d, c in BOUT_D: pose(g, (d[0] - 387, d[1] - 199.2), c, px + ND * PAS_D[0], py + ND * PAS_D[1])
+    if salle == 'arene': gradins(a)
     pnj = {}
     for n, (x, y), f, r, q in ETALS if salle == 'marche' else []:
         a.put(P[n], x, y, f, bloque=r)
@@ -188,6 +222,11 @@ def exporter(salle='marche'):
     entree = {'x': slot[0], 'y': slot[1], 'id': 0, 'sub': 0, 'tag': salle, 'n': [NS, NS], 'inside': 1, 'batiments': 1,
               'sol': {'x': BOX[0] + ox, 'y': BOX[1] + oy, 'w': sol.width, 'h': sol.height}, 'decor': places}
     M['maps'] = [m for m in M['maps'] if m['tag'] != salle] + [entree]
+    if salle == 'arene':   # 11B : places du public (pixels des cartes, comme le décor) dans src/data/arene_ames.json, lues par l'affichage
+        AP = os.path.join(os.path.dirname(ZONES), 'arene_ames.json'); txt = open(AP).read()
+        txt = re.sub(r',\n "public": \[.*?\]\]', '', txt, flags=re.S)   # format du fichier gardé : la liste tient sur une ligne
+        pub = json.dumps([[round(x + ox), round(y + oy)] for x, y in PUBLIC], separators=(',', ':'))
+        open(AP, 'w').write(txt.rstrip().rstrip('}').rstrip() + ',\n "public": ' + pub + '\n}\n')
     json.dump(M, open(f'{out}/monde.json', 'w'))
     # dehors : la case libre du Bastion la plus proche de la porte de l'Hôtel de vente (repère du Bastion, centre = 0, 0)
     BCX, BCY = OX + 8 * MW / 2, OY + 8 * MH / 2

@@ -14,6 +14,7 @@ import { themeChoisi, zoneAvecTheme } from '../sim/havresac';
 import type { Compte } from '../sim/quests';
 import { QuestView } from './questView';
 import { PassantsView } from './passantsView';
+import { PublicArene } from './publicArene';
 import { RecolteView } from './recolteView';
 import { AtelierView } from './atelierView';
 import { estPalier, recettesAuNiveau } from '../sim/metiers';
@@ -201,6 +202,8 @@ export class ZoneScene extends Phaser.Scene {
   private talkClick: string | null = null;
   private questView: QuestView | null = null;
   private passantsView: PassantsView | null = null;
+  /** « Arène : » 11B : le public des gradins de l'arène des âmes. */
+  private publicArene: PublicArene | null = null;
   private dialogueView: DialogueView | null = null;
   private acc = 0;
   /** Le clic en cours a commencé sur l'interface : maintenir le bouton ne fait pas attaquer. */
@@ -409,6 +412,7 @@ export class ZoneScene extends Phaser.Scene {
       if (this.world.quetes) {
         this.questView = new QuestView(this, this.world, this.worldView);
         if (this.world.passants) this.passantsView = new PassantsView(this, this.world.passants);
+        if (GAME_DATA.zones[this.zoneId]?.open?.bastion) { const pa = this.publicArene = new PublicArene(this, this.world); this.events.once('shutdown', () => { pa.destroy(); if (this.publicArene === pa) this.publicArene = null; }); }
         const dv = this.dialogueView = new DialogueView(this, this.world, this.questView);
         this.events.once('shutdown', () => dv.destroy());
       }
@@ -1426,6 +1430,7 @@ export class ZoneScene extends Phaser.Scene {
   private consumeEvents() {
     for (const e of this.world.drainEvents()) {
       Coop.noter(e);
+      this.publicArene?.evenement(e);
       if (this.perso?.stats && this.perso.session) noter(e, this.perso.stats, this.perso.session, this.bestiaire, GAME_DATA.monsters, ITEMS.equipment);
       this.fx.handle(e);
       this.hud.handle(e);
@@ -2271,6 +2276,7 @@ export class ZoneScene extends Phaser.Scene {
     this.brume?.update(this.game.loop.delta / 1000);
     this.questView?.update();
     this.passantsView?.update();
+    this.publicArene?.update(this.game.loop.delta / 1000);
     this.dialogueView?.update();
     EntityView.temps = this.world.time;
     if (this.reglages.barresVie === 'survol' && !this.vitrine) EntityView.survol = this.monsterUnder(this.input.activePointer)?.id ?? null;

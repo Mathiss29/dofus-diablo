@@ -125,4 +125,17 @@ describe('Arène des âmes (« Arène : » du 15 novembre 2026)', () => {
     }
     expect(M).toBeTruthy();
   });
+
+  it('11B : des gradins et du public dans l\'arène ; la porte et la piste restent libres', () => {
+    const w = monde(), wg = w.worldGrid!, pub = (ARENE_AMES as unknown as { public: [number, number][] }).public;
+    expect(pub.length).toBeGreaterThanOrEqual(30);
+    // chaque place du public est dans la salle de l'arène, sur les gradins (pas sur une case où l'on marche)
+    for (const [mx, my] of pub) {
+      const e = wg.toScreen(mx, my), q = { x: e.y + e.x / 2, y: e.y - e.x / 2 };
+      expect(wg.mapAt(q.x, q.y)?.tag).toBe('arene');
+    }
+    const po = w.portes.find(q => q.nom === 'Arène des âmes')!;
+    expect(wg.walkable(po.ends[1].x, po.ends[1].y)).toBe(true);
+    expect(wg.freeByMap.get('arene')!.length).toBeGreaterThan(400);
+  });
 });
