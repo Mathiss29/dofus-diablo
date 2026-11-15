@@ -35,12 +35,18 @@ function politiqueContenu(env: Record<string, string>): Plugin {
   };
 }
 
+/** Version du build (cache des images, et mise à jour automatique : src/render/miseAJour.ts lit version.json au lancement). */
+const BUILD = Date.now().toString(36);
+function fichierVersion(): Plugin {
+  return { name: 'fichier-version', apply: 'build', generateBundle() { this.emitFile({ type: 'asset', fileName: 'version.json', source: JSON.stringify({ v: BUILD }) }); } };
+}
+
 // base relative : le build marche aussi bien sur GitHub Pages que sur itch.io
 export default defineConfig(({ mode }) => ({
   base: './',
-  plugins: [politiqueContenu({ ...loadEnv(mode, process.cwd(), 'VITE_'), ...Object.fromEntries(Object.entries(process.env).filter(([k]) => k.startsWith('VITE_'))) as Record<string, string> })],
+  plugins: [politiqueContenu({ ...loadEnv(mode, process.cwd(), 'VITE_'), ...Object.fromEntries(Object.entries(process.env).filter(([k]) => k.startsWith('VITE_'))) as Record<string, string> }), fichierVersion()],
   // version du build pour casser le cache des images (src/render/assetUrl.ts)
-  define: { __BUILD__: JSON.stringify(Date.now().toString(36)) },
+  define: { __BUILD__: JSON.stringify(BUILD) },
   build: { target: 'es2022', chunkSizeWarningLimit: 2000 },
   // le serveur multijoueur (serveur/) a ses propres tests (node --test)
   test: { exclude: ['**/node_modules/**', 'serveur/**'] },
