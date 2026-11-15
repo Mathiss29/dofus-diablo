@@ -2411,6 +2411,408 @@
    "officiel": "Tourbillon : +2 Portée maximale"
   }
  ],
+ "ouginak": [
+  {
+   "id": "ouginak-01",
+   "slot": "anneau",
+   "piece": "Anneau Nos",
+   "sort": "Dogue",
+   "dofusId": 13757,
+   "effet": "parCible",
+   "n": 1,
+   "officiel": "Dogue : +1 lancer(s) par cible"
+  },
+  {
+   "id": "ouginak-02",
+   "slot": "anneau",
+   "piece": "Anneau Nos",
+   "sort": "Dépouille",
+   "dofusId": 13789,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Dépouille : ligne de vue désactivée"
+  },
+  {
+   "id": "ouginak-03",
+   "slot": "anneau",
+   "piece": "Anneau Nos",
+   "sort": "Carcasse",
+   "dofusId": 13768,
+   "effet": "parCible",
+   "n": 1,
+   "officiel": "Carcasse : +1 lancer(s) par cible"
+  },
+  {
+   "id": "ouginak-04",
+   "slot": "anneau",
+   "piece": "Anneau Nos",
+   "sort": "Battue",
+   "dofusId": 13796,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Battue : ligne de vue désactivée"
+  },
+  {
+   "id": "ouginak-05",
+   "slot": "anneau",
+   "piece": "Anneau Nos",
+   "sort": "Aboiement",
+   "dofusId": 13773,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Aboiement : -1 PA"
+  },
+  {
+   "id": "ouginak-06",
+   "slot": "amulette",
+   "piece": "Anneau Nos",
+   "sort": "Rogne",
+   "dofusId": 13803,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Rogne : -1 de relance"
+  },
+  {
+   "id": "ouginak-07",
+   "slot": "arme",
+   "piece": "Anneau Nos",
+   "sort": "Appel de la Meute",
+   "dofusId": 14357,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Appel de la Meute : -1 de relance"
+  },
+  {
+   "id": "ouginak-08",
+   "slot": "bouclier",
+   "piece": "Anneau Nos",
+   "sort": "Nouvelle Lune",
+   "dofusId": 14321,
+   "effet": "relance",
+   "n": 1,
+   "officiel": "Nouvelle Lune : -1 de relance"
+  },
+  {
+   "id": "ouginak-09",
+   "slot": "bottes",
+   "piece": "Bottes Harcie",
+   "sort": "Rabattage",
+   "dofusId": 13754,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Rabattage : ligne de vue désactivée"
+  },
+  {
+   "id": "ouginak-10",
+   "slot": "bottes",
+   "piece": "Bottes Harcie",
+   "sort": "Limier",
+   "dofusId": 13765,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Limier : ligne de vue désactivée"
+  },
+  {
+   "id": "ouginak-11",
+   "slot": "bottes",
+   "piece": "Bottes Harcie",
+   "sort": "Tétanisation",
+   "dofusId": 13753,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Tétanisation : ligne de vue désactivée"
+  },
+  {
+   "id": "ouginak-12",
+   "slot": "bottes",
+   "piece": "Bottes Harcie",
+   "sort": "Pelage Protecteur",
+   "dofusId": 13772,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Pelage Protecteur : -1 PA"
+  },
+  {
+   "id": "ouginak-13",
+   "slot": "bottes",
+   "piece": "Bottes Harcie",
+   "sort": "Férocité",
+   "dofusId": 13798,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Férocité : -1 PA"
+  },
+  {
+   "id": "ouginak-14",
+   "slot": "amulette",
+   "piece": "Bottes Harcie",
+   "sort": "Flair",
+   "dofusId": 13749,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Flair : -1 PA"
+  },
+  {
+   "id": "ouginak-15",
+   "slot": "arme",
+   "piece": "Bottes Harcie",
+   "sort": "Acharnement",
+   "dofusId": 13805,
+   "effet": "ligne",
+   "n": 1,
+   "officiel": "Acharnement : lancer en ligne désactivé"
+  },
+  {
+   "id": "ouginak-16",
+   "slot": "bouclier",
+   "piece": "Bottes Harcie",
+   "sort": "Aboi",
+   "dofusId": 13790,
+   "effet": "parCible",
+   "n": 1,
+   "officiel": "Aboi : +1 lancer(s) par cible"
+  },
+  {
+   "id": "ouginak-17",
+   "slot": "cape",
+   "piece": "Cape Hoile",
+   "sort": "Tibia",
+   "dofusId": 13763,
+   "effet": "crit",
+   "n": 25,
+   "officiel": "Tibia : +25% Critique"
+  },
+  {
+   "id": "ouginak-18",
+   "slot": "cape",
+   "piece": "Cape Hoile",
+   "sort": "Humérus",
+   "dofusId": 13794,
+   "effet": "po",
+   "n": 1,
+   "officiel": "Humérus : +1 Portée maximale"
+  },
+  {
+   "id": "ouginak-19",
+   "slot": "cape",
+   "piece": "Cape Hoile",
+   "sort": "Amarok",
+   "dofusId": 13802,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Amarok : ligne de vue désactivée"
+  },
+  {
+   "id": "ouginak-20",
+   "slot": "cape",
+   "piece": "Cape Hoile",
+   "sort": "Cerbère",
+   "dofusId": 13758,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Cerbère : -1 PA"
+  },
+  {
+   "id": "ouginak-21",
+   "slot": "cape",
+   "piece": "Cape Hoile",
+   "sort": "Convergence",
+   "dofusId": 13770,
+   "effet": "ligne",
+   "n": 1,
+   "officiel": "Convergence : lancer en ligne désactivé"
+  },
+  {
+   "id": "ouginak-22",
+   "slot": "amulette",
+   "piece": "Cape Hoile",
+   "sort": "Pistage",
+   "dofusId": 13806,
+   "effet": "ligne",
+   "n": 1,
+   "officiel": "Pistage : lancer en ligne désactivé"
+  },
+  {
+   "id": "ouginak-23",
+   "slot": "arme",
+   "piece": "Cape Hoile",
+   "sort": "Arcanin",
+   "dofusId": 13771,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Arcanin : +1 lancer(s) par tour"
+  },
+  {
+   "id": "ouginak-24",
+   "slot": "bouclier",
+   "piece": "Cape Hoile",
+   "sort": "Caninos",
+   "dofusId": 13797,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Caninos : +1 lancer(s) par tour"
+  },
+  {
+   "id": "ouginak-25",
+   "slot": "chapeau",
+   "piece": "Chapeau Devin",
+   "sort": "Molosse",
+   "dofusId": 13756,
+   "effet": "crit",
+   "n": 30,
+   "officiel": "Molosse : +30% Critique"
+  },
+  {
+   "id": "ouginak-26",
+   "slot": "chapeau",
+   "piece": "Chapeau Devin",
+   "sort": "Mâchoire",
+   "dofusId": 13787,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Mâchoire : ligne de vue désactivée"
+  },
+  {
+   "id": "ouginak-27",
+   "slot": "chapeau",
+   "piece": "Chapeau Devin",
+   "sort": "Os à Moelle",
+   "dofusId": 13762,
+   "effet": "parCible",
+   "n": 1,
+   "officiel": "Os à Moelle : +1 lancer(s) par cible"
+  },
+  {
+   "id": "ouginak-28",
+   "slot": "chapeau",
+   "piece": "Chapeau Devin",
+   "sort": "Muselière",
+   "dofusId": 13793,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Muselière : -1 PA"
+  },
+  {
+   "id": "ouginak-29",
+   "slot": "chapeau",
+   "piece": "Chapeau Devin",
+   "sort": "Charogne",
+   "dofusId": 13766,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Charogne : ligne de vue désactivée"
+  },
+  {
+   "id": "ouginak-30",
+   "slot": "amulette",
+   "piece": "Chapeau Devin",
+   "sort": "Radius",
+   "dofusId": 13799,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Radius : ligne de vue désactivée"
+  },
+  {
+   "id": "ouginak-31",
+   "slot": "arme",
+   "piece": "Chapeau Devin",
+   "sort": "Traque",
+   "dofusId": 13755,
+   "effet": "ligne",
+   "n": 1,
+   "officiel": "Traque : lancer en ligne désactivé"
+  },
+  {
+   "id": "ouginak-32",
+   "slot": "bouclier",
+   "piece": "Chapeau Devin",
+   "sort": "Dépeçage",
+   "dofusId": 13804,
+   "effet": "ligne",
+   "n": 1,
+   "officiel": "Dépeçage : lancer en ligne désactivé"
+  },
+  {
+   "id": "ouginak-33",
+   "slot": "ceinture",
+   "piece": "Ceinture Leumant",
+   "sort": "Vertèbre",
+   "dofusId": 13800,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Vertèbre : -1 PA"
+  },
+  {
+   "id": "ouginak-34",
+   "slot": "ceinture",
+   "piece": "Ceinture Leumant",
+   "sort": "Cubitus",
+   "dofusId": 13760,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Cubitus : ligne de vue désactivée"
+  },
+  {
+   "id": "ouginak-35",
+   "slot": "ceinture",
+   "piece": "Ceinture Leumant",
+   "sort": "Calcanéus",
+   "dofusId": 13788,
+   "effet": "ligne",
+   "n": 1,
+   "officiel": "Calcanéus : lancer en ligne désactivé"
+  },
+  {
+   "id": "ouginak-36",
+   "slot": "ceinture",
+   "piece": "Ceinture Leumant",
+   "sort": "Apaisement",
+   "dofusId": 13769,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Apaisement : -1 PA"
+  },
+  {
+   "id": "ouginak-37",
+   "slot": "ceinture",
+   "piece": "Ceinture Leumant",
+   "sort": "Affection",
+   "dofusId": 13791,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Affection : -1 PA"
+  },
+  {
+   "id": "ouginak-38",
+   "slot": "amulette",
+   "piece": "Ceinture Leumant",
+   "sort": "Panique",
+   "dofusId": 13781,
+   "effet": "parTour",
+   "n": 1,
+   "officiel": "Panique : +1 lancer(s) par tour"
+  },
+  {
+   "id": "ouginak-39",
+   "slot": "arme",
+   "piece": "Ceinture Leumant",
+   "sort": "Poursuite",
+   "dofusId": 13801,
+   "effet": "ligne",
+   "n": 1,
+   "officiel": "Poursuite : lancer en ligne désactivé"
+  },
+  {
+   "id": "ouginak-40",
+   "slot": "bouclier",
+   "piece": "Ceinture Leumant",
+   "sort": "Chasse",
+   "dofusId": 13795,
+   "effet": "ldv",
+   "n": 1,
+   "officiel": "Chasse : ligne de vue désactivée"
+  }
+ ],
  "sacrieur": [
   {
    "id": "sacrieur-01",

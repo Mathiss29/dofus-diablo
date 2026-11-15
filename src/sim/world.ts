@@ -63,7 +63,7 @@ import { RENFORT, cleRenforceeDe, texteRenfort } from './clesRenforcees';
 import { CHASSE, OEUVRE, PIERRES, coutOeuvre, coutPerce, metiersOeuvre, type Cout } from './oeuvre';
 import { BOISSONS, CONSO, ELIXIRS, PARCHEMINS, RARES_RECOLTE, REPAS, RES_BOISSON, sorteConso, texteBonus } from './consommables';
 import { majMonstreSadida, rallier, soignerPoupee } from './sadida';
-import { coupSurMonstre, proieAchevee } from './ouginak';
+import { coupSurMonstre, morsureRoquet, proieAchevee } from './ouginak';
 import { RECOLTE, porteeRecolte, quantite, xpRecolte, type Recolte, type RecoltesData } from './recolte';
 
 export interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: number;
@@ -3686,6 +3686,7 @@ export class World {
     if (m.state === 'idle' || m.state === 'return') this.aggroGroup(m);
     this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: dmg, crit: false, element: el, sort: 'invocations' });
     if (p.cls.rage.mode === 'eveil') { p.lastHitAt = p.age; p.addRage(REGLES_BETES.eveil.parCoupBete, this); }
+    morsureRoquet(b, m, dmg);   // Ouginak : Crocs sales
     if (m.hp <= 0) this.killMonster(m);
     return dmg;
   }

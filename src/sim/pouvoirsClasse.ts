@@ -185,6 +185,23 @@ export const POUVOIRS_CLASSE: PouvoirClasseDef[] = [
   pc('sadida', 'V', 'Pandémie', 'inoculation', 'arme', [8, 12], 1, v => `Inoculation gagne ${v} % de dégâts en plus par Infecté, et n'a plus de plafond.`),
   pc('sadida', 'W', 'Don de la forêt', 'don_naturel', 'bouclier', [20, 35], 1, v => `Don Naturel te rend tout de suite une charge d'Arbre, et son soin monte de ${v} %.`),
   pc('sadida', 'X', 'Hiver éternel', 'la_surpuissante', 'anneau', [30, 50], 1, v => `Le Choc Hivernal de la Surpuissante frappe aussi les monstres à 1 case de sa cible, à ${v} % de ses dégâts, et les Infecte.`),
+  // --- Ouginak (« Ouginak : 7A-7P », 15 nov. 2026) : 16 pouvoirs, 2 par emplacement ----------------------------------------
+  pc('ouginak', 'A', "Mâchoires d'acier", 'molosse', 'chapeau', [30, 50], 5, v => `Molosse sur la Proie donne 2 crans de Rage au lieu d'un, et réduit tes dommages subis de ${v} % au lieu de 10 %.`),
+  pc('ouginak', 'B', 'Sang du loup', 'proie', 'chapeau', [40, 60], 5, v => `En Forme Bestiale, tes coups sur la Proie te soignent ${v} % de plus.`),
+  pc('ouginak', 'C', 'Meute fidèle', 'lance_roquet', 'cape', [60, 80], 5, v => `Un deuxième Roquet t'accompagne, avec ${v} % des PV et des dégâts du premier.`),
+  pc('ouginak', 'D', 'Crocs sales', 'lance_roquet', 'cape', [20, 35], 1, v => `Les morsures du Roquet font saigner 3 s : ${v} % de la morsure par seconde.`),
+  pc('ouginak', 'E', 'Pleine lune', 'arcanin', 'amulette', [5, 8], 0.5, v => `Pendant ${n(v)} s après la transformation, ta Rage ne retombe pas.`),
+  pc('ouginak', 'F', 'Hurlement', 'tibia', 'amulette', [20, 35], 1, v => `Quand tu deviens Bête, un hurlement repousse les ennemis à 3 cases et les ralentit de ${v} % pendant 2 s.`),
+  pc('ouginak', 'G', 'Œil du traqueur', 'traque', 'anneau', [10, 18], 1, v => `Tes sorts font ${v} % de dégâts en plus à la Proie.`),
+  pc('ouginak', 'H', 'Proie suivante', 'proie', 'anneau', [4, 6], 0.5, v => `Quand la Proie meurt, la marque saute aussitôt au monstre le plus proche, à ${n(v)} cases au plus.`),
+  pc('ouginak', 'I', 'Os à ronger', 'os_a_moelle', 'ceinture', [3, 5], 0.5, v => `Os à Moelle et Carcasse gardent leur bonus sur la Proie ${n(v)} s de plus et le font monter deux fois plus vite.`),
+  pc('ouginak', 'J', 'Peau dure', 'amarok', 'ceinture', [4, 7], 1, v => `Chaque cran de Rage réduit encore de ${v} % les dégâts que tu prends.`),
+  pc('ouginak', 'K', 'Bond de la bête', 'convergence', 'bottes', [1, 2], 1, v => `En Forme Bestiale, ton bond (Espace) va ${v} case${v > 1 ? 's' : ''} plus loin et un bond sur deux ne coûte pas de charge.`),
+  pc('ouginak', 'L', 'Course de meute', 'lance_roquet', 'bottes', [10, 18], 1, v => `Tant que ton Roquet est en vie, tu cours ${v} % plus vite.`),
+  pc('ouginak', 'M', 'Curée', 'chasse', 'arme', [15, 25], 1, v => `Achever la Proie te rend un cran de Rage et ${v} % de tes PV.`),
+  pc('ouginak', 'N', 'Rage aveugle', 'tibia', 'arme', [20, 35], 1, v => `En Forme Bestiale, Tibia et Amarok frappent 1 case plus large et ${v} % plus fort.`),
+  pc('ouginak', 'O', 'Pelage épais', 'pelage_protecteur', 'bouclier', [20, 35], 1, v => `Pelage Protecteur se lance aussi en Forme Bestiale, et ses boucliers sont ${v} % plus gros.`),
+  pc('ouginak', 'P', 'Instinct de survie', 'apaisement', 'bouclier', [10, 15], 1, v => `Sous 30 % de PV, tu gagnes aussitôt un cran de Rage et un bouclier de ${v} % de tes PV (une fois toutes les 20 s).`),
 ];
 /** Châtiments du Sacrieur (Dofus Rétro, 14B) : caractéristique gagnée à chaque coup reçu. */
 export const CHATIMENTS: Record<string, 'force' | 'agilite' | 'chance' | 'intelligence' | 'vitalite'> =
@@ -196,11 +213,11 @@ export const estPouvoirClasse = (id: string) => !!PC_PAR_ID[id];
 
 /** 2D : pouvoirs préférés de chaque boss (chance triplée sur son butin), un par classe. */
 export const BOSS_PREFERES: Record<string, string[]> = {
-  royal: ['pc-iop-A', 'pc-cra-G', 'pc-osamodas-E', 'pc-sacrieur-E', 'pc-sacrieur-L', 'pc-iop-K', 'pc-cra-P', 'pc-osamodas-L', 'pc-forgelance-E', 'pc-forgelance-M', 'pc-eniripsa-E', 'pc-eniripsa-I', 'pc-ecaflip-A', 'pc-ecaflip-J', 'pc-sadida-C', 'pc-sadida-J', 'pc-sadida-Q'],
-  kardorim: ['pc-iop-F', 'pc-cra-H', 'pc-osamodas-F', 'pc-sacrieur-D', 'pc-sacrieur-O', 'pc-iop-J', 'pc-cra-O', 'pc-osamodas-O', 'pc-forgelance-C', 'pc-forgelance-L', 'pc-eniripsa-P', 'pc-eniripsa-H', 'pc-ecaflip-P', 'pc-ecaflip-E', 'pc-sadida-P', 'pc-sadida-F', 'pc-sadida-R'],
-  tournesol_affame: ['pc-sadida-A', 'pc-iop-H', 'pc-cra-A', 'pc-osamodas-D', 'pc-sacrieur-A', 'pc-sacrieur-J', 'pc-iop-L', 'pc-cra-K', 'pc-osamodas-J', 'pc-forgelance-I', 'pc-forgelance-A', 'pc-eniripsa-C', 'pc-eniripsa-G', 'pc-ecaflip-N', 'pc-ecaflip-G', 'pc-sadida-K', 'pc-sadida-S', 'pc-sadida-T'],
-  mob_l_eponge: ['pc-iop-E', 'pc-cra-F', 'pc-osamodas-B', 'pc-sacrieur-C', 'pc-sacrieur-P', 'pc-iop-M', 'pc-cra-M', 'pc-osamodas-K', 'pc-forgelance-K', 'pc-forgelance-H', 'pc-eniripsa-A', 'pc-eniripsa-O', 'pc-ecaflip-O', 'pc-ecaflip-C', 'pc-sadida-M', 'pc-sadida-H', 'pc-sadida-U', 'pc-sadida-V'],
-  kankreblath: ['pc-iop-B', 'pc-cra-C', 'pc-osamodas-C', 'pc-sacrieur-B', 'pc-sacrieur-K', 'pc-iop-O', 'pc-cra-J', 'pc-osamodas-P', 'pc-forgelance-D', 'pc-forgelance-O', 'pc-eniripsa-M', 'pc-eniripsa-N', 'pc-ecaflip-M', 'pc-ecaflip-I', 'pc-sadida-D', 'pc-sadida-N', 'pc-sadida-W', 'pc-sadida-X'],
+  royal: ['pc-iop-A', 'pc-cra-G', 'pc-osamodas-E', 'pc-sacrieur-E', 'pc-sacrieur-L', 'pc-iop-K', 'pc-cra-P', 'pc-osamodas-L', 'pc-forgelance-E', 'pc-forgelance-M', 'pc-eniripsa-E', 'pc-eniripsa-I', 'pc-ecaflip-A', 'pc-ecaflip-J', 'pc-sadida-C', 'pc-sadida-J', 'pc-sadida-Q', 'pc-ouginak-A', 'pc-ouginak-J', 'pc-ouginak-O'],
+  kardorim: ['pc-iop-F', 'pc-cra-H', 'pc-osamodas-F', 'pc-sacrieur-D', 'pc-sacrieur-O', 'pc-iop-J', 'pc-cra-O', 'pc-osamodas-O', 'pc-forgelance-C', 'pc-forgelance-L', 'pc-eniripsa-P', 'pc-eniripsa-H', 'pc-ecaflip-P', 'pc-ecaflip-E', 'pc-sadida-P', 'pc-sadida-F', 'pc-sadida-R', 'pc-ouginak-P', 'pc-ouginak-M', 'pc-ouginak-E'],
+  tournesol_affame: ['pc-sadida-A', 'pc-iop-H', 'pc-cra-A', 'pc-osamodas-D', 'pc-sacrieur-A', 'pc-sacrieur-J', 'pc-iop-L', 'pc-cra-K', 'pc-osamodas-J', 'pc-forgelance-I', 'pc-forgelance-A', 'pc-eniripsa-C', 'pc-eniripsa-G', 'pc-ecaflip-N', 'pc-ecaflip-G', 'pc-sadida-K', 'pc-sadida-S', 'pc-sadida-T', 'pc-ouginak-D', 'pc-ouginak-C', 'pc-ouginak-I'],
+  mob_l_eponge: ['pc-iop-E', 'pc-cra-F', 'pc-osamodas-B', 'pc-sacrieur-C', 'pc-sacrieur-P', 'pc-iop-M', 'pc-cra-M', 'pc-osamodas-K', 'pc-forgelance-K', 'pc-forgelance-H', 'pc-eniripsa-A', 'pc-eniripsa-O', 'pc-ecaflip-O', 'pc-ecaflip-C', 'pc-sadida-M', 'pc-sadida-H', 'pc-sadida-U', 'pc-sadida-V', 'pc-ouginak-G', 'pc-ouginak-H', 'pc-ouginak-L'],
+  kankreblath: ['pc-iop-B', 'pc-cra-C', 'pc-osamodas-C', 'pc-sacrieur-B', 'pc-sacrieur-K', 'pc-iop-O', 'pc-cra-J', 'pc-osamodas-P', 'pc-forgelance-D', 'pc-forgelance-O', 'pc-eniripsa-M', 'pc-eniripsa-N', 'pc-ecaflip-M', 'pc-ecaflip-I', 'pc-sadida-D', 'pc-sadida-N', 'pc-sadida-W', 'pc-sadida-X', 'pc-ouginak-F', 'pc-ouginak-N', 'pc-ouginak-K', 'pc-ouginak-B'],
 };
 /** 2A : part des pouvoirs de Légendaire qui sont des pouvoirs de classe inventés. */
 export const CHANCE_POUVOIR_CLASSE = 0.2;

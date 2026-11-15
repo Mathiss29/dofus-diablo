@@ -1,6 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { GAME_DATA, ITEMS } from '../src/sim/data';
+import type { EquipSlot, Item } from '../src/sim/items';
+import { PC_PAR_ID } from '../src/sim/pouvoirsClasse';
 import { GridMap, type MapData } from '../src/sim/gridmap';
 import { NO_INPUT, type PlayerInput } from '../src/sim/input';
 import { World } from '../src/sim/world';
@@ -12,6 +14,14 @@ const oug = (seed = 7) => { const w = new World({ data: GAME_DATA, zone: 'champs
 const idle = (w: World, s: number) => { for (let i = 0; i < s * 60; i++) w.step(STEP, NO_INPUT); };
 const press = (w: World, pressed: PlayerInput['pressed'], aim: { x: number; y: number }) => { w.player.pa = 99; w.player.cd = {}; w.player.casts = {}; w.step(STEP, { ...NO_INPUT, aim, pressed }); };
 const niveau = (p: World['player'], n: number) => { p.level = n; p.recompute(); p.learnSpells(null); p.pa = p.paMax; };
+/** Porte un Légendaire avec ce pouvoir de l'Ouginak. */
+const porter = (w: World, lettre: string, value: number) => {
+  const id = `pc-ouginak-${lettre}`, c = PC_PAR_ID[id];
+  const [iid] = Object.entries(ITEMS.equipment).find(([, d]) => d.slot === c.slot && !d.familier && d.level <= 20)!;
+  const it: Item = { uid: w.newUid(), id: iid, rarity: 'legendaire', stats: {}, extra: [], legendary: { id, value } };
+  w.player.equipment[(c.slot === 'anneau' ? 'anneau1' : c.slot) as EquipSlot] = it;
+  w.player.recompute();
+};
 /** Monstre en chasse, increvable et figé sur place. */
 const cible = (w: World, x: number, y: number, hp = 50000) => { const m = w.spawnMonster('bouftou', x, y); m.state = 'chase'; m.hp = m.maxHp = hp; m.stun = 999; return m; };
 
@@ -170,5 +180,39 @@ describe('Ouginak (« Classes : 14A+14C 15A+15B 16A+16B 17A », « Ouginak : 1A+
     press(w, 'flair', { x: m.x, y: m.y }); idle(w, 0.4);
     expect(Math.hypot(p.x - m.x, p.y - m.y)).toBeLessThan(80);
     expect(p.rage).toBe(0);
+  });
+
+  it('7A-7P légendaires : Mâchoires d\'acier, Peau dure, Pleine lune, Pelage épais', () => {
+    const w = oug(); idle(w, 0.2);
+    const p = w.player; niveau(p, 60);
+    porter(w, 'A', 50); porter(w, 'J', 7); porter(w, 'E', 8); porter(w, 'O', 35);
+    const m = cible(w, p.x + 60, p.y);
+    press(w, 'proie', { x: m.x, y: m.y }); idle(w, 0.4);
+    p.rage = 0;
+    press(w, 'molosse', { x: m.x, y: m.y }); idle(w, 0.4);
+    expect(p.rage).toBe(2);   // Mâchoires d'acier : 2 crans sur la Proie
+    expect(p.oug!.subisN).toBeCloseTo(0.5);
+    p.oug!.subisT = 0; p.rage = 2;
+    expect(subisOuginak(p)).toBeCloseTo(1 - 2 * (0.08 + 0.07));   // Peau dure
+    p.rage = 3; idle(w, 0.1);
+    expect(p.ougBete).toBe(true);
+    idle(w, 6);
+    expect(p.rage).toBe(3);   // Pleine lune : la Rage tient 8 s
+    p.pa = 99; p.cd = {};
+    expect(p.canStart('pelage_protecteur')).toBe(true);   // Pelage épais : permis en Bête
+  });
+
+  it('légendaires : Proie suivante, Curée, Meute fidèle', () => {
+    const w = oug(); idle(w, 0.2);
+    const p = w.player; niveau(p, 60); idle(w, 0.2);
+    porter(w, 'H', 6); porter(w, 'M', 25); porter(w, 'C', 80); idle(w, 0.3);
+    expect(w.betes.filter(b => b.owner === p && b.base === 'oug_roquet' && !b.dead)).toHaveLength(2);   // deux Roquets
+    const m = cible(w, p.x + 60, p.y), n = cible(w, p.x + 140, p.y);
+    press(w, 'proie', { x: m.x, y: m.y }); idle(w, 0.4);
+    p.rage = 0; p.hp = Math.round(p.maxHp / 2); const hp = p.hp;
+    w.killMonster(m);
+    expect(proieDe(p, w)).toBe(n);   // la marque saute
+    expect(p.rage).toBe(1);   // Curée
+    expect(p.hp).toBeGreaterThan(hp);
   });
 });
